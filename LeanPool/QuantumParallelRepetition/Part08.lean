@@ -541,9 +541,7 @@ theorem existsCommonSupportPreservingRationalApproximations
       lt_of_le_of_lt
         (le_add_of_nonneg_right cost_nonnegative)
         denominator_large
-    have crossed :=
-      (div_lt_iff₀ gamma_positive).mp reciprocal_bound
-    linarith only [crossed]
+    exact (div_lt_iff₀' gamma_positive).mp reciprocal_bound
   refine ⟨denominator, denominator_positive,
     fun index => distributionRoundedNumerator
       base denominator (probability index), ?_, ?_, ?_⟩

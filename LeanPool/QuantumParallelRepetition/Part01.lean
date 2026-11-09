@@ -5,7 +5,6 @@ Authors: OpenAI, Dean Cureton
 -/
 module
 
-public import Mathlib.Analysis.CStarAlgebra.Matrix
 public import Mathlib.Analysis.CStarAlgebra.Module.Constructions
 public import Mathlib.Analysis.InnerProductSpace.StarOrder
 public import Mathlib.Analysis.Matrix.Order
@@ -15,14 +14,8 @@ public import Mathlib.LinearAlgebra.FreeModule.PID
 public import Mathlib.MeasureTheory.Function.L2Space
 public import Mathlib.MeasureTheory.SpecificCodomains.Pi
 public import Mathlib.Tactic.NormNum.RealSqrt -- shake: keep
-public import Mathlib.Analysis.InnerProductSpace.Positive
-public import Mathlib.Analysis.Matrix.HermitianFunctionalCalculus
-public import Mathlib.MeasureTheory.Integral.Bochner.Basic
-public import Mathlib.MeasureTheory.Integral.IntegrableOn
-public import Mathlib.MeasureTheory.Measure.Haar.OfBasis
 
 import Mathlib.Algebra.Order.Archimedean.Real.Hom
-import Mathlib.MeasureTheory.Integral.IntegralEqImproper
 
 /-! # Quantum parallel repetition, part 01 -/
 
@@ -796,9 +789,8 @@ private theorem convexMixtureStrategy_winProbability
       _ = ∑ j : J, ∑ x : X, ∑ y : Y, ∑ a : A, ∑ b : B,
             f x y a b j := Finset.sum_comm
   unfold Strategy.winProbability
-  simp_rw [convexMixtureStrategy_outcomeProbability p hp h_normalized S]
-  simp_rw [h_branch]
-  simp_rw [Finset.mul_sum]
+  simp only [convexMixtureStrategy_outcomeProbability p hp h_normalized S,
+    h_branch, Finset.mul_sum]
   rw [h_swap (fun x y a b j =>
     G.questionWeight x y *
       (p j * (if G.predicate x y a b = true then
@@ -1762,9 +1754,10 @@ private theorem spectralPurificationFilter_gram
   have hDsquare : D * D = diagonalPurificationGram eigenvalue s := by
     simp only [D, diagonalPurificationGram, Matrix.diagonal_mul_diagonal,
       pow_two, Complex.ofReal_mul]
+  have conjugation_star : e (star D) = star (e D) := e.map_star' D
   change star (e D) * e D = e (diagonalPurificationGram eigenvalue s)
   calc
-    star (e D) * e D = e (star D) * e D := by rw [map_star e]
+    star (e D) * e D = e (star D) * e D := by rw [conjugation_star]
     _ = e (star D * D) := (map_mul e (star D) D).symm
     _ = e (diagonalPurificationGram eigenvalue s) := by
       rw [hDstar, hDsquare]
@@ -2214,9 +2207,10 @@ theorem spectralSupportFunctional_isHermitian
     simp only [RCLike.star_def, Complex.conj_ofReal]
   have hDstar : star D = D := by
     simpa only [Matrix.star_eq_conjTranspose] using hD.eq
+  have conjugation_star : e (star D) = star (e D) := e.map_star' D
   change Matrix.conjTranspose (e D) = e D
   simpa only [Matrix.star_eq_conjTranspose] using
-    (show star (e D) = e D by rw [← map_star e, hDstar])
+    (show star (e D) = e D by rw [← conjugation_star, hDstar])
 
 /-- Apply reciprocal eigenvalues to a positive matrix, with zero on its kernel. -/
 def spectralSupportInverse
@@ -3721,8 +3715,9 @@ theorem spectralPurificationFilter_square_contraction
         (le_add_of_nonneg_right hs.le)
     exact Complex.nonneg_iff.mpr
       ⟨sub_nonneg.mpr (mul_le_of_le_one_right hnonneg hle), rfl⟩
+  have conjugation_star : e (star D) = star (e D) := e.map_star' D
   change (e D - star (e D) * e D).PosSemidef
-  rw [← map_star e, hDstar, ← map_mul e, ← map_sub e]
+  rw [← conjugation_star, hDstar, ← map_mul e, ← map_sub e]
   change ((U : Matrix d d ℂ) * (D - D * D) *
     star (U : Matrix d d ℂ)).PosSemidef
   simpa only [Matrix.star_eq_conjTranspose] using
@@ -5245,7 +5240,7 @@ theorem bornTracePairing_one_le_one
       bornTracePairing ρ.matrix (1 : Matrix dA dA ℂ) G :=
     (bornTracePairing ρ.matrix (1 : Matrix dA dA ℂ)).map_sub 1 G
   rw [hdiff, bornTracePairing_one_one] at hpositive
-  linarith only [hpositive]
+  exact le_add_neg_iff_le.mp hpositive
 
 theorem positiveContraction_eigenvalue_le_one
     {d : Type*} [Fintype d] [DecidableEq d]

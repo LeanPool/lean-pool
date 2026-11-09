@@ -570,7 +570,8 @@ theorem dSVDensityRationalCompleteProjectiveOutcome_norm_sq_eq
           (ofLp (sharedThresholdResource (d := Fin d) τ)))‖ ^ 2 =
       (∑ k : Fin N, (Matrix.trace (P k * R k)).re) /
         ((d : ℝ) * (N : ℝ))
-  simpa [τ] using
+  simpa only [τ, blockDiagonal'_transpose, one_pow, one_mul, Fintype.card_fin,
+    sum_const, card_univ, nsmul_eq_mul, mul_one] using
     sharedThresholdResource_block_action_norm_sq
       τ P R
       (fun k =>
@@ -817,13 +818,8 @@ theorem dSVDensityRationalCanonicalAcceptedTarget_distance_le
     ‖ξ.val - dSVDensityRationalCanonicalAcceptedTarget
         w N ξ‖ ≤
       Real.sqrt (1 / w + (d : ℝ) * w / (N : ℝ)) := by
-  have nonnegative : 0 ≤ 1 / w + (d : ℝ) * w / (N : ℝ) := by
-    positivity
-  have squared :=
-    dSVDensityRationalCanonicalAcceptedTarget_distance_sq_le
-      width grid ξ
-  have exact_sqrt := Real.sq_sqrt nonnegative
-  nlinarith only [squared, exact_sqrt, Real.sqrt_nonneg (1 / w + (d : ℝ) * w / (N : ℝ))]
+  exact Real.le_sqrt_of_sq_le
+    (dSVDensityRationalCanonicalAcceptedTarget_distance_sq_le width grid ξ)
 
 theorem dSVDensityRationalCanonicalAcceptedTarget_ne_zero
     {d N : ℕ} {w : ℝ} (width : 0 < w) (grid : 0 < N)
@@ -1021,7 +1017,7 @@ theorem
   have denominator : 0 < w := width
   have ratio : (w + 1) / w ≤ 2 := by
     apply (div_le_iff₀ denominator).mpr
-    linarith only [large]
+    exact add_one_le_two_mul large
   calc
     dSVDensityRationalLeftProjectiveThresholdAtomMismatch
         w N ξ ζ /
@@ -1062,10 +1058,9 @@ theorem dSVDensityRationalLargeWidth_exists_fine_grid
     lt_trans (div_pos real_dimension denominator) large
   have grid : 0 < N := by exact_mod_cast real_grid
   refine ⟨N, grid, ?_⟩
-  have crossed := (div_lt_iff₀ denominator).mp large
   have small : (d : ℝ) / N < ε / (2 * (w + 1)) := by
     apply (div_lt_iff₀ real_grid).mpr
-    linarith only [crossed]
+    exact (div_lt_iff₀' denominator).mp large
   have positive : 0 < 2 * (w + 1) := by positivity
   have scaled := (lt_div_iff₀ positive).mp small
   linarith only [scaled]
@@ -1810,7 +1805,7 @@ private theorem dSVDensityRationalActualMixed_escape_ge_diagonal
       grid dimension w ξ ζ,
     ← dSVDensityRationalActualMixedAsynchronousMass_eq_crossHazard
       w N ξ ζ] at loss
-  linarith
+  exact tsub_le_iff_left.mp loss
 
 end
 
@@ -2526,7 +2521,7 @@ theorem dSVDensityRationalCanonicalUnitPrefix_relative_distance_sq
       change x ^ 2 ≤ _
       rw [magnitude, denominator]
       norm_num only [Nat.cast_one, div_one]
-      nlinarith [sq_nonneg x]
+      nlinarith only [x_nonnegative, x_two, s_one, sq_nonneg x]
   · have r_positive_nat : 0 < r.val := Nat.pos_of_ne_zero zero
     have r_positive : (0 : ℝ) < r.val := by
       exact_mod_cast r_positive_nat
@@ -2554,8 +2549,13 @@ theorem dSVDensityRationalCanonicalUnitPrefix_relative_distance_sq
       (mul_nonneg x_nonnegative root_positive.le) linear
     have weighted : x ^ 2 * (r.val : ℝ) ≤
         4 * |(r.val : ℝ) - (s.val : ℝ)| := by
-      have root_square := Real.sq_sqrt r_positive.le
-      nlinarith [y_squared]
+      calc
+        x ^ 2 * (r.val : ℝ) = (x * Real.sqrt (r.val : ℝ)) ^ 2 := by
+          rw [mul_pow, Real.sq_sqrt r_positive.le]
+        _ ≤ (2 * y) ^ 2 := by simpa only [pow_two] using square
+        _ = 4 * |(r.val : ℝ) - (s.val : ℝ)| := by
+          rw [mul_pow, y_squared]
+          norm_num
     have rank_relative :
         x ^ 2 ≤ 4 * |(r.val : ℝ) - (s.val : ℝ)| /
           (r.val : ℝ) :=
@@ -5079,7 +5079,7 @@ theorem
               N width schedule ξ ζ k)) * bound := by
       rw [Finset.sum_mul]
     _ ≤ bound := by
-      linarith only [mul_nonneg bound_nonnegative (sub_nonneg.mpr escape_budget)]
+      exact mul_le_of_le_one_left bound_nonnegative escape_budget
 
 /-- The error rate associated with DSV density rational heterogeneous physical uniform escape. -/
 def dSVDensityRationalHeterogeneousPhysicalUniformEscapeRate
@@ -5522,7 +5522,7 @@ theorem bornTracePairing_le_one_one
       bornTracePairing ρ.matrix F (1 : Matrix dB dB ℂ) := by
     simp only [map_sub (bornTracePairing ρ.matrix), LinearMap.sub_apply]
   rw [hdiff, bornTracePairing_one_one] at hpositive
-  linarith only [hpositive]
+  exact le_add_neg_iff_le.mp hpositive
 
 theorem matrixLogEntropy_born_lower_bound_right
     {dA dB : Type*}

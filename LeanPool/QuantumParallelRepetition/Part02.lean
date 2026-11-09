@@ -6,12 +6,9 @@ Authors: OpenAI, Dean Cureton
 module
 
 public import LeanPool.QuantumParallelRepetition.Part01
-public import Mathlib.Analysis.Matrix.Order -- shake: keep
 public import Mathlib.Analysis.Normed.Module.Normalize
 public import Mathlib.InformationTheory.KullbackLeibler.KLFun
 public import Mathlib.LinearAlgebra.Matrix.Permutation
-public import Mathlib.MeasureTheory.Function.L2Space
-public import Mathlib.MeasureTheory.SpecificCodomains.Pi -- shake: keep
 public import Mathlib.NumberTheory.Harmonic.Defs
 import Mathlib.NumberTheory.Harmonic.Bounds
 
@@ -130,8 +127,7 @@ theorem exists_proofHarmonicNumber_ratio_ge
     harmonicNumber_pos (Nat.mul_pos hd hn)
   have hupper := harmonicNumber_mul_le_add hd hn
   have hbudget : C < ε * harmonicNumber n := by
-    have h := (div_lt_iff₀ hε).mp hnlarge
-    linarith
+    exact (div_lt_iff₀' hε).mp hnlarge
   refine ⟨n, hn, (le_div_iff₀ hden).mpr ?_⟩
   have hscaled := mul_le_mul_of_nonneg_left
     hupper (sub_nonneg.mpr hεone)
@@ -297,7 +293,7 @@ theorem harmonicSchmidtFiber_count_sq_le
         mul_nonneg hx (Real.sqrt_nonneg _)
       have hs :
           (x * Real.sqrt ((j.val : ℝ) + 1)) ^ 2 ≤ a ^ 2 := by
-        linarith only [mul_nonneg (sub_nonneg.mpr hscaled) (add_nonneg ha hnonneg)]
+        exact (sq_le_sq₀ hnonneg ha).mpr hscaled
       rw [mul_pow, Real.sq_sqrt hjpositive.le] at hs
       simpa only [mul_comm] using hs
     have hcardreal : (S.card : ℝ) ≤ (j.val : ℝ) + 1 := by
@@ -463,7 +459,7 @@ private theorem descendingHarmonicSchmidtAmplitude_le_harmonic
   have hnonneg :
       0 ≤ x * Real.sqrt ((k.val : ℝ) + 1) :=
     mul_nonneg hx hsqrt.le
-  nlinarith only [hsquare, hnonneg]
+  exact (sq_le_one_iff₀ hnonneg).mp hsquare
 
 private def diagonalSchmidtUnitVector
     {d : ℕ} (σ : Fin d → ℝ)
@@ -1755,12 +1751,12 @@ private theorem exists_proofTargetCanonicalSpectralSchmidtDecomposition
           (orthonormalBasisUnitary v) := by
     rw [eigen_unitary]
   rw [replace]
-  simpa [T, C, σ, targetCoefficientMatrix, Matrix.toLpLin_apply,
-    EuclideanSpace.basisFun_apply, Matrix.mulVec_single_one,
-    Matrix.col_apply, EuclideanSpace.inner_single_right,
-    conjugateUnitary_apply,
-    orthonormalBasisUnitary_apply, singular,
-    mul_assoc, mul_left_comm, mul_comm] using coordinate
+  simpa only [T, C, σ, conjugateUnitary_apply, orthonormalBasisUnitary_apply,
+    RCLike.star_def,
+    mul_comm, mul_left_comm, EuclideanSpace.basisFun_apply, toLpLin_apply, PiLp.ofLp_single,
+    mulVec_single, MulOpposite.op_one, one_smul, col_apply, targetCoefficientMatrix,
+    EuclideanSpace.inner_single_right, one_mul, singular, Complex.coe_smul, ofLp_sum,
+    ofLp_smul, Finset.sum_apply, Pi.smul_apply, real_smul, smul_eq_mul, mul_assoc] using coordinate
 
 end
 
@@ -2469,7 +2465,7 @@ theorem dSVHeterogeneousRealStopping_escape_budget
     _ ≤ 1 := by
       have := dSVHeterogeneousRealPrefix_nonneg
         continuation continuation_nonnegative N
-      linarith only [this]
+      exact sub_le_self 1 this
 
 end
 
@@ -3546,7 +3542,7 @@ theorem quadratic_le_klFun {x : ℝ} (hx : 0 ≤ x) :
     3 * (x - 1) ^ 2 / (2 * (x + 2)) ≤ InformationTheory.klFun x := by
   have h := pinskerScalarGap_nonneg hx
   dsimp [pinskerScalarGap] at h
-  linarith
+  exact le_add_neg_iff_le.mp h
 
 /-- The entropy quantity for finite relative. -/
 def finiteRelativeEntropy {ι : Type*} [Fintype ι]
@@ -4846,7 +4842,7 @@ theorem dSVUniformDensityThresholdGrid_count_eq_floor
     mul_nonneg nonnegative gridpositive.le
   have floor_bound : Nat.floor (density * (N : ℝ)) ≤ N := by
     have product : density * (N : ℝ) ≤ (N : ℝ) := by
-      nlinarith
+      exact (mul_le_iff_le_one_left gridpositive).mpr bounded
     have floor := Nat.floor_mono product
     simpa only [ge_iff_le, Nat.floor_natCast] using floor
   have same :
@@ -5353,15 +5349,6 @@ theorem dSVUniformDensityCompletePureHistory_raw_norm
       if flag.val = 0 then (1 : ℝ) else 0)
   have hsquare : ‖single‖ ^ 2 = (d : ℝ) * (N : ℝ) :=
     dSVUniformDensityThresholdRaw_norm_sq N d
-  have hwhole :
-      ‖whole‖ ^ 2 = (((N * d) ^ (L + 1) : ℕ) : ℝ) := by
-    have original := sharedThresholdResourceRaw_norm_sq
-      (d := Fin (L + 1) →
-        DSVUniformDensityThresholdLocalIndex N d)
-      (fun flag : Fin (L + 1) =>
-        if flag.val = 0 then (1 : ℝ) else 0)
-    simpa [DSVUniformDensityThresholdLocalIndex,
-      whole] using original
   have hpower :
       (‖single‖ ^ (L + 1)) ^ 2 =
         (((N * d) ^ (L + 1) : ℕ) : ℝ) := by
@@ -5373,6 +5360,17 @@ theorem dSVUniformDensityCompletePureHistory_raw_norm
           rw [hsquare]
           push_cast
           ac_rfl
+  have hwhole :
+      ‖whole‖ ^ 2 = (((N * d) ^ (L + 1) : ℕ) : ℝ) := by
+    have original := sharedThresholdResourceRaw_norm_sq
+      (d := Fin (L + 1) →
+        DSVUniformDensityThresholdLocalIndex N d)
+      (fun flag : Fin (L + 1) =>
+        if flag.val = 0 then (1 : ℝ) else 0)
+    simpa only [whole, DSVUniformDensityThresholdLocalIndex, Fin.val_eq_zero_iff, Nat.cast_pow,
+      Nat.cast_mul, Fintype.card_pi, Fintype.card_sigma, Fintype.card_fin, sum_const,
+      card_univ, smul_eq_mul, prod_const, ite_pow, one_pow, ne_eq, OfNat.ofNat_ne_zero,
+      not_false_eq_true, zero_pow, sum_ite_eq', mem_univ, ↓reduceIte, mul_one] using original
   change ‖whole‖ = ‖single‖ ^ (L + 1)
   exact (sq_eq_sq₀ (norm_nonneg whole) (pow_nonneg (norm_nonneg single) _)).mp
     (hwhole.trans hpower.symm)
