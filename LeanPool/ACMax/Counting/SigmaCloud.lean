@@ -5,6 +5,7 @@ Authors: Zeru Zhu, Jinzheng Li, Yuanjie Ren
 -/
 module
 
+public import LeanPool.ACMax.Counting.Arithmetic
 public import LeanPool.ACMax.Counting.HubCross
 public import LeanPool.ACMax.Counting.Quotient
 
@@ -152,7 +153,7 @@ theorem algConn_le_two_of_sigma_apex_pair [Nonempty V]
           ≤ (G.degree w : ℝ) - 1 := by
         have : ((G.neighborFinset w \ insert z Z).card : ℝ) + 1
             ≤ (G.degree w : ℝ) := by exact_mod_cast hcard
-        linarith only [this]
+        exact le_sub_iff_add_le.mpr this
       have hid := sigma_slot_identity c (h3 w)
       have hp2 : (0 : ℝ) ≤ (c / ((G.degree w : ℝ) - 2)) ^ 2 := sq_nonneg _
       linarith only [hid, mul_le_mul_of_nonneg_right hleakR hp2]
@@ -236,7 +237,7 @@ theorem sigma_slot_le (G : SimpleGraph V) (h3 : ∀ w, 3 ≤ G.degree w)
       ≤ (G.degree w : ℝ) - 1 := by
     have : ((G.neighborFinset w \ insert z Z).card : ℝ) + 1
         ≤ (G.degree w : ℝ) := by exact_mod_cast hcard
-    linarith only [this]
+    exact le_sub_iff_add_le.mpr this
   have hid := sigma_slot_identity c (h3 w)
   have hp2 : (0 : ℝ) ≤ (c / ((G.degree w : ℝ) - 2)) ^ 2 := sq_nonneg _
   linarith only [hid, mul_le_mul_of_nonneg_right hleakR hp2]
@@ -278,7 +279,7 @@ theorem sigma_slot_le_sharp (G : SimpleGraph V) (h3 : ∀ w, 3 ≤ G.degree w)
       ≤ (G.degree w : ℝ) - 2 := by
     have : ((G.neighborFinset w \ insert z Z).card : ℝ) + 2
         ≤ (G.degree w : ℝ) := by exact_mod_cast hcard
-    linarith only [this]
+    exact le_sub_iff_add_le.mpr this
   have hid := sigma_slot_identity c (h3 w)
   have hp2 : (0 : ℝ) ≤ (c / ((G.degree w : ℝ) - 2)) ^ 2 := sq_nonneg _
   linarith only [hid, mul_le_mul_of_nonneg_right hleakR hp2]
@@ -481,24 +482,10 @@ private theorem algConn_le_two_of_sigma_cross_pair_hkey : ∀ {V : Type u_1} [Fi
       2 * cB ^ 2 + 2 * cA ^ 2 := by
   classical
   intro V inst G u v h h' hsu hsv cA cB hsh hsh' hsh1 hsh'1
-  have e1 : cB / ((G.degree h : ℝ) - 2)
-      = cB * (1 / ((G.degree h : ℝ) - 2)) := by ring
-  have e2 : cA / ((G.degree h' : ℝ) - 2)
-      = cA * (1 / ((G.degree h' : ℝ) - 2)) := by ring
-  rw [e1, e2]
-  set s := 1 / ((G.degree h : ℝ) - 2)
-  set s' := 1 / ((G.degree h' : ℝ) - 2)
-  have hs1 : cB ^ 2 * sigS G u ≤ cB ^ 2 * (2 - s) :=
-    mul_le_mul_of_nonneg_left (by linarith only [hsu, hsh]) (sq_nonneg cB)
-  have hs2 : cA ^ 2 * sigS G v ≤ cA ^ 2 * (2 - s') :=
-    mul_le_mul_of_nonneg_left (by linarith only [hsv, hsh']) (sq_nonneg cA)
-  have hs2le : s ^ 2 ≤ s := by nlinarith only [hsh, hsh1]
-  have hs'2le : s' ^ 2 ≤ s' := by nlinarith only [hsh', hsh'1]
-  have hcross2 : 2 * (cB * s) * (cA * s') ≤ cB ^ 2 * s + cA ^ 2 * s' := by
-    nlinarith only [sq_nonneg (cB * s - cA * s'),
-      mul_le_mul_of_nonneg_left hs2le (sq_nonneg cB),
-      mul_le_mul_of_nonneg_left hs'2le (sq_nonneg cA)]
-  nlinarith only [hs1, hs2, hcross2]
+  simpa only [div_eq_mul_inv, one_mul] using
+    Arithmetic.sigma_cross_arithmetic cB cA (sigS G u) (sigS G v)
+      (1 / ((G.degree h : ℝ) - 2)) (1 / ((G.degree h' : ℝ) - 2))
+      hsu hsv hsh.le hsh'.le hsh1 hsh'1
 
 open Classical in
 /-- **LAW B — the σ-cross law.**  Two non-adjacent vertices with no common
@@ -682,7 +669,7 @@ theorem sigma_setsum_ge_free (G : SimpleGraph (Fin n)) (K : Finset (Fin n))
         refine Finset.sum_le_sum fun x hx => ?_
         have := sigma_mono (by norm_num : 3 ≤ 5) (hK x hx)
         rw [sigma_five] at this
-        linarith only [this]
+        exact this
 
 open Classical in
 /-- Any set of σ-values (degrees ≥ 3) has sum at most `card`. -/
@@ -729,7 +716,7 @@ theorem sigma_setsum_triple_gap (G : SimpleGraph (Fin n)) (K : Finset (Fin n))
     have hσx : (3 / 4 : ℝ) ≤ sigma (G.degree x) := by
       have := sigma_mono (by norm_num : 3 ≤ 6) hx6
       rw [sigma_six] at this
-      linarith only [this]
+      exact this
     have hrest : (2 / 3 : ℝ) * ((K.erase x).card : ℝ)
         ≤ ∑ y ∈ K.erase x, sigma (G.degree y) :=
       sigma_setsum_ge_free G _ (fun y hy => hK y (Finset.mem_of_mem_erase hy))
@@ -844,7 +831,7 @@ theorem sigma_transfer_sat {d : ℕ} (hd : 16 ≤ d) :
   have hdR : (16 : ℝ) ≤ (d : ℝ) := by exact_mod_cast hd
   have hpos : (0 : ℝ) < (d : ℝ) - 2 := by linarith only [hdR]
   rw [sigma, div_mul_eq_mul_div, div_le_iff₀ hpos]
-  nlinarith [mul_nonneg (show (0 : ℝ) ≤ (d : ℝ) - 16 by linarith only [hdR])
+  linarith only [mul_nonneg (show (0 : ℝ) ≤ (d : ℝ) - 16 by exact sub_nonneg.mpr hdR)
     (show (0 : ℝ) ≤ (d : ℝ) - 2 by linarith only [hdR])]
 
 /-- The usable transfer follows from four nonnegative polynomial terms. -/
@@ -853,7 +840,7 @@ private theorem sigma_usable_transfer_arithmetic (d f j S : ℝ)
     (d - 3) * (d - f) ≤ (5 / 4 * (d - 4) + S) * (d - 2) := by
   have hd2 : 0 ≤ d - 2 := by linarith only [hd]
   have h1 := mul_nonneg (show 0 ≤ d - 4 by linarith only [hd])
-    (show 0 ≤ d - 6 by linarith only [hd])
+    (show 0 ≤ d - 6 by exact sub_nonneg.mpr hd)
   have h2 := mul_nonneg hf (show 0 ≤ d - 5 by linarith only [hd])
   have h3 := mul_nonneg (sub_nonneg.mpr hfj) hd2
   have h4 := mul_le_mul_of_nonneg_right hSj hd2
@@ -959,7 +946,7 @@ theorem sigma_transfer_usable (G : SimpleGraph (Fin n)) (w : Fin n)
     exact sigma_setsum_ge_free G _ (fun x hx => (Finset.mem_filter.mp hx).2)
   have hSle : (1 / 2 : ℝ) * (f : ℝ) + S ≤ 2 := by
     rw [hdecomp] at hs
-    linarith only [hs]
+    exact hs
   have hfj3 : 3 ≤ f + j := by omega
   have haj : ((hubTwins G w).card : ℝ) + (j : ℝ) = (d : ℝ) - (f : ℝ) := by
     have h1R : ((hubTwins G w).card : ℝ) + (f : ℝ) + (j : ℝ) = (d : ℝ) := by
@@ -1027,8 +1014,8 @@ theorem capped_overflow_nonneg {d : ℕ} (hd5 : 5 ≤ d) (hd15 : d ≤ 15) :
   have hd15R : (d : ℝ) ≤ 15 := by exact_mod_cast hd15
   have hpos : (0 : ℝ) < (d : ℝ) - 2 := by linarith only [hd5R]
   rw [sigma, div_mul_eq_mul_div, sub_nonneg, le_div_iff₀ hpos]
-  nlinarith [mul_nonneg (show (0 : ℝ) ≤ (d : ℝ) - 5 by linarith only [hd5R])
-    (show (0 : ℝ) ≤ 15 - (d : ℝ) by linarith only [hd15R])]
+  linarith only [hd15R, mul_nonneg (show (0 : ℝ) ≤ (d : ℝ) - 5 by exact sub_nonneg.mpr hd5R)
+    (show (0 : ℝ) ≤ 15 - (d : ℝ) by exact sub_nonneg.mpr hd15R)]
 
 open Classical in
 /-- The per-hub capped overflow is at most `25/12` (attained at `d = 5`). -/
@@ -1037,8 +1024,7 @@ theorem capped_overflow_le_max {d : ℕ} (hd5 : 5 ≤ d) (_hd15 : d ≤ 15) :
   have hd5R : (5 : ℝ) ≤ (d : ℝ) := by exact_mod_cast hd5
   have hpos : (0 : ℝ) < (d : ℝ) - 2 := by linarith only [hd5R]
   rw [sigma, div_mul_eq_mul_div, sub_le_iff_le_add, div_le_iff₀ hpos]
-  nlinarith [mul_nonneg (show (0 : ℝ) ≤ (d : ℝ) - 5 by linarith only [hd5R])
-    (show (0 : ℝ) ≤ (d : ℝ) - 2 by linarith only [hd5R])]
+  linarith only [sq_nonneg ((d : ℝ) - 5), hd5R]
 
 open Classical in
 /-- The collapsed capped-overflow grid: with the block law pinning every capped
@@ -2917,7 +2903,8 @@ theorem hub_saturated_fires (n : ℕ) [Nonempty (Fin n)] (hn : 512 ≤ n)
     have h1 : G.degree w + k ≤ 2 * k + 1 := by omega
     have h2 : 2 * (k + 1) * (k + 1) ≤ 512 := by
       have : k ≤ 15 := by omega
-      nlinarith
+      exact Nat.mul_le_mul (Nat.mul_le_mul_left 2 (Nat.add_le_add_right this 1))
+        (Nat.add_le_add_right this 1)
     have hkn : k + 1 ≤ n := by omega
     have key : n * (G.degree w + k) + 2 * (k + 1) * (k + 1)
         ≤ 2 * (k + 1) * n := by

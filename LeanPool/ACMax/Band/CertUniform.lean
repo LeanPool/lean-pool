@@ -100,7 +100,7 @@ theorem uniform_power_four (t v : ℕ)
     clear_value u
     clear * - hu0 hcoef
     positivity
-  have hend : (T - 9) * A ^ 4 ≤ (A + 10 * T) ^ 4 := by linarith only [hgap]
+  have hend : (T - 9) * A ^ 4 ≤ (A + 10 * T) ^ 4 := by exact sub_nonneg.mp hgap
   have hcross : (A + 10 * T) * (5 * V) ≤ (5 * V + 10 * T) * A := by
     have hmonotone := mul_le_mul_of_nonneg_left hVA
       (show 0 ≤ 10 * T by linarith only [hT43])

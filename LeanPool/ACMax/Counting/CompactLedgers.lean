@@ -521,11 +521,11 @@ theorem sigma_pair_gap {d₁ d₂ : ℕ} (h₁ : 5 ≤ d₁) (h₂ : 5 ≤ d₂)
   have hs₁ : (3 / 4 : ℝ) ≤ sigma d₁ := by
     have := sigma_mono (by norm_num : 3 ≤ 6) h₁6
     rw [sigma_six] at this
-    linarith only [this]
+    exact this
   have hs₂ : (3 / 4 : ℝ) ≤ sigma d₂ := by
     have := sigma_mono (by norm_num : 3 ≤ 6) h₂6
     rw [sigma_six] at this
-    linarith only [this]
+    exact this
   by_cases hd₁6 : d₁ = 6
   · by_cases hd₂6 : d₂ = 6
     · rw [hd₁6, hd₂6, sigma_six] at h

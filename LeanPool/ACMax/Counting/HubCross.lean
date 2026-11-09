@@ -184,7 +184,7 @@ private theorem algConn_le_two_of_hub_cross_pair_hleak_sumA : ∀ {V : Type u_1}
     (fun w => ((G.neighborFinset w \ insert u B).card : ℝ)) p
     s (1 / 2) Lg 3 hpg hpe hLg hleakA
   norm_num only [hcardAe, Nat.cast_ofNat] at h ⊢
-  linarith only [h]
+  exact h
 
 open Classical in
 private theorem algConn_le_two_of_hub_cross_pair_hleak_sumB : ∀ {V : Type u_1} [Fintype V]
@@ -277,7 +277,7 @@ private theorem algConn_le_two_of_hub_cross_pair_hLg_step1 : ∀ {V : Type u_1} 
   have hcR : ((G.neighborFinset g \ insert u B).card : ℝ) + 1
       ≤ (G.degree g : ℝ) := by exact_mod_cast hc
   rw [ha_def]
-  linarith only [hcR]
+  exact le_sub_iff_add_le.mpr hcR
 
 open Classical in
 private theorem algConn_le_two_of_hub_cross_pair_hLg_step2 : ∀ {V : Type u_1} [Fintype V]

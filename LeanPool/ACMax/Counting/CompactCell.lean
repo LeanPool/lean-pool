@@ -107,8 +107,8 @@ theorem sigma_le_of_le {c d : ℕ} (hc : 3 ≤ c) (hcd : c ≤ d) : sigma c ≤ 
     field_simp; ring
   rw [keyc, keyd]
   have : 1 / ((d : ℝ) - 2) ≤ 1 / ((c : ℝ) - 2) :=
-    one_div_le_one_div_of_le hc2 (by linarith only [hcd'])
-  linarith only [this]
+    one_div_le_one_div_of_le hc2 (by exact sub_le_sub_right hcd' _)
+  exact sub_le_sub_left this _
 
 open Classical in
 /-- **`σ`-usability at `Δ = 5`**: three neighbours of degree `≤ 5` give

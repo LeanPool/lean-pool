@@ -393,7 +393,7 @@ theorem algConn_le_two_of_two_clusters [Nonempty V]
           ≤ ((2 * S₁.card * S₂.card * (S₁.card + S₂.card) : ℕ) : ℝ) :=
         Nat.cast_le.mpr hcut
       push_cast at h1
-      linarith only [h1]
+      exact h1
     ring_nf
     nlinarith only [hcutR]
 

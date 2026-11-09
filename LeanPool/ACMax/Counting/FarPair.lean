@@ -309,7 +309,7 @@ theorem algConn_le_two_of_weighted_double_star [Nonempty V]
       Finset.sum_ite_eq' Finset.univ v fun _ => av,
       Finset.sum_ite_mem, Finset.sum_ite_mem, Finset.univ_inter, Finset.univ_inter]
     simp only [Finset.mem_univ, ite_true]
-    linarith only [hbal]
+    exact sub_eq_zero.mpr hbal
   -- Nonvanishing.
   have hne0 : ∃ i, x i ≠ 0 := ⟨u, by rw [hxu]; exact ne_of_gt hau⟩
   -- Squared norm.
@@ -862,7 +862,7 @@ theorem algConn_le_two_of_apex_double_star [Nonempty V]
       Finset.sum_ite_eq' Finset.univ v fun _ => av,
       Finset.sum_ite_mem, Finset.sum_ite_mem, Finset.univ_inter, Finset.univ_inter]
     simp only [Finset.mem_univ, ite_true]
-    linarith only [hbal]
+    exact sub_eq_zero.mpr hbal
   -- Nonvanishing.
   have hne0 : ∃ i, x i ≠ 0 := ⟨u, by rw [hxu]; exact ne_of_gt hau⟩
   -- Squared norm.
