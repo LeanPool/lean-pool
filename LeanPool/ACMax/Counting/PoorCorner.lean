@@ -92,7 +92,7 @@ theorem algConn_le_two_of_far_deg3_pair [Nonempty V]
           ext a
           simp only [Finset.mem_filter, Finset.mem_inter,
             SimpleGraph.mem_neighborFinset]
-          tauto
+          exact and_comm
         rw [hfe]
         norm_num
         ring
@@ -173,7 +173,7 @@ theorem algConn_le_two_of_far_deg3_pair [Nonempty V]
               + (G.neighborFinset w ∩ G.neighborFinset t').card : ℕ) : ℝ) ≤ 3 := by
             exact_mod_cast this
           push_cast at hcast
-          linarith
+          exact le_sub_iff_add_le.mpr hcast
         norm_num only [show (2 : ℝ) ^ 2 = 4 by norm_num]
         exact mul_le_mul_of_nonneg_right h2 (by norm_num)
       calc (∑ w ∈ G.neighborFinset t,
@@ -658,6 +658,8 @@ private theorem exists_far_deg3_pair_hDfilt : ∀ (n : ℕ) (G : SimpleGraph (Fi
   have hcard2 := Finset.card_le_card hsub
   rw [Finset.card_insert_of_notMem hu0no, Finset.card_insert_of_notMem hu1no]
     at hcard2
+  clear * - n R4 D u₀ u₁ G hglob4 hglob3 hR4u0 hR3u0 hR4u1 hR3u1 hDisoCard hs4I hs34I hsum4D
+    hsum3D hcard2
   omega
 
 open Classical in
@@ -853,12 +855,18 @@ private theorem six_isolated_twins_contradiction : ∀ (n : ℕ) (G : SimpleGrap
       (hR4u1) (hR3u1) (hDisoCard) (hDisoSub) (hs4I) (hs34I) (hsum4D) (hsum3D) (hu1no) (hu0no)
   have hxle : (((D.erase u₀).erase u₁).filter (fun z => R4 z = 2)).card ≤ 6 := by
     have := Finset.card_filter_le ((D.erase u₀).erase u₁) (fun z => R4 z = 2)
+    clear * - n R4 D u₀ u₁ G hglob4 hglob3 hR4u0 hR3u0 hR4u1 hR3u1 hDisoCard hs4I hs34I hsum4D
+      hsum3D
     omega
   have hF4 : Fours.card ≤ 4 := by omega
   have hxbound : 2 * (2 + (((D.erase u₀).erase u₁).filter (fun z => R4 z = 2)).card)
       ≤ 12 := by
     have h2 := hsq12 Fours.card hF4
+    clear * - n R4 D u₀ u₁ G hglob4 hglob3 hpig hR4u0 hR3u0 hR4u1 hR3u1 hDisoCard hs4I hs34I
+      hsum4D hsum3D hDfilt h2
     omega
+  clear * - n G hglob4 hglob3 u₀ u₁ hR4u0 hR3u0 hR4u1 hR3u1 hDisoCard hs4I hs34I hsum4D hsum3D
+    hxbound
   omega
 
 open Classical in
@@ -1046,20 +1054,26 @@ theorem exists_far_deg3_pair (n : ℕ) (hn : 18 ≤ n) (G : SimpleGraph (Fin n))
     have h12 : ∀ z ∈ D, R4 z = 1 ∨ R4 z = 2 := by
       intro z hz
       have := hprof z hz
+      clear * - R4 z n G this
       omega
     have h34 : ∀ z ∈ D, 2 * R4 z + R3 z = 4 := by
       intro z hz
       have := hprof z hz
+      clear * - R4 z R3 n G this
       omega
     have hs4 : ∑ z ∈ D, R4 z = D.card + (D.filter (fun z => R4 z = 2)).card :=
       hsplit12 D h12
     have hs34 : 2 * (∑ z ∈ D, R4 z) + ∑ z ∈ D, R3 z = 4 * D.card := h34sum D h34
     have hxle : (D.filter (fun z => R4 z = 2)).card ≤ 8 := by
       have := Finset.card_filter_le D (fun z => R4 z = 2)
+      clear * - n R4 D G hDcard hglob4 hglob3 hs4 hs34
       omega
-    have hF4 : Fours.card ≤ 4 := by omega
+    have hF4 : Fours.card ≤ 4 := by
+      clear * - n Fours G hDcard hglob4 hglob3 hs4 hs34
+      omega
     have hxbound : 2 * (D.filter (fun z => R4 z = 2)).card ≤ 12 := by
       have h2 := hsq12 Fours.card hF4
+      clear * - n R4 D G hDcard hglob4 hglob3 hpig hs4 hs34 h2
       omega
     omega
 
@@ -1093,7 +1107,7 @@ open Classical in
 theorem mem_farOf {n : ℕ} {G : SimpleGraph (Fin n)} {t s : Fin n} :
     s ∈ farOf n G t ↔ G.degree s = 3 ∧ s ≠ t ∧ ¬G.Adj t s ∧
       ∀ w : Fin n, ¬(G.Adj t w ∧ G.Adj s w) := by
-  simp [farOf]
+  simp only [farOf, ne_eq, not_and, Finset.mem_filter, Finset.mem_univ, true_and]
 
 /-! ## Threshold bricks (tri-11 / C4-14, valid for all `n ≥ 18`) -/
 
@@ -1299,7 +1313,8 @@ theorem sum_inter_add_sum_diff' {n : ℕ} (s t : Finset (Fin n)) (f : Fin n → 
   have hd : s \ t = s \ (s ∩ t) := by
     ext x
     simp only [Finset.mem_sdiff, Finset.mem_inter]
-    tauto
+    exact ⟨fun ⟨hs, ht⟩ => ⟨hs, fun h => ht h.2⟩,
+      fun ⟨hs, ht⟩ => ⟨hs, fun h => ht ⟨hs, h⟩⟩⟩
   rw [add_comm, hd]
   exact Finset.sum_sdiff Finset.inter_subset_left
 
@@ -1317,7 +1332,7 @@ theorem anchor_swap {n : ℕ} (G : SimpleGraph (Fin n)) (H S : Finset (Fin n))
     congr 1
     ext w
     simp only [Finset.mem_inter, Finset.mem_filter, SimpleGraph.mem_neighborFinset]
-    tauto
+    exact and_comm
   rw [Finset.sum_congr rfl h1, Finset.sum_comm]
   refine Finset.sum_congr rfl fun w _ => ?_
   rw [Finset.sum_ite, Finset.sum_const, Finset.sum_const_zero, add_zero, smul_eq_mul]
@@ -1424,7 +1439,11 @@ theorem service_supply {n : ℕ} (G : SimpleGraph (Fin n)) {D : Finset (Fin n)}
       ext p
       simp only [Finset.mem_offDiag, Finset.mem_filter, Finset.mem_inter,
         SimpleGraph.mem_neighborFinset]
-      tauto
+      constructor
+      · rintro ⟨⟨h1, hF1⟩, ⟨h2, hF2⟩, hne⟩
+        exact ⟨⟨hF1, hF2, hne⟩, h1, h2⟩
+      · rintro ⟨⟨hF1, hF2, hne⟩, h1, h2⟩
+        exact ⟨⟨h1, hF1⟩, ⟨h2, hF2⟩, hne⟩
     have hswap2 : ∑ w ∈ Dᶜ, ((G.neighborFinset w ∩ F).offDiag).card
         = ∑ p ∈ F.offDiag, (Dᶜ.filter (fun w => G.Adj w p.1 ∧ G.Adj w p.2)).card := by
       simp_rw [hset, Finset.card_filter]

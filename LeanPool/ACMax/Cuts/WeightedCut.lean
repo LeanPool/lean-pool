@@ -92,7 +92,7 @@ theorem algConn_le_two_of_weighted_cut {V : Type*} [Fintype V] [Nonempty V]
     refine Finset.sum_congr rfl (fun i _ => Finset.sum_congr rfl (fun j _ => ?_))
     refine if_congr ?_ rfl rfl
     rw [SimpleGraph.adj_comm]
-    tauto
+    exact and_congr_right fun _ => and_comm
   -- Quadratic form equals `(p+q)² · cut = N² · cut`.
   have hquad : dotProduct x ((G.lapMatrix ℝ).mulVec x) =
       ((p : ℝ) + (q : ℝ)) ^ 2 * (cut : ℝ) := by
@@ -112,6 +112,6 @@ theorem algConn_le_two_of_weighted_cut {V : Type*} [Fintype V] [Nonempty V]
   rw [hquad, hnorm, hpqR]
   have hcR : (N : ℝ) * (cut : ℝ) ≤ 2 * ((p : ℝ) * (q : ℝ)) := by exact_mod_cast hcut
   have hNnn : (0 : ℝ) ≤ (N : ℝ) := Nat.cast_nonneg N
-  nlinarith [hcR, hNnn]
+  nlinarith only [hcR, hNnn]
 
 end ACMax

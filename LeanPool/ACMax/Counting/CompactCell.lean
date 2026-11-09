@@ -98,7 +98,7 @@ theorem sigma_le_of_le {c d : ℕ} (hc : 3 ≤ c) (hcd : c ≤ d) : sigma c ≤ 
   have hc3 : (3 : ℝ) ≤ (c : ℝ) := by exact_mod_cast hc
   have hcd' : (c : ℝ) ≤ (d : ℝ) := by exact_mod_cast hcd
   have hc2 : (0 : ℝ) < (c : ℝ) - 2 := by linarith
-  have hd2 : (0 : ℝ) < (d : ℝ) - 2 := by linarith
+  have hd2 : (0 : ℝ) < (d : ℝ) - 2 := by linarith only [hc3, hcd']
   have hcne : ((c : ℝ) - 2) ≠ 0 := ne_of_gt hc2
   have hdne : ((d : ℝ) - 2) ≠ 0 := ne_of_gt hd2
   have keyc : ((c : ℝ) - 3) / ((c : ℝ) - 2) = 1 - 1 / ((c : ℝ) - 2) := by
@@ -107,8 +107,8 @@ theorem sigma_le_of_le {c d : ℕ} (hc : 3 ≤ c) (hcd : c ≤ d) : sigma c ≤ 
     field_simp; ring
   rw [keyc, keyd]
   have : 1 / ((d : ℝ) - 2) ≤ 1 / ((c : ℝ) - 2) :=
-    one_div_le_one_div_of_le hc2 (by linarith)
-  linarith
+    one_div_le_one_div_of_le hc2 (by exact sub_le_sub_right hcd' _)
+  exact sub_le_sub_left this _
 
 open Classical in
 /-- **`σ`-usability at `Δ = 5`**: three neighbours of degree `≤ 5` give
@@ -141,7 +141,7 @@ theorem one_le_cW (G : SimpleGraph V) (u : V) (hmin : ∀ w : V, 3 ≤ G.degree 
     intro w _
     have hd : (3 : ℝ) ≤ (G.degree w : ℝ) := by exact_mod_cast hmin w
     apply div_nonneg <;> linarith
-  linarith
+  linarith only [hnn]
 
 open Classical in
 theorem cW_pos (G : SimpleGraph V) (u : V) (hmin : ∀ w : V, 3 ≤ G.degree w) :
@@ -158,7 +158,7 @@ theorem slot_pointwise (au : ℝ) (d : ℕ) (hd : 3 ≤ d) :
       = 2 * (au / ((d : ℝ) - 2)) ^ 2 + au ^ 2 * sigma d := by
   unfold sigma
   have h3 : (3 : ℝ) ≤ (d : ℝ) := by exact_mod_cast hd
-  have h2 : ((d : ℝ) - 2) ≠ 0 := by intro hc; linarith
+  have h2 : ((d : ℝ) - 2) ≠ 0 := by intro hc; linarith only [h3, hc]
   field_simp
   ring
 
@@ -190,7 +190,7 @@ theorem algConn_le_two_of_slot_far_pair [Nonempty V] (G : SimpleGraph V) (u v : 
   have hdpos : ∀ w : V, (0 : ℝ) < (G.degree w : ℝ) - 2 := by
     intro w
     have h3 : (3 : ℝ) ≤ (G.degree w : ℝ) := by exact_mod_cast hmin w
-    linarith
+    linarith only [h3]
   refine algConn_le_two_of_weighted_double_star G u v (cW G v) (cW G u)
     (fun w => cW G v / ((G.degree w : ℝ) - 2)) (fun w => cW G u / ((G.degree w : ℝ) - 2))
     hne huv hcap hauPos ?_ ?_ ?_ ?_
@@ -341,7 +341,7 @@ theorem algConn_le_two_of_slot_far_pair_far [Nonempty V] (G : SimpleGraph V) (u 
     intro w' hw'
     exact ite_eq_right (hfar w w' ((G.mem_neighborFinset u w).mp hw)
       ((G.mem_neighborFinset v w').mp hw'))
-  rw [hz]; linarith
+  rw [hz]; linarith only [hslot0]
 
 open Classical in
 /-- **`L-FB-1` — the `hslot_both` workhorse form.**  A cross-free far pair each of
@@ -355,7 +355,7 @@ theorem algConn_le_two_of_slot_far_pair_both [Nonempty V] (G : SimpleGraph V) (u
     (hu : sigS G u ≤ 2) (hv : sigS G v ≤ 2) :
     algConn G ≤ 2 := by
   apply algConn_le_two_of_slot_far_pair_far G u v hne huv hcap hmin hfar
-  nlinarith [sq_nonneg (cW G v), sq_nonneg (cW G u), hu, hv]
+  nlinarith only [sq_nonneg (cW G v), sq_nonneg (cW G u), hu, hv]
 
 /-! ## The slot-far-pair packaging and the fat-side assembly -/
 
@@ -471,8 +471,8 @@ theorem nonusable_deg3_structure (G : SimpleGraph V) (u : V)
     have hw' : w = a ∨ w = b ∨ w = c := by
       rw [hN] at hw; simpa using hw
     rcases hw' with rfl | rfl | rfl
-    · linarith
-    · linarith
+    · linarith only [h, lb, lc, hz, hsum]
+    · linarith only [h, la, lc, hz, hsum]
     · linarith
   · -- (b) some neighbour has degree ≥ 6.
     by_contra hcon
@@ -482,7 +482,7 @@ theorem nonusable_deg3_structure (G : SimpleGraph V) (u : V)
       have := hcon w hw
       omega
     have := usable_deg3_of_light G u hd h3 hlight
-    linarith
+    linarith only [h, this]
   · -- (c) at least two neighbours have degree ≥ 5.
     by_contra hcon
     push Not at hcon
@@ -643,7 +643,7 @@ theorem nonusable_light_has_heavy_nbr (G : SimpleGraph (Fin n))
           rw [nsmul_eq_mul, SimpleGraph.card_neighborFinset_eq_degree]
       _ ≤ 4 * (1 / 2) := by
           have h4 : (G.degree v : ℝ) ≤ 4 := by exact_mod_cast hd
-          linarith
+          linarith only [h4]
       _ = 2 := by norm_num
   linarith
 
