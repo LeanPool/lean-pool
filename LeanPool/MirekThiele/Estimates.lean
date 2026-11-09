@@ -5064,158 +5064,6 @@ theorem martDiff_truncate_of_subset {T R : DyadicCube d} (h : T.toSet ⊆ R.toSe
     fun ε => avg_truncate_of_subset ((T.child_subset ε).trans h) f
   simp only [martDiff, avg_truncate_of_subset h, hc]
 
-/-- **Lemma 2.71** (with the integrability hypotheses of the paper made explicit, and the
-conclusion in `[0, ∞]`): if `f₁ ∈ L^p`, `f₂ ∈ L^{p'}` with `1/p + 1/p' = 1`, `f₃ ∈ L^∞` with
-`‖f₃‖_∞ ≤ 1`, and the coefficients `α_T`, `T ⊆ R`, are dominated by
-`C₀ (Δ_T f₁ Δ_T f₂ + E_T f₁ Δ_T f₂ Δ_T f₃ + E_T f₂ Δ_T f₁ Δ_T f₃ + E_T f₁ E_T f₂ (Δ_T f₃)²) |T|`,
-then `∑_{T ⊆ R} |α_T| ≤ C C₀ ‖f₁ 𝟙_R‖_p ‖f₂ 𝟙_R‖_{p'}`. Proved below as `lemma271`. [PROVED] -/
-def Lemma271 (d : ℕ) (p p' : ℝ) : Prop :=
-  1 < p → 1 < p' → 1 / p + 1 / p' = 1 → ∃ C : ℝ, 0 ≤ C ∧
-    ∀ (C₀ : ℝ) (R : DyadicCube d) (f₁ f₂ f₃ : (Fin d → ℝ) → ℝ) (α : DyadicCube d → ℝ),
-      0 ≤ C₀ → MemLp f₁ (ENNReal.ofReal p) volume → MemLp f₂ (ENNReal.ofReal p') volume →
-      MemLp f₃ ⊤ volume → eLpNorm f₃ ⊤ volume ≤ 1 →
-      (∀ T ∈ R.tree, |α T| ≤ C₀ * (martDiff T f₁ * martDiff T f₂
-        + martAvg T f₁ * martDiff T f₂ * martDiff T f₃
-        + martAvg T f₂ * martDiff T f₁ * martDiff T f₃
-        + martAvg T f₁ * martAvg T f₂ * martDiff T f₃ ^ 2) * T.vol) →
-      ∑' T : R.tree, ‖α T‖ₑ ≤ ENNReal.ofReal (C * C₀) *
-        (eLpNorm (truncate R f₁) (ENNReal.ofReal p) volume *
-          eLpNorm (truncate R f₂) (ENNReal.ofReal p') volume)
-
-/-- **Lemma 2.71**, deduced from Theorem 2.68, Hölder's inequality for outer measure spaces and
-Proposition 3.6 of Do–Thiele. [PROVED] -/
-theorem lemma271 (hd : d ≠ 0) (p p' : ℝ) : Lemma271 d p p' := by
-  intro hp hp' hpp'
-  obtain ⟨Cp, hCp0, hCp⟩ := carlesonEmbedding hd p hp
-  obtain ⟨Cp', hCp'0, hCp'⟩ := carlesonEmbedding hd p' hp'
-  refine ⟨32 * Cp * Cp', by positivity, ?_⟩
-  intro C₀ R f₁ f₂ f₃ α hC₀ hf₁ hf₂ hf₃ hf₃1 hα
-  -- the truncated functions and their outer norms
-  set g₁ := truncate R f₁ with hg₁
-  set g₂ := truncate R f₂ with hg₂
-  have hg₁L : MemLp g₁ (ENNReal.ofReal p) volume :=
-    hf₁.indicator R.measurableSet_toSet.nullMeasurableSet
-  have hg₂L : MemLp g₂ (ENNReal.ofReal p') volume :=
-    hf₂.indicator R.measurableSet_toSet.nullMeasurableSet
-  obtain ⟨hE₁, hΔ₁⟩ := hCp g₁ hg₁L
-  obtain ⟨hE₂, hΔ₂⟩ := hCp' g₂ hg₂L
-  have hΔ₃1 : outerLinfNorm (sizeP 2) (fun T => martDiff T f₃) ≤ 1 :=
-    (outerLinfNorm_martDiff_le hd hf₃).trans hf₃1
-  set N₁ := eLpNorm g₁ (ENNReal.ofReal p) volume with hN₁def
-  set N₂ := eLpNorm g₂ (ENNReal.ofReal p') volume with hN₂def
-  have hN₁ : N₁ ≠ ⊤ := hg₁L.eLpNorm_ne_top
-  have hN₂ : N₂ ≠ ⊤ := hg₂L.eLpNorm_ne_top
-  have hE₁fin : outerLpNorm sizeInf p (fun T => martAvg T g₁) ≠ ⊤ :=
-    ne_top_of_le_ne_top (ENNReal.mul_ne_top ENNReal.ofReal_ne_top hN₁) hE₁
-  have hΔ₁fin : outerLpNorm (sizeP 2) p (fun T => martDiff T g₁) ≠ ⊤ :=
-    ne_top_of_le_ne_top (ENNReal.mul_ne_top ENNReal.ofReal_ne_top hN₁) hΔ₁
-  have hE₂fin : outerLpNorm sizeInf p' (fun T => martAvg T g₂) ≠ ⊤ :=
-    ne_top_of_le_ne_top (ENNReal.mul_ne_top ENNReal.ofReal_ne_top hN₂) hE₂
-  have hΔ₂fin : outerLpNorm (sizeP 2) p' (fun T => martDiff T g₂) ≠ ⊤ :=
-    ne_top_of_le_ne_top (ENNReal.mul_ne_top ENNReal.ofReal_ne_top hN₂) hΔ₂
-  -- monotonicity of the sizes
-  have hS₂ : ∀ F G : DyadicCube d → ℝ, ∀ T, (∀ Q, ‖F Q‖ₑ ≤ ‖G Q‖ₑ) → sizeP 2 F T ≤ sizeP 2 G T :=
-    fun F G T h => sizeP_mono (by norm_num) h T
-  have hS₁ : ∀ F G : DyadicCube d → ℝ, ∀ T, (∀ Q, ‖F Q‖ₑ ≤ ‖G Q‖ₑ) → sizeP 1 F T ≤ sizeP 1 G T :=
-    fun F G T h => sizeP_mono (by norm_num) h T
-  have hSinf : ∀ F G : DyadicCube d → ℝ, ∀ T, (∀ Q, ‖F Q‖ₑ ≤ ‖G Q‖ₑ) → sizeInf F T ≤ sizeInf G T :=
-    fun F G T h => sizeInf_mono h T
-  have hpp'' : 1 / p' + 1 / p = 1 := by rw [add_comm]; exact hpp'
-  -- the four terms
-  set K : ENNReal := 2 * (ENNReal.ofReal Cp * N₁ * (ENNReal.ofReal Cp' * N₂)) with hK
-  set A : DyadicCube d → ℝ := ((fun T => martDiff T g₁) * fun T => martDiff T g₂) with hAdef
-  set B : DyadicCube d → ℝ :=
-    ((fun T => martAvg T g₁) * ((fun T => martDiff T g₂) * fun T => martDiff T f₃)) with hBdef
-  set Cf : DyadicCube d → ℝ :=
-    ((fun T => martAvg T g₂) * ((fun T => martDiff T g₁) * fun T => martDiff T f₃)) with hCdef
-  set D : DyadicCube d → ℝ :=
-    ((fun T => martAvg T g₁) * ((fun T => martAvg T g₂) * fun T => martDiff T f₃ ^ 2)) with hDdef
-  have hA : outerLpNorm (sizeP 1) 1 A ≤ K := by
-    refine (outerL1Norm_mul_le (sizeP 1) (sizeP 2) (sizeP 2) hS₂ hS₂ sizeP_one_mul_le_sizeP_two
-      hp hp' hpp' _ _ hΔ₁fin hΔ₂fin).trans ?_
-    rw [hK]
-    exact mul_le_mul' le_rfl (mul_le_mul' hΔ₁ hΔ₂)
-  have hB : outerLpNorm (sizeP 1) 1 B ≤ K := by
-    have h23 : outerLpNorm (sizeP 1) p' ((fun T => martDiff T g₂) * fun T => martDiff T f₃) ≤
-        outerLpNorm (sizeP 2) p' (fun T => martDiff T g₂) := by
-      refine (outerLpNorm_mul_le_Linf (sizeP 1) (sizeP 2) (sizeP 2) hS₂ hS₂
-        sizeP_one_mul_le_sizeP_two (by linarith) _ _
-        (ne_top_of_le_ne_top ENNReal.one_ne_top hΔ₃1)).trans ?_
-      calc _ ≤ outerLpNorm (sizeP 2) p' (fun T => martDiff T g₂) * 1 := mul_le_mul' le_rfl hΔ₃1
-        _ = _ := mul_one _
-    have h23fin : outerLpNorm (sizeP 1) p' ((fun T => martDiff T g₂) * fun T => martDiff T f₃) ≠ ⊤
-      :=
-      ne_top_of_le_ne_top hΔ₂fin h23
-    refine (outerL1Norm_mul_le (sizeP 1) sizeInf (sizeP 1) hSinf hS₁ sizeP_one_mul_le_sizeInf
-      hp hp' hpp' _ _ hE₁fin h23fin).trans ?_
-    rw [hK]
-    exact mul_le_mul' le_rfl (mul_le_mul' hE₁ (h23.trans hΔ₂))
-  have hC : outerLpNorm (sizeP 1) 1 Cf ≤ K := by
-    have h13 : outerLpNorm (sizeP 1) p ((fun T => martDiff T g₁) * fun T => martDiff T f₃) ≤
-        outerLpNorm (sizeP 2) p (fun T => martDiff T g₁) := by
-      refine (outerLpNorm_mul_le_Linf (sizeP 1) (sizeP 2) (sizeP 2) hS₂ hS₂
-        sizeP_one_mul_le_sizeP_two (by linarith) _ _
-        (ne_top_of_le_ne_top ENNReal.one_ne_top hΔ₃1)).trans ?_
-      calc _ ≤ outerLpNorm (sizeP 2) p (fun T => martDiff T g₁) * 1 := mul_le_mul' le_rfl hΔ₃1
-        _ = _ := mul_one _
-    have h13fin : outerLpNorm (sizeP 1) p ((fun T => martDiff T g₁) * fun T => martDiff T f₃) ≠ ⊤ :=
-      ne_top_of_le_ne_top hΔ₁fin h13
-    refine (outerL1Norm_mul_le (sizeP 1) sizeInf (sizeP 1) hSinf hS₁ sizeP_one_mul_le_sizeInf
-      hp' hp hpp'' _ _ hE₂fin h13fin).trans ?_
-    calc 2 * (outerLpNorm sizeInf p' (fun T => martAvg T g₂) *
-          outerLpNorm (sizeP 1) p ((fun T => martDiff T g₁) * fun T => martDiff T f₃))
-        ≤ 2 * (ENNReal.ofReal Cp' * N₂ * (ENNReal.ofReal Cp * N₁)) := by
-          gcongr
-          exact h13.trans hΔ₁
-      _ = K := by rw [hK]; ring
-  have hD : outerLpNorm (sizeP 1) 1 D ≤ K := by
-    have hsq : outerLinfNorm (sizeP 1) (fun T => martDiff T f₃ ^ 2) ≤ 1 := by
-      refine iSup_le fun T => ?_
-      rw [sizeP_one_sq]
-      exact pow_le_one₀ zero_le ((le_iSup (fun T => sizeP 2 (fun T => martDiff T f₃) T) T).trans
-        hΔ₃1)
-    have h23 : outerLpNorm (sizeP 1) p' ((fun T => martAvg T g₂) * fun T => martDiff T f₃ ^ 2) ≤
-        outerLpNorm sizeInf p' (fun T => martAvg T g₂) := by
-      refine (outerLpNorm_mul_le_Linf (sizeP 1) sizeInf (sizeP 1) hSinf hS₁
-        sizeP_one_mul_le_sizeInf (by linarith) _ _
-        (ne_top_of_le_ne_top ENNReal.one_ne_top hsq)).trans ?_
-      calc _ ≤ outerLpNorm sizeInf p' (fun T => martAvg T g₂) * 1 := mul_le_mul' le_rfl hsq
-        _ = _ := mul_one _
-    have h23fin : outerLpNorm (sizeP 1) p' ((fun T => martAvg T g₂) * fun T => martDiff T f₃ ^ 2) ≠
-      ⊤ :=
-      ne_top_of_le_ne_top hE₂fin h23
-    refine (outerL1Norm_mul_le (sizeP 1) sizeInf (sizeP 1) hSinf hS₁ sizeP_one_mul_le_sizeInf
-      hp hp' hpp' _ _ hE₁fin h23fin).trans ?_
-    rw [hK]
-    exact mul_le_mul' le_rfl (mul_le_mul' hE₁ (h23.trans hE₂))
-  -- nonnegativity of the four terms
-  have hA0 : ∀ T, 0 ≤ A T := fun T => mul_nonneg (martDiff_nonneg _ _) (martDiff_nonneg _ _)
-  have hB0 : ∀ T, 0 ≤ B T := fun T =>
-    mul_nonneg (martAvg_nonneg _ _) (mul_nonneg (martDiff_nonneg _ _) (martDiff_nonneg _ _))
-  have hC0 : ∀ T, 0 ≤ Cf T := fun T =>
-    mul_nonneg (martAvg_nonneg _ _) (mul_nonneg (martDiff_nonneg _ _) (martDiff_nonneg _ _))
-  have hD0 : ∀ T, 0 ≤ D T := fun T =>
-    mul_nonneg (martAvg_nonneg _ _) (mul_nonneg (martAvg_nonneg _ _) (sq_nonneg _))
-  -- the pointwise bound on `α`
-  have hpt : ∀ T : R.tree, ‖α T‖ₑ ≤ ENNReal.ofReal C₀ *
-      ((‖A T‖ₑ + ‖B T‖ₑ + ‖Cf T‖ₑ + ‖D T‖ₑ) * ENNReal.ofReal (T : DyadicCube d).vol) := by
-    intro T
-    have hT : (T : DyadicCube d).toSet ⊆ R.toSet := DyadicCube.mem_tree.mp T.2
-    have h : |α T| ≤ C₀ * (A T + B T + Cf T + D T) * (T : DyadicCube d).vol := by
-      have h0 := hα T T.2
-      rw [← martDiff_truncate_of_subset hT f₁, ← martDiff_truncate_of_subset hT f₂,
-        ← martAvg_truncate_of_subset hT f₁, ← martAvg_truncate_of_subset hT f₂] at h0
-      simp only [hAdef, hBdef, hCdef, hDdef, Pi.mul_apply]
-      linarith [h0]
-    exact enorm_le_four_term_bound hC₀ (hA0 T) (hB0 T) (hC0 T) (hD0 T) h
-  -- summation
-  calc ∑' T : R.tree, ‖α T‖ₑ
-      ≤ ENNReal.ofReal C₀ * (4 * K + 4 * K + 4 * K + 4 * K) :=
-        tsum_enorm_le_four_outer_bounds R α A B Cf D C₀ K hpt hA hB hC hD
-    _ = ENNReal.ofReal (32 * Cp * Cp' * C₀) * (N₁ * N₂) := by
-        rw [hK, ENNReal.ofReal_mul (by positivity), ENNReal.ofReal_mul (by positivity),
-          ENNReal.ofReal_mul (by norm_num), ENNReal.ofReal_ofNat]
-        ring
 
 end Lemma271Proof
 
@@ -5651,5 +5499,35 @@ theorem lemma272one (hd : d ≠ 0) (p q : ℝ) : Lemma272one d p q := by
         ring
 
 end Lemma272Proof
+
+/-- **Lemma 2.71** (with the integrability hypotheses of the paper made explicit, and the
+conclusion in `[0, ∞]`): if `f₁ ∈ L^p`, `f₂ ∈ L^{p'}` with `1/p + 1/p' = 1`, `f₃ ∈ L^∞` with
+`‖f₃‖_∞ ≤ 1`, and the coefficients `α_T`, `T ⊆ R`, are dominated by
+`C₀ (Δ_T f₁ Δ_T f₂ + E_T f₁ Δ_T f₂ Δ_T f₃ + E_T f₂ Δ_T f₁ Δ_T f₃ + E_T f₁ E_T f₂ (Δ_T f₃)²) |T|`,
+then `∑_{T ⊆ R} |α_T| ≤ C C₀ ‖f₁ 𝟙_R‖_p ‖f₂ 𝟙_R‖_{p'}`. Proved below as `lemma271`. [PROVED] -/
+def Lemma271 (d : ℕ) (p p' : ℝ) : Prop :=
+  1 < p → 1 < p' → 1 / p + 1 / p' = 1 → ∃ C : ℝ, 0 ≤ C ∧
+    ∀ (C₀ : ℝ) (R : DyadicCube d) (f₁ f₂ f₃ : (Fin d → ℝ) → ℝ) (α : DyadicCube d → ℝ),
+      0 ≤ C₀ → MemLp f₁ (ENNReal.ofReal p) volume → MemLp f₂ (ENNReal.ofReal p') volume →
+      MemLp f₃ ⊤ volume → eLpNorm f₃ ⊤ volume ≤ 1 →
+      (∀ T ∈ R.tree, |α T| ≤ C₀ * (martDiff T f₁ * martDiff T f₂
+        + martAvg T f₁ * martDiff T f₂ * martDiff T f₃
+        + martAvg T f₂ * martDiff T f₁ * martDiff T f₃
+        + martAvg T f₁ * martAvg T f₂ * martDiff T f₃ ^ 2) * T.vol) →
+      ∑' T : R.tree, ‖α T‖ₑ ≤ ENNReal.ofReal (C * C₀) *
+        (eLpNorm (truncate R f₁) (ENNReal.ofReal p) volume *
+          eLpNorm (truncate R f₂) (ENNReal.ofReal p') volume)
+
+/-- **Lemma 2.71** is the endpoint estimate with its two bounded inputs equal. [PROVED] -/
+theorem lemma271 (hd : d ≠ 0) (p p' : ℝ) : Lemma271 d p p' := by
+  intro hp hp' hpp'
+  obtain ⟨C, hC, hbound⟩ := lemma272one hd p p' hp hp' hpp'
+  refine ⟨C, hC, ?_⟩
+  intro C₀ R f₁ f₂ f₃ α hC₀ hf₁ hf₂ hf₃ hf₃1 hα
+  apply hbound C₀ R f₁ f₂ f₃ f₃ α hC₀ hf₁ hf₂ hf₃ hf₃1 hf₃ hf₃1
+  intro T hT
+  refine (hα T hT).trans_eq ?_
+  ring
+
 
 end MirekThiele
