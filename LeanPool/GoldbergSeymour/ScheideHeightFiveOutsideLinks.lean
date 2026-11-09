@@ -843,38 +843,6 @@ private theorem helper_hwy4_487.{u_1, u_2} :
     simp [Sym2.mem_iff]⟩
   exact (hproper hbq hadj hbcolor) hqcolor
 
-private theorem helper_hwv1_500.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E] [ DecidableEq E] (G :
-        LooplessMultigraph V E) (k : ℕ) (e0 : E) (phi : PartialEdgeColoring E k) (T : TreeSequence
-        G e0) (N : NormalGlobalMaximumTriple G k e0 phi T) (hNheight : N.height = (5 : ℕ)) (v1 v2
-        : V),
-    let y0 : V := T.vertex (⟨(0 : ℕ),
-    have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
-        : ¬(0 : ℕ) < T.length + (1 : ℕ)) ↦
-    by omega
-    ⟩ : Fin (T.length + (1 : ℕ)));
-    let y1 : V := T.vertex (⟨(1 : ℕ),
-    have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
-        : ¬(1 : ℕ) < T.length + (1 : ℕ)) ↦
-    by omega
-    ⟩ : Fin (T.length + (1 : ℕ)));
-    let y4 : V := T.vertex (⟨(4 : ℕ),
-    have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
-        : ¬(4 : ℕ) < T.length + (1 : ℕ)) ↦
-    by omega
-    ⟩ : Fin (T.length + (1 : ℕ)));
-    ∀ (w : V), w = y0 ∨ w = y1 ∨ w = y4 ∨ w = v1 ∨ w = v2 → w ≠ y0 → w ≠ y1 → w ≠ y4 → w ≠ v2 → w
-        = v1 := by
-  classical
-  intro V E _ _ _ G k e0 phi T N hNheight v1 v2 y0 y1 y4 w hwcases hwy0 hwy1 hwy4 hwv2
-  rcases hwcases with h | h | h | h | h
-  · exact False.elim (hwy0 h)
-  · exact False.elim (hwy1 h)
-  · exact False.elim (hwy4 h)
-  · exact h
-  · exact False.elim (hwv2 h)
-
 private theorem helper_hfixed_509.{u_1, u_2} :
     open scoped Classical in
     ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq E]
@@ -1543,38 +1511,6 @@ private theorem helper_hxy4_913.{u_1, u_2} :
     simp [Sym2.mem_iff]⟩
   exact (hproper' haq hadj hacolor') hqcolor'
 
-private theorem helper_hxv1_926.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E] [ DecidableEq E] (G :
-        LooplessMultigraph V E) (k : ℕ) (e0 : E) (phi : PartialEdgeColoring E k) (T : TreeSequence
-        G e0) (N : NormalGlobalMaximumTriple G k e0 phi T) (hNheight : N.height = (5 : ℕ)) (v1 v2
-        : V),
-    let y0 : V := T.vertex (⟨(0 : ℕ),
-    have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
-        : ¬(0 : ℕ) < T.length + (1 : ℕ)) ↦
-    by omega
-    ⟩ : Fin (T.length + (1 : ℕ)));
-    let y1 : V := T.vertex (⟨(1 : ℕ),
-    have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
-        : ¬(1 : ℕ) < T.length + (1 : ℕ)) ↦
-    by omega
-    ⟩ : Fin (T.length + (1 : ℕ)));
-    let y4 : V := T.vertex (⟨(4 : ℕ),
-    have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
-        : ¬(4 : ℕ) < T.length + (1 : ℕ)) ↦
-    by omega
-    ⟩ : Fin (T.length + (1 : ℕ)));
-    ∀ (x : V), x = y0 ∨ x = y1 ∨ x = y4 ∨ x = v1 ∨ x = v2 → x ≠ y0 → x ≠ y1 → x ≠ y4 → x ≠ v2 → x
-        = v1 := by
-  classical
-  intro V E _ _ _ G k e0 phi T N hNheight v1 v2 y0 y1 y4 x hxcases hxy0 hxy1 hxy4 hxv2
-  rcases hxcases with h | h | h | h | h
-  · exact False.elim (hxy0 h)
-  · exact False.elim (hxy1 h)
-  · exact False.elim (hxy4 h)
-  · exact h
-  · exact False.elim (hxv2 h)
-
 private theorem helper_haNotC0_935.{u_1, u_2} :
     open scoped Classical in
     ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E] [ DecidableEq E] (G :
@@ -1731,8 +1667,7 @@ private theorem helper_continuation_2397.{u_1, u_2} :
     intro h
     exact G.loopless a v2 (by simpa [h] using haends)
   have hxv1 : x = v1 := by
-    exact @helper_hxv1_926 (@V) (@E) inferInstance inferInstance inferInstance (@G) (@k) (@e0)
-        (@phi) (@T) (@N) (@hNheight) (@v1) (@v2) (@x) (@hxcases) (@hxy0) (@hxy1) (@hxy4) (@hxv2)
+    simpa only [hxy0, hxy1, hxy4, hxv2, false_or, or_false] using hxcases
   have haends' : G.ends a = s(v1, v2) := by
     rw [haends, hxv1, Sym2.eq_swap]
   have haNotC0 : Sum.inr a ∉ C0 := by
@@ -2076,8 +2011,7 @@ private theorem helper_continuation_1992.{u_1, u_2} :
     intro h
     exact G.loopless b v2 (by simpa [h] using hbends)
   have hwv1 : w = v1 := by
-    exact @helper_hwv1_500 (@V) (@E) inferInstance inferInstance inferInstance (@G) (@k) (@e0)
-        (@phi) (@T) (@N) (@hNheight) (@v1) (@v2) (@w) (@hwcases) (@hwy0) (@hwy1) (@hwy4) (@hwv2)
+    simpa only [hwy0, hwy1, hwy4, hwv2, false_or, or_false] using hwcases
   have hbends' : G.ends b = s(v1, v2) := by
     rw [hbends, hwv1, Sym2.eq_swap]
   have hfixed : FixedPairMaximalTashkinovTree G e0 phi T := by

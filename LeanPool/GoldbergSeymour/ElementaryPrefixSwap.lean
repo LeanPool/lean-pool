@@ -46,16 +46,6 @@ theorem P2880_T1_ElementaryPrefixSwap
   let _ := Fintype.ofFinite V
   let Q := TwoColorComponent G mu alpha beta z
   let sigma := TwoColorComponentSwap G mu alpha beta z
-  have edgeToVertex {v : V} {f : E} (hf : Sum.inr f ∈ Q)
-      (hvf : Incident G v f) (hc : mu f = some alpha ∨ mu f = some beta) :
-      Sum.inl v ∈ Q := by
-    change (TwoColorIncidenceGraph G mu alpha beta).connectedComponentMk
-      (Sum.inr f) = _ at hf
-    change (TwoColorIncidenceGraph G mu alpha beta).connectedComponentMk
-      (Sum.inl v) = _
-    have hadj : (TwoColorIncidenceGraph G mu alpha beta).Adj
-        (Sum.inl v) (Sum.inr f) := ⟨hvf, hc⟩
-    exact (SimpleGraph.ConnectedComponent.connectedComponentMk_eq_of_adj hadj).trans hf
   have vertexToEdge {v : V} {f : E} (hv : Sum.inl v ∈ Q)
       (hvf : Incident G v f) (hc : mu f = some alpha ∨ mu f = some beta) :
       Sum.inr f ∈ Q := by
@@ -69,13 +59,7 @@ theorem P2880_T1_ElementaryPrefixSwap
   have behavior := TwoColorComponentSwapMissingBehavior G mu alpha beta hne hproper z
   refine ⟨?_, ?_⟩
   · intro v hv f hvf
-    by_cases hf : Sum.inr f ∈ Q
-    · by_cases ha : mu f = some alpha
-      · exact False.elim (houtside v hv (edgeToVertex hf hvf (Or.inl ha)))
-      · by_cases hb : mu f = some beta
-        · exact False.elim (houtside v hv (edgeToVertex hf hvf (Or.inr hb)))
-        · simp [TwoColorComponentSwap, Q, hf, ha, hb]
-    · simp [TwoColorComponentSwap, Q, hf]
+    exact TwoColorComponentSwap.eq_of_incident_of_not_mem (houtside v hv) hvf
   · intro v hvZ
     by_cases hvQ : Sum.inl v ∈ Q
     · have oldNotMissing (c : Fin k) (hc : c ∈ TreeMissingColors mu B) :

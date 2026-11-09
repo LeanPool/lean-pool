@@ -68,6 +68,24 @@ theorem TwoColorComponentSwap.otherColor_iff {V E : Type*} {G : LooplessMultigra
       · rw [ite_eq_right right]
   · rw [ite_eq_right member]
 
+/-- A component swap fixes every edge incident to a vertex outside the selected component. -/
+theorem TwoColorComponentSwap.eq_of_incident_of_not_mem {V E : Type*}
+    {G : LooplessMultigraph V E} {k : ℕ} {phi : PartialEdgeColoring E k}
+    {alpha beta : Fin k} {z : V ⊕ E} {vertex : V} {edge : E}
+    (outside : Sum.inl vertex ∉ TwoColorComponent G phi alpha beta z)
+    (incident : Incident G vertex edge) :
+    TwoColorComponentSwap G phi alpha beta z edge = phi edge := by
+  classical
+  by_cases member : Sum.inr edge ∈ TwoColorComponent G phi alpha beta z
+  · have excluded (colors : phi edge = some alpha ∨ phi edge = some beta) : False := by
+      exact outside ((SimpleGraph.ConnectedComponent.connectedComponentMk_eq_of_adj
+        (show (TwoColorIncidenceGraph G phi alpha beta).Adj (Sum.inl vertex) (Sum.inr edge)
+          from ⟨incident, colors⟩)).trans member)
+    simp only [TwoColorComponentSwap, ite_eq_left member,
+      ite_eq_right (fun first => excluded (Or.inl first)),
+      ite_eq_right (fun second => excluded (Or.inr second))]
+  · simp only [TwoColorComponentSwap, ite_eq_right member]
+
 /-- A component swap preserves the unique uncolored edge, even for coincident swap colors. -/
 theorem IsOneEdgeUncolored.componentSwap {V E : Type*} {G : LooplessMultigraph V E}
     {k : ℕ} {phi : PartialEdgeColoring E k} {alpha beta : Fin k} {z : Sum V E} {e0 : E}

@@ -88,46 +88,9 @@ theorem ScheideEnlargedStrictAugmentation {V E : Type*}
     simpa [y0, TreeSequenceVertexSet] using
       (show ∃ i : Fin (T.length + 1), T.vertex i = y0 from
         ⟨⟨0, hp⟩, by simpa [y0] using hv⟩)
-  have hedgeColor : ∀ g : E, Sum.inr g ∈ Q →
-      phiD g = some D.alpha0 ∨ phiD g = some alpha := by
-    intro g hg
-    change (TwoColorIncidenceGraph G phiD D.alpha0 alpha).connectedComponentMk
-        (Sum.inr g) =
-      (TwoColorIncidenceGraph G phiD D.alpha0 alpha).connectedComponentMk
-        (Sum.inl u) at hg
-    have heq := (SimpleGraph.ConnectedComponent.mem_supp_iff _ _).mp hg
-    have hp : (TwoColorIncidenceGraph G phiD D.alpha0 alpha).Reachable
-        (Sum.inr g) (Sum.inl u) := SimpleGraph.ConnectedComponent.exact heq
-    have hsupp := SimpleGraph.mem_support_of_reachable (by simp) hp
-    obtain ⟨z, hz⟩ :=
-      ((TwoColorIncidenceGraph G phiD D.alpha0 alpha).mem_support).mp hsupp
-    cases z with
-    | inl v => exact hz.2
-    | inr e => simp [TwoColorIncidenceGraph] at hz
-  have hedgeAvoid : ∀ g : E, Incident G y0 g → Sum.inr g ∉ Q := by
-    intro g hinc hg
-    have hcolor := hedgeColor g hg
-    have hadj : (TwoColorIncidenceGraph G phiD D.alpha0 alpha).Adj
-        (Sum.inl y0) (Sum.inr g) := by
-      simp [TwoColorIncidenceGraph, hinc, hcolor]
-    have hc :=
-      SimpleGraph.ConnectedComponent.connectedComponentMk_eq_of_adj hadj
-    apply hQavoid y0 hy0T
-    change (TwoColorIncidenceGraph G phiD D.alpha0 alpha).connectedComponentMk
-        (Sum.inl y0) =
-      (TwoColorIncidenceGraph G phiD D.alpha0 alpha).connectedComponentMk
-        (Sum.inl u)
-    change (TwoColorIncidenceGraph G phiD D.alpha0 alpha).connectedComponentMk
-        (Sum.inr g) =
-      (TwoColorIncidenceGraph G phiD D.alpha0 alpha).connectedComponentMk
-        (Sum.inl u) at hg
-    exact hc.trans hg
   have hincidentFixed : ∀ g : E, Incident G y0 g → psi g = phiD g := by
     intro g hinc
-    have hg : Sum.inr g ∉
-        TwoColorComponent G phiD D.alpha0 alpha (Sum.inl u) := by
-      simpa [Q] using hedgeAvoid g hinc
-    simp [psi, TwoColorComponentSwap, hg]
+    exact TwoColorComponentSwap.eq_of_incident_of_not_mem (hQavoid y0 hy0T) hinc
   have halpha0MissingPsi : D.alpha0 ∈ MissingColors G psi y0 := by
     simp only [MissingColors, Finset.mem_sdiff, Finset.mem_univ, true_and]
       at halpha0Missing ⊢

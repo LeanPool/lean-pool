@@ -1188,68 +1188,6 @@ private theorem helper_hz32_856.{u_1, u_2} :
     simp
   exact (hproper (Ne.symm hne) ⟨y2, hinc, hf2inc⟩ hf3color) hf2color
 
-private theorem helper_hz2cases_863.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E] [ DecidableEq E] (G :
-        LooplessMultigraph V E) (k : ℕ) (e0 : E) (phi : PartialEdgeColoring E k) (T : TreeSequence
-        G e0) (N : NormalGlobalMaximumTriple G k e0 phi T) (hNheight : N.height = (5 : ℕ)),
-    let y0 : V := T.vertex (⟨(0 : ℕ),
-      Nat.zero_lt_succ T.length
-    ⟩ : Fin (T.length + (1 : ℕ)));
-    let y1 : V := T.vertex (⟨(1 : ℕ),
-      Nat.lt_succ_of_le T.positive
-    ⟩ : Fin (T.length + (1 : ℕ)));
-    let y2 : V := T.vertex (⟨(2 : ℕ),
-      (Fin.castLE (hNheight ▸ N.height_upper) (2 : Fin 5)).isLt
-    ⟩ : Fin (T.length + (1 : ℕ)));
-    let y3 : V := T.vertex (⟨(3 : ℕ),
-      (Fin.castLE (hNheight ▸ N.height_upper) (3 : Fin 5)).isLt
-    ⟩ : Fin (T.length + (1 : ℕ)));
-    let y4 : V := T.vertex (⟨(4 : ℕ),
-      (Fin.castLE (hNheight ▸ N.height_upper) (4 : Fin 5)).isLt
-    ⟩ : Fin (T.length + (1 : ℕ)));
-    ∀ (z2 : V), z2 = y0 ∨ z2 = y1 ∨ z2 = y2 ∨ z2 = y3 ∨ z2 = y4 → z2 ≠ y2 → z2 ≠ y0 → z2 ≠ y3 → z2
-        = y1 ∨ z2 = y4 := by
-  classical
-  intro V E _ _ _ G k e0 phi T N hNheight y0 y1 y2 y3 y4 z2 hz2trunk hz22 hz20 hz23
-  rcases hz2trunk with h | h | h | h | h
-  · exact False.elim (hz20 h)
-  · exact Or.inl h
-  · exact False.elim (hz22 h)
-  · exact False.elim (hz23 h)
-  · exact Or.inr h
-
-private theorem helper_hz3cases_870.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E] [ DecidableEq E] (G :
-        LooplessMultigraph V E) (k : ℕ) (e0 : E) (phi : PartialEdgeColoring E k) (T : TreeSequence
-        G e0) (N : NormalGlobalMaximumTriple G k e0 phi T) (hNheight : N.height = (5 : ℕ)),
-    let y0 : V := T.vertex (⟨(0 : ℕ),
-      Nat.zero_lt_succ T.length
-    ⟩ : Fin (T.length + (1 : ℕ)));
-    let y1 : V := T.vertex (⟨(1 : ℕ),
-      Nat.lt_succ_of_le T.positive
-    ⟩ : Fin (T.length + (1 : ℕ)));
-    let y2 : V := T.vertex (⟨(2 : ℕ),
-      (Fin.castLE (hNheight ▸ N.height_upper) (2 : Fin 5)).isLt
-    ⟩ : Fin (T.length + (1 : ℕ)));
-    let y3 : V := T.vertex (⟨(3 : ℕ),
-      (Fin.castLE (hNheight ▸ N.height_upper) (3 : Fin 5)).isLt
-    ⟩ : Fin (T.length + (1 : ℕ)));
-    let y4 : V := T.vertex (⟨(4 : ℕ),
-      (Fin.castLE (hNheight ▸ N.height_upper) (4 : Fin 5)).isLt
-    ⟩ : Fin (T.length + (1 : ℕ)));
-    ∀ (z3 : V), z3 = y0 ∨ z3 = y1 ∨ z3 = y2 ∨ z3 = y3 ∨ z3 = y4 → z3 ≠ y3 → z3 ≠ y0 → z3 ≠ y2 → z3
-        = y1 ∨ z3 = y4 := by
-  classical
-  intro V E _ _ _ G k e0 phi T N hNheight y0 y1 y2 y3 y4 z3 hz3trunk hz33 hz30 hz32
-  rcases hz3trunk with h | h | h | h | h
-  · exact False.elim (hz30 h)
-  · exact Or.inl h
-  · exact False.elim (hz32 h)
-  · exact False.elim (hz33 h)
-  · exact Or.inr h
-
 private theorem helper_crossing_contra_877.{u_1, u_2} :
     open scoped Classical in
     ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E] [ DecidableEq E] (G :
@@ -1571,16 +1509,18 @@ private theorem helper_f2_eq_f3_2262.{u_1, u_2} :
       hf2color f3 hf3inc hf3color z2 hf2ends z3 hf3ends hz2trunk hz3trunk hproper
       missing_excludes hz22 hz33 hz20 hz30 hgends' hv1' hv2' hv3' hv4' hgvinc
   by_contra hne
-  have hz23 := @helper_hz23_849 (@V) (@E) inferInstance inferInstance inferInstance (@G) (@k) (@e0)
+  have hz23 : z2 ≠ y3 :=
+    @helper_hz23_849 (@V) (@E) inferInstance inferInstance inferInstance (@G) (@k) (@e0)
       (@phi) (@T) (@N) (@hNheight) (@gamma) (@f2) (@hf2color) (@f3) (@hf3inc) (@hf3color) (@z2)
       (@hf2ends) (@hproper) (@hne)
-  have hz32 := @helper_hz32_856 (@V) (@E) inferInstance inferInstance inferInstance (@G) (@k) (@e0)
+  have hz32 : z3 ≠ y2 :=
+    @helper_hz32_856 (@V) (@E) inferInstance inferInstance inferInstance (@G) (@k) (@e0)
       (@phi) (@T) (@N) (@hNheight) (@gamma) (@f2) (@hf2inc) (@hf2color) (@f3) (@hf3color) (@z3)
       (@hf3ends) (@hproper) (@hne)
-  have hz2cases := @helper_hz2cases_863 (@V) (@E) inferInstance inferInstance inferInstance (@G)
-      (@k) (@e0) (@phi) (@T) (@N) (@hNheight) (@z2) (@hz2trunk) (@hz22) (@hz20) (@hz23)
-  have hz3cases := @helper_hz3cases_870 (@V) (@E) inferInstance inferInstance inferInstance (@G)
-      (@k) (@e0) (@phi) (@T) (@N) (@hNheight) (@z3) (@hz3trunk) (@hz33) (@hz30) (@hz32)
+  have hz2cases : z2 = y1 ∨ z2 = y4 := by
+    simpa only [hz20, hz22, hz23, false_or] using hz2trunk
+  have hz3cases : z3 = y1 ∨ z3 = y4 := by
+    simpa only [hz30, hz32, hz33, false_or] using hz3trunk
   have crossing_contra := @helper_crossing_contra_877 (@V) (@E) inferInstance inferInstance
       inferInstance (@G) (@k) (@e0) (@phi) (@T) (@N) (@hNheight) (@gamma) (@g) (@v) (@hgcolor)
       (@hgamma0) (@f2) (@hf2inc) (@hf2color) (@f3) (@hf3inc) (@hf3color) (@z2) (@hf2ends) (@z3)

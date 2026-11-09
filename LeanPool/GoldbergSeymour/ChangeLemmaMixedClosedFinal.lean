@@ -542,58 +542,6 @@ private theorem helper_branch_481.{u_1, u_2} :
   · exact hne
   · simpa [hi, ← lastPositive hz] using halphaClosed
 
-private theorem helper_incidentFixed_651.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E]
-      [ DecidableEq V] [ DecidableEq E] (G : LooplessMultigraph V E) (k : ℕ)
-      (e0 : E) (input : PartialEdgeColoring E k) (T : TreeSequence G e0)
-      (phi : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k e0 input T phi)
-      (base : HierarchyBase ett phi) (C : HierarchyCounterexample base)
-      (alpha beta : Fin k),
-    let H : TashkinovHierarchy ett base := C.hierarchy;
-    let q : Fin (H.dividerCount + (1 : ℕ)) := Fin.last H.dividerCount;
-    let A : TreeSequence G e0 := HierarchyStarredStage H q;
-    let ib : Fin (T.length + (1 : ℕ)) := HierarchyFirstMissingPosition phi T beta;
-    let vb : V := T.vertex ib;
-    let ell : ℕ := T.length - A.length;
-    let yLength : ℕ := min (A.length + (ell - (1 : ℕ))) T.length;
-    let Y : TreeSequence G e0 :=
-      TreeSequencePrefix T yLength
-        (have hA : (1 : ℕ) ≤ A.length := A.positive;
-        have hT : (1 : ℕ) ≤ T.length := T.positive;
-        Decidable.byContradiction fun (a : ¬(1 : ℕ) ≤ yLength) ↦ by omega)
-        (by omega);
-    alpha ∈ MissingColors G phi (T.vertex (HierarchyFirstMissingPosition phi T alpha)) ∧
-        (↑(HierarchyFirstMissingPosition phi T alpha) : ℕ) ≤ Y.length →
-    beta ∈ MissingColors G phi (T.vertex (HierarchyFirstMissingPosition phi T beta)) ∧
-        (↑(HierarchyFirstMissingPosition phi T beta) : ℕ) ≤ Y.length →
-    let K : Set (V ⊕ E) := TwoColorComponent G phi alpha beta (Sum.inl vb);
-    let sigma : PartialEdgeColoring E k :=
-      TwoColorComponentSwap G phi alpha beta (Sum.inl vb);
-    (∀ v ∈ TreeSequenceVertexSet A, Sum.inl v ∉ K) →
-    (∀ (f : E), phi f ≠ some alpha → phi f ≠ some beta → sigma f = phi f) →
-    ∀ (f : E),
-    TreeIncidentEdge A f →
-    sigma f = phi f := by
-  classical
-  intro V E _ _ _ _ G k e0 input T phi ett base C alpha beta H q A ib vb ell yLength Y ha hb K
-      sigma avoidA fixedValue f hf
-  clear * - hf sigma K avoidA fixedValue
-  obtain ⟨v, hv, hvf⟩ := hf
-  by_cases hK : Sum.inr f ∈ K
-  · by_cases ha : phi f = some alpha
-    · exact False.elim (avoidA v hv
-        ((SimpleGraph.ConnectedComponent.connectedComponentMk_eq_of_adj
-          (show (TwoColorIncidenceGraph G phi alpha beta).Adj (Sum.inl v) (Sum.inr f)
-            from ⟨hvf, Or.inl ha⟩)).trans hK))
-    · by_cases hb : phi f = some beta
-      · exact False.elim (avoidA v hv
-          ((SimpleGraph.ConnectedComponent.connectedComponentMk_eq_of_adj
-            (show (TwoColorIncidenceGraph G phi alpha beta).Adj (Sum.inl v) (Sum.inr f)
-              from ⟨hvf, Or.inr hb⟩)).trans hK))
-      · exact fixedValue f ha hb
-  · simp [sigma, TwoColorComponentSwap, K, hK]
-
 private theorem helper_stable_667.{u_1, u_2} :
     open scoped Classical in
     ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq V] [DecidableEq E]
@@ -1110,9 +1058,8 @@ private theorem helper_continuation_5094.{u_1, u_2} :
     unfold TreeMissingColors
     exact Finset.biUnion_congr rfl (fun v hv => missingA v (hS hv))
   have incidentFixed (f : E) (hf : TreeIncidentEdge A f) : sigma f = phi f := by
-    exact @helper_incidentFixed_651 (@V) (@E) inferInstance inferInstance inferInstance
-        inferInstance (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C) (@alpha) (@beta)
-        (@ha) (@hb) (@avoidA) (@fixedValue) (@f) (@hf)
+    obtain ⟨v, hv, hvf⟩ := hf
+    exact TwoColorComponentSwap.eq_of_incident_of_not_mem (avoidA v hv) hvf
   have stable (S : TreeSequence G e0) (hS : TreeSequenceVertexSet S ⊆ TreeSequenceVertexSet A)
       (D : Finset (Fin k)) : StableColoring S D phi sigma := by
     exact @helper_stable_667 (@V) (@E) inferInstance inferInstance inferInstance inferInstance
