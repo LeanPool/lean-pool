@@ -565,26 +565,6 @@ private abbrev helperBranch2767Conditions.{u_1, u_2} : Prop :=
     let sameComponent : Prop := TwoColorComponent G phi alpha beta (Sum.inl va) =
         TwoColorComponent G phi alpha beta (Sum.inl vb); sameComponent
 
-private theorem helper_hfirst_209.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E]
-    [ DecidableEq V] [ DecidableEq E] (G : LooplessMultigraph V E) (k : ℕ)
-    (e0 : E) (input : PartialEdgeColoring E k) (T : TreeSequence G e0)
-    (phi : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k e0 input T phi)
-    (base : HierarchyBase ett phi) (C : HierarchyCounterexample base),
-  let H : TashkinovHierarchy ett base := C.hierarchy;
-  ∀ (hzero : H.dividerCount = (0 : ℕ)),
-  H.stage (⟨(1 : ℕ), by omega⟩ : Fin (H.dividerCount + (2 : ℕ))) = T := by
-  classical
-  intro V E _ _ _ _ G k e0 input T phi ett base C H hzero
-  have hi : (⟨1, by omega⟩ : Fin (H.dividerCount + 2)) =
-      Fin.last (H.dividerCount + 1) := by
-    apply Fin.ext
-    simp only [Fin.val_last]
-    omega
-  rw [hi]
-  exact H.terminalStage
-
 private theorem helper_prefixPosition_223.{u_1, u_2} :
     open scoped Classical in
     ∀ {V : Type u_1} {E : Type u_2} (G : LooplessMultigraph V E) (e0 : E)
@@ -2100,10 +2080,9 @@ private theorem helper_branch_2767.{u_1, u_2} :
     rw [hz]
     rfl
   have hstarC : HierarchyStarredStage C.hierarchy (Fin.last C.hierarchy.dividerCount) = A := hstar
-  have hfirst : H.stage ⟨1, by omega⟩ = T := by
-    exact helper_hfirst_209 (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C) (@hzero)
   have hAT : TreeSequenceInitialSegment A T := by
-    simpa only [hfirst] using H.coreInsideFirst
+    rw [← hstar]
+    exact H.lastStarredInitialSegment
   have hvaA : va ∈ TreeSequenceVertexSet A := by
     simpa only [hstarC] using hlocation.1
   have hvbA : vb ∉ TreeSequenceVertexSet A := by

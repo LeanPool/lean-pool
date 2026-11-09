@@ -1203,10 +1203,7 @@ theorem StableChangeCasesOneTwo {V E : Type*}
         (@C)
     have hA : A = H.stage q.castSucc := starPositive q hq
     have hAT : TreeSequenceInitialSegment A T := by
-      rw [hA]
-      have hh := H.nested q
-      have hlast : q.succ = Fin.last (H.dividerCount + 1) := Fin.ext rfl
-      simpa only [hlast, H.terminalStage] using hh
+      exact H.lastStarredInitialSegment
     have ordinaryToA (j : Fin (H.dividerCount + 2)) (hj : j.val ≤ H.dividerCount) :
         TreeSequenceInitialSegment (H.stage j) A := by
       rw [hA]

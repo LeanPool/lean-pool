@@ -270,49 +270,8 @@ theorem HierarchySituationTwoCaseTwoExclusions {V E : Type*}
   let ell := HierarchyFullTailLength C
   let B := HierarchyFullTailPrefix C (ell - 2)
   let n : Fin (ett.rounds + 1) := Fin.last ett.rounds
-  have stageSegment : ∀ (a d : ℕ), (hbound : a + d ≤ H.dividerCount + 1) →
-      TreeSequenceInitialSegment (H.stage ⟨a, by omega⟩)
-        (H.stage ⟨a + d, by omega⟩) := by
-    intro a d bound
-    exact H.stageInitialSegmentOfLE _ _ (by change a ≤ a + d; exact Nat.le_add_right _ _)
-  have hAstage : ∀ hq : 0 < H.dividerCount,
-      A = H.stage ⟨H.dividerCount, by omega⟩ := by
-    intro hq
-    have hlast : (Fin.last H.dividerCount : Fin (H.dividerCount + 1)) =
-        (⟨H.dividerCount - 1, by omega⟩ : Fin H.dividerCount).succ := by
-      apply Fin.ext
-      simp
-      omega
-    dsimp [A, HierarchyStarredStage]
-    rw [hlast]
-    simp only [Fin.cases]
-    apply congrArg H.stage
-    apply Fin.ext
-    simp
-    omega
   have hAT : TreeSequenceInitialSegment A T := by
-    by_cases hq : H.dividerCount = 0
-    · have hc := H.coreInsideFirst
-      have ht : H.stage ⟨1, by omega⟩ = T := by
-        have hi : (⟨1, by omega⟩ : Fin (H.dividerCount + 2)) =
-            Fin.last (H.dividerCount + 1) := by
-          apply Fin.ext
-          simp [hq]
-        rw [hi]
-        exact H.terminalStage
-      have hc' : TreeSequenceInitialSegment base.core T := by
-        convert hc using 1
-        exact ht.symm
-      simpa [A, H, HierarchyStarredStage, Fin.last, hq] using hc'
-    · have hs := stageSegment H.dividerCount 1 (by omega)
-      have ha : A = H.stage ⟨H.dividerCount, by omega⟩ := hAstage (Nat.pos_of_ne_zero hq)
-      rw [ha]
-      have ht : H.stage ⟨H.dividerCount + 1, by omega⟩ = T := by
-        convert H.terminalStage using 1
-        apply congrArg H.stage
-        apply Fin.ext
-        rfl
-      simpa [ht] using hs
+    exact H.lastStarredInitialSegment
   have helem : ColoredVertexSetElementary G phi
       (TreeSequenceVertexSet (HierarchyFullTailPrefix C (ell - 1))) := by
     change ColoredVertexSetElementary G phi

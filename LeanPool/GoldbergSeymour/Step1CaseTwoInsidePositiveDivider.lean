@@ -537,16 +537,7 @@ lemma Step1CaseTwoInsidePositiveDivider {V E : Type*}
     rw [← hi]
     simp [HierarchyStarredStage]
   have hAT : TreeSequenceInitialSegment A T := by
-    let i : Fin H.dividerCount := ⟨H.dividerCount - 1, by omega⟩
-    have hi : (Fin.last H.dividerCount).castSucc =
-        (⟨i.val + 1, by omega⟩ : Fin (H.dividerCount + 2)) := by
-      apply Fin.ext
-      simp [i]
-      omega
-    rw [hAstage]
-    rw [hi, H.dividerStage i]
-    exact ⟨Nat.le_of_lt_succ (H.dividerPosition i).isLt,
-      by intro j; rfl, by intro j; rfl⟩
+    exact H.lastStarredInitialSegment
   have segmentSubset {B C : TreeSequence G e0}
       (hs : TreeSequenceInitialSegment B C) :
       TreeSequenceVertexSet B ⊆ TreeSequenceVertexSet C := by

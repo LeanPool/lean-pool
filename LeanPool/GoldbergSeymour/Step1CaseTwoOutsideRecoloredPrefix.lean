@@ -1020,19 +1020,7 @@ lemma Step1CaseTwoOutsideRecoloredPrefix {V E : Type*}
         i.succ.castSucc (by simp)
       simpa only [H.baseStage, ← hs] using hh
   have hAT : TreeSequenceInitialSegment A T := by
-    by_cases hz : H.dividerCount = 0
-    · have hl : Fin.last H.dividerCount = (0 : Fin (H.dividerCount + 1)) :=
-        Fin.ext (by simp [hz])
-      have ht : (1 : Fin (H.dividerCount + 2)) =
-          Fin.last (H.dividerCount + 1) := Fin.ext (by simp [hz])
-      simpa [A, hl, HierarchyStarredStage, ht, H.terminalStage] using H.coreInsideFirst
-    · let i : Fin H.dividerCount := ⟨H.dividerCount - 1, by omega⟩
-      have hl : Fin.last H.dividerCount = i.succ := Fin.ext (by simp [i]; omega)
-      have hs : A = H.stage i.succ.castSucc := by
-        simp [A, hl, HierarchyStarredStage]
-      have hh := stage_segment i.succ.castSucc (Fin.last (H.dividerCount + 1))
-        (by change i.val + 1 ≤ H.dividerCount + 1; omega)
-      simpa only [H.terminalStage, ← hs] using hh
+    exact H.lastStarredInitialSegment
   have hdegree : MaximumDegree G + 1 ≤ k := by
     have hinit := ett.series.certified 0
     cases hinit with

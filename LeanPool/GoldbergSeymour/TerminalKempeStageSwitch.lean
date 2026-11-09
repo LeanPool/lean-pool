@@ -1051,11 +1051,6 @@ private theorem helper_continuation_190.{u_1, u_2} :
   let n := Fin.last R.corresponding.replacementETT.rounds
   let Tn := R.corresponding.replacementETT.series.data.tree n.castSucc
   let Dn := TashkinovStoredColors R.corresponding.replacementETT.series.data n
-  have chain : ∀ (j : ℕ) (hj : j < H.dividerCount + 2)
-      (i : Fin (H.dividerCount + 2)), i.val ≤ j →
-      TreeSequenceInitialSegment (H.stage i) (H.stage ⟨j, hj⟩) := by
-    intro j hj i hi
-    exact H.stageInitialSegmentOfLE i ⟨j, hj⟩ hi
   have lastPositive (hq : H.dividerCount ≠ 0) :
       HierarchyStarredStage H q = H.stage ⟨H.dividerCount, by omega⟩ := by
     unfold HierarchyStarredStage
@@ -1069,14 +1064,7 @@ private theorem helper_continuation_190.{u_1, u_2} :
     exact R.replacementBase.lastRoundInitialSegmentCore
   have coreA : TreeSequenceInitialSegment R.replacementBase.core A := by
     rw [← starEq R]
-    by_cases hq : H.dividerCount = 0
-    · have he : HierarchyStarredStage H q = R.replacementBase.core := by
-        simp [HierarchyStarredStage, q, hq, Fin.last]
-      rw [he]
-      exact ⟨le_rfl, fun _ => rfl, fun _ => rfl⟩
-    · rw [lastPositive hq]
-      exact trans H.coreInsideFirst (chain H.dividerCount (by omega) ⟨1, by omega⟩
-        (by change 1 ≤ H.dividerCount; omega))
+    exact H.coreInitialSegmentOfStarredStage q
   have hTnA := trans hTnCore coreA
   have stageCase :
       (0 < H.dividerCount ∧ a ∈ TreeMissingColors R.coloring
@@ -1201,12 +1189,7 @@ theorem P2963_T1_TerminalKempeStageSwitch {V E : Type*}
         (Fin.last R.counterexample.hierarchy.dividerCount) = A :=
     (sameLast _ _ _ _ R.sameGood.1.2.1 R.sameGood.1.2.2.1 R.sameGood.1.1).symm
   have hAT : TreeSequenceInitialSegment A T := by
-    have starNext (j : Fin (C.hierarchy.dividerCount + 1)) :
-        TreeSequenceInitialSegment (HierarchyStarredStage C.hierarchy j)
-          (C.hierarchy.stage j.succ) :=
-      Fin.cases C.hierarchy.coreInsideFirst (fun i => C.hierarchy.nested i.succ) j
-    simpa only [Fin.succ_last, C.hierarchy.terminalStage] using
-      starNext (Fin.last C.hierarchy.dividerCount)
+    exact C.hierarchy.lastStarredInitialSegment
   let B := TreeSequencePrefix T (T.length - 1) (by omega) (by omega)
   change TreeSequenceInitialSegment A X at hAX
   change A.length < X.length at hAXlt

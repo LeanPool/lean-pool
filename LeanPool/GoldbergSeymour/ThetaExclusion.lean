@@ -51,13 +51,7 @@ theorem P2880_T1_ThetaExclusion
       ctx.proper ctx.oneEdgeUncolored ctx.lowerRung ctx.fewerDividers
       ctx.lexicographicMinimality ctx.largeMissingSet
   have hAT : TreeSequenceInitialSegment A T := by
-    have hnext : TreeSequenceInitialSegment (HierarchyStarredStage H q)
-        (H.stage q.succ) := by
-      refine Fin.cases ?_ (fun i => ?_) q
-      · exact H.coreInsideFirst
-      · exact H.nested i.succ
-    have hlast : q.succ = Fin.last (H.dividerCount + 1) := Fin.ext rfl
-    simpa only [hlast, H.terminalStage] using hnext
+    exact H.lastStarredInitialSegment
   have hordinary : TreeSequenceInitialSegment (H.stage q.castSucc) A := by
     exact H.stageInitialSegmentOfStarredStage q q le_rfl
   have hstageMissing :

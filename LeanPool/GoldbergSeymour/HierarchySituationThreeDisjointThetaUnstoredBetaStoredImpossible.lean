@@ -2452,11 +2452,8 @@ theorem HierarchySituationThreeDisjointThetaUnstoredBetaStoredImpossible
       exact SharedFacts.DisjointThetaTransport.sameStar (@G) (@k) (@e0) (@input) (@T) (@phi)
           (@ett) (@base) (@C) (@ctx)
           (@P) (@alpha) (@beta) (@d) (@j)
-    have starNext (i : Fin (H.dividerCount + 1)) :
-        TreeSequenceInitialSegment (HierarchyStarredStage H i) (H.stage i.succ) :=
-      Fin.cases H.coreInsideFirst (fun t => H.nested t.succ) i
     have hAtoT : TreeSequenceInitialSegment A T := by
-      simpa only [q, Fin.succ_last, H.terminalStage] using starNext q
+      exact H.lastStarredInitialSegment
     have htail : j ≤ T.length - A.length := by
       have h := hpathUpper
       simpa [ell, HierarchyFullTailLength, sameStar] using Nat.le_of_lt h

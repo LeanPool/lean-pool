@@ -2124,9 +2124,7 @@ theorem HierarchyClaimNinePENormalization {V E : Type*}
     rw [hi]
     rfl
   have hAT : TreeSequenceInitialSegment A T := by
-    have hi : (⟨1, by omega⟩ : Fin (H.dividerCount + 2)) =
-        Fin.last (H.dividerCount + 1) := Fin.ext (by simp [hz])
-    simpa only [hA, hi, H.terminalStage] using H.coreInsideFirst
+    exact H.lastStarredInitialSegment
   have htwo : 2 ≤ ell :=
     HierarchyCounterexampleTailAtLeastTwo G k e0 P.corresponding.replacementInput
       T mu F b X mctx.proper mctx.oneEdgeUncolored mctx.lowerRung

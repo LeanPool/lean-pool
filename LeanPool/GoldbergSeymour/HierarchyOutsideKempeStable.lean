@@ -56,27 +56,9 @@ theorem HierarchyOutsideKempeStable {V E : Type*}
   refine ⟨stable.1, stable.2.1, stable.2.2.1, stable.2.2.2.1, ?_⟩
   intro hkind
   unfold CombinedStableColoring
-  have segmentTrans {A B C : TreeSequence G e0}
-      (hAB : TreeSequenceInitialSegment A B)
-      (hBC : TreeSequenceInitialSegment B C) :
-      TreeSequenceInitialSegment A C := by
-    exact hAB.trans hBC
-  have chain : ∀ q : ℕ, (hq : q ≤ H.dividerCount) →
-      TreeSequenceInitialSegment (H.stage ⟨1, by omega⟩)
-        (H.stage ⟨1 + q, by omega⟩) := by
-    intro index bound
-    exact H.stageInitialSegmentOfLE _ _ (Nat.le_add_right 1 index)
-  have stageToT : TreeSequenceInitialSegment
-      (H.stage ⟨1, by omega⟩) T := by
-    have hc := chain H.dividerCount le_rfl
-    have hi : (⟨1 + H.dividerCount, by omega⟩ : Fin (H.dividerCount + 2)) =
-        Fin.last (H.dividerCount + 1) := by
-      apply Fin.ext
-      simp [Nat.add_comm]
-    rw [hi] at hc
-    simpa [H.terminalStage] using hc
   have coreToT : TreeSequenceInitialSegment base.core T := by
-    exact segmentTrans H.coreInsideFirst stageToT
+    exact (H.coreInitialSegmentOfStarredStage (Fin.last _)).trans
+      H.lastStarredInitialSegment
   rcases base.parallel hkind with ⟨chosen, closed, unionExists⟩
   obtain ⟨unionCert⟩ := unionExists
   have unionToT : TreeSequenceInitialSegment base.core T := coreToT

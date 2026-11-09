@@ -69,21 +69,7 @@ theorem P2752_T2_PrefixReconstruction {V E : Type*}
     intro h
     exact hpresent (h ▸ D.alphaMissingTerminal)
   have hA : TreeSequenceInitialSegment A T := by
-    obtain hz | ⟨i, hi⟩ := Fin.eq_zero_or_eq_succ (Fin.last H.dividerCount)
-    · have hq : H.dividerCount = 0 := by
-        simpa using congrArg Fin.val hz
-      have hcore : TreeSequenceInitialSegment base.core T := by
-        have hh := H.coreInsideFirst
-        have ht : H.stage ⟨1, by omega⟩ = T := by
-          convert H.terminalStage using 1; congr 1; apply Fin.ext; simp [hq]
-        rw [ht] at hh
-        exact hh
-      simpa [A, HierarchyStarredStage, hz] using hcore
-    · have ha : A = H.stage (Fin.last H.dividerCount).castSucc := by
-        simp [A, HierarchyStarredStage, hi]
-      rw [ha]
-      have hh := H.nested (Fin.last H.dividerCount)
-      simpa [H.terminalStage] using hh
+    exact H.lastStarredInitialSegment
   have htail : 2 ≤ T.length - A.length := D.tailAtLeastTwo
   have hlen : Bplus.length = T.length - 1 := by
     change min (A.length + (T.length - A.length - 1)) T.length = T.length - 1

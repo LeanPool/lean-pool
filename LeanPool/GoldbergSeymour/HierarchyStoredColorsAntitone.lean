@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.HierarchyTreeFacts
+
 public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegmentFacts
 public import LeanPool.GoldbergSeymour.HierarchyStoredColorsAt
 
@@ -41,26 +43,9 @@ theorem HierarchyStoredColorsAntitone {V E : Type*}
   have hstage : TreeSequenceInitialSegment
       (HierarchyStarredStage H i.castSucc)
       (HierarchyStarredStage H i.succ) := by
-    by_cases hi : i.val = 0
-    · have hi' : i = ⟨0, Fin.pos i⟩ := Fin.ext hi
-      rw [hi']
-      simpa [HierarchyStarredStage] using H.coreInsideFirst
-    · have hne : i.castSucc ≠ 0 := by
-        intro hz
-        apply hi
-        exact congrArg Fin.val hz
-      change TreeSequenceInitialSegment
-        (Fin.cases base.core (fun j => H.stage j.castSucc.succ) i.castSucc)
-        (H.stage i.castSucc.succ)
-      have hindex : (i.castSucc.pred hne).succ = i.castSucc :=
-        Fin.succ_pred i.castSucc hne
-      have hstar :
-          Fin.cases base.core (fun j => H.stage j.castSucc.succ) i.castSucc =
-            H.stage i.castSucc.castSucc := by
-        rw [← hindex]
-        rfl
-      rw [hstar]
-      exact H.nested i.castSucc
+    exact H.starredStageInitialSegmentOfLE i.castSucc i.succ (by
+      change i.val ≤ i.val + 1
+      exact Nat.le_succ _)
   apply Finset.mem_sdiff.mpr
   refine ⟨(Finset.mem_sdiff.mp hc).1, ?_⟩
   intro hprev

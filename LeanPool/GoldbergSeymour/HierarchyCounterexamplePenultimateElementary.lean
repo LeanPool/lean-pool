@@ -551,34 +551,8 @@ theorem HierarchyCounterexamplePenultimateElementary {V E : Type*}
       inferInstance G k e0 input T phi ett base C hproper hone hlower hfinalIndex
   have segmentRefl (X : TreeSequence G e0) : TreeSequenceInitialSegment X X :=
     ⟨le_rfl, (by intro i; rfl), (by intro i; rfl)⟩
-  have stageSegment : ∀ (a d : ℕ), (hbound : a + d ≤ H.dividerCount + 1) →
-      TreeSequenceInitialSegment (H.stage ⟨a, by omega⟩)
-        (H.stage ⟨a + d, by omega⟩) := by
-    intro a d bound
-    exact H.stageInitialSegmentOfLE _ _ (by change a ≤ a + d; exact Nat.le_add_right _ _)
   have aSegment : TreeSequenceInitialSegment A T := by
-    by_cases hq : H.dividerCount = 0
-    · have hc := H.coreInsideFirst
-      have hi : (⟨1, by omega⟩ : Fin (H.dividerCount + 2)) =
-          Fin.last (H.dividerCount + 1) := by
-        apply Fin.ext
-        simp [hq]
-      have ht : H.stage ⟨1, by omega⟩ = T := by
-        rw [hi]
-        exact H.terminalStage
-      have hc' : TreeSequenceInitialSegment base.core T := by
-        convert hc using 1
-        exact ht.symm
-      simpa [A, H, HierarchyStarredStage, Fin.last, hq] using hc'
-    · have hs := stageSegment H.dividerCount 1 (by omega)
-      have hA : A = H.stage ⟨H.dividerCount, by omega⟩ := hAstage (by omega)
-      have hT : H.stage ⟨H.dividerCount + 1, by omega⟩ = T := by
-        convert H.terminalStage using 1
-        apply congrArg H.stage
-        apply Fin.ext
-        rfl
-      rw [hA]
-      simpa [hA, hT] using hs
+    exact H.lastStarredInitialSegment
   have prefixEqOfSegment {X Y : TreeSequence G e0}
       (hXY : TreeSequenceInitialSegment X Y) :
       X = TreeSequencePrefix Y X.length X.positive hXY.1 := by

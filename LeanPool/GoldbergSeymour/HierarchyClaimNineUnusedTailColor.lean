@@ -779,12 +779,7 @@ theorem HierarchyClaimNineUnusedTailColor {V E : Type*}
       P.corresponding.replacementInput T mu em bm Cm cm.proper cm.oneEdgeUncolored
       cm.lowerRung cm.fewerDividers cm.lexicographicMinimality cm.largeMissingSet
   have hAT : TreeSequenceInitialSegment A T := by
-    have hs : TreeSequenceInitialSegment (HierarchyStarredStage H q) (H.stage q.succ) := by
-      refine Fin.cases ?_ (fun i => ?_) q
-      · exact H.coreInsideFirst
-      · exact H.nested i.succ
-    have hlast : q.succ = Fin.last (H.dividerCount + 1) := Fin.ext rfl
-    simpa only [hlast, H.terminalStage] using hs
+    exact H.lastStarredInitialSegment
   have hsum : A.length + ell = T.length := Nat.add_sub_of_le hAT.1
   have hBlen : B.length = T.length - 1 := by
     dsimp [B, HierarchyFullTailPrefix]

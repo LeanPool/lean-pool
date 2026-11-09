@@ -548,13 +548,7 @@ theorem HierarchyClaimNine {V E : Type*}
       ctx.proper ctx.oneEdgeUncolored ctx.lowerRung ctx.fewerDividers
       ctx.lexicographicMinimality ctx.largeMissingSet
   have hAT : TreeSequenceInitialSegment A0 T := by
-    have hs : TreeSequenceInitialSegment
-        (HierarchyStarredStage H0 q0) (H0.stage q0.succ) := by
-      refine Fin.cases ?_ (fun i => ?_) q0
-      · exact H0.coreInsideFirst
-      · exact H0.nested i.succ
-    have hlast : q0.succ = Fin.last (H0.dividerCount + 1) := Fin.ext rfl
-    simpa only [hlast, H0.terminalStage] using hs
+    exact H0.lastStarredInitialSegment
   have hsum : A0.length + ell = T.length := Nat.add_sub_of_le hAT.1
   have hBlen : B.length = A0.length + (ell - 1) := by
     change min (A0.length + (ell - 1)) T.length = A0.length + (ell - 1)

@@ -1496,26 +1496,7 @@ theorem helper_hATouter_959.{u_1, u_2} :
   TreeSequenceInitialSegment A T := by
   classical
   intro V E _ _ _ _ G k e0 input T phi ett base C ctx D H q A
-  by_cases hz : H.dividerCount = 0
-  · have hq : q = 0 := Fin.ext (by simp [q, hz])
-    have hs : (⟨1, Nat.lt_succ_of_le (Nat.succ_le_succ (Nat.zero_le _))⟩ : Fin (H.dividerCount
-        + 2)) =
-        Fin.last (H.dividerCount + 1) := Fin.ext (by simp [hz])
-    simpa [A, hq, HierarchyStarredStage, hs, H.terminalStage] using H.coreInsideFirst
-  · have hq : q ≠ 0 := by
-      intro he
-      have hv := congrArg Fin.val he
-      simp [q] at hv
-      omega
-    have ha : A = H.stage q.castSucc := by
-      dsimp [A]
-      rw [← Fin.succ_pred q hq]
-      rfl
-    rw [ha]
-    have hs : H.stage q.succ = T := by
-      convert H.terminalStage using 1
-      congr 1
-    simpa only [hs] using H.nested q
+  exact H.lastStarredInitialSegment
 
 theorem helper_hABouter_980.{u_1, u_2} :
     open scoped Classical in

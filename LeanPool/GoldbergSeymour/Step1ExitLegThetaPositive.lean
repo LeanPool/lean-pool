@@ -189,49 +189,6 @@ private theorem helper_segment_trans_208.{u_1, u_2} :
       _ = R.edge (Fin.castLE u z) := hz
       _ = S.edge z := he z
 
-private theorem helper_prev_to_star_264.{u_1, u_2} :
-    ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E] [ DecidableEq V] [ DecidableEq E] (G
-        : LooplessMultigraph V E) (k : ℕ) (e0 : E) (n q : ℕ) (M : Step1ExitLegMinimum G k e0 n q),
-        (0 : ℕ) < M.selected.hierarchy.dividerCount →
-    let H : TashkinovHierarchy M.selected.ett M.selected.base := M.selected.hierarchy;
-    let d : ℕ := H.dividerCount;
-    ∀ (hd : (1 : ℕ) ≤ d),
-    let i : Fin H.dividerCount := (⟨H.dividerCount - (1 : ℕ),
-    by omega
-    ⟩ : Fin H.dividerCount); HierarchyStarredStage H (Fin.last d) = H.stage i.succ.castSucc →
-        TreeSequenceInitialSegment (H.stage i.castSucc.castSucc) (H.stage i.succ.castSucc) →
-        TreeSequenceInitialSegment (HierarchyStarredStage H i.castSucc) (H.stage i.succ.castSucc)
-  := by
-  classical
-  intro V E _ _ _ _ G k e0 n q M hpositive H d hd i star_eq old_to_star
-  by_cases hdone : H.dividerCount = 1
-  · have hiz : i = Fin.mk 0 (by omega) := by
-      apply Fin.ext
-      simp [i, hdone]
-    subst i
-    simpa [HierarchyStarredStage, hdone] using H.coreInsideFirst
-  · have hiz : i.castSucc ≠ 0 := by
-      intro hz
-      have : H.dividerCount = 1 := by
-        have hi := i.isLt
-        simp [i] at hz
-        omega
-      exact hdone this
-    have hstar : HierarchyStarredStage H i.castSucc =
-        H.stage i.castSucc.castSucc := by
-      unfold HierarchyStarredStage
-      generalize hj : i.castSucc = j
-      have hjz : j ≠ 0 := by
-        intro hz
-        apply hiz
-        exact hj.trans hz
-      cases j using Fin.cases with
-      | zero => exact False.elim (hjz rfl)
-      | succ l =>
-        congr 1
-    rw [hstar]
-    exact H.nested i.castSucc
-
 private theorem helper_continuation_446.{u_1, u_2} :
     open scoped Classical in
     ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E] [ DecidableEq V] [ DecidableEq E] (G
@@ -374,8 +331,8 @@ lemma Step1ExitLegThetaPositive {V E : Type*}
   have old_to_star : TreeSequenceInitialSegment (H.stage i.castSucc.castSucc)
       (H.stage i.succ.castSucc) := by
     convert H.nested i.castSucc using 1; congr 1
-  have prev_to_star := @helper_prev_to_star_264 V E inferInstance inferInstance inferInstance
-      inferInstance G k e0 n q M hpositive hd star_eq old_to_star
+  have prev_to_star := by
+    exact H.starredStageInitialSegmentNext i.castSucc
   have base_to_old : TreeSequenceInitialSegment
       (M.selected.ett.series.data.tree
         (Fin.last M.selected.ett.rounds).castSucc) (H.stage i.castSucc.castSucc) := by

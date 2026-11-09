@@ -113,13 +113,6 @@ theorem HierarchySituationTwoReorderedTreesCertified {V E : Type*}
   let n : Fin (ett.rounds + 1) := Fin.last ett.rounds
   let Tn := ett.series.data.tree n.castSucc
   -- Exact ordered prefixes will be used for both route restriction and hierarchy copying.
-  have segmentRefl (X : TreeSequence G e0) : TreeSequenceInitialSegment X X :=
-    ⟨le_rfl, (fun _ => rfl), (fun _ => rfl)⟩
-  have segmentTrans {X Y Z : TreeSequence G e0}
-      (hXY : TreeSequenceInitialSegment X Y)
-      (hYZ : TreeSequenceInitialSegment Y Z) :
-      TreeSequenceInitialSegment X Z := by
-    exact hXY.trans hYZ
   have commonPrefix {X Y Z : TreeSequence G e0}
       (hXZ : TreeSequenceInitialSegment X Z)
       (hYZ : TreeSequenceInitialSegment Y Z) (hXY : X.length ≤ Y.length) :
@@ -145,42 +138,10 @@ theorem HierarchySituationTwoReorderedTreesCertified {V E : Type*}
     apply equalTrees
       (commonPrefix hXY (prefixSegment Y X.length X.positive hXY.1) le_rfl)
     rfl
-  have stageSegment : ∀ (a d : ℕ) (hbound : a + d ≤ H.dividerCount + 1),
-      TreeSequenceInitialSegment (H.stage ⟨a, by omega⟩)
-        (H.stage ⟨a + d, by omega⟩) := by
-    intro a d bound
-    exact H.stageInitialSegmentOfLE _ _ (by change a ≤ a + d; exact Nat.le_add_right _ _)
-  have stageToT (i : Fin (H.dividerCount + 2)) :
-      TreeSequenceInitialSegment (H.stage i) T := by
-    have hs := stageSegment i.val (H.dividerCount + 1 - i.val) (by omega)
-    have hi : (⟨i.val + (H.dividerCount + 1 - i.val), by omega⟩ :
-        Fin (H.dividerCount + 2)) = Fin.last (H.dividerCount + 1) := by
-      apply Fin.ext
-      simp
-      omega
-    simpa [hi, H.terminalStage] using hs
-  have hAstage (hq : 0 < H.dividerCount) :
-      A = H.stage ⟨H.dividerCount, by omega⟩ := by
-    exact helper_hAstage_679 G k e0 input T phi ett base C hq
-  have hAcore (hq : H.dividerCount = 0) : A = base.core := by
-    simp [A, HierarchyStarredStage, Fin.last, hq]
   have hAT : TreeSequenceInitialSegment A T := by
-    by_cases hq : H.dividerCount = 0
-    · rw [hAcore hq]
-      exact segmentTrans H.coreInsideFirst (stageToT _)
-    · rw [hAstage (by omega)]
-      exact stageToT _
+    exact H.lastStarredInitialSegment
   have hcoreA : TreeSequenceInitialSegment base.core A := by
-    by_cases hq : H.dividerCount = 0
-    · rw [hAcore hq]; exact segmentRefl _
-    · rw [hAstage (by omega)]
-      exact segmentTrans H.coreInsideFirst
-        (by
-          convert stageSegment 1 (H.dividerCount - 1) (by omega) using 1
-          congr 1
-          apply Fin.ext
-          simp
-          omega)
+    exact H.coreInitialSegmentOfStarredStage (Fin.last _)
   have hell : ell = T.length - A.length := rfl
   have htwo : 2 ≤ ell := D.tailAtLeastTwo
   have hAlen : A.length ≤ T.length := hAT.1
@@ -192,7 +153,13 @@ theorem HierarchySituationTwoReorderedTreesCertified {V E : Type*}
     omega
   have hm : 3 ≤ T.length := by have := A.positive; omega
   have hBT : TreeSequenceInitialSegment B T := prefixSegment _ _ _ _
-  apply helper_continuation_891 <;> assumption
+  apply helper_continuation_891 <;> try assumption
+  · exact TreeSequenceInitialSegment.refl
+  · exact fun first second => first.trans second
+  · intro first distance bound
+    exact H.stageInitialSegmentOfLE _ _ (Nat.le_add_right _ _)
+  · exact H.stageInitialSegment
+  · exact helper_hAstage_679 G k e0 input T phi ett base C
 end GoldbergSeymour
 
 end

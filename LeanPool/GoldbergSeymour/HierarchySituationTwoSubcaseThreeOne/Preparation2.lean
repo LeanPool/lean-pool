@@ -1361,7 +1361,7 @@ theorem helper_h_exception_6390.{u_1, u_2} :
         · exact False.elim (hj (congrArg Fin.val hz))
         · rfl
     have hAT : TreeSequenceInitialSegment A T := by
-      exact helper_hAT_359 (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C) (@starredAt)
+      exact H.lastStarredInitialSegment
     have htail : 2 ≤ ell := D.tailAtLeastTwo
     have hell : ell = T.length - A.length := rfl
     have hBL : B.length + 2 = T.length := by

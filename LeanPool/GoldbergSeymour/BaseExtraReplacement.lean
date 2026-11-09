@@ -754,16 +754,7 @@ theorem P2905_T2_BaseExtraReplacement {V E : Type*}
       ett base C ctx.proper ctx.oneEdgeUncolored ctx.lowerRung ctx.fewerDividers
       ctx.lexicographicMinimality ctx.largeMissingSet (u := u) hu (v := v) hv huv
   have hAT : TreeSequenceInitialSegment A T := by
-    have hstep : TreeSequenceInitialSegment
-        (HierarchyStarredStage H q) (H.stage q.succ) := by
-      cases q using Fin.cases with
-      | zero => exact H.coreInsideFirst
-      | succ i => exact H.nested i.succ
-    have hlast : q.succ = Fin.last (H.dividerCount + 1) := by
-      apply Fin.ext
-      simp [q]
-    rw [← H.terminalStage]
-    simpa only [hlast] using hstep
+    exact H.lastStarredInitialSegment
   have hlenAB : A.length ≤ B.length := by
     change A.length ≤ min (A.length + (ell - 1)) T.length
     have hp := hpathUpper

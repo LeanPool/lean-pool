@@ -1222,30 +1222,11 @@ private theorem helper_hcoreLength_1080.{u_1, u_2} :
         ≤ A.length := by
   classical
   intro V E _ _ _ _ G k e0 input T phi ett base C ctx D H q A POne sameStar baseOne' COne' HOne qOne
-  by_cases hz : HOne.dividerCount = 0
-  · have hi : qOne = 0 := by apply Fin.ext; simp [qOne, hz]
-    have he := sameStar POne
-    change HierarchyStarredStage HOne qOne = A at he
-    rw [hi] at he
-    change baseOne'.core = A at he
-    exact le_of_eq (congrArg TreeSequence.length he)
-  · have hmono : Monotone (fun i : Fin (HOne.dividerCount + 2) => (HOne.stage i).length) :=
-      Fin.monotone_iff_le_succ.mpr fun i => (HOne.nested i).1
-    have hi : qOne = (⟨HOne.dividerCount - 1, by omega⟩ : Fin HOne.dividerCount).succ := by
-      apply Fin.ext
-      simp [qOne]
-      omega
-    have he := sameStar POne
-    change HierarchyStarredStage HOne qOne = A at he
-    rw [hi] at he
-    simp only [HierarchyStarredStage, Fin.cases_succ] at he
-    have hle := hmono (show (⟨1, by omega⟩ : Fin (HOne.dividerCount + 2)) ≤
-        (⟨HOne.dividerCount - 1, by omega⟩ : Fin HOne.dividerCount).succ.castSucc by
-      change 1 ≤ HOne.dividerCount - 1 + 1
-      omega)
-    dsimp only at hle
-    rw [he] at hle
-    exact HOne.coreInsideFirst.1.trans hle
+  have included := HOne.coreInitialSegmentOfStarredStage qOne
+  have same := sameStar POne
+  change HierarchyStarredStage HOne qOne = A at same
+  rw [same] at included
+  exact included.1
 
 private theorem helper_hrouteTwo_1126.{u_1, u_2} :
     open scoped Classical in

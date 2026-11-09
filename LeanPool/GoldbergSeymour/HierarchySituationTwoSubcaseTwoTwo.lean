@@ -1172,14 +1172,7 @@ private theorem helper_hcoreLength_597.{u_1, u_2} :
     base.core.length ≤ A.length := by
   classical
   intro V E _ _ _ _ G k e0 input T phi ett base C ctx D H q A hApositive hAzero
-  by_cases hz : H.dividerCount = 0
-  · exact le_of_eq (congrArg TreeSequence.length (hAzero hz).symm)
-  · rw [hApositive (Nat.pos_of_ne_zero hz)]
-    have hm : Monotone (fun i : Fin (H.dividerCount + 2) => (H.stage i).length) :=
-      Fin.monotone_iff_le_succ.mpr fun i => (H.nested i).1
-    exact H.coreInsideFirst.1.trans (hm (show
-      (⟨1, by omega⟩ : Fin (H.dividerCount + 2)) ≤
-        ⟨H.dividerCount, by omega⟩ from Nat.pos_of_ne_zero hz))
+  exact (H.coreInitialSegmentOfStarredStage q).1
 
 private theorem helper_hbetaTheta_676.{u_1, u_2} :
     open scoped Classical in

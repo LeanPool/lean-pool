@@ -527,45 +527,10 @@ theorem NineN {V E : Type*}
           ∀ h : Fin 7, eta h ∈ D ∧
             eta h ∈ TreeMissingColors phi (Ty i) ∧
             Disjoint (good.gamma q (eta h) ∪ {eta h}) (U i))
-  have stageMono : Monotone (fun j => TreeSequenceVertexSet (H.stage j)) := by
-    apply Fin.monotone_iff_le_succ.mpr
-    intro j
-    exact TreeSequenceInitialSegmentVertexSetSubset (H.nested j)
   have hAT : TreeSequenceInitialSegment A T := by
-    by_cases hz : H.dividerCount = 0
-    · have hA : A = base.core := by
-        have hq : q = 0 := by apply Fin.ext; simp [q, hz]
-        simp [A, HierarchyStarredStage, hq]
-      have ht : H.stage ⟨1, by omega⟩ = T := by
-        convert H.terminalStage using 1; congr 1; apply Fin.ext; simp [hz]
-      simpa only [hA, ht] using H.coreInsideFirst
-    · let r : Fin H.dividerCount := ⟨H.dividerCount - 1, by omega⟩
-      have hq : q = r.succ := by apply Fin.ext; simp [q, r]; omega
-      have hA : A = H.stage r.succ.castSucc := by
-        change HierarchyStarredStage H q = _
-        rw [hq]
-        rfl
-      have ht : q.succ = Fin.last (H.dividerCount + 1) := by
-        apply Fin.ext
-        simp [q]
-      have hc : H.stage r.succ.succ = T := by
-        simpa only [hq] using (congrArg H.stage ht).trans H.terminalStage
-      simpa only [hq, ← hA, hc] using H.nested q
+    exact H.lastStarredInitialSegment
   have hcoreA : TreeSequenceVertexSet base.core ⊆ TreeSequenceVertexSet A := by
-    by_cases hz : H.dividerCount = 0
-    · have hA : A = base.core := by
-        have hq : q = 0 := by apply Fin.ext; simp [q, hz]
-        simp [A, HierarchyStarredStage, hq]
-      rw [hA]
-    · let r : Fin H.dividerCount := ⟨H.dividerCount - 1, by omega⟩
-      have hq : q = r.succ := by apply Fin.ext; simp [q, r]; omega
-      have hA : A = H.stage r.succ.castSucc := by
-        change HierarchyStarredStage H q = _
-        rw [hq]
-        rfl
-      rw [hA]
-      exact (TreeSequenceInitialSegmentVertexSetSubset H.coreInsideFirst).trans
-        (stageMono (by change 1 ≤ r.val + 1; omega))
+    exact (H.coreInitialSegmentOfStarredStage q).vertexSet_subset
   have hTnCore : TreeSequenceVertexSet Tn ⊆ TreeSequenceVertexSet base.core := by
     exact TreeSequenceInitialSegmentVertexSetSubset base.lastRoundInitialSegmentCore
   have hdegree : MaximumDegree G + 1 ≤ k := by

@@ -242,29 +242,6 @@ private theorem helper_hseparated_657.{u_1, u_2} :
       (Sum.inl (T.vertex p)) at hy
   exact hy.symm.trans hx
 
-private theorem helper_hstarToTOriginal_485.{u_1, u_2} :
-    open scoped Classical in
-      ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq V]
-        [DecidableEq E] (G : LooplessMultigraph V E) (k : ℕ) (e0 : E)
-        (input : PartialEdgeColoring E k) (T : TreeSequence G e0)
-        (phi : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k e0 input T phi)
-        (base : HierarchyBase ett phi) (C : HierarchyCounterexample base),
-        TreeSequenceInitialSegment
-          (HierarchyStarredStage C.hierarchy (Fin.last C.hierarchy.dividerCount)) T := by
-  classical
-  intro V E _ _ _ _ G k e0 input T phi ett base C
-  let H₀ := C.hierarchy
-  let q₀ : Fin (H₀.dividerCount + 1) := Fin.last H₀.dividerCount
-  have starStep : TreeSequenceInitialSegment
-      (HierarchyStarredStage H₀ q₀) (H₀.stage q₀.succ) := by
-    refine Fin.cases ?_ (fun i => ?_) q₀
-    · exact H₀.coreInsideFirst
-    · exact H₀.nested i.succ
-  have hlast : q₀.succ = Fin.last (H₀.dividerCount + 1) := by
-    apply Fin.ext
-    rfl
-  simpa [H₀, q₀, hlast, H₀.terminalStage] using starStep
-
 private theorem helper_hprefixA_B_507.{u_1, u_2} :
     open scoped Classical in
     ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq V] [DecidableEq E] (G :
@@ -1418,8 +1395,8 @@ theorem P2880_T1_CommonPreparation
   have hstar : HierarchyStarredStage C.hierarchy
       (Fin.last C.hierarchy.dividerCount) = A :=
     (P2752_T2_HierarchyMeasures C.hierarchy P.counterexample.hierarchy P.sameGood.1).1
-  have hstarToTOriginal := @helper_hstarToTOriginal_485 (@V) (@E) inferInstance inferInstance
-      inferInstance inferInstance (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C)
+  have hstarToTOriginal := by
+    exact C.hierarchy.lastStarredInitialSegment
   have hA_T : TreeSequenceInitialSegment A T := by
     rw [← hstar]
     exact hstarToTOriginal

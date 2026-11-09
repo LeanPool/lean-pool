@@ -154,40 +154,12 @@ theorem P2813_T1_PrefixReconstruction {V E : Type*}
       (hWZ : TreeSequenceInitialSegment W Z) :
       TreeSequenceInitialSegment U Z := by
     exact hUW.trans hWZ
-  have stageChain : ∀ (j : ℕ) (hj : j < H.dividerCount + 2)
-      (i : Fin (H.dividerCount + 2)), i.val ≤ j →
-      TreeSequenceInitialSegment (H.stage i) (H.stage ⟨j, hj⟩) := by
-    intro last bound first ordered
-    exact H.stageInitialSegmentOfLE first ⟨last, bound⟩ ordered
-  have starStage (r : Fin (H.dividerCount + 1)) :
-      TreeSequenceInitialSegment (HierarchyStarredStage H r)
-        (H.stage r.succ) := by
-    clear * - H r
-    refine Fin.cases ?_ (fun i => ?_) r
-    · exact H.coreInsideFirst
-    · exact H.nested i.succ
   have starChain (r s : Fin (H.dividerCount + 1)) (hrs : r ≤ s) :
       TreeSequenceInitialSegment (HierarchyStarredStage H r)
         (HierarchyStarredStage H s) := by
-    clear * - H r s hrs stageChain starStage trans
-    by_cases heq : r = s
-    · subst s
-      exact ⟨le_rfl, fun _ => rfl, fun _ => rfl⟩
-    · have hrlt : r.val < s.val := by
-        have := Fin.le_iff_val_le_val.mp hrs
-        have : r.val ≠ s.val := fun h => heq (Fin.ext h)
-        omega
-      have hs : s ≠ 0 := by intro hs; subst s; simp at hrlt
-      have hstar : HierarchyStarredStage H s = H.stage s.castSucc := by
-        rw [← Fin.succ_pred s hs]
-        rfl
-      rw [hstar]
-      exact trans (starStage r)
-        (stageChain s.val (by omega) r.succ (by simp; omega))
+    exact H.starredStageInitialSegmentOfLE r s hrs
   have hAT : TreeSequenceInitialSegment A T := by
-    have hh := starStage q
-    have hlast : q.succ = Fin.last (H.dividerCount + 1) := Fin.ext rfl
-    simpa [hlast, H.terminalStage] using hh
+    exact H.lastStarredInitialSegment
   have hTyT : TreeSequenceInitialSegment Ty T :=
     ⟨Nat.min_le_right _ _, fun _ => rfl, fun _ => rfl⟩
   have equalTrees {S U : TreeSequence G e0}

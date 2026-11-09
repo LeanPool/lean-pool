@@ -354,25 +354,6 @@ private theorem helper_advance_428.{u_1, u_2} :
   exact nextMember P2 theta (by rw [hmissing2 _ (vertexMem B jnext)]; exact htheta1)
     (hterminal2 hgLast)
 
-private theorem helper_hAT_826.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq V] [DecidableEq E] (G :
-        LooplessMultigraph V E) (k : ℕ) (e0 : E) (input : PartialEdgeColoring E k) (T :
-        TreeSequence G e0) (phi : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k e0
-        input T phi) (base : HierarchyBase ett phi) (C : HierarchyCounterexample base),
-        HierarchyPathNumber C.hierarchy = (1 : ℕ) →
-    ∀ (i : ℕ), (1 : ℕ) ≤ i → i < HierarchyFullTailLength C - (1 : ℕ) →
-    let A : TreeSequence G e0 := HierarchyStarredStage C.hierarchy (Fin.last
-        C.hierarchy.dividerCount); TreeSequenceInitialSegment A T := by
-  classical
-  intro V E _ _ _ _ G k e0 input T phi ett base C hsituation i hiLower hiUpper A
-  have starNext (j : Fin (C.hierarchy.dividerCount + 1)) :
-      TreeSequenceInitialSegment (HierarchyStarredStage C.hierarchy j)
-        (C.hierarchy.stage j.succ) :=
-    Fin.cases C.hierarchy.coreInsideFirst (fun i => C.hierarchy.nested i.succ) j
-  simpa only [Fin.succ_last, C.hierarchy.terminalStage] using
-    starNext (Fin.last C.hierarchy.dividerCount)
-
 private theorem helper_fullB_848.{u_1, u_2} :
     open scoped Classical in
     ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E] [ DecidableEq V] [ DecidableEq E] (G
@@ -508,9 +489,8 @@ theorem HierarchySituationOneAdvanceInsideStored {V E : Type*}
         HierarchyStarredStage R.counterexample.hierarchy
           (Fin.last R.counterexample.hierarchy.dividerCount) = A :=
       (sameLast _ _ _ _ R.sameGood.1.2.1 R.sameGood.1.2.2.1 R.sameGood.1.1).symm
-    have hAT :=
-      @helper_hAT_826 (@V) (@E) inferInstance inferInstance inferInstance inferInstance (@G) (@k)
-          (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C) (@hsituation) (@i) (@hiLower) (@hiUpper)
+    have hAT := by
+      exact C.hierarchy.lastStarredInitialSegment
     have htail : 3 ≤ T.length - A.length := by
       change i < (T.length - A.length) - 1 at hiUpper
       omega

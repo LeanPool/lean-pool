@@ -1131,31 +1131,9 @@ lemma Step1CaseOneOutsideStar {V E : Type*}
       (hSU : TreeSequenceInitialSegment S U)
       (hUW : TreeSequenceInitialSegment U W) : TreeSequenceInitialSegment S W := by
     exact hSU.trans hUW
-  have stage_segment : ∀ (a d : ℕ) (hbound : a + d ≤ H.dividerCount + 1),
-      TreeSequenceInitialSegment (H.stage ⟨a, by omega⟩)
-        (H.stage ⟨a + d, by omega⟩) := by
-    intro a d bound
-    exact H.stageInitialSegmentOfLE _ _ (by change a ≤ a + d; exact Nat.le_add_right _ _)
   let A := HierarchyStarredStage H (Fin.last H.dividerCount)
   have hAT : TreeSequenceInitialSegment A T := by
-    by_cases hz : H.dividerCount = 0
-    · have hl : Fin.last H.dividerCount = (0 : Fin (H.dividerCount + 1)) :=
-        Fin.ext (by simp [hz])
-      have ht : (1 : Fin (H.dividerCount + 2)) =
-          Fin.last (H.dividerCount + 1) := Fin.ext (by simp [hz])
-      simpa [A, hl, HierarchyStarredStage, ht, H.terminalStage] using H.coreInsideFirst
-    · have hs : A = H.stage ⟨H.dividerCount, by omega⟩ := by
-        unfold A HierarchyStarredStage
-        obtain hz' | ⟨i, hi⟩ := Fin.eq_zero_or_eq_succ (Fin.last H.dividerCount)
-        · exact False.elim (hz (by simpa using congrArg Fin.val hz'))
-        · rw [hi, Fin.cases_succ]
-          congr 1
-          apply Fin.ext
-          simpa using (congrArg Fin.val hi).symm
-      have hh := stage_segment H.dividerCount 1 (by omega)
-      have ht : (⟨H.dividerCount + 1, by omega⟩ : Fin (H.dividerCount + 2)) =
-          Fin.last (H.dividerCount + 1) := Fin.ext rfl
-      simpa only [← hs, ht, H.terminalStage] using hh
+    exact H.lastStarredInitialSegment
   have hbT : b₂ ∈ TreeSequenceVertexSet T := hP₂.2.2.2.1
   have betaReserved : beta ∈ (HierarchyTerminalStoredColors H).biUnion
       (good.gamma (Fin.last H.dividerCount)) := by

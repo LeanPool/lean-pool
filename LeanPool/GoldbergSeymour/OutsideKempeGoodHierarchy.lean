@@ -243,8 +243,9 @@ private theorem helper_continuation_343.{u_1, u_2} :
     constructor <;> intro h c hc
     · exact (boundaryAt hA c).symm ▸ h c hc
     · exact (boundaryAt hA c) ▸ h c hc
-  have coreSubset₁ : TreeSequenceVertexSet base₁.core ⊆ TreeSequenceVertexSet T :=
-    (initialSubset H₁.coreInsideFirst).trans (stageSubset₁ ⟨1, by omega⟩)
+  have coreSubset₁ : TreeSequenceVertexSet base₁.core ⊆ TreeSequenceVertexSet T := by
+    exact ((H₁.coreInitialSegmentOfStarredStage (Fin.last _)).trans
+      H₁.lastStarredInitialSegment).vertexSet_subset
   have coreSubset₂ : TreeSequenceVertexSet base₂.core ⊆ TreeSequenceVertexSet T := by
     rw [← hcore]
     exact coreSubset₁
@@ -415,15 +416,13 @@ private theorem helper_continuation_155.{u_1, u_2} :
   have starredSubset₁ : ∀ j : Fin (H₁.dividerCount + 1),
       TreeSequenceVertexSet (HierarchyStarredStage H₁ j) ⊆ TreeSequenceVertexSet T := by
     intro j
-    refine Fin.cases ?_ (fun i => ?_) j
-    · exact (initialSubset H₁.coreInsideFirst).trans (stageSubset₁ ⟨1, by omega⟩)
-    · exact stageSubset₁ i.succ.castSucc
+    exact ((H₁.starredStageInitialSegmentOfLE j (Fin.last _) (Fin.le_last _)).trans
+      H₁.lastStarredInitialSegment).vertexSet_subset
   have starredSubset₂ : ∀ j : Fin (H₂.dividerCount + 1),
       TreeSequenceVertexSet (HierarchyStarredStage H₂ j) ⊆ TreeSequenceVertexSet T := by
     intro j
-    refine Fin.cases ?_ (fun i => ?_) j
-    · exact (initialSubset H₂.coreInsideFirst).trans (stageSubset₂ ⟨1, by omega⟩)
-    · exact stageSubset₂ i.succ.castSucc
+    exact ((H₂.starredStageInitialSegmentOfLE j (Fin.last _) (Fin.le_last _)).trans
+      H₂.lastStarredInitialSegment).vertexSet_subset
   have starredMissingAt : ∀ j : Fin (H₂.dividerCount + 1),
       TreeMissingColors phi (HierarchyStarredStage H₁
         (Fin.cast (congrArg (fun q => q + 1) hcount).symm j)) =

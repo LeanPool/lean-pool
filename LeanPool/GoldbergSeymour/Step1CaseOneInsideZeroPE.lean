@@ -342,11 +342,8 @@ lemma Step1CaseOneInsideZeroPE {V E : Type*}
       simp [hdividerZero]
     simp only [A, hz, HierarchyStarredStage, Fin.cases_zero]
   have hcoreT : TreeSequenceInitialSegment base.core T := by
-    have hi : (⟨1, by omega⟩ : Fin (H.dividerCount + 2)) =
-        Fin.last (H.dividerCount + 1) := by
-      apply Fin.ext
-      simp [hdividerZero]
-    simpa only [hi, H.terminalStage] using H.coreInsideFirst
+    exact (H.coreInitialSegmentOfStarredStage (Fin.last _)).trans
+      H.lastStarredInitialSegment
   have initialVertices : ∀ {S U : TreeSequence G e0},
       TreeSequenceInitialSegment S U →
       TreeSequenceVertexSet S ⊆ TreeSequenceVertexSet U := by

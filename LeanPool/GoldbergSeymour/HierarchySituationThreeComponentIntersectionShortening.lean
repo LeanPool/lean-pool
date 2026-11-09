@@ -2623,10 +2623,10 @@ theorem HierarchySituationThreeComponentIntersectionShortening
               inferInstance (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C) (@ctx) (@P)
               (@reflSeg) (@trans) (@b) (@ih)
     have starNext (i : Fin (H.dividerCount + 1)) :
-        TreeSequenceInitialSegment (HierarchyStarredStage H i) (H.stage i.succ) :=
-      Fin.cases H.coreInsideFirst (fun i => H.nested i.succ) i
+        TreeSequenceInitialSegment (HierarchyStarredStage H i) (H.stage i.succ) := by
+      exact H.starredStageInitialSegmentNext i
     have hAT : TreeSequenceInitialSegment A T := by
-      simpa only [q, Fin.succ_last, H.terminalStage] using starNext q
+      exact H.lastStarredInitialSegment
     have lastZero (hz : H.dividerCount = 0) : A = P.replacementBase.core := by
       simp [A, q, HierarchyStarredStage, hz, Fin.last]
     have lastPositive (hz : H.dividerCount ≠ 0) :

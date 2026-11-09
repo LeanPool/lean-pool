@@ -1088,9 +1088,6 @@ private theorem helper_branch_402.{u_1, u_2} :
   have stageSegment (a d : ℕ) (hbound : a + d ≤ H.dividerCount + 1) :
       TreeSequenceInitialSegment (H.stage ⟨a, by omega⟩) (H.stage ⟨a + d, by omega⟩) := by
     exact H.stageInitialSegmentOfLE _ _ (by change a ≤ a + d; exact Nat.le_add_right _ _)
-  have stageToT (j : Fin (H.dividerCount + 2)) :
-      TreeSequenceInitialSegment (H.stage j) T := by
-    exact H.stageInitialSegment j
   have lastPositive (hp : H.dividerCount ≠ 0) : A = H.stage q.castSucc := by
     let i : Fin H.dividerCount := ⟨H.dividerCount - 1, by omega⟩
     have hi : q = i.succ := Fin.ext (by dsimp [q, i]; omega)
@@ -1098,12 +1095,7 @@ private theorem helper_branch_402.{u_1, u_2} :
     rw [hi]
     rfl
   have hAT : TreeSequenceInitialSegment A T := by
-    by_cases hz : H.dividerCount = 0
-    · have hq : q = 0 := Fin.ext (by simp [q, hz])
-      have hA : A = base.core := by simp [A, HierarchyStarredStage, hq]
-      exact segTrans (hA ▸ H.coreInsideFirst) (stageToT ⟨1, by omega⟩)
-    · rw [lastPositive hz]
-      exact stageToT q.castSucc
+    exact H.lastStarredInitialSegment
   exact @helper_continuation_547 (@V) (@E) inferInstance inferInstance inferInstance
       inferInstance (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C) (@ctx) (@D) (@beta)
       (@hmissing) (@hunused) (@halternative) (@hbetaPresent) (@hhit) (@hlenB) (@hlenPlus) (@hBT)

@@ -1811,12 +1811,8 @@ private theorem helper_continuation_2110.{u_1, u_2} :
       TreeSequenceInitialSegment (H.stage j.castSucc) A := by
     rw [hA]
     exact stagesNested j.castSucc q.castSucc (Fin.le_last j)
-  have coreInsideA : TreeSequenceVertexSet base.core ⊆ TreeSequenceVertexSet A :=
-    TreeSequenceInitialSegmentVertexSetSubset
-      (segmentTrans H.coreInsideFirst
-        (by
-          rw [hA]
-          exact stagesNested ⟨1, by omega⟩ q.castSucc (by change 1 ≤ H.dividerCount; omega)))
+  have coreInsideA : TreeSequenceVertexSet base.core ⊆ TreeSequenceVertexSet A := by
+    exact (H.coreInitialSegmentOfStarredStage q).vertexSet_subset
   have starredInsideA (j : Fin (H.dividerCount + 1)) :
       TreeSequenceVertexSet (HierarchyStarredStage H j) ⊆ TreeSequenceVertexSet A := by
     refine Fin.cases ?_ (fun a => ?_) j
@@ -2318,11 +2314,7 @@ theorem HierarchyCounterexampleOneAdditionPositiveDividerImpossible
       (hlenXY : X.length = Y.length) : X = Y := by
     exact hXY.eq_of_length_eq hlenXY
   have hAT : TreeSequenceInitialSegment A T := by
-    rw [hA]
-    have ht : H.stage q.succ = T := H.terminalStage
-    have h := H.nested q
-    rw [ht] at h
-    exact h
+    exact H.lastStarredInitialSegment
   have stagesNested : ∀ a b : Fin (H.dividerCount + 2),
       a.val ≤ b.val → TreeSequenceInitialSegment (H.stage a) (H.stage b) := by
     intro first last ordered

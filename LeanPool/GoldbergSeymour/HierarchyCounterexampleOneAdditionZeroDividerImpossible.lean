@@ -1423,7 +1423,8 @@ theorem HierarchyCounterexampleOneAdditionZeroDividerImpossible
     exact @helper_hfirst_144 (@V) (@E) inferInstance inferInstance inferInstance inferInstance
         (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C) (@hzero)
   have hAT : TreeSequenceInitialSegment A T := by
-    simpa only [hfirst] using H.coreInsideFirst
+    rw [← hstar]
+    exact H.lastStarredInitialSegment
   have hlen : T.length = A.length + 1 := by
     exact @helper_hlen_155 (@V) (@E) inferInstance inferInstance inferInstance inferInstance (@G)
         (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C) (@honeAddition) (@hzero) (@hstar) (@hAT)

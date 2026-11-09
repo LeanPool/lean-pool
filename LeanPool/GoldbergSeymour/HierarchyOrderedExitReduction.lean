@@ -750,10 +750,7 @@ theorem rutcor {V E : Type*}
   have hA : A = H.stage q.castSucc := starPositive q hq
   have hlast : q.succ = Fin.last (H.dividerCount + 1) := Fin.ext rfl
   have hAT : TreeSequenceInitialSegment A T := by
-    rw [hA]
-    have hh := H.nested q
-    rw [hlast, H.terminalStage] at hh
-    exact hh
+    exact H.lastStarredInitialSegment
   have hAlen : A.length < T.length := by
     rw [hA]
     have hh := H.strict q

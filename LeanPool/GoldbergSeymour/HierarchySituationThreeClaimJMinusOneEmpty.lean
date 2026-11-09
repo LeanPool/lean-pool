@@ -846,12 +846,7 @@ theorem HierarchySituationThreeClaimJMinusOneEmpty {V E : Type*}
   let Y := HierarchyFullTailPrefix C (j - 2)
   let I := HierarchyEligibleCommonMissingIndices G k e0 input T phi ett base C ctx
   have hAT : TreeSequenceInitialSegment A T := by
-    have starNext (i : Fin (C.hierarchy.dividerCount + 1)) :
-        TreeSequenceInitialSegment (HierarchyStarredStage C.hierarchy i)
-          (C.hierarchy.stage i.succ) :=
-      Fin.cases C.hierarchy.coreInsideFirst (fun i => C.hierarchy.nested i.succ) i
-    simpa only [Fin.succ_last, C.hierarchy.terminalStage] using
-      starNext (Fin.last C.hierarchy.dividerCount)
+    exact C.hierarchy.lastStarredInitialSegment
   exact @helper_continuation_671 V E inferInstance inferInstance inferInstance inferInstance G k
       e0 input T phi ett base C ctx hpathLower hpathUpper hvertexMissing hempty common
       seriesProper seriesOne hAT

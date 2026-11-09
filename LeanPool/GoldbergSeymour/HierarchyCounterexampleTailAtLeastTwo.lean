@@ -122,13 +122,7 @@ theorem HierarchyCounterexampleTailAtLeastTwo {V E : Type*}
       have hseg : TreeSequenceInitialSegment
           (HierarchyStarredStage C.hierarchy
             (Fin.last C.hierarchy.dividerCount)) T := by
-        have hc := C.hierarchy.coreInsideFirst
-        rw [show (⟨1, by omega⟩ : Fin (C.hierarchy.dividerCount + 2)) =
-            Fin.last (C.hierarchy.dividerCount + 1) by
-              apply Fin.ext
-              simp [hzero]] at hc
-        rw [hAeq]
-        simpa [C.hierarchy.terminalStage, hzero] using hc
+        exact C.hierarchy.lastStarredInitialSegment
       by_contra hnon
       have hle :
           (HierarchyStarredStage C.hierarchy

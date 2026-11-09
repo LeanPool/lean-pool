@@ -1148,11 +1148,7 @@ private theorem helper_continuation_286.{u_1, u_2} :
       base.core R.replacementBase.core R.sameGood.1.2.1
       R.sameGood.1.2.2.1 R.sameGood.1.1
   have hAT : TreeSequenceInitialSegment A T := by
-    clear * - H
-    have starNext (i : Fin (H.dividerCount + 1)) :
-        TreeSequenceInitialSegment (HierarchyStarredStage H i) (H.stage i.succ) :=
-      Fin.cases H.coreInsideFirst (fun i => H.nested i.succ) i
-    simpa only [Fin.succ_last, H.terminalStage] using starNext (Fin.last H.dividerCount)
+    exact H.lastStarredInitialSegment
   have hellSame : HierarchyFullTailLength C = ell := by
     change T.length - (HierarchyStarredStage C.hierarchy
       (Fin.last C.hierarchy.dividerCount)).length = T.length - A.length

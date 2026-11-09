@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.HierarchyTreeFacts
+
 public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegmentFacts
 public import LeanPool.GoldbergSeymour.ParallelCommonMissingClosed
 public import LeanPool.GoldbergSeymour.Step1ExitLegPresentation
@@ -150,17 +152,8 @@ lemma Step1ExitLegThetaZeroParallel {V E : Type*}
       (HierarchyStoredColorsAt P.hierarchy 0).biUnion (P.good.gamma 0) := by
     have hcoreTerm : TreeSequenceVertexSet P.base.core ⊆
         TreeSequenceVertexSet P.T := by
-      apply initialSubset
-      have hstage : P.hierarchy.stage
-          (⟨1, by omega⟩ : Fin (P.hierarchy.dividerCount + 2)) = P.T := by
-        have hidx : (⟨1, by omega⟩ : Fin (P.hierarchy.dividerCount + 2)) =
-            Fin.last (P.hierarchy.dividerCount + 1) := by
-          apply Fin.ext
-          simp [hzero]
-        exact congrArg P.hierarchy.stage hidx |>.trans P.hierarchy.terminalStage
-      have hinside := P.hierarchy.coreInsideFirst
-      rw [hstage] at hinside
-      exact hinside
+      exact ((P.hierarchy.coreInitialSegmentOfStarredStage (Fin.last _)).trans
+        P.hierarchy.lastStarredInitialSegment).vertexSet_subset
     have hmissingCoreTerm : TreeMissingColors P.phi P.base.core ⊆
         TreeMissingColors P.phi P.T := by
       intro c hc

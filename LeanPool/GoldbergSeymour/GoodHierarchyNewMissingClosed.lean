@@ -57,28 +57,7 @@ theorem GoodHierarchyNewMissingClosed {V E : Type*}
   have oldSegment : TreeSequenceInitialSegment
       (HierarchyStarredStage H i.castSucc)
       (H.stage i.succ.castSucc) := by
-    by_cases hi : i.val = 0
-    · have hi' : i = ⟨0, Fin.pos i⟩ := Fin.ext hi
-      rw [hi']
-      dsimp [starred]
-      change TreeSequenceInitialSegment base.core (H.stage ⟨1, by omega⟩)
-      exact H.coreInsideFirst
-    · have hne : i.castSucc ≠ 0 := by
-        intro hz
-        apply hi
-        exact congrArg Fin.val hz
-      change TreeSequenceInitialSegment
-        (Fin.cases base.core (fun j => H.stage j.castSucc.succ) i.castSucc)
-        (H.stage i.castSucc.succ)
-      have hindex : (i.castSucc.pred hne).succ = i.castSucc :=
-        Fin.succ_pred i.castSucc hne
-      have hstar :
-          Fin.cases base.core (fun j => H.stage j.castSucc.succ) i.castSucc =
-            H.stage i.castSucc.castSucc := by
-        rw [← hindex]
-        rfl
-      rw [hstar]
-      exact H.nested i.castSucc
+    exact H.starredStageInitialSegmentNext i.castSucc
   have oldMissing : ∀ {c : Fin k},
       c ∈ HierarchyStageMissingColors H i.castSucc →
       ∃ u, u ∈ starred ∧ c ∈ MissingColors G phi u := by

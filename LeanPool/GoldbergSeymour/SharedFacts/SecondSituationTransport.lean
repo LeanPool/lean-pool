@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.HierarchyTreeFacts
+
 public import LeanPool.GoldbergSeymour.HierarchyFirstMissingPositionPrefixCutoff
 public import LeanPool.GoldbergSeymour.TreeSequenceColoringFacts
 
@@ -233,17 +235,7 @@ theorem apositive.{u_1, u_2} : apositiveStatement.{u_1, u_2} := by
 theorem aT.{u_1, u_2} : aTStatement.{u_1, u_2} := by
   classical
   intro V E _ _ _ _ G k e0 input T phi ett base C H q A hApositive hAzero
-  by_cases hz : H.dividerCount = 0
-  · have hi : (⟨1, by omega⟩ : Fin (H.dividerCount + 2)) =
-        Fin.last (H.dividerCount + 1) := by apply Fin.ext; simp [hz]
-    simpa [hAzero hz, hi, H.terminalStage] using H.coreInsideFirst
-  · rw [hApositive (Nat.pos_of_ne_zero hz)]
-    have hi : (⟨H.dividerCount, by omega⟩ : Fin (H.dividerCount + 2)) =
-        q.castSucc := Fin.ext rfl
-    have hj : H.stage q.succ = T := by
-      convert H.terminalStage using 1
-      congr 1
-    simpa only [hi, hj] using H.nested q
+  exact H.lastStarredInitialSegment
 
 /-- A common proof used by the branches of this transport or construction argument. -/
 theorem aB.{u_1, u_2} : aBStatement.{u_1, u_2} := by

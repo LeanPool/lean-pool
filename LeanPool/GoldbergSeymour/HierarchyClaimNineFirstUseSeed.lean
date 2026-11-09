@@ -2667,15 +2667,8 @@ private theorem helper_continuation_2508.{u_1, u_2} :
         (hSU : TreeSequenceInitialSegment S U)
         (hUW : TreeSequenceInitialSegment U W) : TreeSequenceInitialSegment S W := by
       exact hSU.trans hUW
-    have stageSegment (a d : ℕ) (hbound : a + d ≤ H.dividerCount + 1) :
-        TreeSequenceInitialSegment (H.stage ⟨a, by omega⟩)
-          (H.stage ⟨a + d, by omega⟩) := by
-      exact H.stageInitialSegmentOfLE _ _ (by change a ≤ a + d; exact Nat.le_add_right _ _)
     have coreToA : TreeSequenceInitialSegment bm.core A := by
-      rw [hAeq]
-      have hs := stageSegment 1 (H.dividerCount - 1) (by omega)
-      have he : 1 + (H.dividerCount - 1) = H.dividerCount := by omega
-      simpa [he] using segTrans H.coreInsideFirst hs
+      exact H.coreInitialSegmentOfStarredStage q
     have TnToCore : TreeSequenceInitialSegment Tn bm.core := by
       exact bm.lastRoundInitialSegmentCore
     have hTnA := segTrans TnToCore coreToA

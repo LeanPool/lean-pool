@@ -967,12 +967,8 @@ theorem HierarchySituationOneShorteningContradiction {V E : Type*}
         TreeSequenceInitialSegment (H.stage i) (H.stage ⟨j, hj⟩) := by
       intro j hj i hi
       exact H.stageInitialSegmentOfLE i ⟨j, hj⟩ hi
-    have starNext (j : Fin (H.dividerCount + 1)) :
-        TreeSequenceInitialSegment (HierarchyStarredStage H j) (H.stage j.succ) := by
-      refine Fin.cases H.coreInsideFirst (fun i => H.nested i.succ) j
     have hAT : TreeSequenceInitialSegment A T := by
-      have hh := starNext (Fin.last H.dividerCount)
-      simpa only [Fin.succ_last, H.terminalStage] using hh
+      exact H.lastStarredInitialSegment
     have hTnCore : TreeSequenceInitialSegment Tn P.replacementBase.core := by
       exact P.replacementBase.lastRoundInitialSegmentCore
     have coreA : TreeSequenceInitialSegment P.replacementBase.core A := by

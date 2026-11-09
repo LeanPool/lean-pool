@@ -114,25 +114,8 @@ lemma Step1CaseOneInsidePositiveDivider {V E : Type*}
     (hdividerPositive : 0 < H.dividerCount) : False := by
   classical
   let A := HierarchyStarredStage H (Fin.last H.dividerCount)
-  have starPositive : ∀ j : Fin (H.dividerCount + 1), 0 < j.val →
-      HierarchyStarredStage H j = H.stage j.castSucc := by
-    intro j
-    refine Fin.cases ?_ ?_ j
-    · intro hj
-      simp at hj
-    · intro i hj
-      rfl
-  let i : Fin H.dividerCount := ⟨H.dividerCount - 1, by omega⟩
-  have hstar : A = H.stage ⟨i.val + 1, by omega⟩ := by
-    rw [show A = H.stage (Fin.last H.dividerCount).castSucc from
-      starPositive _ (by simpa using hdividerPositive)]
-    congr 1
-    apply Fin.ext
-    dsimp [i]
-    omega
   have hAT : TreeSequenceInitialSegment A T := by
-    rw [hstar, H.dividerStage i]
-    exact ⟨_, fun j => rfl, fun j => rfl⟩
+    exact H.lastStarredInitialSegment
   have hA : TreeSequenceVertexSet A ⊆ TreeSequenceVertexSet T :=
     TreeSequenceInitialSegmentVertexSetSubset hAT
   have hb₁A : b₁ ∈ TreeSequenceVertexSet A := by

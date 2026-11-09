@@ -5,7 +5,7 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegmentFacts
+public import LeanPool.GoldbergSeymour.HierarchyTreeFacts
 
 public import LeanPool.GoldbergSeymour.HierarchyEligibleCommonMissingIndices
 
@@ -54,12 +54,7 @@ theorem P2905_T2_EmptyCommonMissingLocation {V E : Type*}
   let B := HierarchyFullTailPrefix C (ell - 1)
   let I := HierarchyEligibleCommonMissingIndices G k e0 input T phi ett base C ctx
   have hAT : TreeSequenceInitialSegment A T := by
-    have starNext (i : Fin (C.hierarchy.dividerCount + 1)) :
-        TreeSequenceInitialSegment (HierarchyStarredStage C.hierarchy i)
-          (C.hierarchy.stage i.succ) :=
-      Fin.cases C.hierarchy.coreInsideFirst (fun i => C.hierarchy.nested i.succ) i
-    simpa only [Fin.succ_last, C.hierarchy.terminalStage] using
-      starNext (Fin.last C.hierarchy.dividerCount)
+    exact C.hierarchy.lastStarredInitialSegment
   have htail : 3 ≤ ell := by change j < ell at hpathUpper; change 2 ≤ j at hpathLower; omega
   have hell : ell = T.length - A.length := rfl
   have prefixLen (r : ℕ) (hr : r ≤ ell) :

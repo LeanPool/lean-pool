@@ -260,13 +260,8 @@ private theorem helper_branch_424.{u_1, u_2} :
       rw [hkindReplacement]
       exact hPE
     have hcoreU : TreeSequenceInitialSegment baseU.core U := by
-      have h := H.coreInsideFirst
-      have hi : (⟨1, by omega⟩ : Fin (H.dividerCount + 2)) =
-          Fin.last (H.dividerCount + 1) := by
-        apply Fin.ext
-        simp [hd]
-      rw [hi, H.terminalStage] at h
-      exact h
+      exact (H.coreInitialSegmentOfStarredStage (Fin.last _)).trans
+        H.lastStarredInitialSegment
     have hcoreSubset := TreeSequenceInitialSegmentVertexSetSubset hcoreU
     rw [hstar] at hu hv
     exact hUelem (hcoreSubset hu) (hcoreSubset hv) huv
@@ -674,13 +669,8 @@ private theorem helper_hAU_497.{u_1, u_2} :
     by_cases hPE : ett.series.data.kind (Fin.last ett.rounds) =
         some TashkinovExtensionKind.PE
     · have hcoreU : TreeSequenceInitialSegment baseU.core U := by
-        have h := H.coreInsideFirst
-        have hi : (⟨1, by omega⟩ : Fin (H.dividerCount + 2)) =
-            Fin.last (H.dividerCount + 1) := by
-          apply Fin.ext
-          simp [hd]
-        rw [hi, H.terminalStage] at h
-        exact h
+        exact (H.coreInitialSegmentOfStarredStage (Fin.last _)).trans
+          H.lastStarredInitialSegment
       simpa [hstar] using hcoreU
     · have hcoreOrig : base.core = Tn := base.nonparallel hPE
       have hAeq : A = Tn := hstar.trans (hcore.trans hcoreOrig)

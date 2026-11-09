@@ -120,39 +120,8 @@ theorem ChangeLemma {V E : Type*}
   let H := C.hierarchy
   let q : Fin (H.dividerCount + 1) := Fin.last H.dividerCount
   let A := HierarchyStarredStage H q
-  have stageToEnd : ∀ i : Fin (H.dividerCount + 1),
-      TreeSequenceInitialSegment (H.stage i.castSucc)
-        (H.stage (Fin.last (H.dividerCount + 1))) := by
-    intro index
-    exact H.stageInitialSegmentOfLE _ _ (Fin.le_last _)
   have hAsegment : TreeSequenceInitialSegment A T := by
-    rw [show T = H.stage (Fin.last (H.dividerCount + 1)) from H.terminalStage.symm]
-    by_cases hq : H.dividerCount = 0
-    · have hA : A = base.core := by
-        dsimp [A, q, HierarchyStarredStage]
-        have hz : Fin.last H.dividerCount =
-            (0 : Fin (H.dividerCount + 1)) := by
-          apply Fin.ext
-          simp [hq]
-        rw [hz]
-        rfl
-      have hs : H.stage (Fin.last (H.dividerCount + 1)) = H.stage 1 := by
-        apply congrArg H.stage
-        apply Fin.ext
-        simp [hq]
-      simpa [hA, hs] using H.coreInsideFirst
-    · have hs : A = H.stage q.castSucc := by
-        have hqsucc : ∃ r : Fin H.dividerCount, q = r.succ := by
-          refine ⟨⟨H.dividerCount - 1, by omega⟩, ?_⟩
-          apply Fin.ext
-          simp [q]
-          omega
-        rcases hqsucc with ⟨r, hr⟩
-        change HierarchyStarredStage H q = H.stage q.castSucc
-        rw [hr]
-        dsimp [HierarchyStarredStage]
-      rw [hs]
-      exact stageToEnd q
+    exact H.lastStarredInitialSegment
   have missing_to_vertex :
     ∀ c : Fin k, c ∈ TreeMissingColors phi A → T.vertex (HierarchyFirstMissingPosition phi T c) ∈
         TreeSequenceVertexSet A := by

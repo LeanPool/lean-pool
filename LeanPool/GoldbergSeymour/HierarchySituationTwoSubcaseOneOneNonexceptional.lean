@@ -2803,17 +2803,7 @@ theorem HierarchySituationTwoSubcaseOneOneNonexceptional {V E : Type*}
     · exact False.elim (hj (congrArg Fin.val hz))
     · rfl
   have hAT : TreeSequenceInitialSegment A T := by
-    by_cases hz : H.dividerCount = 0
-    · have hq : q = 0 := Fin.ext (by simp [q, hz])
-      have hs : (⟨1, by omega⟩ : Fin (H.dividerCount + 2)) =
-          Fin.last (H.dividerCount + 1) := Fin.ext (by simp [hz])
-      simpa [A, hq, HierarchyStarredStage, hs, H.terminalStage] using H.coreInsideFirst
-    · have ha : A = H.stage q.castSucc := starredAt q (by simpa [q] using hz)
-      rw [ha]
-      have hs : H.stage q.succ = T := by
-        convert H.terminalStage using 1
-        congr 1
-      simpa only [hs] using H.nested q
+    exact H.lastStarredInitialSegment
   have htail : 2 ≤ T.length - A.length := D.tailAtLeastTwo
   have hBL : B.length + 2 = T.length := by
     change min (A.length + (T.length - A.length - 2)) T.length + 2 = T.length

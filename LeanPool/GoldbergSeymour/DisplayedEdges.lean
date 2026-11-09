@@ -392,17 +392,12 @@ theorem P2813_T1_DisplayedEdges {V E : Type*}
   have starStage (r : Fin (H.dividerCount + 1)) :
       TreeSequenceInitialSegment (HierarchyStarredStage H r)
         (H.stage r.succ) := by
-    clear * - H r
-    refine Fin.cases ?_ (fun i => ?_) r
-    · exact H.coreInsideFirst
-    · exact H.nested i.succ
+    exact H.starredStageInitialSegmentNext r
   have starChain := @helper_starChain_264 (@V) (@E) inferInstance inferInstance inferInstance
       inferInstance (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@H) (@trans) (@stageChain)
       (@starStage)
   have hAT : TreeSequenceInitialSegment A T := by
-    have hh := starStage q
-    have hlast : q.succ = Fin.last (H.dividerCount + 1) := Fin.ext rfl
-    simpa [hlast, H.terminalStage] using hh
+    exact H.lastStarredInitialSegment
   have hATy := @helper_hATy_286 (@V) (@E) inferInstance inferInstance inferInstance inferInstance
       (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@H) (@hAT)
   have hTyT : TreeSequenceInitialSegment Ty T :=

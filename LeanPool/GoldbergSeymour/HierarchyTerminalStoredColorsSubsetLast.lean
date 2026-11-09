@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.HierarchyTreeFacts
+
 public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegmentFacts
 public import LeanPool.GoldbergSeymour.HierarchyTerminalStoredColors
 public import LeanPool.GoldbergSeymour.HierarchyStoredColorsAt
@@ -35,48 +37,9 @@ theorem HierarchyTerminalStoredColorsSubsetLast {V E : Type*}
         eta ∉ HierarchyTerminalStoredColors H →
         eta ∈ TreeMissingColors phi T) := by
   classical
-  have segmentRight {A B C : TreeSequence G e0}
-      (hAB : TreeSequenceInitialSegment A B) (hBC : B = C) :
-      TreeSequenceInitialSegment A C := by
-    subst C
-    exact hAB
   have starToTerminal : TreeSequenceInitialSegment
       (HierarchyStarredStage H (Fin.last H.dividerCount)) T := by
-    by_cases hz : H.dividerCount = 0
-    · have hstar : HierarchyStarredStage H (Fin.last H.dividerCount) =
-          base.core := by
-        have hlast : Fin.last H.dividerCount =
-            (0 : Fin (H.dividerCount + 1)) := by
-          apply Fin.ext
-          simp [hz]
-        rw [hlast]
-        rfl
-      rw [hstar]
-      have hindex : (1 : Fin (H.dividerCount + 2)) =
-          Fin.last (H.dividerCount + 1) := by
-        apply Fin.ext
-        simp [hz]
-      have hstage : H.stage (1 : Fin (H.dividerCount + 2)) = T :=
-        (congrArg H.stage hindex).trans H.terminalStage
-      exact segmentRight H.coreInsideFirst hstage
-    · let i : Fin H.dividerCount :=
-        ⟨H.dividerCount - 1, Nat.sub_lt (Nat.zero_lt_of_ne_zero hz) (by omega)⟩
-      have hlast : Fin.last H.dividerCount = i.succ := by
-        apply Fin.ext
-        simp [i]
-        omega
-      have hstar : HierarchyStarredStage H (Fin.last H.dividerCount) =
-          H.stage i.succ.castSucc := by
-        rw [hlast]
-        rfl
-      rw [hstar]
-      have hterminal : H.stage i.succ.succ = T := by
-        have hindex : i.succ.succ = Fin.last (H.dividerCount + 1) := by
-          apply Fin.ext
-          simp [i]
-          omega
-        exact (congrArg H.stage hindex).trans H.terminalStage
-      exact segmentRight (H.nested i.succ) hterminal
+    exact H.lastStarredInitialSegment
   have vertexSubset : TreeSequenceVertexSet
       (HierarchyStarredStage H (Fin.last H.dividerCount)) ⊆
         TreeSequenceVertexSet T := by

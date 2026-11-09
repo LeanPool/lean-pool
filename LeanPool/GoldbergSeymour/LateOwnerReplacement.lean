@@ -912,10 +912,7 @@ theorem P2905_T2_LateOwnerReplacement {V E : Type*}
       ett base C ctx.proper ctx.oneEdgeUncolored ctx.lowerRung ctx.fewerDividers
       ctx.lexicographicMinimality ctx.largeMissingSet
   have hAT : TreeSequenceInitialSegment A T := by
-    have hnext (i : Fin (H.dividerCount + 1)) :
-        TreeSequenceInitialSegment (HierarchyStarredStage H i) (H.stage i.succ) :=
-      Fin.cases H.coreInsideFirst (fun i => H.nested i.succ) i
-    simpa [A, q, Fin.succ_last, H.terminalStage] using hnext q
+    exact H.lastStarredInitialSegment
   have htail : 3 ≤ ell := by
     change 2 ≤ HierarchyPathNumber H at hpathLower
     change HierarchyPathNumber H < ell at hpathUpper

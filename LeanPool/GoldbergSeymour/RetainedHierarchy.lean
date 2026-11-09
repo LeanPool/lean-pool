@@ -307,35 +307,17 @@ theorem P2813_T1_RetainedHierarchy {V E : Type*}
     rfl
   have hA : A = H.stage q.castSucc := starPositive q hq
   have hAT : TreeSequenceInitialSegment A T := by
-    rw [hA]
-    have hh := H.nested q
-    have hlast : q.succ = Fin.last (H.dividerCount + 1) := Fin.ext rfl
-    simpa only [hlast, H.terminalStage] using hh
+    exact H.lastStarredInitialSegment
   have ordinaryToA (j : Fin (H.dividerCount + 2)) (hj : j.val ≤ H.dividerCount) :
       TreeSequenceInitialSegment (H.stage j) A := by
     rw [hA]
     exact stageChain H.dividerCount (by omega) j hj
   have coreToStar (j : Fin (H.dividerCount + 1)) :
       TreeSequenceInitialSegment base.core (HierarchyStarredStage H j) := by
-    clear * - H trans stageChain starPositive
-    by_cases hj : j = 0
-    · subst j
-      exact ⟨le_rfl, fun _ => rfl, fun _ => rfl⟩
-    · have hjp : 0 < j.val := by
-        have hne : j.val ≠ 0 := fun hh => hj (Fin.ext hh)
-        omega
-      rw [starPositive j hjp]
-      exact trans H.coreInsideFirst
-        (stageChain j.val (by omega) ⟨1, by omega⟩ (by simp; omega))
+    exact H.coreInitialSegmentOfStarredStage j
   have starToA (j : Fin (H.dividerCount + 1)) :
       TreeSequenceInitialSegment (HierarchyStarredStage H j) A := by
-    by_cases hj : j = 0
-    · subst j
-      exact coreToStar q
-    · rw [starPositive j (by
-        have hne : j.val ≠ 0 := fun hh => hj (Fin.ext hh)
-        omega)]
-      exact ordinaryToA j.castSucc (by have := j.isLt; simp only [Fin.val_castSucc]; omega)
+    exact H.starredStageInitialSegmentOfLE j q (Fin.le_last j)
   have coreA : TreeSequenceInitialSegment base.core A := coreToStar q
   have TnCore : TreeSequenceInitialSegment Tn base.core := by
     exact base.lastRoundInitialSegmentCore
