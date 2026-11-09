@@ -100,7 +100,7 @@ theorem moore_strip_arith_sharp {N X H R : ℤ} (hN : 123 ≤ N)
     (hmaster : 10 * X + 7 * H ≤ 4 * N - 200) :
     (N - H) ^ 2 < (N - H) * (2 * R + 1) + (N - 4 - X - 3 * H) * (3 * R ^ 2 - R) := by
   have hR8 : (8 : ℤ) ≤ R := by omega
-  have hvpos : (0 : ℤ) ≤ N - H := by linarith
+  have hvpos : (0 : ℤ) ≤ N - H := by linarith only [hN, hHX, hmaster]
   have hq : (0 : ℤ) ≤ N - 4 - X - 3 * H := by linarith
   have hApos : (0 : ℤ) ≤ 2 * N - X - 35 := by linarith
   have hcore := moore_strip_core_sharp hN hH hHX hmaster
@@ -225,7 +225,7 @@ theorem starved_dead_ge_123 {n : ℕ} [Nonempty (Fin n)] (G : SimpleGraph (Fin n
     have hwZ : (3 : ℤ) * (Rl : ℤ) ^ 2 - (Rl : ℤ) = (w : ℤ) := by
       have hcast : ((3 * Rl ^ 2 : ℕ) : ℤ) = ((w + Rl : ℕ) : ℤ) := by exact_mod_cast hw
       push_cast at hcast
-      linarith
+      linarith only [hw]
     rw [hwZ] at hkey
     rw [e1, e2]
     exact_mod_cast hkey

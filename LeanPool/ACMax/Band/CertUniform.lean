@@ -38,7 +38,6 @@ theorem binomial_lower_three (v t k : ℕ) :
       4 * (k + 3) * (k + 2) * (k + 1) * t ^ 3 * v ^ k := by
   induction k with
   | zero =>
-      norm_num [pow_succ]
       ring_nf
       exact le_rfl
   | succ k ih =>
@@ -47,7 +46,8 @@ theorem binomial_lower_three (v t k : ℕ) :
         3 * (v + 2 * t) ^ (k + 1 + 3)
             = (v + 2 * t) *
                 (3 * (v + 2 * t) ^ (k + 3)) := by
-              ring_nf
+              rw [Nat.add_right_comm k 1 3, pow_succ]
+              ac_rfl
         _ ≥ (v + 2 * t) *
               (3 * v ^ (k + 3) +
                 6 * (k + 3) * t * v ^ (k + 2) +
@@ -57,9 +57,8 @@ theorem binomial_lower_three (v t k : ℕ) :
               6 * (k + 1 + 3) * t * v ^ (k + 1 + 2) +
               6 * (k + 1 + 3) * (k + 1 + 2) * t ^ 2 * v ^ (k + 1 + 1) +
               4 * (k + 1 + 3) * (k + 1 + 2) * (k + 1 + 1) * t ^ 3 * v ^ (k + 1) := by
-            simp only [pow_succ]
-            nlinarith [Nat.zero_le
-              (8 * (k + 3) * (k + 2) * (k + 1) * t ^ 4 * v ^ k)]
+            convert Nat.le_add_right _
+              (8 * (k + 3) * (k + 2) * (k + 1) * t ^ 4 * v ^ k) using 1; ring
 
 theorem uniform_power_four (t v : ℕ)
     (ht43 : 43 ≤ t) (htv : t ≤ v) (hv122 : v ≤ 122)
@@ -79,10 +78,10 @@ theorem uniform_power_four (t v : ℕ)
     have hlinZ : (5 : ℤ) * v + 41 ≤ 200 + 3 * t := by
       exact_mod_cast hlin
     dsimp [A, T, V]
-    linarith
-  have hApos : (0 : ℤ) < A := by dsimp [A]; linarith
+    linarith only [hlin]
+  have hApos : (0 : ℤ) < A := by dsimp [A]; linarith only [ht43]
   set u : ℤ := T - 43 with hu
-  have hu0 : 0 ≤ u := by dsimp [u]; linarith
+  have hu0 : 0 ≤ u := by dsimp [u]; linarith only [ht43]
   have hu36 : u ≤ 36 := by
     dsimp [u, A] at *
     linarith
@@ -101,7 +100,7 @@ theorem uniform_power_four (t v : ℕ)
     clear_value u
     clear * - hu0 hcoef
     positivity
-  have hend : (T - 9) * A ^ 4 ≤ (A + 10 * T) ^ 4 := by linarith
+  have hend : (T - 9) * A ^ 4 ≤ (A + 10 * T) ^ 4 := by linarith only [hgap]
   have hcross : (A + 10 * T) * (5 * V) ≤ (5 * V + 10 * T) * A := by
     have hmonotone := mul_le_mul_of_nonneg_left hVA
       (show 0 ≤ 10 * T by linarith only [hT43])
@@ -166,15 +165,15 @@ theorem uniform_cubic_arith (t v ell : ℕ)
     have hlinZ : (5 : ℤ) * v + 41 ≤ 50 * ell + 3 * t := by
       exact_mod_cast hlin
     dsimp [X, A, L, T, V]
-    linarith
-  have hTX : 5 * T ≤ X := by dsimp [X]; linarith
+    linarith only [hlin]
+  have hTX : 5 * T ≤ X := by dsimp [X]; linarith only [htv]
   have hTA : 5 * T ≤ A := hTX.trans hXA
   have hT122 : T ≤ 122 := hTV.trans hV122
   set a : ℤ := L - 5 with ha
   set b : ℤ := T - 43 with hb
   have ha0 : 0 ≤ a := by dsimp [a]; linarith
   have hb0 : 0 ≤ b := by dsimp [b]; linarith
-  have hb79 : b ≤ 79 := by dsimp [b]; linarith
+  have hb79 : b ≤ 79 := by dsimp [b]; linarith only [htv, hv122]
   have hLa : L = a + 5 := by dsimp [a]; ring
   have hTb : T = b + 43 := by dsimp [b]; ring
   -- Keep positivity in the shifted coordinates instead of expanding their definitions.
@@ -197,7 +196,7 @@ theorem uniform_cubic_arith (t v ell : ℕ)
       ring
     rw [hid]
     positivity
-  have hcoef : 0 ≤ 10299 - 81 * b := by linarith
+  have hcoef : 0 ≤ 10299 - 81 * b := by linarith only [htv, hv122, hb]
   have hPhi : 0 ≤ P A := by
     have hid :
         P A =
@@ -219,14 +218,14 @@ theorem uniform_cubic_arith (t v ell : ℕ)
     (T - 10) * (A + X) + 5 * T * (T - 2 * L - 10)
   have hQ : 0 ≤ Q := by
     have hAX : 10 * T ≤ A + X := by linarith
-    have hcore : 0 ≤ 3 * T - 2 * L - 30 := by linarith
+    have hcore : 0 ≤ 3 * T - 2 * L - 30 := by linarith only [ht43, hell10]
     dsimp [Q]
     have hproduct := mul_le_mul_of_nonneg_left hAX (show 0 ≤ T - 10 by omega)
     have hnonneg := mul_nonneg (show 0 ≤ 5 * T by omega) hcore
     nlinarith only [hproduct, hnonneg]
   have hPX : 0 ≤ P X := by
     by_cases heq : A = 5 * T
-    · have hX : X = 5 * T := by linarith
+    · have hX : X = 5 * T := by linarith only [htv, hlin, heq]
       simpa [hX] using hPlo
     · have hstrict : 5 * T < A := lt_of_le_of_ne hTA (Ne.symm heq)
       have hwidth : 0 < A - 5 * T := sub_pos.mpr hstrict
@@ -268,7 +267,7 @@ theorem uniform_cubic_arith (t v ell : ℕ)
           4 * L * (L - 1) * (L - 2) * T ^ 3 -
           3 * (T - 10) * V ^ 3 :=
       nonneg_of_mul_nonneg_right hPX (by norm_num)
-    linarith
+    linarith only [hPX]
   dsimp [T, V, L] at hdesiredZ
   exact_mod_cast hdesiredZ
 

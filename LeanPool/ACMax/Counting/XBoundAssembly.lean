@@ -229,13 +229,13 @@ theorem all_heavy_corner_count (n : ℕ) (hn : 2 ≤ n) (G : SimpleGraph (Fin n)
                     exact absurd this (Finset.notMem_empty w)
                   have := sigma_mono (h3 w) hw4
                   rw [sigma_four] at this
-                  linarith
+                  linarith only [this]
               _ = ((G.neighborFinset v).card : ℝ) * (1 / 2) := by
                   rw [Finset.sum_const, nsmul_eq_mul]
               _ ≤ 2 := by
                   rw [G.card_neighborFinset_eq_degree, hv4]
                   norm_num
-          linarith
+          linarith only [hsup, hle]
   -- the double count: light-to-heavy incidences fit in the heavy slots
   have hdouble : ∑ t ∈ D₃, (G.neighborFinset t ∩ H).card
       + ∑ v ∈ D₄, (G.neighborFinset v ∩ H).card

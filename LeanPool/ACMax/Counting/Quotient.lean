@@ -393,9 +393,9 @@ theorem algConn_le_two_of_two_clusters [Nonempty V]
           ≤ ((2 * S₁.card * S₂.card * (S₁.card + S₂.card) : ℕ) : ℝ) :=
         Nat.cast_le.mpr hcut
       push_cast at h1
-      linarith
+      linarith only [h1]
     ring_nf
-    nlinarith [hcutR]
+    nlinarith only [hcutR]
 
 /-! ## The degree-class partition on the residual cell -/
 
@@ -778,8 +778,8 @@ theorem medges_or_single (n : ℕ) [Nonempty (Fin n)] (hn : 18 ≤ n)
       · subst e24
         exact absurd rfl hne
       · exact absurd h34 (by
-          have := hcherry t₁ t₂ t₄ e24 h12
-          tauto)
+          intro hadj
+          exact hcherry t₁ t₂ t₄ e24 h12 hadj hd1 hd2 hd4)
     by_cases e14 : t₁ = t₄
     · subst e14
       by_cases e23 : t₂ = t₃
@@ -788,18 +788,18 @@ theorem medges_or_single (n : ℕ) [Nonempty (Fin n)] (hn : 18 ≤ n)
           rw [Finset.pair_comm t₂ t₁] at hne
           exact fun h => hne (by rw [Finset.pair_comm]))
       · exact absurd h34.symm (by
-          have := hcherry t₁ t₂ t₃ e23 h12
-          tauto)
+          intro hadj
+          exact hcherry t₁ t₂ t₃ e23 h12 hadj hd1 hd2 hd3)
     by_cases e23 : t₂ = t₃
     · subst e23
       exact absurd h34 (by
-        have := hcherry t₂ t₁ t₄ e14 h12.symm
-        tauto)
+        intro hadj
+        exact hcherry t₂ t₁ t₄ e14 h12.symm hadj hd2 hd1 hd4)
     by_cases e24 : t₂ = t₄
     · subst e24
       exact absurd h34.symm (by
-        have := hcherry t₂ t₁ t₃ e13 h12.symm
-        tauto)
+        intro hadj
+        exact hcherry t₂ t₁ t₃ e13 h12.symm hadj hd2 hd1 hd3)
     · exact two_medges_fire n hn G t₁ t₂ t₃ t₄ (G.ne_of_adj h12) e13 e14
         e23 e24 (G.ne_of_adj h34) h12 h34 hd1 hd2 hd3 hd4
   · push Not at htwo

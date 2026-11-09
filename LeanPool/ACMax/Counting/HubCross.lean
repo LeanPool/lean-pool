@@ -96,7 +96,7 @@ theorem usable_twin_partners_deg_le_four (G : SimpleGraph V) (t g w w' : V)
     have h4 : sigma 4 = 1 / 2 := sigma_four
     rw [hsig] at husable
     rw [h9] at hσg; rw [h5] at hσw; rw [h4] at hσw'
-    linarith
+    linarith only [husable, hσg, hσw, hσw']
   · by_contra hcon
     have hw5 : 5 ≤ G.degree w' := by omega
     have hσw : sigma 4 ≤ sigma (G.degree w) := sigma_mono (by norm_num) hw4
@@ -105,7 +105,7 @@ theorem usable_twin_partners_deg_le_four (G : SimpleGraph V) (t g w w' : V)
     have h4 : sigma 4 = 1 / 2 := sigma_four
     rw [hsig] at husable
     rw [h9] at hσg; rw [h4] at hσw; rw [h5] at hσw'
-    linarith
+    linarith only [husable, hσg, hσw, hσw']
 
 open Classical in
 private theorem algConn_le_two_of_hub_cross_pair_hleakA : ∀ {V : Type u_1} [Fintype V] (G :
@@ -242,7 +242,7 @@ private theorem algConn_le_two_of_hub_cross_pair_hLg_1 : ∀ {V : Type u_1} [Fin
   have hcR : ((G.neighborFinset g \ insert u B).card : ℝ) + 2
       ≤ (G.degree g : ℝ) := by exact_mod_cast hc
   rw [ha_def]
-  linarith
+  linarith only [hcR]
 
 open Classical in
 private theorem algConn_le_two_of_hub_cross_pair_hLg_2 : ∀ {V : Type u_1} [Fintype V] (G :
@@ -277,7 +277,7 @@ private theorem algConn_le_two_of_hub_cross_pair_hLg_step1 : ∀ {V : Type u_1} 
   have hcR : ((G.neighborFinset g \ insert u B).card : ℝ) + 1
       ≤ (G.degree g : ℝ) := by exact_mod_cast hc
   rw [ha_def]
-  linarith
+  linarith only [hcR]
 
 open Classical in
 private theorem algConn_le_two_of_hub_cross_pair_hLg_step2 : ∀ {V : Type u_1} [Fintype V]
@@ -458,11 +458,11 @@ theorem algConn_le_two_of_hub_cross_pair [Nonempty V]
   have ha3 : (3 : ℝ) ≤ a := by
     rw [ha_def]
     have : (4 : ℝ) ≤ (G.degree g : ℝ) := by exact_mod_cast hD
-    linarith
+    linarith only [this]
   have hb3 : (3 : ℝ) ≤ b := by
     rw [hb_def]
     have : (4 : ℝ) ≤ (G.degree g' : ℝ) := by exact_mod_cast hD'
-    linarith
+    linarith only [this]
   have ha0 : a ≠ 0 := by linarith
   have hb0 : b ≠ 0 := by linarith
   set s : ℝ := 1 / a with hs_def
@@ -478,7 +478,7 @@ theorem algConn_le_two_of_hub_cross_pair [Nonempty V]
   have has : a * s = 1 := by rw [hs_def]; field_simp
   have hbs : b * s' = 1 := by rw [hs'_def]; field_simp
   set w0 : ℝ := 1 / 2 + (s - s') / 2 with hw0_def
-  have hw0_pos : 0 < w0 := by rw [hw0_def]; linarith
+  have hw0_pos : 0 < w0 := by rw [hw0_def]; linarith only [hs_pos, hs_le, hs'_le]
   set p : V → ℝ := fun w => if w = g then s else 1 / 2 with hp_def
   set q : V → ℝ := fun w => if w = g' then s' else w0 with hq_def
   -- Values off the hubs.

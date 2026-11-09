@@ -121,7 +121,7 @@ theorem mIncidence_le_two (n : ℕ) (G : SimpleGraph (Fin n))
         rw [← this]
         exact Finset.mem_insert_self t {u}
       rw [Finset.mem_insert, Finset.mem_singleton] at hmem
-      tauto
+      exact hmem.elim hta htb
     have htermab : ∀ t : Fin n, G.degree t = 3 →
         (G.neighborFinset t ∩ deg3Set G).card ≤ 1 := by
       intro t ht3
@@ -495,37 +495,37 @@ theorem sigma_pair_gap {d₁ d₂ : ℕ} (h₁ : 5 ≤ d₁) (h₂ : 5 ≤ d₂)
       have h8 : d ≤ 8 := by omega
       have hle : sigma d ≤ sigma 8 := sigma_mono (by omega) h8
       have h8v : sigma 8 = 5 / 6 := by norm_num [sigma]
-      linarith
+      exact (not_lt_of_ge (hle.trans_eq h8v)) hgt
     have hge : sigma 9 ≤ sigma d := sigma_mono (by norm_num) hd9
     have h9v : sigma 9 = 6 / 7 := by norm_num [sigma]
-    linarith
+    exact h9v ▸ hge
   by_cases hd₁5 : d₁ = 5
   · have h₁v : sigma d₁ = 2 / 3 := by rw [hd₁5]; exact sigma_five
     have hgt : (5 / 6 : ℝ) < sigma d₂ := by
       rw [h₁v] at h
-      linarith
+      linarith only [h]
     have := key d₂ h₂ hgt
     rw [h₁v]
-    linarith
+    linarith only [this]
   by_cases hd₂5 : d₂ = 5
   · have h₂v : sigma d₂ = 2 / 3 := by rw [hd₂5]; exact sigma_five
     have hgt : (5 / 6 : ℝ) < sigma d₁ := by
       rw [h₂v] at h
-      linarith
+      linarith only [h]
     have := key d₁ h₁ hgt
     rw [h₂v]
-    linarith
+    linarith only [this]
   -- both degrees ≥ 6
   have h₁6 : 6 ≤ d₁ := by omega
   have h₂6 : 6 ≤ d₂ := by omega
   have hs₁ : (3 / 4 : ℝ) ≤ sigma d₁ := by
     have := sigma_mono (by norm_num : 3 ≤ 6) h₁6
     rw [sigma_six] at this
-    linarith
+    linarith only [this]
   have hs₂ : (3 / 4 : ℝ) ≤ sigma d₂ := by
     have := sigma_mono (by norm_num : 3 ≤ 6) h₂6
     rw [sigma_six] at this
-    linarith
+    linarith only [this]
   by_cases hd₁6 : d₁ = 6
   · by_cases hd₂6 : d₂ = 6
     · rw [hd₁6, hd₂6, sigma_six] at h
@@ -534,15 +534,15 @@ theorem sigma_pair_gap {d₁ d₂ : ℕ} (h₁ : 5 ≤ d₁) (h₂ : 5 ≤ d₂)
       have hσ₂ : (4 / 5 : ℝ) ≤ sigma d₂ := by
         have := sigma_mono (by norm_num : 3 ≤ 7) h₂7
         have h7v : sigma 7 = 4 / 5 := by norm_num [sigma]
-        linarith
+        linarith only [this, h7v]
       rw [hd₁6, sigma_six]
-      linarith
+      linarith only [hσ₂]
   · have h₁7 : 7 ≤ d₁ := by omega
     have hσ₁ : (4 / 5 : ℝ) ≤ sigma d₁ := by
       have := sigma_mono (by norm_num : 3 ≤ 7) h₁7
       have h7v : sigma 7 = 4 / 5 := by norm_num [sigma]
-      linarith
-    linarith
+      linarith only [this, h7v]
+    linarith only [h, hs₂, hσ₁]
 
 open Classical in
 /-- **Sharp heavy σ-inflow (integer profile).**  A suppressed vertex receives
@@ -578,7 +578,7 @@ theorem heavy_sigma_into_suppressed_sharp (G : SimpleGraph (Fin n)) (t : Fin n)
     have hzero : ∑ w ∈ (G.neighborFinset t).filter (fun w => ¬ 5 ≤ G.degree w),
         sigma (G.degree w) = 0 := by
       rw [hempty, Finset.sum_empty]
-    linarith
+    linarith only [hs, hsplit, hzero]
   · -- exactly one light neighbour, of degree 4
     have hcomp1 :
         ((G.neighborFinset t).filter (fun w => ¬ 5 ≤ G.degree w)).card = 1 := by
@@ -615,7 +615,7 @@ theorem heavy_sigma_into_suppressed_sharp (G : SimpleGraph (Fin n)) (t : Fin n)
       rw [hpair, Finset.sum_pair hne]
     have hgt : (3 / 2 : ℝ) < sigma (G.degree w₁) + sigma (G.degree w₂) := by
       rw [← hsum2]
-      linarith
+      linarith only [hs, hsplit, hcompsum]
     rw [hsum2]
     exact sigma_pair_gap hw₁5 hw₂5 hgt
 
@@ -650,7 +650,8 @@ theorem weighted_heavy_ledger_sharp (G : SimpleGraph (Fin n))
             rw [hS, Finset.mem_filter] at ht
             exact heavy_sigma_into_suppressed_sharp G t h3 ht.2.1 ht.2.2)
         rw [nsmul_eq_mul] at hb
-        linarith
+        rw [mul_comm]
+        exact hb
     _ = ∑ t ∈ S, ∑ w ∈ H, (if G.Adj t w then sigma (G.degree w) else 0) := by
         refine Finset.sum_congr rfl fun t _ => ?_
         rw [← hset t, Finset.sum_filter]

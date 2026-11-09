@@ -55,26 +55,32 @@ theorem algConn_le_two_of_ind_2K2 {V : Type*} [Fintype V] [Nonempty V]
     have := (Finset.card_le_card hsub).trans (cardle p q r); omega
   have hab' : a ≠ b := by
     rintro rfl
-    exact collapse a c d (by intro x; simp only [Finset.mem_insert, Finset.mem_singleton]; tauto)
+    exact collapse a c d (by
+      intro x; simp only [Finset.mem_insert, Finset.mem_singleton]; clear * - x; tauto)
   have hac' : a ≠ c := by
     rintro rfl
-    exact collapse a b d (by intro x; simp only [Finset.mem_insert, Finset.mem_singleton]; tauto)
+    exact collapse a b d (by
+      intro x; simp only [Finset.mem_insert, Finset.mem_singleton]; clear * - x; tauto)
   have had' : a ≠ d := by
     rintro rfl
-    exact collapse a b c (by intro x; simp only [Finset.mem_insert, Finset.mem_singleton]; tauto)
+    exact collapse a b c (by
+      intro x; simp only [Finset.mem_insert, Finset.mem_singleton]; clear * - x; tauto)
   have hbc' : b ≠ c := by
     rintro rfl
-    exact collapse a b d (by intro x; simp only [Finset.mem_insert, Finset.mem_singleton]; tauto)
+    exact collapse a b d (by
+      intro x; simp only [Finset.mem_insert, Finset.mem_singleton]; clear * - x; tauto)
   have hbd' : b ≠ d := by
     rintro rfl
-    exact collapse a b c (by intro x; simp only [Finset.mem_insert, Finset.mem_singleton]; tauto)
+    exact collapse a b c (by
+      intro x; simp only [Finset.mem_insert, Finset.mem_singleton]; clear * - x; tauto)
   have hcd' : c ≠ d := by
     rintro rfl
-    exact collapse a b c (by intro x; simp only [Finset.mem_insert, Finset.mem_singleton]; tauto)
+    exact collapse a b c (by
+      intro x; simp only [Finset.mem_insert, Finset.mem_singleton]; clear * - x; tauto)
   have hPN : ({a, b} : Finset V) ∪ {c, d} = {a, b, c, d} := by
     ext x
     simp only [Finset.mem_union, Finset.mem_insert, Finset.mem_singleton]
-    tauto
+    exact or_assoc
   -- The two cross-edge intersections are empty.
   have ha_inter0 : G.neighborFinset a ∩ ({c, d} : Finset V) = ∅ := by
     ext x

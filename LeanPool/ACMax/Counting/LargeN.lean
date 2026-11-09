@@ -534,7 +534,7 @@ private theorem bigclean_pair_coverage_hP2le : ∀ (n : ℕ) (G : SimpleGraph (F
             rw [Finset.offDiag_card, Nat.sub_le_iff_le_add]
             have hmul : (G.neighborFinset w ∩ T).card * (G.neighborFinset w ∩ T).card
                 ≤ 2 * (G.neighborFinset w ∩ T).card := Nat.mul_le_mul_right _ h4
-            linarith
+            linarith only [hmul]
         _ = 1 * ∑ w ∈ Finset.univ.filter (fun w : Fin n => ¬9 ≤ G.degree w),
               (G.neighborFinset w ∩ T).card := by
             rw [Finset.mul_sum]
@@ -553,7 +553,7 @@ private theorem bigclean_pair_coverage_hP2le : ∀ (n : ℕ) (G : SimpleGraph (F
               _ ≤ 2 * T.card := by simpa only [hTdef] using this
         _ = 2 * T.card := by ring
     have hdist : (A + 2) * T.card = A * T.card + 2 * T.card := by ring
-    linarith
+    linarith only [hbig, hsmall]
   calc P2.card
       ≤ (Finset.univ.biUnion
           (fun w : Fin n => (G.neighborFinset w ∩ T).offDiag)).card :=
@@ -858,7 +858,9 @@ theorem nat_quad_bound (x b c : ℕ) (h : x * (x - 1) ≤ b * x + c) :
   have heq : x * (b + c + 1) = b * x + (c * x + x) := by ring
   have hcx : c ≤ c * x := Nat.le_mul_of_pos_right c (by omega)
   have hx1 : 1 ≤ x := by omega
-  linarith
+  rw [heq] at h3
+  have hcancel : c * x + x ≤ c := Nat.le_of_add_le_add_left (h3.trans h)
+  exact Nat.not_succ_le_self c ((Nat.add_le_add hcx hx1).trans hcancel)
 
 /-! ## The cloud bound and unconditional large-`n` ACMAX
 

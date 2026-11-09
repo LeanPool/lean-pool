@@ -83,21 +83,21 @@ theorem algConn_le_two_of_sigma_apex_pair [Nonempty V]
   have hDpos : ∀ w : V, (0 : ℝ) < (G.degree w : ℝ) - 2 := by
     intro w
     have : (3 : ℝ) ≤ (G.degree w : ℝ) := by exact_mod_cast h3 w
-    linarith
+    linarith only [this]
   have hterm_nonneg : ∀ w : V, (0 : ℝ) ≤ 1 / ((G.degree w : ℝ) - 2) :=
     fun w => le_of_lt (div_pos one_pos (hDpos w))
   have hcA1 : (1 : ℝ) ≤ cA := by
     rw [hcA]
     have : (0 : ℝ) ≤ ∑ w ∈ (G.neighborFinset u).erase g, 1 / ((G.degree w : ℝ) - 2) :=
       Finset.sum_nonneg fun w _ => hterm_nonneg w
-    linarith
+    exact le_add_of_nonneg_right this
   have hcB1 : (1 : ℝ) ≤ cB := by
     rw [hcB]
     have : (0 : ℝ) ≤ ∑ w ∈ (G.neighborFinset v).erase g, 1 / ((G.degree w : ℝ) - 2) :=
       Finset.sum_nonneg fun w _ => hterm_nonneg w
-    linarith
-  have hcA0 : (0 : ℝ) < cA := by linarith
-  have hcB0 : (0 : ℝ) < cB := by linarith
+    exact le_add_of_nonneg_right this
+  have hcA0 : (0 : ℝ) < cA := lt_of_lt_of_le zero_lt_one hcA1
+  have hcB0 : (0 : ℝ) < cB := lt_of_lt_of_le zero_lt_one hcB1
   refine algConn_le_two_of_apex_double_star G u v g cB cA
     (fun w => cB / ((G.degree w : ℝ) - 2))
     (fun w => cA / ((G.degree w : ℝ) - 2))
@@ -152,10 +152,10 @@ theorem algConn_le_two_of_sigma_apex_pair [Nonempty V]
           ≤ (G.degree w : ℝ) - 1 := by
         have : ((G.neighborFinset w \ insert z Z).card : ℝ) + 1
             ≤ (G.degree w : ℝ) := by exact_mod_cast hcard
-        linarith
+        linarith only [this]
       have hid := sigma_slot_identity c (h3 w)
       have hp2 : (0 : ℝ) ≤ (c / ((G.degree w : ℝ) - 2)) ^ 2 := sq_nonneg _
-      nlinarith [mul_le_mul_of_nonneg_right hleakR hp2]
+      linarith only [hid, mul_le_mul_of_nonneg_right hleakR hp2]
     -- sum the per-slot bounds on each side
     have hsumA : ∑ w ∈ (G.neighborFinset u).erase g, ((cB - cB / ((G.degree w : ℝ) - 2)) ^ 2)
         + ∑ w ∈ (G.neighborFinset u).erase g, ((G.neighborFinset w \ insert u ((G.neighborFinset
@@ -179,7 +179,7 @@ theorem algConn_le_two_of_sigma_apex_pair [Nonempty V]
       rw [h2] at h1
       have h3' : cB ^ 2 * (∑ w ∈ (G.neighborFinset u).erase g, sigma (G.degree w)) ≤ cB ^ 2 * 1 :=
         mul_le_mul_of_nonneg_left hsu (sq_nonneg cB)
-      linarith
+      linarith only [h1, h3']
     have hsumB : ∑ w ∈ (G.neighborFinset v).erase g, ((cA - cA / ((G.degree w : ℝ) - 2)) ^ 2)
         + ∑ w ∈ (G.neighborFinset v).erase g, ((G.neighborFinset w \ insert v ((G.neighborFinset
           u).erase g)).card : ℝ)
@@ -202,9 +202,9 @@ theorem algConn_le_two_of_sigma_apex_pair [Nonempty V]
       rw [h2] at h1
       have h3' : cA ^ 2 * (∑ w ∈ (G.neighborFinset v).erase g, sigma (G.degree w)) ≤ cA ^ 2 * 1 :=
         mul_le_mul_of_nonneg_left hsv (sq_nonneg cA)
-      linarith
+      linarith only [h1, h3']
     rw [hcross]
-    linarith [hsumA, hsumB]
+    linarith only [hsumA, hsumB]
 
 open Classical in
 /-- Generic σ-slot bound: for any adjacent anchor `z` and slot `w`, with
@@ -236,10 +236,10 @@ theorem sigma_slot_le (G : SimpleGraph V) (h3 : ∀ w, 3 ≤ G.degree w)
       ≤ (G.degree w : ℝ) - 1 := by
     have : ((G.neighborFinset w \ insert z Z).card : ℝ) + 1
         ≤ (G.degree w : ℝ) := by exact_mod_cast hcard
-    linarith
+    linarith only [this]
   have hid := sigma_slot_identity c (h3 w)
   have hp2 : (0 : ℝ) ≤ (c / ((G.degree w : ℝ) - 2)) ^ 2 := sq_nonneg _
-  nlinarith [mul_le_mul_of_nonneg_right hleakR hp2]
+  linarith only [hid, mul_le_mul_of_nonneg_right hleakR hp2]
 
 open Classical in
 /-- Sharp σ-slot bound at a crossing slot: if additionally `w` has a
@@ -278,10 +278,10 @@ theorem sigma_slot_le_sharp (G : SimpleGraph V) (h3 : ∀ w, 3 ≤ G.degree w)
       ≤ (G.degree w : ℝ) - 2 := by
     have : ((G.neighborFinset w \ insert z Z).card : ℝ) + 2
         ≤ (G.degree w : ℝ) := by exact_mod_cast hcard
-    linarith
+    linarith only [this]
   have hid := sigma_slot_identity c (h3 w)
   have hp2 : (0 : ℝ) ≤ (c / ((G.degree w : ℝ) - 2)) ^ 2 := sq_nonneg _
-  nlinarith [mul_le_mul_of_nonneg_right hleakR hp2]
+  linarith only [hid, mul_le_mul_of_nonneg_right hleakR hp2]
 
 open Classical in
 private theorem algConn_le_two_of_sigma_cross_pair_hcrossle : ∀ {V : Type u_1} [Fintype V]
@@ -381,10 +381,10 @@ private theorem algConn_le_two_of_sigma_cross_pair_hsideU : ∀ {V : Type u_1} [
       rw [ite_eq_left rfl]
       have hsharp := sigma_slot_le_sharp G h3 cB u (G.neighborFinset v)
         w h' hadj_uw hhh' hh'N (fun hc => huv (hc ▸ (G.adj_symm hh')))
-      linarith
+      linarith only [hsharp]
     · rw [ite_eq_right hwh]
       have hgen := sigma_slot_le G h3 cB u (G.neighborFinset v) w hadj_uw
-      linarith
+      linarith only [hgen]
   have hsum := Finset.sum_le_sum hpt
   rw [Finset.sum_add_distrib] at hsum
   have hrhs : ∑ w ∈ G.neighborFinset u,
@@ -400,7 +400,7 @@ private theorem algConn_le_two_of_sigma_cross_pair_hsideU : ∀ {V : Type u_1} [
     rw [Finset.sum_ite_eq' (G.neighborFinset u) h]
     exact ite_eq_left hhN
   rw [hrhs] at hsum
-  linarith
+  exact hsum
 
 open Classical in
 private theorem algConn_le_two_of_sigma_cross_pair_hsideV : ∀ {V : Type u_1} [Fintype V] (G
@@ -442,10 +442,10 @@ private theorem algConn_le_two_of_sigma_cross_pair_hsideV : ∀ {V : Type u_1} [
       have hsharp := sigma_slot_le_sharp G h3 cA v (G.neighborFinset u)
         w h hadj_vw (G.adj_symm hhh') hhN
         (fun hc => huv (hc ▸ (G.adj_symm hh)).symm)
-      linarith
+      linarith only [hsharp]
     · rw [ite_eq_right hwh]
       have hgen := sigma_slot_le G h3 cA v (G.neighborFinset u) w hadj_vw
-      linarith
+      linarith only [hgen]
   have hsum := Finset.sum_le_sum hpt
   rw [Finset.sum_add_distrib] at hsum
   have hrhs : ∑ w ∈ G.neighborFinset v,
@@ -461,7 +461,7 @@ private theorem algConn_le_two_of_sigma_cross_pair_hsideV : ∀ {V : Type u_1} [
     rw [Finset.sum_ite_eq' (G.neighborFinset v) h']
     exact ite_eq_left hh'N
   rw [hrhs] at hsum
-  linarith
+  exact hsum
 
 open Classical in
 private theorem algConn_le_two_of_sigma_cross_pair_hkey : ∀ {V : Type u_1} [Fintype V] (G :
@@ -489,9 +489,9 @@ private theorem algConn_le_two_of_sigma_cross_pair_hkey : ∀ {V : Type u_1} [Fi
   set s := 1 / ((G.degree h : ℝ) - 2)
   set s' := 1 / ((G.degree h' : ℝ) - 2)
   have hs1 : cB ^ 2 * sigS G u ≤ cB ^ 2 * (2 - s) :=
-    mul_le_mul_of_nonneg_left (by linarith) (sq_nonneg cB)
+    mul_le_mul_of_nonneg_left (by linarith only [hsu, hsh]) (sq_nonneg cB)
   have hs2 : cA ^ 2 * sigS G v ≤ cA ^ 2 * (2 - s') :=
-    mul_le_mul_of_nonneg_left (by linarith) (sq_nonneg cA)
+    mul_le_mul_of_nonneg_left (by linarith only [hsv, hsh']) (sq_nonneg cA)
   have hs2le : s ^ 2 ≤ s := by nlinarith only [hsh, hsh1]
   have hs'2le : s' ^ 2 ≤ s' := by nlinarith only [hsh', hsh'1]
   have hcross2 : 2 * (cB * s) * (cA * s') ≤ cB ^ 2 * s + cA ^ 2 * s' := by
@@ -523,21 +523,21 @@ theorem algConn_le_two_of_sigma_cross_pair [Nonempty V]
   have hDpos : ∀ w : V, (0 : ℝ) < (G.degree w : ℝ) - 2 := by
     intro w
     have : (3 : ℝ) ≤ (G.degree w : ℝ) := by exact_mod_cast h3 w
-    linarith
+    linarith only [this]
   have hterm_nonneg : ∀ w : V, (0 : ℝ) ≤ 1 / ((G.degree w : ℝ) - 2) :=
     fun w => le_of_lt (div_pos one_pos (hDpos w))
   have hcA1 : (1 : ℝ) ≤ cA := by
     rw [hcA]
     have : (0 : ℝ) ≤ ∑ w ∈ G.neighborFinset u, 1 / ((G.degree w : ℝ) - 2) :=
       Finset.sum_nonneg fun w _ => hterm_nonneg w
-    linarith
+    exact le_add_of_nonneg_right this
   have hcB1 : (1 : ℝ) ≤ cB := by
     rw [hcB]
     have : (0 : ℝ) ≤ ∑ w ∈ G.neighborFinset v, 1 / ((G.degree w : ℝ) - 2) :=
       Finset.sum_nonneg fun w _ => hterm_nonneg w
-    linarith
-  have hcA0 : (0 : ℝ) < cA := by linarith
-  have hcB0 : (0 : ℝ) < cB := by linarith
+    exact le_add_of_nonneg_right this
+  have hcA0 : (0 : ℝ) < cA := lt_of_lt_of_le zero_lt_one hcA1
+  have hcB0 : (0 : ℝ) < cB := lt_of_lt_of_le zero_lt_one hcB1
   have hhN : h ∈ G.neighborFinset u := (G.mem_neighborFinset u h).mpr hh
   have hh'N : h' ∈ G.neighborFinset v := (G.mem_neighborFinset v h').mpr hh'
   refine algConn_le_two_of_weighted_double_star G u v cB cA
@@ -582,11 +582,11 @@ theorem algConn_le_two_of_sigma_cross_pair [Nonempty V]
       have hsh1 : 1 / ((G.degree h : ℝ) - 2) ≤ 1 := by
         rw [div_le_one (hDpos h)]
         have : (3 : ℝ) ≤ (G.degree h : ℝ) := by exact_mod_cast h3 h
-        linarith
+        linarith only [this]
       have hsh'1 : 1 / ((G.degree h' : ℝ) - 2) ≤ 1 := by
         rw [div_le_one (hDpos h')]
         have : (3 : ℝ) ≤ (G.degree h' : ℝ) := by exact_mod_cast h3 h'
-        linarith
+        linarith only [this]
       have hkey :=
           algConn_le_two_of_sigma_cross_pair_hkey (V := V) (G := G) (u := u) (v := v) (h := h)
             (h' := h') (hsu) (hsv) (hsh) (hsh') (hsh1) (hsh'1)
@@ -617,7 +617,7 @@ theorem algConn_le_two_of_sigma_cross_pair [Nonempty V]
               + 2 * ∑ w ∈ G.neighborFinset u, (cB / ((G.degree w : ℝ) - 2)) ^ 2 := by
           rw [Finset.sum_add_distrib, ← Finset.mul_sum, ← Finset.mul_sum, sigS]
         rw [hrhs] at hsum
-        linarith
+        exact hsum
       have hsideV : ∑ w ∈ G.neighborFinset v,
           ((cA - cA / ((G.degree w : ℝ) - 2)) ^ 2)
           + ∑ w ∈ G.neighborFinset v,
@@ -636,17 +636,17 @@ theorem algConn_le_two_of_sigma_cross_pair [Nonempty V]
               + 2 * ∑ w ∈ G.neighborFinset v, (cA / ((G.degree w : ℝ) - 2)) ^ 2 := by
           rw [Finset.sum_add_distrib, ← Finset.mul_sum, ← Finset.mul_sum, sigS]
         rw [hrhs] at hsum
-        linarith
+        exact hsum
       have hsu2 : cB ^ 2 * sigS G u ≤ cB ^ 2 * 2 := by
         have hsh : (0 : ℝ) < 1 / ((G.degree h : ℝ) - 2) :=
           div_pos one_pos (hDpos h)
-        exact mul_le_mul_of_nonneg_left (by linarith) (sq_nonneg cB)
+        exact mul_le_mul_of_nonneg_left (by linarith only [hsu, hsh]) (sq_nonneg cB)
       have hsv2 : cA ^ 2 * sigS G v ≤ cA ^ 2 * 2 := by
         have hsh' : (0 : ℝ) < 1 / ((G.degree h' : ℝ) - 2) :=
           div_pos one_pos (hDpos h')
-        exact mul_le_mul_of_nonneg_left (by linarith) (sq_nonneg cA)
+        exact mul_le_mul_of_nonneg_left (by linarith only [hsv, hsh']) (sq_nonneg cA)
       rw [hcross0]
-      linarith [hsideU, hsideV, hsu2, hsv2]
+      linarith only [hsideU, hsideV, hsu2, hsv2]
 
 end ACMax
 
@@ -682,7 +682,7 @@ theorem sigma_setsum_ge_free (G : SimpleGraph (Fin n)) (K : Finset (Fin n))
         refine Finset.sum_le_sum fun x hx => ?_
         have := sigma_mono (by norm_num : 3 ≤ 5) (hK x hx)
         rw [sigma_five] at this
-        linarith
+        linarith only [this]
 
 open Classical in
 /-- Any set of σ-values (degrees ≥ 3) has sum at most `card`. -/
@@ -708,7 +708,7 @@ theorem sigma_setsum_triple_gap (G : SimpleGraph (Fin n)) (K : Finset (Fin n))
     have hle : ∑ x ∈ K, sigma (G.degree x) ≤ (K.card : ℝ) :=
       sigma_setsum_le_card G K (fun x hx => by have := hK x hx; omega)
     have : (K.card : ℝ) ≤ 2 := by exact_mod_cast Nat.le_of_lt_succ (by omega)
-    linarith
+    linarith only [h2, hle, this]
   by_cases hall5 : ∀ x ∈ K, G.degree x = 5
   · -- all degree 5: sum = (2/3)·card > 2 forces card ≥ 4
     have hsum : ∑ x ∈ K, sigma (G.degree x) = (2 / 3 : ℝ) * (K.card : ℝ) := by
@@ -721,7 +721,7 @@ theorem sigma_setsum_triple_gap (G : SimpleGraph (Fin n)) (K : Finset (Fin n))
       norm_num at h2
     have : (4 : ℝ) ≤ (K.card : ℝ) := by exact_mod_cast hcard4
     rw [hsum]
-    linarith
+    linarith only [h2, hsum, this]
   · -- some member has degree ≥ 6
     simp only [not_forall] at hall5
     obtain ⟨x, hxK, hx5⟩ := hall5
@@ -729,7 +729,7 @@ theorem sigma_setsum_triple_gap (G : SimpleGraph (Fin n)) (K : Finset (Fin n))
     have hσx : (3 / 4 : ℝ) ≤ sigma (G.degree x) := by
       have := sigma_mono (by norm_num : 3 ≤ 6) hx6
       rw [sigma_six] at this
-      linarith
+      linarith only [this]
     have hrest : (2 / 3 : ℝ) * ((K.erase x).card : ℝ)
         ≤ ∑ y ∈ K.erase x, sigma (G.degree y) :=
       sigma_setsum_ge_free G _ (fun y hy => hK y (Finset.mem_of_mem_erase hy))
@@ -740,7 +740,7 @@ theorem sigma_setsum_triple_gap (G : SimpleGraph (Fin n)) (K : Finset (Fin n))
         = sigma (G.degree x) + ∑ y ∈ K.erase x, sigma (G.degree y) :=
       (Finset.add_sum_erase K _ hxK).symm
     rw [hsplit]
-    linarith
+    linarith only [hσx, hrest, hcard2R]
 
 /-! ## The neighbourhood profile of a heavy vertex -/
 
@@ -842,10 +842,10 @@ certificate `(d−16)(d−2) ≥ 0`. -/
 theorem sigma_transfer_sat {d : ℕ} (hd : 16 ≤ d) :
     sigma d * (d : ℝ) ≤ (5 / 4 : ℝ) * ((d : ℝ) - 4) := by
   have hdR : (16 : ℝ) ≤ (d : ℝ) := by exact_mod_cast hd
-  have hpos : (0 : ℝ) < (d : ℝ) - 2 := by linarith
+  have hpos : (0 : ℝ) < (d : ℝ) - 2 := by linarith only [hdR]
   rw [sigma, div_mul_eq_mul_div, div_le_iff₀ hpos]
-  nlinarith [mul_nonneg (show (0 : ℝ) ≤ (d : ℝ) - 16 by linarith)
-    (show (0 : ℝ) ≤ (d : ℝ) - 2 by linarith)]
+  nlinarith [mul_nonneg (show (0 : ℝ) ≤ (d : ℝ) - 16 by linarith only [hdR])
+    (show (0 : ℝ) ≤ (d : ℝ) - 2 by linarith only [hdR])]
 
 /-- The usable transfer follows from four nonnegative polynomial terms. -/
 private theorem sigma_usable_transfer_arithmetic (d f j S : ℝ)
@@ -892,23 +892,23 @@ theorem sigma_transfer_nonusable (G : SimpleGraph (Fin n)) (w : Fin n)
     have h1R : ((hubTwins G w).card : ℝ) + (f : ℝ)
         + (((G.neighborFinset w).filter (fun u => 5 ≤ G.degree u)).card : ℝ)
         = (d : ℝ) := by exact_mod_cast hpart
-    linarith
+    linarith only [h1R]
   rw [haj]
   have hSgt : (2 : ℝ) - (1 / 2 : ℝ) * (f : ℝ) < S := by
     rw [hdecomp] at hs
-    linarith
+    linarith only [hs]
   by_cases hcase : d = 5 ∧ f = 0
   · -- the exact tie: `S > 2` over a set of heavy σ-values ⟹ `S ≥ 25/12`
     obtain ⟨hd5, hf0⟩ := hcase
     have hS2 : (2 : ℝ) < S := by
       rw [hf0] at hSgt
       push_cast at hSgt
-      linarith
+      linarith only [hSgt]
     have hS25 : (25 / 12 : ℝ) ≤ S :=
       sigma_setsum_triple_gap G _ (fun x hx => (Finset.mem_filter.mp hx).2) hS2
     rw [hd5, hf0, sigma_five]
     push_cast
-    linarith
+    linarith only [hS25]
   · -- real relaxation: certificate `(d−4)(d−6+2f) ≥ 0`
     have hdfR : (0 : ℝ) ≤ ((d : ℝ) - 4) * ((d : ℝ) - 6 + 2 * (f : ℝ)) := by
       have hd5R : (5 : ℝ) ≤ (d : ℝ) := by exact_mod_cast hd
@@ -922,12 +922,12 @@ theorem sigma_transfer_nonusable (G : SimpleGraph (Fin n)) (w : Fin n)
         have hf1R : (1 : ℝ) ≤ (f : ℝ) := by exact_mod_cast hf1
         rw [hd5]
         push_cast
-        nlinarith
+        linarith only [hf1R]
       · have h6R : (6 : ℝ) ≤ (d : ℝ) := by exact_mod_cast h
         have hfR : (0 : ℝ) ≤ (f : ℝ) := by positivity
-        nlinarith
+        exact mul_nonneg (by linarith only [hd5R]) (by linarith only [h6R, hfR])
     have hd5R : (5 : ℝ) ≤ (d : ℝ) := by exact_mod_cast hd
-    have hpos : (0 : ℝ) < (d : ℝ) - 2 := by linarith
+    have hpos : (0 : ℝ) < (d : ℝ) - 2 := by linarith only [hd5R]
     rw [sigma, div_mul_eq_mul_div, div_le_iff₀ hpos]
     exact sigma_nonusable_transfer_arithmetic d f S hpos hdfR hSgt
 
@@ -959,18 +959,18 @@ theorem sigma_transfer_usable (G : SimpleGraph (Fin n)) (w : Fin n)
     exact sigma_setsum_ge_free G _ (fun x hx => (Finset.mem_filter.mp hx).2)
   have hSle : (1 / 2 : ℝ) * (f : ℝ) + S ≤ 2 := by
     rw [hdecomp] at hs
-    linarith
+    linarith only [hs]
   have hfj3 : 3 ≤ f + j := by omega
   have haj : ((hubTwins G w).card : ℝ) + (j : ℝ) = (d : ℝ) - (f : ℝ) := by
     have h1R : ((hubTwins G w).card : ℝ) + (f : ℝ) + (j : ℝ) = (d : ℝ) := by
       exact_mod_cast hpart
-    linarith
+    linarith only [h1R]
   rw [haj]
   rcases Nat.lt_or_ge d 6 with hd5' | hd6
   · -- `d = 5`: the class degenerates to `j = 0, 4 ≤ f`
     have hd5 : d = 5 := by omega
     have h3f4j : 3 * f + 4 * j ≤ 12 := by
-      have : (3 : ℝ) * (f : ℝ) + 4 * (j : ℝ) ≤ 12 := by linarith
+      have : (3 : ℝ) * (f : ℝ) + 4 * (j : ℝ) ≤ 12 := by linarith only [hs, hdecomp, hSj]
       exact_mod_cast this
     have ha2 : (hubTwins G w).card ≤ 2 := by omega
     have hane2 : (hubTwins G w).card ≠ 2 := fun h2 => hW5 ⟨hd5, h2⟩
@@ -982,15 +982,15 @@ theorem sigma_transfer_usable (G : SimpleGraph (Fin n)) (w : Fin n)
       have := hSj
       rw [hj0'] at this
       push_cast at this
-      linarith
+      linarith only [hSj]
     rw [hd5, sigma_five]
     push_cast
-    linarith
+    linarith only [hSj, hf4R]
   · -- `d ≥ 6`
     have hd6R : (6 : ℝ) ≤ (d : ℝ) := by exact_mod_cast hd6
     have hfR : (0 : ℝ) ≤ (f : ℝ) := by positivity
     have hfj3R : (3 : ℝ) ≤ (f : ℝ) + (j : ℝ) := by exact_mod_cast hfj3
-    have hpos : (0 : ℝ) < (d : ℝ) - 2 := by linarith
+    have hpos : (0 : ℝ) < (d : ℝ) - 2 := by linarith only [hd6R]
     rw [sigma, div_mul_eq_mul_div, div_le_iff₀ hpos]
     exact sigma_usable_transfer_arithmetic d f j S hd6R hfR hfj3R hSj
 
@@ -1015,7 +1015,7 @@ theorem sigma_transfer_w5 (G : SimpleGraph (Fin n)) (w : Fin n)
     sigma_setsum_ge_free G _ (fun x hx => (Finset.mem_filter.mp hx).2)
   rw [hd, ha, sigma_five]
   push_cast
-  linarith
+  linarith only [hSj]
 
 /-! ## The extended capped-class count (`d ≤ 15`) -/
 
@@ -1025,20 +1025,20 @@ theorem capped_overflow_nonneg {d : ℕ} (hd5 : 5 ≤ d) (hd15 : d ≤ 15) :
     (0 : ℝ) ≤ sigma d * (d : ℝ) - (5 / 4) * ((d : ℝ) - 4) := by
   have hd5R : (5 : ℝ) ≤ (d : ℝ) := by exact_mod_cast hd5
   have hd15R : (d : ℝ) ≤ 15 := by exact_mod_cast hd15
-  have hpos : (0 : ℝ) < (d : ℝ) - 2 := by linarith
+  have hpos : (0 : ℝ) < (d : ℝ) - 2 := by linarith only [hd5R]
   rw [sigma, div_mul_eq_mul_div, sub_nonneg, le_div_iff₀ hpos]
-  nlinarith [mul_nonneg (show (0 : ℝ) ≤ (d : ℝ) - 5 by linarith)
-    (show (0 : ℝ) ≤ 15 - (d : ℝ) by linarith)]
+  nlinarith [mul_nonneg (show (0 : ℝ) ≤ (d : ℝ) - 5 by linarith only [hd5R])
+    (show (0 : ℝ) ≤ 15 - (d : ℝ) by linarith only [hd15R])]
 
 open Classical in
 /-- The per-hub capped overflow is at most `25/12` (attained at `d = 5`). -/
 theorem capped_overflow_le_max {d : ℕ} (hd5 : 5 ≤ d) (_hd15 : d ≤ 15) :
     sigma d * (d : ℝ) - (5 / 4) * ((d : ℝ) - 4) ≤ 25 / 12 := by
   have hd5R : (5 : ℝ) ≤ (d : ℝ) := by exact_mod_cast hd5
-  have hpos : (0 : ℝ) < (d : ℝ) - 2 := by linarith
+  have hpos : (0 : ℝ) < (d : ℝ) - 2 := by linarith only [hd5R]
   rw [sigma, div_mul_eq_mul_div, sub_le_iff_le_add, div_le_iff₀ hpos]
-  nlinarith [mul_nonneg (show (0 : ℝ) ≤ (d : ℝ) - 5 by linarith)
-    (show (0 : ℝ) ≤ (d : ℝ) - 2 by linarith)]
+  nlinarith [mul_nonneg (show (0 : ℝ) ≤ (d : ℝ) - 5 by linarith only [hd5R])
+    (show (0 : ℝ) ≤ (d : ℝ) - 2 by linarith only [hd5R])]
 
 open Classical in
 /-- The collapsed capped-overflow grid: with the block law pinning every capped
@@ -1105,7 +1105,7 @@ theorem capped_overflow_le (n : ℕ) (G : SimpleGraph (Fin n))
           have h1 : (C ∩ E).card ≤ 4 :=
             le_trans (Finset.card_le_card Finset.inter_subset_right) hEcard
           have h1R : ((C ∩ E).card : ℝ) ≤ 4 := by exact_mod_cast h1
-          nlinarith
+          exact mul_le_mul_of_nonneg_right h1R (by norm_num)
   have hQmx : ∀ g ∈ Q, ∀ g' ∈ Q, g ≠ g' → mCross G g g' = 0 := by
     intro g hg g' _ _
     by_contra hmx
@@ -1324,7 +1324,7 @@ theorem sigma_transfer_sum (n : ℕ) (G : SimpleGraph (Fin n))
         (fun u => 5 ≤ G.degree u), sigma (G.degree u) :=
       Finset.sum_nonneg fun u hu =>
         sigma_nonneg (by have := (Finset.mem_filter.mp hu).2; omega)
-    have hd40 : (0 : ℝ) ≤ (5 / 4 : ℝ) * ((G.degree w : ℝ) - 4) := by linarith
+    have hd40 : (0 : ℝ) ≤ (5 / 4 : ℝ) * ((G.degree w : ℝ) - 4) := by linarith only [hw5R]
     have hite1 : (0 : ℝ) ≤ (if G.degree w = 5 ∧ sigS G w ≤ 2
         ∧ (hubTwins G w).card = 2 then (1 / 12 : ℝ) else 0) := by
       split <;> norm_num
@@ -1351,10 +1351,10 @@ theorem sigma_transfer_sum (n : ℕ) (G : SimpleGraph (Fin n))
           ≤ sigma (G.degree w) * (G.degree w : ℝ) :=
         mul_le_mul_of_nonneg_left hajd hσ0
       rw [ite_eq_left hcap]
-      linarith
+      linarith only [h1, hS0, hite1]
     · by_cases hus : 2 < sigS G w
       · have := sigma_transfer_nonusable G w h3 hw5 hus
-        linarith
+        linarith only [this, hite1, hite2]
       · have husle : sigS G w ≤ 2 := le_of_not_gt hus
         by_cases h16 : 16 ≤ G.degree w
         · have h1 : sigma (G.degree w) * (((hubTwins G w).card : ℝ)
@@ -1363,14 +1363,14 @@ theorem sigma_transfer_sum (n : ℕ) (G : SimpleGraph (Fin n))
               ≤ sigma (G.degree w) * (G.degree w : ℝ) :=
             mul_le_mul_of_nonneg_left hajd hσ0
           have h2 := sigma_transfer_sat h16
-          linarith
+          linarith only [h1, h2, hS0, hite1, hite2]
         · have ha3 : (hubTwins G w).card + 3 ≤ G.degree w := by omega
           by_cases hW5 : G.degree w = 5 ∧ (hubTwins G w).card = 2
           · have := sigma_transfer_w5 G w hW5.1 hW5.2
             rw [ite_eq_left ⟨hW5.1, husle, hW5.2⟩]
-            linarith
+            linarith only [this, hite2]
           · have := sigma_transfer_usable G w h3 hw5 husle ha3 hW5
-            linarith
+            linarith only [this, hite1, hite2]
   have hsum := Finset.sum_le_sum hpt
   -- distribute both sides
   have hLHS : ∑ w ∈ H, sigma (G.degree w) * (((hubTwins G w).card : ℝ)
@@ -1379,7 +1379,7 @@ theorem sigma_transfer_sum (n : ℕ) (G : SimpleGraph (Fin n))
         + ∑ w ∈ H, sigma (G.degree w)
           * ((((G.neighborFinset w).filter (fun u => 5 ≤ G.degree u)).card : ℝ)) := by
     rw [← Finset.sum_add_distrib]
-    exact Finset.sum_congr rfl fun w _ => by ring
+    exact Finset.sum_congr rfl fun w _ => mul_add _ _ _
   have hRHS : ∑ w ∈ H, ((5 / 4 : ℝ) * ((G.degree w : ℝ) - 4)
         + (∑ u ∈ (G.neighborFinset w).filter (fun u => 5 ≤ G.degree u),
             sigma (G.degree u))
@@ -1441,7 +1441,7 @@ theorem sigma_transfer_sum (n : ℕ) (G : SimpleGraph (Fin n))
   rw [← hH] at hexch
   rw [hLHS, hRHS] at hsum
   rw [← hX] at hsum
-  linarith [hsum, hexch, hW5sum, hcapsum]
+  linarith only [hsum, hexch, hW5sum, hcapsum]
 
 /-! ## The `W₅ᵇ` cloud bound
 
@@ -1483,7 +1483,7 @@ theorem w5big_structure (G : SimpleGraph (Fin n))
   have hσx : (6 / 7 : ℝ) ≤ sigma (G.degree x) := by
     have := sigma_mono (by norm_num : 3 ≤ 9) hx9
     have h9v : sigma 9 = 6 / 7 := by norm_num [sigma]
-    linarith
+    linarith only [this, h9v]
   have hj1 : H.card = 1 := by
     by_contra hcon
     have hj2 : 2 ≤ H.card := by
@@ -1516,7 +1516,7 @@ theorem w5big_structure (G : SimpleGraph (Fin n))
     -- `2 ≥ (3−j)/2 + 6/7 + (2/3)(j−1) = 71/42 + j/6 ≥ 85/42` — contradiction
     rw [hsplit] at hsig
     rw [hfR] at hsig
-    linarith
+    linarith only [hsig, hσx, hfree, hjR]
   -- the heavy filter is exactly `{x}`
   obtain ⟨a, ha⟩ := Finset.card_eq_one.mp hj1
   have hax : a = x := by
@@ -1670,13 +1670,13 @@ theorem w5big_law_hypotheses (G : SimpleGraph (Fin n))
   · rw [hsig₀]
   · have hD : (0 : ℝ) < (G.degree h : ℝ) - 2 := by
       have : (9 : ℝ) ≤ (G.degree h : ℝ) := by exact_mod_cast hbig
-      linarith
+      linarith only [this]
     have hone : sigma (G.degree h) + 1 / ((G.degree h : ℝ) - 2) = 1 := by
       rw [sigma]
       field_simp
       ring
     rw [hsig₀]
-    linarith
+    linarith only [hone]
 
 end ACMax
 

@@ -1,10 +1,11 @@
 /-
-Copyright (c) 2026 Zeru Zhu, Jinzheng Li, Yuanjie Ren. All rights reserved.
+Copyright (c) 2026 Zeru Zhu, Jinzheng Li, Yuanjie Ren and OpenAI. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Zeru Zhu, Jinzheng Li, Yuanjie Ren
+Authors: Zeru Zhu, Jinzheng Li, Yuanjie Ren, OpenAI
 -/
 module
 
+public import LeanPool.ACMax.Counting.PointwiseCharges
 public import LeanPool.ACMax.Spectral.TestVector
 
 /-!
@@ -45,6 +46,15 @@ machinery is introduced.
 namespace ACMax
 
 open Matrix
+
+private theorem double_five_charges (a b c d e : ℝ) :
+    a + a + b + b + c + c + d + d + e + e = 2 * (a + b + c + d + e) := by
+  ring
+
+private theorem double_seven_charges (a b c d e f g : ℝ) :
+    a + a + b + b + c + c + d + d + e + e + f + f + g + g
+      = 2 * (f + g + a + b + c + d + e) := by
+  ring
 
 variable {V : Type*} [Fintype V]
 
@@ -130,131 +140,13 @@ private theorem algConn_le_two_of_weighted_double_star_hterm : ∀ {V : Type u_1
   classical
   intro V inst G u v au av p q A hp B hq hmemA hmemB hAB x hxu hxv hxA hxB hxZ i j
   by_cases hadj : G.Adj i j
-  · -- Nonnegativity of every summand.
-    have nn1 : (0:ℝ) ≤ if G.Adj i j ∧ i = u then (au - p j) ^ 2 else 0 := by
-      split <;> positivity
-    have nn2 : (0:ℝ) ≤ if G.Adj i j ∧ j = u then (au - p i) ^ 2 else 0 := by
-      split <;> positivity
-    have nn3 : (0:ℝ) ≤ if G.Adj i j ∧ i = v then (av - q j) ^ 2 else 0 := by
-      split <;> positivity
-    have nn4 : (0:ℝ) ≤ if G.Adj i j ∧ j = v then (av - q i) ^ 2 else 0 := by
-      split <;> positivity
-    have nn5 : (0:ℝ) ≤ if G.Adj i j ∧ i ∈ A ∧ j ∈ B then (p i + q j) ^ 2 else 0 := by
-      split <;> positivity
-    have nn6 : (0:ℝ) ≤ if G.Adj i j ∧ i ∈ B ∧ j ∈ A then (p j + q i) ^ 2 else 0 := by
-      split <;> positivity
-    have nn7 : (0:ℝ) ≤ if G.Adj i j ∧ i ∈ A ∧ j ≠ u ∧ j ∉ B then p i ^ 2 else 0 := by
-      split <;> positivity
-    have nn8 : (0:ℝ) ≤ if G.Adj i j ∧ j ∈ A ∧ i ≠ u ∧ i ∉ B then p j ^ 2 else 0 := by
-      split <;> positivity
-    have nn9 : (0:ℝ) ≤ if G.Adj i j ∧ i ∈ B ∧ j ≠ v ∧ j ∉ A then q i ^ 2 else 0 := by
-      split <;> positivity
-    have nn10 : (0:ℝ) ≤ if G.Adj i j ∧ j ∈ B ∧ i ≠ v ∧ i ∉ A then q j ^ 2 else 0 := by
-      split <;> positivity
-    rw [ite_eq_left hadj]
-    by_cases hiu : i = u
-    · -- `u → N(u)` edge.
-      have hjA : j ∈ A := (hmemA j).mpr (hiu ▸ hadj)
-      have e1 : (if G.Adj i j ∧ i = u then (au - p j) ^ 2 else 0) = (au - p j) ^ 2 :=
-        ite_eq_left ⟨hadj, hiu⟩
-      have hxi : x i = au := by rw [hiu]; exact hxu
-      rw [hxi, hxA j hjA]
-      linarith only [nn2, nn3, nn4, nn5, nn6, nn7, nn8, nn9, nn10, e1]
-    · by_cases hju : j = u
-      · -- `N(u) → u` edge.
-        have hiA : i ∈ A := (hmemA i).mpr (G.adj_symm (hju ▸ hadj))
-        have e2 : (if G.Adj i j ∧ j = u then (au - p i) ^ 2 else 0) = (au - p i) ^ 2 :=
-          ite_eq_left ⟨hadj, hju⟩
-        have hxj : x j = au := by rw [hju]; exact hxu
-        have hval : (p i - au) ^ 2 = (au - p i) ^ 2 := by ring
-        rw [hxj, hxA i hiA, hval]
-        linarith only [nn1, nn3, nn4, nn5, nn6, nn7, nn8, nn9, nn10, e2]
-      · by_cases hiv : i = v
-        · -- `v → N(v)` edge.
-          have hjB : j ∈ B := (hmemB j).mpr (hiv ▸ hadj)
-          have e3 : (if G.Adj i j ∧ i = v then (av - q j) ^ 2 else 0) = (av - q j) ^ 2 :=
-            ite_eq_left ⟨hadj, hiv⟩
-          have hxi : x i = -av := by rw [hiv]; exact hxv
-          have hval : (-av - -(q j)) ^ 2 = (av - q j) ^ 2 := by ring
-          rw [hxi, hxB j hjB, hval]
-          linarith only [nn1, nn2, nn4, nn5, nn6, nn7, nn8, nn9, nn10, e3]
-        · by_cases hjv : j = v
-          · -- `N(v) → v` edge.
-            have hiB : i ∈ B := (hmemB i).mpr (G.adj_symm (hjv ▸ hadj))
-            have e4 : (if G.Adj i j ∧ j = v then (av - q i) ^ 2 else 0)
-                = (av - q i) ^ 2 := ite_eq_left ⟨hadj, hjv⟩
-            have hxj : x j = -av := by rw [hjv]; exact hxv
-            have hval : (-(q i) - -av) ^ 2 = (av - q i) ^ 2 := by ring
-            rw [hxj, hxB i hiB, hval]
-            linarith only [nn1, nn2, nn3, nn5, nn6, nn7, nn8, nn9, nn10, e4]
-          · -- Neither endpoint is a centre.
-            by_cases hiA : i ∈ A
-            · by_cases hjB : j ∈ B
-              · -- cross edge `N(u) → N(v)`.
-                have e5 : (if G.Adj i j ∧ i ∈ A ∧ j ∈ B then (p i + q j) ^ 2 else 0)
-                    = (p i + q j) ^ 2 := ite_eq_left ⟨hadj, hiA, hjB⟩
-                have hval : (p i - -(q j)) ^ 2 = (p i + q j) ^ 2 := by ring
-                rw [hxA i hiA, hxB j hjB, hval]
-                linarith only [nn1, nn2, nn3, nn4, nn6, nn7, nn8, nn9, nn10, e5]
-              · by_cases hjA : j ∈ A
-                · -- internal `N(u)` edge: charge both slots.
-                  have e7 : (if G.Adj i j ∧ i ∈ A ∧ j ≠ u ∧ j ∉ B then p i ^ 2 else 0)
-                      = p i ^ 2 := ite_eq_left ⟨hadj, hiA, hju, hjB⟩
-                  have e8 : (if G.Adj i j ∧ j ∈ A ∧ i ≠ u ∧ i ∉ B then p j ^ 2 else 0)
-                      = p j ^ 2 := ite_eq_left ⟨hadj, hjA, hiu, hAB i hiA⟩
-                  have hb : (p i - p j) ^ 2 ≤ p i ^ 2 + p j ^ 2 := by
-                    nlinarith only [mul_nonneg (hp i hiA) (hp j hjA)]
-                  rw [hxA i hiA, hxA j hjA]
-                  linarith only [nn1, nn2, nn3, nn4, nn5, nn6, nn9, nn10, e7, e8, hb]
-                · -- leak `N(u) → Z`.
-                  have e7 : (if G.Adj i j ∧ i ∈ A ∧ j ≠ u ∧ j ∉ B then p i ^ 2 else 0)
-                      = p i ^ 2 := ite_eq_left ⟨hadj, hiA, hju, hjB⟩
-                  have hval : (p i - 0) ^ 2 = p i ^ 2 := by ring
-                  rw [hxA i hiA, hxZ j hju hjv hjA hjB, hval]
-                  linarith only [nn1, nn2, nn3, nn4, nn5, nn6, nn8, nn9, nn10, e7]
-            · by_cases hiB : i ∈ B
-              · by_cases hjA : j ∈ A
-                · -- cross edge `N(v) → N(u)`.
-                  have e6 : (if G.Adj i j ∧ i ∈ B ∧ j ∈ A then (p j + q i) ^ 2 else 0)
-                      = (p j + q i) ^ 2 := ite_eq_left ⟨hadj, hiB, hjA⟩
-                  have hval : (-(q i) - p j) ^ 2 = (p j + q i) ^ 2 := by ring
-                  rw [hxB i hiB, hxA j hjA, hval]
-                  linarith only [nn1, nn2, nn3, nn4, nn5, nn7, nn8, nn9, nn10, e6]
-                · by_cases hjB : j ∈ B
-                  · -- internal `N(v)` edge.
-                    have e9 : (if G.Adj i j ∧ i ∈ B ∧ j ≠ v ∧ j ∉ A then q i ^ 2 else 0)
-                        = q i ^ 2 := ite_eq_left ⟨hadj, hiB, hjv, hjA⟩
-                    have e10 : (if G.Adj i j ∧ j ∈ B ∧ i ≠ v ∧ i ∉ A then q j ^ 2 else 0)
-                        = q j ^ 2 := ite_eq_left ⟨hadj, hjB, hiv, hiA⟩
-                    have hb : (-(q i) - -(q j)) ^ 2 ≤ q i ^ 2 + q j ^ 2 := by
-                      nlinarith only [mul_nonneg (hq i hiB) (hq j hjB)]
-                    rw [hxB i hiB, hxB j hjB]
-                    linarith only [nn1, nn2, nn3, nn4, nn5, nn6, nn7, nn8, e9, e10, hb]
-                  · -- leak `N(v) → Z`.
-                    have e9 : (if G.Adj i j ∧ i ∈ B ∧ j ≠ v ∧ j ∉ A then q i ^ 2 else 0)
-                        = q i ^ 2 := ite_eq_left ⟨hadj, hiB, hjv, hjA⟩
-                    have hval : (-(q i) - 0) ^ 2 = q i ^ 2 := by ring
-                    rw [hxB i hiB, hxZ j hju hjv hjA hjB, hval]
-                    linarith only [nn1, nn2, nn3, nn4, nn5, nn6, nn7, nn8, nn10, e9]
-              · by_cases hjA : j ∈ A
-                · -- leak `Z → N(u)`.
-                  have e8 : (if G.Adj i j ∧ j ∈ A ∧ i ≠ u ∧ i ∉ B then p j ^ 2 else 0)
-                      = p j ^ 2 := ite_eq_left ⟨hadj, hjA, hiu, hiB⟩
-                  have hval : (0 - p j) ^ 2 = p j ^ 2 := by ring
-                  rw [hxZ i hiu hiv hiA hiB, hxA j hjA, hval]
-                  linarith only [nn1, nn2, nn3, nn4, nn5, nn6, nn7, nn9, nn10, e8]
-                · by_cases hjB : j ∈ B
-                  · -- leak `Z → N(v)`.
-                    have e10 : (if G.Adj i j ∧ j ∈ B ∧ i ≠ v ∧ i ∉ A then q j ^ 2 else 0)
-                        = q j ^ 2 := ite_eq_left ⟨hadj, hjB, hiv, hiA⟩
-                    have hval : (0 - -(q j)) ^ 2 = q j ^ 2 := by ring
-                    rw [hxZ i hiu hiv hiA hiB, hxB j hjB, hval]
-                    linarith only [nn1, nn2, nn3, nn4, nn5, nn6, nn7, nn8, nn9, e10]
-                  · -- `Z → Z`: zero.
-                    rw [hxZ i hiu hiv hiA hiB, hxZ j hju hjv hjA hjB]
-                    norm_num
-                    linarith only [nn1, nn2, nn3, nn4, nn5, nn6, nn7, nn8, nn9, nn10]
-  · simp [hadj]
+  · simpa only [hadj, true_and, ite_true] using
+      Pointwise.double_star_edge_bound u v i j A B au av p q x hp hq hAB hxu hxv hxA hxB hxZ
+        (fun hiu => (hmemA j).mpr (hiu ▸ hadj))
+        (fun hju => (hmemA i).mpr (G.adj_symm (hju ▸ hadj)))
+        (fun hiv => (hmemB j).mpr (hiv ▸ hadj))
+        (fun hjv => (hmemB i).mpr (G.adj_symm (hjv ▸ hadj)))
+  · simp only [hadj, ↓reduceIte, false_and, add_zero, ne_eq, Std.le_refl]
 
 open Classical in
 private theorem algConn_le_two_of_weighted_double_star_hC5 : ∀ {V : Type u_1} [Fintype V] (G :
@@ -417,7 +309,7 @@ theorem algConn_le_two_of_weighted_double_star [Nonempty V]
       Finset.sum_ite_eq' Finset.univ v fun _ => av,
       Finset.sum_ite_mem, Finset.sum_ite_mem, Finset.univ_inter, Finset.univ_inter]
     simp only [Finset.mem_univ, ite_true]
-    linarith [hbal]
+    linarith only [hbal]
   -- Nonvanishing.
   have hne0 : ∃ i, x i ≠ 0 := ⟨u, by rw [hxu]; exact ne_of_gt hau⟩
   -- Squared norm.
@@ -493,7 +385,7 @@ theorem algConn_le_two_of_weighted_double_star [Nonempty V]
     refine Finset.sum_congr rfl fun a _ => Finset.sum_congr rfl fun b _ => ?_
     refine if_congr ?_ rfl rfl
     rw [SimpleGraph.adj_comm]
-    tauto
+    exact and_congr_right fun _ => and_comm
   -- Count lemma: `N(u)` leak slots.
   have hC7 :=
       algConn_le_two_of_weighted_double_star_hC7 (V := V) (G := G) (u := u) (v := v) (p := p)
@@ -537,11 +429,11 @@ theorem algConn_le_two_of_weighted_double_star [Nonempty V]
             + (∑ w ∈ B, ((G.neighborFinset w \ insert v A).card : ℝ) * q w ^ 2)) := by
           simp_rw [Finset.sum_add_distrib]
           rw [hC1, hC2, hC3, hC4, hC5, hC6, hC7, hC8, hC9, hC10]
-          ring
+          exact double_five_charges _ _ _ _ _
   -- Conclude via the universal test-vector certificate.
   apply algConn_le_two_of_testvector G x hsum0 hne0
   rw [← Matrix.toLinearMap₂'_apply', SimpleGraph.lapMatrix_toLinearMap₂', hnorm]
-  linarith [hsum_bound, hQ]
+  linarith only [hsum_bound, hQ]
 
 /-! ## The apex double star and the tie law
 
@@ -638,175 +530,79 @@ private theorem algConn_le_two_of_apex_double_star_hterm : ∀ {V : Type u_1} [F
             if j = v ∧ i = g then av ^ 2 else 0 := by
   classical
   intro V inst G u v g au av p q hau A hp B hq hmemA hmemB hAB x hxu hxv hxA hxB hxZ hxg i j
-  have nn1 : (0:ℝ) ≤ if i = u ∧ j ∈ A then (au - p j) ^ 2 else 0 := by
-    split <;> positivity
-  have nn2 : (0:ℝ) ≤ if j = u ∧ i ∈ A then (au - p i) ^ 2 else 0 := by
-    split <;> positivity
-  have nn3 : (0:ℝ) ≤ if i = v ∧ j ∈ B then (av - q j) ^ 2 else 0 := by
-    split <;> positivity
-  have nn4 : (0:ℝ) ≤ if j = v ∧ i ∈ B then (av - q i) ^ 2 else 0 := by
-    split <;> positivity
-  have nn5 : (0:ℝ) ≤ if G.Adj i j ∧ i ∈ A ∧ j ∈ B then (p i + q j) ^ 2 else 0 := by
-    split <;> positivity
-  have nn6 : (0:ℝ) ≤ if G.Adj i j ∧ i ∈ B ∧ j ∈ A then (p j + q i) ^ 2 else 0 := by
-    split <;> positivity
-  have nn7 : (0:ℝ) ≤ if G.Adj i j ∧ i ∈ A ∧ j ≠ u ∧ j ∉ B then p i ^ 2 else 0 := by
-    split <;> positivity
-  have nn8 : (0:ℝ) ≤ if G.Adj i j ∧ j ∈ A ∧ i ≠ u ∧ i ∉ B then p j ^ 2 else 0 := by
-    split <;> positivity
-  have nn9 : (0:ℝ) ≤ if G.Adj i j ∧ i ∈ B ∧ j ≠ v ∧ j ∉ A then q i ^ 2 else 0 := by
-    split <;> positivity
-  have nn10 : (0:ℝ) ≤ if G.Adj i j ∧ j ∈ B ∧ i ≠ v ∧ i ∉ A then q j ^ 2 else 0 := by
-    split <;> positivity
-  have nn11 : (0:ℝ) ≤ if i = u ∧ j = g then au ^ 2 else 0 := by
-    split <;> positivity
-  have nn12 : (0:ℝ) ≤ if j = u ∧ i = g then au ^ 2 else 0 := by
-    split <;> positivity
-  have nn13 : (0:ℝ) ≤ if i = v ∧ j = g then av ^ 2 else 0 := by
-    split <;> positivity
-  have nn14 : (0:ℝ) ≤ if j = v ∧ i = g then av ^ 2 else 0 := by
-    split <;> positivity
+  have nn1 := Pointwise.square_charge_nonneg (i = u ∧ j ∈ A) ((au - p j))
+  have nn2 := Pointwise.square_charge_nonneg (j = u ∧ i ∈ A) ((au - p i))
+  have nn3 := Pointwise.square_charge_nonneg (i = v ∧ j ∈ B) ((av - q j))
+  have nn4 := Pointwise.square_charge_nonneg (j = v ∧ i ∈ B) ((av - q i))
+  have nn5 := Pointwise.square_charge_nonneg (G.Adj i j ∧ i ∈ A ∧ j ∈ B) ((p i + q j))
+  have nn6 := Pointwise.square_charge_nonneg (G.Adj i j ∧ i ∈ B ∧ j ∈ A) ((p j + q i))
+  have nn7 := Pointwise.square_charge_nonneg (G.Adj i j ∧ i ∈ A ∧ j ≠ u ∧ j ∉ B) (p i)
+  have nn8 := Pointwise.square_charge_nonneg (G.Adj i j ∧ j ∈ A ∧ i ≠ u ∧ i ∉ B) (p j)
+  have nn9 := Pointwise.square_charge_nonneg (G.Adj i j ∧ i ∈ B ∧ j ≠ v ∧ j ∉ A) (q i)
+  have nn10 := Pointwise.square_charge_nonneg (G.Adj i j ∧ j ∈ B ∧ i ≠ v ∧ i ∉ A) (q j)
+  have nn11 := Pointwise.square_charge_nonneg (i = u ∧ j = g) (au)
+  have nn12 := Pointwise.square_charge_nonneg (j = u ∧ i = g) (au)
+  have nn13 := Pointwise.square_charge_nonneg (i = v ∧ j = g) (av)
+  have nn14 := Pointwise.square_charge_nonneg (j = v ∧ i = g) (av)
+  have prefixNonneg2 := add_nonneg nn1 nn2
+  have prefixNonneg3 := add_nonneg prefixNonneg2 nn3
+  have prefixNonneg4 := add_nonneg prefixNonneg3 nn4
+  have prefixNonneg5 := add_nonneg prefixNonneg4 nn5
+  have prefixNonneg6 := add_nonneg prefixNonneg5 nn6
+  have prefixNonneg7 := add_nonneg prefixNonneg6 nn7
+  have prefixNonneg8 := add_nonneg prefixNonneg7 nn8
+  have prefixNonneg9 := add_nonneg prefixNonneg8 nn9
+  have prefixNonneg10 := add_nonneg prefixNonneg9 nn10
+  have prefixNonneg11 := add_nonneg prefixNonneg10 nn11
+  have prefixNonneg12 := add_nonneg prefixNonneg11 nn12
+  have prefixNonneg13 := add_nonneg prefixNonneg12 nn13
+  have prefixNonneg14 := add_nonneg prefixNonneg13 nn14
+  have suffixNonneg13 := add_nonneg nn13 nn14
+  have suffixNonneg12 := add_nonneg nn12 suffixNonneg13
   by_cases hadj : G.Adj i j
-  · rw [ite_eq_left hadj]
-    by_cases hiu : i = u
-    · by_cases hjg : j = g
-      · -- apex edge `u → g`.
-        have e11 : (if i = u ∧ j = g then au ^ 2 else 0) = au ^ 2 := ite_eq_left ⟨hiu, hjg⟩
-        have hxi : x i = au := by rw [hiu]; exact hxu
-        have hxj : x j = 0 := by rw [hjg]; exact hxg
-        rw [hxi, hxj, sub_zero]
-        linarith only [nn1, nn2, nn3, nn4, nn5, nn6, nn7, nn8, nn9, nn10, nn12, nn13, nn14, e11]
-      · -- `u → A` edge.
-        have hjA : j ∈ A := (hmemA j).mpr ⟨hjg, hiu ▸ hadj⟩
-        have e1 : (if i = u ∧ j ∈ A then (au - p j) ^ 2 else 0) = (au - p j) ^ 2 :=
-          ite_eq_left ⟨hiu, hjA⟩
-        have hxi : x i = au := by rw [hiu]; exact hxu
-        rw [hxi, hxA j hjA]
-        linarith only [nn2, nn3, nn4, nn5, nn6, nn7, nn8, nn9, nn10, nn11, nn12, nn13, nn14, e1]
-    · by_cases hju : j = u
-      · by_cases hig : i = g
-        · -- apex edge `g → u`.
-          have e12 : (if j = u ∧ i = g then au ^ 2 else 0) = au ^ 2 := ite_eq_left ⟨hju, hig⟩
-          have hxi : x i = 0 := by rw [hig]; exact hxg
-          have hxj : x j = au := by rw [hju]; exact hxu
-          rw [hxi, hxj, zero_sub, neg_sq]
-          linarith only [nn1, nn2, nn3, nn4, nn5, nn6, nn7, nn8, nn9, nn10, nn11, nn13, nn14, e12]
-        · -- `A → u` edge.
-          have hiA : i ∈ A := (hmemA i).mpr ⟨hig, G.adj_symm (hju ▸ hadj)⟩
-          have e2 : (if j = u ∧ i ∈ A then (au - p i) ^ 2 else 0) = (au - p i) ^ 2 :=
-            ite_eq_left ⟨hju, hiA⟩
-          have hxj : x j = au := by rw [hju]; exact hxu
-          rw [hxj, hxA i hiA, sub_sq_comm (p i) au]
-          linarith only [nn1, nn3, nn4, nn5, nn6, nn7, nn8, nn9, nn10, nn11, nn12, nn13, nn14, e2]
-      · by_cases hiv : i = v
-        · by_cases hjg : j = g
-          · -- apex edge `v → g`.
-            have e13 : (if i = v ∧ j = g then av ^ 2 else 0) = av ^ 2 :=
-              ite_eq_left ⟨hiv, hjg⟩
-            have hxi : x i = -av := by rw [hiv]; exact hxv
-            have hxj : x j = 0 := by rw [hjg]; exact hxg
-            rw [hxi, hxj, sub_zero, neg_sq]
-            linarith only [nn1, nn2, nn3, nn4, nn5, nn6, nn7, nn8, nn9, nn10, nn11, nn12, nn14, e13]
-          · -- `v → B` edge.
-            have hjB : j ∈ B := (hmemB j).mpr ⟨hjg, hiv ▸ hadj⟩
-            have e3 : (if i = v ∧ j ∈ B then (av - q j) ^ 2 else 0) = (av - q j) ^ 2 :=
-              ite_eq_left ⟨hiv, hjB⟩
-            have hxi : x i = -av := by rw [hiv]; exact hxv
-            have hval : (-av - -(q j)) ^ 2 = (av - q j) ^ 2 := by ring
-            rw [hxi, hxB j hjB, hval]
-            linarith only [nn1, nn2, nn4, nn5, nn6, nn7, nn8, nn9, nn10, nn11, nn12, nn13, nn14, e3]
-        · by_cases hjv : j = v
-          · by_cases hig : i = g
-            · -- apex edge `g → v`.
-              have e14 : (if j = v ∧ i = g then av ^ 2 else 0) = av ^ 2 :=
-                ite_eq_left ⟨hjv, hig⟩
-              have hxi : x i = 0 := by rw [hig]; exact hxg
-              have hxj : x j = -av := by rw [hjv]; exact hxv
-              rw [hxi, hxj, zero_sub, neg_neg]
-              linarith only [nn1, nn2, nn3, nn4, nn5, nn6, nn7,
-                nn8, nn9, nn10, nn11, nn12, nn13, e14]
-            · -- `B → v` edge.
-              have hiB : i ∈ B := (hmemB i).mpr ⟨hig, G.adj_symm (hjv ▸ hadj)⟩
-              have e4 : (if j = v ∧ i ∈ B then (av - q i) ^ 2 else 0)
-                  = (av - q i) ^ 2 := ite_eq_left ⟨hjv, hiB⟩
-              have hxj : x j = -av := by rw [hjv]; exact hxv
-              have hval : (-(q i) - -av) ^ 2 = (av - q i) ^ 2 := by ring
-              rw [hxj, hxB i hiB, hval]
-              linarith only [nn1, nn2, nn3, nn5, nn6, nn7, nn8,
-                nn9, nn10, nn11, nn12, nn13, nn14, e4]
-          · -- Neither endpoint is a centre.
-            by_cases hiA : i ∈ A
-            · by_cases hjB : j ∈ B
-              · -- cross edge `A → B`.
-                have e5 : (if G.Adj i j ∧ i ∈ A ∧ j ∈ B then (p i + q j) ^ 2 else 0)
-                    = (p i + q j) ^ 2 := ite_eq_left ⟨hadj, hiA, hjB⟩
-                rw [hxA i hiA, hxB j hjB, sub_neg_eq_add]
-                linarith only [nn1, nn2, nn3, nn4, nn6, nn7, nn8,
-                  nn9, nn10, nn11, nn12, nn13, nn14, e5]
-              · by_cases hjA : j ∈ A
-                · -- internal `A` edge: charge both slots.
-                  have e7 : (if G.Adj i j ∧ i ∈ A ∧ j ≠ u ∧ j ∉ B then p i ^ 2 else 0)
-                      = p i ^ 2 := ite_eq_left ⟨hadj, hiA, hju, hjB⟩
-                  have e8 : (if G.Adj i j ∧ j ∈ A ∧ i ≠ u ∧ i ∉ B then p j ^ 2 else 0)
-                      = p j ^ 2 := ite_eq_left ⟨hadj, hjA, hiu, hAB i hiA⟩
-                  have hb : (p i - p j) ^ 2 ≤ p i ^ 2 + p j ^ 2 := by
-                    nlinarith only [mul_nonneg (hp i hiA) (hp j hjA)]
-                  rw [hxA i hiA, hxA j hjA]
-                  linarith only [nn1, nn2, nn3, nn4, nn5, nn6, nn9,
-                    nn10, nn11, nn12, nn13, nn14, e7, e8, hb]
-                · -- leak `A → Z`.
-                  have e7 : (if G.Adj i j ∧ i ∈ A ∧ j ≠ u ∧ j ∉ B then p i ^ 2 else 0)
-                      = p i ^ 2 := ite_eq_left ⟨hadj, hiA, hju, hjB⟩
-                  rw [hxA i hiA, hxZ j hju hjv hjA hjB, sub_zero]
-                  linarith only [nn1, nn2, nn3, nn4, nn5, nn6, nn8,
-                    nn9, nn10, nn11, nn12, nn13, nn14, e7]
-            · by_cases hiB : i ∈ B
-              · by_cases hjA : j ∈ A
-                · -- cross edge `B → A`.
-                  have e6 : (if G.Adj i j ∧ i ∈ B ∧ j ∈ A then (p j + q i) ^ 2 else 0)
-                      = (p j + q i) ^ 2 := ite_eq_left ⟨hadj, hiB, hjA⟩
-                  have hval : (-(q i) - p j) ^ 2 = (p j + q i) ^ 2 := by ring
-                  rw [hxB i hiB, hxA j hjA, hval]
-                  linarith only [nn1, nn2, nn3, nn4, nn5, nn7, nn8,
-                    nn9, nn10, nn11, nn12, nn13, nn14, e6]
-                · by_cases hjB : j ∈ B
-                  · -- internal `B` edge.
-                    have e9 : (if G.Adj i j ∧ i ∈ B ∧ j ≠ v ∧ j ∉ A then q i ^ 2 else 0)
-                        = q i ^ 2 := ite_eq_left ⟨hadj, hiB, hjv, hjA⟩
-                    have e10 : (if G.Adj i j ∧ j ∈ B ∧ i ≠ v ∧ i ∉ A then q j ^ 2
-                        else 0) = q j ^ 2 := ite_eq_left ⟨hadj, hjB, hiv, hiA⟩
-                    have hb : (-(q i) - -(q j)) ^ 2 ≤ q i ^ 2 + q j ^ 2 := by
-                      nlinarith only [mul_nonneg (hq i hiB) (hq j hjB)]
-                    rw [hxB i hiB, hxB j hjB]
-                    linarith only [nn1, nn2, nn3, nn4, nn5, nn6, nn7,
-                      nn8, nn11, nn12, nn13, nn14, e9, e10, hb]
-                  · -- leak `B → Z`.
-                    have e9 : (if G.Adj i j ∧ i ∈ B ∧ j ≠ v ∧ j ∉ A then q i ^ 2 else 0)
-                        = q i ^ 2 := ite_eq_left ⟨hadj, hiB, hjv, hjA⟩
-                    rw [hxB i hiB, hxZ j hju hjv hjA hjB, sub_zero, neg_sq]
-                    linarith only [nn1, nn2, nn3, nn4, nn5, nn6, nn7,
-                      nn8, nn10, nn11, nn12, nn13, nn14, e9]
-              · by_cases hjA : j ∈ A
-                · -- leak `Z → A`.
-                  have e8 : (if G.Adj i j ∧ j ∈ A ∧ i ≠ u ∧ i ∉ B then p j ^ 2 else 0)
-                      = p j ^ 2 := ite_eq_left ⟨hadj, hjA, hiu, hiB⟩
-                  rw [hxZ i hiu hiv hiA hiB, hxA j hjA, zero_sub, neg_sq]
-                  linarith only [nn1, nn2, nn3, nn4, nn5, nn6, nn7,
-                    nn9, nn10, nn11, nn12, nn13, nn14, e8]
-                · by_cases hjB : j ∈ B
-                  · -- leak `Z → B`.
-                    have e10 : (if G.Adj i j ∧ j ∈ B ∧ i ≠ v ∧ i ∉ A then q j ^ 2
-                        else 0) = q j ^ 2 := ite_eq_left ⟨hadj, hjB, hiv, hiA⟩
-                    rw [hxZ i hiu hiv hiA hiB, hxB j hjB, zero_sub, neg_neg]
-                    linarith only [nn1, nn2, nn3, nn4, nn5, nn6, nn7,
-                      nn8, nn9, nn11, nn12, nn13, nn14, e10]
-                  · -- `Z → Z`: zero.
-                    rw [hxZ i hiu hiv hiA hiB, hxZ j hju hjv hjA hjB]
-                    norm_num
-                    linarith only [nn1, nn2, nn3, nn4, nn5, nn6, nn7,
-                      nn8, nn9, nn10, nn11, nn12, nn13, nn14]
+  · by_cases hiug : i = u ∧ j = g
+    · have hxi : x i = au := by rw [hiug.1]; exact hxu
+      have hxj : x j = 0 := by rw [hiug.2]; exact hxg
+      rw [ite_eq_left hadj, hxi, hxj, sub_zero]
+      simpa only [add_assoc, zero_add, add_zero] using
+        Pointwise.le_add_nonnegative_charges prefixNonneg10 suffixNonneg12 (ite_eq_left hiug).ge
+    by_cases hjug : j = u ∧ i = g
+    · have hxi : x i = 0 := by rw [hjug.2]; exact hxg
+      have hxj : x j = au := by rw [hjug.1]; exact hxu
+      rw [ite_eq_left hadj, hxi, hxj, zero_sub, neg_sq]
+      simpa only [add_assoc, zero_add, add_zero] using
+        Pointwise.le_add_nonnegative_charges prefixNonneg11 suffixNonneg13 (ite_eq_left hjug).ge
+    by_cases hivg : i = v ∧ j = g
+    · have hxi : x i = -av := by rw [hivg.1]; exact hxv
+      have hxj : x j = 0 := by rw [hivg.2]; exact hxg
+      rw [ite_eq_left hadj, hxi, hxj, sub_zero, neg_sq]
+      simpa only [add_assoc, zero_add, add_zero] using
+        Pointwise.le_add_nonnegative_charges prefixNonneg12 nn14 (ite_eq_left hivg).ge
+    by_cases hjvg : j = v ∧ i = g
+    · have hxi : x i = 0 := by rw [hjvg.2]; exact hxg
+      have hxj : x j = -av := by rw [hjvg.1]; exact hxv
+      rw [ite_eq_left hadj, hxi, hxj, zero_sub, neg_neg]
+      simpa only [add_assoc, zero_add, add_zero] using
+        Pointwise.le_add_nonnegative_charges prefixNonneg13 (le_refl (0 : ℝ)) (ite_eq_left hjvg).ge
+    have huj : i = u → j ∈ A := fun hiu =>
+      (hmemA j).mpr ⟨fun hjg => hiug ⟨hiu, hjg⟩, hiu ▸ hadj⟩
+    have hjuA : j = u → i ∈ A := fun hju =>
+      (hmemA i).mpr ⟨fun hig => hjug ⟨hju, hig⟩, G.adj_symm (hju ▸ hadj)⟩
+    have hvj : i = v → j ∈ B := fun hiv =>
+      (hmemB j).mpr ⟨fun hjg => hivg ⟨hiv, hjg⟩, hiv ▸ hadj⟩
+    have hjvB : j = v → i ∈ B := fun hjv =>
+      (hmemB i).mpr ⟨fun hig => hjvg ⟨hjv, hig⟩, G.adj_symm (hjv ▸ hadj)⟩
+    have hfirst : (i = u ∧ j ∈ A) ↔ i = u := ⟨And.left, fun h => ⟨h, huj h⟩⟩
+    have hsecond : (j = u ∧ i ∈ A) ↔ j = u := ⟨And.left, fun h => ⟨h, hjuA h⟩⟩
+    have hthird : (i = v ∧ j ∈ B) ↔ i = v := ⟨And.left, fun h => ⟨h, hvj h⟩⟩
+    have hfourth : (j = v ∧ i ∈ B) ↔ j = v := ⟨And.left, fun h => ⟨h, hjvB h⟩⟩
+    have hbound := Pointwise.double_star_edge_bound u v i j A B au av p q x
+      hp hq hAB hxu hxv hxA hxB hxZ huj hjuA hvj hjvB
+    have htail := add_nonneg (add_nonneg (add_nonneg nn11 nn12) nn13) nn14
+    simpa only [hadj, true_and, ite_true, hfirst, hsecond, hthird, hfourth, add_assoc] using
+      hbound.trans (le_add_of_nonneg_right htail)
   · rw [ite_eq_right hadj]
-    linarith only [nn1, nn2, nn3, nn4, nn5, nn6, nn7, nn8, nn9, nn10, nn11, nn12, nn13, nn14]
+    exact prefixNonneg14
 
 open Classical in
 private theorem algConn_le_two_of_apex_double_star_hC5 : ∀ {V : Type u_1} [Fintype V] (G :
@@ -1040,23 +836,23 @@ theorem algConn_le_two_of_apex_double_star [Nonempty V]
   set x : V → ℝ := fun w =>
     ((if w = u then au else 0) + (if w ∈ A then p w else 0))
       - ((if w = v then av else 0) + (if w ∈ B then q w else 0)) with hxdef
-  have hxu : x u = au := by simp [hxdef, hne, huA, huB]
-  have hxv : x v = -av := by simp [hxdef, hne.symm, hvA, hvB]
+  have hxu : x u = au := by simp only [hxdef, ↓reduceIte, huA, add_zero, hne, huB, sub_zero]
+  have hxv : x v = -av := by simp only [hxdef, hne.symm, ↓reduceIte, hvA, add_zero, hvB, zero_sub]
   have hxA : ∀ w ∈ A, x w = p w := by
     intro w hw
     have h1 : w ≠ u := fun e => huA (e ▸ hw)
     have h2 : w ≠ v := fun e => hvA (e ▸ hw)
     have h3 : w ∉ B := hAB w hw
-    simp [hxdef, h1, h2, hw, h3]
+    simp only [hxdef, h1, ↓reduceIte, hw, zero_add, h2, h3, add_zero, sub_zero]
   have hxB : ∀ w ∈ B, x w = -(q w) := by
     intro w hw
     have h1 : w ≠ u := fun e => huB (e ▸ hw)
     have h2 : w ≠ v := fun e => hvB (e ▸ hw)
     have h3 : w ∉ A := fun hwA => hAB w hwA hw
-    simp [hxdef, h1, h2, h3, hw]
+    simp only [hxdef, h1, ↓reduceIte, h3, add_zero, h2, hw, zero_add, zero_sub]
   have hxZ : ∀ w : V, w ≠ u → w ≠ v → w ∉ A → w ∉ B → x w = 0 := by
     intro w h1 h2 h3 h4
-    simp [hxdef, h1, h2, h3, h4]
+    simp only [hxdef, h1, ↓reduceIte, h3, add_zero, h2, h4, sub_self]
   have hxg : x g = 0 := hxZ g (Ne.symm hug) (Ne.symm hvg) hgA hgB
   -- Orthogonality to the all-ones vector.
   have hsum0 : ∑ i, x i = 0 := by
@@ -1066,7 +862,7 @@ theorem algConn_le_two_of_apex_double_star [Nonempty V]
       Finset.sum_ite_eq' Finset.univ v fun _ => av,
       Finset.sum_ite_mem, Finset.sum_ite_mem, Finset.univ_inter, Finset.univ_inter]
     simp only [Finset.mem_univ, ite_true]
-    linarith [hbal]
+    linarith only [hbal]
   -- Nonvanishing.
   have hne0 : ∃ i, x i ≠ 0 := ⟨u, by rw [hxu]; exact ne_of_gt hau⟩
   -- Squared norm.
@@ -1108,7 +904,7 @@ theorem algConn_le_two_of_apex_double_star [Nonempty V]
     refine Finset.sum_congr rfl fun a _ => Finset.sum_congr rfl fun b _ => ?_
     refine if_congr ?_ rfl rfl
     rw [SimpleGraph.adj_comm]
-    tauto
+    exact and_congr_right fun _ => and_comm
   -- Count lemma: `A` leak slots.
   have hC7 :=
       algConn_le_two_of_apex_double_star_hC7 (V := V) (G := G) (u := u) (v := v) (g := g) (p
@@ -1169,11 +965,11 @@ theorem algConn_le_two_of_apex_double_star [Nonempty V]
             + (∑ w ∈ B, ((G.neighborFinset w \ insert v A).card : ℝ) * q w ^ 2)) := by
           simp_rw [Finset.sum_add_distrib]
           rw [hC1, hC2, hC3, hC4, hC5, hC6, hC7, hC8, hC9, hC10, hC11, hC12, hC13, hC14]
-          ring
+          exact double_seven_charges _ _ _ _ _ _ _
   -- Conclude via the universal test-vector certificate.
   apply algConn_le_two_of_testvector G x hsum0 hne0
   rw [← Matrix.toLinearMap₂'_apply', SimpleGraph.lapMatrix_toLinearMap₂', hnorm]
-  linarith [hsum_bound, hQ]
+  linarith only [hsum_bound, hQ]
 
 open Classical in
 /-- **The apex-tie twin law.**  Two degree-3 vertices `u ≠ v`, non-adjacent,
@@ -1308,6 +1104,6 @@ theorem algConn_le_two_of_apex_twin_pair [Nonempty V]
           ≤ ∑ _w ∈ B, (3 / 4 : ℝ) := Finset.sum_le_sum hpt
         _ = 3 / 2 := by rw [Finset.sum_const, hcardB]; norm_num
     rw [hsum_p2, hsum_q2, hsum_1p, hsum_1q, hcr, one_pow]
-    linarith [hleakA, hleakB]
+    linarith only [hleakA, hleakB]
 
 end ACMax
