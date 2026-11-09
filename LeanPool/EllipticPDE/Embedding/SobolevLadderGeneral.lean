@@ -102,13 +102,13 @@ theorem memLp_of_gradClosed_general (hd : 1 < d) (c : EuclideanSpace ℝ (Fin d)
     have hq0 : (0 : ℝ) < (q : ℝ) := lt_of_lt_of_le hp₀0 (by exact_mod_cast hpq)
     have hqinv0 : (0 : ℝ) < (q : ℝ)⁻¹ := inv_pos.mpr hq0
     have hqinv : (q : ℝ)⁻¹ ≤ (p₀ : ℝ)⁻¹ := inv_anti₀ hp₀0 (by exact_mod_cast hpq)
-    have hsdR : (p₀ : ℝ) * ((s : ℝ) + 1) ≤ (d : ℝ) := by push_cast at hsd; linarith
-    have hsdprev : (p₀ : ℝ) * (s : ℝ) ≤ (d : ℝ) := by nlinarith
+    have hsdR : (p₀ : ℝ) * ((s : ℝ) + 1) ≤ (d : ℝ) := by push_cast at hsd; linarith only [hsd]
+    have hsdprev : (p₀ : ℝ) * (s : ℝ) ≤ (d : ℝ) := by nlinarith only [hp₀1, hsdR]
     push_cast at hqs
     -- The midpoint of the gap, so that the rung shrinks the ball without leaving `r`.
     set r' : ℝ := (r + R) / 2 with hr'_def
-    have hrr' : r < r' := by rw [hr'_def]; linarith
-    have hr'R : r' < R := by rw [hr'_def]; linarith
+    have hrr' : r < r' := by rw [hr'_def]; linarith only [hrR]
+    have hr'R : r' < R := by rw [hr'_def]; linarith only [hrR]
     have hr' : (0 : ℝ) < r' := lt_trans hr hrr'
     -- The reciprocal at rung `s`, and the exponent naming it.
     set t : ℝ := (p₀ : ℝ)⁻¹ - (s : ℝ) * (d : ℝ)⁻¹ with ht_def
@@ -120,11 +120,11 @@ theorem memLp_of_gradClosed_general (hd : 1 < d) (c : EuclideanSpace ℝ (Fin d)
         have hc2 : (p₀ : ℝ) * ((s : ℝ) + 1) * ((d : ℝ)⁻¹ * (p₀ : ℝ)⁻¹)
             = ((s : ℝ) + 1) * (d : ℝ)⁻¹ := by field_simp
         rw [hc1, hc2] at hmul
-        linarith
-      rw [ht_def]; linarith
+        linarith only [hmul]
+      rw [ht_def]; linarith only [hdinv0, hstep]
     have ht_le : t ≤ (p₀ : ℝ)⁻¹ := by
       have : 0 ≤ (s : ℝ) * (d : ℝ)⁻¹ := by positivity
-      rw [ht_def]; linarith
+      rw [ht_def]; linarith only [this]
     set Q : ℝ≥0 := Real.toNNReal t⁻¹ with hQ_def
     have hQcoe : ((Q : ℝ≥0) : ℝ) = t⁻¹ := by
       rw [hQ_def]
@@ -140,7 +140,7 @@ theorem memLp_of_gradClosed_general (hd : 1 < d) (c : EuclideanSpace ℝ (Fin d)
     by_cases hu1 : (q : ℝ)⁻¹ + (d : ℝ)⁻¹ ≤ 1
     · -- The target is at or above the conjugate exponent, so the rung runs onto it.
       set u : ℝ := (q : ℝ)⁻¹ + (d : ℝ)⁻¹ with hu_def
-      have hu0 : 0 < u := by rw [hu_def]; linarith
+      have hu0 : 0 < u := by rw [hu_def]; linarith only [hdinv0, hqinv0]
       set p : ℝ≥0 := Real.toNNReal u⁻¹ with hp_def
       have hpcoe : ((p : ℝ≥0) : ℝ) = u⁻¹ := by
         rw [hp_def]
@@ -151,7 +151,7 @@ theorem memLp_of_gradClosed_general (hd : 1 < d) (c : EuclideanSpace ℝ (Fin d)
         rw [← NNReal.coe_le_coe, NNReal.coe_one, hpcoe]
         have := inv_anti₀ hu0 hu1
         simpa using this
-      have htu : t ≤ u := by rw [ht_def, hu_def]; linarith
+      have htu : t ≤ u := by rw [ht_def, hu_def]; linarith only [hqs]
       have hpQ : p ≤ Q := by
         rw [← NNReal.coe_le_coe]
         refine (inv_le_inv₀ hQ0 hp0).mp ?_
@@ -166,23 +166,23 @@ theorem memLp_of_gradClosed_general (hd : 1 < d) (c : EuclideanSpace ℝ (Fin d)
         ((hgrad i (by omega)).mono (Metric.ball_subset_ball hr'R.le))).1
     · -- The target sits below the conjugate exponent, so one rung overshoots it.
       have hu1' : 1 < (q : ℝ)⁻¹ + (d : ℝ)⁻¹ := lt_of_not_ge hu1
-      have hqd : 1 - (d : ℝ)⁻¹ < (q : ℝ)⁻¹ := by linarith
+      have hqd : 1 - (d : ℝ)⁻¹ < (q : ℝ)⁻¹ := by linarith only [hu1]
       set t₁ : ℝ := (p₀ : ℝ)⁻¹ - (d : ℝ)⁻¹ with ht₁_def
       have hd2R : (2 : ℝ) ≤ (d : ℝ) := by exact_mod_cast (by omega : 2 ≤ d)
       have ht₁0 : 0 < t₁ := by
         by_contra hcon
         have hcon' : t₁ ≤ 0 := le_of_not_gt hcon
-        have hple : (d : ℝ)⁻¹ ≥ (p₀ : ℝ)⁻¹ := by rw [ht₁_def] at hcon'; linarith
+        have hple : (d : ℝ)⁻¹ ≥ (p₀ : ℝ)⁻¹ := by rw [ht₁_def] at hcon'; linarith only [hcon]
         have hdp : (d : ℝ) ≤ (p₀ : ℝ) := (inv_le_inv₀ hp₀0 hdpos).mp hple
         have hqge : (p₀ : ℝ) ≤ (q : ℝ) := by exact_mod_cast hpq
         have hqinv' : (q : ℝ)⁻¹ ≤ (d : ℝ)⁻¹ :=
           inv_anti₀ hdpos (le_trans hdp hqge)
-        have : (1 : ℝ) < 2 * (d : ℝ)⁻¹ := by linarith
+        have : (1 : ℝ) < 2 * (d : ℝ)⁻¹ := by linarith only [hqinv, hu1, hcon]
         have hdd : (d : ℝ)⁻¹ ≤ 2⁻¹ := by
           have := inv_anti₀ (b := (2 : ℝ)) (by norm_num) hd2R
           simpa using this
-        linarith
-      have ht₁_le : t₁ ≤ (p₀ : ℝ)⁻¹ := by rw [ht₁_def]; linarith
+        linarith only [hqinv, hu1, hcon, hdd]
+      have ht₁_le : t₁ ≤ (p₀ : ℝ)⁻¹ := by rw [ht₁_def]; linarith only [hdinv0]
       set P : ℝ≥0 := Real.toNNReal t₁⁻¹ with hP_def
       have hPcoe : ((P : ℝ≥0) : ℝ) = t₁⁻¹ := by
         rw [hP_def]
@@ -206,7 +206,7 @@ theorem memLp_of_gradClosed_general (hd : 1 < d) (c : EuclideanSpace ℝ (Fin d)
         refine (inv_le_inv₀ hP0 hq0).mp ?_
         rw [hPinv, ht₁_def]
         have hs0 : 0 ≤ (s : ℝ) * (d : ℝ)⁻¹ := by positivity
-        linarith
+        linarith only [hp₀inv, hu1]
       have : IsFiniteMeasure (volume.restrict (Metric.ball c r)) :=
         ⟨by rw [Measure.restrict_apply_univ]; exact measure_ball_lt_top⟩
       exact hPmem.mono_exponent (by exact_mod_cast hqP)
@@ -238,10 +238,10 @@ theorem memLp_of_gradClosed_general_ideal (hd : 1 < d) (c : EuclideanSpace ℝ (
     have hc2 : (p₀ : ℝ) * (s : ℝ) * ((d : ℝ)⁻¹ * (p₀ : ℝ)⁻¹) = (s : ℝ) * (d : ℝ)⁻¹ := by
       field_simp
     rw [hc1, hc2] at hmul
-    rw [ht_def]; linarith
+    rw [ht_def]; linarith only [hmul]
   have ht_le : t ≤ (p₀ : ℝ)⁻¹ := by
     have : 0 ≤ (s : ℝ) * (d : ℝ)⁻¹ := by positivity
-    rw [ht_def]; linarith
+    rw [ht_def]; linarith only [this]
   have hqcoe : ((Real.toNNReal t⁻¹ : ℝ≥0) : ℝ) = t⁻¹ := Real.coe_toNNReal _ (inv_nonneg.mpr ht0.le)
   have hqinv : ((Real.toNNReal t⁻¹ : ℝ≥0) : ℝ)⁻¹ = t := by rw [hqcoe, inv_inv]
   have hp₀q : p₀ ≤ Real.toNNReal t⁻¹ := by

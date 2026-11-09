@@ -7,6 +7,8 @@ Authors: Alejandro Soto Franco
 -- Adapted for Lean Pool's pinned Lean and Mathlib; upstream commit is recorded in projects.yml.
 module
 
+import LeanPool.EllipticPDE.Analysis.ScalarEstimates
+
 public import LeanPool.EllipticPDE.Existence.Garding
 public import LeanPool.EllipticPDE.Regularity.DiffQuotientBound
 
@@ -496,7 +498,7 @@ theorem caccioppoli (Op : FullEllipticOp d) {Ω : Set (EuclideanSpace ℝ (Fin d
               mulTest (isTestFn_mul hζ hζ) ((u : H1amb Ω) 0)⟫ := by
       rw [Op.lowerBilin_apply]
       simp only [hv0]
-    linarith [hfb, hlow]
+    linarith only [hζ, hfb, hlow]
   -- Right-hand side as an inner product, bounded by Cauchy-Schwarz and Young.
   have hRHSeq : (∫ x in Ω, (f x : ℝ) * ((v : H1amb Ω) 0 x : ℝ))
       = ⟪f, mulTest (isTestFn_mul hζ hζ) ((u : H1amb Ω) 0)⟫ := by
@@ -516,7 +518,7 @@ theorem caccioppoli (Op : FullEllipticOp d) {Ω : Set (EuclideanSpace ℝ (Fin d
             (y := ‖(u : H1amb Ω) 0‖) one_pos
           have h2l : (2 : ℝ) * 1 = 2 := by norm_num
           rw [h2l] at hy
-          linarith [hy]
+          linarith only [hy]
   -- Zeroth-order term bounded (no absorption needed).
   have hZthbound :
       -(⟪Op.cAct ((u : H1amb Ω) 0),
@@ -578,7 +580,6 @@ theorem caccioppoli (Op : FullEllipticOp d) {Ω : Set (EuclideanSpace ℝ (Fin d
         + (d : ℝ) * β ^ 2 / (2 * A.lam) * ‖(u : H1amb Ω) 0‖ ^ 2
         + Op.Csup * Z2 * ‖(u : H1amb Ω) 0‖ ^ 2 := by
     linarith [hen, hbil, hweak, hRHSf, hTsum, hZthbound, hrel]
-  nlinarith [hfin, sq_nonneg ‖(u : H1amb Ω) 0‖, sq_nonneg ‖f‖,
-    mul_nonneg hCu (sq_nonneg ‖f‖)]
+  exact Analysis.energy_le_combined_squares hCu hfin
 
 end EllipticPdes.Regularity

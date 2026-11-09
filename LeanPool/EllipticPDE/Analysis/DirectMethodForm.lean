@@ -68,7 +68,7 @@ omit [CompleteSpace H] in
 /-- A coercive form is positive semidefinite. -/
 lemma bilin_self_nonneg (hco : IsCoercive B) (U : H) : 0 ≤ B U U := by
   obtain ⟨C, hC, hcoer⟩ := hco
-  nlinarith [hcoer U, mul_nonneg (mul_nonneg hC.le (norm_nonneg U)) (norm_nonneg U)]
+  exact (mul_nonneg (mul_nonneg hC.le (norm_nonneg U)) (norm_nonneg U)).trans (hcoer U)
 
 omit [CompleteSpace H] in
 /-- The form on a difference, expanded by symmetry. -/
@@ -137,7 +137,7 @@ theorem exists_bilin_minimiser (hco : IsCoercive B) (hsymm : ∀ U V : H, B U V 
     intro n
     have h2 : ‖U n‖ ^ 2 ≤ (m + 1) / C := by
       rw [le_div_iff₀ hC]
-      nlinarith [hcoer (U n), hUB n]
+      nlinarith only [hcoer, hUB, hcoer (U n), hUB n]
     calc ‖U n‖ = Real.sqrt (‖U n‖ ^ 2) := (Real.sqrt_sq (norm_nonneg _)).symm
       _ ≤ M := Real.sqrt_le_sqrt h2
   -- Weak compactness in `H`.

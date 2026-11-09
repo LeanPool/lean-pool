@@ -152,7 +152,7 @@ theorem tendstoUniformlyOn_indicator_convolution
   calc dist ((B.indicator h ⋆[L, volume] ((φ n).normed volume)) y) (h y)
       = dist ((((φ n).normed volume) ⋆[L, volume] B.indicator h) y) (h y) := by rw [hcomm]
     _ ≤ ε / 2 := hkey
-    _ < ε := by linarith
+    _ < ε := by linarith only [hε]
 
 /-! ### Classical derivative -/
 
@@ -190,7 +190,7 @@ theorem hasFDerivAt_of_continuousOn_hasWeakGradOn
   have hφρ : ∀ n, (φ n).rOut ≤ ρ := by
     intro n
     rw [hrOut n, div_le_iff₀ (hn2 n)]
-    nlinarith [hρ0, Nat.cast_nonneg (α := ℝ) n]
+    nlinarith only [hR, hρ_def, hρ0, Nat.cast_nonneg (α := ℝ) n]
   have hφ0 : Tendsto (fun n => (φ n).rOut) atTop (𝓝 0) := by
     simp only [hrOut]
     exact tendsto_const_nhds.div_atTop
@@ -212,7 +212,7 @@ theorem hasFDerivAt_of_continuousOn_hasWeakGradOn
     refine subset_trans (Metric.closedBall_subset_closedBall' ?_) hencl
     have h1 : dist y x < ρ := Metric.mem_ball.mp hy
     have h2 := hφρ n
-    linarith
+    linarith only [h1, h2]
   -- Uniform convergence of the values and of the partials.
   have hvals : TendstoUniformlyOn (fun n y => U n y) u atTop (Metric.ball x ρ) :=
     tendstoUniformlyOn_indicator_convolution hBm hui huc hencl φ hφρ hφ0
@@ -243,7 +243,7 @@ theorem hasFDerivAt_of_continuousOn_hasWeakGradOn
       rw [Finset.sum_const, Finset.card_univ, Fintype.card_fin, nsmul_eq_mul]
       rw [mul_div_assoc'] at *
       rw [div_lt_iff₀ (by positivity)]
-      nlinarith [hε]
+      nlinarith only [hε]
     rw [dist_eq_norm]
     exact lt_of_le_of_lt
       ((opNorm_le_sum_apply_single _).trans (Finset.sum_le_sum fun k _ => hcoord k)) hsum

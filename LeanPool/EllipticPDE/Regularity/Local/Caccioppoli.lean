@@ -7,6 +7,8 @@ Authors: Alejandro Soto Franco
 -- Adapted for Lean Pool's pinned Lean and Mathlib; upstream commit is recorded in projects.yml.
 module
 
+import LeanPool.EllipticPDE.Analysis.ScalarEstimates
+
 public import LeanPool.EllipticPDE.Regularity.Local.WeakSolution
 
 
@@ -128,7 +130,7 @@ theorem caccioppoli_W12 (Op : FullEllipticOp d) {Ω : Set (EuclideanSpace ℝ (F
           + ⟪Op.cAct (U 0),
               mulTest (isTestFn_mul hζ hζ) (U 0)⟫ := by
       simp only [hv0]
-    linarith [hfb, hlow]
+    linarith only [hζ, hfb, hlow]
   -- Right-hand side as an inner product, bounded by Cauchy-Schwarz and Young.
   have hRHSeq : (∫ x in Ω, (f x : ℝ) * (V 0 x : ℝ))
       = ⟪f, mulTest (isTestFn_mul hζ hζ) (U 0)⟫ := by
@@ -148,7 +150,7 @@ theorem caccioppoli_W12 (Op : FullEllipticOp d) {Ω : Set (EuclideanSpace ℝ (F
             (y := ‖U 0‖) one_pos
           have h2l : (2 : ℝ) * 1 = 2 := by norm_num
           rw [h2l] at hy
-          linarith [hy]
+          linarith only [hy]
   -- Zeroth-order term bounded (no absorption needed).
   have hZthbound :
       -(⟪Op.cAct (U 0),
@@ -210,8 +212,7 @@ theorem caccioppoli_W12 (Op : FullEllipticOp d) {Ω : Set (EuclideanSpace ℝ (F
         + (d : ℝ) * β ^ 2 / (2 * A.lam) * ‖U 0‖ ^ 2
         + Op.Csup * Z2 * ‖U 0‖ ^ 2 := by
     linarith [hen, hbil, hweak, hRHSf, hTsum, hZthbound, hrel]
-  nlinarith [hfin, sq_nonneg ‖U 0‖, sq_nonneg ‖f‖,
-    mul_nonneg hCu (sq_nonneg ‖f‖)]
+  exact Analysis.energy_le_combined_squares hCu hfin
 
 /-- A term of a sum of squares, from a bound on the weighted sum, with the square root
 taken. -/
@@ -225,7 +226,7 @@ theorem le_sqrt_mul_of_sum_sq_le {ι : Type*} [Fintype ι] (g : ι → ℝ) (hg 
     linarith [h]
   have hi : g i ^ 2 ≤ ∑ j, g j ^ 2 :=
     Finset.single_le_sum (f := fun j => g j ^ 2) (fun j _ => sq_nonneg _) (Finset.mem_univ i)
-  have hsq : a ^ 2 + b ^ 2 ≤ (a + b) ^ 2 := by nlinarith
+  have hsq : a ^ 2 + b ^ 2 ≤ (a + b) ^ 2 := by nlinarith only [ha, hb]
   have hkey : g i ^ 2 ≤ (Real.sqrt (2 * C0 / lam) * (a + b)) ^ 2 := by
     rw [mul_pow, Real.sq_sqrt hC'0]
     exact hi.trans (hsum.trans (mul_le_mul_of_nonneg_left hsq hC'0))

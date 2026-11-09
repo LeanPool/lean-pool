@@ -373,8 +373,8 @@ theorem fullBilin_coercive_const_of_nonneg_zeroth (Ω : Set (EuclideanSpace ℝ 
     EllipticPdes.Poincare.poincare_H01 CP hbase U.2
   have hSnonneg : 0 ≤ S := Finset.sum_nonneg (fun i _ => sq_nonneg _)
   have hkey : ‖U‖ * ‖U‖ ≤ (CP + 1) * S := by
-    have : ‖U‖ ^ 2 ≤ (CP + 1) * S := by rw [hnorm]; nlinarith [hpoin]
-    nlinarith [this]
+    rw [← sq, hnorm, add_mul, one_mul]
+    exact add_le_add_left hpoin S
   rw [mul_assoc]
   calc Op.lam / (CP + 1) * (‖U‖ * ‖U‖)
       ≤ Op.lam / (CP + 1) * ((CP + 1) * S) :=

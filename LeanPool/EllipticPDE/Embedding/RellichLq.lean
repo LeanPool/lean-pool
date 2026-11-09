@@ -135,7 +135,7 @@ theorem norm_rellichEmbL_sub_le (hΩm : MeasurableSet Ω) (hΩb : IsBounded Ω) 
     rw [ENNReal.ofReal_mul (by positivity : (0:ℝ) ≤ ‖embL2 Ω U - embL2 Ω V‖ ^ θ)]
   rw [← ENNReal.ofReal_rpow_of_nonneg (norm_nonneg _) hθ0.le,
     ← ENNReal.ofReal_rpow_of_nonneg
-      (by positivity : (0:ℝ) ≤ 2 * (sobolevConst d : ℝ) * d) (by linarith),
+      (by positivity : (0:ℝ) ≤ 2 * (sobolevConst d : ℝ) * d) (by linarith only [hθ1]),
     ofReal_norm]
 
 /-- **Rellich-Kondrachov below the critical exponent.** On a bounded measurable domain the
@@ -203,8 +203,8 @@ theorem rellichEmbL_isCompact (hΩm : MeasurableSet Ω) (hΩb : IsBounded Ω) (h
           Real.rpow_one]
     _ < ε := by
         rw [div_mul_eq_mul_div, div_lt_iff₀ hK0]
-        have hMK : M ^ (1 - θ) < K := by rw [hK]; linarith
-        nlinarith [Real.rpow_nonneg hM0 (1 - θ)]
+        have hMK : M ^ (1 - θ) < K := by rw [hK]; exact lt_add_one _
+        exact mul_lt_mul_of_pos_left hMK hε
 
 end
 

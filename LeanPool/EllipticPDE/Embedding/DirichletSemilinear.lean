@@ -113,7 +113,7 @@ theorem exists_weakSolution_dirichlet_of_lt
   have hpos : 0 < laplaceBilin (ball (0 : EuclideanSpace ℝ (Fin (n + 1))) 1) U U := by
     obtain ⟨C, hC, hcoer⟩ := id hco
     have hUpos : 0 < ‖U‖ := norm_pos_iff.mpr hUne
-    nlinarith [hcoer U, mul_pos (mul_pos hC hUpos) hUpos]
+    exact (mul_pos (mul_pos hC hUpos) hUpos).trans_le (hcoer U)
   refine ⟨U, hU, hpos, fun V => ?_⟩
   have h := euler_lagrange_of_bilin_min (p := (q : ℝ≥0∞)) (by simpa using hq0) ENNReal.coe_ne_top
     hp1 (rellichEmbL measurableSet_ball hΩb hd hq) _ (laplaceBilin_symm _)

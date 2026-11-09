@@ -124,14 +124,14 @@ theorem localFamiliesAt_zero (Op : FullEllipticOp (n + 1))
   · calc ‖restrictL2 (Ω := W) (extendL2 hΩm (U 0))‖ ≤ ‖extendL2 hΩm (U 0)‖ :=
           norm_restrictL2_le _
       _ = ‖U 0‖ := norm_extendL2 hΩm _
-      _ ≤ (1 + Cg) * (M + ‖U 0‖) := by nlinarith
+      _ ≤ (1 + Cg) * (M + ‖U 0‖) := by nlinarith only [hCg0, hM0, hU0]
   · rw [← restrictL2_extendL2_mulTest_of_eqOn hΩm hWm hWΩ hζ hζW (U i.succ)]
     have hg := hCg U f hsol i
     calc ‖restrictL2 (Ω := W) (extendL2 hΩm (mulTest hζ (U i.succ)))‖
         ≤ ‖extendL2 hΩm (mulTest hζ (U i.succ))‖ := norm_restrictL2_le _
       _ = ‖mulTest hζ (U i.succ)‖ := norm_extendL2 hΩm _
       _ ≤ Cg * (‖f‖ + ‖U 0‖) := hg
-      _ ≤ (1 + Cg) * (M + ‖U 0‖) := by nlinarith
+      _ ≤ (1 + Cg) * (M + ‖U 0‖) := by nlinarith only [hCg0, hM0, hU0, hfM]
 
 /-- **Hypothesis at `k + 1` from the conclusion at `k`.** For a compact `W`, the conclusion at
 order `k` on `tsupport θ`, with `θ = 1` near `W`, gives `U₀` its `k + 2` weak derivatives on
@@ -195,8 +195,8 @@ theorem localRegularityAt_of_localFamiliesAt (Op : FullEllipticOp (n + 1))
   set B : ℝ := (CW + 1) * (M + ‖U 0‖) with hB
   choose H hH using hW U f M hfk hM hsol
   obtain ⟨F, HF, hFbd, hFpair⟩ := hDat U f H hfk B
-    (fun j => (hH j).mono_const (by rw [hB]; nlinarith))
-    (hM.mono_const (by rw [hB]; nlinarith))
+    (fun j => (hH j).mono_const (by rw [hB]; nlinarith only [hM0, hU0]))
+    (hM.mono_const (by rw [hB]; nlinarith only [hCW0, hM0, hU0]))
   have hweak : ∀ w : H01 Ω,
       Op.fullBilin Ω ⟨cutoffMul hη U, cutoffMul_mem_H01_of_mem_W12 hΩo hη hsol.1⟩ w
         = ∫ x in Ω, (F x : ℝ) * ((w : H1amb Ω) 0 x : ℝ) := by
@@ -213,7 +213,7 @@ theorem localRegularityAt_of_localFamiliesAt (Op : FullEllipticOp (n + 1))
   change CV * (K * B + ‖(cutoffMul hη U) 0‖) ≤ _
   have h1 : K * B + ‖(cutoffMul hη U) 0‖ ≤ (K * (CW + 1) + Mη) * (M + ‖U 0‖) := by
     rw [hB]
-    nlinarith [mul_nonneg hMη0 hM0]
+    nlinarith only [hη, hMη0, hM0, hη0, mul_nonneg hMη0 hM0]
   rw [mul_assoc]
   exact mul_le_mul_of_nonneg_left h1 hCV0
 

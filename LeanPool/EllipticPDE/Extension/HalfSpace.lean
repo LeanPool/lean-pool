@@ -297,7 +297,7 @@ theorem integral_partialD_of_eq (hu : IntegrableOn u (halfSpace j) volume)
         exact norm_partialD_slabCut_le (hε n) hC j x
       have h2 : ‖ψ x‖ ≤ M * (2 * ((n : ℝ) + 1)⁻¹) := by
         rw [Real.norm_eq_abs]
-        exact le_trans hψx (by nlinarith [hM0, hcase'])
+        exact le_trans hψx (by nlinarith only [hM0, hcase, hcase'])
       calc ‖partialD j (slabCut j (((n : ℝ) + 1)⁻¹)) x‖ * ‖ψ x‖
           ≤ (C / ((n : ℝ) + 1)⁻¹) * (M * (2 * ((n : ℝ) + 1)⁻¹)) := by
             refine mul_le_mul h1 h2 (norm_nonneg _) ?_

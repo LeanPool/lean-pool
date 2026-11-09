@@ -173,7 +173,7 @@ theorem finite_setOf_hasEigenvalue_abs_ge (hK : IsCompactOperator K)
       rw [norm_sub_sq_real, horth, hu_norm n]
       ring
     rw [hdiff]
-    nlinarith [norm_nonneg (u n - z), sq_nonneg ‖z‖, hsq]
+    nlinarith only [hsq, norm_nonneg (u n - z), sq_nonneg ‖z‖]
   -- compactness extracts a Cauchy subsequence of `K vₙ`: contradiction
   have hvball : ∀ n : ℕ, v n ∈ Metric.closedBall (0 : E) δ⁻¹ := by
     intro n
@@ -631,7 +631,7 @@ theorem resolvent_bound (hK : IsCompactOperator (Op.opK Ω)) {lam : ℝ}
   calc ‖(u : H1amb Ω) 0‖ ≤ ‖u‖ := PiLp.norm_apply_le _ _
     _ ≤ ‖B‖ * ‖f‖ := hub
     _ ≤ (‖B‖ + 1) * ‖f‖ :=
-        mul_le_mul_of_nonneg_right (by linarith [norm_nonneg B]) (norm_nonneg f)
+        mul_le_mul_of_nonneg_right (by linarith only [norm_nonneg B]) (norm_nonneg f)
 
 end FullEllipticOp
 

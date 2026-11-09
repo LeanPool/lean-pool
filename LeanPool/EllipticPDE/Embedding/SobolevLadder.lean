@@ -91,7 +91,7 @@ theorem memLp_of_gradClosed (hd : 0 < d) (c : EuclideanSpace ℝ (Fin d))
     have hq0 : (0 : ℝ) < (q : ℝ) := by
       have : ((2 : ℝ≥0) : ℝ) ≤ (q : ℝ) := NNReal.coe_le_coe.mpr hq2
       simp only [NNReal.coe_ofNat] at this
-      linarith
+      linarith only [this]
     -- At the bottom rung the exponent is `2` itself, since `1/q ≥ 1/2` caps it there.
     have hq2' : q ≤ 2 := by
       rw [← NNReal.coe_le_coe, NNReal.coe_ofNat]
@@ -107,7 +107,7 @@ theorem memLp_of_gradClosed (hd : 0 < d) (c : EuclideanSpace ℝ (Fin d))
     -- The dimension is at least two, since the rung `s + 1` sits strictly below it.
     have hd2n : 2 ≤ d := le_trans (Nat.le_add_left 2 s) (Nat.succ_le_of_lt hsd)
     have hd2 : (2 : ℝ) ≤ (d : ℝ) := by exact_mod_cast hd2n
-    have hdpos : (0 : ℝ) < (d : ℝ) := by linarith
+    have hdpos : (0 : ℝ) < (d : ℝ) := by linarith only [hd2]
     have hdinv : (d : ℝ)⁻¹ ≤ 2⁻¹ := by
       have := inv_anti₀ (b := (2 : ℝ)) (by norm_num) hd2
       simpa using this
@@ -115,7 +115,7 @@ theorem memLp_of_gradClosed (hd : 0 < d) (c : EuclideanSpace ℝ (Fin d))
     have hqinv0 : (0 : ℝ) < (q : ℝ)⁻¹ := by
       have h2q : ((2 : ℝ≥0) : ℝ) ≤ (q : ℝ) := NNReal.coe_le_coe.mpr hq2
       simp only [NNReal.coe_ofNat] at h2q
-      exact inv_pos.mpr (by linarith)
+      exact inv_pos.mpr (by linarith only [hdinv, hdinv0, h2q])
     have hqinv : (q : ℝ)⁻¹ ≤ 2⁻¹ := by
       have h2q : ((2 : ℝ≥0) : ℝ) ≤ (q : ℝ) := NNReal.coe_le_coe.mpr hq2
       simp only [NNReal.coe_ofNat] at h2q
@@ -124,8 +124,8 @@ theorem memLp_of_gradClosed (hd : 0 < d) (c : EuclideanSpace ℝ (Fin d))
     push_cast at hqs
     -- The midpoint of the gap, so that the rung shrinks the ball without leaving `r`.
     set r' : ℝ := (r + R) / 2 with hr'_def
-    have hrr' : r < r' := by rw [hr'_def]; linarith
-    have hr'R : r' < R := by rw [hr'_def]; linarith
+    have hrr' : r < r' := by rw [hr'_def]; linarith only [hrR]
+    have hr'R : r' < R := by rw [hr'_def]; linarith only [hrR]
     have hr' : (0 : ℝ) < r' := lt_trans hr hrr'
     -- The exponent of the rung below, `1/Q = 1/2 - s/(2d)`.
     set t : ℝ := 2⁻¹ - (s : ℝ) * (d : ℝ)⁻¹ / 2 with ht_def
@@ -134,10 +134,10 @@ theorem memLp_of_gradClosed (hd : 0 < d) (c : EuclideanSpace ℝ (Fin d))
       have hmul : (s : ℝ) * (d : ℝ)⁻¹ < 1 := by
         rw [← mul_inv_cancel₀ hdpos.ne']
         exact mul_lt_mul_of_pos_right hs hdinv0
-      rw [ht_def]; linarith
+      rw [ht_def]; linarith only [hmul]
     have ht2 : t ≤ 2⁻¹ := by
       have : 0 ≤ (s : ℝ) * (d : ℝ)⁻¹ := by positivity
-      rw [ht_def]; linarith
+      rw [ht_def]; linarith only [this]
     set Q : ℝ≥0 := Real.toNNReal t⁻¹ with hQ_def
     have hQcoe : ((Q : ℝ≥0) : ℝ) = t⁻¹ := by
       rw [hQ_def]
@@ -150,8 +150,8 @@ theorem memLp_of_gradClosed (hd : 0 < d) (c : EuclideanSpace ℝ (Fin d))
       simpa using this
     -- The exponent the inequality is applied at, `1/p = 1/q + 1/d`.
     set u : ℝ := (q : ℝ)⁻¹ + (d : ℝ)⁻¹ with hu_def
-    have hu0 : 0 < u := by rw [hu_def]; linarith
-    have hu1 : u ≤ 1 := by rw [hu_def]; linarith
+    have hu0 : 0 < u := by rw [hu_def]; linarith only [hdinv0, hqinv0]
+    have hu1 : u ≤ 1 := by rw [hu_def]; linarith only [hdinv, hqinv]
     set p : ℝ≥0 := Real.toNNReal u⁻¹ with hp_def
     have hpcoe : ((p : ℝ≥0) : ℝ) = u⁻¹ := by
       rw [hp_def]
@@ -163,7 +163,7 @@ theorem memLp_of_gradClosed (hd : 0 < d) (c : EuclideanSpace ℝ (Fin d))
       have := inv_anti₀ hu0 hu1
       simpa using this
     -- The half-step is what keeps the applied exponent below the rung's own.
-    have htu : t ≤ u := by rw [ht_def, hu_def]; linarith
+    have htu : t ≤ u := by rw [ht_def, hu_def]; linarith only [hdinv0, hqs]
     have hpQ : p ≤ Q := by
       rw [← NNReal.coe_le_coe]
       refine (inv_le_inv₀ hQ0 hp0).mp ?_

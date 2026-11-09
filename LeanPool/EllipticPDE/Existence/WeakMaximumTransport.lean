@@ -417,13 +417,13 @@ theorem energy_le_transport (Op : FullEllipticOp d)
           ≤ Op.Bsup * (‖((V : H1amb Ω) i.succ x : ℝ)‖ * ‖vΓ x‖) := by
         rw [abs_mul, abs_mul, Real.norm_eq_abs, Real.norm_eq_abs, mul_assoc]
         gcongr
-      linarith [neg_abs_le (Op.b x i * ((V : H1amb Ω) i.succ x : ℝ) * vΓ x)]
+      linarith only [habs, neg_abs_le (Op.b x i * ((V : H1amb Ω) i.succ x : ℝ) * vΓ x)]
     calc -(Op.Bsup * (‖(V : H1amb Ω) i.succ‖
             * (eLpNorm ((V : H1amb Ω) 0) 2 (μ.restrict Γ)).toReal))
         = -(Op.Bsup * ⟪A, B⟫) + -(Op.Bsup * (‖A‖ * ‖B‖ - ⟪A, B⟫)) := by rw [hA, hB]; ring
       _ ≤ -(Op.Bsup * ⟪A, B⟫) := by
           have : 0 ≤ ‖A‖ * ‖B‖ - ⟪A, B⟫ := sub_nonneg.mpr (real_inner_le_norm A B)
-          nlinarith [Op.Bsup_nonneg]
+          nlinarith only [this, Op.Bsup_nonneg]
       _ = ∫ x, -(Op.Bsup * (‖((V : H1amb Ω) i.succ x : ℝ)‖ * ‖vΓ x‖)) ∂μ := by
           rw [hAB, integral_neg, integral_const_mul]
       _ ≤ ∫ x, Op.b x i * (U i.succ x : ℝ) * ((V : H1amb Ω) 0 x : ℝ) ∂μ :=
@@ -485,7 +485,7 @@ theorem exists_measure_truncSupport_ge_of_sobolev (hΩb : Bornology.IsBounded Ω
   have hKbase : 0 ≤ (C : ℝ) * d * (Op.Bsup * d / Op.lam) :=
     mul_nonneg (mul_nonneg (NNReal.coe_nonneg _) (Nat.cast_nonneg _))
       (div_nonneg (mul_nonneg Op.Bsup_nonneg (Nat.cast_nonneg _)) Op.lam_pos.le)
-  have hKpos : 0 < K := by linarith
+  have hKpos : 0 < K := by linarith only [hKbase]
   refine ⟨K⁻¹ ^ θ⁻¹, Real.rpow_pos_of_pos (inv_pos.mpr hKpos) _,
     fun V u g hu hg k hV0 hpos henergy => ?_⟩
   set Γ := truncSupport u g k with hΓdef
@@ -562,8 +562,8 @@ theorem exists_measure_truncSupport_ge_of_sobolev (hΩb : Bornology.IsBounded Ω
         simp only [Pi.zero_apply] at hx
         rw [hx0] at hx
         by_contra hlt
-        rw [max_eq_left (by linarith [not_le.mp hlt])] at hx
-        linarith [not_le.mp hlt]
+        rw [max_eq_left (by linarith only [hlt, not_le.mp hlt])] at hx
+        linarith only [hx, hlt, not_le.mp hlt]
       have : μ {x | k < u x} = 0 := by
         have := ae_iff.mp hle
         simpa only [not_le] using this
@@ -572,7 +572,7 @@ theorem exists_measure_truncSupport_ge_of_sobolev (hΩb : Bornology.IsBounded Ω
   have hchain : N ≤ K * γ ^ θ * N := by
     have hSle : S ≤ Op.Bsup * d * vΓ / Op.lam := by
       rw [le_div_iff₀ Op.lam_pos]
-      linarith [hS]
+      linarith only [hS]
     have hK0 : 0 ≤ (C : ℝ) * d := by positivity
     calc N ≤ (C : ℝ) * ∑ i : Fin d, ‖(V : H1amb Ω) i.succ‖ := hN
       _ ≤ (C : ℝ) * (d * S) := by gcongr
@@ -582,14 +582,14 @@ theorem exists_measure_truncSupport_ge_of_sobolev (hΩb : Bornology.IsBounded Ω
       _ ≤ ((C : ℝ) * d * (Op.Bsup * d / Op.lam)) * (N * γ ^ θ) := by
           gcongr
       _ ≤ K * (N * γ ^ θ) := by
-          refine mul_le_mul_of_nonneg_right (by rw [hKdef]; linarith)
+          refine mul_le_mul_of_nonneg_right (by rw [hKdef]; linarith only [])
             (mul_nonneg hNpos.le (Real.rpow_nonneg hγ0 _))
       _ = K * γ ^ θ * N := by ring
   have hone : 1 ≤ K * γ ^ θ := by
     have := hchain
     rw [← one_mul N] at this
     nth_rewrite 2 [mul_comm] at this
-    exact le_of_mul_le_mul_right (by rw [one_mul]; linarith) hNpos
+    exact le_of_mul_le_mul_right (by rw [one_mul]; linarith only [hchain]) hNpos
   have hinv : K⁻¹ ≤ γ ^ θ := by
     calc K⁻¹ = K⁻¹ * 1 := (mul_one _).symm
       _ ≤ K⁻¹ * (K * γ ^ θ) := mul_le_mul_of_nonneg_left hone (inv_nonneg.mpr hKpos.le)

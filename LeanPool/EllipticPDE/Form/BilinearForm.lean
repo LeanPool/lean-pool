@@ -116,8 +116,8 @@ theorem laplaceBilin_coercive_const (Ω : Set (EuclideanSpace ℝ (Fin d)))
     poincare_H01 CP hbase U.2
   -- Hence `‖U‖² ≤ (C_P + 1) · S`, i.e. `(1 / (C_P + 1)) ‖U‖² ≤ B[U, U]`.
   have hkey : ‖U‖ * ‖U‖ ≤ (CP + 1) * S := by
-    have : ‖U‖ ^ 2 ≤ (CP + 1) * S := by rw [hnorm]; nlinarith [hpoin]
-    nlinarith [this]
+    have : ‖U‖ ^ 2 ≤ (CP + 1) * S := by rw [hnorm]; nlinarith only [hpoin]
+    nlinarith only [hnorm, hpoin, this]
   rw [hBUU, mul_assoc]
   calc 1 / (CP + 1) * (‖U‖ * ‖U‖)
       ≤ 1 / (CP + 1) * ((CP + 1) * S) := mul_le_mul_of_nonneg_left hkey (by positivity)

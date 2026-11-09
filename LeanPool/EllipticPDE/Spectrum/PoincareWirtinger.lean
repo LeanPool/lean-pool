@@ -206,7 +206,7 @@ theorem poincare_wirtinger (hd : 0 < d) (hΩopen : IsOpen Ω) (hΩb : Bornology.
     have hg1 : g (V k) ≤ 1 := (hgV_le k).trans (by
       rw [div_le_one (by positivity)]; linarith [(k.cast_nonneg : (0 : ℝ) ≤ k)])
     have : ‖V k‖ ^ 2 ≤ 2 ^ 2 := by
-      rw [hsq]; nlinarith [hg0 (V k)]
+      rw [hsq]; nlinarith only [hg0, hg1, hg0 (V k)]
     exact le_of_sq_le_sq this (by norm_num)
   -- Rellich-Kondrachov: a subsequence converges in `L²`
   have hcpt := (embW12_isCompact hd hΩopen hΩb hC1).isCompact_closure_image_closedBall 2

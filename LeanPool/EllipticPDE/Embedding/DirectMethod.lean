@@ -91,7 +91,7 @@ theorem exists_minimiser_of_lt (hΩb : IsBounded (ball (0 : EuclideanSpace ℝ (
     intro n
     have hlt : m < m + 1 / ((n : ℝ) + 1) := by
       have : (0 : ℝ) < 1 / ((n : ℝ) + 1) := by positivity
-      linarith
+      linarith only [this]
     obtain ⟨r, hrE, hr⟩ := exists_lt_of_csInf_lt hEne hlt
     obtain ⟨U, hU, rfl⟩ := hrE
     exact ⟨U, hU, hr⟩
@@ -101,8 +101,8 @@ theorem exists_minimiser_of_lt (hΩb : IsBounded (ball (0 : EuclideanSpace ℝ (
     have h1 : (1 : ℝ) / ((n : ℝ) + 1) ≤ 1 := by
       rw [div_le_one (by positivity)]
       have : (0 : ℝ) ≤ (n : ℝ) := Nat.cast_nonneg n
-      linarith
-    linarith [hUlt n]
+      linarith only []
+    linarith only [hUlt, h1, hUlt n]
   have hUnorm : Tendsto (fun n => ‖U n‖) atTop (𝓝 m) := by
     refine tendsto_of_tendsto_of_tendsto_of_le_of_le (g := fun _ : ℕ => m)
       (h := fun n => m + 1 / ((n : ℝ) + 1)) tendsto_const_nhds ?_ ?_ ?_
@@ -121,7 +121,7 @@ theorem exists_minimiser_of_lt (hΩb : IsBounded (ball (0 : EuclideanSpace ℝ (
   have hwnorm : ‖w‖ ≤ m :=
     norm_weakLimit_le_of_tendsto (hUnorm.comp hφ.tendsto_atTop) hweak
   -- Rellich gives a further subsequence converging strongly in `L^q`.
-  have hm1 : (0 : ℝ) < m + 1 := by linarith
+  have hm1 : (0 : ℝ) < m + 1 := by linarith only [hm0]
   have hTL : IsCompactOperator (T.toLinearMap) :=
     rellichEmbL_isCompact_of_lt measurableSet_ball hΩb hd hq hq0 hp' hp'0 hqlt
   have hcl := (isCompactOperator_iff_isCompact_closure_image_closedBall T.toLinearMap hm1).mp hTL
@@ -193,8 +193,8 @@ theorem exists_minimiser_of_lt (hΩb : IsBounded (ball (0 : EuclideanSpace ℝ (
       refine tendsto_of_tendsto_of_tendsto_of_le_of_le
         (g := fun j => ⟪z2, a⟫ - ‖((U (φ (ψ j)) : H01 B1) : H1amb B1) 0 - z2‖ * ‖a‖)
         (h := fun j => ⟪z2, a⟫ + ‖((U (φ (ψ j)) : H01 B1) : H1amb B1) 0 - z2‖ * ‖a‖)
-        ?_ ?_ (fun j => by linarith [abs_le.mp (hdiff j)]) (fun j => by
-          linarith [abs_le.mp (hdiff j)])
+        ?_ ?_ (fun j => by linarith only [hdiff, abs_le.mp (hdiff j)]) (fun j => by
+          linarith only [hdiff, abs_le.mp (hdiff j)])
       · simpa using tendsto_const_nhds.sub (hL2conv.mul_const ‖a‖)
       · simpa using tendsto_const_nhds.add (hL2conv.mul_const ‖a‖)
     have hweak0 : Tendsto

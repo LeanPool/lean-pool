@@ -111,7 +111,7 @@ theorem exists_weakLimit {u : ℕ → H} {M : ℝ} (hM : ∀ n, ‖u n‖ ≤ M)
           mul_le_mul_of_nonneg_left hj.le hM0
         have hkey : M * (ε / (3 * (M + 1))) < ε / 3 := by
           rw [mul_div_assoc', div_lt_div_iff₀ (by positivity) (by norm_num)]
-          nlinarith [hε, hM0]
+          nlinarith only [hε, hM0]
         linarith
       have hmid := hN k hk m hm
       rw [Real.dist_eq] at hmid ⊢
