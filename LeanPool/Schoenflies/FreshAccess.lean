@@ -95,39 +95,23 @@ particular it is connected, which is what `lem:cellulation-invariants`(i) asks o
 
 /-- The truncated access cone is convex. -/
 theorem convex_accessCone (p v : Plane) (s : ℝ) : Convex ℝ (accessCone p v s) := by
-  rintro x ⟨hx1, hx2⟩ y ⟨hy1, hy2⟩ α β hα hβ hαβ
-  have hβ' : β = 1 - α := by linarith
-  subst hβ'
-  -- Abbreviations for the two distances and the two inner products.
-  set A := ‖x - p‖ with hA
-  set B := ‖y - p‖ with hB
-  set Ix := inner ℝ v (x - p) with hIx
-  set Iy := inner ℝ v (y - p) with hIy
-  -- Everything happens in the translated coordinates.
-  have hshift : α • x + (1 - α) • y - p = α • (x - p) + (1 - α) • (y - p) := by module
-  have hnorm : ‖α • x + (1 - α) • y - p‖ ≤ α * A + (1 - α) * B := by
-    rw [hshift]
-    refine (norm_add_le _ _).trans_eq ?_
-    rw [norm_smul, norm_smul, Real.norm_eq_abs, Real.norm_eq_abs, abs_of_nonneg hα,
-      abs_of_nonneg hβ]
-  have hinner : inner ℝ v (α • x + (1 - α) • y - p) = α * Ix + (1 - α) * Iy := by
-    rw [hshift, inner_add_right, real_inner_smul_right, real_inner_smul_right]
-  -- A convex combination lies between the minimum and the maximum of its two arguments.
-  have hcomb : ∀ c d : ℝ, min c d ≤ α * c + (1 - α) * d ∧ α * c + (1 - α) * d ≤ max c d := by
-    intro c d
-    have h1 : α * min c d ≤ α * c := mul_le_mul_of_nonneg_left (min_le_left _ _) hα
-    have h2 : (1 - α) * min c d ≤ (1 - α) * d := mul_le_mul_of_nonneg_left (min_le_right _ _) hβ
-    have h3 : α * c ≤ α * max c d := mul_le_mul_of_nonneg_left (le_max_left _ _) hα
-    have h4 : (1 - α) * d ≤ (1 - α) * max c d := mul_le_mul_of_nonneg_left (le_max_right _ _) hβ
-    constructor <;> nlinarith
-  refine ⟨hnorm.trans_lt (lt_of_le_of_lt (hcomb A B).2 (max_lt hx1 hy1)), ?_⟩
-  -- The cone defect `⟪v, z⟫ - ‖z‖/2` is at least the minimum of the two defects, so positive.
-  rw [hinner]
-  have hdef : min (Ix - A / 2) (Iy - B / 2) ≤ α * (Ix - A / 2) + (1 - α) * (Iy - B / 2) :=
-    (hcomb (Ix - A / 2) (Iy - B / 2)).1
-  have hminpos : 0 < min (Ix - A / 2) (Iy - B / 2) :=
-    lt_min (by linarith) (by linarith)
-  nlinarith
+  have hlinear := ((2 : ℝ) • (innerSL ℝ v).toLinearMap).concaveOn (s := Set.univ)
+    (convex_univ : Convex ℝ (Set.univ : Set Plane))
+  have hcone : Convex ℝ {z : Plane | ‖z‖ < 2 * inner ℝ v z} := by
+    have h := (convexOn_univ_norm.sub hlinear).convex_lt (0 : ℝ)
+    convert! h using 1
+    ext z
+    simp only [Set.mem_ofPred_eq, Set.mem_univ, true_and, Pi.sub_apply,
+      LinearMap.smul_apply, ContinuousLinearMap.coe_coe, innerSL_apply_apply,
+      smul_eq_mul, sub_lt_zero]
+  have htranslated : Convex ℝ {x : Plane | ‖x - p‖ < 2 * inner ℝ v (x - p)} := by
+    convert! hcone.translate_preimage_right (-p) using 1
+    ext x
+    simp only [Set.mem_preimage, Set.mem_ofPred_eq, sub_eq_add_neg, add_comm]
+  convert! (convex_ball p s).inter htranslated using 1
+  ext x
+  simp only [accessCone, Set.mem_inter_iff, Set.mem_ofPred_eq, Metric.mem_ball,
+    dist_eq_norm, div_lt_iff₀ (show (0 : ℝ) < 2 by norm_num), mul_comm]
 
 /-- The truncated access cone is preconnected: it is convex. -/
 theorem isPreconnected_accessCone (p v : Plane) (s : ℝ) :
@@ -147,7 +131,7 @@ private theorem half_lt_inner_self (hv : ‖v‖ = 1) : 1 / 2 < inner ℝ v v :=
 
 /-- The distance from the apex to a point of the axis. -/
 private theorem dist_apex_axis (hv : ‖v‖ = 1) (ht : 0 < t) : dist p (p + t • v) = t := by
-  have hshift : p + t • v - p = t • v := by module
+  have hshift : p + t • v - p = t • v := by exact add_sub_cancel_left _ _
   rw [dist_comm, dist_eq_norm, hshift, norm_smul, Real.norm_eq_abs, abs_of_pos ht, hv, mul_one]
 
 /-- The apex lies in the closure of its own access cone. -/
@@ -156,22 +140,22 @@ theorem mem_closure_accessCone (hv : ‖v‖ = 1) (hs : 0 < s) : p ∈ closure (
   · have hpos : 0 < min ε s / 2 := by positivity
     have hlt : min ε s / 2 < s := by
       have := min_le_right ε s
-      linarith
+      linarith only [this, hs]
     exact mem_accessCone hv (half_lt_inner_self hv) hpos hlt
   · have hpos : 0 < min ε s / 2 := by positivity
     rw [dist_apex_axis hv hpos]
     have := min_le_left ε s
-    linarith
+    linarith only [this, hε]
 
 /-- **The straight access segment.** The cone contains an open segment leaving the apex, so the
 apex is polygonally accessible from anything containing the cone. This is `PolyAccessible` in
 the shape `lem:accessible-endpoints` consumes. -/
 theorem polyAccessible_accessCone (hv : ‖v‖ = 1) (hs : 0 < s) (hsub : accessCone p v s ⊆ N) :
     PolyAccessible N p := by
-  have hhalf : (0:ℝ) < s / 2 := by linarith
-  have hmono : accessCone p v (s / 2) ⊆ accessCone p v s := accessCone_mono (by linarith)
+  have hhalf : (0:ℝ) < s / 2 := by linarith only [hs]
+  have hmono : accessCone p v (s / 2) ⊆ accessCone p v s := accessCone_mono (by linarith only [hs])
   have hz : p + (s / 2) • v ∈ accessCone p v s :=
-    mem_accessCone hv (half_lt_inner_self hv) hhalf (by linarith)
+    mem_accessCone hv (half_lt_inner_self hv) hhalf (by linarith only [hs])
   refine PolyAccessible.of_openSegment (hsub hz) ?_
   exact ((openSegment_subset_accessCone hv (half_lt_inner_self hv) hhalf).trans hmono).trans hsub
 

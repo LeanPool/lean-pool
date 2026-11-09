@@ -1252,8 +1252,8 @@ theorem sub_eq_smul_of_mem_segment {a b x y : Plane} (hx : x ∈ segment ℝ a b
     (hy : y ∈ segment ℝ a b) : ∃ c : ℝ, x - y = c • (a - b) := by
   obtain ⟨α, β, -, -, hαβ, rfl⟩ := hx
   obtain ⟨γ, δ, -, -, hγδ, rfl⟩ := hy
-  have hb : β = 1 - α := by linarith
-  have hd : δ = 1 - γ := by linarith
+  have hb : β = 1 - α := by linarith only [hαβ]
+  have hd : δ = 1 - γ := by linarith only [hγδ]
   subst hb; subst hd
   exact ⟨α - γ, by module⟩
 
@@ -1284,9 +1284,10 @@ theorem ClosedPolygon.isCornerAt_vertex {m : ℕ} (P : ClosedPolygon m) (i : ZMo
     intro v hv
     calc t * ‖v‖ ≤ (r / (2 * (‖u‖ + ‖w‖ + 1))) * ‖v‖ :=
           mul_le_mul_of_nonneg_right (min_le_right _ _) (norm_nonneg v)
-      _ < r := by
-          rw [div_mul_eq_mul_div, div_lt_iff₀ (by positivity)]
-          nlinarith [norm_nonneg v]
+      _ ≤ (r / (2 * (‖u‖ + ‖w‖ + 1))) * (‖u‖ + ‖w‖ + 1) :=
+          mul_le_mul_of_nonneg_left hv (div_nonneg hr.le (mul_pos zero_lt_two hM).le)
+      _ = r / 2 := by rw [div_mul_eq_mul_div, mul_div_mul_right _ _ hM.ne']
+      _ < r := half_lt_self hr
   have hstep : ∀ v : Plane, ‖v‖ ≤ ‖u‖ + ‖w‖ + 1 →
       P.vertex i + t • v ∈ ball (P.vertex i) r := by
     intro v hv
@@ -1294,14 +1295,14 @@ theorem ClosedPolygon.isCornerAt_vertex {m : ℕ} (P : ClosedPolygon m) (i : ZMo
       abs_of_pos htpos]
     exact key v hv
   have hxmem : P.vertex i + t • u ∈ segment ℝ a b := by
-    refine hsub ⟨hstep u (by linarith [norm_nonneg w]), ?_⟩
+    refine hsub ⟨hstep u (by linarith only [norm_nonneg w]), ?_⟩
     refine ClosedPolygon.edge_subset_carrier (i := i)
-      ⟨1 - t, t, by linarith, htpos.le, by ring, ?_⟩
+      ⟨1 - t, t, by linarith only [htle], htpos.le, by ring, ?_⟩
     rw [hu]; module
   have hymem : P.vertex i + t • w ∈ segment ℝ a b := by
-    refine hsub ⟨hstep w (by linarith [norm_nonneg u]), ?_⟩
+    refine hsub ⟨hstep w (by linarith only [norm_nonneg u]), ?_⟩
     refine ClosedPolygon.edge_subset_carrier (i := i - 1)
-      ⟨t, 1 - t, htpos.le, by linarith, by ring, ?_⟩
+      ⟨t, 1 - t, htpos.le, by linarith only [htle], by ring, ?_⟩
     rw [hw, sub_add_cancel]; module
   have hvmem : P.vertex i ∈ segment ℝ a b := openSegment_subset_segment ℝ _ _ hvab
   have hdet := det_eq_zero_of_mem_segment hymem hxmem hvmem
