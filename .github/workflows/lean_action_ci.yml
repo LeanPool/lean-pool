@@ -806,6 +806,9 @@ jobs:
         id: compilation
         env:
           BUILD_TIME_BASE: ${{ github.event.merge_group.base_sha || github.event.pull_request.base.sha || github.event.before }}
+          # This run's shards already compiled and timed these projects'
+          # changed files, so assembly neither rebuilds nor re-times them.
+          SHARD_PROJECTS: ${{ join(fromJSON(needs.plan.outputs.matrix).include.*.projects, ' ') }}
         run: |
           set -euo pipefail
           # Always rebuild this job's changed files after every cache/artifact
@@ -815,7 +818,9 @@ jobs:
           if [ -n "$BUILD_TIME_BASE" ] && ! printf '%s' "$BUILD_TIME_BASE" | grep -q '^0*$' \
              && git cat-file -e "$BUILD_TIME_BASE" 2>/dev/null; then
             time_base="$BUILD_TIME_BASE"
-            PYTHONPATH=python python3 -m lean_pool.build_time_limits prepare --base "$time_base"
+            # shellcheck disable=SC2086 # SHARD_PROJECTS is a space-separated list on purpose
+            PYTHONPATH=python python3 -m lean_pool.build_time_limits prepare \
+              --base "$time_base" --exclude-projects $SHARD_PROJECTS
           fi
           PYTHONPATH=python python3 -m lean_pool.build_time_limits watch -- ~/.elan/bin/lake build LeanPool 2>&1 | tee lean-build.log
           if grep -nE '(^|: )warning:' lean-build.log; then
@@ -823,8 +828,9 @@ jobs:
             exit 1
           fi
           if [ -n "$time_base" ]; then
+            # shellcheck disable=SC2086 # SHARD_PROJECTS is a space-separated list on purpose
             PYTHONPATH=python python3 -m lean_pool.build_time_limits check \
-              --log lean-build.log --base "$time_base"
+              --log lean-build.log --base "$time_base" --exclude-projects $SHARD_PROJECTS
           fi
 
       # Main publishes the shared full build. A minimal-verifier PR publishes

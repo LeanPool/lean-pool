@@ -13,6 +13,7 @@ from pathlib import Path
 
 import pytest
 import yaml
+
 from lean_pool import build_time_limits as limits
 
 BUNDLE = "LeanPool/MovingSofa/Certificates/Bundle004.lean"
@@ -625,6 +626,18 @@ def test_prepare_and_check_scope_other_shard_and_explicit_empty(tmp_path: Path):
     assert limits.check(log, base, root, 600) == 1
 
 
+def test_assembly_skips_projects_its_shards_already_timed(tmp_path: Path):
+    """Assembly neither rebuilds nor re-times changed files a shard just checked."""
+    root, base = _repository(tmp_path)
+    shard_output = _artifact(root, BUNDLE_MODULE, ".olean")
+    log = tmp_path / "build.log"
+    log.write_text("")
+    assert limits.prepare(base, root, exclude_projects=["MovingSofa"]) == 0
+    assert shard_output.exists()
+    assert limits.check(log, base, root, 600, exclude_projects=["MovingSofa"]) == 0
+    assert limits.check(log, base, root, 600, exclude_projects=["Other"]) == 1
+
+
 def test_noncontent_change_has_no_fresh_timing_requirement(tmp_path: Path):
     """A noncontent PR neither invalidates old output nor checks untouched files."""
     root, _ = _repository(tmp_path)
@@ -748,6 +761,11 @@ def test_workflow_rebuilds_changed_modules_after_all_compiled_restores() -> None
         else:
             assert "--modules" not in script
             assert "lake build LeanPool" in script
+        if name == "finalize":
+            assert "include.*.projects" in steps[index]["env"]["SHARD_PROJECTS"]
+            assert script.count("--exclude-projects $SHARD_PROJECTS") == 2
+        else:
+            assert "--exclude-projects" not in script
         for restore_index, step in enumerate(steps):
             run = step.get("run", "")
             cache = step.get("uses", "").startswith("actions/cache/restore@") and (

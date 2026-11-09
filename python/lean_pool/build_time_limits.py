@@ -481,18 +481,39 @@ def violations(
 
 
 def _selected_changed_modules(
-    base: str, root: Path, modules: list[str] | None
+    base: str,
+    root: Path,
+    modules: list[str] | None,
+    exclude_projects: list[str] | None = None,
 ) -> dict[str, str]:
+    """Changed modules this job is responsible for timing.
+
+    ``exclude_projects`` names projects that this run's build shards already
+    compiled fresh and checked, so the assembling job neither rebuilds nor
+    re-times them.
+    """
     changed = changed_modules(base, root)
-    if modules is None:
-        return changed
-    selected = set(modules)
-    return {module: path for module, path in changed.items() if module in selected}
+    if modules is not None:
+        selected = set(modules)
+        changed = {
+            module: path for module, path in changed.items() if module in selected
+        }
+    excluded = set(exclude_projects or ())
+    return {
+        module: path
+        for module, path in changed.items()
+        if module.split(".")[1] not in excluded
+    }
 
 
-def prepare(base: str, root: Path, modules: list[str] | None = None) -> int:
+def prepare(
+    base: str,
+    root: Path,
+    modules: list[str] | None = None,
+    exclude_projects: list[str] | None = None,
+) -> int:
     """Invalidate changed-module artifacts so their build must record new timings."""
-    changed = _selected_changed_modules(base, root, modules)
+    changed = _selected_changed_modules(base, root, modules, exclude_projects)
     removed = 0
     for path in changed.values():
         stem = Path(path).with_suffix("")
@@ -520,10 +541,11 @@ def check(
     limit: int,
     *,
     modules: list[str] | None = None,
+    exclude_projects: list[str] | None = None,
 ) -> int:
     """Report changed files over the per-file limit; return the exit status."""
     times = module_times(log_path.read_text(errors="replace"))
-    changed = _selected_changed_modules(base, root, modules)
+    changed = _selected_changed_modules(base, root, modules, exclude_projects)
     built = [module for module in changed if module in times]
     print(
         f"Per-file build-time limit {limit} s: {len(changed)} added or modified "
@@ -561,12 +583,14 @@ def main(arguments: list[str] | None = None) -> int:
     prepare_parser.add_argument("--base", required=True)
     prepare_parser.add_argument("--root", type=Path, default=Path.cwd())
     prepare_parser.add_argument("--modules", nargs="*")
+    prepare_parser.add_argument("--exclude-projects", nargs="*", default=[])
     check_parser = commands.add_parser("check", help="check changed files' build times")
     check_parser.add_argument("--log", type=Path, required=True)
     check_parser.add_argument("--base", required=True)
     check_parser.add_argument("--limit", type=int, default=FILE_LIMIT_SECONDS)
     check_parser.add_argument("--root", type=Path, default=Path.cwd())
     check_parser.add_argument("--modules", nargs="*")
+    check_parser.add_argument("--exclude-projects", nargs="*", default=[])
     options = parser.parse_args(arguments)
     if options.command == "watch":
         build = options.build[1:] if options.build[:1] == ["--"] else options.build
@@ -574,9 +598,16 @@ def main(arguments: list[str] | None = None) -> int:
             parser.error("watch needs a command after --")
         return watch(build, options.limit)
     if options.command == "prepare":
-        return prepare(options.base, options.root, options.modules)
+        return prepare(
+            options.base, options.root, options.modules, options.exclude_projects
+        )
     return check(
-        options.log, options.base, options.root, options.limit, modules=options.modules
+        options.log,
+        options.base,
+        options.root,
+        options.limit,
+        modules=options.modules,
+        exclude_projects=options.exclude_projects,
     )
 
 
