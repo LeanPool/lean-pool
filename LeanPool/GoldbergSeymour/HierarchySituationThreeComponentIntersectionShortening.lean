@@ -1146,109 +1146,6 @@ private theorem helper_branch_317.{u_1, u_2} :
     subst ue
     rfl
 
-private theorem helper_branch_397.{u_1, u_2} :
-    open scoped Classical in
-  ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq V] [DecidableEq E]
-  (G : LooplessMultigraph V E) (k : ℕ) (e0 : E) (input : PartialEdgeColoring E k)
-  (T : TreeSequence G e0) (phi : PartialEdgeColoring E k)
-  (ett : ExtendedTashkinovTree G k e0 input T phi) (base : HierarchyBase ett phi)
-  (C : HierarchyCounterexample base)
-  (ctx : HierarchyMinimumCounterexampleContext G k e0 input T phi ett base C)
-  (P : HierarchyReplacementPresentation G k e0 input T phi ett base C ctx),
-  let R : ExtendedTashkinovTree G k e0 P.corresponding.replacementInput T P.coloring :=
-    P.corresponding.replacementETT;
-  let mu : PartialEdgeColoring E k := P.coloring;
-  let n : Fin (R.rounds + (1 : ℕ)) := Fin.last R.rounds;
-  let Tn : TreeSequence G e0 := R.series.data.tree n.castSucc;
-  n = (0 : Fin (R.rounds + (1 : ℕ))) →
-  ColoredVertexSetClosed G mu (TreeSequenceVertexSet Tn) := by
-  classical
-  intro V E _ _ _ _ G k e0 input T phi ett base C ctx P R mu n Tn hn
-  have hv := congrArg Fin.val hn
-  simp only [n, Fin.val_last, Fin.val_zero] at hv
-  have := R.roundsPositive
-  omega
-
-private theorem helper_branch_402.{u_1, u_2} :
-    open scoped Classical in
-  ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq V] [DecidableEq E]
-  (G : LooplessMultigraph V E) (k : ℕ) (e0 : E) (input : PartialEdgeColoring E k)
-  (T : TreeSequence G e0) (phi : PartialEdgeColoring E k)
-  (ett : ExtendedTashkinovTree G k e0 input T phi) (base : HierarchyBase ett phi)
-  (C : HierarchyCounterexample base)
-  (ctx : HierarchyMinimumCounterexampleContext G k e0 input T phi ett base C)
-  (P : HierarchyReplacementPresentation G k e0 input T phi ett base C ctx),
-  let R : ExtendedTashkinovTree G k e0 P.corresponding.replacementInput T P.coloring :=
-    P.corresponding.replacementETT;
-  let mu : PartialEdgeColoring E k := P.coloring;
-  let n : Fin (R.rounds + (1 : ℕ)) := Fin.last R.rounds;
-  let Tn : TreeSequence G e0 := R.series.data.tree n.castSucc;
-  (
-  ∀ (W : TreeSequence G e0) (D : Finset (Fin k)) (rho sigma : PartialEdgeColoring E k),
-  IsProperEdgeColoring G rho →
-  IsOneEdgeUncolored rho e0 →
-  IsProperEdgeColoring G sigma →
-  IsOneEdgeUncolored sigma e0 →
-  StableColoring W D rho sigma →
-  ColoredVertexSetClosed G rho (TreeSequenceVertexSet W) →
-  ColoredVertexSetClosed G sigma (TreeSequenceVertexSet W)) →
-  ∀ (i : Fin R.rounds),
-  IsProperEdgeColoring G (R.series.data.coloring i.castSucc) →
-  IsOneEdgeUncolored (R.series.data.coloring i.castSucc) e0 →
-  ColoredVertexSetClosed G (R.series.data.coloring i.castSucc)
-      (TreeSequenceVertexSet (R.series.data.tree i.succ.castSucc)) →
-  ∀
-    (choice :
-      MaximumDefectiveChoice G e0 (R.series.data.tree i.succ.castSucc)
-        (TashkinovStoredColors R.series.data i.castSucc)
-        (R.series.data.coloring i.castSucc)),
-  R.series.data.coloring i.succ = choice.selected →
-  n = i.succ →
-  ColoredVertexSetClosed G mu (TreeSequenceVertexSet Tn) := by
-  classical
-  intro V E _ _ _ _ G k e0 input T phi ett base C ctx P R mu n Tn stableClosed i hp ho hc choice
-      hcol hn
-  have hin : i.succ = n := hn.symm
-  have hm : mu = choice.selected := by
-    have hg : mu = R.series.data.coloring n := R.generatingColoring
-    rw [← hin, hcol] at hg
-    exact hg
-  rw [hm]
-  have htree : Tn = R.series.data.tree i.succ.castSucc := by rw [hin]
-  rw [htree]
-  exact @stableClosed _ _ _ _ hp ho choice.selectedProper
-    choice.selectedOneUncolored choice.selectedStable @hc
-
-private theorem helper_branch_419.{u_1, u_2} :
-    open scoped Classical in
-  ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq V] [DecidableEq E]
-  (G : LooplessMultigraph V E) (k : ℕ) (e0 : E) (input : PartialEdgeColoring E k)
-  (T : TreeSequence G e0) (phi : PartialEdgeColoring E k)
-  (ett : ExtendedTashkinovTree G k e0 input T phi) (base : HierarchyBase ett phi)
-  (C : HierarchyCounterexample base)
-  (ctx : HierarchyMinimumCounterexampleContext G k e0 input T phi ett base C)
-  (P : HierarchyReplacementPresentation G k e0 input T phi ett base C ctx),
-  let R : ExtendedTashkinovTree G k e0 P.corresponding.replacementInput T P.coloring :=
-    P.corresponding.replacementETT;
-  let mu : PartialEdgeColoring E k := P.coloring;
-  let n : Fin (R.rounds + (1 : ℕ)) := Fin.last R.rounds;
-  let Tn : TreeSequence G e0 := R.series.data.tree n.castSucc;
-  ∀ (i : Fin R.rounds),
-  ColoredVertexSetClosed G (R.series.data.coloring i.castSucc)
-      (TreeSequenceVertexSet (R.series.data.tree i.succ.castSucc)) →
-  R.series.data.coloring i.succ = R.series.data.coloring i.castSucc →
-  n = i.succ →
-  ColoredVertexSetClosed G mu (TreeSequenceVertexSet Tn) := by
-  classical
-  intro V E _ _ _ _ G k e0 input T phi ett base C ctx P R mu n Tn i hc hcol hn
-  have hin : i.succ = n := hn.symm
-  have hm : mu = R.series.data.coloring i.castSucc := by
-    have hg : mu = R.series.data.coloring n := R.generatingColoring
-    rw [← hin, hcol] at hg
-    exact hg
-  rw [hm, show Tn = R.series.data.tree i.succ.castSucc by rw [hin]]
-  exact @hc
-
 private theorem helper_exceptional_436.{u_1, u_2} :
     open scoped Classical in
   ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq V] [DecidableEq E]
@@ -2429,30 +2326,12 @@ private theorem componentIntersectionFromMissingColors.{u_1, u_2} :
       exact StableColoring.closed W D rho sigma hp ho hps hos hcl hst
     have nonparallelClosed
         (hk : R.series.data.kind n ≠ some TashkinovExtensionKind.PE) :
-        ColoredVertexSetClosed G mu (TreeSequenceVertexSet Tn) := by as_aux_lemma =>
-      clear * - R n Tn mu hk stableClosed
-      have step := R.series.certified n
-      generalize hn : n = z at step
-      cases step with
-      | initial =>
-          exact @helper_branch_397 (@V) (@E) inferInstance inferInstance inferInstance
-              inferInstance (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C) (@ctx) (@P)
-              (@hn)
-      | SE i hp ho hc hnc hnr choice halt hcol hstored hedges hkind
-          hvertex houtside hdelta hgamma seed hadjoin hclosure hordered hstrict =>
-              exact @helper_branch_402 (@V) (@E) inferInstance inferInstance inferInstance
-                  inferInstance (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C) (@ctx)
-                  (@P) (@stableClosed) (@i) (@hp) (@ho) (@hc) (@choice) (@hcol) (@hn)
-      | PE i hp ho hc hnc hnr choice halt gamma hgamma second hps hos hst
-          exit hcol hproper hone hstored hedges hkind hvertex houtside hdelta
-          hgammaEq hclosure hordered hstrict =>
-        exfalso
-        exact hk (hn.symm ▸ hkind)
-      | RE i hp ho hc hnc available hcol hstored hedges hkind hvertex
-          houtside hdelta hgamma seed hadjoin hclosure hordered hstrict =>
-              exact @helper_branch_419 (@V) (@E) inferInstance inferInstance inferInstance
-                  inferInstance (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C) (@ctx)
-                  (@P) (@i) (@hc) (@hcol) (@hn)
+        ColoredVertexSetClosed G mu (TreeSequenceVertexSet Tn) := by
+      exact R.series.closedOfNonParallel n
+        (by
+          simpa only [n, Fin.val_last] using
+            (lt_of_lt_of_le Nat.zero_lt_one R.roundsPositive)) mu
+        R.coloringProperties.1 R.coloringProperties.2 R.generatingColoring hk
     have hmod : ModColoring R mu := by as_aux_lemma =>
       clear * - P R mu
       apply Td G k e0 P.corresponding.replacementInput T mu R P.maximum

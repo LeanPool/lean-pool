@@ -1,7 +1,7 @@
 /-
 Copyright (c) 2026 Wesley Pegden. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Wesley Pegden
+Authors: Wesley Pegden, Lean Pool contributors
 -/
 module
 
@@ -323,86 +323,6 @@ private theorem helper_closedSingleton_356.{u_1, u_2} :
   obtain ⟨hb, hcol⟩ := Finset.mem_filter.mp hf
   exact hc hb hv hcol hvm
 
-private theorem helper_terminalPE_393.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq V] [DecidableEq E] (G :
-        LooplessMultigraph V E) (k : ℕ) (e0 : E) (input : PartialEdgeColoring E k) (T :
-        TreeSequence G e0) (phi : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k e0
-        input T phi) (base : HierarchyBase ett phi) (H : TashkinovHierarchy ett base) (alpha : Fin
-        k),
-    let Tn : TreeSequence G e0 := ett.series.data.tree (Fin.last ett.rounds).castSucc; (
-    ∀ (i : Fin (H.dividerCount + (1 : ℕ))), ¬TreeColorSetClosed G phi (HierarchyStarredStage H i)
-        ({ alpha } : Finset (Fin k))) → alpha ∈ TreeMissingColors phi Tn → (
-    ∀ (B : TreeSequence G e0), ColoredVertexSetClosed G phi (TreeSequenceVertexSet B) → alpha ∈
-        TreeMissingColors phi B → TreeColorSetClosed G phi B ({ alpha } : Finset (Fin k))) → (
-    ∀ (B : TreeSequence G e0) (C : Finset (Fin k)) (psi pi : PartialEdgeColoring E k),
-        IsProperEdgeColoring G psi → IsOneEdgeUncolored psi e0 → IsProperEdgeColoring G pi →
-        IsOneEdgeUncolored pi e0 → StableColoring B C psi pi → ColoredVertexSetClosed G psi
-        (TreeSequenceVertexSet B) → ColoredVertexSetClosed G pi (TreeSequenceVertexSet B)) →
-        ett.series.data.kind (Fin.last ett.rounds) = some TashkinovExtensionKind.PE := by
-  classical
-  intro V E _ _ _ _ G k e0 input T phi ett base H alpha Tn hn missingTn closedSingleton stableClosed
-  let p : Fin ett.rounds := ⟨ett.rounds - 1, by have := ett.roundsPositive; omega⟩
-  have hp : p.succ = Fin.last ett.rounds := by
-    apply Fin.ext
-    simp only [Fin.val_succ, Fin.val_last]
-    dsimp [p]
-    have := ett.roundsPositive
-    omega
-  have hphi : phi = ett.series.data.coloring p.succ := by
-    rw [hp]
-    exact ett.generatingColoring
-  have hTn : Tn = ett.series.data.tree p.succ.castSucc := by rw [hp]
-  generalize heq : p.succ = target
-  cases ett.series.certified target with
-  | initial triple seedLength initialColoring initialStored initialEdges
-      initialKind initialVertex initialOutside initialDelta initialGamma initialClosure =>
-    exact (Fin.succ_ne_zero p heq).elim
-  | PE ci previousProper previousOneUncolored previousClosed
-      previousNotStronglyClosed noRevisiting choice seriesAlternativeFails
-      gamma gammaRule secondStable secondStableProper secondStableOneUncolored
-      secondStableRelation exitWitness currentColoring currentProper
-      currentOneUncolored currentStored currentEdges currentKind currentVertex
-      currentOutside currentDelta currentGamma closedExtension orderedExtension
-          strictExtension =>
-    have hci : ci = p := Fin.ext (by have := congrArg Fin.val heq; simp at this; omega)
-    subst ci
-    rw [← hp]
-    exact currentKind
-  | RE ci previousProper previousOneUncolored previousClosed
-      previousNotStronglyClosed available currentColoring currentStored currentEdges
-      currentKind currentVertex currentOutside currentDelta currentGamma adjoined
-      adjoinedExactly closedExtension orderedExtension strictExtension =>
-    have hci : ci = p := Fin.ext (by have := congrArg Fin.val heq; simp at this; omega)
-    subst ci
-    have hnot : ett.series.data.kind (Fin.last ett.rounds) ≠
-        some TashkinovExtensionKind.PE := by rw [← hp, currentKind]; simp
-    apply False.elim
-    apply hn 0
-    change TreeColorSetClosed G phi base.core {alpha}
-    rw [base.nonparallel hnot]
-    apply closedSingleton Tn
-    · rw [hphi, currentColoring, hTn]
-      exact previousClosed
-    · exact missingTn
-  | SE ci previousProper previousOneUncolored previousClosed
-      previousNotStronglyClosed noRevisiting choice seriesAlternative currentColoring
-      currentStored currentEdges currentKind currentVertex currentOutside currentDelta
-      currentGamma adjoined adjoinedExactly closedExtension orderedExtension strictExtension =>
-    have hci : ci = p := Fin.ext (by have := congrArg Fin.val heq; simp at this; omega)
-    subst ci
-    have hnot : ett.series.data.kind (Fin.last ett.rounds) ≠
-        some TashkinovExtensionKind.PE := by rw [← hp, currentKind]; simp
-    apply False.elim
-    apply hn 0
-    change TreeColorSetClosed G phi base.core {alpha}
-    rw [base.nonparallel hnot]
-    apply closedSingleton Tn
-    · rw [hphi, currentColoring, hTn]
-      exact stableClosed _ _ _ _ previousProper previousOneUncolored
-        choice.selectedProper choice.selectedOneUncolored choice.selectedStable previousClosed
-    · exact missingTn
-
 private theorem helper_noMissingClosure_505.{u_1, u_2} :
     open scoped Classical in
     ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq V] [DecidableEq E] (G :
@@ -595,16 +515,18 @@ private theorem helper_continuation_896.{u_1, u_2} :
         (hc : ColoredVertexSetClosed G phi (TreeSequenceVertexSet B))
         (hm : alpha ∈ TreeMissingColors phi B) : TreeColorSetClosed G phi B {alpha} := by
       apply helper_closedSingleton_356 <;> assumption
-    have stableClosed (B : TreeSequence G e0) (D : Finset (Fin k))
-        (psi pi : PartialEdgeColoring E k) (hpsi : IsProperEdgeColoring G psi)
-        (hpsiOne : IsOneEdgeUncolored psi e0) (hpi : IsProperEdgeColoring G pi)
-        (hpiOne : IsOneEdgeUncolored pi e0) (hs : StableColoring B D psi pi)
-        (hc : ColoredVertexSetClosed G psi (TreeSequenceVertexSet B)) :
-        ColoredVertexSetClosed G pi (TreeSequenceVertexSet B) :=
-      StableColoring.closed B D psi pi hpsi hpsiOne hpi hpiOne hc hs
     have terminalPE : ett.series.data.kind (Fin.last ett.rounds) =
         some TashkinovExtensionKind.PE := by
-      apply helper_terminalPE_393 <;> assumption
+      by_contra nonparallel
+      apply hn 0
+      change TreeColorSetClosed G phi base.core {alpha}
+      rw [base.nonparallel nonparallel]
+      exact closedSingleton Tn (ett.series.closedOfNonParallel (Fin.last ett.rounds)
+        (by
+          simpa only [Fin.val_last] using
+            (lt_of_lt_of_le Nat.zero_lt_one ett.roundsPositive)) phi
+        ett.coloringProperties.1 ett.coloringProperties.2 ett.generatingColoring nonparallel)
+        missingTn
     -- The least missing position is an actual witness in the ladder tree.
     let a := HierarchyFirstMissingPosition phi T alpha
     let va := T.vertex a

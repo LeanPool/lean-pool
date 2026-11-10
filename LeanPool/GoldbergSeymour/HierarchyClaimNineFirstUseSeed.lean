@@ -1,7 +1,7 @@
 /-
 Copyright (c) 2026 Wesley Pegden. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Wesley Pegden
+Authors: Wesley Pegden, Lean Pool contributors
 -/
 module
 
@@ -2882,83 +2882,12 @@ private theorem helper_branch_4070.{u_1, u_2} :
     exact @helper_closedSingleton_400 (@V) (@E) inferInstance inferInstance inferInstance
         inferInstance (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C) (@ctx) (@P)
         (@gamma) (@U) (@hc) (@hm)
-  have stableClosed (U : TreeSequence G e0) (S : Finset (Fin k))
-      (psi pi : PartialEdgeColoring E k)
-      (hpsi : IsProperEdgeColoring G psi) (hpsiOne : IsOneEdgeUncolored psi e0)
-      (hpi : IsProperEdgeColoring G pi) (hpiOne : IsOneEdgeUncolored pi e0)
-      (hs : StableColoring U S psi pi)
-      (hc : ColoredVertexSetClosed G psi (TreeSequenceVertexSet U)) :
-      ColoredVertexSetClosed G pi (TreeSequenceVertexSet U) := by
-    exact StableColoring.closed U S psi pi hpsi hpsiOne hpi hpiOne hc hs
-  let p : Fin em.rounds := ⟨em.rounds - 1, by have := em.roundsPositive; omega⟩
-  have hp : p.succ = n := by
-    apply Fin.ext
-    change p.val + 1 = em.rounds
-    dsimp [p]
-    exact Nat.sub_add_cancel em.roundsPositive
-  have hphi : mu = em.series.data.coloring p.succ := by
-    rw [hp]
-    exact em.generatingColoring
-  have hTn : Tn = em.series.data.tree p.succ.castSucc := by rw [hp]
   have hclosedTn : TreeColorSetClosed G mu Tn {gamma} := by
-    generalize heq : p.succ = target
-    cases em.series.certified target with
-    | initial triple seedLength initialColoring initialStored initialEdges
-        initialKind initialVertex initialOutside initialDelta initialGamma initialClosure =>
-      exact (Fin.succ_ne_zero p heq).elim
-    | PE ci previousProper previousOneUncolored previousClosed
-        previousNotStronglyClosed noRevisiting choice seriesAlternativeFails
-        delta gammaRule secondStable secondStableProper secondStableOneUncolored
-        secondStableRelation exitWitness currentColoring currentProper
-        currentOneUncolored currentStored currentEdges currentKind currentVertex
-        currentOutside currentDelta currentGamma closedExtension orderedExtension
-            strictExtension =>
-      have hci : ci = p := Fin.ext (by
-        have hv := congrArg Fin.val heq
-        simp at hv ⊢
-        omega)
-      subst ci
-      have hfinalPE : em.series.data.kind n = some TashkinovExtensionKind.PE := by
-        rw [← hp, currentKind]
-      exact (hpe hfinalPE).elim
-    | RE ci previousProper previousOneUncolored previousClosed
-        previousNotStronglyClosed available currentColoring currentStored currentEdges
-        currentKind currentVertex currentOutside currentDelta currentGamma adjoined
-        adjoinedExactly closedExtension orderedExtension strictExtension =>
-      have hci : ci = p := Fin.ext (by
-        have hv := congrArg Fin.val heq
-        simp at hv ⊢
-        omega)
-      subst ci
-      have hclosedPrev : ColoredVertexSetClosed G mu
-          (TreeSequenceVertexSet (em.series.data.tree p.succ.castSucc)) := by
-        rw [hphi, currentColoring]
-        exact previousClosed
-      rw [hTn]
-      exact closedSingleton _ hclosedPrev (by simpa [hphi, currentColoring, hTn] using hgTn)
-    | SE ci previousProper previousOneUncolored previousClosed
-        previousNotStronglyClosed noRevisiting choice seriesAlternative currentColoring
-        currentStored currentEdges currentKind currentVertex currentOutside currentDelta
-        currentGamma adjoined adjoinedExactly closedExtension orderedExtension
-            strictExtension =>
-      have hci : ci = p := Fin.ext (by
-        have hv := congrArg Fin.val heq
-        simp at hv ⊢
-        omega)
-      subst ci
-      have hstableClosed : ColoredVertexSetClosed G choice.selected
-          (TreeSequenceVertexSet (em.series.data.tree p.succ.castSucc)) :=
-        stableClosed (em.series.data.tree p.succ.castSucc)
-        (TashkinovStoredColors em.series.data p.castSucc)
-        (em.series.data.coloring p.castSucc) choice.selected
-        previousProper previousOneUncolored choice.selectedProper
-        choice.selectedOneUncolored choice.selectedStable previousClosed
-      have hclosedNow : ColoredVertexSetClosed G mu
-          (TreeSequenceVertexSet (em.series.data.tree p.succ.castSucc)) := by
-        rw [hphi, currentColoring]
-        exact hstableClosed
-      rw [hTn]
-      exact closedSingleton _ hclosedNow (by simpa [hphi, currentColoring, hTn] using hgTn)
+    exact closedSingleton Tn (em.series.closedOfNonParallel n
+      (by
+        simpa only [n, Fin.val_last] using
+          (lt_of_lt_of_le Nat.zero_lt_one em.roundsPositive)) mu
+      em.coloringProperties.1 em.coloringProperties.2 em.generatingColoring hpe) hgTn
   have hclosed : TreeColorSetClosed G mu A {gamma} := by
     rw [hAeq]
     exact hclosedTn
