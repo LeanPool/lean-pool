@@ -33,6 +33,18 @@ theorem TashkinovHierarchy.stageInitialSegment (hierarchy : TashkinovHierarchy e
     (by simpa only [hierarchy.terminalStage] using TreeSequenceInitialSegment.refl tree)
     (fun index next => (hierarchy.nested index).trans next) index
 
+/-- A hierarchy divider lies before the end of any tree containing its divider stage. -/
+theorem TashkinovHierarchy.dividerPosition_le_of_stage_prefix
+    (hierarchy : TashkinovHierarchy ett base) (index : Fin hierarchy.dividerCount)
+    {prefixTree : TreeSequence G e0}
+    (segment : TreeSequenceInitialSegment (hierarchy.stage index.succ.castSucc) prefixTree) :
+    (hierarchy.dividerPosition index).val ≤ prefixTree.length := by
+  have length := congrArg TreeSequence.length (hierarchy.dividerStage index)
+  change (hierarchy.stage index.succ.castSucc).length =
+    (hierarchy.dividerPosition index).val at length
+  rw [← length]
+  exact segment.1
+
 /-- In the parallel case the closure vertices are contained in the base core. -/
 theorem HierarchyBase.closure_vertexSet_subset_core (base : HierarchyBase ett phi)
     (parallel : ett.series.data.kind (Fin.last ett.rounds) = some TashkinovExtensionKind.PE) :

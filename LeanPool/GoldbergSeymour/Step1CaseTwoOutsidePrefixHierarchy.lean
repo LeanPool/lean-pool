@@ -641,12 +641,8 @@ lemma Step1CaseTwoOutsidePrefixHierarchy {V E : Type*}
       exact ite_eq_right (show j.val ≠ H.dividerCount + 1 by omega)
     have stageLast : stageC (Fin.last (H.dividerCount + 1)) = C := by
       simp only [stageC, Fin.val_last, ite_true]
-    have divBound (i : Fin H.dividerCount) : (H.dividerPosition i).val ≤ C.length := by
-      have hl := congrArg TreeSequence.length (H.dividerStage i)
-      change (H.stage ⟨i.val + 1, by omega⟩).length = (H.dividerPosition i).val at hl
-      have hs := stageToB i.succ
-      rw [← hl]
-      exact le_trans hs.1 hBtoC.1
+    have divBound (i : Fin H.dividerCount) : (H.dividerPosition i).val ≤ C.length :=
+      H.dividerPosition_le_of_stage_prefix i ((stageToB i.succ).trans hBtoC)
     let KC := @helperKC712 (@V) (@E) inferInstance inferInstance inferInstance inferInstance (@G)
         (@k) (@e0) (@input) (@T) (@phi) (@ett) (@hpositive) (@base) (@H) (@mu) (@Bminus) (@C)
         (@hBCstrict) (@hCT) (@segTrans) (@coreToB) (@hBtoC) (@stageToB) (@newInput) (@newSeries)

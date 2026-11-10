@@ -1,7 +1,7 @@
 /-
 Copyright (c) 2026 Wesley Pegden. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Wesley Pegden
+Authors: Wesley Pegden, Lean Pool contributors
 -/
 module
 
@@ -62,6 +62,25 @@ theorem ETTFirstAppearanceIndex.le_of_series_mem {V E : Type*}
         (fun index => ett.series.data.tree index.succ.castSucc) index]
     exact stageMember
   exact Nat.succ_le_succ (Fin.le_iff_val_le_val.mp (Finset.min'_le _ _ candidate))
+
+/-- Before a vertex first appears, every positive series stage excludes it. -/
+theorem ETTFirstAppearanceIndex.not_mem_series_stage_of_lt {V E : Type*}
+    [Fintype V] [Fintype E] [DecidableEq E]
+    {G : LooplessMultigraph V E} {k : ℕ} {e0 : E} {input generating : PartialEdgeColoring E k}
+    {tree : TreeSequence G e0} (ett : ExtendedTashkinovTree G k e0 input tree generating)
+    (vertex : V) (member : vertex ∈ TreeSequenceVertexSet tree)
+    (index : Fin (ett.rounds + 1)) (positive : 0 < index.val)
+    (before : index.val < ETTFirstAppearanceIndex ett vertex member) :
+    vertex ∉ TreeSequenceVertexSet (ett.series.data.tree index.castSucc) := by
+  intro stageMember
+  let previous : Fin ett.rounds := ⟨index.val - 1, by have := index.isLt; omega⟩
+  have previousIndex : previous.succ = index := Fin.ext (by simp [previous]; omega)
+  have bound := ETTFirstAppearanceIndex.le_of_series_mem ett vertex member previous
+    (by simpa only [previousIndex] using stageMember)
+  have previousValue : previous.val + 1 = index.val := by
+    change index.val - 1 + 1 = index.val
+    omega
+  omega
 
 end GoldbergSeymour
 

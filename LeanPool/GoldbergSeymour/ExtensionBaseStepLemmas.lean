@@ -1,7 +1,7 @@
 /-
 Copyright (c) 2026 Wesley Pegden. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Wesley Pegden
+Authors: Wesley Pegden, Lean Pool contributors
 -/
 module
 
@@ -1574,14 +1574,15 @@ theorem helper_branch_880.{u_1, u_2} :
     rw [hjTreeIndex] at hstep
     exact hstep
   have hvNotPrevious : v ∉ TreeSequenceVertexSet Tprevious := by
-    exact @helper_hvNotPrevious_1574 (@V) (@E) inferInstance inferInstance inferInstance (@G)
-        (@k) (@e0) (@input) (@T) (@generating) (@ett) (@hpositive) (@v) (@hqTerminal) (@hvFinal)
-        (@hfirstUpper) (@hfirstPositive) (@hjSlot) (@terminalPosition) (@hjPositive)
+    exact ETTFirstAppearanceIndex.not_mem_series_stage_of_lt ett v hvFinal
+      jSlot.castSucc hjPositive (by
+        change ETTFirstAppearanceIndex ett v hvFinal - 1 < ETTFirstAppearanceIndex ett v hvFinal
+        exact Nat.sub_lt hfirstPositive (by decide))
   have hpreviousStrict : Tprevious.length < seed.length := by
-    exact @helper_hpreviousStrict_1615 (@V) (@E) inferInstance inferInstance inferInstance (@G)
-        (@k) (@e0) (@input) (@T) (@generating) (@ett) (@hpositive) (@v) (@hqTerminal) (@hvFinal)
-        (@hfirstUpper) (@hfirstPositive) (@terminalPosition) (@hterminalAt)
-        (@hterminalPositionPositive) (@hterminalPositionBound) (@hpreviousTj) (@hvNotPrevious)
+    have outside : (ett.series.data.tree jSlot.succ.castSucc).vertex terminalPosition ∉
+        TreeSequenceVertexSet Tprevious := by simpa only [hterminalAt] using hvNotPrevious
+    exact hpreviousTj.length_lt_of_vertex_not_mem
+      (TreeSequenceInitialSegment.refl Tprevious) outside
   have hpreviousSeed : TreeSequenceInitialSegment Tprevious seed :=
     commonPrefix hpreviousTj hseedTj (Nat.le_of_lt hpreviousStrict)
   have hseedBuild :

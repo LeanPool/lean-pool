@@ -119,192 +119,51 @@ private theorem helper_closureVertices_400.{u_1, u_2} :
   rw [u.vertexSet]
   exact Finset.mem_union_right _ hv
 
-private theorem helper_divBound_489.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E]
-      [ DecidableEq V] [ DecidableEq E] (G : LooplessMultigraph V E) (k : ℕ)
-      (e0 : E) (input : PartialEdgeColoring E k) (T : TreeSequence G e0)
-      (phi : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k e0 input T phi),
-    (0 : ℕ) < ett.rounds →
-    ∀ (base : HierarchyBase ett phi) (H : TashkinovHierarchy ett base) (beta : Fin k)
-      (b₂ : V) (gamma : Fin k) (sigma : PartialEdgeColoring E k)
-      (i₁ i₂ : Fin (T.length + (1 : ℕ))) (hiorder : (↑i₁ : ℕ) < (↑i₂ : ℕ))
-      (hspos : (1 : ℕ) ≤ (↑i₂ : ℕ) - (1 : ℕ)) (hsT : (↑i₂ : ℕ) ≤ T.length),
-    let Bminus : TreeSequence G e0 :=
-      TreeSequencePrefix T ((↑i₂ : ℕ) - (1 : ℕ)) hspos
-        (by
-          have := GoldbergSeymour.TreeSequence.positive T
-          have := Fin.isLt i₂
-          have := GoldbergSeymour.TreeSequence.positive T
-          omega);
-    let C : TreeSequence G e0 :=
-      TreeSequencePrefix T (↑i₂ : ℕ)
-        (by
-          have := GoldbergSeymour.TreeSequence.positive T
-          have := Fin.isLt i₂
-          have := GoldbergSeymour.TreeSequence.positive T
-          omega)
-        hsT;
-    let mu : PartialEdgeColoring E k :=
-      TwoColorComponentSwap G sigma gamma beta (Sum.inl b₂);
-    TreeSequenceInitialSegment Bminus C →
-    (∀ (j : Fin (H.dividerCount + (1 : ℕ))),
-        TreeSequenceInitialSegment (H.stage j.castSucc) Bminus) →
-    ∀ (newInput : PartialEdgeColoring E k)
-      (newSeries : TashkinovSeries G k ett.rounds e0 newInput) (rp : (1 : ℕ) ≤ ett.1)
-      (above :
-        TreeSequenceInitialSegment
-          (newSeries.data.tree (⟨ett.1, by omega⟩ : Fin (ett.1 + (2 : ℕ)))) C)
-      (strict :
-        (newSeries.data.tree
-              (⟨ett.1, by
-                  have := above.1
-                  omega⟩ :
-                Fin (ett.1 + (2 : ℕ)))).length <
-          C.length)
-      (below :
-        TreeSequenceInitialSegment C (newSeries.data.tree (Fin.last (ett.1 + (1 : ℕ)))))
-      (gen : mu = newSeries.data.coloring (Fin.last ett.1)),
-    { rounds := ett.1, roundsPositive := rp, series := newSeries, abovePenultimate := above,
-            strictAbovePenultimate := strict, belowFinal := below,
-            generatingColoring := gen :
-            ExtendedTashkinovTree G k e0 newInput C mu }.series ≍
-        newSeries →
-    ∀ (i : Fin H.dividerCount),
-    (↑(H.dividerPosition i) : ℕ) ≤ C.length := by
-  classical
-  intro V E _ _ _ _ G k e0 input T phi ett hpositive base H beta b₂ gamma sigma i₁ i₂ hiorder
-      hspos hsT Bminus C mu hBtoC stageToB newInput newSeries rp above strict below gen hs i
-  have hl := congrArg TreeSequence.length (H.dividerStage i)
-  change (H.stage ⟨i.val + 1, by omega⟩).length = (H.dividerPosition i).val at hl
-  have hs := stageToB i.succ
-  rw [← hl]
-  exact le_trans hs.1 hBtoC.1
+section TerminalStage
 
-private theorem helper_strict_833.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E]
-      [ DecidableEq V] [ DecidableEq E] (G : LooplessMultigraph V E) (k : ℕ)
-      (e0 : E) (input : PartialEdgeColoring E k) (T : TreeSequence G e0)
-      (phi : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k e0 input T phi)
-      (_ : (0 : ℕ) < ett.rounds) (base : HierarchyBase ett phi)
-      (H : TashkinovHierarchy ett base) (i₁ i₂ : Fin (T.length + (1 : ℕ)))
-      (hiorder : (↑i₁ : ℕ) < (↑i₂ : ℕ)) (hspos : (1 : ℕ) ≤ (↑i₂ : ℕ) - (1 : ℕ))
-      (hsT : (↑i₂ : ℕ) ≤ T.length),
-    let Bminus : TreeSequence G e0 :=
-      TreeSequencePrefix T ((↑i₂ : ℕ) - (1 : ℕ)) hspos (by omega);
-    let C : TreeSequence G e0 := TreeSequencePrefix T (↑i₂ : ℕ) (by omega) hsT;
-    ∀ (_ : Bminus.length < C.length)
-      (_ :
-        ∀ (j : Fin (H.dividerCount + (1 : ℕ))),
-          TreeSequenceInitialSegment (H.stage j.castSucc) Bminus)
-      (newInput : PartialEdgeColoring E k)
-      (newSeries : TashkinovSeries G k ett.rounds e0 newInput)
-      (_ :
-        (newSeries.data.tree (⟨ett.1, by omega⟩ : Fin (ett.1 + (2 : ℕ)))).length <
-          C.length),
-    let stageC : Fin (H.dividerCount + (2 : ℕ)) → TreeSequence G e0 :=
-      fun (j : Fin (H.dividerCount + (2 : ℕ))) ↦
-      if (↑j : ℕ) = H.dividerCount + (1 : ℕ) then C else H.stage j;
-    ∀
-      (_ :
-        ∀ (j : Fin (H.dividerCount + (2 : ℕ))) (_ : (↑j : ℕ) ≤ H.dividerCount),
-          stageC j = H.stage j)
-      (_ : stageC (Fin.last (H.dividerCount + (1 : ℕ))) = C)
-      (j : Fin (H.dividerCount + (1 : ℕ))),
-    (stageC j.castSucc).length < (stageC j.succ).length := by
-  classical
-  intro V E _ _ _ _ G k e0 input T phi ett hpositive base H i₁ i₂ hiorder hspos hsT Bminus C
-      hBCstrict stageToB newInput newSeries strict stageC stageOld stageLast j
-  rw [stageOld j.castSucc (by have := j.isLt; simp; omega)]
-  by_cases hj : j.val = H.dividerCount
-  · have he : j.succ = Fin.last (H.dividerCount + 1) := Fin.ext (by simp; omega)
-    rw [he, stageLast]
-    exact lt_of_le_of_lt (stageToB j).1 hBCstrict
-  · rw [stageOld j.succ (by simp; have := j.isLt; omega)]
-    exact H.strict j
+variable {V E : Type*} [Fintype V] [Fintype E] [DecidableEq V] [DecidableEq E]
+    {G : LooplessMultigraph V E} {k : ℕ} {e0 : E}
+    {input generating phi : PartialEdgeColoring E k} {tree : TreeSequence G e0}
+    {ett : ExtendedTashkinovTree G k e0 input tree generating} {base : HierarchyBase ett phi}
 
-private theorem helper_nested_879.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E]
-      [ DecidableEq V] [ DecidableEq E] (G : LooplessMultigraph V E) (k : ℕ)
-      (e0 : E) (input : PartialEdgeColoring E k) (T : TreeSequence G e0)
-      (phi : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k e0 input T phi)
-      (_ : (0 : ℕ) < ett.rounds) (base : HierarchyBase ett phi)
-      (H : TashkinovHierarchy ett base) (i₁ i₂ : Fin (T.length + (1 : ℕ)))
-      (hiorder : (↑i₁ : ℕ) < (↑i₂ : ℕ)) (hspos : (1 : ℕ) ≤ (↑i₂ : ℕ) - (1 : ℕ))
-      (hsT : (↑i₂ : ℕ) ≤ T.length),
-    let Bminus : TreeSequence G e0 :=
-      TreeSequencePrefix T ((↑i₂ : ℕ) - (1 : ℕ)) hspos (by omega);
-    let C : TreeSequence G e0 := TreeSequencePrefix T (↑i₂ : ℕ) (by omega) hsT;
-    ∀
-      (_ :
-        ∀ {S U W : TreeSequence G e0},
-          TreeSequenceInitialSegment S U →
-            TreeSequenceInitialSegment U W → TreeSequenceInitialSegment S W)
-      (_ : TreeSequenceInitialSegment Bminus C)
-      (_ :
-        ∀ (j : Fin (H.dividerCount + (1 : ℕ))),
-          TreeSequenceInitialSegment (H.stage j.castSucc) Bminus)
-      (newInput : PartialEdgeColoring E k) (_ : TashkinovSeries G k ett.rounds e0 newInput),
-    let stageC : Fin (H.dividerCount + (2 : ℕ)) → TreeSequence G e0 :=
-      fun (j : Fin (H.dividerCount + (2 : ℕ))) ↦
-      if (↑j : ℕ) = H.dividerCount + (1 : ℕ) then C else H.stage j;
-    ∀
-      (_ :
-        ∀ (j : Fin (H.dividerCount + (2 : ℕ))) (_ : (↑j : ℕ) ≤ H.dividerCount),
-          stageC j = H.stage j)
-      (_ : stageC (Fin.last (H.dividerCount + (1 : ℕ))) = C)
-      (j : Fin (H.dividerCount + (1 : ℕ))),
-    TreeSequenceInitialSegment (stageC j.castSucc) (stageC j.succ) := by
-  classical
-  intro V E _ _ _ _ G k e0 input T phi ett hpositive base H i₁ i₂ hiorder hspos hsT Bminus C
-      segTrans hBtoC stageToB newInput newSeries stageC stageOld stageLast j
-  rw [stageOld j.castSucc (by have := j.isLt; simp; omega)]
-  by_cases hj : j.val = H.dividerCount
-  · have he : j.succ = Fin.last (H.dividerCount + 1) := Fin.ext (by simp; omega)
-    rw [he, stageLast]
-    exact segTrans (stageToB j) hBtoC
-  · rw [stageOld j.succ (by simp; have := j.isLt; omega)]
-    exact H.nested j
+private theorem terminalStageStep (hierarchy : TashkinovHierarchy ett base)
+    (terminal : TreeSequence G e0)
+    (stages : Fin (hierarchy.dividerCount + 2) → TreeSequence G e0)
+    (old : ∀ index, index.val ≤ hierarchy.dividerCount → stages index = hierarchy.stage index)
+    (last : stages (Fin.last (hierarchy.dividerCount + 1)) = terminal)
+    (terminalPrefix : TreeSequenceInitialSegment
+      (hierarchy.stage (Fin.last hierarchy.dividerCount).castSucc) terminal)
+    (terminalStrict : (hierarchy.stage (Fin.last hierarchy.dividerCount).castSucc).length <
+      terminal.length) (index : Fin (hierarchy.dividerCount + 1)) :
+    TreeSequenceInitialSegment (stages index.castSucc) (stages index.succ) ∧
+      (stages index.castSucc).length < (stages index.succ).length := by
+  rw [old index.castSucc (Nat.le_of_lt_succ index.isLt)]
+  by_cases final : index.val = hierarchy.dividerCount
+  · have same : index = Fin.last hierarchy.dividerCount := Fin.ext final
+    subst index
+    rw [show (Fin.last hierarchy.dividerCount).succ =
+      Fin.last (hierarchy.dividerCount + 1) from rfl, last]
+    exact ⟨terminalPrefix, terminalStrict⟩
+  · rw [old index.succ (by simp; have := index.isLt; omega)]
+    exact ⟨hierarchy.nested index, hierarchy.strict index⟩
 
-private theorem helper_dividerStage_937.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E]
-      [ DecidableEq V] [ DecidableEq E] (G : LooplessMultigraph V E) (k : ℕ)
-      (e0 : E) (input : PartialEdgeColoring E k) (T : TreeSequence G e0)
-      (phi : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k e0 input T phi)
-      (_ : (0 : ℕ) < ett.rounds) (base : HierarchyBase ett phi)
-      (H : TashkinovHierarchy ett base) (i₁ i₂ : Fin (T.length + (1 : ℕ)))
-      (hiorder : (↑i₁ : ℕ) < (↑i₂ : ℕ)) (_ : (1 : ℕ) ≤ (↑i₂ : ℕ) - (1 : ℕ))
-      (hsT : (↑i₂ : ℕ) ≤ T.length),
-    let C : TreeSequence G e0 := TreeSequencePrefix T (↑i₂ : ℕ) (by omega) hsT;
-    ∀ (newInput : PartialEdgeColoring E k) (_ : TashkinovSeries G k ett.rounds e0 newInput),
-    let stageC : Fin (H.dividerCount + (2 : ℕ)) → TreeSequence G e0 :=
-      fun (j : Fin (H.dividerCount + (2 : ℕ))) ↦
-      if (↑j : ℕ) = H.dividerCount + (1 : ℕ) then C else H.stage j;
-    ∀
-      (_ :
-        ∀ (j : Fin (H.dividerCount + (2 : ℕ))) (_ : (↑j : ℕ) ≤ H.dividerCount),
-          stageC j = H.stage j)
-      (divBound : ∀ (i : Fin H.dividerCount), (↑(H.dividerPosition i) : ℕ) ≤ C.length)
-      (i : Fin H.dividerCount),
-    stageC (⟨(↑i : ℕ) + (1 : ℕ), by omega⟩ : Fin (H.dividerCount + (2 : ℕ))) =
-      TreeSequencePrefix C
-        (↑(⟨(↑(H.dividerPosition i) : ℕ), Nat.lt_succ_of_le (divBound i)⟩ :
-              Fin (C.length + (1 : ℕ))) :
-          ℕ)
-        (H.dividerPositive i)
-        (Nat.le_of_lt_succ
-          (⟨(↑(H.dividerPosition i) : ℕ), Nat.lt_succ_of_le (divBound i)⟩ :
-              Fin (C.length + (1 : ℕ))).isLt) := by
-  classical
-  intro V E _ _ _ _ G k e0 input T phi ett hpositive base H i₁ i₂ hiorder hspos hsT C newInput
-      newSeries stageC stageOld divBound i
-  rw [stageOld ⟨i.val + 1, by omega⟩
-    (by change i.val + 1 ≤ H.dividerCount; omega), H.dividerStage i]
-  rw [TreeSequencePrefix, TreeSequencePrefix]
-  congr 1
+private theorem terminalDividerStage (hierarchy : TashkinovHierarchy ett base)
+    (terminal : TreeSequence G e0) (terminalPrefix : TreeSequenceInitialSegment terminal tree)
+    (stages : Fin (hierarchy.dividerCount + 2) → TreeSequence G e0)
+    (old : ∀ index, index.val ≤ hierarchy.dividerCount → stages index = hierarchy.stage index)
+    (bound : ∀ index : Fin hierarchy.dividerCount,
+      (hierarchy.dividerPosition index).val ≤ terminal.length)
+    (index : Fin hierarchy.dividerCount) :
+    stages ⟨index.val + 1, by omega⟩ =
+      TreeSequencePrefix terminal (hierarchy.dividerPosition index).val
+        (hierarchy.dividerPositive index) (bound index) := by
+  rw [old ⟨index.val + 1, by omega⟩
+    (by change index.val + 1 ≤ hierarchy.dividerCount; exact Nat.succ_le_of_lt index.isLt),
+    hierarchy.dividerStage index]
+  exact ((TreeSequenceInitialSegment.prefix_segment terminal _
+    (hierarchy.dividerPositive index) (bound index)).trans terminalPrefix).eq_prefix.symm
+
+end TerminalStage
 
 private theorem treeSequenceVertexCast {V E : Type*} {G : LooplessMultigraph V E}
     {e0 : E} {S U : TreeSequence G e0} (h : S = U) (i : Fin (S.length + 1)) :
@@ -428,10 +287,11 @@ private theorem helper_branch_366.{u_1, u_2} :
     exact ite_eq_right (show j.val ≠ H.dividerCount + 1 by omega)
   have stageLast : stageC (Fin.last (H.dividerCount + 1)) = C := by
     simp only [stageC, Fin.val_last, ite_true]
-  have divBound :=
-    helper_divBound_489 (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@hpositive) (@base) (@H)
-        (@beta) (@b₂) (@gamma) (@sigma) (@i₁) (@i₂) (@hiorder) (@hspos) (@hsT) (@hBtoC)
-        (@stageToB) (@newInput) (@newSeries) (@rp) (@above) (@strict) (@below) (@gen) (@hs)
+  have divBound (i : Fin H.dividerCount) : (H.dividerPosition i).val ≤ C.length :=
+    H.dividerPosition_le_of_stage_prefix i ((stageToB i.succ).trans hBtoC)
+  have step := terminalStageStep H C stageC stageOld stageLast
+    ((stageToB (Fin.last H.dividerCount)).trans hBtoC)
+    (lt_of_le_of_lt (stageToB (Fin.last H.dividerCount)).1 hBCstrict)
   let KC : TashkinovHierarchy rep baseC :=
     { dividerCount := H.dividerCount
       stage := stageC
@@ -439,21 +299,12 @@ private theorem helper_branch_366.{u_1, u_2} :
         rw [stageOld 0 (by simp), H.baseStage]
         exact htree.symm
       terminalStage := stageLast
-      nested := by
-        exact helper_nested_879 (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@hpositive) (@base)
-            (@H) (@i₁) (@i₂) (@hiorder) (@hspos) (@hsT) (@segTrans) (@hBtoC) (@stageToB)
-            (@newInput) (@newSeries) (@stageOld) (@stageLast)
-      strict := by
-        exact helper_strict_833 (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@hpositive) (@base)
-            (@H) (@i₁) (@i₂) (@hiorder) (@hspos) (@hsT) (@hBCstrict) (@stageToB) (@newInput)
-            (@newSeries) (@strict) (@stageOld) (@stageLast)
+      nested := fun index => (step index).1
+      strict := fun index => (step index).2
       dividerPosition := fun i => ⟨(H.dividerPosition i).val, Nat.lt_succ_of_le (divBound i)⟩
       dividerPositive := H.dividerPositive
       dividerIncreasing := H.dividerIncreasing
-      dividerStage := by
-        exact helper_dividerStage_937 (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@hpositive)
-            (@base) (@H) (@i₁) (@i₂) (@hiorder) (@hspos) (@hsT) (@newInput) (@newSeries)
-            (@stageOld) (@divBound)
+      dividerStage := terminalDividerStage H C hCT stageC stageOld divBound
       coreInsideFirst := by
         by_cases hd : H.dividerCount = 0
         · have he : (⟨1, by omega⟩ : Fin (H.dividerCount + 2)) =

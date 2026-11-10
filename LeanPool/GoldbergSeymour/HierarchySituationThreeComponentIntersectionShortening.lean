@@ -1,7 +1,7 @@
 /-
 Copyright (c) 2026 Wesley Pegden. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Wesley Pegden
+Authors: Wesley Pegden, Lean Pool contributors
 -/
 module
 
@@ -2346,12 +2346,8 @@ private theorem componentIntersectionFromSpliceFacts.{u_1, u_2} :
         TreeSequenceInitialSegment (H.stage i.castSucc) U := trans (stageA i) hAU
     have stageB (i : Fin (H.dividerCount + 1)) :
         TreeSequenceInitialSegment (H.stage i.castSucc) B := trans (stageA i) hAB
-    have hdivB (i : Fin H.dividerCount) : (H.dividerPosition i).val ≤ B.length := by
-      have hl := congrArg TreeSequence.length (H.dividerStage i)
-      change (H.stage ⟨i.val + 1, by omega⟩).length = (H.dividerPosition i).val at hl
-      have hs := (stageB i.succ).1
-      change (H.stage ⟨i.val + 1, by omega⟩).length ≤ B.length at hs
-      omega
+    have hdivB (i : Fin H.dividerCount) : (H.dividerPosition i).val ≤ B.length :=
+      H.dividerPosition_le_of_stage_prefix i (stageB i.succ)
     have prefixEq (p : ℕ) (hp : 1 ≤ p) (hpB : p ≤ B.length) :
         TreeSequencePrefix U p hp (hpB.trans hBU.1) =
           TreeSequencePrefix T p hp (hpB.trans hBT.1) := by

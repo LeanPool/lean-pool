@@ -1805,11 +1805,10 @@ theorem helper_hvNotPrevious_5841.{u_1, u_2} :
   intro V E _ _ _ G k e0 input T generating ett hpositive v q hqTerminal hvFinal hfirstUpper
       hfirstPositive jSlot hjSlot p0 indices0 terminalPosition hterminalPositionPositive
       hterminalPositionBound TjPrime hqLast uPosition Tprevious hjPositive
-  exact @helper_hvNotPrevious_2347 (@V) (@E) inferInstance inferInstance inferInstance (@G)
-      (@k) (@e0) (@input) (@T) (@generating) (@ett) (@hpositive) (@v) (@hqTerminal)
-      (@hvFinal) (@hfirstUpper) (@hfirstPositive) (@hjSlot) (@p0) (@indices0)
-      (@terminalPosition) (@hterminalPositionPositive) (@hterminalPositionBound) (@TjPrime)
-      (@hqLast) (@uPosition) (@hjPositive)
+  exact ETTFirstAppearanceIndex.not_mem_series_stage_of_lt ett v hvFinal
+    jSlot.castSucc hjPositive (by
+      change ETTFirstAppearanceIndex ett v hvFinal - 1 < ETTFirstAppearanceIndex ett v hvFinal
+      exact Nat.sub_lt hfirstPositive (by decide))
 
 theorem helper_hpreviousStrict_5854.{u_1, u_2} :
     open scoped Classical in
@@ -1846,11 +1845,11 @@ theorem helper_hpreviousStrict_5854.{u_1, u_2} :
   intro V E _ _ _ G k e0 input T generating ett hpositive v q hqTerminal hvFinal hfirstUpper
       hfirstPositive jSlot p0 indices0 terminalPosition hterminalAt hterminalPositionPositive
       hterminalPositionBound seed TjPrime uPosition Tprevious hvNotPrevious hpreviousTj hjPositive
-  exact @helper_hpreviousStrict_2394 (@V) (@E) inferInstance inferInstance inferInstance
-      (@G) (@k) (@e0) (@input) (@T) (@generating) (@ett) (@hpositive) (@v) (@hqTerminal)
-      (@hvFinal) (@hfirstUpper) (@hfirstPositive) (@p0) (@indices0) (@terminalPosition)
-      (@hterminalAt) (@hterminalPositionPositive) (@hterminalPositionBound) (@TjPrime)
-      (@uPosition) (@hvNotPrevious) (@hpreviousTj) (@hjPositive)
+  have outside : (ett.series.data.tree jSlot.succ.castSucc).vertex terminalPosition ∉
+      TreeSequenceVertexSet Tprevious := by
+    simpa only [hterminalAt] using hvNotPrevious hjPositive
+  exact (hpreviousTj hjPositive).length_lt_of_vertex_not_mem
+    (TreeSequenceInitialSegment.refl Tprevious) outside
 
 theorem helper_branch_5870.{u_1, u_2} :
     open scoped Classical in
@@ -3011,11 +3010,10 @@ theorem helper_hvNotPrevious_6710.{u_1, u_2} :
   intro V E _ _ _ G k e0 input T generating ett hpositive v gamma delta sigma q hqTerminal
       hvFinal hfirstUpper hfirstPositive jSlot hjSlot trace p0 indices0 gamma0 delta0 rho1
       terminalPosition hqLast H x componentPath u exitPath Tprevious hjPositive
-  exact @helper_hvNotPrevious_4521 (@V) (@E) inferInstance inferInstance inferInstance (@G)
-      (@k) (@e0) (@input) (@T) (@generating) (@ett) (@hpositive) (@v) (@gamma) (@delta)
-      (@sigma) (@hqTerminal) (@hvFinal) (@hfirstUpper) (@hfirstPositive) (@hjSlot) (@trace)
-      (@p0) (@indices0) (@gamma0) (@delta0) (@terminalPosition) (@hqLast) (@x)
-      (@componentPath) (@u) (@exitPath) (@hjPositive)
+  exact ETTFirstAppearanceIndex.not_mem_series_stage_of_lt ett v hvFinal
+    jSlot.castSucc hjPositive (by
+      change ETTFirstAppearanceIndex ett v hvFinal - 1 < ETTFirstAppearanceIndex ett v hvFinal
+      exact Nat.sub_lt hfirstPositive (by decide))
 
 theorem helper_hpreviousStrict_6723.{u_1, u_2} :
     open scoped Classical in
@@ -3058,12 +3056,11 @@ theorem helper_hpreviousStrict_6723.{u_1, u_2} :
       hvFinal hfirstUpper hfirstPositive jSlot trace p0 indices0 gamma0 delta0 rho1
       terminalPosition hterminalAt hterminalPositionPositive hterminalPositionBound seed H x
       componentPath u exitPath Tprevious hvNotPrevious hpreviousTj hjPositive
-  exact @helper_hpreviousStrict_4568 (@V) (@E) inferInstance inferInstance inferInstance
-      (@G) (@k) (@e0) (@input) (@T) (@generating) (@ett) (@hpositive) (@v) (@gamma)
-      (@delta) (@sigma) (@hqTerminal) (@hvFinal) (@hfirstUpper) (@hfirstPositive) (@trace)
-      (@p0) (@indices0) (@gamma0) (@delta0) (@terminalPosition) (@hterminalAt)
-      (@hterminalPositionPositive) (@hterminalPositionBound) (@x) (@componentPath) (@u)
-      (@exitPath) (@hvNotPrevious) (@hpreviousTj) (@hjPositive)
+  have outside : (ett.series.data.tree jSlot.succ.castSucc).vertex terminalPosition ∉
+      TreeSequenceVertexSet Tprevious := by
+    simpa only [hterminalAt] using hvNotPrevious hjPositive
+  exact (hpreviousTj hjPositive).length_lt_of_vertex_not_mem
+    (TreeSequenceInitialSegment.refl Tprevious) outside
 
 theorem helper_branch_6740.{u_1, u_2} :
     open scoped Classical in
