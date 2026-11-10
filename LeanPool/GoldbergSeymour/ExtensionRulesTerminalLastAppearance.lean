@@ -5,6 +5,7 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.StableColoring
 public import LeanPool.GoldbergSeymour.TashkinovSeriesTreeFacts
 
 public import LeanPool.GoldbergSeymour.ETTFirstAppearanceIndex
@@ -251,57 +252,19 @@ private theorem helper_branch_350.{u_1, u_2} :
         q.val + 1 := by
       simpa [q] using hfirst
     omega
-  have prevInBefore : ∀ w : V, w ∈ TreeSequenceVertexSet Tprev →
-      w ∈ B := by
-    intro w hw
-    have hwN := TreeSequenceInitialSegmentVertexSetSubset prevToN hw
-    have hwT := TreeSequenceInitialSegmentVertexSetSubset
-      terminalSegment hwN
-    apply Finset.mem_filter.mpr
-    refine ⟨hwT, ?_⟩
-    rcases prevToN with ⟨hlen, hvertices, _⟩
-    rcases Finset.mem_image.mp hw with ⟨iw, _, hiw⟩
-    rcases Finset.mem_image.mp hvN with ⟨iv, _, hiv⟩
-    have hleniv : Tprev.length < iv.val := by
-      by_contra hnot
-      have hivBound : iv.val < Tprev.length + 1 := by omega
-      let ivPrev : Fin (Tprev.length + 1) := ⟨iv.val, hivBound⟩
-      apply hvNotPrev
-      apply Finset.mem_image.mpr
-      refine ⟨ivPrev, Finset.mem_univ _, ?_⟩
-      calc
-        Tprev.vertex ivPrev =
-            Tn.vertex (Fin.castLE (Nat.succ_le_succ hlen) ivPrev) :=
-          (hvertices ivPrev).symm
-        _ = Tn.vertex iv := by
-          congr 1
-        _ = v := hiv
-    have horderN : TreeVertexOrder Tn w v := by
-      refine ⟨Fin.castLE (Nat.succ_le_succ hlen) iw, iv,
-        (hvertices iw).trans hiw, hiv, ?_⟩
-      have hiwBound : iw.val ≤ Tprev.length := by omega
-      simp only [Fin.val_castLE]
-      omega
-    exact orderTransfer terminalSegment w v horderN
+  have prevInBefore : ∀ vertex, vertex ∈ TreeSequenceVertexSet Tprev → vertex ∈ B := by
+    intro vertex inTree
+    obtain ⟨position, _, equal⟩ := Finset.mem_image.mp hvN
+    have later := prevToN.length_lt_of_vertex_not_mem (position := position)
+      (TreeSequenceInitialSegment.refl Tprev) (by simpa only [equal] using hvNotPrev)
+    refine Finset.mem_filter.mpr ⟨(prevToN.trans terminalSegment).vertexSet_subset inTree, ?_⟩
+    exact orderTransfer terminalSegment vertex v
+      (by simpa only [equal] using prevToN.vertex_precedes later inTree)
   have stablePrevQ : StableColoring Tprev
       (TashkinovStoredColors ett.series.data q.castSucc)
-      (ett.series.data.coloring q.castSucc) sigma := by
-    constructor
-    · intro f hf hcolor
-      rcases hf with ⟨w, hw, hwf⟩
-      rcases hcolor with ⟨c, hc, hcf⟩
-      apply beforeStableQ.1 f ⟨w, prevInBefore w hw, hwf⟩
-      refine ⟨c, ?_, hcf⟩
-      rcases Finset.mem_union.mp hc with hc | hc
-      · apply Finset.mem_union.mpr
-        left
-        simp only [TreeMissingColors, Finset.mem_biUnion] at hc
-        rcases hc with ⟨z, hz, hzc⟩
-        simp only [Finset.mem_biUnion]
-        exact ⟨z, prevInBefore z hz, hzc⟩
-      · exact Finset.mem_union.mpr (Or.inr hc)
-    · intro w hw
-      exact beforeStableQ.2 w (prevInBefore w hw)
+      (ett.series.data.coloring q.castSucc) sigma :=
+    StableColoringOn.mono beforeStableQ (fun _ member => prevInBefore _ member)
+      (fun _ member => member)
   simpa [Tprev, hqj] using stablePrevQ
 
 private theorem helper_swapMissing_482.{u_1, u_2} :

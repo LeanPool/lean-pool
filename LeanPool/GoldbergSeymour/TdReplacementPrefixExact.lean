@@ -5,6 +5,7 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.StableColoring
 public import LeanPool.GoldbergSeymour.TashkinovAugmentationSequenceInitialSegment
 public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegmentFacts
 public import LeanPool.GoldbergSeymour.CorrespondingTerminalClosureEq
@@ -694,149 +695,6 @@ private theorem helper_branch_508.{u_1, u_2} :
       strictExtension =>
     exact (Fin.succ_ne_zero i htarget.symm).elim
 
-private theorem helper_hstableRestricted_798.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E]
-      [ DecidableEq E] (G : LooplessMultigraph V E) (k : ℕ) (e0 : E)
-      (input : PartialEdgeColoring E k) (T : TreeSequence G e0)
-      (generating : PartialEdgeColoring E k)
-      (ett : ExtendedTashkinovTree G k e0 input T generating)
-      (hpositive : (0 : ℕ) < ett.rounds),
-    let q : Fin ett.rounds :=
-      (⟨ett.rounds - (1 : ℕ),
-          Nat.sub_lt (Nat.zero_lt_of_lt hpositive)
-            (Decidable.byContradiction fun (a : ¬(0 : ℕ) < (1 : ℕ)) ↦ by omega)⟩ :
-        Fin ett.rounds);
-    ∀ (sigmaPrev : PartialEdgeColoring E k),
-    StableColoring (ett.series.data.tree q.succ.castSucc)
-        (TashkinovStoredColors ett.series.data q.castSucc)
-        (ett.series.data.coloring q.castSucc) sigmaPrev →
-    (∀ {A B : TreeSequence G e0},
-        TreeSequenceInitialSegment A B →
-          ∀ {v : V}, v ∈ TreeSequenceVertexSet A → v ∈ TreeSequenceVertexSet B) →
-    ∀ (hroundSub : ett.rounds - (1 : ℕ) + (1 : ℕ) = ett.rounds)
-      (originalPrefix :
-        ExtendedTashkinovTree G k e0 input
-          (ett.series.data.tree
-            (⟨ett.rounds - (1 : ℕ) + (1 : ℕ),
-                Decidable.byContradiction
-                  fun (a : ¬ett.rounds - (1 : ℕ) + (1 : ℕ) < ett.rounds + (2 : ℕ)) ↦ by
-                  omega⟩ :
-              Fin (ett.rounds + (2 : ℕ))))
-          (ett.series.data.coloring
-            (⟨ett.rounds - (1 : ℕ),
-                Decidable.byContradiction
-                  fun (a : ¬ett.rounds - (1 : ℕ) < ett.rounds + (1 : ℕ)) ↦ by omega⟩ :
-              Fin (ett.rounds + (1 : ℕ)))))
-      (hfinalTree :
-        ett.series.data.tree
-            (⟨ett.rounds - (1 : ℕ) + (1 : ℕ),
-                Decidable.byContradiction
-                  fun (a : ¬ett.rounds - (1 : ℕ) + (1 : ℕ) < ett.rounds + (2 : ℕ)) ↦ by
-                  omega⟩ :
-              Fin (ett.rounds + (2 : ℕ))) =
-          ett.series.data.tree (Fin.last ett.rounds).castSucc),
-    let originalPrefix' :
-      ExtendedTashkinovTree G k e0 input
-        (ett.series.data.tree (Fin.last ett.rounds).castSucc)
-        (ett.series.data.coloring
-          (⟨ett.rounds - (1 : ℕ),
-              Decidable.byContradiction
-                fun (a : ¬ett.rounds - (1 : ℕ) < ett.rounds + (1 : ℕ)) ↦ by omega⟩ :
-            Fin (ett.rounds + (1 : ℕ)))) :=
-      { rounds := originalPrefix.rounds, roundsPositive := originalPrefix.roundsPositive,
-        series := originalPrefix.series,
-        abovePenultimate :=
-          Eq.mp
-            (congrArg
-              (TreeSequenceInitialSegment
-                (originalPrefix.series.data.tree
-                  (⟨originalPrefix.rounds,
-                      Decidable.byContradiction
-                        fun (a : ¬originalPrefix.rounds < originalPrefix.rounds + (2 : ℕ)) ↦
-                        by omega⟩ :
-                    Fin (originalPrefix.rounds + (2 : ℕ)))))
-              hfinalTree)
-            originalPrefix.abovePenultimate,
-        strictAbovePenultimate :=
-          Eq.mp
-            (congrArg
-              (LT.lt
-                (originalPrefix.series.data.tree
-                    (⟨originalPrefix.rounds,
-                        Decidable.byContradiction
-                          fun
-                            (a : ¬originalPrefix.rounds < originalPrefix.rounds + (2 : ℕ)) ↦
-                          by omega⟩ :
-                      Fin (originalPrefix.rounds + (2 : ℕ)))).length)
-              (congrArg TreeSequence.length hfinalTree))
-            originalPrefix.strictAbovePenultimate,
-        belowFinal :=
-          Eq.mp
-            (congrFun' (congrArg TreeSequenceInitialSegment hfinalTree)
-              (originalPrefix.series.data.tree
-                (Fin.last (originalPrefix.rounds + (1 : ℕ)))))
-            originalPrefix.belowFinal,
-        generatingColoring := originalPrefix.generatingColoring :
-        ExtendedTashkinovTree G k e0 input
-          (ett.series.data.tree (Fin.last ett.rounds).castSucc)
-          (ett.series.data.coloring
-            (⟨ett.rounds - (1 : ℕ),
-                Decidable.byContradiction
-                  fun (a : ¬ett.rounds - (1 : ℕ) < ett.rounds + (1 : ℕ)) ↦ by omega⟩ :
-              Fin (ett.rounds + (1 : ℕ)))) };
-    let rLast : Fin (originalPrefix'.rounds + (1 : ℕ)) := Fin.last originalPrefix'.rounds;
-    originalPrefix'.series.data.coloring rLast = ett.series.data.coloring q.castSucc →
-    TashkinovStoredColors originalPrefix'.series.data rLast =
-        TashkinovStoredColors ett.series.data q.castSucc →
-    ett.series.data.tree (Fin.last ett.rounds).castSucc =
-        ett.series.data.tree q.succ.castSucc →
-    (∀ {A B : TreeSequence G e0},
-        TreeSequenceInitialSegment A B →
-          ∀ {f : E}, TreeIncidentEdge A f → TreeIncidentEdge B f) →
-    (∀ {A B : TreeSequence G e0},
-        TreeSequenceInitialSegment A B →
-          ∀ {phi : PartialEdgeColoring E k},
-            TreeMissingColors phi A ⊆ TreeMissingColors phi B) →
-    StableColoring (originalPrefix'.series.data.tree rLast.castSucc)
-      (TashkinovStoredColors originalPrefix'.series.data rLast)
-      (originalPrefix'.series.data.coloring rLast) sigmaPrev := by
-  classical
-  intro V E _ _ _ G k e0 input T generating ett hpositive q sigmaPrev hsigmaPrevStable
-      vertexSegment hroundSub originalPrefix hfinalTree originalPrefix' rLast hlastColor
-      hlastStored hterminalTree incidentSegment missingSegment
-  constructor
-  · intro f hf hcolor
-    have hfFull : TreeIncidentEdge
-        (ett.series.data.tree q.succ.castSucc) f := by
-      simpa only [hterminalTree] using
-        (incidentSegment originalPrefix'.abovePenultimate hf)
-    rcases hcolor with ⟨c, hc, hfc⟩
-    have hcFull : c ∈
-        TreeMissingColors (ett.series.data.coloring q.castSucc)
-            (ett.series.data.tree q.succ.castSucc) ∪
-          TashkinovStoredColors ett.series.data q.castSucc := by
-      rcases Finset.mem_union.mp hc with hc | hc
-      · apply Finset.mem_union_left
-        have hc' : c ∈ TreeMissingColors
-            (ett.series.data.coloring q.castSucc)
-            (originalPrefix'.series.data.tree rLast.castSucc) := by
-          simpa [hlastColor] using hc
-        simpa only [hterminalTree] using
-          (missingSegment originalPrefix'.abovePenultimate hc')
-      · apply Finset.mem_union_right
-        simpa [hlastStored] using hc
-    have hcopy := hsigmaPrevStable.1 f hfFull
-      ⟨c, hcFull, by simpa [hlastColor] using hfc⟩
-    simpa [hlastColor] using hcopy
-  · intro v hv
-    have hvFull : v ∈ TreeSequenceVertexSet
-        (ett.series.data.tree q.succ.castSucc) := by
-      simpa only [hterminalTree] using
-        (vertexSegment originalPrefix'.abovePenultimate hv)
-    have hcopy := hsigmaPrevStable.2 v hvFull
-    simpa [hlastColor] using hcopy
-
 private theorem helper_hseedPackage_853.{u_1, u_2} :
     open scoped Classical in
     ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E]
@@ -1062,27 +920,16 @@ private theorem helper_branch_755.{u_1, u_2} :
       ett.series.data.tree (Fin.last ett.rounds).castSucc =
         ett.series.data.tree q.succ.castSucc := by
     rw [hqSucc]
-  have incidentSegment {A B : TreeSequence G e0}
-      (hAB : TreeSequenceInitialSegment A B) {f : E}
-      (hf : TreeIncidentEdge A f) : TreeIncidentEdge B f := by
-    rcases hf with ⟨v, hv, hve⟩
-    exact ⟨v, vertexSegment hAB hv, hve⟩
-  have missingSegment {A B : TreeSequence G e0}
-      (hAB : TreeSequenceInitialSegment A B)
-      {phi : PartialEdgeColoring E k} :
-      TreeMissingColors phi A ⊆ TreeMissingColors phi B := by
-    intro c hc
-    simp only [TreeMissingColors, Finset.mem_biUnion] at hc ⊢
-    rcases hc with ⟨v, hv, hvc⟩
-    exact ⟨v, vertexSegment hAB hv, hvc⟩
   have hstableRestricted : StableColoring
       (originalPrefix'.series.data.tree rLast.castSucc)
       (TashkinovStoredColors originalPrefix'.series.data rLast)
       (originalPrefix'.series.data.coloring rLast) sigmaPrev := by
-    exact @helper_hstableRestricted_798 V E inferInstance inferInstance inferInstance G k e0
-        input T generating ett hpositive sigmaPrev hsigmaPrevStable vertexSegment hroundSub
-        originalPrefix hfinalTree hlastColor hlastStored hterminalTree incidentSegment
-        missingSegment
+    rw [hlastStored, hlastColor]
+    apply hsigmaPrevStable.mono
+    · intro vertex membership
+      simpa only [hterminalTree] using
+        originalPrefix'.abovePenultimate.vertexSet_subset membership
+    · exact fun _ membership => membership
   have hlowerPrefix := hlower originalPrefix'
     (by rw [hr']; omega) (by rw [hr']; omega) hprefixMP'
   have hmod : ModColoring originalPrefix' sigmaPrev := by

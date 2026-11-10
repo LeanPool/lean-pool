@@ -1214,19 +1214,11 @@ lemma Step1CaseOneOutsideStar {V E : Type*}
   have hsT : i₂.val ≤ T.length := Nat.le_of_lt_succ i₂.isLt
   let Bminus := TreeSequencePrefix T (i₂.val - 1) hspos (by omega)
   let C := TreeSequencePrefix T i₂.val (by omega) hsT
-  have hAB : TreeSequenceInitialSegment A Bminus := by
-    refine ⟨by simpa [Bminus, TreeSequencePrefix] using (show A.length ≤ i₂.val - 1 by omega),
-      ?_, ?_⟩
-    · intro i
-      change T.vertex (Fin.castLE _ (Fin.castLE _ i)) = A.vertex i
-      exact hAT.2.1 i
-    · intro i
-      change T.edge (Fin.castLE _ (Fin.castLE _ i)) = A.edge i
-      exact hAT.2.2 i
-  have hBC : TreeSequenceInitialSegment Bminus C := by
-    refine ⟨by simp [Bminus, C, TreeSequencePrefix], ?_, ?_⟩
-    · intro i; rfl
-    · intro i; rfl
+  have hAB : TreeSequenceInitialSegment A Bminus :=
+    hAT.prefix_of_segment _ (by omega) (by omega)
+  have hBC : TreeSequenceInitialSegment Bminus C :=
+    TreeSequenceInitialSegment.prefix_prefix T _ _ hspos (by omega)
+      (by omega) hsT (by omega)
   have hCT : TreeSequenceInitialSegment C T := ⟨hsT, fun _ => rfl, fun _ => rfl⟩
   have hBT := segment_trans hBC hCT
   have hBCstrict : Bminus.length < C.length := by
@@ -1236,15 +1228,8 @@ lemma Step1CaseOneOutsideStar {V E : Type*}
     change T.vertex ⟨i₂.val, _⟩ = b₂
     exact hi₂
   have hbNotB : b₂ ∉ TreeSequenceVertexSet Bminus := by
-    intro hb
-    obtain ⟨r, hr⟩ := by
-      simpa only [TreeSequenceVertexSet, Finset.mem_image, Finset.mem_univ, true_and] using hb
-    have heq := T.vertex_injective ((hBT.2.1 r).trans (hr.trans hi₂.symm))
-    have hv := congrArg Fin.val heq
-    have hrl := r.isLt
-    change r.val < i₂.val - 1 + 1 at hrl
-    simp only [Fin.val_castLE] at hv
-    omega
+    rw [← hi₂]
+    exact hBT.vertex_not_mem_after (by change i₂.val - 1 < i₂.val; omega)
   have hBCadjoin : ∃ g, TreeSequenceAdjoinEdge Bminus g C := by
     have hlen : C.length = Bminus.length + 1 := by
       simp only [Bminus, C, TreeSequencePrefix]

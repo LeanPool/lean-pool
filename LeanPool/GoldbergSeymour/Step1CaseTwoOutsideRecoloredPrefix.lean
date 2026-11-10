@@ -487,19 +487,11 @@ private theorem helper_continuation_431.{u_1, u_2} :
   have hsT : i₃.val ≤ T.length := Nat.le_of_lt_succ i₃.isLt
   let Bminus := TreeSequencePrefix T (i₃.val - 1) hspos (by omega)
   let C := TreeSequencePrefix T i₃.val (by omega) hsT
-  have hAB : TreeSequenceInitialSegment A Bminus := by
-    refine ⟨by simpa [Bminus, TreeSequencePrefix] using (show A.length ≤ i₃.val - 1 by omega),
-      ?_, ?_⟩
-    · intro i
-      change T.vertex (Fin.castLE _ (Fin.castLE _ i)) = A.vertex i
-      exact hAT.2.1 i
-    · intro i
-      change T.edge (Fin.castLE _ (Fin.castLE _ i)) = A.edge i
-      exact hAT.2.2 i
-  have hBC : TreeSequenceInitialSegment Bminus C := by
-    refine ⟨by simp [Bminus, C, TreeSequencePrefix], ?_, ?_⟩
-    · intro i; rfl
-    · intro i; rfl
+  have hAB : TreeSequenceInitialSegment A Bminus :=
+    hAT.prefix_of_segment _ (by omega) (by omega)
+  have hBC : TreeSequenceInitialSegment Bminus C :=
+    TreeSequenceInitialSegment.prefix_prefix T _ _ hspos (by omega)
+      (by omega) hsT (by omega)
   have hCT : TreeSequenceInitialSegment C T := ⟨hsT, fun _ => rfl, fun _ => rfl⟩
   have hBT := segment_trans hBC hCT
   have hTnB := segment_trans hTnA hAB
@@ -510,15 +502,8 @@ private theorem helper_continuation_431.{u_1, u_2} :
     change T.vertex ⟨i₃.val, _⟩ = b₃
     exact hi₃
   have hbNotB : b₃ ∉ TreeSequenceVertexSet Bminus := by
-    intro hb
-    obtain ⟨r, hr⟩ := by
-      simpa only [TreeSequenceVertexSet, Finset.mem_image, Finset.mem_univ, true_and] using hb
-    have heq := T.vertex_injective ((hBT.2.1 r).trans (hr.trans hi₃.symm))
-    have hv := congrArg Fin.val heq
-    have hrl := r.isLt
-    change r.val < i₃.val - 1 + 1 at hrl
-    simp only [Fin.val_castLE] at hv
-    omega
+    rw [← hi₃]
+    exact hBT.vertex_not_mem_after (by change i₃.val - 1 < i₃.val; omega)
   have hb₁C : b₁ ∈ TreeSequenceVertexSet C := by
     simp only [TreeSequenceVertexSet, Finset.mem_image, Finset.mem_univ, true_and]
     exact ⟨⟨i₁.val, by change i₁.val < i₃.val + 1; omega⟩, hi₁⟩

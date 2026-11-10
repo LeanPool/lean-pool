@@ -305,25 +305,7 @@ theorem RestrictedAugmentationCorrespondingEndpoint {V E : Type*}
       A.length ≤ B.length →
       TreeSequenceInitialSegment A B := by
     intro A B C hAC hBC hlenAB
-    rcases hAC with ⟨hlenAC, hvertexAC, hedgeAC⟩
-    rcases hBC with ⟨hlenBC, hvertexBC, hedgeBC⟩
-    refine ⟨hlenAB, ?_, ?_⟩
-    · intro i
-      calc
-        B.vertex (Fin.castLE (Nat.succ_le_succ hlenAB) i) =
-            C.vertex (Fin.castLE (Nat.succ_le_succ hlenBC)
-              (Fin.castLE (Nat.succ_le_succ hlenAB) i)) :=
-          (hvertexBC _).symm
-        _ = C.vertex (Fin.castLE (Nat.succ_le_succ hlenAC) i) := by
-          congr 1
-        _ = A.vertex i := hvertexAC i
-    · intro i
-      calc
-        B.edge (Fin.castLE hlenAB i) =
-            C.edge (Fin.castLE hlenBC (Fin.castLE hlenAB i)) :=
-          (hedgeBC _).symm
-        _ = C.edge (Fin.castLE hlenAC i) := by congr 1
-        _ = A.edge i := hedgeAC i
+    exact hBC.of_common_extension hAC hlenAB
   rcases corrJ with ⟨replacementInput, replacementSeries, replacementETT,
     rungAgreement, seriesPresentation, finalGeneratingColoring,
     ladderTreesAgree, storedColorsAgree, connectingEdgesAgree,

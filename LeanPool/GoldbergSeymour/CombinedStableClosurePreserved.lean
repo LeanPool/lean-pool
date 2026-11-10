@@ -112,37 +112,8 @@ theorem CombinedStableClosurePreserved {V E : Type*}
     have hab : StableColoring base.closure ∅ a.1 b.1 := hstable.2
     have hba := (sc2 G e0 base.closure ∅).symm hab
     exact hba
-  have hseqSigma : TashkinovAugmentationSequence sigma seed base.closure := by
-    apply TashkinovAugmentationSequence.transport ?_ hseqPhi
-    intro A B hstep segment
-    have htailVertex (vertex : V) (member : vertex ∈ TreeSequenceVertexSet B) :
-        vertex ∈ TreeSequenceVertexSet base.closure :=
-      TreeSequenceInitialSegmentVertexSetSubset segment member
-    have hnew : TashkinovAugmentation sigma A B := by
-      rcases hstep with ⟨hlen, hseg, c, hcolor, hmiss⟩
-      refine ⟨hlen, hseg, c, ?_, ?_⟩
-      · let hlast : Fin B.length := Fin.cast hlen.symm (Fin.last A.length)
-        have hcolor' : phi (B.edge hlast) = some c := by
-          dsimp [hlast]
-          exact hcolor
-        have hinc : TreeIncidentEdge base.closure (B.edge hlast) := by
-          rcases edgeIncident hlast with ⟨v, hv, he⟩
-          exact ⟨v, htailVertex v hv, he⟩
-        have hcR : c ∈ TreeMissingColors phi base.closure := by
-          unfold TreeMissingColors at hmiss ⊢
-          rcases Finset.mem_biUnion.mp hmiss with ⟨v, hv, hvc⟩
-          exact Finset.mem_biUnion.mpr ⟨v, htailVertex v (vertexTransfer hseg hv), hvc⟩
-        have heq := hstable.2.1 _ hinc
-          ⟨c, Finset.mem_union_left _ hcR, by
-            exact hcolor'⟩
-        exact heq.trans (by
-          exact hcolor')
-      · unfold TreeMissingColors at hmiss ⊢
-        rcases Finset.mem_biUnion.mp hmiss with ⟨v, hv, hvc⟩
-        refine Finset.mem_biUnion.mpr ⟨v, hv, ?_⟩
-        rw [hstable.2.2 v (htailVertex v (vertexTransfer hseg hv))]
-        exact hvc
-    exact hnew
+  have hseqSigma : TashkinovAugmentationSequence sigma seed base.closure :=
+    TashkinovAugmentationSequence.transport_of_stable hstable.2 hseqPhi
   exact ⟨hterminal, by
     have equalityReach : ∀ {A : TreeSequence G e0},
         Relation.ReflTransGen (TashkinovAugmentation phi) A base.closure →

@@ -1974,30 +1974,6 @@ private theorem helper_branch_1326.{u_1, u_2} :
       input T generating original presentation counterexample seed hseed gamma i3 hi3pos hi3le W
       hW route4W A40 max40 agree40 agree0 Q1 Q2 Q3 c1 hc1 g1 c2 hc2 g2 c3 hc3 g3 hdis12 hdis13
       hdis23 hmeasure good1 good2 good3 finish j1 hj1 j2 hj2 j3 hj3 hj12 hj13 hj23 h12 h13
-private theorem helper_commonPrefix_945.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} (G : LooplessMultigraph V E) (e0 : E)
-      {A B X : TreeSequence G e0},
-    TreeSequenceInitialSegment A X →
-    TreeSequenceInitialSegment B X →
-    A.length ≤ B.length →
-    TreeSequenceInitialSegment A B := by
-  classical
-  intro V E G e0 A B X hAX hBX hlen
-  refine ⟨hlen, ?_, ?_⟩
-  · intro i
-    calc
-      B.vertex (Fin.castLE _ i) =
-          X.vertex (Fin.castLE _ (Fin.castLE _ i)) := (hBX.2.1 _).symm
-      _ = X.vertex (Fin.castLE _ i) := by congr 1
-      _ = A.vertex i := hAX.2.1 _
-  · intro i
-    calc
-      B.edge (Fin.castLE _ i) =
-          X.edge (Fin.castLE _ (Fin.castLE _ i)) := (hBX.2.2 _).symm
-      _ = X.edge (Fin.castLE _ i) := by congr 1
-      _ = A.edge i := hAX.2.2 _
-
 private theorem helper_transportRoute_1070.{u_1, u_2} :
     open scoped Classical in
     ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq V] [DecidableEq E]
@@ -2984,7 +2960,7 @@ theorem RutgersStrictShortening
       (hAX : TreeSequenceInitialSegment A X)
       (hBX : TreeSequenceInitialSegment B X) (hlen : A.length ≤ B.length) :
       TreeSequenceInitialSegment A B := by
-    exact @helper_commonPrefix_945 V E G e0 A B X hAX hBX hlen
+    exact hBX.of_common_extension hAX hlen
   have terminalAgreement {i : PartialEdgeColoring E k}
       {A : TreeSequence G e0} {phi : PartialEdgeColoring E k}
       (base : ExtendedTashkinovTree G k e0 i A phi)

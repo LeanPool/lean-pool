@@ -157,38 +157,6 @@ private theorem helper_branch_326.{u_1, u_2} :
     apply Finset.mem_biUnion.mpr
     exact ⟨eta, hstored, he ▸ hgamma⟩
 
-private theorem helper_segment_trans_208.{u_1, u_2} :
-    ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq V] [DecidableEq E] (G :
-        LooplessMultigraph V E) (k : ℕ) (e0 : E) (n q : ℕ) (_ : Step1ExitLegMinimum G k e0 n q)
-        {S R W : TreeSequence G e0}, TreeSequenceInitialSegment S R → TreeSequenceInitialSegment R
-        W → TreeSequenceInitialSegment S W := by
-  classical
-  intro V E _ _ _ _ G k e0 n q M S R W hSR hRW
-  rcases hSR with ⟨u, hfirst⟩
-  rcases hfirst with ⟨hu, he⟩
-  rcases hRW with ⟨v, hsecond⟩
-  rcases hsecond with ⟨hv, hw⟩
-  have htotal : S.length ≤ W.length := by omega
-  refine ⟨htotal, ?_, ?_⟩
-  · intro z
-    have hz := hu z
-    have hz' := hv (Fin.castLE (Nat.succ_le_succ u) z)
-    calc
-      W.vertex (Fin.castLE (Nat.succ_le_succ htotal) z) =
-          W.vertex (Fin.castLE (Nat.succ_le_succ v)
-            (Fin.castLE (Nat.succ_le_succ u) z)) := by
-              congr 1
-      _ = R.vertex (Fin.castLE (Nat.succ_le_succ u) z) := hz'
-      _ = S.vertex z := hz
-  · intro z
-    have hz := hw (Fin.castLE u z)
-    calc
-      W.edge (Fin.castLE htotal z) =
-          W.edge (Fin.castLE v (Fin.castLE u z)) := by
-            congr 1
-      _ = R.edge (Fin.castLE u z) := hz
-      _ = S.edge z := he z
-
 private theorem helper_continuation_446.{u_1, u_2} :
     open scoped Classical in
     ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E] [ DecidableEq V] [ DecidableEq E] (G
@@ -308,8 +276,7 @@ lemma Step1ExitLegThetaPositive {V E : Type*}
   have hd : 1 ≤ d := by
     dsimp [d]
     exact Nat.one_le_iff_ne_zero.mpr (Nat.ne_of_gt hpositive)
-  have segment_trans := @helper_segment_trans_208 V E inferInstance inferInstance inferInstance
-      inferInstance G k e0 n q M
+  have segment_trans := @TreeSequenceInitialSegment.trans V E G e0
   have stage_chain : ∀ (r : ℕ) (hr : r ≤ d + 1),
       TreeSequenceInitialSegment (H.stage 0)
       (H.stage ⟨r, by omega⟩) := by

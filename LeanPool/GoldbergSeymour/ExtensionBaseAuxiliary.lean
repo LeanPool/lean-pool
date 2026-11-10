@@ -446,59 +446,6 @@ private theorem helper_hfxy_453.{u_1, u_2} :
     hzout (hyEq ▸ hyNext)
   exact hyne (hyEq.trans hxEq.symm)
 
-private theorem helper_hstableLower_484.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E] [ DecidableEq E] (G :
-        LooplessMultigraph V E) (k : ℕ) (e0 : E) (input : PartialEdgeColoring E k) (T :
-        TreeSequence G e0) (generating : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k
-        e0 input T generating) (hpositive : (0 : ℕ) < ett.rounds) (v : V),
-    let q : Fin ett.rounds := (⟨ett.rounds - (1 : ℕ),
-    by omega
-    ⟩ : Fin ett.rounds);
-    ∀ (hqTerminal : (↑q : ℕ) + (1 : ℕ) = ett.rounds) (hvFinal : v ∈ TreeSequenceVertexSet T) (_ :
-        ETTFirstAppearanceIndex ett v hvFinal ≤ (↑q : ℕ) + (1 : ℕ)) (_ : (0 : ℕ) <
-        ETTFirstAppearanceIndex ett v hvFinal) (_ : (
-    ∀ {A B : TreeSequence G e0} (_ : TreeSequenceInitialSegment A B), TreeSequenceVertexSet A ⊆
-        TreeSequenceVertexSet B)) (r _ : Fin ett.rounds) (sigmaR : PartialEdgeColoring E k) (_ :
-        StableColoring (ett.series.data.tree r.succ.castSucc) (TashkinovStoredColors
-        ett.series.data r.castSucc) (ett.series.data.coloring r.castSucc) sigmaR) (x : V) (_ : x ∈
-        TreeSequenceVertexSet T) (lower : ExtendedTashkinovTree G k e0 input (ett.series.data.tree
-        (⟨(↑r : ℕ) + (1 : ℕ),
-    by omega
-    ⟩ : Fin (ett.rounds + (2 : ℕ)))) (ett.series.data.coloring (⟨(↑r : ℕ),
-    by omega
-    ⟩ : Fin (ett.rounds + (1 : ℕ))))),
-    let nLower : Fin (lower.rounds + (1 : ℕ)) := Fin.last lower.rounds;
-    let P : TreeSequence G e0 := ett.series.data.tree r.castSucc.castSucc;
-    let Tnext : TreeSequence G e0 := ett.series.data.tree r.succ.castSucc;
-    ∀ (_ : TreeSequenceInitialSegment P Tnext) (_ : lower.series.data.tree nLower.castSucc = P) (_
-        : lower.series.data.coloring nLower = ett.series.data.coloring r.castSucc) (_ :
-        TashkinovStoredColors lower.series.data nLower = TashkinovStoredColors ett.series.data
-        r.castSucc), StableColoring (lower.series.data.tree nLower.castSucc)
-        (TashkinovStoredColors lower.series.data nLower) (lower.series.data.coloring nLower)
-        sigmaR := by
-  classical
-  intro V E _ _ _ G k e0 input T generating ett hpositive v q hqTerminal hvFinal hfirstUpper
-      hfirstPositive vertexTransfer r a sigmaR hstableR x hxFinal lower nLower P Tnext hPNext
-      htreeLower hcolorLower hstoredLower
-  rw [htreeLower, hstoredLower, hcolorLower]
-  constructor
-  · intro f hfP hcontrolled
-    apply hstableR.1 f
-    · rcases hfP with ⟨z, hz, hzf⟩
-      exact ⟨z, vertexTransfer hPNext hz, hzf⟩
-    · rcases hcontrolled with ⟨c, hc, hfc⟩
-      refine ⟨c, ?_, hfc⟩
-      rcases Finset.mem_union.mp hc with hc | hc
-      · apply Finset.mem_union.mpr
-        left
-        simp only [TreeMissingColors, Finset.mem_biUnion] at hc ⊢
-        rcases hc with ⟨z, hz, hcz⟩
-        exact ⟨z, vertexTransfer hPNext hz, hcz⟩
-      · exact Finset.mem_union.mpr (Or.inr hc)
-  · intro z hz
-    exact hstableR.2 z (vertexTransfer hPNext hz)
-
 private theorem helper_branch_664.{u_1, u_2} :
     open scoped Classical in
     ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq E] (G :
@@ -1119,10 +1066,6 @@ private theorem helper_branch_1321.{u_1, u_2} :
   change ix.val < terminalPosition.val at hlt
   omega
 
-private theorem helper_commonPrefix_1530.{u_1, u_2} :
-    SharedFacts.ParallelSupportClosureProperties.comparableInitialSegmentsStatement.{u_1, u_2} :=
-  SharedFacts.ParallelSupportClosureProperties.comparableInitialSegments.{u_1, u_2}
-
 private theorem helper_hvNotPrevious_1574.{u_1, u_2} :
     open scoped Classical in
     ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E]
@@ -1400,64 +1343,6 @@ private theorem helper_branch_1730.{u_1, u_2} :
   refine ⟨Or.inr (by simpa only [htarget] using currentKind),
     available.edge, adjoined, by simpa only [htarget] using currentEdges, hadjoin, ?_⟩
   simpa only [hi] using hadjoin.restrict_route hroute hseedTj hpreviousStrict
-
-private theorem helper_hstablePrevious_1829.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E] [ DecidableEq E] (G :
-        LooplessMultigraph V E) (k : ℕ) (e0 : E) (input : PartialEdgeColoring E k) (T :
-        TreeSequence G e0) (generating : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k
-        e0 input T generating) (hpositive : (0 : ℕ) < ett.rounds) (v : V) (sigma :
-        PartialEdgeColoring E k),
-    let q : Fin ett.rounds := (⟨ett.rounds - (1 : ℕ),
-    by omega
-    ⟩ : Fin ett.rounds);
-    ∀ (hqTerminal : (↑q : ℕ) + (1 : ℕ) = ett.rounds) (hvFinal : v ∈ TreeSequenceVertexSet T)
-        (hfirstUpper : ETTFirstAppearanceIndex ett v hvFinal ≤ (↑q : ℕ) + (1 : ℕ)) (hfirstPositive
-        : (0 : ℕ) < ETTFirstAppearanceIndex ett v hvFinal),
-    let jSlot : Fin ett.rounds := (⟨ETTFirstAppearanceIndex ett v hvFinal - (1 : ℕ),
-    by omega
-    ⟩ : Fin ett.rounds);
-    ∀ (trace : ExtensionBaseRestorationTrace ett v hvFinal sigma),
-    let rho1 : PartialEdgeColoring E k := trace.coloring (Fin.last trace.steps);
-    ∀ (_ : StableColoringBeforeVertex T v hvFinal (TashkinovStoredColors ett.series.data
-        jSlot.castSucc) (ett.series.data.coloring jSlot.castSucc) rho1) (terminalPosition : Fin
-        ((ett.series.data.tree jSlot.succ.castSucc).length + (1 : ℕ))) (hterminalPositionPositive
-        : (1 : ℕ) ≤ (↑terminalPosition : ℕ)) (hterminalPositionBound : (↑terminalPosition : ℕ) ≤
-        (ett.series.data.tree jSlot.succ.castSucc).length),
-    let seed : TreeSequence G e0 := TreeSequencePrefix (ett.series.data.tree jSlot.succ.castSucc)
-        (↑terminalPosition : ℕ) hterminalPositionPositive hterminalPositionBound;
-    ∀ (_ : (
-    ∀ {A : TreeSequence G e0} (_ : TreeSequenceInitialSegment A seed) (_ : A.length < seed.length)
-        {x : V} (_ : x ∈ TreeSequenceVertexSet A), x ∈ TreeVerticesBefore T v hvFinal)),
-    let Tprevious : TreeSequence G e0 := ett.series.data.tree jSlot.castSucc.castSucc;
-    ∀ (_ : Tprevious.length < seed.length) (_ : TreeSequenceInitialSegment Tprevious seed),
-        StableColoring Tprevious (TashkinovStoredColors ett.series.data jSlot.castSucc)
-        (ett.series.data.coloring jSlot.castSucc) rho1 := by
-  classical
-  intro V E _ _ _ G k e0 input T generating ett hpositive v sigma q hqTerminal hvFinal
-      hfirstUpper hfirstPositive jSlot trace rho1 hb1Rho terminalPosition
-      hterminalPositionPositive hterminalPositionBound seed segmentVertexBefore Tprevious
-      hpreviousStrict hpreviousSeed
-  constructor
-  · intro f hfIncident hfControlled
-    obtain ⟨x, hxPrevious, hxf⟩ := hfIncident
-    apply hb1Rho.1 f
-      ⟨x, segmentVertexBefore hpreviousSeed hpreviousStrict hxPrevious,
-        hxf⟩
-    obtain ⟨c, hcControlled, hfc⟩ := hfControlled
-    refine ⟨c, ?_, hfc⟩
-    rcases Finset.mem_union.mp hcControlled with hcMissing | hcStored
-    · apply Finset.mem_union_left
-      unfold TreeMissingColors at hcMissing
-      obtain ⟨z, hzPrevious, hcz⟩ :=
-        Finset.mem_biUnion.mp hcMissing
-      exact Finset.mem_biUnion.mpr
-        ⟨z, segmentVertexBefore hpreviousSeed hpreviousStrict
-          hzPrevious, hcz⟩
-    · exact Finset.mem_union_right _ hcStored
-  · intro x hxPrevious
-    exact hb1Rho.2 x
-      (segmentVertexBefore hpreviousSeed hpreviousStrict hxPrevious)
 
 private theorem helper_branch_1907.{u_1, u_2} :
     open scoped Classical in
@@ -2049,73 +1934,6 @@ private theorem helper_branch_3107.{u_1, u_2} :
 private theorem helper_branch_3129.{u_1, u_2} :
     SharedFacts.ExtensionBranches.branch3129Statement.{u_1, u_2} :=
   SharedFacts.ExtensionBranches.branch3129.{u_1, u_2}
-
-private theorem helper_hstablePrevious_3232.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E] [ DecidableEq E] (G :
-        LooplessMultigraph V E) (k : ℕ) (e0 : E) (input : PartialEdgeColoring E k) (T :
-        TreeSequence G e0) (generating : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k
-        e0 input T generating) (hpositive : (0 : ℕ) < ett.rounds) (v : V) (sigma :
-        PartialEdgeColoring E k),
-    let q : Fin ett.rounds := (⟨ett.rounds - (1 : ℕ),
-    by omega
-    ⟩ : Fin ett.rounds);
-    ∀ (hqTerminal : (↑q : ℕ) + (1 : ℕ) = ett.rounds) (hvFinal : v ∈ TreeSequenceVertexSet T)
-        (hfirstUpper : ETTFirstAppearanceIndex ett v hvFinal ≤ (↑q : ℕ) + (1 : ℕ)) (hfirstPositive
-        : (0 : ℕ) < ETTFirstAppearanceIndex ett v hvFinal),
-    let jSlot : Fin ett.rounds := (⟨ETTFirstAppearanceIndex ett v hvFinal - (1 : ℕ),
-    by omega
-    ⟩ : Fin ett.rounds);
-    ∀ (trace : ExtensionBaseRestorationTrace ett v hvFinal sigma) (hterminalJ : v ∈
-        TreeSequenceVertexSet (ett.series.data.tree jSlot.succ.castSucc)) (p0 : ℕ) (indices0 : Fin
-        (p0 + (1 : ℕ)) → Fin ett.rounds),
-    let rho1 : PartialEdgeColoring E k := trace.coloring (Fin.last trace.steps);
-    ∀ (terminalPosition : Fin ((ett.series.data.tree jSlot.succ.castSucc).length + (1 : ℕ)))
-        (hterminalPositionPositive : (1 : ℕ) ≤ (↑terminalPosition : ℕ)) (hterminalPositionBound :
-        (↑terminalPosition : ℕ) ≤ (ett.series.data.tree jSlot.succ.castSucc).length),
-    let seed : TreeSequence G e0 := TreeSequencePrefix (ett.series.data.tree jSlot.succ.castSucc)
-        (↑terminalPosition : ℕ) hterminalPositionPositive hterminalPositionBound;
-    ∀ (u : V) (b : Fin (p0 + (1 : ℕ))) (traceB : ExtensionBaseAlgorithmBTrace ett v rho1 u p0
-        indices0 b),
-    let rho2 : PartialEdgeColoring E k := traceB.coloring (Fin.last traceB.steps);
-    ∀ (_ : StableColoringBeforeVertex (ett.series.data.tree jSlot.succ.castSucc) v hterminalJ
-        (TashkinovStoredColors ett.series.data jSlot.castSucc) (ett.series.data.coloring
-        jSlot.castSucc) (traceB.coloring (Fin.last traceB.steps))),
-    let Tprevious : TreeSequence G e0 := ett.series.data.tree jSlot.castSucc.castSucc;
-    ∀ (_ : (
-    ∀ (_ : (0 : ℕ) < (↑jSlot : ℕ)), Tprevious.length < seed.length)) (_ : (
-    ∀ (_ : (0 : ℕ) < (↑jSlot : ℕ)), TreeSequenceInitialSegment Tprevious seed)) (_ : (
-    ∀ {A : TreeSequence G e0} (_ : TreeSequenceInitialSegment A seed) (_ : A.length < seed.length)
-        {x : V} (_ : x ∈ TreeSequenceVertexSet A), x ∈ TreeVerticesBefore (ett.series.data.tree
-        jSlot.succ.castSucc) v hterminalJ)) (_ : (0 : ℕ) < (↑jSlot : ℕ)), StableColoring Tprevious
-        (TashkinovStoredColors ett.series.data jSlot.castSucc) (ett.series.data.coloring
-        jSlot.castSucc) rho2 := by
-  classical
-  intro V E _ _ _ G k e0 input T generating ett hpositive v sigma q hqTerminal hvFinal
-      hfirstUpper hfirstPositive jSlot trace hterminalJ p0 indices0 rho1 terminalPosition
-      hterminalPositionPositive hterminalPositionBound seed u b traceB rho2 c1 Tprevious
-      hpreviousStrict hpreviousSeed segmentVertexBeforeJ hjPositive
-  constructor
-  · intro f hfIncident hfControlled
-    obtain ⟨x, hxPrevious, hxf⟩ := hfIncident
-    apply c1.1 f
-      ⟨x, segmentVertexBeforeJ (hpreviousSeed hjPositive)
-        (hpreviousStrict hjPositive) hxPrevious, hxf⟩
-    obtain ⟨color, hcControlled, hfc⟩ := hfControlled
-    refine ⟨color, ?_, hfc⟩
-    rcases Finset.mem_union.mp hcControlled with hcMissing | hcStored
-    · apply Finset.mem_union_left
-      unfold TreeMissingColors at hcMissing
-      obtain ⟨z, hzPrevious, hcz⟩ :=
-        Finset.mem_biUnion.mp hcMissing
-      exact Finset.mem_biUnion.mpr
-        ⟨z, segmentVertexBeforeJ (hpreviousSeed hjPositive)
-          (hpreviousStrict hjPositive) hzPrevious, hcz⟩
-    · exact Finset.mem_union_right _ hcStored
-  · intro x hxPrevious
-    exact c1.2 x
-      (segmentVertexBeforeJ (hpreviousSeed hjPositive)
-        (hpreviousStrict hjPositive) hxPrevious)
 
 private theorem helper_hcorrNonempty_3307.{u_1, u_2} :
     open scoped Classical in
@@ -3744,64 +3562,6 @@ private theorem helper_hTjC_5298.{u_1, u_2} :
     ((hseedTj.2.1 iSeed).symm.trans
       (congrArg
         (ett.series.data.tree jSlot.succ.castSucc).vertex hcast))
-
-private theorem helper_branch_5420.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E] [ DecidableEq E] (G :
-        LooplessMultigraph V E) (k : ℕ) (e0 : E) (input : PartialEdgeColoring E k) (T :
-        TreeSequence G e0) (generating : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k
-        e0 input T generating) (hpositive : (0 : ℕ) < ett.rounds) (v : V),
-    let q : Fin ett.rounds := (⟨ett.rounds - (1 : ℕ),
-    by omega
-    ⟩ : Fin ett.rounds);
-    ∀ (hqTerminal : (↑q : ℕ) + (1 : ℕ) = ett.rounds) (hvFinal : v ∈ TreeSequenceVertexSet T)
-        (hfirstUpper : ETTFirstAppearanceIndex ett v hvFinal ≤ (↑q : ℕ) + (1 : ℕ)) (hfirstPositive
-        : (0 : ℕ) < ETTFirstAppearanceIndex ett v hvFinal),
-    let jSlot : Fin ett.rounds := (⟨ETTFirstAppearanceIndex ett v hvFinal - (1 : ℕ),
-    by omega
-    ⟩ : Fin ett.rounds);
-    ∀ (hterminalJ : v ∈ TreeSequenceVertexSet (ett.series.data.tree jSlot.succ.castSucc))
-        (terminalPosition : Fin ((ett.series.data.tree jSlot.succ.castSucc).length + (1 : ℕ)))
-        (hterminalPositionPositive : (1 : ℕ) ≤ (↑terminalPosition : ℕ)) (hterminalPositionBound :
-        (↑terminalPosition : ℕ) ≤ (ett.series.data.tree jSlot.succ.castSucc).length),
-    let seed : TreeSequence G e0 := TreeSequencePrefix (ett.series.data.tree jSlot.succ.castSucc)
-        (↑terminalPosition : ℕ) hterminalPositionPositive hterminalPositionBound;
-    ∀ (_ : (
-    ∀ {A : TreeSequence G e0} (_ : TreeSequenceInitialSegment A seed) (_ : A.length < seed.length)
-        {x : V} (_ : x ∈ TreeSequenceVertexSet A), x ∈ TreeVerticesBefore T v hvFinal)),
-    let Tprevious : TreeSequence G e0 := ett.series.data.tree jSlot.castSucc.castSucc;
-    ∀ (_ : (
-    ∀ (_ : (0 : ℕ) < (↑jSlot : ℕ)), Tprevious.length < seed.length)) (_ : (
-    ∀ (_ : (0 : ℕ) < (↑jSlot : ℕ)), TreeSequenceInitialSegment Tprevious seed)) (rho3 :
-        PartialEdgeColoring E k) (_ : StableColoringBeforeVertex (ett.series.data.tree
-        jSlot.succ.castSucc) v hterminalJ (TashkinovStoredColors ett.series.data jSlot.castSucc)
-        (ett.series.data.coloring jSlot.castSucc) rho3) (_ : (
-    ∀ {A : TreeSequence G e0} (_ : TreeSequenceInitialSegment A seed) (_ : A.length < seed.length)
-        {y : V} (_ : y ∈ TreeSequenceVertexSet A), y ∈ TreeVerticesBefore (ett.series.data.tree
-        jSlot.succ.castSucc) v hterminalJ)) (_ : (0 : ℕ) < (↑jSlot : ℕ)) (f : E) (_ :
-        TreeIncidentEdge Tprevious f) (_ : (
-    ∃ c ∈ TreeMissingColors (ett.series.data.coloring jSlot.castSucc) Tprevious ∪
-        TashkinovStoredColors ett.series.data jSlot.castSucc, ett.series.data.coloring
-        jSlot.castSucc f = some c)), rho3 f = ett.series.data.coloring jSlot.castSucc f := by
-  classical
-  intro V E _ _ _ G k e0 input T generating ett hpositive v q hqTerminal hvFinal hfirstUpper
-      hfirstPositive jSlot hterminalJ terminalPosition hterminalPositionPositive
-      hterminalPositionBound seed segmentVertexBefore Tprevious hpreviousStrict hpreviousSeed
-      rho3 hd1 segmentVertexBefore hjPositive f hfIncident hfControlled
-  obtain ⟨y, hyPrevious, hyf⟩ := hfIncident
-  apply hd1.1 f
-    ⟨y, segmentVertexBefore (hpreviousSeed hjPositive)
-      (hpreviousStrict hjPositive) hyPrevious, hyf⟩
-  obtain ⟨c, hcControlled, hfc⟩ := hfControlled
-  refine ⟨c, ?_, hfc⟩
-  rcases Finset.mem_union.mp hcControlled with hcMissing | hcStored
-  · apply Finset.mem_union_left
-    unfold TreeMissingColors at hcMissing
-    obtain ⟨y, hy, hcy⟩ := Finset.mem_biUnion.mp hcMissing
-    exact Finset.mem_biUnion.mpr
-      ⟨y, segmentVertexBefore (hpreviousSeed hjPositive)
-        (hpreviousStrict hjPositive) hy, hcy⟩
-  · exact Finset.mem_union_right _ hcStored
 
 private theorem helper_branch_5475.{u_1, u_2} :
     open scoped Classical in

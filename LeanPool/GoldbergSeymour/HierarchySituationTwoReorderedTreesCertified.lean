@@ -117,13 +117,7 @@ theorem HierarchySituationTwoReorderedTreesCertified {V E : Type*}
       (hXZ : TreeSequenceInitialSegment X Z)
       (hYZ : TreeSequenceInitialSegment Y Z) (hXY : X.length ≤ Y.length) :
       TreeSequenceInitialSegment X Y := by
-    refine ⟨hXY, ?_, ?_⟩
-    · intro i
-      have hv := hYZ.2.1 (Fin.castLE (Nat.succ_le_succ hXY) i)
-      exact hv.symm.trans (by simpa using hXZ.2.1 i)
-    · intro i
-      have he := hYZ.2.2 (Fin.castLE hXY i)
-      exact he.symm.trans (by simpa using hXZ.2.2 i)
+    exact hYZ.of_common_extension hXZ hXY
   have equalTrees {X Y : TreeSequence G e0}
       (hXY : TreeSequenceInitialSegment X Y) (hlen : X.length = Y.length) :
       X = Y := by

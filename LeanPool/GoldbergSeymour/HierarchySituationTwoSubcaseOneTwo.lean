@@ -1183,21 +1183,6 @@ private theorem helper_hstoredTwo_1050.{u_1, u_2} :
     exact firstPreserved rho muTwo D.theta hmissingTwo hmissingPairOne.2
   · exact firstUnaffected rho D.gammaOne D.theta c hgammaTheta ctxOne.proper hcg hct
 
-private theorem helper_commonPrefix_1062.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} (G : LooplessMultigraph V E) (e0 : E)
-        {X Y F : TreeSequence G e0}, TreeSequenceInitialSegment X F → TreeSequenceInitialSegment Y
-        F → X.length ≤ Y.length → TreeSequenceInitialSegment X Y := by
-  classical
-  intro V E G e0 X Y F hXF hYF hXY
-  refine ⟨hXY, ?_, ?_⟩
-  · intro i
-    rw [← hYF.2.1 (Fin.castLE (Nat.succ_le_succ hXY) i)]
-    exact hXF.2.1 i
-  · intro i
-    rw [← hYF.2.2 (Fin.castLE hXY i)]
-    exact hXF.2.2 i
-
 private theorem helper_hcoreLength_1080.{u_1, u_2} :
     open scoped Classical in
     ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq V] [DecidableEq E] (G :
@@ -2100,7 +2085,7 @@ private theorem helper_continuation_2860.{u_1, u_2} :
   have commonPrefix {X Y F : TreeSequence G e0}
       (hXF : TreeSequenceInitialSegment X F) (hYF : TreeSequenceInitialSegment Y F)
       (hXY : X.length ≤ Y.length) : TreeSequenceInitialSegment X Y := by
-    exact @helper_commonPrefix_1062 (@V) (@E) (@G) (@e0) (@X) (@Y) (@F) (@hXF) (@hYF) (@hXY)
+    exact hYF.of_common_extension hXF hXY
   exact @helper_continuation_3192 (@V) (@E) inferInstance inferInstance inferInstance
       inferInstance (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C) (@ctx) (@D) (@htail)
       (@hBlen) (@hBT) (@hAB) (@hyB) (@hnotA) (@hgammaTheta) (@higB) (@self) (@hyt)

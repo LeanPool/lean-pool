@@ -2417,7 +2417,7 @@ private theorem helper_continuation_2398.{u_1, u_2} :
   have hXB : TreeSequenceInitialSegment X B := by
     have lengthBound : X.length ≤ B.length := by
       rw [hBlen, hXlen]
-      omega
+      exact Nat.le_sub_one_of_lt hAshort
     exact prefixOverlap hXT hBT lengthBound
   exact @helper_continuation_2492 (@V) (@E) inferInstance inferInstance inferInstance
       inferInstance (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C) (@ctx)

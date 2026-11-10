@@ -5,8 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.TashkinovAugmentationSequenceTransport
 public import LeanPool.GoldbergSeymour.ExtendedTashkinovTree
-public import LeanPool.GoldbergSeymour.HkuMissingStoredMonotone
 
 public import LeanPool.GoldbergSeymour.TashkinovAugmentationSequenceInitialSegment
 
@@ -78,38 +78,9 @@ theorem P2647_T1_TerminalStableRoute
       TashkinovClosure sigma S F := by
     as_aux_lemma =>
     have routeTransport (A : TreeSequence G e0)
-        (hroute : TashkinovAugmentationSequence phi A F) :
-        TashkinovAugmentationSequence sigma A F := by
-      unfold TashkinovAugmentationSequence at hroute ⊢
-      induction hroute using Relation.ReflTransGen.head_induction_on with
-      | refl => exact Relation.ReflTransGen.refl
-      | @head A B hstep htail ih =>
-        obtain ⟨hlen, hAB, c, hcolor, hc⟩ := hstep
-        have hBF := TashkinovAugmentationSequenceInitialSegment phi B F htail
-        have hAF := TashkinovAugmentationSequenceInitialSegment phi A F
-          (Relation.ReflTransGen.head ⟨hlen, hAB, c, hcolor, hc⟩ htail)
-        obtain ⟨v, hv, hcv⟩ := Finset.mem_biUnion.mp hc
-        have hvF := TreeSequenceInitialSegmentVertexSetSubset hAF hv
-        have hcF : c ∈ TreeMissingColors phi F :=
-          Finset.mem_biUnion.mpr ⟨v, hvF, hcv⟩
-        let j : Fin B.length := Fin.cast hlen.symm (Fin.last A.length)
-        have hj : TreeIncidentEdge F (B.edge j) := by
-          obtain ⟨i, hi⟩ := B.attaches j
-          refine ⟨B.vertex j.succ, ?_, ?_⟩
-          · apply TreeSequenceInitialSegmentVertexSetSubset hBF
-            simp only [TreeSequenceVertexSet, Finset.mem_image,
-              Finset.mem_univ, true_and]
-            exact ⟨j.succ, rfl⟩
-          · simp [Incident, hi]
-        have hfixed : sigma (B.edge j) = phi (B.edge j) :=
-          hstable.1 _ hj ⟨c, Finset.mem_union_left D hcF, hcolor⟩
-        have hcSigma : c ∈ TreeMissingColors sigma A := by
-          apply Finset.mem_biUnion.mpr
-          refine ⟨v, hv, ?_⟩
-          rw [hstable.2 v hvF]
-          exact hcv
-        exact Relation.ReflTransGen.head
-          ⟨hlen, hAB, c, hfixed.trans hcolor, hcSigma⟩ ih
+        (route : TashkinovAugmentationSequence phi A F) :
+        TashkinovAugmentationSequence sigma A F :=
+      TashkinovAugmentationSequence.transport_of_stable hstable route
     refine ⟨routeTransport S hclosure.1, ?_⟩
     intro f c v hf hv hfc hcv
     simp only [BoundaryEdges, Finset.mem_filter, Finset.mem_univ, true_and] at hf
@@ -217,17 +188,8 @@ theorem P2647_T1_TerminalStableRoute
       · simpa [Tn, hq] using adjoinedExactly
       · exact transport hp ho (by simpa only [phi, F, hq, hnFinal] using closedExtension)
   have hsubset := TreeSequenceInitialSegmentVertexSetSubset facts.2.2.1
-  have hmonotone := (HkuMissingStoredMonotone G k original.rounds e0 input
-    original.series q).2
-  have hmonotone' : TreeMissingColors phi Tn ∪ D ⊆ TreeMissingColors phi F ∪ D := by
-    simpa only [Tn, F, phi, D, hq, hnFinal] using hmonotone
-  have ladderStable : StableColoring Tn D phi sigma := by
-    refine ⟨?_, fun v hv => hstable.2 v (hsubset hv)⟩
-    intro f hf hc
-    obtain ⟨v, hv, hi⟩ := hf
-    apply hstable.1 f ⟨v, hsubset hv, hi⟩
-    obtain ⟨c, hc, hfc⟩ := hc
-    exact ⟨c, hmonotone' hc, hfc⟩
+  have ladderStable : StableColoring Tn D phi sigma :=
+    hstable.mono hsubset (fun _ member => member)
   exact ⟨facts.1, facts.2.1, facts.2.2.1, facts.2.2.2.1,
     ladderStable, facts.2.2.2.2⟩
 

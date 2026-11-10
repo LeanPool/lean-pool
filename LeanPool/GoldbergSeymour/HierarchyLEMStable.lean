@@ -5,6 +5,7 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.TashkinovAugmentationSequenceTransport
 public import LeanPool.GoldbergSeymour.HierarchyOutsideKempeStable
 public import LeanPool.GoldbergSeymour.TashkinovAugmentationSequenceRestrict
 public import LeanPool.GoldbergSeymour.TashkinovAugmentationSequenceInitialSegment
@@ -48,75 +49,6 @@ private theorem helper_hladder_156.{u_1, u_2} :
     simpa [hgen] using hfixed f (hinc f hf)
   · intro v hv
     simpa [hgen] using hstab.2 v (hsub hv)
-
-private theorem helper_transportSequence_234.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq E] (G :
-        LooplessMultigraph V E) (k : ℕ) (e0 : E) (input : PartialEdgeColoring E k) (T :
-        TreeSequence G e0) (phi sigma : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k
-        e0 input T phi), (0 : ℕ) < ett.rounds → StableColoring T (TashkinovStoredColors
-        ett.series.data (Fin.last ett.rounds)) phi sigma → (
-    ∀ (f : E), TreeIncidentEdge (ett.series.data.tree (Fin.last ett.rounds).castSucc) f →
-        TreeIncidentEdge T f) →
-    ∀ {A : TreeSequence G e0}, TashkinovAugmentationSequence phi A T →
-        TashkinovAugmentationSequence sigma A T := by
-  classical
-  intro V E _ _ _ G k e0 input T phi sigma ett hpositive hstab hinc A hseq
-  have vertexTransfer : ∀ {X Y : TreeSequence G e0},
-      TashkinovAugmentation phi X Y →
-      ∀ v, v ∈ TreeSequenceVertexSet X → v ∈ TreeSequenceVertexSet Y := by
-    intro X Y step v member
-    exact step.2.1.vertexSet_subset member
-  have vertexInclusion : ∀ {X Y : TreeSequence G e0},
-      TashkinovAugmentationSequence phi X Y →
-      ∀ v, v ∈ TreeSequenceVertexSet X → v ∈ TreeSequenceVertexSet Y := by
-    intro X Y hxy
-    unfold TashkinovAugmentationSequence at hxy
-    induction hxy using Relation.ReflTransGen.head_induction_on with
-    | refl => intro v hv; exact hv
-    | head hstep htail ih =>
-      intro v hv
-      rcases hstep with ⟨hlen, hsegment, c, hcolor, hmiss⟩
-      exact ih v (vertexTransfer ⟨hlen, hsegment, c, hcolor, hmiss⟩ v hv)
-  have segmentVertices : ∀ {X Y : TreeSequence G e0},
-      TreeSequenceInitialSegment X Y →
-      ∀ v, v ∈ TreeSequenceVertexSet X → v ∈ TreeSequenceVertexSet Y := by
-    intro X Y segment v member
-    exact segment.vertexSet_subset member
-  unfold TashkinovAugmentationSequence at hseq ⊢
-  induction hseq using Relation.ReflTransGen.head_induction_on with
-  | refl => exact Relation.ReflTransGen.refl
-  | @head X Y hstep htail ih =>
-    have htailVertex := vertexInclusion htail
-    rcases hstep with ⟨hlen, hsegment, c, hcolor, hmiss⟩
-    refine Relation.ReflTransGen.head ?_ ih
-    refine ⟨hlen, hsegment, c, ?_, ?_⟩
-    · let hlast : Fin Y.length := Fin.cast hlen.symm (Fin.last X.length)
-      have hcolor' : phi (Y.edge hlast) = some c := by
-        dsimp [hlast]
-        exact hcolor
-      have hinc : TreeIncidentEdge T (Y.edge hlast) := by
-        rcases Y.attaches hlast with ⟨i, hi⟩
-        refine ⟨Y.vertex hlast.succ, ?_, ?_⟩
-        · apply htailVertex
-          simp [TreeSequenceVertexSet]
-        · change Y.vertex hlast.succ ∈ G.ends (Y.edge hlast)
-          rw [hi]
-          exact Sym2.mem_mk_left _ _
-      have heq := hstab.1 _ hinc
-        ⟨c, Finset.mem_union_left _ (by
-          unfold TreeMissingColors at hmiss ⊢
-          rcases Finset.mem_biUnion.mp hmiss with ⟨v, hv, hvc⟩
-          have hvY : v ∈ TreeSequenceVertexSet Y :=
-            segmentVertices hsegment v hv
-          exact Finset.mem_biUnion.mpr ⟨v, htailVertex v hvY, hvc⟩), hcolor'⟩
-      exact heq.trans hcolor'
-    · unfold TreeMissingColors at hmiss ⊢
-      rcases Finset.mem_biUnion.mp hmiss with ⟨v, hv, hvc⟩
-      have hvY : v ∈ TreeSequenceVertexSet Y := segmentVertices hsegment v hv
-      refine Finset.mem_biUnion.mpr ⟨v, hv, ?_⟩
-      rw [hstab.2 v (htailVertex v hvY)]
-      exact hvc
 
 private theorem helper_branch_346.{u_1, u_2} :
     open scoped Classical in
@@ -763,9 +695,10 @@ theorem HierarchyLEMStable {V E : Type*}
         (@input) (@T) (@phi) (@sigma) (@ett) (@hpositive) (@hstab) (@hfixed) (@hsub) (@hinc)
   have restrictSequence :=
     @TashkinovAugmentationSequenceRestrict V E inferInstance G k e0
-  have transportSequence :=
-    @helper_transportSequence_234 (@V) (@E) inferInstance inferInstance inferInstance (@G) (@k)
-        (@e0) (@input) (@T) (@phi) (@sigma) (@ett) (@hpositive) (@hstab) (@hinc)
+  have transportSequence {A : TreeSequence G e0}
+      (route : TashkinovAugmentationSequence phi A T) :
+      TashkinovAugmentationSequence sigma A T :=
+    TashkinovAugmentationSequence.transport_of_stable hstab route
   have sequenceSegment {A B : TreeSequence G e0}
       (sequence : TashkinovAugmentationSequence phi A B) : TreeSequenceInitialSegment A B :=
     TashkinovAugmentationSequenceInitialSegment phi A B sequence

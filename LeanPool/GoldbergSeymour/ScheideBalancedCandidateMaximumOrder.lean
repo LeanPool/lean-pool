@@ -5,6 +5,7 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.TashkinovAugmentationSequencePreservesTashkinovTree
 public import LeanPool.GoldbergSeymour.BoundaryColorEdges
 public import LeanPool.GoldbergSeymour.ScheideBalancedCandidate
 public import LeanPool.GoldbergSeymour.TashTree
@@ -24,141 +25,6 @@ Adapted from Wesley Pegden’s Trellis formalization at
 @[expose] public section
 
 namespace GoldbergSeymour
-
-private theorem helper_hPlusTash_173.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E] [ DecidableEq V] [ DecidableEq E] (G
-        : LooplessMultigraph V E) (k : ℕ) (e0 : E) (phi : PartialEdgeColoring E k) (T S :
-        TreeSequence G e0) (N : NormalGlobalMaximumTriple G k e0 phi T) (_ :
-        ScheideBalancedCandidate N S),
-    let X : Finset V := TreeSequenceVertexSet S;
-    ∀ (omitted :
-    ∃ (n : ℕ) (hn : n < T.length + (1 : ℕ)), T.vertex (⟨n, hn⟩ : Fin (T.length + (1 : ℕ))) ∉ X),
-    let n : ℕ := Nat.find omitted;
-    ∀ (hnlt : n < T.length + (1 : ℕ)) (hnlarge : (2 : ℕ) ≤ n),
-    let q : Fin T.length := (⟨n - (1 : ℕ), Decidable.byContradiction fun (a : ¬n - (1 : ℕ) <
-        T.length) =>
-    by omega
-    ⟩ : Fin T.length);
-    ∀ (a : Fin ((↑q : ℕ) + (1 : ℕ))) (gamma : Fin k) (_ : phi (T.edge q) = some gamma) (_ : gamma
-        ∈ MissingColors G phi (T.vertex (a.castLT ((
-    by first  | omega
-    ))))) (s : Fin (S.length + (1 : ℕ))) (_ : S.vertex s = T.vertex (a.castLT (Nat.lt_trans a.isLt
-        (Nat.succ_lt_succ q.isLt)))) (Splus : TreeSequence G e0) (hPlusLen : Splus.length =
-        S.length + (1 : ℕ)) (hSPlusInit : TreeSequenceInitialSegment S Splus) (_ : Splus.edge
-        (Fin.cast ((
-    by omega
-    )) (Fin.last S.length)) = T.edge q) (_ : (
-    ∀ (i : Fin (S.length + (1 : ℕ))), Splus.vertex (Fin.castLE (Nat.succ_le_succ hSPlusInit.1) i)
-        = S.vertex i)) (_ : (
-    ∀ (j : Fin S.length), Splus.edge (Fin.castLE hSPlusInit.1 j) = S.edge j)), TashkinovTree G e0
-        phi Splus := by
-  classical
-  intro V E _ _ _ _ G k e0 phi T S N hS X omitted n hnlt hnlarge q a gamma hqcolor hagamma s hsa
-      Splus hPlusLen hSPlusInit hPlusLast hPlusVertex hPlusEdge j hj
-  by_cases hlast : j.val = S.length
-  · have hjlast : j = Fin.cast hPlusLen.symm (Fin.last S.length) := by
-      apply Fin.ext
-      simp [hlast]
-    let ss : Fin (j.val + 1) := ⟨s.val, by simpa [hlast] using s.isLt⟩
-    refine ⟨ss, gamma, ?_, ?_⟩
-    · rw [hjlast, hPlusLast, hqcolor]
-    · have hcast : Fin.castLT ss
-        (Nat.lt_trans ss.isLt (Nat.succ_lt_succ j.isLt)) =
-        Fin.castLE (Nat.succ_le_succ hSPlusInit.1) s := by
-        apply Fin.ext
-        simp [ss]
-      rw [hcast, hPlusVertex, hsa]
-      exact hagamma
-  · have hjlt : j.val < S.length := by
-      rw [hPlusLen] at j
-      omega
-    let jS : Fin S.length := ⟨j.val, hjlt⟩
-    obtain ⟨i, c, hcolor, hmissing⟩ := hS.tashkinov jS (by simpa [jS] using hj)
-    let ii : Fin (j.val + 1) := ⟨i.val, by simpa [jS] using i.isLt⟩
-    refine ⟨ii, c, ?_, ?_⟩
-    · have hindex : j = Fin.castLE hSPlusInit.1 jS := by
-        apply Fin.ext
-        rfl
-      rw [hindex, hPlusEdge]
-      exact hcolor
-    · have hidx : Fin.castLT ii
-          (Nat.lt_trans ii.isLt (Nat.succ_lt_succ j.isLt)) =
-          Fin.castLE (Nat.succ_le_succ hSPlusInit.1)
-            (Fin.castLT i
-              (Nat.lt_trans i.isLt (Nat.succ_lt_succ jS.isLt))) := by
-        apply Fin.ext
-        rfl
-      rw [hidx, hPlusVertex]
-      exact hmissing
-
-private theorem helper_hPlusPlusTash_472.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [Finite V] [Fintype E] [DecidableEq V] (G : LooplessMultigraph
-        V E) (k : ℕ) (e0 : E) (phi : PartialEdgeColoring E k) (T S : TreeSequence G e0),
-    let X : Finset V := TreeSequenceVertexSet S;
-    ∀ (omitted :
-    ∃ (n : ℕ) (hn : n < T.length + (1 : ℕ)), T.vertex (⟨n, hn⟩ : Fin (T.length + (1 : ℕ))) ∉ X),
-    let n : ℕ := Nat.find omitted;
-    ∀ (_ : n < T.length + (1 : ℕ)) (_ : (2 : ℕ) ≤ n) (gamma : Fin k) (s : Fin (S.length + (1 :
-        ℕ))) (Splus : TreeSequence G e0) (_ : Splus.length = S.length + (1 : ℕ)) (hSPlusInit :
-        TreeSequenceInitialSegment S Splus) (_ : TashkinovTree G e0 phi Splus) (_ :
-        (TreeSequenceVertexSet Splus).card = S.length + (2 : ℕ)),
-    let U : Finset V := TreeSequenceVertexSet Splus;
-    ∀ (_ : U.card = S.length + (2 : ℕ)) (f : E) (_ : phi f = some gamma) (Splusplus : TreeSequence
-        G e0) (hPlusPlusLen : Splusplus.length = Splus.length + (1 : ℕ)) (hPlusPlusInit :
-        TreeSequenceInitialSegment Splus Splusplus) (_ : Splusplus.edge (Fin.cast ((
-    by omega
-    )) (Fin.last Splus.length)) = f) (_ : (
-    ∀ (i : Fin (Splus.length + (1 : ℕ))), Splusplus.vertex (Fin.castLE (Nat.succ_le_succ
-        hPlusPlusInit.1) i) = Splus.vertex i)) (_ : (
-    ∀ (j : Fin Splus.length), Splusplus.edge (Fin.castLE hPlusPlusInit.1 j) = Splus.edge j)),
-    let zIndex : Fin (Splus.length + (1 : ℕ)) := Fin.castLE (Nat.succ_le_succ hSPlusInit.1) s;
-    ∀ (_ : gamma ∈ MissingColors G phi (Splus.vertex zIndex)), TashkinovTree G e0 phi Splusplus
-  := by
-  classical
-  intro V E _ _ _ G k e0 phi T S X omitted n hnlt hnlarge gamma s Splus hPlusLen hSPlusInit
-      hPlusTash hPlusCard U hUCard f hfColor Splusplus hPlusPlusLen hPlusPlusInit hPlusPlusLast
-      hPlusPlusVertex hPlusPlusEdge zIndex hzIndexMissing j hj
-  let _ := Fintype.ofFinite V
-  by_cases hlast : j.val = Splus.length
-  · have hjlast : j = Fin.cast hPlusPlusLen.symm (Fin.last Splus.length) := by
-      apply Fin.ext
-      simp [hlast]
-    let zz : Fin (j.val + 1) :=
-      ⟨zIndex.val, by simpa [hlast] using zIndex.isLt⟩
-    refine ⟨zz, gamma, ?_, ?_⟩
-    · rw [hjlast, hPlusPlusLast, hfColor]
-    · have hcast : Fin.castLT zz
-          (Nat.lt_trans zz.isLt (Nat.succ_lt_succ j.isLt)) =
-          Fin.castLE (Nat.succ_le_succ hPlusPlusInit.1) zIndex := by
-        apply Fin.ext
-        simp [zz]
-      rw [hcast, hPlusPlusVertex]
-      exact hzIndexMissing
-  · have hjlt : j.val < Splus.length := by
-      rw [hPlusPlusLen] at j
-      omega
-    let jPlus : Fin Splus.length := ⟨j.val, hjlt⟩
-    obtain ⟨i, c, hcolor, hmissing⟩ :=
-      hPlusTash jPlus (by simpa [jPlus] using hj)
-    let ii : Fin (j.val + 1) :=
-      ⟨i.val, by simpa [jPlus] using i.isLt⟩
-    refine ⟨ii, c, ?_, ?_⟩
-    · have hindex : j = Fin.castLE hPlusPlusInit.1 jPlus := by
-        apply Fin.ext
-        rfl
-      rw [hindex, hPlusPlusEdge]
-      exact hcolor
-    · have hidx : Fin.castLT ii
-          (Nat.lt_trans ii.isLt (Nat.succ_lt_succ j.isLt)) =
-          Fin.castLE (Nat.succ_le_succ hPlusPlusInit.1)
-            (Fin.castLT i
-              (Nat.lt_trans i.isLt (Nat.succ_lt_succ jPlus.isLt))) := by
-        apply Fin.ext
-        rfl
-      rw [hidx, hPlusPlusVertex]
-      exact hmissing
 
 private theorem helper_hUsed_577.{u_1, u_2} :
     open scoped Classical in
@@ -609,10 +475,6 @@ private theorem helper_continuation_951.{u_1, u_2} :
     TreeSequenceBoundaryEdgeAppendExists Splus f hfBoundary
   rcases hAdjoinPlusPlus with
     ⟨hPlusPlusLen, hPlusPlusInit, hPlusPlusLast⟩
-  have hPlusPlusVertex (i : Fin (Splus.length + 1)) :
-      Splusplus.vertex
-          (Fin.castLE (Nat.succ_le_succ hPlusPlusInit.1) i) =
-        Splus.vertex i := hPlusPlusInit.2.1 i
   have hPlusPlusEdge (j : Fin Splus.length) :
       Splusplus.edge (Fin.castLE hPlusPlusInit.1 j) = Splus.edge j :=
     hPlusPlusInit.2.2 j
@@ -621,10 +483,16 @@ private theorem helper_continuation_951.{u_1, u_2} :
   have hzIndexMissing : gamma ∈ MissingColors G phi (Splus.vertex zIndex) := by
     simpa [zIndex] using hsGamma
   have hPlusPlusTash : TashkinovTree G e0 phi Splusplus := by
-    exact @helper_hPlusPlusTash_472 V E inferInstance inferInstance inferInstance G
-        k e0 phi T S omitted hnlt hnlarge gamma s Splus hPlusLen hSPlusInit hPlusTash hPlusCard
-        hUCard f hfColor Splusplus hPlusPlusLen hPlusPlusInit hPlusPlusLast hPlusPlusVertex
-        hPlusPlusEdge hzIndexMissing
+    apply TashkinovAugmentationSequencePreservesTashkinovTree G e0 phi Splus Splusplus
+      hPlusTash
+    apply Relation.ReflTransGen.single
+    refine ⟨hPlusPlusLen, hPlusPlusInit, gamma, ?_, ?_⟩
+    · rw [hPlusPlusLast]; exact hfColor
+    · exact Finset.mem_biUnion.mpr
+        ⟨Splus.vertex zIndex, (by
+          simp only [TreeSequenceVertexSet, Finset.mem_image, Finset.mem_univ, true_and]
+          exact ⟨zIndex, rfl⟩),
+          hzIndexMissing⟩
   have hSPlusPlusInit : TreeSequenceInitialSegment S Splusplus := by
     exact hSPlusInit.trans hPlusPlusInit
   have hTrunkInit :
@@ -900,9 +768,14 @@ theorem ScheideBalancedCandidateMaximumOrder {V E : Type*}
       Splus.edge (Fin.castLE hSPlusInit.1 j) = S.edge j :=
     hSPlusInit.2.2 j
   have hPlusTash : TashkinovTree G e0 phi Splus := by
-    exact @helper_hPlusTash_173 V E inferInstance inferInstance inferInstance inferInstance G k
-        e0 phi T S N hS omitted hnlt hnlarge a gamma hqcolor hagamma s hsa Splus hPlusLen
-        hSPlusInit hPlusLast hPlusVertex hPlusEdge
+    apply TashkinovAugmentationSequencePreservesTashkinovTree G e0 phi S Splus hS.tashkinov
+    apply Relation.ReflTransGen.single
+    refine ⟨hPlusLen, hSPlusInit, gamma, ?_, ?_⟩
+    · rw [hPlusLast]; exact hqcolor
+    · exact Finset.mem_biUnion.mpr
+        ⟨S.vertex s, (by
+          simp only [TreeSequenceVertexSet, Finset.mem_image, Finset.mem_univ, true_and]
+          exact ⟨s, rfl⟩), hsa.symm ▸ hagamma⟩
   have hgammaUsedT : gamma ∈ TreeUsedColors phi T := by
     simp only [TreeUsedColors, Finset.mem_filter, Finset.mem_univ, true_and]
     exact ⟨q, by simp [q]; omega, hqcolor⟩

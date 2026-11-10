@@ -13,6 +13,8 @@ import LeanPool.GoldbergSeymour.TashkinovAugmentationSequenceTransport
 
 import all LeanPool.GoldbergSeymour.ExtensionBaseBranchPreparation
 import all LeanPool.GoldbergSeymour.ExtensionBaseAuxiliary
+public import LeanPool.GoldbergSeymour.StableColoring
+public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegmentFacts
 public import LeanPool.GoldbergSeymour.ExtensionBaseStepLemmas
 public import LeanPool.GoldbergSeymour.TashkinovAugmentationBeforeVertex
 public import LeanPool.GoldbergSeymour.ExtensionBaseClaim44
@@ -4038,7 +4040,7 @@ theorem helper_continuation_14264.{u_1, u_2} :
       (hBC : TreeSequenceInitialSegment B C)
       (hlen : A.length ≤ B.length) :
       TreeSequenceInitialSegment A B := by
-    exact @helper_commonPrefix_1530 (@V) (@E) (@G) (@e0) (@A) (@B) (@C) (@hAC) (@hBC) (@hlen)
+    exact hBC.of_common_extension hAC hlen
   let supportColors := Finset.univ.biUnion fun a : Fin (p0 + 1) =>
     ett.series.data.stored (indices0 a).succ
   obtain ⟨TjPrime, hclosure, hprimeElementary, hcaseSplit⟩ :
@@ -4131,10 +4133,7 @@ theorem helper_continuation_14264.{u_1, u_2} :
       (ett.series.data.tree jSlot.succ.castSucc) v hterminalJ
       (TashkinovStoredColors ett.series.data jSlot.castSucc)
       (ett.series.data.coloring jSlot.castSucc) rho1 := by
-    exact @helper_hb1Tj_1978 (@V) (@E) inferInstance inferInstance inferInstance (@G) (@k)
-        (@e0) (@input) (@T) (@generating) (@ett) (@hpositive) (@v) (@sigma) (@hqTerminal)
-        (@hvFinal) (@hfirstUpper) (@hfirstPositive) (@trace) (@hterminalJ) (@hb1Rho)
-        (@hbeforeTjFinal)
+    exact StableColoringOn.mono hb1Rho hbeforeTjFinal (fun _ membership => membership)
   have hcaseOnePrepared :
       (((TreeSequenceVertexSet TjPrime).erase v).biUnion
           (fun x => MissingColors G rho1 x) ∩ supportColors).Nonempty →

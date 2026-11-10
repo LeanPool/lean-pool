@@ -1,7 +1,7 @@
 /-
 Copyright (c) 2026 Wesley Pegden. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Wesley Pegden
+Authors: Wesley Pegden, Lean Pool contributors
 -/
 module
 
@@ -912,6 +912,12 @@ theorem helper_hcaseTwoObservationPackage_3695.{u_1, u_2} :
     ⟨hbeta, hbetaSupport⟩,
     ⟨hz, hzPosition, hzAfter, hzChoice, hzBefore, hzEdges⟩⟩
 
+private theorem first_value_eq_last_of_zero_length {α : Sort*} {length : ℕ}
+    (values : Fin (length + 1) → α) (zeroLength : length = 0) :
+    values 0 = values (Fin.last length) := by
+  subst length
+  rfl
+
 theorem helper_hgammaFirstZero_3790.{u_1, u_2} :
     open scoped Classical in
     ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E] [ DecidableEq E] (G :
@@ -944,10 +950,7 @@ theorem helper_hgammaFirstZero_3790.{u_1, u_2} :
       hvFinal hfirstUpper hfirstPositive jSlot trace p0 indices0 gamma0 delta0 rho1
       terminalPosition hterminalPositionPositive hterminalPositionBound hgammaLast gammaFirst H x
       componentPath u exitPath zPosition hp0
-  have hindex : (0 : Fin (p0 + 1)) = Fin.last p0 := by
-    apply Fin.ext
-    exact hp0.symm
-  exact (congrArg gamma0 hindex).trans hgammaLast
+  exact (first_value_eq_last_of_zero_length gamma0 hp0).trans hgammaLast
 
 theorem helper_hvBeforePrime_3939.{u_1, u_2} :
     open scoped Classical in
@@ -3521,10 +3524,7 @@ theorem helper_hgammaFirstZero_6905.{u_1, u_2} :
       hvFinal hfirstUpper hfirstPositive jSlot trace p0 indices0 gamma0 delta0 rho1
       terminalPosition hterminalPositionPositive hterminalPositionBound hgammaLast gammaFirst H x
       componentPath u exitPath zPosition hp0
-  have hindex : (0 : Fin (p0 + 1)) = Fin.last p0 := by
-    apply Fin.ext
-    exact hp0.symm
-  exact (congrArg gamma0 hindex).trans hgammaLast
+  exact (first_value_eq_last_of_zero_length gamma0 hp0).trans hgammaLast
 
 theorem helper_hclaim45Package_6912.{u_1, u_2} :
     helperHclaim45Package6912Conditions.{u_1, u_2} := by

@@ -1363,88 +1363,6 @@ private theorem helper_horderedUnused_290.{u_1, u_2} :
     obtain ⟨_, t, ht, _, hcolor⟩ := Finset.mem_filter.mp hm
     exact hbetaUnused t ht hcolor
 
-private theorem helper_hDnDisjoint_310.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E]
-    [DecidableEq V] [DecidableEq E] (G : LooplessMultigraph V E) (k : ℕ)
-    (e0 : E) (input : PartialEdgeColoring E k) (T : TreeSequence G e0)
-    (phi : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k e0 input T phi)
-    (base : HierarchyBase ett phi) (C : HierarchyCounterexample base)
-    (ctx : HierarchyMinimumCounterexampleContext G k e0 input T phi ett base C)
-    (D : HierarchySituationTwoCaseTwoData G k e0 input T phi ett base C ctx),
-  let H : TashkinovHierarchy ett base := C.hierarchy;
-  let q : Fin (H.dividerCount + (1 : ℕ)) := Fin.last H.dividerCount;
-  let A : TreeSequence G e0 := HierarchyStarredStage H q;
-  let ell : ℕ := HierarchyFullTailLength C;
-  let B : TreeSequence G e0 := HierarchyFullTailPrefix C (ell - (2 : ℕ));
-  let Bplus : TreeSequence G e0 := HierarchyFullTailPrefix C (ell - (1 : ℕ));
-  let n : Fin (ett.rounds + (1 : ℕ)) := Fin.last ett.rounds;
-  let Dn : Finset (Fin k) := TashkinovStoredColors ett.series.data n;
-  (D.alpha ∉ TreeMissingColors phi B ∧
-      D.alpha ∉ Dn ∧
-  ∀ (t : Fin T.length),
-  A.length ≤ (↑t : ℕ) →
-  phi (T.edge t) ≠ some D.alpha) →
-  ∀
-    (R :
-      HierarchySituationTwoReorderedTrees G k e0 input T phi ett base C ctx
-        D.toHierarchySituationTwoTailData),
-  let baseExtraMissing : Finset (Fin k) :=
-    (TreeSequenceVertexSet base.core \
-          TreeSequenceVertexSet (ett.series.data.tree n.castSucc)).biUnion
-      fun (v : V) ↦ MissingColors G phi v;
-  let prefixUsed : Finset (Fin k) :=
-    ({c : Fin k |
-        ∃ (r : Fin T.length),
-          A.length ≤ (↑r : ℕ) ∧
-            (↑r : ℕ) < A.length + (ell - (2 : ℕ)) ∧ phi (T.edge r) = some c} :
-      Finset (Fin k));
-  let available : Finset (Fin k) :=
-    (TreeMissingColors phi B \ baseExtraMissing) \ prefixUsed;
-  let finalColors : Finset (Fin k) :=
-    ({c : Fin k | phi (T.edge R.penultimateEdgeIndex) = some c} : Finset (Fin k)) ∪
-      ({c : Fin k | phi (T.edge D.lastEdgeIndex) = some c} : Finset (Fin k));
-  ∀ beta ∈ (available \ finalColors) \ Dn,
-  beta ∈ available \ finalColors →
-  beta ∉ Dn →
-  beta ∈ available →
-  beta ∉ finalColors →
-  beta ∈ TreeMissingColors phi B \ baseExtraMissing →
-  beta ∉ prefixUsed →
-  beta ∈ TreeMissingColors phi B →
-  beta ∉ baseExtraMissing →
-  (
-  ∀ (t : Fin T.length),
-  A.length ≤ (↑t : ℕ) →
-  phi (T.edge t) ≠ some beta) →
-  beta ≠ D.alpha →
-  beta ∈ TreeMissingColors phi T →
-  (↑(HierarchyFirstMissingPosition phi T beta) : ℕ) ≤ B.length →
-  beta ∈ TreeMissingColors phi Bplus →
-  (
-  beta ∉ TreeMissingColors phi A ∨ D.alpha ∉ TreeMissingColors phi A →
-  TreeVertexOrder T (T.vertex (HierarchyFirstMissingPosition phi T beta))
-      (T.vertex (HierarchyFirstMissingPosition phi T D.alpha)) ∧
-    beta ∉
-      ({c : Fin k |
-          ∃ (t : Fin T.length),
-            A.length ≤ (↑t : ℕ) ∧
-              (↑t : ℕ) < (↑(HierarchyFirstMissingPosition phi T D.alpha) : ℕ) ∧
-                phi (T.edge t) = some c} :
-        Finset (Fin k))) →
-  Disjoint (insert beta ({ D.alpha } : Finset (Fin k)) : Finset (Fin k)) Dn := by
-  classical
-  intro V E _ _ _ _ G k e0 input T phi ett base C ctx D H q A ell B Bplus n Dn halpha R
-      baseExtraMissing prefixUsed available finalColors beta hbeta hbetaAvailableFinal hbetaDn
-      hbetaAvailable hbetaFinal hbetaMissingExtra hbetaPrefixUnused hbetaMissing hbetaExtra
-      hbetaUnused hcolorsDistinct hbetaT hbetaFirstBound hbetaPrefix horderedUnused
-  rw [Finset.disjoint_left]
-  intro c hc hd
-  simp only [Finset.mem_insert, Finset.mem_singleton] at hc
-  rcases hc with rfl | rfl
-  · exact hbetaDn hd
-  · exact halpha.2.1 hd
-
 private theorem helper_hcomponentPenultimate_325.{u_1, u_2} :
     open scoped Classical in
     ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E]
@@ -3706,12 +3624,8 @@ theorem HierarchySituationTwoSubcaseTwoOneNonexceptional {V E : Type*}
         (@hstarLen) (@hminusLen) (@hstarLength) (@beta) (@hbetaUnused) (@hbetaFirstBound)
         (@halphaFirst)
   have hDnDisjoint : Disjoint ({beta, D.alpha} : Finset (Fin k)) Dn := by
-    exact @helper_hDnDisjoint_310 (@V) (@E) inferInstance inferInstance inferInstance
-        inferInstance (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C) (@ctx) (@D)
-        (@halpha) (@R) (@beta) (@hbeta) (@hbetaAvailableFinal) (@hbetaDn) (@hbetaAvailable)
-        (@hbetaFinal) (@hbetaMissingExtra) (@hbetaPrefixUnused) (@hbetaMissing) (@hbetaExtra)
-        (@hbetaUnused) (@hcolorsDistinct) (@hbetaT) (@hbetaFirstBound) (@hbetaPrefix)
-        (@horderedUnused)
+    exact Finset.disjoint_insert_left.mpr
+      ⟨hbetaDn, Finset.disjoint_singleton_left.mpr halpha.2.1⟩
   have hDnqDisjoint : Disjoint ({beta, D.alpha} : Finset (Fin k))
       (HierarchyStoredColorsAt H q) := by
     apply hDnDisjoint.mono_right

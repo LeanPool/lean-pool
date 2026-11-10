@@ -5,6 +5,7 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.MissingColorsNonemptyOfMaximumDegree
 public import LeanPool.GoldbergSeymour.TashkinovAugmentationSequenceInitialSegment
 public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegmentFacts
 public import LeanPool.GoldbergSeymour.ColorDegreeBounds
@@ -339,27 +340,8 @@ lemma Step1ZeroDividerAnchorPE {V E : Type*}
     have step := ett.series.certified 0
     cases step with
     | initial triple => exact triple.2.2.1
-  have presentBound := PresentColors.card_le_degree G phi x
-  have degreeAt : Degree G x ≤ MaximumDegree G := by
-    unfold MaximumDegree
-    exact Finset.le_max' _ _ (Finset.mem_insert.mpr (Or.inr
-      (Finset.mem_image.mpr ⟨x, by simp⟩)))
-  have missingAtX : (MissingColors G phi x).Nonempty := by
-    by_contra hempty
-    have hmissingEmpty : MissingColors G phi x = ∅ :=
-      Finset.not_nonempty_iff_eq_empty.mp hempty
-    have hall : PresentColors G phi x = Finset.univ := by
-      apply Finset.eq_univ_of_forall
-      intro d
-      by_contra hd
-      have hm : d ∈ MissingColors G phi x := by
-        simp [MissingColors, hd]
-      rw [hmissingEmpty] at hm
-      exact Finset.notMem_empty d hm
-    have hk : k ≤ Degree G x := by
-      have := presentBound
-      simpa [hall] using this
-    omega
+  have missingAtX : (MissingColors G phi x).Nonempty :=
+    MissingColorsNonemptyOfMaximumDegree G phi degreeBound x
   obtain ⟨c, hcxMissing⟩ := missingAtX
   have hcT : c ∈ TreeMissingColors phi Tn := by
     unfold TreeMissingColors

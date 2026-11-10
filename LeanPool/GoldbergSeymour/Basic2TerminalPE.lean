@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegmentFacts
+public import LeanPool.GoldbergSeymour.StableColoring
 public import LeanPool.GoldbergSeymour.TashkinovSeriesTreeFacts
 
 public import LeanPool.GoldbergSeymour.SharedFacts.Basic2TerminalPE
@@ -176,63 +178,6 @@ private theorem helper_targetEdgeOutside_444.{u_1, u_2} :
       true_and]
     exact ⟨f, by simpa [hxEq] using hxf, hfc⟩
 
-private theorem helper_hstableR_473.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E] [ DecidableEq E] (G :
-        LooplessMultigraph V E) (k : ℕ) (e0 : E) (input : PartialEdgeColoring E k) (T :
-        TreeSequence G e0) (generating : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k
-        e0 input T generating) (hpositive : (0 : ℕ) < ett.rounds),
-    let _ : DecidableEq V := Classical.decEq V;
-    ∀ (sigma : PartialEdgeColoring E k) (v : V) (_ : v ∈ TreeSequenceVertexSet T) (_ : Fin
-        ett.rounds),
-    let terminal : Fin (ett.rounds + (1 : ℕ)) := Fin.last ett.rounds;
-    let previous : Fin ett.rounds := (⟨ett.rounds - (1 : ℕ),
-    by omega
-    ⟩ : Fin ett.rounds);
-    ∀ (gamma : Fin k) (choice : MaximumDefectiveChoice G e0 (ett.series.data.tree
-        previous.succ.castSucc) (TashkinovStoredColors ett.series.data previous.castSucc)
-        (ett.series.data.coloring previous.castSucc)),
-    let recovered : PartialEdgeColoring E k := TwoColorComponentSwap G sigma gamma choice.color
-        (Sum.inl choice.vertex);
-    ∀ (_ : StableColoring (ett.series.data.tree terminal.castSucc) (TashkinovStoredColors
-        ett.series.data previous.castSucc) (ett.series.data.coloring previous.castSucc)
-        recovered),
-    let r : ℕ := ett.rounds - (1 : ℕ);
-    ∀ (hrBefore : r < ett.rounds) (_ : TreeSequenceInitialSegment (ett.series.data.tree (⟨r,
-    by omega
-    ⟩ : Fin (ett.rounds + (2 : ℕ)))) (ett.series.data.tree terminal.castSucc)) (lower :
-        ExtendedTashkinovTree G k e0 input (ett.series.data.tree (⟨r + (1 : ℕ),
-    by omega
-    ⟩ : Fin (ett.rounds + (2 : ℕ)))) (ett.series.data.coloring (⟨r,
-    by omega
-    ⟩ : Fin (ett.rounds + (1 : ℕ))))) (hr : lower.rounds = r), StableColoring
-        (ett.series.data.tree (⟨r,
-    by omega
-    ⟩ : Fin (ett.rounds + (2 : ℕ)))) (TashkinovStoredColors ett.series.data previous.castSucc)
-        (ett.series.data.coloring previous.castSucc) recovered := by
-  classical
-  intro V E _ _ _ G k e0 input T generating ett hpositive this sigma v hvFinal q terminal
-      previous gamma choice recovered hrecoveredStable r hrBefore hRTerminal lower hr
-  constructor
-  · intro f hf hcontrol
-    apply hrecoveredStable.1 f
-    · rcases hf with ⟨x, hx, hxf⟩
-      exact ⟨x, TreeSequenceInitialSegmentVertexSetSubset
-        hRTerminal hx, hxf⟩
-    · rcases hcontrol with ⟨c, hc, hcf⟩
-      refine ⟨c, ?_, hcf⟩
-      rcases Finset.mem_union.mp hc with hc | hc
-      · apply Finset.mem_union.mpr
-        left
-        simp only [TreeMissingColors, Finset.mem_biUnion] at hc ⊢
-        rcases hc with ⟨x, hx, hxc⟩
-        exact ⟨x, TreeSequenceInitialSegmentVertexSetSubset
-          hRTerminal hx, hxc⟩
-      · exact Finset.mem_union.mpr (Or.inr hc)
-  · intro x hx
-    exact hrecoveredStable.2 x
-      (TreeSequenceInitialSegmentVertexSetSubset hRTerminal hx)
-
 private theorem helper_continuation_618.{u_1, u_2} :
     open scoped Classical in
     ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E] [ DecidableEq E] (G :
@@ -382,10 +327,8 @@ private theorem helper_continuation_618.{u_1, u_2} :
   have hnTree' : lower.series.data.tree nLower.castSucc =
       ett.series.data.tree ⟨r, by omega⟩ := by
     rw [htree nLower.castSucc, hnTreeCast, ← hrTree]
-  have hstableR :=
-    @helper_hstableR_473 V E inferInstance inferInstance inferInstance G k e0 input T
-        generating ett hpositive sigma v hvFinal q gamma choice hrecoveredStable hrBefore
-        hRTerminal lower hr
+  have hstableR := hrecoveredStable.mono hRTerminal.vertexSet_subset
+    (fun _ membership => membership)
   have hstableLower : StableColoring
       (lower.series.data.tree nLower.castSucc)
       (TashkinovStoredColors lower.series.data nLower)

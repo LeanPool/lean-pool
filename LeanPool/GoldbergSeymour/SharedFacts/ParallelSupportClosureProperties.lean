@@ -5,6 +5,7 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegmentFacts
 public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegment
 public import Mathlib.Combinatorics.SimpleGraph.Init
 public import Mathlib.Tactic.Bound.Init
@@ -30,27 +31,8 @@ abbrev comparableInitialSegmentsStatement.{u_1, u_2} : Prop :=
 
 /-- A common proof used by the branches of this transport or construction argument. -/
 theorem comparableInitialSegments.{u_1, u_2} : comparableInitialSegmentsStatement.{u_1, u_2} := by
-  classical
   intro V E G e0 A B C hAC hBC hlen
-  rcases hAC with ⟨hACLen, hACVertices, hACEdges⟩
-  rcases hBC with ⟨hBCLen, hBCVertices, hBCEdges⟩
-  refine ⟨hlen, ?_, ?_⟩
-  · intro i
-    calc
-      B.vertex (Fin.castLE (Nat.succ_le_succ hlen) i) =
-          C.vertex (Fin.castLE (Nat.succ_le_succ hBCLen)
-            (Fin.castLE (Nat.succ_le_succ hlen) i)) :=
-        (hBCVertices _).symm
-      _ = C.vertex (Fin.castLE (Nat.succ_le_succ hACLen) i) := by
-        congr 1
-      _ = A.vertex i := hACVertices i
-  · intro i
-    calc
-      B.edge (Fin.castLE hlen i) =
-          C.edge (Fin.castLE hBCLen (Fin.castLE hlen i)) :=
-        (hBCEdges _).symm
-      _ = C.edge (Fin.castLE hACLen i) := by congr 1
-      _ = A.edge i := hACEdges i
+  exact hBC.of_common_extension hAC hlen
 
 end GoldbergSeymour.SharedFacts.ParallelSupportClosureProperties
 

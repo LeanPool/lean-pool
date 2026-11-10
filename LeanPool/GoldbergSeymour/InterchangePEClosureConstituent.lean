@@ -433,20 +433,6 @@ private theorem helper_hSlen_631.{u_1, u_2} :
     dsimp [P] at hstrict
     omega
 
-private theorem helper_commonPrefix_563.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} (G : LooplessMultigraph V E) (e0 : E)
-        {A B C : TreeSequence G e0}, TreeSequenceInitialSegment A C → TreeSequenceInitialSegment B
-        C → A.length ≤ B.length → TreeSequenceInitialSegment A B := by
-  classical
-  intro V E G e0 A B C hAC hBC hlen
-  refine ⟨hlen, ?_, ?_⟩
-  · intro i
-    exact (hBC.2.1 (Fin.castLE (Nat.succ_le_succ hlen) i)).symm.trans
-      (hAC.2.1 i)
-  · intro i
-    exact (hBC.2.2 (Fin.castLE hlen i)).symm.trans (hAC.2.2 i)
-
 private theorem helper_stepSegment_573.{u_1, u_2} :
     open scoped Classical in
     ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq E] (G :
@@ -661,7 +647,7 @@ theorem InterchangePEClosureConstituent {V E : Type*}
       (hAC : TreeSequenceInitialSegment A C)
       (hBC : TreeSequenceInitialSegment B C) (hlen : A.length ≤ B.length) :
       TreeSequenceInitialSegment A B := by
-    exact @helper_commonPrefix_563 (@V) (@E) (@G) (@e0) (@A) (@B) (@C) (@hAC) (@hBC) (@hlen)
+    exact hBC.of_common_extension hAC hlen
   have stepSegment (i : Fin (ett.rounds + 1)) :
       TreeSequenceInitialSegment (ett.series.data.tree i.castSucc)
         (ett.series.data.tree i.succ) := by

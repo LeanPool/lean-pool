@@ -5,6 +5,7 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegmentFacts
 public import LeanPool.GoldbergSeymour.HierarchyTreeFacts
 
 public import LeanPool.GoldbergSeymour.HierarchyFirstMissingPositionPrefixCutoff
@@ -282,13 +283,8 @@ theorem firstUnaffected.{u_1, u_2} : firstUnaffectedStatement.{u_1, u_2} := by
 
 /-- A common proof used by the branches of this transport or construction argument. -/
 theorem comparableInitialSegments.{u_1, u_2} : comparableInitialSegmentsStatement.{u_1, u_2} := by
-  classical
   intro V E G e0 X Y F hXF hYF hXY
-  refine ⟨hXY, ?_, ?_⟩
-  · intro i
-    exact (hYF.2.1 (Fin.castLE (Nat.succ_le_succ hXY) i)).symm.trans (hXF.2.1 i)
-  · intro i
-    exact (hYF.2.2 (Fin.castLE hXY i)).symm.trans (hXF.2.2 i)
+  exact hYF.of_common_extension hXF hXY
 
 /-- A common proof used by the branches of this transport or construction argument. -/
 theorem predecessorIncident.{u_1, u_2} : predecessorIncidentStatement.{u_1, u_2} := by

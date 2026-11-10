@@ -5,6 +5,7 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.TashkinovAugmentationSequenceTransport
 public import LeanPool.GoldbergSeymour.TashkinovAugmentationSequenceInitialSegment
 public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegmentFacts
 public import LeanPool.GoldbergSeymour.ColoredVertexSetElementary
@@ -66,89 +67,11 @@ theorem TechnicalTheoremBase {V E : Type*} [Fintype V] [Fintype E]
     refine ⟨elementary, ?_⟩
     dsimp
     intro sigma hproper hone hstable alpha beta hmissing
-    have vertexTransfer {X Y : TreeSequence G e0}
-        (hab : TreeSequenceInitialSegment X Y) {v : V}
-        (hv : v ∈ TreeSequenceVertexSet X) :
-        v ∈ TreeSequenceVertexSet Y := by
-      exact hab.vertexSet_subset hv
-    have vertexReach {X Y : TreeSequence G e0}
-        {phi : PartialEdgeColoring E k}
-        (hab : TashkinovAugmentationSequence phi X Y) {v : V}
-        (hv : v ∈ TreeSequenceVertexSet X) :
-        v ∈ TreeSequenceVertexSet Y := by
-      exact (TashkinovAugmentationSequenceInitialSegment phi X Y hab).vertexSet_subset hv
-    have incidentTransfer {X Y : TreeSequence G e0}
-        (hab : TreeSequenceInitialSegment X Y) {f : E}
-        (hf : TreeIncidentEdge X f) : TreeIncidentEdge Y f := by
-      rcases hf with ⟨v, hv, hve⟩
-      exact ⟨v, vertexTransfer hab hv, hve⟩
-    have incidentReach {X Y : TreeSequence G e0}
-        {phi : PartialEdgeColoring E k}
-        (hab : TashkinovAugmentationSequence phi X Y) {f : E}
-        (hf : TreeIncidentEdge X f) : TreeIncidentEdge Y f := by
-      exact incidentTransfer (TashkinovAugmentationSequenceInitialSegment phi X Y hab) hf
-    have closureReach {X Y : TreeSequence G e0}
-        {phi : PartialEdgeColoring E k}
-        (hab : TashkinovAugmentationSequence phi X Y) {v : V}
-        (hv : v ∈ TreeSequenceVertexSet X) :
-        v ∈ TreeSequenceVertexSet Y := vertexReach hab hv
     have sequenceSigma {X : TreeSequence G e0}
-        (hreach : TashkinovAugmentationSequence
+        (route : TashkinovAugmentationSequence
           (series.data.coloring 0) X (series.data.tree ⟨1, by omega⟩)) :
-        TashkinovAugmentationSequence sigma X
-          (series.data.tree ⟨1, by omega⟩) := by
-      unfold TashkinovAugmentationSequence at hreach ⊢
-      induction hreach using Relation.ReflTransGen.head_induction_on with
-      | refl => exact Relation.ReflTransGen.refl
-      | @head X Y hstep htail ih =>
-          refine Relation.ReflTransGen.head ?_ ih
-          rcases hstep with ⟨hlen, hseg, c, hcolor, hmissing⟩
-          rcases hseg with ⟨hle, hvertices, hedges⟩
-          let segment : TreeSequenceInitialSegment X Y :=
-            ⟨hle, hvertices, hedges⟩
-          refine ⟨hlen, segment, c, ?_, ?_⟩
-          · rcases (show c ∈ TreeMissingColors (series.data.coloring 0) _
-                from hmissing) with hcm
-            rw [TreeMissingColors] at hcm
-            rcases Finset.mem_biUnion.mp hcm with ⟨x, hx, hxc⟩
-            have hx1 := closureReach htail
-              (vertexTransfer segment hx)
-            have hcm1 : c ∈ TreeMissingColors (series.data.coloring 0)
-                (series.data.tree ⟨1, by omega⟩) := by
-              rw [TreeMissingColors]
-              exact Finset.mem_biUnion.mpr ⟨x, hx1, hxc⟩
-            have hinc : TreeIncidentEdge
-                (series.data.tree ⟨1, by omega⟩)
-                (Y.edge (Fin.cast hlen.symm (Fin.last X.length))) := by
-              let last : Fin Y.length :=
-                Fin.cast hlen.symm (Fin.last X.length)
-              obtain ⟨i, hi⟩ := Y.attaches last
-              let q : Fin (X.length + 1) := ⟨i.val, by omega⟩
-              let z : Fin (Y.length + 1) :=
-                Fin.castLT i (Nat.lt_trans i.isLt (Nat.succ_lt_succ last.isLt))
-              have hz : Fin.castLE (Nat.succ_le_succ hle) q = z := by
-                apply Fin.ext
-                rfl
-              have hzmem : Y.vertex z ∈ TreeSequenceVertexSet Y := by
-                simp [TreeSequenceVertexSet]
-              have hincY : TreeIncidentEdge Y
-                  (Y.edge (Fin.cast hlen.symm (Fin.last X.length))) := by
-                refine ⟨Y.vertex z, hzmem, ?_⟩
-                unfold Incident
-                change Y.vertex z ∈ G.ends (Y.edge last)
-                rw [hi]
-                exact Sym2.mem_mk_right _ _
-              exact incidentReach htail hincY
-            have heq := hstable.1 _ hinc
-              (by exact ⟨c, Finset.mem_union_left _ hcm1, hcolor⟩)
-            exact heq.trans hcolor
-          · rw [TreeMissingColors] at hmissing
-            rcases Finset.mem_biUnion.mp hmissing with ⟨x, hx, hxc⟩
-            have hx1 := closureReach htail (vertexTransfer segment hx)
-            rw [TreeMissingColors]
-            exact Finset.mem_biUnion.mpr ⟨x, hx, by
-              rw [hstable.2 x hx1]
-              exact hxc⟩
+        TashkinovAugmentationSequence sigma X (series.data.tree ⟨1, by omega⟩) :=
+      TashkinovAugmentationSequence.transport_of_stable hstable route
     have sigmaReach := sequenceSigma initialClosure.1
     exact (Tchange G k e0 sigma (series.data.tree ⟨1, by omega⟩)
     ⟨triple'.1, triple'.2.1, triple'.2.2.1, hproper, hone⟩

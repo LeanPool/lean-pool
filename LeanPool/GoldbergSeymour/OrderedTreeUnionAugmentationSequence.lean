@@ -73,50 +73,17 @@ private theorem helper_replay_113.{u_1, u_2} :
       let j : Fin U.length := ⟨n, by omega⟩
       obtain ⟨i, hedgeUR, hvertexUR⟩ := hnewEntryFromRight j hnL
       have hrightOutside : R.vertex i.succ ∉ TreeSequenceVertexSet L := by
-        intro hmem
-        rw [TreeSequenceVertexSet] at hmem
-        obtain ⟨a, -, ha⟩ :=
-          (@Finset.mem_image _ _ (Classical.decEq V)).mp hmem
-        have huvertex : U.vertex
-              (Fin.castLE (Nat.succ_le_succ hleftSegment.1) a) =
-            L.vertex a := hleftSegment.2.1 a
-        have heq : U.vertex j.succ =
-            U.vertex (Fin.castLE (Nat.succ_le_succ hleftSegment.1) a) :=
-          hvertexUR.trans (ha.symm.trans huvertex.symm)
-        have hindex := congrArg Fin.val (U.vertex_injective heq)
-        simp [j] at hindex
-        omega
+        rw [← hvertexUR]
+        exact hleftSegment.vertex_not_mem_after (by change L.length < n + 1; omega)
       have hiP : P.length ≤ i.val := by
-        by_contra hnot
-        have hi : i.val < P.length := Nat.lt_of_not_ge hnot
-        let a : Fin (P.length + 1) := ⟨i.val + 1, by omega⟩
-        have hRPa : R.vertex
-              (Fin.castLE (Nat.succ_le_succ hPRSegment.1) a) = P.vertex a :=
-          hPRSegment.2.1 a
-        apply hrightOutside
-        rw [TreeSequenceVertexSet]
-        apply (@Finset.mem_image _ _ (Classical.decEq V)).mpr
-        refine ⟨Fin.castLE (Nat.succ_le_succ hPL.1) a, Finset.mem_univ _, ?_⟩
-        have hia : Fin.castLE (Nat.succ_le_succ hPRSegment.1) a = i.succ :=
-          Fin.ext (by simp [a])
-        rw [hia] at hRPa
-        exact (hPL.2.1 a).trans hRPa.symm
+        have later := hPRSegment.length_lt_of_vertex_not_mem hPL hrightOutside
+        change P.length < i.val + 1 at later
+        omega
       have hiR : i.val < R.length := i.isLt
       let RX := TreeSequencePrefix R i.val
         (Nat.le_trans P.positive hiP) (Nat.le_of_lt hiR)
-      have hPRX : TreeSequenceInitialSegment P RX := by
-        refine ⟨hiP, ?_, ?_⟩
-        · intro a
-          change R.vertex _ = P.vertex a
-          calc
-            R.vertex _ = R.vertex
-                (Fin.castLE (Nat.succ_le_succ hPRSegment.1) a) := by congr 1
-            _ = P.vertex a := hPRSegment.2.1 a
-        · intro a
-          change R.edge _ = P.edge a
-          calc
-            R.edge _ = R.edge (Fin.castLE hPRSegment.1 a) := by congr 1
-            _ = P.edge a := hPRSegment.2.2 a
+      have hPRX : TreeSequenceInitialSegment P RX :=
+        hPRSegment.prefix_of_segment i.val hiP (Nat.le_of_lt hiR)
       have hRXR : TreeSequenceInitialSegment RX R :=
         prefixSegment R i.val (Nat.le_trans P.positive hiP) (Nat.le_of_lt hiR)
       have hsuffix : TashkinovAugmentationSequence phi RX R :=
@@ -148,17 +115,7 @@ private theorem helper_replay_113.{u_1, u_2} :
         apply Finset.mem_biUnion.mpr
         refine ⟨v, ?_, hcMissing⟩
         by_cases hvL : v ∈ TreeSequenceVertexSet L
-        · rw [TreeSequenceVertexSet] at hvL ⊢
-          obtain ⟨b, -, hb⟩ :=
-            (@Finset.mem_image _ _ (Classical.decEq V)).mp hvL
-          apply (@Finset.mem_image _ _ (Classical.decEq V)).mpr
-          refine ⟨Fin.castLE (Nat.succ_le_succ hnL) b, Finset.mem_univ _, ?_⟩
-          change U.vertex _ = v
-          calc
-            U.vertex _ = U.vertex
-                (Fin.castLE (Nat.succ_le_succ hleftSegment.1) b) := by congr 1
-            _ = L.vertex b := hleftSegment.2.1 b
-            _ = v := hb
+        · exact (hleftSegment.prefix_of_segment n hnL hnU').vertexSet_subset hvL
         · have haPos : 1 ≤ a.val := by
             by_contra hzero
             have haZero : a.val = 0 := by omega

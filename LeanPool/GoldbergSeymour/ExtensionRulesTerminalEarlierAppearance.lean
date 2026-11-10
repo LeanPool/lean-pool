@@ -5,6 +5,7 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.StableColoring
 public import LeanPool.GoldbergSeymour.ExtendedTashkinovLadderRestriction
 
 public import LeanPool.GoldbergSeymour.TashkinovSeriesTreeFacts
@@ -95,43 +96,37 @@ private abbrev helperContinuation1280Conditions.{u_1, u_2} : Prop :=
     by omega
     ⟩ : Fin (ett.rounds + (1 : ℕ))))) (hr : lower.rounds = r) (_ : (
     ∀ (i : Fin (lower.rounds + (2 : ℕ))), lower.series.data.tree i = ett.series.data.tree
-        (Fin.castLE (Decidable.byContradiction fun (a : ¬lower.rounds + (2 : ℕ) ≤ ett.rounds + (2
-        : ℕ)) ↦
-    by
-             omega
+        (Fin.castLE (
+        Nat.add_le_add_right ((Nat.le_of_eq hr).trans (Nat.sub_le _ _)) 2
     ) i))) (_ : (
     ∀ (i : Fin (lower.rounds + (1 : ℕ))), lower.series.data.coloring i = ett.series.data.coloring
-        (Fin.castLE (Decidable.byContradiction fun (a : ¬lower.rounds + (1 : ℕ) ≤ ett.rounds + (1
-        : ℕ)) ↦
-    by omega
+        (Fin.castLE (
+        Nat.add_le_add_right ((Nat.le_of_eq hr).trans (Nat.sub_le _ _)) 1
     ) i) ∧ lower.series.data.stored i = ett.series.data.stored (Fin.castLE
-        (Decidable.byContradiction fun (a : ¬lower.rounds + (1 : ℕ) ≤ ett.rounds + (1 : ℕ)) ↦
-    by omega
+        (
+        Nat.add_le_add_right ((Nat.le_of_eq hr).trans (Nat.sub_le _ _)) 1
     ) i) ∧ lower.series.data.connectingEdges i = ett.series.data.connectingEdges (Fin.castLE
-        (Decidable.byContradiction fun (a : ¬lower.rounds + (1 : ℕ) ≤ ett.rounds + (1 : ℕ)) ↦
-    by omega
-    ) i) ∧ lower.series.data.kind i = ett.series.data.kind (Fin.castLE (Decidable.byContradiction
-        fun (a : ¬lower.rounds + (1 : ℕ) ≤ ett.rounds + (1 : ℕ)) ↦
-    by omega
+        (
+        Nat.add_le_add_right ((Nat.le_of_eq hr).trans (Nat.sub_le _ _)) 1
+    ) i) ∧ lower.series.data.kind i = ett.series.data.kind (Fin.castLE (
+        Nat.add_le_add_right ((Nat.le_of_eq hr).trans (Nat.sub_le _ _)) 1
     ) i) ∧ lower.series.data.chosenVertex i = ett.series.data.chosenVertex (Fin.castLE
-        (Decidable.byContradiction fun (a : ¬lower.rounds + (1 : ℕ) ≤ ett.rounds + (1 : ℕ)) ↦
-    by omega
+        (
+        Nat.add_le_add_right ((Nat.le_of_eq hr).trans (Nat.sub_le _ _)) 1
     ) i) ∧ lower.series.data.outsideVertex i = ett.series.data.outsideVertex (Fin.castLE
-        (Decidable.byContradiction fun (a : ¬lower.rounds + (1 : ℕ) ≤ ett.rounds + (1 : ℕ)) ↦
-    by omega
+        (
+        Nat.add_le_add_right ((Nat.le_of_eq hr).trans (Nat.sub_le _ _)) 1
     ) i) ∧ lower.series.data.delta i = ett.series.data.delta (Fin.castLE
-        (Decidable.byContradiction fun (a : ¬lower.rounds + (1 : ℕ) ≤ ett.rounds + (1 : ℕ)) ↦
-    by omega
+        (
+        Nat.add_le_add_right ((Nat.le_of_eq hr).trans (Nat.sub_le _ _)) 1
     ) i) ∧ lower.series.data.gamma i = ett.series.data.gamma (Fin.castLE
-        (Decidable.byContradiction fun (a : ¬lower.rounds + (1 : ℕ) ≤ ett.rounds + (1 : ℕ)) ↦
-    by omega
+        (
+        Nat.add_le_add_right ((Nat.le_of_eq hr).trans (Nat.sub_le _ _)) 1
     ) i) ∧ TashkinovStoredColors lower.series.data i = TashkinovStoredColors ett.series.data
-        (Fin.castLE (Decidable.byContradiction fun (a : ¬lower.rounds + (1 : ℕ) ≤ ett.rounds + (1
-        : ℕ)) ↦
-    by omega
-    ) i) ∧ lower.series.certified i ≍ ett.series.certified (Fin.castLE (Decidable.byContradiction
-        fun (a : ¬lower.rounds + (1 : ℕ) ≤ ett.rounds + (1 : ℕ)) ↦
-    by omega
+        (Fin.castLE (
+        Nat.add_le_add_right ((Nat.le_of_eq hr).trans (Nat.sub_le _ _)) 1
+    ) i) ∧ lower.series.certified i ≍ ett.series.certified (Fin.castLE (
+        Nat.add_le_add_right ((Nat.le_of_eq hr).trans (Nat.sub_le _ _)) 1
     ) i))),
     let Tn : TreeSequence G e0 := ett.series.data.tree ci.succ.castSucc;
     let P : TreeSequence G e0 := ett.series.data.tree ci.castSucc.castSucc;
@@ -243,30 +238,30 @@ private abbrev helperContinuation1138Conditions.{u_1, u_2} : Prop :=
     ⟩ : Fin (ett.rounds + (1 : ℕ))))) (hr : lower.rounds = r) (_ : MaximumProperty lower) (_ : (
     ∀ (i : Fin (lower.rounds + (2 : ℕ))), lower.series.data.tree i = ett.series.data.tree
         (Fin.castLE (
-    by omega
+        Nat.add_le_add_right ((Nat.le_of_eq hr).trans (Nat.sub_le _ _)) 2
     ) i))) (_ : (
     ∀ (i : Fin (lower.rounds + (1 : ℕ))), lower.series.data.coloring i = ett.series.data.coloring
         (Fin.castLE (
-    by omega
+        Nat.add_le_add_right ((Nat.le_of_eq hr).trans (Nat.sub_le _ _)) 1
     ) i) ∧ lower.series.data.stored i = ett.series.data.stored (Fin.castLE (
-    by omega
+        Nat.add_le_add_right ((Nat.le_of_eq hr).trans (Nat.sub_le _ _)) 1
     ) i) ∧ lower.series.data.connectingEdges i = ett.series.data.connectingEdges (Fin.castLE (
-    by omega
+        Nat.add_le_add_right ((Nat.le_of_eq hr).trans (Nat.sub_le _ _)) 1
     ) i) ∧ lower.series.data.kind i = ett.series.data.kind (Fin.castLE (
-    by omega
+        Nat.add_le_add_right ((Nat.le_of_eq hr).trans (Nat.sub_le _ _)) 1
     ) i) ∧ lower.series.data.chosenVertex i = ett.series.data.chosenVertex (Fin.castLE (
-    by omega
+        Nat.add_le_add_right ((Nat.le_of_eq hr).trans (Nat.sub_le _ _)) 1
     ) i) ∧ lower.series.data.outsideVertex i = ett.series.data.outsideVertex (Fin.castLE (
-    by omega
+        Nat.add_le_add_right ((Nat.le_of_eq hr).trans (Nat.sub_le _ _)) 1
     ) i) ∧ lower.series.data.delta i = ett.series.data.delta (Fin.castLE (
-    by omega
+        Nat.add_le_add_right ((Nat.le_of_eq hr).trans (Nat.sub_le _ _)) 1
     ) i) ∧ lower.series.data.gamma i = ett.series.data.gamma (Fin.castLE (
-    by omega
+        Nat.add_le_add_right ((Nat.le_of_eq hr).trans (Nat.sub_le _ _)) 1
     ) i) ∧ TashkinovStoredColors lower.series.data i = TashkinovStoredColors ett.series.data
         (Fin.castLE (
-    by omega
+        Nat.add_le_add_right ((Nat.le_of_eq hr).trans (Nat.sub_le _ _)) 1
     ) i) ∧ lower.series.certified i ≍ ett.series.certified (Fin.castLE (
-    by omega
+        Nat.add_le_add_right ((Nat.le_of_eq hr).trans (Nat.sub_le _ _)) 1
     ) i))),
     let nLower : Fin (lower.rounds + (1 : ℕ)) := Fin.last lower.rounds;
     let Tn : TreeSequence G e0 := ett.series.data.tree ci.succ.castSucc;
@@ -338,10 +333,8 @@ private abbrev helperBranch409Conditions.{u_1, u_2} : Prop :=
     by omega
     ⟩ : Fin (ett.rounds + (2 : ℕ)))) (_ : (
     ∀ (i : Fin (lower.rounds + (2 : ℕ))), lower.series.data.tree i = ett.series.data.tree
-        (Fin.castLE (Decidable.byContradiction fun (a : ¬lower.rounds + (2 : ℕ) ≤ ett.rounds + (2
-        : ℕ)) ↦
-    by
-            omega
+        (Fin.castLE (
+        Nat.add_le_add_right ((Nat.le_of_eq hs).trans (Nat.le_of_lt hsn)) 2
     ) i))) (x : V) (hxLower : x ∈ TreeSequenceVertexSet T') (hxFinal : x ∈ TreeSequenceVertexSet
         T) (_ : ETTFirstAppearanceIndex ett x hxFinal ≤ s), ETTFirstAppearanceIndex lower x
         hxLower = ETTFirstAppearanceIndex ett x hxFinal)),
@@ -770,88 +763,20 @@ private theorem helper_branch_847.{u_1, u_2} :
     have hfirstP : ETTFirstAppearanceIndex ett v hvFinal = p.val + 1 := by
       simpa [p] using hfirst
     omega
-  have qInBefore : ∀ x : V, x ∈ TreeSequenceVertexSet Q → x ∈ B := by
-    intro x hx
-    have hxA := TreeSequenceInitialSegmentVertexSetSubset hQA hx
-    have hxT := TreeSequenceInitialSegmentVertexSetSubset hAT hxA
-    apply Finset.mem_filter.mpr
-    refine ⟨hxT, ?_⟩
-    rcases hQA with ⟨hlen, hvertices, _⟩
-    rcases Finset.mem_image.mp hx with ⟨ix, _, hix⟩
-    rcases Finset.mem_image.mp hvA with ⟨iv, _, hiv⟩
-    have hleniv : Q.length < iv.val := by
-      by_contra hnot
-      have hivBound : iv.val < Q.length + 1 := by omega
-      let ivQ : Fin (Q.length + 1) := ⟨iv.val, hivBound⟩
-      apply hvNotQ
-      apply Finset.mem_image.mpr
-      refine ⟨ivQ, Finset.mem_univ _, ?_⟩
-      calc
-        Q.vertex ivQ =
-            A.vertex (Fin.castLE (Nat.succ_le_succ hlen) ivQ) :=
-          (hvertices ivQ).symm
-        _ = A.vertex iv := by
-          congr 1
-        _ = v := hiv
-    have horderA : TreeVertexOrder A x v := by
-      refine ⟨Fin.castLE (Nat.succ_le_succ hlen) ix, iv,
-        (hvertices ix).trans hix, hiv, ?_⟩
-      have hixBound : ix.val ≤ Q.length := by omega
-      simp only [Fin.val_castLE]
-      omega
-    exact orderTransfer hAT x v horderA
+  have qInBefore : ∀ vertex, vertex ∈ TreeSequenceVertexSet Q → vertex ∈ B := by
+    intro vertex inTree
+    obtain ⟨position, _, equal⟩ := Finset.mem_image.mp hvA
+    have later := hQA.length_lt_of_vertex_not_mem (position := position)
+      (TreeSequenceInitialSegment.refl Q) (by simpa only [equal] using hvNotQ)
+    refine Finset.mem_filter.mpr ⟨(hQA.trans hAT).vertexSet_subset inTree, ?_⟩
+    exact orderTransfer hAT vertex v
+      (by simpa only [equal] using hQA.vertex_precedes later inTree)
   have stableQ : StableColoring Q
       (TashkinovStoredColors ett.series.data p.castSucc)
-      (ett.series.data.coloring p.castSucc) sigma := by
-    constructor
-    · intro f hf hcolor
-      rcases hf with ⟨x, hx, hxf⟩
-      rcases hcolor with ⟨c, hc, hfc⟩
-      apply beforeStable.1 f ⟨x, qInBefore x hx, hxf⟩
-      refine ⟨c, ?_, hfc⟩
-      rcases Finset.mem_union.mp hc with hc | hc
-      · apply Finset.mem_union.mpr
-        left
-        simp only [TreeMissingColors, Finset.mem_biUnion] at hc
-        rcases hc with ⟨z, hz, hzc⟩
-        simp only [Finset.mem_biUnion]
-        exact ⟨z, qInBefore z hz, hzc⟩
-      · exact Finset.mem_union.mpr (Or.inr hc)
-    · intro x hx
-      exact beforeStable.2 x (qInBefore x hx)
+      (ett.series.data.coloring p.castSucc) sigma :=
+    StableColoringOn.mono beforeStable (fun _ member => qInBefore _ member)
+      (fun _ member => member)
   simpa [Q, hpj] using stableQ
-
-private theorem helper_selectedStableP_966.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq E] (G :
-        LooplessMultigraph V E) (k : ℕ) (e0 : E) (input : PartialEdgeColoring E k) (T :
-        TreeSequence G e0) (generating : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k
-        e0 input T generating),
-    let _ : DecidableEq V := Classical.decEq V;
-    ∀ (ci : Fin ett.rounds) (choice : MaximumDefectiveChoice G e0 (ett.series.data.tree
-        ci.succ.castSucc) (TashkinovStoredColors ett.series.data ci.castSucc)
-        (ett.series.data.coloring ci.castSucc)),
-    let Tn : TreeSequence G e0 := ett.series.data.tree ci.succ.castSucc;
-    let P : TreeSequence G e0 := ett.series.data.tree ci.castSucc.castSucc;
-    ∀ (_ : TreeSequenceInitialSegment P Tn) (_ : TreeMissingColors (ett.series.data.coloring
-        ci.castSucc) P ⊆ TreeMissingColors (ett.series.data.coloring ci.castSucc) Tn),
-        StableColoring P (TashkinovStoredColors ett.series.data ci.castSucc)
-        (ett.series.data.coloring ci.castSucc) choice.selected := by
-  classical
-  intro V E _ _ _ G k e0 input T generating ett this ci choice Tn P hPTn oldMissingIntoTn
-  constructor
-  · intro f hf hcolor
-    rcases hcolor with ⟨c, hc, hcf⟩
-    apply choice.selectedStable.1 f
-    · rcases hf with ⟨x, hx, hxf⟩
-      exact ⟨x, TreeSequenceInitialSegmentVertexSetSubset hPTn hx, hxf⟩
-    · refine ⟨c, ?_, hcf⟩
-      rcases Finset.mem_union.mp hc with hc | hc
-      · exact Finset.mem_union.mpr (Or.inl (oldMissingIntoTn hc))
-      · exact Finset.mem_union.mpr (Or.inr hc)
-  · intro x hx
-    exact choice.selectedStable.2 x
-      (TreeSequenceInitialSegmentVertexSetSubset hPTn hx)
 
 private theorem helper_seriesEdgeEq_1174.{u_1, u_2} :
     open scoped Classical in
@@ -1247,16 +1172,8 @@ private theorem helper_branch_409.{u_1, u_2} :
     rw [hnStored, hnCast]
   have hnTree' : lower.series.data.tree nLower.castSucc = P := by
     rw [htree nLower.castSucc, hnTreeCast]
-  have oldMissingIntoTn : TreeMissingColors
-      (ett.series.data.coloring ci.castSucc) P ⊆
-      TreeMissingColors (ett.series.data.coloring ci.castSucc) Tn := by
-    intro c hc
-    simp only [TreeMissingColors, Finset.mem_biUnion] at hc ⊢
-    rcases hc with ⟨x, hx, hc⟩
-    exact ⟨x, TreeSequenceInitialSegmentVertexSetSubset hPTn hx, hc⟩
-  have selectedStableP :=
-    @helper_selectedStableP_966 V E inferInstance inferInstance inferInstance G k e0 input
-        T generating ett ci choice hPTn oldMissingIntoTn
+  have selectedStableP := choice.selectedStable.mono hPTn.vertexSet_subset
+    (fun _ member => member)
   have hstableLower : StableColoring
       (lower.series.data.tree nLower.castSucc)
       (TashkinovStoredColors lower.series.data nLower)

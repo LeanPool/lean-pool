@@ -67,35 +67,6 @@ private theorem helper_hiSeed_234.{u_1, u_2} :
   rw [hia] at hZSeedA
   exact (hseedU.2.1 a).trans hZSeedA.symm
 
-private theorem helper_hseedZX_252.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} {G : LooplessMultigraph V E} {e0 : E} (Tj seed : TreeSequence
-        G e0) (zPosition : Fin (Tj.length + (1 : ℕ))) (hzPositionPositive : (1 : ℕ) ≤ (↑zPosition
-        : ℕ)) (hzPositionBound : (↑zPosition : ℕ) ≤ Tj.length),
-    let Z : TreeSequence G e0 := TreeSequencePrefix Tj (↑zPosition : ℕ) hzPositionPositive
-        hzPositionBound;
-    ∀ (_ : TreeSequenceInitialSegment seed Z) (i : Fin Z.length) (hiSeed : seed.length ≤ (↑i : ℕ))
-        (hiZ : (↑i : ℕ) < Z.length),
-    let ZX : TreeSequence G e0 := TreeSequencePrefix Z (↑i : ℕ) (Nat.le_trans seed.positive
-        hiSeed) (Nat.le_of_lt hiZ); TreeSequenceInitialSegment seed ZX := by
-  classical
-  intro V E G e0 Tj seed zPosition hzPositionPositive hzPositionBound Z hseedZSegment i hiSeed
-      hiZ ZX
-  refine ⟨hiSeed, ?_, ?_⟩
-  · intro a
-    change Z.vertex _ = seed.vertex a
-    calc
-      Z.vertex _ = Z.vertex
-          (Fin.castLE (Nat.succ_le_succ hseedZSegment.1) a) := by
-        congr 1
-      _ = seed.vertex a := hseedZSegment.2.1 a
-  · intro a
-    change Z.edge _ = seed.edge a
-    calc
-      Z.edge _ = Z.edge (Fin.castLE hseedZSegment.1 a) := by
-        congr 1
-      _ = seed.edge a := hseedZSegment.2.2 a
-
 private theorem helper_hmissingX_305.{u_1, u_2} :
     open scoped Classical in
     ∀ {V : Type u_1} {E : Type u_2} [ Finite V] [ Fintype E] {G : LooplessMultigraph V E} {k : ℕ}
@@ -386,8 +357,8 @@ private theorem helper_branch_209.{u_1, u_2} :
   have hiZ : i.val < Z.length := i.isLt
   let ZX := TreeSequencePrefix Z i.val
     (Nat.le_trans seed.positive hiSeed) (Nat.le_of_lt hiZ)
-  have hseedZX := @helper_hseedZX_252 V E G e0 Tj seed zPosition hzPositionPositive hzPositionBound
-      hseedZSegment i hiSeed hiZ
+  have hseedZX : TreeSequenceInitialSegment seed ZX :=
+    hseedZSegment.prefix_of_segment i.val hiSeed (Nat.le_of_lt hiZ)
   have hZXZ : TreeSequenceInitialSegment ZX Z :=
     prefixSegment Z i.val (Nat.le_trans seed.positive hiSeed)
       (Nat.le_of_lt hiZ)
@@ -414,18 +385,8 @@ private theorem helper_branch_209.{u_1, u_2} :
     rw [← hcast, hZai, haiLast]
     exact hcolorA
   have hleftX {v : V} (hvU : v ∈ TreeSequenceVertexSet U) :
-      v ∈ TreeSequenceVertexSet X := by
-    simp only [TreeSequenceVertexSet, Finset.mem_image,
-      Finset.mem_univ, true_and] at hvU ⊢
-    obtain ⟨b, hb⟩ := hvU
-    refine ⟨Fin.castLE (Nat.succ_le_succ hnU) b, ?_⟩
-    change M.vertex _ = v
-    calc
-      M.vertex _ = M.vertex
-          (Fin.castLE (Nat.succ_le_succ hleftSegment.1) b) := by
-        congr 1
-      _ = U.vertex b := hleftSegment.2.1 b
-      _ = v := hb
+      v ∈ TreeSequenceVertexSet X :=
+    (hleftSegment.prefix_of_segment n hnU hnM').vertexSet_subset hvU
   have hmissingX := @helper_hmissingX_305 V E inferInstance inferInstance G k e0 Tj seed TjPrime
       phiJ rho3 terminalSupport u z hzTj zPosition uPosition hzPosition huPositionPositive
       huPositionBound hzPositionPositive hzPositionBound hZTj hseedU hterminalInclusion
@@ -695,61 +656,6 @@ private theorem helper_branch_1101.{u_1, u_2} :
       intro heq
       exact huOutsideTj (heq.symm.subset huC)⟩
   exact (Nat.not_lt_of_ge hbound) (Finset.card_lt_card hstrict)
-
-private theorem helper_hstableLower_821.{u_1, u_2} :
-    open scoped Classical in ∀ {V : Type u_1} {E : Type u_2} [Finite V] [Fintype E] {G :
-    LooplessMultigraph V E} {k : ℕ} {e0 : E} (Tjm1 Tj : TreeSequence G e0) (phiJ rho3 :
-    PartialEdgeColoring E k) (Dprev : Finset (Fin k)) (terminalSupport : V) (hterminalTj :
-    terminalSupport ∈ TreeSequenceVertexSet Tj), TreeSequenceVertexSet Tjm1 ⊆
-    TreeVerticesBefore Tj terminalSupport hterminalTj → StableColoringBeforeVertex Tj
-    terminalSupport hterminalTj Dprev phiJ rho3 → StableColoring Tjm1 Dprev phiJ rho3 := by
-  classical
-  intro V E _ _ G k e0 Tjm1 Tj phiJ rho3 Dprev terminalSupport hterminalTj hTjm1Before hd1
-  let _ := Fintype.ofFinite V
-  unfold StableColoring
-  constructor
-  · intro f hfIncident hfControlled
-    obtain ⟨v, hvTjm1, hvf⟩ := hfIncident
-    have hvBefore : v ∈ TreeVerticesBefore Tj terminalSupport hterminalTj :=
-      hTjm1Before hvTjm1
-    apply hd1.1 f ⟨v, hvBefore, hvf⟩
-    obtain ⟨c, hcControlled, hfc⟩ := hfControlled
-    refine ⟨c, ?_, hfc⟩
-    rcases Finset.mem_union.mp hcControlled with hcMissing | hcStored
-    · apply Finset.mem_union_left
-      unfold TreeMissingColors at hcMissing
-      obtain ⟨w, hwTjm1, hcw⟩ := Finset.mem_biUnion.mp hcMissing
-      exact Finset.mem_biUnion.mpr
-        ⟨w, hTjm1Before hwTjm1, hcw⟩
-    · exact Finset.mem_union_right _ hcStored
-  · intro v hvTjm1
-    exact hd1.2 v (hTjm1Before hvTjm1)
-
-private theorem helper_commonPrefix_864.{u_1, u_2} :
-    open scoped Classical in ∀ {V : Type u_1} {E : Type u_2} {G : LooplessMultigraph V E} {e0
-    : E} {A B C : TreeSequence G e0}, TreeSequenceInitialSegment A C →
-    TreeSequenceInitialSegment B C → A.length ≤ B.length → TreeSequenceInitialSegment A B := by
-  classical
-  intro V E G e0 A B C hAC hBC hlen
-  rcases hAC with ⟨hlenAC, hvertexAC, hedgeAC⟩
-  rcases hBC with ⟨hlenBC, hvertexBC, hedgeBC⟩
-  refine ⟨hlen, ?_, ?_⟩
-  · intro i
-    calc
-      B.vertex (Fin.castLE (Nat.succ_le_succ hlen) i) =
-          C.vertex (Fin.castLE (Nat.succ_le_succ hlenBC)
-            (Fin.castLE (Nat.succ_le_succ hlen) i)) :=
-        (hvertexBC _).symm
-      _ = C.vertex (Fin.castLE (Nat.succ_le_succ hlenAC) i) := by
-        congr 1
-      _ = A.vertex i := hvertexAC i
-  · intro i
-    calc
-      B.edge (Fin.castLE hlen i) =
-          C.edge (Fin.castLE hlenBC (Fin.castLE hlen i)) :=
-        (hedgeBC _).symm
-      _ = C.edge (Fin.castLE hlenAC i) := by congr 1
-      _ = A.edge i := hedgeAC i
 
 private theorem helper_hseedVertexBefore_888.{u_1, u_2} :
     open scoped Classical in ∀ {V : Type u_1} {E : Type u_2} [Finite V] {G :
@@ -1299,12 +1205,15 @@ theorem ExtensionBaseCaseTwoContradiction {V E : Type*}
       (zPosition.val < (Fin.last Tj.length).val ∧
         beta ∈ MissingColors G rho1 z)) : False := by
   classical
-  have hstableLower := @helper_hstableLower_821 V E inferInstance inferInstance G k e0 Tjm1 Tj phiJ
-      rho3 Dprev terminalSupport hterminalTj hTjm1Before hd1
+  have hstableLower : StableColoring Tjm1 Dprev phiJ rho3 :=
+    StableColoringOn.mono hd1 hTjm1Before (fun _ membership => membership)
   have hmod : ModColoring lower rho3 :=
     hLowerVI rho3 hrhoProper hrhoOne hstableLower
   have segmentTrans := @TreeSequenceInitialSegment.trans V E G e0
-  have commonPrefix := @helper_commonPrefix_864 V E G e0
+  have commonPrefix {A B C : TreeSequence G e0}
+      (hAC : TreeSequenceInitialSegment A C) (hBC : TreeSequenceInitialSegment B C)
+      (hlen : A.length ≤ B.length) : TreeSequenceInitialSegment A B :=
+    hBC.of_common_extension hAC hlen
   have hseedVertexBefore := @helper_hseedVertexBefore_888 V E inferInstance G e0 Tj seed
       terminalSupport hterminalTj hseedJ hseedTerminal
   have hsegmentVertexBefore {A : TreeSequence G e0}

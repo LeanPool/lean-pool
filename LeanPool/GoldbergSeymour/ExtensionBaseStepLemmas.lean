@@ -7,6 +7,7 @@ module
 
 import LeanPool.GoldbergSeymour.TashkinovAugmentationSequenceTransport
 
+public import LeanPool.GoldbergSeymour.StableColoring
 public import LeanPool.GoldbergSeymour.ExtendedTashkinovLadderRestriction
 
 public import LeanPool.GoldbergSeymour.TashkinovSeriesTreeFacts
@@ -1219,10 +1220,8 @@ theorem helper_hLowerPartV_179.{u_1, u_2} :
       (lower.series.data.tree nLower.castSucc)
       (TashkinovStoredColors lower.series.data nLower)
       (lower.series.data.coloring nLower) sigmaR := by
-    exact @helper_hstableLower_484 (@V) (@E) inferInstance inferInstance inferInstance (@G) (@k)
-        (@e0) (@input) (@T) (@generating) (@ett) (@hpositive) (@v) (@hqTerminal) (@hvFinal)
-        (@hfirstUpper) (@hfirstPositive) (@vertexTransfer) (@r) (@a) (@sigmaR) (@hstableR) (@x)
-        (@hxFinal) (@lower) (@hPNext) (@htreeLower) (@hcolorLower) (@hstoredLower)
+    rw [htreeLower, hstoredLower, hcolorLower]
+    exact hstableR.mono hPNext.vertexSet_subset (fun _ membership => membership)
   have hdefectiveLower : DefectiveColor G sigmaR
       (TreeSequenceVertexSet
         (lower.series.data.tree nLower.castSucc)) deltaR := by
@@ -1653,11 +1652,9 @@ theorem helper_branch_880.{u_1, u_2} :
   have hstablePrevious : StableColoring Tprevious
       (TashkinovStoredColors ett.series.data jSlot.castSucc)
       (ett.series.data.coloring jSlot.castSucc) rho1 := by
-    exact @helper_hstablePrevious_1829 (@V) (@E) inferInstance inferInstance inferInstance (@G)
-        (@k) (@e0) (@input) (@T) (@generating) (@ett) (@hpositive) (@v) (@sigma) (@hqTerminal)
-        (@hvFinal) (@hfirstUpper) (@hfirstPositive) (@trace) (@hb1Rho) (@terminalPosition)
-        (@hterminalPositionPositive) (@hterminalPositionBound) (by assumption) (@hpreviousStrict)
-        (@hpreviousSeed)
+    exact StableColoringOn.mono hb1Rho
+      (fun _ membership => segmentVertexBefore hpreviousSeed hpreviousStrict membership)
+      (fun _ membership => membership)
   have hstableLower : StableColoring
       (lower.series.data.tree nLower.castSucc)
       (TashkinovStoredColors lower.series.data nLower)
@@ -1953,11 +1950,10 @@ theorem helper_branch_1756.{u_1, u_2} :
   have hstablePrevious : StableColoring Tprevious
       (TashkinovStoredColors ett.series.data jSlot.castSucc)
       (ett.series.data.coloring jSlot.castSucc) rho2 := by
-    exact @helper_hstablePrevious_3232 (@V) (@E) inferInstance inferInstance inferInstance (@G)
-        (@k) (@e0) (@input) (@T) (@generating) (@ett) (@hpositive) (@v) (@sigma) (@hqTerminal)
-        (@hvFinal) (@hfirstUpper) (@hfirstPositive) (@trace) (@hterminalJ) (@p0) (@indices0)
-        (@terminalPosition) (@hterminalPositionPositive) (@hterminalPositionBound) (@u) (@b)
-        (@traceB) (@c1) (@hpreviousStrict) (@hpreviousSeed) (@segmentVertexBeforeJ) (@hjPositive)
+    exact StableColoringOn.mono c1
+      (fun _ membership => segmentVertexBeforeJ (hpreviousSeed hjPositive)
+        (hpreviousStrict hjPositive) membership)
+      (fun _ membership => membership)
   have hstableLower : StableColoring
       (lower.series.data.tree nLower.castSucc)
       (TashkinovStoredColors lower.series.data nLower)
@@ -2162,15 +2158,10 @@ theorem helper_branch_2914.{u_1, u_2} :
   have hstablePrevious : StableColoring Tprevious
       (TashkinovStoredColors ett.series.data jSlot.castSucc)
       (ett.series.data.coloring jSlot.castSucc) rho3 := by
-    constructor
-    · exact @helper_branch_5420 (@V) (@E) inferInstance inferInstance inferInstance (@G) (@k)
-        (@e0) (@input) (@T) (@generating) (@ett) (@hpositive) (@v) (@hqTerminal) (@hvFinal)
-        (@hfirstUpper) (@hfirstPositive) (@hterminalJ) (@terminalPosition)
-        (@hterminalPositionPositive) (@hterminalPositionBound) (by assumption) (@hpreviousStrict)
-        (@hpreviousSeed) (@rho3) (@hd1) (by assumption) (@hjPositive)
-    · intro y hy
-      exact hd1.2 y (segmentVertexBefore (hpreviousSeed hjPositive)
-        (hpreviousStrict hjPositive) hy)
+    exact StableColoringOn.mono hd1
+      (fun _ membership => segmentVertexBefore (hpreviousSeed hjPositive)
+        (hpreviousStrict hjPositive) membership)
+      (fun _ membership => membership)
   have hseedBuildRho :
       (ett.series.data.kind jSlot.castSucc =
           some TashkinovExtensionKind.PE ∧
@@ -2568,20 +2559,7 @@ theorem helper_hb1Tj_1978.{u_1, u_2} :
   classical
   intro V E _ _ _ G k e0 input T generating ett hpositive v sigma q hqTerminal hvFinal
       hfirstUpper hfirstPositive jSlot trace hterminalJ rho1 hb1Rho hbeforeTjFinal
-  constructor
-  · intro f hfIncident hfControlled
-    obtain ⟨x, hxBefore, hxf⟩ := hfIncident
-    apply hb1Rho.1 f ⟨x, hbeforeTjFinal hxBefore, hxf⟩
-    obtain ⟨c, hcControlled, hfc⟩ := hfControlled
-    refine ⟨c, ?_, hfc⟩
-    rcases Finset.mem_union.mp hcControlled with hcMissing | hcStored
-    · apply Finset.mem_union_left
-      obtain ⟨z, hzBefore, hcz⟩ := Finset.mem_biUnion.mp hcMissing
-      exact Finset.mem_biUnion.mpr
-        ⟨z, hbeforeTjFinal hzBefore, hcz⟩
-    · exact Finset.mem_union_right _ hcStored
-  · intro x hxBefore
-    exact hb1Rho.2 x (hbeforeTjFinal hxBefore)
+  exact StableColoringOn.mono hb1Rho hbeforeTjFinal (fun _ membership => membership)
 
 theorem helper_hinitialB_2039.{u_1, u_2} :
     open scoped Classical in

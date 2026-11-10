@@ -5,6 +5,7 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegmentFacts
 public import LeanPool.GoldbergSeymour.HierarchyTreeFacts
 
 public import LeanPool.GoldbergSeymour.HierarchyCounterexamplePenultimateElementary
@@ -74,20 +75,10 @@ theorem P2880_T1_ThetaExclusion
     ⟨Nat.min_le_right _ _, fun _ => rfl, fun _ => rfl⟩
   have hZT : TreeSequenceInitialSegment Z T :=
     ⟨Nat.min_le_right _ _, fun _ => rfl, fun _ => rfl⟩
-  have commonPrefix {U W : TreeSequence G e0}
-      (hu : TreeSequenceInitialSegment U T)
-      (hw : TreeSequenceInitialSegment W T) (hlen : U.length ≤ W.length) :
-      TreeSequenceInitialSegment U W := by
-    refine ⟨hlen, ?_, ?_⟩
-    · intro i
-      exact (hw.2.1 (Fin.castLE (Nat.succ_le_succ hlen) i)).symm.trans
-        (hu.2.1 i)
-    · intro i
-      exact (hw.2.2 (Fin.castLE hlen i)).symm.trans (hu.2.2 i)
   have hAY : TreeSequenceInitialSegment A Y :=
-    commonPrefix hAT hYT (by rw [hYlen]; omega)
+    hYT.of_common_extension hAT (by rw [hYlen]; omega)
   have hYZ : TreeSequenceInitialSegment Y Z := by
-    apply commonPrefix hYT hZT
+    apply hZT.of_common_extension hYT
     rw [hYlen, hZlen]
     have htail : j < T.length - A.length := hbefore
     omega

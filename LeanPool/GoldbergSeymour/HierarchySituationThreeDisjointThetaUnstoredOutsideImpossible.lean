@@ -5,6 +5,7 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegmentFacts
 public import LeanPool.GoldbergSeymour.HierarchyTreeFacts
 
 public import LeanPool.GoldbergSeymour.TreeSequenceFirstMissingPositionInvariant
@@ -1220,21 +1221,7 @@ private theorem helper_continuation_286.{u_1, u_2} :
       (hSW : TreeSequenceInitialSegment S W)
       (hUW : TreeSequenceInitialSegment U W)
       (hlen : S.length ≤ U.length) : TreeSequenceInitialSegment S U := by
-    clear * - hSW hUW hlen
-    refine ⟨hlen, ?_, ?_⟩
-    · intro i
-      calc
-        U.vertex (Fin.castLE (Nat.succ_le_succ hlen) i) =
-            W.vertex (Fin.castLE (Nat.succ_le_succ hUW.1)
-              (Fin.castLE (Nat.succ_le_succ hlen) i)) := (hUW.2.1 _).symm
-        _ = W.vertex (Fin.castLE (Nat.succ_le_succ hSW.1) i) := by congr 1
-        _ = S.vertex i := hSW.2.1 i
-    · intro i
-      calc
-        U.edge (Fin.castLE hlen i) = W.edge (Fin.castLE hUW.1 (Fin.castLE hlen i)) :=
-          (hUW.2.2 _).symm
-        _ = W.edge (Fin.castLE hSW.1 i) := by congr 1
-        _ = S.edge i := hSW.2.2 i
+    exact hUW.of_common_extension hSW hlen
   have hAZ : TreeSequenceInitialSegment A Z :=
     commonPrefix hAT hZT (by rw [hZlen]; have := hAT.1; omega)
   have hYZ : TreeSequenceInitialSegment Y Z :=

@@ -5,6 +5,7 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegmentFacts
 public import LeanPool.GoldbergSeymour.HierarchyFirstMissingPositionPrefixCutoff
 public import LeanPool.GoldbergSeymour.TreeSequenceColoringFacts
 
@@ -688,25 +689,8 @@ theorem prefixToTree.{u_1, u_2} : prefixToTreeStatement.{u_1, u_2} := by
 
 /-- A common proof used by the branches of this transport or construction argument. -/
 theorem comparableInitialSegments.{u_1, u_2} : comparableInitialSegmentsStatement.{u_1, u_2} := by
-  classical
   intro V E G e0 T U W hUT hWT hUW
-  as_aux_lemma =>
-    rcases hUT with ⟨hu, huv, hue⟩
-    rcases hWT with ⟨hw, hwv, hwe⟩
-    refine ⟨hUW, ?_, ?_⟩
-    · intro i
-      calc
-        W.vertex (Fin.castLE (Nat.succ_le_succ hUW) i) =
-            T.vertex (Fin.castLE (Nat.succ_le_succ hw)
-              (Fin.castLE (Nat.succ_le_succ hUW) i)) := (hwv _).symm
-        _ = T.vertex (Fin.castLE (Nat.succ_le_succ hu) i) := by congr 1
-        _ = U.vertex i := huv i
-    · intro i
-      calc
-        W.edge (Fin.castLE hUW i) = T.edge (Fin.castLE hw (Fin.castLE hUW i)) :=
-          (hwe _).symm
-        _ = T.edge (Fin.castLE hu i) := by congr 1
-        _ = U.edge i := hue i
+  exact hWT.of_common_extension hUT hUW
 
 /-- A common proof used by the branches of this transport or construction argument. -/
 theorem elemZ.{u_1, u_2} : elemZStatement.{u_1, u_2} := by

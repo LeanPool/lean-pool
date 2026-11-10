@@ -57,30 +57,9 @@ theorem TashkinovAugmentationSequenceColoringTransport
     | @tail C D hAC hCD ih =>
         exact initialSegmentTrans ih hCD.2.1
   have commonExtensionPrefix {A : TreeSequence G e0}
-      (hAX : TreeSequenceInitialSegment A X)
-      (hlen : A.length < X.length) :
-      TreeSequenceInitialSegment A B := by
-    rcases hAX with ⟨hAXLen, hAXVertex, hAXEdge⟩
-    rcases hBX with ⟨hBXLen, hBXVertex, hBXEdge⟩
-    have hABLen : A.length ≤ B.length := by omega
-    refine ⟨hABLen, ?_, ?_⟩
-    · intro i
-      calc
-        B.vertex (Fin.castLE (Nat.succ_le_succ hABLen) i) =
-            X.vertex (Fin.castLE (Nat.succ_le_succ hBXLen)
-              (Fin.castLE (Nat.succ_le_succ hABLen) i)) :=
-          (hBXVertex _).symm
-        _ = X.vertex (Fin.castLE (Nat.succ_le_succ hAXLen) i) := by
-          congr 1
-        _ = A.vertex i := hAXVertex i
-    · intro i
-      calc
-        B.edge (Fin.castLE hABLen i) =
-            X.edge (Fin.castLE hBXLen (Fin.castLE hABLen i)) :=
-          (hBXEdge _).symm
-        _ = X.edge (Fin.castLE hAXLen i) := by
-          congr 1
-        _ = A.edge i := hAXEdge i
+      (hAX : TreeSequenceInitialSegment A X) (hlen : A.length < X.length) :
+      TreeSequenceInitialSegment A B :=
+    hBX.of_common_extension hAX (by omega)
   have transport (A : TreeSequence G e0) (hsource : S.length ≤ A.length)
       (hroute : TashkinovAugmentationSequence phi A X) :
       TashkinovAugmentationSequence sigma A X := by
@@ -103,13 +82,7 @@ theorem TashkinovAugmentationSequenceColoringTransport
       have hcSigma : c ∈ TreeMissingColors sigma A := by
         rw [TreeMissingColors] at hc ⊢
         rcases Finset.mem_biUnion.mp hc with ⟨v, hvA, hcv⟩
-        have hvB : v ∈ TreeSequenceVertexSet B := by
-          rw [TreeSequenceVertexSet] at hvA ⊢
-          rcases Finset.mem_image.mp hvA with ⟨j, _, hj⟩
-          refine Finset.mem_image.mpr ⟨Fin.castLE (Nat.succ_le_succ hAB.1) j,
-            Finset.mem_univ _, ?_⟩
-          rw [hAB.2.1 j]
-          exact hj
+        have hvB := hAB.vertexSet_subset hvA
         refine Finset.mem_biUnion.mpr ⟨v, hvA, ?_⟩
         rw [hmissing v hvB]
         exact hcv
