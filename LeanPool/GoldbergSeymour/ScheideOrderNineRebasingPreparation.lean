@@ -1,7 +1,7 @@
 /-
 Copyright (c) 2026 Wesley Pegden. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Wesley Pegden
+Authors: Wesley Pegden, Lean Pool contributors
 -/
 module
 
@@ -23,6 +23,19 @@ Adapted from Wesley Pegden’s Trellis formalization at
 namespace GoldbergSeymour.ScheideRebasing
 
 open scoped Sym2
+
+/-- The first order-nine rebasing permutation exchanges the two selected vertex pairs. -/
+def firstPermutation : Equiv.Perm (Fin 9) :=
+  (Equiv.swap 2 5).trans (Equiv.swap 3 6)
+
+/-- The second order-nine rebasing permutation uses the opposite selected pair order. -/
+def secondPermutation : Equiv.Perm (Fin 9) :=
+  ((Equiv.swap 2 6).trans (Equiv.swap 2 3)).trans (Equiv.swap 2 5)
+
+/-- Reorder an indexed family using either of two permutations. -/
+def rebasedVertices {Index V : Type*} (vertex : Index → V)
+    (left right : Equiv.Perm Index) (first : Prop) [Decidable first] : Index → V :=
+  fun index => if first then vertex (left index) else vertex (right index)
 
 /-- Dependent contract shared by the order-nine tree rebasing proof modules.
 
@@ -975,15 +988,11 @@ abbrev helperFirstEight3682Conditions.{u_1, u_2} : Prop :=
     let cast9 : Fin (9 : ℕ) ≃ Fin (S.length + (1 : ℕ)) := finCongr (
     by omega
     );
-    let permA : Equiv.Perm (Fin (9 : ℕ)) := Equiv.trans (Equiv.swap (2 : Fin (9 : ℕ)) (5 : Fin (9
-        : ℕ))) (Equiv.swap (3 : Fin (9 : ℕ)) (6 : Fin (9 : ℕ)));
-    let permB : Equiv.Perm (Fin (9 : ℕ)) := (Equiv.trans (Equiv.swap (2 : Fin (9 : ℕ)) (6 : Fin (9
-        : ℕ))) (Equiv.swap (2 : Fin (9 : ℕ)) (3 : Fin (9 : ℕ)))).trans (Equiv.swap (2 : Fin (9 :
-        ℕ)) (5 : Fin (9 : ℕ)));
-    let newVertex : Fin (9 : ℕ) → V := fun (i : Fin (9 : ℕ)) ↦ if b0 = f1 then S.vertex ((cast9 :
-        Fin (9 : ℕ) → Fin (S.length + (1 : ℕ))) ((permA : Fin (9 : ℕ) → Fin (9 : ℕ)) i)) else
-        S.vertex ((cast9 : Fin (9 : ℕ) → Fin (S.length + (1 : ℕ))) ((permB : Fin (9 : ℕ) → Fin (9
-        : ℕ)) i)); newVertex (7 : Fin (9 : ℕ)) = y7 → (
+    let permA : Equiv.Perm (Fin (9 : ℕ)) := firstPermutation;
+    let permB : Equiv.Perm (Fin (9 : ℕ)) := secondPermutation;
+    let newVertex : Fin (9 : ℕ) → V :=
+      rebasedVertices (fun index => S.vertex (cast9 index)) permA permB (b0 = f1);
+    newVertex (7 : Fin (9 : ℕ)) = y7 → (
     ∀ (q : Fin (7 : ℕ)),
     ∃ (t : Fin (7 : ℕ)), newVertex (Fin.castLE (
     by omega
@@ -1271,35 +1280,10 @@ noncomputable abbrev helperS3810.{u_1, u_2} :
   let cast9 :
     Fin (9 : ℕ) ≃ Fin (S.length + (1 : ℕ)) :=
     finCongr (by omega);
-  let permA : Equiv.Perm (Fin (9 : ℕ)) :=
-    Equiv.trans
-      (Equiv.swap (2 : Fin (9 : ℕ))
-        (5 : Fin (9 : ℕ)))
-      (Equiv.swap (3 : Fin (9 : ℕ))
-        (6 : Fin (9 : ℕ)));
-  let permB : Equiv.Perm (Fin (9 : ℕ)) :=
-    (Equiv.trans
-          (Equiv.swap (2 : Fin (9 : ℕ))
-            (6 : Fin (9 : ℕ)))
-          (Equiv.swap (2 : Fin (9 : ℕ))
-            (3 : Fin (9 : ℕ)))).trans
-      (Equiv.swap (2 : Fin (9 : ℕ))
-        (5 : Fin (9 : ℕ)));
+  let permA : Equiv.Perm (Fin (9 : ℕ)) := firstPermutation;
+  let permB : Equiv.Perm (Fin (9 : ℕ)) := secondPermutation;
   let newVertex : Fin (9 : ℕ) → V :=
-    fun (i : Fin (9 : ℕ)) ↦
-    if b0 = f1 then
-      S.vertex
-        ((cast9 :
-            Fin (9 : ℕ) →
-              Fin (S.length + (1 : ℕ)))
-          ((permA : Fin (9 : ℕ) → Fin (9 : ℕ)) i))
-    else
-      S.vertex
-        ((cast9 :
-            Fin (9 : ℕ) →
-              Fin (S.length + (1 : ℕ)))
-          ((permB : Fin (9 : ℕ) → Fin (9 : ℕ))
-            i));
+      rebasedVertices (fun index => S.vertex (cast9 index)) permA permB (b0 = f1);
   let edgeList : List E :=
     [a0, f1, beta56, f2, a1, a3, c0, c1];
   (hedgeListLength : edgeList.length = (8 : ℕ)) →
@@ -1616,15 +1600,10 @@ abbrev helperHS'tash4523Conditions.{u_1, u_2} : Prop :=
     let cast9 : Fin (9 : ℕ) ≃ Fin (S.length + (1 : ℕ)) := finCongr (
     by omega
     );
-    let permA : Equiv.Perm (Fin (9 : ℕ)) := Equiv.trans (Equiv.swap (2 : Fin (9 : ℕ)) (5 : Fin (9
-        : ℕ))) (Equiv.swap (3 : Fin (9 : ℕ)) (6 : Fin (9 : ℕ)));
-    let permB : Equiv.Perm (Fin (9 : ℕ)) := (Equiv.trans (Equiv.swap (2 : Fin (9 : ℕ)) (6 : Fin (9
-        : ℕ))) (Equiv.swap (2 : Fin (9 : ℕ)) (3 : Fin (9 : ℕ)))).trans (Equiv.swap (2 : Fin (9 :
-        ℕ)) (5 : Fin (9 : ℕ)));
-    let newVertex : Fin (9 : ℕ) → V := fun (i : Fin (9 : ℕ)) ↦ if b0 = f1 then S.vertex ((cast9 :
-        (a : Fin (9 : ℕ)) → Fin (S.length + (1 : ℕ))) ((permA : (a : Fin (9 : ℕ)) → Fin (9 : ℕ))
-        i)) else S.vertex ((cast9 : (a : Fin (9 : ℕ)) → Fin (S.length + (1 : ℕ))) ((permB : (a :
-        Fin (9 : ℕ)) → Fin (9 : ℕ)) i));
+    let permA : Equiv.Perm (Fin (9 : ℕ)) := firstPermutation;
+    let permB : Equiv.Perm (Fin (9 : ℕ)) := secondPermutation;
+    let newVertex : Fin (9 : ℕ) → V :=
+      rebasedVertices (fun index => S.vertex (cast9 index)) permA permB (b0 = f1);
     let edgeList : List E := [a0, f1, beta56, f2, a1, a3, c0, c1];
     ∀ (hedgeListLength : edgeList.length = (8 : ℕ)),
     let newEdge : Fin (8 : ℕ) → E := fun (i : Fin (8 : ℕ)) ↦ edgeList.get (Fin.cast (Eq.symm
@@ -1661,6 +1640,29 @@ abbrev helperHS'tash4523Conditions.{u_1, u_2} : Prop :=
         ℕ),
     by omega
     ⟩ : Fin (S'.length + (1 : ℕ))))), TashkinovTree G e psi S'
+
+/-- A common image under the two permutations determines a rebased vertex. -/
+theorem rebasedVertices_eq_of_images {Index V : Type*} (vertex : Index → V)
+    (left right : Equiv.Perm Index) (first : Prop) [Decidable first] {index image : Index}
+    (leftImage : left index = image) (rightImage : right index = image) :
+    rebasedVertices vertex left right first index = vertex image := by
+  by_cases selected : first
+  · simpa only [rebasedVertices, ite_eq_left selected] using congrArg vertex leftImage
+  · simpa only [rebasedVertices, ite_eq_right selected] using congrArg vertex rightImage
+
+/-- Rebasing preserves injectivity of an arbitrary indexed family. -/
+theorem rebasedVertices_injective {Index V : Type*} {vertex : Index → V}
+    (injective : Function.Injective vertex) (left right : Equiv.Perm Index)
+    (first : Prop) [Decidable first] :
+    Function.Injective (rebasedVertices vertex left right first) := by
+  intro i j equal
+  by_cases selected : first
+  · apply left.injective
+    apply injective
+    simpa only [rebasedVertices, ite_eq_left selected] using equal
+  · apply right.injective
+    apply injective
+    simpa only [rebasedVertices, ite_eq_right selected] using equal
 
 theorem mappedCastLE {V : Type*} {m n : ℕ} (f : Fin n → V)
     (h : m ≤ n) (i : Fin m) (j : Fin n) (heq : i.val = j.val) :
@@ -2716,59 +2718,22 @@ theorem helper_nv2_3221.{u_1, u_2} :
     ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E] [ DecidableEq E] (G :
         LooplessMultigraph V E) (k : ℕ) {e : E} (psi : PartialEdgeColoring E k) (S : TreeSequence
         G e) (_ : NormalGlobalMaximumTriple G k e psi S) (hlen : S.length = (8 : ℕ)),
-    let y5 : V := S.vertex (⟨(5 : ℕ),
-    have _ : (1 : ℕ) ≤ S.length := S.positive;
-    have _ : (1 : ℕ) ≤ S.length := S.positive;
-    have _ : (1 : ℕ) ≤ S.length := S.positive; Decidable.byContradiction fun (a : ¬(5 : ℕ) <
-        S.length + (1 : ℕ)) ↦
-    by
-            omega
-    ⟩ : Fin (S.length + (1 : ℕ)));
-    let y6 : V := S.vertex (⟨(6 : ℕ),
-    have _ : (1 : ℕ) ≤ S.length := S.positive;
-    have _ : (1 : ℕ) ≤ S.length := S.positive;
-    have _ : (1 : ℕ) ≤ S.length := S.positive; Decidable.byContradiction fun (a : ¬(6 : ℕ) <
-        S.length + (1 : ℕ)) ↦
-    by
-            omega
-    ⟩ : Fin (S.length + (1 : ℕ)));
-    let b0 : E := S.edge (⟨(4 : ℕ),
-    have _ : (1 : ℕ) ≤ S.length := S.positive;
-    have _ : (1 : ℕ) ≤ S.length := S.positive;
-    have _ : (1 : ℕ) ≤ S.length := S.positive; Decidable.byContradiction fun (a : ¬(4 : ℕ) <
-        S.length) ↦
-    by
-            omega
-    ⟩ : Fin S.length);
-    let b1 : E := S.edge (⟨(5 : ℕ),
-    have _ : (1 : ℕ) ≤ S.length := S.positive;
-    have _ : (1 : ℕ) ≤ S.length := S.positive;
-    have _ : (1 : ℕ) ≤ S.length := S.positive; Decidable.byContradiction fun (a : ¬(5 : ℕ) <
-        S.length) ↦
-    by
-            omega
-    ⟩ : Fin S.length);
+    let y5 : V := S.vertex (⟨(5 : ℕ), by omega⟩ : Fin (S.length + (1 : ℕ)));
+    let y6 : V := S.vertex (⟨(6 : ℕ), by omega⟩ : Fin (S.length + (1 : ℕ)));
+    let b0 : E := S.edge (⟨(4 : ℕ), by omega⟩ : Fin S.length);
+    let b1 : E := S.edge (⟨(5 : ℕ), by omega⟩ : Fin S.length);
     ∀ (f1 f2 : E) (v1 v2 : V),
-    let r6' : Fin S.length := (⟨(6 : ℕ),
-    have _ : (1 : ℕ) ≤ S.length := S.positive;
-    have _ : (1 : ℕ) ≤ S.length := S.positive;
-    by
-        omega
-    ⟩ : Fin S.length);
+    let r6' : Fin S.length := (⟨(6 : ℕ), by omega⟩ : Fin S.length);
     ∀ (_ : Fin ((↑r6' : ℕ) + (1 : ℕ))),
     let cast9 : Fin (9 : ℕ) ≃ Fin (S.length + (1 : ℕ)) := finCongr (
     by
         omega
     );
-    let permA : Equiv.Perm (Fin (9 : ℕ)) := Equiv.trans (Equiv.swap (2 : Fin (9 : ℕ)) (5 : Fin (9
-        : ℕ))) (Equiv.swap (3 : Fin (9 : ℕ)) (6 : Fin (9 : ℕ)));
-    let permB : Equiv.Perm (Fin (9 : ℕ)) := (Equiv.trans (Equiv.swap (2 : Fin (9 : ℕ)) (6 : Fin (9
-        : ℕ))) (Equiv.swap (2 : Fin (9 : ℕ)) (3 : Fin (9 : ℕ)))).trans (Equiv.swap (2 : Fin (9 :
-        ℕ)) (5 : Fin (9 : ℕ)));
-    let newVertex : Fin (9 : ℕ) → V := fun (i : Fin (9 : ℕ)) ↦ if b0 = f1 then S.vertex ((cast9 :
-        Fin (9 : ℕ) → Fin (S.length + (1 : ℕ))) ((permA : Fin (9 : ℕ) → Fin (9 : ℕ)) i)) else
-        S.vertex ((cast9 : Fin (9 : ℕ) → Fin (S.length + (1 : ℕ))) ((permB : Fin (9 : ℕ) → Fin (9
-        : ℕ)) i)); (b0 = f1 → y5 = v1 ∧ b1 = f2 ∧ y6 = v2) → (b0 ≠ f1 → y5 = v2 ∧ b1 = f1 ∧ y6 =
+    let permA : Equiv.Perm (Fin (9 : ℕ)) := firstPermutation;
+    let permB : Equiv.Perm (Fin (9 : ℕ)) := secondPermutation;
+    let newVertex : Fin (9 : ℕ) → V :=
+      rebasedVertices (fun index => S.vertex (cast9 index)) permA permB (b0 = f1);
+    (b0 = f1 → y5 = v1 ∧ b1 = f2 ∧ y6 = v2) → (b0 ≠ f1 → y5 = v2 ∧ b1 = f1 ∧ y6 =
         v1) → (
     ∀ (i : Fin (9 : ℕ)) (q : Fin (S.length + (1 : ℕ))), (↑i : ℕ) = (↑q : ℕ) → S.vertex ((cast9 :
         Fin (9 : ℕ) → Fin (S.length + (1 : ℕ))) i) = S.vertex q) → newVertex (2 : Fin (9 : ℕ)) =
@@ -2779,15 +2744,15 @@ theorem helper_nv2_3221.{u_1, u_2} :
   by_cases hb : b0 = f1
   · calc
       newVertex 2 = y5 := by
-        simp only [newVertex, ite_eq_left hb, y5]
+        simp only [newVertex, rebasedVertices, ite_eq_left hb, y5]
         apply vertex_cast9
-        simp [permA, Equiv.swap_apply_def]
+        simp [permA, firstPermutation, Equiv.swap_apply_def]
       _ = v1 := (hselectA hb).1
   · calc
       newVertex 2 = y6 := by
-        simp only [newVertex, ite_eq_right hb, y6]
+        simp only [newVertex, rebasedVertices, ite_eq_right hb, y6]
         apply vertex_cast9
-        simp [permB, Equiv.swap_apply_def]
+        simp [permB, secondPermutation, Equiv.swap_apply_def]
       _ = v1 := (hselectB hb).2.2
 
 theorem helper_nv3_3235.{u_1, u_2} :
@@ -2795,59 +2760,22 @@ theorem helper_nv3_3235.{u_1, u_2} :
     ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E] [ DecidableEq E] (G :
         LooplessMultigraph V E) (k : ℕ) {e : E} (psi : PartialEdgeColoring E k) (S : TreeSequence
         G e) (_ : NormalGlobalMaximumTriple G k e psi S) (hlen : S.length = (8 : ℕ)),
-    let y5 : V := S.vertex (⟨(5 : ℕ),
-    have _ : (1 : ℕ) ≤ S.length := S.positive;
-    have _ : (1 : ℕ) ≤ S.length := S.positive;
-    have _ : (1 : ℕ) ≤ S.length := S.positive; Decidable.byContradiction fun (a : ¬(5 : ℕ) <
-        S.length + (1 : ℕ)) ↦
-    by
-            omega
-    ⟩ : Fin (S.length + (1 : ℕ)));
-    let y6 : V := S.vertex (⟨(6 : ℕ),
-    have _ : (1 : ℕ) ≤ S.length := S.positive;
-    have _ : (1 : ℕ) ≤ S.length := S.positive;
-    have _ : (1 : ℕ) ≤ S.length := S.positive; Decidable.byContradiction fun (a : ¬(6 : ℕ) <
-        S.length + (1 : ℕ)) ↦
-    by
-            omega
-    ⟩ : Fin (S.length + (1 : ℕ)));
-    let b0 : E := S.edge (⟨(4 : ℕ),
-    have _ : (1 : ℕ) ≤ S.length := S.positive;
-    have _ : (1 : ℕ) ≤ S.length := S.positive;
-    have _ : (1 : ℕ) ≤ S.length := S.positive; Decidable.byContradiction fun (a : ¬(4 : ℕ) <
-        S.length) ↦
-    by
-            omega
-    ⟩ : Fin S.length);
-    let b1 : E := S.edge (⟨(5 : ℕ),
-    have _ : (1 : ℕ) ≤ S.length := S.positive;
-    have _ : (1 : ℕ) ≤ S.length := S.positive;
-    have _ : (1 : ℕ) ≤ S.length := S.positive; Decidable.byContradiction fun (a : ¬(5 : ℕ) <
-        S.length) ↦
-    by
-            omega
-    ⟩ : Fin S.length);
+    let y5 : V := S.vertex (⟨(5 : ℕ), by omega⟩ : Fin (S.length + (1 : ℕ)));
+    let y6 : V := S.vertex (⟨(6 : ℕ), by omega⟩ : Fin (S.length + (1 : ℕ)));
+    let b0 : E := S.edge (⟨(4 : ℕ), by omega⟩ : Fin S.length);
+    let b1 : E := S.edge (⟨(5 : ℕ), by omega⟩ : Fin S.length);
     ∀ (f1 f2 : E) (v1 v2 : V),
-    let r6' : Fin S.length := (⟨(6 : ℕ),
-    have _ : (1 : ℕ) ≤ S.length := S.positive;
-    have _ : (1 : ℕ) ≤ S.length := S.positive;
-    by
-        omega
-    ⟩ : Fin S.length);
+    let r6' : Fin S.length := (⟨(6 : ℕ), by omega⟩ : Fin S.length);
     ∀ (_ : Fin ((↑r6' : ℕ) + (1 : ℕ))),
     let cast9 : Fin (9 : ℕ) ≃ Fin (S.length + (1 : ℕ)) := finCongr (
     by
         omega
     );
-    let permA : Equiv.Perm (Fin (9 : ℕ)) := Equiv.trans (Equiv.swap (2 : Fin (9 : ℕ)) (5 : Fin (9
-        : ℕ))) (Equiv.swap (3 : Fin (9 : ℕ)) (6 : Fin (9 : ℕ)));
-    let permB : Equiv.Perm (Fin (9 : ℕ)) := (Equiv.trans (Equiv.swap (2 : Fin (9 : ℕ)) (6 : Fin (9
-        : ℕ))) (Equiv.swap (2 : Fin (9 : ℕ)) (3 : Fin (9 : ℕ)))).trans (Equiv.swap (2 : Fin (9 :
-        ℕ)) (5 : Fin (9 : ℕ)));
-    let newVertex : Fin (9 : ℕ) → V := fun (i : Fin (9 : ℕ)) ↦ if b0 = f1 then S.vertex ((cast9 :
-        Fin (9 : ℕ) → Fin (S.length + (1 : ℕ))) ((permA : Fin (9 : ℕ) → Fin (9 : ℕ)) i)) else
-        S.vertex ((cast9 : Fin (9 : ℕ) → Fin (S.length + (1 : ℕ))) ((permB : Fin (9 : ℕ) → Fin (9
-        : ℕ)) i)); (b0 = f1 → y5 = v1 ∧ b1 = f2 ∧ y6 = v2) → (b0 ≠ f1 → y5 = v2 ∧ b1 = f1 ∧ y6 =
+    let permA : Equiv.Perm (Fin (9 : ℕ)) := firstPermutation;
+    let permB : Equiv.Perm (Fin (9 : ℕ)) := secondPermutation;
+    let newVertex : Fin (9 : ℕ) → V :=
+      rebasedVertices (fun index => S.vertex (cast9 index)) permA permB (b0 = f1);
+    (b0 = f1 → y5 = v1 ∧ b1 = f2 ∧ y6 = v2) → (b0 ≠ f1 → y5 = v2 ∧ b1 = f1 ∧ y6 =
         v1) → (
     ∀ (i : Fin (9 : ℕ)) (q : Fin (S.length + (1 : ℕ))), (↑i : ℕ) = (↑q : ℕ) → S.vertex ((cast9 :
         Fin (9 : ℕ) → Fin (S.length + (1 : ℕ))) i) = S.vertex q) → newVertex (3 : Fin (9 : ℕ)) =
@@ -2858,15 +2786,15 @@ theorem helper_nv3_3235.{u_1, u_2} :
   by_cases hb : b0 = f1
   · calc
       newVertex 3 = y6 := by
-        simp only [newVertex, ite_eq_left hb, y6]
+        simp only [newVertex, rebasedVertices, ite_eq_left hb, y6]
         apply vertex_cast9
-        simp [permA, Equiv.swap_apply_def]
+        simp [permA, firstPermutation, Equiv.swap_apply_def]
       _ = v2 := (hselectA hb).2.2
   · calc
       newVertex 3 = y5 := by
-        simp only [newVertex, ite_eq_right hb, y5]
+        simp only [newVertex, rebasedVertices, ite_eq_right hb, y5]
         apply vertex_cast9
-        simp [permB, Equiv.swap_apply_def]
+        simp [permB, secondPermutation, Equiv.swap_apply_def]
       _ = v2 := (hselectB hb).1
 
 theorem helper_firstSeven_3311.{u_1, u_2} :
@@ -2874,101 +2802,29 @@ theorem helper_firstSeven_3311.{u_1, u_2} :
     ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E] [ DecidableEq E] (G :
         LooplessMultigraph V E) (k : ℕ) {e : E} (psi : PartialEdgeColoring E k) (S : TreeSequence
         G e) (_ : NormalGlobalMaximumTriple G k e psi S) (hlen : S.length = (8 : ℕ)),
-    let y0 : V := S.vertex (⟨(0 : ℕ),
-    have _ : (1 : ℕ) ≤ S.length := S.positive;
-    have _ : (1 : ℕ) ≤ S.length := S.positive;
-    have _ : (1 : ℕ) ≤ S.length := S.positive; Decidable.byContradiction fun (a : ¬(0 : ℕ) <
-        S.length + (1 : ℕ)) ↦
-    by
-            omega
-    ⟩ : Fin (S.length + (1 : ℕ)));
-    let y1 : V := S.vertex (⟨(1 : ℕ),
-    have _ : (1 : ℕ) ≤ S.length := S.positive;
-    have _ : (1 : ℕ) ≤ S.length := S.positive;
-    have _ : (1 : ℕ) ≤ S.length := S.positive; Decidable.byContradiction fun (a : ¬(1 : ℕ) <
-        S.length + (1 : ℕ)) ↦
-    by
-            omega
-    ⟩ : Fin (S.length + (1 : ℕ)));
-    let y2 : V := S.vertex (⟨(2 : ℕ),
-    have _ : (1 : ℕ) ≤ S.length := S.positive;
-    have _ : (1 : ℕ) ≤ S.length := S.positive;
-    have _ : (1 : ℕ) ≤ S.length := S.positive; Decidable.byContradiction fun (a : ¬(2 : ℕ) <
-        S.length + (1 : ℕ)) ↦
-    by
-            omega
-    ⟩ : Fin (S.length + (1 : ℕ)));
-    let y3 : V := S.vertex (⟨(3 : ℕ),
-    have _ : (1 : ℕ) ≤ S.length := S.positive;
-    have _ : (1 : ℕ) ≤ S.length := S.positive;
-    have _ : (1 : ℕ) ≤ S.length := S.positive; Decidable.byContradiction fun (a : ¬(3 : ℕ) <
-        S.length + (1 : ℕ)) ↦
-    by
-            omega
-    ⟩ : Fin (S.length + (1 : ℕ)));
-    let y4 : V := S.vertex (⟨(4 : ℕ),
-    have _ : (1 : ℕ) ≤ S.length := S.positive;
-    have _ : (1 : ℕ) ≤ S.length := S.positive;
-    have _ : (1 : ℕ) ≤ S.length := S.positive; Decidable.byContradiction fun (a : ¬(4 : ℕ) <
-        S.length + (1 : ℕ)) ↦
-    by
-            omega
-    ⟩ : Fin (S.length + (1 : ℕ)));
-    let y5 : V := S.vertex (⟨(5 : ℕ),
-    have _ : (1 : ℕ) ≤ S.length := S.positive;
-    have _ : (1 : ℕ) ≤ S.length := S.positive;
-    have _ : (1 : ℕ) ≤ S.length := S.positive; Decidable.byContradiction fun (a : ¬(5 : ℕ) <
-        S.length + (1 : ℕ)) ↦
-    by
-            omega
-    ⟩ : Fin (S.length + (1 : ℕ)));
-    let y6 : V := S.vertex (⟨(6 : ℕ),
-    have _ : (1 : ℕ) ≤ S.length := S.positive;
-    have _ : (1 : ℕ) ≤ S.length := S.positive;
-    have _ : (1 : ℕ) ≤ S.length := S.positive; Decidable.byContradiction fun (a : ¬(6 : ℕ) <
-        S.length + (1 : ℕ)) ↦
-    by
-            omega
-    ⟩ : Fin (S.length + (1 : ℕ)));
-    let b0 : E := S.edge (⟨(4 : ℕ),
-    have _ : (1 : ℕ) ≤ S.length := S.positive;
-    have _ : (1 : ℕ) ≤ S.length := S.positive;
-    have _ : (1 : ℕ) ≤ S.length := S.positive; Decidable.byContradiction fun (a : ¬(4 : ℕ) <
-        S.length) ↦
-    by
-            omega
-    ⟩ : Fin S.length);
-    let b1 : E := S.edge (⟨(5 : ℕ),
-    have _ : (1 : ℕ) ≤ S.length := S.positive;
-    have _ : (1 : ℕ) ≤ S.length := S.positive;
-    have _ : (1 : ℕ) ≤ S.length := S.positive; Decidable.byContradiction fun (a : ¬(5 : ℕ) <
-        S.length) ↦
-    by
-            omega
-    ⟩ : Fin S.length);
+    let y0 : V := S.vertex (⟨(0 : ℕ), by omega⟩ : Fin (S.length + (1 : ℕ)));
+    let y1 : V := S.vertex (⟨(1 : ℕ), by omega⟩ : Fin (S.length + (1 : ℕ)));
+    let y2 : V := S.vertex (⟨(2 : ℕ), by omega⟩ : Fin (S.length + (1 : ℕ)));
+    let y3 : V := S.vertex (⟨(3 : ℕ), by omega⟩ : Fin (S.length + (1 : ℕ)));
+    let y4 : V := S.vertex (⟨(4 : ℕ), by omega⟩ : Fin (S.length + (1 : ℕ)));
+    let y5 : V := S.vertex (⟨(5 : ℕ), by omega⟩ : Fin (S.length + (1 : ℕ)));
+    let y6 : V := S.vertex (⟨(6 : ℕ), by omega⟩ : Fin (S.length + (1 : ℕ)));
+    let b0 : E := S.edge (⟨(4 : ℕ), by omega⟩ : Fin S.length);
+    let b1 : E := S.edge (⟨(5 : ℕ), by omega⟩ : Fin S.length);
     ∀ (f1 f2 : E) (v1 v2 : V), b0 = f1 ∧ y5 = v1 ∧ b1 = f2 ∧ y6 = v2 ∨ b0 = f2 ∧ y5 = v2 ∧ b1 = f1
         ∧ y6 = v1 →
     ∀ (_ : E),
-    let r6' : Fin S.length := (⟨(6 : ℕ),
-    have _ : (1 : ℕ) ≤ S.length := S.positive;
-    have _ : (1 : ℕ) ≤ S.length := S.positive;
-    by
-        omega
-    ⟩ : Fin S.length);
+    let r6' : Fin S.length := (⟨(6 : ℕ), by omega⟩ : Fin S.length);
     ∀ (_ : Fin ((↑r6' : ℕ) + (1 : ℕ))),
     let cast9 : Fin (9 : ℕ) ≃ Fin (S.length + (1 : ℕ)) := finCongr (
     by
         omega
     );
-    let permA : Equiv.Perm (Fin (9 : ℕ)) := Equiv.trans (Equiv.swap (2 : Fin (9 : ℕ)) (5 : Fin (9
-        : ℕ))) (Equiv.swap (3 : Fin (9 : ℕ)) (6 : Fin (9 : ℕ)));
-    let permB : Equiv.Perm (Fin (9 : ℕ)) := (Equiv.trans (Equiv.swap (2 : Fin (9 : ℕ)) (6 : Fin (9
-        : ℕ))) (Equiv.swap (2 : Fin (9 : ℕ)) (3 : Fin (9 : ℕ)))).trans (Equiv.swap (2 : Fin (9 :
-        ℕ)) (5 : Fin (9 : ℕ)));
-    let newVertex : Fin (9 : ℕ) → V := fun (i : Fin (9 : ℕ)) ↦ if b0 = f1 then S.vertex ((cast9 :
-        Fin (9 : ℕ) → Fin (S.length + (1 : ℕ))) ((permA : Fin (9 : ℕ) → Fin (9 : ℕ)) i)) else
-        S.vertex ((cast9 : Fin (9 : ℕ) → Fin (S.length + (1 : ℕ))) ((permB : Fin (9 : ℕ) → Fin (9
-        : ℕ)) i)); newVertex (0 : Fin (9 : ℕ)) = y0 → newVertex (1 : Fin (9 : ℕ)) = y1 → newVertex
+    let permA : Equiv.Perm (Fin (9 : ℕ)) := firstPermutation;
+    let permB : Equiv.Perm (Fin (9 : ℕ)) := secondPermutation;
+    let newVertex : Fin (9 : ℕ) → V :=
+      rebasedVertices (fun index => S.vertex (cast9 index)) permA permB (b0 = f1);
+    newVertex (0 : Fin (9 : ℕ)) = y0 → newVertex (1 : Fin (9 : ℕ)) = y1 → newVertex
         (2 : Fin (9 : ℕ)) = v1 → newVertex (3 : Fin (9 : ℕ)) = v2 → newVertex (4 : Fin (9 : ℕ)) =
         y4 → newVertex (5 : Fin (9 : ℕ)) = y2 → newVertex (6 : Fin (9 : ℕ)) = y3 →
     ∀ (q : Fin (7 : ℕ)),
@@ -3015,38 +2871,10 @@ theorem helper_hselectA_3623.{u_1, u_2} :
     open scoped Classical in
     ∀ {V : Type u_1} {E : Type u_2} (G : LooplessMultigraph V E) {e : E} (S : TreeSequence G e)
         (hlen : S.length = (8 : ℕ)),
-    let y5 : V := S.vertex (⟨(5 : ℕ),
-    have _ : (1 : ℕ) ≤ S.length := S.positive;
-    have _ : (1 : ℕ) ≤ S.length := S.positive;
-    have _ : (1 : ℕ) ≤ S.length := S.positive; Decidable.byContradiction fun (a : ¬(5 : ℕ) <
-        S.length + (1 : ℕ)) ↦
-    by
-            omega
-    ⟩ : Fin (S.length + (1 : ℕ)));
-    let y6 : V := S.vertex (⟨(6 : ℕ),
-    have _ : (1 : ℕ) ≤ S.length := S.positive;
-    have _ : (1 : ℕ) ≤ S.length := S.positive;
-    have _ : (1 : ℕ) ≤ S.length := S.positive; Decidable.byContradiction fun (a : ¬(6 : ℕ) <
-        S.length + (1 : ℕ)) ↦
-    by
-            omega
-    ⟩ : Fin (S.length + (1 : ℕ)));
-    let b0 : E := S.edge (⟨(4 : ℕ),
-    have _ : (1 : ℕ) ≤ S.length := S.positive;
-    have _ : (1 : ℕ) ≤ S.length := S.positive;
-    have _ : (1 : ℕ) ≤ S.length := S.positive; Decidable.byContradiction fun (a : ¬(4 : ℕ) <
-        S.length) ↦
-    by
-            omega
-    ⟩ : Fin S.length);
-    let b1 : E := S.edge (⟨(5 : ℕ),
-    have _ : (1 : ℕ) ≤ S.length := S.positive;
-    have _ : (1 : ℕ) ≤ S.length := S.positive;
-    have _ : (1 : ℕ) ≤ S.length := S.positive; Decidable.byContradiction fun (a : ¬(5 : ℕ) <
-        S.length) ↦
-    by
-            omega
-    ⟩ : Fin S.length);
+    let y5 : V := S.vertex (⟨(5 : ℕ), by omega⟩ : Fin (S.length + (1 : ℕ)));
+    let y6 : V := S.vertex (⟨(6 : ℕ), by omega⟩ : Fin (S.length + (1 : ℕ)));
+    let b0 : E := S.edge (⟨(4 : ℕ), by omega⟩ : Fin S.length);
+    let b1 : E := S.edge (⟨(5 : ℕ), by omega⟩ : Fin S.length);
     ∀ (f1 f2 : E) (v1 v2 : V) (_ : b0 ≠ b1) (_ : b0 = f1 ∧ y5 = v1 ∧ b1 = f2 ∧ y6 = v2 ∨ b0 = f2 ∧
         y5 = v2 ∧ b1 = f1 ∧ y6 = v1) (_ : b0 = f1), y5 = v1 ∧ b1 = f2 ∧ y6 = v2 := by
   classical
@@ -3064,544 +2892,222 @@ theorem helper_nv0_3642.{u_1, u_2} :
     ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E] [ DecidableEq E] (G :
         LooplessMultigraph V E) (k : ℕ) {e : E} (psi : PartialEdgeColoring E k) (S : TreeSequence
         G e) (_ : NormalGlobalMaximumTriple G k e psi S) (hlen : S.length = (8 : ℕ)),
-    let y0 : V := S.vertex (⟨(0 : ℕ),
-    have _ : (1 : ℕ) ≤ S.length := S.positive;
-    have _ : (1 : ℕ) ≤ S.length := S.positive;
-    have _ : (1 : ℕ) ≤ S.length := S.positive; Decidable.byContradiction fun (a : ¬(0 : ℕ) <
-        S.length + (1 : ℕ)) ↦
-    by
-            omega
-    ⟩ : Fin (S.length + (1 : ℕ)));
-    let b0 : E := S.edge (⟨(4 : ℕ),
-    have _ : (1 : ℕ) ≤ S.length := S.positive;
-    have _ : (1 : ℕ) ≤ S.length := S.positive;
-    have _ : (1 : ℕ) ≤ S.length := S.positive; Decidable.byContradiction fun (a : ¬(4 : ℕ) <
-        S.length) ↦
-    by
-            omega
-    ⟩ : Fin S.length);
+    let y0 : V := S.vertex (⟨(0 : ℕ), by omega⟩ : Fin (S.length + (1 : ℕ)));
+    let b0 : E := S.edge (⟨(4 : ℕ), by omega⟩ : Fin S.length);
     ∀ (f1 : E),
-    let r6' : Fin S.length := (⟨(6 : ℕ),
-    have _ : (1 : ℕ) ≤ S.length := S.positive;
-    have _ : (1 : ℕ) ≤ S.length := S.positive;
-    by
-        omega
-    ⟩ : Fin S.length);
+    let r6' : Fin S.length := (⟨(6 : ℕ), by omega⟩ : Fin S.length);
     ∀ (_ : Fin ((↑r6' : ℕ) + (1 : ℕ))),
     let cast9 : Fin (9 : ℕ) ≃ Fin (S.length + (1 : ℕ)) := finCongr (
     by
         omega
     );
-    let permA : Equiv.Perm (Fin (9 : ℕ)) := Equiv.trans (Equiv.swap (2 : Fin (9 : ℕ)) (5 : Fin (9
-        : ℕ))) (Equiv.swap (3 : Fin (9 : ℕ)) (6 : Fin (9 : ℕ)));
-    let permB : Equiv.Perm (Fin (9 : ℕ)) := (Equiv.trans (Equiv.swap (2 : Fin (9 : ℕ)) (6 : Fin (9
-        : ℕ))) (Equiv.swap (2 : Fin (9 : ℕ)) (3 : Fin (9 : ℕ)))).trans (Equiv.swap (2 : Fin (9 :
-        ℕ)) (5 : Fin (9 : ℕ)));
-    let newVertex : Fin (9 : ℕ) → V := fun (i : Fin (9 : ℕ)) ↦ if b0 = f1 then S.vertex ((cast9 :
-        (a : Fin (9 : ℕ)) → Fin (S.length + (1 : ℕ))) ((permA : (a : Fin (9 : ℕ)) → Fin (9 : ℕ))
-        i)) else S.vertex ((cast9 : (a : Fin (9 : ℕ)) → Fin (S.length + (1 : ℕ))) ((permB : (a :
-        Fin (9 : ℕ)) → Fin (9 : ℕ)) i));
+    let permA : Equiv.Perm (Fin (9 : ℕ)) := firstPermutation;
+    let permB : Equiv.Perm (Fin (9 : ℕ)) := secondPermutation;
+    let newVertex : Fin (9 : ℕ) → V :=
+      rebasedVertices (fun index => S.vertex (cast9 index)) permA permB (b0 = f1);
     ∀ (_ :
     ∀ (i : Fin (9 : ℕ)) (q : Fin (S.length + (1 : ℕ))) (_ : (↑i : ℕ) = (↑q : ℕ)), S.vertex ((cast9
         : (a : Fin (9 : ℕ)) → Fin (S.length + (1 : ℕ))) i) = S.vertex q), newVertex (0 : Fin (9 :
         ℕ)) = y0 := by
   classical
   intro V E _ _ _ G k e psi S M hlen y0 b0 f1 r6' w cast9 permA permB newVertex vertex_cast9
-  by_cases hb : b0 = f1
-  · simp only [newVertex, ite_eq_left hb, y0]
-    apply vertex_cast9
-    simp [permA, Equiv.swap_apply_def]
-  · simp only [newVertex, ite_eq_right hb, y0]
-    apply vertex_cast9
-    simp [permB, Equiv.swap_apply_def]
+  exact (rebasedVertices_eq_of_images (fun position => S.vertex (cast9 position))
+    permA permB (b0 = f1) (index := 0) (image := 0) (by decide) (by decide)).trans
+      (vertex_cast9 0 _ rfl)
 
 theorem helper_nv1_3650.{u_1, u_2} :
     open scoped Classical in
     ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E] [ DecidableEq E] (G :
         LooplessMultigraph V E) (k : ℕ) {e : E} (psi : PartialEdgeColoring E k) (S : TreeSequence
         G e) (_ : NormalGlobalMaximumTriple G k e psi S) (hlen : S.length = (8 : ℕ)),
-    let y1 : V := S.vertex (⟨(1 : ℕ),
-    have _ : (1 : ℕ) ≤ S.length := S.positive;
-    have _ : (1 : ℕ) ≤ S.length := S.positive;
-    have _ : (1 : ℕ) ≤ S.length := S.positive; Decidable.byContradiction fun (a : ¬(1 : ℕ) <
-        S.length + (1 : ℕ)) ↦
-    by
-            omega
-    ⟩ : Fin (S.length + (1 : ℕ)));
-    let b0 : E := S.edge (⟨(4 : ℕ),
-    have _ : (1 : ℕ) ≤ S.length := S.positive;
-    have _ : (1 : ℕ) ≤ S.length := S.positive;
-    have _ : (1 : ℕ) ≤ S.length := S.positive; Decidable.byContradiction fun (a : ¬(4 : ℕ) <
-        S.length) ↦
-    by
-            omega
-    ⟩ : Fin S.length);
+    let y1 : V := S.vertex (⟨(1 : ℕ), by omega⟩ : Fin (S.length + (1 : ℕ)));
+    let b0 : E := S.edge (⟨(4 : ℕ), by omega⟩ : Fin S.length);
     ∀ (f1 : E),
-    let r6' : Fin S.length := (⟨(6 : ℕ),
-    have _ : (1 : ℕ) ≤ S.length := S.positive;
-    have _ : (1 : ℕ) ≤ S.length := S.positive;
-    by
-        omega
-    ⟩ : Fin S.length);
+    let r6' : Fin S.length := (⟨(6 : ℕ), by omega⟩ : Fin S.length);
     ∀ (_ : Fin ((↑r6' : ℕ) + (1 : ℕ))),
     let cast9 : Fin (9 : ℕ) ≃ Fin (S.length + (1 : ℕ)) := finCongr (
     by
         omega
     );
-    let permA : Equiv.Perm (Fin (9 : ℕ)) := Equiv.trans (Equiv.swap (2 : Fin (9 : ℕ)) (5 : Fin (9
-        : ℕ))) (Equiv.swap (3 : Fin (9 : ℕ)) (6 : Fin (9 : ℕ)));
-    let permB : Equiv.Perm (Fin (9 : ℕ)) := (Equiv.trans (Equiv.swap (2 : Fin (9 : ℕ)) (6 : Fin (9
-        : ℕ))) (Equiv.swap (2 : Fin (9 : ℕ)) (3 : Fin (9 : ℕ)))).trans (Equiv.swap (2 : Fin (9 :
-        ℕ)) (5 : Fin (9 : ℕ)));
-    let newVertex : Fin (9 : ℕ) → V := fun (i : Fin (9 : ℕ)) ↦ if b0 = f1 then S.vertex ((cast9 :
-        (a : Fin (9 : ℕ)) → Fin (S.length + (1 : ℕ))) ((permA : (a : Fin (9 : ℕ)) → Fin (9 : ℕ))
-        i)) else S.vertex ((cast9 : (a : Fin (9 : ℕ)) → Fin (S.length + (1 : ℕ))) ((permB : (a :
-        Fin (9 : ℕ)) → Fin (9 : ℕ)) i));
+    let permA : Equiv.Perm (Fin (9 : ℕ)) := firstPermutation;
+    let permB : Equiv.Perm (Fin (9 : ℕ)) := secondPermutation;
+    let newVertex : Fin (9 : ℕ) → V :=
+      rebasedVertices (fun index => S.vertex (cast9 index)) permA permB (b0 = f1);
     ∀ (_ :
     ∀ (i : Fin (9 : ℕ)) (q : Fin (S.length + (1 : ℕ))) (_ : (↑i : ℕ) = (↑q : ℕ)), S.vertex ((cast9
         : (a : Fin (9 : ℕ)) → Fin (S.length + (1 : ℕ))) i) = S.vertex q), newVertex (1 : Fin (9 :
         ℕ)) = y1 := by
   classical
   intro V E _ _ _ G k e psi S M hlen y1 b0 f1 r6' w cast9 permA permB newVertex vertex_cast9
-  by_cases hb : b0 = f1
-  · simp only [newVertex, ite_eq_left hb, y1]
-    apply vertex_cast9
-    simp [permA, Equiv.swap_apply_def]
-  · simp only [newVertex, ite_eq_right hb, y1]
-    apply vertex_cast9
-    simp [permB, Equiv.swap_apply_def]
+  exact (rebasedVertices_eq_of_images (fun position => S.vertex (cast9 position))
+    permA permB (b0 = f1) (index := 1) (image := 1) (by decide) (by decide)).trans
+      (vertex_cast9 1 _ rfl)
 
 theorem helper_nv4_3666.{u_1, u_2} :
     open scoped Classical in
     ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E] [ DecidableEq E] (G :
         LooplessMultigraph V E) (k : ℕ) {e : E} (psi : PartialEdgeColoring E k) (S : TreeSequence
         G e) (_ : NormalGlobalMaximumTriple G k e psi S) (hlen : S.length = (8 : ℕ)),
-    let y4 : V := S.vertex (⟨(4 : ℕ),
-    have _ : (1 : ℕ) ≤ S.length := S.positive;
-    have _ : (1 : ℕ) ≤ S.length := S.positive;
-    have _ : (1 : ℕ) ≤ S.length := S.positive; Decidable.byContradiction fun (a : ¬(4 : ℕ) <
-        S.length + (1 : ℕ)) ↦
-    by
-            omega
-    ⟩ : Fin (S.length + (1 : ℕ)));
-    let b0 : E := S.edge (⟨(4 : ℕ),
-    have _ : (1 : ℕ) ≤ S.length := S.positive;
-    have _ : (1 : ℕ) ≤ S.length := S.positive;
-    have _ : (1 : ℕ) ≤ S.length := S.positive; Decidable.byContradiction fun (a : ¬(4 : ℕ) <
-        S.length) ↦
-    by
-            omega
-    ⟩ : Fin S.length);
+    let y4 : V := S.vertex (⟨(4 : ℕ), by omega⟩ : Fin (S.length + (1 : ℕ)));
+    let b0 : E := S.edge (⟨(4 : ℕ), by omega⟩ : Fin S.length);
     ∀ (f1 : E),
-    let r6' : Fin S.length := (⟨(6 : ℕ),
-    have _ : (1 : ℕ) ≤ S.length := S.positive;
-    have _ : (1 : ℕ) ≤ S.length := S.positive;
-    by
-        omega
-    ⟩ : Fin S.length);
+    let r6' : Fin S.length := (⟨(6 : ℕ), by omega⟩ : Fin S.length);
     ∀ (_ : Fin ((↑r6' : ℕ) + (1 : ℕ))),
     let cast9 : Fin (9 : ℕ) ≃ Fin (S.length + (1 : ℕ)) := finCongr (
     by
         omega
     );
-    let permA : Equiv.Perm (Fin (9 : ℕ)) := Equiv.trans (Equiv.swap (2 : Fin (9 : ℕ)) (5 : Fin (9
-        : ℕ))) (Equiv.swap (3 : Fin (9 : ℕ)) (6 : Fin (9 : ℕ)));
-    let permB : Equiv.Perm (Fin (9 : ℕ)) := (Equiv.trans (Equiv.swap (2 : Fin (9 : ℕ)) (6 : Fin (9
-        : ℕ))) (Equiv.swap (2 : Fin (9 : ℕ)) (3 : Fin (9 : ℕ)))).trans (Equiv.swap (2 : Fin (9 :
-        ℕ)) (5 : Fin (9 : ℕ)));
-    let newVertex : Fin (9 : ℕ) → V := fun (i : Fin (9 : ℕ)) ↦ if b0 = f1 then S.vertex ((cast9 :
-        (a : Fin (9 : ℕ)) → Fin (S.length + (1 : ℕ))) ((permA : (a : Fin (9 : ℕ)) → Fin (9 : ℕ))
-        i)) else S.vertex ((cast9 : (a : Fin (9 : ℕ)) → Fin (S.length + (1 : ℕ))) ((permB : (a :
-        Fin (9 : ℕ)) → Fin (9 : ℕ)) i));
+    let permA : Equiv.Perm (Fin (9 : ℕ)) := firstPermutation;
+    let permB : Equiv.Perm (Fin (9 : ℕ)) := secondPermutation;
+    let newVertex : Fin (9 : ℕ) → V :=
+      rebasedVertices (fun index => S.vertex (cast9 index)) permA permB (b0 = f1);
     ∀ (_ :
     ∀ (i : Fin (9 : ℕ)) (q : Fin (S.length + (1 : ℕ))) (_ : (↑i : ℕ) = (↑q : ℕ)), S.vertex ((cast9
         : (a : Fin (9 : ℕ)) → Fin (S.length + (1 : ℕ))) i) = S.vertex q), newVertex (4 : Fin (9 :
         ℕ)) = y4 := by
   classical
   intro V E _ _ _ G k e psi S M hlen y4 b0 f1 r6' w cast9 permA permB newVertex vertex_cast9
-  by_cases hb : b0 = f1
-  · simp only [newVertex, ite_eq_left hb, y4]
-    apply vertex_cast9
-    simp [permA, Equiv.swap_apply_def]
-  · simp only [newVertex, ite_eq_right hb, y4]
-    apply vertex_cast9
-    simp [permB, Equiv.swap_apply_def]
+  exact (rebasedVertices_eq_of_images (fun position => S.vertex (cast9 position))
+    permA permB (b0 = f1) (index := 4) (image := 4) (by decide) (by decide)).trans
+      (vertex_cast9 4 _ rfl)
 
 theorem helper_nv5_3674.{u_1, u_2} :
     open scoped Classical in
     ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E] [ DecidableEq E] (G :
         LooplessMultigraph V E) (k : ℕ) {e : E} (psi : PartialEdgeColoring E k) (S : TreeSequence
         G e) (_ : NormalGlobalMaximumTriple G k e psi S) (hlen : S.length = (8 : ℕ)),
-    let y2 : V := S.vertex (⟨(2 : ℕ),
-    have _ : (1 : ℕ) ≤ S.length := S.positive;
-    have _ : (1 : ℕ) ≤ S.length := S.positive;
-    have _ : (1 : ℕ) ≤ S.length := S.positive; Decidable.byContradiction fun (a : ¬(2 : ℕ) <
-        S.length + (1 : ℕ)) ↦
-    by
-            omega
-    ⟩ : Fin (S.length + (1 : ℕ)));
-    let b0 : E := S.edge (⟨(4 : ℕ),
-    have _ : (1 : ℕ) ≤ S.length := S.positive;
-    have _ : (1 : ℕ) ≤ S.length := S.positive;
-    have _ : (1 : ℕ) ≤ S.length := S.positive; Decidable.byContradiction fun (a : ¬(4 : ℕ) <
-        S.length) ↦
-    by
-            omega
-    ⟩ : Fin S.length);
+    let y2 : V := S.vertex (⟨(2 : ℕ), by omega⟩ : Fin (S.length + (1 : ℕ)));
+    let b0 : E := S.edge (⟨(4 : ℕ), by omega⟩ : Fin S.length);
     ∀ (f1 : E),
-    let r6' : Fin S.length := (⟨(6 : ℕ),
-    have _ : (1 : ℕ) ≤ S.length := S.positive;
-    have _ : (1 : ℕ) ≤ S.length := S.positive;
-    by
-        omega
-    ⟩ : Fin S.length);
+    let r6' : Fin S.length := (⟨(6 : ℕ), by omega⟩ : Fin S.length);
     ∀ (_ : Fin ((↑r6' : ℕ) + (1 : ℕ))),
     let cast9 : Fin (9 : ℕ) ≃ Fin (S.length + (1 : ℕ)) := finCongr (
     by
         omega
     );
-    let permA : Equiv.Perm (Fin (9 : ℕ)) := Equiv.trans (Equiv.swap (2 : Fin (9 : ℕ)) (5 : Fin (9
-        : ℕ))) (Equiv.swap (3 : Fin (9 : ℕ)) (6 : Fin (9 : ℕ)));
-    let permB : Equiv.Perm (Fin (9 : ℕ)) := (Equiv.trans (Equiv.swap (2 : Fin (9 : ℕ)) (6 : Fin (9
-        : ℕ))) (Equiv.swap (2 : Fin (9 : ℕ)) (3 : Fin (9 : ℕ)))).trans (Equiv.swap (2 : Fin (9 :
-        ℕ)) (5 : Fin (9 : ℕ)));
-    let newVertex : Fin (9 : ℕ) → V := fun (i : Fin (9 : ℕ)) ↦ if b0 = f1 then S.vertex ((cast9 :
-        (a : Fin (9 : ℕ)) → Fin (S.length + (1 : ℕ))) ((permA : (a : Fin (9 : ℕ)) → Fin (9 : ℕ))
-        i)) else S.vertex ((cast9 : (a : Fin (9 : ℕ)) → Fin (S.length + (1 : ℕ))) ((permB : (a :
-        Fin (9 : ℕ)) → Fin (9 : ℕ)) i));
+    let permA : Equiv.Perm (Fin (9 : ℕ)) := firstPermutation;
+    let permB : Equiv.Perm (Fin (9 : ℕ)) := secondPermutation;
+    let newVertex : Fin (9 : ℕ) → V :=
+      rebasedVertices (fun index => S.vertex (cast9 index)) permA permB (b0 = f1);
     ∀ (_ :
     ∀ (i : Fin (9 : ℕ)) (q : Fin (S.length + (1 : ℕ))) (_ : (↑i : ℕ) = (↑q : ℕ)), S.vertex ((cast9
         : (a : Fin (9 : ℕ)) → Fin (S.length + (1 : ℕ))) i) = S.vertex q), newVertex (5 : Fin (9 :
         ℕ)) = y2 := by
   classical
   intro V E _ _ _ G k e psi S M hlen y2 b0 f1 r6' w cast9 permA permB newVertex vertex_cast9
-  by_cases hb : b0 = f1
-  · simp only [newVertex, ite_eq_left hb, y2]
-    apply vertex_cast9
-    simp [permA, Equiv.swap_apply_def]
-  · simp only [newVertex, ite_eq_right hb, y2]
-    apply vertex_cast9
-    simp [permB, Equiv.swap_apply_def]
+  exact (rebasedVertices_eq_of_images (fun position => S.vertex (cast9 position))
+    permA permB (b0 = f1) (index := 5) (image := 2) (by decide) (by decide)).trans
+      (vertex_cast9 2 _ rfl)
 
 theorem helper_nv6_3682.{u_1, u_2} :
     open scoped Classical in
     ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E] [ DecidableEq E] (G :
         LooplessMultigraph V E) (k : ℕ) {e : E} (psi : PartialEdgeColoring E k) (S : TreeSequence
         G e) (_ : NormalGlobalMaximumTriple G k e psi S) (hlen : S.length = (8 : ℕ)),
-    let y3 : V := S.vertex (⟨(3 : ℕ),
-    have _ : (1 : ℕ) ≤ S.length := S.positive;
-    have _ : (1 : ℕ) ≤ S.length := S.positive;
-    have _ : (1 : ℕ) ≤ S.length := S.positive; Decidable.byContradiction fun (a : ¬(3 : ℕ) <
-        S.length + (1 : ℕ)) ↦
-    by
-            omega
-    ⟩ : Fin (S.length + (1 : ℕ)));
-    let b0 : E := S.edge (⟨(4 : ℕ),
-    have _ : (1 : ℕ) ≤ S.length := S.positive;
-    have _ : (1 : ℕ) ≤ S.length := S.positive;
-    have _ : (1 : ℕ) ≤ S.length := S.positive; Decidable.byContradiction fun (a : ¬(4 : ℕ) <
-        S.length) ↦
-    by
-            omega
-    ⟩ : Fin S.length);
+    let y3 : V := S.vertex (⟨(3 : ℕ), by omega⟩ : Fin (S.length + (1 : ℕ)));
+    let b0 : E := S.edge (⟨(4 : ℕ), by omega⟩ : Fin S.length);
     ∀ (f1 : E),
-    let r6' : Fin S.length := (⟨(6 : ℕ),
-    have _ : (1 : ℕ) ≤ S.length := S.positive;
-    have _ : (1 : ℕ) ≤ S.length := S.positive;
-    by
-        omega
-    ⟩ : Fin S.length);
+    let r6' : Fin S.length := (⟨(6 : ℕ), by omega⟩ : Fin S.length);
     ∀ (_ : Fin ((↑r6' : ℕ) + (1 : ℕ))),
     let cast9 : Fin (9 : ℕ) ≃ Fin (S.length + (1 : ℕ)) := finCongr (
     by
         omega
     );
-    let permA : Equiv.Perm (Fin (9 : ℕ)) := Equiv.trans (Equiv.swap (2 : Fin (9 : ℕ)) (5 : Fin (9
-        : ℕ))) (Equiv.swap (3 : Fin (9 : ℕ)) (6 : Fin (9 : ℕ)));
-    let permB : Equiv.Perm (Fin (9 : ℕ)) := (Equiv.trans (Equiv.swap (2 : Fin (9 : ℕ)) (6 : Fin (9
-        : ℕ))) (Equiv.swap (2 : Fin (9 : ℕ)) (3 : Fin (9 : ℕ)))).trans (Equiv.swap (2 : Fin (9 :
-        ℕ)) (5 : Fin (9 : ℕ)));
-    let newVertex : Fin (9 : ℕ) → V := fun (i : Fin (9 : ℕ)) ↦ if b0 = f1 then S.vertex ((cast9 :
-        (a : Fin (9 : ℕ)) → Fin (S.length + (1 : ℕ))) ((permA : (a : Fin (9 : ℕ)) → Fin (9 : ℕ))
-        i)) else S.vertex ((cast9 : (a : Fin (9 : ℕ)) → Fin (S.length + (1 : ℕ))) ((permB : (a :
-        Fin (9 : ℕ)) → Fin (9 : ℕ)) i));
+    let permA : Equiv.Perm (Fin (9 : ℕ)) := firstPermutation;
+    let permB : Equiv.Perm (Fin (9 : ℕ)) := secondPermutation;
+    let newVertex : Fin (9 : ℕ) → V :=
+      rebasedVertices (fun index => S.vertex (cast9 index)) permA permB (b0 = f1);
     ∀ (_ :
     ∀ (i : Fin (9 : ℕ)) (q : Fin (S.length + (1 : ℕ))) (_ : (↑i : ℕ) = (↑q : ℕ)), S.vertex ((cast9
         : (a : Fin (9 : ℕ)) → Fin (S.length + (1 : ℕ))) i) = S.vertex q), newVertex (6 : Fin (9 :
         ℕ)) = y3 := by
   classical
   intro V E _ _ _ G k e psi S M hlen y3 b0 f1 r6' w cast9 permA permB newVertex vertex_cast9
-  by_cases hb : b0 = f1
-  · simp only [newVertex, ite_eq_left hb, y3]
-    apply vertex_cast9
-    simp [permA, Equiv.swap_apply_def]
-  · simp only [newVertex, ite_eq_right hb, y3]
-    apply vertex_cast9
-    simp [permB, Equiv.swap_apply_def]
+  exact (rebasedVertices_eq_of_images (fun position => S.vertex (cast9 position))
+    permA permB (b0 = f1) (index := 6) (image := 3) (by decide) (by decide)).trans
+      (vertex_cast9 3 _ rfl)
 
 theorem helper_nv7_3690.{u_1, u_2} :
     open scoped Classical in
     ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E] [ DecidableEq E] (G :
         LooplessMultigraph V E) (k : ℕ) {e : E} (psi : PartialEdgeColoring E k) (S : TreeSequence
         G e) (_ : NormalGlobalMaximumTriple G k e psi S) (hlen : S.length = (8 : ℕ)),
-    let y7 : V := S.vertex (⟨(7 : ℕ),
-    have _ : (1 : ℕ) ≤ S.length := S.positive;
-    have _ : (1 : ℕ) ≤ S.length := S.positive;
-    have _ : (1 : ℕ) ≤ S.length := S.positive; Decidable.byContradiction fun (a : ¬(7 : ℕ) <
-        S.length + (1 : ℕ)) ↦
-    by
-            omega
-    ⟩ : Fin (S.length + (1 : ℕ)));
-    let b0 : E := S.edge (⟨(4 : ℕ),
-    have _ : (1 : ℕ) ≤ S.length := S.positive;
-    have _ : (1 : ℕ) ≤ S.length := S.positive;
-    have _ : (1 : ℕ) ≤ S.length := S.positive; Decidable.byContradiction fun (a : ¬(4 : ℕ) <
-        S.length) ↦
-    by
-            omega
-    ⟩ : Fin S.length);
+    let y7 : V := S.vertex (⟨(7 : ℕ), by omega⟩ : Fin (S.length + (1 : ℕ)));
+    let b0 : E := S.edge (⟨(4 : ℕ), by omega⟩ : Fin S.length);
     ∀ (f1 : E),
-    let r6' : Fin S.length := (⟨(6 : ℕ),
-    have _ : (1 : ℕ) ≤ S.length := S.positive;
-    have _ : (1 : ℕ) ≤ S.length := S.positive;
-    by
-        omega
-    ⟩ : Fin S.length);
+    let r6' : Fin S.length := (⟨(6 : ℕ), by omega⟩ : Fin S.length);
     ∀ (_ : Fin ((↑r6' : ℕ) + (1 : ℕ))),
     let cast9 : Fin (9 : ℕ) ≃ Fin (S.length + (1 : ℕ)) := finCongr (
     by
         omega
     );
-    let permA : Equiv.Perm (Fin (9 : ℕ)) := Equiv.trans (Equiv.swap (2 : Fin (9 : ℕ)) (5 : Fin (9
-        : ℕ))) (Equiv.swap (3 : Fin (9 : ℕ)) (6 : Fin (9 : ℕ)));
-    let permB : Equiv.Perm (Fin (9 : ℕ)) := (Equiv.trans (Equiv.swap (2 : Fin (9 : ℕ)) (6 : Fin (9
-        : ℕ))) (Equiv.swap (2 : Fin (9 : ℕ)) (3 : Fin (9 : ℕ)))).trans (Equiv.swap (2 : Fin (9 :
-        ℕ)) (5 : Fin (9 : ℕ)));
-    let newVertex : Fin (9 : ℕ) → V := fun (i : Fin (9 : ℕ)) ↦ if b0 = f1 then S.vertex ((cast9 :
-        (a : Fin (9 : ℕ)) → Fin (S.length + (1 : ℕ))) ((permA : (a : Fin (9 : ℕ)) → Fin (9 : ℕ))
-        i)) else S.vertex ((cast9 : (a : Fin (9 : ℕ)) → Fin (S.length + (1 : ℕ))) ((permB : (a :
-        Fin (9 : ℕ)) → Fin (9 : ℕ)) i));
+    let permA : Equiv.Perm (Fin (9 : ℕ)) := firstPermutation;
+    let permB : Equiv.Perm (Fin (9 : ℕ)) := secondPermutation;
+    let newVertex : Fin (9 : ℕ) → V :=
+      rebasedVertices (fun index => S.vertex (cast9 index)) permA permB (b0 = f1);
     ∀ (_ :
     ∀ (i : Fin (9 : ℕ)) (q : Fin (S.length + (1 : ℕ))) (_ : (↑i : ℕ) = (↑q : ℕ)), S.vertex ((cast9
         : (a : Fin (9 : ℕ)) → Fin (S.length + (1 : ℕ))) i) = S.vertex q), newVertex (7 : Fin (9 :
         ℕ)) = y7 := by
   classical
   intro V E _ _ _ G k e psi S M hlen y7 b0 f1 r6' w cast9 permA permB newVertex vertex_cast9
-  by_cases hb : b0 = f1
-  · simp only [newVertex, ite_eq_left hb, y7]
-    apply vertex_cast9
-    simp [permA, Equiv.swap_apply_def]
-  · simp only [newVertex, ite_eq_right hb, y7]
-    apply vertex_cast9
-    simp [permB, Equiv.swap_apply_def]
+  exact (rebasedVertices_eq_of_images (fun position => S.vertex (cast9 position))
+    permA permB (b0 = f1) (index := 7) (image := 7) (by decide) (by decide)).trans
+      (vertex_cast9 7 _ rfl)
 
 theorem helper_nv8_3698.{u_1, u_2} :
     open scoped Classical in
     ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E] [ DecidableEq E] (G :
         LooplessMultigraph V E) (k : ℕ) {e : E} (psi : PartialEdgeColoring E k) (S : TreeSequence
         G e) (_ : NormalGlobalMaximumTriple G k e psi S) (hlen : S.length = (8 : ℕ)),
-    let y8 : V := S.vertex (⟨(8 : ℕ),
-    have _ : (1 : ℕ) ≤ S.length := S.positive;
-    have _ : (1 : ℕ) ≤ S.length := S.positive;
-    have _ : (1 : ℕ) ≤ S.length := S.positive; Decidable.byContradiction fun (a : ¬(8 : ℕ) <
-        S.length + (1 : ℕ)) ↦
-    by
-            omega
-    ⟩ : Fin (S.length + (1 : ℕ)));
-    let b0 : E := S.edge (⟨(4 : ℕ),
-    have _ : (1 : ℕ) ≤ S.length := S.positive;
-    have _ : (1 : ℕ) ≤ S.length := S.positive;
-    have _ : (1 : ℕ) ≤ S.length := S.positive; Decidable.byContradiction fun (a : ¬(4 : ℕ) <
-        S.length) ↦
-    by
-            omega
-    ⟩ : Fin S.length);
+    let y8 : V := S.vertex (⟨(8 : ℕ), by omega⟩ : Fin (S.length + (1 : ℕ)));
+    let b0 : E := S.edge (⟨(4 : ℕ), by omega⟩ : Fin S.length);
     ∀ (f1 : E),
-    let r6' : Fin S.length := (⟨(6 : ℕ),
-    have _ : (1 : ℕ) ≤ S.length := S.positive;
-    have _ : (1 : ℕ) ≤ S.length := S.positive;
-    by
-        omega
-    ⟩ : Fin S.length);
+    let r6' : Fin S.length := (⟨(6 : ℕ), by omega⟩ : Fin S.length);
     ∀ (_ : Fin ((↑r6' : ℕ) + (1 : ℕ))),
     let cast9 : Fin (9 : ℕ) ≃ Fin (S.length + (1 : ℕ)) := finCongr (
     by
         omega
     );
-    let permA : Equiv.Perm (Fin (9 : ℕ)) := Equiv.trans (Equiv.swap (2 : Fin (9 : ℕ)) (5 : Fin (9
-        : ℕ))) (Equiv.swap (3 : Fin (9 : ℕ)) (6 : Fin (9 : ℕ)));
-    let permB : Equiv.Perm (Fin (9 : ℕ)) := (Equiv.trans (Equiv.swap (2 : Fin (9 : ℕ)) (6 : Fin (9
-        : ℕ))) (Equiv.swap (2 : Fin (9 : ℕ)) (3 : Fin (9 : ℕ)))).trans (Equiv.swap (2 : Fin (9 :
-        ℕ)) (5 : Fin (9 : ℕ)));
-    let newVertex : Fin (9 : ℕ) → V := fun (i : Fin (9 : ℕ)) ↦ if b0 = f1 then S.vertex ((cast9 :
-        (a : Fin (9 : ℕ)) → Fin (S.length + (1 : ℕ))) ((permA : (a : Fin (9 : ℕ)) → Fin (9 : ℕ))
-        i)) else S.vertex ((cast9 : (a : Fin (9 : ℕ)) → Fin (S.length + (1 : ℕ))) ((permB : (a :
-        Fin (9 : ℕ)) → Fin (9 : ℕ)) i));
+    let permA : Equiv.Perm (Fin (9 : ℕ)) := firstPermutation;
+    let permB : Equiv.Perm (Fin (9 : ℕ)) := secondPermutation;
+    let newVertex : Fin (9 : ℕ) → V :=
+      rebasedVertices (fun index => S.vertex (cast9 index)) permA permB (b0 = f1);
     ∀ (_ :
     ∀ (i : Fin (9 : ℕ)) (q : Fin (S.length + (1 : ℕ))) (_ : (↑i : ℕ) = (↑q : ℕ)), S.vertex ((cast9
         : (a : Fin (9 : ℕ)) → Fin (S.length + (1 : ℕ))) i) = S.vertex q), newVertex (8 : Fin (9 :
         ℕ)) = y8 := by
   classical
   intro V E _ _ _ G k e psi S M hlen y8 b0 f1 r6' w cast9 permA permB newVertex vertex_cast9
-  by_cases hb : b0 = f1
-  · simp only [newVertex, ite_eq_left hb, y8]
-    apply vertex_cast9
-    simp [permA, Equiv.swap_apply_def]
-  · simp only [newVertex, ite_eq_right hb, y8]
-    apply vertex_cast9
-    simp [permB, Equiv.swap_apply_def]
+  exact (rebasedVertices_eq_of_images (fun position => S.vertex (cast9 position))
+    permA permB (b0 = f1) (index := 8) (image := 8) (by decide) (by decide)).trans
+      (vertex_cast9 8 _ rfl)
 
 theorem helper_hedge_iff_3716.{u_1, u_2} :
     open scoped Classical in
     ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E] [ DecidableEq E] (G :
         LooplessMultigraph V E) (k : ℕ) {e : E} (psi : PartialEdgeColoring E k) (S : TreeSequence
         G e) (_ : NormalGlobalMaximumTriple G k e psi S) (hlen : S.length = (8 : ℕ)),
-    let b0 : E := S.edge (⟨(4 : ℕ),
-    have _ : (1 : ℕ) ≤ S.length := S.positive;
-    have _ : (1 : ℕ) ≤ S.length := S.positive;
-    have _ : (1 : ℕ) ≤ S.length := S.positive; Decidable.byContradiction fun (a : ¬(4 : ℕ) <
-        S.length) ↦
-    by
-            omega
-    ⟩ : Fin S.length);
+    let b0 : E := S.edge (⟨(4 : ℕ), by omega⟩ : Fin S.length);
     ∀ (f1 : E),
-    let r6' : Fin S.length := (⟨(6 : ℕ),
-    have _ : (1 : ℕ) ≤ S.length := S.positive;
-    have _ : (1 : ℕ) ≤ S.length := S.positive;
-    by
-        omega
-    ⟩ : Fin S.length);
+    let r6' : Fin S.length := (⟨(6 : ℕ), by omega⟩ : Fin S.length);
     ∀ (_ : Fin ((↑r6' : ℕ) + (1 : ℕ))),
     let cast9 : Fin (9 : ℕ) ≃ Fin (S.length + (1 : ℕ)) := finCongr (
     by
         omega
     );
-    let permA : Equiv.Perm (Fin (9 : ℕ)) := Equiv.trans (Equiv.swap (2 : Fin (9 : ℕ)) (5 : Fin (9
-        : ℕ))) (Equiv.swap (3 : Fin (9 : ℕ)) (6 : Fin (9 : ℕ)));
-    let permB : Equiv.Perm (Fin (9 : ℕ)) := (Equiv.trans (Equiv.swap (2 : Fin (9 : ℕ)) (6 : Fin (9
-        : ℕ))) (Equiv.swap (2 : Fin (9 : ℕ)) (3 : Fin (9 : ℕ)))).trans (Equiv.swap (2 : Fin (9 :
-        ℕ)) (5 : Fin (9 : ℕ)));
-    let newVertex : Fin (9 : ℕ) → V := fun (i : Fin (9 : ℕ)) ↦ if b0 = f1 then S.vertex ((cast9 :
-        (a : Fin (9 : ℕ)) → Fin (S.length + (1 : ℕ))) ((permA : (a : Fin (9 : ℕ)) → Fin (9 : ℕ))
-        i)) else S.vertex ((cast9 : (a : Fin (9 : ℕ)) → Fin (S.length + (1 : ℕ))) ((permB : (a :
-        Fin (9 : ℕ)) → Fin (9 : ℕ)) i)); Function.Injective newVertex := by
+    let permA : Equiv.Perm (Fin (9 : ℕ)) := firstPermutation;
+    let permB : Equiv.Perm (Fin (9 : ℕ)) := secondPermutation;
+    let newVertex : Fin (9 : ℕ) → V :=
+      rebasedVertices (fun index => S.vertex (cast9 index)) permA permB (b0 = f1);
+    Function.Injective newVertex := by
   classical
   intro V E _ _ _ G k e psi S M hlen b0 f1 r6' w cast9 permA permB newVertex
-  by_cases hb : b0 = f1
-  · intro i j hij
-    simp only [newVertex, ite_eq_left hb] at hij
-    exact permA.injective (cast9.injective (S.vertex_injective hij))
-  · intro i j hij
-    simp only [newVertex, ite_eq_right hb] at hij
-    exact permB.injective (cast9.injective (S.vertex_injective hij))
+  exact rebasedVertices_injective (S.vertex_injective.comp cast9.injective)
+    permA permB (b0 = f1)
 
-theorem helper_newEdge_injective_3726.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E] [ DecidableEq E] (G :
-        LooplessMultigraph V E) (k : ℕ) (e0 : E) (phi : PartialEdgeColoring E k) (T : TreeSequence
-        G e0) (_ : NormalGlobalMaximumTriple G k e0 phi T) {e : E} (psi : PartialEdgeColoring E k)
-        (S : TreeSequence G e) (_ : NormalGlobalMaximumTriple G k e psi S) (hlen : S.length = (8 :
-        ℕ)),
-    let y5 : V := S.vertex (⟨(5 : ℕ),
-    have _ : (1 : ℕ) ≤ S.length := S.positive;
-    have _ : (1 : ℕ) ≤ S.length := S.positive;
-    have _ : (1 : ℕ) ≤ S.length := S.positive; Decidable.byContradiction fun (a : ¬(5 : ℕ) <
-        S.length + (1 : ℕ)) ↦
-    by
-            omega
-    ⟩ : Fin (S.length + (1 : ℕ)));
-    let y6 : V := S.vertex (⟨(6 : ℕ),
-    have _ : (1 : ℕ) ≤ S.length := S.positive;
-    have _ : (1 : ℕ) ≤ S.length := S.positive;
-    have _ : (1 : ℕ) ≤ S.length := S.positive; Decidable.byContradiction fun (a : ¬(6 : ℕ) <
-        S.length + (1 : ℕ)) ↦
-    by
-            omega
-    ⟩ : Fin (S.length + (1 : ℕ)));
-    let a1 : E := S.edge (⟨(1 : ℕ),
-    have _ : (1 : ℕ) ≤ S.length := S.positive;
-    have _ : (1 : ℕ) ≤ S.length := S.positive;
-    have _ : (1 : ℕ) ≤ S.length := S.positive; Decidable.byContradiction fun (a : ¬(1 : ℕ) <
-        S.length) ↦
-    by
-            omega
-    ⟩ : Fin S.length);
-    let a3 : E := S.edge (⟨(3 : ℕ),
-    have _ : (1 : ℕ) ≤ S.length := S.positive;
-    have _ : (1 : ℕ) ≤ S.length := S.positive;
-    have _ : (1 : ℕ) ≤ S.length := S.positive; Decidable.byContradiction fun (a : ¬(3 : ℕ) <
-        S.length) ↦
-    by
-            omega
-    ⟩ : Fin S.length);
-    let b0 : E := S.edge (⟨(4 : ℕ),
-    have _ : (1 : ℕ) ≤ S.length := S.positive;
-    have _ : (1 : ℕ) ≤ S.length := S.positive;
-    have _ : (1 : ℕ) ≤ S.length := S.positive; Decidable.byContradiction fun (a : ¬(4 : ℕ) <
-        S.length) ↦
-    by
-            omega
-    ⟩ : Fin S.length);
-    let b1 : E := S.edge (⟨(5 : ℕ),
-    have _ : (1 : ℕ) ≤ S.length := S.positive;
-    have _ : (1 : ℕ) ≤ S.length := S.positive;
-    have _ : (1 : ℕ) ≤ S.length := S.positive; Decidable.byContradiction fun (a : ¬(5 : ℕ) <
-        S.length) ↦
-    by
-            omega
-    ⟩ : Fin S.length);
-    let c0 : E := S.edge (⟨(6 : ℕ),
-    have _ : (1 : ℕ) ≤ S.length := S.positive;
-    have _ : (1 : ℕ) ≤ S.length := S.positive;
-    have _ : (1 : ℕ) ≤ S.length := S.positive; Decidable.byContradiction fun (a : ¬(6 : ℕ) <
-        S.length) ↦
-    by
-            omega
-    ⟩ : Fin S.length);
-    let c1 : E := S.edge (⟨(7 : ℕ),
-    have _ : (1 : ℕ) ≤ S.length := S.positive;
-    have _ : (1 : ℕ) ≤ S.length := S.positive;
-    have _ : (1 : ℕ) ≤ S.length := S.positive; Decidable.byContradiction fun (a : ¬(7 : ℕ) <
-        S.length) ↦
-    by
-            omega
-    ⟩ : Fin S.length);
-    ∀ (_ : Fin ((↑(⟨(4 : ℕ),
-    have _ : (1 : ℕ) ≤ S.length := S.positive;
-    have _ : (1 : ℕ) ≤ S.length := S.positive;
-    have _ : (1 : ℕ) ≤ S.length := S.positive; Decidable.byContradiction fun (a : ¬(4 : ℕ) <
-        S.length) ↦
-    by
-                    omega
-    ⟩ : Fin S.length) : ℕ) + (1 : ℕ))) (_ : Fin ((↑(⟨(5 : ℕ),
-    have _ : (1 : ℕ) ≤ S.length := S.positive;
-    have _ : (1 : ℕ) ≤ S.length := S.positive;
-    have _ : (1 : ℕ) ≤ S.length := S.positive; Decidable.byContradiction fun (a : ¬(5 : ℕ) <
-        S.length) ↦
-    by
-                    omega
-    ⟩ : Fin S.length) : ℕ) + (1 : ℕ))) (f1 f2 : E) (v1 v2 : V) (_ : b0 = f1 ∧ y5 = v1 ∧ b1 = f2 ∧
-        y6 = v2 ∨ b0 = f2 ∧ y5 = v2 ∧ b1 = f1 ∧ y6 = v1) (beta56 : E),
-    let a0 : E := S.edge (⟨(0 : ℕ),
-    have _ : (1 : ℕ) ≤ S.length := S.positive;
-    have _ : (1 : ℕ) ≤ S.length := S.positive; Decidable.byContradiction fun (a : ¬(0 : ℕ) <
-        S.length) ↦
-    by
-            omega
-    ⟩ : Fin S.length);
-    ∀ (_ : a0 = e) (_ : beta56 ≠ a0) (_ : beta56 ≠ f1) (_ : beta56 ≠ f2) (_ : beta56 ≠ a1) (_ :
-        beta56 ≠ a3) (_ : beta56 ≠ c0) (_ : beta56 ≠ c1),
-    let edgeList : List E := [a0, f1, beta56, f2, a1, a3, c0, c1];
-    ∀ (hedgeListLength : edgeList.length = (8 : ℕ)),
-    let newEdge : Fin (8 : ℕ) → E := fun (i : Fin (8 : ℕ)) ↦ edgeList.get (Fin.cast (Eq.symm
-        hedgeListLength) i);
-    ∀ (_ :
-    ∀ (i j : Fin S.length), S.edge i = S.edge j ↔ i = j), Function.Injective newEdge := by
-  classical
-  intro V E _ _ _ G k e0 phi T N e psi S M hlen y5 y6 a1 a3 b0 b1 c0 c1 p0 p1 f1 f2 v1 v2 horient
-      beta56 a0 ha0eq hbeta_a0 hbeta_f1 hbeta_f2 hbeta_a1 hbeta_a3 hbeta_c0 hbeta_c1 edgeList
-      hedgeListLength newEdge hedge_iff
-  apply helper_newEdge_injective_1199 <;> assumption
+alias helper_newEdge_injective_3726 := helper_newEdge_injective_1199
+
 theorem helper_hS'tash_4523.{u_1, u_2} :
     helperHS'tash4523Conditions.{u_1, u_2} := by
   classical

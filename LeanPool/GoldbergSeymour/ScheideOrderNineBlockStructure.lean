@@ -1,7 +1,7 @@
 /-
 Copyright (c) 2026 Wesley Pegden. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Wesley Pegden
+Authors: Wesley Pegden, Lean Pool contributors
 -/
 module
 
@@ -1009,13 +1009,10 @@ private theorem helper_continuation_1913.{u_1, u_2} : scheideBlockContinuationSt
       have hwlt : w.val < 7 := by simp [r6']
       omega
     let cast9 : Fin 9 ≃ Fin (S.length + 1) := finCongr (by omega)
-    let permA : Equiv.Perm (Fin 9) :=
-      (Equiv.swap 2 5).trans (Equiv.swap 3 6)
-    let permB : Equiv.Perm (Fin 9) :=
-      ((Equiv.swap 2 6).trans (Equiv.swap 2 3)).trans (Equiv.swap 2 5)
-    let newVertex : Fin 9 → V := fun i ↦
-      if b0 = f1 then S.vertex (cast9 (permA i))
-      else S.vertex (cast9 (permB i))
+    let permA : Equiv.Perm (Fin 9) := firstPermutation
+    let permB : Equiv.Perm (Fin 9) := secondPermutation
+    let newVertex : Fin 9 → V :=
+      rebasedVertices (fun index => S.vertex (cast9 index)) permA permB (b0 = f1)
     let edgeList : List E := [a0, f1, beta56, f2, a1, a3, c0, c1]
     have hedgeListLength : edgeList.length = 8 := by rfl
     let newEdge : Fin 8 → E := fun i ↦
@@ -1063,8 +1060,9 @@ private theorem helper_continuation_1913.{u_1, u_2} : scheideBlockContinuationSt
         S.vertex i = S.vertex j ↔ i = j := S.vertex_injective.eq_iff
     have hedge_iff (i j : Fin S.length) :
         S.edge i = S.edge j ↔ i = j := S.edge_injective.eq_iff
-    have newVertex_injective : Function.Injective newVertex := by
-      apply helper_hedge_iff_3716 <;> assumption
+    have newVertex_injective : Function.Injective newVertex :=
+      rebasedVertices_injective (S.vertex_injective.comp cast9.injective)
+        permA permB (b0 = f1)
     have newEdge_injective : Function.Injective newEdge := by
       apply helper_newEdge_injective_3726 <;> assumption
     have firstSeven : ∀ q : Fin 7, ∃ t : Fin 7,
