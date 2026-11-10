@@ -86,7 +86,7 @@ theorem add_mem_closure {A : G → Prop} {g h : G}
 theorem closure_min {A B : G → Prop} (hAB : A ≤ B) [ClosedUnderAdd B] :
     closure A ≤ B :=
   ClosureOperator.closure_min (c := closureOperator) hAB (by
-    simp_all)
+    simp_all only [ClosureOperator.ofCompletePred_isClosed])
 
 theorem closure_le {A B : G → Prop} [ClosedUnderAdd B] : closure A ≤ B ↔ A ≤ B :=
   ⟨(subset_closure A).trans, fun h => closure_min h⟩
@@ -139,7 +139,7 @@ theorem has_option_mem_closure {A : G → Prop} {g g' : G}
 theorem closure_min {A B : G → Prop} (hAB : A ≤ B) [Hereditary B] :
     closure A ≤ B :=
   ClosureOperator.closure_min (c := closureOperator) hAB (by
-    simp_all)
+    simp_all only [ClosureOperator.ofCompletePred_isClosed])
 
 theorem closure_le {A B : G → Prop} [Hereditary B] : closure A ≤ B ↔ A ≤ B :=
   ⟨(subset_closure A).trans, fun h => closure_min h⟩
@@ -189,7 +189,7 @@ theorem neg_mem_closure {A : G → Prop} {g : G} (hg : closure A g) : closure A 
 theorem closure_min {A B : G → Prop} (hAB : A ≤ B) [ClosedUnderNeg B] :
     closure A ≤ B :=
   ClosureOperator.closure_min (c := closureOperator) hAB (by
-    simp_all)
+    simp_all only [ClosureOperator.ofCompletePred_isClosed])
 
 theorem closure_le {A B : G → Prop} [ClosedUnderNeg B] : closure A ≤ B ↔ A ≤ B :=
   ⟨(subset_closure A).trans, fun h => closure_min h⟩
@@ -250,7 +250,7 @@ theorem dicotic_mem_closure {IsAmbient A : G → Prop} (B C : Set G) [Small B] [
 theorem closure_min {IsAmbient A B : G → Prop} (hAB : A ≤ B)
     [ClosedUnderDicotic IsAmbient B] : closure IsAmbient A ≤ B :=
   ClosureOperator.closure_min (c := closureOperator IsAmbient) hAB (by
-    simp_all)
+    simp_all only [ClosureOperator.ofCompletePred_isClosed])
 
 theorem closure_le {IsAmbient A B : G → Prop} [ClosedUnderDicotic IsAmbient B] :
     closure IsAmbient A ≤ B ↔ A ≤ B :=

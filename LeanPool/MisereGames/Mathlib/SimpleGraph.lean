@@ -48,7 +48,9 @@ theorem exist_edge_end_walk {graph : SimpleGraph V} {v u : V} (h1 : v ≠ u)
     by_cases h2 : w = u
     · subst h2
       use Sym2.mk v w
-      simp_all
+      simp_all only [
+        ne_eq, not_true_eq_false, IsEmpty.forall_iff, SimpleGraph.mem_edgeSet, Sym2.mem_iff,
+        or_true, and_self]
     · exact ih h2
 
 end SimpleGraph

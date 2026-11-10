@@ -46,7 +46,9 @@ recommended_spelling "star" for "⋆" in [«term⋆»]
 @[simp] theorem neg_star : -⋆ = ⋆ := by simp [star]
 
 @[simp] theorem short_star : IsShort ⋆ := by
-  rw [star, Form.short_def]; simp
+  rw [star, Form.short_def]; simp only [
+    moves_ofSets, Set.finite_singleton, Set.mem_singleton_iff, forall_eq, Short.zero, and_self,
+    implies_true]
 
 /-! ### Half -/
 
@@ -61,7 +63,9 @@ recommended_spelling "half" for "½" in [«term½»]
 @[simp] theorem rightMoves_half : ½ᴿ = {1} := rightMoves_ofSets ..
 
 theorem short_half : IsShort ½ := by
-  rw [half, Form.short_def]; simp
+  rw [half, Form.short_def]; simp only [
+    moves_ofSets, Player.cases, Player.forall, Set.finite_singleton, Set.mem_singleton_iff,
+    forall_eq, Short.zero, and_self, Short.one]
 
 /-! ### Up and down -/
 
@@ -76,7 +80,9 @@ recommended_spelling "up" for "↑" in [«term↑»]
 @[simp] theorem rightMoves_up : ↑ᴿ = {⋆} := rightMoves_ofSets ..
 
 theorem short_up : IsShort ↑ := by
-  rw [up, Form.short_def]; simp
+  rw [up, Form.short_def]; simp only [
+    moves_ofSets, Player.cases, Player.forall, Set.finite_singleton, Set.mem_singleton_iff,
+    forall_eq, Short.zero, and_self, short_star]
 
 /-- The game `↓ = {⋆ | 0}`. -/
 def down : GameForm :=
@@ -92,7 +98,9 @@ recommended_spelling "down" for "↓" in [«term↓»]
 @[simp] theorem neg_up : -↑ = ↓ := by simp [up, down]
 
 theorem short_down : IsShort ↓ := by
-  rw [down, Form.short_def]; simp
+  rw [down, Form.short_def]; simp only [
+    moves_ofSets, Player.cases, Player.forall, Set.finite_singleton, Set.mem_singleton_iff,
+    forall_eq, short_star, and_self, Short.zero]
 
 /-! ### Tiny and miny -/
 

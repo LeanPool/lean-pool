@@ -79,7 +79,9 @@ protected theorem IsDeadEnd.add {g h : G} {p : Player} (h1 : IsDeadEnd p g) (h2 
   · exact IsDeadEnd.add (isDeadEnd_of_mem_moves h1 h3) h2
   · exact IsDeadEnd.add h1 (isDeadEnd_of_mem_moves h2 h3)
 termination_by (g, h)
-decreasing_by all_goals form_wf
+decreasing_by
+  · exact Prod.Lex.left _ _ (MisereGames.Moves.Subposition.of_mem_moves (by assumption))
+  · exact Prod.Lex.right _ (MisereGames.Moves.Subposition.of_mem_moves (by assumption))
 
 private protected theorem IsDeadEnd.neg {g : G} {p : Player} (h1 : IsDeadEnd p (-g)) :
     IsDeadEnd (-p) g := by
@@ -94,7 +96,7 @@ private protected theorem IsDeadEnd.neg {g : G} {p : Player} (h1 : IsDeadEnd p (
     exact h2 (-gp) (Set.mem_neg.mp h4)
   exact IsDeadEnd.neg h5
 termination_by g
-decreasing_by form_wf
+decreasing_by exact MisereGames.Moves.Subposition.of_mem_moves h4
 
 @[simp]
 protected theorem IsDeadEnd.neg_iff {g : G} {p : Player} : IsDeadEnd p (-g) ↔ IsDeadEnd (-p) g := by
@@ -136,7 +138,7 @@ theorem isPFree_of_isDeadEnd {g : G} {p : Player} (h1 : IsDeadEnd p g) : IsPFree
   · intro p' gp h_gp
     exact isPFree_of_isDeadEnd (isDeadEnd_of_mem_moves h1 h_gp)
 termination_by g
-decreasing_by form_wf
+decreasing_by exact MisereGames.Moves.Subposition.of_mem_moves h_gp
 
 /-- A form is dead-ending when all of its end options are dead ends, hereditarily. -/
 @[expose] def IsDeadEnding (g : G) : Prop :=
@@ -187,7 +189,9 @@ protected theorem IsDeadEnding.add {g h : G} (h1 : IsDeadEnding g) (h2 : IsDeadE
     · exact IsDeadEnding.add (isDeadEnding_of_mem_moves h1 h3) h2
     · exact IsDeadEnding.add h1 (isDeadEnding_of_mem_moves h2 h3)
 termination_by (g, h)
-decreasing_by all_goals form_wf
+decreasing_by
+  · exact Prod.Lex.left _ _ (MisereGames.Moves.Subposition.of_mem_moves (by assumption))
+  · exact Prod.Lex.right _ (MisereGames.Moves.Subposition.of_mem_moves (by assumption))
 
 private protected theorem IsDeadEnding.neg {g : G} (h1 : IsDeadEnding (-g)) : IsDeadEnding g := by
   unfold IsDeadEnding at h1 ⊢
@@ -201,7 +205,7 @@ private protected theorem IsDeadEnding.neg {g : G} (h1 : IsDeadEnding (-g)) : Is
     have h4 := h2 (-p) (-gp) (by simp [h3])
     exact IsDeadEnding.neg h4
 termination_by g
-decreasing_by form_wf
+decreasing_by exact MisereGames.Moves.Subposition.of_mem_moves h3
 
 instance : ClosedUnderNeg (IsDeadEnding (G := G)) where
   neg_of {g} h := by
@@ -211,7 +215,8 @@ instance : ClosedUnderNeg (IsDeadEnding (G := G)) where
 @[simp]
 theorem isDeadEnding_zero : IsDeadEnding (0 : G) := by
   unfold IsDeadEnding IsDeadEnd
-  simp
+  simp only [
+    isEnd_zero, moves_zero, Set.mem_empty_iff_false, IsEmpty.forall_iff, implies_true, and_self]
 
 @[simp]
 theorem isDeadEnding_natCast (n : ℕ) : IsDeadEnding (n : G) := by
@@ -569,7 +574,7 @@ theorem isDeadEnd_left_strongTest_winsGoingFirst {x g : GameForm}
       intro gr hgr; exact hglr gr (by rw [Player.neg_left]; exact hgr)
     exact isDeadEnd_left_strongTest_not_winsGoingFirst hxd houtcome htestgl hglr'
 termination_by (x, g)
-decreasing_by form_wf
+decreasing_by exact Prod.Lex.right _ (MisereGames.Moves.Subposition.of_mem_moves hgl)
 
 theorem isDeadEnd_left_strongTest_not_winsGoingFirst {x g : GameForm}
     (h_isDeadEnd : IsDeadEnd .left x) (h_outcome : MisereOutcome g = .L)
@@ -589,7 +594,9 @@ theorem isDeadEnd_left_strongTest_not_winsGoingFirst {x g : GameForm}
       have h_isDeadEnd_xr := isDeadEnd_of_mem_moves h_isDeadEnd hxr'
       exact isDeadEnd_left_strongTest_winsGoingFirst h_isDeadEnd_xr h_test
 termination_by (x, g)
-decreasing_by form_wf
+decreasing_by
+  · exact Prod.Lex.right _ (MisereGames.Moves.Subposition.of_mem_moves hgr')
+  · exact Prod.Lex.left _ _ (MisereGames.Moves.Subposition.of_mem_moves hxr)
 
 end
 

@@ -279,7 +279,9 @@ theorem ofSetsWithTombs_ff_TombstoneFree
     (h1 : ∀ p, ∀ gp ∈ st p,
       TombstoneFree gp) : TombstoneFree (ofSetsWithTombs st (fun _ => False)) := by
   unfold TombstoneFree
-  simp_all
+  simp_all only [
+    Player.forall, hasTombstone_ofSetsWithTombs, not_false_eq_true, implies_true,
+    moves_ofSetsWithTombs, and_self]
 
 /--
 Convert a `TombstoneFree` `AugmentedForm` to a `GameForm` by 'forgetting' about
@@ -296,7 +298,9 @@ theorem ofGameForm_tombstoneFree (g : GameForm) : TombstoneFree (ofGameForm g) :
   | mk g ih =>
     unfold ofGameForm
     apply ofSetsWithTombs_ff_TombstoneFree
-    simp_all
+    simp_all only [
+      Player.forall, Set.mem_range, Subtype.exists, exists_prop, forall_exists_index, and_imp,
+      forall_apply_eq_imp_iff₂, implies_true, and_self]
 
 @[simp]
 theorem not_hasTombstone_ofGameForm (g : GameForm) (p : Player)
@@ -328,7 +332,9 @@ private theorem ofGameForm_Injective' {x y : GameForm} (h1 : ofGameForm x = ofGa
     rw [(ofGameForm_Injective' h7).symm]
     exact h6
 termination_by (x, y)
-decreasing_by form_wf
+decreasing_by
+  · exact Prod.Lex.left _ _ (MisereGames.Moves.Subposition.of_mem_moves h5)
+  · exact Prod.Lex.left _ _ (MisereGames.Moves.Subposition.of_mem_moves h6)
 
 theorem ofGameForm_Injective : Function.Injective ofGameForm := by
   intro _ _ h1
@@ -376,7 +382,11 @@ theorem toGameForm_ofGameForm (g : GameForm) :
       use (ofGameForm gp)
       exact Exists.intro (by use gp) (toGameForm_ofGameForm gp)
 termination_by g
-decreasing_by form_wf
+decreasing_by
+  · exact MisereGames.Moves.Subposition.of_mem_moves h2
+  · exact MisereGames.Moves.Subposition.of_mem_moves h2
+  · exact MisereGames.Moves.Subposition.of_mem_moves h1
+  · exact MisereGames.Moves.Subposition.of_mem_moves h1
 
 @[simp]
 theorem ofGameForm_toGameForm (g : AugmentedForm) (h1 : TombstoneFree g) :
@@ -399,7 +409,10 @@ theorem ofGameForm_toGameForm (g : AugmentedForm) (h1 : TombstoneFree g) :
       · exact ofGameForm_toGameForm x (TombstoneFree.moves h1 p x h2)
   · simp only [hasTombstone_ofSetsWithTombs, h1, TombstoneFree.not_hasTombstone]
 termination_by g
-decreasing_by form_wf
+decreasing_by
+  · exact MisereGames.Moves.Subposition.of_mem_moves h3
+  · exact MisereGames.Moves.Subposition.of_mem_moves h3
+  · exact MisereGames.Moves.Subposition.of_mem_moves h2
 
 private theorem add_eq (x y : AugmentedForm) : x + y =
     ofSetsWithTombs
@@ -413,9 +426,10 @@ private theorem add_eq (x y : AugmentedForm) : x + y =
   change add' _ _ = _
   rw [add']
   congr 1
-  all_goals
-  · ext p
-    cases p <;> simp [HAdd.hAdd, Add.add]
+  · funext p
+    cases p <;> simp only [Player.cases, Set.image_eq_range, HAdd.hAdd, Add.add]
+  · funext p
+    cases p <;> rfl
 
 private theorem add_eq' (x y : AugmentedForm) : x + y =
     ofSetsWithTombs
@@ -446,7 +460,17 @@ private theorem add_comm' (x y : AugmentedForm) : x + y = y + x := by
       rw [add_comm']
   · simp only [hasTombstone_add', or_comm]
 termination_by (x, y)
-decreasing_by form_wf
+decreasing_by
+  · exact Prod.Lex.left _ _ (MisereGames.Moves.Subposition.of_mem_moves h)
+  · exact Prod.Lex.right _ (MisereGames.Moves.Subposition.of_mem_moves h)
+
+private theorem moves_add_eq_empty_iff (p : Player) (x y : AugmentedForm) :
+    moves p (x + y) = ∅ ↔ moves p x = ∅ ∧ moves p y = ∅ := by
+  rw [moves_add']
+  change (_ ⊔ _ : Set AugmentedForm) = ⊥ ↔ _
+  rw [sup_eq_bot_iff]
+  change (_ '' _ = ∅ ∧ _ '' _ = ∅) ↔ _
+  rw [Set.image_eq_empty, Set.image_eq_empty]
 
 lemma hasTombstone_add_assoc (x y z : AugmentedForm) (p : Player) :
     hasTombstone p (x + y + z) ↔ hasTombstone p (x + (y + z)) := by
@@ -458,21 +482,23 @@ lemma hasTombstone_add_assoc (x y z : AugmentedForm) (p : Player) :
   <;> simp only [h1, h2, h3, hasTombstone_add', And.comm, EndLike, and_self, and_true,
                  false_and, false_or, iff_or_self, or_false, or_iff_left_iff_imp, or_self,
                  or_self_left, true_and, true_or, isEnd_def]
-  <;> by_cases h4 : moves p x = ∅
-  <;> by_cases h5 : moves p y = ∅
-  <;> by_cases h6 : moves p z = ∅
-  <;> simp [h4, h5, h6]
+  <;> simp only [moves_add_eq_empty_iff]
+  <;> tauto
 
 private theorem add_assoc' (x y z : AugmentedForm) : x + y + z = x + (y + z) := by
-  ext1
-  · simp only [moves_add', Set.image_union, Set.image_image, Set.union_assoc]
-    refine congrArg₂ _ ?_ (congrArg₂ _ ?_ ?_) <;>
-    · ext
-      congr! 2
-      rw [add_assoc']
-  · exact hasTombstone_add_assoc x y z _
+  refine ext (fun p => ?_) (hasTombstone_add_assoc x y z)
+  simp only [moves_add', Set.image_union, Set.image_image, Set.union_assoc]
+  refine congrArg₂ _ ?_ (congrArg₂ _ ?_ ?_)
+  · exact Set.image_congr fun a ha => add_assoc' a y z
+  · exact Set.image_congr fun a ha => add_assoc' x a z
+  · exact Set.image_congr fun a ha => add_assoc' x y a
 termination_by (x, y, z)
-decreasing_by form_wf
+decreasing_by
+  · exact Prod.Lex.left _ _ (MisereGames.Moves.Subposition.of_mem_moves (by assumption))
+  · exact Prod.Lex.right _
+      (Prod.Lex.left _ _ (MisereGames.Moves.Subposition.of_mem_moves (by assumption)))
+  · exact Prod.Lex.right _
+      (Prod.Lex.right _ (MisereGames.Moves.Subposition.of_mem_moves (by assumption)))
 
 theorem ofGameForm_exists_preimage {a : AugmentedForm} (h1 : TombstoneFree a)
     : ∃g, ofGameForm g = a := by
@@ -533,7 +559,11 @@ theorem ofGameForm_add (g h : GameForm) : ofGameForm (g + h) = ofGameForm g + of
       · rw [<-h6]
         exact ofGameForm_add g x
 termination_by (g, h)
-decreasing_by form_wf
+decreasing_by
+  · exact Prod.Lex.left _ _ (MisereGames.Moves.Subposition.of_mem_moves h3)
+  · exact Prod.Lex.right _ (MisereGames.Moves.Subposition.of_mem_moves h3)
+  · exact Prod.Lex.left _ _ (MisereGames.Moves.Subposition.of_mem_moves h5)
+  · exact Prod.Lex.right _ (MisereGames.Moves.Subposition.of_mem_moves h5)
 
 private def neg' (x : AugmentedForm) : AugmentedForm :=
   ofSetsWithTombs
@@ -575,14 +605,14 @@ private theorem neg_neg' (x : AugmentedForm) : -(-x) = x := by
   · obtain ⟨yp, h1, h2⟩ := h1
     have h3 : neg' (neg' yp) = -(-yp) := rfl
     rw [<-h2, h3, neg_neg' yp]
-    simp_all
+    simp_all only [neg_neg]
   · use xp
     rw [neg_neg p]
     apply And.intro h1
     have h3 : neg' (neg' xp) = -(-xp) := rfl
     rw [h3, neg_neg' xp]
 termination_by x
-decreasing_by form_wf
+decreasing_by all_goals exact MisereGames.Moves.Subposition.of_mem_moves h1
 
 instance : InvolutiveNeg AugmentedForm where
   neg_neg := private neg_neg'
@@ -616,7 +646,9 @@ private theorem neg_add' (x y : AugmentedForm) : -(x + y) = -x + -y := by
       rw [← neg_inj, neg_add', neg_neg]
   · simp [hasTombstone_neg', EndLike_neg', hasTombstone_add']
 termination_by (x, y)
-decreasing_by form_wf
+decreasing_by
+  · exact Prod.Lex.left _ _ (MisereGames.Moves.Subposition.of_mem_moves (by assumption))
+  · exact Prod.Lex.right _ (MisereGames.Moves.Subposition.of_mem_moves (by assumption))
 
 instance : AddCommSemigroup AugmentedForm where
   add_assoc := private add_assoc'
@@ -638,9 +670,12 @@ private lemma hasTombstone_add_zero' (g : AugmentedForm) (p : Player)
 private lemma add_zero' (x : AugmentedForm) : x + !{fun _ ↦ ∅} = x := by
   refine moveRecOn x ?_
   intro x ih
-  ext
-  · aesop (add simp [moves_ofSets'])
-  · exact hasTombstone_add_zero' x _
+  refine ext (fun p => ?_) (hasTombstone_add_zero' x)
+  simp only [moves_add', moves_ofSets', Set.image_empty, Set.union_empty]
+  calc
+    (· + !{fun _ ↦ ∅}) '' moves p x = id '' moves p x :=
+      Set.image_congr fun y hy => ih p y hy
+    _ = moves p x := Set.image_id _
 
 noncomputable instance : Form AugmentedForm where
   moves_neg' := by

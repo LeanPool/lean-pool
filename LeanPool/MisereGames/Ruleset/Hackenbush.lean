@@ -251,14 +251,18 @@ theorem groundEdge_mem_groundComp {graph : SimpleGraph V}
                SimpleGraph.Reachable.rfl, true_and]
     apply SimpleGraph.Reachable.symm
     apply SimpleGraph.Adj.reachable
-    simp_all
+    simp_all only [
+      SimpleGraph.mem_edgeSet, Sym2.mem_iff, true_or, SimpleGraph.deleteEdges_adj,
+      Set.mem_singleton_iff, not_false_eq_true, and_self]
   · subst h3
     simp only [h1, ne_eq] at hne
     simp only [groundComp, SimpleGraph.deleteEdges_adj, Set.mem_singleton_iff, h1,
                SimpleGraph.mem_edgeSet, h2, hne, not_false_eq_true, and_self,
                SimpleGraph.Reachable.rfl, true_and, and_true]
     apply SimpleGraph.Adj.reachable
-    simp_all
+    simp_all only [
+      SimpleGraph.mem_edgeSet, Sym2.mem_iff, or_true, SimpleGraph.deleteEdges_adj,
+      Set.mem_singleton_iff, not_false_eq_true, and_self]
 
 /--
 Ground edges of the removed position = ground edges of original minus the
@@ -306,7 +310,7 @@ theorem groundCount_remove_neg {hack : Hackenbush V} {e : Sym2 V} {p : Player}
   unfold groundCount
   rw [← hack.groundEdges_remove_eq e p, Finset.erase_eq_of_notMem]
   simp only [groundEdges, Finset.mem_filter, mem_edgeFinset, not_and]
-  simp_all
+  simp_all only [Player.ne_iff_eq_neg, implies_true]
 
 /--
 Ground count is preserved when removing a non-ground edge.
@@ -317,7 +321,7 @@ theorem groundCount_remove_non_ground {hack : Hackenbush V} {e : Sym2 V} {p : Pl
   unfold groundCount
   rw [← hack.groundEdges_remove_eq e p, Finset.erase_eq_of_notMem]
   simp only [groundEdges, Finset.mem_filter, mem_edgeFinset, not_and]
-  simp_all
+  simp_all only [Player.ne_iff_eq_neg, IsEmpty.forall_iff, implies_true]
 
 /--
 Removing a p-coloured edge preserves (-p)-coloured ground count.
@@ -460,7 +464,7 @@ theorem exists_neg_ground_edge {hack : Hackenbush V} {p : Player}
     apply Nat.ne_of_gt
     exact Finset.card_pos.mpr ⟨e, Finset.mem_filter.mpr ⟨hack.mem_edgeFinset.mpr he₁, he₂, he₃⟩⟩
   · use e
-    simp_all
+    simp_all only [ne_eq, Player.ne_iff_eq_neg, and_self]
 
 /--
 A p-move cannot lead to the zero game when groundCount p = 0.
@@ -481,7 +485,7 @@ theorem move_not_zero_of_groundCount_zero {hack : Hackenbush V} {p : Player} {e 
     simp only [remove_graph]
     exact groundEdge_mem_groundComp he'_mem hne he'_gnd hack.connected
   intro hbot
-  simp_all
+  simp_all only [ne_eq, remove_graph, SimpleGraph.edgeSet_bot, Set.mem_empty_iff_false]
 
 /--
 Removing any edge preserves the zero-ness of groundCount p.
@@ -500,7 +504,7 @@ theorem groundCount_zero_of_option {hack : Hackenbush V} {p : Player} {e : Sym2 
     simp only [groundEdges, Finset.mem_filter, mem_edgeFinset]
     exact ⟨he'_G, he'_gnd, he'_col⟩
   rw [groundCount, Finset.card_eq_zero] at hgc
-  simp_all
+  simp_all only [Finset.notMem_empty]
 
 /-!
 ### Stride theory
