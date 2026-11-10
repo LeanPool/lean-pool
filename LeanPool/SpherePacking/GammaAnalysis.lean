@@ -3568,20 +3568,8 @@ private theorem upperShortShellDamping_global_bound
     exact mul_nonneg (Real.exp_pos _).le
       (le_min (sq_nonneg T) (by norm_num))
   have hshort :
-      ContinuousOn (shortShellDensity ε) (Set.Icc a₀ A) := by
-    have hn : Continuous (fun a : ℝ =>
-      (1 - 10 * ε * (1 + a)) * Real.exp (-2 * a)) := by
-      fun_prop
-    have hd : Continuous (fun a : ℝ =>
-      2 * a ^ 2 * Real.cosh a) := by
-      fun_prop
-    unfold shortShellDensity
-    apply (hn.continuousOn.div hd.continuousOn ?_).neg
-    intro a ha
-    have hapos : 0 < a := ha₀.trans_le ha.1
-    exact
-      (mul_pos (mul_pos (by norm_num) (sq_pos_of_pos hapos))
-        (Real.cosh_pos a)).ne'
+      ContinuousOn (shortShellDensity ε) (Set.Icc a₀ A) :=
+    (shortShellDensity_continuousOn_pos ε).mono (fun _ ha => ha₀.trans_le ha.1)
   have hcosh : Continuous
       (fun a : ℝ => Real.cosh ((1 + δ) * a)) := by
     exact Continuous.comp' Real.continuous_cosh (Continuous.const_mul continuous_id' (1 + δ))
@@ -3959,18 +3947,8 @@ private theorem upperShortShellVariance_global_bound
     try dsimp [K]
     positivity
   have hshort :
-      ContinuousOn (shortShellDensity ε) (Set.Icc a₀ A) := by
-    have hn : Continuous (fun a : ℝ =>
-      (1 - 10 * ε * (1 + a)) * Real.exp (-2 * a)) := by
-      fun_prop
-    have hd : Continuous (fun a : ℝ =>
-      2 * a ^ 2 * Real.cosh a) := by
-      fun_prop
-    unfold shortShellDensity
-    apply (hn.continuousOn.div hd.continuousOn ?_).neg
-    intro a ha
-    have hapos : 0 < a := ha₀.trans_le ha.1
-    positivity
+      ContinuousOn (shortShellDensity ε) (Set.Icc a₀ A) :=
+    (shortShellDensity_continuousOn_pos ε).mono (fun _ ha => ha₀.trans_le ha.1)
   have hcosh : Continuous
       (fun a : ℝ => Real.cosh ((1 + δ) * a)) := by
     exact Continuous.comp' Real.continuous_cosh (Continuous.const_mul continuous_id' (1 + δ))
@@ -4223,18 +4201,8 @@ private theorem upperShortShellThirdMoment_le
     try dsimp [a₀]
     positivity
   have hshort :
-      ContinuousOn (shortShellDensity ε) (Set.Icc a₀ A) := by
-    have hn : Continuous (fun a : ℝ =>
-      (1 - 10 * ε * (1 + a)) * Real.exp (-2 * a)) := by
-      fun_prop
-    have hd : Continuous (fun a : ℝ =>
-      2 * a ^ 2 * Real.cosh a) := by
-      fun_prop
-    unfold shortShellDensity
-    apply (hn.continuousOn.div hd.continuousOn ?_).neg
-    intro a ha
-    have hapos : 0 < a := ha₀.trans_le ha.1
-    positivity
+      ContinuousOn (shortShellDensity ε) (Set.Icc a₀ A) :=
+    (shortShellDensity_continuousOn_pos ε).mono (fun _ ha => ha₀.trans_le ha.1)
   have hcosh : Continuous
       (fun a : ℝ => Real.cosh ((1 + δ) * a)) := by
     exact Continuous.comp' Real.continuous_cosh (Continuous.const_mul continuous_id' (1 + δ))
@@ -5119,20 +5087,8 @@ private theorem realHyperbolicShellPhase_hasDerivAt
     positivity
   let w : ℝ → ℝ := fun a =>
     shortShellDensity ε (max a (ε ^ 3))
-  have hmax (a : ℝ) : 0 < max a (ε ^ 3) :=
-    hcutoff.trans_le (le_max_right _ _)
-  have hw : Continuous w := by
-    have hn : Continuous (fun a : ℝ =>
-        (1 - 10 * ε * (1 + (max a (ε ^ 3)))) *
-          Real.exp (-2 * max a (ε ^ 3))) := by
-      fun_prop
-    have hd : Continuous (fun a : ℝ =>
-        2 * (max a (ε ^ 3)) ^ 2 *
-          Real.cosh (max a (ε ^ 3))) := by
-      fun_prop
-    try dsimp [w]
-    unfold shortShellDensity
-    exact (hn.div hd (fun a => by positivity [hmax a])).neg
+  have hw : Continuous w :=
+    shortShellDensity_clamped_continuous ε (ε ^ 3) hcutoff
   have hshortfun :
       (fun v : ℝ => ∫ a in (ε ^ 3)..(10 * Real.log (1 / ε)),
         shortShellDensity ε a *
@@ -6801,21 +6757,8 @@ private theorem shortShellDensity_continuousOn_support
     {ε : ℝ} (hε : 0 < ε) :
     ContinuousOn (shortShellDensity ε)
       (Icc (ε ^ 3) (10 * Real.log (1 / ε))) := by
-  have hn : Continuous
-      (fun a : ℝ =>
-        (1 - 10 * ε * (1 + a)) * Real.exp (-2 * a)) := by
-    fun_prop
-  have hd : Continuous
-      (fun a : ℝ =>
-        2 * a ^ 2 * Real.cosh a) := by
-    fun_prop
-  unfold shortShellDensity
-  exact (hn.continuousOn.div hd.continuousOn
-    (fun a ha => by
-      have hcutoff : 0 < (ε ^ 3) := by
-        positivity
-      have ha0 : 0 < a := hcutoff.trans_le ha.1
-      positivity)).neg
+  exact (shortShellDensity_continuousOn_pos ε).mono
+    (fun _ ha => (pow_pos hε 3).trans_le ha.1)
 
 private theorem mellinShellPhase_shifted_re
     {ε : ℝ} (hε : 0 < ε)
