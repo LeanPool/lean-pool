@@ -5,6 +5,8 @@ Authors: Wesley Pegden, Lean Pool contributors
 -/
 module
 
+public import LeanPool.GoldbergSeymour.HierarchyPathNumberPrefix
+
 public import LeanPool.GoldbergSeymour.HierarchyTreeFacts
 
 public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegmentFacts
@@ -154,10 +156,9 @@ private theorem helper_continuation_5341.{u_1, u_2} :
         (@nestedK) (@strictK) (@coreInsideK) (@positiveK) (@increasingK) (@dividerStageK)
         (@starredEq)
   have hpS : HierarchyPathNumber KF ≤ HierarchyPathNumber H := by
-    exact helper_hpS_844 G k e0 input T phi ett base C ctx hpathLower P alpha hp hpUpper htail
-        hlenT hBT consecutive S hSBlen beta hab lastPositive positiveB aboveB strictB belowB
-        generatingB baseB HB corr bs baseStageK terminalStageK nestedK strictK coreInsideK
-        positiveK increasingK dividerStageK lastStar
+    apply H.pathNumber_le_of_prefix KF (congrArg TreeSequence.length lastStar) hBT
+    change A.length < B.length
+    omega
   have lastOrdinary : HB.stage (Fin.last HB.dividerCount).castSucc =
       H.stage (Fin.last H.dividerCount).castSucc := by
     apply helper_lastOrdinary_2387 <;> assumption
@@ -380,7 +381,7 @@ private theorem helper_shortening_124.{u_1, u_2} :
     have consecutive (t : Fin T.length)
         (ht : A.length + HierarchyPathNumber H ≤ t.val) :
         G.ends (T.edge t) = s(T.vertex t.castSucc, T.vertex t.succ) := by
-      exact helper_consecutive_852 G k e0 input T phi ett base C ctx P hpUpper hlenT t ht
+      exact H.consecutive_after_pathNumber hpUpper t ht
     have hends : G.ends f = s(y, w) :=
       (consecutive r (by dsimp [r]; omega)).trans (by rw [hy, hw])
     have hyf : Incident G y f := by rw [Incident, hends]; exact Sym2.mem_mk_left _ _

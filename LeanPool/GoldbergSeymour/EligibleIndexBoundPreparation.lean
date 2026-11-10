@@ -1,9 +1,11 @@
 /-
 Copyright (c) 2026 Wesley Pegden. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Wesley Pegden
+Authors: Wesley Pegden, Lean Pool contributors
 -/
 module
+
+public import LeanPool.GoldbergSeymour.HierarchyPathNumberPrefix
 
 public import LeanPool.GoldbergSeymour.HierarchyTreeFacts
 
@@ -2251,29 +2253,9 @@ theorem helper_hpS_844.{u_1, u_2} :
       htail hlenT B hBT r f consecutive S hSBlen beta hab sigma lastPositive positiveB aboveB
       strictB belowB generatingB baseB HB EB corr bs baseStageK terminalStageK nestedK strictK
       coreInsideK positiveK increasingK dividerStageK KF lastStar
-  let candidates := (Finset.Icc 1 (B.length - A.length)).filter fun i =>
-    ∀ t : Fin B.length, A.length + i ≤ t.val →
-      G.ends (B.edge t) = s(B.vertex t.castSucc, B.vertex t.succ)
-  have hm : HierarchyPathNumber H ∈ candidates := by
-    refine Finset.mem_filter.mpr ⟨Finset.mem_Icc.mpr ⟨by omega, by
-      dsimp [B, TreeSequencePrefix]
-      omega⟩, ?_⟩
-    intro t ht
-    rw [← hBT.2.2 t]
-    have hc := consecutive (Fin.castLE hBT.1 t) ht
-    have hv1 : (Fin.castLE hBT.1 t).castSucc =
-        Fin.castLE (Nat.succ_le_succ hBT.1) t.castSucc := Fin.ext rfl
-    have hv2 : (Fin.castLE hBT.1 t).succ =
-        Fin.castLE (Nat.succ_le_succ hBT.1) t.succ := Fin.ext rfl
-    rw [hv1, hv2, hBT.2.1 t.castSucc, hBT.2.1 t.succ] at hc
-    exact hc
-  have hn : candidates.Nonempty := ⟨HierarchyPathNumber H, hm⟩
-  unfold HierarchyPathNumber
-  dsimp only
-  rw [lastStar]
-  change (if h : candidates.Nonempty then candidates.min' h else B.length - A.length) ≤ _
-  rw [dite_eq_left hn]
-  exact Finset.min'_le candidates _ hm
+  apply H.pathNumber_le_of_prefix KF (congrArg TreeSequence.length lastStar) hBT
+  change A.length < T.length - 1
+  omega
 
 theorem helper_consecutive_852.{u_1, u_2} :
     open scoped Classical in
@@ -2295,20 +2277,7 @@ theorem helper_consecutive_852.{u_1, u_2} :
   G.ends (T.edge t) = s(T.vertex t.castSucc, T.vertex t.succ) := by
   classical
   intro V E _ _ _ _ G k e0 input T phi ett base C ctx P old H A hpUpper hlenT t ht
-  let candidates := (Finset.Icc 1 (T.length - A.length)).filter fun i =>
-    ∀ t : Fin T.length, A.length + i ≤ t.val →
-      G.ends (T.edge t) = s(T.vertex t.castSucc, T.vertex t.succ)
-  have hp' : HierarchyPathNumber H =
-      (if h : candidates.Nonempty then candidates.min' h else T.length - A.length) := rfl
-  have hn : candidates.Nonempty := by
-    by_contra hn
-    rw [dite_eq_right hn] at hp'
-    omega
-  have hm : candidates.min' hn = HierarchyPathNumber H := by
-    simpa only [dite_eq_left hn] using hp'.symm
-  have hc := (Finset.mem_filter.mp (Finset.min'_mem candidates hn)).2
-  rw [hm] at hc
-  exact hc t ht
+  exact H.consecutive_after_pathNumber hpUpper t ht
 
 theorem helper_noInc_930.{u_1, u_2} :
     open scoped Classical in

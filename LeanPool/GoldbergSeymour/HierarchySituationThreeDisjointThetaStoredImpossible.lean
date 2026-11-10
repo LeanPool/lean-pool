@@ -1,9 +1,11 @@
 /-
 Copyright (c) 2026 Wesley Pegden. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Wesley Pegden
+Authors: Wesley Pegden, Lean Pool contributors
 -/
 module
+
+public import LeanPool.GoldbergSeymour.HierarchyFullTailPrefix
 
 public import LeanPool.GoldbergSeymour.HierarchyFirstMissingPositionPrefixCutoff
 public import LeanPool.GoldbergSeymour.SharedFacts.DisjointThetaProofs
@@ -1885,7 +1887,6 @@ theorem HierarchySituationThreeDisjointThetaStoredImpossible
     have htail : j ≤ T.length - A.length := by
       have h := hpathUpper
       simpa [ell, HierarchyFullTailLength, sameStar] using Nat.le_of_lt h
-    have hjLower : 2 ≤ j := hpathLower
     have hjUpper : j < ell := hpathUpper
     have hcutJ : A.length + j ≤ T.length := by
       have hAT := hAtoT.1
@@ -1903,10 +1904,6 @@ theorem HierarchySituationThreeDisjointThetaStoredImpossible
           (Nat.min_le_right _ _) := by
       unfold HierarchyFullTailPrefix
       simp only [sameStar]
-    have prefixToTree (m : ℕ) (hm : 1 ≤ m) (hmT : m ≤ T.length) :
-        TreeSequenceInitialSegment (TreeSequencePrefix T m hm hmT) T := by
-      exact @SharedFacts.DisjointThetaTransport.prefixToTree (@V) (@E) (@G) (@e0) (@T) (@m)
-          (@hm) (@hmT)
     have commonPrefix {U W : TreeSequence G e0}
         (hUT : TreeSequenceInitialSegment U T)
         (hWT : TreeSequenceInitialSegment W T) (hUW : U.length ≤ W.length) :
@@ -1914,63 +1911,22 @@ theorem HierarchySituationThreeDisjointThetaStoredImpossible
       exact @SharedFacts.DisjointThetaTransport.comparableInitialSegments (@V) (@E) (@G) (@e0)
           (@T) (@U) (@W) (@hUT) (@hWT) (@hUW)
     have hYlen : Y.length = A.length + j := by
-      change (HierarchyFullTailPrefix C j).length = A.length + j
-      rw [fullPrefixEq j]
-      simp only [TreeSequencePrefix, min_eq_left hcutJ]
-    have hBtoT : TreeSequenceInitialSegment B T := by
-      change TreeSequenceInitialSegment (HierarchyFullTailPrefix C (j - 2)) T
-      rw [fullPrefixEq]
-      exact prefixToTree _ (le_min (A.positive.trans (Nat.le_add_right _ _)) T.positive)
-        (min_le_right _ _)
-    have hXtoT : TreeSequenceInitialSegment X T := by
-      change TreeSequenceInitialSegment (HierarchyFullTailPrefix C (j - 1)) T
-      rw [fullPrefixEq]
-      exact prefixToTree _ (le_min (A.positive.trans (Nat.le_add_right _ _)) T.positive)
-        (min_le_right _ _)
-    have hYtoT : TreeSequenceInitialSegment Y T := by
-      change TreeSequenceInitialSegment (HierarchyFullTailPrefix C j) T
-      rw [fullPrefixEq]
-      exact prefixToTree _ (le_min (A.positive.trans (Nat.le_add_right _ _)) T.positive)
-        (min_le_right _ _)
+      simpa only [sameStar] using HierarchyFullTailPrefix.length_of_le C j
+        (by simpa only [sameStar] using hcutJ)
+    have hBtoT : TreeSequenceInitialSegment B T :=
+      HierarchyFullTailPrefix.initialSegment C (j - 2)
+    have hYtoT : TreeSequenceInitialSegment Y T :=
+      HierarchyFullTailPrefix.initialSegment C j
     have hBtoX : TreeSequenceInitialSegment B X :=
-      commonPrefix hBtoT hXtoT (by
-        change (HierarchyFullTailPrefix C (j - 2)).length ≤
-          (HierarchyFullTailPrefix C (j - 1)).length
-        rw [fullPrefixEq (j - 2), fullPrefixEq (j - 1)]
-        simp only [TreeSequencePrefix]
-        exact min_le_min_right _ (Nat.add_le_add_left (Nat.sub_le_sub_left (by decide) j) _))
+      HierarchyFullTailPrefix.initialSegmentOfLE C _ _ (Nat.sub_le_sub_left (by decide) j)
     have hXtoY : TreeSequenceInitialSegment X Y :=
-      commonPrefix hXtoT hYtoT (by
-        change (HierarchyFullTailPrefix C (j - 1)).length ≤
-          (HierarchyFullTailPrefix C j).length
-        rw [fullPrefixEq (j - 1), fullPrefixEq j]
-        simp only [TreeSequencePrefix]
-        exact min_le_min_right _ (Nat.add_le_add_left (Nat.sub_le j 1) _))
+      HierarchyFullTailPrefix.initialSegmentOfLE C _ _ (Nat.sub_le j 1)
     have hYtoZ : TreeSequenceInitialSegment Y Z :=
-      commonPrefix hYtoT (by
-        change TreeSequenceInitialSegment (HierarchyFullTailPrefix C (ell - 1)) T
-        rw [fullPrefixEq]
-        exact prefixToTree _ (le_min (A.positive.trans (Nat.le_add_right _ _)) T.positive)
-          (min_le_right _ _))
-        (by
-          change (HierarchyFullTailPrefix C j).length ≤
-            (HierarchyFullTailPrefix C (ell - 1)).length
-          rw [fullPrefixEq j, fullPrefixEq (ell - 1)]
-          simp only [TreeSequencePrefix]
-          exact min_le_min_right _ (Nat.add_le_add_left (Nat.le_sub_one_of_lt hjUpper) _))
-    have hZtoT : TreeSequenceInitialSegment Z T := by
-        change TreeSequenceInitialSegment (HierarchyFullTailPrefix C (ell - 1)) T
-        rw [fullPrefixEq]
-        exact prefixToTree _ (le_min (A.positive.trans (Nat.le_add_right _ _)) T.positive)
-          (min_le_right _ _)
-    have hAtoY : TreeSequenceInitialSegment A Y :=
-      commonPrefix hAtoT hYtoT (by rw [hYlen]; exact Nat.le_add_right _ _)
-    have hAtoB : TreeSequenceInitialSegment A B :=
-      commonPrefix hAtoT hBtoT (by
-        change A.length ≤ (HierarchyFullTailPrefix C (j - 2)).length
-        rw [fullPrefixEq]
-        simp only [TreeSequencePrefix]
-        exact le_min (Nat.le_add_right _ _) hAtoT.1)
+      HierarchyFullTailPrefix.initialSegmentOfLE C _ _ (Nat.le_sub_one_of_lt hjUpper)
+    have hZtoT : TreeSequenceInitialSegment Z T :=
+      HierarchyFullTailPrefix.initialSegment C (ell - 1)
+    have hAtoY : TreeSequenceInitialSegment A Y := by
+      simpa only [sameStar] using HierarchyFullTailPrefix.starredStageInitialSegment C j
     have penultimatePrefixEq : HierarchyFullTailPrefix R.counterexample
         (HierarchyFullTailLength R.counterexample - 1) = Z := by
       simp only [Z, ell, HierarchyFullTailPrefix, HierarchyFullTailLength, sameStar]

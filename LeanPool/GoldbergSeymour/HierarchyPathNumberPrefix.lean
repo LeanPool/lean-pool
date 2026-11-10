@@ -1,7 +1,7 @@
 /-
 Copyright (c) 2026 Wesley Pegden. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Wesley Pegden
+Authors: Wesley Pegden, Lean Pool contributors
 -/
 module
 
@@ -19,6 +19,52 @@ General facts extracted from the credited Trellis proof families at
 namespace GoldbergSeymour
 
 open scoped Sym2
+
+/-- A hierarchy with a nonempty tail has a positive path number. -/
+theorem TashkinovHierarchy.pathNumber_pos {V E : Type*}
+    [Fintype V] [Fintype E] [DecidableEq V] [DecidableEq E]
+    {G : LooplessMultigraph V E} {k : ℕ} {e0 : E} {input generating phi : PartialEdgeColoring E k}
+    {tree : TreeSequence G e0} {ett : ExtendedTashkinovTree G k e0 input tree generating}
+    {base : HierarchyBase ett phi} (hierarchy : TashkinovHierarchy ett base)
+    (tail : (HierarchyStarredStage hierarchy (Fin.last hierarchy.dividerCount)).length <
+      tree.length) : 0 < HierarchyPathNumber hierarchy := by
+  classical
+  unfold HierarchyPathNumber
+  dsimp only
+  split_ifs with nonempty
+  · exact (Finset.mem_Icc.mp (Finset.mem_filter.mp (Finset.min'_mem _ nonempty)).1).1
+  · exact Nat.sub_pos_of_lt tail
+
+/-- A path number before the tail end forces consecutive endpoints on every later edge. -/
+theorem TashkinovHierarchy.consecutive_after_pathNumber {V E : Type*}
+    [Fintype V] [Fintype E] [DecidableEq V] [DecidableEq E]
+    {G : LooplessMultigraph V E} {k : ℕ} {e0 : E} {input generating phi : PartialEdgeColoring E k}
+    {tree : TreeSequence G e0} {ett : ExtendedTashkinovTree G k e0 input tree generating}
+    {base : HierarchyBase ett phi} (hierarchy : TashkinovHierarchy ett base)
+    (short : HierarchyPathNumber hierarchy < tree.length -
+      (HierarchyStarredStage hierarchy (Fin.last hierarchy.dividerCount)).length)
+    (index : Fin tree.length)
+    (after : (HierarchyStarredStage hierarchy (Fin.last hierarchy.dividerCount)).length +
+      HierarchyPathNumber hierarchy ≤ index.val) :
+    G.ends (tree.edge index) = s(tree.vertex index.castSucc, tree.vertex index.succ) := by
+  classical
+  let stage := HierarchyStarredStage hierarchy (Fin.last hierarchy.dividerCount)
+  change HierarchyPathNumber hierarchy < tree.length - stage.length at short
+  let candidates := (Finset.Icc 1 (tree.length - stage.length)).filter fun position =>
+    ∀ index : Fin tree.length, stage.length + position ≤ index.val →
+      G.ends (tree.edge index) = s(tree.vertex index.castSucc, tree.vertex index.succ)
+  have value : HierarchyPathNumber hierarchy =
+      (if nonempty : candidates.Nonempty then candidates.min' nonempty
+        else tree.length - stage.length) := rfl
+  have nonempty : candidates.Nonempty := by
+    by_contra empty
+    rw [dite_eq_right empty] at value
+    omega
+  have minimum : candidates.min' nonempty = HierarchyPathNumber hierarchy := by
+    simpa only [dite_eq_left nonempty] using value.symm
+  have consecutive := (Finset.mem_filter.mp (Finset.min'_mem candidates nonempty)).2
+  rw [minimum] at consecutive
+  exact consecutive index after
 
 /-- Restricting the terminal tree cannot increase the first path position after a common offset. -/
 theorem TashkinovHierarchy.pathNumber_le_of_prefix {V E : Type*}
