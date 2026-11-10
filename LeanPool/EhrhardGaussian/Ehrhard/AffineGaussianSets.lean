@@ -46,7 +46,7 @@ theorem map_apply_of_open_null_frontier {E F : Type*} [TopologicalSpace E]
 
 /-- An affine image of standard Gaussian measure evaluates a convex set by its preimage. -/
 theorem affine_standardGaussian_map_apply {n : ℕ} {F : Type*}
-    [NormedAddCommGroup F] [NormedSpace ℝ F] [FiniteDimensional ℝ F]
+    [NormedAddCommGroup F] [NormedSpace ℝ F]
     [MeasurableSpace F] [BorelSpace F]
     (L : (Fin n → ℝ) →L[ℝ] F) (m : F) {A : Set F} (hA : Convex ℝ A) :
     (standardGaussianMeasure n).map (fun x => m + L x) A =

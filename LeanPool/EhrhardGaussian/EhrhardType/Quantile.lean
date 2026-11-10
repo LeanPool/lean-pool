@@ -65,7 +65,7 @@ theorem bddBelow_strictCDF_gt (μ : Measure ℝ) [IsProbabilityMeasure μ]
   exact (hb.trans_le hle).not_ge ha.le
 
 /-- The atom-compatible quantile of a real probability law, on its finite probability domain. -/
-noncomputable def quantile (μ : Measure ℝ) [IsProbabilityMeasure μ] (p : Ioo (0 : ℝ) 1) : ℝ :=
+noncomputable def quantile (μ : Measure ℝ) (p : Ioo (0 : ℝ) 1) : ℝ :=
   sInf {a | p.val < μ.real (Iio a)}
 
 /-- Exact strict inverse identity, valid even at a lower-endpoint atom. -/
@@ -97,7 +97,7 @@ theorem monotone_quantile (μ : Measure ℝ) [IsProbabilityMeasure μ] :
     (lt_of_le_of_lt hpq ((quantile_lt_iff μ q a).mp hqa))).le
 
 /-- The transport used in LX26: sample a finite quantile at the standard Gaussian CDF. -/
-noncomputable def gaussianQuantileTransport (μ : Measure ℝ) [IsProbabilityMeasure μ] (z : ℝ) : ℝ :=
+noncomputable def gaussianQuantileTransport (μ : Measure ℝ) (z : ℝ) : ℝ :=
   quantile μ ⟨cdf (gaussianReal 0 1) z, standardGaussian_cdf_mem_Ioo z⟩
 
 /-- The Gaussian quantile transport is monotone. -/

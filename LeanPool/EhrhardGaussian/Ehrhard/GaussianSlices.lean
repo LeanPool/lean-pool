@@ -7,7 +7,10 @@ module
 
 public import LeanPool.EhrhardGaussian.Ehrhard.ScalarFunctional
 public import LeanPool.EhrhardGaussian.Gaussian.GaussianPoincareFinite
-public import Mathlib.Topology.Algebra.Module.Equiv
+public import Mathlib.Topology.Algebra.Module.Equiv.Basic
+public import Mathlib.Topology.Algebra.Module.Equiv.Pi
+public import Mathlib.Topology.Algebra.Module.Equiv.Prod
+public import Mathlib.Topology.Algebra.Module.Equiv.Submodule
 public import Mathlib.Analysis.Normed.Group.CocompactMap
 import Mathlib.MeasureTheory.Integral.Pi
 import Mathlib.MeasureTheory.Integral.Prod

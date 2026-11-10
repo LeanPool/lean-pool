@@ -5,6 +5,8 @@ Authors: Scott Armstrong
 -/
 module
 
+public import Mathlib.Probability.Distributions.Gaussian.Real
+
 public import LeanPool.EhrhardGaussian.Definitions.LogMGFRatio
 import Mathlib.Analysis.Convex.Function
 import Mathlib.Tactic.FieldSimp

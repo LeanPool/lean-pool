@@ -97,7 +97,7 @@ private lemma coordinateDerivative_affine_smul {n : ℕ} {G : (Fin n → ℝ) �
 
 
 /-- A Fréchet derivative on a finite product is the sum of its coordinate derivatives. -/
-private lemma fderiv_apply_eq_sum_coordinateDerivative {n : ℕ} {F : (Fin n → ℝ) → ℝ}
+theorem fderiv_apply_eq_sum_coordinateDerivative {n : ℕ} {F : (Fin n → ℝ) → ℝ}
     (z v : Fin n → ℝ) :
     fderiv ℝ F z v = ∑ i, v i * coordinateDerivative F i z := by
   have hv : v = ∑ i : Fin n, v i • Pi.single i (1 : ℝ) := by
@@ -107,7 +107,7 @@ private lemma fderiv_apply_eq_sum_coordinateDerivative {n : ℕ} {F : (Fin n →
   simp [coordinateDerivative, smul_eq_mul, Pi.single_apply]
 
 /-- The norm of the derivative on a vector is bounded by the coordinate derivative bounds. -/
-private lemma abs_fderiv_apply_le_of_coordinate_bound {n : ℕ} {F : (Fin n → ℝ) → ℝ}
+theorem abs_fderiv_apply_le_of_coordinate_bound {n : ℕ} {F : (Fin n → ℝ) → ℝ}
     (z v : Fin n → ℝ) {B : ℝ} (hB : 0 ≤ B)
     (hcoord : ∀ i, |coordinateDerivative F i z| ≤ B) :
     |fderiv ℝ F z v| ≤ (Fintype.card (Fin n) : ℝ) * ‖v‖ * B := by
@@ -127,7 +127,7 @@ private lemma abs_fderiv_apply_le_of_coordinate_bound {n : ℕ} {F : (Fin n → 
     _ = (Fintype.card (Fin n) : ℝ) * ‖v‖ * B := by simp [Finset.sum_const, mul_assoc]
 
 /-- A translated scalar multiple of a vector has a simple product norm bound. -/
-private lemma one_add_norm_add_smul_le {n : ℕ} (x ξ : Fin n → ℝ) (u : ℝ) :
+theorem one_add_norm_add_smul_le {n : ℕ} (x ξ : Fin n → ℝ) (u : ℝ) :
     1 + ‖x + u • ξ‖ ≤ (1 + ‖x‖) * (1 + |u|) * (1 + ‖ξ‖) := by
   have htri : ‖x + u • ξ‖ ≤ ‖x‖ + |u| * ‖ξ‖ := by
     calc
@@ -205,7 +205,7 @@ lemma integrable_eval_mul_shift_of_polynomial_bound {n : ℕ} {f : (Fin n → �
 
 /-- The first derivative of a Gaussian shift average is obtained by differentiating its
 integrand. -/
-private theorem hasDerivAt_shiftAverage {n : ℕ} {F : (Fin n → ℝ) → ℝ}
+private theorem hasDerivAt_shiftAverage_innerProduct {n : ℕ} {F : (Fin n → ℝ) → ℝ}
     (hF : HasPolynomiallyBoundedCoordinateDerivatives F)
     (x : Fin n → ℝ) (u : ℝ) :
     @HasDerivAt ℝ _ ℝ Real.normedAddCommGroup.toAddCommGroup
@@ -323,8 +323,8 @@ private theorem hasDerivAt_shiftAverage {n : ℕ} {F : (Fin n → ℝ) → ℝ}
     (∫ ξ, fderiv ℝ F (x + u • ξ) ξ ∂(standardGaussianMeasure n)) u
   exact hderiv.2
 
-/-- Version of `hasDerivAt_shiftAverage` in the ambient real module structure. -/
-private theorem hasDerivAt_shiftAverage_standard {n : ℕ} {F : (Fin n → ℝ) → ℝ}
+/-- Version of `hasDerivAt_shiftAverage_innerProduct` in the ambient real module structure. -/
+theorem hasDerivAt_shiftAverage {n : ℕ} {F : (Fin n → ℝ) → ℝ}
     (hF : HasPolynomiallyBoundedCoordinateDerivatives F)
     (x : Fin n → ℝ) (u : ℝ) :
     HasDerivAt (shiftAverage F x)
@@ -335,7 +335,7 @@ private theorem hasDerivAt_shiftAverage_standard {n : ℕ} {F : (Fin n → ℝ) 
     rfl
   have hadd : (Real.normedAddCommGroup.toAddCommGroup : AddCommGroup ℝ) =
       (inferInstance : AddCommGroup ℝ) := rfl
-  simpa only [hmodule, hadd] using hasDerivAt_shiftAverage hF x u
+  simpa only [hmodule, hadd] using hasDerivAt_shiftAverage_innerProduct hF x u
 
 /-- A coordinate derivative of `F` remains a polynomially bounded `C¹` function after a fixed
 affine Gaussian shift. -/
@@ -497,7 +497,7 @@ theorem hasDerivAt_heatAverage {n : ℕ} {F : (Fin n → ℝ) → ℝ}
             C * (1 + ‖z‖) ^ d + C * (1 + ‖z‖) ^ d :=
               add_le_add (hfunction z) (hfirst i z)
         _ = 2 * C * (1 + ‖z‖) ^ d := by ring
-  have hshift := hasDerivAt_shiftAverage_standard hbase x (Real.sqrt t)
+  have hshift := hasDerivAt_shiftAverage hbase x (Real.sqrt t)
   have hsqrt : HasDerivAt Real.sqrt (1 / (2 * Real.sqrt t)) t :=
     Real.hasDerivAt_sqrt (ne_of_gt ht)
   have hrootne : Real.sqrt t ≠ 0 := ne_of_gt (Real.sqrt_pos.2 ht)

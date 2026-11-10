@@ -45,49 +45,12 @@ theorem hasDerivAt_gaussian_bridge_argument {n : ℕ}
   · rw [sub_eq_add_neg, ← neg_smul]
 
 private theorem integrable_gaussian_bridge {n : ℕ} {F : (Fin n → ℝ) → ℝ}
-    (hF : HasPolynomiallyBoundedCoordinateDerivatives F)
-    (ξ : Fin n → ℝ) {t : ℝ} (ht : 0 < t) (ht1 : t < 1) :
+    (hF : HasPolynomiallyBoundedCoordinateDerivatives F) (ξ : Fin n → ℝ) (t : ℝ) :
     Integrable (fun η => F (Real.sqrt t • ξ + Real.sqrt (1 - t) • η))
       (standardGaussianMeasure n) := by
   rcases hF.2 with ⟨C, hC, d, hvalue, _⟩
-  let A : ℝ → (Fin n → ℝ) → (Fin n → ℝ) :=
-    fun r η => Real.sqrt r • ξ + Real.sqrt (1 - r) • η
-  let Bξ : ℝ := 1 + ‖ξ‖
-  have hAcont (r : ℝ) : Continuous (A r) := by
-    dsimp [A]
-    fun_prop
-  have hpoint (η : Fin n → ℝ) :
-      1 + ‖A t η‖ ≤ Bξ * (1 + ‖η‖) := by
-    have hsqt : 0 ≤ Real.sqrt t := Real.sqrt_nonneg _
-    have hsqt1 : Real.sqrt t ≤ 1 := by
-      rw [Real.sqrt_le_one]
-      linarith
-    have hsq1t : 0 ≤ Real.sqrt (1 - t) := Real.sqrt_nonneg _
-    have hsq1t1 : Real.sqrt (1 - t) ≤ 1 := by
-      rw [Real.sqrt_le_one]
-      linarith
-    have hsum : ‖A t η‖ ≤ ‖ξ‖ + ‖η‖ := by
-      dsimp [A]
-      calc
-        ‖Real.sqrt t • ξ + Real.sqrt (1 - t) • η‖ ≤
-            ‖Real.sqrt t • ξ‖ + ‖Real.sqrt (1 - t) • η‖ := norm_add_le _ _
-        _ = Real.sqrt t * ‖ξ‖ + Real.sqrt (1 - t) * ‖η‖ := by
-          rw [norm_smul, Real.norm_eq_abs, abs_of_nonneg hsqt,
-            norm_smul, Real.norm_eq_abs, abs_of_nonneg hsq1t]
-        _ ≤ ‖ξ‖ + ‖η‖ := by
-          simpa only [one_mul] using add_le_add
-            (mul_le_mul_of_nonneg_right hsqt1 (norm_nonneg ξ))
-            (mul_le_mul_of_nonneg_right hsq1t1 (norm_nonneg η))
-    dsimp [Bξ]
-    nlinarith [norm_nonneg η, norm_nonneg ξ]
-  have hmeas := (hF.1.continuous.comp (hAcont t)).measurable
-  apply integrable_of_pi_polynomial_bound hmeas (C := C * Bξ ^ d)
-    (by positivity) (d := d)
-  intro η
-  calc
-    |F (A t η)| ≤ C * (1 + ‖A t η‖) ^ d := hvalue _
-    _ ≤ C * (Bξ * (1 + ‖η‖)) ^ d := by gcongr; exact hpoint η
-    _ = C * Bξ ^ d * (1 + ‖η‖) ^ d := by rw [mul_pow]; ring
+  exact integrable_shift_of_polynomial_bound hF.1.continuous.measurable hC hvalue
+    (Real.sqrt t • ξ) (Real.sqrt (1 - t))
 
 /-- The derivative of a Gaussian bridge average is the average of its directional derivative. -/
 theorem hasDerivAt_gaussian_bridge_integral {n : ℕ}
@@ -124,7 +87,7 @@ theorem hasDerivAt_gaussian_bridge_integral {n : ℕ}
     filter_upwards with r
     exact ((hF.1.continuous.comp (hAcont r)).measurable).aestronglyMeasurable
   have hFint : Integrable (fun η => F (A t η)) (standardGaussianMeasure n) :=
-    integrable_gaussian_bridge hF ξ ht ht1
+    integrable_gaussian_bridge hF ξ t
   have hderivCont : Continuous (fun η =>
       fderiv ℝ F (A t η) (A' t η)) := by
     have hfd : Continuous (fun z : Fin n → ℝ => fderiv ℝ F z) :=

@@ -33,7 +33,8 @@ main_results:
   informal: For a finite-dimensional Gaussian law, convex sets A and B, and
     t in [0,1], Gaussian CDF lower thresholds a and b for their probabilities
     give the CDF lower threshold (1-t)a+tb for the probability of their
-    Minkowski combination. Singular covariance and masses zero or one are allowed.
+    Minkowski combination. Singular covariance and unit masses are allowed;
+    a zero-mass set has no finite admissible threshold.
 - declaration: EhrhardGaussian.gaussian_convexity
   informal: For a finite convex real function of a finite-dimensional Gaussian
     vector with every positive exponential moment finite, log E[exp(qF)]/q,
