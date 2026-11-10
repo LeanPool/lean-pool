@@ -384,6 +384,87 @@ section
 open Filter MeasureTheory Set
 open scoped FourierTransform SchwartzMap Topology RealInnerProductSpace ENNReal NNReal
 
+private theorem euclidean_ae_ne_zero {d : ℕ} (hd : 0 < d) :
+    ∀ᵐ x ∂(volume : Measure (Euclidean d)), x ≠ 0 := by
+  let : Nonempty (Fin d) := Fin.pos_iff_nonempty.mp hd
+  exact (volume : Measure (Euclidean d)).ae_ne 0
+
+private theorem schwartz_mul_norm_cpow_integrable {d : ℕ}
+    (hd : 0 < d) (f : TestFunction d) (z : ℂ)
+    (hlower : -(d : ℝ) < z.re) (hupper : z.re ≤ 0) :
+    Integrable
+      (fun x : Euclidean d => f x * (‖x‖ : ℂ) ^ z)
+      (volume : Measure (Euclidean d)) := by
+  let : Nonempty (Fin d) := Fin.pos_iff_nonempty.mp hd
+  have hpow : Measurable (fun x : Euclidean d => (‖x‖ : ℂ) ^ z) := by
+    apply measurable_of_continuousOn_compl_singleton
+      (0 : Euclidean d)
+    apply continuousOn_of_forall_continuousAt
+    intro x hx
+    have hxzero : x ≠ 0 := by
+      simpa only [mem_compl_iff, mem_singleton_iff] using! hx
+    exact
+      (Complex.continuousAt_ofReal_cpow_const ‖x‖ z
+        (Or.inr (norm_ne_zero_iff.mpr hxzero))).comp
+        continuous_norm.continuousAt
+  have hmeas :
+      AEStronglyMeasurable
+        (fun x : Euclidean d => f x * (‖x‖ : ℂ) ^ z)
+        (volume : Measure (Euclidean d)) :=
+    (f.continuous.measurable.mul hpow).aestronglyMeasurable
+  have hdim : 1 ≤ Module.finrank ℝ (Euclidean d) := by
+    rw [finrank_euclideanSpace_fin]
+    omega
+  let : NormedAddCommGroup (EuclideanSpace ℝ (Fin d)) := inferInstance
+  let : NormedSpace ℝ (EuclideanSpace ℝ (Fin d)) := inferInstance
+  let : MeasureSpace (EuclideanSpace ℝ (Fin d)) := inferInstance
+  have hexponent :
+      -z.re < (Module.finrank ℝ (Euclidean d) : ℝ) := by
+    rw [finrank_euclideanSpace_fin]
+    exact (neg_lt_of_neg_lt hlower)
+  have hinner :
+      IntegrableOn
+        (fun x : Euclidean d => f x * (‖x‖ : ℂ) ^ z)
+        (Metric.ball 0 1)
+        (volume : Measure (Euclidean d)) := by
+    apply MeasureTheory.integrableOn_ball_of_norm_le_rpow
+      hdim hexponent (C := SchwartzMap.seminorm ℝ 0 0 f)
+      (r := 1)
+    · filter_upwards
+        [ae_restrict_of_ae
+          (euclidean_ae_ne_zero hd)] with x hx
+      rw [norm_mul,
+        Complex.norm_cpow_eq_rpow_re_of_pos
+          (norm_pos_iff.mpr hx), neg_neg]
+      exact mul_le_mul_of_nonneg_right
+        (SchwartzMap.norm_le_seminorm ℝ f x)
+        (Real.rpow_nonneg (norm_nonneg x) z.re)
+    · exact hmeas
+  have houter :
+      IntegrableOn
+        (fun x : Euclidean d => f x * (‖x‖ : ℂ) ^ z)
+        (Metric.ball (0 : Euclidean d) 1)ᶜ
+        (volume : Measure (Euclidean d)) := by
+    refine (f.integrable.norm.restrict).mono' hmeas.restrict ?_
+    filter_upwards
+      [ae_restrict_mem
+        (Metric.isOpen_ball.measurableSet.compl)] with x hx
+    have hnorm : 1 ≤ ‖x‖ := by
+      have hnot : ¬ ‖x‖ < (1 : ℝ) := by
+        simpa only [not_lt, mem_compl_iff, Metric.mem_ball, dist_zero_right] using! hx
+      exact le_of_not_gt hnot
+    rw [norm_mul,
+      Complex.norm_cpow_eq_rpow_re_of_pos
+        (lt_of_lt_of_le zero_lt_one hnorm)]
+    calc
+      ‖f x‖ * ‖x‖ ^ z.re ≤ ‖f x‖ * 1 :=
+        mul_le_mul_of_nonneg_left
+          (Real.rpow_le_one_of_one_le_of_nonpos hnorm hupper)
+          (norm_nonneg _)
+      _ = ‖f x‖ := mul_one _
+  have hglobal := hinner.union houter
+  rwa [union_compl_self, integrableOn_univ] at hglobal
+
 private noncomputable def dilationEquiv (d : ℕ) (a : ℝ) (ha : a ≠ 0) :
     Euclidean d ≃L[ℝ] Euclidean d :=
   (LinearEquiv.smulOfNeZero ℝ (Euclidean d) a ha).toContinuousLinearEquiv
@@ -1220,86 +1301,6 @@ private theorem fourier_gaussianMellin_pairing {d : ℕ}
         (gaussianMellinWeight_integrable a ha))
   simpa only [SchwartzMap.fourier_coe, fourier_gaussianMellinWeight a ha] using! hpair
 
-private theorem euclidean_ae_ne_zero {d : ℕ} (hd : 0 < d) :
-    ∀ᵐ x ∂(volume : Measure (Euclidean d)), x ≠ 0 := by
-  let : Nonempty (Fin d) := Fin.pos_iff_nonempty.mp hd
-  exact (volume : Measure (Euclidean d)).ae_ne 0
-
-private theorem schwartz_mul_norm_cpow_integrable {d : ℕ}
-    (hd : 0 < d) (f : TestFunction d) (z : ℂ)
-    (hlower : -(d : ℝ) < z.re) (hupper : z.re ≤ 0) :
-    Integrable
-      (fun x : Euclidean d => f x * (‖x‖ : ℂ) ^ z)
-      (volume : Measure (Euclidean d)) := by
-  let : Nonempty (Fin d) := Fin.pos_iff_nonempty.mp hd
-  have hpow : Measurable (fun x : Euclidean d => (‖x‖ : ℂ) ^ z) := by
-    apply measurable_of_continuousOn_compl_singleton
-      (0 : Euclidean d)
-    apply continuousOn_of_forall_continuousAt
-    intro x hx
-    have hxzero : x ≠ 0 := by
-      simpa only [mem_compl_iff, mem_singleton_iff] using! hx
-    exact
-      (Complex.continuousAt_ofReal_cpow_const ‖x‖ z
-        (Or.inr (norm_ne_zero_iff.mpr hxzero))).comp
-        continuous_norm.continuousAt
-  have hmeas :
-      AEStronglyMeasurable
-        (fun x : Euclidean d => f x * (‖x‖ : ℂ) ^ z)
-        (volume : Measure (Euclidean d)) :=
-    (f.continuous.measurable.mul hpow).aestronglyMeasurable
-  have hdim : 1 ≤ Module.finrank ℝ (Euclidean d) := by
-    rw [finrank_euclideanSpace_fin]
-    omega
-  let : NormedAddCommGroup (EuclideanSpace ℝ (Fin d)) := inferInstance
-  let : NormedSpace ℝ (EuclideanSpace ℝ (Fin d)) := inferInstance
-  let : MeasureSpace (EuclideanSpace ℝ (Fin d)) := inferInstance
-  have hexponent :
-      -z.re < (Module.finrank ℝ (Euclidean d) : ℝ) := by
-    rw [finrank_euclideanSpace_fin]
-    exact (neg_lt_of_neg_lt hlower)
-  have hinner :
-      IntegrableOn
-        (fun x : Euclidean d => f x * (‖x‖ : ℂ) ^ z)
-        (Metric.ball 0 1)
-        (volume : Measure (Euclidean d)) := by
-    apply MeasureTheory.integrableOn_ball_of_norm_le_rpow
-      hdim hexponent (C := SchwartzMap.seminorm ℝ 0 0 f)
-      (r := 1)
-    · filter_upwards
-        [ae_restrict_of_ae
-          (euclidean_ae_ne_zero hd)] with x hx
-      rw [norm_mul,
-        Complex.norm_cpow_eq_rpow_re_of_pos
-          (norm_pos_iff.mpr hx), neg_neg]
-      exact mul_le_mul_of_nonneg_right
-        (SchwartzMap.norm_le_seminorm ℝ f x)
-        (Real.rpow_nonneg (norm_nonneg x) z.re)
-    · exact hmeas
-  have houter :
-      IntegrableOn
-        (fun x : Euclidean d => f x * (‖x‖ : ℂ) ^ z)
-        (Metric.ball (0 : Euclidean d) 1)ᶜ
-        (volume : Measure (Euclidean d)) := by
-    refine (f.integrable.norm.restrict).mono' hmeas.restrict ?_
-    filter_upwards
-      [ae_restrict_mem
-        (Metric.isOpen_ball.measurableSet.compl)] with x hx
-    have hnorm : 1 ≤ ‖x‖ := by
-      have hnot : ¬ ‖x‖ < (1 : ℝ) := by
-        simpa only [not_lt, mem_compl_iff, Metric.mem_ball, dist_zero_right] using! hx
-      exact le_of_not_gt hnot
-    rw [norm_mul,
-      Complex.norm_cpow_eq_rpow_re_of_pos
-        (lt_of_lt_of_le zero_lt_one hnorm)]
-    calc
-      ‖f x‖ * ‖x‖ ^ z.re ≤ ‖f x‖ * 1 :=
-        mul_le_mul_of_nonneg_left
-          (Real.rpow_le_one_of_one_le_of_nonpos hnorm hupper)
-          (norm_nonneg _)
-      _ = ‖f x‖ := mul_one _
-  have hglobal := hinner.union houter
-  rwa [union_compl_self, integrableOn_univ] at hglobal
 
 private theorem gaussianMellinParameter_integrable
     (b : ℂ) (hb : 0 < b.re) (r : ℝ) (hr : 0 < r) :
