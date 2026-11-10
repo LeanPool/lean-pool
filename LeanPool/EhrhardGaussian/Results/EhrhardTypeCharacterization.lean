@@ -28,7 +28,7 @@ log-normal bounds of KPZ Lemma 3.2 hold for every Ehrhard-type law normalised by
 theorem ehrhardType_characterization :
     (∀ {n : ℕ} (μ : Measure (EuclideanSpace ℝ (Fin n))) [IsGaussian μ]
       (F : EuclideanSpace ℝ (Fin n) → ℝ), ConvexOn ℝ Set.univ F → IsEhrhardType (μ.map F)) ∧
-    (∀ ν : Measure ℝ, IsProbabilityMeasure ν →
+    (∀ ν : Measure ℝ,
       (IsEhrhardType ν ↔ ∃ h : ℝ → ℝ, Monotone h ∧ ConvexOn ℝ Set.univ h ∧
         ν = (gaussianReal 0 1).map h)) ∧
     (∀ (ν : ℕ → ProbabilityMeasure ℝ) (ν' : ProbabilityMeasure ℝ), Tendsto ν atTop (nhds ν') →

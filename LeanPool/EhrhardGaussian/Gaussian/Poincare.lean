@@ -188,8 +188,6 @@ theorem standardGaussianMeasure_eq_withDensity (n : ℕ) :
 /-- Gaussian integration by parts holds in each coordinate of a finite standard Gaussian vector. -/
 theorem standardGaussianIntegrationByParts {n : ℕ} {f : (Fin n → ℝ) → ℝ}
     (hcont : ContDiff ℝ 1 f)
-    (_hgrowth : ∃ C : ℝ, ∃ N : ℕ, 0 ≤ C ∧
-      ∀ x : Fin n → ℝ, |f x| + ‖fderiv ℝ f x‖ ≤ C * (1 + ‖x‖) ^ N)
     (hint_f : Integrable (fun x => f x * standardGaussianDensityReal x) volume)
     (hint_deriv : ∀ i, Integrable
       (fun x => coordinateDerivative f i x * standardGaussianDensityReal x) volume)

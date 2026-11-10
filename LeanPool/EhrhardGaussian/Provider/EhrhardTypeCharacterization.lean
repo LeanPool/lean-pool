@@ -25,10 +25,10 @@ namespace EhrhardGaussian.Provider
 
 /-- A probability law is of Ehrhard type if and only if it is the image of the standard Gaussian law
 under a monotone convex function. -/
-theorem ehrhardType_representation (ν : Measure ℝ) (hν : IsProbabilityMeasure ν) :
+theorem ehrhardType_representation (ν : Measure ℝ) :
     IsEhrhardType ν ↔ ∃ h : ℝ → ℝ, Monotone h ∧ ConvexOn ℝ Set.univ h ∧
       ν = (gaussianReal 0 1).map h :=
-  EhrhardType.isEhrhardType_iff_exists_monotone_convex ν hν
+  EhrhardType.isEhrhardType_iff_exists_monotone_convex ν
 
 /-- Weak limits of Ehrhard-type probability laws are of Ehrhard type, including constant limits. -/
 theorem ehrhardType_weakClosure
@@ -64,7 +64,7 @@ representations, are closed under weak convergence and satisfy the normalized mo
 theorem ehrhardType_characterization :
     (∀ {n : ℕ} (μ : Measure (EuclideanSpace ℝ (Fin n))) [IsGaussian μ]
       (F : EuclideanSpace ℝ (Fin n) → ℝ), ConvexOn ℝ Set.univ F → IsEhrhardType (μ.map F)) ∧
-    (∀ ν : Measure ℝ, IsProbabilityMeasure ν →
+    (∀ ν : Measure ℝ,
       (IsEhrhardType ν ↔ ∃ h : ℝ → ℝ, Monotone h ∧ ConvexOn ℝ Set.univ h ∧
         ν = (gaussianReal 0 1).map h)) ∧
     (∀ (ν : ℕ → ProbabilityMeasure ℝ) (ν' : ProbabilityMeasure ℝ), Tendsto ν atTop (nhds ν') →

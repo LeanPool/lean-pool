@@ -60,8 +60,7 @@ theorem isEhrhardType_map_of_monotone_convex {h : ℝ → ℝ}
     exact strictCDF_standardGaussian _
 
 /-- An Ehrhard-type law is exactly a monotone convex image of the standard Gaussian law. -/
-theorem isEhrhardType_iff_exists_monotone_convex (ν : Measure ℝ)
-    (_hν : IsProbabilityMeasure ν) :
+theorem isEhrhardType_iff_exists_monotone_convex (ν : Measure ℝ) :
     IsEhrhardType ν ↔ ∃ h : ℝ → ℝ, Monotone h ∧ ConvexOn ℝ univ h ∧
       ν = (gaussianReal 0 1).map h := by
   constructor

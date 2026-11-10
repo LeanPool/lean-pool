@@ -56,7 +56,7 @@ theorem standardGaussian_integration_by_parts {n : ℕ} {f : (Fin n → ℝ) →
     refine ⟨1, 1, zero_le_one, fun x => ?_⟩
     simpa only [one_mul, pow_one, ← Real.norm_eq_abs] using
       (norm_le_pi_norm x j).trans (le_add_of_nonneg_left zero_le_one)
-  exact standardGaussianIntegrationByParts hcont ⟨C, N, hC, hb⟩
+  exact standardGaussianIntegrationByParts hcont
     (integrable_standardGaussian_weight (hf2.integrable (by norm_num)))
     (fun j => integrable_standardGaussian_weight ((hd2 j).integrable (by norm_num)))
     (fun j => integrable_standardGaussian_weight ((hx2 j).integrable_mul hf2)) i
