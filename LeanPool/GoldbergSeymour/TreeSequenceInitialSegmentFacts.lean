@@ -1,7 +1,7 @@
 /-
 Copyright (c) 2026 Wesley Pegden. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Wesley Pegden
+Authors: Wesley Pegden, Lean Pool contributors
 -/
 module
 
@@ -99,6 +99,13 @@ theorem of_common_extension {first second extension : TreeSequence G e0}
         (firstEdges _).symm
       _ = extension.edge (Fin.castLE secondLength index) := by congr 1
       _ = second.edge index := secondEdges index
+
+/-- The last vertex of an initial segment occurs at its length in the extension. -/
+theorem last_vertex_eq {initial tree : TreeSequence G e0}
+    (segment : TreeSequenceInitialSegment initial tree) {position : Fin (tree.length + 1)}
+    (samePosition : position.val = initial.length) :
+    initial.vertex (Fin.last initial.length) = tree.vertex position := by
+  exact (segment.2.1 _).symm.trans (congrArg tree.vertex (Fin.ext samePosition.symm))
 
 /-- A tree's last vertex does not occur in a strictly shorter initial segment. -/
 theorem last_vertex_ne {initial tree : TreeSequence G e0}

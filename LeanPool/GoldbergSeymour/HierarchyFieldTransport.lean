@@ -7,6 +7,7 @@ module
 
 public import LeanPool.GoldbergSeymour.GoodHierarchy
 public import LeanPool.GoldbergSeymour.SameHierarchyStages
+public import LeanPool.GoldbergSeymour.HierarchyFirstMissingPositionPrefixCutoff
 
 /-!
 # Transport of hierarchy fields
@@ -18,6 +19,45 @@ General facts extracted from the credited Trellis proof families at
 @[expose] public section
 
 namespace GoldbergSeymour
+
+/-- Segment colors can only shrink when a hierarchy stage is cut to a color-preserving prefix. -/
+theorem TashkinovHierarchy.segmentColors_subset_of_prefix
+    {V E : Type*} [Fintype V] [Fintype E] [DecidableEq V] [DecidableEq E]
+    {G : LooplessMultigraph V E} {k : ℕ} {e0 : E}
+    {input input' phi mu generating generating' : PartialEdgeColoring E k}
+    {T C : TreeSequence G e0}
+    {ett : ExtendedTashkinovTree G k e0 input T generating}
+    {ett' : ExtendedTashkinovTree G k e0 input' C generating'}
+    {base : HierarchyBase ett phi} {base' : HierarchyBase ett' mu}
+    (H : TashkinovHierarchy ett base) (K : TashkinovHierarchy ett' base')
+    (j : Fin (H.dividerCount + 1)) (j' : Fin (K.dividerCount + 1)) (eta : Fin k)
+    (hstar : HierarchyStarredStage K j' = HierarchyStarredStage H j)
+    (hUW : TreeSequenceInitialSegment (K.stage j'.succ) (H.stage j.succ))
+    (hUC : TreeSequenceInitialSegment (K.stage j'.succ) C)
+    (hCT : TreeSequenceInitialSegment C T)
+    (hfirst : (HierarchyFirstMissingPosition mu C eta).val =
+      (HierarchyFirstMissingPosition phi C eta).val)
+    (hfixed : ∀ r : Fin C.length, mu (C.edge r) = phi (C.edge r)) :
+    HierarchySegmentColors K j' eta ⊆ HierarchySegmentColors H j eta := by
+  classical
+  have hcut : min (HierarchyFirstMissingPosition mu C eta).val
+      (K.stage j'.succ).length =
+      min (HierarchyFirstMissingPosition phi T eta).val (K.stage j'.succ).length := by
+    rw [hfirst]
+    exact HierarchyFirstMissingPositionPrefixCutoff phi C T hCT eta _ hUC.1
+  intro c hc
+  simp only [HierarchySegmentColors, Finset.mem_filter, Finset.mem_univ, true_and] at hc ⊢
+  obtain ⟨r, hlo, hhi, hcol⟩ := hc
+  refine ⟨Fin.castLE hUW.1 r, ?_, ?_, ?_⟩
+  · simpa only [hstar, Fin.val_castLE] using hlo
+  · have hr : r.val < (HierarchyFirstMissingPosition phi T eta).val := by
+      rw [hcut] at hhi
+      exact lt_of_lt_of_le hhi (Nat.min_le_left _ _)
+    exact lt_min hr (Fin.castLE hUW.1 r).isLt
+  · rw [hUW.2.2 r]
+    have hf := hfixed (Fin.castLE hUC.1 r)
+    rw [hUC.2.2 r] at hf
+    exact hf.symm.trans hcol
 
 variable {V E : Type*} [Fintype V] [Fintype E] [DecidableEq V] [DecidableEq E]
     {G : LooplessMultigraph V E} {k : ℕ} {e0 : E}

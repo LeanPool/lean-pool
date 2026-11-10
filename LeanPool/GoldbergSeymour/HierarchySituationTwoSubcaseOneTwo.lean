@@ -654,26 +654,6 @@ private theorem helper_hAB_146.{u_1, u_2} :
   · intro i
     exact hAT.2.2 i
 
-private theorem helper_hBterminal_152.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq V] [DecidableEq E] (G :
-        LooplessMultigraph V E) (k : ℕ) (e0 : E) (input : PartialEdgeColoring E k) (T :
-        TreeSequence G e0) (phi : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k e0
-        input T phi) (base : HierarchyBase ett phi) (C : HierarchyCounterexample base) (ctx :
-        HierarchyMinimumCounterexampleContext G k e0 input T phi ett base C) (D :
-        HierarchySituationTwoCaseOneTwoData G k e0 input T phi ett base C ctx),
-    let B : TreeSequence G e0 := HierarchyFullTailPrefix C (HierarchyFullTailLength C - (1 : ℕ));
-        B.length + (1 : ℕ) = T.length → TreeSequenceInitialSegment B T → B.vertex (Fin.last
-        B.length) = T.vertex D.penultimateVertexIndex := by
-  classical
-  intro V E _ _ _ _ G k e0 input T phi ett base C ctx D B hBlen hBT
-  rw [← hBT.2.1 (Fin.last B.length)]
-  congr 1
-  apply Fin.ext
-  have hp := D.penultimateVertexPosition
-  simp only [Fin.val_castLE, Fin.val_last]
-  omega
-
 private theorem helper_hgammaUnused_232.{u_1, u_2} :
     open scoped Classical in
     ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq V] [DecidableEq E] (G :
@@ -1182,36 +1162,6 @@ private theorem helper_hstoredTwo_1050.{u_1, u_2} :
   · subst c
     exact firstPreserved rho muTwo D.theta hmissingTwo hmissingPairOne.2
   · exact firstUnaffected rho D.gammaOne D.theta c hgammaTheta ctxOne.proper hcg hct
-
-private theorem helper_hcoreLength_1080.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq V] [DecidableEq E] (G :
-        LooplessMultigraph V E) (k : ℕ) (e0 : E) (input : PartialEdgeColoring E k) (T :
-        TreeSequence G e0) (phi : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k e0
-        input T phi) (base : HierarchyBase ett phi) (C : HierarchyCounterexample base) (ctx :
-        HierarchyMinimumCounterexampleContext G k e0 input T phi ett base C) (_ :
-        HierarchySituationTwoCaseOneTwoData G k e0 input T phi ett base C ctx),
-    let H : TashkinovHierarchy ett base := C.hierarchy;
-    let q : Fin (H.dividerCount + (1 : ℕ)) := Fin.last H.dividerCount;
-    let A : TreeSequence G e0 := HierarchyStarredStage H q;
-    ∀ (POne : HierarchyReplacementPresentation G k e0 input T phi ett base C ctx), (
-    ∀ (P : HierarchyReplacementPresentation G k e0 input T phi ett base C ctx),
-        HierarchyStarredStage P.counterexample.hierarchy (Fin.last
-        P.counterexample.hierarchy.dividerCount) = A) →
-    let baseOne' : HierarchyBase POne.corresponding.replacementETT POne.coloring :=
-        POne.replacementBase;
-    let COne' : HierarchyCounterexample POne.replacementBase := POne.counterexample;
-    let HOne : TashkinovHierarchy POne.corresponding.replacementETT POne.replacementBase :=
-        COne'.hierarchy;
-    let _ : Fin (HOne.dividerCount + (1 : ℕ)) := Fin.last HOne.dividerCount; baseOne'.core.length
-        ≤ A.length := by
-  classical
-  intro V E _ _ _ _ G k e0 input T phi ett base C ctx D H q A POne sameStar baseOne' COne' HOne qOne
-  have included := HOne.coreInitialSegmentOfStarredStage qOne
-  have same := sameStar POne
-  change HierarchyStarredStage HOne qOne = A at same
-  rw [same] at included
-  exact included.1
 
 private theorem helper_hrouteTwo_1126.{u_1, u_2} :
     open scoped Classical in
@@ -1805,9 +1755,8 @@ private theorem helper_continuation_3192.{u_1, u_2} :
       TreeSequenceInitialSegment X F := by
     exact @TreeSequenceInitialSegment.trans V E G e0 (@X) (@Y) (@F) (@hXY) (@hYF)
   have hcoreLength : baseOne'.core.length ≤ A.length := by
-    exact @helper_hcoreLength_1080 (@V) (@E) inferInstance inferInstance inferInstance
-        inferInstance (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C) (@ctx) (@D)
-        (@POne) (@sameStar)
+    simpa only [show HierarchyStarredStage HOne qOne = A from sameStar POne] using
+      (HOne.coreInitialSegmentOfStarredStage qOne).1
   have transportRoute (S : TreeSequence G e0) (hs : TashkinovAugmentationSequence rho S B) :
       TashkinovAugmentationSequence muTwo S B := by
     have fixedEdges (index : Fin B.length) :
@@ -2321,9 +2270,9 @@ theorem HierarchySituationTwoSubcaseOneTwo {V E : Type*}
         (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C) (@htail) (@hBlen) (@hApositive)
         (@hAzero) (@hAT)
   have hBterminal : B.vertex (Fin.last B.length) = T.vertex D.penultimateVertexIndex := by
-    exact @helper_hBterminal_152 (@V) (@E) inferInstance inferInstance inferInstance
-        inferInstance (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C) (@ctx) (@D)
-        (@hBlen) (@hBT)
+    exact hBT.last_vertex_eq (by
+      have position := D.penultimateVertexPosition
+      omega)
   have hyB : T.vertex D.penultimateVertexIndex ∈ TreeSequenceVertexSet B := by
     simp only [TreeSequenceVertexSet, Finset.mem_image, Finset.mem_univ, true_and]
     exact ⟨Fin.last B.length, hBterminal⟩

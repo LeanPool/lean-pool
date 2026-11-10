@@ -1,7 +1,7 @@
 /-
 Copyright (c) 2026 Wesley Pegden. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Wesley Pegden
+Authors: Wesley Pegden, Lean Pool contributors
 -/
 module
 
@@ -11,6 +11,8 @@ public import LeanPool.GoldbergSeymour.CorrespondingExtendedTashkinovTreeTermina
 
 public import LeanPool.GoldbergSeymour.CorrespondingExtendedTashkinovTree
 public import LeanPool.GoldbergSeymour.GoodHierarchy
+public import LeanPool.GoldbergSeymour.HierarchyFieldTransport
+public import LeanPool.GoldbergSeymour.TreeSequenceFirstMissingPositionInvariant
 
 public import LeanPool.GoldbergSeymour.HierarchyFirstMissingPositionPrefixCutoff
 
@@ -27,6 +29,114 @@ Adapted from Wesley Pegden’s Trellis formalization at
 @[expose] public section
 
 namespace GoldbergSeymour
+
+section PrefixColoring
+
+variable {V E : Type*} [Fintype V] [Fintype E] [DecidableEq V] [DecidableEq E]
+    {G : LooplessMultigraph V E} {k : ℕ} {e0 : E}
+    {input otherInput generating otherGenerating phi sigma : PartialEdgeColoring E k}
+    {T U : TreeSequence G e0}
+    {ett : ExtendedTashkinovTree G k e0 input T generating}
+    {otherETT : ExtendedTashkinovTree G k e0 otherInput U otherGenerating}
+    {base : HierarchyBase ett phi} {otherBase : HierarchyBase otherETT sigma}
+    {original : TashkinovHierarchy ett base}
+
+/-- Recolor a good hierarchy while cutting its terminal tree to a compatible prefix. -/
+noncomputable def GoodHierarchy.transportOfPrefixColoringAgreement
+    (good : GoodHierarchy original) (replacement : TashkinovHierarchy otherETT otherBase)
+    (count : original.dividerCount = replacement.dividerCount)
+    (core : otherBase.core = base.core) (closure : otherBase.closure = base.closure)
+    (tree : otherETT.series.data.tree (Fin.last otherETT.rounds).castSucc =
+      ett.series.data.tree (Fin.last ett.rounds).castSucc)
+    (kind : otherETT.series.data.kind (Fin.last otherETT.rounds) =
+      ett.series.data.kind (Fin.last ett.rounds))
+    (stored : TashkinovStoredColors otherETT.series.data (Fin.last otherETT.rounds) =
+      TashkinovStoredColors ett.series.data (Fin.last ett.rounds))
+    (prefixTree : TreeSequence G e0)
+    (fixed : ∀ edge, TreeIncidentEdge prefixTree edge → sigma edge = phi edge)
+    (missing : ∀ vertex ∈ TreeSequenceVertexSet prefixTree,
+      MissingColors G sigma vertex = MissingColors G phi vertex)
+    (coreInside : TreeSequenceInitialSegment base.core prefixTree)
+    (closureInside : ett.series.data.kind (Fin.last ett.rounds) = some TashkinovExtensionKind.PE →
+      TreeSequenceVertexSet base.closure ⊆ TreeSequenceVertexSet prefixTree)
+    (stages : ∀ index : Fin (replacement.dividerCount + 1),
+      replacement.stage index.castSucc = original.stage
+        (Fin.cast (congrArg (fun n => n + 1) count.symm) index).castSucc)
+    (stars : ∀ index : Fin (replacement.dividerCount + 1),
+      HierarchyStarredStage replacement index = HierarchyStarredStage original
+        (Fin.cast (congrArg (fun n => n + 1) count.symm) index))
+    (stageInside : ∀ index : Fin (original.dividerCount + 1),
+      TreeSequenceInitialSegment (original.stage index.castSucc) prefixTree)
+    (starInside : ∀ index : Fin (original.dividerCount + 1),
+      TreeSequenceInitialSegment (HierarchyStarredStage original index) prefixTree)
+    (terminalPrefix : TreeSequenceInitialSegment U T)
+    (beforeTerminal : TreeSequenceInitialSegment prefixTree U)
+    (terminalLength : U.length = prefixTree.length + 1)
+    (edges : ∀ position : Fin U.length, sigma (U.edge position) = phi (U.edge position))
+    (nextPrefix : ∀ index : Fin (replacement.dividerCount + 1),
+      TreeSequenceInitialSegment (replacement.stage index.succ) (original.stage
+        (Fin.cast (congrArg (fun n => n + 1) count.symm) index).succ)) :
+    GoodHierarchy replacement := by
+  classical
+  have missingEq (S : TreeSequence G e0) (inside :
+      TreeSequenceVertexSet S ⊆ TreeSequenceVertexSet prefixTree) :
+      TreeMissingColors sigma S = TreeMissingColors phi S := by
+    exact TreeMissingColors.congr (fun vertex member => missing vertex (inside member))
+  have storedEq (index : Fin (replacement.dividerCount + 1)) :
+      HierarchyStoredColorsAt replacement index = HierarchyStoredColorsAt original
+        (Fin.cast (congrArg (fun n => n + 1) count.symm) index) :=
+    original.storedColors_eq_of_agreement replacement _ index stored (stars index)
+      (missingEq _ (starInside _).vertexSet_subset)
+  have minusEq (S : TreeSequence G e0) (inside :
+      TreeSequenceVertexSet S ⊆ TreeSequenceVertexSet prefixTree) (colors : Finset (Fin k)) :
+      TreeColorSetMinusClosed G sigma S colors ↔ TreeColorSetMinusClosed G phi S colors := by
+    have boundary (color : Fin k) : BoundaryColorEdges G sigma (TreeSequenceVertexSet S) color =
+        BoundaryColorEdges G phi (TreeSequenceVertexSet S) color := by
+      ext edge
+      simp only [BoundaryColorEdges, Finset.mem_filter]
+      apply and_congr_right
+      intro member
+      simp only [BoundaryEdges, Finset.mem_filter, Finset.mem_univ, true_and] at member
+      obtain ⟨vertex, vertexIn, other, _, ends⟩ := member
+      have fixedEdge := fixed edge ⟨vertex, inside vertexIn, by
+        change vertex ∈ G.ends edge
+        rw [ends]
+        exact Sym2.mem_mk_left _ _⟩
+      rw [fixedEdge]
+    unfold TreeColorSetMinusClosed TreeColorSetClosed
+    rw [missingEq S inside]
+    simp only [boundary]
+  refine good.transportOfFields replacement count storedEq ?_ ?_ ?_ ?_ ?_
+  · intro index
+    exact original.stageMissingColors_eq_of_agreement replacement _ index (stages index)
+      (missingEq _ (stageInside _).vertexSet_subset)
+  · intro index color _
+    exact original.segmentColors_subset_of_prefix replacement _ index color (stars index)
+      (nextPrefix index) (replacement.stageInitialSegment _) terminalPrefix
+      (congrArg Fin.val
+        (U.firstMissingPosition_eq_of_prefix_agreement beforeTerminal terminalLength.le
+          missing color))
+      edges
+  · intro index
+    simp only [stages, stars, Fin.cast_castSucc, Fin.cast_succ_eq]
+    apply Finset.biUnion_congr rfl
+    intro vertex member
+    exact missing vertex ((stageInside _).vertexSet_subset (Finset.mem_sdiff.mp member).1)
+  · intro parallel
+    have oldParallel := kind.symm.trans parallel
+    dsimp only [reindexedGamma]
+    rw [Fin.cast_zero, storedEq, Fin.cast_zero, core, closure, tree,
+      minusEq _ coreInside.vertexSet_subset,
+      missingEq _ (base.lastRoundInitialSegmentCore.trans coreInside).vertexSet_subset,
+      missingEq _ (closureInside oldParallel)]
+    exact good.parallelBase oldParallel
+  · intro index
+    dsimp only [reindexedGamma]
+    rw [stages, storedEq, minusEq _ (stageInside _).vertexSet_subset]
+    simpa only [Fin.cast_succ_eq, Fin.cast_castSucc] using
+      good.minusClosed (Fin.cast count.symm index)
+
+end PrefixColoring
 
 private theorem helper_continuation_174.{u_1, u_2} :
     open scoped Classical in

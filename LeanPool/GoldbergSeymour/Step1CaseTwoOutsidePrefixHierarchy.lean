@@ -17,6 +17,7 @@ public import LeanPool.GoldbergSeymour.TreeSequenceFirstMissingPositionInvariant
 
 public import LeanPool.GoldbergSeymour.GoodHierarchy
 public import LeanPool.GoldbergSeymour.HierarchyFieldTransport
+public import LeanPool.GoldbergSeymour.GoodHierarchySameDividerTransport
 public import LeanPool.GoldbergSeymour.GoodHierarchyReservedDisjoint
 public import LeanPool.GoldbergSeymour.MaximumProperty
 public import LeanPool.GoldbergSeymour.Td
@@ -392,866 +393,10 @@ private noncomputable abbrev helperKC712.{u_1, u_2} :
       · rw [stageOld ⟨1, by omega⟩ (by change 1 ≤ H.dividerCount; omega)]
         exact H.coreInsideFirst }
 
-private noncomputable abbrev helperGoodC1021.{u_1, u_2} :
-    open scoped Classical in
-      {V : Type u_1} →
-  {E : Type u_2} →
-  [ Fintype V] →
-  [ Fintype E] →
-  [ DecidableEq V] →
-  [ DecidableEq E] →
-  (G : LooplessMultigraph V E) →
-  (k : ℕ) →
-  (e0 : E) →
-  (input : PartialEdgeColoring E k) →
-  (T : TreeSequence G e0) →
-  (phi : PartialEdgeColoring E k) →
-  (ett : ExtendedTashkinovTree G k e0 input T phi) →
-  (hpositive : (0 : ℕ) < ett.rounds) →
-  (base : HierarchyBase ett phi) →
-  (H : TashkinovHierarchy ett base) →
-  GoodHierarchy H →
-  Fin k →
-  (mu : PartialEdgeColoring E k) →
-  (Bminus C : TreeSequence G e0) →
-  (hBCstrict : Bminus.length < C.length) →
-  (hCT : TreeSequenceInitialSegment C T) →
-  (segTrans :
-      ∀ {S U W : TreeSequence G e0},
-        TreeSequenceInitialSegment S U →
-          TreeSequenceInitialSegment U W →
-            TreeSequenceInitialSegment S W) →
-  let Tn : TreeSequence G e0 :=
-    ett.series.data.tree
-      (Fin.last ett.rounds).castSucc;
-  (coreToB :
-      TreeSequenceInitialSegment base.core
-        Bminus) →
-  (hBtoC :
-      TreeSequenceInitialSegment Bminus C) →
-  (stageToB :
-      ∀ (j : Fin (H.dividerCount + (1 : ℕ))),
-        TreeSequenceInitialSegment
-          (H.stage j.castSucc) Bminus) →
-  (∀ (S : TreeSequence G e0),
-      TreeSequenceVertexSet S ⊆
-          TreeSequenceVertexSet Bminus →
-        TreeMissingColors mu S =
-          TreeMissingColors phi S) →
-  (newInput : PartialEdgeColoring E k) →
-  (newSeries :
-      TashkinovSeries G k ett.rounds e0
-        newInput) →
-  (rp : (1 : ℕ) ≤ ett.1) →
-  (above :
-      TreeSequenceInitialSegment
-        (newSeries.data.tree
-          (⟨ett.1, by omega⟩ :
-            Fin (ett.1 + (2 : ℕ))))
-        C) →
-  (strict :
-      (newSeries.data.tree
-            (⟨ett.1, by omega⟩ :
-              Fin
-                (ett.1 +
-                  (2 :
-                    ℕ)))).length <
-        C.length) →
-  (below :
-      TreeSequenceInitialSegment
-        C
-        (newSeries.data.tree
-          (Fin.last
-            (ett.1 +
-              (1 : ℕ))))) →
-  (gen :
-      mu =
-        newSeries.data.coloring
-          (Fin.last ett.1)) →
-  { rounds := ett.1,
-          roundsPositive :=
-            rp,
-          series :=
-            newSeries,
-          abovePenultimate :=
-            above,
-          strictAbovePenultimate :=
-            strict,
-          belowFinal :=
-            below,
-          generatingColoring :=
-            gen :
-          ExtendedTashkinovTree
-            G k e0 newInput
-            C mu }.series ≍
-      newSeries →
-  let rep :
-    ExtendedTashkinovTree
-      G k e0 newInput C
-      mu :=
-    helperRep474 G k e0
-      input T phi ett mu C
-      newInput newSeries
-      rp above strict
-      below gen;
-  (htree :
-      newSeries.data.tree
-          (Fin.last
-              ett.rounds).castSucc =
-        Tn) →
-  (hkind :
-      newSeries.data.kind
-          (Fin.last
-            ett.rounds) =
-        ett.series.data.kind
-          (Fin.last
-            ett.rounds)) →
-  (chosenAgree :
-      ett.series.data.kind
-            (Fin.last
-              ett.rounds) =
-          some
-            TashkinovExtensionKind.PE →
-        newSeries.data.chosenVertex
-            (Fin.last
-              ett.rounds) =
-          ett.series.data.chosenVertex
-            (Fin.last
-              ett.rounds)) →
-  (ett.series.data.kind
-          (Fin.last
-            ett.rounds) =
-        some
-          TashkinovExtensionKind.PE →
-      TreeSequenceVertexSet
-          base.closure ⊆
-        TreeSequenceVertexSet
-          Bminus) →
-  (closureMu :
-      ett.series.data.kind
-            (Fin.last
-              ett.rounds) =
-          some
-            TashkinovExtensionKind.PE →
-        TashkinovClosure
-          mu
-          (TreeSequencePrefix
-            Tn
-            (↑base.supportPosition :
-              ℕ)
-            base.supportPositive
-            (Nat.le_of_lt_succ
-              base.supportPosition.isLt))
-          base.closure) →
-  let baseC :
-    HierarchyBase
-      rep mu :=
-    helperBaseC598
-      G k e0
-      input T
-      phi ett
-      base mu C
-      newInput
-      newSeries
-      rp above
-      strict
-      below gen
-      htree
-      hkind
-      chosenAgree
-      closureMu;
-  let stageC :
-    Fin
-        (H.dividerCount +
-          (2 :
-            ℕ)) →
-      TreeSequence
-        G e0 :=
-    fun
-      (j :
-        Fin
-          (H.dividerCount +
-            (2 :
-              ℕ))) ↦
-    if
-        (↑j :
-            ℕ) =
-          H.dividerCount +
-            (1 :
-              ℕ) then
-      C
-    else
-      H.stage j;
-  (stageOld :
-      ∀
-        (j :
-          Fin
-            (H.dividerCount +
-              (2 :
-                ℕ))),
-        (↑j :
-              ℕ) ≤
-            H.dividerCount →
-          stageC
-              j =
-            H.stage
-              j) →
-  (stageLast :
-      stageC
-          (Fin.last
-            (H.dividerCount +
-              (1 :
-                ℕ))) =
-        C) →
-  (divBound :
-      ∀
-        (i :
-          Fin
-            H.dividerCount),
-        (↑(H.dividerPosition
-                i) :
-            ℕ) ≤
-          C.length) →
-  let KC :
-    TashkinovHierarchy
-      rep
-      baseC :=
-    helperKC712
-      G k
-      e0
-      input
-      T
-      phi
-      ett
-      hpositive
-      base
-      H mu
-      Bminus
-      C
-      hBCstrict
-      hCT
-      segTrans
-      coreToB
-      hBtoC
-      stageToB
-      newInput
-      newSeries
-      rp
-      above
-      strict
-      below
-      gen
-      htree
-      hkind
-      chosenAgree
-      closureMu
-      stageOld
-      stageLast
-      divBound;
-  (∀
-      (j :
-        Fin
-          (H.dividerCount +
-            (1 :
-              ℕ))),
-      KC.stage
-          j.castSucc =
-        H.stage
-          j.castSucc) →
-  TreeMissingColors
-        mu
-        Tn =
-      TreeMissingColors
-        phi
-        Tn →
-  (∀
-      (j :
-        Fin
-          (H.dividerCount +
-            (1 :
-              ℕ))),
-      HierarchyStoredColorsAt
-          KC
-          j =
-        HierarchyStoredColorsAt
-          H
-          j) →
-  (∀
-      (j :
-        Fin
-          (H.dividerCount +
-            (1 :
-              ℕ))),
-      HierarchyStageMissingColors
-          KC
-          j =
-        HierarchyStageMissingColors
-          H
-          j) →
-  (∀
-      (j :
-        Fin
-          (H.dividerCount +
-            (1 :
-              ℕ)))
-      (eta :
-        Fin
-          k),
-      HierarchySegmentColors
-          KC
-          j
-          eta ⊆
-        HierarchySegmentColors
-          H
-          j
-          eta) →
-  (∀
-      (S :
-        TreeSequence
-          G
-          e0),
-      TreeSequenceVertexSet
-            S ⊆
-          TreeSequenceVertexSet
-            Bminus →
-        ∀
-          (D :
-            Finset
-              (Fin
-                k)),
-          TreeColorSetMinusClosed
-              G
-              mu
-              S
-              D ↔
-            TreeColorSetMinusClosed
-              G
-              phi
-              S
-              D) →
-  (∀
-      (i :
-        Fin
-          H.dividerCount),
-      ((TreeSequenceVertexSet
-                (KC.stage
-                  i.succ.castSucc) \
-              TreeSequenceVertexSet
-                (HierarchyStarredStage
-                  KC
-                  i.castSucc)).biUnion
-          fun
-            (v :
-              V) ↦
-          MissingColors
-            G
-            mu
-            v) =
-        (TreeSequenceVertexSet
-                (H.stage
-                  i.succ.castSucc) \
-              TreeSequenceVertexSet
-                (HierarchyStarredStage
-                  H
-                  i.castSucc)).biUnion
-          fun
-            (v :
-              V) ↦
-          MissingColors
-            G
-            phi
-            v) →
-  GoodHierarchy
-    KC := by
-  classical
-  intro V E _ _ _ _ G k e0 input T phi ett hpositive base H good gamma mu Bminus C hBCstrict hCT
-      segTrans Tn coreToB hBtoC stageToB missingEq newInput newSeries rp above strict below gen
-      hs rep htree hkind chosenAgree closureVertices closureMu baseC stageC stageOld stageLast
-      divBound KC ordinaryEq terminalMissing indexedStoredEq stageMissingEq segmentSubset minusEq
-      refreshEq
-  exact good.transportOfFields KC rfl indexedStoredEq stageMissingEq
-    (fun j eta _ => segmentSubset j eta) refreshEq
-    (by
-      intro hp
-      have hpOld := hkind.symm.trans hp
-      have hold := good.parallelBase hpOld
-      change ¬TreeColorSetMinusClosed G mu base.core
-          ((HierarchyStoredColorsAt KC 0).biUnion (good.gamma 0)) ∧
-        4 ≤ ((TreeMissingColors mu (newSeries.data.tree (Fin.last ett.rounds).castSucc) ∩
-          TreeMissingColors mu base.closure) \
-            (HierarchyStoredColorsAt KC 0).biUnion (good.gamma 0)).card
-      rw [indexedStoredEq, minusEq _ coreToB.vertexSet_subset,
-        htree, terminalMissing, missingEq _ (closureVertices hpOld)]
-      exact hold)
-    (by
-      intro i
-      rw [ordinaryEq, indexedStoredEq, minusEq _ (stageToB i.succ).vertexSet_subset]
-      exact good.minusClosed i)
-
-private abbrev helperContinuation906Conditions.{u_1, u_2} : Prop :=
- open scoped Classical in
-  ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq V] [DecidableEq E]
-   (G : LooplessMultigraph V E) (k : ℕ) (e0 : E) (input : PartialEdgeColoring E k)
-   (T : TreeSequence G e0) (phi : PartialEdgeColoring E k)
-   (ett : ExtendedTashkinovTree G k e0 input T phi),
-  MaximumProperty ett →
-  (0 : ℕ) < ett.rounds →
-  ∀ (base : HierarchyBase ett phi) (H : TashkinovHierarchy ett base) (good : GoodHierarchy H),
-  (2 : ℕ) * ett.rounds + (11 : ℕ) ≤
-    (TreeMissingColors phi (ett.series.data.tree (Fin.last ett.rounds).castSucc)).card →
-  ∀ (beta gamma : Fin k),
-  beta ∉ TreeMissingColors phi T →
-  ∀ (mu : PartialEdgeColoring E k) (Bminus C : TreeSequence G e0),
-  (∀ (e : E), TreeIncidentEdge Bminus e → mu e = phi e) →
-  (∀ v ∈ TreeSequenceVertexSet Bminus, MissingColors G mu v = MissingColors G phi v) →
-  gamma ∉
-    (HierarchyStoredColorsAt H (Fin.last H.dividerCount)).biUnion
-     (good.gamma (Fin.last H.dividerCount)) →
-  Bminus.length < C.length →
-  TreeSequenceInitialSegment C T →
-  (∀ (S : TreeSequence G e0), TreeSequenceInitialSegment S S) →
-  (∀ {S U W : TreeSequence G e0},
-    TreeSequenceInitialSegment S U →
-     TreeSequenceInitialSegment U W → TreeSequenceInitialSegment S W) →
-  let Tn : TreeSequence G e0 := ett.series.data.tree (Fin.last ett.rounds).castSucc;
-  TreeSequenceInitialSegment base.core Bminus →
-  TreeSequenceInitialSegment Tn Bminus →
-  C.length = Bminus.length + (1 : ℕ) →
-  TreeSequenceInitialSegment Bminus C →
-  TreeSequenceInitialSegment Tn C →
-  Tn.length < C.length →
-  (∀ (j : Fin (H.dividerCount + (1 : ℕ))),
-    TreeSequenceInitialSegment (H.stage j.castSucc) Bminus) →
-  (∀ (j : Fin (H.dividerCount + (1 : ℕ))),
-    TreeSequenceInitialSegment (HierarchyStarredStage H j) Bminus) →
-  (∀ (S : TreeSequence G e0) (i : Fin (S.length + (1 : ℕ))),
-    S.vertex i ∈ TreeSequenceVertexSet S) →
-  (∀ (j : Fin C.length), mu (C.edge j) = phi (C.edge j)) →
-  (∀ (S : TreeSequence G e0),
-    TreeSequenceVertexSet S ⊆ TreeSequenceVertexSet Bminus →
-     TreeMissingColors mu S = TreeMissingColors phi S) →
-  ModColoring ett mu →
-  (ett.series.data.kind (Fin.last ett.rounds) =
-      some TashkinovExtensionKind.PE ∧
-     TashkinovAugmentationSequence mu Tn C ∨
-    (ett.series.data.kind (Fin.last ett.rounds) =
-       some TashkinovExtensionKind.SE ∨
-      ett.series.data.kind (Fin.last ett.rounds) =
-       some TashkinovExtensionKind.RE) ∧
-     ∃ (f : E) (seed : TreeSequence G e0),
-      ett.series.data.connectingEdges (Fin.last ett.rounds) =
-        ({ f } : Finset E) ∧
-       TreeSequenceAdjoinEdge Tn f seed ∧
-        TashkinovAugmentationSequence mu seed C) →
-  ∃ (corrC : CorrespondingExtendedTashkinovTree G k e0 ett mu C) (baseC
-   : HierarchyBase corrC.replacementETT mu) (KC :
-   TashkinovHierarchy corrC.replacementETT baseC) (goodC :
-   GoodHierarchy KC),
-   ModColoring ett mu ∧
-    MaximumProperty corrC.replacementETT ∧
-     (ett.series.data.kind (Fin.last ett.rounds) =
-         some TashkinovExtensionKind.PE ∧
-        TashkinovAugmentationSequence mu
-         (ett.series.data.tree (Fin.last ett.rounds).castSucc) C ∨
-       (ett.series.data.kind (Fin.last ett.rounds) =
-          some TashkinovExtensionKind.SE ∨
-         ett.series.data.kind (Fin.last ett.rounds) =
-          some TashkinovExtensionKind.RE) ∧
-        ∃ (f : E) (seed : TreeSequence G e0),
-         ett.series.data.connectingEdges (Fin.last ett.rounds) =
-           ({ f } : Finset E) ∧
-          TreeSequenceAdjoinEdge
-            (ett.series.data.tree (Fin.last ett.rounds).castSucc) f
-            seed ∧
-           TashkinovAugmentationSequence mu seed C) ∧
-      KC.dividerCount = H.dividerCount ∧
-       (2 : ℕ) * corrC.replacementETT.rounds + (11 : ℕ) ≤
-         (TreeMissingColors mu
-           (corrC.replacementETT.series.data.tree
-            (Fin.last corrC.replacementETT.rounds).castSucc)).card ∧
-        gamma ∉
-          (HierarchyStoredColorsAt KC
-             (Fin.last KC.dividerCount)).biUnion
-           (goodC.gamma (Fin.last KC.dividerCount)) ∧
-         beta ∉
-          (HierarchyStoredColorsAt KC
-             (Fin.last KC.dividerCount)).biUnion
-           (goodC.gamma (Fin.last KC.dividerCount))
-
-private abbrev helperSegmentSubset970Conditions.{u_1, u_2} : Prop :=
- open scoped Classical in
-  ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E] [ DecidableEq V]
-   [ DecidableEq E] (G : LooplessMultigraph V E) (k : ℕ) (e0 : E)
-   (input : PartialEdgeColoring E k) (T : TreeSequence G e0) (phi : PartialEdgeColoring E k)
-   (ett : ExtendedTashkinovTree G k e0 input T phi) (hpositive : (0 : ℕ) < ett.rounds)
-   (base : HierarchyBase ett phi) (H : TashkinovHierarchy ett base) (mu : PartialEdgeColoring E k)
-   (Bminus C : TreeSequence G e0) (hBCstrict : Bminus.length < C.length)
-   (hCT : TreeSequenceInitialSegment C T)
-   (segTrans :
-    ∀ {S U W : TreeSequence G e0},
-     TreeSequenceInitialSegment S U →
-      TreeSequenceInitialSegment U W → TreeSequenceInitialSegment S W),
-  let Tn : TreeSequence G e0 := ett.series.data.tree (Fin.last ett.rounds).castSucc;
-  ∀ (coreToB : TreeSequenceInitialSegment base.core Bminus)
-   (hBtoC : TreeSequenceInitialSegment Bminus C)
-   (stageToB :
-    ∀ (j : Fin (H.dividerCount + (1 : ℕ))),
-     TreeSequenceInitialSegment (H.stage j.castSucc) Bminus),
-  (∀ (j : Fin C.length), mu (C.edge j) = phi (C.edge j)) →
-  ∀ (newInput : PartialEdgeColoring E k) (newSeries : TashkinovSeries G k ett.rounds e0 newInput)
-   (rp : (1 : ℕ) ≤ ett.1)
-   (above :
-    TreeSequenceInitialSegment (newSeries.data.tree (⟨ett.1, by omega⟩ : Fin (ett.1 + (2 : ℕ))))
-     C)
-   (strict : (newSeries.data.tree (⟨ett.1, by omega⟩ : Fin (ett.1 + (2 : ℕ)))).length < C.length)
-   (below : TreeSequenceInitialSegment C (newSeries.data.tree (Fin.last (ett.1 + (1 : ℕ)))))
-   (gen : mu = newSeries.data.coloring (Fin.last ett.1)),
-  let rep : ExtendedTashkinovTree G k e0 newInput C mu :=
-   helperRep474 G k e0 input T phi ett mu C newInput newSeries rp above strict below gen;
-  ∀ (htree : newSeries.data.tree (Fin.last ett.rounds).castSucc = Tn)
-   (hkind :
-    newSeries.data.kind (Fin.last ett.rounds) = ett.series.data.kind (Fin.last ett.rounds))
-   (chosenAgree :
-    ett.series.data.kind (Fin.last ett.rounds) = some TashkinovExtensionKind.PE →
-     newSeries.data.chosenVertex (Fin.last ett.rounds) =
-      ett.series.data.chosenVertex (Fin.last ett.rounds))
-   (closureMu :
-    ett.series.data.kind (Fin.last ett.rounds) = some TashkinovExtensionKind.PE →
-     TashkinovClosure mu
-      (TreeSequencePrefix Tn (↑base.supportPosition : ℕ) base.supportPositive
-       (Nat.le_of_lt_succ base.supportPosition.isLt))
-      base.closure),
-  let baseC : HierarchyBase rep mu :=
-   helperBaseC598 G k e0 input T phi ett base mu C newInput newSeries rp above strict below gen
-    htree hkind chosenAgree closureMu;
-  let stageC : Fin (H.dividerCount + (2 : ℕ)) → TreeSequence G e0 :=
-   fun (j : Fin (H.dividerCount + (2 : ℕ))) ↦
-   if (↑j : ℕ) = H.dividerCount + (1 : ℕ) then C else H.stage j;
-  ∀
-   (stageOld :
-    ∀ (j : Fin (H.dividerCount + (2 : ℕ))), (↑j : ℕ) ≤ H.dividerCount → stageC j = H.stage j)
-   (stageLast : stageC (Fin.last (H.dividerCount + (1 : ℕ))) = C)
-   (divBound : ∀ (i : Fin H.dividerCount), (↑(H.dividerPosition i) : ℕ) ≤ C.length),
-  let KC : TashkinovHierarchy rep baseC :=
-   helperKC712 G k e0 input T phi ett hpositive base H mu Bminus C hBCstrict hCT segTrans
-    coreToB hBtoC stageToB newInput newSeries rp above strict below gen htree hkind
-    chosenAgree closureMu stageOld stageLast divBound;
-  (∀ (j : Fin (H.dividerCount + (1 : ℕ))),
-    HierarchyStarredStage KC j = HierarchyStarredStage H j) →
-  (∀ (eta : Fin k),
-    (↑(HierarchyFirstMissingPosition mu C eta) : ℕ) =
-     (↑(HierarchyFirstMissingPosition phi C eta) : ℕ)) →
-  (∀ (j : Fin (H.dividerCount + (1 : ℕ))),
-    TreeSequenceInitialSegment (KC.stage j.succ) (H.stage j.succ) ∧
-     TreeSequenceInitialSegment (KC.stage j.succ) C) →
-  ∀ (j : Fin (H.dividerCount + (1 : ℕ))) (eta : Fin k),
-  HierarchySegmentColors KC j eta ⊆ HierarchySegmentColors H j eta
-
-private abbrev helperCaseContinuation955Conditions.{u_1, u_2} : Prop :=
- open scoped Classical in
-  ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E] [ DecidableEq V]
-   [ DecidableEq E] (G : LooplessMultigraph V E) (k : ℕ) (e0 : E)
-   (input : PartialEdgeColoring E k) (T : TreeSequence G e0) (phi : PartialEdgeColoring E k)
-   (ett : ExtendedTashkinovTree G k e0 input T phi) (hpositive : (0 : ℕ) < ett.rounds)
-   (base : HierarchyBase ett phi) (H : TashkinovHierarchy ett base) (good : GoodHierarchy H)
-   (hlarge :
-    (2 : ℕ) * ett.rounds + (11 : ℕ) ≤
-     (TreeMissingColors phi (ett.series.data.tree (Fin.last ett.rounds).castSucc)).card)
-   (beta gamma : Fin k) (hbeta : beta ∉ TreeMissingColors phi T) (mu : PartialEdgeColoring E k)
-   (Bminus C : TreeSequence G e0) (hfixed : ∀ (e : E), TreeIncidentEdge Bminus e → mu e = phi e)
-   (hmissingFixed :
-    ∀ v ∈ TreeSequenceVertexSet Bminus, MissingColors G mu v = MissingColors G phi v)
-   (hgammaReserved :
-    gamma ∉
-     (HierarchyStoredColorsAt H (Fin.last H.dividerCount)).biUnion
-      (good.gamma (Fin.last H.dividerCount)))
-   (hBCstrict : Bminus.length < C.length) (hCT : TreeSequenceInitialSegment C T)
-   (segRefl : ∀ (S : TreeSequence G e0), TreeSequenceInitialSegment S S)
-   (segTrans :
-    ∀ {S U W : TreeSequence G e0},
-     TreeSequenceInitialSegment S U →
-      TreeSequenceInitialSegment U W → TreeSequenceInitialSegment S W),
-  let Tn : TreeSequence G e0 := ett.series.data.tree (Fin.last ett.rounds).castSucc;
-  ∀ (coreToB : TreeSequenceInitialSegment base.core Bminus)
-   (hlenC : C.length = Bminus.length + (1 : ℕ)) (hBtoC : TreeSequenceInitialSegment Bminus C)
-   (stageToB :
-    ∀ (j : Fin (H.dividerCount + (1 : ℕ))), TreeSequenceInitialSegment (H.stage j.castSucc) Bminus)
-   (starredToB :
-    ∀ (j : Fin (H.dividerCount + (1 : ℕ))),
-     TreeSequenceInitialSegment (HierarchyStarredStage H j) Bminus)
-   (vertexMem :
-    ∀ (S : TreeSequence G e0) (i : Fin (S.length + (1 : ℕ))), S.vertex i ∈ TreeSequenceVertexSet S)
-   (fixedC : ∀ (j : Fin C.length), mu (C.edge j) = phi (C.edge j))
-   (missingEq :
-    ∀ (S : TreeSequence G e0),
-     TreeSequenceVertexSet S ⊆ TreeSequenceVertexSet Bminus →
-      TreeMissingColors mu S = TreeMissingColors phi S)
-   (hmod : ModColoring ett mu)
-   (terminalRoute :
-    ett.series.data.kind (Fin.last ett.rounds) = some TashkinovExtensionKind.PE ∧
-      TashkinovAugmentationSequence mu Tn C ∨
-     (ett.series.data.kind (Fin.last ett.rounds) = some TashkinovExtensionKind.SE ∨
-       ett.series.data.kind (Fin.last ett.rounds) = some TashkinovExtensionKind.RE) ∧
-      ∃ (f : E) (seed : TreeSequence G e0),
-       ett.series.data.connectingEdges (Fin.last ett.rounds) = ({ f } : Finset E) ∧
-        TreeSequenceAdjoinEdge Tn f seed ∧ TashkinovAugmentationSequence mu seed C)
-   (newInput : PartialEdgeColoring E k) (newSeries : TashkinovSeries G k ett.rounds e0 newInput)
-   (hgen : mu = newSeries.data.coloring (Fin.last ett.rounds))
-   (htrees :
-    ∀ (i : Fin ett.rounds),
-     newSeries.data.tree i.succ.castSucc = ett.series.data.tree i.succ.castSucc)
-   (hstored :
-    ∀ (i : Fin (ett.rounds + (1 : ℕ))), newSeries.data.stored i = ett.series.data.stored i)
-   (hedges :
-    ∀ (i : Fin (ett.rounds + (1 : ℕ))),
-     newSeries.data.connectingEdges i = ett.series.data.connectingEdges i)
-   (hkinds : ∀ (i : Fin (ett.rounds + (1 : ℕ))), newSeries.data.kind i = ett.series.data.kind i)
-   (hproper :
-    ∀ (i : Fin (ett.rounds + (1 : ℕ))), IsProperEdgeColoring G (newSeries.data.coloring i))
-   (hone : ∀ (i : Fin (ett.rounds + (1 : ℕ))), IsOneEdgeUncolored (newSeries.data.coloring i) e0)
-   (hstableSeries :
-    ∀ (i : Fin ett.rounds),
-     StableColoring (ett.series.data.tree i.succ.castSucc)
-      (TashkinovStoredColors ett.series.data i.succ) (ett.series.data.coloring i.succ)
-      (newSeries.data.coloring i.succ))
-   (rp : (1 : ℕ) ≤ ett.1)
-   (above :
-    TreeSequenceInitialSegment (newSeries.data.tree (⟨ett.1, by omega⟩ : Fin (ett.1 + (2 : ℕ)))) C)
-   (strict : (newSeries.data.tree (⟨ett.1, by omega⟩ : Fin (ett.1 + (2 : ℕ)))).length < C.length)
-   (below : TreeSequenceInitialSegment C (newSeries.data.tree (Fin.last (ett.1 + (1 : ℕ)))))
-   (gen : mu = newSeries.data.coloring (Fin.last ett.1))
-   (hs :
-    { rounds := ett.1, roundsPositive := rp, series := newSeries, abovePenultimate := above,
-       strictAbovePenultimate := strict, belowFinal := below, generatingColoring := gen :
-       ExtendedTashkinovTree G k e0 newInput C mu }.series ≍
-     newSeries)
-   (hMPC :
-    MaximumProperty
-     { replacementInput := newInput, replacementSeries := newSeries,
-       replacementETT :=
-        {
-         rounds := ett.1, roundsPositive := rp, series := newSeries, abovePenultimate := above,
-         strictAbovePenultimate := strict, belowFinal := below, generatingColoring := gen :
-         ExtendedTashkinovTree G k e0 newInput C mu },
-       rungAgreement := by
-        first
-        | omega
-        | (
-          have := GoldbergSeymour.TreeSequence.positive C
-          have := hCT.1
-          have := coreToB.1
-          have := hBtoC.1
-          have := above.1
-          have := below.1
-          try dsimp only [GoldbergSeymour.TreeSequencePrefix] at *),
-       seriesPresentation := hs, finalGeneratingColoring := hgen, ladderTreesAgree := htrees,
-       storedColorsAgree := hstored, connectingEdgesAgree := hedges, extensionKindsAgree := hkinds,
-       replacementProper := hproper, replacementOneUncolored := hone,
-       replacementStable := hstableSeries :
-       CorrespondingExtendedTashkinovTree G k e0 ett mu C }.replacementETT),
-  let rep : ExtendedTashkinovTree G k e0 newInput C mu :=
-   helperRep474 G k e0 input T phi ett mu C newInput newSeries rp above strict below gen;
-  ∀ (htree : newSeries.data.tree (Fin.last ett.rounds).castSucc = Tn)
-   (hkind :
-    newSeries.data.kind (Fin.last ett.rounds) = ett.series.data.kind (Fin.last ett.rounds))
-   (chosenAgree :
-    ∀ (hp : ett.series.data.kind (Fin.last ett.rounds) = some TashkinovExtensionKind.PE),
-     newSeries.data.chosenVertex (Fin.last ett.rounds) =
-      ett.series.data.chosenVertex (Fin.last ett.rounds))
-   (closureVertices :
-    ∀ (hp : ett.series.data.kind (Fin.last ett.rounds) = some TashkinovExtensionKind.PE),
-     TreeSequenceVertexSet base.closure ⊆ TreeSequenceVertexSet Bminus)
-   (closureMu :
-    ∀ (hp : ett.series.data.kind (Fin.last ett.rounds) = some TashkinovExtensionKind.PE),
-     TashkinovClosure mu
-      (TreeSequencePrefix Tn (↑base.supportPosition : ℕ) base.supportPositive
-       (Nat.le_of_lt_succ base.supportPosition.isLt))
-      base.closure),
-  let baseC : HierarchyBase rep mu :=
-   helperBaseC598 G k e0 input T phi ett base mu C newInput newSeries rp above strict below gen
-    htree hkind chosenAgree closureMu;
-  let stageC : Fin (H.dividerCount + (2 : ℕ)) → TreeSequence G e0 :=
-   fun (j : Fin (H.dividerCount + (2 : ℕ))) ↦
-   if (↑j : ℕ) = H.dividerCount + (1 : ℕ) then C else H.stage j;
-  ∀
-   (stageOld :
-    ∀ (j : Fin (H.dividerCount + (2 : ℕ))) (hj : (↑j : ℕ) ≤ H.dividerCount),
-     stageC j = H.stage j)
-   (stageLast : stageC (Fin.last (H.dividerCount + (1 : ℕ))) = C)
-   (divBound : ∀ (i : Fin H.dividerCount), (↑(H.dividerPosition i) : ℕ) ≤ C.length),
-  let KC : TashkinovHierarchy rep baseC :=
-   helperKC712 G k e0 input T phi ett hpositive base H mu Bminus C hBCstrict hCT segTrans
-    coreToB hBtoC stageToB newInput newSeries rp above strict below gen htree hkind chosenAgree
-    closureMu stageOld stageLast divBound;
-  ∀
-   (ordinaryEq :
-    ∀ (j : Fin (H.dividerCount + (1 : ℕ))), KC.stage j.castSucc = H.stage j.castSucc)
-   (starredEq :
-    ∀ (j : Fin (H.dividerCount + (1 : ℕ))),
-     HierarchyStarredStage KC j = HierarchyStarredStage H j)
-   (terminalMissing : TreeMissingColors mu Tn = TreeMissingColors phi Tn)
-   (storedEq :
-    TashkinovStoredColors newSeries.data (Fin.last ett.rounds) =
-     TashkinovStoredColors ett.series.data (Fin.last ett.rounds)),
-  ∃ (KC :
-   TashkinovHierarchy
-    { replacementInput := newInput, replacementSeries := newSeries,
-      replacementETT :=
-       {
-        rounds := ett.1, roundsPositive := rp, series := newSeries, abovePenultimate := above,
-        strictAbovePenultimate := strict, belowFinal := below, generatingColoring := gen :
-        ExtendedTashkinovTree G k e0 newInput C mu },
-      rungAgreement := by
-       first
-       | omega
-       | (
-         have := GoldbergSeymour.TreeSequence.positive C
-         have := hCT.1
-         have := coreToB.1
-         have := hBtoC.1
-         have := above.1
-         have := below.1
-         have := congrArg GoldbergSeymour.TreeSequence.length htree
-         have := congrArg GoldbergSeymour.TreeSequence.length stageLast
-         try dsimp only [GoldbergSeymour.TreeSequencePrefix] at *),
-      seriesPresentation := hs, finalGeneratingColoring := hgen, ladderTreesAgree := htrees,
-      storedColorsAgree := hstored, connectingEdgesAgree := hedges,
-      extensionKindsAgree := hkinds, replacementProper := hproper,
-      replacementOneUncolored := hone, replacementStable := hstableSeries :
-      CorrespondingExtendedTashkinovTree G k e0 ett mu C }.replacementETT
-    baseC)
-   (goodC : GoodHierarchy KC),
-   ModColoring ett mu ∧
-    MaximumProperty
-      { replacementInput := newInput, replacementSeries := newSeries,
-        replacementETT :=
-         {
-          rounds := ett.1, roundsPositive := rp, series := newSeries,
-          abovePenultimate := above, strictAbovePenultimate := strict, belowFinal := below,
-          generatingColoring := gen : ExtendedTashkinovTree G k e0 newInput C mu },
-        rungAgreement := by
-         first
-         | omega
-         | (
-           have := GoldbergSeymour.TreeSequence.positive C
-           have := hCT.1
-           have := coreToB.1
-           have := hBtoC.1
-           have := above.1
-           have := below.1
-           have := congrArg GoldbergSeymour.TreeSequence.length htree
-           have := congrArg GoldbergSeymour.TreeSequence.length stageLast
-           try dsimp only [GoldbergSeymour.TreeSequencePrefix] at *),
-        seriesPresentation := hs, finalGeneratingColoring := hgen, ladderTreesAgree := htrees,
-        storedColorsAgree := hstored, connectingEdgesAgree := hedges,
-        extensionKindsAgree := hkinds, replacementProper := hproper,
-        replacementOneUncolored := hone, replacementStable := hstableSeries :
-        CorrespondingExtendedTashkinovTree G k e0 ett mu C }.replacementETT ∧
-     (ett.series.data.kind (Fin.last ett.rounds) = some TashkinovExtensionKind.PE ∧
-        TashkinovAugmentationSequence mu (ett.series.data.tree (Fin.last ett.rounds).castSucc)
-         C ∨
-       (ett.series.data.kind (Fin.last ett.rounds) = some TashkinovExtensionKind.SE ∨
-         ett.series.data.kind (Fin.last ett.rounds) = some TashkinovExtensionKind.RE) ∧
-        ∃ (f : E) (seed : TreeSequence G e0),
-         ett.series.data.connectingEdges (Fin.last ett.rounds) = ({ f } : Finset E) ∧
-          TreeSequenceAdjoinEdge (ett.series.data.tree (Fin.last ett.rounds).castSucc) f seed ∧
-           TashkinovAugmentationSequence mu seed C) ∧
-      KC.dividerCount = H.dividerCount ∧
-       (2 : ℕ) *
-           { replacementInput := newInput, replacementSeries := newSeries,
-             replacementETT :=
-              {
-               rounds := ett.1, roundsPositive := rp, series := newSeries,
-               abovePenultimate := above, strictAbovePenultimate := strict,
-               belowFinal := below, generatingColoring := gen :
-               ExtendedTashkinovTree G k e0 newInput C mu },
-             rungAgreement := by
-              first
-              | omega
-              | (
-                have := GoldbergSeymour.TreeSequence.positive C
-                have := hCT.1
-                have := coreToB.1
-                have := hBtoC.1
-                have := above.1
-                have := below.1
-                have := congrArg GoldbergSeymour.TreeSequence.length htree
-                have := congrArg GoldbergSeymour.TreeSequence.length stageLast
-                try dsimp only [GoldbergSeymour.TreeSequencePrefix] at *),
-             seriesPresentation := hs, finalGeneratingColoring := hgen,
-             ladderTreesAgree := htrees, storedColorsAgree := hstored,
-             connectingEdgesAgree := hedges, extensionKindsAgree := hkinds,
-             replacementProper := hproper, replacementOneUncolored := hone,
-             replacementStable := hstableSeries :
-             CorrespondingExtendedTashkinovTree G k e0 ett mu C }.replacementETT.rounds +
-          (11 : ℕ) ≤
-         (TreeMissingColors mu
-           ({ replacementInput := newInput, replacementSeries := newSeries,
-              replacementETT :=
-               {
-                rounds := ett.1, roundsPositive := rp, series := newSeries,
-                abovePenultimate := above, strictAbovePenultimate := strict,
-                belowFinal := below, generatingColoring := gen :
-                ExtendedTashkinovTree G k e0 newInput C mu },
-              rungAgreement := by
-               first
-               | omega
-               | (
-                 have := GoldbergSeymour.TreeSequence.positive C
-                 have := hCT.1
-                 have := coreToB.1
-                 have := hBtoC.1
-                 have := above.1
-                 have := below.1
-                 have := congrArg GoldbergSeymour.TreeSequence.length htree
-                 have := congrArg GoldbergSeymour.TreeSequence.length stageLast
-                 try dsimp only [GoldbergSeymour.TreeSequencePrefix] at *),
-              seriesPresentation := hs, finalGeneratingColoring := hgen,
-              ladderTreesAgree := htrees, storedColorsAgree := hstored,
-              connectingEdgesAgree := hedges, extensionKindsAgree := hkinds,
-              replacementProper := hproper, replacementOneUncolored := hone,
-              replacementStable := hstableSeries :
-              CorrespondingExtendedTashkinovTree G k e0 ett mu
-               C }.replacementETT.series.data.tree
-            (Fin.last
-              { replacementInput := newInput, replacementSeries := newSeries,
-                replacementETT :=
-                 {
-                  rounds := ett.1, roundsPositive := rp, series := newSeries,
-                  abovePenultimate := above, strictAbovePenultimate := strict,
-                  belowFinal := below, generatingColoring := gen :
-                  ExtendedTashkinovTree G k e0 newInput C mu },
-                rungAgreement := by
-                 first
-                 | omega
-                 | (
-                   have := GoldbergSeymour.TreeSequence.positive C
-                   have := hCT.1
-                   have := coreToB.1
-                   have := hBtoC.1
-                   have := above.1
-                   have := below.1
-                   have := congrArg GoldbergSeymour.TreeSequence.length htree
-                   have := congrArg GoldbergSeymour.TreeSequence.length stageLast
-                   try dsimp only [GoldbergSeymour.TreeSequencePrefix] at *),
-                seriesPresentation := hs, finalGeneratingColoring := hgen,
-                ladderTreesAgree := htrees, storedColorsAgree := hstored,
-                connectingEdgesAgree := hedges, extensionKindsAgree := hkinds,
-                replacementProper := hproper, replacementOneUncolored := hone,
-                replacementStable := hstableSeries :
-                CorrespondingExtendedTashkinovTree G k e0 ett mu
-                 C }.replacementETT.rounds).castSucc)).card ∧
-        gamma ∉
-          (HierarchyStoredColorsAt KC (Fin.last KC.dividerCount)).biUnion
-           (goodC.gamma (Fin.last KC.dividerCount)) ∧
-         beta ∉
-          (HierarchyStoredColorsAt KC (Fin.last KC.dividerCount)).biUnion
-           (goodC.gamma (Fin.last KC.dividerCount))
-
 private theorem helper_peSupport_740.{u_1, u_2} :
     open scoped Classical in
     ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E]
-    [DecidableEq E] (G : LooplessMultigraph V E) (k : ℕ) (e0 : E) (_ : Fin k)
+    [DecidableEq E] (G : LooplessMultigraph V E) (k : ℕ) (e0 : E)
     {r : ℕ} {inp : PartialEdgeColoring E k} (s : TashkinovSeries G k r e0 inp)
     (q : Fin r),
   s.data.kind q.succ = some TashkinovExtensionKind.PE →
@@ -1261,7 +406,7 @@ private theorem helper_peSupport_740.{u_1, u_2} :
       v ∈ TreeSequenceVertexSet (s.data.tree q.succ.castSucc) ∧
         u ∉ TreeSequenceVertexSet (s.data.tree q.succ.castSucc) ∧ G.ends f = s(v, u) := by
   classical
-  intro V E _ _ _ G k e0 gamma r inp s q hp
+  intro V E _ _ _ G k e0 r inp s q hp
   have step := s.certified q.succ
   generalize hi : q.succ = i at step
   cases step with
@@ -1282,263 +427,6 @@ private theorem helper_peSupport_740.{u_1, u_2} :
         ⟨choice.vertex, choice.otherEndpoint, choice.edge, vertex, edges,
           choice.vertexDefective.1, choice.otherOutside, choice.edgeEnds⟩)
 
-private theorem helper_segmentSubset_970.{u_1, u_2} :
-    helperSegmentSubset970Conditions.{u_1, u_2} := by
-  classical
-  intro V E _ _ _ _ G k e0 input T phi ett hpositive base H mu Bminus C hBCstrict hCT segTrans Tn
-      coreToB hBtoC stageToB fixedC newInput newSeries rp above strict below gen rep htree hkind
-      chosenAgree closureMu baseC stageC stageOld stageLast divBound KC starredEq cutoffEq
-      nextPrefix j eta
-  have hUW := (nextPrefix j).1
-  have hUC := (nextPrefix j).2
-  have hcut : min (HierarchyFirstMissingPosition mu C eta).val
-      (KC.stage j.succ).length =
-      min (HierarchyFirstMissingPosition phi T eta).val
-        (KC.stage j.succ).length := by
-    rw [cutoffEq eta]
-    exact HierarchyFirstMissingPositionPrefixCutoff phi C T hCT eta _ hUC.1
-  intro c hc
-  simp only [HierarchySegmentColors, Finset.mem_filter, Finset.mem_univ,
-    true_and] at hc ⊢
-  obtain ⟨r, hlo, hhi, hcol⟩ := hc
-  refine ⟨Fin.castLE hUW.1 r, ?_, ?_, ?_⟩
-  · simpa only [starredEq, Fin.val_castLE] using hlo
-  · have hr : r.val < (HierarchyFirstMissingPosition phi T eta).val := by
-      rw [hcut] at hhi
-      exact lt_of_lt_of_le hhi (Nat.min_le_left _ _)
-    exact lt_min hr (Fin.castLE hUW.1 r).isLt
-  · rw [hUW.2.2 r]
-    have hf := fixedC (Fin.castLE hUC.1 r)
-    rw [hUC.2.2 r] at hf
-    exact hf.symm.trans hcol
-
-private theorem helper_caseContinuation_955.{u_1, u_2} :
-    helperCaseContinuation955Conditions.{u_1, u_2} := by
-  classical
-  intro V E _ _ _ _ G k e0 input T phi ett hpositive base H good hlarge beta gamma hbeta mu
-      Bminus C hfixed hmissingFixed hgammaReserved hBCstrict hCT segRefl segTrans Tn coreToB
-      hlenC hBtoC stageToB starredToB vertexMem fixedC missingEq hmod terminalRoute newInput
-      newSeries hgen htrees hstored hedges hkinds hproper hone hstableSeries rp above strict
-      below gen hs hMPC rep htree hkind chosenAgree closureVertices closureMu baseC stageC
-      stageOld stageLast divBound KC ordinaryEq starredEq terminalMissing storedEq
-  have indexedStoredEq (j : Fin (H.dividerCount + 1)) :
-      HierarchyStoredColorsAt KC j = HierarchyStoredColorsAt H j := by
-    change TashkinovStoredColors newSeries.data (Fin.last ett.rounds) \
-        TreeMissingColors mu (HierarchyStarredStage KC j) =
-      TashkinovStoredColors ett.series.data (Fin.last ett.rounds) \
-        TreeMissingColors phi (HierarchyStarredStage H j)
-    rw [storedEq, starredEq, missingEq _
-      (TreeSequenceInitialSegmentVertexSetSubset (starredToB j))]
-  have stageMissingEq (j : Fin (H.dividerCount + 1)) :
-      HierarchyStageMissingColors KC j = HierarchyStageMissingColors H j := by
-    refine Fin.cases ?_ (fun i => ?_) j
-    · change TreeMissingColors mu (newSeries.data.tree (Fin.last ett.rounds).castSucc) =
-        TreeMissingColors phi Tn
-      rw [htree, terminalMissing]
-    · change TreeMissingColors mu (KC.stage i.succ.castSucc) =
-        TreeMissingColors phi (H.stage i.succ.castSucc)
-      rw [ordinaryEq]
-      exact missingEq _ (TreeSequenceInitialSegmentVertexSetSubset (stageToB i.succ))
-  refine ⟨KC, ?_⟩
-  -- Changing missingness only at the final position leaves the capped cutoff unchanged.
-  have cutoffEq (eta : Fin k) :
-      (HierarchyFirstMissingPosition mu C eta).val =
-        (HierarchyFirstMissingPosition phi C eta).val := by
-    exact congrArg Fin.val
-      (C.firstMissingPosition_eq_of_prefix_agreement hBtoC hlenC.le hmissingFixed eta)
-  have nextPrefix (j : Fin (H.dividerCount + 1)) :
-      TreeSequenceInitialSegment (KC.stage j.succ) (H.stage j.succ) ∧
-        TreeSequenceInitialSegment (KC.stage j.succ) C := by
-    change TreeSequenceInitialSegment (stageC j.succ) (H.stage j.succ) ∧
-      TreeSequenceInitialSegment (stageC j.succ) C
-    by_cases hj : j.val = H.dividerCount
-    · have he : j.succ = Fin.last (H.dividerCount + 1) := Fin.ext (by simp; omega)
-      rw [he, stageLast, H.terminalStage]
-      exact ⟨hCT, segRefl C⟩
-    · rw [stageOld j.succ (by simp; have := j.isLt; omega)]
-      exact ⟨segRefl _, segTrans (stageToB ⟨j.val + 1, by omega⟩) hBtoC⟩
-  have segmentSubset (j : Fin (H.dividerCount + 1)) (eta : Fin k) :
-      HierarchySegmentColors KC j eta ⊆ HierarchySegmentColors H j eta := by
-    apply helper_segmentSubset_970 <;> assumption
-  have boundaryFixed (S : TreeSequence G e0)
-      (hS : TreeSequenceVertexSet S ⊆ TreeSequenceVertexSet Bminus)
-      (e : E) (he : e ∈ BoundaryEdges G (TreeSequenceVertexSet S)) :
-      mu e = phi e := by
-    simp only [BoundaryEdges, Finset.mem_filter, Finset.mem_univ, true_and] at he
-    obtain ⟨v, hv, w, hw, hends⟩ := he
-    apply hfixed
-    refine ⟨v, hS hv, ?_⟩
-    change v ∈ G.ends e
-    rw [hends]; exact Sym2.mem_mk_left _ _
-  have minusEq (S : TreeSequence G e0)
-      (hS : TreeSequenceVertexSet S ⊆ TreeSequenceVertexSet Bminus)
-      (D : Finset (Fin k)) :
-      TreeColorSetMinusClosed G mu S D ↔ TreeColorSetMinusClosed G phi S D := by
-    have hb (c : Fin k) : BoundaryColorEdges G mu (TreeSequenceVertexSet S) c =
-        BoundaryColorEdges G phi (TreeSequenceVertexSet S) c := by
-      ext e
-      simp only [BoundaryColorEdges, Finset.mem_filter]
-      exact and_congr_right (fun he => by rw [boundaryFixed S hS e he])
-    unfold TreeColorSetMinusClosed TreeColorSetClosed
-    rw [missingEq S hS]
-    simp only [hb]
-  have refreshEq (i : Fin H.dividerCount) :
-      ((TreeSequenceVertexSet (KC.stage i.succ.castSucc) \
-        TreeSequenceVertexSet (HierarchyStarredStage KC i.castSucc)).biUnion
-          fun v => MissingColors G mu v) =
-      ((TreeSequenceVertexSet (H.stage i.succ.castSucc) \
-        TreeSequenceVertexSet (HierarchyStarredStage H i.castSucc)).biUnion
-          fun v => MissingColors G phi v) := by
-    rw [ordinaryEq, starredEq]
-    apply Finset.biUnion_congr rfl
-    intro v hv
-    exact hmissingFixed v (TreeSequenceInitialSegmentVertexSetSubset
-      (stageToB i.succ) (Finset.mem_sdiff.mp hv).1)
-  let goodC := @helperGoodC1021 (@V) (@E) inferInstance inferInstance inferInstance inferInstance
-      (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@hpositive) (@base) (@H) (@good) (@gamma) (@mu)
-      (@Bminus) (@C) (@hBCstrict) (@hCT) (@segTrans) (@coreToB) (@hBtoC) (@stageToB) (@missingEq)
-      (@newInput) (@newSeries) (@rp) (@above) (@strict) (@below) (@gen) (@hs) (@htree) (@hkind)
-      (@chosenAgree) (@closureVertices) (@closureMu) (@stageOld) (@stageLast) (@divBound)
-      (@ordinaryEq) (@terminalMissing) (@indexedStoredEq) (@stageMissingEq) (@segmentSubset)
-      (@minusEq) (@refreshEq)
-  refine ⟨goodC, hmod, hMPC, terminalRoute, rfl, ?_, ?_, ?_⟩
-  · change 2 * ett.rounds + 11 ≤
-      (TreeMissingColors mu (newSeries.data.tree (Fin.last ett.rounds).castSucc)).card
-    rw [htree, terminalMissing]
-    exact hlarge
-  · change gamma ∉ (HierarchyStoredColorsAt KC (Fin.last H.dividerCount)).biUnion
-      (good.gamma (Fin.last H.dividerCount))
-    rw [indexedStoredEq]
-    exact hgammaReserved
-  · change beta ∉ (HierarchyStoredColorsAt KC (Fin.last H.dividerCount)).biUnion
-      (good.gamma (Fin.last H.dividerCount))
-    rw [indexedStoredEq]
-    intro hb
-    obtain ⟨eta, he, hbe⟩ := Finset.mem_biUnion.mp hb
-    have hm := (GoodHierarchyReservedDisjoint good (Fin.last H.dividerCount)).1 eta he hbe
-    obtain ⟨v, hv, hbv⟩ := Finset.mem_biUnion.mp hm
-    apply hbeta
-    exact Finset.mem_biUnion.mpr ⟨v,
-      TreeSequenceInitialSegmentVertexSetSubset
-        (segTrans (segTrans (starredToB _) hBtoC) hCT) hv, hbv⟩
-
-private theorem helper_continuation_906.{u_1, u_2} :
-    helperContinuation906Conditions.{u_1, u_2} := by
-  classical
-  intro V E _ _ _ _ G k e0 input T phi ett hMP hpositive base H good hlarge beta gamma hbeta mu
-      Bminus C hfixed hmissingFixed hgammaReserved hBCstrict hCT segRefl segTrans Tn coreToB
-      TnToB hlenC hBtoC TnToC TnStrictC stageToB starredToB vertexMem fixedC missingEq hmod
-      terminalRoute
-  obtain ⟨corrC⟩ := hmod.2.2 C TnToC TnStrictC terminalRoute
-  have hMPC := MaximumPropertyTransport G k e0 ett mu hmod C corrC hMP
-  refine ⟨corrC, ?_⟩
-  have peSupport {r : ℕ} {inp : PartialEdgeColoring E k}
-      (s : TashkinovSeries G k r e0 inp) (q : Fin r)
-      (hp : s.data.kind q.succ = some TashkinovExtensionKind.PE) :
-      ∃ v u f, s.data.chosenVertex q.succ = some v ∧
-        s.data.connectingEdges q.succ = {f} ∧
-        v ∈ TreeSequenceVertexSet (s.data.tree q.succ.castSucc) ∧
-        u ∉ TreeSequenceVertexSet (s.data.tree q.succ.castSucc) ∧
-        G.ends f = s(v, u) := by
-    apply helper_peSupport_740 <;> assumption
-  rcases corrC with ⟨newInput, newSeries, newETT, hr, hs, hgen, htrees, hstored,
-    hedges, hkinds, hproper, hone, hstableSeries⟩
-  cases newETT with
-  | mk r rp series above strict below gen =>
-    cases hr
-    have heq : series = newSeries := eq_of_heq hs
-    cases heq
-    let rep := @helperRep474 (@V) (@E) inferInstance inferInstance inferInstance (@G) (@k) (@e0)
-        (@input) (@T) (@phi) (@ett) (@mu) (@C) (@newInput) (@newSeries) (@rp) (@above) (@strict)
-        (@below) (@gen)
-    let q : Fin ett.rounds := ⟨ett.rounds - 1, by omega⟩
-    have hq : q.succ = Fin.last ett.rounds := Fin.ext (by simp [q]; omega)
-    have htree : newSeries.data.tree (Fin.last ett.rounds).castSucc = Tn := by
-      simpa only [hq, Tn] using htrees q
-    have hkind := hkinds (Fin.last ett.rounds)
-    have chosenAgree (hp : ett.series.data.kind (Fin.last ett.rounds) =
-        some TashkinovExtensionKind.PE) :
-        newSeries.data.chosenVertex (Fin.last ett.rounds) =
-          ett.series.data.chosenVertex (Fin.last ett.rounds) := by
-      obtain ⟨v, u, f, hv, hf, hvin, huout, hends⟩ :=
-        peSupport ett.series q (by simpa [hq] using hp)
-      obtain ⟨v', u', f', hv', hf', hvin', huout', hends'⟩ :=
-        peSupport newSeries q (by simpa [hq] using hkind.trans hp)
-      have hedge : f' = f := by
-        have hh := hedges q.succ
-        rw [hf', hf] at hh
-        simpa using hh
-      have hvEq : v' = v := by
-        rcases Sym2.eq_iff.mp (hends'.symm.trans (hedge ▸ hends)) with h | h
-        · exact h.1
-        · have hin : v ∈ TreeSequenceVertexSet (newSeries.data.tree q.succ.castSucc) := by
-            simpa [hq, htree, Tn] using hvin
-          exact False.elim (huout' (h.2 ▸ hin))
-      simpa [hq] using hv'.trans ((congrArg some hvEq).trans hv.symm)
-    have closureVertices (hp : ett.series.data.kind (Fin.last ett.rounds) =
-        some TashkinovExtensionKind.PE) :
-        TreeSequenceVertexSet base.closure ⊆ TreeSequenceVertexSet Bminus := by
-      obtain ⟨_, _, ⟨u⟩⟩ := base.parallel hp
-      intro v hv
-      apply TreeSequenceInitialSegmentVertexSetSubset coreToB
-      rw [u.vertexSet]
-      exact Finset.mem_union_right _ hv
-    -- The closure need not be an ordered prefix of the core.
-    have closureMu (hp : ett.series.data.kind (Fin.last ett.rounds) =
-        some TashkinovExtensionKind.PE) :
-        TashkinovClosure mu
-          (TreeSequencePrefix Tn base.supportPosition.val base.supportPositive
-            (Nat.le_of_lt_succ base.supportPosition.isLt)) base.closure := by
-      exact TashkinovClosure.transport_of_fixed hfixed hmissingFixed
-        (closureVertices hp) (base.parallel hp).2.1
-    let pos : Fin ((newSeries.data.tree (Fin.last ett.rounds).castSucc).length + 1) :=
-      Fin.cast (congrArg (fun S : TreeSequence G e0 => S.length + 1) htree.symm)
-        base.supportPosition
-    let baseC := @helperBaseC598 (@V) (@E) inferInstance inferInstance inferInstance inferInstance
-        (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@mu) (@C) (@newInput) (@newSeries)
-        (@rp) (@above) (@strict) (@below) (@gen) (@htree) (@hkind) (@chosenAgree) (@closureMu)
-    refine ⟨baseC, ?_⟩
-    let stageC : Fin (H.dividerCount + 2) → TreeSequence G e0 :=
-      fun j => if j.val = H.dividerCount + 1 then C else H.stage j
-    have stageOld (j : Fin (H.dividerCount + 2)) (hj : j.val ≤ H.dividerCount) :
-        stageC j = H.stage j := by
-      exact ite_eq_right (show j.val ≠ H.dividerCount + 1 by omega)
-    have stageLast : stageC (Fin.last (H.dividerCount + 1)) = C := by
-      simp only [stageC, Fin.val_last, ite_true]
-    have divBound (i : Fin H.dividerCount) : (H.dividerPosition i).val ≤ C.length := by
-      have hl := congrArg TreeSequence.length (H.dividerStage i)
-      change (H.stage ⟨i.val + 1, by omega⟩).length = (H.dividerPosition i).val at hl
-      have hs := stageToB i.succ
-      rw [← hl]
-      exact le_trans hs.1 hBtoC.1
-    let KC := @helperKC712 (@V) (@E) inferInstance inferInstance inferInstance inferInstance (@G)
-        (@k) (@e0) (@input) (@T) (@phi) (@ett) (@hpositive) (@base) (@H) (@mu) (@Bminus) (@C)
-        (@hBCstrict) (@hCT) (@segTrans) (@coreToB) (@hBtoC) (@stageToB) (@newInput) (@newSeries)
-        (@rp) (@above) (@strict) (@below) (@gen) (@htree) (@hkind) (@chosenAgree) (@closureMu)
-        (@stageOld) (@stageLast) (@divBound)
-    have ordinaryEq (j : Fin (H.dividerCount + 1)) :
-        KC.stage j.castSucc = H.stage j.castSucc :=
-      stageOld j.castSucc (Nat.le_of_lt_succ j.isLt)
-    have starredEq (j : Fin (H.dividerCount + 1)) :
-        HierarchyStarredStage KC j = HierarchyStarredStage H j := by
-      refine Fin.cases rfl (fun i => ordinaryEq i.succ) j
-    have terminalMissing : TreeMissingColors mu Tn = TreeMissingColors phi Tn :=
-      missingEq Tn (TreeSequenceInitialSegmentVertexSetSubset TnToB)
-    have storedEq : TashkinovStoredColors newSeries.data (Fin.last ett.rounds) =
-        TashkinovStoredColors ett.series.data (Fin.last ett.rounds) := by
-      unfold TashkinovStoredColors
-      simp only [hstored, ← hgen, ← ett.generatingColoring, htree, terminalMissing]
-      rfl
-    exact @helper_caseContinuation_955 (@V) (@E) inferInstance inferInstance inferInstance
-        inferInstance (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@hpositive) (@base) (@H)
-        (@good) (@hlarge) (@beta) (@gamma) (@hbeta) (@mu) (@Bminus) (@C) (@hfixed)
-        (@hmissingFixed) (@hgammaReserved) (@hBCstrict) (@hCT) (@segRefl) (@segTrans) (@coreToB)
-        (@hlenC) (@hBtoC) (@stageToB) (@starredToB) (@vertexMem) (@fixedC) (@missingEq) (@hmod)
-        (@terminalRoute) (@newInput) (@newSeries) (@hgen) (@htrees) (@hstored) (@hedges)
-        (@hkinds) (@hproper) (@hone) (@hstableSeries) (@rp) (@above) (@strict) (@below) (@gen)
-        (@hs) (@hMPC) (@htree) (@hkind) (@chosenAgree) (@closureVertices) (@closureMu)
-        (@stageOld) (@stageLast) (@divBound) (@ordinaryEq) (@starredEq) (@terminalMissing)
-        (@storedEq)
 lemma Step1CaseTwoOutsidePrefixHierarchy {V E : Type*}
     [Fintype V] [Fintype E] [DecidableEq V] [DecidableEq E]
     (G : LooplessMultigraph V E) (k : ℕ) (e0 : E)
@@ -1627,8 +515,6 @@ lemma Step1CaseTwoOutsidePrefixHierarchy {V E : Type*}
       (hUW : TreeSequenceInitialSegment U W) :
       TreeSequenceInitialSegment S W := by
     exact hSU.trans hUW
-  have segRefl (S : TreeSequence G e0) : TreeSequenceInitialSegment S S :=
-    ⟨le_rfl, (by intro i; rfl), (by intro i; rfl)⟩
   let A := HierarchyStarredStage H (Fin.last H.dividerCount)
   let Tn := ett.series.data.tree (Fin.last ett.rounds).castSucc
   have lastZero (h : H.dividerCount = 0) : A = base.core := by
@@ -1688,7 +574,133 @@ lemma Step1CaseTwoOutsidePrefixHierarchy {V E : Type*}
     exact ett.series.terminalRouteColoringTransport hpositive phi ett.generatingColoring
       C TnToC TnStrictC (segTrans hCT ett.belowFinal) mu Bminus hBtoC hlenC
       (fun t _ => fixedC t) hmissingFixed
-  apply helper_continuation_906 <;> assumption
+  obtain ⟨corrC⟩ := hmod.2.2 C TnToC TnStrictC terminalRoute
+  have hMPC := MaximumPropertyTransport G k e0 ett mu hmod C corrC hMP
+  refine ⟨corrC, ?_⟩
+  rcases corrC with ⟨newInput, newSeries, newETT, hr, hs, hgen, htrees, hstored,
+    hedges, hkinds, hproper, hone, hstableSeries⟩
+  cases newETT with
+  | mk r rp series above strict below gen =>
+    cases hr
+    have heq : series = newSeries := eq_of_heq hs
+    cases heq
+    let rep := @helperRep474 (@V) (@E) inferInstance inferInstance inferInstance (@G) (@k) (@e0)
+        (@input) (@T) (@phi) (@ett) (@mu) (@C) (@newInput) (@newSeries) (@rp) (@above) (@strict)
+        (@below) (@gen)
+    let q : Fin ett.rounds := ⟨ett.rounds - 1, by omega⟩
+    have hq : q.succ = Fin.last ett.rounds := Fin.ext (by simp [q]; omega)
+    have htree : newSeries.data.tree (Fin.last ett.rounds).castSucc = Tn := by
+      simpa only [hq, Tn] using htrees q
+    have hkind := hkinds (Fin.last ett.rounds)
+    have chosenAgree (hp : ett.series.data.kind (Fin.last ett.rounds) =
+        some TashkinovExtensionKind.PE) :
+        newSeries.data.chosenVertex (Fin.last ett.rounds) =
+          ett.series.data.chosenVertex (Fin.last ett.rounds) := by
+      obtain ⟨v, u, f, hv, hf, hvin, huout, hends⟩ :=
+        helper_peSupport_740 G k e0 ett.series q (by simpa [hq] using hp)
+      obtain ⟨v', u', f', hv', hf', hvin', huout', hends'⟩ :=
+        helper_peSupport_740 G k e0 newSeries q (by simpa [hq] using hkind.trans hp)
+      have hedge : f' = f := by
+        have hh := hedges q.succ
+        rw [hf', hf] at hh
+        simpa using hh
+      have hvEq : v' = v := by
+        rcases Sym2.eq_iff.mp (hends'.symm.trans (hedge ▸ hends)) with h | h
+        · exact h.1
+        · have hin : v ∈ TreeSequenceVertexSet (newSeries.data.tree q.succ.castSucc) := by
+            simpa [hq, htree, Tn] using hvin
+          exact False.elim (huout' (h.2 ▸ hin))
+      simpa [hq] using hv'.trans ((congrArg some hvEq).trans hv.symm)
+    have closureVertices (hp : ett.series.data.kind (Fin.last ett.rounds) =
+        some TashkinovExtensionKind.PE) :
+        TreeSequenceVertexSet base.closure ⊆ TreeSequenceVertexSet Bminus := by
+      obtain ⟨_, _, ⟨u⟩⟩ := base.parallel hp
+      intro v hv
+      apply TreeSequenceInitialSegmentVertexSetSubset coreToB
+      rw [u.vertexSet]
+      exact Finset.mem_union_right _ hv
+    -- The closure need not be an ordered prefix of the core.
+    have closureMu (hp : ett.series.data.kind (Fin.last ett.rounds) =
+        some TashkinovExtensionKind.PE) :
+        TashkinovClosure mu
+          (TreeSequencePrefix Tn base.supportPosition.val base.supportPositive
+            (Nat.le_of_lt_succ base.supportPosition.isLt)) base.closure := by
+      exact TashkinovClosure.transport_of_fixed hfixed hmissingFixed
+        (closureVertices hp) (base.parallel hp).2.1
+    let pos : Fin ((newSeries.data.tree (Fin.last ett.rounds).castSucc).length + 1) :=
+      Fin.cast (congrArg (fun S : TreeSequence G e0 => S.length + 1) htree.symm)
+        base.supportPosition
+    let baseC := @helperBaseC598 (@V) (@E) inferInstance inferInstance inferInstance inferInstance
+        (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@mu) (@C) (@newInput) (@newSeries)
+        (@rp) (@above) (@strict) (@below) (@gen) (@htree) (@hkind) (@chosenAgree) (@closureMu)
+    refine ⟨baseC, ?_⟩
+    let stageC : Fin (H.dividerCount + 2) → TreeSequence G e0 :=
+      fun j => if j.val = H.dividerCount + 1 then C else H.stage j
+    have stageOld (j : Fin (H.dividerCount + 2)) (hj : j.val ≤ H.dividerCount) :
+        stageC j = H.stage j := by
+      exact ite_eq_right (show j.val ≠ H.dividerCount + 1 by omega)
+    have stageLast : stageC (Fin.last (H.dividerCount + 1)) = C := by
+      simp only [stageC, Fin.val_last, ite_true]
+    have divBound (i : Fin H.dividerCount) : (H.dividerPosition i).val ≤ C.length := by
+      have hl := congrArg TreeSequence.length (H.dividerStage i)
+      change (H.stage ⟨i.val + 1, by omega⟩).length = (H.dividerPosition i).val at hl
+      have hs := stageToB i.succ
+      rw [← hl]
+      exact le_trans hs.1 hBtoC.1
+    let KC := @helperKC712 (@V) (@E) inferInstance inferInstance inferInstance inferInstance (@G)
+        (@k) (@e0) (@input) (@T) (@phi) (@ett) (@hpositive) (@base) (@H) (@mu) (@Bminus) (@C)
+        (@hBCstrict) (@hCT) (@segTrans) (@coreToB) (@hBtoC) (@stageToB) (@newInput) (@newSeries)
+        (@rp) (@above) (@strict) (@below) (@gen) (@htree) (@hkind) (@chosenAgree) (@closureMu)
+        (@stageOld) (@stageLast) (@divBound)
+    have ordinaryEq (j : Fin (H.dividerCount + 1)) :
+        KC.stage j.castSucc = H.stage j.castSucc :=
+      stageOld j.castSucc (Nat.le_of_lt_succ j.isLt)
+    have starredEq (j : Fin (H.dividerCount + 1)) :
+        HierarchyStarredStage KC j = HierarchyStarredStage H j := by
+      refine Fin.cases rfl (fun i => ordinaryEq i.succ) j
+    have terminalMissing : TreeMissingColors mu Tn = TreeMissingColors phi Tn :=
+      missingEq Tn (TreeSequenceInitialSegmentVertexSetSubset TnToB)
+    have storedEq : TashkinovStoredColors newSeries.data (Fin.last ett.rounds) =
+        TashkinovStoredColors ett.series.data (Fin.last ett.rounds) := by
+      unfold TashkinovStoredColors
+      simp only [hstored, ← hgen, ← ett.generatingColoring, htree, terminalMissing]
+      rfl
+    have nextPrefix (j : Fin (H.dividerCount + 1)) :
+        TreeSequenceInitialSegment (KC.stage j.succ) (H.stage j.succ) := by
+      change TreeSequenceInitialSegment (stageC j.succ) (H.stage j.succ)
+      by_cases last : j.val = H.dividerCount
+      · have index : j.succ = Fin.last (H.dividerCount + 1) := Fin.ext (by simp; omega)
+        rw [index, stageLast, H.terminalStage]
+        exact hCT
+      · rw [stageOld j.succ (by simp; have := j.isLt; omega)]
+        exact TreeSequenceInitialSegment.refl _
+    let goodC : GoodHierarchy KC := good.transportOfPrefixColoringAgreement KC rfl rfl rfl
+      htree hkind storedEq Bminus hfixed hmissingFixed coreToB closureVertices ordinaryEq starredEq
+      stageToB starredToB hCT hBtoC hlenC fixedC nextPrefix
+    have indexedStoredEq (j : Fin (H.dividerCount + 1)) :
+        HierarchyStoredColorsAt KC j = HierarchyStoredColorsAt H j :=
+      H.storedColors_eq_of_agreement KC j j storedEq (starredEq j)
+        (missingEq _ (starredToB j).vertexSet_subset)
+    refine ⟨KC, goodC, hmod, hMPC, terminalRoute, rfl, ?_, ?_, ?_⟩
+    · change 2 * ett.rounds + 11 ≤
+        (TreeMissingColors mu (newSeries.data.tree (Fin.last ett.rounds).castSucc)).card
+      rw [htree, terminalMissing]
+      exact hlarge
+    · change gamma ∉ (HierarchyStoredColorsAt KC (Fin.last H.dividerCount)).biUnion
+        (good.gamma (Fin.last H.dividerCount))
+      rw [indexedStoredEq]
+      exact hgammaReserved
+    · change beta ∉ (HierarchyStoredColorsAt KC (Fin.last H.dividerCount)).biUnion
+        (good.gamma (Fin.last H.dividerCount))
+      rw [indexedStoredEq]
+      intro hb
+      obtain ⟨eta, he, hbe⟩ := Finset.mem_biUnion.mp hb
+      have hm := (GoodHierarchyReservedDisjoint good (Fin.last H.dividerCount)).1 eta he hbe
+      obtain ⟨v, hv, hbv⟩ := Finset.mem_biUnion.mp hm
+      apply hbeta
+      exact Finset.mem_biUnion.mpr ⟨v,
+        TreeSequenceInitialSegmentVertexSetSubset
+          (segTrans (segTrans (starredToB _) hBtoC) hCT) hv, hbv⟩
 end GoldbergSeymour
 
 end
