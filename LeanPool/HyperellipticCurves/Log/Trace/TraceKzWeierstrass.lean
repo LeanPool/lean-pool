@@ -446,11 +446,6 @@ theorem X_mul_omegaPrime_eq_aeval_tracePoly_mul_derivative {hu : uτ.Monic}
   classical
   have hdvdτ : uτ ∣ vτ ^ 2 - f := ⟨w, hw⟩
   have hgτ : 2 * uτ.natDegree < f.natDegree := by rw [hfdeg]; lia
-  set Φ := ftauFoldFGL hu rfl hv hw hbez hf hfdeg hroot hcc haτ hbτ hdF hπ hπ0
-    hsplitτ hunitτ
-  set ζK : Fin uτ.natDegree → K⟦X⟧ :=
-    fun j ↦ PowerSeries.map ψ (wZeta hf hdeg hω hωu xQ yQ m m₀ uτ vτ d j)
-  set ι' : K⟦X⟧ →+* Kz := algebraMap (PowerSeries K) Kz with hιdef
   set ρ : O⟦X⟧ →+* Kz := kzHom (O := O) ψ with hρdef
   obtain ⟨cPτ, sPτ, hsPτ⟩ := isCoprime_ftauFoldPipe hu rfl hv hw hbez havF
   obtain ⟨cφ, sφ, hsφ⟩ : IsCoprime (wPipeline hf hdeg hω hωu xQ yQ m m₀ uτ vτ d).1
@@ -480,32 +475,11 @@ theorem X_mul_omegaPrime_eq_aeval_tracePoly_mul_derivative {hu : uτ.Monic}
           by_contra hne'
           exact (hunitτ i' j' hne').ne_zero (by rw [hij, sub_self])) hsPτ) hsφ k j)
     hΘ i
-  -- both sides are `ι'`-images; identify them in `K⟦z⟧`
-  have hcast : algebraMap K Kz = ι'.comp (PowerSeries.C : K →+* K⟦X⟧) := by
-    rw [hιdef, ← PowerSeries.algebraMap_eq]
-    exact IsScalarTower.algebraMap_eq K K⟦X⟧ Kz
-  have hyv : ρ PowerSeries.X = ι' PowerSeries.X := by rw [hρdef, kzHom_apply, PowerSeries.map_X]
-  have hRHS : (∑ j, algebraMap K Kz ((traceMatrix (uτ.map ψ) (c₂.map ψ))⁻¹
-        (finCongr (hu.natDegree_map ψ).symm i) (finCongr (hu.natDegree_map ψ).symm j))
-        * (ρ (weierstrassSeries hf hdeg hω hωu) ^ (j : ℕ)
-          * ρ (PowerSeries.derivative (weierstrassSeries hf hdeg hω hωu))))
-      = ι' (aeval (PowerSeries.map ψ (weierstrassSeries hf hdeg hω hωu))
-            ((2 : K) • tracePoly (uτ.map ψ) (c₂.map ψ) (Fin.cast (hu.natDegree_map ψ).symm i))
-          * PowerSeries.derivative (PowerSeries.map ψ (weierstrassSeries hf hdeg hω hωu))) := by
-    rw [two_smul_tracePoly, map_sum, Finset.sum_mul, map_sum]
-    refine Fintype.sum_equiv (finCongr (hu.natDegree_map ψ).symm) _ _ fun j ↦ ?_
-    rw [hcast, RingHom.comp_apply, map_mul, map_mul, map_mul,
-      map_pow, aeval_C, aeval_X, ← PowerSeries.algebraMap_eq, ← PowerSeries.map_derivative,
-      hρdef, kzHom_apply, kzHom_apply, map_pow]
-    simp only [finCongr_apply, Fin.val_cast]
-    ring
-  -- cancel the embedding and the factor `2`
-  have hend : ι' (2 * (PowerSeries.X * omegaPrime (Φ.map ψ) ζK i))
-      = ι' (aeval (PowerSeries.map ψ (weierstrassSeries hf hdeg hω hωu))
-            ((2 : K) • tracePoly (uτ.map ψ) (c₂.map ψ) (Fin.cast (hu.natDegree_map ψ).symm i))
-          * PowerSeries.derivative (PowerSeries.map ψ (weierstrassSeries hf hdeg hω hωu))) := by
-    rw [map_mul, map_ofNat, ← hRHS, ← hdrive, hyv, map_mul]
-  exact eq_aeval_mul_of_two_mul_eq ((IsFractionRing.injective (PowerSeries K) Kz) hend)
+  apply eq_eval_tracePoly_mul_of_two_mul_eq_sum (hu.natDegree_map ψ)
+    (aeval (PowerSeries.map ψ (weierstrassSeries hf hdeg hω hωu))).toRingHom
+    (fun c ↦ by change aeval _ (C c) = _; rw [aeval_C, PowerSeries.algebraMap_eq]) (aeval_X _) i
+  simpa only [hρdef, kzHom_apply, map_mul, PowerSeries.map_X,
+    ← PowerSeries.map_derivative] using hdrive
 
 /-- **The `hW`-identification at a Weierstrass centre, from per-disk hypotheses only**: if
 the numerator `h₀` has coordinates `cs` in the trace-form basis, then the integral disk

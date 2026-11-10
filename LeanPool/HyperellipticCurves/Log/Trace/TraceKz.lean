@@ -501,6 +501,40 @@ end KzChartSolve
 
 /-! ### The generic-chart capstone, per disk -/
 
+/-- Read a trace-matrix solve through a chart evaluation and cancel its doubling. -/
+theorem eq_eval_tracePoly_mul_of_two_mul_eq_sum {K : Type*} [Field K] [NeZero (2 : K)]
+    {n : ℕ} {u s : K[X]} (hdeg : u.natDegree = n)
+    (φ : K[X] →+* K⟦X⟧) (hC : ∀ c, φ (C c) = PowerSeries.C c)
+    {x dx A : K⟦X⟧} (hX : φ X = x) (i : Fin n)
+    (h : 2 * algebraMap K⟦X⟧ (FractionRing K⟦X⟧) A
+      = ∑ j : Fin n, algebraMap K (FractionRing K⟦X⟧) ((traceMatrix u s)⁻¹
+          (finCongr hdeg.symm i) (finCongr hdeg.symm j))
+        * ((algebraMap K⟦X⟧ (FractionRing K⟦X⟧) x) ^ (j : ℕ)
+          * algebraMap K⟦X⟧ (FractionRing K⟦X⟧) dx)) :
+    A = φ (tracePoly u s (Fin.cast hdeg.symm i)) * dx := by
+  classical
+  let ι : K⟦X⟧ →+* FractionRing K⟦X⟧ := algebraMap _ _
+  have hcast : algebraMap K (FractionRing K⟦X⟧) = ι.comp PowerSeries.C := by
+    dsimp only [ι]
+    rw [← PowerSeries.algebraMap_eq]
+    exact IsScalarTower.algebraMap_eq K K⟦X⟧ (FractionRing K⟦X⟧)
+  have hRHS : (∑ j : Fin n, algebraMap K (FractionRing K⟦X⟧) ((traceMatrix u s)⁻¹
+        (finCongr hdeg.symm i) (finCongr hdeg.symm j)) * (ι x ^ (j : ℕ) * ι dx))
+      = ι (φ ((2 : K) • tracePoly u s (Fin.cast hdeg.symm i)) * dx) := by
+    rw [two_smul_tracePoly, map_sum, Finset.sum_mul, map_sum]
+    refine Fintype.sum_equiv (finCongr hdeg.symm) _ _ fun j ↦ ?_
+    rw [hcast, RingHom.comp_apply, map_mul, map_mul, map_mul, map_pow, hC, hX, map_pow]
+    simp only [finCongr_apply, Fin.val_cast]
+    ring
+  have hend : 2 * A = φ ((2 : K) • tracePoly u s (Fin.cast hdeg.symm i)) * dx :=
+    IsFractionRing.injective K⟦X⟧ (FractionRing K⟦X⟧) (by
+      rw [map_mul, map_ofNat, h, hRHS])
+  have h2 : (2 : K⟦X⟧) ≠ 0 := fun h0 ↦ NeZero.ne (2 : K)
+    (by simpa only [map_ofNat, map_zero] using congrArg PowerSeries.constantCoeff h0)
+  apply mul_left_cancel₀ h2
+  rw [hend, Polynomial.smul_eq_C_mul, map_mul, hC, map_ofNat]
+  ring
+
 section KzAssembleGeneric
 
 variable {O : Type*} [CommRing O] [IsDomain O] [IsLocalRing O] [UniformSpace O]
@@ -560,11 +594,6 @@ theorem yseries_mul_omegaPrime_eq_taylor_tracePoly_kz {hu : uτ.Monic}
   classical
   have hdvdτ : uτ ∣ vτ ^ 2 - f := ⟨w, hw⟩
   have hgτ : 2 * uτ.natDegree < f.natDegree := by rw [hfdeg]; lia
-  set Φ := ftauFoldFGL hu rfl hv hw hbez hf hfdeg hroot hcc haτ hbτ hdF hπ hπ0
-    hsplitτ hunitτ
-  set ζK : Fin uτ.natDegree → K⟦X⟧ :=
-    fun j ↦ PowerSeries.map ψ (phiZeta f a b xQ yQ m m₀ uτ vτ d j)
-  set ι' : K⟦X⟧ →+* Kz := algebraMap (PowerSeries K) Kz with hιdef
   set ρ : O⟦X⟧ →+* Kz := kzHom (O := O) ψ with hρdef
   obtain ⟨cPτ, sPτ, hsPτ⟩ := isCoprime_ftauFoldPipe hu rfl hv hw hbez havF
   obtain ⟨cφ, sφ, hsφ⟩ := isCoprime_phiPipeline havφ
@@ -590,31 +619,11 @@ theorem yseries_mul_omegaPrime_eq_taylor_tracePoly_kz {hu : uτ.Monic}
           by_contra hne'
           exact (hunitτ i' j' hne').ne_zero (by rw [hij, sub_self])) hsPτ) hsφ k j)
     hΘ i
-  -- both sides are `ι'`-images; identify them in `K⟦z⟧`
-  have hcast : algebraMap K Kz = ι'.comp (PowerSeries.C : K →+* K⟦X⟧) := by
-    rw [hιdef, ← PowerSeries.algebraMap_eq]
-    exact IsScalarTower.algebraMap_eq K K⟦X⟧ Kz
-  have hyv : ρ (PowerSeries.C b * diskSeriesGeneric f a)
-      = ι' (PowerSeries.C (ψ b) * diskSeriesGeneric (f.map ψ) (ψ a)) := by
-    rw [hρdef, kzHom_apply, map_mul, PowerSeries.map_C,
-      map_diskSeriesGeneric ψ f a hfa h2]
-  have hRHS : (∑ j, algebraMap K Kz ((traceMatrix (uτ.map ψ) (c₂.map ψ))⁻¹
-        (finCongr (hu.natDegree_map ψ).symm i) (finCongr (hu.natDegree_map ψ).symm j))
-        * ρ (PowerSeries.C a + PowerSeries.X) ^ (j : ℕ))
-      = ι' ((taylorSeriesHom (ψ a)) ((2 : K) • tracePoly (uτ.map ψ) (c₂.map ψ)
-          (Fin.cast (hu.natDegree_map ψ).symm i))) := by
-    rw [two_smul_tracePoly, map_sum, map_sum]
-    refine Fintype.sum_equiv (finCongr (hu.natDegree_map ψ).symm) _ _ fun j ↦ ?_
-    rw [hcast, RingHom.comp_apply, map_mul, map_mul, map_pow, taylorSeriesHom_C,
-      taylorSeriesHom_X, map_pow, hρdef, kzHom_apply]
-    simp only [PowerSeries.map_C, PowerSeries.map_X, map_add, finCongr_apply, Fin.val_cast]
-    rfl
-  have hend : ι' (2 * (PowerSeries.C (ψ b) * diskSeriesGeneric (f.map ψ) (ψ a)
-        * omegaPrime (Φ.map ψ) ζK i))
-      = ι' (taylorSeriesHom (ψ a) ((2 : K) • tracePoly (uτ.map ψ) (c₂.map ψ)
-          (Fin.cast (hu.natDegree_map ψ).symm i))) := by
-    rw [map_mul, map_ofNat, ← hRHS, ← hdrive, hyv, map_mul]
-  exact eq_coe_taylor_of_two_mul_eq ((IsFractionRing.injective (PowerSeries K) Kz) hend)
+  refine (eq_eval_tracePoly_mul_of_two_mul_eq_sum (hu.natDegree_map ψ)
+    (taylorSeriesHom (ψ a)) (taylorSeriesHom_C (ψ a)) (dx := 1)
+    (taylorSeriesHom_X (ψ a)) i ?_).trans (mul_one _)
+  simpa only [hρdef, kzHom_apply, map_mul, map_add, PowerSeries.map_C, PowerSeries.map_X,
+    map_one, mul_one, map_diskSeriesGeneric ψ f a hfa h2] using hdrive
 
 /-- **The disk expansion of an integral differential is its `ω′`-combination** (the
 `hW`-identification of blueprint `thm:disk-bound`): if the numerator `h₀` has coordinates
