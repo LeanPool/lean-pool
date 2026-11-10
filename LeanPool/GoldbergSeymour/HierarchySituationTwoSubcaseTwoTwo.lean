@@ -1934,40 +1934,6 @@ private theorem helper_branch_1360.{u_1, u_2} :
     exact Finset.disjoint_left.mp
       (C.good.disjointPairs q eta D.theta heta hthetaStored he) hb hgammaPair
 
-private theorem helper_hfinalCard_1448.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E]
-      [ DecidableEq V] [ DecidableEq E] (G : LooplessMultigraph V E) (k : ℕ)
-      (e0 : E) (input : PartialEdgeColoring E k) (T : TreeSequence G e0)
-      (phi : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k e0 input T phi)
-      (base : HierarchyBase ett phi) (C : HierarchyCounterexample base)
-      (ctx : HierarchyMinimumCounterexampleContext G k e0 input T phi ett base C)
-      (D : HierarchySituationTwoCaseTwoTwoData G k e0 input T phi ett base C ctx),
-    let Bshort : TreeSequence G e0 :=
-      HierarchyFullTailPrefix C (HierarchyFullTailLength C - (2 : ℕ));
-    ∀ (hshortLen : Bshort.length + (2 : ℕ) = T.length),
-    let previousEdge : Fin T.length :=
-      (⟨T.length - (2 : ℕ),
-          by
-          have := GoldbergSeymour.TreeSequence.positive T
-          omega⟩ :
-        Fin T.length);
-    let finalColors : Finset (Fin k) :=
-      ({c : Fin k | phi (T.edge previousEdge) = some c} : Finset (Fin k)) ∪
-        ({c : Fin k | phi (T.edge D.lastEdgeIndex) = some c} : Finset (Fin k));
-    (∀ (f : E), ({c : Fin k | phi f = some c} : Finset (Fin k)).card ≤ (1 : ℕ)) →
-    finalColors.card ≤ (2 : ℕ) := by
-  classical
-  intro V E _ _ _ _ G k e0 input T phi ett base C ctx D Bshort hshortLen previousEdge finalColors
-      singleColorCard
-  have hu := Finset.card_union_le
-    (Finset.univ.filter fun c => phi (T.edge previousEdge) = some c)
-    (Finset.univ.filter fun c => phi (T.edge D.lastEdgeIndex) = some c)
-  have hp := singleColorCard (T.edge previousEdge)
-  have hl := singleColorCard (T.edge D.lastEdgeIndex)
-  dsimp [finalColors]
-  omega
-
 private theorem helper_unused_1456.{u_1, u_2} :
     open scoped Classical in
     ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E]
@@ -2437,9 +2403,13 @@ private theorem helper_branch_3441.{u_1, u_2} :
     exact Option.some.inj ((Finset.mem_filter.mp ha).2.symm.trans
       (Finset.mem_filter.mp hb).2)
   have hfinalCard : finalColors.card ≤ 2 := by
-    exact @helper_hfinalCard_1448 (@V) (@E) inferInstance inferInstance inferInstance
-        inferInstance (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C) (@ctx) (@D)
-        (@hshortLen) (@singleColorCard)
+    have unionBound := Finset.card_union_le
+      (Finset.univ.filter fun c => phi (T.edge previousEdge) = some c)
+      (Finset.univ.filter fun c => phi (T.edge D.lastEdgeIndex) = some c)
+    have penultimateBound := singleColorCard (T.edge previousEdge)
+    have lastBound := singleColorCard (T.edge D.lastEdgeIndex)
+    dsimp [finalColors]
+    omega
   have unused {c : Fin k} (hp : c ∉ prefixUsed) (hf : c ∉ finalColors) :
       ∀ t : Fin T.length, A.length ≤ t.val → phi (T.edge t) ≠ some c := by
     exact @helper_unused_1456 (@V) (@E) inferInstance inferInstance inferInstance inferInstance

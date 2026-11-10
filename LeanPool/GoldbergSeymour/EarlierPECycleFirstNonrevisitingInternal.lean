@@ -6,6 +6,7 @@ Authors: Wesley Pegden
 module
 
 public import LeanPool.GoldbergSeymour.InternalEdges
+public import LeanPool.GoldbergSeymour.WalkVertexRegion
 public import LeanPool.GoldbergSeymour.TashkinovSeries
 public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegmentVertexSetSubset
 
@@ -539,674 +540,6 @@ private theorem helper_outsideOnCycle_401.{u_1, u_2} :
     rw [← ha]
     exact edgeCycle.getVert_mem_support 1
 
-private theorem helper_outsideIndicesNonempty_437.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [inst : Fintype V] [inst_1 : Fintype E] [inst_2 : DecidableEq
-        E] (G : LooplessMultigraph V E) (k rounds : ℕ) (e0 : E) (input : PartialEdgeColoring E k)
-        (series : TashkinovSeries G k rounds e0 input) (r : Fin rounds) (gamma delta : Fin k)
-        (cycle : TwoColorCycle G (series.data.coloring r.succ) gamma delta), (↑r : ℕ) + (1 : ℕ) <
-        rounds →
-    let candidates : Finset (Fin rounds) := ({q : Fin rounds | (↑r : ℕ) < (↑q : ℕ) ∧
-        series.data.kind q.succ ≠ some TashkinovExtensionKind.RE} : Finset (Fin rounds));
-    ∀ (candidatesNonempty : candidates.Nonempty),
-    let p : Fin rounds := candidates.min' candidatesNonempty;
-    ∀ (pColoring : series.data.coloring p.castSucc = series.data.coloring r.succ),
-    let cycleP : TwoColorCycle G (series.data.coloring p.castSucc) gamma delta := @Eq.rec
-        (PartialEdgeColoring E k) (@TashkinovSeriesData.coloring V E G k rounds e0
-        (@TashkinovSeries.data V E inst inst_1 inst_2 G k rounds e0 input series) (@Fin.succ
-        rounds r)) (fun (x : PartialEdgeColoring E k) (_ : @Eq (PartialEdgeColoring E k)
-        (@TashkinovSeriesData.coloring V E G k rounds e0 (@TashkinovSeries.data V E inst inst_1
-        inst_2 G k rounds e0 input series) (@Fin.succ rounds r)) x) ↦ @TwoColorCycle V E G k x
-        gamma delta) cycle (@TashkinovSeriesData.coloring V E G k rounds e0 (@TashkinovSeries.data
-        V E inst inst_1 inst_2 G k rounds e0 input series) (@Fin.castSucc rounds p)) (@Eq.symm
-        (PartialEdgeColoring E k) (@TashkinovSeriesData.coloring V E G k rounds e0
-        (@TashkinovSeries.data V E inst inst_1 inst_2 G k rounds e0 input series) (@Fin.castSucc
-        rounds p)) (@TashkinovSeriesData.coloring V E G k rounds e0 (@TashkinovSeries.data V E
-        inst inst_1 inst_2 G k rounds e0 input series) (@Fin.succ rounds r)) pColoring);
-    ∀ (f : E), Sum.inr f ∈ cycleP.walk.support →
-    let currentTree : Finset V := TreeSequenceVertexSet (series.data.tree p.succ.castSucc);
-    ∀ (v0 : V) (hv0CycleP : Sum.inl v0 ∈ cycleP.walk.support),
-    ∀ outsideVertex ∉ currentTree,
-    let rootedCycle : (TwoColorIncidenceGraph G (series.data.coloring p.castSucc) gamma
-        delta).Walk (Sum.inl v0) (Sum.inl v0) := cycleP.walk.rotate (Sum.inl v0) hv0CycleP;
-        Sum.inl outsideVertex ∈ rootedCycle.support →
-    let outsideIndices : Finset (Fin (rootedCycle.length + (1 : ℕ))) := ({i : Fin
-        (rootedCycle.length + (1 : ℕ)) |
-    ∃ (v : V), rootedCycle.getVert (↑i : ℕ) = Sum.inl v ∧ v ∉ currentTree} : Finset (Fin
-        (rootedCycle.length + (1 : ℕ)))); outsideIndices.Nonempty := by
-  classical
-  intro V E _ _ _ G k rounds e0 input series r gamma delta cycle hrTerminalLt candidates
-      candidatesNonempty p pColoring cycleP f hfCycleP currentTree v0 hv0CycleP outsideVertex
-      outsideVertexNotCurrent rootedCycle outsideVertexRooted outsideIndices
-  obtain ⟨n, hn, hnle⟩ :=
-    SimpleGraph.Walk.mem_support_iff_exists_getVert.mp outsideVertexRooted
-  let i : Fin (rootedCycle.length + 1) := ⟨n, by omega⟩
-  refine ⟨i, Finset.mem_filter.mpr ⟨Finset.mem_univ _, ?_⟩⟩
-  exact ⟨outsideVertex, by simpa [i] using hn, outsideVertexNotCurrent⟩
-
-private theorem helper_beforeFirstOutside_450.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [inst : Fintype V] [inst_1 : Fintype E] [inst_2 : DecidableEq
-        E] (G : LooplessMultigraph V E) (k rounds : ℕ) (e0 : E) (input : PartialEdgeColoring E k)
-        (series : TashkinovSeries G k rounds e0 input) (r : Fin rounds) (gamma delta : Fin k)
-        (cycle : TwoColorCycle G (series.data.coloring r.succ) gamma delta), (↑r : ℕ) + (1 : ℕ) <
-        rounds →
-    let candidates : Finset (Fin rounds) := ({q : Fin rounds | (↑r : ℕ) < (↑q : ℕ) ∧
-        series.data.kind q.succ ≠ some TashkinovExtensionKind.RE} : Finset (Fin rounds));
-    ∀ (candidatesNonempty : candidates.Nonempty),
-    let p : Fin rounds := candidates.min' candidatesNonempty;
-    ∀ (pColoring : series.data.coloring p.castSucc = series.data.coloring r.succ),
-    let cycleP : TwoColorCycle G (series.data.coloring p.castSucc) gamma delta := @Eq.rec
-        (PartialEdgeColoring E k) (@TashkinovSeriesData.coloring V E G k rounds e0
-        (@TashkinovSeries.data V E inst inst_1 inst_2 G k rounds e0 input series) (@Fin.succ
-        rounds r)) (fun (x : PartialEdgeColoring E k) (_ : @Eq (PartialEdgeColoring E k)
-        (@TashkinovSeriesData.coloring V E G k rounds e0 (@TashkinovSeries.data V E inst inst_1
-        inst_2 G k rounds e0 input series) (@Fin.succ rounds r)) x) ↦ @TwoColorCycle V E G k x
-        gamma delta) cycle (@TashkinovSeriesData.coloring V E G k rounds e0 (@TashkinovSeries.data
-        V E inst inst_1 inst_2 G k rounds e0 input series) (@Fin.castSucc rounds p)) (@Eq.symm
-        (PartialEdgeColoring E k) (@TashkinovSeriesData.coloring V E G k rounds e0
-        (@TashkinovSeries.data V E inst inst_1 inst_2 G k rounds e0 input series) (@Fin.castSucc
-        rounds p)) (@TashkinovSeriesData.coloring V E G k rounds e0 (@TashkinovSeries.data V E
-        inst inst_1 inst_2 G k rounds e0 input series) (@Fin.succ rounds r)) pColoring);
-    ∀ (f : E), Sum.inr f ∈ cycleP.walk.support →
-    let currentTree : Finset V := TreeSequenceVertexSet (series.data.tree p.succ.castSucc);
-    ∀ (v0 : V) (hv0CycleP : Sum.inl v0 ∈ cycleP.walk.support),
-    let rootedCycle : (TwoColorIncidenceGraph G (series.data.coloring p.castSucc) gamma
-        delta).Walk (Sum.inl v0) (Sum.inl v0) := cycleP.walk.rotate (Sum.inl v0) hv0CycleP;
-    let outsideIndices : Finset (Fin (rootedCycle.length + (1 : ℕ))) := ({i : Fin
-        (rootedCycle.length + (1 : ℕ)) |
-    ∃ (v : V), rootedCycle.getVert (↑i : ℕ) = Sum.inl v ∧ v ∉ currentTree} : Finset (Fin
-        (rootedCycle.length + (1 : ℕ))));
-    ∀ (outsideIndicesNonempty : outsideIndices.Nonempty),
-    let firstOutside : Fin (rootedCycle.length + (1 : ℕ)) := outsideIndices.min'
-        outsideIndicesNonempty;
-    ∀ (i : Fin (rootedCycle.length + (1 : ℕ))), (↑i : ℕ) < (↑firstOutside : ℕ) →
-    ∀ (v : V), rootedCycle.getVert (↑i : ℕ) = Sum.inl v → v ∈ currentTree := by
-  classical
-  intro V E _ _ _ G k rounds e0 input series r gamma delta cycle hrTerminalLt candidates
-      candidatesNonempty p pColoring cycleP f hfCycleP currentTree v0 hv0CycleP rootedCycle
-      outsideIndices outsideIndicesNonempty firstOutside i hi v hv
-  by_contra hvOutside
-  have hiMem : i ∈ outsideIndices := Finset.mem_filter.mpr
-    ⟨Finset.mem_univ _, ⟨v, hv, hvOutside⟩⟩
-  have hmin := Finset.min'_le outsideIndices i hiMem
-  omega
-
-private theorem helper_firstOutsidePositive_459.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [inst : Fintype V] [inst_1 : Fintype E] [inst_2 : DecidableEq
-        E] (G : LooplessMultigraph V E) (k rounds : ℕ) (e0 : E) (input : PartialEdgeColoring E k)
-        (series : TashkinovSeries G k rounds e0 input) (r : Fin rounds) (gamma delta : Fin k)
-        (cycle : TwoColorCycle G (series.data.coloring r.succ) gamma delta), (↑r : ℕ) + (1 : ℕ) <
-        rounds →
-    let candidates : Finset (Fin rounds) := ({q : Fin rounds | (↑r : ℕ) < (↑q : ℕ) ∧
-        series.data.kind q.succ ≠ some TashkinovExtensionKind.RE} : Finset (Fin rounds));
-    ∀ (candidatesNonempty : candidates.Nonempty),
-    let p : Fin rounds := candidates.min' candidatesNonempty;
-    ∀ (pColoring : series.data.coloring p.castSucc = series.data.coloring r.succ),
-    let cycleP : TwoColorCycle G (series.data.coloring p.castSucc) gamma delta := @Eq.rec
-        (PartialEdgeColoring E k) (@TashkinovSeriesData.coloring V E G k rounds e0
-        (@TashkinovSeries.data V E inst inst_1 inst_2 G k rounds e0 input series) (@Fin.succ
-        rounds r)) (fun (x : PartialEdgeColoring E k) (_ : @Eq (PartialEdgeColoring E k)
-        (@TashkinovSeriesData.coloring V E G k rounds e0 (@TashkinovSeries.data V E inst inst_1
-        inst_2 G k rounds e0 input series) (@Fin.succ rounds r)) x) ↦ @TwoColorCycle V E G k x
-        gamma delta) cycle (@TashkinovSeriesData.coloring V E G k rounds e0 (@TashkinovSeries.data
-        V E inst inst_1 inst_2 G k rounds e0 input series) (@Fin.castSucc rounds p)) (@Eq.symm
-        (PartialEdgeColoring E k) (@TashkinovSeriesData.coloring V E G k rounds e0
-        (@TashkinovSeries.data V E inst inst_1 inst_2 G k rounds e0 input series) (@Fin.castSucc
-        rounds p)) (@TashkinovSeriesData.coloring V E G k rounds e0 (@TashkinovSeries.data V E
-        inst inst_1 inst_2 G k rounds e0 input series) (@Fin.succ rounds r)) pColoring);
-    ∀ (f : E), Sum.inr f ∈ cycleP.walk.support →
-    let currentTree : Finset V := TreeSequenceVertexSet (series.data.tree p.succ.castSucc);
-    ∀ (v0 : V) (hv0CycleP : Sum.inl v0 ∈ cycleP.walk.support), v0 ∈ currentTree →
-    let rootedCycle : (TwoColorIncidenceGraph G (series.data.coloring p.castSucc) gamma
-        delta).Walk (Sum.inl v0) (Sum.inl v0) := cycleP.walk.rotate (Sum.inl v0) hv0CycleP;
-    let outsideIndices : Finset (Fin (rootedCycle.length + (1 : ℕ))) := ({i : Fin
-        (rootedCycle.length + (1 : ℕ)) |
-    ∃ (v : V), rootedCycle.getVert (↑i : ℕ) = Sum.inl v ∧ v ∉ currentTree} : Finset (Fin
-        (rootedCycle.length + (1 : ℕ))));
-    ∀ (outsideIndicesNonempty : outsideIndices.Nonempty),
-    let firstOutside : Fin (rootedCycle.length + (1 : ℕ)) := outsideIndices.min'
-        outsideIndicesNonempty;
-    ∀ (y : V), rootedCycle.getVert (↑firstOutside : ℕ) = Sum.inl y → y ∉ currentTree → (0 : ℕ) <
-        (↑firstOutside : ℕ) := by
-  classical
-  intro V E _ _ _ G k rounds e0 input series r gamma delta cycle hrTerminalLt candidates
-      candidatesNonempty p pColoring cycleP f hfCycleP currentTree v0 hv0CycleP hv0Current
-      rootedCycle outsideIndices outsideIndicesNonempty firstOutside y hyAt hyOutside
-  by_contra hnot
-  have hiZero : firstOutside.val = 0 := by omega
-  have hyv0 : y = v0 := by
-    apply Sum.inl.inj
-    calc
-      Sum.inl y = rootedCycle.getVert firstOutside.val := hyAt.symm
-      _ = rootedCycle.getVert 0 := by rw [hiZero]
-      _ = Sum.inl v0 := rootedCycle.getVert_zero
-  exact hyOutside (hyv0.symm ▸ hv0Current)
-
-private theorem helper_firstOutsideLt_469.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [inst : Fintype V] [inst_1 : Fintype E] [inst_2 : DecidableEq
-        E] (G : LooplessMultigraph V E) (k rounds : ℕ) (e0 : E) (input : PartialEdgeColoring E k)
-        (series : TashkinovSeries G k rounds e0 input) (r : Fin rounds) (gamma delta : Fin k)
-        (cycle : TwoColorCycle G (series.data.coloring r.succ) gamma delta), (↑r : ℕ) + (1 : ℕ) <
-        rounds →
-    let candidates : Finset (Fin rounds) := ({q : Fin rounds | (↑r : ℕ) < (↑q : ℕ) ∧
-        series.data.kind q.succ ≠ some TashkinovExtensionKind.RE} : Finset (Fin rounds));
-    ∀ (candidatesNonempty : candidates.Nonempty),
-    let p : Fin rounds := candidates.min' candidatesNonempty;
-    ∀ (pColoring : series.data.coloring p.castSucc = series.data.coloring r.succ),
-    let cycleP : TwoColorCycle G (series.data.coloring p.castSucc) gamma delta := @Eq.rec
-        (PartialEdgeColoring E k) (@TashkinovSeriesData.coloring V E G k rounds e0
-        (@TashkinovSeries.data V E inst inst_1 inst_2 G k rounds e0 input series) (@Fin.succ
-        rounds r)) (fun (x : PartialEdgeColoring E k) (_ : @Eq (PartialEdgeColoring E k)
-        (@TashkinovSeriesData.coloring V E G k rounds e0 (@TashkinovSeries.data V E inst inst_1
-        inst_2 G k rounds e0 input series) (@Fin.succ rounds r)) x) ↦ @TwoColorCycle V E G k x
-        gamma delta) cycle (@TashkinovSeriesData.coloring V E G k rounds e0 (@TashkinovSeries.data
-        V E inst inst_1 inst_2 G k rounds e0 input series) (@Fin.castSucc rounds p)) (@Eq.symm
-        (PartialEdgeColoring E k) (@TashkinovSeriesData.coloring V E G k rounds e0
-        (@TashkinovSeries.data V E inst inst_1 inst_2 G k rounds e0 input series) (@Fin.castSucc
-        rounds p)) (@TashkinovSeriesData.coloring V E G k rounds e0 (@TashkinovSeries.data V E
-        inst inst_1 inst_2 G k rounds e0 input series) (@Fin.succ rounds r)) pColoring);
-    ∀ (f : E), Sum.inr f ∈ cycleP.walk.support →
-    let currentTree : Finset V := TreeSequenceVertexSet (series.data.tree p.succ.castSucc);
-    ∀ (v0 : V) (hv0CycleP : Sum.inl v0 ∈ cycleP.walk.support), v0 ∈ currentTree →
-    let rootedCycle : (TwoColorIncidenceGraph G (series.data.coloring p.castSucc) gamma
-        delta).Walk (Sum.inl v0) (Sum.inl v0) := cycleP.walk.rotate (Sum.inl v0) hv0CycleP;
-    let outsideIndices : Finset (Fin (rootedCycle.length + (1 : ℕ))) := ({i : Fin
-        (rootedCycle.length + (1 : ℕ)) |
-    ∃ (v : V), rootedCycle.getVert (↑i : ℕ) = Sum.inl v ∧ v ∉ currentTree} : Finset (Fin
-        (rootedCycle.length + (1 : ℕ))));
-    ∀ (outsideIndicesNonempty : outsideIndices.Nonempty),
-    let firstOutside : Fin (rootedCycle.length + (1 : ℕ)) := outsideIndices.min'
-        outsideIndicesNonempty;
-    ∀ (y : V), rootedCycle.getVert (↑firstOutside : ℕ) = Sum.inl y → y ∉ currentTree →
-        (↑firstOutside : ℕ) < rootedCycle.length := by
-  classical
-  intro V E _ _ _ G k rounds e0 input series r gamma delta cycle hrTerminalLt candidates
-      candidatesNonempty p pColoring cycleP f hfCycleP currentTree v0 hv0CycleP hv0Current
-      rootedCycle outsideIndices outsideIndicesNonempty firstOutside y hyAt hyOutside
-  by_contra hnot
-  have hiLast : firstOutside.val = rootedCycle.length := by
-    have := firstOutside.isLt
-    omega
-  have hyv0 : y = v0 := by
-    apply Sum.inl.inj
-    calc
-      Sum.inl y = rootedCycle.getVert firstOutside.val := hyAt.symm
-      _ = rootedCycle.getVert rootedCycle.length := by rw [hiLast]
-      _ = Sum.inl v0 := rootedCycle.getVert_length
-  exact hyOutside (hyv0.symm ▸ hv0Current)
-
-private theorem helper_firstOutsideNotOne_481.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [inst : Fintype V] [inst_1 : Fintype E] [inst_2 : DecidableEq
-        E] (G : LooplessMultigraph V E) (k rounds : ℕ) (e0 : E) (input : PartialEdgeColoring E k)
-        (series : TashkinovSeries G k rounds e0 input) (r : Fin rounds) (gamma delta : Fin k)
-        (cycle : TwoColorCycle G (series.data.coloring r.succ) gamma delta), (↑r : ℕ) + (1 : ℕ) <
-        rounds →
-    let candidates : Finset (Fin rounds) := ({q : Fin rounds | (↑r : ℕ) < (↑q : ℕ) ∧
-        series.data.kind q.succ ≠ some TashkinovExtensionKind.RE} : Finset (Fin rounds));
-    ∀ (candidatesNonempty : candidates.Nonempty),
-    let p : Fin rounds := candidates.min' candidatesNonempty;
-    ∀ (pColoring : series.data.coloring p.castSucc = series.data.coloring r.succ),
-    let cycleP : TwoColorCycle G (series.data.coloring p.castSucc) gamma delta := @Eq.rec
-        (PartialEdgeColoring E k) (@TashkinovSeriesData.coloring V E G k rounds e0
-        (@TashkinovSeries.data V E inst inst_1 inst_2 G k rounds e0 input series) (@Fin.succ
-        rounds r)) (fun (x : PartialEdgeColoring E k) (_ : @Eq (PartialEdgeColoring E k)
-        (@TashkinovSeriesData.coloring V E G k rounds e0 (@TashkinovSeries.data V E inst inst_1
-        inst_2 G k rounds e0 input series) (@Fin.succ rounds r)) x) ↦ @TwoColorCycle V E G k x
-        gamma delta) cycle (@TashkinovSeriesData.coloring V E G k rounds e0 (@TashkinovSeries.data
-        V E inst inst_1 inst_2 G k rounds e0 input series) (@Fin.castSucc rounds p)) (@Eq.symm
-        (PartialEdgeColoring E k) (@TashkinovSeriesData.coloring V E G k rounds e0
-        (@TashkinovSeries.data V E inst inst_1 inst_2 G k rounds e0 input series) (@Fin.castSucc
-        rounds p)) (@TashkinovSeriesData.coloring V E G k rounds e0 (@TashkinovSeries.data V E
-        inst inst_1 inst_2 G k rounds e0 input series) (@Fin.succ rounds r)) pColoring);
-    ∀ (f : E), Sum.inr f ∈ cycleP.walk.support →
-    let currentTree : Finset V := TreeSequenceVertexSet (series.data.tree p.succ.castSucc);
-    ∀ (v0 : V) (hv0CycleP : Sum.inl v0 ∈ cycleP.walk.support),
-    let rootedCycle : (TwoColorIncidenceGraph G (series.data.coloring p.castSucc) gamma
-        delta).Walk (Sum.inl v0) (Sum.inl v0) := cycleP.walk.rotate (Sum.inl v0) hv0CycleP;
-    let outsideIndices : Finset (Fin (rootedCycle.length + (1 : ℕ))) := ({i : Fin
-        (rootedCycle.length + (1 : ℕ)) |
-    ∃ (v : V), rootedCycle.getVert (↑i : ℕ) = Sum.inl v ∧ v ∉ currentTree} : Finset (Fin
-        (rootedCycle.length + (1 : ℕ))));
-    ∀ (outsideIndicesNonempty : outsideIndices.Nonempty),
-    let firstOutside : Fin (rootedCycle.length + (1 : ℕ)) := outsideIndices.min'
-        outsideIndicesNonempty;
-    ∀ (y : V), rootedCycle.getVert (↑firstOutside : ℕ) = Sum.inl y → (↑firstOutside : ℕ) <
-        rootedCycle.length → (↑firstOutside : ℕ) ≠ (1 : ℕ) := by
-  classical
-  intro V E _ _ _ G k rounds e0 input series r gamma delta cycle hrTerminalLt candidates
-      candidatesNonempty p pColoring cycleP f hfCycleP currentTree v0 hv0CycleP rootedCycle
-      outsideIndices outsideIndicesNonempty firstOutside y hyAt firstOutsideLt hiOne
-  have hAdj := rootedCycle.adj_getVert_succ (i := 0) (by omega)
-  have hyOne : rootedCycle.getVert 1 = Sum.inl y := by
-    simpa [hiOne] using hyAt
-  rw [rootedCycle.getVert_zero, hyOne] at hAdj
-  simp [TwoColorIncidenceGraph] at hAdj
-
-private theorem helper_crossingEdge_492.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [inst : Fintype V] [inst_1 : Fintype E] [inst_2 : DecidableEq
-        E] (G : LooplessMultigraph V E) (k rounds : ℕ) (e0 : E) (input : PartialEdgeColoring E k)
-        (series : TashkinovSeries G k rounds e0 input) (r : Fin rounds) (gamma delta : Fin k)
-        (cycle : TwoColorCycle G (series.data.coloring r.succ) gamma delta),
-    let candidates : Finset (Fin rounds) := ({q : Fin rounds | (↑r : ℕ) < (↑q : ℕ) ∧
-        series.data.kind q.succ ≠ some TashkinovExtensionKind.RE} : Finset (Fin rounds));
-    ∀ (candidatesNonempty : candidates.Nonempty),
-    let p : Fin rounds := candidates.min' candidatesNonempty;
-    ∀ (pColoring : series.data.coloring p.castSucc = series.data.coloring r.succ),
-    let cycleP : TwoColorCycle G (series.data.coloring p.castSucc) gamma delta := @Eq.rec
-        (PartialEdgeColoring E k) (@TashkinovSeriesData.coloring V E G k rounds e0
-        (@TashkinovSeries.data V E inst inst_1 inst_2 G k rounds e0 input series) (@Fin.succ
-        rounds r)) (fun (x : PartialEdgeColoring E k) (_ : @Eq (PartialEdgeColoring E k)
-        (@TashkinovSeriesData.coloring V E G k rounds e0 (@TashkinovSeries.data V E inst inst_1
-        inst_2 G k rounds e0 input series) (@Fin.succ rounds r)) x) ↦ @TwoColorCycle V E G k x
-        gamma delta) cycle (@TashkinovSeriesData.coloring V E G k rounds e0 (@TashkinovSeries.data
-        V E inst inst_1 inst_2 G k rounds e0 input series) (@Fin.castSucc rounds p)) (@Eq.symm
-        (PartialEdgeColoring E k) (@TashkinovSeriesData.coloring V E G k rounds e0
-        (@TashkinovSeries.data V E inst inst_1 inst_2 G k rounds e0 input series) (@Fin.castSucc
-        rounds p)) (@TashkinovSeriesData.coloring V E G k rounds e0 (@TashkinovSeries.data V E
-        inst inst_1 inst_2 G k rounds e0 input series) (@Fin.succ rounds r)) pColoring);
-    let currentTree : Finset V := TreeSequenceVertexSet (series.data.tree p.succ.castSucc);
-    ∀ (v0 : V) (hv0CycleP : Sum.inl v0 ∈ cycleP.walk.support),
-    let rootedCycle : (TwoColorIncidenceGraph G (series.data.coloring p.castSucc) gamma
-        delta).Walk (Sum.inl v0) (Sum.inl v0) := cycleP.walk.rotate (Sum.inl v0) hv0CycleP;
-    let outsideIndices : Finset (Fin (rootedCycle.length + (1 : ℕ))) := ({i : Fin
-        (rootedCycle.length + (1 : ℕ)) |
-    ∃ (v : V), rootedCycle.getVert (↑i : ℕ) = Sum.inl v ∧ v ∉ currentTree} : Finset (Fin
-        (rootedCycle.length + (1 : ℕ))));
-    ∀ (outsideIndicesNonempty : outsideIndices.Nonempty),
-    let firstOutside : Fin (rootedCycle.length + (1 : ℕ)) := outsideIndices.min'
-        outsideIndicesNonempty;
-    ∀ (y : V), rootedCycle.getVert (↑firstOutside : ℕ) = Sum.inl y → (TwoColorIncidenceGraph G
-        (series.data.coloring p.castSucc) gamma delta).Adj (rootedCycle.getVert ((↑firstOutside :
-        ℕ) - (1 : ℕ))) (rootedCycle.getVert ((↑firstOutside : ℕ) - (1 : ℕ) + (1 : ℕ))) →
-        (↑firstOutside : ℕ) - (1 : ℕ) + (1 : ℕ) = (↑firstOutside : ℕ) →
-    ∃ (g : E), rootedCycle.getVert ((↑firstOutside : ℕ) - (1 : ℕ)) = Sum.inr g := by
-  classical
-  intro V E _ _ _ G k rounds e0 input series r gamma delta cycle candidates candidatesNonempty p
-      pColoring cycleP currentTree v0 hv0CycleP rootedCycle outsideIndices outsideIndicesNonempty
-      firstOutside y hyAt crossingAdj crossingIndex
-  cases hnode : rootedCycle.getVert (firstOutside.val - 1) with
-  | inl v =>
-    exfalso
-    rw [crossingIndex, hyAt, hnode] at crossingAdj
-    simp [TwoColorIncidenceGraph] at crossingAdj
-  | inr g => exact ⟨g, rfl⟩
-
-private theorem helper_insideVertex_508.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [inst : Fintype V] [inst_1 : Fintype E] [inst_2 : DecidableEq
-        E] (G : LooplessMultigraph V E) (k rounds : ℕ) (e0 : E) (input : PartialEdgeColoring E k)
-        (series : TashkinovSeries G k rounds e0 input) (r : Fin rounds) (gamma delta : Fin k)
-        (cycle : TwoColorCycle G (series.data.coloring r.succ) gamma delta),
-    let candidates : Finset (Fin rounds) := ({q : Fin rounds | (↑r : ℕ) < (↑q : ℕ) ∧
-        series.data.kind q.succ ≠ some TashkinovExtensionKind.RE} : Finset (Fin rounds));
-    ∀ (candidatesNonempty : candidates.Nonempty),
-    let p : Fin rounds := candidates.min' candidatesNonempty;
-    ∀ (pColoring : series.data.coloring p.castSucc = series.data.coloring r.succ),
-    let cycleP : TwoColorCycle G (series.data.coloring p.castSucc) gamma delta := @Eq.rec
-        (PartialEdgeColoring E k) (@TashkinovSeriesData.coloring V E G k rounds e0
-        (@TashkinovSeries.data V E inst inst_1 inst_2 G k rounds e0 input series) (@Fin.succ
-        rounds r)) (fun (x : PartialEdgeColoring E k) (_ : @Eq (PartialEdgeColoring E k)
-        (@TashkinovSeriesData.coloring V E G k rounds e0 (@TashkinovSeries.data V E inst inst_1
-        inst_2 G k rounds e0 input series) (@Fin.succ rounds r)) x) ↦ @TwoColorCycle V E G k x
-        gamma delta) cycle (@TashkinovSeriesData.coloring V E G k rounds e0 (@TashkinovSeries.data
-        V E inst inst_1 inst_2 G k rounds e0 input series) (@Fin.castSucc rounds p)) (@Eq.symm
-        (PartialEdgeColoring E k) (@TashkinovSeriesData.coloring V E G k rounds e0
-        (@TashkinovSeries.data V E inst inst_1 inst_2 G k rounds e0 input series) (@Fin.castSucc
-        rounds p)) (@TashkinovSeriesData.coloring V E G k rounds e0 (@TashkinovSeries.data V E
-        inst inst_1 inst_2 G k rounds e0 input series) (@Fin.succ rounds r)) pColoring);
-    let currentTree : Finset V := TreeSequenceVertexSet (series.data.tree p.succ.castSucc);
-    ∀ (v0 : V) (hv0CycleP : Sum.inl v0 ∈ cycleP.walk.support),
-    let rootedCycle : (TwoColorIncidenceGraph G (series.data.coloring p.castSucc) gamma
-        delta).Walk (Sum.inl v0) (Sum.inl v0) := cycleP.walk.rotate (Sum.inl v0) hv0CycleP;
-    let outsideIndices : Finset (Fin (rootedCycle.length + (1 : ℕ))) := ({i : Fin
-        (rootedCycle.length + (1 : ℕ)) |
-    ∃ (v : V), rootedCycle.getVert (↑i : ℕ) = Sum.inl v ∧ v ∉ currentTree} : Finset (Fin
-        (rootedCycle.length + (1 : ℕ))));
-    ∀ (outsideIndicesNonempty : outsideIndices.Nonempty),
-    let firstOutside : Fin (rootedCycle.length + (1 : ℕ)) := outsideIndices.min'
-        outsideIndicesNonempty;
-    ∀ (g : E), rootedCycle.getVert ((↑firstOutside : ℕ) - (1 : ℕ)) = Sum.inr g →
-        (TwoColorIncidenceGraph G (series.data.coloring p.castSucc) gamma delta).Adj
-        (rootedCycle.getVert ((↑firstOutside : ℕ) - (2 : ℕ))) (rootedCycle.getVert ((↑firstOutside
-        : ℕ) - (2 : ℕ) + (1 : ℕ))) → (↑firstOutside : ℕ) - (2 : ℕ) + (1 : ℕ) = (↑firstOutside : ℕ)
-        - (1 : ℕ) →
-    ∃ (x : V), rootedCycle.getVert ((↑firstOutside : ℕ) - (2 : ℕ)) = Sum.inl x := by
-  classical
-  intro V E _ _ _ G k rounds e0 input series r gamma delta cycle candidates candidatesNonempty p
-      pColoring cycleP currentTree v0 hv0CycleP rootedCycle outsideIndices outsideIndicesNonempty
-      firstOutside g hgAt beforeCrossingAdj beforeCrossingIndex
-  cases hnode : rootedCycle.getVert (firstOutside.val - 2) with
-  | inl x => exact ⟨x, rfl⟩
-  | inr e =>
-    exfalso
-    rw [beforeCrossingIndex, hgAt, hnode] at beforeCrossingAdj
-    simp [TwoColorIncidenceGraph] at beforeCrossingAdj
-
-private theorem helper_hxCurrent_517.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [inst : Fintype V] [inst_1 : Fintype E] [inst_2 : DecidableEq
-        E] (G : LooplessMultigraph V E) (k rounds : ℕ) (e0 : E) (input : PartialEdgeColoring E k)
-        (series : TashkinovSeries G k rounds e0 input) (r : Fin rounds) (gamma delta : Fin k)
-        (cycle : TwoColorCycle G (series.data.coloring r.succ) gamma delta), (↑r : ℕ) + (1 : ℕ) <
-        rounds →
-    let candidates : Finset (Fin rounds) := ({q : Fin rounds | (↑r : ℕ) < (↑q : ℕ) ∧
-        series.data.kind q.succ ≠ some TashkinovExtensionKind.RE} : Finset (Fin rounds));
-    ∀ (candidatesNonempty : candidates.Nonempty),
-    let p : Fin rounds := candidates.min' candidatesNonempty;
-    ∀ (pColoring : series.data.coloring p.castSucc = series.data.coloring r.succ),
-    let cycleP : TwoColorCycle G (series.data.coloring p.castSucc) gamma delta := @Eq.rec
-        (PartialEdgeColoring E k) (@TashkinovSeriesData.coloring V E G k rounds e0
-        (@TashkinovSeries.data V E inst inst_1 inst_2 G k rounds e0 input series) (@Fin.succ
-        rounds r)) (fun (x : PartialEdgeColoring E k) (_ : @Eq (PartialEdgeColoring E k)
-        (@TashkinovSeriesData.coloring V E G k rounds e0 (@TashkinovSeries.data V E inst inst_1
-        inst_2 G k rounds e0 input series) (@Fin.succ rounds r)) x) ↦ @TwoColorCycle V E G k x
-        gamma delta) cycle (@TashkinovSeriesData.coloring V E G k rounds e0 (@TashkinovSeries.data
-        V E inst inst_1 inst_2 G k rounds e0 input series) (@Fin.castSucc rounds p)) (@Eq.symm
-        (PartialEdgeColoring E k) (@TashkinovSeriesData.coloring V E G k rounds e0
-        (@TashkinovSeries.data V E inst inst_1 inst_2 G k rounds e0 input series) (@Fin.castSucc
-        rounds p)) (@TashkinovSeriesData.coloring V E G k rounds e0 (@TashkinovSeries.data V E
-        inst inst_1 inst_2 G k rounds e0 input series) (@Fin.succ rounds r)) pColoring);
-    ∀ (f : E), Sum.inr f ∈ cycleP.walk.support →
-    let currentTree : Finset V := TreeSequenceVertexSet (series.data.tree p.succ.castSucc);
-    ∀ (v0 : V) (hv0CycleP : Sum.inl v0 ∈ cycleP.walk.support),
-    let rootedCycle : (TwoColorIncidenceGraph G (series.data.coloring p.castSucc) gamma
-        delta).Walk (Sum.inl v0) (Sum.inl v0) := cycleP.walk.rotate (Sum.inl v0) hv0CycleP;
-    let outsideIndices : Finset (Fin (rootedCycle.length + (1 : ℕ))) := ({i : Fin
-        (rootedCycle.length + (1 : ℕ)) |
-    ∃ (v : V), rootedCycle.getVert (↑i : ℕ) = Sum.inl v ∧ v ∉ currentTree} : Finset (Fin
-        (rootedCycle.length + (1 : ℕ))));
-    ∀ (outsideIndicesNonempty : outsideIndices.Nonempty),
-    let firstOutside : Fin (rootedCycle.length + (1 : ℕ)) := outsideIndices.min'
-        outsideIndicesNonempty; (
-    ∀ (i : Fin (rootedCycle.length + (1 : ℕ))), (↑i : ℕ) < (↑firstOutside : ℕ) →
-    ∀ (v : V), rootedCycle.getVert (↑i : ℕ) = Sum.inl v → v ∈ currentTree) → (↑firstOutside : ℕ) <
-        rootedCycle.length → (↑firstOutside : ℕ) - (1 : ℕ) + (1 : ℕ) = (↑firstOutside : ℕ) →
-        (↑firstOutside : ℕ) - (2 : ℕ) + (1 : ℕ) = (↑firstOutside : ℕ) - (1 : ℕ) →
-    ∀ (x : V), rootedCycle.getVert ((↑firstOutside : ℕ) - (2 : ℕ)) = Sum.inl x → x ∈ currentTree
-  := by
-  classical
-  intro V E _ _ _ G k rounds e0 input series r gamma delta cycle hrTerminalLt candidates
-      candidatesNonempty p pColoring cycleP f hfCycleP currentTree v0 hv0CycleP rootedCycle
-      outsideIndices outsideIndicesNonempty firstOutside beforeFirstOutside firstOutsideLt
-      crossingIndex beforeCrossingIndex x hxAt
-  apply beforeFirstOutside
-    (⟨firstOutside.val - 2, Nat.lt_succ_of_le
-      ((Nat.sub_le _ _).trans (Nat.le_of_lt firstOutsideLt))⟩ :
-        Fin (rootedCycle.length + 1))
-    (show firstOutside.val - 2 < firstOutside.val by omega) x
-  simpa using hxAt
-
-private theorem helper_returnPrefixPositive_550.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [inst : Fintype V] [inst_1 : Fintype E] [inst_2 : DecidableEq
-        E] (G : LooplessMultigraph V E) (k rounds : ℕ) (e0 : E) (input : PartialEdgeColoring E k)
-        (series : TashkinovSeries G k rounds e0 input) (r : Fin rounds) (gamma delta : Fin k)
-        (cycle : TwoColorCycle G (series.data.coloring r.succ) gamma delta), (↑r : ℕ) + (1 : ℕ) <
-        rounds →
-    let candidates : Finset (Fin rounds) := ({q : Fin rounds | (↑r : ℕ) < (↑q : ℕ) ∧
-        series.data.kind q.succ ≠ some TashkinovExtensionKind.RE} : Finset (Fin rounds));
-    ∀ (candidatesNonempty : candidates.Nonempty),
-    let p : Fin rounds := candidates.min' candidatesNonempty;
-    ∀ (pColoring : series.data.coloring p.castSucc = series.data.coloring r.succ),
-    let cycleP : TwoColorCycle G (series.data.coloring p.castSucc) gamma delta := @Eq.rec
-        (PartialEdgeColoring E k) (@TashkinovSeriesData.coloring V E G k rounds e0
-        (@TashkinovSeries.data V E inst inst_1 inst_2 G k rounds e0 input series) (@Fin.succ
-        rounds r)) (fun (x : PartialEdgeColoring E k) (_ : @Eq (PartialEdgeColoring E k)
-        (@TashkinovSeriesData.coloring V E G k rounds e0 (@TashkinovSeries.data V E inst inst_1
-        inst_2 G k rounds e0 input series) (@Fin.succ rounds r)) x) ↦ @TwoColorCycle V E G k x
-        gamma delta) cycle (@TashkinovSeriesData.coloring V E G k rounds e0 (@TashkinovSeries.data
-        V E inst inst_1 inst_2 G k rounds e0 input series) (@Fin.castSucc rounds p)) (@Eq.symm
-        (PartialEdgeColoring E k) (@TashkinovSeriesData.coloring V E G k rounds e0
-        (@TashkinovSeries.data V E inst inst_1 inst_2 G k rounds e0 input series) (@Fin.castSucc
-        rounds p)) (@TashkinovSeriesData.coloring V E G k rounds e0 (@TashkinovSeries.data V E
-        inst inst_1 inst_2 G k rounds e0 input series) (@Fin.succ rounds r)) pColoring);
-    ∀ (f : E), Sum.inr f ∈ cycleP.walk.support →
-    let currentTree : Finset V := TreeSequenceVertexSet (series.data.tree p.succ.castSucc);
-    ∀ (v0 : V) (hv0CycleP : Sum.inl v0 ∈ cycleP.walk.support),
-    let rootedCycle : (TwoColorIncidenceGraph G (series.data.coloring p.castSucc) gamma
-        delta).Walk (Sum.inl v0) (Sum.inl v0) := cycleP.walk.rotate (Sum.inl v0) hv0CycleP;
-    let outsideIndices : Finset (Fin (rootedCycle.length + (1 : ℕ))) := ({i : Fin
-        (rootedCycle.length + (1 : ℕ)) |
-    ∃ (v : V), rootedCycle.getVert (↑i : ℕ) = Sum.inl v ∧ v ∉ currentTree} : Finset (Fin
-        (rootedCycle.length + (1 : ℕ)))); outsideIndices.Nonempty →
-    ∀ (g : E) (hgRooted : Sum.inr g ∈ rootedCycle.support),
-    let returnPrefix : (TwoColorIncidenceGraph G (series.data.coloring p.castSucc) gamma
-        delta).Walk (Sum.inl v0) (Sum.inr g) := rootedCycle.takeUntil (Sum.inr g) hgRooted; (0 :
-        ℕ) < returnPrefix.length := by
-  classical
-  intro V E _ _ _ G k rounds e0 input series r gamma delta cycle hrTerminalLt candidates
-      candidatesNonempty p pColoring cycleP f hfCycleP currentTree v0 hv0CycleP rootedCycle
-      outsideIndices outsideIndicesNonempty g hgRooted returnPrefix
-  by_contra hnot
-  have hzero : returnPrefix.length = 0 := by omega
-  have hget := rootedCycle.getVert_length_takeUntil hgRooted
-  rw [hzero, rootedCycle.getVert_zero] at hget
-  cases hget
-
-private theorem helper_returnPrefixLength_556.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [inst : Fintype V] [inst_1 : Fintype E] [inst_2 : DecidableEq
-        E] (G : LooplessMultigraph V E) (k rounds : ℕ) (e0 : E) (input : PartialEdgeColoring E k)
-        (series : TashkinovSeries G k rounds e0 input) (r : Fin rounds) (gamma delta : Fin k)
-        (cycle : TwoColorCycle G (series.data.coloring r.succ) gamma delta), (↑r : ℕ) + (1 : ℕ) <
-        rounds →
-    let candidates : Finset (Fin rounds) := ({q : Fin rounds | (↑r : ℕ) < (↑q : ℕ) ∧
-        series.data.kind q.succ ≠ some TashkinovExtensionKind.RE} : Finset (Fin rounds));
-    ∀ (candidatesNonempty : candidates.Nonempty),
-    let p : Fin rounds := candidates.min' candidatesNonempty;
-    ∀ (pColoring : series.data.coloring p.castSucc = series.data.coloring r.succ),
-    let cycleP : TwoColorCycle G (series.data.coloring p.castSucc) gamma delta := @Eq.rec
-        (PartialEdgeColoring E k) (@TashkinovSeriesData.coloring V E G k rounds e0
-        (@TashkinovSeries.data V E inst inst_1 inst_2 G k rounds e0 input series) (@Fin.succ
-        rounds r)) (fun (x : PartialEdgeColoring E k) (_ : @Eq (PartialEdgeColoring E k)
-        (@TashkinovSeriesData.coloring V E G k rounds e0 (@TashkinovSeries.data V E inst inst_1
-        inst_2 G k rounds e0 input series) (@Fin.succ rounds r)) x) ↦ @TwoColorCycle V E G k x
-        gamma delta) cycle (@TashkinovSeriesData.coloring V E G k rounds e0 (@TashkinovSeries.data
-        V E inst inst_1 inst_2 G k rounds e0 input series) (@Fin.castSucc rounds p)) (@Eq.symm
-        (PartialEdgeColoring E k) (@TashkinovSeriesData.coloring V E G k rounds e0
-        (@TashkinovSeries.data V E inst inst_1 inst_2 G k rounds e0 input series) (@Fin.castSucc
-        rounds p)) (@TashkinovSeriesData.coloring V E G k rounds e0 (@TashkinovSeries.data V E
-        inst inst_1 inst_2 G k rounds e0 input series) (@Fin.succ rounds r)) pColoring);
-    ∀ (f : E), Sum.inr f ∈ cycleP.walk.support →
-    let currentTree : Finset V := TreeSequenceVertexSet (series.data.tree p.succ.castSucc);
-    ∀ (v0 : V) (hv0CycleP : Sum.inl v0 ∈ cycleP.walk.support),
-    let rootedCycle : (TwoColorIncidenceGraph G (series.data.coloring p.castSucc) gamma
-        delta).Walk (Sum.inl v0) (Sum.inl v0) := cycleP.walk.rotate (Sum.inl v0) hv0CycleP;
-        rootedCycle.IsCycle →
-    let outsideIndices : Finset (Fin (rootedCycle.length + (1 : ℕ))) := ({i : Fin
-        (rootedCycle.length + (1 : ℕ)) |
-    ∃ (v : V), rootedCycle.getVert (↑i : ℕ) = Sum.inl v ∧ v ∉ currentTree} : Finset (Fin
-        (rootedCycle.length + (1 : ℕ))));
-    ∀ (outsideIndicesNonempty : outsideIndices.Nonempty),
-    let firstOutside : Fin (rootedCycle.length + (1 : ℕ)) := outsideIndices.min'
-        outsideIndicesNonempty; (↑firstOutside : ℕ) < rootedCycle.length → (2 : ℕ) ≤
-        (↑firstOutside : ℕ) → (↑firstOutside : ℕ) - (1 : ℕ) + (1 : ℕ) = (↑firstOutside : ℕ) →
-    ∀ (g : E), rootedCycle.getVert ((↑firstOutside : ℕ) - (1 : ℕ)) = Sum.inr g → (↑firstOutside :
-        ℕ) - (2 : ℕ) + (1 : ℕ) = (↑firstOutside : ℕ) - (1 : ℕ) →
-    ∀ (hgRooted : Sum.inr g ∈ rootedCycle.support),
-    let returnPrefix : (TwoColorIncidenceGraph G (series.data.coloring p.castSucc) gamma
-        delta).Walk (Sum.inl v0) (Sum.inr g) := rootedCycle.takeUntil (Sum.inr g) hgRooted; (0 :
-        ℕ) < returnPrefix.length → returnPrefix.length = (↑firstOutside : ℕ) - (1 : ℕ) := by
-  classical
-  intro V E _ _ _ G k rounds e0 input series r gamma delta cycle hrTerminalLt candidates
-      candidatesNonempty p pColoring cycleP f hfCycleP currentTree v0 hv0CycleP rootedCycle
-      rootedIsCycle outsideIndices outsideIndicesNonempty firstOutside firstOutsideLt
-      firstOutsideAtLeastTwo crossingIndex g hgAt beforeCrossingIndex hgRooted returnPrefix
-      returnPrefixPositive
-  have hprefixLe := rootedCycle.length_takeUntil_le_length hgRooted
-  apply rootedIsCycle.getVert_injOn
-    (by simp only [Set.mem_ofPred_eq]; exact ⟨returnPrefixPositive, hprefixLe⟩)
-    (by simp only [Set.mem_ofPred_eq]; constructor <;> omega)
-  calc
-    rootedCycle.getVert returnPrefix.length = Sum.inr g :=
-      rootedCycle.getVert_length_takeUntil hgRooted
-    _ = rootedCycle.getVert (firstOutside.val - 1) := hgAt.symm
-
-private theorem helper_returnPathOnCycle_565.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [inst : Fintype V] [inst_1 : Fintype E] [inst_2 : DecidableEq
-        E] (G : LooplessMultigraph V E) (k rounds : ℕ) (e0 : E) (input : PartialEdgeColoring E k)
-        (series : TashkinovSeries G k rounds e0 input) (r : Fin rounds) (gamma delta : Fin k)
-        (cycle : TwoColorCycle G (series.data.coloring r.succ) gamma delta),
-    let candidates : Finset (Fin rounds) := ({q : Fin rounds | (↑r : ℕ) < (↑q : ℕ) ∧
-        series.data.kind q.succ ≠ some TashkinovExtensionKind.RE} : Finset (Fin rounds));
-    ∀ (candidatesNonempty : candidates.Nonempty),
-    let p : Fin rounds := candidates.min' candidatesNonempty;
-    ∀ (pColoring : series.data.coloring p.castSucc = series.data.coloring r.succ),
-    let cycleP : TwoColorCycle G (series.data.coloring p.castSucc) gamma delta := @Eq.rec
-        (PartialEdgeColoring E k) (@TashkinovSeriesData.coloring V E G k rounds e0
-        (@TashkinovSeries.data V E inst inst_1 inst_2 G k rounds e0 input series) (@Fin.succ
-        rounds r)) (fun (x : PartialEdgeColoring E k) (_ : @Eq (PartialEdgeColoring E k)
-        (@TashkinovSeriesData.coloring V E G k rounds e0 (@TashkinovSeries.data V E inst inst_1
-        inst_2 G k rounds e0 input series) (@Fin.succ rounds r)) x) ↦ @TwoColorCycle V E G k x
-        gamma delta) cycle (@TashkinovSeriesData.coloring V E G k rounds e0 (@TashkinovSeries.data
-        V E inst inst_1 inst_2 G k rounds e0 input series) (@Fin.castSucc rounds p)) (@Eq.symm
-        (PartialEdgeColoring E k) (@TashkinovSeriesData.coloring V E G k rounds e0
-        (@TashkinovSeries.data V E inst inst_1 inst_2 G k rounds e0 input series) (@Fin.castSucc
-        rounds p)) (@TashkinovSeriesData.coloring V E G k rounds e0 (@TashkinovSeries.data V E
-        inst inst_1 inst_2 G k rounds e0 input series) (@Fin.succ rounds r)) pColoring);
-    ∀ (v0 : V) (hv0CycleP : Sum.inl v0 ∈ cycleP.walk.support),
-    let rootedCycle : (TwoColorIncidenceGraph G (series.data.coloring p.castSucc) gamma
-        delta).Walk (Sum.inl v0) (Sum.inl v0) := cycleP.walk.rotate (Sum.inl v0) hv0CycleP;
-    ∀ (g : E) (hgRooted : Sum.inr g ∈ rootedCycle.support),
-    let returnPrefix : (TwoColorIncidenceGraph G (series.data.coloring p.castSucc) gamma
-        delta).Walk (Sum.inl v0) (Sum.inr g) := rootedCycle.takeUntil (Sum.inr g) hgRooted;
-    let returnPath : (TwoColorIncidenceGraph G (series.data.coloring p.castSucc) gamma delta).Walk
-        (Sum.inr g) (Sum.inl v0) := returnPrefix.reverse;
-    ∀ z ∈ returnPath.support, z ∈ cycleP.walk.support := by
-  classical
-  intro V E _ _ _ G k rounds e0 input series r gamma delta cycle candidates candidatesNonempty p
-      pColoring cycleP v0 hv0CycleP rootedCycle g hgRooted returnPrefix returnPath z hz
-  have hzPrefix : z ∈ returnPrefix.support := by
-    simpa [returnPath, SimpleGraph.Walk.support_reverse] using hz
-  have hzRooted := rootedCycle.support_takeUntil_subset_support hgRooted hzPrefix
-  exact (cycleP.walk.mem_support_rotate_iff (Sum.inl v0) hv0CycleP).mp hzRooted
-
-private theorem helper_returnPathInternal_572.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [inst : Fintype V] [inst_1 : Fintype E] [inst_2 : DecidableEq
-        E] (G : LooplessMultigraph V E) (k rounds : ℕ) (e0 : E) (input : PartialEdgeColoring E k)
-        (series : TashkinovSeries G k rounds e0 input) (r : Fin rounds) (gamma delta : Fin k)
-        (cycle : TwoColorCycle G (series.data.coloring r.succ) gamma delta), (↑r : ℕ) + (1 : ℕ) <
-        rounds →
-    let candidates : Finset (Fin rounds) := ({q : Fin rounds | (↑r : ℕ) < (↑q : ℕ) ∧
-        series.data.kind q.succ ≠ some TashkinovExtensionKind.RE} : Finset (Fin rounds));
-    ∀ (candidatesNonempty : candidates.Nonempty),
-    let p : Fin rounds := candidates.min' candidatesNonempty;
-    ∀ (pColoring : series.data.coloring p.castSucc = series.data.coloring r.succ),
-    let cycleP : TwoColorCycle G (series.data.coloring p.castSucc) gamma delta := @Eq.rec
-        (PartialEdgeColoring E k) (@TashkinovSeriesData.coloring V E G k rounds e0
-        (@TashkinovSeries.data V E inst inst_1 inst_2 G k rounds e0 input series) (@Fin.succ
-        rounds r)) (fun (x : PartialEdgeColoring E k) (_ : @Eq (PartialEdgeColoring E k)
-        (@TashkinovSeriesData.coloring V E G k rounds e0 (@TashkinovSeries.data V E inst inst_1
-        inst_2 G k rounds e0 input series) (@Fin.succ rounds r)) x) ↦ @TwoColorCycle V E G k x
-        gamma delta) cycle (@TashkinovSeriesData.coloring V E G k rounds e0 (@TashkinovSeries.data
-        V E inst inst_1 inst_2 G k rounds e0 input series) (@Fin.castSucc rounds p)) (@Eq.symm
-        (PartialEdgeColoring E k) (@TashkinovSeriesData.coloring V E G k rounds e0
-        (@TashkinovSeries.data V E inst inst_1 inst_2 G k rounds e0 input series) (@Fin.castSucc
-        rounds p)) (@TashkinovSeriesData.coloring V E G k rounds e0 (@TashkinovSeries.data V E
-        inst inst_1 inst_2 G k rounds e0 input series) (@Fin.succ rounds r)) pColoring);
-    ∀ (f : E), Sum.inr f ∈ cycleP.walk.support →
-    let currentTree : Finset V := TreeSequenceVertexSet (series.data.tree p.succ.castSucc);
-    ∀ (v0 : V) (hv0CycleP : Sum.inl v0 ∈ cycleP.walk.support),
-    let rootedCycle : (TwoColorIncidenceGraph G (series.data.coloring p.castSucc) gamma
-        delta).Walk (Sum.inl v0) (Sum.inl v0) := cycleP.walk.rotate (Sum.inl v0) hv0CycleP;
-    let outsideIndices : Finset (Fin (rootedCycle.length + (1 : ℕ))) := ({i : Fin
-        (rootedCycle.length + (1 : ℕ)) |
-    ∃ (v : V), rootedCycle.getVert (↑i : ℕ) = Sum.inl v ∧ v ∉ currentTree} : Finset (Fin
-        (rootedCycle.length + (1 : ℕ))));
-    ∀ (outsideIndicesNonempty : outsideIndices.Nonempty),
-    let firstOutside : Fin (rootedCycle.length + (1 : ℕ)) := outsideIndices.min'
-        outsideIndicesNonempty; (
-    ∀ (i : Fin (rootedCycle.length + (1 : ℕ))), (↑i : ℕ) < (↑firstOutside : ℕ) →
-    ∀ (v : V), rootedCycle.getVert (↑i : ℕ) = Sum.inl v → v ∈ currentTree) → (↑firstOutside : ℕ) <
-        rootedCycle.length → (↑firstOutside : ℕ) - (1 : ℕ) + (1 : ℕ) = (↑firstOutside : ℕ) →
-    ∀ (g : E), (↑firstOutside : ℕ) - (2 : ℕ) + (1 : ℕ) = (↑firstOutside : ℕ) - (1 : ℕ) →
-    ∀ (hgRooted : Sum.inr g ∈ rootedCycle.support),
-    let returnPrefix : (TwoColorIncidenceGraph G (series.data.coloring p.castSucc) gamma
-        delta).Walk (Sum.inl v0) (Sum.inr g) := rootedCycle.takeUntil (Sum.inr g) hgRooted;
-    let returnPath : (TwoColorIncidenceGraph G (series.data.coloring p.castSucc) gamma delta).Walk
-        (Sum.inr g) (Sum.inl v0) := returnPrefix.reverse; returnPrefix.length = (↑firstOutside :
-        ℕ) - (1 : ℕ) →
-    ∀ (v : V), Sum.inl v ∈ returnPath.support → v ∈ currentTree := by
-  classical
-  intro V E _ _ _ G k rounds e0 input series r gamma delta cycle hrTerminalLt candidates
-      candidatesNonempty p pColoring cycleP f hfCycleP currentTree v0 hv0CycleP rootedCycle
-      outsideIndices outsideIndicesNonempty firstOutside beforeFirstOutside firstOutsideLt
-      crossingIndex g beforeCrossingIndex hgRooted returnPrefix returnPath returnPrefixLength v hv
-  have hvPrefix : Sum.inl v ∈ returnPrefix.support := by
-    simpa [returnPath, SimpleGraph.Walk.support_reverse] using hv
-  obtain ⟨m, hm, hmle⟩ :=
-    SimpleGraph.Walk.mem_support_iff_exists_getVert.mp hvPrefix
-  have hmRooted : rootedCycle.getVert m = Sum.inl v := by
-    rw [← rootedCycle.getVert_takeUntil hgRooted hmle]
-    exact hm
-  have hmFirst : m < firstOutside.val := by
-    rw [returnPrefixLength] at hmle
-    omega
-  apply beforeFirstOutside
-    (⟨m, by omega⟩ : Fin (rootedCycle.length + 1)) hmFirst v hmRooted
-
-private theorem helper_interveningForCertificate_587.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [inst : Fintype V] [inst_1 : Fintype E] [inst_2 : DecidableEq
-        E] (G : LooplessMultigraph V E) (k rounds : ℕ) (e0 : E) (input : PartialEdgeColoring E k)
-        (series : TashkinovSeries G k rounds e0 input) (r : Fin rounds) (gamma delta : Fin k)
-        (cycle : TwoColorCycle G (series.data.coloring r.succ) gamma delta), (↑r : ℕ) + (1 : ℕ) <
-        rounds →
-    let candidates : Finset (Fin rounds) := ({q : Fin rounds | (↑r : ℕ) < (↑q : ℕ) ∧
-        series.data.kind q.succ ≠ some TashkinovExtensionKind.RE} : Finset (Fin rounds));
-    ∀ (candidatesNonempty : candidates.Nonempty),
-    let p : Fin rounds := candidates.min' candidatesNonempty; (
-    ∀ (j : Fin rounds), (↑r : ℕ) < (↑j : ℕ) → (↑j : ℕ) < (↑p : ℕ) → series.data.kind j.succ = some
-        TashkinovExtensionKind.RE) →
-    ∀ (pColoring : series.data.coloring p.castSucc = series.data.coloring r.succ),
-    let cycleP : TwoColorCycle G (series.data.coloring p.castSucc) gamma delta := @Eq.rec
-        (PartialEdgeColoring E k) (@TashkinovSeriesData.coloring V E G k rounds e0
-        (@TashkinovSeries.data V E inst inst_1 inst_2 G k rounds e0 input series) (@Fin.succ
-        rounds r)) (fun (x : PartialEdgeColoring E k) (_ : @Eq (PartialEdgeColoring E k)
-        (@TashkinovSeriesData.coloring V E G k rounds e0 (@TashkinovSeries.data V E inst inst_1
-        inst_2 G k rounds e0 input series) (@Fin.succ rounds r)) x) ↦ @TwoColorCycle V E G k x
-        gamma delta) cycle (@TashkinovSeriesData.coloring V E G k rounds e0 (@TashkinovSeries.data
-        V E inst inst_1 inst_2 G k rounds e0 input series) (@Fin.castSucc rounds p)) (@Eq.symm
-        (PartialEdgeColoring E k) (@TashkinovSeriesData.coloring V E G k rounds e0
-        (@TashkinovSeries.data V E inst inst_1 inst_2 G k rounds e0 input series) (@Fin.castSucc
-        rounds p)) (@TashkinovSeriesData.coloring V E G k rounds e0 (@TashkinovSeries.data V E
-        inst inst_1 inst_2 G k rounds e0 input series) (@Fin.succ rounds r)) pColoring);
-    ∀ (f : E), Sum.inr f ∈ cycleP.walk.support →
-    let currentTree : Finset V := TreeSequenceVertexSet (series.data.tree p.succ.castSucc);
-    ∀ (v0 : V) (hv0CycleP : Sum.inl v0 ∈ cycleP.walk.support),
-    let rootedCycle : (TwoColorIncidenceGraph G (series.data.coloring p.castSucc) gamma
-        delta).Walk (Sum.inl v0) (Sum.inl v0) := cycleP.walk.rotate (Sum.inl v0) hv0CycleP;
-    let outsideIndices : Finset (Fin (rootedCycle.length + (1 : ℕ))) := ({i : Fin
-        (rootedCycle.length + (1 : ℕ)) |
-    ∃ (v : V), rootedCycle.getVert (↑i : ℕ) = Sum.inl v ∧ v ∉ currentTree} : Finset (Fin
-        (rootedCycle.length + (1 : ℕ)))); outsideIndices.Nonempty →
-    ∀ (g : E), Sum.inr g ∈ rootedCycle.support →
-    ∀ (j : Fin (rounds + (1 : ℕ))), (0 : ℕ) < (↑j : ℕ) → (↑r.succ : ℕ) < (↑j : ℕ) → (↑j : ℕ) ≤
-        (↑p.castSucc : ℕ) → series.data.kind j = some TashkinovExtensionKind.RE := by
-  classical
-  intro V E _ _ _ G k rounds e0 input series r gamma delta cycle hrTerminalLt candidates
-      candidatesNonempty p betweenRE pColoring cycleP f hfCycleP currentTree v0 hv0CycleP
-      rootedCycle outsideIndices outsideIndicesNonempty g hgRooted j hjPositive hrj hjp
-  simp only [Fin.val_succ, Fin.val_castSucc] at hrj hjp
-  let q : Fin rounds := ⟨j.val - 1, by omega⟩
-  have hqSucc : q.succ = j := by
-    apply Fin.ext
-    simp [q]
-    omega
-  rw [← hqSucc]
-  apply betweenRE q
-  · simp [q]
-    omega
-  · simp [q]
-    omega
-
 private theorem helper_continuation_1518.{u_1, u_2} :
     helperContinuation1518Conditions.{u_1, u_2} := by
   classical
@@ -1235,10 +568,8 @@ private theorem helper_continuation_1518.{u_1, u_2} :
     Finset.univ.filter fun i => ∃ v : V,
       rootedCycle.getVert i.val = Sum.inl v ∧ v ∉ currentTree
   have outsideIndicesNonempty : outsideIndices.Nonempty := by
-    exact @helper_outsideIndicesNonempty_437 (@V) (@E) inferInstance inferInstance inferInstance
-        (@G) (@k) (@rounds) (@e0) (@input) (@series) (@r) (@gamma) (@delta) (@cycle)
-        (@hrTerminalLt) (@candidatesNonempty) (@pColoring) (@f) (@hfCycleP) (@v0) (@hv0CycleP)
-        (@outsideVertex) (@outsideVertexNotCurrent) (@outsideVertexRooted)
+    exact WalkVertexRegion.outsideIndices_nonempty rootedCycle currentTree
+      outsideVertexNotCurrent outsideVertexRooted
   let firstOutside : Fin (rootedCycle.length + 1) :=
     outsideIndices.min' outsideIndicesNonempty
   have firstOutsideSpec : ∃ y : V,
@@ -1249,35 +580,33 @@ private theorem helper_continuation_1518.{u_1, u_2} :
   have beforeFirstOutside : ∀ i : Fin (rootedCycle.length + 1),
       i.val < firstOutside.val → ∀ v : V,
         rootedCycle.getVert i.val = Sum.inl v → v ∈ currentTree := by
-    exact @helper_beforeFirstOutside_450 (@V) (@E) inferInstance inferInstance inferInstance (@G)
-        (@k) (@rounds) (@e0) (@input) (@series) (@r) (@gamma) (@delta) (@cycle) (@hrTerminalLt)
-        (@candidatesNonempty) (@pColoring) (@f) (@hfCycleP) (@v0) (@hv0CycleP)
-        (@outsideIndicesNonempty)
+    intro index before vertex atVertex
+    exact WalkVertexRegion.mem_before_firstOutside rootedCycle currentTree
+      outsideIndicesNonempty before atVertex
   have firstOutsidePositive : 0 < firstOutside.val := by
-    exact @helper_firstOutsidePositive_459 (@V) (@E) inferInstance inferInstance inferInstance
-        (@G) (@k) (@rounds) (@e0) (@input) (@series) (@r) (@gamma) (@delta) (@cycle)
-        (@hrTerminalLt) (@candidatesNonempty) (@pColoring) (@f) (@hfCycleP) (@v0) (@hv0CycleP)
-        (@hv0Current) (@outsideIndicesNonempty) (@y) (@hyAt) (@hyOutside)
+    exact WalkVertexRegion.firstOutside_pos rootedCycle currentTree
+      hv0Current outsideIndicesNonempty
   have firstOutsideLt : firstOutside.val < rootedCycle.length := by
-    exact @helper_firstOutsideLt_469 (@V) (@E) inferInstance inferInstance inferInstance (@G)
-        (@k) (@rounds) (@e0) (@input) (@series) (@r) (@gamma) (@delta) (@cycle) (@hrTerminalLt)
-        (@candidatesNonempty) (@pColoring) (@f) (@hfCycleP) (@v0) (@hv0CycleP) (@hv0Current)
-        (@outsideIndicesNonempty) (@y) (@hyAt) (@hyOutside)
+    exact WalkVertexRegion.firstOutside_lt_length rootedCycle currentTree
+      hv0Current outsideIndicesNonempty
   have firstOutsideNotOne : firstOutside.val ≠ 1 := by
-    exact @helper_firstOutsideNotOne_481 (@V) (@E) inferInstance inferInstance inferInstance (@G)
-        (@k) (@rounds) (@e0) (@input) (@series) (@r) (@gamma) (@delta) (@cycle) (@hrTerminalLt)
-        (@candidatesNonempty) (@pColoring) (@f) (@hfCycleP) (@v0) (@hv0CycleP)
-        (@outsideIndicesNonempty) (@y) (@hyAt) (@firstOutsideLt)
+    intro one
+    have adjacent := rootedCycle.adj_getVert_succ (i := 0) (by omega)
+    have atOne : rootedCycle.getVert 1 = Sum.inl y := by simpa only [one] using hyAt
+    rw [rootedCycle.getVert_zero, atOne] at adjacent
+    simp only [TwoColorIncidenceGraph] at adjacent
   have firstOutsideAtLeastTwo : 2 ≤ firstOutside.val := by omega
   have crossingAdj := rootedCycle.adj_getVert_succ
     (i := firstOutside.val - 1) (by omega)
   have crossingIndex : firstOutside.val - 1 + 1 = firstOutside.val := by omega
   have crossingEdge : ∃ g : E,
       rootedCycle.getVert (firstOutside.val - 1) = Sum.inr g := by
-    exact @helper_crossingEdge_492 (@V) (@E) inferInstance inferInstance inferInstance (@G) (@k)
-        (@rounds) (@e0) (@input) (@series) (@r) (@gamma) (@delta) (@cycle) (@candidatesNonempty)
-        (@pColoring) (@v0) (@hv0CycleP) (@outsideIndicesNonempty) (@y) (@hyAt) (@crossingAdj)
-        (@crossingIndex)
+    cases node : rootedCycle.getVert (firstOutside.val - 1) with
+    | inl vertex =>
+      exfalso
+      rw [crossingIndex, hyAt, node] at crossingAdj
+      simp only [TwoColorIncidenceGraph] at crossingAdj
+    | inr edge => exact ⟨edge, rfl⟩
   obtain ⟨g, hgAt⟩ := crossingEdge
   have hgy : Incident G y g := by
     rw [crossingIndex, hyAt, hgAt] at crossingAdj
@@ -1288,17 +617,16 @@ private theorem helper_continuation_1518.{u_1, u_2} :
       firstOutside.val - 1 := by omega
   have insideVertex : ∃ x : V,
       rootedCycle.getVert (firstOutside.val - 2) = Sum.inl x := by
-    exact @helper_insideVertex_508 (@V) (@E) inferInstance inferInstance inferInstance (@G) (@k)
-        (@rounds) (@e0) (@input) (@series) (@r) (@gamma) (@delta) (@cycle) (@candidatesNonempty)
-        (@pColoring) (@v0) (@hv0CycleP) (@outsideIndicesNonempty) (@g) (@hgAt)
-        (@beforeCrossingAdj) (@beforeCrossingIndex)
+    cases node : rootedCycle.getVert (firstOutside.val - 2) with
+    | inl vertex => exact ⟨vertex, rfl⟩
+    | inr edge =>
+      exfalso
+      rw [beforeCrossingIndex, hgAt, node] at beforeCrossingAdj
+      simp only [TwoColorIncidenceGraph] at beforeCrossingAdj
   obtain ⟨x, hxAt⟩ := insideVertex
   have hxCurrent : x ∈ currentTree := by
-    exact @helper_hxCurrent_517 (@V) (@E) inferInstance inferInstance inferInstance (@G) (@k)
-        (@rounds) (@e0) (@input) (@series) (@r) (@gamma) (@delta) (@cycle) (@hrTerminalLt)
-        (@candidatesNonempty) (@pColoring) (@f) (@hfCycleP) (@v0) (@hv0CycleP)
-        (@outsideIndicesNonempty) (@beforeFirstOutside) (@firstOutsideLt) (@crossingIndex)
-        (@beforeCrossingIndex) (@x) (@hxAt)
+    exact beforeFirstOutside (⟨firstOutside.val - 2, by omega⟩ : Fin (rootedCycle.length + 1))
+      (show firstOutside.val - 2 < firstOutside.val by omega) x hxAt
   have hxg : Incident G x g := by
     rw [beforeCrossingIndex, hgAt, hxAt] at beforeCrossingAdj
     simpa [TwoColorIncidenceGraph] using beforeCrossingAdj.1
@@ -1326,35 +654,45 @@ private theorem helper_continuation_1518.{u_1, u_2} :
     rootedIsCycle.isPath_takeUntil hgRooted
   have returnPathIsPath : returnPath.IsPath := returnPrefixPath.reverse
   have returnPrefixPositive : 0 < returnPrefix.length := by
-    exact @helper_returnPrefixPositive_550 (@V) (@E) inferInstance inferInstance inferInstance
-        (@G) (@k) (@rounds) (@e0) (@input) (@series) (@r) (@gamma) (@delta) (@cycle)
-        (@hrTerminalLt) (@candidatesNonempty) (@pColoring) (@f) (@hfCycleP) (@v0) (@hv0CycleP)
-        (@outsideIndicesNonempty) (@g) (@hgRooted)
+    by_contra notPositive
+    have zero : returnPrefix.length = 0 := by omega
+    have atEnd := rootedCycle.getVert_length_takeUntil hgRooted
+    rw [zero, rootedCycle.getVert_zero] at atEnd
+    cases atEnd
   have returnPrefixLength : returnPrefix.length = firstOutside.val - 1 := by
-    exact @helper_returnPrefixLength_556 (@V) (@E) inferInstance inferInstance inferInstance (@G)
-        (@k) (@rounds) (@e0) (@input) (@series) (@r) (@gamma) (@delta) (@cycle) (@hrTerminalLt)
-        (@candidatesNonempty) (@pColoring) (@f) (@hfCycleP) (@v0) (@hv0CycleP) (@rootedIsCycle)
-        (@outsideIndicesNonempty) (@firstOutsideLt) (@firstOutsideAtLeastTwo) (@crossingIndex)
-        (@g) (@hgAt) (@beforeCrossingIndex) (@hgRooted) (@returnPrefixPositive)
+    have prefixBound := rootedCycle.length_takeUntil_le_length hgRooted
+    apply rootedIsCycle.getVert_injOn
+      (by simp only [Set.mem_ofPred_eq]; exact ⟨returnPrefixPositive, prefixBound⟩)
+      (by simp only [Set.mem_ofPred_eq]; constructor <;> omega)
+    exact (rootedCycle.getVert_length_takeUntil hgRooted).trans hgAt.symm
   have returnPathOnCycle : ∀ z ∈ returnPath.support,
       z ∈ cycleP.walk.support := by
-    exact @helper_returnPathOnCycle_565 (@V) (@E) inferInstance inferInstance inferInstance (@G)
-        (@k) (@rounds) (@e0) (@input) (@series) (@r) (@gamma) (@delta) (@cycle)
-        (@candidatesNonempty) (@pColoring) (@v0) (@hv0CycleP) (@g) (@hgRooted)
+    intro vertex member
+    have prefixMember : vertex ∈ returnPrefix.support := by
+      simpa only [returnPath, SimpleGraph.Walk.support_reverse, List.mem_reverse] using member
+    exact (cycleP.walk.mem_support_rotate_iff (Sum.inl v0) hv0CycleP).mp
+      (rootedCycle.support_takeUntil_subset_support hgRooted prefixMember)
   have returnPathInternal : ∀ v, Sum.inl v ∈ returnPath.support →
       v ∈ currentTree := by
-    exact @helper_returnPathInternal_572 (@V) (@E) inferInstance inferInstance inferInstance (@G)
-        (@k) (@rounds) (@e0) (@input) (@series) (@r) (@gamma) (@delta) (@cycle) (@hrTerminalLt)
-        (@candidatesNonempty) (@pColoring) (@f) (@hfCycleP) (@v0) (@hv0CycleP)
-        (@outsideIndicesNonempty) (@beforeFirstOutside) (@firstOutsideLt) (@crossingIndex) (@g)
-        (@beforeCrossingIndex) (@hgRooted) (@returnPrefixLength)
+    intro vertex member
+    have prefixMember : Sum.inl vertex ∈ returnPrefix.support := by
+      simpa only [returnPath, SimpleGraph.Walk.support_reverse, List.mem_reverse] using member
+    obtain ⟨index, atVertex, bound⟩ :=
+      SimpleGraph.Walk.mem_support_iff_exists_getVert.mp prefixMember
+    have rootedAtVertex : rootedCycle.getVert index = Sum.inl vertex := by
+      rw [← rootedCycle.getVert_takeUntil hgRooted bound]
+      exact atVertex
+    have before : index < firstOutside.val := by rw [returnPrefixLength] at bound; omega
+    exact beforeFirstOutside ⟨index, by omega⟩ before vertex rootedAtVertex
   have interveningForCertificate : ∀ j : Fin (rounds + 1),
       0 < j.val → r.succ.val < j.val → j.val ≤ p.castSucc.val →
         series.data.kind j = some TashkinovExtensionKind.RE := by
-    exact @helper_interveningForCertificate_587 (@V) (@E) inferInstance inferInstance
-        inferInstance (@G) (@k) (@rounds) (@e0) (@input) (@series) (@r) (@gamma) (@delta)
-        (@cycle) (@hrTerminalLt) (@candidatesNonempty) (@betweenRE) (@pColoring) (@f) (@hfCycleP)
-        (@v0) (@hv0CycleP) (@outsideIndicesNonempty) (@g) (@hgRooted)
+    intro index positive earlier before
+    obtain ⟨previous, rfl⟩ := Fin.eq_succ_of_ne_zero (i := index) (by
+      intro zero
+      simp only [zero, Fin.val_zero, Nat.lt_irrefl] at positive)
+    exact betweenRE previous (by simp only [Fin.val_succ] at earlier; omega)
+      (by simp only [Fin.val_succ, Fin.val_castSucc] at before; omega)
   have cert : RevisitingExtensionCertificate series.data p.castSucc := {
     earlier := r.succ
     earlierPositive := by simp

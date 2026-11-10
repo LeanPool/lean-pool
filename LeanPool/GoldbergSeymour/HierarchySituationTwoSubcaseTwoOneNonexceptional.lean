@@ -980,97 +980,6 @@ private abbrev helperContinuation4495Conditions.{u_1, u_2} : Prop :=
      (HierarchyStoredColorsAt H q)),
   False
 
-private theorem helper_hfinalCard_138.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E]
-    [DecidableEq V] [DecidableEq E] (G : LooplessMultigraph V E) (k : ℕ)
-    (e0 : E) (input : PartialEdgeColoring E k) (T : TreeSequence G e0)
-    (phi : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k e0 input T phi)
-    (base : HierarchyBase ett phi) (C : HierarchyCounterexample base)
-    (ctx : HierarchyMinimumCounterexampleContext G k e0 input T phi ett base C)
-    (D : HierarchySituationTwoCaseTwoData G k e0 input T phi ett base C ctx)
-    (R :
-      HierarchySituationTwoReorderedTrees G k e0 input T phi ett base C ctx
-        D.toHierarchySituationTwoTailData)
-    (corrMinus : CorrespondingExtendedTashkinovTree G k e0 ett phi R.minus)
-    (baseMinus : HierarchyBase corrMinus.replacementETT phi)
-    (_ : TashkinovHierarchy corrMinus.replacementETT baseMinus)
-    (corrStar : CorrespondingExtendedTashkinovTree G k e0 ett phi R.star)
-    (baseStar : HierarchyBase corrStar.replacementETT phi)
-    (_ : TashkinovHierarchy corrStar.replacementETT baseStar),
-  let finalColors : Finset (Fin k) :=
-    ({c : Fin k | phi (T.edge R.penultimateEdgeIndex) = some c} : Finset (Fin k)) ∪
-      ({c : Fin k | phi (T.edge D.lastEdgeIndex) = some c} : Finset (Fin k));
-  (
-  ∀ (f : E),
-  ({c : Fin k | phi f = some c} : Finset (Fin k)).card ≤ (1 : ℕ)) →
-  finalColors.card ≤ (2 : ℕ) := by
-  classical
-  intro V E _ _ _ _ G k e0 input T phi ett base C ctx D R corrMinus baseMinus HMinus corrStar
-      baseStar HStar finalColors singleColorCard
-  have hu := Finset.card_union_le
-    (Finset.univ.filter fun c => phi (T.edge R.penultimateEdgeIndex) = some c)
-    (Finset.univ.filter fun c => phi (T.edge D.lastEdgeIndex) = some c)
-  have hp := singleColorCard (T.edge R.penultimateEdgeIndex)
-  have hl := singleColorCard (T.edge D.lastEdgeIndex)
-  dsimp [finalColors]
-  omega
-
-private theorem helper_hremaining_149.{u_1, u_2} :
-    open scoped Classical in
-  ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E]
-  [DecidableEq V] [DecidableEq E] (G : LooplessMultigraph V E) (k : ℕ)
-  (e0 : E) (input : PartialEdgeColoring E k) (T : TreeSequence G e0)
-  (phi : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k e0 input T phi)
-  (base : HierarchyBase ett phi) (C : HierarchyCounterexample base)
-  (ctx : HierarchyMinimumCounterexampleContext G k e0 input T phi ett base C)
-  (D : HierarchySituationTwoCaseTwoData G k e0 input T phi ett base C ctx),
-  let H : TashkinovHierarchy ett base := C.hierarchy;
-  let q : Fin (H.dividerCount + (1 : ℕ)) := Fin.last H.dividerCount;
-  let A : TreeSequence G e0 := HierarchyStarredStage H q;
-  let ell : ℕ := HierarchyFullTailLength C;
-  let B : TreeSequence G e0 := HierarchyFullTailPrefix C (ell - (2 : ℕ));
-  let n : Fin (ett.rounds + (1 : ℕ)) := Fin.last ett.rounds;
-  let Dn : Finset (Fin k) := TashkinovStoredColors ett.series.data n;
-  ∀
-    (R :
-      HierarchySituationTwoReorderedTrees G k e0 input T phi ett base C ctx
-        D.toHierarchySituationTwoTailData)
-    (corrMinus : CorrespondingExtendedTashkinovTree G k e0 ett phi R.minus)
-    (baseMinus : HierarchyBase corrMinus.replacementETT phi)
-    (_ : TashkinovHierarchy corrMinus.replacementETT baseMinus)
-    (corrStar : CorrespondingExtendedTashkinovTree G k e0 ett phi R.star)
-    (baseStar : HierarchyBase corrStar.replacementETT phi)
-    (_ : TashkinovHierarchy corrStar.replacementETT baseStar),
-  let baseExtraMissing : Finset (Fin k) :=
-    (TreeSequenceVertexSet base.core \
-          TreeSequenceVertexSet (ett.series.data.tree n.castSucc)).biUnion
-      fun (v : V) ↦ MissingColors G phi v;
-  let prefixUsed : Finset (Fin k) :=
-    ({c : Fin k |
-        ∃ (r : Fin T.length),
-          A.length ≤ (↑r : ℕ) ∧
-            (↑r : ℕ) < A.length + (ell - (2 : ℕ)) ∧ phi (T.edge r) = some c} :
-      Finset (Fin k));
-  let available : Finset (Fin k) :=
-    (TreeMissingColors phi B \ baseExtraMissing) \ prefixUsed;
-  (2 : ℕ) * ett.rounds + (11 : ℕ) ≤ available.card →
-  let finalColors : Finset (Fin k) :=
-    ({c : Fin k | phi (T.edge R.penultimateEdgeIndex) = some c} : Finset (Fin k)) ∪
-      ({c : Fin k | phi (T.edge D.lastEdgeIndex) = some c} : Finset (Fin k));
-  finalColors.card ≤ (2 : ℕ) →
-  Dn.card ≤ ett.rounds →
-  ett.rounds + (9 : ℕ) ≤ ((available \ finalColors) \ Dn).card := by
-  classical
-  intro V E _ _ _ _ G k e0 input T phi ett base C ctx D H q A ell B n Dn R corrMinus baseMinus
-      HMinus corrStar baseStar HStar baseExtraMissing prefixUsed available havailable finalColors
-      hfinalCard hDnCard
-  have hfirst := Finset.card_le_card_sdiff_add_card
-    (s := available) (t := finalColors)
-  have hsecond := Finset.card_le_card_sdiff_add_card
-    (s := available \ finalColors) (t := Dn)
-  omega
-
 private theorem helper_hbetaUnused_164.{u_1, u_2} :
     open scoped Classical in
   ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E]
@@ -3543,13 +3452,23 @@ theorem HierarchySituationTwoSubcaseTwoOneNonexceptional {V E : Type*}
     exact Option.some.inj ((Finset.mem_filter.mp ha).2.symm.trans
       (Finset.mem_filter.mp hb).2)
   have hfinalCard : finalColors.card ≤ 2 := by
-    apply helper_hfinalCard_138 <;> assumption
+    have unionBound := Finset.card_union_le
+      (Finset.univ.filter fun c => phi (T.edge R.penultimateEdgeIndex) = some c)
+      (Finset.univ.filter fun c => phi (T.edge D.lastEdgeIndex) = some c)
+    have penultimateBound := singleColorCard (T.edge R.penultimateEdgeIndex)
+    have lastBound := singleColorCard (T.edge D.lastEdgeIndex)
+    dsimp [finalColors]
+    omega
   have hDnCard : Dn.card ≤ ett.rounds := by
     simpa [Dn, n] using TashkinovStoredColorsCardinality
       G k ett.rounds e0 input ett.series n
   have hremaining : ett.rounds + 9 ≤
       ((available \ finalColors) \ Dn).card := by
-    apply helper_hremaining_149 <;> assumption
+    have firstBound := Finset.card_le_card_sdiff_add_card
+      (s := available) (t := finalColors)
+    have secondBound := Finset.card_le_card_sdiff_add_card
+      (s := available \ finalColors) (t := Dn)
+    omega
   have hnonempty : ((available \ finalColors) \ Dn).Nonempty := by
     apply Finset.card_pos.mp
     omega

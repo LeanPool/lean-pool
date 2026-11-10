@@ -195,70 +195,6 @@ abbrev helperBranch11555Conditions.{u_1, u_2} : Prop :=
         ett.rounds).castSucc) f seed ∧ TashkinovAugmentationSequence sigma seed Tstar) → Nonempty
         (CorrespondingExtendedTashkinovTree G k e0 ett sigma Tstar)
 
-private abbrev helperContinuation4951Conditions.{u_1, u_2} : Prop :=
- open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [inst : Fintype V] [inst_1 : Fintype E] [inst_2 : DecidableEq
-        E] (G : LooplessMultigraph V E) (k : ℕ) (e0 : E) (input : PartialEdgeColoring E k) (T :
-        TreeSequence G e0) (generating : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k
-        e0 input T generating) (hpositive : (0 : ℕ) < ett.rounds) (sigma : PartialEdgeColoring E
-        k), IsProperEdgeColoring G sigma → IsOneEdgeUncolored sigma e0 → StableColoring
-        (ett.series.data.tree (Fin.last ett.rounds).castSucc) (TashkinovStoredColors
-        ett.series.data (Fin.last ett.rounds)) (ett.series.data.coloring (Fin.last ett.rounds))
-        sigma →
-    ∀ (Tstar : TreeSequence G e0), TreeSequenceInitialSegment (ett.series.data.tree (Fin.last
-        ett.rounds).castSucc) Tstar → (ett.series.data.tree (Fin.last ett.rounds).castSucc).length
-        < Tstar.length →
-    ∀ (closureTree : TreeSequence G e0), TreeSequenceInitialSegment Tstar closureTree →
-    let q : Fin ett.rounds := (⟨ett.rounds - (1 : ℕ),
-    by omega
-    ⟩ : Fin ett.rounds); q.succ = Fin.last ett.rounds →
-    ∀ (choice : MaximumDefectiveChoice G e0 (ett.series.data.tree q.succ.castSucc)
-        (TashkinovStoredColors ett.series.data q.castSucc) (ett.series.data.coloring q.castSucc)),
-        ett.series.data.stored q.succ = ({ choice.color } : Finset (Fin k)) →
-        ett.series.data.connectingEdges q.succ = ({ choice.edge } : Finset E) →
-        ett.series.data.kind q.succ = some TashkinovExtensionKind.SE →
-    ∀ (sigmaPrev : PartialEdgeColoring E k), IsProperEdgeColoring G sigmaPrev → IsOneEdgeUncolored
-        sigmaPrev e0 → ett.rounds = (1 : ℕ) →
-    ∀ (prefixInput : PartialEdgeColoring E k) (zeroPrefix : TashkinovSeries G k (0 : ℕ) e0
-        prefixInput),
-    let zeroLast : Fin ((0 : ℕ) + (1 : ℕ)) := Fin.last (0 : ℕ);
-    let newStored : Finset (Fin k) := ({ choice.color } : Finset (Fin k));
-    let newEdges : Finset E := ({ choice.edge } : Finset E);
-    let newKind : Option TashkinovExtensionKind := some TashkinovExtensionKind.SE;
-    let newVertex : Option V := some choice.vertex;
-    let newOutside : Option V := some choice.otherEndpoint;
-    let newDelta : Option (Fin k) := some choice.color;
-    let newGamma : Option (Fin k) := none;
-    let appendedData : TashkinovSeriesData G k ((0 : ℕ) + (1 : ℕ)) e0 := TashkinovSeriesDataAppend
-        zeroPrefix.data closureTree sigma newStored newEdges newKind newVertex newOutside newDelta
-        newGamma; appendedData.tree (Fin.last (2 : ℕ)) = closureTree → appendedData.coloring
-        (Fin.last (1 : ℕ)) = sigma → appendedData.stored (Fin.last (1 : ℕ)) = newStored →
-        appendedData.connectingEdges (Fin.last (1 : ℕ)) = newEdges → appendedData.kind (Fin.last
-        (1 : ℕ)) = newKind → appendedData.tree zeroLast.succ.castSucc = ett.series.data.tree
-        q.succ.castSucc → appendedData.coloring zeroLast.castSucc = sigmaPrev →
-    ∀ (extendedSeries : TashkinovSeries G k ((0 : ℕ) + (1 : ℕ)) e0 prefixInput),
-        extendedSeries.data = TashkinovSeriesDataAppend zeroPrefix.data closureTree sigma
-        newStored newEdges newKind newVertex newOutside newDelta newGamma → (0 : ℕ) + (1 : ℕ) =
-        ett.rounds →
-    let castSeries : {a b : ℕ} → a = b → TashkinovSeries G k a e0 prefixInput → TashkinovSeries G
-        k b e0 prefixInput := fun {a b} (h : a = b) series => series.castRounds h; (
-    ∀ {a b : ℕ} (h : a = b) (S : TashkinovSeries G k a e0 prefixInput) (i : Fin (b + (2 : ℕ))),
-        (castSeries h S).data.tree i = S.data.tree (Fin.cast (
-    by omega
-    ) i)) → (
-    ∀ {a b : ℕ} (h : a = b) (S : TashkinovSeries G k a e0 prefixInput) (i : Fin (b + (1 : ℕ))),
-        (castSeries h S).data.coloring i = S.data.coloring (Fin.cast (
-    by omega
-    ) i)) → (
-    ∀ {a b : ℕ} (h : a = b) (S : TashkinovSeries G k a e0 prefixInput) (i : Fin (b + (1 : ℕ))),
-        (castSeries h S).data.stored i = S.data.stored (Fin.cast (
-    by omega
-    ) i)) → (
-    ∀ {a b : ℕ} (h : a = b) (S : TashkinovSeries G k a e0 prefixInput) (i : Fin (b + (1 : ℕ))),
-        (castSeries h S).data.connectingEdges i = S.data.connectingEdges (Fin.cast (
-    by omega
-    ) i)) → Nonempty (CorrespondingExtendedTashkinovTree G k e0 ett sigma Tstar)
-
 /-- Dependent contract shared by the terminal series reconstruction proof modules.
 
 Keeping this interface separate avoids repeating its dependent hypotheses and data.
@@ -416,79 +352,6 @@ abbrev helperBranch12991Conditions.{u_1, u_2} : Prop :=
                                          have := GoldbergSeymour.TreeSequence.positive T
                                          omega
     ) newi.succ)
-
-private abbrev helperContinuation7494Conditions.{u_1, u_2} : Prop :=
- open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E] [ DecidableEq E] (G :
-        LooplessMultigraph V E) (k : ℕ) (e0 : E) (input : PartialEdgeColoring E k) (T :
-        TreeSequence G e0) (generating : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k
-        e0 input T generating) (hpositive : (0 : ℕ) < ett.rounds) (sigma : PartialEdgeColoring E
-        k) (hsigmaProper : IsProperEdgeColoring G sigma) (hsigmaOne : IsOneEdgeUncolored sigma e0)
-        (hsigmaStable : StableColoring (ett.series.data.tree (Fin.last ett.rounds).castSucc)
-        (TashkinovStoredColors ett.series.data (Fin.last ett.rounds)) (ett.series.data.coloring
-        (Fin.last ett.rounds)) sigma) (Tstar : TreeSequence G e0) (hTnTstar :
-        TreeSequenceInitialSegment (ett.series.data.tree (Fin.last ett.rounds).castSucc) Tstar)
-        (hstrict : (ett.series.data.tree (Fin.last ett.rounds).castSucc).length < Tstar.length)
-        (closureTree : TreeSequence G e0) (hTstarClosure : TreeSequenceInitialSegment Tstar
-        closureTree),
-    let q : Fin ett.rounds := (⟨ett.rounds - (1 : ℕ),
-    by omega
-    ⟩ : Fin ett.rounds);
-    ∀ (hqSucc : q.succ = Fin.last ett.rounds) (gamma : Fin k) (choice : MaximumDefectiveChoice G
-        e0 (ett.series.data.tree q.succ.castSucc) (TashkinovStoredColors ett.series.data
-        q.castSucc) (ett.series.data.coloring q.castSucc)) (currentStored : ett.series.data.stored
-        q.succ = (insert choice.color ({ gamma } : Finset (Fin k)) : Finset (Fin k)))
-        (currentEdges : ett.series.data.connectingEdges q.succ = ({ choice.edge } : Finset E))
-        (currentKind : ett.series.data.kind q.succ = some TashkinovExtensionKind.PE) (sigmaPrev :
-        PartialEdgeColoring E k) (hsigmaPrevProper : IsProperEdgeColoring G sigmaPrev)
-        (hsigmaPrevOne : IsOneEdgeUncolored sigmaPrev e0),
-    let H : SimpleGraph (V ⊕ E) := TwoColorIncidenceGraph G sigmaPrev gamma choice.color;
-    ∀ (a b : V ⊕ E) (p_1 : (TwoColorIncidenceGraph G sigmaPrev gamma choice.color).Walk a b) (a_1
-        : p_1.IsPath) (u : V) (p : H.Walk (Sum.inl choice.vertex) (Sum.inl u)) (hp : p.IsPath)
-        (hroundOne : ett.rounds = (1 : ℕ)) (prefixInput : PartialEdgeColoring E k) (zeroPrefix :
-        TashkinovSeries G k (0 : ℕ) e0 prefixInput),
-    let zeroLast : Fin ((0 : ℕ) + (1 : ℕ)) := Fin.last (0 : ℕ);
-    let newStored : Finset (Fin k) := (insert choice.color ({ gamma } : Finset (Fin k)) : Finset
-        (Fin k));
-    let newEdges : Finset E := ({ choice.edge } : Finset E);
-    let newKind : Option TashkinovExtensionKind := some TashkinovExtensionKind.PE;
-    let newVertex : Option V := some choice.vertex;
-    let newOutside : Option V := some choice.otherEndpoint;
-    let newDelta : Option (Fin k) := some choice.color;
-    let newGamma : Option (Fin k) := some gamma;
-    let appendedData : TashkinovSeriesData G k ((0 : ℕ) + (1 : ℕ)) e0 := TashkinovSeriesDataAppend
-        zeroPrefix.data closureTree sigma newStored newEdges newKind newVertex newOutside newDelta
-        newGamma;
-    ∀ (happendLastTree : appendedData.tree (Fin.last (2 : ℕ)) = closureTree) (happendLastColor :
-        appendedData.coloring (Fin.last (1 : ℕ)) = sigma) (happendLastStored : appendedData.stored
-        (Fin.last (1 : ℕ)) = newStored) (happendLastEdges : appendedData.connectingEdges (Fin.last
-        (1 : ℕ)) = newEdges) (happendLastKind : appendedData.kind (Fin.last (1 : ℕ)) = newKind)
-        (happendTree : appendedData.tree zeroLast.succ.castSucc = ett.series.data.tree
-        q.succ.castSucc) (happendColor : appendedData.coloring zeroLast.castSucc = sigmaPrev)
-        (extendedSeries : TashkinovSeries G k ((0 : ℕ) + (1 : ℕ)) e0 prefixInput) (hextendedData :
-        extendedSeries.data = TashkinovSeriesDataAppend zeroPrefix.data closureTree sigma
-        newStored newEdges newKind newVertex newOutside newDelta newGamma) (hroundsEq : (0 : ℕ) +
-        (1 : ℕ) = ett.rounds),
-    let castSeries : {a b : ℕ} → (h : a = b) → (S : TashkinovSeries G k a e0 prefixInput) →
-        TashkinovSeries G k b e0 prefixInput := fun {a b : ℕ} (h : a = b) (S : TashkinovSeries G k
-        a e0 prefixInput) ↦ S.castRounds h;
-    ∀ (castSeriesTree :
-    ∀ {a b : ℕ} (h : a = b) (S : TashkinovSeries G k a e0 prefixInput) (i : Fin (b + (2 : ℕ))),
-        (castSeries h S).data.tree i = S.data.tree (Fin.cast (
-    by omega
-    ) i)) (castSeriesColoring :
-    ∀ {a b : ℕ} (h : a = b) (S : TashkinovSeries G k a e0 prefixInput) (i : Fin (b + (1 : ℕ))),
-        (castSeries h S).data.coloring i = S.data.coloring (Fin.cast (
-    by omega
-    ) i)) (castSeriesStored :
-    ∀ {a b : ℕ} (h : a = b) (S : TashkinovSeries G k a e0 prefixInput) (i : Fin (b + (1 : ℕ))),
-        (castSeries h S).data.stored i = S.data.stored (Fin.cast (
-    by omega
-    ) i)) (castSeriesEdges :
-    ∀ {a b : ℕ} (h : a = b) (S : TashkinovSeries G k a e0 prefixInput) (i : Fin (b + (1 : ℕ))),
-        (castSeries h S).data.connectingEdges i = S.data.connectingEdges (Fin.cast (
-    by omega
-    ) i)), Nonempty (CorrespondingExtendedTashkinovTree G k e0 ett sigma Tstar)
 
 /-- Dependent contract shared by the terminal series reconstruction proof modules.
 
@@ -2889,81 +2752,69 @@ theorem helper_branch_7068.{u_1, u_2} :
     SharedFacts.TerminalRebuildTransport.branchStatement.{u_1, u_2} :=
   SharedFacts.TerminalRebuildTransport.branch.{u_1, u_2}
 
-private theorem helper_continuation_4951.{u_1, u_2} :
-    helperContinuation4951Conditions.{u_1, u_2} := by
-  classical
-  intro V E _ _ _ G k e0 input T generating ett hpositive sigma hsigmaProper hsigmaOne
-      hsigmaStable Tstar hTnTstar hstrict closureTree hTstarClosure q hqSucc choice currentStored
-      currentEdges currentKind sigmaPrev hsigmaPrevProper hsigmaPrevOne hroundOne prefixInput
-      zeroPrefix zeroLast newStored newEdges newKind newVertex newOutside newDelta newGamma
-      appendedData happendLastTree happendLastColor happendLastStored happendLastEdges
-      happendLastKind happendTree happendColor extendedSeries hextendedData hroundsEq castSeries
-      castSeriesTree castSeriesColoring castSeriesStored castSeriesEdges
-  let finalSeries : TashkinovSeries G k ett.rounds e0 prefixInput :=
-    castSeries hroundsEq extendedSeries
-  have hfinalTree : finalSeries.data.tree (Fin.last (ett.rounds + 1)) = closureTree := by
-    change (extendedSeries.castRounds hroundsEq).data.tree (Fin.last (ett.rounds + 1)) = closureTree
-    rw [TashkinovSeries.castRounds_finalTree, hextendedData]
-    exact happendLastTree
-  have hpenultimateTree : finalSeries.data.tree (Fin.last ett.rounds).castSucc =
-      ett.series.data.tree (Fin.last ett.rounds).castSucc := by
-    change (extendedSeries.castRounds hroundsEq).data.tree (Fin.last ett.rounds).castSucc = _
-    rw [TashkinovSeries.castRounds_penultimateTree, hextendedData, ← hqSucc]
-    exact happendTree
-  have hfinalColor : finalSeries.data.coloring (Fin.last ett.rounds) = sigma := by
-    change (extendedSeries.castRounds hroundsEq).data.coloring (Fin.last ett.rounds) = sigma
-    rw [TashkinovSeries.castRounds_finalColoring, hextendedData]
-    exact happendLastColor
-  have hprefixFields := @helper_hprefixFields_744 (@V) (@E) inferInstance inferInstance
-      inferInstance (@G) (@k) (@e0) (@input) (@T) (@generating) (@ett) (@hpositive) (@Tstar)
-      (@closureTree) (@hroundOne) (@prefixInput) (@zeroPrefix) (@hroundsEq)
-  have hseriesDataAgree : ∀ i : Fin (ett.rounds + 1),
-      finalSeries.data.stored i = ett.series.data.stored i ∧
-        finalSeries.data.connectingEdges i = ett.series.data.connectingEdges i ∧
-        finalSeries.data.kind i = ett.series.data.kind i := by
-    change ∀ i : Fin (ett.rounds + 1),
-        (extendedSeries.castRounds hroundsEq).data.stored i = ett.series.data.stored i ∧
-          (extendedSeries.castRounds hroundsEq).data.connectingEdges i =
-            ett.series.data.connectingEdges i ∧
-          (extendedSeries.castRounds hroundsEq).data.kind i = ett.series.data.kind i
-    simpa only [TashkinovSeries.castRounds_data] using
+/-- A completed one-round series presents a correspondence independently of its extension kind.
+Initial metadata comes from the certificates; only the final metadata and trees are supplied. -/
+theorem oneRoundCorrespondence {V E : Type*} [Fintype V] [Fintype E] [DecidableEq E]
+    {G : LooplessMultigraph V E} {k : ℕ} {e0 : E}
+    {input generating replacementInput sigma : PartialEdgeColoring E k}
+    {tree replacementTree finalTree : TreeSequence G e0}
+    (base : ExtendedTashkinovTree G k e0 input tree generating)
+    (completed : TashkinovSeries G k 1 e0 replacementInput)
+    (rounds : base.rounds = 1)
+    (above : TreeSequenceInitialSegment
+      (base.series.data.tree (Fin.last base.rounds).castSucc) replacementTree)
+    (strict : (base.series.data.tree (Fin.last base.rounds).castSucc).length <
+      replacementTree.length)
+    (below : TreeSequenceInitialSegment replacementTree finalTree)
+    (stable : StableColoring (base.series.data.tree (Fin.last base.rounds).castSucc)
+      (TashkinovStoredColors base.series.data (Fin.last base.rounds))
+      (base.series.data.coloring (Fin.last base.rounds)) sigma)
+    (lastTree : completed.data.tree (Fin.last 2) = finalTree)
+    (penultimate : completed.data.tree (Fin.last 1).castSucc =
+      base.series.data.tree (Fin.last base.rounds).castSucc)
+    (lastColor : completed.data.coloring (Fin.last 1) = sigma)
+    (lastMetadata : completed.data.stored (Fin.last 1) =
+        base.series.data.stored (Fin.last base.rounds) ∧
+      completed.data.connectingEdges (Fin.last 1) =
+        base.series.data.connectingEdges (Fin.last base.rounds) ∧
+      completed.data.kind (Fin.last 1) = base.series.data.kind (Fin.last base.rounds)) :
+    Nonempty (CorrespondingExtendedTashkinovTree G k e0 base sigma replacementTree) := by
+  let series := completed.castRounds rounds.symm
+  have finalTreeEqual : series.data.tree (Fin.last (base.rounds + 1)) = finalTree := by
+    rw [TashkinovSeries.castRounds_finalTree]
+    exact lastTree
+  have penultimateTree : series.data.tree (Fin.last base.rounds).castSucc =
+      base.series.data.tree (Fin.last base.rounds).castSucc := by
+    rw [TashkinovSeries.castRounds_penultimateTree]
+    exact penultimate
+  have finalColor : series.data.coloring (Fin.last base.rounds) = sigma := by
+    rw [TashkinovSeries.castRounds_finalColoring]
+    exact lastColor
+  have metadata : ∀ index : Fin (base.rounds + 1),
+      series.data.stored index = base.series.data.stored index ∧
+        series.data.connectingEdges index = base.series.data.connectingEdges index ∧
+        series.data.kind index = base.series.data.kind index := by
+    simpa only [series, TashkinovSeries.castRounds_data] using
       (TashkinovSeriesData.castMetadataAgreement (r := 0)
-        ett.series.data extendedSeries.data hroundsEq
+        base.series.data completed.data rounds.symm
         (by
-          intro i
-          have hi : i = Fin.last 0 := by
-            apply Fin.ext
-            have bound := i.isLt
-            omega
-          subst i
-          simpa only [hextendedData, TashkinovSeriesDataAppend, Fin.lastCases_castSucc] using
-            hprefixFields (Fin.castLE (by omega) (Fin.last 0))
-              (by change 0 < ett.rounds; exact hpositive))
-        (by
-          simpa only [hextendedData, TashkinovSeriesDataAppend, Fin.lastCases_last, ← hqSucc] using
-            And.intro currentStored.symm (And.intro currentEdges.symm currentKind.symm)))
-  have hseriesTreeAgree : ∀ i : Fin ett.rounds,
-      finalSeries.data.tree i.succ.castSucc = ett.series.data.tree i.succ.castSucc := by
-    change ∀ i : Fin ett.rounds,
-      (extendedSeries.castRounds hroundsEq).data.tree i.succ.castSucc =
-        ett.series.data.tree i.succ.castSucc
-    simpa only [TashkinovSeries.castRounds_data] using
+          intro index
+          have zero : index = 0 := Fin.ext (by omega)
+          subst index
+          simpa using initialMetadataAgreement completed base.series)
+        lastMetadata)
+  have trees : ∀ index : Fin base.rounds, series.data.tree index.succ.castSucc =
+      base.series.data.tree index.succ.castSucc := by
+    simpa only [series, TashkinovSeries.castRounds_data] using
       (TashkinovSeriesData.castTreeAgreement (r := 0)
-        ett.series.data extendedSeries.data hroundsEq
-        (fun i => Fin.elim0 i)
-        (by
-          simpa only [finalSeries, castSeries, TashkinovSeries.castRounds_data] using
-            hpenultimateTree))
-  have hseriesStable := TashkinovSeriesData.stabilityOfOneRound
-    ett.series.data finalSeries.data.coloring hroundOne
-    (by rw [hfinalColor]; exact hsigmaStable)
-  have penultimate : finalSeries.data.tree (Fin.last ett.rounds).castSucc =
-      ett.series.data.tree (Fin.last ett.rounds).castSucc := hpenultimateTree
-  have terminal : finalSeries.data.tree (Fin.last (ett.rounds + 1)) = closureTree := hfinalTree
-  exact ⟨CorrespondingExtendedTashkinovTree.ofSeries ett finalSeries
-    (by rw [penultimate]; exact hTnTstar) (by rw [penultimate]; exact hstrict)
-    (by rw [terminal]; exact hTstarClosure)
-    hfinalColor.symm hseriesTreeAgree hseriesDataAgree hseriesStable⟩
+        base.series.data completed.data rounds.symm (fun index => Fin.elim0 index)
+        (by simpa only [series, TashkinovSeries.castRounds_data] using penultimateTree))
+  have allStable := TashkinovSeriesData.stabilityOfOneRound
+    base.series.data series.data.coloring rounds (by rw [finalColor]; exact stable)
+  exact ⟨CorrespondingExtendedTashkinovTree.ofSeries base series
+    (by rw [penultimateTree]; exact above) (by rw [penultimateTree]; exact strict)
+    (by rw [finalTreeEqual]; exact below) finalColor.symm trees metadata allStable⟩
+
 
 theorem helper_branch_11555.{u_1, u_2} :
     helperBranch11555Conditions.{u_1, u_2} := by
@@ -3081,22 +2932,18 @@ theorem helper_branch_11555.{u_1, u_2} :
     TashkinovSeriesAppend G k 0 e0 prefixInput zeroPrefix closureTree
       sigma newStored newEdges newKind newVertex newOutside newDelta
       newGamma lastStep
-  have hroundsEq : 0 + 1 = ett.rounds := by omega
-  let castSeries := fun {a b : ℕ} (h : a = b)
-      (S : TashkinovSeries G k a e0 prefixInput) => S.castRounds h
-  let castSeriesTree := fun {a b : ℕ} (h : a = b)
-      (S : TashkinovSeries G k a e0 prefixInput) (i : Fin (b + 2)) =>
-    S.castRounds_tree h i
-  let castSeriesColoring := fun {a b : ℕ} (h : a = b)
-      (S : TashkinovSeries G k a e0 prefixInput) (i : Fin (b + 1)) =>
-    S.castRounds_coloring h i
-  let castSeriesStored := fun {a b : ℕ} (h : a = b)
-      (S : TashkinovSeries G k a e0 prefixInput) (i : Fin (b + 1)) =>
-    S.castRounds_stored h i
-  let castSeriesEdges := fun {a b : ℕ} (h : a = b)
-      (S : TashkinovSeries G k a e0 prefixInput) (i : Fin (b + 1)) =>
-    S.castRounds_connectingEdges h i
-  apply helper_continuation_4951 <;> assumption
+  apply oneRoundCorrespondence ett extendedSeries hroundOne
+    hTnTstar hstrict hTstarClosure hsigmaStable
+  · rw [hextendedData]
+    exact happendLastTree
+  · rw [hextendedData, ← hqSucc]
+    exact happendTree
+  · rw [hextendedData]
+    exact happendLastColor
+  · rw [hextendedData, ← hqSucc]
+    exact ⟨happendLastStored.trans currentStored.symm,
+      happendLastEdges.trans currentEdges.symm, happendLastKind.trans currentKind.symm⟩
+
 theorem helper_hsigmaPrevEnlarged_12232.{u_1, u_2} :
     helperHsigmaPrevEnlarged12232Conditions.{u_1, u_2} := by
   classical
@@ -3227,86 +3074,6 @@ theorem helper_hsigmaPrevEnlarged_12232.{u_1, u_2} :
   rw [hsigmaPrevFormula]
   exact stableSelected
 
-private theorem helper_continuation_7494.{u_1, u_2} :
-    helperContinuation7494Conditions.{u_1, u_2} := by
-  classical
-  intro V E _ _ _ G k e0 input T generating ett hpositive sigma hsigmaProper hsigmaOne
-      hsigmaStable Tstar hTnTstar hstrict closureTree hTstarClosure q hqSucc gamma choice
-      currentStored currentEdges currentKind sigmaPrev hsigmaPrevProper hsigmaPrevOne H
-      auxiliaryStart b auxiliaryWalk auxiliaryPath u p hp hroundOne prefixInput zeroPrefix
-      zeroLast newStored newEdges newKind newVertex newOutside newDelta newGamma appendedData
-      happendLastTree happendLastColor happendLastStored happendLastEdges happendLastKind
-      happendTree happendColor extendedSeries hextendedData hroundsEq castSeries castSeriesTree
-      castSeriesColoring castSeriesStored castSeriesEdges
-  let finalSeries : TashkinovSeries G k ett.rounds e0 prefixInput :=
-    castSeries hroundsEq extendedSeries
-  have hfinalTree : finalSeries.data.tree (Fin.last (ett.rounds + 1)) = closureTree := by
-    change (extendedSeries.castRounds hroundsEq).data.tree (Fin.last (ett.rounds + 1)) = closureTree
-    rw [TashkinovSeries.castRounds_finalTree, hextendedData]
-    exact happendLastTree
-  have hpenultimateTree : finalSeries.data.tree (Fin.last ett.rounds).castSucc =
-      ett.series.data.tree (Fin.last ett.rounds).castSucc := by
-    change (extendedSeries.castRounds hroundsEq).data.tree (Fin.last ett.rounds).castSucc = _
-    rw [TashkinovSeries.castRounds_penultimateTree, hextendedData, ← hqSucc]
-    exact happendTree
-  have hfinalColor : finalSeries.data.coloring (Fin.last ett.rounds) = sigma := by
-    change (extendedSeries.castRounds hroundsEq).data.coloring (Fin.last ett.rounds) = sigma
-    rw [TashkinovSeries.castRounds_finalColoring, hextendedData]
-    exact happendLastColor
-  have hprefixFields :
-    ∀ (i : Fin (ett.rounds + 1)), i.val < ett.rounds → zeroPrefix.data.stored zeroLast =
-        ett.series.data.stored i ∧ zeroPrefix.data.connectingEdges zeroLast =
-        ett.series.data.connectingEdges i ∧ zeroPrefix.data.kind zeroLast = ett.series.data.kind i
-  := by
-    apply helper_hprefixFields_3431 <;> assumption
-  have hseriesDataAgree : ∀ i : Fin (ett.rounds + 1),
-      finalSeries.data.stored i = ett.series.data.stored i ∧
-        finalSeries.data.connectingEdges i = ett.series.data.connectingEdges i ∧
-        finalSeries.data.kind i = ett.series.data.kind i := by
-    change ∀ i : Fin (ett.rounds + 1),
-        (extendedSeries.castRounds hroundsEq).data.stored i = ett.series.data.stored i ∧
-          (extendedSeries.castRounds hroundsEq).data.connectingEdges i =
-            ett.series.data.connectingEdges i ∧
-          (extendedSeries.castRounds hroundsEq).data.kind i = ett.series.data.kind i
-    simpa only [TashkinovSeries.castRounds_data] using
-      (TashkinovSeriesData.castMetadataAgreement (r := 0)
-        ett.series.data extendedSeries.data hroundsEq
-        (by
-          intro i
-          have hi : i = Fin.last 0 := by
-            apply Fin.ext
-            have bound := i.isLt
-            omega
-          subst i
-          simpa only [hextendedData, TashkinovSeriesDataAppend, Fin.lastCases_castSucc] using
-            hprefixFields (Fin.castLE (by omega) (Fin.last 0))
-              (by change 0 < ett.rounds; exact hpositive))
-        (by
-          simpa only [hextendedData, TashkinovSeriesDataAppend, Fin.lastCases_last, ← hqSucc] using
-            And.intro currentStored.symm (And.intro currentEdges.symm currentKind.symm)))
-  have hseriesTreeAgree : ∀ i : Fin ett.rounds,
-      finalSeries.data.tree i.succ.castSucc = ett.series.data.tree i.succ.castSucc := by
-    change ∀ i : Fin ett.rounds,
-      (extendedSeries.castRounds hroundsEq).data.tree i.succ.castSucc =
-        ett.series.data.tree i.succ.castSucc
-    simpa only [TashkinovSeries.castRounds_data] using
-      (TashkinovSeriesData.castTreeAgreement (r := 0)
-        ett.series.data extendedSeries.data hroundsEq
-        (fun i => Fin.elim0 i)
-        (by
-          simpa only [finalSeries, castSeries, TashkinovSeries.castRounds_data] using
-            hpenultimateTree))
-  have hseriesStable := TashkinovSeriesData.stabilityOfOneRound
-    ett.series.data finalSeries.data.coloring hroundOne
-    (by rw [hfinalColor]; exact hsigmaStable)
-  have penultimate : finalSeries.data.tree (Fin.last ett.rounds).castSucc =
-      ett.series.data.tree (Fin.last ett.rounds).castSucc := hpenultimateTree
-  have terminal : finalSeries.data.tree (Fin.last (ett.rounds + 1)) = closureTree := hfinalTree
-  exact ⟨CorrespondingExtendedTashkinovTree.ofSeries ett finalSeries
-    (by rw [penultimate]; exact hTnTstar) (by rw [penultimate]; exact hstrict)
-    (by rw [terminal]; exact hTstarClosure)
-    hfinalColor.symm hseriesTreeAgree hseriesDataAgree hseriesStable⟩
-
 theorem helper_branch_12554.{u_1, u_2} :
     helperBranch12554Conditions.{u_1, u_2} := by
   classical
@@ -3422,30 +3189,18 @@ theorem helper_branch_12554.{u_1, u_2} :
     TashkinovSeriesAppend G k 0 e0 prefixInput zeroPrefix closureTree
       sigma newStored newEdges newKind newVertex newOutside newDelta
       newGamma lastStep
-  have hroundsEq : 0 + 1 = ett.rounds := by omega
-  let castSeries := fun {a b : ℕ} (h : a = b)
-      (S : TashkinovSeries G k a e0 prefixInput) => S.castRounds h
-  let castSeriesTree := fun {a b : ℕ} (h : a = b)
-      (S : TashkinovSeries G k a e0 prefixInput) (i : Fin (b + 2)) =>
-    S.castRounds_tree h i
-  let castSeriesColoring := fun {a b : ℕ} (h : a = b)
-      (S : TashkinovSeries G k a e0 prefixInput) (i : Fin (b + 1)) =>
-    S.castRounds_coloring h i
-  let castSeriesStored := fun {a b : ℕ} (h : a = b)
-      (S : TashkinovSeries G k a e0 prefixInput) (i : Fin (b + 1)) =>
-    S.castRounds_stored h i
-  let castSeriesEdges := fun {a b : ℕ} (h : a = b)
-      (S : TashkinovSeries G k a e0 prefixInput) (i : Fin (b + 1)) =>
-    S.castRounds_connectingEdges h i
-  exact @helper_continuation_7494 (@V) (@E) inferInstance inferInstance inferInstance (@G) (@k)
-      (@e0) (@input) (@T) (@generating) (@ett) (@hpositive) (@sigma) (@hsigmaProper) (@hsigmaOne)
-      (@hsigmaStable) (@Tstar) (@hTnTstar) (@hstrict) (@closureTree) (@hTstarClosure) (@hqSucc)
-      (@gamma) (@choice) (@currentStored) (@currentEdges) (@currentKind) (@sigmaPrev)
-      (@hsigmaPrevProper) (@hsigmaPrevOne) _ (@b) _ (by
-    assumption) (@u) (@p) (@hp) (@hroundOne) (@prefixInput) (@zeroPrefix) (@happendLastTree)
-        (@happendLastColor) (@happendLastStored) (@happendLastEdges) (@happendLastKind)
-        (@happendTree) (@happendColor) (@extendedSeries) (@hextendedData) (@hroundsEq)
-        (@castSeriesTree) (@castSeriesColoring) (@castSeriesStored) (@castSeriesEdges)
+  apply oneRoundCorrespondence ett extendedSeries hroundOne
+    hTnTstar hstrict hTstarClosure hsigmaStable
+  · rw [hextendedData]
+    exact happendLastTree
+  · rw [hextendedData, ← hqSucc]
+    exact happendTree
+  · rw [hextendedData]
+    exact happendLastColor
+  · rw [hextendedData, ← hqSucc]
+    exact ⟨happendLastStored.trans currentStored.symm,
+      happendLastEdges.trans currentEdges.symm, happendLastKind.trans currentKind.symm⟩
+
 theorem helper_pePostStatus_12865.{u_1, u_2} :
     open scoped Classical in
     ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E] [ DecidableEq E] (G :

@@ -1610,127 +1610,6 @@ private theorem helper_hGammaSize_1295.{u_1, u_2} :
   rw [he] at hc
   exact hc.trans (by simpa only [Nat.mul_comm] using Nat.mul_le_mul_left 2 hb)
 
-private theorem helper_hFinalSize_1306.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E] [ DecidableEq V] [ DecidableEq E] (G
-        : LooplessMultigraph V E) (k : ℕ) (e0 : E) (input : PartialEdgeColoring E k) (T :
-        TreeSequence G e0) (phi : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k e0
-        input T phi) (base : HierarchyBase ett phi) (C : HierarchyCounterexample base) (ctx :
-        HierarchyMinimumCounterexampleContext G k e0 input T phi ett base C) (D :
-        HierarchySituationTwoCaseOneData G k e0 input T phi ett base C ctx),
-    let ell : ℕ := HierarchyFullTailLength C;
-    let B : TreeSequence G e0 := HierarchyFullTailPrefix C (ell - (2 : ℕ));
-    ∀ (hBlen : B.length = T.length - (2 : ℕ)) (P1 : HierarchyReplacementPresentation G k e0 input
-        T phi ett base C ctx),
-    let rho : PartialEdgeColoring E k := P1.coloring;
-    let beforeLast : Fin T.length := (⟨B.length, @Eq.mpr (@LT.lt Nat instLTNat
-        (@TreeSequence.length V E G e0 B) (@TreeSequence.length V E G e0 T)) (@LT.lt Nat instLTNat
-        (@HSub.hSub Nat Nat Nat (@instHSub Nat instSubNat) (@TreeSequence.length V E G e0 T)
-        (@OfNat.ofNat Nat (nat_lit 2) (instOfNatNat (nat_lit 2)))) (@TreeSequence.length V E G e0
-        T)) (@id (@Eq Prop (@LT.lt Nat instLTNat (@TreeSequence.length V E G e0 B)
-        (@TreeSequence.length V E G e0 T)) (@LT.lt Nat instLTNat (@HSub.hSub Nat Nat Nat
-        (@instHSub Nat instSubNat) (@TreeSequence.length V E G e0 T) (@OfNat.ofNat Nat (nat_lit 2)
-        (instOfNatNat (nat_lit 2)))) (@TreeSequence.length V E G e0 T))) (@congrArg Nat Prop
-        (@TreeSequence.length V E G e0 B) (@HSub.hSub Nat Nat Nat (@instHSub Nat instSubNat)
-        (@TreeSequence.length V E G e0 T) (@OfNat.ofNat Nat (nat_lit 2) (instOfNatNat (nat_lit
-        2)))) (fun (_a : Nat) ↦ @LT.lt Nat instLTNat _a (@TreeSequence.length V E G e0 T)) hBlen))
-        (
-    have hp : @LE.le Nat instLENat (@OfNat.ofNat Nat (nat_lit 1) (instOfNatNat (nat_lit 1)))
-        (@TreeSequence.length V E G e0 T) := @TreeSequence.positive V E G e0 T;
-        @Decidable.byContradiction (@LT.lt Nat instLTNat (@HSub.hSub Nat Nat Nat (@instHSub Nat
-        instSubNat) (@TreeSequence.length V E G e0 T) (@OfNat.ofNat Nat (nat_lit 2) (instOfNatNat
-        (nat_lit 2)))) (@TreeSequence.length V E G e0 T)) ((@HSub.hSub Nat Nat Nat (@instHSub Nat
-        instSubNat) (@TreeSequence.length V E G e0 T) (@OfNat.ofNat Nat (nat_lit 2) (instOfNatNat
-        (nat_lit 2)))).decLt (@TreeSequence.length V E G e0 T)) fun (a : Not (@LT.lt Nat instLTNat
-        (@HSub.hSub Nat Nat Nat (@instHSub Nat instSubNat) (@TreeSequence.length V E G e0 T)
-        (@OfNat.ofNat Nat (nat_lit 2) (instOfNatNat (nat_lit 2)))) (@TreeSequence.length V E G e0
-        T))) ↦
-    by omega
-    )⟩ : Fin T.length);
-    let finalColors : Finset (Fin k) := (rho (T.edge beforeLast)).toFinset ∪ (rho (T.edge
-        D.lastEdgeIndex)).toFinset; finalColors.card ≤ (2 : ℕ) := by
-  classical
-  intro V E _ _ _ _ G k e0 input T phi ett base C ctx D ell B hBlen P1 rho beforeLast finalColors
-  have hc := Finset.card_union_le
-    (rho (T.edge beforeLast)).toFinset (rho (T.edge D.lastEdgeIndex)).toFinset
-  have ho (o : Option (Fin k)) : o.toFinset.card ≤ 1 := by
-    cases o <;> simp
-  have h1 := ho (rho (T.edge beforeLast))
-  have h2 := ho (rho (T.edge D.lastEdgeIndex))
-  change finalColors.card ≤
-    (rho (T.edge beforeLast)).toFinset.card +
-      (rho (T.edge D.lastEdgeIndex)).toFinset.card at hc
-  clear * - hc h1 h2
-  omega
-
-private theorem helper_hchoice_1318.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E] [ DecidableEq V] [ DecidableEq E] (G
-        : LooplessMultigraph V E) (k : ℕ) (e0 : E) (input : PartialEdgeColoring E k) (T :
-        TreeSequence G e0) (phi : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k e0
-        input T phi) (base : HierarchyBase ett phi) (C : HierarchyCounterexample base) (ctx :
-        HierarchyMinimumCounterexampleContext G k e0 input T phi ett base C) (D :
-        HierarchySituationTwoCaseOneData G k e0 input T phi ett base C ctx),
-    let H : TashkinovHierarchy ett base := C.hierarchy;
-    let q : Fin (H.dividerCount + (1 : ℕ)) := Fin.last H.dividerCount;
-    let A : TreeSequence G e0 := HierarchyStarredStage H q;
-    let ell : ℕ := HierarchyFullTailLength C;
-    let B : TreeSequence G e0 := HierarchyFullTailPrefix C (ell - (2 : ℕ));
-    ∀ (hBlen : B.length = T.length - (2 : ℕ)) (P1 : HierarchyReplacementPresentation G k e0 input
-        T phi ett base C ctx),
-    let rho : PartialEdgeColoring E k := P1.coloring;
-    let J1 : ExtendedTashkinovTree G k e0 P1.corresponding.replacementInput T P1.coloring :=
-        P1.corresponding.replacementETT;
-    let H1 : TashkinovHierarchy P1.corresponding.replacementETT P1.replacementBase :=
-        P1.counterexample.hierarchy;
-    let q1 : Fin (H1.dividerCount + (1 : ℕ)) := Fin.last H1.dividerCount;
-    let n1 : Fin (J1.rounds + (1 : ℕ)) := Fin.last J1.rounds;
-    let Tn1 : TreeSequence G e0 := J1.series.data.tree n1.castSucc;
-    let extra : Finset (Fin k) := (TreeSequenceVertexSet P1.replacementBase.core \
-        TreeSequenceVertexSet Tn1).biUnion fun (v : V) ↦ MissingColors G rho v;
-    let used : Finset (Fin k) := ({c : Fin k |
-    ∃ (t : Fin T.length), A.length ≤ (↑t : ℕ) ∧ (↑t : ℕ) < A.length + (ell - (2 : ℕ)) ∧ rho
-        (T.edge t) = some c} : Finset (Fin k));
-    let available : Finset (Fin k) := (TreeMissingColors rho B \ extra) \ used;
-    let Gamma : Finset (Fin k) := (HierarchyStoredColorsAt H1 q1).biUnion
-        (P1.counterexample.good.gamma q1);
-    let beforeLast : Fin T.length := (⟨B.length, @Eq.mpr (@LT.lt Nat instLTNat
-        (@TreeSequence.length V E G e0 B) (@TreeSequence.length V E G e0 T)) (@LT.lt Nat instLTNat
-        (@HSub.hSub Nat Nat Nat (@instHSub Nat instSubNat) (@TreeSequence.length V E G e0 T)
-        (@OfNat.ofNat Nat (nat_lit 2) (instOfNatNat (nat_lit 2)))) (@TreeSequence.length V E G e0
-        T)) (@id (@Eq Prop (@LT.lt Nat instLTNat (@TreeSequence.length V E G e0 B)
-        (@TreeSequence.length V E G e0 T)) (@LT.lt Nat instLTNat (@HSub.hSub Nat Nat Nat
-        (@instHSub Nat instSubNat) (@TreeSequence.length V E G e0 T) (@OfNat.ofNat Nat (nat_lit 2)
-        (instOfNatNat (nat_lit 2)))) (@TreeSequence.length V E G e0 T))) (@congrArg Nat Prop
-        (@TreeSequence.length V E G e0 B) (@HSub.hSub Nat Nat Nat (@instHSub Nat instSubNat)
-        (@TreeSequence.length V E G e0 T) (@OfNat.ofNat Nat (nat_lit 2) (instOfNatNat (nat_lit
-        2)))) (fun (_a : Nat) ↦ @LT.lt Nat instLTNat _a (@TreeSequence.length V E G e0 T)) hBlen))
-        (
-    have hp : @LE.le Nat instLENat (@OfNat.ofNat Nat (nat_lit 1) (instOfNatNat (nat_lit 1)))
-        (@TreeSequence.length V E G e0 T) := @TreeSequence.positive V E G e0 T;
-        @Decidable.byContradiction (@LT.lt Nat instLTNat (@HSub.hSub Nat Nat Nat (@instHSub Nat
-        instSubNat) (@TreeSequence.length V E G e0 T) (@OfNat.ofNat Nat (nat_lit 2) (instOfNatNat
-        (nat_lit 2)))) (@TreeSequence.length V E G e0 T)) ((@HSub.hSub Nat Nat Nat (@instHSub Nat
-        instSubNat) (@TreeSequence.length V E G e0 T) (@OfNat.ofNat Nat (nat_lit 2) (instOfNatNat
-        (nat_lit 2)))).decLt (@TreeSequence.length V E G e0 T)) fun (a : Not (@LT.lt Nat instLTNat
-        (@HSub.hSub Nat Nat Nat (@instHSub Nat instSubNat) (@TreeSequence.length V E G e0 T)
-        (@OfNat.ofNat Nat (nat_lit 2) (instOfNatNat (nat_lit 2)))) (@TreeSequence.length V E G e0
-        T))) ↦
-    by omega
-    )⟩ : Fin T.length);
-    let finalColors : Finset (Fin k) := (rho (T.edge beforeLast)).toFinset ∪ (rho (T.edge
-        D.lastEdgeIndex)).toFinset; (2 : ℕ) * J1.rounds + (11 : ℕ) ≤ available.card → Gamma.card ≤
-        (2 : ℕ) * J1.rounds → finalColors.card ≤ (2 : ℕ) → (available \ (Gamma ∪
-        finalColors)).Nonempty := by
-  classical
-  intro V E _ _ _ _ G k e0 input T phi ett base C ctx D H q A ell B hBlen P1 rho J1 H1 q1 n1 Tn1
-      extra used available Gamma beforeLast finalColors hsize hGammaSize hFinalSize
-  apply Finset.card_pos.mp
-  have hremoved := Finset.card_union_le Gamma finalColors
-  have hremain := Finset.card_le_card_sdiff_add_card (s := available)
-    (t := Gamma ∪ finalColors)
-  omega
-
 private theorem helper_betaTail_1334.{u_1, u_2} :
     open scoped Classical in
     ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E] [ DecidableEq V] [ DecidableEq E] (G
@@ -3403,13 +3282,20 @@ private theorem helper_continuation_3592.{u_1, u_2} :
     exact @helper_hGammaSize_1295 (@V) (@E) inferInstance inferInstance inferInstance
         inferInstance (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C) (@ctx) (@gamma) (@P1)
   have hFinalSize : finalColors.card ≤ 2 := by
-    exact @helper_hFinalSize_1306 (@V) (@E) inferInstance inferInstance inferInstance
-        inferInstance (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C) (@ctx) (@D)
-        (@hBlen) (@P1)
+    have unionBound := Finset.card_union_le
+      (rho (T.edge beforeLast)).toFinset (rho (T.edge D.lastEdgeIndex)).toFinset
+    have optionBound (color : Option (Fin k)) : color.toFinset.card ≤ 1 := by
+      cases color <;> simp
+    have penultimateBound := optionBound (rho (T.edge beforeLast))
+    have lastBound := optionBound (rho (T.edge D.lastEdgeIndex))
+    change finalColors.card ≤ _ at unionBound
+    omega
   have hchoice : (available \ (Gamma ∪ finalColors)).Nonempty := by
-    exact @helper_hchoice_1318 (@V) (@E) inferInstance inferInstance inferInstance inferInstance
-        (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C) (@ctx) (@D) (@hBlen) (@P1)
-        (@hsize) (@hGammaSize) (@hFinalSize)
+    apply Finset.card_pos.mp
+    have removedBound := Finset.card_union_le Gamma finalColors
+    have remainingBound := Finset.card_le_card_sdiff_add_card
+      (s := available) (t := Gamma ∪ finalColors)
+    omega
   obtain ⟨beta, hbeta⟩ := hchoice
   have betaParts : ((beta ∈ TreeMissingColors rho B ∧ beta ∉ extra) ∧ beta ∉ used) ∧
       (beta ∉ Gamma ∧ beta ∉ finalColors) := by

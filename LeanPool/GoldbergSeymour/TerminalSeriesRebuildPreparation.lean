@@ -1075,6 +1075,30 @@ theorem helper_hpenultimateTree_713.{u_1, u_2} :
     _ = ett.series.data.tree (Fin.last ett.rounds).castSucc := by
           rw [hqSucc]
 
+/-- Initial certificates fix the stored colors, connecting edges and extension kind.
+The two series may have different lengths and generating colorings. -/
+theorem initialMetadataAgreement {V E : Type*} [Fintype V] [Fintype E] [DecidableEq E]
+    {G : LooplessMultigraph V E} {k leftRounds rightRounds : ℕ} {e0 : E}
+    {leftInput rightInput : PartialEdgeColoring E k}
+    (left : TashkinovSeries G k leftRounds e0 leftInput)
+    (right : TashkinovSeries G k rightRounds e0 rightInput) :
+    left.data.stored 0 = right.data.stored 0 ∧
+      left.data.connectingEdges 0 = right.data.connectingEdges 0 ∧
+      left.data.kind 0 = right.data.kind 0 := by
+  have leftInitial := left.certified 0
+  have rightInitial := right.certified 0
+  cases leftInitial with
+  | initial triple0 seedLength0 initialColoring0 initialStored0
+      initialEdges0 initialKind0 initialVertex0 initialOutside0
+      initialDelta0 initialGamma0 initialClosure0 =>
+    cases rightInitial with
+    | initial triple1 seedLength1 initialColoring1 initialStored1
+        initialEdges1 initialKind1 initialVertex1 initialOutside1
+        initialDelta1 initialGamma1 initialClosure1 =>
+      exact ⟨initialStored0.trans initialStored1.symm,
+        initialEdges0.trans initialEdges1.symm, initialKind0.trans initialKind1.symm⟩
+
+
 theorem helper_hprefixFields_744.{u_1, u_2} :
     open scoped Classical in
     ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq E] (G :
@@ -1097,22 +1121,7 @@ theorem helper_hprefixFields_744.{u_1, u_2} :
     omega
   have hiEq : i = 0 := Fin.ext hiZero
   subst i
-  have hold := zeroPrefix.certified 0
-  have hnew := ett.series.certified 0
-  cases hold with
-  | initial triple0 seedLength0 initialColoring0 initialStored0
-      initialEdges0 initialKind0 initialVertex0 initialOutside0
-      initialDelta0 initialGamma0 initialClosure0 =>
-    cases hnew with
-    | initial triple1 seedLength1 initialColoring1 initialStored1
-        initialEdges1 initialKind1 initialVertex1 initialOutside1
-        initialDelta1 initialGamma1 initialClosure1 =>
-      exact ⟨by simpa [zeroLast] using
-          initialStored0.trans initialStored1.symm,
-        by simpa [zeroLast] using
-          initialEdges0.trans initialEdges1.symm,
-        by simpa [zeroLast] using
-          initialKind0.trans initialKind1.symm⟩
+  simpa only [zeroLast, Fin.last_zero] using initialMetadataAgreement zeroPrefix ett.series
 
 theorem helper_hseriesDataAgree_772.{u_1, u_2} :
     open scoped Classical in
@@ -2126,22 +2135,7 @@ theorem helper_hprefixFields_3431.{u_1, u_2} :
     omega
   have hiEq : i = 0 := Fin.ext hiZero
   subst i
-  have hold := zeroPrefix.certified 0
-  have hnew := ett.series.certified 0
-  cases hold with
-  | initial triple0 seedLength0 initialColoring0 initialStored0
-      initialEdges0 initialKind0 initialVertex0 initialOutside0
-      initialDelta0 initialGamma0 initialClosure0 =>
-    cases hnew with
-    | initial triple1 seedLength1 initialColoring1 initialStored1
-        initialEdges1 initialKind1 initialVertex1 initialOutside1
-        initialDelta1 initialGamma1 initialClosure1 =>
-      exact ⟨by simpa [zeroLast] using
-          initialStored0.trans initialStored1.symm,
-        by simpa [zeroLast] using
-          initialEdges0.trans initialEdges1.symm,
-        by simpa [zeroLast] using
-          initialKind0.trans initialKind1.symm⟩
+  simpa only [zeroLast, Fin.last_zero] using initialMetadataAgreement zeroPrefix ett.series
 
 theorem helper_hseriesDataAgree_3459.{u_1, u_2} :
     open scoped Classical in
