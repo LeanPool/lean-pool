@@ -1,11 +1,12 @@
 /-
 Copyright (c) 2026 Wesley Pegden. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Wesley Pegden
+Authors: Wesley Pegden, Lean Pool contributors
 -/
 module
 
 public import LeanPool.GoldbergSeymour.GoodHierarchy
+public import LeanPool.GoldbergSeymour.SameHierarchyStages
 
 /-!
 # Transport of hierarchy fields
@@ -127,6 +128,152 @@ theorem GoodHierarchy.uniqueRefresh_transport {original : TashkinovHierarchy ett
         good.gamma i.succ theta = good.gamma i.castSucc theta := by
   rw [stored, original.segmentMissingColors_eq_of_agreement replacement i j stage star missing]
   exact good.uniqueRefresh i
+
+variable {original : TashkinovHierarchy ett base}
+
+/-- Auxiliary color families use the canonical backward cast of divider indices. -/
+def GoodHierarchy.reindexedGamma (good : GoodHierarchy original)
+    (replacement : TashkinovHierarchy otherETT otherBase)
+    (count : original.dividerCount = replacement.dividerCount) :
+    Fin (replacement.dividerCount + 1) → Fin k → Finset (Fin k) :=
+  fun index => good.gamma (Fin.cast (congrArg (fun value => value + 1) count.symm) index)
+
+/-- Transport the common fields of a good hierarchy; closure obligations stay explicit. -/
+noncomputable def GoodHierarchy.transportOfFields (good : GoodHierarchy original)
+    (replacement : TashkinovHierarchy otherETT otherBase)
+    (count : original.dividerCount = replacement.dividerCount)
+    (stored : ∀ index, HierarchyStoredColorsAt replacement index = HierarchyStoredColorsAt original
+      (Fin.cast (congrArg (fun value => value + 1) count.symm) index))
+    (missing : ∀ index, HierarchyStageMissingColors replacement index =
+      HierarchyStageMissingColors original
+        (Fin.cast (congrArg (fun value => value + 1) count.symm) index))
+    (segment : ∀ index color, color ∈ HierarchyStoredColorsAt original
+        (Fin.cast (congrArg (fun value => value + 1) count.symm) index) →
+      HierarchySegmentColors replacement index color ⊆ HierarchySegmentColors original
+        (Fin.cast (congrArg (fun value => value + 1) count.symm) index) color)
+    (refresh : ∀ index : Fin replacement.dividerCount,
+      ((TreeSequenceVertexSet (replacement.stage index.succ.castSucc) \
+          TreeSequenceVertexSet (HierarchyStarredStage replacement index.castSucc)).biUnion
+        (MissingColors G sigma)) =
+      ((TreeSequenceVertexSet (original.stage (Fin.cast count.symm index).succ.castSucc) \
+          TreeSequenceVertexSet (HierarchyStarredStage original
+            (Fin.cast count.symm index).castSucc)).biUnion (MissingColors G phi)))
+    (parallel : otherETT.series.data.kind (Fin.last otherETT.rounds) =
+        some TashkinovExtensionKind.PE →
+      ¬TreeColorSetMinusClosed G sigma otherBase.core
+          ((HierarchyStoredColorsAt replacement 0).biUnion
+            (good.reindexedGamma replacement count 0)) ∧
+        4 ≤ ((TreeMissingColors sigma (otherETT.series.data.tree
+          (Fin.last otherETT.rounds).castSucc) ∩ TreeMissingColors sigma otherBase.closure) \
+          (HierarchyStoredColorsAt replacement 0).biUnion
+            (good.reindexedGamma replacement count 0)).card)
+    (minus : ∀ index : Fin replacement.dividerCount,
+      TreeColorSetMinusClosed G sigma (replacement.stage index.succ.castSucc)
+        ((HierarchyStoredColorsAt replacement index.succ).biUnion
+          (good.reindexedGamma replacement count index.castSucc))) :
+    GoodHierarchy replacement where
+  gamma := good.reindexedGamma replacement count
+  twoColors := by
+    intro index color member
+    exact good.twoColors _ color (stored index ▸ member)
+  avoidance := by
+    intro index color member other inGamma
+    have old := good.avoidance _ color (stored index ▸ member) inGamma
+    refine Finset.mem_sdiff.mpr ⟨?_, ?_⟩
+    · rw [missing]
+      exact (Finset.mem_sdiff.mp old).1
+    · intro inSegment
+      exact (Finset.mem_sdiff.mp old).2 (segment index color (stored index ▸ member) inSegment)
+  disjointPairs := by
+    intro index color other member otherMember different
+    exact good.disjointPairs _ color other (stored index ▸ member)
+      (stored index ▸ otherMember) different
+  uniqueRefresh := by
+    intro index
+    simpa only [reindexedGamma, stored, refresh, Fin.cast_succ_eq, Fin.cast_castSucc] using
+      good.uniqueRefresh (Fin.cast count.symm index)
+  parallelBase := parallel
+  minusClosed := minus
+
+section CommonTerminalTree
+
+variable {alignedETT : ExtendedTashkinovTree G k e0 otherInput T otherGenerating}
+    {alignedBase : HierarchyBase alignedETT sigma}
+
+/-- Recolor a good hierarchy using local color agreement and explicit closure obligations. -/
+noncomputable def GoodHierarchy.transportOfColoringAgreement (good : GoodHierarchy original)
+    (replacement : TashkinovHierarchy alignedETT alignedBase)
+    (same : SameHierarchyStages original replacement)
+    (stored : TashkinovStoredColors alignedETT.series.data (Fin.last alignedETT.rounds) =
+      TashkinovStoredColors ett.series.data (Fin.last ett.rounds))
+    (stageMissing : ∀ index : Fin (original.dividerCount + 1),
+      TreeMissingColors sigma (original.stage index.castSucc) =
+        TreeMissingColors phi (original.stage index.castSucc))
+    (starMissing : ∀ index : Fin (original.dividerCount + 1),
+      TreeMissingColors sigma (HierarchyStarredStage original index) =
+        TreeMissingColors phi (HierarchyStarredStage original index))
+    (first : ∀ (index : Fin (original.dividerCount + 1)) (color : Fin k),
+      color ∈ HierarchyStoredColorsAt original index →
+      (HierarchyFirstMissingPosition sigma T color).val =
+        (HierarchyFirstMissingPosition phi T color).val)
+    (edges : ∀ (index : Fin (original.dividerCount + 1))
+      (position : Fin (original.stage index.succ).length),
+      sigma ((original.stage index.succ).edge position) =
+        phi ((original.stage index.succ).edge position))
+    (vertexMissing : ∀ index : Fin original.dividerCount,
+      ∀ vertex ∈ TreeSequenceVertexSet (original.stage index.succ.castSucc) \
+          TreeSequenceVertexSet (HierarchyStarredStage original index.castSucc),
+        MissingColors G sigma vertex = MissingColors G phi vertex)
+    (parallel : ett.series.data.kind (Fin.last ett.rounds) = some TashkinovExtensionKind.PE →
+      ¬TreeColorSetMinusClosed G sigma base.core
+          ((HierarchyStoredColorsAt original 0).biUnion (good.gamma 0)) ∧
+        4 ≤ ((TreeMissingColors sigma (ett.series.data.tree (Fin.last ett.rounds).castSucc) ∩
+          TreeMissingColors sigma base.closure) \
+          (HierarchyStoredColorsAt original 0).biUnion (good.gamma 0)).card)
+    (minus : ∀ index : Fin original.dividerCount,
+      TreeColorSetMinusClosed G sigma (original.stage index.succ.castSucc)
+        ((HierarchyStoredColorsAt original index.succ).biUnion (good.gamma index.castSucc))) :
+    GoodHierarchy replacement := by
+  have storedEq (index : Fin (replacement.dividerCount + 1)) :
+      HierarchyStoredColorsAt replacement index = HierarchyStoredColorsAt original
+        (Fin.cast (congrArg (fun count => count + 1) same.2.1.symm) index) :=
+    original.storedColors_eq_of_agreement replacement _ index stored
+      (same.starredStage_eq index) (starMissing _)
+  refine good.transportOfFields replacement same.2.1 storedEq ?_ ?_ ?_ ?_ ?_
+  · intro index
+    apply original.stageMissingColors_eq_of_agreement replacement _ index
+    · simpa only [Fin.cast_castSucc] using same.stage_eq index.castSucc
+    · exact stageMissing _
+  · intro index color member
+    apply Eq.subset
+    apply original.segmentColors_eq_of_agreement replacement _ index color
+    · simpa only [Fin.cast_succ_eq] using same.stage_eq index.succ
+    · exact same.starredStage_eq index
+    · exact first _ color member
+    · exact edges _
+  · intro index
+    apply original.segmentMissingColors_eq_of_agreement replacement _ index
+    · simpa only [Fin.cast_castSucc, Fin.cast_succ_eq] using
+        same.stage_eq index.succ.castSucc
+    · simpa only [Fin.cast_castSucc] using same.starredStage_eq index.castSucc
+    · exact vertexMissing _
+  · intro isParallel
+    have originalParallel := same.2.2.2.2.1.mpr isParallel
+    have treeEq : alignedETT.series.data.tree (Fin.last alignedETT.rounds).castSucc =
+        ett.series.data.tree (Fin.last ett.rounds).castSucc := by
+      rw [← replacement.baseStage, ← original.baseStage]
+      simpa only [Fin.cast_zero] using same.stage_eq 0
+    dsimp only [reindexedGamma]
+    rw [Fin.cast_zero, storedEq, Fin.cast_zero, ← same.1,
+      ← same.2.2.2.2.2 originalParallel, treeEq]
+    exact parallel originalParallel
+  · intro index
+    dsimp only [reindexedGamma]
+    rw [storedEq, same.stage_eq]
+    simpa only [Fin.cast_succ_eq, Fin.cast_castSucc] using
+      minus (Fin.cast same.2.1.symm index)
+
+end CommonTerminalTree
 
 end GoldbergSeymour
 

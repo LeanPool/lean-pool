@@ -1,7 +1,7 @@
 /-
 Copyright (c) 2026 Wesley Pegden. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Wesley Pegden
+Authors: Wesley Pegden, Lean Pool contributors
 -/
 module
 
@@ -560,33 +560,30 @@ noncomputable abbrev helperGoodS3640.{u_1, u_2} :
       goodB EB coreBX closureBX corr bs hcore hpe hclosure baseStageK terminalStageK nestedK
       strictK coreInsideK positiveK increasingK dividerStageK KF starredEq stageBX terminalTree
       storedEq stageMissingEq segmentEq
-  exact {
-    gamma := goodB.gamma
-    twoColors := by
-      intro j c hc
-      exact goodB.twoColors j c (by rw [storedEq j] at hc; exact hc)
-    avoidance := by
-      intro j c hc
-      rw [stageMissingEq j, segmentEq j c]
-      exact goodB.avoidance j c (by rw [storedEq j] at hc; exact hc)
-    disjointPairs := by
-      intro j c d hc hd hne
-      exact goodB.disjointPairs j c d (by rw [storedEq j] at hc; exact hc)
-        (by rw [storedEq j] at hd; exact hd) hne
-    uniqueRefresh := by
-      intro i
-      exact goodB.uniqueRefresh_transport KF i i (storedEq i.succ) rfl
-        (starredEq i.castSucc) (fun v hv => missingFixed v
-          (TreeSequenceInitialSegmentVertexSetSubset (stageBX i.succ)
-            (Finset.mem_sdiff.mp hv).1))
-    parallelBase := by
-      apply helper_parallelBase_4547 <;> assumption
-    minusClosed := by
+  exact goodB.transportOfFields KF rfl storedEq stageMissingEq
+    (fun j c _ => (segmentEq j c).subset)
+    (fun i => HB.segmentMissingColors_eq_of_agreement KF i i rfl
+      (starredEq i.castSucc) (fun v hv => missingFixed v
+        ((stageBX i.succ).vertexSet_subset (Finset.mem_sdiff.mp hv).1)))
+    (by
+      intro isParallel
+      have oldParallel := hpe.mpr isParallel
+      have closure := hclosure oldParallel
+      change ¬TreeColorSetMinusClosed G sigma bs.core
+          ((HierarchyStoredColorsAt KF 0).biUnion (goodB.gamma 0)) ∧
+        4 ≤ ((TreeMissingColors sigma (corr.replacementETT.series.data.tree
+          (Fin.last corr.replacementETT.rounds).castSucc) ∩ TreeMissingColors sigma bs.closure) \
+          (HierarchyStoredColorsAt KF 0).biUnion (goodB.gamma 0)).card
+      rw [← hcore, ← closure, terminalTree, storedEq,
+        missingTree _ hTnX.vertexSet_subset, missingTree _ (closureBX oldParallel),
+        minusEq _ coreBX]
+      exact goodB.parallelBase oldParallel)
+    (by
       intro i
       change TreeColorSetMinusClosed G sigma (HB.stage i.succ.castSucc)
         ((HierarchyStoredColorsAt KF i.succ).biUnion (goodB.gamma i.castSucc))
-      rw [storedEq i.succ, minusEq _ (TreeSequenceInitialSegmentVertexSetSubset (stageBX i.succ))]
-      exact goodB.minusClosed i }
+      rw [storedEq i.succ, minusEq _ (stageBX i.succ).vertexSet_subset]
+      exact goodB.minusClosed i)
 
 end EligibleIndexBound
 

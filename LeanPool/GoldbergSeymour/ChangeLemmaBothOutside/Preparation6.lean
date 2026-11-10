@@ -1,7 +1,7 @@
 /-
 Copyright (c) 2026 Wesley Pegden. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Wesley Pegden
+Authors: Wesley Pegden, Lean Pool contributors
 -/
 module
 
@@ -811,21 +811,9 @@ noncomputable abbrev helperGoodS6400.{u_1, u_2} :
       minusEq count stages hbbase hbterminal hbnested hbstrict positions hbpositive hbincreasing
       hbdivider hbcore goodB stageBToA hcore hpe hclosure positionsS hspositive hsincreasing hsbase
       hsterminal hsnested hsstrict hsdivider hscore HB HS storedEq missingEq segmentEq refreshEq
-  exact {
-    gamma := goodB.gamma
-    twoColors := by intro j eta he; exact goodB.twoColors j eta (storedEq j ▸ he)
-    avoidance := by
-      intro j eta he
-      rw [missingEq, segmentEq j eta (storedEq j ▸ he)]
-      exact goodB.avoidance j eta (storedEq j ▸ he)
-    disjointPairs := by
-      intro j eta theta he ht hne
-      exact goodB.disjointPairs j eta theta (storedEq j ▸ he) (storedEq j ▸ ht) hne
-    uniqueRefresh := by
-      intro i
-      simpa only [storedEq, refreshEq] using goodB.uniqueRefresh i
-    parallelBase := by
-      dsimp only
+  exact goodB.transportOfFields HS rfl storedEq missingEq
+    (fun j c member => (segmentEq j c member).subset) refreshEq
+    (by
       intro hp
       have hpOld := hpe.mpr hp
       have hc := hclosure hpOld
@@ -841,11 +829,11 @@ noncomputable abbrev helperGoodS6400.{u_1, u_2} :
         treeMissingEq _ (TreeSequenceInitialSegmentVertexSetSubset TnToA),
         treeMissingEq _ (closureBToA hpOld),
         minusEq _ (by rw [hcoreB]; exact TreeSequenceInitialSegmentVertexSetSubset coreToA)]
-      exact goodB.parallelBase hpOld
-    minusClosed := by
+      exact goodB.parallelBase hpOld)
+    (by
       intro i
       rw [storedEq, minusEq _ (TreeSequenceInitialSegmentVertexSetSubset (stageBToA i.succ))]
-      exact goodB.minusClosed i }
+      exact goodB.minusClosed i)
 
 theorem helper_continuation_4653.{u_1, u_2} :
     helperContinuation4653Conditions.{u_1, u_2} := by
@@ -924,86 +912,56 @@ theorem helper_continuation_4653.{u_1, u_2} :
     exact @helper_minusEq_1405 (@V) (@E) inferInstance inferInstance inferInstance
         inferInstance (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C) (@alpha) (@beta)
         (@halphaA) (@hbetaA) (@unaffected) (@treeMissingEq) (@S) (@hS) (@D)
-  rcases HB with ⟨count, stages, hbbase, hbterminal, hbnested, hbstrict, positions,
-    hbpositive, hbincreasing, hbdivider, hbcore⟩
-  rcases HS with ⟨countS, stagesS, hsbase, hsterminal, hsnested, hsstrict, positionsS,
-    hspositive, hsincreasing, hsdivider, hscore⟩
-  rcases hsame with ⟨hcore, hcount, hstages, hpositions, hpe, hclosure⟩
-  dsimp only at hcount hstages hpositions
-  cases hcount
-  have hstage : stages = stagesS := eq_of_heq hstages
-  cases hstage
-  let HB : TashkinovHierarchy ettB baseB :=
-    ⟨count, stages, hbbase, hbterminal, hbnested, hbstrict, positions,
-      hbpositive, hbincreasing, hbdivider, hbcore⟩
-  let HS : TashkinovHierarchy corr.replacementETT baseS :=
-    ⟨count, stages, hsbase, hsterminal, hsnested, hsstrict, positionsS,
-      hspositive, hsincreasing, hsdivider, hscore⟩
-  have starEq (j : Fin (count + 1)) :
-      HierarchyStarredStage HS j = HierarchyStarredStage HB j := by
-    exact Fin.cases hcore.symm (fun i => rfl) j
-  have storedEq (j : Fin (count + 1)) :
-      HierarchyStoredColorsAt HS j = HierarchyStoredColorsAt HB j := by
-    exact HB.storedColors_eq_of_agreement HS j j storedS (starEq j)
-      (treeMissingEq _ (TreeSequenceInitialSegmentVertexSetSubset (starBToA j)))
-  have missingEq (j : Fin (count + 1)) :
-      HierarchyStageMissingColors HS j = HierarchyStageMissingColors HB j := by
-    exact HB.stageMissingColors_eq_of_agreement HS j j rfl
-      (treeMissingEq _ (TreeSequenceInitialSegmentVertexSetSubset (stageBToA j)))
   -- Only stored colors require a transported first-missing cutoff.
   have firstEq (eta : Fin k) (he : eta ∈ Dn) :
       HierarchyFirstMissingPosition sigma B eta = HierarchyFirstMissingPosition phi B eta := by
     exact @helper_firstEq_1458 (@V) (@E) inferInstance inferInstance inferInstance
         inferInstance (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C) (@alpha) (@beta)
         (@hAib) (@hDn) (@behavior) (@eta) (@he)
-  have segmentEq (j : Fin (count + 1)) (eta : Fin k)
-      (he : eta ∈ HierarchyStoredColorsAt HB j) :
-      HierarchySegmentColors HS j eta = HierarchySegmentColors HB j eta := by
-    apply HB.segmentColors_eq_of_agreement HS j j eta rfl (starEq j)
-      (congrArg Fin.val (firstEq eta (Finset.mem_sdiff.mp he).1))
-    intro index
-    have initial := stageBToB j.succ
-    have fixed := edgesFixed (Fin.castLE initial.1 index)
-    rw [initial.2.2] at fixed
-    exact fixed
-  have refreshEq (i : Fin count) :
-      ((TreeSequenceVertexSet (HS.stage i.succ.castSucc) \
-        TreeSequenceVertexSet (HierarchyStarredStage HS i.castSucc)).biUnion
-          fun v => MissingColors G sigma v) =
-      ((TreeSequenceVertexSet (HB.stage i.succ.castSucc) \
-        TreeSequenceVertexSet (HierarchyStarredStage HB i.castSucc)).biUnion
-          fun v => MissingColors G phi v) := by
-    exact HB.segmentMissingColors_eq_of_agreement HS i i rfl (starEq i.castSucc)
-      (fun v hv => missingA v (TreeSequenceInitialSegmentVertexSetSubset (stageBToA i.succ)
-        (Finset.mem_sdiff.mp hv).1))
-  let goodS : GoodHierarchy HS := by
-    exact @helperGoodS6400 (@V) (@E) inferInstance inferInstance inferInstance inferInstance
-        (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C) (@alpha) (@beta)
-        (@coreToA) (@TnToA) (@hAib) (@rpB) (@aboveB) (@strictB) (@belowB) (@genB) (@baseB)
-        (@hcoreB) (@treeMissingEq) (@corr) (@baseS) (@closureBToA) (@minusEq) (@count) (@stages)
-        (@hbbase) (@hbterminal) (@hbnested) (@hbstrict) (@positions) (@hbpositive)
-        (@hbincreasing) (@hbdivider) (@hbcore) (@goodB) (@stageBToA) (@hcore) (@hpe) (@hclosure)
-        (@positionsS) (@hspositive) (@hsincreasing) (@hsbase) (@hsterminal) (@hsnested)
-        (@hsstrict) (@hsdivider) (@hscore) (@storedEq) (@missingEq) (@segmentEq) (@refreshEq)
+  have parallel (isParallel : ettB.series.data.kind (Fin.last ettB.rounds) =
+      some TashkinovExtensionKind.PE) :
+      ¬TreeColorSetMinusClosed G sigma baseB.core
+          ((HierarchyStoredColorsAt HB 0).biUnion (goodB.gamma 0)) ∧
+        4 ≤ ((TreeMissingColors sigma Tn ∩ TreeMissingColors sigma baseB.closure) \
+          (HierarchyStoredColorsAt HB 0).biUnion (goodB.gamma 0)).card := by
+    rw [treeMissingEq _ TnToA.vertexSet_subset, treeMissingEq _ (closureBToA isParallel),
+      minusEq _ (by rw [hcoreB]; exact coreToA.vertexSet_subset)]
+    exact goodB.parallelBase isParallel
+  have minus (index : Fin HB.dividerCount) :
+      TreeColorSetMinusClosed G sigma (HB.stage index.succ.castSucc)
+        ((HierarchyStoredColorsAt HB index.succ).biUnion (goodB.gamma index.castSucc)) := by
+    rw [minusEq _ (stageBToA index.succ).vertexSet_subset]
+    exact goodB.minusClosed index
+  let goodS : GoodHierarchy HS := goodB.transportOfColoringAgreement HS hsame storedS
+    (fun index => treeMissingEq _ (stageBToA index).vertexSet_subset)
+    (fun index => treeMissingEq _ (starBToA index).vertexSet_subset)
+    (fun _ color member => congrArg Fin.val (firstEq color (Finset.mem_sdiff.mp member).1))
+    (fun index position => by
+      have initial := stageBToB index.succ
+      have fixed := edgesFixed (Fin.castLE initial.1 position)
+      rw [initial.2.2] at fixed
+      exact fixed)
+    (fun index vertex member => missingA vertex
+      ((stageBToA index.succ).vertexSet_subset (Finset.mem_sdiff.mp member).1)) parallel minus
   let CS : HierarchyCounterexample baseS :=
     { positive := by rw [hrS]; exact C.positive
       hierarchy := HS
       good := goodS
       maximum := hMPS
       notElementary := sigmaNotElementary }
-  have hstarLast : HierarchyStarredStage HS (Fin.last count) = A := by
-    exact (starEq _).trans
-      (H.lastStarredStage_eq_of_agreement HB hcountB (fun j => (hstagesB j).2))
-  have hlastOrd : HS.stage (Fin.last count).castSucc = H.stage q.castSucc := by
-    have hs := (hstagesB (Fin.last count)).1
-    have hj : Fin.cast (congrArg (fun n : ℕ => n + 1) hcountB) (Fin.last count) = q :=
-      Fin.ext (by simp [q])
-    simpa only [hj] using hs
+  have hstarLast : HierarchyStarredStage HS (Fin.last HS.dividerCount) = A := by
+    exact hsame.lastStarredStage_eq.trans
+      (H.lastStarredStage_eq_of_agreement HB hcountB (fun index => (hstagesB index).2))
+  have hlastOrd : HS.stage (Fin.last HS.dividerCount).castSucc = H.stage q.castSucc := by
+    have stage := (hstagesB (Fin.last HB.dividerCount)).1
+    have index : Fin.cast (congrArg (fun count : ℕ => count + 1) hcountB)
+        (Fin.last HB.dividerCount) = q := Fin.ext hcountB
+    exact hsame.lastOrdinaryStage_eq.trans (by simpa only [index] using stage)
   -- Path candidates restrict to the shorter prefix; the second measure decreases strictly.
   have pathLe : HierarchyPathNumber HS ≤ HierarchyPathNumber H := by
     exact H.pathNumber_le_of_prefix HS
       (congrArg (fun S : TreeSequence G e0 => S.length) hstarLast) BToT ABstrict
-  have tailLess : B.length - (HS.stage (Fin.last count).castSucc).length <
+  have tailLess : B.length - (HS.stage (Fin.last HS.dividerCount).castSucc).length <
       T.length - (H.stage q.castSucc).length := by
     rw [hlastOrd]
     have hlen := (ordinaryToA q).1
@@ -1011,7 +969,7 @@ theorem helper_continuation_4653.{u_1, u_2} :
   have hless : HierarchyCounterexampleLess (HierarchyCounterexampleMeasure CS)
       (HierarchyCounterexampleMeasure C) := by
     exact HierarchyCounterexampleLess.of_le_of_lt pathLe tailLess
-  exact hminimal CS hrS hcountB hless
+  exact hminimal CS hrS (hsame.2.1.symm.trans hcountB) hless
 
 theorem helper_finish_4308.{u_1, u_2} :
     helperFinish4308Conditions.{u_1, u_2} := by

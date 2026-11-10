@@ -1,7 +1,7 @@
 /-
 Copyright (c) 2026 Wesley Pegden. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Wesley Pegden
+Authors: Wesley Pegden, Lean Pool contributors
 -/
 module
 
@@ -11,6 +11,7 @@ public import LeanPool.GoldbergSeymour.HierarchyFirstMissingPositionPrefixCutoff
 
 public import LeanPool.GoldbergSeymour.TerminalHierarchyPrefixConstruction
 public import LeanPool.GoldbergSeymour.GoodHierarchy
+public import LeanPool.GoldbergSeymour.HierarchyFieldTransport
 public import LeanPool.GoldbergSeymour.MaximumProperty
 public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegmentFacts
 
@@ -99,35 +100,16 @@ private theorem helper_continuation_904.{u_1, u_2} :
     · change phi ((H.stage j.succ).edge (Fin.castLE hnext.1 x)) = some c
       rw [hnext.2.2 x]
       exact hcolor
-  let goodB : GoodHierarchy HB := by
-    exact {
-      gamma := good.gamma
-      twoColors := by
-        intro j eta hmem
-        apply good.twoColors j eta
-        rw [← storedEq j]
-        exact hmem
-      avoidance := by
-        intro j eta hmem c hc
-        have ho := good.avoidance j eta (by rw [← storedEq j]; exact hmem) hc
-        exact Finset.mem_sdiff.mpr ⟨by rw [missingEq j]; exact (Finset.mem_sdiff.mp ho).1,
-          fun hn => (Finset.mem_sdiff.mp ho).2 (segmentSubset j eta hn)⟩
-      disjointPairs := by
-        intro j eta theta h₁ h₂ hne
-        apply good.disjointPairs j eta theta
-        · rw [← storedEq j]; exact h₁
-        · rw [← storedEq j]; exact h₂
-        · exact hne
-      uniqueRefresh := by
-        intro i
-        rw [stageOrdNext i]
-        simpa [storedEq, starredEq] using good.uniqueRefresh i
-      parallelBase := by
-        simpa [ettB, baseB, HierarchyStoredColorsAt, HierarchyStarredStage] using good.parallelBase
-      minusClosed := by
-        intro i
-        rw [stageOrdNext i]
-        simpa [storedEq] using good.minusClosed i }
+  let goodB : GoodHierarchy HB := good.transportOfFields HB rfl storedEq missingEq
+    (fun j eta _ => segmentSubset j eta)
+    (fun i => by rw [stageOrdNext i, starredEq]; rfl)
+    (by
+      simpa [GoodHierarchy.reindexedGamma, ettB, baseB,
+        HierarchyStoredColorsAt, HierarchyStarredStage] using good.parallelBase)
+    (by
+      intro i
+      rw [stageOrdNext i]
+      simpa [GoodHierarchy.reindexedGamma, storedEq] using good.minusClosed i)
   refine ⟨ettB, mpB, rfl, HEq.rfl, baseB, rfl, rfl, rfl, HB, rfl, ?_, ?_, goodB, ?_⟩
   · intro j
     exact ⟨by simpa using hbStageOld j, starredEq j⟩

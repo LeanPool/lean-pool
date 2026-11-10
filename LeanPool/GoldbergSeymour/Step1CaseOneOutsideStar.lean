@@ -1,7 +1,7 @@
 /-
 Copyright (c) 2026 Wesley Pegden. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Wesley Pegden
+Authors: Wesley Pegden, Lean Pool contributors
 -/
 module
 
@@ -16,6 +16,7 @@ public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegmentFacts
 public import LeanPool.GoldbergSeymour.TreeSequenceFirstMissingPositionInvariant
 
 public import LeanPool.GoldbergSeymour.GoodHierarchy
+public import LeanPool.GoldbergSeymour.HierarchyFieldTransport
 public import LeanPool.GoldbergSeymour.GoodHierarchyReservedDisjoint
 public import LeanPool.GoldbergSeymour.HierarchyTerminalStoredColors
 public import LeanPool.GoldbergSeymour.Td
@@ -742,43 +743,24 @@ private theorem helper_branch_366.{u_1, u_2} :
     intro v hv
     exact hmissingFixed v (TreeSequenceInitialSegmentVertexSetSubset
       (stageToB i.succ) (Finset.mem_sdiff.mp hv).1)
-  let goodC : GoodHierarchy KC :=
-    { gamma := good.gamma
-      twoColors := by
-        intro j eta he
-        exact good.twoColors j eta (indexedStoredEq j ▸ he)
-      avoidance := by
-        intro j eta he c hc
-        have hav := good.avoidance j eta (indexedStoredEq j ▸ he) hc
-        refine Finset.mem_sdiff.mpr ⟨?_, ?_⟩
-        · rw [stageMissingEq]; exact (Finset.mem_sdiff.mp hav).1
-        · intro hs
-          exact (Finset.mem_sdiff.mp hav).2 (segmentSubset j eta hs)
-      disjointPairs := by
-        intro j eta theta he ht hne
-        exact good.disjointPairs j eta theta (indexedStoredEq j ▸ he)
-          (indexedStoredEq j ▸ ht) hne
-      uniqueRefresh := by
-        intro i
-        simpa only [indexedStoredEq, refreshEq] using good.uniqueRefresh i
-      parallelBase := by
-        dsimp only
-        intro hp
-        have hpOld := hkind.symm.trans hp
-        have hold := good.parallelBase hpOld
-        change ¬TreeColorSetMinusClosed G mu base.core
-            ((HierarchyStoredColorsAt KC 0).biUnion (good.gamma 0)) ∧
-          4 ≤ ((TreeMissingColors mu (newSeries.data.tree (Fin.last ett.rounds).castSucc) ∩
-            TreeMissingColors mu base.closure) \
-              (HierarchyStoredColorsAt KC 0).biUnion (good.gamma 0)).card
-        rw [indexedStoredEq, minusEq _ (TreeSequenceInitialSegmentVertexSetSubset coreToB),
-          htree, terminalMissing, missingEq _ (closureVertices hpOld)]
-        exact hold
-      minusClosed := by
-        intro i
-        rw [ordinaryEq, indexedStoredEq,
-          minusEq _ (TreeSequenceInitialSegmentVertexSetSubset (stageToB i.succ))]
-        exact good.minusClosed i }
+  let goodC : GoodHierarchy KC := good.transportOfFields KC rfl indexedStoredEq stageMissingEq
+    (fun j eta _ => segmentSubset j eta) refreshEq
+    (by
+      intro hp
+      have hpOld := hkind.symm.trans hp
+      have hold := good.parallelBase hpOld
+      change ¬TreeColorSetMinusClosed G mu base.core
+          ((HierarchyStoredColorsAt KC 0).biUnion (good.gamma 0)) ∧
+        4 ≤ ((TreeMissingColors mu (newSeries.data.tree (Fin.last ett.rounds).castSucc) ∩
+          TreeMissingColors mu base.closure) \
+            (HierarchyStoredColorsAt KC 0).biUnion (good.gamma 0)).card
+      rw [indexedStoredEq, minusEq _ coreToB.vertexSet_subset,
+        htree, terminalMissing, missingEq _ (closureVertices hpOld)]
+      exact hold)
+    (by
+      intro i
+      rw [ordinaryEq, indexedStoredEq, minusEq _ (stageToB i.succ).vertexSet_subset]
+      exact good.minusClosed i)
   exact ⟨goodC, hMPC, rfl⟩
 
 private theorem helper_rebuild_367.{u_1, u_2} :
