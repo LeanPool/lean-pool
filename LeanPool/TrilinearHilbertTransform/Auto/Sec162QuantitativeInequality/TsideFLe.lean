@@ -1980,6 +1980,7 @@ theorem leaf_final_hQk :
     Qk ≤ cQ * Real.exp X ^ (8 * cc + 4 + 2 * g) := by
   intro g cQ k cc hcc hk2 Mp V famFuel E ρ hρ hρ1 Vl0 Os hcQ hk1 X hX G hGdef hG1 Cjg hCjg1 G0e W
     hW1 hOsk hhull Yn hYn0 hlogY hCjgk hWk Qk hQkdef hcQ0
+  clear_value Cjg G0e W
   have! hkX : (k : ℝ) ≤ Real.exp X := by rw [hX]; exact le_exp_one_add_log_sq hk1
   have! hGX : G = Real.exp X ^ g := by rw [hGdef, ← Real.exp_nat_mul]
   have! hlY0 : 0 ≤ 1 + Real.log (2 + Yn) := by
@@ -2042,6 +2043,7 @@ theorem leaf_final_hcore :
     hullCutConstant (ρ / 64 / 2) ≤ 160000 * (2 + Real.log ((S.K : ℝ) + 2)) ^ 6 * Qk := by
   intro k cc Mp V famFuel E ρ S Vl0 Γ Os Nb n Cjg hCjg1 G0e W hΓle hW1 Yn Qk hQkdef hlam hh0 hL10
     hN10 hLY0
+  clear_value Cjg G0e W
   have! hCjg0 : 0 ≤ Cjg := by linarith only [hCjg1]
   have! hW0 : 0 ≤ W := by linarith only [hW1]
   have h1 : Γ ≤ 2000 * Os.card * (n ^ 3 * Cjg) * W := hΓle
@@ -2064,12 +2066,9 @@ theorem leaf_final_hcore :
     mul_le_mul_of_nonneg_right (mul_le_mul_of_nonneg_right
       (mul_le_mul_of_nonneg_left hlam (by norm_num))
       (mul_nonneg (mul_nonneg (Nat.cast_nonneg _) hCjg0) hW0)) hh0
-  have! h6 : (2000 * (80 * (2 + Real.log ((S.K : ℝ) + 2)) ^ 6 * (1 + Real.log (2 + Yn))) *
-      (Os.card * Cjg * W)) * hullCutConstant (ρ / 64 / 2) =
-      160000 * (2 + Real.log ((S.K : ℝ) + 2)) ^ 6 * Qk := by rw [hQkdef]; ring
   have! h7 := mul_le_mul_of_nonneg_right h2 hh0
   rw [h3] at h7
-  linarith only [h7, h5, h6]
+  linarith only [h7, h5]
 
 /-- Step `hNEAR` of `leaf_final`, over the part of its context that it uses. -/
 theorem leaf_final_hNEAR :
@@ -2123,6 +2122,7 @@ theorem leaf_final_hNEAR :
   intro κ q hq2 hq3 Nd Msch g cm ce ce2 cQ CΛ Cb Cl k cc hcc P Mp V famFuel E ρ R S Vl0 nearS Γ Os
     hR0 hCb20n hMCb2 hClb u hu1 X hX0 hcmn hcen hce2n Nb Cjg hCjg1 G0e W hW1 Yn hYn0 Qk hQkdef
     hcQ0 hQk eq' hnearS Kb hKp hlamb hKp0 hCN0 hnbc hP0 hh0 hcore
+  clear_value Cjg G0e W
   set! ZT := 4 * ((nbCM κ hq2 hq3 + nbCUM κ hq2 hq3) * (1 + finiteDepthConstant κ q Nd) *
         (1 + Real.log ((S.K : ℝ) + 2)) * ((S.K : ℝ) + 2) ^ eq' *
         (64 * (2 * (2 * Real.sqrt 1)) * (2 * (2 * Real.sqrt 1)))) *
