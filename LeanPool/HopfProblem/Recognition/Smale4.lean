@@ -900,9 +900,9 @@ private theorem
   have hτ : ContDiff ℝ ∞ τ :=
     Real.smoothTransition.contDiff.comp ((contDiff_const.mul contDiff_id).sub contDiff_const)
   have hτlower (s : ℝ) (hs : s ≤ 1 / 3) : τ s = 0 :=
-    Real.smoothTransition.zero_of_nonpos (by linarith)
+    Real.smoothTransition.zero_of_nonpos (by linarith only [hs])
   have hτupper (s : ℝ) (hs : 2 / 3 ≤ s) : τ s = 1 :=
-    Real.smoothTransition.one_of_one_le (by linarith)
+    Real.smoothTransition.one_of_one_le (by linarith only [hs])
   let A : ℝ × E → E := fun p => I.family (τ p.1, p.2)
   have hInorm : ContDiff ℝ ∞ I.family :=
     (I.smooth.comp (Smale.PartialChart.vectorProduct ℝ E).contMDiff).contDiff
@@ -965,11 +965,11 @@ private theorem
     · intro p hp
       rw [hΨ]
       change (I.family (τ p.2, p.1), p.2) = p
-      rw [hτlower p.2 (by linarith), I.zero]
+      rw [hτlower p.2 (by linarith only [hp]), I.zero]
     · intro p hp
       rw [hΨ]
       change (I.family (τ p.2, p.1), p.2) = (D p.1, p.2)
-      rw [hτupper p.2 (by linarith), I.one]
+      rw [hτupper p.2 (by linarith only [hp]), I.one]
   refine
     ⟨W, F, contDiff_suspensionField Ψ, suspensionField_height Ψ (fun p => by rw [hΨ]),
       hasCompactSupport_suspensionField_sub_vertical Ψ hΨ hK hfix hstationary, hsupp,
@@ -1091,16 +1091,16 @@ private theorem
   change a ^ 2 - s ^ 2 - 2 * a ^ 2 * φ (s, 0) < 0
   by_cases hs : s ∈ Set.Icc (-a) a
   · rw [hone s hs]
-    nlinarith [sq_pos_of_pos ha, sq_nonneg s]
+    linarith only [ha, sq_pos_of_pos ha, sq_nonneg s]
   · have hsq : a ^ 2 < s ^ 2 := by
       by_cases hl : -a ≤ s
       · have hr : a < s := lt_of_not_ge (fun h => hs ⟨hl, h⟩)
-        nlinarith
+        nlinarith only [ha, hr]
       · have hh : s < -a := lt_of_not_ge hl
-        nlinarith
+        nlinarith only [ha, hl]
     have hnonneg : 0 ≤ 2 * a ^ 2 * φ (s, 0) :=
       mul_nonneg (mul_nonneg (by norm_num) (sq_nonneg a)) (hφ (s, 0))
-    linarith
+    linarith only [hsq, hnonneg]
 
 private theorem
     MorseCancel.cancelledDescent_ne_zero {m : ℕ} (σ : Fin m → ℝ) (hσ : ∀ i, σ i ≠ 0) {a : ℝ}
@@ -1236,8 +1236,8 @@ private theorem
     exact hnonzero _ ((partialChartField_zero_iff Φ (cancelledDescent σ a φ) hx).mp hz)
   obtain ⟨V', hV', heq, hzero, hkeep⟩ :=
     Degree.LocalFieldReplacement.exists_smooth_field_replacement Φ V W hV hW hc hsupp hfix hreg
-  have hp : (a, (0 : Fin m → ℝ)) ∈ Φ.source := haxis ⟨⟨by linarith, le_rfl⟩, rfl⟩
-  have hq : (-a, (0 : Fin m → ℝ)) ∈ Φ.source := haxis ⟨⟨le_rfl, by linarith⟩, rfl⟩
+  have hp : (a, (0 : Fin m → ℝ)) ∈ Φ.source := haxis ⟨⟨by linarith only [ha], le_rfl⟩, rfl⟩
+  have hq : (-a, (0 : Fin m → ℝ)) ∈ Φ.source := haxis ⟨⟨le_rfl, by linarith only [ha]⟩, rfl⟩
   refine ⟨φ, hφ, hc, hsupp, hsuppN, hrange, hone, V', hV', heq, ?_, hkeep⟩
   intro x
   rw [hzero x]
@@ -1421,7 +1421,7 @@ private theorem
     (hab : a < b) (hγcont : ContinuousOn γ (Set.Icc a b))
     (hγ : IsMIntegralCurveOn γ V (Set.Ioo a b)) : F (b - a) (γ a) = γ b := by
   let c := (a + b) / 2
-  have hc : c ∈ Set.Ioo a b := by constructor <;> dsimp [c] <;> linarith
+  have hc : c ∈ Set.Ioo a b := by constructor <;> dsimp [c] <;> linarith only [hab]
   have hη : IsMIntegralCurve (fun t => F (t - c) (γ c)) V := by
     have hh := (hcurve (γ c)).comp_add (-c)
     simpa only [sub_eq_add_neg, Function.comp_def] using hh
@@ -1490,7 +1490,7 @@ private theorem
         ∀ z : Fin m → ℝ,
           ‖z‖ ≤ δ → cubicFlowCylinder σ a (z, T) ∈ Metric.ball (c, (0 : Fin m → ℝ)) r := by
   have hcl : c ∈ closure (Set.Ioo (-a) a) := by
-    rw [closure_Ioo (by linarith : -a ≠ a)]
+    rw [closure_Ioo (by linarith only [ha] : -a ≠ a)]
     exact hc
   obtain ⟨s, hs, hdist⟩ := Metric.mem_closure_iff.mp hcl r hr
   let T := cubicAxisClock a s
@@ -1723,7 +1723,7 @@ private theorem
   let C := Max.max C₀ 0 + 1
   have hC : 0 < C := by dsimp [C]; positivity
   have hbound (z : E) (hz : z ∈ Metric.closedBall (0 : E) R) : ‖fderiv ℝ (fderiv ℝ f) z‖ ≤ C := by
-    exact (hC₀ z hz).trans (by dsimp [C]; linarith [le_max_left C₀ 0])
+    exact (hC₀ z hz).trans (by dsimp [C]; linarith only [le_max_left C₀ 0])
   have hlip {x z : E} (hx : x ∈ Metric.closedBall (0 : E) R)
     (hz : z ∈ Metric.closedBall (0 : E) R) : ‖fderiv ℝ f z - fderiv ℝ f x‖ ≤ C * ‖z - x‖ :=
     (convex_closedBall (0 : E) R).norm_image_sub_le_of_norm_fderiv_le
@@ -2054,7 +2054,7 @@ private theorem
       rw [abs_mul]
       have hrabs : |r| ≤ 2 := (abs_lt.mpr hr).le
       have hh := mul_le_mul_of_nonneg_right hrabs (abs_nonneg τ)
-      linarith
+      linarith only [hτ, hh]
     have hd := (hα (r * τ) hrt).scomp r ((hasDerivAt_id r).mul_const τ)
     change HasDerivAt (fun s : ℝ => α (s * τ)) ((1 * τ) • v (α (r * τ))) r at hd
     simpa only [one_mul] using hd
@@ -2788,7 +2788,7 @@ private theorem MorseCancel.exists_backward_morse_quadratic_level_exit {N P : Ty
                 Metric.closedBall (0 : N) (2 * r) ×ˢ Metric.closedBall (0 : P) (2 * r)) ∧
             ‖(Smale.MorseHandle.descentFlow s z).1‖ ≤ ‖z.1‖ := by
   let R := 3 * r / 2
-  have hrR : r < R := by dsimp [R]; linarith
+  have hrR : r < R := by dsimp [R]; linarith only [hr]
   have hR : 0 < R := hr.trans hrR
   let T := -Real.log (R / ‖z.2‖)
   have hn : 0 < ‖z.2‖ := norm_pos_iff.mpr hne
@@ -2807,13 +2807,13 @@ private theorem MorseCancel.exists_backward_morse_quadratic_level_exit {N P : Ty
     Smale.MorseHandle.descentFlow t z ∈
       Metric.closedBall (0 : N) (2 * r) ×ˢ Metric.closedBall (0 : P) (2 * r) := by
     constructor
-    · exact mem_closedBall_zero_iff.mpr ((hsmall t ht.2).trans (by linarith))
+    · exact mem_closedBall_zero_iff.mpr ((hsmall t ht.2).trans (by linarith only [hzn, hzp, hn]))
     · rw [mem_closedBall_zero_iff, Smale.MorseHandle.norm_descentFlow_snd]
       calc
         Real.exp (-t) * ‖z.2‖ ≤ Real.exp (-T) * ‖z.2‖ :=
           mul_le_mul_of_nonneg_right (Real.exp_le_exp.mpr (neg_le_neg ht.1)) (norm_nonneg _)
         _ = R := by rw [hexp, div_mul_cancel₀ R hn.ne']
-        _ ≤ 2 * r := by dsimp [R]; linarith
+        _ ≤ 2 * r := by dsimp [R]; linarith only [hzp, hn]
   have hheightT : r ^ 2 < Smale.MorseHandle.quadratic (Smale.MorseHandle.descentFlow T z) := by
     change
       r ^ 2 <
@@ -2821,12 +2821,12 @@ private theorem MorseCancel.exists_backward_morse_quadratic_level_exit {N P : Ty
     rw [hnorm]
     have hs := (sq_lt_sq₀ (norm_nonneg _) hr.le).mpr ((hsmall T hT.le).trans_lt hzn)
     dsimp [R]
-    nlinarith [sq_pos_of_pos hr]
+    linarith only [hs, sq_pos_of_pos hr]
   have hheight0 : Smale.MorseHandle.quadratic (Smale.MorseHandle.descentFlow 0 z) < r ^ 2 := by
     rw [Flow.map_zero_apply]
     change -‖z.1‖ ^ 2 + ‖z.2‖ ^ 2 < r ^ 2
     have hs := (sq_lt_sq₀ (norm_nonneg _) hr.le).mpr hzp
-    nlinarith [sq_nonneg ‖z.1‖]
+    linarith only [hs, sq_nonneg ‖z.1‖]
   have hc :
     Continuous (fun t : ℝ => Smale.MorseHandle.quadratic (Smale.MorseHandle.descentFlow t z)) := by
     change
@@ -2850,7 +2850,7 @@ private theorem MorseCancel.exists_backward_morse_quadratic_level_exit {N P : Ty
       (by
         intro heq
         rw [heq] at hlevel
-        linarith)
+        linarith only [hheight0, hlevel])
   exact ⟨s, hs0, hlevel, fun t ht => hstay t ⟨hs.1.trans ht.1, ht.2⟩, hsmall s hs0.le⟩
 
 private theorem
@@ -2881,10 +2881,10 @@ private theorem
     exists_backward_morse_quadratic_level_exit (z := z.swap) hr hzp hzn hne
   rw [morse_descentFlow_swap, morse_quadratic_swap] at hlevel
   rw [morse_descentFlow_swap] at hsmall
-  refine ⟨-s, neg_pos.mpr hs, by linarith, ?_, hsmall⟩
+  refine ⟨-s, neg_pos.mpr hs, by linarith only [hlevel], ?_, hsmall⟩
   intro t ht
   have hh :=
-    hstay (-t) (show -t ∈ Set.Icc s (0 : ℝ) from ⟨by linarith [ht.2], neg_nonpos.mpr ht.1⟩)
+    hstay (-t) (show -t ∈ Set.Icc s (0 : ℝ) from ⟨by linarith only [ht, ht.2], neg_nonpos.mpr ht.1⟩)
   rw [morse_descentFlow_swap, neg_neg] at hh
   exact ⟨hh.2, hh.1⟩
 
@@ -2946,7 +2946,7 @@ private theorem
         r ^ 2 at hq
     rw [hn, norm_zero] at hq
     have hp : ‖(z : c.NegativeCoordinates × c.PositiveCoordinates).2‖ = r := by
-      nlinarith [norm_nonneg (z : c.NegativeCoordinates × c.PositiveCoordinates).2]
+      nlinarith only [hr, hq, norm_nonneg (z : c.NegativeCoordinates × c.PositiveCoordinates).2]
     let v : Smale.PuncturedHandle.UnitSphere c.PositiveCoordinates :=
       ⟨r⁻¹ • (z : c.NegativeCoordinates × c.PositiveCoordinates).2,
         by
@@ -3013,7 +3013,7 @@ private theorem
         -(r ^ 2) at hq
     rw [hp, norm_zero] at hq
     have hn : ‖(z : c.NegativeCoordinates × c.PositiveCoordinates).1‖ = r := by
-      nlinarith [norm_nonneg (z : c.NegativeCoordinates × c.PositiveCoordinates).1]
+      nlinarith only [hr, hq, norm_nonneg (z : c.NegativeCoordinates × c.PositiveCoordinates).1]
     let v : Smale.PuncturedHandle.UnitSphere c.NegativeCoordinates :=
       ⟨r⁻¹ • (z : c.NegativeCoordinates × c.PositiveCoordinates).1,
         by
@@ -3080,7 +3080,7 @@ private theorem
       -‖(Smale.MorseHandle.descentFlow T (c.splitChart x)).1‖ ^ 2 +
           ‖(Smale.MorseHandle.descentFlow T (c.splitChart x)).2‖ ^ 2 =
         r ^ 2 at hlevel
-    linarith
+    linarith only [hlevel]
   · simpa only [hcoord] using hsmall
   · rw [hcoord]
     exact hstay T ⟨le_rfl, hT.le⟩
@@ -3132,7 +3132,7 @@ private theorem
       -‖(Smale.MorseHandle.descentFlow T (c.splitChart x)).1‖ ^ 2 +
           ‖(Smale.MorseHandle.descentFlow T (c.splitChart x)).2‖ ^ 2 =
         -(r ^ 2) at hlevel
-    linarith
+    linarith only [hlevel]
   · simpa only [hcoord] using hsmall
   · rw [hcoord]
     exact hstay T ⟨hT.le, le_rfl⟩
@@ -3184,7 +3184,7 @@ private theorem MorseCancel.eventually_backward_exit_in_belt_neighborhood {E M :
   have hq : Smale.MorseHandle.quadratic (c.splitChart (F T x)) = r ^ 2 := by
     have heq := c.splitChart_equation hsource
     change -‖(c.splitChart (F T x)).1‖ ^ 2 + ‖(c.splitChart (F T x)).2‖ ^ 2 = r ^ 2
-    linarith
+    linarith only [hlevel, heq]
   have hh :=
     hsection (c.splitChart (F T x)) hbox hq (hsmall.trans_lt (hx.2.1.trans_le (min_le_right _ _)))
   have hinv : c.splitChart.symm (c.splitChart (F T x)) = F T x := c.splitChart.left_inv' hsource
@@ -3222,7 +3222,7 @@ private theorem MorseCancel.eventually_forward_exit_in_attaching_neighborhood {E
   have hq : Smale.MorseHandle.quadratic (c.splitChart (F T x)) = -(r ^ 2) := by
     have heq := c.splitChart_equation hsource
     change -‖(c.splitChart (F T x)).1‖ ^ 2 + ‖(c.splitChart (F T x)).2‖ ^ 2 = -(r ^ 2)
-    linarith
+    linarith only [hlevel, heq]
   have hh :=
     hsection (c.splitChart (F T x)) hbox hq (hsmall.trans_lt (hx.2.2.trans_le (min_le_right _ _)))
   have hinv : c.splitChart.symm (c.splitChart (F T x)) = F T x := c.splitChart.left_inv' hsource
@@ -3406,7 +3406,7 @@ private theorem
     have hzs : z ∈ c.chart.target ∧ c.chart.symm z ∈ d.chart.source := hz
     rw [hR, hQ]
     change (∑ i, d.weights i * (d.chart (c.chart.symm z) i) ^ 2) = ∑ i, c.weights i * (z i) ^ 2
-    linarith [c.inverse_equation z hzs.1, d.equation (c.chart.symm z) hzs.2]
+    linarith only [hzs, c.inverse_equation z hzs.1, d.equation (c.chart.symm z) hzs.2]
   exact
     equivalent_quadratic_germs_of_bijective_derivative Q R hRcont hdiff.hasFDerivAt hP0 hbij hquad
 
@@ -3518,7 +3518,7 @@ private theorem AdaptedWindows.nonminimum_forward_basin_meagre {E M : Type*} [No
     exact
       hblock
         ⟨Metric.mem_closedBall_self hr.le,
-          Metric.closedBall_subset_closedBall (by linarith : r / 2 ≤ r) hb⟩
+          Metric.closedBall_subset_closedBall (by linarith only [hr] : r / 2 ≤ r) hb⟩
   have hi : 0 < Module.finrank ℝ c.NegativeCoordinates := by
     rwa [MorseCancel.nativeMorseIndex_eq_chart c] at hindex
   have hK : IsNowhereDense K := MorseCancel.native_positive_plane_piece_nowhereDense c hi hKt
@@ -3614,12 +3614,12 @@ private theorem Degree.FlowCancellation.exists_strict_descent_flow_endpoints {X 
     apply Filter.tendsto_atTop.mpr
     intro b
     filter_upwards [Filter.eventually_ge_atTop (b - t)] with s hs
-    linarith
+    linarith only [hs]
   have hshiftBot (t : ℝ) : Filter.Tendsto (t + ·) Filter.atBot Filter.atBot := by
     apply Filter.tendsto_atBot.mpr
     intro b
     filter_upwards [Filter.eventually_le_atBot (b - t)] with s hs
-    linarith
+    linarith only [hs]
   have hstep (y : X) (hy : y ∉ S) : f (F 1 y) < f y := by
     have hh := hstrict y hy (show (0 : ℝ) < 1 by norm_num)
     simpa only [F.map_zero_apply] using hh
@@ -3662,17 +3662,17 @@ private theorem Degree.FlowCancellation.exists_uniform_flow_escape {X : Type*} [
     obtain ⟨t, ht⟩ := hescape x hx
     by_cases hl : c ≤ f (F t x)
     · have hr : d < f (F t x) := lt_of_not_ge (fun h => ht ⟨hl, h⟩)
-      have hδ : 0 < (f (F t x) - d) / 2 := by linarith
+      have hδ : 0 < (f (F t x) - d) / 2 := by linarith only [hr]
       apply Set.mem_iUnion.mpr
       refine ⟨⟨(t, (f (F t x) - d) / 2), hδ⟩, Or.inr ?_⟩
       change d + (f (F t x) - d) / 2 < f (F t x)
-      linarith
+      linarith only [hr]
     · have hl' : f (F t x) < c := lt_of_not_ge hl
-      have hδ : 0 < (c - f (F t x)) / 2 := by linarith
+      have hδ : 0 < (c - f (F t x)) / 2 := by linarith only [hl]
       apply Set.mem_iUnion.mpr
       refine ⟨⟨(t, (c - f (F t x)) / 2), hδ⟩, Or.inl ?_⟩
       change f (F t x) < c - (c - f (F t x)) / 2
-      linarith
+      linarith only [hl]
   obtain ⟨S, hScover⟩ := hC.elim_finite_subcover O hO hcover
   have hS : S.Nonempty := by
     obtain ⟨x, hx⟩ := hne
@@ -3687,7 +3687,7 @@ private theorem Degree.FlowCancellation.exists_uniform_flow_escape {X : Type*} [
     have hh := Finset.le_sup' (fun p : J => |p.val.1|) hp
     have habs := abs_nonneg p.val.1
     dsimp [T]
-    linarith
+    linarith only [hp, hh, habs]
   have hδ : 0 < δ := div_pos hmin (by norm_num)
   refine ⟨T, hT, δ, hδ, ?_⟩
   intro x hx
@@ -3695,15 +3695,15 @@ private theorem Degree.FlowCancellation.exists_uniform_flow_escape {X : Type*} [
   have ht : |p.val.1| ≤ T := by
     have hh := Finset.le_sup' (fun p : J => |p.val.1|) hp
     dsimp [T]
-    linarith
+    linarith only [hS, hp, hh]
   have hd : δ ≤ p.val.2 := by
     have hh := Finset.inf'_le (fun p : J => p.val.2) hp
     dsimp [δ]
-    linarith
+    linarith only [hS, hmin, hp, hh]
   refine ⟨p.val.1, abs_le.mp ht, ?_⟩
   rcases hpx with h | h
-  · exact Or.inl (by linarith)
-  · exact Or.inr (by linarith)
+  · exact Or.inl (by linarith only [hS, hd, h])
+  · exact Or.inr (by linarith only [hS, hd, h])
 
 private theorem Degree.FlowCancellation.exists_flow_no_return_neighborhood {X : Type*}
     [TopologicalSpace X] [CompactSpace X] (F : Flow ℝ X) {f : X → ℝ} (hf : Continuous f)
@@ -3734,24 +3734,26 @@ private theorem Degree.FlowCancellation.exists_flow_no_return_neighborhood {X : 
     intro x hx
     refine ⟨fun s _ => hKU (hinvariant s x hx), ?_⟩
     have hh := hband x hx
-    constructor <;> linarith [hh.1, hh.2]
+    constructor <;> linarith only [hδ, hh, hh.1, hh.2]
   have hNU : N ⊆ U := by
     intro x hx
-    have hh := hx.1 0 (show (0 : ℝ) ∈ Set.Icc (-T) T from ⟨by linarith, hT.le⟩)
+    have hh := hx.1 0 (show (0 : ℝ) ∈ Set.Icc (-T) T from ⟨by linarith only [hT], hT.le⟩)
     simpa only [F.map_zero_apply] using hh
   refine ⟨N, hN, hKN, hNU, ?_⟩
   intro x hx t ht htx s hs
   by_cases hshort : s ≤ T
-  · exact hx.1 s ⟨by linarith [hs.1], hshort⟩
+  · exact hx.1 s ⟨by linarith only [hT, hs, hs.1], hshort⟩
   have hTs : T < s := lt_of_not_ge hshort
   by_cases hshort' : t - s ≤ T
-  · have hh := htx.1 (s - t) (show s - t ∈ Set.Icc (-T) T from ⟨by linarith, by linarith [hs.2]⟩)
+  · have hh := htx.1 (s - t) (show s - t ∈ Set.Icc (-T) T from ⟨by linarith only [hshort'],
+    by linarith only [hT, hs, hs.2]⟩)
     rw [← F.map_add, sub_add_cancel] at hh
     exact hh
   have hTs' : T < t - s := lt_of_not_ge hshort'
   by_contra hout
   obtain ⟨v, hv, hleave⟩ := hEsc (F s x) hout
-  have htime : s + v ∈ Set.Icc (0 : ℝ) t := ⟨by linarith [hv.1], by linarith [hv.2]⟩
+  have htime : s + v ∈ Set.Icc (0 : ℝ) t := ⟨by linarith only [hshort, hv, hv.1],
+    by linarith only [hshort', hv, hv.2]⟩
   have hlo := hmono x htime.1
   have hhi := hmono x htime.2
   change f (F (s + v) x) ≤ f (F 0 x) at hlo
@@ -3761,8 +3763,8 @@ private theorem Degree.FlowCancellation.exists_flow_no_return_neighborhood {X : 
   have hxheight : f x ∈ Set.Ioo (c - δ) (d + δ) := hx.2
   have htheight : f (F t x) ∈ Set.Ioo (c - δ) (d + δ) := htx.2
   rcases hleave with h | h
-  · linarith [htheight.1]
-  · linarith [hxheight.2]
+  · linarith only [hhi, htheight, h, htheight.1]
+  · linarith only [hlo, hxheight, h, hxheight.2]
 
 private theorem
     Degree.FlowCancellation.invariant_band_subset_connection {X : Type*} [TopologicalSpace X]
@@ -3793,13 +3795,13 @@ private theorem
       (by
         intro he
         rw [he] at hsep'
-        linarith [hxband.1])
+        linarith only [hxband, hsep', hxband.1])
   have hsp : s = p :=
     (hpair s hs hsband).resolve_right
       (by
         intro he
         rw [he] at hsep'
-        linarith [hxband.2])
+        linarith only [hxband, hsep', hxband.2])
   obtain ⟨t, ht⟩ :=
     hunique x hxS (by simpa only [hrq] using hrlim) (by simpa only [hsp] using hslim)
   exact Or.inr ⟨t, ht⟩
@@ -3989,8 +3991,8 @@ private theorem AdaptedWindows.exists_positive_belt_branch_in_minimum_basin {E M
     constructor
     · rw [mem_closedBall_zero_iff, norm_smul, Real.norm_eq_abs, abs_of_pos d.radius_pos,
         mem_sphere_zero_iff_norm.mp u.property, mul_one]
-      linarith [d.radius_pos]
-    · exact Metric.mem_closedBall_self (by linarith [d.radius_pos])
+      linarith only [d.radius_pos]
+    · exact Metric.mem_closedBall_self (by linarith only [d.radius_pos])
   have h0value :
     d.chart.splitChart.symm (Degree.BeltPassage.lower d.radius 0 u.val v.val) =
       (d.surgery.attachingSphere u).val := by
@@ -4966,7 +4968,7 @@ private theorem Smale.MorseHandle.ambientMap_sphere_mem_product {N P : Type*} [N
       Metric.closedBall (0 : N) (2 * ρ) ×ˢ Metric.closedBall (0 : P) (2 * ρ) := by
   have hA : 0 < ρ * Real.sqrt (1 + ‖v‖ ^ 2) := mul_pos hρ (Real.sqrt_pos.mpr (by positivity))
   have hs : Real.sqrt (1 + ‖v‖ ^ 2) ≤ 2 :=
-    Real.sqrt_le_iff.mpr ⟨by norm_num, by nlinarith [norm_nonneg v]⟩
+    Real.sqrt_le_iff.mpr ⟨by norm_num, by nlinarith only [hv, norm_nonneg v]⟩
   constructor
   · rw [mem_closedBall_zero_iff]
     change ‖(ρ * Real.sqrt (1 + ‖v‖ ^ 2)) • (u : N)‖ ≤ 2 * ρ
@@ -4979,7 +4981,7 @@ private theorem Smale.MorseHandle.ambientMap_sphere_mem_product {N P : Type*} [N
     change ‖ρ • v‖ ≤ 2 * ρ
     rw [norm_smul, Real.norm_eq_abs, abs_of_pos hρ]
     have hm := mul_le_mul_of_nonneg_left hv hρ.le
-    linarith
+    linarith only [hρ, hm]
 
 private theorem
     Smale.MorseHandle.norm_ambientInverse_fst_of_lower {N P : Type*} [NormedAddCommGroup N]
@@ -4988,7 +4990,7 @@ private theorem
   let A : ℝ := ρ * Real.sqrt (1 + ‖ρ⁻¹ • z.2‖ ^ 2)
   have hA : 0 < A := mul_pos hρ (Real.sqrt_pos.mpr (by positivity))
   have hA₂ : A ^ 2 = ρ ^ 2 + ‖z.2‖ ^ 2 := inverse_scale_sq hρ z.2
-  have hn : ‖z.1‖ = A := by nlinarith [norm_nonneg z.1]
+  have hn : ‖z.1‖ = A := by nlinarith only [hz, hA, hA₂, norm_nonneg z.1]
   change ‖A⁻¹ • z.1‖ = 1
   rw [norm_smul, Real.norm_eq_abs, abs_of_pos (inv_pos.mpr hA), hn, inv_mul_cancel₀ hA.ne']
 
@@ -5098,7 +5100,7 @@ private theorem Smale.ManifoldMorse.SignedMorseChart.norm_beltInverseCoordinates
   have hh := c.splitChart_equation hy
   rw [y.property] at hh
   change -‖(c.splitChart (y : M)).2‖ ^ 2 + ‖(c.splitChart (y : M)).1‖ ^ 2 = -(ρ ^ 2)
-  linarith
+  linarith only [hh]
 
 attribute [local instance 100] Classical.propDecidable in
 private def Smale.ManifoldMorse.SignedMorseChart.beltNeighborhoodInverse {E M : Type*}
@@ -5220,7 +5222,7 @@ private theorem Smale.ManifoldMorse.MorseSurgeryData.belt_model_mem_target {E M 
   · have hv : ‖(v : d.chart.PositiveCoordinates)‖ = 1 := mem_sphere_zero_iff_norm.mp v.property
     simp only [Metric.mem_closedBall, dist_zero_right, norm_smul, Real.norm_eq_abs,
       abs_of_pos d.radius_pos, hv, mul_one]
-    linarith [d.radius_pos]
+    linarith only [d.radius_pos]
 
 attribute [local instance 100] Classical.propDecidable in
 private theorem Smale.ManifoldMorse.MorseSurgeryData.belt_mem_normalDomain {E M : Type*}
@@ -5264,7 +5266,7 @@ private theorem Smale.ManifoldMorse.MorseSurgeryData.beltNormal_eq_zero_iff {E M
     have heq := d.chart.splitChart_equation hx
     change f (x : M) = f p - ‖z.1‖ ^ 2 + ‖z.2‖ ^ 2 at heq
     rw [hz₁, norm_zero, zero_pow (by decide : 2 ≠ 0), sub_zero, x.property] at heq
-    have hnorm : ‖z.2‖ = d.radius := by nlinarith [norm_nonneg z.2, d.radius_pos]
+    have hnorm : ‖z.2‖ = d.radius := by nlinarith only [heq, norm_nonneg z.2, d.radius_pos]
     let v : Smale.PuncturedHandle.UnitSphere d.chart.PositiveCoordinates :=
       ⟨d.radius⁻¹ • z.2, by
         rw [mem_sphere_zero_iff_norm, norm_smul, Real.norm_eq_abs,
