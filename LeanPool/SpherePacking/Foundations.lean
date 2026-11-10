@@ -320,28 +320,16 @@ private theorem normalizedCostSet_bddBelow (d : ℕ) :
 
 private theorem fourier_sq_apply {d : ℕ} (f : TestFunction d) (x : Euclidean d) :
     ((𝓕 (𝓕 f) : TestFunction d) x) = f (-x) := by
-  let : FourierTransform (TestFunction d) (TestFunction d) := inferInstance
-  let : FourierTransform (Euclidean d → ℂ) (Euclidean d → ℂ) := inferInstance
   have hinv := congrArg (fun g : TestFunction d => g (-x))
     (show (𝓕⁻ (𝓕 f) : TestFunction d) = f from
       FourierTransform.fourierInv_fourier_eq f)
-  have hchange :
-      ((𝓕⁻ (𝓕 f) : TestFunction d) (-x)) =
-        ((𝓕 (𝓕 f) : TestFunction d) x) := by
-    calc
-      ((𝓕⁻ (𝓕 f) : TestFunction d) (-x)) =
-          (𝓕⁻ ((𝓕 f : TestFunction d) : Euclidean d → ℂ)) (-x) :=
-        congrFun (SchwartzMap.fourierInv_coe (𝓕 f)) (-x)
-      _ = (𝓕 ((𝓕 f : TestFunction d) : Euclidean d → ℂ)) x := by
-        rw [Real.fourierInv_eq_fourier_neg]
-        simp only [neg_neg]
-      _ = ((𝓕 (𝓕 f) : TestFunction d) x) :=
-        (congrFun (SchwartzMap.fourier_coe (𝓕 f)) x).symm
-  exact hchange ▸ hinv
+  rw [SchwartzMap.fourierInv_apply_eq,
+    SchwartzMap.compCLMOfContinuousLinearEquiv_apply] at hinv
+  change ((𝓕 (𝓕 f) : TestFunction d) (-(-x))) = f (-x) at hinv
+  simpa only [neg_neg] using! hinv
 
 private theorem fourier_sq_of_radial {d : ℕ} (f : TestFunction d)
     (hf : IsRadial f) : (𝓕 (𝓕 f) : TestFunction d) = f := by
-  let : FourierTransform (TestFunction d) (TestFunction d) := inferInstance
   ext x
   rw [fourier_sq_apply]
   exact hf.even x
@@ -557,26 +545,27 @@ private theorem balancedFunction_fourier_nonneg {d : ℕ} (f : Admissible d)
       (inv_nonneg.mpr (pow_nonneg (balancingScale_pos f).le d))
       (f.fourier_nonneg ((balancingScale f)⁻¹ • ξ))
 
-private theorem gaussianMellin_fourier_radial {d : ℕ} {f : TestFunction d}
-    (hf : IsRadial f) : IsRadial (𝓕 f : TestFunction d) := by
-  let : FourierTransform (TestFunction d) (TestFunction d) := inferInstance
-  let : FourierTransform (Euclidean d → ℂ) (Euclidean d → ℂ) := inferInstance
+private theorem fourier_radial_of_radial
+    {V : Type*} [NormedAddCommGroup V] [InnerProductSpace ℝ V]
+    [FiniteDimensional ℝ V] [MeasurableSpace V] [BorelSpace V]
+    (f : V → ℂ) (hf : ∀ x y : V, ‖x‖ = ‖y‖ → f x = f y) :
+    ∀ x y : V, ‖x‖ = ‖y‖ → (𝓕 f) x = (𝓕 f) y := by
   intro x y hxy
-  let A : Euclidean d ≃ₗᵢ[ℝ] Euclidean d :=
-    Submodule.reflection (ℝ ∙ (x - y))ᗮ
+  let A : V ≃ₗᵢ[ℝ] V := Submodule.reflection (ℝ ∙ (x - y))ᗮ
   have hA : A x = y := Submodule.reflection_sub hxy
-  have hcomp : (f : Euclidean d → ℂ) ∘ A = f := by
+  have hcomp : f ∘ A = f := by
     funext z
     exact hf (A z) z (A.norm_map z)
-  change (𝓕 (f : Euclidean d → ℂ)) x =
-    (𝓕 (f : Euclidean d → ℂ)) y
   calc
-    (𝓕 (f : Euclidean d → ℂ)) x =
-        (𝓕 ((f : Euclidean d → ℂ) ∘ A)) x := by rw [hcomp]
-    _ = (𝓕 (f : Euclidean d → ℂ)) (A x) :=
-      Real.fourier_comp_linearIsometry A (f : Euclidean d → ℂ) x
-    _ = (𝓕 (f : Euclidean d → ℂ)) y := by rw [hA]
+    (𝓕 f) x = (𝓕 (f ∘ A)) x := by rw [hcomp]
+    _ = (𝓕 f) (A x) := Real.fourier_comp_linearIsometry A f x
+    _ = (𝓕 f) y := congrArg (𝓕 f) hA
 
+private theorem gaussianMellin_fourier_radial {d : ℕ} {f : TestFunction d}
+    (hf : IsRadial f) : IsRadial (𝓕 f : TestFunction d) := by
+  intro x y hxy
+  change (𝓕 (f : Euclidean d → ℂ)) x = (𝓕 (f : Euclidean d → ℂ)) y
+  exact fourier_radial_of_radial (f : Euclidean d → ℂ) hf x y hxy
 
 private theorem balancedFunction_fourier_radial {d : ℕ} (f : Admissible d) :
     IsRadial (𝓕 (balancedFunction f) : TestFunction d) := by
@@ -1189,7 +1178,6 @@ private theorem gaussianMellinWeight_integrable {d : ℕ}
     (a : ℝ) (ha : 0 < a) :
     Integrable (gaussianMellinWeight d a)
       (volume : Measure (Euclidean d)) := by
-  let : MeasureSpace (Euclidean d) := inferInstance
   have hcomplex : 0 < (a : ℂ).re := by
     simpa only [Complex.ofReal_re] using! ha
   simpa only [neg_mul, inner_zero_left, Complex.ofReal_zero, mul_zero, add_zero] using!
@@ -1218,49 +1206,19 @@ private theorem fourier_gaussianMellin_pairing {d : ℕ}
             Complex.exp
               (-((Real.pi : ℂ) ^ 2) * (‖x‖ : ℂ) ^ 2 /
                 (a : ℂ))) := by
-  let : MeasureSpace (Euclidean d) := inferInstance
-  let : FourierTransform (TestFunction d) (TestFunction d) := inferInstance
-  let : FourierTransform (Euclidean d → ℂ) (Euclidean d → ℂ) := inferInstance
-  have hflip :
-      (innerₗ (Euclidean d)).flip = innerₗ (Euclidean d) := by
-    ext x y
-    change
-      @inner ℝ (Euclidean d) _ y x =
-        @inner ℝ (Euclidean d) _ x y
-    exact real_inner_comm x y
-  calc
-    (∫ ξ : Euclidean d,
-      ((𝓕 f : TestFunction d) ξ) * gaussianMellinWeight d a ξ) =
-        ∫ ξ : Euclidean d,
-          (𝓕 (f : Euclidean d → ℂ)) ξ *
-            gaussianMellinWeight d a ξ := by
-      apply integral_congr_ae
-      filter_upwards [] with ξ
-      exact congrArg
-        (fun z : ℂ => z * gaussianMellinWeight d a ξ)
-        (congrFun (SchwartzMap.fourier_coe f) ξ)
-    _ = ∫ x : Euclidean d,
-          f x *
-            (𝓕 (gaussianMellinWeight d a) :
-              Euclidean d → ℂ) x := by
-      simpa only [smul_eq_mul, hflip] using!
-        (VectorFourier.integral_fourierIntegral_smul_eq_flip
-          (L := innerₗ (Euclidean d))
-          (μ := (volume : Measure (Euclidean d)))
-          (ν := (volume : Measure (Euclidean d)))
-          (f := (f : Euclidean d → ℂ))
-          (g := gaussianMellinWeight d a)
-          Real.continuous_fourierChar continuous_inner
-          f.integrable (gaussianMellinWeight_integrable a ha))
-    _ = ∫ x : Euclidean d,
-          f x *
-            (((Real.pi : ℂ) / (a : ℂ)) ^ ((d : ℂ) / 2) *
-              Complex.exp
-                (-((Real.pi : ℂ) ^ 2) * (‖x‖ : ℂ) ^ 2 /
-                  (a : ℂ))) := by
-      apply integral_congr_ae
-      filter_upwards [] with x
-      rw [fourier_gaussianMellinWeight a ha x]
+  have hpair :
+      (∫ ξ : Euclidean d,
+        (𝓕 (f : Euclidean d → ℂ)) ξ * gaussianMellinWeight d a ξ) =
+      ∫ x : Euclidean d, f x * (𝓕 (gaussianMellinWeight d a)) x := by
+    simpa only [smul_eq_mul, flip_innerₗ] using!
+      (VectorFourier.integral_fourierIntegral_smul_eq_flip
+        (L := innerₗ (Euclidean d))
+        (μ := (volume : Measure (Euclidean d)))
+        (ν := (volume : Measure (Euclidean d)))
+        (f := (f : Euclidean d → ℂ)) (g := gaussianMellinWeight d a)
+        Real.continuous_fourierChar continuous_inner f.integrable
+        (gaussianMellinWeight_integrable a ha))
+  simpa only [SchwartzMap.fourier_coe, fourier_gaussianMellinWeight a ha] using! hpair
 
 private theorem euclidean_ae_ne_zero {d : ℕ} (hd : 0 < d) :
     ∀ᵐ x ∂(volume : Measure (Euclidean d)), x ≠ 0 := by

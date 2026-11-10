@@ -202,6 +202,31 @@ private theorem integral_norm_complexFrullaniSegment
     _ = ‖w - z‖ * (complexFrullaniSegment z w s).re⁻¹ := by
       rw [integral_laplaceKernel hpositive]
 
+private theorem integrable_parameter_kernel_of_exp_bound
+    {F : ℝ → ℝ → ℂ} {m C : ℝ} (hm : 0 < m)
+    (hF : AEStronglyMeasurable (Function.uncurry F)
+      ((volume.restrict (Set.uIoc (0 : ℝ) 1)).prod
+        (volume.restrict (Ioi 0))))
+    (hbound : ∀ s ∈ Icc (0 : ℝ) 1, ∀ x : ℝ, 0 < x →
+      ‖F s x‖ ≤ C * Real.exp (-m * x)) :
+    Integrable (Function.uncurry F)
+      ((volume.restrict (Set.uIoc (0 : ℝ) 1)).prod
+        (volume.restrict (Ioi 0))) := by
+  have hconstant : IntegrableOn (fun _ : ℝ => C) (Set.uIoc (0 : ℝ) 1) :=
+    intervalIntegrable_iff.mp intervalIntegrable_const
+  have hdomain : ∀ᵐ p ∂((volume.restrict (Set.uIoc (0 : ℝ) 1)).prod
+      (volume.restrict (Ioi (0 : ℝ)))),
+      p ∈ Set.uIoc (0 : ℝ) 1 ×ˢ Ioi (0 : ℝ) := by
+    apply (Measure.ae_prod_mem_iff_ae_ae_mem (measurableSet_uIoc.prod measurableSet_Ioi)).2
+    filter_upwards [ae_restrict_mem measurableSet_uIoc] with s hs
+    filter_upwards [ae_restrict_mem measurableSet_Ioi] with x hx
+    exact ⟨hs, hx⟩
+  apply (hconstant.mul_prod (laplaceKernel_integrable hm)).mono' hF
+  filter_upwards [hdomain] with p hp
+  have hs := hp.1
+  rw [Set.uIoc_of_le (show (0 : ℝ) ≤ 1 from zero_le_one)] at hs
+  exact hbound p.1 ⟨hs.1.le, hs.2⟩ p.2 hp.2
+
 private theorem complexFrullaniParameter_integrable
     {z w : ℂ} (hz : 0 < z.re) (hw : 0 < w.re) :
     Integrable
@@ -221,51 +246,16 @@ private theorem complexFrullaniParameter_integrable
           (volume.restrict (Ioi 0))) := by
     unfold complexFrullaniSegment
     fun_prop
-  apply (integrable_prod_iff hmeas).2
-  constructor
-  · filter_upwards [ae_restrict_mem measurableSet_uIoc]
-      with s hs
-    rw [Set.uIoc_of_le (show (0 : ℝ) ≤ 1 by norm_num)] at hs
-    have hclosed : s ∈ Icc (0 : ℝ) 1 :=
-      ⟨hs.1.le, hs.2⟩
-    exact
-      (complexLaplaceKernel_integrable
-        (complexFrullaniSegment_re_pos hz hw hclosed)).const_mul
-          (w - z)
-  · have hsegment :
-        Continuous (fun s : ℝ =>
-          (complexFrullaniSegment z w s).re) := by
-        unfold complexFrullaniSegment
-        fun_prop
-    have hnonzero :
-        ∀ s ∈ Set.uIcc (0 : ℝ) 1,
-          (complexFrullaniSegment z w s).re ≠ 0 := by
-      intro s hs
-      rw [Set.uIcc_of_le (show (0 : ℝ) ≤ 1 by norm_num)] at hs
-      exact (complexFrullaniSegment_re_pos hz hw hs).ne'
-    have hcontinuous :
-        ContinuousOn
-          (fun s : ℝ =>
-            ‖w - z‖ *
-              (complexFrullaniSegment z w s).re⁻¹)
-          (Set.uIcc (0 : ℝ) 1) :=
-      continuousOn_const.mul
-        (hsegment.continuousOn.inv₀ hnonzero)
-    have hintegrable :
-        Integrable
-          (fun s : ℝ =>
-            ‖w - z‖ *
-              (complexFrullaniSegment z w s).re⁻¹)
-          (volume.restrict (Set.uIoc (0 : ℝ) 1)) :=
-      intervalIntegrable_iff.mp
-        (hcontinuous.intervalIntegrable)
-    apply hintegrable.congr
-    filter_upwards [ae_restrict_mem measurableSet_uIoc]
-      with s hs
-    rw [Set.uIoc_of_le (show (0 : ℝ) ≤ 1 by norm_num)] at hs
-    have hclosed : s ∈ Icc (0 : ℝ) 1 :=
-      ⟨hs.1.le, hs.2⟩
-    exact (integral_norm_complexFrullaniSegment hz hw hclosed).symm
+  apply integrable_parameter_kernel_of_exp_bound (C := ‖w - z‖)
+    (lt_min hz hw) hmeas
+  intro s hs x hx
+  rw [norm_mul, Complex.norm_exp]
+  apply mul_le_mul_of_nonneg_left _ (norm_nonneg (w - z))
+  apply Real.exp_le_exp.mpr
+  simp only [Complex.mul_re, Complex.neg_re, Complex.ofReal_re,
+    Complex.ofReal_im, mul_zero, sub_zero]
+  exact mul_le_mul_of_nonneg_right
+    (neg_le_neg (complexFrullaniSegment_min_re_le z w hs)) hx.le
 
 private theorem complexFrullaniKernel_integrable
     {z w : ℂ} (hz : 0 < z.re) (hw : 0 < w.re) :
@@ -415,9 +405,6 @@ private theorem complexFrullaniShiftParameter_integrable
         complexFrullaniKernel (z + (s : ℂ)) 1 x))
       ((volume.restrict (Set.uIoc (0 : ℝ) 1)).prod
         (volume.restrict (Ioi 0))) := by
-  have hm : 0 < min z.re 1 :=
-    lt_min hz (by norm_num)
-  let C : ℝ := ‖(1 : ℂ) - z‖ + 1
   have hmeas :
       AEStronglyMeasurable
         (Function.uncurry (fun s x : ℝ =>
@@ -434,68 +421,10 @@ private theorem complexFrullaniShiftParameter_integrable
           (volume.restrict (Ioi 0)))
     apply Measurable.aestronglyMeasurable
     fun_prop
-  apply (integrable_prod_iff hmeas).2
-  constructor
-  · filter_upwards [ae_restrict_mem measurableSet_uIoc]
-      with s hs
-    rw [Set.uIoc_of_le (show (0 : ℝ) ≤ 1 by norm_num)] at hs
-    have hspositive : 0 < (z + (s : ℂ)).re := by
-      simp only [Complex.add_re, Complex.ofReal_re]
-      linarith only [hs.1, hz, hs]
-    change
-      IntegrableOn
-        (complexFrullaniKernel (z + (s : ℂ)) 1)
-        (Ioi 0)
-    exact complexFrullaniKernel_integrable
-      hspositive (by norm_num : 0 < (1 : ℂ).re)
-  · have hconstant :
-        Integrable (fun _ : ℝ => C * (min z.re 1)⁻¹)
-          (volume.restrict (Set.uIoc (0 : ℝ) 1)) :=
-      intervalIntegrable_iff.mp
-        (continuous_const.intervalIntegrable (a := (0 : ℝ))
-          (b := 1))
-    apply hconstant.mono'
-    · simpa only [Function.uncurry_apply_pair] using!
-        hmeas.norm.integral_prod_right'
-    filter_upwards [ae_restrict_mem measurableSet_uIoc]
-      with s hs
-    rw [Set.uIoc_of_le (show (0 : ℝ) ≤ 1 by norm_num)] at hs
-    have hclosed : s ∈ Icc (0 : ℝ) 1 :=
-      ⟨hs.1.le, hs.2⟩
-    have hspositive : 0 < (z + (s : ℂ)).re := by
-      simp only [Complex.add_re, Complex.ofReal_re]
-      linarith only [hs.1, hz, hs]
-    have hkernel :=
-      complexFrullaniKernel_integrable
-        hspositive (by norm_num : 0 < (1 : ℂ).re)
-    have hmajor :
-        IntegrableOn
-          (fun x : ℝ =>
-            C * Real.exp (-(min z.re 1) * x))
-          (Ioi 0) :=
-      (laplaceKernel_integrable hm).const_mul C
-    change
-      ‖∫ x : ℝ in Ioi 0,
-        ‖complexFrullaniKernel (z + (s : ℂ)) 1 x‖‖ ≤
-          C * (min z.re 1)⁻¹
-    rw [Real.norm_eq_abs, abs_of_nonneg
-      (integral_nonneg fun x => norm_nonneg
-        (complexFrullaniKernel (z + (s : ℂ)) 1 x))]
-    calc
-      (∫ x : ℝ in Ioi 0,
-        ‖complexFrullaniKernel (z + (s : ℂ)) 1 x‖) ≤
-          ∫ x : ℝ in Ioi 0,
-            C * Real.exp (-(min z.re 1) * x) := by
-        apply integral_mono_ae hkernel.norm hmajor
-        filter_upwards [ae_restrict_mem measurableSet_Ioi]
-          with x hx
-        change
-          ‖complexFrullaniKernel (z + (s : ℂ)) 1 x‖ ≤
-            C * Real.exp (-(min z.re 1) * x)
-        exact complexFrullaniShiftKernel_norm_le_exp z
-          hclosed hx
-      _ = C * (min z.re 1)⁻¹ := by
-        rw [integral_const_mul, integral_laplaceKernel hm]
+  apply integrable_parameter_kernel_of_exp_bound (C := ‖(1 : ℂ) - z‖ + 1)
+    (lt_min hz zero_lt_one) hmeas
+  intro s hs x hx
+  exact complexFrullaniShiftKernel_norm_le_exp z hs hx
 
 private noncomputable def complexWallisPhaseKernel (z : ℂ) (x : ℝ) : ℂ :=
   ((1 - Complex.exp (-(x : ℂ))) *

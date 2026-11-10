@@ -3837,7 +3837,7 @@ private theorem lowerGammaBoundaryLog_dimension_scaled_le_neg_of_large
         linear_combination (mul_nonneg (sub_nonneg.mpr hℓ) hlognonneg)
   have htail := lowerGammaBoundaryLog_dimension_scaled_log_tail_uniform
     hd hc hY
-  linarith only [hlogtwo, hexpsmall, hcoth, hmain, htail]
+  linear_combination htail + hmain + hcoth / 2 + 2 * hexpsmall + hlogtwo
 
 private noncomputable def lowerGammaScaledCappedClipped
     (d : ℕ) (c D n Y : ℝ) : ℝ :=
@@ -4411,7 +4411,8 @@ private theorem lowerGammaBoundaryLog_integer_scaled
     rw [lowerRiemannLog_scaled_factor hkreal]
     have hrad :
         0 < ((j : ℝ) / (k : ℝ)) ^ 2 + T ^ 2 / 4 := by
-      linarith only [sq_nonneg ((j : ℝ) / (k : ℝ)), sq_pos_of_ne_zero hT, hT]
+      exact add_pos_of_nonneg_of_pos (sq_nonneg _)
+        (div_pos (sq_pos_of_ne_zero hT) (by norm_num))
     rw [Real.log_mul hkreal.ne'
       (Real.sqrt_pos.mpr hrad).ne']
     rfl
@@ -4456,7 +4457,8 @@ private theorem lowerGammaBoundaryLog_halfInteger_scaled
     rw [lowerRiemannLog_scaled_factor hℓ]
     have hrad :
         0 < (((j : ℝ) + 1 / 2) / ℓ) ^ 2 + T ^ 2 / 4 := by
-      linarith only [sq_nonneg (((j : ℝ) + 1 / 2) / ℓ), sq_pos_of_ne_zero hT, hT]
+      exact add_pos_of_nonneg_of_pos (sq_nonneg _)
+        (div_pos (sq_pos_of_ne_zero hT) (by norm_num))
     rw [Real.log_mul hℓ.ne'
       (Real.sqrt_pos.mpr hrad).ne']
     rfl
@@ -4492,7 +4494,8 @@ private theorem lowerRiemannLog_continuous
     {T : ℝ} (hT : T ≠ 0) :
     Continuous (lowerRiemannLog T) := by
   have hrad (x : ℝ) : 0 < x ^ 2 + T ^ 2 / 4 := by
-    linarith only [sq_nonneg x, sq_pos_of_ne_zero hT]
+    exact add_pos_of_nonneg_of_pos (sq_nonneg x)
+      (div_pos (sq_pos_of_ne_zero hT) (by norm_num))
   have hsqrt :
       Continuous (fun x : ℝ =>
         Real.sqrt (x ^ 2 + T ^ 2 / 4)) := by
@@ -4525,9 +4528,9 @@ private theorem lowerGammaBoundaryLog_integer_riemann_le
       -(k : ℝ) * (∫ x in (0 : ℝ)..1, lowerRiemannLog T x) =
         (k : ℝ) * (1 + lowerEndpointPhase T) := by
     rw [neg_mul, ← mul_neg, hphase]
-  linarith only [hriemann, hkphase, hcoth, le_abs_self (lowerRiemannLog T 1),
-    neg_le_abs (lowerRiemannLog T 0), abs_nonneg (lowerRiemannLog T 0),
-    abs_nonneg (lowerRiemannLog T 1)]
+  linear_combination hriemann + hkphase + le_abs_self (lowerRiemannLog T 1) +
+    neg_le_abs (lowerRiemannLog T 0) + 2 * abs_nonneg (lowerRiemannLog T 0) +
+    abs_nonneg (lowerRiemannLog T 1) + hcoth / 2
 
 private theorem lowerRiemannLog_halfInteger_tail_integral_le
     (k : ℕ) {ℓ T : ℝ}
@@ -4630,7 +4633,7 @@ private theorem lowerGammaBoundaryLog_halfInteger_riemann_le
         ℓ * ((∫ x in (0 : ℝ)..(k : ℝ) / ℓ, q x) + ∫ x in (k : ℝ) / ℓ..1, q x) =
           ℓ * ∫ x in (0 : ℝ)..1, q x := by
       rw [hsplit]
-    linarith only [hmidupper, htail, hℓsplit]
+    linear_combination hmidupper + htail - hℓsplit
   have hqk : q ((k : ℝ) / ℓ) ≤ q 1 := by
     apply lowerRiemannLog_monotoneOn hT
     · exact (show (k : ℝ) / ℓ ∈ Ici (0 : ℝ) from
@@ -4670,8 +4673,9 @@ private theorem lowerGammaBoundaryLog_halfInteger_riemann_le
   have hcoth' :
       Real.log (lowerCoth (Real.pi * ℓ * |T| / 2)) ≤
         Real.log (lowerCoth (Real.pi * |T| / 2)) := hcoth
-  linarith only [hsumupper, hqk, hcoth', hℓphase, le_abs_self (q 1), neg_le_abs (q 0),
-    abs_nonneg (q 0), abs_nonneg (q 1)]
+  linear_combination hsumupper + hℓphase + hqk + hcoth' / 2 +
+    3 * le_abs_self (q 1) / 2 + 3 * neg_le_abs (q 0) / 2 +
+    3 * abs_nonneg (q 0) / 2 + abs_nonneg (q 1) / 2
 
 private theorem lowerGammaBoundaryLog_dimension_riemann_le
     {d : ℕ} (hd : 2 ≤ d) {R T : ℝ}
@@ -6928,8 +6932,6 @@ private theorem fourier_conj_apply_of_real {d : ℕ} (f : TestFunction d)
     (hf : IsRealValued f) (ξ : Euclidean d) :
     starRingEnd ℂ ((𝓕 f : TestFunction d) ξ) =
       ((𝓕 f : TestFunction d) (-ξ)) := by
-  let : FourierTransform (TestFunction d) (TestFunction d) := inferInstance
-  let : FourierTransform (Euclidean d → ℂ) (Euclidean d → ℂ) := inferInstance
   change starRingEnd ℂ ((𝓕 (f : Euclidean d → ℂ)) ξ) =
     (𝓕 (f : Euclidean d → ℂ)) (-ξ)
   rw [Real.fourier_eq', Real.fourier_eq', ← integral_conj]
@@ -6982,9 +6984,6 @@ private theorem fourier_radialAutocorrelation_nonneg (d : ℕ) (ξ : Euclidean d
 private theorem fourier_radialFlatBump_zero (d : ℕ) :
     ((𝓕 (radialFlatBump d) : TestFunction d) (0 : Euclidean d)) =
       (↑(∫ x : Euclidean d, radialFlatBumpReal d x) : ℂ) := by
-  let : MeasureSpace (Euclidean d) := inferInstance
-  let : FourierTransform (TestFunction d) (TestFunction d) := inferInstance
-  let : FourierTransform (Euclidean d → ℂ) (Euclidean d → ℂ) := inferInstance
   change (𝓕 (radialFlatBump d : Euclidean d → ℂ)) 0 = _
   rw [Real.fourier_eq']
   simpa only [neg_mul, inner_zero_right, mul_zero, Complex.ofReal_zero, zero_mul, Complex.exp_zero,

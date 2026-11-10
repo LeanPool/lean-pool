@@ -2711,7 +2711,6 @@ private theorem integral_normalizedRadialLogProfile {d : ℕ} (hd : 0 < d)
     {R : ℝ} (hR : 0 < R) :
     (∫ v : ℝ, normalizedRadialLogProfile hd g R v) =
       (∫ x : Euclidean d, (g x).re) / radialL1Mass g := by
-  let : MeasureSpace (Euclidean d) := inferInstance
   calc
     (∫ v : ℝ, normalizedRadialLogProfile hd g R v) =
         ∫ v : ℝ,
@@ -3138,7 +3137,6 @@ private theorem norm_schwartz_imaginaryRiesz_integral_le_L1 {d : ℕ}
     ‖∫ x : Euclidean d,
       f x * (‖x‖ : ℂ) ^ (-(Complex.I * (t : ℂ)))‖ ≤
       radialL1Mass f := by
-  let : MeasureSpace (Euclidean d) := inferInstance
   calc
     ‖∫ x : Euclidean d,
       f x * (‖x‖ : ℂ) ^ (-(Complex.I * (t : ℂ)))‖ ≤
@@ -3241,7 +3239,6 @@ private theorem radial_fourier_mellin_regularized_closed {d : ℕ}
       (Real.pi : ℂ) ^ ((d : ℂ) / 2 - s) *
         (mellin (radialProfile hd f) ((d : ℂ) - s) *
           (Complex.Gamma (((d : ℂ) - s) / 2))⁻¹) := by
-  let : FourierTransform (TestFunction d) (TestFunction d) := inferInstance
   let U : Set ℂ := Complex.re ⁻¹' Ioo (0 : ℝ) (d : ℝ)
   let T : Set ℂ := Complex.re ⁻¹' Icc (0 : ℝ) (d : ℝ)
   let L : ℂ → ℂ := fun w =>
@@ -3330,7 +3327,6 @@ private theorem radial_fourier_mellin_antifourier_boundary {d : ℕ}
         Complex.Gamma (-(Complex.I * (y : ℂ)) / 2) *
         mellin (radialProfile hd f)
           ((d : ℂ) + Complex.I * (y : ℂ))) := by
-  let : FourierTransform (TestFunction d) (TestFunction d) := inferInstance
   let s : ℂ := -(Complex.I * (y : ℂ))
   have hhatZero :
       (𝓕 f : TestFunction d) (0 : Euclidean d) = 0 := by
@@ -4057,8 +4053,8 @@ private theorem integrable_fourier_of_integrable_two_derivatives
     rw [congrFun
       (Real.fourier_deriv hg' hg'diff hg'') t,
       congrFun (Real.fourier_deriv hg hgdiff hg') t]
-    simp only [smul_eq_mul]
-    ring
+    simp only [smul_eq_mul, pow_two]
+    exact (mul_assoc _ _ _).symm
   have hcoef (t : ℝ) :
       ‖(2 * (Real.pi : ℂ) * Complex.I * (t : ℂ)) ^ 2‖ =
         p ^ 2 * t ^ 2 := by
@@ -4078,7 +4074,10 @@ private theorem integrable_fourier_of_integrable_two_derivatives
   have hquadratic (t : ℝ) :
       t ^ 2 * ‖(𝓕 g : ℝ → ℂ) t‖ ≤ D / p ^ 2 := by
     apply (le_div_iff₀ (sq_pos_of_pos hp)).2
-    linear_combination (hsecond t)
+    calc
+      (t ^ 2 * ‖(𝓕 g : ℝ → ℂ) t‖) * p ^ 2 =
+          p ^ 2 * t ^ 2 * ‖(𝓕 g : ℝ → ℂ) t‖ := by ac_rfl
+      _ ≤ D := hsecond t
   have hmajor : Integrable
       (fun t : ℝ => (A + D / p ^ 2) * (1 + t ^ 2)⁻¹) :=
     integrable_inv_one_add_sq.const_mul (A + D / p ^ 2)
@@ -4088,7 +4087,8 @@ private theorem integrable_fourier_of_integrable_two_derivatives
   change ‖(𝓕 g : ℝ → ℂ) t‖ ≤
     (A + D / p ^ 2) / (1 + t ^ 2)
   apply (le_div_iff₀ hden).2
-  linear_combination (hzero t + hquadratic t)
+  rw [mul_add, mul_one, mul_comm ‖(𝓕 g : ℝ → ℂ) t‖ (t ^ 2)]
+  exact add_le_add (hzero t) (hquadratic t)
 
 private theorem schwartzRealLine_mellinConvergent_of_re_pos
     (g : 𝓢(ℝ, ℂ)) (s : ℂ) (hs : 0 < s.re) :
@@ -4616,12 +4616,9 @@ private theorem stripPoissonPrimitive_hasDerivAt {σ : ℝ}
   have hden : 0 <
       Real.exp (Real.pi * T / 2) ^ 2 + 1 -
         2 * Real.exp (Real.pi * T / 2) * Real.cos (stripAngle σ) := by
-    linarith only [
-      sq_nonneg (Real.exp (Real.pi * T / 2) - Real.cos (stripAngle σ)),
-      sq_pos_of_pos hsin,
-      hsin,
-      htrig
-    ]
+    linear_combination
+      sq_nonneg (Real.exp (Real.pi * T / 2) - Real.cos (stripAngle σ)) +
+      sq_pos_of_pos hsin + htrig
   field_simp [hsin0, hpi, hexp.ne', hden.ne']
   linear_combination (4 * htrig)
 
@@ -8290,8 +8287,10 @@ private theorem monotone_midpointIntegral_error
     have hjnonneg : 0 ≤ (j : ℝ) := Nat.cast_nonneg j
     have hjlast : (j : ℝ) + 1 ≤ (k : ℝ) := by
       exact_mod_cast (Nat.succ_le_of_lt hjk)
-    exact hf ⟨hjnonneg, by linear_combination hjlast⟩
-      ⟨by linarith only [], by linear_combination hjlast⟩ (by linarith only [])
+    exact hf ⟨hjnonneg, (le_add_of_nonneg_right zero_le_one).trans hjlast⟩
+      ⟨add_nonneg hjnonneg (by norm_num),
+        (add_le_add (le_refl (j : ℝ)) (by norm_num : (1 / 2 : ℝ) ≤ 1)).trans hjlast⟩
+      (le_add_of_nonneg_right (by norm_num))
   have hmidright :
       (∑ j ∈ Finset.range k, f ((j : ℝ) + 1 / 2)) ≤
         ∑ j ∈ Finset.range k, f ((j : ℝ) + 1) := by
@@ -8301,8 +8300,10 @@ private theorem monotone_midpointIntegral_error
     have hjnonneg : 0 ≤ (j : ℝ) := Nat.cast_nonneg j
     have hjlast : (j : ℝ) + 1 ≤ (k : ℝ) := by
       exact_mod_cast (Nat.succ_le_of_lt hjk)
-    exact hf ⟨by linarith only [], by linear_combination hjlast⟩
-      ⟨by linarith only [], hjlast⟩ (by linarith only [])
+    exact hf ⟨add_nonneg hjnonneg (by norm_num),
+        (add_le_add (le_refl (j : ℝ)) (by norm_num : (1 / 2 : ℝ) ≤ 1)).trans hjlast⟩
+      ⟨add_nonneg hjnonneg zero_le_one, hjlast⟩
+      (add_le_add (le_refl (j : ℝ)) (by norm_num : (1 / 2 : ℝ) ≤ 1))
   have hshift :
       (∑ j ∈ Finset.range k, f ((j : ℝ) + 1)) -
         (∑ j ∈ Finset.range k, f (j : ℝ)) =
@@ -8314,7 +8315,9 @@ private theorem monotone_midpointIntegral_error
       simp only [Nat.cast_add, Nat.cast_one]
     · simp only [CharP.cast_eq_zero]
   apply (abs_le).2
-  constructor <;> linarith
+  constructor
+  · linear_combination hleft + hmidright + hshift
+  · linear_combination hright + hmidleft + hshift
 
 private theorem lower_halfInteger_midpointRiemann_error
     {T : ℝ} (hT : T ≠ 0)
