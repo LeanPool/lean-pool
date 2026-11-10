@@ -1080,19 +1080,19 @@ private theorem poissonLogistic_characteristic_of_ne_zero
       ((t / Real.sinh t : ℝ) : ℂ) := by
   let x : ℝ := t / Real.pi
   have hx : x ≠ 0 := by
-    try dsimp [x]
+    try dsimp only [x]
     exact div_ne_zero ht Real.pi_ne_zero
   let w : ℂ := Complex.I * (x : ℂ)
   have hwplus : 0 < (1 + w).re := by
-    try dsimp [w]
+    try dsimp only [w]
     norm_num
   have hwminus : 0 < (1 - w).re := by
-    try dsimp [w]
+    try dsimp only [w]
     norm_num
   have hphase (u : ℝ) :
       ((Real.pi * u : ℝ) : ℂ) * w =
         Complex.I * (t : ℂ) * (u : ℂ) := by
-    try dsimp [w, x]
+    try dsimp only [w, x]
     push_cast
     field_simp [Real.pi_ne_zero]
   have hbeta :
@@ -1106,7 +1106,7 @@ private theorem poissonLogistic_characteristic_of_ne_zero
     rw [hsum]
     norm_num
   have hscale : Real.pi * x = t := by
-    try dsimp [x]
+    try dsimp only [x]
     field_simp [Real.pi_ne_zero]
   calc
     (∫ u : ℝ,
@@ -1599,7 +1599,7 @@ private theorem poissonLogistic_lowerWallisPhase_product_integrable :
     poissonLogisticDensity p.1 *
       lowerWallisPhaseKernel p.1 p.2
   have hmeas : Measurable F := by
-    try dsimp [F]
+    try dsimp only [F]
     unfold poissonLogisticDensity lowerWallisPhaseKernel
     fun_prop
   have hfrequency :
@@ -2899,7 +2899,7 @@ private theorem plusPolynomial_translation_norm_le
       9 * (1 + |u|) ^ 2 * (|T| + |T| ^ 3) := by
   let z : ℂ := Complex.I * (u : ℂ)
   have hz : ‖z‖ = |u| := by
-    try dsimp [z]
+    try dsimp only [z]
     simp only [Complex.norm_mul, Complex.norm_I, Complex.norm_real, Real.norm_eq_abs, one_mul]
   have hA :
       ‖2 * z + Complex.I * (1 + 3 * z ^ 2)‖ ≤
@@ -2933,7 +2933,7 @@ private theorem minusPolynomial_translation_norm_le
       9 * (1 + |u|) ^ 2 * (|T| + |T| ^ 3) := by
   let z : ℂ := Complex.I * (u : ℂ)
   have hz : ‖z‖ = |u| := by
-    try dsimp [z]
+    try dsimp only [z]
     simp only [Complex.norm_mul, Complex.norm_I, Complex.norm_real, Real.norm_eq_abs, one_mul]
   have hA :
       ‖2 * z - Complex.I * (1 + 3 * z ^ 2)‖ ≤
@@ -4309,7 +4309,7 @@ private theorem upperGammaVarianceDensity_pointwise_bounds
       (a + ℓ / 2) * Real.exp (-η * a) := by
   let x : ℝ := 2 * a / ℓ
   have hx : 0 < x := by
-    try dsimp [x]
+    try dsimp only [x]
     positivity
   have hkernel := upper_inv_one_sub_exp_neg_bounds hx
   have hden : 0 < 1 - Real.exp (-x) := by
@@ -4323,13 +4323,13 @@ private theorem upperGammaVarianceDensity_pointwise_bounds
         a * Real.exp (-η * a) *
           (1 - Real.exp (-x))⁻¹ := by
     unfold upperGammaMeasureDensity
-    try dsimp [x]
+    try dsimp only [x]
     field_simp [ha.ne', hℓ.ne', hden.ne']
   constructor
   · calc
       (ℓ / 2) * Real.exp (-η * a) =
           a * Real.exp (-η * a) * x⁻¹ := by
-            try dsimp [x]
+            try dsimp only [x]
             field_simp [ha.ne', hℓ.ne']
       _ ≤ a * Real.exp (-η * a) *
           (1 - Real.exp (-x))⁻¹ :=
@@ -4343,7 +4343,7 @@ private theorem upperGammaVarianceDensity_pointwise_bounds
       _ ≤ a * Real.exp (-η * a) * (1 + x⁻¹) :=
         mul_le_mul_of_nonneg_left hkernel.2 hfactor
       _ = (a + ℓ / 2) * Real.exp (-η * a) := by
-        try dsimp [x]
+        try dsimp only [x]
         field_simp [ha.ne', hℓ.ne']
 
 private theorem upperGammaThirdMomentDensity_pointwise_bounds
@@ -4831,7 +4831,7 @@ private theorem realHyperbolicShellPhase_hasDerivAt
     apply intervalIntegral.integral_congr
     intro a ha
     rw [uIcc_of_le horder] at ha
-    try dsimp [w]
+    try dsimp only [w]
     rw [max_eq_left ha.1]
   have hshortderiv :
       (∫ a in (ε ^ 3)..(10 * Real.log (1 / ε)),
@@ -4841,7 +4841,7 @@ private theorem realHyperbolicShellPhase_hasDerivAt
     apply intervalIntegral.integral_congr
     intro a ha
     rw [uIcc_of_le horder] at ha
-    try dsimp [w]
+    try dsimp only [w]
     rw [max_eq_left ha.1]
   have hshort :
       HasDerivAt
@@ -4951,7 +4951,7 @@ private theorem exists_plusSaddleSmallRadiusPhase_error
   have hx : x ∈ Set.Icc (1 : ℝ) 2 := by
     constructor <;> dsimp [x] <;> linarith
   have hscale : ℓ * (x - 1) = 2 * (n : ℝ) := by
-    try dsimp [x]
+    try dsimp only [x]
     field_simp; apply add_sub_cancel_left
   have hidentity :
       ℓ * (realHyperbolicShellPhase ε x -
@@ -4978,7 +4978,7 @@ private theorem exists_plusSaddleSmallRadiusPhase_error
     _ ≤ ℓ * (C * (x - 1) ^ 2) :=
       mul_le_mul_of_nonneg_left (hC x hx) hℓ.le
     _ = (4 * C) * (n : ℝ) ^ 2 / ℓ := by
-      try dsimp [x]
+      try dsimp only [x]
       field_simp; ring
 
 private theorem plusSaddleSmallRadiusPolynomial_error
@@ -4992,10 +4992,10 @@ private theorem plusSaddleSmallRadiusPolynomial_error
   have hb : 0 < (ε / 4) := div_pos hε four_pos
   let s : ℝ := 2 * (n : ℝ) / ℓ
   have hs : 0 ≤ s := by
-    try dsimp [s]
+    try dsimp only [s]
     positivity
   have hsone : s ≤ 1 := by
-    try dsimp [s]
+    try dsimp only [s]
     exact (div_le_iff₀ hℓ).mpr (by simpa only [one_mul] using! hn)
   have hsquare : (2 + s) ^ 2 ≤ 9 := by
     linarith only [mul_nonneg (show 0 ≤ 3 - (2 + s) by linarith) (show 0 ≤ 3 + (2 + s) by linarith)]
@@ -5015,7 +5015,7 @@ private theorem plusSaddleSmallRadiusPolynomial_error
         s * 9 / (ε / 4) := by
           gcongr
     _ = (18 / (ε / 4)) * ((n : ℝ) / ℓ) := by
-      try dsimp [s]
+      try dsimp only [s]
       field_simp; ring
 
 private theorem abs_exp_sub_one_le_abs_mul_exp_abs (t : ℝ) :
@@ -5176,7 +5176,7 @@ private theorem saddleExpSeries_firstMoment_hasSum (y : ℝ) :
       (fun n : ℕ => y *
         (y ^ n / (n.factorial : ℝ))) := by
     funext n
-    try dsimp [f]
+    try dsimp only [f]
     rw [Nat.factorial_succ, pow_succ]
     push_cast
     field_simp
@@ -5200,7 +5200,7 @@ private theorem saddleExpSeries_secondFallingMoment_hasSum (y : ℝ) :
       (fun n : ℕ => y ^ 2 *
         (y ^ n / (n.factorial : ℝ))) := by
     funext n
-    try dsimp [f]
+    try dsimp only [f]
     rw [show n + 2 = (n + 1) + 1 by omega,
       Nat.factorial_succ, Nat.factorial_succ,
       pow_succ, pow_succ]
@@ -6470,7 +6470,7 @@ private theorem saddle_complexShellInterval_re
           (Real.cos (x * T) * Real.cosh (x * u) - 1) := by
       apply intervalIntegral.integral_congr
       intro x hx
-      try dsimp [F]
+      try dsimp only [F]
       rw [Complex.mul_re, Complex.sub_re,
         saddle_shifted_complexCos_re]
       simp only [Complex.ofReal_re, Complex.one_re, Complex.ofReal_im, Complex.sub_im,
@@ -7296,12 +7296,12 @@ private theorem saddleSourceRadius_div_sqrt_eq
   let S : ℝ := shortShellRadiusContribution ε +
     positiveShellRadiusContribution ε
   have ha : 0 < a := by
-    try dsimp [a]
+    try dsimp only [a]
     positivity
   have hdreal : 0 < (d : ℝ) := by exact_mod_cast hd
   have hquotient : 0 < a / (4 * Real.pi) := by positivity
   have hmformula : m = (d : ℝ) * a / 4 := by
-    try dsimp [m, a, saddleCriticalGammaArgument]
+    try dsimp only [m, a, saddleCriticalGammaArgument]
     ring
   have hlogm : Real.log m =
       Real.log (d : ℝ) + Real.log a - Real.log (4 : ℝ) := by
@@ -7322,7 +7322,7 @@ private theorem saddleSourceRadius_div_sqrt_eq
       -(Real.log Real.pi) / 2 +
         saddleDigamma m / 2 + S := by
     rw [saddleLogRadius_critical_eq]
-    try dsimp [m, S]
+    try dsimp only [m, S]
     apply add_assoc
   calc
     saddleSourceRadius ε d / Real.sqrt (d : ℝ) =
@@ -7348,7 +7348,7 @@ private theorem saddleSourceRadius_div_sqrt_eq
             Real.log (saddleCriticalGammaArgument ε d)) / 2) *
           limitingSaddleRadius ε := by
       unfold limitingSaddleRadius
-      try dsimp [m, a, S]
+      try dsimp only [m, a, S]
       apply mul_assoc
 
 private theorem tendsto_saddleSourceRadius_normalized
