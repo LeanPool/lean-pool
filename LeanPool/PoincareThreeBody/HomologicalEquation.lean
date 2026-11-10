@@ -9,7 +9,6 @@ public import LeanPool.PoincareThreeBody.Perturbation
 import Mathlib.Analysis.Calculus.Deriv.Add
 import Mathlib.Analysis.Calculus.Deriv.Mul
 import Mathlib.Analysis.InnerProductSpace.Basic
-import Mathlib.MeasureTheory.Integral.Bochner.Basic
 
 /-!
 # The first homological equation

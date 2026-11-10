@@ -7,8 +7,6 @@ module
 
 public import LeanPool.PoincareThreeBody.KeplerOrbit
 public import LeanPool.PoincareThreeBody.Perturbation
-import Mathlib.MeasureTheory.Integral.Bochner.Basic
-import Mathlib.Tactic.Positivity.Finset
 
 /-!
 # Elliptic Kepler positions in the rotating frame

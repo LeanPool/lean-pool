@@ -13,7 +13,6 @@ import Mathlib.Analysis.Calculus.Deriv.Inv
 import Mathlib.Analysis.Calculus.Deriv.Mul
 import Mathlib.Analysis.InnerProductSpace.Basic
 import Mathlib.Analysis.SpecialFunctions.Sqrt
-import Mathlib.MeasureTheory.Integral.Bochner.Basic
 
 /-!
 # First mass perturbation of the planar Hamiltonian

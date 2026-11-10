@@ -9,7 +9,6 @@ public import LeanPool.PoincareThreeBody.KeplerOrbit
 public import Mathlib.Topology.Algebra.Module.FiniteDimension
 import Mathlib.Analysis.Calculus.InverseFunctionTheorem.FDeriv
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.Deriv
-import Mathlib.MeasureTheory.Integral.Bochner.Basic
 
 /-!
 # Joint analyticity of Kepler's equation

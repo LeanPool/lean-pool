@@ -13,8 +13,6 @@ import LeanPool.PoincareThreeBody.Analytic
 import LeanPool.PoincareThreeBody.LeadingObstruction
 import LeanPool.PoincareThreeBody.MixedPartials
 import Mathlib.Analysis.Analytic.Order
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.Arctan
-import Mathlib.MeasureTheory.Covering.Besicovitch
 
 /-!
 # Analyticity and flatness of differential minors

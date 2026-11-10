@@ -12,8 +12,6 @@ public import Mathlib.Analysis.InnerProductSpace.Basic
 import LeanPool.PoincareThreeBody.Analytic
 import Mathlib.Analysis.Analytic.IsolatedZeros
 import Mathlib.Analysis.Calculus.Deriv.Comp
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.Arctan
-import Mathlib.MeasureTheory.Covering.Besicovitch
 
 /-!
 # Analytic coefficient normalization in the mass parameter
@@ -133,7 +131,7 @@ theorem analyticAt_uncurry_domainMassNormalizedCandidate_of_mass_ne
       (fun w : ℝ × PhaseSpace ↦
         normalizationResidual F energyFunction w.1 w.2) z := by
     exact hcandidate.sub (henergyFunction.comp
-      (f := Function.uncurry hamiltonian) hhamiltonian)
+      (f := Function.uncurry hamiltonian) (x := z) hhamiltonian)
   have hquotient : AnalyticAt ℝ
       (fun w : ℝ × PhaseSpace ↦
         normalizationResidual F energyFunction w.1 w.2 / w.1) z :=
@@ -192,7 +190,7 @@ theorem analyticAt_normalizationResidual_massSlice
       (f := fun mass : ℝ ↦ (mass, state)) hembedding
   unfold normalizationResidual
   exact hcandidate.sub (henergyFunction.comp
-    (f := fun mass ↦ hamiltonian mass state) hhamiltonian)
+    (f := fun mass ↦ hamiltonian mass state) (x := (0 : ℝ)) hhamiltonian)
 
 /-- The removable mass quotient is analytic at zero on every fixed collision-free phase slice. -/
 theorem analyticAt_massNormalizedCandidate_massSlice
@@ -225,13 +223,13 @@ theorem massNormalizedCandidate_zero_eq_parameterCoefficient
   have hcomposition : AnalyticAt ℝ
       (fun z : ℝ × PhaseSpace ↦ energyFunction (hamiltonian z.1 z.2))
       (0, state) :=
-    henergyFunction.comp (f := Function.uncurry hamiltonian) hhamiltonian
+    henergyFunction.comp (f := Function.uncurry hamiltonian)
+      (x := (0, state)) hhamiltonian
   have hjoint : DifferentiableAt ℝ
       (Function.uncurry (normalizationResidual F energyFunction)) (0, state) := by
     exact (hcandidate.sub hcomposition).differentiableAt
-  simpa [Function.uncurry] using
-    (deriv_curry_left
-      (G := Function.uncurry (normalizationResidual F energyFunction)) hjoint)
+  exact deriv_curry_left
+    (B := PhaseSpace) (G := Function.uncurry (normalizationResidual F energyFunction)) hjoint
 
 /-- Explicit coefficient bookkeeping for one normalization step: the new zeroth coefficient is
 the old first mass coefficient minus the energy derivative times the Hamiltonian perturbation. -/
@@ -252,7 +250,8 @@ theorem parameterCoefficient_normalizationResidual
   have hcompositionJoint : AnalyticAt ℝ
       (fun z : ℝ × PhaseSpace ↦ energyFunction (hamiltonian z.1 z.2))
       (0, state) :=
-    henergyFunction.comp (f := Function.uncurry hamiltonian) hhamiltonianJoint
+    henergyFunction.comp (f := Function.uncurry hamiltonian)
+      (x := (0, state)) hhamiltonianJoint
   have hresidualJoint : DifferentiableAt ℝ
       (Function.uncurry (normalizationResidual F energyFunction)) (0, state) :=
     (hcandidateJoint.sub hcompositionJoint).differentiableAt
@@ -277,9 +276,10 @@ theorem parameterCoefficient_normalizationResidual
   have hcandidateCoefficient :
       deriv (fun mass ↦ F mass state) 0 =
         parameterCoefficient (Function.uncurry F) state := by
-    simpa [Function.uncurry] using
-      (deriv_curry_left hcandidateJoint.differentiableAt)
-  rw [← deriv_curry_left hresidualJoint]
+    exact deriv_curry_left (B := PhaseSpace) (G := Function.uncurry F)
+      hcandidateJoint.differentiableAt
+  rw [← deriv_curry_left (B := PhaseSpace)
+    (G := Function.uncurry (normalizationResidual F energyFunction)) hresidualJoint]
   change deriv (fun mass ↦ normalizationResidual F energyFunction mass state) 0 = _
   rw [hresidualSlice, hcandidateCoefficient,
     deriv_hamiltonian_mass_zero hdomain.2]

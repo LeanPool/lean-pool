@@ -11,8 +11,6 @@ import Mathlib.Analysis.Analytic.Constructions
 import Mathlib.Analysis.Calculus.Deriv.Comp
 import Mathlib.Analysis.Calculus.Deriv.Prod
 import Mathlib.Analysis.Calculus.MeanValue
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.Arctan
-import Mathlib.MeasureTheory.Covering.Besicovitch
 
 /-!
 # Constancy of the leading coefficient on Kepler energy leaves

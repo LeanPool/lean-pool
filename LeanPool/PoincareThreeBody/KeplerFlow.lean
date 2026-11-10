@@ -8,7 +8,6 @@ module
 public import LeanPool.PoincareThreeBody.KeplerPhaseOrbit
 import Mathlib.Analysis.Calculus.Deriv.Comp
 import Mathlib.Analysis.Calculus.Deriv.Prod
-import Mathlib.Tactic.Positivity.Finset
 
 /-!
 # The resonant ellipse as a Hamiltonian flow line
