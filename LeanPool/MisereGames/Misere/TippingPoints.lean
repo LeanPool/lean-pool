@@ -33,17 +33,21 @@ private theorem right_wins_of_birthday_le (g : GameForm) (b : ℕ) (h1 : birthda
     refine ⟨gr + b, Form.add_right_mem_moves_add h3 b, ?_⟩
     exact not_left_wins_of_birthday_lt gr b ((Form.birthday_lt_of_mem_moves h3).trans_le h1)
 termination_by g
-decreasing_by form_wf
+decreasing_by exact MisereGames.Moves.Subposition.of_mem_moves h3
 
 private theorem not_left_wins_of_birthday_lt (g : GameForm) (b : ℕ) (h1 : birthday g < b) :
     ¬WinsGoingFirst .left (g + b) := by
   have hbpos : 0 < b := by
     by_contra hb
-    simp_all
+    simp_all only [not_lt, nonpos_iff_eq_zero, Nat.cast_zero, NatOrdinal.not_lt_zero]
   obtain ⟨k, hk⟩ := Nat.exists_eq_succ_of_ne_zero (Nat.ne_of_gt hbpos)
   rw [not_winsGoingFirst_iff]
   constructor
-  · simp_all
+  · simp_all only [
+    Nat.succ_eq_add_one, Nat.cast_add, Nat.cast_one, Order.lt_add_one_iff, lt_add_iff_pos_left,
+    add_pos_iff, zero_lt_one, or_true, IsEndLike.add_iff, GameForm.isEndLike_iff_isEnd,
+    natCast_isEndLike_iff, isEnd_left_natCast_iff, not_isEndLike_left_one, and_false,
+    not_false_eq_true]
   · intro gl h2
     rw [moves_add] at h2
     rcases h2 with ⟨gl', h3, rfl⟩ | ⟨bl, h3, rfl⟩
@@ -52,7 +56,10 @@ private theorem not_left_wins_of_birthday_lt (g : GameForm) (b : ℕ) (h1 : birt
         simpa [hk, Nat.succ_eq_add_one] using h3
       rw [h6]
       have h7 : birthday g ≤ (k : ℕ) := by
-        simp_all
+        simp_all only [
+          Nat.succ_eq_add_one, Nat.cast_add, Nat.cast_one, Order.lt_add_one_iff,
+          lt_add_iff_pos_left, add_pos_iff, zero_lt_one, or_true, leftMoves_natCast_succ,
+          Set.mem_singleton_iff]
       by_cases h8 : IsEnd .right g
       · exact winsGoingFirst_add_of_isEnd h8 (natCast_isEnd_right k)
       · obtain ⟨gr, h9⟩ := not_isEnd_exists_move h8
@@ -60,7 +67,9 @@ private theorem not_left_wins_of_birthday_lt (g : GameForm) (b : ℕ) (h1 : birt
         refine ⟨gr + k, Form.add_right_mem_moves_add h9 k, ?_⟩
         exact not_left_wins_of_birthday_lt gr k ((Form.birthday_lt_of_mem_moves h9).trans_le h7)
 termination_by g
-decreasing_by form_wf
+decreasing_by
+  · exact MisereGames.Moves.Subposition.of_mem_moves h3
+  · exact MisereGames.Moves.Subposition.of_mem_moves h9
 
 end
 
@@ -73,7 +82,7 @@ theorem _root_.MisereGames.add_birthday_plus_one_R
     (g : GameForm) (b : ℕ) (h1 : birthday g = b) :
     MisereOutcome (g + (b + (1 : ℕ))) = .R := by
   have h2 : (b : NatOrdinal) < (b + 1 : ℕ) := by
-    simp
+    simp only [Nat.cast_add, Nat.cast_one, lt_add_iff_pos_right, zero_lt_one]
   simpa [Nat.cast_add, Nat.cast_one, add_assoc] using add_gt_birthday_R g (b + 1) (h1 ▸ h2)
 
 theorem _root_.MisereGames.add_neg_birthday_plus_one_L
@@ -101,7 +110,10 @@ theorem _root_.MisereGames.LTippingPoint.aux {g : GameForm} (h1 : IsShort g) :
 private theorem left_wins_second_implies_left_wins_first_add_one {g : GameForm}
     (h1 : ¬WinsGoingFirst .right g) : WinsGoingFirst .left (g + 1) := by
   refine winsGoingFirst_of_moves ?_
-  simp_all
+  simp_all only [
+    moves_add, leftMoves_one, Set.image_singleton, add_zero, Set.union_singleton,
+    Set.mem_insert_iff, Set.mem_image, Player.neg_left, exists_eq_or_imp, not_false_eq_true,
+    ↓existsAndEq, and_true, true_or]
 
 private theorem exists_add_nat_N_of_not_R {g : GameForm} (h0 : IsShort g) (h1 :
     MisereOutcome g ≠ .R) :
@@ -111,7 +123,7 @@ private theorem exists_add_nat_N_of_not_R {g : GameForm} (h0 : IsShort g) (h1 :
   have hrR : MisereOutcome (g + r) = .R := Nat.find_spec hR
   have hrpos : 0 < r := by
     by_contra h2
-    simp_all
+    simp_all only [ne_eq, not_lt, nonpos_iff_eq_zero, Nat.cast_zero, add_zero]
   let n : ℕ := r - 1
   have hnsucc : n + 1 = r := by
     dsimp [n]
@@ -131,7 +143,7 @@ private theorem exists_add_nat_N_of_not_R {g : GameForm} (h0 : IsShort g) (h1 :
   refine ⟨n, ?_⟩
   cases hn : MisereOutcome (g + n)
   · exact False.elim ((misereOutcome_L_iff_winsGoingFirst.mp hn).right hright_n)
-  · simp
+  · simp only
   · exact False.elim ((misereOutcome_P_iff_winsGoingFirst.mp hn).left hright_n)
   · exact False.elim (hnotR_n hn)
 
@@ -237,7 +249,7 @@ theorem _root_.MisereGames.RTippingPoint_neg {g : GameForm} (hsg : IsShort g) :
     have h_neg :
         MisereOutcome (-g + (LTippingPoint hsg : GameForm))
         = (MisereOutcome (g + (-(LTippingPoint hsg : GameForm)))).Conjugate := by
-      simp_all
+      simp_all only [neg_add_rev, neg_neg, misereOutcome_conjugate_neg]
     have := LTippingPoint_iff hsg ( LTippingPoint hsg ) |>.1 rfl
     simp_all only [neg_add_rev, neg_neg]
     decide

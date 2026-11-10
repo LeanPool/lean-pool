@@ -93,7 +93,7 @@ private lemma downlinkOptions_short {r : G} {p : Player} {g h : G} {z : moves (-
   rcases ha with (⟨hp, hhp, rfl⟩ | ⟨gp, hgp, rfl⟩) | ha0
   · exact hz ⟨hp, hhp⟩
   · exact Adjoint.short_rootedAdjoint h_root_short (Short.of_mem_moves hg hgp)
-  · simp_all
+  · simp_all only [Subtype.forall, not_mem_moves_of_isEnd, IsEmpty.forall_iff, implies_true]
 
 instance : Ambient IsShort (G := G) where
   isAmbient_rootedAdjoint h_root_short hg := Adjoint.short_rootedAdjoint h_root_short hg

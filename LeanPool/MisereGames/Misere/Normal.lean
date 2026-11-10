@@ -162,7 +162,7 @@ private theorem add_neg_misereGE_zero {g : AugmentedForm} (hg : Normal g) :
     rcases hgr with ⟨gr, hgr, rfl⟩ | ⟨ngr, hngr, rfl⟩
     · refine Or.inr ⟨gr + -gr, ?_, ?_⟩
       · exact add_left_mem_moves_add (z := gr) (by
-          simp_all)
+          simp_all only [moves_neg, Player.neg_left, Set.mem_neg, neg_neg])
       · exact add_neg_misereGE_zero (hg.moves hgr)
     · have hngr' : -ngr ∈ Form.moves Player.left g := by
         simpa [moves_neg, Set.mem_neg] using hngr
@@ -185,7 +185,7 @@ private theorem zero_misereGE_add_neg {g : AugmentedForm} (hg : Normal g) :
     rcases hhl with ⟨gl, hgl, rfl⟩ | ⟨ngl, hngl, rfl⟩
     · refine Or.inr ⟨gl + -gl, ?_, ?_⟩
       · exact add_left_mem_moves_add (z := gl) (by
-          simp_all)
+          simp_all only [moves_neg, Player.neg_right, Set.mem_neg, neg_neg])
       · exact zero_misereGE_add_neg (hg.moves hgl)
     · have hngl' : -ngl ∈ Form.moves Player.right g := by
         simpa [moves_neg, Set.mem_neg] using hngl

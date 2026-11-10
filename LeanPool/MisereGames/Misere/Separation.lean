@@ -206,7 +206,8 @@ theorem leftSeparatorCandidate_eq_neg (r g x : G) :
     · exact neg_inj.symm
     · rw [Adjoint.rootedAdjoint_neg]
       exact neg_inj.symm
-  simp_all
+  simp_all only [
+    Set.singleton_union, Set.neg_insert, neg_neg, neg_ofSets, Set.neg_singleton, ofSets_inj']
 
 /--
 $\def\form<#1>[#2]{\left\{#1 \mid #2\right\}}$
@@ -299,12 +300,13 @@ lemma leftSeparating_of_rightSeparating_of_leftSeparatorCandidate_mem
       | inr h_y_move =>
           obtain ⟨yl, hyl, rfl⟩ := h_y_move
           change yl ∈ moves .left (leftSeparatorCandidate r g x) at hyl
-          simp_all
+          simp_all only [
+            Player.forall, leftMoves_ofSets, Set.mem_singleton_iff, Player.neg_left]
   · apply winsGoingFirst_of_moves
     refine ⟨h + x, ?_, ?_⟩
     · apply add_left_mem_moves_add
       change x ∈ moves .left (leftSeparatorCandidate r g x)
-      simp_all
+      simp_all only [Player.forall, leftMoves_ofSets, Set.mem_singleton_iff]
     · exact hhx
 
 attribute [local instance] Classical.propDecidable
@@ -409,7 +411,9 @@ lemma downlinked_of_downlinkWitness_mem
           add_right_mem_moves_add hgr (rootedAdjoint r gr),
           not_winsGoingFirst_of_misereOutcome_P
             (misereOutcome_add_rootedAdjoint_eq_P h_isRoot (Hereditary.of_mem_moves hg hgr))⟩
-      · simp_all
+      · simp_all only [
+        Player.forall, Subtype.forall, not_mem_moves_of_isEnd, IsEmpty.forall_iff, implies_true,
+        Player.neg_left]
   · intro hEnd
     apply hRnonempty.ne_empty
     simpa [t, R, ofSets_isEndLike_iff, isEnd_def] using
@@ -428,7 +432,9 @@ lemma downlinked_of_downlinkWitness_mem
           add_right_mem_moves_add hhl (rootedAdjoint r hl),
           not_winsGoingFirst_of_misereOutcome_P
             (misereOutcome_add_rootedAdjoint_eq_P h_isRoot (Hereditary.of_mem_moves hh hhl))⟩
-      · simp_all
+      · simp_all only [
+        Player.forall, Subtype.forall, not_mem_moves_of_isEnd, IsEmpty.forall_iff, implies_true,
+        Player.neg_right]
 
 /--
 If $G$ and $H$ are `RightSeparating`, then $\overline{H}$ and $\overline{G}$

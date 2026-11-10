@@ -200,7 +200,7 @@ theorem pf_misereOutcome_add_N_of_RTippingPoint_lt_LTippingPoint {g h : GameForm
   rw [hshift]
   rcases OutcomeStable.misereOutcome_of_add_RN hAgr hAhr hR hN with hc | hc
   · exact hc
-  · simp_all
+  · simp_all only [ge_iff_le, Outcome.le_R_iff, reduceCtorEq]
 
 /--
 If $\mathcal{A}$ is an outcome-stable and integer-invertible monoid, and $G, H

@@ -110,7 +110,7 @@ theorem liftSucc_zero : liftSucc (0 : AugmentedForm.{u}) = 0 := by
 @[simp]
 theorem not_hasTombstone_adjoint {p : Player} {g : AugmentedForm.{u}} : ¬hasTombstone p (g°) := by
   rw [adjoint_def]
-  split_ifs <;> simp
+  split_ifs <;> simp only [hasTombstone_ofSets, not_false_eq_true]
 
 @[simp]
 theorem liftSucc_adjoint (g : AugmentedForm.{u}) : liftSucc (g°) = (liftSucc g)° := by
