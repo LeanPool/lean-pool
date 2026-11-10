@@ -404,10 +404,8 @@ private theorem stripRegularizedOuter_integrable_of_exp_integrable
           Real.exp (a * z.re) * Real.exp ((-a) * y) := by
       rw [← Real.exp_add]
       congr 1
-      try dsimp [a]
       ring
     rw [hsplit]
-    try dsimp [Cpos]
     apply mul_right_comm
   have hnegfactor (y : ℝ) :
       Real.exp (-(Real.pi * (z.re - y) / (2 * ℓ))) / D =
@@ -417,10 +415,8 @@ private theorem stripRegularizedOuter_integrable_of_exp_integrable
           Real.exp (-a * z.re) * Real.exp (a * y) := by
       rw [← Real.exp_add]
       congr 1
-      try dsimp [a]
       ring
     rw [hsplit]
-    try dsimp [Cneg]
     apply mul_right_comm
   have hboundaryRight :
       ContinuousOn b (Ioi (0 : ℝ)) :=
@@ -896,22 +892,18 @@ private theorem stripPoissonKernel_le_center_of_lower
     unfold stripAngle
     linear_combination (mul_nonpos_of_nonneg_of_nonpos Real.pi_pos.le hnonpos / 2)
   have hq : 0 ≤ q := by
-    try dsimp [q]
     apply Real.cos_nonneg_of_mem_Icc
     exact ⟨by linarith only [Real.pi_pos, hangle], hhalf⟩
   have hqlt : q < 1 := by
-    try dsimp [q]
     have h := Real.cos_lt_cos_of_nonneg_of_le_pi
       (x := 0) (y := stripAngle σ)
       (by norm_num) hangle.2.le hangle.1
     simpa only [gt_iff_lt, Real.cos_zero] using! h
   have hc : 0 < c := by
-    try dsimp [c]
     linear_combination hqlt
   have hA : 0 < A := Real.cosh_pos _
   have hAone : 1 ≤ A := Real.one_le_cosh _
   have hcompare : c * A ≤ A - q := by
-    try dsimp [c]
     linear_combination (mul_nonneg hq (sub_nonneg.mpr hAone))
   have hsin : 0 < Real.sin (stripAngle σ) :=
     Real.sin_pos_of_pos_of_lt_pi hangle.1 hangle.2
@@ -1409,11 +1401,9 @@ private theorem harmonic_integerGammaBoundary_abs_le_linear
     |(k : ℝ) * Real.log (Real.pi * R ^ 2)|
   let A : ℝ := L + S + (k : ℝ) + 1
   have hS : 0 ≤ S := by
-    try dsimp [S]
     positivity
   have hL : 0 ≤ L := abs_nonneg _
   have hA : 0 ≤ A := by
-    try dsimp [A]
     positivity
   refine ⟨A, hA, ?_⟩
   intro x hx
@@ -1448,8 +1438,6 @@ private theorem harmonic_integerGammaBoundary_abs_le_linear
         ((j : ℝ) ^ 2 + (x / 2) ^ 2)))
   have hk : 0 ≤ (k : ℝ) := Nat.cast_nonneg k
   have hxpos : 0 ≤ x := by linear_combination hx
-  try dsimp [A, L]
-  try dsimp [L] at hL
   linarith only [mul_nonneg hL hxpos, mul_nonneg hS hxpos, mul_nonneg hk hxpos, hsum, habs, hxpos]
 
 private theorem harmonic_halfIntegerGammaBoundary_abs_le_linear
@@ -1546,9 +1534,6 @@ private theorem harmonic_halfIntegerGammaBoundary_abs_le_linear
   have hk : 0 ≤ (k : ℝ) := Nat.cast_nonneg k
   have hπ : 0 ≤ Real.pi := Real.pi_pos.le
   have hxn : 0 ≤ x := hxpos.le
-  try dsimp [A, L, Q]
-  try dsimp [L] at hL
-  try dsimp [Q] at hQ
   linarith only [htotal, hmain, hsum, hcorrhalf, mul_nonneg hL hxn, mul_nonneg hS hxn,
     mul_nonneg hk hxn, mul_nonneg hπ hxn, mul_nonneg hQ hxn, hk, hπ, hQ, hxn]
 
@@ -1782,12 +1767,10 @@ private theorem exists_stripPoissonKernel_uniform_abs_moment :
   have hcosh : 1 < Real.cosh (Real.pi / 2) :=
     Real.one_lt_cosh.mpr harg
   have hC : 0 < C := by
-    try dsimp [C]
     have hpositive := Real.cosh_pos (Real.pi / 2)
     have hinv := (inv_lt_one₀ hpositive).mpr hcosh
     exact one_div_pos.mpr (by linear_combination hinv)
   have hJ : 0 ≤ J := by
-    try dsimp [J]
     apply integral_nonneg
     intro T
     exact mul_nonneg
@@ -1796,13 +1779,11 @@ private theorem exists_stripPoissonKernel_uniform_abs_moment :
         (by norm_num : (0 : ℝ) < 1) T).le
       (abs_nonneg T)
   have hE : 0 ≤ E := by
-    try dsimp [E]
     apply integral_nonneg
     intro T
     unfold stripPoissonExponentialMajorant
     positivity
   have hM : 0 ≤ M := by
-    try dsimp [M]
     positivity
   refine ⟨M, hM, ?_⟩
   intro σ hbelow habove
@@ -1844,7 +1825,6 @@ private theorem exists_stripPoissonKernel_uniform_abs_moment :
               1 / (1 -
                 (Real.cosh (Real.pi * (1 : ℝ) / 2))⁻¹) =
                 C := by
-            try dsimp [C]
             congr 2
             ring_nf
           rw [hCeq] at hcompare
@@ -1892,7 +1872,6 @@ private theorem exists_stripPoissonKernel_uniform_abs_moment :
           integral_stripPoissonKernel hbelow habove
         _ ≤ 1 := (stripBottomMass_lt_one hbelow).le
     have hsplit := integral_add_compl hS hmoment
-    try dsimp [M]
     linarith only [hE, hfar, hnear, hsplit]
   · have hσnonneg : 0 ≤ σ := le_of_not_ge hσ
     have hmajor :=
@@ -1900,14 +1879,12 @@ private theorem exists_stripPoissonKernel_uniform_abs_moment :
     have hineq :
         (∫ T : ℝ,
           stripPoissonKernel σ T * |T|) ≤ E := by
-      try dsimp [E]
       apply integral_mono hmoment hmajor
       intro T
       apply mul_le_mul_of_nonneg_right
         (stripPoissonKernel_le_exponentialMajorant_of_nonneg
           hσnonneg habove T)
         (abs_nonneg T)
-    try dsimp [M]
     linarith only [mul_nonneg hC.le hJ, habove, hσ, hineq]
 
 private theorem lowerGammaBoundaryCapped_poisson_abs_le_linear
@@ -1931,7 +1908,6 @@ private theorem lowerGammaBoundaryCapped_poisson_abs_le_linear
     exists_stripPoissonKernel_uniform_abs_moment
   let B : ℝ := A * (1 + ℓ * M)
   have hB : 0 ≤ B := by
-    try dsimp [B]
     positivity
   refine ⟨B, hB, ?_⟩
   intro σ hbelow habove s
@@ -2015,7 +1991,6 @@ private theorem lowerGammaBoundaryCapped_poisson_abs_le_linear
         hmomentle (by exact (mul_nonneg_iff_of_pos_right hℓ).mpr hA : 0 ≤ A * ℓ)
       linear_combination (hfirst + hsecond)
     _ ≤ B * (1 + |s|) := by
-      try dsimp [B]
       linear_combination (mul_nonneg (show 0 ≤ A * ℓ * M by positivity) (abs_nonneg s))
 
 private theorem lowerStripCappedGammaOuter_abs_re_le_linear
@@ -2039,11 +2014,9 @@ private theorem lowerStripCappedGammaOuter_abs_re_le_linear
   have hzabove : z.im < ℓ := hz.2
   let σ : ℝ := z.im / ℓ
   have hσbelow : -1 < σ := by
-    try dsimp [σ]
     apply (lt_div_iff₀ hℓ).2
     simpa only [neg_mul, one_mul] using! hzbelow
   have hσabove : σ < 1 := by
-    try dsimp [σ]
     apply (div_lt_iff₀ hℓ).2
     simpa only [one_mul] using! hzabove
   have hzrep :
@@ -2095,10 +2068,8 @@ private theorem antiFourierWitness_cappedWeightedMellinStrip_growth
       hd w
   let c : ℝ := Real.pi / (4 * ℓ)
   have hc : 0 < c := by
-    try dsimp [c]
     positivity
   have hclt : c < Real.pi / (ℓ - (-ℓ)) := by
-    try dsimp [c]
     apply (div_lt_div_iff₀
       (by positivity : 0 < 4 * ℓ)
       (by linear_combination (2 * hℓ) : 0 < ℓ - (-ℓ))).2
@@ -2144,7 +2115,6 @@ private theorem antiFourierWitness_cappedWeightedMellinStrip_growth
               simpa only [add_comm] using!
                 Real.add_one_le_exp (c * |z.re|))
             (by positivity)
-    try dsimp [B]
     calc
       G * (1 + |z.re|) ≤
           G * ((1 + 1 / c) *
@@ -2238,7 +2208,6 @@ private theorem harmonic_bottom_far_joint_tendsto_zero
   have hcosh : 1 < Real.cosh (Real.pi * δ / 2) :=
     Real.one_lt_cosh.mpr hδarg
   have hC : 0 < C := by
-    try dsimp [C]
     have hpositive := Real.cosh_pos (Real.pi * δ / 2)
     have hinv := (inv_lt_one₀ hpositive).mpr hcosh
     exact one_div_pos.mpr (by linear_combination hinv)
@@ -2443,7 +2412,6 @@ private theorem harmonic_bottom_joint_tendsto_zero_of_zero
       (ε / 2) hhalf
   let δ : ℝ := η / (2 * ℓ)
   have hδ : 0 < δ := by
-    try dsimp [δ]
     positivity
   let S : Set ℝ := {T : ℝ | δ ≤ |T|}
   have hS : MeasurableSet S :=
@@ -2535,7 +2503,6 @@ private theorem harmonic_bottom_joint_tendsto_zero_of_zero
             exact hT (show T ∈ S from hge)
           exact lt_of_not_ge hnot
         have hscaled : ℓ * |T| < η / 2 := by
-          try dsimp [δ] at hTsmall
           have hm := mul_lt_mul_of_pos_left
             hTsmall hℓ
           have heq : ℓ * (η / (2 * ℓ)) =
@@ -2952,7 +2919,6 @@ private theorem exists_antiFourierWitness_eventually_capped_bottom_majorant
     antiFourierWitness_normalizedMellinStrip_uniform_bound hd w
   let D₀ : ℝ := Real.log (C + 1)
   have hD₀ : Real.exp D₀ = C + 1 := by
-    try dsimp [D₀]
     apply Real.exp_log
     linear_combination hC
   refine ⟨D₀, ?_⟩
@@ -5162,7 +5128,6 @@ private theorem exists_lowerStripPoissonMajorant_uniform_negative
   have hA : A < 0 := hσnegative
   let γ : ℝ := -(stripBottomMass σ * A) / 2
   have hγ : 0 < γ := by
-    try dsimp [γ]
     linear_combination (mul_neg_of_pos_of_neg hmass hA / 2)
   have hscale : Tendsto
       (fun d : ℕ => (d : ℝ) / 2) atTop atTop := by
@@ -5200,7 +5165,6 @@ private theorem exists_lowerStripPoissonMajorant_uniform_negative
     _ ≤ ((d : ℝ) / 2) * stripBottomMass σ * A +
       lowerRiemannPoissonError σ := hbound
     _ ≤ -γ * ((d : ℝ) / 2) := by
-      try dsimp [γ] at hderr ⊢
       linear_combination hderr
 
 private theorem lowerCoth_log_half_le_of_one_le_abs
@@ -5325,7 +5289,6 @@ private theorem lowerGammaScaledPositivePart_poisson_exponential_tail
       Real.exp (-(Real.pi / 2) * (S - C))
   have hE : 0 ≤ E := by
     apply (mul_nonneg_iff_of_pos_right hC).mp
-    try dsimp [E]
     exact mul_nonneg
       (mul_nonneg
         (mul_nonneg (stripBottomMass_pos hσone).le
@@ -5376,7 +5339,6 @@ private theorem lowerGammaScaledPositivePart_poisson_exponential_tail
                     (by positivity)
                 · exact (stripBottomMass_pos hσone).le
             _ = E := by
-              try dsimp [E]
               (symm; apply mul_assoc)
         exact mul_le_mul_of_nonneg_right hkernel
           (le_max_right _ _)
@@ -6290,7 +6252,6 @@ private theorem lowerStripCappedPoisson_tendsto_radius
     Real.sqrt_pos.mpr hdreal
   let c : ℝ := R / Real.sqrt (d : ℝ)
   have hrad : c * Real.sqrt (d : ℝ) = R := by
-    try dsimp [c]
     exact div_mul_cancel₀ R hsqrt.ne'
   have h := lowerStripCappedPoisson_tendsto
     (c := c) hd hσbelow hσabove s
@@ -6947,6 +6908,7 @@ private theorem radialFlatBump_radial (d : ℕ) : IsRadial (radialFlatBump d) :=
 
 private theorem integral_radialFlatBumpReal_pos (d : ℕ) :
     0 < ∫ x : Euclidean d, radialFlatBumpReal d x := by
+  let : MeasureSpace (Euclidean d) := inferInstance
   apply integral_pos_of_integrable_nonneg_nonzero
     (show Continuous (radialFlatBumpReal d) by
       unfold radialFlatBumpReal
@@ -6966,6 +6928,8 @@ private theorem fourier_conj_apply_of_real {d : ℕ} (f : TestFunction d)
     (hf : IsRealValued f) (ξ : Euclidean d) :
     starRingEnd ℂ ((𝓕 f : TestFunction d) ξ) =
       ((𝓕 f : TestFunction d) (-ξ)) := by
+  let : FourierTransform (TestFunction d) (TestFunction d) := inferInstance
+  let : FourierTransform (Euclidean d → ℂ) (Euclidean d → ℂ) := inferInstance
   change starRingEnd ℂ ((𝓕 (f : Euclidean d → ℂ)) ξ) =
     (𝓕 (f : Euclidean d → ℂ)) (-ξ)
   rw [Real.fourier_eq', Real.fourier_eq', ← integral_conj]
@@ -7018,6 +6982,9 @@ private theorem fourier_radialAutocorrelation_nonneg (d : ℕ) (ξ : Euclidean d
 private theorem fourier_radialFlatBump_zero (d : ℕ) :
     ((𝓕 (radialFlatBump d) : TestFunction d) (0 : Euclidean d)) =
       (↑(∫ x : Euclidean d, radialFlatBumpReal d x) : ℂ) := by
+  let : MeasureSpace (Euclidean d) := inferInstance
+  let : FourierTransform (TestFunction d) (TestFunction d) := inferInstance
+  let : FourierTransform (Euclidean d → ℂ) (Euclidean d → ℂ) := inferInstance
   change (𝓕 (radialFlatBump d : Euclidean d → ℂ)) 0 = _
   rw [Real.fourier_eq']
   simpa only [neg_mul, inner_zero_right, mul_zero, Complex.ofReal_zero, zero_mul, Complex.exp_zero,
@@ -7084,6 +7051,7 @@ private theorem radialAutocorrelation_outside_eq_zero (d : ℕ)
 
 private theorem radialAutocorrelation_real (d : ℕ) :
     IsRealValued (radialAutocorrelation d) := by
+  let : MeasureSpace (Euclidean d) := inferInstance
   intro x
   rw [radialAutocorrelation, SchwartzMap.convolution_apply,
     MeasureTheory.convolution_def]
@@ -7455,13 +7423,11 @@ private theorem saddleSmallRadiusStarOrdinate_sourceScale
       ((d : ℝ) / 2) * (1 + u) := by
   let ℓ : ℝ := (d : ℝ) / 2
   have hℓ : 0 < ℓ := by
-    try dsimp [ℓ]
     positivity
   have hstar :
       ℓ * (1 + saddleSmallRadiusStarOrdinate d) =
         Real.log ℓ / 4 := by
     unfold saddleSmallRadiusStarOrdinate
-    try dsimp [ℓ]
     field_simp [hℓ.ne']
     ring
   change Real.log ℓ / 4 ≤ ℓ * (1 + u)
@@ -7577,10 +7543,8 @@ private theorem eventually_plusSaddleProfile_re_pos_at_secondBranchSaddles :
   intro u hu
   let δ : ℝ := u - 1
   have hδ : ε / 2 ≤ δ := by
-    try dsimp [δ]
     linear_combination hu
   have hidentity : 1 + δ = u := by
-    try dsimp [δ]
     apply add_sub_cancel
   have hulower : -1 < u := by linarith only [hε, hu]
   have hℓ : 0 < (d : ℝ) / 2 := by positivity
@@ -7624,10 +7588,8 @@ private theorem eventually_minusSaddleProfile_re_neg_at_secondBranchSaddles :
   intro u hu
   let δ : ℝ := u - 1
   have hδ : ε / 2 ≤ δ := by
-    try dsimp [δ]
     linear_combination hu
   have hidentity : 1 + δ = u := by
-    try dsimp [δ]
     apply add_sub_cancel
   have hulower : -1 < u := by linarith only [hε, hu]
   have huminus : 1 + ε / 4 ≤ u := by linarith only [hε, hu]

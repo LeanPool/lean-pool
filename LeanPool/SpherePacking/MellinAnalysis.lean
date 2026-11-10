@@ -569,7 +569,6 @@ private theorem saddleGaussianPoleWeightedRepresentative_eq_pole_add_correction
   have hslope :=
     sub_smul_dslope (saddleMellinInversePower r) p z
   have hcoordinate : z - p = q := by
-    try dsimp [p, q]
     apply sub_neg_eq_add
   rw [hcoordinate, smul_eq_mul] at hslope
   have hdiv :
@@ -2636,6 +2635,7 @@ private theorem radialProfile_re_weight_integrable {d : ℕ} (hd : 0 < d)
     IntegrableOn
       (fun r : ℝ => r ^ (d - 1) * (radialProfile hd g r).re)
       (Ioi 0) := by
+  let : MeasureSpace (Euclidean d) := inferInstance
   let : Nonempty (Fin d) := Fin.pos_iff_nonempty.mp hd
   have hre :
       Integrable
@@ -2655,6 +2655,7 @@ private theorem integral_radialProfile_re {d : ℕ} (hd : 0 < d)
       radialSurfaceArea d *
         ∫ r : ℝ in Ioi 0,
           r ^ (d - 1) * (radialProfile hd g r).re := by
+  let : MeasureSpace (Euclidean d) := inferInstance
   let : Nonempty (Fin d) := Fin.pos_iff_nonempty.mp hd
   calc
     (∫ x : Euclidean d, (g x).re) =
@@ -2710,6 +2711,7 @@ private theorem integral_normalizedRadialLogProfile {d : ℕ} (hd : 0 < d)
     {R : ℝ} (hR : 0 < R) :
     (∫ v : ℝ, normalizedRadialLogProfile hd g R v) =
       (∫ x : Euclidean d, (g x).re) / radialL1Mass g := by
+  let : MeasureSpace (Euclidean d) := inferInstance
   calc
     (∫ v : ℝ, normalizedRadialLogProfile hd g R v) =
         ∫ v : ℝ,
@@ -2806,6 +2808,8 @@ private theorem integral_re_eq_zero_of_antiFourier {d : ℕ}
     (hanti : (𝓕 g : TestFunction d) = -g)
     (hzero : g (0 : Euclidean d) = 0) :
     (∫ x : Euclidean d, (g x).re) = 0 := by
+  let : FourierTransform (TestFunction d) (TestFunction d) := inferInstance
+  let : FourierTransform (Euclidean d → ℂ) (Euclidean d → ℂ) := inferInstance
   let : MeasureSpace (EuclideanSpace ℝ (Fin d)) := inferInstance
   have hfourierzero :
       ((𝓕 g : TestFunction d) (0 : Euclidean d)) = 0 := by
@@ -2872,7 +2876,6 @@ private theorem antiFourierWitness_normalizedRadialLogProfile
       (∫ v : ℝ, φ v) = 0 ∧
       (∫ v : ℝ, |φ v|) = 1 ∧
       (∀ v : ℝ, 0 ≤ v → 0 ≤ φ v) := by
-  try dsimp
   refine ⟨normalizedRadialLogProfile_integrable
       hd w.function w.radial hR, ?_, ?_, ?_⟩
   · exact integral_normalizedRadialLogProfile_eq_zero_of_antiFourier
@@ -3053,7 +3056,6 @@ private theorem radialMellinStrip_differentiableAt {d : ℕ}
       hd f hf hzero
       ((d : ℂ) / 2 - Complex.I * z) hs
   have hinner : DifferentiableAt ℂ A z := by
-    try dsimp [A]
     fun_prop
   have hcomp : DifferentiableAt ℂ (F ∘ A) z :=
     houter.comp z hinner
@@ -3136,6 +3138,7 @@ private theorem norm_schwartz_imaginaryRiesz_integral_le_L1 {d : ℕ}
     ‖∫ x : Euclidean d,
       f x * (‖x‖ : ℂ) ^ (-(Complex.I * (t : ℂ)))‖ ≤
       radialL1Mass f := by
+  let : MeasureSpace (Euclidean d) := inferInstance
   calc
     ‖∫ x : Euclidean d,
       f x * (‖x‖ : ℂ) ^ (-(Complex.I * (t : ℂ)))‖ ≤
@@ -3238,6 +3241,7 @@ private theorem radial_fourier_mellin_regularized_closed {d : ℕ}
       (Real.pi : ℂ) ^ ((d : ℂ) / 2 - s) *
         (mellin (radialProfile hd f) ((d : ℂ) - s) *
           (Complex.Gamma (((d : ℂ) - s) / 2))⁻¹) := by
+  let : FourierTransform (TestFunction d) (TestFunction d) := inferInstance
   let U : Set ℂ := Complex.re ⁻¹' Ioo (0 : ℝ) (d : ℝ)
   let T : Set ℂ := Complex.re ⁻¹' Icc (0 : ℝ) (d : ℝ)
   let L : ℂ → ℂ := fun w =>
@@ -3326,6 +3330,7 @@ private theorem radial_fourier_mellin_antifourier_boundary {d : ℕ}
         Complex.Gamma (-(Complex.I * (y : ℂ)) / 2) *
         mellin (radialProfile hd f)
           ((d : ℂ) + Complex.I * (y : ℂ))) := by
+  let : FourierTransform (TestFunction d) (TestFunction d) := inferInstance
   let s : ℂ := -(Complex.I * (y : ℂ))
   have hhatZero :
       (𝓕 f : TestFunction d) (0 : Euclidean d) = 0 := by
@@ -3964,7 +3969,6 @@ private theorem normalizedRadialLogProfile_weighted_integrable {d : ℕ}
         (normalizedRadialLogProfile hd f R v : ℂ)) := by
   let κ : ℝ := (d : ℝ) - a
   have hκ : -2 < κ := by
-    try dsimp [κ]
     linear_combination ha
   have hconv : MellinConvergent
       (radialProfile hd f) (κ : ℂ) := by
@@ -4024,7 +4028,6 @@ private theorem normalizedRadialLogProfile_weighted_integrable {d : ℕ}
   filter_upwards [] with v
   rw [normalizedRadialLogProfile_weighted_ofReal
     hd f hreal R a v]
-  try dsimp [κ]
   (symm; apply mul_assoc)
 
 private theorem integrable_fourier_of_integrable_two_derivatives
@@ -4038,7 +4041,6 @@ private theorem integrable_fourier_of_integrable_two_derivatives
   let D : ℝ := ∫ v : ℝ, ‖deriv (deriv g) v‖
   let p : ℝ := 2 * Real.pi
   have hp : 0 < p := by
-    try dsimp [p]
     exact Real.two_pi_pos
   have hcont : Continuous (𝓕 g : ℝ → ℂ) := by
     exact VectorFourier.fourierIntegral_continuous
@@ -4060,7 +4062,6 @@ private theorem integrable_fourier_of_integrable_two_derivatives
   have hcoef (t : ℝ) :
       ‖(2 * (Real.pi : ℂ) * Complex.I * (t : ℂ)) ^ 2‖ =
         p ^ 2 * t ^ 2 := by
-    try dsimp [p]
     simp only [norm_pow, Complex.norm_mul, Complex.norm_ofNat, Complex.norm_real, Real.norm_eq_abs,
       abs_of_pos Real.pi_pos, Complex.norm_I, mul_one]
     rw [mul_pow, sq_abs]
@@ -4363,7 +4364,6 @@ private theorem normalizedRadialLogProfile_weighted_fourier_integrable
   let c : ℂ :=
     ((radialSurfaceArea d / radialL1Mass f * R ^ d : ℝ) : ℂ)
   have hκ : 0 < κ := by
-    try dsimp [κ]
     linear_combination ha
   have hweight :
       (fun v : ℝ =>
@@ -5290,16 +5290,12 @@ private theorem stripRegularizedHolomorphicPoissonKernelDeriv_local_bound
   let Cpos : ℝ := Real.pi * Real.exp (a * (z.re + 1)) / D
   let Cneg : ℝ := Real.pi * Real.exp (-a * (z.re - 1)) / D
   have ha : 0 < a := by
-    try dsimp [a]
     exact div_pos Real.pi_pos (mul_pos (by norm_num) hℓ)
   have hsin0 : 0 < sin0 := by
-    try dsimp [sin0, A]
     exact Real.sin_pos_of_pos_of_lt_pi hangle hangle'
   have hD : 0 < D := by
-    try dsimp [D]
     positivity
   have hA : Continuous A := by
-    try dsimp [A]
     exact Continuous.comp' Real.continuous_sin
         (Continuous.comp' (Continuous.div_const continuous_id' (2 * ℓ))
           (Continuous.const_mul (Continuous.add_const Complex.continuous_im ℓ) Real.pi))
@@ -5313,10 +5309,8 @@ private theorem stripRegularizedHolomorphicPoissonKernelDeriv_local_bound
     change sin0 / 2 < sin0
     linear_combination (hsin0 / 2)
   have hCpos : 0 ≤ Cpos := by
-    try dsimp [Cpos]
     positivity
   have hCneg : 0 ≤ Cneg := by
-    try dsimp [Cneg]
     positivity
   refine ⟨Metric.ball z 1 ∩
       (Complex.im ⁻¹' Ioo (-ℓ) ℓ) ∩
@@ -5340,7 +5334,6 @@ private theorem stripRegularizedHolomorphicPoissonKernelDeriv_local_bound
   have hden :
       D ≤ 4 * ℓ ^ 2 *
         Real.sin (Real.pi * (w.im + ℓ) / (2 * ℓ)) ^ 2 := by
-    try dsimp [D]
     apply mul_le_mul_of_nonneg_left _ (by positivity)
     exact
       (sq_le_sq₀ (by positivity) (le_trans
@@ -5354,7 +5347,6 @@ private theorem stripRegularizedHolomorphicPoissonKernelDeriv_local_bound
       calc
         Real.pi * (w.re - y) / (2 * ℓ) =
             a * (w.re - y) := by
-          try dsimp [a]
           apply mul_right_comm
         _ ≤ a * (z.re + 1 - y) :=
           mul_le_mul_of_nonneg_left (by linear_combination hreupper) ha.le
@@ -5376,7 +5368,6 @@ private theorem stripRegularizedHolomorphicPoissonKernelDeriv_local_bound
           congr 1
           ring
         rw [hsplit]
-        try dsimp [Cpos]
         ring
       _ ≤ (Cpos + Cneg) *
           Real.exp (-(Real.pi / (2 * ℓ)) * |y|) := by
@@ -5394,7 +5385,6 @@ private theorem stripRegularizedHolomorphicPoissonKernelDeriv_local_bound
       calc
         -(Real.pi * (w.re - y) / (2 * ℓ)) =
             -(a * (w.re - y)) := by
-          try dsimp [a]
           ring
         _ ≤ -(a * (z.re - 1 - y)) := by
           apply neg_le_neg
@@ -5419,7 +5409,6 @@ private theorem stripRegularizedHolomorphicPoissonKernelDeriv_local_bound
           congr 1
           ring
         rw [hsplit]
-        try dsimp [Cneg]
         ring
       _ ≤ (Cpos + Cneg) *
           Real.exp (-(Real.pi / (2 * ℓ)) * |y|) := by
@@ -6548,10 +6537,8 @@ private theorem lowerStripGammaOuter_integrable_of_exp_integrable
           Real.exp (a * z.re) * Real.exp ((-a) * y) := by
       rw [← Real.exp_add]
       congr 1
-      try dsimp [a]
       ring
     rw [hsplit]
-    try dsimp [Cpos]
     apply mul_right_comm
   have hnegfactor (y : ℝ) :
       Real.exp (-(Real.pi * (z.re - y) / (2 * ℓ))) / D =
@@ -6561,10 +6548,8 @@ private theorem lowerStripGammaOuter_integrable_of_exp_integrable
           Real.exp (-a * z.re) * Real.exp (a * y) := by
       rw [← Real.exp_add]
       congr 1
-      try dsimp [a]
       ring
     rw [hsplit]
-    try dsimp [Cneg]
     apply mul_right_comm
   have hgammaRight :
       ContinuousOn (lowerGammaBoundaryLog ℓ R) (Ioi (0 : ℝ)) :=
@@ -7167,8 +7152,6 @@ private theorem lowerCoth_log_abs_integrable :
                   3 * (Real.exp ((-1 : ℝ) * |y|) *
                     |Real.log (|y|)|)) := by
           ring
-        try dsimp [A] at hsmallbound ⊢
-        try dsimp [A] at hproduct hrewrite
         linear_combination hfar_nonneg + hsmallbound + hproduct
       · have hylarge : 1 < |y| := lt_of_not_ge hsmall
         have harg : 1 ≤ Real.pi * |y| / 2 := by
@@ -7879,7 +7862,6 @@ private theorem exists_lowerGammaScaledPositivePart_uniform_bound
   have hB : 1 ≤ B := le_max_left 1 _
   have hC : B ≤ C := le_max_left _ _
   have hK : 0 ≤ K := by
-    try dsimp [K]
     apply integral_nonneg
     intro Y
     by_cases hY : Y = 0

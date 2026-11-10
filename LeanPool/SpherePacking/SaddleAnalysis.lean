@@ -927,7 +927,6 @@ private theorem saddleSmallResidue_coefficient_le_majorant
   let Y : ℝ := Real.log ℓ / 8 + C
   have hℓpos : 0 < ℓ := lt_of_lt_of_le zero_lt_one hℓ
   have hY : 0 ≤ Y := by
-    try dsimp [Y]
     exact add_nonneg
       (div_nonneg (Real.log_nonneg hℓ)
         (by norm_num)) hC
@@ -943,7 +942,6 @@ private theorem saddleSmallResidue_coefficient_le_majorant
       _ = Real.exp
           (2 * C - (3 / 4 : ℝ) * Real.log ℓ) := by
         congr 1
-        try dsimp [Y]
         ring
   calc
     (K / ℓ) *
@@ -1195,7 +1193,6 @@ private theorem eventually_plusSaddleSmallRadius_relativeFiniteResidue_lt_half_o
   filter_upwards [hdimension, hstar]
     with d hres hcut
   intro r hr hrstar
-  try dsimp
   exact hres (saddleSmallRadiusVariable ε r)
     (saddleSmallRadiusVariable_nonneg ε r)
     (hcut r hr hrstar)
@@ -1339,7 +1336,6 @@ private theorem saddleNegative_relativeGammaTail_le_majorant
   let N : ℕ := saddleSmallResidueTruncation ℓ
   let Y : ℝ := Real.log ℓ / 8 + C
   have hY : 0 ≤ Y := by
-    try dsimp [Y]
     exact add_nonneg
       (div_nonneg (Real.log_nonneg hℓ) (by norm_num)) hC
   have hΓ : 0 < Real.Gamma (3 / 2 : ℝ) :=
@@ -1405,7 +1401,6 @@ private theorem saddleNegative_relativeGammaTail_le_majorant
         (mul_nonneg (div_nonneg hKε hΓ.le) (add_nonneg zero_le_one hY))
     _ = saddleNegativeRelativeGammaTailMajorant C K Kε ℓ := by
       unfold saddleNegativeRelativeGammaTailMajorant
-      try dsimp [N, Y, E]
       ring
 
 private theorem tendsto_saddleNegativeTruncation_odd_sq_div :
@@ -1913,7 +1908,6 @@ private theorem upperGammaPositiveShifted_log_norm_eq_neg_damping
   let m : ℝ := ℓ * η / 2
   let b : ℝ := ℓ * T / 2
   have hm : 0 < m := by
-    try dsimp [m]
     positivity
   have hfinite :
       (fun n : ℕ =>
@@ -2009,7 +2003,6 @@ private theorem upperGammaShifted_modulus_eq_exp_neg_damping
   let m : ℝ := ℓ * η / 2
   let b : ℝ := ℓ * T / 2
   have hm : 0 < m := by
-    try dsimp [m]
     positivity
   have hΓ : 0 < Real.Gamma m :=
     Real.Gamma_pos_of_pos hm
@@ -2152,7 +2145,6 @@ private theorem upperPositiveHalfGamma_scaled_sq_le
   | succ n ih =>
       let q : ℝ := (n : ℝ) + 1 / 2
       have hq : 0 < q := by
-        try dsimp [q]
         positivity
       have hreal :
           Real.Gamma (((n + 1 : ℕ) : ℝ) + 1 / 2) =
@@ -2305,7 +2297,6 @@ private theorem upperNegativeContour_shortDamping_le_gamma
   let a₀ : ℝ := (ε ^ 3)
   let A : ℝ := (10 * Real.log (1 / ε))
   have ha₀ : 0 < a₀ := by
-    try dsimp [a₀]
     exact pow_pos hε 3
   have hfactor : 0 ≤ 1 - 4 * ε := by linear_combination (4 * hεsmall)
   have hsubset : Ioc a₀ A ⊆ Ioi (0 : ℝ) := by
@@ -2932,7 +2923,6 @@ private theorem upperNegativeContour_gamma_mul_shellExponential_le
     have h := upperShortShellDamping_neg_frequency
       ε ℓ δ T
     have hfreq : -T = -(-s) / ℓ := by
-      try dsimp [T]
       (symm; apply neg_mul)
     rw [hfreq] at h
     exact h
@@ -2953,7 +2943,6 @@ private theorem upperNegativeContour_gamma_mul_shellExponential_le
               Real.exp (-ε * Real.pi * |s|) := by
       simpa only [neg_mul, neg_neg, abs_neg] using! hgamma
     have hfreq : s / ℓ = -T := by
-      try dsimp [T]
       ring
     rw [hfreq, upperShortShellDamping_neg_frequency] at h
     exact h
@@ -3251,7 +3240,6 @@ private theorem plusSaddleTaylorRemainder_negativeContour_bound
     plusSaddleMellinData_negativeContour_integral_norm_le
       hε hεsmall hℓ N hN horder hmargin
   have hc : ‖c‖ = 1 / (2 * Real.pi) := by
-    try dsimp [c]
     rw [Complex.norm_real, Real.norm_eq_abs,
       abs_of_pos (by positivity : 0 < 1 / (2 * Real.pi))]
   unfold plusSaddleTaylorRemainder
@@ -3306,7 +3294,6 @@ private theorem saddleSmallRadiusVariable_sqrt_eq_source
   let q : ℝ := r * Real.exp
     (Real.log Real.pi / 2 + saddleShellDerivativeOne ε)
   have hq : 0 ≤ q := by
-    try dsimp [q]
     positivity
   have he :
       Real.exp
@@ -3319,7 +3306,6 @@ private theorem saddleSmallRadiusVariable_sqrt_eq_source
         Real.log Real.pi + 2 * saddleShellDerivativeOne ε by ring,
       Real.exp_add, Real.exp_log Real.pi_pos]
   have hsq : q ^ 2 = saddleSmallRadiusVariable ε r := by
-    try dsimp [q]
     rw [mul_pow, he]
     unfold saddleSmallRadiusVariable
     apply mul_comm
@@ -3353,7 +3339,6 @@ private theorem saddleSmallRadiusVariable_halfIntegerFactor
             (Real.log Real.pi / 2 + saddleShellDerivativeOne ε) =
           Real.log Real.pi + 2 * saddleShellDerivativeOne ε by ring,
         Real.exp_add, Real.exp_log Real.pi_pos]
-    try dsimp [q]
     rw [mul_pow, he]
     unfold saddleSmallRadiusVariable
     apply mul_comm
@@ -3670,12 +3655,10 @@ private theorem eventually_plusSaddleTaylorRemainder_relative_lt_half_on_star
   filter_upwards [hstar, htaildim, hdepth,
     eventually_gt_atTop (0 : ℕ)] with d hcut htaild hNd hd
   intro r hr hrstar
-  try dsimp
   let ℓ : ℝ := (d : ℝ) / 2
   let N : ℕ := saddleSmallResidueTruncation ℓ
   let y : ℝ := saddleSmallRadiusVariable ε r
   have hℓ : 0 < ℓ := by
-    try dsimp [ℓ]
     positivity
   have hy : 0 ≤ y := saddleSmallRadiusVariable_nonneg ε r
   have hyupper : y ≤ Real.log ℓ / 8 + C := by
@@ -5921,10 +5904,8 @@ private theorem upperFirstBranch_shortVariance_le_gamma
   let γ : ℝ → ℝ := fun a =>
     a ^ 2 * upperGammaMeasureDensity ℓ η a
   have hη : 0 < η := by
-    try dsimp [η]
     linear_combination (hulower)
   have ha₀ : 0 < a₀ := by
-    try dsimp [a₀]
     exact pow_pos hε 3
   have hfactor : 0 ≤ 1 - 4 * ε := by
     linear_combination (4 * hεsmall)
@@ -5982,7 +5963,6 @@ private theorem upperFirstBranch_shortVariance_le_gamma
       0 ≤ᵐ[volume.restrict (Ioi (0 : ℝ))] γ := by
     filter_upwards [ae_restrict_mem measurableSet_Ioi]
       with a ha
-    try dsimp [γ]
     exact mul_nonneg (sq_nonneg a)
       (upperGammaMeasureDensity_pos hℓ ha).le
   have haesubset :
@@ -6030,7 +6010,6 @@ private theorem upperFirstBranch_shortVariance_le_gamma
           (inv_pos.mpr hℓ).le
     _ = (1 - 4 * ε) * upperGammaVariance ℓ (1 + u) := by
       unfold upperGammaVariance
-      try dsimp [γ, η]
       apply mul_left_comm
 
 private theorem upperFirstBranch_saddleSourceGaussianVariance_lower_bound
@@ -6595,7 +6574,6 @@ private theorem saddleSourceWeightedCosineQuadraticRemainder_norm_le
     (hw.mul (continuous_id.pow 3).continuousOn).mul
       (by fun_prop)
   have hg : IntervalIntegrable g volume b c := by
-    try dsimp [g]
     exact (continuousOn_const.mul hbase).intervalIntegrable_of_Icc
       hbc
   have hpoint (a : ℝ) (ha : a ∈ Ioc b c) :
@@ -6616,7 +6594,6 @@ private theorem saddleSourceWeightedCosineQuadraticRemainder_norm_le
                 a u T)
               hwa
       _ = g a := by
-        try dsimp [g]
         rw [abs_mul, abs_of_nonneg haa]
         ring
   calc
@@ -6631,7 +6608,6 @@ private theorem saddleSourceWeightedCosineQuadraticRemainder_norm_le
     _ = (|T| ^ 3 / 6) *
       ∫ a in b..c,
         w a * a ^ 3 * Real.cosh (u * a) := by
-        try dsimp [g]
         rw [intervalIntegral.integral_const_mul]
 
 private theorem saddleSourcePositiveShellQuadraticRemainder_norm_le
@@ -6948,7 +6924,6 @@ private theorem saddleSourceShellQuadraticRemainder_eq
       (realHyperbolicShellPhase ε u : ℂ) = Hs + Hp := by
     rw [← mellinShellPhase_imaginary]
     unfold mellinShellPhase
-    try dsimp [Hs, Hp]
     congr 1
     · apply intervalIntegral.integral_congr
       intro a ha
@@ -7115,7 +7090,6 @@ private theorem upperImaginaryExp_centered_norm_le
       x ^ 2 / 2 + |x| ^ 3 / 6 := by
   let q : ℂ := ((x ^ 2 / 2 : ℝ) : ℂ)
   have hq : ‖q‖ = x ^ 2 / 2 := by
-    try dsimp [q]
     rw [Complex.norm_real, Real.norm_eq_abs,
       abs_of_nonneg (by positivity)]
   calc
@@ -7130,7 +7104,6 @@ private theorem upperImaginaryExp_centered_norm_le
       norm_sub_le _ _
     _ ≤ |x| ^ 3 / 6 + x ^ 2 / 2 := by
       rw [hq]
-      try dsimp [q]
       exact add_le_add
         (upperImaginaryExp_quadratic_remainder_norm_le x)
         (le_refl _)
