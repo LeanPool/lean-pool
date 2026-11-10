@@ -17,6 +17,13 @@ import LeanPool.ZhangYeungInequality.PFR.Mathlib.Probability.Independence.Basic
 # Bounding the mutual information
 -/
 
+-- Avoid repeated searches for empty or singleton types during simplification.
+attribute [-simp] IsEmpty.forall_iff Finset.univ_eq_empty forall_const
+  Function.const_inj Function.const_eq_zero Function.const_eq_one Set.range_const
+  exists_const IsEmpty.exists_iff add_eq_zero mul_eq_one
+  ProbabilityTheory.iIndepFun.of_subsingleton ProbabilityTheory.iIndep.of_subsingleton
+  ProbabilityTheory.iIndepSets.of_subsingleton
+
 open scoped ZhangYeungPFR
 
 
@@ -32,8 +39,8 @@ lemma multiDist_of_cast {m m' : ℕ} (h : m' = m) {Ω : Fin m → Type*}
     congr 1
     · apply IdentDistrib.entropy_congr
       refine {
-        aemeasurable_fst := by fun_prop
-        aemeasurable_snd := by fun_prop
+        aemeasurable_fst := .of_discrete
+        aemeasurable_snd := .of_discrete
         map_eq := ?_
        }
       have : (fun (x: Fin m' → G) ↦ ∑ i, x i) =
@@ -106,6 +113,7 @@ private lemma row_entropy_le {G Ωₒ : Type u} [MeasurableFinGroup G] [MeasureS
     (one : Fin p.m) (i : Fin p.m) :
     let V : Fin p.m → Ω' → G := fun i ω ↦ ∑ j, X' (i, j) ω
     H[V i] ≤ H[∑ j, X j] + ∑ j, d[X' (i, j) # X' (i, j)] := by
+  have : DiscreteMeasurableSpace G := inferInstance
   have hm := p.hm
   have _ : NeZero p.m := by rw [neZero_iff]; omega
   dsimp only
@@ -122,13 +130,13 @@ private lemma row_entropy_le {G Ωₒ : Type u} [MeasurableFinGroup G] [MeasureS
     convert hIndependent with i
     · exact IdentDistrib.map_eq hident_X
     apply IdentDistrib.map_eq
-    exact hident_X.comp (u := fun x ↦ x i) (by fun_prop)
+    exact hident_X.comp (u := fun x ↦ x i) (measurable_pi_apply i)
   have hindep_Z' : iIndepFun Z' ℙ := by
     rw [iIndepFun_iff_map_fun_eq_pi_map] at hIndependent' ⊢ <;> try fun_prop
     convert hIndependent' with i
     · exact IdentDistrib.map_eq hident_X'
     apply IdentDistrib.map_eq
-    exact hident_X'.comp (u := fun x ↦ x i) (by fun_prop)
+    exact hident_X'.comp (u := fun x ↦ x i) (measurable_pi_apply i)
   have hindep_all : iIndepFun (Sum.elim Z Z') ℙ :=
     hindep_Z.sum_elim ℙ hindep_Z' h_indep_XX_XX'
   let s : Finset (Fin p.m ⊕ (Fin p.m × Fin p.m)) := Finset.image Sum.inl Finset.univ
@@ -164,13 +172,13 @@ private lemma row_entropy_le {G Ωₒ : Type u} [MeasurableFinGroup G] [MeasureS
     simp only [Finset.mem_univ, Sum.elim_inr, Sum.elim_inl, forall_const, f]
     intro j
     have hident_1 : IdentDistrib (X' (i, j)) (Z' (i, j)) ℙ ℙ := by
-      exact hident_X'.symm.comp (u := fun x ↦ x (i, j)) (by fun_prop)
+      exact hident_X'.symm.comp (u := fun x ↦ x (i, j)) (measurable_pi_apply (i, j))
     have hident_2 : IdentDistrib (Z' (i, j)) (Z ((e j) i)) ℙ ℙ := by
       apply hident_1.symm.trans
       have h1 : IdentDistrib (X ((e j) i)) (Z ((e j) i)) ℙ ℙ := by
-        exact hident_X.symm.comp (u := fun x ↦ x ((e j) i)) (by fun_prop)
+        exact hident_X.symm.comp (u := fun x ↦ x ((e j) i)) (measurable_pi_apply ((e j) i))
       have h2 : IdentDistrib (X' (i, j)) (X ((e j) i)) ℙ ℙ := by
-        exact (he j).comp (u := fun x ↦ x i) (by fun_prop)
+        exact (he j).comp (u := fun x ↦ x i) (measurable_pi_apply i)
       exact h2.trans h1
     calc
       _ = d[Z' (i, j) # Z ((e j) i)] :=
@@ -202,6 +210,8 @@ private lemma conditional_self_rdist_le {G Ω : Type u} [MeasurableFinGroup G]
     (hIndependent : iIndepFun X) (i j : Fin m) (hj : j ∈ Finset.Iio (finalIndex hm)) :
     d[X (i, j) # X (i, j) | rowTail X i j] ≤ d[X (i, j) # X (i, j)] +
       (H[rowTail X i j] - H[rowTail X i (j + firstIndex hm)]) / 2 := by
+  have : DiscreteMeasurableSpace G := inferInstance
+  have : NeZero m := ⟨Nat.ne_of_gt (lt_of_lt_of_le (Nat.succ_pos 1) hm)⟩
   calc
     _ ≤ d[X (i, j) # X (i, j)] + I[X (i, j) : rowTail X i j] / 2 := by
       apply condRuzsaDist_le' <;> fun_prop
@@ -235,7 +245,7 @@ private lemma conditional_self_rdist_le {G Ω : Type u} [MeasurableFinGroup G]
         omega⟩
       let φ' : (T' → G) → G := fun f ↦ f ⟨(i, j), by simp [T']⟩
       convert iIndepFun.finsets_comp' _ hIndependent (by fun_prop) (φ := φ)
-        (show Measurable φ by fun_prop) (show Measurable φ' by fun_prop) with ω ω <;>
+        (show Measurable φ from .of_discrete) (show Measurable φ' from .of_discrete) with ω ω <;>
         try simp [φ]
       · simp [← Finset.sum_attach (.Ici _)]
       rw [Finset.disjoint_left]
@@ -249,6 +259,8 @@ private lemma final_to_row_rdist_le {G Ω : Type u} [MeasurableFinGroup G]
     (hIndependent : iIndepFun X) (i : Fin m) :
     d[X (i, finalIndex hm) # ∑ j, X (i, j)] ≤ d[X (i, finalIndex hm) # X (i, finalIndex hm)] +
       (H[∑ j, X (i, j)] - H[X (i, finalIndex hm)]) / 2 := by
+  have : DiscreteMeasurableSpace G := inferInstance
+  have : NeZero m := ⟨Nat.ne_of_gt (lt_of_lt_of_le (Nat.succ_pos 1) hm)⟩
   have hSum : ∑ j, X (i, j) =
       X (i, finalIndex hm) + ∑ j ∈ Finset.Iio (finalIndex hm), X (i, j) := by
     symm
@@ -270,7 +282,7 @@ private lemma final_to_row_rdist_le {G Ω : Type u} [MeasurableFinGroup G]
       obtain ⟨j, hj⟩ := j
       simpa [T'] using hj⟩
   convert iIndepFun.finsets_comp' _ hIndependent (by fun_prop) (φ := φ)
-    (show Measurable φ by fun_prop) (show Measurable φ' by fun_prop) with ω ω
+    (show Measurable φ from .of_discrete) (show Measurable φ' from .of_discrete) with ω ω
   · simp only [Finset.sum_apply, Finset.univ_eq_attach, φ']
     symm
     convert Finset.sum_attach _ _
@@ -323,6 +335,7 @@ lemma mutual_information_le {G Ωₒ : Type u} [MeasurableFinGroup G] [MeasureSp
       (fun ω ↦ (fun i ↦ X (e i) ω))) :
     I[ fun ω ↦ ( fun j ↦ ∑ i, X' (i, j) ω) : fun ω ↦ ( fun i ↦ ∑ j, X' (i, j) ω) |
   fun ω ↦ ∑ i, ∑ j, X' (i, j) ω ] ≤ p.m * (4*p.m+1) * p.η * D[ X; (fun _ ↦ hΩ)] := by
+  have : DiscreteMeasurableSpace G := inferInstance
   have hm := p.hm
   have _ : NeZero p.m := by rw [neZero_iff]; omega
   have hη := p.hη
@@ -345,7 +358,7 @@ lemma mutual_information_le {G Ωₒ : Type u} [MeasurableFinGroup G] [MeasureSp
     calc
       _ = D[fun i ω ↦ X (e i) ω; fun x ↦ hΩ] := by
         apply multiDist_copy _ _ _ _ _
-        intro i; exact IdentDistrib.comp (u := fun x ↦ x i) he (by fun_prop)
+        intro i; exact IdentDistrib.comp (u := fun x ↦ x i) he (measurable_pi_apply i)
       _ = _ := by convert multiDist_of_perm (fun _ ↦ hΩ) _ _ e <;> try infer_instance
   have h2 {j : Fin p.m} (hj: j ∈ Finset.Iio last)
   : A j ≤ p.η * ∑ i, d[ X' (i, j) # X' (i, j) | S i j ] := by
@@ -355,15 +368,16 @@ lemma mutual_information_le {G Ωₒ : Type u} [MeasurableFinGroup G] [MeasureSp
       _ _ e using 3 with i _ <;> try infer_instance
     all_goals try fun_prop
     apply condRuzsaDist'_of_copy <;> try fun_prop
-    · exact IdentDistrib.comp (u := fun x ↦ x i) he (by fun_prop)
+    · exact IdentDistrib.comp (u := fun x ↦ x i) he (measurable_pi_apply i)
     apply IdentDistrib.refl; fun_prop
   have h3 : B ≤ p.η * ∑ i, d[ X' (i, last) # V i ] := by
     obtain ⟨e, he⟩ := hperm last
     simp only [B, hD, V]
     convert sub_multiDistance_le' inferInstance hX h_min inferInstance (X' := fun i ↦ V i)
       (by fun_prop) e using 3 with i _
-    apply IdentDistrib.rdist_congr_left (by fun_prop); exact IdentDistrib.comp (u := fun x ↦ x i)
-      he (by fun_prop)
+    apply IdentDistrib.rdist_congr_left (by fun_prop)
+    exact IdentDistrib.comp (u := fun x ↦ x i)
+      he (measurable_pi_apply i)
   have h4 (i : Fin p.m) {j : Fin p.m} (hj : j ∈ Finset.Iio last) :
       d[X' (i, j) # X' (i, j) | S i j] ≤ d[X' (i, j) # X' (i, j)] +
         (H[S i j] - H[S i (j + one)]) / 2 := by
@@ -438,10 +452,11 @@ lemma mutual_information_le {G Ωₒ : Type u} [MeasurableFinGroup G] [MeasureSp
         congr 2
         · congr; ext j; obtain ⟨e, he⟩ := hperm j
           convert Equiv.sum_comp e _ with i _
-          apply IdentDistrib.rdist_congr <;> exact he.comp (u := fun x ↦ x i) (by fun_prop)
+          apply IdentDistrib.rdist_congr <;>
+            exact he.comp (u := fun x ↦ x i) (measurable_pi_apply i)
         obtain ⟨e, he⟩ := hperm last
         convert Equiv.sum_comp e _ with i _
-        apply IdentDistrib.entropy_congr; exact he.comp (u := fun x ↦ x i) (by fun_prop)
+        apply IdentDistrib.entropy_congr; exact he.comp (u := fun x ↦ x i) (measurable_pi_apply i)
       _ ≤ _ := by simp
   have h8 (i : Fin p.m) :
       H[V i] ≤ H[∑ j, X j] + ∑ j, d[X' (i, j) # X' (i, j)] := by
@@ -460,9 +475,9 @@ lemma mutual_information_le {G Ωₒ : Type u} [MeasurableFinGroup G] [MeasureSp
       ext j
       obtain ⟨e, he⟩ := hperm j
       convert Equiv.sum_comp e _ with i _
-      apply IdentDistrib.rdist_congr <;> exact .comp (u := fun x ↦ x i) he (by fun_prop)
+      apply IdentDistrib.rdist_congr <;> exact .comp (u := fun x ↦ x i) he (measurable_pi_apply i)
     _ = _ := by simp; abel
-  have h10 : I₀/p.η ≤ 2 * p.m * ∑ i, d[X i # X i] + p.m * k := by linarith
+  have h10 : I₀/p.η ≤ 2 * p.m * ∑ i, d[X i # X i] + p.m * k := by linarith only [h7, h9]
   have h11 : ∑ i, d[X i # X i] ≤ 2 * p.m * k := by
     convert multidist_ruzsa_II hm _ _ _ hX _ <;> try infer_instance
   calc

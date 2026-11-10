@@ -39,6 +39,13 @@ Assumptions:
   given some random variables with control on total cost, as well as total mutual information.
 -/
 
+-- Avoid repeated searches for empty or singleton types during simplification.
+attribute [-simp] IsEmpty.forall_iff Finset.univ_eq_empty forall_const
+  Function.const_inj Function.const_eq_zero Function.const_eq_one Set.range_const
+  exists_const IsEmpty.exists_iff add_eq_zero mul_eq_one
+  ProbabilityTheory.iIndepFun.of_subsingleton ProbabilityTheory.iIndep.of_subsingleton
+  ProbabilityTheory.iIndepSets.of_subsingleton
+
 open scoped ZhangYeungPFR
 
 
@@ -89,8 +96,8 @@ local notation3 "I₂" => I[U : W | S]
 --(Mantas) this times out in the proof below
 private lemma hmeas2 {G : Type*} [AddCommGroup G] [Finite G] [hG : MeasurableSpace G]
     [MeasurableSingletonClass G] :
-    Measurable fun p : Fin 4 → G => ((p 0 + p 1, p 0 + p 2), p 0 + p 1 + p 2 + p 3) := by
-  fun_prop
+    Measurable fun p : Fin 4 → G => ((p 0 + p 1, p 0 + p 2), p 0 + p 1 + p 2 + p 3) :=
+  .of_discrete
 
 include h_indep hX₁ hX₂ hX₁' hX₂' h₁ in
 /-- The quantity `I_3 = I[V:W|S]` is equal to `I_2`. -/
@@ -152,9 +159,9 @@ lemma sum_condMutual_le [Module (ZMod 2) G] [IsProbabilityMeasure (ℙ : Measure
   rw [I₃_eq, this]
   any_goals simpa
   have h₂ := second_estimate p X₁ X₂ X₁' X₂' hX₁ hX₂ hX₁' hX₂' h₁ h₂ h_indep h_min
-  have : 0 < 1 - p.η := by linarith [p.hη']
+  have : 0 < 1 - p.η := by linarith only [p.hη']
   field_simp at h₂ ⊢
-  linarith
+  linarith only [h₂]
 
 local notation3:max "c[" A "; " μ " # " B " ; " μ' "]" =>
   d[p.X₀₁; ℙ # A; μ] - d[p.X₀₁ # X₁] + (d[p.X₀₂; ℙ # B; μ'] - d[p.X₀₂ # X₂])
@@ -240,7 +247,7 @@ lemma sum_dist_diff_le [IsProbabilityMeasure (ℙ : Measure Ω)] [Module (ZMod 2
       condRuzsaDist_diff_ofsum_le ℙ (hX := p.hmeas1) (hY := hX₁) (hZ := hX₂)
       (Measurable.add hX₁' hX₂') (independenceCondition1 hX₁ hX₂ hX₁' hX₂' h_indep)
     rw [← add_assoc, aux1] at aux2
-    linarith [aux2]
+    exact aux2
   have ineq2 : d[X₀₂ # U | S] - d[X₀₂ # X₂] ≤ (H[S; ℙ] - H[X₂; ℙ])/2 := by
     have aux1 : H[S] + H[U] - H[X₂] - H[X₁' + X₂'] = H[S] - H[X₂] := by
       rw [hU X₁ X₂ X₁' X₂' h₁ h₂ h_indep]; ring
@@ -250,7 +257,7 @@ lemma sum_dist_diff_le [IsProbabilityMeasure (ℙ : Measure Ω)] [Module (ZMod 2
       apply condRuzsaDist_diff_ofsum_le ℙ (p.hmeas2) (hX₂) (hX₁)
         (Measurable.add hX₁' hX₂') (independenceCondition2 hX₁ hX₂ hX₁' hX₂' h_indep)
     rw [← add_assoc, aux1] at aux2
-    linarith [aux2]
+    exact aux2
   have V_add_eq : V + (X₁ + X₂') = S := by abel
   have ineq3 : d[X₀₁ # V | S] - d[X₀₁ # X₁] ≤ (H[S; ℙ] - H[X₁; ℙ])/2 := by
     have aux2 : d[p.X₀₁ # V | V + (X₁ + X₂')] - d[p.X₀₁ # X₁']
@@ -260,7 +267,7 @@ lemma sum_dist_diff_le [IsProbabilityMeasure (ℙ : Measure Ω)] [Module (ZMod 2
     have aux1 : H[S] + H[V] - H[X₁'] - H[X₁ + X₂'] = H[S; ℙ] - H[X₁; ℙ] := by
       rw [hV X₁ X₂ X₁' X₂' h₁ h₂ h_indep, h₁.entropy_congr]; ring
     rw [← h₁.rdist_congr_right p.hmeas1.aemeasurable, V_add_eq, aux1] at aux2
-    linarith [aux2]
+    exact aux2
   have ineq4 : d[X₀₂ # V | S] - d[X₀₂ # X₂] ≤ (H[S; ℙ] - H[X₂; ℙ])/2 := by
     have aux2 : d[p.X₀₂ # V | V + (X₁ + X₂')] - d[p.X₀₂ # X₂]
             ≤ (H[V + (X₁ + X₂')] + H[V] - H[X₂] - H[X₁ + X₂']) / 2 := by
@@ -270,7 +277,7 @@ lemma sum_dist_diff_le [IsProbabilityMeasure (ℙ : Measure Ω)] [Module (ZMod 2
     have aux1 : H[S] + H[V] - H[X₂] - H[X₁ + X₂'] = H[S; ℙ] - H[X₂; ℙ] := by
       rw [hV X₁ X₂ X₁' X₂' h₁ h₂ h_indep]; ring
     rw [V_add_eq, aux1] at aux2
-    linarith [aux2]
+    exact aux2
   let W' := X₂ + X₂'
   have ineq5 : d[X₀₁ # W | S] - d[X₀₁ # X₁] ≤ (H[S; ℙ] + H[W; ℙ] - H[X₁; ℙ] - H[W'; ℙ])/2 := by
     have := condRuzsaDist_diff_ofsum_le ℙ p.hmeas1 hX₁ hX₁' (Measurable.add hX₂ hX₂')
@@ -357,7 +364,7 @@ lemma construct_good_prelim :
   let sum2 : ℝ := (Measure.map T₃ ℙ)[fun t ↦ d[p.X₀₁; ℙ # T₁; ℙ[|T₃ ⁻¹' {t}]] - d[p.X₀₁ # X₁]]
   let sum3 : ℝ := (Measure.map T₃ ℙ)[fun t ↦ d[p.X₀₂; ℙ # T₂; ℙ[|T₃ ⁻¹' {t}]] - d[p.X₀₂ # X₂]]
   let sum4 : ℝ := (Measure.map T₃ ℙ)[fun t ↦ ψ[T₁; ℙ[|T₃ ⁻¹' {t}] # T₂; ℙ[|T₃ ⁻¹' {t}]]]
-  have hp.η : 0 ≤ p.η := by linarith [p.hη]
+  have hp.η : 0 ≤ p.η := le_of_lt p.hη
   have hP : IsProbabilityMeasure (Measure.map T₃ ℙ) :=
     inferInstance
   have h2T₃ : T₃ = T₁ + T₂ :=
@@ -372,7 +379,7 @@ lemma construct_good_prelim :
       rw [h2T₃, entropy_add_right', entropy_comm] <;> assumption
     have h3 : H[⟨T₁, T₂⟩] = H[⟨T₃, T₁⟩] := by
       rw [h2T₃, entropy_add_left, entropy_comm] <;> assumption
-    simp_rw [mutualInfo_def] at h1 ⊢; linarith
+    simp_rw [mutualInfo_def] at h1 ⊢; linarith only [h1, h2, h3]
   have h2 : p.η * sum2 ≤ p.η * (d[p.X₀₁ # T₁] - d[p.X₀₁ # X₁] + I[T₁ : T₃] / 2) := by
     have : sum2 = d[p.X₀₁ # T₁ | T₃] - d[p.X₀₁ # X₁] := by
       simp only [integral_sub .of_finite .of_finite, integral_const, smul_eq_mul, sum2]
@@ -380,7 +387,7 @@ lemma construct_good_prelim :
         (FiniteRange.ae_mem_toFinset _ T₃ hT₃.aemeasurable), setIntegral_finset _ .finset,
         map_measureReal_apply hT₃ (.singleton _)]
     gcongr
-    linarith [condRuzsaDist_le' ℙ ℙ p.hmeas1 hT₁ hT₃]
+    linarith only [this, condRuzsaDist_le' ℙ ℙ p.hmeas1 hT₁ hT₃]
   have h3 : p.η * sum3 ≤ p.η * (d[p.X₀₂ # T₂] - d[p.X₀₂ # X₂] + I[T₂ : T₃] / 2) := by
     have : sum3 = d[p.X₀₂ # T₂ | T₃] - d[p.X₀₂ # X₂] := by
       simp only [integral_sub .of_finite .of_finite, integral_const, smul_eq_mul, sum3]
@@ -389,9 +396,9 @@ lemma construct_good_prelim :
          setIntegral_finset _ .finset,
         map_measureReal_apply hT₃ (.singleton _)]
     gcongr
-    linarith [condRuzsaDist_le' ℙ ℙ p.hmeas2 hT₂ hT₃]
+    linarith only [this, condRuzsaDist_le' ℙ ℙ p.hmeas2 hT₂ hT₃]
   have h4 : sum4 ≤ δ + p.η * c[T₁ # T₂] + p.η * (I[T₁ : T₃] + I[T₂ : T₃]) / 2 := by
-    suffices sum4 = sum1 + p.η * (sum2 + sum3) by linarith
+    suffices heq : sum4 = sum1 + p.η * (sum2 + sum3) by linarith only [heq, h1, h2, h3]
     simp only [sum1, sum2, sum3, sum4, integral_add .of_finite .of_finite, integral_const_mul]
   have hk : k ≤ sum4 := by
     suffices (Measure.map T₃ ℙ)[fun _ ↦ k] ≤ sum4 by simpa using this
@@ -423,8 +430,8 @@ lemma construct_good :
   have v3 := construct_good_prelim p X₁ X₂ h_min (by rw [← hT]; abel) hT₂ hT₁ hT₃
   have v6 := construct_good_prelim p X₁ X₂ h_min (by rw [← hT]; abel) hT₃ hT₂ hT₁
   simp only [mutualInfo, entropy_comm hT₂ hT₁, entropy_comm hT₃ hT₁, entropy_comm hT₃ hT₂]
-    at *
-  linarith
+    at v2 v3 v6 ⊢
+  linarith only [v2, v3, v6]
 
 include hT₁ hT₂ hT₃ hT h_min in
 omit [IsProbabilityMeasure (ℙ : Measure Ω')] in
