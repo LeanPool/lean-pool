@@ -12,9 +12,7 @@ import LeanPool.PoincareThreeBody.Analytic
 import LeanPool.PoincareThreeBody.KeplerHamiltonian
 import Mathlib.Analysis.Calculus.Deriv.Prod
 import Mathlib.Analysis.Calculus.InverseFunctionTheorem.FDeriv
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.Arctan
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.Deriv
-import Mathlib.MeasureTheory.Covering.Besicovitch
 
 /-!
 # A local Delaunay chart at the rational elliptic anchor

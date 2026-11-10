@@ -10,7 +10,6 @@ public import LeanPool.PoincareThreeBody.Perturbation
 public import Mathlib.Analysis.InnerProductSpace.Basic
 import LeanPool.PoincareThreeBody.Analytic
 import LeanPool.PoincareThreeBody.HomologicalEquation
-import Mathlib.MeasureTheory.Integral.Bochner.Basic
 
 /-!
 # Mixed derivatives of the restricted three-body Hamiltonian

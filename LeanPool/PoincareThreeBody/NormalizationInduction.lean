@@ -9,8 +9,6 @@ public import LeanPool.PoincareThreeBody.AnalyticMinors
 public import LeanPool.PoincareThreeBody.AnalyticNormalization
 import LeanPool.PoincareThreeBody.Analytic
 import Mathlib.Analysis.Calculus.IteratedDeriv.Lemmas
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.Arctan
-import Mathlib.MeasureTheory.Covering.Besicovitch
 
 /-!
 # Iterated Poincaré normalization

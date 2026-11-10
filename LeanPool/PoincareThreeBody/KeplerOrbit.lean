@@ -11,7 +11,6 @@ public import Mathlib.Topology.Algebra.Module.ModuleTopology
 import Mathlib.Analysis.Calculus.Deriv.MeanValue
 import Mathlib.Analysis.Calculus.InverseFunctionTheorem.Analytic
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.Deriv
-import Mathlib.MeasureTheory.Integral.Bochner.Basic
 
 /-!
 # Elliptic Kepler orbits in eccentric anomaly
