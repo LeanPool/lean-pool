@@ -1,7 +1,7 @@
 /-
 Copyright (c) 2026 Wesley Pegden. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Wesley Pegden
+Authors: Wesley Pegden, Lean Pool contributors
 -/
 module
 
@@ -23,6 +23,86 @@ Adapted from Wesley Pegden’s Trellis formalization at
 namespace GoldbergSeymour
 
 open scoped Sym2
+
+/-- Addition of finite indices commutes with the cyclic successor. -/
+theorem finRotation_successor {length : ℕ} (positive : 0 < length)
+    (start position : Fin length) :
+    start + (⟨(position.val + 1) % length, Nat.mod_lt _ positive⟩ : Fin length) =
+      (⟨((start + position).val + 1) % length, Nat.mod_lt _ positive⟩ : Fin length) := by
+  apply Fin.ext
+  change (start.val + ((position.val + 1) % length)) % length =
+    (((start.val + position.val) % length) + 1) % length
+  simp only [Nat.add_mod_mod, Nat.mod_add_mod, Nat.add_assoc]
+
+/-- A shifted prefix and fixed tail preserve a color property away from the cut edge. -/
+theorem shiftedEdgeProperty {Edge Value : Type*} {length : ℕ}
+    (edge : Fin length → Edge) (before after : Edge → Value) (cut : Fin length)
+    (edgeInjective : Function.Injective edge)
+    (shift : ∀ index : Fin cut.val,
+      after (edge (Fin.castLE (Nat.le_of_lt cut.isLt) index)) =
+        before (edge ⟨index.val + 1, by omega⟩))
+    (fixed : ∀ value : Edge,
+      (∀ index : Fin (cut.val + 1),
+        value ≠ edge (Fin.castLE (Nat.succ_le_of_lt cut.isLt) index)) →
+      after value = before value)
+    (property : Value → Prop)
+    (propertyBefore : ∀ index : Fin length, 1 ≤ index.val → property (before (edge index)))
+    (target : Fin length) (away : target ≠ cut) : property (after (edge target)) := by
+  by_cases below : target.val < cut.val
+  · let index : Fin cut.val := ⟨target.val, below⟩
+    have shifted := shift index
+    have same : Fin.castLE (Nat.le_of_lt cut.isLt) index = target := Fin.ext rfl
+    rw [same] at shifted
+    rw [shifted]
+    exact propertyBefore ⟨index.val + 1, by omega⟩ (Nat.succ_le_succ (Nat.zero_le _))
+  · have greater : cut.val < target.val := by
+      have different : target.val ≠ cut.val := fun equal => away (Fin.ext equal)
+      omega
+    rw [fixed (edge target) (by
+      intro index equal
+      have values := congrArg Fin.val (edgeInjective equal)
+      have bound := index.isLt
+      change target.val = index.val at values
+      omega)]
+    exact propertyBefore target (by omega)
+
+
+/-- The last cyclic edge joins the final vertex to the first vertex. -/
+theorem cyclicEdgeEnds_last {Vertex Edge : Type*} {length : ℕ}
+    (positive : 0 < length) (vertex : Fin length → Vertex) (edge : Fin length → Edge)
+    (ends : Edge → Sym2 Vertex)
+    (incident : ∀ index : Fin length,
+      ends (edge index) = s(vertex index,
+        vertex ⟨(index.val + 1) % length, Nat.mod_lt _ positive⟩)) :
+    ends (edge ⟨length - 1, by omega⟩) =
+      s(vertex ⟨length - 1, by omega⟩, vertex ⟨0, positive⟩) := by
+  have final := incident ⟨length - 1, by omega⟩
+  simpa only [Nat.sub_add_cancel positive, Nat.mod_self] using final
+
+/-- A prefix agreeing with a cyclic edge family has the same consecutive endpoints. -/
+theorem cyclicEdgeEnds_internal {Vertex Edge : Type*} {length height : ℕ}
+    (upper : height ≤ length + 1) (positive : 0 < height)
+    (vertex : Fin (length + 1) → Vertex) (edge : Fin length → Edge)
+    (cycleEdge : Fin height → Edge) (ends : Edge → Sym2 Vertex)
+    (incident : ∀ index : Fin height,
+      ends (cycleEdge index) = s(vertex (Fin.castLE upper index),
+        vertex (Fin.castLE upper ⟨(index.val + 1) % height, Nat.mod_lt _ positive⟩)))
+    (same : ∀ (position : Fin length) (before : position.val + 1 < height),
+      edge position = cycleEdge ⟨position.val, by omega⟩)
+    (position : Fin length) (before : position.val + 1 < height) :
+    ends (edge position) = s(vertex position.castSucc, vertex position.succ) := by
+  rw [same position before, incident ⟨position.val, by omega⟩]
+  apply Sym2.eq_iff.mpr
+  left
+  constructor
+  · apply congrArg vertex
+    apply Fin.ext
+    rfl
+  · apply congrArg vertex
+    apply Fin.ext
+    change (position.val + 1) % height = position.val + 1
+    exact Nat.mod_eq_of_lt before
+
 
 private theorem helper_hends_75.{u_1, u_2} :
     ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E] [ DecidableEq E] (G :

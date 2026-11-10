@@ -21,36 +21,6 @@ Adapted from Wesley Pegden’s Trellis formalization at
 
 namespace GoldbergSeymour
 
-private theorem helper_hrho_injective_91.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E]
-      [DecidableEq E] (G : LooplessMultigraph V E) (k : ℕ) (e0 : E)
-      (phi : PartialEdgeColoring E k) (T : TreeSequence G e0)
-      (N : NormalGlobalMaximumTriple G k e0 phi T) (j : Fin N.height) (_ _ : Fin k),
-    let rho : Fin N.height → Fin N.height := fun (r : Fin N.height) ↦ j + r;
-    Function.Injective rho := by
-  classical
-  intro V E _ _ _ G k e0 phi T N j A B rho a b hab
-  have hmod (r : Fin N.height) :
-      (j.val + r.val) % N.height =
-        if j.val + r.val < N.height then
-          j.val + r.val
-        else
-          j.val + r.val - N.height := by
-    by_cases hr : j.val + r.val < N.height
-    · simp [hr, Nat.mod_eq_of_lt hr]
-    · rw [ite_eq_right hr, Nat.mod_eq_sub_mod (by omega)]
-      rw [Nat.mod_eq_of_lt]
-      omega
-  have hv := congrArg Fin.val hab
-  change (j.val + a.val) % N.height =
-    (j.val + b.val) % N.height at hv
-  rw [hmod a, hmod b] at hv
-  by_cases ha : j.val + a.val < N.height <;>
-    by_cases hb : j.val + b.val < N.height <;>
-    simp [ha, hb] at hv <;>
-    apply Fin.ext <;> omega
-
 private theorem helper_hvertex_injective_155.{u_1, u_2} :
     open scoped Classical in
     ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E]
@@ -198,65 +168,6 @@ private theorem helper_htransport_index_221.{u_1, u_2} :
     refine ⟨b, ?_⟩
     rw [hvertex_tail _ (by simpa [b] using (show N.height ≤ a.val by omega))]
 
-private theorem helper_hnew_zero_282.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E]
-      [ DecidableEq E] (G : LooplessMultigraph V E) (k : ℕ) (e0 : E)
-      (phi : PartialEdgeColoring E k) (T : TreeSequence G e0)
-      (N : NormalGlobalMaximumTriple G k e0 phi T) (j : Fin N.height) (_ _ : Fin k)
-      (hp3 : (3 : ℕ) ≤ N.height),
-    let rho : Fin N.height → Fin N.height := fun (r : Fin N.height) ↦ j + r;
-    rho
-          (⟨(0 : ℕ), by
-              have := GoldbergSeymour.TreeSequence.positive T
-              omega⟩ :
-            Fin N.height) =
-        j →
-    let newVertex : Fin (T.length + (1 : ℕ)) → V := fun (r : Fin (T.length + (1 : ℕ))) ↦
-      if hr : (↑r : ℕ) < N.height then
-        T.vertex (Fin.castLE N.height_upper (rho (⟨(↑r : ℕ), hr⟩ : Fin N.height)))
-      else T.vertex r;
-    let newEdge : Fin T.length → E := fun (r : Fin T.length) ↦
-      if hr : (↑r : ℕ) + (1 : ℕ) < N.height then
-        NormalCycleEdge N
-          (rho
-            (⟨(↑r : ℕ), by
-                have := GoldbergSeymour.TreeSequence.positive T
-                omega⟩ :
-              Fin N.height))
-      else T.edge r;
-    (∀ (r : Fin (T.length + (1 : ℕ))) (hr : (↑r : ℕ) < N.height),
-        newVertex r =
-          T.vertex (Fin.castLE N.height_upper (rho (⟨(↑r : ℕ), hr⟩ : Fin N.height)))) →
-    ∀ (hvertex_injective : Function.Injective newVertex)
-      (hedge_injective : Function.Injective newEdge)
-      (hfirst_edge : newEdge (⟨(0 : ℕ), T.positive⟩ : Fin T.length) = NormalCycleEdge N j)
-      (hattaches :
-        ∀ (r : Fin T.length),
-          ∃ (a : Fin ((↑r : ℕ) + (1 : ℕ))),
-            G.ends (newEdge r) =
-              s(newVertex r.succ,
-                newVertex
-                  (a.castLT
-                    (by
-                      have := GoldbergSeymour.TreeSequence.positive T
-                      omega)))),
-    let T' : TreeSequence G (NormalCycleEdge N j) :=
-      { length := T.length, positive := T.positive, vertex := newVertex, edge := newEdge,
-        vertex_injective := hvertex_injective, edge_injective := hedge_injective,
-        first_edge := hfirst_edge, attaches := hattaches :
-        TreeSequence G (NormalCycleEdge N j) };
-    T'.vertex (⟨(0 : ℕ), Nat.zero_lt_succ T'.length⟩ : Fin (T'.length + (1 : ℕ))) =
-      T.vertex (Fin.castLE N.height_upper j) := by
-  classical
-  intro V E _ _ _ G k e0 phi T N j A B hp3 rho hrho_zero newVertex newEdge hvertex_prefix
-      hvertex_injective hedge_injective hfirst_edge hattaches T'
-  change newVertex ⟨0, Nat.zero_lt_succ T.length⟩ = _
-  rw [hvertex_prefix _ (by
-    change 0 < N.height
-    omega)]
-  exact congrArg (fun q => T.vertex (Fin.castLE N.height_upper q)) hrho_zero
-
 private theorem helper_hcycle_color_pair_306.{u_1, u_2} :
     open scoped Classical in
     ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E]
@@ -295,117 +206,6 @@ private theorem helper_hcycle_color_pair_306.{u_1, u_2} :
       simpa [hb] using hc
     · right
       simpa [hb] using hc
-
-private theorem helper_htrunk_color_331.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E]
-      [ DecidableEq E] (G : LooplessMultigraph V E) (k : ℕ) (e0 : E)
-      (phi psi : PartialEdgeColoring E k) (T : TreeSequence G e0)
-      (N : NormalGlobalMaximumTriple G k e0 phi T) (j : Fin N.height),
-    (1 : ℕ) ≤ (↑j : ℕ) →
-    ∀ (A B : Fin k),
-    (∀ (i : Fin (↑j : ℕ)),
-        psi
-            (NormalCycleEdge N
-              (Fin.castLE
-                (by
-                  have := GoldbergSeymour.TreeSequence.positive T
-                  omega)
-                i)) =
-          phi
-            (NormalCycleEdge N
-              (⟨(↑i : ℕ) + (1 : ℕ),
-                  by
-                  have := GoldbergSeymour.TreeSequence.positive T
-                  omega⟩ :
-                Fin N.height))) →
-    (∀ (f : E),
-        (∀ (i : Fin ((↑j : ℕ) + (1 : ℕ))),
-            f ≠
-              NormalCycleEdge N
-                (Fin.castLE
-                  (by
-                    have := GoldbergSeymour.TreeSequence.positive T
-                    omega)
-                  i)) →
-          psi f = phi f) →
-    ∀ (hp3 : (3 : ℕ) ≤ N.height),
-    Function.Injective (NormalCycleEdge N) →
-    let rho : Fin N.height → Fin N.height := fun (r : Fin N.height) ↦ j + r;
-    Function.Injective rho →
-    rho
-          (⟨(0 : ℕ), by
-              have := GoldbergSeymour.TreeSequence.positive T
-              omega⟩ :
-            Fin N.height) =
-        j →
-    let newEdge : Fin T.length → E := fun (r : Fin T.length) ↦
-      if hr : (↑r : ℕ) + (1 : ℕ) < N.height then
-        NormalCycleEdge N
-          (rho
-            (⟨(↑r : ℕ), by
-                have := GoldbergSeymour.TreeSequence.positive T
-                omega⟩ :
-              Fin N.height))
-      else T.edge r;
-    (∀ (r : Fin T.length) (hr : (↑r : ℕ) + (1 : ℕ) < N.height),
-        newEdge r =
-          NormalCycleEdge N
-            (rho
-              (⟨(↑r : ℕ), by
-                  have := GoldbergSeymour.TreeSequence.positive T
-                  omega⟩ :
-                Fin N.height))) →
-    (∀ (q : Fin N.height),
-        (1 : ℕ) ≤ (↑q : ℕ) →
-          phi (NormalCycleEdge N q) = some A ∨ phi (NormalCycleEdge N q) = some B) →
-    ∀ (r : Fin T.length),
-    (1 : ℕ) ≤ (↑r : ℕ) →
-    (↑r : ℕ) + (1 : ℕ) < N.height →
-    psi (newEdge r) = some A ∨ psi (newEdge r) = some B := by
-  classical
-  intro V E _ _ _ G k e0 phi psi T N j hj A B hshift hfixed hp3 hcycle_injective rho
-      hrho_injective hrho_zero newEdge hedge_prefix hcycle_color_pair r hrpos hr
-  let q : Fin N.height := rho ⟨r.val, by omega⟩
-  rw [hedge_prefix r hr]
-  change psi (NormalCycleEdge N q) = some A ∨
-    psi (NormalCycleEdge N q) = some B
-  have hqj : q ≠ j := by
-    intro heq
-    have hz := hrho_injective (heq.trans hrho_zero.symm)
-    have hv := congrArg Fin.val hz
-    simp at hv
-    omega
-  by_cases hq : q.val < j.val
-  · let a : Fin j.val := ⟨q.val, hq⟩
-    have hs := hshift a
-    have hc := hcycle_color_pair
-      ⟨a.val + 1, by
-        have hjlt := j.isLt
-        simp [a] at *
-        omega⟩ (by simp [a])
-    have hqa : Fin.castLE (Nat.le_of_lt j.isLt) a = q := by
-      apply Fin.ext
-      rfl
-    rw [hqa] at hs
-    rw [hs]
-    simpa [a] using hc
-  · have hqgt : j.val < q.val := by
-      have hn : q.val ≠ j.val := by
-        intro hn
-        apply hqj
-        apply Fin.ext
-        exact hn
-      omega
-    have hf : psi (NormalCycleEdge N q) = phi (NormalCycleEdge N q) := by
-      apply hfixed
-      intro a heq
-      have hi := hcycle_injective heq
-      have hv := congrArg Fin.val hi
-      simp at hv
-      omega
-    rw [hf]
-    exact hcycle_color_pair q (by omega)
 
 private theorem helper_hmissing_preserved_374.{u_1, u_2} :
     open scoped Classical in
@@ -574,262 +374,6 @@ private theorem helper_hvertex_set_477.{u_1, u_2} :
       simpa [b] using hv
     · refine ⟨a, hvertex_tail a (by omega)⟩
 
-private theorem helper_branch_510.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E]
-      [ DecidableEq E] (G : LooplessMultigraph V E) (k : ℕ) (e0 : E)
-      (phi : PartialEdgeColoring E k) (T : TreeSequence G e0)
-      (N : NormalGlobalMaximumTriple G k e0 phi T) (j : Fin N.height) (_ _ : Fin k)
-      (_ : (3 : ℕ) ≤ N.height),
-    let rho : Fin N.height → Fin N.height := fun (r : Fin N.height) ↦ j + r;
-    (∀ (r : Fin N.height), (↑(rho r) : ℕ) = ((↑j : ℕ) + (↑r : ℕ)) % N.height) →
-    let newVertex : Fin (T.length + (1 : ℕ)) → V := fun (r : Fin (T.length + (1 : ℕ))) ↦
-      if hr : (↑r : ℕ) < N.height then
-        T.vertex (Fin.castLE N.height_upper (rho (⟨(↑r : ℕ), hr⟩ : Fin N.height)))
-      else T.vertex r;
-    let newEdge : Fin T.length → E := fun (r : Fin T.length) ↦
-      if hr : (↑r : ℕ) + (1 : ℕ) < N.height then
-        NormalCycleEdge N
-          (rho
-            (⟨(↑r : ℕ), by
-                have := GoldbergSeymour.TreeSequence.positive T
-                omega⟩ :
-              Fin N.height))
-      else T.edge r;
-    (∀ (r : Fin (T.length + (1 : ℕ))) (hr : (↑r : ℕ) < N.height),
-        newVertex r =
-          T.vertex (Fin.castLE N.height_upper (rho (⟨(↑r : ℕ), hr⟩ : Fin N.height)))) →
-    ∀ (hvertex_injective : Function.Injective newVertex)
-      (hedge_injective : Function.Injective newEdge)
-      (hfirst_edge : newEdge (⟨(0 : ℕ), T.positive⟩ : Fin T.length) = NormalCycleEdge N j)
-      (hattaches :
-        ∀ (r : Fin T.length),
-          ∃ (a : Fin ((↑r : ℕ) + (1 : ℕ))),
-            G.ends (newEdge r) =
-              s(newVertex r.succ,
-                newVertex
-                  (a.castLT
-                    (by
-                      have := GoldbergSeymour.TreeSequence.positive T
-                      omega)))),
-    let T' : TreeSequence G (NormalCycleEdge N j) :=
-      { length := T.length, positive := T.positive, vertex := newVertex, edge := newEdge,
-        vertex_injective := hvertex_injective, edge_injective := hedge_injective,
-        first_edge := hfirst_edge, attaches := hattaches :
-        TreeSequence G (NormalCycleEdge N j) };
-    ∀ (r : Fin (T'.length + (1 : ℕ))),
-    (↑r : ℕ) < N.height →
-    ∃ (i : Fin N.height),
-    (↑i : ℕ) = ((↑j : ℕ) + (↑r : ℕ)) % N.height ∧
-    T'.vertex r = T.vertex (Fin.castLE N.height_upper i) := by
-  classical
-  intro V E _ _ _ G k e0 phi T N j A B hp3 rho hrho_val newVertex newEdge hvertex_prefix
-      hvertex_injective hedge_injective hfirst_edge hattaches T' r hr
-  let i : Fin N.height := rho ⟨r.val, hr⟩
-  refine ⟨i, ?_, ?_⟩
-  · exact hrho_val ⟨r.val, hr⟩
-  · change newVertex r = _
-    rw [hvertex_prefix r hr]
-
-private theorem helper_branch_520.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E]
-      [ DecidableEq E] (G : LooplessMultigraph V E) (k : ℕ) (e0 : E)
-      (phi : PartialEdgeColoring E k) (T : TreeSequence G e0)
-      (N : NormalGlobalMaximumTriple G k e0 phi T) (j : Fin N.height) (_ _ : Fin k)
-      (_ : (3 : ℕ) ≤ N.height),
-    let rho : Fin N.height → Fin N.height := fun (r : Fin N.height) ↦ j + r;
-    (∀ (r : Fin N.height), (↑(rho r) : ℕ) = ((↑j : ℕ) + (↑r : ℕ)) % N.height) →
-    let newVertex : Fin (T.length + (1 : ℕ)) → V := fun (r : Fin (T.length + (1 : ℕ))) ↦
-      if hr : (↑r : ℕ) < N.height then
-        T.vertex (Fin.castLE N.height_upper (rho (⟨(↑r : ℕ), hr⟩ : Fin N.height)))
-      else T.vertex r;
-    let newEdge : Fin T.length → E := fun (r : Fin T.length) ↦
-      if hr : (↑r : ℕ) + (1 : ℕ) < N.height then
-        NormalCycleEdge N
-          (rho
-            (⟨(↑r : ℕ), by
-                have := GoldbergSeymour.TreeSequence.positive T
-                omega⟩ :
-              Fin N.height))
-      else T.edge r;
-    (∀ (r : Fin T.length) (hr : (↑r : ℕ) + (1 : ℕ) < N.height),
-        newEdge r =
-          NormalCycleEdge N
-            (rho
-              (⟨(↑r : ℕ), by
-                  have := GoldbergSeymour.TreeSequence.positive T
-                  omega⟩ :
-                Fin N.height))) →
-    ∀ (hvertex_injective : Function.Injective newVertex)
-      (hedge_injective : Function.Injective newEdge)
-      (hfirst_edge : newEdge (⟨(0 : ℕ), T.positive⟩ : Fin T.length) = NormalCycleEdge N j)
-      (hattaches :
-        ∀ (r : Fin T.length),
-          ∃ (a : Fin ((↑r : ℕ) + (1 : ℕ))),
-            G.ends (newEdge r) =
-              s(newVertex r.succ,
-                newVertex
-                  (a.castLT
-                    (by
-                      have := GoldbergSeymour.TreeSequence.positive T
-                      omega)))),
-    let T' : TreeSequence G (NormalCycleEdge N j) :=
-      { length := T.length, positive := T.positive, vertex := newVertex, edge := newEdge,
-        vertex_injective := hvertex_injective, edge_injective := hedge_injective,
-        first_edge := hfirst_edge, attaches := hattaches :
-        TreeSequence G (NormalCycleEdge N j) };
-    ∀ (r : Fin T'.length),
-    (↑r : ℕ) + (1 : ℕ) < N.height →
-    ∃ (i : Fin N.height),
-    (↑i : ℕ) = ((↑j : ℕ) + (↑r : ℕ)) % N.height ∧
-    T'.edge r = NormalCycleEdge N i := by
-  classical
-  intro V E _ _ _ G k e0 phi T N j A B hp3 rho hrho_val newVertex newEdge hedge_prefix
-      hvertex_injective hedge_injective hfirst_edge hattaches T' r hr
-  let i : Fin N.height := rho ⟨r.val, by omega⟩
-  refine ⟨i, ?_, ?_⟩
-  · exact hrho_val ⟨r.val, by omega⟩
-  · change newEdge r = _
-    rw [hedge_prefix r hr]
-
-private theorem helper_branch_526.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E]
-      [ DecidableEq E] (G : LooplessMultigraph V E) (k : ℕ) (e0 : E)
-      (phi : PartialEdgeColoring E k) (T : TreeSequence G e0)
-      (N : NormalGlobalMaximumTriple G k e0 phi T) (j : Fin N.height) (_ _ : Fin k)
-      (_ : (3 : ℕ) ≤ N.height),
-    let rho : Fin N.height → Fin N.height := fun (r : Fin N.height) ↦ j + r;
-    let newVertex : Fin (T.length + (1 : ℕ)) → V := fun (r : Fin (T.length + (1 : ℕ))) ↦
-      if hr : (↑r : ℕ) < N.height then
-        T.vertex (Fin.castLE N.height_upper (rho (⟨(↑r : ℕ), hr⟩ : Fin N.height)))
-      else T.vertex r;
-    let newEdge : Fin T.length → E := fun (r : Fin T.length) ↦
-      if hr : (↑r : ℕ) + (1 : ℕ) < N.height then
-        NormalCycleEdge N
-          (rho
-            (⟨(↑r : ℕ), by
-                have := GoldbergSeymour.TreeSequence.positive T
-                omega⟩ :
-              Fin N.height))
-      else T.edge r;
-    (∀ (r : Fin T.length), N.height - (1 : ℕ) ≤ (↑r : ℕ) → newEdge r = T.edge r) →
-    ∀ (hvertex_injective : Function.Injective newVertex)
-      (hedge_injective : Function.Injective newEdge)
-      (hfirst_edge : newEdge (⟨(0 : ℕ), T.positive⟩ : Fin T.length) = NormalCycleEdge N j)
-      (hattaches :
-        ∀ (r : Fin T.length),
-          ∃ (a : Fin ((↑r : ℕ) + (1 : ℕ))),
-            G.ends (newEdge r) =
-              s(newVertex r.succ,
-                newVertex
-                  (a.castLT
-                    (by
-                      have := GoldbergSeymour.TreeSequence.positive T
-                      omega)))),
-    let T' : TreeSequence G (NormalCycleEdge N j) :=
-      { length := T.length, positive := T.positive, vertex := newVertex, edge := newEdge,
-        vertex_injective := hvertex_injective, edge_injective := hedge_injective,
-        first_edge := hfirst_edge, attaches := hattaches :
-        TreeSequence G (NormalCycleEdge N j) };
-    ∀ (r : Fin T'.length),
-    N.height - (1 : ℕ) ≤ (↑r : ℕ) →
-    ∃ (s : Fin T.length),
-    (↑s : ℕ) = (↑r : ℕ) ∧
-    T'.edge r = T.edge s := by
-  classical
-  intro V E _ _ _ G k e0 phi T N j A B hp3 rho newVertex newEdge hedge_tail hvertex_injective
-      hedge_injective hfirst_edge hattaches T' r hr
-  refine ⟨⟨r.val, by simp [T']⟩, rfl, ?_⟩
-  change newEdge r = _
-  exact hedge_tail r hr
-
-private theorem helper_hrho_succ_760.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E]
-      [ DecidableEq E] (G : LooplessMultigraph V E) (k : ℕ) (e0 : E)
-      (phi : PartialEdgeColoring E k) (T : TreeSequence G e0)
-      (N : NormalGlobalMaximumTriple G k e0 phi T) (j : Fin N.height) (_ _ : Fin k)
-      (hp3 : (3 : ℕ) ≤ N.height),
-    let rho : Fin N.height → Fin N.height := fun (r : Fin N.height) ↦ j + r;
-    ∀ (r : Fin N.height) (hr : (↑r : ℕ) + (1 : ℕ) < N.height),
-    rho (⟨(↑r : ℕ) + (1 : ℕ), hr⟩ : Fin N.height) =
-      (⟨((↑(rho r) : ℕ) + (1 : ℕ)) % N.height,
-          Nat.mod_lt ((↑(rho r) : ℕ) + (1 : ℕ))
-            (by
-              omega)⟩ :
-        Fin N.height) := by
-  classical
-  intro V E _ _ _ G k e0 phi T N j A B hp3 rho r hr
-  apply Fin.ext
-  change (j.val + (r.val + 1)) % N.height =
-    (((j.val + r.val) % N.height) + 1) % N.height
-  calc
-    (j.val + (r.val + 1)) % N.height =
-        ((j.val + r.val) + 1) % N.height := by congr 1
-    _ = (((j.val + r.val) % N.height) + (1 % N.height)) %
-        N.height := Nat.add_mod (j.val + r.val) 1 N.height
-    _ = (((j.val + r.val) % N.height) + 1) % N.height := by
-      rw [Nat.mod_eq_of_lt (by omega : 1 < N.height)]
-
-private theorem helper_hnew_one_874.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E]
-      [ DecidableEq E] (G : LooplessMultigraph V E) (k : ℕ) (e0 : E)
-      (phi : PartialEdgeColoring E k) (T : TreeSequence G e0)
-      (N : NormalGlobalMaximumTriple G k e0 phi T) (j : Fin N.height) (_ _ : Fin k)
-      (hp3 : (3 : ℕ) ≤ N.height),
-    let rho : Fin N.height → Fin N.height := fun (r : Fin N.height) ↦ j + r;
-    (∀ (r : Fin N.height), (↑(rho r) : ℕ) = ((↑j : ℕ) + (↑r : ℕ)) % N.height) →
-    let newVertex : Fin (T.length + (1 : ℕ)) → V := fun (r : Fin (T.length + (1 : ℕ))) ↦
-      if hr : (↑r : ℕ) < N.height then
-        T.vertex (Fin.castLE N.height_upper (rho (⟨(↑r : ℕ), hr⟩ : Fin N.height)))
-      else T.vertex r;
-    let newEdge : Fin T.length → E := fun (r : Fin T.length) ↦
-      if hr : (↑r : ℕ) + (1 : ℕ) < N.height then
-        NormalCycleEdge N
-          (rho
-            (⟨(↑r : ℕ), by
-                omega⟩ :
-              Fin N.height))
-      else T.edge r;
-    (∀ (r : Fin (T.length + (1 : ℕ))) (hr : (↑r : ℕ) < N.height),
-        newVertex r =
-          T.vertex (Fin.castLE N.height_upper (rho (⟨(↑r : ℕ), hr⟩ : Fin N.height)))) →
-    ∀ (hvertex_injective : Function.Injective newVertex)
-      (hedge_injective : Function.Injective newEdge)
-      (hfirst_edge : newEdge (⟨(0 : ℕ), T.positive⟩ : Fin T.length) = NormalCycleEdge N j)
-      (hattaches :
-        ∀ (r : Fin T.length),
-          ∃ (a : Fin ((↑r : ℕ) + (1 : ℕ))),
-            G.ends (newEdge r) =
-              s(newVertex r.succ,
-                newVertex (a.castLT (Nat.lt_trans a.isLt (Nat.succ_lt_succ r.isLt))))),
-    let T' : TreeSequence G (NormalCycleEdge N j) :=
-      { length := T.length, positive := T.positive, vertex := newVertex, edge := newEdge,
-        vertex_injective := hvertex_injective, edge_injective := hedge_injective,
-        first_edge := hfirst_edge, attaches := hattaches :
-        TreeSequence G (NormalCycleEdge N j) };
-    T'.vertex (⟨(1 : ℕ), Nat.succ_lt_succ T'.positive⟩ : Fin (T'.length + (1 : ℕ))) =
-      T.vertex
-        (Fin.castLE N.height_upper
-          (⟨((↑j : ℕ) + (1 : ℕ)) % N.height,
-              Nat.mod_lt ((↑j : ℕ) + (1 : ℕ))
-                (by
-                  omega)⟩ :
-            Fin N.height)) := by
-  classical
-  intro V E _ _ _ G k e0 phi T N j A B hp3 rho hrho_val newVertex newEdge hvertex_prefix
-      hvertex_injective hedge_injective hfirst_edge hattaches T'
-  change newVertex ⟨1, Nat.succ_lt_succ T.positive⟩ = _
-  rw [hvertex_prefix _ (by
-    change 1 < N.height
-    omega)]
-  apply congrArg T.vertex
-  apply Fin.ext
-  exact hrho_val ⟨1, by omega⟩
-
 private abbrev helperContinuation1037Conditions.{u_1, u_2} : Prop :=
  open scoped Classical in
   ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E] [ DecidableEq E]
@@ -959,10 +503,15 @@ private theorem helper_continuation_1037.{u_1, u_2} :
   have htrunk_color (r : Fin T.length) (hrpos : 1 ≤ r.val)
       (hr : r.val + 1 < N.height) :
       psi (newEdge r) = some A ∨ psi (newEdge r) = some B := by
-    exact @helper_htrunk_color_331 (@V) (@E) inferInstance inferInstance inferInstance (@G) (@k)
-        (@e0) (@phi) (@psi) (@T) (@N) (@j) (@hj) (@A) (@B) (@hshift) (@hfixed) (@hp3)
-        (@hcycle_injective) (@hrho_injective) (@hrho_zero) (@hedge_prefix) (@hcycle_color_pair)
-        (@r) (@hrpos) (@hr)
+    rw [hedge_prefix r hr]
+    apply shiftedEdgeProperty (NormalCycleEdge N) phi psi j hcycle_injective hshift hfixed
+      (fun color => color = some A ∨ color = some B) hcycle_color_pair
+      (rho ⟨r.val, by omega⟩)
+    intro equal
+    have zero := hrho_injective (equal.trans hrho_zero.symm)
+    have values := congrArg Fin.val zero
+    change r.val = 0 at values
+    omega
   have hmissing_preserved (v : V) (c : Fin k)
       (hcA : c ≠ A) (hcB : c ≠ B)
       (hc : c ∈ MissingColors G phi v) :
@@ -1039,19 +588,22 @@ private theorem helper_continuation_1037.{u_1, u_2} :
     rw [hvertex_set]
     exact N.global.2.2
   refine ⟨T', hglobal, rfl, hvertex_set, ?_, ?_, ?_, ?_⟩
-  · exact @helper_branch_510 (@V) (@E) inferInstance inferInstance inferInstance (@G) (@k) (@e0)
-      (@phi) (@T) (@N) (@j) (@A) (@B) (@hp3) (@hrho_val) (@hvertex_prefix) (@hvertex_injective)
-      (@hedge_injective) (@hfirst_edge) (@hattaches)
+  · intro r hr
+    refine ⟨rho ⟨r.val, hr⟩, hrho_val _, ?_⟩
+    change newVertex r = _
+    exact hvertex_prefix r hr
   · intro r hr
     refine ⟨⟨r.val, by simpa [T'] using r.isLt⟩, rfl, ?_⟩
     change newVertex r = _
     exact hvertex_tail r hr
-  · exact @helper_branch_520 (@V) (@E) inferInstance inferInstance inferInstance (@G) (@k) (@e0)
-      (@phi) (@T) (@N) (@j) (@A) (@B) (@hp3) (@hrho_val) (@hedge_prefix) (@hvertex_injective)
-      (@hedge_injective) (@hfirst_edge) (@hattaches)
-  · exact @helper_branch_526 (@V) (@E) inferInstance inferInstance inferInstance (@G) (@k) (@e0)
-      (@phi) (@T) (@N) (@j) (@A) (@B) (@hp3) (@hedge_tail) (@hvertex_injective)
-      (@hedge_injective) (@hfirst_edge) (@hattaches)
+  · intro r hr
+    refine ⟨rho ⟨r.val, by omega⟩, hrho_val _, ?_⟩
+    change newEdge r = _
+    exact hedge_prefix r hr
+  · intro r hr
+    refine ⟨⟨r.val, r.isLt⟩, rfl, ?_⟩
+    change newEdge r = _
+    exact hedge_tail r hr
 
 theorem ScheideTrunkRotationTree {V E : Type*}
     [Fintype V] [Fintype E] [DecidableEq E]
@@ -1112,8 +664,7 @@ theorem ScheideTrunkRotationTree {V E : Type*}
       (rho r).val = (j.val + r.val) % N.height := by
     rfl
   have hrho_injective : Function.Injective rho := by
-    exact @helper_hrho_injective_91 (@V) (@E) inferInstance inferInstance inferInstance (@G) (@k)
-        (@e0) (@phi) (@T) (@N) (@j) (@A) (@B)
+    exact add_right_injective j
   have hrho_surjective : Function.Surjective rho :=
     Finite.injective_iff_surjective.mp hrho_injective
   have hrho_zero : rho ⟨0, by omega⟩ = j := by
@@ -1123,8 +674,7 @@ theorem ScheideTrunkRotationTree {V E : Type*}
   have hrho_succ (r : Fin N.height) (hr : r.val + 1 < N.height) :
       rho ⟨r.val + 1, hr⟩ =
         ⟨((rho r).val + 1) % N.height, Nat.mod_lt _ (by omega)⟩ := by
-    exact @helper_hrho_succ_760 (@V) (@E) inferInstance inferInstance inferInstance (@G) (@k)
-        (@e0) (@phi) (@T) (@N) (@j) (@A) (@B) (@hp3) (@r) (@hr)
+    simpa only [Nat.mod_eq_of_lt hr] using finRotation_successor (by omega) j r
   let newVertex : Fin (T.length + 1) → V := fun r =>
     if hr : r.val < N.height then
       T.vertex (Fin.castLE N.height_upper (rho ⟨r.val, hr⟩))
@@ -1231,16 +781,18 @@ theorem ScheideTrunkRotationTree {V E : Type*}
   have hnew_zero :
       T'.vertex ⟨0, Nat.zero_lt_succ T'.length⟩ =
         T.vertex (Fin.castLE N.height_upper j) := by
-    exact @helper_hnew_zero_282 (@V) (@E) inferInstance inferInstance inferInstance (@G) (@k)
-        (@e0) (@phi) (@T) (@N) (@j) (@A) (@B) (@hp3) (@hrho_zero) (@hvertex_prefix)
-        (@hvertex_injective) (@hedge_injective) (@hfirst_edge) (@hattaches)
+    change newVertex ⟨0, Nat.zero_lt_succ T.length⟩ = _
+    rw [hvertex_prefix _ (by change 0 < N.height; omega)]
+    exact congrArg (fun index => T.vertex (Fin.castLE N.height_upper index)) hrho_zero
   have hnew_one :
       T'.vertex ⟨1, Nat.succ_lt_succ T'.positive⟩ =
         T.vertex (Fin.castLE N.height_upper
           ⟨(j.val + 1) % N.height, Nat.mod_lt _ (by omega)⟩) := by
-    exact @helper_hnew_one_874 (@V) (@E) inferInstance inferInstance inferInstance (@G) (@k)
-        (@e0) (@phi) (@T) (@N) (@j) (@A) (@B) (@hp3) (@hrho_val) (@hvertex_prefix)
-        (@hvertex_injective) (@hedge_injective) (@hfirst_edge) (@hattaches)
+    change newVertex ⟨1, Nat.succ_lt_succ T.positive⟩ = _
+    rw [hvertex_prefix _ (by change 1 < N.height; omega)]
+    apply congrArg T.vertex
+    apply Fin.ext
+    exact hrho_val ⟨1, by omega⟩
   have hpair_colors :
       ({N.alpha, N.beta} : Finset (Fin k)) = {A, B} := by
     by_cases ho : Odd j.val

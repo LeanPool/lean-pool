@@ -21,37 +21,6 @@ Adapted from Wesley Pegden’s Trellis formalization at
 
 namespace GoldbergSeymour
 
-private theorem helper_hrho_injective_88.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E]
-      [DecidableEq E] (G : LooplessMultigraph V E) (k : ℕ) (e0 : E)
-      (phi : PartialEdgeColoring E k) (T : TreeSequence G e0)
-      (N : NormalGlobalMaximumTriple G k e0 phi T) (j : Fin N.height) (_ _ : Fin k)
-      (_ : TreeSequence G (NormalCycleEdge N j)),
-    let rho : Fin N.height → Fin N.height := fun (r : Fin N.height) ↦ j + r;
-    Function.Injective rho := by
-  classical
-  intro V E _ _ _ G k e0 phi T N j A B T' rho a b hab
-  have hmod (r : Fin N.height) :
-      (j.val + r.val) % N.height =
-        if j.val + r.val < N.height then
-          j.val + r.val
-        else
-          j.val + r.val - N.height := by
-    by_cases hr : j.val + r.val < N.height
-    · simp [hr, Nat.mod_eq_of_lt hr]
-    · rw [ite_eq_right hr, Nat.mod_eq_sub_mod (by omega)]
-      rw [Nat.mod_eq_of_lt]
-      omega
-  have hv := congrArg Fin.val hab
-  change (j.val + a.val) % N.height =
-    (j.val + b.val) % N.height at hv
-  rw [hmod a, hmod b] at hv
-  by_cases ha : j.val + a.val < N.height <;>
-    by_cases hb : j.val + b.val < N.height <;>
-    simp [ha, hb] at hv <;>
-    apply Fin.ext <;> omega
-
 private theorem helper_hrot_vertex_133.{u_1, u_2} :
     open scoped Classical in
     ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq E] (G :
@@ -109,81 +78,6 @@ private theorem helper_hpair_colors_150.{u_1, u_2} :
     · right
       rw [hBe]
       simpa [hqo] using hc
-
-private theorem helper_hrot_color_173.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E] [ DecidableEq E] (G :
-        LooplessMultigraph V E) (k : ℕ) (e0 : E) (phi psi : PartialEdgeColoring E k) (T :
-        TreeSequence G e0) (N : NormalGlobalMaximumTriple G k e0 phi T) (j : Fin N.height), (1 :
-        ℕ) ≤ (↑j : ℕ) →
-    ∀ (A B : Fin k), (
-    ∀ (i : Fin (↑j : ℕ)), psi (NormalCycleEdge N (Fin.castLE (
-    by
-                  have := GoldbergSeymour.TreeSequence.positive T
-                  omega
-    ) i)) = phi (NormalCycleEdge N (⟨(↑i : ℕ) + (1 : ℕ),
-    by
-                  have := GoldbergSeymour.TreeSequence.positive T
-                  omega
-    ⟩ : Fin N.height))) → (
-    ∀ (f : E), (
-    ∀ (i : Fin ((↑j : ℕ) + (1 : ℕ))), f ≠ NormalCycleEdge N (Fin.castLE (
-    by
-                    have := GoldbergSeymour.TreeSequence.positive T
-                    omega
-    ) i)) → psi f = phi f) →
-    ∀ (_ : TreeSequence G (NormalCycleEdge N j)) (hp3 : (3 : ℕ) ≤ N.height), Function.Injective
-        (NormalCycleEdge N) →
-    let rho : Fin N.height → Fin N.height := fun (r : Fin N.height) ↦ j + r; Function.Injective
-        rho → rho (⟨(0 : ℕ),
-    by
-              have := GoldbergSeymour.TreeSequence.positive T
-              omega
-    ⟩ : Fin N.height) = j → (
-    ∀ (q : Fin N.height), (1 : ℕ) ≤ (↑q : ℕ) → phi (NormalCycleEdge N q) = some A ∨ phi
-        (NormalCycleEdge N q) = some B) →
-    ∀ (r : Fin N.height), (1 : ℕ) ≤ (↑r : ℕ) → psi (NormalCycleEdge N (rho r)) = some A ∨ psi
-        (NormalCycleEdge N (rho r)) = some B := by
-  classical
-  intro V E _ _ _ G k e0 phi psi T N j hj A B hshift hfixed T' hp3 hcycle_injective rho
-      hrho_injective hrho_zero hpair_colors r hr
-  have hne : rho r ≠ j := by
-    intro heq
-    have hz := hrho_injective (heq.trans hrho_zero.symm)
-    have hv := congrArg Fin.val hz
-    simp at hv
-    omega
-  by_cases hq : (rho r).val < j.val
-  · let a : Fin j.val := ⟨(rho r).val, hq⟩
-    have hs := hshift a
-    have hc := hpair_colors
-      ⟨a.val + 1, by
-        have hjlt := j.isLt
-        simp [a] at *
-        omega⟩ (by simp [a])
-    have ha : Fin.castLE (Nat.le_of_lt j.isLt) a = rho r := by
-      apply Fin.ext
-      rfl
-    rw [ha] at hs
-    rw [hs]
-    simpa [a] using hc
-  · have hgt : j.val < (rho r).val := by
-      have hn : (rho r).val ≠ j.val := by
-        intro hn
-        apply hne
-        apply Fin.ext
-        exact hn
-      omega
-    have hf : psi (NormalCycleEdge N (rho r)) =
-        phi (NormalCycleEdge N (rho r)) := by
-      apply hfixed
-      intro a heq
-      have hi := hcycle_injective heq
-      have hv := congrArg Fin.val hi
-      simp at hv
-      omega
-    rw [hf]
-    exact hpair_colors (rho r) (by omega)
 
 private theorem helper_htrunk_edge_eq_213.{u_1, u_2} :
     open scoped Classical in
@@ -587,41 +481,6 @@ private theorem helper_hedge_support_585.{u_1, u_2} :
       simp [n]
       omega
 
-private theorem helper_hrho_succ_860.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E] [ DecidableEq E] (G :
-        LooplessMultigraph V E) (k : ℕ) (e0 : E) (phi : PartialEdgeColoring E k) (T : TreeSequence
-        G e0) (N : NormalGlobalMaximumTriple G k e0 phi T) (j : Fin N.height) (_ _ : Fin k) (_ :
-        TreeSequence G (NormalCycleEdge N j)) (hp3 : (3 : ℕ) ≤ N.height),
-    let rho : Fin N.height → Fin N.height := fun (r : Fin N.height) ↦ j + r;
-    ∀ (r : Fin N.height), rho (⟨((↑r : ℕ) + (1 : ℕ)) % N.height, Nat.mod_lt ((↑r : ℕ) + (1 : ℕ)) (
-    by
-                omega
-    )⟩ : Fin N.height) = (⟨((↑(rho r) : ℕ) + (1 : ℕ)) % N.height, Nat.mod_lt ((↑(rho r) : ℕ) + (1
-        : ℕ)) (
-    by
-              omega
-    )⟩ : Fin N.height) := by
-  classical
-  intro V E _ _ _ G k e0 phi T N j A B T' hp3 rho r
-  apply Fin.ext
-  change (j.val + ((r.val + 1) % N.height)) % N.height =
-    (((j.val + r.val) % N.height) + 1) % N.height
-  calc
-    (j.val + ((r.val + 1) % N.height)) % N.height =
-        ((j.val % N.height) + (((r.val + 1) % N.height) % N.height)) %
-          N.height := Nat.add_mod _ _ _
-    _ = ((j.val % N.height) + ((r.val + 1) % N.height)) %
-        N.height := by
-      rw [Nat.mod_eq_of_lt (Nat.mod_lt _ (by omega))]
-    _ = (j.val + (r.val + 1)) % N.height :=
-      (Nat.add_mod _ _ _).symm
-    _ = ((j.val + r.val) + 1) % N.height := by congr 1
-    _ = (((j.val + r.val) % N.height) + (1 % N.height)) %
-        N.height := Nat.add_mod (j.val + r.val) 1 N.height
-    _ = (((j.val + r.val) % N.height) + 1) % N.height := by
-      rw [Nat.mod_eq_of_lt (by omega : 1 < N.height)]
-
 private theorem helper_hstart_936.{u_1, u_2} :
     open scoped Classical in
     ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E] [ DecidableEq E] (G :
@@ -700,238 +559,6 @@ private theorem helper_hend_944.{u_1, u_2} :
   · change (2 * (N.height - 1)) % 2 = 0
     omega
 
-private theorem helper_hpath_support_960.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E] [ DecidableEq E] (G :
-        LooplessMultigraph V E) (k : ℕ) (e0 : E) (phi psi : PartialEdgeColoring E k) (T :
-        TreeSequence G e0) (N : NormalGlobalMaximumTriple G k e0 phi T) (j : Fin N.height) (A B :
-        Fin k) (T' : TreeSequence G (NormalCycleEdge N j)) (hp3 : (3 : ℕ) ≤ N.height) (hnew_upper
-        : N.height ≤ T'.length + (1 : ℕ)),
-    let rho : Fin N.height → Fin N.height := fun (r : Fin N.height) ↦ j + r;
-    let H : SimpleGraph (V ⊕ E) := TwoColorIncidenceGraph G psi A B;
-    let pathNode : Fin ((2 : ℕ) * (N.height - (1 : ℕ)) + (1 : ℕ)) → V ⊕ E := fun (n : Fin ((2 : ℕ)
-        * (N.height - (1 : ℕ)) + (1 : ℕ))) ↦ if _ : (↑n : ℕ) % (2 : ℕ) = (0 : ℕ) then Sum.inl
-        (T'.vertex (Fin.castLE hnew_upper (⟨((↑n : ℕ) / (2 : ℕ) + (1 : ℕ)) % N.height, Nat.mod_lt
-        ((↑n : ℕ) / (2 : ℕ) + (1 : ℕ)) (
-    by
-                      omega
-    )⟩ : Fin N.height))) else Sum.inr (NormalCycleEdge N (rho (⟨((↑n : ℕ) + (1 : ℕ)) / (2 : ℕ),
-    by
-                  omega
-    ⟩ : Fin N.height)));
-    let nodes : List (V ⊕ E) := List.ofFn pathNode;
-    ∀ (hchain : List.IsChain H.Adj nodes) (hnodes_nonempty : nodes ≠ []),
-    let rawPath : H.Walk (nodes.head hnodes_nonempty) (nodes.getLast hnodes_nonempty) :=
-        SimpleGraph.Walk.ofSupport nodes hnodes_nonempty hchain;
-    ∀ (hstart : nodes.head hnodes_nonempty = Sum.inl (T'.vertex (⟨(1 : ℕ), Nat.succ_lt_succ
-        T'.positive⟩ : Fin (T'.length + (1 : ℕ))))) (hend : nodes.getLast hnodes_nonempty =
-        Sum.inl (T'.vertex (⟨(0 : ℕ), Nat.zero_lt_succ T'.length⟩ : Fin (T'.length + (1 : ℕ))))),
-    let closingPath : H.Walk (Sum.inl (T'.vertex (⟨(1 : ℕ), Nat.succ_lt_succ T'.positive⟩ : Fin
-        (T'.length + (1 : ℕ))))) (Sum.inl (T'.vertex (⟨(0 : ℕ), Nat.zero_lt_succ T'.length⟩ : Fin
-        (T'.length + (1 : ℕ))))) := rawPath.copy hstart hend; closingPath.support = nodes := by
-  classical
-  intro V E _ _ _ G k e0 phi psi T N j A B T' hp3 hnew_upper rho H pathNode nodes hchain
-      hnodes_nonempty rawPath hstart hend closingPath
-  calc
-    closingPath.support = rawPath.support := by
-      simpa only [closingPath] using
-        SimpleGraph.Walk.support_copy rawPath hstart hend
-    _ = nodes := by
-      simpa only [rawPath] using
-        SimpleGraph.Walk.support_ofSupport hnodes_nonempty hchain
-
-private theorem helper_hpath_length_968.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E] [ DecidableEq E] (G :
-        LooplessMultigraph V E) (k : ℕ) (e0 : E) (phi psi : PartialEdgeColoring E k) (T :
-        TreeSequence G e0) (N : NormalGlobalMaximumTriple G k e0 phi T) (j : Fin N.height) (A B :
-        Fin k) (T' : TreeSequence G (NormalCycleEdge N j)) (hp3 : (3 : ℕ) ≤ N.height) (hnew_upper
-        : N.height ≤ T'.length + (1 : ℕ)),
-    let rho : Fin N.height → Fin N.height := fun (r : Fin N.height) ↦ j + r;
-    let H : SimpleGraph (V ⊕ E) := TwoColorIncidenceGraph G psi A B;
-    let pathNode : Fin ((2 : ℕ) * (N.height - (1 : ℕ)) + (1 : ℕ)) → V ⊕ E := fun (n : Fin ((2 : ℕ)
-        * (N.height - (1 : ℕ)) + (1 : ℕ))) ↦ if _ : (↑n : ℕ) % (2 : ℕ) = (0 : ℕ) then Sum.inl
-        (T'.vertex (Fin.castLE hnew_upper (⟨((↑n : ℕ) / (2 : ℕ) + (1 : ℕ)) % N.height, Nat.mod_lt
-        ((↑n : ℕ) / (2 : ℕ) + (1 : ℕ)) (
-    by
-                      omega
-    )⟩ : Fin N.height))) else Sum.inr (NormalCycleEdge N (rho (⟨((↑n : ℕ) + (1 : ℕ)) / (2 : ℕ),
-    by
-                  omega
-    ⟩ : Fin N.height)));
-    let nodes : List (V ⊕ E) := List.ofFn pathNode;
-    ∀ (hchain : List.IsChain H.Adj nodes) (hnodes_nonempty : nodes ≠ []),
-    let rawPath : H.Walk (nodes.head hnodes_nonempty) (nodes.getLast hnodes_nonempty) :=
-        SimpleGraph.Walk.ofSupport nodes hnodes_nonempty hchain;
-    ∀ (hstart : nodes.head hnodes_nonempty = Sum.inl (T'.vertex (⟨(1 : ℕ), Nat.succ_lt_succ
-        T'.positive⟩ : Fin (T'.length + (1 : ℕ))))) (hend : nodes.getLast hnodes_nonempty =
-        Sum.inl (T'.vertex (⟨(0 : ℕ), Nat.zero_lt_succ T'.length⟩ : Fin (T'.length + (1 : ℕ))))),
-    let closingPath : H.Walk (Sum.inl (T'.vertex (⟨(1 : ℕ), Nat.succ_lt_succ T'.positive⟩ : Fin
-        (T'.length + (1 : ℕ))))) (Sum.inl (T'.vertex (⟨(0 : ℕ), Nat.zero_lt_succ T'.length⟩ : Fin
-        (T'.length + (1 : ℕ))))) := rawPath.copy hstart hend; closingPath.length = (2 : ℕ) *
-        (N.height - (1 : ℕ)) := by
-  classical
-  intro V E _ _ _ G k e0 phi psi T N j A B T' hp3 hnew_upper rho H pathNode nodes hchain
-      hnodes_nonempty rawPath hstart hend closingPath
-  calc
-    closingPath.length = rawPath.length := by
-      simpa only [closingPath] using
-        SimpleGraph.Walk.length_copy rawPath hstart hend
-    _ = nodes.length - 1 := by
-      simpa only [rawPath] using
-        SimpleGraph.Walk.length_ofSupport hnodes_nonempty hchain
-    _ = 2 * (N.height - 1) := by
-      simp [nodes]
-
-private theorem helper_hclosing_ends_995.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E] [ DecidableEq E] (G :
-        LooplessMultigraph V E) (k : ℕ) (e0 : E) (phi psi : PartialEdgeColoring E k) (T :
-        TreeSequence G e0) (N : NormalGlobalMaximumTriple G k e0 phi T) (j : Fin N.height) (A B :
-        Fin k) (T' : TreeSequence G (NormalCycleEdge N j)) (hp3 : (3 : ℕ) ≤ N.height) (hnew_upper
-        : N.height ≤ T'.length + (1 : ℕ)),
-    let rho : Fin N.height → Fin N.height := fun (r : Fin N.height) ↦ j + r; (
-    ∀ (r : Fin N.height), G.ends (NormalCycleEdge N (rho r)) = s(T'.vertex (Fin.castLE hnew_upper
-        r), T'.vertex (Fin.castLE hnew_upper (⟨((↑r : ℕ) + (1 : ℕ)) % N.height, Nat.mod_lt ((↑r :
-        ℕ) + (1 : ℕ)) (
-    by
-                        omega
-    )⟩ : Fin N.height)))) →
-    let last : Fin N.height := (⟨N.height - (1 : ℕ),
-    by
-          omega
-    ⟩ : Fin N.height);
-    let pred : Fin N.height := rho last;
-    let H : SimpleGraph (V ⊕ E) := TwoColorIncidenceGraph G psi A B;
-    let pathNode : Fin ((2 : ℕ) * (N.height - (1 : ℕ)) + (1 : ℕ)) → V ⊕ E := fun (n : Fin ((2 : ℕ)
-        * (N.height - (1 : ℕ)) + (1 : ℕ))) ↦ if _ : (↑n : ℕ) % (2 : ℕ) = (0 : ℕ) then Sum.inl
-        (T'.vertex (Fin.castLE hnew_upper (⟨((↑n : ℕ) / (2 : ℕ) + (1 : ℕ)) % N.height, Nat.mod_lt
-        ((↑n : ℕ) / (2 : ℕ) + (1 : ℕ)) (
-    by
-                      omega
-    )⟩ : Fin N.height))) else Sum.inr (NormalCycleEdge N (rho (⟨((↑n : ℕ) + (1 : ℕ)) / (2 : ℕ),
-    by
-                  omega
-    ⟩ : Fin N.height)));
-    let nodes : List (V ⊕ E) := List.ofFn pathNode; List.IsChain H.Adj nodes →
-    ∀ (hnodes_nonempty : nodes ≠ []), nodes.head hnodes_nonempty = Sum.inl (T'.vertex (⟨(1 : ℕ),
-        Nat.succ_lt_succ T'.positive⟩ : Fin (T'.length + (1 : ℕ)))) → nodes.getLast
-        hnodes_nonempty = Sum.inl (T'.vertex (⟨(0 : ℕ), Nat.zero_lt_succ T'.length⟩ : Fin
-        (T'.length + (1 : ℕ)))) →
-    let lastIndex : Fin (T'.length + (1 : ℕ)) := Fin.castLE hnew_upper last; G.ends
-        (NormalCycleEdge N pred) = s(T'.vertex lastIndex, T'.vertex (⟨(0 : ℕ), Nat.zero_lt_succ
-        T'.length⟩ : Fin (T'.length + (1 : ℕ)))) := by
-  classical
-  intro V E _ _ _ G k e0 phi psi T N j A B T' hp3 hnew_upper rho hrot_ends last pred H pathNode
-      nodes hchain hnodes_nonempty hstart hend lastIndex
-  rw [show pred = rho last by rfl, hrot_ends]
-  apply Sym2.eq_iff.mpr
-  left
-  constructor
-  · rfl
-  · apply congrArg T'.vertex
-    apply Fin.ext
-    change (N.height - 1 + 1) % N.height = 0
-    have hh : N.height - 1 + 1 = N.height := by omega
-    rw [hh, Nat.mod_self]
-
-private theorem helper_htrunk_ends_1008.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E] [ DecidableEq E] (G :
-        LooplessMultigraph V E) (k : ℕ) (e0 : E) (phi psi : PartialEdgeColoring E k) (T :
-        TreeSequence G e0) (N : NormalGlobalMaximumTriple G k e0 phi T) (j : Fin N.height) (A B :
-        Fin k) (T' : TreeSequence G (NormalCycleEdge N j)) (hp3 : (3 : ℕ) ≤ N.height) (hnew_upper
-        : N.height ≤ T'.length + (1 : ℕ)),
-    let rho : Fin N.height → Fin N.height := fun (r : Fin N.height) ↦ j + r; (
-    ∀ (r : Fin N.height), G.ends (NormalCycleEdge N (rho r)) = s(T'.vertex (Fin.castLE hnew_upper
-        r), T'.vertex (Fin.castLE hnew_upper (⟨((↑r : ℕ) + (1 : ℕ)) % N.height, Nat.mod_lt ((↑r :
-        ℕ) + (1 : ℕ)) (
-    by
-                        omega
-    )⟩ : Fin N.height)))) → (
-    ∀ (r : Fin T'.length) (hr : (↑r : ℕ) + (1 : ℕ) < N.height), T'.edge r = NormalCycleEdge N (rho
-        (⟨(↑r : ℕ),
-    by
-                  omega
-    ⟩ : Fin N.height))) →
-    let H : SimpleGraph (V ⊕ E) := TwoColorIncidenceGraph G psi A B;
-    let pathNode : Fin ((2 : ℕ) * (N.height - (1 : ℕ)) + (1 : ℕ)) → V ⊕ E := fun (n : Fin ((2 : ℕ)
-        * (N.height - (1 : ℕ)) + (1 : ℕ))) ↦ if _ : (↑n : ℕ) % (2 : ℕ) = (0 : ℕ) then Sum.inl
-        (T'.vertex (Fin.castLE hnew_upper (⟨((↑n : ℕ) / (2 : ℕ) + (1 : ℕ)) % N.height, Nat.mod_lt
-        ((↑n : ℕ) / (2 : ℕ) + (1 : ℕ)) (
-    by
-                      omega
-    )⟩ : Fin N.height))) else Sum.inr (NormalCycleEdge N (rho (⟨((↑n : ℕ) + (1 : ℕ)) / (2 : ℕ),
-    by
-                  omega
-    ⟩ : Fin N.height)));
-    let nodes : List (V ⊕ E) := List.ofFn pathNode; List.IsChain H.Adj nodes →
-    ∀ (hnodes_nonempty : nodes ≠ []), nodes.head hnodes_nonempty = Sum.inl (T'.vertex (⟨(1 : ℕ),
-        Nat.succ_lt_succ T'.positive⟩ : Fin (T'.length + (1 : ℕ)))) → nodes.getLast
-        hnodes_nonempty = Sum.inl (T'.vertex (⟨(0 : ℕ), Nat.zero_lt_succ T'.length⟩ : Fin
-        (T'.length + (1 : ℕ)))) →
-    ∀ (r : Fin T'.length), (1 : ℕ) ≤ (↑r : ℕ) → (↑r : ℕ) + (2 : ℕ) ≤ N.height → G.ends (T'.edge r)
-        = s(T'.vertex (⟨(↑r : ℕ), Nat.lt_succ_of_lt r.isLt⟩ : Fin (T'.length + (1 : ℕ))),
-        T'.vertex r.succ) := by
-  classical
-  intro V E _ _ _ G k e0 phi psi T N j A B T' hp3 hnew_upper rho hrot_ends htrunk_edge_eq H
-      pathNode nodes hchain hnodes_nonempty hstart hend r hrpos hrbound
-  have hrbefore : r.val + 1 < N.height := by omega
-  rw [htrunk_edge_eq r hrbefore,
-    hrot_ends ⟨r.val, by omega⟩]
-  apply Sym2.eq_iff.mpr
-  left
-  constructor
-  · apply congrArg T'.vertex
-    apply Fin.ext
-    rfl
-  · apply congrArg T'.vertex
-    apply Fin.ext
-    change (r.val + 1) % N.height = r.val + 1
-    exact Nat.mod_eq_of_lt (by omega)
-
-private theorem helper_hnew_one_1032.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E] [ DecidableEq E] (G :
-        LooplessMultigraph V E) (k : ℕ) (e0 : E) (phi psi : PartialEdgeColoring E k) (T :
-        TreeSequence G e0) (N : NormalGlobalMaximumTriple G k e0 phi T) (j : Fin N.height) (A B :
-        Fin k) (T' : TreeSequence G (NormalCycleEdge N j)) (hp3 : (3 : ℕ) ≤ N.height) (hnew_upper
-        : N.height ≤ T'.length + (1 : ℕ)),
-    let rho : Fin N.height → Fin N.height := fun (r : Fin N.height) ↦ j + r; (
-    ∀ (r : Fin N.height), T'.vertex (Fin.castLE hnew_upper r) = T.vertex (Fin.castLE
-        N.height_upper (rho r))) →
-    let H : SimpleGraph (V ⊕ E) := TwoColorIncidenceGraph G psi A B;
-    let pathNode : Fin ((2 : ℕ) * (N.height - (1 : ℕ)) + (1 : ℕ)) → V ⊕ E := fun (n : Fin ((2 : ℕ)
-        * (N.height - (1 : ℕ)) + (1 : ℕ))) ↦ if _ : (↑n : ℕ) % (2 : ℕ) = (0 : ℕ) then Sum.inl
-        (T'.vertex (Fin.castLE hnew_upper (⟨((↑n : ℕ) / (2 : ℕ) + (1 : ℕ)) % N.height, Nat.mod_lt
-        ((↑n : ℕ) / (2 : ℕ) + (1 : ℕ)) (
-    by
-                      omega
-    )⟩ : Fin N.height))) else Sum.inr (NormalCycleEdge N (rho (⟨((↑n : ℕ) + (1 : ℕ)) / (2 : ℕ),
-    by
-                  omega
-    ⟩ : Fin N.height)));
-    let nodes : List (V ⊕ E) := List.ofFn pathNode;
-    ∀ (_ : List.IsChain H.Adj nodes) (hnodes_nonempty : nodes ≠ []) (_ : nodes.head
-        hnodes_nonempty = Sum.inl (T'.vertex (⟨(1 : ℕ), Nat.succ_lt_succ T'.positive⟩ : Fin
-        (T'.length + (1 : ℕ))))) (_ : nodes.getLast hnodes_nonempty = Sum.inl (T'.vertex (⟨(0 :
-        ℕ), Nat.zero_lt_succ T'.length⟩ : Fin (T'.length + (1 : ℕ))))), T'.vertex (⟨(1 : ℕ),
-        Nat.succ_lt_succ T'.positive⟩ : Fin (T'.length + (1 : ℕ))) = T.vertex (Fin.castLE
-        N.height_upper (⟨((↑j : ℕ) + (1 : ℕ)) % N.height, Nat.mod_lt ((↑j : ℕ) + (1 : ℕ)) (
-    by
-                  omega
-    )⟩ : Fin N.height)) := by
-  classical
-  intro V E _ _ _ G k e0 phi psi T N j A B T' hp3 hnew_upper rho hrot_vertex H pathNode nodes
-      hchain hnodes_nonempty hstart hend
-  rw [show (⟨1, Nat.succ_lt_succ T'.positive⟩ : Fin (T'.length + 1)) =
-      Fin.castLE hnew_upper (⟨1, by omega⟩ : Fin N.height) by rfl,
-    hrot_vertex]
-  apply congrArg T.vertex
-  apply congrArg (Fin.castLE N.height_upper)
-  apply Fin.ext
-  rfl
-
 theorem ScheideTrunkRotationNormal {V E : Type*}
     [Fintype V] [Fintype E] [DecidableEq E]
     (G : LooplessMultigraph V E) (k : ℕ) (e0 : E)
@@ -991,7 +618,7 @@ theorem ScheideTrunkRotationNormal {V E : Type*}
       (rho r).val = (j.val + r.val) % N.height := by
     rfl
   have hrho_injective : Function.Injective rho := by
-    apply helper_hrho_injective_88 <;> assumption
+    exact add_right_injective j
   have hrho_zero : rho ⟨0, by omega⟩ = j := by
     apply Fin.ext
     change (j.val + 0) % N.height = j.val
@@ -999,7 +626,7 @@ theorem ScheideTrunkRotationNormal {V E : Type*}
   have hrho_succ (r : Fin N.height) :
       rho ⟨(r.val + 1) % N.height, Nat.mod_lt _ (by omega)⟩ =
         ⟨((rho r).val + 1) % N.height, Nat.mod_lt _ (by omega)⟩ := by
-    apply helper_hrho_succ_860 <;> assumption
+    exact finRotation_successor (by omega) j r
   have hrot_vertex (r : Fin N.height) :
       T'.vertex (Fin.castLE hnew_upper r) =
         T.vertex (Fin.castLE N.height_upper (rho r)) := by
@@ -1017,7 +644,13 @@ theorem ScheideTrunkRotationNormal {V E : Type*}
   have hrot_color (r : Fin N.height) (hr : 1 ≤ r.val) :
       psi (NormalCycleEdge N (rho r)) = some A ∨
         psi (NormalCycleEdge N (rho r)) = some B := by
-    apply helper_hrot_color_173 <;> assumption
+    apply shiftedEdgeProperty (NormalCycleEdge N) phi psi j hcycle_injective hshift hfixed
+      (fun color => color = some A ∨ color = some B) hpair_colors (rho r)
+    intro equal
+    have zero := hrho_injective (equal.trans hrho_zero.symm)
+    have values := congrArg Fin.val zero
+    change r.val = 0 at values
+    omega
   have htrunk_edge_eq (r : Fin T'.length)
       (hr : r.val + 1 < N.height) :
       T'.edge r = NormalCycleEdge N
@@ -1065,9 +698,13 @@ theorem ScheideTrunkRotationNormal {V E : Type*}
       (Sum.inl (T'.vertex ⟨0, Nat.zero_lt_succ T'.length⟩)) :=
     rawPath.copy hstart hend
   have hpath_support : closingPath.support = nodes := by
-    apply helper_hpath_support_960; assumption
+    exact (SimpleGraph.Walk.support_copy rawPath hstart hend).trans
+      (SimpleGraph.Walk.support_ofSupport hnodes_nonempty hchain)
   have hpath_length : closingPath.length = 2 * (N.height - 1) := by
-    apply helper_hpath_length_968; assumption
+    calc
+      closingPath.length = rawPath.length := SimpleGraph.Walk.length_copy rawPath hstart hend
+      _ = nodes.length - 1 := SimpleGraph.Walk.length_ofSupport hnodes_nonempty hchain
+      _ = 2 * (N.height - 1) := by simp [nodes]
   have hnode_injective : Function.Injective pathNode := by
     apply helper_hnode_injective_505 <;> assumption
   have hpath_isPath : closingPath.IsPath := by
@@ -1085,11 +722,16 @@ theorem ScheideTrunkRotationNormal {V E : Type*}
   have hclosing_ends : G.ends (NormalCycleEdge N pred) =
       s(T'.vertex lastIndex,
         T'.vertex ⟨0, Nat.zero_lt_succ T'.length⟩) := by
-    apply helper_hclosing_ends_995 <;> assumption
+    exact cyclicEdgeEnds_last (by omega)
+      (fun index => T'.vertex (Fin.castLE hnew_upper index))
+      (fun index => NormalCycleEdge N (rho index)) G.ends hrot_ends
   have htrunk_ends :
     ∀ r : Fin T'.length, 1 ≤ r.val → r.val + 2 ≤ N.height → G.ends (T'.edge r) = s(T'.vertex
         ⟨r.val, Nat.lt_succ_of_lt r.isLt⟩, T'.vertex r.succ) := by
-    apply helper_htrunk_ends_1008 <;> assumption
+    intro position _ bound
+    exact cyclicEdgeEnds_internal hnew_upper (by omega) T'.vertex T'.edge
+      (fun index => NormalCycleEdge N (rho index)) G.ends hrot_ends htrunk_edge_eq
+      position (by omega)
   have hnew_zero : T'.vertex ⟨0, Nat.zero_lt_succ T'.length⟩ =
       T.vertex (Fin.castLE N.height_upper j) := by
     rw [show (⟨0, Nat.zero_lt_succ T'.length⟩ : Fin (T'.length + 1)) =
@@ -1098,7 +740,7 @@ theorem ScheideTrunkRotationNormal {V E : Type*}
   have hnew_one : T'.vertex ⟨1, Nat.succ_lt_succ T'.positive⟩ =
       T.vertex (Fin.castLE N.height_upper
         ⟨(j.val + 1) % N.height, Nat.mod_lt _ (by omega)⟩) := by
-    apply helper_hnew_one_1032 <;> assumption
+    exact hrot_vertex ⟨1, by omega⟩
   let N' : NormalGlobalMaximumTriple G k (NormalCycleEdge N j) psi T' :=
     { global := hglobal
       height := N.height

@@ -1,7 +1,7 @@
 /-
 Copyright (c) 2026 Wesley Pegden. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Wesley Pegden
+Authors: Wesley Pegden, Lean Pool contributors
 -/
 module
 
@@ -366,6 +366,55 @@ theorem GoodHierarchyPrefixRepackage {V E : Type*}
       inferInstance (@G) (@k) (@e0) (@input) (@T) (@generating) (@phi) (@ett) (@base) (@H)
       (@good) (@r) (@hr) (@mpPrefix) (@oldDividerValue) (@stageEqRaw) (@starredEqRaw)
       (@storedEqRaw) (@stageMissingEqRaw) (@segmentSubsetRaw)
+/-- Repackage the last ordinary prefix with indices expressed in the resulting hierarchy. -/
+theorem GoodHierarchyLastPrefixRepackage {V E : Type*}
+    [Fintype V] [Fintype E] [DecidableEq V] [DecidableEq E]
+    (G : LooplessMultigraph V E) (k : ℕ) (e0 : E)
+    (input : PartialEdgeColoring E k) (T : TreeSequence G e0)
+    (generating phi : PartialEdgeColoring E k)
+    (ett : ExtendedTashkinovTree G k e0 input T generating)
+    (maximum : MaximumProperty ett) (base : HierarchyBase ett phi)
+    (H : TashkinovHierarchy ett base) (good : GoodHierarchy H)
+    (positive : 0 < H.dividerCount) (prefixTree : TreeSequence G e0)
+    (atLast : prefixTree = H.stage (Fin.last H.dividerCount).castSucc) :
+    ∃ ettPrefix : ExtendedTashkinovTree G k e0 input prefixTree generating,
+    ∃ basePrefix : HierarchyBase ettPrefix phi,
+    ∃ HP : TashkinovHierarchy ettPrefix basePrefix,
+    ∃ goodPrefix : GoodHierarchy HP,
+      MaximumProperty ettPrefix ∧
+      ∃ count : HP.dividerCount + 1 = H.dividerCount,
+        basePrefix.core = base.core ∧ basePrefix.closure = base.closure ∧
+        (∀ index : Fin (HP.dividerCount + 2),
+          HP.stage index = H.stage ⟨index.val, by omega⟩) ∧
+        (∀ index : Fin (HP.dividerCount + 1),
+          HierarchyStoredColorsAt HP index = HierarchyStoredColorsAt H ⟨index.val, by omega⟩ ∧
+          ∀ color : Fin k,
+            goodPrefix.gamma index color = good.gamma ⟨index.val, by omega⟩ color) ∧
+        TreeColorSetMinusClosed G phi (H.stage (Fin.last H.dividerCount).castSucc)
+          ((HierarchyStoredColorsAt H (Fin.last H.dividerCount)).biUnion
+            (good.gamma ⟨H.dividerCount - 1,
+              Nat.lt_succ_of_le (Nat.sub_le H.dividerCount 1)⟩)) := by
+  classical
+  subst prefixTree
+  obtain ⟨ettPrefix, prefixMaximum, rounds, series, basePrefix, core, closure, support,
+      HP, oldCount, stages, dividers, goodPrefix, colors, minus⟩ :=
+    GoodHierarchyPrefixRepackage G k e0 input T generating phi ett maximum base H good
+      (Fin.last H.dividerCount) (by change 1 ≤ H.dividerCount; omega)
+  have count : HP.dividerCount + 1 = H.dividerCount := by
+    change HP.dividerCount = H.dividerCount - 1 at oldCount
+    omega
+  refine ⟨ettPrefix, basePrefix, HP, goodPrefix, prefixMaximum, count, core, closure, ?_, ?_, minus⟩
+  · intro index
+    let old : Fin (H.dividerCount + 1) := ⟨index.val, by omega⟩
+    have same : Fin.cast (by omega) old = index := Fin.ext rfl
+    simpa only [same] using stages old
+  · intro index
+    let old : Fin H.dividerCount := ⟨index.val, by omega⟩
+    have same : Fin.cast (by omega) old = index := Fin.ext rfl
+    have result := colors old
+    simpa only [same] using result
+
+
 end GoldbergSeymour
 
 end

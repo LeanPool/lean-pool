@@ -130,32 +130,19 @@ theorem helper_positivePackage_2874.{u_1, u_2} :
       TnToA ordinaryToA missingA treeMissingEq closureInsideA corrT hmaximumT baseT hcoreT
       hclosureT terminalData K starredEq storedEq stageMissingEq gammaNot segmentTransfer minusEq
       goodT hq hqK U hU
-  subst U
-  obtain ⟨ettA, hMPA, hrA, hsA, baseA, hcoreA, hclosureA, hsupportA,
-      KA, hcount, hstages, hdividers, goodA, hgammaA, hminusA⟩ :=
-    GoodHierarchyPrefixRepackage G k e0 corrT.replacementInput T sigma sigma
-      corrT.replacementETT hmaximumT baseT K goodT q hqK
-  refine ⟨corrT.replacementInput, ettA, baseA, KA, goodA, hMPA, ?_⟩
-  have hcount' : KA.dividerCount + 1 = H.dividerCount := by
-    change KA.dividerCount = H.dividerCount - 1 at hcount
-    change 0 < H.dividerCount at hq
-    omega
-  refine ⟨hcount', hcoreA.trans hcoreT, hclosureA.trans hclosureT, ?_, ?_, ?_⟩
-  · intro j
-    let jp : Fin (q.val + 1) := ⟨j.val, by dsimp [q]; have := j.isLt; omega⟩
-    have he : Fin.cast (by omega) jp = j := Fin.ext rfl
-    simpa only [he] using hstages jp
-  · intro j
-    let jp : Fin q.val := ⟨j.val, by dsimp [q]; have := j.isLt; omega⟩
-    have he : Fin.cast (by omega) jp = j := Fin.ext rfl
-    have hg := hgammaA jp
-    simp only [he] at hg
-    refine ⟨hg.1.trans (storedEq _), ?_⟩
-    intro eta heta
-    exact hg.2 eta
-  · have he : (Fin.last H.dividerCount).castSucc =
-        (⟨H.dividerCount, by omega⟩ : Fin (H.dividerCount + 2)) := Fin.ext rfl
-    simpa [K, goodT, storedEq, q, he] using hminusA
+  obtain ⟨ettA, baseA, KA, goodA, maximumA, count, core, closure, stages, colors, minus⟩ :=
+    GoodHierarchyLastPrefixRepackage G k e0 corrT.replacementInput T sigma sigma
+      corrT.replacementETT hmaximumT baseT K goodT hq U hU
+  have gammaAgreement : goodT.gamma = C.good.gamma := rfl
+  refine ⟨corrT.replacementInput, ettA, baseA, KA, goodA, maximumA, count,
+    core.trans hcoreT, closure.trans hclosureT, stages, ?_, ?_⟩
+  · intro index
+    refine ⟨(colors index).1.trans (storedEq _), ?_⟩
+    intro color _
+    rw [← gammaAgreement]
+    exact (colors index).2 color
+  · rw [gammaAgreement, storedEq] at minus
+    exact minus
 
 theorem helper_sameComponent_3526.{u_1, u_2} :
     open scoped Classical in
