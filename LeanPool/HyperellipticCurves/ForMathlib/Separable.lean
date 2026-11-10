@@ -58,7 +58,7 @@ namespace Polynomial
 /-- **Squarefreeness ascends to the fraction field** for a monic polynomial over an
 integrally closed domain: a repeated monic factor over the fraction field lifts to a
 repeated factor by Gauss's lemma. -/
-theorem Monic.squarefree_map_fraction_map {R K : Type*} [CommRing R] [IsDomain R]
+theorem Monic.squarefree_map_fraction_map {R K : Type*} [CommRing R]
     [IsIntegrallyClosed R] [Field K] [Algebra R K] [IsFractionRing R K] {g : R[X]}
     (hg : g.Monic) (hsq : Squarefree g) : Squarefree (g.map (algebraMap R K)) := fun q hq ↦ by
   have hq0 : q ≠ 0 := by

@@ -37,7 +37,7 @@ field (`ChabautyColeman.phiPipeline_map_constantCoeff`,
 `ChabautyColeman.chartV_map_constantCoeff`). Feeding these into
 `ChabautyColeman.mk0_phiPipeline_eval` gives `chartClass(ζ(z₀)) = ([P_{z₀}] + [ιP₀]) · [τ]`
 (`ChabautyColeman.chartClass_eq_diskPointDiff_mul_tauClass`), whence
-`(J1_equiv_polydisk c).1 = ζ(z₀)` through `ChabautyColeman.polydiskToKer`
+`(reductionKernelEquivPolydisk c).1 = ζ(z₀)` through `ChabautyColeman.polydiskToKer`
 (`ChabautyColeman.J1_equiv_polydisk_diskPointDiff`).
 -/
 
@@ -278,7 +278,7 @@ theorem J1_equiv_polydisk_diskPointDiff (hf : f.Monic) (hdeg : 0 < f.natDegree)
     {z₀ : O} (hz₀ : z₀ ∈ maximalIdeal O)
     (hζ : ∀ j : Fin uτ.natDegree,
       PSeries.eval z₀ (phiZeta f a b xQ yQ m m₀ uτ vτ d j) ∈ maximalIdeal O) :
-    (J1_equiv_polydisk hu rfl hv hw hbez hf hdeg hfdeg hsq
+    (reductionKernelEquivPolydisk hu rfl hv hw hbez hf hdeg hfdeg hsq
         ⟨aj (f.map (algebraMap O (FractionRing O))) (algebraMap O (FractionRing O) (a + z₀))
             (algebraMap O (FractionRing O)
               (PSeries.eval z₀ (PowerSeries.C b * diskSeriesGeneric f a)))
@@ -286,10 +286,10 @@ theorem J1_equiv_polydisk_diskPointDiff (hf : f.Monic) (hdeg : 0 < f.natDegree)
             (algebraMap O (FractionRing O) (-b)),
           MonoidHom.mem_ker.mpr (redJ_diskPointDiff_eq_one hf hdeg hb hfa h2 hz₀)⟩).1
       = fun j ↦ PSeries.eval z₀ (phiZeta f a b xQ yQ m m₀ uτ vτ d j) := by
-  suffices h : J1_equiv_polydisk hu rfl hv hw hbez hf hdeg hfdeg hsq _
+  suffices h : reductionKernelEquivPolydisk hu rfl hv hw hbez hf hdeg hfdeg hsq _
       = ⟨fun j ↦ PSeries.eval z₀ (phiZeta f a b xQ yQ m m₀ uτ vτ d j), hζ⟩ from
     congrArg Subtype.val h
-  rw [J1_equiv_polydisk, Equiv.symm_apply_eq, Equiv.ofBijective_apply]
+  rw [reductionKernelEquivPolydisk, Equiv.symm_apply_eq, Equiv.ofBijective_apply]
   refine Subtype.ext ?_
   change _ = chartClass hu rfl hv hw hbez hζ * (tauClass (f := f) (v := vτ) hu)⁻¹
   rw [chartClass_eq_diskPointDiff_mul_tauClass hf hsep hm hm₀ hb hfa h2 hyQ hu hv hw hbez

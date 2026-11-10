@@ -282,7 +282,7 @@ variable {O : Type*} [CommRing O] [IsDomain O] [IsDiscreteValuationRing O]
 /-- **The logarithm value transports to the fraction field** (toward `thm:omega-prime-global`,
 numerical clause (b)): the image of `Lam c i` in `K = FractionRing O` is the convergent
 `p`-adic sum of the honest logarithm series of `F_τ` at the chart coordinates
-`(J1_equiv_polydisk c).1` of `c + τ`. This is the pushforward of the integral `O`-level
+`(reductionKernelEquivPolydisk c).1` of `c + τ`. This is the pushforward of the integral `O`-level
 value along the continuous inclusion `O ↪ K`. -/
 theorem hasSum_algebraMap_Lam (hf : f.Monic) (hdeg : 0 < f.natDegree)
     (hfdeg : (f.map (algebraMap O (FractionRing O))).natDegree = 2 * n + 1)
@@ -298,7 +298,7 @@ theorem hasSum_algebraMap_Lam (hf : f.Monic) (hdeg : 0 < f.natDegree)
         coeff d' ((ftauFoldFGLFrac hu hne hv hw hbez hf hfdeg hroot hcc ha hbv hd hram
             hsplit hunit).log i)
           * d'.prod fun s j ↦ algebraMap O (FractionRing O)
-              ((J1_equiv_polydisk hu hne hv hw hbez hf hdeg hfdeg hsq c).1 s) ^ j)
+              ((reductionKernelEquivPolydisk hu hne hv hw hbez hf hdeg hfdeg hsq c).1 s) ^ j)
       (algebraMap O (FractionRing O)
         (Lam hu hne hv hw hbez hf hdeg hfdeg hsq hroot hcc ha hbv
           hsplit hunit hd hram hpe c i)) := by

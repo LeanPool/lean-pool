@@ -166,7 +166,7 @@ noncomputable def genCuspFold (k : Type*) [Field k] (g : ℕ)
 
 /-- The master congruence of the extended chain at stage `g + m`, descended along the
 even phase-2 pairing to the stage-`(g - m)` alphabet of the phase-1 chain. -/
-private theorem foldChain_congr [NeZero (2 : k)]
+private theorem foldChain_congr
     {H₀ : FractionRing (MvPolynomial ℕ k)} {m : ℕ} (hm : m ≤ g)
     (hok : ∀ j < g + m,
       (genCuspFold k g H₀ j).2.2

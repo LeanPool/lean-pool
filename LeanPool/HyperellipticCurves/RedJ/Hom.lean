@@ -84,7 +84,7 @@ variable [CharZero K] [Fact (Squarefree (f.map (algebraMap O K)))]
 
 /-- The base-changed class of a represented class is represented by the extended ideal. -/
 theorem hypJacMap_eq_mk0_extendNZ {L L' : IntermediateField K (AlgebraicClosure K)}
-    [FiniteDimensional K L] [FiniteDimensional K L'] [Algebra L L'] [IsScalarTower K L L']
+    [Algebra L L'] [IsScalarTower K L L']
     {c : HypJac K (f.map (algebraMap O K))}
     {I : (Ideal (HypRing L ((f.map (algebraMap O K)).map (algebraMap K L))))⁰}
     (hc : HypJac.map (f.map (algebraMap O K)) c = ClassGroup.mk0 I) :
@@ -114,8 +114,8 @@ theorem hypJacMap_eq_mk0_extendNZ {L L' : IntermediateField K (AlgebraicClosure 
     _ = ClassGroup.mk0 (ClassGroup.extendedIdeal _ _ I) := by
         rw [hc]
         exact ClassGroup.extendedHom_mk0 _ _ I
-    _ = ClassGroup.mk0 (extendNZ L L' I) := by
-        congr 1
+    _ = ClassGroup.mk0 (extendNZ L L' I) :=
+        congrArg ClassGroup.mk0 (Subtype.ext rfl)
 
 omit [CharZero K] [Fact (Squarefree (f.map (algebraMap O K)))] in
 /-- Extension of ideals along the tower is transitive. -/
@@ -140,7 +140,7 @@ theorem extendNZ_map_baseChangeTo (L₁ L₃ L₄ : IntermediateField K (Algebra
 /-- The base change to `Lb` of the Abel–Jacobi class of a point is the class of the point ideal
 of the base-changed coordinates. -/
 theorem hypJacMap_aj_eq_mk0_pointIdeal
-    (Lb : IntermediateField K (AlgebraicClosure K)) [FiniteDimensional K Lb] (x y : K) :
+    (Lb : IntermediateField K (AlgebraicClosure K)) (x y : K) :
     HypJac.map (K' := Lb) (f.map (algebraMap O K)) (aj (f.map (algebraMap O K)) x y)
       = ClassGroup.mk0 ⟨pointIdeal ((f.map (algebraMap O K)).map (algebraMap K Lb))
           (algebraMap K Lb x) (algebraMap K Lb y),
@@ -216,7 +216,7 @@ theorem mk0_redIdealBar_extendNZ_mul
 
 /-- The reductions of the connecting principal factors are principal. -/
 theorem isPrincipal_redIdealBar_span_baseChangeTo
-    (L₃ L₄ : IntermediateField K (AlgebraicClosure K)) [FiniteDimensional K L₃]
+    (L₃ L₄ : IntermediateField K (AlgebraicClosure K))
     [FiniteDimensional K L₄] [Algebra L₃ L₄] [IsScalarTower K L₃ L₄]
     (hf : f.Monic) (hdeg : 0 < f.natDegree)
     {N : Polynomial L₃} (hN0 : N ≠ 0) (hsplitN : (N.map (algebraMap L₃ L₄)).Splits)

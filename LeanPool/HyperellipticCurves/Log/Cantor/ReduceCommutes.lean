@@ -350,7 +350,7 @@ open Function IsLocalRing
 /-- A polynomial over the fraction field `K` whose image in an extension `L` is defined over the
 integral closure of `O` in `L` is already defined over `O`: its coefficients are integral over
 `O`, hence in `O` because `O` is integrally closed. -/
-theorem exists_map_eq_of_map_integralClosure {O K L : Type*} [CommRing O] [IsDomain O]
+theorem exists_map_eq_of_map_integralClosure {O K L : Type*} [CommRing O]
     [IsIntegrallyClosed O] [Field K] [Algebra O K] [IsFractionRing O K] [Field L] [Algebra K L]
     [Algebra O L] [IsScalarTower O K L] {q : K[X]} {qC : (integralClosure O L)[X]}
     (h : q.map (algebraMap K L) = qC.map (algebraMap (integralClosure O L) L)) :

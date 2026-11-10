@@ -82,7 +82,7 @@ theorem hasSum_Lam_antiderivOmegaPrime_of_polydisk (hf : f.Monic) (hdeg : 0 < f.
     {ζ : Fin uτ.natDegree → O⟦X⟧} (hζ0 : ∀ s, PowerSeries.constantCoeff (ζ s) = 0)
     {z₀ : O} (hz₀ : z₀ ∈ maximalIdeal O)
     (c : (redJHom (K := FractionRing O) (f := f) hf hdeg).ker)
-    (hJ : (J1_equiv_polydisk hu rfl hv hw hbez hf hdeg hfdeg hsq c).1
+    (hJ : (reductionKernelEquivPolydisk hu rfl hv hw hbez hf hdeg hfdeg hsq c).1
       = fun j ↦ PSeries.eval z₀ (ζ j)) (i : Fin uτ.natDegree) :
     HasSum (fun k : ℕ ↦ PowerSeries.coeff k (antideriv (omegaPrime
           (ftauFoldFGLFrac hu rfl hv hw hbez hf hfdeg hroot hcc ha hbv hd hram hsplit hunit)

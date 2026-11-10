@@ -117,12 +117,10 @@ noncomputable abbrev y : HypRing R f := ω
 @[simp]
 theorem y_sq : y f ^ 2 = algebraMap R[X] _ f := by rw [omega_sq]; simp
 
-@[simp]
 theorem star_y : star (y f) = -y f := by rw [star_omega]; simp
 
 /-- The involution negates the imaginary part (the `b = 0` case of
 `QuadraticAlgebra.star_mk`). -/
-@[simp]
 theorem star_mk (p q : R[X]) : star (⟨p, q⟩ : HypRing R f) = ⟨p, -q⟩ := by simp
 
 /-- Every element of the coordinate ring decomposes as `re + im · y`. -/
@@ -172,7 +170,6 @@ noncomputable abbrev y : HypField K f := ω
 theorem y_sq : y f ^ 2 = algebraMap K[X] _ f := by
   rw [omega_sq, IsScalarTower.algebraMap_apply K[X] (RatFunc K) (HypField K f)]; simp
 
-@[simp]
 theorem star_y : star (y f) = -y f := by rw [star_omega]; simp
 
 /-- The hyperelliptic involution `ι` on `K(x)[Y]/(Y² - f)`, as a `K(x)`-algebra

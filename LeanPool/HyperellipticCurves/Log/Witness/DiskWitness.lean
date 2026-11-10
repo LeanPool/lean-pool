@@ -287,7 +287,7 @@ at a good parameter carries a full certificate pack, Weierstrass avoidance at bo
 reduced data, and the CRT input — the reduced stage-2 `u`-part is coprime to the pair
 block. Only the curve-avoidance of the composed cofactor depends on whether the centre is
 generic or a Weierstrass point, and it enters as `hWf`. -/
-theorem exists_isPipelineCerts_pencil_of_isCoprime [IsAlgClosed K] [NeZero (2 : K)]
+theorem exists_isPipelineCerts_pencil_of_isCoprime [NeZero (2 : K)]
     [Fact (Odd f.natDegree)] [Fact (Squarefree f)] (hu : uτ.Monic) (hne : uτ.eval a ≠ 0)
     (hd : uτ ∣ vτ ^ 2 - f) (hb : b ^ 2 = f.eval a)
     (hv : vτ.degree < uτ.degree) (hgp : IsCoprime uτ f)

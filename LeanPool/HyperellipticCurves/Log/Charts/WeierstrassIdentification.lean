@@ -263,7 +263,7 @@ theorem J1_equiv_polydisk_diskPointDiff_weierstrass (hf : f.Monic) (hdeg : 0 < f
     {z₀ : O} (hz₀ : z₀ ∈ maximalIdeal O)
     (hζ : ∀ j : Fin uτ.natDegree,
       PSeries.eval z₀ (wZeta hf hdeg hω hωu xQ yQ m m₀ uτ vτ d j) ∈ maximalIdeal O) :
-    (J1_equiv_polydisk hu rfl hv hw hbez hf hdeg hfdeg hsq
+    (reductionKernelEquivPolydisk hu rfl hv hw hbez hf hdeg hfdeg hsq
         ⟨aj (f.map (algebraMap O (FractionRing O)))
             (algebraMap O (FractionRing O) (PSeries.eval z₀ (weierstrassSeries hf hdeg hω hωu)))
             (algebraMap O (FractionRing O) z₀)
@@ -272,10 +272,10 @@ theorem J1_equiv_polydisk_diskPointDiff_weierstrass (hf : f.Monic) (hdeg : 0 < f
           MonoidHom.mem_ker.mpr
             (redJ_diskPointDiff_eq_one_weierstrass hf hdeg hω hωu hz₀)⟩).1
       = fun j ↦ PSeries.eval z₀ (wZeta hf hdeg hω hωu xQ yQ m m₀ uτ vτ d j) := by
-  suffices h : J1_equiv_polydisk hu rfl hv hw hbez hf hdeg hfdeg hsq _
+  suffices h : reductionKernelEquivPolydisk hu rfl hv hw hbez hf hdeg hfdeg hsq _
       = ⟨fun j ↦ PSeries.eval z₀ (wZeta hf hdeg hω hωu xQ yQ m m₀ uτ vτ d j), hζ⟩ from
     congrArg Subtype.val h
-  rw [J1_equiv_polydisk, Equiv.symm_apply_eq, Equiv.ofBijective_apply]
+  rw [reductionKernelEquivPolydisk, Equiv.symm_apply_eq, Equiv.ofBijective_apply]
   refine Subtype.ext ?_
   change _ = chartClass hu rfl hv hw hbez hζ * (tauClass (f := f) (v := vτ) hu)⁻¹
   rw [chartClass_eq_diskPointDiff_mul_tauClass_weierstrass hf hdeg hω hωu hsep hm hm₀ hyQ

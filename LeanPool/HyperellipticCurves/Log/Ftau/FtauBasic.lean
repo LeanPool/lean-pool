@@ -42,7 +42,7 @@ section SubstZero
 variable {O : Type*} [CommRing O]
 
 /-- Substituting `0` for every variable extracts the constant term. -/
-theorem subst_zero_eq_C_constantCoeff {σ τ : Type*} [Finite σ] (f : MvPowerSeries σ O) :
+theorem subst_zero_eq_C_constantCoeff {σ τ : Type*} (f : MvPowerSeries σ O) :
     MvPowerSeries.subst (fun _ : σ ↦ (0 : MvPowerSeries τ O)) f
       = MvPowerSeries.C (MvPowerSeries.constantCoeff f) := by
   ext e

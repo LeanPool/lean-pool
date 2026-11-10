@@ -54,7 +54,6 @@ theorem dotDer_C (a : A) : d.dotDer (C a) = C (d a) := by simp [← monomial_zer
 @[simp]
 theorem dotDer_X : d.dotDer (X : A[X]) = 0 := by simp [← monomial_one_one_eq_X]
 
-@[simp]
 theorem dotDer_C_mul_X_pow (a : A) (j : ℕ) : d.dotDer (C a * X ^ j) = C (d a) * X ^ j := by
   rw [C_mul_X_pow_eq_monomial, dotDer_monomial, C_mul_X_pow_eq_monomial]
 

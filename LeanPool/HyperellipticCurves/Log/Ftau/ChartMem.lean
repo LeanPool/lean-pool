@@ -21,7 +21,7 @@ For a `τ`-datum `(u, v)` in good position (with certificate pack, as provided b
 `ChabautyColeman.TauData`), the map sending a polydisk point `z ∈ 𝔪ⁿ` to the chart class
 at `z` translated by `-τ` is a bijection onto the kernel of the reduction homomorphism
 `ChabautyColeman.redJHom` (`ChabautyColeman.polydiskToKer_bijective`,
-`ChabautyColeman.J1_equiv_polydisk`), and transports the formal group law `F_τ` to the
+`ChabautyColeman.reductionKernelEquivPolydisk`), and transports the formal group law `F_τ` to the
 multiplication of the Jacobian (`ChabautyColeman.polydiskToKer_eval_FtauFold`).
 
 Forward direction (`ChabautyColeman.exists_chartClass_eq`): a class with trivial
@@ -431,7 +431,7 @@ theorem polydiskToKer_bijective (hf : f.Monic) (hdeg : 0 < f.natDegree)
 polydisk** (blueprint `thm:chart-mem`): the inverse of the parametrization
 `ChabautyColeman.polydiskToKer`. The group compatibility (transport of multiplication to
 `+_{F_τ}`) is `ChabautyColeman.polydiskToKer_eval_FtauFold`. -/
-noncomputable def J1_equiv_polydisk (hf : f.Monic) (hdeg : 0 < f.natDegree)
+noncomputable def reductionKernelEquivPolydisk (hf : f.Monic) (hdeg : 0 < f.natDegree)
     (hfdeg : (f.map (algebraMap O (FractionRing O))).natDegree = 2 * n + 1)
     (hsq : Squarefree (u.map (residue O))) :
     (redJHom (K := FractionRing O) (f := f) hf hdeg).ker

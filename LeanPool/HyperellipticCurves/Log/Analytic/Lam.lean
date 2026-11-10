@@ -81,16 +81,16 @@ noncomputable def kerScaledCoords (hf : f.Monic) (hdeg : 0 < f.natDegree)
     (hsq : Squarefree (u.map (residue O))) (hram : IsUniformizer π p e)
     (c : (redJHom (K := FractionRing O) (f := f) hf hdeg).ker) : Fin n → O :=
   fun j ↦ (hram.mem_iff.mp
-    ((J1_equiv_polydisk hu hne hv hw hbez hf hdeg hfdeg hsq c).2 j)).choose
+    ((reductionKernelEquivPolydisk hu hne hv hw hbez hf hdeg hfdeg hsq c).2 j)).choose
 
 theorem kerScaledCoords_spec (hf : f.Monic) (hdeg : 0 < f.natDegree)
     (hfdeg : (f.map (algebraMap O (FractionRing O))).natDegree = 2 * n + 1)
     (hsq : Squarefree (u.map (residue O))) (hram : IsUniformizer π p e)
     (c : (redJHom (K := FractionRing O) (f := f) hf hdeg).ker) (j : Fin n) :
     π * kerScaledCoords hu hne hv hw hbez hf hdeg hfdeg hsq hram c j
-      = (J1_equiv_polydisk hu hne hv hw hbez hf hdeg hfdeg hsq c).1 j :=
+      = (reductionKernelEquivPolydisk hu hne hv hw hbez hf hdeg hfdeg hsq c).1 j :=
   (hram.mem_iff.mp
-    ((J1_equiv_polydisk hu hne hv hw hbez hf hdeg hfdeg hsq c).2 j)).choose_spec.symm
+    ((reductionKernelEquivPolydisk hu hne hv hw hbez hf hdeg hfdeg hsq c).2 j)).choose_spec.symm
 
 /-- **The abelian logarithm on the kernel of reduction** (blueprint `def:Lam`), in the
 `π`-scaled coordinates of `thm:log-iso`: `Λ(c) = (evalT y (HL i))ᵢ` where `y` is the
@@ -126,12 +126,12 @@ theorem J1_equiv_polydisk_mul (hf : f.Monic) (hdeg : 0 < f.natDegree)
     (hunit : ∀ i j, i ≠ j → IsUnit (a i - a j))
     (hd : IsFtauFoldCerts A a b hu hne hv hw hbez d)
     (c₁ c₂ : (redJHom (K := FractionRing O) (f := f) hf hdeg).ker) :
-    (J1_equiv_polydisk hu hne hv hw hbez hf hdeg hfdeg hsq (c₁ * c₂)).1
+    (reductionKernelEquivPolydisk hu hne hv hw hbez hf hdeg hfdeg hsq (c₁ * c₂)).1
       = fun j ↦ MvPSeries.eval
-          (Sum.elim (J1_equiv_polydisk hu hne hv hw hbez hf hdeg hfdeg hsq c₁).1
-            (J1_equiv_polydisk hu hne hv hw hbez hf hdeg hfdeg hsq c₂).1)
+          (Sum.elim (reductionKernelEquivPolydisk hu hne hv hw hbez hf hdeg hfdeg hsq c₁).1
+            (reductionKernelEquivPolydisk hu hne hv hw hbez hf hdeg hfdeg hsq c₂).1)
           (FtauFold A a b hu hne hv hw hbez d j) := by
-  set E := J1_equiv_polydisk hu hne hv hw hbez hf hdeg hfdeg hsq
+  set E := reductionKernelEquivPolydisk hu hne hv hw hbez hf hdeg hfdeg hsq
   have hx : ∀ s, Sum.elim (E c₁).1 (E c₂).1 s ∈ maximalIdeal O := fun s ↦ by
     cases s with
     | inl s => exact (E c₁).2 s
@@ -177,7 +177,7 @@ theorem Lam_add (hf : f.Monic) (hdeg : 0 < f.natDegree)
   set Φ := ftauFoldFGL hu hne hv hw hbez hf
       ((hf.natDegree_map (algebraMap O (FractionRing O))).symm.trans hfdeg) hroot hcc ha hbv
       hd hram.maximalIdeal_eq hram.ne_zero_of_charZero_fractionRing hsplit hunit with hΦ
-  set E := J1_equiv_polydisk hu hne hv hw hbez hf hdeg hfdeg hsq with hE
+  set E := reductionKernelEquivPolydisk hu hne hv hw hbez hf hdeg hfdeg hsq with hE
   set y₁ := kerScaledCoords hu hne hv hw hbez hf hdeg hfdeg hsq hram c₁ with hy₁
   set y₂ := kerScaledCoords hu hne hv hw hbez hf hdeg hfdeg hsq hram c₂ with hy₂
   set y₁₂ := kerScaledCoords hu hne hv hw hbez hf hdeg hfdeg hsq hram (c₁ * c₂) with hy₁₂

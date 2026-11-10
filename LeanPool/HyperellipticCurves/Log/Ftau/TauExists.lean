@@ -108,22 +108,17 @@ theorem hasGoodCenter_genus_two [IsAlgClosed (ResidueField O)]
   have hg : genus f = 2 := genus_eq_of_natDegree hdeg
   exact hasGoodCenter_of_pos_genus hT hf (by lia) (.inl hg.ge) (by rw [hdeg, hg])
 
-/-- **The `τ`-datum pack**: everything the fold form of the translated group law `F_τ`
-consumes, bundled. Downstream nodes (`thm:Ftau-assoc`, `def:Lam`, `thm:chart-mem`, …)
-take a single `TauData O f` parameter instead of a long hypothesis list; it exists under
-`ChabautyColeman.HasGoodCenter` (`ChabautyColeman.TauData.exists_of_hasGoodCenter`).
-The pack is indexed by `deg u`, not by the genus it agrees with (`hne`): the consumers
-work at `deg u` throughout, and an index expressed through `hne` would force them to
-transport along it. Beyond the Mumford datum with its certificates, the pack carries the
-honest point data of the fold — the `τ`-point tuple splitting `u` and the moving points
-of the `Y`-side chart — together with a valid fold certificate pack over `O⟦X;Y⟧` and
-its Weierstrass avoidance, both descending to the residue configuration by
-construction. -/
-structure TauData (O : Type*) [CommRing O] [IsLocalRing O] (f : O[X]) where
+/-- The Mumford support, interpolation certificates, and separated point tuple. -/
+structure TauSupportData (O : Type*) [CommRing O] (f : O[X]) where
+  /-- The monic support polynomial. -/
   u : O[X]
+  /-- The polynomial interpolating the y-coordinates. -/
   v : O[X]
+  /-- The cofactor in the curve equation `v² - f = u * w`. -/
   w : O[X]
+  /-- The support coefficient of the Bézout identity. -/
   c₁ : O[X]
+  /-- The `2v` coefficient of the Bézout identity. -/
   c₂ : O[X]
   hu : u.Monic
   hv : v.degree < u.degree
@@ -139,6 +134,20 @@ structure TauData (O : Type*) [CommRing O] [IsLocalRing O] (f : O[X]) where
   hbv : ∀ i, v.eval (a i) = b i
   /-- The `τ`-roots are pairwise unit-separated: distinct residue disks. -/
   hunit : ∀ i j, i ≠ j → IsUnit (a i - a j)
+
+/-- **The `τ`-datum pack**: everything the fold form of the translated group law `F_τ`
+consumes, bundled. Downstream nodes (`thm:Ftau-assoc`, `def:Lam`, `thm:chart-mem`, …)
+take a single `TauData O f` parameter instead of a long hypothesis list; it exists under
+`ChabautyColeman.HasGoodCenter` (`ChabautyColeman.TauData.exists_of_hasGoodCenter`).
+The pack is indexed by `deg u`, not by the genus it agrees with (`hne`): the consumers
+work at `deg u` throughout, and an index expressed through `hne` would force them to
+transport along it. Beyond the Mumford datum with its certificates, the pack carries the
+honest point data of the fold — the `τ`-point tuple splitting `u` and the moving points
+of the `Y`-side chart — together with a valid fold certificate pack over `O⟦X;Y⟧` and
+its Weierstrass avoidance, both descending to the residue configuration by
+construction. -/
+structure TauData (O : Type*) [CommRing O] [IsLocalRing O] (f : O[X])
+    extends TauSupportData O f where
   /-- The moving points: the Hensel roots of the `Y`-side chart polynomial. -/
   A : Fin u.natDegree → MvPowerSeries (Fin u.natDegree ⊕ Fin u.natDegree) O
   hroot : ∀ i, (ftauUY u u.natDegree).eval (A i) = 0
@@ -278,8 +287,13 @@ theorem TauData.exists_of_hasGoodCenter {f : O[X]} {T : Set (ResidueField O)}
   have hcop : IsCoprime (u.map (residue O)) (f.map (residue O)) := by
     rw [hured]
     exact isCoprime_tupleU fun i h ↦ pow_ne_zero 2 (hy0 i) ((hcv i).trans h)
-  refine ⟨⟨u, v, w, c₁, c₂, humonic, hvdeg, hw, hbez0, hne, a, b, hsplit, hbv, hunit,
-    A, hroot, hcc, D, hD, havoid, hcop⟩, fun t ht ↦ ?_⟩
+  refine ⟨{
+    toTauSupportData := {
+      u := u, v := v, w := w, c₁ := c₁, c₂ := c₂
+      hu := humonic, hv := hvdeg, hw := hw, hbez := hbez0, hne := hne
+      a := a, b := b, hsplit := hsplit, hbv := hbv, hunit := hunit }
+    A := A, hroot := hroot, hcc := hcc, d := D
+    hd := hD, havoid := havoid, hcopres := hcop }, fun t ht ↦ ?_⟩
   rw [hured, eval_tupleU]
   exact Finset.prod_ne_zero_iff.mpr fun i _ ↦ sub_ne_zero.mpr fun h ↦ hxT i t ht h.symm
 

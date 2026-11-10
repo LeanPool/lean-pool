@@ -230,7 +230,7 @@ theorem J1_equiv_polydisk_diskPointDiff_inf (hf : f.Monic) (hdeg : 0 < f.natDegr
     {z₀ : O} (hz₀ : z₀ ∈ maximalIdeal O) (hz₀0 : z₀ ≠ 0)
     (hζ : ∀ j : Fin uτ.natDegree,
       PSeries.eval z₀ (infZeta hf uτ vτ j) ∈ maximalIdeal O) :
-    (J1_equiv_polydisk hu rfl hv hw hbez hf hdeg hfdeg hsq
+    (reductionKernelEquivPolydisk hu rfl hv hw hbez hf hdeg hfdeg hsq
         ⟨aj (f.map (algebraMap O (FractionRing O)))
             (algebraMap O (FractionRing O) (PSeries.eval z₀ (infSeries hf)))⁻¹
             ((algebraMap O (FractionRing O) z₀)⁻¹
@@ -239,10 +239,10 @@ theorem J1_equiv_polydisk_diskPointDiff_inf (hf : f.Monic) (hdeg : 0 < f.natDegr
           MonoidHom.mem_ker.mpr
             (redJ_diskPointDiff_eq_one_inf hf hdeg hgdeg hz₀ hz₀0)⟩).1
       = fun j ↦ PSeries.eval z₀ (infZeta hf uτ vτ j) := by
-  suffices h : J1_equiv_polydisk hu rfl hv hw hbez hf hdeg hfdeg hsq _
+  suffices h : reductionKernelEquivPolydisk hu rfl hv hw hbez hf hdeg hfdeg hsq _
       = ⟨fun j ↦ PSeries.eval z₀ (infZeta hf uτ vτ j), hζ⟩ from
     congrArg Subtype.val h
-  rw [J1_equiv_polydisk, Equiv.symm_apply_eq, Equiv.ofBijective_apply]
+  rw [reductionKernelEquivPolydisk, Equiv.symm_apply_eq, Equiv.ofBijective_apply]
   refine Subtype.ext ?_
   change _ = chartClass hu rfl hv hw hbez hζ * (tauClass (f := f) (v := vτ) hu)⁻¹
   rw [chartClass_eq_diskPointDiff_mul_tauClass_inf hf hu hv hw hbez hvτ hgdeg hV hVdeg

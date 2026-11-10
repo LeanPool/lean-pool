@@ -47,6 +47,28 @@ theorem coeff_mul_linear (q : R[X]) (w : R) (s k : ℕ) :
     ring
   rw [h2, coeff_add, coeff_C_mul]
 
+/-- A bounded Horner tail is a coefficient of division by a monic linear factor. -/
+private theorem coeff_divByMonic_X_sub_C_range {A : R[X]} {n : ℕ} (hA : A.natDegree ≤ n)
+    (a : R) (m : ℕ) :
+    (A /ₘ (X - C a)).coeff m =
+      ∑ l ∈ Finset.range (n - m), A.coeff (m + 1 + l) * a ^ l := by
+  rw [coeff_divByMonic_X_sub_C]
+  calc
+    ∑ i ∈ Finset.Icc (m + 1) A.natDegree, a ^ (i - (m + 1)) * A.coeff i
+        = ∑ i ∈ Finset.Icc (m + 1) n, a ^ (i - (m + 1)) * A.coeff i := by
+      apply Finset.sum_subset (Finset.Icc_subset_Icc_right hA)
+      intro i hi hnot
+      have hdeg : A.natDegree < i := by
+        have hi₁ := (Finset.mem_Icc.mp hi).1
+        simp only [Finset.mem_Icc, not_and, not_le] at hnot
+        exact hnot hi₁
+      rw [coeff_eq_zero_of_natDegree_lt hdeg, mul_zero]
+    _ = _ := by
+      rw [← Finset.Ico_succ_right_eq_Icc, Finset.sum_Ico_eq_sum_range]
+      change (∑ k ∈ Finset.range ((n + 1) - (m + 1)),
+        a ^ (m + 1 + k - (m + 1)) * A.coeff (m + 1 + k)) = _
+      simp only [Nat.add_sub_add_right, Nat.add_sub_cancel_left, mul_comm]
+
 /-- **The Horner-tail combination of the linear-factor columns**: summing the columns of the
 `q·(w+X)`-pattern matrix against the Horner tails of `A` produces the moment-system row value
 minus `A(-w)` times the plain first column. This is the column operation behind the value
@@ -55,76 +77,38 @@ theorem horner_col_sum {n : ℕ} {A : R[X]} (hA : A.natDegree ≤ n) (w : R) (k 
     ∑ m : Fin n, (∑ l ∈ Finset.range (n - (m : ℕ)), A.coeff ((m : ℕ) + 1 + l) * (-w) ^ l)
         * (q * (C w + X) * X ^ (m : ℕ)).coeff k
       = (A * q).coeff k - A.eval (-w) * q.coeff k := by
-  have hH : ∀ m : ℕ, (fun m ↦ ∑ l ∈ Finset.range (n - m), A.coeff (m + 1 + l) * (-w) ^ l) m
-      = ∑ l ∈ Finset.range (n - m), A.coeff (m + 1 + l) * (-w) ^ l := fun m ↦ rfl
-  set H : ℕ → R := fun m ↦ ∑ l ∈ Finset.range (n - m), A.coeff (m + 1 + l) * (-w) ^ l
-  -- the Horner recursion and the two boundary identities
-  have hHrec : ∀ j < n, H j = A.coeff (j + 1) + -w * H (j + 1) := by
-    intro j hj
-    simp only [hH]
-    rw [show n - j = (n - (j + 1)) + 1 by lia, Finset.sum_range_succ',
-      Finset.sum_congr rfl (fun l _ ↦ show A.coeff (j + 1 + (l + 1)) * (-w) ^ (l + 1)
-        = -w * (A.coeff (j + 1 + 1 + l) * (-w) ^ l) by
-          rw [show j + 1 + (l + 1) = j + 1 + 1 + l by lia, pow_succ]
-          ring),
-      ← Finset.mul_sum, add_zero, pow_zero, mul_one, add_comm]
-  have hHtop : 1 ≤ n → H (n - 1) = A.coeff n := by
-    intro h0
-    simp only [hH]
-    rw [show n - (n - 1) = 1 by lia, Finset.sum_range_one, pow_zero, mul_one,
-      show n - 1 + 1 + 0 = n by lia]
-  have hev : A.eval (-w) = A.coeff 0 + -w * H 0 := by
-    simp only [hH, Nat.sub_zero]
-    rw [eval_eq_sum_range' (n := n + 1) (by lia),
-      Finset.sum_range_succ',
-      Finset.sum_congr rfl (fun l _ ↦ show A.coeff (l + 1) * (-w) ^ (l + 1)
-        = -w * (A.coeff (0 + 1 + l) * (-w) ^ l) by
-          rw [pow_succ, show (0 : ℕ) + 1 + l = l + 1 by lia]
-          ring),
-      ← Finset.mul_sum, pow_zero, mul_one, add_comm]
-  -- convert to a range sum of split columns
-  have h1 : ∑ m : Fin n, H (m : ℕ) * (q * (C w + X) * X ^ (m : ℕ)).coeff k
-      = ∑ m : Fin n, (w * H (m : ℕ) * (q * X ^ (m : ℕ)).coeff k
-          + H (m : ℕ) * (q * X ^ ((m : ℕ) + 1)).coeff k) :=
-    Finset.sum_congr rfl fun m _ ↦ by rw [coeff_mul_linear]; ring
-  have h2 : ∑ m : Fin n, (w * H (m : ℕ) * (q * X ^ (m : ℕ)).coeff k
-        + H (m : ℕ) * (q * X ^ ((m : ℕ) + 1)).coeff k)
-      = ∑ m ∈ Finset.range n, (w * H m * (q * X ^ m).coeff k
-          + H m * (q * X ^ (m + 1)).coeff k) :=
-    Fin.sum_univ_eq_sum_range
-      (fun m ↦ w * H m * (q * X ^ m).coeff k + H m * (q * X ^ (m + 1)).coeff k) n
-  rw [h1, h2]
-  -- telescoping: the partial sums absorb the Horner recursion
-  have hpart : ∀ j, 1 ≤ j → j ≤ n →
-      ∑ m ∈ Finset.range j, (w * H m * (q * X ^ m).coeff k
-          + H m * (q * X ^ (m + 1)).coeff k)
-        = w * H 0 * (q * X ^ 0).coeff k - A.coeff 0 * (q * X ^ 0).coeff k
-          + ∑ m ∈ Finset.range j, A.coeff m * (q * X ^ m).coeff k
-          + H (j - 1) * (q * X ^ j).coeff k := by
-    intro j hj1 hjn
-    induction j with
-    | zero => lia
-    | succ j ih =>
-      rcases Nat.eq_zero_or_pos j with rfl | hj0
-      · rw [Finset.sum_range_one, Finset.sum_range_one]
-        norm_num
-      · have hrec := hHrec (j - 1) (by lia)
-        rw [show j - 1 + 1 = j by lia] at hrec
-        have h3 : ∑ m ∈ Finset.range (j + 1), A.coeff m * (q * X ^ m).coeff k
-            = ∑ m ∈ Finset.range j, A.coeff m * (q * X ^ m).coeff k
-              + A.coeff j * (q * X ^ j).coeff k :=
-          Finset.sum_range_succ (fun m ↦ A.coeff m * (q * X ^ m).coeff k) j
-        rw [Finset.sum_range_succ, ih hj0 (by lia), h3, Nat.add_sub_cancel]
-        linear_combination ((q * X ^ j).coeff k) * hrec
+  classical
+  nontriviality R
   rcases Nat.eq_zero_or_pos n with rfl | hn
-  · -- constant `A`: both sides collapse
-    rw [Finset.sum_range_zero, Polynomial.eq_C_of_natDegree_le_zero hA, coeff_C_mul, eval_C]
-    ring
-  · rw [hpart n hn le_rfl, hHtop hn,
-      coeff_mul_eq_sum_coeff_mul_X_pow (q := q) (g := n) hA k, Finset.sum_range_succ]
-    have hq0 : (q * X ^ 0).coeff k = q.coeff k := by rw [pow_zero, mul_one]
-    rw [hq0]
-    linear_combination (q.coeff k) * hev
+  · rw [Polynomial.eq_C_of_natDegree_le_zero hA]
+    simp
+  let B := A /ₘ (X - C (-w))
+  have hBdeg : B.natDegree < n := by
+    dsimp only [B]
+    rw [natDegree_divByMonic A (monic_X_sub_C _), natDegree_X_sub_C]
+    lia
+  have hB : B = ∑ m : Fin n, C (B.coeff m) * X ^ (m : ℕ) := by
+    exact (B.as_sum_range_C_mul_X_pow' hBdeg).trans
+      (Fin.sum_univ_eq_sum_range (fun m : ℕ ↦ C (B.coeff m) * X ^ m) n).symm
+  have hfac : B * (C w + X) = A - C (A.eval (-w)) := by
+    have h := A.modByMonic_add_div (X - C (-w))
+    rw [modByMonic_X_sub_C_eq_C_eval, map_neg, sub_neg_eq_add] at h
+    dsimp only [B]
+    rw [map_neg, sub_neg_eq_add]
+    linear_combination h
+  calc
+    _ = ∑ m : Fin n, ((C (B.coeff m) * X ^ (m : ℕ)) * (q * (C w + X))).coeff k := by
+      apply Finset.sum_congr rfl
+      intro m hm
+      rw [← coeff_divByMonic_X_sub_C_range hA (-w)]
+      change B.coeff m * _ = _
+      rw [show C (B.coeff m) * X ^ (m : ℕ) * (q * (C w + X)) =
+        C (B.coeff m) * (q * (C w + X) * X ^ (m : ℕ)) by ring, coeff_C_mul]
+    _ = (B * (q * (C w + X))).coeff k := by
+      rw [← finsetSum_coeff, ← Finset.sum_mul, ← hB]
+    _ = _ := by
+      rw [show B * (q * (C w + X)) = (B * (C w + X)) * q by ring,
+        hfac, sub_mul, coeff_sub, coeff_C_mul]
 
 /-- The cyclically rotated pattern is the moment determinant, up to the sign of the cycle. -/
 theorem momentDet_rotate (g : ℕ) (q : R[X]) :

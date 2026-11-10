@@ -165,7 +165,7 @@ private theorem rootMultiplicity_map_eq_of_taylor_factor {O : Type*} [CommRing O
 
 /-- A monic factor `W` of `taylor a N` inherits splitting over `K` from `N`: since `N` splits,
 so does `taylor a N`, and `W` divides it. -/
-private theorem splits_weierstrassFactor {O : Type*} [CommRing O] [IsDomain O]
+private theorem splits_weierstrassFactor {O : Type*} [CommRing O]
     {K : Type*} [Field K] [Algebra O K] [IsFractionRing O K] {N W W' q : O[X]} {a : O}
     (hN0 : N ≠ 0) (hsplit : (N.map (algebraMap O K)).Splits)
     (hNfac : taylor a N = W * W' * q) : (W.map (algebraMap O K)).Splits := by
@@ -420,7 +420,7 @@ private theorem neg_eq_self_iff_maximalIdeal {O : Type*} [CommRing O] [IsLocalRi
 /-- Support-finiteness for the `x`-fiber count: if `s z` is a curve point over `z.1` (i.e.
 `(ι z.1)² = f(s z)`), then `z ↦ rootMult_{s z}(p)` has finite support — its nonzero locus injects
 via `z ↦ ι z.1` into the roots of `∏_{r ∈ p.roots} (X² - C f(r))`. -/
-private theorem finite_support_rootMultiplicity_onCurve {O : Type*} [CommRing O] [IsDomain O]
+private theorem finite_support_rootMultiplicity_onCurve {O : Type*} [CommRing O]
     [IsLocalRing O] {K : Type*} [Field K] [Algebra O K] [IsFractionRing O K]
     {f : O[X]} {p : K[X]} (hp : p ≠ 0)
     {s : maximalIdeal O → K}

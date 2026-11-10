@@ -132,15 +132,14 @@ theorem pointIdeal_isPrime {x₀ y₀ : K} (h : y₀ ^ 2 = f.eval x₀) :
   (pointIdeal_isMaximal h).isPrime
 
 /-- The height-one prime of the Dedekind domain `A_K` corresponding to a curve point `(x₀, y₀)`. -/
-noncomputable def pointSpectrum [NeZero (2 : K)] [Fact (Odd f.natDegree)] [Fact (Squarefree f)]
+noncomputable def pointSpectrum
     {x₀ y₀ : K} (h : y₀ ^ 2 = f.eval x₀) :
     IsDedekindDomain.HeightOneSpectrum (HypRing K f) where
   asIdeal := pointIdeal f x₀ y₀
   isPrime := pointIdeal_isPrime h
   ne_bot := pointIdeal_ne_bot f x₀ y₀
 
-@[simp] theorem pointSpectrum_asIdeal [NeZero (2 : K)] [Fact (Odd f.natDegree)]
-    [Fact (Squarefree f)] {x₀ y₀ : K} (h : y₀ ^ 2 = f.eval x₀) :
+@[simp] theorem pointSpectrum_asIdeal {x₀ y₀ : K} (h : y₀ ^ 2 = f.eval x₀) :
     (pointSpectrum h).asIdeal = pointIdeal f x₀ y₀ :=
   rfl
 
