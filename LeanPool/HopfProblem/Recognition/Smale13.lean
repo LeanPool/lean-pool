@@ -232,7 +232,8 @@ private theorem
     apply Set.disjoint_left.mpr
     rintro y ⟨x, rfl⟩ hy
     exact S.upper_point_not_on_belt_of_lower_orbit hf q haq (α j x) (β j x) (horbit j x) hy
-  let x : (Smale.Hemisphere.Sphere 2) := Smale.Hemisphere.point Bool.true ⟨0, by simp⟩
+  let x : (Smale.Hemisphere.Sphere 2) := Smale.Hemisphere.point Bool.true ⟨0,
+    by simp only [Metric.mem_closedBall, dist_self, zero_le_one]⟩
   let v :=
     Smale.SphereCoordinates.standardParametrization (S.data q).chart.PositiveCoordinates 2 x
   have hv :
@@ -568,7 +569,8 @@ private theorem
   have hpabove (j : Fin n) : S.toSurgeryWindows.lower q < f (p j) :=
     (S.toSurgeryWindows.lower_lt_value q).trans
       ((S.toSurgeryWindows.value_lt_upper q).trans (hhigh j))
-  let x₀ : (Smale.Hemisphere.Sphere 2) := Smale.Hemisphere.point Bool.true ⟨0, by simp⟩
+  let x₀ : (Smale.Hemisphere.Sphere 2) := Smale.Hemisphere.point Bool.true ⟨0,
+    by simp only [Metric.mem_closedBall, dist_self, zero_le_one]⟩
   obtain ⟨Γ₀, hΓ₀, hδΓ⟩ :=
     T.exists_regular_band_middle_basin_family hf hal (S.data q).lower_regular ha hgap (δ i x₀) p
       hpabove (fun j => δ j) hδ
@@ -686,7 +688,8 @@ private theorem AdaptedWindows.exists_common_cut_prescribed_family_slide {E M : 
                                 Filter.Tendsto (fun t => S.flow t z) Filter.atTop (𝓝 v) := by
   let _ := Smale.RegularLevel.chartedSpace hf ha
   obtain ⟨βq, hβs, hβe, hβi, hrange, horbit, -⟩ :=
-    S.exists_canonical_basin_sphere hf q hq ha αq (Smale.Hemisphere.point Bool.true ⟨0, by simp⟩)
+    S.exists_canonical_basin_sphere hf q hq ha αq (Smale.Hemisphere.point Bool.true ⟨0,
+      by simp only [Metric.mem_closedBall, dist_self, zero_le_one]⟩)
       (hfamily.2.2.2.2 0)
   have hβfamily :=
     MorseCancel.nativeMiddleBasinFamily_replace_zero S hf ha q p αq βq α hfamily hrange hβs hβe
@@ -1974,8 +1977,8 @@ private theorem
     calc
       e.symm 1 * e 1 = e (e.symm 1 • (1 : ℤ)) := by
         rw [map_zsmul, zsmul_eq_mul]
-        simp
-      _ = 1 := by simp
+        simp only [Int.cast_eq]
+      _ = 1 := by simp only [Int.zsmul_eq_mul, mul_one, LinearEquiv.apply_symm_apply]
   exact Int.isUnit_iff_natAbs_eq.mp (IsUnit.of_mul_eq_one_right _ h)
 
 private theorem Smale.SpherePoint.sourceCountMark_topClass_natAbs (n : ℕ) {N : Type}
@@ -2118,7 +2121,7 @@ private theorem Smale.CoverOverlapHomology.homologyEquiv_symm_single {X : Type} 
   · rw [Pi.single_eq_same]
   · intro j _ hji
     rw [Pi.single_eq_of_ne hji, map_zero]
-  · simp
+  · simp only [Finset.mem_univ, not_true_eq_false, Pi.single_eq_same, IsEmpty.forall_iff]
 
 private theorem Smale.CoverOverlapHomology.homologyEquiv_inclusion {X : Type} [TopologicalSpace X]
     {ι : Type} [Fintype ι] [DecidableEq ι] (U : Set X) (V : ι → Set X) (hU : IsOpen U)
@@ -2409,7 +2412,8 @@ private theorem
     Smale.SphereNormalCoordinates.localBoundary_homology_outward n
       (Smale.NativeParametrization.centered x) j B
       (Smale.NativeParametrization.zero_mem_centered_source x) (d.collapseNormal ∘ g)
-      (hc0.symm ▸ hs.mdifferentiableAt (by simp)) (hc0.symm ▸ hA) L hL b k a
+      (hc0.symm ▸ hs.mdifferentiableAt (by simp only [ne_eq, WithTop.coe_eq_zero,
+        ENat.top_ne_zero, not_false_eq_true])) (hc0.symm ▸ hA) L hL b k a
   rw [hc0, d.collapseNormal_comp_sign_of_transverse hf q (n + 2) hdim j g hg ht x hx] at h
   exact h
 
@@ -2742,7 +2746,8 @@ private theorem MorseCancel.exists_native_belt_cut_family {E M : Type} [NormedAd
     simp only [Matrix.mulVec, dotProduct, Finset.univ_eq_empty, Finset.sum_empty,
       Pi.one_apply] at hh
     exact zero_ne_one hh
-  let za := γ ⟨0, hnpos⟩ (Smale.Hemisphere.point Bool.true ⟨0, by simp⟩)
+  let za := γ ⟨0, hnpos⟩ (Smale.Hemisphere.point Bool.true ⟨0,
+    by simp only [Metric.mem_closedBall, dist_self, zero_le_one]⟩)
   obtain ⟨β, hβ, horbit, -, hmatrix, hsurj'⟩ :=
     T.exists_lower_cut_geometric_matrix hf hba (S.data q).upper_regular (T.data q).upper_regular
       hband za p (fun j => (hlower j).trans (T.toSurgeryWindows.lower_lt_value (p j))) B γ hγ
@@ -2796,7 +2801,9 @@ private theorem Smale.ManifoldMorse.MorseSurgeryData.exists_transverse_represent
   intro hg₀ hinj himm
   have hdim' :
     Module.finrank ℝ (EuclideanSpace ℝ (Fin 2)) + Module.finrank ℝ (EuclideanSpace ℝ (Fin 3)) =
-      Module.finrank ℝ (Smale.RegularLevel.Model E) := by simp [Smale.RegularLevel.Model, hdim]
+      Module.finrank ℝ (Smale.RegularLevel.Model E) := by simp only [finrank_euclideanSpace,
+        Fintype.card_fin, Nat.reduceAdd, RegularLevel.Model, hdim,
+          Nat.add_one_sub_one]
   obtain ⟨e, hiso, ht⟩ :=
     Smale.NativeTransversality.exists_ambient_transverse_diffeomorph hg₀ (d.belt_smooth hf 3)
       hdim'
@@ -2805,9 +2812,12 @@ private theorem Smale.ManifoldMorse.MorseSurgeryData.exists_transverse_represent
   have hi : ∀ x, Function.Injective (mfderiv (𝓡 2) 𝓘(ℝ, Smale.RegularLevel.Model E) g x) := by
     intro x
     change Function.Injective (mfderiv (𝓡 2) 𝓘(ℝ, Smale.RegularLevel.Model E) (e ∘ g₀) x)
-    rw [mfderiv_comp x (e.mdifferentiable (by simp) _) (hg₀.mdifferentiable (by simp) x)]
+    rw [mfderiv_comp x (e.mdifferentiable (by simp only [ne_eq, WithTop.coe_eq_zero,
+      ENat.top_ne_zero, not_false_eq_true]) _) (hg₀.mdifferentiable (by simp only [ne_eq,
+      WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true]) x)]
     exact
-      ((e.toOpenPartialHomeomorph_mdifferentiable (by simp)).mfderiv_injective (by trivial)).comp
+      ((e.toOpenPartialHomeomorph_mdifferentiable (by simp only [ne_eq, WithTop.coe_eq_zero,
+        ENat.top_ne_zero, not_false_eq_true])).mfderiv_injective (by trivial)).comp
         (himm x)
   exact ⟨e, g, hiso, fun _ => rfl, ⟨hg, e.injective.comp hinj, hi, ht⟩, hiso.comp_homotopic g₀⟩
 
@@ -3079,9 +3089,12 @@ private theorem MorseCancel.cancel_from_preserved_unit_belt_cut {E M : Type} [No
   have hαimm (x : (Smale.Hemisphere.Sphere 2)) :
     Function.Injective (mfderiv (𝓡 2) 𝓘(ℝ, Smale.RegularLevel.Model E) α x) := by
     change Function.Injective (mfderiv (𝓡 2) 𝓘(ℝ, Smale.RegularLevel.Model E) (e.symm ∘ γ) x)
-    rw [mfderiv_comp x (e.symm.contMDiff.mdifferentiableAt (by simp))
-        (hγ.mdifferentiableAt (by simp))]
-    exact (e.symm.mfderivToContinuousLinearEquiv (by simp) (γ x)).injective.comp (himm x)
+    rw [mfderiv_comp x (e.symm.contMDiff.mdifferentiableAt (by simp only [ne_eq,
+      WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true]))
+        (hγ.mdifferentiableAt (by simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero,
+          not_false_eq_true]))]
+    exact (e.symm.mfderivToContinuousLinearEquiv (by simp only [ne_eq, WithTop.coe_eq_zero,
+      ENat.top_ne_zero, not_false_eq_true]) (γ x)).injective.comp (himm x)
   have hsection : equalCutSection hlevel α = γ := rfl
   have hclass := equalCutSection_class hsub hlevel α
   rw [hsection] at hclass
@@ -3122,7 +3135,9 @@ private theorem MorseCancel.cancel_from_preserved_unit_belt_cut {E M : Type} [No
     have hold : β₀ y = δ x := e.injective hxy
     have hh :=
       (Degree.TransverseGerms.native_transversality_partial_diffeomorph_iff e.toPartialDiffeomorph
-            (hgood.1.mdifferentiableAt (by simp)) (hβ₀.mdifferentiableAt (by simp)) hold
+            (hgood.1.mdifferentiableAt (by simp only [ne_eq, WithTop.coe_eq_zero,
+              ENat.top_ne_zero, not_false_eq_true])) (hβ₀.mdifferentiableAt (by simp only [ne_eq,
+              WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])) hold
             (Set.mem_univ _)).mp
         (hgood.2.2.2 x y)
     exact hh hxy
@@ -3473,7 +3488,7 @@ private theorem Smale.IntegerPresentation.adjoin_matrix_injective {B C : Type*} 
     have htail : P.matrix.mulVec (Fin.tail z) = 0 := by
       rw [P.adjoin_mulVec q hq b hker, hz0, zero_smul, zero_add] at hz
       exact hz
-    have hzero' : P.matrix.mulVec (0 : Fin c → ℤ) = 0 := by simp
+    have hzero' : P.matrix.mulVec (0 : Fin c → ℤ) = 0 := by simp only [Matrix.mulVec_zero]
     have ht : Fin.tail z = 0 := hP (htail.trans hzero'.symm)
     funext i
     exact Fin.cases hz0 (fun j => congrFun ht j) i
@@ -3744,14 +3759,16 @@ private theorem Smale.ManifoldMorse.nonempty_homeomorphSphere_of_two_critical_po
     intro x hx
     rw [hcrit] at hx
     simpa only [Set.mem_insert_iff, Set.mem_singleton_iff] using hx
-  have hp : p ∈ criticalPoints E f := by rw [hcrit]; simp
-  have hq : q ∈ criticalPoints E f := by rw [hcrit]; simp
+  have hp : p ∈ criticalPoints E f := by rw [hcrit]; simp only [mem_insert_iff, mem_singleton_iff,
+    true_or]
+  have hq : q ∈ criticalPoints E f := by rw [hcrit]; simp only [mem_insert_iff, mem_singleton_iff,
+    or_true]
   obtain ⟨hmin, hmax⟩ := unique_extrema_of_two_critical_values hf hpq hcover
   obtain ⟨cp⟩ := nonempty_signedMorseChart hf hm p hp
   obtain ⟨cq⟩ := nonempty_signedMorseChart hf hm q hq
   let a := (f p + f q) / 2
-  have hpa : f p < a := by dsimp [a]; linarith
-  have haq : a < f q := by dsimp [a]; linarith
+  have hpa : f p < a := by dsimp [a]; linarith only [hpq]
+  have haq : a < f q := by dsimp [a]; linarith only [hpq]
   have hregularL : ∀ x, f p < f x → f x ≤ a → x ∉ criticalPoints E f := by
     intro x hxlo hxhi hxcrit
     rcases hcover x hxcrit with h | h
@@ -3768,7 +3785,7 @@ private theorem Smale.ManifoldMorse.nonempty_homeomorphSphere_of_two_critical_po
       exact hxcrit
     rcases hcover x hxcrit' with h | h
     · rw [h] at hxhi
-      linarith
+      linarith only [hpa, hxhi]
     · rw [h] at hxlo
       exact lt_irrefl _ hxlo
   obtain ⟨R⟩ :=

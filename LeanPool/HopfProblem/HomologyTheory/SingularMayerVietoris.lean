@@ -72,7 +72,8 @@ private theorem SimplexSet.mem_Icc [IsOrderedAddMonoid S] {f : ι → S} (hf : f
 
 private theorem SimplexSet.single_mem [DecidableEq ι] [ZeroLEOneClass S] (i : ι) :
     Pi.single i 1 ∈ SimplexSet S ι :=
-  ⟨le_update_iff.2 ⟨zero_le_one, fun _ _ => le_rfl⟩, by simp⟩
+  ⟨le_update_iff.2 ⟨zero_le_one, fun _ _ => le_rfl⟩, by simp only [Finset.sum_pi_single',
+    Finset.mem_univ, ↓reduceIte]⟩
 
 namespace SimplexSet
 
@@ -103,7 +104,8 @@ variable [IsOrderedRing S] {κ : Type*} [Fintype κ]
 @[simp]
 private theorem le_one (s : SimplexSet S ι) (x : ι) : s x ≤ 1 := by
   rw [← sum_eq_one s]
-  exact Finset.single_le_sum (by simp) (by simp)
+  exact Finset.single_le_sum (by simp only [Finset.mem_univ, zero_le, imp_self,
+    implies_true]) (by simp only [Finset.mem_univ])
 
 private theorem image_linearMap (f : ι → κ) :
     Set.image (FunOnFinite.linearMap S S f) (SimplexSet S ι) ⊆ SimplexSet S κ := by
@@ -127,7 +129,7 @@ private theorem map_coe (f : ι → κ) (s : SimplexSet S ι) :
 private theorem map_comp_apply {μ : Type*} [Fintype μ] (f : ι → κ) (g : κ → μ)
     (x : SimplexSet S ι) : map g (map f x) = map (g.comp f) x := by
   ext
-  simp [FunOnFinite.linearMap_comp]
+  simp only [map_coe, FunOnFinite.linearMap_comp, LinearMap.coe_comp, comp_apply]
 
 /-- The vertex of the simplex at index `x`. -/
 private abbrev vertex [DecidableEq ι] (x : ι) : SimplexSet S ι :=
@@ -151,7 +153,7 @@ private theorem vertex_injective [Nontrivial S] [DecidableEq ι] :
   intro x y h
   replace h := DFunLike.congr_fun h x
   by_contra!
-  simp [Pi.single_eq_of_ne this] at h
+  simp only [vertex_coe, Pi.single_eq_same, Pi.single_eq_of_ne this, one_ne_zero] at h
 
 private instance [Nonempty ι] : Nonempty (SimplexSet S ι) := by
   classical
@@ -296,8 +298,9 @@ private theorem FirstHurewicz.simplexFace_apply_self (n : ℕ) (i : Fin (n + 2))
 private theorem FirstHurewicz.simplexFace_apply_succAbove (n : ℕ) (i : Fin (n + 2)) (s : Simplex n)
     (k : Fin (n + 1)) : simplexFace n i s (i.succAbove k) = s k := by
   change FunOnFinite.linearMap ℝ ℝ i.succAbove (s : Fin (n + 1) → ℝ) (i.succAbove k) = s k
-  simp [FunOnFinite.linearMap_apply_apply, Fin.succAbove_right_injective.eq_iff,
-    Finset.sum_filter]
+  simp only [FunOnFinite.linearMap_apply_apply, Fin.succAbove_right_injective.eq_iff,
+    Finset.sum_filter,
+      Finset.sum_ite_eq', Finset.mem_univ, ↓reduceIte]
 
 private theorem FirstHurewicz.simplexFace_one_zero (s : Simplex 1) :
     (simplexFace 1 0 s : Fin 3 → ℝ) = ![0, s 0, s 1] := by
@@ -512,11 +515,14 @@ private def FirstHurewicz.ofSimplex (n : ℕ) :
 
 private theorem FirstHurewicz.toSimplex_ofSimplex (n : ℕ) (s : Simplex n) :
     toSimplex n (ofSimplex n s) = s :=
-  Subtype.ext <| funext fun i => by simp [toSimplex, ofSimplex]
+  Subtype.ext <| funext fun i => by simp only [toSimplex, ofSimplex, ContinuousMap.coe_mk,
+    Finsupp.equivFunOnFinite_symm_apply_apply,
+      Subtype.coe_eta]
 
 private theorem FirstHurewicz.ofSimplex_toSimplex (n : ℕ)
     (w : Convexity.StdSimplex ℝ (Fin (n + 1))) : ofSimplex n (toSimplex n w) = w :=
-  Convexity.StdSimplex.ext <| Finsupp.ext fun i => by simp [toSimplex, ofSimplex]
+  Convexity.StdSimplex.ext <| Finsupp.ext fun i => by simp only [ofSimplex, toSimplex,
+    ContinuousMap.coe_mk, Finsupp.equivFunOnFinite_symm_coe]
 
 private theorem FirstHurewicz.toSimplex_map {n m : ℕ} (f : Fin (n + 1) → Fin (m + 1))
     (w : Convexity.StdSimplex ℝ (Fin (n + 1))) :
@@ -528,7 +534,7 @@ private theorem FirstHurewicz.toSimplex_map {n m : ℕ} (f : Fin (n + 1) → Fin
     FunOnFinite.linearMap ℝ ℝ f (fun i => w.weights i) j
   rw [FunOnFinite.linearMap_apply_apply, Convexity.StdSimplex.weights_map,
     Finsupp.mapDomain_fintype, Finsupp.coe_finsetSum, Finset.sum_apply, Finset.sum_filter]
-  exact Finset.sum_congr rfl fun a _ => by simp [Finsupp.single_apply]
+  exact Finset.sum_congr rfl fun a _ => by simp only [Finsupp.single_apply]
 
 /-- Singular simplices, indexed as Mathlib's singular simplicial set indexes them. -/
 private def FirstHurewicz.simplexIndexEquiv (X : Type) [TopologicalSpace X] (n : ℕ) :
@@ -802,7 +808,8 @@ private theorem
     (∃ b : K.X ((ComplexShape.down ℕ).prev 1),
         (K.d ((ComplexShape.down ℕ).prev 1) 1).hom b = c.1) ↔
       _
-  have hp : (ComplexShape.down ℕ).prev 1 = 2 := (ComplexShape.down ℕ).prev_eq' (by simp)
+  have hp : (ComplexShape.down ℕ).prev 1 = 2 :=
+    (ComplexShape.down ℕ).prev_eq' (by simp only [ComplexShape.down_Rel, Nat.reduceAdd])
   rw [hp]
 
 attribute [local instance] FirstHurewicz.ChainHomology.shortCycleModule in
@@ -862,7 +869,8 @@ attribute [local instance] FirstHurewicz.ChainHomology.shortCycleModule
 private theorem FirstHurewicz.ChainHomology.range_sc_one_f (K : ChainComplex (ModuleCat.{0} ℤ) ℕ) :
     LinearMap.range (K.sc 1).f.hom = LinearMap.range (K.d 2 1).hom := by
   change LinearMap.range (K.d ((ComplexShape.down ℕ).prev 1) 1).hom = _
-  have hp : (ComplexShape.down ℕ).prev 1 = 2 := (ComplexShape.down ℕ).prev_eq' (by simp)
+  have hp : (ComplexShape.down ℕ).prev 1 = 2 :=
+    (ComplexShape.down ℕ).prev_eq' (by simp only [ComplexShape.down_Rel, Nat.reduceAdd])
   rw [hp]
 
 attribute [local instance] FirstHurewicz.ChainHomology.shortCycleModule in
@@ -961,7 +969,8 @@ private theorem FirstHurewicz.cycles1_boundary (X : Type) [TopologicalSpace X] (
     boundaryOne X c.1 = 0 := by
   have hc := c.2
   change ((singularComplex X).d 1 ((ComplexShape.down ℕ).next 1)).hom c.1 = 0 at hc
-  have hn : (ComplexShape.down ℕ).next 1 = 0 := (ComplexShape.down ℕ).next_eq' (by simp)
+  have hn : (ComplexShape.down ℕ).next 1 = 0 :=
+    (ComplexShape.down ℕ).next_eq' (by simp only [ComplexShape.down_Rel, zero_add])
   rw [hn] at hc
   exact hc
 
@@ -1756,7 +1765,9 @@ private theorem SingularMayerVietoris.homologyLinearMap_second_zero_surjective
     {S : CategoryTheory.ShortComplex (ChainComplex (ModuleCat.{0} ℤ) ℕ)} (hS : S.ShortExact) :
     Function.Surjective (homologyLinearMap S.g 0) := by
   have := hS.epi_g
-  have := HomologicalComplex.epi_homologyMap_of_epi_of_not_rel S.g 0 (by intro j; simp)
+  have :=
+    HomologicalComplex.epi_homologyMap_of_epi_of_not_rel S.g 0 (by intro j; simp only
+    [ComplexShape.down_Rel, Nat.add_eq_zero_iff, one_ne_zero, and_false, not_false_eq_true])
   exact (ModuleCat.epi_iff_surjective _).mp inferInstance
 
 private theorem SingularMayerVietoris.connectingMap_naturality
@@ -2450,7 +2461,8 @@ private theorem SingularMayerVietoris.affineSimplex_vertex {n p : ℕ}
   change
     (∑ j : Fin (n + 1), ((Pi.single i (1 : ℝ) : Fin (n + 1) → ℝ) j) • (v j : Fin (p + 1) → ℝ)) =
       (v i : Fin (p + 1) → ℝ)
-  simp [Pi.single_apply]
+  simp only [Pi.single_apply, ite_smul, one_smul, zero_smul, Finset.sum_ite_eq', Finset.mem_univ,
+    ↓reduceIte]
 
 private def SingularMayerVietoris.stdVertices (n : ℕ) : Fin (n + 1) → FirstHurewicz.Simplex n :=
   SimplexSet.vertex
@@ -2463,7 +2475,9 @@ private theorem SingularMayerVietoris.affineSimplex_stdVertices (n : ℕ) :
   apply Subtype.ext
   funext j
   change (∑ i, t i • Pi.single i (1 : ℝ)) j = t j
-  simp [Finset.sum_apply, Pi.smul_apply, Pi.single_apply]
+  simp only [Finset.sum_apply, Pi.smul_apply, Pi.single_apply, smul_eq_mul, mul_ite, mul_one,
+    mul_zero,
+      Finset.sum_ite_eq, Finset.mem_univ, ↓reduceIte]
 
 private theorem SingularMayerVietoris.affineSimplex_face {n p : ℕ}
     (v : Fin (n + 2) → FirstHurewicz.Simplex p) (i : Fin (n + 2)) :
@@ -2546,7 +2560,7 @@ private theorem
   apply Finsupp.lhom_ext
   intro v z
   have hs : Finsupp.single v z = z • formalSimplex v := by
-    simp [formalSimplex, Finsupp.smul_single]
+    simp only [formalSimplex, Finsupp.smul_single, Int.zsmul_eq_mul, mul_one]
   rw [hs, f.map_smul, g.map_smul, h]
 
 private def SingularMayerVietoris.formalMap {V W : Type*} (f : V → W) (n : ℕ) :
@@ -2556,7 +2570,7 @@ private def SingularMayerVietoris.formalMap {V W : Type*} (f : V → W) (n : ℕ
 @[simp]
 private theorem SingularMayerVietoris.formalMap_simplex {V W : Type*} (f : V → W) {n : ℕ}
     (v : Fin n → V) : formalMap f n (formalSimplex v) = formalSimplex (f ∘ v) := by
-  simp [formalMap, formalSimplex]
+  simp only [formalMap, formalSimplex, Finsupp.lmapDomain_apply, Finsupp.mapDomain_single]
 
 private def SingularMayerVietoris.formalCone {V : Type*} (a : V) (n : ℕ) :
     FormalChains V n →ₗ[ℤ] FormalChains V (n + 1) :=
@@ -2566,7 +2580,7 @@ private def SingularMayerVietoris.formalCone {V : Type*} (a : V) (n : ℕ) :
 private theorem
     SingularMayerVietoris.formalCone_simplex {V : Type*} (a : V) {n : ℕ} (v : Fin n → V) :
     formalCone a n (formalSimplex v) = formalSimplex (Fin.cons a v) := by
-  simp [formalCone, formalSimplex]
+  simp only [formalCone, formalSimplex, Finsupp.lmapDomain_apply, Finsupp.mapDomain_single]
 
 private def SingularMayerVietoris.formalBoundary {V : Type*} (n : ℕ) :
     FormalChains V (n + 1) →ₗ[ℤ] FormalChains V n :=
@@ -2607,7 +2621,7 @@ private theorem SingularMayerVietoris.formalBoundary_cone {V : Type*} (a : V) (n
     simp only [Fin.val_zero, pow_zero, one_smul]
     have hz : Fin.cons a v ∘ (0 : Fin (n + 2)).succAbove = v := by
       funext i
-      simp
+      simp only [Fin.succAbove_zero, comp_apply, Fin.cons_succ]
     rw [hz, sub_eq_add_neg]
     congr 1
     rw [map_sum, ← Finset.sum_neg_distrib]
@@ -2895,7 +2909,7 @@ private theorem SingularMayerVietoris.formalMap_subdivisionHomotopy {V W : Type*
         formalSubdivisionHomotopy center' n (formalMap f n c) := by
   intro n
   induction n with
-  | zero => intro c; simp
+  | zero => intro c; simp only [Nat.reduceAdd, formalSubdivisionHomotopy_zero, map_zero]
   | succ n ih =>
     intro c
     have h :
@@ -2949,7 +2963,8 @@ private theorem SingularMayerVietoris.formalSubdivisionIteratedHomotopy_apply {V
 private theorem SingularMayerVietoris.formalSubdivisionIteratedHomotopy_zero {V : Type*}
     (center : FormalCenter V) (n : ℕ) (c : FormalChains V n) :
     formalSubdivisionIteratedHomotopy center 0 n c = 0 := by
-  simp [formalSubdivisionIteratedHomotopy]
+  simp only [formalSubdivisionIteratedHomotopy, Finset.range_zero, Finset.sum_empty,
+    LinearMap.zero_apply]
 
 private theorem SingularMayerVietoris.formalSubdivisionIteratedHomotopy_succ {V : Type*}
     (center : FormalCenter V) (k n : ℕ) (c : FormalChains V n) :
@@ -2962,7 +2977,8 @@ private theorem SingularMayerVietoris.formalSubdivisionIteratedHomotopy_succ {V 
 private theorem SingularMayerVietoris.formalSubdivisionIteratedHomotopy_degree_zero {V : Type*}
     (center : FormalCenter V) (k : ℕ) (c : FormalChains V 0) :
     formalSubdivisionIteratedHomotopy center k 0 c = 0 := by
-  simp [formalSubdivisionIteratedHomotopy_apply]
+  simp only [Nat.reduceAdd, formalSubdivisionIteratedHomotopy_apply, formalSubdivisionHomotopy_zero,
+      Finset.sum_const_zero]
 
 private theorem SingularMayerVietoris.formalSubdivisionIteratedHomotopy_boundary {V : Type*}
     (center : FormalCenter V) (k n : ℕ) (c : FormalChains V (n + 1)) :
@@ -2970,7 +2986,8 @@ private theorem SingularMayerVietoris.formalSubdivisionIteratedHomotopy_boundary
         formalSubdivisionIteratedHomotopy center k n (formalBoundary n c) =
       c - (formalSubdivision center (n + 1))^[k] c := by
   induction k with
-  | zero => simp
+  | zero => simp only [formalSubdivisionIteratedHomotopy_zero, map_zero, add_zero, iterate_zero,
+    id_eq, sub_self]
   | succ k
     ih =>
     rw [formalSubdivisionIteratedHomotopy_succ, formalSubdivisionIteratedHomotopy_succ, map_add]
@@ -3237,7 +3254,9 @@ private theorem SingularMayerVietoris.formalChainsSupported_univ {V : Type*} (n 
 private theorem
     SingularMayerVietoris.formalSimplex_mem_supported_iff {V : Type*} {n : ℕ} {S : Set V}
     (v : Fin n → V) : formalSimplex v ∈ formalChainsSupported S n ↔ ∀ i, v i ∈ S := by
-  classical simp [formalSimplex, formalChainsSupported, Finsupp.mem_supported]
+  classical simp only [formalChainsSupported, formalSimplex, Finsupp.mem_supported, ne_eq,
+    one_ne_zero, not_false_eq_true,
+      Finsupp.support_single, Finset.coe_singleton, singleton_subset_iff, mem_ofPred_eq]
 
 private theorem SingularMayerVietoris.formalSimplex_mem_supported {V : Type*} {n : ℕ} {S : Set V}
     {v : Fin n → V} (hv : ∀ i, v i ∈ S) : formalSimplex v ∈ formalChainsSupported S n :=
@@ -3447,7 +3466,8 @@ private theorem SingularMayerVietoris.vertexBarycenter_sub {E : Type*} [Seminorm
   simp only [vertexBarycenter, Finset.sum_sub_distrib, Finset.sum_const, Finset.card_univ,
     Fintype.card_fin, smul_sub]
   rw [← Nat.cast_smul_eq_nsmul ℝ, smul_smul]
-  simp [hn]
+  simp only [one_div, Nat.cast_add, Nat.cast_one, ne_eq, hn, not_false_eq_true, inv_mul_cancel₀,
+    one_smul]
 
 private theorem SingularMayerVietoris.sum_norm_vertex_sub_le {E : Type*} [SeminormedAddCommGroup E]
     {n : ℕ} (v : Fin (n + 1) → E) {D : ℝ} (hpair : ∀ i j, Dist.dist (v i) (v j) ≤ D)
@@ -3460,7 +3480,9 @@ private theorem SingularMayerVietoris.sum_norm_vertex_sub_le {E : Type*} [Semino
       apply Finset.sum_le_sum
       intro i _hi
       simpa only [dist_eq_norm] using hpair i j
-    _ = (n : ℝ) * D := by simp
+    _ = (n : ℝ) * D := by simp only [Finset.sum_const, Finset.mem_univ, Finset.card_erase_of_mem,
+      Finset.card_univ, Fintype.card_fin,
+        add_tsub_cancel_right, nsmul_eq_mul]
 
 private theorem SingularMayerVietoris.dist_vertexBarycenter_vertex_le {E : Type*}
     [SeminormedAddCommGroup E] [NormedSpace ℝ E] {n : ℕ} (v : Fin (n + 1) → E) {D : ℝ}
@@ -3699,7 +3721,7 @@ private theorem SingularMayerVietoris.formalSubdivision_simplex_mesh {V E : Type
     let : Subsingleton (Fin (0 + 1)) := inferInstanceAs (Subsingleton (Fin 1))
     have hij : i = j := Subsingleton.elim _ _
     subst j
-    simp [meshFactor]
+    simp only [dist_self, meshFactor, CharP.cast_eq_zero, zero_add, div_one, zero_mul, Std.le_refl]
   | succ n ih =>
     intro v D hpair w hw
     have hD : 0 ≤ D := by simpa only [dist_self] using hpair 0 0

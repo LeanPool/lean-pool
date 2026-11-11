@@ -66,7 +66,7 @@ private theorem
   intro j
   by_cases h : A i j < 0
   · simpa [h] using isOpen_ne_fun (continuous_apply j) continuous_const
-  · simp [h]
+  · simp only [h, ne_eq, iInter_of_empty, isOpen_univ]
 
 private theorem ToricCharts.torus_subset_domain {d : ℕ} (A : Matrix (Fin d) (Fin d) ℤ) :
     torus ⊆ domain A := fun _ hz _ j _ => hz j
@@ -96,8 +96,9 @@ private theorem ToricCharts.monomial_contDiffOn {d : ℕ} (A : Matrix (Fin d) (F
 private theorem ToricCharts.prod_zpow_eq_mo1973_9082 {d : ℕ} (a : ℂ) (ha : a ≠ 0)
     (s : Finset (Fin d)) (k : Fin d → ℤ) : (∏ i ∈ s, a ^ k i) = a ^ ∑ i ∈ s, k i := by
   induction s using Finset.induction_on with
-  | empty => simp
-  | @insert i s hi ih => simp [hi, ih, zpow_add₀ ha]
+  | empty => simp only [Finset.prod_empty, Finset.sum_empty, zpow_ofNat, pow_zero]
+  | @insert i s hi ih => simp only [hi, not_false_eq_true, Finset.prod_insert, ih,
+    Finset.sum_insert, zpow_add₀ ha]
 
 private theorem ToricCharts.monomial_mul_on_torus {d : ℕ} (A B : Matrix (Fin d) (Fin d) ℤ)
     {z : CoordinateSpace d} (hz : z ∈ torus) : monomial A (monomial B z) = monomial (A * B) z := by
@@ -120,18 +121,19 @@ private theorem ToricCharts.monomial_mul_on_torus {d : ℕ} (A B : Matrix (Fin d
 @[simp]
 private theorem ToricCharts.monomial_one {d : ℕ} (z : CoordinateSpace d) : monomial 1 z = z := by
   funext i
-  simp [monomial, Matrix.one_apply]
+  simp only [monomial, Matrix.one_apply, pow_ite, zpow_ofNat, pow_one, pow_zero, Finset.prod_ite_eq,
+      Finset.mem_univ, ↓reduceIte]
 
 private theorem ToricCharts.monomial_mul {d : ℕ} (A : Matrix (Fin d) (Fin d) ℤ)
     (z w : CoordinateSpace d) : monomial A (z * w) = monomial A z * monomial A w := by
   funext i
-  simp [monomial, mul_zpow, Finset.prod_mul_distrib]
+  simp only [monomial, Pi.mul_apply, mul_zpow, Finset.prod_mul_distrib]
 
 @[simp]
 private theorem
     ToricCharts.monomial_ones {d : ℕ} (A : Matrix (Fin d) (Fin d) ℤ) : monomial A 1 = 1 := by
   funext i
-  simp [monomial]
+  simp only [monomial, Pi.one_apply, one_zpow, Finset.prod_const_one]
 
 private def
     ToricCharts.overlap {d : ℕ} (A B : Matrix (Fin d) (Fin d) ℤ) : Set (CoordinateSpace d) :=
@@ -221,7 +223,7 @@ private theorem ToricCharts.monomial_zero_of_column_single {A : Matrix (Fin 3) (
     {z : CoordinateSpace 3} {j k : Fin 3} (hj : z j = 0)
     (hc : ∀ i, A i j = if i = k then 1 else 0) : monomial A z k = 0 := by
   apply Finset.prod_eq_zero (Finset.mem_univ j)
-  simp [hj, hc]
+  simp only [hj, hc, ↓reduceIte, zpow_ofNat, pow_one]
 
 private theorem
     ToricCharts.inverse_mapsTo_domain {A B : Matrix (Fin 3) (Fin 3) ℤ} (hA : HeightOne A)
@@ -231,11 +233,11 @@ private theorem
   have hzj : z j = 0 := eq_zero_of_zpow_eq_zero hj
   have hAj : A k j ≠ 0 := by
     intro he
-    simp [he] at hj
+    simp only [he, zpow_ofNat, pow_zero, one_ne_zero] at hj
   obtain ⟨l, hl⟩ := column_single_of_zero hA hz hzj
   have hkl : k = l := by
     by_contra h
-    exact hAj (by simp [hl, h])
+    exact hAj (by simp only [hl, h, ↓reduceIte])
   subst l
   have hentry := congrFun (congrFun hBA i) j
   have hnonneg : 0 ≤ B i k := by
@@ -406,7 +408,8 @@ private theorem ToricFan.Triangle.chartChange_preserves_time (s t : ToricFan.Tri
   exact time_holomorphic.continuous.comp_continuousOn (chartChange s t).continuousOn
 
 private theorem ToricFan.Triangle.central_fibre (z : ToricCharts.CoordinateSpace 3) :
-    time z = 0 ↔ z 0 = 0 ∨ z 1 = 0 ∨ z 2 = 0 := by simp [time, mul_eq_zero, or_assoc]
+    time z = 0 ↔ z 0 = 0 ∨ z 1 = 0 ∨ z 2 = 0 := by simp only [time, Fin.isValue, mul_eq_zero,
+      or_assoc]
 
 private abbrev ToricSpace.gluingCore : TopCat.GlueData.MkCore
     where
@@ -476,7 +479,8 @@ private def ToricSpace.parametrization (s : ToricFan.Triangle) :
 
 @[simp]
 private theorem ToricSpace.parametrization_target (s : ToricFan.Triangle) :
-    (parametrization s).target = Set.range (ToricSpace.inclusion s) := by simp [parametrization]
+    (parametrization s).target = Set.range (ToricSpace.inclusion s) :=
+      by simp only [parametrization, IsOpenEmbedding.toOpenPartialHomeomorph_target]
 
 private theorem ToricSpace.parametrization_transition (s t : ToricFan.Triangle)
     {z : ToricCharts.CoordinateSpace 3}
@@ -818,7 +822,7 @@ private theorem
 private theorem ToricSeparation.exponents_transition (s t : ToricFan.Triangle) :
     exponents t s ᵥ* ToricFan.Triangle.transition s t = -exponents s t := by
   rw [exponents, character_swap, Matrix.vecMul_vecMul, ToricFan.Triangle.transition_covariance]
-  simp [exponents, Matrix.neg_vecMul]
+  simp only [Matrix.neg_vecMul, exponents]
 
 private theorem ToricSeparation.exponents_cancel (s t : ToricFan.Triangle) (j : Fin 3) :
     exponents s t j + ∑ i, exponents t s i * ToricFan.Triangle.transition s t i j = 0 := by
@@ -854,7 +858,7 @@ private theorem ToricCharts.characters_mul_on_torus (A : Matrix (Fin 3) (Fin 3) 
       apply Finset.prod_congr rfl
       intro j _
       rw [← zpow_add₀ (hz j), h j, zpow_zero]
-    _ = 1 := by simp
+    _ = 1 := by simp only [Finset.prod_const_one]
 
 private theorem
     ToricCharts.characters_mul_on_domain (A : Matrix (Fin 3) (Fin 3) ℤ) (a b : Fin 3 → ℤ)
@@ -897,7 +901,7 @@ private theorem ToricCharts.overlapGraph_closed (A : Matrix (Fin 3) (Fin 3) ℤ)
       apply Finset.prod_eq_zero (Finset.mem_univ j)
       rw [hz, zero_zpow _ (ne_of_gt (hpos i j hij))]
     change character a p.1 * character b p.2 = 1 at hPeq
-    simp [hchar] at hPeq
+    simp only [hchar, zero_mul, zero_ne_one] at hPeq
   refine ⟨hD, ?_⟩
   let : (𝓝[overlapGraph A] p).NeBot := mem_closure_iff_nhdsWithin_neBot.mp hp
   have hf : ContinuousAt (fun q : CoordinateSpace 3 × CoordinateSpace 3 => monomial A q.1) p :=
@@ -944,10 +948,11 @@ private def ToricFan.Triangle.shift (s : ToricFan.Triangle) (v : Fin 2 → ℤ) 
 
 @[simp]
 private theorem ToricFan.Triangle.shift_zero (s : ToricFan.Triangle) : s.shift 0 = s := by
-  ext <;> simp [shift]
+  ext <;> simp only [shift, Pi.zero_apply, add_zero]
 
 private theorem ToricFan.Triangle.shift_add (s : ToricFan.Triangle) (v w : Fin 2 → ℤ) :
-    (s.shift v).shift w = s.shift (v + w) := by ext <;> simp [shift, add_assoc]
+    (s.shift v).shift w = s.shift (v + w) := by ext <;> simp only [shift, Fin.isValue, add_assoc,
+      Pi.add_apply]
 
 private def ToricFan.Triangle.shear (v : Fin 2 → ℤ) : Matrix (Fin 3) (Fin 3) ℤ :=
   !![1, 0, v 0; 0, 1, v 1; 0, 0, 1]
@@ -978,12 +983,12 @@ private theorem ToricFan.Triangle.transition_shift (s t : ToricFan.Triangle) (v 
     transition (s.shift v) (t.shift v) = transition s t := by
   rw [transition, dual_shift, rays_shift, Matrix.mul_assoc, ← Matrix.mul_assoc (shear (-v)),
     shear_add]
-  simp [transition]
+  simp only [neg_add_cancel, shear_zero, one_mul, transition]
 
 private theorem
     ToricFan.Triangle.chartChange_shift_source (s t : ToricFan.Triangle) (v : Fin 2 → ℤ) :
     (chartChange (s.shift v) (t.shift v)).source = (chartChange s t).source := by
-  simp [transition_shift]
+  simp only [chartChange_source, transition_shift]
 
 private theorem ToricFan.Triangle.chartChange_shift_apply (s t : ToricFan.Triangle) (v : Fin 2 → ℤ)
     (z : ToricCharts.CoordinateSpace 3) :
@@ -1019,12 +1024,12 @@ private theorem ToricSpace.translate_holomorphic (v : Fin 2 → ℤ) :
 @[simp]
 private theorem ToricSpace.translate_zero (x : Space) : ToricSpace.translate 0 x = x := by
   obtain ⟨s, z, rfl⟩ := inclusion_jointly_surjective x
-  simp
+  simp only [translate_inclusion, ToricFan.Triangle.shift_zero]
 
 private theorem ToricSpace.translate_add (v w : Fin 2 → ℤ) (x : Space) :
     ToricSpace.translate v (ToricSpace.translate w x) = ToricSpace.translate (v + w) x := by
   obtain ⟨s, z, rfl⟩ := inclusion_jointly_surjective x
-  simp [ToricFan.Triangle.shift_add, add_comm v w]
+  simp only [translate_inclusion, ToricFan.Triangle.shift_add, add_comm v w]
 
 private def ToricSpace.translationHomeomorph (v : Fin 2 → ℤ) : Space ≃ₜ Space
     where
@@ -1039,7 +1044,7 @@ private def ToricSpace.translationHomeomorph (v : Fin 2 → ℤ) : Space ≃ₜ 
 private theorem ToricSpace.time_translate (v : Fin 2 → ℤ) (x : Space) :
     time (ToricSpace.translate v x) = time x := by
   obtain ⟨s, z, rfl⟩ := inclusion_jointly_surjective x
-  simp
+  simp only [translate_inclusion, time_inclusion]
 
 private abbrev ToricSpace.ActingTorus :=
   Fin 3 → ℂˣ
@@ -1124,21 +1129,21 @@ private theorem ToricSpace.factors_mul (s : ToricFan.Triangle) (u v : ActingToru
 
 @[simp]
 private theorem ToricSpace.scale_one (s : ToricFan.Triangle) (z : ToricCharts.CoordinateSpace 3) :
-    scale s 1 z = z := by simp [scale]
+    scale s 1 z = z := by simp only [scale, factors_one, one_mul]
 
 private theorem ToricSpace.scale_mul (s : ToricFan.Triangle) (u v : ActingTorus)
     (z : ToricCharts.CoordinateSpace 3) : scale s u (scale s v z) = scale s (u * v) z := by
-  simp [scale, factors_mul, mul_assoc]
+  simp only [scale, factors_mul, mul_assoc]
 
 @[simp]
 private theorem ToricSpace.torusAction_one (x : Space) : torusAction 1 x = x := by
   obtain ⟨s, z, rfl⟩ := inclusion_jointly_surjective x
-  simp
+  simp only [torusAction_inclusion, scale_one]
 
 private theorem ToricSpace.torusAction_mul (u v : ActingTorus) (x : Space) :
     torusAction u (torusAction v x) = torusAction (u * v) x := by
   obtain ⟨s, z, rfl⟩ := inclusion_jointly_surjective x
-  simp [scale_mul]
+  simp only [torusAction_inclusion, scale_mul]
 
 private def ToricSpace.torusHomeomorph (u : ActingTorus) : Space ≃ₜ Space
     where
@@ -1159,13 +1164,13 @@ private theorem ToricSpace.time_scale (s : ToricFan.Triangle) (u : ActingTorus)
     (z : ToricCharts.CoordinateSpace 3) :
     ToricFan.Triangle.time (scale s u z) = (u 2 : ℂ) * ToricFan.Triangle.time z := by
   rw [← time_factors s u]
-  simp [ToricFan.Triangle.time, scale]
+  simp only [ToricFan.Triangle.time, scale, Fin.isValue, Pi.mul_apply]
   ring
 
 private theorem ToricSpace.time_torusAction (u : ActingTorus) (x : Space) :
     time (torusAction u x) = (u 2 : ℂ) * time x := by
   obtain ⟨s, z, rfl⟩ := inclusion_jointly_surjective x
-  simp [time_scale]
+  simp only [torusAction_inclusion, time_inclusion, time_scale, Fin.isValue]
 
 private def ToricSpace.fibreMultiplier (u : Fin 2 → ℂˣ) : ActingTorus :=
   ![u 0, u 1, 1]
@@ -1173,7 +1178,8 @@ private def ToricSpace.fibreMultiplier (u : Fin 2 → ℂˣ) : ActingTorus :=
 @[simp]
 private theorem ToricSpace.time_fibreMultiplier (u : Fin 2 → ℂˣ) (x : Space) :
     time (torusAction (fibreMultiplier u) x) = time x := by
-  simp [time_torusAction, fibreMultiplier]
+  simp only [fibreMultiplier, Fin.isValue, time_torusAction, Matrix.cons_val, Units.val_one,
+    one_mul]
 
 private theorem ToricSpace.shear_fibreMultiplier (v : Fin 2 → ℤ) (u : Fin 2 → ℂˣ) :
     ToricCharts.monomial (ToricFan.Triangle.shear v) (fun j => (fibreMultiplier u j : ℂ)) =
@@ -1194,7 +1200,7 @@ private theorem ToricSpace.fibreMultiplier_translate (v : Fin 2 → ℤ) (u : Fi
     torusAction (fibreMultiplier u) (ToricSpace.translate v x) =
       ToricSpace.translate v (torusAction (fibreMultiplier u) x) := by
   obtain ⟨s, z, rfl⟩ := inclusion_jointly_surjective x
-  simp [scale, factors_shift_fibreMultiplier]
+  simp only [translate_inclusion, torusAction_inclusion, scale, factors_shift_fibreMultiplier]
 
 @[simp]
 private theorem ToricSpace.fibreMultiplier_one : fibreMultiplier 1 = 1 := by
@@ -1214,16 +1220,17 @@ private theorem ToricSpace.variableMultiplier_inclusion (u : ℂ → Fin 2 → �
     (z : ToricCharts.CoordinateSpace 3) :
     variableMultiplier u (ToricSpace.inclusion s z) =
       ToricSpace.inclusion s (scale s (fibreMultiplier (u (ToricFan.Triangle.time z))) z) := by
-  simp [variableMultiplier]
+  simp only [variableMultiplier, time_inclusion, torusAction_inclusion]
 
 @[simp]
 private theorem ToricSpace.time_variableMultiplier (u : ℂ → Fin 2 → ℂˣ) (x : Space) :
-    time (variableMultiplier u x) = time x := by simp [variableMultiplier]
+    time (variableMultiplier u x) = time x := by simp only [variableMultiplier,
+      time_fibreMultiplier]
 
 @[simp]
 private theorem
     ToricSpace.variableMultiplier_one (x : Space) : variableMultiplier (fun _ => 1) x = x := by
-  simp [variableMultiplier]
+  simp only [variableMultiplier, fibreMultiplier_one, torusAction_one]
 
 private theorem ToricSpace.variableMultiplier_mul (u v : ℂ → Fin 2 → ℂˣ) (x : Space) :
     variableMultiplier u (variableMultiplier v x) = variableMultiplier (fun t => u t * v t) x := by
@@ -1233,7 +1240,7 @@ private theorem
     ToricSpace.variableMultiplier_translate (u : ℂ → Fin 2 → ℂˣ) (v : Fin 2 → ℤ) (x : Space) :
     variableMultiplier u (ToricSpace.translate v x) =
       ToricSpace.translate v (variableMultiplier u x) := by
-  simp [variableMultiplier, fibreMultiplier_translate]
+  simp only [variableMultiplier, time_translate, fibreMultiplier_translate]
 
 private theorem ToricSpace.varying_scale_holomorphic (s : ToricFan.Triangle) (u : ℂ → Fin 2 → ℂˣ)
     {D : Set ℂ} (hu : ∀ j, ContDiffOn ℂ ω (fun t => (u t j : ℂ)) D) :
@@ -1278,7 +1285,7 @@ private theorem
   rw [he]
   have hpre : ToricSpace.inclusion s ⁻¹' (time ⁻¹' D) = ToricFan.Triangle.time ⁻¹' D := by
     ext z
-    simp
+    simp only [mem_preimage, time_inclusion]
   rw [hpre]
   exact (inclusion_holomorphic s).comp_contMDiffOn (varying_scale_holomorphic s u hu).contMDiffOn
 
@@ -1304,7 +1311,9 @@ def ToricSpace.exponentialMultiplier (C : ℂ → Matrix (Fin 2) (Fin 2) ℂ) (v
 private theorem ToricSpace.exponentialMultiplier_zero (C : ℂ → Matrix (Fin 2) (Fin 2) ℂ) (t : ℂ) :
     exponentialMultiplier C 0 t = 1 := by
   ext j
-  simp [exponentialMultiplier, Matrix.mulVec, dotProduct]
+  simp only [exponentialMultiplier, Matrix.mulVec, dotProduct, Pi.zero_apply, Int.cast_zero,
+    mul_zero,
+      Finset.sum_const_zero, Complex.exp_zero, Units.mk0_one, Units.val_one, Pi.one_apply]
 
 private theorem
     ToricSpace.exponentialMultiplier_add (C : ℂ → Matrix (Fin 2) (Fin 2) ℂ) (v w : Fin 2 → ℤ)
@@ -1313,7 +1322,7 @@ private theorem
       exponentialMultiplier C v t * exponentialMultiplier C w t := by
   have he : (fun i => ((v + w) i : ℂ)) = (fun i => (v i : ℂ)) + (fun i => (w i : ℂ)) := by
     ext i
-    simp
+    simp only [Pi.add_apply, Int.cast_add]
   ext j
   change
     Complex.exp (2 * Real.pi * Complex.I * ((C t) *ᵥ (fun i => ((v + w) i : ℂ))) j) =
@@ -1339,13 +1348,14 @@ private def
 
 @[simp]
 private theorem ToricSpace.time_twistedTranslate (C : ℂ → Matrix (Fin 2) (Fin 2) ℂ) (v : Fin 2 → ℤ)
-    (x : Space) : time (twistedTranslate C v x) = time x := by simp [twistedTranslate]
+    (x : Space) : time (twistedTranslate C v x) = time x := by simp only [twistedTranslate,
+      time_variableMultiplier, time_translate]
 
 @[simp]
 private theorem ToricSpace.twistedTranslate_zero (C : ℂ → Matrix (Fin 2) (Fin 2) ℂ) (x : Space) :
     twistedTranslate C 0 x = x := by
   have he : exponentialMultiplier C 0 = (fun _ => 1) := funext (exponentialMultiplier_zero C)
-  simp [twistedTranslate, he]
+  simp only [twistedTranslate, he, cuspVector_zero, translate_zero, variableMultiplier_one]
 
 private theorem ToricSpace.twistedTranslate_add (C : ℂ → Matrix (Fin 2) (Fin 2) ℂ) (v w : Fin 2 → ℤ)
     (x : Space) : twistedTranslate C v (twistedTranslate C w x) = twistedTranslate C (v + w) x := by
@@ -1516,7 +1526,7 @@ private theorem ToricSpace.logNorm_monomial (A : Matrix (Fin 3) (Fin 3) ℤ)
   ext i
   change Real.log ‖∏ j, z j ^ A i j‖ = ∑ j, (A i j : ℝ) * Real.log ‖z j‖
   rw [norm_prod, Real.log_prod (fun j _ => norm_ne_zero_iff.mpr (zpow_ne_zero _ (hz j)))]
-  simp [norm_zpow, Real.log_zpow]
+  simp only [norm_zpow, Real.log_zpow]
 
 private def ToricSpace.logCoordinates (x : Space) : Fin 3 → ℝ :=
   logNorm (torusCoordinates x)
@@ -1529,7 +1539,7 @@ private theorem ToricSpace.logCoordinates_inclusion (s : ToricFan.Triangle)
 @[simp]
 private theorem
     ToricSpace.logCoordinates_time (x : Space) : logCoordinates x 2 = Real.log ‖time x‖ := by
-  simp [logCoordinates, logNorm]
+  simp only [logCoordinates, logNorm, Fin.isValue, torusCoordinates_time]
 
 private theorem ToricSpace.logNorm_sum (s : ToricFan.Triangle) {z : ToricCharts.CoordinateSpace 3}
     (hz : z ∈ ToricCharts.torus) : ∑ j, logNorm z j = Real.log ‖ToricFan.Triangle.time z‖ := by
@@ -1593,7 +1603,7 @@ private theorem ToricSpace.lattice_bounded_finite (R : ℝ) :
     {v : Fin 2 → ℤ | ‖latticeReal v‖ ≤ R}.Finite := by
   have he : {v : Fin 2 → ℤ | ‖latticeReal v‖ ≤ R} = Metric.closedBall 0 R := by
     ext v
-    simp [norm_latticeReal, Metric.mem_closedBall, dist_zero_right]
+    simp only [norm_latticeReal, mem_ofPred_eq, Metric.mem_closedBall, dist_zero_right]
   rw [he]
   exact (ProperSpace.isCompact_closedBall _ _).finite_of_discrete
 
@@ -1637,7 +1647,8 @@ private theorem ToricSpace.norm_matrix_mulVec_le (A : Matrix (Fin 2) (Fin 2) ℝ
           ((norm_le_pi_norm (A i) j).trans
             (norm_le_pi_norm (fun k : Fin 2 => fun l : Fin 2 => A k l) i))
           (norm_le_pi_norm v j) (norm_nonneg _) (norm_nonneg _)
-    _ = 2 * entryNorm A * ‖v‖ := by simp; ring
+    _ = 2 * entryNorm A * ‖v‖ := by simp only [Finset.sum_const, Finset.card_univ,
+      Fintype.card_fin, nsmul_eq_mul, Nat.cast_ofNat]; ring
 
 private theorem ToricSpace.position_displacement (C : ℂ → Matrix (Fin 2) (Fin 2) ℂ) (v : Fin 2 → ℤ)
     {x : Space} (hx : x ∈ openTorus) (ht : Real.log ‖time x‖ ≠ 0) :
@@ -1671,7 +1682,7 @@ private theorem
     rw [position_displacement C v hx ht.ne]
   simp only [add_neg_cancel_right, norm_neg, norm_cuspVector] at htriangle
   rw [hnorm] at htriangle
-  linarith
+  linarith only [he, htriangle]
 
 private def ToricSpace.barycentric (z : ToricCharts.CoordinateSpace 3) : Fin 3 → ℝ := fun j =>
   logNorm z j / Real.log ‖ToricFan.Triangle.time z‖
@@ -1699,10 +1710,14 @@ private theorem ToricSpace.chartSize_pos (s : ToricFan.Triangle) : 0 < chartSize
 
 private theorem ToricSpace.ray_norm_le_chartSize (s : ToricFan.Triangle) (i : Fin 2) (j : Fin 3) :
     ‖(s.rays i.castSucc j : ℝ)‖ ≤ chartSize s := by
-  have ha : ‖(s.a : ℝ)‖ ≤ chartSize s := by unfold chartSize; linarith [norm_nonneg (s.b : ℝ)]
-  have hb : ‖(s.b : ℝ)‖ ≤ chartSize s := by unfold chartSize; linarith [norm_nonneg (s.a : ℝ)]
-  have ha' : ‖(s.a : ℝ) + 1‖ ≤ chartSize s := (norm_add_le _ _).trans (by simp [chartSize])
-  have hb' : ‖(s.b : ℝ) + 1‖ ≤ chartSize s := (norm_add_le _ _).trans (by simp [chartSize])
+  have ha : ‖(s.a : ℝ)‖ ≤ chartSize s := by unfold chartSize; linarith only [norm_nonneg (s.b : ℝ)]
+  have hb : ‖(s.b : ℝ)‖ ≤ chartSize s := by unfold chartSize; linarith only [norm_nonneg (s.a : ℝ)]
+  have ha' : ‖(s.a : ℝ) + 1‖ ≤ chartSize s :=
+    (norm_add_le _ _).trans (by simp only [Real.norm_eq_abs, norm_one, chartSize,
+    add_le_add_iff_right, le_add_iff_nonneg_right, abs_nonneg])
+  have hb' : ‖(s.b : ℝ) + 1‖ ≤ chartSize s :=
+    (norm_add_le _ _).trans (by simp only [Real.norm_eq_abs, norm_one, chartSize,
+    add_le_add_iff_right, le_add_iff_nonneg_left, abs_nonneg])
   cases hs : s.upper <;> fin_cases i <;> fin_cases j <;>
     first
     | simpa [ToricFan.Triangle.rays, hs] using ha
@@ -1738,10 +1753,10 @@ private theorem ToricSpace.barycentric_norm_bound {z : ToricCharts.CoordinateSpa
     barycentric_sum referenceTriangle hz (Real.log_neg (norm_pos_iff.mpr hn) (ht.trans hε1)).ne
   have hsum : ∑ k : Fin 3, (barycentric z k + η) = 1 + 3 * η := by
     rw [Finset.sum_add_distrib, hs]
-    simp
+    simp only [Finset.sum_const, Finset.card_univ, Fintype.card_fin, nsmul_eq_mul, Nat.cast_ofNat]
   have hu :=
     Finset.single_le_sum (s := Finset.univ) (f := fun k : Fin 3 => barycentric z k + η)
-      (fun k _ => by linarith [hlow k]) (Finset.mem_univ j)
+      (fun k _ => by linarith only [hlow, hlow k]) (Finset.mem_univ j)
   rw [hsum] at hu
   change ‖barycentric z j‖ ≤ 1 + 2 * η
   rw [Real.norm_eq_abs, abs_le]
@@ -1772,7 +1787,8 @@ private theorem
       exact
         mul_le_mul (ray_norm_le_chartSize s i j) (barycentric_norm_bound hz hS hε hε1 ht hzS j)
           (norm_nonneg _) (chartSize_pos s).le
-    _ = positionBound s S ε := by simp [positionBound]; ring
+    _ = positionBound s S ε := by simp only [Finset.sum_const, Finset.card_univ, Fintype.card_fin,
+      nsmul_eq_mul, Nat.cast_ofNat, positionBound]; ring
 
 /-- The logarithmic bound required of a period correction near the cusp. -/
 public
@@ -1805,7 +1821,7 @@ private theorem ToricSpace.chartNeighbourhood_cover {ε : ℝ} {x : Space} (hx :
   refine ⟨s, n, z, ⟨?_, by simpa using hx⟩, rfl⟩
   intro j
   have h := norm_le_pi_norm z j
-  linarith
+  linarith only [hn, h]
 
 private def ToricSpace.chartTranslates (C : ℂ → Matrix (Fin 2) (Fin 2) ℂ) (ε : ℝ)
     (s t : ToricFan.Triangle) (n m : ℕ) : Set (Fin 2 → ℤ) :=
@@ -1846,18 +1862,20 @@ private theorem
     lattice_bound_of_small_drift C v hpT (Real.log_neg ht (htime.trans hε1)) (hR _ ht htime)
   have hpbound :=
     position_norm_bound s hzT
-      (by have hn : 0 ≤ (n : ℝ) := Nat.cast_nonneg n; linarith : (1 : ℝ) ≤ n + 2) hε hε1 hz.2
+      (by have hn : 0 ≤ (n : ℝ) := Nat.cast_nonneg n; linarith only [hε1, ht,
+        htime] : (1 : ℝ) ≤ n + 2) hε hε1 hz.2
       (fun j => (hz.1 j).le)
   have hqbound :=
     position_norm_bound t hwT
-      (by have hm : 0 ≤ (m : ℝ) := Nat.cast_nonneg m; linarith : (1 : ℝ) ≤ m + 2) hε hε1 hw.2
+      (by have hm : 0 ≤ (m : ℝ) := Nat.cast_nonneg m; linarith only [hε1, ht,
+        htime] : (1 : ℝ) ≤ m + 2) hε hε1 hw.2
       (fun j => (hw.1 j).le)
   rw [hew] at hqbound
   have hd :=
     norm_sub_le (position (twistedTranslate C v (ToricSpace.inclusion s z)))
       (position (ToricSpace.inclusion s z))
   change ‖latticeReal v‖ ≤ _
-  linarith
+  linarith only [hvbound, hpbound, hqbound, hd]
 
 private theorem ToricSpace.compact_translates_finite (C : ℂ → Matrix (Fin 2) (Fin 2) ℂ) {ε : ℝ}
     (hε : 0 < ε) (hε1 : ε < 1) (hC : ∀ i j, ContDiffOn ℂ ω (fun z => C z i j) (Metric.ball 0 ε))
@@ -1895,7 +1913,7 @@ private theorem ToricSpace.exists_smallDrift_radius (C : ℂ → Matrix (Fin 2) 
     exact continuousAt_const.mul (Complex.continuous_im.continuousAt.comp (hC i j))
   have hnorm : ContinuousAt (fun t => entryNorm (driftMatrix C t)) 0 := hentries.norm
   let M := entryNorm (driftMatrix C 0) + 1
-  have hM : entryNorm (driftMatrix C 0) < M := by dsimp [M]; linarith
+  have hM : entryNorm (driftMatrix C 0) < M := by dsimp [M]; linarith only []
   have hevent : ∀ᶠ t in 𝓝 (0 : ℂ), entryNorm (driftMatrix C t) < M := hnorm (gt_mem_nhds hM)
   obtain ⟨δ, hδ, hδbound⟩ := Metric.eventually_nhds_iff.mp hevent
   let ε := Min.min δ (Min.min (1 / 2) (Real.exp (-4 * M)))
@@ -1909,7 +1927,7 @@ private theorem ToricSpace.exists_smallDrift_radius (C : ℂ → Matrix (Fin 2) 
     have hsmall : ‖t‖ ≤ Real.exp (-4 * M) :=
       htε.le.trans ((min_le_right _ _).trans (min_le_right _ _))
     simpa only [Real.log_exp] using Real.log_le_log ht hsmall
-  linarith
+  linarith only [hbound, hlog]
 
 private abbrev CuspQuotient.LatticeGroup :=
   Multiplicative (Fin 2 → ℤ)
@@ -2125,7 +2143,7 @@ private theorem
     s.coordinates (s.generate x) = x := by
   change (s.dual.map (Int.castRingHom ℝ)) *ᵥ ((s.rays.map (Int.castRingHom ℝ)) *ᵥ x) = x
   rw [Matrix.mulVec_mulVec, ← Matrix.map_mul, dual_rays]
-  simp
+  simp only [Int.coe_castRingHom, Int.cast_zero, Int.cast_one, Matrix.map_one, Matrix.one_mulVec]
 
 private def ToricFan.Triangle.cone (s : ToricFan.Triangle) : ConvexCone ℝ RealPlane₄
     where
@@ -2191,7 +2209,7 @@ private theorem ToricSpace.displacement_lower_bound (C : ℂ → Matrix (Fin 2) 
   have he := displacement_error_bound C ht hR v
   have htri := norm_sub_le (displacement C t v) (displacement C t v - realCuspVector v)
   rw [sub_sub_cancel, realCuspVector_norm] at htri
-  linarith
+  linarith only [he, htri]
 
 private theorem ToricSpace.displacement_upper_bound (C : ℂ → Matrix (Fin 2) (Fin 2) ℂ) {t : ℂ}
     (ht : Real.log ‖t‖ < 0) (hR : entryNorm (driftMatrix C t) ≤ -Real.log ‖t‖ / 4)
@@ -2199,7 +2217,7 @@ private theorem ToricSpace.displacement_upper_bound (C : ℂ → Matrix (Fin 2) 
   have he := displacement_error_bound C ht hR v
   have htri := norm_add_le (realCuspVector v) (displacement C t v - realCuspVector v)
   rw [add_sub_cancel, realCuspVector_norm] at htri
-  linarith
+  linarith only [he, htri]
 
 private theorem ToricSpace.displacement_bijective (C : ℂ → Matrix (Fin 2) (Fin 2) ℂ) {t : ℂ}
     (ht : Real.log ‖t‖ < 0) (hR : entryNorm (driftMatrix C t) ≤ -Real.log ‖t‖ / 4) :
@@ -2220,7 +2238,7 @@ private theorem ToricSpace.exists_integer_rounding (u : Fin 2 → ℝ) :
   intro i
   simp only [Pi.add_apply, latticeReal, Int.cast_neg, Real.norm_eq_abs]
   rw [abs_le]
-  constructor <;> linarith [Int.floor_le (u i), Int.lt_floor_add_one (u i)]
+  constructor <;> linarith only [Int.floor_le (u i), Int.lt_floor_add_one (u i)]
 
 private theorem ToricSpace.position_twistedTranslate_displacement (C : ℂ → Matrix (Fin 2) (Fin 2) ℂ)
     (v : Fin 2 → ℤ) {x : Space} (hx : x ∈ openTorus) (ht : Real.log ‖time x‖ ≠ 0) :
@@ -2239,7 +2257,7 @@ private theorem ToricSpace.exists_bounded_translate (C : ℂ → Matrix (Fin 2) 
   obtain ⟨v, hv⟩ := exists_integer_rounding u
   refine ⟨v, ?_⟩
   rw [position_twistedTranslate_displacement C v hx ht.ne, ← hu, ← map_add]
-  exact (displacement_upper_bound C ht hR _).trans (by nlinarith)
+  exact (displacement_upper_bound C ht hR _).trans (by linarith only [hv])
 
 private theorem
     ToricSpace.exists_torus_chart (s : ToricFan.Triangle) {x : Space} (hx : x ∈ openTorus) :
@@ -2306,12 +2324,12 @@ private theorem ToricSpace.exists_bounded_cone (y : Fin 2 → ℝ) (hy : ‖y‖
     abs_le.mp (by simpa only [Real.norm_eq_abs] using (norm_le_pi_norm y 1).trans hy)
   have haI : (-3 : ℤ) ≤ a ∧ a ≤ 3 := by
     constructor
-    · exact_mod_cast (show (-3 : ℝ) ≤ (a : ℝ) by linarith)
-    · exact_mod_cast (show (a : ℝ) ≤ 3 by linarith)
+    · exact_mod_cast (show (-3 : ℝ) ≤ (a : ℝ) by linarith only [ha', hy0])
+    · exact_mod_cast (show (a : ℝ) ≤ 3 by linarith only [ha, hy0])
   have hbI : (-3 : ℤ) ≤ b ∧ b ≤ 3 := by
     constructor
-    · exact_mod_cast (show (-3 : ℝ) ≤ (b : ℝ) by linarith)
-    · exact_mod_cast (show (b : ℝ) ≤ 3 by linarith)
+    · exact_mod_cast (show (-3 : ℝ) ≤ (b : ℝ) by linarith only [hb', hy1])
+    · exact_mod_cast (show (b : ℝ) ≤ 3 by linarith only [hb, hy1])
   by_cases hsum : y 0 + y 1 ≤ 1 + (a : ℝ) + b
   · refine ⟨⟨a, b, Bool.false⟩, ⟨haI, hbI⟩, ?_⟩
     rw [ToricFan.Triangle.mem_cone, ToricFan.Triangle.coordinates_lower]
@@ -2490,7 +2508,7 @@ private def CuspQuotient.affineTube (ε : ℝ) : Set (ToricCharts.CoordinateSpac
 
 private theorem CuspQuotient.affineTube_starConvex (ε : ℝ) : StarConvex ℝ 0 (affineTube ε) := by
   intro z hz a b ha hb hab
-  have hb1 : b ≤ 1 := by linarith
+  have hb1 : b ≤ 1 := by linarith only [ha, hab]
   simp only [smul_zero, zero_add]
   change ‖ToricFan.Triangle.time (b • z)‖ < ε
   have he : ‖ToricFan.Triangle.time (b • z)‖ = b ^ 3 * ‖ToricFan.Triangle.time z‖ := by
@@ -2642,7 +2660,9 @@ private theorem
       centralChartMap C ε hε ⟨0, 0, s.upper⟩ centralOrigin := by
   let v : Fin 2 → ℤ := ![-s.b, s.a]
   have he : (⟨0, 0, s.upper⟩ : ToricFan.Triangle).shift (ToricSpace.cuspVector v) = s := by
-    ext <;> simp [ToricFan.Triangle.shift, ToricSpace.cuspVector, v]
+    ext <;> simp only [ToricFan.Triangle.shift, ToricSpace.cuspVector, Fin.isValue,
+      Matrix.cons_val_one,
+        Matrix.cons_val_fin_one, Matrix.cons_val_zero, neg_neg, zero_add, v]
   simpa only [he] using centralChartMap_origin_shift C ε hε ⟨0, 0, s.upper⟩ v
 
 private theorem CuspQuotient.reference_central_overlap :
@@ -2668,8 +2688,12 @@ private theorem
     (hε : 0 < ε) :
     (Set.range (centralChartMap C ε hε ⟨0, 0, Bool.false⟩) ∩
         Set.range (centralChartMap C ε hε ⟨0, 0, Bool.true⟩)).Nonempty := by
-  let z : centralAffine := ⟨![1, 0, 0], by simp [centralAffine, ToricFan.Triangle.time]⟩
-  let w : centralAffine := ⟨![0, 0, 1], by simp [centralAffine, ToricFan.Triangle.time]⟩
+  let z : centralAffine := ⟨![1, 0, 0], by simp only [centralAffine, ToricFan.Triangle.time,
+    Fin.isValue, mul_eq_zero, mem_ofPred_eq,
+      Matrix.cons_val_zero, one_ne_zero, Matrix.cons_val_one, or_true, Matrix.cons_val, or_self]⟩
+  let w : centralAffine := ⟨![0, 0, 1], by simp only [centralAffine, ToricFan.Triangle.time,
+    Fin.isValue, mul_eq_zero, mem_ofPred_eq,
+      Matrix.cons_val_zero, Matrix.cons_val_one, or_self, Matrix.cons_val, one_ne_zero, or_false]⟩
   refine ⟨centralChartMap C ε hε ⟨0, 0, Bool.false⟩ z, Set.mem_range_self z, w, ?_⟩
   apply congrArg (quotientMap C ε)
   exact Subtype.ext reference_central_overlap.symm

@@ -61,14 +61,14 @@ private theorem
 private theorem SpecialPeriods.rho_sq : rho ^ 2 = rho - 1 := by
   apply Complex.ext
   · simp only [pow_two, Complex.mul_re, rho_re, rho_im, Complex.sub_re, Complex.one_re]
-    nlinarith [Real.sq_sqrt (by norm_num : (0 : ℝ) ≤ 3)]
+    linarith only [Real.sq_sqrt (by norm_num : (0 : ℝ) ≤ 3)]
   · simp only [pow_two, Complex.mul_im, rho_re, rho_im, Complex.sub_im, Complex.one_im]
     ring
 
 private theorem SpecialPeriods.norm_rho : ‖rho‖ = 1 := by
   rw [← sq_eq_sq₀ (norm_nonneg _) zero_le_one, Complex.sq_norm, Complex.normSq_apply, rho_re,
     rho_im]
-  nlinarith [Real.sq_sqrt (by norm_num : (0 : ℝ) ≤ 3)]
+  linarith only [Real.sq_sqrt (by norm_num : (0 : ℝ) ≤ 3)]
 
 private theorem SpecialPeriods.rho_cube : rho ^ 3 = -1 := by
   calc
@@ -105,7 +105,7 @@ private theorem SpecialPeriods.cayley_im_pos {a z : ℂ} (ha : 0 < a.im) (hz : �
   apply div_pos
   · apply mul_pos ha
     rw [sub_pos, Complex.normSq_eq_norm_sq]
-    nlinarith [norm_nonneg z]
+    exact (sq_lt_one_iff₀ (norm_nonneg z)).mpr hz
   · exact Complex.normSq_pos.mpr (one_sub_ne_zero_of_norm_lt_one hz)
 
 private theorem
@@ -189,7 +189,7 @@ private theorem SpecialPeriods.tauThree_im_pos {z : ℂ} (hz : ‖z‖ < 1) : 0 
 private theorem SpecialPeriods.tauFour_im_pos {z : ℂ} (hz : ‖z‖ < 1) : 0 < (tauFour z).im := by
   apply cayley_im_pos (by simp)
   rw [norm_pow]
-  nlinarith [norm_nonneg z]
+  exact (sq_lt_one_iff₀ (norm_nonneg z)).mpr hz
 
 private theorem SpecialPeriods.tauThree_ne_zero {z : ℂ} (hz : ‖z‖ < 1) : tauThree z ≠ 0 := by
   intro he
@@ -217,7 +217,7 @@ private theorem SpecialPeriods.tauThree_rotate {z : ℂ} (hz : ‖z‖ < 1) :
 
 private theorem SpecialPeriods.tauFour_rotate {z : ℂ} (hz : ‖z‖ < 1) :
     tauFour (rotateFour z) = -1 / tauFour z := by
-  have hz2 : ‖z ^ 2‖ < 1 := by rw [norm_pow]; nlinarith [norm_nonneg z]
+  have hz2 : ‖z ^ 2‖ < 1 := by rw [norm_pow]; exact (sq_lt_one_iff₀ (norm_nonneg z)).mpr hz
   have hd : 1 - z ^ 2 ≠ 0 := one_sub_ne_zero_of_norm_lt_one hz2
   have hp : 1 + z ^ 2 ≠ 0 := by
     intro h
@@ -235,7 +235,7 @@ private theorem SpecialPeriods.tauFour_contDiffOn : ContDiffOn ℂ ω tauFour (M
   apply (cayley_contDiffOn Complex.I).comp (contDiffOn_id.pow 2)
   intro z hz
   simp only [Metric.mem_ball, dist_zero_right, norm_pow, id_eq] at *
-  nlinarith [norm_nonneg z]
+  exact (sq_lt_one_iff₀ (norm_nonneg z)).mpr hz
 
 private def SpecialPeriods.localThree (z : ℂ) : PeriodPoint :=
   sectionThree (tauThree z)
@@ -386,12 +386,12 @@ private theorem
     intro he
     have hh := congrArg Complex.im he
     simp only [Complex.neg_im, Complex.one_im] at hh
-    linarith [rho_im_pos]
+    linarith only [hh, rho_im_pos]
   · rw [neg_sq, rho_sq]
     intro he
     have hh := congrArg Complex.im he
     simp only [Complex.sub_im, Complex.one_im, sub_zero] at hh
-    linarith [rho_im_pos]
+    linarith only [hh, rho_im_pos]
 
 private theorem SpecialPeriods.neg_I_pow_ne_one {n : ℕ} (hn : 0 < n) (hn' : n < 4) :
     (-Complex.I) ^ n ≠ 1 := by

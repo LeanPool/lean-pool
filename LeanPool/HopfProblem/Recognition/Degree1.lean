@@ -443,8 +443,8 @@ private theorem
   let W₁ := U₁ ∩ Prod.fst ⁻¹' (I₁ ∩ Set.Ioi ((p + q) / 2))
   have hW₀ : IsOpen W₀ := hU₀.inter ((hI₀.inter isOpen_Iio).preimage continuous_fst)
   have hW₁ : IsOpen W₁ := hU₁.inter ((hI₁.inter isOpen_Ioi).preimage continuous_fst)
-  have h0W : (p, (0 : V)) ∈ W₀ := ⟨h0, h0I, by change p < (p + q) / 2; linarith⟩
-  have h1W : (q, (0 : V)) ∈ W₁ := ⟨h1, h1I, by change (p + q) / 2 < q; linarith⟩
+  have h0W : (p, (0 : V)) ∈ W₀ := ⟨h0, h0I, by change p < (p + q) / 2; linarith only [hpq]⟩
+  have h1W : (q, (0 : V)) ∈ W₁ := ⟨h1, h1I, by change (p + q) / 2 < q; linarith only [hpq]⟩
   let K : Set (ℝ × V) := Set.univ ×ˢ {0}
   have hv0 (y : ℝ × V) (hy : y ∈ K ∩ W₀) : R₀ y = H y := by
     have hz : y.2 = 0 := hy.1.2
@@ -471,7 +471,7 @@ private theorem
   have h0not : (p, (0 : V)) ∉ W₁ := by
     intro hh
     have hbad : (p + q) / 2 < p := hh.2.2
-    linarith
+    linarith only [hpq, hbad]
   refine ⟨G, hG, ?_, ?_, (hoff _ h0not).trans hg₀, hg₁⟩
   · intro s
     have hs : (s, (0 : V)) ∈ K := ⟨Set.mem_univ s, rfl⟩
@@ -913,11 +913,11 @@ private theorem MorseCancel.exists_tube_support_box {V E H M : Type*} [NormedAdd
     by_cases ht0 : t < 0
     · apply hball0
       rw [Metric.mem_closedBall, Real.dist_eq, sub_zero, abs_of_neg ht0]
-      linarith [ht.1]
+      linarith only [ht, ht.1]
     · by_cases ht1 : 1 < t
       · apply hball1
         rw [Metric.mem_closedBall, Real.dist_eq, abs_of_pos (sub_pos.mpr ht1)]
-        linarith [ht.2]
+        linarith only [ht, ht.2]
       · exact haxis ⟨⟨le_of_not_gt ht0, le_of_not_gt ht1⟩, rfl⟩
   have hwideAxis : Set.Icc (-a) (1 + b) ×ˢ {(0 : V)} ⊆ Φ.source := by
     rintro ⟨t, z⟩ ⟨ht, hz⟩
@@ -927,7 +927,7 @@ private theorem MorseCancel.exists_tube_support_box {V E H M : Type*} [NormedAdd
   obtain ⟨r, hr, hprod⟩ :=
     Smale.DiskFraming.exists_pos_prod_closedBall_subset CompactIccSpace.isCompact_Icc
       Φ.open_source hwideAxis
-  exact ⟨-a, 1 + b, r, by linarith, by linarith, hr, hprod⟩
+  exact ⟨-a, 1 + b, r, by linarith only [ha], by linarith only [hb], hr, hprod⟩
 
 private def
     Degree.RegularHeightCoordinates.heightMap {V : Type*} (F : ℝ × V → ℝ) (p : ℝ × V) : ℝ × V :=
@@ -950,7 +950,7 @@ private theorem
     subst w
     have he : L (s, z) = L (t, z) := congrArg Prod.fst h
     rw [linear_decomposition L s z, linear_decomposition L t z] at he
-    have hst : s = t := (mul_right_cancel₀ hL) (by linarith)
+    have hst : s = t := (mul_right_cancel₀ hL) (by linarith only [he])
     exact Prod.ext hst rfl
   · rintro ⟨s, z⟩
     refine ⟨((s - L (0, z)) / L (1, 0), z), ?_⟩
@@ -1022,17 +1022,17 @@ private theorem Degree.RegularHeightCoordinates.heightMap_surjective_of_bounded 
   rintro ⟨r, z⟩
   let a := r - (C + 1)
   let b := r + (C + 1)
-  have hab : a ≤ b := by dsimp [a, b]; linarith
+  have hab : a ≤ b := by dsimp [a, b]; linarith only [hC]
   have hs : Continuous (fun s : ℝ => displacedHeight u (s, z)) :=
     continuous_id.add (hu.comp (continuous_id.prodMk continuous_const))
   have hlo : displacedHeight u (a, z) ≤ r := by
     have h := (abs_le.mp (hbound (a, z))).2
     dsimp [displacedHeight, a] at *
-    linarith
+    linarith only [h]
   have hhi : r ≤ displacedHeight u (b, z) := by
     have h := (abs_le.mp (hbound (b, z))).1
     dsimp [displacedHeight, b] at *
-    linarith
+    linarith only [h]
   obtain ⟨s, _, he⟩ := intermediate_value_Icc hab hs.continuousOn ⟨hlo, hhi⟩
   exact ⟨(s, z), Prod.ext he rfl⟩
 
@@ -1065,7 +1065,7 @@ private theorem
     Degree.MorseRearrangement.translation_germ_apply (D : Diffeomorph 𝓘(ℝ, ℝ) 𝓘(ℝ, ℝ) ℝ ℝ ∞)
     {x y : ℝ} (hD : D =ᶠ[𝓝 x] fun z => z + (y - x)) : D x = y := by
   have h := hD.self_of_nhds
-  linarith
+  linarith only [h]
 
 private theorem Degree.MorseRearrangement.intervalTranslation_refl (a b x : ℝ) :
     IntervalTranslation a b x x := by
@@ -1087,7 +1087,7 @@ private theorem Degree.MorseRearrangement.intervalTranslation_symm {a b x y : �
   · filter_upwards [hgerm.comp_tendsto ht] with z hz
     change D (D.symm z) = D.symm z + (y - x) at hz
     rw [D.apply_symm_apply] at hz
-    linarith
+    linarith only [hz]
 
 private theorem Degree.MorseRearrangement.intervalTranslation_trans {a b x y z : ℝ}
     (hxy : IntervalTranslation a b x y) (hyz : IntervalTranslation a b y z) :
@@ -1109,14 +1109,14 @@ private theorem Degree.MorseRearrangement.intervalTranslation_trans {a b x y z :
 private theorem Degree.MorseRearrangement.exists_local_interval_translation {a b x : ℝ}
     (hx : x ∈ Set.Ioo a b) : ∃ ε, 0 < ε ∧ ∀ y, Dist.dist y x < ε → IntervalTranslation a b x y := by
   obtain ⟨r, hr, hsub⟩ := Metric.mem_nhds_iff.mp (isOpen_Ioo.mem_nhds hx)
-  let β : ContDiffBump x := ⟨r / 4, r / 2, by positivity, by linarith⟩
+  let β : ContDiffBump x := ⟨r / 4, r / 2, by positivity, by linarith only [hr]⟩
   have hsupp : tsupport (fun z : ℝ => β z) ⊆ Set.Ioo a b := by
     rw [β.tsupport_eq]
     intro z hz
     apply hsub
     have hh : Dist.dist z x ≤ r / 2 := hz
     change Dist.dist z x < r
-    linarith
+    linarith only [hr, hh]
   have hcompact : HasCompactSupport (fun z : ℝ => β z) := by
     change IsCompact (tsupport (fun z : ℝ => β z))
     rw [β.tsupport_eq]
@@ -1156,9 +1156,10 @@ private theorem Degree.MorseRearrangement.strictMono_of_fixed_exterior
     StrictMono D := by
   rcases D.continuous.strictMono_of_inj D.injective with hm | ha
   · exact hm
-  · have hanti := ha (show b < b + 1 by linarith)
-    rw [hfix b (fun h => (lt_irrefl b) h.2), hfix (b + 1) (fun h => by linarith [h.2])] at hanti
-    linarith
+  · have hanti := ha (show b < b + 1 by linarith only [])
+    rw [hfix b (fun h => (lt_irrefl b) h.2), hfix (b + 1) (fun h => by linarith only [h,
+      h.2])] at hanti
+    linarith only [hanti]
 
 private theorem Degree.MorseRearrangement.deriv_pos_of_strictMono_diffeomorph
     (D : Diffeomorph 𝓘(ℝ, ℝ) 𝓘(ℝ, ℝ) ℝ ℝ ∞) (hm : StrictMono D) (x : ℝ) : 0 < deriv D x := by
@@ -1317,7 +1318,7 @@ private theorem MorseCancel.longitudinalBlend_derivative_positive {V : Type*} [N
     ⟨mul_nonneg (hηrange t).1 (hβrange p.2).1,
       (mul_le_of_le_one_left (hβrange p.2).1 (hηrange t).2).trans (hβrange p.2).2⟩
   have hpos := Degree.MorseRearrangement.positive_blended_slope hweight (hDpos p.1) zero_lt_one
-  nlinarith
+  linarith only [hpos]
 
 private theorem
     MorseCancel.longitudinalBlend_slices {V : Type*} [NormedAddCommGroup V] [NormedSpace ℝ V]
@@ -1390,11 +1391,11 @@ private theorem
   have hτ0 : τ ≠ 0 := by
     intro h
     rw [h, Real.smoothTransition.zero] at heq
-    linarith [hc.1]
+    linarith only [hc, heq, hc.1]
   have hτ1 : τ ≠ 1 := by
     intro h
     rw [h, Real.smoothTransition.one] at heq
-    linarith [hc.2]
+    linarith only [hc, heq, hc.2]
   have hτI : τ ∈ Set.Ioo (0 : ℝ) 1 := ⟨lt_of_le_of_ne hτ.1 (Ne.symm hτ0), lt_of_le_of_ne hτ.2 hτ1⟩
   refine ⟨τ, hτI, heq, smoothTransition_deriv_pos hτI, ?_⟩
   intro t ht
@@ -1440,9 +1441,9 @@ private theorem MorseCancel.nonempty_longitudinalTubeMotion {V E H M : Type*} [N
     (haxis : Set.Icc (0 : ℝ) 1 ×ˢ {(0 : V)} ⊆ Φ.source) : Nonempty (LongitudinalTubeMotion Φ) := by
   obtain ⟨l, u, r, hl, hu, hr, hbox⟩ := exists_tube_support_box Φ haxis
   let c : ℝ := (1 + u) / 2
-  have hc : 1 < c := by dsimp only [c]; linarith
+  have hc : 1 < c := by dsimp only [c]; linarith only [hu]
   have hcpos : 0 < c := zero_lt_one.trans hc
-  have hcu : c < u := by dsimp only [c]; linarith
+  have hcu : c < u := by dsimp only [c]; linarith only [hu]
   have h0I : (0 : ℝ) ∈ Set.Ioo l u := ⟨hl, zero_lt_one.trans hu⟩
   have hcI : c ∈ Set.Ioo l u := ⟨hl.trans hcpos, hcu⟩
   obtain ⟨D, hDfix, hDgerm, hD0, -, hDpos⟩ :=
@@ -1963,7 +1964,7 @@ private theorem
     (0, v) ∈ c.splitChart.target :=
     hblock
       ⟨Metric.mem_closedBall_self hr.le,
-        Metric.closedBall_subset_closedBall (by linarith : r / 2 ≤ r)
+        Metric.closedBall_subset_closedBall (by linarith only [hr] : r / 2 ≤ r)
           (Metric.ball_subset_closedBall hv)⟩
   have hlocal :
     ContMDiffOn 𝓘(ℝ, c.PositiveCoordinates) 𝓘(ℝ, E) ∞ (fun v => c.splitChart.symm (0, v))
@@ -2035,7 +2036,7 @@ private theorem
   have htarget (v : c.NegativeCoordinates) (hv : v ∈ Metric.ball 0 (r / 2)) :
     (v, 0) ∈ c.splitChart.target :=
     hblock
-      ⟨Metric.closedBall_subset_closedBall (by linarith : r / 2 ≤ r)
+      ⟨Metric.closedBall_subset_closedBall (by linarith only [hr] : r / 2 ≤ r)
           (Metric.ball_subset_closedBall hv),
         Metric.mem_closedBall_self hr.le⟩
   have hlocal :
@@ -3878,8 +3879,8 @@ private theorem
   let V : Set ℝ := (fun t : ℝ => t + (-1 - r)) ⁻¹' Set.Ioo (-R) R
   have hU : IsOpen U := isOpen_Ioo.preimage (continuous_id.add continuous_const)
   have hV : IsOpen V := isOpen_Ioo.preimage (continuous_id.add continuous_const)
-  have hp : r ∈ Set.Ioo (-R) R := ⟨by linarith, hrR⟩
-  have hm : -r ∈ Set.Ioo (-R) R := ⟨by linarith, by linarith⟩
+  have hp : r ∈ Set.Ioo (-R) R := ⟨by linarith only [hr, hrR], hrR⟩
+  have hm : -r ∈ Set.Ioo (-R) R := ⟨by linarith only [hrR], by linarith only [hr, hrR]⟩
   have h0U : (0 : ℝ) ∈ U := by simpa only [U, Set.mem_preimage, zero_add] using hp
   have h1V : (1 : ℝ) ∈ V := by
     change 1 + (-1 - r) ∈ Set.Ioo (-R) R
@@ -3908,7 +3909,7 @@ private theorem
     rw [ha0, hb1]
     intro hh
     have heq := hinj ⟨hp.1.le, hp.2.le⟩ ⟨hm.1.le, hm.2.le⟩ hh
-    linarith
+    linarith only [hr, heq]
   exact
     exists_embedded_native_open_arc_with_local_germs S ha hb hU hV h0U h1V haS hbS hia hib hpath
       hxy hdim
@@ -3922,8 +3923,8 @@ private theorem
       IsClosed C ∧
         ({0, 1} : Set ℝ) ⊆ interior C ∧
           ∀ t ∈ Set.Icc (0 : ℝ) 1 ∩ C, t ∉ ({0, 1} : Set ℝ) → β t ∉ α '' Set.Icc (-r) r := by
-  have hp : r ∈ Set.Ioo (-R) R := ⟨by linarith, hrR⟩
-  have hm : -r ∈ Set.Ioo (-R) R := ⟨by linarith, by linarith⟩
+  have hp : r ∈ Set.Ioo (-R) R := ⟨by linarith only [hr, hrR], hrR⟩
+  have hm : -r ∈ Set.Ioo (-R) R := ⟨by linarith only [hrR], by linarith only [hr, hrR]⟩
   have hnear0 : ∀ᶠ t in 𝓝 (0 : ℝ), β t = α (t + r) ∧ t + r ∈ Set.Ioo (-R) R := by
     have hn : ∀ᶠ t in 𝓝 (0 : ℝ), t + r ∈ Set.Ioo (-R) R :=
       ((continuous_id.add continuous_const).continuousAt.tendsto
@@ -3954,18 +3955,19 @@ private theorem
       exact mem_interior_iff_mem_nhds.mpr h1C
   · intro t ht htB
     rintro ⟨s, hs, heq⟩
-    have hsR : s ∈ Set.Icc (-R) R := ⟨by linarith [hs.1], by linarith [hs.2]⟩
+    have hsR : s ∈ Set.Icc (-R) R := ⟨by linarith only [hrR, hs, hs.1], by linarith only [hrR, hs,
+      hs.2]⟩
     rcases ht.2 with ht0 | ht1
     · have hg := hball0 ht0
       have hts := hinj ⟨hg.2.1.le, hg.2.2.le⟩ hsR (hg.1.symm.trans heq.symm)
       have htne : t ≠ 0 := fun h => htB (Or.inl h)
       have htpos : 0 < t := lt_of_le_of_ne ht.1.1 htne.symm
-      linarith [hs.2]
+      linarith only [hs, hts, htpos, hs.2]
     · have hg := hball1 ht1
       have hts := hinj ⟨hg.2.1.le, hg.2.2.le⟩ hsR (hg.1.symm.trans heq.symm)
       have htne : t ≠ 1 := fun h => htB (Or.inr h)
       have htlt : t < 1 := lt_of_le_of_ne ht.1.2 htne
-      linarith [hs.1]
+      linarith only [hs, hts, htlt, hs.1]
 
 private theorem Smale.ManifoldImmersion.exists_relative_embedded_avoidance_in_open_of_isClosed_range
     {E E' G H H' Y N : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] [FiniteDimensional ℝ E]
@@ -4159,7 +4161,7 @@ private theorem
     · rw [(toIcoMod_eq_self hT).mpr ⟨ht0, by simpa only [zero_add] using htn.2⟩]
     · have hmod : toIcoMod hT 0 t = t + T := by
         apply (toIcoMod_eq_iff hT).mpr
-        refine ⟨⟨by linarith [htn.1], by linarith⟩, -1, ?_⟩
+        refine ⟨⟨by linarith only [htn, htn.1], by linarith only [ht0]⟩, -1, ?_⟩
         simp
       rw [hmod]
       exact ht
@@ -4258,9 +4260,10 @@ private theorem
     have hc : Continuous (fun t : ℝ => t + 1) := continuous_id.add continuous_const
     simpa only [zero_add] using hc.continuousAt.tendsto (x := 0)
   filter_upwards [h1.comp_tendsto ht,
-    Ioo_mem_nhds (show (-1 : ℝ) < 0 by norm_num) (show 0 < 2 * r by linarith)] with t ht htn
+    Ioo_mem_nhds (show (-1 : ℝ) < 0 by norm_num) (show 0 < 2 * r by linarith only [hr])] with t ht
+      htn
   change β (t + 1) = α (t + 1 + (-1 - r)) at ht
-  rw [joinedArc_right (by linarith [htn.1]), joinedArc_left htn.2.le,
+  rw [joinedArc_right (by linarith only [htn, htn.1]), joinedArc_left htn.2.le,
     show t + (2 * r + 1) + (-2 * r) = t + 1 by ring, ht]
   congr 1
   ring
@@ -4271,13 +4274,13 @@ private theorem Degree.CircleGluing.joinedArc_injOn {N : Type*} {α β : ℝ →
     Set.InjOn (joinedArc α β r) (Set.Ico (0 : ℝ) (2 * r + 1)) := by
   intro x hx y hy hxy
   have hleft {t : ℝ} (ht : t ∈ Set.Ico (0 : ℝ) (2 * r + 1)) (hle : t ≤ 2 * r) :
-    t + (-r) ∈ Set.Icc (-r) r := ⟨by linarith [ht.1], by linarith⟩
+    t + (-r) ∈ Set.Icc (-r) r := ⟨by linarith only [ht, ht.1], by linarith only [hle]⟩
   have hright {t : ℝ} (ht : t ∈ Set.Ico (0 : ℝ) (2 * r + 1)) (hlt : 2 * r < t) :
-    t + (-2 * r) ∈ Set.Ioo (0 : ℝ) 1 := ⟨by linarith, by linarith [ht.2]⟩
+    t + (-2 * r) ∈ Set.Ioo (0 : ℝ) 1 := ⟨by linarith only [hlt], by linarith only [ht, ht.2]⟩
   by_cases hxl : x ≤ 2 * r <;> by_cases hyl : y ≤ 2 * r
   · rw [joinedArc_left hxl, joinedArc_left hyl] at hxy
     have heq := hα (hleft hx hxl) (hleft hy hyl) hxy
-    linarith
+    linarith only [heq]
   · rw [joinedArc_left hxl, joinedArc_right (lt_of_not_ge hyl)] at hxy
     exact False.elim (havoid _ (hright hy (lt_of_not_ge hyl)) ⟨_, hleft hx hxl, hxy⟩)
   · rw [joinedArc_right (lt_of_not_ge hxl), joinedArc_left hyl] at hxy
@@ -4286,7 +4289,7 @@ private theorem Degree.CircleGluing.joinedArc_injOn {N : Type*} {α β : ℝ →
     have heq :=
       hβ (Set.Ioo_subset_Icc_self (hright hx (lt_of_not_ge hxl)))
         (Set.Ioo_subset_Icc_self (hright hy (lt_of_not_ge hyl))) hxy
-    linarith
+    linarith only [heq]
 
 private theorem
     Degree.CircleGluing.joinedArc_contMDiffAt {N : Type*} {G H : Type*} [NormedAddCommGroup G]
@@ -4296,7 +4299,8 @@ private theorem
     (h0 : β =ᶠ[𝓝 (0 : ℝ)] (fun t => α (t + r))) {t : ℝ} (ht : t ∈ Set.Ico (0 : ℝ) (2 * r + 1)) :
     ContMDiffAt 𝓘(ℝ, ℝ) J ∞ (joinedArc α β r) t := by
   by_cases htle : t ≤ 2 * r
-  · have htα : t + (-r) ∈ Set.Ioo (-R) R := ⟨by linarith [ht.1], by linarith⟩
+  · have htα : t + (-r) ∈ Set.Ioo (-R) R := ⟨by linarith only [hrR, ht, ht.1],
+    by linarith only [hrR, htle]⟩
     have hs :=
       (hα.contMDiffAt (Ioo_mem_nhds htα.1 htα.2)).comp t
         (contMDiff_id.add contMDiff_const).contMDiffAt
@@ -4318,7 +4322,8 @@ private theorem Degree.CircleGluing.joinedArc_derivative_injective {N : Type*} {
     (ht : t ∈ Set.Ico (0 : ℝ) (2 * r + 1)) :
     Function.Injective (mfderiv 𝓘(ℝ, ℝ) J (joinedArc α β r) t) := by
   by_cases htle : t ≤ 2 * r
-  · have htα : t + (-r) ∈ Set.Ioo (-R) R := ⟨by linarith [ht.1], by linarith⟩
+  · have htα : t + (-r) ∈ Set.Ioo (-R) R := ⟨by linarith only [hrR, ht, ht.1],
+    by linarith only [hrR, htle]⟩
     have heq : joinedArc α β r =ᶠ[𝓝 t] (fun s => α (s + (-r))) := by
       rcases htle.eq_or_lt with rfl | hlt
       · exact joinedArc_seam_germ h0
@@ -4327,7 +4332,8 @@ private theorem Degree.CircleGluing.joinedArc_derivative_injective {N : Type*} {
     exact
       MorseCancel.injective_mfderiv_curve_translate
         ((hα.contMDiffAt (Ioo_mem_nhds htα.1 htα.2)).mdifferentiableAt (by simp)) (hiα _ htα)
-  · have htβ : t + (-2 * r) ∈ Set.Icc (0 : ℝ) 1 := ⟨by linarith, by linarith [ht.2]⟩
+  · have htβ : t + (-2 * r) ∈ Set.Icc (0 : ℝ) 1 := ⟨by linarith only [htle], by linarith only [ht,
+    ht.2]⟩
     rw [(joinedArc_right_germ (α := α) (β := β) (lt_of_not_ge htle)).mfderiv_eq']
     exact
       MorseCancel.injective_mfderiv_curve_translate (hβ.mdifferentiableAt (by simp)) (hiβ _ htβ)
@@ -4344,8 +4350,8 @@ private theorem
     Degree.CircleGluing.joinedLoop_left {N : Type*} {r : ℝ} (hr : 0 < r) (α β : ℝ → N) {s : ℝ}
     (hs : s ∈ Set.Icc (-r) r) : joinedLoop hr α β (s + r) = α s := by
   change joinedArc α β r (toIcoMod _ 0 (s + r)) = α s
-  rw [(toIcoMod_eq_self _).mpr ⟨by linarith [hs.1], by linarith [hs.2]⟩,
-    joinedArc_left (by linarith [hs.2])]
+  rw [(toIcoMod_eq_self _).mpr ⟨by linarith only [hs, hs.1], by linarith only [hs, hs.2]⟩,
+    joinedArc_left (by linarith only [hs, hs.2])]
   congr 1
   ring
 
@@ -4357,13 +4363,14 @@ private theorem Degree.CircleGluing.joinedLoop_right {N : Type*} {r : ℝ} (hr :
     have hper := (joinedLoop_periodic hr α β) 0
     rw [zero_add] at hper
     have hz : joinedLoop hr α β 0 = α (-r) := by
-      simpa only [neg_add_cancel] using joinedLoop_left hr α β (s := -r) ⟨le_rfl, by linarith⟩
+      simpa only [neg_add_cancel] using joinedLoop_left hr α β (s := -r) ⟨le_rfl,
+        by linarith only [hr]⟩
     exact hper.trans (hz.trans h1.symm)
   · change joinedArc α β r (toIcoMod _ 0 (2 * r + s)) = β s
     rw [(toIcoMod_eq_self _).mpr
-        ⟨by linarith [hs.1], by
+        ⟨by linarith only [hr, hs, hs.1], by
           have hlt : s < 1 := lt_of_le_of_ne hs.2 hs1
-          linarith⟩]
+          linarith only [hlt]⟩]
     by_cases hs0 : s = 0
     · subst s
       rw [add_zero, joinedArc_left le_rfl]
@@ -4371,7 +4378,7 @@ private theorem Degree.CircleGluing.joinedLoop_right {N : Type*} {r : ℝ} (hr :
     · rw [joinedArc_right
           (by
             have hpos : 0 < s := lt_of_le_of_ne hs.1 (Ne.symm hs0)
-            linarith)]
+            linarith only [hpos])]
       congr 1
       ring
 
@@ -4381,15 +4388,15 @@ private theorem Degree.CircleGluing.joinedLoop_range {N : Type*} {r : ℝ} (hr :
   ext z
   constructor
   · rintro ⟨t, rfl⟩
-    let q := toIcoMod (show 0 < 2 * r + 1 by linarith) 0 t
+    let q := toIcoMod (show 0 < 2 * r + 1 by linarith only [hr]) 0 t
     have hq : q ∈ Set.Ico (0 : ℝ) (2 * r + 1) := by
-      simpa only [zero_add] using toIcoMod_mem_Ico (show 0 < 2 * r + 1 by linarith) 0 t
+      simpa only [zero_add] using toIcoMod_mem_Ico (show 0 < 2 * r + 1 by linarith only [hr]) 0 t
     change joinedArc α β r q ∈ _
     by_cases hqr : q ≤ 2 * r
     · rw [joinedArc_left hqr]
-      exact Or.inl ⟨_, ⟨by linarith [hq.1], by linarith⟩, rfl⟩
+      exact Or.inl ⟨_, ⟨by linarith only [hq, hq.1], by linarith only [hqr]⟩, rfl⟩
     · rw [joinedArc_right (lt_of_not_ge hqr)]
-      exact Or.inr ⟨_, ⟨by linarith, by linarith [hq.2]⟩, rfl⟩
+      exact Or.inr ⟨_, ⟨by linarith only [hqr], by linarith only [hq, hq.2]⟩, rfl⟩
   · rintro (⟨s, hs, rfl⟩ | ⟨s, hs, rfl⟩)
     · exact ⟨s + r, joinedLoop_left hr α β hs⟩
     · exact ⟨2 * r + s, joinedLoop_right hr h0 h1 hs⟩
@@ -4661,11 +4668,11 @@ private theorem
     Degree.CircleGluing.joinedLoop_derivative_injective hr hrR hα hβ hb0 hb1 hderiv hβd
   have hsub : Set.Icc (-r) r ⊆ Set.Icc (-R) R := by
     intro s hs
-    exact ⟨by linarith [hs.1], by linarith [hs.2]⟩
+    exact ⟨by linarith only [hrR, hs, hs.1], by linarith only [hrR, hs, hs.2]⟩
   have hαi : Set.InjOn α (Set.Icc (-r) r) := hinj.mono hsub
   have hFi : Set.InjOn F (Set.Ico (0 : ℝ) (2 * r + 1)) :=
     Degree.CircleGluing.joinedLoop_injOn hr hαi hβi havoid
-  have hT : 0 < 2 * r + 1 := by linarith
+  have hT : 0 < 2 * r + 1 := by linarith only [hr]
   have hper : Function.Periodic F (2 * r + 1) := Degree.CircleGluing.joinedLoop_periodic hr α β
   let Γ := Degree.CircleGluing.periodicCircle hT.ne' hper
   have hΓ : ContMDiff (𝓡 1) J ∞ Γ := Degree.CircleGluing.periodicCircle_contMDiff hT.ne' hper hF
@@ -4742,7 +4749,7 @@ private theorem Degree.Handle.half_le_denominator {N P : Type*} [NormedAddCommGr
   have hv : ‖(z.2 : P)‖ ≤ 1 := mem_closedBall_zero_iff.mp z.2.property
   have hd := le_max_right ‖(z.1 : N)‖ (1 - ‖(z.2 : P)‖ / 2)
   change (1 / 2 : ℝ) ≤ Max.max ‖(z.1 : N)‖ (1 - ‖(z.2 : P)‖ / 2)
-  linarith
+  linarith only [hv, hd]
 
 private theorem
     Degree.Handle.denominator_pos {N P : Type*} [NormedAddCommGroup N] [NormedAddCommGroup P]
@@ -4752,7 +4759,7 @@ private theorem
 private theorem Degree.Handle.denominator_le_one {N P : Type*} [NormedAddCommGroup N]
     [NormedAddCommGroup P] (z : Space (N := N) (P := P)) : denominator z ≤ 1 := by
   apply max_le (mem_closedBall_zero_iff.mp z.1.property)
-  linarith [norm_nonneg (z.2 : P)]
+  linarith only [norm_nonneg (z.2 : P)]
 
 private def
     Degree.Handle.positiveMultiplier {N P : Type*} [NormedAddCommGroup N] [NormedAddCommGroup P]
@@ -4764,7 +4771,7 @@ private theorem Degree.Handle.positiveMultiplier_nonneg {N P : Type*} [NormedAdd
   apply div_nonneg
   · have hd := le_max_right ‖(z.1 : N)‖ (1 - ‖(z.2 : P)‖ / 2)
     change 0 ≤ 2 * Max.max ‖(z.1 : N)‖ (1 - ‖(z.2 : P)‖ / 2) + ‖(z.2 : P)‖ - 2
-    linarith
+    linarith only [hd]
   · exact mul_nonneg (norm_nonneg _) (denominator_pos z).le
 
 private theorem Degree.Handle.positiveMultiplier_le_one {N P : Type*} [NormedAddCommGroup N]
@@ -4774,8 +4781,9 @@ private theorem Degree.Handle.positiveMultiplier_le_one {N P : Type*} [NormedAdd
   · apply (div_le_one (mul_pos (norm_pos_iff.mpr hv) (denominator_pos z))).mpr
     have hb : ‖(z.2 : P)‖ ≤ 1 := mem_closedBall_zero_iff.mp z.2.property
     have hprod :=
-      mul_nonneg (sub_nonneg.mpr (denominator_le_one z)) (show 0 ≤ 2 - ‖(z.2 : P)‖ by linarith)
-    nlinarith
+      mul_nonneg (sub_nonneg.mpr (denominator_le_one z)) (show 0 ≤ 2 - ‖(z.2 : P)‖ by linarith
+        only [hb])
+    linarith only [hprod]
 
 private def Degree.Handle.negative {N P : Type*} [NormedAddCommGroup N] [NormedAddCommGroup P]
     [NormedSpace ℝ N] (z : Space (N := N) (P := P)) : N :=
@@ -4882,7 +4890,7 @@ private theorem
     · unfold denominator
       rw [hu]
       apply max_eq_left
-      linarith [norm_nonneg (z.2 : P)]
+      linarith only [norm_nonneg (z.2 : P)]
     · exact denominator_eq_one_of_snd_eq_zero z hv
   apply Prod.ext
   · apply Subtype.ext
@@ -5443,7 +5451,7 @@ private theorem
     by_cases hs : P s
     · have hsU : γ s ∈ U := by
         rw [show γ s = c - s from hs]
-        exact hIU ⟨by linarith [s.property.2], by linarith [s.property.1]⟩
+        exact hIU ⟨by linarith only [s.property.2], by linarith only [s.property.1]⟩
       have heq := local_affine_height_germ hγ hU hd hsU
       filter_upwards [continuous_subtype_val.continuousAt heq] with r hr
       apply propext
@@ -5460,8 +5468,8 @@ private theorem
         (isClosed_eq hγ ((continuous_const (y := c)).sub continuous_id)).isOpen_compl
       filter_upwards [continuous_subtype_val.continuousAt (hopen.mem_nhds hn)] with r hr
       exact propext ⟨fun h => (hr h).elim, fun h => (hs h).elim⟩
-  let s₀ : J := ⟨0, ⟨by linarith [hc.2], by linarith [hc.1]⟩⟩
-  let s₁ : J := ⟨t, ⟨by linarith [ht.2], by linarith [ht.1]⟩⟩
+  let s₀ : J := ⟨0, ⟨by linarith only [hc, hc.2], by linarith only [hc, hc.1]⟩⟩
+  let s₁ : J := ⟨t, ⟨by linarith only [ht, ht.2], by linarith only [ht, ht.1]⟩⟩
   have hinit : P s₀ := by simpa only [P, s₀, sub_zero] using hzero
   have heq : P s₀ = P s₁ := hloc.apply_eq_of_preconnectedSpace s₀ s₁
   have hfinish : P s₁ := heq ▸ hinit
@@ -5495,14 +5503,14 @@ private theorem Degree.FlowTimeChange.normalized_flow_level_image {X : Type*} [T
     have hh :=
       hshift x (a - b) (by rw [hx]; exact ⟨le_rfl, hab⟩) (by rw [hx]; constructor <;> linarith)
     change f (F (a - b) x) = b
-    linarith
+    linarith only [hx, hh]
   · intro hy
     change f y = b at hy
     have hh :=
       hshift y (b - a) (by rw [hy]; exact ⟨hab, le_rfl⟩) (by rw [hy]; constructor <;> linarith)
     refine ⟨F (b - a) y, ?_, ?_⟩
     · change f (F (b - a) y) = a
-      linarith
+      linarith only [hy, hh]
     · rw [← F.map_add, show a - b + (b - a) = 0 by ring, F.map_zero_apply]
 
 private theorem Degree.FlowTimeChange.normalized_flow_sublevel_iff {X : Type*} [TopologicalSpace X]
@@ -5518,17 +5526,17 @@ private theorem Degree.FlowTimeChange.normalized_flow_sublevel_iff {X : Type*} [
     dsimp [γ]
     rw [neg_sub, show a + (b - a) = b by ring]
   have hzero (s : ℝ) (hs : s ∈ Set.Icc 0 (b - a)) (hgs : γ s = 0) : f x = a := by
-    have hz : f (F (-s) x) = a + s := by dsimp [γ] at hgs; linarith
+    have hz : f (F (-s) x) = a + s := by dsimp [γ] at hgs; linarith only [hgs]
     have hh :=
-      hshift (F (-s) x) s (by rw [hz]; constructor <;> linarith [hs.1, hs.2])
+      hshift (F (-s) x) s (by rw [hz]; constructor <;> linarith only [hs, hs.1, hs.2])
         (by rw [hz]; constructor <;> linarith)
     rw [← F.map_add, add_neg_cancel, F.map_zero_apply] at hh
-    linarith
+    linarith only [hgs, hh]
   have hzeroEnd (hx : f x = a) : γ (b - a) = 0 := by
     have hh :=
       hshift x (a - b) (by rw [hx]; exact ⟨le_rfl, hab⟩) (by rw [hx]; constructor <;> linarith)
     rw [hend]
-    linarith
+    linarith only [hx, hh]
   constructor
   · intro hy
     by_contra hx
@@ -5536,7 +5544,7 @@ private theorem Degree.FlowTimeChange.normalized_flow_sublevel_iff {X : Type*} [
     obtain ⟨s, hs, hgs⟩ :=
       intermediate_value_Icc' (sub_nonneg.mpr hab) hγ.continuousOn
         (show (0 : ℝ) ∈ Set.Icc (γ (b - a)) (γ 0) by rw [hstart, hend]; constructor <;> linarith)
-    linarith [hzero s hs hgs]
+    linarith only [hzero, hx, hs, hgs, hzero s hs hgs]
   · intro hx
     by_contra hy
     have hy' : b < f (F (a - b) x) := lt_of_not_ge hy
@@ -5545,7 +5553,7 @@ private theorem Degree.FlowTimeChange.normalized_flow_sublevel_iff {X : Type*} [
         (show (0 : ℝ) ∈ Set.Icc (γ 0) (γ (b - a)) by rw [hstart, hend]; constructor <;> linarith)
     have hh := hzeroEnd (hzero s hs hgs)
     rw [hend] at hh
-    linarith
+    linarith only [hy, hh]
 
 private theorem
     Degree.FlowTimeChange.normalized_flow_sublevel_image {X : Type*} [TopologicalSpace X]
@@ -5590,7 +5598,7 @@ private theorem Degree.FlowTimeChange.exists_positive_integral_clock {a : ℝ �
             mul_le_mul_of_nonneg_left (min_le_right _ _) hδ.le
           _ = y := by field_simp
       rw [hzero] at hh
-      linarith
+      linarith only [hh, hm]
     · refine ⟨Max.max 0 (y / δ), ?_⟩
       have hh := hbound (le_max_left 0 (y / δ))
       have hm : y ≤ δ * Max.max 0 (y / δ) := by
@@ -5598,7 +5606,7 @@ private theorem Degree.FlowTimeChange.exists_positive_integral_clock {a : ℝ �
           y = δ * (y / δ) := by field_simp
           _ ≤ δ * Max.max 0 (y / δ) := mul_le_mul_of_nonneg_left (le_max_right _ _) hδ.le
       rw [hzero] at hh
-      linarith
+      linarith only [hh, hm]
   let c : ℝ ≃o ℝ := hmono.orderIsoOfSurjective g hsurj
   refine ⟨c, hzero, fun _ => rfl, hd, ?_⟩
   intro t

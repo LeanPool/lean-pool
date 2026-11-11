@@ -52,9 +52,9 @@ private theorem SpecialPeriods.modularRegularQuotientJ_exists_subsingleton_fibre
     ∃ c : ModularRegularBase, Subsingleton (modularRegularQuotientJ ⁻¹' { c }) := by
   obtain ⟨R, hR, hlarge⟩ := modularQuotientJ_unique_fibre_at_large_values
   let r : ℝ := Max.max R 1728 + 1
-  have hrpos : 0 < r := by dsimp [r]; linarith [le_max_right R (1728 : ℝ)]
-  have hrbig : 1728 < r := by dsimp [r]; linarith [le_max_right R (1728 : ℝ)]
-  have hrR : R < r := by dsimp [r]; linarith [le_max_left R (1728 : ℝ)]
+  have hrpos : 0 < r := by dsimp [r]; linarith only [le_max_right R (1728 : ℝ)]
+  have hrbig : 1728 < r := by dsimp [r]; linarith only [le_max_right R (1728 : ℝ)]
+  have hrR : R < r := by dsimp [r]; linarith only [le_max_left R (1728 : ℝ)]
   let c : ModularRegularBase :=
     ⟨(r : ℂ),
       (mem_modularRegularValues _).mpr ⟨by exact_mod_cast hrpos.ne', by exact_mod_cast hrbig.ne'⟩⟩
@@ -140,7 +140,7 @@ private theorem SpecialPeriods.exists_analytic_power_coordinate {F : ℂ → ℂ
   have hderiv : deriv h a = r a := by
     simpa only [h, id_eq, sub_self, MulZeroClass.zero_mul, one_mul, add_zero] using
       (((hasDerivAt_id a).sub_const a).fun_mul hr.differentiableAt.hasDerivAt).deriv
-  refine ⟨h, hh, by simp [h], hderiv ▸ hra, ?_⟩
+  refine ⟨h, hh, by simp only [sub_self, zero_mul, h], hderiv ▸ hra, ?_⟩
   filter_upwards [hFg, hrpow] with w hw hwr
   rw [hw, smul_eq_mul, ← hwr, ← mul_pow]
 
@@ -266,14 +266,15 @@ private theorem
     analyticOrderAt (fun z : ℂ => e.symm (c * z ^ k) - a) 0 = (k : ℕ∞) := by
   have ht : (0 : ℂ) ∈ e.target := he ▸ e.map_source ha
   have hg : AnalyticAt ℂ (fun z : ℂ => c * z ^ k) 0 := by fun_prop
-  have hg0 : c * (0 : ℂ) ^ k = 0 := by simp [hk.ne']
+  have hg0 : c * (0 : ℂ) ^ k = 0 := by simp only [ne_eq, hk.ne', not_false_eq_true, zero_pow,
+    mul_zero]
   have hi0 : AnalyticAt ℂ (fun z : ℂ => e.symm z - a) (c * (0 : ℂ) ^ k) := by
     rw [hg0]
     exact (hi 0 ht).sub analyticAt_const
   have horder : analyticOrderAt (fun z : ℂ => c * z ^ k) 0 = (k : ℕ∞) := by
     rw [hg.analyticOrderAt_eq_natCast]
     refine ⟨fun _ => c, analyticAt_const, hc, ?_⟩
-    exact Filter.Eventually.of_forall fun z => by simp [mul_comm]
+    exact Filter.Eventually.of_forall fun z => by simp only [sub_zero, smul_eq_mul, mul_comm]
   have hcomp := hi0.analyticOrderAt_comp (g := fun z : ℂ => c * z ^ k) (z₀ := 0) hg
   simpa only [Function.comp_def, hg0, sub_zero, analytic_chart_inverse_order_one e ha he hf hi,
     horder, one_mul] using hcomp
@@ -307,7 +308,7 @@ private theorem SpecialPeriods.modularRhoAction_coe (z : ℍ) :
 private theorem SpecialPeriods.modularIAction_coe (z : ℍ) :
     modularIAction z = ((ModularGroup.S • z : ℍ) : ℂ) := by
   rw [UpperHalfPlane.modular_S_smul]
-  simp [modularIAction, inv_neg, div_eq_mul_inv]
+  simp only [modularIAction, div_eq_mul_inv, neg_mul, one_mul, inv_neg]
 
 private theorem SpecialPeriods.modularRhoAction_deriv_rho : deriv modularRhoAction rho = -rho := by
   have h := ((hasDerivAt_id rho).sub_const 1).div (hasDerivAt_id rho) rho_ne_zero
@@ -319,15 +320,19 @@ private theorem SpecialPeriods.modularRhoAction_deriv_rho : deriv modularRhoActi
 
 private theorem SpecialPeriods.modularSL_holomorphic (g : SL(2, ℤ)) :
     ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω (fun z : ℍ => g • z) :=
-  UpperHalfPlane.contMDiff_smul (g := Matrix.SpecialLinearGroup.mapGL ℝ g) (by simp)
+  UpperHalfPlane.contMDiff_smul (g :=
+    Matrix.SpecialLinearGroup.mapGL ℝ g) (by simp only [Matrix.SpecialLinearGroup.det_mapGL,
+    Units.val_one, zero_lt_one])
 
 private theorem SpecialPeriods.upperHalfPlane_holomorphic_eq_of_eventuallyEq {f g : ℍ → ℍ}
     (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) (hg : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω g) {a : ℍ} (he : f =ᶠ[𝓝 a] g) :
     f = g := by
   have hfc : MDifferentiable 𝓘(ℂ) 𝓘(ℂ) (fun z => (f z : ℂ)) :=
-    (UpperHalfPlane.contMDiff_coe.comp hf).mdifferentiable (by simp)
+    (UpperHalfPlane.contMDiff_coe.comp hf).mdifferentiable (by simp only [ne_eq,
+      WithTop.top_ne_zero, not_false_eq_true])
   have hgc : MDifferentiable 𝓘(ℂ) 𝓘(ℂ) (fun z => (g z : ℂ)) :=
-    (UpperHalfPlane.contMDiff_coe.comp hg).mdifferentiable (by simp)
+    (UpperHalfPlane.contMDiff_coe.comp hg).mdifferentiable (by simp only [ne_eq,
+      WithTop.top_ne_zero, not_false_eq_true])
   have hz : ∀ᶠ z in 𝓝[≠] a, (f z : ℂ) - (g z : ℂ) = 0 :=
     (he.mono fun z hz => by rw [hz, sub_self]).filter_mono nhdsWithin_le_nhds
   have hzero := UpperHalfPlane.eq_zero_of_frequently (hfc.sub hgc) hz.frequently
@@ -393,7 +398,7 @@ private theorem SpecialPeriods.modular_T_has_no_fixed_point (z : ℍ) : ModularG
   rw [UpperHalfPlane.modular_T_smul, UpperHalfPlane.coe_vadd] at hc
   have hr := congrArg Complex.re hc
   simp only [Complex.add_re, Complex.ofReal_one, Complex.one_re] at hr
-  linarith
+  linarith only [hr]
 
 private theorem SpecialPeriods.modularRho_fixed_iff (z : ℍ) :
     (ModularGroup.T * ModularGroup.S) • z = z ↔ z = rhoPoint := by
@@ -816,13 +821,16 @@ private theorem
   let α : ℂ → ℂ := fun z => ((A • UpperHalfPlane.ofComplex z : ℍ) : ℂ)
   let β : ℂ → ℂ := fun z => ((γ • UpperHalfPlane.ofComplex z : ℍ) : ℂ)
   have ht : AnalyticAt ℂ t (a : ℂ) :=
-    ModularGermLift.analyticAt_upperHalfPlane_lift (hτ.mdifferentiable (by simp)) a
+    ModularGermLift.analyticAt_upperHalfPlane_lift (hτ.mdifferentiable (by simp only [ne_eq,
+      WithTop.top_ne_zero, not_false_eq_true])) a
   have hα : AnalyticAt ℂ α (a : ℂ) :=
     ModularGermLift.analyticAt_upperHalfPlane_lift
-      ((Triangle.specialLinear_holomorphic A).mdifferentiable (by simp)) a
+      ((Triangle.specialLinear_holomorphic A).mdifferentiable (by simp only [ne_eq,
+        WithTop.top_ne_zero, not_false_eq_true])) a
   have hβ : AnalyticAt ℂ β (τ a : ℂ) :=
     ModularGermLift.analyticAt_upperHalfPlane_lift
-      ((modularSL_holomorphic γ).mdifferentiable (by simp)) (τ a)
+      ((modularSL_holomorphic γ).mdifferentiable (by simp only [ne_eq, WithTop.top_ne_zero,
+        not_false_eq_true])) (τ a)
   have ht₀ : t (a : ℂ) = (τ a : ℂ) := by simp only [t, UpperHalfPlane.ofComplex_apply]
   have hα₀ : α (a : ℂ) = (a : ℂ) := by simp only [α, UpperHalfPlane.ofComplex_apply, hAa]
   have hβ₀ : β (τ a : ℂ) = (τ a : ℂ) := by simp only [β, UpperHalfPlane.ofComplex_apply, hγfix]
@@ -849,11 +857,11 @@ private theorem
   obtain ⟨x, hx⟩ := intermediate_value_univ a b hF hmid
   refine ⟨x, (mem_modularRegularValues _).mpr ⟨?_, ?_⟩⟩
   · intro hz
-    have hh : F x = 0 := by simp [F, hz]
-    linarith
+    have hh : F x = 0 := by simp only [hz, Complex.zero_re, F]
+    linarith only [hx, hh]
   · intro hz
     have hh : F x = 1728 := by norm_num [F, hz]
-    linarith
+    linarith only [hx, hh]
 
 private theorem SpecialPeriods.modular_lift_first_generator_of_rho_order {τ : ℍ → ℍ}
     (hτ : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω τ) (ha : τ Triangle.centerOne = rhoPoint)
@@ -921,13 +929,16 @@ private theorem SpecialPeriods.modular_lift_monodromy_deriv_of_order {τ : ℍ �
   let α : ℂ → ℂ := fun z => ((A • UpperHalfPlane.ofComplex z : ℍ) : ℂ)
   let β : ℂ → ℂ := fun z => ((γ • UpperHalfPlane.ofComplex z : ℍ) : ℂ)
   have ht : AnalyticAt ℂ t (a : ℂ) :=
-    ModularGermLift.analyticAt_upperHalfPlane_lift (hτ.mdifferentiable (by simp)) a
+    ModularGermLift.analyticAt_upperHalfPlane_lift (hτ.mdifferentiable (by simp only [ne_eq,
+      WithTop.top_ne_zero, not_false_eq_true])) a
   have hα : AnalyticAt ℂ α (a : ℂ) :=
     ModularGermLift.analyticAt_upperHalfPlane_lift
-      ((Triangle.specialLinear_holomorphic A).mdifferentiable (by simp)) a
+      ((Triangle.specialLinear_holomorphic A).mdifferentiable (by simp only [ne_eq,
+        WithTop.top_ne_zero, not_false_eq_true])) a
   have hβ : AnalyticAt ℂ β (τ a : ℂ) :=
     ModularGermLift.analyticAt_upperHalfPlane_lift
-      ((modularSL_holomorphic γ).mdifferentiable (by simp)) (τ a)
+      ((modularSL_holomorphic γ).mdifferentiable (by simp only [ne_eq, WithTop.top_ne_zero,
+        not_false_eq_true])) (τ a)
   have ht₀ : t (a : ℂ) = (τ a : ℂ) := by simp only [t, UpperHalfPlane.ofComplex_apply]
   have hα₀ : α (a : ℂ) = (a : ℂ) := by simp only [α, UpperHalfPlane.ofComplex_apply, hAa]
   have hβ₀ : β (τ a : ℂ) = (τ a : ℂ) := by simp only [β, UpperHalfPlane.ofComplex_apply, hγfix]
@@ -985,7 +996,7 @@ private theorem SpecialPeriods.modular_trace_zero_trace_neg_two_classification (
     have hd : B 0 0 * B 1 1 - B 0 1 * B 1 0 = 1 :=
       (Matrix.det_fin_two B.val).symm.trans B.property
     rw [h11] at hd
-    nlinarith [hd]
+    linarith only [hd, hd]
   rw [triangleModularA_product_trace] at hprod
   rcases GlobalTauNormalization.trace_neg_two_triples (B 0 0) (B 0 1) (B 1 0) hdet hprod with
     ⟨hp, hq, hr⟩ | ⟨hp, hq, hr⟩ | ⟨hp, hq, hr⟩
@@ -1031,7 +1042,9 @@ private theorem SpecialPeriods.modularCyclicNormalizer_conjugate_A (k : Fin 3) :
 
 private theorem SpecialPeriods.modularCyclicNormalizer_conjugate_S (k : Fin 3) :
     modularCyclicNormalizer k * modularSCyclicConjugate k * (modularCyclicNormalizer k)⁻¹ =
-      ModularGroup.S := by simp [modularCyclicNormalizer, modularSCyclicConjugate, mul_assoc]
+      ModularGroup.S := by simp only [modularCyclicNormalizer, modularSCyclicConjugate, mul_assoc,
+        inv_mul_cancel_left, inv_inv,
+          inv_mul_cancel, mul_one]
 
 private theorem SpecialPeriods.modular_pair_signed_conjugation_normalization (B : SL(2, ℤ))
     (htr : Matrix.trace B.val = 0)
@@ -1070,7 +1083,7 @@ private theorem
 private theorem SpecialPeriods.triangleModularA_pow_smul_rhoPoint (n : ℕ) :
     triangleModularA ^ n • rhoPoint = rhoPoint := by
   induction n with
-  | zero => simp
+  | zero => simp only [pow_zero, one_smul]
   | succ n ih => rw [pow_succ, SemigroupAction.mul_smul, triangleModularA_smul_rhoPoint, ih]
 
 private theorem SpecialPeriods.modularCyclicNormalizer_smul_rhoPoint (k : Fin 3) :
@@ -1242,7 +1255,9 @@ private theorem SpecialPeriods.modularSL_trace_zero_of_fixed_deriv_neg_one (B : 
 private theorem SpecialPeriods.modularSL_trace_inv (B : SL(2, ℤ)) :
     Matrix.trace (B⁻¹).val = Matrix.trace B.val := by
   change Matrix.trace (Matrix.adjugate B.val) = Matrix.trace B.val
-  simp [Matrix.trace_fin_two, Matrix.adjugate_fin_two, add_comm]
+  simp only [Matrix.adjugate_fin_two, Fin.isValue, Matrix.trace_fin_two, Matrix.of_apply,
+    Matrix.cons_val',
+      Matrix.cons_val_zero, Matrix.cons_val_fin_one, Matrix.cons_val_one, add_comm]
 
 private theorem SpecialPeriods.modularSL_trace_conjugate (u B : SL(2, ℤ)) :
     Matrix.trace (u * B * u⁻¹).val = Matrix.trace B.val := by
@@ -1322,7 +1337,7 @@ private theorem SpecialPeriods.exists_cyclic_normalization_of_rho_lift (F : ℍ 
   obtain ⟨x, hx⟩ :=
     exists_regular_modular_value_of_j_values hτ.continuous Triangle.centerOne Triangle.centerTwo
       hJa hJb
-  have hτMD := hτ.mdifferentiable (by simp)
+  have hτMD := hτ.mdifferentiable (by simp only [ne_eq, WithTop.top_ne_zero, not_false_eq_true])
   have ho₁ :=
     ModularGermLift.native_modularJ_lift_order_of_zero hτMD hJ (n := 1) hFa
       (by simpa using horder₁)
@@ -1490,7 +1505,7 @@ private theorem
   obtain ⟨n, hn⟩ := modularSL_integer_translation_of_commutes_T_inv_action γ h
   refine ⟨n, fun z => ?_⟩
   rw [hn z, UpperHalfPlane.coe_vadd]
-  simp [add_comm]
+  simp only [Complex.ofReal_intCast, add_comm]
 
 private theorem
     SpecialPeriods.ModularGermLift.analyticAt_modular_smul_of_im_pos (γ : SL(2, ℤ)) {w : ℂ}
@@ -1501,7 +1516,7 @@ private theorem
       w
   apply UpperHalfPlane.analyticAt_smul (τ := (⟨w, hw⟩ : ℍ))
   change 0 < ((Matrix.SpecialLinearGroup.mapGL ℝ γ).det : ℝ)
-  simp
+  simp only [Matrix.SpecialLinearGroup.det_mapGL, Units.val_one, zero_lt_one]
 
 private theorem
     SpecialPeriods.ModularGermLift.analyticAt_modular_smul (γ : SL(2, ℤ)) {σ : ℂ → ℂ} {a : ℂ}

@@ -908,7 +908,7 @@ private theorem SecondHurewicz.SimplyConnected.retractedSimplex_eq_of_mem {n : �
   change
     (u.2 i + (cylinderDenominator u - 1) * barycenterCoordinate n) / cylinderDenominator u = u.2 i
   rw [cylinderDenominator_eq_one_of_mem hu]
-  simp
+  simp only [sub_self, zero_mul, add_zero, div_one]
 
 private theorem SecondHurewicz.SimplyConnected.retracted_mem_bottomOrSide {n : ℕ}
     (u : unitInterval × FirstHurewicz.Simplex n) :
@@ -1162,12 +1162,14 @@ private def
 @[simp]
 private theorem SecondHurewicz.squareCoordinates_zero (z : (unitInterval) × (unitInterval)) :
     squareCoordinates z 0 = z.1 := by
-  simp [squareCoordinates, Cube.insertAt, Homeomorph.funSplitAt_symm_apply]
+  simp only [squareCoordinates, Fin.isValue, ne_eq, Cube.insertAt, ContinuousMap.coe_mk,
+      Homeomorph.funSplitAt_symm_apply, ↓reduceDIte]
 
 @[simp]
 private theorem SecondHurewicz.squareCoordinates_one (z : (unitInterval) × (unitInterval)) :
     squareCoordinates z 1 = z.2 := by
-  simp [squareCoordinates, Cube.insertAt, Homeomorph.funSplitAt_symm_apply]
+  simp only [squareCoordinates, Fin.isValue, ne_eq, Cube.insertAt, ContinuousMap.coe_mk,
+      Homeomorph.funSplitAt_symm_apply, one_ne_zero, ↓reduceDIte]
 
 private def
     SecondHurewicz.squareMap {X : Type} [TopologicalSpace X] {x : X} (p : GenLoop (Fin 2) X x) :
@@ -2053,7 +2055,7 @@ private def SecondHurewicz.SimplyConnected.chosenBasePath {X : Type} [Topologica
 @[simp]
 private theorem SecondHurewicz.SimplyConnected.chosenBasePath_self {X : Type} [TopologicalSpace X]
     [SimplyConnectedSpace X] (x : X) : chosenBasePath x x = Path.refl x := by
-  simp [chosenBasePath]
+  simp only [chosenBasePath, ↓reduceDIte, Path.cast_rfl_rfl]
 
 private def SecondHurewicz.SimplyConnected.chosenNullHomotopy {X : Type} [TopologicalSpace X]
     [SimplyConnectedSpace X] (x : X) (p : Path x x) : p.Homotopy (Path.refl x) := by
@@ -2067,7 +2069,7 @@ private theorem
     SecondHurewicz.SimplyConnected.chosenNullHomotopy_refl {X : Type} [TopologicalSpace X]
     [SimplyConnectedSpace X] (x : X) :
     chosenNullHomotopy x (Path.refl x) = Path.Homotopy.refl (Path.refl x) := by
-  simp [chosenNullHomotopy]
+  simp only [chosenNullHomotopy, ↓reduceDIte]
   rfl
 
 private def SecondHurewicz.SimplyConnected.vertexHomotopy {X : Type} [TopologicalSpace X]
@@ -2504,20 +2506,20 @@ private theorem
     · refine ⟨2, ?_⟩
       change t 0 = 0 at hi
       change Min.min (t 0 : ℝ) (t 1 : ℝ) = 0
-      simp [hi, min_eq_left (t 1).property.1]
+      simp only [Fin.isValue, hi, Icc.coe_zero, min_eq_left (t 1).property.1]
     · refine ⟨2, ?_⟩
       change t 1 = 0 at hi
       change Min.min (t 0 : ℝ) (t 1 : ℝ) = 0
-      simp [hi, min_eq_right (t 0).property.1]
+      simp only [Fin.isValue, hi, Icc.coe_zero, min_eq_right (t 0).property.1]
   · fin_cases i
     · refine ⟨0, ?_⟩
       change t 0 = 1 at hi
       change 1 - (t 0 : ℝ) = 0
-      simp [hi]
+      simp only [Fin.isValue, hi, Icc.coe_one, sub_self]
     · refine ⟨1, ?_⟩
       change t 1 = 1 at hi
       change (t 0 : ℝ) - Min.min (t 0 : ℝ) (t 1 : ℝ) = 0
-      simp [hi, min_eq_left (t 0).property.2]
+      simp only [Fin.isValue, hi, Icc.coe_one, min_eq_left (t 0).property.2, sub_self]
 
 private def SecondHurewicz.SimplyConnected.basedTriangleLoop {X : Type} [TopologicalSpace X] {x : X}
     (τ : BasedTriangle x) : GenLoop (Fin 2) X x :=
@@ -2789,7 +2791,7 @@ private theorem SecondHurewicz.SimplyConnected.tetrahedronSimplexBlend_zero {n :
   apply Subtype.ext
   funext i
   change (1 - (0 : ℝ)) * a i + (0 : ℝ) * b i = a i
-  simp
+  simp only [sub_zero, one_mul, zero_mul, add_zero]
 
 @[simp]
 private theorem SecondHurewicz.SimplyConnected.tetrahedronSimplexBlend_one {n : ℕ}
@@ -2797,7 +2799,7 @@ private theorem SecondHurewicz.SimplyConnected.tetrahedronSimplexBlend_one {n : 
   apply Subtype.ext
   funext i
   change (1 - (1 : ℝ)) * a i + (1 : ℝ) * b i = b i
-  simp
+  simp only [sub_self, zero_mul, one_mul, zero_add]
 
 @[simp]
 private theorem
@@ -2831,7 +2833,7 @@ private theorem SecondHurewicz.SimplyConnected.tetrahedronSimplexBlend_zero_coor
     (t : (unitInterval)) (a b : FirstHurewicz.Simplex n) (i : Fin (n + 1)) (ha : a i = 0)
     (hb : b i = 0) : tetrahedronSimplexBlend t a b i = 0 := by
   change (1 - (t : ℝ)) * a i + (t : ℝ) * b i = 0
-  simp [ha, hb]
+  simp only [ha, mul_zero, hb, add_zero]
 
 private theorem SecondHurewicz.SimplyConnected.simplexFace_two_zero (s : FirstHurewicz.Simplex 2) :
     (FirstHurewicz.simplexFace 2 0 s : Fin 4 → ℝ) = ![0, s 0, s 1, s 2] := by
@@ -2930,7 +2932,9 @@ private theorem SecondHurewicz.SimplyConnected.tetrahedronQuadrilateralA_boundar
         simp [DFunLike.coe, tetrahedronQuadrilateralA, hi, min_eq_left (u 1).property.1]
     · change u 1 = 0 at hi
       refine ⟨2, 3, by decide, ?_, ?_⟩ <;>
-        simp [DFunLike.coe, tetrahedronQuadrilateralA, hi, min_eq_right (u 0).property.1]
+        simp only [DFunLike.coe, Nat.reduceAdd, tetrahedronQuadrilateralA, Fin.isValue,
+          ContinuousMap.toFun_eq_coe,
+            hi, Icc.coe_zero, min_eq_right (u 0).property.1, sub_zero, sub_self, Matrix.cons_val]
   · fin_cases i
     · change u 0 = 1 at hi
       refine ⟨0, 3, by decide, ?_, ?_⟩ <;>
@@ -3033,11 +3037,15 @@ private theorem SecondHurewicz.SimplyConnected.quarterTurn_boundary (u : Fin 2 �
   rcases hu with ⟨i, hi | hi⟩
   · fin_cases i
     · change u 0 = 0 at hi
-      exact ⟨1, Or.inr (by simp [hi])⟩
+      exact ⟨1, Or.inr (by simp only [Fin.isValue, quarterTurn_apply, Nat.succ_eq_add_one,
+        Nat.reduceAdd, hi, unitInterval.symm_zero,
+          Matrix.cons_val_one, Matrix.cons_val_fin_one])⟩
     · exact ⟨0, Or.inl (by simpa using hi)⟩
   · fin_cases i
     · change u 0 = 1 at hi
-      exact ⟨1, Or.inl (by simp [hi])⟩
+      exact ⟨1, Or.inl (by simp only [Fin.isValue, quarterTurn_apply, Nat.succ_eq_add_one,
+        Nat.reduceAdd, hi, unitInterval.symm_one,
+          Matrix.cons_val_one, Matrix.cons_val_fin_one])⟩
     · exact ⟨0, Or.inr (by simpa using hi)⟩
 
 private def
@@ -3050,7 +3058,8 @@ private def SecondHurewicz.SimplyConnected.rotationVector (v : ℝ × ℝ) : ℝ
 
 @[simp]
 private theorem SecondHurewicz.SimplyConnected.rotationVector_norm (v : ℝ × ℝ) :
-    ‖rotationVector v‖ = ‖v‖ := by simp [rotationVector, Prod.norm_def, max_comm]
+    ‖rotationVector v‖ = ‖v‖ := by simp only [rotationVector, Prod.norm_def, Real.norm_eq_abs,
+      norm_neg, max_comm]
 
 private def SecondHurewicz.SimplyConnected.rotationBlend (t : ℝ) (v : ℝ × ℝ) : ℝ × ℝ :=
   ((1 - t) * v.1 + t * v.2, (1 - t) * v.2 - t * v.1)
@@ -3058,15 +3067,17 @@ private def SecondHurewicz.SimplyConnected.rotationBlend (t : ℝ) (v : ℝ × �
 @[simp]
 private theorem
     SecondHurewicz.SimplyConnected.rotationBlend_zero (v : ℝ × ℝ) : rotationBlend 0 v = v := by
-  ext <;> simp [rotationBlend]
+  ext <;> simp only [rotationBlend, sub_zero, one_mul, zero_mul, add_zero, Prod.mk.eta]
 
 @[simp]
 private theorem SecondHurewicz.SimplyConnected.rotationBlend_one (v : ℝ × ℝ) :
-    rotationBlend 1 v = rotationVector v := by ext <;> simp [rotationBlend, rotationVector]
+    rotationBlend 1 v = rotationVector v := by ext <;> simp only [rotationBlend, sub_self,
+      zero_mul, one_mul, zero_add, zero_sub, rotationVector]
 
 @[simp]
 private theorem SecondHurewicz.SimplyConnected.rotationBlend_zero_vector (t : ℝ) :
-    rotationBlend t 0 = 0 := by ext <;> simp [rotationBlend]
+    rotationBlend t 0 = 0 := by ext <;> simp only [rotationBlend, Prod.fst_zero, mul_zero,
+      Prod.snd_zero, add_zero, sub_self]
 
 private theorem
     SecondHurewicz.SimplyConnected.rotationBlend_ne_zero (t : ℝ) {v : ℝ × ℝ} (hv : v ≠ 0) :
@@ -3130,7 +3141,8 @@ private def SecondHurewicz.SimplyConnected.rotationDenominator (t : (unitInterva
 private theorem SecondHurewicz.SimplyConnected.rotationDenominator_pos (t : (unitInterval))
     (u : Fin 2 → (unitInterval)) : 0 < rotationDenominator t u := by
   by_cases hv : rotationCentered u = 0
-  · simp [rotationDenominator, hv]
+  · simp only [rotationDenominator, hv, norm_zero, sub_zero, rotationBlend_zero_vector, add_zero,
+    zero_lt_one]
   · have hnorm : 0 < ‖rotationBlend t (rotationCentered u)‖ :=
       norm_pos_iff.mpr (rotationBlend_ne_zero t hv)
     have hle := rotationCentered_norm_le u
@@ -3181,7 +3193,7 @@ private theorem SecondHurewicz.SimplyConnected.rotationNormalized_norm_boundary 
     ‖rotationNormalized t u‖ = 1 := by
   have hd := rotationDenominator_pos t u
   have he : rotationDenominator t u = ‖rotationBlend t (rotationCentered u)‖ := by
-    simp [rotationDenominator, rotationCentered_norm_boundary u hu]
+    simp only [rotationDenominator, rotationCentered_norm_boundary u hu, sub_self, zero_add]
   rw [rotationNormalized, norm_smul, Real.norm_of_nonneg (inv_nonneg.mpr hd.le)]
   rw [← he, inv_mul_cancel₀ (ne_of_gt hd)]
 
@@ -3189,12 +3201,16 @@ private theorem SecondHurewicz.SimplyConnected.rotationNormalized_norm_boundary 
 private theorem
     SecondHurewicz.SimplyConnected.rotationNormalized_zero (u : Fin 2 → (unitInterval)) :
     rotationNormalized 0 u = rotationCentered u := by
-  simp [rotationNormalized, rotationDenominator]
+  simp only [rotationNormalized, rotationDenominator, Icc.coe_zero, rotationBlend_zero,
+    sub_add_cancel, inv_one,
+      one_smul]
 
 @[simp]
 private theorem SecondHurewicz.SimplyConnected.rotationNormalized_one (u : Fin 2 → (unitInterval)) :
     rotationNormalized 1 u = rotationVector (rotationCentered u) := by
-  simp [rotationNormalized, rotationDenominator]
+  simp only [rotationNormalized, rotationDenominator, Icc.coe_one, rotationBlend_one,
+    rotationVector_norm,
+      sub_add_cancel, inv_one, one_smul]
 
 private def SecondHurewicz.SimplyConnected.rotationUncenter (v : ℝ × ℝ) (hv : ‖v‖ ≤ 1) :
     Fin 2 → (unitInterval) :=
@@ -3490,8 +3506,9 @@ private theorem SecondHurewicz.SimplyConnected.cyclicTriangleQuotient_commonZero
           min_eq_left (u 1).property.1, min_eq_left (u 1).property.2]
     · change u 1 = 0 at hi
       refine ⟨1, ?_, ?_⟩
-      · simp [triangleCubeQuotient_apply, triangleCyclicPermutation_one, hi,
-          min_eq_right (u 0).property.1]
+      · simp only [Nat.reduceAdd, triangleCubeQuotient_apply, Fin.isValue, hi,
+        triangleCyclicPermutation_one,
+          triangleQuotient_two, Icc.coe_zero, min_eq_right (u 0).property.1]
       · simp [triangleCubeQuotient_apply, hi, (u 0).property.2]
   · fin_cases i
     · change u 0 = 1 at hi
@@ -3625,10 +3642,10 @@ private theorem
   cases h with
   | zero i ha hb =>
     apply p.property
-    exact ⟨i, Or.inl (by simp [subdivisionBlend, ha, hb])⟩
+    exact ⟨i, Or.inl (by simp only [subdivisionBlend, ha, hb, Icc.convexComb_eq])⟩
   | one i ha hb =>
     apply p.property
-    exact ⟨i, Or.inr (by simp [subdivisionBlend, ha, hb])⟩
+    exact ⟨i, Or.inr (by simp only [subdivisionBlend, ha, hb, Icc.convexComb_eq])⟩
   | diagonal ha hb =>
     apply subdivisionOnDiagonal p hd
     simp only [subdivisionBlend, ha, hb]
@@ -3669,25 +3686,28 @@ private def
 private theorem SecondHurewicz.SimplyConnected.subdivisionSubMin_zero_left (v : (unitInterval)) :
     subdivisionSubMin 0 v = 0 := by
   apply Subtype.ext
-  simp [subdivisionSubMin, v.property.1]
+  simp only [subdivisionSubMin, Icc.coe_zero, v.property.1, inf_of_le_left, sub_self, Icc.mk_zero]
 
 @[simp]
 private theorem SecondHurewicz.SimplyConnected.subdivisionSubMin_zero_right (u : (unitInterval)) :
     subdivisionSubMin u 0 = u := by
   apply Subtype.ext
-  simp [subdivisionSubMin, u.property.1]
+  simp only [subdivisionSubMin, Icc.coe_zero, u.property.1, inf_of_le_right, sub_zero,
+    Subtype.coe_eta]
 
 @[simp]
 private theorem SecondHurewicz.SimplyConnected.subdivisionSubMin_one_left (v : (unitInterval)) :
     subdivisionSubMin 1 v = (unitInterval.symm) v := by
   apply Subtype.ext
-  simp [subdivisionSubMin, v.property.2]
+  simp only [subdivisionSubMin, Icc.coe_one, v.property.2, inf_of_le_right,
+    unitInterval.coe_symm_eq]
 
 @[simp]
 private theorem SecondHurewicz.SimplyConnected.subdivisionSubMin_one_right (u : (unitInterval)) :
     subdivisionSubMin u 1 = 0 := by
   apply Subtype.ext
-  simp [subdivisionSubMin, u.property.2]
+  simp only [subdivisionSubMin, Icc.coe_one, u.property.2, inf_of_le_left, sub_self, Icc.mk_zero,
+    Icc.coe_zero]
 
 private def SecondHurewicz.SimplyConnected.subdivisionLowerProductMap :
     C(SubdivisionSquare, SubdivisionSquare)
@@ -3757,39 +3777,66 @@ private theorem SecondHurewicz.SimplyConnected.subdivisionLowerProductMap_based 
     (hd : ∀ t : (unitInterval), p ![t, t] = x) (u : SubdivisionSquare)
     (hu : u ∈ Cube.boundary (Fin 2)) : p (subdivisionLowerProductMap u) = x := by
   rcases subdivisionSquare_boundary_cases u hu with h | h | h | h
-  · exact p.property _ ⟨0, Or.inl (by simp [subdivisionLowerProductMap, h])⟩
-  · exact p.property _ ⟨0, Or.inr (by simp [subdivisionLowerProductMap, h])⟩
-  · exact p.property _ ⟨1, Or.inl (by simp [subdivisionLowerProductMap, h])⟩
-  · exact subdivisionOnDiagonal p hd _ (by simp [subdivisionLowerProductMap, h])
+  · exact p.property _ ⟨0, Or.inl (by simp only [subdivisionLowerProductMap, Fin.isValue,
+    ContinuousMap.coe_mk, h, zero_mul, Matrix.cons_val_zero])⟩
+  · exact p.property _ ⟨0, Or.inr (by simp only [subdivisionLowerProductMap, Fin.isValue,
+    ContinuousMap.coe_mk, h, one_mul, Matrix.cons_val_zero])⟩
+  · exact p.property _ ⟨1, Or.inl (by simp only [subdivisionLowerProductMap, Fin.isValue,
+    ContinuousMap.coe_mk, h, mul_zero, Matrix.cons_val_one,
+      Matrix.cons_val_fin_one])⟩
+  · exact subdivisionOnDiagonal p hd _ (by simp only [subdivisionLowerProductMap, Fin.isValue,
+    ContinuousMap.coe_mk, h, mul_one, Matrix.cons_val_zero,
+      Matrix.cons_val_one, Matrix.cons_val_fin_one])
 
 private theorem SecondHurewicz.SimplyConnected.subdivisionUpperProductMap_based {X : Type*}
     [TopologicalSpace X] {x : X} (p : GenLoop (Fin 2) X x)
     (hd : ∀ t : (unitInterval), p ![t, t] = x) (u : SubdivisionSquare)
     (hu : u ∈ Cube.boundary (Fin 2)) : p (subdivisionUpperProductMap u) = x := by
   rcases subdivisionSquare_boundary_cases u hu with h | h | h | h
-  · exact p.property _ ⟨0, Or.inl (by simp [subdivisionUpperProductMap, h])⟩
-  · exact p.property _ ⟨0, Or.inr (by simp [subdivisionUpperProductMap, h])⟩
-  · exact subdivisionOnDiagonal p hd _ (by simp [subdivisionUpperProductMap, h])
-  · exact p.property _ ⟨1, Or.inr (by simp [subdivisionUpperProductMap, h])⟩
+  · exact p.property _ ⟨0, Or.inl (by simp only [subdivisionUpperProductMap, Fin.isValue,
+    ContinuousMap.coe_mk, h, Icc.convexComb_zero_one,
+      Matrix.cons_val_zero])⟩
+  · exact p.property _ ⟨0, Or.inr (by simp only [subdivisionUpperProductMap, Fin.isValue,
+    ContinuousMap.coe_mk, h, Icc.convexComb_eq,
+      Matrix.cons_val_zero])⟩
+  · exact subdivisionOnDiagonal p hd _ (by simp only [subdivisionUpperProductMap, Fin.isValue,
+    ContinuousMap.coe_mk, h, Icc.convexComb_zero,
+      Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val_fin_one])
+  · exact p.property _ ⟨1, Or.inr (by simp only [subdivisionUpperProductMap, Fin.isValue,
+    ContinuousMap.coe_mk, h, Icc.convexComb_one,
+      Matrix.cons_val_one, Matrix.cons_val_fin_one])⟩
 
 private theorem SecondHurewicz.SimplyConnected.subdivisionUpperConeMap_based {X : Type*}
     [TopologicalSpace X] {x : X} (p : GenLoop (Fin 2) X x)
     (hd : ∀ t : (unitInterval), p ![t, t] = x) (u : SubdivisionSquare)
     (hu : u ∈ Cube.boundary (Fin 2)) : p (subdivisionUpperConeMap u) = x := by
   rcases subdivisionSquare_boundary_cases u hu with h | h | h | h
-  · exact p.property _ ⟨0, Or.inl (by simp [subdivisionUpperConeMap, h])⟩
-  · exact p.property _ ⟨1, Or.inr (by simp [subdivisionUpperConeMap, h])⟩
-  · exact subdivisionOnDiagonal p hd _ (by simp [subdivisionUpperConeMap, h])
-  · exact p.property _ ⟨0, Or.inl (by simp [subdivisionUpperConeMap, h])⟩
+  · exact p.property _ ⟨0, Or.inl (by simp only [subdivisionUpperConeMap, Fin.isValue,
+    ContinuousMap.coe_mk, h, zero_mul, Icc.convexComb_zero_one,
+      Matrix.cons_val_zero])⟩
+  · exact p.property _ ⟨1, Or.inr (by simp only [subdivisionUpperConeMap, Fin.isValue,
+    ContinuousMap.coe_mk, h, one_mul, Icc.convexComb_eq,
+      Matrix.cons_val_one, Matrix.cons_val_fin_one])⟩
+  · exact subdivisionOnDiagonal p hd _ (by simp only [subdivisionUpperConeMap, Fin.isValue,
+    ContinuousMap.coe_mk, h, unitInterval.symm_zero, mul_one,
+      Icc.convexComb_zero, Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val_fin_one])
+  · exact p.property _ ⟨0, Or.inl (by simp only [subdivisionUpperConeMap, Fin.isValue,
+    ContinuousMap.coe_mk, h, unitInterval.symm_one, mul_zero,
+      Icc.convexComb_one, Matrix.cons_val_zero])⟩
 
 private theorem SecondHurewicz.SimplyConnected.subdivisionLowerTriangleMap_based {X : Type*}
     [TopologicalSpace X] {x : X} (p : GenLoop (Fin 2) X x)
     (hd : ∀ t : (unitInterval), p ![t, t] = x) (u : SubdivisionSquare)
     (hu : u ∈ Cube.boundary (Fin 2)) : p (subdivisionLowerTriangleMap u) = x := by
   rcases subdivisionSquare_boundary_cases u hu with h | h | h | h
-  · exact p.property _ ⟨0, Or.inl (by simp [subdivisionLowerTriangleMap, h])⟩
-  · exact p.property _ ⟨0, Or.inr (by simp [subdivisionLowerTriangleMap, h])⟩
-  · exact p.property _ ⟨1, Or.inl (by simp [subdivisionLowerTriangleMap, h])⟩
+  · exact p.property _ ⟨0, Or.inl (by simp only [subdivisionLowerTriangleMap, Fin.isValue,
+    ContinuousMap.coe_mk, h, zero_le, inf_of_le_left,
+      Matrix.cons_val_zero])⟩
+  · exact p.property _ ⟨0, Or.inr (by simp only [subdivisionLowerTriangleMap, Fin.isValue,
+    ContinuousMap.coe_mk, h, Matrix.cons_val_zero])⟩
+  · exact p.property _ ⟨1, Or.inl (by simp only [subdivisionLowerTriangleMap, Fin.isValue,
+    ContinuousMap.coe_mk, h, zero_le, inf_of_le_right,
+      Matrix.cons_val_one, Matrix.cons_val_fin_one])⟩
   · exact
       subdivisionOnDiagonal p hd _
         (by
@@ -3801,10 +3848,18 @@ private theorem SecondHurewicz.SimplyConnected.subdivisionUpperTriangleMap_based
     (hd : ∀ t : (unitInterval), p ![t, t] = x) (u : SubdivisionSquare)
     (hu : u ∈ Cube.boundary (Fin 2)) : p (subdivisionUpperTriangleMap u) = x := by
   rcases subdivisionSquare_boundary_cases u hu with h | h | h | h
-  · exact p.property _ ⟨1, Or.inl (by simp [subdivisionUpperTriangleMap, h])⟩
-  · exact p.property _ ⟨1, Or.inr (by simp [subdivisionUpperTriangleMap, h])⟩
-  · exact subdivisionOnDiagonal p hd _ (by simp [subdivisionUpperTriangleMap, h])
-  · exact p.property _ ⟨0, Or.inl (by simp [subdivisionUpperTriangleMap, h])⟩
+  · exact p.property _ ⟨1, Or.inl (by simp only [subdivisionUpperTriangleMap, Fin.isValue,
+    ContinuousMap.coe_mk, h, subdivisionSubMin_zero_left,
+      Matrix.cons_val_one, Matrix.cons_val_fin_one])⟩
+  · exact p.property _ ⟨1, Or.inr (by simp only [subdivisionUpperTriangleMap, Fin.isValue,
+    ContinuousMap.coe_mk, h, subdivisionSubMin_one_left,
+      Matrix.cons_val_one, Matrix.cons_val_fin_one])⟩
+  · exact subdivisionOnDiagonal p hd _ (by simp only [subdivisionUpperTriangleMap, Fin.isValue,
+    ContinuousMap.coe_mk, h, subdivisionSubMin_zero_right,
+      Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val_fin_one])
+  · exact p.property _ ⟨0, Or.inl (by simp only [subdivisionUpperTriangleMap, Fin.isValue,
+    ContinuousMap.coe_mk, h, subdivisionSubMin_one_right,
+      Matrix.cons_val_zero])⟩
 
 private def
     SecondHurewicz.SimplyConnected.subdivisionLowerProductLoop {X : Type*} [TopologicalSpace X]
@@ -3840,13 +3895,24 @@ private theorem SecondHurewicz.SimplyConnected.subdivisionLowerProductTriangle_s
     SubdivisionSameSide (subdivisionLowerProductMap u) (subdivisionLowerTriangleMap u) := by
   rcases subdivisionSquare_boundary_cases u hu with h | h | h | h
   · exact
-      .zero 0 (by simp [subdivisionLowerProductMap, h]) (by simp [subdivisionLowerTriangleMap, h])
+      .zero 0 (by simp only [subdivisionLowerProductMap, Fin.isValue, ContinuousMap.coe_mk, h,
+        zero_mul, Matrix.cons_val_zero]) (by simp only [subdivisionLowerTriangleMap, Fin.isValue,
+        ContinuousMap.coe_mk, h, zero_le, inf_of_le_left,
+          Matrix.cons_val_zero])
   · exact
-      .one 0 (by simp [subdivisionLowerProductMap, h]) (by simp [subdivisionLowerTriangleMap, h])
+      .one 0 (by simp only [subdivisionLowerProductMap, Fin.isValue, ContinuousMap.coe_mk, h,
+        one_mul, Matrix.cons_val_zero]) (by simp only [subdivisionLowerTriangleMap, Fin.isValue,
+        ContinuousMap.coe_mk, h, Matrix.cons_val_zero])
   · exact
-      .zero 1 (by simp [subdivisionLowerProductMap, h]) (by simp [subdivisionLowerTriangleMap, h])
+      .zero 1 (by simp only [subdivisionLowerProductMap, Fin.isValue, ContinuousMap.coe_mk, h,
+        mul_zero, Matrix.cons_val_one,
+          Matrix.cons_val_fin_one]) (by simp only [subdivisionLowerTriangleMap, Fin.isValue,
+            ContinuousMap.coe_mk, h, zero_le, inf_of_le_right,
+          Matrix.cons_val_one, Matrix.cons_val_fin_one])
   · exact
-      .diagonal (by simp [subdivisionLowerProductMap, h])
+      .diagonal (by simp only [subdivisionLowerProductMap, Fin.isValue, ContinuousMap.coe_mk, h,
+        mul_one, Matrix.cons_val_zero,
+          Matrix.cons_val_one, Matrix.cons_val_fin_one])
         (by
           simp [subdivisionLowerTriangleMap, h,
             min_eq_left (show u 0 ≤ (1 : (unitInterval)) from (u 0).property.2)])
@@ -3856,11 +3922,28 @@ private theorem
     (hu : u ∈ Cube.boundary (Fin 2)) :
     SubdivisionSameSide (subdivisionUpperProductMap u) (subdivisionUpperConeMap u) := by
   rcases subdivisionSquare_boundary_cases u hu with h | h | h | h
-  · exact .zero 0 (by simp [subdivisionUpperProductMap, h]) (by simp [subdivisionUpperConeMap, h])
-  · exact .one 1 (by simp [subdivisionUpperProductMap, h]) (by simp [subdivisionUpperConeMap, h])
+  · exact .zero 0 (by simp only [subdivisionUpperProductMap, Fin.isValue, ContinuousMap.coe_mk, h,
+    Icc.convexComb_zero_one,
+      Matrix.cons_val_zero]) (by simp only [subdivisionUpperConeMap, Fin.isValue,
+        ContinuousMap.coe_mk, h, zero_mul, Icc.convexComb_zero_one,
+      Matrix.cons_val_zero])
+  · exact .one 1 (by simp only [subdivisionUpperProductMap, Fin.isValue, ContinuousMap.coe_mk, h,
+    Icc.convexComb_eq,
+      Matrix.cons_val_one, Matrix.cons_val_fin_one]) (by simp only [subdivisionUpperConeMap,
+        Fin.isValue, ContinuousMap.coe_mk, h, one_mul, Icc.convexComb_eq,
+      Matrix.cons_val_one, Matrix.cons_val_fin_one])
   · exact
-      .diagonal (by simp [subdivisionUpperProductMap, h]) (by simp [subdivisionUpperConeMap, h])
-  · exact .one 1 (by simp [subdivisionUpperProductMap, h]) (by simp [subdivisionUpperConeMap, h])
+      .diagonal (by simp only [subdivisionUpperProductMap, Fin.isValue, ContinuousMap.coe_mk, h,
+        Icc.convexComb_zero,
+          Matrix.cons_val_zero, Matrix.cons_val_one,
+            Matrix.cons_val_fin_one]) (by simp only [subdivisionUpperConeMap, Fin.isValue,
+            ContinuousMap.coe_mk, h, unitInterval.symm_zero, mul_one,
+          Icc.convexComb_zero, Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val_fin_one])
+  · exact .one 1 (by simp only [subdivisionUpperProductMap, Fin.isValue, ContinuousMap.coe_mk, h,
+    Icc.convexComb_one,
+      Matrix.cons_val_one, Matrix.cons_val_fin_one]) (by simp only [subdivisionUpperConeMap,
+        Fin.isValue, ContinuousMap.coe_mk, h, unitInterval.symm_one, mul_zero,
+      Icc.convexComb_one, Matrix.cons_val_one, Matrix.cons_val_fin_one])
 
 private theorem
     SecondHurewicz.SimplyConnected.subdivisionUpperConeTriangle_sides (u : SubdivisionSquare)
@@ -3868,12 +3951,29 @@ private theorem
     SubdivisionSameSide (subdivisionUpperConeMap u) (subdivisionUpperTriangleMap u) := by
   rcases subdivisionSquare_boundary_cases u hu with h | h | h | h
   · exact
-      .zero 0 (by simp [subdivisionUpperConeMap, h]) (by simp [subdivisionUpperTriangleMap, h])
-  · exact .one 1 (by simp [subdivisionUpperConeMap, h]) (by simp [subdivisionUpperTriangleMap, h])
+      .zero 0 (by simp only [subdivisionUpperConeMap, Fin.isValue, ContinuousMap.coe_mk, h,
+        zero_mul, Icc.convexComb_zero_one,
+          Matrix.cons_val_zero]) (by simp only [subdivisionUpperTriangleMap, Fin.isValue,
+            ContinuousMap.coe_mk, h, subdivisionSubMin_zero_left,
+          Matrix.cons_val_zero])
+  · exact .one 1 (by simp only [subdivisionUpperConeMap, Fin.isValue, ContinuousMap.coe_mk, h,
+    one_mul, Icc.convexComb_eq,
+      Matrix.cons_val_one, Matrix.cons_val_fin_one]) (by simp only [subdivisionUpperTriangleMap,
+        Fin.isValue, ContinuousMap.coe_mk, h, subdivisionSubMin_one_left,
+      Matrix.cons_val_one, Matrix.cons_val_fin_one])
   · exact
-      .diagonal (by simp [subdivisionUpperConeMap, h]) (by simp [subdivisionUpperTriangleMap, h])
+      .diagonal (by simp only [subdivisionUpperConeMap, Fin.isValue, ContinuousMap.coe_mk, h,
+        unitInterval.symm_zero, mul_one,
+          Icc.convexComb_zero, Matrix.cons_val_zero, Matrix.cons_val_one,
+            Matrix.cons_val_fin_one]) (by simp only [subdivisionUpperTriangleMap, Fin.isValue,
+            ContinuousMap.coe_mk, h, subdivisionSubMin_zero_right,
+          Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val_fin_one])
   · exact
-      .zero 0 (by simp [subdivisionUpperConeMap, h]) (by simp [subdivisionUpperTriangleMap, h])
+      .zero 0 (by simp only [subdivisionUpperConeMap, Fin.isValue, ContinuousMap.coe_mk, h,
+        unitInterval.symm_one, mul_zero,
+          Icc.convexComb_one, Matrix.cons_val_zero]) (by simp only [subdivisionUpperTriangleMap,
+            Fin.isValue, ContinuousMap.coe_mk, h, subdivisionSubMin_one_right,
+          Matrix.cons_val_zero])
 
 private def SecondHurewicz.SimplyConnected.subdivisionLowerTriangleHomotopy {X : Type*}
     [TopologicalSpace X] {x : X} (p : GenLoop (Fin 2) X x)
@@ -3951,7 +4051,7 @@ private theorem
     Set.projIcc_of_le_left zero_le_one (by linarith)
   rw [subdivisionWarpCoordinate_apply, hzero]
   apply Subtype.ext
-  simp
+  simp only [Icc.coe_convexComb, Icc.coe_zero, mul_zero, zero_add, Icc.coe_mul]
 
 private theorem
     SecondHurewicz.SimplyConnected.subdivisionWarpCoordinate_of_half_le (u v : (unitInterval))
@@ -3991,20 +4091,32 @@ private def
 private theorem SecondHurewicz.SimplyConnected.subdivisionWarpMap_sides (u : SubdivisionSquare)
     (hu : u ∈ Cube.boundary (Fin 2)) : SubdivisionSameSide u (subdivisionWarpMap u) := by
   rcases subdivisionSquare_boundary_cases u hu with h | h | h | h
-  · exact .zero 0 h (by simp [subdivisionWarpMap, h])
-  · exact .one 0 h (by simp [subdivisionWarpMap, h])
-  · exact .zero 1 h (by simp [subdivisionWarpMap, h])
-  · exact .one 1 h (by simp [subdivisionWarpMap, h])
+  · exact .zero 0 h (by simp only [subdivisionWarpMap, Fin.isValue, ContinuousMap.coe_mk, h,
+    Matrix.cons_val_zero])
+  · exact .one 0 h (by simp only [subdivisionWarpMap, Fin.isValue, ContinuousMap.coe_mk, h,
+    Matrix.cons_val_zero])
+  · exact .zero 1 h (by simp only [subdivisionWarpMap, Fin.isValue, ContinuousMap.coe_mk, h,
+    subdivisionWarpCoordinate_zero,
+      Matrix.cons_val_one, Matrix.cons_val_fin_one])
+  · exact .one 1 h (by simp only [subdivisionWarpMap, Fin.isValue, ContinuousMap.coe_mk, h,
+    subdivisionWarpCoordinate_one,
+      Matrix.cons_val_one, Matrix.cons_val_fin_one])
 
 private theorem
     SecondHurewicz.SimplyConnected.subdivisionWarpMap_based {X : Type*} [TopologicalSpace X]
     {x : X} (p : GenLoop (Fin 2) X x) (u : SubdivisionSquare) (hu : u ∈ Cube.boundary (Fin 2)) :
     p (subdivisionWarpMap u) = x := by
   rcases subdivisionSquare_boundary_cases u hu with h | h | h | h
-  · exact p.property _ ⟨0, Or.inl (by simp [subdivisionWarpMap, h])⟩
-  · exact p.property _ ⟨0, Or.inr (by simp [subdivisionWarpMap, h])⟩
-  · exact p.property _ ⟨1, Or.inl (by simp [subdivisionWarpMap, h])⟩
-  · exact p.property _ ⟨1, Or.inr (by simp [subdivisionWarpMap, h])⟩
+  · exact p.property _ ⟨0, Or.inl (by simp only [subdivisionWarpMap, Fin.isValue,
+    ContinuousMap.coe_mk, h, Matrix.cons_val_zero])⟩
+  · exact p.property _ ⟨0, Or.inr (by simp only [subdivisionWarpMap, Fin.isValue,
+    ContinuousMap.coe_mk, h, Matrix.cons_val_zero])⟩
+  · exact p.property _ ⟨1, Or.inl (by simp only [subdivisionWarpMap, Fin.isValue,
+    ContinuousMap.coe_mk, h, subdivisionWarpCoordinate_zero,
+      Matrix.cons_val_one, Matrix.cons_val_fin_one])⟩
+  · exact p.property _ ⟨1, Or.inr (by simp only [subdivisionWarpMap, Fin.isValue,
+    ContinuousMap.coe_mk, h, subdivisionWarpCoordinate_one,
+      Matrix.cons_val_one, Matrix.cons_val_fin_one])⟩
 
 private def
     SecondHurewicz.SimplyConnected.subdivisionWarpLoop {X : Type*} [TopologicalSpace X] {x : X}
@@ -4419,28 +4531,36 @@ attribute [local instance] PeriodTorusHigherHomology.integerLinearMapModule
 @[simp]
 private theorem
     SecondHurewicz.SimplyConnected.lowerSquareTriangle_zero (s : FirstHurewicz.Simplex 2) :
-    (lowerSquareTriangle s 0 : ℝ) = s 1 + s 2 := by simp [lowerSquareTriangle]
+    (lowerSquareTriangle s 0 : ℝ) = s 1 + s 2 := by simp only [Nat.reduceAdd, lowerSquareTriangle,
+      Fin.isValue, ContinuousMap.comp_apply, squareCoordinates_zero,
+        lowerProductTriangle_fst]
 
 attribute [local instance] PeriodTorusHigherHomology.integerLinearMapModule
     PeriodTorusHigherHomology.integerTensorModule in
 @[simp]
 private theorem
     SecondHurewicz.SimplyConnected.lowerSquareTriangle_one (s : FirstHurewicz.Simplex 2) :
-    (lowerSquareTriangle s 1 : ℝ) = s 2 := by simp [lowerSquareTriangle]
+    (lowerSquareTriangle s 1 : ℝ) = s 2 := by simp only [Nat.reduceAdd, lowerSquareTriangle,
+      Fin.isValue, ContinuousMap.comp_apply, squareCoordinates_one,
+        lowerProductTriangle_snd]
 
 attribute [local instance] PeriodTorusHigherHomology.integerLinearMapModule
     PeriodTorusHigherHomology.integerTensorModule in
 @[simp]
 private theorem
     SecondHurewicz.SimplyConnected.upperSquareTriangle_zero (s : FirstHurewicz.Simplex 2) :
-    (upperSquareTriangle s 0 : ℝ) = s 2 := by simp [upperSquareTriangle]
+    (upperSquareTriangle s 0 : ℝ) = s 2 := by simp only [Nat.reduceAdd, upperSquareTriangle,
+      Fin.isValue, ContinuousMap.comp_apply, squareCoordinates_zero,
+        upperProductTriangle_fst]
 
 attribute [local instance] PeriodTorusHigherHomology.integerLinearMapModule
     PeriodTorusHigherHomology.integerTensorModule in
 @[simp]
 private theorem
     SecondHurewicz.SimplyConnected.upperSquareTriangle_one (s : FirstHurewicz.Simplex 2) :
-    (upperSquareTriangle s 1 : ℝ) = s 1 + s 2 := by simp [upperSquareTriangle]
+    (upperSquareTriangle s 1 : ℝ) = s 1 + s 2 := by simp only [Nat.reduceAdd, upperSquareTriangle,
+      Fin.isValue, ContinuousMap.comp_apply, squareCoordinates_one,
+        upperProductTriangle_snd]
 
 attribute [local instance] PeriodTorusHigherHomology.integerLinearMapModule
     PeriodTorusHigherHomology.integerTensorModule in
@@ -4823,11 +4943,15 @@ private theorem SecondHurewicz.SimplyConnected.lowerSquareTriangle_verticesBased
   · right
     apply Subtype.ext
     change (lowerSquareTriangle (SimplexSet.vertex (S := ℝ) i) 1 : ℝ) = 1
-    simp [hi, SimplexSet.vertex]
+    simp only [Nat.reduceAdd, SimplexSet.vertex, hi, Fin.isValue, lowerSquareTriangle_one,
+      SimplexSet.vertex_coe,
+        Pi.single_eq_same]
   · left
     apply Subtype.ext
     change (lowerSquareTriangle (SimplexSet.vertex (S := ℝ) i) 1 : ℝ) = 0
-    simp [hi, SimplexSet.vertex]
+    simp only [Nat.reduceAdd, SimplexSet.vertex, Fin.isValue, lowerSquareTriangle_one,
+      SimplexSet.vertex_coe,
+        ne_eq, hi, not_false_eq_true, Pi.single_eq_of_ne']
 
 private theorem SecondHurewicz.SimplyConnected.upperSquareTriangle_verticesBased {X : Type}
     [TopologicalSpace X] {x : X} (p : GenLoop (Fin 2) X x) :
@@ -4840,11 +4964,15 @@ private theorem SecondHurewicz.SimplyConnected.upperSquareTriangle_verticesBased
   · right
     apply Subtype.ext
     change (upperSquareTriangle (SimplexSet.vertex (S := ℝ) i) 0 : ℝ) = 1
-    simp [hi, SimplexSet.vertex]
+    simp only [Nat.reduceAdd, SimplexSet.vertex, hi, Fin.isValue, upperSquareTriangle_zero,
+      SimplexSet.vertex_coe,
+        Pi.single_eq_same]
   · left
     apply Subtype.ext
     change (upperSquareTriangle (SimplexSet.vertex (S := ℝ) i) 0 : ℝ) = 0
-    simp [hi, SimplexSet.vertex]
+    simp only [Nat.reduceAdd, SimplexSet.vertex, Fin.isValue, upperSquareTriangle_zero,
+      SimplexSet.vertex_coe,
+        ne_eq, hi, not_false_eq_true, Pi.single_eq_of_ne']
 
 private theorem
     SecondHurewicz.SimplyConnected.squareTriangles_diagonal {X : Type} [TopologicalSpace X]
@@ -5304,7 +5432,8 @@ private theorem SecondHurewicz.SimplyConnected.subdivisionLowerSquareTriangle_ba
   · change s 1 = 0 at hi
     apply subdivisionOnDiagonal p hd
     apply Subtype.ext
-    simp [hi]
+    simp only [Nat.reduceAdd, Fin.isValue, lowerSquareTriangle_zero, hi, zero_add,
+      lowerSquareTriangle_one]
   · change s 2 = 0 at hi
     apply p.property
     refine ⟨1, Or.inl ?_⟩
@@ -5328,7 +5457,8 @@ private theorem
   · change s 1 = 0 at hi
     apply subdivisionOnDiagonal p hd
     apply Subtype.ext
-    simp [hi]
+    simp only [Nat.reduceAdd, Fin.isValue, upperSquareTriangle_zero, upperSquareTriangle_one, hi,
+      zero_add]
   · change s 2 = 0 at hi
     apply p.property
     refine ⟨0, Or.inl ?_⟩
@@ -5357,7 +5487,8 @@ private theorem
   · change s 2 = 0 at hi
     apply subdivisionOnDiagonal p hd
     apply Subtype.ext
-    simp [hi]
+    simp only [Nat.reduceAdd, Fin.isValue, subdivisionUpperPositiveSquareTriangle_zero,
+        subdivisionUpperPositiveSquareTriangle_one, hi, add_zero]
 
 private def
     SecondHurewicz.SimplyConnected.subdivisionLowerBasedTriangle {X : Type} [TopologicalSpace X]
@@ -5439,9 +5570,15 @@ private theorem SecondHurewicz.SimplyConnected.subdivisionUpperNegativeMap_based
     (hd : ∀ t : (unitInterval), p ![t, t] = x) (u : SubdivisionSquare)
     (hu : u ∈ Cube.boundary (Fin 2)) : p (subdivisionUpperNegativeMap u) = x := by
   rcases subdivisionSquare_boundary_cases u hu with h | h | h | h
-  · exact p.property _ ⟨1, Or.inl (by simp [subdivisionUpperNegativeMap, h])⟩
-  · exact p.property _ ⟨1, Or.inr (by simp [subdivisionUpperNegativeMap, h])⟩
-  · exact p.property _ ⟨0, Or.inl (by simp [subdivisionUpperNegativeMap, h])⟩
+  · exact p.property _ ⟨1, Or.inl (by simp only [subdivisionUpperNegativeMap, Fin.isValue,
+    ContinuousMap.coe_mk, h, zero_le, inf_of_le_left,
+      Matrix.cons_val_one, Matrix.cons_val_fin_one])⟩
+  · exact p.property _ ⟨1, Or.inr (by simp only [subdivisionUpperNegativeMap, Fin.isValue,
+    ContinuousMap.coe_mk, h, Matrix.cons_val_one,
+      Matrix.cons_val_fin_one])⟩
+  · exact p.property _ ⟨0, Or.inl (by simp only [subdivisionUpperNegativeMap, Fin.isValue,
+    ContinuousMap.coe_mk, h, zero_le, inf_of_le_right,
+      Matrix.cons_val_zero])⟩
   · exact
       subdivisionOnDiagonal p hd _
         (by
@@ -5453,14 +5590,20 @@ private theorem SecondHurewicz.SimplyConnected.subdivisionUpperNegativeReversedM
     (hd : ∀ t : (unitInterval), p ![t, t] = x) (u : SubdivisionSquare)
     (hu : u ∈ Cube.boundary (Fin 2)) : p (subdivisionUpperNegativeReversedMap u) = x := by
   rcases subdivisionSquare_boundary_cases u hu with h | h | h | h
-  · exact p.property _ ⟨1, Or.inl (by simp [subdivisionUpperNegativeReversedMap, h])⟩
-  · exact p.property _ ⟨1, Or.inr (by simp [subdivisionUpperNegativeReversedMap, h])⟩
+  · exact p.property _ ⟨1, Or.inl (by simp only [subdivisionUpperNegativeReversedMap, Fin.isValue,
+    ContinuousMap.coe_mk, h, zero_le, inf_of_le_left,
+      Matrix.cons_val_one, Matrix.cons_val_fin_one])⟩
+  · exact p.property _ ⟨1, Or.inr (by simp only [subdivisionUpperNegativeReversedMap, Fin.isValue,
+    ContinuousMap.coe_mk, h, Matrix.cons_val_one,
+      Matrix.cons_val_fin_one])⟩
   · exact
       subdivisionOnDiagonal p hd _
         (by
           simp [subdivisionUpperNegativeReversedMap, h,
             min_eq_left (show u 0 ≤ (1 : (unitInterval)) from (u 0).property.2)])
-  · exact p.property _ ⟨0, Or.inl (by simp [subdivisionUpperNegativeReversedMap, h])⟩
+  · exact p.property _ ⟨0, Or.inl (by simp only [subdivisionUpperNegativeReversedMap, Fin.isValue,
+    ContinuousMap.coe_mk, h, unitInterval.symm_one,
+      zero_le, inf_of_le_right, Matrix.cons_val_zero])⟩
 
 private def
     SecondHurewicz.SimplyConnected.subdivisionUpperNegativeLoop {X : Type*} [TopologicalSpace X]
@@ -5481,19 +5624,33 @@ private theorem
   by
   rcases subdivisionSquare_boundary_cases u hu with h | h | h | h
   · exact
-      .zero 1 (by simp [subdivisionUpperTriangleMap, h])
-        (by simp [subdivisionUpperNegativeReversedMap, h])
+      .zero 1 (by simp only [subdivisionUpperTriangleMap, Fin.isValue, ContinuousMap.coe_mk, h,
+        subdivisionSubMin_zero_left,
+          Matrix.cons_val_one, Matrix.cons_val_fin_one])
+        (by simp only [subdivisionUpperNegativeReversedMap, Fin.isValue, ContinuousMap.coe_mk, h,
+          zero_le, inf_of_le_left,
+            Matrix.cons_val_one, Matrix.cons_val_fin_one])
   · exact
-      .one 1 (by simp [subdivisionUpperTriangleMap, h])
-        (by simp [subdivisionUpperNegativeReversedMap, h])
+      .one 1 (by simp only [subdivisionUpperTriangleMap, Fin.isValue, ContinuousMap.coe_mk, h,
+        subdivisionSubMin_one_left,
+          Matrix.cons_val_one, Matrix.cons_val_fin_one])
+        (by simp only [subdivisionUpperNegativeReversedMap, Fin.isValue, ContinuousMap.coe_mk, h,
+          Matrix.cons_val_one,
+            Matrix.cons_val_fin_one])
   · exact
-      .diagonal (by simp [subdivisionUpperTriangleMap, h])
+      .diagonal (by simp only [subdivisionUpperTriangleMap, Fin.isValue, ContinuousMap.coe_mk, h,
+        subdivisionSubMin_zero_right,
+          Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val_fin_one])
         (by
           simp [subdivisionUpperNegativeReversedMap, h,
             min_eq_left (show u 0 ≤ (1 : (unitInterval)) from (u 0).property.2)])
   · exact
-      .zero 0 (by simp [subdivisionUpperTriangleMap, h])
-        (by simp [subdivisionUpperNegativeReversedMap, h])
+      .zero 0 (by simp only [subdivisionUpperTriangleMap, Fin.isValue, ContinuousMap.coe_mk, h,
+        subdivisionSubMin_one_right,
+          Matrix.cons_val_zero])
+        (by simp only [subdivisionUpperNegativeReversedMap, Fin.isValue, ContinuousMap.coe_mk, h,
+          unitInterval.symm_one,
+            zero_le, inf_of_le_right, Matrix.cons_val_zero])
 
 private def SecondHurewicz.SimplyConnected.subdivisionUpperOrientationHomotopy {X : Type*}
     [TopologicalSpace X] {x : X} (p : GenLoop (Fin 2) X x)
