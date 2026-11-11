@@ -161,7 +161,7 @@ theorem SubgradientOn.of_mapClusterPt_of_continuousAt
   have hleft :
       MapClusterPt (u x + inner ℝ p (z - x)) l
         (fun i => u (xs i) + inner ℝ (ps i) (z - xs i)) := by
-    exact hpair.continuousAt_comp hcont
+    simpa only [Function.comp_def] using hpair.continuousAt_comp hcont
   have hright : Filter.Tendsto (fun _ : ι => u z) l (𝓝 (u z)) :=
     tendsto_const_nhds
   have hle :
