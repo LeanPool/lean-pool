@@ -159,7 +159,7 @@ theorem tendsto_nhdsWithin_of_tendsto_norm_sub_ray_zero
   have herror :
       Filter.Tendsto (fun a => φ a - (y + ε a • normal)) l (𝓝 (0 : E)) := by
     rw [tendsto_zero_iff_norm_tendsto_zero]
-    simpa using hclose
+    exact hclose
   have hray : Filter.Tendsto (fun a => y + ε a • normal) l (𝓝 y) :=
     tendsto_add_smul_of_tendsto_zero hε
   have hsum :

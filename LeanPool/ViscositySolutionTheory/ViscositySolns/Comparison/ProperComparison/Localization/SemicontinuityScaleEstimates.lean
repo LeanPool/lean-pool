@@ -77,7 +77,7 @@ theorem tendsto_valueGap_zero_of_continuousAt_of_tendsto_same
     Tendsto (fun i : ι => u (x i) - u (y i)) l (nhds 0) := by
   have hxv : Tendsto (fun i : ι => u (x i)) l (nhds (u z)) := hu.tendsto.comp hx
   have hyv : Tendsto (fun i : ι => u (y i)) l (nhds (u z)) := hu.tendsto.comp hy
-  simpa using hxv.sub hyv
+  simpa only [sub_self] using hxv.sub hyv
 
 /--
 Let `u : R^n -> R` be continuous at `z`. If `(x i, y i) -> (z, z)` along
@@ -105,13 +105,13 @@ theorem tendsto_right_of_tendsto_left_of_tendsto_distance_zero
     Tendsto y l (nhds z) := by
   have hdiff : Tendsto (fun i : ι => x i - y i) l (nhds 0) := by
     rw [tendsto_iff_norm_sub_tendsto_zero]
-    simpa using hdist
+    simpa only [sub_zero] using hdist
   have hy' : Tendsto (fun i : ι => x i - (x i - y i)) l (nhds (z - 0)) :=
     hx.sub hdiff
   have hy_eq : (fun i : ι => x i - (x i - y i)) = y := by
     funext i
     abel
-  simpa [hy_eq]
+  simpa only [sub_sub_cancel, sub_zero]
     using hy'
 
 /--
@@ -156,7 +156,7 @@ theorem tendsto_nhdsWithin_of_tendsto_norm_sub_zero_of_eventually_mem
     Tendsto x l (nhdsWithin z C) := by
   have hx : Tendsto x l (nhds z) := by
     rw [tendsto_iff_norm_sub_tendsto_zero]
-    simpa using hxz
+    exact hxz
   exact tendsto_nhdsWithin_of_tendsto_nhds_of_eventually_within x hx hxC
 
 /--
@@ -172,7 +172,7 @@ theorem tendsto_valueGap_zero_of_continuousWithinAt_of_tendsto_same
     Tendsto (fun i : ι => u (x i) - u (y i)) l (nhds 0) := by
   have hxv : Tendsto (fun i : ι => u (x i)) l (nhds (u z)) := hu.tendsto.comp hx
   have hyv : Tendsto (fun i : ι => u (y i)) l (nhds (u z)) := hu.tendsto.comp hy
-  simpa using hxv.sub hyv
+  simpa only [sub_self] using hxv.sub hyv
 
 /--
 Let `u` be upper semicontinuous at `z` relative to `C`, and let `v` be lower
@@ -191,17 +191,17 @@ theorem eventually_value_sub_lt_of_upper_lowerSemicontinuousWithinAt_of_tendsto_
     (hx : Tendsto x l (nhdsWithin z C)) (hy : Tendsto y l (nhdsWithin z C))
     (hε : 0 < ε) :
     ∀ᶠ i in l, u (x i) - v (y i) < u z - v z + ε := by
-  have hε2 : 0 < ε / 2 := by linarith
+  have hε2 : 0 < ε / 2 := by linarith only [hε]
   have hux :
       ∀ᶠ p in nhdsWithin z C, u p < u z + ε / 2 :=
-    hu (u z + ε / 2) (by linarith)
+    hu (u z + ε / 2) (by linarith only [hε])
   have hvy :
       ∀ᶠ p in nhdsWithin z C, v z - ε / 2 < v p :=
-    hv (v z - ε / 2) (by linarith)
+    hv (v z - ε / 2) (by linarith only [hε])
   filter_upwards [hx hux, hy hvy] with i hxi hyi
   change u (x i) < u z + ε / 2 at hxi
   change v z - ε / 2 < v (y i) at hyi
-  linarith
+  linarith only [hxi, hyi]
 
 /--
 Let `(x i, y i)` maximize the shifted doubled-variable objective on
@@ -231,9 +231,9 @@ theorem shifted_gap_at_limit_of_closure_maximizers
     v x0 < u x0 - δ := by
   have hzclosure : z ∈ closure C := subset_closure hz
   have hgap_pos : 0 < u z - δ - v z := by
-    linarith
+    linarith only [hgap]
   have hε : 0 < (u z - δ - v z) / 2 := by
-    linarith
+    linarith only [hgap]
   have hlower :
       ∀ᶠ i in l, u z - δ - v z <= u (x i) - δ - v (y i) :=
     eventually_shifted_value_sub_ge_of_closure_maximizers hzclosure hmax
@@ -248,8 +248,8 @@ theorem shifted_gap_at_limit_of_closure_maximizers
   change u (x i) - δ - v (y i) <
       u x0 - δ - v x0 + (u z - δ - v z) / 2 at hupper_i
   have hpositive : 0 < u x0 - δ - v x0 := by
-    linarith
-  linarith
+    linarith only [hgap, hlower_i, hupper_i]
+  linarith only [hgap, hlower_i, hupper_i]
 
 /--
 Let `(x i, y i)` maximize the doubled-variable objective on `C × C` for all
@@ -279,7 +279,7 @@ theorem tendsto_weightedDistanceSq_zero_of_eventually_isMaxOn_of_semicontinuousO
     filter_upwards [hmax] with i hi
     exact lt_of_lt_of_le hb (mul_nonneg hi.1.le (sq_nonneg ‖x i - y i‖))
   · intro b hb
-    have hb2 : 0 < b / 2 := by linarith
+    have hb2 : 0 < b / 2 := by linarith only [hb]
     have hvalue :
         ∀ᶠ i in l, u (x i) - v (y i) < u z - v z + b / 2 :=
       eventually_value_sub_lt_of_upper_lowerSemicontinuousWithinAt_of_tendsto_same
@@ -295,12 +295,12 @@ theorem tendsto_weightedDistanceSq_zero_of_eventually_isMaxOn_of_semicontinuousO
           u (x i) - v (y i) - (u z - v z) := by
       have hnorm :=
         norm_weightedDistanceSq_le_quadraticPenalty_mul_two hαi.le (x i) (y i)
-      nlinarith
+      nlinarith only [hpenalty, hnorm]
     have hright : u (x i) - v (y i) - (u z - v z) < b / 2 := by
-      linarith
+      linarith only [hvalue_i]
     have hhalf : (α i / 2) * ‖x i - y i‖ ^ 2 < b / 2 :=
       lt_of_le_of_lt hpenalty' hright
-    nlinarith
+    nlinarith only [hvalue_i, hpenalty']
 
 /--
 Assume `u ≤ v` on `frontier C` and `δ > 0`. Suppose `x0 ∈ closure C`,
@@ -348,7 +348,7 @@ theorem tendsto_weightedDistanceSq_zero_of_shifted_closure_maximizers_of_tendsto
         0 < α i ∧ x i ∈ C ∧ y i ∈ C ∧
           IsMaxOn (fun q : DoubledPoint n => doubledObjective w v (α i) q)
             (C ×ˢ C) (x i, y i) := by
-    simpa [w] using
+    exact
       eventually_isMaxOn_doubledObjective_restrict_closure
         (C := C) (u := w) (v := v) hmax hmem
   have hxC : Tendsto x l (nhdsWithin x0 C) :=
@@ -385,8 +385,8 @@ theorem tendsto_distance_zero_of_tendsto_weightedDistanceSq_of_eventually_one_le
         _ <= α i * ‖x i - y i‖ ^ 2 := mul_le_mul_of_nonneg_right hαi hsq
   have hsqrt :
       Tendsto (fun i : ι => √(‖x i - y i‖ ^ 2)) l (nhds 0) := by
-    simpa using hsquare.sqrt
-  simpa [Real.sqrt_sq_eq_abs, abs_of_nonneg] using hsqrt
+    simpa only [norm_nonneg, Real.sqrt_sq, Real.sqrt_zero] using hsquare.sqrt
+  simpa only [norm_nonneg, Real.sqrt_sq] using hsqrt
 
 /--
 Under the hypotheses of

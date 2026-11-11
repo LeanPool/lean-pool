@@ -41,7 +41,9 @@ theorem hasSecondOrderExpansionAt_real_of_eventually_norm_sub_quadratic_le_mul
           (1 / 2 : ℝ) * inner ℝ z ((q • (1 : ℝ →L[ℝ] ℝ)) z)‖ =
         ‖f (x + z) - f x - p * z - (1 / 2 : ℝ) * q * z ^ 2‖ := by
     congr 1
-    simp [affineRemainder, mul_assoc, mul_left_comm, mul_comm, pow_two]
+    simp only [affineRemainder, add_sub_cancel_left, RCLike.inner_apply, conj_trivial, mul_comm,
+      one_div, smul_apply, one_apply_eq_self, smul_eq_mul, mul_left_comm, mul_assoc, pow_two,
+      sub_left_inj]
     ring
   rw [hnorm]
   exact hz
@@ -63,7 +65,9 @@ theorem hasSecondOrderExpansionAt_real_of_eventually_norm_sub_quadratic_div_norm
           (1 / 2 : ℝ) * inner ℝ z ((q • (1 : ℝ →L[ℝ] ℝ)) z)‖ =
         ‖f (x + z) - f x - p * z - (1 / 2 : ℝ) * q * z ^ 2‖ := by
     congr 1
-    simp [affineRemainder, mul_assoc, mul_left_comm, mul_comm, pow_two]
+    simp only [affineRemainder, add_sub_cancel_left, RCLike.inner_apply, conj_trivial, mul_comm,
+      one_div, smul_apply, one_apply_eq_self, smul_eq_mul, mul_left_comm, mul_assoc, pow_two,
+      sub_left_inj]
     ring
   rw [hnorm]
   exact hz
@@ -79,7 +83,7 @@ theorem secondOrderDifferentiableAt_real_of_eventually_norm_sub_quadratic_le_mul
   refine ⟨p, q • (1 : ℝ →L[ℝ] ℝ), ?_,
     hasSecondOrderExpansionAt_real_of_eventually_norm_sub_quadratic_le_mul h⟩
   rw [IsSymmetricOperator]
-  exact LinearMap.IsSymmetric.smul (by simp) LinearMap.IsSymmetric.one
+  exact LinearMap.IsSymmetric.smul (by simp only [conj_trivial]) LinearMap.IsSymmetric.one
 
 /-- Real-line scalar form of the punctured normalized quadratic
 estimate-to-second-order-differentiability constructor. -/
@@ -92,7 +96,7 @@ theorem secondOrderDifferentiableAt_real_of_eventually_norm_sub_quadratic_div_no
   refine ⟨p, q • (1 : ℝ →L[ℝ] ℝ), ?_,
     hasSecondOrderExpansionAt_real_of_eventually_norm_sub_quadratic_div_norm_sq_le h⟩
   rw [IsSymmetricOperator]
-  exact LinearMap.IsSymmetric.smul (by simp) LinearMap.IsSymmetric.one
+  exact LinearMap.IsSymmetric.smul (by simp only [conj_trivial]) LinearMap.IsSymmetric.one
 
 /-- Pointwise real-line scalar quadratic estimate data. This names the usual one-dimensional
 target estimate before it is converted into the project second-order expansion predicate. -/
@@ -164,21 +168,21 @@ theorem RealScalarQuadraticEstimateWithDataAt.average
   have hsplit :
       f (x + z) - f x - p * z - (1 / 2 : ℝ) * ((q + q') / 2) * z ^ 2 =
         (1 / 2 : ℝ) * A + (1 / 2 : ℝ) * B := by
-    simp [A, B]
+    simp only [one_div, A, B]
     ring
   calc
     ‖f (x + z) - f x - p * z - (1 / 2 : ℝ) * ((q + q') / 2) * z ^ 2‖ =
         ‖(1 / 2 : ℝ) * A + (1 / 2 : ℝ) * B‖ := by rw [hsplit]
     _ ≤ ‖(1 / 2 : ℝ) * A‖ + ‖(1 / 2 : ℝ) * B‖ := norm_add_le _ _
     _ = (1 / 2 : ℝ) * ‖A‖ + (1 / 2 : ℝ) * ‖B‖ := by
-      simp [norm_mul]
+      simp only [one_div, norm_mul, norm_inv, Real.norm_ofNat, Real.norm_eq_abs]
     _ ≤ (1 / 2 : ℝ) * ((ε / 2) * ‖z‖ ^ 2) +
         (1 / 2 : ℝ) * ((ε / 2) * ‖z‖ ^ 2) := by
       gcongr
     _ = (ε / 2) * ‖z‖ ^ 2 := by ring
     _ ≤ ε * ‖z‖ ^ 2 := by
       gcongr
-      linarith
+      linarith only [hε]
 
 /-- Quotient-form scalar estimates with the same base point and first-order coefficient can be
 averaged in their quadratic coefficient. -/
@@ -197,7 +201,7 @@ theorem RealScalarQuadraticQuotientEstimateWithDataAt.average
   have hsplit :
       f (x + z) - f x - p * z - (1 / 2 : ℝ) * ((q + q') / 2) * z ^ 2 =
         (1 / 2 : ℝ) * A + (1 / 2 : ℝ) * B := by
-    simp [A, B]
+    simp only [one_div, A, B]
     ring
   have hnorm :
       ‖f (x + z) - f x - p * z - (1 / 2 : ℝ) * ((q + q') / 2) * z ^ 2‖ ≤
@@ -207,7 +211,7 @@ theorem RealScalarQuadraticQuotientEstimateWithDataAt.average
           ‖(1 / 2 : ℝ) * A + (1 / 2 : ℝ) * B‖ := by rw [hsplit]
       _ ≤ ‖(1 / 2 : ℝ) * A‖ + ‖(1 / 2 : ℝ) * B‖ := norm_add_le _ _
       _ = (1 / 2 : ℝ) * ‖A‖ + (1 / 2 : ℝ) * ‖B‖ := by
-        simp [norm_mul]
+        simp only [one_div, norm_mul, norm_inv, Real.norm_ofNat, Real.norm_eq_abs]
       _ ≤ (1 / 2 : ℝ) * ((ε / 2) * ‖z‖ ^ 2) +
           (1 / 2 : ℝ) * ((ε / 2) * ‖z‖ ^ 2) := by
         have hA : ‖A‖ ≤ (ε / 2) * ‖z‖ ^ 2 := (div_le_iff₀ hden).mp hz
@@ -218,7 +222,7 @@ theorem RealScalarQuadraticQuotientEstimateWithDataAt.average
         (1 / 2 : ℝ) * ((q + q') / 2) * z ^ 2‖ ≤ ε * ‖z‖ ^ 2 := by
     exact hnorm.trans (by
       gcongr
-      linarith)
+      linarith only [hε])
   exact (div_le_iff₀ hden).mpr hnorm'
 
 /-- Scalar quadratic estimates are stable under rescaling the line parameter. This is the
@@ -239,11 +243,11 @@ theorem RealScalarQuadraticEstimateWithDataAt.comp_mul
         field_simp [ne_of_gt hden_pos]
       _ ≤ ε * 1 := by
         gcongr
-        exact div_le_one_of_le₀ (by linarith) (by positivity)
+        exact div_le_one_of_le₀ (by linarith only []) (by positivity)
       _ = ε := by ring
   have htend : Filter.Tendsto (fun t : ℝ => c * t) (nhds 0) (nhds 0) := by
     have hc : ContinuousAt (fun t : ℝ => c * t) 0 := by fun_prop
-    simpa using hc.tendsto
+    simpa only [mul_zero] using hc.tendsto
   filter_upwards [htend.eventually (h δ hδ)] with t ht
   have hnorm :
       ‖f (c * t) - f 0 - (c * p) * t - (1 / 2 : ℝ) * (c ^ 2 * q) * t ^ 2‖ =
@@ -257,12 +261,13 @@ theorem RealScalarQuadraticEstimateWithDataAt.comp_mul
     calc
       ‖f (c * t) - f 0 - p * (c * t) - (1 / 2 : ℝ) * q * (c * t) ^ 2‖
           ≤ δ * ‖c * t‖ ^ 2 := by
-            simpa [zero_add] using ht
+            simpa only [one_div, Real.norm_eq_abs, norm_mul, zero_add] using ht
       _ = (δ * ‖c‖ ^ 2) * ‖t‖ ^ 2 := by
-        simp [norm_mul, mul_assoc, mul_left_comm, mul_comm, pow_two]
+        simp only [norm_mul, Real.norm_eq_abs, pow_two, mul_left_comm, mul_comm, abs_mul_abs_self,
+          mul_assoc]
       _ ≤ ε * ‖t‖ ^ 2 := by
         exact mul_le_mul_of_nonneg_right hc_le (sq_nonneg _)
-  simpa [zero_add, mul_zero] using hbound
+  simpa only [zero_add, mul_zero, one_div, Real.norm_eq_abs, sq_abs, ge_iff_le] using hbound
 
 /-- Quotient-form scalar estimates are stable under rescaling the line parameter. -/
 theorem RealScalarQuadraticQuotientEstimateWithDataAt.comp_mul
@@ -274,7 +279,8 @@ theorem RealScalarQuadraticQuotientEstimateWithDataAt.comp_mul
   by_cases hc : c = 0
   · filter_upwards [self_mem_nhdsWithin] with t ht_ne
     subst c
-    simp [hε.le]
+    simp only [zero_add, zero_mul, mul_zero, sub_self, one_div, ne_eq, OfNat.ofNat_ne_zero,
+      not_false_eq_true, zero_pow, norm_zero, Real.norm_eq_abs, sq_abs, zero_div, hε.le]
   · let δ : ℝ := ε / (‖c‖ ^ 2 + 1)
     have hδ : 0 < δ := div_pos hε (by positivity)
     have hc_le : δ * ‖c‖ ^ 2 ≤ ε := by
@@ -286,7 +292,7 @@ theorem RealScalarQuadraticQuotientEstimateWithDataAt.comp_mul
           field_simp [ne_of_gt hden_pos]
         _ ≤ ε * 1 := by
           gcongr
-          exact div_le_one_of_le₀ (by linarith) (by positivity)
+          exact div_le_one_of_le₀ (by linarith only []) (by positivity)
         _ = ε := by ring
     have htend :
         Filter.Tendsto (fun t : ℝ => c * t)
@@ -295,7 +301,7 @@ theorem RealScalarQuadraticQuotientEstimateWithDataAt.comp_mul
       refine tendsto_nhdsWithin_iff.mpr ⟨?_, ?_⟩
       · have hc : ContinuousAt (fun t : ℝ => c * t) 0 := by fun_prop
         have hbase : Filter.Tendsto (fun t : ℝ => c * t) (nhds 0) (nhds 0) := by
-          simpa using hc.tendsto
+          simpa only [mul_zero] using hc.tendsto
         exact hbase.mono_left nhdsWithin_le_nhds
       · filter_upwards [self_mem_nhdsWithin] with t ht_ne
         exact mul_ne_zero hc ht_ne
@@ -315,12 +321,15 @@ theorem RealScalarQuadraticQuotientEstimateWithDataAt.comp_mul
       calc
         ‖f (c * t) - f 0 - p * (c * t) - (1 / 2 : ℝ) * q * (c * t) ^ 2‖
             ≤ δ * ‖c * t‖ ^ 2 := by
-              exact (div_le_iff₀ hden_ct).mp (by simpa [zero_add] using ht)
+              exact (div_le_iff₀ hden_ct).mp (by simpa only [one_div, Real.norm_eq_abs, norm_mul,
+                zero_add] using ht)
         _ = (δ * ‖c‖ ^ 2) * ‖t‖ ^ 2 := by
-          simp [norm_mul, mul_assoc, mul_left_comm, mul_comm, pow_two]
+          simp only [norm_mul, Real.norm_eq_abs, pow_two, mul_left_comm, mul_comm,
+            abs_mul_abs_self, mul_assoc]
         _ ≤ ε * ‖t‖ ^ 2 := by
           exact mul_le_mul_of_nonneg_right hc_le (sq_nonneg _)
-    exact (div_le_iff₀ hden_t).mpr (by simpa [zero_add, mul_zero] using hbound)
+    exact (div_le_iff₀ hden_t).mpr (by simpa only [zero_add, mul_zero, one_div, Real.norm_eq_abs,
+      sq_abs] using hbound)
 
 /-- Recenter scalar quadratic estimate data at `x` as estimate data at `0` for the translated
 function `z ↦ f (x + z)`. -/
@@ -329,7 +338,7 @@ theorem RealScalarQuadraticEstimateWithDataAt.recenter_zero
     (h : RealScalarQuadraticEstimateWithDataAt f x p q) :
     RealScalarQuadraticEstimateWithDataAt (fun z : ℝ => f (x + z)) 0 p q := by
   intro ε hε
-  simpa using h ε hε
+  simpa only [zero_add, add_zero, one_div, Real.norm_eq_abs, sq_abs] using h ε hε
 
 /-- Quotient-estimate version of `RealScalarQuadraticEstimateWithDataAt.recenter_zero`. -/
 theorem RealScalarQuadraticQuotientEstimateWithDataAt.recenter_zero
@@ -337,7 +346,7 @@ theorem RealScalarQuadraticQuotientEstimateWithDataAt.recenter_zero
     (h : RealScalarQuadraticQuotientEstimateWithDataAt f x p q) :
     RealScalarQuadraticQuotientEstimateWithDataAt (fun z : ℝ => f (x + z)) 0 p q := by
   intro ε hε
-  simpa using h ε hε
+  simpa only [zero_add, add_zero, one_div, Real.norm_eq_abs, sq_abs, ne_eq] using h ε hε
 
 /-- On the real line, scalar quadratic estimate data at `x` transfers to the restriction of `f`
 to the affine line through `x` with real direction `ξ`. -/
@@ -351,8 +360,8 @@ theorem RealScalarQuadraticEstimateWithDataAt.real_lineRestriction
       AleksandrovDifferentiability.lineRestriction f x ξ =
         fun t : ℝ => f (x + ξ * t) := by
     funext t
-    simp [AleksandrovDifferentiability.lineRestriction, mul_comm]
-  simpa [hfun] using hcomp
+    simp only [lineRestriction, smul_eq_mul, mul_comm]
+  simpa only [hfun] using hcomp
 
 /-- Quotient-estimate version of
 `RealScalarQuadraticEstimateWithDataAt.real_lineRestriction`. -/
@@ -366,8 +375,8 @@ theorem RealScalarQuadraticQuotientEstimateWithDataAt.real_lineRestriction
       AleksandrovDifferentiability.lineRestriction f x ξ =
         fun t : ℝ => f (x + ξ * t) := by
     funext t
-    simp [AleksandrovDifferentiability.lineRestriction, mul_comm]
-  simpa [hfun] using hcomp
+    simp only [lineRestriction, smul_eq_mul, mul_comm]
+  simpa only [hfun] using hcomp
 
 /-- Line-restriction version of `RealScalarQuadraticEstimateWithDataAt.comp_mul`: replacing the
 direction `v` by `c • v` scales the first coefficient by `c` and the quadratic coefficient by
@@ -382,8 +391,8 @@ theorem RealScalarQuadraticEstimateWithDataAt.lineRestriction_smul
       AleksandrovDifferentiability.lineRestriction u x (c • v) =
         fun t : ℝ => AleksandrovDifferentiability.lineRestriction u x v (c * t) := by
     funext t
-    simp [AleksandrovDifferentiability.lineRestriction, smul_smul, mul_comm]
-  simpa [hfun] using h.comp_mul (c := c)
+    simp only [lineRestriction, smul_smul, mul_comm]
+  simpa only [hfun] using h.comp_mul (c := c)
 
 /-- Quotient-estimate version of
 `RealScalarQuadraticEstimateWithDataAt.lineRestriction_smul`. -/
@@ -397,8 +406,8 @@ theorem RealScalarQuadraticQuotientEstimateWithDataAt.lineRestriction_smul
       AleksandrovDifferentiability.lineRestriction u x (c • v) =
         fun t : ℝ => AleksandrovDifferentiability.lineRestriction u x v (c * t) := by
     funext t
-    simp [AleksandrovDifferentiability.lineRestriction, smul_smul, mul_comm]
-  simpa [hfun] using h.comp_mul (c := c)
+    simp only [lineRestriction, smul_smul, mul_comm]
+  simpa only [hfun] using h.comp_mul (c := c)
 
 /-- Diagonal pair-direction version of line-restriction rescaling: the direction `v + v` carries
 the first-order coefficient from the ambient slope and the quadratic coefficient `4 * q`. -/
@@ -410,8 +419,8 @@ theorem RealScalarQuadraticEstimateWithDataAt.lineRestriction_add_self
       (AleksandrovDifferentiability.lineRestriction u x (v + v)) 0
         (inner ℝ p (v + v)) (4 * q) := by
   have hs := h.lineRestriction_smul (c := (2 : ℝ))
-  simpa [two_smul, inner_add_right, two_mul, pow_two, mul_assoc,
-    show (2 + 2 : ℝ) = 4 by norm_num] using hs
+  simpa only [inner_add_right, two_smul, two_mul, pow_two, show (2 + 2 : ℝ) = 4 by norm_num] using
+    hs
 
 /-- Quotient-estimate version of
 `RealScalarQuadraticEstimateWithDataAt.lineRestriction_add_self`. -/
@@ -423,8 +432,8 @@ theorem RealScalarQuadraticQuotientEstimateWithDataAt.lineRestriction_add_self
       (AleksandrovDifferentiability.lineRestriction u x (v + v)) 0
         (inner ℝ p (v + v)) (4 * q) := by
   have hs := h.lineRestriction_smul (c := (2 : ℝ))
-  simpa [two_smul, inner_add_right, two_mul, pow_two, mul_assoc,
-    show (2 + 2 : ℝ) = 4 by norm_num] using hs
+  simpa only [inner_add_right, two_smul, two_mul, pow_two, show (2 + 2 : ℝ) = 4 by norm_num] using
+    hs
 
 /-- Existential scalar estimate version of line-restriction rescaling. -/
 theorem RealScalarQuadraticEstimateAt.lineRestriction_smul
@@ -466,7 +475,7 @@ theorem RealScalarQuadraticEstimateAt.lineRestriction_smul_iff
   constructor
   · intro h
     have h' := h.lineRestriction_smul (u := u) (x := x) (v := c • v) (c := c⁻¹)
-    simpa [smul_smul, inv_mul_cancel₀ hc] using h'
+    simpa only [smul_smul, inv_mul_cancel₀ hc, one_smul] using h'
   · intro h
     exact h.lineRestriction_smul (u := u) (x := x) (v := v) (c := c)
 
@@ -480,7 +489,7 @@ theorem RealScalarQuadraticQuotientEstimateAt.lineRestriction_smul_iff
   constructor
   · intro h
     have h' := h.lineRestriction_smul (u := u) (x := x) (v := c • v) (c := c⁻¹)
-    simpa [smul_smul, inv_mul_cancel₀ hc] using h'
+    simpa only [smul_smul, inv_mul_cancel₀ hc, one_smul] using h'
   · intro h
     exact h.lineRestriction_smul (u := u) (x := x) (v := v) (c := c)
 
@@ -491,7 +500,7 @@ theorem RealScalarQuadraticEstimateAt.lineRestriction_add_self
       (AleksandrovDifferentiability.lineRestriction u x v) 0) :
     RealScalarQuadraticEstimateAt
       (AleksandrovDifferentiability.lineRestriction u x (v + v)) 0 := by
-  simpa [two_smul] using h.lineRestriction_smul (u := u) (x := x) (v := v) (c := (2 : ℝ))
+  simpa only [two_smul] using h.lineRestriction_smul (u := u) (x := x) (v := v) (c := (2 : ℝ))
 
 /-- Existential scalar quotient-estimate version for the diagonal pair direction `v + v`. -/
 theorem RealScalarQuadraticQuotientEstimateAt.lineRestriction_add_self
@@ -500,14 +509,15 @@ theorem RealScalarQuadraticQuotientEstimateAt.lineRestriction_add_self
       (AleksandrovDifferentiability.lineRestriction u x v) 0) :
     RealScalarQuadraticQuotientEstimateAt
       (AleksandrovDifferentiability.lineRestriction u x (v + v)) 0 := by
-  simpa [two_smul] using h.lineRestriction_smul (u := u) (x := x) (v := v) (c := (2 : ℝ))
+  simpa only [two_smul] using h.lineRestriction_smul (u := u) (x := x) (v := v) (c := (2 : ℝ))
 
 /-- Constant real-line functions have scalar quadratic estimate data with zero coefficients. -/
 theorem realScalarQuadraticEstimateWithDataAt_const (c x : ℝ) :
     RealScalarQuadraticEstimateWithDataAt (fun _ : ℝ => c) x 0 0 := by
   intro ε hε
   filter_upwards with z
-  simpa using mul_nonneg hε.le (sq_nonneg z)
+  simpa only [sub_self, zero_mul, one_div, mul_zero, norm_zero, Real.norm_eq_abs, sq_abs] using
+    mul_nonneg hε.le (sq_nonneg z)
 
 /-- Constant real-line functions have punctured scalar quotient-estimate data with zero
 coefficients. -/
@@ -566,8 +576,8 @@ theorem realScalarQuadraticEstimateAt_lineRestriction_zero_direction
   have hfun :
       AleksandrovDifferentiability.lineRestriction u x (0 : E) = fun _ : ℝ => u x := by
     funext t
-    simp [AleksandrovDifferentiability.lineRestriction]
-  simpa [hfun] using
+    simp only [lineRestriction, smul_zero, add_zero]
+  simpa only [hfun] using
     (realScalarQuadraticEstimateAt_const (u x) 0)
 
 /-- Quotient-estimate version of
@@ -579,8 +589,8 @@ theorem realScalarQuadraticQuotientEstimateAt_lineRestriction_zero_direction
   have hfun :
       AleksandrovDifferentiability.lineRestriction u x (0 : E) = fun _ : ℝ => u x := by
     funext t
-    simp [AleksandrovDifferentiability.lineRestriction]
-  simpa [hfun] using
+    simp only [lineRestriction, smul_zero, add_zero]
+  simpa only [hfun] using
     (realScalarQuadraticQuotientEstimateAt_const (u x) 0)
 
 /-- Rebase scalar estimate data from a parameter `t` on the line through `x` to parameter `0`
@@ -596,7 +606,8 @@ theorem RealScalarQuadraticEstimateWithDataAt.lineRestriction_rebase
   have harg : x + t • v + z • v = x + (t + z) • v := by
     rw [add_smul]
     abel
-  simpa [AleksandrovDifferentiability.lineRestriction, harg, add_assoc] using hz
+  simpa only [lineRestriction, zero_add, harg, zero_smul, add_zero, one_div, Real.norm_eq_abs,
+    sq_abs, ge_iff_le] using hz
 
 /-- Quotient-estimate version of
 `RealScalarQuadraticEstimateWithDataAt.lineRestriction_rebase`. -/
@@ -611,7 +622,8 @@ theorem RealScalarQuadraticQuotientEstimateWithDataAt.lineRestriction_rebase
   have harg : x + t • v + z • v = x + (t + z) • v := by
     rw [add_smul]
     abel
-  simpa [AleksandrovDifferentiability.lineRestriction, harg, add_assoc] using hz
+  simpa only [lineRestriction, zero_add, harg, zero_smul, add_zero, one_div, Real.norm_eq_abs,
+    sq_abs, ge_iff_le] using hz
 
 /-- Existential scalar estimate rebase from a line parameter to the corresponding ambient base
 point on the same line. -/
@@ -652,18 +664,20 @@ theorem realScalarQuadraticEstimateWithDataAt_of_hasSecondOrderExpansionAt
   filter_upwards [h.def hε] with z hz
   have hBz : B z = z * B 1 := by
     calc
-      B z = B (z • (1 : ℝ)) := by simp
+      B z = B (z • (1 : ℝ)) := by simp only [smul_eq_mul, mul_one]
       _ = z • B 1 := by rw [map_smul]
       _ = z * B 1 := by rfl
   have hnorm :
       ‖f (x + z) - f x - p * z - (1 / 2 : ℝ) * B 1 * z ^ 2‖ =
         ‖f (x + z) - f x - inner ℝ p z - (1 / 2 : ℝ) * inner ℝ z (B z)‖ := by
     congr 1
-    simp [hBz, pow_two, mul_assoc, mul_left_comm, mul_comm]
+    simp only [one_div, pow_two, mul_comm, mul_assoc, RCLike.inner_apply, conj_trivial, hBz,
+      mul_left_comm]
   have hsq_norm : ‖(‖z‖ ^ 2 : ℝ)‖ = ‖z‖ ^ 2 :=
     Real.norm_of_nonneg (sq_nonneg _)
   rw [hnorm]
-  simpa [hsq_norm] using hz
+  simpa only [RCLike.inner_apply, conj_trivial, one_div, Real.norm_eq_abs, sq_abs, ge_iff_le,
+    norm_pow] using hz
 
 /-- On the real line, a project-level second-order expansion gives the scalar quadratic estimate
 shape used by the one-dimensional assembly interface. -/
@@ -699,7 +713,7 @@ theorem realScalarQuadraticEstimateAt_of_rightDeriv_averageRemainder_of_hasDeriv
   have hεhalf : 0 < ε / 2 := by positivity
   have hto_nhds :
       Filter.Tendsto (fun z : ℝ => x + z) (nhds 0) (nhds x) := by
-    simpa using (tendsto_const_nhds.add Filter.tendsto_id :
+    simpa only [add_zero] using (tendsto_const_nhds.add Filter.tendsto_id :
       Filter.Tendsto (fun z : ℝ => x + z) (nhds 0) (nhds (x + 0)))
   have hmem :
       ∀ᶠ z in nhds 0, x + z ∈ interior S :=
@@ -711,11 +725,11 @@ theorem realScalarQuadraticEstimateAt_of_rightDeriv_averageRemainder_of_hasDeriv
       (fun z : ℝ => rightDeriv f (x + z) - rightDeriv f x - q * z)
         =o[nhds 0] fun z : ℝ => z := by
     have hcomp := hderiv.isLittleO.comp_tendsto hto_within
-    simpa [Function.comp_def, mul_comm] using hcomp
+    simpa only [smul_eq_mul, mul_comm, Function.comp_def, add_sub_cancel_left] using hcomp
   have hderiv_bound :
       ∀ᶠ z in nhds 0,
         ‖rightDeriv f (x + z) - rightDeriv f x - q * z‖ ≤ ε * ‖z‖ := by
-    simpa using hderiv_comp.def hε
+    simpa only [Real.norm_eq_abs] using hderiv_comp.def hε
   filter_upwards [havg (ε / 2) hεhalf, hderiv_bound] with z havg_z hderiv_z
   let A : ℝ :=
     f (x + z) - f x - rightDeriv f x * z -
@@ -727,16 +741,16 @@ theorem realScalarQuadraticEstimateAt_of_rightDeriv_averageRemainder_of_hasDeriv
       ‖D‖ =
           ‖(1 / 2 : ℝ)‖ *
             ‖rightDeriv f (x + z) - rightDeriv f x - q * z‖ * ‖z‖ := by
-        simp [D, norm_mul, mul_assoc]
+        simp only [mul_assoc, one_div, norm_mul, norm_inv, Real.norm_ofNat, Real.norm_eq_abs, D]
       _ ≤ ‖(1 / 2 : ℝ)‖ * (ε * ‖z‖) * ‖z‖ := by
         gcongr
       _ = (ε / 2) * ‖z‖ ^ 2 := by
         simp only [Real.norm_eq_abs, abs_of_nonneg (by norm_num : 0 ≤ (1 / 2 : ℝ))]
-        nlinarith [sq_abs z]
+        nlinarith only [sq_abs z]
   have hsplit :
       f (x + z) - f x - rightDeriv f x * z - (1 / 2 : ℝ) * q * z ^ 2 =
         A + D := by
-    simp [A, D, pow_two]
+    simp only [one_div, pow_two, A, D]
     ring
   calc
     ‖f (x + z) - f x - rightDeriv f x * z - (1 / 2 : ℝ) * q * z ^ 2‖ =
@@ -771,7 +785,7 @@ theorem realScalarQuadraticEstimateAt_of_taylor_isLittleO
         f (x + z) - (f x + p * ((x + z) - x) + (1 / 2 : ℝ) * q * ((x + z) - x) ^ 2))
         =o[nhds 0] fun z : ℝ => ((x + z) - x) ^ 2 := by
     refine h.comp_tendsto ?_
-    simpa using (tendsto_const_nhds.add Filter.tendsto_id :
+    simpa only [add_zero] using (tendsto_const_nhds.add Filter.tendsto_id :
       Filter.Tendsto (fun z : ℝ => x + z) (nhds 0) (nhds (x + 0)))
   filter_upwards [hcomp.def hε] with z hz
   have hleft :
@@ -781,7 +795,7 @@ theorem realScalarQuadraticEstimateAt_of_taylor_isLittleO
     congr 1
     ring
   have hright : ‖((x + z) - x) ^ 2‖ = ‖z‖ ^ 2 := by
-    simp [norm_pow]
+    simp only [add_sub_cancel_left, norm_pow, Real.norm_eq_abs, sq_abs]
   rw [← hleft, ← hright]
   exact hz
 
@@ -801,10 +815,17 @@ theorem realScalarQuadraticEstimateAt_of_contDiffOn_two_of_mem_interior
     have hwithin :=
       taylor_isLittleO (f := f) (x₀ := x) (n := 2) (s := s)
         hs (interior_subset hx) hf
-    simpa [nhdsWithin_eq_nhds.mpr (mem_interior_iff_mem_nhds.mp hx)] using hwithin
+    simpa only [taylorWithinEval_succ, taylor_within_zero_eval, CharP.cast_eq_zero, zero_add,
+      Nat.factorial_zero, Nat.cast_one, mul_one, inv_one, pow_one, one_mul,
+      iteratedDerivWithin_one, smul_eq_mul, Nat.factorial_one, Nat.reduceAdd,
+      nhdsWithin_eq_nhds.mpr (mem_interior_iff_mem_nhds.mp hx)] using hwithin
   have htwo : ((1 + 1 : ℝ)⁻¹) = (2 : ℝ)⁻¹ := by norm_num
-  simpa [p, q, taylor_within_apply, Nat.factorial, pow_succ, mul_assoc, mul_comm,
-    mul_left_comm, htwo] using htaylor
+  simpa only [p, q, iteratedDerivWithin_one, one_div, mul_comm, pow_succ, pow_zero, mul_one,
+    mul_assoc,
+    taylorWithinEval_succ, taylor_within_apply, zero_add, Finset.range_one, smul_eq_mul,
+    Finset.sum_singleton, iteratedDerivWithin_zero, Nat.factorial, Nat.cast_one, inv_one,
+    CharP.cast_eq_zero, Nat.succ_eq_add_one, one_mul, htwo, Nat.reduceAdd, mul_left_comm] using
+      htaylor
 
 /-- Points carrying real-line scalar quadratic estimate data. -/
 def realScalarQuadraticEstimateSet (f : ℝ → ℝ) : Set ℝ :=

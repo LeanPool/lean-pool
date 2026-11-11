@@ -556,7 +556,7 @@ theorem lineRightDeriv_eq_inner_of_gradient_mapClusterPt
     rightDeriv (AleksandrovDifferentiability.lineRestriction u x v) 0 = inner ℝ q v := by
   have hinnerCluster : MapClusterPt (inner ℝ q v) l (fun a : ι => inner ℝ (G a) v) := by
     have hcont : ContinuousAt (fun p : E => inner ℝ p v) q := by fun_prop
-    simpa [Function.comp_def] using hq.continuousAt_comp hcont
+    exact hq.continuousAt_comp hcont
   have hinnerLimit : Filter.Tendsto (fun a : ι => inner ℝ (G a) v) l
       (𝓝 (rightDeriv (AleksandrovDifferentiability.lineRestriction u x v) 0)) :=
     hlim.congr' hrealize
@@ -595,7 +595,7 @@ theorem ConvexOn.lineRightDeriv_le_inner_of_posLine_gradient_mapClusterPt
 /-- An ordinary derivative realizes the project-local right derivative. -/
 theorem rightDeriv_eq_of_hasDerivAt {f : ℝ → ℝ} {x p : ℝ} (h : HasDerivAt f p x) :
     rightDeriv f x = p := by
-  simpa [rightDeriv] using h.hasDerivWithinAt.derivWithin (uniqueDiffWithinAt_Ioi x)
+  exact h.hasDerivWithinAt.derivWithin (uniqueDiffWithinAt_Ioi x)
 
 /-- Differentiability of `u` at a point of an affine line differentiates the corresponding line
 restriction at that parameter. -/

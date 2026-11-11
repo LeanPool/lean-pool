@@ -475,7 +475,7 @@ theorem exists_semiconvex_twoSidedJet_sequence_subsequence_graph_tendsto
   have hB' : B'.IsHermitian := by
     exact hB.add hlambdaI
   have hconv : ConvexOn Real Set.univ g := by
-    simpa [g] using hsemi.convexOn_semiconvexConvexification (C := Set.univ) convex_univ
+    exact hsemi.convexOn_semiconvexConvexification (C := Set.univ) convex_univ
   have hmaxg : IsMaxOn (semiconvexQuadraticObjective g B') Set.univ 0 := by
     exact
       (isMaxOn_semiconvexQuadraticObjective_convexification_add_scalar_identity_iff
@@ -492,11 +492,11 @@ theorem exists_semiconvex_twoSidedJet_sequence_subsequence_graph_tendsto
   let Z : Hessian n := ZConv - lambda • (1 : Hessian n)
   have hJherm : ∀ k : Nat, (JSeq k).hessian.IsHermitian := by
     intro k
-    simpa [JSeq, QJet, quadraticModelJetAt] using (hJhermConv k).sub hlambdaI
+    exact (hJhermConv k).sub hlambdaI
   have htwoSided : ∀ k : Nat,
       HasSecondOrderJet f (xSeq k) (JSeq k).gradient (JSeq k).hessian := by
     intro k
-    simpa [JSeq, QJet, g] using
+    exact
       (htwoSidedConv k).of_semiconvexConvexification (lambda := lambda)
   have hZ :
       Filter.Tendsto (fun k : Nat => (JSeq (φ k)).hessian)
@@ -506,7 +506,7 @@ theorem exists_semiconvex_twoSidedJet_sequence_subsequence_graph_tendsto
           (fun k : Nat => (JSeqConv (φ k)).hessian - lambda • (1 : Hessian n))
           Filter.atTop (𝓝 (ZConv - lambda • (1 : Hessian n))) :=
       hZConv.sub tendsto_const_nhds
-    simpa [JSeq, QJet, Z, quadraticModelJetAt] using hsub
+    exact hsub
   have hclosedConv :
       ({ gradient := 0, hessian := ZConv } : Jet n) ∈ ClosedSuperjet Set.univ g 0 :=
     closedSuperjet_of_tendsto_closedSuperjet
@@ -517,7 +517,7 @@ theorem exists_semiconvex_twoSidedJet_sequence_subsequence_graph_tendsto
       (Filter.Eventually.of_forall fun k => hclosedConvSeq (φ k))
   have hclosed :
       ({ gradient := 0, hessian := Z } : Jet n) ∈ ClosedSuperjet Set.univ f 0 := by
-    simpa [Z, g] using
+    exact
       closedSuperjet_of_closedSuperjet_semiconvexConvexification_at_zero
         lambda f ZConv hclosedConv
   have hZHerm : Z.IsHermitian := by

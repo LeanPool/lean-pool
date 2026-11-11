@@ -52,7 +52,7 @@ theorem sourceCubeOscillation_nonneg_of_boundedOn {n : ℕ} {u : SourceCubeSpace
   have hle : sInf (u '' sourceOpenCube n 3) ≤ sSup (u '' sourceOpenCube n 3) := by
     exact (csInf_le hlower ⟨0, hx, rfl⟩).trans (le_csSup hupper ⟨0, hx, rfl⟩)
   dsimp [sourceCubeOscillation, oscOn]
-  linarith
+  linarith only [hle]
 
 /-- ENNReal squeeze lemma for estimates bounded by `K / m` for every positive natural `m`. -/
 theorem measure_eq_zero_of_forall_le_ofReal_const_div_nat
@@ -81,10 +81,10 @@ theorem measure_eq_zero_of_forall_le_ofReal_const_div_nat
     have hm_pos : 0 < m := Nat.cast_pos.mp hm_pos_real
     have hmul : K < (m : ℝ) * (ε : ℝ) := by
       have := (div_lt_iff₀ hεreal).mp hm
-      simpa [mul_comm] using this
+      exact this
     have hK_div_le : K / (m : ℝ) ≤ (ε : ℝ) := by
       rw [div_le_iff₀ hm_pos_real]
-      nlinarith [hmul]
+      nlinarith only [hmul, hmul]
     calc
       μ s ≤ ENNReal.ofReal (K / (m : ℝ)) := hbound m hm_pos
       _ ≤ ENNReal.ofReal (ε : ℝ) := ENNReal.ofReal_le_ofReal hK_div_le
@@ -144,7 +144,7 @@ theorem HasSourceCubeValueDifferenceUpperBound.of_sourceCubeOscillation
   have inf_le_hx : sInf (u '' sourceOpenCube n 3) ≤ u x :=
     csInf_le hlower ⟨x, hx, rfl⟩
   dsimp [sourceCubeOscillation, oscOn]
-  linarith
+  linarith only [hy_le_sup, inf_le_hx]
 
 /-- Boundedness of `u` on `Q_3`, in the project-local `BoundedOn` sense, supplies the
 order-boundedness needed to bound value differences by the source-cube oscillation. -/
@@ -186,7 +186,7 @@ theorem HasSourceCubeValueDifferenceUpperBound.subgradient_norm_le_of_mem_source
   have hle_diff : ‖p‖ ≤ u (x + e) - u x := by
     have hsupport' : u x + ‖p‖ ≤ u (x + e) := by
       simpa [hdiff, hinner_eq] using hsupport
-    linarith
+    linarith only [hsupport']
   exact hle_diff.trans (hval.2 (x + e) he_mem)
 
 /-- Variant of the source local gradient bound for points in `Q_{3/2}`. The proof tests the
@@ -223,11 +223,11 @@ theorem HasSourceCubeValueDifferenceUpperBound.subgradient_norm_le_of_mem_three_
   have hle_diff : (3 / 2 : ℝ) * ‖p‖ ≤ u (x + (3 / 2 : ℝ) • e) - u x := by
     have hsupport' : u x + (3 / 2 : ℝ) * ‖p‖ ≤ u (x + (3 / 2 : ℝ) • e) := by
       simpa [hdiff, inner_smul_right, hinner_eq] using hsupport
-    linarith
+    linarith only [hsupport']
   have hle_M : (3 / 2 : ℝ) * ‖p‖ ≤ M :=
     hle_diff.trans (hval.2 (x + (3 / 2 : ℝ) • e) he_mem)
   have hnorm_nonneg : 0 ≤ ‖p‖ := norm_nonneg _
-  nlinarith
+  nlinarith only [hM_nonneg, hle_M]
 
 /-- The source local subgradient bound gives bornological boundedness of the full
 subdifferential at points in `Q_{3/2}`. -/

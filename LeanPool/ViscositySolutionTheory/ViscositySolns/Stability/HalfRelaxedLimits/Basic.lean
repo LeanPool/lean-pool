@@ -341,7 +341,7 @@ theorem eventually_sub_test_lt_of_upperHalfRelaxedLimit_sub_test_lt
     (hlt : upperHalfRelaxedLimit uᵢ l C x - φ x < a) (hab : a < b) :
     ∀ᶠ q in halfRelaxedFilter l C x, uᵢ q.1 q.2 - φ q.2 < b := by
   rcases exists_between (lt_trans hlt hab) with ⟨c, hcU, hcb⟩
-  have hU : upperHalfRelaxedLimit uᵢ l C x < c + φ x := by linarith
+  have hU : upperHalfRelaxedLimit uᵢ l C x < c + φ x := by linarith only [hcU]
   have hval : ∀ᶠ q in halfRelaxedFilter l C x, uᵢ q.1 q.2 < c + φ x :=
     eventually_lt_of_limsup_lt hU hbddAbove
   have hgap : 0 < b - c := sub_pos.2 hcb
@@ -352,9 +352,9 @@ theorem eventually_sub_test_lt_of_upperHalfRelaxedLimit_sub_test_lt
       (halfRelaxedFilter l C x) (nhds (φ x)) :=
     hφ.tendsto.comp hcoord
   have hφevent : ∀ᶠ q in halfRelaxedFilter l C x, φ x - (b - c) < φ q.2 :=
-    hφtendsto (Ioi_mem_nhds (by linarith))
+    hφtendsto (Ioi_mem_nhds (by linarith only [hcb]))
   filter_upwards [hval, hφevent] with q hqval hqφ
-  linarith
+  linarith only [hqval, hqφ]
 
 /--
 If the lower half-relaxed limit satisfies
@@ -372,7 +372,7 @@ theorem eventually_lt_sub_test_of_lt_lowerHalfRelaxedLimit_sub_test
     (hlt : a < lowerHalfRelaxedLimit uᵢ l C x - φ x) (hba : b < a) :
     ∀ᶠ q in halfRelaxedFilter l C x, b < uᵢ q.1 q.2 - φ q.2 := by
   rcases exists_between (lt_trans hba hlt) with ⟨c, hbc, hcL⟩
-  have hL : c + φ x < lowerHalfRelaxedLimit uᵢ l C x := by linarith
+  have hL : c + φ x < lowerHalfRelaxedLimit uᵢ l C x := by linarith only [hcL]
   have hval : ∀ᶠ q in halfRelaxedFilter l C x, c + φ x < uᵢ q.1 q.2 :=
     eventually_lt_of_lt_liminf hL hbddBelow
   have hgap : 0 < c - b := sub_pos.2 hbc
@@ -383,9 +383,9 @@ theorem eventually_lt_sub_test_of_lt_lowerHalfRelaxedLimit_sub_test
       (halfRelaxedFilter l C x) (nhds (φ x)) :=
     hφ.tendsto.comp hcoord
   have hφevent : ∀ᶠ q in halfRelaxedFilter l C x, φ q.2 < φ x + (c - b) :=
-    hφtendsto (Iio_mem_nhds (by linarith))
+    hφtendsto (Iio_mem_nhds (by linarith only [hbc]))
   filter_upwards [hval, hφevent] with q hqval hqφ
-  linarith
+  linarith only [hqval, hqφ]
 
 /--
 Compact upper bound for `uᵢ - φ` from strict upper half-relaxed test bounds.
@@ -502,7 +502,7 @@ theorem exists_upperHalfRelaxedLimit_sub_lt
       upperHalfRelaxedLimit uᵢ l C x - ε < uᵢ i y := by
   have hlt : upperHalfRelaxedLimit uᵢ l C x - ε <
       upperHalfRelaxedLimit uᵢ l C x := by
-    linarith
+    linarith only [hε]
   have hfreq := frequently_lt_upperHalfRelaxedLimit
     (uᵢ := uᵢ) (l := l) (C := C) (x := x)
     (a := upperHalfRelaxedLimit uᵢ l C x - ε) hcobddBelow hlt
@@ -526,7 +526,7 @@ theorem exists_lt_lowerHalfRelaxedLimit_add
       uᵢ i y < lowerHalfRelaxedLimit uᵢ l C x + ε := by
   have hlt : lowerHalfRelaxedLimit uᵢ l C x <
       lowerHalfRelaxedLimit uᵢ l C x + ε := by
-    linarith
+    linarith only [hε]
   have hfreq := frequently_lowerHalfRelaxedLimit_lt
     (uᵢ := uᵢ) (l := l) (C := C) (x := x)
     (a := lowerHalfRelaxedLimit uᵢ l C x + ε) hcobddAbove hlt
@@ -553,7 +553,7 @@ theorem frequently_lt_upperHalfRelaxedLimit_sub_test
   have hε2 : 0 < ε / 2 := by positivity
   have hlt : upperHalfRelaxedLimit uᵢ l C x - ε / 2 <
       upperHalfRelaxedLimit uᵢ l C x := by
-    linarith
+    linarith only [hε]
   have hval : ∃ᶠ q in halfRelaxedFilter l C x,
       upperHalfRelaxedLimit uᵢ l C x - ε / 2 < uᵢ q.1 q.2 :=
     frequently_lt_upperHalfRelaxedLimit
@@ -566,9 +566,9 @@ theorem frequently_lt_upperHalfRelaxedLimit_sub_test
       (halfRelaxedFilter l C x) (nhds (φ x)) :=
     hφ.tendsto.comp hcoord
   have hφeventually : ∀ᶠ q in halfRelaxedFilter l C x, φ q.2 < φ x + ε / 2 :=
-    hφtendsto (Iio_mem_nhds (by linarith))
+    hφtendsto (Iio_mem_nhds (by linarith only [hε]))
   exact (hval.and_eventually hφeventually).mono fun q hq => by
-    linarith
+    linarith only [hq]
 
 /--
 After subtracting a continuous test function, the approximating family
@@ -588,7 +588,7 @@ theorem frequently_lowerHalfRelaxedLimit_sub_test_lt
   have hε2 : 0 < ε / 2 := by positivity
   have hlt : lowerHalfRelaxedLimit uᵢ l C x <
       lowerHalfRelaxedLimit uᵢ l C x + ε / 2 := by
-    linarith
+    linarith only [hε]
   have hval : ∃ᶠ q in halfRelaxedFilter l C x,
       uᵢ q.1 q.2 < lowerHalfRelaxedLimit uᵢ l C x + ε / 2 :=
     frequently_lowerHalfRelaxedLimit_lt
@@ -601,9 +601,9 @@ theorem frequently_lowerHalfRelaxedLimit_sub_test_lt
       (halfRelaxedFilter l C x) (nhds (φ x)) :=
     hφ.tendsto.comp hcoord
   have hφeventually : ∀ᶠ q in halfRelaxedFilter l C x, φ x - ε / 2 < φ q.2 :=
-    hφtendsto (Ioi_mem_nhds (by linarith))
+    hφtendsto (Ioi_mem_nhds (by linarith only [hε]))
   exact (hval.and_eventually hφeventually).mono fun q hq => by
-    linarith
+    linarith only [hq]
 
 /--
 For every `ε > 0`, every set of indices `A` with `A ∈ l`, and every

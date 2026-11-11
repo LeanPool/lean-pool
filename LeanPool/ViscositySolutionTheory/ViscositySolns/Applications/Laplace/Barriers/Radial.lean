@@ -67,11 +67,11 @@ theorem eucSq_pos_of_ne {x y : Point n} (h : x ≠ y) : 0 < eucSq x y := by
     apply h
     funext i
     have hsum : ∑ j, (x j - y j) * (x j - y j) = 0 := by
-      simpa [eucSq, dotProduct] using h'.symm
+      exact h'.symm
     have hi := (Finset.sum_eq_zero_iff_of_nonneg
       (fun j _ => mul_self_nonneg (x j - y j))).mp hsum i (Finset.mem_univ _)
     have := mul_self_eq_zero.mp hi
-    linarith
+    linarith only [this]
 
 /-- The sup norm is dominated by the Euclidean distance. -/
 theorem norm_sub_le_sqrt_eucSq (x y : Point n) : ‖x - y‖ <= Real.sqrt (eucSq x y) := by
@@ -86,7 +86,7 @@ theorem norm_sub_le_sqrt_eucSq (x y : Point n) : ‖x - y‖ <= Real.sqrt (eucSq
 theorem eucSq_le_card_mul_norm_sq (x y : Point n) : eucSq x y <= n * ‖x - y‖ ^ 2 := by
   have h : ∀ i, (x - y) i * (x - y) i <= ‖x - y‖ ^ 2 := fun i => by
     have h1 : |(x - y) i| <= ‖x - y‖ := by
-      simpa [Real.norm_eq_abs] using norm_le_pi_norm (x - y) i
+      exact norm_le_pi_norm (x - y) i
     have h2 : (x - y) i * (x - y) i = |(x - y) i| ^ 2 := by rw [sq_abs, sq]
     rw [h2]
     exact pow_le_pow_left₀ (abs_nonneg _) h1 2
@@ -101,8 +101,8 @@ theorem abs_dotProduct_le (a b : Point n) : |dotProduct a b| <= n * (‖a‖ * �
     _ <= ∑ i, |a i * b i| := Finset.abs_sum_le_sum_abs _ _
     _ <= ∑ _i : Fin n, ‖a‖ * ‖b‖ := Finset.sum_le_sum fun i _ => by
         rw [abs_mul]
-        exact mul_le_mul (by simpa [Real.norm_eq_abs] using norm_le_pi_norm a i)
-          (by simpa [Real.norm_eq_abs] using norm_le_pi_norm b i) (abs_nonneg _)
+        exact mul_le_mul (by exact norm_le_pi_norm a i)
+          (by exact norm_le_pi_norm b i) (abs_nonneg _)
           (norm_nonneg _)
     _ = n * (‖a‖ * ‖b‖) := by simp
 
@@ -162,10 +162,10 @@ theorem trace_hessian_le_of_mem_subjet_of_mem_superjet {C : Set (Point n)}
     rw [sub_self] at hqsub
     simp only [Jet.sub_gradient, Jet.sub_hessian]
     rw [hqsub]
-    linarith
+    linarith only [hy1, hy2]
   have h := trace_nonneg_of_mem_superjet_zero_univ hKJ
   rw [Jet.sub_hessian, Matrix.trace_sub] at h
-  linarith
+  linarith only [h]
 
 /-! ### Scalar Taylor expansion -/
 
@@ -282,8 +282,8 @@ theorem hasSecondOrderExpansionWithin_comp_eucSq {C : Set (Point n)}
           <= 2 * |dotProduct z (x - x₀)| + |dotProduct (x - x₀) (x - x₀)| := by
         refine (abs_add_le _ _).trans ?_
         rw [abs_mul, abs_two]
-      _ <= 2 * (n * (‖z‖ * t)) + n * (t * t) := by linarith
-      _ <= (2 * n * ‖z‖ + n) * t := by nlinarith [mul_le_mul_of_nonneg_left hd ht]
+      _ <= 2 * (n * (‖z‖ * t)) + n * (t * t) := by linarith only [h1, h2]
+      _ <= (2 * n * ‖z‖ + n) * t := by nlinarith only [hd, ht, mul_le_mul_of_nonneg_left hd ht]
   have hE' : (fun x : Point n => E (eucSq x c)) =o[𝓝 x₀] fun x => ‖x - x₀‖ ^ 2 :=
     (hG.comp_tendsto hcont).trans_isBigO (hSO.pow 2)
   have hpoly : (fun x : Point n => G₂ / 2 * (dotProduct (x - x₀) (x - x₀) *
@@ -294,7 +294,7 @@ theorem hasSecondOrderExpansionWithin_comp_eucSq {C : Set (Point n)}
       refine IsBigO.of_bound n (Eventually.of_forall fun x => ?_)
       have h2 := abs_dotProduct_le (x - x₀) (x - x₀)
       rw [Real.norm_eq_abs, Real.norm_of_nonneg (by positivity : (0 : Real) <= ‖x - x₀‖ ^ 2), sq]
-      linarith
+      linarith only [h2]
     have ho : (fun x : Point n => dotProduct (x - x₀) (x - x₀) +
         4 * dotProduct z (x - x₀)) =o[𝓝 x₀] fun _ => (1 : Real) := by
       rw [isLittleO_one_iff]
@@ -357,7 +357,7 @@ theorem trace_expProfileJet_hessian_nonpos {k α ρ : Real} (hk : 0 <= k) (hα :
   rw [trace_expProfileJet_hessian]
   have he := Real.exp_pos (-(α * (eucSq x₀ c - ρ)))
   have h1 : 0 <= 2 * k * α * Real.exp (-(α * (eucSq x₀ c - ρ))) := by positivity
-  exact mul_nonpos_of_nonneg_of_nonpos h1 (by linarith)
+  exact mul_nonpos_of_nonneg_of_nonpos h1 (by linarith only [hs])
 
 /-! ### Scalar inequalities for the barrier profile -/
 
@@ -374,16 +374,16 @@ theorem sqrt_le_sqrt_add_div {a b : Real} (ha : 0 <= a) (hb : 0 < b) :
     field_simp
     ring
   have : 0 <= (t - u) ^ 2 / (2 * u) := by positivity
-  linarith
+  linarith only [hid, this]
 
 theorem one_sub_exp_neg_le (u : Real) : 1 - Real.exp (-u) <= u := by
-  linarith [Real.add_one_le_exp (-u)]
+  linarith only [Real.add_one_le_exp (-u)]
 
 theorem mul_exp_neg_le_one_sub_exp_neg (u : Real) :
     u * Real.exp (-u) <= 1 - Real.exp (-u) := by
   have h := Real.add_one_le_exp u
   have he : Real.exp u * Real.exp (-u) = 1 := by rw [← Real.exp_add]; simp
   have hpos := Real.exp_pos (-u)
-  nlinarith
+  nlinarith only [h, he, hpos]
 
 end ViscositySolns

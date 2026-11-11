@@ -42,7 +42,8 @@ theorem measure_diff_directionalLineScalarEstimateSet_preimage_linearIsometryEqu
       e ⁻¹' Ω \ e ⁻¹' directionalLineScalarEstimateSet (e v) u =
         e ⁻¹' (Ω \ directionalLineScalarEstimateSet (e v) u) := by
     ext x
-    simp
+    simp only [Set.mem_sdiff, Set.mem_preimage, mem_directionalLineScalarEstimateSet,
+      Set.preimage_sdiff]
   rw [hset]
   exact measure_preimage_linearIsometryEquiv_eq_zero e hnull
 
@@ -59,7 +60,8 @@ theorem measure_diff_directionalLineScalarQuotientEstimateSet_preimage_linearIso
       e ⁻¹' Ω \ e ⁻¹' directionalLineScalarQuotientEstimateSet (e v) u =
         e ⁻¹' (Ω \ directionalLineScalarQuotientEstimateSet (e v) u) := by
     ext x
-    simp
+    simp only [Set.mem_sdiff, Set.mem_preimage, mem_directionalLineScalarQuotientEstimateSet,
+      Set.preimage_sdiff]
   rw [hset]
   exact measure_preimage_linearIsometryEquiv_eq_zero e hnull
 
@@ -80,7 +82,9 @@ theorem measure_diff_directionalLineScalarEstimateSet_image_linearIsometryEquiv_
       e ⁻¹' (e '' Ω) \ directionalLineScalarEstimateSet v ((u ∘ e.symm) ∘ e) =
         Ω \ directionalLineScalarEstimateSet v u := by
     ext x
-    simp [directionalLineScalarEstimateSet, Function.comp_def]
+    simp only [directionalLineScalarEstimateSet, Function.comp_def,
+      LinearIsometryEquiv.symm_apply_apply, Set.mem_sdiff, Set.mem_preimage, Set.mem_image,
+      EmbeddingLike.apply_eq_iff_eq, exists_eq_right, Set.mem_ofPred_eq]
   rwa [hset] at hpre
 
 /-- Quotient-estimate version of
@@ -99,7 +103,9 @@ theorem measure_diff_directionalLineScalarQuotientEstimateSet_image_linearIsomet
       e ⁻¹' (e '' Ω) \ directionalLineScalarQuotientEstimateSet v ((u ∘ e.symm) ∘ e) =
         Ω \ directionalLineScalarQuotientEstimateSet v u := by
       ext x
-      simp [directionalLineScalarQuotientEstimateSet, Function.comp_def]
+      simp only [directionalLineScalarQuotientEstimateSet, Function.comp_def,
+        LinearIsometryEquiv.symm_apply_apply, Set.mem_sdiff, Set.mem_preimage, Set.mem_image,
+        EmbeddingLike.apply_eq_iff_eq, exists_eq_right, Set.mem_ofPred_eq]
   rwa [hset] at hpre
 
 /-- Pull back full-measure finite directional slice-goodness through a linear isometry
@@ -116,7 +122,8 @@ theorem measure_diff_directionalSliceEstimateSet_preimage_linearIsometryEquiv_eq
       e ⁻¹' Ω \ e ⁻¹' directionalSliceEstimateSet D (fun i ↦ e (v i)) u =
         e ⁻¹' (Ω \ directionalSliceEstimateSet D (fun i ↦ e (v i)) u) := by
     ext x
-    simp
+    simp only [Set.mem_sdiff, Set.mem_preimage, mem_directionalSliceEstimateSet,
+      Set.preimage_sdiff]
   rw [hset]
   exact measure_preimage_linearIsometryEquiv_eq_zero e hnull
 
@@ -134,7 +141,8 @@ theorem measure_diff_directionalSliceQuotientEstimateSet_preimage_linearIsometry
       e ⁻¹' Ω \ e ⁻¹' directionalSliceQuotientEstimateSet D (fun i ↦ e (v i)) u =
         e ⁻¹' (Ω \ directionalSliceQuotientEstimateSet D (fun i ↦ e (v i)) u) := by
     ext x
-    simp
+    simp only [Set.mem_sdiff, Set.mem_preimage, mem_directionalSliceQuotientEstimateSet,
+      Set.preimage_sdiff]
   rw [hset]
   exact measure_preimage_linearIsometryEquiv_eq_zero e hnull
 
@@ -155,7 +163,9 @@ theorem measure_diff_directionalSliceEstimateSet_image_linearIsometryEquiv_eq_ze
       e ⁻¹' (e '' Ω) \ directionalSliceEstimateSet D v ((u ∘ e.symm) ∘ e) =
         Ω \ directionalSliceEstimateSet D v u := by
     ext x
-    simp [directionalSliceEstimateSet, DirectionalSliceEstimateAt, Function.comp_def]
+    simp only [directionalSliceEstimateSet, DirectionalSliceEstimateAt, Function.comp_def,
+      LinearIsometryEquiv.symm_apply_apply, Set.mem_sdiff, Set.mem_preimage, Set.mem_image,
+      EmbeddingLike.apply_eq_iff_eq, exists_eq_right, Set.mem_ofPred_eq, not_and, not_forall]
   rwa [hset] at hpre
 
 /-- Quotient-estimate version of
@@ -176,8 +186,10 @@ theorem measure_diff_directionalSliceQuotientEstimateSet_image_linearIsometryEqu
       e ⁻¹' (e '' Ω) \ directionalSliceQuotientEstimateSet D v ((u ∘ e.symm) ∘ e) =
         Ω \ directionalSliceQuotientEstimateSet D v u := by
     ext x
-    simp [directionalSliceQuotientEstimateSet, DirectionalSliceQuotientEstimateAt,
-      Function.comp_def]
+    simp only [directionalSliceQuotientEstimateSet, DirectionalSliceQuotientEstimateAt,
+      Function.comp_def, LinearIsometryEquiv.symm_apply_apply, Set.mem_sdiff, Set.mem_preimage,
+      Set.mem_image, EmbeddingLike.apply_eq_iff_eq, exists_eq_right, Set.mem_ofPred_eq, not_and,
+      not_forall]
   rwa [hset] at hpre
 
 /-- Pull back full-measure compatible finite directional slice-goodness through a linear isometry
@@ -194,7 +206,8 @@ theorem measure_diff_compatibleDirectionalSliceEstimateSet_preimage_linearIsomet
       e ⁻¹' Ω \ e ⁻¹' compatibleDirectionalSliceEstimateSet D (fun i ↦ e (v i)) u =
         e ⁻¹' (Ω \ compatibleDirectionalSliceEstimateSet D (fun i ↦ e (v i)) u) := by
     ext x
-    simp
+    simp only [Set.mem_sdiff, Set.mem_preimage, mem_compatibleDirectionalSliceEstimateSet,
+      Set.preimage_sdiff]
   rw [hset]
   exact measure_preimage_linearIsometryEquiv_eq_zero e hnull
 
@@ -214,7 +227,8 @@ theorem
       e ⁻¹' Ω \ e ⁻¹' symmetricCompatibleDirectionalSliceEstimateSet D (fun i ↦ e (v i)) u =
         e ⁻¹' (Ω \ symmetricCompatibleDirectionalSliceEstimateSet D (fun i ↦ e (v i)) u) := by
     ext x
-    simp
+    simp only [Set.mem_sdiff, Set.mem_preimage,
+      mem_symmetricCompatibleDirectionalSliceEstimateSet, Set.preimage_sdiff]
   rw [hset]
   exact measure_preimage_linearIsometryEquiv_eq_zero e hnull
 
@@ -235,7 +249,8 @@ theorem
       e ⁻¹' Ω \ e ⁻¹' compatibleDirectionalSliceQuotientEstimateSet D (fun i ↦ e (v i)) u =
         e ⁻¹' (Ω \ compatibleDirectionalSliceQuotientEstimateSet D (fun i ↦ e (v i)) u) := by
     ext x
-    simp
+    simp only [Set.mem_sdiff, Set.mem_preimage, mem_compatibleDirectionalSliceQuotientEstimateSet,
+      Set.preimage_sdiff]
   rw [hset]
   exact measure_preimage_linearIsometryEquiv_eq_zero e hnull
 
@@ -262,7 +277,8 @@ theorem
           (Ω \ symmetricCompatibleDirectionalSliceQuotientEstimateSet D
             (fun i ↦ e (v i)) u) := by
     ext x
-    simp
+    simp only [Set.mem_sdiff, Set.mem_preimage,
+      mem_symmetricCompatibleDirectionalSliceQuotientEstimateSet, Set.preimage_sdiff]
   rw [hset]
   exact measure_preimage_linearIsometryEquiv_eq_zero e hnull
 
@@ -284,8 +300,11 @@ theorem measure_diff_compatibleDirectionalSliceEstimateSet_image_linearIsometryE
       e ⁻¹' (e '' Ω) \ compatibleDirectionalSliceEstimateSet D v ((u ∘ e.symm) ∘ e) =
         Ω \ compatibleDirectionalSliceEstimateSet D v u := by
     ext x
-    simp [compatibleDirectionalSliceEstimateSet, CompatibleDirectionalSliceEstimateAt,
-      Function.comp_def]
+    simp only [compatibleDirectionalSliceEstimateSet, CompatibleDirectionalSliceEstimateAt,
+      Function.comp_def, LinearIsometryEquiv.symm_apply_apply, exists_and_left, exists_and_right,
+      Set.mem_sdiff, Set.mem_preimage, Set.mem_image, EmbeddingLike.apply_eq_iff_eq,
+      exists_eq_right, Set.mem_ofPred_eq, not_exists, not_and, not_forall,
+      forall_exists_index]
   rwa [hset] at hpre
 
 /-- Symmetric-compatible version of
@@ -308,8 +327,11 @@ theorem
           symmetricCompatibleDirectionalSliceEstimateSet D v ((u ∘ e.symm) ∘ e) =
         Ω \ symmetricCompatibleDirectionalSliceEstimateSet D v u := by
     ext x
-    simp [symmetricCompatibleDirectionalSliceEstimateSet,
-      SymmetricCompatibleDirectionalSliceEstimateAt, Function.comp_def]
+    simp only [symmetricCompatibleDirectionalSliceEstimateSet,
+      SymmetricCompatibleDirectionalSliceEstimateAt, Function.comp_def,
+      LinearIsometryEquiv.symm_apply_apply, Set.mem_sdiff, Set.mem_preimage, Set.mem_image,
+      EmbeddingLike.apply_eq_iff_eq, exists_eq_right, Set.mem_ofPred_eq, not_exists, not_and,
+      not_forall]
   rwa [hset] at hpre
 
 /-- Quotient-estimate version of
@@ -332,8 +354,11 @@ theorem
           compatibleDirectionalSliceQuotientEstimateSet D v ((u ∘ e.symm) ∘ e) =
         Ω \ compatibleDirectionalSliceQuotientEstimateSet D v u := by
     ext x
-    simp [compatibleDirectionalSliceQuotientEstimateSet,
-      CompatibleDirectionalSliceQuotientEstimateAt, Function.comp_def]
+    simp only [compatibleDirectionalSliceQuotientEstimateSet,
+      CompatibleDirectionalSliceQuotientEstimateAt, Function.comp_def,
+      LinearIsometryEquiv.symm_apply_apply, exists_and_left, exists_and_right, Set.mem_sdiff,
+      Set.mem_preimage, Set.mem_image, EmbeddingLike.apply_eq_iff_eq, exists_eq_right,
+      Set.mem_ofPred_eq, not_exists, not_and, not_forall, forall_exists_index]
   rwa [hset] at hpre
 
 /-- Symmetric-compatible quotient-estimate version of
@@ -356,8 +381,11 @@ theorem
           symmetricCompatibleDirectionalSliceQuotientEstimateSet D v ((u ∘ e.symm) ∘ e) =
         Ω \ symmetricCompatibleDirectionalSliceQuotientEstimateSet D v u := by
     ext x
-    simp [symmetricCompatibleDirectionalSliceQuotientEstimateSet,
-      SymmetricCompatibleDirectionalSliceQuotientEstimateAt, Function.comp_def]
+    simp only [symmetricCompatibleDirectionalSliceQuotientEstimateSet,
+      SymmetricCompatibleDirectionalSliceQuotientEstimateAt, Function.comp_def,
+      LinearIsometryEquiv.symm_apply_apply, Set.mem_sdiff, Set.mem_preimage, Set.mem_image,
+      EmbeddingLike.apply_eq_iff_eq, exists_eq_right, Set.mem_ofPred_eq, not_exists, not_and,
+      not_forall]
   rwa [hset] at hpre
 
 

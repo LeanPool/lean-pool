@@ -45,7 +45,7 @@ theorem inner_lt_of_norm_sub_center_le_of_forall_norm_sub_sq_lt
   have hsq_le :
       ‖x - (x - lam • normal)‖ ^ 2 ≤ ‖p - (x - lam • normal)‖ ^ 2 := by
     rw [sq_le_sq]
-    simpa [abs_of_nonneg (norm_nonneg _)] using hfar
+    simpa only [sub_sub_cancel, abs_of_nonneg (norm_nonneg _)] using hfar
   have hx_center : x - (x - lam • normal) = lam • normal := by
     abel
   have hp_center : p - (x - lam • normal) = (p - x) + lam • normal := by
@@ -53,7 +53,7 @@ theorem inner_lt_of_norm_sub_center_le_of_forall_norm_sub_sq_lt
   have hsq_nonneg :
       0 ≤ ‖p - x‖ ^ 2 + 2 * lam * inner ℝ (p - x) normal := by
     rw [hx_center, hp_center, norm_add_sq_real, real_inner_smul_right] at hsq_le
-    nlinarith
+    nlinarith only [hsq_le]
   have hinner_le : inner ℝ (p - x) normal ≤ u - inner ℝ normal x := by
     calc
       inner ℝ (p - x) normal = inner ℝ normal (p - x) := by rw [real_inner_comm]
@@ -61,11 +61,11 @@ theorem inner_lt_of_norm_sub_center_le_of_forall_norm_sub_sq_lt
       _ ≤ u - inner ℝ normal x := sub_le_sub_right hp_le _
   have hterm_le :
       2 * lam * inner ℝ (p - x) normal ≤ 2 * lam * (u - inner ℝ normal x) := by
-    exact mul_le_mul_of_nonneg_left hinner_le (by nlinarith)
+    exact mul_le_mul_of_nonneg_left hinner_le (by nlinarith only [hlam])
   have hforced : 2 * lam * (inner ℝ normal x - u) ≤ ‖p - x‖ ^ 2 := by
-    nlinarith
+    nlinarith only [hsq_nonneg, hterm_le]
   have hcontr := hbound hp
-  nlinarith
+  nlinarith only [hsq_nonneg, hterm_le, hcontr]
 
 omit [CompleteSpace E] in
 /-- If a set lies in the closed ball centered at `y` with `p` on the boundary, then
@@ -82,9 +82,9 @@ theorem exposesPoint_of_subset_closedBall
   refine ⟨hp, ?_⟩
   intro r hr hne
   have hdist : ‖r - y‖ ≤ ‖p - y‖ := by
-    simpa [Metric.mem_closedBall, dist_eq_norm] using hsub hr
+    simpa only [Metric.mem_closedBall, dist_eq_norm] using hsub hr
   have hsq : ‖r - y‖ ^ 2 ≤ ‖p - y‖ ^ 2 := by
-    nlinarith [hdist, norm_nonneg (r - y), norm_nonneg (p - y)]
+    nlinarith only [hdist, hdist, norm_nonneg (r - y), norm_nonneg (p - y)]
   have hdecomp : r - y = (r - p) + (p - y) := by
     abel
   have hexpand :
@@ -98,12 +98,12 @@ theorem exposesPoint_of_subset_closedBall
     have hrp_ne : r - p ≠ 0 := sub_ne_zero.mpr hne
     exact sq_pos_of_pos (norm_pos_iff.mpr hrp_ne)
   have hinner_neg : inner ℝ (r - p) (p - y) < 0 := by
-    nlinarith
+    nlinarith only [hsq, hexpand, hnorm_pos]
   have hdiff :
       inner ℝ (p - y) r - inner ℝ (p - y) p =
         inner ℝ (r - p) (p - y) := by
     rw [← inner_sub_right, real_inner_comm]
-  linarith
+  linarith only [hinner_neg, hdiff]
 
 omit [CompleteSpace E] in
 /-- Farthest points from a center are exposed by the corresponding supporting ball. -/
@@ -115,7 +115,7 @@ theorem exposesPoint_of_forall_norm_sub_le
   exposesPoint_of_subset_closedBall hp
     (by
       intro r hr
-      simpa [Metric.mem_closedBall, dist_eq_norm] using hmax hr)
+      simpa only [Metric.mem_closedBall, dist_eq_norm] using hmax hr)
 
 omit [CompleteSpace E] in
 /-- If the shifted center is far enough from the halfspace, a farthest point is an exposed point
@@ -140,7 +140,7 @@ theorem exists_exposesPoint_and_inner_lt_of_forall_norm_sub_sq_lt
   have hhalf : u < inner ℝ normal p :=
     inner_lt_of_norm_sub_center_le_of_forall_norm_sub_sq_lt
       (s := s) (normal := normal) (x := x) (p := p) (u := u) (lam := lam)
-      hlam hp hbound (by simpa [y] using hfar)
+      hlam hp hbound (by exact hfar)
   exact
     ⟨p, hp,
       exposesPoint_of_forall_norm_sub_le hp
@@ -181,8 +181,8 @@ theorem exists_mathlib_exposedPoint_inner_lt_of_isCompact_of_inner_lt
       ∀ ⦃z : E⦄, z ∈ s → ‖z - x‖ ^ 2 < 2 * lam * (inner ℝ normal x - u) := by
     intro z hz
     have hzle : ‖z - x‖ ^ 2 ≤ M := by
-      simpa [M] using (isMaxOn_iff.mp hrmax) z hz
-    nlinarith
+      exact (isMaxOn_iff.mp hrmax) z hz
+    nlinarith only [hscale, hzle]
   obtain ⟨p, _hp, hexposed, hpout⟩ :=
     exists_exposesPoint_and_inner_lt_of_forall_norm_sub_sq_lt
       (s := s) hcompact (normal := normal) (x := x) (u := u) (lam := lam)

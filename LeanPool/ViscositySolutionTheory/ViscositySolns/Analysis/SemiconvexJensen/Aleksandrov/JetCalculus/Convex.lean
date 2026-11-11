@@ -162,7 +162,7 @@ theorem Superjet.quadraticForm_nonneg_of_convexOn_closedBall
         simp [linePlus, lineMinus]
         ring
       rw [hmid] at hconv_ineq
-      simpa using hconv_ineq
+      exact hconv_ineq
     have havg_upper :
         (1 / 2 : Real) * g (linePlus t) + (1 / 2 : Real) * g (lineMinus t) <=
           g x + (1 / 2 : Real) * t ^ 2 * Q + c * t ^ 2 * ‖v‖ ^ 2 := by

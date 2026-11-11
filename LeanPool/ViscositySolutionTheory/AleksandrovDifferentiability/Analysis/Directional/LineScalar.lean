@@ -314,10 +314,10 @@ theorem RealScalarQuadraticEstimateAt.compatibleDirectionalSliceEstimateAt_real
   refine ⟨p, (fun i => v i ^ 2 * q), (fun i j => (v i + v j) ^ 2 * q), ?_, ?_⟩
   · intro i _hi
     have hi := hwith.real_lineRestriction (ξ := v i)
-    simpa [Real.inner_apply, mul_comm] using hi
+    exact hi
   · intro i _hi j _hj
     have hij := hwith.real_lineRestriction (ξ := v i + v j)
-    simpa [Real.inner_apply, mul_comm] using hij
+    exact hij
 
 /-- Punctured normalized quotient version of
 `RealScalarQuadraticEstimateAt.compatibleDirectionalSliceEstimateAt_real`. -/
@@ -330,10 +330,10 @@ theorem RealScalarQuadraticQuotientEstimateAt.compatibleDirectionalSliceQuotient
   refine ⟨p, (fun i => v i ^ 2 * q), (fun i j => (v i + v j) ^ 2 * q), ?_, ?_⟩
   · intro i _hi
     have hi := hwith.real_lineRestriction (ξ := v i)
-    simpa [Real.inner_apply, mul_comm] using hi
+    exact hi
   · intro i _hi j _hj
     have hij := hwith.real_lineRestriction (ξ := v i + v j)
-    simpa [Real.inner_apply, mul_comm] using hij
+    exact hij
 
 /-- On the real line, the ordinary scalar-estimate good set is contained in every directional
 line scalar-estimate good set. -/

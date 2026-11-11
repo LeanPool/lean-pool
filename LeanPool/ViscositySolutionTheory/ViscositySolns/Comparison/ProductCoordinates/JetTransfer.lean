@@ -64,7 +64,7 @@ theorem pointHessianToBlockHessian_eq_comparisonBlockDiagonal_of_mixed_dot_zero
               Z (Fin.natAdd n j) (Fin.castAdd n i) =
                 Z (Fin.castAdd n i) (Fin.natAdd n j) := by
             have h := congr_fun (congr_fun hZ.eq (Fin.castAdd n i)) (Fin.natAdd n j)
-            simpa [Matrix.conjTranspose] using h
+            exact h
           have hzero :
               Z (Fin.castAdd n i) (Fin.natAdd n j) = 0 := by
             have h := hmix (Pi.single i (1 : Real)) (Pi.single j (1 : Real))
@@ -76,14 +76,14 @@ theorem pointHessianToBlockHessian_eq_comparisonBlockDiagonal_of_mixed_dot_zero
             have hraw :
                 Z (Fin.natAdd n j) (Fin.castAdd n i) +
                     Z (Fin.castAdd n i) (Fin.natAdd n j) = 0 := by
-              simpa [pointHessianToBlockHessian, Fin.natAdd_eq_addNat] using h
+              exact h
             rw [hsym] at hraw
             have h' :
                 Z (Fin.castAdd n i) (Fin.natAdd n j) +
                     Z (Fin.castAdd n i) (Fin.natAdd n j) = 0 := by
               exact hraw
-            linarith
-          simpa [pointHessianToBlockHessian, Fin.natAdd_eq_addNat] using hzero
+            linarith only [hraw]
+          exact hzero
   | inr i =>
       cases b with
       | inl j =>
@@ -91,7 +91,7 @@ theorem pointHessianToBlockHessian_eq_comparisonBlockDiagonal_of_mixed_dot_zero
               Z (Fin.natAdd n i) (Fin.castAdd n j) =
                 Z (Fin.castAdd n j) (Fin.natAdd n i) := by
             have h := congr_fun (congr_fun hZ.eq (Fin.castAdd n j)) (Fin.natAdd n i)
-            simpa [Matrix.conjTranspose] using h
+            exact h
           have hzero :
               Z (Fin.natAdd n i) (Fin.castAdd n j) = 0 := by
             have h := hmix (Pi.single j (1 : Real)) (Pi.single i (1 : Real))
@@ -103,14 +103,14 @@ theorem pointHessianToBlockHessian_eq_comparisonBlockDiagonal_of_mixed_dot_zero
             have hraw :
                 Z (Fin.natAdd n i) (Fin.castAdd n j) +
                     Z (Fin.castAdd n j) (Fin.natAdd n i) = 0 := by
-              simpa [pointHessianToBlockHessian, Fin.natAdd_eq_addNat] using h
+              exact h
             rw [← hsym] at hraw
             have h' :
                 Z (Fin.natAdd n i) (Fin.castAdd n j) +
                     Z (Fin.natAdd n i) (Fin.castAdd n j) = 0 := by
               exact hraw
-            linarith
-          simpa [pointHessianToBlockHessian, Fin.natAdd_eq_addNat] using hzero
+            linarith only [hraw]
+          exact hzero
       | inr j =>
           simp [rightPointHessian, pointHessianToBlockHessian]
 
@@ -310,7 +310,7 @@ theorem mixed_dot_zero_of_hasSecondOrderExpansionWithin_blockFunctionToPointFunc
       have hqbase : quadraticModel z (F z) p Z z = F z := by
         simp [quadraticModel]
       rw [hboth, hleft, hright] at hsep
-      linarith
+      linarith only [hsep, hquad, hbase]
     have hdiv :
         (1 / 2 : Real) * B +
             (rho (z + t • u + t • v) - rho (z + t • u) -
@@ -328,7 +328,7 @@ theorem mixed_dot_zero_of_hasSecondOrderExpansionWithin_blockFunctionToPointFunc
             rho (z + t • v) + rho z)) / (t ^ 2) = 0
       rw [hmix]
       simp
-    linarith
+    linarith only [hdiv]
   have hconst_to_zero : Tendsto (fun _t : Real => (1 / 2 : Real) * B) l (nhds 0) := by
     have hneg : Tendsto
         (fun t : Real =>
@@ -346,7 +346,7 @@ theorem mixed_dot_zero_of_hasSecondOrderExpansionWithin_blockFunctionToPointFunc
   have hhalf : (1 / 2 : Real) * B = 0 :=
     tendsto_nhds_unique hconst_to_half hconst_to_zero
   have hB : B = 0 := by
-    linarith
+    linarith only [hhalf]
   simpa [B, u, v] using hB
 
 /--
@@ -404,7 +404,7 @@ theorem superjet_left_of_superjet_blockFunctionToPointFunction_sub_at
       ε * ‖pointWithLeft (n := n) z x - z‖ ^ 2 <=
         ε * ‖x - pointLeft (n := n) z‖ ^ 2 :=
     mul_le_mul_of_nonneg_left hsq hε.le
-  linarith
+  linarith only [hx, hexcess, hmul]
 
 /--
 Restrict a superjet of a separated difference to the right coordinate slice at
@@ -464,7 +464,7 @@ theorem subjet_right_of_superjet_blockFunctionToPointFunction_sub_at
         ε * ‖pointWithRight (n := n) z y - z‖ ^ 2 <=
           ε * ‖y - pointRight (n := n) z‖ ^ 2 :=
       mul_le_mul_of_nonneg_left hsq hε.le
-    linarith
+    linarith only [hy, hexcess, hmul]
   change Jr.neg ∈ Subjet Set.univ H (pointRight (n := n) z)
   simpa using
     (superjet_neg_iff_subjet (C := Set.univ) (u := fun y : Point n => -H y)
@@ -525,7 +525,7 @@ theorem subjet_left_of_subjet_blockFunctionToPointFunction_sub_at
       ε * ‖pointWithLeft (n := n) z x - z‖ ^ 2 <=
         ε * ‖x - pointLeft (n := n) z‖ ^ 2 :=
     mul_le_mul_of_nonneg_left hsq hε.le
-  linarith
+  linarith only [hx, hexcess, hmul]
 
 /--
 Restrict a subjet of a separated difference to the right coordinate slice at
@@ -584,7 +584,7 @@ theorem superjet_right_of_subjet_blockFunctionToPointFunction_sub_at
       ε * ‖pointWithRight (n := n) z y - z‖ ^ 2 <=
         ε * ‖y - pointRight (n := n) z‖ ^ 2 :=
     mul_le_mul_of_nonneg_left hsq hε.le
-  linarith
+  linarith only [hy, hexcess, hmul]
 
 /--
 Closed-superjet restriction to the left coordinate for a separated difference.
@@ -626,7 +626,7 @@ theorem closedSuperjet_left_of_closedSuperjet_blockFunctionToPointFunction_sub
     have hjet : Continuous fun z : ((Point (n + n) × Real) × Jet (n + n)) =>
         leftPointJet (n := n) z.2 :=
       continuous_leftPointJet.comp continuous_snd
-    simpa [T] using hleft.prodMk hjet
+    exact hleft.prodMk hjet
   have hT_mem : T ((0, F 0), J) ∈ closure (T '' SuperjetGraph Set.univ F) :=
     image_closure_subset_closure_image hTcont ⟨((0, F 0), J), hJ, rfl⟩
   have hsubset : T '' SuperjetGraph Set.univ F ⊆ SuperjetGraph Set.univ G := by
@@ -707,8 +707,8 @@ theorem closedSubjet_right_of_closedSuperjet_blockFunctionToPointFunction_sub
       have hhess : Continuous fun z : ((Point (n + n) × Real) × Jet (n + n)) =>
           -((rightPointJet (n := n) z.2).hessian) :=
         (Jet.continuous_hessian.comp hrightJet).neg
-      simpa [Jet.neg] using hgrad.prodMk hhess
-    simpa [T] using hleft.prodMk hjet
+      exact hgrad.prodMk hhess
+    exact hleft.prodMk hjet
   have hT_mem : T ((0, F 0), J) ∈ closure (T '' SuperjetGraph Set.univ F) :=
     image_closure_subset_closure_image hTcont ⟨((0, F 0), J), hJ, rfl⟩
   have hsubset : T '' SuperjetGraph Set.univ F ⊆ SubjetGraph Set.univ H := by

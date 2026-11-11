@@ -74,7 +74,7 @@ theorem quadraticModel_scalar_identity_convex_combination
         (lambda / 2) * a * b * dotProduct (x - y) (x - y) =
       a * quadraticModel 0 0 0 (lambda • (1 : Hessian n)) x +
         b * quadraticModel 0 0 0 (lambda • (1 : Hessian n)) y := by
-  have hb_eq : b = 1 - a := by linarith
+  have hb_eq : b = 1 - a := by linarith only [hab]
   subst b
   simp only [quadraticModel, sub_zero, zero_add, dotProduct_add, add_dotProduct,
     smul_dotProduct, dotProduct_smul, dotProduct_sub, sub_dotProduct, Matrix.smul_mulVec,
@@ -99,7 +99,7 @@ theorem quadraticModel_zero_convex_combination
         b * quadraticModel 0 0 0 B y -
           (1 / 2 : Real) * a * b *
             dotProduct (Matrix.mulVec B (x - y)) (x - y) := by
-  have hb_eq : b = 1 - a := by linarith
+  have hb_eq : b = 1 - a := by linarith only [hab]
   subst b
   simp only [quadraticModel, sub_zero, zero_add, dotProduct_add, add_dotProduct,
     smul_dotProduct, dotProduct_smul, dotProduct_sub, sub_dotProduct,
@@ -137,14 +137,14 @@ theorem dotProduct_mulVec_le_entrywise_abs_mul_dotProduct_self
         |(1 / 2 : Real) * dotProduct (Matrix.mulVec B v) v| <=
           ((1 / 2 : Real) * eta * (n : Real) * (n : Real)) * ‖v‖ ^ 2 := by
       simpa [hquad_eq] using hquad
-    linarith
+    linarith only [hle_abs, hquad']
   have hdot_norm : ‖v‖ ^ 2 <= dotProduct v v :=
     norm_sq_le_dotProduct_self v
   have hcoeff_nonneg : 0 <= eta * (n : Real) * (n : Real) := by positivity
   calc
     dotProduct (Matrix.mulVec B v) v <=
         (eta * (n : Real) * (n : Real)) * ‖v‖ ^ 2 := by
-      linarith
+      linarith only [hhalf_le]
     _ <= (eta * (n : Real) * (n : Real)) * dotProduct v v := by
       exact mul_le_mul_of_nonneg_left hdot_norm hcoeff_nonneg
 
@@ -173,7 +173,7 @@ theorem coordinateSemiconvexOn_neg_quadraticModel_of_entrywise_abs_le
     dotProduct_mulVec_le_entrywise_abs_mul_dotProduct_self
       (n := n) B heta hB (x - y)
   have hab_nonneg : 0 <= a * b := mul_nonneg ha hb
-  nlinarith
+  nlinarith only [hquad, hD, hab_nonneg]
 
 /--
 Coordinate semiconvexity implies convexity after adding the quadratic function
@@ -195,7 +195,7 @@ theorem CoordinateSemiconvexOn.convexOn_semiconvexConvexification
     quadraticModel_scalar_identity_convex_combination (n := n) lambda x y (a := a) (b := b) hab
   unfold semiconvexConvexification
   simp only [smul_eq_mul]
-  nlinarith
+  nlinarith only [hf, hquad]
 
 /--
 Convexity after adding the quadratic function implies coordinate
@@ -215,7 +215,7 @@ theorem ConvexOn.coordinateSemiconvexOn_of_semiconvexConvexification
     quadraticModel_scalar_identity_convex_combination (n := n) lambda x y (a := a) (b := b) hab
   unfold semiconvexConvexification at hconv_ineq
   simp only [smul_eq_mul] at hconv_ineq
-  nlinarith
+  nlinarith only [hconv_ineq, hquad]
 
 /--
 On a convex set, coordinate semiconvexity is equivalent to convexity after
@@ -272,12 +272,12 @@ theorem CoordinateSemiconvexOn.mono
       simpa [sq] using sq_nonneg ((x - y) i)
   have hfactor_nonneg : 0 <= a * b * dotProduct (x - y) (x - y) := by
     exact mul_nonneg (mul_nonneg ha hb) hdot_nonneg
-  have hcoeff : lambda / 2 <= mu / 2 := by linarith
+  have hcoeff : lambda / 2 <= mu / 2 := by linarith only [hlambda_mu]
   have hpenalty :
       (lambda / 2) * (a * b * dotProduct (x - y) (x - y)) <=
         (mu / 2) * (a * b * dotProduct (x - y) (x - y)) :=
     mul_le_mul_of_nonneg_right hcoeff hfactor_nonneg
-  nlinarith
+  nlinarith only [h, hpenalty]
 
 /--
 The sum of two coordinate semiconvex functions is coordinate semiconvex, with
@@ -296,7 +296,7 @@ theorem CoordinateSemiconvexOn.add
   intro x hx y hy a b ha hb hab hcombo
   have hf' := hf x hx y hy a b ha hb hab hcombo
   have hg' := hg x hx y hy a b ha hb hab hcombo
-  nlinarith
+  nlinarith only [hf', hg']
 
 /--
 The coordinate semiconvexity inequality restricts to subsets.
@@ -420,7 +420,7 @@ theorem supConvolutionKernel_convex_combination
       a * supConvolutionKernel lambda v ξ z +
         b * supConvolutionKernel lambda v ζ z +
           (lambda / 2) * a * b * dotProduct (ξ - ζ) (ξ - ζ) := by
-  have hb_eq : b = 1 - a := by linarith
+  have hb_eq : b = 1 - a := by linarith only [hab]
   let dx : Point n := z - ξ
   let dy : Point n := z - ζ
   have hcenter : z - (a • ξ + b • ζ) = a • dx + b • dy := by
@@ -480,7 +480,7 @@ theorem coordinateSemiconvexOn_compactSupConvolution_of_exists_isMaxOn
     a * compactSupConvolution lambda K v ξ + b * compactSupConvolution lambda K v ζ +
       (lambda / 2) * a * b * dotProduct (ξ - ζ) (ξ - ζ)
   rw [hcombo_eq, supConvolutionKernel_convex_combination lambda v z ξ ζ hab]
-  nlinarith
+  nlinarith only [ha, hb, hξ_le, hζ_le]
 
 /--
 Compactness and upper semicontinuity supply the maximum points needed for the
@@ -575,7 +575,7 @@ theorem semiconvexQuadraticObjective_convexification_add_scalar_identity
     quadraticModel_add (x0 := (0 : Point n)) (r := 0) (s := 0)
       (p := 0) (q := 0) (X := B) (Y := lambda • (1 : Hessian n)) x
   simp only [zero_add] at hquad
-  nlinarith
+  nlinarith only [hquad]
 
 /--
 The maximum hypothesis for the semiconvex function is equivalent to the

@@ -177,7 +177,7 @@ theorem ExposesPoint.of_subset_singleton
   refine ⟨hp, ?_⟩
   intro r hr hne
   have hrp : r = p := by
-    simpa using hsubset hr
+    exact hsubset hr
   exact False.elim (hne hrp)
 
 omit [CompleteSpace E] in

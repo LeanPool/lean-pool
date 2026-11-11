@@ -39,7 +39,7 @@ theorem superjet_add_hasSecondOrderExpansionWithin {C : Set (Point n)}
   filter_upwards [hu, hphi] with y huy hphiy
   rw [Jet.add_gradient, Jet.add_hessian, quadraticModel_add]
   rw [hphiy]
-  linarith
+  linarith only [huy]
 
 /--
 Adding a function with second-order expansion shifts subjets by its jet.
@@ -55,7 +55,7 @@ theorem subjet_add_hasSecondOrderExpansionWithin {C : Set (Point n)}
   filter_upwards [hu, hphi] with y huy hphiy
   rw [Jet.add_gradient, Jet.add_hessian, quadraticModel_add]
   rw [hphiy]
-  linarith
+  linarith only [huy]
 
 /--
 Subtracting the jet of a function with second-order expansion pulls back a
@@ -74,7 +74,7 @@ theorem superjet_sub_of_add_hasSecondOrderExpansionWithin {C : Set (Point n)}
     u y = (u y + φ y) - φ y := by ring
     _ <= (quadraticModel x ((fun y => u y + φ y) x) J.gradient J.hessian y +
           rho y) - φ y := by
-      linarith
+      linarith only [huy]
     _ = (quadraticModel x ((fun y => u y + φ y) x) J.gradient J.hessian y +
           rho y) - (quadraticModel x (φ x) A.gradient A.hessian y + sigma y) := by
       rw [hphiy]
@@ -86,7 +86,7 @@ theorem superjet_sub_of_add_hasSecondOrderExpansionWithin {C : Set (Point n)}
               quadraticModel x (φ x) A.gradient A.hessian y := by
         have h := quadraticModel_sub x (u x + φ x) (φ x) J.gradient A.gradient
           J.hessian A.hessian y
-        simpa using h
+        simpa only [add_sub_cancel_right] using h
       simp only [Jet.sub_gradient, Jet.sub_hessian]
       rw [hq]
       ring
@@ -115,14 +115,14 @@ theorem subjet_sub_of_add_hasSecondOrderExpansionWithin {C : Set (Point n)}
               quadraticModel x (φ x) A.gradient A.hessian y := by
         have h := quadraticModel_sub x (u x + φ x) (φ x) J.gradient A.gradient
           J.hessian A.hessian y
-        simpa using h
+        simpa only [add_sub_cancel_right] using h
       simp only [Jet.sub_gradient, Jet.sub_hessian]
       rw [hq]
       ring
     _ = (quadraticModel x ((fun y => u y + φ y) x) J.gradient J.hessian y +
           rho y) - φ y := by
       rw [hphiy]
-    _ <= (u y + φ y) - φ y := by linarith
+    _ <= (u y + φ y) - φ y := by linarith only [huy]
     _ = u y := by ring
 
 /--
@@ -139,7 +139,7 @@ theorem superjet_add_hasSecondOrderExpansionWithin_iff {C : Set (Point n)}
   · intro hJ
     have h := superjet_add_hasSecondOrderExpansionWithin hJ hφ
     have hEq : J - A + A = J := sub_add_cancel J A
-    simpa [hEq] using h
+    simpa only [hEq] using h
 
 /--
 Shift equivalence for subjets under addition of a function with second-order
@@ -155,7 +155,7 @@ theorem subjet_add_hasSecondOrderExpansionWithin_iff {C : Set (Point n)}
   · intro hJ
     have h := subjet_add_hasSecondOrderExpansionWithin hJ hφ
     have hEq : J - A + A = J := sub_add_cancel J A
-    simpa [hEq] using h
+    simpa only [hEq] using h
 
 /--
 Enlarging the Hessian of a superjet preserves membership. This is the basic
@@ -174,7 +174,7 @@ theorem superjet_mono_hessian {C : Set (Point n)} {u : Point n -> Real}
       have hq : quadraticModel x (u x) J.gradient J.hessian y <=
           quadraticModel x (u x) J.gradient Y y :=
         quadraticModel_le_of_hessian_le hXY y
-      linarith
+      linarith only [hq]
 
 /--
 Shrinking the Hessian of a subjet preserves membership. This is the subjet
@@ -193,7 +193,7 @@ theorem subjet_mono_hessian {C : Set (Point n)} {u : Point n -> Real}
       have hq : quadraticModel x (u x) J.gradient Y y <=
           quadraticModel x (u x) J.gradient J.hessian y :=
         quadraticModel_le_of_hessian_le hYX y
-      linarith
+      linarith only [hq]
     _ <= u y := huy
 
 /--
@@ -210,12 +210,11 @@ theorem eventually_le_quadraticModel_hessian_add_identity_of_superjet
   have hrho_bound : ∀ᶠ y in nhdsWithin x C,
       ‖rho y‖ <= ((1 / 2 : Real) * δ) * ‖y - x‖ ^ 2 := by
     filter_upwards [hrho.bound hcoef_pos] with y hy
-    simpa [Real.norm_eq_abs,
-      abs_of_nonneg (mul_nonneg hcoef_pos.le (sq_nonneg ‖y - x‖))] using hy
+    simpa only [Real.norm_eq_abs, one_div, norm_pow, abs_norm] using hy
   filter_upwards [hu, hrho_bound] with y huy hρ
   have hρ_le : rho y <= ((1 / 2 : Real) * δ) * ‖y - x‖ ^ 2 := by
     have hρ_abs : rho y <= ‖rho y‖ := by
-      simpa [Real.norm_eq_abs] using le_abs_self (rho y)
+      exact le_abs_self (rho y)
     exact hρ_abs.trans hρ
   have hidentity :
       ((1 / 2 : Real) * δ) * ‖y - x‖ ^ 2 <=
@@ -225,15 +224,15 @@ theorem eventually_le_quadraticModel_hessian_add_identity_of_superjet
       quadraticModel x (u x) J.gradient (J.hessian + δ • (1 : Hessian n)) y =
         quadraticModel x (u x) J.gradient J.hessian y +
           quadraticModel x 0 0 (δ • (1 : Hessian n)) y := by
-    simpa using
+    simpa only [add_zero] using
       (quadraticModel_add x (u x) 0 J.gradient 0
         J.hessian (δ • (1 : Hessian n)) y)
   calc
     u y <= quadraticModel x (u x) J.gradient J.hessian y + rho y := huy
     _ <= quadraticModel x (u x) J.gradient J.hessian y +
-        ((1 / 2 : Real) * δ) * ‖y - x‖ ^ 2 := by linarith
+        ((1 / 2 : Real) * δ) * ‖y - x‖ ^ 2 := by linarith only [hρ_le]
     _ <= quadraticModel x (u x) J.gradient J.hessian y +
-        quadraticModel x 0 0 (δ • (1 : Hessian n)) y := by linarith
+        quadraticModel x 0 0 (δ • (1 : Hessian n)) y := by linarith only [hidentity]
     _ = quadraticModel x (u x) J.gradient (J.hessian + δ • (1 : Hessian n)) y :=
       hsplit.symm
 
@@ -251,12 +250,11 @@ theorem eventually_quadraticModel_hessian_sub_identity_le_of_subjet
   have hrho_bound : ∀ᶠ y in nhdsWithin x C,
       ‖rho y‖ <= ((1 / 2 : Real) * δ) * ‖y - x‖ ^ 2 := by
     filter_upwards [hrho.bound hcoef_pos] with y hy
-    simpa [Real.norm_eq_abs,
-      abs_of_nonneg (mul_nonneg hcoef_pos.le (sq_nonneg ‖y - x‖))] using hy
+    simpa only [Real.norm_eq_abs, one_div, norm_pow, abs_norm] using hy
   filter_upwards [hu, hrho_bound] with y huy hρ
   have hnegρ_le : -rho y <= ((1 / 2 : Real) * δ) * ‖y - x‖ ^ 2 := by
     have hρ_abs : -rho y <= ‖rho y‖ := by
-      simpa [Real.norm_eq_abs] using neg_le_abs (rho y)
+      exact neg_le_abs (rho y)
     exact hρ_abs.trans hρ
   have hidentity :
       ((1 / 2 : Real) * δ) * ‖y - x‖ ^ 2 <=
@@ -266,7 +264,7 @@ theorem eventually_quadraticModel_hessian_sub_identity_le_of_subjet
       quadraticModel x (u x) J.gradient (J.hessian - δ • (1 : Hessian n)) y =
         quadraticModel x (u x) J.gradient J.hessian y -
           quadraticModel x 0 0 (δ • (1 : Hessian n)) y := by
-    simpa using
+    simpa only [sub_zero] using
       (quadraticModel_sub x (u x) 0 J.gradient 0
         J.hessian (δ • (1 : Hessian n)) y)
   calc
@@ -274,8 +272,8 @@ theorem eventually_quadraticModel_hessian_sub_identity_le_of_subjet
         quadraticModel x (u x) J.gradient J.hessian y -
           quadraticModel x 0 0 (δ • (1 : Hessian n)) y := hsplit
     _ <= quadraticModel x (u x) J.gradient J.hessian y -
-        ((1 / 2 : Real) * δ) * ‖y - x‖ ^ 2 := by linarith
-    _ <= quadraticModel x (u x) J.gradient J.hessian y + rho y := by linarith
+        ((1 / 2 : Real) * δ) * ‖y - x‖ ^ 2 := by linarith only [hidentity]
+    _ <= quadraticModel x (u x) J.gradient J.hessian y + rho y := by linarith only [hnegρ_le]
     _ <= u y := huy
 
 /--
@@ -298,12 +296,11 @@ theorem eventually_quadraticModel_lift_hessian_sub_identity_lt_of_subjet
   have hrho_bound : ∀ᶠ y in nhdsWithin x C,
       ‖rho y‖ <= ((1 / 4 : Real) * γ) * ‖y - x‖ ^ 2 := by
     filter_upwards [hrho.bound hcoef_pos] with y hy
-    simpa [Real.norm_eq_abs,
-      abs_of_nonneg (mul_nonneg hcoef_pos.le (sq_nonneg ‖y - x‖))] using hy
+    simpa only [Real.norm_eq_abs, one_div, norm_pow, abs_norm] using hy
   filter_upwards [hu, hrho_bound] with y huy hρ hmargin
   have hnegρ_le : -rho y <= ((1 / 4 : Real) * γ) * ‖y - x‖ ^ 2 := by
     have hρ_abs : -rho y <= ‖rho y‖ := by
-      simpa [Real.norm_eq_abs] using neg_le_abs (rho y)
+      exact neg_le_abs (rho y)
     exact hρ_abs.trans hρ
   have hidentity :
       ((1 / 2 : Real) * γ) * ‖y - x‖ ^ 2 <=
@@ -317,14 +314,14 @@ theorem eventually_quadraticModel_lift_hessian_sub_identity_lt_of_subjet
         quadraticModel x (u x) J.gradient (J.hessian - γ • (1 : Hessian n)) y =
           quadraticModel x (u x) J.gradient J.hessian y -
             quadraticModel x 0 0 (γ • (1 : Hessian n)) y := by
-      simpa using
+      simpa only [sub_zero] using
         (quadraticModel_sub x (u x) 0 J.gradient 0
           J.hessian (γ • (1 : Hessian n)) y)
     calc
       quadraticModel x (u x + δ) J.gradient (J.hessian - γ • (1 : Hessian n)) y =
           quadraticModel x (u x) J.gradient (J.hessian - γ • (1 : Hessian n)) y +
             δ := by
-            simp [quadraticModel]
+            simp only [quadraticModel, dotProduct_sub, one_div]
             ring
       _ = quadraticModel x (u x) J.gradient J.hessian y + δ -
           quadraticModel x 0 0 (γ • (1 : Hessian n)) y := by
@@ -336,8 +333,9 @@ theorem eventually_quadraticModel_lift_hessian_sub_identity_lt_of_subjet
         quadraticModel x (u x) J.gradient J.hessian y + δ -
           quadraticModel x 0 0 (γ • (1 : Hessian n)) y := hsplit
     _ <= quadraticModel x (u x) J.gradient J.hessian y + δ -
-        ((1 / 2 : Real) * γ) * ‖y - x‖ ^ 2 := by linarith
-    _ < quadraticModel x (u x) J.gradient J.hessian y + rho y := by linarith
+        ((1 / 2 : Real) * γ) * ‖y - x‖ ^ 2 := by linarith only [hidentity]
+    _ < quadraticModel x (u x) J.gradient J.hessian y + rho y := by linarith only [hmargin,
+      hnegρ_le]
     _ <= u y := huy
 
 /--
@@ -358,12 +356,11 @@ theorem eventually_forall_quadraticModel_lift_hessian_sub_identity_lt_of_subjet
   have hrho_bound : ∀ᶠ y in nhdsWithin x C,
       ‖rho y‖ <= ((1 / 4 : Real) * γ) * ‖y - x‖ ^ 2 := by
     filter_upwards [hrho.bound hcoef_pos] with y hy
-    simpa [Real.norm_eq_abs,
-      abs_of_nonneg (mul_nonneg hcoef_pos.le (sq_nonneg ‖y - x‖))] using hy
+    simpa only [Real.norm_eq_abs, one_div, norm_pow, abs_norm] using hy
   filter_upwards [hu, hrho_bound] with y huy hρ δ hmargin
   have hnegρ_le : -rho y <= ((1 / 4 : Real) * γ) * ‖y - x‖ ^ 2 := by
     have hρ_abs : -rho y <= ‖rho y‖ := by
-      simpa [Real.norm_eq_abs] using neg_le_abs (rho y)
+      exact neg_le_abs (rho y)
     exact hρ_abs.trans hρ
   have hidentity :
       ((1 / 2 : Real) * γ) * ‖y - x‖ ^ 2 <=
@@ -377,14 +374,14 @@ theorem eventually_forall_quadraticModel_lift_hessian_sub_identity_lt_of_subjet
         quadraticModel x (u x) J.gradient (J.hessian - γ • (1 : Hessian n)) y =
           quadraticModel x (u x) J.gradient J.hessian y -
             quadraticModel x 0 0 (γ • (1 : Hessian n)) y := by
-      simpa using
+      simpa only [sub_zero] using
         (quadraticModel_sub x (u x) 0 J.gradient 0
           J.hessian (γ • (1 : Hessian n)) y)
     calc
       quadraticModel x (u x + δ) J.gradient (J.hessian - γ • (1 : Hessian n)) y =
           quadraticModel x (u x) J.gradient (J.hessian - γ • (1 : Hessian n)) y +
             δ := by
-            simp [quadraticModel]
+            simp only [quadraticModel, dotProduct_sub, one_div]
             ring
       _ = quadraticModel x (u x) J.gradient J.hessian y + δ -
           quadraticModel x 0 0 (γ • (1 : Hessian n)) y := by
@@ -396,8 +393,9 @@ theorem eventually_forall_quadraticModel_lift_hessian_sub_identity_lt_of_subjet
         quadraticModel x (u x) J.gradient J.hessian y + δ -
           quadraticModel x 0 0 (γ • (1 : Hessian n)) y := hsplit
     _ <= quadraticModel x (u x) J.gradient J.hessian y + δ -
-        ((1 / 2 : Real) * γ) * ‖y - x‖ ^ 2 := by linarith
-    _ < quadraticModel x (u x) J.gradient J.hessian y + rho y := by linarith
+        ((1 / 2 : Real) * γ) * ‖y - x‖ ^ 2 := by linarith only [hidentity]
+    _ < quadraticModel x (u x) J.gradient J.hessian y + rho y := by linarith only [hmargin,
+      hnegρ_le]
     _ <= u y := huy
 
 /--
@@ -421,19 +419,19 @@ theorem superjet_of_forall_add_pos_smul_one {C : Set (Point n)}
   let J0 : Jet n := { gradient := p, hessian := X }
   let Jδ : Jet n := { gradient := p, hessian := X + δ • (1 : Hessian n) }
   have hJδ : Jδ ∈ Superjet C u x := h δ hδ
-  have hbase := superjetExcess_secondOrderNonposWithin hJδ (ε / 2) (by linarith)
+  have hbase := superjetExcess_secondOrderNonposWithin hJδ (ε / 2) (by linarith only [hε])
   have hcoef : (1 / 2 : Real) * δ * (n : Real) <= ε / 2 := by
     have hn_nonneg : 0 <= (n : Real) := Nat.cast_nonneg n
     have hfrac : (n : Real) / denom <= 1 := by
       rw [div_le_one hdenom_pos]
       dsimp [denom]
-      linarith
+      linarith only []
     calc
       (1 / 2 : Real) * δ * (n : Real) = (ε / 2) * ((n : Real) / denom) := by
         dsimp [δ]
         field_simp [hdenom_pos.ne']
       _ <= (ε / 2) * 1 := by
-        exact mul_le_mul_of_nonneg_left hfrac (by linarith)
+        exact mul_le_mul_of_nonneg_left hfrac (by linarith only [hε])
       _ = ε / 2 := by ring
   filter_upwards [hbase] with y hy
   have hpert : quadraticModel x 0 (Jδ - J0).gradient (Jδ - J0).hessian y <=
@@ -447,13 +445,13 @@ theorem superjet_of_forall_add_pos_smul_one {C : Set (Point n)}
     calc
       quadraticModel x 0 (Jδ - J0).gradient (Jδ - J0).hessian y =
           quadraticModel x 0 0 (δ • (1 : Hessian n)) y := by
-        simp [Jδ, J0]
+        simp only [Jet.sub_gradient, sub_self, Jet.sub_hessian, add_sub_cancel_left, Jδ, J0]
       _ <= ((1 / 2 : Real) * δ * (n : Real)) * ‖y - x‖ ^ 2 := hquad
       _ <= (ε / 2) * ‖y - x‖ ^ 2 := hcoef_mul
   have hformula := superjetExcess_eq_add_quadraticModel_sub u x J0 Jδ y
   change SuperjetExcess u x J0 y <= ε * ‖y - x‖ ^ 2
   rw [hformula]
-  nlinarith [sq_nonneg ‖y - x‖]
+  nlinarith only [hy, hpert, sq_nonneg ‖y - x‖]
 
 /--
 If all positive identity-Hessian shrinkings of a fixed-gradient jet are subjets,
@@ -475,19 +473,19 @@ theorem subjet_of_forall_sub_pos_smul_one {C : Set (Point n)}
   let J0 : Jet n := { gradient := p, hessian := X }
   let Jδ : Jet n := { gradient := p, hessian := X - δ • (1 : Hessian n) }
   have hJδ : Jδ ∈ Subjet C u x := h δ hδ
-  have hbase := subjetExcess_secondOrderNonposWithin hJδ (ε / 2) (by linarith)
+  have hbase := subjetExcess_secondOrderNonposWithin hJδ (ε / 2) (by linarith only [hε])
   have hcoef : (1 / 2 : Real) * δ * (n : Real) <= ε / 2 := by
     have hn_nonneg : 0 <= (n : Real) := Nat.cast_nonneg n
     have hfrac : (n : Real) / denom <= 1 := by
       rw [div_le_one hdenom_pos]
       dsimp [denom]
-      linarith
+      linarith only []
     calc
       (1 / 2 : Real) * δ * (n : Real) = (ε / 2) * ((n : Real) / denom) := by
         dsimp [δ]
         field_simp [hdenom_pos.ne']
       _ <= (ε / 2) * 1 := by
-        exact mul_le_mul_of_nonneg_left hfrac (by linarith)
+        exact mul_le_mul_of_nonneg_left hfrac (by linarith only [hε])
       _ = ε / 2 := by ring
   filter_upwards [hbase] with y hy
   have hpert : quadraticModel x 0 (J0 - Jδ).gradient (J0 - Jδ).hessian y <=
@@ -501,13 +499,13 @@ theorem subjet_of_forall_sub_pos_smul_one {C : Set (Point n)}
     calc
       quadraticModel x 0 (J0 - Jδ).gradient (J0 - Jδ).hessian y =
           quadraticModel x 0 0 (δ • (1 : Hessian n)) y := by
-        simp [Jδ, J0]
+        simp only [Jet.sub_gradient, sub_self, Jet.sub_hessian, sub_sub_cancel, J0, Jδ]
       _ <= ((1 / 2 : Real) * δ * (n : Real)) * ‖y - x‖ ^ 2 := hquad
       _ <= (ε / 2) * ‖y - x‖ ^ 2 := hcoef_mul
   have hformula := subjetExcess_eq_add_quadraticModel_sub u x J0 Jδ y
   change SubjetExcess u x J0 y <= ε * ‖y - x‖ ^ 2
   rw [hformula]
-  nlinarith [sq_nonneg ‖y - x‖]
+  nlinarith only [hy, hpert, sq_nonneg ‖y - x‖]
 
 /--
 For fixed gradient `p`, the Hessian slice of an ordinary superjet fiber is
@@ -526,28 +524,28 @@ theorem isClosed_superjet_hessian_slice (C : Set (Point n)) (u : Point n -> Real
     have hn2 : 0 <= (n : Real) * (n : Real) :=
       mul_nonneg (Nat.cast_nonneg n) (Nat.cast_nonneg n)
     dsimp [denom]
-    linarith
+    linarith only [hn2]
   let η : Real := ε / denom
   have hηpos : 0 < η := div_pos hε hdenom_pos
   have hηnonneg : 0 <= η := hηpos.le
   have hnbhd : {Y : Hessian n | ∀ i j : Fin n, |(Y - X) i j| < η} ∈ nhds X :=
     hessian_eventually_entrywise_abs_sub_lt X hηpos
   rcases (mem_closure_iff_nhds.mp hX _ hnbhd) with ⟨Y, hYclose, hYjet⟩
-  have hbase := superjetExcess_secondOrderNonposWithin hYjet (ε / 2) (by linarith)
+  have hbase := superjetExcess_secondOrderNonposWithin hYjet (ε / 2) (by linarith only [hε])
   have hcoef : (1 / 2 : Real) * η * (n : Real) * (n : Real) <= ε / 2 := by
     have hn2_nonneg : 0 <= (n : Real) * (n : Real) :=
       mul_nonneg (Nat.cast_nonneg n) (Nat.cast_nonneg n)
     have hfrac : ((n : Real) * (n : Real)) / denom <= 1 := by
       rw [div_le_one hdenom_pos]
       dsimp [denom]
-      linarith
+      linarith only []
     calc
       (1 / 2 : Real) * η * (n : Real) * (n : Real) =
           (ε / 2) * (((n : Real) * (n : Real)) / denom) := by
         dsimp [η]
         field_simp [hdenom_pos.ne']
       _ <= (ε / 2) * 1 := by
-        exact mul_le_mul_of_nonneg_left hfrac (by linarith)
+        exact mul_le_mul_of_nonneg_left hfrac (by linarith only [hε])
       _ = ε / 2 := by ring
   filter_upwards [hbase] with y hy
   let JX : Jet n := { gradient := p, hessian := X }
@@ -562,7 +560,7 @@ theorem isClosed_superjet_hessian_slice (C : Set (Point n)) (u : Point n -> Real
       (ε / 2) * ‖y - x‖ ^ 2 := by
     have hq1 : quadraticModel x 0 (JY - JX).gradient (JY - JX).hessian y =
         quadraticModel x 0 0 (Y - X) y := by
-      simp [JY, JX]
+      simp only [Jet.sub_gradient, sub_self, Jet.sub_hessian, JY, JX]
     rw [hq1]
     have hle_abs :
         quadraticModel x 0 0 (Y - X) y <= |quadraticModel x 0 0 (Y - X) y| :=
@@ -571,7 +569,7 @@ theorem isClosed_superjet_hessian_slice (C : Set (Point n)) (u : Point n -> Real
   have hformula := superjetExcess_eq_add_quadraticModel_sub u x JX JY y
   change SuperjetExcess u x JX y <= ε * ‖y - x‖ ^ 2
   rw [hformula]
-  nlinarith [sq_nonneg ‖y - x‖]
+  nlinarith only [hy, hquad, sq_nonneg ‖y - x‖]
 
 /--
 For fixed gradient `p`, the Hessian slice of an ordinary subjet fiber is closed.
@@ -588,28 +586,28 @@ theorem isClosed_subjet_hessian_slice (C : Set (Point n)) (u : Point n -> Real)
     have hn2 : 0 <= (n : Real) * (n : Real) :=
       mul_nonneg (Nat.cast_nonneg n) (Nat.cast_nonneg n)
     dsimp [denom]
-    linarith
+    linarith only [hn2]
   let η : Real := ε / denom
   have hηpos : 0 < η := div_pos hε hdenom_pos
   have hηnonneg : 0 <= η := hηpos.le
   have hnbhd : {Y : Hessian n | ∀ i j : Fin n, |(Y - X) i j| < η} ∈ nhds X :=
     hessian_eventually_entrywise_abs_sub_lt X hηpos
   rcases (mem_closure_iff_nhds.mp hX _ hnbhd) with ⟨Y, hYclose, hYjet⟩
-  have hbase := subjetExcess_secondOrderNonposWithin hYjet (ε / 2) (by linarith)
+  have hbase := subjetExcess_secondOrderNonposWithin hYjet (ε / 2) (by linarith only [hε])
   have hcoef : (1 / 2 : Real) * η * (n : Real) * (n : Real) <= ε / 2 := by
     have hn2_nonneg : 0 <= (n : Real) * (n : Real) :=
       mul_nonneg (Nat.cast_nonneg n) (Nat.cast_nonneg n)
     have hfrac : ((n : Real) * (n : Real)) / denom <= 1 := by
       rw [div_le_one hdenom_pos]
       dsimp [denom]
-      linarith
+      linarith only []
     calc
       (1 / 2 : Real) * η * (n : Real) * (n : Real) =
           (ε / 2) * (((n : Real) * (n : Real)) / denom) := by
         dsimp [η]
         field_simp [hdenom_pos.ne']
       _ <= (ε / 2) * 1 := by
-        exact mul_le_mul_of_nonneg_left hfrac (by linarith)
+        exact mul_le_mul_of_nonneg_left hfrac (by linarith only [hε])
       _ = ε / 2 := by ring
   filter_upwards [hbase] with y hy
   let JX : Jet n := { gradient := p, hessian := X }
@@ -617,7 +615,7 @@ theorem isClosed_subjet_hessian_slice (C : Set (Point n)) (u : Point n -> Real)
   have hA : ∀ i j : Fin n, |(X - Y) i j| <= η := by
     intro i j
     have hclose := (hYclose i j).le
-    simpa [Pi.sub_apply, abs_sub_comm] using hclose
+    simpa only [Matrix.sub_apply, ge_iff_le, abs_sub_comm] using hclose
   have hquad_abs : |quadraticModel x 0 0 (X - Y) y| <=
       ((1 / 2 : Real) * η * (n : Real) * (n : Real)) * ‖y - x‖ ^ 2 :=
     abs_quadraticModel_zero_zero_le_of_entrywise_abs_le x y hηnonneg hA
@@ -625,7 +623,7 @@ theorem isClosed_subjet_hessian_slice (C : Set (Point n)) (u : Point n -> Real)
       (ε / 2) * ‖y - x‖ ^ 2 := by
     have hq1 : quadraticModel x 0 (JX - JY).gradient (JX - JY).hessian y =
         quadraticModel x 0 0 (X - Y) y := by
-      simp [JY, JX]
+      simp only [Jet.sub_gradient, sub_self, Jet.sub_hessian, JX, JY]
     rw [hq1]
     have hle_abs :
         quadraticModel x 0 0 (X - Y) y <= |quadraticModel x 0 0 (X - Y) y| :=
@@ -634,7 +632,7 @@ theorem isClosed_subjet_hessian_slice (C : Set (Point n)) (u : Point n -> Real)
   have hformula := subjetExcess_eq_add_quadraticModel_sub u x JX JY y
   change SubjetExcess u x JX y <= ε * ‖y - x‖ ^ 2
   rw [hformula]
-  nlinarith [sq_nonneg ‖y - x‖]
+  nlinarith only [hy, hquad, sq_nonneg ‖y - x‖]
 
 /--
 Neg duality for superjets (CIL Remark 2.6): `J` is a superjet of `u` at `x`
@@ -648,12 +646,12 @@ theorem superjet_neg_iff_subjet {C : Set (Point n)} {u : Point n -> Real}
     refine ⟨fun y => -ρ y, hρ.neg_left, ?_⟩
     filter_upwards [hle] with y hy
     simp only [Jet.neg_gradient, Jet.neg_hessian, quadraticModel_neg]
-    linarith
+    linarith only [hy]
   · rintro ⟨ρ, hρ, hle⟩
     refine ⟨fun y => -ρ y, hρ.neg_left, ?_⟩
     filter_upwards [hle] with y hy
     simp only [Jet.neg_gradient, Jet.neg_hessian, quadraticModel_neg] at hy
-    linarith
+    linarith only [hy]
 
 /--
 Neg duality for subjets (CIL Remark 2.6): `J` is a subjet of `u` at `x`
@@ -667,11 +665,11 @@ theorem subjet_neg_iff_superjet {C : Set (Point n)} {u : Point n -> Real}
     refine ⟨fun y => -ρ y, hρ.neg_left, ?_⟩
     filter_upwards [hle] with y hy
     simp only [Jet.neg_gradient, Jet.neg_hessian, quadraticModel_neg]
-    linarith
+    linarith only [hy]
   · rintro ⟨ρ, hρ, hle⟩
     refine ⟨fun y => -ρ y, hρ.neg_left, ?_⟩
     filter_upwards [hle] with y hy
     simp only [Jet.neg_gradient, Jet.neg_hessian, quadraticModel_neg] at hy
-    linarith
+    linarith only [hy]
 
 end ViscositySolns

@@ -347,13 +347,13 @@ theorem quadraticEstimateAt_comp_linearIsometryEquiv
       QuadraticEstimateAt.of_image_linearIsometryEquiv
         (e := e.symm) (u := u) (x := e x)
         (by simpa [Function.comp_def] using h)
-    simpa using h'
+    exact h'
   · intro h
     have h' :=
       QuadraticEstimateAt.of_image_linearIsometryEquiv
         (e := e) (u := u ∘ e) (x := x)
         (by simpa [Function.comp_def] using h)
-    simpa using h'
+    exact h'
 
 /-- Set-level transport of ambient quadratic estimate data through a linear isometry
 equivalence. -/
@@ -374,13 +374,13 @@ theorem quadraticQuotientEstimateAt_comp_linearIsometryEquiv
       QuadraticQuotientEstimateAt.of_image_linearIsometryEquiv
         (e := e.symm) (u := u) (x := e x)
         (by simpa [Function.comp_def] using h)
-    simpa using h'
+    exact h'
   · intro h
     have h' :=
       QuadraticQuotientEstimateAt.of_image_linearIsometryEquiv
         (e := e) (u := u ∘ e) (x := x)
         (by simpa [Function.comp_def] using h)
-    simpa using h'
+    exact h'
 
 /-- Set-level transport of punctured normalized ambient quadratic estimate data through a linear
 isometry equivalence. -/

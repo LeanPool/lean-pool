@@ -412,7 +412,7 @@ theorem PerronLowerEnvelopeLocalQuadraticMaxPatchAt.strictLocalPatchAt
     Filter.inter_mem hV hqAbove, ?_, hWlta, hold, ?_⟩
   · intro y hy
     exact hy.2
-  · simpa [q] using hmax
+  · exact hmax
 
 /--
 The global quadratic max-patch datum gives the existing global strict

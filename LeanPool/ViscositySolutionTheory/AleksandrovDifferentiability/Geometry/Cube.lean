@@ -224,9 +224,9 @@ theorem convex_sourceOpenCubeAt {n : ℕ} (c : SourceCubeSpace n) (r : ℝ) :
             calc
               a * r + b * r = (a + b) * r := by ring
               _ = r := by rw [hab]; ring
-          nlinarith
+          nlinarith only [hx_lt, hy_le, hsum_mul]
         · have ha_eq : a = 0 := le_antisymm (le_of_not_gt ha_pos) ha
-          have hb_eq : b = 1 := by nlinarith
+          have hb_eq : b = 1 := by nlinarith only [ha, hab, ha_pos]
           simpa [ha_eq, hb_eq] using hy
 
 /-- Centered source open cubes are convex. -/
@@ -380,7 +380,7 @@ theorem norm_sourceCoordinateVector {n : ℕ} (i : Fin n) :
     rw [← real_inner_self_eq_norm_sq]
     simp [sourceCoordinateVector]
   have hnonneg : 0 ≤ ‖sourceCoordinateVector i‖ := norm_nonneg _
-  nlinarith [sq_nonneg (‖sourceCoordinateVector i‖ + 1)]
+  nlinarith only [hsq, hnonneg, sq_nonneg (‖sourceCoordinateVector i‖ + 1)]
 
 /-- A positive-dimensional source cube space contains a unit vector. -/
 theorem exists_unit_sourceCubeSpace_of_pos {n : ℕ} (hn : 0 < n) :
@@ -664,7 +664,7 @@ theorem sourceOpenCube_one_add_norm_le_one_mem_three {n : ℕ}
   have htri : |x i + z i| ≤ |x i| + |z i| := abs_add_le (x i) (z i)
   have hx_i : |x i| < 1 := by simpa using hx i
   have hz_i : |z i| ≤ 1 := (abs_sourceCoordinate_le_norm z i).trans hz
-  have hlt : |x i + z i| < 3 := by linarith
+  have hlt : |x i + z i| < 3 := by linarith only [htri, hx_i, hz_i]
   simpa using hlt
 
 /-- A displacement of Euclidean norm at most `1 / 2` from `Q_1` stays inside `Q_{3/2}`. -/
@@ -675,7 +675,7 @@ theorem sourceOpenCube_one_add_norm_le_half_mem_three_halves {n : ℕ}
   have htri : |x i + z i| ≤ |x i| + |z i| := abs_add_le (x i) (z i)
   have hx_i : |x i| < 1 := by simpa using hx i
   have hz_i : |z i| ≤ (1 / 2 : ℝ) := (abs_sourceCoordinate_le_norm z i).trans hz
-  have hlt : |x i + z i| < (3 / 2 : ℝ) := by linarith
+  have hlt : |x i + z i| < (3 / 2 : ℝ) := by linarith only [htri, hx_i, hz_i]
   simpa using hlt
 
 /-- Small line segments from `Q_1` stay inside `Q_{3/2}`. -/
@@ -683,7 +683,7 @@ theorem sourceOpenCube_one_add_smul_norm_le_half_mem_three_halves {n : ℕ}
     {x z : SourceCubeSpace n} (hx : x ∈ sourceOpenCube n 1) (hz : ‖z‖ ≤ (1 / 2 : ℝ))
     {t : ℝ} (ht : t ∈ Set.Icc (0 : ℝ) 1) :
     x + t • z ∈ sourceOpenCube n (3 / 2 : ℝ) := by
-  have ht_abs : |t| ≤ 1 := abs_le.mpr ⟨by linarith [ht.1], ht.2⟩
+  have ht_abs : |t| ≤ 1 := abs_le.mpr ⟨by linarith only [ht, ht.1], ht.2⟩
   have htz : ‖t • z‖ ≤ (1 / 2 : ℝ) := by
     calc
       ‖t • z‖ = |t| * ‖z‖ := norm_smul t z
@@ -712,7 +712,7 @@ theorem sourceOpenCube_one_add_norm_le_two_mem_three {n : ℕ}
   have htri : |x i + z i| ≤ |x i| + |z i| := abs_add_le (x i) (z i)
   have hx_i : |x i| < 1 := by simpa using hx i
   have hz_i : |z i| ≤ 2 := (abs_sourceCoordinate_le_norm z i).trans hz
-  have hlt : |x i + z i| < 3 := by linarith
+  have hlt : |x i + z i| < 3 := by linarith only [htri, hx_i, hz_i]
   simpa using hlt
 
 /-- A displacement of Euclidean norm at most `3 / 2` from `Q_{3/2}` stays inside `Q_3`. -/
@@ -724,14 +724,14 @@ theorem sourceOpenCube_three_halves_add_norm_le_three_halves_mem_three {n : ℕ}
   have htri : |x i + z i| ≤ |x i| + |z i| := abs_add_le (x i) (z i)
   have hx_i : |x i| < (3 / 2 : ℝ) := by simpa using hx i
   have hz_i : |z i| ≤ (3 / 2 : ℝ) := (abs_sourceCoordinate_le_norm z i).trans hz
-  have hlt : |x i + z i| < 3 := by linarith
+  have hlt : |x i + z i| < 3 := by linarith only [htri, hx_i, hz_i]
   simpa using hlt
 
 /-- A displacement of Euclidean norm at most `1` from `Q_1` stays inside `Q_3`. -/
 theorem sourceOpenCube_one_sub_norm_le_one_mem_three {n : ℕ}
     {x z : SourceCubeSpace n} (hx : x ∈ sourceOpenCube n 1) (hz : ‖z‖ ≤ 1) :
     x - z ∈ sourceOpenCube n 3 := by
-  simpa [sub_eq_add_neg] using
+  exact
     sourceOpenCube_one_add_norm_le_one_mem_three hx (z := -z) (by simpa using hz)
 
 /-- A one-coordinate displacement of size less than `2` from `Q_1` stays inside `Q_3`.
@@ -744,7 +744,7 @@ theorem sourceOpenCube_one_add_coordinate_mem_three {n : ℕ} {i : Fin n}
   · subst j
     have htri : |x i + h| ≤ |x i| + |h| := abs_add_le (x i) h
     have hx_i : |x i| < 1 := by simpa using hx i
-    have hlt : |x i + h| < 3 := by linarith
+    have hlt : |x i + h| < 3 := by linarith only [hh, htri, hx_i]
     simpa [sourceCoordinateVector] using hlt
   · simpa [sourceCoordinateVector_apply_ne hji] using
       lt_trans (hx j) (by norm_num : (1 : ℝ) < 3)

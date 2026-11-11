@@ -73,7 +73,7 @@ theorem upperSemicontinuousOn_supConvolutionKernel
       UpperSemicontinuousOn
         (fun x : Point n => -((lambda / 2) * dotProduct (x - ξ) (x - ξ))) K :=
     (continuousOn_iff_lower_upperSemicontinuousOn.mp hpen.neg).2
-  simpa [supConvolutionKernel, sub_eq_add_neg] using hu.add hnegpen
+  exact hu.add hnegpen
 
 /--
 On a nonempty compact set, the sup-convolution kernel attains a maximum.
@@ -204,10 +204,10 @@ theorem superjet_of_superjet_supConvolutionMajorant
     v x <= vhat (T x) + (lambda / 2) * dotProduct (y - η) (y - η) := by
       dsimp [supConvolutionKernel] at hmajor_x
       rw [hx_xi] at hmajor_x
-      linarith
+      linarith only [hmajor_x]
     _ <= quadraticModel η (vhat η) q Y (T x) + rho (T x) +
         (lambda / 2) * dotProduct (y - η) (y - η) := by
-      linarith
+      linarith only [hxineq]
     _ = quadraticModel y (v y) q Y x + rho (T x) := by
       rw [hvalue]
       dsimp [supConvolutionKernel, quadraticModel]
@@ -282,7 +282,7 @@ theorem superjet_gradient_eq_of_supConvolutionMajorant
               ‖η + t • d - η‖ ^ 2 := by
         rw [← hvalue]
         unfold SuperjetExcess at htso
-        linarith
+        linarith only [htso, hmajor_t]
       have halg :
           supConvolutionKernel lambda v (η + t • d) y -
               supConvolutionKernel lambda v η y -
@@ -335,7 +335,7 @@ theorem superjet_gradient_eq_of_supConvolutionMajorant
         have := hkernel_model
         rw [← sub_le_iff_le_add'] at this
         rw [halg] at this
-        linarith
+        linarith only [hkernel_model, halg]
       have hnorm_line : ‖η + t • d - η‖ ^ 2 = t ^ 2 * ‖d‖ ^ 2 := by
         have hdiff : η + t • d - η = t • d := by
           ext i
@@ -353,7 +353,7 @@ theorem superjet_gradient_eq_of_supConvolutionMajorant
                 ((lambda / 2) * dotProduct d d +
                   (1 / 2 : Real) * dotProduct (Matrix.mulVec Y d) d + ‖d‖ ^ 2) := by
           rw [hnorm_line] at hpre
-          nlinarith
+          nlinarith only [hpre]
         have ht_nonneg : 0 <= t := htpos'.le
         have hpre'' :
             t * A <=
@@ -361,9 +361,9 @@ theorem superjet_gradient_eq_of_supConvolutionMajorant
                 (t *
                   ((lambda / 2) * dotProduct d d +
                     (1 / 2 : Real) * dotProduct (Matrix.mulVec Y d) d + ‖d‖ ^ 2)) := by
-          nlinarith
+          nlinarith only [hkernel_model, halg, hnorm_line]
         exact le_of_mul_le_mul_left hpre'' htpos'
-      simpa [B] using hdiv
+      exact hdiv
     have htend_zero :
         Tendsto (fun t : Real => t * B) (nhdsWithin (0 : Real) (Set.Ioi 0)) (nhds 0) := by
       have ht : Tendsto (fun t : Real => t) (nhdsWithin (0 : Real) (Set.Ioi 0)) (nhds 0) :=
@@ -376,13 +376,13 @@ theorem superjet_gradient_eq_of_supConvolutionMajorant
     have hle : dotProduct a a <= 0 := hdot_nonpos a
     have hnorm_le : ‖a‖ ^ 2 <= dotProduct a a := norm_sq_le_dotProduct_self a
     have hnorm_nonneg : 0 <= ‖a‖ ^ 2 := sq_nonneg _
-    linarith
+    linarith only [hle, hnorm_le, hnorm_nonneg]
   have ha_zero : a = 0 := by
     have hnorm_zero : ‖a‖ = 0 := by
       have hnorm_sq_zero : ‖a‖ ^ 2 = 0 := by
         have hnorm_le : ‖a‖ ^ 2 <= dotProduct a a := norm_sq_le_dotProduct_self a
         have hnorm_nonneg : 0 <= ‖a‖ ^ 2 := sq_nonneg _
-        linarith
+        linarith only [hdot_zero, hnorm_le, hnorm_nonneg]
       exact sq_eq_zero_iff.mp hnorm_sq_zero
     exact norm_eq_zero.mp hnorm_zero
   have : lambda • (y - η) - q = 0 := ha_zero

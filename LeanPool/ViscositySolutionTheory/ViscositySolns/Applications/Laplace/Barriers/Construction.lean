@@ -98,7 +98,7 @@ theorem half_eucSq_le_eucSq_sphereMidpoint {C : Set (Point n)} {R : Real}
     eucSq x p.1 / 2 <= eucSq x (sphereMidpoint p) - R ^ 2 / 4 := by
   rw [sphereMidpoint, eucSq_midpoint, hp.2.1]
   have := hp.2.2 x hx
-  linarith
+  linarith only [this]
 
 theorem eucSq_sphereMidpoint_le {C : Set (Point n)} {R : Real} (hR : 0 < R)
     {p : Point n × Point n} (hp : p ∈ exteriorSphereParams C R) (x : Point n) :
@@ -114,7 +114,7 @@ theorem eucSq_sphereMidpoint_le {C : Set (Point n)} {R : Real} (hR : 0 < R)
   generalize eucSq x p.2 = e' at h1 ⊢
   generalize Real.sqrt (eucSq x p.1) = δ at h1 h2 ⊢
   generalize eucSq x p.1 = e at h2 ⊢
-  nlinarith
+  nlinarith only [h1, h2]
 
 theorem eucSq_sphereMidpoint_self {C : Set (Point n)} {R : Real}
     {p : Point n × Point n} (hp : p ∈ exteriorSphereParams C R) :
@@ -164,9 +164,9 @@ theorem sqrt_mul_sqrt_le_sqrt_one_sub_exp {α T τ e : Real} (hα : 0 < α)
       Real.sqrt (1 - Real.exp (-(α * τ))) := by
   rw [← Real.sqrt_mul (by positivity)]
   apply Real.sqrt_le_sqrt
-  have hτ0 : 0 <= τ := by linarith
+  have hτ0 : 0 <= τ := by linarith only [hτ, he]
   have h1 : Real.exp (-(α * T)) <= Real.exp (-(α * τ)) :=
-    Real.exp_le_exp.2 (by nlinarith)
+    Real.exp_le_exp.2 (by nlinarith only [hα, hτT])
   have h2 := mul_exp_neg_le_one_sub_exp_neg (α * τ)
   calc
     α * Real.exp (-(α * T)) / 2 * e = α * Real.exp (-(α * T)) * (e / 2) := by ring
@@ -184,7 +184,7 @@ theorem sqrt_one_sub_exp_le_sqrt_mul_sqrt {α R Δ δ τ : Real} (hα : 0 <= α)
   calc
     1 - Real.exp (-(α * τ)) <= α * τ := one_sub_exp_neg_le _
     _ <= α * (δ ^ 2 + R * δ) := mul_le_mul_of_nonneg_left hτ hα
-    _ <= α * ((Δ + R) * δ) := mul_le_mul_of_nonneg_left (by nlinarith) hα
+    _ <= α * ((Δ + R) * δ) := mul_le_mul_of_nonneg_left (by nlinarith only [hδ, hδΔ]) hα
     _ = α * (Δ + R) * δ := by ring
 
 /-- The lower constant `c` with `√c |x - x₀| ≤ Φ_p(x)` on `closure C`. -/
@@ -210,7 +210,7 @@ theorem sqrt_lowerConst_mul_le_laplaceBarrierProfile {C : Set (Point n)} {R D : 
   have hδD : Real.sqrt (eucSq x p.1) <= Real.sqrt D := Real.sqrt_le_sqrt (hD x hx _ hp1)
   have heD := hD x hx _ hp1
   have hT : eucSq x (sphereMidpoint p) - R ^ 2 / 4 <= D + R * Real.sqrt D := by
-    nlinarith [mul_le_mul_of_nonneg_left hδD hR.le]
+    nlinarith only [hR, hτT, hδD, heD, mul_le_mul_of_nonneg_left hδD hR.le]
   exact sqrt_mul_sqrt_le_sqrt_one_sub_exp (laplaceBarrierRate_pos hR) hτ hT
     (eucSq_nonneg _ _)
 
@@ -328,7 +328,7 @@ theorem add_mul_sqrt_one_sub_le {gp A e₀ e : Real} (hA : 0 <= A) (he₀ : e₀
       A * Real.sqrt (1 - e₀) + A / (2 * Real.sqrt (1 - e₀)) * e₀ -
         A / (2 * Real.sqrt (1 - e₀)) * e := by
     ring
-  linarith
+  linarith only [hmul, hid]
 
 /-- The upper barrier is a viscosity supersolution of `-Δu = 0` on `C`. -/
 theorem viscositySupersolution_laplaceUpperBarrier (hCopen : IsOpen C)
@@ -349,7 +349,7 @@ theorem viscositySupersolution_laplaceUpperBarrier (hCopen : IsOpen C)
   have hτx : 0 < eucSq x (sphereMidpoint p) - R ^ 2 / 4 := by
     have h1 := half_eucSq_le_eucSq_sphereMidpoint hp hxC
     have h2 := eucSq_pos_of_ne hne
-    linarith
+    linarith only [h1, h2]
   obtain ⟨E, hE⟩ : ∃ E : Point n -> Real, E = fun y =>
       Real.exp (-(laplaceBarrierRate n R * (eucSq y (sphereMidpoint p) - R ^ 2 / 4))) :=
     ⟨_, rfl⟩
@@ -359,7 +359,7 @@ theorem viscositySupersolution_laplaceUpperBarrier (hCopen : IsOpen C)
     intro y hy
     have h1 := half_eucSq_le_eucSq_sphereMidpoint hp hy
     have h2 := eucSq_nonneg y p.1
-    have hτ : 0 <= eucSq y (sphereMidpoint p) - R ^ 2 / 4 := by linarith
+    have hτ : 0 <= eucSq y (sphereMidpoint p) - R ^ 2 / 4 := by linarith only [h1, h2]
     rw [hE, ← Real.exp_zero]
     exact Real.exp_le_exp.2 (neg_nonpos.2 (mul_nonneg hα.le hτ))
   have hEx : E x < 1 := by
@@ -387,7 +387,7 @@ theorem viscositySupersolution_laplaceUpperBarrier (hCopen : IsOpen C)
     have h1 := laplaceUpperBarrier_le (A := A) hCbdd hgc hp y
     have h2 := hW_ge y (subset_closure hy)
     rw [hW_eq, sub_self]
-    linarith
+    linarith only [h1, h2]
   have hK := superjet_of_touchesAbove_hasSecondOrderExpansionWithin htouch
     (hasSecondOrderExpansionWithin_expProfile C a k (laplaceBarrierRate n R) (R ^ 2 / 4)
       (sphereMidpoint p) x)
@@ -397,11 +397,11 @@ theorem viscositySupersolution_laplaceUpperBarrier (hCopen : IsOpen C)
     have h1 := two_mul_laplaceBarrierRate_mul (n := n) hR
     have h2 := mul_le_mul_of_nonneg_left (le_of_lt (sub_pos.1 hτx))
       (by positivity : (0 : Real) <= 2 * laplaceBarrierRate n R)
-    linarith
+    linarith only [h1, h2]
   have hk : 0 <= k := by positivity
   have hneg := trace_expProfileJet_hessian_nonpos (ρ := R ^ 2 / 4) hk hα.le hs
   rw [laplaceOperator_apply]
-  linarith
+  linarith only [htr, hneg]
 
 end UpperBarrier
 

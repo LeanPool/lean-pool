@@ -84,15 +84,16 @@ theorem HasOneDimSecondDerivativeOpenIntervalDerivativeGapBound.symmetricRemaind
   intro x p h hx hp hh_pos hhρ
   have hh_one : h < 1 := lt_of_lt_of_le hhρ hρ_le_one
   have hx_int : x ∈ interior (Set.Ioo (-3 : ℝ) 3) := by
-    simpa using (show x ∈ Set.Ioo (-3 : ℝ) 3 by
+    simpa only [interior_Ioo, Set.mem_Ioo] using (show x ∈ Set.Ioo (-3 : ℝ) 3 by
       rcases hx with ⟨hx_left, hx_right⟩
       constructor <;> linarith)
   have hxmh : x - h ∈ interior (Set.Ioo (-3 : ℝ) 3) := by
-    simpa using (show x - h ∈ Set.Ioo (-3 : ℝ) 3 by
+    simpa only [interior_Ioo, Set.mem_Ioo, neg_lt_sub_iff_lt_add] using (show x - h ∈ Set.Ioo (-3
+      : ℝ) 3 by
       rcases hx with ⟨hx_left, hx_right⟩
       constructor <;> linarith)
   have hxph : x + h ∈ interior (Set.Ioo (-3 : ℝ) 3) := by
-    simpa using (show x + h ∈ Set.Ioo (-3 : ℝ) 3 by
+    simpa only [interior_Ioo, Set.mem_Ioo] using (show x + h ∈ Set.Ioo (-3 : ℝ) 3 by
       rcases hx with ⟨hx_left, hx_right⟩
       constructor <;> linarith)
   rcases hp.affineRemainder_pm_le_mul_leftDeriv_sub_rightDeriv
@@ -132,9 +133,9 @@ theorem of_sourceRightDerivStieltjes_endpointBounds
       (sourceRightDerivStieltjesSecondDerivativeMeasure v hmono) ρ := by
   intro x h hx hh_pos hhρ
   rcases hendpoints hx hh_pos hhρ with ⟨hleft, hright⟩
-  have hlt : x - h < x + h := by linarith
+  have hlt : x - h < x + h := by linarith only [hh_pos]
   rw [sourceRightDerivStieltjesSecondDerivativeMeasure_real_Ioo hmono hlt]
-  linarith
+  linarith only [hmono, hleft, hright]
 
 end HasOneDimSecondDerivativeOpenIntervalDerivativeGapBound
 
@@ -426,7 +427,8 @@ theorem HasSourceRightDerivStieltjesEndpointIdentities.of_leftEndpointLimits_of_
   intro x h hx hh_pos hhρ
   have hh_one : h < 1 := lt_of_lt_of_le hhρ hρ_le_one
   have hxmh_int : x - h ∈ interior (Set.Ioo (-3 : ℝ) 3) := by
-    simpa using (show x - h ∈ Set.Ioo (-3 : ℝ) 3 by
+    simpa only [interior_Ioo, Set.mem_Ioo, neg_lt_sub_iff_lt_add] using (show x - h ∈ Set.Ioo (-3
+      : ℝ) 3 by
       rcases hx with ⟨hx_left, hx_right⟩
       constructor <;> linarith)
   exact AleksandrovDifferentiability.ConvexOn.tendsto_rightDeriv_nhdsGT
@@ -445,7 +447,7 @@ theorem HasSourceRightDerivStieltjesEndpointIdentities.of_convex
   intro x h hx hh_pos hhρ
   have hh_one : h < 1 := lt_of_lt_of_le hhρ hρ_le_one
   have hxph_int : x + h ∈ interior (Set.Ioo (-3 : ℝ) 3) := by
-    simpa using (show x + h ∈ Set.Ioo (-3 : ℝ) 3 by
+    simpa only [interior_Ioo, Set.mem_Ioo] using (show x + h ∈ Set.Ioo (-3 : ℝ) 3 by
       rcases hx with ⟨hx_left, hx_right⟩
       constructor <;> linarith)
   exact AleksandrovDifferentiability.ConvexOn.tendsto_rightDeriv_nhdsLT_leftDeriv
@@ -490,9 +492,9 @@ theorem HasSourceRightDerivStieltjesEndpointControl.of_endpointBounds
     by
       intro x h hx hh_pos hhρ
       rcases hendpoints hx hh_pos hhρ with ⟨hleft, hright⟩
-      have hlt : x - h < x + h := by linarith
+      have hlt : x - h < x + h := by linarith only [hh_pos]
       rw [sourceRightDerivStieltjesSecondDerivativeMeasure_real_Ioo hmono hlt]
-      linarith
+      linarith only [hmono, hleft, hright]
   HasSourceRightDerivStieltjesEndpointControl.of_openIntervalDerivativeGapBound
     hgap hv hρ_le_one
 

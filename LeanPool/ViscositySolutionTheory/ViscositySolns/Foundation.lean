@@ -247,7 +247,7 @@ theorem symHessian_eq_self_of_isHermitian {X : Hessian n} (hX : X.IsHermitian) :
     symHessian X = X := by
   ext i j
   have hji : X j i = X i j := by
-    simpa using hX.apply i j
+    exact hX.apply i j
   simp [symHessian, hji]
   ring
 
@@ -430,7 +430,7 @@ theorem hessian_eventually_entrywise_abs_sub_lt (X : Hessian n) {η : Real} (hη
   have htarget : ∀ᶠ z in nhds (X i j), |z - X i j| < η := by
     exact Metric.eventually_nhds_iff.mpr ⟨η, hη, fun z hz => by rwa [Real.dist_eq] at hz⟩
   have hpre := (hcont.continuousAt).eventually htarget
-  simpa [Pi.sub_apply] using hpre
+  exact hpre
 
 /--
 If a Hessian has all entries bounded by `η`, then its quadratic model is
@@ -458,7 +458,7 @@ theorem abs_quadraticModel_zero_zero_le_of_entrywise_abs_le (x0 x : Point n)
           |∑ i : Fin n, ∑ j : Fin n, A i j * dx j * dx i| := by
         simp [dotProduct, Matrix.mulVec, Finset.sum_mul, mul_assoc]
       _ <= ∑ i : Fin n, |∑ j : Fin n, A i j * dx j * dx i| := by
-        simpa using Finset.abs_sum_le_sum_abs
+        exact Finset.abs_sum_le_sum_abs
           (fun i : Fin n => ∑ j : Fin n, A i j * dx j * dx i) Finset.univ
       _ <= ∑ _i : Fin n, ∑ _j : Fin n, η * ‖dx‖ * ‖dx‖ := by
         refine Finset.sum_le_sum ?_
@@ -466,7 +466,7 @@ theorem abs_quadraticModel_zero_zero_le_of_entrywise_abs_le (x0 x : Point n)
         calc
           |∑ j : Fin n, A i j * dx j * dx i| <=
               ∑ j : Fin n, |A i j * dx j * dx i| := by
-            simpa using Finset.abs_sum_le_sum_abs
+            exact Finset.abs_sum_le_sum_abs
               (fun j : Fin n => A i j * dx j * dx i) Finset.univ
           _ <= ∑ _j : Fin n, η * ‖dx‖ * ‖dx‖ := by
             refine Finset.sum_le_sum ?_
@@ -502,7 +502,7 @@ theorem continuous_quadraticModel_jet (x0 : Point n) (r : Real) (x : Point n) :
   have htotal : Continuous fun J : Jet n =>
       r + dotProduct J.gradient dx + (1 / 2 : Real) * dotProduct (Matrix.mulVec J.hessian dx) dx :=
     (continuous_const.add hlin).add (continuous_const.mul hquad)
-  simpa [quadraticModel, dx, add_assoc] using htotal
+  exact htotal
 
 /--
 For fixed jet data, the quadratic model is a continuous function of the
@@ -521,7 +521,7 @@ theorem continuous_quadraticModel (x0 : Point n) (r : Real) (p : Point n)
   have htotal : Continuous fun x : Point n =>
       r + dotProduct p (dx x) + (1 / 2 : Real) * dotProduct (Matrix.mulVec X (dx x)) (dx x) :=
     (continuous_const.add hlin).add (continuous_const.mul hquad)
-  simpa [quadraticModel, dx, add_assoc] using htotal
+  exact htotal
 
 /-- Negating the value, gradient, and Hessian data negates the quadratic model. -/
 @[simp]
@@ -590,12 +590,9 @@ theorem quadraticModel_convexCombination (x0 : Point n) (r a b : Real) (p q : Po
     (X Y : Hessian n) (x : Point n) (hab : a + b = 1) :
     quadraticModel x0 r (a • p + b • q) (a • X + b • Y) x =
       a * quadraticModel x0 r p X x + b * quadraticModel x0 r q Y x := by
-  have hr : r * a + r * b = r := by
-    nlinarith [congrArg (fun t => r * t) hab]
   simp only [quadraticModel, Matrix.add_mulVec, Matrix.smul_mulVec, add_dotProduct,
     smul_dotProduct]
-  ring_nf at hr ⊢
-  nlinarith
+  linear_combination -r * hab
 
 /-- The quadratic model is monotone in the Hessian for the Loewner order. -/
 theorem quadraticModel_le_of_hessian_le {x0 : Point n} {r : Real} {p : Point n}
@@ -604,18 +601,18 @@ theorem quadraticModel_le_of_hessian_le {x0 : Point n} {r : Real} {p : Point n}
   let dx : Point n := x - x0
   have hnonneg : 0 <= dotProduct dx (Matrix.mulVec (Y - X) dx) := by
     have hpsd : (Y - X).PosSemidef := Matrix.le_iff.mp hXY
-    simpa using hpsd.dotProduct_mulVec_nonneg dx
+    exact hpsd.dotProduct_mulVec_nonneg dx
   have hquad :
       dotProduct (Matrix.mulVec X dx) dx <= dotProduct (Matrix.mulVec Y dx) dx := by
     have hrewrite : dotProduct dx (Matrix.mulVec (Y - X) dx) =
         dotProduct (Matrix.mulVec Y dx) dx - dotProduct (Matrix.mulVec X dx) dx := by
       rw [Matrix.sub_mulVec, dotProduct_sub]
       rw [dotProduct_comm dx (Y *ᵥ dx), dotProduct_comm dx (X *ᵥ dx)]
-    linarith
+    linarith only [hnonneg, hrewrite]
   dsimp [quadraticModel]
   change r + dotProduct p dx + (1 / 2 : Real) * dotProduct (Matrix.mulVec X dx) dx <=
     r + dotProduct p dx + (1 / 2 : Real) * dotProduct (Matrix.mulVec Y dx) dx
-  linarith
+  linarith only [hquad]
 
 /--
 The little-oh remainder used in the definition of second-order semijets,
@@ -644,7 +641,7 @@ theorem semijetRemainder_sub {C : Set (Point n)} {x0 : Point n}
     {rho sigma : Point n -> Real}
     (hrho : SemijetRemainder C x0 rho) (hsigma : SemijetRemainder C x0 sigma) :
     SemijetRemainder C x0 (fun x => rho x - sigma x) := by
-  simpa [sub_eq_add_neg] using semijetRemainder_add hrho (semijetRemainder_neg hsigma)
+  exact semijetRemainder_add hrho (semijetRemainder_neg hsigma)
 
 theorem semijetRemainder_const_mul {C : Set (Point n)} {x0 : Point n}
     {rho : Point n -> Real} (a : Real)
@@ -756,7 +753,7 @@ theorem secondOrderExpansion_remainder_at_base
     rho x0 = φ x0 - r := by
   have hbase := hφ.self_of_nhdsWithin hx0
   simp [quadraticModel] at hbase
-  linarith
+  linarith only [hbase]
 
 /--
 For an expansion whose prescribed value is the value of the function at the
@@ -834,7 +831,7 @@ theorem continuous_quadraticModelJetAt (x0 : Point n) (p : Point n)
   apply continuous_induced_rng.mpr
   change Continuous fun x : Point n =>
     ((quadraticModelJetAt x0 p X x).gradient, (quadraticModelJetAt x0 p X x).hessian)
-  simpa [quadraticModelJetAt] using Continuous.prodMk hgrad hX
+  exact Continuous.prodMk hgrad hX
 
 /--
 As `x -> 0`, the gradient component of the recentered quadratic model with

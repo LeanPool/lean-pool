@@ -152,7 +152,7 @@ theorem StrictViscositySubsolution.to_viscositySubsolution
   refine ⟨hu.upperSemicontinuousOn, ?_⟩
   intro x hx J hJ
   have hstrict := hu.2 x hx J hJ
-  linarith
+  linarith only [hε, hstrict]
 
 /--
 Uniform decrease of the operator under a fixed downward shift in the scalar
@@ -198,7 +198,7 @@ theorem uniformScalarDecreaseOn_traceSecondOrderOperator
   intro x hx r p X
   have hxδε : ε <= c x * δ := hcδ x hx
   simp [traceSecondOrderOperator_apply]
-  linarith
+  linarith only [hxδε]
 
 /--
 Trace-form operators satisfy the uniform scalar-decrease condition with
@@ -236,7 +236,7 @@ theorem ViscositySubsolution.strict_sub_const_of_uniformScalarDecrease
     (hdec : UniformScalarDecreaseOn C F δ ε) :
     StrictViscositySubsolution C F ε (fun y => u y - δ) := by
   refine ⟨?_, ?_⟩
-  · simpa [sub_eq_add_neg] using hu.1.add upperSemicontinuousOn_const
+  · exact hu.1.add upperSemicontinuousOn_const
   · intro x hx J hJ
     have hJu : J ∈ Superjet C u x := (superjet_sub_const_iff).1 hJ
     have huJ : F x (u x) J.gradient J.hessian <= 0 := hu.2 x hx J hJu
@@ -248,7 +248,7 @@ theorem ViscositySubsolution.strict_sub_const_of_uniformScalarDecrease
       F x ((fun y => u y - δ) x) J.gradient J.hessian =
           F x (u x - δ) J.gradient J.hessian := rfl
       _ <= F x (u x) J.gradient J.hessian - ε := hshift
-      _ <= -ε := by linarith
+      _ <= -ε := by linarith only [huJ]
 
 /--
 Strictification data on the compact closure of `C`.
@@ -445,7 +445,7 @@ theorem localizedStrictificationAlongOn_of_constantShiftData
   refine ⟨ε, fun z => u z - δ, α, x, y, hε, hIshii, ?_, hR, hloc, ?_⟩
   · exact hu.strict_sub_const_of_uniformScalarDecrease hdec
   · intro z _hz
-    linarith
+    linarith only [hδη]
 
 /--
 A constructor for natural-number indexed constant-shift localized

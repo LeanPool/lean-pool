@@ -61,12 +61,14 @@ theorem OperatorContinuous.exists_pos_eventually_lowerEnvelope_quadratic_lift_lt
       F x (quadraticModel x (W x) J.gradient J.hessian x)
           (quadraticModelJetAt x J.gradient J.hessian x).gradient
           (quadraticModelJetAt x J.gradient J.hessian x).hessian < 0 := by
-    simpa [W, quadraticModel] using hneg
+    simpa only [quadraticModel, sub_self, dotProduct_zero, add_zero, one_div, Matrix.mulVec_zero,
+      mul_zero, quadraticModelJetAt_base] using hneg
   rcases hF.exists_pos_eventually_quadraticModelJetAt_lift_lt_of_lt
       (x0 := x) (r := W x) (p := J.gradient) (X := J.hessian) hbase with
     ⟨κ, hκpos, hnear⟩
   refine ⟨κ, hκpos, ?_, ?_⟩
-  · simpa [W, quadraticModel] using lt_add_of_pos_right (W x) hκpos
+  · simpa only [quadraticModel, sub_self, dotProduct_zero, add_zero, one_div, Matrix.mulVec_zero,
+    mul_zero, lt_add_iff_pos_right] using lt_add_of_pos_right (W x) hκpos
   · exact hnear.filter_mono nhdsWithin_le_nhds
 
 /--
@@ -121,7 +123,7 @@ theorem OperatorContinuous.exists_pos_pos_eventually_lowerEnvelope_bentQuadratic
             (J.hessian - (0 : Real) • (1 : Hessian n)) x).gradient
           (quadraticModelJetAt x J.gradient
             (J.hessian - (0 : Real) • (1 : Hessian n)) x).hessian < 0 := by
-    simpa [W, A] using hbaseδ
+    simpa only [zero_smul, sub_zero, quadraticModelJetAt_base] using hbaseδ
   have hpathγ : Continuous fun γ : Real =>
       ((x,
           quadraticModel x (W x + δ) J.gradient
@@ -140,7 +142,7 @@ theorem OperatorContinuous.exists_pos_pos_eventually_lowerEnvelope_bentQuadratic
             Jet n).gradient,
           ({ gradient := J.gradient, hessian := J.hessian - γ • (1 : Hessian n) } :
             Jet n).hessian)
-      simpa using Continuous.prodMk continuous_const hH
+      exact Continuous.prodMk continuous_const hH
     have hval : Continuous fun γ : Real =>
         quadraticModel x (W x + δ) J.gradient
           (J.hessian - γ • (1 : Hessian n)) x := by
@@ -154,7 +156,9 @@ theorem OperatorContinuous.exists_pos_pos_eventually_lowerEnvelope_bentQuadratic
             (J.hessian - γ • (1 : Hessian n)) x).gradient,
           (quadraticModelJetAt x J.gradient
             (J.hessian - γ • (1 : Hessian n)) x).hessian)
-      simpa [quadraticModelJetAt] using Continuous.prodMk continuous_const hH
+      simpa only [quadraticModelJetAt, one_div, sub_self, Matrix.mulVec_zero,
+        Matrix.transpose_sub, Matrix.transpose_smul, Matrix.transpose_one, add_zero, smul_zero,
+        continuous_prodMk] using Continuous.prodMk continuous_const hH
     exact Continuous.prodMk (Continuous.prodMk continuous_const hval) hjet
   have hcontγ : Continuous fun γ : Real =>
       F x
@@ -190,7 +194,8 @@ theorem OperatorContinuous.exists_pos_pos_eventually_lowerEnvelope_bentQuadratic
   rcases (hnearγWithin.and hposWithin).exists with
     ⟨γ, hbaseBent, hγpos⟩
   refine ⟨δ, γ, hδpos, hγpos, ?_, ?_⟩
-  · simpa [W, quadraticModel] using lt_add_of_pos_right (W x) hδpos
+  · simpa only [quadraticModel, sub_self, dotProduct_zero, add_zero, one_div, Matrix.mulVec_zero,
+    mul_zero, lt_add_iff_pos_right] using lt_add_of_pos_right (W x) hδpos
   · exact (hF.eventually_quadraticModelJetAt_lt_of_lt
       (x0 := x) (r := W x + δ) (p := J.gradient)
       (X := J.hessian - γ • (1 : Hessian n)) hbaseBent).filter_mono
@@ -502,14 +507,14 @@ theorem OperatorContinuous.perronLowerEnvelope_localQuadraticOpenBump
   have hnegSetNhds : negSet ∈ nhdsWithin x C := by
     exact hnear
   refine ⟨κ, negSet, hκpos, hnegSetOpen, hnegSetNhds, ?_, ?_, ?_⟩
-  · simpa [q] using hWlt
-  · simpa [q] using
+  · exact hWlt
+  · exact
       (continuous_quadraticModel x
         (lowerEnvelope C
           (perronEnvelope C boundary F g B.lower B.upper) x + κ)
         J.gradient J.hessian).continuousWithinAt
   · intro z hz _hzC
-    simpa [q, negSet] using hz
+    exact hz
 
 /--
 Operator continuity supplies the open-neighborhood bent quadratic bump datum at
@@ -552,13 +557,13 @@ theorem OperatorContinuous.perronLowerEnvelope_bentQuadraticOpenBump
   have hnegSetNhds : negSet ∈ nhdsWithin x C := by
     exact hnear
   refine ⟨δ, γ, negSet, hδpos, hγpos, hnegSetOpen, hnegSetNhds, ?_, ?_, ?_⟩
-  · simpa [q, Xb] using hWlt
-  · simpa [q, Xb] using
+  · exact hWlt
+  · exact
       (continuous_quadraticModel x
         (lowerEnvelope C
           (perronEnvelope C boundary F g B.lower B.upper) x + δ)
         J.gradient Xb).continuousWithinAt
   · intro z hz _hzC
-    simpa [q, Xb, negSet] using hz
+    exact hz
 
 end ViscositySolns

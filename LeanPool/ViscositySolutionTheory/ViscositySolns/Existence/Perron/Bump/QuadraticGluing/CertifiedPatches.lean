@@ -292,7 +292,7 @@ theorem PerronLowerEnvelopeLocalQuadraticCompactInactiveCertifiedPatchAt.quadrat
   intro z hz hzV
   rcases hactive z hz hzV with ⟨D, hDC, hDnhds, hDopen, hDinterior, hDV⟩
   have hqSub : ViscositySubsolution D F q := by
-    simpa [q] using
+    exact
       (ViscositySubsolution.quadraticModel_of_mem_interior_of_hessianSymmetricInvariant
         (C := D) (F := F) (x0 := x)
         (r := lowerEnvelope C (perronEnvelope C boundary F g B.lower B.upper) x + κ)
@@ -802,7 +802,7 @@ theorem PerronLowerEnvelopeLocalQuadraticBumpAt.maxPatchAt_of_compactInactiveSub
   have hpatched : PerronClass C boundary F g B.lower B.upper patched :=
     ⟨hdirichlet, hlower, hupper⟩
   refine ⟨κ, V, old, hκpos, hV, hWltq, hqCont, hneg, hold, ?_⟩
-  simpa [patched, q] using hpatched
+  exact hpatched
 
 /--
 Global local lifted-quadratic data plus compact-inactive local

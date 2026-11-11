@@ -223,7 +223,7 @@ theorem exists_inter_closedBall_compactRelativeNeighborhood_subset_of_mem_nhdsWi
   have hrR : r <= R := by
     calc
       r <= R / 2 := min_le_left _ _
-      _ <= R := by linarith
+      _ <= R := by linarith only [hR]
   have hrε : r < ε := by
     calc
       r <= ε / 2 := min_le_right _ _

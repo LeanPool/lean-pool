@@ -29,14 +29,14 @@ variable {n : Nat}
 theorem upperSemicontinuousOn_neg {C : Set (Point n)} {u : Point n -> Real}
     (hu : UpperSemicontinuousOn u C) :
     LowerSemicontinuousOn (fun x => -u x) C := by
-  simpa [Function.comp_def] using
+  exact
     (continuous_neg.comp_upperSemicontinuousOn_antitone hu
       (fun _ _ h => neg_le_neg h))
 
 theorem lowerSemicontinuousOn_neg {C : Set (Point n)} {u : Point n -> Real}
     (hu : LowerSemicontinuousOn u C) :
     UpperSemicontinuousOn (fun x => -u x) C := by
-  simpa [Function.comp_def] using
+  exact
     (continuous_neg.comp_lowerSemicontinuousOn_antitone hu
       (fun _ _ h => neg_le_neg h))
 
@@ -220,7 +220,7 @@ theorem viscositySubsolution_neg_iff {C : Set (Point n)} {F : Operator n}
     have h := hjet x hx J.neg hJ'
     simp only [Jet.neg_gradient, Jet.neg_hessian] at h
     simp only [negOperator, neg_neg]
-    linarith
+    linarith only [h]
   · rintro ⟨hlsc, hjet⟩
     refine ⟨?_, fun x hx J hJ => ?_⟩
     · simpa [neg_neg] using lowerSemicontinuousOn_neg hlsc
@@ -228,7 +228,7 @@ theorem viscositySubsolution_neg_iff {C : Set (Point n)} {F : Operator n}
         (superjet_neg_iff_subjet (J := J)).mp hJ
       have h := hjet x hx J.neg hJ'
       simp only [negOperator, Jet.neg_gradient, Jet.neg_hessian, neg_neg] at h
-      linarith
+      linarith only [h]
 
 /--
 Neg duality for supersolutions: `u` is a viscosity supersolution of `F = 0`
@@ -247,7 +247,7 @@ theorem viscositySupersolution_neg_iff {C : Set (Point n)} {F : Operator n}
     have h := hjet x hx J.neg hJ'
     simp only [Jet.neg_gradient, Jet.neg_hessian] at h
     simp only [negOperator, neg_neg]
-    linarith
+    linarith only [h]
   · rintro ⟨husc, hjet⟩
     refine ⟨?_, fun x hx J hJ => ?_⟩
     · simpa [neg_neg] using upperSemicontinuousOn_neg husc
@@ -255,7 +255,7 @@ theorem viscositySupersolution_neg_iff {C : Set (Point n)} {F : Operator n}
         (subjet_neg_iff_superjet (J := J)).mp hJ
       have h := hjet x hx J.neg hJ'
       simp only [negOperator, Jet.neg_gradient, Jet.neg_hessian, neg_neg] at h
-      linarith
+      linarith only [h]
 
 /--
 Neg duality for viscosity solutions: `u` solves `F = 0` exactly when `-u`
