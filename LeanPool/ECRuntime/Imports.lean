@@ -29,6 +29,7 @@ public import LeanPool.ECRuntime.MultiplicativeDrift
 public import LeanPool.ECRuntime.Mutation
 public import LeanPool.ECRuntime.Objective
 public import LeanPool.ECRuntime.OneMax
+public import LeanPool.ECRuntime.OneMaxRLSExact
 public import LeanPool.ECRuntime.OneMaxRLSHarmonicStep
 public import LeanPool.ECRuntime.OneMaxUnaryHarmonic
 public import LeanPool.ECRuntime.PrefixMarginalDynamics

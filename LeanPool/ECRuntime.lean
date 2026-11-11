@@ -6,6 +6,7 @@ Authors: Jiri Kovar, Jakub Kudela
 module
 
 public import LeanPool.ECRuntime.ConstantExitRuntime
+public import LeanPool.ECRuntime.OneMaxUnaryHarmonic
 public import LeanPool.ECRuntime.RLSAllDimensionPaperSharpCentered
 public import LeanPool.ECRuntime.RandomStakeCouponArbitraryTargetFiniteHorizon
 public import LeanPool.ECRuntime.RandomStakeCouponArbitraryTargetRuntime
