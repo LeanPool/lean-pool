@@ -83,7 +83,7 @@ theorem OperatorContinuous.locallyBounded {F : Operator n}
   have htri : |f y| <= |f z| + |f y - f z| := by
     simpa [sub_eq_add_neg, add_comm, add_left_comm, add_assoc] using
       abs_add_le (f z) (f y - f z)
-  linarith
+  linarith only [habs, htri]
 
 theorem OperatorContinuousOn.locallyBoundedOn
     {S : Set ((Point n × Real) × Jet n)} {F : Operator n}
@@ -100,7 +100,7 @@ theorem OperatorContinuousOn.locallyBoundedOn
   have htri : |f y| <= |f z| + |f y - f z| := by
     simpa [sub_eq_add_neg, add_comm, add_left_comm, add_assoc] using
       abs_add_le (f z) (f y - f z)
-  linarith
+  linarith only [habs, htri]
 
 theorem OperatorContinuous.locallyBoundedOn
     {S : Set ((Point n × Real) × Jet n)} {F : Operator n}

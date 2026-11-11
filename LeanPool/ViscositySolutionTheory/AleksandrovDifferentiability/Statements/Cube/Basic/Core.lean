@@ -209,19 +209,19 @@ theorem mem_sourceCrossPolytope_of_sum_abs_le {n : ℕ} {h : ℝ} (hn : 1 ≤ n)
       exact hz
     have hextra_nonneg : 0 ≤ extra := by
       dsimp [extra]
-      linarith
+      linarith only [hS_div_le_one]
     cases a with
     | inl i =>
         have hnum : 0 ≤ z i + |z i| := by
           have := neg_le_abs (z i)
-          linarith
+          linarith only [this]
         have hbase : 0 ≤ (z i + |z i|) / (2 * h) := div_nonneg hnum hden
         dsimp [w]
         split_ifs <;> linarith
     | inr i =>
         have hnum : 0 ≤ |z i| - z i := by
           have := le_abs_self (z i)
-          linarith
+          linarith only [this]
         have hbase : 0 ≤ (|z i| - z i) / (2 * h) := div_nonneg hnum hden
         dsimp [w]
         split_ifs <;> linarith
@@ -246,7 +246,7 @@ theorem mem_sourceCrossPolytope_of_sum_abs_le {n : ℕ} {h : ℝ} (hn : 1 ≤ n)
                   ring
           _ = (∑ i : Fin n, |z i|) / h := by
                 rw [Finset.sum_div]
-      simpa [hS_eq] using hpoint
+      exact hpoint
     calc
       ∑ a : Sum (Fin n) (Fin n), w a
           = ((∑ i : Fin n, (z i + |z i|) / (2 * h)) +
@@ -453,7 +453,7 @@ theorem HasSourceCubeValueDifferenceUpperBound.affineRemainderLinearGrowthBound_
   intro z hzQ
   have hu_bound : u (x + z) - u x ≤ M := hval.2 (x + z) hzQ
   have hinner_abs : |inner ℝ p z| ≤ ‖p‖ * ‖z‖ := by
-    simpa [Real.norm_eq_abs] using norm_inner_le_norm (𝕜 := ℝ) p z
+    exact norm_inner_le_norm (𝕜 := ℝ) p z
   have hneg_inner : -inner ℝ p z ≤ G * ‖z‖ := by
     calc
       -inner ℝ p z ≤ |inner ℝ p z| := neg_le_abs _
@@ -463,7 +463,7 @@ theorem HasSourceCubeValueDifferenceUpperBound.affineRemainderLinearGrowthBound_
     abel
   dsimp [affineRemainder]
   rw [hdiff]
-  linarith
+  linarith only [hu_bound, hneg_inner]
 
 /-- Points in `Q_1` have all sufficiently short coordinate endpoints inside `Q_3`. This
 discharges the endpoint-domain hypothesis in the source small-increment estimate. -/
@@ -476,7 +476,7 @@ theorem sourceCube_coordinateEndpointDomain_of_mem_sourceOpenCube_one {n : ℕ}
   intro r hrpos hrρ i
   have hrabs : |r| < 2 := by
     rw [abs_of_pos hrpos]
-    linarith
+    linarith only [hρ, hrpos, hrρ]
   exact ⟨sourceOpenCube_one_add_coordinate_mem_three (i := i) hx hrabs,
     sourceOpenCube_one_sub_coordinate_mem_three (i := i) hx hrabs⟩
 
@@ -559,7 +559,7 @@ theorem HasSourceCubeAffineRemainderLinearGrowthBound.largeIncrementQuadraticBou
       K1 * r ≤ (K1 / ρ) * r ^ 2 := by
     have hr_le : r ≤ r ^ 2 / ρ := by
       rw [le_div_iff₀ hρ]
-      nlinarith
+      nlinarith only [hzρ, hρsq_le_rsq]
     calc
       K1 * r ≤ K1 * (r ^ 2 / ρ) :=
         mul_le_mul_of_nonneg_left hr_le hK1
@@ -572,7 +572,7 @@ theorem HasSourceCubeAffineRemainderLinearGrowthBound.largeIncrementQuadraticBou
         add_le_add hconst hlinear_term
       _ = (K0 / ρ ^ 2 + K1 / ρ) * r ^ 2 := by
         ring
-  exact hlinear.trans (by simpa [r] using hquad)
+  exact hlinear.trans (by exact hquad)
 
 /-- Value-difference control plus a slope norm bound imply the source large-increment quadratic
 estimate. This is the abstract Lean version of the source proof's large-`z` step from

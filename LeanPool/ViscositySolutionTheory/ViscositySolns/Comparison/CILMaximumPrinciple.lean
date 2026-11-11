@@ -89,10 +89,10 @@ theorem CILDoubledMaximumPrincipleOn.of_global_doubledQuadraticExpansion
     hv.mono hLsubsetD
   have hinv_pos : 0 < epsilon⁻¹ := inv_pos.mpr hepsilon
   have hlambda_nonneg : 0 <= epsilon⁻¹ + μ z0 := by
-    linarith [hμ z0]
+    linarith only [hμ, hinv_pos, hμ z0]
   have hlambda_ne : epsilon⁻¹ + μ z0 ≠ 0 := by
     have hpos : 0 < epsilon⁻¹ + μ z0 := by
-      linarith [hμ z0]
+      linarith only [hμ, hinv_pos, hμ z0]
     exact ne_of_gt hpos
   rcases closedSemijets_and_cilBounds_ambient_of_regularizedDoubledConvolution
       (n := n) hJensen hAleksandrov hlambda_nonneg hlambda_ne
@@ -184,10 +184,10 @@ theorem CILDoubledMaximumPrincipleOn.of_selectedTwoSidedJets_global_doubledQuadr
     hv.mono hLsubsetD
   have hinv_pos : 0 < epsilon⁻¹ := inv_pos.mpr hepsilon
   have hlambda_nonneg : 0 <= epsilon⁻¹ + μ z0 := by
-    linarith [hμ z0]
+    linarith only [hμ, hinv_pos, hμ z0]
   have hlambda_ne : epsilon⁻¹ + μ z0 ≠ 0 := by
     have hpos : 0 < epsilon⁻¹ + μ z0 := by
-      linarith [hμ z0]
+      linarith only [hμ, hinv_pos, hμ z0]
     exact ne_of_gt hpos
   rcases closedSemijets_and_cilBounds_ambient_of_selectedTwoSidedJets
       (n := n) hselected hlambda_nonneg hlambda_ne
@@ -303,7 +303,7 @@ theorem QuadraticPenaltyIshiiLemmaOn.of_localized_jensen_aleksandrov
         exact Matrix.IsHermitian.fromBlocks hαI hnegαI hαI)
       (fun _z => comparisonPenaltyBlock_le_two_smul_blockDiagonalIdentity
         (n := n) hα_nonneg)
-      (fun _z => by linarith)
+      (fun _z => by linarith only [hα])
   simpa [blockPointLeft_comparisonPenaltyBlock_mulVec_doubledPoint,
     blockPointRight_comparisonPenaltyBlock_mulVec_doubledPoint] using hCIL
 
@@ -381,7 +381,7 @@ theorem QuadraticPenaltyIshiiLemmaOn.of_selectedTwoSidedJets
         exact Matrix.IsHermitian.fromBlocks hαI hnegαI hαI)
       (fun _z => comparisonPenaltyBlock_le_two_smul_blockDiagonalIdentity
         (n := n) hα_nonneg)
-      (fun _z => by linarith)
+      (fun _z => by linarith only [hα])
   simpa [blockPointLeft_comparisonPenaltyBlock_mulVec_doubledPoint,
     blockPointRight_comparisonPenaltyBlock_mulVec_doubledPoint] using hCIL
 

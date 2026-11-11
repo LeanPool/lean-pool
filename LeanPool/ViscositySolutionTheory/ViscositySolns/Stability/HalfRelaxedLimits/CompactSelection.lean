@@ -204,12 +204,12 @@ theorem exists_isMaxOn_mem_nhds_upperHalfRelaxedLimit_sub_test_sub_lt
     intro y hy
     have hygap := hgap y hy.1 hy.2
     dsimp [M]
-    linarith
+    linarith only [hδpos, hygap]
   have hφE : ∀ y ∈ E, ContinuousWithinAt φ C y := fun y hy =>
     hφC.continuousWithinAt (hEC hy)
   have hupperE : ∀ᶠ i in l, ∀ y ∈ E, uᵢ i y - φ y < M - δ / 3 :=
     eventually_forall_sub_test_lt_of_isCompact_upperHalfRelaxedLimit_sub_test_lt
-      hEcompact hEC hbddAbove hφE hEbound (by dsimp [M]; linarith)
+      hEcompact hEC hbddAbove hφE hEbound (by dsimp [M]; linarith only [hδpos])
   let B : Set ι := {i | ∀ y ∈ E, uᵢ i y - φ y < M - δ / 3}
   have hB : B ∈ l := hupperE
   have hAB : A ∩ B ∈ l := inter_mem hA hB
@@ -225,12 +225,12 @@ theorem exists_isMaxOn_mem_nhds_upperHalfRelaxedLimit_sub_test_sub_lt
     have hηleδ : η <= δ / 3 := min_le_right ε (δ / 3)
     have hlt_lower : M - δ / 3 < uᵢ i z - φ z := by
       dsimp [M] at hzval ⊢
-      linarith
-    linarith
+      linarith only [hzval, hlt_upper, hηleδ]
+    linarith only [hzval, hlt_upper, hηleδ]
   have hηleε : η <= ε := min_le_left ε (δ / 3)
   have hzvalε :
       upperHalfRelaxedLimit uᵢ l C x - φ x - ε < uᵢ i z - φ z := by
-    linarith
+    linarith only [hzval, hηleε]
   exact ⟨i, hiAB.1, z, hzK, hOV hzO, hmax, hzvalε⟩
 
 /--
@@ -280,12 +280,12 @@ theorem exists_isMinOn_mem_nhds_lowerHalfRelaxedLimit_sub_test_add
     intro y hy
     have hygap := hgap y hy.1 hy.2
     dsimp [M]
-    linarith
+    linarith only [hδpos, hygap]
   have hφE : ∀ y ∈ E, ContinuousWithinAt φ C y := fun y hy =>
     hφC.continuousWithinAt (hEC hy)
   have hlowerE : ∀ᶠ i in l, ∀ y ∈ E, M + δ / 3 < uᵢ i y - φ y :=
     eventually_forall_lt_sub_test_of_lt_isCompact_lowerHalfRelaxedLimit_sub_test
-      hEcompact hEC hbddBelow hφE hEbound (by dsimp [M]; linarith)
+      hEcompact hEC hbddBelow hφE hEbound (by dsimp [M]; linarith only [hδpos])
   let B : Set ι := {i | ∀ y ∈ E, M + δ / 3 < uᵢ i y - φ y}
   have hB : B ∈ l := hlowerE
   have hAB : A ∩ B ∈ l := inter_mem hA hB
@@ -301,12 +301,12 @@ theorem exists_isMinOn_mem_nhds_lowerHalfRelaxedLimit_sub_test_add
     have hηleδ : η <= δ / 3 := min_le_right ε (δ / 3)
     have hlt_upper : uᵢ i z - φ z < M + δ / 3 := by
       dsimp [M] at hzval ⊢
-      linarith
-    linarith
+      linarith only [hzval, hlt_lower, hηleδ]
+    linarith only [hzval, hlt_lower, hηleδ]
   have hηleε : η <= ε := min_le_left ε (δ / 3)
   have hzvalε :
       uᵢ i z - φ z < lowerHalfRelaxedLimit uᵢ l C x - φ x + ε := by
-    linarith
+    linarith only [hzval, hηleε]
   exact ⟨i, hiAB.1, z, hzK, hOV hzO, hmin, hzvalε⟩
 
 /--
@@ -474,7 +474,7 @@ theorem exists_isMaxOn_mem_nhds_abs_upperHalfRelaxedLimit_lt
           (φ z - φ x)|
           <= |(uᵢ i z - φ z) - (upperHalfRelaxedLimit uᵢ l C x - φ x)| +
               |φ z - φ x| := abs_add_le _ _
-      _ < ε := by linarith
+      _ < ε := by linarith only [hadj, hφabs]
   exact ⟨i, hiA, z, hzK, hzV, hKz, hmax, by simpa [hdecomp] using hsum⟩
 
 /--
@@ -536,7 +536,7 @@ theorem exists_isMinOn_mem_nhds_abs_lowerHalfRelaxedLimit_lt
           (φ z - φ x)|
           <= |(uᵢ i z - φ z) - (lowerHalfRelaxedLimit uᵢ l C x - φ x)| +
               |φ z - φ x| := abs_add_le _ _
-      _ < ε := by linarith
+      _ < ε := by linarith only [hadj, hφabs]
   exact ⟨i, hiA, z, hzK, hzV, hKz, hmin, by simpa [hdecomp] using hsum⟩
 
 /--

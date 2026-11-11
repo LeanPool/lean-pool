@@ -69,7 +69,7 @@ theorem coordinateSliceConvexSourceSecantSlopeValue_measurable
     hu_cont.comp hp0_cont.continuousOn hp0_maps
   have h1_cont : ContinuousOn (fun y : SourceCubeSpace n => u (p1 y)) (sourceOpenCube n 1) :=
     hu_cont.comp hp1_cont.continuousOn hp1_maps
-  have hden : c + h - c ≠ 0 := by linarith
+  have hden : c + h - c ≠ 0 := by linarith only [hpos]
   have hslope_cont :
       ContinuousOn
         (fun y : SourceCubeSpace n =>
@@ -169,10 +169,10 @@ theorem ConvexOn.rightDeriv_eq_iInf_slope_sourceForwardSecantStep
     have hk_pos : 0 < sourceForwardSecantStep k := sourceForwardSecantStep_pos k
     have hk_le_hm : sourceForwardSecantStep k ≤ sourceForwardSecantStep m :=
       antitone_sourceForwardSecantStep hmk
-    have hm_lt : x < x + sourceForwardSecantStep m := by linarith
-    have hk_lt : x < x + sourceForwardSecantStep k := by linarith
+    have hm_lt : x < x + sourceForwardSecantStep m := by linarith only [hm_pos]
+    have hk_lt : x < x + sourceForwardSecantStep k := by linarith only [hk_pos]
     have hk_le : x + sourceForwardSecantStep k ≤ x + sourceForwardSecantStep m := by
-      linarith
+      linarith only [hk_le_hm]
     have hm_mem : x + sourceForwardSecantStep m ∈ {y | y ∈ S ∧ x < y} :=
       ⟨hstep m, hm_lt⟩
     have hk_mem : x + sourceForwardSecantStep k ∈ {y | y ∈ S ∧ x < y} :=
@@ -185,7 +185,7 @@ theorem ConvexOn.rightDeriv_eq_iInf_slope_sourceForwardSecantStep
     rintro _ ⟨m, rfl⟩
     have hm_lt : x < x + sourceForwardSecantStep m := by
       have hm_pos : 0 < sourceForwardSecantStep m := sourceForwardSecantStep_pos m
-      linarith
+      linarith only [hm_pos]
     exact AleksandrovDifferentiability.ConvexOn.rightDeriv_le_slope
       (S := S) (f := f) (x := x) (y := x + sourceForwardSecantStep m)
       hf hx (hstep m) hm_lt
@@ -236,7 +236,7 @@ theorem coordinateSliceConvexSourceRightDerivExtensionValue_secantApprox
         using sourceDerivativeClamp_mem_Ioo_three s
     have hstep : ∀ m : ℕ, c + sourceForwardSecantStep m ∈ Set.Ioo (-3 : ℝ) 3 := by
       intro m
-      simpa [c] using sourceDerivativeClamp_add_mem_Ioo_three (s := s)
+      exact sourceDerivativeClamp_add_mem_Ioo_three (s := s)
         (sourceForwardSecantStep_pos m) (sourceForwardSecantStep_lt_one m)
     have hright :=
       ConvexOn.rightDeriv_eq_iInf_slope_sourceForwardSecantStep

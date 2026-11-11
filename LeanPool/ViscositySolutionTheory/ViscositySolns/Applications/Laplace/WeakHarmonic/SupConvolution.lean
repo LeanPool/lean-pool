@@ -59,7 +59,7 @@ theorem neg_mul_dotProduct_le_centralSecondDifference_of_coordinateSemiconvexOn
   rw [hmid, hdiff, smul_dotProduct, dotProduct_smul, smul_eq_mul, smul_eq_mul] at h
   unfold centralSecondDifference
   set d := dotProduct v v
-  nlinarith [h]
+  nlinarith only [h, h]
 
 theorem dotProduct_smul_single_self (h : ℝ) (i : Fin n) :
     dotProduct (h • (Pi.single i 1 : Point n)) (h • Pi.single i 1) = h ^ 2 := by
@@ -88,7 +88,7 @@ theorem neg_mul_le_coordSecondDifference_of_coordinateSemiconvexOn
   have hh2 : 0 < h ^ 2 := by positivity
   unfold coordSecondDifference
   rw [le_inv_mul_iff₀ hh2]
-  linarith
+  linarith only [hsum]
 
 /-! ### Second differences at points with a second-order jet -/
 
@@ -108,8 +108,8 @@ theorem tendsto_coordSecondDifference_of_hasSecondOrderJet {f : Point n → ℝ}
     refine IsBigO.of_bound 1 ?_
     filter_upwards [hup, hlow] with y hy1 hy2
     simp only [one_mul, Real.norm_eq_abs, σ]
-    have h1 : f y - Q y ≤ ρ₁ y := by simp only [Q]; linarith
-    have h2 : ρ₂ y ≤ f y - Q y := by simp only [Q]; linarith
+    have h1 : f y - Q y ≤ ρ₁ y := by simp only [Q]; linarith only [hy1]
+    have h2 : ρ₂ y ≤ f y - Q y := by simp only [Q]; linarith only [hy2]
     rw [abs_le]
     constructor
     · have := neg_abs_le (ρ₂ y)
@@ -145,7 +145,7 @@ theorem tendsto_coordSecondDifference_of_hasSecondOrderJet {f : Point n → ℝ}
       have hneg : x - h • Pi.single i (1 : ℝ) = x + h • -Pi.single i 1 := by
         rw [smul_neg, ← sub_eq_add_neg]
       simp only [centralSecondDifference, σ, hneg]
-      linarith
+      linarith only [hq]
     have hh2 : h ^ 2 ≠ 0 := by positivity
     rw [coordSecondDifference, Finset.sum_congr rfl fun i _ => hterm i, Matrix.trace,
       Finset.mul_sum, ← Finset.sum_add_distrib]
@@ -188,7 +188,7 @@ theorem dist_lt_of_isMaxOn_supConvolutionKernel {K : Set (Point n)}
   have hlampos : 0 < lambda := by
     by_contra hneg
     replace hneg := not_lt.mp hneg
-    nlinarith [sq_nonneg δ]
+    nlinarith only [hlam, hMη, hneg, sq_nonneg δ]
   unfold supConvolutionKernel at hle
   set d := dotProduct (y - η) (y - η)
   rw [dist_eq_norm]
@@ -198,7 +198,7 @@ theorem dist_lt_of_isMaxOn_supConvolutionKernel {K : Set (Point n)}
   have h1 : lambda * δ ^ 2 ≤ lambda * d := by
     have := hsq.trans hdot
     exact mul_le_mul_of_nonneg_left this hlampos.le
-  nlinarith
+  nlinarith only [hlam, hMη, hMy, hle, h1]
 
 /-- The compact sup-convolution dominates `u` on `K`. -/
 theorem le_compactSupConvolution_of_isCompact {K : Set (Point n)} {u : Point n → ℝ}
@@ -248,10 +248,10 @@ theorem exists_lambda_abs_compactSupConvolution_sub_le {K : Set (Point n)}
     have hdot : 0 ≤ dotProduct (y - η) (y - η) :=
       (sq_nonneg ‖y - η‖).trans (norm_sq_le_dotProduct_self _)
     have : 0 ≤ lambda / 2 * dotProduct (y - η) (y - η) := by positivity
-    linarith
+    linarith only [this]
   rw [Real.dist_eq] at hclose
   have hup := (le_abs_self _).trans hclose.le
-  rw [abs_of_nonneg (by linarith)]
-  linarith
+  rw [abs_of_nonneg (by linarith only [hlow])]
+  linarith only [hval, hkernel, hup]
 
 end ViscositySolns

@@ -51,7 +51,7 @@ private theorem linear_eq_zero_of_forall_le_add_mul {c A m : ℝ}
     dsimp [r]
     field_simp [hm]
     ring
-  linarith
+  linarith only [hr, hcalc]
 
 /-- A line subgradient lifts to an ambient supporting functional on open finite-dimensional
 convex domains.
@@ -111,7 +111,7 @@ theorem ConvexOn.lineSubgradientLiftsToAmbientFunctional_of_isOpen
       simpa [lineDomain] using hr_mem
     have hminorant :=
       SubgradientOn.lineRestriction_supporting_slope_inequality hq hr_domain
-    linarith
+    linarith only [hlt, hminorant]
   rcases geometric_hahn_banach_open
       (ConvexOn.convex_strictEpigraphOn hu)
       (isOpen_strictEpigraphOn_of_continuousOn hs (hu.continuousOn hs))
@@ -132,7 +132,7 @@ theorem ConvexOn.lineSubgradientLiftsToAmbientFunctional_of_isOpen
     have hdecomp : (x₀, u₀ + 1) = (x₀, u₀) + (0, (1 : ℝ)) := by
       ext <;> simp
     rw [hdecomp, map_add] at hlt
-    linarith
+    linarith only [hbase_ge, hlt]
   have hline_direction_zero : Λ (z, q) = 0 := by
     have hline_all : ∀ a : ℝ, c ≤ Λ ((x₀, u₀) + a • (z, q)) := by
       intro a
@@ -167,7 +167,7 @@ theorem ConvexOn.lineSubgradientLiftsToAmbientFunctional_of_isOpen
     have hvne : Λ (0, (1 : ℝ)) ≠ 0 := ne_of_lt hvert
     rw [strictEpigraphOn.normalizedHorizontalFunctional_apply]
     field_simp [hvne]
-    linarith
+    linarith only [hdir]
 
 /-- On an open finite-dimensional convex domain in a complete real inner-product space, the
 subdifferential is nonempty at every point of the domain.

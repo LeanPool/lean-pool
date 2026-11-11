@@ -58,9 +58,9 @@ theorem exists_pos_radius_ball_subset_neg_gradient_image_jensenContactSet
   have ha_nonneg : 0 <= a := by
     exact mul_nonneg (Nat.cast_nonneg n) hr
   have ha1_pos : 0 < a + 1 := by
-    linarith
+    linarith only [ha_nonneg]
   have hden_pos : 0 < 2 * (a + 1) := by positivity
-  have hgamma_half_lt : gamma / 2 < gamma := by linarith
+  have hgamma_half_lt : gamma / 2 < gamma := by linarith only [hgamma_pos]
   have hrho_pos : 0 < rho := by
     dsimp [rho]
     exact lt_min (half_pos hdelta) (div_pos hgamma_pos hden_pos)
@@ -71,7 +71,7 @@ theorem exists_pos_radius_ball_subset_neg_gradient_image_jensenContactSet
   have hq_delta : q ∈ Metric.ball (0 : Point n) delta := by
     have hrho_le : rho <= delta / 2 := min_le_left _ _
     have hnorm_lt_half : ‖q‖ < delta / 2 := lt_of_lt_of_le hqnorm hrho_le
-    have hnorm_lt_delta : ‖q‖ < delta := by linarith
+    have hnorm_lt_delta : ‖q‖ < delta := by linarith only [hrho_pos, hqnorm, hrho_le]
     simpa [Metric.mem_ball, dist_eq_norm] using hnorm_lt_delta
   have hq_gamma_bound : ‖q‖ < gamma / (2 * (a + 1)) := by
     exact lt_of_lt_of_le hqnorm (min_le_right _ _)
@@ -82,8 +82,8 @@ theorem exists_pos_radius_ball_subset_neg_gradient_image_jensenContactSet
     have hright : (a + 1) * (gamma / (2 * (a + 1))) = gamma / 2 := by
       field_simp [ha1_pos.ne']
     have hle : a * ‖q‖ <= (a + 1) * ‖q‖ := by
-      nlinarith [norm_nonneg q]
-    nlinarith
+      nlinarith only [norm_nonneg q]
+    nlinarith only [hmul_lt, hright, hle]
   have hq_small : (n : Real) * ‖q‖ * r < gamma := by
     have hrewrite : (n : Real) * ‖q‖ * r = a * ‖q‖ := by
       dsimp [a]
@@ -130,9 +130,9 @@ theorem exists_pos_radius_ball_subset_neg_gradient_image_jensenGlobalContactSet
   have ha_nonneg : 0 <= a := by
     exact mul_nonneg (Nat.cast_nonneg n) hr
   have ha1_pos : 0 < a + 1 := by
-    linarith
+    linarith only [ha_nonneg]
   have hden_pos : 0 < 2 * (a + 1) := by positivity
-  have hgamma_half_lt : gamma / 2 < gamma := by linarith
+  have hgamma_half_lt : gamma / 2 < gamma := by linarith only [hgamma_pos]
   have hrho_pos : 0 < rho := by
     dsimp [rho]
     exact lt_min (half_pos hdelta) (div_pos hgamma_pos hden_pos)
@@ -143,7 +143,7 @@ theorem exists_pos_radius_ball_subset_neg_gradient_image_jensenGlobalContactSet
   have hq_delta : q ∈ Metric.ball (0 : Point n) delta := by
     have hrho_le : rho <= delta / 2 := min_le_left _ _
     have hnorm_lt_half : ‖q‖ < delta / 2 := lt_of_lt_of_le hqnorm hrho_le
-    have hnorm_lt_delta : ‖q‖ < delta := by linarith
+    have hnorm_lt_delta : ‖q‖ < delta := by linarith only [hrho_pos, hqnorm, hrho_le]
     simpa [Metric.mem_ball, dist_eq_norm] using hnorm_lt_delta
   have hq_gamma_bound : ‖q‖ < gamma / (2 * (a + 1)) := by
     exact lt_of_lt_of_le hqnorm (min_le_right _ _)
@@ -154,8 +154,8 @@ theorem exists_pos_radius_ball_subset_neg_gradient_image_jensenGlobalContactSet
     have hright : (a + 1) * (gamma / (2 * (a + 1))) = gamma / 2 := by
       field_simp [ha1_pos.ne']
     have hle : a * ‖q‖ <= (a + 1) * ‖q‖ := by
-      nlinarith [norm_nonneg q]
-    nlinarith
+      nlinarith only [norm_nonneg q]
+    nlinarith only [hmul_lt, hright, hle]
   have hq_small : (n : Real) * ‖q‖ * r < gamma := by
     have hrewrite : (n : Real) * ‖q‖ * r = a * ‖q‖ := by
       dsimp [a]
@@ -202,16 +202,16 @@ theorem ball_subset_neg_gradient_image_jensenGlobalContactSet_of_boundary_gap
   have ha_nonneg : 0 <= a := by
     exact mul_nonneg (Nat.cast_nonneg n) hr
   have ha1_pos : 0 < a + 1 := by
-    linarith
+    linarith only [ha_nonneg]
   have hgamma_half_lt : gamma / 2 < gamma := by
-    linarith
+    linarith only [hgamma]
   intro q hq
   have hqnorm : ‖q‖ < rho := by
     simpa [rho, a, Metric.mem_ball, dist_eq_norm] using hq
   have hq_delta : q ∈ Metric.ball (0 : Point n) delta := by
     have hrho_le : rho <= delta / 2 := min_le_left _ _
     have hnorm_lt_half : ‖q‖ < delta / 2 := lt_of_lt_of_le hqnorm hrho_le
-    have hnorm_lt_delta : ‖q‖ < delta := by linarith
+    have hnorm_lt_delta : ‖q‖ < delta := by linarith only [hdelta, hqnorm, hrho_le]
     simpa [Metric.mem_ball, dist_eq_norm] using hnorm_lt_delta
   have hq_gamma_bound : ‖q‖ < gamma / (2 * (a + 1)) := by
     exact lt_of_lt_of_le hqnorm (min_le_right _ _)
@@ -222,8 +222,8 @@ theorem ball_subset_neg_gradient_image_jensenGlobalContactSet_of_boundary_gap
     have hright : (a + 1) * (gamma / (2 * (a + 1))) = gamma / 2 := by
       field_simp [ha1_pos.ne']
     have hle : a * ‖q‖ <= (a + 1) * ‖q‖ := by
-      nlinarith [norm_nonneg q]
-    nlinarith
+      nlinarith only [norm_nonneg q]
+    nlinarith only [hmul_lt, hright, hle]
   have hq_small : (n : Real) * ‖q‖ * r < gamma := by
     have hrewrite : (n : Real) * ‖q‖ * r = a * ‖q‖ := by
       dsimp [a]
@@ -448,7 +448,7 @@ theorem eventually_boundary_gap_of_uniformOn_closedBall
       ∀ m : Nat, N <= m ->
         ∀ x : Point n, x ∈ Metric.closedBall x0 r -> dist x x0 = r ->
           fseq m x <= fseq m x0 - gamma / 2 := by
-  rcases hunif (gamma / 4) (by linarith) with ⟨N, hN⟩
+  rcases hunif (gamma / 4) (by linarith only [hgamma]) with ⟨N, hN⟩
   refine ⟨N, ?_⟩
   intro m hm x hx hboundary
   have hx0 : x0 ∈ Metric.closedBall x0 r := Metric.mem_closedBall_self hr
@@ -456,12 +456,12 @@ theorem eventually_boundary_gap_of_uniformOn_closedBall
   have hx0_bound := hN m hm x0 hx0
   have hx_upper : fseq m x <= f x + gamma / 4 := by
     have hle_abs : fseq m x - f x <= |fseq m x - f x| := le_abs_self _
-    linarith
+    linarith only [hx_bound, hle_abs]
   have hx0_lower : f x0 - gamma / 4 <= fseq m x0 := by
     have hneg_abs : -|fseq m x0 - f x0| <= fseq m x0 - f x0 := neg_abs_le _
-    linarith
+    linarith only [hx0_bound, hneg_abs]
   have hfgap := hgap x hx hboundary
-  linarith
+  linarith only [hx_upper, hx0_lower, hfgap]
 
 /--
 A positive-measure consequence of the Jacobian image-measure estimate.
@@ -537,7 +537,7 @@ theorem measure_limsup_le_of_forall_measure_le
   have hTendsto :
       Filter.Tendsto (fun n : Nat => μ (U n)) Filter.atTop
         (𝓝 (μ (⋂ n : Nat, U n))) := by
-    simpa [Function.comp_def] using
+    exact
       (tendsto_measure_iInter_atTop (μ := μ) (s := U) hUmeas hUanti hUfinite)
   have hUlower : ∀ n : Nat, c <= μ (U n) := by
     intro n
@@ -547,7 +547,7 @@ theorem measure_limsup_le_of_forall_measure_le
     exact (hlower n).trans (measure_mono hEnU)
   have hlimsup_lower : c <= μ (⋂ n : Nat, U n) :=
     ge_of_tendsto' hTendsto hUlower
-  exact hlimsup_lower.trans (measure_mono (by simpa [U] using hlimsup))
+  exact hlimsup_lower.trans (measure_mono (by exact hlimsup))
 
 /--
 Positive measure passes from a sequence of uniformly positive measurable sets

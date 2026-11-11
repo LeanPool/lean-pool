@@ -104,7 +104,7 @@ theorem ViscositySubsolution.strict_add_laplacePenalty
     Matrix.trace_sub, Matrix.trace_smul, Matrix.trace_one, Fintype.card_fin,
     smul_eq_mul] at h
   simp only [laplaceOperator_apply]
-  linarith
+  linarith only [h]
 
 /--
 Dirichlet comparison for the Laplace operator on a domain with compact closure
@@ -155,10 +155,10 @@ theorem dirichletComparisonPrinciple_laplaceOperator (hn : 0 < n)
       have hyK := hK y (frontier_subset_closure hy)
       have hpen : laplacePenalty η K y + η <= 0 := by
         rw [laplacePenalty_apply]
-        nlinarith
+        nlinarith only [hη, hyK]
       have := hboundary y hy
       simp only [w]
-      linarith)
+      linarith only [hpen, this])
     hη
     (by rw [hw]; exact hu.viscosity.strict_add_laplacePenalty η K)
     hv.viscosity operatorContinuous_laplaceOperator proper_laplaceOperator
@@ -177,6 +177,6 @@ theorem dirichletComparisonPrinciple_laplaceOperator (hn : 0 < n)
   have hηK : η * K = ε := by
     rw [hηdef]
     field_simp
-  nlinarith
+  nlinarith only [hη, hx, hxx, hηK]
 
 end ViscositySolns

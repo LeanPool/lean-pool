@@ -146,7 +146,7 @@ theorem measureReal_Ioo_symm_le_two_mul_of_not_sourceLocalizedMaximalBadPredicat
   have hmass :=
     measureReal_Ioo_le_mul_of_not_sourceLocalizedMaximalBadPredicate
       (μ := μ) (s := x) (t := t) (a := x - h) (b := x + h)
-      hnot (by linarith)
+      hnot (by linarith only [hh_pos])
       (sourceMaximalWindow_Ioo_symm_subset_sourceMaximalDomain hx hh)
       ⟨by linarith, by linarith⟩
   convert hmass using 1

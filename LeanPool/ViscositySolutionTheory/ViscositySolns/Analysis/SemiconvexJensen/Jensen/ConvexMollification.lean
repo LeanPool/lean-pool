@@ -222,10 +222,10 @@ theorem exists_continuous_extension_eqOn_intermediate_closedBall_of_convexOn_clo
   let Rmid : Real := (r + R) / 2
   have hrRmid : r < Rmid := by
     dsimp [Rmid]
-    linarith
+    linarith only [hrR]
   have hRmidR : Rmid < R := by
     dsimp [Rmid]
-    linarith
+    linarith only [hrR]
   let s : Set (Point n) := Metric.closedBall x0 Rmid
   have hcont_ball : ContinuousOn g (Metric.ball x0 R) :=
     (ConvexOn.coordinateSemiconvexOn_zero (n := n) hconv).continuousOn_ball_of_closedBall
@@ -432,7 +432,7 @@ theorem convolution_sample_convexity_inequality
     ring_nf
     have hzab : z i * a + z i * b = z i := by
       rw [← mul_add, hab, mul_one]
-    linarith
+    linarith only [hzab]
   have hconv_le :
       g (a • (x - z) + b • (y - z)) <=
         a • g (x - z) + b • g (y - z) :=
@@ -574,7 +574,7 @@ theorem abs_normedBumpConvolution_sub_le_of_local_oscillation
       dist ((φ.normed volume ⋆[lsmul Real Real, volume] G : Point n -> Real) z) (G z) <=
         eps :=
     φ.dist_normed_convolution_le hG.aestronglyMeasurable (hosc z hz)
-  simpa [Real.dist_eq] using hdist
+  exact hdist
 
 /--
 The fixed-kernel approximation estimate, rewritten for a function `g` which
@@ -632,27 +632,27 @@ theorem exists_pos_le_sub_forall_dist_le_of_continuous_on_closedBall
     ⟨δ, hδ_pos, hδ⟩
   let η : Real := min δ (R - r) / 2
   have hmargin_pos : 0 < R - r := by
-    linarith
+    linarith only [hrR]
   have hmin_pos : 0 < min δ (R - r) :=
     lt_min hδ_pos hmargin_pos
   have hη_pos : 0 < η := by
     dsimp [η]
-    linarith
+    linarith only [hmin_pos]
   have hη_le_delta : η <= δ := by
     dsimp [η]
     have hmin_le : min δ (R - r) <= δ := min_le_left _ _
-    linarith
+    linarith only [hδ_pos, hmin_le]
   have hη_le_margin : η <= R - r := by
     dsimp [η]
     have hmin_le : min δ (R - r) <= R - r := min_le_right _ _
-    linarith
+    linarith only [hrR, hmin_le]
   refine ⟨η, hη_pos, hη_le_margin, ?_⟩
   intro z hz y hy
   have hzR : z ∈ Metric.closedBall x0 R := by
-    exact Metric.closedBall_subset_closedBall (by linarith) hz
+    exact Metric.closedBall_subset_closedBall (by linarith only [hrR]) hz
   have hyR : y ∈ Metric.closedBall x0 R := by
     have hcontain : r + η <= R := by
-      linarith
+      linarith only [hη_le_margin]
     exact ball_subset_closedBall_of_mem_closedBall_add_le
           (x0 := x0) (z := z) (r := r) (R := R) (ρ := η)
       hz hcontain hy
@@ -747,9 +747,9 @@ theorem jensenMollifierBump_rOut_le_rho
   have hden_pos : 0 < (m : Real) + 1 := by positivity
   have hden_ge : 1 <= (m : Real) + 1 := by
     have hm_nonneg : 0 <= (m : Real) := Nat.cast_nonneg m
-    linarith
+    linarith only []
   rw [jensenMollifierBump_rOut]
   rw [div_le_iff₀ hden_pos]
-  nlinarith [mul_le_mul_of_nonneg_left hden_ge hrho.le]
+  nlinarith only [hrho, hden_ge, mul_le_mul_of_nonneg_left hden_ge hrho.le]
 
 end ViscositySolns

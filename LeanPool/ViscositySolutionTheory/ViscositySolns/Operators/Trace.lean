@@ -108,10 +108,10 @@ theorem trace_mul_nonneg_of_posSemidef {A B : Hessian n}
   simp only [star_eq_conjTranspose]
   have hcycle₁ :
       Matrix.trace ((Sᴴ * S) * B) = Matrix.trace (B * Sᴴ * S) := by
-    simpa only [Matrix.mul_assoc] using Matrix.trace_mul_cycle Sᴴ S B
+    exact Matrix.trace_mul_cycle Sᴴ S B
   have hcycle₂ :
       Matrix.trace (B * Sᴴ * S) = Matrix.trace (S * B * Sᴴ) := by
-    simpa only [Matrix.mul_assoc] using Matrix.trace_mul_cycle B Sᴴ S
+    exact Matrix.trace_mul_cycle B Sᴴ S
   rw [hcycle₁, hcycle₂]
   exact (hB.mul_mul_conjTranspose_same S).trace_nonneg
 
@@ -131,7 +131,7 @@ theorem trace_mul_antitone_of_posSemidef {A : Hessian n}
   have htrace :
       Matrix.trace (A * (X - Y)) = Matrix.trace (A * X) - Matrix.trace (A * Y) := by
     rw [Matrix.mul_sub, Matrix.trace_sub]
-  linarith
+  linarith only [hnonneg, htrace]
 
 /--
 If `A x` is positive semidefinite for every `x`, then the trace-form operator
@@ -193,7 +193,7 @@ theorem trace_diagonal_mul_antitone_of_nonneg
         exact (h_empty (Finset.mem_univ i)).elim
     rw [hYsum, hXsum]
     exact mul_le_mul_of_nonneg_left (hdiag i) (ha i)
-  linarith
+  linarith only [htrace]
 
 /--
 The trace-form operator with a diagonal nonnegative Hessian coefficient is

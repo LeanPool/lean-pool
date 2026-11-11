@@ -135,7 +135,7 @@ theorem SubgradientOn.smul_add_smul
         = a * (u x + inner ℝ p₀ (y - x)) +
             b * (u x + inner ℝ p₁ (y - x)) := by
           rw [inner_add_left, real_inner_smul_left, real_inner_smul_left]
-          have hb_eq : b = 1 - a := by linarith
+          have hb_eq : b = 1 - a := by linarith only [hab]
           rw [hb_eq]
           ring
     _ ≤ a * u y + b * u y := hcombo
@@ -287,7 +287,7 @@ theorem of_punctured_of_base
     have hp_eq : p = p₀ := hbase p hp
     subst p
     simp
-  · exact hy ⟨hyapproach, by simpa using hyx⟩ p hp
+  · exact hy ⟨hyapproach, by exact hyx⟩ p hp
 
 /-- Cluster values of an auxiliary slope map `G` along the differentiability/approach set `D`.
 
@@ -326,7 +326,7 @@ theorem GradientClusterSet.mem_of_mem
   have hmap : Filter.map G (pure y) ≤ Filter.map G (𝓝[D] y) :=
     Filter.map_mono (m := G) (pure_le_nhdsWithin hy)
   have hpure : ClusterPt (G y) (Filter.map G (pure y)) := by
-    simpa using
+    exact
       (ClusterPt.of_le_nhds (pure_le_nhds (G y)) :
         ClusterPt (G y) (pure (G y)))
   exact hpure.mono hmap
@@ -640,7 +640,7 @@ theorem eventually_gradient_estimates_of_isLittleO
       simpa [Metric.mem_ball, dist_eq_norm] using hw
     calc
       ‖w - x‖ ≤ ‖w - y‖ + ‖y - x‖ := htri
-      _ ≤ ‖y - x‖ + ‖y - x‖ := by linarith
+      _ ≤ ‖y - x‖ + ‖y - x‖ := by linarith only [hwlt]
       _ = 2 * ‖y - x‖ := by ring
   rw [eventually_nhdsWithin_iff]
   filter_upwards [hUopen.mem_nhds hyU, hBsmall, hdist] with w hwU hwB hwdist hwD
@@ -812,7 +812,7 @@ theorem eventually_segment_estimates
   rcases Metric.mem_nhds_iff.mp hlinEv with ⟨δ, hδpos, hδsub⟩
   filter_upwards [Metric.ball_mem_nhds (0 : E) hδpos, hsegment] with
     z hzball hzsegment t ht p hp
-  have ht_abs : |t| ≤ 1 := abs_le.mpr ⟨by linarith [ht.1], ht.2⟩
+  have ht_abs : |t| ≤ 1 := abs_le.mpr ⟨by linarith only [ht, ht.1], ht.2⟩
   have hz_norm_lt : ‖z‖ < δ := by
     simpa [Metric.mem_ball, dist_eq_norm] using hzball
   have htz_norm_lt : ‖t • z‖ < δ := by
@@ -843,7 +843,7 @@ theorem eventually_segment_inner_estimates
   intro ε hε
   filter_upwards [eventually_segment_estimates hlin hsegment ε hε] with z hz t ht p hp
   let r : E := p - (p₀ + B (t • z))
-  have ht_abs : |t| ≤ 1 := abs_le.mpr ⟨by linarith [ht.1], ht.2⟩
+  have ht_abs : |t| ≤ 1 := abs_le.mpr ⟨by linarith only [ht, ht.1], ht.2⟩
   have htz_norm : ‖t • z‖ ≤ ‖z‖ := by
     calc
       ‖t • z‖ = |t| * ‖z‖ := norm_smul t z
@@ -860,9 +860,9 @@ theorem eventually_segment_inner_estimates
     dsimp [r]
     rw [inner_sub_left, inner_add_left, hmodel]
   have hinner : |inner ℝ r z| ≤ ‖r‖ * ‖z‖ := by
-    simpa [Real.norm_eq_abs] using norm_inner_le_norm (𝕜 := ℝ) r z
+    exact norm_inner_le_norm (𝕜 := ℝ) r z
   have hnorm : ‖r‖ ≤ ε * ‖t • z‖ := by
-    simpa [r] using hz t ht p hp
+    exact hz t ht p hp
   calc
     |inner ℝ p z - (inner ℝ p₀ z + t * inner ℝ z (B z))|
         = |inner ℝ r z| := by rw [hscalar]
@@ -896,7 +896,7 @@ theorem SubgradientOn.eq_gradient_of_hasGradientAt {s : Set E} {u : E → ℝ} {
     rw [← sub_nonneg]
     have hdiff : inner ℝ p (y - x) = inner ℝ p y - inner ℝ p x := by
       rw [inner_sub_right]
-    linarith
+    linarith only [hsupport, hdiff]
   have hmin : IsLocalMin g x := hminOn.isLocalMin hs
   have hinner : HasFDerivAt (fun y : E => inner ℝ p y)
       (InnerProductSpace.toDual ℝ E p) x :=

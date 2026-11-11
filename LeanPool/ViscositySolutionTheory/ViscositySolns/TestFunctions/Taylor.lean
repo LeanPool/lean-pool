@@ -75,7 +75,7 @@ theorem contDiff_quadraticModel {k : ℕ∞ω}
         ContDiff Real k
           (fun y : Point n × Point n => J.toSecondDerivative y.1 y.2) :=
       J.toSecondDerivative.isBoundedBilinearMap.contDiff
-    simpa using hbilin.comp₂ hdx hdx
+    exact hbilin.comp₂ hdx hdx
   have htotal :
       ContDiff Real k (fun x : Point n =>
         r + J.toFirstDerivative (x - x0) +
@@ -88,7 +88,8 @@ theorem contDiff_quadraticModel {k : ℕ∞ω}
         (fun x : Point n => quadraticModel x0 r p X x) := by
     ext x
     rw [quadraticModel_eq_linearMap x0 r J x]
-  simpa [← hfun] using htotal
+  simpa only [← hfun, Jet.toFirstDerivative_apply, dotProduct_sub, one_div, map_sub, sub_apply,
+    Jet.toSecondDerivative_apply] using htotal
 
 /--
 For a symmetric bilinear second derivative, the derivative of the Fréchet
@@ -102,54 +103,31 @@ theorem hasFDerivWithinAt_frechetSecondOrderModel {C : Set (Point n)}
       (fun y : Point n => frechetSecondOrderModel x0 r Dφ D2φ y)
       (Dφ + D2φ (x - x0)) C x := by
   let dx : Point n := x - x0
-  let shift : Point n →L[Real] Point n :=
-    (ContinuousLinearMap.id Real (Point n)) - (0 : Point n →L[Real] Point n)
-  have hshift_apply (y : Point n) : shift y = y := by
-    simp [shift]
+  have hshift :
+      HasFDerivWithinAt (fun y : Point n => y - x0)
+        (ContinuousLinearMap.id Real (Point n)) C x :=
+    (hasFDerivWithinAt_id x C).sub_const x0
   have hlin :
       HasFDerivWithinAt (fun y : Point n => Dφ (y - x0)) Dφ C x := by
-    simpa [map_sub] using
+    simpa only [map_sub] using
       (Dφ.hasFDerivWithinAt (s := C) (x := x)).sub_const (Dφ x0)
   have hquad_raw :
       HasFDerivWithinAt (fun y : Point n => D2φ (y - x0) (y - x0))
         (D2φ.precompR (Point n) dx (ContinuousLinearMap.id Real (Point n)) +
-          D2φ.precompL (Point n) (ContinuousLinearMap.id Real (Point n)) dx) C x := by
-    let shiftFun : Point n -> Point n := fun y => y - x0
-    have hshift_deriv :
-        HasFDerivWithinAt shiftFun (ContinuousLinearMap.id Real (Point n)) C x := by
-      simpa [shiftFun, sub_eq_add_neg] using
-        (ContinuousLinearMap.id Real (Point n)).hasFDerivWithinAt.add_const (-x0)
-    simpa [shiftFun, dx] using D2φ.hasFDerivWithinAt_of_bilinear hshift_deriv hshift_deriv
-  have hquad_deriv :
+          D2φ.precompL (Point n) (ContinuousLinearMap.id Real (Point n)) dx) C x :=
+    D2φ.hasFDerivWithinAt_of_bilinear hshift hshift
+  have hquad :
       HasFDerivWithinAt (fun y : Point n => (1 / 2 : Real) * D2φ (y - x0) (y - x0))
         (D2φ (x - x0)) C x := by
     refine (hquad_raw.const_smul (1 / 2 : Real)).congr_fderiv ?_
     ext v
     simp only [smul_apply, add_apply,
       ContinuousLinearMap.precompR_apply, ContinuousLinearMap.precompL_apply,
-      ContinuousLinearMap.id_apply]
+      ContinuousLinearMap.id_apply, smul_eq_mul]
     rw [hD2φ v dx]
-    simp [dx]
-    ring_nf
-  have hsum0 :
-      HasFDerivWithinAt
-        ((fun _ : Point n => r) +
-          ((fun y : Point n => Dφ (y - x0)) +
-            (fun y : Point n => (1 / 2 : Real) * D2φ (y - x0) (y - x0))))
-        (0 + (Dφ + D2φ (x - x0))) C x :=
-    (hasFDerivWithinAt_const r x C).add (hlin.add hquad_deriv)
-  have hsum :
-      HasFDerivWithinAt
-        ((fun _ : Point n => r) +
-          ((fun y : Point n => Dφ (y - x0)) +
-            (fun y : Point n => (1 / 2 : Real) * D2φ (y - x0) (y - x0))))
-        (Dφ + D2φ (x - x0)) C x :=
-    hsum0.congr_fderiv (by simp)
-  refine hsum.congr (fun y _ => ?_) ?_
-  · simp [frechetSecondOrderModel]
+    change (1 / 2 : Real) * (D2φ dx v + D2φ dx v) = D2φ dx v
     ring
-  · simp [frechetSecondOrderModel]
-    ring
+  exact (hlin.const_add r).add hquad
 
 /--
 Derivative of the residual after subtracting the Fréchet second-order model.
@@ -181,7 +159,7 @@ theorem frechetDerivativeResidual_isLittleO_of_hasFDerivWithinAt {C : Set (Point
   have hraw := hDφ_deriv.isLittleO.norm_right
   exact hraw.congr_left fun x => by
     ext v
-    simp [hDφ0]
+    simp only [hDφ0, map_sub, sub_apply, add_apply]
     ring
 
 /--
@@ -237,8 +215,8 @@ theorem isLittleO_second_order_of_hasFDerivWithinAt_isLittleO_deriv {C : Set (Po
   have h' :
       Asymptotics.IsLittleO (nhdsWithin x0 C) (fun x : Point n => R x - R x0)
         (fun x : Point n => ‖x - x0‖ ^ 2) := by
-    simpa using h
-  exact h'.congr_left fun x => by simp [hR0]
+    exact h
+  exact h'.congr_left fun x => by simp only [hR0, sub_zero]
 
 /--
 If the residual after subtracting the Fréchet second-order Taylor polynomial has
@@ -262,7 +240,7 @@ theorem frechetLittleO_of_hasFDerivWithinAt_isLittleO_deriv {C : Set (Point n)}
       (fun x : Point n => ‖x - x0‖ ^ 2) := by
   refine isLittleO_second_order_of_hasFDerivWithinAt_isLittleO_deriv
     hC hx0 hRderiv hR' ?_
-  simp [frechetSecondOrderModel]
+  simp only [frechetSecondOrderModel, sub_self, map_zero, add_zero, one_div, mul_zero]
 
 /--
 A derivative-residual form of the Fréchet Taylor bridge. This is often easier

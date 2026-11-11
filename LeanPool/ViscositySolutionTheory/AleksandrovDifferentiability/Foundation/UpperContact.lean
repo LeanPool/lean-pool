@@ -109,17 +109,17 @@ theorem HasUpperContactWithSlopeOn.mono_opening
   refine ⟨h.mem, ?_⟩
   intro y hy
   have hupper := h.upper_inequality (y := y) hy
-  have hhalf : a / 2 ≤ b / 2 := by linarith
+  have hhalf : a / 2 ≤ b / 2 := by linarith only [hab]
   have hquad :
       (a / 2) * ‖y - x‖ ^ 2 ≤ (b / 2) * ‖y - x‖ ^ 2 :=
     mul_le_mul_of_nonneg_right hhalf (sq_nonneg _)
-  linarith
+  linarith only [hupper, hquad]
 
 theorem HasUpperContactWithSlopeOn.mono_opening_add_nonneg
     {s : Set E} {u : E → ℝ} {x p : E} {a c : ℝ}
     (h : HasUpperContactWithSlopeOn s u x p a) (hc : 0 ≤ c) :
     HasUpperContactWithSlopeOn s u x p (a + c) :=
-  h.mono_opening (by linarith)
+  h.mono_opening (by linarith only [hc])
 
 theorem HasUpperContactOn.mem {s : Set E} {u : E → ℝ} {x : E} {a : ℝ}
     (h : HasUpperContactOn s u x a) :
@@ -151,7 +151,7 @@ theorem HasUpperContactOn.mono_opening_add_nonneg
     {s : Set E} {u : E → ℝ} {x : E} {a c : ℝ}
     (h : HasUpperContactOn s u x a) (hc : 0 ≤ c) :
     HasUpperContactOn s u x (a + c) :=
-  h.mono_opening (by linarith)
+  h.mono_opening (by linarith only [hc])
 
 theorem HasUpperContactOpeningAtMostOn.hasUpperContactOn_add_pos
     {s : Set E} {u : E → ℝ} {x : E} {A η : ℝ}
@@ -176,13 +176,13 @@ theorem HasUpperContactOpeningAtMostOn.mono_bound
     (h : HasUpperContactOpeningAtMostOn s u x A) (hAB : A ≤ B) :
     HasUpperContactOpeningAtMostOn s u x B := by
   intro η hη
-  exact (h.hasUpperContactOn_add_pos hη).mono_opening (by linarith)
+  exact (h.hasUpperContactOn_add_pos hη).mono_opening (by linarith only [hAB])
 
 theorem HasUpperContactOpeningAtMostOn.mono_bound_add_nonneg
     {s : Set E} {u : E → ℝ} {x : E} {A c : ℝ}
     (h : HasUpperContactOpeningAtMostOn s u x A) (hc : 0 ≤ c) :
     HasUpperContactOpeningAtMostOn s u x (A + c) :=
-  h.mono_bound (by linarith)
+  h.mono_bound (by linarith only [hc])
 
 theorem HasUpperContactOpeningAtMostOn.of_hasUpperContactOn
     {s : Set E} {u : E → ℝ} {x : E} {A : ℝ}
@@ -215,13 +215,13 @@ theorem HasUpperContactWithSlopeOpeningAtMostOn.mono_bound
     (h : HasUpperContactWithSlopeOpeningAtMostOn s u x p A) (hAB : A ≤ B) :
     HasUpperContactWithSlopeOpeningAtMostOn s u x p B := by
   intro η hη
-  exact (h.hasUpperContactWithSlopeOn_add_pos hη).mono_opening (by linarith)
+  exact (h.hasUpperContactWithSlopeOn_add_pos hη).mono_opening (by linarith only [hAB])
 
 theorem HasUpperContactWithSlopeOpeningAtMostOn.mono_bound_add_nonneg
     {s : Set E} {u : E → ℝ} {x p : E} {A c : ℝ}
     (h : HasUpperContactWithSlopeOpeningAtMostOn s u x p A) (hc : 0 ≤ c) :
     HasUpperContactWithSlopeOpeningAtMostOn s u x p (A + c) :=
-  h.mono_bound (by linarith)
+  h.mono_bound (by linarith only [hc])
 
 theorem HasUpperContactWithSlopeOpeningAtMostOn.of_hasUpperContactWithSlopeOn
     {s : Set E} {u : E → ℝ} {x p : E} {A : ℝ}

@@ -55,7 +55,8 @@ theorem laplacian_eq_sum_fderiv_fderiv {ι : Type*} [Fintype ι] (b : Orthonorma
   have hd : DifferentiableAt ℝ (fderiv ℝ f) x :=
     (hf.fderiv_right (m := 1) (by norm_num)).differentiable (by norm_num) x
   rw [fderiv_clm_apply hd (differentiableAt_const _)]
-  simp
+  simp only [Fin.isValue, Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val_fin_one,
+    fderiv_fun_const, Pi.zero_apply, comp_zero, zero_add, flip_apply]
 
 variable [MeasurableSpace E] [BorelSpace E] {μ : Measure E} [μ.IsAddHaarMeasure]
 
@@ -65,7 +66,7 @@ theorem fderiv_convolution_apply {f g : E → ℝ} (hf : LocallyIntegrable f μ)
     fderiv ℝ (f ⋆[lsmul ℝ ℝ, μ] g) x v = (f ⋆[lsmul ℝ ℝ, μ] fun y ↦ fderiv ℝ g y v) x := by
   rw [(hgc.hasFDerivAt_convolution_right (lsmul ℝ ℝ) hf hg x).fderiv]
   exact convolution_precompR_apply (𝕜 := ℝ) (L := lsmul ℝ ℝ) hf (hgc.fderiv (𝕜 := ℝ))
-    (hg.continuous_fderiv (by simp)) x v
+    (hg.continuous_fderiv (by simp only [ne_eq, one_ne_zero, not_false_eq_true])) x v
 
 /-- `Δ (f ⋆ g) = f ⋆ Δg` for a smooth compactly supported kernel `g`. -/
 theorem laplacian_convolution {f g : E → ℝ} (hf : LocallyIntegrable f μ)
@@ -106,17 +107,17 @@ theorem exists_radial_kernel {r : ℝ} (hr : 0 < r) :
   have hhc : HasCompactSupport h := by
     refine HasCompactSupport.intro (isCompact_closedBall (0 : E) r) fun y hy ↦ ?_
     rw [mem_closedBall_zero_iff, not_le] at hy
-    exact expNegInvGlue.zero_of_nonpos (by nlinarith [norm_nonneg y])
+    exact expNegInvGlue.zero_of_nonpos (by nlinarith only [hr, hy, norm_nonneg y])
   have hcont : Continuous h :=
     (expNegInvGlue.contDiff (n := 0)).continuous.comp (by fun_prop)
   have hpos : 0 < ∫ y, h y ∂μ :=
     hcont.integral_pos_of_hasCompactSupport_nonneg_nonzero hhc
       (fun y ↦ expNegInvGlue.nonneg _) (x := 0) (by
         simp only [hh, norm_zero]
-        exact (expNegInvGlue.pos_of_pos (by nlinarith)).ne')
+        exact (expNegInvGlue.pos_of_pos (by nlinarith only [hr])).ne')
   refine ⟨fun t ↦ (∫ y, h y ∂μ)⁻¹ * expNegInvGlue (r ^ 2 - t), ?_, fun t ht ↦ ?_, ?_⟩
   · exact contDiff_const.mul (expNegInvGlue.contDiff.comp (contDiff_const.sub contDiff_id))
-  · simp [expNegInvGlue.zero_of_nonpos (sub_nonpos.mpr ht)]
+  · simp only [expNegInvGlue.zero_of_nonpos (sub_nonpos.mpr ht), mul_zero]
   · rw [integral_const_mul]
     exact inv_mul_cancel₀ hpos.ne'
 
@@ -130,7 +131,7 @@ theorem exists_contDiff_eventuallyEq_laplacian_eq_zero [Nontrivial E] {U : Set E
   set r := ε / 3 with hr_def
   have hr : 0 < r := by positivity
   set B := closedBall x₀ (2 * r) with hB_def
-  have hBU : B ⊆ U := (closedBall_subset_ball (by linarith)).trans hεU
+  have hBU : B ⊆ U := (closedBall_subset_ball (by linarith only [hr_def, hr])).trans hεU
   obtain ⟨g, hg, hg0, hg1⟩ := exists_radial_kernel μ hr
   set ρ : E → ℝ := fun y ↦ g (‖y‖ ^ 2) with hρ_def
   have hρ : ContDiff ℝ ∞ ρ := hg.comp (contDiff_norm_sq ℝ)
@@ -149,7 +150,7 @@ theorem exists_contDiff_eventuallyEq_laplacian_eq_zero [Nontrivial E] {U : Set E
     filter_upwards [ball_mem_nhds x₀ hr] with x hx
     have hxB : closedBall x r ⊆ B := closedBall_subset_closedBall' (by
       rw [mem_ball] at hx
-      linarith)
+      linarith only [hx])
     have hk : Continuous fun s : ℝ ↦ g (s ^ 2) := hg.continuous.comp (continuous_pow 2)
     have hmvp := integral_radial_smul_eq_of_weaklyHarmonic hU hcont hu (hxB.trans hBU) hk
       (fun s hs ↦ hg0 _ (pow_le_pow_left₀ hr.le hs.le 2))
@@ -159,10 +160,11 @@ theorem exists_contDiff_eventuallyEq_laplacian_eq_zero [Nontrivial E] {U : Set E
     refine integral_congr_ae (Eventually.of_forall fun y ↦ ?_)
     simp only [lsmul_apply, smul_eq_mul, sub_add_cancel_left, norm_neg, hρ_def]
     by_cases hy : ‖y‖ ≤ r
-    · rw [hf_def, indicator_of_mem (hxB (by simpa [mem_closedBall, dist_eq_norm] using hy)),
+    · rw [hf_def, indicator_of_mem (hxB (by simpa only [mem_closedBall, dist_eq_norm,
+      add_sub_cancel_left] using hy)),
         mul_comm]
     · have := hg0 (‖y‖ ^ 2) (pow_le_pow_left₀ hr.le (not_le.mp hy).le 2)
-      simp [this]
+      simp only [this, zero_mul, mul_zero]
   · -- harmonicity of the mollification at `x₀`
     set ψ : E → ℝ := fun t ↦ ρ (t + -x₀) with hψ_def
     have hψ : ContDiff ℝ ∞ ψ := hρ.comp (contDiff_id.add contDiff_const)
@@ -172,7 +174,7 @@ theorem exists_contDiff_eventuallyEq_laplacian_eq_zero [Nontrivial E] {U : Set E
       by_contra h
       rw [mem_closedBall, dist_eq_norm, not_le, sub_eq_add_neg] at h
       exact ht (hρ0 _ h)
-    have hball : closedBall x₀ r ⊆ B := closedBall_subset_closedBall (by linarith)
+    have hball : closedBall x₀ r ⊆ B := closedBall_subset_closedBall (by linarith only [hr])
     have hweak := hu ψ hψ hψc (hψs.trans (hball.trans hBU))
     have hΔψ : Δ ψ = fun t ↦ Δ ρ (t + -x₀) := laplacian_comp_add_right ρ (-x₀)
     have hΔρ : ∀ y, Δ ρ y = 4 * ‖y‖ ^ 2 * deriv (deriv g) (‖y‖ ^ 2) +
@@ -198,7 +200,7 @@ theorem weyl_of_weaklyHarmonicOn {U : Set E} {u : E → ℝ} (hU : IsOpen U)
   · -- in dimension zero every function is constant
     have hconst : u = fun _ ↦ u 0 := funext fun x ↦ congrArg u (Subsingleton.elim x 0)
     rw [hconst]
-    exact ⟨contDiffOn_const, fun x _ ↦ by simp⟩
+    exact ⟨contDiffOn_const, fun x _ ↦ by simp only [laplacian_const, Pi.zero_apply]⟩
   · refine ⟨fun x hx ↦ ?_, fun x hx ↦ ?_⟩ <;>
       obtain ⟨w, hw, huw, hΔ⟩ := exists_contDiff_eventuallyEq_laplacian_eq_zero hU hcont hu hx
     · exact (hw.contDiffAt.congr_of_eventuallyEq huw).contDiffWithinAt

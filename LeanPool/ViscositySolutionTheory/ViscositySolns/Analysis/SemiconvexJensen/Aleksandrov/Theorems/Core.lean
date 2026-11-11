@@ -134,14 +134,14 @@ theorem ball_subset_iUnion_closedBall_shrink
   let eps : Real := R - dist x x0
   have heps_pos : 0 < eps := by
     dsimp [eps]
-    simpa [dist_comm] using sub_pos.mpr hx
+    exact sub_pos.mpr hx
   have hratio_pos : 0 < eps / R := div_pos heps_pos hR
   rcases exists_nat_one_div_lt hratio_pos with ⟨k, hk⟩
   refine Set.mem_iUnion.mpr ⟨k, ?_⟩
   rw [Metric.mem_closedBall]
   have hden1_pos : 0 < (k : Real) + 1 := by positivity
   have hden2_pos : 0 < (k : Real) + 2 := by positivity
-  have hden_le : (k : Real) + 1 <= (k : Real) + 2 := by linarith
+  have hden_le : (k : Real) + 1 <= (k : Real) + 2 := by linarith only []
   have hrecip_le :
       (1 : Real) / ((k : Real) + 2) <=
         (1 : Real) / ((k : Real) + 1) :=
@@ -156,8 +156,8 @@ theorem ball_subset_iUnion_closedBall_shrink
       _ = eps := by field_simp [hR.ne']
   dsimp [eps] at hRdiv_lt
   have hdist_le : dist x x0 <= R - R / ((k : Real) + 2) := by
-    linarith
-  simpa [dist_comm] using hdist_le
+    linarith only [hRdiv_lt]
+  exact hdist_le
 
 /--
 A metric sphere in coordinate space has zero Lebesgue measure as soon as the
@@ -165,7 +165,7 @@ radius is positive.
 -/
 theorem volume_sphere_eq_zero_of_pos (x0 : Point n) {r : Real} (hr : 0 < r) :
     volume (Metric.sphere x0 r) = 0 := by
-  simpa using
+  exact
     (MeasureTheory.Measure.addHaar_sphere_of_ne_zero
       (volume : Measure (Point n)) x0 hr.ne')
 
@@ -279,7 +279,7 @@ theorem AleksandrovSecondDifferentiabilityByJetsOnClosedBallTheorem.of_global_in
   have hden3_pos : 0 < (k : Real) + 3 := by positivity
   have hrecip2_pos : 0 < R / ((k : Real) + 2) := div_pos hR hden2_pos
   have hrecip3_pos : 0 < R / ((k : Real) + 3) := div_pos hR hden3_pos
-  have hden23 : (k : Real) + 2 <= (k : Real) + 3 := by linarith
+  have hden23 : (k : Real) + 2 <= (k : Real) + 3 := by linarith only []
   have hrecip_le :
       (1 : Real) / ((k : Real) + 3) <=
         (1 : Real) / ((k : Real) + 2) :=
@@ -296,7 +296,7 @@ theorem AleksandrovSecondDifferentiabilityByJetsOnClosedBallTheorem.of_global_in
     dsimp [rk, sk]
     have hstrict :
         R / ((k : Real) + 3) < R / ((k : Real) + 2) := by
-      have hden23_strict : (k : Real) + 2 < (k : Real) + 3 := by linarith
+      have hden23_strict : (k : Real) + 2 < (k : Real) + 3 := by linarith only []
       have hrecip_strict :
           (1 : Real) / ((k : Real) + 3) <
             (1 : Real) / ((k : Real) + 2) :=
@@ -307,19 +307,19 @@ theorem AleksandrovSecondDifferentiabilityByJetsOnClosedBallTheorem.of_global_in
         _ < R * ((1 : Real) / ((k : Real) + 2)) :=
             mul_lt_mul_of_pos_left hrecip_strict hR
         _ = R / ((k : Real) + 2) := by ring
-    linarith
+    linarith only [hstrict]
   have hsk_pos : 0 < sk := by
     dsimp [sk]
     have hlt : R / ((k : Real) + 3) < R := by
       have hden_gt_one : (1 : Real) < (k : Real) + 3 := by
         have hk_nonneg : 0 <= (k : Real) := Nat.cast_nonneg k
-        linarith
+        linarith only []
       rw [div_lt_iff₀ hden3_pos]
-      nlinarith
-    linarith
+      nlinarith only [hR]
+    linarith only [hlt]
   have hsk_lt_R : sk < R := by
     dsimp [sk]
-    linarith
+    linarith only [hrecip3_pos]
   rcases hext f x0 R sk hsk_pos hsk_lt_R hsemi with
     ⟨g, hgsemi, hgf⟩
   refine measure_mono_null ?_ (hAleksandrov g hgsemi)

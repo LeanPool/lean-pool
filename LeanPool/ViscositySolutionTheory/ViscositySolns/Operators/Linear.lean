@@ -56,7 +56,7 @@ theorem degenerateElliptic_affineSecondOrderOperator
     DegenerateElliptic (affineSecondOrderOperator G b c f) := by
   intro x r p X Y hYX
   dsimp [affineSecondOrderOperator]
-  linarith [hG x X Y hYX]
+  linarith only [hG, hYX, hG x X Y hYX]
 
 /--
 If the Hessian contribution is antitone in `X` and `0 ≤ c x` for every `x`,
@@ -72,7 +72,7 @@ theorem proper_affineSecondOrderOperator
   · intro x p X r s hrs
     dsimp [affineSecondOrderOperator]
     have hmul : c x * r <= c x * s := mul_le_mul_of_nonneg_left hrs (hc x)
-    linarith
+    linarith only [hmul]
   · exact degenerateElliptic_affineSecondOrderOperator hG
 
 /--

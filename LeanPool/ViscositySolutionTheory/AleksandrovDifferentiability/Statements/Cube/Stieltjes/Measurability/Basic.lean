@@ -39,7 +39,7 @@ theorem stieltjesFunction_leftLim_eq_iSup_rat_lt (F : StieltjesFunction ℝ) (c 
     refine ⟨F (c - 1), ?_⟩
     exact ⟨c - 1, by
       change c - 1 < c
-      linarith, rfl⟩
+      linarith only [], rfl⟩
   have hA_bdd : BddAbove A := by
     refine ⟨F c, ?_⟩
     rintro y ⟨r, hr, rfl⟩

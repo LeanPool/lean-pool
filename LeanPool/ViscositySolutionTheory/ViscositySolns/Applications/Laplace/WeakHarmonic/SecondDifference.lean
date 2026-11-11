@@ -65,7 +65,7 @@ def coordSecondDifference (f : Point n → ℝ) (h : ℝ) (x : Point n) : ℝ :=
 
 theorem norm_single_one_le_one (i : Fin n) : ‖(Pi.single i (1 : ℝ) : Point n)‖ ≤ 1 := by
   rw [Pi.norm_single]
-  simp
+  simp only [norm_one, Std.le_refl]
 
 /-! ### A one-dimensional second-order mean value estimate -/
 
@@ -81,7 +81,7 @@ theorem abs_central_second_difference_sub_le {g g' g'' : ℝ → ℝ} {a ε h : 
   have hmemI : ∀ t ∈ Icc (0 : ℝ) h, t ∈ Icc (-h) h ∧ -t ∈ Icc (-h) h := by
     intro t ht
     exact ⟨⟨by linarith [ht.1], ht.2⟩, ⟨by linarith [ht.2], by linarith [ht.1]⟩⟩
-  have h0 : (0 : ℝ) ∈ Icc (-h) h := ⟨by linarith, hh⟩
+  have h0 : (0 : ℝ) ∈ Icc (-h) h := ⟨by linarith only [hh], hh⟩
   -- first derivative: `φ t = g' t - a t` has derivative `g'' t - a`
   have hφ : ∀ t ∈ Icc (-h) h, |(g' t - a * t) - (g' 0 - a * 0)| ≤ ε * |t| := by
     intro t ht
@@ -90,9 +90,9 @@ theorem abs_central_second_difference_sub_le {g g' g'' : ℝ → ℝ} {a ε h : 
       fun s _ => ((hg' s).sub ((hasDerivAt_id' s).const_mul a)).hasDerivWithinAt
     have hb : ∀ s ∈ Icc (-h) h, ‖g'' s - a * 1‖ ≤ ε := by
       intro s hs
-      simpa [Real.norm_eq_abs] using hbound s hs
+      simpa only [mul_one, Real.norm_eq_abs] using hbound s hs
     have := (convex_Icc (-h) h).norm_image_sub_le_of_norm_hasDerivWithin_le hderiv hb h0 ht
-    simpa [Real.norm_eq_abs] using this
+    simpa only [mul_zero, sub_zero, ge_iff_le, Real.norm_eq_abs] using this
   -- second step: `ψ t = g t + g (-t) - 2 g 0 - a t²`
   let ψ : ℝ → ℝ := fun t => g t + g (-t) - 2 * g 0 - a * (t * t)
   let ψ' : ℝ → ℝ := fun t => g' t - g' (-t) - 2 * a * t
@@ -145,7 +145,7 @@ theorem lapTrace_eq_zero_of_notMem_tsupport {χ : Point n → ℝ} {x : Point n}
   have h2 : x ∉ tsupport (fderiv ℝ (fderiv ℝ χ)) := fun hx2 =>
     hx (tsupport_fderiv_subset ℝ (tsupport_fderiv_subset ℝ hx2))
   have hzero : fderiv ℝ (fderiv ℝ χ) x = 0 := image_eq_zero_of_notMem_tsupport h2
-  simp [lapTrace, hzero]
+  simp only [lapTrace, hzero, zero_apply, Finset.sum_const_zero]
 
 /-- The trace Laplacian of a `C²` function is continuous. -/
 theorem continuous_lapTrace {χ : Point n → ℝ} (hχ : ContDiff ℝ 2 χ) :
@@ -278,8 +278,8 @@ theorem coordSecondDifference_eq_zero_of_notMem_cthickening {f : Point n → ℝ
       exact (dist_add_smul_single_le x (-h) i).trans
         (by rw [abs_neg, abs_of_nonneg hh]; exact hhr)
     have h3 : f x = 0 := hnot x (by rw [dist_self]; exact hr)
-    simp [centralSecondDifference, h1, h2, h3]
-  simp [coordSecondDifference, hterm]
+    simp only [centralSecondDifference, h1, h2, add_zero, h3, mul_zero, sub_self]
+  simp only [coordSecondDifference, hterm, Finset.sum_const_zero, mul_zero]
 
 /--
 A continuous function whose support lies in a compact set is integrable.
@@ -325,7 +325,7 @@ theorem tendsto_integral_mul_coordSecondDifference {w χ : Point n → ℝ}
   have hgint : Integrable (S.indicator fun x => ε / (2 * (A + 1)) * |w x|) := by
     rw [integrable_indicator_iff hS.measurableSet]
     exact ((hw.continuousOn.integrableOn_compact hS).norm.const_mul (ε / (2 * (A + 1)))).congr
-      (ae_of_all _ fun x => by simp [Real.norm_eq_abs])
+      (ae_of_all _ fun x => by simp only [Real.norm_eq_abs])
   rw [Real.dist_eq, ← integral_sub hΔint hLint]
   have hbound : ∀ x, ‖w x * coordSecondDifference χ h x - w x * lapTrace χ x‖ ≤
       S.indicator (fun x => ε / (2 * (A + 1)) * |w x|) x := by
@@ -338,7 +338,7 @@ theorem tendsto_integral_mul_coordSecondDifference {w χ : Point n → ℝ}
     · rw [indicator_of_notMem hx,
         coordSecondDifference_eq_zero_of_notMem_cthickening hhpos'.le hh1 hx,
         lapTrace_eq_zero_of_notMem_tsupport (fun h' => hx (self_subset_cthickening _ h'))]
-      simp
+      simp only [mul_zero, sub_self, norm_zero, Std.le_refl]
   have hle := norm_integral_le_of_norm_le hgint (ae_of_all _ hbound)
   rw [integral_indicator hS.measurableSet, integral_const_mul, ← hAdef] at hle
   rw [← Real.norm_eq_abs]
@@ -346,7 +346,7 @@ theorem tendsto_integral_mul_coordSecondDifference {w χ : Point n → ℝ}
       ≤ ε / (2 * (A + 1)) * A := hle
     _ < ε := by
         rw [div_mul_eq_mul_div, div_lt_iff₀ (by positivity)]
-        nlinarith
+        nlinarith only [hA, hε]
 
 /-! ### Discrete integration by parts -/
 

@@ -137,7 +137,7 @@ theorem SubgradientOn.directional_le_lineRightDeriv
     inner ℝ p v ≤ rightDeriv (lineRestriction u x v) 0 := by
   have hpLine := hp.lineRestriction_subgradientOn (v := v)
   have huLine := ConvexOn.lineRestriction (x := x) (v := v) hu
-  simpa using hpLine.le_rightDeriv_of_convex huLine h0
+  exact hpLine.le_rightDeriv_of_convex huLine h0
 
 /-- A subgradient at an arbitrary point of a line controls the right derivative of the line
 restriction at the corresponding parameter. -/
@@ -148,7 +148,7 @@ theorem SubgradientOn.directional_le_lineRightDeriv_at
     inner ℝ p v ≤ rightDeriv (lineRestriction u x v) t := by
   have hpLine := hp.lineRestriction_subgradientOn_at (x := x) (v := v) (t := t)
   have huLine := ConvexOn.lineRestriction (x := x) (v := v) hu
-  simpa using hpLine.le_rightDeriv_of_convex huLine ht
+  exact hpLine.le_rightDeriv_of_convex huLine ht
 
 /-- A subgradient controls the left derivative of every one-dimensional restriction. -/
 theorem SubgradientOn.lineLeftDeriv_le_directional
@@ -157,7 +157,7 @@ theorem SubgradientOn.lineLeftDeriv_le_directional
     leftDeriv (lineRestriction u x v) 0 ≤ inner ℝ p v := by
   have hpLine := hp.lineRestriction_subgradientOn (v := v)
   have huLine := ConvexOn.lineRestriction (x := x) (v := v) hu
-  simpa using hpLine.leftDeriv_le_of_convex huLine h0
+  exact hpLine.leftDeriv_le_of_convex huLine h0
 
 /-- A subgradient at an arbitrary point of a line controls the left derivative of the line
 restriction at the corresponding parameter. -/
@@ -168,7 +168,7 @@ theorem SubgradientOn.lineLeftDeriv_le_directional_at
     leftDeriv (lineRestriction u x v) t ≤ inner ℝ p v := by
   have hpLine := hp.lineRestriction_subgradientOn_at (x := x) (v := v) (t := t)
   have huLine := ConvexOn.lineRestriction (x := x) (v := v) hu
-  simpa using hpLine.leftDeriv_le_of_convex huLine ht
+  exact hpLine.leftDeriv_le_of_convex huLine ht
 
 /-- At an interior line parameter, every ambient subgradient directional value lies in the
 one-dimensional subgradient interval of the line restriction. -/

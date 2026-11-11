@@ -38,7 +38,7 @@ theorem ConvexOn.convex_strictEpigraphOn {s : Set E} {u : E → ℝ}
     [NormedSpace ℝ E]
     (hu : ConvexOn ℝ s u) :
     Convex ℝ (strictEpigraphOn s u) := by
-  simpa [strictEpigraphOn] using hu.convex_strict_epigraph
+  exact hu.convex_strict_epigraph
 
 /-- If `u` is continuous on an open set, then its strict epigraph over that set is open. -/
 theorem isOpen_strictEpigraphOn_of_continuousOn {s : Set E} {u : E → ℝ}
@@ -102,7 +102,7 @@ theorem strictEpigraphOn_separatingFunctional_vertical_neg
   have hdecomp : (x, u x + 1) = (x, u x) + (0, (1 : ℝ)) := by
     ext <;> simp
   rw [hdecomp, map_add] at hlt
-  linarith
+  linarith only [hlt]
 
 /-- Separation of the strict epigraph from a graph point, with the vertical negativity
 normalization already extracted.
@@ -145,7 +145,7 @@ theorem strictEpigraphOn_separatingFunctional_graph_le
   have hε_pos : 0 < ε := by
     exact div_pos (sub_pos.mpr hbase_lt) hden_pos
   have hmem : (y, u y + ε) ∈ strictEpigraphOn s u := by
-    exact ⟨hy, by linarith⟩
+    exact ⟨hy, by linarith only [hε_pos]⟩
   have hlt := hsep (y, u y + ε) hmem
   have hdecomp : (y, u y + ε) = (y, u y) + ε • (0, (1 : ℝ)) := by
     ext <;> simp
@@ -156,7 +156,7 @@ theorem strictEpigraphOn_separatingFunctional_graph_le
     field_simp [ne_of_lt hvert]
   have hcontrary : ℓ (x, u x) < ℓ (y, u y) + ε * ℓ (0, (1 : ℝ)) := by
     rw [hmul]
-    linarith
+    linarith only [hnot]
   exact hcontrary.not_ge hlt.le
 
 /-- The normalized horizontal part of a strict-epigraph separator supports the function at the
@@ -178,7 +178,7 @@ theorem strictEpigraphOn_normalizedHorizontalFunctional_supporting_inequality
     have hx_decomp : (x, u x) = (x, (0 : ℝ)) + u x • (0, (1 : ℝ)) := by
       ext <;> simp
     rw [hy_decomp, hx_decomp, map_add, map_smul, map_add, map_smul] at hgraph
-    simpa [mul_comm] using hgraph
+    exact hgraph
   have hsub :
       ℓ (y - x, (0 : ℝ)) = ℓ (y, (0 : ℝ)) - ℓ (x, (0 : ℝ)) := by
     have hdecomp : (y - x, (0 : ℝ)) = (y, (0 : ℝ)) - (x, (0 : ℝ)) := by
@@ -187,9 +187,9 @@ theorem strictEpigraphOn_normalizedHorizontalFunctional_supporting_inequality
   set a : ℝ := ℓ (0, (1 : ℝ))
   set byv : ℝ := ℓ (y, (0 : ℝ))
   set bxv : ℝ := ℓ (x, (0 : ℝ))
-  have ha : a < 0 := by simpa [a] using hvert
+  have ha : a < 0 := by exact hvert
   have hgraph_ab : byv + u y * a ≤ bxv + u x * a := by
-    simpa [a, byv, bxv] using hgraph_expanded
+    exact hgraph_expanded
   rw [strictEpigraphOn.normalizedHorizontalFunctional_apply, hsub]
   change u x + -(byv - bxv) / a ≤ u y
   have hpos : 0 < -a := neg_pos.mpr ha
@@ -199,7 +199,7 @@ theorem strictEpigraphOn_normalizedHorizontalFunctional_supporting_inequality
       field_simp [ne_of_lt ha]
       ring
     rw [hleft]
-    nlinarith [hgraph_ab]
+    nlinarith only [hgraph_expanded, hgraph_ab]
   exact (mul_le_mul_iff_right₀ hpos).mp hmul
 
 /-- A convex function on an open finite-dimensional domain admits a supporting continuous

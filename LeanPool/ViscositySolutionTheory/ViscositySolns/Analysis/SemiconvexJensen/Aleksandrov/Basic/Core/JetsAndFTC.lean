@@ -164,7 +164,7 @@ theorem HasSecondOrderExpansionWithin.hasSecondOrderJet_of_mem_nhds
     rw [nhdsWithin_eq_nhds.mpr hC, nhdsWithin_univ]
   have huniv : HasSecondOrderExpansionWithin Set.univ f x J :=
     (hasSecondOrderExpansionWithin_congr_nhdsWithin hfilter).1 h
-  simpa using huniv.hasSecondOrderJet
+  exact huniv.hasSecondOrderJet
 
 /--
 The set of points where a function has some second-order jet.
@@ -413,7 +413,7 @@ theorem norm_le_norm_right_of_mem_uIoc_zero
   · have ht0 : t ≤ 0 := (lt_of_lt_of_le hts hs0).le
     rw [Real.norm_eq_abs, Real.norm_eq_abs, abs_of_nonpos hs0,
       abs_of_nonpos ht0]
-    linarith
+    linarith only [hts]
 
 /--
 Uniform small-segment form of a one-dimensional `o(id)` bound.
@@ -524,7 +524,7 @@ theorem LipschitzOnWith.absolutelyContinuousOnInterval_comp_segment
     have hFdist :
         dist (F (x0 + s • v)) (F (x0 + t • v)) ≤
           (K : Real) * dist (x0 + s • v) (x0 + t • v) := by
-      simpa using hF.dist_le_mul
+      exact hF.dist_le_mul
         (x0 + s • v) trivial (x0 + t • v) trivial
     have hline :
         dist (x0 + s • v) (x0 + t • v) = ‖v‖ * dist s t := by
@@ -558,7 +558,7 @@ theorem LipschitzOnWith.absolutelyContinuousOnInterval_comp_segment_of_subset
     have hFdist :
         dist (F (x0 + u • v)) (F (x0 + t • v)) ≤
           (K : Real) * dist (x0 + u • v) (x0 + t • v) := by
-      simpa using hF.dist_le_mul
+      exact hF.dist_le_mul
         (x0 + u • v) (hseg u hu) (x0 + t • v) (hseg t ht)
     have hline :
         dist (x0 + u • v) (x0 + t • v) = ‖v‖ * dist u t := by

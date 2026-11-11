@@ -98,20 +98,20 @@ theorem le_of_tendsto_of_mapClusterPt_of_eventually_le
   let δ : ℝ := (a - b) / 3
   have hδ : 0 < δ := by
     dsimp [δ]
-    linarith
+    linarith only [hnot]
   have hδ_gap : b + δ < a - δ := by
     dsimp [δ]
-    linarith
+    linarith only [hnot]
   have hf_event : ∀ᶠ i in l, a - δ < f i := by
     have hmem : Set.Ioi (a - δ) ∈ 𝓝 a := by
-      exact Ioi_mem_nhds (by linarith)
+      exact Ioi_mem_nhds (by linarith only [hδ])
     exact hf hmem
   have hg_freq : ∃ᶠ i in l, g i ∈ Set.Iio (b + δ) :=
-    mapClusterPt_iff_frequently.mp hg (Set.Iio (b + δ)) (Iio_mem_nhds (by linarith))
+    mapClusterPt_iff_frequently.mp hg (Set.Iio (b + δ)) (Iio_mem_nhds (by linarith only [hδ]))
   have hfreq : ∃ᶠ i in l, g i < b + δ ∧ a - δ < f i ∧ f i ≤ g i :=
     (hg_freq.and_eventually (hf_event.and hle)).mono fun i hi => ⟨hi.1, hi.2.1, hi.2.2⟩
   rcases hfreq.exists with ⟨i, hgi, hfi, hlei⟩
-  linarith
+  linarith only [hδ_gap, hgi, hfi, hlei]
 
 /-- An eventual scalar inequality passes to a cluster point on the left and a limit on the
 right. -/
@@ -123,15 +123,15 @@ theorem le_of_mapClusterPt_of_tendsto_of_eventually_le
     a ≤ b := by
   have hneg_cluster : MapClusterPt (-a) l (fun i => -f i) := by
     have hcont : ContinuousAt (fun x : ℝ => -x) a := by fun_prop
-    simpa [Function.comp_def] using hf.continuousAt_comp hcont
+    exact hf.continuousAt_comp hcont
   have hneg_tend : Filter.Tendsto (fun i => -g i) l (𝓝 (-b)) := by
-    simpa using hg.neg
+    exact hg.neg
   have hneg_le : (fun i => -g i) ≤ᶠ[l] (fun i => -f i) := by
     filter_upwards [hle] with i hi
-    linarith
+    linarith only [hi]
   have hle_neg : -b ≤ -a :=
     le_of_tendsto_of_mapClusterPt_of_eventually_le hneg_tend hneg_cluster hneg_le
-  linarith
+  linarith only [hle_neg]
 
 omit [CompleteSpace E] in
 /-- Closed-graph form of the subgradient inequality for cluster points.
@@ -161,7 +161,7 @@ theorem SubgradientOn.of_mapClusterPt_of_continuousAt
   have hleft :
       MapClusterPt (u x + inner ℝ p (z - x)) l
         (fun i => u (xs i) + inner ℝ (ps i) (z - xs i)) := by
-    simpa [Function.comp_def] using hpair.continuousAt_comp hcont
+    simpa only [Function.comp_def] using hpair.continuousAt_comp hcont
   have hright : Filter.Tendsto (fun _ : ι => u z) l (𝓝 (u z)) :=
     tendsto_const_nhds
   have hle :

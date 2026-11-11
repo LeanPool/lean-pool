@@ -136,7 +136,7 @@ theorem HasFDerivAt.hasDerivAt_frechetSecondOrderResidual_line
         (Dφ := Dφ) (D2φ := D2φ) (Dφ_at := Dφ_at)
         hD2sym hφ.hasFDerivWithinAt
     exact hwithin.hasFDerivAt_of_univ
-  simpa using HasFDerivAt.hasDerivAt_line (x := x0) (v := v) (t := t) hres
+  exact HasFDerivAt.hasDerivAt_line (x := x0) (v := v) (t := t) hres
 
 /--
 A.e. line-restriction derivative for the residual after subtracting a Fréchet
@@ -340,7 +340,7 @@ theorem derivativeResidual_segment_bound_of_hasFDerivAt
   have ht01 : 0 ≤ t ∧ t ≤ 1 := by
     rcases Set.mem_uIoc.mp ht with h | h
     · exact ⟨h.1.le, h.2⟩
-    · linarith
+    · linarith only [h]
   have hseg_sub :
       (x0 + t • (z - x0)) - x0 = t • (z - x0) := by
     simp
@@ -550,7 +550,7 @@ theorem IsSymmetricBilinear.of_hasFDerivAt_derivative_map_eventually
     second_derivative_symmetric_of_eventually
       (𝕜 := Real) (f := f) (f' := Df) (f'' := D2f)
       hf hDf v w
-  simpa using hsym
+  exact hsym
 
 /--
 A continuous linear map is self-adjoint for the coordinate dot product.

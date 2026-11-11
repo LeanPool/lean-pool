@@ -74,7 +74,7 @@ theorem map_volume_restrict_linearIsometryEquiv_image
         ((volume : Measure E).restrict (e ⁻¹' (e '' Ω))).map e := by
           rw [hpre]
     _ = ((volume : Measure E).map e).restrict (e '' Ω) := by
-          simpa using
+          exact
             (e.toMeasurableEquiv.restrict_map (volume : Measure E) (e '' Ω)).symm
     _ = (volume : Measure F).restrict (e '' Ω) := by
           rw [(LinearIsometryEquiv.measurePreserving e).map_eq]

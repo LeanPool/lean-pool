@@ -400,7 +400,7 @@ theorem secondOrderBadSetOn_subset_domain_diff_of_inter_subset_differentiability
   rcases (mem_secondOrderBadSetOn.mp hx) with ⟨hxs, hxbad⟩
   refine ⟨hxs, ?_⟩
   intro hxG
-  exact hxbad (by simpa using hG ⟨hxs, hxG⟩)
+  exact hxbad (by exact hG ⟨hxs, hxG⟩)
 
 theorem secondOrderDifferentiableAEOn_of_fullMeasure_goodSet
     {μ : Measure E} {s G : Set E} {u : E → ℝ} (hs : MeasurableSet s)

@@ -333,7 +333,7 @@ theorem linearPerturbation_lt_center_of_boundary_gap
     le_trans (le_abs_self _) hlin_abs
   have hf_gap := hgap x hx hboundary
   dsimp [linearPerturbation]
-  linarith
+  linarith only [hp, hlin_le, hf_gap]
 
 /--
 A maximum point of a sufficiently small linear perturbation on a closed ball
@@ -520,7 +520,7 @@ theorem tendsto_eval_of_uniformOn_closedBall_comp
   have hdist : dist (fseq (idx j) y) (f y) = |fseq (idx j) y - f y| := by
     rw [Real.dist_eq]
   rw [hdist]
-  exact lt_of_le_of_lt hclose (by linarith)
+  exact lt_of_le_of_lt hclose (by linarith only [heps])
 
 /--
 Set-theoretic limsup containment for closed-ball global contact sets under
@@ -579,7 +579,7 @@ theorem JensenGlobalContactSet.limsup_subset_jensenContactSet_of_uniformOn_close
   have hidx : Filter.Tendsto (fun j : Nat => mseq (φ j)) Filter.atTop Filter.atTop :=
     Filter.tendsto_atTop_mono (fun j : Nat => hmseq (φ j)) hφ.tendsto_atTop
   have hp_delta : p ∈ Metric.ball (0 : Point n) delta := by
-    have hhalf_lt : delta / 2 < delta := by linarith
+    have hhalf_lt : delta / 2 < delta := by linarith only [hdelta]
     rw [Metric.mem_ball]
     exact lt_of_le_of_lt hp_closed hhalf_lt
   have hmax : IsMaxOn (linearPerturbation f p) (Metric.closedBall x0 r) x := by
@@ -608,12 +608,12 @@ theorem JensenGlobalContactSet.limsup_subset_jensenContactSet_of_uniformOn_close
         Filter.Tendsto
           (fun j : Nat => linearPerturbation (fseq (mseq (φ j))) (pseq (φ j)) y)
           Filter.atTop (𝓝 (linearPerturbation f p y)) := by
-      simpa [linearPerturbation] using hy_tendsto_f.add hy_tendsto_dot
+      exact hy_tendsto_f.add hy_tendsto_dot
     have hright :
         Filter.Tendsto
           (fun j : Nat => linearPerturbation (fseq (mseq (φ j))) (pseq (φ j)) x)
           Filter.atTop (𝓝 (linearPerturbation f p x)) := by
-      simpa [linearPerturbation] using hx_tendsto_f.add hx_tendsto_dot
+      exact hx_tendsto_f.add hx_tendsto_dot
     exact le_of_tendsto_of_tendsto hleft hright
       (Filter.Eventually.of_forall fun j : Nat => hmaxseq (φ j) hy)
   exact mem_jensenContactSet_of_isMaxOn_closedBall_of_mem_ball
