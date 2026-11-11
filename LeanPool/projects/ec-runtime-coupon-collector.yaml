@@ -1,0 +1,55 @@
+slug: ec-runtime-coupon-collector
+title: Sharp coupon collection and randomized local search
+summary: >-
+  Proves the sharp additive minus-one-half correction for the mean time to
+  collect uniformly sampled coupons from an independent uniform initial set,
+  and for one-bit randomized local search on strictly coordinate-monotone
+  Boolean fitness functions. The centering uses the average of the floor and
+  ceiling half-dimension harmonic numbers, so the limit covers both parities.
+  Develops finite Markov transitions, first-hitting-time expectations, geometric
+  tail bounds, and the exact finite-dimensional mean formulas used in the proof.
+branch: probability and randomized algorithms
+entry_module: LeanPool.ECRuntime
+authors:
+  - Jiri Kovar
+  - Jakub Kudela  # Jakub Kůdela, ORCID 0000-0002-4372-2105.
+source:
+  title: Collecting Coupons with Random Initial Stake
+  authors:
+    - Benjamin Doerr
+    - Carola Doerr
+  arxiv: '1308.6384'
+  url: https://github.com/UAI-VUT-Brno/Runtime-analysis-of-evolutionary-computation-algorithms/tree/a0e34dce6395d48d0fb9c7b8850088973f503d8b
+  github_repo: UAI-VUT-Brno/Runtime-analysis-of-evolutionary-computation-algorithms
+license: Apache-2.0
+status: verified
+provenance: AI
+main_declarations:
+  - ECRuntime.proposed_randomStakeCoupon_allDimensionPaperSharpCentered
+  - ECRuntime.proposed_strictMonotoneRLS_allDimensionPaperSharpCentered
+main_results:
+  - declaration: ECRuntime.proposed_randomStakeCoupon_allDimensionPaperSharpCentered
+    informal: >-
+      For n coupon types, with each coupon independently present initially with
+      probability one half, the expected remaining number of independent uniform
+      coupon draws minus n times the average of H_floor(n/2) and H_ceil(n/2)
+      converges to minus one half as n tends to infinity.
+    source_ref: Doerr and Doerr, Collecting Coupons with Random Initial Stake, Theorem 1.
+  - declaration: ECRuntime.proposed_strictMonotoneRLS_allDimensionPaperSharpCentered
+    informal: >-
+      For any family of strictly coordinate-monotone real-valued Boolean fitness
+      functions, the uniform-start mean number of one-bit elitist RLS mutation
+      iterations to reach the all-one string, excluding the initial evaluation,
+      has the same all-dimension additive minus-one-half correction.
+    source_ref: Doerr and Doerr, Collecting Coupons with Random Initial Stake, Theorem 3 (RLS corollary).
+tags:
+  - coupon-collector
+  - randomized-local-search
+  - expected-runtime
+  - markov-chains
+  - asymptotics
+msc:
+  - 60J10
+  - 60G40
+  - 68Q25
+  - 68W20
