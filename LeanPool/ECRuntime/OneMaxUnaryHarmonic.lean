@@ -35,7 +35,7 @@ private theorem oneMaxUnary_progress_mass_lower_bound
   have hmass :
       (∑ mask ∈ singleZeroMasks x, law.weight mask) =
         law.singleZeroFlipWeight x := by
-    unfold singleZeroMasks singleZeroFlipWeight
+    unfold singleZeroMasks zeroSingletonMasks singleZeroFlipWeight
     rw [Finset.sum_image]
     intro i _ j _ hij
     exact Finset.singleton_injective hij

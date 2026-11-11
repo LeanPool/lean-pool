@@ -208,12 +208,6 @@ theorem stage127_runtimeSup_lowerApprox
   exact (ENNReal.ofReal_le_ofReal hfinite).trans
     (finiteHorizonRuntime_ofReal_le_runtimeSup P target t x)
 
-/-!
-Unpromoted geometric-survival Bellman bridge, used by Stages 109 and 131.
-The same mathematical assertion is user-approved as Stage 131. This support
-lemma is internal: the public statement remains in the numbered candidate.
--/
-
 /-- A bounded Bellman certificate is an exact runtime when the non-target
 survival probability decays geometrically. -/
 theorem candidate_geometricBellman_runtime_eq
@@ -225,7 +219,7 @@ theorem candidate_geometricBellman_runtime_eq
     (hRzero : ∀ x, x ∈ target → R x = 0)
     (hRbellman : ∀ x, x ∉ target → R x = 1 + expectedValueAfter P R x)
     (B C q : Real) (hRB : ∀ x, R x ≤ B)
-    (hC : 0 ≤ C) (hq0 : 0 ≤ q) (hq1 : q < 1)
+    (hq0 : 0 ≤ q) (hq1 : q < 1)
     (hsurvival : ∀ t x,
       finiteLevelSurvival P targetᶜ t x ≤ C * q ^ t)
     (x : alpha) :
@@ -280,15 +274,7 @@ theorem candidate_geometricBellman_runtime_eq
     exact Filter.Eventually.of_forall (fun t =>
       stage127_runtimeSup_lowerApprox
         P target hP R hRzero hRbellman B hRB t x)
-  -- C is nonnegative by hypothesis; the proof uses the stronger supplied
-  -- bound directly, which already entails nonnegativity of every tail.
-  have _hC : 0 ≤ C := hC
   exact le_antisymm hupper hlower
-
-/-!
-Stage 131 approved statement. Its hypotheses and conclusion match the
-approved candidate exactly. Provisional integration: official full gate pending.
--/
 
 /-- A nonnegative Bellman certificate with geometric survival bounds
 computes the unrestricted expected first-hitting time exactly. -/
@@ -301,13 +287,13 @@ theorem proposed_exactRuntime_of_bellmanAndGeometricSurvival
     (hRzero : ∀ x, x ∈ target → R x = 0)
     (hRbellman : ∀ x, x ∉ target → R x = 1 + expectedValueAfter P R x)
     (B C q : Real) (hRB : ∀ x, R x ≤ B)
-    (hC : 0 ≤ C) (hq0 : 0 ≤ q) (hq1 : q < 1)
+    (hq0 : 0 ≤ q) (hq1 : q < 1)
     (hsurvival : ∀ t x,
       finiteLevelSurvival P targetᶜ t x ≤ C * q ^ t)
     (x : alpha) :
     runtimeSup P target x = ENNReal.ofReal (R x) := by
   exact candidate_geometricBellman_runtime_eq
     P target hP R hRnonneg hRzero hRbellman
-    B C q hRB hC hq0 hq1 hsurvival x
+    B C q hRB hq0 hq1 hsurvival x
 
 end ECRuntime

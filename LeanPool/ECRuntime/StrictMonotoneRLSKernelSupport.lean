@@ -30,7 +30,7 @@ def CandidateCoordinateStrictMonotonicity {n : Nat}
 
 /-- A strictly monotone objective makes exactly the OneMax accept/reject
 choices for a singleton mutation, including the reverse one-to-zero move. -/
-private theorem candidateStrictMonotoneRLS_selected_singleton_eq_oneMax
+theorem candidateStrictMonotoneRLS_selected_singleton_eq_oneMax
     {n : Nat} (fitness : BitString n → Real)
     (hf : CandidateCoordinateStrictMonotonicity fitness)
     (x : BitString n) (i : Fin n) :

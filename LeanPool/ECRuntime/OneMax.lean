@@ -130,17 +130,14 @@ theorem oneMaxPotential_selected_single_zero_flip_lt
   omega
 
 /-- The finite set of masks that flip exactly one currently-zero bit. -/
-def singleZeroMasks {n : ℕ} (x : BitString n) : Finset (MutationMask n) :=
-  (zeroPositions x).image (fun i => ({i} : MutationMask n))
+abbrev singleZeroMasks {n : ℕ} (x : BitString n) : Finset (MutationMask n) :=
+  zeroSingletonMasks x
 
 /-- Summing mask weights over `singleZeroMasks` agrees with the earlier coordinate sum. -/
 theorem singleZeroMasks_weight_eq {n : ℕ} (p : ℝ) (x : BitString n) :
     (∑ mask ∈ singleZeroMasks x, mutationMaskWeight p mask) =
       singleZeroFlipWeight p x := by
-  unfold singleZeroMasks singleZeroFlipWeight
-  rw [Finset.sum_image]
-  intro a ha b hb hab
-  exact Finset.singleton_injective hab
+  exact zeroSingletonMasks_weight_eq p x
 
 /--
 The total mass of all strict OneMax improvements is at least the mass of the

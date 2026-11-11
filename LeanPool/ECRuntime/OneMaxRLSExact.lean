@@ -97,6 +97,6 @@ theorem oneMaxRLS_runtimeSup_eq_harmonic
     hRnonneg hRzero hRbellman
     ((n : Real) * harmonicReal n) (n : Real)
     (1 - 1 / (n : Real)) hRbound
-    (Nat.cast_nonneg n) hq0 hq1 hsurvival x
+    hq0 hq1 hsurvival x
 
 end ECRuntime

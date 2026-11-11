@@ -53,10 +53,12 @@ theorem linearErrorPotential_nonneg {n : ℕ}
   exact mul_nonneg (hg i) (by cases x i <;> simp [bitValueReal])
 
 /--
-Rank-based coefficients for the classical Doerr--Johannsen--Winzen linear-function
-analysis, written in the reversed coordinate convention used here.  Their coefficients
-`1 + i/n` increase with objective importance; because our coordinate `0` is the most
-important one, the equivalent coefficients are `2 - (i+1)/n`.
+Shifted rank coefficients inspired by Doerr--Johannsen--Winzen,
+*Multiplicative Drift Analysis*, Lemma 6 (arXiv:1101.0776).
+The paper uses `1 + j/n` for `j = 1, ..., n`. Reversing its coordinate order
+gives `2 - i/n` for zero-based `i`; this definition subtracts a further `1/n`
+from every coefficient. The results below prove properties of this shifted
+variant directly.
 -/
 noncomputable def rankPotentialWeight (n : ℕ) (i : Fin n) : ℝ :=
   2 - ((i.val + 1 : ℕ) : ℝ) / (n : ℝ)

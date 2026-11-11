@@ -35,14 +35,6 @@ unfolding every variable-index harmonic number during Pascal reindexing. -/
 private theorem stage138_harmonic_zero : harmonicReal 0 = 0 := by
   simp [harmonicReal]
 
-/-- Each term in the finite correction is nonnegative. -/
-private theorem stage138_correction_nonneg (n : Nat) :
-    0 ≤ (Finset.Icc 1 n).sum (fun j =>
-      (1 : Real) / ((j : Real) * (2 : Real) ^ j)) := by
-  apply Finset.sum_nonneg
-  intro j hj
-  positivity
-
 /-- Every row of the binomial triangle has total weight `2^n`.
 The same proof has independently compiled in Stage 137. -/
 private theorem stage138_binomial_mass (n : Nat) :

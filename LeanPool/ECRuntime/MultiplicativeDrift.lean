@@ -56,7 +56,6 @@ theorem multiplicativeDriftPotential_eq_zero_of_mem {α : Type*}
 theorem multiplicativeDriftPotential_nonneg {α : Type*}
     (vmin : ℝ) (V : α → ℝ)
     (hvmin : 0 < vmin)
-    (_hV : ∀ x, 0 ≤ V x)
     (hmin : ∀ x, x ∉ realPotentialTarget V → vmin ≤ V x) :
     ∀ x, 0 ≤ multiplicativeDriftPotential vmin V x := by
   intro x
@@ -254,7 +253,7 @@ theorem multiplicativeDrift_finiteHorizonBound
   · intro x
     unfold multiplicativeDriftRuntime
     exact additiveDriftRuntime_nonneg δ (multiplicativeDriftPotential vmin V) hδ
-      (multiplicativeDriftPotential_nonneg vmin V hvmin hV hmin) x
+      (multiplicativeDriftPotential_nonneg vmin V hvmin hmin) x
   · exact multiplicativeDrift_superSolution
       P V δ vmin hP hδ hvmin hV hmin hmult
 
