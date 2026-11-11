@@ -2748,10 +2748,6 @@ private theorem helper_hxOutsidePrime_4415.{u_1, u_2} :
     (hendpointNeighbor _ hdeltaAdj).symm
   exact hedgeNe (Sum.inr.inj heq)
 
-private theorem helper_branch_4596.{u_1, u_2} :
-    SharedFacts.ExtensionBranches.branchStatement.{u_1, u_2} :=
-  SharedFacts.ExtensionBranches.branch.{u_1, u_2}
-
 private theorem helper_branch_4629.{u_1, u_2} :
     open scoped Classical in
     ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E] [ DecidableEq E] (G :

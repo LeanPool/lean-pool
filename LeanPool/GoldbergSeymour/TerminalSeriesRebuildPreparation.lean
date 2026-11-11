@@ -1458,43 +1458,6 @@ theorem helper_htreeEdge_2018.{u_1, u_2} :
     exact (secondStableProper hne ⟨choice.vertex, hwe, choice.edgeIncident⟩ hec
       hchoiceSecond).elim
 
-theorem helper_hsigmaEdge_2047.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E] [ DecidableEq E] (G :
-        LooplessMultigraph V E) (k : ℕ) (e0 : E) (input : PartialEdgeColoring E k) (T :
-        TreeSequence G e0) (generating : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k
-        e0 input T generating) (hpositive : (0 : ℕ) < ett.rounds) (sigma : PartialEdgeColoring E
-        k), IsProperEdgeColoring G sigma →
-    ∀ (_ : TreeSequence G e0),
-    let q : Fin ett.rounds := (⟨ett.rounds - (1 : ℕ),
-    by omega
-    ⟩ : Fin ett.rounds); StableColoring (ett.series.data.tree q.succ.castSucc)
-        (TashkinovStoredColors ett.series.data q.succ) (ett.series.data.coloring q.succ) sigma →
-    ∀ (gamma : Fin k) (secondStable : PartialEdgeColoring E k), IsProperEdgeColoring G
-        secondStable →
-    ∀ (choice : MaximumDefectiveChoice G e0 (ett.series.data.tree q.succ.castSucc)
-        (TashkinovStoredColors ett.series.data q.castSucc) (ett.series.data.coloring q.castSucc)),
-        ett.series.data.coloring q.succ = TwoColorComponentSwap G secondStable gamma choice.color
-        (Sum.inl choice.vertex) → ett.series.data.stored q.succ = (insert choice.color ({ gamma }
-        : Finset (Fin k)) : Finset (Fin k)) → choice.vertex ∈ TreeSequenceVertexSet
-        (ett.series.data.tree q.succ.castSucc) → (
-    ∀ w ∈ TreeSequenceVertexSet (ett.series.data.tree q.succ.castSucc), Sum.inl w ∈
-        TwoColorComponent G sigma gamma choice.color (Sum.inl choice.vertex) ↔ w = choice.vertex)
-        → gamma ∈ MissingColors G secondStable choice.vertex →
-    ∀ (_ : V), (
-    ∀ (e : E), Sum.inr e ∈ TwoColorComponent G secondStable gamma choice.color (Sum.inl
-        choice.vertex) → secondStable e = some gamma ∨ secondStable e = some choice.color) →
-        secondStable choice.edge = some choice.color → gamma ≠ choice.color → Sum.inr choice.edge
-        ∈ TwoColorComponent G secondStable gamma choice.color (Sum.inl choice.vertex) →
-    ∀ (e : E), TreeIncidentEdge (ett.series.data.tree q.succ.castSucc) e → Sum.inr e ∈
-        TwoColorComponent G sigma gamma choice.color (Sum.inl choice.vertex) → e = choice.edge := by
-  classical
-  intro V E _ _ _ G k e0 input T generating ett hpositive sigma hsigmaProper _ q
-      hsigmaStableQ gamma secondStable secondStableProper choice currentColoring currentStored
-      hchoiceVertex hcomponent hmissing u hcompEdge hchoiceSecond hneq hfcomponent
-  exact ett.series.stableSwapComponentIncidentEdgeUnique q sigma hsigmaProper hsigmaStableQ
-    gamma secondStable choice currentColoring currentStored hcomponent hmissing hchoiceSecond hneq
-
 theorem helper_undoneOne_2148.{u_1, u_2} :
     open scoped Classical in
     ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E] [ DecidableEq E] (G :

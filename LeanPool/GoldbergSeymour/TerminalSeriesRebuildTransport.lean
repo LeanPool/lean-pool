@@ -664,26 +664,6 @@ theorem helper_hpathComponent_4867.{u_1, u_2} :
     (fun x hx z hadj => ⟨by simpa using hx, hclosed x (by simpa using hx) z hadj, hadj⟩)
     (by simp)
 
-theorem helper_hcompEdge_4879.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E] [ DecidableEq E] (G :
-        LooplessMultigraph V E) (k : ℕ) (e0 : E) (input : PartialEdgeColoring E k) (T :
-        TreeSequence G e0) (generating : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k
-        e0 input T generating) (hpositive : (0 : ℕ) < ett.rounds) (_ : TreeSequence G e0),
-    let q : Fin ett.rounds := (⟨ett.rounds - (1 : ℕ),
-    by
-          have := GoldbergSeymour.TreeSequence.positive T
-          omega
-    ⟩ : Fin ett.rounds);
-    ∀ (gamma : Fin k) (secondStable : PartialEdgeColoring E k) (choice : MaximumDefectiveChoice G
-        e0 (ett.series.data.tree q.succ.castSucc) (TashkinovStoredColors ett.series.data
-        q.castSucc) (ett.series.data.coloring q.castSucc)) (_ : V) (e : E), Sum.inr e ∈
-        TwoColorComponent G secondStable gamma choice.color (Sum.inl choice.vertex) → secondStable
-        e = some gamma ∨ secondStable e = some choice.color := by
-  classical
-  intro V E _ _ _ G k e0 input T generating ett hpositive _ q gamma secondStable choice u e he
-  exact TwoColorComponent.edge_colors he
-
 theorem helper_hchoiceSecond_4895.{u_1, u_2} :
     open scoped Classical in
     ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E] [ DecidableEq E] (G :
@@ -735,45 +715,6 @@ theorem helper_hneq_4901.{u_1, u_2} :
     simpa [MissingColors] using hmissing
   exact hpnot hp
 
-theorem helper_hsigmaEdge_4922.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E] [ DecidableEq E] (G :
-        LooplessMultigraph V E) (k : ℕ) (e0 : E) (input : PartialEdgeColoring E k) (T :
-        TreeSequence G e0) (generating : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k
-        e0 input T generating) (hpositive : (0 : ℕ) < ett.rounds) (sigma : PartialEdgeColoring E
-        k), IsProperEdgeColoring G sigma →
-    ∀ (_ : TreeSequence G e0),
-    let q : Fin ett.rounds := (⟨ett.rounds - (1 : ℕ),
-    by
-          have := GoldbergSeymour.TreeSequence.positive T
-          omega
-    ⟩ : Fin ett.rounds); StableColoring (ett.series.data.tree q.succ.castSucc)
-        (TashkinovStoredColors ett.series.data q.succ) (ett.series.data.coloring q.succ) sigma →
-    ∀ (gamma : Fin k) (secondStable : PartialEdgeColoring E k), IsProperEdgeColoring G
-        secondStable →
-    ∀ (choice : MaximumDefectiveChoice G e0 (ett.series.data.tree q.succ.castSucc)
-        (TashkinovStoredColors ett.series.data q.castSucc) (ett.series.data.coloring q.castSucc)),
-        ett.series.data.coloring q.succ = TwoColorComponentSwap G secondStable gamma choice.color
-        (Sum.inl choice.vertex) → ett.series.data.stored q.succ = (insert choice.color ({ gamma }
-        : Finset (Fin k)) : Finset (Fin k)) → choice.vertex ∈ TreeSequenceVertexSet
-        (ett.series.data.tree q.succ.castSucc) → (
-    ∀ w ∈ TreeSequenceVertexSet (ett.series.data.tree q.succ.castSucc), Sum.inl w ∈
-        TwoColorComponent G sigma gamma choice.color (Sum.inl choice.vertex) ↔ w = choice.vertex)
-        → gamma ∈ MissingColors G secondStable choice.vertex →
-    ∀ (_ : V), (
-    ∀ (e : E), Sum.inr e ∈ TwoColorComponent G secondStable gamma choice.color (Sum.inl
-        choice.vertex) → secondStable e = some gamma ∨ secondStable e = some choice.color) →
-        secondStable choice.edge = some choice.color → gamma ≠ choice.color → Sum.inr choice.edge
-        ∈ TwoColorComponent G secondStable gamma choice.color (Sum.inl choice.vertex) →
-    ∀ (e : E), TreeIncidentEdge (ett.series.data.tree q.succ.castSucc) e → Sum.inr e ∈
-        TwoColorComponent G sigma gamma choice.color (Sum.inl choice.vertex) → e = choice.edge := by
-  classical
-  intro V E _ _ _ G k e0 input T generating ett hpositive sigma hsigmaProper Tstar q
-      hsigmaStableQ gamma secondStable secondStableProper choice currentColoring currentStored
-      hchoiceVertex hcomponent hmissing u hcompEdge hchoiceSecond hneq hfcomponent
-  exact ett.series.stableSwapComponentIncidentEdgeUnique q sigma hsigmaProper hsigmaStableQ
-    gamma secondStable choice currentColoring currentStored hcomponent hmissing hchoiceSecond hneq
-
 theorem helper_treeMissingTransport_4940.{u_1, u_2} :
     open scoped Classical in
     ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E] [ DecidableEq E] (G :
@@ -799,26 +740,6 @@ theorem helper_treeMissingTransport_4940.{u_1, u_2} :
     exact ⟨w, hw, by rw [hab w hw] at hc; exact hc⟩
   · rintro ⟨w, hw, hc⟩
     exact ⟨w, hw, by rw [hab w hw]; exact hc⟩
-
-theorem helper_sigmaComponentColor_4960.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E] [ DecidableEq E] (G :
-        LooplessMultigraph V E) (k : ℕ) (e0 : E) (input : PartialEdgeColoring E k) (T :
-        TreeSequence G e0) (generating : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k
-        e0 input T generating) (hpositive : (0 : ℕ) < ett.rounds) (sigma : PartialEdgeColoring E
-        k) (_ : TreeSequence G e0),
-    let q : Fin ett.rounds := (⟨ett.rounds - (1 : ℕ),
-    by
-          have := GoldbergSeymour.TreeSequence.positive T
-          omega
-    ⟩ : Fin ett.rounds);
-    ∀ (gamma : Fin k) (choice : MaximumDefectiveChoice G e0 (ett.series.data.tree q.succ.castSucc)
-        (TashkinovStoredColors ett.series.data q.castSucc) (ett.series.data.coloring q.castSucc))
-        (_ : V) (e : E), Sum.inr e ∈ TwoColorComponent G sigma gamma choice.color (Sum.inl
-        choice.vertex) → sigma e = some gamma ∨ sigma e = some choice.color := by
-  classical
-  intro V E _ _ _ G k e0 input T generating ett hpositive sigma _ q gamma choice u e he
-  exact TwoColorComponent.edge_colors he
 
 theorem helper_gammaControl_5005.{u_1, u_2} :
     open scoped Classical in
@@ -1119,77 +1040,9 @@ theorem helper_hnewAlternativeFails_5223.{u_1, u_2} :
   · simpa [newChoice] using hrhoNew
   · simpa [newChoice] using hrhoIntersection
 
-theorem helper_hchoiceSecond_5266.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E] [ DecidableEq E] (G :
-        LooplessMultigraph V E) (k : ℕ) (e0 : E) (input : PartialEdgeColoring E k) (T :
-        TreeSequence G e0) (generating : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k
-        e0 input T generating) (hpositive : (0 : ℕ) < ett.rounds) (_ : TreeSequence G e0),
-    let q : Fin ett.rounds := (⟨ett.rounds - (1 : ℕ),
-    by
-          have := GoldbergSeymour.TreeSequence.positive T
-          omega
-    ⟩ : Fin ett.rounds);
-    ∀ (secondStable : PartialEdgeColoring E k) (choice : MaximumDefectiveChoice G e0
-        (ett.series.data.tree q.succ.castSucc) (TashkinovStoredColors ett.series.data q.castSucc)
-        (ett.series.data.coloring q.castSucc)), StableColoring (ett.series.data.tree
-        q.succ.castSucc) (insert choice.color (TashkinovStoredColors ett.series.data q.castSucc) :
-        Finset (Fin k)) choice.selected secondStable → secondStable choice.edge = some
-        choice.color := by
-  classical
-  intro V E _ _ _ G k e0 input T generating ett hpositive _ q secondStable choice
-      secondStableRelation
-  have hfix := secondStableRelation.1 choice.edge
-    ⟨choice.vertex, choice.vertexDefective.1, choice.edgeIncident⟩
-    ⟨choice.color, Finset.mem_union_right _
-      (Finset.mem_insert_self _ _), choice.edgeColor⟩
-  exact hfix.trans choice.edgeColor
+alias helper_hchoiceSecond_5266 := helper_hchoiceSecond_4895
 
-theorem helper_hgammaDeltaNe_5272.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E] [ DecidableEq E] (G :
-        LooplessMultigraph V E) (k : ℕ) (e0 : E) (input : PartialEdgeColoring E k) (T :
-        TreeSequence G e0) (generating : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k
-        e0 input T generating) (hpositive : (0 : ℕ) < ett.rounds) (_ : TreeSequence G e0),
-    let q : Fin ett.rounds := (⟨ett.rounds - (1 : ℕ),
-    by
-          have := GoldbergSeymour.TreeSequence.positive T
-          omega
-    ⟩ : Fin ett.rounds);
-    ∀ (gamma : Fin k) (secondStable : PartialEdgeColoring E k) (choice : MaximumDefectiveChoice G
-        e0 (ett.series.data.tree q.succ.castSucc) (TashkinovStoredColors ett.series.data
-        q.castSucc) (ett.series.data.coloring q.castSucc)), gamma ∈ MissingColors G secondStable
-        choice.vertex → secondStable choice.edge = some choice.color → gamma ≠ choice.color := by
-  classical
-  intro V E _ _ _ G k e0 input T generating ett hpositive _ q gamma secondStable choice
-      hgammaSecond hchoiceSecond heq
-  have hpresent : gamma ∈ PresentColors G secondStable choice.vertex := by
-    simp only [PresentColors, Finset.mem_filter, Finset.mem_univ,
-      true_and]
-    exact ⟨choice.edge, choice.edgeIncident, heq ▸ hchoiceSecond⟩
-  have hnot : gamma ∉ PresentColors G secondStable choice.vertex := by
-    simpa [MissingColors] using hgammaSecond
-  exact hnot hpresent
-
-theorem helper_hsigmaComponentColor_5296.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E] [ DecidableEq E] (G :
-        LooplessMultigraph V E) (k : ℕ) (e0 : E) (input : PartialEdgeColoring E k) (T :
-        TreeSequence G e0) (generating : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k
-        e0 input T generating) (hpositive : (0 : ℕ) < ett.rounds) (sigma : PartialEdgeColoring E
-        k) (_ : TreeSequence G e0),
-    let q : Fin ett.rounds := (⟨ett.rounds - (1 : ℕ),
-    by
-          have := GoldbergSeymour.TreeSequence.positive T
-          omega
-    ⟩ : Fin ett.rounds);
-    ∀ (gamma : Fin k) (choice : MaximumDefectiveChoice G e0 (ett.series.data.tree q.succ.castSucc)
-        (TashkinovStoredColors ett.series.data q.castSucc) (ett.series.data.coloring q.castSucc))
-        (f : E), Sum.inr f ∈ TwoColorComponent G sigma gamma choice.color (Sum.inl choice.vertex)
-        → sigma f = some gamma ∨ sigma f = some choice.color := by
-  classical
-  intro V E _ _ _ G k e0 input T generating ett hpositive sigma _ q gamma choice f hf
-  exact TwoColorComponent.edge_colors hf
+alias helper_hgammaDeltaNe_5272 := helper_hneq_4901
 
 theorem helper_hrootLeaf_5339.{u_1, u_2} :
     open scoped Classical in
