@@ -419,53 +419,6 @@ private theorem hIEeCross :
     ((edge_finite A).inter_of_left (FootprintEdges C))
     ((edge_finite B).inter_of_left (FootprintEdges C))
 
-private theorem htripleVcard :
-    (by
-      classical
-      exact
-        ∀ (A : ProtoTile), ∀ (B : ProtoTile), ∀ (C : ProtoTile), ∀ (AB : ProtoTile), ∀ (BC :
-            ProtoTile), ∀ (CA : ProtoTile), ∀ (ABC : ProtoTile), (AB.cells.card = A.cells.card +
-            B.cells.card) → ((BC.cells.card = B.cells.card + C.cells.card) → ((CA.cells.card =
-            C.cells.card + A.cells.card) → ((ABC.cells.card = A.cells.card + B.cells.card +
-            C.cells.card) → (((FootprintVertices AB).ncard + (FootprintVertices A ∩
-            FootprintVertices B).ncard = (FootprintVertices A).ncard + (FootprintVertices
-            B).ncard) → (((FootprintVertices BC).ncard + (FootprintVertices B ∩ FootprintVertices
-            C).ncard = (FootprintVertices B).ncard + (FootprintVertices C).ncard) →
-            (((FootprintVertices CA).ncard + (FootprintVertices C ∩ FootprintVertices A).ncard =
-            (FootprintVertices C).ncard + (FootprintVertices A).ncard) → (((FootprintEdges
-            AB).ncard + (FootprintEdges A ∩ FootprintEdges B).ncard = (FootprintEdges A).ncard +
-            (FootprintEdges B).ncard) → (((FootprintEdges BC).ncard + (FootprintEdges B ∩
-            FootprintEdges C).ncard = (FootprintEdges B).ncard + (FootprintEdges C).ncard) →
-            (((FootprintEdges CA).ncard + (FootprintEdges C ∩ FootprintEdges A).ncard =
-            (FootprintEdges C).ncard + (FootprintEdges A).ncard) → (((FootprintVertices
-            ABC).ncard + (FootprintVertices A ∩ FootprintVertices C ∪ FootprintVertices B ∩
-            FootprintVertices C).ncard = (FootprintVertices AB).ncard + (FootprintVertices
-            C).ncard) → (((FootprintEdges ABC).ncard + (FootprintEdges A ∩ FootprintEdges C ∪
-            FootprintEdges B ∩ FootprintEdges C).ncard = (FootprintEdges AB).ncard +
-            (FootprintEdges C).ncard) → (((FootprintVertices A ∩ FootprintVertices C ∪
-            FootprintVertices B ∩ FootprintVertices C).ncard + (FootprintVertices A ∩
-            FootprintVertices B ∩ FootprintVertices C).ncard = (FootprintVertices A ∩
-            FootprintVertices C).ncard + (FootprintVertices B ∩ FootprintVertices C).ncard) →
-            (((FootprintEdges A ∩ FootprintEdges C ∪ FootprintEdges B ∩ FootprintEdges C).ncard =
-            (FootprintEdges A ∩ FootprintEdges C).ncard + (FootprintEdges B ∩ FootprintEdges
-            C).ncard) → (((FootprintVertices A).ncard + Finset.card A.cells = (FootprintEdges
-            A).ncard + (1 : ℕ)) → (((FootprintVertices B).ncard + Finset.card B.cells =
-            (FootprintEdges B).ncard + (1 : ℕ)) → (((FootprintVertices C).ncard + Finset.card
-            C.cells = (FootprintEdges C).ncard + (1 : ℕ)) → (((FootprintVertices AB).ncard +
-            Finset.card AB.cells = (FootprintEdges AB).ncard + (1 : ℕ)) → (((FootprintVertices
-            BC).ncard + Finset.card BC.cells = (FootprintEdges BC).ncard + (1 : ℕ)) →
-            (((FootprintVertices CA).ncard + Finset.card CA.cells = (FootprintEdges CA).ncard +
-            (1 : ℕ)) → (((FootprintVertices ABC).ncard + Finset.card ABC.cells = (FootprintEdges
-            ABC).ncard + (1 : ℕ)) → ((FootprintVertices A ∩ FootprintVertices B ∩
-            FootprintVertices C).ncard = 1))))))))))))))))))))) ) := by
-  classical
-  intro A B C AB BC CA ABC hcellsAB hcellsBC hcellsCA hcellsABC hIEvAB hIEvBC hIEvCA hIEeAB
-      hIEeBC hIEeCA hIEvABC hIEeABC hIEvCross hIEeCross hEulerA hEulerB hEulerC hEulerAB hEulerBC
-      hEulerCA hEulerABC
-  rw [Set.inter_comm (FootprintVertices C) (FootprintVertices A)] at hIEvCA
-  rw [Set.inter_comm (FootprintEdges C) (FootprintEdges A)] at hIEeCA
-  omega
-
 private theorem htripleVfinite :
     (by
       classical
@@ -864,9 +817,13 @@ theorem LatticeTileThreeDiskJunction
   have hEulerBC := LatticeTileGridEulerCount BC hBC
   have hEulerCA := LatticeTileGridEulerCount CA hCA
   have hEulerABC := LatticeTileGridEulerCount ABC hABC
-  have htripleVcard := ThreeDiskJunctionGeometry.htripleVcard A B C AB BC CA ABC hcellsAB
-      hcellsBC hcellsCA hcellsABC hIEvAB hIEvBC hIEvCA hIEeAB hIEeBC hIEeCA hIEvABC hIEeABC
-      hIEvCross hIEeCross hEulerA hEulerB hEulerC hEulerAB hEulerBC hEulerCA hEulerABC
+  have htripleVcard := (show
+      (FootprintVertices A ∩ FootprintVertices B ∩ FootprintVertices C).ncard = 1
+    from by
+      classical
+      rw [Set.inter_comm (FootprintVertices C) (FootprintVertices A)] at hIEvCA
+      rw [Set.inter_comm (FootprintEdges C) (FootprintEdges A)] at hIEeCA
+      omega)
   have htripleVfinite := ThreeDiskJunctionGeometry.htripleVfinite A B C vertex_finite
   have htripleVnonempty := ThreeDiskJunctionGeometry.htripleVnonempty A B C htripleVcard
   obtain ⟨rho, hrho⟩ := htripleVnonempty

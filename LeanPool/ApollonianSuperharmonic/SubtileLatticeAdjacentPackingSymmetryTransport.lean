@@ -6,6 +6,7 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.TileOdometerSlopeNonempty
 
 public import LeanPool.ApollonianSuperharmonic.P5625T1CentroidSlopeDifferenceCovariance
 public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryScopedPhase
@@ -132,28 +133,8 @@ private theorem support_nonempty :
       exact
         ∀ (C : CircleCoordinates), ∀ (U : ProtoTile), ∀ (h : PartialOdometer), ∀ (p : ℝ × ℝ), 0 <
             C.1 → TileOdometer C U h → PartialOdometerSlope h = some p → U.cells.Nonempty ) := by
-  classical
-  intro C U h p hpos hO hp
-  have hd := PositiveCurvatureTileOdometerDomain C U h hpos hO
-  by_contra hn
-  have hde : (h.domain : Set GaussianInt) = {U.anchor} := by
-    rw [hd]
-    simp [FootprintVertices, hn]
-  have hs : (PartialOdometerSquares h).Nonempty := by
-    by_contra hs
-    simp [PartialOdometerSlope, hs] at hp
-  rcases hs with ⟨x, hx⟩
-  simp only [PartialOdometerSquares, Finset.mem_filter] at hx
-  have hz : x + 1 = U.anchor := by
-    apply Set.mem_singleton_iff.mp
-    rw [← hde]
-    exact hx.2.1
-  have hz0 : x = U.anchor := by
-    apply Set.mem_singleton_iff.mp
-    rw [← hde]
-    exact hx.1
-  have hzbad := congrArg (fun z : GaussianInt => z.re) (hz.trans hz0.symm)
-  norm_num at hzbad
+  intro C U k p _ hO hp
+  exact TileOdometerSlopeNonempty.cells C U k p hO hp
 
 private theorem hsr₀ :
     (by

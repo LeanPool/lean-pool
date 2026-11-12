@@ -427,25 +427,8 @@ private theorem hβc :
   field_simp [hDneq]
   ring
 
-private theorem hγc :
-    (by
-      classical
-      exact
-        ∀ (p : P3381T1PolygonBoundary 0),
-        let a : Real × Real := p.vertex 0
-        let b : Real × Real := p.vertex 1
-        let c : Real × Real := p.vertex 2
-        let D : Real := (b - a).1 * (c - a).2 - (c - a).1 * (b - a).2
-        (D ≠ 0) → (
-        let gamma : (Real × Real) → Real := fun x =>
-          ((b - a).1 * (x - a).2 - (b - a).2 * (x - a).1) / D
-        gamma c = 1) ) := by
-  classical
-  intro p a b c D hDneq gamma
-  dsimp [gamma]
-  field_simp [hDneq]
-  simp [D]
-  ring
+private abbrev hγc :=
+  ApollonianSuperharmonic.TriangleRayIntersections.hβb
 
 private theorem hSconv :
     (by

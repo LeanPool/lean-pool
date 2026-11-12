@@ -5,10 +5,17 @@ Authors: Wesley Pegden
 -/
 module
 
-public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryAffineVectorAction
+public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryPartialOdometerAction
+public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryScopedPhase
+public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetrySlopeAction
+public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryVectorAction
+public import LeanPool.ApollonianSuperharmonic.GaussianRealPoint
 public import LeanPool.ApollonianSuperharmonic.P5625T1CentroidSlopeDifferenceCovariance
-public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryTileOdometerCovariance
-public import LeanPool.ApollonianSuperharmonic.TileOdometerDomain
+public import LeanPool.ApollonianSuperharmonic.PartialOdometerSlope
+public import LeanPool.ApollonianSuperharmonic.TileOdometerSlopeNonempty
+public import Mathlib.Init
+
 
 /-!
 # Shared packing-symmetry transport facts
@@ -26,29 +33,7 @@ namespace LatticeAdjacentPackingSymmetryFacts
 theorem tileCellsNonempty (c : CircleCoordinates) (T : ProtoTile)
     (h : PartialOdometer) (p : ℝ × ℝ) (hO : TileOdometer c T h)
     (hp : PartialOdometerSlope h = some p) : T.cells.Nonempty := by
-  classical
-  have hd := TileOdometerDomain c T h hO
-  by_contra hn
-  have hde : (h.domain : Set GaussianInt) = {T.anchor} := by
-    rw [hd]
-    simp [FootprintVertices, hn]
-  have hs : (PartialOdometerSquares h).Nonempty := by
-    by_contra hs
-    simp [PartialOdometerSlope, hs] at hp
-  rcases hs with ⟨x, hx⟩
-  simp only [PartialOdometerSquares, Finset.mem_filter] at hx
-  have hz : x + 1 = T.anchor := by
-    apply Set.mem_singleton_iff.mp
-    rw [← hde]
-    exact hx.2.1
-  have hz0 : x = T.anchor := by
-    apply Set.mem_singleton_iff.mp
-    rw [← hde]
-    exact hx.1
-  have hzbad : x + 1 = x := hz.trans hz0.symm
-  have hzbad' := congrArg (fun z : GaussianInt => z.re) hzbad
-  norm_num at hzbad'
-
+  exact TileOdometerSlopeNonempty.cells c T h p hO hp
 
 /-- The slope action preserves a specified slope on a nonempty tile. -/
 theorem slopeAction :

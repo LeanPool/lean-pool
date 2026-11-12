@@ -85,16 +85,8 @@ private theorem q2posI :
   intro P
   exact_mod_cast P.q₂_pos
 
-private theorem cross :
-    ∀ (P : FordFareyParameter), P.p₁ * (P.q₂ : Int) - (P.q₁ : Int) * P.p₂ = 1 := by
-  classical
-  intro P
-  have h1 : P.p₁ * ((P.q₁ + P.q₂ : Nat) : Int) -
-      (P.q₁ : Int) * (P.p₁ + P.p₂) = 1 := by
-    simpa [P.sum_q, P.sum_p] using P.det₁
-  norm_num [Nat.cast_add] at h1
-  nlinarith [h1]
-
+private abbrev cross :=
+  FordFareySum.determinant
 
 private theorem unequal :
     ∀ (P : FordFareyParameter), (2 < P.q) → ((0 < (P.q₂ : Int)) → ((P.p₁ * (P.q₂ : Int) - (P.q₁ :

@@ -6,6 +6,7 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.BoundaryFootprintInclusion
 public import Mathlib.Data.EReal.Basic
 public import Mathlib.Topology.MetricSpace.Pseudo.Defs
 public import Mathlib.Topology.MetricSpace.Pseudo.Lemmas
@@ -35,19 +36,7 @@ namespace CommonFootprintIncidence
 
 private noncomputable def I : GaussianInt := ⟨0, 1⟩
 
-private theorem boundary_footprint (T : ProtoTile) (e : Finset GaussianInt)
-      (he : e ∈ BoundaryFootprintEdges T) : e ∈ FootprintEdges T := by
-  classical
-  let I : GaussianInt := ⟨0, 1⟩
-  rcases he with ⟨z, ⟨rfl, h⟩ | ⟨rfl, h⟩⟩
-  · rcases h with ⟨hz, -⟩ | ⟨-, hz⟩
-    · exact ⟨z, hz, Or.inl rfl⟩
-    · refine ⟨z - I, hz, Or.inr (Or.inr (Or.inr ?_))⟩
-      congr 1 <;> simp [I, Zsqrtd.ext_iff]
-  · rcases h with ⟨hz, -⟩ | ⟨-, hz⟩
-    · exact ⟨z, hz, Or.inr (Or.inl rfl)⟩
-    · refine ⟨z - 1, hz, Or.inr (Or.inr (Or.inl ?_))⟩
-      congr 1 <;> simp []
+private abbrev boundary_footprint := BoundaryFootprintInclusion.boundaryEdge
 
 private noncomputable def toR : GaussianInt → Real × Real := fun z => ((z.re : Int), (z.im : Int))
 
@@ -66,27 +55,7 @@ private theorem vertex_realization (T : ProtoTile) (hne : T.cells.Nonempty)
     subst z
     simp [ClosedSquareRealization, toR, Prod.le_def]
 
-private theorem edge_vertex_footprint (T : ProtoTile) (e : Finset GaussianInt)
-      (he : e ∈ FootprintEdges T) (z : GaussianInt) (hz : z ∈ e) :
-      z ∈ FootprintVertices T := by
-  classical
-  rcases he with ⟨c, hc, he⟩
-  unfold FootprintVertices
-  rw [ite_eq_left ⟨c, hc⟩]
-  rcases he with h | h | h | h <;> subst e
-  all_goals simp only [Finset.mem_insert, Finset.mem_singleton] at hz
-  · rcases hz with rfl | rfl
-    · exact ⟨_, hc, Or.inl rfl⟩
-    · exact ⟨_, hc, Or.inr (Or.inl rfl)⟩
-  · rcases hz with rfl | rfl
-    · exact ⟨_, hc, Or.inl rfl⟩
-    · exact ⟨_, hc, Or.inr (Or.inr (Or.inl rfl))⟩
-  · rcases hz with rfl | rfl
-    · exact ⟨_, hc, Or.inr (Or.inl rfl)⟩
-    · exact ⟨_, hc, Or.inr (Or.inr (Or.inr rfl))⟩
-  · rcases hz with rfl | rfl
-    · exact ⟨_, hc, Or.inr (Or.inr (Or.inl rfl))⟩
-    · exact ⟨_, hc, Or.inr (Or.inr (Or.inr rfl))⟩
+private abbrev edge_vertex_footprint := BoundaryFootprintInclusion.edgeVertex
 
 private theorem local_cell (z c : GaussianInt) (p : Real × Real)
       (hpnear : dist p (toR z) < (1 / 2 : Real))

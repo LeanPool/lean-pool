@@ -1002,39 +1002,6 @@ private theorem hpathIndexEdge :
   · simp [hsplit, List.idxOf_append, hxnot]
   · simp [hsplit, List.idxOf_append, hynot, hxy, Nat.add_comm]
 
-private theorem hwalkHeadPos :
-    (by
-      classical
-      exact
-        ∀ (T : ProtoTile), ∀ (U : ProtoTile), ∀ (centerShift : GaussianInt), ∀ (Rminus :
-            ProtoTile), ∀ (Rplus : ProtoTile),
-        let F : ProtoTile → ProtoTile := fun X => TileTranslation (TileHalfTurn X) centerShift
-        ∀ (Epositive : ExactTileInterfaceTriple T U Rplus), ∀ (Eimage : ExactTileInterfaceTriple
-            (F T) (F U) (F Rplus)), ∀ (hvFT : FootprintVertices (F T) = FootprintVertices U), ∀
-            (hvFU : FootprintVertices (F U) = FootprintVertices T), ∀ (hvFR : FootprintVertices
-            (F Rplus) = FootprintVertices Rminus), ∀ (heFT : FootprintEdges (F T) =
-            FootprintEdges U), ∀ (heFU : FootprintEdges (F U) = FootprintEdges T), ∀ (heFR :
-            FootprintEdges (F Rplus) = FootprintEdges Rminus),
-        let Enegative : ExactTileInterfaceTriple U T Rminus := {
-          point := Eimage.point
-          otherAB := Eimage.otherAB
-          otherBC := Eimage.otherBC
-          otherCA := Eimage.otherCA
-          pathAB := by simpa [hvFT, hvFU, heFT, heFU] using Eimage.pathAB
-          pathBC := by simpa [hvFU, hvFR, heFU, heFR] using Eimage.pathBC
-          pathCA := by simpa [hvFR, hvFT, heFR, heFT] using Eimage.pathCA
-          unique_common := by
-            intro z
-            simpa [hvFT, hvFU, hvFR] using Eimage.unique_common z }
-        (Enegative.point = Epositive.otherAB) → (∀ (walk : List GaussianInt), (∃ z, walk.head? =
-            some z ∧ z = Enegative.point) → (walk.head? = some Epositive.otherAB)) ) := by
-  classical
-  intro T U centerShift Rminus Rplus F Epositive Eimage hvFT hvFU hvFR heFT heFU heFR Enegative
-      hnegativePoint walk hwalkStart
-  obtain ⟨z, hz, hzpoint⟩ := hwalkStart
-  rw [hzpoint, hnegativePoint] at hz
-  exact hz
-
 private theorem hwalkLastPos :
     (by
       classical
@@ -1379,8 +1346,13 @@ theorem P4261T2UnitInterface
         hpathLength hpathIndex hpathIndexInjective hstartIndex
         (UnitInterfaceGeometry.hfinishIndex T U Rplus Epositive path hpathLength
         hpathHead) (UnitInterfaceGeometry.hpathIndexEdge path hpathNodup)
-        (UnitInterfaceGeometry.hwalkHeadPos T U centerShift Rminus Rplus Epositive Eimage hvFT
-        hvFU hvFR heFT heFU heFR hnegativePoint walk hwalkStart)
+        ((show
+            walk.head? = some Epositive.otherAB
+          from by
+            classical
+            obtain ⟨z, hz, hzpoint⟩ := hwalkStart
+            rw [hzpoint, hnegativePoint] at hz
+            exact hz))
         (UnitInterfaceGeometry.hwalkLastPos T U Rplus Epositive walk hwalkFinish)
         (UnitInterfaceGeometry.hwalkVertexPath T U walk hwalkInOuter path hpathVertices)))
   }⟩

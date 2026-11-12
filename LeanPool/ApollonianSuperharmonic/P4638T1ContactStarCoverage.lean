@@ -6,6 +6,8 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.LatticeFootprintIncidence
+public import LeanPool.ApollonianSuperharmonic.BoundaryFootprintInclusion
 
 public import LeanPool.ApollonianSuperharmonic.PrecursorBoundaryArcData
 public import LeanPool.ApollonianSuperharmonic.LatticeTileGridStructure
@@ -96,18 +98,8 @@ private theorem hdisjPlusO :
   · exact (Finset.not_nonempty_iff_eq_empty.mpr hE hDplus).elim
   · exact (Finset.not_nonempty_iff_eq_empty.mpr hE hO).elim
 
-private theorem hdisjMinusO :
-    (by
-      classical
-      exact
-        ∀ (Dminus : ProtoTile), ∀ (O : ProtoTile), (Finset.Nonempty O.cells) → ((TileTouching
-            Dminus O) → ((Dminus.cells.Nonempty) → (Disjoint Dminus.cells O.cells))) ) := by
-  classical
-  intro Dminus O hO htminus hDminus
-  rcases htminus with ⟨_, _, hd, _⟩ | ⟨hE, _⟩ | ⟨hE, _⟩
-  · exact hd
-  · exact (Finset.not_nonempty_iff_eq_empty.mpr hE hDminus).elim
-  · exact (Finset.not_nonempty_iff_eq_empty.mpr hE hO).elim
+private abbrev hdisjMinusO :=
+  ApollonianSuperharmonic.ContactStarCases.hdisjPlusO
 
 private theorem hpathPlusO :
     (by
@@ -124,38 +116,11 @@ private theorem hpathPlusO :
   · exact (Finset.not_nonempty_iff_eq_empty.mpr hE hDplus).elim
   · exact (Finset.not_nonempty_iff_eq_empty.mpr hE hO).elim
 
-private theorem hpathMinusO :
-    (by
-      classical
-      exact
-        ∀ (Dminus : ProtoTile), ∀ (O : ProtoTile), (Finset.Nonempty O.cells) → ((TileTouching
-            Dminus O) → ((Dminus.cells.Nonempty) → (SimpleGridPath (BoundaryFootprintVertices
-            Dminus ∩ BoundaryFootprintVertices O) (BoundaryFootprintEdges Dminus ∩
-            BoundaryFootprintEdges O)))) ) := by
-  classical
-  intro Dminus O hO htminus hDminus
-  rcases htminus with ⟨_, _, _, hp⟩ | ⟨hE, _⟩ | ⟨hE, _⟩
-  · exact hp
-  · exact (Finset.not_nonempty_iff_eq_empty.mpr hE hDminus).elim
-  · exact (Finset.not_nonempty_iff_eq_empty.mpr hE hO).elim
+private abbrev hpathMinusO :=
+  ApollonianSuperharmonic.ContactStarCases.hpathPlusO
 
-private theorem boundaryEdgeFootprint :
-    (by
-      classical
-      exact
-        ∀ (T : ProtoTile), ∀ e ∈ BoundaryFootprintEdges T, e ∈ FootprintEdges T ) := by
-  classical
-  intro T e he
-  let I : GaussianInt := ⟨0, 1⟩
-  rcases he with ⟨z, ⟨rfl, h⟩ | ⟨rfl, h⟩⟩
-  · rcases h with ⟨hz, -⟩ | ⟨-, hz⟩
-    · exact ⟨z, hz, Or.inl rfl⟩
-    · refine ⟨z - I, hz, Or.inr (Or.inr (Or.inr ?_))⟩
-      congr 1 <;> simp [I, Zsqrtd.ext_iff]
-  · rcases h with ⟨hz, -⟩ | ⟨-, hz⟩
-    · exact ⟨z, hz, Or.inr (Or.inl rfl)⟩
-    · refine ⟨z - 1, hz, Or.inr (Or.inr (Or.inl ?_))⟩
-      congr 1 <;> simp []
+private abbrev boundaryEdgeFootprint :=
+  BoundaryFootprintInclusion.boundaryEdge
 
 private theorem edgeAt_eq :
     (by
@@ -296,28 +261,8 @@ private theorem boundaryVertexOfCross :
   exact ⟨edgeAt y j, boundaryEdgeOfCross T y j hcross,
     by fin_cases j <;> simp [edgeAt]⟩
 
-private theorem incident :
-    (by
-      classical
-      exact
-        ∀ (T : ProtoTile), ∀ (y : GaussianInt), Finset.Nonempty T.cells → y ∈ FootprintVertices T
-            → ∃ (j : Fin (4 : ℕ)), LatticeVertexIncidentCell y j ∈ T.cells ) := by
-  classical
-  intro T y hne hy
-  simp only [FootprintVertices, hne, ite_true, Set.mem_ofPred_eq] at hy
-  rcases hy with ⟨c, hc, h | h | h | h⟩
-  · exact ⟨0, by simpa [LatticeVertexIncidentCell] using h ▸ hc⟩
-  · refine ⟨1, ?_⟩
-    rw [h]
-    simpa [LatticeVertexIncidentCell] using hc
-  · refine ⟨3, ?_⟩
-    rw [h]
-    simpa [LatticeVertexIncidentCell] using hc
-  · refine ⟨2, ?_⟩
-    change y - 1 - ⟨0, 1⟩ ∈ T.cells
-    rw [h]
-    convert hc using 1
-    ext <;> simp
+private abbrev incident :=
+  LatticeFootprintIncidence.incidentCell
 
 private theorem coverLeft :
     (by

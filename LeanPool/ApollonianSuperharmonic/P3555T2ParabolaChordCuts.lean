@@ -164,37 +164,6 @@ private theorem hBNodup :
       have hxa : x = a := hxy.trans hy
       exact haNotV (hxa ▸ hx)⟩
 
-private theorem hsets :
-    ∀ (n : Nat),
-      (∀ (a : Fin (n + 3)),
-        ∀ (b : Fin (n + 3)),
-          ∀ (u : List (Fin (n + 3))),
-            ∀ (v : List (Fin (n + 3))),
-              (∃ k : Nat,
-                  (a :: (u ++ b :: v)).Sublist
-                    ((List.ofFn (fun i : Fin (n + 3) => i)).rotate k)) →
-                (let A := a :: (u ++ [b]);
-                let B := b :: (v ++ [a]);
-                ((u ++ b :: v).Nodup) →
-                  ((a ≠ b) →
-                    ((u.Nodup ∧ (b :: v).Nodup ∧ ∀ a ∈ u, ∀ b_1 ∈ b :: v, a ≠ b_1) →
-                      ((u.Nodup) →
-                        ((b ∉ u) →
-                          ((v.Nodup) →
-                            ((b ∉ v) →
-                              ((a ∉ u) →
-                                ((a ∉ v) →
-                                  ((∀ i, i ∈ u → i ∈ v → False) →
-                                    ((A.Nodup) →
-                                      ((B.Nodup) →
-                                        ({i | i ∈ A} ∩ {i | i ∈ B} =
-                                          {a, b})))))))))))))) := by
-  classical
-  intro n a b u v hcyclic A B htailNodup hne hparts huNodup hbNotU hvNodup hbNotV haNotU haNotV
-      huvDisjoint hANodup hBNodup
-  ext i
-  simp [A, B, List.mem_cons, List.mem_append]; aesop
-
 private theorem hnil :
     ∀ (n : Nat), ∀ (xs : List (Fin (n + 3))), ([] : List (Fin (n + 3))).Sublist xs := by
   classical
@@ -1760,9 +1729,12 @@ theorem P3555T2ParabolaChordCuts {n : Nat}
   have huvDisjoint : ∀ i, i ∈ u → i ∈ v → False := ParabolaChordLemmas.huvDisjoint n b u v hparts
   have hANodup : A.Nodup := ParabolaChordLemmas.hANodup n a b u hne huNodup hbNotU haNotU
   have hBNodup : B.Nodup := ParabolaChordLemmas.hBNodup n a b v hne hvNodup hbNotV haNotV
-  have hsets : {i | i ∈ A} ∩ {i | i ∈ B} = {a, b} := ParabolaChordLemmas.hsets n a b u v
-      hcyclic htailNodup hne hparts huNodup hbNotU hvNodup hbNotV haNotU haNotV huvDisjoint
-      hANodup hBNodup
+  have hsets : {i | i ∈ A} ∩ {i | i ∈ B} = {a, b} := (show
+      {i | i ∈ A} ∩ {i | i ∈ B} = {a, b}
+    from by
+      classical
+      ext i
+      simp [A, B, List.mem_cons, List.mem_append]; aesop)
   have hnil (xs : List (Fin (n + 3))) :
       ([] : List (Fin (n + 3))).Sublist xs := ParabolaChordLemmas.hnil n xs
   have hnilv := ParabolaChordLemmas.hnilv n v hnil

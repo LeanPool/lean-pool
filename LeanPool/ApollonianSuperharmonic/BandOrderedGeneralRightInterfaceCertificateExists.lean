@@ -6,6 +6,8 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.TileQuarterTurnTranslation
+public import LeanPool.ApollonianSuperharmonic.ObservableTileRetargeting
 public import LeanPool.ApollonianSuperharmonic.GaussianQuarterTurnProperties
 public import LeanPool.ApollonianSuperharmonic.BandParentVectorQuarterTurn
 public import LeanPool.ApollonianSuperharmonic.BandVectorParentSums
@@ -32,59 +34,6 @@ namespace ApollonianSuperharmonic
 
 namespace RightInterfaceCertificateGeometry
 
-private theorem tileTouchingRetarget :
-    (by
-      classical
-      exact
-        forall (A A' B B' : ProtoTile), A.cells = A'.cells -> (A.cells = ∅ -> A.anchor =
-            A'.anchor) -> B.cells = B'.cells -> (B.cells = ∅ -> B.anchor = B'.anchor) ->
-            TileTouching A B -> TileTouching A' B' ) := by
-  classical
-  intro A A' B B' hAc hAa hBc hBa ht
-  have hAo := ProtoTileObservableExtensionality A A' hAc hAa
-  have hBo := ProtoTileObservableExtensionality B B' hBc hBa
-  rcases ht with ht | ht | ht
-  · left
-    refine ⟨?_, ?_, ?_, ?_⟩
-    · simpa [hAc] using ht.1
-    · simpa [hBc] using ht.2.1
-    · simpa [hAc, hBc] using ht.2.2.1
-    · simpa [hAo.2.1, hAo.2.2.1, hBo.2.1, hBo.2.2.1] using ht.2.2.2
-  · right; left
-    refine ⟨?_, ?_⟩
-    · simpa [hAc] using ht.1
-    · rw [← hAa ht.1, ← hBo.2.1]
-      exact ht.2
-  · right; right
-    refine ⟨?_, ?_⟩
-    · simpa [hBc] using ht.1
-    · rw [← hBa ht.1, ← hAo.2.1]
-      exact ht.2
-
-private theorem touchingRetarget :
-    (by
-      classical
-      exact
-        (forall (A A' B B' : ProtoTile), A.cells = A'.cells -> (A.cells = ∅ -> A.anchor =
-            A'.anchor) -> B.cells = B'.cells -> (B.cells = ∅ -> B.anchor = B'.anchor) ->
-            TileTouching A B -> TileTouching A' B') → (forall (A A' B B' D D' : ProtoTile),
-            A.cells = A'.cells -> (A.cells = ∅ -> A.anchor = A'.anchor) -> B.cells = B'.cells ->
-            (B.cells = ∅ -> B.anchor = B'.anchor) -> D.cells = D'.cells -> (D.cells = ∅ ->
-            D.anchor = D'.anchor) -> TouchingTriple A B D -> TouchingTriple A' B' D') ) := by
-  classical
-  intro tileTouchingRetarget A A' B B' D D' hAc hAa hBc hBa hDc hDa ht
-  have hAo := ProtoTileObservableExtensionality A A' hAc hAa
-  have hBo := ProtoTileObservableExtensionality B B' hBc hBa
-  have hDo := ProtoTileObservableExtensionality D D' hDc hDa
-  rcases ht with ⟨hAB, hBD, hDA, p, hp, hpu⟩
-  refine ⟨tileTouchingRetarget A A' B B' hAc hAa hBc hBa hAB,
-    tileTouchingRetarget B B' D D' hBc hBa hDc hDa hBD,
-    tileTouchingRetarget D D' A A' hDc hDa hAc hAa hDA, p, ?_, ?_⟩
-  · simpa [← hAo.2.1, ← hBo.2.1, ← hDo.2.1] using hp
-  · intro y hy
-    apply hpu y
-    simpa [← hAo.2.1, ← hBo.2.1, ← hDo.2.1] using hy
-
 private theorem hAeAt211 :
     (by
       classical
@@ -95,42 +44,6 @@ private theorem hAeAt211 :
   intro A A' hAc
   simp only [FootprintEdges]
   rw [hAc]
-
-private theorem quarterTranslate :
-    (by
-      classical
-      exact
-        ∀ (A : ProtoTile), ∀ (a : GaussianInt), ∀ (u : GaussianInt), TileTranslation
-            (TileQuarterTurn (TileTranslation A a)) u = TileTranslation (TileTranslation
-            (TileQuarterTurn A) u) (GaussianQuarterTurn a) ) := by
-  classical
-  intro A a u
-  rcases A with ⟨cells, anchor⟩
-  rw [ProtoTile.mk.injEq]
-  constructor
-  · ext z
-    simp only [TileTranslation, TileQuarterTurn, Finset.mem_image,
-      GaussianTranslation]
-    constructor
-    · rintro ⟨y, hy, rfl⟩
-      rcases hy with ⟨w, hw, rfl⟩
-      rcases hw with ⟨v, hv, rfl⟩
-      refine ⟨GaussianQuarterTurn v - 1 + u, ?_, ?_⟩
-      · refine ⟨GaussianQuarterTurn v - 1, ?_, rfl⟩
-        exact ⟨v, hv, rfl⟩
-      · cases a; cases v; cases u
-        apply Zsqrtd.ext <;>
-          simp [GaussianQuarterTurn] <;> omega
-    · rintro ⟨y, hy, rfl⟩
-      rcases hy with ⟨w, hw, rfl⟩
-      rcases hw with ⟨v, hv, rfl⟩
-      refine ⟨GaussianQuarterTurn (GaussianTranslation a v) - 1, ?_, ?_⟩
-      · exact ⟨GaussianTranslation a v, ⟨v, hv, rfl⟩, rfl⟩
-      · cases a; cases v; cases u
-        apply Zsqrtd.ext <;>
-          simp [GaussianQuarterTurn, GaussianTranslation] <;> omega
-  · ext <;> simp [TileTranslation, TileQuarterTurn, GaussianTranslation,
-      GaussianQuarterTurn] <;> omega
 
 private theorem translateObs :
     (by
@@ -944,8 +857,7 @@ theorem BandOrderedGeneralRightInterfaceCertificateExists
     Nonempty (BandOrderedGeneralRightInterfaceCertificate normalization) := by
 -- BODY
   classical
-  have touchingRetarget := RightInterfaceCertificateGeometry.touchingRetarget
-      (RightInterfaceCertificateGeometry.tileTouchingRetarget)
+  have touchingRetarget := ObservableTileRetargeting.triple
   have swapAB : forall (A B D : ProtoTile),
       ExactTileInterfaceTriple A B D -> ExactTileInterfaceTriple B A D := by
     intro A B D E
@@ -996,7 +908,7 @@ theorem BandOrderedGeneralRightInterfaceCertificateExists
           simpa [hAo.1] using E.unique_common y }
   have centeredTurnTouching := RightInterfaceCertificateGeometry.centeredTurnTouching
       touchingRetarget
-            (RightInterfaceCertificateGeometry.quarterTranslate)
+            (TileQuarterTurnTranslation.translated)
                 (RightInterfaceCertificateGeometry.translateObs)
   have centeredTurnExact := RightInterfaceCertificateGeometry.centeredTurnExact
   have thirdTurnExact := RightInterfaceCertificateGeometry.thirdTurnExact centeredTurnExact

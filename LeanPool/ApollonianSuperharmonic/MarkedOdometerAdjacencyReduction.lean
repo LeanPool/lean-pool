@@ -210,110 +210,6 @@ private theorem hnormalizedCentroid :
       hcentroidForward
   simpa [bundle.normalized_root_eq, bundle.normalized_fixed_eq] using hcentroidForward
 
-private theorem hnormalizedSlopeX :
-    (by
-      classical
-      exact
-        ∀ (C₀ : BandCircle), ∀ (Cᵢ : BandCircle), ∀ (q : Fin (4 : ℕ) → CircleCoordinates), ∀ (i :
-            Fin (3 : ℕ)), ∀ (T₀ : ProtoTile), ∀ (Tᵢ : ProtoTile), ∀ (h₀ : PartialOdometer), ∀ (hᵢ
-            : PartialOdometer), ∀ (x : GaussianInt), ∀ (bundle :
-            BandOrderedGeneralNormalizedOccurrenceBundle C₀ Cᵢ T₀ Tᵢ h₀ hᵢ x),
-        let g := bundle.symmetry
-        let normalizationPresentation := BandPackingSymmetryQuadrupleAction g q
-        let sigma : Fin 3 → Fin 3 := fun j =>
-          if BandPackingSymmetryReversesOrientation g then -j else j
-        ∀ (transportedRootSlope : ℝ × ℝ), ∀ (transportedFixedSlope : ℝ × ℝ), ∀
-            (transportedRotation : Fin (4 : ℕ)), (transportedFixedSlope.1 -
-            transportedRootSlope.1 = ((1 / 2 : ℝ) • GaussianRealPoint ((-(⟨(0 : ℤ), (1 : ℤ)⟩ :
-            GaussianInt)) ^ (↑transportedRotation : ℕ) * (BandVectors.2
-            (BandPackingSymmetryQuadrupleAction g q ((fun (j : Fin (3 : ℕ)) => if
-            BandPackingSymmetryReversesOrientation g = true then -j else j) i).succ)
-            (BandPackingSymmetryQuadrupleAction g q (0 : Fin (4 : ℕ))) + BandVectors.2
-            (BandPackingSymmetryQuadrupleAction g q (0 : Fin (4 : ℕ)))
-            (BandPackingSymmetryQuadrupleAction g q ((fun (j : Fin (3 : ℕ)) => if
-            BandPackingSymmetryReversesOrientation g = true then -j else j) i).succ)))).1) →
-            ((transportedRootSlope = bundle.normalizedRootSlope) → ((transportedFixedSlope =
-            bundle.normalizedFixedSlope) → (bundle.normalizedFixedSlope.1 -
-            bundle.normalizedRootSlope.1 = ((1 / 2 : ℝ) • GaussianRealPoint ((-⟨0, 1⟩ :
-            GaussianInt) ^ transportedRotation.val * (BandVectors.2 (normalizationPresentation
-            (sigma i).succ) (normalizationPresentation 0) + BandVectors.2
-            (normalizationPresentation 0) (normalizationPresentation (sigma i).succ)))).1))) ) := by
-  classical
-  intro C₀ Cᵢ q i T₀ Tᵢ h₀ hᵢ x bundle g normalizationPresentation sigma transportedRootSlope
-      transportedFixedSlope transportedRotation hslopeXForward htransportRootSlopeEq
-      htransportFixedSlopeEq
-  simpa [htransportRootSlopeEq, htransportFixedSlopeEq] using hslopeXForward
-
-private theorem hnormalizedSlopeY :
-    (by
-      classical
-      exact
-        ∀ (C₀ : BandCircle), ∀ (Cᵢ : BandCircle), ∀ (q : Fin (4 : ℕ) → CircleCoordinates), ∀ (i :
-            Fin (3 : ℕ)), ∀ (T₀ : ProtoTile), ∀ (Tᵢ : ProtoTile), ∀ (h₀ : PartialOdometer), ∀ (hᵢ
-            : PartialOdometer), ∀ (x : GaussianInt), ∀ (bundle :
-            BandOrderedGeneralNormalizedOccurrenceBundle C₀ Cᵢ T₀ Tᵢ h₀ hᵢ x),
-        let g := bundle.symmetry
-        let normalizationPresentation := BandPackingSymmetryQuadrupleAction g q
-        let sigma : Fin 3 → Fin 3 := fun j =>
-          if BandPackingSymmetryReversesOrientation g then -j else j
-        ∀ (transportedRootSlope : ℝ × ℝ), ∀ (transportedFixedSlope : ℝ × ℝ), ∀
-            (transportedRotation : Fin (4 : ℕ)), (transportedFixedSlope.2 -
-            transportedRootSlope.2 = ((1 / 2 : ℝ) • GaussianRealPoint ((-(⟨(0 : ℤ), (1 : ℤ)⟩ :
-            GaussianInt)) ^ (↑transportedRotation : ℕ) * (BandVectors.2
-            (BandPackingSymmetryQuadrupleAction g q ((fun (j : Fin (3 : ℕ)) => if
-            BandPackingSymmetryReversesOrientation g = true then -j else j) i).succ)
-            (BandPackingSymmetryQuadrupleAction g q (0 : Fin (4 : ℕ))) + BandVectors.2
-            (BandPackingSymmetryQuadrupleAction g q (0 : Fin (4 : ℕ)))
-            (BandPackingSymmetryQuadrupleAction g q ((fun (j : Fin (3 : ℕ)) => if
-            BandPackingSymmetryReversesOrientation g = true then -j else j) i).succ)))).2) →
-            ((transportedRootSlope = bundle.normalizedRootSlope) → ((transportedFixedSlope =
-            bundle.normalizedFixedSlope) → (bundle.normalizedFixedSlope.2 -
-            bundle.normalizedRootSlope.2 = ((1 / 2 : ℝ) • GaussianRealPoint ((-⟨0, 1⟩ :
-            GaussianInt) ^ transportedRotation.val * (BandVectors.2 (normalizationPresentation
-            (sigma i).succ) (normalizationPresentation 0) + BandVectors.2
-            (normalizationPresentation 0) (normalizationPresentation (sigma i).succ)))).2))) ) := by
-  classical
-  intro C₀ Cᵢ q i T₀ Tᵢ h₀ hᵢ x bundle g normalizationPresentation sigma transportedRootSlope
-      transportedFixedSlope transportedRotation hslopeYForward htransportRootSlopeEq
-      htransportFixedSlopeEq
-  simpa [htransportRootSlopeEq, htransportFixedSlopeEq] using hslopeYForward
-
-private theorem hrowUR :
-    (by
-      classical
-      exact
-        ∀ (C₀ : BandCircle), ∀ (Cᵢ : BandCircle), ∀ (q : Fin (4 : ℕ) → CircleCoordinates), ∀ (i :
-            Fin (3 : ℕ)), ∀ (s : Fin (4 : ℕ)), ∀ (T₀ : ProtoTile), ∀ (Tᵢ : ProtoTile), ∀ (h₀ :
-            PartialOdometer), ∀ (hᵢ : PartialOdometer), ∀ (x : GaussianInt), ∀ (bundle :
-            BandOrderedGeneralNormalizedOccurrenceBundle C₀ Cᵢ T₀ Tᵢ h₀ hᵢ x),
-        let g := bundle.symmetry
-        let normalizationPresentation := BandPackingSymmetryQuadrupleAction g q
-        let sigma : Fin 3 → Fin 3 := fun j =>
-          if BandPackingSymmetryReversesOrientation g then -j else j
-        ∀ (delta : Bool), ∀ (transportedRotation : Fin (4 : ℕ)), (transportedRotation = if
-            BandPackingSymmetryReversesOrientation g = true then -s - (1 : Fin (4 : ℕ)) + if
-            delta = true then (2 : Fin (4 : ℕ)) else (0 : Fin (4 : ℕ)) else s + if delta = true
-            then (2 : Fin (4 : ℕ)) else (0 : Fin (4 : ℕ))) → (
-        let rowUR := TileTranslation bundle.normalizedRoot
-          ((⟨0, 1⟩ : GaussianInt) ^ transportedRotation.val *
-            (if Even transportedRotation.val then
-              BandVectors.1 (normalizationPresentation 0) (normalizationPresentation (sigma i).succ)
-            else BandVectors.1 (normalizationPresentation (sigma i).succ) (normalizationPresentation
-                0)))
-        rowUR = TileTranslation (BandPackingSymmetryTileAction g T₀) ((⟨0, 1⟩ : GaussianInt) ^
-            (if BandPackingSymmetryReversesOrientation g then -s - 1 + (if delta then (2 : Fin 4)
-            else 0) else s + (if delta then (2 : Fin 4) else 0)).val * (if Even (if
-            BandPackingSymmetryReversesOrientation g then -s - 1 + (if delta then (2 : Fin 4)
-            else 0) else s + (if delta then (2 : Fin 4) else 0)).val then BandVectors.1
-            (BandPackingSymmetryQuadrupleAction g q 0) (BandPackingSymmetryQuadrupleAction g q
-            (sigma i).succ) else BandVectors.1 (BandPackingSymmetryQuadrupleAction g q (sigma
-            i).succ) (BandPackingSymmetryQuadrupleAction g q 0)))) ) := by
-  classical
-  intro C₀ Cᵢ q i s T₀ Tᵢ h₀ hᵢ x bundle g normalizationPresentation sigma delta
-      transportedRotation hrotationForward rowUR
-  dsimp [rowUR]
-  rw [bundle.normalized_root_eq, hrotationForward]
-
 private theorem hmarkedOld :
     (by
       classical
@@ -842,41 +738,6 @@ private theorem hinverseCircleFixed :
         (BandPackingSymmetryCircleAction bundle.symmetry Cᵢ.1.1) := by
           rw [bundle.normalized_fixed_circle_eq]
     _ = Cᵢ.1.1 := hcircleL Cᵢ.1.1
-
-private theorem hnotOriginal :
-    (by
-      classical
-      exact
-        ∀ (C₀ : BandCircle), ∀ (Cᵢ : BandCircle), ∀ (q : Fin (4 : ℕ) → CircleCoordinates), ∀ (i :
-            Fin (3 : ℕ)), ∀ (s : Fin (4 : ℕ)), ∀ (T₀ : ProtoTile), ∀ (Tᵢ : ProtoTile), ∀ (h₀ :
-            PartialOdometer), ∀ (hᵢ : PartialOdometer), ∀ (x : GaussianInt), ∀ (bundle :
-            BandOrderedGeneralNormalizedOccurrenceBundle C₀ Cᵢ T₀ Tᵢ h₀ hᵢ x),
-        let g := bundle.symmetry
-        let normalizationPresentation := BandPackingSymmetryQuadrupleAction g q
-        let sigma : Fin 3 → Fin 3 := fun j =>
-          if BandPackingSymmetryReversesOrientation g then -j else j
-        ∀ (transportedRotation : Fin (4 : ℕ)),
-        let oldUR := TileTranslation T₀
-          ((⟨0, 1⟩ : GaussianInt) ^ s.val *
-            (if Even s.val then BandVectors.1 (q 0) (q i.succ)
-              else BandVectors.1 (q i.succ) (q 0)))
-        let rowUR := TileTranslation bundle.normalizedRoot
-          ((⟨0, 1⟩ : GaussianInt) ^ transportedRotation.val *
-            (if Even transportedRotation.val then
-              BandVectors.1 (normalizationPresentation 0) (normalizationPresentation (sigma i).succ)
-            else BandVectors.1 (normalizationPresentation (sigma i).succ) (normalizationPresentation
-                0)))
-        (x ∈ FootprintVertices oldUR ↔ bundle.normalizedPoint ∈ FootprintVertices rowUR) →
-            ((bundle.normalizedPoint ∉ FootprintVertices (TileTranslation bundle.normalizedRoot
-            ((⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt) ^ (↑transportedRotation : ℕ) * if Even
-            (↑transportedRotation : ℕ) then BandVectors.1 (normalizationPresentation (0 : Fin (4
-            : ℕ))) (normalizationPresentation (sigma i).succ) else BandVectors.1
-            (normalizationPresentation (sigma i).succ) (normalizationPresentation (0 : Fin (4 :
-            ℕ)))))) → (x ∉ FootprintVertices oldUR)) ) := by
-  classical
-  intro C₀ Cᵢ q i s T₀ Tᵢ h₀ hᵢ x bundle g normalizationPresentation sigma transportedRotation
-      oldUR rowUR hmarkedOld hnotMarked hx
-  exact hnotMarked (hmarkedOld.mp hx)
 
 private theorem hpFixedEq :
     (by
@@ -2721,8 +2582,12 @@ private theorem leftAdjacencyCase :
   rcases hleft with ⟨hCfixed, hleftAdj, hnotMarked⟩
   have hinverseCircleFixed := MarkedAdjacencyGeometry.hinverseCircleFixed C₀ Cᵢ T₀ Tᵢ h₀ hᵢ x
       bundle C' ginv hcircleL hinverseProper hinversePositive hinverseCircle hCfixed
-  have hnotOriginal := MarkedAdjacencyGeometry.hnotOriginal C₀ Cᵢ q i s T₀ Tᵢ h₀ hᵢ x bundle
-      transportedRotation hmarkedOld hnotMarked
+  have hnotOriginal := (show
+      x ∉ FootprintVertices oldUR
+    from by
+      classical
+      intro hx
+      exact hnotMarked (hmarkedOld.mp hx))
   rcases hleftAdj with ⟨hOFixed, hOSelected, pFixed, pSelected,
     hslopeFixed, hslopeSelected, hleftGeometry⟩
   have hpFixedEq := MarkedAdjacencyGeometry.hpFixedEq C₀ Cᵢ T₀ Tᵢ h₀ hᵢ x bundle pFixed
@@ -3466,8 +3331,10 @@ theorem MarkedOdometerAdjacencyReduction :
     have hmarkedTransport :=
       markedData.2.2 g q hq i s delta hphaseForward T₀ x
     have hmarkedOld := MarkedAdjacencyGeometry.hmarkedOld C₀ Cᵢ q i s T₀ Tᵢ h₀ hᵢ x bundle delta
-        transportedRotation hmarkedTransport (MarkedAdjacencyGeometry.hrowUR C₀ Cᵢ q i s T₀ Tᵢ h₀
-        hᵢ x bundle delta transportedRotation hrotationForward)
+        transportedRotation hmarkedTransport ((by
+            classical
+            dsimp [rowUR]
+            rw [bundle.normalized_root_eq, hrotationForward]))
     have subtileGeometry := BandOrderedGeneralSubtileSelectedRowGeometry
         C₀ Cᵢ T₀ Tᵢ h₀ hᵢ x bundle subtilePlacement selectedEdge
         hxSelectedEdge hselectedEdge row (MarkedAdjacencyGeometry.hnormalizedOrbit C₀ Cᵢ T₀ Tᵢ h₀
@@ -3477,12 +3344,12 @@ theorem MarkedOdometerAdjacencyReduction :
             (MarkedAdjacencyGeometry.hrᵢ C₀ Cᵢ q i T₀ Tᵢ h₀ hᵢ x hqᵢ bundle)
         (MarkedAdjacencyGeometry.hnormalizedCentroid C₀ Cᵢ q i T₀ Tᵢ h₀ hᵢ x bundle
             transportedRotation hcentroidForward)
-        (MarkedAdjacencyGeometry.hnormalizedSlopeX C₀ Cᵢ q i T₀ Tᵢ h₀ hᵢ x bundle
-            transportedRootSlope transportedFixedSlope transportedRotation hslopeXForward
-            htransportRootSlopeEq htransportFixedSlopeEq)
-            (MarkedAdjacencyGeometry.hnormalizedSlopeY C₀ Cᵢ q i T₀ Tᵢ h₀ hᵢ x bundle
-            transportedRootSlope transportedFixedSlope transportedRotation hslopeYForward
-            htransportRootSlopeEq htransportFixedSlopeEq)
+        ((by
+            classical
+            simpa [htransportRootSlopeEq, htransportFixedSlopeEq] using hslopeXForward))
+            ((by
+                classical
+                simpa [htransportRootSlopeEq, htransportFixedSlopeEq] using hslopeYForward))
     dsimp at subtileGeometry
     rcases subtileGeometry with
       ⟨C', selectedSlope, hC', hsub', hslope', hxFixed', hxSelected',

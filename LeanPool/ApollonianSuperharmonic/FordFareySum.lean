@@ -7,6 +7,8 @@ module
 
 public import LeanPool.ApollonianSuperharmonic.FordFareyParameter
 public import Mathlib.Init
+public import Mathlib.Tactic.Linarith.Frontend
+
 
 
 /-!
@@ -27,6 +29,17 @@ theorem denominatorSum :
   classical
   intro P
   exact P.sum_q
+
+/-- Shared determinant fact. -/
+theorem determinant :
+    ∀ (Q : FordFareyParameter), Q.p₁ * (Q.q₂ : Int) - (Q.q₁ : Int) * Q.p₂ = 1 := by
+  classical
+  intro Q
+  have h1 : Q.p₁ * ((Q.q₁ + Q.q₂ : Nat) : Int) -
+      (Q.q₁ : Int) * (Q.p₁ + Q.p₂) = 1 := by
+    simpa [Q.sum_q, Q.sum_p] using Q.det₁
+  norm_num [Nat.cast_add] at h1
+  nlinarith [h1]
 
 end FordFareySum
 end ApollonianSuperharmonic

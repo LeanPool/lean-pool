@@ -173,41 +173,11 @@ private theorem hImMem :
   · right; simpa using congrArg Zsqrtd.im e
   · right; simpa using congrArg Zsqrtd.im e
 
-private theorem kReMem :
-    (by
-      classical
-      exact
-        ∀ (k : PartialOdometer), ∀ (v : LatticeCell), ((k.domain : Set GaussianInt) = {v, v + 1,
-            v + ⟨0, 1⟩, v + 1 + ⟨0, 1⟩}) → (∀ y ∈ k.domain, y.re = v.re ∨ y.re = v.re + (1 : ℤ))
-    ) := by
-  classical
-  intro k v kdomSq y hy
-  change y ∈ (k.domain : Set GaussianInt) at hy
-  rw [kdomSq] at hy
-  rcases (by simpa using hy : y = v ∨ y = v + 1 ∨
-    y = v + ⟨0, 1⟩ ∨ y = v + 1 + ⟨0, 1⟩) with e | e | e | e
-  · left; exact congrArg Zsqrtd.re e
-  · right; simpa using congrArg Zsqrtd.re e
-  · left; simpa using congrArg Zsqrtd.re e
-  · right; simpa using congrArg Zsqrtd.re e
+private abbrev kReMem :=
+  ApollonianSuperharmonic.UnitBoundaryProof.hReMem
 
-private theorem kImMem :
-    (by
-      classical
-      exact
-        ∀ (k : PartialOdometer), ∀ (v : LatticeCell), ((k.domain : Set GaussianInt) = {v, v + 1,
-            v + ⟨0, 1⟩, v + 1 + ⟨0, 1⟩}) → (∀ y ∈ k.domain, y.im = v.im ∨ y.im = v.im + (1 : ℤ))
-    ) := by
-  classical
-  intro k v kdomSq y hy
-  change y ∈ (k.domain : Set GaussianInt) at hy
-  rw [kdomSq] at hy
-  rcases (by simpa using hy : y = v ∨ y = v + 1 ∨
-    y = v + ⟨0, 1⟩ ∨ y = v + 1 + ⟨0, 1⟩) with e | e | e | e
-  · left; exact congrArg Zsqrtd.im e
-  · left; simpa using congrArg Zsqrtd.im e
-  · right; simpa using congrArg Zsqrtd.im e
-  · right; simpa using congrArg Zsqrtd.im e
+private abbrev kImMem :=
+  ApollonianSuperharmonic.UnitBoundaryProof.hImMem
 
 private theorem horizontalPositive :
     (by

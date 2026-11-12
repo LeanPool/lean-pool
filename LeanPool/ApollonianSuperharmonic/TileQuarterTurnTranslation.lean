@@ -7,7 +7,9 @@ module
 
 public import LeanPool.ApollonianSuperharmonic.TileQuarterTurn
 public import LeanPool.ApollonianSuperharmonic.TileTranslation
+public import LeanPool.ApollonianSuperharmonic.TileTranslationProperties
 public import Mathlib.Init
+
 
 
 /-!
@@ -45,6 +47,12 @@ theorem commute :
         Finset.image_image, Function.comp_def, map]
     · simp [TileQuarterTurn, TileTranslation, GaussianTranslation,
         GaussianQuarterTurn, add_comm]
+
+/-- Quarter-turn covariance commutes with a further translation. -/
+theorem translated (A : ProtoTile) (a u : GaussianInt) :
+    TileTranslation (TileQuarterTurn (TileTranslation A a)) u =
+      TileTranslation (TileTranslation (TileQuarterTurn A) u) (GaussianQuarterTurn a) := by
+  rw [commute, TileTranslationProperties.add, TileTranslationProperties.add, add_comm]
 
 end TileQuarterTurnTranslation
 end ApollonianSuperharmonic

@@ -504,51 +504,6 @@ private theorem realize :
     obtain ⟨m, hm, ha⟩ := inner W hW
     exact ⟨m, hm, AncestorOdometerTrans _ _ _ _ _ _ _ _ _ ha ancestor⟩
 
-private theorem hxk :
-    (by
-      classical
-      exact
-        ∀ (C₀ : BandCircle), ∀ (Cᵢ : BandCircle), ∀ (i : Fin (3 : ℕ)), ∀ (orientation : Bool), ∀
-            (T₀ : ProtoTile), ∀ (base : ProtoTile), ∀ (Rminus : ProtoTile), ∀ (Rplus :
-            ProtoTile), ∀ (tiles : List ProtoTile), ∀ (h₀ : PartialOdometer), ∀ (hminus :
-            PartialOdometer), ∀ (hplus : PartialOdometer), ∀ (hO₀ : TileOdometer C₀.1.1 T₀ h₀), ∀
-            (hOminus : TileOdometer Cᵢ.1.1 Rminus hminus), ∀ (hOplus : TileOdometer Cᵢ.1.1 Rplus
-            hplus), ∀ (p₀ : ℝ × ℝ), ∀ (pminus : ℝ × ℝ), ∀ (pplus : ℝ × ℝ), ∀ (hs₀ :
-            PartialOdometerSlope h₀ = some p₀), ∀ (hsminus : PartialOdometerSlope hminus = some
-            pminus), ∀ (hsplus : PartialOdometerSlope hplus = some pplus), ∀ (qb : Fin (4 : ℕ) →
-            CircleCoordinates), ∀ (hqb : ProperBandQuadruple qb), ∀ (hb₀ : qb (0 : Fin (4 : ℕ)) =
-            C₀.1.1), ∀ (hbᵢ : qb i.succ = Cᵢ.1.1), ∀ (hT₀ : BandPrototile C₀.1.1 T₀), ∀ (hchart :
-            Cᵢ.1.1.1 = (1 : ℤ) → UnitOccurrenceOrientation qb i orientation), ∀ (htiles :
-            TileString Cᵢ orientation base Rminus Rplus tiles), ∀ (hcminus : TileCentroid Rminus
-            - TileCentroid T₀ = (1 / 2 : ℝ) • GaussianRealPoint (BandVectors.1 (qb i.succ) (qb (0
-            : Fin (4 : ℕ))) - BandVectors.1 (qb (0 : Fin (4 : ℕ))) (qb i.succ))), ∀ (hcplus :
-            TileCentroid Rplus - TileCentroid T₀ = (1 / 2 : ℝ) • GaussianRealPoint (BandVectors.1
-            (qb i.succ) (qb (0 : Fin (4 : ℕ))) + BandVectors.1 (qb (0 : Fin (4 : ℕ))) (qb
-            i.succ))), ∀ (dm : pminus - p₀ = (1 / 2 : ℝ) • GaussianRealPoint (BandVectors.2 (qb
-            i.succ) (qb 0) - BandVectors.2 (qb 0) (qb i.succ))), ∀ (dp : pplus - p₀ = (1 / 2 : ℝ)
-            • GaussianRealPoint (BandVectors.2 (qb i.succ) (qb 0) + BandVectors.2 (qb 0) (qb
-            i.succ))),
-        let initial : P4458T1BoundaryFrame Cᵢ orientation base Rminus Rplus hminus hplus :=
-          { outer := C₀, q := qb, proper := hqb, slot := i, child := hb₀, parent := hbᵢ
-            tile := T₀, odometer := h₀, outer_odo := hO₀, minus_odo := hOminus
-            plus_odo := hOplus, outer_band := hT₀, base_band := htiles.1
-            minus_family := htiles.2.2.2.2.1 _ (List.mem_of_mem_head? htiles.2.1)
-            plus_family := htiles.2.2.2.2.1 _ (List.mem_of_getLast? htiles.2.2.1)
-            chart := hchart, minus_centroid := hcminus, plus_centroid := hcplus
-            outerSlope := p₀, minusSlope := pminus, plusSlope := pplus
-            slope_outer := hs₀, slope_minus := hsminus, slope_plus := hsplus
-            minus_difference := dm, plus_difference := dp }
-        ∀ (U : ProtoTile), ∀ (k : PartialOdometer), (AncestorOdometer Cᵢ.1.1 initial.outer.1.1 U
-            initial.tile k initial.odometer) → (∀ (x :
-            GaussianInt), (x ∈ FootprintVertices U) → (x ∈ k.domain)) ) := by
-  classical
-  intro C₀ Cᵢ i orientation T₀ base Rminus Rplus tiles h₀ hminus hplus hO₀ hOminus hOplus p₀
-      pminus pplus hs₀ hsminus hsplus qb hqb hb₀ hbᵢ hT₀ hchart htiles hcminus hcplus dm dp
-      initial U k ha x hx
-  change x ∈ (k.domain : Set GaussianInt)
-  rw [ha.2.2.1]
-  exact hx
-
 end BoundaryOdometerGeometry
 
 theorem BoundaryStringOdometerRespect :
@@ -658,9 +613,13 @@ theorem BoundaryStringOdometerRespect :
   have domain := PositiveCurvatureTileOdometerDomain C₀.1.1 T₀ h₀ C₀.property hO₀
   intro x hx
   rw [← domain]
-  exact ha.2.2.2.1 (BoundaryOdometerGeometry.hxk C₀ Cᵢ i orientation T₀ base Rminus Rplus tiles
-      h₀ hminus hplus hO₀ hOminus hOplus p₀ pminus pplus hs₀ hsminus hsplus qb hqb hb₀ hbᵢ hT₀
-      hchart htiles hcminus hcplus dm dp U k ha x hx)
+  exact ha.2.2.2.1 ((show
+      x ∈ k.domain
+    from by
+      classical
+      change x ∈ (k.domain : Set GaussianInt)
+      rw [ha.2.2.1]
+      exact hx))
 
 end ApollonianSuperharmonic
 

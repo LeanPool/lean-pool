@@ -6,6 +6,7 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.ListEndpointFacts
 
 public import LeanPool.ApollonianSuperharmonic.CurvatureOneBandPrototileSingleton
 public import LeanPool.ApollonianSuperharmonic.SwappedAffineTriangularChartAlignment
@@ -39,18 +40,8 @@ private theorem hRmem :
   rw [List.eq_cons_of_mem_head? hopt]
   simp
 
-private theorem hSmem :
-    (by
-      classical
-      exact
-        ∀ (S : ProtoTile), ∀ (forward : List ProtoTile), (forward.getLast? = some S) → (S ∈
-            forward) ) := by
-  classical
-  intro S forward hflast
-  have hopt : S ∈ forward.getLast? := by simp [hflast]
-  obtain ⟨hne, hget⟩ := List.mem_getLast?_eq_getLast hopt
-  rw [hget]
-  exact List.getLast_mem hne
+private abbrev hSmem :=
+  @ListEndpointFacts.lastMembership ProtoTile
 
 private theorem hrs :
     (by
@@ -424,29 +415,8 @@ private theorem hEdgeA'At404 :
     (fun e : Finset GaussianInt => e.image q) hEdgeA
   simpa [unitAt, Finset.image_insert, q, qInv, hqInv'] using hmem
 
-private theorem hEdgeB'At409 :
-    (by
-      classical
-      exact
-        ∀ (x : GaussianInt),
-        let x0 : GaussianInt := ⟨x.im, -x.re - 1⟩
-        let unitAt : Int × Int → ProtoTile := fun z =>
-          TileTranslation (⟨{x0}, x0⟩ : ProtoTile)
-            (⟨z.1, z.2⟩ : GaussianInt)
-        let turnedAt : Int × Int → ProtoTile := fun z => TileQuarterTurn (unitAt z)
-        let q := GaussianQuarterTurn
-        let qInv : GaussianInt → GaussianInt := fun z => ⟨z.im, -z.re⟩
-        (∀ (z : GaussianInt), q (qInv z) = z) → ((∀ (z : Int × Int), FootprintEdges (turnedAt z)
-            = (fun e : Finset GaussianInt => e.image q) '' FootprintEdges (unitAt z)) → (∀ (v :
-            GaussianInt), ∀ (w : GaussianInt), ∀ (b' : ℤ × ℤ), ({qInv v, qInv w} ∈ FootprintEdges
-            ((fun (z : ℤ × ℤ) => TileTranslation (⟨{x0}, x0⟩ : ProtoTile) (⟨z.1, z.2⟩ :
-            GaussianInt)) b')) → ({v, w} ∈ FootprintEdges (turnedAt b')))) ) := by
-  classical
-  intro x x0 unitAt turnedAt q qInv hqInv' hqedges v w b' hEdgeB
-  rw [hqedges]
-  have hmem := Set.mem_image_of_mem
-    (fun e : Finset GaussianInt => e.image q) hEdgeB
-  simpa [unitAt, Finset.image_insert, q, qInv, hqInv'] using hmem
+private abbrev hEdgeB'At409 :=
+  ApollonianSuperharmonic.OpposingInterfaceGeometry.hEdgeA'At404
 
 private theorem incident :
     (by

@@ -859,18 +859,8 @@ private theorem hs'At727 :
   intro q p hsucc u
   simpa [u] using hsucc
 
-private theorem hb :
-    ∀ (q : Fin 4 → CircleCoordinates), (ProperBandQuadruple q) → (
-    let base : Fin 4 → CircleCoordinates := ![q 0, q 3, q 1, q 2]
-    ProperBandQuadruple base) := by
-  classical
-  intro q hq base
-  refine ⟨SemiProperQuadruple.rotate (SemiProperQuadruple.rotate hq.1), ?_⟩
-  intro i
-  fin_cases i
-  · simpa [base] using hq.2 2
-  · simpa [base] using hq.2 0
-  · simpa [base] using hq.2 1
+private abbrev hb :=
+  ApollonianSuperharmonic.RetainedBoundaryDetails.huAt713
 
 private theorem hnl'At757 :
     ∀ (q : Fin 4 → CircleCoordinates), (∀ (i : Fin (4 : ℕ)), (q i).1 ≠ (0 : ℤ)) → (

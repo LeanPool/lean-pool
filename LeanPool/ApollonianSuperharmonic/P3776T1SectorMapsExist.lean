@@ -1165,74 +1165,6 @@ private theorem sectorChosenCone_periodic :
       rw [sectorChosenCone_spec f o w]
     _ = sectorChosenCone f o z + GaussianRealPoint u := by rw [hw]
 
-private theorem sectorGlobalChosen_spec :
-    ∀ (ι : Type), ∀ (P : PeriodicTileCore ι), ∀ (H : P3776T1TileContractions P), ∀ (E :
-        P3776T1DualEdges P),
-    let SectorInterval := Set.Icc (0 : ℝ) 1
-    let SectorCone := {z : SectorInterval × SectorInterval // (z.2 : ℝ) ≤ z.1}
-    let sectorCollapse := P3832T1ConeCollapse
-    ∀ (sectorSupportedHalfCone : ∀ {ι : Type}, ∀ (P : PeriodicTileCore ι), ∀ (H :
-        P3776T1TileContractions P), ∀ (E : P3776T1DualEdges P), ∀ (f : P.plane.Face), ∀ (a :
-        ι), ∀ (b : ι), (P.plane.adjacent a b) → ((∃ i, P.plane.faceVertex f i = a) → ((∃ i,
-        P.plane.faceVertex f i = b) → (∃ G : C(SectorCone, ℝ × ℝ), ∀ z : SectorInterval ×
-        SectorInterval, G (sectorCollapse z) = H.homotopy a z.1 (E.half f a b z.2))))),
-    let SectorSimplex := StandardSimplex (Fin 3)
-    let sectorChamber : Fin 3 → Fin 3 → Fin 3 → Set SectorSimplex := fun i j k =>
-      {s | s.1 j ≤ s.1 i ∧ s.1 k ≤ s.1 j}
-    let SectorOrder := {t : Fin 3 × Fin 3 × Fin 3 //
-      t.1 ≠ t.2.1 ∧ t.1 ≠ t.2.2 ∧ t.2.1 ≠ t.2.2}
-    let sectorI : SectorOrder → Fin 3 := fun o => o.1.1
-    let sectorJ : SectorOrder → Fin 3 := fun o => o.1.2.1
-    let sectorK : SectorOrder → Fin 3 := fun o => o.1.2.2
-    let sectorCh := fun o : SectorOrder => sectorChamber (sectorI o) (sectorJ o) (sectorK o)
-    ∀ (sectorOrderedSum : ∀ (s : SectorSimplex), ∀ (i : Fin 3), ∀ (j : Fin 3), ∀ (k : Fin 3), (i
-        ≠ j) → ((i ≠ k) → ((j ≠ k) → (s.1 i + s.1 j + s.1 k = 1)))),
-    let sectorParam := fun (o : SectorOrder) (s : SectorSimplex) (hs : s ∈ sectorCh o) =>
-      let i := sectorI o
-      let j := sectorJ o
-      let k := sectorK o
-      have hc : (∀ n, 0 ≤ s.1 n) ∧ ∑ n : Fin 3, s.1 n = 1 := by
-        simpa only [SectorSimplex, StandardSimplex, Set.mem_ofPred_eq] using s.2
-      have hsum : s.1 i + s.1 j + s.1 k = 1 :=
-        sectorOrderedSum s i j k o.2.1 o.2.2.1 o.2.2.2
-      have hxy := hs.1
-      have hyz := hs.2
-      have hr0 : 0 ≤ 2 * (s.1 j - s.1 k) + 3 * s.1 k := by
-        linarith [hc.1 j, hc.1 k]
-      have hr1 : 2 * (s.1 j - s.1 k) + 3 * s.1 k ≤ 1 := by
-        linarith [hc.1 i, hsum]
-      have hb0 : 0 ≤ 2 * (s.1 j - s.1 k) := by linarith [hyz]
-      have hbr : 2 * (s.1 j - s.1 k) ≤ 2 * (s.1 j - s.1 k) + 3 * s.1 k := by
-        nlinarith [hc.1 k]
-      (⟨⟨⟨2*(s.1 j-s.1 k)+3*s.1 k,hr0,hr1⟩,
-        ⟨2*(s.1 j-s.1 k),hb0,le_trans hbr hr1⟩⟩,hbr⟩ : SectorCone)
-    ∀ (sectorParam_continuous : ∀ (o : SectorOrder), Continuous (fun s :
-        {s : SectorSimplex // s ∈ sectorCh o} => sectorParam o s.1 s.2)),
-    let sectorPiece (o : SectorOrder)
-        (G : C(SectorCone,ℝ×ℝ)) : C({s : SectorSimplex // s ∈ sectorCh o},ℝ×ℝ) :=
-      ⟨fun s => G (sectorParam o s.1 s.2),
-        G.continuous.comp (sectorParam_continuous o)⟩
-    let sectorChosenCone (f : P.plane.Face) (o : SectorOrder) : C(SectorCone,ℝ×ℝ) :=
-      Classical.choose (sectorSupportedHalfCone P H E f
-        (P.plane.faceVertex f (sectorI o)) (P.plane.faceVertex f (sectorJ o))
-        (P.plane.face_edges f (sectorI o) (sectorJ o) o.2.1)
-        ⟨sectorI o,rfl⟩ ⟨sectorJ o,rfl⟩)
-    let sectorChosenPiece (f : P.plane.Face) (o : SectorOrder) :
-        C({s : SectorSimplex // s ∈ sectorCh o},ℝ×ℝ) :=
-      sectorPiece o (sectorChosenCone f o)
-    ∀ (sectorGlobalMap : ∀ (f : P.plane.Face), ∃ F : C(SectorSimplex,ℝ×ℝ), ∀ o s (hs : s ∈
-        sectorCh o), F s=sectorChosenPiece f o ⟨s,hs⟩),
-    let sectorGlobalChosen (f : P.plane.Face) : C(SectorSimplex,ℝ×ℝ) :=
-      Classical.choose (sectorGlobalMap f)
-    ∀ (f : P.plane.Face), ∀ (o : SectorOrder), ∀ (s : SectorSimplex), ∀ (hs : s ∈ sectorCh o),
-        sectorGlobalChosen f s = sectorChosenPiece f o ⟨s,hs⟩ := by
-  classical
-  intro ι P H E SectorInterval SectorCone sectorCollapse sectorSupportedHalfCone SectorSimplex
-      sectorChamber SectorOrder sectorI sectorJ sectorK sectorCh sectorOrderedSum sectorParam
-      sectorParam_continuous sectorPiece sectorChosenCone sectorChosenPiece sectorGlobalMap
-      sectorGlobalChosen f o s hs
-  exact Classical.choose_spec (sectorGlobalMap f) o s hs
-
 private theorem sectorGlobalChosen_periodic :
     ∀ (ι : Type), ∀ (P : PeriodicTileCore ι), ∀ (H : P3776T1TileContractions P), ∀ (E :
         P3776T1DualEdges P),
@@ -1851,9 +1783,11 @@ theorem P3776T1SectorMapsExist {ι : Type} (P : PeriodicTileCore ι)
   let sectorGlobalChosen (f : P.plane.Face) : C(SectorSimplex,ℝ×ℝ) :=
     Classical.choose (sectorGlobalMap f)
   have sectorGlobalChosen_spec (f : P.plane.Face) (o : SectorOrder)
-      (s : SectorSimplex) (hs : s ∈ sectorCh o) := SectorMapsProof.sectorGlobalChosen_spec ι P H
-          E sectorSupportedHalfCone
-          sectorOrderedSum sectorParam_continuous sectorGlobalMap f o s hs
+      (s : SectorSimplex) (hs : s ∈ sectorCh o) := (show
+          sectorGlobalChosen f s = sectorChosenPiece f o ⟨s,hs⟩
+        from by
+          classical
+          exact Classical.choose_spec (sectorGlobalMap f) o s hs)
   have sectorGlobalChosen_periodic (u : P.lattice) (f : P.plane.Face)
       (s : SectorSimplex) := SectorMapsProof.sectorGlobalChosen_periodic ι P H E
           sectorSupportedHalfCone

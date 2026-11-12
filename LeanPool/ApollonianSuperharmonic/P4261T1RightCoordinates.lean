@@ -6,6 +6,9 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.PartialOdometerEquality
+public import LeanPool.ApollonianSuperharmonic.BandLayoutParentNonempty
+public import LeanPool.ApollonianSuperharmonic.BandParentCentroidComparison
 
 public import LeanPool.ApollonianSuperharmonic.P4261T1PlacedOdometer
 public import LeanPool.ApollonianSuperharmonic.TileSubodometerLiteralDecompositionPiece
@@ -74,36 +77,8 @@ private theorem hslopeVector :
   intro q q'' i'' r hrotate j
   rw [hrotate (i'' + 2), hrotate (i'' + 1)]; dsimp [j]; fin_cases r <;> fin_cases i'' <;> rfl
 
-private theorem hsCent :
-    (by
-      classical
-      exact
-        ∀ (q : Fin 4 → CircleCoordinates), ∀ (N : ProtoTile), ∀ (q'' : Fin (4 : ℕ) →
-            CircleCoordinates), ∀ (i'' : Fin (3 : ℕ)), ∀ (s : Bool), ∀ (S' : Fin (3 : ℕ) → Bool →
-            ProtoTile), (∀ (j : Fin (3 : ℕ)), ∀ (t : Bool), TileCentroid (S' j t) - TileCentroid
-            N = (if t = true then (1 : ℝ) else (-1 : ℝ)) • (1 / 2 : ℝ) • (GaussianRealPoint
-            (BandVectors.1 (q'' (j + (2 : Fin (3 : ℕ))).succ) (q'' (j + (1 : Fin (3 : ℕ))).succ))
-            - (-(GaussianRealPoint (BandVectors.1 (q'' (j + (2 : Fin (3 : ℕ))).succ) (q'' (j + (1
-            : Fin (3 : ℕ))).succ))).2, (GaussianRealPoint (BandVectors.1 (q'' (j + (2 : Fin (3 :
-            ℕ))).succ) (q'' (j + (1 : Fin (3 : ℕ))).succ))).1))) → (∀ (R : Fin (3 : ℕ) → Bool →
-            ProtoTile), (∀ (i : Fin (3 : ℕ)), ∀ (s : Bool), TileCentroid (R i s) - TileCentroid N
-            = (if s = true then (1 : ℝ) else (-1 : ℝ)) • (1 / 2 : ℝ) • (GaussianRealPoint
-            (BandVectors.1 (q (i + (2 : Fin (3 : ℕ))).succ) (q (i + (1 : Fin (3 : ℕ))).succ)) -
-            (-(GaussianRealPoint (BandVectors.1 (q (i + (2 : Fin (3 : ℕ))).succ) (q (i + (1 : Fin
-            (3 : ℕ))).succ))).2, (GaussianRealPoint (BandVectors.1 (q (i + (2 : Fin (3 :
-            ℕ))).succ) (q (i + (1 : Fin (3 : ℕ))).succ))).1))) → (∀ (r : Fin (3 : ℕ)),
-        let j : Fin 3 := i'' + r
-        (BandVectors.1 (q'' ((i'' + 2).succ)) (q'' ((i'' + 1).succ)) = BandVectors.1 (q ((j +
-            2).succ)) (q ((j + 1).succ))) → (TileCentroid (S' i'' s) = TileCentroid (R j s)))) )
-            := by
-  classical
-  intro q N q'' i'' s S' hcent' R hrootCent r j hvector
-  calc
-    TileCentroid (S' i'' s) =
-        (TileCentroid (S' i'' s) - TileCentroid N) + TileCentroid N := by abel
-    _ = (TileCentroid (R j s) - TileCentroid N) + TileCentroid N := by
-      rw [hcent' i'' s, hrootCent j s, hvector]
-    _ = TileCentroid (R j s) := by abel
+private abbrev hsCent :=
+  BandParentCentroidComparison.centroidEquality
 
 private theorem hbandSelected :
     (by
@@ -325,25 +300,6 @@ private theorem hlayoutCent :
       rw [heq]
     _ = TileCentroid Pshift := by rw [hPshiftCent]; abel
 
-private theorem hparentNonempty :
-    (by
-      classical
-      exact
-        ∀ (q : Fin 4 → CircleCoordinates), ∀ (cfg : BandOrderedGeneralConfiguration q), ∀ (C₀ :
-            BandCircle), ∀ (T₀ : ProtoTile), ∀ (cert : BandOrderedGeneralLayoutCertificate q cfg
-            C₀ T₀), ∀ (i'' : Fin (3 : ℕ)), ∀ (s : Bool), ∀ (r : Fin (3 : ℕ)),
-        let j : Fin 3 := i'' + r
-        (cert.P j s).cells.Nonempty ) := by
-  classical
-  intro q cfg C₀ T₀ cert i'' s r j
-  rcases cert.parent_lattice j s with ⟨e⟩
-  have hball : (0 : ℝ × ℝ) ∈ Metric.closedBall (0 : ℝ × ℝ) 1 := by simp
-  have hreal : (e ⟨(0 : ℝ × ℝ), hball⟩ : ℝ × ℝ) ∈
-      TileRealization (cert.P j s) := (e ⟨0, hball⟩).property
-  simp only [TileRealization, Set.mem_iUnion] at hreal
-  rcases hreal with ⟨x, hx, _⟩
-  exact ⟨x, hx⟩
-
 private theorem hselectedNonempty :
     (by
       classical
@@ -550,30 +506,6 @@ private theorem hvalueSuppliedFresh :
       intro hxF
       exact hx ((Set.ext_iff.mp hdomainSuppliedFresh x).mpr hxF)
     rw [h.value_outside x hx, (rH j s).value_outside x hxFresh]
-
-private theorem hfunEq :
-    (by
-      classical
-      exact
-        ∀ (C₀ : BandCircle), ∀ (N : ProtoTile), ∀ (hN : PartialOdometer), ∀ (C : BandCircle), ∀
-            (T : ProtoTile), ∀ (h : PartialOdometer), (TileSubodometer C₀.1.1 C.1.1 N T hN h) →
-            (∀ (i'' : Fin (3 : ℕ)), ∀ (s : Bool), ∀ (hs' : Fin (3 : ℕ) → Bool → PartialOdometer),
-            ((↑h.domain : Set GaussianInt) = (↑(hs' i'' s).domain : Set GaussianInt)) → ((∀ x ∈
-            h.domain, h.value x = (hs' i'' s).value x) → (∀ (rH : Fin (3 : ℕ) → Bool →
-            PartialOdometer), ∀ (r : Fin (3 : ℕ)),
-        let j : Fin 3 := i'' + r
-        ((h.domain : Set GaussianInt) = FootprintVertices T) → (((h.domain : Set GaussianInt) =
-            (rH j s).domain) → ((∀ x, h.value x = (rH j s).value x) → (h = rH j s)))))) ) := by
-  classical
-  intro C₀ N hN C T h hsub i'' s hs' hselectedDomain hselectedValue rH r j hdomainT
-      hdomainSuppliedFresh hvalueSuppliedFresh
-  cases h with
-  | mk hd hv hout =>
-    have hdomEq : hd = (rH j s).domain := Finset.coe_injective hdomainSuppliedFresh
-    have hvalEq : hv = (rH j s).value := funext hvalueSuppliedFresh
-    cases hdomEq
-    cases hvalEq
-    rfl
 
 private theorem hsumA :
     (by
@@ -988,7 +920,7 @@ theorem P4261T1RightCoordinates
       hrootCent r ra hNcent hlayoutOcc hPshiftCent
   have hlayoutCells : (R j s).cells = Pshift.cells :=
     (BandPrototileCentroidUnique (q j.succ) _ _ hbandFresh hbandShift hlayoutCent).1
-  have hparentNonempty := RightCoordinateGeometry.hparentNonempty q cfg C₀ T₀ cert i'' s r
+  have hparentNonempty := BandLayoutParentNonempty.cells q cfg C₀ T₀ cert (i'' + r) s
   have hselectedNonempty := RightCoordinateGeometry.hselectedNonempty q cfg C₀ T₀ cert T i' e'
       i'' s S' hselectedCells R r hselectedCellsFresh ra hlayoutCells hparentNonempty
   have hcellsT : T.cells = Pshift.cells := RightCoordinateGeometry.hcellsT q cfg C₀ T₀ cert T i'
@@ -1008,8 +940,8 @@ theorem P4261T1RightCoordinates
       hselectedDomain rH r hdomainSelFresh
   have hvalueSuppliedFresh := RightCoordinateGeometry.hvalueSuppliedFresh hN h i'' s hs' hvalue'
       hselectedDomain hselectedValue rH hrootValue r hdomainSuppliedFresh
-  have hfunEq := RightCoordinateGeometry.hfunEq C₀ N hN C T h hsub i'' s hs' hselectedDomain
-      hselectedValue rH r hdomainT hdomainSuppliedFresh hvalueSuppliedFresh
+  have hfunEq := PartialOdometerEquality.extensionality h (rH (i'' + r) s) hdomainSuppliedFresh
+      hvalueSuppliedFresh
   have hsumA := RightCoordinateGeometry.hsumA q cfg
   have hsumAPoint := congrArg GaussianRealPoint hsumA
   simp only [GaussianRealPoint, Int.reduceNeg, Fin.isValue, GaussianInt.intCast_re,

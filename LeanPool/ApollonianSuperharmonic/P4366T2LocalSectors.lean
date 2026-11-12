@@ -6,6 +6,7 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.ListEndpointFacts
 
 public import LeanPool.ApollonianSuperharmonic.AncestorOdometer
 public import LeanPool.ApollonianSuperharmonic.P5635T1EndpointDiagonalOwnership
@@ -483,21 +484,8 @@ private theorem last_edge_unique :
     hrevPath e hrevDecomp hxe
   simpa [Finset.pair_comm] using hresult
 
-private theorem split_mem :
-    (by
-      classical
-      exact
-        ∀ (r : List GaussianInt), ∀ (z : GaussianInt), z ∈ r → ∃ l t, r = l ++ z :: t ) := by
-  classical
-  intro r z hz
-  induction r with
-  | nil => simp at hz
-  | cons a r ih =>
-    simp only [List.mem_cons] at hz
-    rcases hz with rfl | hz
-    · exact ⟨[], r, rfl⟩
-    · rcases ih hz with ⟨l, t, ht⟩
-      exact ⟨a :: l, t, by simp [ht, List.cons_append]⟩
+private abbrev split_mem :=
+  @ListEndpointFacts.splitMembership GaussianInt
 
 private theorem hsuf :
     (by
@@ -555,70 +543,6 @@ private theorem hleft :
   calc
     path = pre ++ x :: y :: rest := hsplit
     _ = pre' ++ z :: x :: y :: rest := by rw [← hpreEq]; simp [List.append_assoc]
-
-private theorem hzx :
-    (by
-      classical
-      exact
-        ∀ (Ci : BandCircle), ∀ (T0 : ProtoTile), ∀ (T0' : ProtoTile), ∀ (path : List
-            GaussianInt), ∀ (P : PeriodicTileComplex ↥(TilingLattice Ci)), ∀ (x : GaussianInt),
-            (x ∈ path) → ((∀ (y : GaussianInt), y = x ∨ y = x + (1 : GaussianInt) ∨ y = x - (1 :
-            GaussianInt) ∨ y = x + (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt) ∨ y = x - (⟨(0 : ℤ), (1 :
-            ℤ)⟩ : GaussianInt) → y ∈ FootprintVertices T0 ∨ y ∈ FootprintVertices T0') → (∀ (pre
-            : List GaussianInt), ∀ (y : GaussianInt), ∀ (rest : List GaussianInt), (path = pre ++
-            x :: y :: rest) → (∀ (hpre' : pre ≠ []),
-        let z := pre.getLast hpre'
-        let pre' := pre.dropLast
-        (path = pre' ++ z :: x :: y :: rest) → ((path = pre ++ x :: y :: rest) → (∀ (UL :
-            ProtoTile), ∀ (VL : ProtoTile), ∀ (iaL : ↥(TilingLattice Ci)), ∀ (ibL :
-            ↥(TilingLattice Ci)), ∀ (jL : Fin (4 : ℕ)), (({z, x} : Finset GaussianInt) = ![{x, x
-                + (⟨(0 : ℤ),
-            (1 : ℤ)⟩ : GaussianInt)}, {x - (1 : GaussianInt), x}, {x - (⟨(0 : ℤ),
-            (1 : ℤ)⟩ : GaussianInt), x}, {x, x + (1 : GaussianInt)}] jL) → (({z, x} ∈
-            FootprintEdges UL) → (({z, x} ∈ FootprintEdges VL) → ((LatticeVertexIncidentCell x jL
-            ∈ (P.tile iaL).cells ∧ LatticeVertexIncidentCell x (jL + (1 : Fin (4 : ℕ))) ∈ (P.tile
-            ibL).cells ∨ LatticeVertexIncidentCell x jL ∈ (P.tile ibL).cells ∧
-            LatticeVertexIncidentCell x (jL + (1 : Fin (4 : ℕ))) ∈ (P.tile iaL).cells) → (∀ (UR :
-            ProtoTile), ∀ (VR : ProtoTile), ∀ (iaR : ↥(TilingLattice Ci)), ∀ (ibR :
-            ↥(TilingLattice Ci)), ∀ (jR : Fin (4 : ℕ)), (({x, y} : Finset GaussianInt) = ![{x, x
-                + (⟨(0 : ℤ),
-            (1 : ℤ)⟩ : GaussianInt)}, {x - (1 : GaussianInt), x}, {x - (⟨(0 : ℤ),
-            (1 : ℤ)⟩ : GaussianInt), x}, {x, x + (1 : GaussianInt)}] jR) → (({x, y} ∈
-            FootprintEdges UR) → (({x, y} ∈ FootprintEdges VR) → ((LatticeVertexIncidentCell x jR
-            ∈ (P.tile iaR).cells ∧ LatticeVertexIncidentCell x (jR + (1 : Fin (4 : ℕ))) ∈ (P.tile
-            ibR).cells ∨ LatticeVertexIncidentCell x jR ∈ (P.tile ibR).cells ∧
-            LatticeVertexIncidentCell x (jR + (1 : Fin (4 : ℕ))) ∈ (P.tile iaR).cells) → (((pre'
-            ++ z :: x :: y :: rest).Nodup) → (((z :: x :: y :: rest).Nodup) → ((z ∉ x :: y ::
-            rest) → (z ≠ x)))))))))))))))) ) := by
-  classical
-  intro Ci T0 T0' path P x hx hstar pre y rest hsplit hpre' z pre' hleft hright UL VL iaL ibL jL
-      eL hedgeUL hedgeVL hsectorL UR VR iaR ibR jR eR hedgeUR hedgeVR hsectorR hnodupPath
-      htailNodup hznot heq
-  subst x
-  exact hznot (List.mem_cons_self ..)
-
-private theorem hzy :
-    (by
-      classical
-      exact
-        ∀ (path : List GaussianInt), ∀ (x : GaussianInt), ∀ (pre : List GaussianInt), ∀ (y :
-            GaussianInt), ∀ (rest : List GaussianInt), (path = pre ++ x :: y :: rest) → (∀ (hpre'
-            : pre ≠ []),
-        let z := pre.getLast hpre'
-        let pre' := pre.dropLast
-        (path = pre' ++ z :: x :: y :: rest) → ((path = pre ++ x :: y :: rest) → (∀ (UR :
-            ProtoTile), ∀ (VR : ProtoTile), ∀ (jR : Fin (4 : ℕ)), (({x, y} : Finset GaussianInt)
-                = ![{x, x + (⟨(0 : ℤ),
-            (1 : ℤ)⟩ : GaussianInt)}, {x - (1 : GaussianInt), x}, {x - (⟨(0 : ℤ),
-            (1 : ℤ)⟩ : GaussianInt), x}, {x, x + (1 : GaussianInt)}] jR) → (({x, y} ∈
-            FootprintEdges UR) → (({x, y} ∈ FootprintEdges VR) → (((pre' ++ z :: x :: y ::
-            rest).Nodup) → (((z :: x :: y :: rest).Nodup) → ((z ∉ x :: y :: rest) → (z ≠
-            y))))))))) ) := by
-  classical
-  intro path x pre y rest hsplit hpre' z pre' hleft hright UR VR jR eR hedgeUR hedgeVR hnodupPath
-      htailNodup hznot heq
-  subst y
-  exact hznot (List.mem_cons_of_mem x (List.mem_cons_self ..))
 
 private theorem hEdgeNe :
     (by
@@ -884,48 +808,8 @@ private theorem hLaligned :
     · exact ⟨label_T0 x (jL + 1) (hULsub (by simpa [hULidx] using h.2)),
         owner_unique _ iaL (by simpa [hULidx] using h.2)⟩
 
-private theorem hRaligned :
-    (by
-      classical
-      exact
-        ∀ (Ci : BandCircle), ∀ (T0 : ProtoTile), ∀ (T0' : ProtoTile), ∀ (P : PeriodicTileComplex
-            ↥(TilingLattice Ci)),
-        let outerLabel : GaussianInt → Fin 4 → Fin 3 := fun x j =>
-          if LatticeVertexIncidentCell x j ∈ T0.cells then 0
-          else if LatticeVertexIncidentCell x j ∈ T0'.cells then 1 else 2
-        (∀ (x : GaussianInt), ∀ (j : Fin 4), (LatticeVertexIncidentCell x j ∈ T0.cells) →
-            (outerLabel x j = 0)) → ((∀ (x : GaussianInt), ∀ (j : Fin 4),
-            (LatticeVertexIncidentCell x j ∈ T0'.cells) → (outerLabel x j = 1)) → (
-        let owner : GaussianInt → TilingLattice Ci := fun c =>
-          Classical.choose (PeriodicTileIndexedMultiplicityOne P c)
-        (∀ (c : GaussianInt), ∀ (a : TilingLattice Ci), (c ∈ (P.tile a).cells) → (owner c = a)) →
-            (∀ (x : GaussianInt), ∀ (UR : ProtoTile), ∀ (VR : ProtoTile), ∀ (iaR :
-            ↥(TilingLattice Ci)), ∀ (ibR : ↥(TilingLattice Ci)), ∀ (jR : Fin (4 : ℕ)), (P.tile
-            iaR = UR) → ((P.tile ibR = VR) → ((LatticeVertexIncidentCell x jR ∈ (P.tile
-            iaR).cells ∧ LatticeVertexIncidentCell x (jR + (1 : Fin (4 : ℕ))) ∈ (P.tile
-            ibR).cells ∨ LatticeVertexIncidentCell x jR ∈ (P.tile ibR).cells ∧
-            LatticeVertexIncidentCell x (jR + (1 : Fin (4 : ℕ))) ∈ (P.tile iaR).cells) →
-            ((UR.cells ⊆ T0.cells) → ((VR.cells ⊆ T0'.cells) → (((outerLabel x jR = 0 ∧ owner
-            (LatticeVertexIncidentCell x jR) = iaR) ∧ (outerLabel x (jR + 1) = 1 ∧ owner
-            (LatticeVertexIncidentCell x (jR + 1)) = ibR)) ∨ ((outerLabel x jR = 1 ∧ owner
-            (LatticeVertexIncidentCell x jR) = ibR) ∧ (outerLabel x (jR + 1) = 0 ∧ owner
-            (LatticeVertexIncidentCell x (jR + 1)) = iaR)))))))))) ) := by
-  classical
-  intro Ci T0 T0' P outerLabel label_T0 label_T0' owner owner_unique x UR VR iaR ibR jR hURidx
-      hVRidx hsectorR hURsub hVRsub
-  rcases hsectorR with h | h
-  · left
-    constructor
-    · exact ⟨label_T0 x jR (hURsub (by simpa [hURidx] using h.1)),
-        owner_unique _ iaR (by simpa [hURidx] using h.1)⟩
-    · exact ⟨label_T0' x (jR + 1) (hVRsub (by simpa [hVRidx] using h.2)),
-        owner_unique _ ibR (by simpa [hVRidx] using h.2)⟩
-  · right
-    constructor
-    · exact ⟨label_T0' x jR (hVRsub (by simpa [hVRidx] using h.1)),
-        owner_unique _ ibR (by simpa [hVRidx] using h.1)⟩
-    · exact ⟨label_T0 x (jR + 1) (hURsub (by simpa [hURidx] using h.2)),
-        owner_unique _ iaR (by simpa [hURidx] using h.2)⟩
+private abbrev hRaligned :=
+  ApollonianSuperharmonic.LocalSectorGeometry.hLaligned
 
 private theorem transition_is_path_edge :
     (by
@@ -1635,11 +1519,14 @@ private theorem interiorSector :
   have htailNodup : (z :: x :: y :: rest).Nodup :=
     (List.nodup_append.mp hnodupPath).2.1
   have hznot : z ∉ x :: y :: rest := (List.nodup_cons.mp htailNodup).1
-  have hzx := LocalSectorGeometry.hzx Ci T0 T0' path P x hx hstar pre y rest hsplit hpre'
-      hleft hright UL VL iaL ibL jL eL hedgeUL hedgeVL hsectorL UR VR iaR ibR jR eR hedgeUR
-      hedgeVR hsectorR hnodupPath htailNodup hznot
-  have hzy := LocalSectorGeometry.hzy path x pre y rest hsplit hpre' hleft hright UR VR jR
-      eR hedgeUR hedgeVR hnodupPath htailNodup hznot
+  have hzx : z ≠ x := by
+    intro heq
+    subst x
+    exact hznot (List.mem_cons_self ..)
+  have hzy : z ≠ y := by
+    intro heq
+    subst y
+    exact hznot (List.mem_cons_of_mem x (List.mem_cons_self ..))
   have hEdgeNe : ({z, x} : Finset GaussianInt) ≠ {x, y} := LocalSectorGeometry.hEdgeNe x
       pre y hpre' hzx hzy
   have hjne := LocalSectorGeometry.hjne x pre y hpre' jL eL jR eR hzx hzy

@@ -6,6 +6,7 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.TileTranslationProperties
 
 public import LeanPool.ApollonianSuperharmonic.AffineTriangularPlaneTriangulation
 public import LeanPool.ApollonianSuperharmonic.AffineTriangularComplexChart
@@ -554,18 +555,8 @@ private theorem facescard :
     fun h => Sum.inl_ne_inr (D.faces.injective h)
   simp [faces, hn]
 
-private theorem translate_add :
-    (by
-      classical
-      exact
-        ∀ (U : ProtoTile), ∀ (x : GaussianInt), ∀ (y : GaussianInt), TileTranslation
-            (TileTranslation U x) y = TileTranslation U (x + y) ) := by
-  classical
-  intro U x y
-  cases U
-  simp only [TileTranslation, Finset.image_image, Function.comp_def,
-    GaussianTranslation, add_assoc]
-  rfl
+private abbrev translate_add :=
+  TileTranslationProperties.add
 
 private theorem hzero :
     (by

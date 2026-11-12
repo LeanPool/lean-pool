@@ -6,6 +6,7 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.BoundaryFootprintInclusion
 public import LeanPool.ApollonianSuperharmonic.TileTouchingDisjoint
 
 public import LeanPool.ApollonianSuperharmonic.BandTileSimultaneousInduction
@@ -394,31 +395,8 @@ private theorem hOD :
   exact Finset.disjoint_left.mp hAD (seg.precursor_in_left hxO) hxD
 
 
-private theorem edge_vertex_footprint :
-    (by
-      classical
-      exact
-        ∀ (U : ProtoTile), ∀ (e : Finset GaussianInt), (e ∈ FootprintEdges U) → (∀ (x :
-            GaussianInt), (x ∈ e) → (x ∈ FootprintVertices U)) ) := by
-  classical
-  intro U e he x hx
-  rcases he with ⟨c, hc, he⟩
-  simp only [FootprintVertices, ite_eq_left (show U.cells.Nonempty from ⟨c, hc⟩),
-    Set.mem_ofPred_eq]
-  rcases he with h | h | h | h <;> subst e
-  all_goals simp only [Finset.mem_insert, Finset.mem_singleton] at hx
-  · rcases hx with rfl | rfl
-    · exact ⟨_, hc, Or.inl rfl⟩
-    · exact ⟨c, hc, Or.inr (Or.inl rfl)⟩
-  · rcases hx with rfl | rfl
-    · exact ⟨_, hc, Or.inl rfl⟩
-    · exact ⟨c, hc, Or.inr (Or.inr (Or.inl rfl))⟩
-  · rcases hx with rfl | rfl
-    · exact ⟨c, hc, Or.inr (Or.inl rfl)⟩
-    · exact ⟨c, hc, Or.inr (Or.inr (Or.inr rfl))⟩
-  · rcases hx with rfl | rfl
-    · exact ⟨c, hc, Or.inr (Or.inr (Or.inl rfl))⟩
-    · exact ⟨c, hc, Or.inr (Or.inr (Or.inr rfl))⟩
+private abbrev edge_vertex_footprint :=
+  BoundaryFootprintInclusion.edgeVertex
 
 private theorem boundary_raw :
     (by

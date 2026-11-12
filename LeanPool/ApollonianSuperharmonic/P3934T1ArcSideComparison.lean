@@ -516,51 +516,8 @@ private theorem hgfun_surj :
   apply Subtype.ext
   exact hx
 
-private theorem hhfun_surj :
-    ∀ (S : Set (ℝ × ℝ)), ∀ (h : (↑(Set.Icc (0 : ℝ) (1 : ℝ)) : Type) → ℝ × ℝ), ∀ (hhrange :
-        Set.range h = S),
-    let hfun : Set.Icc (0 : Real) 1 → S := fun x =>
-      ⟨h x, by rw [← hhrange]; exact ⟨x, rfl⟩⟩
-    Function.Surjective hfun := by
-  classical
-  intro S h hhrange hfun z
-  have hz : (z : Real × Real) ∈ Set.range h := by
-    rw [hhrange]
-    exact z.property
-  rcases hz with ⟨x, hx⟩
-  refine ⟨x, ?_⟩
-  apply Subtype.ext
-  exact hx
-
-private theorem hphi_mono :
-    ∀ (S : Set (ℝ × ℝ)), ∀ (g : (↑(Set.Icc (0 : ℝ) (1 : ℝ)) : Type) → ℝ × ℝ), ∀ (h : (↑(Set.Icc
-        (0 : ℝ) (1 : ℝ)) : Type) → ℝ × ℝ), ∀ (hgrange : Set.range g = S), ∀ (hhrange : Set.range
-        h = S),
-    let gfun : Set.Icc (0 : Real) 1 → S := fun x =>
-      ⟨g x, by rw [← hgrange]; exact ⟨x, rfl⟩⟩
-    let hfun : Set.Icc (0 : Real) 1 → S := fun x =>
-      ⟨h x, by rw [← hhrange]; exact ⟨x, rfl⟩⟩
-    ∀ (hgfun_inj : Function.Injective gfun), ∀ (hhfun_inj : Function.Injective hfun), ∀
-        (hgfun_surj : Function.Surjective gfun), ∀ (hhfun_surj : Function.Surjective hfun),
-    let ge : Set.Icc (0 : Real) 1 ≃ S := Equiv.ofBijective gfun ⟨hgfun_inj, hgfun_surj⟩
-    let he : Set.Icc (0 : Real) 1 ≃ S := Equiv.ofBijective hfun ⟨hhfun_inj, hhfun_surj⟩
-    ∀ (hgfun_cont : Continuous gfun), ∀ (hhfun_cont : Continuous hfun),
-    let GH := Continuous.homeoOfEquivCompactToT2 (f := ge) hgfun_cont
-    let HH := Continuous.homeoOfEquivCompactToT2 (f := he) hhfun_cont
-    let phi : Set.Icc (0 : Real) 1 ≃ₜ Set.Icc (0 : Real) 1 := GH.trans HH.symm
-    let x0 : Set.Icc (0 : Real) 1 := ⟨0, by norm_num⟩
-    let x1 : Set.Icc (0 : Real) 1 := ⟨1, by norm_num⟩
-    (phi x0 = x0) → ((phi x1 = x1) → (StrictMono phi)) := by
-  classical
-  intro S g h hgrange hhrange gfun hfun hgfun_inj hhfun_inj hgfun_surj hhfun_surj ge he
-      hgfun_cont hhfun_cont GH HH phi x0 x1 hphi0 hphi1
-  rcases phi.continuous.strictMono_of_inj phi.injective with hm | hm
-  · exact hm
-  · have h01 : x0 < x1 := by norm_num [x0, x1]
-    have := hm h01
-    rw [hphi0, hphi1] at this
-    have hle : x0 ≤ x1 := by norm_num [x0, x1]
-    exact False.elim ((not_lt_of_ge hle) this)
+private abbrev hhfun_surj :=
+  ApollonianSuperharmonic.ArcComparisonMainProof.ArcComparisonCoreFacts.hgfun_surj
 
 private theorem hx0L :
     ∀ (S : Set (ℝ × ℝ)),
@@ -1199,8 +1156,17 @@ private theorem compareCore :
   have hphi1 : phi x1 = x1 := by
     apply hhinj
     rw [hrel, hgb, hhb]
-  have hphi_mono : StrictMono phi := ArcComparisonCoreFacts.hphi_mono S g h hgrange hhrange
-      hgfun_inj hhfun_inj hgfun_surj hhfun_surj hgfun_cont hhfun_cont hphi0 hphi1
+  have hphi_mono : StrictMono phi := (show
+      StrictMono phi
+    from by
+      classical
+      rcases phi.continuous.strictMono_of_inj phi.injective with hm | hm
+      · exact hm
+      · have h01 : x0 < x1 := by norm_num [x0, x1]
+        have := hm h01
+        rw [hphi0, hphi1] at this
+        have hle : x0 ≤ x1 := by norm_num [x0, x1]
+        exact False.elim ((not_lt_of_ge hle) this))
   let i0 : Fin p.count := ⟨0, p.positive⟩
   let j0 : Fin q.count := ⟨0, q.positive⟩
   let i1 : Fin (p.count + 1) := ⟨1, by have hp := p.positive; omega⟩

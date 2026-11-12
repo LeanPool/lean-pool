@@ -6,6 +6,7 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.TileOdometerSlopeNonempty
 
 public import LeanPool.ApollonianSuperharmonic.P5625T1CentroidSlopeDifferenceCovariance
 public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryInversePhaseCancellation
@@ -414,28 +415,8 @@ private theorem positiveSupport :
       exact
         ∀ (C : CircleCoordinates), ∀ (U : ProtoTile), ∀ (k : PartialOdometer), ∀ (p : ℝ × ℝ), 0 <
             C.1 → TileOdometer C U k → PartialOdometerSlope k = some p → U.cells.Nonempty ) := by
-  classical
-  intro C U k p hpos hO hp
-  have hd := PositiveCurvatureTileOdometerDomain C U k hpos hO
-  by_contra hn
-  have hde : (k.domain : Set GaussianInt) = {U.anchor} := by
-    rw [hd]
-    simp [FootprintVertices, hn]
-  have hs : (PartialOdometerSquares k).Nonempty := by
-    by_contra hs
-    simp [PartialOdometerSlope, hs] at hp
-  rcases hs with ⟨x, hx⟩
-  simp only [PartialOdometerSquares, Finset.mem_filter] at hx
-  have hz : x + 1 = U.anchor := by
-    apply Set.mem_singleton_iff.mp
-    rw [← hde]
-    exact hx.2.1
-  have hz0 : x = U.anchor := by
-    apply Set.mem_singleton_iff.mp
-    rw [← hde]
-    exact hx.1
-  have hzbad := congrArg (fun z : GaussianInt => z.re) (hz.trans hz0.symm)
-  norm_num at hzbad
+  intro C U k p _ hO hp
+  exact TileOdometerSlopeNonempty.cells C U k p hO hp
 
 private theorem hq0 :
     (by
@@ -972,47 +953,8 @@ private theorem hAphase2 :
   simpa [A', Z, q', sigma, BandPackingSymmetryReversesOrientation] using
     (hcyc i).2
 
-private theorem hactM2 :
-    (by
-      classical
-      exact
-        let affineQuarter : GaussianInt × GaussianInt → GaussianInt × GaussianInt :=
-          fun z => (GaussianQuarterTurn z.1, -GaussianQuarterTurn z.2)
-        (∀ k : BandPackingSymmetry, (∀ y, ∀ z, BandPackingSymmetryAffineVectorAction k (y + z) =
-            BandPackingSymmetryAffineVectorAction k y + BandPackingSymmetryAffineVectorAction k
-            z) ∧ (∀ y, BandPackingSymmetryAffineVectorAction k (-y) =
-            -BandPackingSymmetryAffineVectorAction k y) ∧ (∀ y,
-            BandPackingSymmetryAffineVectorAction k (affineQuarter y) = if
-            BandPackingSymmetryReversesOrientation k then -affineQuarter
-            (BandPackingSymmetryAffineVectorAction k y) else affineQuarter
-            (BandPackingSymmetryAffineVectorAction k y))) → (∀ (g : BandPackingSymmetry), ∀ (q :
-            Fin (4 : ℕ) → CircleCoordinates), ∀ (i : Fin (3 : ℕ)),
-        let W := BandVectors.1 (q ((i + 2).succ)) (q ((i + 1).succ))
-        let A := BandVectors.2 (q ((i + 2).succ)) (q ((i + 1).succ))
-        let Z : GaussianInt × GaussianInt := (W, A)
-        let M : GaussianInt × GaussianInt :=
-          (W - GaussianQuarterTurn W, A + GaussianQuarterTurn A)
-        (M = Z + -affineQuarter Z) → (BandPackingSymmetryAffineVectorAction g M = if
-            BandPackingSymmetryReversesOrientation g then BandPackingSymmetryAffineVectorAction g
-            Z + affineQuarter (BandPackingSymmetryAffineVectorAction g Z) else
-            BandPackingSymmetryAffineVectorAction g Z - affineQuarter
-            (BandPackingSymmetryAffineVectorAction g Z))) ) := by
-  classical
-  intro affineQuarter affineFacts g q i W A Z M hpat2
-  calc
-    _ = BandPackingSymmetryAffineVectorAction g (Z + -affineQuarter Z) :=
-      congrArg (BandPackingSymmetryAffineVectorAction g) hpat2
-    _ = BandPackingSymmetryAffineVectorAction g Z +
-        BandPackingSymmetryAffineVectorAction g (-affineQuarter Z) :=
-      (affineFacts g).1 _ _
-    _ = BandPackingSymmetryAffineVectorAction g Z -
-        BandPackingSymmetryAffineVectorAction g (affineQuarter Z) := by
-      rw [(affineFacts g).2.1]
-      simp [sub_eq_add_neg]
-    _ = _ := by
-      rw [(affineFacts g).2.2]
-      cases BandPackingSymmetryReversesOrientation g <;>
-        ext <;> simp [affineQuarter, GaussianQuarterTurn]; ring
+private abbrev hactM2 :=
+  ApollonianSuperharmonic.MarkedCovarianceGeometry.hactM
 
 private theorem hMphase2 :
     (by

@@ -309,45 +309,8 @@ private theorem hx_i_endAt391 :
       _ = tgt (s.edge i) bi := by rw [hc, hb1]
       _ = Q (i + 1) := hqi.symm
 
-private theorem hx_j_endAt415 :
-    ∀ (r : Nat), ∀ (n : Nat), ∀ (q : P3381T1PolygonBoundary r), ∀ (p : P3381T1PolygonBoundary
-        n), ∀ (s : P3475T1BoundarySubdivision q p), ∀ (X : Set (Real × Real)), ∀ (K : Set (Real
-        × Real)), ∀ (t : P3475T1TriangleTree q X K),
-    let Q := P3523T1InterpolatedTarget s t
-    let tgt (e : Fin (r + 3)) (u : Real) :=
-      (1 - u) • t.target e + u • t.target (e + 1)
-    (∀ (e : Fin (r + 3)), Function.Injective (tgt e)) → (∀ (j : Fin (n + (3 : ℕ))), ∀ (x : ℝ ×
-        ℝ), ∀ (bj : ℝ), (s.parameter j ≤ bj) → ((bj ≤ (1 : ℝ)) → ((Q (j + (1 : Fin (n + (3 :
-        ℕ)))) = tgt (s.edge j) bj) → (∀ (φ : ℝ), (φ ∈ Set.Icc (0 : ℝ) (1 : ℝ)) → (
-    let cj := s.parameter j + φ * (bj - s.parameter j)
-    (Q j = tgt (s.edge j) (s.parameter j)) → ((x = tgt (s.edge j) cj) → ((x = t.target (s.edge j)
-        ∨ x = t.target (s.edge j + (1 : Fin (r + (3 : ℕ))))) → (x = Q j ∨ x = Q (j + 1)))))))))
-            := by
-  classical
-  intro r n q p s X K t Q tgt hcoarse_inj_tgt j x bj haj hbj hqj φ hφ cj hqj0 hx_j' hj_end
-  rcases hj_end with hj_end | hj_end
-  · have hc : cj = 0 := hcoarse_inj_tgt (s.edge j) (by
-      calc tgt (s.edge j) cj = x := hx_j'.symm
-        _ = t.target (s.edge j) := hj_end
-        _ = tgt (s.edge j) 0 := by simp [tgt])
-    have ha0 : s.parameter j = 0 := by
-      dsimp [cj] at hc
-      nlinarith [s.parameter_nonneg j, hφ.1, hφ.2, haj]
-    left
-    calc x = tgt (s.edge j) cj := hx_j'
-      _ = tgt (s.edge j) (s.parameter j) := by rw [hc, ha0]
-      _ = Q j := hqj0.symm
-  · have hc : cj = 1 := hcoarse_inj_tgt (s.edge j) (by
-      calc tgt (s.edge j) cj = x := hx_j'.symm
-        _ = t.target (s.edge j + 1) := hj_end
-        _ = tgt (s.edge j) 1 := by simp [tgt])
-    have hb1 : bj = 1 := by
-      dsimp [cj] at hc
-      nlinarith [haj, hbj, hφ.1, hφ.2]
-    right
-    calc x = tgt (s.edge j) cj := hx_j'
-      _ = tgt (s.edge j) bj := by rw [hc, hb1]
-      _ = Q (j + 1) := hqj.symm
+private abbrev hx_j_endAt415 :=
+  ApollonianSuperharmonic.TargetBoundaryProof.hx_i_endAt391
 
 private theorem hfine_subset :
     ∀ (r : Nat), ∀ (n : Nat), ∀ (q : P3381T1PolygonBoundary r), ∀ (p : P3381T1PolygonBoundary

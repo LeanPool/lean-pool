@@ -6,6 +6,7 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.BoundaryFootprintInclusion
 
 public import LeanPool.ApollonianSuperharmonic.P4677T2TouchingWalk
 public import LeanPool.ApollonianSuperharmonic.TouchingTriple
@@ -26,55 +27,11 @@ namespace ApollonianSuperharmonic
 
 namespace PrecursorWalkGeometry
 
-private theorem boundary_edge_footprint :
-    (by
-      classical
-      exact
-        ∀ (T : ProtoTile), ∀ e ∈ BoundaryFootprintEdges T, e ∈ FootprintEdges T ) := by
-  classical
-  intro T e he
-  rcases he with ⟨z, ⟨rfl, h⟩ | ⟨rfl, h⟩⟩
-  · rcases h with ⟨hz, _⟩ | ⟨_, hz⟩
-    · exact ⟨z, hz, Or.inl rfl⟩
-    · refine ⟨z - ⟨0, 1⟩, hz, Or.inr (Or.inr (Or.inr ?_))⟩
-      congr 1 <;> simp [Zsqrtd.ext_iff]
-  · rcases h with ⟨hz, _⟩ | ⟨_, hz⟩
-    · exact ⟨z, hz, Or.inr (Or.inl rfl)⟩
-    · refine ⟨z - 1, hz, Or.inr (Or.inr (Or.inl ?_))⟩
-      congr 1 <;> simp []
+private abbrev boundary_edge_footprint := BoundaryFootprintInclusion.boundaryEdge
 
-private theorem edge_vertex :
-    (by
-      classical
-      exact
-        ∀ (T : ProtoTile), ∀ e ∈ FootprintEdges T, ∀ z ∈ e, z ∈ FootprintVertices T ) := by
-  classical
-  intro T e he z hz
-  rcases he with ⟨c, hc, rfl | rfl | rfl | rfl⟩
-  all_goals
-    simp only [FootprintVertices,
-      ite_eq_left (show T.cells.Nonempty from ⟨c, hc⟩), Set.mem_ofPred_eq]
-    refine ⟨c, hc, ?_⟩
-    simp only [Finset.mem_insert, Finset.mem_singleton] at hz
-    rcases hz with rfl | rfl <;> simp
+private abbrev edge_vertex := BoundaryFootprintInclusion.edgeVertex
 
-private theorem boundary_vertex_footprint :
-    (by
-      classical
-      exact
-        (∀ (T : ProtoTile), ∀ (e : Finset GaussianInt), (e ∈ BoundaryFootprintEdges T) → (e ∈
-            FootprintEdges T)) → ((∀ (T : ProtoTile), ∀ (e : Finset GaussianInt), (e ∈
-            FootprintEdges T) → (∀ (z : GaussianInt), (z ∈ e) → (z ∈ FootprintVertices T))) → (∀
-            (T : ProtoTile), ∀ z ∈ BoundaryFootprintVertices T, z ∈ FootprintVertices T)) ) := by
-  classical
-  intro boundary_edge_footprint edge_vertex T z hz
-  by_cases hne : T.cells.Nonempty
-  · simp only [BoundaryFootprintVertices, ite_eq_left hne, Set.mem_ofPred_eq] at hz
-    obtain ⟨e, he, hze⟩ := hz
-    exact edge_vertex T e (boundary_edge_footprint T e he) z hze
-  · have hanchor : z = T.anchor := by
-      simpa [BoundaryFootprintVertices, hne] using hz
-    simp [FootprintVertices, hne, hanchor]
+private abbrev boundary_vertex_footprint := BoundaryFootprintInclusion.boundaryVertex
 
 private theorem R_symm :
     (by
@@ -214,36 +171,8 @@ private theorem p₁chain :
     exact ⟨edge_parent X hXc hXf _ he.1,
       edge_parentB Y hYc _ he.2⟩
 
-private theorem p₃chain :
-    (by
-      classical
-      exact
-        ∀ (A : ProtoTile), ∀ (B : ProtoTile), ∀ (Z : ProtoTile), ∀ (W : ProtoTile), (Z.cells ⊆
-            A.cells) → ((W.cells ⊆ B.cells) → ((FootprintVertices Z ⊆ FootprintVertices A) →
-            ((FootprintVertices W ⊆ FootprintVertices B) → (∀ (p₃ : List GaussianInt), (∀ z ∈ p₃,
-            z ∈ FootprintVertices Z ∩ FootprintVertices W) → ((∀ (a : GaussianInt), ∀ (b :
-            GaussianInt), ∀ (l₁ : List GaussianInt), ∀ (l₂ : List GaussianInt), p₃ = l₁ ++ a :: b
-            :: l₂ → {a, b} ∈ FootprintEdges Z ∩ FootprintEdges W) → (
-        let R : GaussianInt → GaussianInt → Prop := fun u v =>
-          u ∈ FootprintVertices A ∩ FootprintVertices B ∧
-          v ∈ FootprintVertices A ∩ FootprintVertices B ∧
-          {u, v} ∈ FootprintEdges A ∩ FootprintEdges B
-        (∀ (T : ProtoTile), (T.cells ⊆ A.cells) → ((FootprintVertices T ⊆ FootprintVertices A) →
-            (∀ (e : Finset GaussianInt), (e ∈ FootprintEdges T) → (e ∈ FootprintEdges A)))) → ((∀
-            (T : ProtoTile), (T.cells ⊆ B.cells) → (∀ (e : Finset GaussianInt), (e ∈
-            FootprintEdges T) → (e ∈ FootprintEdges B))) → (List.IsChain R p₃)))))))) ) := by
-  classical
-  intro A B Z W hZc hWc hZf hWf p₃ hp₃v hp₃e R edge_parent edge_parentB
-  apply List.isChain_iff_forall_rel_of_append_cons_cons.mpr
-  intro u v l r h
-  refine ⟨?_, ?_, ?_⟩
-  · have hu := hp₃v u (by simp [h])
-    exact ⟨hZf hu.1, hWf hu.2⟩
-  · have hv := hp₃v v (by simp [h])
-    exact ⟨hZf hv.1, hWf hv.2⟩
-  · have he := hp₃e u v l r h
-    exact ⟨edge_parent Z hZc hZf _ he.1,
-      edge_parentB W hWc _ he.2⟩
+private abbrev p₃chain :=
+  ApollonianSuperharmonic.PrecursorWalkGeometry.p₁chain
 
 private theorem p₁mem :
     (by

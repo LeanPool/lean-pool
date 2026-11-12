@@ -358,15 +358,8 @@ private theorem hrightDrop :
   exact List.mem_dropLast_of_mem_of_ne_getLast hUR (by
     simpa [hrightGetLast] using hUneS)
 
-private theorem hrightTailDrop :
-    ∀ (J : ProtoTile), ∀ (U : ProtoTile), (¬U = J) → (∀ (b : ProtoTile), ∀ (bs : List ProtoTile),
-        (U ∈ (J :: b :: bs).dropLast) → (U ∈ (b :: bs).dropLast)) := by
-  classical
-  intro J U hUJ b bs hrightDrop
-  simp only [List.dropLast_cons_cons, List.mem_cons] at hrightDrop
-  rcases hrightDrop with hEq | hmem
-  · exact (hUJ hEq).elim
-  · exact hmem
+private abbrev hrightTailDrop :=
+  ApollonianSuperharmonic.RespectAppendDetails.hUintAt389
 
 end RespectAppendDetails
 

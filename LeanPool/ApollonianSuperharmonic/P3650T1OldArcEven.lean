@@ -1044,35 +1044,6 @@ private theorem hspan :
   apply hind.affineSpan_eq_top_iff_card_eq_finrank_add_one.mpr
   norm_num [Module.finrank_prod]
 
-private theorem hrange :
-    (by
-      classical
-      exact
-        ∀ (n : Nat), ∀ (p : P3381T1PolygonBoundary n), ∀ (E : P3650T1ExposedCorner p), ∀ (D :
-            P3650T1VisibleDiagonal p E), ∀ (C : P3650T1CyclicChildren p D.a D.b),
-        let e := segment Real (p.vertex D.a) (p.vertex D.b)
-        let CL := P3544T1BoundaryCarrier C.left
-        let CR := P3544T1BoundaryCarrier C.right
-        let OL := P3544T1RayParity C.left
-        let OR := P3544T1RayParity C.right
-        ((∃ x, x ∈ CL \ e ∧ x ∉ OR) → Disjoint (CL \ e) OR) → (((∃ x, x ∈ CR \ e ∧ x ∉ OL) →
-            Disjoint (CR \ e) OL) → (
-        let va := p.vertex (E.b - 1)
-        let vb := p.vertex E.b
-        let vc := p.vertex (E.b + 1)
-        let vv : Fin 3 → Real × Real := ![va, vb, vc]
-        ∀ (hind : AffineIndependent Real vv), ∀ (hspan : affineSpan Real (Set.range vv) = ⊤),
-        let A : AffineBasis (Fin 3) Real (Real × Real) := ⟨vv, hind, hspan⟩
-        Set.range A = ({va, vb, vc} : Set (Real × Real)))) ) := by
-  classical
-  intro n p E D C e CL CR OL OR propagateRight propagateLeft va vb vc vv hind hspan A
-  rw [show (A : Fin 3 → Real × Real) = ![va, vb, vc] from funext (by
-    intro i
-    fin_cases i <;> rfl)]
-  ext x
-  simp
-  tauto
-
 private theorem hcoord_nonneg :
     (by
       classical
@@ -1789,57 +1760,6 @@ private theorem hX2At1147 :
   rw [hcoordLine 2 vb vc δ, hcoordB2, hcoordC2]
   ring
 
-private theorem hγ0At1150 :
-    (by
-      classical
-      exact
-        ∀ (n : Nat), ∀ (p : P3381T1PolygonBoundary n), ∀ (E : P3650T1ExposedCorner p),
-        let va := p.vertex (E.b - 1)
-        let vb := p.vertex E.b
-        let vc := p.vertex (E.b + 1)
-        let vv : Fin 3 → Real × Real := ![va, vb, vc]
-        ∀ (hind : AffineIndependent Real vv), ∀ (hspan : affineSpan Real (Set.range vv) = ⊤),
-        let A : AffineBasis (Fin 3) Real (Real × Real) := ⟨vv, hind, hspan⟩
-        (∀ (i : Fin 3), ∀ (x : Real × Real), ∀ (y : Real × Real), ∀ (t : Real), A.coord i
-            (AffineMap.lineMap x y t) = (1 - t) * A.coord i x + t * A.coord i y) → (∀ (r₀ : ℝ),
-        let r : Real := min r₀ 1
-        let δ₀ : Real := r / (2 * (‖va - vb‖ + ‖vc - vb‖ + 1))
-        let δ : Real := min δ₀ (1/2)
-        let U : Real × Real := AffineMap.lineMap vb va (-δ)
-        let X : Real × Real := AffineMap.lineMap vb vc δ
-        let γ : Real → Real × Real := fun t => AffineMap.lineMap U X t
-        (A.coord 0 U = -δ) → ((A.coord 0 X = 0) → (∀ (t : Real), A.coord 0 (γ t) = -(1-t)*δ))) )
-            := by
-  classical
-  intro n p E va vb vc vv hind hspan A hcoordLine r₀ r δ₀ δ U X γ hU0 hX0 t
-  rw [hcoordLine 0 U X t, hU0, hX0]
-  ring
-
-private theorem hγ2At1153 :
-    (by
-      classical
-      exact
-        ∀ (n : Nat), ∀ (p : P3381T1PolygonBoundary n), ∀ (E : P3650T1ExposedCorner p),
-        let va := p.vertex (E.b - 1)
-        let vb := p.vertex E.b
-        let vc := p.vertex (E.b + 1)
-        let vv : Fin 3 → Real × Real := ![va, vb, vc]
-        ∀ (hind : AffineIndependent Real vv), ∀ (hspan : affineSpan Real (Set.range vv) = ⊤),
-        let A : AffineBasis (Fin 3) Real (Real × Real) := ⟨vv, hind, hspan⟩
-        (∀ (i : Fin 3), ∀ (x : Real × Real), ∀ (y : Real × Real), ∀ (t : Real), A.coord i
-            (AffineMap.lineMap x y t) = (1 - t) * A.coord i x + t * A.coord i y) → (∀ (r₀ : ℝ),
-        let r : Real := min r₀ 1
-        let δ₀ : Real := r / (2 * (‖va - vb‖ + ‖vc - vb‖ + 1))
-        let δ : Real := min δ₀ (1/2)
-        let U : Real × Real := AffineMap.lineMap vb va (-δ)
-        let X : Real × Real := AffineMap.lineMap vb vc δ
-        let γ : Real → Real × Real := fun t => AffineMap.lineMap U X t
-        (A.coord 2 U = 0) → ((A.coord 2 X = δ) → (∀ (t : Real), A.coord 2 (γ t) = t*δ))) ) := by
-  classical
-  intro n p E va vb vc vv hind hspan A hcoordLine r₀ r δ₀ δ U X γ hU2 hX2 t
-  rw [hcoordLine 2 U X t, hU2, hX2]
-  ring
-
 private theorem hrightCenterAt1156 :
     (by
       classical
@@ -2385,57 +2305,6 @@ private theorem hX2At1391 :
   rw [hcoordLine 2 vb va δ, hcoordB2, hcoordA2]
   ring
 
-private theorem hγ0At1394 :
-    (by
-      classical
-      exact
-        ∀ (n : Nat), ∀ (p : P3381T1PolygonBoundary n), ∀ (E : P3650T1ExposedCorner p),
-        let va := p.vertex (E.b - 1)
-        let vb := p.vertex E.b
-        let vc := p.vertex (E.b + 1)
-        let vv : Fin 3 → Real × Real := ![va, vb, vc]
-        ∀ (hind : AffineIndependent Real vv), ∀ (hspan : affineSpan Real (Set.range vv) = ⊤),
-        let A : AffineBasis (Fin 3) Real (Real × Real) := ⟨vv, hind, hspan⟩
-        (∀ (i : Fin 3), ∀ (x : Real × Real), ∀ (y : Real × Real), ∀ (t : Real), A.coord i
-            (AffineMap.lineMap x y t) = (1 - t) * A.coord i x + t * A.coord i y) → (∀ (r₀ : ℝ),
-        let r : Real := min r₀ 1
-        let δ₀ : Real := r / (2 * (‖va - vb‖ + ‖vc - vb‖ + 1))
-        let δ : Real := min δ₀ (1/2)
-        let U : Real × Real := AffineMap.lineMap vb vc (-δ)
-        let X : Real × Real := AffineMap.lineMap vb va δ
-        let γ : Real → Real × Real := fun t => AffineMap.lineMap U X t
-        (A.coord 0 U = 0) → ((A.coord 0 X = δ) → (∀ (t : Real), A.coord 0 (γ t) = t*δ))) ) := by
-  classical
-  intro n p E va vb vc vv hind hspan A hcoordLine r₀ r δ₀ δ U X γ hU0 hX0 t
-  rw [hcoordLine 0 U X t, hU0, hX0]
-  ring
-
-private theorem hγ2At1397 :
-    (by
-      classical
-      exact
-        ∀ (n : Nat), ∀ (p : P3381T1PolygonBoundary n), ∀ (E : P3650T1ExposedCorner p),
-        let va := p.vertex (E.b - 1)
-        let vb := p.vertex E.b
-        let vc := p.vertex (E.b + 1)
-        let vv : Fin 3 → Real × Real := ![va, vb, vc]
-        ∀ (hind : AffineIndependent Real vv), ∀ (hspan : affineSpan Real (Set.range vv) = ⊤),
-        let A : AffineBasis (Fin 3) Real (Real × Real) := ⟨vv, hind, hspan⟩
-        (∀ (i : Fin 3), ∀ (x : Real × Real), ∀ (y : Real × Real), ∀ (t : Real), A.coord i
-            (AffineMap.lineMap x y t) = (1 - t) * A.coord i x + t * A.coord i y) → (∀ (r₀ : ℝ),
-        let r : Real := min r₀ 1
-        let δ₀ : Real := r / (2 * (‖va - vb‖ + ‖vc - vb‖ + 1))
-        let δ : Real := min δ₀ (1/2)
-        let U : Real × Real := AffineMap.lineMap vb vc (-δ)
-        let X : Real × Real := AffineMap.lineMap vb va δ
-        let γ : Real → Real × Real := fun t => AffineMap.lineMap U X t
-        (A.coord 2 U = -δ) → ((A.coord 2 X = 0) → (∀ (t : Real), A.coord 2 (γ t) = -(1-t)*δ))) )
-            := by
-  classical
-  intro n p E va vb vc vv hind hspan A hcoordLine r₀ r δ₀ δ U X γ hU2 hX2 t
-  rw [hcoordLine 2 U X t, hU2, hX2]
-  ring
-
 private theorem hleftCenter :
     (by
       classical
@@ -2942,8 +2811,18 @@ private theorem hseedRAt3047 :
   have hU2 := OldArcParityProof.hU2At1141 n p E hind hspan hcoordA2 hcoordB2 hcoordLine r₀
   have hX0 := OldArcParityProof.hX0At1144 n p E hind hspan hcoordB0 hcoordC0 hcoordLine r₀
   have hX2 := OldArcParityProof.hX2At1147 n p E hind hspan hcoordB2 hcoordC2 hcoordLine r₀
-  have hγ0 (t : Real) := OldArcParityProof.hγ0At1150 n p E hind hspan hcoordLine r₀ hU0 hX0 t
-  have hγ2 (t : Real) := OldArcParityProof.hγ2At1153 n p E hind hspan hcoordLine r₀ hU2 hX2 t
+  have hγ0 (t : Real) := (show
+      A.coord 0 (γ t) = -(1-t)*δ
+    from by
+      classical
+      rw [hcoordLine 0 U X t, hU0, hX0]
+      ring)
+  have hγ2 (t : Real) := (show
+      A.coord 2 (γ t) = t*δ
+    from by
+      classical
+      rw [hcoordLine 2 U X t, hU2, hX2]
+      ring)
   have hrightCenter := OldArcParityProof.hrightCenterAt1156 n p E D C ha hrightLast
   have hrightZero := OldArcParityProof.hrightZero n p E D C hrightFirst
   have hrightWrap := OldArcParityProof.hrightWrap n p E D C
@@ -3057,8 +2936,18 @@ private theorem hseedLAt3101 :
   have hU2 := OldArcParityProof.hU2At1385 n p E hind hspan hcoordB2 hcoordC2 hcoordLine r₀
   have hX0 := OldArcParityProof.hX0At1388 n p E hind hspan hcoordA0 hcoordB0 hcoordLine r₀
   have hX2 := OldArcParityProof.hX2At1391 n p E hind hspan hcoordA2 hcoordB2 hcoordLine r₀
-  have hγ0 (t : Real) := OldArcParityProof.hγ0At1394 n p E hind hspan hcoordLine r₀ hU0 hX0 t
-  have hγ2 (t : Real) := OldArcParityProof.hγ2At1397 n p E hind hspan hcoordLine r₀ hU2 hX2 t
+  have hγ0 (t : Real) := (show
+      A.coord 0 (γ t) = t*δ
+    from by
+      classical
+      rw [hcoordLine 0 U X t, hU0, hX0]
+      ring)
+  have hγ2 (t : Real) := (show
+      A.coord 2 (γ t) = -(1-t)*δ
+    from by
+      classical
+      rw [hcoordLine 2 U X t, hU2, hX2]
+      ring)
   have hleftCenter := OldArcParityProof.hleftCenter n p E D C ha hleftFirst
   have hleftOne := OldArcParityProof.hleftOne n p E D C hleftNext
   have hleftWrap := OldArcParityProof.hleftWrap n p E D C
@@ -3179,8 +3068,16 @@ theorem P3650T1OldArcEven {n : Nat} (p : P3381T1PolygonBoundary n)
     have hind := OldArcParityProof.hind n p E hdet
     have hspan := OldArcParityProof.hspan n p E hind
     let A : AffineBasis (Fin 3) Real (Real × Real) := ⟨vv, hind, hspan⟩
-    have hrange : Set.range A = ({va, vb, vc} : Set (Real × Real)) := OldArcParityProof.hrange n
-        p E D C propagateRight propagateLeft hind hspan
+    have hrange : Set.range A = ({va, vb, vc} : Set (Real × Real)) := (show
+        Set.range A = ({va, vb, vc} : Set (Real × Real))
+      from by
+        classical
+        rw [show (A : Fin 3 → Real × Real) = ![va, vb, vc] from funext (by
+          intro i
+          fin_cases i <;> rfl)]
+        ext x
+        simp
+        tauto)
     have htriangle : p.vertex D.b ∈ convexHull Real (Set.range A) := by
       simpa [hrange, va, vb, vc] using hvertex
     have hcoord_nonneg := OldArcParityProof.hcoord_nonneg n p E D hind hspan htriangle

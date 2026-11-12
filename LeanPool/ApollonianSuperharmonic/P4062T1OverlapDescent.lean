@@ -6,6 +6,7 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.FourNeighborLaplacianProperties
 public import LeanPool.ApollonianSuperharmonic.FordInteriorSquareCoordinates
 
 public import LeanPool.ApollonianSuperharmonic.FordOdometer
@@ -130,31 +131,6 @@ private theorem hrec₃' :
   classical
   intro P P₂ hrec₃ x hx
   simpa [FordOdometer] using hrec₃ x hx
-
-private theorem hlapAffine :
-    (by
-      classical
-      exact
-        ∀ (f : GaussianInt → ℤ), ∀ (f' : GaussianInt → ℤ), ∀ (x : GaussianInt), ∀ (t :
-            GaussianInt), ∀ (A : ℤ), ∀ (B : ℤ), ∀ (C : ℤ), f x = f' (x - t) + A * x.re + B * x.im
-            + C → f (x - (1 : GaussianInt)) = f' (x - t - (1 : GaussianInt)) + A * (x - (1 :
-            GaussianInt)).re + B * (x - (1 : GaussianInt)).im + C → f (x + (1 : GaussianInt)) =
-            f' (x - t + (1 : GaussianInt)) + A * (x + (1 : GaussianInt)).re + B * (x + (1 :
-            GaussianInt)).im + C → f (x - ⟨(0 : ℤ), (1 : ℤ)⟩) = f' (x - t - ⟨(0 : ℤ), (1 : ℤ)⟩) +
-            A * (x - ⟨(0 : ℤ), (1 : ℤ)⟩).re + B * (x - ⟨(0 : ℤ), (1 : ℤ)⟩).im + C → f (x + ⟨(0 :
-            ℤ), (1 : ℤ)⟩) = f' (x - t + ⟨(0 : ℤ), (1 : ℤ)⟩) + A * (x + ⟨(0 : ℤ), (1 : ℤ)⟩).re + B
-            * (x + ⟨(0 : ℤ), (1 : ℤ)⟩).im + C → FourNeighborLaplacian f x = FourNeighborLaplacian
-            f' (x - t) ) := by
-  classical
-  intro f f' x t A B C h0 hm hp hmi hpi
-  rw [FourNeighborLaplacian, hm, hp, hmi, hpi, h0,
-    FourNeighborLaplacian]
-  rw [show x - t - 1 = (x - t) - 1 by abel,
-    show x - t + 1 = (x - t) + 1 by abel,
-    show x - t - ⟨0, 1⟩ = (x - t) - ⟨0, 1⟩ by rfl,
-    show x - t + ⟨0, 1⟩ = (x - t) + ⟨0, 1⟩ by rfl]
-  simp
-  ring
 
 private theorem hrec0Member :
     (by
@@ -474,83 +450,6 @@ private theorem htargetAt327 :
       (by
           simp only [Zsqrtd.im_add]
           omega) using 1; ring
-
-private theorem hyAt433 :
-    (by
-      classical
-      exact
-        ∀ (P : FordFareyParameter), ∀ (P₁ : FordFareyParameter), (FordFareyParameter) → (∀ (hP :
-            (2 : ℕ) < P.q), (∀ (q : Nat), ∀ (x : GaussianInt), x ∈
-            P4062T1InteriorSquare q ↔ 1 ≤ x.re ∧ x.re ≤ (q : Int) - 1 ∧ 1 ≤ x.im ∧ x.im ≤ (q :
-            Int) - 1) → (∀ (hsum : P.q = P.q₁ + P.q₂), ∀ (hcrossdet : P.p₁ * (P.q₂ : Int) - P.p₂ *
-            (P.q₁ : Int) = 1), ∀ (hpos₁ : 0 < P.q₁), ∀ (hpos₂ : 0 < P.q₂), ∀ (horder : P.q₂ <
-            P.q₁), ∀ (hdlt : P.q₁ - P.q₂ < P.q), ∀ (hdetdiff : (P.p₁-P.p₂) * (P.q₁ : Int) -
-            ((P.q₁-P.q₂ : Nat) : Int) * P.p₁ = 1), ∀ (H : FordFareyParameter), ∀ (hHq : H.q =
-            P.q₁ - P.q₂), ∀ (hredParent : Nat.Coprime P.q₁ P.p₁.natAbs),
-        let Q : FordFareyParameter := by
-          have hdet₂ : P.p₂ * (P.q₁ : Int) -
-              (P.q₂ : Int) * P.p₁ = -1 := by nlinarith only [hcrossdet]
-          refine FordFareyParameter.mk P.p₁ P.q₁ hpos₁ hredParent
-            (P.p₁-P.p₂) (P.q₁-P.q₂) P.p₂ P.q₂ ?_ ?_ ?_ ?_ ?_ ?_ ?_
-          · ring
-          · omega
-          · exact hdetdiff
-          · exact hdet₂
-          · omega
-          · exact hpos₂
-          · intro hu
-            have : P.q₁ = 1 := by simpa using hu
-            omega
-        ∀ (R : FordFareyParameter), (R.p = P.p₁ ∧ R.q = P.q₁) → ((Q.p₁ = P.p₁-P.p₂ ∧ Q.q₁ =
-            P.q₁-P.q₂ ∧ Q.p₂ = P.p₂ ∧ Q.q₂ = P.q₂) → ((P₁.p₁ = P.p₁-P.p₂ ∧ P₁.q₁ = P.q₁-P.q₂ ∧
-            P₁.p₂ = P.p₂ ∧ P₁.q₂ = P.q₂) → (∀ (x : GaussianInt), ((↑P.q₂ : ℤ) + (1 : ℤ) ≤ x.re ∧
-            x.re ≤ (↑P.q₁ : ℤ) - (1 : ℤ) ∧ (↑P.q₂ : ℤ) + (1 : ℤ) ≤ x.im ∧ x.im ≤ (↑P.q₁ : ℤ) - (1
-            : ℤ)) → (
-        let y : GaussianInt := x-⟨(P.q₂ : Int),(P.q₂ : Int)⟩
-        y ∈ P4062T1InteriorSquare (P.q₁-P.q₂)))))))) := by
-  classical
-  intro P P₁ P₂ hP squareCoordinates hsum hcrossdet hpos₁ hpos₂ horder hdlt hdetdiff H hHq
-      hredParent Q R hR hpar hparP x hc y
-  apply (squareCoordinates (P.q₁-P.q₂) y).mpr
-  dsimp [y]
-  rw [Nat.cast_sub (by omega : P.q₂ ≤ P.q₁)]
-  exact ⟨by omega, by omega, by omega, by omega⟩
-
-private theorem hcastAt445 :
-    (by
-      classical
-      exact
-        ∀ (P : FordFareyParameter), ∀ (P₁ : FordFareyParameter), (FordFareyParameter) → (∀ (hP :
-            (2 : ℕ) < P.q), ∀ (hsum : P.q = P.q₁ + P.q₂), ∀ (hcrossdet : P.p₁ * (P.q₂ :
-            Int) - P.p₂ * (P.q₁ : Int) = 1), ∀ (hpos₁ : 0 < P.q₁), ∀ (hpos₂ : 0 < P.q₂), ∀
-                (horder : P.q₂ < P.q₁), ∀ (hdlt : P.q₁ - P.q₂ < P.q), ∀ (hdetdiff : (P.p₁-P.p₂) *
-            (P.q₁ : Int) - ((P.q₁-P.q₂ : Nat) : Int) * P.p₁ = 1), ∀ (H : FordFareyParameter), ∀
-                (hHq : H.q = P.q₁ - P.q₂), ∀ (hredParent : Nat.Coprime P.q₁ P.p₁.natAbs),
-        let Q : FordFareyParameter := by
-          have hdet₂ : P.p₂ * (P.q₁ : Int) -
-              (P.q₂ : Int) * P.p₁ = -1 := by nlinarith only [hcrossdet]
-          refine FordFareyParameter.mk P.p₁ P.q₁ hpos₁ hredParent
-            (P.p₁-P.p₂) (P.q₁-P.q₂) P.p₂ P.q₂ ?_ ?_ ?_ ?_ ?_ ?_ ?_
-          · ring
-          · omega
-          · exact hdetdiff
-          · exact hdet₂
-          · omega
-          · exact hpos₂
-          · intro hu
-            have : P.q₁ = 1 := by simpa using hu
-            omega
-        ∀ (R : FordFareyParameter), (R.p = P.p₁ ∧ R.q = P.q₁) → ((Q.p₁ = P.p₁-P.p₂ ∧ Q.q₁ =
-            P.q₁-P.q₂ ∧ Q.p₂ = P.p₂ ∧ Q.q₂ = P.q₂) → ((P₁.p₁ = P.p₁-P.p₂ ∧ P₁.q₁ = P.q₁-P.q₂ ∧
-            P₁.p₂ = P.p₂ ∧ P₁.q₂ = P.q₂) → ((GaussianInt) → ((H.q : Int) = (P.q₁ :
-                Int)-P.q₂)))))) := by
-  classical
-  intro P P₁ P₂ hP hsum hcrossdet hpos₁ hpos₂ horder hdlt hdetdiff H hHq hredParent Q R hR hpar
-      hparP y
-  calc
-    (H.q : Int) = ((P.q₁-P.q₂ : Nat) : Int) := by exact_mod_cast hHq
-    _ = (P.q₁ : Int)-P.q₂ := by
-      rw [Nat.cast_sub (by omega : P.q₂ ≤ P.q₁)]
 
 private theorem hdetdiffAt465 :
     (by
@@ -952,8 +851,8 @@ theorem P4062T1OverlapDescent (P P₁ P₂ : FordFareyParameter)
       (hmi : f (x - ⟨0, 1⟩) = f' ((x - t) - ⟨0, 1⟩) +
         A * (x - ⟨0, 1⟩).re + B * (x - ⟨0, 1⟩).im + C)
       (hpi : f (x + ⟨0, 1⟩) = f' ((x - t) + ⟨0, 1⟩) +
-        A * (x + ⟨0, 1⟩).re + B * (x + ⟨0, 1⟩).im + C) := OverlapDescentDetails.hlapAffine f f' x
-            t A B C h0 hm hp hmi hpi
+        A * (x + ⟨0, 1⟩).re + B * (x + ⟨0, 1⟩).im + C) :=
+          FourNeighborLaplacianProperties.affineTranslate f f' x t A B C h0 hm hp hmi hpi
   have hrec0Member (z : GaussianInt)
       (a : 0 ≤ z.re) (b : z.re ≤ (P.q₁ : Int))
       (c : 0 ≤ z.im) (d : z.im ≤ (P.q₁ : Int)) := OverlapDescentDetails.hrec0Member P z a b c d
@@ -1029,9 +928,11 @@ theorem P4062T1OverlapDescent (P P₁ P₂ : FordFareyParameter)
     · intro hx
       have hc := hcoords x hx
       let y : GaussianInt := x-⟨(P.q₂ : Int),(P.q₂ : Int)⟩
-      have hy := OverlapDescentDetails.hyAt433 P P₁ P₂
-          hP squareCoordinates hsum hcrossdet hpos₁ hpos₂ horder hdlt hdetdiff H hHq hredParent R
-          hR hpar hparP x hc
+      have hy : y ∈ P4062T1InteriorSquare (P.q₁-P.q₂) := by
+        apply (squareCoordinates (P.q₁-P.q₂) y).mpr
+        dsimp [y]
+        rw [Nat.cast_sub (by omega : P.q₂ ≤ P.q₁)]
+        exact ⟨by omega, by omega, by omega, by omega⟩
       refine Finset.mem_image.mpr ⟨y, ?_, ?_⟩
       · simpa [hHq] using hy
       · dsimp [y]
@@ -1039,8 +940,8 @@ theorem P4062T1OverlapDescent (P P₁ P₂ : FordFareyParameter)
     · intro hx
       obtain ⟨y, hy, hxy⟩ := Finset.mem_image.mp hx
       have hyc := (squareCoordinates H.q y).mp hy
-      have hcast := OverlapDescentDetails.hcastAt445 P P₁ P₂ hP
-          hsum hcrossdet hpos₁ hpos₂ horder hdlt hdetdiff H hHq hredParent R hR hpar hparP y
+      have hcast : (H.q : Int) = (P.q₁ : Int)-P.q₂ := by
+        rw [hHq, Nat.cast_sub (by omega : P.q₂ ≤ P.q₁)]
       subst x
       apply Finset.mem_inter.mpr
       constructor

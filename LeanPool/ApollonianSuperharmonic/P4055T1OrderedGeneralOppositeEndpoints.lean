@@ -131,24 +131,8 @@ private theorem hWpCent :
   all_goals rw [haUre, haUim, haWre, haWim]
   all_goals dsimp; ring
 
-private theorem hZpCent :
-    (by
-      classical
-      exact
-        ∀ (U : ProtoTile), ∀ (Z : ProtoTile), ∀ (aU : GaussianInt), ∀ (aZ : GaussianInt),
-        let Zp := TileTranslation Z (aU - aZ)
-        ((aU.re : Real) = (TileCentroid U).1 + (TileCentroid U).2) → (((aU.im : Real) =
-            (TileCentroid U).2 - (TileCentroid U).1) → (((aZ.re : Real) = (TileCentroid Z).1 +
-            (TileCentroid Z).2) → (((aZ.im : Real) = (TileCentroid Z).2 - (TileCentroid Z).1) →
-            (TileCentroid Zp - TileCentroid U = (-(TileCentroid Z - TileCentroid U).2,
-            (TileCentroid Z - TileCentroid U).1))))) ) := by
-  classical
-  intro U Z aU aZ Zp haUre haUim haZre haZim
-  rw [(TileTranslationFormulas Z (aU - aZ)).2.2.2.2.1]
-  ext <;> simp only []
-  all_goals simp only [Zsqrtd.re_sub, Zsqrtd.im_sub, Int.cast_sub]
-  all_goals rw [haUre, haUim, haZre, haZim]
-  all_goals dsimp; ring
+private abbrev hZpCent :=
+  ApollonianSuperharmonic.OppositeEndpointGeometry.hWpCent
 
 private theorem hWrot :
     (by
@@ -496,26 +480,8 @@ private theorem hFvW :
   funext x
   simp [F, GaussianTranslation]
 
-private theorem hFvZ :
-    (by
-      classical
-      exact
-        ∀ (Z : ProtoTile), ∀ (aU : GaussianInt), ∀ (aZ : GaussianInt), (FootprintVertices
-            (TileTranslation (TileQuarterTurn Z) aZ) = FootprintVertices Z) → (
-        let Zp := TileTranslation Z (aU - aZ)
-        let F : GaussianInt → GaussianInt := fun x => GaussianQuarterTurn x + aU
-        FootprintVertices Zp = F '' FootprintVertices Z) ) := by
-  classical
-  intro Z aU aZ hZv Zp F
-  rw [(TileTranslationFormulas Z (aU - aZ)).2.2.2.2.2.1]
-  conv_lhs => rw [← hZv]
-  rw [
-    (TileTranslationFormulas (TileQuarterTurn Z) aZ).2.2.2.2.2.1,
-    (TileQuarterTurnFormulas Z).2.2.2.2.2.1]
-  simp only [Set.image_image]
-  congr 1
-  funext x
-  simp [F, GaussianTranslation]
+private abbrev hFvZ :=
+  ApollonianSuperharmonic.OppositeEndpointGeometry.hFvW
 
 private theorem hFeW :
     (by
@@ -540,28 +506,8 @@ private theorem hFeW :
   ext x
   simp [F, GaussianTranslation]
 
-private theorem hFeZ :
-    (by
-      classical
-      exact
-        ∀ (Z : ProtoTile), ∀ (aU : GaussianInt), ∀ (aZ : GaussianInt),
-        let Zp := TileTranslation Z (aU - aZ)
-        let F : GaussianInt → GaussianInt := fun x => GaussianQuarterTurn x + aU
-        (FootprintEdges (TileTranslation (TileQuarterTurn Z) aZ) = FootprintEdges Z) →
-            (FootprintEdges Zp = (fun e : Finset GaussianInt => e.image F) '' FootprintEdges Z) )
-            := by
-  classical
-  intro Z aU aZ Zp F hZedges
-  rw [(TileTranslationFormulas Z (aU - aZ)).2.2.2.2.2.2.1]
-  conv_lhs => rw [← hZedges]
-  rw [
-    (TileTranslationFormulas (TileQuarterTurn Z) aZ).2.2.2.2.2.2.1,
-    (TileQuarterTurnFormulas Z).2.2.2.2.2.2.1]
-  simp only [Set.image_image, Finset.image_image]
-  congr 1
-  funext e
-  ext x
-  simp [F, GaussianTranslation]
+private abbrev hFeZ :=
+  ApollonianSuperharmonic.OppositeEndpointGeometry.hFeW
 
 private theorem hinvV :
     (by
@@ -778,23 +724,8 @@ private theorem hparentWV :
       (hinvV _).symm
     _ = f '' FootprintVertices Wp := by rw [hFvW]
 
-private theorem hparentZV :
-    (by
-      classical
-      exact
-        ∀ (Z : ProtoTile), ∀ (aU : GaussianInt), ∀ (aZ : GaussianInt),
-        let Zp := TileTranslation Z (aU - aZ)
-        let F : GaussianInt → GaussianInt := fun x => GaussianQuarterTurn x + aU
-        let f : GaussianInt → GaussianInt := fun x =>
-          GaussianQuarterTurn (GaussianQuarterTurn (GaussianQuarterTurn (x - aU)))
-        (FootprintVertices Zp = F '' FootprintVertices Z) → ((∀ (S : Set GaussianInt), f '' (F ''
-            S) = S) → (FootprintVertices Z = f '' FootprintVertices Zp)) ) := by
-  classical
-  intro Z aU aZ Zp F f hFvZ hinvV
-  calc
-    FootprintVertices Z = f '' (F '' FootprintVertices Z) :=
-      (hinvV _).symm
-    _ = f '' FootprintVertices Zp := by rw [hFvZ]
+private abbrev hparentZV :=
+  ApollonianSuperharmonic.OppositeEndpointGeometry.hparentWV
 
 private theorem hparentWE :
     (by
@@ -818,27 +749,8 @@ private theorem hparentWE :
     _ = (fun e : Finset GaussianInt => e.image f) '' FootprintEdges Wp := by
       rw [hFeW]
 
-private theorem hparentZE :
-    (by
-      classical
-      exact
-        ∀ (Z : ProtoTile), ∀ (aU : GaussianInt), ∀ (aZ : GaussianInt),
-        let Zp := TileTranslation Z (aU - aZ)
-        let F : GaussianInt → GaussianInt := fun x => GaussianQuarterTurn x + aU
-        let f : GaussianInt → GaussianInt := fun x =>
-          GaussianQuarterTurn (GaussianQuarterTurn (GaussianQuarterTurn (x - aU)))
-        (FootprintEdges Zp = (fun e : Finset GaussianInt => e.image F) '' FootprintEdges Z) → ((∀
-            (E : Set (Finset GaussianInt)), (fun e : Finset GaussianInt => e.image f) '' ((fun e
-            : Finset GaussianInt => e.image F) '' E) = E) → (FootprintEdges Z = (fun e : Finset
-            GaussianInt => e.image f) '' FootprintEdges Zp)) ) := by
-  classical
-  intro Z aU aZ Zp F f hFeZ hinvE
-  calc
-    FootprintEdges Z = (fun e : Finset GaussianInt => e.image f) ''
-        ((fun e : Finset GaussianInt => e.image F) '' FootprintEdges Z) :=
-      (hinvE _).symm
-    _ = (fun e : Finset GaussianInt => e.image f) '' FootprintEdges Zp := by
-      rw [hFeZ]
+private abbrev hparentZE :=
+  ApollonianSuperharmonic.OppositeEndpointGeometry.hparentWE
 
 private theorem hchildV :
     (by

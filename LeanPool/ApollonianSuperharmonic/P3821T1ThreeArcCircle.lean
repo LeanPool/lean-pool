@@ -151,26 +151,6 @@ private theorem hf0 :
     ite_eq_right (by norm_num : ¬ (3 : ℝ) ≤ 2), q₀, q₂, hright, hleft]
   exact h₀a.trans h₂a.symm
 
-private theorem hℓc :
-    ∀ (ι : Type), ∀ (P : PlaneTriangulation ι), ∀ (a : ι), ∀ (b : ι), ∀ (c : ι), ∀ (h₀ :
-        (↑(Set.Icc (0 : ℝ) 1) : Type) ≃ₜ (↑(P.edgeArc a b) : Type)), ∀ (h₁ : (↑(Set.Icc (0 : ℝ)
-        1) : Type) ≃ₜ (↑(P.edgeArc b c) : Type)), ∀ (h₂ : (↑(Set.Icc (0 : ℝ) 1) : Type) ≃ₜ
-        (↑(P.edgeArc c a) : Type)),
-    let clamp (x : ℝ) : Set.Icc (0 : ℝ) 1 :=
-      ⟨max 0 (min x 1), ⟨le_max_left _ _, max_le_iff.mpr ⟨by norm_num, min_le_right _ _⟩⟩⟩
-    let q₀ : ℝ → Real × Real := fun x => (h₀ (clamp x) : Real × Real)
-    let q₁ : ℝ → Real × Real := fun x => (h₁ (clamp (x - 1)) : Real × Real)
-    let q₂ : ℝ → Real × Real := fun x => (h₂ (clamp (x - 2)) : Real × Real)
-    let mid : ℝ → Real × Real := fun x => if x ≤ 2 then q₁ x else q₂ x
-    let f : ℝ → Real × Real := fun x => if x ≤ 1 then q₀ x else mid x
-    (Continuous f) → (f 0 = f 3) → ∀ [this : Fact (0 < (3 : ℝ))],
-    let ℓ : AddCircle (3 : ℝ) → Real × Real := AddCircle.liftIco 3 0 f
-    Continuous ℓ := by
-  classical
-  intro ι P a b c h₀ h₁ h₂ clamp q₀ q₁ q₂ mid f hf hf0 this ℓ
-  apply AddCircle.liftIco_zero_continuous hf0
-  exact hf.continuousOn
-
 private theorem clamp_eq_self :
     let clamp (x : ℝ) : Set.Icc (0 : ℝ) 1 :=
       ⟨max 0 (min x 1), ⟨le_max_left _ _, max_le_iff.mpr ⟨by norm_num, min_le_right _ _⟩⟩⟩
@@ -600,27 +580,6 @@ private theorem hf_inj :
           have hv := congrArg Subtype.val heq
           linarith
 
-private theorem lift_eq :
-    ∀ (ι : Type), ∀ (P : PlaneTriangulation ι), ∀ (a : ι), ∀ (b : ι), ∀ (c : ι), ∀ (h₀ :
-        (↑(Set.Icc (0 : ℝ) 1) : Type) ≃ₜ (↑(P.edgeArc a b) : Type)), ∀ (h₁ : (↑(Set.Icc (0 : ℝ)
-        1) : Type) ≃ₜ (↑(P.edgeArc b c) : Type)), ∀ (h₂ : (↑(Set.Icc (0 : ℝ) 1) : Type) ≃ₜ
-        (↑(P.edgeArc c a) : Type)),
-    let clamp (x : ℝ) : Set.Icc (0 : ℝ) 1 :=
-      ⟨max 0 (min x 1), ⟨le_max_left _ _, max_le_iff.mpr ⟨by norm_num, min_le_right _ _⟩⟩⟩
-    let q₀ : ℝ → Real × Real := fun x => (h₀ (clamp x) : Real × Real)
-    let q₁ : ℝ → Real × Real := fun x => (h₁ (clamp (x - 1)) : Real × Real)
-    let q₂ : ℝ → Real × Real := fun x => (h₂ (clamp (x - 2)) : Real × Real)
-    let mid : ℝ → Real × Real := fun x => if x ≤ 2 then q₁ x else q₂ x
-    let f : ℝ → Real × Real := fun x => if x ≤ 1 then q₀ x else mid x
-    ∀ [this : Fact (0 < (3 : ℝ))],
-    let ℓ : AddCircle (3 : ℝ) → Real × Real := AddCircle.liftIco 3 0 f
-    ∀ (x : ℝ), (x ∈ Set.Ico (0 : ℝ) 3) → ℓ (x : AddCircle (3 : ℝ)) = f x := by
-  classical
-  intro ι P a b c h₀ h₁ h₂ clamp q₀ q₁ q₂ mid f this ℓ x hx
-  dsimp [ℓ]
-  apply AddCircle.liftIco_coe_apply
-  simpa using hx
-
 end ThreeArcCircleLemmas
 
 namespace ThreeArcCircleRange
@@ -784,7 +743,12 @@ theorem P3821T1ThreeArcCircle {ι : Type} (P : PlaneTriangulation ι)
   have hf0 : f 0 = f 3 := ThreeArcCircleLemmas.hf0 ι P a b c h₀ h₀a h₁ h₂ h₂a
   let : Fact (0 < (3 : ℝ)) := ⟨by norm_num⟩
   let ℓ : AddCircle (3 : ℝ) → Real × Real := AddCircle.liftIco 3 0 f
-  have hℓc : Continuous ℓ := ThreeArcCircleLemmas.hℓc ι P a b c h₀ h₁ h₂ hf hf0 (this := this)
+  have hℓc : Continuous ℓ := (show
+      Continuous ℓ
+    from by
+      classical
+      apply AddCircle.liftIco_zero_continuous hf0
+      exact hf.continuousOn)
   have clamp_eq_self (x : ℝ) (hx : x ∈ Set.Icc (0 : ℝ) 1) :
       clamp x = ⟨x, hx⟩ := ThreeArcCircleLemmas.clamp_eq_self x hx
   have fseg₀ (x : ℝ) (hx : 0 ≤ x) (h₁x : x ≤ 1) :
@@ -818,8 +782,14 @@ theorem P3821T1ThreeArcCircle {ι : Type} (P : PlaneTriangulation ι)
       f x = f y → x = y := ThreeArcCircleLemmas.hf_inj ι P a b c h₀ h₁ h₂ fseg₀ fseg₁ fseg₂
           cross₀₁ cross₁₂ cross₀₂
   have lift_eq (x : ℝ) (hx : x ∈ Set.Ico (0 : ℝ) 3) :
-      ℓ (x : AddCircle (3 : ℝ)) = f x := ThreeArcCircleLemmas.lift_eq ι P a b c h₀ h₁ h₂ (this :=
-          this) x hx
+      ℓ (x : AddCircle (3 : ℝ)) = f x := (show
+          ∀ (x : ℝ), (x ∈ Set.Ico (0 : ℝ) 3) → ℓ (x : AddCircle (3 : ℝ)) = f x
+        from by
+          classical
+          intro x hx
+          dsimp [ℓ]
+          apply AddCircle.liftIco_coe_apply
+          simpa using hx) x hx
   let e : Circle → Real × Real := ℓ ∘ (AddCircle.homeomorphCircle (by norm_num : (3 : ℝ) ≠ 0)).symm
   refine ⟨⟨e, ?_⟩, ?_, ?_⟩
   · exact hℓc.comp (AddCircle.homeomorphCircle (by norm_num : (3 : ℝ) ≠ 0)).symm.continuous

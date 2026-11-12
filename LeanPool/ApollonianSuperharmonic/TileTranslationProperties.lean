@@ -5,8 +5,10 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.ApollonianSuperharmonic.TileTranslation
 public import LeanPool.ApollonianSuperharmonic.TileTranslationFormulas
 public import Mathlib.Init
+
 
 
 /-!
@@ -61,6 +63,14 @@ theorem add :
     · ext q
       simp [TileTranslation, GaussianTranslation, add_comm, add_left_comm]
     · simp [TileTranslation, GaussianTranslation, add_comm, add_left_comm]
+
+/-- Cell inclusion is preserved by translating both tiles. -/
+theorem cellsSubset (X Y : ProtoTile) (hXY : X.cells ⊆ Y.cells) (d : GaussianInt) :
+    (TileTranslation X d).cells ⊆ (TileTranslation Y d).cells := by
+  rw [cells, cells]
+  intro z hz
+  obtain ⟨w, hw, rfl⟩ := Finset.mem_image.mp hz
+  exact Finset.mem_image.mpr ⟨w, hXY hw, rfl⟩
 
 end TileTranslationProperties
 end ApollonianSuperharmonic

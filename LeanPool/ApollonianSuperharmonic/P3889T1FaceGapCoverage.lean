@@ -1541,22 +1541,8 @@ private theorem hnormAt994 :
   rw [norm_smul, hunit d had, Real.norm_eq_abs, abs_of_nonneg ht0]
   ring
 
-private theorem hdistAt997 :
-    (by
-      classical
-      exact
-        ∀ (ι : Type), ∀ (P : PeriodicTileComplex ι), ∀ (D : P3723T1AllContactRouting P), ∀ (a :
-            ι), ∀ (u : ι → ℝ × ℝ),
-        let x := D.position a
-        ∀ (z : ℝ × ℝ), ∀ (d : ι), ∀ (t : ℝ), (z = x + t • u d) → ((‖t • u d‖ = t) → (dist z x =
-            t)) ) := by
-  classical
-  intro ι P D a u x z d t hzeq hnorm
-  have : dist x z = t := by
-    rw [dist_eq_norm, hzeq]
-    have hsub : x - (x + t • u d) = -(t • u d) := by abel
-    rw [hsub, norm_neg, hnorm]
-  simpa [dist_comm] using this
+private abbrev hdistAt997 :=
+  ApollonianSuperharmonic.FaceGapProof.hdistAt981
 
 private theorem hSphereConnected :
     (by

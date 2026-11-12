@@ -6,6 +6,7 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.BoundaryFootprintInclusion
 
 public import LeanPool.ApollonianSuperharmonic.BandDoubleDecomposition
 public import LeanPool.ApollonianSuperharmonic.BandModifiedCoverage
@@ -123,22 +124,8 @@ private theorem qne :
   change (Q i s).cells.card = _ at ha
   exact Finset.card_pos.mp (by omega)
 
-private theorem sne :
-    (by
-      classical
-      exact
-        ∀ (q : Fin 4 → CircleCoordinates), ∀ (cfg : BandOrderedGeneralConfiguration q), ∀ (S :
-            Fin (3 : ℕ) → Bool → ProtoTile), (∀ (i : Fin (3 : ℕ)), ∀ (s : Bool), (0 : ℤ) ≤
-            (cfg.firstPredecessor i.succ).1 ∧ TileArea (S i s) = (cfg.firstPredecessor
-            i.succ).1.toNat ∧ ((0 : ℤ) < (cfg.firstPredecessor i.succ).1 → LatticeTile (S i s)))
-            → ((∀ (i : Fin 3), (i = 1 ∨ i = 2) → (0 < (cfg.firstPredecessor i.succ).1)) → (∀ (i :
-            Fin 3), ∀ (s : Bool), (i = 1 ∨ i = 2) → ((S i s).cells.Nonempty))) ) := by
-  classical
-  intro q cfg S sg rpPos i s hi
-  have ha := (sg i s).2.1
-  have hp := rpPos i hi
-  change (S i s).cells.card = _ at ha
-  exact Finset.card_pos.mp (by omega)
+private abbrev sne :=
+  ApollonianSuperharmonic.OrderedLayoutGeometry.qne
 
 private theorem oriented :
     (by
@@ -489,23 +476,8 @@ private theorem diskNonempty :
   obtain ⟨x, hx, _⟩ := hp
   exact ⟨x, hx⟩
 
-private theorem boundaryEdge :
-    (by
-      classical
-      exact
-        ∀ (U : ProtoTile), ∀ (e : Finset GaussianInt), (e ∈ BoundaryFootprintEdges U) → (e ∈
-            FootprintEdges U) ) := by
-  classical
-  intro U e he
-  rcases he with ⟨z, ⟨rfl, h⟩ | ⟨rfl, h⟩⟩
-  · rcases h with ⟨hz, _⟩ | ⟨_, hz⟩
-    · exact ⟨z, hz, Or.inl rfl⟩
-    · refine ⟨z - ⟨0, 1⟩, hz, Or.inr (Or.inr (Or.inr ?_))⟩
-      congr 1 <;> simp [Zsqrtd.ext_iff]
-  · rcases h with ⟨hz, _⟩ | ⟨_, hz⟩
-    · exact ⟨z, hz, Or.inr (Or.inl rfl)⟩
-    · refine ⟨z - 1, hz, Or.inr (Or.inr (Or.inl ?_))⟩
-      congr 1 <;> simp []
+private abbrev boundaryEdge :=
+  BoundaryFootprintInclusion.boundaryEdge
 
 private theorem touchEdge :
     (by

@@ -6,6 +6,7 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.ModifiedSubtileFacts
 public import LeanPool.ApollonianSuperharmonic.TileTranslationProperties
 
 public import LeanPool.ApollonianSuperharmonic.BandOrderedGeneralLayoutCertificate
@@ -88,21 +89,6 @@ private theorem pairCells :
   intro q cfg C₀ T layout P O u v separation a b hab hnot
   exact separation.2 a b hab hnot
 
-
-private theorem cellInclusion :
-    (by
-      classical
-      exact
-        (∀ (X : ProtoTile), ∀ (d : GaussianInt), (TileTranslation X d).cells = X.cells.image
-            (GaussianTranslation d)) → (∀ (X : ProtoTile), ∀ (Y : ProtoTile), (X.cells ⊆ Y.cells)
-            → (∀ (d : GaussianInt), (TileTranslation X d).cells ⊆ (TileTranslation Y d).cells)) )
-            := by
-  classical
-  intro translationCells X Y hXY d
-  rw [translationCells, translationCells]
-  intro z hz
-  obtain ⟨w, hw, rfl⟩ := Finset.mem_image.mp hz
-  exact Finset.mem_image.mpr ⟨w, hXY hw, rfl⟩
 
 private theorem isolatedPrecursor :
     (by
@@ -227,30 +213,6 @@ private theorem translateComplement :
   intro A B d
   exact (TileCellComplementCovariance A B d).1
 
-private theorem modifiedA :
-    (by
-      classical
-      exact
-        ∀ (q : Fin 4 → CircleCoordinates), ∀ (cfg : BandOrderedGeneralConfiguration q), ∀ (C₀ :
-            BandCircle), ∀ (T : ProtoTile), ∀ (layout : BandOrderedGeneralLayoutCertificate q cfg
-            C₀ T),
-        let P := layout.P
-        let O := layout.O
-        let u := layout.u
-        let v := layout.v
-        (∀ (A : ProtoTile), ∀ (B : ProtoTile), ∀ (d : GaussianInt), TileTranslation
-            (TileCellComplement A B) d = TileCellComplement (TileTranslation A d)
-            (TileTranslation B d)) → (∀ (m : Int), ∀ (n : Int),
-            ModifiedSubtileOccurrenceInterpretation P O u v ⟨.A, m, n⟩ = TileCellComplement
-            (SubtileOccurrenceInterpretation P u v ⟨.A, m, n⟩) (TileTranslation O ((m :
-            GaussianInt) * u + (n : GaussianInt) * v))) ) := by
-  classical
-  intro q cfg C₀ T layout P O u v translateComplement m n
-  change TileTranslation (TileCellComplement (P 0 true) O)
-    ((m : GaussianInt) * u + (n : GaussianInt) * v) = _
-  rw [translateComplement]
-  rfl
-
 private theorem modifiedOther :
     (by
       classical
@@ -343,31 +305,6 @@ private theorem complementNonempty :
     ((m : GaussianInt) * u + (n : GaussianInt) * v)
   rw [translateComplement] at ht
   simpa [SubtileOccurrenceInterpretation] using ht
-
-private theorem deletionSupport :
-    (by
-      classical
-      exact
-        ∀ (q : Fin 4 → CircleCoordinates), ∀ (cfg : BandOrderedGeneralConfiguration q), ∀ (C₀ :
-            BandCircle), ∀ (T : ProtoTile), ∀ (layout : BandOrderedGeneralLayoutCertificate q cfg
-            C₀ T),
-        let P := layout.P
-        let O := layout.O
-        let u := layout.u
-        let v := layout.v
-        (∀ (m : Int), ∀ (n : Int), (TileCellComplement (SubtileOccurrenceInterpretation P u v
-            ⟨.A, m, n⟩) (TileTranslation O ((m : GaussianInt) * u + (n : GaussianInt) *
-            v))).cells.Nonempty) → (∀ (m : Int), ∀ (n : Int), ∀ (Y : ProtoTile),
-            (Y.cells.Nonempty) → ((TileTranslation O ((m : GaussianInt) * u + (n : GaussianInt) *
-            v)).cells = ∅ ∨ ((TileCellComplement (SubtileOccurrenceInterpretation P u v ⟨.A, m,
-            n⟩) (TileTranslation O ((m : GaussianInt) * u + (n : GaussianInt) *
-            v))).cells.Nonempty ∧ Y.cells.Nonempty))) ) := by
-  classical
-  intro q cfg C₀ T layout P O u v complementNonempty m n Y hY
-  by_cases hO : O.cells = ∅
-  · exact Or.inl ((TileTranslationFormulas O
-      ((m : GaussianInt) * u + (n : GaussianInt) * v)).2.2.1.mpr hO)
-  · exact Or.inr ⟨complementNonempty m n, hY⟩
 
 private theorem modifiedAEdges :
     (by
@@ -651,7 +588,7 @@ theorem P5640T1NonpairedOccurrenceIntersections
   have translationCells (X : ProtoTile) (d : GaussianInt) :=
       TileTranslationProperties.cells X d
   have cellInclusion (X Y : ProtoTile) (hXY : X.cells ⊆ Y.cells)
-      (d : GaussianInt) := NonpairedOccurrenceGeometry.cellInclusion translationCells X Y hXY d
+      (d : GaussianInt) := TileTranslationProperties.cellsSubset X Y hXY d
   have isolatedPrecursor (m n : Int) := NonpairedOccurrenceGeometry.isolatedPrecursor q cfg C₀ T
       layout m n
   have translatedNonempty (X : ProtoTile) (hne : X.cells.Nonempty)
@@ -672,16 +609,19 @@ theorem P5640T1NonpairedOccurrenceIntersections
               precursorInPlus cellInclusion isolatedPrecursor m n Y hYA hYB hsupport
   have translateComplement (A B : ProtoTile) (d : GaussianInt) :=
       NonpairedOccurrenceGeometry.translateComplement A B d
-  have modifiedA (m n : Int) := NonpairedOccurrenceGeometry.modifiedA q cfg C₀ T layout
-      translateComplement m n
+  have modifiedA (m n : Int) := ModifiedSubtileFacts.modifiedA layout.P layout.O layout.u
+      layout.v m n
   have modifiedOther (b : PeriodicSubtileIndex) (hb : b.label ≠ .A) :=
       NonpairedOccurrenceGeometry.modifiedOther q cfg C₀ T layout b hb
   have parentNonempty (b : PeriodicSubtileIndex) := NonpairedOccurrenceGeometry.parentNonempty q
       cfg C₀ T layout translatedNonempty b
   have complementNonempty (m n : Int) := NonpairedOccurrenceGeometry.complementNonempty q cfg C₀
       T layout translatedNonempty translateComplement m n
-  have deletionSupport (m n : Int) (Y : ProtoTile) (hY : Y.cells.Nonempty) :=
-      NonpairedOccurrenceGeometry.deletionSupport q cfg C₀ T layout complementNonempty m n Y hY
+  have deletionSupport (m n : Int) (Y : ProtoTile) (hY : Y.cells.Nonempty) :
+      (TileTranslation O ((m : GaussianInt) * u + (n : GaussianInt) * v)).cells = ∅ ∨
+        ((TileCellComplement (SubtileOccurrenceInterpretation P u v ⟨.A, m, n⟩)
+          (TileTranslation O ((m : GaussianInt) * u + (n : GaussianInt) * v))).cells.Nonempty ∧
+          Y.cells.Nonempty) := Or.inr ⟨complementNonempty m n, hY⟩
   have modifiedAEdges (m n : Int) (b : PeriodicSubtileIndex)
       (hbA : b.label ≠ .A)
       (hbpair : ¬ (b.label = .B ∧ b.first = m ∧ b.second = n)) :

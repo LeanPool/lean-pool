@@ -6,6 +6,7 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryDomainTransport
 
 public import LeanPool.ApollonianSuperharmonic.AncestorOdometer
 public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryTileOdometerCovariance
@@ -97,19 +98,7 @@ private theorem hInclusion :
     (BandPackingSymmetryPartialOdometerActionFormulas g h k).1]
   exact Set.image_mono hIncl
 
-private theorem actionForward :
-    (by
-      classical
-      exact
-        ∀ (a : BandPackingSymmetry), ∀ (p : PartialOdometer), ∀ (x : GaussianInt), (x ∈ p.domain)
-            → (BandPackingSymmetryVectorAction a x ∈ (BandPackingSymmetryPartialOdometerAction a
-            p).domain) ) := by
-  classical
-  intro a p x hx
-  change BandPackingSymmetryVectorAction a x ∈
-    ((BandPackingSymmetryPartialOdometerAction a p).domain : Set GaussianInt)
-  rw [(BandPackingSymmetryPartialOdometerActionFormulas a p p).1]
-  exact ⟨x, hx, rfl⟩
+private abbrev actionForward := BandPackingSymmetryDomainTransport.forward
 
 private theorem literalRestriction :
     (by

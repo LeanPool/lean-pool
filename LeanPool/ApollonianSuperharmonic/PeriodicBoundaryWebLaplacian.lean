@@ -1267,31 +1267,8 @@ private theorem hxM :
     simpa [tileM] using hxv
   exact (Set.ext_iff.mp hdomu x).mpr hxv'
 
-private theorem hxW :
-    (by
-      classical
-      exact
-        ∀ (C : BandCircle), ∀ (T : ProtoTile), ∀ (h : PartialOdometer), ∀ (x : GaussianInt), ∀ (P
-            : PeriodicTileComplex ↥(TilingLattice C)), ∀ (a0 : ↥(TilingLattice C)), ∀ (a1 :
-            ↥(TilingLattice C)), ∀ (a2 : ↥(TilingLattice C)), ∀ (a3 : ↥(TilingLattice C)),
-        let owner : Fin 4 → TilingLattice C := ![a0, a1, a2, a3]
-        ∀ (w : Fin (4 : ℕ)),
-        let sector : Fin 4 → GaussianInt :=
-          ![x, x - 1, x - 1 - ⟨0, 1⟩, x - ⟨0, 1⟩]
-        let u' : GaussianInt := owner w
-        ∀ (au' : GaussianInt),
-        let hu'Odo : PartialOdometer := PartialOdometerAffineTranslate h u' au' 0
-        ((hu'Odo.domain : Set GaussianInt) = FootprintVertices (TileTranslation T u')) → ((P.tile
-            (owner w) = TileTranslation T u') → ((∀ (i : Fin 4), ∀ (y : GaussianInt), (y = sector
-            i ∨ y = sector i + 1 ∨ y = sector i + ⟨0, 1⟩ ∨ y = sector i + 1 + ⟨0, 1⟩) → (y ∈
-            FootprintVertices (P.tile (owner i)))) → ((∀ i : Fin 4, x = sector i ∨ x = sector i +
-            1 ∨ x = sector i + ⟨0, 1⟩ ∨ x = sector i + 1 + ⟨0, 1⟩) → (x ∈ hu'Odo.domain)))) ) := by
-  classical
-  intro C T h x P a0 a1 a2 a3 owner w sector u' au' hu'Odo hdomu' tileW cellVertex sectorCornerX
-  have hxv := cellVertex w x (sectorCornerX w)
-  have hxv' : x ∈ FootprintVertices (TileTranslation T u') := by
-    simpa [tileW] using hxv
-  exact (Set.ext_iff.mp hdomu' x).mpr hxv'
+private abbrev hxW :=
+  ApollonianSuperharmonic.WebLaplacianGeometry.hxM
 
 private theorem hstar :
     (by

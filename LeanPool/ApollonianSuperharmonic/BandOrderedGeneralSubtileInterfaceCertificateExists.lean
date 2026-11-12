@@ -6,6 +6,7 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.TileQuarterTurnTranslation
 
 public import LeanPool.ApollonianSuperharmonic.BandOrderedGeneralSubtileInterfaceCertificate
 public import LeanPool.ApollonianSuperharmonic.BandOrderedGeneralSubtileCanonicalRows
@@ -128,31 +129,6 @@ private theorem centeredCompare (g : GaussianInt) (C : CircleCoordinates) (Y Z :
     (hobs.2.2.2.2.symm.trans hcent)
   exact ⟨hcells.trans hunique.1, fun he =>
     (hanchor he).trans (hunique.2 (hcells.symm.trans he))⟩
-
-private theorem quarterTranslate (A : ProtoTile) (a d : GaussianInt) :
-    TileTranslation (TileQuarterTurn (TileTranslation A a)) d =
-      TileTranslation (TileTranslation (TileQuarterTurn A) d)
-        (GaussianQuarterTurn a) := by
-  classical
-  rcases A with ⟨cells, anchor⟩
-  rw [ProtoTile.mk.injEq]
-  constructor
-  · ext z
-    simp only [TileTranslation, TileQuarterTurn, Finset.mem_image,
-      GaussianTranslation]
-    constructor
-    · rintro ⟨y, ⟨w, ⟨v, hv, rfl⟩, rfl⟩, rfl⟩
-      refine ⟨GaussianQuarterTurn v - 1 + d, ?_, ?_⟩
-      · exact ⟨GaussianQuarterTurn v - 1, ⟨v, hv, rfl⟩, rfl⟩
-      · apply Zsqrtd.ext <;>
-          simp [GaussianQuarterTurn] <;> omega
-    · rintro ⟨y, ⟨w, ⟨v, hv, rfl⟩, rfl⟩, rfl⟩
-      refine ⟨GaussianQuarterTurn (GaussianTranslation a v) - 1,
-        ⟨GaussianTranslation a v, ⟨v, hv, rfl⟩, rfl⟩, ?_⟩
-      apply Zsqrtd.ext <;>
-        simp [GaussianQuarterTurn, GaussianTranslation] <;> omega
-  · ext <;> simp [TileTranslation, TileQuarterTurn, GaussianTranslation,
-      GaussianQuarterTurn] <;> omega
 
 end SubtileInterfaceGeometry
 
@@ -2407,7 +2383,7 @@ theorem BandOrderedGeneralSubtileInterfaceCertificateExists
                       quarterSymmetricTranslation g hrootBar
                           (SubtileInterfacePreparation.rotatedCentroid C₀ Cᵢ q i T₀ Tᵢ h₀ hᵢ x
                           normalization g hg) (SubtileInterfaceGeometry.centeredCompare g)
-                      (SubtileInterfaceGeometry.quarterTranslate)
+                      (TileQuarterTurnTranslation.translated)
                           (SubtileInterfacePreparation.hout0 C₀ Cᵢ q i T₀ Tᵢ h₀ hᵢ x
                           normalization hflips) (SubtileInterfacePreparation.hout1 C₀ Cᵢ q i T₀
                           Tᵢ h₀ hᵢ x normalization hflips) rowsAt

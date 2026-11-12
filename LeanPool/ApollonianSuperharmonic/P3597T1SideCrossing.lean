@@ -795,91 +795,6 @@ private theorem hxGall :
   intro n p x d g G hGmem Gall
   exact Set.mem_iInter.mpr hGmem
 
-private theorem hNopen :
-    ∀ (n : Nat), ∀ (p : P3381T1PolygonBoundary n), ∀ (i : Fin (n + 3)), ∀ (x : Real × Real),
-    let a := p.vertex i
-    let b := p.vertex (i + 1)
-    ∀ (d : ℝ × ℝ),
-    let D : Fin (n + 3) → Real := fun j =>
-      d.1 * (p.vertex (j + 1) - p.vertex j).2 -
-        d.2 * (p.vertex (j + 1) - p.vertex j).1
-    let T : Fin (n + 3) → (Real × Real) → Real := fun j y =>
-      (((p.vertex j - y).1 * (p.vertex (j + 1) - p.vertex j).2 -
-        (p.vertex j - y).2 * (p.vertex (j + 1) - p.vertex j).1) / D j)
-    let U : Fin (n + 3) → (Real × Real) → Real := fun j y =>
-      (((p.vertex j - y).1 * d.2 - (p.vertex j - y).2 * d.1) / D j)
-    let V : Fin (n + 3) → Set (Real × Real) := fun j =>
-      if j = i then {y | 0 < U j y ∧ U j y < 1}
-      else if U j x < 0 then {y | U j y < 0}
-      else if 1 < U j x then {y | 1 < U j y}
-      else if 0 < T j x then {y | 0 < T j y ∧ 0 < U j y ∧ U j y < 1}
-      else {y | T j y < 0 ∧ 0 < U j y ∧ U j y < 1}
-    let Vall : Set (Real × Real) := ⋂ j, V j
-    (IsOpen Vall) → (
-    let W : Fin (n + 3) → Set (Real × Real) := fun j =>
-      if j = i then Set.univ else (segment Real (p.vertex j) (p.vertex (j + 1)))ᶜ
-    let Wall : Set (Real × Real) := ⋂ j, W j
-    (IsOpen Wall) → (
-    let Q : (Real × Real) → Real := fun y =>
-      if b.1 - a.1 = 0 then (y.2 - a.2) / (b.2 - a.2)
-      else (y.1 - a.1) / (b.1 - a.1)
-    let Qline : Set (Real × Real) := {y | 0 < Q y ∧ Q y < 1}
-    (IsOpen Qline) → (
-    let g : Fin (n + 3) → (Real × Real) → Real := fun j y =>
-      d.1 * (p.vertex j - y).2 - d.2 * (p.vertex j - y).1
-    let G : Fin (n + 3) → Set (Real × Real) := fun j =>
-      {y | g j y < 0} ∪ {y | 0 < g j y}
-    let Gall : Set (Real × Real) := ⋂ j, G j
-    (IsOpen Gall) → (
-    let N : Set (Real × Real) := Vall ∩ (Wall ∩ (Qline ∩ Gall))
-    IsOpen N)))) := by
-  classical
-  intro n p i x a b d D T U V Vall hVallopen W Wall hWallopen Q Qline hQlineopen g G Gall
-      hGallopen N
-  exact hVallopen.inter (hWallopen.inter (hQlineopen.inter hGallopen))
-
-private theorem hxN :
-    ∀ (n : Nat), ∀ (p : P3381T1PolygonBoundary n), ∀ (i : Fin (n + 3)), ∀ (x : Real × Real),
-    let a := p.vertex i
-    let b := p.vertex (i + 1)
-    ∀ (d : ℝ × ℝ),
-    let D : Fin (n + 3) → Real := fun j =>
-      d.1 * (p.vertex (j + 1) - p.vertex j).2 -
-        d.2 * (p.vertex (j + 1) - p.vertex j).1
-    let T : Fin (n + 3) → (Real × Real) → Real := fun j y =>
-      (((p.vertex j - y).1 * (p.vertex (j + 1) - p.vertex j).2 -
-        (p.vertex j - y).2 * (p.vertex (j + 1) - p.vertex j).1) / D j)
-    let U : Fin (n + 3) → (Real × Real) → Real := fun j y =>
-      (((p.vertex j - y).1 * d.2 - (p.vertex j - y).2 * d.1) / D j)
-    let V : Fin (n + 3) → Set (Real × Real) := fun j =>
-      if j = i then {y | 0 < U j y ∧ U j y < 1}
-      else if U j x < 0 then {y | U j y < 0}
-      else if 1 < U j x then {y | 1 < U j y}
-      else if 0 < T j x then {y | 0 < T j y ∧ 0 < U j y ∧ U j y < 1}
-      else {y | T j y < 0 ∧ 0 < U j y ∧ U j y < 1}
-    let Vall : Set (Real × Real) := ⋂ j, V j
-    (x ∈ Vall) → (
-    let W : Fin (n + 3) → Set (Real × Real) := fun j =>
-      if j = i then Set.univ else (segment Real (p.vertex j) (p.vertex (j + 1)))ᶜ
-    let Wall : Set (Real × Real) := ⋂ j, W j
-    (x ∈ Wall) → (
-    let Q : (Real × Real) → Real := fun y =>
-      if b.1 - a.1 = 0 then (y.2 - a.2) / (b.2 - a.2)
-      else (y.1 - a.1) / (b.1 - a.1)
-    let Qline : Set (Real × Real) := {y | 0 < Q y ∧ Q y < 1}
-    (x ∈ Qline) → (
-    let g : Fin (n + 3) → (Real × Real) → Real := fun j y =>
-      d.1 * (p.vertex j - y).2 - d.2 * (p.vertex j - y).1
-    let G : Fin (n + 3) → Set (Real × Real) := fun j =>
-      {y | g j y < 0} ∪ {y | 0 < g j y}
-    let Gall : Set (Real × Real) := ⋂ j, G j
-    (x ∈ Gall) → (
-    let N : Set (Real × Real) := Vall ∩ (Wall ∩ (Qline ∩ Gall))
-    x ∈ N)))) := by
-  classical
-  intro n p i x a b d D T U V Vall hxVall W Wall hxWall Q Qline hxQline g G Gall hxGall N
-  exact ⟨hxVall, ⟨hxWall, ⟨hxQline, hxGall⟩⟩⟩
-
 private theorem hcarrier :
     ∀ (n : Nat), ∀ (p : P3381T1PolygonBoundary n), ∀ (i : Fin (n + 3)), ∀ (x : Real × Real),
     let a := p.vertex i
@@ -947,51 +862,6 @@ private theorem hcarrier :
           apply Prod.ext <;> simp [smul_sub, sub_smul] <;> ring
         _ = y := hline'.symm
     exact Set.mem_iUnion.mpr ⟨i, hyseg⟩
-
-private theorem hgenericY :
-    ∀ (n : Nat), ∀ (p : P3381T1PolygonBoundary n), ∀ (i : Fin (n + 3)), ∀ (x : Real × Real),
-    let a := p.vertex i
-    let b := p.vertex (i + 1)
-    ∀ (d : ℝ × ℝ),
-    let D : Fin (n + 3) → Real := fun j =>
-      d.1 * (p.vertex (j + 1) - p.vertex j).2 -
-        d.2 * (p.vertex (j + 1) - p.vertex j).1
-    let T : Fin (n + 3) → (Real × Real) → Real := fun j y =>
-      (((p.vertex j - y).1 * (p.vertex (j + 1) - p.vertex j).2 -
-        (p.vertex j - y).2 * (p.vertex (j + 1) - p.vertex j).1) / D j)
-    let U : Fin (n + 3) → (Real × Real) → Real := fun j y =>
-      (((p.vertex j - y).1 * d.2 - (p.vertex j - y).2 * d.1) / D j)
-    let V : Fin (n + 3) → Set (Real × Real) := fun j =>
-      if j = i then {y | 0 < U j y ∧ U j y < 1}
-      else if U j x < 0 then {y | U j y < 0}
-      else if 1 < U j x then {y | 1 < U j y}
-      else if 0 < T j x then {y | 0 < T j y ∧ 0 < U j y ∧ U j y < 1}
-      else {y | T j y < 0 ∧ 0 < U j y ∧ U j y < 1}
-    let Vall : Set (Real × Real) := ⋂ j, V j
-    let W : Fin (n + 3) → Set (Real × Real) := fun j =>
-      if j = i then Set.univ else (segment Real (p.vertex j) (p.vertex (j + 1)))ᶜ
-    let Wall : Set (Real × Real) := ⋂ j, W j
-    let Q : (Real × Real) → Real := fun y =>
-      if b.1 - a.1 = 0 then (y.2 - a.2) / (b.2 - a.2)
-      else (y.1 - a.1) / (b.1 - a.1)
-    let Qline : Set (Real × Real) := {y | 0 < Q y ∧ Q y < 1}
-    let g : Fin (n + 3) → (Real × Real) → Real := fun j y =>
-      d.1 * (p.vertex j - y).2 - d.2 * (p.vertex j - y).1
-    let G : Fin (n + 3) → Set (Real × Real) := fun j =>
-      {y | g j y < 0} ∪ {y | 0 < g j y}
-    let Gall : Set (Real × Real) := ⋂ j, G j
-    let N : Set (Real × Real) := Vall ∩ (Wall ∩ (Qline ∩ Gall))
-    ∀ (rN : ℝ), (Metric.ball x rN ⊆ N) → (∀ (y : Real × Real), (y ∈ Metric.ball x rN) → (∀ j, d.1
-        * (p.vertex j - y).2 - d.2 * (p.vertex j - y).1 ≠ 0)) := by
-  classical
-  intro n p i x a b d D T U V Vall W Wall Q Qline g G Gall N rN hballN y hy
-  have hyGall : y ∈ Gall := (hballN hy).2.2.2
-  intro j
-  have hGj := Set.mem_iInter.mp hyGall j
-  have hg : g j y < 0 ∨ 0 < g j y := by simpa [G] using hGj
-  rcases hg with h | h
-  · simpa [g] using (ne_of_lt h)
-  · simpa [g] using (ne_of_gt h)
 
 private theorem hparity :
     ∀ (n : Nat), ∀ (p : P3381T1PolygonBoundary n), ∀ (d : ℝ × ℝ), (∀ (i : Fin (n + (3 : ℕ))),
@@ -1827,16 +1697,24 @@ theorem P3597T1SideCrossing {n : Nat} (p : P3381T1PolygonBoundary n)
   have hGallopen : IsOpen Gall := SideCrossingProof.hGallopen n p d hGopen
   have hxGall : x ∈ Gall := SideCrossingProof.hxGall n p x d hGmem
   let N : Set (Real × Real) := Vall ∩ (Wall ∩ (Qline ∩ Gall))
-  have hNopen : IsOpen N := SideCrossingProof.hNopen n p i x d hVallopen hWallopen hQlineopen
-      hGallopen
-  have hxN : x ∈ N := SideCrossingProof.hxN n p i x d hxVall hxWall hxQline hxGall
+  have hNopen : IsOpen N := hVallopen.inter (hWallopen.inter (hQlineopen.inter hGallopen))
+  have hxN : x ∈ N := ⟨hxVall, ⟨hxWall, ⟨hxQline, hxGall⟩⟩⟩
   obtain ⟨rN, hrN, hballN⟩ := Metric.isOpen_iff.mp hNopen x hxN
   have hcarrier (y : Real × Real) (hy : y ∈ Metric.ball x rN) :
       y ∈ P3544T1BoundaryCarrier p ↔ F y = 0 := SideCrossingProof.hcarrier n p i x d hsegF
           hQline rN hballN y hy
   have hgenericY (y : Real × Real) (hy : y ∈ Metric.ball x rN) :
-      ∀ j, d.1 * (p.vertex j - y).2 - d.2 * (p.vertex j - y).1 ≠ 0 := SideCrossingProof.hgenericY
-          n p i x d rN hballN y hy
+      ∀ j, d.1 * (p.vertex j - y).2 - d.2 * (p.vertex j - y).1 ≠ 0 := (show
+          ∀ j, d.1 * (p.vertex j - y).2 - d.2 * (p.vertex j - y).1 ≠ 0
+        from by
+          classical
+          have hyGall : y ∈ Gall := (hballN hy).2.2.2
+          intro j
+          have hGj := Set.mem_iInter.mp hyGall j
+          have hg : g j y < 0 ∨ 0 < g j y := by simpa [G] using hGj
+          rcases hg with h | h
+          · simpa [g] using (ne_of_lt h)
+          · simpa [g] using (ne_of_gt h))
   have hparity (y : Real × Real) (hyC : y ∉ P3544T1BoundaryCarrier p)
       (hgv : ∀ j, d.1 * (p.vertex j - y).2 - d.2 * (p.vertex j - y).1 ≠ 0) :
       (y ∈ P3544T1RayParity p ↔

@@ -6,6 +6,7 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.ListEndpointFacts
 
 public import LeanPool.ApollonianSuperharmonic.AncestorOdometer
 public import LeanPool.ApollonianSuperharmonic.TileOdometerBandPrototile
@@ -627,18 +628,8 @@ private theorem hRmem :
   rw [List.eq_cons_of_mem_head? hopt]
   simp
 
-private theorem hSmem :
-    (by
-      classical
-      exact
-        ∀ (Rplus : ProtoTile), ∀ (tiles : List ProtoTile), (tiles.getLast? = some Rplus) → (Rplus
-            ∈ tiles) ) := by
-  classical
-  intro Rplus tiles hlast
-  have hopt : Rplus ∈ tiles.getLast? := by simp [hlast]
-  obtain ⟨hne, hget⟩ := List.mem_getLast?_eq_getLast hopt
-  rw [hget]
-  exact List.getLast_mem hne
+private abbrev hSmem :=
+  @ListEndpointFacts.lastMembership ProtoTile
 
 private theorem hnotouch :
     (by

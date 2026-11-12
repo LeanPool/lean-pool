@@ -367,20 +367,8 @@ private theorem hnotA :
     exact Set.mem_iUnion.mpr ⟨a, left_mem_segment Real _ _⟩
   simpa [h] using this
 
-private theorem hnotB :
-    (by
-      classical
-      exact
-        ∀ (n : Nat), ∀ (p : P3381T1PolygonBoundary n), ∀ (b : Fin (n + 3)),
-        let Cp := P3544T1BoundaryCarrier p
-        ∀ (y : ℝ × ℝ), (y ∉ Cp) → (y ≠ p.vertex b) ) := by
-  classical
-  intro n p b Cp y hyCp h
-  apply hyCp
-  have : p.vertex b ∈ Cp := by
-    change p.vertex b ∈ ⋃ i, segment Real (p.vertex i) (p.vertex (i + 1))
-    exact Set.mem_iUnion.mpr ⟨b, left_mem_segment Real _ _⟩
-  simpa [h] using this
+private abbrev hnotB :=
+  ApollonianSuperharmonic.LocalCoherenceProof.hnotA
 
 private theorem hmem :
     (by

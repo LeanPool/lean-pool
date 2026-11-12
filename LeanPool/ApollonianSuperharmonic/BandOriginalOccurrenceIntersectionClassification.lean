@@ -6,6 +6,8 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.ModifiedSubtileFacts
+public import LeanPool.ApollonianSuperharmonic.BandOriginalParentContainment
 public import LeanPool.ApollonianSuperharmonic.LatticeTileNonempty
 
 public import LeanPool.ApollonianSuperharmonic.BandOrderedGeneralLayoutCertificate
@@ -29,39 +31,11 @@ namespace ApollonianSuperharmonic
 
 namespace OriginalIntersectionGeometry
 
-private theorem hOA :
-    (by
-      classical
-      exact
-        ∀ (q : Fin 4 → CircleCoordinates), ∀ (cfg : BandOrderedGeneralConfiguration q), ∀ (C₀ :
-            BandCircle), ∀ (T : ProtoTile), ∀ (cert : BandOrderedGeneralLayoutCertificate q cfg
-            C₀ T),
-        let P := cert.P
-        let O := cert.O
-        O.cells ⊆ (P 0 true).cells ) := by
-  classical
-  intro q cfg C₀ T cert P O
-  change cert.O.cells ⊆ (cert.P 0 true).cells
-  rw [cert.precursor_eq]
-  intro x hx
-  exact (cert.plus_union x).2 ⟨0, false, hx⟩
+private abbrev hOA :=
+  BandOriginalParentContainment.positiveParent
 
-private theorem hOB :
-    (by
-      classical
-      exact
-        ∀ (q : Fin 4 → CircleCoordinates), ∀ (cfg : BandOrderedGeneralConfiguration q), ∀ (C₀ :
-            BandCircle), ∀ (T : ProtoTile), ∀ (cert : BandOrderedGeneralLayoutCertificate q cfg
-            C₀ T),
-        let P := cert.P
-        let O := cert.O
-        O.cells ⊆ (P 0 false).cells ) := by
-  classical
-  intro q cfg C₀ T cert P O
-  change cert.O.cells ⊆ (cert.P 0 false).cells
-  rw [cert.precursor_cells]
-  intro x hx
-  exact (cert.minus_union x).2 ⟨0, true, hx⟩
+private abbrev hOB :=
+  BandOriginalParentContainment.negativeParent
 
 private theorem hmodified :
     (by
@@ -80,30 +54,6 @@ private theorem hmodified :
   intro q cfg C₀ T cert P O u v a
   exact cert.modified_tile a
 
-
-private theorem hmodA :
-    (by
-      classical
-      exact
-        ∀ (q : Fin 4 → CircleCoordinates), ∀ (cfg : BandOrderedGeneralConfiguration q), ∀ (C₀ :
-            BandCircle), ∀ (T : ProtoTile), ∀ (cert : BandOrderedGeneralLayoutCertificate q cfg
-            C₀ T),
-        let P := cert.P
-        let O := cert.O
-        let u := cert.u
-        let v := cert.v
-        (∀ (A : ProtoTile), ∀ (B : ProtoTile), ∀ (w : GaussianInt), TileTranslation
-            (TileCellComplement A B) w = TileCellComplement (TileTranslation A w)
-            (TileTranslation B w)) → (∀ (m : Int), ∀ (n : Int),
-            ModifiedSubtileOccurrenceInterpretation P O u v ⟨.A, m, n⟩ = TileCellComplement
-            (SubtileOccurrenceInterpretation P u v ⟨.A, m, n⟩) (TileTranslation O ((m :
-            GaussianInt) * u + (n : GaussianInt) * v))) ) := by
-  classical
-  intro q cfg C₀ T cert P O u v htranslate_complement m n
-  change TileTranslation (TileCellComplement (P 0 true) O)
-      ((m : GaussianInt) * u + (n : GaussianInt) * v) = _
-  rw [htranslate_complement]
-  rfl
 
 private theorem hmodother :
     (by
@@ -1120,8 +1070,7 @@ theorem BandOriginalOccurrenceIntersectionClassification
       TileTranslation (TileCellComplement A B) w =
         TileCellComplement (TileTranslation A w) (TileTranslation B w) :=
     (TileCellComplementCovariance A B w).1
-  have hmodA (m n : Int) := OriginalIntersectionGeometry.hmodA q cfg C₀ T cert
-      htranslate_complement m n
+  have hmodA (m n : Int) := ModifiedSubtileFacts.modifiedA cert.P cert.O cert.u cert.v m n
   have hmodother (a : PeriodicSubtileIndex) (ha : a.label ≠ .A) :
       ModifiedSubtileOccurrenceInterpretation P O u v a =
         SubtileOccurrenceInterpretation P u v a := OriginalIntersectionGeometry.hmodother q cfg

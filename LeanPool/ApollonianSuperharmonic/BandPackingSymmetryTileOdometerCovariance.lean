@@ -6,6 +6,7 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryDomainTransport
 
 public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryAffineVectorCovariance
 public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryScopedPhaseUnique
@@ -165,19 +166,7 @@ private theorem zeroLine :
       have hp := (ProperBandCurvatureStructure _ hq).1
       omega
 
-private theorem actionForward :
-    (by
-      classical
-      exact
-        ∀ (a : BandPackingSymmetry), ∀ (k : PartialOdometer), ∀ (x : GaussianInt), (x ∈ k.domain)
-            → (BandPackingSymmetryVectorAction a x ∈ (BandPackingSymmetryPartialOdometerAction a
-            k).domain) ) := by
-  classical
-  intro a k x hx
-  change BandPackingSymmetryVectorAction a x ∈
-    ((BandPackingSymmetryPartialOdometerAction a k).domain : Set GaussianInt)
-  rw [(BandPackingSymmetryPartialOdometerActionFormulas a k k).1]
-  exact ⟨x, hx, rfl⟩
+private abbrev actionForward := BandPackingSymmetryDomainTransport.forward
 
 private theorem actionDiff :
     (by

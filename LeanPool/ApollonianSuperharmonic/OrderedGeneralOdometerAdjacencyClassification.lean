@@ -315,30 +315,6 @@ private theorem hsmall :
   · rw [hempty]; exact Set.subsingleton_empty
   · exact hsmall
 
-private theorem hsmallg :
-    (by
-      classical
-      exact
-        ∀ (T : ProtoTile), ∀ (T₀ : ProtoTile), ∀ (h : PartialOdometer), ∀ (h₀ : PartialOdometer),
-            ∀ (T' : ProtoTile), ∀ (h' : PartialOdometer), ∀ (g : BandPackingSymmetry), ∀ (qbar :
-            Fin (4 : ℕ) → CircleCoordinates), ∀ (cfg : BandOrderedGeneralConfiguration qbar), ∀
-            (Cg : BandCircle), ∀ (Ig : BandCircle), ∀ (Dg : BandCircle), ∀ (cert :
-            BandOrderedGeneralLayoutCertificate qbar cfg Cg (BandPackingSymmetryTileAction g
-            T₀)), ∀ (a : PeriodicSubtileIndex), (P4261T1PlacedOdometer cert
-            (BandPackingSymmetryPartialOdometerAction g h₀) Ig (BandPackingSymmetryTileAction g
-            T) (BandPackingSymmetryPartialOdometerAction g h) a) → (∀ (b : PeriodicSubtileIndex),
-            (P4261T1PlacedOdometer cert (BandPackingSymmetryPartialOdometerAction g h₀) Dg
-            (BandPackingSymmetryTileAction g T') (BandPackingSymmetryPartialOdometerAction g h')
-            b) → ((((FootprintVertices (SubtileOccurrenceInterpretation cert.P cert.u cert.v a))
-            ∩ FootprintVertices (SubtileOccurrenceInterpretation cert.P cert.u cert.v
-            b)).Subsingleton) → ((((BandPackingSymmetryPartialOdometerAction g h').domain : Set
-            GaussianInt) ∩ (BandPackingSymmetryPartialOdometerAction g h).domain).Subsingleton)))
-            ) := by
-  classical
-  intro T T₀ h h₀ T' h' g qbar cfg Cg Ig Dg cert a pa b pb hsmall
-  rw [pb.domain, pa.domain, Set.inter_comm]
-  exact hsmall
-
 private theorem forward :
     (by
       classical
@@ -521,8 +497,14 @@ theorem OrderedGeneralOdometerAdjacencyClassification :
               b)).Subsingleton := OdometerAdjacencyGeometry.hsmall T₀ g qbar cfg Cg cert a b hraw
       have hsmallg : (((BandPackingSymmetryPartialOdometerAction g h').domain : Set GaussianInt) ∩
           (BandPackingSymmetryPartialOdometerAction g h).domain).Subsingleton :=
-              OdometerAdjacencyGeometry.hsmallg T T₀ h h₀ T' h' g qbar cfg Cg Ig Dg cert a pa b
-              pb hsmall
+              (show
+                  (((BandPackingSymmetryPartialOdometerAction g h').domain :
+                  Set GaussianInt) ∩ (BandPackingSymmetryPartialOdometerAction
+                  g h).domain).Subsingleton
+                from by
+                  classical
+                  rw [pb.domain, pa.domain, Set.inter_comm]
+                  exact hsmall)
       left
       intro x hx y hy
       have forward (f : PartialOdometer) (z : GaussianInt) (hz : z ∈ f.domain) :

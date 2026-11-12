@@ -6,6 +6,8 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.TileQuarterTurnTranslation
+public import LeanPool.ApollonianSuperharmonic.ObservableTileRetargeting
 
 public import LeanPool.ApollonianSuperharmonic.P5640T1NonpairedOccurrenceIntersections
 public import LeanPool.ApollonianSuperharmonic.P5635T1RightBoundaryInterfaceRecords
@@ -204,100 +206,6 @@ private theorem hedge :
   intro A A' hcell
   simp only [FootprintEdges]
   rw [hcell]
-
-private theorem tileTouchingRetarget :
-    (by
-      classical
-      exact
-        ∀ (A : ProtoTile), ∀ (A' : ProtoTile), ∀ (B : ProtoTile), ∀ (B' : ProtoTile), (A.cells =
-            A'.cells) → ((A.cells = ∅ → A.anchor = A'.anchor) → ((B.cells = B'.cells) → ((B.cells
-            = ∅ → B.anchor = B'.anchor) → ((TileTouching A B) → (TileTouching A' B'))))) ) := by
-  classical
-  intro A A' B B' hAc hAa hBc hBa ht
-  have hAo := ProtoTileObservableExtensionality A A' hAc hAa
-  have hBo := ProtoTileObservableExtensionality B B' hBc hBa
-  rcases ht with ht | ht | ht
-  · left
-    refine ⟨?_, ?_, ?_, ?_⟩
-    · simpa [hAc] using ht.1
-    · simpa [hBc] using ht.2.1
-    · simpa [hAc, hBc] using ht.2.2.1
-    · simpa [hAo.2.1, hAo.2.2.1, hBo.2.1, hBo.2.2.1] using ht.2.2.2
-  · right; left
-    refine ⟨?_, ?_⟩
-    · simpa [hAc] using ht.1
-    · rw [← hAa ht.1, ← hBo.2.1]
-      exact ht.2
-  · right; right
-    refine ⟨?_, ?_⟩
-    · simpa [hBc] using ht.1
-    · rw [← hBa ht.1, ← hAo.2.1]
-      exact ht.2
-
-private theorem touchingRetarget :
-    (by
-      classical
-      exact
-        (∀ (A : ProtoTile), ∀ (A' : ProtoTile), ∀ (B : ProtoTile), ∀ (B' : ProtoTile), (A.cells =
-            A'.cells) → ((A.cells = ∅ → A.anchor = A'.anchor) → ((B.cells = B'.cells) → ((B.cells
-            = ∅ → B.anchor = B'.anchor) → ((TileTouching A B) → (TileTouching A' B')))))) → (∀ (A
-            : ProtoTile), ∀ (A' : ProtoTile), ∀ (B : ProtoTile), ∀ (B' : ProtoTile), ∀ (D :
-            ProtoTile), ∀ (D' : ProtoTile), (A.cells = A'.cells) → ((A.cells = ∅ → A.anchor =
-            A'.anchor) → ((B.cells = B'.cells) → ((B.cells = ∅ → B.anchor = B'.anchor) →
-            ((D.cells = D'.cells) → ((D.cells = ∅ → D.anchor = D'.anchor) → ((TouchingTriple A B
-            D) → (TouchingTriple A' B' D')))))))) ) := by
-  classical
-  intro tileTouchingRetarget A A' B B' D D' hAc hAa hBc hBa hDc hDa ht
-  have hAo := ProtoTileObservableExtensionality A A' hAc hAa
-  have hBo := ProtoTileObservableExtensionality B B' hBc hBa
-  have hDo := ProtoTileObservableExtensionality D D' hDc hDa
-  rcases ht with ⟨hAB, hBD, hDA, p, hp, hpu⟩
-  refine ⟨tileTouchingRetarget A A' B B' hAc hAa hBc hBa hAB,
-    tileTouchingRetarget B B' D D' hBc hBa hDc hDa hBD,
-    tileTouchingRetarget D D' A A' hDc hDa hAc hAa hDA, p, ?_, ?_⟩
-  · simpa [← hAo.2.1, ← hBo.2.1, ← hDo.2.1] using hp
-  · intro y hy
-    apply hpu y
-    simpa [← hAo.2.1, ← hBo.2.1, ← hDo.2.1] using hy
-
-private theorem quarterTranslate :
-    (by
-      classical
-      exact
-        ∀ (C : BandCircle), ∀ (D : BandCircle), ∀ (T : ProtoTile), ∀ (N : ProtoTile), ∀ (h :
-            PartialOdometer), ∀ (k : PartialOdometer), ∀ (x : GaussianInt),
-            (BandOrderedGeneralNormalizedOccurrenceBundle C D T N h k x) → (∀ (A : ProtoTile), ∀
-            (a : GaussianInt), ∀ (u₀ : GaussianInt), TileTranslation (TileQuarterTurn
-            (TileTranslation A a)) u₀ = TileTranslation (TileTranslation (TileQuarterTurn A) u₀)
-            (GaussianQuarterTurn a)) ) := by
-  classical
-  intro C D T N h k x bundle A a u₀
-  rcases A with ⟨cells, anchor⟩
-  rw [ProtoTile.mk.injEq]
-  constructor
-  · ext z
-    simp only [TileTranslation, TileQuarterTurn, Finset.mem_image,
-      GaussianTranslation]
-    constructor
-    · rintro ⟨y, hy, rfl⟩
-      rcases hy with ⟨w, hw, rfl⟩
-      rcases hw with ⟨v, hv, rfl⟩
-      refine ⟨GaussianQuarterTurn v - 1 + u₀, ?_, ?_⟩
-      · refine ⟨GaussianQuarterTurn v - 1, ?_, rfl⟩
-        exact ⟨v, hv, rfl⟩
-      · cases a; cases v; cases u₀
-        apply Zsqrtd.ext <;>
-          simp [GaussianQuarterTurn] <;> omega
-    · rintro ⟨y, hy, rfl⟩
-      rcases hy with ⟨w, hw, rfl⟩
-      rcases hw with ⟨v, hv, rfl⟩
-      refine ⟨GaussianQuarterTurn (GaussianTranslation a v) - 1, ?_, ?_⟩
-      · exact ⟨GaussianTranslation a v, ⟨v, hv, rfl⟩, rfl⟩
-      · cases a; cases v; cases u₀
-        apply Zsqrtd.ext <;>
-          simp [GaussianQuarterTurn, GaussianTranslation] <;> omega
-  · ext <;> simp [TileTranslation, TileQuarterTurn, GaussianTranslation,
-      GaussianQuarterTurn] <;> omega
 
 private theorem translateObs :
     (by
@@ -2014,78 +1922,6 @@ private theorem geomAt1214 :
   exact packageGeometry 0 1 1 false true g hgs hge hneq
     R1g R2g hW hX
 
-private theorem hgeomAt1233 :
-    (by
-      classical
-      exact
-        ∀ (C : BandCircle), ∀ (D : BandCircle), ∀ (T : ProtoTile), ∀ (N : ProtoTile), ∀ (h :
-            PartialOdometer), ∀ (k : PartialOdometer), ∀ (x : GaussianInt), ∀ (bundle :
-            BandOrderedGeneralNormalizedOccurrenceBundle C D T N h k x), ∀ (placement :
-            BandOrderedGeneralRightPlacement bundle.normalizedPresentation bundle.configuration
-            bundle.normalizedCircle bundle.normalizedRoot bundle.normalizedFixed
-            bundle.normalizedRootFunction bundle.normalizedFixedFunction bundle.normalizedPoint
-            bundle.pieces bundle.functions bundle.selectedSlot bundle.selectedSign
-            bundle.routedDirection), ∀ (selectedEdge : Finset GaussianInt),
-        let q := bundle.normalizedPresentation
-        let F := bundle.normalizedFixed
-        let root := bundle.normalizedRoot
-        let P := placement.layout.P
-        let u := placement.layout.u
-        let v := placement.layout.v
-        let selectedPath : Prop :=
-            (∃ selectedStart selectedEnd : GaussianInt,
-              SimpleGridPathBetween
-                (FootprintVertices
-                    (SubtileOccurrenceInterpretation P u v placement.exteriorIndex) ∩
-                  FootprintVertices
-                    (SubtileOccurrenceInterpretation P u v placement.centralIndex))
-                (FootprintEdges
-                    (SubtileOccurrenceInterpretation P u v placement.exteriorIndex) ∩
-                  FootprintEdges
-                    (SubtileOccurrenceInterpretation P u v placement.centralIndex))
-                selectedStart selectedEnd ∧
-              selectedEdge ∈
-                FootprintEdges
-                    (SubtileOccurrenceInterpretation P u v placement.exteriorIndex) ∩
-                  FootprintEdges
-                    (SubtileOccurrenceInterpretation P u v placement.centralIndex) ∧
-              bundle.normalizedPoint ∈ selectedEdge)
-        let rightGeometry := fun (i j : Fin 3) (sgn : GaussianInt)
-            (firstSign secondSign : Bool) ↦
-          let firstCompanion := TileTranslation F
-            (sgn * BandVectors.1 (q 0) (q i.succ))
-          let secondCompanion := TileTranslation F
-            (sgn * BandVectors.1 (q 0) (q j.succ))
-          let firstPiece := TileTranslation (placement.layout.P i firstSign)
-            placement.rightNeighborDisplacement
-          let secondPiece := TileTranslation (placement.layout.P j secondSign)
-            placement.rightNeighborDisplacement
-          ∃ firstBoundaryData : ExactTileInterfaceTriple F firstCompanion firstPiece,
-            ∃ secondBoundaryData : ExactTileInterfaceTriple F secondCompanion secondPiece,
-              ∃ firstData : ExactTileInterfaceTriple root F firstCompanion,
-                ∃ secondData : ExactTileInterfaceTriple root F secondCompanion,
-                  firstBoundaryData.point = firstData.point ∧
-                  secondBoundaryData.point = secondData.point ∧
-                  LatticeTile root ∧ LatticeTile F ∧ LatticeTile firstCompanion ∧
-                  LatticeTile secondCompanion ∧ Disjoint root.cells firstCompanion.cells ∧
-                  Disjoint F.cells firstCompanion.cells ∧
-                  Disjoint root.cells secondCompanion.cells ∧
-                  Disjoint F.cells secondCompanion.cells ∧
-                  Disjoint firstCompanion.cells secondCompanion.cells ∧
-                  TouchingTriple root F firstCompanion ∧
-                  TouchingTriple root F secondCompanion ∧
-                  firstData.point ≠ secondData.point ∧
-                  secondData.point = firstData.otherAB ∧
-                  secondData.otherAB = firstData.point ∧ selectedPath
-        (placement.rightFirstSlot = (0 : Fin (3 : ℕ))) → ((placement.rightSecondSlot = (1 : Fin
-            (3 : ℕ))) → ((rightGeometry 0 1 1 false true) → (rightGeometry
-            placement.rightFirstSlot placement.rightSecondSlot 1 false true))) ) := by
-  classical
-  intro C D T N h k x bundle placement selectedEdge q F root P u v selectedPath rightGeometry hi
-      hj geom
-  rw [hi, hj]
-  exact geom
-
 private theorem hRAt1245 :
     (by
       classical
@@ -2387,78 +2223,6 @@ private theorem geomAt1286 :
   exact packageGeometry 0 1 (-1) true false g hgs hge hneq
     R1g R2g hW hX
 
-private theorem hgeomAt1305 :
-    (by
-      classical
-      exact
-        ∀ (C : BandCircle), ∀ (D : BandCircle), ∀ (T : ProtoTile), ∀ (N : ProtoTile), ∀ (h :
-            PartialOdometer), ∀ (k : PartialOdometer), ∀ (x : GaussianInt), ∀ (bundle :
-            BandOrderedGeneralNormalizedOccurrenceBundle C D T N h k x), ∀ (placement :
-            BandOrderedGeneralRightPlacement bundle.normalizedPresentation bundle.configuration
-            bundle.normalizedCircle bundle.normalizedRoot bundle.normalizedFixed
-            bundle.normalizedRootFunction bundle.normalizedFixedFunction bundle.normalizedPoint
-            bundle.pieces bundle.functions bundle.selectedSlot bundle.selectedSign
-            bundle.routedDirection), ∀ (selectedEdge : Finset GaussianInt),
-        let q := bundle.normalizedPresentation
-        let F := bundle.normalizedFixed
-        let root := bundle.normalizedRoot
-        let P := placement.layout.P
-        let u := placement.layout.u
-        let v := placement.layout.v
-        let selectedPath : Prop :=
-            (∃ selectedStart selectedEnd : GaussianInt,
-              SimpleGridPathBetween
-                (FootprintVertices
-                    (SubtileOccurrenceInterpretation P u v placement.exteriorIndex) ∩
-                  FootprintVertices
-                    (SubtileOccurrenceInterpretation P u v placement.centralIndex))
-                (FootprintEdges
-                    (SubtileOccurrenceInterpretation P u v placement.exteriorIndex) ∩
-                  FootprintEdges
-                    (SubtileOccurrenceInterpretation P u v placement.centralIndex))
-                selectedStart selectedEnd ∧
-              selectedEdge ∈
-                FootprintEdges
-                    (SubtileOccurrenceInterpretation P u v placement.exteriorIndex) ∩
-                  FootprintEdges
-                    (SubtileOccurrenceInterpretation P u v placement.centralIndex) ∧
-              bundle.normalizedPoint ∈ selectedEdge)
-        let rightGeometry := fun (i j : Fin 3) (sgn : GaussianInt)
-            (firstSign secondSign : Bool) ↦
-          let firstCompanion := TileTranslation F
-            (sgn * BandVectors.1 (q 0) (q i.succ))
-          let secondCompanion := TileTranslation F
-            (sgn * BandVectors.1 (q 0) (q j.succ))
-          let firstPiece := TileTranslation (placement.layout.P i firstSign)
-            placement.rightNeighborDisplacement
-          let secondPiece := TileTranslation (placement.layout.P j secondSign)
-            placement.rightNeighborDisplacement
-          ∃ firstBoundaryData : ExactTileInterfaceTriple F firstCompanion firstPiece,
-            ∃ secondBoundaryData : ExactTileInterfaceTriple F secondCompanion secondPiece,
-              ∃ firstData : ExactTileInterfaceTriple root F firstCompanion,
-                ∃ secondData : ExactTileInterfaceTriple root F secondCompanion,
-                  firstBoundaryData.point = firstData.point ∧
-                  secondBoundaryData.point = secondData.point ∧
-                  LatticeTile root ∧ LatticeTile F ∧ LatticeTile firstCompanion ∧
-                  LatticeTile secondCompanion ∧ Disjoint root.cells firstCompanion.cells ∧
-                  Disjoint F.cells firstCompanion.cells ∧
-                  Disjoint root.cells secondCompanion.cells ∧
-                  Disjoint F.cells secondCompanion.cells ∧
-                  Disjoint firstCompanion.cells secondCompanion.cells ∧
-                  TouchingTriple root F firstCompanion ∧
-                  TouchingTriple root F secondCompanion ∧
-                  firstData.point ≠ secondData.point ∧
-                  secondData.point = firstData.otherAB ∧
-                  secondData.otherAB = firstData.point ∧ selectedPath
-        (placement.rightFirstSlot = (0 : Fin (3 : ℕ))) → ((placement.rightSecondSlot = (1 : Fin
-            (3 : ℕ))) → ((rightGeometry 0 1 (-1) true false) → (rightGeometry
-            placement.rightFirstSlot placement.rightSecondSlot (-1) true false))) ) := by
-  classical
-  intro C D T N h k x bundle placement selectedEdge q F root P u v selectedPath rightGeometry hi
-      hj geom
-  rw [hi, hj]
-  exact geom
-
 private theorem hRAt1329 :
     (by
       classical
@@ -2569,79 +2333,6 @@ private theorem hXAt1373 :
   classical
   intro C D T N h k x bundle placement root secondBoundarySubset hj hsecond
   simpa [hj, hsecond] using secondBoundarySubset
-
-private theorem hgeomAt1378 :
-    (by
-      classical
-      exact
-        ∀ (C : BandCircle), ∀ (D : BandCircle), ∀ (T : ProtoTile), ∀ (N : ProtoTile), ∀ (h :
-            PartialOdometer), ∀ (k : PartialOdometer), ∀ (x : GaussianInt), ∀ (bundle :
-            BandOrderedGeneralNormalizedOccurrenceBundle C D T N h k x), ∀ (placement :
-            BandOrderedGeneralRightPlacement bundle.normalizedPresentation bundle.configuration
-            bundle.normalizedCircle bundle.normalizedRoot bundle.normalizedFixed
-            bundle.normalizedRootFunction bundle.normalizedFixedFunction bundle.normalizedPoint
-            bundle.pieces bundle.functions bundle.selectedSlot bundle.selectedSign
-            bundle.routedDirection), ∀ (selectedEdge : Finset GaussianInt),
-        let q := bundle.normalizedPresentation
-        let F := bundle.normalizedFixed
-        let root := bundle.normalizedRoot
-        let P := placement.layout.P
-        let u := placement.layout.u
-        let v := placement.layout.v
-        let selectedPath : Prop :=
-            (∃ selectedStart selectedEnd : GaussianInt,
-              SimpleGridPathBetween
-                (FootprintVertices
-                    (SubtileOccurrenceInterpretation P u v placement.exteriorIndex) ∩
-                  FootprintVertices
-                    (SubtileOccurrenceInterpretation P u v placement.centralIndex))
-                (FootprintEdges
-                    (SubtileOccurrenceInterpretation P u v placement.exteriorIndex) ∩
-                  FootprintEdges
-                    (SubtileOccurrenceInterpretation P u v placement.centralIndex))
-                selectedStart selectedEnd ∧
-              selectedEdge ∈
-                FootprintEdges
-                    (SubtileOccurrenceInterpretation P u v placement.exteriorIndex) ∩
-                  FootprintEdges
-                    (SubtileOccurrenceInterpretation P u v placement.centralIndex) ∧
-              bundle.normalizedPoint ∈ selectedEdge)
-        let rightGeometry := fun (i j : Fin 3) (sgn : GaussianInt)
-            (firstSign secondSign : Bool) ↦
-          let firstCompanion := TileTranslation F
-            (sgn * BandVectors.1 (q 0) (q i.succ))
-          let secondCompanion := TileTranslation F
-            (sgn * BandVectors.1 (q 0) (q j.succ))
-          let firstPiece := TileTranslation (placement.layout.P i firstSign)
-            placement.rightNeighborDisplacement
-          let secondPiece := TileTranslation (placement.layout.P j secondSign)
-            placement.rightNeighborDisplacement
-          ∃ firstBoundaryData : ExactTileInterfaceTriple F firstCompanion firstPiece,
-            ∃ secondBoundaryData : ExactTileInterfaceTriple F secondCompanion secondPiece,
-              ∃ firstData : ExactTileInterfaceTriple root F firstCompanion,
-                ∃ secondData : ExactTileInterfaceTriple root F secondCompanion,
-                  firstBoundaryData.point = firstData.point ∧
-                  secondBoundaryData.point = secondData.point ∧
-                  LatticeTile root ∧ LatticeTile F ∧ LatticeTile firstCompanion ∧
-                  LatticeTile secondCompanion ∧ Disjoint root.cells firstCompanion.cells ∧
-                  Disjoint F.cells firstCompanion.cells ∧
-                  Disjoint root.cells secondCompanion.cells ∧
-                  Disjoint F.cells secondCompanion.cells ∧
-                  Disjoint firstCompanion.cells secondCompanion.cells ∧
-                  TouchingTriple root F firstCompanion ∧
-                  TouchingTriple root F secondCompanion ∧
-                  firstData.point ≠ secondData.point ∧
-                  secondData.point = firstData.otherAB ∧
-                  secondData.otherAB = firstData.point ∧ selectedPath
-        (placement.rightFirstSlot = (1 : Fin (3 : ℕ))) → ((placement.rightSecondSlot = (2 : Fin
-            (3 : ℕ))) → ((rightGeometry (1 : Fin (3 : ℕ)) (2 : Fin (3 : ℕ)) (1 : GaussianInt)
-            false true) → (rightGeometry placement.rightFirstSlot placement.rightSecondSlot 1
-            false true))) ) := by
-  classical
-  intro C D T N h k x bundle placement selectedEdge q F root P u v selectedPath rightGeometry hi
-      hj geom
-  rw [hi, hj]
-  exact geom
 
 private theorem hRAt1390 :
     (by
@@ -2754,79 +2445,6 @@ private theorem hXAt1432 :
   intro C D T N h k x bundle placement root secondBoundarySubset hj hsecond
   simpa [hj, hsecond] using secondBoundarySubset
 
-private theorem hgeomAt1437 :
-    (by
-      classical
-      exact
-        ∀ (C : BandCircle), ∀ (D : BandCircle), ∀ (T : ProtoTile), ∀ (N : ProtoTile), ∀ (h :
-            PartialOdometer), ∀ (k : PartialOdometer), ∀ (x : GaussianInt), ∀ (bundle :
-            BandOrderedGeneralNormalizedOccurrenceBundle C D T N h k x), ∀ (placement :
-            BandOrderedGeneralRightPlacement bundle.normalizedPresentation bundle.configuration
-            bundle.normalizedCircle bundle.normalizedRoot bundle.normalizedFixed
-            bundle.normalizedRootFunction bundle.normalizedFixedFunction bundle.normalizedPoint
-            bundle.pieces bundle.functions bundle.selectedSlot bundle.selectedSign
-            bundle.routedDirection), ∀ (selectedEdge : Finset GaussianInt),
-        let q := bundle.normalizedPresentation
-        let F := bundle.normalizedFixed
-        let root := bundle.normalizedRoot
-        let P := placement.layout.P
-        let u := placement.layout.u
-        let v := placement.layout.v
-        let selectedPath : Prop :=
-            (∃ selectedStart selectedEnd : GaussianInt,
-              SimpleGridPathBetween
-                (FootprintVertices
-                    (SubtileOccurrenceInterpretation P u v placement.exteriorIndex) ∩
-                  FootprintVertices
-                    (SubtileOccurrenceInterpretation P u v placement.centralIndex))
-                (FootprintEdges
-                    (SubtileOccurrenceInterpretation P u v placement.exteriorIndex) ∩
-                  FootprintEdges
-                    (SubtileOccurrenceInterpretation P u v placement.centralIndex))
-                selectedStart selectedEnd ∧
-              selectedEdge ∈
-                FootprintEdges
-                    (SubtileOccurrenceInterpretation P u v placement.exteriorIndex) ∩
-                  FootprintEdges
-                    (SubtileOccurrenceInterpretation P u v placement.centralIndex) ∧
-              bundle.normalizedPoint ∈ selectedEdge)
-        let rightGeometry := fun (i j : Fin 3) (sgn : GaussianInt)
-            (firstSign secondSign : Bool) ↦
-          let firstCompanion := TileTranslation F
-            (sgn * BandVectors.1 (q 0) (q i.succ))
-          let secondCompanion := TileTranslation F
-            (sgn * BandVectors.1 (q 0) (q j.succ))
-          let firstPiece := TileTranslation (placement.layout.P i firstSign)
-            placement.rightNeighborDisplacement
-          let secondPiece := TileTranslation (placement.layout.P j secondSign)
-            placement.rightNeighborDisplacement
-          ∃ firstBoundaryData : ExactTileInterfaceTriple F firstCompanion firstPiece,
-            ∃ secondBoundaryData : ExactTileInterfaceTriple F secondCompanion secondPiece,
-              ∃ firstData : ExactTileInterfaceTriple root F firstCompanion,
-                ∃ secondData : ExactTileInterfaceTriple root F secondCompanion,
-                  firstBoundaryData.point = firstData.point ∧
-                  secondBoundaryData.point = secondData.point ∧
-                  LatticeTile root ∧ LatticeTile F ∧ LatticeTile firstCompanion ∧
-                  LatticeTile secondCompanion ∧ Disjoint root.cells firstCompanion.cells ∧
-                  Disjoint F.cells firstCompanion.cells ∧
-                  Disjoint root.cells secondCompanion.cells ∧
-                  Disjoint F.cells secondCompanion.cells ∧
-                  Disjoint firstCompanion.cells secondCompanion.cells ∧
-                  TouchingTriple root F firstCompanion ∧
-                  TouchingTriple root F secondCompanion ∧
-                  firstData.point ≠ secondData.point ∧
-                  secondData.point = firstData.otherAB ∧
-                  secondData.otherAB = firstData.point ∧ selectedPath
-        (placement.rightFirstSlot = (1 : Fin (3 : ℕ))) → ((placement.rightSecondSlot = (2 : Fin
-            (3 : ℕ))) → ((rightGeometry (1 : Fin (3 : ℕ)) (2 : Fin (3 : ℕ)) (-1 : GaussianInt)
-            true false) → (rightGeometry placement.rightFirstSlot placement.rightSecondSlot (-1)
-            true false))) ) := by
-  classical
-  intro C D T N h k x bundle placement selectedEdge q F root P u v selectedPath rightGeometry hi
-      hj geom
-  rw [hi, hj]
-  exact geom
-
 private theorem hRAt1461 :
     (by
       classical
@@ -2938,79 +2556,6 @@ private theorem hXAt1505 :
   intro C D T N h k x bundle placement root secondBoundarySubset hj hsecond
   simpa [hj, hsecond] using secondBoundarySubset
 
-private theorem hgeomAt1510 :
-    (by
-      classical
-      exact
-        ∀ (C : BandCircle), ∀ (D : BandCircle), ∀ (T : ProtoTile), ∀ (N : ProtoTile), ∀ (h :
-            PartialOdometer), ∀ (k : PartialOdometer), ∀ (x : GaussianInt), ∀ (bundle :
-            BandOrderedGeneralNormalizedOccurrenceBundle C D T N h k x), ∀ (placement :
-            BandOrderedGeneralRightPlacement bundle.normalizedPresentation bundle.configuration
-            bundle.normalizedCircle bundle.normalizedRoot bundle.normalizedFixed
-            bundle.normalizedRootFunction bundle.normalizedFixedFunction bundle.normalizedPoint
-            bundle.pieces bundle.functions bundle.selectedSlot bundle.selectedSign
-            bundle.routedDirection), ∀ (selectedEdge : Finset GaussianInt),
-        let q := bundle.normalizedPresentation
-        let F := bundle.normalizedFixed
-        let root := bundle.normalizedRoot
-        let P := placement.layout.P
-        let u := placement.layout.u
-        let v := placement.layout.v
-        let selectedPath : Prop :=
-            (∃ selectedStart selectedEnd : GaussianInt,
-              SimpleGridPathBetween
-                (FootprintVertices
-                    (SubtileOccurrenceInterpretation P u v placement.exteriorIndex) ∩
-                  FootprintVertices
-                    (SubtileOccurrenceInterpretation P u v placement.centralIndex))
-                (FootprintEdges
-                    (SubtileOccurrenceInterpretation P u v placement.exteriorIndex) ∩
-                  FootprintEdges
-                    (SubtileOccurrenceInterpretation P u v placement.centralIndex))
-                selectedStart selectedEnd ∧
-              selectedEdge ∈
-                FootprintEdges
-                    (SubtileOccurrenceInterpretation P u v placement.exteriorIndex) ∩
-                  FootprintEdges
-                    (SubtileOccurrenceInterpretation P u v placement.centralIndex) ∧
-              bundle.normalizedPoint ∈ selectedEdge)
-        let rightGeometry := fun (i j : Fin 3) (sgn : GaussianInt)
-            (firstSign secondSign : Bool) ↦
-          let firstCompanion := TileTranslation F
-            (sgn * BandVectors.1 (q 0) (q i.succ))
-          let secondCompanion := TileTranslation F
-            (sgn * BandVectors.1 (q 0) (q j.succ))
-          let firstPiece := TileTranslation (placement.layout.P i firstSign)
-            placement.rightNeighborDisplacement
-          let secondPiece := TileTranslation (placement.layout.P j secondSign)
-            placement.rightNeighborDisplacement
-          ∃ firstBoundaryData : ExactTileInterfaceTriple F firstCompanion firstPiece,
-            ∃ secondBoundaryData : ExactTileInterfaceTriple F secondCompanion secondPiece,
-              ∃ firstData : ExactTileInterfaceTriple root F firstCompanion,
-                ∃ secondData : ExactTileInterfaceTriple root F secondCompanion,
-                  firstBoundaryData.point = firstData.point ∧
-                  secondBoundaryData.point = secondData.point ∧
-                  LatticeTile root ∧ LatticeTile F ∧ LatticeTile firstCompanion ∧
-                  LatticeTile secondCompanion ∧ Disjoint root.cells firstCompanion.cells ∧
-                  Disjoint F.cells firstCompanion.cells ∧
-                  Disjoint root.cells secondCompanion.cells ∧
-                  Disjoint F.cells secondCompanion.cells ∧
-                  Disjoint firstCompanion.cells secondCompanion.cells ∧
-                  TouchingTriple root F firstCompanion ∧
-                  TouchingTriple root F secondCompanion ∧
-                  firstData.point ≠ secondData.point ∧
-                  secondData.point = firstData.otherAB ∧
-                  secondData.otherAB = firstData.point ∧ selectedPath
-        (placement.rightFirstSlot = (2 : Fin (3 : ℕ))) → ((placement.rightSecondSlot = (0 : Fin
-            (3 : ℕ))) → ((rightGeometry (2 : Fin (3 : ℕ)) (0 : Fin (3 : ℕ)) (1 : GaussianInt)
-            false true) → (rightGeometry placement.rightFirstSlot placement.rightSecondSlot 1
-            false true))) ) := by
-  classical
-  intro C D T N h k x bundle placement selectedEdge q F root P u v selectedPath rightGeometry hi
-      hj geom
-  rw [hi, hj]
-  exact geom
-
 private theorem hRAt1522 :
     (by
       classical
@@ -3121,79 +2666,6 @@ private theorem hXAt1564 :
   classical
   intro C D T N h k x bundle placement root secondBoundarySubset hj hsecond
   simpa [hj, hsecond] using secondBoundarySubset
-
-private theorem hgeomAt1569 :
-    (by
-      classical
-      exact
-        ∀ (C : BandCircle), ∀ (D : BandCircle), ∀ (T : ProtoTile), ∀ (N : ProtoTile), ∀ (h :
-            PartialOdometer), ∀ (k : PartialOdometer), ∀ (x : GaussianInt), ∀ (bundle :
-            BandOrderedGeneralNormalizedOccurrenceBundle C D T N h k x), ∀ (placement :
-            BandOrderedGeneralRightPlacement bundle.normalizedPresentation bundle.configuration
-            bundle.normalizedCircle bundle.normalizedRoot bundle.normalizedFixed
-            bundle.normalizedRootFunction bundle.normalizedFixedFunction bundle.normalizedPoint
-            bundle.pieces bundle.functions bundle.selectedSlot bundle.selectedSign
-            bundle.routedDirection), ∀ (selectedEdge : Finset GaussianInt),
-        let q := bundle.normalizedPresentation
-        let F := bundle.normalizedFixed
-        let root := bundle.normalizedRoot
-        let P := placement.layout.P
-        let u := placement.layout.u
-        let v := placement.layout.v
-        let selectedPath : Prop :=
-            (∃ selectedStart selectedEnd : GaussianInt,
-              SimpleGridPathBetween
-                (FootprintVertices
-                    (SubtileOccurrenceInterpretation P u v placement.exteriorIndex) ∩
-                  FootprintVertices
-                    (SubtileOccurrenceInterpretation P u v placement.centralIndex))
-                (FootprintEdges
-                    (SubtileOccurrenceInterpretation P u v placement.exteriorIndex) ∩
-                  FootprintEdges
-                    (SubtileOccurrenceInterpretation P u v placement.centralIndex))
-                selectedStart selectedEnd ∧
-              selectedEdge ∈
-                FootprintEdges
-                    (SubtileOccurrenceInterpretation P u v placement.exteriorIndex) ∩
-                  FootprintEdges
-                    (SubtileOccurrenceInterpretation P u v placement.centralIndex) ∧
-              bundle.normalizedPoint ∈ selectedEdge)
-        let rightGeometry := fun (i j : Fin 3) (sgn : GaussianInt)
-            (firstSign secondSign : Bool) ↦
-          let firstCompanion := TileTranslation F
-            (sgn * BandVectors.1 (q 0) (q i.succ))
-          let secondCompanion := TileTranslation F
-            (sgn * BandVectors.1 (q 0) (q j.succ))
-          let firstPiece := TileTranslation (placement.layout.P i firstSign)
-            placement.rightNeighborDisplacement
-          let secondPiece := TileTranslation (placement.layout.P j secondSign)
-            placement.rightNeighborDisplacement
-          ∃ firstBoundaryData : ExactTileInterfaceTriple F firstCompanion firstPiece,
-            ∃ secondBoundaryData : ExactTileInterfaceTriple F secondCompanion secondPiece,
-              ∃ firstData : ExactTileInterfaceTriple root F firstCompanion,
-                ∃ secondData : ExactTileInterfaceTriple root F secondCompanion,
-                  firstBoundaryData.point = firstData.point ∧
-                  secondBoundaryData.point = secondData.point ∧
-                  LatticeTile root ∧ LatticeTile F ∧ LatticeTile firstCompanion ∧
-                  LatticeTile secondCompanion ∧ Disjoint root.cells firstCompanion.cells ∧
-                  Disjoint F.cells firstCompanion.cells ∧
-                  Disjoint root.cells secondCompanion.cells ∧
-                  Disjoint F.cells secondCompanion.cells ∧
-                  Disjoint firstCompanion.cells secondCompanion.cells ∧
-                  TouchingTriple root F firstCompanion ∧
-                  TouchingTriple root F secondCompanion ∧
-                  firstData.point ≠ secondData.point ∧
-                  secondData.point = firstData.otherAB ∧
-                  secondData.otherAB = firstData.point ∧ selectedPath
-        (placement.rightFirstSlot = (2 : Fin (3 : ℕ))) → ((placement.rightSecondSlot = (0 : Fin
-            (3 : ℕ))) → ((rightGeometry (2 : Fin (3 : ℕ)) (0 : Fin (3 : ℕ)) (-1 : GaussianInt)
-            true false) → (rightGeometry placement.rightFirstSlot placement.rightSecondSlot (-1)
-            true false))) ) := by
-  classical
-  intro C D T N h k x bundle placement selectedEdge q F root P u v selectedPath rightGeometry hi
-      hj geom
-  rw [hi, hj]
-  exact geom
 
 end SelectedRowGeometry
 
@@ -3665,8 +3137,13 @@ private theorem firstCyclicCase :
     · have geom := SelectedRowGeometry.geomAt1214 C D T N h k x bundle placement selectedEdge
         edgeVertex hp packageGeometry firstBoundarySubset secondBoundarySubset hi hj R1 R2 g
         hgs hge hneq hfirst hsecond
-      have hgeom := SelectedRowGeometry.hgeomAt1233 C D T N h k x bundle placement selectedEdge
-          hi hj geom
+      have hgeom := (show
+          rightGeometry placement.rightFirstSlot placement.rightSecondSlot 1 false
+          true
+        from by
+          classical
+          rw [hi, hj]
+          exact geom)
       rcases chosenBoundary with ⟨hs, hsign⟩ |
         ⟨hs, hsign⟩
       · have hselectedSign : bundle.selectedSign = false := by
@@ -3714,8 +3191,13 @@ private theorem firstCyclicCase :
     · have geom := SelectedRowGeometry.geomAt1286 C D T N h k x bundle placement selectedEdge
         edgeVertex hp packageGeometry firstBoundarySubset secondBoundarySubset hi hj R1 R2 g
         hgs hge hneq hfirst hsecond
-      have hgeom := SelectedRowGeometry.hgeomAt1305 C D T N h k x bundle placement selectedEdge
-          hi hj geom
+      have hgeom := (show
+          rightGeometry placement.rightFirstSlot placement.rightSecondSlot (-1) true
+          false
+        from by
+          classical
+          rw [hi, hj]
+          exact geom)
       rcases chosenBoundary with ⟨hs, hsign⟩ |
         ⟨hs, hsign⟩
       · have hselectedSign : bundle.selectedSign = true := by
@@ -4058,8 +3540,13 @@ private theorem secondCyclicCase :
       have hX := SelectedRowGeometry.hXAt1373 C D T N h k x bundle placement
           secondBoundarySubset hj hsecond
       have geom := packageGeometry 1 2 1 false true g hgs hge hneq R1g R2g hW hX
-      have hgeom := SelectedRowGeometry.hgeomAt1378 C D T N h k x bundle placement selectedEdge
-          hi hj geom
+      have hgeom := (show
+          rightGeometry placement.rightFirstSlot placement.rightSecondSlot 1 false
+          true
+        from by
+          classical
+          rw [hi, hj]
+          exact geom)
       rcases chosenBoundary with ⟨hs, hsign⟩ |
         ⟨hs, hsign⟩
       · have hs' : bundle.selectedSign = false := by
@@ -4106,8 +3593,13 @@ private theorem secondCyclicCase :
       have hX := SelectedRowGeometry.hXAt1432 C D T N h k x bundle placement
           secondBoundarySubset hj hsecond
       have geom := packageGeometry 1 2 (-1) true false g hgs hge hneq R1g R2g hW hX
-      have hgeom := SelectedRowGeometry.hgeomAt1437 C D T N h k x bundle placement selectedEdge
-          hi hj geom
+      have hgeom := (show
+          rightGeometry placement.rightFirstSlot placement.rightSecondSlot (-1) true
+          false
+        from by
+          classical
+          rw [hi, hj]
+          exact geom)
       rcases chosenBoundary with ⟨hs, hsign⟩ |
         ⟨hs, hsign⟩
       · have hs' : bundle.selectedSign = true := by
@@ -4450,8 +3942,13 @@ private theorem thirdCyclicCase :
       have hX := SelectedRowGeometry.hXAt1505 C D T N h k x bundle placement
           secondBoundarySubset hj hsecond
       have geom := packageGeometry 2 0 1 false true g hgs hge hneq R1g R2g hW hX
-      have hgeom := SelectedRowGeometry.hgeomAt1510 C D T N h k x bundle placement selectedEdge
-          hi hj geom
+      have hgeom := (show
+          rightGeometry placement.rightFirstSlot placement.rightSecondSlot 1 false
+          true
+        from by
+          classical
+          rw [hi, hj]
+          exact geom)
       rcases chosenBoundary with ⟨hs, hsign⟩ |
         ⟨hs, hsign⟩
       · have hs' : bundle.selectedSign = false := by
@@ -4498,8 +3995,13 @@ private theorem thirdCyclicCase :
       have hX := SelectedRowGeometry.hXAt1564 C D T N h k x bundle placement
           secondBoundarySubset hj hsecond
       have geom := packageGeometry 2 0 (-1) true false g hgs hge hneq R1g R2g hW hX
-      have hgeom := SelectedRowGeometry.hgeomAt1569 C D T N h k x bundle placement selectedEdge
-          hi hj geom
+      have hgeom := (show
+          rightGeometry placement.rightFirstSlot placement.rightSecondSlot (-1) true
+          false
+        from by
+          classical
+          rw [hi, hj]
+          exact geom)
       rcases chosenBoundary with ⟨hs, hsign⟩ |
         ⟨hs, hsign⟩
       · have hs' : bundle.selectedSign = true := by
@@ -4707,10 +4209,9 @@ theorem BandOrderedGeneralRightSelectedRowGeometry
       (hanchor : A.cells = ∅ → A.anchor = A'.anchor)
       (E : ExactTileInterfaceTriple A B D) : ExactTileInterfaceTriple A' B D :=
           SelectedRowExactInterfaces.retargetExactFirst A A' B D hcell hanchor E
-  have touchingRetarget := SelectedRowGeometry.touchingRetarget
-      (SelectedRowGeometry.tileTouchingRetarget)
+  have touchingRetarget := ObservableTileRetargeting.triple
   have centeredTurnTouching := SelectedRowGeometry.centeredTurnTouching touchingRetarget
-      (SelectedRowGeometry.quarterTranslate C D T N h k x bundle) (SelectedRowGeometry.translateObs)
+      (TileQuarterTurnTranslation.translated) (SelectedRowGeometry.translateObs)
   have exactPlus (ell : Fin 3) : ExactTileInterfaceTriple F
       (TileTranslation F (BandVectors.1 (q 0) (q ell.succ)))
       (TileTranslation F (-BandVectors.1 (q 0) (q (ell + 1).succ))) := by

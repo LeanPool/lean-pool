@@ -144,23 +144,8 @@ private theorem hT0cent :
   rw [hc, (TileTranslationFormulas (DiamondTile K.1) u).2.2.2.2.1]
   rfl
 
-private theorem hT0'cent :
-    (by
-      classical
-      exact
-        ∀ (K : DiamondParameter), ∀ (T0' : ProtoTile), ∀ (u' : GaussianInt), (T0'.cells =
-            (TileTranslation (DiamondTile K.1) u').cells) → ((T0'.cells.Nonempty) → (TileCentroid
-            T0' = TileCentroid (DiamondTile K.1) + GaussianRealPoint u')) ) := by
-  classical
-  intro K T0' u' hu'Cell hT0'ne
-  have htrne : (TileTranslation (DiamondTile K.1) u').cells.Nonempty := by
-    rw [← hu'Cell]
-    exact hT0'ne
-  have hc : TileCentroid T0' = TileCentroid (TileTranslation (DiamondTile K.1) u') := by
-    unfold TileCentroid
-    rw [ite_eq_left hT0'ne, ite_eq_left htrne, hu'Cell]
-  rw [hc, (TileTranslationFormulas (DiamondTile K.1) u').2.2.2.2.1]
-  rfl
+private abbrev hT0'cent :=
+  ApollonianSuperharmonic.DiamondBoundaryStarGeometry.hT0cent
 
 private theorem hshift :
     (by

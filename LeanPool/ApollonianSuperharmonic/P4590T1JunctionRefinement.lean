@@ -6,6 +6,7 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.LatticeFootprintIncidence
 
 public import LeanPool.ApollonianSuperharmonic.P4590T1PositivePrototileDisk
 public import LeanPool.ApollonianSuperharmonic.P4339T1PrecursorSupportGeometry
@@ -35,28 +36,8 @@ private theorem htransZero :
   funext z
   exact add_zero z
 
-private theorem incident :
-    (by
-      classical
-      exact
-        ∀ (W : ProtoTile), ∀ (y : GaussianInt), (W.cells.Nonempty) → ((y ∈ FootprintVertices W) →
-            (∃ j : Fin 4, LatticeVertexIncidentCell y j ∈ W.cells)) ) := by
-  classical
-  intro W y hne hy
-  simp only [FootprintVertices, hne, ite_true, Set.mem_ofPred_eq] at hy
-  rcases hy with ⟨c, hc, h | h | h | h⟩
-  · exact ⟨0, by simpa [LatticeVertexIncidentCell] using h ▸ hc⟩
-  · refine ⟨1, ?_⟩
-    rw [h]
-    simpa [LatticeVertexIncidentCell] using hc
-  · refine ⟨3, ?_⟩
-    rw [h]
-    simpa [LatticeVertexIncidentCell] using hc
-  · refine ⟨2, ?_⟩
-    change y - 1 - ⟨0, 1⟩ ∈ W.cells
-    rw [h]
-    convert hc using 1
-    ext <;> simp
+private abbrev incident :=
+  LatticeFootprintIncidence.incidentCell
 
 private theorem hfourCells :
     (by
@@ -701,22 +682,8 @@ private theorem classifyADface :
   cases label <;> fin_cases i <;> fin_cases j <;>
     simp [SixSubtileFaceVertices, a0, d0] at hi hj ⊢ <;> omega
 
-private theorem rhoFace2 :
-    (by
-      classical
-      exact
-        ∀ (q : Fin 4 → CircleCoordinates), ∀ (cfg : BandOrderedGeneralConfiguration q), ∀ (C :
-            BandCircle), ∀ (T : ProtoTile), ∀ (cert : BandOrderedGeneralLayoutCertificate q cfg C
-            T), ∀ (F : cert.modified.plane.Face), ∀ (face : PeriodicSubtileFaceIndex),
-            (cert.modifiedFaceEquivalence F = face) → (cert.modified.rho F =
-                cert.unmodified.core.rho
-            (cert.unmodified.faceEquiv.symm face)) ) := by
-  classical
-  intro q cfg C T cert F face hF
-  have hEq : F = cert.modifiedFaceEquivalence.symm face := by
-    have hh := congrArg cert.modifiedFaceEquivalence.symm hF
-    simpa using hh
-  rw [hEq, cert.modified_face_points]
+private abbrev rhoFace2 :=
+  ApollonianSuperharmonic.JunctionRefinementGeometry.rhoFace
 
 private theorem hf2point :
     (by
@@ -1003,22 +970,8 @@ private theorem classifyCFface :
   cases label <;> fin_cases i <;> fin_cases j <;>
     simp [SixSubtileFaceVertices, c0, f0] at hi hj ⊢ <;> omega
 
-private theorem rhoFace3 :
-    (by
-      classical
-      exact
-        ∀ (q : Fin 4 → CircleCoordinates), ∀ (cfg : BandOrderedGeneralConfiguration q), ∀ (C :
-            BandCircle), ∀ (T : ProtoTile), ∀ (cert : BandOrderedGeneralLayoutCertificate q cfg C
-            T), ∀ (F : cert.modified.plane.Face), ∀ (face : PeriodicSubtileFaceIndex),
-            (cert.modifiedFaceEquivalence F = face) → (cert.modified.rho F =
-                cert.unmodified.core.rho
-            (cert.unmodified.faceEquiv.symm face)) ) := by
-  classical
-  intro q cfg C T cert F face hF
-  have hEq : F = cert.modifiedFaceEquivalence.symm face := by
-    have hh := congrArg cert.modifiedFaceEquivalence.symm hF
-    simpa using hh
-  rw [hEq, cert.modified_face_points]
+private abbrev rhoFace3 :=
+  ApollonianSuperharmonic.JunctionRefinementGeometry.rhoFace
 
 private theorem hf3point :
     (by
@@ -1283,22 +1236,8 @@ private theorem hxvDE :
   rw [← hregular.adjacent_raw_eq_edge_vertices d0 e0 hde]
   exact hxDE
 
-private theorem rhoFace4 :
-    (by
-      classical
-      exact
-        ∀ (q : Fin 4 → CircleCoordinates), ∀ (cfg : BandOrderedGeneralConfiguration q), ∀ (C :
-            BandCircle), ∀ (T : ProtoTile), ∀ (cert : BandOrderedGeneralLayoutCertificate q cfg C
-            T), ∀ (F : cert.modified.plane.Face), ∀ (face : PeriodicSubtileFaceIndex),
-            (cert.modifiedFaceEquivalence F = face) → (cert.modified.rho F =
-                cert.unmodified.core.rho
-            (cert.unmodified.faceEquiv.symm face)) ) := by
-  classical
-  intro q cfg C T cert F face hF
-  have hEq : F = cert.modifiedFaceEquivalence.symm face := by
-    have hh := congrArg cert.modifiedFaceEquivalence.symm hF
-    simpa using hh
-  rw [hEq, cert.modified_face_points]
+private abbrev rhoFace4 :=
+  ApollonianSuperharmonic.JunctionRefinementGeometry.rhoFace
 
 private theorem hf4point :
     (by

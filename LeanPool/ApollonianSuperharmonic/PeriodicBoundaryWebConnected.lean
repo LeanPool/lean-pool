@@ -605,42 +605,11 @@ private theorem indexBoundaryPath :
               h2head h2last h2mem h2chain
           exact ⟨l, hhead, hlast, hmem, hchain⟩
 
-private theorem indexedDisjoint :
-    (by
-      classical
-      exact
-        ∀ (C : BandCircle), ∀ (P : PeriodicTileComplex ↥(TilingLattice C)), ∀ (a : TilingLattice
-            C), ∀ (b : TilingLattice C), (P.plane.adjacent a b) → (Disjoint (P.tile a).cells
-            (P.tile b).cells) ) := by
-  classical
-  intro C P a b hab
-  apply Finset.disjoint_left.mpr
-  intro x hxa hxb
-  obtain ⟨owner, howner, hunique⟩ := PeriodicTileIndexedMultiplicityOne P x
-  have ha : a = owner := hunique a hxa
-  have hb : b = owner := hunique b hxb
-  have hne : a ≠ b := by
-    intro hab'
-    rw [← hab'] at hab
-    exact P.plane.adjacent_irreflexive a hab
-  exact hne (ha.trans hb.symm)
+private abbrev indexedDisjoint :=
+  ApollonianSuperharmonic.BoundaryWebGeometry.indexedDisjointEarly
 
-private theorem edgeBoundary :
-    (by
-      classical
-      exact
-        ∀ (C : BandCircle), ∀ (P : PeriodicTileComplex ↥(TilingLattice C)), (∀ (a : TilingLattice
-            C), ∀ (b : TilingLattice C), (P.plane.adjacent a b) → (Disjoint (P.tile a).cells
-            (P.tile b).cells)) → (∀ (a : TilingLattice C), ∀ (b : TilingLattice C),
-            (P.plane.adjacent a b) → (∀ (e : Finset GaussianInt), (e ∈ FootprintEdges (P.tile a)
-            ∩ FootprintEdges (P.tile b)) → (e ∈ BoundaryFootprintEdges (P.tile a) ∩
-            BoundaryFootprintEdges (P.tile b)))) ) := by
-  classical
-  intro C P indexedDisjoint a b hab e he
-  have he' := he
-  rw [CellDisjointCommonEdgesBoundary (P.tile a) (P.tile b)
-    (indexedDisjoint a b hab)] at he'
-  exact he'
+private abbrev edgeBoundary :=
+  ApollonianSuperharmonic.BoundaryWebGeometry.edgeBoundaryEarly
 
 private theorem noBoundaryIncident :
     (by

@@ -656,48 +656,6 @@ private theorem neighbor_injective :
   intro x neighbor a b hab
   fin_cases a <;> fin_cases b <;> simp [neighbor, Zsqrtd.ext_iff] at hab ⊢ <;> omega
 
-private theorem neighbor_exhaust :
-    (by
-      classical
-      exact
-        ∀ (C : BandCircle), ∀ (q : Fin (4 : ℕ) → CircleCoordinates), ∀ (cfg :
-            BandOrderedGeneralConfiguration q), ∀ (T : ProtoTile), ∀ (cert :
-            BandOrderedGeneralLayoutCertificate q cfg C T), ∀ (D : Finset GaussianInt), ∀ (P :
-            Finset GaussianInt), ∀ (x : GaussianInt), (x ∈ D \ P) → ((x ∈ D) → ((x ∉ P) → ((x ∈
-            FootprintVertices T ∧ x ∉ BoundaryFootprintVertices T) → ((∀ (j : Fin (4 : ℕ)),
-            LatticeVertexIncidentCell x j ∈ T.cells) → ((∀ (i : Fin 3), ∀ (s : Bool), (x ∈
-            FootprintVertices (cert.P i s)) → (x ∈ BoundaryFootprintVertices (cert.P i s))) → ((∀
-            {α : Type}, ∀ (F : α → ProtoTile), (∀ a, LatticeTile (F a)) → (∀ (owner : Fin 4 → α),
-            (∀ j, ∀ a, LatticeVertexIncidentCell x j ∈ (F a).cells ↔ owner j = a) → (¬ (owner 0 =
-            owner 2 ∧ owner 1 ≠ owner 0 ∧ owner 3 ≠ owner 0) ∧ ¬ (owner 1 = owner 3 ∧ owner 0 ≠
-            owner 1 ∧ owner 2 ≠ owner 1)))) → ((∀ {α : Type}, ∀ (F : α → ProtoTile), (∀ a, ∀ b, a
-            ≠ b → Disjoint (F a).cells (F b).cells) → ((∀ j : Fin 4, ∃ a,
-            LatticeVertexIncidentCell x j ∈ (F a).cells) → (∃ owner : Fin 4 → α, ∀ j, ∀ a,
-            LatticeVertexIncidentCell x j ∈ (F a).cells ↔ owner j = a))) → (((∀ j : Fin 4,
-            LatticeVertexIncidentCell x j ∈ (cert.P 0 true).cells ∨ LatticeVertexIncidentCell x j
-            ∈ (cert.P 0 false).cells) → (∀ (j : Fin 4), (∃ i s, LatticeVertexIncidentCell x j ∈
-            (cert.P i s).cells ∧ LatticeVertexIncidentCell x (j + 1) ∈ (cert.P i s).cells) ↔
-            (LatticeVertexIncidentCell x j ∈ (cert.P 0 true).cells ∧ LatticeVertexIncidentCell x
-            (j + 1) ∈ (cert.P 0 true).cells) ∨ (LatticeVertexIncidentCell x j ∈ (cert.P 0
-            false).cells ∧ LatticeVertexIncidentCell x (j + 1) ∈ (cert.P 0 false).cells))) → (
-        let neighbor : Fin 4 → GaussianInt := ![x + ⟨0, 1⟩, x - 1, x - ⟨0, 1⟩, x + 1]
-        (∀ (j : Fin 4), ∃ a b : Fin 4, LatticeVertexIncidentCell x j = LatticeVertexIncidentCell
-            (neighbor j) a ∧ LatticeVertexIncidentCell x (j + 1) = LatticeVertexIncidentCell
-            (neighbor j) b) → ((∀ (j : Fin 4), neighbor j ∈ P ↔ ∃ i s, LatticeVertexIncidentCell
-            x j ∈ (cert.P i s).cells ∧ LatticeVertexIncidentCell x (j + 1) ∈ (cert.P i s).cells)
-            → ((Function.Injective neighbor) → ((∀ (j : Fin 4), FourNeighborAdjacent (neighbor j)
-            x) → (∀ (y : GaussianInt), (FourNeighborAdjacent y x) → (∃ j : Fin 4, neighbor j =
-            y)))))))))))))) ) := by
-  classical
-  intro C q cfg T cert D P x hx hxD hxP hxT hcells no_parent_interior no_diagonal label_sectors
-      common_parent_iff neighbor shared_cells neighbor_bridge neighbor_injective
-      neighbor_adjacent y hy
-  rcases hy with rfl | rfl | rfl | rfl
-  · exact ⟨1, by simp [neighbor]⟩
-  · exact ⟨3, by simp [neighbor]⟩
-  · exact ⟨2, by simp [neighbor]⟩
-  · exact ⟨0, by simp [neighbor]⟩
-
 private theorem neighbor_count :
     (by
       classical
@@ -1684,10 +1642,17 @@ theorem P4250T2InterfaceNeighborCount :
       fin_cases j <;> simp [neighbor, FourNeighborAdjacent]
     have neighbor_count := InterfaceNeighborGeometry.neighbor_count C q cfg T cert P x
         neighbor_bridge
-              neighbor_injective neighbor_adjacent (InterfaceNeighborGeometry.neighbor_exhaust C
-              q cfg T cert D P x hx hxD hxP hxT hcells no_parent_interior no_diagonal
-              label_sectors common_parent_iff shared_cells neighbor_bridge neighbor_injective
-              neighbor_adjacent)
+              neighbor_injective neighbor_adjacent ((show
+                  ∀ (y : GaussianInt), (FourNeighborAdjacent y x) → (∃ j : Fin
+                  4, neighbor j = y)
+                from by
+                  classical
+                  intro y hy
+                  rcases hy with rfl | rfl | rfl | rfl
+                  · exact ⟨1, by simp [neighbor]⟩
+                  · exact ⟨3, by simp [neighbor]⟩
+                  · exact ⟨2, by simp [neighbor]⟩
+                  · exact ⟨0, by simp [neighbor]⟩))
     constructor
     · intro hnotR
       have owner_exists := InterfaceNeighborGeometry.owner_exists C q cfg T cert x hcells

@@ -6,6 +6,8 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.PairAssignmentFacts
+public import LeanPool.ApollonianSuperharmonic.TileCornerMultiplicity
 public import Mathlib.Data.Finset.Card
 public import Mathlib.Data.Set.Card
 public import Mathlib.Tactic.NormNum
@@ -54,19 +56,8 @@ private theorem hcountpos :
   rw [Multiset.mem_toFinset] at hz
   exact Multiset.count_pos.mpr hz
 
-private theorem hvertexSet :
-    ∀ (T : ProtoTile), (T.cells.Nonempty) → (
-    let I : GaussianInt := ⟨0, 1⟩
-    let cornerBag : Multiset GaussianInt := T.cells.1.bind fun c =>
-      ([c, c + 1, c + I, c + 1 + I] : List GaussianInt)
-    (cornerBag.toFinset : Set GaussianInt) = FootprintVertices T) := by
-  classical
-  intro T hne I cornerBag
-  ext z
-  change z ∈ cornerBag.toFinset ↔ z ∈ FootprintVertices T
-  rw [Multiset.mem_toFinset]
-  dsimp only [cornerBag, I]
-  simp [FootprintVertices, hne]
+private abbrev hvertexSet :=
+  TileCornerMultiplicity.vertexSupport
 
 private theorem hvertexCard :
     ∀ (T : ProtoTile),
@@ -400,18 +391,8 @@ private theorem hedgeIdentity :
   rw [hedgePartition, ← hedgeBagCard] at ⊢
   omega
 
-private theorem pair_eq :
-    ∀ {a : GaussianInt}, ∀ {b : GaussianInt}, ∀ {c : GaussianInt}, ∀ {d : GaussianInt}, (({a, b}
-        : Finset GaussianInt) = {c, d}) → ((a = c ∧ b = d) ∨ (a = d ∧ b = c)) := by
-  classical
-  intro a b c d h
-  have hs : ({a, b} : Set GaussianInt) = {c, d} := by
-    ext x
-    have hx := congrArg (fun s : Finset GaussianInt => x ∈ s) h
-    apply Iff.of_eq
-    change (x = a ∨ x = b) = (x = c ∨ x = d)
-    simpa only [Finset.mem_insert, Finset.mem_singleton] using hx
-  exact Set.pair_eq_pair_iff.mp hs
+private abbrev pair_eq :=
+  @PairAssignmentFacts.finsetPair GaussianInt inferInstance
 
 private theorem edgeOf_injective :
     (ProtoTile) → (

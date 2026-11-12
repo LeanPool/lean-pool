@@ -698,32 +698,8 @@ private theorem htriple'At567 :
     hobsV.2.2).mp
   exact hbaseTouch.2.1 i U' hU'band hcenter'
 
-private theorem hcenterU' :
-    (by
-      classical
-      exact
-        ∀ (K : DiamondParameter), ∀ (T : ProtoTile),
-        let q := DiamondRecursiveQuadruple K
-        let D := DiamondTile K.1
-        ∀ (w : GaussianInt),
-        let T' := TileTranslation T (-w)
-        (TileCentroid T' = TileCentroid D) → ((∀ (A : ProtoTile), ∀ (B : ProtoTile), TileCentroid
-            (TileTranslation A (-w)) - TileCentroid (TileTranslation B (-w)) = TileCentroid A -
-            TileCentroid B) → (∀ (i : Fin (3 : ℕ)), ∀ (U : ProtoTile), (TileCentroid U -
-            TileCentroid T = (1 / 2 : ℝ) • (GaussianRealPoint (BandVectors.1
-            (DiamondRecursiveQuadruple K i.succ) (DiamondRecursiveQuadruple K (0 : Fin (4 : ℕ))))
-            + GaussianRealPoint (BandVectors.1 (DiamondRecursiveQuadruple K (0 : Fin (4 : ℕ)))
-            (DiamondRecursiveQuadruple K i.succ)))) → (
-        let U' := TileTranslation U (-w)
-        TileCentroid U' - TileCentroid D = (1 / 2 : Real) • (GaussianRealPoint (BandVectors.1 (q
-            i.succ) (q 0)) + GaussianRealPoint (BandVectors.1 (q 0) (q i.succ)))))) ) := by
-  classical
-  intro K T q D w T' hcent translate_centroid_diff i U hcenterU U'
-  calc
-    TileCentroid U' - TileCentroid D =
-        TileCentroid U' - TileCentroid T' := by rw [hcent]
-    _ = TileCentroid U - TileCentroid T := translate_centroid_diff U T
-    _ = _ := hcenterU
+private abbrev hcenterU' :=
+  ApollonianSuperharmonic.DiamondInterfaceGeometry.hcenter'
 
 private theorem hcenterV' :
     (by

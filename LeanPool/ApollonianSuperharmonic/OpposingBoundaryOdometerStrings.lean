@@ -1170,58 +1170,6 @@ private theorem hgsHead :
   rw [List.head?_mapIdx, hhsHead]
   simp [transformAt, constAt, hplus]
 
-private theorem hgsLast :
-    (by
-      classical
-        exact
-        ∀ (q : Fin 4 → CircleCoordinates),
-          (∀ (i : Fin 3),
-            (∀ (tiles : List ProtoTile),
-              ∀ (hseed : PartialOdometer),
-                (∀ (centerShift : GaussianInt),
-                  let d : GaussianInt :=
-                    -BandVectors.2 (q ((i + 1).succ)) (q i.succ);
-                  let hminus := PartialOdometerAffineTranslate hseed 0 d 0;
-                  (∀ (couter : GaussianInt),
-                    ∀ (eouter : ℤ),
-                      let a : GaussianInt := -couter;
-                      let b : Int := -eouter;
-                      let hplus :=
-                        PartialOdometerAffineTranslate
-                          (PartialOdometerHalfTurn hminus) centerShift a 0;
-                      ∀ (eback : ℤ),
-                        let bplus : Int := -eback;
-                        let hminusBack :=
-                          PartialOdometerAffineTranslate
-                            (PartialOdometerHalfTurn hplus) centerShift a bplus;
-                        (hminus = hminusBack) →
-                          ((2 ≤ tiles.length) →
-                            (∀ (hs : List PartialOdometer),
-                              (hs.getLast? = some hplus) →
-                                ((hs.length = tiles.length) →
-                                  (let constAt : Nat → Int := fun n =>
-                                    if n = 0 then 0
-                                    else if n + 1 = hs.length then bplus else b;
-                                  let transformAt :
-                                    Nat → PartialOdometer → PartialOdometer :=
-                                    fun n h =>
-                                    PartialOdometerAffineTranslate
-                                      (PartialOdometerHalfTurn h) centerShift a
-                                      (constAt n);
-                                  let gs := hs.mapIdx transformAt;
-                                  gs.getLast? = some hminus))))))))) := by
-  classical
-  intro q i tiles hseed centerShift d hminus couter eouter a b hplus eback bplus hminusBack
-      hminusBackEq htilesLength hs hhsLast hlengthEq constAt transformAt gs
-  rw [List.getLast?_mapIdx, hhsLast]
-  have hlastIndex : hs.length - 1 + 1 = hs.length := by omega
-  have hlastNotZero : hs.length - 1 ≠ 0 := by omega
-  simp only [Option.map_some]
-  apply congrArg some
-  dsimp [transformAt, constAt]
-  rw [ite_eq_right hlastNotZero, ite_eq_left hlastIndex]
-  exact hminusBackEq.symm
-
 private theorem forall2_dropLast :
     (by
       classical
@@ -1623,34 +1571,6 @@ private theorem hreverseTilesNonempty :
   rw [h] at hreverseHead
   simp at hreverseHead
 
-private theorem hgsNonempty :
-    (by
-      classical
-      exact
-        ∀ (q : Fin 4 -> CircleCoordinates), ∀ (i : Fin 3), ∀ (hseed : PartialOdometer), ∀
-            (centerShift : GaussianInt),
-        let d : GaussianInt := -BandVectors.2 (q ((i + 1).succ)) (q i.succ)
-        let hminus := PartialOdometerAffineTranslate hseed 0 d 0
-        ∀ (couter : GaussianInt), ∀ (eouter : ℤ),
-        let a : GaussianInt := -couter
-        let b : Int := -eouter
-        let hplus := PartialOdometerAffineTranslate
-          (PartialOdometerHalfTurn hminus) centerShift a 0
-        ∀ (eback : ℤ),
-        let bplus : Int := -eback
-        ∀ (hs : List PartialOdometer),
-        let constAt : Nat → Int := fun n =>
-          if n = 0 then 0 else if n + 1 = hs.length then bplus else b
-        let transformAt : Nat → PartialOdometer → PartialOdometer := fun n h =>
-          PartialOdometerAffineTranslate (PartialOdometerHalfTurn h) centerShift a (constAt n)
-        let gs := hs.mapIdx transformAt
-        (gs.head? = some hplus) → (gs ≠ []) ) := by
-  classical
-  intro q i hseed centerShift d hminus couter eouter a b hplus eback bplus hs constAt transformAt
-      gs hgsHead h
-  rw [h] at hgsHead
-  simp at hgsHead
-
 private theorem forall2_length :
     (by
       classical
@@ -2004,8 +1924,18 @@ private theorem opposingBoundaryConclusion :
       transformForall htransform
   have hgsHead := OpposingBoundaryGeometry.hgsHead q i hseed centerShift couter eouter eback hs
       hhsHead
-  have hgsLast := OpposingBoundaryGeometry.hgsLast q i tiles hseed centerShift couter eouter
-      eback hminusBackEq htilesLength hs hhsLast hlengthEq
+  have hgsLast := (show
+      gs.getLast? = some hminus
+    from by
+      classical
+      rw [List.getLast?_mapIdx, hhsLast]
+      have hlastIndex : hs.length - 1 + 1 = hs.length := by omega
+      have hlastNotZero : hs.length - 1 ≠ 0 := by omega
+      simp only [Option.map_some]
+      apply congrArg some
+      dsimp [transformAt, constAt]
+      rw [ite_eq_right hlastNotZero, ite_eq_left hlastIndex]
+      exact hminusBackEq.symm)
   let cellRelation : ProtoTile → ProtoTile → Prop := fun T U =>
     (TileTranslation (TileHalfTurn T) centerShift).cells = U.cells
   have hinteriorCells := OpposingBoundaryGeometry.hinteriorCells tiles centerShift
@@ -2052,8 +1982,10 @@ private theorem opposingBoundaryConclusion :
   have hreverseHead : reverseTiles.head? = some Rplus := hreverse.2.1
   have hreverseTilesNonempty := OpposingBoundaryGeometry.hreverseTilesNonempty Rplus reverseTiles
       hreverseHead
-  have hgsNonempty := OpposingBoundaryGeometry.hgsNonempty q i hseed centerShift couter eouter
-      eback hs hgsHead
+  have hgsNonempty : gs ≠ [] := by
+    have hhead : gs.head? = some hplus := hgsHead
+    intro h
+    simp [h] at hhead
   have forall2_mem_right :
     ∀ {α β : Type} {r : α → β → Prop}
           {xs : List α} {ys : List β}, List.Forall₂ r xs ys →

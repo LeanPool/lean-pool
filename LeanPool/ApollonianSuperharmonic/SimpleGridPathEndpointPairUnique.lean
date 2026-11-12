@@ -6,6 +6,7 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.ListEndpointFacts
 
 public import LeanPool.ApollonianSuperharmonic.SimpleGridPathBetween
 
@@ -72,23 +73,8 @@ private theorem hpform :
     simp only [List.head?_cons, Option.some.injEq] at hx
     exact ⟨r, by simp [hx]⟩
 
-private theorem hqform :
-    ∀ (V : Set GaussianInt), ∀ (E : Set (Finset GaussianInt)), ∀ (x' : GaussianInt), ∀ (y' :
-        GaussianInt), ∀ (q : List GaussianInt), (q.Nodup) → (((2 : ℕ) ≤ q.length) → ((q.head? =
-        some x') → ((q.getLast? = some y') → ((V = (↑q.toFinset : Set GaussianInt)) → ((∀ (a :
-        GaussianInt), ∀ (b : GaussianInt), ∀ (l₁ : List GaussianInt), ∀ (l₂ : List GaussianInt),
-        q = l₁ ++ a :: b :: l₂ → b = a + (1 : GaussianInt) ∨ b = a - (1 : GaussianInt) ∨ b = a +
-        { re := (0 : ℤ), im := (1 : ℤ) } ∨ b = a - { re := (0 : ℤ), im := (1 : ℤ) }) → ((∀ (e :
-        Finset GaussianInt), e ∈ E ↔ ∃ (a : GaussianInt) (b : GaussianInt) (l₁ : List
-        GaussianInt) (l₂ : List GaussianInt), q = l₁ ++ a :: b :: l₂ ∧ e = {a, b}) → ((q ≠ []) →
-        (∃ r, q = x' :: r)))))))) := by
-  classical
-  intro V E x' y' q hq hqlen hx' hy' hV' hstep' hE' hqne
-  cases q with
-  | nil => exact False.elim (hqne rfl)
-  | cons a r =>
-    simp only [List.head?_cons, Option.some.injEq] at hx'
-    exact ⟨r, by simp [hx']⟩
+private abbrev hqform :=
+  ApollonianSuperharmonic.EndpointPairProof.hpform
 
 private theorem endpoint_edge :
     ∀ (r : List GaussianInt), ∀ (z : GaussianInt), r.Nodup → 2 ≤ r.length → r.head? = some z →
@@ -126,18 +112,8 @@ private theorem endpoint_edge :
   · simp [hab]
   · simpa using he
 
-private theorem split_mem :
-    ∀ (r : List GaussianInt), ∀ (z : GaussianInt), z ∈ r → ∃ l t, r = l ++ z :: t := by
-  classical
-  intro r z hzmem
-  induction r with
-  | nil => simp at hzmem
-  | cons a r ih =>
-    simp only [List.mem_cons] at hzmem
-    rcases hzmem with rfl | hzmem
-    · exact ⟨[], r, rfl⟩
-    · rcases ih hzmem with ⟨l, t, ht⟩
-      exact ⟨a :: l, t, by simp [ht, List.cons_append]⟩
+private abbrev split_mem :=
+  @ListEndpointFacts.splitMembership GaussianInt
 
 private theorem endpoint_unique :
     (∀ (r : List GaussianInt), ∀ (z : GaussianInt), r.Nodup → 2 ≤ r.length → r.head? = some z → ∀

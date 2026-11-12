@@ -391,25 +391,6 @@ private theorem invStep :
       dotProduct, Fin.sum_univ_two] at heq ⊢
     linear_combination heq
 
-private theorem hlenPre :
-    (by
-      classical
-      exact
-        (BandCircle) → (∀ (Ci : BandCircle), ∀ (orientation : Bool), ∀ (base : ProtoTile), ∀
-            (Rminus : ProtoTile), ∀ (Rplus : ProtoTile), ∀ (tiles : List ProtoTile), ∀ (hs : List
-            PartialOdometer), ∀ (hplus : PartialOdometer), (OdometerStringRespect Ci orientation
-            base Rminus Rplus tiles hs) → ((GaussianInt) → ((GaussianInt) → ((List GaussianInt) →
-            ((PeriodicTileComplex ↥(TilingLattice Ci)) → (∀ (preTiles : List ProtoTile), (tiles =
-            preTiles ++ [Rplus]) → (∀ (preHs : List PartialOdometer), (hs = preHs ++ [hplus]) →
-            (preTiles.length = preHs.length)))))))) ) := by
-  classical
-  intro C0 Ci orientation base Rminus Rplus tiles hs hplus hRespect a b rest P preTiles hpreTiles
-      preHs hpreHs
-  have hlen := (List.Forall₂.length_eq hRespect.2.1)
-  rw [hpreTiles, hpreHs, List.length_append, List.length_singleton,
-    List.length_append, List.length_singleton] at hlen
-  omega
-
 private theorem hzipLast :
     (by
       classical
@@ -905,8 +886,14 @@ theorem OpposingBoundaryStarLocalization
       obtain ⟨preHs, hpreHs⟩ := List.getLast?_eq_some_iff.mp hlast
       have hzipLast : tiles.zip hs = preTiles.zip preHs ++ [(Rplus, hplus)] :=
           OpposingStarGeometry.hzipLast Rplus tiles hs hplus preTiles hpreTiles preHs hpreHs
-          (OpposingStarGeometry.hlenPre C0 Ci orientation base Rminus Rplus tiles hs hplus
-          hRespect a b rest P preTiles hpreTiles preHs hpreHs)
+          ((show
+              preTiles.length = preHs.length
+            from by
+              classical
+              have hlen := (List.Forall₂.length_eq hRespect.2.1)
+              rw [hpreTiles, hpreHs, List.length_append, List.length_singleton,
+                List.length_append, List.length_singleton] at hlen
+              omega))
       have hUzip' := OpposingStarGeometry.hUzip' Rplus tiles hs hplus U g hUzip preTiles preHs
           hzipLast
       obtain ⟨postTiles, hpostTiles⟩ :=

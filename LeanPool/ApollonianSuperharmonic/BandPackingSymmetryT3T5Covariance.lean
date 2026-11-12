@@ -6,6 +6,8 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryLinearIdentities
+public import LeanPool.ApollonianSuperharmonic.TileTranslationProperties
 public import LeanPool.ApollonianSuperharmonic.GaussianRealPointProperties
 
 public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryCovariance
@@ -99,18 +101,8 @@ private theorem triple_obs :
   simp only [TouchingTriple, touching_obs ha hb, touching_obs hb hc,
     touching_obs hc ha, oa.2.1, ob.2.1, oc.2.1]
 
-private theorem translate_add :
-    (by
-      classical
-      exact
-        ∀ (A : ProtoTile), ∀ (x : GaussianInt), ∀ (y : GaussianInt), TileTranslation
-            (TileTranslation A x) y = TileTranslation A (x + y) ) := by
-  classical
-  intro A x y
-  cases A
-  simp only [TileTranslation, Finset.image_image, Function.comp_def,
-    GaussianTranslation, add_assoc]
-  rfl
+private abbrev translate_add :=
+  TileTranslationProperties.add
 
 private theorem translate_zero :
     (by
@@ -414,43 +406,11 @@ private theorem radd :
   | shift w => rfl
   | comp h k ih ik => simp [R, ih, ik]
 
-private theorem rsub :
-    (by
-      classical
-      exact
-        let R : BandPackingSymmetry → (Real × Real) → (Real × Real) :=
-          BandPackingSymmetry.rec (fun p => p) (fun p => (-p.2, p.1))
-            (fun p => (-p.1, p.2)) (fun _ p => p)
-            (fun _ _ f k p => f (k p))
-        ∀ (h : BandPackingSymmetry), ∀ (p : Real × Real), ∀ (t : Real × Real), R h (p - t) = R h
-            p - R h t ) := by
-  classical
-  intro R h p t
-  induction h generalizing p t with
-  | identity => rfl
-  | negate => ext <;> simp [R]; ring
-  | conjugate => ext <;> simp [R]; ring
-  | shift w => rfl
-  | comp h k ih ik => simp [R, ih, ik]
+private abbrev rsub :=
+  BandPackingSymmetryLinearIdentities.linearity.1
 
-private theorem rsmul :
-    (by
-      classical
-      exact
-        let R : BandPackingSymmetry → (Real × Real) → (Real × Real) :=
-          BandPackingSymmetry.rec (fun p => p) (fun p => (-p.2, p.1))
-            (fun p => (-p.1, p.2)) (fun _ p => p)
-            (fun _ _ f k p => f (k p))
-        ∀ (h : BandPackingSymmetry), ∀ (c : Real), ∀ (p : Real × Real), R h (c • p) = c • R h p )
-            := by
-  classical
-  intro R h c p
-  induction h generalizing p with
-  | identity => rfl
-  | negate => ext <;> simp [R]
-  | conjugate => ext <;> simp [R]
-  | shift w => rfl
-  | comp h k ih ik => simp [R, ih, ik]
+private abbrev rsmul :=
+  BandPackingSymmetryLinearIdentities.linearity.2
 
 private theorem rpoint :
     (by

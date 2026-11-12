@@ -546,59 +546,6 @@ private theorem qPC :
   rw [ha]
   norm_num [T]
 
-private theorem qPN :
-    (by
-      classical
-      exact
-        ∀ (K : DiamondParameter), ∀ (f : IntegerLatticeFunction), ∀ (B : Int),
-        let k : Int := K.1
-        ∀ (a : ℤ), ∀ (b : ℤ), (k < b ∧ b ≤ (2 : ℤ) * (k - (1 : ℤ)) + (k + (1 : ℤ)) ∧ -(k - (1 :
-            ℤ)) ≤ a + k ∧ a + k ≤ k - (1 : ℤ) ∧ k < a + k + (1 : ℤ) + b ∧ a + k ≤ b - (k + (1 :
-            ℤ)) + (1 : ℤ) ∧ b ≤ (1 : ℤ) + (a + k) + (2 : ℤ) * (k - (1 : ℤ)) + (k + (1 : ℤ)) ∧ a +
-            k ≤ (2 : ℤ) * (k - (1 : ℤ)) - (b - (k + (1 : ℤ))) + (1 : ℤ)) → (((↑(K.1 - (1 : ℕ)) :
-            ℤ) = k - (1 : ℤ)) → (
-        let Q : Int → Int → Int := fun x y =>
-          (Int.natAbs x : Int) * ((Int.natAbs x : Int)-1)/2 - (x-y)^2/4
-        let T : Int → Int := fun n => n*(n-1)/2
-        (b = (2 : ℤ) * k + (1 : ℤ) + a) → (
-        let t : Int := -a
-        let zA : GaussianInt := ⟨-t,2*k+1-t⟩
-        (f zA=Q (-t) (2*k+1-t)) → ((f zA=Q (k-t) (k-t)+(-t)-k*(2*k+1-t)+B) → ((f (zA-1)=Q (k-t-1)
-            (k-t)+(-t-1)-k*(2*k+1-t)+B) → ((f (zA+⟨0,1⟩)=Q (k-t) (k+1-t)+(-t)-k*(2*k+2-t)+B) →
-            ((Q (-t) (2*k+1-t)=T t-(k*k+k)) → ((Q (k-t) (k-t)=T (k-t)) → (Q (k-t) (k+1-t)=T
-            (k-t)))))))))) ) := by
-  classical
-  intro K f B k a b hdpred hcast Q T hb t zA hC hPC hPW hPN qC qPC
-  unfold Q
-  have ha : (Int.natAbs (k-t):Int)=k-t := by
-    rw [Int.natCast_natAbs,abs_of_nonneg (show 0≤k-t by omega)]
-  rw [ha]
-  norm_num [T]
-
-private theorem qPWlt :
-    (by
-      classical
-      exact
-        ∀ (K : DiamondParameter), ∀ (f : IntegerLatticeFunction), ∀ (B : Int),
-        let k : Int := K.1
-        ∀ (a : ℤ), (ℤ) → (((↑(K.1 - (1 : ℕ)) : ℤ) = k - (1 : ℤ)) → (
-        let Q : Int → Int → Int := fun x y =>
-          (Int.natAbs x : Int) * ((Int.natAbs x : Int)-1)/2 - (x-y)^2/4
-        let T : Int → Int := fun n => n*(n-1)/2
-        let t : Int := -a
-        let zA : GaussianInt := ⟨-t,2*k+1-t⟩
-        (f zA=Q (-t) (2*k+1-t)) → ((f zA=Q (k-t) (k-t)+(-t)-k*(2*k+1-t)+B) → ((f (zA-1)=Q (k-t-1)
-            (k-t)+(-t-1)-k*(2*k+1-t)+B) → ((f (zA+⟨0,1⟩)=Q (k-t) (k+1-t)+(-t)-k*(2*k+2-t)+B) →
-            ((Q (-t) (2*k+1-t)=T t-(k*k+k)) → ((Q (k-t) (k-t)=T (k-t)) → ((Q (k-t) (k+1-t)=T
-            (k-t)) → (t < k → Q (k - t - (1 : ℤ)) (k - t) = T (k - t - (1 : ℤ))))))))))) ) := by
-  classical
-  intro K f B k a b hcast Q T t zA hC hPC hPW hPN qC qPC qPN hlt
-  unfold Q
-  have ha : (Int.natAbs (k-t-1):Int)=k-t-1 := by
-    rw [Int.natCast_natAbs,abs_of_nonneg (show 0≤k-t-1 by omega)]
-  rw [ha]
-  norm_num [T]
-
 private theorem qPWeq :
     (by
       classical
@@ -1045,10 +992,24 @@ theorem P5352T2Predecessor2 (K : DiamondParameter) (hk : 1 < K.1)
           hPC hPW hPN
       have qPC := SecondPredecessorProof.qPC K f B a b hdpred hcast hb hC
           hPC hPW hPN qC
-      have qPN := SecondPredecessorProof.qPN K f B a b hdpred hcast hb
-          hC hPC hPW hPN qC qPC
-      have qPWlt (hlt : t<k) := SecondPredecessorProof.qPWlt K f B a
-          b hcast hC hPC hPW hPN qC qPC qPN hlt
+      have qPN := (show
+          Q (k-t) (k+1-t)=T (k-t)
+        from by
+          classical
+          unfold Q
+          have ha : (Int.natAbs (k-t):Int)=k-t := by
+            rw [Int.natCast_natAbs,abs_of_nonneg (show 0≤k-t by omega)]
+          rw [ha]
+          norm_num [T])
+      have qPWlt (hlt : t<k) := (show
+          Q (k - t - (1 : ℤ)) (k - t) = T (k - t - (1 : ℤ))
+        from by
+          classical
+          unfold Q
+          have ha : (Int.natAbs (k-t-1):Int)=k-t-1 := by
+            rw [Int.natCast_natAbs,abs_of_nonneg (show 0≤k-t-1 by omega)]
+          rw [ha]
+          norm_num [T])
       have qPWeq (heq : t=k) := SecondPredecessorProof.qPWeq K a heq
       have hEastDiff : f (zA+1)-f zA=k+1-t := SecondPredecessorProof.hEastDiff K f a tdiffRev hC
           hE qC qE

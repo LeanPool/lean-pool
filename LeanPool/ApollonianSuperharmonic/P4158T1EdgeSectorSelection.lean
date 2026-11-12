@@ -1302,22 +1302,8 @@ private theorem he_ne_aAt851 :
     simpa [heq] using hcfA
   exact (Finset.disjoint_left.mp hdisET) hcfE (U_in_T hcf)
 
-private theorem he_ne_bAt858 :
-    (by
-      classical
-      exact
-        ∀ (Ci : BandCircle), ∀ (T' : ProtoTile), ∀ (Rplus : ProtoTile), ∀ (PP :
-            PeriodicTileComplex ↥(TilingLattice Ci)), ∀ (V : ProtoTile), ∀ (b : ↥(TilingLattice
-            Ci)), (PP.tile b = V) → ((V.cells ⊆ T'.cells) → (∀ (cb : LatticeCell), (cb ∈ V.cells)
-            → (∀ (e : ↥(TilingLattice Ci)), (PP.tile e = Rplus) → ((Disjoint Rplus.cells
-            T'.cells) → (e ≠ b))))) ) := by
-  classical
-  intro Ci T' Rplus PP V b hVb V_in_T' cb hcb e he hdisET' heq
-  have hcbB : cb ∈ (PP.tile b).cells := by simpa [hVb] using hcb
-  have hcbE : cb ∈ Rplus.cells := by
-    rw [← he]
-    simpa [heq] using hcbB
-  exact (Finset.disjoint_left.mp hdisET') hcbE (V_in_T' hcb)
+private abbrev he_ne_bAt858 :=
+  ApollonianSuperharmonic.EdgeSectorGeometry.he_ne_bAt755
 
 private theorem ht_ne_eAt866 :
     (by

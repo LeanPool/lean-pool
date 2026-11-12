@@ -6,6 +6,9 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.PartialOdometerEquality
+public import LeanPool.ApollonianSuperharmonic.BandLayoutParentNonempty
+public import LeanPool.ApollonianSuperharmonic.BandParentCentroidComparison
 
 public import LeanPool.ApollonianSuperharmonic.P4261T1PlacedOdometer
 public import LeanPool.ApollonianSuperharmonic.TileSubodometerLiteralDecompositionPiece
@@ -55,36 +58,8 @@ private theorem hvector :
   intro q q' i' r hrotate j
   rw [hrotate (i' + 2), hrotate (i' + 1)]; dsimp [j]; fin_cases r <;> fin_cases i' <;> rfl
 
-private theorem hsCent :
-    (by
-      classical
-      exact
-        ∀ (q : Fin 4 → CircleCoordinates), ∀ (T₀ : ProtoTile), ∀ (q' : Fin (4 : ℕ) →
-            CircleCoordinates), ∀ (i' : Fin (3 : ℕ)), ∀ (hs : Bool), ∀ (S' : Fin (3 : ℕ) → Bool →
-            ProtoTile), (∀ (j : Fin (3 : ℕ)), ∀ (t : Bool), TileCentroid (S' j t) - TileCentroid
-            T₀ = (if t = true then (1 : ℝ) else (-1 : ℝ)) • (1 / 2 : ℝ) • (GaussianRealPoint
-            (BandVectors.1 (q' (j + (2 : Fin (3 : ℕ))).succ) (q' (j + (1 : Fin (3 : ℕ))).succ)) -
-            (-(GaussianRealPoint (BandVectors.1 (q' (j + (2 : Fin (3 : ℕ))).succ) (q' (j + (1 :
-            Fin (3 : ℕ))).succ))).2, (GaussianRealPoint (BandVectors.1 (q' (j + (2 : Fin (3 :
-            ℕ))).succ) (q' (j + (1 : Fin (3 : ℕ))).succ))).1))) → (∀ (R : Fin (3 : ℕ) → Bool →
-            ProtoTile), (∀ (i : Fin (3 : ℕ)), ∀ (s : Bool), TileCentroid (R i s) - TileCentroid
-            T₀ = (if s = true then (1 : ℝ) else (-1 : ℝ)) • (1 / 2 : ℝ) • (GaussianRealPoint
-            (BandVectors.1 (q (i + (2 : Fin (3 : ℕ))).succ) (q (i + (1 : Fin (3 : ℕ))).succ)) -
-            (-(GaussianRealPoint (BandVectors.1 (q (i + (2 : Fin (3 : ℕ))).succ) (q (i + (1 : Fin
-            (3 : ℕ))).succ))).2, (GaussianRealPoint (BandVectors.1 (q (i + (2 : Fin (3 :
-            ℕ))).succ) (q (i + (1 : Fin (3 : ℕ))).succ))).1))) → (∀ (r : Fin (3 : ℕ)),
-        let j : Fin 3 := i' + r
-        (BandVectors.1 (q' ((i' + 2).succ)) (q' ((i' + 1).succ)) = BandVectors.1 (q ((j +
-            2).succ)) (q ((j + 1).succ))) → (TileCentroid (S' i' hs) = TileCentroid (R j hs)))) )
-            := by
-  classical
-  intro q T₀ q' i' hs S' hcent' R hrootCent r j hvector
-  calc
-    TileCentroid (S' i' hs) =
-        (TileCentroid (S' i' hs) - TileCentroid T₀) + TileCentroid T₀ := by abel
-    _ = (TileCentroid (R j hs) - TileCentroid T₀) + TileCentroid T₀ := by
-      rw [hcent' i' hs, hrootCent j hs, hvector]
-    _ = TileCentroid (R j hs) := by abel
+private abbrev hsCent :=
+  BandParentCentroidComparison.centroidEquality
 
 private theorem hbandSelected :
     (by
@@ -125,26 +100,6 @@ private theorem hlayoutCent :
     _ = (TileCentroid (cert.P j hs) - TileCentroid T₀) + TileCentroid T₀ := by
       rw [hrootCent j hs, hlayoutOcc.2.2]
     _ = TileCentroid (cert.P j hs) := by abel
-
-private theorem hparentNonempty :
-    (by
-      classical
-      exact
-        ∀ (q : Fin 4 → CircleCoordinates), ∀ (cfg : BandOrderedGeneralConfiguration q), ∀ (C₀ :
-            BandCircle), ∀ (T₀ : ProtoTile), ∀ (cert : BandOrderedGeneralLayoutCertificate q cfg
-            C₀ T₀), ∀ (i' : Fin (3 : ℕ)), ∀ (hs : Bool), ∀ (r : Fin (3 : ℕ)),
-        let j : Fin 3 := i' + r
-        (cert.P j hs).cells.Nonempty ) := by
-  classical
-  intro q cfg C₀ T₀ cert i' hs r j
-  rcases cert.parent_lattice j hs with ⟨e⟩
-  have hball : (0 : ℝ × ℝ) ∈ Metric.closedBall (0 : ℝ × ℝ) 1 := by
-    simp
-  have hreal : (e ⟨(0 : ℝ × ℝ), hball⟩ : ℝ × ℝ) ∈
-      TileRealization (cert.P j hs) := (e ⟨0, hball⟩).property
-  simp only [TileRealization, Set.mem_iUnion] at hreal
-  rcases hreal with ⟨x, hx, _⟩
-  exact ⟨x, hx⟩
 
 private theorem hselectedNonempty :
     (by
@@ -334,30 +289,6 @@ private theorem hvalueSuppliedFresh :
       exact hx ((Set.ext_iff.mp hdomainSuppliedFresh x).mpr hxFresh)
     rw [h.value_outside x hx, (rH j hs).value_outside x hxFresh]
 
-private theorem hfunEq :
-    (by
-      classical
-      exact
-        ∀ (C₀ : BandCircle), ∀ (T₀ : ProtoTile), ∀ (h₀ : PartialOdometer), ∀ (C : BandCircle), ∀
-            (T : ProtoTile), ∀ (h : PartialOdometer), (TileSubodometer C₀.1.1 C.1.1 T₀ T h₀ h) →
-            (∀ (i' : Fin (3 : ℕ)), ∀ (hs : Bool), ∀ (hs' : Fin (3 : ℕ) → Bool → PartialOdometer),
-            ((↑h.domain : Set GaussianInt) = (↑(hs' i' hs).domain : Set GaussianInt)) → ((∀ x ∈
-            h.domain, h.value x = (hs' i' hs).value x) → (∀ (rH : Fin (3 : ℕ) → Bool →
-            PartialOdometer), ∀ (r : Fin (3 : ℕ)),
-        let j : Fin 3 := i' + r
-        ((h.domain : Set GaussianInt) = FootprintVertices T) → (((h.domain : Set GaussianInt) =
-            (rH j hs).domain) → ((∀ x, h.value x = (rH j hs).value x) → (h = rH j hs)))))) ) := by
-  classical
-  intro C₀ T₀ h₀ C T h hsub i' hs hs' hselectedDomain hselectedValue rH r j hdomainT
-      hdomainSuppliedFresh hvalueSuppliedFresh
-  cases h with
-  | mk hd hv hout =>
-    have hdomEq : hd = (rH j hs).domain := Finset.coe_injective hdomainSuppliedFresh
-    have hvalEq : hv = (rH j hs).value := funext hvalueSuppliedFresh
-    cases hdomEq
-    cases hvalEq
-    rfl
-
 private theorem centralLabel :
     (by
       classical
@@ -534,7 +465,7 @@ theorem P4261T1CentralCoordinates
   have hlayoutCells : (R j hs).cells = (cert.P j hs).cells :=
     (BandPrototileCentroidUnique (q j.succ) _ _ hbandFresh hbandLayout hlayoutCent).1
   have hparentNonempty : (cert.P j hs).cells.Nonempty :=
-      CentralCoordinateGeometry.hparentNonempty q cfg C₀ T₀ cert i' hs r
+      BandLayoutParentNonempty.cells q cfg C₀ T₀ cert (i' + r) hs
   have hselectedNonempty := CentralCoordinateGeometry.hselectedNonempty q cfg C₀ T₀ cert T i' hs
       S' hselectedCells R r hselectedCellsFresh hlayoutCells hparentNonempty
   have hcellsT : T.cells = (cert.P j hs).cells := CentralCoordinateGeometry.hcellsT q cfg C₀ T₀
@@ -555,8 +486,8 @@ theorem P4261T1CentralCoordinates
       hselectedDomain rH r hdomainSelFresh
   have hvalueSuppliedFresh := CentralCoordinateGeometry.hvalueSuppliedFresh h₀ h i' hs hs'
       hvalue' hselectedDomain hselectedValue rH hrootValue r hdomainSuppliedFresh
-  have hfunEq : h = rH j hs := CentralCoordinateGeometry.hfunEq C₀ T₀ h₀ C T h hsub i' hs hs'
-      hselectedDomain hselectedValue rH r hdomainT hdomainSuppliedFresh hvalueSuppliedFresh
+  have hfunEq : h = rH j hs := PartialOdometerEquality.extensionality h (rH (i' + r) hs)
+      hdomainSuppliedFresh hvalueSuppliedFresh
   let slot : SixSubtileLabel → Fin 3 × Bool := fun l => match l with
     | .A => (0, true)
     | .B => (0, false)

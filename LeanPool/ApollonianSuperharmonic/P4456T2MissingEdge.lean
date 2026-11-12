@@ -338,37 +338,8 @@ private theorem hzeroaEdge :
       ⟨by simpa [hzero] using hy, hya⟩
     exact hneqxy (hsub hxI hyI)
 
-private theorem hzerobEdge :
-    (by
-      classical
-      exact
-        ∀ (C : BandCircle), ∀ (T : ProtoTile), ∀ (P : PeriodicTileComplex ↥(TilingLattice C)), ∀
-            (x : GaussianInt), (x ∈ FootprintVertices T) → (∀ (y : GaussianInt), (y ∈
-            FootprintVertices T) → ((P.tile 0 = T) → (∀ (b : ↥(TilingLattice C)), (b ≠ 0) → ((x ∈
-            FootprintVertices (P.tile b)) → ((y ∈ FootprintVertices (P.tile b)) → ((x ≠ y) → ((∀
-            (a : ↥(TilingLattice C)), ∀ (b : ↥(TilingLattice C)), a ≠ b → ((FootprintEdges
-            (P.tile a) ∩ FootprintEdges (P.tile b)).Nonempty ↔ P.plane.adjacent a b) ∧
-            ((FootprintEdges (P.tile a) ∩ FootprintEdges (P.tile b)).Nonempty → SimpleGridPath
-            (CommonFootprintEdgeVertices (P.tile a) (P.tile b)) (FootprintEdges (P.tile a) ∩
-            FootprintEdges (P.tile b)) ∧ FootprintVertices (P.tile a) ∩ FootprintVertices (P.tile
-            b) = CommonFootprintEdgeVertices (P.tile a) (P.tile b)) ∧ (¬(FootprintEdges (P.tile
-            a) ∩ FootprintEdges (P.tile b)).Nonempty → FootprintVertices (P.tile a) ∩
-            FootprintVertices (P.tile b) = ∅ ∨ (FootprintVertices (P.tile a) ∩ FootprintVertices
-            (P.tile b)).Subsingleton)) → ((FootprintEdges (P.tile 0) ∩ FootprintEdges (P.tile
-            b)).Nonempty)))))))) ) := by
-  classical
-  intro C T P x hx y hy hzero b hb0 hxb hyb hneqxy hclass
-  by_contra hn
-  have hsmall := (hclass 0 b (Ne.symm hb0)).2.2 hn
-  rcases hsmall with hempty | hsub
-  · have hxI : x ∈ FootprintVertices (P.tile 0) ∩ FootprintVertices (P.tile b) :=
-      ⟨by simpa [hzero] using hx, hxb⟩
-    simp [hempty] at hxI
-  · have hxI : x ∈ FootprintVertices (P.tile 0) ∩ FootprintVertices (P.tile b) :=
-      ⟨by simpa [hzero] using hx, hxb⟩
-    have hyI : y ∈ FootprintVertices (P.tile 0) ∩ FootprintVertices (P.tile b) :=
-      ⟨by simpa [hzero] using hy, hyb⟩
-    exact hneqxy (hsub hxI hyI)
+private abbrev hzerobEdge :=
+  ApollonianSuperharmonic.MissingEdgeGeometry.hzeroaEdge
 
 private theorem habneq :
     (by

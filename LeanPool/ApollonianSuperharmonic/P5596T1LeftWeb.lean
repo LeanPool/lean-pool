@@ -821,24 +821,8 @@ private theorem hgf :
   intro y hy
   rw [hc y (ha.2.2.2.1 hy), ha.2.2.2.2 y hy]
 
-private theorem hgk :
-    (by
-      classical
-      exact
-        ∀ (C : BandCircle), ∀ (T₂ : ProtoTile), ∀ (h₂ : PartialOdometer), ∀ (g :
-            IntegerLatticeFunction), (GlobalOdometerExtends g h₂) → (∀ (q : Fin (4 : ℕ) →
-            CircleCoordinates), ∀ (i : Fin (3 : ℕ)), ∀ (hq : ProperBandQuadruple q), ∀ (hpos : 0
-            < (q i.succ).1),
-        let Ci : BandCircle :=
-          ⟨⟨q i.succ, Or.inl hpos, q, hq.1, i.succ, rfl⟩, hpos⟩
-        ∀ (V : ProtoTile), ∀ (k : PartialOdometer), (AncestorOdometer Ci.1.1 C.1.1 V T₂ k h₂) →
-            (GlobalOdometerExtends g k)) ) := by
-  classical
-  intro C T₂ h₂ g hg₂ q i hq hpos Ci V k hb
-  obtain ⟨c, hc⟩ := hg₂
-  refine ⟨c, ?_⟩
-  intro y hy
-  rw [hc y (hb.2.2.2.1 hy), hb.2.2.2.2 y hy]
+private abbrev hgk :=
+  ApollonianSuperharmonic.LeftWebGeometry.hgf
 
 private theorem hbelow :
     (by

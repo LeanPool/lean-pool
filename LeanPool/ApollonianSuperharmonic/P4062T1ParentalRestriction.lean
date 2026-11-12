@@ -6,6 +6,7 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.FourNeighborLaplacianProperties
 public import LeanPool.ApollonianSuperharmonic.FordInteriorSquareCoordinates
 
 public import LeanPool.ApollonianSuperharmonic.P4062T1RecursiveInteriors
@@ -94,27 +95,6 @@ private theorem hrecursive :
     simpa [FordOdometer] using rec₂ x hx
   · intro x hx
     simpa [FordOdometer] using rec₃ x hx
-
-private theorem hlapAffine :
-    ∀ (f : GaussianInt → ℤ), ∀ (f' : GaussianInt → ℤ), ∀ (x : GaussianInt), ∀ (t : GaussianInt),
-        ∀ (A : ℤ), ∀ (B : ℤ), ∀ (C : ℤ), f x = f' (x - t) + A * x.re + B * x.im + C → f (x - (1 :
-        GaussianInt)) = f' (x - t - (1 : GaussianInt)) + A * (x - (1 : GaussianInt)).re + B * (x
-        - (1 : GaussianInt)).im + C → f (x + (1 : GaussianInt)) = f' (x - t + (1 : GaussianInt))
-        + A * (x + (1 : GaussianInt)).re + B * (x + (1 : GaussianInt)).im + C → f (x - ⟨(0 : ℤ),
-        (1 : ℤ)⟩) = f' (x - t - ⟨(0 : ℤ), (1 : ℤ)⟩) + A * (x - ⟨(0 : ℤ), (1 : ℤ)⟩).re + B * (x -
-        ⟨(0 : ℤ), (1 : ℤ)⟩).im + C → f (x + ⟨(0 : ℤ), (1 : ℤ)⟩) = f' (x - t + ⟨(0 : ℤ), (1 : ℤ)⟩)
-        + A * (x + ⟨(0 : ℤ), (1 : ℤ)⟩).re + B * (x + ⟨(0 : ℤ), (1 : ℤ)⟩).im + C →
-        FourNeighborLaplacian f x = FourNeighborLaplacian f' (x - t) := by
-  classical
-  intro f f' x t A B C h0 hm hp hmi hpi
-  rw [FourNeighborLaplacian, hm, hp, hmi, hpi, h0,
-    FourNeighborLaplacian]
-  rw [show x - t - 1 = (x - t) - 1 by abel,
-    show x - t + 1 = (x - t) + 1 by abel,
-    show x - t - ⟨0, 1⟩ = (x - t) - ⟨0, 1⟩ by rfl,
-    show x - t + ⟨0, 1⟩ = (x - t) + ⟨0, 1⟩ by rfl]
-  simp
-  ring
 
 private theorem hchild0Lap :
     ∀ (P : FordFareyParameter), ∀ (P₁ : FordFareyParameter), (FordFareyParameter) → ((P₁.q =
@@ -375,7 +355,7 @@ theorem P4062T1ParentalRestriction (P : FordFareyParameter)
       (hpi : f (x + ⟨0, 1⟩) = f' ((x - t) + ⟨0, 1⟩) +
         A * (x + ⟨0, 1⟩).re + B * (x + ⟨0, 1⟩).im + C) :
       FourNeighborLaplacian f x = FourNeighborLaplacian f' (x - t) :=
-          ParentalRestrictionProof.hlapAffine f f' x t A B C h0 hm hp hmi hpi
+          FourNeighborLaplacianProperties.affineTranslate f f' x t A B C h0 hm hp hmi hpi
   have hrec0Member (z : GaussianInt)
       (hzr : 0 ≤ z.re) (hzr' : z.re ≤ (P.q₁ : Int))
       (hzi : 0 ≤ z.im) (hzi' : z.im ≤ (P.q₁ : Int)) :

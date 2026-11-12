@@ -224,23 +224,8 @@ private theorem hcentT :
   simp only [TileCentroid, ite_eq_left hTnon, ite_eq_left htn]
   rw [hu.1]
 
-private theorem hcentT' :
-    (by
-      classical
-      exact
-        ∀ (P : FordFareyParameter), ∀ (T' : ProtoTile), ∀ (h' : PartialOdometer), ∀ (H :
-            PartialOdometer), ∀ (v : GaussianInt), (T'.cells = (TileTranslation (FordTile P.q)
-            v).cells ∧ (T'.cells = ∅ → T'.anchor = (TileTranslation (FordTile P.q) v).anchor) ∧ ∃
-            (a : GaussianInt) (b : ℤ), (∀ (x : GaussianInt), x ∈ h'.domain ↔ x - v ∈ H.domain) ∧
-            ∀ x ∈ h'.domain, h'.value x = H.value (x - v) + a.re * x.re + a.im * x.im + b) →
-            (((FordTile P.q).cells.Nonempty) → ((T'.cells.Nonempty) → (TileCentroid T' =
-            TileCentroid (TileTranslation (FordTile P.q) v)))) ) := by
-  classical
-  intro P T' h' H v hv hFnon hT'non
-  have htn : (TileTranslation (FordTile P.q) v).cells.Nonempty := by
-    simpa [TileTranslation] using hFnon.image (GaussianTranslation v)
-  simp only [TileCentroid, ite_eq_left hT'non, ite_eq_left htn]
-  rw [hv.1]
+private abbrev hcentT' :=
+  ApollonianSuperharmonic.MatchedFordGeometry.hcentT
 
 private theorem hfordcent :
     (by
@@ -587,24 +572,8 @@ private theorem footprintT :
   simp only [ite_eq_left htn]
   rw [hu.1]
 
-private theorem footprintT' :
-    (by
-      classical
-      exact
-        ∀ (P : FordFareyParameter), ∀ (T' : ProtoTile), ∀ (h' : PartialOdometer), ∀ (H :
-            PartialOdometer), ∀ (v : GaussianInt), (T'.cells = (TileTranslation (FordTile P.q)
-            v).cells ∧ (T'.cells = ∅ → T'.anchor = (TileTranslation (FordTile P.q) v).anchor) ∧ ∃
-            (a : GaussianInt) (b : ℤ), (∀ (x : GaussianInt), x ∈ h'.domain ↔ x - v ∈ H.domain) ∧
-            ∀ x ∈ h'.domain, h'.value x = H.value (x - v) + a.re * x.re + a.im * x.im + b) →
-            (((FordTile P.q).cells.Nonempty) → ((T'.cells.Nonempty) → (FootprintVertices T' =
-            FootprintVertices (TileTranslation (FordTile P.q) v)))) ) := by
-  classical
-  intro P T' h' H v hv hFnon hT'non
-  simp only [FootprintVertices, ite_eq_left hT'non]
-  have htn : (TileTranslation (FordTile P.q) v).cells.Nonempty := by
-    simpa [TileTranslation] using hFnon.image (GaussianTranslation v)
-  simp only [ite_eq_left htn]
-  rw [hv.1]
+private abbrev footprintT' :=
+  ApollonianSuperharmonic.MatchedFordGeometry.footprintT
 
 private theorem hinter :
     (by

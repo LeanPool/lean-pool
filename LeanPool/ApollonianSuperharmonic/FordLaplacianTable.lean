@@ -853,30 +853,6 @@ private theorem outward :
   have hv := v3 t (a + 1) (by omega) (by omega)
   simpa only [add_sub_cancel_left, mul_one] using And.intro hl hv
 
-private theorem near1 :
-    ∀ (P : FordFareyParameter),
-    let g := FordOdometer P
-    (GaussianInt) → (
-    let a : Int := P.q₁
-    let b : Int := P.q₂
-    let A := P.p₁
-    let B := P.p₂
-    let cdiv (n d : Int) := -((-n) / d)
-    ((P.q : Int) = a + b) → ((0 < a) → (∀ (P₁ : FordFareyParameter), (P₁.q = P.q₁) → (∀ (P₂ :
-        FordFareyParameter), (P₂.q = P.q₂) → ((∀ (r : Int), ∀ (s : Int), (b ≤ r ∧ r ≤ P.q ∧ b ≤ s
-        ∧ s ≤ P.q) → ((r - b ≤ 1 ∨ a - 1 ≤ r - b ∨ s - b ≤ 1 ∨ a - 1 ≤ s - b) → (g ⟨r, s⟩ = cdiv
-        (A * (r - b) * (s - b)) a + B * r + B * s - B * b + 1))) → (∀ (r : ℤ), b ≤ r → r ≤ (↑P.q
-        : ℤ) → g ⟨r, b + (1 : ℤ)⟩ = cdiv (A * (r - b)) a + B * r + B + (1 : ℤ) ∧ g ⟨b + (1 : ℤ),
-        r⟩ = cdiv (A * (r - b)) a + B * r + B + (1 : ℤ))))))) := by
-  classical
-  intro P g x a b A B cdiv hsum ha0 P₁ hq₁ P₂ hq₂ v1 r ht ht'
-  have hl := v1 r (b + 1) (by omega) (by omega)
-  have hv := v1 (b + 1) r (by omega) (by omega)
-  simp only [add_sub_cancel_left, mul_one] at hl hv
-  constructor
-  · nlinarith only [hl]
-  · nlinarith only [hv]
-
 private theorem near2 :
     ∀ (P : FordFareyParameter),
     let g := FordOdometer P
@@ -1183,8 +1159,25 @@ private theorem interiorLaplacian :
       FourNeighborLaplacian g ⟨b, (P.q : Int) - t⟩ = cdiv (B * t) b - A * t / a :=
           FordLaplacianProof.highFormula P lapCoord hsum hdet hb ha0 P₁ hq₁ P₂ hq₂ cminus
           (FordLaplacianDetails.cplus) (FordLaplacianProof.edge2 P ha x hsum hdet hb P₁ hq₁ P₂
-              hq₂ v2 v3 cmul) (FordLaplacianDetails.near1 P x hsum ha0 P₁ hq₁ P₂ hq₂
-              (FordLaplacianProof.v1 P x hsum P₁ hp₁ hq₁ P₂ hq₂ rec1 parentValue))
+              hq₂ v2 v3 cmul) ((show
+                  ∀ (r : ℤ), b ≤ r → r ≤ (↑P.q : ℤ) → g ⟨r, b + (1 : ℤ)⟩ =
+                  cdiv (A * (r - b)) a + B * r + B + (1 : ℤ) ∧ g ⟨b + (1 : ℤ),
+                  r⟩ = cdiv (A * (r - b)) a + B * r + B + (1 : ℤ)
+                from by
+                  classical
+                  intro r ht ht'
+                  have hl := ((FordLaplacianProof.v1 P x hsum P₁ hp₁ hq₁ P₂ hq₂ rec1
+                      parentValue)) r (b + 1) (by omega) (by omega)
+                  have hv := ((FordLaplacianProof.v1 P x hsum P₁ hp₁ hq₁ P₂ hq₂ rec1
+                      parentValue)) (b + 1) r (by omega) (by omega)
+                  change g ⟨r, b + 1⟩ = cdiv (A * (r - b) * (b + 1 - b)) a +
+                    B * r + B * (b + 1) - B * b + 1 at hl
+                  change g ⟨b + 1, r⟩ = cdiv (A * (b + 1 - b) * (r - b)) a +
+                    B * (b + 1) + B * r - B * b + 1 at hv
+                  simp only [add_sub_cancel_left, mul_one] at hl hv
+                  constructor
+                  · nlinarith only [hl]
+                  · nlinarith only [hv]))
               (FordLaplacianDetails.near2 P ha x hsum P₁ hq₁ P₂ hq₂ v2 v3) t ht hta htb
   have roundArm (t : Int) (ht : 0 < t) (hta : t < a) (htb : t < b) :
       cdiv (B * t) b - A * t / a = 1 := FordLaplacianProof.roundArm P hdet hb ha0 t ht hta htb

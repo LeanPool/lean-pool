@@ -6,6 +6,8 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.TileTranslationProperties
+public import LeanPool.ApollonianSuperharmonic.BandOriginalParentContainment
 
 public import LeanPool.ApollonianSuperharmonic.P4418T3EndpointOwnerIndices
 public import LeanPool.ApollonianSuperharmonic.P4418T3SelectedInterfaceData
@@ -84,54 +86,11 @@ private def selectedSecondFace (q : Fin 4 → CircleCoordinates)
 
 namespace SelectedInterfaceGeometry
 
-private theorem hOA :
-    (by
-      classical
-      exact
-        ∀ (q : Fin 4 → CircleCoordinates), ∀ (cfg : BandOrderedGeneralConfiguration q), ∀ (C :
-            BandCircle), ∀ (T : ProtoTile), ∀ (cert : BandOrderedGeneralLayoutCertificate q cfg C
-            T),
-        let P := cert.P
-        let O := cert.O
-        O.cells ⊆ (P 0 true).cells ) := by
-  classical
-  intro q cfg C T cert P O
-  change cert.O.cells ⊆ (cert.P 0 true).cells
-  rw [cert.precursor_eq]
-  intro x hx
-  exact (cert.plus_union x).2 ⟨0, false, hx⟩
+private abbrev hOA :=
+  BandOriginalParentContainment.positiveParent
 
-private theorem hOB :
-    (by
-      classical
-      exact
-        ∀ (q : Fin 4 → CircleCoordinates), ∀ (cfg : BandOrderedGeneralConfiguration q), ∀ (C :
-            BandCircle), ∀ (T : ProtoTile), ∀ (cert : BandOrderedGeneralLayoutCertificate q cfg C
-            T),
-        let P := cert.P
-        let O := cert.O
-        O.cells ⊆ (P 0 false).cells ) := by
-  classical
-  intro q cfg C T cert P O
-  change cert.O.cells ⊆ (cert.P 0 false).cells
-  rw [cert.precursor_cells]
-  intro x hx
-  exact (cert.minus_union x).2 ⟨0, true, hx⟩
-
-private theorem cellInclusion :
-    (by
-      classical
-      exact
-        (∀ (X : ProtoTile), ∀ (d : GaussianInt), (TileTranslation X d).cells = X.cells.image
-            (GaussianTranslation d)) → (∀ (X : ProtoTile), ∀ (Y : ProtoTile), (X.cells ⊆ Y.cells)
-            → (∀ (d : GaussianInt), (TileTranslation X d).cells ⊆ (TileTranslation Y d).cells)) )
-            := by
-  classical
-  intro translatedCells X Y hXY d
-  rw [translatedCells, translatedCells]
-  intro z hz
-  obtain ⟨w, hw, rfl⟩ := Finset.mem_image.mp hz
-  exact Finset.mem_image.mpr ⟨w, hXY hw, rfl⟩
+private abbrev hOB :=
+  BandOriginalParentContainment.negativeParent
 
 private theorem isolated :
     (by
@@ -243,31 +202,6 @@ private theorem complementNonempty :
     ((m : GaussianInt) * u + (n : GaussianInt) * v)
   rw [(TileCellComplementCovariance _ _ _).1] at ht
   simpa [SubtileOccurrenceInterpretation, P, u, v] using ht
-
-private theorem deletionSupport :
-    (by
-      classical
-      exact
-        ∀ (q : Fin 4 → CircleCoordinates), ∀ (cfg : BandOrderedGeneralConfiguration q), ∀ (C :
-            BandCircle), ∀ (T : ProtoTile), ∀ (cert : BandOrderedGeneralLayoutCertificate q cfg C
-            T),
-        let P := cert.P
-        let O := cert.O
-        let u := cert.u
-        let v := cert.v
-        (∀ (m : Int), ∀ (n : Int), (TileCellComplement (SubtileOccurrenceInterpretation P u v
-            ⟨.A,m,n⟩) (TileTranslation O ((m : GaussianInt) * u + (n : GaussianInt) *
-            v))).cells.Nonempty) → (∀ (m : Int), ∀ (n : Int), ∀ (Y : ProtoTile),
-            (Y.cells.Nonempty) → ((TileTranslation O ((m : GaussianInt) * u + (n : GaussianInt) *
-            v)).cells = ∅ ∨ ((TileCellComplement (SubtileOccurrenceInterpretation P u v ⟨.A,m,n⟩)
-            (TileTranslation O ((m : GaussianInt) * u + (n : GaussianInt) * v))).cells.Nonempty ∧
-            Y.cells.Nonempty))) ) := by
-  classical
-  intro q cfg C T cert P O u v complementNonempty m n Y hY
-  by_cases hO : O.cells = ∅
-  · exact Or.inl ((TileTranslationFormulas O
-      ((m : GaussianInt) * u + (n : GaussianInt) * v)).2.2.1.mpr hO)
-  · exact Or.inr ⟨complementNonempty m n, hY⟩
 
 private theorem deleteEdge :
     (by
@@ -756,40 +690,6 @@ private theorem reversePath :
     · intro he
       apply (hE e).mpr
       simpa using reverseRaw p.reverse e he
-
-private theorem hne :
-    (by
-      classical
-      exact
-        ∀ (q : Fin 4 → CircleCoordinates), ∀ (cfg : BandOrderedGeneralConfiguration q), ∀ (C :
-            BandCircle), ∀ (T : ProtoTile), ∀ (cert : BandOrderedGeneralLayoutCertificate q cfg C
-            T), ∀ (a : PeriodicSubtileIndex), ∀ (b : PeriodicSubtileIndex), ∀ (row :
-            BandOrderedGeneralSelectedContactRow q cfg C T cert a b),
-        let P := cert.P
-        let O := cert.O
-        let u := cert.u
-        let v := cert.v
-        ((FootprintEdges (ModifiedSubtileOccurrenceInterpretation P O u v a) ∩ FootprintEdges
-            (ModifiedSubtileOccurrenceInterpretation P O u v b) = FootprintEdges
-            (SubtileOccurrenceInterpretation P u v a) ∩ FootprintEdges
-            (SubtileOccurrenceInterpretation P u v b)) ∧ (FootprintVertices
-            (ModifiedSubtileOccurrenceInterpretation P O u v a) ∩ FootprintVertices
-            (ModifiedSubtileOccurrenceInterpretation P O u v b) = FootprintVertices
-            (SubtileOccurrenceInterpretation P u v a) ∩ FootprintVertices
-            (SubtileOccurrenceInterpretation P u v b))) → (
-        let owners := P4418T3EndpointOwnerIndices q cfg C T cert a b row
-        let face0 : PeriodicSubtileFaceIndex := selectedFirstFace q cfg C T cert a b row
-        let face1 : PeriodicSubtileFaceIndex := selectedSecondFace q cfg C T cert a b row
-        let F0 := cert.modifiedFaceEquivalence.symm face0
-        let F1 := cert.modifiedFaceEquivalence.symm face1
-        (F0 ≠ F1) → (((∃ iA iB iO : Fin 3, cert.modified.plane.faceVertex F0 iA = a ∧
-            cert.modified.plane.faceVertex F0 iB = b ∧ cert.modified.plane.faceVertex F0 iO =
-            owners.1) ∧ (∃ jA jB jO : Fin 3, cert.modified.plane.faceVertex F1 jA = a ∧
-            cert.modified.plane.faceVertex F1 jB = b ∧ cert.modified.plane.faceVertex F1 jO =
-            owners.2)) → (a ≠ b))) ) := by
-  classical
-  intro q cfg C T cert a b row P O u v retargeted owners face0 face1 F0 F1 faceDistinct faceTable h
-  cases row <;> cases h
 
 private theorem allowed :
     (by
@@ -1786,7 +1686,7 @@ theorem P4418T3SelectedInterfaceExists
   have cellInclusion (X Y : ProtoTile) (hXY : X.cells ⊆ Y.cells)
       (d : GaussianInt) :
       (TileTranslation X d).cells ⊆ (TileTranslation Y d).cells :=
-          SelectedInterfaceGeometry.cellInclusion translatedCells X Y hXY d
+          TileTranslationProperties.cellsSubset X Y hXY d
   have isolated (m n : Int) :
       ∀ z ∈ CellSupportedFootprintVertices
           (TileTranslation O ((m : GaussianInt) * u + (n : GaussianInt) * v)),
@@ -1808,8 +1708,7 @@ theorem P4418T3SelectedInterfaceExists
       (TileTranslation O ((m : GaussianInt) * u + (n : GaussianInt) * v)).cells = ∅ ∨
         ((TileCellComplement (SubtileOccurrenceInterpretation P u v ⟨.A,m,n⟩)
           (TileTranslation O ((m : GaussianInt) * u + (n : GaussianInt) * v))).cells.Nonempty ∧
-          Y.cells.Nonempty) := SelectedInterfaceGeometry.deletionSupport q cfg C T cert
-              complementNonempty m n Y hY
+          Y.cells.Nonempty) := (Or.inr ⟨complementNonempty m n, hY⟩)
   have deleteEdge (m n : Int) (Y : ProtoTile)
       (hYA : Disjoint Y.cells (SubtileOccurrenceInterpretation P u v ⟨.A,m,n⟩).cells)
       (hYB : Disjoint Y.cells (SubtileOccurrenceInterpretation P u v ⟨.B,m,n⟩).cells) :
@@ -1901,8 +1800,12 @@ theorem P4418T3SelectedInterfaceExists
       {x y : GaussianInt} (h : SimpleGridPathBetween V E x y) :
       SimpleGridPathBetween V E y x := SelectedInterfaceGeometry.reversePath (V := V) (E := E) (x
           := x) (y := y) h
-  have hne : a ≠ b := SelectedInterfaceGeometry.hne q cfg C T cert a b row retargeted
-      faceDistinct faceTable
+  have hne : a ≠ b := (show
+      a ≠ b
+    from by
+      classical
+      intro h
+      cases row <;> cases h)
   have allowed : AllowedSubtileIncidence a b := SelectedInterfaceGeometry.allowed q cfg C T cert
       a b row
   have modifiedEdges :

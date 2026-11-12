@@ -291,33 +291,6 @@ private theorem hbAt256 :
   rw [Int.natCast_natAbs, abs_of_nonpos (by omega : -k ≤ 0)]
   omega
 
-private theorem hlAt265 :
-    (by
-      classical
-      exact
-        ∀ (K : DiamondParameter), ∀ (f : IntegerLatticeFunction), ∀ (B : Int),
-        let k : Int := K.1
-        let C (p q : Int) : Prop :=
-          0 ≤ q ∧ q ≤ 2*k ∧ -k ≤ p ∧ p ≤ k ∧
-            -q-1 ≤ p ∧ p ≤ q+1 ∧ -(2*k-q+1) ≤ p ∧ p ≤ 2*k-q+1
-        let U (p q : Int) : Prop := 0 ≤ p ∧ p ≤ 1 ∧ 0 ≤ q ∧ q ≤ 1
-        (∀ (p : Int), ∀ (q : Int), FourNeighborLaplacian f ⟨p,q⟩ = (f ⟨p+1,q⟩ - f ⟨p,q⟩) + (f
-            ⟨p-1,q⟩ - f ⟨p,q⟩) + (f ⟨p,q+1⟩ - f ⟨p,q⟩) + (f ⟨p,q-1⟩ - f ⟨p,q⟩)) → ((C (⟨-k, k⟩ :
-                GaussianInt).re
-            (⟨-k, k⟩ : GaussianInt).im) → ((U ((⟨-k, k⟩ : GaussianInt).re - (-k - (1 : ℤ)))
-                ((⟨-k, k⟩ : GaussianInt).im - k)) → ((f ⟨-k, k + (1 :
-            ℤ)⟩ = k * (k - (1 : ℤ)) / (2 : ℤ) - (k ^ (2 : ℕ) + k)) → ((f ⟨-k - (1 : ℤ), k⟩ = (-k
-            - (1 : ℤ)) * k + B) → ((f ⟨-k, k⟩ = (-k - (1 : ℤ)) * k + B) → (((Int.natAbs (1-k) :
-            Int) = k-1) → (((Int.natAbs (-k) : Int) = k) → ((f ⟨(1 : ℤ) - k, k⟩ = (k - (1 : ℤ)) *
-            (k - (2 : ℤ)) / (2 : ℤ) - (k ^ (2 : ℕ) - k)) → ((f ⟨-k, k - (1 : ℤ)⟩ = k * (k - (1 :
-            ℤ)) / (2 : ℤ) - (k ^ (2 : ℕ) - k)) → ((f ⟨-k, k⟩ = k * (k - (1 : ℤ)) / (2 : ℤ) - k ^
-            (2 : ℕ)) → ((k * (k - (1 : ℤ)) / (2 : ℤ) - (k - (1 : ℤ)) * (k - (2 : ℤ)) / (2 : ℤ) =
-            k - (1 : ℤ)) → (FourNeighborLaplacian f ⟨-k,k⟩ = 1)))))))))))) ) := by
-  classical
-  intro K f B k C U lap center unitCenter hn hdiffW hdiffZ ha hb he hs hc ht
-  rw [lap, show -k+1 = 1-k by ring]
-  omega
-
 private theorem hzAt275 :
     (by
       classical
@@ -404,33 +377,6 @@ private theorem hmarkAt309 :
   rw [cmem]
   change ¬ C (k-k) (k-(-k-1))
   dsimp [C]
-  omega
-
-private theorem hlAt331 :
-    (by
-      classical
-      exact
-        ∀ (K : DiamondParameter), ∀ (f : IntegerLatticeFunction), ∀ (B : Int),
-        let k : Int := K.1
-        let C (p q : Int) : Prop :=
-          0 ≤ q ∧ q ≤ 2*k ∧ -k ≤ p ∧ p ≤ k ∧
-            -q-1 ≤ p ∧ p ≤ q+1 ∧ -(2*k-q+1) ≤ p ∧ p ≤ 2*k-q+1
-        let U (p q : Int) : Prop := 0 ≤ p ∧ p ≤ 1 ∧ 0 ≤ q ∧ q ≤ 1
-        (∀ (p : Int), ∀ (q : Int), FourNeighborLaplacian f ⟨p,q⟩ = (f ⟨p+1,q⟩ - f ⟨p,q⟩) + (f
-            ⟨p-1,q⟩ - f ⟨p,q⟩) + (f ⟨p,q+1⟩ - f ⟨p,q⟩) + (f ⟨p,q-1⟩ - f ⟨p,q⟩)) → ((C (⟨k, k⟩ :
-                GaussianInt).re
-            (⟨k, k⟩ : GaussianInt).im) → ((U ((⟨k, k⟩ : GaussianInt).re - k) ((⟨k, k⟩ :
-                GaussianInt).im - (k - (1 : ℤ)))) → ((f ⟨k, k - (1 : ℤ)⟩
-            = k * (k - (1 : ℤ)) / (2 : ℤ)) → ((f ⟨k + (1 : ℤ), k⟩ = (1 : ℤ) + (k - (1 : ℤ)) * (k
-            + (1 : ℤ)) + B) → ((f ⟨k, k⟩ = (k - (1 : ℤ)) * k + B) → ((f ⟨k+1,k⟩ - f ⟨k,k⟩ = k) →
-            (((Int.natAbs (k-1) : Int) = k-1) → (((Int.natAbs k : Int) = k) → ((f ⟨k - (1 : ℤ),
-            k⟩ = (k - (1 : ℤ)) * (k - (2 : ℤ)) / (2 : ℤ)) → ((f ⟨k, k + (1 : ℤ)⟩ = k * (k - (1 :
-            ℤ)) / (2 : ℤ)) → ((f ⟨k, k⟩ = k * (k - (1 : ℤ)) / (2 : ℤ)) → ((k * (k - (1 : ℤ)) / (2
-            : ℤ) - (k - (1 : ℤ)) * (k - (2 : ℤ)) / (2 : ℤ) = k - (1 : ℤ)) →
-            (FourNeighborLaplacian f ⟨k,k⟩ = 1))))))))))))) ) := by
-  classical
-  intro K f B k C U lap center unitCenter hs hdiffE hdiffZ he ha hb hw hn hc ht
-  rw [lap]
   omega
 
 end FirstUnitProof
@@ -544,8 +490,12 @@ theorem P5352T2FirstUnit (K : DiamondParameter) (hk : 1 < K.1)
     rw [show -k-(k-1) = 1-2*k by ring, sqp] at hs
     rw [show -k-k = -(2*k) by ring, neg_sq, sq0] at hc
     have ht := triDiff k
-    have hl : FourNeighborLaplacian f ⟨-k,k⟩ = 1 := FirstUnitProof.hlAt265 K f B lap center
-        unitCenter hn hdiffW hdiffZ ha hb he hs hc ht
+    have hl : FourNeighborLaplacian f ⟨-k,k⟩ = 1 := (show
+        FourNeighborLaplacian f ⟨-k,k⟩ = 1
+      from by
+        classical
+        rw [lap, show -k+1 = 1-k by ring]
+        omega)
     exact ⟨fun h => False.elim (hmark h), fun _ => hl⟩
   · have hw := covered (z.re-1) z.im
       (Or.inr (Or.inr (Or.inl (by ext <;> simp))))
@@ -595,8 +545,12 @@ theorem P5352T2FirstUnit (K : DiamondParameter) (hk : 1 < K.1)
     norm_num [P4207T1DiamondFormula, ha, hb] at hw hn hs hc
     rw [show k-1-1 = k-2 by ring] at hw
     have ht := triDiff k
-    have hl : FourNeighborLaplacian f ⟨k,k⟩ = 1 := FirstUnitProof.hlAt331 K f B lap center
-        unitCenter hs hdiffE hdiffZ he ha hb hw hn hc ht
+    have hl : FourNeighborLaplacian f ⟨k,k⟩ = 1 := (show
+        FourNeighborLaplacian f ⟨k,k⟩ = 1
+      from by
+        classical
+        rw [lap]
+        omega)
     exact ⟨fun h => False.elim (hmark h), fun _ => hl⟩
 
 end ApollonianSuperharmonic

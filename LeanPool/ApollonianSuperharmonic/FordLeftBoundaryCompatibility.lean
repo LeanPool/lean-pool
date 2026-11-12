@@ -249,39 +249,8 @@ private theorem hcentT :
         ((GaussianTranslation u (FordTile P2.q).anchor).im : ℝ)
       exact_mod_cast congrArg (fun z => z.im) ha
 
-private theorem hcentT' :
-    (by
-      classical
-      exact
-        ∀ (T' : ProtoTile), ∀ (g2 : BandPackingSymmetry), ∀ (P2 : FordFareyParameter), ∀ (u' :
-            GaussianInt), ((BandPackingSymmetryTileAction g2 T').cells = (TileTranslation
-            (FordTile P2.q) u').cells) → (((BandPackingSymmetryTileAction g2 T').cells = ∅ →
-            (BandPackingSymmetryTileAction g2 T').anchor = (TileTranslation (FordTile P2.q)
-            u').anchor) → (TileCentroid (BandPackingSymmetryTileAction g2 T') = TileCentroid
-            (TileTranslation (FordTile P2.q) u'))) ) := by
-  classical
-  intro T' g2 P2 u' hu' huempty'
-  rw [TileCentroid, TileCentroid]
-  by_cases hn : (BandPackingSymmetryTileAction g2 T').cells.Nonempty
-  · have hn' : (TileTranslation (FordTile P2.q) u').cells.Nonempty := by
-      rw [← hu']
-      exact hn
-    simp [hu', hn']
-  · have he : (BandPackingSymmetryTileAction g2 T').cells = ∅ :=
-      Finset.not_nonempty_iff_eq_empty.mp hn
-    have ha := huempty' he
-    rw [(TileTranslationFormulas (FordTile P2.q) u').2.1] at ha
-    have ht : ¬ (TileTranslation (FordTile P2.q) u').cells.Nonempty := by
-      simpa [hu'] using hn
-    simp only [hn, ht, ite_false]
-    rw [(TileTranslationFormulas (FordTile P2.q) u').2.1]
-    apply Prod.ext
-    · change ((BandPackingSymmetryTileAction g2 T').anchor.re : ℝ) =
-        ((GaussianTranslation u' (FordTile P2.q).anchor).re : ℝ)
-      exact_mod_cast congrArg (fun z => z.re) ha
-    · change ((BandPackingSymmetryTileAction g2 T').anchor.im : ℝ) =
-        ((GaussianTranslation u' (FordTile P2.q).anchor).im : ℝ)
-      exact_mod_cast congrArg (fun z => z.im) ha
+private abbrev hcentT' :=
+  ApollonianSuperharmonic.FordBoundaryCompatibilityGeometry.hcentT
 
 private theorem hshift :
     (by
@@ -380,40 +349,8 @@ private theorem heqH :
       rw [(BandPackingSymmetryPartialOdometerAction g2 h).value_outside x hx,
         (PartialOdometerAffineTranslate k u a b).value_outside x hnot]
 
-private theorem heqH' :
-    (by
-      classical
-      exact
-        ∀ (h' : PartialOdometer), ∀ (g2 : BandPackingSymmetry), ∀ (k : PartialOdometer), ∀ (u' :
-            GaussianInt), ∀ (a' : GaussianInt), ∀ (b' : ℤ), (∀ (x : GaussianInt), x ∈
-            (BandPackingSymmetryPartialOdometerAction g2 h').domain ↔ x - u' ∈ k.domain) → ((∀ x
-            ∈ (BandPackingSymmetryPartialOdometerAction g2 h').domain,
-            (BandPackingSymmetryPartialOdometerAction g2 h').value x = k.value (x - u') + a'.re *
-            x.re + a'.im * x.im + b') → (BandPackingSymmetryPartialOdometerAction g2 h' =
-            PartialOdometerAffineTranslate k u' a' b')) ) := by
-  classical
-  intro h' g2 k u' a' b' hud' huv'
-  apply (PartialOdometer.mk.injEq _ _ _ _ _ _).mpr
-  constructor
-  · apply Finset.ext
-    intro x
-    exact (hud' x).trans ((PartialOdometerAffineTranslateFormulas k u' a' b').2.1 x).symm
-  · apply funext
-    intro x
-    change (BandPackingSymmetryPartialOdometerAction g2 h').value x =
-      (PartialOdometerAffineTranslate k u' a' b').value x
-    by_cases hx : x ∈ (BandPackingSymmetryPartialOdometerAction g2 h').domain
-    · rw [(PartialOdometerAffineTranslateFormulas k u' a' b').2.2.1 x
-          (by
-            have hxa := (PartialOdometerAffineTranslateFormulas k u' a' b').2.1 x
-            exact hxa.mpr ((hud' x).mp hx))]
-      exact huv' x hx
-    · have hxa := (PartialOdometerAffineTranslateFormulas k u' a' b').2.1 x
-      have hnot : x ∉ (PartialOdometerAffineTranslate k u' a' b').domain := by
-        intro ha
-        exact hx ((hud' x).mpr (hxa.mp ha))
-      rw [(BandPackingSymmetryPartialOdometerAction g2 h').value_outside x hx,
-        (PartialOdometerAffineTranslate k u' a' b').value_outside x hnot]
+private abbrev heqH' :=
+  ApollonianSuperharmonic.FordBoundaryCompatibilityGeometry.heqH
 
 private theorem hvec :
     (by

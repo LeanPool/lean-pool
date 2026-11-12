@@ -450,69 +450,6 @@ private theorem hks :
       (fun x hx => (hkrest true x hx).1),
       (fun x hx => (hkrest true x hx).2.symm)⟩
 
-private theorem hrest :
-    (by
-      classical
-      exact
-        ∀ (U : ProtoTile), ∀ (k : PartialOdometer), ∀ (q : Fin (4 : ℕ) → CircleCoordinates), ∀ (r
-            : Fin (3 : ℕ)), ∀ (s : BandPackingSymmetry),
-        let qr : Fin 4 → CircleCoordinates :=
-          ![q 0, q r.succ, q (r + 1).succ, q (r + 2).succ]
-        let p := BandPackingSymmetryQuadrupleAction s qr
-        let V := BandPackingSymmetryTileAction s U
-        let l := BandPackingSymmetryPartialOdometerAction s k
-        ∀ (hp : ProperBandQuadruple p), ∀ (hpos : 0 < (p 0).1), ∀ (cfg :
-            BandOrderedGeneralConfiguration p),
-        let B : BandCircle := ⟨⟨p 0, Or.inl hpos, p, hp.1, 0, rfl⟩, hpos⟩
-        ∀ (cert : BandOrderedGeneralLayoutCertificate p cfg B V),
-        let restrict (W : ProtoTile) : PartialOdometer :=
-          let d := l.domain.filter fun x => decide (x ∈ FootprintVertices W)
-          { domain := d
-            value := fun x => if x ∈ d then l.value x else 0
-            value_outside := by intro x hx; exact ite_eq_right hx }
-        let ls := fun i s => restrict (cert.P i s)
-        (∀ i, ∀ s, ∀ x, x ∈ (ls i s).domain → x ∈ l.domain ∧ l.value x = (ls i s).value x) → (∀
-            (G : IntegerLatticeFunction), (GlobalOdometerExtends G l) → (∀ i, ∀ t,
-            GlobalOdometerExtends G (ls i t))) ) := by
-  classical
-  intro U k q r s qr p V l hp hpos cfg B cert restrict ls hlrest G heG i t
-  obtain ⟨b, hb⟩ := heG
-  refine ⟨b, ?_⟩
-  intro x hx
-  rw [hb x (hlrest i t x hx).1, (hlrest i t x hx).2]
-
-private theorem hkext :
-    (by
-      classical
-      exact
-        ∀ (U : ProtoTile), ∀ (k : PartialOdometer), ∀ (q : Fin (4 : ℕ) → CircleCoordinates), ∀ (r
-            : Fin (3 : ℕ)), ∀ (s : BandPackingSymmetry),
-        let qr : Fin 4 → CircleCoordinates :=
-          ![q 0, q r.succ, q (r + 1).succ, q (r + 2).succ]
-        let p := BandPackingSymmetryQuadrupleAction s qr
-        let V := BandPackingSymmetryTileAction s U
-        let l := BandPackingSymmetryPartialOdometerAction s k
-        ∀ (hp : ProperBandQuadruple p), ∀ (hpos : 0 < (p 0).1), ∀ (cfg :
-            BandOrderedGeneralConfiguration p),
-        let B : BandCircle := ⟨⟨p 0, Or.inl hpos, p, hp.1, 0, rfl⟩, hpos⟩
-        ∀ (cert : BandOrderedGeneralLayoutCertificate p cfg B V),
-        let restrict (W : ProtoTile) : PartialOdometer :=
-          let d := l.domain.filter fun x => decide (x ∈ FootprintVertices W)
-          { domain := d
-            value := fun x => if x ∈ d then l.value x else 0
-            value_outside := by intro x hx; exact ite_eq_right hx }
-        let ls := fun i s => restrict (cert.P i s)
-        let ks := fun _ : Bool => restrict cert.O
-        (∀ s, ∀ x, x ∈ (ks s).domain → x ∈ (ls 0 s).domain ∧ (ls 0 s).value x = (ks s).value x) →
-            (∀ (G : IntegerLatticeFunction), (∀ i, ∀ t, GlobalOdometerExtends G (ls i t)) →
-            (GlobalOdometerExtends G (ks true))) ) := by
-  classical
-  intro U k q r s qr p V l hp hpos cfg B cert restrict ls ks hkrest G hrest
-  obtain ⟨b, hb⟩ := hrest 0 true
-  refine ⟨b, ?_⟩
-  intro x hx
-  rw [hb x (hkrest true x hx).1, (hkrest true x hx).2]
-
 private theorem kids :
     (by
       classical
@@ -757,7 +694,15 @@ theorem BandTileAcyclicIndegree :
             (BandAcyclicIndegreeGeometry.hOancestor U q r s hp hpos cfg cert)
         obtain ⟨G, heG, hlat, htile, hweb, hperiod, hlap⟩ :=
           BandCanonicalPeriodicExtension B p hp rfl V l f' hV hl hldom he'
-        have hrest := BandAcyclicIndegreeGeometry.hrest U k q r s hp hpos cfg cert hlrest G heG
+        have hrest := (show
+            ∀ i, ∀ t, GlobalOdometerExtends G (ls i t)
+          from by
+            classical
+            intro i t
+            obtain ⟨b, hb⟩ := heG
+            refine ⟨b, ?_⟩
+            intro x hx
+            rw [hb x (hlrest i t x hx).1, (hlrest i t x hx).2])
         let D := l.domain.filter fun x =>
           @decide (x ∉ BoundaryFootprintVertices V) (Classical.propDecidable _)
         let A := fun a : Fin 3 × Bool => (ls a.1 a.2).domain.filter fun x =>
@@ -770,8 +715,14 @@ theorem BandTileAcyclicIndegree :
             hlsdom hls G hrest
         let os := fun a => Classical.choice (kids a)
         have mass := P5532T1RestrictionMassBalance (cfg.firstPredecessor 1)
-          cert.O (ks true) G (hks true) (hksdom true) (BandAcyclicIndegreeGeometry.hkext U k q r
-              s hp hpos cfg cert hkrest G hrest)
+          cert.O (ks true) G (hks true) (hksdom true) ((show
+              GlobalOdometerExtends G (ks true)
+            from by
+              classical
+              obtain ⟨b, hb⟩ := hrest 0 true
+              refine ⟨b, ?_⟩
+              intro x hx
+              rw [hb x (hkrest true x hx).1, (hkrest true x hx).2]))
         obtain ⟨hAD, hpair, hcross, hUnion⟩ := P5532T1ParentInteriorGeometry
           B p cfg V cert l ls (ks true) hlat hldom hlsdom (hksdom true)
         have closed := BandAcyclicIndegreeGeometry.closed U k q r s hp hpos cfg cert G kids mass

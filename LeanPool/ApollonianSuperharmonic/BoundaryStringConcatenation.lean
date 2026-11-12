@@ -493,20 +493,8 @@ private theorem hσm :
     _ = (a, b) + σ r := by rw [h]
     _ = σ r + (a, b) := by abel
 
-private theorem hσs :
-    (by
-      classical
-      exact
-        ∀ (m : ℤ × ℤ), ∀ (s : ℤ × ℤ), ∀ (σ : ℤ × ℤ ≃+ ℤ × ℤ), ∀ (c : ℤ), ∀ (d : ℤ), (σ (s - m) =
-            (c, d)) → (σ s = σ m + (c, d)) ) := by
-  classical
-  intro m s σ c d hσsm
-  have h := hσsm
-  rw [map_sub] at h
-  calc
-    σ s = (σ s - σ m) + σ m := by abel
-    _ = (c, d) + σ m := by rw [h]
-    _ = σ m + (c, d) := by abel
+private abbrev hσs :=
+  ApollonianSuperharmonic.BoundaryConcatenationGeometry.hσm
 
 private theorem hDimage :
     (by

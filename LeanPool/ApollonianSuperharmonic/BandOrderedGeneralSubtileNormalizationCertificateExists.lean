@@ -6,6 +6,9 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.BandPrototileQuarterTurn
+public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryDomainTransport
+public import LeanPool.ApollonianSuperharmonic.BandQuadrupleCyclicRotation
 
 public import LeanPool.ApollonianSuperharmonic.P5658T1FivePointDomainCoverSymmetryCovariance
 public import LeanPool.ApollonianSuperharmonic.BandOrderedGeneralSubtileNormalizationCertificate
@@ -28,59 +31,6 @@ Changes: pool module paths, public exports, project namespace and current Mathli
 namespace ApollonianSuperharmonic
 
 namespace SubtileNormalizationGeometry
-
-private theorem hqrotSemi :
-    (by
-      classical
-      exact
-        ∀ (q : Fin 4 → CircleCoordinates), (ProperBandQuadruple q) → ( ∀ (r : Fin (3 : ℕ)), ∀ (g
-            : BandPackingSymmetry), (
-        let q' := BandPackingSymmetryQuadrupleAction g ![q (0 : Fin (4 : ℕ)), q r.succ, q (r + (1
-            : Fin (3 : ℕ))).succ, q (r + (2 : Fin (3 : ℕ))).succ]; Xor (∃ (P :
-            FordFareyParameter), (1 : ℕ) < P.q ∧ q' = FordRecursiveQuadruple P) (Xor (∃ (K :
-            DiamondParameter), (1 : ℕ) < K.1 ∧ q' = DiamondRecursiveQuadruple K) (Nonempty
-            (BandOrderedGeneralConfiguration q')))) → (
-        let qrot : Fin 4 → CircleCoordinates :=
-          ![q 0, q r.succ, q (r + 1).succ, q (r + 2).succ]
-        SemiProperQuadruple qrot)) ) := by
-  classical
-  intro q hq r g hregime qrot
-  fin_cases r
-  · convert hq.1 using 1; funext j; fin_cases j <;> simp [qrot]
-  · convert SemiProperQuadruple.rotate hq.1 using 1;
-      funext j; fin_cases j <;> simp [qrot]
-  · convert SemiProperQuadruple.rotate
-        (SemiProperQuadruple.rotate hq.1) using 1;
-      funext j; fin_cases j <;> simp [qrot]
-
-private theorem hqrot :
-    (by
-      classical
-      exact
-        ∀ (q : Fin 4 → CircleCoordinates), (ProperBandQuadruple q) → ( ∀ (r : Fin (3 : ℕ)), ∀ (g
-            : BandPackingSymmetry), (
-        let q' := BandPackingSymmetryQuadrupleAction g ![q (0 : Fin (4 : ℕ)), q r.succ, q (r + (1
-            : Fin (3 : ℕ))).succ, q (r + (2 : Fin (3 : ℕ))).succ]; Xor (∃ (P :
-            FordFareyParameter), (1 : ℕ) < P.q ∧ q' = FordRecursiveQuadruple P) (Xor (∃ (K :
-            DiamondParameter), (1 : ℕ) < K.1 ∧ q' = DiamondRecursiveQuadruple K) (Nonempty
-            (BandOrderedGeneralConfiguration q')))) → (
-        let qrot : Fin 4 → CircleCoordinates :=
-          ![q 0, q r.succ, q (r + 1).succ, q (r + 2).succ]
-        (SemiProperQuadruple qrot) → (ProperBandQuadruple qrot))) ) := by
-  classical
-  intro q hq r g hregime qrot hqrotSemi
-  refine ⟨hqrotSemi, ?_⟩
-  intro j
-  fin_cases r <;> fin_cases j <;> simp [qrot]
-  · simpa using hq.2 (0 : Fin 3)
-  · simpa using hq.2 (1 : Fin 3)
-  · simpa using hq.2 (2 : Fin 3)
-  · simpa using hq.2 (1 : Fin 3)
-  · simpa using hq.2 (2 : Fin 3)
-  · simpa using hq.2 (0 : Fin 3)
-  · simpa using hq.2 (2 : Fin 3)
-  · simpa using hq.2 (0 : Fin 3)
-  · simpa using hq.2 (1 : Fin 3)
 
 private theorem hgeneral :
     (by
@@ -270,44 +220,6 @@ private theorem hqbarᵢPos :
   have hnl := cfg.noLine ibar.succ
   omega
 
-private theorem hx₀bar :
-    (by
-      classical
-      exact
-        ∀ (h₀ : PartialOdometer), (PartialOdometer) → (∀ (x : GaussianInt), (x ∈ h₀.domain) → (∀
-            (g : BandPackingSymmetry),
-        let h₀bar := BandPackingSymmetryPartialOdometerAction g h₀
-        let xbar := BandPackingSymmetryVectorAction g x
-        xbar ∈ h₀bar.domain)) ) := by
-  classical
-  intro h₀ hᵢ x hx₀ g h₀bar xbar
-  have hdom := (BandPackingSymmetryPartialOdometerActionFormulas g h₀ hᵢ).1
-  have hxset : BandPackingSymmetryVectorAction g x ∈
-      ((BandPackingSymmetryPartialOdometerAction g h₀).domain :
-        Set GaussianInt) := by
-    rw [hdom]
-    exact ⟨x, hx₀, rfl⟩
-  exact hxset
-
-private theorem hxᵢbar :
-    (by
-      classical
-      exact
-        (PartialOdometer) → (∀ (hᵢ : PartialOdometer), ∀ (x : GaussianInt), (x ∈ hᵢ.domain) → (∀
-            (g : BandPackingSymmetry),
-        let hᵢbar := BandPackingSymmetryPartialOdometerAction g hᵢ
-        let xbar := BandPackingSymmetryVectorAction g x
-        xbar ∈ hᵢbar.domain)) ) := by
-  classical
-  intro h₀ hᵢ x hxᵢ g hᵢbar xbar
-  have hdom := (BandPackingSymmetryPartialOdometerActionFormulas g hᵢ h₀).1
-  have hxset : BandPackingSymmetryVectorAction g x ∈
-      ((BandPackingSymmetryPartialOdometerAction g hᵢ).domain :
-        Set GaussianInt) := by
-    rw [hdom]
-    exact ⟨x, hxᵢ, rfl⟩
-  exact hxset
-
 private theorem hadjbar :
     (by
       classical
@@ -392,43 +304,6 @@ private theorem hsmallT1 :
   intro q r g qrot qbar q' T' S' hq' hT' hocc hcells _
   have hI := BandTileSimultaneousInduction q' hq' T' hT'
   exact ⟨hI.1, hI.2.1, hI.2.2.1 S' hocc hcells⟩
-
-private theorem hsmallT2 :
-    (by
-      classical
-      exact
-        ∀ (q : Fin 4 → CircleCoordinates), ∀ (r : Fin (3 : ℕ)), ∀ (g : BandPackingSymmetry),
-        let qrot : Fin 4 → CircleCoordinates :=
-          ![q 0, q r.succ, q (r + 1).succ, q (r + 2).succ]
-        let qbar := BandPackingSymmetryQuadrupleAction g qrot
-        ∀ (D : CircleCoordinates), ∀ (U : ProtoTile), BandPrototile D U → Int.toNat D.1 <
-            Int.toNat (qbar 0).1 → QuarterTurnSymmetric U ) := by
-  classical
-  intro q r g qrot qbar D U hU _
-  cases hU with
-  | line w z hw =>
-      intro p
-      simp [TileRealization, TileCentroid]
-  | unit z a anchor =>
-      intro p
-      have hc : TileCentroid (⟨{a}, anchor⟩ : ProtoTile) =
-          (((a.re : Int) : Real) + (1 / 2 : Real),
-            ((a.im : Int) : Real) + (1 / 2 : Real)) := by
-        simp [TileCentroid]
-      rw [hc]
-      rcases p with ⟨px, py⟩
-      simp only [TileRealization, Finset.mem_singleton, Set.mem_iUnion]
-      simp only [ClosedSquareRealization, Set.mem_Icc, Prod.le_def]
-      constructor
-      · rintro ⟨b, rfl, hlo, hhi⟩
-        refine ⟨b, rfl, ?_, ?_⟩ <;> constructor <;>
-          linarith [hlo.1, hlo.2, hhi.1, hhi.2]
-      · rintro ⟨b, rfl, hlo, hhi⟩
-        refine ⟨b, rfl, ?_, ?_⟩ <;> constructor <;>
-          linarith [hlo.1, hlo.2, hhi.1, hhi.2]
-  | @decompose q' hq' S' U' hS hcells hfoot hcent =>
-      exact (BandTileSimultaneousInduction q' hq' U
-        (.decompose hq' hS hcells hfoot hcent)).2.2.2.1
 
 private theorem hsmallT4 :
     (by
@@ -715,92 +590,6 @@ private theorem hexteriorIndex :
   generalize hi : ibar = j at ⊢
   generalize hs : sbar = t at ⊢
   fin_cases j <;> fin_cases t <;> simp [exteriorIndex, hi, hs]
-
-private theorem hexteriorCentroid :
-    (by
-      classical
-      exact
-        ∀ (q : Fin 4 → CircleCoordinates), ∀ (i : Fin 3), ∀ (T₀ : ProtoTile), ∀ (r : Fin (3 :
-            ℕ)), ∀ (g : BandPackingSymmetry),
-        let qrot : Fin 4 → CircleCoordinates :=
-          ![q 0, q r.succ, q (r + 1).succ, q (r + 2).succ]
-        let irot : Fin 3 := i - r
-        let qbar := BandPackingSymmetryQuadrupleAction g qrot
-        ∀ (hqbar : ProperBandQuadruple qbar), ∀ (cfg : BandOrderedGeneralConfiguration qbar), ∀
-            (sbar : Fin (4 : ℕ)),
-        let reverse := BandPackingSymmetryReversesOrientation g
-        let ibar : Fin 3 := if reverse then -irot else irot
-        let T₀bar := BandPackingSymmetryTileAction g T₀
-        ∀ (hqbar₀Pos : 0 < (qbar 0).1),
-        let C₀bar : BandCircle :=
-          ⟨⟨qbar 0, ⟨Or.inl hqbar₀Pos, ⟨qbar, hqbar.1, ⟨0, rfl⟩⟩⟩⟩, hqbar₀Pos⟩
-        ∀ (layout : BandOrderedGeneralLayoutCertificate qbar cfg C₀bar T₀bar),
-        let incoming : Fin 3 → GaussianInt := fun j =>
-          BandVectors.1 (qbar j.succ) (qbar 0)
-        let outgoing : Fin 3 → GaussianInt := fun j =>
-          BandVectors.1 (qbar 0) (qbar j.succ)
-        let exteriorIndex : PeriodicSubtileIndex :=
-          if ibar = 0 then
-            if sbar = 0 then ⟨.A, 0, -1⟩
-            else if sbar = 1 then ⟨.B, 1, 1⟩
-            else if sbar = 2 then ⟨.B, 0, 1⟩
-            else ⟨.A, -1, -1⟩
-          else if ibar = 1 then
-            if sbar = 0 then ⟨.C, 1, 1⟩
-            else if sbar = 1 then ⟨.D, -1, 0⟩
-            else if sbar = 2 then ⟨.D, -1, -1⟩
-            else ⟨.C, 1, 0⟩
-          else
-            if sbar = 0 then ⟨.E, -1, 0⟩
-            else if sbar = 1 then ⟨.F, 0, -1⟩
-            else if sbar = 2 then ⟨.F, 1, 0⟩
-            else ⟨.E, 0, 1⟩
-        (
-        let uIndex := if ibar = (0 : Fin (3 : ℕ)) then if sbar = (0 : Fin (4 : ℕ)) then
-            (⟨SixSubtileLabel.A, (0 : ℤ), (-1 : ℤ)⟩ : PeriodicSubtileIndex) else if sbar = (1 :
-            Fin (4 : ℕ)) then (⟨SixSubtileLabel.B, (1 : ℤ), (1 : ℤ)⟩ : PeriodicSubtileIndex) else
-            if sbar = (2 : Fin (4 : ℕ)) then (⟨SixSubtileLabel.B, (0 : ℤ), (1 : ℤ)⟩ :
-            PeriodicSubtileIndex) else (⟨SixSubtileLabel.A, (-1 : ℤ), (-1 : ℤ)⟩ :
-            PeriodicSubtileIndex) else if ibar = (1 : Fin (3 : ℕ)) then if sbar = (0 : Fin (4 :
-            ℕ)) then (⟨SixSubtileLabel.C, (1 : ℤ), (1 : ℤ)⟩ : PeriodicSubtileIndex) else if sbar
-            = (1 : Fin (4 : ℕ)) then (⟨SixSubtileLabel.D, (-1 : ℤ), (0 : ℤ)⟩ :
-            PeriodicSubtileIndex) else if sbar = (2 : Fin (4 : ℕ)) then (⟨SixSubtileLabel.D, (-1
-            : ℤ), (-1 : ℤ)⟩ : PeriodicSubtileIndex) else (⟨SixSubtileLabel.C, (1 : ℤ), (0 : ℤ)⟩ :
-            PeriodicSubtileIndex) else if sbar = (0 : Fin (4 : ℕ)) then (⟨SixSubtileLabel.E, (-1
-            : ℤ), (0 : ℤ)⟩ : PeriodicSubtileIndex) else if sbar = (1 : Fin (4 : ℕ)) then
-            (⟨SixSubtileLabel.F, (0 : ℤ), (-1 : ℤ)⟩ : PeriodicSubtileIndex) else if sbar = (2 :
-            Fin (4 : ℕ)) then (⟨SixSubtileLabel.F, (1 : ℤ), (0 : ℤ)⟩ : PeriodicSubtileIndex) else
-            (⟨SixSubtileLabel.E, (0 : ℤ), (1 : ℤ)⟩ : PeriodicSubtileIndex);
-        let vIndex := if ibar = (0 : Fin (3 : ℕ)) then if sbar = (0 : Fin (4 : ℕ)) then
-            (⟨SixSubtileLabel.C, (1 : ℤ), (0 : ℤ)⟩ : PeriodicSubtileIndex) else if sbar = (1 :
-            Fin (4 : ℕ)) then (⟨SixSubtileLabel.F, (1 : ℤ), (0 : ℤ)⟩ : PeriodicSubtileIndex) else
-            if sbar = (2 : Fin (4 : ℕ)) then (⟨SixSubtileLabel.D, (-1 : ℤ), (0 : ℤ)⟩ :
-            PeriodicSubtileIndex) else (⟨SixSubtileLabel.E, (-1 : ℤ), (0 : ℤ)⟩ :
-            PeriodicSubtileIndex) else if ibar = (1 : Fin (3 : ℕ)) then if sbar = (0 : Fin (4 :
-            ℕ)) then (⟨SixSubtileLabel.E, (0 : ℤ), (1 : ℤ)⟩ : PeriodicSubtileIndex) else if sbar
-            = (1 : Fin (4 : ℕ)) then (⟨SixSubtileLabel.B, (0 : ℤ), (1 : ℤ)⟩ :
-            PeriodicSubtileIndex) else if sbar = (2 : Fin (4 : ℕ)) then (⟨SixSubtileLabel.F, (0 :
-            ℤ), (-1 : ℤ)⟩ : PeriodicSubtileIndex) else (⟨SixSubtileLabel.A, (0 : ℤ), (-1 : ℤ)⟩ :
-            PeriodicSubtileIndex) else if sbar = (0 : Fin (4 : ℕ)) then (⟨SixSubtileLabel.A, (-1
-            : ℤ), (-1 : ℤ)⟩ : PeriodicSubtileIndex) else if sbar = (1 : Fin (4 : ℕ)) then
-            (⟨SixSubtileLabel.D, (-1 : ℤ), (-1 : ℤ)⟩ : PeriodicSubtileIndex) else if sbar = (2 :
-            Fin (4 : ℕ)) then (⟨SixSubtileLabel.B, (1 : ℤ), (1 : ℤ)⟩ : PeriodicSubtileIndex) else
-            (⟨SixSubtileLabel.C, (1 : ℤ), (1 : ℤ)⟩ : PeriodicSubtileIndex);
-        let U := SubtileOccurrenceInterpretation layout.P layout.u layout.v uIndex;
-        let V := SubtileOccurrenceInterpretation layout.P layout.u layout.v vIndex; TileCentroid
-            U - TileCentroid T₀bar = (1 / 2 : ℝ) • GaussianRealPoint ((⟨(0 : ℤ), (1 : ℤ)⟩ :
-            GaussianInt) ^ (↑sbar : ℕ) * (incoming ibar + outgoing ibar)) ∧ TileCentroid V -
-            TileCentroid T₀bar = (1 / 2 : ℝ) • GaussianRealPoint ((⟨(0 : ℤ), (1 : ℤ)⟩ :
-            GaussianInt) ^ (↑sbar : ℕ) * if Even (↑sbar : ℕ) then incoming (ibar + (1 : Fin (3 :
-            ℕ))) - outgoing (ibar + (1 : Fin (3 : ℕ))) else outgoing (ibar - (1 : Fin (3 : ℕ))) -
-            incoming (ibar - (1 : Fin (3 : ℕ))))) → (TileCentroid
-            (SubtileOccurrenceInterpretation layout.P layout.u layout.v exteriorIndex) -
-            TileCentroid T₀bar = (1 / 2 : ℝ) • GaussianRealPoint ((⟨0, 1⟩ : GaussianInt) ^
-            sbar.val * (incoming ibar + outgoing ibar))) ) := by
-  classical
-  intro q i T₀ r g qrot irot qbar hqbar cfg sbar reverse ibar T₀bar hqbar₀Pos C₀bar layout
-      incoming outgoing exteriorIndex hrows
-  simpa [exteriorIndex] using hrows.1
 
 private theorem hexteriorBand :
     (by
@@ -1110,8 +899,14 @@ private theorem subtileNormalizationCertificate :
           layout.v exteriorIndex) - TileCentroid T₀bar =
         (1 / 2 : ℝ) • GaussianRealPoint
           ((⟨0, 1⟩ : GaussianInt) ^ sbar.val *
-            (incoming ibar + outgoing ibar)) := SubtileNormalizationGeometry.hexteriorCentroid q
-                i T₀ r g hqbar cfg sbar hqbar₀Pos layout hrows
+            (incoming ibar + outgoing ibar)) := (show
+                TileCentroid (SubtileOccurrenceInterpretation layout.P layout.u
+                layout.v exteriorIndex) - TileCentroid T₀bar = (1 / 2 : ℝ) •
+                GaussianRealPoint ((⟨0, 1⟩ : GaussianInt) ^ sbar.val * (incoming
+                ibar + outgoing ibar))
+              from by
+                classical
+                simpa [exteriorIndex] using hrows.1)
   have hexteriorBand : BandPrototile (qbar ibar.succ)
       (SubtileOccurrenceInterpretation layout.P layout.u layout.v
         exteriorIndex) := SubtileNormalizationGeometry.hexteriorBand q i T₀ r g hqbar cfg sbar
@@ -1240,10 +1035,7 @@ theorem BandOrderedGeneralSubtileNormalizationCertificateExists
   obtain ⟨r, g, hregime⟩ := BandRegimeClassification q hq
   let qrot : Fin 4 → CircleCoordinates :=
     ![q 0, q r.succ, q (r + 1).succ, q (r + 2).succ]
-  have hqrotSemi : SemiProperQuadruple qrot := SubtileNormalizationGeometry.hqrotSemi q hq r g
-      hregime
-  have hqrot : ProperBandQuadruple qrot := SubtileNormalizationGeometry.hqrot q hq r g hregime
-      hqrotSemi
+  have hqrot : ProperBandQuadruple qrot := BandQuadrupleCyclicRotation.proper q hq r
   let irot : Fin 3 := i - r
   have hrotParent : qrot irot.succ = q i.succ := by
     fin_cases r <;> fin_cases i <;> simp [qrot, irot]
@@ -1303,8 +1095,8 @@ theorem BandOrderedGeneralSubtileNormalizationCertificateExists
     ⟨⟨qbar ibar.succ,
       ⟨Or.inl hqbarᵢPos, ⟨qbar, hqbar.1, ⟨ibar.succ, rfl⟩⟩⟩⟩,
       hqbarᵢPos⟩
-  have hx₀bar : xbar ∈ h₀bar.domain := SubtileNormalizationGeometry.hx₀bar h₀ hᵢ x hx₀ g
-  have hxᵢbar : xbar ∈ hᵢbar.domain := SubtileNormalizationGeometry.hxᵢbar h₀ hᵢ x hxᵢ g
+  have hx₀bar : xbar ∈ h₀bar.domain := BandPackingSymmetryDomainTransport.forward g h₀ x hx₀
+  have hxᵢbar : xbar ∈ hᵢbar.domain := BandPackingSymmetryDomainTransport.forward g hᵢ x hxᵢ
   have hadjbar : SubtileLatticeAdjacent C₀bar Cᵢbar
       T₀bar Tᵢbar h₀bar hᵢbar := SubtileNormalizationGeometry.hadjbar q i T₀ Tᵢ h₀ hᵢ r g hqbar
           p₀bar pᵢbar sbar hO₀bar hOᵢbar hp₀bar hpᵢbar hcentroidBar hslopexBar hslopeyBar
@@ -1326,7 +1118,7 @@ theorem BandOrderedGeneralSubtileNormalizationCertificateExists
               SubtileNormalizationGeometry.hsmallT1 q r g
   have hsmallT2 : ∀ (D : CircleCoordinates) (U : ProtoTile),
       BandPrototile D U → Int.toNat D.1 < Int.toNat (qbar 0).1 →
-      QuarterTurnSymmetric U := SubtileNormalizationGeometry.hsmallT2 q r g
+      QuarterTurnSymmetric U := fun D U hU _ => BandPrototileQuarterTurn.symmetry D U hU
   have hsmallT4 : ∀ (q' : Fin 4 → CircleCoordinates)
       (T' U : ProtoTile), ProperBandQuadruple q' →
       BandPrototile (q' 0) T' →

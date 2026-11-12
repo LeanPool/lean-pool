@@ -1600,35 +1600,6 @@ private theorem hNoff :
     · exact (ne_of_lt hx.2.2) (by simpa [V, hp] using hu0)
     · exact (ne_of_gt hx.2.1) (by simpa [U, hp] using hw0)
 
-private theorem hWoff :
-    (by
-      classical
-      exact
-        ∀ (n : Nat), ∀ (p : P3381T1PolygonBoundary n),
-        let v := p.vertex
-        ∀ (b : Fin (n + (3 : ℕ))),
-        let B := v b
-        let a := v (b - 1)
-        let c := v (b + 1)
-        let u : Real × Real := a - B
-        let w : Real × Real := c - B
-        let cross (x y : Real × Real) : Real := x.1 * y.2 - x.2 * y.1
-        let C := P3544T1BoundaryCarrier p
-        ∀ (rK : ℝ),
-        let r := min rK (min (dist B a / 2) (dist B c / 2))
-        let U := if 0 < cross u w then u else w
-        let V := if 0 < cross u w then w else u
-        let W : Set (Real × Real) := {x | x ∈ Metric.ball B r ∧
-          (cross U (x - B) < 0 ∨ 0 < cross V (x - B))}
-        (∀ x, x ∈ Metric.ball B r → x ∈ C → 0 ≤ cross U (x-B) ∧ cross V (x-B) ≤ 0) → (∀ x, x ∈ W
-            → x ∉ C) ) := by
-  classical
-  intro n p v b B a c u w cross C rK r U V W hcarrierSigns x hx hc
-  have hs := hcarrierSigns x hx.1 hc
-  rcases hx.2 with hn | hp
-  · exact (not_lt_of_ge hs.1) hn
-  · exact (not_lt_of_ge hs.2) hp
-
 private theorem hcover :
     (by
       classical
@@ -1819,37 +1790,6 @@ private theorem hyheight :
     simp only [smul_eq_mul, mul_one]
   rw [hval]
   linarith
-
-private theorem hynotC :
-    (by
-      classical
-      exact
-        ∀ (n : Nat), ∀ (p : P3381T1PolygonBoundary n),
-        let v := p.vertex
-        let f : Fin (n + 3) × Fin (n + 3) → Real := fun ij =>
-          ((v ij.2).1 - (v ij.1).1) / ((v ij.1).2 - (v ij.2).2)
-        ∀ (hqexists : ∃ q : Real, q ∉ Set.range f),
-        let q := Classical.choose hqexists
-        ∀ (b : Fin (n + (3 : ℕ))),
-        let c := v (b + 1)
-        let B := v b
-        let e : Real × Real := (1, 0)
-        ∀ (ε : ℝ),
-        let y : Real × Real := B + ε • e
-        let ell : (Real × Real) →ₗ[Real] Real :=
-          { toFun := fun x => x.1 + q * x.2
-            map_add' := by intro x y; simp; ring
-            map_smul' := by intro c x; simp; ring }
-        let a := v (b - 1)
-        let C := P3544T1BoundaryCarrier p
-        ∀ (rK : ℝ),
-        let r := min rK (min (dist B a / 2) (dist B c / 2))
-        (∀ x : Real × Real, x ∈ Metric.ball B r → x ∈ C → ell x ≤ ell B) → ((y ∈ Metric.ball B r)
-            → ((ell B < ell y) → (y ∉ C))) ) := by
-  classical
-  intro n p v f hqexists q b c B e ε y ell a C rK r hellCarrier hyball hyheight hyC
-  have hle := hellCarrier y hyball hyC
-  exact (not_lt_of_ge hle) hyheight
 
 private theorem hYclass :
     (by
@@ -2317,148 +2257,6 @@ private theorem htranslateS :
   rw [Metric.mem_ball, he]
   exact hz
 
-private theorem hymS :
-    (by
-      classical
-      exact
-        ∀ (n : Nat), ∀ (p : P3381T1PolygonBoundary n),
-        let v := p.vertex
-        ∀ (b : Fin (n + (3 : ℕ))),
-        let B := v b
-        let a := v (b - 1)
-        let c := v (b + 1)
-        let u : Real × Real := a - B
-        let w : Real × Real := c - B
-        let cross (x y : Real × Real) : Real := x.1 * y.2 - x.2 * y.1
-        ∀ (rK : ℝ),
-        let r := min rK (min (dist B a / 2) (dist B c / 2))
-        let σ := min (1 / 2) (r / (4 * (dist B a + 1)))
-        let x0 := B + σ • u
-        ∀ (rS : ℝ),
-        let S := Metric.ball x0 rS ∩ Metric.ball B r
-        ∀ (δ : ℝ), (Metric.ball x0 δ ⊆ S) → (
-        let qside : Real × Real := if 0 < cross u w then w else -w
-        ∀ (η : ℝ), (-(η • qside) ∈ Metric.ball (0 : Real × Real) δ) → ((∀ z : Real × Real, z ∈
-            Metric.ball (0 : Real × Real) δ → x0 + z ∈ Metric.ball x0 δ) → (
-        let ym := x0 - η • qside
-        ym ∈ S))) ) := by
-  classical
-  intro n p v b B a c u w cross rK r σ x0 rS S δ hballS qside η hηballNeg htranslateS ym
-  have hh := htranslateS (-(η • qside)) hηballNeg
-  simpa [ym, sub_eq_add_neg] using hballS hh
-
-private theorem hcrossUplus :
-    (by
-      classical
-      exact
-        ∀ (n : Nat), ∀ (p : P3381T1PolygonBoundary n),
-        let v := p.vertex
-        ∀ (b : Fin (n + (3 : ℕ))),
-        let B := v b
-        let a := v (b - 1)
-        let c := v (b + 1)
-        let u : Real × Real := a - B
-        let w : Real × Real := c - B
-        let cross (x y : Real × Real) : Real := x.1 * y.2 - x.2 * y.1
-        ∀ (rK : ℝ),
-        let r := min rK (min (dist B a / 2) (dist B c / 2))
-        (∀ z : Real × Real, IsLinearMap Real (cross z)) → ((∀ z : Real × Real, cross z z = 0) → (
-        let σ := min (1 / 2) (r / (4 * (dist B a + 1)))
-        let x0 := B + σ • u
-        let qside : Real × Real := if 0 < cross u w then w else -w
-        ∀ (η : ℝ),
-        let yp := x0 + η • qside
-        (yp - B = σ • u + η • qside) → (cross u (yp-B) = η * cross u qside))) ) := by
-  classical
-  intro n p v b B a c u w cross rK r hcrossLinear hcrossSelf σ x0 qside η yp hyplus
-  rw [hyplus, (hcrossLinear u).map_add, (hcrossLinear u).map_smul,
-    (hcrossLinear u).map_smul, hcrossSelf]
-  simp only [smul_eq_mul, mul_zero, zero_add]
-
-private theorem hcrossUminus :
-    (by
-      classical
-      exact
-        ∀ (n : Nat), ∀ (p : P3381T1PolygonBoundary n),
-        let v := p.vertex
-        ∀ (b : Fin (n + (3 : ℕ))),
-        let B := v b
-        let a := v (b - 1)
-        let c := v (b + 1)
-        let u : Real × Real := a - B
-        let w : Real × Real := c - B
-        let cross (x y : Real × Real) : Real := x.1 * y.2 - x.2 * y.1
-        ∀ (rK : ℝ),
-        let r := min rK (min (dist B a / 2) (dist B c / 2))
-        (∀ z : Real × Real, IsLinearMap Real (cross z)) → ((∀ z : Real × Real, cross z z = 0) → (
-        let σ := min (1 / 2) (r / (4 * (dist B a + 1)))
-        let x0 := B + σ • u
-        let qside : Real × Real := if 0 < cross u w then w else -w
-        ∀ (η : ℝ),
-        let ym := x0 - η • qside
-        (ym - B = σ • u - η • qside) → (cross u (ym-B) = -(η * cross u qside)))) ) := by
-  classical
-  intro n p v b B a c u w cross rK r hcrossLinear hcrossSelf σ x0 qside η ym hyminus
-  rw [hyminus, (hcrossLinear u).map_sub, (hcrossLinear u).map_smul,
-    (hcrossLinear u).map_smul, hcrossSelf]
-  simp only [smul_eq_mul, mul_zero, zero_sub]
-
-private theorem hcrossWplus :
-    (by
-      classical
-      exact
-        ∀ (n : Nat), ∀ (p : P3381T1PolygonBoundary n),
-        let v := p.vertex
-        ∀ (b : Fin (n + (3 : ℕ))),
-        let B := v b
-        let a := v (b - 1)
-        let c := v (b + 1)
-        let u : Real × Real := a - B
-        let w : Real × Real := c - B
-        let cross (x y : Real × Real) : Real := x.1 * y.2 - x.2 * y.1
-        ∀ (rK : ℝ),
-        let r := min rK (min (dist B a / 2) (dist B c / 2))
-        (∀ z : Real × Real, IsLinearMap Real (cross z)) → (
-        let σ := min (1 / 2) (r / (4 * (dist B a + 1)))
-        let x0 := B + σ • u
-        let qside : Real × Real := if 0 < cross u w then w else -w
-        (cross w qside = 0) → (∀ (η : ℝ),
-        let yp := x0 + η • qside
-        (yp - B = σ • u + η • qside) → (cross w (yp-B) = σ * cross w u))) ) := by
-  classical
-  intro n p v b B a c u w cross rK r hcrossLinear σ x0 qside hcrossWq η yp hyplus
-  rw [hyplus, (hcrossLinear w).map_add, (hcrossLinear w).map_smul,
-    (hcrossLinear w).map_smul, hcrossWq]
-  simp only [smul_eq_mul, mul_zero, add_zero]
-
-private theorem hcrossWminus :
-    (by
-      classical
-      exact
-        ∀ (n : Nat), ∀ (p : P3381T1PolygonBoundary n),
-        let v := p.vertex
-        ∀ (b : Fin (n + (3 : ℕ))),
-        let B := v b
-        let a := v (b - 1)
-        let c := v (b + 1)
-        let u : Real × Real := a - B
-        let w : Real × Real := c - B
-        let cross (x y : Real × Real) : Real := x.1 * y.2 - x.2 * y.1
-        ∀ (rK : ℝ),
-        let r := min rK (min (dist B a / 2) (dist B c / 2))
-        (∀ z : Real × Real, IsLinearMap Real (cross z)) → (
-        let σ := min (1 / 2) (r / (4 * (dist B a + 1)))
-        let x0 := B + σ • u
-        let qside : Real × Real := if 0 < cross u w then w else -w
-        (cross w qside = 0) → (∀ (η : ℝ),
-        let ym := x0 - η • qside
-        (ym - B = σ • u - η • qside) → (cross w (ym-B) = σ * cross w u))) ) := by
-  classical
-  intro n p v b B a c u w cross rK r hcrossLinear σ x0 qside hcrossWq η ym hyminus
-  rw [hyminus, (hcrossLinear w).map_sub, (hcrossLinear w).map_smul,
-    (hcrossLinear w).map_smul, hcrossWq]
-  simp only [smul_eq_mul, mul_zero, sub_zero]
-
 private theorem hdetSide :
     (by
       classical
@@ -2475,61 +2273,6 @@ private theorem hdetSide :
   intro n p v b B a u cross z
   simp [P3381T1TriangleDeterminant, cross, u, a, B]
   ring
-
-private theorem hdetPlus :
-    (by
-      classical
-      exact
-        ∀ (n : Nat), ∀ (p : P3381T1PolygonBoundary n),
-        let v := p.vertex
-        ∀ (b : Fin (n + (3 : ℕ))),
-        let B := v b
-        let a := v (b - 1)
-        let c := v (b + 1)
-        let u : Real × Real := a - B
-        let w : Real × Real := c - B
-        let cross (x y : Real × Real) : Real := x.1 * y.2 - x.2 * y.1
-        ∀ (rK : ℝ),
-        let r := min rK (min (dist B a / 2) (dist B c / 2))
-        let σ := min (1 / 2) (r / (4 * (dist B a + 1)))
-        let x0 := B + σ • u
-        let qside : Real × Real := if 0 < cross u w then w else -w
-        (0 < cross u qside) → (∀ (η : ℝ), ((0 : ℝ) < η) → (
-        let yp := x0 + η • qside
-        (cross u (yp-B) = η * cross u qside) → ((∀ z : Real × Real, P3381T1TriangleDeterminant
-            ![a, B, z] = -cross u (z-B)) → (P3381T1TriangleDeterminant ![a, B, yp] < 0)))) ) := by
-  classical
-  intro n p v b B a c u w cross rK r σ x0 qside hcrossUq η hη yp hcrossUplus hdetSide
-  rw [hdetSide, hcrossUplus]
-  exact neg_neg_of_pos (mul_pos hη hcrossUq)
-
-private theorem hdetMinus :
-    (by
-      classical
-      exact
-        ∀ (n : Nat), ∀ (p : P3381T1PolygonBoundary n),
-        let v := p.vertex
-        ∀ (b : Fin (n + (3 : ℕ))),
-        let B := v b
-        let a := v (b - 1)
-        let c := v (b + 1)
-        let u : Real × Real := a - B
-        let w : Real × Real := c - B
-        let cross (x y : Real × Real) : Real := x.1 * y.2 - x.2 * y.1
-        ∀ (rK : ℝ),
-        let r := min rK (min (dist B a / 2) (dist B c / 2))
-        let σ := min (1 / 2) (r / (4 * (dist B a + 1)))
-        let x0 := B + σ • u
-        let qside : Real × Real := if 0 < cross u w then w else -w
-        (0 < cross u qside) → (∀ (η : ℝ), ((0 : ℝ) < η) → (
-        let ym := x0 - η • qside
-        (cross u (ym-B) = -(η * cross u qside)) → ((∀ z : Real × Real,
-            P3381T1TriangleDeterminant ![a, B, z] = -cross u (z-B)) → (0 <
-            P3381T1TriangleDeterminant ![a, B, ym])))) ) := by
-  classical
-  intro n p v b B a c u w cross rK r σ x0 qside hcrossUq η hη ym hcrossUminus hdetSide
-  rw [hdetSide, hcrossUminus]
-  exact neg_pos.mpr (neg_neg_of_pos (mul_pos hη hcrossUq))
 
 private theorem hOpp :
     (by
@@ -2666,38 +2409,6 @@ private theorem hNanchor :
       exact hypnot (hOpp.mpr hm)
     exact ⟨ym, hNu, hymO⟩
 
-private theorem hNodd :
-    (by
-      classical
-      exact
-        ∀ (n : Nat), ∀ (p : P3381T1PolygonBoundary n),
-        let v := p.vertex
-        ∀ (b : Fin (n + (3 : ℕ))),
-        let B := v b
-        let a := v (b - 1)
-        let c := v (b + 1)
-        let u : Real × Real := a - B
-        let w : Real × Real := c - B
-        let cross (x y : Real × Real) : Real := x.1 * y.2 - x.2 * y.1
-        let O := P3544T1RayParity p
-        let C := P3544T1BoundaryCarrier p
-        ∀ (rK : ℝ),
-        let r := min rK (min (dist B a / 2) (dist B c / 2))
-        let U := if 0 < cross u w then u else w
-        let V := if 0 < cross u w then w else u
-        (∀ S : Set (Real × Real), IsConnected S → (∀ x, x ∈ S → x ∉ C) → ∀ x, x ∈ S → ∀ y, y ∈ S
-            → (x ∈ O ↔ y ∈ O)) → (
-        let N : Set (Real × Real) := {x | x ∈ Metric.ball B r ∧
-          0 < cross U (x - B) ∧ cross V (x - B) < 0}
-        (IsPathConnected N) → ((∀ x, x ∈ N → x ∉ C) → ((∃ z, z ∈ N ∧ z ∈ O) → (∀ x, x ∈ N → x ∈
-            O)))) ) := by
-  classical
-  intro n p v b B a c u w cross O C rK r U V hconstOn N hNpc hNoff hNanchor
-  obtain ⟨z, hzN, hzO⟩ := hNanchor
-  intro x hx
-  have hsame := hconstOn N hNpc.isConnected hNoff x hx z hzN
-  exact hsame.mpr hzO
-
 private theorem hLocalCone :
     (by
       classical
@@ -2784,33 +2495,6 @@ private theorem hN0pc :
   exact (ExposedCornerGeometry.hNconvex n p b rK
       hcrossLinear).isPathConnected (ExposedCornerGeometry.hN0ne n p b rK hcrossLinear hUV hz0U
       hz0V τ hτ hτball)
-
-private theorem hW0pc :
-    (by
-      classical
-      exact
-        ∀ (n : Nat), ∀ (p : P3381T1PolygonBoundary n),
-        let v := p.vertex
-        ∀ (b : Fin (n + (3 : ℕ))),
-        let B := v b
-        let a := v (b - 1)
-        let c := v (b + 1)
-        let u : Real × Real := a - B
-        let w : Real × Real := c - B
-        let cross (x y : Real × Real) : Real := x.1 * y.2 - x.2 * y.1
-        ∀ (rK : ℝ),
-        let r := min rK (min (dist B a / 2) (dist B c / 2))
-        let U := if 0 < cross u w then u else w
-        let V := if 0 < cross u w then w else u
-        let W1 : Set (Real × Real) := {z | z ∈ Metric.ball 0 r ∧ cross U z < 0}
-        let W2 : Set (Real × Real) := {z | z ∈ Metric.ball 0 r ∧ 0 < cross V z}
-        let W0 : Set (Real × Real) := W1 ∪ W2
-        (Convex Real W1) → ((Convex Real W2) → ((W1.Nonempty) → ((W2.Nonempty) → (((W1 ∩
-            W2).Nonempty) → (IsPathConnected W0))))) ) := by
-  classical
-  intro n p v b B a c u w cross rK r U V W1 W2 W0 hW1convex hW2convex hW1ne hW2ne hWoverlap
-  exact (hW1convex.isPathConnected hW1ne).union
-      (hW2convex.isPathConnected hW2ne) hWoverlap
 
 private theorem hcover :
     (by
@@ -2957,9 +2641,14 @@ private theorem hynotC :
             ℝ)) ∉ P3544T1BoundaryCarrier p))))) ) := by
   classical
   intro n p v f hqexists b hprev B a c rK r hcarrierLocal hsegmentHeight e ε y hyball hyheight
-  exact ExposedCornerGeometry.hynotC n p hqexists b ε rK
-      (ExposedCornerGeometry.hellCarrier n p hqexists b hprev rK hcarrierLocal hsegmentHeight)
-      hyball hyheight
+  exact (show
+      y ∉ (P3544T1BoundaryCarrier p)
+    from by
+      classical
+      intro hyC
+      have hle := ((ExposedCornerGeometry.hellCarrier n p hqexists b hprev rK hcarrierLocal
+          hsegmentHeight)) y hyball hyC
+      exact (not_lt_of_ge hle) hyheight)
 
 private theorem hWeven :
     (by
@@ -3091,9 +2780,16 @@ private theorem hWeven :
   intro n p v f hqexists q b c B e ε y ell a u w hellu hellw cross hdet hparity rK r
       hcarrierLocal hsegParam hcrossLinear hcrossSelf hswap U V hconeUV hconstOn W hWpc
       hsegmentHeight hcover hyball hyheight hynotC d0 hdv0 hde0 badV badE T κ hκT hκbad
-  exact ExposedCornerGeometry.hWeven n p b rK hconstOn hWpc (ExposedCornerGeometry.hWoff
-      n p b rK (ExposedCornerGeometry.hcarrierSigns n p b hdet rK hcarrierLocal hsegParam
-      hcrossLinear hcrossSelf hswap)) ε (ExposedCornerGeometry.hYclass n p hqexists b ε rK
+  exact ExposedCornerGeometry.hWeven n p b rK hconstOn hWpc ((show
+      ∀ x, x ∈ W → x ∉ (P3544T1BoundaryCarrier p)
+    from by
+      classical
+      intro x hx hc
+      have hs := ((ExposedCornerGeometry.hcarrierSigns n p b hdet rK hcarrierLocal hsegParam
+            hcrossLinear hcrossSelf hswap)) x hx.1 hc
+      rcases hx.2 with hn | hp
+      · exact (not_lt_of_ge hs.1) hn
+      · exact (not_lt_of_ge hs.2) hp)) ε (ExposedCornerGeometry.hYclass n p hqexists b ε rK
       hconeUV hcover (ExposedCornerGeometry.hconeHeight n p hqexists b hellu hellw) hyball
       hyheight hynotC) (ExposedCornerGeometry.hyEven n p b hparity ε hynotC d0 κ
       (ExposedCornerGeometry.hdv n p b ε d0 hdv0 κ hκbad) (ExposedCornerGeometry.hde n p b ε d0
@@ -3258,15 +2954,50 @@ private theorem hLocalCone :
       hconeUV hconstOn N hNpc hcover hWeven σ hσ x0 rS sbit hrule S qside hcrossUq hcrossWq η hη
       yp ym hypS hymS hyplus hyminus hcrossUplus hcrossUminus hdetSide
   exact ExposedCornerGeometry.hLocalCone n p b rK hconeUV hcover hWeven
-              (ExposedCornerGeometry.hNodd n p b rK hconstOn hNpc (ExposedCornerGeometry.hNoff n
-              p b rK (ExposedCornerGeometry.hcarrierCross n p b rK hcarrierLocal hsegParam
-              hcrossLinear)) (ExposedCornerGeometry.hNanchor n p b hdet rK hswap hWeven hσ rS
-              hcrossUq η hη hypS hymS hcrossUplus hcrossUminus (ExposedCornerGeometry.hcrossWplus
-              n p b rK hcrossLinear hcrossWq η hyplus) (ExposedCornerGeometry.hcrossWminus n p b
-              rK hcrossLinear hcrossWq η hyminus) (ExposedCornerGeometry.hOpp n p b hprev rK rS
-              sbit hrule η hypS hymS (ExposedCornerGeometry.hdetPlus n p b rK hcrossUq η hη
-              hcrossUplus hdetSide) (ExposedCornerGeometry.hdetMinus n p b rK hcrossUq η hη
-              hcrossUminus hdetSide))))
+              ((show
+                  ∀ x, x ∈ N → x ∈ O
+                from by
+                  classical
+                  obtain ⟨z, hzN, hzO⟩ := ((ExposedCornerGeometry.hNanchor n p b hdet rK hswap
+                      hWeven hσ rS
+                                hcrossUq η hη hypS hymS hcrossUplus hcrossUminus ((show
+                                    cross w (yp-B) = σ * cross w u
+                                  from by
+                                    classical
+                                    change (∀ z, IsLinearMap ℝ (cross z)) at hcrossLinear
+                                    change cross w qside = 0 at hcrossWq
+                                    rw [hyplus, (hcrossLinear w).map_add, (hcrossLinear w).map_smul,
+                                      (hcrossLinear w).map_smul, hcrossWq]
+                                    simp only [smul_eq_mul, mul_zero, add_zero])) ((show
+                                        cross w (ym-B) = σ * cross w u
+                                      from by
+                                        classical
+                                        change (∀ z : Real × Real, IsLinearMap Real (cross z))
+                                            at hcrossLinear
+                                        change cross w qside = 0 at hcrossWq
+                                        rw [hyminus, (hcrossLinear w).map_sub, (hcrossLinear
+                                            w).map_smul,
+                                          (hcrossLinear w).map_smul, hcrossWq]
+                                        simp only [smul_eq_mul, mul_zero, sub_zero]))
+                                            (ExposedCornerGeometry.hOpp n p b hprev rK rS
+                                sbit hrule η hypS hymS ((show
+                                    P3381T1TriangleDeterminant ![a, B, yp] < 0
+                                  from by
+                                    classical
+                                    rw [hdetSide, hcrossUplus]
+                                    exact neg_neg_of_pos (mul_pos hη hcrossUq))) ((show
+                                        0 < P3381T1TriangleDeterminant ![a, B, ym]
+                                      from by
+                                        classical
+                                        rw [hdetSide, hcrossUminus]
+                                        exact neg_pos.mpr (neg_neg_of_pos (mul_pos hη
+                                            hcrossUq)))))))
+                  intro x hx
+                  have hsame := hconstOn N hNpc.isConnected ((ExposedCornerGeometry.hNoff n
+                                p b rK (ExposedCornerGeometry.hcarrierCross n p b rK
+                                    hcarrierLocal hsegParam
+                                hcrossLinear))) x hx z hzN
+                  exact hsame.mpr hzO))
 
 end ExposedCornerAssembly
 
@@ -3323,7 +3054,6 @@ theorem P3650T1ExposedCornerExists {n : Nat} (p : P3381T1PolygonBoundary n) :
   have hheightTop : height B = 1 := by simpa [height] using hFB
   have hheightNext : height c = 0 := by simpa [height] using hFc
   let O := P3544T1RayParity p
-  let C := P3544T1BoundaryCarrier p
   rcases P3544T1LocalParity p with
     ⟨_, _, _, _, hlocal, hgeneric, hparity, _, hsides⟩
   let J : Set (Fin (n + 3)) := {j | j ≠ b ∧ j + 1 ≠ b}
@@ -3346,15 +3076,13 @@ theorem P3650T1ExposedCornerExists {n : Nat} (p : P3381T1PolygonBoundary n) :
   have hcarrierLocal := ExposedCornerGeometry.hcarrierLocal n p b hprev rK hballK hrKle
       (ExposedCornerGeometry.haddinj n)
   have hsegParam := ExposedCornerGeometry.hsegParam hlineMap
-  have hcrossLinear := ExposedCornerGeometry.hcrossLinear
-  have hcrossSelf := ExposedCornerGeometry.hcrossSelf
+  have hcrossLinear : ∀ z, IsLinearMap ℝ (cross z) := ExposedCornerGeometry.hcrossLinear
+  have hcrossSelf : ∀ z, cross z z = 0 := ExposedCornerGeometry.hcrossSelf
   have hswap : cross w u = -cross u w := by dsimp [cross]; ring
   have hpos : 0 < cross u w ∨ cross u w < 0 := lt_or_gt_of_ne hdet.symm
   let U := if 0 < cross u w then u else w
   let V := if 0 < cross u w then w else u
   have hUV := ExposedCornerGeometry.hUV n p b hswap hpos
-  have hUne := ExposedCornerGeometry.hUne n p b hu hw
-  have hVne := ExposedCornerGeometry.hVne n p b hu hw
   have hdecomp := ExposedCornerGeometry.hdecomp n p b hUV
   have hconeUV := ExposedCornerGeometry.hconeUV n p b hdet hcrossLinear hUV hdecomp
   have hsmallScale := ExposedCornerGeometry.hsmallScale
@@ -3381,8 +3109,9 @@ theorem P3650T1ExposedCornerExists {n : Nat} (p : P3381T1PolygonBoundary n) :
   have hW2ne : W2.Nonempty := ⟨-(τ • z0), hτnegBall, hposV⟩
   have hWoverlap : (W1 ∩ W2).Nonempty :=
     ⟨-(τ • z0), ⟨hτnegBall, hnegU⟩, ⟨hτnegBall, hposV⟩⟩
-  have hW0pc : IsPathConnected W0 := ExposedCornerAssembly.hW0pc n p b rK hW1convex hW2convex
-      hW1ne hW2ne hWoverlap
+  have hW0pc : IsPathConnected W0 :=
+    (hW1convex.isPathConnected hW1ne).union
+      (hW2convex.isPathConnected hW2ne) hWoverlap
   let N : Set (Real × Real) := {x | x ∈ Metric.ball B r ∧
     0 < cross U (x - B) ∧ cross V (x - B) < 0}
   let W : Set (Real × Real) := {x | x ∈ Metric.ball B r ∧
@@ -3421,14 +3150,9 @@ theorem P3650T1ExposedCornerExists {n : Nat} (p : P3381T1PolygonBoundary n) :
   have hbadfinite : (Set.range badV ∪ Set.range badE).Finite :=
     (Set.finite_range badV).union (Set.finite_range badE)
   obtain ⟨κ, hκT, hκbad⟩ := (Set.Ioi_infinite T).exists_notMem_finite hbadfinite
-  let d := d0 + κ • e
-  have hκpos : 0 < κ := lt_of_le_of_lt (le_max_left _ _) hκT
-  let hits : Set (Fin (n + 3)) := {i | ∃ t : Real, 0 < t ∧ y + t • d ∈ segment Real (v i) (v (i +
-      1))}
   have hWeven := ExposedCornerAssembly.hWeven n p hqexists b ε hellu hellw hdet hparity rK
       hcarrierLocal hsegParam hcrossLinear hcrossSelf hswap hconeUV hconstOn hWpc hsegmentHeight
       hcover hyball hyheight hynotC d0 hdv0 hde0 κ hκT hκbad
-  have hdistBA : 0 < dist B a := hdistA
   let σ := min (1 / 2) (r / (4 * (dist B a + 1)))
   have hσ : 0 < σ := by dsimp [σ]; positivity
   have hσle : σ ≤ r / (4 * (dist B a + 1)) := min_le_right _ _
@@ -3453,12 +3177,20 @@ theorem P3650T1ExposedCornerExists {n : Nat} (p : P3381T1PolygonBoundary n) :
   let yp := x0 + η • qside
   let ym := x0 - η • qside
   have hypS : yp ∈ S := hballS (htranslateS (η • qside) hηball)
-  have hymS := ExposedCornerGeometry.hymS n p b rK rS δ hballS η (ExposedCornerGeometry.hηballNeg
-      n p b δ η hηball) htranslateS
+  have hymS : ym ∈ S := by
+    have hh := htranslateS (-(η • qside))
+      (ExposedCornerGeometry.hηballNeg n p b δ η hηball)
+    simpa [ym, S, x0, σ, u, a, B, c, v, r, sub_eq_add_neg] using hballS hh
   have hyplus : yp - B = σ • u + η • qside := by dsimp [yp, x0]; abel
   have hyminus : ym - B = σ • u - η • qside := by dsimp [ym, x0]; abel
-  have hcrossUplus := ExposedCornerGeometry.hcrossUplus n p b rK hcrossLinear hcrossSelf η hyplus
-  have hcrossUminus := ExposedCornerGeometry.hcrossUminus n p b rK hcrossLinear hcrossSelf η hyminus
+  have hcrossUplus : cross u (yp - B) = η * cross u qside := by
+    rw [hyplus, (hcrossLinear u).map_add, (hcrossLinear u).map_smul,
+      (hcrossLinear u).map_smul, hcrossSelf]
+    simp only [smul_eq_mul, mul_zero, zero_add]
+  have hcrossUminus : cross u (ym - B) = -(η * cross u qside) := by
+    rw [hyminus, (hcrossLinear u).map_sub, (hcrossLinear u).map_smul,
+      (hcrossLinear u).map_smul, hcrossSelf]
+    simp only [smul_eq_mul, mul_zero, zero_sub]
   have hdetSide := ExposedCornerGeometry.hdetSide n p b
   have hLocalCone : ∀ x : Real × Real, x ∈ Metric.ball B r →
       (x ∈ O ↔ ∃ s t : Real, 0 < s ∧ 0 < t ∧ x = B + s • u + t • w) :=

@@ -6,6 +6,7 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryLinearIdentities
 
 public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryProjectiveVectorCovariance
 public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryScopedPhase
@@ -29,42 +30,11 @@ namespace ApollonianSuperharmonic
 
 namespace SymmetryCovarianceProof
 
-private theorem rsub :
-    (by
-      classical
-      exact
-        let R : BandPackingSymmetry → (Real × Real) → (Real × Real) :=
-          BandPackingSymmetry.rec (fun p => p) (fun p => (-p.2, p.1))
-            (fun p => (-p.1, p.2)) (fun _ p => p)
-            (fun _ _ f k p => f (k p))
-        ∀ (h : BandPackingSymmetry), ∀ (p : ℝ × ℝ), ∀ (t : ℝ × ℝ), R h (p - t) = R h p - R h t )
-            := by
-  classical
-  intro R h p t
-  induction h generalizing p t with
-  | identity => rfl
-  | negate => ext <;> simp [R]; ring
-  | conjugate => ext <;> simp [R]; ring
-  | shift w => rfl
-  | comp h k ih ik => simp [R, ih, ik]
+private abbrev rsub :=
+  BandPackingSymmetryLinearIdentities.linearity.1
 
-private theorem rsmul :
-    (by
-      classical
-      exact
-        let R : BandPackingSymmetry → (Real × Real) → (Real × Real) :=
-          BandPackingSymmetry.rec (fun p => p) (fun p => (-p.2, p.1))
-            (fun p => (-p.1, p.2)) (fun _ p => p)
-            (fun _ _ f k p => f (k p))
-        ∀ (h : BandPackingSymmetry), ∀ (c : ℝ), ∀ (p : ℝ × ℝ), R h (c • p) = c • R h p ) := by
-  classical
-  intro R h c p
-  induction h generalizing p with
-  | identity => rfl
-  | negate => ext <;> simp [R]
-  | conjugate => ext <;> simp [R]
-  | shift w => rfl
-  | comp h k ih ik => simp [R, ih, ik]
+private abbrev rsmul :=
+  BandPackingSymmetryLinearIdentities.linearity.2
 
 private theorem rneg :
     (by

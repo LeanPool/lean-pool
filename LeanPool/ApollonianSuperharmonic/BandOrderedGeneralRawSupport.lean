@@ -6,6 +6,8 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.PairAssignmentFacts
+public import LeanPool.ApollonianSuperharmonic.BandLayoutFaceSupport
 public import LeanPool.ApollonianSuperharmonic.BoundaryFootprintInclusion
 public import LeanPool.ApollonianSuperharmonic.TileTranslationProperties
 
@@ -61,47 +63,11 @@ private theorem htileC :
   rw [cert.modified_tile]
   simp [c, ModifiedSubtileOccurrenceInterpretation, translation_zero]
 
-private theorem hf1At170 :
-    (by
-      classical
-      exact
-        ∀ (q : Fin 4 → CircleCoordinates), ∀ (cfg : BandOrderedGeneralConfiguration q), ∀ (C₀ :
-            BandCircle), ∀ (T : ProtoTile), ∀ (cert : BandOrderedGeneralLayoutCertificate q cfg
-            C₀ T),
-        let a : PeriodicSubtileIndex := ⟨.A, 0, 0⟩
-        let c : PeriodicSubtileIndex := ⟨.C, 0, 0⟩
-        let f1 := cert.modifiedFaceEquivalence.symm ⟨.I1, 0, 0⟩
-        ∀ (f : cert.modified.plane.Face), ∀ (g : cert.modified.plane.Face), (∀ (h :
-            cert.modified.plane.Face), ((∃ (i : Fin (3 : ℕ)), cert.modified.plane.faceVertex h i
-            = a) ∧ ∃ (i : Fin (3 : ℕ)), cert.modified.plane.faceVertex h i = c) → h = f ∨ h = g)
-            → (f1 = f ∨ f1 = g) ) := by
-  classical
-  intro q cfg C₀ T cert a c f1 f g hfaces
-  apply hfaces
-  constructor
-  · exact ⟨0, by simp [f1, a, cert.modified_face_vertices, SixSubtileFaceVertices]⟩
-  · exact ⟨2, by simp [f1, c, cert.modified_face_vertices, SixSubtileFaceVertices]⟩
+private abbrev hf1At170 :=
+  BandLayoutFaceSupport.firstFace
 
-private theorem hf3 :
-    (by
-      classical
-      exact
-        ∀ (q : Fin 4 → CircleCoordinates), ∀ (cfg : BandOrderedGeneralConfiguration q), ∀ (C₀ :
-            BandCircle), ∀ (T : ProtoTile), ∀ (cert : BandOrderedGeneralLayoutCertificate q cfg
-            C₀ T),
-        let a : PeriodicSubtileIndex := ⟨.A, 0, 0⟩
-        let c : PeriodicSubtileIndex := ⟨.C, 0, 0⟩
-        let f3 := cert.modifiedFaceEquivalence.symm ⟨.I3, 0, 0⟩
-        ∀ (f : cert.modified.plane.Face), ∀ (g : cert.modified.plane.Face), (∀ (h :
-            cert.modified.plane.Face), ((∃ (i : Fin (3 : ℕ)), cert.modified.plane.faceVertex h i
-            = a) ∧ ∃ (i : Fin (3 : ℕ)), cert.modified.plane.faceVertex h i = c) → h = f ∨ h = g)
-            → (f3 = f ∨ f3 = g) ) := by
-  classical
-  intro q cfg C₀ T cert a c f3 f g hfaces
-  apply hfaces
-  constructor
-  · exact ⟨0, by simp [f3, a, cert.modified_face_vertices, SixSubtileFaceVertices]⟩
-  · exact ⟨1, by simp [f3, c, cert.modified_face_vertices, SixSubtileFaceVertices]⟩
+private abbrev hf3 :=
+  BandLayoutFaceSupport.thirdFace
 
 private theorem hf13 :
     (by
@@ -117,25 +83,6 @@ private theorem hf13 :
   intro q cfg C₀ T cert f1 f3 h
   have := congrArg cert.modifiedFaceEquivalence h
   simp [f1, f3] at this
-
-private theorem hpair :
-    (by
-      classical
-      exact
-        ∀ (q : Fin 4 → CircleCoordinates), ∀ (cfg : BandOrderedGeneralConfiguration q), ∀ (C₀ :
-            BandCircle), ∀ (T : ProtoTile), ∀ (cert : BandOrderedGeneralLayoutCertificate q cfg
-            C₀ T),
-        let f1 := cert.modifiedFaceEquivalence.symm ⟨.I1, 0, 0⟩
-        let f3 := cert.modifiedFaceEquivalence.symm ⟨.I3, 0, 0⟩
-        ∀ (f : cert.modified.plane.Face), ∀ (g : cert.modified.plane.Face), (f1 = f ∨ f1 = g) →
-            ((f3 = f ∨ f3 = g) → ((f1 ≠ f3) → ((f1 = f ∧ f3 = g) ∨ (f1 = g ∧ f3 = f)))) ) := by
-  classical
-  intro q cfg C₀ T cert f1 f3 f g hf1 hf3 hf13
-  rcases hf1 with h1 | h1 <;> rcases hf3 with h3 | h3
-  · exact False.elim (hf13 (h1.trans h3.symm))
-  · exact Or.inl ⟨h1, h3⟩
-  · exact Or.inr ⟨h1, h3⟩
-  · exact False.elim (hf13 (h1.trans h3.symm))
 
 private theorem hend :
     (by
@@ -747,8 +694,9 @@ theorem BandOrderedGeneralRawSupport
     have hf1 : f1 = f ∨ f1 = g := RawSupportGeometry.hf1At170 q cfg C₀ T cert f g hfaces
     have hf3 : f3 = f ∨ f3 = g := RawSupportGeometry.hf3 q cfg C₀ T cert f g hfaces
     have hf13 : f1 ≠ f3 := RawSupportGeometry.hf13 q cfg C₀ T cert
-    have hpair : (f1 = f ∧ f3 = g) ∨ (f1 = g ∧ f3 = f) := RawSupportGeometry.hpair q cfg C₀ T
-        cert f g hf1 hf3 hf13
+    have hpair : (f1 = f ∧ f3 = g) ∨ (f1 = g ∧ f3 = f) := PairAssignmentFacts.assignment
+        (cert.modifiedFaceEquivalence.symm ⟨.I1, 0, 0⟩) (cert.modifiedFaceEquivalence.symm ⟨.I3,
+        0, 0⟩) f g hf1 hf3 hf13
     have hrho1 : cert.modified.rho f1 = z1 := cert.modified_face_points _
     have hrho3 : cert.modified.rho f3 = z3 := cert.modified_face_points _
     have hend : cert.modified.rho f ≠ cert.modified.rho g := RawSupportGeometry.hend q cfg C₀ T

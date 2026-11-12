@@ -1817,24 +1817,8 @@ private theorem hjL :
   obtain ⟨z, hz⟩ := Set.mem_range.mp hjk
   exact ⟨L.face k z, by simpa only [Function.comp_apply] using hz⟩
 
-private theorem hnoRAt1259 :
-    (by
-      classical
-      exact
-        ∀ (n : Nat), ∀ (p : P3381T1PolygonBoundary n), ∀ (S : P3544T1DiagonalSplit p), (∀ (i
-            : Fin (n + 3)), ∀ (j : Fin (n + 3)), (i ≠ j) → ((i ∈ Set.range S.il ∧ i ∈ Set.range
-            S.ir ∧ j ∈ Set.range S.il ∧ j ∈ Set.range S.ir) ↔ ((i = S.a ∧ j = S.b) ∨ (i = S.b ∧ j
-            = S.a)))) → (∀ (i : Fin (n + (3 : ℕ))), ∀ (j : Fin (n + (3 : ℕ))), (i ≠ j) → ((¬(i =
-            S.a ∧ j = S.b ∨ j = S.a ∧ i = S.b)) → ((i ∈ Set.range S.il) → ((j ∈ Set.range S.il) →
-            (¬ (i ∈ Set.range S.ir ∧ j ∈ Set.range S.ir)))))) ) := by
-  classical
-  intro n p S hdiagPair i j hij hdiag hiL hjL hh
-  have hd := (hdiagPair i j hij).1 ⟨hiL, hh.1, hjL, hh.2⟩
-  have hd' : (i = S.a ∧ j = S.b) ∨ (j = S.a ∧ i = S.b) := by
-    rcases hd with h | h
-    · exact Or.inl h
-    · exact Or.inr ⟨h.2, h.1⟩
-  exact hdiag hd'
+private abbrev hnoRAt1259 :=
+  ApollonianSuperharmonic.IndexedFaceLedgerProof.hnoRAt1159
 
 private theorem hcountLAt1267 :
     (by
@@ -1887,24 +1871,8 @@ private theorem hjR :
   obtain ⟨z, hz⟩ := Set.mem_range.mp hjk
   exact ⟨R.face k z, by simpa only [Function.comp_apply] using hz⟩
 
-private theorem hnoLAt1285 :
-    (by
-      classical
-      exact
-        ∀ (n : Nat), ∀ (p : P3381T1PolygonBoundary n), ∀ (S : P3544T1DiagonalSplit p), (∀ (i
-            : Fin (n + 3)), ∀ (j : Fin (n + 3)), (i ≠ j) → ((i ∈ Set.range S.il ∧ i ∈ Set.range
-            S.ir ∧ j ∈ Set.range S.il ∧ j ∈ Set.range S.ir) ↔ ((i = S.a ∧ j = S.b) ∨ (i = S.b ∧ j
-            = S.a)))) → (∀ (i : Fin (n + (3 : ℕ))), ∀ (j : Fin (n + (3 : ℕ))), (i ≠ j) → ((¬(i =
-            S.a ∧ j = S.b ∨ j = S.a ∧ i = S.b)) → ((i ∈ Set.range S.ir) → ((j ∈ Set.range S.ir) →
-            (¬ (i ∈ Set.range S.il ∧ j ∈ Set.range S.il)))))) ) := by
-  classical
-  intro n p S hdiagPair i j hij hdiag hiR hjR hh
-  have hd := (hdiagPair i j hij).1 ⟨hh.1, hiR, hh.2, hjR⟩
-  have hd' : (i = S.a ∧ j = S.b) ∨ (j = S.a ∧ i = S.b) := by
-    rcases hd with h | h
-    · exact Or.inl h
-    · exact Or.inr ⟨h.2, h.1⟩
-  exact hdiag hd'
+private abbrev hnoLAt1285 :=
+  ApollonianSuperharmonic.IndexedFaceLedgerProof.hnoLAt1180
 
 private theorem hcountRAt1293 :
     (by

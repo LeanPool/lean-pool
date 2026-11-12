@@ -6,6 +6,7 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.BandPrototileCentroidBounds
 public import LeanPool.ApollonianSuperharmonic.GaussianRealPointProperties
 
 public import LeanPool.ApollonianSuperharmonic.BandGenealogy
@@ -938,41 +939,8 @@ private theorem maxImCell :
   rcases Finset.mem_image.mp (Finset.max'_mem imCells imNe) with ⟨x, hx, he⟩
   exact ⟨x, hx, he⟩
 
-private theorem centerIm :
-    (by
-      classical
-      exact
-        ∀ (T1 : ProtoTile),
-        let c1 := TileCentroid T1
-        let imCells : Finset Int := T1.cells.image (fun x => x.im)
-        ∀ (imNe : imCells.Nonempty), (∀ p ∈ TileRealization T1, (2 * c1.1 - p.1, 2 * c1.2 - p.2)
-            ∈ TileRealization T1) → ((∀ p ∈ TileRealization T1, (↑(imCells.min' imNe) : Real) ≤
-            p.2 ∧ p.2 ≤ (↑(imCells.max' imNe) : Real) + 1) → (
-        let mIm := imCells.min' imNe
-        let MIm := imCells.max' imNe
-        (∃ x ∈ T1.cells, x.im = mIm) → ((∃ x ∈ T1.cells, x.im = MIm) → (2 * c1.2 = (mIm : Real) +
-            MIm + 1)))) ) := by
-  classical
-  intro T1 c1 imCells imNe reflect1 hboundIm mIm MIm minImCell maxImCell
-  rcases minImCell with ⟨xmin, hxmin, hxminim⟩
-  rcases maxImCell with ⟨xmax, hmax, hmaxim⟩
-  have pmin : ((xmin.re : Real), (mIm : Real)) ∈ TileRealization T1 := by
-    simp only [TileRealization, Set.mem_iUnion]
-    refine ⟨xmin, hxmin, ?_⟩
-    simp only [ClosedSquareRealization, Set.mem_Icc, Prod.le_def]
-    exact ⟨⟨by simp, by simp [hxminim]⟩,
-      ⟨by simp, by simp [hxminim]⟩⟩
-  have pmax : ((xmax.re : Real), ((MIm : Real) + 1)) ∈ TileRealization T1 := by
-    simp only [TileRealization, Set.mem_iUnion]
-    refine ⟨xmax, hmax, ?_⟩
-    simp only [ClosedSquareRealization, Set.mem_Icc, Prod.le_def]
-    exact ⟨⟨by simp, by simp [hmaxim]⟩,
-      ⟨by simp, by simp [hmaxim]⟩⟩
-  have bmin := hboundIm _ (reflect1 _ pmin)
-  have bmax := hboundIm _ (reflect1 _ pmax)
-  dsimp at bmin bmax
-  norm_num at bmin bmax ⊢
-  linarith
+private abbrev centerIm :=
+  BandPrototileCentroidBounds.imaginaryCenter
 
 private theorem ht1 :
     (by
@@ -1575,58 +1543,6 @@ private theorem sumIm :
   · intro x hx
     exact (congrArg (fun z => (z.im : Real)) (tau_invol x)).symm
 
-private theorem hre :
-    (by
-      classical
-      exact
-        ∀ (q : Fin (4 : ℕ) → CircleCoordinates), ∀ (r : Fin (3 : ℕ)), ∀ (g : BandPackingSymmetry),
-        let q' : Fin 4 → CircleCoordinates :=
-          BandPackingSymmetryQuadrupleAction g
-            ![q 0, q r.succ, q (r + 1).succ, q (r + 2).succ]
-        ∀ (T1 : ProtoTile),
-        let a : GaussianInt := BandVectors.1 (q' 3) (q' 2)
-        let I : GaussianInt := ⟨0, 1⟩
-        let reCells : Finset Int := T1.cells.image (fun x => x.re)
-        let imCells : Finset Int := T1.cells.image (fun x => x.im)
-        ∀ (reNe : reCells.Nonempty), ∀ (imNe : imCells.Nonempty),
-        let mRe := reCells.min' reNe
-        let MRe := reCells.max' reNe
-        let mIm := imCells.min' imNe
-        let MIm := imCells.max' imNe
-        let t1 : GaussianInt := ⟨mRe + MRe + 1, mIm + MIm + 1⟩
-        let t0 : GaussianInt := t1 + a - I * a
-        let tau : GaussianInt → GaussianInt := fun x => t0 - x - 1 - I
-        ∀ x, ((tau x).re : Real) = (t0.re : Real) - (x.re : Real) - 1 ) := by
-  classical
-  intro q r g q' T1 a I reCells imCells reNe imNe mRe MRe mIm MIm t1 t0 tau x
-  simp [tau, I]
-
-private theorem him :
-    (by
-      classical
-      exact
-        ∀ (q : Fin (4 : ℕ) → CircleCoordinates), ∀ (r : Fin (3 : ℕ)), ∀ (g : BandPackingSymmetry),
-        let q' : Fin 4 → CircleCoordinates :=
-          BandPackingSymmetryQuadrupleAction g
-            ![q 0, q r.succ, q (r + 1).succ, q (r + 2).succ]
-        ∀ (T1 : ProtoTile),
-        let a : GaussianInt := BandVectors.1 (q' 3) (q' 2)
-        let I : GaussianInt := ⟨0, 1⟩
-        let reCells : Finset Int := T1.cells.image (fun x => x.re)
-        let imCells : Finset Int := T1.cells.image (fun x => x.im)
-        ∀ (reNe : reCells.Nonempty), ∀ (imNe : imCells.Nonempty),
-        let mRe := reCells.min' reNe
-        let MRe := reCells.max' reNe
-        let mIm := imCells.min' imNe
-        let MIm := imCells.max' imNe
-        let t1 : GaussianInt := ⟨mRe + MRe + 1, mIm + MIm + 1⟩
-        let t0 : GaussianInt := t1 + a - I * a
-        let tau : GaussianInt → GaussianInt := fun x => t0 - x - 1 - I
-        ∀ x, ((tau x).im : Real) = (t0.im : Real) - (x.im : Real) - 1 ) := by
-  classical
-  intro q r g q' T1 a I reCells imCells reNe imNe mRe MRe mIm MIm t1 t0 tau x
-  simp [tau, I]
-
 private theorem sRe :
     (by
       classical
@@ -1940,11 +1856,19 @@ private theorem hrootCent :
       T0.cells.sum (fun x => ((tau x).im : Real)) := PrototileConstruction.sumIm
           q r g T1 S reNe imNe tau_invol tau_cells
   have hre : ∀ x, ((tau x).re : Real) =
-      (t0.re : Real) - (x.re : Real) - 1 := PrototileConstruction.hre q r g T1
-          reNe imNe
+      (t0.re : Real) - (x.re : Real) - 1 := (show
+          ∀ x, ((tau x).re : Real) = (t0.re : Real) - (x.re : Real) - 1
+        from by
+          classical
+          intro x
+          simp [tau, I])
   have him : ∀ x, ((tau x).im : Real) =
-      (t0.im : Real) - (x.im : Real) - 1 := PrototileConstruction.him q r g T1
-          reNe imNe
+      (t0.im : Real) - (x.im : Real) - 1 := (show
+          ∀ x, ((tau x).im : Real) = (t0.im : Real) - (x.im : Real) - 1
+        from by
+          classical
+          intro x
+          simp [tau, I])
   have sRe : 2 * T0.cells.sum (fun x => (x.re : Real)) =
       (T0.cells.card : Real) * (t0.re : Real) - T0.cells.card :=
           PrototileConstruction.sRe q r g T1 S reNe imNe sumRe hre

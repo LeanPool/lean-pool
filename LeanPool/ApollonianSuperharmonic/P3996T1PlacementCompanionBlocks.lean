@@ -582,47 +582,6 @@ private theorem first_center :
     bundle.configuration.proper i (i + 1) (i + 2) hcyc).1
   exact centerAlgFirst _ _ _ _ (flip_incoming i) halg
 
-private theorem second_center :
-    (by
-      classical
-      exact
-        ∀ (C : BandCircle), ∀ (D : BandCircle), ∀ (T : ProtoTile), ∀ (N : ProtoTile), ∀ (h :
-            PartialOdometer), ∀ (k : PartialOdometer), ∀ (x : GaussianInt), ∀ (bundle :
-            BandOrderedGeneralNormalizedOccurrenceBundle C D T N h k x), (∀ (i : Fin 3),
-            BandVectors.1 (bundle.normalizedPresentation 0) (bundle.normalizedPresentation
-            i.succ) = (⟨0, 1⟩ : GaussianInt) * BandVectors.1 (bundle.normalizedPresentation
-            i.succ) (bundle.normalizedPresentation 0)) → (
-        let I : GaussianInt := ⟨0, 1⟩
-        let branchDisplacement (i : Fin 3) : Real × Real :=
-          (1 / 2 : Real) • GaussianRealPoint ((I - 1) *
-            BandVectors.1 (bundle.normalizedPresentation i.succ)
-              (bundle.normalizedPresentation 0))
-        let quarterTurn (p : Real × Real) : Real × Real := (-p.2, p.1)
-        let cOff (w : GaussianInt) : Real × Real :=
-          (1 / 2 : Real) • (GaussianRealPoint w -
-            (-(GaussianRealPoint w).2, (GaussianRealPoint w).1))
-        let edgeCenter (a : GaussianInt) : Real × Real :=
-          (1 / 2 : Real) • GaussianRealPoint ((I - 1) * a)
-        (∀ (e : GaussianInt), ∀ (d : GaussianInt), ∀ (a : GaussianInt), ∀ (b : GaussianInt), (b =
-            I * a) → ((-(1 - I) * e + 2 * d = -(a + b)) → (-cOff e + GaussianRealPoint d =
-            quarterTurn (edgeCenter a)))) → (
-        let q := bundle.normalizedPresentation
-        let o (i : Fin 3) := BandVectors.1 (q 0) (q i.succ)
-        let e (i : Fin 3) := BandVectors.1 (q ((i + 2).succ)) (q ((i + 1).succ))
-        let d (i : Fin 3) := cOff (e i)
-        ∀ (i : Fin 3), -d i + GaussianRealPoint (o (i + 1)) = quarterTurn (branchDisplacement
-            i))) ) := by
-  classical
-  intro C D T N h k x bundle flip_incoming I branchDisplacement quarterTurn cOff edgeCenter
-      centerAlgSecond q o e d i
-  have hcyc : (i + 2 = 0 ∧ i = 1 ∧ i + 1 = 2) ∨
-      (i + 2 = 1 ∧ i = 2 ∧ i + 1 = 0) ∨
-      (i + 2 = 2 ∧ i = 0 ∧ i + 1 = 1) := by
-    fin_cases i <;> decide
-  have halg := (P3045T1RightBoundaryDisplacementAlgebra q
-    bundle.configuration.proper (i + 2) i (i + 1) hcyc).2.1
-  exact centerAlgSecond _ _ _ _ (flip_incoming i) halg
-
 private theorem cyclic_slots :
     (by
       classical
@@ -1108,46 +1067,6 @@ private theorem row_data :
     · simp [hs, period0, period1, third_period]
       abel
 
-private theorem identify :
-    (by
-      classical
-      exact
-        ∀ (C : BandCircle), ∀ (D : BandCircle), ∀ (T : ProtoTile), ∀ (N : ProtoTile), ∀ (h :
-            PartialOdometer), ∀ (k : PartialOdometer), ∀ (x : GaussianInt), ∀ (bundle :
-            BandOrderedGeneralNormalizedOccurrenceBundle C D T N h k x), ∀ (placement :
-            BandOrderedGeneralRightPlacement bundle.normalizedPresentation bundle.configuration
-            bundle.normalizedCircle bundle.normalizedRoot bundle.normalizedFixed
-            bundle.normalizedRootFunction bundle.normalizedFixedFunction bundle.normalizedPoint
-            bundle.pieces bundle.functions bundle.selectedSlot bundle.selectedSign
-            bundle.routedDirection),
-        let occurrence := SubtileOccurrenceInterpretation placement.layout.P
-          placement.layout.u placement.layout.v
-        let I : GaussianInt := ⟨0, 1⟩
-        let branchDisplacement (i : Fin 3) : Real × Real :=
-          (1 / 2 : Real) • GaussianRealPoint ((I - 1) *
-            BandVectors.1 (bundle.normalizedPresentation i.succ)
-              (bundle.normalizedPresentation 0))
-        (∀ (i : Fin 3), branchDisplacement i ≠ (0, 0)) → (
-        let quarterTurn (p : Real × Real) : Real × Real := (-p.2, p.1)
-        let branchCenter (E : Real × Real) (b : Fin 4) : Real × Real :=
-          if b = 0 then -E
-          else if b = 1 then quarterTurn E
-          else if b = 2 then E
-          else -quarterTurn E
-        (∀ (E : Real × Real), (E ≠ (0, 0)) → (∀ (b : Fin 4), ∀ (c : Fin 4), (b ≠ c) →
-            (branchCenter E b ≠ branchCenter E c))) → (
-        let exteriorCenter := TileCentroid (occurrence placement.exteriorIndex) -
-          TileCentroid bundle.normalizedFixed
-        ∀ (n : Fin (4 : ℕ)), (exteriorCenter = branchCenter (branchDisplacement
-            bundle.selectedSlot) n) → (∀ (m : Fin 4), (exteriorCenter = branchCenter
-            (branchDisplacement bundle.selectedSlot) m) → (n = m)))) ) := by
-  classical
-  intro C D T N h k x bundle placement occurrence I branchDisplacement branchDisplacement_nonzero
-      quarterTurn branchCenter four_centers_distinct exteriorCenter n hrow m hc
-  by_contra hne
-  exact (four_centers_distinct _ (branchDisplacement_nonzero _) n m hne)
-    (hrow.symm.trans hc)
-
 end PlacementCompanionGeometry
 
 theorem P3996T1PlacementCompanionBlocks
@@ -1250,8 +1169,19 @@ theorem P3996T1PlacementCompanionBlocks
   let d (i : Fin 3) := cOff (e i)
   have first_center := PlacementCompanionGeometry.first_center C D T N h k x bundle flip_incoming
       (PlacementCompanionGeometry.centerAlgFirst cancel2)
-  have second_center := PlacementCompanionGeometry.second_center C D T N h k x bundle
-      flip_incoming (PlacementCompanionGeometry.centerAlgSecond cancel2)
+  have second_center := (show
+      ∀ (i : Fin 3), -d i + GaussianRealPoint (o (i + 1)) = quarterTurn
+      (branchDisplacement i)
+    from by
+      classical
+      intro i
+      have hcyc : (i + 2 = 0 ∧ i = 1 ∧ i + 1 = 2) ∨
+          (i + 2 = 1 ∧ i = 2 ∧ i + 1 = 0) ∨
+          (i + 2 = 2 ∧ i = 0 ∧ i + 1 = 1) := by
+        fin_cases i <;> decide
+      have halg := (P3045T1RightBoundaryDisplacementAlgebra q
+        bundle.configuration.proper (i + 2) i (i + 1) hcyc).2.1
+      exact ((PlacementCompanionGeometry.centerAlgSecond cancel2)) _ _ _ _ (flip_incoming i) halg)
   let exteriorCenter := TileCentroid (occurrence placement.exteriorIndex) -
     TileCentroid bundle.normalizedFixed
   have placement_center : exteriorCenter =
@@ -1277,8 +1207,15 @@ theorem P3996T1PlacementCompanionBlocks
               translate_center) (PlacementCompanionGeometry.raw_centers C D T N h k x bundle
               first_center second_center)
   obtain ⟨n, hrow, hshift⟩ := row_data
-  have identify := PlacementCompanionGeometry.identify C D T N h k x bundle placement
-      branchDisplacement_nonzero four_centers_distinct n hrow
+  have identify := (show
+      ∀ (m : Fin 4), (exteriorCenter = branchCenter (branchDisplacement
+      bundle.selectedSlot) m) → (n = m)
+    from by
+      classical
+      intro m hc
+      by_contra hne
+      exact (four_centers_distinct _ (branchDisplacement_nonzero _) n m hne)
+        (hrow.symm.trans hc))
   refine ⟨?_, ?_, ?_, ?_⟩
   · intro hbranch
     have hn := identify 0 (placement_centers.1 hbranch)

@@ -5,8 +5,13 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Data.List.Basic
+public import Mathlib.Data.List.Nodup
+public import Mathlib.Data.Nat.Basic
 public import Mathlib.Init
 public import Mathlib.NumberTheory.Zsqrtd.GaussianInt
+public import Mathlib.Tactic.TypeStar
+
 
 
 /-!
@@ -110,6 +115,28 @@ theorem getNotTake {α : Type*} (l : List α) (hn : l.Nodup) (m : Nat)
   have heq' : l[i] = l[m] := by simpa using heq
   have hidx := hn.getElem_inj_iff.mp heq'
   omega
+
+/-- A specified last element belongs to its list. -/
+theorem lastMembership {α : Type*} (S : α) (forward : List α)
+    (hflast : forward.getLast? = some S) : S ∈ forward := by
+  classical
+  have hopt : S ∈ forward.getLast? := by simp [hflast]
+  obtain ⟨hne, hget⟩ := List.mem_getLast?_eq_getLast hopt
+  rw [hget]
+  exact List.getLast_mem hne
+
+/-- Split a list at any member. -/
+theorem splitMembership {α : Type*} (r : List α) (z : α) (hz : z ∈ r) :
+    ∃ l t, r = l ++ z :: t := by
+  classical
+  induction r with
+  | nil => simp at hz
+  | cons a r ih =>
+    simp only [List.mem_cons] at hz
+    rcases hz with rfl | hz
+    · exact ⟨[], r, rfl⟩
+    · rcases ih hz with ⟨l, t, ht⟩
+      exact ⟨a :: l, t, by simp [ht, List.cons_append]⟩
 
 end ListEndpointFacts
 end ApollonianSuperharmonic

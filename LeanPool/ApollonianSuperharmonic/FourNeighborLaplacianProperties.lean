@@ -9,6 +9,7 @@ public import LeanPool.ApollonianSuperharmonic.FourNeighborLaplacian
 public import Mathlib.Init
 
 
+
 /-!
 # FourNeighborLaplacianProperties
 
@@ -32,6 +33,28 @@ theorem differences :
   classical
   intro g x
   unfold FourNeighborLaplacian
+  ring
+
+/-- Affine perturbations and translation preserve the four-neighbor Laplacian. -/
+theorem affineTranslate :
+    ∀ (f : GaussianInt → ℤ), ∀ (f' : GaussianInt → ℤ), ∀ (x : GaussianInt), ∀ (t : GaussianInt),
+        ∀ (A : ℤ), ∀ (B : ℤ), ∀ (C : ℤ), f x = f' (x - t) + A * x.re + B * x.im + C → f (x - (1 :
+        GaussianInt)) = f' (x - t - (1 : GaussianInt)) + A * (x - (1 : GaussianInt)).re + B * (x
+        - (1 : GaussianInt)).im + C → f (x + (1 : GaussianInt)) = f' (x - t + (1 : GaussianInt))
+        + A * (x + (1 : GaussianInt)).re + B * (x + (1 : GaussianInt)).im + C → f (x - ⟨(0 : ℤ),
+        (1 : ℤ)⟩) = f' (x - t - ⟨(0 : ℤ), (1 : ℤ)⟩) + A * (x - ⟨(0 : ℤ), (1 : ℤ)⟩).re + B * (x -
+        ⟨(0 : ℤ), (1 : ℤ)⟩).im + C → f (x + ⟨(0 : ℤ), (1 : ℤ)⟩) = f' (x - t + ⟨(0 : ℤ), (1 : ℤ)⟩)
+        + A * (x + ⟨(0 : ℤ), (1 : ℤ)⟩).re + B * (x + ⟨(0 : ℤ), (1 : ℤ)⟩).im + C →
+        FourNeighborLaplacian f x = FourNeighborLaplacian f' (x - t) := by
+  classical
+  intro f f' x t A B C h0 hm hp hmi hpi
+  rw [FourNeighborLaplacian, hm, hp, hmi, hpi, h0,
+    FourNeighborLaplacian]
+  rw [show x - t - 1 = (x - t) - 1 by abel,
+    show x - t + 1 = (x - t) + 1 by abel,
+    show x - t - ⟨0, 1⟩ = (x - t) - ⟨0, 1⟩ by rfl,
+    show x - t + ⟨0, 1⟩ = (x - t) + ⟨0, 1⟩ by rfl]
+  simp
   ring
 
 end FourNeighborLaplacianProperties

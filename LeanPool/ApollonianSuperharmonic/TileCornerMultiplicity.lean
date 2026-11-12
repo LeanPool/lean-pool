@@ -5,8 +5,10 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.ApollonianSuperharmonic.FootprintVertices
 public import LeanPool.ApollonianSuperharmonic.ProtoTile
 public import Mathlib.Init
+
 
 
 /-!
@@ -60,6 +62,21 @@ theorem cornerCount :
   rw [Finset.sum_ite_eq', Finset.sum_ite_eq', Finset.sum_ite_eq',
     Finset.sum_ite_eq']
   omega
+
+/-- Shared vertexSupport fact. -/
+theorem vertexSupport :
+    ∀ (T : ProtoTile), (T.cells.Nonempty) → (
+    let I : GaussianInt := ⟨0, 1⟩
+    let cornerBag : Multiset GaussianInt := T.cells.1.bind fun c =>
+      ([c, c + 1, c + I, c + 1 + I] : List GaussianInt)
+    (cornerBag.toFinset : Set GaussianInt) = FootprintVertices T) := by
+  classical
+  intro T hne I cornerBag
+  ext z
+  change z ∈ cornerBag.toFinset ↔ z ∈ FootprintVertices T
+  rw [Multiset.mem_toFinset]
+  dsimp only [cornerBag, I]
+  simp [FootprintVertices, hne]
 
 end TileCornerMultiplicity
 end ApollonianSuperharmonic

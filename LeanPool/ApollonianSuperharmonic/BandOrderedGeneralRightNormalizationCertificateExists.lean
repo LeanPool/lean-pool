@@ -6,6 +6,9 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.BandPrototileQuarterTurn
+public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryDomainTransport
+public import LeanPool.ApollonianSuperharmonic.BandQuadrupleCyclicRotation
 
 public import LeanPool.ApollonianSuperharmonic.P5658T1FivePointDomainCoverSymmetryCovariance
 public import LeanPool.ApollonianSuperharmonic.BandOrderedGeneralRightNormalizationCertificate
@@ -27,59 +30,6 @@ Changes: pool module paths, public exports, project namespace and current Mathli
 namespace ApollonianSuperharmonic
 
 namespace RightNormalizationGeometry
-
-private theorem hqrotSemi :
-    (by
-      classical
-      exact
-        ∀ (q : Fin (4 : ℕ) → CircleCoordinates), (ProperBandQuadruple q) → (∀ (r : Fin (3 : ℕ)),
-            ∀ (g : BandPackingSymmetry), (
-        let q' := BandPackingSymmetryQuadrupleAction g ![q (0 : Fin (4 : ℕ)), q r.succ, q (r + (1
-            : Fin (3 : ℕ))).succ, q (r + (2 : Fin (3 : ℕ))).succ]; Xor (∃ (P :
-            FordFareyParameter), (1 : ℕ) < P.q ∧ q' = FordRecursiveQuadruple P) (Xor (∃ (K :
-            DiamondParameter), (1 : ℕ) < K.1 ∧ q' = DiamondRecursiveQuadruple K) (Nonempty
-            (BandOrderedGeneralConfiguration q')))) → (
-        let qrot : Fin 4 → CircleCoordinates :=
-          ![q 0, q r.succ, q (r + 1).succ, q (r + 2).succ]
-        SemiProperQuadruple qrot)) ) := by
-  classical
-  intro q hq r g hregime qrot
-  fin_cases r
-  · convert hq.1 using 1; funext j; fin_cases j <;> simp [qrot]
-  · convert SemiProperQuadruple.rotate hq.1 using 1;
-      funext j; fin_cases j <;> simp [qrot]
-  · convert SemiProperQuadruple.rotate
-        (SemiProperQuadruple.rotate hq.1) using 1;
-      funext j; fin_cases j <;> simp [qrot]
-
-private theorem hqrot :
-    (by
-      classical
-      exact
-        ∀ (q : Fin (4 : ℕ) → CircleCoordinates), (ProperBandQuadruple q) → (∀ (r : Fin (3 : ℕ)),
-            ∀ (g : BandPackingSymmetry), (
-        let q' := BandPackingSymmetryQuadrupleAction g ![q (0 : Fin (4 : ℕ)), q r.succ, q (r + (1
-            : Fin (3 : ℕ))).succ, q (r + (2 : Fin (3 : ℕ))).succ]; Xor (∃ (P :
-            FordFareyParameter), (1 : ℕ) < P.q ∧ q' = FordRecursiveQuadruple P) (Xor (∃ (K :
-            DiamondParameter), (1 : ℕ) < K.1 ∧ q' = DiamondRecursiveQuadruple K) (Nonempty
-            (BandOrderedGeneralConfiguration q')))) → (
-        let qrot : Fin 4 → CircleCoordinates :=
-          ![q 0, q r.succ, q (r + 1).succ, q (r + 2).succ]
-        (SemiProperQuadruple qrot) → (ProperBandQuadruple qrot))) ) := by
-  classical
-  intro q hq r g hregime qrot hqrotSemi
-  refine ⟨hqrotSemi, ?_⟩
-  intro j
-  fin_cases r <;> fin_cases j <;> simp [qrot]
-  · simpa using hq.2 (0 : Fin 3)
-  · simpa using hq.2 (1 : Fin 3)
-  · simpa using hq.2 (2 : Fin 3)
-  · simpa using hq.2 (1 : Fin 3)
-  · simpa using hq.2 (2 : Fin 3)
-  · simpa using hq.2 (0 : Fin 3)
-  · simpa using hq.2 (2 : Fin 3)
-  · simpa using hq.2 (0 : Fin 3)
-  · simpa using hq.2 (1 : Fin 3)
 
 private theorem hgeneral :
     (by
@@ -267,44 +217,6 @@ private theorem hslopeImBar' :
   intro q i₀ e₀ r g qrot irot qbar negative pTbar pNbar hslopeImBar reverse idir ebar positive
   simpa [qbar, reverse, idir, ebar, positive] using hslopeImBar
 
-private theorem hxTbar :
-    (by
-      classical
-      exact
-        ∀ (h : PartialOdometer), (PartialOdometer) → (∀ (x : GaussianInt), (x ∈ h.domain) → (∀ (g
-            : BandPackingSymmetry),
-        let hbar := BandPackingSymmetryPartialOdometerAction g h
-        let xbar := BandPackingSymmetryVectorAction g x
-        xbar ∈ hbar.domain)) ) := by
-  classical
-  intro h k x hxT g hbar xbar
-  have hdom := (BandPackingSymmetryPartialOdometerActionFormulas g h k).1
-  have hxset : BandPackingSymmetryVectorAction g x ∈
-      ((BandPackingSymmetryPartialOdometerAction g h).domain :
-        Set GaussianInt) := by
-    rw [hdom]
-    exact ⟨x, hxT, rfl⟩
-  exact hxset
-
-private theorem hxNbar :
-    (by
-      classical
-      exact
-        (PartialOdometer) → (∀ (k : PartialOdometer), ∀ (x : GaussianInt), (x ∈ k.domain) → (∀ (g
-            : BandPackingSymmetry),
-        let kbar := BandPackingSymmetryPartialOdometerAction g k
-        let xbar := BandPackingSymmetryVectorAction g x
-        xbar ∈ kbar.domain)) ) := by
-  classical
-  intro h k x hxN g kbar xbar
-  have hdom := (BandPackingSymmetryPartialOdometerActionFormulas g k h).1
-  have hxset : BandPackingSymmetryVectorAction g x ∈
-      ((BandPackingSymmetryPartialOdometerAction g k).domain :
-        Set GaussianInt) := by
-    rw [hdom]
-    exact ⟨x, hxN, rfl⟩
-  exact hxset
-
 private theorem hsmallT1 :
     (by
       classical
@@ -323,43 +235,6 @@ private theorem hsmallT1 :
   intro q r g qrot qbar q' T' S' hq' hT' hocc hcells _
   have hI := BandTileSimultaneousInduction q' hq' T' hT'
   exact ⟨hI.1, hI.2.1, hI.2.2.1 S' hocc hcells⟩
-
-private theorem hsmallT2 :
-    (by
-      classical
-      exact
-        ∀ (q : Fin (4 : ℕ) → CircleCoordinates), ∀ (r : Fin (3 : ℕ)), ∀ (g : BandPackingSymmetry),
-        let qrot : Fin 4 → CircleCoordinates :=
-          ![q 0, q r.succ, q (r + 1).succ, q (r + 2).succ]
-        let qbar := BandPackingSymmetryQuadrupleAction g qrot
-        ∀ (D : CircleCoordinates), ∀ (U : ProtoTile), BandPrototile D U → Int.toNat D.1 <
-            Int.toNat (qbar 0).1 → QuarterTurnSymmetric U ) := by
-  classical
-  intro q r g qrot qbar D U hU _
-  cases hU with
-  | line w z hw =>
-      intro p
-      simp [TileRealization, TileCentroid]
-  | unit z a anchor =>
-      intro p
-      have hc : TileCentroid (⟨{a}, anchor⟩ : ProtoTile) =
-          (((a.re : Int) : Real) + (1 / 2 : Real),
-            ((a.im : Int) : Real) + (1 / 2 : Real)) := by
-        simp [TileCentroid]
-      rw [hc]
-      rcases p with ⟨px, py⟩
-      simp only [TileRealization, Finset.mem_singleton, Set.mem_iUnion]
-      simp only [ClosedSquareRealization, Set.mem_Icc, Prod.le_def]
-      constructor
-      · rintro ⟨b, rfl, hlo, hhi⟩
-        refine ⟨b, rfl, ?_, ?_⟩ <;> constructor <;>
-          linarith [hlo.1, hlo.2, hhi.1, hhi.2]
-      · rintro ⟨b, rfl, hlo, hhi⟩
-        refine ⟨b, rfl, ?_, ?_⟩ <;> constructor <;>
-          linarith [hlo.1, hlo.2, hhi.1, hhi.2]
-  | @decompose q' hq' S' U' hS hcells hfoot hcent =>
-      exact (BandTileSimultaneousInduction q' hq' U
-        (.decompose hq' hS hcells hfoot hcent)).2.2.2.1
 
 private theorem hsmallT4 :
     (by
@@ -456,47 +331,6 @@ private theorem hadjbar :
   · simpa [qbar, reverse, idir, ebar] using hcentBar
   · simpa [qbar, reverse, idir, ebar] using hslopeReBar
   · simpa [qbar, reverse, idir, ebar] using hslopeImBar
-
-private theorem houterCentroid :
-    (by
-      classical
-        exact
-        ∀ (T : ProtoTile),
-          ∀ (N : ProtoTile),
-            ∀ (q : Fin (4 : ℕ) → CircleCoordinates),
-              ∀ (i₀ : Fin (3 : ℕ)),
-                ∀ (e₀ : Bool),
-                  ∀ (r : Fin (3 : ℕ)),
-                    ∀ (g : BandPackingSymmetry),
-                      let qrot : Fin 4 → CircleCoordinates :=
-                        ![q 0, q r.succ, q (r + 1).succ, q (r + 2).succ];
-                      let irot : Fin 3 := i₀ - r;
-                      let qbar := BandPackingSymmetryQuadrupleAction g qrot;
-                      ∀ (negative : Bool),
-                        let reverse := BandPackingSymmetryReversesOrientation g;
-                        let idir : Fin 3 := if reverse then -irot else irot;
-                        let ebar : Bool := xor (xor e₀ negative) reverse;
-                        let positive : Bool := !ebar;
-                        (TileCentroid (BandPackingSymmetryTileAction g N) -
-                              TileCentroid (BandPackingSymmetryTileAction g T) =
-                            (if positive = true then (-1 : Real) else 1) •
-                              GaussianRealPoint
-                                (BandVectors.1 (qbar 0) (qbar idir.succ))) →
-                          (let Tbar := BandPackingSymmetryTileAction g T;
-                          let Nbar := BandPackingSymmetryTileAction g N;
-                          let displacement : GaussianInt :=
-                            (if positive = true then (1 : GaussianInt) else -1) *
-                              BandVectors.1 (qbar 0) (qbar idir.succ);
-                          TileCentroid Tbar =
-                            TileCentroid (TileTranslation Nbar displacement))) := by
-  classical
-  intro T N q i₀ e₀ r g qrot irot qbar negative reverse idir ebar positive hcentBar' Tbar Nbar
-      displacement
-  rw [(TileTranslationFormulas Nbar displacement).2.2.2.2.1]
-  have h₁ := congrArg Prod.fst hcentBar'
-  have h₂ := congrArg Prod.snd hcentBar'
-  apply Prod.ext <;> rcases positive with (_ | _) <;>
-    simp [displacement, GaussianRealPoint] at h₁ h₂ ⊢ <;> linarith
 
 private theorem boundaryData :
     (by
@@ -678,8 +512,7 @@ theorem BandOrderedGeneralRightNormalizationCertificateExists
   obtain ⟨r, g, hregime⟩ := BandRegimeClassification q hq
   let qrot : Fin 4 → CircleCoordinates :=
     ![q 0, q r.succ, q (r + 1).succ, q (r + 2).succ]
-  have hqrot := RightNormalizationGeometry.hqrot q hq r g hregime
-      (RightNormalizationGeometry.hqrotSemi q hq r g hregime)
+  have hqrot := BandQuadrupleCyclicRotation.proper q hq r
   let irot : Fin 3 := i₀ - r
   have hrotParent : qrot irot.succ = q i₀.succ := by
     fin_cases r <;> fin_cases i₀ <;> simp [qrot, irot]
@@ -716,8 +549,8 @@ theorem BandOrderedGeneralRightNormalizationCertificateExists
   let hbar := BandPackingSymmetryPartialOdometerAction g h
   let kbar := BandPackingSymmetryPartialOdometerAction g k
   let xbar := BandPackingSymmetryVectorAction g x
-  have hxTbar := RightNormalizationGeometry.hxTbar h k x hxT g
-  have hxNbar := RightNormalizationGeometry.hxNbar h k x hxN g
+  have hxTbar := BandPackingSymmetryDomainTransport.forward g h x hxT
+  have hxNbar := BandPackingSymmetryDomainTransport.forward g k x hxN
   have hTbarBand : BandPrototile (qbar 0) Tbar :=
     TileOdometerBandPrototile _ _ _ hOTbar
   have hNbarBand : BandPrototile (qbar 0) Nbar :=
@@ -725,7 +558,9 @@ theorem BandOrderedGeneralRightNormalizationCertificateExists
   have hTind := BandTileSimultaneousInduction qbar hqbar Tbar hTbarBand
   have hNind := BandTileSimultaneousInduction qbar hqbar Nbar hNbarBand
   have hsmallT1 := RightNormalizationGeometry.hsmallT1 q r g
-  have hsmallT2 := RightNormalizationGeometry.hsmallT2 q r g
+  have hsmallT2 (D : CircleCoordinates) (U : ProtoTile) (hU : BandPrototile D U)
+      (_ : Int.toNat D.1 < Int.toNat (qbar 0).1) : QuarterTurnSymmetric U :=
+    BandPrototileQuarterTurn.symmetry D U hU
   have hsmallT4 := RightNormalizationGeometry.hsmallT4 q r g
   have hsmallT5 := RightNormalizationGeometry.hsmallT5 q r g
   have hqbarPos : 0 < (qbar 0).1 := (ProperBandCurvatureStructure qbar hqbar).1
@@ -741,8 +576,18 @@ theorem BandOrderedGeneralRightNormalizationCertificateExists
   let displacement : GaussianInt :=
     (if positive = true then (1 : GaussianInt) else -1) *
       BandVectors.1 (qbar 0) (qbar idir.succ)
-  have houterCentroid := RightNormalizationGeometry.houterCentroid T N q i₀ e₀ r g negative
-          hcentBar'
+  have houterCentroid := (show
+      TileCentroid Tbar = TileCentroid (TileTranslation Nbar displacement)
+    from by
+      classical
+      change TileCentroid Nbar - TileCentroid Tbar =
+        (if positive = true then (-1 : Real) else 1) •
+          GaussianRealPoint (BandVectors.1 (qbar 0) (qbar idir.succ)) at hcentBar'
+      rw [(TileTranslationFormulas Nbar displacement).2.2.2.2.1]
+      have h₁ := congrArg Prod.fst hcentBar'
+      have h₂ := congrArg Prod.snd hcentBar'
+      apply Prod.ext <;> rcases positive with (_ | _) <;>
+        simp [displacement, GaussianRealPoint] at h₁ h₂ ⊢ <;> linarith)
   have htranslatedN :
       BandPrototile (qbar 0) (TileTranslation Nbar displacement) :=
     BandPrototileTranslation _ _ _ hNbarBand

@@ -605,24 +605,8 @@ private theorem sourceE₁ :
       intro u v l₁ l₂ heq
       exact (hedge₁ {u, v}).mpr (Or.inr ⟨u, v, l₁, l₂, heq, rfl⟩))
 
-private theorem sourceE₂ :
-    ∀ (E₂ : Set (Finset GaussianInt)), ∀ (p₂ : List GaussianInt), ∀ (a₂ : GaussianInt), ∀ (b₂ :
-        GaussianInt), (p₂.head? = some a₂) → ((p₂.getLast? = some b₂) → ((∀ (e : Finset
-        GaussianInt), e ∈ E₂ ↔ e = {b₂, a₂} ∨ ∃ (a : GaussianInt) (b : GaussianInt) (l₁ : List
-        GaussianInt) (l₂ : List GaussianInt), p₂ = l₁ ++ a :: b :: l₂ ∧ e = {a, b}) → ((∀ (p :
-            List GaussianInt), ∀ (a : GaussianInt), ∀ (b : GaussianInt), ∀ (E : Set (Finset
-        GaussianInt)), (p.head? = some a) → ((p.getLast? = some b) → ((({b, a} : Finset
-        GaussianInt) ∈ E) → ((∀ u, ∀ v, ∀ l₁, ∀ l₂, p = l₁ ++ u :: v :: l₂ → ({u, v} : Finset
-            GaussianInt)
-        ∈ E) → (Cycle.Chain (fun u v => ({u, v} : Finset GaussianInt) ∈ E) (p : Cycle
-        GaussianInt)))))) → (Cycle.Chain (fun u v => ({u, v} : Finset GaussianInt) ∈ E₂)
-      (p₂ : Cycle GaussianInt))))) := by
-  classical
-  intro E₂ p₂ a₂ b₂ hhead₂ hlast₂ hedge₂ sourceEdgeChain
-  exact sourceEdgeChain p₂ a₂ b₂ E₂ hhead₂ hlast₂
-    ((hedge₂ {b₂, a₂}).mpr (Or.inl rfl)) (by
-      intro u v l₁ l₂ heq
-      exact (hedge₂ {u, v}).mpr (Or.inr ⟨u, v, l₁, l₂, heq, rfl⟩))
+private abbrev sourceE₂ :=
+  ApollonianSuperharmonic.MixedCycleDetails.sourceE₁
 
 private theorem hp₂cycleeq :
     ∀ (p₂ : List GaussianInt), ∀ (x : GaussianInt), (p₂.idxOf x < p₂.length) → (
@@ -1041,69 +1025,6 @@ private theorem hcloseP :
   intro V₁ p₁ p₂ x c₂ good z c₁ good₁ w prefix₂ prefix₁ Q p hpne hPplusX
   have h := hPplusX.rel_getLast_head_of_append hpne (by simp)
   simpa using h
-
-private theorem hpUnionChain :
-    ∀ (V₁ : Set GaussianInt), ∀ (E₁ : Set (Finset GaussianInt)), ∀ (E₂ : Set (Finset
-        GaussianInt)), ∀ (p₁ : List GaussianInt), ∀ (p₂ : List GaussianInt), ∀ (x : GaussianInt),
-    let c₂ := p₂.rotate (p₂.idxOf x)
-    let good (z : GaussianInt) : Bool := @decide (z ∉ V₁) (Classical.propDecidable _)
-    ∀ (z : GaussianInt),
-    let c₁ := p₁.rotate (p₁.idxOf z)
-    let good₁ (w : GaussianInt) : Bool := decide (w ≠ x)
-    (GaussianInt) → (
-    let prefix₂ := c₂.tail.takeWhile good
-    let prefix₁ := c₁.tail.takeWhile good₁
-    let Q := x :: (prefix₂ ++ [z])
-    let edgeRel (u v : GaussianInt) : Prop :=
-      ({u, v} : Finset GaussianInt) ∈ E₁ ∪ E₂
-    let p := Q ++ prefix₁
-    ((p ++ [x]).IsChain edgeRel) → (p.IsChain edgeRel)) := by
-  classical
-  intro V₁ E₁ E₂ p₁ p₂ x c₂ good z c₁ good₁ w prefix₂ prefix₁ Q edgeRel p hpPlusUnion
-  have h := hpPlusUnion.left_of_append
-  simpa using h
-
-private theorem hcloseUnion :
-    ∀ (V₁ : Set GaussianInt), ∀ (E₁ : Set (Finset GaussianInt)), ∀ (E₂ : Set (Finset
-        GaussianInt)), ∀ (p₁ : List GaussianInt), ∀ (p₂ : List GaussianInt), ∀ (x : GaussianInt),
-    let c₂ := p₂.rotate (p₂.idxOf x)
-    let good (z : GaussianInt) : Bool := @decide (z ∉ V₁) (Classical.propDecidable _)
-    ∀ (z : GaussianInt),
-    let c₁ := p₁.rotate (p₁.idxOf z)
-    let good₁ (w : GaussianInt) : Bool := decide (w ≠ x)
-    (GaussianInt) → (
-    let prefix₂ := c₂.tail.takeWhile good
-    let prefix₁ := c₁.tail.takeWhile good₁
-    let Q := x :: (prefix₂ ++ [z])
-    let edgeRel (u v : GaussianInt) : Prop :=
-      ({u, v} : Finset GaussianInt) ∈ E₁ ∪ E₂
-    let p := Q ++ prefix₁
-    ∀ (hpne : p ≠ []), ((p ++ [x]).IsChain edgeRel) → (edgeRel (p.getLast hpne) x)) := by
-  classical
-  intro V₁ E₁ E₂ p₁ p₂ x c₂ good z c₁ good₁ w prefix₂ prefix₁ Q edgeRel p hpne hpPlusUnion
-  have h := hpPlusUnion.rel_getLast_head_of_append hpne (by simp)
-  simpa using h
-
-private theorem hadjUnion :
-    ∀ (V₁ : Set GaussianInt), ∀ (E₁ : Set (Finset GaussianInt)), ∀ (E₂ : Set (Finset
-        GaussianInt)), ∀ (p₁ : List GaussianInt), ∀ (p₂ : List GaussianInt), ∀ (x : GaussianInt),
-    let c₂ := p₂.rotate (p₂.idxOf x)
-    let good (z : GaussianInt) : Bool := @decide (z ∉ V₁) (Classical.propDecidable _)
-    ∀ (z : GaussianInt),
-    let c₁ := p₁.rotate (p₁.idxOf z)
-    let good₁ (w : GaussianInt) : Bool := decide (w ≠ x)
-    (GaussianInt) → (
-    let prefix₂ := c₂.tail.takeWhile good
-    let prefix₁ := c₁.tail.takeWhile good₁
-    let Q := x :: (prefix₂ ++ [z])
-    let edgeRel (u v : GaussianInt) : Prop :=
-      ({u, v} : Finset GaussianInt) ∈ E₁ ∪ E₂
-    let p := Q ++ prefix₁
-    (p.IsChain edgeRel) → (∀ a, ∀ b, ∀ l₁, ∀ l₂, p = l₁ ++ a :: b :: l₂ → edgeRel a b)) := by
-  classical
-  intro V₁ E₁ E₂ p₁ p₂ x c₂ good z c₁ good₁ w prefix₂ prefix₁ Q edgeRel p hpUnionChain
-  rw [List.isChain_iff_forall_rel_of_append_cons_cons] at hpUnionChain
-  exact hpUnionChain
 
 private theorem hadjP :
     ∀ (V₁ : Set GaussianInt), ∀ (p₁ : List GaussianInt), ∀ (p₂ : List GaussianInt), ∀ (x :
@@ -1537,11 +1458,12 @@ theorem P3963T1MixedBoundaryCycle
       z w hpne hPplusX
   have hpPlusUnion : (p ++ [x]).IsChain edgeRel := by
     simpa [p, R, prefix₁, List.append_assoc] using hPplusUnion
-  have hpUnionChain := MixedCycleDetails.hpUnionChain V₁ E₁ E₂ p₁ p₂ x z w
-      hpPlusUnion
-  have hcloseUnion := MixedCycleDetails.hcloseUnion V₁ E₁ E₂ p₁ p₂ x
-      z w hpne hpPlusUnion
-  have hadjUnion := MixedCycleDetails.hadjUnion V₁ E₁ E₂ p₁ p₂ x z w hpUnionChain
+  have hpUnionChain : p.IsChain edgeRel := by
+    simpa using hpPlusUnion.left_of_append
+  have hcloseUnion : edgeRel (p.getLast hpne) x := by
+    simpa using hpPlusUnion.rel_getLast_head_of_append hpne (by simp)
+  have hadjUnion : ∀ a b l₁ l₂, p = l₁ ++ a :: b :: l₂ → edgeRel a b :=
+    List.isChain_iff_forall_rel_of_append_cons_cons.mp hpUnionChain
   have hphead : p.head? = some x := by simp [p, Q]
   have hplast : p.getLast? = some (p.getLast hpne) := List.getLast?_eq_some_getLast hpne
   let v := p.getLast hpne

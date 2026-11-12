@@ -763,43 +763,11 @@ private theorem hip :
     nlinarith
   exact htsp n this
 
-private theorem hrq :
-    ∀ (q : ℂ), ∀ (η : ℝ), ∀ (εp : ℝ), ∀ (εq : ℝ),
-    let h : ℝ := min η (min εp εq) / 10
-    (0 < h) → (∀ (s : ℝ), (∀ (n : ℤ), q.re / h - s ≠ (↑n : ℝ)) → (∀ (t : ℝ),
-    let o : ℂ := (h * s : ℝ) + (h * t : ℝ) * Complex.I
-    let rq : ℂ := (q - o) / (h : ℂ)
-    ∀ n : ℤ, rq.re ≠ n)) := by
-  classical
-  intro q η εp εq h hh s hspq t o rq n hn
-  have : q.re / h - s = n := by
-    dsimp [rq, o] at hn ⊢
-    simp only [Complex.div_re, Complex.sub_re, Complex.add_re, Complex.mul_re,
-      Complex.ofReal_re, Complex.ofReal_im, Complex.I_re, Complex.I_im,
-      mul_zero, zero_mul, sub_zero, add_zero] at hn
-    simp only [Complex.normSq_ofReal] at hn
-    field_simp [ne_of_gt hh] at hn ⊢
-    nlinarith
-  exact hspq n this
+private abbrev hrq :=
+  ApollonianSuperharmonic.ComponentContoursProof.hrp
 
-private theorem hiq :
-    ∀ (q : ℂ), ∀ (η : ℝ), ∀ (εp : ℝ), ∀ (εq : ℝ),
-    let h : ℝ := min η (min εp εq) / 10
-    (0 < h) → (∀ (s : ℝ), ∀ (t : ℝ), (∀ (n : ℤ), q.im / h - t ≠ (↑n : ℝ)) → (
-    let o : ℂ := (h * s : ℝ) + (h * t : ℝ) * Complex.I
-    let rq : ℂ := (q - o) / (h : ℂ)
-    ∀ n : ℤ, rq.im ≠ n)) := by
-  classical
-  intro q η εp εq h hh s t htq o rq n hn
-  have : q.im / h - t = n := by
-    dsimp [rq, o] at hn ⊢
-    simp only [Complex.div_im, Complex.sub_im, Complex.add_im, Complex.mul_im,
-      Complex.ofReal_re, Complex.ofReal_im, Complex.I_re, Complex.I_im,
-      mul_zero, add_zero] at hn
-    simp only [Complex.normSq_ofReal] at hn
-    field_simp [ne_of_gt hh] at hn ⊢
-    nlinarith
-  exact htq n this
+private abbrev hiq :=
+  ApollonianSuperharmonic.ComponentContoursProof.hip
 
 private theorem hpclose :
     ∀ (p : ℂ),
@@ -1297,39 +1265,8 @@ private theorem hsumAt1198 :
     _ = P3821T1LoopIndex (loops j) (GridCellCenter up) :=
       cell_index up rp hup j
 
-private theorem hsumAt1214 :
-    ∀ (q : ℂ),
-    let openbox (u : GaussianInt) (z : ℂ) : Prop :=
-      (u.re : ℝ) < z.re ∧ z.re < (u.re : ℝ) + 1 ∧
-        (u.im : ℝ) < z.im ∧ z.im < (u.im : ℝ) + 1
-    ∀ (η : ℝ), ∀ (εp : ℝ), ∀ (εq : ℝ),
-    let h : ℝ := min η (min εp εq) / 10
-    ∀ (s : ℝ), ∀ (t : ℝ),
-    let o : ℂ := (h * s : ℝ) + (h * t : ℝ) * Complex.I
-    let rq : ℂ := (q - o) / (h : ℂ)
-    ∀ (uq : GaussianInt), (openbox uq rq) → (∀ (n : ℕ), ∀ (loops : Fin n → C(Circle, ℂ)),
-    let g : Fin n → C(Circle, ℂ) := fun j =>
-      ⟨fun z => (h : ℂ) * loops j z + o, (continuous_const.mul (loops j).continuous).add
-          continuous_const⟩
-    (∀ (j : Fin n), ∀ (r : ℂ), (∀ z, loops j z ≠ r) → (P3821T1LoopIndex (g j) ((h : ℂ) * r + o)
-        = P3821T1LoopIndex (loops j) r)) → ((∀ (u : GaussianInt), ∀ (r : ℂ), (openbox u r) → (∀
-            (j : Fin n), ∀ z, loops j z ≠ r)) → ((∀ (u : GaussianInt), ∀ (r : ℂ), (openbox u r) →
-            (∀ (j : Fin n), P3821T1LoopIndex (loops j) r = P3821T1LoopIndex (loops j)
-        (GridCellCenter u))) → (((h : ℂ) * rq + o = q) → ((∑ j, P3821T1LoopIndex (g j) q) = ∑
-        j, P3821T1LoopIndex (loops j) (GridCellCenter uq)))))) := by
-  classical
-  intro q openbox η εp εq h s t o rq uq huq n loops g hscaled_index hloop_open_avoid cell_index
-      hqgrid
-  apply Finset.sum_congr rfl
-  intro j hj
-  calc
-      P3821T1LoopIndex (g j) q =
-          P3821T1LoopIndex (g j) ((h : ℂ) * rq + o) := by
-        exact congrArg (P3821T1LoopIndex (g j)) hqgrid.symm
-    _ = P3821T1LoopIndex (loops j) rq :=
-      hscaled_index j rq (hloop_open_avoid uq rq huq j)
-    _ = P3821T1LoopIndex (loops j) (GridCellCenter uq) :=
-      cell_index uq rq huq j
+private abbrev hsumAt1214 :=
+  ApollonianSuperharmonic.ComponentContoursProof.hsumAt1198
 
 end ComponentContoursProof
 
@@ -1611,21 +1548,8 @@ private theorem hpgrid :
     _ = (p - o) + o := congrArg (fun z : ℂ => z + o) hcancel
     _ = p := sub_add_cancel p o
 
-private theorem hqgrid :
-    ∀ (q : ℂ), ∀ (η : ℝ), ∀ (εp : ℝ), ∀ (εq : ℝ),
-    let h : ℝ := min η (min εp εq) / 10
-    ∀ (s : ℝ), ∀ (t : ℝ),
-    let o : ℂ := (h * s : ℝ) + (h * t : ℝ) * Complex.I
-    let rq : ℂ := (q - o) / (h : ℂ)
-    ((h : ℂ) ≠ 0) → ((h : ℂ) * rq + o = q) := by
-  classical
-  intro q η εp εq h s t o rq hdenom
-  have hcancel : (h : ℂ) * ((q - o) / (h : ℂ)) = q - o :=
-    mul_div_cancel₀ (q - o) hdenom
-  change (h : ℂ) * ((q - o) / (h : ℂ)) + o = q
-  calc
-    _ = (q - o) + o := congrArg (fun z : ℂ => z + o) hcancel
-    _ = q := sub_add_cancel q o
+private abbrev hqgrid :=
+  ApollonianSuperharmonic.ComponentContourDetails.hpgrid
 
 private theorem hpoint :
     let corner (u : GaussianInt) : Fin 4 → GaussianInt :=

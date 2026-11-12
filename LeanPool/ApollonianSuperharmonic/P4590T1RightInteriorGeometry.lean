@@ -6,6 +6,9 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.PairAssignmentFacts
+public import LeanPool.ApollonianSuperharmonic.BandLayoutCentroidCoordinates
+public import LeanPool.ApollonianSuperharmonic.BandLayoutFaceSupport
 
 public import LeanPool.ApollonianSuperharmonic.P4590T1PositivePrototileDisk
 public import LeanPool.ApollonianSuperharmonic.P4590T1OppositeCellsStar
@@ -27,32 +30,8 @@ namespace ApollonianSuperharmonic
 
 namespace RightInteriorGeometry
 
-private theorem ht :
-    (by
-      classical
-      exact
-        ∀ (q : Fin (4 : ℕ) → CircleCoordinates), ∀ (cfg : BandOrderedGeneralConfiguration q), ∀
-            (C : BandCircle), ∀ (T : ProtoTile), ∀ (cert : BandOrderedGeneralLayoutCertificate q
-            cfg C T), ∀ (u : GaussianInt), (GaussianRealPoint u = ((TileCentroid (cert.P (0 : Fin
-            (3 : ℕ)) false)).1 + (TileCentroid (cert.P (0 : Fin (3 : ℕ)) false)).2, (TileCentroid
-            (cert.P (0 : Fin (3 : ℕ)) false)).2 - (TileCentroid (cert.P (0 : Fin (3 : ℕ))
-            false)).1)) → (
-        let w := BandVectors.1 (q 3) (q 2)
-        let t : GaussianInt :=
-          ⟨u.re - u.im + w.re + w.im, u.re + u.im + w.im - w.re⟩
-        (t.re : Real) = 2 * (TileCentroid T).1 ∧ (t.im : Real) = 2 * (TileCentroid T).2) ) := by
-  classical
-  intro q cfg C T cert u hu w t
-  have hur := congrArg Prod.fst hu
-  have hui := congrArg Prod.snd hu
-  have hc := (cert.outer_occurrence 0 false).2.2
-  have hcr := congrArg Prod.fst hc
-  have hci := congrArg Prod.snd hc
-  norm_num [GaussianRealPoint] at hur hui hcr hci
-  simp only [← GaussianInt.intCast_re, ← GaussianInt.intCast_im] at hur hui hcr hci
-  dsimp [t, w]
-  push_cast
-  constructor <;> linarith
+private abbrev ht :=
+  BandLayoutCentroidCoordinates.doubledCenter
 
 private theorem hHcells :
     (by
@@ -599,47 +578,11 @@ private theorem hisolated :
     cert.precursor_isolated 0 0 z
       (by simpa [translation_zero] using hzraw) cell hc
 
-private theorem hf1 :
-    (by
-      classical
-      exact
-        ∀ (q : Fin (4 : ℕ) → CircleCoordinates), ∀ (cfg : BandOrderedGeneralConfiguration q), ∀
-            (C : BandCircle), ∀ (T : ProtoTile), ∀ (cert : BandOrderedGeneralLayoutCertificate q
-            cfg C T),
-        let a : PeriodicSubtileIndex := ⟨.A, 0, 0⟩
-        let c : PeriodicSubtileIndex := ⟨.C, 0, 0⟩
-        let f1 := cert.modifiedFaceEquivalence.symm ⟨.I1, 0, 0⟩
-        ∀ (f : cert.modified.plane.Face), ∀ (g : cert.modified.plane.Face), (∀ (h :
-            cert.modified.plane.Face), ((∃ (i : Fin (3 : ℕ)), cert.modified.plane.faceVertex h i
-            = a) ∧ ∃ (i : Fin (3 : ℕ)), cert.modified.plane.faceVertex h i = c) → h = f ∨ h = g)
-            → (f1 = f ∨ f1 = g) ) := by
-  classical
-  intro q cfg C T cert a c f1 f g hfaces
-  apply hfaces
-  constructor
-  · exact ⟨0, by simp [f1, a, cert.modified_face_vertices, SixSubtileFaceVertices]⟩
-  · exact ⟨2, by simp [f1, c, cert.modified_face_vertices, SixSubtileFaceVertices]⟩
+private abbrev hf1 :=
+  BandLayoutFaceSupport.firstFace
 
-private theorem hf3 :
-    (by
-      classical
-      exact
-        ∀ (q : Fin (4 : ℕ) → CircleCoordinates), ∀ (cfg : BandOrderedGeneralConfiguration q), ∀
-            (C : BandCircle), ∀ (T : ProtoTile), ∀ (cert : BandOrderedGeneralLayoutCertificate q
-            cfg C T),
-        let a : PeriodicSubtileIndex := ⟨.A, 0, 0⟩
-        let c : PeriodicSubtileIndex := ⟨.C, 0, 0⟩
-        let f3 := cert.modifiedFaceEquivalence.symm ⟨.I3, 0, 0⟩
-        ∀ (f : cert.modified.plane.Face), ∀ (g : cert.modified.plane.Face), (∀ (h :
-            cert.modified.plane.Face), ((∃ (i : Fin (3 : ℕ)), cert.modified.plane.faceVertex h i
-            = a) ∧ ∃ (i : Fin (3 : ℕ)), cert.modified.plane.faceVertex h i = c) → h = f ∨ h = g)
-            → (f3 = f ∨ f3 = g) ) := by
-  classical
-  intro q cfg C T cert a c f3 f g hfaces
-  apply hfaces
-  constructor
-  · exact ⟨0, by simp [f3, a, cert.modified_face_vertices, SixSubtileFaceVertices]⟩
-  · exact ⟨1, by simp [f3, c, cert.modified_face_vertices, SixSubtileFaceVertices]⟩
+private abbrev hf3 :=
+  BandLayoutFaceSupport.thirdFace
 
 private theorem hf13 :
     (by
@@ -655,25 +598,6 @@ private theorem hf13 :
   intro q cfg C T cert f1 f3 h
   have hh := congrArg cert.modifiedFaceEquivalence h
   simp [f1, f3] at hh
-
-private theorem hpair :
-    (by
-      classical
-      exact
-        ∀ (q : Fin (4 : ℕ) → CircleCoordinates), ∀ (cfg : BandOrderedGeneralConfiguration q), ∀
-            (C : BandCircle), ∀ (T : ProtoTile), ∀ (cert : BandOrderedGeneralLayoutCertificate q
-            cfg C T),
-        let f1 := cert.modifiedFaceEquivalence.symm ⟨.I1, 0, 0⟩
-        let f3 := cert.modifiedFaceEquivalence.symm ⟨.I3, 0, 0⟩
-        ∀ (f : cert.modified.plane.Face), ∀ (g : cert.modified.plane.Face), (f1 = f ∨ f1 = g) →
-            ((f3 = f ∨ f3 = g) → ((f1 ≠ f3) → ((f1 = f ∧ f3 = g) ∨ (f1 = g ∧ f3 = f)))) ) := by
-  classical
-  intro q cfg C T cert f1 f3 f g hf1 hf3 hf13
-  rcases hf1 with h1 | h1 <;> rcases hf3 with h3 | h3
-  · exact False.elim (hf13 (h1.trans h3.symm))
-  · exact Or.inl ⟨h1, h3⟩
-  · exact Or.inr ⟨h1, h3⟩
-  · exact False.elim (hf13 (h1.trans h3.symm))
 
 private theorem hend :
     (by
@@ -1962,9 +1886,10 @@ private theorem positiveCase :
   have hraw := ((hclass a c hac).2.1 hcommon).2
   obtain ⟨_, f, g, hfg, hf, hg, hfaces, hpath⟩ :=
     (PeriodicTileIntersectionPaths cert.modified hregular a c hac).1.mpr hcommon
-  have hpair := RightInteriorGeometry.hpair q cfg C T cert f g (RightInteriorGeometry.hf1 q cfg
+  have hpair := PairAssignmentFacts.assignment (cert.modifiedFaceEquivalence.symm ⟨.I1, 0, 0⟩)
+      (cert.modifiedFaceEquivalence.symm ⟨.I3, 0, 0⟩) f g (RightInteriorGeometry.hf1 q cfg
       C T cert f g hfaces) (RightInteriorGeometry.hf3 q cfg C T cert f g hfaces)
-      (RightInteriorGeometry.hf13 q cfg C T cert)
+          (RightInteriorGeometry.hf13 q cfg C T cert)
   have hrho1 : cert.modified.rho f1 =
       cert.unmodified.core.rho (cert.unmodified.faceEquiv.symm ⟨.I1, 0, 0⟩) :=
     cert.modified_face_points _
