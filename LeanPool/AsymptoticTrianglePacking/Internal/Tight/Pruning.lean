@@ -6,11 +6,8 @@ Authors: Juan Pablo Traverso Gianini, Aristotle
 
 module
 
-public import LeanPool.AsymptoticTrianglePacking.Internal.Basic
 public import LeanPool.AsymptoticTrianglePacking.Internal.Greedy
 public import Mathlib.Algebra.BigOperators.Group.Finset.Piecewise
-public import Mathlib.Algebra.Group.Action.Defs
-public import Mathlib.Algebra.Order.BigOperators.Group.Finset
 
 /-!
 # LeanPool.AsymptoticTrianglePacking.Internal — deterministic pruning counts

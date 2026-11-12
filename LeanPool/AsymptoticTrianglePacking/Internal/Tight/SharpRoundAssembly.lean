@@ -7,17 +7,7 @@ Authors: Juan Pablo Traverso Gianini, Aristotle
 module
 
 public import LeanPool.AsymptoticTrianglePacking.Internal.Tight.SharpRound
-public import LeanPool.AsymptoticTrianglePacking.Internal.Tight.Pruning
-public import LeanPool.AsymptoticTrianglePacking.Internal.Prelude
-public import LeanPool.AsymptoticTrianglePacking.Internal.Covered
-public import LeanPool.AsymptoticTrianglePacking.Internal.Tight.CoverVariance
-public import LeanPool.AsymptoticTrianglePacking.Internal.Tight.Selection
-public import LeanPool.AsymptoticTrianglePacking.Internal.Tight.SafeDegree
-public import LeanPool.AsymptoticTrianglePacking.Internal.Tight.LossVariance
 public import Mathlib.Algebra.Order.Chebyshev
-public import LeanPool.AsymptoticTrianglePacking.Internal.Round
-public import Mathlib.Analysis.Normed.Ring.Basic
-public import Mathlib.Analysis.Real.Sqrt
 
 
 /-!
@@ -2938,10 +2928,11 @@ theorem sharpRoundFor_of_two_gamma_le_eps (r : ℕ) (hr2 : 2 ≤ r) (γ ε θ α
           hδ_le_dn hdn_lt hLpos hLu
       clear_value c d
       have hDropT : S * γ * (δ - lo) * δ * (1 - γ) / Δ = S * γ * ((δ - lo) * c) := by
-        rw [hcdef]; field_simp
+        rw [hcdef]; ring
       have hDropO : ((δn : ℝ) - lo) * (((r : ℝ) - 1) * (δn : ℝ) * (p * L))
           = S * γ * (((δn : ℝ) - lo) * d) := by
-        rw [hddef, hSdef, hpdef]; field_simp
+        rw [hddef, hSdef, hpdef]
+        simp only [div_eq_mul_inv, mul_inv_rev]; ring
       have hErrle : Err ≤ Δ * γ ^ 2 + (r : ℝ) * (κn : ℝ) * γ :=
         sharp_bonferroni_error_le hR2 (Nat.cast_nonneg _) (Nat.cast_nonneg _) hp0 hpγ hDn_le
           hErrdef

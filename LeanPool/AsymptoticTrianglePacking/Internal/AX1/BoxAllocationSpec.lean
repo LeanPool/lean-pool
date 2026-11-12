@@ -43,7 +43,6 @@ public import Mathlib.Algebra.Field.ZMod
 public import Mathlib.Basic.Real.Basic
 public import Mathlib.Tactic.Bound
 public import Mathlib.Algebra.Order.Ring.Star
-public import Mathlib.Data.Finset.Prod
 public import Mathlib.Tactic.NormNum
 
 

@@ -33,17 +33,7 @@ one dummy from each of the first `r - t` columns; the weight `w T` is spread uni
 Must be sorry-free and axiom-clean `[propext, Classical.choice, Quot.sound]`.
 -/
 public import LeanPool.AsymptoticTrianglePacking.Internal.NearRegularNibble
-public import LeanPool.AsymptoticTrianglePacking.Internal.Basic
-public import Mathlib.Basic.Real.Basic
-public import Mathlib.Data.Fintype.Card
-import Mathlib.Algebra.BigOperators.Ring.Finset
-import Mathlib.Algebra.Order.BigOperators.Group.Finset
-public import Mathlib.Algebra.Order.Ring.Star
-public import Mathlib.Analysis.InnerProductSpace.Basic
-public import Mathlib.Analysis.RCLike.Lemmas
 public import Mathlib.Algebra.Order.Star.Int
-public import Mathlib.Analysis.Real.Sqrt
-public import Mathlib.Tactic.ContinuousFunctionalCalculus
 
 
 

@@ -7,14 +7,7 @@ Authors: Juan Pablo Traverso Gianini, Aristotle
 module
 
 public import LeanPool.AsymptoticTrianglePacking.Internal.WeightedBoundedEdges
-import LeanPool.AsymptoticTrianglePacking.Internal.NearRegularNibble
-public import LeanPool.AsymptoticTrianglePacking.Internal.RegularMost
 public import LeanPool.AsymptoticTrianglePacking.Internal.AX1.CoarseCellCoupled
-public import LeanPool.AsymptoticTrianglePacking.Internal.AX1.BoxAllocationSpec
-public import Mathlib.Algebra.Field.ZMod
-public import Mathlib.Data.Finset.Fin
-public import Mathlib.Tactic.IntervalCases
-public import Mathlib.Tactic.Ring
 
 
 /-! # BoxPlacementCount -/

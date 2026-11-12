@@ -7,12 +7,7 @@ Authors: Juan Pablo Traverso Gianini, Aristotle
 module
 
 public import LeanPool.AsymptoticTrianglePacking.Internal.Tight.Pruning
-public import LeanPool.AsymptoticTrianglePacking.Internal.Prelude
-public import LeanPool.AsymptoticTrianglePacking.Internal.Basic
-public import LeanPool.AsymptoticTrianglePacking.Internal.Survival
 public import LeanPool.AsymptoticTrianglePacking.Internal.Tight.CoverVariance
-public import LeanPool.AsymptoticTrianglePacking.Internal.Tight.TightRound
-public import LeanPool.AsymptoticTrianglePacking.Internal.Tight.LossVariance
 
 
 /-!

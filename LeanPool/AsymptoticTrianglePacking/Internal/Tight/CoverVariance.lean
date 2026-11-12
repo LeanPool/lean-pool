@@ -7,16 +7,7 @@ Authors: Juan Pablo Traverso Gianini, Aristotle
 module
 
 public import LeanPool.AsymptoticTrianglePacking.Internal.Tight.TightRound
-public import LeanPool.AsymptoticTrianglePacking.Internal.Prelude
 public import LeanPool.AsymptoticTrianglePacking.Internal.Tight.LossVariance
-public import LeanPool.AsymptoticTrianglePacking.Internal.Basic
-public import LeanPool.AsymptoticTrianglePacking.Internal.Conflict
-public import Mathlib.Analysis.Normed.Ring.Lemmas
-public import LeanPool.AsymptoticTrianglePacking.Internal.Round
-public import LeanPool.AsymptoticTrianglePacking.Internal.Survival
-public import LeanPool.AsymptoticTrianglePacking.Internal.Covered
-public import LeanPool.AsymptoticTrianglePacking.Internal.CoveredExpectation
-public import LeanPool.AsymptoticTrianglePacking.Internal.Tight.CoverProb
 
 
 
