@@ -463,24 +463,13 @@ noncomputable def liftedRules : HornProgram (L.sum Language.order) (trBlock d) (
 /-- The stage-successor pairs of copies: within one copy, or crossing to the
 next. -/
 noncomputable def stagePairs : List (Fin (hs d) × Fin (hs d)) :=
-  ((List.finRange (hs d)).flatMap fun j => (List.finRange (hs d)).map fun j' => (j, j')).filter
-    fun p => p.1 = p.2 ∨ (p.1 : ℕ) + 1 = (p.2 : ℕ)
-
-private theorem mem_stagePairs {j j' : Fin (hs d)} :
-    (j, j') ∈ stagePairs d ↔ j = j' ∨ (j : ℕ) + 1 = (j' : ℕ) := by
-  rw [stagePairs, List.mem_filter]
-  constructor
-  · rintro ⟨-, h⟩
-    simpa using h
-  · intro h
-    refine ⟨List.mem_flatMap.mpr ⟨j, List.mem_finRange j,
-      List.mem_map.mpr ⟨j', List.mem_finRange j', rfl⟩⟩, by simpa using h⟩
+  StageWalk.pairs (hs d)
 
 /-- The guard stepping from stage `(j, t)` to stage `(j', t')`: the successor
 tuple within a copy, the wrap-around between consecutive copies. -/
 noncomputable def stageG (j j' : Fin (hs d)) :
     (L.sum Language.order).Formula (Fin (kk d)) :=
-  if j = j' then succTupF (vT1 d) (vT2 d) else maxTupF (vT1 d) ⊓ minTupF (vT2 d)
+  StageWalk.guard (vT1 d) (vT2 d) j j'
 
 /-- Base rules: at the first stage, nothing is derived. -/
 noncomputable def nBase : HornProgram (L.sum Language.order) (trBlock d) (kk d) :=
@@ -651,7 +640,7 @@ variable (A : Type) [L.Structure A] [LinearOrder A]
 /-- The rank of a stage: its position in the lexicographic order of the pairs
 of a copy index and a stage tuple. -/
 noncomputable def srank (j : Fin (hs d)) (t : Fin (hm d) → A) : ℕ :=
-  orank (A := Fin (hs d) ×ₗ Lex (Fin (hm d) → A)) (toLex (j, toLex t))
+  StageWalk.rank A j t
 
 /-- The complement of a stage: at stage `(j, t)`, the atom `i x` is not yet
 derived. (A named definition, so that reduction stops here rather than
@@ -802,7 +791,7 @@ private theorem card_le_srank_top {A : Type} [LinearOrder A] [Finite A]
     refine prodLex_isTop_iff.mpr ⟨fun x => ?_, fun y => tup_isTop_iff.mpr ht y⟩
     change (x : ℕ) ≤ hc d
     exact Nat.le_of_lt_succ x.isLt
-  rw [srank, orank_isTop htop]
+  rw [srank, StageWalk.rank, orank_isTop htop]
   have hfin : ∀ n : ℕ, Nat.card (Fin n) = n := fun n => by
     rw [Nat.card_eq_fintype_card, Fintype.card_fin]
   have h1 : Nat.card (Fin (hs d) ×ₗ Lex (Fin (hm d) → A)) =
@@ -869,19 +858,8 @@ omit [Finite A] in
 theorem stageG_covBy {j j' : Fin (hs d)} (hjj : (j, j') ∈ stagePairs d)
     (h : (stageG d j j').Realize V) :
     toLex ((j, toLex fun q => V (vT1 d q)) : Fin (hs d) × Lex (Fin (hm d) → A)) ⋖
-      toLex (j', toLex fun q => V (vT2 d q)) := by
-  rcases (mem_stagePairs (d := d)).mp hjj with rfl | hcross
-  · rw [stageG, ite_eq_left rfl] at h
-    exact prodLex_covBy_iff.mpr (Or.inl ⟨rfl,
-      tupSucc_iff_covBy.mp ((realize_succTupF (L := L) _ _).mp h)⟩)
-  · have hne : j ≠ j' := by
-      intro he
-      rw [he] at hcross
-      omega
-    rw [stageG, ite_eq_right hne, Formula.realize_inf] at h
-    refine prodLex_covBy_iff.mpr (Or.inr ⟨finCovBy_iff.mpr hcross, ?_, ?_⟩)
-    · exact tup_isTop_iff.mpr ((realize_maxTupF (L := L) _).mp h.1)
-    · exact tup_isBot_iff.mpr ((realize_minTupF (L := L) _).mp h.2)
+      toLex (j', toLex fun q => V (vT2 d q)) :=
+  StageWalk.guard_covBy hjj h
 
 open Classical in
 private theorem nStep_sound {j j' : Fin (hs d)} (hjj : (j, j') ∈ stagePairs d) {i : d.B.ι} :
@@ -1438,30 +1416,15 @@ private theorem stageG_realize {j j' : Fin (hs d)} {V : Fin (kk d) → A}
     (hjj : (j, j') ∈ stagePairs d)
     (hcov : toLex ((j, toLex fun q => V (vT1 d q)) : Fin (hs d) × Lex (Fin (hm d) → A)) ⋖
       toLex (j', toLex fun q => V (vT2 d q))) :
-    (stageG d j j').Realize V := by
-  rcases (mem_stagePairs (d := d)).mp hjj with rfl | hcross
-  · rw [stageG, ite_eq_left rfl]
-    rcases prodLex_covBy_iff.mp hcov with ⟨-, htail⟩ | ⟨hjcov, -, -⟩
-    · exact (realize_succTupF (L := L) _ _).mpr (tupSucc_iff_covBy.mpr htail)
-    · exact absurd hjcov.1 (lt_irrefl _)
-  · have hne : j ≠ j' := by
-      intro he
-      rw [he] at hcross
-      omega
-    rw [stageG, ite_eq_right hne, Formula.realize_inf]
-    rcases prodLex_covBy_iff.mp hcov with ⟨heq, -⟩ | ⟨-, htop, hbot⟩
-    · exact absurd heq hne
-    · exact ⟨(realize_maxTupF (L := L) _).mpr (tup_isTop_iff.mp htop),
-        (realize_minTupF (L := L) _).mpr (tup_isBot_iff.mp hbot)⟩
+    (stageG d j j').Realize V :=
+  StageWalk.guard_realize hjj hcov
 
 omit [L.Structure A] [Finite A] in
 /-- A cover of stages is a stage pair. -/
 private theorem stagePairs_of_covBy {j j' : Fin (hs d)} {u u' : Lex (Fin (hm d) → A)}
     (hcov : toLex ((j, u) : Fin (hs d) × Lex (Fin (hm d) → A)) ⋖ toLex (j', u')) :
-    (j, j') ∈ stagePairs d := by
-  rcases prodLex_covBy_iff.mp hcov with ⟨rfl, -⟩ | ⟨hjcov, -, -⟩
-  · exact (mem_stagePairs (d := d)).mpr (Or.inl rfl)
-  · exact (mem_stagePairs (d := d)).mpr (Or.inr (finCovBy_iff.mp hjcov))
+    (j, j') ∈ stagePairs d :=
+  StageWalk.pairs_of_covBy hcov
 
 omit [Finite A] in
 /-- At the bottom stage, everything is underived, by the base rules. -/

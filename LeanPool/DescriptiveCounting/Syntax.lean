@@ -185,13 +185,13 @@ def transVar (env : Env) (t : TSyntax `fovar) : MacroM Term := do
   let coord : Nat := if let `(fovar| $_:ident[$j]) := t then j.getNat else 0
   unless t.raw[0].isIdent do Macro.throwErrorAt t "expected an object variable"
   let i : Name := t.raw[0].getId
-  if let some k := env.args.idxOf? i then
-    return ← liftIn env.depth
-      (← `(($(Syntax.mkNumLit (toString k)), $(Syntax.mkNumLit (toString coord)))))
   match env.vars.reverse.find? (fun (p : Name × Nat × Nat) => p.1 == i) with
   | some (_, born, idx) =>
       liftIn (env.depth - born - 1) (← `(Sum.inr $(Syntax.mkNumLit (toString idx))))
   | none =>
+      if let some k := env.args.idxOf? i then
+        return ← liftIn env.depth
+          (← `(($(Syntax.mkNumLit (toString k)), $(Syntax.mkNumLit (toString coord)))))
       if env.free.contains i then
         liftIn env.depth (mkIdent i)
       else

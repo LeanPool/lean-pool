@@ -713,4 +713,98 @@ theorem orank_isTop {z : A} (hz : ∀ a : A, a ≤ z) : orank z = Nat.card A - 1
 
 end Rank
 
+/-! ### Stage walks through copies of the tuple order -/
+
+namespace StageWalk
+
+/-- Consecutive stages stay in one copy or move to its next copy. -/
+def pairs (copies : ℕ) : List (Fin copies × Fin copies) :=
+  ((List.finRange copies).flatMap fun j => (List.finRange copies).map fun j' => (j, j')).filter
+    fun p => p.1 = p.2 ∨ (p.1 : ℕ) + 1 = (p.2 : ℕ)
+
+/-- Membership in the list of permitted copy transitions. -/
+theorem mem_pairs {copies : ℕ} {j j' : Fin copies} :
+    (j, j') ∈ pairs copies ↔ j = j' ∨ (j : ℕ) + 1 = (j' : ℕ) := by
+  rw [pairs, List.mem_filter]
+  constructor
+  · rintro ⟨-, h⟩
+    simpa using h
+  · intro h
+    refine ⟨List.mem_flatMap.mpr ⟨j, List.mem_finRange j,
+      List.mem_map.mpr ⟨j', List.mem_finRange j', rfl⟩⟩, by simpa using h⟩
+
+variable {L : Language.{0, 0}} {copies width : ℕ} {α : Type}
+
+/-- The successor guard for two selected tuples, including wrap between copies. -/
+noncomputable def guard (current next : Fin width → α) (j j' : Fin copies) :
+    (L.sum Language.order).Formula α :=
+  if j = j' then succTupF current next else maxTupF current ⊓ minTupF next
+
+/-- A stage's position in the order on copies of the tuple space. -/
+noncomputable def rank (A : Type) [LinearOrder A] (j : Fin copies) (t : Fin width → A) : ℕ :=
+  orank (A := Fin copies ×ₗ Lex (Fin width → A)) (toLex (j, toLex t))
+
+section Covers
+
+variable {A : Type} [L.Structure A] [LinearOrder A] [Nonempty A]
+variable {current next : Fin width → α} {j j' : Fin copies} {V : α → A}
+
+/-- A realized stage guard is a cover in the lexicographic stage order. -/
+theorem guard_covBy (hjj : (j, j') ∈ pairs copies)
+    (h : (guard (L := L) current next j j').Realize V) :
+    toLex ((j, toLex fun q => V (current q)) : Fin copies × Lex (Fin width → A)) ⋖
+      toLex (j', toLex fun q => V (next q)) := by
+  rcases mem_pairs.mp hjj with rfl | hcross
+  · rw [guard, ite_eq_left rfl] at h
+    exact prodLex_covBy_iff.mpr (Or.inl ⟨rfl,
+      tupSucc_iff_covBy.mp ((realize_succTupF (L := L) _ _).mp h)⟩)
+  · have hne : j ≠ j' := by
+      intro he
+      rw [he] at hcross
+      omega
+    rw [guard, ite_eq_right hne, Formula.realize_inf] at h
+    refine prodLex_covBy_iff.mpr (Or.inr ⟨finCovBy_iff.mpr hcross, ?_, ?_⟩)
+    · exact tup_isTop_iff.mpr ((realize_maxTupF (L := L) _).mp h.1)
+    · exact tup_isBot_iff.mpr ((realize_minTupF (L := L) _).mp h.2)
+
+/-- A cover realizes the stage guard. -/
+theorem guard_realize (hjj : (j, j') ∈ pairs copies)
+    (hcov : toLex ((j, toLex fun q => V (current q)) :
+        Fin copies × Lex (Fin width → A)) ⋖
+      toLex (j', toLex fun q => V (next q))) :
+    (guard (L := L) current next j j').Realize V := by
+  rcases mem_pairs.mp hjj with rfl | hcross
+  · rw [guard, ite_eq_left rfl]
+    rcases prodLex_covBy_iff.mp hcov with ⟨-, htail⟩ | ⟨hjcov, -, -⟩
+    · exact (realize_succTupF (L := L) _ _).mpr (tupSucc_iff_covBy.mpr htail)
+    · exact absurd hjcov.1 (lt_irrefl _)
+  · have hne : j ≠ j' := by
+      intro he
+      rw [he] at hcross
+      omega
+    rw [guard, ite_eq_right hne, Formula.realize_inf]
+    rcases prodLex_covBy_iff.mp hcov with ⟨heq, -⟩ | ⟨-, htop, hbot⟩
+    · exact absurd heq hne
+    · exact ⟨(realize_maxTupF (L := L) _).mpr (tup_isTop_iff.mp htop),
+        (realize_minTupF (L := L) _).mpr (tup_isBot_iff.mp hbot)⟩
+
+omit [L.Structure A] in
+/-- Every cover uses a permitted transition between copies. -/
+theorem pairs_of_covBy {u u' : Lex (Fin width → A)}
+    (hcov : toLex ((j, u) : Fin copies × Lex (Fin width → A)) ⋖ toLex (j', u')) :
+    (j, j') ∈ pairs copies := by
+  rcases prodLex_covBy_iff.mp hcov with ⟨rfl, -⟩ | ⟨hjcov, -, -⟩
+  · exact mem_pairs.mpr (Or.inl rfl)
+  · exact mem_pairs.mpr (Or.inr (finCovBy_iff.mp hjcov))
+
+/-- A successor guard advances the rank by one. -/
+theorem rank_guard [Finite A] (hjj : (j, j') ∈ pairs copies)
+    (h : (guard (L := L) current next j j').Realize V) :
+    rank A j' (fun q => V (next q)) = rank A j (fun q => V (current q)) + 1 :=
+  orank_covBy (guard_covBy hjj h)
+
+end Covers
+
+end StageWalk
+
 end DescriptiveComplexity
