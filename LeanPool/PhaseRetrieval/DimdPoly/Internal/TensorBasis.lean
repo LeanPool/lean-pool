@@ -352,59 +352,12 @@ theorem toFun_ofPkappa
 private theorem summable_sq_hermite_phi_eval
     (k : Nat) (z : ℂ) :
     Summable (fun n : Nat => ‖HermitekLEAN.Phi k n z‖ ^ 2) := by
-  obtain ⟨C, hC_nonneg, hC⟩ := HermitekLEAN.point_eval_bounded (k := k) z
-  apply summable_of_sum_range_le (c := C ^ 2) (fun n => sq_nonneg _)
-  intro J
-  let a' : Fin J -> ℂ := fun n => star (HermitekLEAN.Phi k n.1 z)
-  have hNS :
-      HermitekLEAN.weightedNormSq (HermitekLEAN.finiteHermiteSum k a') =
-        Finset.sum Finset.univ (fun n : Fin J => ‖HermitekLEAN.Phi k n.1 z‖ ^ 2) := by
-    rw [HermitekLEAN.finiteHermiteSum_normSq]
-    refine Finset.sum_congr rfl ?_
-    intro n hn
-    simp [a']
-  let S : ℝ := Finset.sum Finset.univ
-    (fun n : Fin J => ‖HermitekLEAN.Phi k n.1 z‖ ^ 2)
-  have hS_nonneg : 0 <= S := by
-    dsimp [S]
-    exact Finset.sum_nonneg fun n hn => sq_nonneg _
-  have hWN :
-      HermitekLEAN.weightedNorm (HermitekLEAN.finiteHermiteSum k a') =
-        Real.sqrt S := by
-    change Real.sqrt (HermitekLEAN.weightedNormSq (HermitekLEAN.finiteHermiteSum k a')) =
-      Real.sqrt S
-    rw [hNS]
-  have hFz : HermitekLEAN.finiteHermiteSum k a' z = (S : ℂ) := by
-    simp only [HermitekLEAN.finiteHermiteSum, a', S]
-    push_cast
-    congr 1
-    ext1 n
-    calc
-      star (HermitekLEAN.Phi k n.1 z) * HermitekLEAN.Phi k n.1 z
-          = HermitekLEAN.Phi k n.1 z * star (HermitekLEAN.Phi k n.1 z) := by ring
-      _ = (‖HermitekLEAN.Phi k n.1 z‖ ^ 2 : ℂ) := by
-        simpa [Complex.normSq_eq_norm_sq] using
-          Complex.mul_conj (HermitekLEAN.Phi k n.1 z)
-  have hev :
-      ‖HermitekLEAN.finiteHermiteSum k a' z‖ <=
-        C * HermitekLEAN.weightedNorm (HermitekLEAN.finiteHermiteSum k a') :=
-    hC (HermitekLEAN.finiteHermiteSum_mem_Hk k a')
-  have hFz_bound : S <= ‖HermitekLEAN.finiteHermiteSum k a' z‖ := by
-    calc
-      S <= |S| := le_abs_self S
-      _ = ‖(S : ℂ)‖ := (Complex.norm_real S).symm
-      _ = ‖HermitekLEAN.finiteHermiteSum k a' z‖ := by rw [hFz]
-  have hSle : S <= C ^ 2 := by
-    have hev' : ‖HermitekLEAN.finiteHermiteSum k a' z‖ <= C * Real.sqrt S := by
-      simpa [hWN] using hev
-    linarith only [
-      hS_nonneg, hFz_bound, hev', Real.sq_sqrt hS_nonneg, sq_nonneg (Real.sqrt S - C),
-      hC_nonneg
-    ]
-  calc
-    Finset.sum (Finset.range J) (fun n => ‖HermitekLEAN.Phi k n z‖ ^ 2)
-        = S := (Fin.sum_univ_eq_sum_range (fun n : Nat => ‖HermitekLEAN.Phi k n z‖ ^ 2) J).symm
-    _ <= C ^ 2 := hSle
+  -- Preserve the imported definition's local equation lemma.
+  have hsum_apply {D : ℕ} (a : Fin D → ℂ) (w : ℂ) :
+      HermitekLEAN.finiteHermiteSum k a w =
+        ∑ n : Fin D, a n * HermitekLEAN.Phi k n.1 w := by
+    simp only [HermitekLEAN.finiteHermiteSum]
+  exact HermitekLEAN.summable_norm_sq_Phi_eval k z
 
 private theorem summable_sq_phi1D_eval
     (k : Nat) (z : ℂ) :
@@ -1064,7 +1017,7 @@ private lemma phi1D_norm_le_majorant
     _ ≤ ((1 / Real.sqrt ((Nat.factorial k : ℝ) * (Nat.factorial n : ℝ))) : ℝ) *
             (((2 : ℝ) ^ k) * common) := by
           gcongr
-          simpa [S] using choose_partial_sum_le_pow_two k n
+          exact choose_partial_sum_le_pow_two k n
     _ = phiMajorant k n R := by
           dsimp [phiMajorant, common]
           rw [div_eq_mul_inv]
@@ -1242,7 +1195,7 @@ theorem l2_tsum_represents_toFun
   have hL2 :
       Filter.Tendsto (fun J : MultiIndex d =>
           evalPkappaL2 kappa (truncateFinset (box J) U))
-        Filter.atTop (nhds S) := by simpa [S] using evalPkappaL2_box_tendsto_tsum hd kappa U
+        Filter.atTop (nhds S) := by exact evalPkappaL2_box_tendsto_tsum hd kappa U
   have hInMeasure := MeasureTheory.tendstoInMeasure_of_tendsto_Lp hL2
   obtain ⟨ns, hns, hns_ae⟩ := hInMeasure.exists_seq_tendsto_ae'
   have hpartial_ae :
@@ -1278,7 +1231,7 @@ theorem l2_tsum_represents_toFun
   have htoLp : hmem.toLp (toFun kappa U) = S := by
     apply MeasureTheory.Lp.ext
     exact hmem.coeFn_toLp.trans hS_ae.symm
-  exact ⟨hmem, by simpa [S] using htoLp⟩
+  exact ⟨hmem, by exact htoLp⟩
 
 theorem partialSum_continuous
     {d : Nat} (hd : 0 < d) (kappa : MultiIndex d) (U : Skappa d kappa)
@@ -1320,9 +1273,9 @@ theorem toL2_eq_boxLimit
   have hL2 :
       Filter.Tendsto (fun J : MultiIndex d =>
           evalPkappaL2 kappa (truncateFinset (box J) U))
-        Filter.atTop (nhds S) := by simpa [S] using evalPkappaL2_box_tendsto_tsum hd kappa U
+        Filter.atTop (nhds S) := by exact evalPkappaL2_box_tendsto_tsum hd kappa U
   have hrepS : IsTensorL2Rep S (toFun kappa U) := by
-    simpa [S] using l2_tsum_represents_toFun hd kappa U
+    exact l2_tsum_represents_toFun hd kappa U
   rcases hrepS with ⟨hmem, htoLp⟩
   have htoL2 : toL2 kappa U = S := by
     unfold toL2
@@ -1360,11 +1313,7 @@ theorem coeff_recovery
   let Φ : L2Tensor d := PhiL2 kappa beta
   have hlimL2 := (toL2_eq_boxLimit hd kappa U).1
   have hinner_cont : Continuous (fun F : L2Tensor d => inner ℂ Φ F) := by fun_prop
-  have hlim_inner :
-      Filter.Tendsto
-        (fun J : MultiIndex d =>
-          inner ℂ Φ (evalPkappaL2 kappa (truncateFinset (box J) U)))
-        Filter.atTop (nhds (inner ℂ Φ (toL2 kappa U))) :=
+  have hlim_inner :=
     hinner_cont.continuousAt.tendsto.comp hlimL2
   have hbeta_eventually :
       ∀ᶠ J : MultiIndex d in Filter.atTop, beta ∈ box J := by
@@ -1381,18 +1330,14 @@ theorem coeff_recovery
     calc
       inner ℂ Φ (evalPkappaL2 kappa (truncateFinset (box J) U))
           = coeffPkappa (truncateFinset (box J) U) beta := by
-            simpa [Φ] using (finite_coeff_recovery hd kappa (truncateFinset (box J) U) beta).symm
+            exact (finite_coeff_recovery hd kappa (truncateFinset (box J) U) beta).symm
       _ = coeffSkappa U beta := by
             simp only [coeffPkappa, coeffSkappa, truncateFinset]
             rw [Finsupp.finsetSum_apply, Finset.sum_eq_single beta]
             · simp
             · simp_all
             · simp_all
-  have hlim_coeff :
-      Filter.Tendsto
-        (fun J : MultiIndex d =>
-          inner ℂ Φ (evalPkappaL2 kappa (truncateFinset (box J) U)))
-        Filter.atTop (nhds (coeffSkappa U beta)) :=
+  have hlim_coeff :=
     tendsto_nhds_of_eventually_eq hseq_coeff
   exact (tendsto_nhds_unique hlim_inner hlim_coeff).symm
 

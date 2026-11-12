@@ -15,6 +15,8 @@ Authors: Susanna Bertolini, Jaume de Dios Pont
 -/
 module
 
+import LeanPool.PhaseRetrieval.FourierParseval
+
 public import LeanPool.PhaseRetrieval.Constant.Internal.BlockDecomposition
 import LeanPool.PhaseRetrieval.Constant.Internal.AnnulusLocalEstimate
 import LeanPool.PhaseRetrieval.Constant.Internal.LeakageEstimate
@@ -91,60 +93,19 @@ private lemma circleNormSq_polyEvalCircle {D : ℕ} (a : Fin D → ℂ) (r : ℝ
     ⟨fun k => ((k.val + 1 : ℕ) : ℤ), fun k₁ k₂ h => by
       simp only at h; exact Fin.ext (by omega)⟩
   have he (k : Fin D) : e k = ((k.val + 1 : ℕ) : ℤ) := rfl
-  let E' := (Finset.univ : Finset (Fin D)).map e
-  let b : ℤ → ℂ := fun n => ∑ k ∈ (Finset.univ : Finset (Fin D)).filter
-    (fun k => e k = n), a k * (r : ℂ) ^ (k.val + 1)
-  have hb_eq : ∀ k : Fin D,
-      b (e k) = a k * (r : ℂ) ^ (k.val + 1) := by
-    intro k
-    simp only [b]
-    rw [filter_embedding_eq_singleton e k, Finset.sum_singleton]
-  let Pcont : C(AddCircle T, ℂ) := ∑ k : Fin D,
-    (a k * (r : ℂ) ^ (k.val + 1)) • fourier (e k)
-  have hPcont_eq : ∀ t : AddCircle T, (Pcont : AddCircle T → ℂ) t =
-      polyEvalCircle a r t := by
-    intro t; simp only [Pcont, polyEvalCircle, ContinuousMap.coe_sum, Finset.sum_apply,
-      ContinuousMap.coe_smul, Pi.smul_apply, smul_eq_mul]
-    simp_rw [he]
-  let PLp := (ContinuousMap.toLp (α := AddCircle T) 2 AddCircle.haarAddCircle ℂ) Pcont
-  have hPLp' : PLp = ∑ n ∈ E', b n • fourierLp 2 n := by
-    simp only [PLp, Pcont, fourierLp, map_sum, map_smul, E', b]
-    rw [Finset.sum_map]; congr 1; ext k
-    rw [filter_embedding_eq_singleton e k, Finset.sum_singleton]
-  have hinner_orth : @inner ℂ _ _ PLp PLp =
-      Complex.ofReal (∑ k : Fin D, ‖a k * (r : ℂ) ^ (k.val + 1)‖ ^ 2) := by
-    rw [hPLp', orthonormal_fourier.inner_sum b b E']
-    rw [show E' = (Finset.univ : Finset (Fin D)).map e from rfl]
-    rw [Finset.sum_map, Complex.ofReal_sum]; congr 1; ext k
-    rw [hb_eq k, mul_comm (starRingEnd ℂ _), mul_conj]
-    congr 1; exact (Complex.sq_norm _).symm
-  have hnorm_eq : ∀ k : Fin D,
-      ‖a k * (r : ℂ) ^ (k.val + 1)‖ ^ 2 = ‖a k‖ ^ 2 * (r ^ 2) ^ (k.val + 1) := by
-    intro k; rw [norm_mul, norm_pow, Complex.norm_real, mul_pow]
-    congr 1; rw [← pow_mul, show (k.val + 1) * 2 = 2 * (k.val + 1) from by ring,
-        pow_mul, Real.norm_eq_abs, sq_abs]
-  simp_rw [hnorm_eq] at hinner_orth
-  have hcombine := (L2.inner_def (𝕜 := ℂ) PLp PLp).symm.trans hinner_orth
-  have hae := ContinuousMap.coeFn_toLp (μ := AddCircle.haarAddCircle) (𝕜 := ℂ) (p := 2) Pcont
-  calc ∫ t : AddCircle T, ‖polyEvalCircle a r t‖ ^ 2 ∂AddCircle.haarAddCircle
-      = ∫ t, ‖(↑↑PLp : AddCircle T → ℂ) t‖ ^ 2 ∂AddCircle.haarAddCircle := by
-          symm; apply integral_congr_ae; filter_upwards [hae] with t ht
-          rw [show (↑↑PLp : AddCircle T → ℂ) t = Pcont t from ht, hPcont_eq t]
-    _ = (∫ t, @inner ℂ ℂ _ ((↑↑PLp : AddCircle T → ℂ) t)
-            ((↑↑PLp : AddCircle T → ℂ) t) ∂AddCircle.haarAddCircle).re := by
-          have hint := L2.integrable_inner (𝕜 := ℂ) PLp PLp; symm
-          calc _ = Complex.reCLM (∫ t, @inner ℂ ℂ _ ((↑↑PLp : AddCircle T → ℂ) t)
-                ((↑↑PLp : AddCircle T → ℂ) t) ∂AddCircle.haarAddCircle) := rfl
-            _ = ∫ t, Complex.reCLM (@inner ℂ ℂ _ ((↑↑PLp : AddCircle T → ℂ) t)
-                ((↑↑PLp : AddCircle T → ℂ) t)) ∂AddCircle.haarAddCircle :=
-                (ContinuousLinearMap.integral_comp_comm _ hint).symm
-            _ = _ := by congr 1; ext t
-                        exact @inner_self_eq_norm_sq ℂ ℂ _ _ _ _
+  calc
+    (∫ t : AddCircle T, ‖polyEvalCircle a r t‖ ^ 2 ∂AddCircle.haarAddCircle) =
+        ∑ k : Fin D, ‖a k * (r : ℂ) ^ (k.val + 1)‖ ^ 2 := by
+      simpa only [polyEvalCircle, he] using
+        PhaseRetrieval.integral_norm_sq_fourier_sum (period := T) e
+          (fun k => a k * (r : ℂ) ^ (k.val + 1))
     _ = ∑ k : Fin D, ‖a k‖ ^ 2 * (r ^ 2) ^ (k.val + 1) := by
-          rw [show (∫ t : AddCircle T, @inner ℂ ℂ _ ((↑↑PLp : AddCircle T → ℂ) t)
-              ((↑↑PLp : AddCircle T → ℂ) t) ∂AddCircle.haarAddCircle) =
-              Complex.ofReal (∑ k : Fin D, ‖a k‖ ^ 2 * (r ^ 2) ^ (k.val + 1))
-              from hcombine, Complex.ofReal_re]
+      apply Finset.sum_congr rfl
+      intro k _
+      rw [norm_mul, norm_pow, Complex.norm_real, mul_pow]
+      congr 1
+      rw [← pow_mul, show (k.val + 1) * 2 = 2 * (k.val + 1) from by ring,
+        pow_mul, Real.norm_eq_abs, sq_abs]
 
 /-! ## Polar decomposition of fockNormSq -/
 private lemma fockNormSq_polar {D : ℕ} (a : Fin D → ℂ) :
@@ -435,9 +396,7 @@ private lemma annular_rho_partial_le {D : ℕ} (a : Fin D → ℂ) (J : ℕ) :
       (integrable_rho_sq_of_continuous (continuous_polyEvalCircle a r))
       (integrable_sq_of_continuous (continuous_polyEvalCircle a r))
       (fun t => by exact pow_le_pow_left₀ (abs_nonneg _) (rho_le_norm _) 2)
-  have hf_intOn : IntegrableOn (fun r => r * Real.exp (-r ^ 2) *
-      (∫ t : AddCircle T, ‖polyEvalCircle a r t‖ ^ 2 ∂AddCircle.haarAddCircle))
-      (Set.Ioi 0) volume := fockIntegrand_integrableOn a
+  have hf_intOn := fockIntegrand_integrableOn a
   have hg_cont : Continuous g := rhoIntegrand_continuous a
   have hg_ii : ∀ (a b : ℝ), IntervalIntegrable g volume a b :=
     fun a b => hg_cont.intervalIntegrable a b

@@ -19,6 +19,8 @@ Authors: Susanna Bertolini, Jaume de Dios Pont
 -/
 module
 
+import LeanPool.PhaseRetrieval.FourierParseval
+
 public import Mathlib.Analysis.Fourier.AddCircle
 public import Mathlib.LinearAlgebra.Complex.FiniteDimensional
 import Mathlib.Analysis.SpecialFunctions.Gaussian.GaussianIntegral
@@ -502,11 +504,7 @@ theorem polar_coord_fock {D : ℕ} (a : Fin D → ℂ) :
   -- First, establish integrability. The integrand is the image under polar coordinates
   -- of (ρ(U(z)))² * exp(-‖z‖²), which is a finite sum of continuous functions with
   -- Gaussian decay, hence integrable.
-  have hint : IntegrableOn
-    (fun p : ℝ × ℝ => p.1 * (rho (polyEvalCircle a p.1 (QuotientAddGroup.mk p.2)) ^ 2 *
-      Real.exp (-p.1 ^ 2)))
-    (Set.Ioi 0 ×ˢ Set.Ioo (-Real.pi) Real.pi)
-    (volume.prod volume) := integrableOn_polar_rho a
+  have hint := integrableOn_polar_rho a
   rw [show (volume : Measure (ℝ × ℝ)) = volume.prod volume from Measure.volume_eq_prod ℝ ℝ]
   rw [setIntegral_prod (fun p : ℝ × ℝ =>
     p.1 * (rho (polyEvalCircle a p.1 (QuotientAddGroup.mk p.2)) ^ 2 *
@@ -562,108 +560,23 @@ theorem polar_coord_fock {D : ℕ} (a : Fin D → ℂ) :
 private lemma circleNormSq_polyEvalCircle {D : ℕ} (a : Fin D → ℂ) (r : ℝ) :
     ∫ t : AddCircle T, ‖polyEvalCircle a r t‖ ^ 2 ∂AddCircle.haarAddCircle =
     ∑ k : Fin D, ‖a k‖ ^ 2 * (r ^ 2) ^ (k.val + 1) := by
-  -- polyEvalCircle a r t = ∑_k (a_k * r^{k+1}) * fourier(k+1)(t)
-  -- By orthonormality of Fourier monomials: ∫ ‖∑ c_k e_k‖² = ∑ ‖c_k‖²
-  -- Following the pattern from parseval_finite in LocalCircleEstimate.lean.
-  -- Step 1: Build the continuous map and its L² representative
   let e : Fin D ↪ ℤ :=
     ⟨fun k => ((k.val + 1 : ℕ) : ℤ), fun k₁ k₂ h => by
       simp only at h; exact Fin.ext (by omega)⟩
   have he (k : Fin D) : e k = ((k.val + 1 : ℕ) : ℤ) := rfl
-  let E' := (Finset.univ : Finset (Fin D)).map e
-  let b : ℤ → ℂ := fun n => ∑ k ∈ (Finset.univ : Finset (Fin D)).filter
-    (fun k => e k = n), a k * (r : ℂ) ^ (k.val + 1)
-  -- The filter sum has at most one element, so b n = a_k * r^{k+1} when n = k+1
-  have hb_eq : ∀ k : Fin D, b (e k) = a k * (r : ℂ) ^ (k.val + 1) := by
-    intro k
-    simp only [b]
-    rw [Finset.sum_filter]
-    have : ∀ j : Fin D, e j = e k ↔ j = k := by
-      intro j; constructor
-      · intro h
-        exact e.injective h
-      · exact congrArg e
-    simp_all
-  let c : ℤ → ℂ := fun n =>
-    if h : ∃ k : Fin D, ((k.val + 1 : ℕ) : ℤ) = n
-    then a h.choose * (r : ℂ) ^ (h.choose.val + 1)
-    else 0
-  -- Define the continuous map
-  let Pcont : C(AddCircle T, ℂ) := ∑ k : Fin D,
-    (a k * (r : ℂ) ^ (k.val + 1)) • fourier (e k)
-  have hPcont_eq : ∀ t : AddCircle T, (Pcont : AddCircle T → ℂ) t =
-      polyEvalCircle a r t := by
-    intro t
-    simp only [Pcont, polyEvalCircle, ContinuousMap.coe_sum, Finset.sum_apply,
-      ContinuousMap.coe_smul, Pi.smul_apply, smul_eq_mul]
-    simp_rw [he]
-  -- Step 2: Build the Lp version
-  let PLp := (ContinuousMap.toLp (α := AddCircle T) 2 AddCircle.haarAddCircle ℂ) Pcont
-  have hPLp : PLp = ∑ k : Fin D,
-      (a k * (r : ℂ) ^ (k.val + 1)) • fourierLp 2 (e k) := by
-    simp only [PLp, Pcont, fourierLp, map_sum, map_smul]
-  -- Step 3: Rewrite as a sum over E' for orthonormal_fourier.inner_sum
-  have hPLp' : PLp = ∑ n ∈ E', b n • fourierLp 2 n := by
-    rw [hPLp]
-    simp only [E', b]
-    rw [Finset.sum_map]
-    congr 1; ext k
-    rw [Finset.sum_filter]
-    have : ∀ j : Fin D, e j = e k ↔ j = k := by
-      intro j; constructor
-      · intro h
-        exact e.injective h
-      · exact congrArg e
-    simp_all
-  -- Step 4: Compute inner product via orthonormality
-  have hinner_orth : @inner ℂ _ _ PLp PLp =
-      Complex.ofReal (∑ k : Fin D, ‖a k * (r : ℂ) ^ (k.val + 1)‖ ^ 2) := by
-    rw [hPLp', orthonormal_fourier.inner_sum b b E']
-    rw [show E' = (Finset.univ : Finset (Fin D)).map e from rfl]
-    rw [Finset.sum_map, Complex.ofReal_sum]
-    congr 1; ext k
-    rw [hb_eq k, mul_comm (starRingEnd ℂ _), mul_conj]
-    congr 1; exact (Complex.sq_norm _).symm
-  -- Step 5: Simplify ‖a_k * r^{k+1}‖² = ‖a_k‖² * r^{2(k+1)}
-  have hnorm_eq : ∀ k : Fin D,
-      ‖a k * (r : ℂ) ^ (k.val + 1)‖ ^ 2 = ‖a k‖ ^ 2 * (r ^ 2) ^ (k.val + 1) := by
-    intro k
-    rw [norm_mul, norm_pow, Complex.norm_real, mul_pow]
-    congr 1
-    rw [← pow_mul, show (k.val + 1) * 2 = 2 * (k.val + 1) from by ring,
-        pow_mul, Real.norm_eq_abs, sq_abs]
-  simp_rw [hnorm_eq] at hinner_orth
-  -- Step 6: Connect inner product to integral via L2.inner_def
-  have hinner_L2 := L2.inner_def (𝕜 := ℂ) PLp PLp
-  have hcombine := hinner_L2.symm.trans hinner_orth
-  -- Step 7: The coercion from ContinuousMap to Lp agrees a.e.
-  have hae := ContinuousMap.coeFn_toLp (μ := AddCircle.haarAddCircle) (𝕜 := ℂ) (p := 2) Pcont
-  -- Step 8: Compute the final result via calc
-  calc ∫ t : AddCircle T, ‖polyEvalCircle a r t‖ ^ 2 ∂AddCircle.haarAddCircle
-      = ∫ t : AddCircle T, ‖(↑↑PLp : AddCircle T → ℂ) t‖ ^ 2 ∂AddCircle.haarAddCircle := by
-          symm; apply integral_congr_ae
-          filter_upwards [hae] with t ht
-          show ‖(↑↑PLp : AddCircle T → ℂ) t‖ ^ 2 = ‖polyEvalCircle a r t‖ ^ 2
-          rw [show (↑↑PLp : AddCircle T → ℂ) t = Pcont t from ht, hPcont_eq t]
-    _ = (∫ t : AddCircle T, @inner ℂ ℂ _ ((↑↑PLp : AddCircle T → ℂ) t)
-            ((↑↑PLp : AddCircle T → ℂ) t) ∂AddCircle.haarAddCircle).re := by
-          have hint := L2.integrable_inner (𝕜 := ℂ) PLp PLp
-          symm
-          calc (∫ t, @inner ℂ ℂ _ ((↑↑PLp : AddCircle T → ℂ) t)
-                ((↑↑PLp : AddCircle T → ℂ) t) ∂AddCircle.haarAddCircle).re
-              = Complex.reCLM (∫ t, @inner ℂ ℂ _ ((↑↑PLp : AddCircle T → ℂ) t)
-                ((↑↑PLp : AddCircle T → ℂ) t) ∂AddCircle.haarAddCircle) := rfl
-            _ = ∫ t, Complex.reCLM (@inner ℂ ℂ _ ((↑↑PLp : AddCircle T → ℂ) t)
-                ((↑↑PLp : AddCircle T → ℂ) t)) ∂AddCircle.haarAddCircle :=
-                (ContinuousLinearMap.integral_comp_comm _ hint).symm
-            _ = ∫ t, ‖(↑↑PLp : AddCircle T → ℂ) t‖ ^ 2 ∂AddCircle.haarAddCircle := by
-                congr 1; ext t
-                exact @inner_self_eq_norm_sq ℂ ℂ _ _ _ ((↑↑PLp : AddCircle T → ℂ) t)
+  calc
+    (∫ t : AddCircle T, ‖polyEvalCircle a r t‖ ^ 2 ∂AddCircle.haarAddCircle) =
+        ∑ k : Fin D, ‖a k * (r : ℂ) ^ (k.val + 1)‖ ^ 2 := by
+      simpa only [polyEvalCircle, he] using
+        PhaseRetrieval.integral_norm_sq_fourier_sum (period := T) e
+          (fun k => a k * (r : ℂ) ^ (k.val + 1))
     _ = ∑ k : Fin D, ‖a k‖ ^ 2 * (r ^ 2) ^ (k.val + 1) := by
-          rw [show (∫ t : AddCircle T, @inner ℂ ℂ _ ((↑↑PLp : AddCircle T → ℂ) t)
-              ((↑↑PLp : AddCircle T → ℂ) t) ∂AddCircle.haarAddCircle) =
-              Complex.ofReal (∑ k : Fin D, ‖a k‖ ^ 2 * (r ^ 2) ^ (k.val + 1))
-              from hcombine, Complex.ofReal_re]
+      apply Finset.sum_congr rfl
+      intro k _
+      rw [norm_mul, norm_pow, Complex.norm_real, mul_pow]
+      congr 1
+      rw [← pow_mul, show (k.val + 1) * 2 = 2 * (k.val + 1) from by ring,
+        pow_mul, Real.norm_eq_abs, sq_abs]
 
 /-- The radial Gaussian integral: `2 ∫_{r>0} r^{2n+1} exp(-r²) dr = n!`.
     This follows from the substitution `t = r²` giving `∫_0^∞ t^n exp(-t) dt = Γ(n+1) = n!`. -/
@@ -717,11 +630,7 @@ private lemma fockNorm_polar {D : ℕ} (a : Fin D → ℂ) :
       Complex.norm_polarCoord_symm, sq_abs]
   simp_rw [integrand_rw]
   -- Step 3: Fubini
-  have hint : IntegrableOn
-    (fun p : ℝ × ℝ => p.1 * (‖polyEvalCircle a p.1 (QuotientAddGroup.mk p.2)‖ ^ 2 *
-      Real.exp (-p.1 ^ 2)))
-    (Set.Ioi 0 ×ˢ Set.Ioo (-Real.pi) Real.pi)
-    (volume.prod volume) := integrableOn_polar_norm a
+  have hint := integrableOn_polar_norm a
   rw [show (volume : Measure (ℝ × ℝ)) = volume.prod volume from Measure.volume_eq_prod ℝ ℝ]
   rw [setIntegral_prod _ hint]
   simp only []
