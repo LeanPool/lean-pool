@@ -33,7 +33,7 @@ theorem calls_first_bound (hp : 1 < p) (heps : 0 < eps)
   change (horizon p eps M D : ℝ) <
     2 * Real.sqrt (M * D / ((p - 1) * eps)) + 1 at hnlt
   push_cast at hcallsReal
-  linarith
+  linarith only [hcallsReal, hnlt]
 
 theorem first_to_second_bound (hp : 1 < p) (heps : 0 < eps)
     (hM : 0 < M) (hD : 0 < D)
@@ -53,7 +53,7 @@ theorem first_to_second_bound (hp : 1 < p) (heps : 0 < eps)
   calc
     4 * (Real.sqrt (M * D / eps) / Real.sqrt (p - 1)) + 2 ≤
         4 * (Real.sqrt (M * D / eps) / Real.sqrt (p - 1)) +
-          2 * Real.sqrt (M * D / eps) := by linarith
+          2 * Real.sqrt (M * D / eps) := by linarith only [hsqrtK]
     _ = (4 / Real.sqrt (p - 1) + 2) * Real.sqrt (M * D / eps) := by ring
 
 end V7.Stage3BelowTwoS3F

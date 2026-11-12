@@ -51,7 +51,7 @@ lemma kernelHessian_quadratic_nonneg {r theta : ℝ}
       (AffineMap.lineMap x (x + e) t)) e
   have hconvLine : ConvexOn ℝ Set.univ line := by
     have hc := (lowerKernelPhi_convex (d := d)
-      (by linarith : 1 ≤ r) htheta).comp_affineMap
+      (by linarith only [htheta, htr] : 1 ≤ r) htheta).comp_affineMap
         (AffineMap.lineMap x (x + e))
     change ConvexOn ℝ Set.univ
       ((lowerKernelPhi (d := d) r theta) ∘ AffineMap.lineMap x (x + e))
@@ -152,7 +152,7 @@ lemma psd_pairing_cauchy_schwarz (H : Point d →L[ℝ] Point d)
       have hdiv : X ^ (2 : ℕ) / C ≤ A := by linarith
       have hm := (div_le_iff₀ hCpos).mp hdiv
       dsimp [A, C, X] at hm ⊢
-      nlinarith
+      linarith only [hm]
   · let t : ℝ := -(X / A)
     have hz := hpos (f + t • e)
     rw [hquad] at hz
@@ -170,7 +170,7 @@ lemma psd_pairing_cauchy_schwarz (H : Point d →L[ℝ] Point d)
     have hdiv : X ^ (2 : ℕ) / A ≤ C := by linarith
     have hm := (div_le_iff₀ hApos).mp hdiv
     dsimp [A, C, X] at hm ⊢
-    nlinarith
+    linarith only [hm]
 
 /-- Pointwise Hessian Cauchy--Schwarz for the concrete kernel. -/
 lemma kernelHessian_cauchy_schwarz {r theta : ℝ}

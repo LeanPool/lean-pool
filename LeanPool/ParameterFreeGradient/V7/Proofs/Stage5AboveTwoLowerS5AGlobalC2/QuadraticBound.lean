@@ -72,7 +72,7 @@ lemma kernelHessian_radial_nonpos {r theta : ℝ}
     4 * theta * (2 * theta / r - 1) * r *
         O3.lpPower r x ^ (2 * theta / r - 2) *
         O3.pairing (O3.powerDualityMap r x) e ^ (2 : ℕ) ≤ 0 := by
-  have hr0 : 0 < r := by linarith
+  have hr0 : 0 < r := by linarith only [htheta, htr]
   have hcoef : 2 * theta / r - 1 < 0 := by
     rw [sub_lt_zero, div_lt_one hr0]
     exact htr
@@ -88,7 +88,7 @@ lemma kernelHessian_radial_nonpos {r theta : ℝ}
           ((4 * theta * r) * O3.lpPower r x ^ (2 * theta / r - 2) *
             O3.pairing (O3.powerDualityMap r x) e ^ (2 : ℕ)) by ring]
   have hfourtheta : 0 ≤ 4 * theta :=
-    mul_nonneg (by norm_num) (by linarith)
+    mul_nonneg (by norm_num) (by linarith only [htheta])
   have hbase : 0 ≤ 4 * theta * r := mul_nonneg hfourtheta hr0.le
   exact mul_nonpos_of_nonpos_of_nonneg hcoef.le
     (mul_nonneg (mul_nonneg hbase hpow) hsquare)
@@ -101,12 +101,12 @@ lemma weighted_diagonal_bound {r theta : ℝ}
         O3.lpNorm r e ^ (2 : ℕ) := by
   have hn : 0 < O3.lpNorm r x := O3.lpNorm_pos_of_ne_zero hx
   have hweighted := O3.Stage2RouteD.weightedHolder_upper hr x e hx
-  rw [lpPower_rpow_eq_lpNorm_rpow_of_ne_zero (by linarith : r ≠ 0) x hx]
+  rw [lpPower_rpow_eq_lpNorm_rpow_of_ne_zero (by linarith only [hr] : r ≠ 0) x hx]
   have hexp : r * (2 * theta / r - 1) = (2 * theta - 2) + (2 - r) := by
-    field_simp [ne_of_gt (by linarith : 0 < r)]
+    field_simp [ne_of_gt (by linarith only [hr] : 0 < r)]
     ring
   rw [hexp, Real.rpow_add hn]
-  nlinarith [mul_le_mul_of_nonneg_left hweighted
+  linarith only [hn, hweighted, mul_le_mul_of_nonneg_left hweighted
     (Real.rpow_nonneg hn.le (2 * theta - 2))]
 
 /-- The exact dimension-free Hessian quadratic bound used in the manuscript. -/
@@ -119,13 +119,13 @@ theorem kernelHessian_quadratic_bound {r theta : ℝ}
   by_cases hx : x = 0
   · subst x
     rw [kernelHessian_zero hr htheta htr]
-    simp [O3.pairing, O3.lpNorm_zero (by linarith : 0 < r),
-      Real.zero_rpow (by linarith : 2 * theta - 2 ≠ 0)]
+    simp [O3.pairing, O3.lpNorm_zero (by linarith only [htheta, htr] : 0 < r),
+      Real.zero_rpow (by linarith only [htheta] : 2 * theta - 2 ≠ 0)]
   · rw [pairing_kernelHessian_eq]
     have hradial := kernelHessian_radial_nonpos hr htheta htr x e
     have hdiag := weighted_diagonal_bound (theta := theta) hr x e hx
     have hcoef : 0 ≤ 4 * theta * (r - 1) :=
-      mul_nonneg (mul_nonneg (by norm_num) (by linarith)) (by linarith)
-    nlinarith [mul_le_mul_of_nonneg_left hdiag hcoef]
+      mul_nonneg (mul_nonneg (by norm_num) (by linarith only [htheta])) (by linarith)
+    linarith only [hcoef, hdiag, hradial, mul_le_mul_of_nonneg_left hdiag hcoef]
 
 end V7.Stage5AboveTwoLower.S5AGlobalC2

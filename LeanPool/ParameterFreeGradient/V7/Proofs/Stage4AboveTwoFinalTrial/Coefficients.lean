@@ -172,7 +172,7 @@ theorem coeffC_row_sum (p eta : ℝ) (n : ℕ) (hp : 2 < p)
       simp [hsupport]
       field_simp [hune]
       have hrel := weight_succ_relation (p := p) (eta := eta) hn hkn
-      linarith
+      linarith only [hrel]
 
 theorem coeffB_row_sum (p eta : ℝ) (n : ℕ) (hp : 2 < p)
     (heta : 0 < eta) (hn : 1 ≤ n) :
@@ -215,7 +215,7 @@ theorem coefficient_assumptions (p eta : ℝ) (n : ℕ) (hp : 2 < p)
         positivity
       · have heq : k + 1 = n := by omega
         rw [heq, increment_at hn]
-    linarith
+    linarith only [hinc]
   · intro k hk i
     exact ⟨rfl, rfl⟩
   · exact coeffC_row_sum p eta n hp heta hn

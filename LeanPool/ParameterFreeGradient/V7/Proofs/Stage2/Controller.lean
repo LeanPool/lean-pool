@@ -77,7 +77,7 @@ private theorem indexed_visit_bounds {p eps G Ma Da L R : ℝ}
           · rw [hstep.2]; positivity
           · rw [hstep.1]; exact hMbound
           · rw [hstep.2]
-            linarith [hrad.2.2.2.2]
+            linarith only [hiPrev, hiReport, hrad, hrad.2.2.2.2]
       | scale failed =>
           simp only [houtcome] at hstep
           have hsc := hscale failed houtcome
@@ -90,9 +90,9 @@ private theorem indexed_visit_bounds {p eps G Ma Da L R : ℝ}
           · rw [hstep.2]
             exact div_pos hG (by rw [hstep.1]; positivity)
           · rw [hstep.1]
-            linarith
+            linarith only [hiPrev, hiReport, hsc]
           · rw [hstep.2, hhalf]
-            linarith
+            linarith only [hDa, hDaBound, hDbound, hiPrev, hlower]
 
 private theorem path_geometric_sums {eps G Ma R : ℝ}
     (heps : 0 < eps) (hG : 0 < G) (hMa : 0 < Ma) (hR : 0 ≤ R)
@@ -132,7 +132,7 @@ theorem trialOutcomeCertification : TrialOutcomeCertificationStatement := by
     cached oracle visits reports schedules hpath hschedules hledger
   have hb := indexed_visit_bounds hG hMa hDa hMaBound hDaBound
     cached oracle visits reports schedules hpath hledger
-  have hR : 0 ≤ R := by linarith
+  have hR : 0 ≤ R := by linarith only [hDa, hDaBound]
   refine ⟨?_, ?_, ?_⟩
   · intro visit hmem
     rw [List.mem_iff_get] at hmem

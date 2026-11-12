@@ -25,7 +25,7 @@ private theorem finite_geometric_sum_le {c ratio : ℝ}
       c * ratio ^ N / (ratio - 1) := by
   rw [← Finset.mul_sum, geom_sum_eq hratio.ne']
   have hden : 0 < ratio - 1 := sub_pos.mpr hratio
-  have hpow : 0 ≤ ratio ^ N := pow_nonneg (by linarith) _
+  have hpow : 0 ≤ ratio ^ N := pow_nonneg (by linarith only [hratio]) _
   calc
     c * ((ratio ^ N - 1) / (ratio - 1)) =
         c * (ratio ^ N - 1) / (ratio - 1) := by ring
@@ -49,7 +49,7 @@ theorem localCostExponent_pos {p : ℝ} :
   split_ifs with h
   · norm_num
   · have hp2 : 2 < p := lt_of_not_ge h
-    exact div_pos (by linarith) (by linarith)
+    exact div_pos (by linarith only [h]) (by linarith only [h])
 
 private theorem geometric_coefficient_eq {a : ℝ} :
     (2 : ℝ) ^ a / ((2 : ℝ) ^ a - 1) =

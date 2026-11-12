@@ -37,8 +37,8 @@ lemma signedLpLinearMap_injective {p : ℝ} (hp : 2 < p)
     rw [map_sub, hxy, sub_self]
   have hn := hsym.1 (x - y)
   change O3.lpNorm p (Q (x - y)) = O3.lpNorm p (x - y) at hn
-  rw [hsub, O3.lpNorm_zero (by linarith : 0 < p)] at hn
-  have hz : x - y = 0 := (O3.lpNorm_eq_zero_iff (by linarith : 0 < p)).mp hn.symm
+  rw [hsub, O3.lpNorm_zero (by linarith only [hp] : 0 < p)] at hn
+  have hz : x - y = 0 := (O3.lpNorm_eq_zero_iff (by linarith only [hp] : 0 < p)).mp hn.symm
   exact sub_eq_zero.mp hz
 
 lemma signedLpLinearMap_surjective {p : ℝ} (hp : 2 < p)
@@ -87,7 +87,7 @@ theorem repairKernel_phi_signed_invariant {p : ℝ} {d : ℕ}
       ∀ x, (repairKernel p d).phi (Q x) = (repairKernel p d).phi x := by
   intro Q Qdual hsym x
   exact lowerKernelPhi_signed_invariant hp
-    (by linarith [two_lt_kernelR0 hp hd] : kernelR0 p d ≠ 0) hsym x
+    (by linarith only [hd, hp, two_lt_kernelR0 hp hd] : kernelR0 p d ≠ 0) hsym x
 
 theorem repairKernel_smooth_value_signed_equivariant {p : ℝ} {d : ℕ}
     (hp : 2 < p) (hd : 2 ≤ d) :
@@ -99,7 +99,7 @@ theorem repairKernel_smooth_value_signed_equivariant {p : ℝ} {d : ℕ}
         ((repairKernel p d).smooth chi ell).value (Q x) := by
   intro chi hchi ell Q Qdual hconv hlip hsym x
   exact localSmoothingValue_signed_equivariant hp
-    (by linarith [two_lt_kernelR0 hp hd] : kernelR0 p d ≠ 0)
+    (by linarith only [hd, hp, two_lt_kernelR0 hp hd] : kernelR0 p d ≠ 0)
     (repairKernelBase p d) rfl ell hsym x
 
 end V7.Stage5AboveTwoLowerS5A2Envelope

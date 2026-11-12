@@ -54,7 +54,7 @@ lemma hasDerivAt_kernelLine_of_ne_zero {r theta : ℝ}
     (hz : x + t • h ≠ 0) :
     HasDerivAt (kernelLine r theta x h)
       (kernelLineGradient r theta x h t) t := by
-  have hr0 : r ≠ 0 := by linarith
+  have hr0 : r ≠ 0 := by linarith only [hr]
   have hS : linePower r x h t ≠ 0 :=
     (O3.lpPower_pos_of_ne_zero hz).ne'
   have hp := (hasDerivAt_linePower hr x h t).rpow_const
@@ -77,10 +77,10 @@ lemma hasDerivAt_kernelLineGradient_of_ne_zero {r theta : ℝ}
     (hz : x + t • h ≠ 0) :
     HasDerivAt (kernelLineGradient r theta x h)
       (kernelLineHessian r theta x h t) t := by
-  have hr0 : r ≠ 0 := by linarith
+  have hr0 : r ≠ 0 := by linarith only [hr]
   have hS : linePower r x h t ≠ 0 :=
     (O3.lpPower_pos_of_ne_zero hz).ne'
-  have hpow := (hasDerivAt_linePower (by linarith : 1 < r) x h t).rpow_const
+  have hpow := (hasDerivAt_linePower (by linarith only [hr] : 1 < r) x h t).rpow_const
     (Or.inl hS) (p := 2 * theta / r - 1)
   have hpair := hasDerivAt_linePowerPair_above_two hr x h t
   have hprod := hpow.mul hpair
@@ -112,7 +112,7 @@ lemma kernelLine_twice_differentiable_of_ne_zero {r theta : ℝ}
         (kernelLineGradient r theta x h t) t ∧
       HasDerivAt (kernelLineGradient r theta x h)
         (kernelLineHessian r theta x h t) t := by
-  exact ⟨hasDerivAt_kernelLine_of_ne_zero (by linarith) x h t hz,
+  exact ⟨hasDerivAt_kernelLine_of_ne_zero (by linarith only [hr]) x h t hz,
     hasDerivAt_kernelLineGradient_of_ne_zero hr x h t hz⟩
 
 /-- Along a line passing through the whole-vector origin, the kernel is an
@@ -127,7 +127,7 @@ lemma kernelLine_eq_radial_of_eq_zero {r theta : ℝ}
     funext i
     have hzi := congrFun hz i
     simp only [Pi.add_apply, Pi.smul_apply, smul_eq_mul, Pi.zero_apply] at hzi ⊢
-    linarith
+    linarith only [hzi]
   rw [kernelLine, hvec,
     Stage5AboveTwoLower.lowerKernelPhi_eq_norm_power (by linarith : r ≠ 0)]
   change 2 * (O3.lpNorm r ((s - t) • h)) ^ (2 * theta) = _
@@ -145,7 +145,7 @@ lemma hasDerivAt_kernelLine_at_zero {r theta : ℝ}
   rw [kernelLine_eq_radial_of_eq_zero hr x h t hz]
   have habs := O3.Stage2RouteA.hasDerivAt_abs_affine_rpow
     (p := 2 * theta) (a := -t) (b := 1) (t := t)
-    (by nlinarith : 1 < 2 * theta)
+    (by linarith only [htheta] : 1 < 2 * theta)
   simp only [mul_one, neg_add_cancel, abs_zero, mul_zero] at habs
   have hfun : (fun s : ℝ ↦ |-t + s| ^ (2 * theta)) =
       fun s : ℝ ↦ |s - t| ^ (2 * theta) := by
@@ -167,11 +167,11 @@ lemma hasDerivAt_kernelLine_radialGradient_at_zero {r theta : ℝ}
   have hsub : HasDerivAt ((· - t) : ℝ → ℝ) 1 t := by
     simpa using (hasDerivAt_id t).sub_const t
   have hjOuter := O3.Stage2RouteA.hasDerivAt_scalarJ_above_two
-    (by nlinarith : 2 < 2 * theta) (u := (0 : ℝ))
+    (by linarith only [htheta] : 2 < 2 * theta) (u := (0 : ℝ))
   have hj := hjOuter.comp_of_eq t hsub (by simp)
   simp only [abs_zero] at hj
   have hpow : (0 : ℝ) ^ (2 * theta - 2) = 0 := by
-    rw [Real.zero_rpow (by nlinarith : 2 * theta - 2 ≠ 0)]
+    rw [Real.zero_rpow (by linarith only [htheta] : 2 * theta - 2 ≠ 0)]
   rw [hpow] at hj
   norm_num at hj
   simpa only [Function.comp_apply, mul_assoc, mul_zero] using hj.const_mul

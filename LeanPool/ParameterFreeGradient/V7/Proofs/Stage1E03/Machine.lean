@@ -99,7 +99,7 @@ theorem one_le_horizon {eps M D : ℝ} (hkappa : 1 ≤ M * D / eps) :
     exact (Real.le_sqrt (by positivity) (by positivity)).2
       (by simpa using hkappa)
   have hge := horizon_real_ge eps M D
-  exact_mod_cast (show (1 : ℝ) ≤ (horizon eps M D : ℝ) by nlinarith)
+  exact_mod_cast (show (1 : ℝ) ≤ (horizon eps M D : ℝ) by linarith only [hge, hsqrt])
 
 theorem horizon_gradient_budget {eps M D : ℝ}
     (heps : 0 < eps) (hM : 0 < M) (hD : 0 < D)
@@ -116,22 +116,22 @@ theorem horizon_gradient_budget {eps M D : ℝ}
   have hs2 : 0 < s * s := mul_pos hs hs
   have hceil := horizon_real_ge eps M D
   have hsqrt2 : Real.sqrt 2 ≤ 2 := by
-    nlinarith [Real.sq_sqrt (by norm_num : (0 : ℝ) ≤ 2)]
+    nlinarith only [Real.sq_sqrt (by norm_num : (0 : ℝ) ≤ 2)]
   have hsqrtk : 0 ≤ Real.sqrt kappa := Real.sqrt_nonneg _
   have hkSq : (Real.sqrt kappa) ^ 2 = kappa := Real.sq_sqrt hk0
   have hden : 4 * kappa ≤ s * s := by
     change 2 * Real.sqrt kappa ≤ (n : ℝ) at hceil
     dsimp only [s]
-    nlinarith
+    nlinarith only [hceil, hkSq, hsqrtk]
   have hkdef : kappa = M * D / eps := rfl
   have hMD : 4 * M * D ≤ eps * (s * s) := by
     rw [hkdef] at hden
     have h := mul_le_mul_of_nonneg_left hden heps.le
     field_simp [ne_of_gt heps] at h
-    nlinarith
+    linarith only [h]
   have hnum : 2 * Real.sqrt 2 * M * D ≤ eps * (s * s) := by
     have hMD0 : 0 ≤ M * D := mul_nonneg hM.le hD.le
-    nlinarith
+    nlinarith only [hMD, hMD0, hsqrt2]
   exact (div_le_iff₀ hs2).2 (by
     simpa only [kappa, n, s] using hnum)
 

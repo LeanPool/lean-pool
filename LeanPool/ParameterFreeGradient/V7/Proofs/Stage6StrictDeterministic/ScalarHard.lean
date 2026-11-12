@@ -41,7 +41,7 @@ theorem hardValue_of_middle {eps H z : ℝ} (hzH : H < z) (hz3 : z ≤ 3 * H) :
 
 theorem hardValue_of_right {eps H z : ℝ} (hH : 0 ≤ H) (hz3 : 3 * H < z) :
     hardValue eps H z = (2 * eps) * z - 4 * (2 * eps) * H := by
-  have hzH : ¬ z ≤ H := by intro h; linarith
+  have hzH : ¬ z ≤ H := by intro h; linarith only [h, hH, hz3]
   simp [hardValue, hzH, not_le.mpr hz3]
 
 theorem hardSlope_of_le {eps H z : ℝ} (hz : z ≤ H) :
@@ -53,7 +53,7 @@ theorem hardSlope_of_middle {eps H z : ℝ} (hzH : H < z) (hz3 : z ≤ 3 * H) :
 
 theorem hardSlope_of_right {eps H z : ℝ} (hH : 0 ≤ H) (hz3 : 3 * H < z) :
     hardSlope eps H z = 2 * eps := by
-  have hzH : ¬ z ≤ H := by intro h; linarith
+  have hzH : ¬ z ≤ H := by intro h; linarith only [h, hH, hz3]
   simp [hardSlope, hzH, not_le.mpr hz3]
 
 private theorem left_hasDerivAt (eps z : ℝ) :
@@ -128,7 +128,7 @@ theorem hardValue_hasDerivAt {eps H : ℝ} (hH : 0 < H) (z : ℝ) :
         ring
       rw [hderiv] at hpoly
       refine hpoly.congr_of_mem ?_
-        ⟨Set.mem_Ici.mpr le_rfl, Set.mem_Iic.mpr (by linarith)⟩
+        ⟨Set.mem_Ici.mpr le_rfl, Set.mem_Iic.mpr (by linarith only [hH])⟩
       intro y hy
       by_cases hyH : y = H
       · subst y
@@ -140,14 +140,14 @@ theorem hardValue_hasDerivAt {eps H : ℝ} (hH : 0 < H) (z : ℝ) :
       simp only [Set.mem_union, Set.mem_Iic, Set.mem_inter_iff, Set.mem_Ici]
       constructor
       · rintro (hy | hy)
-        · linarith
+        · linarith only [hH, hy]
         · exact hy.2
       · intro hy
         by_cases hyH : y ≤ H
         · exact Or.inl hyH
         · exact Or.inr ⟨le_of_not_ge hyH, hy⟩
     rw [hset] at hu
-    have hfull := hu.hasDerivAt (Iic_mem_nhds (by linarith : H < 3 * H))
+    have hfull := hu.hasDerivAt (Iic_mem_nhds (by linarith only [hH] : H < 3 * H))
     rw [hardSlope_of_le (eps := eps) (H := H) le_rfl]
     exact hfull
   · rcases lt_trichotomy z (3 * H) with hz3 | hz3eq | h3z
@@ -234,7 +234,7 @@ theorem hardSlope_eq_clipped {eps H z : ℝ} (hH : 0 < H) :
   unfold hardSlope clippedCoordinate
   split_ifs with hzH hz3
   · have hzdiv : z / H ≤ 1 := (div_le_one hH).mpr hzH
-    have ha : z / H - 2 ≤ -1 := by linarith
+    have ha : z / H - 2 ≤ -1 := by linarith only [hzdiv]
     have hmax : max (-1) (z / H - 2) = -1 := max_eq_left ha
     have hmin : min 1 (-1 : ℝ) = -1 := min_eq_right (by norm_num)
     rw [hmax, hmin]
@@ -242,9 +242,9 @@ theorem hardSlope_eq_clipped {eps H z : ℝ} (hH : 0 < H) :
   · have hHlt : H < z := lt_of_not_ge hzH
     have hzdiv_lower : -1 < z / H - 2 := by
       have := (one_lt_div hH).mpr hHlt
-      linarith
+      linarith only [this]
     have hzdiv_upper : z / H - 2 ≤ 1 := by
-      exact (sub_le_iff_le_add).mpr ((div_le_iff₀ hH).mpr (by linarith))
+      exact (sub_le_iff_le_add).mpr ((div_le_iff₀ hH).mpr (by linarith only [hz3]))
     have hmax : max (-1) (z / H - 2) = z / H - 2 :=
       max_eq_right hzdiv_lower.le
     have hmin : min 1 (z / H - 2) = z / H - 2 :=
@@ -253,9 +253,9 @@ theorem hardSlope_eq_clipped {eps H z : ℝ} (hH : 0 < H) :
   · have h3lt : 3 * H < z := lt_of_not_ge hz3
     have hzdiv : 1 < z / H - 2 := by
       have := (lt_div_iff₀ hH).mpr h3lt
-      linarith
+      linarith only [this]
     have hmax : max (-1) (z / H - 2) = z / H - 2 :=
-      max_eq_right (by linarith)
+      max_eq_right (by linarith only [hzdiv])
     have hmin : min 1 (z / H - 2) = 1 := min_eq_left hzdiv.le
     rw [hmax, hmin]
     ring
@@ -267,13 +267,13 @@ theorem clippedCoordinate_monotone {H : ℝ} (hH : 0 < H) :
   apply min_le_min le_rfl
   apply max_le_max le_rfl
   have := div_le_div_of_nonneg_right hxy hH.le
-  linarith
+  linarith only [this]
 
 theorem hardSlope_monotone {eps H : ℝ} (heps : 0 < eps) (hH : 0 < H) :
     Monotone (hardSlope eps H) := by
   intro x y hxy
   rw [hardSlope_eq_clipped hH, hardSlope_eq_clipped hH]
-  exact mul_le_mul_of_nonneg_left (clippedCoordinate_monotone hH hxy) (by linarith)
+  exact mul_le_mul_of_nonneg_left (clippedCoordinate_monotone hH hxy) (by linarith only [heps])
 
 /-- Scalar convexity follows from the globally monotone literal derivative. -/
 theorem hardValue_convex {eps H : ℝ} (heps : 0 < eps) (hH : 0 < H) :
@@ -305,7 +305,7 @@ theorem hardSlope_lipschitz {eps H : ℝ} (heps : 0 < eps) (hH : 0 < H)
       ((2 * eps) / H) * |x - y| := by
   rw [hardSlope_eq_clipped hH, hardSlope_eq_clipped hH]
   have hclip := clippedCoordinate_lipschitz H x y
-  have hg : 0 ≤ 2 * eps := by linarith
+  have hg : 0 ≤ 2 * eps := by linarith only [heps]
   have hscaled := mul_le_mul_of_nonneg_left hclip hg
   have habs : |x / H - 2 - (y / H - 2)| = |x - y| / H := by
     have heq : x / H - 2 - (y / H - 2) = (x - y) / H := by
@@ -322,7 +322,7 @@ theorem hardSlope_lipschitz {eps H : ℝ} (heps : 0 < eps) (hH : 0 < H)
 
 theorem hardValue_at_minimizer {eps H : ℝ} (hH : 0 < H) :
     hardValue eps H (2 * H) = -3 * eps * H := by
-  rw [hardValue_of_middle (by linarith : H < 2 * H) (by linarith : 2 * H ≤ 3 * H)]
+  rw [hardValue_of_middle (by linarith only [hH] : H < 2 * H) (by linarith : 2 * H ≤ 3 * H)]
   field_simp [ne_of_gt hH]
   ring
 
@@ -331,7 +331,7 @@ theorem hardValue_minimum {eps H : ℝ} (heps : 0 < eps) (hH : 0 < H)
   rw [hardValue_at_minimizer hH]
   by_cases hzH : z ≤ H
   · rw [hardValue_of_le hzH]
-    nlinarith
+    nlinarith only [hH, heps, hzH]
   · have hHz : H < z := lt_of_not_ge hzH
     by_cases hz3 : z ≤ 3 * H
     · rw [hardValue_of_middle hHz hz3]
@@ -342,9 +342,9 @@ theorem hardValue_minimum {eps H : ℝ} (heps : 0 < eps) (hH : 0 < H)
               3 * eps * H = (eps / H) * (z - 2 * H) ^ 2 := by
         field_simp [ne_of_gt hH]
         ring
-      nlinarith [mul_nonneg hcoef hsquare]
+      linarith only [hcoef, hidentity, hsquare, mul_nonneg hcoef hsquare]
     · rw [hardValue_of_right hH.le (lt_of_not_ge hz3)]
-      nlinarith
+      nlinarith only [hH, heps, hz3]
 
 theorem hardValue_eq_minimizer_iff {eps H : ℝ} (heps : 0 < eps) (hH : 0 < H)
     (z : ℝ) : hardValue eps H z = hardValue eps H (2 * H) ↔ z = 2 * H := by
@@ -353,7 +353,7 @@ theorem hardValue_eq_minimizer_iff {eps H : ℝ} (heps : 0 < eps) (hH : 0 < H)
     rw [hardValue_at_minimizer hH] at heq
     by_cases hzH : z ≤ H
     · rw [hardValue_of_le hzH] at heq
-      nlinarith
+      nlinarith only [hH, heps, heq, hzH]
     · have hHz : H < z := lt_of_not_ge hzH
       by_cases hz3 : z ≤ 3 * H
       · rw [hardValue_of_middle hHz hz3] at heq
@@ -363,12 +363,12 @@ theorem hardValue_eq_minimizer_iff {eps H : ℝ} (heps : 0 < eps) (hH : 0 < H)
           field_simp [ne_of_gt hH]
           ring
         have hprod : (eps / H) * (z - 2 * H) ^ 2 = 0 := by
-          linarith
+          linarith only [heq, hidentity]
         rcases mul_eq_zero.mp hprod with hcoef | hsquare
         · exact False.elim ((div_ne_zero (ne_of_gt heps) (ne_of_gt hH)) hcoef)
         · exact sub_eq_zero.mp (sq_eq_zero_iff.mp hsquare)
       · rw [hardValue_of_right hH.le (lt_of_not_ge hz3)] at heq
-        nlinarith
+        nlinarith only [hH, heps, heq, hz3]
   · rintro rfl
     rfl
 
@@ -380,9 +380,9 @@ theorem hardValue_linear_lower {eps H : ℝ} (heps : 0 < eps) (hH : 0 < H)
   · rw [hardValue_of_le hzH]
     by_cases hz0 : z ≤ 0
     · rw [abs_of_nonpos hz0]
-      nlinarith
+      nlinarith only [hH, heps]
     · rw [abs_of_pos (lt_of_not_ge hz0)]
-      nlinarith
+      nlinarith only [hH, heps, hzH]
   · have hHz : H < z := lt_of_not_ge hzH
     have hz0 : 0 < z := hH.trans hHz
     rw [abs_of_pos hz0]
@@ -396,7 +396,7 @@ theorem hardValue_linear_lower {eps H : ℝ} (heps : 0 < eps) (hH : 0 < H)
             (eps / H) * (z - 3 * H) ^ 2 := by
         field_simp [ne_of_gt hH]
         ring
-      nlinarith [mul_nonneg hcoef hsquare]
+      linarith only [hcoef, hidentity, hsquare, mul_nonneg hcoef hsquare]
     · rw [hardValue_of_right hH.le (lt_of_not_ge hz3)]
 
 end V7.Stage6StrictDeterministic

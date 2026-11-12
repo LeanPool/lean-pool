@@ -248,20 +248,20 @@ private lemma coefficient_X_weighted_step (n : ℕ) (hn : 1 ≤ n)
   ring
 
 private lemma pairing_add_right (x y z : Point d) :
-    O3.pairing x (y + z) = O3.pairing x y + O3.pairing x z := by
-  simp [O3.pairing, Finset.sum_add_distrib, mul_add]
+    O3.pairing x (y + z) = O3.pairing x y + O3.pairing x z :=
+  V7.ResidualAlgebra.pairing_add_right x y z
 
 private lemma pairing_add_left (x y z : Point d) :
-    O3.pairing (x + y) z = O3.pairing x z + O3.pairing y z := by
-  simp [O3.pairing, Finset.sum_add_distrib, add_mul]
+    O3.pairing (x + y) z = O3.pairing x z + O3.pairing y z :=
+  V7.ResidualAlgebra.pairing_add_left x y z
 
 private lemma pairing_sub_left (x y z : Point d) :
-    O3.pairing (x - y) z = O3.pairing x z - O3.pairing y z := by
-  simp [O3.pairing, Finset.sum_sub_distrib, sub_mul]
+    O3.pairing (x - y) z = O3.pairing x z - O3.pairing y z :=
+  V7.ResidualAlgebra.pairing_sub_left x y z
 
 private lemma pairing_sub_right (x y z : Point d) :
-    O3.pairing x (y - z) = O3.pairing x y - O3.pairing x z := by
-  simp [O3.pairing, Finset.sum_sub_distrib, mul_sub]
+    O3.pairing x (y - z) = O3.pairing x y - O3.pairing x z :=
+  V7.ResidualAlgebra.pairing_sub_right x y z
 
 private lemma pairing_smul_left (r : ℝ) (x y : Point d) :
     O3.pairing (r • x) y = r * O3.pairing x y :=
@@ -289,7 +289,7 @@ private lemma shifted_dw_pairing (n : ℕ) (dw : ScalarSeq)
   have hend : f n = 0 := by simp [f, hdwn]
   rw [Finset.sum_range_succ, hend, add_zero] at hshift
   dsimp [f] at hshift ⊢
-  linarith
+  linarith only [hshift]
 
 private lemma free_bilinear_reduction (n : ℕ) (hn : 1 ≤ n)
     (u dw : ScalarSeq) (alpha c b : ScalarMatrix)
@@ -538,7 +538,7 @@ private lemma function_block_identity (n : ℕ) (hn : 1 ≤ n)
     ring
   unfold FunctionBregman
   rw [hrem1, hrem2, hflip, hdec1, hdec2]
-  linarith
+  linarith only [hcancel]
 
 private lemma aboveHstar_zero (p : ℝ) (hp : 2 < p) (d : ℕ) :
     aboveHstar p (0 : Point d) = 0 := by
@@ -715,7 +715,7 @@ theorem dualTerminalEnergy (p : ℝ) (hp : 2 < p) (n : ℕ)
     intro x y
     unfold FunctionBregman
     have h := hfirst y x
-    linarith
+    linarith only [h]
   have hwpos : ∀ k ≤ n, 0 < 1 / data.u (n - k) := by
     intro k hk
     exact one_div_pos.mpr (hu_pos (n - k) (by omega))
@@ -730,7 +730,7 @@ theorem dualTerminalEnergy (p : ℝ) (hp : 2 < p) (n : ℕ)
     have hinv := one_div_le_one_div_of_le hpos₁ hmono
     have hden : n - (k + 1) = n - k - 1 := by omega
     rw [hden]
-    linarith
+    exact sub_nonneg.mpr hinv
   let gradBlock : ℝ :=
     ∑ k ∈ Finset.range n,
       ((1 / data.u (n - (k + 1))) / 2) *
@@ -815,7 +815,7 @@ theorem dualTerminalEnergy (p : ℝ) (hp : 2 < p) (n : ℕ)
         ring
       rw [heq]
       exact hguard_sum
-    linarith
+    linarith only [hf, hdelta_sum, hguard_split]
   have hmirror_gap := mirror_gap_nonnegative p hp n data.r
   have hmirror0 : 0 ≤
       FunctionBregman (aboveHstar p) (aboveMirrorMap p) 0 (data.r 0) := by
@@ -846,21 +846,19 @@ theorem dualTerminalEnergy (p : ℝ) (hp : 2 < p) (n : ℕ)
             (data.r k) (data.r (k + 1))) - mirrorNormBlock := by
       rw [hnormdef, ← Finset.sum_sub_distrib]
       exact hmirror_gap
-    linarith
+    linarith only [hm, hgap_split, hmirror0]
   have hcore : aboveHstar p (data.r n) ≤
       (1 / data.u n) *
         (data.oracle.value (data.q 0) - data.oracle.value (data.q n)) +
       aboveErrorSum p n data.u data.dw := by
-    linarith
+    linarith only [hres_blocks, hfunction_bound, hmirror_bound]
   have hsinf : sInf (Set.range data.oracle.value) ≤
       data.oracle.value (data.q n) :=
     csInf_le hbdd ⟨data.q n, rfl⟩
   have hscale : 0 ≤ 1 / data.u n :=
     le_of_lt (one_div_pos.mpr (hu_pos n le_rfl))
   have hgapscale := mul_le_mul_of_nonneg_left
-    (show data.oracle.value (data.q 0) - data.oracle.value (data.q n) ≤
-      data.oracle.value (data.q 0) - sInf (Set.range data.oracle.value) by
-        linarith) hscale
+    (sub_le_sub_left hsinf (data.oracle.value (data.q 0))) hscale
   calc
     aboveHstar p (data.oracle.gradient (data.q n)) =
         aboveHstar p (data.r n) := by

@@ -43,12 +43,12 @@ theorem unitCompleted_smooth {p : ℝ} {d T : ℕ}
     rcases hsteps t0 ht0 with ⟨-, -, -, -, -, -, hH, -⟩
     exact hH
   have hHcert := partialH_convex_oneLipschitz data.toLowerCompletionData
-    (by linarith : 1 ≤ p) ht0 hbasic hH
+    (by linarith only [hp] : 1 ≤ p) ht0 hbasic hH
   have hchi : 0 < P.chi := unitChi_pos hT
   have hbase := repairSelectedOracle_smooth hp hd hchi
     (data.partialH t0) hHcert.1 hHcert.2
   have hbeta : 0 < P.beta := unitBeta_pos hp hd hT
-  have hq := O3.one_lt_conjugateExponent (by linarith : 1 < p)
+  have hq := O3.one_lt_conjugateExponent (by linarith only [hp] : 1 < p)
   intro x y
   have hb := hbase x y
   have hgradEq : ∀ z, data.completedOracle.gradient z =

@@ -100,12 +100,12 @@ theorem cocoercivityGuard_of_scale_ge {p L M : ℝ} (hp : 1 < p)
     have hcore : G ^ (2 : ℕ) / (2 * inst.L) ≤
         BregmanRemainder inst.oracle x y := by
       dsimp only [BregmanRemainder]
-      linarith [hyz, hgrad, hpair, hdesc]
+      linarith only [hdesc, hgrad, hpair, hyz]
     have hfrac : G ^ (2 : ℕ) / (2 * M) ≤
         G ^ (2 : ℕ) / (2 * inst.L) := by
       have hnum : 0 ≤ G ^ (2 : ℕ) := sq_nonneg G
       exact div_le_div_of_nonneg_left hnum
-        (mul_pos (by norm_num) inst.L_pos) (by nlinarith)
+        (mul_pos (by norm_num) inst.L_pos) (by linarith only [hLM])
     dsimp only [CocoercivityGuard]
     change BregmanRemainder inst.oracle x y ≥ G ^ (2 : ℕ) / (2 * M)
     exact hfrac.trans hcore

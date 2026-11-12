@@ -67,7 +67,7 @@ lemma continuous_lpPowerFDeriv {r : ℝ} (hr : 2 < r) {d : ℕ} :
 lemma continuous_lpPower {r : ℝ} (hr : 2 < r) {d : ℕ} :
     Continuous (O3.lpPower (d := d) r) := by
   have hd : Differentiable ℝ (O3.lpPower (d := d) r) :=
-    fun x ↦ (hasFDerivAt_lpPower (by linarith : 1 < r) x).differentiableAt
+    fun x ↦ (hasFDerivAt_lpPower (by linarith only [hr] : 1 < r) x).differentiableAt
   exact hd.continuous
 
 lemma continuousAt_kernelHessianCoord_of_ne_zero {r theta : ℝ}

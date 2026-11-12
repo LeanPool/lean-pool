@@ -224,7 +224,7 @@ theorem abovePointwiseResidualIdentity : AbovePointwiseResidualIdentityStatement
       exact (h₁.2 k hk).trans (h₂.2 k hk).symm
   · intro A B C D X hAn hX hmap
     have hnorm := Stage4AboveTwoIdentity.norm_block
-      p (by linarith) n hn u dw alpha c b hcoeff A B C D hmap
+      p (by linarith only [hp]) n hn u dw alpha c b hcoeff A B C D hmap
     have homega := ResidualAlgebra.omega_block n Omega heven B D hmap.2.2
     have halpha := Stage4AboveTwoIdentity.alpha_block
       n hn u dw alpha c b hcoeff A B C D hmap

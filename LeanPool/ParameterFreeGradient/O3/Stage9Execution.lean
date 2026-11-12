@@ -224,7 +224,7 @@ theorem ogmg_velocity_p_relation (cfg : OGMGExecutionConfig d)
       have hden' : cfg.theta i * 2 - 1 ≠ 0 := by
         intro h
         apply hden i
-        linarith
+        linarith only [h]
       field_simp [hM, hθ i, hθ (i + 1), hden i, hden']
       ring
 

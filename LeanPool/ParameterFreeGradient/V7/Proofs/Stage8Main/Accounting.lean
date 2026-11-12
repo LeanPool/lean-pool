@@ -45,7 +45,7 @@ theorem selectedAmort_pos (p : ℝ) (hp : 1 < p) :
 theorem runtimeCoefficient_pos (data : RuntimeData d) :
     0 < runtimeCoefficient data := by
   by_cases hp2 : data.input.p < 2
-  · have hsub : 0 < data.input.p - 1 := by linarith [data.hp]
+  · have hsub : 0 < data.input.p - 1 := by linarith only [data.hp]
     have hsqrt : 0 < Real.sqrt (data.input.p - 1) := Real.sqrt_pos.2 hsub
     simp only [runtimeCoefficient, hp2, ↓reduceDIte, gt_iff_lt]
     positivity
@@ -115,7 +115,7 @@ theorem reportCalls_bound (data : RuntimeData d)
     rfl
   have hepsG : data.input.eps < data.G := by simpa [hGvalue] using hlarge
   have hDaPos : 0 < data.G / data.Ma := div_pos data.hG data.Ma_pos
-  have hR : 0 < inst.R := by linarith
+  have hR : 0 < inst.R := by linarith only [hDaBound, hDaPos]
   have hcert := V7.trialOutcomeCertification data.input.p data.hp d
     data.input.eps data.G data.Ma (data.G / data.Ma) inst.L inst.R
     data.heps data.hG data.Ma_pos hDaPos rfl hMaBound hDaBound

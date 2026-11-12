@@ -31,14 +31,14 @@ theorem conjugate_budget_identity {p : ℝ} (hp : 2 < p) :
     conjugateExponent p * (1 + aboveBudgetExponent p) = 2 := by
   change O3.conjugateExponent p * (1 + (p - 2) / p) = 2
   rw [O3.conjugateExponent_eq]
-  field_simp [show p ≠ 0 by linarith, show p - 1 ≠ 0 by linarith]
+  field_simp [show p ≠ 0 by linarith only [hp], show p - 1 ≠ 0 by linarith only [hp]]
   ring
 
 private lemma aboveH_unit_le {p : ℝ} (hp : 2 < p) (z : Point d)
     (hz : lpNorm p z ≤ 1) :
     aboveH p z ≤ 1 / p := by
   have hnorm : 0 ≤ lpNorm p z := O3.lpNorm_nonneg _ _
-  have hpow := Real.rpow_le_rpow hnorm hz (by linarith : 0 ≤ p)
+  have hpow := Real.rpow_le_rpow hnorm hz (by linarith only [hp] : 0 ≤ p)
   rw [Real.one_rpow] at hpow
   unfold aboveH
   exact mul_le_of_le_one_right (by positivity : 0 ≤ 1 / p) hpow
@@ -52,7 +52,7 @@ theorem phaseOnePowerBound (p : ℝ) (hp : 2 < p) (n : ℕ) (hn : 1 ≤ n)
     (hdw : data.dw = plateauDw p (1 / p) n) :
     data.oracle.value (data.x n) - data.fstar ≤
       aboveHp p / (n : ℝ) ^ ((p + 2) / p) := by
-  have hp0 : 0 < p := by linarith
+  have hp0 : 0 < p := by linarith only [hp]
   have heta : 0 < (1 / p : ℝ) := one_div_pos.mpr hp0
   have hbal := V7.aboveWeightErrorBalance p hp n hn (1 / p) heta
   change
@@ -69,12 +69,12 @@ theorem phaseOnePowerBound (p : ℝ) (hp : 2 < p) (n : ℕ) (hn : 1 ≤ n)
       3 / (2 * p) := by
     have := add_le_add hh hbal.1
     field_simp [hp0.ne'] at this ⊢
-    linarith
+    linarith only [this]
   have hc := Stage4AboveTwo.growthConstant_pos hp
   have ha : 0 < (1 / p) ^ aboveBudgetExponent p :=
     Real.rpow_pos_of_pos heta _
   have hnpos : 0 < (n : ℝ) := by exact_mod_cast (Nat.zero_lt_of_lt hn)
-  have hr : 0 < (p + 2) / p := div_pos (by linarith) hp0
+  have hr : 0 < (p + 2) / p := div_pos (by linarith only [hp]) hp0
   have hnpow : 0 < (n : ℝ) ^ ((p + 2) / p) :=
     Real.rpow_pos_of_pos hnpos _
   have hden : 0 < plateauU p (1 / p) n n := by
@@ -127,7 +127,7 @@ private theorem horizon_power_bound {H delta beta rho : ℝ}
   · rw [div_le_iff₀ hnpow]
     have := mul_le_mul_of_nonneg_right hpow hdelta.le
     field_simp [hdelta.ne'] at this
-    nlinarith
+    linarith only [this]
 
 theorem phaseOneHorizonBound (p : ℝ) (hp : 2 < p) (delta : ℝ)
     (hdelta : 0 < delta)
@@ -140,8 +140,8 @@ theorem phaseOneHorizonBound (p : ℝ) (hp : 2 < p) (delta : ℝ)
     (hu : data.u = plateauU p (1 / p) n)
     (hdw : data.dw = plateauDw p (1 / p) n) :
     data.oracle.value (data.x n) - data.fstar ≤ delta := by
-  have hp0 : 0 < p := by linarith
-  have hp2 : 0 < p + 2 := by linarith
+  have hp0 : 0 < p := by linarith only [hp]
+  have hp2 : 0 < p + 2 := by linarith only [hp]
   have hhor := horizon_power_bound
     (Stage4AboveTwo.hpConstant_pos hp) hdelta
     (div_pos hp0 hp2) (div_pos hp2 hp0)
@@ -168,7 +168,7 @@ theorem phaseTwoEnergyBound (p : ℝ) (hp : 2 < p) (n : ℕ) (hn : 1 ≤ n)
             (aboveBudgetExponent p) *
           (n : ℝ) ^ ((p + 2) / p)) +
       (delta ^ (conjugateExponent p) / conjugateExponent p) / 2 := by
-  have hp0 : 0 < p := by linarith
+  have hp0 : 0 < p := by linarith only [hp]
   have hq : 0 < conjugateExponent p := Stage4AboveTwo.conjugate_pos hp
   let eta := delta ^ (conjugateExponent p) / conjugateExponent p
   have heta : 0 < eta := div_pos (Real.rpow_pos_of_pos hdelta _) hq
@@ -227,8 +227,8 @@ theorem phaseTwoHorizonBound (p : ℝ) (hp : 2 < p) (delta : ℝ)
         delta ^ (conjugateExponent p) / conjugateExponent p ∧
       lpNorm (conjugateExponent p)
         (data.oracle.gradient (data.q n)) ≤ delta := by
-  have hp0 : 0 < p := by linarith
-  have hp2 : 0 < p + 2 := by linarith
+  have hp0 : 0 < p := by linarith only [hp]
+  have hp2 : 0 < p + 2 := by linarith only [hp]
   have hq : 0 < conjugateExponent p := Stage4AboveTwo.conjugate_pos hp
   let eta := delta ^ (conjugateExponent p) / conjugateExponent p
   have heta : 0 < eta := div_pos (Real.rpow_pos_of_pos hdelta _) hq
@@ -286,13 +286,13 @@ theorem phaseTwoHorizonBound (p : ℝ) (hp : 2 < p) (delta : ℝ)
       rw [Real.rpow_add heta]
       simp
     rw [hetaSplit] at htwodelta
-    nlinarith
+    linarith only [htwodelta]
   have hestar : aboveHstar p (data.oracle.gradient (data.q n)) ≤ eta := by
     refine le_trans henergy ?_
     change delta /
         (aboveGrowthConstant p * eta ^ aboveBudgetExponent p *
           (n : ℝ) ^ ((p + 2) / p)) + eta / 2 ≤ eta
-    linarith
+    linarith only [hfirst]
   constructor
   · simpa [eta] using hestar
   · have hnorm : 0 ≤ lpNorm (conjugateExponent p)

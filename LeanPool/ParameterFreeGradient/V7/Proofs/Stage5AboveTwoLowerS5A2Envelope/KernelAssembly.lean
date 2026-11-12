@@ -88,10 +88,10 @@ lemma selectedDisplacement_scaled_unit {p : ℝ} {d : ℕ}
   have hs := (selectedDisplacement_concrete_spec hp hd hchi ell hlip x).2
   change O3.lpNorm p ((1 / chi) •
     selectedDisplacement (repairKernelBase p d) chi ell x) ≤ 1
-  rw [O3.Stage2RouteC.lpNorm_smul (by linarith : 1 ≤ p),
+  rw [O3.Stage2RouteC.lpNorm_smul (by linarith only [hp] : 1 ≤ p),
     abs_of_pos (one_div_pos.mpr hchi)]
   rw [div_mul_eq_mul_div, div_le_one hchi]
-  linarith
+  linarith only [hchi, hs]
 
 lemma repairSelectedGradient_support {p : ℝ} {d : ℕ}
     (hp : 2 < p) (hd : 2 ≤ d) {chi : ℝ} (hchi : 0 < chi)
@@ -103,7 +103,7 @@ lemma repairSelectedGradient_support {p : ℝ} {d : ℕ}
       localSmoothingValue (repairKernelBase p d) chi ell y := by
   exact localSmoothingValue_supporting_of_minimizers
     (repairKernelBase p d) hchi ell hconv
-    (lowerKernelPhi_convex (by linarith [two_lt_kernelR0 hp hd] : 1 ≤ kernelR0 p d)
+    (lowerKernelPhi_convex (by linarith only [hd, hp, two_lt_kernelR0 hp hd] : 1 ≤ kernelR0 p d)
       (one_lt_repairTheta hp hd))
     (lowerKernelPhi_coordinateGradient (two_lt_kernelR0 hp hd)
       (one_lt_repairTheta hp hd)
@@ -124,7 +124,7 @@ lemma repairSelectedGradient_lipschitz {p : ℝ} {d : ℕ}
     simpa [repairMpd, repairKernelBase] using
       (repair_kernelGradient_cocoercive hp hd)
   have h := minimizer_kernel_gradient_lipschitz (repairKernelBase p d)
-    (by linarith : 1 < p) hchi (repairMpd_nonneg hp hd) ell hconv
+    (by linarith only [hp] : 1 < p) hchi (repairMpd_nonneg hp hd) ell hconv
     (lowerKernelPhi_coordinateGradient (two_lt_kernelR0 hp hd)
       (one_lt_repairTheta hp hd)
       (two_mul_repairTheta_lt_kernelR0 hp hd)) hcoco
@@ -153,7 +153,7 @@ lemma repairSelectedGradient_lipschitz {p : ℝ} {d : ℕ}
     change O3.lpNorm (O3.conjugateExponent p) ((-1 : ℝ) • D) =
       O3.lpNorm (O3.conjugateExponent p) D
     rw [O3.Stage2RouteC.lpNorm_smul
-      (O3.one_lt_conjugateExponent (by linarith : 1 < p)).le]
+      (O3.one_lt_conjugateExponent (by linarith only [hp] : 1 < p)).le]
     norm_num
   change lpNorm (conjugateExponent p) (-D) ≤ _
   rw [hnormNeg]
@@ -166,7 +166,7 @@ lemma hasFDerivAt_repairSelectedValue {p : ℝ} {d : ℕ}
     HasFDerivAt (repairSelectedOracle p d chi ell).value
       (pairingCLM ((repairSelectedOracle p d chi ell).gradient x)) x := by
   apply hasFDerivAt_of_global_support_and_lp_lipschitz
-    (by linarith : 1 < p) (div_nonneg (repairMpd_nonneg hp hd) hchi.le)
+    (by linarith only [hp] : 1 < p) (div_nonneg (repairMpd_nonneg hp hd) hchi.le)
   · exact fun a b ↦ repairSelectedGradient_support hp hd hchi ell hconv hlip a b
   · exact fun a b ↦ repairSelectedGradient_lipschitz hp hd hchi ell hconv hlip a b
 

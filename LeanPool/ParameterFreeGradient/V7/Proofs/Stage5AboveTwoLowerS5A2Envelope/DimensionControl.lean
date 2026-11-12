@@ -42,11 +42,11 @@ lemma lpNorm_kernelR0_le_exp_mul_lpNorm {p : ℝ} {d : ℕ}
   calc
     lpNorm (kernelR0 p d) x ≤
         lpAmbientConstant (kernelR0 p d) d * ‖x‖ :=
-      lpNorm_le_ambientConstant (by linarith [hrtwo]) x
+      lpNorm_le_ambientConstant (by linarith only [hrtwo]) x
     _ ≤ lpAmbientConstant (kernelR0 p d) d * lpNorm p x := by
       gcongr
       · exact lpAmbientConstant_nonneg _ _
-      · exact norm_le_lpNorm (by linarith) x
+      · exact norm_le_lpNorm (by linarith only [hp]) x
     _ = Real.exp (1 / 3) * lpNorm p x := by
       congr 1
       rw [lpAmbientConstant_eq_rpow hrpos, hr]
@@ -73,7 +73,7 @@ lemma repair_logarithmic_hessian_scalar_bound {p : ℝ} {d : ℕ}
   rw [hr] at hcoeff
   have htheta := repairTheta_lt_101_div_100 hp hd
   have hexparg : 2 * repairTheta p d / 3 ≤ 101 / 150 := by
-    linarith
+    linarith only [htheta]
   have hexp : Real.exp (2 * repairTheta p d / 3) ≤
       Real.exp (2 / 3) * (150 / 149) := by
     calc
@@ -93,12 +93,12 @@ lemma repair_logarithmic_hessian_scalar_bound {p : ℝ} {d : ℕ}
       4 * repairTheta p d * (kernelR0 p d - 1) := by
     have ht := one_lt_repairTheta hp hd
     have hrpos := two_lt_kernelR0 hp hd
-    nlinarith [mul_pos (by positivity : 0 < 4 * repairTheta p d)
+    nlinarith only [hrpos, ht, htheta, mul_pos (by positivity : 0 < 4 * repairTheta p d)
       (by linarith : 0 < kernelR0 p d - 1)]
   have hmul := mul_le_mul hcoeff.le hexp (Real.exp_pos _).le
     (mul_nonneg (by norm_num) (mul_nonneg (by norm_num) hlog.le))
   rw [hr]
-  nlinarith [Real.exp_pos (2 / 3)]
+  nlinarith only [hlog, hmul, Real.exp_pos (2 / 3)]
 
 /-- The literal repaired kernel Hessian obeys the exact frozen two-regime
 constant on the physical unit `ell_p` ball. -/
@@ -123,7 +123,7 @@ theorem repair_kernelHessian_unit_bound {p : ℝ} {d : ℕ}
   by_cases hregime : p ≤ 3 * Real.log d
   · rw [ite_eq_left hregime]
     have hrp : r = p := by simp [r, kernelR0, min_eq_left hregime]
-    have ha : 0 ≤ 2 * theta - 2 := by linarith
+    have ha : 0 ≤ 2 * theta - 2 := by linarith only [htheta]
     have hzpow : lpNorm r z ^ (2 * theta - 2) ≤ 1 := by
       rw [hrp]
       exact Real.rpow_le_one (O3.lpNorm_nonneg p z) hz ha
@@ -131,12 +131,12 @@ theorem repair_kernelHessian_unit_bound {p : ℝ} {d : ℕ}
       have hc := repair_hessian_coefficient_lt_101_div_25_mul_r0 hp hd
       dsimp [r, theta]
       rw [kernelR0, min_eq_left hregime] at hc ⊢
-      nlinarith
+      linarith only [hc, hrp, htheta, htr]
     rw [hrp] at hraw hzpow ⊢
     have hcoeffp : 4 * theta * (p - 1) ≤ 5 * p := by
       simpa [hrp] using hcoeff
     have hcoefNonneg : 0 ≤ 4 * theta * (p - 1) := by
-      exact mul_nonneg (mul_nonneg (by norm_num) (by linarith)) (by linarith)
+      exact mul_nonneg (mul_nonneg (by norm_num) (by linarith only [htheta])) (by linarith)
     have heNonneg : 0 ≤ lpNorm p e ^ (2 : ℕ) := sq_nonneg _
     calc
       O3.pairing e (kernelHessian p theta z e) ≤
@@ -159,7 +159,7 @@ theorem repair_kernelHessian_unit_bound {p : ℝ} {d : ℕ}
         lpNorm r z ≤ K * lpNorm p z := hzconv
         _ ≤ K * 1 := by gcongr
         _ = K := mul_one K
-    have ha : 0 ≤ 2 * theta - 2 := by linarith
+    have ha : 0 ≤ 2 * theta - 2 := by linarith only [htheta]
     have hzpow : lpNorm r z ^ (2 * theta - 2) ≤
         Real.exp ((2 * theta - 2) / 3) := by
       calc
@@ -172,9 +172,9 @@ theorem repair_kernelHessian_unit_bound {p : ℝ} {d : ℕ}
           ring
     have hesq : lpNorm r e ^ (2 : ℕ) ≤
         (K * lpNorm p e) ^ (2 : ℕ) := by
-      nlinarith [O3.lpNorm_nonneg r e, O3.lpNorm_nonneg p e]
+      nlinarith only [heconv, O3.lpNorm_nonneg r e, O3.lpNorm_nonneg p e]
     have hcoefNonneg : 0 ≤ 4 * theta * (r - 1) := by
-      exact mul_nonneg (mul_nonneg (by norm_num) (by linarith)) (by linarith)
+      exact mul_nonneg (mul_nonneg (by norm_num) (by linarith)) (by linarith only [htheta, htr])
     have hzpNonneg : 0 ≤ lpNorm r z ^ (2 * theta - 2) :=
       Real.rpow_nonneg (O3.lpNorm_nonneg r z) _
     have htarget := repair_logarithmic_hessian_scalar_bound hp hd hregime
@@ -227,7 +227,7 @@ theorem repair_kernelGradient_cocoercive {p : ℝ} {d : ℕ}
         (lt_of_lt_of_le (by decide : 1 < 2) hd))
       positivity
   exact kernelGradient_cocoercive_on_unit_of_hessian_bound
-    (by linarith) (two_lt_kernelR0 hp hd) (one_lt_repairTheta hp hd)
+    (by linarith only [hp]) (two_lt_kernelR0 hp hd) (one_lt_repairTheta hp hd)
     (two_mul_repairTheta_lt_kernelR0 hp hd)
     (repair_kernelHessian_unit_bound hp hd)
 

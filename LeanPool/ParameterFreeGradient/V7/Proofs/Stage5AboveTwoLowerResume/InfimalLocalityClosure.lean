@@ -33,7 +33,7 @@ theorem localSmoothingValue_eventually_eq_lowerKernelPhi
     localSmoothingValue kernel chi ell₁ =ᶠ[nhds x]
       localSmoothingValue kernel chi ell₂ := by
   let eta : ℝ := chi / 4
-  have hp : 1 ≤ p := by linarith
+  have hp : 1 ≤ p := by linarith only [hrp, htheta, hthetaUpper, htr]
   have heta : 0 < eta := by dsimp [eta]; positivity
   have hnear : ∀ᶠ y in nhds x, lpNorm p (y - x) < eta :=
     eventually_lpNorm_sub_lt hp heta x

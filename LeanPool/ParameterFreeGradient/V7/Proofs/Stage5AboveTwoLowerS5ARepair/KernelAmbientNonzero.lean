@@ -72,7 +72,7 @@ noncomputable def kernelFDeriv (r theta : ℝ) (x : Point d) :
 lemma hasFDerivAt_lowerKernelPhi_of_ne_zero {r theta : ℝ}
     (hr : 1 < r) (x : Point d) (hx : x ≠ 0) :
     HasFDerivAt (lowerKernelPhi r theta) (kernelFDeriv r theta x) x := by
-  have hr0 : r ≠ 0 := by linarith
+  have hr0 : r ≠ 0 := by linarith only [hr]
   have hS : O3.lpPower r x ≠ 0 := (O3.lpPower_pos_of_ne_zero hx).ne'
   have hp := (hasFDerivAt_lpPower hr x).rpow_const
     (Or.inl hS) (p := 2 * theta / r)

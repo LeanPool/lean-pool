@@ -41,7 +41,7 @@ lemma scalar_powerDuality_self {p u : ℝ} (hp : 1 < p) :
     |u| ^ (p - 2) * u * u = |u| ^ p := by
   by_cases hu : u = 0
   · subst u
-    have hp0 : p ≠ 0 := by linarith
+    have hp0 : p ≠ 0 := by linarith only [hp]
     simp [hp0]
   · have hau : |u| ≠ 0 := (abs_ne_zero.mpr hu)
     have hpow := Real.rpow_add_intCast hau (p - 2) (2 : ℤ)
@@ -58,7 +58,7 @@ lemma pairing_powerDualityMap_self {p : ℝ} (hp : 1 < p) {d : ℕ}
 
 lemma lpNorm_rpow_p {p : ℝ} (hp : 1 < p) {d : ℕ} (u : Point d) :
     (lpNorm p u) ^ p = lpPower p u := by
-  exact O3.Experimental.lpNorm_rpow_eq_lpPower (by linarith) u
+  exact O3.Experimental.lpNorm_rpow_eq_lpPower (by linarith only [hp]) u
 
 @[simp] lemma dualityMap_zero {p : ℝ} (hp : 0 < p) {d : ℕ} :
     dualityMap p (0 : Point d) = 0 := by
@@ -102,7 +102,7 @@ noncomputable def squareVector {d : ℕ} (h : Point d) : Point d :=
 lemma lpNorm_weightVector {q : ℝ} (hq : 2 < q) {d : ℕ} (z : Point d) :
     lpNorm (q / (q - 2)) (weightVector q z) =
       (lpNorm q z) ^ (q - 2) := by
-  have hq0 : q ≠ 0 := by linarith
+  have hq0 : q ≠ 0 := by linarith only [hq]
   have hqm : q - 2 ≠ 0 := by linarith
   unfold lpNorm lpPower weightVector
   have hsum :
@@ -147,8 +147,8 @@ lemma weightedHolder_upper {q : ℝ} (hq : 2 < q) {d : ℕ}
     (lpNorm q z) ^ (2 - q) *
         (∑ i, |z i| ^ (q - 2) * (h i) ^ (2 : ℕ)) ≤
       (lpNorm q h) ^ (2 : ℕ) := by
-  have hden : 0 < q - 2 := by linarith
-  have hr1 : 1 < q / (q - 2) := (lt_div_iff₀ hden).2 (by linarith)
+  have hden : 0 < q - 2 := by linarith only [hq]
+  have hr1 : 1 < q / (q - 2) := (lt_div_iff₀ hden).2 (by linarith only)
   have hrs : (q / (q - 2)).HolderConjugate (q / 2) := by
     apply Real.holderConjugate_iff.mpr
     refine ⟨hr1, ?_⟩
@@ -159,7 +159,7 @@ lemma weightedHolder_upper {q : ℝ} (hq : 2 < q) {d : ℕ}
       (∑ i, |z i| ^ (q - 2) * (h i) ^ (2 : ℕ)) ≤
         (lpNorm q z) ^ (q - 2) * (lpNorm q h) ^ (2 : ℕ) := by
     simpa only [pairing, weightVector, squareVector,
-      lpNorm_weightVector hq z, lpNorm_squareVector (by linarith : 0 < q) h] using hholder
+      lpNorm_weightVector hq z, lpNorm_squareVector (by linarith only [hq] : 0 < q) h] using hholder
   have hfactor : 0 ≤ (lpNorm q z) ^ (2 - q) :=
     Real.rpow_nonneg (lpNorm_nonneg q z) _
   have hmul := mul_le_mul_of_nonneg_left hholder' hfactor
@@ -187,7 +187,7 @@ lemma weightedHolder_upper_power {q : ℝ} (hq : 2 < q) {d : ℕ}
     (lpPower q z) ^ (2 / q - 1) *
         (∑ i, |z i| ^ (q - 2) * (h i) ^ (2 : ℕ)) ≤
       (lpNorm q h) ^ (2 : ℕ) := by
-  rw [lpPower_factor_eq_lpNorm (by linarith : 0 < q) hz]
+  rw [lpPower_factor_eq_lpNorm (by linarith only [hq] : 0 < q) hz]
   exact weightedHolder_upper hq z h hz
 
 /-- Exact quadratic Fenchel--Young lower bound for the literal conjugate O3
@@ -234,6 +234,6 @@ lemma fenchel_smoothness_algebra {p q σ : ℝ} (hpq : p.HolderConjugate q)
   simp only [quadraticRegularizer, sub_zero] at hfenchelX hfy hsmooth ⊢
   rw [hcx, pairing_smul_left, hpairC] at hfy
   rw [hcoef] at hsmooth
-  nlinarith
+  linarith only [hfenchelX, hfy, hsmooth]
 
 end O3.Stage2RouteD

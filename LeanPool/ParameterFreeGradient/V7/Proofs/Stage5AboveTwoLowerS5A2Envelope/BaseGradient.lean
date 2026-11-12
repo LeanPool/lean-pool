@@ -31,13 +31,13 @@ theorem _root_.V7.aboveLowerBaseGradient : AboveLowerBaseGradientStatement := by
   rcases hcompletion with
     ⟨hp', hd, hT, hTd, hx0, hkernel, hDelta, hdelta, hchi, hbeta,
       hqueries, hsteps, hcompletedValue, hcompletedGradient⟩
-  have hpOne : 1 ≤ p := by linarith
+  have hpOne : 1 ≤ p := by linarith only [hp]
   have hTreal : 0 < (T : ℝ) := by exact_mod_cast hT
   have hDeltaPos : 0 < base.Delta := by rw [hDelta]; positivity
   have hDeltaLe : base.Delta ≤ 1 := by
     rw [hDelta]
     exact Real.rpow_le_one_of_one_le_of_nonpos (by exact_mod_cast hT)
-      (div_nonpos_of_nonpos_of_nonneg (by norm_num) (by linarith : 0 ≤ p))
+      (div_nonpos_of_nonpos_of_nonneg (by norm_num) (by linarith only [hp] : 0 ≤ p))
   have hdeltaPos : 0 < base.delta := by rw [hdelta]; positivity
   have hchiPos : 0 < base.chi := by rw [hchi]; positivity
   have hbetaPos : 0 < base.beta := by rw [hbeta]; exact div_pos hchiPos hkernel.1
@@ -45,7 +45,7 @@ theorem _root_.V7.aboveLowerBaseGradient : AboveLowerBaseGradientStatement := by
     (128 * base.kernel.Mpd * (T : ℝ) ^ (1 + 2 / p))
   have hconst16 := lower_gap_constant_identity (p := p) (T := T)
     (M := base.kernel.Mpd) (Delta := base.Delta) (chi := base.chi)
-    (delta := base.delta) (beta := base.beta) (by linarith : 0 < p)
+    (delta := base.delta) (beta := base.beta) (by linarith only [hp] : 0 < p)
     hT hkernel.1 hDelta hdelta hchi hbeta
   have hK8 : 8 * K = base.beta * base.Delta / 4 := by
     dsimp [K]
@@ -61,7 +61,7 @@ theorem _root_.V7.aboveLowerBaseGradient : AboveLowerBaseGradientStatement := by
       rw [hneg] at htri
       have hsub : base.queries t + -minimizer = base.queries t - minimizer := by module
       rw [hsub] at htri
-      linarith
+      linarith only [hminRadius, hq, htri]
     have hfirst := O3.Stage3Anchor.firstOrderConvex_of_coordinateGradient
       hobjectiveConvex hobjectiveGradient (base.queries t) minimizer
     have hgapPair : data.completedOracle.value (base.queries t) -
@@ -70,9 +70,9 @@ theorem _root_.V7.aboveLowerBaseGradient : AboveLowerBaseGradientStatement := by
         (base.queries t - minimizer) := by
       simp only [O3.pairing, Pi.sub_apply, mul_sub,
         Finset.sum_sub_distrib] at hfirst ⊢
-      linarith
+      linarith only [hfirst]
     have hholder := O3.pairing_le_lpNorm_mul
-      (O3.holderConjugate_conjugateExponent (by linarith : 1 < p)).symm
+      (O3.holderConjugate_conjugateExponent (by linarith only [hp] : 1 < p)).symm
       (data.completedOracle.gradient (base.queries t))
       (base.queries t - minimizer)
     have hGnonneg := O3.lpNorm_nonneg (conjugateExponent p)
@@ -99,12 +99,12 @@ theorem _root_.V7.aboveLowerBaseGradient : AboveLowerBaseGradientStatement := by
         8 * K = 1 / (16 * base.kernel.Mpd *
             (T : ℝ) ^ (1 + 2 / p)) := hK8.trans hconst16
         _ ≤ _ := hgap16
-    nlinarith
+    linarith only [hK8, hconst16, hgap16, hupper8]
   · have hqOutside : 4 ≤ lpNorm p (base.queries t) := le_of_not_gt hq
     have hfull := (houtPack.1 (base.queries t) hqOutside).2
     change K ≤ lpNorm (conjugateExponent p)
       (data.completedOracle.gradient (base.queries t))
     rw [hfull]
-    nlinarith [hK8, mul_le_mul_of_nonneg_left hDeltaLe hbetaPos.le]
+    linarith only [hDeltaLe, hK8, hbetaPos, hK8, mul_le_mul_of_nonneg_left hDeltaLe hbetaPos.le]
 
 end V7.Stage5AboveTwoLowerS5A2Envelope

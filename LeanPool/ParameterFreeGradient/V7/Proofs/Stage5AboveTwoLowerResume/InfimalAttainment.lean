@@ -99,12 +99,12 @@ lemma lpNorm_le_lpNorm_of_exponent_le {r p : ℝ}
         have hi := norm_apply_le_lpNorm hr y i
         simpa [Real.norm_eq_abs, hyr] using hi
       exact Real.rpow_le_rpow_of_exponent_ge'
-        (abs_nonneg (y i)) hcoord (by linarith) hrp
+        (abs_nonneg (y i)) hcoord (by linarith only [hr]) hrp
     have hpowerOne : O3.lpPower p y ≤ 1 := by
       calc
         O3.lpPower p y ≤ O3.lpPower r y := hpower
         _ = lpNorm r y ^ r :=
-          (O3.Experimental.lpNorm_rpow_eq_lpPower (by linarith : r ≠ 0) y).symm
+          (O3.Experimental.lpNorm_rpow_eq_lpPower (by linarith only [hr] : r ≠ 0) y).symm
         _ = 1 := by rw [hyr, Real.one_rpow]
     have hyp : lpNorm p y ≤ 1 := by
       unfold lpNorm O3.lpNorm
@@ -120,7 +120,7 @@ lemma lpNorm_le_lpNorm_of_exponent_le {r p : ℝ}
       _ = A * lpNorm p y := by
         change O3.lpNorm p (A • y) = A * O3.lpNorm p y
         rw [O3.Stage2RouteC.lpNorm_smul hp, abs_of_pos hA]
-      _ ≤ A := by nlinarith
+      _ ≤ A := by nlinarith only [hA, hyp]
       _ = lpNorm r x := rfl
 
 /-- The concrete kernel has the required all-radii barrier once the standard
@@ -133,40 +133,40 @@ lemma lowerKernelPhi_radial_of_lpNorm_le {p r theta : ℝ}
   intro u hu
   rw [lowerKernelPhi_eq_norm_power hr]
   have hbase : lpNorm p u ≤ lpNorm r u := hmono u
-  have hexp : 1 < 2 * theta := by linarith
+  have hexp : 1 < 2 * theta := by linarith only [htheta]
   have hself : lpNorm p u ≤ lpNorm p u ^ (2 * theta) := by
     rcases hu.eq_or_lt with heq | hlt
     · rw [← heq]
       simp
     · exact (Real.self_lt_rpow_of_one_lt hlt hexp).le
   have hpow : lpNorm p u ^ (2 * theta) ≤ lpNorm r u ^ (2 * theta) :=
-    Real.rpow_le_rpow (O3.lpNorm_nonneg p u) hbase (by linarith)
+    Real.rpow_le_rpow (O3.lpNorm_nonneg p u) hbase (by linarith only [htheta])
   have hnonneg : 0 ≤ lpNorm r u ^ (2 * theta) :=
     Real.rpow_nonneg (O3.lpNorm_nonneg r u) _
-  nlinarith
+  linarith only [hpow, hself, hu]
 
 /-- Concrete all-radii barrier for the current `lowerKernelPhi`. -/
 theorem lowerKernelPhi_radial {p r theta : ℝ}
     (hr : 1 ≤ r) (hrp : r ≤ p) (htheta : 1 < theta) {d : ℕ} :
     ∀ u : Point d, 1 ≤ lpNorm p u →
       lpNorm p u < lowerKernelPhi r theta u := by
-  exact lowerKernelPhi_radial_of_lpNorm_le (by linarith : r ≠ 0) htheta
+  exact lowerKernelPhi_radial_of_lpNorm_le (by linarith only [hr] : r ≠ 0) htheta
     (fun u ↦ lpNorm_le_lpNorm_of_exponent_le hr hrp u)
 
 lemma self_lt_two_mul_rpow_of_three_four_lt {t a : ℝ}
     (ht : 3 / 4 < t) (ht1 : t ≤ 1) (ha : 0 ≤ a) (ha3 : a < 3) :
     t < 2 * t ^ a := by
-  have ht0 : 0 < t := by linarith
+  have ht0 : 0 < t := by linarith only [ht]
   have hcubic : t ^ (3 : ℝ) ≤ t ^ a :=
     Real.rpow_le_rpow_of_exponent_ge' ht0.le ht1 ha ha3.le
   have hthree : t ^ (3 : ℝ) = t ^ (3 : ℕ) := by
     norm_num [Real.rpow_natCast]
   rw [hthree] at hcubic
-  have htSq : 9 / 16 < t ^ (2 : ℕ) := by nlinarith
+  have htSq : 9 / 16 < t ^ (2 : ℕ) := by nlinarith only [ht]
   have hpoly : t < 2 * t ^ (3 : ℕ) := by
     rw [pow_succ]
-    nlinarith
-  nlinarith
+    nlinarith only [ht]
+  linarith only [hcubic, hpoly]
 
 /-- The concrete kernel cost already beats the Lipschitz loss on the fixed
 outer quarter of the smoothing ball when `theta < 5/4`. -/
@@ -175,13 +175,13 @@ theorem lowerKernelPhi_dominates_outer_quarter {p r theta : ℝ}
     (hthetaUpper : theta < 5 / 4) {d : ℕ} (u : Point d)
     (huLower : 3 / 4 < lpNorm p u) (huUpper : lpNorm p u ≤ 1) :
     lpNorm p u < lowerKernelPhi r theta u := by
-  rw [lowerKernelPhi_eq_norm_power (by linarith : r ≠ 0)]
+  rw [lowerKernelPhi_eq_norm_power (by linarith only [hr, htheta, hthetaUpper] : r ≠ 0)]
   have hmono := lpNorm_le_lpNorm_of_exponent_le hr hrp u
   have hpow := Real.rpow_le_rpow (O3.lpNorm_nonneg p u) hmono
-    (by linarith : 0 ≤ 2 * theta)
+    (by linarith only [htheta, hthetaUpper] : 0 ≤ 2 * theta)
   have hscalar := self_lt_two_mul_rpow_of_three_four_lt huLower huUpper
-    (by linarith : 0 ≤ 2 * theta) (by linarith : 2 * theta < 3)
-  nlinarith
+    (by linarith only [htheta, hthetaUpper] : 0 ≤ 2 * theta) (by linarith : 2 * theta < 3)
+  linarith only [hpow, hscalar]
 
 /-- A continuous smoothing cost whose value outside the closed smoothing ball
 is strictly larger than the zero-displacement cost has a global minimizer,
@@ -250,9 +250,9 @@ theorem exists_infimal_minimizer_of_radial_kernel
   have hell := hlip (x + v) x
   have hellLower : ell x - lpNorm p v ≤ ell (x + v) := by
     rw [show x + v - x = v by abel] at hell
-    linarith [neg_le_of_abs_le hell]
+    linarith only [hell, neg_le_of_abs_le hell]
   simp only [smoothingCost, add_zero, hphi0, smul_zero, mul_zero, add_zero]
-  nlinarith
+  linarith only [hellLower, hkernelScaled]
 
 /-- Finite-dimensional attainment and strict interiority for the actual
 kernel selected by the Stage-5 construction. -/
@@ -265,15 +265,15 @@ theorem exists_infimal_minimizer_lowerKernelPhi
     ∃ v : Point d,
       IsInfimalMinimizer kernel chi ell x v ∧ lpNorm p v < chi := by
   apply exists_infimal_minimizer_of_radial_kernel kernel hchi ell x
-    (by linarith : 1 ≤ p) hlip
+    (by linarith only [hrp, htheta, htr] : 1 ≤ p) hlip
   · rw [hkernelPhi]
     exact (Stage5AboveTwoLower.S5AGlobalC2.contDiff_two_lowerKernelPhi
       hr htheta htr).continuous
   · rw [hkernelPhi]
-    exact lowerKernelPhi_zero (by linarith : 0 < r) (by linarith : 0 < theta)
+    exact lowerKernelPhi_zero (by linarith only [htheta, htr] : 0 < r) (by linarith : 0 < theta)
   · intro u hu
     rw [hkernelPhi]
-    exact lowerKernelPhi_radial (by linarith : 1 ≤ r) hrp htheta u hu
+    exact lowerKernelPhi_radial (by linarith only [htheta, htr] : 1 ≤ r) hrp htheta u hu
 
 /-- The actual minimizer can be chosen with the uniform outer-quarter margin
 `‖v‖_p ≤ 3 chi / 4`, independently of the centre and of the one-Lipschitz
@@ -294,15 +294,15 @@ theorem exists_infimal_minimizer_lowerKernelPhi_with_margin
   by_contra hmargin
   have hvLower : 3 * chi / 4 < lpNorm p v := by
     have : chi - chi / 4 < lpNorm p v := lt_of_not_ge hmargin
-    linarith
-  have hp : 1 ≤ p := by linarith
+    linarith only [hmargin]
+  have hp : 1 ≤ p := by linarith only [hrp, htheta, hthetaUpper, htr]
   have hscale : lpNorm p ((1 / chi) • v) = lpNorm p v / chi := by
     change O3.lpNorm p ((1 / chi) • v) = O3.lpNorm p v / chi
     rw [O3.Stage2RouteC.lpNorm_smul hp, abs_of_pos (one_div_pos.mpr hchi)]
     ring
   have huLower : 3 / 4 < lpNorm p ((1 / chi) • v) := by
     rw [hscale, lt_div_iff₀ hchi]
-    nlinarith
+    linarith only [hmargin]
   have huUpper : lpNorm p ((1 / chi) • v) ≤ 1 := by
     rw [hscale, div_le_one hchi]
     exact hvInterior.le
@@ -321,14 +321,14 @@ theorem exists_infimal_minimizer_lowerKernelPhi_with_margin
   have hell := hlip (x + v) x
   have hellLower : ell x - lpNorm p v ≤ ell (x + v) := by
     rw [show x + v - x = v by abel] at hell
-    linarith [neg_le_of_abs_le hell]
+    linarith only [hell, neg_le_of_abs_le hell]
   have hphi0 : kernel.phi 0 = 0 := by
     rw [hkernelPhi]
     exact lowerKernelPhi_zero (by linarith : 0 < r) (by linarith : 0 < theta)
   have hstrict : smoothingCost kernel chi ell x 0 <
       smoothingCost kernel chi ell x v := by
     simp only [smoothingCost, add_zero, hphi0, smul_zero, mul_zero, add_zero]
-    nlinarith
+    linarith only [hellLower, hkernelScaled]
   exact (not_lt_of_ge (hvmin 0)) hstrict
 
 /-- Exact approximation bounds for the concrete infimal value. -/
@@ -347,16 +347,16 @@ theorem localSmoothingValue_bounds_lowerKernelPhi
   have hell := hlip (x + v) x
   have hellLower : ell x - lpNorm p v ≤ ell (x + v) := by
     rw [show x + v - x = v by abel] at hell
-    linarith [neg_le_of_abs_le hell]
+    linarith only [hell, neg_le_of_abs_le hell]
   have hphiNonneg : 0 ≤ kernel.phi ((1 / chi) • v) := by
     rw [hkernelPhi]
     exact lowerKernelPhi_nonneg _
   have hlower : ell x - chi ≤ smoothingCost kernel chi ell x v := by
     unfold smoothingCost
-    nlinarith [mul_nonneg hchi.le hphiNonneg]
+    linarith only [hchi, hellLower, hphiNonneg, hvInterior, mul_nonneg hchi.le hphiNonneg]
   have hphi0 : kernel.phi 0 = 0 := by
     rw [hkernelPhi]
-    exact lowerKernelPhi_zero (by linarith : 0 < r) (by linarith : 0 < theta)
+    exact lowerKernelPhi_zero (by linarith only [htheta, htr] : 0 < r) (by linarith : 0 < theta)
   have hupper := hvmin 0
   simp only [smoothingCost, add_zero, smul_zero, hphi0, mul_zero, add_zero] at hupper
   exact ⟨hlower, hupper⟩

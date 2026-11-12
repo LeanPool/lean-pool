@@ -33,7 +33,7 @@ open Stage7StrictRandomizedExpected
 theorem oneDimensionalInteriorLpTransfer :
     OneDimensionalInteriorLpTransferStatement := by
   intro p hp
-  exact ⟨fun x => lpNorm_fin_one (by linarith) x,
+  exact ⟨fun x => lpNorm_fin_one (by linarith only [hp]) x,
     fun x => lpNorm_fin_one (lt_trans zero_lt_one (O3.one_lt_conjugateExponent hp)) x⟩
 
 end V7
