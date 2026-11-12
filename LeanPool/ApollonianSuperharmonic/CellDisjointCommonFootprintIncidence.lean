@@ -6,15 +6,12 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
-public import Mathlib.Topology.MetricSpace.Basic
-public import Mathlib.Topology.Order.Real
-public import Mathlib.Topology.MetricSpace.Pseudo.Constructions
-public import Mathlib.Basic.Real.Basic
-public import Mathlib.Tactic.ByContra
-public import Mathlib.Tactic.Linarith
-public import Mathlib.Tactic.NormNum
+public import Mathlib.Data.EReal.Basic
+public import Mathlib.Topology.MetricSpace.Pseudo.Defs
+public import Mathlib.Topology.MetricSpace.Pseudo.Lemmas
+public import Mathlib.Topology.Order.T5
+public import LeanPool.ApollonianSuperharmonic.CellDisjointCommonEdgesBoundary
 public import Mathlib.Topology.Connected.Basic
-public import Mathlib.Topology.MetricSpace.Pseudo.Real
 
 public import LeanPool.ApollonianSuperharmonic.BoundaryFootprintVertices
 public import LeanPool.ApollonianSuperharmonic.CommonFootprintEdgeVertices
@@ -38,84 +35,6 @@ namespace CommonFootprintIncidence
 
 private noncomputable def I : GaussianInt := ⟨0, 1⟩
 
-private theorem horiz_unique (x y : GaussianInt)
-      (h : ({x, x + 1} : Finset GaussianInt) = {y, y + 1}) : x = y := by
-  classical
-  have hx : x = y ∨ x = y + 1 := by
-    have : x ∈ ({y, y + 1} : Finset GaussianInt) := by rw [← h]; simp
-    simpa using this
-  have hy : y = x ∨ y = x + 1 := by
-    have : y ∈ ({x, x + 1} : Finset GaussianInt) := by rw [h]; simp
-    simpa using this
-  rcases hx with hxy | hxy
-  · exact hxy
-  rcases hy with hyx | hyx
-  · exact hyx.symm
-  · exfalso
-    have hre := congrArg Zsqrtd.re hxy
-    have hre' := congrArg Zsqrtd.re hyx
-    norm_num at hre hre'
-    omega
-
-private theorem vert_unique (x y : GaussianInt)
-      (h : ({x, x + I} : Finset GaussianInt) = {y, y + I}) : x = y := by
-  classical
-  let I : GaussianInt := ⟨0, 1⟩
-  change ({x, x + I} : Finset GaussianInt) = {y, y + I} at h
-  have hx : x = y ∨ x = y + I := by
-    have : x ∈ ({y, y + I} : Finset GaussianInt) := by rw [← h]; simp
-    simpa using this
-  have hy : y = x ∨ y = x + I := by
-    have : y ∈ ({x, x + I} : Finset GaussianInt) := by rw [h]; simp
-    simpa using this
-  rcases hx with hxy | hxy
-  · exact hxy
-  rcases hy with hyx | hyx
-  · exact hyx.symm
-  · exfalso
-    have him := congrArg Zsqrtd.im hxy
-    have him' := congrArg Zsqrtd.im hyx
-    simp [I] at him him'
-    omega
-
-private theorem horiz_ne_vert (x y : GaussianInt) :
-      ({x, x + 1} : Finset GaussianInt) ≠ {y, y + I} := by
-  classical
-  let I : GaussianInt := ⟨0, 1⟩
-  change (({x, x + 1} : Finset GaussianInt) ≠ {y, y + I})
-  intro h
-  have hx : x = y ∨ x = y + I := by
-    have : x ∈ ({y, y + I} : Finset GaussianInt) := by rw [← h]; simp
-    simpa using this
-  have hx1 : x + 1 = y ∨ x + 1 = y + I := by
-    have : x + 1 ∈ ({y, y + I} : Finset GaussianInt) := by rw [← h]; simp
-    simpa using this
-  rcases hx with hx | hx <;> rcases hx1 with hx1 | hx1
-  all_goals
-    have hre := congrArg Zsqrtd.re hx
-    have him := congrArg Zsqrtd.im hx
-    have hre1 := congrArg Zsqrtd.re hx1
-    have him1 := congrArg Zsqrtd.im hx1
-    simp [I] at hre him hre1 him1
-    omega
-
-private theorem footprint_normalize (T : ProtoTile) (e : Finset GaussianInt)
-      (he : e ∈ FootprintEdges T) :
-      (∃ z, e = {z, z + 1} ∧ (z ∈ T.cells ∨ z - I ∈ T.cells)) ∨
-      (∃ z, e = {z, z + I} ∧ (z ∈ T.cells ∨ z - 1 ∈ T.cells)) := by
-  classical
-  let I : GaussianInt := ⟨0, 1⟩
-  change ((∃ z, e = {z, z + 1} ∧ (z ∈ T.cells ∨ z - I ∈ T.cells)) ∨
-      (∃ z, e = {z, z + I} ∧ (z ∈ T.cells ∨ z - 1 ∈ T.cells)))
-  rcases he with ⟨x, hx, h | h | h | h⟩
-  · exact Or.inl ⟨x, h, Or.inl hx⟩
-  · exact Or.inr ⟨x, h, Or.inl hx⟩
-  · refine Or.inr ⟨x + 1, h, Or.inr ?_⟩
-    simpa [add_sub_cancel_right] using hx
-  · refine Or.inl ⟨x + I, ?_, Or.inr ?_⟩
-    · simpa [I, Zsqrtd.ext_iff, add_comm, add_left_comm, add_assoc] using h
-    simpa [I, Zsqrtd.ext_iff] using hx
-
 private theorem boundary_footprint (T : ProtoTile) (e : Finset GaussianInt)
       (he : e ∈ BoundaryFootprintEdges T) : e ∈ FootprintEdges T := by
   classical
@@ -129,65 +48,6 @@ private theorem boundary_footprint (T : ProtoTile) (e : Finset GaussianInt)
     · exact ⟨z, hz, Or.inr (Or.inl rfl)⟩
     · refine ⟨z - 1, hz, Or.inr (Or.inr (Or.inl ?_))⟩
       congr 1 <;> simp []
-
-private theorem hEdge (U : ProtoTile) (V : ProtoTile) (hdisjoint : Disjoint U.cells V.cells) :
-    FootprintEdges U ∩ FootprintEdges V =
-      BoundaryFootprintEdges U ∩ BoundaryFootprintEdges V := by
-  classical
-  let I : GaussianInt := ⟨0, 1⟩
-  have horiz_unique (x y : GaussianInt)
-      (h : ({x, x + 1} : Finset GaussianInt) = {y, y + 1}) : x = y := horiz_unique x y h
-  have vert_unique (x y : GaussianInt)
-      (h : ({x, x + I} : Finset GaussianInt) = {y, y + I}) : x = y := vert_unique x y h
-  have horiz_ne_vert (x y : GaussianInt) :
-      ({x, x + 1} : Finset GaussianInt) ≠ {y, y + I} := horiz_ne_vert x y
-  have footprint_normalize (T : ProtoTile) (e : Finset GaussianInt)
-      (he : e ∈ FootprintEdges T) :
-      (∃ z, e = {z, z + 1} ∧ (z ∈ T.cells ∨ z - I ∈ T.cells)) ∨
-      (∃ z, e = {z, z + I} ∧ (z ∈ T.cells ∨ z - 1 ∈ T.cells)) := footprint_normalize T e he
-  have boundary_footprint (T : ProtoTile) (e : Finset GaussianInt)
-      (he : e ∈ BoundaryFootprintEdges T) : e ∈ FootprintEdges T := boundary_footprint T e he
-  as_aux_lemma =>
-  ext e
-  constructor
-  · rintro ⟨heU, heV⟩
-    have hd := Finset.disjoint_left.mp hdisjoint
-    rcases footprint_normalize U e heU with ⟨z, hz, hzU⟩ | ⟨z, hz, hzU⟩ <;>
-      rcases footprint_normalize V e heV with ⟨w, hw, hwV⟩ | ⟨w, hw, hwV⟩
-    · have bzw : z = w := horiz_unique z w (hz.symm.trans hw)
-      subst w
-      constructor <;> refine ⟨z, Or.inl ⟨?_, ?_⟩⟩
-      · exact hz
-      · rcases hzU with hzU | hzU <;> rcases hwV with hzV | hzV
-        · exact (hd hzU hzV).elim
-        · exact Or.inl ⟨hzU, fun hbad => hd hbad hzV⟩
-        · exact Or.inr ⟨fun hbad => hd hbad hzV, hzU⟩
-        · exact (hd hzU hzV).elim
-      · exact hz
-      · rcases hzU with hzU | hzU <;> rcases hwV with hzV | hzV
-        · exact (hd hzU hzV).elim
-        · exact Or.inr ⟨fun hbad => hd hzU hbad, hzV⟩
-        · exact Or.inl ⟨hzV, fun hbad => hd hzU hbad⟩
-        · exact (hd hzU hzV).elim
-    · exact (horiz_ne_vert z w (hz.symm.trans hw)).elim
-    · exact (horiz_ne_vert w z (hw.symm.trans hz)).elim
-    · have bzw : z = w := vert_unique z w (hz.symm.trans hw)
-      subst w
-      constructor <;> refine ⟨z, Or.inr ⟨?_, ?_⟩⟩
-      · exact hz
-      · rcases hzU with hzU | hzU <;> rcases hwV with hzV | hzV
-        · exact (hd hzU hzV).elim
-        · exact Or.inl ⟨hzU, fun hbad => hd hbad hzV⟩
-        · exact Or.inr ⟨fun hbad => hd hbad hzV, hzU⟩
-        · exact (hd hzU hzV).elim
-      · exact hz
-      · rcases hzU with hzU | hzU <;> rcases hwV with hzV | hzV
-        · exact (hd hzU hzV).elim
-        · exact Or.inr ⟨fun hbad => hd hzU hbad, hzV⟩
-        · exact Or.inl ⟨hzV, fun hbad => hd hzU hbad⟩
-        · exact (hd hzU hzV).elim
-  · rintro ⟨heU, heV⟩
-    exact ⟨boundary_footprint U e heU, boundary_footprint V e heV⟩
 
 private noncomputable def toR : GaussianInt → Real × Real := fun z => ((z.re : Int), (z.im : Int))
 
@@ -475,7 +335,7 @@ theorem CellDisjointCommonFootprintIncidence (U V : ProtoTile)
       (he : e ∈ BoundaryFootprintEdges T) : e ∈ FootprintEdges T :=
           CommonFootprintIncidence.boundary_footprint T e he
   have hEdge : FootprintEdges U ∩ FootprintEdges V =
-      BoundaryFootprintEdges U ∩ BoundaryFootprintEdges V := CommonFootprintIncidence.hEdge U V
+      BoundaryFootprintEdges U ∩ BoundaryFootprintEdges V := CellDisjointCommonEdgesBoundary U V
           hdisjoint
   have edge_vertex_footprint (T : ProtoTile) (e : Finset GaussianInt)
       (he : e ∈ FootprintEdges T) (z : GaussianInt) (hz : z ∈ e) :

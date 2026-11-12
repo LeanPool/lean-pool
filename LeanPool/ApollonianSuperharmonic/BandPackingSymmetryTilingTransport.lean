@@ -155,78 +155,6 @@ private theorem image_subsingletonAt247 :
     exact h ⟨⟨a, ha.1, rfl⟩, ⟨a, ha.2, rfl⟩⟩
       ⟨⟨b, hb.1, rfl⟩, ⟨b, hb.2, rfl⟩⟩
 
-private theorem quarter_symmetryAt307 :
-    (by
-      classical
-      exact
-        ∀ T : ProtoTile, QuarterTurnSymmetric T ↔ QuarterTurnSymmetric (TileQuarterTurn T)
-    ) := by
-  classical
-  intro T
-  unfold QuarterTurnSymmetric
-  have first := TileQuarterTurnFormulas T
-  simp only [first.2.2.2.1, first.2.2.2.2.1]
-  simp only [Set.mem_image]
-  constructor
-  · intro h p
-    constructor
-    · intro hp
-      rcases hp with ⟨q, hq, rfl⟩
-      refine ⟨((TileCentroid T).1 - (q.2 - (TileCentroid T).2),
-        (TileCentroid T).2 + (q.1 - (TileCentroid T).1)), (h q).mp hq, ?_⟩
-      dsimp
-      ring
-    · intro hp
-      rcases hp with ⟨q, hq, hpq⟩
-      have heq' := congrArg Prod.fst hpq
-      have heq'' := congrArg Prod.snd hpq
-      dsimp at heq' heq''
-      have qeq : q =
-          ((TileCentroid T).1 - ((-p.1) - (TileCentroid T).2),
-            (TileCentroid T).2 + (p.2 - (TileCentroid T).1)) := by
-        apply Prod.ext
-        · dsimp
-          linarith [heq'']
-        · dsimp
-          linarith [heq']
-      refine ⟨(p.2, -p.1), ?_, ?_⟩
-      · apply (h (p.2, -p.1)).mpr
-        exact qeq ▸ hq
-      · dsimp
-        ring
-  · intro h p
-    constructor
-    · intro hp
-      have hh := h (-p.2, p.1)
-      have hr : (-p.2, p.1) ∈ (fun p => (-p.2, p.1)) ''
-          TileRealization T := ⟨p, hp, rfl⟩
-      rcases hh.mp hr with ⟨q, hq, heq⟩
-      have heq' := congrArg Prod.fst heq
-      have heq'' := congrArg Prod.snd heq
-      have qeq : q =
-          ((TileCentroid T).1 - (p.2 - (TileCentroid T).2),
-            (TileCentroid T).2 + (p.1 - (TileCentroid T).1)) := by
-        apply Prod.ext <;> dsimp at heq' heq'' ⊢ <;> linarith
-      rw [← qeq]
-      exact hq
-    · intro hp
-      have hh := h (-p.2, p.1)
-      have hc : ∃ x ∈ TileRealization T,
-          (-x.2, x.1) =
-            (-(TileCentroid T).2 - ((-p.2, p.1).2 - (TileCentroid T).1),
-              (TileCentroid T).1 + ((-p.2, p.1).1 -
-                -(TileCentroid T).2)) := by
-        refine ⟨((TileCentroid T).1 - (p.2 - (TileCentroid T).2),
-          (TileCentroid T).2 + (p.1 - (TileCentroid T).1)), hp, ?_⟩
-        dsimp
-        ring_nf
-      rcases hh.mpr hc with ⟨q, hq, heq⟩
-      have heq' := congrArg Prod.fst heq
-      have heq'' := congrArg Prod.snd heq
-      dsimp at heq' heq''
-      rw [show q = p by apply Prod.ext <;> linarith] at hq
-      exact hq
-
 private theorem reflection_symmetry :
     (by
       classical
@@ -295,29 +223,6 @@ private theorem reflection_symmetry :
       have qeq : q = p := by
         apply Prod.ext <;> dsimp [target] at first_eq second_eq ⊢ <;> linarith
       exact qeq ▸ hq
-
-private theorem image_subsingletonAt436 :
-    (by
-      classical
-      exact
-        ∀ (f : GaussianInt → GaussianInt), Function.Injective f → ∀ (A : Set GaussianInt), ∀ (B :
-            Set GaussianInt), (A ∩ B).Subsingleton ↔ (f '' A ∩ f '' B).Subsingleton
-    ) := by
-  classical
-  intro f hf A B
-  constructor
-  · intro h x hx y hy
-    rcases hx with ⟨⟨a, ha, rfl⟩, ⟨b, hb, hab⟩⟩
-    rcases hy with ⟨⟨c, hc, rfl⟩, ⟨d, hd, hcd⟩⟩
-    have hab' : a = b := hf hab.symm
-    have hcd' : c = d := hf hcd.symm
-    subst b
-    subst d
-    exact congrArg f (h ⟨ha, hb⟩ ⟨hc, hd⟩)
-  · intro h a ha b hb
-    apply hf
-    exact h ⟨⟨a, ha.1, rfl⟩, ⟨a, ha.2, rfl⟩⟩
-      ⟨⟨b, hb.1, rfl⟩, ⟨b, hb.2, rfl⟩⟩
 
 end TilingTransportProof
 
@@ -489,10 +394,10 @@ private theorem conjugation :
               (fun i s => BandPackingSymmetryTileAction BandPackingSymmetry.conjugate (S i s))
               (BandPackingSymmetryVectorAction BandPackingSymmetry.conjugate u)
               (BandPackingSymmetryVectorAction BandPackingSymmetry.conjugate v) o := by
-  have quarter_symmetry := TilingTransportProof.quarter_symmetryAt307
+  have quarter_symmetry := TilingTransportProof.quarter_symmetryAt181
   have image_subsingleton (f : GaussianInt → GaussianInt)
       (hf : Function.Injective f) (A B : Set GaussianInt) :=
-          TilingTransportProof.image_subsingletonAt436 f hf A B
+          TilingTransportProof.image_subsingletonAt247 f hf A B
   have reflection_injective : Function.Injective
       (fun z : GaussianInt => -GaussianReflection z) :=
           TilingTransportDetails.reflection_injective

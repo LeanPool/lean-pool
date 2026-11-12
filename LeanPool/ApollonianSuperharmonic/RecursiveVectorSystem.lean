@@ -39,10 +39,9 @@ $$
 v_{20}&=v_{21}-iv_{32},&v_{03}&=v_{13}+iv_{32},\\
 a_{20}&=a_{21}+ia_{32},&a_{03}&=a_{13}-ia_{32}.
 \end{aligned}
-\end{aligned}
 $$
-These are exactly the recursion rules of equation (4.2), and parent
-rotations provide the other cases.  Finally, only when $C\to D$ is the
+These successor relations are the unnumbered recursion display in Section 5.3
+of the cited paper; parent rotations provide the other cases.  Finally, only when $C\to D$ is the
 canonical orientation of \operatorname{PrimitiveVectorOrientation}, the opposite
 ordered value is prescribed once by
 $$

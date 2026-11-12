@@ -108,35 +108,13 @@ private theorem edge_finite :
   · exact ⟨(⟨c, hc⟩, true, false), by simpa [edge, I] using h.symm⟩
   · exact ⟨(⟨c, hc⟩, true, true), by simpa [edge, I] using h.symm⟩
 
-private theorem hunionAB_C :
-    (by
-      classical
-      exact
-        ∀ (A : ProtoTile), ∀ (B : ProtoTile), ∀ (C : ProtoTile), ∀ (AB : ProtoTile), ∀ (BC :
-            ProtoTile), ∀ (CA : ProtoTile), ∀ (ABC : ProtoTile), (∀ (z : LatticeCell), z ∈
-            AB.cells ↔ z ∈ A.cells ∨ z ∈ B.cells) → ((∀ (z : LatticeCell), z ∈ ABC.cells ↔ z ∈
-            A.cells ∨ z ∈ B.cells ∨ z ∈ C.cells) → ((FourNeighborConnected (↑A.cells : Set
-            LatticeCell) ∧ NoCheckerboardCellVertex (↑A.cells : Set LatticeCell) ∧
-            SimpleGridCycle (BoundaryFootprintVertices A) (BoundaryFootprintEdges A)) →
-            ((FourNeighborConnected (↑B.cells : Set LatticeCell) ∧ NoCheckerboardCellVertex
-            (↑B.cells : Set LatticeCell) ∧ SimpleGridCycle (BoundaryFootprintVertices B)
-            (BoundaryFootprintEdges B)) → ((FourNeighborConnected (↑C.cells : Set LatticeCell) ∧
-            NoCheckerboardCellVertex (↑C.cells : Set LatticeCell) ∧ SimpleGridCycle
-            (BoundaryFootprintVertices C) (BoundaryFootprintEdges C)) → ((FourNeighborConnected
-            (↑AB.cells : Set LatticeCell) ∧ NoCheckerboardCellVertex (↑AB.cells : Set
-            LatticeCell) ∧ SimpleGridCycle (BoundaryFootprintVertices AB) (BoundaryFootprintEdges
-            AB)) → ((FourNeighborConnected (↑BC.cells : Set LatticeCell) ∧
-            NoCheckerboardCellVertex (↑BC.cells : Set LatticeCell) ∧ SimpleGridCycle
-            (BoundaryFootprintVertices BC) (BoundaryFootprintEdges BC)) → ((FourNeighborConnected
-            (↑CA.cells : Set LatticeCell) ∧ NoCheckerboardCellVertex (↑CA.cells : Set
-            LatticeCell) ∧ SimpleGridCycle (BoundaryFootprintVertices CA) (BoundaryFootprintEdges
-            CA)) → ((FourNeighborConnected (↑ABC.cells : Set LatticeCell) ∧
-            NoCheckerboardCellVertex (↑ABC.cells : Set LatticeCell) ∧ SimpleGridCycle
-            (BoundaryFootprintVertices ABC) (BoundaryFootprintEdges ABC)) → (forall z :
-            LatticeCell, z ∈ ABC.cells ↔ z ∈ AB.cells ∨ z ∈ C.cells))))))))) ) := by
+private theorem hunionAB_C (A B C AB ABC : ProtoTile)
+    (hunionAB : ∀ z : LatticeCell, z ∈ AB.cells ↔ z ∈ A.cells ∨ z ∈ B.cells)
+    (hunionABC : ∀ z : LatticeCell, z ∈ ABC.cells ↔
+      z ∈ A.cells ∨ z ∈ B.cells ∨ z ∈ C.cells) :
+    ∀ z : LatticeCell, z ∈ ABC.cells ↔ z ∈ AB.cells ∨ z ∈ C.cells := by
   classical
-  intro A B C AB BC CA ABC hunionAB hunionABC hAgrid hBgrid hCgrid hABgrid hBCgrid hCAgrid
-      hABCgrid z
+  intro z
   rw [hunionABC z, hunionAB z]
   tauto
 
@@ -249,15 +227,9 @@ private theorem hcellsABC :
     simpa using hunionAB_C z
   rw [h, Finset.card_union_of_disjoint hdisjointAB_C, hcellsAB]
 
-private theorem horiz_unique :
-    (by
-      classical
-      exact
-        (ProtoTile) → ((ProtoTile) → ((ProtoTile) → ((ProtoTile) → ((ProtoTile) → ((ProtoTile) →
-            ((ProtoTile) → (∀ (x : GaussianInt), ∀ (y : GaussianInt), (({x, x + 1} : Finset
-            GaussianInt) = {y, y + 1}) → (x = y)))))))) ) := by
+private theorem horiz_unique (x y : GaussianInt)
+    (h : ({x, x + 1} : Finset GaussianInt) = {y, y + 1}) : x = y := by
   classical
-  intro A B C AB BC CA ABC x y h
   have hx : x = y ∨ x = y + 1 := by
     have : x ∈ ({y, y + 1} : Finset GaussianInt) := by rw [← h]; simp
     simpa using this
@@ -274,16 +246,10 @@ private theorem horiz_unique :
     omega
 
 private theorem vert_unique :
-    (by
-      classical
-      exact
-        (ProtoTile) → ((ProtoTile) → ((ProtoTile) → ((ProtoTile) → ((ProtoTile) → ((ProtoTile) →
-            ((ProtoTile) → (
-        let I : GaussianInt := ⟨0, 1⟩
-        ∀ (x : GaussianInt), ∀ (y : GaussianInt), (({x, x + I} : Finset GaussianInt) = {y,
-            y + I}) → (x = y)))))))) ) := by
+    let I : GaussianInt := ⟨0, 1⟩
+    ∀ x y : GaussianInt, ({x, x + I} : Finset GaussianInt) = {y, y + I} → x = y := by
   classical
-  intro A B C AB BC CA ABC I x y h
+  intro I x y h
   have hx : x = y ∨ x = y + I := by
     have : x ∈ ({y, y + I} : Finset GaussianInt) := by rw [← h]; simp
     simpa using this
@@ -300,16 +266,10 @@ private theorem vert_unique :
     omega
 
 private theorem horiz_ne_vert :
-    (by
-      classical
-      exact
-        (ProtoTile) → ((ProtoTile) → ((ProtoTile) → ((ProtoTile) → ((ProtoTile) → ((ProtoTile) →
-            ((ProtoTile) → (
-        let I : GaussianInt := ⟨0, 1⟩
-        ∀ (x : GaussianInt), ∀ (y : GaussianInt), ({x, x + 1} : Finset GaussianInt) ≠ {y,
-            y + I}))))))) ) := by
+    let I : GaussianInt := ⟨0, 1⟩
+    ∀ x y : GaussianInt, ({x, x + 1} : Finset GaussianInt) ≠ {y, y + I} := by
   classical
-  intro A B C AB BC CA ABC I x y h
+  intro I x y h
   have hx : x = y ∨ x = y + I := by
     have : x ∈ ({y, y + I} : Finset GaussianInt) := by rw [← h]; simp
     simpa using this
@@ -647,16 +607,10 @@ private theorem htripleVfinite :
   exact ((vertex_finite A).inter_of_left (FootprintVertices B)).inter_of_left
       (FootprintVertices C)
 
-private theorem htripleVnonempty :
-    (by
-      classical
-      exact
-        ∀ (A : ProtoTile), ∀ (B : ProtoTile), ∀ (C : ProtoTile), (ProtoTile) → ((ProtoTile) →
-            ((ProtoTile) → ((ProtoTile) → (((FootprintVertices A ∩ FootprintVertices B ∩
-            FootprintVertices C).ncard = 1) → ((FootprintVertices A ∩ FootprintVertices B ∩
-            FootprintVertices C).Nonempty))))) ) := by
+private theorem htripleVnonempty (A B C : ProtoTile)
+    (htripleVcard : (FootprintVertices A ∩ FootprintVertices B ∩ FootprintVertices C).ncard = 1) :
+    (FootprintVertices A ∩ FootprintVertices B ∩ FootprintVertices C).Nonempty := by
   classical
-  intro A B C AB BC CA ABC htripleVcard
   by_contra hempty
   rw [Set.not_nonempty_iff_eq_empty] at hempty
   rw [hempty, Set.ncard_empty] at htripleVcard
@@ -947,8 +901,7 @@ theorem LatticeTileThreeDiskJunction
   have hEAB := edge_union A B AB hunionAB
   have hEBC := edge_union B C BC hunionBC
   have hECA := edge_union C A CA hunionCA
-  have hunionAB_C := ThreeDiskJunctionGeometry.hunionAB_C A B C AB BC CA ABC hunionAB hunionABC
-      hAgrid hBgrid hCgrid hABgrid hBCgrid hCAgrid hABCgrid
+  have hunionAB_C := ThreeDiskJunctionGeometry.hunionAB_C A B C AB ABC hunionAB hunionABC
   have hVABC := vertex_union AB C ABC hABne hCne hABCne hunionAB_C
   have hEABC := edge_union AB C ABC hunionAB_C
   obtain ⟨hVrawAB, ⟨xAB, yAB, hpathAB0⟩, -, -⟩ :=
@@ -991,12 +944,11 @@ theorem LatticeTileThreeDiskJunction
   let I : GaussianInt := ⟨0, 1⟩
   have horiz_unique (x y : GaussianInt)
       (h : ({x, x + 1} : Finset GaussianInt) = {y, y + 1}) :=
-          ThreeDiskJunctionGeometry.horiz_unique A B C AB BC CA ABC x y h
+          ThreeDiskJunctionGeometry.horiz_unique x y h
   have vert_unique (x y : GaussianInt)
       (h : ({x, x + I} : Finset GaussianInt) = {y, y + I}) :=
-          ThreeDiskJunctionGeometry.vert_unique A B C AB BC CA ABC x y h
-  have horiz_ne_vert (x y : GaussianInt) := ThreeDiskJunctionGeometry.horiz_ne_vert A B C AB BC
-      CA ABC x y
+          ThreeDiskJunctionGeometry.vert_unique x y h
+  have horiz_ne_vert (x y : GaussianInt) := ThreeDiskJunctionGeometry.horiz_ne_vert x y
   have footprint_normalize (T : ProtoTile) (e : Finset GaussianInt)
       (he : e ∈ FootprintEdges T) := ThreeDiskJunctionGeometry.footprint_normalize T e he
   have htripleEdges :
@@ -1045,8 +997,7 @@ theorem LatticeTileThreeDiskJunction
       hcellsBC hcellsCA hcellsABC hIEvAB hIEvBC hIEvCA hIEeAB hIEeBC hIEeCA hIEvABC hIEeABC
       hIEvCross hIEeCross hEulerA hEulerB hEulerC hEulerAB hEulerBC hEulerCA hEulerABC
   have htripleVfinite := ThreeDiskJunctionGeometry.htripleVfinite A B C vertex_finite
-  have htripleVnonempty := ThreeDiskJunctionGeometry.htripleVnonempty A B C AB BC CA ABC
-      htripleVcard
+  have htripleVnonempty := ThreeDiskJunctionGeometry.htripleVnonempty A B C htripleVcard
   obtain ⟨rho, hrho⟩ := htripleVnonempty
   have huniqueRho (z : GaussianInt) := ThreeDiskJunctionGeometry.huniqueRho A B C htripleVcard
       htripleVfinite rho hrho z

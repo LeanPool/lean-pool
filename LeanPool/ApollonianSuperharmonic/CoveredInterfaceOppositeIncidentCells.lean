@@ -6,6 +6,7 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.P3102T2CommonEdgeSectorTransition
 
 public import LeanPool.ApollonianSuperharmonic.FootprintEdges
 public import LeanPool.ApollonianSuperharmonic.FootprintVertices
@@ -136,149 +137,6 @@ private theorem hcheckQ :
   intro B hBlat c Q
   simpa [Q, LatticeVertexIncidentCell] using
     (LatticeTileGridStructure B hBlat).2.1 c
-
-private theorem htrans :
-    (by
-      classical
-      exact
-        ∀ (A : ProtoTile), ∀ (B : ProtoTile), (Disjoint A.cells B.cells) → (∀ (D : ProtoTile), ∀
-            (c : GaussianInt), (c ∈ FootprintVertices A ∩ FootprintVertices B ∩ FootprintVertices
-            D) → ((∀ (y : GaussianInt), y = c ∨ y = c + (1 : GaussianInt) ∨ y = c - (1 :
-            GaussianInt) ∨ y = c + (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt) ∨ y = c - (⟨(0 : ℤ), (1 :
-            ℤ)⟩ : GaussianInt) → y ∈ FootprintVertices A ∨ y ∈ FootprintVertices B) → (
-        let P : Fin 4 → Prop := fun j => LatticeVertexIncidentCell c j ∈ A.cells
-        let Q : Fin 4 → Prop := fun j => LatticeVertexIncidentCell c j ∈ B.cells
-        let R : Fin 4 → Prop := fun j => LatticeVertexIncidentCell c j ∈ D.cells
-        (∀ ⦃a : LatticeCell⦄, a ∈ A.cells → a ∉ B.cells) → ((∀ j, ¬ (P j ∧ Q j)) → ((∀ j, ¬ (P j
-            ∧ R j)) → ((∀ j, ¬ (Q j ∧ R j)) → (((∀ (j : Fin (4 : ℕ)), LatticeVertexIncidentCell c
-            j ∈ A.cells ∨ LatticeVertexIncidentCell c j ∈ B.cells ∨ LatticeVertexIncidentCell c j
-            ∈ D.cells) ∧ (∃ (j : Fin (4 : ℕ)), LatticeVertexIncidentCell c j ∈ A.cells) ∧ (∃ (j :
-            Fin (4 : ℕ)), LatticeVertexIncidentCell c j ∈ B.cells) ∧ (∃ (j : Fin (4 : ℕ)),
-            LatticeVertexIncidentCell c j ∈ D.cells) ∧ ((∃ (j : Fin (4 : ℕ)),
-            LatticeVertexIncidentCell c j ∈ A.cells ∧ LatticeVertexIncidentCell c (j + (2 : Fin
-            (4 : ℕ))) ∈ B.cells) ∨ (∃ (j : Fin (4 : ℕ)), LatticeVertexIncidentCell c j ∈ A.cells
-            ∧ LatticeVertexIncidentCell c (j + (2 : Fin (4 : ℕ))) ∈ D.cells) ∨ ∃ (j : Fin (4 :
-            ℕ)), LatticeVertexIncidentCell c j ∈ B.cells ∧ LatticeVertexIncidentCell c (j + (2 :
-            Fin (4 : ℕ))) ∈ D.cells)) → ((∀ j, P j ∨ Q j ∨ R j) → ((¬ ((P 0 ∧ P 2 ∧ ¬ P 1 ∧ ¬ P
-            3) ∨ (P 1 ∧ P 3 ∧ ¬ P 0 ∧ ¬ P 2))) → ((¬ ((Q 0 ∧ Q 2 ∧ ¬ Q 1 ∧ ¬ Q 3) ∨ (Q 1 ∧ Q 3 ∧
-            ¬ Q 0 ∧ ¬ Q 2))) → (∀ (e : Finset GaussianInt), (c ∈ e) → ((e ∈ FootprintEdges A ∩
-            FootprintEdges B) → (∃ j, (P j ∧ Q (j + 1)) ∨ (Q j ∧ P (j + 1))))))))))))))) ) := by
-  classical
-  intro A B hAB D c hc hstarc P Q R hdAB hPQ hPR hQR hlocal hcover hcheckP hcheckQ e hce he
-  change ∃ j : Fin 4,
-    (LatticeVertexIncidentCell c j ∈ A.cells ∧
-        LatticeVertexIncidentCell c (j + 1) ∈ B.cells) ∨
-      (LatticeVertexIncidentCell c j ∈ B.cells ∧
-        LatticeVertexIncidentCell c (j + 1) ∈ A.cells)
-  let I : GaussianInt := ⟨0, 1⟩
-  have horiz_unique (u v : GaussianInt)
-      (h : ({u, u + 1} : Finset GaussianInt) = {v, v + 1}) : u = v := by
-    have hu : u = v ∨ u = v + 1 := by
-      have : u ∈ ({v, v + 1} : Finset GaussianInt) := by rw [← h]; simp
-      simpa using this
-    have hv : v = u ∨ v = u + 1 := by
-      have : v ∈ ({u, u + 1} : Finset GaussianInt) := by rw [h]; simp
-      simpa using this
-    rcases hu with huv | huv
-    · exact huv
-    rcases hv with hvu | hvu
-    · exact hvu.symm
-    · have hre := congrArg Zsqrtd.re huv
-      have hre' := congrArg Zsqrtd.re hvu
-      norm_num at hre hre'
-      omega
-  have vert_unique (u v : GaussianInt)
-      (h : ({u, u + I} : Finset GaussianInt) = {v, v + I}) : u = v := by
-    have hu : u = v ∨ u = v + I := by
-      have : u ∈ ({v, v + I} : Finset GaussianInt) := by rw [← h]; simp
-      simpa using this
-    have hv : v = u ∨ v = u + I := by
-      have : v ∈ ({u, u + I} : Finset GaussianInt) := by rw [h]; simp
-      simpa using this
-    rcases hu with huv | huv
-    · exact huv
-    rcases hv with hvu | hvu
-    · exact hvu.symm
-    · have him := congrArg Zsqrtd.im huv
-      have him' := congrArg Zsqrtd.im hvu
-      simp [I] at him him'
-      omega
-  have horiz_ne_vert (u v : GaussianInt) :
-      ({u, u + 1} : Finset GaussianInt) ≠ {v, v + I} := by
-    intro h
-    have hu : u = v ∨ u = v + I := by
-      have : u ∈ ({v, v + I} : Finset GaussianInt) := by rw [← h]; simp
-      simpa using this
-    have hu1 : u + 1 = v ∨ u + 1 = v + I := by
-      have : u + 1 ∈ ({v, v + I} : Finset GaussianInt) := by rw [← h]; simp
-      simpa using this
-    rcases hu with hu | hu <;> rcases hu1 with hu1 | hu1
-    all_goals
-      have hre := congrArg Zsqrtd.re hu
-      have him := congrArg Zsqrtd.im hu
-      have hre1 := congrArg Zsqrtd.re hu1
-      have him1 := congrArg Zsqrtd.im hu1
-      simp [I] at hre him hre1 him1
-      omega
-  have hboundary := CellDisjointCommonEdgesBoundary A B hAB
-  have he' : e ∈ BoundaryFootprintEdges A ∩ BoundaryFootprintEdges B := by
-    rw [← hboundary]
-    exact he
-  rcases he'.1 with ⟨u, ⟨heu, hu⟩ | ⟨heu, hu⟩⟩
-  · rcases he'.2 with ⟨v, ⟨hev, hv⟩ | ⟨hev, hv⟩⟩
-    · have huv : u = v := horiz_unique u v (heu.symm.trans hev)
-      subst v
-      have hxuv : c = u ∨ c = u + 1 := by
-        rw [heu] at hce
-        simpa using hce
-      rcases hxuv with rfl | rfl
-      · rcases hu with hu | hu <;> rcases hv with hv | hv
-        · exact (hdAB hu.1 hv.1).elim
-        · exact ⟨3, Or.inr ⟨by
-              simpa [LatticeVertexIncidentCell, I] using hv.2, by
-              simpa [LatticeVertexIncidentCell, I] using hu.1⟩⟩
-        · exact ⟨3, Or.inl ⟨by
-              simpa [LatticeVertexIncidentCell, I] using hu.2, by
-              simpa [LatticeVertexIncidentCell, I] using hv.1⟩⟩
-        · exact (hdAB hu.2 hv.2).elim
-      · rcases hu with hu | hu <;> rcases hv with hv | hv
-        · exact (hdAB hu.1 hv.1).elim
-        · exact ⟨1, Or.inl ⟨by
-              simpa [LatticeVertexIncidentCell, I] using hu.1, by
-              simpa [LatticeVertexIncidentCell, I] using hv.2⟩⟩
-        · exact ⟨1, Or.inr ⟨by
-              simpa [LatticeVertexIncidentCell, I] using hv.1, by
-              simpa [LatticeVertexIncidentCell, I] using hu.2⟩⟩
-        · exact (hdAB hu.2 hv.2).elim
-    · exact (horiz_ne_vert u v (heu.symm.trans hev)).elim
-  · rcases he'.2 with ⟨v, ⟨hev, hv⟩ | ⟨hev, hv⟩⟩
-    · exact (horiz_ne_vert v u (hev.symm.trans heu)).elim
-    · have huv : u = v := vert_unique u v (heu.symm.trans hev)
-      subst v
-      have hxuv : c = u ∨ c = u + I := by
-        rw [heu] at hce
-        simpa using hce
-      rcases hxuv with rfl | rfl
-      · rcases hu with hu | hu <;> rcases hv with hv | hv
-        · exact (hdAB hu.1 hv.1).elim
-        · exact ⟨0, Or.inl ⟨by
-              simpa [LatticeVertexIncidentCell, I] using hu.1, by
-              simpa [LatticeVertexIncidentCell, I] using hv.2⟩⟩
-        · exact ⟨0, Or.inr ⟨by
-              simpa [LatticeVertexIncidentCell, I] using hv.1, by
-              simpa [LatticeVertexIncidentCell, I] using hu.2⟩⟩
-        · exact (hdAB hu.2 hv.2).elim
-      · rcases hu with hu | hu <;> rcases hv with hv | hv
-        · exact (hdAB hu.1 hv.1).elim
-        · exact ⟨2, Or.inr ⟨by
-              simpa [LatticeVertexIncidentCell, I, sub_eq_add_neg,
-                add_comm, add_left_comm, add_assoc] using hv.2, by
-              simpa [LatticeVertexIncidentCell, I] using hu.1⟩⟩
-        · exact ⟨2, Or.inl ⟨by
-              simpa [LatticeVertexIncidentCell, I, sub_eq_add_neg,
-                add_comm, add_left_comm, add_assoc] using hu.2, by
-              simpa [LatticeVertexIncidentCell, I] using hv.1⟩⟩
-        · exact (hdAB hu.2 hv.2).elim
 
 private theorem hnoR :
     (by
@@ -507,8 +365,9 @@ theorem CoveredInterfaceOppositeIncidentCells
     have hcheckQ : ¬ ((Q 0 ∧ Q 2 ∧ ¬ Q 1 ∧ ¬ Q 3) ∨
         (Q 1 ∧ Q 3 ∧ ¬ Q 0 ∧ ¬ Q 2)) := OppositeIncidentGeometry.hcheckQ B hBlat c
     rcases hedgec with ⟨e, hce, he⟩
-    have htrans : ∃ j, (P j ∧ Q (j + 1)) ∨ (Q j ∧ P (j + 1)) := OppositeIncidentGeometry.htrans A
-        B hAB D c hc hstarc hdAB hPQ hPR hQR hlocal hcover hcheckP hcheckQ e hce he
+    have htrans : ∃ j, (P j ∧ Q (j + 1)) ∨ (Q j ∧ P (j + 1)) := by
+      obtain ⟨j, _, hj⟩ := P3102T2CommonEdgeSectorTransition A B c e hAB hce he
+      exact ⟨j, hj⟩
     have hnoR : ∀ j, ¬ (R j ∧ R (j + 1)) := OppositeIncidentGeometry.hnoR A B hAinduced hBinduced
         D c hAD hBD hc hstarc
     simpa [P, Q] using

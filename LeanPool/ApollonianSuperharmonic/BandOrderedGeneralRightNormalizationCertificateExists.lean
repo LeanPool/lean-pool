@@ -577,21 +577,18 @@ private theorem boundaryData :
     (pieces a s) (functions a s) hparentPos (hpieceOdometer a s)
   exact ⟨hu.1, hu.2, ho.1, hd.trans ho.1⟩
 
-private theorem hslots :
-    (by
-      classical
-      exact
-        (ProtoTile) → ((ProtoTile) → ((Fin (4 : ℕ) → CircleCoordinates) → (∀ (i₀ : Fin (3 : ℕ)),
-            ∀ (r : Fin (3 : ℕ)), ∀ (g : BandPackingSymmetry),
-        let irot : Fin 3 := i₀ - r
-        let reverse := BandPackingSymmetryReversesOrientation g
-        let idir : Fin 3 := if reverse then -irot else irot
-        let firstSlot : Fin 3 := idir + 1
-        let secondSlot : Fin 3 := idir + 2
-        (firstSlot = 0 ∧ secondSlot = 1 ∧ idir = 2) ∨ (firstSlot = 1 ∧ secondSlot = 2 ∧ idir = 0)
-            ∨ (firstSlot = 2 ∧ secondSlot = 0 ∧ idir = 1)))) ) := by
+private theorem cyclicSlots :
+    ∀ (i₀ r : Fin 3) (g : BandPackingSymmetry),
+    let irot : Fin 3 := i₀ - r
+    let reverse := BandPackingSymmetryReversesOrientation g
+    let idir : Fin 3 := if reverse then -irot else irot
+    let firstSlot : Fin 3 := idir + 1
+    let secondSlot : Fin 3 := idir + 2
+    (firstSlot = 0 ∧ secondSlot = 1 ∧ idir = 2) ∨
+      (firstSlot = 1 ∧ secondSlot = 2 ∧ idir = 0) ∨
+      (firstSlot = 2 ∧ secondSlot = 0 ∧ idir = 1) := by
   classical
-  intro T N q i₀ r g irot reverse idir firstSlot secondSlot
+  intro i₀ r g irot reverse idir firstSlot secondSlot
   have hi : idir = 0 ∨ idir = 1 ∨ idir = 2 := by omega
   rcases hi with hi | hi | hi <;> simp [firstSlot, secondSlot, hi]
 
@@ -813,7 +810,7 @@ theorem BandOrderedGeneralRightNormalizationCertificateExists
     rightFirstSlot := firstSlot
     rightSecondSlot := secondSlot
     rightDirectionSlot := idir
-    right_slots_cyclic := (RightNormalizationGeometry.hslots T N q i₀ r g)
+    right_slots_cyclic := (RightNormalizationGeometry.cyclicSlots i₀ r g)
     rightNeighborPositive := positive
     right_adjacency_centroid := hcentBar'
     right_adjacency_slope_real := hslopeReBar'
