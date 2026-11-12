@@ -8,8 +8,6 @@ module
 public import Mathlib.Init
 
 public import LeanPool.ApollonianSuperharmonic.BandRegularTileTouchingClassification
-public import LeanPool.ApollonianSuperharmonic.TileBordering
-public import LeanPool.ApollonianSuperharmonic.RegularTileFamily
 
 -- [TABLET NODE: BandTileTopologyApplication]
 
@@ -94,21 +92,6 @@ private theorem translate_zero :
     · ext z
       simp [GaussianTranslation]
     · simp [GaussianTranslation]
-
-private theorem realPoint_injective :
-    (by
-      classical
-      exact
-        Function.Injective GaussianRealPoint ) := by
-  classical
-  intro x y hxy
-  apply Zsqrtd.ext
-  · have h := congrArg Prod.fst hxy
-    dsimp [GaussianRealPoint] at h
-    exact_mod_cast h
-  · have h := congrArg Prod.snd hxy
-    dsimp [GaussianRealPoint] at h
-    exact_mod_cast h
 
 private theorem hnonempty :
     (by
@@ -667,7 +650,7 @@ theorem BandTileTopologyApplication (C : BandCircle)
     have translate_zero : TileTranslation T 0 = T := @TileTopologyGeometry.translate_zero C q T hT
         P htile hchart family_eq centroid_difference
     have realPoint_injective : Function.Injective GaussianRealPoint :=
-        TileTopologyGeometry.realPoint_injective
+        GaussianRealPointProperties.injective
     have hpositive : 0 < (q 0).1 := (ProperBandCurvatureStructure q hq).1
     have harea := (BandTileSimultaneousInduction q hq T hT).2.1
     have hnonempty (x : GaussianInt) :

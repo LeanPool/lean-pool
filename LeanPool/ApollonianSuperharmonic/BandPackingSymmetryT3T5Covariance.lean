@@ -6,10 +6,10 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.GaussianRealPointProperties
 
 public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryCovariance
 public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryInversePhaseCancellation
-public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryScopedPhase
 public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryTilingTransport
 public import LeanPool.ApollonianSuperharmonic.BandPrototileTranslation
 public import LeanPool.ApollonianSuperharmonic.QuarterTurnSymmetricCenteredTransport
@@ -316,15 +316,6 @@ private theorem parent_half :
     · intro h; exact ((TouchingTriplePermutations _ _ _).mp h).2.1
   simpa only [sub_eq_add_neg, add_comm] using hh.trans (ht.trans perm)
 
-private theorem point_add :
-    (by
-      classical
-      exact
-        ∀ (x : GaussianInt), ∀ (y : GaussianInt), GaussianRealPoint (x + y) = GaussianRealPoint x
-            + GaussianRealPoint y ) := by
-  classical
-  intro x y
-  ext <;> simp [GaussianRealPoint]
 
 private theorem point_sub :
     (by
@@ -981,7 +972,7 @@ theorem BandPackingSymmetryT3T5Covariance :
       half_cov half_center
   have parent_half := PackingCovarianceProof.parent_half etranslate triple_obs translate_add
       translate_zero half_translate half_cov half_center half_other
-  have point_add := PackingCovarianceProof.point_add
+  have point_add := GaussianRealPointProperties.add
   have point_sub := PackingCovarianceProof.point_sub
   have point_neg (x : GaussianInt) : GaussianRealPoint (-x) = -GaussianRealPoint x := by
     ext <;> simp [GaussianRealPoint]

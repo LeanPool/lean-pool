@@ -7,11 +7,7 @@ module
 
 public import Mathlib.Init
 
-public import LeanPool.ApollonianSuperharmonic.GlobalOdometerExtends
-public import LeanPool.ApollonianSuperharmonic.FourNeighborLaplacian
-public import LeanPool.ApollonianSuperharmonic.LeftLatticeAdjacent
 public import LeanPool.ApollonianSuperharmonic.CurvatureOneBandCircleClassification
-public import LeanPool.ApollonianSuperharmonic.P5570T1UnitQuadratic
 public import LeanPool.ApollonianSuperharmonic.P3996T1AdjacentParentPlacement
 public import LeanPool.ApollonianSuperharmonic.BandOrientedChildParentIncomingEndpoint
 public import LeanPool.ApollonianSuperharmonic.ExactTileInterfaceDisjointCompanionEndpoints
@@ -152,21 +148,49 @@ private theorem hbAt227 :
 private theorem hvalues :
     (by
       classical
-      exact
-        (BandCircle) → (∀ (h₁ : PartialOdometer), ∀ (h₂ : PartialOdometer), ∀ (g :
-            IntegerLatticeFunction), ∀ (x : GaussianInt), ∀ (c₁ : ℤ), (∀ x ∈ h₁.domain, g x =
-            h₁.value x + c₁) → (∀ (c₂ : ℤ), (∀ x ∈ h₂.domain, g x = h₂.value x + c₂) → ((∀ (y :
-            GaussianInt), y = x ∨ y = x + (1 : GaussianInt) ∨ y = x - (1 : GaussianInt) ∨ y = x +
-            (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt) ∨ y = x - (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt) → y ∈
-            h₁.domain ∨ y ∈ h₂.domain) → ((ℕ) → (∀ (z : GaussianInt), ∀ (a₁ : GaussianInt), ∀ (b₁
-            : ℤ), (∀ x ∈ h₁.domain, h₁.value x = P5570T1UnitQuadratic z x + a₁.re * x.re +
-            a₁.im * x.im + b₁) → (∀ (b₂ : ℤ), (∀ x ∈ h₂.domain, h₂.value x =
-            P5570T1UnitQuadratic z x + a₁.re * x.re + a₁.im * x.im + b₂) → ((b₁+c₁ = b₂+c₂) →
-            (∀ (y : GaussianInt), (y = x ∨ y = x+1 ∨ y = x-1 ∨
-            y = x+⟨0,1⟩ ∨ y = x-⟨0,1⟩) → (g y = P5570T1UnitQuadratic z y + a₁.re*y.re +
-                a₁.im*y.im + (b₁+c₁)))))))))) ) := by
+        exact
+        (∀ (h₁ : PartialOdometer),
+          ∀ (h₂ : PartialOdometer),
+            ∀ (g : IntegerLatticeFunction),
+              ∀ (x : GaussianInt),
+                ∀ (c₁ : ℤ),
+                  (∀ x ∈ h₁.domain, g x = h₁.value x + c₁) →
+                    (∀ (c₂ : ℤ),
+                      (∀ x ∈ h₂.domain, g x = h₂.value x + c₂) →
+                        ((∀ (y : GaussianInt),
+                            y = x ∨
+                                y = x + (1 : GaussianInt) ∨
+                                  y = x - (1 : GaussianInt) ∨
+                                    y = x + (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt) ∨
+                                      y = x - (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt) →
+                              y ∈ h₁.domain ∨ y ∈ h₂.domain) →
+                          (∀ (z : GaussianInt),
+                            ∀ (a₁ : GaussianInt),
+                              ∀ (b₁ : ℤ),
+                                (∀ x ∈ h₁.domain,
+                                    h₁.value x =
+                                      P5570T1UnitQuadratic z x + a₁.re * x.re +
+                                          a₁.im * x.im +
+                                        b₁) →
+                                  (∀ (b₂ : ℤ),
+                                    (∀ x ∈ h₂.domain,
+                                        h₂.value x =
+                                          P5570T1UnitQuadratic z x + a₁.re * x.re +
+                                              a₁.im * x.im +
+                                            b₂) →
+                                      ((b₁ + c₁ = b₂ + c₂) →
+                                        (∀ (y : GaussianInt),
+                                          (y = x ∨
+                                              y = x + 1 ∨
+                                                y = x - 1 ∨
+                                                  y = x + ⟨0, 1⟩ ∨ y = x - ⟨0, 1⟩) →
+                                            (g y =
+                                              P5570T1UnitQuadratic z y +
+                                                    a₁.re * y.re +
+                                                  a₁.im * y.im +
+                                                (b₁ + c₁)))))))))) := by
   classical
-  intro C h₁ h₂ g x c₁ hg₁ c₂ hg₂ hstar n z a₁ b₁ hval₁ b₂ hval₂ hb y hy
+  intro h₁ h₂ g x c₁ hg₁ c₂ hg₂ hstar z a₁ b₁ hval₁ b₂ hval₂ hb y hy
   rcases hstar y hy with hy₁ | hy₂
   · rw [hg₁ y hy₁, hval₁ y hy₁]
     ring
@@ -1061,9 +1085,9 @@ theorem P5596T1LeftWeb
             (hy : y = x ∨ y = x + 1 ∨ y = x - 1 ∨
               y = x + ⟨0, 1⟩ ∨ y = x - ⟨0, 1⟩) :
             g y = P5570T1UnitQuadratic z y +
-              a₁.re * y.re + a₁.im * y.im + (b₁ + c₁) := LeftWebGeometry.hvalues C h₁ h₂ g x c₁
+              a₁.re * y.re + a₁.im * y.im + (b₁ + c₁) := LeftWebGeometry.hvalues h₁ h₂ g x c₁
                   hg₁ c₂
-                  hg₂ hstar n z a₁ b₁ hval₁ b₂ hval₂ hb y hy
+                  hg₂ hstar z a₁ b₁ hval₁ b₂ hval₂ hb y hy
         have hperiodic := CurvatureOnePeriodicOdometer C z hz
         have hq : FourNeighborLaplacian
             (fun y => P5570T1UnitQuadratic z y +

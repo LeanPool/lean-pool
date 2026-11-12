@@ -7,7 +7,6 @@ module
 
 public import Mathlib.Init
 
-public import LeanPool.ApollonianSuperharmonic.BandOrderedGeneralLayoutCertificate
 public import LeanPool.ApollonianSuperharmonic.BandOrientedChildParentEndpoints
 
 -- [TABLET NODE: BandPositiveCutBranchCompanionExclusion]
@@ -39,71 +38,6 @@ private theorem positive_of_nonempty :
   | @decompose r hr S X hS hc hf hcent =>
       exact (ProperBandCurvatureStructure r hr).1
 
-private theorem boundary_edge_footprint :
-    (by
-      classical
-      exact
-        ∀ (X : ProtoTile), ∀ (e : Finset GaussianInt), (e ∈ BoundaryFootprintEdges X) → (e ∈
-            FootprintEdges X) ) := by
-  classical
-  intro X e he
-  let I : GaussianInt := ⟨0, 1⟩
-  rcases he with ⟨z, ⟨rfl, h⟩ | ⟨rfl, h⟩⟩
-  · rcases h with ⟨hz, -⟩ | ⟨-, hz⟩
-    · exact ⟨z, hz, Or.inl rfl⟩
-    · refine ⟨z - I, hz, Or.inr (Or.inr (Or.inr ?_))⟩
-      congr 1 <;> simp [I, Zsqrtd.ext_iff]
-  · rcases h with ⟨hz, -⟩ | ⟨-, hz⟩
-    · exact ⟨z, hz, Or.inr (Or.inl rfl)⟩
-    · refine ⟨z - 1, hz, Or.inr (Or.inr (Or.inl ?_))⟩
-      congr 1 <;> simp []
-
-private theorem edge_vertex_footprint :
-    (by
-      classical
-      exact
-        ∀ (X : ProtoTile), ∀ (e : Finset GaussianInt), (e ∈ FootprintEdges X) → (∀ (z :
-            GaussianInt), (z ∈ e) → (z ∈ FootprintVertices X)) ) := by
-  classical
-  intro X e he z hz
-  rcases he with ⟨c, hc, he⟩
-  unfold FootprintVertices
-  rw [ite_eq_left ⟨c, hc⟩]
-  rcases he with h | h | h | h <;> subst e
-  all_goals simp only [Finset.mem_insert, Finset.mem_singleton] at hz
-  · rcases hz with rfl | rfl
-    · exact ⟨_, hc, Or.inl rfl⟩
-    · exact ⟨_, hc, Or.inr (Or.inl rfl)⟩
-  · rcases hz with rfl | rfl
-    · exact ⟨_, hc, Or.inl rfl⟩
-    · exact ⟨_, hc, Or.inr (Or.inr (Or.inl rfl))⟩
-  · rcases hz with rfl | rfl
-    · exact ⟨_, hc, Or.inr (Or.inl rfl)⟩
-    · exact ⟨_, hc, Or.inr (Or.inr (Or.inr rfl))⟩
-  · rcases hz with rfl | rfl
-    · exact ⟨_, hc, Or.inr (Or.inr (Or.inl rfl))⟩
-    · exact ⟨_, hc, Or.inr (Or.inr (Or.inr rfl))⟩
-
-private theorem boundary_to_raw :
-    (by
-      classical
-      exact
-        (∀ (X : ProtoTile), ∀ (e : Finset GaussianInt), (e ∈ BoundaryFootprintEdges X) → (e ∈
-            FootprintEdges X)) → ((∀ (X : ProtoTile), ∀ (e : Finset GaussianInt), (e ∈
-            FootprintEdges X) → (∀ (z : GaussianInt), (z ∈ e) → (z ∈ FootprintVertices X))) → (∀
-            (X : ProtoTile), ∀ (x : GaussianInt), (x ∈ BoundaryFootprintVertices X) → (x ∈
-            FootprintVertices X))) ) := by
-  classical
-  intro boundary_edge_footprint edge_vertex_footprint X x hx
-  by_cases hne : X.cells.Nonempty
-  · unfold BoundaryFootprintVertices at hx
-    rw [ite_eq_left hne] at hx
-    rcases hx with ⟨e, he, hxe⟩
-    exact edge_vertex_footprint X e (boundary_edge_footprint X e he) x hxe
-  · unfold BoundaryFootprintVertices at hx
-    rw [ite_eq_right hne] at hx
-    subst x
-    simp [FootprintVertices, hne]
 
 private theorem exact_exclusion :
     (by
@@ -317,15 +251,6 @@ private theorem hsum :
   simpa [w, t, u, cfg.firstParentTwo, cfg.firstParentThree] using
     (VectorRecursionLaws cfg.firstPredecessor cfg.firstProper.1).1
 
-private theorem gaussianPoint_add :
-    (by
-      classical
-      exact
-        ∀ (x : GaussianInt), ∀ (y : GaussianInt), GaussianRealPoint (x + y) = GaussianRealPoint x
-            + GaussianRealPoint y ) := by
-  classical
-  intro x y
-  ext <;> simp [GaussianRealPoint]
 
 private theorem gaussianPoint_neg :
     (by
@@ -1595,9 +1520,9 @@ theorem BandPositiveCutBranchCompanionExclusion
         (TileTranslation cert.O
           (-BandVectors.1 (cfg.firstPredecessor 1) (q 3)))) := by
 -- BODY
-  have boundary_to_raw := PositiveCutExclusionGeometry.boundary_to_raw
-      (PositiveCutExclusionGeometry.boundary_edge_footprint)
-      (PositiveCutExclusionGeometry.edge_vertex_footprint)
+  have boundary_to_raw := BoundaryFootprintInclusion.boundaryVertex
+      (BoundaryFootprintInclusion.boundaryEdge)
+      (BoundaryFootprintInclusion.edgeVertex)
   have exact_exclusion := PositiveCutExclusionGeometry.exact_exclusion
   have occurrence_centroid := PositiveCutExclusionGeometry.occurrence_centroid
   have hcurv := ProperBandCurvatureStructure q cfg.proper
@@ -1628,7 +1553,7 @@ theorem BandPositiveCutBranchCompanionExclusion
       GaussianRealPoint ((I - 1) * x) = -GaussianRealPoint ((1 - I) * x) :=
           PositiveCutExclusionGeometry.gaussianPoint_Iminus_one gaussianPoint_neg x
   have hsumGaussianPoint := PositiveCutExclusionGeometry.hsumGaussianPoint q
-            cfg (PositiveCutExclusionGeometry.gaussianPoint_add)
+            cfg (GaussianRealPointProperties.add)
                 (PositiveCutExclusionGeometry.hprod q cfg (PositiveCutExclusionGeometry.hsum q cfg))
   have hsumGaussianPointFst := PositiveCutExclusionGeometry.hsumGaussianPointFst q cfg
       hsumGaussianPoint

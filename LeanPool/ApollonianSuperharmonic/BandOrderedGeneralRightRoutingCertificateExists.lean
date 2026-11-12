@@ -6,6 +6,7 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.BandParentVectorQuarterTurn
 public import LeanPool.ApollonianSuperharmonic.BandVectorParentSums
 
 public import LeanPool.ApollonianSuperharmonic.BandOrderedGeneralRightRoutingCertificate
@@ -76,25 +77,6 @@ private theorem hend :
   intro C T N h k x normalization interface
   rw [← interface.interface_endpoints.1]
   exact (interface.endData.unique_common interface.endData.point).2 rfl
-
-private theorem turn_flip :
-    (by
-      classical
-      exact
-        ∀ (C : BandCircle), ∀ (T : ProtoTile), ∀ (N : ProtoTile), ∀ (h : PartialOdometer), ∀ (k :
-            PartialOdometer), ∀ (x : GaussianInt), ∀ (normalization :
-            BandOrderedGeneralRightNormalizationCertificate C T N h k x),
-        let q := normalization.normalizedPresentation
-        (∀ (j : Fin (3 : ℕ)), BandVectors.1 (q (0 : Fin (4 : ℕ))) (q j.succ) = (⟨(0 : ℤ), (1 :
-            ℤ)⟩ : GaussianInt) * BandVectors.1 (q j.succ) (q (0 : Fin (4 : ℕ))) ∧ BandVectors.2
-            (q (0 : Fin (4 : ℕ))) (q j.succ) = -(⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt) *
-            BandVectors.2 (q j.succ) (q (0 : Fin (4 : ℕ)))) → (∀ (s : Fin 3), GaussianQuarterTurn
-            (BandVectors.1 (q s.succ) (q 0)) = BandVectors.1 (q 0) (q s.succ)) ) := by
-  classical
-  intro C T N h k x normalization q flip s
-  rw [(flip s).1]
-  rcases BandVectors.1 (q s.succ) (q 0) with ⟨a, b⟩
-  apply Zsqrtd.ext <;> simp [GaussianQuarterTurn]
 
 private theorem period2 :
     (by
@@ -215,19 +197,6 @@ private theorem hcentralIndex :
   fin_cases centralSlot <;> cases centralSign <;>
     simp [centralIndex, labelOf]
 
-private theorem translation_zero :
-    (by
-      classical
-      exact
-        ∀ (U : ProtoTile), TileTranslation U 0 = U ) := by
-  classical
-  intro U
-  cases U with
-  | mk cells anchor =>
-      have hc : cells.image (GaussianTranslation 0) = cells := by
-        ext z
-        simp [GaussianTranslation]
-      simp [TileTranslation, hc, GaussianTranslation]
 
 private theorem hcentralOccurrence :
     (by
@@ -993,8 +962,8 @@ theorem BandOrderedGeneralRightRoutingCertificateExists
   have flip := laws.2.2.2.2 normalization.configuration.proper
   have turn_flip (s : Fin 3) :
       GaussianQuarterTurn (BandVectors.1 (q s.succ) (q 0)) =
-        BandVectors.1 (q 0) (q s.succ) := RightRoutingGeometry.turn_flip C T N h k x
-            normalization flip s
+        BandVectors.1 (q 0) (q s.succ) := BandParentVectorQuarterTurn.turn
+            (normalization).normalizedPresentation (fun j => (flip j).1) s
   have turn0 : GaussianQuarterTurn (BandVectors.1 (q 1) (q 0)) =
       BandVectors.1 (q 0) (q 1) := by simpa using turn_flip (0 : Fin 3)
   have turn1 : GaussianQuarterTurn (BandVectors.1 (q 2) (q 0)) =
@@ -1074,7 +1043,7 @@ theorem BandOrderedGeneralRightRoutingCertificateExists
       selectedSlot selectedSign hselected hselectedCells
   have hcentralCell := RightRoutingGeometry.hcentralCell C T N h k x normalization j centralSlot
       centralSign hcentral (RightRoutingGeometry.hcentralOccurrence C T N h k x normalization
-      centralSlot centralSign (RightRoutingGeometry.translation_zero))
+      centralSlot centralSign (TileTranslationProperties.zero))
   have footprint_of_cell := RightRoutingGeometry.footprint_of_cell
   have exteriorCorners := footprint_of_cell _ _ hexteriorCell
   have centralCorners := footprint_of_cell _ _ hcentralCell

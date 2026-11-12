@@ -6,6 +6,7 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.FordParentVectors
 
 public import LeanPool.ApollonianSuperharmonic.P5269T1FordSquareNormalForm
 public import LeanPool.ApollonianSuperharmonic.P5269T1IncomingSquareJunctions
@@ -182,52 +183,6 @@ private theorem hr :
   have hone := Int.eq_one_of_dvd_one (by omega : 0 ≤ (P.q:Int)) hdv
   omega
 
-private theorem h01 :
-    (by
-      classical
-      exact
-        ∀ (P : FordFareyParameter), (BandVectors.1 (FordRecursiveQuadruple P (1 : Fin (4 : ℕ)))
-            (FordRecursiveQuadruple P (0 : Fin (4 : ℕ))) = (⟨(↑P.q : ℤ), (↑P.q₁ : ℤ)⟩ :
-            GaussianInt)) → ((∀ (j : Fin (3 : ℕ)), BandVectors.1 (FordRecursiveQuadruple P (0 :
-            Fin (4 : ℕ))) (FordRecursiveQuadruple P j.succ) = (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt)
-            * BandVectors.1 (FordRecursiveQuadruple P j.succ) (FordRecursiveQuadruple P (0 : Fin
-            (4 : ℕ))) ∧ BandVectors.2 (FordRecursiveQuadruple P (0 : Fin (4 : ℕ)))
-            (FordRecursiveQuadruple P j.succ) = -(⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt) *
-            BandVectors.2 (FordRecursiveQuadruple P j.succ) (FordRecursiveQuadruple P (0 : Fin (4
-            : ℕ)))) → (BandVectors.1 ((FordRecursiveQuadruple P) 0) ((FordRecursiveQuadruple P)
-            1) = ⟨-(P.q₁:Int),P.q⟩)) ) := by
-  classical
-  intro P h10 hf
-  have h := (hf 0).1
-  change BandVectors.1 ((FordRecursiveQuadruple P) 0) ((FordRecursiveQuadruple P) 1) =
-    (⟨0,1⟩ : GaussianInt) * BandVectors.1 ((FordRecursiveQuadruple P) 1)
-        ((FordRecursiveQuadruple P) 0) at h
-  rw [h10] at h
-  exact h.trans (by ext <;> simp)
-
-private theorem h02 :
-    (by
-      classical
-      exact
-        ∀ (P : FordFareyParameter), (BandVectors.1 (FordRecursiveQuadruple P (2 : Fin (4 : ℕ)))
-            (FordRecursiveQuadruple P (0 : Fin (4 : ℕ))) = (⟨-(↑P.q : ℤ), (↑P.q₂ : ℤ)⟩ :
-            GaussianInt)) → ((∀ (j : Fin (3 : ℕ)), BandVectors.1 (FordRecursiveQuadruple P (0 :
-            Fin (4 : ℕ))) (FordRecursiveQuadruple P j.succ) = (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt)
-            * BandVectors.1 (FordRecursiveQuadruple P j.succ) (FordRecursiveQuadruple P (0 : Fin
-            (4 : ℕ))) ∧ BandVectors.2 (FordRecursiveQuadruple P (0 : Fin (4 : ℕ)))
-            (FordRecursiveQuadruple P j.succ) = -(⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt) *
-            BandVectors.2 (FordRecursiveQuadruple P j.succ) (FordRecursiveQuadruple P (0 : Fin (4
-            : ℕ)))) → (BandVectors.1 ((FordRecursiveQuadruple P) 0) ((FordRecursiveQuadruple P)
-            2) = ⟨-(P.q₂:Int),-(P.q:Int)⟩)) ) := by
-  classical
-  intro P h20 hf
-  have h := (hf 1).1
-  change BandVectors.1 ((FordRecursiveQuadruple P) 0) ((FordRecursiveQuadruple P) 2) =
-    (⟨0,1⟩ : GaussianInt) * BandVectors.1 ((FordRecursiveQuadruple P) 2)
-        ((FordRecursiveQuadruple P) 0) at h
-  rw [h20] at h
-  exact h.trans (by ext <;> simp)
-
 end IncomingEndpointGeometry
 
 theorem FordOrientedChildParentIncomingEndpoint
@@ -278,9 +233,9 @@ theorem FordOrientedChildParentIncomingEndpoint
   obtain ⟨hp,h10,h20,_,_⟩ := (FordCoordinateConfiguration P).2 hq
   have hf := (VectorRecursionLaws _ hp.1).2.2.2.2 hp
   have h01 : BandVectors.1 ((FordRecursiveQuadruple P) 0) ((FordRecursiveQuadruple P) 1) =
-      ⟨-(P.q₁:Int),P.q⟩ := IncomingEndpointGeometry.h01 P h10 hf
+      ⟨-(P.q₁:Int),P.q⟩ := FordParentVectors.firstParent P h10 hf
   have h02 : BandVectors.1 ((FordRecursiveQuadruple P) 0) ((FordRecursiveQuadruple P) 2) =
-      ⟨-(P.q₂:Int),-(P.q:Int)⟩ := IncomingEndpointGeometry.h02 P h20 hf
+      ⟨-(P.q₂:Int),-(P.q:Int)⟩ := FordParentVectors.secondParent P h20 hf
   obtain ⟨⟨a,b⟩,hUc⟩ := P5269T1FordSquareNormalForm P hq 0 U hU hUpos
   have hcu := cent U P.q P.q_pos ⟨a,b⟩ hUc
   have he0 : Even (0 : Nat) := by decide

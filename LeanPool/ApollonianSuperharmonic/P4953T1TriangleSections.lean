@@ -6,11 +6,11 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.SignSquareProduct
 public import Mathlib.Tactic.Positivity
 public import Mathlib.Topology.MetricSpace.Pseudo.Real
 
 public import Mathlib.Analysis.Complex.Norm
-public import Mathlib.Analysis.Convex.Hull
 public import Mathlib.LinearAlgebra.Complex.Module
 public import Mathlib.LinearAlgebra.AffineSpace.FiniteDimensional
 public import Mathlib.Analysis.Convex.Combination
@@ -71,10 +71,6 @@ private theorem huv (A : ℂ) (x : ℂ) (B : ℂ) (hAx : A.im < x.im) (hxB : x.i
   have hwv : w < v := hwv x B hxB
   change (u < v)
   exact lt_trans huw hwv
-
-private theorem hσmul (σ : ℝ) (hσ : σ ^ 2 = 1) : σ * σ = 1 := by
-  classical
-  nlinarith [hσ]
 
 private theorem hδ (σ : ℝ) (A : ℂ) (x : ℂ) (B : ℂ) (hgap : 0 < σ * (A.re + (B.re - A.re) * (x.im
     - A.im) / (B.im - A.im) - x.re)) : 0 < (δ σ A x B) := by
@@ -504,7 +500,7 @@ private theorem hperturb (σ : ℝ) (A : ℂ) (x : ℂ) (B : ℂ) (hAx : A.im < 
     rw [hy]
     have hnorm : ‖(t : ℝ) • (z - b i)‖ = |t| * ‖z - b i‖ := by
       change ‖(t : ℂ) * (z - b i)‖ = _
-      simp [Complex.norm_mul, Complex.norm_real, Real.norm_eq_abs, mul_comm]
+      rw [Complex.norm_mul, Complex.norm_real, Real.norm_eq_abs]
     rw [hnorm, abs_of_pos ht]
     calc
       (ε / (‖z - b i‖ + 1)) * ‖z - b i‖ <

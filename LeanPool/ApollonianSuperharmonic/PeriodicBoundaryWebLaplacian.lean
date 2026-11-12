@@ -7,13 +7,7 @@ module
 
 public import Mathlib.Init
 
-public import LeanPool.ApollonianSuperharmonic.BoundaryFootprintVertices
-public import LeanPool.ApollonianSuperharmonic.CircleMatrix
-public import LeanPool.ApollonianSuperharmonic.FourNeighborLaplacian
-public import LeanPool.ApollonianSuperharmonic.GlobalOdometerExtends
 public import LeanPool.ApollonianSuperharmonic.OdometerWeb
-public import LeanPool.ApollonianSuperharmonic.TileOdometer
-public import LeanPool.ApollonianSuperharmonic.TilingLattice
 
 -- [TABLET NODE: PeriodicBoundaryWebLaplacian]
 
@@ -285,27 +279,44 @@ private theorem hcornerOutside :
 private theorem hvowner :
     (by
       classical
-      exact
-        ∀ (C : BandCircle), ∀ (T : ProtoTile), ∀ (x : GaussianInt), ∀ (v : GaussianInt), ∀ (hv :
-            v ∈ TilingLattice C), (x ∈ BoundaryFootprintVertices (TileTranslation T v)) → (∀ (P :
-            PeriodicTileComplex ↥(TilingLattice C)),
-        let iv : TilingLattice C := ⟨v, hv⟩
-        (x ∈ BoundaryFootprintVertices (P.tile iv)) → ((∃ y ∈ (P.tile iv).cells, y = x ∨ y = x -
-            1 ∨ y = x - 1 - ⟨0, 1⟩ ∨ y = x - ⟨0, 1⟩) → ((∃ y, y ∉ (P.tile iv).cells ∧ (y = x ∨ y
-            = x - 1 ∨ y = x - 1 - ⟨0, 1⟩ ∨ y = x - ⟨0, 1⟩)) → (∀ (a0 : ↥(TilingLattice C)), (x ∈
-            (P.tile a0).cells) → ((∀ (y : ↥(TilingLattice C)), (fun (a : ↥(TilingLattice C)) => x
-            ∈ (P.tile a).cells) y → y = a0) → (∀ (a1 : ↥(TilingLattice C)), (x - (1 :
-            LatticeCell) ∈ (P.tile a1).cells) → ((∀ (y : ↥(TilingLattice C)), (fun (a :
-            ↥(TilingLattice C)) => x - (1 : LatticeCell) ∈ (P.tile a).cells) y → y = a1) → (∀ (a2
-            : ↥(TilingLattice C)), (x - (1 : LatticeCell) - (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt) ∈
-            (P.tile a2).cells) → ((∀ (y : ↥(TilingLattice C)), (fun (a : ↥(TilingLattice C)) => x
-            - (1 : LatticeCell) - (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt) ∈ (P.tile a).cells) y → y =
-            a2) → (∀ (a3 : ↥(TilingLattice C)), (x - (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt) ∈ (P.tile
-            a3).cells) → ((∀ (y : ↥(TilingLattice C)), (fun (a : ↥(TilingLattice C)) => x - (⟨(0
-            : ℤ), (1 : ℤ)⟩ : GaussianInt) ∈ (P.tile a).cells) y → y = a3) → (iv = a0 ∨ iv = a1 ∨
-            iv = a2 ∨ iv = a3)))))))))))) ) := by
+        exact
+        ∀ (C : BandCircle),
+          ∀ (x : GaussianInt),
+            ∀ (v : GaussianInt),
+              ∀ (hv : v ∈ TilingLattice C),
+                (∀ (P : PeriodicTileComplex ↥(TilingLattice C)),
+                  let iv : TilingLattice C := ⟨v, hv⟩;
+                  ((∃ y ∈ (P.tile iv).cells,
+                      y = x ∨ y = x - 1 ∨ y = x - 1 - ⟨0, 1⟩ ∨ y = x - ⟨0, 1⟩) →
+                    (∀ (a0 : ↥(TilingLattice C)),
+                      ((∀ (y : ↥(TilingLattice C)),
+                          (fun (a : ↥(TilingLattice C)) => x ∈ (P.tile a).cells) y →
+                            y = a0) →
+                        (∀ (a1 : ↥(TilingLattice C)),
+                          ((∀ (y : ↥(TilingLattice C)),
+                              (fun (a : ↥(TilingLattice C)) =>
+                                    x - (1 : LatticeCell) ∈ (P.tile a).cells)
+                                  y →
+                                y = a1) →
+                            (∀ (a2 : ↥(TilingLattice C)),
+                              ((∀ (y : ↥(TilingLattice C)),
+                                  (fun (a : ↥(TilingLattice C)) =>
+                                        x - (1 : LatticeCell) -
+                                            (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt) ∈
+                                          (P.tile a).cells)
+                                      y →
+                                    y = a2) →
+                                (∀ (a3 : ↥(TilingLattice C)),
+                                  ((∀ (y : ↥(TilingLattice C)),
+                                      (fun (a : ↥(TilingLattice C)) =>
+                                            x - (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt) ∈
+                                              (P.tile a).cells)
+                                          y →
+                                        y = a3) →
+                                    (iv = a0 ∨
+                                      iv = a1 ∨ iv = a2 ∨ iv = a3)))))))))))) := by
   classical
-  intro C T x v hv hx P iv hxi hcorner hcornerOutside a0 ha0 hu0 a1 ha1 hu1 a2 ha2 hu2 a3 ha3 hu3
+  intro C x v hv P iv hcorner a0 hu0 a1 hu1 a2 hu2 a3 hu3
   rcases hcorner with ⟨y, hy, rfl | rfl | rfl | rfl⟩
   · exact Or.inl (hu0 iv hy)
   · exact Or.inr (Or.inl (hu1 iv hy))
@@ -1660,8 +1671,7 @@ theorem PeriodicBoundaryWebLaplacian (C : BandCircle)
             (WebLaplacianGeometry.atMostOneRemaining) (I := I) f m hother hnotinj
     let owner : Fin 4 → TilingLattice C := ![a0, a1, a2, a3]
     have hmexists := WebLaplacianGeometry.hmexists C v hv a0 a1 a2 a3
-        (WebLaplacianGeometry.hvowner C T x v hv hx P hxi hcorner hcornerOutside a0 ha0 hu0 a1
-        ha1 hu1 a2 ha2 hu2 a3 ha3 hu3)
+        (WebLaplacianGeometry.hvowner C x v hv P hcorner a0 hu0 a1 hu1 a2 hu2 a3 hu3)
     obtain ⟨m, hm⟩ := hmexists
     have hnotinj := WebLaplacianGeometry.hnotinj C a0 a1 a2 a3 hfour
     have hother := WebLaplacianGeometry.hother C v hv a0 a1 a2 a3 m hm

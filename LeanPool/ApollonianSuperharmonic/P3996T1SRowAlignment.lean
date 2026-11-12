@@ -6,6 +6,7 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.TileTranslationProperties
 
 public import LeanPool.ApollonianSuperharmonic.P3996T1SRowTable
 public import LeanPool.ApollonianSuperharmonic.BandPrototileTranslation
@@ -138,15 +139,6 @@ private theorem occF :
   simp only [SubtileOccurrenceInterpretation]
   exact BandPrototileTranslation _ _ _ (cert.outer_occurrence 2 false).1
 
-private theorem cellsTranslate :
-    (by
-      classical
-      exact
-        ∀ (X : ProtoTile), ∀ (d : GaussianInt), (TileTranslation X d).cells = X.cells.image
-            (GaussianTranslation d) ) := by
-  classical
-  intro X d
-  exact (TileTranslationFormulas X d).1
 
 private theorem anchorTranslate :
     (by
@@ -938,7 +930,7 @@ theorem P3996T1SRowAlignment
   have occF (m n : Int) : BandPrototile (q 3)
       (SubtileOccurrenceInterpretation cert.P cert.u cert.v ⟨.F, m, n⟩) :=
           SRowAlignmentGeometry.occF q cfg C T cert m n
-  have cellsTranslate := SRowAlignmentGeometry.cellsTranslate
+  have cellsTranslate := TileTranslationProperties.cells
   have anchorTranslate := SRowAlignmentGeometry.anchorTranslate
   have centroidTranslate := SRowAlignmentGeometry.centroidTranslate
   have translationCentroidGP (X : ProtoTile) (d : GaussianInt) :

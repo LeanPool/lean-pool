@@ -123,45 +123,90 @@ private theorem hbandSelected :
 private theorem hgeom :
     (by
       classical
-      exact
-        ∀ (q : Fin 4 → CircleCoordinates), ∀ (cfg : BandOrderedGeneralConfiguration q), ∀ (C₀ :
-            BandCircle), ∀ (T₀ : ProtoTile), ∀ (cert : BandOrderedGeneralLayoutCertificate q cfg
-            C₀ T₀), ∀ (N : ProtoTile), ∀ (pN : ℝ × ℝ), ∀ (p0 : ℝ × ℝ), ∀ (q' : Fin (4 : ℕ) →
-            CircleCoordinates), ∀ (i' : Fin (3 : ℕ)), ∀ (e' : Bool), (q' (0 : Fin (4 : ℕ)) =
-            C₀.1.1) → ((TileCentroid T₀ - TileCentroid N = (if e' = true then (1 : ℝ) else (-1 :
-            ℝ)) • GaussianRealPoint (BandVectors.1 (q' (0 : Fin (4 : ℕ))) (q' i'.succ))) → ((p0.1
-            - pN.1 = (if e' = true then (1 : ℝ) else (-1 : ℝ)) * (↑(BandVectors.2 (q' (0 : Fin (4
-            : ℕ))) (q' i'.succ)).re : ℝ)) → ((p0.2 - pN.2 = (if e' = true then (1 : ℝ) else (-1 :
-            ℝ)) * (↑(BandVectors.2 (q' (0 : Fin (4 : ℕ))) (q' i'.succ)).im : ℝ)) → (∀ (ra : Fin
-            (3 : ℕ)),
-        let k : Fin 3 := i' + ra
-        (q' i'.succ = q k.succ) → (
-        let μ : Int := if e' = true then -1 else 1
-        let m : Int := if k = 0 then μ else if k = 2 then -μ else 0
-        let n : Int := if k = 1 then μ else if k = 2 then -μ else 0
-        (
-        let V := BandVectors.1;
-        let I := (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt);
-        let U := V (q (2 : Fin (4 : ℕ))) (q (1 : Fin (4 : ℕ)));
-        let W := V (q (3 : Fin (4 : ℕ))) (q (2 : Fin (4 : ℕ))); V (q (1 : Fin (4 : ℕ))) (q (3 :
-            Fin (4 : ℕ))) = -U - W ∧ V (q (1 : Fin (4 : ℕ))) (q (2 : Fin (4 : ℕ))) = I * U ∧ V (q
-            (3 : Fin (4 : ℕ))) (q (1 : Fin (4 : ℕ))) = I * (U + W) ∧ V (q (2 : Fin (4 : ℕ))) (q
-            (3 : Fin (4 : ℕ))) = I * W ∧ V (q (0 : Fin (4 : ℕ))) (q (1 : Fin (4 : ℕ))) = U - I *
-            (U + W) ∧ V (q (0 : Fin (4 : ℕ))) (q (2 : Fin (4 : ℕ))) = W + I * U ∧ V (q (0 : Fin
-            (4 : ℕ))) (q (3 : Fin (4 : ℕ))) = -U - W + I * W ∧ V (cfg.firstPredecessor (2 : Fin
-            (4 : ℕ))) (cfg.firstPredecessor (0 : Fin (4 : ℕ))) + V (cfg.firstPredecessor (0 : Fin
-            (4 : ℕ))) (cfg.firstPredecessor (2 : Fin (4 : ℕ))) = ((1 : GaussianInt) + I) * U ∧ V
-            (cfg.firstPredecessor (3 : Fin (4 : ℕ))) (cfg.firstPredecessor (0 : Fin (4 : ℕ))) + V
-            (cfg.firstPredecessor (0 : Fin (4 : ℕ))) (cfg.firstPredecessor (3 : Fin (4 : ℕ))) =
-            (I - (1 : GaussianInt)) * (U + W) ∧ V (cfg.secondPredecessor (1 : Fin (4 : ℕ)))
-            (cfg.secondPredecessor (0 : Fin (4 : ℕ))) + V (cfg.secondPredecessor (0 : Fin (4 :
-            ℕ))) (cfg.secondPredecessor (1 : Fin (4 : ℕ))) = ((1 : GaussianInt) + I) * W) →
-            (GaussianRealPoint ((m : GaussianInt) * cert.u + (n : GaussianInt) * cert.v) = -((if
-            e' = true then (1 : ℝ) else -1) • GaussianRealPoint (BandVectors.1 (q' 0) (q'
-            i'.succ))))))))) ) := by
+        exact
+        ∀ (q : Fin 4 → CircleCoordinates),
+          ∀ (cfg : BandOrderedGeneralConfiguration q),
+            ∀ (C₀ : BandCircle),
+              ∀ (T₀ : ProtoTile),
+                ∀ (cert : BandOrderedGeneralLayoutCertificate q cfg C₀ T₀),
+                  ∀ (q' : Fin (4 : ℕ) → CircleCoordinates),
+                    ∀ (i' : Fin (3 : ℕ)),
+                      ∀ (e' : Bool),
+                        (q' (0 : Fin (4 : ℕ)) = C₀.1.1) →
+                          (∀ (ra : Fin (3 : ℕ)),
+                            let k : Fin 3 := i' + ra;
+                            (q' i'.succ = q k.succ) →
+                              (let μ : Int := if e' = true then -1 else 1;
+                              let m : Int :=
+                                if k = 0 then μ else if k = 2 then -μ else 0;
+                              let n : Int :=
+                                if k = 1 then μ else if k = 2 then -μ else 0;
+                              (let V := BandVectors.1;
+                                let I := (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt);
+                                let U :=
+                                  V (q (2 : Fin (4 : ℕ))) (q (1 : Fin (4 : ℕ)));
+                                let W :=
+                                  V (q (3 : Fin (4 : ℕ))) (q (2 : Fin (4 : ℕ)));
+                                V (q (1 : Fin (4 : ℕ))) (q (3 : Fin (4 : ℕ))) =
+                                    -U - W ∧
+                                  V (q (1 : Fin (4 : ℕ))) (q (2 : Fin (4 : ℕ))) =
+                                      I * U ∧
+                                    V (q (3 : Fin (4 : ℕ))) (q (1 : Fin (4 : ℕ))) =
+                                        I * (U + W) ∧
+                                      V (q (2 : Fin (4 : ℕ)))
+                                            (q (3 : Fin (4 : ℕ))) =
+                                          I * W ∧
+                                        V (q (0 : Fin (4 : ℕ)))
+                                              (q (1 : Fin (4 : ℕ))) =
+                                            U - I * (U + W) ∧
+                                          V (q (0 : Fin (4 : ℕ)))
+                                                (q (2 : Fin (4 : ℕ))) =
+                                              W + I * U ∧
+                                            V (q (0 : Fin (4 : ℕ)))
+                                                  (q (3 : Fin (4 : ℕ))) =
+                                                -U - W + I * W ∧
+                                              V
+                                                      (cfg.firstPredecessor
+                                                        (2 : Fin (4 : ℕ)))
+                                                      (cfg.firstPredecessor
+                                                        (0 : Fin (4 : ℕ))) +
+                                                    V
+                                                      (cfg.firstPredecessor
+                                                        (0 : Fin (4 : ℕ)))
+                                                      (cfg.firstPredecessor
+                                                        (2 : Fin (4 : ℕ))) =
+                                                  ((1 : GaussianInt) + I) * U ∧
+                                                V
+                                                        (cfg.firstPredecessor
+                                                          (3 : Fin (4 : ℕ)))
+                                                        (cfg.firstPredecessor
+                                                          (0 : Fin (4 : ℕ))) +
+                                                      V
+                                                        (cfg.firstPredecessor
+                                                          (0 : Fin (4 : ℕ)))
+                                                        (cfg.firstPredecessor
+                                                          (3 : Fin (4 : ℕ))) =
+                                                    (I - (1 : GaussianInt)) *
+                                                      (U + W) ∧
+                                                  V
+                                                        (cfg.secondPredecessor
+                                                          (1 : Fin (4 : ℕ)))
+                                                        (cfg.secondPredecessor
+                                                          (0 : Fin (4 : ℕ))) +
+                                                      V
+                                                        (cfg.secondPredecessor
+                                                          (0 : Fin (4 : ℕ)))
+                                                        (cfg.secondPredecessor
+                                                          (1 : Fin (4 : ℕ))) =
+                                                    ((1 : GaussianInt) + I) * W) →
+                                (GaussianRealPoint
+                                    ((m : GaussianInt) * cert.u +
+                                      (n : GaussianInt) * cert.v) =
+                                  -((if e' = true then (1 : ℝ) else -1) •
+                                      GaussianRealPoint
+                                        (BandVectors.1 (q' 0) (q' i'.succ))))))) := by
   classical
-  intro q cfg C₀ T₀ cert N pN p0 q' i' e' hq'0 hcentAdj hslopeAdj1 hslopeAdj2 ra k hAdjChild μ m
-      n hforms
+  intro q cfg C₀ T₀ cert q' i' e' hq'0 ra k hAdjChild μ m n hforms
   have hchild : q' i'.succ = q k.succ := hAdjChild
   rw [cert.period_u, cert.period_v, hq'0, cert.child_eq, hchild]
   have h01 := hforms.2.2.2.2.1
@@ -612,46 +657,46 @@ private theorem hsumAIm :
 private theorem hSlopePeriod :
     (by
       classical
-      exact
-        ∀ (q : Fin 4 → CircleCoordinates), ∀ (cfg : BandOrderedGeneralConfiguration q), ∀ (C₀ :
-            BandCircle), ∀ (T₀ : ProtoTile), ∀ (cert : BandOrderedGeneralLayoutCertificate q cfg
-            C₀ T₀), ∀ (N : ProtoTile), ∀ (T : ProtoTile), ∀ (pN : ℝ × ℝ), ∀ (p0 : ℝ × ℝ), ∀ (q' :
-            Fin (4 : ℕ) → CircleCoordinates), ∀ (i' : Fin (3 : ℕ)), ∀ (e' : Bool), (q' (0 : Fin
-            (4 : ℕ)) = C₀.1.1) → ((TileCentroid T₀ - TileCentroid N = (if e' = true then (1 : ℝ)
-            else (-1 : ℝ)) • GaussianRealPoint (BandVectors.1 (q' (0 : Fin (4 : ℕ))) (q'
-            i'.succ))) → ((p0.1 - pN.1 = (if e' = true then (1 : ℝ) else (-1 : ℝ)) *
-            (↑(BandVectors.2 (q' (0 : Fin (4 : ℕ))) (q' i'.succ)).re : ℝ)) → ((p0.2 - pN.2 = (if
-            e' = true then (1 : ℝ) else (-1 : ℝ)) * (↑(BandVectors.2 (q' (0 : Fin (4 : ℕ))) (q'
-            i'.succ)).im : ℝ)) → (∀ (i'' : Fin (3 : ℕ)), ∀ (s : Bool), ∀ (R : Fin (3 : ℕ) → Bool
-            → ProtoTile), ∀ (r : Fin (3 : ℕ)),
-        let j : Fin 3 := i'' + r
-        ∀ (ra : Fin (3 : ℕ)),
-        let k : Fin 3 := i' + ra
-        (q' i'.succ = q k.succ) → (
-        let μ : Int := if e' = true then -1 else 1
-        let m : Int := if k = 0 then μ else if k = 2 then -μ else 0
-        let n : Int := if k = 1 then μ else if k = 2 then -μ else 0
-        (GaussianRealPoint ((m : GaussianInt) * cert.u + (n : GaussianInt) * cert.v) = -((if e' =
-            true then (1 : ℝ) else -1) • GaussianRealPoint (BandVectors.1 (q' 0) (q' i'.succ))))
-            → ((TileCentroid N - TileCentroid T₀ = GaussianRealPoint ((m : GaussianInt) * cert.u
-            + (n : GaussianInt) * cert.v)) → (
-        let shift : GaussianInt := (m : GaussianInt) * cert.u + (n : GaussianInt) * cert.v
-        let Pshift : ProtoTile := TileTranslation (cert.P j s) shift
-        (BandPrototile (q j.succ) Pshift) → ((TileCentroid Pshift = TileCentroid (cert.P j s) +
-            GaussianRealPoint shift) → ((TileCentroid (R j s) = TileCentroid Pshift) → (((R j
-            s).cells = Pshift.cells) → ((T.cells = Pshift.cells) → ((FootprintVertices T =
-            FootprintVertices Pshift) → (((GaussianInt.toComplex (BandVectors.2 (q 0) (q 3))).re
-            = -(GaussianInt.toComplex (BandVectors.2 (q 0) (q 1))).re - (GaussianInt.toComplex
-            (BandVectors.2 (q 0) (q 2))).re) → (((GaussianInt.toComplex (BandVectors.2 (q 0) (q
-            3))).im = -(GaussianInt.toComplex (BandVectors.2 (q 0) (q 1))).im -
-            (GaussianInt.toComplex (BandVectors.2 (q 0) (q 2))).im) → (GaussianRealPoint ((m :
-            GaussianInt) * BandVectors.2 (q 0) (q 1) + (n : GaussianInt) * BandVectors.2 (q 0) (q
-            2)) = -((if e' = true then (1 : ℝ) else -1) • GaussianRealPoint (BandVectors.2 (q' 0)
-            (q' i'.succ)))))))))))))))))) ) := by
+        exact
+        ∀ (q : Fin 4 → CircleCoordinates),
+          ∀ (cfg : BandOrderedGeneralConfiguration q),
+            ∀ (C₀ : BandCircle),
+              ∀ (T₀ : ProtoTile),
+                (BandOrderedGeneralLayoutCertificate q cfg C₀ T₀) →
+                  ∀ (q' : Fin (4 : ℕ) → CircleCoordinates),
+                    ∀ (i' : Fin (3 : ℕ)),
+                      ∀ (e' : Bool),
+                        (q' (0 : Fin (4 : ℕ)) = C₀.1.1) →
+                          (∀ (ra : Fin (3 : ℕ)),
+                            let k : Fin 3 := i' + ra;
+                            (q' i'.succ = q k.succ) →
+                              (let μ : Int := if e' = true then -1 else 1;
+                              let m : Int :=
+                                if k = 0 then μ else if k = 2 then -μ else 0;
+                              let n : Int :=
+                                if k = 1 then μ else if k = 2 then -μ else 0;
+                              (((GaussianInt.toComplex
+                                      (BandVectors.2 (q 0) (q 3))).re =
+                                  -(GaussianInt.toComplex
+                                          (BandVectors.2 (q 0) (q 1))).re -
+                                    (GaussianInt.toComplex
+                                        (BandVectors.2 (q 0) (q 2))).re) →
+                                (((GaussianInt.toComplex
+                                        (BandVectors.2 (q 0) (q 3))).im =
+                                    -(GaussianInt.toComplex
+                                            (BandVectors.2 (q 0) (q 1))).im -
+                                      (GaussianInt.toComplex
+                                          (BandVectors.2 (q 0) (q 2))).im) →
+                                  (GaussianRealPoint
+                                      ((m : GaussianInt) *
+                                          BandVectors.2 (q 0) (q 1) +
+                                        (n : GaussianInt) *
+                                          BandVectors.2 (q 0) (q 2)) =
+                                    -((if e' = true then (1 : ℝ) else -1) •
+                                        GaussianRealPoint
+                                          (BandVectors.2 (q' 0) (q' i'.succ))))))))) := by
   classical
-  intro q cfg C₀ T₀ cert N T pN p0 q' i' e' hq'0 hcentAdj hslopeAdj1 hslopeAdj2 i'' s R r j ra k
-      hAdjChild μ m n hgeom hNcent shift Pshift hbandShift hPshiftCent hlayoutCent hlayoutCells
-      hcellsT hfootT hsumARe hsumAIm
+  intro q cfg C₀ T₀ cert q' i' e' hq'0 ra k hAdjChild μ m n hsumARe hsumAIm
   rw [hq'0, cert.child_eq, hAdjChild]
   have hkvals : k.val = 0 ∨ k.val = 1 ∨ k.val = 2 := by omega
   rcases hkvals with hk | hk | hk
@@ -667,42 +712,30 @@ private theorem hSlopePeriod :
 private theorem hAdjSlope :
     (by
       classical
-      exact
-        ∀ (q : Fin 4 → CircleCoordinates), ∀ (cfg : BandOrderedGeneralConfiguration q), ∀ (C₀ :
-            BandCircle), ∀ (T₀ : ProtoTile), ∀ (cert : BandOrderedGeneralLayoutCertificate q cfg
-            C₀ T₀), ∀ (N : ProtoTile), ∀ (T : ProtoTile), ∀ (pN : ℝ × ℝ), ∀ (p0 : ℝ × ℝ), ∀ (q' :
-            Fin (4 : ℕ) → CircleCoordinates), ∀ (i' : Fin (3 : ℕ)), ∀ (e' : Bool), (q' (0 : Fin
-            (4 : ℕ)) = C₀.1.1) → ((TileCentroid T₀ - TileCentroid N = (if e' = true then (1 : ℝ)
-            else (-1 : ℝ)) • GaussianRealPoint (BandVectors.1 (q' (0 : Fin (4 : ℕ))) (q'
-            i'.succ))) → ((p0.1 - pN.1 = (if e' = true then (1 : ℝ) else (-1 : ℝ)) *
-            (↑(BandVectors.2 (q' (0 : Fin (4 : ℕ))) (q' i'.succ)).re : ℝ)) → ((p0.2 - pN.2 = (if
-            e' = true then (1 : ℝ) else (-1 : ℝ)) * (↑(BandVectors.2 (q' (0 : Fin (4 : ℕ))) (q'
-            i'.succ)).im : ℝ)) → (∀ (i'' : Fin (3 : ℕ)), ∀ (s : Bool), ∀ (R : Fin (3 : ℕ) → Bool
-            → ProtoTile), ∀ (r : Fin (3 : ℕ)),
-        let j : Fin 3 := i'' + r
-        ∀ (ra : Fin (3 : ℕ)),
-        let k : Fin 3 := i' + ra
-        let μ : Int := if e' = true then -1 else 1
-        let m : Int := if k = 0 then μ else if k = 2 then -μ else 0
-        let n : Int := if k = 1 then μ else if k = 2 then -μ else 0
-        (GaussianRealPoint ((m : GaussianInt) * cert.u + (n : GaussianInt) * cert.v) = -((if e' =
-            true then (1 : ℝ) else -1) • GaussianRealPoint (BandVectors.1 (q' 0) (q' i'.succ))))
-            → ((TileCentroid N - TileCentroid T₀ = GaussianRealPoint ((m : GaussianInt) * cert.u
-            + (n : GaussianInt) * cert.v)) → (
-        let shift : GaussianInt := (m : GaussianInt) * cert.u + (n : GaussianInt) * cert.v
-        let Pshift : ProtoTile := TileTranslation (cert.P j s) shift
-        (BandPrototile (q j.succ) Pshift) → ((TileCentroid Pshift = TileCentroid (cert.P j s) +
-            GaussianRealPoint shift) → ((TileCentroid (R j s) = TileCentroid Pshift) → (((R j
-            s).cells = Pshift.cells) → ((T.cells = Pshift.cells) → ((FootprintVertices T =
-            FootprintVertices Pshift) → ((GaussianRealPoint ((m : GaussianInt) * BandVectors.2 (q
-            0) (q 1) + (n : GaussianInt) * BandVectors.2 (q 0) (q 2)) = -((if e' = true then (1 :
-            ℝ) else -1) • GaussianRealPoint (BandVectors.2 (q' 0) (q' i'.succ)))) → ((pN.1 -
-            p0.1, pN.2 - p0.2) = -((if e' = true then (1 : ℝ) else -1) • GaussianRealPoint
-            (BandVectors.2 (q' 0) (q' i'.succ)))))))))))))))) ) := by
+        exact
+        ∀ (C₀ : BandCircle),
+          ∀ (pN : ℝ × ℝ),
+            ∀ (p0 : ℝ × ℝ),
+              ∀ (q' : Fin (4 : ℕ) → CircleCoordinates),
+                ∀ (i' : Fin (3 : ℕ)),
+                  ∀ (e' : Bool),
+                    (q' (0 : Fin (4 : ℕ)) = C₀.1.1) →
+                      ((p0.1 - pN.1 =
+                          (if e' = true then (1 : ℝ) else (-1 : ℝ)) *
+                            (↑(BandVectors.2 (q' (0 : Fin (4 : ℕ)))
+                                    (q' i'.succ)).re :
+                              ℝ)) →
+                        ((p0.2 - pN.2 =
+                            (if e' = true then (1 : ℝ) else (-1 : ℝ)) *
+                              (↑(BandVectors.2 (q' (0 : Fin (4 : ℕ)))
+                                      (q' i'.succ)).im :
+                                ℝ)) →
+                          ((pN.1 - p0.1, pN.2 - p0.2) =
+                            -((if e' = true then (1 : ℝ) else -1) •
+                                GaussianRealPoint
+                                  (BandVectors.2 (q' 0) (q' i'.succ))))))) := by
   classical
-  intro q cfg C₀ T₀ cert N T pN p0 q' i' e' hq'0 hcentAdj hslopeAdj1 hslopeAdj2 i'' s R r j ra k
-      μ m n hgeom hNcent shift Pshift hbandShift hPshiftCent hlayoutCent hlayoutCells hcellsT
-      hfootT hSlopePeriod
+  intro C₀ pN p0 q' i' e' hq'0 hslopeAdj1 hslopeAdj2
   rw [hq'0]
   apply Prod.ext
   · change pN.1 - p0.1 = _
@@ -866,63 +899,17 @@ private theorem hshiftNonemptyAt458 :
 private theorem hmn :
     (by
       classical
-      exact
-        ∀ (q : Fin 4 → CircleCoordinates), ∀ (cfg : BandOrderedGeneralConfiguration q), ∀ (C₀ :
-            BandCircle), ∀ (T₀ : ProtoTile), ∀ (cert : BandOrderedGeneralLayoutCertificate q cfg
-            C₀ T₀), ∀ (N : ProtoTile), ∀ (T : ProtoTile), ∀ (pN : ℝ × ℝ), ∀ (p0 : ℝ × ℝ), ∀ (q' :
-            Fin (4 : ℕ) → CircleCoordinates), ∀ (i' : Fin (3 : ℕ)), ∀ (e' : Bool), (TileCentroid
-            T₀ - TileCentroid N = (if e' = true then (1 : ℝ) else (-1 : ℝ)) • GaussianRealPoint
-            (BandVectors.1 (q' (0 : Fin (4 : ℕ))) (q' i'.succ))) → ((p0.1 - pN.1 = (if e' = true
-            then (1 : ℝ) else (-1 : ℝ)) * (↑(BandVectors.2 (q' (0 : Fin (4 : ℕ))) (q'
-            i'.succ)).re : ℝ)) → ((p0.2 - pN.2 = (if e' = true then (1 : ℝ) else (-1 : ℝ)) *
-            (↑(BandVectors.2 (q' (0 : Fin (4 : ℕ))) (q' i'.succ)).im : ℝ)) → (∀ (i'' : Fin (3 :
-            ℕ)), ∀ (s : Bool), ∀ (R : Fin (3 : ℕ) → Bool → ProtoTile), ∀ (r : Fin (3 : ℕ)),
-        let j : Fin 3 := i'' + r
-        ∀ (ra : Fin (3 : ℕ)),
-        let k : Fin 3 := i' + ra
-        let μ : Int := if e' = true then -1 else 1
-        let m : Int := if k = 0 then μ else if k = 2 then -μ else 0
-        let n : Int := if k = 1 then μ else if k = 2 then -μ else 0
-        (GaussianRealPoint ((m : GaussianInt) * cert.u + (n : GaussianInt) * cert.v) = -((if e' =
-            true then (1 : ℝ) else -1) • GaussianRealPoint (BandVectors.1 (q' 0) (q' i'.succ))))
-            → ((TileCentroid N - TileCentroid T₀ = GaussianRealPoint ((m : GaussianInt) * cert.u
-            + (n : GaussianInt) * cert.v)) → (
-        let shift : GaussianInt := (m : GaussianInt) * cert.u + (n : GaussianInt) * cert.v
-        let Pshift : ProtoTile := TileTranslation (cert.P j s) shift
-        (BandPrototile (q j.succ) Pshift) → ((TileCentroid Pshift = TileCentroid (cert.P j s) +
-            GaussianRealPoint shift) → ((TileCentroid (R j s) = TileCentroid Pshift) → (((R j
-            s).cells = Pshift.cells) → ((T.cells = Pshift.cells) → ((FootprintVertices T =
-            FootprintVertices Pshift) → ((GaussianRealPoint ((m : GaussianInt) * BandVectors.2 (q
-            0) (q 1) + (n : GaussianInt) * BandVectors.2 (q 0) (q 2)) = -((if e' = true then (1 :
-            ℝ) else -1) • GaussianRealPoint (BandVectors.2 (q' 0) (q' i'.succ)))) → (((pN.1 -
-            p0.1, pN.2 - p0.2) = -((if e' = true then (1 : ℝ) else -1) • GaussianRealPoint
-            (BandVectors.2 (q' 0) (q' i'.succ)))) → ((GaussianRealPoint ((m : GaussianInt) *
-            BandVectors.2 (q 0) (q 1) + (n : GaussianInt) * BandVectors.2 (q 0) (q 2)) = (pN.1 -
-            p0.1, pN.2 - p0.2)) → (∀ (ps : ℝ × ℝ), (ps - p0 = (if s = true then (1 : ℝ) else -1)
-            • P4250T1SlopeOffset (BandVectors.2 (q ((j + 2).succ)) (q ((j + 1).succ))) +
-            GaussianRealPoint ((m : GaussianInt) * BandVectors.2 (q 0) (q 1) + (n : GaussianInt)
-            * BandVectors.2 (q 0) (q 2))) → (
-        let slot : SixSubtileLabel → Fin 3 × Bool := fun l => match l with
-          | .A => (0, true)
-          | .B => (0, false)
-          | .C => (1, true)
-          | .D => (1, false)
-          | .E => (2, true)
-          | .F => (2, false)
-        (∀ (kk : Fin 3), ∀ (t : Bool), ∃ l : SixSubtileLabel, slot l = (kk, t) ∧
-            SubtileOccurrenceInterpretation cert.P cert.u cert.v ⟨l, m, n⟩ = TileTranslation
-            (cert.P kk t) shift) → (∀ (l : SixSubtileLabel), (SubtileOccurrenceInterpretation
-            cert.P cert.u cert.v (⟨l, m, n⟩ : PeriodicSubtileIndex) = TileTranslation (cert.P j
-            s) shift) → (
-        let a : PeriodicSubtileIndex := ⟨l, m, n⟩
-        (SubtileOccurrenceInterpretation cert.P cert.u cert.v a = Pshift) →
-            ((Pshift.cells.Nonempty) → ((TileCentroid T = TileCentroid Pshift) → (m ≠ 0 ∨ n ≠
-            0)))))))))))))))))))) ) := by
+        exact
+        ∀ (i' : Fin (3 : ℕ)),
+          ∀ (e' : Bool),
+            (∀ (ra : Fin (3 : ℕ)),
+              let k : Fin 3 := i' + ra;
+              let μ : Int := if e' = true then -1 else 1;
+              let m : Int := if k = 0 then μ else if k = 2 then -μ else 0;
+              let n : Int := if k = 1 then μ else if k = 2 then -μ else 0;
+              (m ≠ 0 ∨ n ≠ 0))) := by
   classical
-  intro q cfg C₀ T₀ cert N T pN p0 q' i' e' hcentAdj hslopeAdj1 hslopeAdj2 i'' s R r j ra k μ m n
-      hgeom hNcent shift Pshift hbandShift hPshiftCent hlayoutCent hlayoutCells hcellsT hfootT
-      hSlopePeriod hAdjSlope hSlopeShift ps hslopeFinal slot labelExists l hocc a hoccTile
-      hshiftNonempty hcentroidT
+  intro i' e' ra k μ m n
   have hkvals : k.val = 0 ∨ k.val = 1 ∨ k.val = 2 := by omega
   rcases hkvals with hk | hk | hk
   · have hh : k = 0 := Fin.ext hk
@@ -988,8 +975,7 @@ theorem P4261T1RightCoordinates
   let m : Int := if k = 0 then μ else if k = 2 then -μ else 0
   let n : Int := if k = 1 then μ else if k = 2 then -μ else 0
   have hforms := P3055T1ParentVectorNormalForms q cfg
-  have hgeom := RightCoordinateGeometry.hgeom q cfg C₀ T₀ cert N pN p0 q' i' e' hq'0 hcentAdj
-      hslopeAdj1 hslopeAdj2 ra hAdjChild hforms
+  have hgeom := RightCoordinateGeometry.hgeom q cfg C₀ T₀ cert q' i' e' hq'0 ra hAdjChild hforms
   have hNcent := RightCoordinateGeometry.hNcent q cfg C₀ T₀ cert N q' i' e' hq'0 hcentAdj ra hgeom
   have hlayoutOcc := cert.outer_occurrence j s
   have hbandLayout : BandPrototile (q j.succ) (cert.P j s) := hlayoutOcc.1
@@ -1031,12 +1017,9 @@ theorem P4261T1RightCoordinates
       Zsqrtd.im_sub, Zsqrtd.im_neg, Prod.mk.injEq] at hsumAPoint
   have hsumARe := RightCoordinateGeometry.hsumARe q hsumAPoint
   have hsumAIm := RightCoordinateGeometry.hsumAIm q hsumAPoint
-  have hSlopePeriod := RightCoordinateGeometry.hSlopePeriod q cfg C₀ T₀ cert N T pN p0 q' i' e'
-      hq'0 hcentAdj hslopeAdj1 hslopeAdj2 i'' s R r ra hAdjChild hgeom hNcent hbandShift
-      hPshiftCent hlayoutCent hlayoutCells hcellsT hfootT hsumARe hsumAIm
-  have hAdjSlope := RightCoordinateGeometry.hAdjSlope q cfg C₀ T₀ cert N T pN p0 q' i' e' hq'0
-      hcentAdj hslopeAdj1 hslopeAdj2 i'' s R r ra hgeom hNcent hbandShift hPshiftCent hlayoutCent
-      hlayoutCells hcellsT hfootT hSlopePeriod
+  have hSlopePeriod := RightCoordinateGeometry.hSlopePeriod q cfg C₀ T₀ cert q' i' e'
+      hq'0 ra hAdjChild hsumARe hsumAIm
+  have hAdjSlope := RightCoordinateGeometry.hAdjSlope C₀ pN p0 q' i' e' hq'0 hslopeAdj1 hslopeAdj2
   have hSlopeShift := RightCoordinateGeometry.hSlopeShift q pN p0 q' i' e' ra hSlopePeriod hAdjSlope
   rcases hrootSlope j s with hzero | ⟨p, ps, hp, hps, hpx, hpy⟩
   · have hpos := cfg.noLine j.succ
@@ -1072,10 +1055,7 @@ theorem P4261T1RightCoordinates
       cfg C₀ T₀ cert i' e' i'' s r ra hparentNonempty
   have hcentroidT : TileCentroid T = TileCentroid Pshift := by
     simp [TileCentroid, hshiftNonempty, hcellsT]
-  have hmn : m ≠ 0 ∨ n ≠ 0 := RightCoordinateGeometry.hmn q cfg C₀ T₀ cert N T pN p0 q' i' e'
-      hcentAdj hslopeAdj1 hslopeAdj2 i'' s R r ra hgeom hNcent hbandShift hPshiftCent hlayoutCent
-      hlayoutCells hcellsT hfootT hSlopePeriod hAdjSlope hSlopeShift ps hslopeFinal labelExists l
-      hocc hoccTile hshiftNonempty hcentroidT
+  have hmn : m ≠ 0 ∨ n ≠ 0 := RightCoordinateGeometry.hmn i' e' ra
   refine ⟨a, ?_, ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩⟩
   · simp only [a]
     rcases hmn with hm | hn

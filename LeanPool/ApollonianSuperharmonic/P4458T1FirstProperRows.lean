@@ -6,8 +6,8 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.BoundaryFrameJoinGeometry
 
-public import LeanPool.ApollonianSuperharmonic.AncestorOdometerInnerSupportNormalization
 public import LeanPool.ApollonianSuperharmonic.BandPrototileCentroidUnique
 public import LeanPool.ApollonianSuperharmonic.BandPrototileTranslation
 public import LeanPool.ApollonianSuperharmonic.P4458T1BoundaryPlacement
@@ -794,20 +794,6 @@ private theorem hjoinCenterEq :
   have h := hcenter.trans hjoinCenter.symm
   simpa using congrArg (fun p : ℝ × ℝ => p + TileCentroid Rminus) h
 
-private theorem hUbandC :
-    (by
-      classical
-      exact
-        ∀ (C : BandCircle), ∀ (orientation : Bool), ∀ (base : ProtoTile), ∀ (Rminus : ProtoTile),
-            ∀ (Rplus : ProtoTile), ∀ (hminus : PartialOdometer), ∀ (hplus : PartialOdometer), ∀
-            (F : P4458T1BoundaryFrame C orientation base Rminus Rplus hminus hplus), ∀ (D :
-            P4458T1RestrictionFamily F), (BandPrototile (F.q F.slot.succ) (D.tiles F.slot
-            false)) → (BandPrototile C.1.1 (D.tiles F.slot false)) ) := by
-  classical
-  intro C orientation base Rminus Rplus hminus hplus F D hUband
-  rw [← F.parent]
-  exact hUband
-
 private theorem hjoinFoot :
     (by
       classical
@@ -1176,7 +1162,8 @@ theorem P4458T1FirstProperRows
       FirstProperRowDetails.hjoinCenterEq C orientation base Rminus Rplus hminus hplus F D
       hcenter u hjoinCenter
   have hjoinCells := BandPrototileCentroidUnique C.1.1
-    (D.tiles F.slot false) join (FirstProperRowDetails.hUbandC C orientation base Rminus Rplus
+    (D.tiles F.slot false) join (BoundaryFrameJoinGeometry.parentPrototile C orientation base
+        Rminus Rplus
         hminus hplus F D hUband) hjoinBand hjoinCenterEq
   have hjoinOdo : TileOdometer C.1.1 join (D.functions F.slot false) :=
     PositiveCurvatureTileOdometerSupportTransport C.1.1

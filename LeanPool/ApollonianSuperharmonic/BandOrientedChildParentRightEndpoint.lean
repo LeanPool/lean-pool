@@ -7,11 +7,9 @@ module
 
 public import Mathlib.Init
 
-public import LeanPool.ApollonianSuperharmonic.BandPrototile
 public import LeanPool.ApollonianSuperharmonic.BandOrientedChildParentEndpoints
 public import LeanPool.ApollonianSuperharmonic.ExactTileInterfaceTriplePackingSymmetryCovariance
 public import LeanPool.ApollonianSuperharmonic.FordOrientedChildParentRightEndpoint
-public import LeanPool.ApollonianSuperharmonic.TileTranslation
 
 -- [TABLET NODE: BandOrientedChildParentRightEndpoint]
 
@@ -101,50 +99,29 @@ private theorem hUford :
 private theorem hWford :
     (by
       classical
-      exact
-        ∀ (r : Fin 4 → CircleCoordinates), ∀ (i : Fin 3), ∀ (s : Fin 4), ∀ (U : ProtoTile), ∀ (W
-            : ProtoTile), ∀ (Z : ProtoTile), (BandPrototile (r i.succ) W) → ((BandPrototile (r
-            (if Even (↑s : ℕ) then i - (1 : Fin (3 : ℕ)) else i + (1 : Fin (3 : ℕ))).succ) Z) →
-            (((0 : ℤ) < (r i.succ).1) → ((TileCentroid W - TileCentroid U = (1 / 2 : ℝ) •
-            GaussianRealPoint ((⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt) ^ (↑s : ℕ) * (BandVectors.1 (r
-            i.succ) (r (0 : Fin (4 : ℕ))) + BandVectors.1 (r (0 : Fin (4 : ℕ))) (r i.succ)))) →
-            ((TileCentroid Z - TileCentroid U = (1 / 2 : ℝ) • GaussianRealPoint ((⟨(0 : ℤ), (1 :
-            ℤ)⟩ : GaussianInt) ^ (↑s : ℕ) * if Even (↑s : ℕ) then BandVectors.1 (r (0 : Fin (4 :
-            ℕ))) (r (i - (1 : Fin (3 : ℕ))).succ) - BandVectors.1 (r (i - (1 : Fin (3 :
-            ℕ))).succ) (r (0 : Fin (4 : ℕ))) else BandVectors.1 (r (i + (1 : Fin (3 : ℕ))).succ)
-            (r (0 : Fin (4 : ℕ))) - BandVectors.1 (r (0 : Fin (4 : ℕ))) (r (i + (1 : Fin (3 :
-            ℕ))).succ))) → ((0 ≤ (r ((if Even s.val then i - 1 else i + 1).succ)).1) → (((0 : ℤ)
-            = (r (if Even (↑s : ℕ) then i - (1 : Fin (3 : ℕ)) else i + (1 : Fin (3 :
-            ℕ))).succ).1) → (∀ (a : Fin (3 : ℕ)), ∀ (g0 : BandPackingSymmetry), ∀ (P :
-            FordFareyParameter), (BandPackingSymmetryReversesOrientation g0 = false) → (((r (a +
-            (2 : Fin (3 : ℕ))).succ).1 = (0 : ℤ)) → ((BandPackingSymmetryQuadrupleAction g0 ![r
-            (0 : Fin (4 : ℕ)), r a.succ, r (a + (1 : Fin (3 : ℕ))).succ, r (a + (2 : Fin (3 :
-            ℕ))).succ] = FordRecursiveQuadruple P) → (
-        let q : Fin 4 → CircleCoordinates :=
-          ![r 0, r a.succ, r (a + 1).succ, r (a + 2).succ]
-        (ProperBandQuadruple q) → (∀ (negative : Bool), (BandPackingSymmetryScopedPhase g0 q
-            negative) → ((∀ (r : Fin (4 : ℕ) → CircleCoordinates), ProperBandQuadruple r → r (0 :
-            Fin (4 : ℕ)) = q (1 : Fin (4 : ℕ)) → r (2 : Fin (4 : ℕ)) = q (2 : Fin (4 : ℕ)) → r (3
-            : Fin (4 : ℕ)) = q (3 : Fin (4 : ℕ)) → BandPackingSymmetryScopedPhase g0 r negative)
-            → ((∀ (t : Fin (4 : ℕ) → CircleCoordinates), ProperBandQuadruple t → t (0 : Fin (4 :
-            ℕ)) = q (2 : Fin (4 : ℕ)) → t (1 : Fin (4 : ℕ)) = q (3 : Fin (4 : ℕ)) →
-            BandPackingSymmetryScopedPhase g0 t negative) → (∀ (g : BandPackingSymmetry),
-            (BandPackingSymmetryReversesOrientation g = BandPackingSymmetryReversesOrientation
-            g0) → ((BandPackingSymmetryScopedPhase g q false) → ((∀ (r : Fin (4 : ℕ) →
-            CircleCoordinates), ProperBandQuadruple r → r (0 : Fin (4 : ℕ)) = q (1 : Fin (4 : ℕ))
-            → r (2 : Fin (4 : ℕ)) = q (2 : Fin (4 : ℕ)) → r (3 : Fin (4 : ℕ)) = q (3 : Fin (4 :
-            ℕ)) → BandPackingSymmetryScopedPhase g r false) → ((∀ (t : Fin (4 : ℕ) →
-            CircleCoordinates), ProperBandQuadruple t → t (0 : Fin (4 : ℕ)) = q (2 : Fin (4 : ℕ))
-            → t (1 : Fin (4 : ℕ)) = q (3 : Fin (4 : ℕ)) → BandPackingSymmetryScopedPhase g t
-            false) → ((BandPrototile (BandPackingSymmetryCircleAction g (r i.succ))
-            (BandPackingSymmetryTileAction g W)) → (
-        let k : Fin 3 := i - a
-        (BandPackingSymmetryQuadrupleAction g q = FordRecursiveQuadruple P) → (BandPrototile
-            ((FordRecursiveQuadruple P) k.succ) (BandPackingSymmetryTileAction g
-            W))))))))))))))))))))) ) := by
+        exact
+        ∀ (r : Fin 4 → CircleCoordinates),
+          ∀ (i : Fin 3),
+            ∀ (W : ProtoTile),
+              (∀ (a : Fin (3 : ℕ)),
+                ∀ (g0 : BandPackingSymmetry),
+                  ∀ (P : FordFareyParameter),
+                    (BandPackingSymmetryReversesOrientation g0 = false) →
+                      (let q : Fin 4 → CircleCoordinates :=
+                        ![r 0, r a.succ, r (a + 1).succ, r (a + 2).succ];
+                      (∀ (g : BandPackingSymmetry),
+                        (BandPackingSymmetryReversesOrientation g =
+                            BandPackingSymmetryReversesOrientation g0) →
+                          ((BandPrototile
+                              (BandPackingSymmetryCircleAction g (r i.succ))
+                              (BandPackingSymmetryTileAction g W)) →
+                            (let k : Fin 3 := i - a;
+                            (BandPackingSymmetryQuadrupleAction g q =
+                                FordRecursiveQuadruple P) →
+                              (BandPrototile ((FordRecursiveQuadruple P) k.succ)
+                                (BandPackingSymmetryTileAction g W)))))))) := by
   classical
-  intro r i s U W Z hW hZ hWpos hWcent hZcent nonnegative zero a g0 P horient hzero hford q hq
-      negative hphase hphase1 hphase2 g horientg hfalse hfalse1 hfalse2 hW' k hzeroAction
+  intro r i W a g0 P horient q g horientg hW' k hzeroAction
   have he := congrFun hzeroAction k.succ
   have source :
       BandPackingSymmetryQuadrupleAction g q k.succ =
@@ -157,52 +134,28 @@ private theorem hWford :
 private theorem phaseForward :
     (by
       classical
-      exact
-        ∀ (r : Fin 4 → CircleCoordinates), ∀ (i : Fin 3), ∀ (s : Fin 4), ∀ (U : ProtoTile), ∀ (W
-            : ProtoTile), ∀ (Z : ProtoTile), (BandPrototile (r i.succ) W) → ((BandPrototile (r
-            (if Even (↑s : ℕ) then i - (1 : Fin (3 : ℕ)) else i + (1 : Fin (3 : ℕ))).succ) Z) →
-            (((0 : ℤ) < (r i.succ).1) → ((TileCentroid W - TileCentroid U = (1 / 2 : ℝ) •
-            GaussianRealPoint ((⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt) ^ (↑s : ℕ) * (BandVectors.1 (r
-            i.succ) (r (0 : Fin (4 : ℕ))) + BandVectors.1 (r (0 : Fin (4 : ℕ))) (r i.succ)))) →
-            ((TileCentroid Z - TileCentroid U = (1 / 2 : ℝ) • GaussianRealPoint ((⟨(0 : ℤ), (1 :
-            ℤ)⟩ : GaussianInt) ^ (↑s : ℕ) * if Even (↑s : ℕ) then BandVectors.1 (r (0 : Fin (4 :
-            ℕ))) (r (i - (1 : Fin (3 : ℕ))).succ) - BandVectors.1 (r (i - (1 : Fin (3 :
-            ℕ))).succ) (r (0 : Fin (4 : ℕ))) else BandVectors.1 (r (i + (1 : Fin (3 : ℕ))).succ)
-            (r (0 : Fin (4 : ℕ))) - BandVectors.1 (r (0 : Fin (4 : ℕ))) (r (i + (1 : Fin (3 :
-            ℕ))).succ))) → ((0 ≤ (r ((if Even s.val then i - 1 else i + 1).succ)).1) → (((0 : ℤ)
-            = (r (if Even (↑s : ℕ) then i - (1 : Fin (3 : ℕ)) else i + (1 : Fin (3 :
-            ℕ))).succ).1) → (∀ (a : Fin (3 : ℕ)), ∀ (g0 : BandPackingSymmetry), ∀ (P :
-            FordFareyParameter), (BandPackingSymmetryReversesOrientation g0 = false) → (((r (a +
-            (2 : Fin (3 : ℕ))).succ).1 = (0 : ℤ)) → ((BandPackingSymmetryQuadrupleAction g0 ![r
-            (0 : Fin (4 : ℕ)), r a.succ, r (a + (1 : Fin (3 : ℕ))).succ, r (a + (2 : Fin (3 :
-            ℕ))).succ] = FordRecursiveQuadruple P) → (
-        let q : Fin 4 → CircleCoordinates :=
-          ![r 0, r a.succ, r (a + 1).succ, r (a + 2).succ]
-        (ProperBandQuadruple q) → (∀ (negative : Bool), (BandPackingSymmetryScopedPhase g0 q
-            negative) → ((∀ (r : Fin (4 : ℕ) → CircleCoordinates), ProperBandQuadruple r → r (0 :
-            Fin (4 : ℕ)) = q (1 : Fin (4 : ℕ)) → r (2 : Fin (4 : ℕ)) = q (2 : Fin (4 : ℕ)) → r (3
-            : Fin (4 : ℕ)) = q (3 : Fin (4 : ℕ)) → BandPackingSymmetryScopedPhase g0 r negative)
-            → ((∀ (t : Fin (4 : ℕ) → CircleCoordinates), ProperBandQuadruple t → t (0 : Fin (4 :
-            ℕ)) = q (2 : Fin (4 : ℕ)) → t (1 : Fin (4 : ℕ)) = q (3 : Fin (4 : ℕ)) →
-            BandPackingSymmetryScopedPhase g0 t negative) → (∀ (g : BandPackingSymmetry),
-            (BandPackingSymmetryReversesOrientation g = BandPackingSymmetryReversesOrientation
-            g0) → ((BandPackingSymmetryScopedPhase g q false) → ((∀ (r : Fin (4 : ℕ) →
-            CircleCoordinates), ProperBandQuadruple r → r (0 : Fin (4 : ℕ)) = q (1 : Fin (4 : ℕ))
-            → r (2 : Fin (4 : ℕ)) = q (2 : Fin (4 : ℕ)) → r (3 : Fin (4 : ℕ)) = q (3 : Fin (4 :
-            ℕ)) → BandPackingSymmetryScopedPhase g r false) → ((∀ (t : Fin (4 : ℕ) →
-            CircleCoordinates), ProperBandQuadruple t → t (0 : Fin (4 : ℕ)) = q (2 : Fin (4 : ℕ))
-            → t (1 : Fin (4 : ℕ)) = q (3 : Fin (4 : ℕ)) → BandPackingSymmetryScopedPhase g t
-            false) → ((BandPrototile (BandPackingSymmetryCircleAction g (r i.succ))
-            (BandPackingSymmetryTileAction g W)) → (
-        let k : Fin 3 := i - a
-        (BandPackingSymmetryQuadrupleAction g q = FordRecursiveQuadruple P) → ((BandPrototile
-            ((FordRecursiveQuadruple P) k.succ) (BandPackingSymmetryTileAction g W)) →
-            (BandVectors.1 ((FordRecursiveQuadruple P) k.succ) ((FordRecursiveQuadruple P) 0) =
-            BandPackingSymmetryVectorAction g (BandVectors.1 (r i.succ) (r
-            0))))))))))))))))))))))) ) := by
+        exact
+        ∀ (r : Fin 4 → CircleCoordinates),
+          ∀ (i : Fin 3),
+            (∀ (a : Fin (3 : ℕ)),
+              ∀ (g0 : BandPackingSymmetry),
+                ∀ (P : FordFareyParameter),
+                  (BandPackingSymmetryReversesOrientation g0 = false) →
+                    (let q : Fin 4 → CircleCoordinates :=
+                      ![r 0, r a.succ, r (a + 1).succ, r (a + 2).succ];
+                    (∀ (g : BandPackingSymmetry),
+                      (BandPackingSymmetryReversesOrientation g =
+                          BandPackingSymmetryReversesOrientation g0) →
+                        ((BandPackingSymmetryScopedPhase g q false) →
+                          (let k : Fin 3 := i - a;
+                          (BandPackingSymmetryQuadrupleAction g q =
+                              FordRecursiveQuadruple P) →
+                            (BandVectors.1 ((FordRecursiveQuadruple P) k.succ)
+                                ((FordRecursiveQuadruple P) 0) =
+                              BandPackingSymmetryVectorAction g
+                                (BandVectors.1 (r i.succ) (r 0))))))))) := by
   classical
-  intro r i s U W Z hW hZ hWpos hWcent hZcent nonnegative zero a g0 P horient hzero hford q hq
-      negative hphase hphase1 hphase2 g horientg hfalse hfalse1 hfalse2 hW' k hzeroAction hWford
+  intro r i a g0 P horient q g horientg hfalse k hzeroAction
   have phase := (show BandPackingSymmetryScopedPhase g q false from hfalse)
   simp only [BandPackingSymmetryScopedPhase] at phase
   rw [hzeroAction] at phase
@@ -213,55 +166,28 @@ private theorem phaseForward :
 private theorem phaseBackward :
     (by
       classical
-      exact
-        ∀ (r : Fin 4 → CircleCoordinates), ∀ (i : Fin 3), ∀ (s : Fin 4), ∀ (U : ProtoTile), ∀ (W
-            : ProtoTile), ∀ (Z : ProtoTile), (BandPrototile (r i.succ) W) → ((BandPrototile (r
-            (if Even (↑s : ℕ) then i - (1 : Fin (3 : ℕ)) else i + (1 : Fin (3 : ℕ))).succ) Z) →
-            (((0 : ℤ) < (r i.succ).1) → ((TileCentroid W - TileCentroid U = (1 / 2 : ℝ) •
-            GaussianRealPoint ((⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt) ^ (↑s : ℕ) * (BandVectors.1 (r
-            i.succ) (r (0 : Fin (4 : ℕ))) + BandVectors.1 (r (0 : Fin (4 : ℕ))) (r i.succ)))) →
-            ((TileCentroid Z - TileCentroid U = (1 / 2 : ℝ) • GaussianRealPoint ((⟨(0 : ℤ), (1 :
-            ℤ)⟩ : GaussianInt) ^ (↑s : ℕ) * if Even (↑s : ℕ) then BandVectors.1 (r (0 : Fin (4 :
-            ℕ))) (r (i - (1 : Fin (3 : ℕ))).succ) - BandVectors.1 (r (i - (1 : Fin (3 :
-            ℕ))).succ) (r (0 : Fin (4 : ℕ))) else BandVectors.1 (r (i + (1 : Fin (3 : ℕ))).succ)
-            (r (0 : Fin (4 : ℕ))) - BandVectors.1 (r (0 : Fin (4 : ℕ))) (r (i + (1 : Fin (3 :
-            ℕ))).succ))) → ((0 ≤ (r ((if Even s.val then i - 1 else i + 1).succ)).1) → (((0 : ℤ)
-            = (r (if Even (↑s : ℕ) then i - (1 : Fin (3 : ℕ)) else i + (1 : Fin (3 :
-            ℕ))).succ).1) → (∀ (a : Fin (3 : ℕ)), ∀ (g0 : BandPackingSymmetry), ∀ (P :
-            FordFareyParameter), (BandPackingSymmetryReversesOrientation g0 = false) → (((r (a +
-            (2 : Fin (3 : ℕ))).succ).1 = (0 : ℤ)) → ((BandPackingSymmetryQuadrupleAction g0 ![r
-            (0 : Fin (4 : ℕ)), r a.succ, r (a + (1 : Fin (3 : ℕ))).succ, r (a + (2 : Fin (3 :
-            ℕ))).succ] = FordRecursiveQuadruple P) → (
-        let q : Fin 4 → CircleCoordinates :=
-          ![r 0, r a.succ, r (a + 1).succ, r (a + 2).succ]
-        (ProperBandQuadruple q) → (∀ (negative : Bool), (BandPackingSymmetryScopedPhase g0 q
-            negative) → ((∀ (r : Fin (4 : ℕ) → CircleCoordinates), ProperBandQuadruple r → r (0 :
-            Fin (4 : ℕ)) = q (1 : Fin (4 : ℕ)) → r (2 : Fin (4 : ℕ)) = q (2 : Fin (4 : ℕ)) → r (3
-            : Fin (4 : ℕ)) = q (3 : Fin (4 : ℕ)) → BandPackingSymmetryScopedPhase g0 r negative)
-            → ((∀ (t : Fin (4 : ℕ) → CircleCoordinates), ProperBandQuadruple t → t (0 : Fin (4 :
-            ℕ)) = q (2 : Fin (4 : ℕ)) → t (1 : Fin (4 : ℕ)) = q (3 : Fin (4 : ℕ)) →
-            BandPackingSymmetryScopedPhase g0 t negative) → (∀ (g : BandPackingSymmetry),
-            (BandPackingSymmetryReversesOrientation g = BandPackingSymmetryReversesOrientation
-            g0) → ((BandPackingSymmetryScopedPhase g q false) → ((∀ (r : Fin (4 : ℕ) →
-            CircleCoordinates), ProperBandQuadruple r → r (0 : Fin (4 : ℕ)) = q (1 : Fin (4 : ℕ))
-            → r (2 : Fin (4 : ℕ)) = q (2 : Fin (4 : ℕ)) → r (3 : Fin (4 : ℕ)) = q (3 : Fin (4 :
-            ℕ)) → BandPackingSymmetryScopedPhase g r false) → ((∀ (t : Fin (4 : ℕ) →
-            CircleCoordinates), ProperBandQuadruple t → t (0 : Fin (4 : ℕ)) = q (2 : Fin (4 : ℕ))
-            → t (1 : Fin (4 : ℕ)) = q (3 : Fin (4 : ℕ)) → BandPackingSymmetryScopedPhase g t
-            false) → ((BandPrototile (BandPackingSymmetryCircleAction g (r i.succ))
-            (BandPackingSymmetryTileAction g W)) → (
-        let k : Fin 3 := i - a
-        (BandPackingSymmetryQuadrupleAction g q = FordRecursiveQuadruple P) → ((BandPrototile
-            ((FordRecursiveQuadruple P) k.succ) (BandPackingSymmetryTileAction g W)) →
-            ((BandVectors.1 ((FordRecursiveQuadruple P) k.succ) ((FordRecursiveQuadruple P) 0) =
-            BandPackingSymmetryVectorAction g (BandVectors.1 (r i.succ) (r 0))) → (BandVectors.1
-            ((FordRecursiveQuadruple P) 0) ((FordRecursiveQuadruple P) k.succ) =
-            BandPackingSymmetryVectorAction g (BandVectors.1 (r 0) (r
-            i.succ)))))))))))))))))))))))) ) := by
+        exact
+        ∀ (r : Fin 4 → CircleCoordinates),
+          ∀ (i : Fin 3),
+            (∀ (a : Fin (3 : ℕ)),
+              ∀ (g0 : BandPackingSymmetry),
+                ∀ (P : FordFareyParameter),
+                  (BandPackingSymmetryReversesOrientation g0 = false) →
+                    (let q : Fin 4 → CircleCoordinates :=
+                      ![r 0, r a.succ, r (a + 1).succ, r (a + 2).succ];
+                    (∀ (g : BandPackingSymmetry),
+                      (BandPackingSymmetryReversesOrientation g =
+                          BandPackingSymmetryReversesOrientation g0) →
+                        ((BandPackingSymmetryScopedPhase g q false) →
+                          (let k : Fin 3 := i - a;
+                          (BandPackingSymmetryQuadrupleAction g q =
+                              FordRecursiveQuadruple P) →
+                            (BandVectors.1 ((FordRecursiveQuadruple P) 0)
+                                ((FordRecursiveQuadruple P) k.succ) =
+                              BandPackingSymmetryVectorAction g
+                                (BandVectors.1 (r 0) (r i.succ))))))))) := by
   classical
-  intro r i s U W Z hW hZ hWpos hWcent hZcent nonnegative zero a g0 P horient hzero hford q hq
-      negative hphase hphase1 hphase2 g horientg hfalse hfalse1 hfalse2 hW' k hzeroAction hWford
-      phaseForward
+  intro r i a g0 P horient q g horientg hfalse k hzeroAction
   have phase := (show BandPackingSymmetryScopedPhase g q false from hfalse)
   simp only [BandPackingSymmetryScopedPhase] at phase
   rw [hzeroAction] at phase
@@ -501,85 +427,100 @@ private theorem hUposFord :
 private theorem hWposFord :
     (by
       classical
-      exact
-        ∀ (r : Fin 4 → CircleCoordinates), ∀ (i : Fin 3), ∀ (s : Fin 4), ∀ (U : ProtoTile), ∀ (W
-            : ProtoTile), ∀ (Z : ProtoTile), (BandPrototile (r i.succ) W) → ((BandPrototile (r
-            (if Even (↑s : ℕ) then i - (1 : Fin (3 : ℕ)) else i + (1 : Fin (3 : ℕ))).succ) Z) →
-            (((0 : ℤ) < (r i.succ).1) → ((TileCentroid W - TileCentroid U = (1 / 2 : ℝ) •
-            GaussianRealPoint ((⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt) ^ (↑s : ℕ) * (BandVectors.1 (r
-            i.succ) (r (0 : Fin (4 : ℕ))) + BandVectors.1 (r (0 : Fin (4 : ℕ))) (r i.succ)))) →
-            ((TileCentroid Z - TileCentroid U = (1 / 2 : ℝ) • GaussianRealPoint ((⟨(0 : ℤ), (1 :
-            ℤ)⟩ : GaussianInt) ^ (↑s : ℕ) * if Even (↑s : ℕ) then BandVectors.1 (r (0 : Fin (4 :
-            ℕ))) (r (i - (1 : Fin (3 : ℕ))).succ) - BandVectors.1 (r (i - (1 : Fin (3 :
-            ℕ))).succ) (r (0 : Fin (4 : ℕ))) else BandVectors.1 (r (i + (1 : Fin (3 : ℕ))).succ)
-            (r (0 : Fin (4 : ℕ))) - BandVectors.1 (r (0 : Fin (4 : ℕ))) (r (i + (1 : Fin (3 :
-            ℕ))).succ))) → ((0 ≤ (r ((if Even s.val then i - 1 else i + 1).succ)).1) → (((0 : ℤ)
-            = (r (if Even (↑s : ℕ) then i - (1 : Fin (3 : ℕ)) else i + (1 : Fin (3 :
-            ℕ))).succ).1) → (∀ (a : Fin (3 : ℕ)), ∀ (g0 : BandPackingSymmetry), ∀ (P :
-            FordFareyParameter), (BandPackingSymmetryReversesOrientation g0 = false) → (((r (a +
-            (2 : Fin (3 : ℕ))).succ).1 = (0 : ℤ)) → ((BandPackingSymmetryQuadrupleAction g0 ![r
-            (0 : Fin (4 : ℕ)), r a.succ, r (a + (1 : Fin (3 : ℕ))).succ, r (a + (2 : Fin (3 :
-            ℕ))).succ] = FordRecursiveQuadruple P) → (
-        let q : Fin 4 → CircleCoordinates :=
-          ![r 0, r a.succ, r (a + 1).succ, r (a + 2).succ]
-        (ProperBandQuadruple q) → (∀ (negative : Bool), (BandPackingSymmetryScopedPhase g0 q
-            negative) → ((∀ (r : Fin (4 : ℕ) → CircleCoordinates), ProperBandQuadruple r → r (0 :
-            Fin (4 : ℕ)) = q (1 : Fin (4 : ℕ)) → r (2 : Fin (4 : ℕ)) = q (2 : Fin (4 : ℕ)) → r (3
-            : Fin (4 : ℕ)) = q (3 : Fin (4 : ℕ)) → BandPackingSymmetryScopedPhase g0 r negative)
-            → ((∀ (t : Fin (4 : ℕ) → CircleCoordinates), ProperBandQuadruple t → t (0 : Fin (4 :
-            ℕ)) = q (2 : Fin (4 : ℕ)) → t (1 : Fin (4 : ℕ)) = q (3 : Fin (4 : ℕ)) →
-            BandPackingSymmetryScopedPhase g0 t negative) → (∀ (g : BandPackingSymmetry),
-            (BandPackingSymmetryReversesOrientation g = BandPackingSymmetryReversesOrientation
-            g0) → ((BandPackingSymmetryScopedPhase g q false) → ((∀ (r : Fin (4 : ℕ) →
-            CircleCoordinates), ProperBandQuadruple r → r (0 : Fin (4 : ℕ)) = q (1 : Fin (4 : ℕ))
-            → r (2 : Fin (4 : ℕ)) = q (2 : Fin (4 : ℕ)) → r (3 : Fin (4 : ℕ)) = q (3 : Fin (4 :
-            ℕ)) → BandPackingSymmetryScopedPhase g r false) → ((∀ (t : Fin (4 : ℕ) →
-            CircleCoordinates), ProperBandQuadruple t → t (0 : Fin (4 : ℕ)) = q (2 : Fin (4 : ℕ))
-            → t (1 : Fin (4 : ℕ)) = q (3 : Fin (4 : ℕ)) → BandPackingSymmetryScopedPhase g t
-            false) → (((∀ (C : CircleCoordinates), (BandPackingSymmetryCircleAction g C).1 = C.1)
-            ∧ (∀ (C : CircleCoordinates), ∀ (T : ProtoTile), BandPrototile C T ↔ BandPrototile
-            (BandPackingSymmetryCircleAction g C) (BandPackingSymmetryTileAction g T)) ∧ ∀ (q :
-            Fin (4 : ℕ) → CircleCoordinates), ∀ (T : ProtoTile), ∀ (S : Fin (3 : ℕ) → Bool →
-            ProtoTile), ProperBandQuadruple q → BandPrototile (q (0 : Fin (4 : ℕ))) T → (∀ (i :
-            Fin (3 : ℕ)), ∀ (s : Bool), BandSubtileOccurrence q T i s (S i s)) → (∀ (x :
-            LatticeCell), x ∈ T.cells ↔ ∃ (i : Fin (3 : ℕ)) (s : Bool), x ∈ (S i s).cells) →
-        let sigma := fun (i : Fin (3 : ℕ)) => if BandPackingSymmetryReversesOrientation g = true
-            then -i else i; ∃ (negative : Bool) (e : Fin (3 : ℕ) × Bool ≃ Fin (3 : ℕ) × Bool) (S'
-            : Fin (3 : ℕ) → Bool → ProtoTile), BandPackingSymmetryScopedPhase g q negative ∧ (∀
-            (i : Fin (3 : ℕ)), ∀ (s : Bool), (e : Fin (3 : ℕ) × Bool → Fin (3 : ℕ) × Bool) (i, s)
-            = (sigma i, s ^^ negative)) ∧ (∀ (i : Fin (3 : ℕ)), ∀ (s : Bool), S' ((e : Fin (3 :
-            ℕ) × Bool → Fin (3 : ℕ) × Bool) (i, s)).1 ((e : Fin (3 : ℕ) × Bool → Fin (3 : ℕ) ×
-            Bool) (i, s)).2 = BandPackingSymmetryTileAction g (S i s)) ∧ (∀ (i : Fin (3 : ℕ)), ∀
-            (s : Bool), BandSubtileOccurrence (BandPackingSymmetryQuadrupleAction g q)
-            (BandPackingSymmetryTileAction g T) i s (S' i s)) ∧ ∀ (x : LatticeCell), x ∈
-            (BandPackingSymmetryTileAction g T).cells ↔ ∃ (i : Fin (3 : ℕ)) (s : Bool), x ∈ (S' i
-            s).cells) → ((BandPrototile (BandPackingSymmetryCircleAction g (r i.succ))
-            (BandPackingSymmetryTileAction g W)) → (
-        let k : Fin 3 := i - a
-        (BandPackingSymmetryQuadrupleAction g q = FordRecursiveQuadruple P) → ((BandPrototile
-            ((FordRecursiveQuadruple P) k.succ) (BandPackingSymmetryTileAction g W)) →
-            ((BandVectors.1 ((FordRecursiveQuadruple P) k.succ) ((FordRecursiveQuadruple P) 0) =
-            BandPackingSymmetryVectorAction g (BandVectors.1 (r i.succ) (r 0))) → ((BandVectors.1
-            ((FordRecursiveQuadruple P) 0) ((FordRecursiveQuadruple P) k.succ) =
-            BandPackingSymmetryVectorAction g (BandVectors.1 (r 0) (r i.succ))) → ((TileCentroid
-            (BandPackingSymmetryTileAction g W) - TileCentroid (BandPackingSymmetryTileAction g
-            U) = (1 / 2 : Real) • GaussianRealPoint (BandPackingSymmetryVectorAction g ((⟨0, 1⟩ :
-            GaussianInt) ^ s.val * (BandVectors.1 (r i.succ) (r 0) + BandVectors.1 (r 0) (r
-            i.succ))))) → ((BandPackingSymmetryVectorAction g ((⟨0, 1⟩ : GaussianInt) ^ s.val *
-            (BandVectors.1 (r i.succ) (r 0) + BandVectors.1 (r 0) (r i.succ))) = (⟨0, 1⟩ :
-            GaussianInt) ^ s.val * (BandVectors.1 ((FordRecursiveQuadruple P) k.succ)
-            ((FordRecursiveQuadruple P) 0) + BandVectors.1 ((FordRecursiveQuadruple P) 0)
-            ((FordRecursiveQuadruple P) k.succ))) → ((TileCentroid (BandPackingSymmetryTileAction
-            g W) - TileCentroid (BandPackingSymmetryTileAction g U) = (1 / 2 : Real) •
-            GaussianRealPoint ((⟨0, 1⟩ : GaussianInt) ^ s.val * (BandVectors.1
-            ((FordRecursiveQuadruple P) k.succ) ((FordRecursiveQuadruple P) 0) + BandVectors.1
-            ((FordRecursiveQuadruple P) 0) ((FordRecursiveQuadruple P) k.succ)))) → (0 <
-            ((FordRecursiveQuadruple P) k.succ).1))))))))))))))))))))))))))) ) := by
+        exact
+        ∀ (r : Fin 4 → CircleCoordinates),
+          ∀ (i : Fin 3),
+            (((0 : ℤ) < (r i.succ).1) →
+              (∀ (a : Fin (3 : ℕ)),
+                ∀ (g0 : BandPackingSymmetry),
+                  ∀ (P : FordFareyParameter),
+                    (BandPackingSymmetryReversesOrientation g0 = false) →
+                      (let q : Fin 4 → CircleCoordinates :=
+                        ![r 0, r a.succ, r (a + 1).succ, r (a + 2).succ];
+                      (∀ (g : BandPackingSymmetry),
+                        (BandPackingSymmetryReversesOrientation g =
+                            BandPackingSymmetryReversesOrientation g0) →
+                          (((∀ (C : CircleCoordinates),
+                                (BandPackingSymmetryCircleAction g C).1 = C.1) ∧
+                              (∀ (C : CircleCoordinates),
+                                  ∀ (T : ProtoTile),
+                                    BandPrototile C T ↔
+                                      BandPrototile
+                                        (BandPackingSymmetryCircleAction g C)
+                                        (BandPackingSymmetryTileAction g T)) ∧
+                                ∀ (q : Fin (4 : ℕ) → CircleCoordinates),
+                                  ∀ (T : ProtoTile),
+                                    ∀ (S : Fin (3 : ℕ) → Bool → ProtoTile),
+                                      ProperBandQuadruple q →
+                                        BandPrototile (q (0 : Fin (4 : ℕ))) T →
+                                          (∀ (i : Fin (3 : ℕ)),
+                                              ∀ (s : Bool),
+                                                BandSubtileOccurrence q T i s
+                                                  (S i s)) →
+                                            (∀ (x : LatticeCell),
+                                                x ∈ T.cells ↔
+                                                  ∃ (i : Fin (3 : ℕ)) (s : Bool),
+                                                    x ∈ (S i s).cells) →
+                                              let sigma := fun (i : Fin (3 : ℕ)) =>
+                                                if
+                                                    BandPackingSymmetryReversesOrientation
+                                                        g =
+                                                      true then
+                                                  -i
+                                                else i;
+                                              ∃ (negative : Bool) (e :
+                                                Fin (3 : ℕ) × Bool ≃
+                                                  Fin (3 : ℕ) × Bool)
+                                                (S' :
+                                                Fin (3 : ℕ) → Bool → ProtoTile),
+                                                BandPackingSymmetryScopedPhase g q
+                                                    negative ∧
+                                                  (∀ (i : Fin (3 : ℕ)),
+                                                      ∀ (s : Bool),
+                                                        (e :
+                                                              Fin (3 : ℕ) × Bool →
+                                                                Fin (3 : ℕ) × Bool)
+                                                            (i, s) =
+                                                          (sigma i,
+                                                            s ^^ negative)) ∧
+                                                    (∀ (i : Fin (3 : ℕ)),
+                                                        ∀ (s : Bool),
+                                                          S'
+                                                              ((e :
+                                                                    Fin (3 : ℕ) ×
+                                                                        Bool →
+                                                                      Fin (3 : ℕ) ×
+                                                                        Bool)
+                                                                  (i, s)).1
+                                                              ((e :
+                                                                    Fin (3 : ℕ) ×
+                                                                        Bool →
+                                                                      Fin (3 : ℕ) ×
+                                                                        Bool)
+                                                                  (i, s)).2 =
+                                                            BandPackingSymmetryTileAction
+                                                              g (S i s)) ∧
+                                                      (∀ (i : Fin (3 : ℕ)),
+                                                          ∀ (s : Bool),
+                                                            BandSubtileOccurrence
+                                                              (BandPackingSymmetryQuadrupleAction
+                                                                g q)
+                                                              (BandPackingSymmetryTileAction
+                                                                g T)
+                                                              i s (S' i s)) ∧
+                                                        ∀ (x : LatticeCell),
+                                                          x ∈
+                                                              (BandPackingSymmetryTileAction
+                                                                  g T).cells ↔
+                                                            ∃ (i : Fin (3 : ℕ)) (s :
+                                                              Bool),
+                                                              x ∈ (S' i s).cells) →
+                            (let k : Fin 3 := i - a;
+                            (BandPackingSymmetryQuadrupleAction g q =
+                                FordRecursiveQuadruple P) →
+                              (0 < ((FordRecursiveQuadruple P) k.succ).1)))))))) := by
   classical
-  intro r i s U W Z hW hZ hWpos hWcent hZcent nonnegative zero a g0 P horient hzero hford q hq
-      negative hphase hphase1 hphase2 g horientg hfalse hfalse1 hfalse2 tileCovariance hW' k
-      hzeroAction hWford phaseForward phaseBackward centroidAction vectorIdentity
-      transformedCentroid
+  intro r i hWpos a g0 P horient q g horientg tileCovariance k hzeroAction
   have he := congrArg (fun x => (x k.succ).1) hzeroAction
   have source :
       BandPackingSymmetryQuadrupleAction g q k.succ =
@@ -710,25 +651,20 @@ theorem BandOrientedChildParentRightEndpoint
             hzeroAction
     have hWford : BandPrototile
         ((FordRecursiveQuadruple P) k.succ)
-        (BandPackingSymmetryTileAction g W) := OrientedRightEndpointGeometry.hWford r i s U W Z
-            hW hZ hWpos hWcent hZcent nonnegative zero a g0 P horient hzero hford hq negative
-            hphase hphase1 hphase2 g horientg hfalse hfalse1 hfalse2 hW' hzeroAction
+        (BandPackingSymmetryTileAction g W) := OrientedRightEndpointGeometry.hWford r i W a g0 P
+            horient g horientg hW' hzeroAction
     have phaseForward :
         BandVectors.1 ((FordRecursiveQuadruple P) k.succ)
             ((FordRecursiveQuadruple P) 0) =
           BandPackingSymmetryVectorAction g
-            (BandVectors.1 (r i.succ) (r 0)) := OrientedRightEndpointGeometry.phaseForward r i s
-                U W Z hW hZ hWpos hWcent hZcent nonnegative zero a g0 P horient hzero hford hq
-                negative hphase hphase1 hphase2 g horientg hfalse hfalse1 hfalse2 hW' hzeroAction
-                hWford
+            (BandVectors.1 (r i.succ) (r 0)) := OrientedRightEndpointGeometry.phaseForward r i a
+                g0 P horient g horientg hfalse hzeroAction
     have phaseBackward :
         BandVectors.1 ((FordRecursiveQuadruple P) 0)
             ((FordRecursiveQuadruple P) k.succ) =
           BandPackingSymmetryVectorAction g
-            (BandVectors.1 (r 0) (r i.succ)) := OrientedRightEndpointGeometry.phaseBackward r i s
-                U W Z hW hZ hWpos hWcent hZcent nonnegative zero a g0 P horient hzero hford hq
-                negative hphase hphase1 hphase2 g horientg hfalse hfalse1 hfalse2 hW' hzeroAction
-                hWford phaseForward
+            (BandVectors.1 (r 0) (r i.succ)) := OrientedRightEndpointGeometry.phaseBackward r i
+                a g0 P horient g horientg hfalse hzeroAction
     have centroidAction :
         TileCentroid (BandPackingSymmetryTileAction g W) -
             TileCentroid (BandPackingSymmetryTileAction g U) =
@@ -777,10 +713,8 @@ theorem BandOrientedChildParentRightEndpoint
         OrientedRightEndpointGeometry.hUposFord r hUpos a g0 P horient g horientg tileCovariance
         hzeroAction
     have hWposFord : 0 < ((FordRecursiveQuadruple P) k.succ).1 :=
-        OrientedRightEndpointGeometry.hWposFord r i s U W Z hW hZ hWpos hWcent hZcent nonnegative
-        zero a g0 P horient hzero hford hq negative hphase hphase1 hphase2 g horientg hfalse
-        hfalse1 hfalse2 tileCovariance hW' hzeroAction hWford phaseForward phaseBackward
-        centroidAction vectorIdentity transformedCentroid
+        OrientedRightEndpointGeometry.hWposFord r i hWpos a g0 P horient g horientg
+            tileCovariance hzeroAction
     have fordResult := FordOrientedChildParentRightEndpoint P hP k s
       (BandPackingSymmetryTileAction g U)
       (BandPackingSymmetryTileAction g W) hUford hWford hUposFord hWposFord

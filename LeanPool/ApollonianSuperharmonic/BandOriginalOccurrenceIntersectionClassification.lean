@@ -6,6 +6,7 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.LatticeTileNonempty
 
 public import LeanPool.ApollonianSuperharmonic.BandOrderedGeneralLayoutCertificate
 public import LeanPool.ApollonianSuperharmonic.BandOriginalPairSeparation
@@ -79,21 +80,6 @@ private theorem hmodified :
   intro q cfg C₀ T cert P O u v a
   exact cert.modified_tile a
 
-private theorem hnonempty :
-    (by
-      classical
-      exact
-        ∀ (X : ProtoTile), (LatticeTile X) → (X.cells.Nonempty) ) := by
-  classical
-  intro X hX
-  unfold LatticeTile TopologicalDisk TileRealization at hX
-  rcases hX with ⟨e⟩
-  have hp : (0 : Real × Real) ∈
-      (Metric.closedBall (0 : Real × Real) 1 : Set (Real × Real)) := by simp
-  have hm := (e ⟨(0 : Real × Real), hp⟩).property
-  simp only [Set.mem_iUnion] at hm
-  obtain ⟨x, hx⟩ := hm
-  exact ⟨x, by simpa [TileRealization] using hx.1⟩
 
 private theorem hmodA :
     (by
@@ -1129,7 +1115,7 @@ theorem BandOriginalOccurrenceIntersectionClassification
   have htranscells (X : ProtoTile) (w : GaussianInt) :
       (TileTranslation X w).cells = X.cells.image (GaussianTranslation w) :=
     (TileTranslationFormulas X w).1
-  have hnonempty (X : ProtoTile) (hX : LatticeTile X) := OriginalIntersectionGeometry.hnonempty X hX
+  have hnonempty (X : ProtoTile) (hX : LatticeTile X) := LatticeTileNonempty.cells X hX
   have htranslate_complement (A B : ProtoTile) (w : GaussianInt) :
       TileTranslation (TileCellComplement A B) w =
         TileCellComplement (TileTranslation A w) (TileTranslation B w) :=

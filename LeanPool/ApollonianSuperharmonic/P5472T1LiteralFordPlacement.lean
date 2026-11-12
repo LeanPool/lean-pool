@@ -186,53 +186,21 @@ private theorem hPminusCent :
 private theorem hcenter' :
     (by
       classical
-      exact
-        ∀ (q : Fin 4 → CircleCoordinates), ∀ (T : ProtoTile), ∀ (P : Fin 3 → Bool → ProtoTile), ∀
-            (r : Fin 3 → Bool → PartialOdometer), ∀ (x : GaussianInt), (GaussianRealPoint x =
-            TileCentroid T) → (∀ (F : FordFareyParameter), ∀ (s : BandPackingSymmetry), ∀ (delta
-            : Bool), (BandPackingSymmetryReversesOrientation s = false) → ((∃ (z : GaussianInt),
-            s = BandPackingSymmetry.shift z ∨ s = (BandPackingSymmetry.shift z).comp
-            BandPackingSymmetry.negate) → ((BandPackingSymmetryScopedPhase s q delta) →
-            ((BandPackingSymmetryCircleAction s (q (1 : Fin (4 : ℕ))) = FordCircleCoordinate F.p
-            F.q) → ((BandVectors.1 (BandPackingSymmetryQuadrupleAction s q (3 : Fin (4 : ℕ)))
-            (BandPackingSymmetryQuadrupleAction s q (2 : Fin (4 : ℕ))) = (⟨-(↑F.q₁ : ℤ), (↑F.q₂ :
-            ℤ)⟩ : GaussianInt)) → (
-        let c := BandPackingSymmetryVectorAction s x
-        let U := TileTranslation (BandPackingSymmetryTileAction s (P 0 (!delta))) (-c)
-        let V := TileTranslation (BandPackingSymmetryTileAction s (P 0 delta)) (-c)
-        let hp := PartialOdometerAffineTranslate
-          (BandPackingSymmetryPartialOdometerAction s (r 0 (!delta))) (-c) 0 0
-        let hm := PartialOdometerAffineTranslate
-          (BandPackingSymmetryPartialOdometerAction s (r 0 delta)) (-c) 0 0
-        (TileOdometer (FordCircleCoordinate F.p F.q) U hp) → ((TileOdometer (FordCircleCoordinate
-            F.p F.q) V hm) → (∀ (e : Fin (3 : ℕ) × Bool ≃ Fin (3 : ℕ) × Bool), ∀ (P' : Fin (3 :
-            ℕ) → Bool → ProtoTile), (∀ (i : Fin (3 : ℕ)), ∀ (s_1 : Bool), P' ((e : Fin (3 : ℕ) ×
-            Bool → Fin (3 : ℕ) × Bool) (i, s_1)).1 ((e : Fin (3 : ℕ) × Bool → Fin (3 : ℕ) × Bool)
-            (i, s_1)).2 = BandPackingSymmetryTileAction s (P i s_1)) → ((∀ (i : Fin (3 : ℕ)), ∀
-            (s_1 : Bool), BandSubtileOccurrence (BandPackingSymmetryQuadrupleAction s q)
-            (BandPackingSymmetryTileAction s T) i s_1 (P' i s_1)) → ((∀ (x : LatticeCell), x ∈
-            (BandPackingSymmetryTileAction s T).cells ↔ ∃ (i : Fin (3 : ℕ)) (s : Bool), x ∈ (P' i
-            s).cells) → ((BandPackingSymmetryScopedPhase s q delta) → ((∀ (i : Fin (3 : ℕ)), ∀
-            (s_1 : Bool), (e : Fin (3 : ℕ) × Bool → Fin (3 : ℕ) × Bool) (i, s_1) = ((fun (i : Fin
-            (3 : ℕ)) => if BandPackingSymmetryReversesOrientation s = true then -i else i) i, s_1
-            ^^ delta)) → ((TileCentroid (BandPackingSymmetryTileAction s (P 0 (!delta))) -
-            TileCentroid (BandPackingSymmetryTileAction s T) = (1 : Real) • ((1 / 2 : Real) •
-            (GaussianRealPoint (BandVectors.1 (BandPackingSymmetryQuadrupleAction s q 3)
-            (BandPackingSymmetryQuadrupleAction s q 2)) - (-(GaussianRealPoint (BandVectors.1
-            (BandPackingSymmetryQuadrupleAction s q 3) (BandPackingSymmetryQuadrupleAction s q
-            2))).2, (GaussianRealPoint (BandVectors.1 (BandPackingSymmetryQuadrupleAction s q 3)
-            (BandPackingSymmetryQuadrupleAction s q 2))).1)))) → ((TileCentroid
-            (BandPackingSymmetryTileAction s (P 0 delta)) - TileCentroid
-            (BandPackingSymmetryTileAction s T) = (-1 : Real) • ((1 / 2 : Real) •
-            (GaussianRealPoint (BandVectors.1 (BandPackingSymmetryQuadrupleAction s q 3)
-            (BandPackingSymmetryQuadrupleAction s q 2)) - (-(GaussianRealPoint (BandVectors.1
-            (BandPackingSymmetryQuadrupleAction s q 3) (BandPackingSymmetryQuadrupleAction s q
-            2))).2, (GaussianRealPoint (BandVectors.1 (BandPackingSymmetryQuadrupleAction s q 3)
-            (BandPackingSymmetryQuadrupleAction s q 2))).1)))) → (TileCentroid
-            (BandPackingSymmetryTileAction s T) = GaussianRealPoint c))))))))))))))) ) := by
+        exact
+        ∀ (T : ProtoTile),
+          ∀ (x : GaussianInt),
+            (GaussianRealPoint x = TileCentroid T) →
+              (∀ (s : BandPackingSymmetry),
+                ((∃ (z : GaussianInt),
+                    s = BandPackingSymmetry.shift z ∨
+                      s =
+                        (BandPackingSymmetry.shift z).comp
+                          BandPackingSymmetry.negate) →
+                  (let c := BandPackingSymmetryVectorAction s x;
+                  (TileCentroid (BandPackingSymmetryTileAction s T) =
+                    GaussianRealPoint c))))) := by
   classical
-  intro q T P r x hcenter F s delta hrev hword hphase hrootCircle hW c U V hp hm hplus' hminus' e
-      P' hPmap hPocc hPcover hdphase he hPplusCent hPminusCent
+  intro T x hcenter s hword c
   rcases hword with ⟨w, hs | hs⟩
   · subst s
     simpa [c, BandPackingSymmetryTileAction, BandPackingSymmetryVectorAction] using
@@ -692,9 +660,7 @@ theorem P5472T1LiteralFordPlacement
   have hPplusCent := LiteralFordPlacementGeometry.hPplusCent q T P s delta e P' hPmap hPocc hePlus
   have hPminusCent := LiteralFordPlacementGeometry.hPminusCent q T P s delta e P' hPmap hPocc
       heMinus
-  have hcenter' := LiteralFordPlacementGeometry.hcenter' q T P r x hcenter F s delta hrev hword
-      hphase hrootCircle hW hplus' hminus' e P' hPmap hPocc hPcover hdphase he hPplusCent
-      hPminusCent
+  have hcenter' := LiteralFordPlacementGeometry.hcenter' T x hcenter s hword
   have hsumReal : (F.q : Real) = (F.q₁ : Real) + F.q₂ := by exact_mod_cast F.sum_q
   have hDplus := LiteralFordPlacementGeometry.hDplus F hsumReal
   have hDminus := LiteralFordPlacementGeometry.hDminus F hsumReal

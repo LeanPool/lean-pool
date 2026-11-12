@@ -7,7 +7,6 @@ module
 
 public import Mathlib.Init
 
-public import LeanPool.ApollonianSuperharmonic.P4250T1SlopeOffset
 public import LeanPool.ApollonianSuperharmonic.RightSubtileOdometerCompatibility
 
 -- [TABLET NODE: P4250T1OrdinaryCompatibility]
@@ -190,14 +189,6 @@ private theorem sY :
   rw [hneg, sneg, sadd]
   ext <;> simp <;> ring
 
-private theorem gaussianPointNeg :
-    (by
-      classical
-      exact
-        ∀ (z : GaussianInt), GaussianRealPoint (-z) = -GaussianRealPoint z ) := by
-  classical
-  intro z
-  ext <;> simp [GaussianRealPoint]
 
 private theorem hV20 :
     (by
@@ -1791,7 +1782,7 @@ theorem P4250T1OrdinaryCompatibility
   have sneg (a : GaussianInt) : sOff (-a) = -sOff a := by
     apply Prod.ext <;> simp [sOff, P4250T1SlopeOffset]  <;> ring
   have sY := OrdinaryCompatibilityGeometry.sY q (OrdinaryCompatibilityGeometry.hY q laws) sadd sneg
-  have gaussianPointNeg := OrdinaryCompatibilityGeometry.gaussianPointNeg
+  have gaussianPointNeg := GaussianRealPointProperties.negation
   have hV20 := OrdinaryCompatibilityGeometry.hV20 q cfg
   have hflip12 := firstLaws.2.2.2.2 cfg.firstProper 1
   have hsumV12 := OrdinaryCompatibilityGeometry.hsumV12 q cfg hV20

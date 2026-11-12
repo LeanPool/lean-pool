@@ -6,9 +6,9 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.BandOdometerParentCentroids
 
 public import LeanPool.ApollonianSuperharmonic.BandOrderedGeneralInteriorWebRow
-public import LeanPool.ApollonianSuperharmonic.BandOrderedGeneralOdometerRowData
 public import LeanPool.ApollonianSuperharmonic.OdometerWeb
 
 -- [TABLET NODE: BandOrderedGeneralOuterMixedOdometerRows]
@@ -359,24 +359,6 @@ private theorem hdelta1 :
   · dsimp [sOff]
     simpa [Fin.add_def, hA] using hp1y
 
-private theorem hc1minus :
-    (by
-      classical
-      exact
-        ∀ (q : Fin 4 -> CircleCoordinates), ∀ (cfg : BandOrderedGeneralConfiguration q), ∀ (C0 :
-            BandCircle), ∀ (T : ProtoTile), ∀ (cert : BandOrderedGeneralLayoutCertificate q cfg
-            C0 T), ∀ (h : PartialOdometer), ∀ (P : Fin 3 -> Bool -> ProtoTile), ∀ (r : Fin 3 ->
-            Bool -> PartialOdometer), ∀ (Q : Fin 3 -> Bool -> ProtoTile), ∀ (S : Fin 3 -> Bool ->
-            ProtoTile), ∀ (u : Fin 3 -> Bool -> PartialOdometer), ∀ (v : Fin 3 -> Bool ->
-            PartialOdometer), ∀ (g : IntegerLatticeFunction), (BandOrderedGeneralOdometerRowData
-            q cfg C0 T cert h P r Q S u v g) → (
-        let cOff (z : GaussianInt) : Real × Real :=
-          (1 / 2 : Real) • (GaussianRealPoint z -
-            (-(GaussianRealPoint z).2, (GaussianRealPoint z).1))
-        TileCentroid (P 1 false) - TileCentroid T = -cOff (BandVectors.1 (q 1) (q 3))) ) := by
-  classical
-  intro q cfg C0 T cert h P r Q S u v g data cOff
-  simpa [cOff, Fin.add_def] using data.hPcent 1 false
 
 private theorem hcent12 :
     (by
@@ -904,24 +886,6 @@ private theorem hsumV12 :
   rw [cfg.firstVectorTwo, cfg.firstChild, cfg.firstParentTwo, hflip12]
   ring
 
-private theorem hc1plus :
-    (by
-      classical
-      exact
-        ∀ (q : Fin 4 -> CircleCoordinates), ∀ (cfg : BandOrderedGeneralConfiguration q), ∀ (C0 :
-            BandCircle), ∀ (T : ProtoTile), ∀ (cert : BandOrderedGeneralLayoutCertificate q cfg
-            C0 T), ∀ (h : PartialOdometer), ∀ (P : Fin 3 -> Bool -> ProtoTile), ∀ (r : Fin 3 ->
-            Bool -> PartialOdometer), ∀ (Q : Fin 3 -> Bool -> ProtoTile), ∀ (S : Fin 3 -> Bool ->
-            ProtoTile), ∀ (u : Fin 3 -> Bool -> PartialOdometer), ∀ (v : Fin 3 -> Bool ->
-            PartialOdometer), ∀ (g : IntegerLatticeFunction), (BandOrderedGeneralOdometerRowData
-            q cfg C0 T cert h P r Q S u v g) → (
-        let cOff (z : GaussianInt) : Real × Real :=
-          (1 / 2 : Real) • (GaussianRealPoint z -
-            (-(GaussianRealPoint z).2, (GaussianRealPoint z).1))
-        TileCentroid (P 1 true) - TileCentroid T = cOff (BandVectors.1 (q 1) (q 3))) ) := by
-  classical
-  intro q cfg C0 T cert h P r Q S u v g data cOff
-  simpa [cOff, Fin.add_def] using data.hPcent 1 true
 
 private theorem hcent21 :
     (by
@@ -2237,7 +2201,7 @@ theorem BandOrderedGeneralOuterMixedOdometerRows
   have hdelta1 := OuterMixedOdometerGeometry.hdelta1 q hA p0 p1leaf hp1x hp1y
   have hc0plus : TileCentroid (P 0 true) - TileCentroid T = cOff W := by
     simpa [cOff, Fin.add_def] using data.hPcent 0 true
-  have hc1minus := OuterMixedOdometerGeometry.hc1minus q cfg C0 T cert h P r Q S u v g data
+  have hc1minus := BandOdometerParentCentroids.negative q cfg C0 T cert h P r Q S u v g data
   have hcent12 := OuterMixedOdometerGeometry.hcent12 q cfg T P firstLaws hW hc0plus hc1minus
   have hsumA12 := OuterMixedOdometerGeometry.hsumA12 q cfg firstLaws hrotA hA21
   have hslope12 := OuterMixedOdometerGeometry.hslope12 q cfg hA p0 p0leaf p1leaf hdelta0 hdelta1
@@ -2275,7 +2239,7 @@ theorem BandOrderedGeneralOuterMixedOdometerRows
   have hdelta1p := OuterMixedOdometerGeometry.hdelta1p q p0 p1pleaf hp1px hp1py
   have hdelta0m := OuterMixedOdometerGeometry.hdelta0m q p0 p0mleaf hp0mx hp0my
   have hflip12pair := firstLaws.2.2.2.2 cfg.firstProper 1
-  have hc1plus := OuterMixedOdometerGeometry.hc1plus q cfg C0 T cert h P r Q S u v g data
+  have hc1plus := BandOdometerParentCentroids.positive q cfg C0 T cert h P r Q S u v g data
   have hc0minus : TileCentroid (P 0 false) - TileCentroid T = -cOff W := by
     simpa [cOff, Fin.add_def] using data.hPcent 0 false
   have hcent21 := OuterMixedOdometerGeometry.hcent21 q cfg T P hW

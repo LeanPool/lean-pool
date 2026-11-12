@@ -6,20 +6,14 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.TileQuarterTurnTranslation
 
 public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryTileAction
 public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryVectorAction
-public import LeanPool.ApollonianSuperharmonic.FootprintEdges
-public import LeanPool.ApollonianSuperharmonic.FootprintVertices
-public import LeanPool.ApollonianSuperharmonic.LatticeTile
 public import LeanPool.ApollonianSuperharmonic.QuarterTurnSymmetric
-public import LeanPool.ApollonianSuperharmonic.SubtileOccurrenceInterpretation
 public import LeanPool.ApollonianSuperharmonic.SubtileOccurrenceInterpretationCovariance
-public import LeanPool.ApollonianSuperharmonic.TileArea
-public import LeanPool.ApollonianSuperharmonic.TileCellComplement
 public import LeanPool.ApollonianSuperharmonic.TileDiskAreaCovariance
 public import LeanPool.ApollonianSuperharmonic.TileCellComplementCovariance
-public import LeanPool.ApollonianSuperharmonic.TouchingTriple
 public import LeanPool.ApollonianSuperharmonic.TouchingTripleCovariance
 
 -- [TABLET NODE: BandPackingSymmetryTilingTransport]
@@ -36,29 +30,6 @@ Changes: pool module paths, public exports, project namespace and current Mathli
 namespace ApollonianSuperharmonic
 
 namespace TilingTransportProof
-
-private theorem quarter_translate :
-    (by
-      classical
-      exact
-        ∀ (T : ProtoTile), ∀ (x : GaussianInt), TileQuarterTurn (TileTranslation T x) =
-            TileTranslation (TileQuarterTurn T) (GaussianQuarterTurn x)
-    ) := by
-  classical
-  intro T x
-  cases T with
-  | mk cells anchor =>
-    have map : (fun z : GaussianInt => GaussianQuarterTurn (z + x) - 1) =
-        (fun z : GaussianInt => (GaussianQuarterTurn z - 1) +
-          GaussianQuarterTurn x) := by
-      funext z
-      ext <;> simp [GaussianQuarterTurn, add_comm]; ring
-    apply congrArg₂ (fun c : FiniteTile => fun d : GaussianInt =>
-      ProtoTile.mk c d)
-    · simp [TileQuarterTurn, TileTranslation, GaussianTranslation,
-        Finset.image_image, Function.comp_def, map]
-    · simp [TileQuarterTurn, TileTranslation, GaussianTranslation,
-        GaussianQuarterTurn, add_comm]
 
 private theorem quarter_symmetryAt181 :
     (by
@@ -330,7 +301,7 @@ private theorem negation :
   · intro T U V
     exact (TouchingTripleCovariance T U V 0).2.1
   · intro T v
-    exact (TilingTransportProof.quarter_translate) T v
+    exact (TileQuarterTurnTranslation.commute) T v
   · intro T
     have h := (TileQuarterTurnFormulas T).2.2.2.2.2.1
     change FootprintVertices (TileQuarterTurn T) =

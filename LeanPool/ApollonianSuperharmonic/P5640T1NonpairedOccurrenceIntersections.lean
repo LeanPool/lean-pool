@@ -6,6 +6,7 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.TileTranslationProperties
 
 public import LeanPool.ApollonianSuperharmonic.BandOrderedGeneralLayoutCertificate
 public import LeanPool.ApollonianSuperharmonic.BandOriginalPairSeparation
@@ -87,15 +88,6 @@ private theorem pairCells :
   intro q cfg C₀ T layout P O u v separation a b hab hnot
   exact separation.2 a b hab hnot
 
-private theorem translationCells :
-    (by
-      classical
-      exact
-        ∀ (X : ProtoTile), ∀ (d : GaussianInt), (TileTranslation X d).cells = X.cells.image
-            (GaussianTranslation d) ) := by
-  classical
-  intro X d
-  exact (TileTranslationFormulas X d).1
 
 private theorem cellInclusion :
     (by
@@ -657,7 +649,7 @@ theorem P5640T1NonpairedOccurrenceIntersections
         a.label = .B ∧ b.label = .A) ∧ a.first = b.first ∧ a.second = b.second)) :=
             NonpairedOccurrenceGeometry.pairCells q cfg C₀ T layout separation a b hab hnot
   have translationCells (X : ProtoTile) (d : GaussianInt) :=
-      NonpairedOccurrenceGeometry.translationCells X d
+      TileTranslationProperties.cells X d
   have cellInclusion (X Y : ProtoTile) (hXY : X.cells ⊆ Y.cells)
       (d : GaussianInt) := NonpairedOccurrenceGeometry.cellInclusion translationCells X Y hXY d
   have isolatedPrecursor (m n : Int) := NonpairedOccurrenceGeometry.isolatedPrecursor q cfg C₀ T

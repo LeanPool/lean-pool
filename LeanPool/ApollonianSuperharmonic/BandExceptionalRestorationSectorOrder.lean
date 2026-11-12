@@ -6,8 +6,8 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.TileTouchingDisjoint
 
-public import LeanPool.ApollonianSuperharmonic.BandOrderedGeneralLayoutCertificate
 public import LeanPool.ApollonianSuperharmonic.BandTileSimultaneousInduction
 public import LeanPool.ApollonianSuperharmonic.ExceptionalRestorationSectorData
 
@@ -171,18 +171,6 @@ private theorem nonempty_cells :
   have he : U.cells = ∅ := Finset.not_nonempty_iff_eq_empty.mp hn
   simp [TileRealization, he] at hreal
 
-private theorem touching_disjoint :
-    (by
-      classical
-      exact
-        ∀ (X : ProtoTile), ∀ (Y : ProtoTile), (X.cells.Nonempty) → ((Y.cells.Nonempty) →
-            ((TileTouching X Y) → (Disjoint X.cells Y.cells))) ) := by
-  classical
-  intro X Y hX hY hxy
-  rcases hxy with ⟨_, _, hd, _⟩ | ⟨he, _⟩ | ⟨he, _⟩
-  · exact hd
-  · simp [he] at hX
-  · simp [he] at hY
 
 private theorem trzero :
     (by
@@ -405,24 +393,6 @@ private theorem hOD :
   intro x hxO hxD
   exact Finset.disjoint_left.mp hAD (seg.precursor_in_left hxO) hxD
 
-private theorem boundary_edge_footprint :
-    (by
-      classical
-      exact
-        ∀ (U : ProtoTile), ∀ (e : Finset GaussianInt), (e ∈ BoundaryFootprintEdges U) → (e ∈
-            FootprintEdges U) ) := by
-  classical
-  intro U e he
-  let I : GaussianInt := ⟨0, 1⟩
-  rcases he with ⟨z, ⟨rfl, h⟩ | ⟨rfl, h⟩⟩
-  · rcases h with ⟨hz, -⟩ | ⟨-, hz⟩
-    · exact ⟨z, hz, Or.inl rfl⟩
-    · refine ⟨z - I, hz, Or.inr (Or.inr (Or.inr ?_))⟩
-      congr 1 <;> simp [I, Zsqrtd.ext_iff]
-  · rcases h with ⟨hz, -⟩ | ⟨-, hz⟩
-    · exact ⟨z, hz, Or.inr (Or.inl rfl)⟩
-    · refine ⟨z - 1, hz, Or.inr (Or.inr (Or.inl ?_))⟩
-      congr 1 <;> simp []
 
 private theorem edge_vertex_footprint :
     (by
@@ -828,42 +798,6 @@ private theorem cuts_ne_marked :
     rcases hmark2D with ⟨j, hj⟩
     exact cutNoD hOne j (heq ▸ hj)
 
-private theorem splitInternal :
-    (by
-      classical
-      exact
-        ∀ (l : List GaussianInt), ∀ (x : GaussianInt), ∀ (h : GaussianInt), ∀ (t : GaussianInt),
-            l.Nodup → l.head? = some h → l.getLast? = some t → x ∈ l → x ≠ h → x ≠ t → ∃ pre y z
-            post, l = pre ++ y :: x :: z :: post ) := by
-  classical
-  intro l
-  induction l with
-  | nil => intro x h t hn hh ht hx; simp at hx
-  | cons a tail ih =>
-    intro x h t hn hh ht hx hxh hxt
-    have hah : a = h := by simpa using hh
-    subst h
-    rcases List.mem_cons.mp hx with hxa | hx
-    · exact (hxh hxa).elim
-    · cases tail with
-      | nil => simp at hx
-      | cons b rest =>
-        by_cases hxb : x = b
-        · subst x
-          have hrest : rest ≠ [] := by
-            intro he
-            subst rest
-            have hb : b = t := by simpa using ht
-            exact hxt hb
-          cases rest with
-          | nil => exact (hrest rfl).elim
-          | cons c u =>
-            refine ⟨[], a, c, u, ?_⟩
-            simp
-        · obtain ⟨pre, y, z, post, heq⟩ :=
-            ih x b t hn.tail (by rfl) (by simpa using ht) hx hxb hxt
-          refine ⟨a :: pre, y, z, post, ?_⟩
-          simp [heq]
 
 private theorem leftInternal :
     (by
@@ -1439,7 +1373,7 @@ theorem BandExceptionalRestorationSectorOrder
   have hO := RestorationSectorGeometry.hO q cfg C₀ T cert
       tile_from_band
   have nonempty_cells := RestorationSectorGeometry.nonempty_cells
-  have touching_disjoint := RestorationSectorGeometry.touching_disjoint
+  have touching_disjoint := TileTouchingDisjoint.cells
   have hA : LatticeTile A := cert.parent_lattice 0 true
   have hB : LatticeTile B := cert.parent_lattice 0 false
   have hCparent : LatticeTile C := cert.parent_lattice 1 true
@@ -1490,7 +1424,7 @@ theorem BandExceptionalRestorationSectorOrder
   have hVD : Disjoint V.cells D.cells :=
     touching_disjoint V D hVne hDne cert.double_second.2.1
   have boundary_raw := RestorationSectorGeometry.boundary_raw
-      (RestorationSectorGeometry.boundary_edge_footprint)
+      (BoundaryFootprintInclusion.boundaryEdge)
       (RestorationSectorGeometry.edge_vertex_footprint)
   have footprint_incident := RestorationSectorGeometry.footprint_incident
   have boundary_missing_incident := RestorationSectorGeometry.boundary_missing_incident
@@ -1523,7 +1457,7 @@ theorem BandExceptionalRestorationSectorOrder
   have cutNoD := RestorationSectorGeometry.cutNoD q cfg C₀ T cert hOD hRD hVD cutDataR
   have cuts_ne_marked := RestorationSectorGeometry.cuts_ne_marked q cfg C₀ T cert hmark1C hmark2D
       cutNoC cutNoD
-  have splitInternal := RestorationSectorGeometry.splitInternal
+  have splitInternal := ListEndpointFacts.internalNeighbors
   have leftInternal := RestorationSectorGeometry.leftInternal q cfg C₀ T cert two_owner_sectors
       hQ hS hQSC splitInternal
   have rightInternal := RestorationSectorGeometry.rightInternal q cfg C₀ T cert two_owner_sectors

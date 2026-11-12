@@ -6,8 +6,8 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.DiamondFootprintCoordinates
 
-public import LeanPool.ApollonianSuperharmonic.P4194T1DiamondVertexIncidence
 public import LeanPool.ApollonianSuperharmonic.P5157T1AlternatingStaircase
 public import LeanPool.ApollonianSuperharmonic.SimpleGridPathEquivariance
 public import LeanPool.ApollonianSuperharmonic.TileTranslationFormulas
@@ -27,32 +27,6 @@ namespace ApollonianSuperharmonic
 
 namespace DecreasingInterfaceProof
 
-private theorem footprint :
-    (by
-      classical
-      exact
-        ∀ (k : Nat), ((0 : ℕ) < k) → (∀ (z : GaussianInt), z ∈ FootprintVertices (DiamondTile k)
-            ↔ (0 : ℤ) ≤ z.im ∧ z.im ≤ (2 : ℤ) * (↑k : ℤ) ∧ -(↑k : ℤ) ≤ z.re ∧ z.re ≤ (↑k : ℤ) ∧
-            -(z.im + (1 : ℤ)) ≤ z.re ∧ z.re ≤ z.im + (1 : ℤ) ∧ -((2 : ℤ) * (↑k : ℤ) - z.im + (1 :
-            ℤ)) ≤ z.re ∧ z.re ≤ (2 : ℤ) * (↑k : ℤ) - z.im + (1 : ℤ))
-    ) := by
-  classical
-  intro k hk z
-  rw [(P4194T1DiamondVertexIncidence k hk z).1]
-  simp only [Fin.exists_fin_succ, Fin.exists_fin_succ, Fin.exists_fin_succ,
-    Fin.exists_fin_succ]
-  rw [show LatticeVertexIncidentCell z 0 = z by rfl,
-    show LatticeVertexIncidentCell z (Fin.succ 0) = z - 1 by rfl,
-    show LatticeVertexIncidentCell z (Fin.succ 0).succ = z - 1 - ⟨0, 1⟩ by rfl,
-    show LatticeVertexIncidentCell z (Fin.succ 0).succ.succ = z - ⟨0, 1⟩ by rfl]
-  rw [(P4194T1DiamondCellRows k z).1,
-    (P4194T1DiamondCellRows k (z - 1)).1,
-    (P4194T1DiamondCellRows k (z - 1 - ⟨0, 1⟩)).1,
-    (P4194T1DiamondCellRows k (z - ⟨0, 1⟩)).1]
-  simp only [Zsqrtd.re_sub, Zsqrtd.im_sub, Zsqrtd.re_one, Zsqrtd.im_one,
-    ]
-  simp []
-  omega
 
 private theorem boundary :
     (by
@@ -325,7 +299,7 @@ theorem P5203T1DecreasingInterface (k : Nat) (hk : 0 < k) (u : GaussianInt) :
         -(k : Int) ≤ z.re ∧ z.re ≤ k ∧
         -(z.im + 1) ≤ z.re ∧ z.re ≤ z.im + 1 ∧
         -(2 * (k : Int) - z.im + 1) ≤ z.re ∧
-          z.re ≤ 2 * (k : Int) - z.im + 1 := DecreasingInterfaceProof.footprint k hk z
+          z.re ≤ 2 * (k : Int) - z.im + 1 := DiamondFootprintCoordinates.coordinates k hk z
   let D := DiamondTile k
   let a : GaussianInt := ⟨(k : Int) + 1, (k : Int)⟩
   let T := TileTranslation D u

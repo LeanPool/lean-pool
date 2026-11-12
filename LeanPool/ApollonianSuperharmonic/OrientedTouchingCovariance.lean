@@ -6,6 +6,7 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.TileQuarterTurnTranslation
 
 public import LeanPool.ApollonianSuperharmonic.BandPrototileTranslation
 public import LeanPool.ApollonianSuperharmonic.QuarterTurnSymmetricCenteredTransport
@@ -26,28 +27,6 @@ namespace ApollonianSuperharmonic
 
 namespace TouchingCovarianceProof
 
-private theorem quarter_translate :
-    (by
-      classical
-      exact
-        ∀ (T : ProtoTile), ∀ (x : GaussianInt), TileQuarterTurn (TileTranslation T x) =
-            TileTranslation (TileQuarterTurn T) (GaussianQuarterTurn x)
-    ) := by
-  classical
-  intro T x
-  cases T with
-  | mk cells anchor =>
-    have map : (fun z : GaussianInt => GaussianQuarterTurn (z + x) - 1) =
-        (fun z : GaussianInt => (GaussianQuarterTurn z - 1) +
-          GaussianQuarterTurn x) := by
-      funext z
-      ext <;> simp [GaussianQuarterTurn, add_comm]; ring
-    apply congrArg₂ (fun c : FiniteTile => fun d : GaussianInt =>
-      ProtoTile.mk c d)
-    · simp [TileQuarterTurn, TileTranslation, GaussianTranslation,
-        Finset.image_image, Function.comp_def, map]
-    · simp [TileQuarterTurn, TileTranslation, GaussianTranslation,
-        GaussianQuarterTurn, add_comm]
 
 private theorem same_touch :
     (by
@@ -577,7 +556,7 @@ theorem OrientedTouchingCovariance :
   have quarter_translate (T : ProtoTile) (x : GaussianInt) :
       TileQuarterTurn (TileTranslation T x) =
         TileTranslation (TileQuarterTurn T) (GaussianQuarterTurn x) :=
-            TouchingCovarianceProof.quarter_translate T x
+            TileQuarterTurnTranslation.commute T x
   have same_touch (A B C A' B' C' : ProtoTile)
       (ha : A.cells = A'.cells) (hb : B.cells = B'.cells)
       (hc : C.cells = C'.cells)

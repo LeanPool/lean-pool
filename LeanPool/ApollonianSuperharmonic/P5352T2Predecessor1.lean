@@ -6,6 +6,8 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.EvenSquareQuotient
+public import LeanPool.ApollonianSuperharmonic.FourNeighborLaplacianProperties
 
 public import LeanPool.ApollonianSuperharmonic.P5352T2PlacementData
 public import LeanPool.ApollonianSuperharmonic.P5352T2DomainRows
@@ -27,17 +29,6 @@ namespace ApollonianSuperharmonic
 
 namespace FirstPredecessorProof
 
-private theorem lap_identity :
-    (by
-      classical
-      exact
-        ∀ (g : IntegerLatticeFunction), ∀ (x : GaussianInt), FourNeighborLaplacian g x = g (x +
-            (1 : GaussianInt)) - g x + (g (x - (1 : GaussianInt)) - g x) + (g (x + ⟨(0 : ℤ), (1 :
-            ℤ)⟩) - g x) + (g (x - ⟨(0 : ℤ), (1 : ℤ)⟩) - g x) ) := by
-  classical
-  intro g x
-  unfold FourNeighborLaplacian
-  ring
 
 private theorem predMem :
     (by
@@ -336,15 +327,6 @@ private theorem hPnval :
   have hv := hPval _ _ (by rw [hnarg]; exact hPn) hnarg
   simpa using hv
 
-private theorem sqEven :
-    (by
-      classical
-      exact
-        ∀ (m : ℤ), ((2 : ℤ) * m) ^ (2 : ℕ) / (4 : ℤ) = m ^ (2 : ℕ) ) := by
-  classical
-  intro m
-  have h := P4207T1FloorArithmetic.1 0 m
-  simpa using h
 
 private theorem sqOdd :
     (by
@@ -701,7 +683,7 @@ theorem P5352T2Predecessor1 (K : DiamondParameter) (hk : 1 < K.1)
   exact (by
     classical
     have lap_identity (g : IntegerLatticeFunction) (x : GaussianInt) :=
-        FirstPredecessorProof.lap_identity g x
+        FourNeighborLaplacianProperties.differences g x
     let k : Int := K.1
     let d : GaussianInt := ⟨k,k+1⟩
     let r : GaussianInt := ⟨2*k,0⟩
@@ -822,7 +804,7 @@ theorem P5352T2Predecessor1 (K : DiamondParameter) (hk : 1 < K.1)
       have qn : DiamondOdometer (⟨K.1-1,by omega⟩) ⟨p-k,k+1-p⟩=Q (p-k) (k+1-p) := by
         simpa [Q] using (P5352T2DomainRows ⟨K.1-1,by omega⟩ ⟨p-k,k+1-p⟩).2 hPn
       -- The exact four increments follow by reducing the even and odd squares.
-      have sqEven (m : Int) := FirstPredecessorProof.sqEven m
+      have sqEven (m : Int) := EvenSquareQuotient.square m
       have sqOdd (m : Int) := FirstPredecessorProof.sqOdd K hk f B p hcast m
       have tri (a : Int) := FirstPredecessorProof.tri K hk f B p hcast a
       have tdiff (a : Int) := FirstPredecessorProof.tdiff K hk f B

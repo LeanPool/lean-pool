@@ -6,6 +6,7 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.FordInteriorSquareCoordinates
 
 public import LeanPool.ApollonianSuperharmonic.FordOdometer
 public import LeanPool.ApollonianSuperharmonic.FourNeighborLaplacian
@@ -27,25 +28,6 @@ namespace ApollonianSuperharmonic
 
 namespace OverlapDescentDetails
 
-private theorem squareCoordinates :
-    (by
-      classical
-      exact
-        ∀ (q : ℕ), ∀ (x : GaussianInt), x ∈ P4062T1InteriorSquare q ↔ (1 : ℤ) ≤ x.re ∧ x.re ≤
-            (↑q : ℤ) - (1 : ℤ) ∧ (1 : ℤ) ≤ x.im ∧ x.im ≤ (↑q : ℤ) - (1 : ℤ) ) := by
-  classical
-  intro q x
-  unfold P4062T1InteriorSquare
-  constructor
-  · intro hx
-    obtain ⟨⟨a, b⟩, hab, rfl⟩ := Finset.mem_image.mp hx
-    obtain ⟨ha, hb⟩ := Finset.mem_product.mp hab
-    exact ⟨(Finset.mem_Icc.mp ha).1, (Finset.mem_Icc.mp ha).2,
-      (Finset.mem_Icc.mp hb).1, (Finset.mem_Icc.mp hb).2⟩
-  · intro h
-    exact Finset.mem_image.mpr ⟨(x.re, x.im),
-      Finset.mem_product.mpr ⟨Finset.mem_Icc.mpr ⟨h.1, h.2.1⟩,
-        Finset.mem_Icc.mpr h.2.2⟩, by cases x; rfl⟩
 
 private theorem hcrossdet :
     (by
@@ -943,7 +925,7 @@ theorem P4062T1OverlapDescent (P P₁ P₂ : FordFareyParameter)
             (x-⟨(P.q₁ : Int), (P.q₁ : Int)⟩)) := by
 -- BODY
   classical
-  have squareCoordinates (q : Nat) (x : GaussianInt) := OverlapDescentDetails.squareCoordinates q x
+  have squareCoordinates (q : Nat) (x : GaussianInt) := FordInteriorSquareCoordinates.membership q x
   have hsum : P.q = P.q₁ + P.q₂ := P.sum_q
   have hcrossdet := OverlapDescentDetails.hcrossdet P
   have hpos₁ := OverlapDescentDetails.hpos₁ P P₁ P₂ hP hq₁ hsum

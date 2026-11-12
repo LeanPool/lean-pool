@@ -6,10 +6,10 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.AffineLineMapProperties
 public import Mathlib.Tactic.Positivity
 
 public import LeanPool.ApollonianSuperharmonic.P3597T1SideCrossing
-public import Mathlib.Topology.Connected.PathConnected
 public import Mathlib.Analysis.Normed.Module.Convex
 public import Mathlib.Topology.LocallyConstant.Basic
 
@@ -2284,15 +2284,6 @@ private theorem hr :
   dsimp [r]
   positivity
 
-private theorem hlineMap :
-    (by
-      classical
-      exact
-        ∀ x y : Real × Real, ∀ t : Real, AffineMap.lineMap x y t = x + t • (y - x) ) := by
-  classical
-  intro x y t
-  rw [AffineMap.lineMap_apply_module]
-  module
 
 private theorem hdistRadial :
     (by
@@ -3190,7 +3181,7 @@ theorem P3597T1VertexSectors {n : Nat} (p : P3381T1PolygonBoundary n)
     exact le_trans (min_le_right _ _) (min_le_left _ _)
   have hrBle : r ≤ dist v (p.vertex prev) / 2 := by
     exact le_trans (min_le_right _ _) (min_le_right _ _)
-  have hlineMap := VertexSectorDetails.hlineMap
+  have hlineMap := AffineLineMapProperties.coordinates
   have hsegA := VertexSectorProof.hsegA n p i hlineMap
   have hdistRadial := VertexSectorDetails.hdistRadial n p i
   have hnoPosMultiple := VertexSectorProof.hnoPosMultiple n p i

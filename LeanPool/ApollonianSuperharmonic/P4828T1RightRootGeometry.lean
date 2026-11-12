@@ -6,13 +6,13 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.RootComplexCoordinates
 
 public import LeanPool.ApollonianSuperharmonic.P4828T1Root
 public import LeanPool.ApollonianSuperharmonic.P4828T1Gap
 public import LeanPool.ApollonianSuperharmonic.P4828T1LineSupport
 public import LeanPool.ApollonianSuperharmonic.ProperBandQuadruple
 public import Mathlib.Analysis.Convex.Combination
-public import Mathlib.Analysis.Complex.ReImTopology
 public import LeanPool.ApollonianSuperharmonic.P4828T1Disk
 
 -- [TABLET NODE: P4828T1RightRootGeometry]
@@ -50,62 +50,17 @@ private noncomputable def tl (a : GaussianInt) : Complex := ⟨(L a) + 1, (y a) 
 
 private noncomputable def tr (a : GaussianInt) : Complex := ⟨(L a) + 2, (y a) + 2⟩
 
-private theorem hU0 (a : GaussianInt) : ((1 + 2 * a : GaussianInt) : Complex) = ⟨(L a) + 1, (y
-    a)⟩ := by
-  classical
-  let L : Real := 2 * (a.re : Real)
-  let y : Real := 2 * (a.im : Real)
-  change (((1 + 2 * a : GaussianInt) : Complex) = ⟨L + 1, y⟩)
-  rw [GaussianInt.toComplex_def₂]
-  apply Complex.ext <;> simp [Zsqrtd.re_add, Zsqrtd.re_mul,
-    Zsqrtd.im_add, Zsqrtd.im_mul, L, y]; ring
+private abbrev hU0 := RootComplexCoordinates.lowerGaussianCoordinate
 
-private theorem hU1 (a : GaussianInt) : ((1 + 2 * a + 2 * ⟨0, 1⟩ : GaussianInt) : Complex) =
-      ⟨(L a) + 1, (y a) + 2⟩ := by
-  classical
-  let L : Real := 2 * (a.re : Real)
-  let y : Real := 2 * (a.im : Real)
-  change (((1 + 2 * a + 2 * ⟨0, 1⟩ : GaussianInt) : Complex) =
-      ⟨L + 1, y + 2⟩)
-  rw [GaussianInt.toComplex_def₂]
-  apply Complex.ext <;> simp [Zsqrtd.re_add, Zsqrtd.re_mul,
-    Zsqrtd.im_add, Zsqrtd.im_mul, L, y]; ring
+private abbrev hU1 := RootComplexCoordinates.upperGaussianCoordinate
 
-private theorem hU0c (a : GaussianInt) : (1 : Complex) + GaussianInt.toComplex (2 : GaussianInt) *
-      (a : Complex) = ⟨(L a) + 1, (y a)⟩ := by
-  classical
-  let L : Real := 2 * (a.re : Real)
-  let y : Real := 2 * (a.im : Real)
-  have hU0 : ((1 + 2 * a : GaussianInt) : Complex) = ⟨L + 1, y⟩ := hU0 a
-  change ((1 : Complex) + GaussianInt.toComplex (2 : GaussianInt) *
-      (a : Complex) = ⟨L + 1, y⟩)
-  rw [GaussianInt.toComplex_add, GaussianInt.toComplex_one] at hU0
-  rw [GaussianInt.toComplex_mul] at hU0
-  exact hU0
+private abbrev hU0c := RootComplexCoordinates.lowerComplexCoordinate
 
-private theorem hU1c (a : GaussianInt) : (1 : Complex) + GaussianInt.toComplex (2 : GaussianInt) *
-      (a : Complex) + GaussianInt.toComplex (2 : GaussianInt) *
-      (⟨0, 1⟩ : GaussianInt) = ⟨(L a) + 1, (y a) + 2⟩ := by
-  classical
-  let L : Real := 2 * (a.re : Real)
-  let y : Real := 2 * (a.im : Real)
-  have hU1 : ((1 + 2 * a + 2 * ⟨0, 1⟩ : GaussianInt) : Complex) =
-      ⟨L + 1, y + 2⟩ := hU1 a
-  change ((1 : Complex) + GaussianInt.toComplex (2 : GaussianInt) *
-      (a : Complex) + GaussianInt.toComplex (2 : GaussianInt) *
-      (⟨0, 1⟩ : GaussianInt) = ⟨L + 1, y + 2⟩)
-  rw [GaussianInt.toComplex_add, GaussianInt.toComplex_add,
-    GaussianInt.toComplex_one] at hU1
-  rw [GaussianInt.toComplex_mul, GaussianInt.toComplex_mul] at hU1
-  exact hU1
+private abbrev hU1c := RootComplexCoordinates.upperComplexCoordinate
 
-private theorem htwo_re : (GaussianInt.toComplex (2 : GaussianInt)).re = 2 := by
-  classical
-  norm_num [GaussianInt.toComplex_def]
+private abbrev htwo_re := RootComplexCoordinates.twoReal
 
-private theorem htwo_im : (GaussianInt.toComplex (2 : GaussianInt)).im = 0 := by
-  classical
-  norm_num [GaussianInt.toComplex_def]
+private abbrev htwo_im := RootComplexCoordinates.twoImaginary
 
 private theorem hvertices (a : GaussianInt) : (vertices a) = {(bl a), (br a), (tl a), (tr a)} := by
   classical
@@ -322,12 +277,7 @@ private theorem hHull (a : GaussianInt) : convexHull Real (vertices a) =
       ((Set.Icc (L + 1) (L + 2)) ×ℂ (Set.Icc y (y + 2)))
   rw [hlin, himageLin, hcornerHull, hrectImageLin]
 
-private theorem rectangleInterior (l u v w : Real) :
-      interior (Set.Icc l u ×ℂ Set.Icc v w) =
-        {z : Complex | l < z.re ∧ z.re < u ∧ v < z.im ∧ z.im < w} := by
-  classical
-  ext z
-  simp [Complex.interior_reProdIm, interior_Icc, Complex.mem_reProdIm, Set.mem_Ioo, and_assoc]
+private abbrev rectangleInterior := RootComplexCoordinates.rectangleInterior
 
 private theorem hInterior (a : GaussianInt) : interior (convexHull Real (vertices a)) =
       {p : Complex | (L a) + 1 < p.re ∧ p.re < (L a) + 2 ∧
@@ -437,15 +387,9 @@ private theorem hchild (a : GaussianInt) :
       Zsqrtd.im_mul, y];
       field_simp; ring
 
-private theorem hs25 : Real.sqrt (25 : Real) = 5 := by
-  classical
-  rw [show (25 : Real) = 5 * 5 by norm_num]
-  exact Real.sqrt_mul_self (by norm_num)
+private abbrev hs25 := RootComplexCoordinates.sqrtTwentyFive
 
-private theorem hs16 : Real.sqrt (16 : Real) = 4 := by
-  classical
-  rw [show (16 : Real) = 4 * 4 by norm_num]
-  exact Real.sqrt_mul_self (by norm_num)
+private abbrev hs16 := RootComplexCoordinates.sqrtSixteen
 
 private theorem hdist0 (a : GaussianInt) : dist (child a) (bl a) = (5 : Real) / 4 := by
   classical
@@ -511,16 +455,18 @@ theorem P4828T1RightRootGeometry (a : GaussianInt) :
   let br : Complex := ⟨L + 2, y⟩
   let tl : Complex := ⟨L + 1, y + 2⟩
   let tr : Complex := ⟨L + 2, y + 2⟩
-  have hU0 : ((1 + 2 * a : GaussianInt) : Complex) = ⟨L + 1, y⟩ := RootGeometryRight.hU0 a
+  have hU0 : ((1 + 2 * a : GaussianInt) : Complex) = ⟨L + 1, y⟩ :=
+      RootComplexCoordinates.lowerGaussianCoordinate a
   have hU1 : ((1 + 2 * a + 2 * ⟨0, 1⟩ : GaussianInt) : Complex) =
-      ⟨L + 1, y + 2⟩ := RootGeometryRight.hU1 a
+      ⟨L + 1, y + 2⟩ := RootComplexCoordinates.upperGaussianCoordinate a
   have hU0c : (1 : Complex) + GaussianInt.toComplex (2 : GaussianInt) *
-      (a : Complex) = ⟨L + 1, y⟩ := RootGeometryRight.hU0c a
+      (a : Complex) = ⟨L + 1, y⟩ := RootComplexCoordinates.lowerComplexCoordinate a
   have hU1c : (1 : Complex) + GaussianInt.toComplex (2 : GaussianInt) *
       (a : Complex) + GaussianInt.toComplex (2 : GaussianInt) *
-      (⟨0, 1⟩ : GaussianInt) = ⟨L + 1, y + 2⟩ := RootGeometryRight.hU1c a
-  have htwo_re : (GaussianInt.toComplex (2 : GaussianInt)).re = 2 := RootGeometryRight.htwo_re
-  have htwo_im : (GaussianInt.toComplex (2 : GaussianInt)).im = 0 := RootGeometryRight.htwo_im
+      (⟨0, 1⟩ : GaussianInt) = ⟨L + 1, y + 2⟩ := RootComplexCoordinates.upperComplexCoordinate a
+  have htwo_re : (GaussianInt.toComplex (2 : GaussianInt)).re = 2 := RootComplexCoordinates.twoReal
+  have htwo_im : (GaussianInt.toComplex (2 : GaussianInt)).im = 0 :=
+      RootComplexCoordinates.twoImaginary
   have hvertices : vertices = {bl, br, tl, tr} := RootGeometryRight.hvertices a
   have himage : Complex.equivRealProdLm '' vertices =
       ({L + 1, L + 2} : Set Real) ×ˢ {y, y + 2} := RootGeometryRight.himage a
@@ -540,7 +486,7 @@ theorem P4828T1RightRootGeometry (a : GaussianInt) :
   have rectangleInterior (l u v w : Real) :
       interior (Set.Icc l u ×ℂ Set.Icc v w) =
         {z : Complex | l < z.re ∧ z.re < u ∧ v < z.im ∧ z.im < w} :=
-            RootGeometryRight.rectangleInterior l u v w
+            RootComplexCoordinates.rectangleInterior l u v w
   have hInterior : interior (convexHull Real vertices) =
       {p : Complex | L + 1 < p.re ∧ p.re < L + 2 ∧
         y < p.im ∧ p.im < y + 2} := RootGeometryRight.hInterior a
@@ -558,8 +504,8 @@ theorem P4828T1RightRootGeometry (a : GaussianInt) :
   have hchild :
       ((q (0 : Fin 4)).2 : Complex) / ((q (0 : Fin 4)).1 : Real) = child :=
           RootGeometryRight.hchild a
-  have hs25 : Real.sqrt (25 : Real) = 5 := RootGeometryRight.hs25
-  have hs16 : Real.sqrt (16 : Real) = 4 := RootGeometryRight.hs16
+  have hs25 : Real.sqrt (25 : Real) = 5 := RootComplexCoordinates.sqrtTwentyFive
+  have hs16 : Real.sqrt (16 : Real) = 4 := RootComplexCoordinates.sqrtSixteen
   have hdist0 : dist child bl = (5 : Real) / 4 := RootGeometryRight.hdist0 a
   have hdist1 : dist child tl = (5 : Real) / 4 := RootGeometryRight.hdist1 a
   · constructor

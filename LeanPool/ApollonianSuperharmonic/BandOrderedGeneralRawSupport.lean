@@ -6,6 +6,8 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.BoundaryFootprintInclusion
+public import LeanPool.ApollonianSuperharmonic.TileTranslationProperties
 
 public import LeanPool.ApollonianSuperharmonic.BandOrderedGeneralLayoutCertificate
 public import LeanPool.ApollonianSuperharmonic.BandOriginalPairSeparation
@@ -28,19 +30,6 @@ Changes: pool module paths, public exports, project namespace and current Mathli
 namespace ApollonianSuperharmonic
 
 namespace RawSupportGeometry
-
-private theorem translation_zeroAt149 :
-    (by
-      classical
-      exact
-        ∀ (U : ProtoTile), TileTranslation U 0 = U ) := by
-  classical
-  intro U
-  have hzero : GaussianTranslation (0 : GaussianInt) = id := by
-    funext z
-    simp [GaussianTranslation]
-  cases U
-  simp [TileTranslation, hzero, GaussianTranslation]
 
 private theorem htileAAt155 :
     (by
@@ -341,24 +330,6 @@ private theorem raw_boundary :
   · exact P3161T2IncidentBoundary _ z ⟨jC, hjC⟩
       ⟨jQ, fun h => Finset.disjoint_left.mp hQC.1 hjQ h⟩
 
-private theorem boundary_edge_footprint :
-    (by
-      classical
-      exact
-        ∀ (U : ProtoTile), ∀ (e : Finset GaussianInt), (e ∈ BoundaryFootprintEdges U) → (e ∈
-            FootprintEdges U) ) := by
-  classical
-  intro U e he
-  let I : GaussianInt := ⟨0, 1⟩
-  rcases he with ⟨z, ⟨rfl, h⟩ | ⟨rfl, h⟩⟩
-  · rcases h with ⟨hz, -⟩ | ⟨-, hz⟩
-    · exact ⟨z, hz, Or.inl rfl⟩
-    · refine ⟨z - I, hz, Or.inr (Or.inr (Or.inr ?_))⟩
-      congr 1 <;> simp [I, Zsqrtd.ext_iff]
-  · rcases h with ⟨hz, -⟩ | ⟨-, hz⟩
-    · exact ⟨z, hz, Or.inr (Or.inl rfl)⟩
-    · refine ⟨z - 1, hz, Or.inr (Or.inr (Or.inl ?_))⟩
-      congr 1 <;> simp []
 
 private theorem hQO :
     (by
@@ -759,7 +730,7 @@ theorem BandOrderedGeneralRawSupport
     let z1 := cert.unmodified.core.rho (cert.unmodified.faceEquiv.symm ⟨.I1, 0, 0⟩)
     let z3 := cert.unmodified.core.rho (cert.unmodified.faceEquiv.symm ⟨.I3, 0, 0⟩)
     have translation_zero (U : ProtoTile) : TileTranslation U 0 = U :=
-        RawSupportGeometry.translation_zeroAt149 U
+        TileTranslationProperties.zero U
     have htileA : cert.modified.tile a =
         TileCellComplement (cert.P 0 true) cert.O := RawSupportGeometry.htileAAt155 q cfg C₀ T
             cert translation_zero
@@ -826,7 +797,7 @@ theorem BandOrderedGeneralRawSupport
         (raw_boundary z1 hz1Q hz1C) (raw_boundary z3 hz3Q hz3C)
     have boundary_edge_footprint (U : ProtoTile) (e : Finset GaussianInt)
         (he : e ∈ BoundaryFootprintEdges U) : e ∈ FootprintEdges U :=
-            RawSupportGeometry.boundary_edge_footprint U e he
+            BoundaryFootprintInclusion.boundaryEdge U e he
     have hQO : Disjoint (cert.Q 1 true).cells cert.O.cells := RawSupportGeometry.hQO q cfg C₀ T
         cert hQne
     have hsupportEdges : ∀ x y : GaussianInt, ∀ l r : List GaussianInt,
@@ -880,7 +851,7 @@ theorem BandOrderedGeneralRawSupport
     let f1 := cert.modifiedFaceEquivalence.symm ⟨.I1, 0, 0⟩
     let f2 := cert.modifiedFaceEquivalence.symm ⟨.I2, 0, 0⟩
     have translation_zero (U : ProtoTile) : TileTranslation U 0 = U :=
-        RawSupportGeometry.translation_zeroAt149 U
+        TileTranslationProperties.zero U
     have htileA : cert.modified.tile a =
         TileCellComplement (cert.P 0 true) cert.O := RawSupportGeometry.htileAAt155 q cfg C₀ T
             cert translation_zero

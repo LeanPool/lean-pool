@@ -7,8 +7,6 @@ module
 
 public import Mathlib.Init
 
-public import LeanPool.ApollonianSuperharmonic.FourNeighborConnected
-public import LeanPool.ApollonianSuperharmonic.LatticeTile
 public import LeanPool.ApollonianSuperharmonic.LatticeTileGridStructure
 
 -- [TABLET NODE: LatticeTileComplementGridConnected]
@@ -294,34 +292,35 @@ private theorem hpNonempty :
 private theorem all_good :
     (by
       classical
-      exact
+        exact
         ∀ (T : ProtoTile),
-        let S : Set LatticeCell := T.cells
-        let step : LatticeCell → LatticeCell → Prop := fun a b =>
-          FourNeighborAdjacent a b ∧ a ∉ S ∧ b ∉ S
-        let reach : LatticeCell → LatticeCell → Prop := Relation.ReflTransGen step
-        let around (v q : LatticeCell) : Prop :=
-          q = v ∨ q = v - 1 ∨ q = v - ⟨0, 1⟩ ∨ q = v - 1 - ⟨0, 1⟩
-        ∀ (p : List GaussianInt), ∀ (x : GaussianInt), ∀ (y : GaussianInt), (p.Nodup) → (((4 : ℕ)
-            ≤ p.length) → ((p.head? = some x) → ((p.getLast? = some y) →
-            ((BoundaryFootprintVertices T = (↑p.toFinset : Set GaussianInt)) → ((∀ (a :
-            GaussianInt), ∀ (b : GaussianInt), ∀ (l₁ : List GaussianInt), ∀ (l₂ : List
-            GaussianInt), p = l₁ ++ a :: b :: l₂ → FourNeighborAdjacent a b) → ((∀ (e : Finset
-            GaussianInt), e ∈ BoundaryFootprintEdges T ↔ e = {y, x} ∨ ∃ (a : GaussianInt) (b :
-            GaussianInt) (l₁ : List GaussianInt) (l₂ : List GaussianInt), p = l₁ ++ a :: b :: l₂
-            ∧ e = {a, b}) → (∀ (base : LatticeCell),
-        let good (v : LatticeCell) : Prop :=
-          ∃ q, q ∉ S ∧ around v q ∧ reach q base
-        (good x) → (
-        let edgeRel (a b : LatticeCell) : Prop :=
-          FourNeighborAdjacent a b ∧
-            ({a, b} : Finset GaussianInt) ∈ BoundaryFootprintEdges T
-        (List.IsChain edgeRel p) → ((∀ (a : LatticeCell), ∀ (l : List LatticeCell), good a →
-            List.IsChain edgeRel (a :: l) → ∀ v ∈ a :: l, good v) → ((p ≠ []) → (∀ v ∈ p, good
-            v))))))))))) ) := by
+          let S : Set LatticeCell := T.cells;
+          let step : LatticeCell → LatticeCell → Prop := fun a b =>
+            FourNeighborAdjacent a b ∧ a ∉ S ∧ b ∉ S;
+          let reach : LatticeCell → LatticeCell → Prop :=
+            Relation.ReflTransGen step;
+          let around (v q : LatticeCell) : Prop :=
+            q = v ∨ q = v - 1 ∨ q = v - ⟨0, 1⟩ ∨ q = v - 1 - ⟨0, 1⟩;
+          ∀ (p : List GaussianInt),
+            ∀ (x : GaussianInt),
+              ((p.head? = some x) →
+                (∀ (base : LatticeCell),
+                  let good (v : LatticeCell) : Prop :=
+                    ∃ q, q ∉ S ∧ around v q ∧ reach q base;
+                  (good x) →
+                    (let edgeRel (a b : LatticeCell) : Prop :=
+                      FourNeighborAdjacent a b ∧
+                        ({ a, b } : Finset GaussianInt) ∈ BoundaryFootprintEdges T;
+                    (List.IsChain edgeRel p) →
+                      ((∀ (a : LatticeCell),
+                          ∀ (l : List LatticeCell),
+                            good a →
+                              List.IsChain edgeRel (a :: l) →
+                                ∀ v ∈ a :: l, good v) →
+                        ((p ≠ []) → (∀ v ∈ p, good v))))))) := by
   classical
-  intro T S step reach around p x y hpNodup hpLength hpHead hpLast hpVerts hpAdjacent hpEdges
-      base good hgoodX edgeRel hpEdgeRel chain_good hpNonempty
+  intro T S step reach around p x hpHead base good hgoodX edgeRel hpEdgeRel chain_good
+      hpNonempty
   cases p with
   | nil => exact (hpNonempty rfl).elim
   | cons a l =>
@@ -669,8 +668,8 @@ theorem LatticeTileComplementGridConnected (T : ProtoTile)
       := b) ha hab
   have chain_good := ComplementGridPaths.chain_good T base good_step
   have hpNonempty := ComplementGridPaths.hpNonempty p x hpHead
-  have all_good := ComplementGridPaths.all_good T p x y hpNodup hpLength hpHead hpLast hpVerts
-      hpAdjacent hpEdges base hgoodX hpEdgeRel chain_good hpNonempty
+  have all_good := ComplementGridPaths.all_good T p x hpHead base hgoodX hpEdgeRel chain_good
+      hpNonempty
   have hxmem : x ∈ p := by
     exact List.mem_of_mem_head? (by simp [hpHead])
   have hymem : y ∈ p := by

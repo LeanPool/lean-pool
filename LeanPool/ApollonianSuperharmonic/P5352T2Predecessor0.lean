@@ -6,6 +6,7 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.FourNeighborLaplacianProperties
 
 public import LeanPool.ApollonianSuperharmonic.P5352T2PlacementData
 public import LeanPool.ApollonianSuperharmonic.P5352T2DomainRows
@@ -27,17 +28,6 @@ namespace ApollonianSuperharmonic
 
 namespace FirstPredecessorCases
 
-private theorem lap_identity :
-    (by
-      classical
-      exact
-        ∀ (g : IntegerLatticeFunction), ∀ (x : GaussianInt), FourNeighborLaplacian g x = g (x +
-            (1 : GaussianInt)) - g x + (g (x - (1 : GaussianInt)) - g x) + (g (x + ⟨(0 : ℤ), (1 :
-            ℤ)⟩) - g x) + (g (x - ⟨(0 : ℤ), (1 : ℤ)⟩) - g x) ) := by
-  classical
-  intro g x
-  unfold FourNeighborLaplacian
-  ring
 
 private theorem endAlgebra :
     (by
@@ -508,34 +498,19 @@ private theorem qPeLt :
 private theorem qPeEq :
     (by
       classical
-      exact
-        ∀ (K : DiamondParameter), ∀ (f : IntegerLatticeFunction), ∀ (B : Int),
-        let k : Int := K.1
-        let d : GaussianInt := ⟨k, 1-k⟩
-        let r : GaussianInt := ⟨2*k, 0⟩
-        ∀ (p : ℤ), ∀ (q : ℤ), ((1 : ℤ) ≤ p) → ((p ≤ k) → (
-        let Q : Int → Int → Int := fun a b =>
-          (Int.natAbs a : Int) * ((Int.natAbs a : Int)-1) / 2 - (a-b)^2/4
-        (q = p - (1 : ℤ)) → (
-        let zA : GaussianInt := ⟨p,p-1⟩
-        (zA-r ∈ FootprintVertices (DiamondTile K.1) ↔ p=k) → ((zA = (⟨p,p-1⟩ : GaussianInt)) → (
-        let valS : Int := Q (p-k) (p-1-1-(1-k))
-        let valC : Int := Q (p-k) (p-1-(1-k))
-        ((zA+1)-d = (⟨p+1-k,p+k-2⟩ : GaussianInt)) → (((zA-⟨0,1⟩)-d = (⟨p-k,p+k-3⟩ :
-            GaussianInt)) → (
-        let val0 : Int := Q p (p-1)
-        let valW : Int := Q (p-1) (p-1)
-        let valN : Int := Q p p
-        (f zA = val0) → ((f (zA-1) = valW) → ((f (zA+⟨0,1⟩) = valN) → ((f zA = valC +
-            (k-1)*(p-1)+B) → ((f (zA+1) = Q (p+1-k) (p-1-(1-k)) + (k-1)*(p-1)+B) → ((f (zA-⟨0,1⟩)
-            = valS + (k-1)*(p-2)+B) → ((val0 = p*(p-1)/2) → ((valW = (p-1)*(p-2)/2) → ((valN =
-            p*(p-1)/2) → ((Q p (p-2) = p*(p-1)/2-1) → ((∀ (m : Int), (1-2*m)^2/4 = m^2-m) →
-            ((valC = (k-p)*(k-p-1)/2-(k-1)^2) → (((p < k) → (Q (p+1-k) (p-1-(1-k)) =
-            (k-p-1)*(k-p-2)/2-((k-1)^2-(k-1)))) → (p = k → Q (p + (1 : ℤ) - k) (p - (1 : ℤ) - ((1
-            : ℤ) - k)) = -((k - (1 : ℤ)) ^ (2 : ℕ) - (k - (1 : ℤ))))))))))))))))))))))) ) := by
+        exact
+        ∀ (K : DiamondParameter),
+          let k : Int := K.1;
+          ∀ (p : ℤ),
+            (let Q : Int → Int → Int := fun a b =>
+              (Int.natAbs a : Int) * ((Int.natAbs a : Int) - 1) / 2 -
+                (a - b) ^ 2 / 4;
+            ((∀ (m : Int), (1 - 2 * m) ^ 2 / 4 = m ^ 2 - m) →
+              (p = k →
+                Q (p + (1 : ℤ) - k) (p - (1 : ℤ) - ((1 : ℤ) - k)) =
+                  -((k - (1 : ℤ)) ^ (2 : ℕ) - (k - (1 : ℤ))))))) := by
   classical
-  intro K f B k d r p q hp1 hpk Q hq zA hComp hzEq valS valC he hs val0 valW valN hC0 hCW hCN
-      hPcenter hPeast hPsouth qC0 qCW qCN qCS floorOdd qP0 qPeLt hpk'
+  intro K k p Q floorOdd hpk'
   subst p
   simp only [Q, Int.natCast_natAbs]
   rw [show k+1-k = 1 by omega, abs_of_nonneg (show 0 ≤ (1:Int) by omega)]
@@ -614,27 +589,43 @@ private theorem tdiffRev :
 private theorem hEastDiff :
     (by
       classical
-      exact
-        ∀ (K : DiamondParameter), ∀ (f : IntegerLatticeFunction), ∀ (B : Int), (∀ (a : Int), ∀ (b
-            : Int), 1-(b-a)+(b-1)=a) → ((∀ (b : Int), ∀ (c : Int),
-            -((b-1)^2-(b-1))+(b-1)*(b-1)+c- (0/2-(b-1)^2+(b-1)*(b-1)+c)=b-1) → (
-        let k : Int := K.1
-        ∀ (p : ℤ), ∀ (q : ℤ), (p ≤ k) → (
-        let Q : Int → Int → Int := fun a b =>
-          (Int.natAbs a : Int) * ((Int.natAbs a : Int)-1) / 2 - (a-b)^2/4
-        (q = p - (1 : ℤ)) → (
-        let zA : GaussianInt := ⟨p,p-1⟩
-        let valS : Int := Q (p-k) (p-1-1-(1-k))
-        let valC : Int := Q (p-k) (p-1-(1-k))
-        (f zA = valC + (k-1)*(p-1)+B) → ((f (zA+1) = Q (p+1-k) (p-1-(1-k)) + (k-1)*(p-1)+B) →
-            ((valC = (k-p)*(k-p-1)/2-(k-1)^2) → (((p < k) → (Q (p+1-k) (p-1-(1-k)) =
-            (k-p-1)*(k-p-2)/2-((k-1)^2-(k-1)))) → (((p = k) → (Q (p+1-k) (p-1-(1-k)) =
-            -((k-1)^2-(k-1)))) → ((valS = (k-p)*(k-p-1)/2-((k-1)^2-(k-1))) → ((∀ (a : Int),
-            (a-1)*(a-2)/2-a*(a-1)/2 = 1-a) → (f (zA+1)-f zA = if p=k then k-1 else p))))))))))) )
-            := by
+        exact
+        ∀ (K : DiamondParameter),
+          ∀ (f : IntegerLatticeFunction),
+            ∀ (B : Int),
+              (∀ (a : Int), ∀ (b : Int), 1 - (b - a) + (b - 1) = a) →
+                ((∀ (b : Int),
+                    ∀ (c : Int),
+                      -((b - 1) ^ 2 - (b - 1)) + (b - 1) * (b - 1) + c -
+                          (0 / 2 - (b - 1) ^ 2 + (b - 1) * (b - 1) + c) =
+                        b - 1) →
+                  (let k : Int := K.1;
+                  ∀ (p : ℤ),
+                    (p ≤ k) →
+                      (let Q : Int → Int → Int := fun a b =>
+                        (Int.natAbs a : Int) * ((Int.natAbs a : Int) - 1) / 2 -
+                          (a - b) ^ 2 / 4;
+                      (let zA : GaussianInt := ⟨p, p - 1⟩;
+                      let valC : Int := Q (p - k) (p - 1 - (1 - k));
+                      (f zA = valC + (k - 1) * (p - 1) + B) →
+                        ((f (zA + 1) =
+                            Q (p + 1 - k) (p - 1 - (1 - k)) + (k - 1) * (p - 1) +
+                              B) →
+                          ((valC = (k - p) * (k - p - 1) / 2 - (k - 1) ^ 2) →
+                            (((p < k) →
+                                (Q (p + 1 - k) (p - 1 - (1 - k)) =
+                                  (k - p - 1) * (k - p - 2) / 2 -
+                                    ((k - 1) ^ 2 - (k - 1)))) →
+                              (((p = k) →
+                                  (Q (p + 1 - k) (p - 1 - (1 - k)) =
+                                    -((k - 1) ^ 2 - (k - 1)))) →
+                                ((∀ (a : Int),
+                                    (a - 1) * (a - 2) / 2 - a * (a - 1) / 2 =
+                                      1 - a) →
+                                  (f (zA + 1) - f zA =
+                                    if p = k then k - 1 else p))))))))))) := by
   classical
-  intro K f B eastAlgebra endAlgebraB k p q hpk Q hq zA valS valC hPcenter hPeast qP0 qPeLt qPeEq
-      qPs tdiffRev
+  intro K f B eastAlgebra endAlgebraB k p hpk Q zA valC hPcenter hPeast qP0 qPeLt qPeEq tdiffRev
   by_cases hp : p=k
   · rw [hPeast, hPcenter, qPeEq hp, qP0]
     rw [hp]
@@ -830,7 +821,7 @@ theorem P5352T2Predecessor0 (K : DiamondParameter) (hk : 1 < K.1)
   exact (by
     classical
     have lap_identity (g : IntegerLatticeFunction) (x : GaussianInt) :=
-        FirstPredecessorCases.lap_identity g x
+        FourNeighborLaplacianProperties.differences g x
     have subDiff {a b c d : Int} (hab : a=b) (hcd : c=d) :
         a-c = b-d := by rw [hab, hcd]
     have eastAlgebra (a b : Int) : 1-(b-a)+(b-1)=a := by ring
@@ -950,16 +941,15 @@ theorem P5352T2Predecessor0 (K : DiamondParameter) (hk : 1 < K.1)
       have floorOdd (m : Int) := FirstPredecessorCases.floorOdd K f B p q m
       have qP0 := FirstPredecessorCases.qP0 K f B p q hpk hq floorEven
       have qPeLt (hpk' : p < k) := FirstPredecessorCases.qPeLt K f B p q hq floorOdd hpk'
-      have qPeEq (hpk' : p = k) := FirstPredecessorCases.qPeEq K f B p q hp1 hpk hq hComp hzEq he
-          hs hC0 hCW hCN hPcenter hPeast hPsouth qC0 qCW qCN qCS floorOdd qP0 qPeLt hpk'
+      have qPeEq (hpk' : p = k) := FirstPredecessorCases.qPeEq K p floorOdd hpk'
       have qPs := FirstPredecessorCases.qPs K f B p q hpk hq floorOdd
       have hQdelta : valS - valC = k-1 := by
         linear_combination qPs-qP0
       have tri (a : Int) := FirstPredecessorCases.tri K f B p q a
       have tdiff (a : Int) := FirstPredecessorCases.tdiff K f B p q tri a
       have tdiffRev (a : Int) := FirstPredecessorCases.tdiffRev K f B p q tdiff a
-      have hEastDiff := FirstPredecessorCases.hEastDiff K f B eastAlgebra endAlgebraB p q hpk hq
-          hPcenter hPeast qP0 qPeLt qPeEq qPs tdiffRev
+      have hEastDiff := FirstPredecessorCases.hEastDiff K f B eastAlgebra endAlgebraB p hpk
+          hPcenter hPeast qP0 qPeLt qPeEq tdiffRev
       have hWestDiff := FirstPredecessorCases.hWestDiff f subDiff p hC0 hCW qC0 qCW tdiffRev
       have hNorthDiff := FirstPredecessorCases.hNorthDiff f subDiff p hC0 hCN qC0 qCN
       have hSouthDiff := FirstPredecessorCases.hSouthDiff K f B subDiff productGap p hPcenter

@@ -6,6 +6,7 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.ListEndpointFacts
 
 public import LeanPool.ApollonianSuperharmonic.OdometerStringRespect
 public import LeanPool.ApollonianSuperharmonic.AncestorOdometer
@@ -59,53 +60,6 @@ private theorem zipDropLast :
           simp only [List.dropLast_cons_cons, List.zip_cons_cons]
           congr 1
           exact ih (y' :: ys) ht
-
-private theorem hrightZipShape :
-    ∀ (C : BandCircle), ∀ (C₀ : BandCircle), ∀ (orientation : Bool), ∀ (base : ProtoTile), ∀ (R :
-        ProtoTile), ∀ (J : ProtoTile), ∀ (S : ProtoTile), ∀ (T₀ : ProtoTile), ∀ (hJ :
-        PartialOdometer), ∀ (hS : PartialOdometer), ∀ (h₀ : PartialOdometer), ∀ (left : List
-        ProtoTile), ∀ (right : List ProtoTile), ∀ (hl : List PartialOdometer), ∀ (hr : List
-        PartialOdometer), (hr.head? = some hJ) → ((hr.getLast? = some hS) → ((TileString C
-        orientation base R S (left.dropLast ++ right)) → ((∀ U ∈ (List.drop (1 : ℕ)
-        right).dropLast, ∃ (g : PartialOdometer), (U, g) ∈ right.zip hr ∧ AncestorOdometer C.1.1
-            C₀.1.1 U T₀ g h₀) → ((List.Forall₂ (fun (T : ProtoTile) (h : PartialOdometer)
-        => TileOdometer C.1.1 T h) right hr) →
-        ((List.IsChain (fun (X Y : ProtoTile × PartialOdometer) => LeftLatticeAdjacent C X.1 Y.1
-        X.2 Y.2) (right.zip hr)) → ((right.length = hr.length) → ((right.head? = some J) →
-        ((right.getLast? = some S) → ((List.Pairwise (fun (T U : ProtoTile) => T ≠ U) right) →
-        ((∀ T ∈ right, T ∈ RegularTileFamily base (TilingLattice C)) → ((List.IsChain (fun (T U :
-        ProtoTile) => if C.1.1.1 = (1 : ℤ) then ∃ (v :
-        GaussianInt), UnitTriangularStep orientation v ∧ TileCentroid U - TileCentroid T =
-        GaussianRealPoint v else TileTouching T U) right) → ((∀ (pre : List ProtoTile), ∀ (T :
-            ProtoTile), ∀ (post : List ProtoTile), right = pre ++ T :: post → pre ≠ [] → post ≠ [] →
-        (0 : ℝ) ≤ (fun (T : ProtoTile) => ((TileCentroid T).2 - (TileCentroid J).2) *
-        ((TileCentroid S).1 - (TileCentroid J).1) - ((TileCentroid T).1 - (TileCentroid J).1) *
-        ((TileCentroid S).2 - (TileCentroid J).2)) T ∧ ∃ U ∈ RegularTileFamily base
-        (TilingLattice C), (fun (T U : ProtoTile) => if C.1.1.1 = (1 : ℤ) then ∃ (v :
-            GaussianInt), UnitTriangularStep orientation v
-        ∧ TileCentroid U - TileCentroid T = GaussianRealPoint v else TileTouching T U) T U ∧ (fun
-        (T : ProtoTile) => ((TileCentroid T).2 - (TileCentroid J).2) * ((TileCentroid S).1 -
-        (TileCentroid J).1) - ((TileCentroid T).1 - (TileCentroid J).1) * ((TileCentroid S).2 -
-        (TileCentroid J).2)) U < (0 : ℝ)) → ((List.Forall₂ (fun T h => TileOdometer C.1.1 T h)
-        (left.dropLast ++ right) (hl.dropLast ++ hr)) → (((left.dropLast ++ right).zip
-        (hl.dropLast ++ hr) = (left.zip hl).dropLast ++ right.zip hr) → (right.zip hr = [(J, hJ)]
-        ++ right.tail.zip hr.tail))))))))))))))) := by
-  classical
-  intro C C₀ orientation base R J S T₀ hJ hS h₀ left right hl hr hrhead hrlast hjoined hrightAnc
-      hrightOdo hrightChain hrightLen hrightTileHead hrightTileLast hrightNodup hrightMem
-      hrightTileChain hrightHeight hrel hzip
-  cases right with
-  | nil => simp at hrightTileHead
-  | cons t ts =>
-    cases hr with
-    | nil => simp at hrhead
-    | cons g gs =>
-      simp only [List.head?_cons] at hrightTileHead hrhead
-      injection hrightTileHead with ht
-      injection hrhead with hg
-      subst t
-      subst g
-      rfl
 
 private theorem hUdropLast :
     ∀ (left : List ProtoTile), ∀ (right : List ProtoTile), ∀ (U : ProtoTile), (U ∈ (List.drop (1
@@ -226,54 +180,6 @@ private theorem hleftZipDrop :
   rw [hleftZipShape]
   simp
 
-private theorem hJmem :
-    ∀ (C : BandCircle), ∀ (C₀ : BandCircle), ∀ (orientation : Bool), ∀ (base : ProtoTile), ∀ (R :
-        ProtoTile), ∀ (J : ProtoTile), ∀ (S : ProtoTile), ∀ (T₀ : ProtoTile), ∀ (hJ :
-        PartialOdometer), ∀ (h₀ : PartialOdometer), ∀ (left : List ProtoTile), ∀ (right : List
-        ProtoTile), ∀ (hl : List PartialOdometer), ∀ (hr : List PartialOdometer), (∀ U ∈
-        (List.drop (1 : ℕ) right).dropLast, ∃ (g : PartialOdometer), (U, g) ∈ right.zip hr ∧
-        AncestorOdometer C.1.1 C₀.1.1 U T₀ g h₀) → ((List.Forall₂ (fun (T : ProtoTile)
-        (h : PartialOdometer) => TileOdometer C.1.1 T
-        h) right hr) → ((List.IsChain (fun (X Y : ProtoTile × PartialOdometer) =>
-        LeftLatticeAdjacent C X.1 Y.1 X.2 Y.2) (right.zip hr)) → ((right.length = hr.length) →
-        ((right.head? = some J) → ((right.getLast? = some S) → ((List.Pairwise (fun (T U :
-        ProtoTile) => T ≠ U) right) → ((∀ T ∈ right, T ∈ RegularTileFamily base (TilingLattice
-        C)) → ((List.IsChain (fun (T U : ProtoTile) => if C.1.1.1 = (1 : ℤ) then ∃ (v :
-            GaussianInt), UnitTriangularStep orientation v
-        ∧ TileCentroid U - TileCentroid T = GaussianRealPoint v else TileTouching T U) right) →
-        ((∀ (pre : List ProtoTile), ∀ (T : ProtoTile), ∀ (post : List ProtoTile), right = pre ++
-        T :: post → pre ≠ [] → post ≠ [] → (0 : ℝ) ≤ (fun (T : ProtoTile) => ((TileCentroid T).2
-        - (TileCentroid J).2) * ((TileCentroid S).1 - (TileCentroid J).1) - ((TileCentroid T).1 -
-        (TileCentroid J).1) * ((TileCentroid S).2 - (TileCentroid J).2)) T ∧ ∃ U ∈
-        RegularTileFamily base (TilingLattice C), (fun (T U : ProtoTile) => if C.1.1.1 = (1 : ℤ)
-            then ∃ (v : GaussianInt),
-        UnitTriangularStep orientation v ∧ TileCentroid U - TileCentroid T = GaussianRealPoint v
-        else TileTouching T U) T U ∧ (fun (T : ProtoTile) => ((TileCentroid T).2 - (TileCentroid
-        J).2) * ((TileCentroid S).1 - (TileCentroid J).1) - ((TileCentroid T).1 - (TileCentroid
-        J).1) * ((TileCentroid S).2 - (TileCentroid J).2)) U < (0 : ℝ)) → ((List.Forall₂ (fun T h
-        => TileOdometer C.1.1 T h) (left.dropLast ++ right) (hl.dropLast ++ hr)) →
-        (((left.dropLast ++ right).zip (hl.dropLast ++ hr) = (left.zip hl).dropLast ++ right.zip
-        hr) → ((right.zip hr = [(J, hJ)] ++ right.tail.zip hr.tail) → ((List.IsChain (fun X Y =>
-        LeftLatticeAdjacent C X.1 Y.1 X.2 Y.2) ([(J, hJ)] ++ right.tail.zip hr.tail)) →
-        ((((left.zip hl).dropLast ++ right.zip hr).IsChain (fun X Y => LeftLatticeAdjacent C X.1
-        Y.1 X.2 Y.2)) → ((TileString C orientation base R S (left.dropLast ++ right)) →
-        (((left.dropLast ++ right).head? = some R) → (((left.dropLast ++ right).getLast? = some
-        S) → ((List.Pairwise (fun (T U : ProtoTile) => T ≠ U) (left.dropLast ++ right)) →
-        ((List.Nodup (left.dropLast ++ right)) → ((List.Disjoint left.dropLast right) → (J ∈
-        right))))))))))))))))))))) := by
-  classical
-  intro C C₀ orientation base R J S T₀ hJ h₀ left right hl hr hrightAnc hrightOdo hrightChain
-      hrightLen hrightTileHead hrightTileLast hrightNodup hrightMem hrightTileChain hrightHeight
-      hrel hzip hrightZipShape hrightChainShape hnewChain hjoinedKeep hcatHead hcatLast
-      hcatPairwise hcatNodup hdisj
-  cases right with
-  | nil => simp at hrightTileHead
-  | cons t ts =>
-    simp only [List.head?_cons] at hrightTileHead
-    injection hrightTileHead with ht
-    subst t
-    simp
-
 private theorem leftPairDrop :
     ∀ (J : ProtoTile), ∀ (hJ : PartialOdometer), ∀ (left : List ProtoTile), ∀ (hl : List
         PartialOdometer), (left.zip hl = left.dropLast.zip hl.dropLast ++ [(J, hJ)]) → (∀
@@ -322,74 +228,6 @@ private theorem hrespect :
   classical
   intro C orientation base R S left right hl hr hrel hzip hnewChain hjoinedKeep
   exact ⟨hjoinedKeep, hrel, by rw [hzip]; exact hnewChain⟩
-
-private theorem hhead :
-    ∀ (C : BandCircle), ∀ (C₀ : BandCircle), ∀ (orientation : Bool), ∀ (base : ProtoTile), ∀ (R :
-        ProtoTile), ∀ (J : ProtoTile), ∀ (S : ProtoTile), ∀ (T₀ : ProtoTile), ∀ (hR :
-        PartialOdometer), ∀ (hJ : PartialOdometer), ∀ (h₀ : PartialOdometer), ∀ (left : List
-        ProtoTile), ∀ (right : List ProtoTile), ∀ (hl : List PartialOdometer), ∀ (hr : List
-        PartialOdometer), (hl.head? = some hR) → ((hl.getLast? = some hJ) → ((hr.head? = some hJ)
-        → ((∀ U ∈ (List.drop (1 : ℕ) left).dropLast, ∃ (g : PartialOdometer), (U, g) ∈ left.zip
-        hl ∧ AncestorOdometer C.1.1 C₀.1.1 U T₀ g h₀) → ((List.Forall₂ (fun (T : ProtoTile)
-        (h : PartialOdometer) => TileOdometer C.1.1 T
-        h) left hl) → ((List.IsChain (fun (X Y : ProtoTile × PartialOdometer) =>
-        LeftLatticeAdjacent C X.1 Y.1 X.2 Y.2) (left.zip hl)) → ((left.length = hl.length) →
-        ((List.Forall₂ (fun T h => TileOdometer C.1.1 T h) (left.dropLast ++ right) (hl.dropLast
-        ++ hr)) → (((left.dropLast ++ right).zip (hl.dropLast ++ hr) = (left.zip hl).dropLast ++
-        right.zip hr) → (((left.zip hl).dropLast.IsChain (fun X Y => LeftLatticeAdjacent C X.1
-        Y.1 X.2 Y.2)) → ((hl.dropLast ++ [hJ] = hl) → ((left.zip hl = left.dropLast.zip
-        hl.dropLast ++ [(J, hJ)]) → ((List.IsChain (fun X Y => LeftLatticeAdjacent C X.1 Y.1 X.2
-        Y.2) (left.dropLast.zip hl.dropLast ++ [(J, hJ)])) → ((((left.zip hl).dropLast ++
-        right.zip hr).IsChain (fun X Y => LeftLatticeAdjacent C X.1 Y.1 X.2 Y.2)) → (((left.zip
-        hl).dropLast = left.dropLast.zip hl.dropLast) → ((∀ {U : ProtoTile}, ∀
-        {g : PartialOdometer}, ((U, g) ∈ left.zip hl) → ((U ≠ J) → ((U, g) ∈ left.dropLast.zip
-        hl.dropLast))) → ((∀ {U : ProtoTile}, ∀ {g : PartialOdometer}, ((U, g) ∈
-        left.dropLast.zip hl.dropLast) → ((U, g) ∈ (left.dropLast ++ right).zip (hl.dropLast ++
-        hr))) → ((∀ {U : ProtoTile}, ∀ {g : PartialOdometer}, ((U, g) ∈ right.zip hr) → ((U, g) ∈
-        (left.dropLast ++ right).zip (hl.dropLast ++ hr))) → ((OdometerStringRespect C
-        orientation base R S (left.dropLast ++ right) (hl.dropLast ++ hr)) → ((hl.dropLast ++
-        hr).head? = some hR))))))))))))))))))) := by
-  classical
-  intro C C₀ orientation base R J S T₀ hR hJ h₀ left right hl hr hlhead hllast hrhead hleftAnc
-      hleftOdo hleftChain hleftLen hrel hzip hleftTailChain hleftFunList hleftZipShape
-      hleftChainShape hnewChain hleftZipDrop leftPairDrop leftPairTransfer rightPairTransfer
-      hrespect
-  cases hl with
-  | nil => simp at hlhead
-  | cons x xs => cases xs <;> simp_all
-
-private theorem hlast :
-    ∀ (C : BandCircle), ∀ (C₀ : BandCircle), ∀ (orientation : Bool), ∀ (base : ProtoTile), ∀ (R :
-        ProtoTile), ∀ (J : ProtoTile), ∀ (S : ProtoTile), ∀ (T₀ : ProtoTile), ∀ (hR :
-        PartialOdometer), ∀ (hJ : PartialOdometer), ∀ (hS : PartialOdometer), ∀ (h₀ :
-        PartialOdometer), ∀ (left : List ProtoTile), ∀ (right : List ProtoTile), ∀ (hl : List
-        PartialOdometer), ∀ (hr : List PartialOdometer), (hr.head? = some hJ) → ((hr.getLast? =
-        some hS) → ((∀ U ∈ (List.drop (1 : ℕ) right).dropLast, ∃ (g : PartialOdometer), (U, g) ∈
-        right.zip hr ∧ AncestorOdometer C.1.1 C₀.1.1 U T₀ g h₀) → ((List.Forall₂ (fun (T :
-        ProtoTile) (h : PartialOdometer) => TileOdometer C.1.1 T h) right hr) → ((List.IsChain
-            (fun (X Y : ProtoTile ×
-        PartialOdometer) => LeftLatticeAdjacent C X.1 Y.1 X.2 Y.2) (right.zip hr)) →
-        ((right.length = hr.length) → ((List.Forall₂ (fun T h => TileOdometer C.1.1 T h)
-        (left.dropLast ++ right) (hl.dropLast ++ hr)) → (((left.dropLast ++ right).zip
-        (hl.dropLast ++ hr) = (left.zip hl).dropLast ++ right.zip hr) → ((right.zip hr = [(J,
-        hJ)] ++ right.tail.zip hr.tail) → ((List.IsChain (fun X Y => LeftLatticeAdjacent C X.1
-        Y.1 X.2 Y.2) ([(J, hJ)] ++ right.tail.zip hr.tail)) → ((((left.zip hl).dropLast ++
-        right.zip hr).IsChain (fun X Y => LeftLatticeAdjacent C X.1 Y.1 X.2 Y.2)) → ((∀
-        {U : ProtoTile}, ∀ {g : PartialOdometer}, ((U, g) ∈ left.dropLast.zip hl.dropLast) → ((U,
-        g) ∈ (left.dropLast ++ right).zip (hl.dropLast ++ hr))) → ((∀ {U : ProtoTile}, ∀
-        {g : PartialOdometer}, ((U, g) ∈ right.zip hr) → ((U, g) ∈ (left.dropLast ++ right).zip
-        (hl.dropLast ++ hr))) → ((OdometerStringRespect C orientation base R S (left.dropLast ++
-        right) (hl.dropLast ++ hr)) → (((hl.dropLast ++ hr).head? = some hR) → ((hl.dropLast ++
-        hr).getLast? = some hS))))))))))))))) := by
-  classical
-  intro C C₀ orientation base R J S T₀ hR hJ hS h₀ left right hl hr hrhead hrlast hrightAnc
-      hrightOdo hrightChain hrightLen hrel hzip hrightZipShape hrightChainShape hnewChain
-      leftPairTransfer rightPairTransfer hrespect hhead
-  have hne : hr ≠ [] := by
-    intro he; simp [he] at hrlast
-  cases hr with
-  | nil => contradiction
-  | cons x xs => simpa using hrlast
 
 private theorem hcatNe :
     ∀ (R : ProtoTile), ∀ (left : List ProtoTile), ∀ (right : List ProtoTile), ((left.dropLast ++
@@ -593,9 +431,7 @@ theorem P4458T1RespectAppend
       RespectAppendDetails.hleftZipShape C J hJ left hl hleftOdo dropLastForall₂ hleftList
       hleftFunList
   have hrightZipShape : right.zip hr = [(J, hJ)] ++ right.tail.zip hr.tail :=
-      RespectAppendProof.hrightZipShape C C₀ orientation base R J S T₀ hJ hS h₀ left right hl hr
-      hrhead hrlast hjoined hrightAnc hrightOdo hrightChain hrightLen hrightTileHead
-      hrightTileLast hrightNodup hrightMem hrightTileChain hrightHeight hrel hzip
+      ListEndpointFacts.zipHeadShape right hr J hJ hrightTileHead hrhead
   have hleftChainShape : List.IsChain
       (fun X Y => LeftLatticeAdjacent C X.1 Y.1 X.2 Y.2)
       (left.dropLast.zip hl.dropLast ++ [(J, hJ)]) := RespectAppendDetails.hleftChainShape C J hJ
@@ -614,10 +450,7 @@ theorem P4458T1RespectAppend
   have hcatNodup : List.Nodup (left.dropLast ++ right) := hcatPairwise
   have hdisj : List.Disjoint left.dropLast right :=
     List.disjoint_of_nodup_append hcatNodup
-  have hJmem : J ∈ right := RespectAppendDetails.hJmem C C₀ orientation base R J S T₀ hJ h₀ left
-      right hl hr hrightAnc hrightOdo hrightChain hrightLen hrightTileHead hrightTileLast
-      hrightNodup hrightMem hrightTileChain hrightHeight hrel hzip hrightZipShape
-      hrightChainShape hnewChain hjoinedKeep hcatHead hcatLast hcatPairwise hcatNodup hdisj
+  have hJmem : J ∈ right := ListEndpointFacts.headMembership right J hrightTileHead
   have leftPairDrop {U : ProtoTile} {g : PartialOdometer}
       (hpair : (U, g) ∈ left.zip hl) (hUJ : U ≠ J) :
       (U, g) ∈ left.dropLast.zip hl.dropLast := RespectAppendDetails.leftPairDrop J hJ left hl
@@ -634,14 +467,10 @@ theorem P4458T1RespectAppend
   have hrespect : OdometerStringRespect C orientation base R S
       (left.dropLast ++ right) (hl.dropLast ++ hr) := RespectAppendDetails.hrespect C orientation
           base R S left right hl hr hrel hzip hnewChain hjoinedKeep
-  have hhead : (hl.dropLast ++ hr).head? = some hR := RespectAppendDetails.hhead C C₀ orientation
-      base R J S T₀ hR hJ h₀ left right hl hr hlhead hllast hrhead hleftAnc hleftOdo hleftChain
-      hleftLen hrel hzip hleftTailChain hleftFunList hleftZipShape hleftChainShape hnewChain
-      hleftZipDrop leftPairDrop leftPairTransfer rightPairTransfer hrespect
-  have hlast : (hl.dropLast ++ hr).getLast? = some hS := RespectAppendDetails.hlast C C₀
-      orientation base R J S T₀ hR hJ hS h₀ left right hl hr hrhead hrlast hrightAnc hrightOdo
-      hrightChain hrightLen hrel hzip hrightZipShape hrightChainShape hnewChain leftPairTransfer
-      rightPairTransfer hrespect hhead
+  have hhead : (hl.dropLast ++ hr).head? = some hR := ListEndpointFacts.headDropLastAppend hl hr
+      hR hJ hlhead hllast hrhead
+  have hlast : (hl.dropLast ++ hr).getLast? = some hS := ListEndpointFacts.lastDropLastAppend hl
+      hr hS hrlast
   refine ⟨hhead, hlast, hrespect, ?_⟩
   intro U hU
   have hUstart : U ∈ (left.dropLast ++ right).drop 1 :=

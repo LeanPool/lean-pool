@@ -179,20 +179,6 @@ private theorem family :
   · rintro ⟨z, hz, _⟩
     exact ⟨index z, index_mem z, hz⟩
 
-private theorem point_inj :
-    (by
-      classical
-      exact
-        Function.Injective GaussianRealPoint ) := by
-  classical
-  intro x y hxy
-  apply Zsqrtd.ext
-  · have h := congrArg Prod.fst hxy
-    dsimp [GaussianRealPoint] at h
-    exact_mod_cast h
-  · have h := congrArg Prod.snd hxy
-    dsimp [GaussianRealPoint] at h
-    exact_mod_cast h
 
 private theorem index_sub :
     (by
@@ -781,7 +767,7 @@ theorem TileStringCoordinateTransport (C : BandCircle) (orientation : Bool)
           index_mem translation_inj U
   have tile_mem (z : Int × Int) : tileAt z ∈ RegularTileFamily base (TilingLattice C) :=
     ⟨index z, index_mem z, rfl⟩
-  have point_inj : Function.Injective GaussianRealPoint := StringCoordinateGeometry.point_inj
+  have point_inj : Function.Injective GaussianRealPoint := GaussianRealPointProperties.injective
   have centroid (z : Int × Int) : TileCentroid (tileAt z) =
       ((TileCentroid base).1 + ((index z).re : Int),
         (TileCentroid base).2 + ((index z).im : Int)) :=

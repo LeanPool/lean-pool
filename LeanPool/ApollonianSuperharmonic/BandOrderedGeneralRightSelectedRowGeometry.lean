@@ -9,7 +9,6 @@ public import Mathlib.Init
 
 public import LeanPool.ApollonianSuperharmonic.P5640T1NonpairedOccurrenceIntersections
 public import LeanPool.ApollonianSuperharmonic.P5635T1RightBoundaryInterfaceRecords
-public import LeanPool.ApollonianSuperharmonic.BandOrderedGeneralNormalizedOccurrenceBundle
 public import LeanPool.ApollonianSuperharmonic.BandOrderedGeneralRightInterfaceCertificateExists
 public import LeanPool.ApollonianSuperharmonic.BandOrderedGeneralSelectedContactRow
 
@@ -65,25 +64,7 @@ private theorem turnOutgoing :
   rcases BandVectors.1 (q s.succ) (q 0) with ⟨a, b⟩
   apply Zsqrtd.ext <;> simp [GaussianQuarterTurn]
 
-private theorem turnNeg :
-    (by
-      classical
-      exact
-        ∀ (z : GaussianInt), GaussianQuarterTurn (-z) = -GaussianQuarterTurn z ) := by
-  classical
-  intro z
-  rcases z with ⟨a, b⟩
-  apply Zsqrtd.ext <;> simp [GaussianQuarterTurn]
 
-private theorem turnTwice :
-    (by
-      classical
-      exact
-        ∀ (z : GaussianInt), GaussianQuarterTurn (GaussianQuarterTurn z) = -z ) := by
-  classical
-  intro z
-  rcases z with ⟨a, b⟩
-  apply Zsqrtd.ext <;> simp [GaussianQuarterTurn]
 
 private theorem turnThrice :
     (by
@@ -4699,8 +4680,8 @@ theorem BandOrderedGeneralRightSelectedRowGeometry
         BandVectors.1 (q 0) (q s.succ) := SelectedRowGeometry.turnOutgoing C D T N h k x bundle
             turnFlip s
   have turnNeg (z : GaussianInt) :
-      GaussianQuarterTurn (-z) = -GaussianQuarterTurn z := SelectedRowGeometry.turnNeg z
-  have turnThrice := SelectedRowGeometry.turnThrice turnNeg (SelectedRowGeometry.turnTwice)
+      GaussianQuarterTurn (-z) = -GaussianQuarterTurn z := GaussianQuarterTurnProperties.negation z
+  have turnThrice := SelectedRowGeometry.turnThrice turnNeg (GaussianQuarterTurnProperties.twice)
   have fixedPositive : 0 < (q 0).1 :=
     (ProperBandCurvatureStructure q cfg.proper).1
   have boundaryRecords := P5635T1RightBoundaryInterfaceRecords

@@ -7,13 +7,8 @@ module
 
 public import Mathlib.Init
 
-public import LeanPool.ApollonianSuperharmonic.DiamondExceptionalLattice
 public import LeanPool.ApollonianSuperharmonic.DiamondLaplacianTable
-public import LeanPool.ApollonianSuperharmonic.DiamondOdometer
-public import LeanPool.ApollonianSuperharmonic.DiamondPeakMatrix
 public import LeanPool.ApollonianSuperharmonic.FiniteAcyclicOrientationObstruction
-public import LeanPool.ApollonianSuperharmonic.FourNeighborConnected
-public import LeanPool.ApollonianSuperharmonic.FourNeighborLaplacian
 public import LeanPool.ApollonianSuperharmonic.P5435T1Cocycle
 public import LeanPool.ApollonianSuperharmonic.P5435T1WebGeometry
 public import LeanPool.ApollonianSuperharmonic.P5432T1EdgeLedger
@@ -442,57 +437,24 @@ private theorem localMem :
 private theorem value :
     (by
       classical
-      exact
-        ∀ (K : DiamondParameter),
-        let D := DiamondVertexDomains K true
-        let S := DiamondVertexDomains K false \ D
-        let W : Set GaussianInt :=
-          {x | ∃ v ∈ DiamondExceptionalLattice K, x - v ∈ S}
-        ((∀ (x : GaussianInt), FourNeighborLaplacian (DiamondOdometer K) (x + ⟨(0 : ℤ), (2 : ℤ) *
-            (↑K.1 : ℤ)⟩) = FourNeighborLaplacian (DiamondOdometer K) x ∧ FourNeighborLaplacian
-            (DiamondOdometer K) (x + ⟨(↑K.1 : ℤ) + (1 : ℤ), (↑K.1 : ℤ)⟩) = FourNeighborLaplacian
-            (DiamondOdometer K) x) ∧ (∀ x ∈ DiamondVertexDomains K false, x ∉
-            DiamondVertexDomains K true → FourNeighborLaplacian (DiamondOdometer K) x = (1 : ℤ))
-            ∧ ∀ x ∈ DiamondVertexDomains K true, FourNeighborLaplacian (DiamondOdometer K) x =
-            (if Even (x.re + x.im) then (1 : ℤ) else (-1 : ℤ)) - if x.re = (0 : ℤ) then (1 : ℤ)
-            else (0 : ℤ)) → ((FourNeighborConnected W ∧ ∀ x ∉ W, ∃ v ∈ DiamondExceptionalLattice
-            K, ∀ (y : GaussianInt), Relation.ReflTransGen (fun (u z : GaussianInt) => u ∉ W ∧ z ∉
-            W ∧ FourNeighborAdjacent u z) x y → y - v ∈ D) → (∀ (finD : D.Finite),
-        let Df := finD.toFinset
-        (∀ x, x ∈ Df ↔ x ∈ DiamondVertexDomains K true) → ((∀ (x : GaussianInt), ∀ (y :
-            GaussianInt), (fun (x y : GaussianInt) => x ∈ Df ∧ y ∈ Df ∧ FourNeighborAdjacent x y
-            ∧ (x.re.natAbs < y.re.natAbs ∨ x.re = y.re ∧ ¬Even (x.re + x.im) ∧ Even (y.re +
-            y.im))) x y → x ∈ Df ∧ y ∈ Df ∧ FourNeighborAdjacent x y) → ((∀ x ∈ Df, ∀ y ∈ Df,
-            FourNeighborAdjacent x y → (fun (x y : GaussianInt) => x ∈ Df ∧ y ∈ Df ∧
-            FourNeighborAdjacent x y ∧ (x.re.natAbs < y.re.natAbs ∨ x.re = y.re ∧ ¬Even (x.re +
-            x.im) ∧ Even (y.re + y.im))) x y ∧ ¬(fun (x y : GaussianInt) => x ∈ Df ∧ y ∈ Df ∧
-            FourNeighborAdjacent x y ∧ (x.re.natAbs < y.re.natAbs ∨ x.re = y.re ∧ ¬Even (x.re +
-            x.im) ∧ Even (y.re + y.im))) y x ∨ (fun (x y : GaussianInt) => x ∈ Df ∧ y ∈ Df ∧
-            FourNeighborAdjacent x y ∧ (x.re.natAbs < y.re.natAbs ∨ x.re = y.re ∧ ¬Even (x.re +
-            x.im) ∧ Even (y.re + y.im))) y x ∧ ¬(fun (x y : GaussianInt) => x ∈ Df ∧ y ∈ Df ∧
-            FourNeighborAdjacent x y ∧ (x.re.natAbs < y.re.natAbs ∨ x.re = y.re ∧ ¬Even (x.re +
-            x.im) ∧ Even (y.re + y.im))) x y) → ((∀ (x : GaussianInt), ∀ (y : GaussianInt), (fun
-            (x y : GaussianInt) => x ∈ Df ∧ y ∈ Df ∧ FourNeighborAdjacent x y ∧ (x.re.natAbs <
-            y.re.natAbs ∨ x.re = y.re ∧ ¬Even (x.re + x.im) ∧ Even (y.re + y.im))) x y → (fun (x
-            : GaussianInt) => (2 : ℕ) * x.re.natAbs + if Even (x.re + x.im) then (1 : ℕ) else (0
-            : ℕ)) x < (fun (x : GaussianInt) => (2 : ℕ) * x.re.natAbs + if Even (x.re + x.im)
-            then (1 : ℕ) else (0 : ℕ)) y) → ((∀ x ∈ Df, (↑{y ∈ Df | @decide ((fun (x y :
-            GaussianInt) => x ∈ Df ∧ y ∈ Df ∧ FourNeighborAdjacent x y ∧ (x.re.natAbs <
-            y.re.natAbs ∨ x.re = y.re ∧ ¬Even (x.re + x.im) ∧ Even (y.re + y.im))) y x)
-                (Classical.propDecidable _) = true}.card : ℤ) = if x.re = (0 : ℤ) then if Even
-                (x.re + x.im) then (2 : ℤ) else (0 :
-            ℤ) else if Even (x.re + x.im) then (3 : ℤ) else (1 : ℤ)) → (∀ (X : Set GaussianInt),
-                ∀ (z : GaussianInt),
-        let R := fun u t => u ∉ X ∧ t ∉ X ∧ FourNeighborAdjacent u t
-        let Y : Set GaussianInt := {y | Relation.ReflTransGen R z y}
-        ∀ (v : GaussianInt), ∀ (Yfin : Y.Finite),
-        let Z := Yfin.toFinset.image (fun y => y-v)
-        ∀ (p : GaussianInt), (∀ t, (t=p ∨ FourNeighborAdjacent p t) → (t ∈ Z ↔ t+v ∉ X)) → (∀ (t
-            : GaussianInt), t = p ∨ FourNeighborAdjacent p t → (if t ∈ Z then (1 : ℤ) else (0 :
-            ℤ)) + X.indicator ((fun _ : GaussianInt => (1 : ℤ))) (t + v) = (1 : ℤ)))))))))) := by
+        exact
+          (∀ (X : Set GaussianInt),
+            ∀ (z : GaussianInt),
+              let R := fun u t => u ∉ X ∧ t ∉ X ∧ FourNeighborAdjacent u t;
+              let Y : Set GaussianInt := {y | Relation.ReflTransGen R z y};
+              ∀ (v : GaussianInt),
+                ∀ (Yfin : Y.Finite),
+                  let Z := Yfin.toFinset.image (fun y => y - v);
+                  ∀ (p : GaussianInt),
+                    (∀ t,
+                        (t = p ∨ FourNeighborAdjacent p t) → (t ∈ Z ↔ t + v ∉ X)) →
+                      (∀ (t : GaussianInt),
+                        t = p ∨ FourNeighborAdjacent p t →
+                          (if t ∈ Z then (1 : ℤ) else (0 : ℤ)) +
+                              X.indicator (fun _ : GaussianInt => (1 : ℤ)) (t + v) =
+                            (1 : ℤ)))) := by
   classical
-  intro K D S W tab geom finD Df hD hsupp horient hrank hcount X z R Y v Yfin Z p localMem t ht
-  let g := DiamondOdometer K
+  intro X z R Y v Yfin Z p localMem t ht
   have hm := localMem t ht
   by_cases h : t ∈ Z
   · simp [h, hm.mp h]
@@ -596,7 +558,7 @@ theorem DiamondExceptionalMaximality (K : DiamondParameter) :
   have py : p+v ∈ Y := (memZ p).mp hp
   have localMem := ExceptionalMaximalityProof.localMem K X z Yout v Yfin p hp hobs memZ py
   have value (t : GaussianInt) (ht : t=p ∨ FourNeighborAdjacent p t) :=
-      ExceptionalMaximalityProof.value K tab geom finD hD hsupp horient hrank hcount X z v Yfin p
+      ExceptionalMaximalityProof.value X z v Yfin p
       localMem t ht
   have e0 := value p (Or.inl rfl)
   have e1 := value (p+1) (Or.inr (Or.inl rfl))

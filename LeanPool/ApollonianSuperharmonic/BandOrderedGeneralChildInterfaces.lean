@@ -6,12 +6,11 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.OrderedParentVectorSum
 
 public import LeanPool.ApollonianSuperharmonic.BandOrderedGeneralAggregatePatches
-public import LeanPool.ApollonianSuperharmonic.BandOrderedGeneralLayoutCertificate
 public import LeanPool.ApollonianSuperharmonic.BandOrderedGeneralMixedAggregatePatches
 public import LeanPool.ApollonianSuperharmonic.BandOrderedGeneralPeriodicBlockCells
-public import LeanPool.ApollonianSuperharmonic.IncomingSuperbasisRelation
 public import LeanPool.ApollonianSuperharmonic.QuarterTurnSymmetricExactInterfaceTransport
 
 -- [TABLET NODE: BandOrderedGeneralChildInterfaces]
@@ -1232,15 +1231,6 @@ private theorem hturn2 :
   rw [hmul, cert.period_v]
   simpa using (hflip 1).1.symm
 
-private theorem hsum :
-    (by
-      classical
-      exact
-        ∀ (q : Fin 4 → CircleCoordinates), (BandOrderedGeneralConfiguration q) → (BandVectors.1
-            (q 1) (q 0) + BandVectors.1 (q 2) (q 0) + BandVectors.1 (q 3) (q 0) = 0) ) := by
-  classical
-  intro q cfg
-  simpa [Fin.sum_univ_succ, add_assoc] using (IncomingSuperbasisRelation q cfg.proper).1
 
 private theorem hthird :
     (by
@@ -1576,7 +1566,7 @@ theorem BandOrderedGeneralChildInterfaces
       ChildInterfaceGeometry.hturn2 q cfg C₀ T cert hmul hflip
   have hthird : BandVectors.1 (q 3) (q 0) =
       -BandVectors.1 (q 1) (q 0) - BandVectors.1 (q 2) (q 0) := ChildInterfaceGeometry.hthird q
-          (ChildInterfaceGeometry.hsum q cfg)
+          (OrderedParentVectorSum.incoming q cfg)
   have hturn3 : GaussianQuarterTurn (BandVectors.1 (q 3) (q 0)) = -cert.u - cert.v := by
     rw [hthird, hmul, mul_sub, mul_neg, ← hmul, ← hmul, hturn1, hturn2]
   have qneg1 : GaussianQuarterTurn (-BandVectors.1 (q 1) (q 0)) = -cert.u := by

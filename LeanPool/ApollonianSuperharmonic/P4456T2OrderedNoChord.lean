@@ -6,6 +6,7 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.TileHalfTurnGeometry
 
 public import LeanPool.ApollonianSuperharmonic.P4456T2CrosscutIndex
 public import LeanPool.ApollonianSuperharmonic.P4456T2ParentSide
@@ -93,63 +94,8 @@ private theorem ht :
   push_cast
   constructor <;> linarith
 
-private theorem htau :
-    (by
-      classical
-      exact
-        ∀ (q : Fin 4 → CircleCoordinates), ∀ (u : GaussianInt),
-        let w := BandVectors.1 (q 3) (q 2)
-        let t : GaussianInt :=
-          ⟨u.re - u.im + w.re + w.im, u.re + u.im + w.im - w.re⟩
-        let tau : GaussianInt → GaussianInt := fun z => t - z - 1 - ⟨0, 1⟩
-        Function.Involutive tau ) := by
-  classical
-  intro q u w t tau z
-  dsimp [tau]
-  abel
 
-private theorem hHcells :
-    (by
-      classical
-      exact
-        ∀ (q : Fin 4 → CircleCoordinates), ∀ (u : GaussianInt),
-        let w := BandVectors.1 (q 3) (q 2)
-        let t : GaussianInt :=
-          ⟨u.re - u.im + w.re + w.im, u.re + u.im + w.im - w.re⟩
-        let H : ProtoTile → ProtoTile := fun U =>
-          TileTranslation (TileQuarterTurn (TileQuarterTurn U)) t
-        let tau : GaussianInt → GaussianInt := fun z => t - z - 1 - ⟨0, 1⟩
-        ∀ U, (H U).cells = U.cells.image tau ) := by
-  classical
-  intro q u w t H tau U
-  simp only [H, TileTranslation, TileQuarterTurn, Finset.image_image]
-  apply Finset.image_congr
-  intro z hz
-  apply Zsqrtd.ext <;> simp [Function.comp_def, GaussianTranslation,
-    GaussianQuarterTurn, tau] <;> ring
 
-private theorem hHreal :
-    (by
-      classical
-      exact
-        ∀ (q : Fin 4 → CircleCoordinates), ∀ (T : ProtoTile), ∀ (u : GaussianInt),
-        let w := BandVectors.1 (q 3) (q 2)
-        let t : GaussianInt :=
-          ⟨u.re - u.im + w.re + w.im, u.re + u.im + w.im - w.re⟩
-        ((t.re : Real) = 2 * (TileCentroid T).1 ∧ (t.im : Real) = 2 * (TileCentroid T).2) → (
-        let H : ProtoTile → ProtoTile := fun U =>
-          TileTranslation (TileQuarterTurn (TileQuarterTurn U)) t
-        ∀ U, TileRealization (H U) = (fun p : Real × Real => (2 * (TileCentroid T).1 - p.1, 2 *
-            (TileCentroid T).2 - p.2)) '' TileRealization U) ) := by
-  classical
-  intro q T u w t ht H U
-  dsimp only [H]
-  rw [(TileTranslationFormulas _ t).2.2.2.1,
-    (TileQuarterTurnFormulas (TileQuarterTurn U)).2.2.2.1,
-    (TileQuarterTurnFormulas U).2.2.2.1, Set.image_image, Set.image_image]
-  congr 1
-  funext p
-  apply Prod.ext <;> dsimp <;> simp only [ht.1, ht.2] <;> ring
 
 private theorem hcenter :
     (by
@@ -618,9 +564,9 @@ theorem P4456T2OrderedNoChord
     let H : ProtoTile → ProtoTile := fun U =>
       TileTranslation (TileQuarterTurn (TileQuarterTurn U)) t
     let tau : GaussianInt → GaussianInt := fun z => t - z - 1 - ⟨0, 1⟩
-    have htau := OrderedNoChordGeometry.htau q u
-    have hHcells := OrderedNoChordGeometry.hHcells q u
-    have hHreal := OrderedNoChordGeometry.hHreal q T u ht
+    have htau := TileHalfTurnGeometry.involutive q u
+    have hHcells := TileHalfTurnGeometry.cells q u
+    have hHreal := TileHalfTurnGeometry.realization q T u ht
     have hcenter := OrderedNoChordGeometry.hcenter
     have hHsigned := OrderedNoChordGeometry.hHsigned q cfg C T layout u htau hHcells hHreal hcenter
     have touch_flip := OrderedNoChordGeometry.touch_flip q cfg C T layout hne u hHsigned

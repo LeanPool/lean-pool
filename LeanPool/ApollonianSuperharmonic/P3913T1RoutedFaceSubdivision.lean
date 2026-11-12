@@ -1861,32 +1861,49 @@ private theorem hxi :
 private theorem hxj :
     (by
       classical
-      exact
-        ∀ (ι : Type), ∀ (P : PeriodicTileComplex ι), ∀ (D : P3723T1AllContactRouting P), ∀ (f :
-            P.plane.Face), ∀ (g : Fin (3 : ℕ) → (↑(Set.Icc (0 : ℝ) (1 : ℝ)) : Type) → ℝ × ℝ), (∀
-            (k : Fin (3 : ℕ)), Function.Injective (g k)) → ((Fin (3 : ℕ)) → (∀ (s : (k
-            : Fin (3 : ℕ)) → P3723T1PolygonalParameterization (g k)),
-        let τ (k : Fin 3) (i : Fin ((s k).count + 1)) : Set.Icc (0 : Real) 1 :=
-          ⟨(s k).time i, by
-            constructor
-            · have hi := (s k).strict.monotone (Fin.zero_le i)
-              rw [(s k).start] at hi
-              exact hi
-            · have hi := (s k).strict.monotone (Fin.le_last i)
-              rw [(s k).finish] at hi
-              exact hi⟩
-        let w (k : Fin 3) (i : Fin ((s k).count + 1)) := g k (τ k i)
-        let v : Fin 3 → ι := P.plane.faceVertex f
-        (∀ (k : Fin 3), ∀ (r : Fin (s k).count), ∀ (x : Real × Real), (x ∈ segment Real (w k
-            r.castSucc) (w k r.succ)) → ((x = D.position (v k)) → (x = w k r.castSucc ∨ x = w k
-            r.succ))) → ((∀ (k : Fin 3), ∀ (r : Fin (s k).count), ∀ (x : Real × Real), (x ∈
-            segment Real (w k r.castSucc) (w k r.succ)) → ((x = D.position (v (k + 1))) → (x = w
-            k r.castSucc ∨ x = w k r.succ))) → (∀ (x : ℝ × ℝ), ∀ (l : Fin (3 : ℕ)), ∀ (r' : Fin
-            (s l).count), (x ∈ segment ℝ (w l r'.castSucc) (w l r'.succ)) → (∀ (u : ι),
-                (D.position u = x) → ((u = v l ∨ u = v (l + (1 : Fin (3 : ℕ)))) → (x = w l
-            r'.castSucc ∨ x = w l r'.succ)))))))) := by
+        exact
+        ∀ (ι : Type),
+          ∀ (P : PeriodicTileComplex ι),
+            ∀ (D : P3723T1AllContactRouting P),
+              ∀ (f : P.plane.Face),
+                ∀ (g : Fin (3 : ℕ) → (↑(Set.Icc (0 : ℝ) (1 : ℝ)) : Type) → ℝ × ℝ),
+                  (∀
+                    (s :
+                      (k : Fin (3 : ℕ)) → P3723T1PolygonalParameterization (g k)),
+                    let τ (k : Fin 3) (i : Fin ((s k).count + 1)) :
+                      Set.Icc (0 : Real) 1 :=
+                      ⟨(s k).time i, by
+                        constructor
+                        · have hi := (s k).strict.monotone (Fin.zero_le i)
+                          rw [(s k).start] at hi
+                          exact hi
+                        · have hi := (s k).strict.monotone (Fin.le_last i)
+                          rw [(s k).finish] at hi
+                          exact hi⟩;
+                    let w (k : Fin 3) (i : Fin ((s k).count + 1)) := g k (τ k i);
+                    let v : Fin 3 → ι := P.plane.faceVertex f;
+                    (∀ (k : Fin 3),
+                        ∀ (r : Fin (s k).count),
+                          ∀ (x : Real × Real),
+                            (x ∈ segment Real (w k r.castSucc) (w k r.succ)) →
+                              ((x = D.position (v k)) →
+                                (x = w k r.castSucc ∨ x = w k r.succ))) →
+                      ((∀ (k : Fin 3),
+                          ∀ (r : Fin (s k).count),
+                            ∀ (x : Real × Real),
+                              (x ∈ segment Real (w k r.castSucc) (w k r.succ)) →
+                                ((x = D.position (v (k + 1))) →
+                                  (x = w k r.castSucc ∨ x = w k r.succ))) →
+                        (∀ (x : ℝ × ℝ),
+                          ∀ (l : Fin (3 : ℕ)),
+                            ∀ (r' : Fin (s l).count),
+                              (x ∈ segment ℝ (w l r'.castSucc) (w l r'.succ)) →
+                                (∀ (u : ι),
+                                  (D.position u = x) →
+                                    ((u = v l ∨ u = v (l + (1 : Fin (3 : ℕ)))) →
+                                      (x = w l r'.castSucc ∨ x = w l r'.succ))))))) := by
   classical
-  intro ι P D f g hi k s τ w v piece_start_corner piece_finish_corner x l r' hx2 u hux hul
+  intro ι P D f g s τ w v piece_start_corner piece_finish_corner x l r' hx2 u hux hul
   rcases hul with hul | hul
   · apply piece_start_corner l r' x hx2
     exact hux.symm.trans (congrArg D.position hul)
@@ -2037,7 +2054,7 @@ theorem P3913T1RoutedFaceSubdivision :
         simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at huk hul
         have hxi := RoutedFaceDetails.hxi ι P D f g hi k s
             piece_start_corner piece_finish_corner x r hx1 u hux huk
-        have hxj := RoutedFaceDetails.hxj ι P D f g hi k
+        have hxj := RoutedFaceDetails.hxj ι P D f g
             s piece_start_corner piece_finish_corner x l r' hx2 u hux hul
         simpa [hli, hri, hlj, hrj] using And.intro hxi hxj
     · intro hx

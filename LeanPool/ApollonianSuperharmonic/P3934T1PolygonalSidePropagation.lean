@@ -274,34 +274,6 @@ private theorem isolatePiece :
       exact ⟨a, rfl⟩
     exact (hnotK hmem).elim
 
-private theorem scaleLocalSide :
-    (by
-      classical
-      exact
-        ∀ (W : Set (ℝ × ℝ)), ∀ (z : ℝ × ℝ), ∀ (w : ℝ × ℝ), ∀ (c : ℝ), ∀ (e : Bool), (0 : ℝ) < c →
-            P3934T1LocalSide W z w e → P3934T1LocalSide W z (c • w) e ) := by
-  classical
-  intro W z w c e hc hside
-  obtain ⟨r, hr, heq⟩ := hside
-  refine ⟨r, hr, ?_⟩
-  have hdet (q : Real × Real) :
-      (c • w).1 * (q.2 - z.2) - (c • w).2 * (q.1 - z.1) =
-        c * (w.1 * (q.2 - z.2) - w.2 * (q.1 - z.1)) := by
-    simp only [Prod.smul_fst, Prod.smul_snd]
-    ring
-  ext q
-  rw [heq]
-  simp only [Set.mem_ofPred_eq]
-  rw [hdet q]
-  constructor
-  · rintro ⟨hq, hs⟩
-    refine ⟨hq, ?_⟩
-    cases e <;> simp at hs ⊢ <;>
-      nlinarith [hc]
-  · rintro ⟨hq, hs⟩
-    refine ⟨hq, ?_⟩
-    cases e <;> simp at hs ⊢ <;>
-      nlinarith [hc]
 
 private theorem straightFrontierRays :
     (by
@@ -1597,7 +1569,7 @@ theorem P3934T1PolygonalSidePropagation
           hinter compactRange compactImage avoidClosed k i t htlo hthi
   have scaleLocalSide (W : Set (Real × Real)) (z w : Real × Real)
       (c : Real) (e : Bool) (hc : 0 < c)
-      (hside : P3934T1LocalSide W z w e) := PolygonSidePropagation.scaleLocalSide W z w c e hc
+      (hside : P3934T1LocalSide W z w e) := LocalSideScaling.positiveScale W z w c e hc
           hside
   have straightFrontierRays (k : Fin 3) (i : Fin (s k).count)
       (A B : Real × Real) (hB : B ≠ 0)

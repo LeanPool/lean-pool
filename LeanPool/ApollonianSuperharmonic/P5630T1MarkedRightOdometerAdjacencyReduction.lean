@@ -6,6 +6,7 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryCurvature
 
 public import LeanPool.ApollonianSuperharmonic.BandOrderedGeneralRightNormalizedBundleExists
 public import LeanPool.ApollonianSuperharmonic.BandOrderedGeneralRoutedSelectedContact
@@ -91,21 +92,6 @@ private theorem hparentPositive :
   intro C T T₀ h h₀ x bundle C' hq'
   rw [hq']
   exact C'.property
-
-private theorem actionCurvatureAt244 :
-    (by
-      classical
-      exact
-        ∀ (g : BandPackingSymmetry), ∀ (c : CircleCoordinates), (BandPackingSymmetryCircleAction
-            g c).1 = c.1 ) := by
-  classical
-  intro g
-  induction g with
-  | identity => intro c; rfl
-  | negate => intro c; rfl
-  | conjugate => intro c; rfl
-  | shift w => intro c; rfl
-  | comp a b iha ihb => intro c; simp [BandPackingSymmetryCircleAction, iha, ihb]
 
 private theorem hinverseCoordinate :
     (by
@@ -983,7 +969,7 @@ theorem P5630T1MarkedRightOdometerAdjacencyReduction :
     ⟨delta, pFixed, pSelected, t', hphaseInv, ht',
       hOFixedInv, hOSelectedInv, hslopeFixedInv, hslopeSelectedInv,
       hcentInv, hslopeReInv, hslopeImInv, hcompat⟩
-  have actionCurvature := MarkedRightAdjacencyGeometry.actionCurvatureAt244
+  have actionCurvature := BandPackingSymmetryCurvature.preserved
   let inversePresentation :=
     BandPackingSymmetryQuadrupleAction ginv bundle.normalizedPresentation
   let inverseSlot := if BandPackingSymmetryReversesOrientation ginv then
@@ -1035,7 +1021,7 @@ theorem P5630T1MarkedRightOdometerAdjacencyReduction :
       hselectedCoord (MarkedRightAdjacencyGeometry.hOFixedOriginal C T T₀ h h₀ x bundle ginv
       htileL hfunL hOFixedInv (MarkedRightAdjacencyGeometry.hrootAction C T T₀ h h₀ x bundle ginv
       hcircleL hnorm)) hOSelectedOriginal hslopeFixedOriginal hcentOriginal hrootCoord
-  have actionCurvature := MarkedRightAdjacencyGeometry.actionCurvatureAt244
+  have actionCurvature := BandPackingSymmetryCurvature.preserved
   have hsizeOriginal := MarkedRightAdjacencyGeometry.hsizeOriginal C T T₀ h h₀ x bundle C' hsize
       ginv hnorm actionCurvature hinverseProper hinversePositive hinverseCircle
   have hcoverOriginal := MarkedRightAdjacencyGeometry.hcoverOriginal C T T₀ h h₀ x markedData

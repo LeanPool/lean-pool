@@ -6,7 +6,7 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
-public import Mathlib.Tactic.Linarith
+public import LeanPool.ApollonianSuperharmonic.ListEndpointFacts
 
 public import LeanPool.ApollonianSuperharmonic.P3523T1InsertionConstruction
 public import LeanPool.ApollonianSuperharmonic.P3523T1SubdivisionExit
@@ -1210,21 +1210,6 @@ private theorem hstepsNodup :
       (List.ofFn fun k : Fin (n + 3) => s.start 0 + k))).Nodup
   exact hfilterNodup.map htupleInj
 
-private theorem getNotTake :
-    ∀ (r : Nat), ∀ (n : Nat), ∀ (q : P3381T1PolygonBoundary r), ∀ (p : P3381T1PolygonBoundary
-        n), (P3475T1BoundarySubdivision q p) → (∀ (X : Set (Real × Real)), ∀ (K : Set (Real ×
-        Real)), (P3475T1TriangleTree q X K) → ((ℕ) → ((Fin (n + (3 : ℕ))) → ((Fin (n + (3 :
-        ℕ))) → (∀ {α : Type}, ∀ (l : List α), (l.Nodup) → (∀ (m : Nat), ∀ (hm : m < l.length),
-        l.get ⟨m, hm⟩ ∉ l.take m)))))) := by
-  classical
-  intro r n q p s X K t h j k α l hn m hm hmem
-  rcases List.mem_take_iff_getElem.mp hmem with ⟨i, hi, heq⟩
-  have hi' : i < m := by omega
-  have hiList : i < l.length := lt_trans hi' hm
-  have heq' : l[i] = l[m] := by simpa using heq
-  have hidx := hn.getElem_inj_iff.mp heq'
-  omega
-
 private theorem hkpos (r n : Nat) (q : P3381T1PolygonBoundary r)
     (p : P3381T1PolygonBoundary n) (s : P3475T1BoundarySubdivision q p)
     [NeZero (n + 3)] (j k : Fin (n + 3))
@@ -1580,8 +1565,7 @@ theorem P3523T1OrderedInsertion {r n : Nat}
               OrderedInsertionGeometry.filterPrev r
               n q s X K t j (α := α) l p k h hn hk hpos hlen hp hcur
       have getNotTake {α : Type} (l : List α) (hn : l.Nodup) (m : Nat)
-          (hm : m < l.length) := OrderedInsertionDetails.getNotTake r
-              n q p s X K t h j k (α := α) l hn m hm
+          (hm : m < l.length) := ListEndpointFacts.getNotTake l hn m hm
       have fold_not_mem (l : List (Fin (n + 3) × Fin (n + 3) × Fin (n + 3)))
           (A : Finset (Fin (n + 3))) (x : Fin (n + 3)) (hx : x ∉ A)
           (hall : ∀ a ∈ l, a.2.1 ≠ x) := OrderedInsertionGeometry.fold_not_mem n

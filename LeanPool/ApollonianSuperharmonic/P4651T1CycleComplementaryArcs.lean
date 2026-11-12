@@ -7,8 +7,6 @@ module
 
 public import Mathlib.Init
 
-public import LeanPool.ApollonianSuperharmonic.SimpleGridCycle
-public import LeanPool.ApollonianSuperharmonic.SimpleGridPath
 public import LeanPool.ApollonianSuperharmonic.SimpleGridCycleSubgraphDegreeTwo
 public import LeanPool.ApollonianSuperharmonic.SimpleGridPathVertexIncidentEdge
 
@@ -1187,21 +1185,11 @@ private theorem hcyX :
   · exact allTail pre a suf hcSplit haX cy hcs
 
 private theorem hcShape :
-    ∀ (V : Set GaussianInt), ∀ (Kplus : Set GaussianInt), ∀ (Kminus : Set GaussianInt), ∀ (E :
-        Set (Finset GaussianInt)), ∀ (a : GaussianInt), ∀ (c : List GaussianInt), ∀ (cx :
-        GaussianInt), ∀ (cy : GaussianInt), (c.Nodup) → (((4 : ℕ) ≤ c.length) → ((c.head? = some
-        cx) → ((c.getLast? = some cy) → ((V = (↑c.toFinset : Set GaussianInt)) → ((∀ (a :
-        GaussianInt), ∀ (b : GaussianInt), ∀ (l₁ : List GaussianInt), ∀ (l₂ : List GaussianInt),
-        c = l₁ ++ a :: b :: l₂ → FourNeighborAdjacent a b) → ((∀ (e : Finset GaussianInt), e ∈ E
-        ↔ e = {cy, cx} ∨ ∃ (a : GaussianInt) (b : GaussianInt) (l₁ : List GaussianInt) (l₂ : List
-        GaussianInt), c = l₁ ++ a :: b :: l₂ ∧ e = {a, b}) → (
-    let X : Set GaussianInt := Kplus ∪ Kminus
-    (c ≠ []) → ((cx ∈ c) → ((cy ∈ c) → ((∀ pre, ∀ x, ∀ s, c = pre ++ x :: s → x ∈ X → ∀ z, z ∈ s
-        → z ∈ X) → ((a ∈ c) → (∀ (pre : List GaussianInt), ∀ (suf : List GaussianInt), (c = pre
-        ++ a :: suf) → (c = cx :: c.tail))))))))))))) := by
+    ∀ (c : List GaussianInt),
+      ∀ (cx : GaussianInt),
+        (((4 : ℕ) ≤ c.length) → ((c.head? = some cx) → (c = cx :: c.tail))) := by
   classical
-  intro V Kplus Kminus E a c cx cy hcN hcLen hcHead hcLast hVcyc hcStep hcEdges X hcne hcxList
-      hcyList allTail haCycle pre suf hcSplit
+  intro c cx hcLen hcHead
   cases c with
   | nil => simp at hcLen
   | cons z zs =>
@@ -1431,8 +1419,8 @@ theorem P4651T1CycleComplementaryArcs :
   have hcloseE : ({cy, cx} : Finset GaussianInt) ∈ E :=
     (hcEdges {cy, cx}).2 (Or.inl rfl)
   have hcxX := edgeClosure cy hcyX cx hcloseE
-  have hcShape : c = cx :: c.tail := CycleArcDetails.hcShape V Kplus Kminus E a c cx cy hcN hcLen
-      hcHead hcLast hVcyc hcStep hcEdges hcne hcxList hcyList allTail haCycle pre suf hcSplit
+  have hcShape : c = cx :: c.tail := CycleArcDetails.hcShape c cx hcLen
+      hcHead
   have hallC : ∀ z, z ∈ c → z ∈ X := CycleArcDetails.hallC Kplus Kminus c cx allTail hcxX hcShape
   have hVtoX : V ⊆ X := CycleArcDetails.hVtoX V Kplus Kminus c hVcyc hallC
   have hVparts : V = Kplus ∪ Kminus := by

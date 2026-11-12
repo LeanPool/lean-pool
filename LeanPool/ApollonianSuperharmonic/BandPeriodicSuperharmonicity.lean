@@ -6,15 +6,11 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.CircleMatrixSymmetry
 
 public import LeanPool.ApollonianSuperharmonic.BandOdometerInteriorTable
 public import LeanPool.ApollonianSuperharmonic.BandTileTopologyApplication
-public import LeanPool.ApollonianSuperharmonic.CircleMatrix
-public import LeanPool.ApollonianSuperharmonic.GlobalOdometerExtends
-public import LeanPool.ApollonianSuperharmonic.IntegerSuperharmonicRepresentative
 public import LeanPool.ApollonianSuperharmonic.PeriodicBoundaryWebLaplacian
-public import LeanPool.ApollonianSuperharmonic.TileOdometer
-public import LeanPool.ApollonianSuperharmonic.TilingLattice
 
 -- [TABLET NODE: BandPeriodicSuperharmonicity]
 
@@ -30,18 +26,6 @@ Changes: pool module paths, public exports, project namespace and current Mathli
 namespace ApollonianSuperharmonic
 
 namespace PeriodicSuperharmonicGeometry
-
-private theorem hsym :
-    (by
-      classical
-      exact
-        ∀ (C : BandCircle), (CircleMatrix C).IsSymm ) := by
-  classical
-  intro C
-  unfold Matrix.IsSymm CircleMatrix
-  dsimp
-  ext i j
-  fin_cases i <;> fin_cases j <;> rfl
 
 private theorem hRne :
     (by
@@ -433,7 +417,7 @@ theorem BandPeriodicSuperharmonicity (C : BandCircle)
 -- BODY
   classical
   unfold IntegerSuperharmonicRepresentative
-  refine ⟨(PeriodicSuperharmonicGeometry.hsym C), ?_, ?_⟩
+  refine ⟨(CircleMatrixSymmetry.symmetric C), ?_, ?_⟩
   · unfold QuadraticGrowthAtInfinity
     obtain ⟨b, hb⟩ := hremainder
     obtain ⟨R, hR, hcard⟩ := TilingLatticeIndex C

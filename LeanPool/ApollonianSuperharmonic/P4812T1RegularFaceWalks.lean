@@ -866,58 +866,132 @@ private theorem commonEdgeForAdjacent :
 private theorem hcAt922 :
     (by
       classical
-      exact
-        ∀ (L : AddSubgroup GaussianInt), ∀ (k : (Int × Int) ≃+ L), ∀ (D : P4812T1AffineDrawing
-            L k), ∀ (T : ProtoTile),
-        let a : L := k (1, 0)
-        let b : L := k (0, 1)
-        ∀ (ru : GaussianInt), ∀ (rd : GaussianInt), ∀ (x : ↥L),
-        let rho : D.plane.Face → GaussianInt := fun f =>
-          match D.faces.symm f with
-          | Sum.inl x => (ru : GaussianInt) + (x : GaussianInt)
-          | Sum.inr x => (rd : GaussianInt) + (x : GaussianInt)
-        ∀ (p0 : List GaussianInt), ∀ (p1 : List GaussianInt), ∀ (p2 : List GaussianInt),
-        let rowPath : Fin 3 → List GaussianInt := fun r =>
-          if r = 0 then p0 else if r = 1 then p1 else p2
-        (↥L) → (
-        let path : D.plane.Face → D.plane.Face → List GaussianInt := fun f g => by
-          letI : ∀ p : Prop, Decidable p := Classical.propDecidable
-          exact match D.faces.symm f, D.faces.symm g with
-          | Sum.inl x, Sum.inr y =>
-              if y = x + a then (rowPath 0).map (fun z => z + (x : GaussianInt))
-              else if y = x - b then (rowPath 1).map (fun z => z + (x : GaussianInt))
-              else if y = x + (a - b) then
-                (rowPath 2).map (fun z => z + (x : GaussianInt))
-              else []
-          | Sum.inr y, Sum.inl x =>
-              if y = x + a then ((rowPath 0).map (fun z => z + (x : GaussianInt))).reverse
-              else if y = x - b then ((rowPath 1).map (fun z => z + (x : GaussianInt))).reverse
-              else if y = x + (a - b) then
-                ((rowPath 2).map (fun z => z + (x : GaussianInt))).reverse
-              else []
-          | _, _ => []
-        (∀ (A : ProtoTile), ∀ (B : ProtoTile), ∀ (fc : D.plane.Face), ∀ (gc : D.plane.Face), ∀ (P
-            : List GaussianInt), (P4733T1ContainedWalk A B (rho fc) (rho gc) P) → ((path fc gc
-            = P) → ((path gc fc = P.reverse) → (∀ (f : D.plane.Face), ∀ (g : D.plane.Face), ((f =
-            fc ∧ g = gc) ∨ (f = gc ∧ g = fc)) → ((path f g).head? = some (rho f) ∧ (path f
-            g).getLast? = some (rho g) ∧ (∀ z ∈ path f g, z ∈ FootprintVertices A ∩
-            FootprintVertices B) ∧ ∀ x y : GaussianInt, ∀ l₁ l₂ : List GaussianInt, path f g = l₁
-            ++ x :: y :: l₂ → {x, y} ∈ FootprintEdges A ∩ FootprintEdges B))))) → (∀ (f :
-            D.plane.Face), ∀ (g : D.plane.Face),
-        let w := x
-        let fc := D.faces (.inl w)
-        let gc := D.faces (.inr (w - b))
-        (f = fc ∧ g = gc ∨ f = gc ∧ g = fc) → ((path fc gc = p1.map (fun z => z + (w :
-            GaussianInt))) → ((path gc fc = (p1.map (fun z => z + (w : GaussianInt))).reverse) →
-            ((P4733T1ContainedWalk (TileTranslation T (w : GaussianInt)) (TileTranslation T ((w
-            - b : L) : GaussianInt)) (rho fc) (rho gc) (p1.map (fun z => z + (w : GaussianInt))))
-            → ((path f g).head? = some (rho f) ∧ (path f g).getLast? = some (rho g) ∧ (∀ z ∈ path
-            f g, z ∈ FootprintVertices (TileTranslation T ↑w) ∩ FootprintVertices
-            (TileTranslation T ↑(w - b))) ∧ ∀ x' y' : GaussianInt, ∀ l₁ l₂ : List GaussianInt,
-            path f g = l₁ ++ x' :: y' :: l₂ → {x', y'} ∈ FootprintEdges (TileTranslation T ↑w) ∩
-            FootprintEdges (TileTranslation T ↑(w - b))))))))) := by
+        exact
+        ∀ (L : AddSubgroup GaussianInt),
+          ∀ (k : (Int × Int) ≃+ L),
+            ∀ (D : P4812T1AffineDrawing L k),
+              ∀ (T : ProtoTile),
+                let a : L := k (1, 0);
+                let b : L := k (0, 1);
+                ∀ (ru : GaussianInt),
+                  ∀ (rd : GaussianInt),
+                    ∀ (x : ↥L),
+                      let rho : D.plane.Face → GaussianInt := fun f =>
+                        match D.faces.symm f with
+                        | Sum.inl x => (ru : GaussianInt) + (x : GaussianInt)
+                        | Sum.inr x => (rd : GaussianInt) + (x : GaussianInt);
+                      ∀ (p0 : List GaussianInt),
+                        ∀ (p1 : List GaussianInt),
+                          ∀ (p2 : List GaussianInt),
+                            let rowPath : Fin 3 → List GaussianInt := fun r =>
+                              if r = 0 then p0 else if r = 1 then p1 else p2;
+                            (let path :
+                              D.plane.Face → D.plane.Face → List GaussianInt :=
+                              fun f g =>
+                              by
+                              letI : ∀ p : Prop, Decidable p :=
+                                Classical.propDecidable
+                              exact
+                                match D.faces.symm f, D.faces.symm g with
+                                | Sum.inl x, Sum.inr y =>
+                                  if y = x + a then
+                                    (rowPath 0).map (fun z => z + (x : GaussianInt))
+                                  else
+                                    if y = x - b then
+                                      (rowPath 1).map
+                                        (fun z => z + (x : GaussianInt))
+                                    else
+                                      if y = x + (a - b) then
+                                        (rowPath 2).map
+                                          (fun z => z + (x : GaussianInt))
+                                      else []
+                                | Sum.inr y, Sum.inl x =>
+                                  if y = x + a then
+                                    ((rowPath 0).map
+                                        (fun z => z + (x : GaussianInt))).reverse
+                                  else
+                                    if y = x - b then
+                                      ((rowPath 1).map
+                                          (fun z => z + (x : GaussianInt))).reverse
+                                    else
+                                      if y = x + (a - b) then
+                                        ((rowPath 2).map
+                                            (fun z =>
+                                              z + (x : GaussianInt))).reverse
+                                      else []
+                                | _, _ => [];
+                            (∀ (A : ProtoTile),
+                                ∀ (B : ProtoTile),
+                                  ∀ (fc : D.plane.Face),
+                                    ∀ (gc : D.plane.Face),
+                                      ∀ (P : List GaussianInt),
+                                        (P4733T1ContainedWalk A B (rho fc) (rho gc)
+                                            P) →
+                                          ((path fc gc = P) →
+                                            ((path gc fc = P.reverse) →
+                                              (∀ (f : D.plane.Face),
+                                                ∀ (g : D.plane.Face),
+                                                  ((f = fc ∧ g = gc) ∨
+                                                      (f = gc ∧ g = fc)) →
+                                                    ((path f g).head? =
+                                                        some (rho f) ∧
+                                                      (path f g).getLast? =
+                                                          some (rho g) ∧
+                                                        (∀ z ∈ path f g,
+                                                            z ∈
+                                                              FootprintVertices A ∩
+                                                                FootprintVertices
+                                                                  B) ∧
+                                                          ∀ x y : GaussianInt,
+                                                            ∀ l₁ l₂ :
+                                                              List GaussianInt,
+                                                              path f g =
+                                                                  l₁ ++
+                                                                    x :: y :: l₂ →
+                                                                { x, y } ∈
+                                                                  FootprintEdges A ∩
+                                                                    FootprintEdges
+                                                                      B))))) →
+                              (∀ (f : D.plane.Face),
+                                ∀ (g : D.plane.Face),
+                                  let w := x;
+                                  let fc := D.faces (.inl w);
+                                  let gc := D.faces (.inr (w - b));
+                                  (f = fc ∧ g = gc ∨ f = gc ∧ g = fc) →
+                                    ((path fc gc =
+                                        p1.map (fun z => z + (w : GaussianInt))) →
+                                      ((path gc fc =
+                                          (p1.map
+                                              (fun z =>
+                                                z + (w : GaussianInt))).reverse) →
+                                        ((P4733T1ContainedWalk
+                                            (TileTranslation T (w : GaussianInt))
+                                            (TileTranslation T
+                                              ((w - b : L) : GaussianInt))
+                                            (rho fc) (rho gc)
+                                            (p1.map
+                                              (fun z => z + (w : GaussianInt)))) →
+                                          ((path f g).head? = some (rho f) ∧
+                                            (path f g).getLast? = some (rho g) ∧
+                                              (∀ z ∈ path f g,
+                                                  z ∈
+                                                    FootprintVertices
+                                                        (TileTranslation T ↑w) ∩
+                                                      FootprintVertices
+                                                        (TileTranslation T
+                                                          ↑(w - b))) ∧
+                                                ∀ x' y' : GaussianInt,
+                                                  ∀ l₁ l₂ : List GaussianInt,
+                                                    path f g =
+                                                        l₁ ++ x' :: y' :: l₂ →
+                                                      { x', y' } ∈
+                                                        FootprintEdges
+                                                            (TileTranslation T ↑w) ∩
+                                                          FootprintEdges
+                                                            (TileTranslation T
+                                                              ↑(w - b))))))))) := by
   classical
-  intro L k D T a b ru rd x rho p0 p1 p2 rowPath y path walkClaims f g w fc gc hpair hforward
+  intro L k D T a b ru rd x rho p0 p1 p2 rowPath path walkClaims f g w fc gc hpair hforward
       hbackward hw
   exact walkClaims (TileTranslation T (w : GaussianInt))
     (TileTranslation T ((w - b : L) : GaussianInt)) fc gc
@@ -2082,7 +2156,7 @@ private theorem secondBackward :
         path f g = l₁ ++ x' :: y' :: l₂ →
           {x', y'} ∈ FootprintEdges (TileTranslation T ↑w) ∩
             FootprintEdges (TileTranslation T ↑(w - b)) := RegularFaceWalkProof.hcAt922
-                L k D T ru rd x p0 p1 p2 y walkClaims f g hpair hforward hbackward hw
+                L k D T ru rd x p0 p1 p2 walkClaims f g hpair hforward hbackward hw
   rcases hc with ⟨hh, hl, hv, he⟩
   refine ⟨hh, hl, ?_, ?_⟩
   · intro z hz

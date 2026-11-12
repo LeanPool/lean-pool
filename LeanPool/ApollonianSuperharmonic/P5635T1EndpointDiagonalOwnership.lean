@@ -6,6 +6,7 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.LatticeVertexSectorFacts
 
 public import LeanPool.ApollonianSuperharmonic.ExactTileInterfaceTripleLatticeTouching
 public import LeanPool.ApollonianSuperharmonic.LocalLatticeInterfaceSectors
@@ -39,17 +40,6 @@ private theorem triple_label_pattern :
   classical
   exact ((((by decide +kernel))))
 
-private theorem neighbor_ne_center :
-    (by
-      classical
-      exact
-        let neighbor (x : GaussianInt) : Fin 4 → GaussianInt :=
-          ![x + ⟨0, 1⟩, x - 1, x - ⟨0, 1⟩, x + 1]
-        ∀ (x : GaussianInt), ∀ (j : Fin 4), neighbor x j ≠ x ) := by
-  classical
-  intro neighbor x j
-  fin_cases j <;> simp [neighbor, Zsqrtd.ext_iff]
-
 private theorem neighbor_injective :
     (by
       classical
@@ -63,64 +53,8 @@ private theorem neighbor_injective :
   fin_cases j <;> fin_cases k <;>
     simp [neighbor, Zsqrtd.ext_iff] at h ⊢ <;> omega
 
-private theorem edgeAt_mem :
-    (by
-      classical
-      exact
-        let neighbor (x : GaussianInt) : Fin 4 → GaussianInt :=
-          ![x + ⟨0, 1⟩, x - 1, x - ⟨0, 1⟩, x + 1]
-        let edgeAt (x : GaussianInt) : Fin 4 → Finset GaussianInt :=
-          ![{x, x + ⟨0, 1⟩}, {x - 1, x},
-            {x - ⟨0, 1⟩, x}, {x, x + 1}]
-        ∀ (x : GaussianInt), ∀ (j : Fin 4), x ∈ edgeAt x j ∧ neighbor x j ∈ edgeAt x j ) := by
-  classical
-  intro neighbor edgeAt x j
-  fin_cases j <;> simp [neighbor, edgeAt]
 
-private theorem edgeAt_eq_pair :
-    (by
-      classical
-      exact
-        let neighbor (x : GaussianInt) : Fin 4 → GaussianInt :=
-          ![x + ⟨0, 1⟩, x - 1, x - ⟨0, 1⟩, x + 1]
-        let edgeAt (x : GaussianInt) : Fin 4 → Finset GaussianInt :=
-          ![{x, x + ⟨0, 1⟩}, {x - 1, x},
-            {x - ⟨0, 1⟩, x}, {x, x + 1}]
-        ∀ (x : GaussianInt), ∀ (j : Fin 4), edgeAt x j = {x, neighbor x j} ) := by
-  classical
-  intro neighbor edgeAt x j
-  fin_cases j <;> simp [edgeAt, neighbor, Finset.pair_comm]
 
-private theorem edgeAt_injective :
-    (by
-      classical
-      exact
-        let neighbor (x : GaussianInt) : Fin 4 → GaussianInt :=
-          ![x + ⟨0, 1⟩, x - 1, x - ⟨0, 1⟩, x + 1]
-        let edgeAt (x : GaussianInt) : Fin 4 → Finset GaussianInt :=
-          ![{x, x + ⟨0, 1⟩}, {x - 1, x},
-            {x - ⟨0, 1⟩, x}, {x, x + 1}]
-        (∀ (x : GaussianInt), ∀ (j : Fin 4), neighbor x j ≠ x) → ((∀ (x : GaussianInt), ∀
-            {j : Fin 4}, ∀ {k : Fin 4}, (neighbor x j = neighbor x k) → (j = k)) → ((∀ (x :
-            GaussianInt), ∀ (j : Fin 4), x ∈ edgeAt x j ∧ neighbor x j ∈ edgeAt x j) → (∀ (x :
-            GaussianInt), ∀ {j : Fin 4}, ∀ {k : Fin 4}, (edgeAt x j = edgeAt x k) → (j = k)))) )
-            := by
-  classical
-  intro neighbor edgeAt neighbor_ne_center neighbor_injective edgeAt_mem x j k h
-  have hx := (edgeAt_mem x j).1
-  have hn := (edgeAt_mem x j).2
-  have hnm : neighbor x j ∈ edgeAt x k := by rw [← h]; exact hn
-  have hchoices : neighbor x j = x ∨ neighbor x j = neighbor x k := by
-    fin_cases k
-    · simpa [edgeAt, neighbor] using hnm
-    · have hh : neighbor x j = x - 1 ∨ neighbor x j = x := by
-        simpa [edgeAt, neighbor] using hnm
-      exact Or.symm hh
-    · have hh : neighbor x j = x - ⟨0, 1⟩ ∨ neighbor x j = x := by
-        simpa [edgeAt, neighbor] using hnm
-      exact Or.symm hh
-    · simpa [edgeAt, neighbor] using hnm
-  exact neighbor_injective x (hchoices.resolve_left (neighbor_ne_center x j))
 
 private theorem edge_of_sector_pair :
     (by
@@ -455,35 +389,7 @@ private theorem triple_sector_cover :
   exact (LocalLatticeInterfaceSectors.1 T0 T0' R x hT hT' hR
     htriple hx).1
 
-private theorem label_T0 :
-    (by
-      classical
-      exact
-        ∀ (T0 : ProtoTile), ∀ (T0' : ProtoTile),
-        let outerLabel : GaussianInt → Fin 4 → Fin 3 := fun x j =>
-          if LatticeVertexIncidentCell x j ∈ T0.cells then 0
-          else if LatticeVertexIncidentCell x j ∈ T0'.cells then 1 else 2
-        ∀ (x : GaussianInt), ∀ (j : Fin 4), (LatticeVertexIncidentCell x j ∈ T0.cells) →
-            (outerLabel x j = 0) ) := by
-  classical
-  intro T0 T0' outerLabel x j hc
-  simp [outerLabel, hc]
 
-private theorem label_T0' :
-    (by
-      classical
-      exact
-        ∀ (T0 : ProtoTile), ∀ (T0' : ProtoTile), (Disjoint T0.cells T0'.cells) → (
-        let outerLabel : GaussianInt → Fin 4 → Fin 3 := fun x j =>
-          if LatticeVertexIncidentCell x j ∈ T0.cells then 0
-          else if LatticeVertexIncidentCell x j ∈ T0'.cells then 1 else 2
-        ∀ (x : GaussianInt), ∀ (j : Fin 4), (LatticeVertexIncidentCell x j ∈ T0'.cells) →
-            (outerLabel x j = 1)) ) := by
-  classical
-  intro T0 T0' hdis outerLabel x j hc
-  have hn : LatticeVertexIncidentCell x j ∉ T0.cells :=
-    Finset.disjoint_left.mp hdis.symm hc
-  simp [outerLabel, hn, hc]
 
 private theorem label_R :
     (by
@@ -884,52 +790,83 @@ private theorem hlabelRA :
 private theorem hlabelGood :
     (by
       classical
-      exact
-        ∀ (T0 : ProtoTile), ∀ (T0' : ProtoTile), ∀ (R : ProtoTile), ∀ (E :
-            ExactTileInterfaceTriple T0 T0' R), (Disjoint T0.cells R.cells) → ((Disjoint
-            T0'.cells R.cells) → (∀ (x : GaussianInt), (∀ (z : GaussianInt), z = x ∨ z = x + (1 :
-            GaussianInt) ∨ z = x - (1 : GaussianInt) ∨ z = x + (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt)
-            ∨ z = x - (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt) → z ∈ FootprintVertices T0 ∨ z ∈
-            FootprintVertices T0') → (
-        let edgeAt (x : GaussianInt) : Fin 4 → Finset GaussianInt :=
-          ![{x, x + ⟨0, 1⟩}, {x - 1, x},
-            {x - ⟨0, 1⟩, x}, {x, x + 1}]
-        (∀ (E : ProtoTile), ∀ (x : GaussianInt), ∀ (j : Fin 4), (x ∈ FootprintVertices T0) → ((x
-            ∈ FootprintVertices T0') → ((∀ y, y = x ∨ y = x + 1 ∨ y = x - 1 ∨ y = x + ⟨0, 1⟩ ∨ y
-            = x - ⟨0, 1⟩ → y ∈ FootprintVertices T0 ∨ y ∈ FootprintVertices T0') → ((Disjoint
-            E.cells T0.cells) → ((Disjoint E.cells T0'.cells) → ((LatticeVertexIncidentCell x j ∈
-            E.cells) → ((LatticeVertexIncidentCell x (j + 1) ∈ E.cells) → (False)))))))) → (
-        let outerLabel : GaussianInt → Fin 4 → Fin 3 := fun x j =>
-          if LatticeVertexIncidentCell x j ∈ T0.cells then 0
-          else if LatticeVertexIncidentCell x j ∈ T0'.cells then 1 else 2
-        (∀ (R : ProtoTile), ∀ (x : GaussianInt), (∀ j : Fin 4, LatticeVertexIncidentCell x j ∈
-            T0.cells ∨ LatticeVertexIncidentCell x j ∈ T0'.cells ∨ LatticeVertexIncidentCell x j
-            ∈ R.cells) → (∀ (j : Fin 4), (outerLabel x j = 2) → (LatticeVertexIncidentCell x j ∈
-            R.cells))) → ((x ∈ FootprintVertices T0 ∩ FootprintVertices T0' ∩ FootprintVertices
-            R) → ((∀ (j : Fin (4 : ℕ)), LatticeVertexIncidentCell x j ∈ T0.cells ∨
-            LatticeVertexIncidentCell x j ∈ T0'.cells ∨ LatticeVertexIncidentCell x j ∈ R.cells)
-            → (∀ (jEdge : Fin (4 : ℕ)), ∀ (eAB : Finset GaussianInt), ∀ (jAB : Fin (4 : ℕ)), ∀
-            (jBR : Fin (4 : ℕ)), ∀ (jRA : Fin (4 : ℕ)), (eAB = edgeAt E.point jAB) →
-            ((LatticeVertexIncidentCell E.point jAB ∈ T0.cells ∧ LatticeVertexIncidentCell
-            E.point (jAB + (1 : Fin (4 : ℕ))) ∈ T0'.cells ∨ LatticeVertexIncidentCell E.point jAB
-            ∈ T0'.cells ∧ LatticeVertexIncidentCell E.point (jAB + (1 : Fin (4 : ℕ))) ∈ T0.cells)
-            → ((jAB ≠ jBR) → ((jRA ≠ jAB) → ((eAB = edgeAt x jAB) → ((LatticeVertexIncidentCell x
-            jAB ∈ T0.cells ∧ LatticeVertexIncidentCell x (jAB + (1 : Fin (4 : ℕ))) ∈ T0'.cells ∨
-            LatticeVertexIncidentCell x jAB ∈ T0'.cells ∧ LatticeVertexIncidentCell x (jAB + (1 :
-            Fin (4 : ℕ))) ∈ T0.cells) → ((jAB = jEdge) → ((({outerLabel x jAB,
-            outerLabel x (jAB + 1)} : Finset (Fin 3)) = {0, 1}) → ((outerLabel x (jAB + (2 : Fin
-            (4 : ℕ))) = (2 : Fin (3 : ℕ)) ∧ outerLabel x (jAB + (3 : Fin (4 : ℕ))) = outerLabel x
-            jAB ∨ outerLabel x (jAB + (3 : Fin (4 : ℕ))) = (2 : Fin (3 : ℕ)) ∧ outerLabel x (jAB
-            + (2 : Fin (4 : ℕ))) = outerLabel x (jAB + (1 : Fin (4 : ℕ))) ∨ outerLabel x (jAB +
-            (2 : Fin (4 : ℕ))) = (2 : Fin (3 : ℕ)) ∧ outerLabel x (jAB + (3 : Fin (4 : ℕ))) = (2
-            : Fin (3 : ℕ)) ∨ outerLabel x (jAB + (3 : Fin (4 : ℕ))) = (2 : Fin (3 : ℕ)) ∧
-            outerLabel x jAB = (2 : Fin (3 : ℕ))) → ((outerLabel x (jAB + 2) = 2 ∧ outerLabel x
-            (jAB + 3) = outerLabel x jAB) ∨ (outerLabel x (jAB + 3) = 2 ∧ outerLabel x (jAB + 2)
-            = outerLabel x (jAB + 1)))))))))))))))))) ) := by
+        exact
+        ∀ (T0 : ProtoTile),
+          ∀ (T0' : ProtoTile),
+            ∀ (R : ProtoTile),
+              (Disjoint T0.cells R.cells) →
+                ((Disjoint T0'.cells R.cells) →
+                  (∀ (x : GaussianInt),
+                    (∀ (z : GaussianInt),
+                        z = x ∨
+                            z = x + (1 : GaussianInt) ∨
+                              z = x - (1 : GaussianInt) ∨
+                                z = x + (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt) ∨
+                                  z = x - (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt) →
+                          z ∈ FootprintVertices T0 ∨ z ∈ FootprintVertices T0') →
+                      ((∀ (E : ProtoTile),
+                          ∀ (x : GaussianInt),
+                            ∀ (j : Fin 4),
+                              (x ∈ FootprintVertices T0) →
+                                ((x ∈ FootprintVertices T0') →
+                                  ((∀ y,
+                                      y = x ∨
+                                          y = x + 1 ∨
+                                            y = x - 1 ∨
+                                              y = x + ⟨0, 1⟩ ∨ y = x - ⟨0, 1⟩ →
+                                        y ∈ FootprintVertices T0 ∨
+                                          y ∈ FootprintVertices T0') →
+                                    ((Disjoint E.cells T0.cells) →
+                                      ((Disjoint E.cells T0'.cells) →
+                                        ((LatticeVertexIncidentCell x j ∈ E.cells) →
+                                          ((LatticeVertexIncidentCell x (j + 1) ∈
+                                              E.cells) →
+                                            (False)))))))) →
+                        (let outerLabel : GaussianInt → Fin 4 → Fin 3 := fun x j =>
+                          if LatticeVertexIncidentCell x j ∈ T0.cells then 0
+                          else
+                            if LatticeVertexIncidentCell x j ∈ T0'.cells then 1
+                            else 2;
+                        (∀ (R : ProtoTile),
+                            ∀ (x : GaussianInt),
+                              (∀ j : Fin 4,
+                                  LatticeVertexIncidentCell x j ∈ T0.cells ∨
+                                    LatticeVertexIncidentCell x j ∈ T0'.cells ∨
+                                      LatticeVertexIncidentCell x j ∈ R.cells) →
+                                (∀ (j : Fin 4),
+                                  (outerLabel x j = 2) →
+                                    (LatticeVertexIncidentCell x j ∈ R.cells))) →
+                          ((x ∈
+                              FootprintVertices T0 ∩ FootprintVertices T0' ∩
+                                FootprintVertices R) →
+                            ((∀ (j : Fin (4 : ℕ)),
+                                LatticeVertexIncidentCell x j ∈ T0.cells ∨
+                                  LatticeVertexIncidentCell x j ∈ T0'.cells ∨
+                                    LatticeVertexIncidentCell x j ∈ R.cells) →
+                              (∀ (jAB : Fin (4 : ℕ)),
+                                ((outerLabel x (jAB + (2 : Fin (4 : ℕ))) =
+                                        (2 : Fin (3 : ℕ)) ∧
+                                      outerLabel x (jAB + (3 : Fin (4 : ℕ))) =
+                                        outerLabel x jAB ∨
+                                    outerLabel x (jAB + (3 : Fin (4 : ℕ))) =
+                                          (2 : Fin (3 : ℕ)) ∧
+                                        outerLabel x (jAB + (2 : Fin (4 : ℕ))) =
+                                          outerLabel x (jAB + (1 : Fin (4 : ℕ))) ∨
+                                      outerLabel x (jAB + (2 : Fin (4 : ℕ))) =
+                                            (2 : Fin (3 : ℕ)) ∧
+                                          outerLabel x (jAB + (3 : Fin (4 : ℕ))) =
+                                            (2 : Fin (3 : ℕ)) ∨
+                                        outerLabel x (jAB + (3 : Fin (4 : ℕ))) =
+                                            (2 : Fin (3 : ℕ)) ∧
+                                          outerLabel x jAB = (2 : Fin (3 : ℕ))) →
+                                  ((outerLabel x (jAB + 2) = 2 ∧
+                                      outerLabel x (jAB + 3) = outerLabel x jAB) ∨
+                                    (outerLabel x (jAB + 3) = 2 ∧
+                                      outerLabel x (jAB + 2) =
+                                        outerLabel x (jAB + 1)))))))))))) := by
   classical
-  intro T0 T0' R E hTm hT'm x hstar edgeAt endpoint_repeat_impossible outerLabel label_eq_two_mem
-      hxTriple hsectorCover jEdge eAB jAB jBR jRA hABat htransAB hjABBR hjRAAB hABatx htransABx
-      hjABEdge hlabelAB hlabelPattern
+  intro T0 T0' R hTm hT'm x hstar endpoint_repeat_impossible outerLabel label_eq_two_mem
+      hxTriple hsectorCover jAB hlabelPattern
   rcases hlabelPattern with h | h | h | h
   · exact Or.inl h
   · exact Or.inr h
@@ -1347,67 +1284,21 @@ private theorem hdiagAt813 :
 private theorem hfinalCellsAt833 :
     (by
       classical
-      exact
-        ∀ (ι : Type), ∀ (P : PeriodicTileComplex ι), ∀ (owner : GaussianInt → ι), ∀ (T0 :
-            ProtoTile), ∀ (T0' : ProtoTile), ∀ (R : ProtoTile), ∀ (U : ProtoTile), ∀ (V :
-            ProtoTile), ∀ (E : ExactTileInterfaceTriple T0 T0' R), ∀ (endpointIndex : ι), ∀ (ia :
-            ι), ∀ (ib : ι), ∀ (x : GaussianInt),
-        let edgeAt (x : GaussianInt) : Fin 4 → Finset GaussianInt :=
-          ![{x, x + ⟨0, 1⟩}, {x - 1, x},
-            {x - ⟨0, 1⟩, x}, {x, x + 1}]
-        let outerLabel : GaussianInt → Fin 4 → Fin 3 := fun x j =>
-          if LatticeVertexIncidentCell x j ∈ T0.cells then 0
-          else if LatticeVertexIncidentCell x j ∈ T0'.cells then 1 else 2
-        ∀ (jEdge : Fin (4 : ℕ)), ∀ (eAB : Finset GaussianInt), ∀ (jAB : Fin (4 : ℕ)), ∀ (jBR :
-            Fin (4 : ℕ)), ∀ (jRA : Fin (4 : ℕ)), (eAB = edgeAt E.point jAB) →
-            ((LatticeVertexIncidentCell E.point jAB ∈ T0.cells ∧ LatticeVertexIncidentCell
-            E.point (jAB + (1 : Fin (4 : ℕ))) ∈ T0'.cells ∨ LatticeVertexIncidentCell E.point jAB
-            ∈ T0'.cells ∧ LatticeVertexIncidentCell E.point (jAB + (1 : Fin (4 : ℕ))) ∈ T0.cells)
-            → ((jAB ≠ jBR) → ((jRA ≠ jAB) → ((eAB = edgeAt x jAB) → ((LatticeVertexIncidentCell x
-            jAB ∈ T0.cells ∧ LatticeVertexIncidentCell x (jAB + (1 : Fin (4 : ℕ))) ∈ T0'.cells ∨
-            LatticeVertexIncidentCell x jAB ∈ T0'.cells ∧ LatticeVertexIncidentCell x (jAB + (1 :
-            Fin (4 : ℕ))) ∈ T0.cells) → ((jAB = jEdge) → ((({outerLabel x jAB,
-            outerLabel x (jAB + 1)} : Finset (Fin 3)) = {0, 1}) → ((outerLabel x (jAB + (2 : Fin
-            (4 : ℕ))) = (2 : Fin (3 : ℕ)) ∧ outerLabel x (jAB + (3 : Fin (4 : ℕ))) = outerLabel x
-            jAB ∨ outerLabel x (jAB + (3 : Fin (4 : ℕ))) = (2 : Fin (3 : ℕ)) ∧ outerLabel x (jAB
-            + (2 : Fin (4 : ℕ))) = outerLabel x (jAB + (1 : Fin (4 : ℕ))) ∨ outerLabel x (jAB +
-            (2 : Fin (4 : ℕ))) = (2 : Fin (3 : ℕ)) ∧ outerLabel x (jAB + (3 : Fin (4 : ℕ))) = (2
-            : Fin (3 : ℕ)) ∨ outerLabel x (jAB + (3 : Fin (4 : ℕ))) = (2 : Fin (3 : ℕ)) ∧
-            outerLabel x jAB = (2 : Fin (3 : ℕ))) → (((LatticeVertexIncidentCell x jAB ∈ (P.tile
-            ia).cells ∧ LatticeVertexIncidentCell x (jAB + 1) ∈ (P.tile ib).cells) ∨
-            (LatticeVertexIncidentCell x jAB ∈ (P.tile ib).cells ∧ LatticeVertexIncidentCell x
-            (jAB + 1) ∈ (P.tile ia).cells)) → (((owner (LatticeVertexIncidentCell x jAB) = ia ∧
-            owner (LatticeVertexIncidentCell x (jAB + 1)) = ib) ∨ (owner
-            (LatticeVertexIncidentCell x jAB) = ib ∧ owner (LatticeVertexIncidentCell x (jAB +
-            1)) = ia)) → (((outerLabel x jAB = 0 ∧ owner (LatticeVertexIncidentCell x jAB) = ia ∧
-            owner (LatticeVertexIncidentCell x (jAB + 1)) = ib) ∨ (outerLabel x jAB = 1 ∧ owner
-            (LatticeVertexIncidentCell x jAB) = ib ∧ owner (LatticeVertexIncidentCell x (jAB +
-            1)) = ia)) → (((outerLabel x jAB = 0 ∧ outerLabel x (jAB + 1) = 1) ∨ (outerLabel x
-            jAB = 1 ∧ outerLabel x (jAB + 1) = 0)) → (
-        let o0 := owner (LatticeVertexIncidentCell x jAB)
-        let o1 := owner (LatticeVertexIncidentCell x (jAB + 1))
-        let o2 := owner (LatticeVertexIncidentCell x (jAB + 2))
-        let o3 := owner (LatticeVertexIncidentCell x (jAB + 3))
-        ((outerLabel x jAB = 0 ∧ o0 = ia ∧ o1 = ib) ∨ (outerLabel x jAB = 1 ∧ o0 = ib ∧ o1 = ia))
-            → ((o0 = o1 ∨ o0 = o2 ∨ o0 = o3 ∨ o1 = o2 ∨ o1 = o3 ∨ o2 = o3) → ((outerLabel x (jAB
-            + (2 : Fin (4 : ℕ))) = (2 : Fin (3 : ℕ)) ∧ outerLabel x (jAB + (3 : Fin (4 : ℕ))) =
-            outerLabel x jAB) → ((LatticeVertexIncidentCell x (jAB + 2) ∈ R.cells) → ((o2 =
-            endpointIndex) → ((LatticeVertexIncidentCell x (jAB + 3) ∈ T0.cells ∨
-            LatticeVertexIncidentCell x (jAB + 3) ∈ T0'.cells) → ((LatticeVertexIncidentCell x
-            jAB ∈ T0.cells ∨ LatticeVertexIncidentCell x jAB ∈ T0'.cells) →
-            ((LatticeVertexIncidentCell x (jAB + 1) ∈ T0.cells ∨ LatticeVertexIncidentCell x (jAB
-            + 1) ∈ T0'.cells) → ((o0 ≠ o1) → ((o0 ≠ o2) → ((o1 ≠ o2) → ((o1 ≠ o3) → ((o2 ≠ o3) →
-            ((o0 = o3) → (((LatticeVertexIncidentCell x (jAB + 1) ∈ U.cells ∧
-            LatticeVertexIncidentCell x (jAB + 3) ∈ V.cells) ∨ (LatticeVertexIncidentCell x (jAB
-            + 1) ∈ V.cells ∧ LatticeVertexIncidentCell x (jAB + 3) ∈ U.cells)) → ((x ∈ U.cells ∧
-            x - 1 - ⟨0, 1⟩ ∈ V.cells) ∨ (x ∈ V.cells ∧ x - 1 - ⟨0, 1⟩ ∈ U.cells) ∨ (x - 1 ∈
-            U.cells ∧ x - ⟨0, 1⟩ ∈ V.cells) ∨ (x - 1 ∈ V.cells ∧ x - ⟨0, 1⟩ ∈
-            U.cells))))))))))))))))))))))))))))) ) := by
+        exact
+        ∀ (U : ProtoTile),
+          ∀ (V : ProtoTile),
+            ∀ (x : GaussianInt),
+              ∀ (jAB : Fin (4 : ℕ)),
+                (((LatticeVertexIncidentCell x (jAB + 1) ∈ U.cells ∧
+                      LatticeVertexIncidentCell x (jAB + 3) ∈ V.cells) ∨
+                    (LatticeVertexIncidentCell x (jAB + 1) ∈ V.cells ∧
+                      LatticeVertexIncidentCell x (jAB + 3) ∈ U.cells)) →
+                  ((x ∈ U.cells ∧ x - 1 - ⟨0, 1⟩ ∈ V.cells) ∨
+                    (x ∈ V.cells ∧ x - 1 - ⟨0, 1⟩ ∈ U.cells) ∨
+                      (x - 1 ∈ U.cells ∧ x - ⟨0, 1⟩ ∈ V.cells) ∨
+                        (x - 1 ∈ V.cells ∧ x - ⟨0, 1⟩ ∈ U.cells)))) := by
   classical
-  intro ι P owner T0 T0' R U V E endpointIndex ia ib x edgeAt outerLabel jEdge eAB jAB jBR jRA
-      hABat htransAB hjABBR hjRAAB hABatx htransABx hjABEdge hlabelAB hlabelPattern hsectorAB
-      hownerAB hownerAligned hlabelsAB o0 o1 o2 o3 hownerAligned' hownerRepeat hGood hcell2 ho2
-      hcell3side hside0 hside1 ho01ne ho02ne ho12ne ho13ne ho23ne ho03 hdiag
+  intro U V x jAB hdiag
   rcases hdiag with hdiag | hdiag
   · fin_cases jAB
     · exact Or.inr (Or.inr (Or.inl
@@ -1644,66 +1535,21 @@ private theorem hdiagAt938 :
 private theorem hfinalCellsAt958 :
     (by
       classical
-      exact
-        ∀ (ι : Type), ∀ (P : PeriodicTileComplex ι), ∀ (owner : GaussianInt → ι), ∀ (T0 :
-            ProtoTile), ∀ (T0' : ProtoTile), ∀ (R : ProtoTile), ∀ (U : ProtoTile), ∀ (V :
-            ProtoTile), ∀ (E : ExactTileInterfaceTriple T0 T0' R), ∀ (endpointIndex : ι), ∀ (ia :
-            ι), ∀ (ib : ι), ∀ (x : GaussianInt),
-        let edgeAt (x : GaussianInt) : Fin 4 → Finset GaussianInt :=
-          ![{x, x + ⟨0, 1⟩}, {x - 1, x},
-            {x - ⟨0, 1⟩, x}, {x, x + 1}]
-        let outerLabel : GaussianInt → Fin 4 → Fin 3 := fun x j =>
-          if LatticeVertexIncidentCell x j ∈ T0.cells then 0
-          else if LatticeVertexIncidentCell x j ∈ T0'.cells then 1 else 2
-        ∀ (jEdge : Fin (4 : ℕ)), ∀ (eAB : Finset GaussianInt), ∀ (jAB : Fin (4 : ℕ)), ∀ (jBR :
-            Fin (4 : ℕ)), ∀ (jRA : Fin (4 : ℕ)), (eAB = edgeAt E.point jAB) →
-            ((LatticeVertexIncidentCell E.point jAB ∈ T0.cells ∧ LatticeVertexIncidentCell
-            E.point (jAB + (1 : Fin (4 : ℕ))) ∈ T0'.cells ∨ LatticeVertexIncidentCell E.point jAB
-            ∈ T0'.cells ∧ LatticeVertexIncidentCell E.point (jAB + (1 : Fin (4 : ℕ))) ∈ T0.cells)
-            → ((jAB ≠ jBR) → ((jRA ≠ jAB) → ((eAB = edgeAt x jAB) → ((LatticeVertexIncidentCell x
-            jAB ∈ T0.cells ∧ LatticeVertexIncidentCell x (jAB + (1 : Fin (4 : ℕ))) ∈ T0'.cells ∨
-            LatticeVertexIncidentCell x jAB ∈ T0'.cells ∧ LatticeVertexIncidentCell x (jAB + (1 :
-            Fin (4 : ℕ))) ∈ T0.cells) → ((jAB = jEdge) → ((({outerLabel x jAB,
-            outerLabel x (jAB + 1)} : Finset (Fin 3)) = {0, 1}) → ((outerLabel x (jAB + (2 : Fin
-            (4 : ℕ))) = (2 : Fin (3 : ℕ)) ∧ outerLabel x (jAB + (3 : Fin (4 : ℕ))) = outerLabel x
-            jAB ∨ outerLabel x (jAB + (3 : Fin (4 : ℕ))) = (2 : Fin (3 : ℕ)) ∧ outerLabel x (jAB
-            + (2 : Fin (4 : ℕ))) = outerLabel x (jAB + (1 : Fin (4 : ℕ))) ∨ outerLabel x (jAB +
-            (2 : Fin (4 : ℕ))) = (2 : Fin (3 : ℕ)) ∧ outerLabel x (jAB + (3 : Fin (4 : ℕ))) = (2
-            : Fin (3 : ℕ)) ∨ outerLabel x (jAB + (3 : Fin (4 : ℕ))) = (2 : Fin (3 : ℕ)) ∧
-            outerLabel x jAB = (2 : Fin (3 : ℕ))) → (((LatticeVertexIncidentCell x jAB ∈ (P.tile
-            ia).cells ∧ LatticeVertexIncidentCell x (jAB + 1) ∈ (P.tile ib).cells) ∨
-            (LatticeVertexIncidentCell x jAB ∈ (P.tile ib).cells ∧ LatticeVertexIncidentCell x
-            (jAB + 1) ∈ (P.tile ia).cells)) → (((owner (LatticeVertexIncidentCell x jAB) = ia ∧
-            owner (LatticeVertexIncidentCell x (jAB + 1)) = ib) ∨ (owner
-            (LatticeVertexIncidentCell x jAB) = ib ∧ owner (LatticeVertexIncidentCell x (jAB +
-            1)) = ia)) → (((outerLabel x jAB = 0 ∧ owner (LatticeVertexIncidentCell x jAB) = ia ∧
-            owner (LatticeVertexIncidentCell x (jAB + 1)) = ib) ∨ (outerLabel x jAB = 1 ∧ owner
-            (LatticeVertexIncidentCell x jAB) = ib ∧ owner (LatticeVertexIncidentCell x (jAB +
-            1)) = ia)) → (((outerLabel x jAB = 0 ∧ outerLabel x (jAB + 1) = 1) ∨ (outerLabel x
-            jAB = 1 ∧ outerLabel x (jAB + 1) = 0)) → (
-        let o0 := owner (LatticeVertexIncidentCell x jAB)
-        let o1 := owner (LatticeVertexIncidentCell x (jAB + 1))
-        let o2 := owner (LatticeVertexIncidentCell x (jAB + 2))
-        let o3 := owner (LatticeVertexIncidentCell x (jAB + 3))
-        ((outerLabel x jAB = 0 ∧ o0 = ia ∧ o1 = ib) ∨ (outerLabel x jAB = 1 ∧ o0 = ib ∧ o1 = ia))
-            → ((o0 = o1 ∨ o0 = o2 ∨ o0 = o3 ∨ o1 = o2 ∨ o1 = o3 ∨ o2 = o3) → ((outerLabel x (jAB
-            + (3 : Fin (4 : ℕ))) = (2 : Fin (3 : ℕ)) ∧ outerLabel x (jAB + (2 : Fin (4 : ℕ))) =
-            outerLabel x (jAB + (1 : Fin (4 : ℕ)))) → ((LatticeVertexIncidentCell x (jAB + 3) ∈
-            R.cells) → ((o3 = endpointIndex) → ((LatticeVertexIncidentCell x (jAB + 2) ∈ T0.cells
-            ∨ LatticeVertexIncidentCell x (jAB + 2) ∈ T0'.cells) → ((LatticeVertexIncidentCell x
-            jAB ∈ T0.cells ∨ LatticeVertexIncidentCell x jAB ∈ T0'.cells) →
-            ((LatticeVertexIncidentCell x (jAB + 1) ∈ T0.cells ∨ LatticeVertexIncidentCell x (jAB
-            + 1) ∈ T0'.cells) → ((o0 ≠ o1) → ((o0 ≠ o2) → ((o0 ≠ o3) → ((o1 ≠ o3) → ((o2 ≠ o3) →
-            ((o1 = o2) → (((LatticeVertexIncidentCell x jAB ∈ U.cells ∧ LatticeVertexIncidentCell
-            x (jAB + 2) ∈ V.cells) ∨ (LatticeVertexIncidentCell x jAB ∈ V.cells ∧
-            LatticeVertexIncidentCell x (jAB + 2) ∈ U.cells)) → ((x ∈ U.cells ∧ x - 1 - ⟨0, 1⟩ ∈
-            V.cells) ∨ (x ∈ V.cells ∧ x - 1 - ⟨0, 1⟩ ∈ U.cells) ∨ (x - 1 ∈ U.cells ∧ x - ⟨0, 1⟩ ∈
-            V.cells) ∨ (x - 1 ∈ V.cells ∧ x - ⟨0, 1⟩ ∈ U.cells))))))))))))))))))))))))))))) ) := by
+        exact
+        ∀ (U : ProtoTile),
+          ∀ (V : ProtoTile),
+            ∀ (x : GaussianInt),
+              ∀ (jAB : Fin (4 : ℕ)),
+                (((LatticeVertexIncidentCell x jAB ∈ U.cells ∧
+                      LatticeVertexIncidentCell x (jAB + 2) ∈ V.cells) ∨
+                    (LatticeVertexIncidentCell x jAB ∈ V.cells ∧
+                      LatticeVertexIncidentCell x (jAB + 2) ∈ U.cells)) →
+                  ((x ∈ U.cells ∧ x - 1 - ⟨0, 1⟩ ∈ V.cells) ∨
+                    (x ∈ V.cells ∧ x - 1 - ⟨0, 1⟩ ∈ U.cells) ∨
+                      (x - 1 ∈ U.cells ∧ x - ⟨0, 1⟩ ∈ V.cells) ∨
+                        (x - 1 ∈ V.cells ∧ x - ⟨0, 1⟩ ∈ U.cells)))) := by
   classical
-  intro ι P owner T0 T0' R U V E endpointIndex ia ib x edgeAt outerLabel jEdge eAB jAB jBR jRA
-      hABat htransAB hjABBR hjRAAB hABatx htransABx hjABEdge hlabelAB hlabelPattern hsectorAB
-      hownerAB hownerAligned hlabelsAB o0 o1 o2 o3 hownerAligned' hownerRepeat hGood hcell3 ho3
-      hcell2side hside0 hside1 ho01ne ho02ne ho03ne ho13ne ho23ne ho12 hdiag
+  intro U V x jAB hdiag
   rcases hdiag with hdiag | hdiag
   · fin_cases jAB
     · exact Or.inl (by simpa [LatticeVertexIncidentCell] using hdiag)
@@ -1779,15 +1625,15 @@ theorem P5635T1EndpointDiagonalOwnership {ι : Type}
   let edgeAt (x : GaussianInt) : Fin 4 → Finset GaussianInt :=
     ![{x, x + ⟨0, 1⟩}, {x - 1, x},
       {x - ⟨0, 1⟩, x}, {x, x + 1}]
-  have edgeAt_mem := EndpointDiagonalGeometry.edgeAt_mem
+  have edgeAt_mem := LatticeVertexSectorFacts.edgeMembership
   have edgeAt_injective (x : GaussianInt) {j k : Fin 4}
-      (h : edgeAt x j = edgeAt x k) := EndpointDiagonalGeometry.edgeAt_injective
-          (EndpointDiagonalGeometry.neighbor_ne_center)
+      (h : edgeAt x j = edgeAt x k) := LatticeVertexSectorFacts.edgeInjective
+          (LatticeVertexSectorFacts.neighborDistinct)
           (EndpointDiagonalGeometry.neighbor_injective) edgeAt_mem x (j := j) (k := k) h
   have endpoint_repeat_impossible := EndpointDiagonalGeometry.endpoint_repeat_impossible T0 T0'
       (EndpointDiagonalGeometry.edge_foreign_impossible edgeAt_mem edgeAt_injective
       (EndpointDiagonalGeometry.edge_of_sector_pair)) (EndpointDiagonalGeometry.star_induced_edge
-      T0 T0' hreg hreg' (EndpointDiagonalGeometry.edgeAt_eq_pair)
+      T0 T0' hreg hreg' (LatticeVertexSectorFacts.edgePair)
       (EndpointDiagonalGeometry.neighbor_in_star) (EndpointDiagonalGeometry.neighbor_four_adjacent))
   have triple_transitions := EndpointDiagonalGeometry.triple_transitions T0 T0' hT hT' hdis
       (EndpointDiagonalGeometry.exact_point_boundary) (EndpointDiagonalGeometry.touching_path)
@@ -1795,8 +1641,8 @@ theorem P5635T1EndpointDiagonalOwnership {ι : Type}
   let outerLabel : GaussianInt → Fin 4 → Fin 3 := fun x j =>
     if LatticeVertexIncidentCell x j ∈ T0.cells then 0
     else if LatticeVertexIncidentCell x j ∈ T0'.cells then 1 else 2
-  have label_T0 := EndpointDiagonalGeometry.label_T0 T0 T0'
-  have label_T0' := EndpointDiagonalGeometry.label_T0' T0 T0' hdis
+  have label_T0 := LatticeVertexSectorFacts.firstTileLabel T0 T0'
+  have label_T0' := LatticeVertexSectorFacts.secondTileLabel T0 T0' hdis
   have label_R := EndpointDiagonalGeometry.label_R T0 T0'
   have label_mem := EndpointDiagonalGeometry.label_mem T0 T0' label_T0 label_T0'
   have label_eq_two_mem := EndpointDiagonalGeometry.label_eq_two_mem T0 T0' label_mem
@@ -1854,9 +1700,8 @@ theorem P5635T1EndpointDiagonalOwnership {ι : Type}
     hjABBR hjBRRA hjRAAB hlabelAB (EndpointDiagonalGeometry.hlabelBR T0 T0' R hTm hT'm x
         label_T0' label_R jBR htransBRx) (EndpointDiagonalGeometry.hlabelRA T0 T0' R hTm hT'm x
         label_T0 label_R jRA htransRAx)
-  have hlabelGood := EndpointDiagonalGeometry.hlabelGood T0 T0' R E hTm hT'm x hstar
-      endpoint_repeat_impossible label_eq_two_mem hxTriple hsectorCover jEdge eAB jAB jBR jRA
-      hABat htransAB hjABBR hjRAAB hABatx htransABx hjABEdge hlabelAB hlabelPattern
+  have hlabelGood := EndpointDiagonalGeometry.hlabelGood T0 T0' R hTm hT'm x hstar
+      endpoint_repeat_impossible label_eq_two_mem hxTriple hsectorCover jAB hlabelPattern
   have hsectorAB := EndpointDiagonalGeometry.hsectorAB ι P ia ib x jEdge hsectorEdge jAB hjABEdge
   have hownerAB := EndpointDiagonalGeometry.hownerAB ι P owner U V ia ib hUidx hVidx x
       owner_unique jAB hsectorAB
@@ -1894,11 +1739,7 @@ theorem P5635T1EndpointDiagonalOwnership {ι : Type}
         ho13ne ho23ne
     have hdiag := EndpointDiagonalGeometry.hdiagAt813 ι P owner owner_mem_iff T0 T0' U V ia ib
         hUidx hVidx x jAB hownerAligned' ho03
-    have hfinalCells := EndpointDiagonalGeometry.hfinalCellsAt833 ι P owner T0 T0' R U V E
-        endpointIndex ia ib x jEdge eAB jAB jBR jRA hABat htransAB hjABBR hjRAAB hABatx htransABx
-        hjABEdge hlabelAB hlabelPattern hsectorAB hownerAB hownerAligned hlabelsAB hownerAligned'
-        hownerRepeat hGood hcell2 ho2 hcell3side hside0 hside1 ho01ne ho02ne ho12ne ho13ne ho23ne
-        ho03 hdiag
+    have hfinalCells := EndpointDiagonalGeometry.hfinalCellsAt833 U V x jAB hdiag
     exact hfinalCells
   · have hcell3 : LatticeVertexIncidentCell x (jAB + 3) ∈ R.cells :=
       label_eq_two_mem R x hsectorCover (jAB + 3) hGood.1
@@ -1923,11 +1764,7 @@ theorem P5635T1EndpointDiagonalOwnership {ι : Type}
         ho13ne ho23ne
     have hdiag := EndpointDiagonalGeometry.hdiagAt938 ι P owner owner_mem_iff T0 T0' U V ia ib
         hUidx hVidx x jAB hownerAligned' ho12
-    have hfinalCells := EndpointDiagonalGeometry.hfinalCellsAt958 ι P owner T0 T0' R U V E
-        endpointIndex ia ib x jEdge eAB jAB jBR jRA hABat htransAB hjABBR hjRAAB hABatx htransABx
-        hjABEdge hlabelAB hlabelPattern hsectorAB hownerAB hownerAligned hlabelsAB hownerAligned'
-        hownerRepeat hGood hcell3 ho3 hcell2side hside0 hside1 ho01ne ho02ne ho03ne ho13ne ho23ne
-        ho12 hdiag
+    have hfinalCells := EndpointDiagonalGeometry.hfinalCellsAt958 U V x jAB hdiag
     exact hfinalCells
 
 end ApollonianSuperharmonic

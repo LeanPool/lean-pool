@@ -9,13 +9,10 @@ public import Mathlib.Init
 
 public import LeanPool.ApollonianSuperharmonic.P5625T1CentroidSlopeDifferenceCovariance
 public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryInversePhaseCancellation
-public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryScopedPhase
-public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryTileAction
 public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryTileOdometerCovariance
 public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryTilingTransport
 public import LeanPool.ApollonianSuperharmonic.LatticeVertexIncidentCell
 public import LeanPool.ApollonianSuperharmonic.TileSubodometer
-public import LeanPool.ApollonianSuperharmonic.TileTranslation
 
 -- [TABLET NODE: BandPackingSymmetryMarkedDataCovariance]
 
@@ -1020,58 +1017,57 @@ private theorem hactM2 :
 private theorem hMphase2 :
     (by
       classical
-      exact
+        exact
         let affineQuarter : GaussianInt × GaussianInt → GaussianInt × GaussianInt :=
-          fun z => (GaussianQuarterTurn z.1, -GaussianQuarterTurn z.2)
-        (∀ (k : BandPackingSymmetry), ∀ (z : GaussianInt × GaussianInt),
-            (BandPackingSymmetryAffineVectorAction k z).1 = BandPackingSymmetryVectorAction k
-            z.1) → (∀ (g : BandPackingSymmetry), ∀ (q : Fin (4 : ℕ) → CircleCoordinates), ∀ (i :
-            Fin (3 : ℕ)), ∀ (e : Bool), ∀ (delta : Bool), (BandPackingSymmetryScopedPhase g q
-            delta) → ((∀ (i : Fin (3 : ℕ)),
-        let e := if delta = true then (-1 : GaussianInt) else (1 : GaussianInt);
-        let incoming := BandPackingSymmetryAffineVectorAction g (BandVectors.1 (q i.succ) (q (0 :
-            Fin (4 : ℕ))), BandVectors.2 (q i.succ) (q (0 : Fin (4 : ℕ))));
-        let cyclic := BandPackingSymmetryAffineVectorAction g (BandVectors.1 (q (i + (2 : Fin (3
-            : ℕ))).succ) (q (i + (1 : Fin (3 : ℕ))).succ), BandVectors.2 (q (i + (2 : Fin (3 :
-            ℕ))).succ) (q (i + (1 : Fin (3 : ℕ))).succ)); BandVectors.2
-            (BandPackingSymmetryQuadrupleAction g q ((fun (i : Fin (3 : ℕ)) => if
-            BandPackingSymmetryReversesOrientation g = true then -i else i) i).succ)
-            (BandPackingSymmetryQuadrupleAction g q (0 : Fin (4 : ℕ))) = e * incoming.2 ∧
-            BandVectors.2 (BandPackingSymmetryQuadrupleAction g q ((fun (i : Fin (3 : ℕ)) => if
-            BandPackingSymmetryReversesOrientation g = true then -i else i) i + (2 : Fin (3 :
-            ℕ))).succ) (BandPackingSymmetryQuadrupleAction g q ((fun (i : Fin (3 : ℕ)) => if
-            BandPackingSymmetryReversesOrientation g = true then -i else i) i + (1 : Fin (3 :
-            ℕ))).succ) = e * if BandPackingSymmetryReversesOrientation g = true then
-            -GaussianQuarterTurn cyclic.2 else cyclic.2) → (
-        let q' := BandPackingSymmetryQuadrupleAction g q
-        let sigma : Fin 3 → Fin 3 := fun j =>
-          if BandPackingSymmetryReversesOrientation g then -j else j
-        let W := BandVectors.1 (q ((i + 2).succ)) (q ((i + 1).succ))
-        let A := BandVectors.2 (q ((i + 2).succ)) (q ((i + 1).succ))
-        let Z : GaussianInt × GaussianInt := (W, A)
-        let M : GaussianInt × GaussianInt :=
-          (W - GaussianQuarterTurn W, A + GaussianQuarterTurn A)
-        let W' := BandVectors.1 (q' ((sigma i + 2).succ))
-          (q' ((sigma i + 1).succ))
-        let A' := BandVectors.2 (q' ((sigma i + 2).succ))
-          (q' ((sigma i + 1).succ))
-        (W' = (if delta then (-1 : GaussianInt) else 1) * (if
-            BandPackingSymmetryReversesOrientation g then GaussianQuarterTurn
-            (BandPackingSymmetryVectorAction g W) else BandPackingSymmetryVectorAction g W)) →
-            ((A' = (if delta then (-1 : GaussianInt) else 1) * (if
-            BandPackingSymmetryReversesOrientation g then -GaussianQuarterTurn
-            (BandPackingSymmetryAffineVectorAction g Z).2 else
-            (BandPackingSymmetryAffineVectorAction g Z).2)) →
-            ((BandPackingSymmetryAffineVectorAction g M = if
-            BandPackingSymmetryReversesOrientation g then BandPackingSymmetryAffineVectorAction g
-            Z + affineQuarter (BandPackingSymmetryAffineVectorAction g Z) else
-            BandPackingSymmetryAffineVectorAction g Z - affineQuarter
-            (BandPackingSymmetryAffineVectorAction g Z)) → ((W' - GaussianQuarterTurn W', A' +
-            GaussianQuarterTurn A') = if delta then -(BandPackingSymmetryAffineVectorAction g M)
-            else BandPackingSymmetryAffineVectorAction g M)))))) ) := by
+          fun z => (GaussianQuarterTurn z.1, -GaussianQuarterTurn z.2);
+        (∀ (k : BandPackingSymmetry),
+            ∀ (z : GaussianInt × GaussianInt),
+              (BandPackingSymmetryAffineVectorAction k z).1 =
+                BandPackingSymmetryVectorAction k z.1) →
+          (∀ (g : BandPackingSymmetry),
+            ∀ (q : Fin (4 : ℕ) → CircleCoordinates),
+              ∀ (i : Fin (3 : ℕ)),
+                ∀ (delta : Bool),
+                  (let q' := BandPackingSymmetryQuadrupleAction g q;
+                  let sigma : Fin 3 → Fin 3 := fun j =>
+                    if BandPackingSymmetryReversesOrientation g then -j else j;
+                  let W := BandVectors.1 (q ((i + 2).succ)) (q ((i + 1).succ));
+                  let A := BandVectors.2 (q ((i + 2).succ)) (q ((i + 1).succ));
+                  let Z : GaussianInt × GaussianInt := (W, A);
+                  let M : GaussianInt × GaussianInt :=
+                    (W - GaussianQuarterTurn W, A + GaussianQuarterTurn A);
+                  let W' :=
+                    BandVectors.1 (q' ((sigma i + 2).succ))
+                      (q' ((sigma i + 1).succ));
+                  let A' :=
+                    BandVectors.2 (q' ((sigma i + 2).succ))
+                      (q' ((sigma i + 1).succ));
+                  (W' =
+                      (if delta then (-1 : GaussianInt) else 1) *
+                        (if BandPackingSymmetryReversesOrientation g then
+                          GaussianQuarterTurn (BandPackingSymmetryVectorAction g W)
+                        else BandPackingSymmetryVectorAction g W)) →
+                    ((A' =
+                        (if delta then (-1 : GaussianInt) else 1) *
+                          (if BandPackingSymmetryReversesOrientation g then
+                            -GaussianQuarterTurn
+                                (BandPackingSymmetryAffineVectorAction g Z).2
+                          else (BandPackingSymmetryAffineVectorAction g Z).2)) →
+                      ((BandPackingSymmetryAffineVectorAction g M =
+                          if BandPackingSymmetryReversesOrientation g then
+                            BandPackingSymmetryAffineVectorAction g Z +
+                              affineQuarter
+                                (BandPackingSymmetryAffineVectorAction g Z)
+                          else
+                            BandPackingSymmetryAffineVectorAction g Z -
+                              affineQuarter
+                                (BandPackingSymmetryAffineVectorAction g Z)) →
+                        ((W' - GaussianQuarterTurn W',
+                            A' + GaussianQuarterTurn A') =
+                          if delta then -(BandPackingSymmetryAffineVectorAction g M)
+                          else BandPackingSymmetryAffineVectorAction g M)))))) := by
   classical
-  intro affineQuarter affineFirst g q i e delta hphase hcyc q' sigma W A Z M W' A' hWphase2
-      hAphase2 hactM2
+  intro affineQuarter affineFirst g q i delta q' sigma W A Z M W' A' hWphase2 hAphase2 hactM2
   rw [hWphase2, hAphase2, ← affineFirst g Z, hactM2]
   cases delta <;> cases hor : BandPackingSymmetryReversesOrientation g <;>
     ext <;> simp [affineQuarter, GaussianQuarterTurn] <;> ring
@@ -1646,8 +1642,8 @@ private theorem forwardSub :
         have hpat2 : M = Z + -affineQuarter Z := by
           ext <;> simp [M, Z, affineQuarter, GaussianQuarterTurn]; ring
         have hactM2 := MarkedCovarianceGeometry.hactM2 affineFacts g q i hpat2
-        have hMphase2 := MarkedCovarianceGeometry.hMphase2 affineFirst g q i e delta hphase
-            hcyc hWphase2 hAphase2 hactM2
+        have hMphase2 := MarkedCovarianceGeometry.hMphase2 affineFirst g q i delta hWphase2
+            hAphase2 hactM2
         have hpointSign := MarkedCovarianceGeometry.hpointSignAt762 g q i delta hMphase2
         have hdiff' := MarkedCovarianceGeometry.hdiff' g T T' q i e delta p p' hdiff hpointSign
         refine ⟨r, r', hsr, hsr', ?_, ?_⟩

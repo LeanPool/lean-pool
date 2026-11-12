@@ -6,6 +6,7 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.DiamondQuadraticArithmetic
 
 public import LeanPool.ApollonianSuperharmonic.P5352T2PlacementData
 public import LeanPool.ApollonianSuperharmonic.P5352T2DomainRows
@@ -43,28 +44,6 @@ private theorem tri :
     rw [ha, show (2*(a/2)+1)*(2*(a/2)+1-1) =
       2*((2*(a/2)+1)*(a/2)) by ring,
       Int.mul_ediv_cancel_left _ (by norm_num : (2:Int) ≠ 0)]
-
-private theorem square :
-    (by
-      classical
-      exact
-        (DiamondParameter) → (∀ (a : ℤ), (4 : ℤ) * (a ^ (2 : ℕ) / (4 : ℤ)) = a ^ (2 : ℕ) - a % (2
-            : ℤ)) ) := by
-  classical
-  intro K a
-  rcases Int.emod_two_eq_zero_or_one a with h | h
-  · have ha : a = 2*(a/2) := by omega
-    have he : a^2 = 4*(a/2)^2 := by
-      conv_lhs => rw [ha]
-      ring
-    rw [he, Int.mul_ediv_cancel_left _ (by norm_num : (4:Int) ≠ 0), h]
-    ring
-  · have ha : a = 2*(a/2)+1 := by omega
-    have he : a^2 = 4*((a/2)^2+a/2)+1 := by
-      conv_lhs => rw [ha]
-      ring
-    rw [he, h]
-    omega
 
 private theorem hposResult :
     (by
@@ -126,25 +105,6 @@ private theorem hfloorOdd :
   rw [he] at hh
   norm_num at hh ⊢
   nlinarith
-
-private theorem scale :
-    (by
-      classical
-      exact
-        let Q (a b : Int) : Int :=
-          (Int.natAbs a : Int)*((Int.natAbs a : Int)-1)/2-(a-b)^2/4
-        let S (a b : Int) : Int := 2*a^2-2*|a|-(a-b)^2+(a-b)%2
-        (∀ (a : Int), 2*(a*(a-1)/2) = a*(a-1)) → ((∀ (a : Int), 4*(a^2/4) = a^2-a%2) → (∀ (a :
-            ℤ), ∀ (b : ℤ), (4 : ℤ) * Q a b = S a b)) ) := by
-  classical
-  intro Q S tri square a b
-  have ht := tri (Int.natAbs a : Int)
-  have hs := square (a-b)
-  have ha : (Int.natAbs a : Int)^2 = a^2 := by
-    rw [Int.natCast_natAbs, sq_abs]
-  dsimp [Q, S]
-  rw [Int.natCast_natAbs] at ht ha ⊢
-  nlinarith only [ht, hs, ha]
 
 private theorem foot :
     (by
@@ -701,8 +661,8 @@ theorem P5491T1DiamondRightBoundary (K : DiamondParameter) (hk : 1 < K.1)
     (Int.natAbs a : Int)*((Int.natAbs a : Int)-1)/2-(a-b)^2/4
   let S (a b : Int) : Int := 2*a^2-2*|a|-(a-b)^2+(a-b)%2
   have tri (a : Int) : 2*(a*(a-1)/2) = a*(a-1) := DiamondRightBoundaryProof.tri K a
-  have square (a : Int) : 4*(a^2/4) = a^2-a%2 := DiamondRightBoundaryProof.square K a
-  have scale (a b : Int) := DiamondBoundaryDetails.scale tri square a b
+  have square (a : Int) : 4*(a^2/4) = a^2-a%2 := DiamondQuadraticArithmetic.squareScale a
+  have scale (a b : Int) := DiamondQuadraticArithmetic.quadraticScale tri square a b
   have foot (z : GaussianInt) := DiamondBoundaryDetails.foot K z
   have hpositive : ∀ (i : Fin 3) (x : GaussianInt),
       x ∈ FootprintVertices (DiamondTile K.1) →

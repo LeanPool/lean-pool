@@ -154,30 +154,25 @@ private theorem determinantCoprime :
 private theorem hFord :
     (by
       classical
-      exact
-        ∀ (P : FordFareyParameter), ∀ (Ci : BandCircle), ∀ (i : Fin 3), (FordRecursiveQuadruple P
-            i.succ = Ci.1.1) → ((i = (0 : Fin (3 : ℕ)) ∧ P.q₁ < P.q₂ ∨ i = (1 : Fin (3 : ℕ)) ∧
-            P.q₂ < P.q₁) → (∀ (T : ProtoTile), ∀ (T' : ProtoTile), ∀ (u : GaussianInt), (T'.cells
-            = (TileTranslation (FordTile P.q) (u + if i = (0 : Fin (3 : ℕ)) then (⟨(↑P.q : ℤ),
-            (↑P.q₁ : ℤ)⟩ : GaussianInt) else (⟨-(↑P.q : ℤ), (↑P.q₂ : ℤ)⟩ : GaussianInt))).cells)
-            → ((∀ (x : GaussianInt), x ∈ FootprintVertices T ∩ FootprintVertices T' ↔ ((x - u).re
-            = if i = (0 : Fin (3 : ℕ)) then (↑P.q : ℤ) else (0 : ℤ)) ∧ (if i = (0 : Fin (3 : ℕ))
-            then (↑P.q₁ : ℤ) else (↑P.q₂ : ℤ)) ≤ (x - u).im ∧ (x - u).im ≤ (↑P.q : ℤ)) → (∀
-            (Rminus : ProtoTile), ∀ (Rplus : ProtoTile), (TileCentroid Rminus - TileCentroid T =
-            (1 / 2 : ℝ) • GaussianRealPoint (BandVectors.1 (FordRecursiveQuadruple P i.succ)
-            (FordRecursiveQuadruple P (0 : Fin (4 : ℕ))) - BandVectors.1 (FordRecursiveQuadruple
-            P (0 : Fin (4 : ℕ))) (FordRecursiveQuadruple P i.succ))) → ((TileCentroid Rplus -
-            TileCentroid T = (1 / 2 : ℝ) • GaussianRealPoint (BandVectors.1
-            (FordRecursiveQuadruple P i.succ) (FordRecursiveQuadruple P (0 : Fin (4 : ℕ))) +
-            BandVectors.1 (FordRecursiveQuadruple P (0 : Fin (4 : ℕ))) (FordRecursiveQuadruple P
-            i.succ))) → ((0 < P.q₁) → (((0 : ℕ) < P.q₂) → (
-        let n := if i = 0 then P.q₁ else P.q₂
-        (0 < n) → ((n < P.q) → ((Ci.1.1.1 = (n : Int) ^ 2) → ((1 < n) → ((∀ (a : Int), ∀ (b :
-            Nat), ∀ (d : Nat), ∀ (c : Int), (a * (d : Int) - (b : Int) * c = 1) → (Nat.Coprime b
-            a.natAbs)) → (BandPrototile Ci.1.1 (FordTile n)))))))))))))) ) := by
+        exact
+        ∀ (P : FordFareyParameter),
+          ∀ (Ci : BandCircle),
+            ∀ (i : Fin 3),
+              (FordRecursiveQuadruple P i.succ = Ci.1.1) →
+                ((i = (0 : Fin (3 : ℕ)) ∧ P.q₁ < P.q₂ ∨
+                    i = (1 : Fin (3 : ℕ)) ∧ P.q₂ < P.q₁) →
+                  ((0 < P.q₁) →
+                    (((0 : ℕ) < P.q₂) →
+                      (let n := if i = 0 then P.q₁ else P.q₂;
+                      ((∀ (a : Int),
+                          ∀ (b : Nat),
+                            ∀ (d : Nat),
+                              ∀ (c : Int),
+                                (a * (d : Int) - (b : Int) * c = 1) →
+                                  (Nat.Coprime b a.natAbs)) →
+                        (BandPrototile Ci.1.1 (FordTile n)))))))) := by
   classical
-  intro P Ci i hCi hsmall T T' u hc' hsegment Rminus Rplus hcm hcp hrpos hspos n hnpos hnq
-      hCicurv hnlarge determinantCoprime
+  intro P Ci i hCi hsmall hrpos hspos n determinantCoprime
   rcases hsmall with ⟨rfl, _⟩ | ⟨rfl, _⟩
   · obtain ⟨Q, ⟨hpQ, hqQ⟩, _⟩ := FordFareyParentsExist P.p₁ P.q₁ hrpos
       (determinantCoprime P.p₁ P.q₁ P.q P.p P.det₁)
@@ -300,51 +295,91 @@ private theorem hcentT :
 private theorem hcmcand :
     (by
       classical
-      exact
-        ∀ (P : FordFareyParameter), ∀ (Ci : BandCircle), ∀ (i : Fin 3), (FordRecursiveQuadruple P
-            i.succ = Ci.1.1) → ((i = (0 : Fin (3 : ℕ)) ∧ P.q₁ < P.q₂ ∨ i = (1 : Fin (3 : ℕ)) ∧
-            P.q₂ < P.q₁) → (∀ (T : ProtoTile), ∀ (T' : ProtoTile), ∀ (u : GaussianInt), (T'.cells
-            = (TileTranslation (FordTile P.q) (u + if i = (0 : Fin (3 : ℕ)) then (⟨(↑P.q : ℤ),
-            (↑P.q₁ : ℤ)⟩ : GaussianInt) else (⟨-(↑P.q : ℤ), (↑P.q₂ : ℤ)⟩ : GaussianInt))).cells)
-            → ((∀ (x : GaussianInt), x ∈ FootprintVertices T ∩ FootprintVertices T' ↔ ((x - u).re
-            = if i = (0 : Fin (3 : ℕ)) then (↑P.q : ℤ) else (0 : ℤ)) ∧ (if i = (0 : Fin (3 : ℕ))
-            then (↑P.q₁ : ℤ) else (↑P.q₂ : ℤ)) ≤ (x - u).im ∧ (x - u).im ≤ (↑P.q : ℤ)) → (∀
-            (Rminus : ProtoTile), ∀ (Rplus : ProtoTile), (TileCentroid Rminus - TileCentroid T =
-            (1 / 2 : ℝ) • GaussianRealPoint (BandVectors.1 (FordRecursiveQuadruple P i.succ)
-            (FordRecursiveQuadruple P (0 : Fin (4 : ℕ))) - BandVectors.1 (FordRecursiveQuadruple
-            P (0 : Fin (4 : ℕ))) (FordRecursiveQuadruple P i.succ))) → ((TileCentroid Rplus -
-            TileCentroid T = (1 / 2 : ℝ) • GaussianRealPoint (BandVectors.1
-            (FordRecursiveQuadruple P i.succ) (FordRecursiveQuadruple P (0 : Fin (4 : ℕ))) +
-            BandVectors.1 (FordRecursiveQuadruple P (0 : Fin (4 : ℕ))) (FordRecursiveQuadruple P
-            i.succ))) → (
-        let n := if i = 0 then P.q₁ else P.q₂
-        (0 < n) → ((n < P.q) → ((Ci.1.1.1 = (n : Int) ^ 2) → ((1 < n) → ((BandPrototile Ci.1.1
-            (FordTile n)) → ((∀ (m : Nat), (0 < m) → (TileCentroid (FordTile m) = ((m : Real) /
-            2, (m : Real) / 2))) → ((TileCentroid T = ((P.q : Real) / 2 + u.re, (P.q : Real) / 2
-            + u.im)) → (
-        let vm : GaussianInt := u + if i = 0 then ⟨P.q, 0⟩ else ⟨0, P.q⟩
-        (BandVectors.1 (FordRecursiveQuadruple P (0 : Fin (4 : ℕ))) (FordRecursiveQuadruple P
-            i.succ) = (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt) * BandVectors.1 (FordRecursiveQuadruple
-            P i.succ) (FordRecursiveQuadruple P (0 : Fin (4 : ℕ)))) → ((ProperBandQuadruple
-            (FordRecursiveQuadruple P) ∧ BandVectors.1 (FordRecursiveQuadruple P (1 : Fin (4 :
-            ℕ))) (FordRecursiveQuadruple P (0 : Fin (4 : ℕ))) = (⟨(↑P.q : ℤ), (↑P.q₁ : ℤ)⟩ :
-            GaussianInt) ∧ BandVectors.1 (FordRecursiveQuadruple P (2 : Fin (4 : ℕ)))
-            (FordRecursiveQuadruple P (0 : Fin (4 : ℕ))) = (⟨-(↑P.q : ℤ), (↑P.q₂ : ℤ)⟩ :
-            GaussianInt) ∧ BandVectors.1 (FordRecursiveQuadruple P (3 : Fin (4 : ℕ)))
-            (FordRecursiveQuadruple P (0 : Fin (4 : ℕ))) = (⟨(0 : ℤ), -(↑P.q : ℤ)⟩ : GaussianInt)
-            ∧ BandVectors.2 (FordRecursiveQuadruple P (1 : Fin (4 : ℕ))) (FordRecursiveQuadruple
-            P (0 : Fin (4 : ℕ))) = (⟨P.p₁, P.p⟩ : GaussianInt) ∧ BandVectors.2
-            (FordRecursiveQuadruple P (2 : Fin (4 : ℕ))) (FordRecursiveQuadruple P (0 : Fin (4 :
-            ℕ))) = (⟨P.p₂, -P.p⟩ : GaussianInt) ∧ BandVectors.2 (FordRecursiveQuadruple P (3 :
-            Fin (4 : ℕ))) (FordRecursiveQuadruple P (0 : Fin (4 : ℕ))) = (⟨-P.p, (0 : ℤ)⟩ :
-            GaussianInt) ∧ BandVectors.2 (FordRecursiveQuadruple P (3 : Fin (4 : ℕ)))
-            (FordRecursiveQuadruple P (2 : Fin (4 : ℕ))) = (⟨-P.p₂, (0 : ℤ)⟩ : GaussianInt) ∧
-            BandVectors.2 (FordRecursiveQuadruple P (1 : Fin (4 : ℕ))) (FordRecursiveQuadruple P
-            (3 : Fin (4 : ℕ))) = (⟨(0 : ℤ), P.p₁⟩ : GaussianInt)) → (TileCentroid Rminus =
-            TileCentroid (TileTranslation (FordTile n) vm)))))))))))))))) ) := by
+        exact
+        ∀ (P : FordFareyParameter),
+          ∀ (i : Fin 3),
+            ((i = (0 : Fin (3 : ℕ)) ∧ P.q₁ < P.q₂ ∨
+                i = (1 : Fin (3 : ℕ)) ∧ P.q₂ < P.q₁) →
+              (∀ (T : ProtoTile),
+                ∀ (u : GaussianInt),
+                  (∀ (Rminus : ProtoTile),
+                    (TileCentroid Rminus - TileCentroid T =
+                        (1 / 2 : ℝ) •
+                          GaussianRealPoint
+                            (BandVectors.1 (FordRecursiveQuadruple P i.succ)
+                                (FordRecursiveQuadruple P (0 : Fin (4 : ℕ))) -
+                              BandVectors.1
+                                (FordRecursiveQuadruple P (0 : Fin (4 : ℕ)))
+                                (FordRecursiveQuadruple P i.succ))) →
+                      (let n := if i = 0 then P.q₁ else P.q₂;
+                      (0 < n) →
+                        ((∀ (m : Nat),
+                            (0 < m) →
+                              (TileCentroid (FordTile m) =
+                                ((m : Real) / 2, (m : Real) / 2))) →
+                          ((TileCentroid T =
+                              ((P.q : Real) / 2 + u.re, (P.q : Real) / 2 + u.im)) →
+                            (let vm : GaussianInt :=
+                              u + if i = 0 then ⟨P.q, 0⟩ else ⟨0, P.q⟩;
+                            (BandVectors.1
+                                  (FordRecursiveQuadruple P (0 : Fin (4 : ℕ)))
+                                  (FordRecursiveQuadruple P i.succ) =
+                                (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt) *
+                                  BandVectors.1 (FordRecursiveQuadruple P i.succ)
+                                    (FordRecursiveQuadruple P (0 : Fin (4 : ℕ)))) →
+                              ((ProperBandQuadruple (FordRecursiveQuadruple P) ∧
+                                  BandVectors.1
+                                        (FordRecursiveQuadruple P (1 : Fin (4 : ℕ)))
+                                        (FordRecursiveQuadruple P
+                                          (0 : Fin (4 : ℕ))) =
+                                      (⟨(↑P.q : ℤ), (↑P.q₁ : ℤ)⟩ : GaussianInt) ∧
+                                    BandVectors.1
+                                          (FordRecursiveQuadruple P
+                                            (2 : Fin (4 : ℕ)))
+                                          (FordRecursiveQuadruple P
+                                            (0 : Fin (4 : ℕ))) =
+                                        (⟨-(↑P.q : ℤ), (↑P.q₂ : ℤ)⟩ : GaussianInt) ∧
+                                      BandVectors.1
+                                            (FordRecursiveQuadruple P
+                                              (3 : Fin (4 : ℕ)))
+                                            (FordRecursiveQuadruple P
+                                              (0 : Fin (4 : ℕ))) =
+                                          (⟨(0 : ℤ), -(↑P.q : ℤ)⟩ : GaussianInt) ∧
+                                        BandVectors.2
+                                              (FordRecursiveQuadruple P
+                                                (1 : Fin (4 : ℕ)))
+                                              (FordRecursiveQuadruple P
+                                                (0 : Fin (4 : ℕ))) =
+                                            (⟨P.p₁, P.p⟩ : GaussianInt) ∧
+                                          BandVectors.2
+                                                (FordRecursiveQuadruple P
+                                                  (2 : Fin (4 : ℕ)))
+                                                (FordRecursiveQuadruple P
+                                                  (0 : Fin (4 : ℕ))) =
+                                              (⟨P.p₂, -P.p⟩ : GaussianInt) ∧
+                                            BandVectors.2
+                                                  (FordRecursiveQuadruple P
+                                                    (3 : Fin (4 : ℕ)))
+                                                  (FordRecursiveQuadruple P
+                                                    (0 : Fin (4 : ℕ))) =
+                                                (⟨-P.p, (0 : ℤ)⟩ : GaussianInt) ∧
+                                              BandVectors.2
+                                                    (FordRecursiveQuadruple P
+                                                      (3 : Fin (4 : ℕ)))
+                                                    (FordRecursiveQuadruple P
+                                                      (2 : Fin (4 : ℕ))) =
+                                                  (⟨-P.p₂, (0 : ℤ)⟩ : GaussianInt) ∧
+                                                BandVectors.2
+                                                    (FordRecursiveQuadruple P
+                                                      (1 : Fin (4 : ℕ)))
+                                                    (FordRecursiveQuadruple P
+                                                      (3 : Fin (4 : ℕ))) =
+                                                  (⟨(0 : ℤ), P.p₁⟩ : GaussianInt)) →
+                                (TileCentroid Rminus =
+                                  TileCentroid
+                                    (TileTranslation (FordTile n) vm))))))))))) := by
   classical
-  intro P Ci i hCi hsmall T T' u hc' hsegment Rminus Rplus hcm hcp n hnpos hnq hCicurv hnlarge
-      hFord fordcent hcentT vm hflip hvecs
+  intro P i hsmall T u Rminus hcm n hnpos fordcent hcentT vm hflip hvecs
   rw [(TileTranslationFormulas _ _).2.2.2.2.1, fordcent n hnpos]
   rw [hflip] at hcm
   rcases hsmall with ⟨rfl, _⟩ | ⟨rfl, _⟩
@@ -366,53 +401,91 @@ private theorem hcmcand :
 private theorem hcpcand :
     (by
       classical
-      exact
-        ∀ (P : FordFareyParameter), ∀ (Ci : BandCircle), ∀ (i : Fin 3), (FordRecursiveQuadruple P
-            i.succ = Ci.1.1) → ((i = (0 : Fin (3 : ℕ)) ∧ P.q₁ < P.q₂ ∨ i = (1 : Fin (3 : ℕ)) ∧
-            P.q₂ < P.q₁) → (∀ (T : ProtoTile), ∀ (T' : ProtoTile), ∀ (u : GaussianInt), (T'.cells
-            = (TileTranslation (FordTile P.q) (u + if i = (0 : Fin (3 : ℕ)) then (⟨(↑P.q : ℤ),
-            (↑P.q₁ : ℤ)⟩ : GaussianInt) else (⟨-(↑P.q : ℤ), (↑P.q₂ : ℤ)⟩ : GaussianInt))).cells)
-            → ((∀ (x : GaussianInt), x ∈ FootprintVertices T ∩ FootprintVertices T' ↔ ((x - u).re
-            = if i = (0 : Fin (3 : ℕ)) then (↑P.q : ℤ) else (0 : ℤ)) ∧ (if i = (0 : Fin (3 : ℕ))
-            then (↑P.q₁ : ℤ) else (↑P.q₂ : ℤ)) ≤ (x - u).im ∧ (x - u).im ≤ (↑P.q : ℤ)) → (∀
-            (Rminus : ProtoTile), ∀ (Rplus : ProtoTile), (TileCentroid Rminus - TileCentroid T =
-            (1 / 2 : ℝ) • GaussianRealPoint (BandVectors.1 (FordRecursiveQuadruple P i.succ)
-            (FordRecursiveQuadruple P (0 : Fin (4 : ℕ))) - BandVectors.1 (FordRecursiveQuadruple
-            P (0 : Fin (4 : ℕ))) (FordRecursiveQuadruple P i.succ))) → ((TileCentroid Rplus -
-            TileCentroid T = (1 / 2 : ℝ) • GaussianRealPoint (BandVectors.1
-            (FordRecursiveQuadruple P i.succ) (FordRecursiveQuadruple P (0 : Fin (4 : ℕ))) +
-            BandVectors.1 (FordRecursiveQuadruple P (0 : Fin (4 : ℕ))) (FordRecursiveQuadruple P
-            i.succ))) → (
-        let n := if i = 0 then P.q₁ else P.q₂
-        (0 < n) → ((n < P.q) → ((Ci.1.1.1 = (n : Int) ^ 2) → ((1 < n) → ((BandPrototile Ci.1.1
-            (FordTile n)) → ((∀ (m : Nat), (0 < m) → (TileCentroid (FordTile m) = ((m : Real) /
-            2, (m : Real) / 2))) → ((TileCentroid T = ((P.q : Real) / 2 + u.re, (P.q : Real) / 2
-            + u.im)) → (
-        let vm : GaussianInt := u + if i = 0 then ⟨P.q, 0⟩ else ⟨0, P.q⟩
-        let vp : GaussianInt := u + if i = 0 then ⟨P.q₂, P.q⟩ else ⟨-(P.q₂ : Int), 0⟩
-        (BandVectors.1 (FordRecursiveQuadruple P (0 : Fin (4 : ℕ))) (FordRecursiveQuadruple P
-            i.succ) = (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt) * BandVectors.1 (FordRecursiveQuadruple
-            P i.succ) (FordRecursiveQuadruple P (0 : Fin (4 : ℕ)))) → ((ProperBandQuadruple
-            (FordRecursiveQuadruple P) ∧ BandVectors.1 (FordRecursiveQuadruple P (1 : Fin (4 :
-            ℕ))) (FordRecursiveQuadruple P (0 : Fin (4 : ℕ))) = (⟨(↑P.q : ℤ), (↑P.q₁ : ℤ)⟩ :
-            GaussianInt) ∧ BandVectors.1 (FordRecursiveQuadruple P (2 : Fin (4 : ℕ)))
-            (FordRecursiveQuadruple P (0 : Fin (4 : ℕ))) = (⟨-(↑P.q : ℤ), (↑P.q₂ : ℤ)⟩ :
-            GaussianInt) ∧ BandVectors.1 (FordRecursiveQuadruple P (3 : Fin (4 : ℕ)))
-            (FordRecursiveQuadruple P (0 : Fin (4 : ℕ))) = (⟨(0 : ℤ), -(↑P.q : ℤ)⟩ : GaussianInt)
-            ∧ BandVectors.2 (FordRecursiveQuadruple P (1 : Fin (4 : ℕ))) (FordRecursiveQuadruple
-            P (0 : Fin (4 : ℕ))) = (⟨P.p₁, P.p⟩ : GaussianInt) ∧ BandVectors.2
-            (FordRecursiveQuadruple P (2 : Fin (4 : ℕ))) (FordRecursiveQuadruple P (0 : Fin (4 :
-            ℕ))) = (⟨P.p₂, -P.p⟩ : GaussianInt) ∧ BandVectors.2 (FordRecursiveQuadruple P (3 :
-            Fin (4 : ℕ))) (FordRecursiveQuadruple P (0 : Fin (4 : ℕ))) = (⟨-P.p, (0 : ℤ)⟩ :
-            GaussianInt) ∧ BandVectors.2 (FordRecursiveQuadruple P (3 : Fin (4 : ℕ)))
-            (FordRecursiveQuadruple P (2 : Fin (4 : ℕ))) = (⟨-P.p₂, (0 : ℤ)⟩ : GaussianInt) ∧
-            BandVectors.2 (FordRecursiveQuadruple P (1 : Fin (4 : ℕ))) (FordRecursiveQuadruple P
-            (3 : Fin (4 : ℕ))) = (⟨(0 : ℤ), P.p₁⟩ : GaussianInt)) → ((TileCentroid Rminus =
-            TileCentroid (TileTranslation (FordTile n) vm)) → (TileCentroid Rplus = TileCentroid
-            (TileTranslation (FordTile n) vp))))))))))))))))) ) := by
+        exact
+        ∀ (P : FordFareyParameter),
+          ∀ (i : Fin 3),
+            ((i = (0 : Fin (3 : ℕ)) ∧ P.q₁ < P.q₂ ∨
+                i = (1 : Fin (3 : ℕ)) ∧ P.q₂ < P.q₁) →
+              (∀ (T : ProtoTile),
+                ∀ (u : GaussianInt),
+                  (∀ (Rplus : ProtoTile),
+                    ((TileCentroid Rplus - TileCentroid T =
+                        (1 / 2 : ℝ) •
+                          GaussianRealPoint
+                            (BandVectors.1 (FordRecursiveQuadruple P i.succ)
+                                (FordRecursiveQuadruple P (0 : Fin (4 : ℕ))) +
+                              BandVectors.1
+                                (FordRecursiveQuadruple P (0 : Fin (4 : ℕ)))
+                                (FordRecursiveQuadruple P i.succ))) →
+                      (let n := if i = 0 then P.q₁ else P.q₂;
+                      (0 < n) →
+                        ((∀ (m : Nat),
+                            (0 < m) →
+                              (TileCentroid (FordTile m) =
+                                ((m : Real) / 2, (m : Real) / 2))) →
+                          ((TileCentroid T =
+                              ((P.q : Real) / 2 + u.re, (P.q : Real) / 2 + u.im)) →
+                            (let vp : GaussianInt :=
+                              u + if i = 0 then ⟨P.q₂, P.q⟩ else ⟨-(P.q₂ : Int), 0⟩;
+                            (BandVectors.1
+                                  (FordRecursiveQuadruple P (0 : Fin (4 : ℕ)))
+                                  (FordRecursiveQuadruple P i.succ) =
+                                (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt) *
+                                  BandVectors.1 (FordRecursiveQuadruple P i.succ)
+                                    (FordRecursiveQuadruple P (0 : Fin (4 : ℕ)))) →
+                              ((ProperBandQuadruple (FordRecursiveQuadruple P) ∧
+                                  BandVectors.1
+                                        (FordRecursiveQuadruple P (1 : Fin (4 : ℕ)))
+                                        (FordRecursiveQuadruple P
+                                          (0 : Fin (4 : ℕ))) =
+                                      (⟨(↑P.q : ℤ), (↑P.q₁ : ℤ)⟩ : GaussianInt) ∧
+                                    BandVectors.1
+                                          (FordRecursiveQuadruple P
+                                            (2 : Fin (4 : ℕ)))
+                                          (FordRecursiveQuadruple P
+                                            (0 : Fin (4 : ℕ))) =
+                                        (⟨-(↑P.q : ℤ), (↑P.q₂ : ℤ)⟩ : GaussianInt) ∧
+                                      BandVectors.1
+                                            (FordRecursiveQuadruple P
+                                              (3 : Fin (4 : ℕ)))
+                                            (FordRecursiveQuadruple P
+                                              (0 : Fin (4 : ℕ))) =
+                                          (⟨(0 : ℤ), -(↑P.q : ℤ)⟩ : GaussianInt) ∧
+                                        BandVectors.2
+                                              (FordRecursiveQuadruple P
+                                                (1 : Fin (4 : ℕ)))
+                                              (FordRecursiveQuadruple P
+                                                (0 : Fin (4 : ℕ))) =
+                                            (⟨P.p₁, P.p⟩ : GaussianInt) ∧
+                                          BandVectors.2
+                                                (FordRecursiveQuadruple P
+                                                  (2 : Fin (4 : ℕ)))
+                                                (FordRecursiveQuadruple P
+                                                  (0 : Fin (4 : ℕ))) =
+                                              (⟨P.p₂, -P.p⟩ : GaussianInt) ∧
+                                            BandVectors.2
+                                                  (FordRecursiveQuadruple P
+                                                    (3 : Fin (4 : ℕ)))
+                                                  (FordRecursiveQuadruple P
+                                                    (0 : Fin (4 : ℕ))) =
+                                                (⟨-P.p, (0 : ℤ)⟩ : GaussianInt) ∧
+                                              BandVectors.2
+                                                    (FordRecursiveQuadruple P
+                                                      (3 : Fin (4 : ℕ)))
+                                                    (FordRecursiveQuadruple P
+                                                      (2 : Fin (4 : ℕ))) =
+                                                  (⟨-P.p₂, (0 : ℤ)⟩ : GaussianInt) ∧
+                                                BandVectors.2
+                                                    (FordRecursiveQuadruple P
+                                                      (1 : Fin (4 : ℕ)))
+                                                    (FordRecursiveQuadruple P
+                                                      (3 : Fin (4 : ℕ))) =
+                                                  (⟨(0 : ℤ), P.p₁⟩ : GaussianInt)) →
+                                (TileCentroid Rplus =
+                                  TileCentroid
+                                    (TileTranslation (FordTile n) vp)))))))))))) := by
   classical
-  intro P Ci i hCi hsmall T T' u hc' hsegment Rminus Rplus hcm hcp n hnpos hnq hCicurv hnlarge
-      hFord fordcent hcentT vm vp hflip hvecs hcmcand
+  intro P i hsmall T u Rplus hcp n hnpos fordcent hcentT vp hflip hvecs
   rw [(TileTranslationFormulas _ _).2.2.2.2.1, fordcent n hnpos]
   rw [hflip] at hcp
   have hsumR : (P.q : Real) = P.q₁ + P.q₂ := by exact_mod_cast P.sum_q
@@ -453,39 +526,20 @@ private theorem hdelta :
 private theorem hnormdelta :
     (by
       classical
-      exact
-        ∀ (P : FordFareyParameter), ∀ (Ci : BandCircle), ∀ (i : Fin 3), (FordRecursiveQuadruple P
-            i.succ = Ci.1.1) → ((i = (0 : Fin (3 : ℕ)) ∧ P.q₁ < P.q₂ ∨ i = (1 : Fin (3 : ℕ)) ∧
-            P.q₂ < P.q₁) → (∀ (T : ProtoTile), ∀ (T' : ProtoTile), ∀ (u : GaussianInt), (T'.cells
-            = (TileTranslation (FordTile P.q) (u + if i = (0 : Fin (3 : ℕ)) then (⟨(↑P.q : ℤ),
-            (↑P.q₁ : ℤ)⟩ : GaussianInt) else (⟨-(↑P.q : ℤ), (↑P.q₂ : ℤ)⟩ : GaussianInt))).cells)
-            → ((∀ (x : GaussianInt), x ∈ FootprintVertices T ∩ FootprintVertices T' ↔ ((x - u).re
-            = if i = (0 : Fin (3 : ℕ)) then (↑P.q : ℤ) else (0 : ℤ)) ∧ (if i = (0 : Fin (3 : ℕ))
-            then (↑P.q₁ : ℤ) else (↑P.q₂ : ℤ)) ≤ (x - u).im ∧ (x - u).im ≤ (↑P.q : ℤ)) → (∀
-            (Rminus : ProtoTile), ∀ (Rplus : ProtoTile), (TileCentroid Rminus - TileCentroid T =
-            (1 / 2 : ℝ) • GaussianRealPoint (BandVectors.1 (FordRecursiveQuadruple P i.succ)
-            (FordRecursiveQuadruple P (0 : Fin (4 : ℕ))) - BandVectors.1 (FordRecursiveQuadruple
-            P (0 : Fin (4 : ℕ))) (FordRecursiveQuadruple P i.succ))) → ((TileCentroid Rplus -
-            TileCentroid T = (1 / 2 : ℝ) • GaussianRealPoint (BandVectors.1
-            (FordRecursiveQuadruple P i.succ) (FordRecursiveQuadruple P (0 : Fin (4 : ℕ))) +
-            BandVectors.1 (FordRecursiveQuadruple P (0 : Fin (4 : ℕ))) (FordRecursiveQuadruple P
-            i.succ))) → (((P.q : Int) = P.q₁ + P.q₂) → (
-        let n := if i = 0 then P.q₁ else P.q₂
-        (0 < n) → ((n < P.q) → ((Ci.1.1.1 = (n : Int) ^ 2) → ((1 < n) → ((BandPrototile Ci.1.1
-            (FordTile n)) → (
-        let vm : GaussianInt := u + if i = 0 then ⟨P.q, 0⟩ else ⟨0, P.q⟩
-        let vp : GaussianInt := u + if i = 0 then ⟨P.q₂, P.q⟩ else ⟨-(P.q₂ : Int), 0⟩
-        (BandVectors.1 (FordRecursiveQuadruple P (0 : Fin (4 : ℕ))) (FordRecursiveQuadruple P
-            i.succ) = (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt) * BandVectors.1 (FordRecursiveQuadruple
-            P i.succ) (FordRecursiveQuadruple P (0 : Fin (4 : ℕ)))) → ((TileCentroid Rminus =
-            TileCentroid (TileTranslation (FordTile n) vm)) → ((TileCentroid Rplus = TileCentroid
-            (TileTranslation (FordTile n) vp)) → ((Rminus.cells = (TileTranslation (FordTile n)
-            vm).cells) → ((Rplus.cells = (TileTranslation (FordTile n) vp).cells) →
-            ((TileCentroid Rplus - TileCentroid Rminus = GaussianRealPoint (vp - vm)) →
-            (Zsqrtd.norm (vp - vm) = (P.q : Int) ^ 2 + (n : Int) ^ 2)))))))))))))))))) ) := by
+        exact
+        ∀ (P : FordFareyParameter),
+          ∀ (i : Fin 3),
+            ((i = (0 : Fin (3 : ℕ)) ∧ P.q₁ < P.q₂ ∨
+                i = (1 : Fin (3 : ℕ)) ∧ P.q₂ < P.q₁) →
+              (∀ (u : GaussianInt),
+                (((P.q : Int) = P.q₁ + P.q₂) →
+                  (let n := if i = 0 then P.q₁ else P.q₂;
+                  (let vm : GaussianInt := u + if i = 0 then ⟨P.q, 0⟩ else ⟨0, P.q⟩;
+                  let vp : GaussianInt :=
+                    u + if i = 0 then ⟨P.q₂, P.q⟩ else ⟨-(P.q₂ : Int), 0⟩;
+                  (Zsqrtd.norm (vp - vm) = (P.q : Int) ^ 2 + (n : Int) ^ 2))))))) := by
   classical
-  intro P Ci i hCi hsmall T T' u hc' hsegment Rminus Rplus hcm hcp hsum n hnpos hnq hCicurv
-      hnlarge hFord vm vp hflip hcmcand hcpcand heqm heqp hdelta
+  intro P i hsmall u hsum n vm vp
   rcases hsmall with ⟨rfl, _⟩ | ⟨rfl, _⟩
   · simp [vm, vp, n, Zsqrtd.norm_def]
     nlinarith [hsum]
@@ -1015,8 +1069,7 @@ theorem P4158T1SmallerStringEdges
   have hC0pos := SmallerStringGeometry.hC0pos P C0 hC0 hqone
   have hCicurv := SmallerStringGeometry.hCicurv P Ci i hCi hsmall hrpos
   have hnlarge := SmallerStringGeometry.hnlarge P C0 Ci i hlarge hnpos hCicurv
-  have hFord := SmallerStringGeometry.hFord P Ci i hCi hsmall T T' u hc' hsegment Rminus Rplus
-      hcm hcp hrpos (P.q₂_pos) hnpos hnq hCicurv hnlarge
+  have hFord := SmallerStringGeometry.hFord P Ci i hCi hsmall hrpos (P.q₂_pos)
       (SmallerStringGeometry.determinantCoprime P C0 Ci i)
   have fordcell (m : Nat) (z : GaussianInt) :
       z ∈ (FordTile m).cells ↔
@@ -1030,10 +1083,10 @@ theorem P4158T1SmallerStringEdges
   let vp : GaussianInt := u + if i = 0 then ⟨P.q₂, P.q⟩ else ⟨-(P.q₂ : Int), 0⟩
   have hflip := ((VectorRecursionLaws (FordRecursiveQuadruple P) hq.1).2.2.2.2 hq i).1
   have hvecs := (FordCoordinateConfiguration P).2 hqone
-  have hcmcand := SmallerStringGeometry.hcmcand P Ci i hCi hsmall T T' u hc' hsegment Rminus
-      Rplus hcm hcp hnpos hnq hCicurv hnlarge hFord fordcent hcentT hflip hvecs
-  have hcpcand := SmallerStringGeometry.hcpcand P Ci i hCi hsmall T T' u hc' hsegment Rminus
-      Rplus hcm hcp hnpos hnq hCicurv hnlarge hFord fordcent hcentT hflip hvecs hcmcand
+  have hcmcand := SmallerStringGeometry.hcmcand P i hsmall T u Rminus hcm hnpos fordcent hcentT
+      hflip hvecs
+  have hcpcand := SmallerStringGeometry.hcpcand P i hsmall T u
+      Rplus hcp hnpos fordcent hcentT hflip hvecs
   have heqm := (BandPrototileCentroidUnique Ci.1.1 Rminus _
     (TileOdometerBandPrototile _ _ _ hOm)
     (BandPrototileTranslation _ _ vm hFord) hcmcand).1
@@ -1041,9 +1094,7 @@ theorem P4158T1SmallerStringEdges
     (TileOdometerBandPrototile _ _ _ hOp)
     (BandPrototileTranslation _ _ vp hFord) hcpcand).1
   have hdelta := SmallerStringGeometry.hdelta P i u Rminus Rplus hcmcand hcpcand
-  have hnormdelta := SmallerStringGeometry.hnormdelta P Ci i hCi hsmall T T' u hc' hsegment
-      Rminus Rplus hcm hcp hsum hnpos hnq hCicurv hnlarge hFord hflip hcmcand hcpcand heqm heqp
-      hdelta
+  have hnormdelta := SmallerStringGeometry.hnormdelta P i hsmall u hsum
   have pointinj := SmallerStringGeometry.pointinj
   have hRS := SmallerStringGeometry.hRS P Ci i hlarge u Rminus Rplus hCicurv hdelta hnormdelta
       pointinj

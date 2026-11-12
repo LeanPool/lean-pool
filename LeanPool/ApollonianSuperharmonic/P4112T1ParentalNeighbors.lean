@@ -6,6 +6,7 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.FordFareySum
 
 public import LeanPool.ApollonianSuperharmonic.P4062T1RemainderPaths
 public import LeanPool.ApollonianSuperharmonic.FourNeighborAdjacent
@@ -94,11 +95,6 @@ private theorem cross :
   norm_num [Nat.cast_add] at h1
   nlinarith [h1]
 
-private theorem hsumN :
-    ∀ (P : FordFareyParameter), P.q = P.q₁ + P.q₂ := by
-  classical
-  intro P
-  exact P.sum_q
 
 private theorem unequal :
     ∀ (P : FordFareyParameter), (2 < P.q) → ((0 < (P.q₂ : Int)) → ((P.p₁ * (P.q₂ : Int) - (P.q₁ :
@@ -861,7 +857,7 @@ theorem P4112T1ParentalNeighbors (P : FordFareyParameter) (hP : 2 < P.q) :
   have q1pos : 0 < P.q₁ := ParentalNeighborLemmas.q1pos P hP
   have q2posI : 0 < (P.q₂ : Int) := ParentalNeighborLemmas.q2posI P
   have cross : P.p₁ * (P.q₂ : Int) - (P.q₁ : Int) * P.p₂ = 1 := ParentalNeighborLemmas.cross P
-  have hsumN := ParentalNeighborLemmas.hsumN P
+  have hsumN := FordFareySum.denominatorSum P
   have unequal : P.q₁ ≠ P.q₂ := ParentalNeighborLemmas.unequal P hP q2posI cross hsumN
   have hsum : (P.q : Int) = (P.q₁ : Int) + (P.q₂ : Int) := ParentalNeighborLemmas.hsum P
   have squareCoordinates (n : Nat) (z : GaussianInt) :

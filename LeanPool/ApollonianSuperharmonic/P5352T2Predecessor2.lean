@@ -6,6 +6,8 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.EvenSquareQuotient
+public import LeanPool.ApollonianSuperharmonic.FourNeighborLaplacianProperties
 
 public import LeanPool.ApollonianSuperharmonic.P5352T2PlacementData
 public import LeanPool.ApollonianSuperharmonic.P5352T2DomainRows
@@ -26,18 +28,6 @@ Changes: pool module paths, public exports, project namespace and current Mathli
 namespace ApollonianSuperharmonic
 
 namespace SecondPredecessorProof
-
-private theorem lap_identity :
-    (by
-      classical
-      exact
-        ∀ (g : IntegerLatticeFunction), ∀ (x : GaussianInt), FourNeighborLaplacian g x = g (x +
-            (1 : GaussianInt)) - g x + (g (x - (1 : GaussianInt)) - g x) + (g (x + ⟨(0 : ℤ), (1 :
-            ℤ)⟩) - g x) + (g (x - ⟨(0 : ℤ), (1 : ℤ)⟩) - g x) ) := by
-  classical
-  intro g x
-  unfold FourNeighborLaplacian
-  ring
 
 private theorem childValue :
     (by
@@ -178,15 +168,6 @@ private theorem tdiffRev :
   have h := tdiff n
   omega
 
-private theorem floorEven :
-    (by
-      classical
-      exact
-        ∀ (m : ℤ), ((2 : ℤ) * m) ^ (2 : ℕ) / (4 : ℤ) = m ^ (2 : ℕ) ) := by
-  classical
-  intro m
-  have h := P4207T1FloorArithmetic.1 0 m
-  simpa using h
 
 private theorem floorOdd :
     (by
@@ -958,7 +939,7 @@ theorem P5352T2Predecessor2 (K : DiamondParameter) (hk : 1 < K.1)
     have lap_identity (g : IntegerLatticeFunction) (x : GaussianInt) :
         FourNeighborLaplacian g x =
           (g (x+1)-g x)+(g (x-1)-g x)+
-            (g (x+⟨0,1⟩)-g x)+(g (x-⟨0,1⟩)-g x) := SecondPredecessorProof.lap_identity g x
+            (g (x+⟨0,1⟩)-g x)+(g (x-⟨0,1⟩)-g x) := FourNeighborLaplacianProperties.differences g x
     let k : Int := K.1
     let d : GaussianInt := ⟨-k,k+1⟩
     let r : GaussianInt := ⟨-2*k,0⟩
@@ -1022,7 +1003,7 @@ theorem P5352T2Predecessor2 (K : DiamondParameter) (hk : 1 < K.1)
     have tri (n : Int) := SecondPredecessorProof.tri K a b n
     have tdiff (n : Int) := SecondPredecessorProof.tdiff K a b tri n
     have tdiffRev (n : Int) := SecondPredecessorProof.tdiffRev K a b tdiff n
-    have floorEven (m : Int) := SecondPredecessorProof.floorEven m
+    have floorEven (m : Int) := EvenSquareQuotient.square m
     have floorOdd (m : Int) := SecondPredecessorProof.floorOdd K a b m
     have ht := SecondPredecessorProof.ht K a b hdpred hcast
         hdchild

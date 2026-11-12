@@ -7,11 +7,6 @@ module
 
 public import Mathlib.Init
 public import Mathlib.Data.ZMod.Basic
-public import Mathlib.Data.Finset.Card
-public import Mathlib.Data.List.Cycle
-public import Mathlib.Tactic.ByContra
-public import Mathlib.Tactic.NormNum
-public import Mathlib.Tactic.Ring
 
 public import LeanPool.ApollonianSuperharmonic.SimpleGridCycle
 public import Mathlib.Data.List.TakeWhile
@@ -799,23 +794,30 @@ private theorem hRedge :
   exact hc₁edgeChain.take _
 
 private theorem hPplusUnion :
-    ∀ (V₁ : Set GaussianInt), ∀ (E₁ : Set (Finset GaussianInt)), ∀ (E₂ : Set (Finset
-        GaussianInt)), ∀ (p₁ : List GaussianInt), ∀ (p₂ : List GaussianInt), ∀ (x : GaussianInt),
-    let c₂ := p₂.rotate (p₂.idxOf x)
-    let good (z : GaussianInt) : Bool := @decide (z ∉ V₁) (Classical.propDecidable _)
-    ∀ (z : GaussianInt),
-    let c₁ := p₁.rotate (p₁.idxOf z)
-    let good₁ (w : GaussianInt) : Bool := decide (w ≠ x)
-    (GaussianInt) → (
-    let R := z :: (c₁.tail.takeWhile good₁ ++ [x])
-    let prefix₂ := c₂.tail.takeWhile good
-    let Q := x :: (prefix₂ ++ [z])
-    (Q.getLast? = some z) → ((∀ v ∈ R.tail.head?, ({z, v} : Finset GaussianInt) ∈ E₁) → (
-    let edgeRel (u v : GaussianInt) : Prop :=
-      ({u, v} : Finset GaussianInt) ∈ E₁ ∪ E₂
-    (Q.IsChain edgeRel) → ((R.tail.IsChain edgeRel) → ((Q ++ R.tail).IsChain edgeRel))))) := by
+    ∀ (V₁ : Set GaussianInt),
+      ∀ (E₁ : Set (Finset GaussianInt)),
+        ∀ (E₂ : Set (Finset GaussianInt)),
+          ∀ (p₁ : List GaussianInt),
+            ∀ (p₂ : List GaussianInt),
+              ∀ (x : GaussianInt),
+                let c₂ := p₂.rotate (p₂.idxOf x);
+                let good (z : GaussianInt) : Bool :=
+                  @decide (z ∉ V₁) (Classical.propDecidable _);
+                ∀ (z : GaussianInt),
+                  let c₁ := p₁.rotate (p₁.idxOf z);
+                  let good₁ (w : GaussianInt) : Bool := decide (w ≠ x);
+                  (let R := z :: (c₁.tail.takeWhile good₁ ++ [x]);
+                  let prefix₂ := c₂.tail.takeWhile good;
+                  let Q := x :: (prefix₂ ++ [z]);
+                  (Q.getLast? = some z) →
+                    ((∀ v ∈ R.tail.head?, ({ z, v } : Finset GaussianInt) ∈ E₁) →
+                      (let edgeRel (u v : GaussianInt) : Prop :=
+                        ({ u, v } : Finset GaussianInt) ∈ E₁ ∪ E₂;
+                      (Q.IsChain edgeRel) →
+                        ((R.tail.IsChain edgeRel) →
+                          ((Q ++ R.tail).IsChain edgeRel))))) := by
   classical
-  intro V₁ E₁ E₂ p₁ p₂ x c₂ good z c₁ good₁ w R prefix₂ Q hQlast hRstepE₁ edgeRel hQunion
+  intro V₁ E₁ E₂ p₁ p₂ x c₂ good z c₁ good₁ R prefix₂ Q hQlast hRstepE₁ edgeRel hQunion
       hRtailUnion
   apply List.IsChain.append hQunion hRtailUnion
   intro u hu v hv
@@ -1144,29 +1146,43 @@ private theorem hpLenTwo :
   omega
 
 private theorem hsimple :
-    ∀ (V₁ : Set GaussianInt), ∀ (p₁ : List GaussianInt), ∀ (p₂ : List GaussianInt), ∀ (x :
-        GaussianInt),
-    let c₂ := p₂.rotate (p₂.idxOf x)
-    let good (z : GaussianInt) : Bool := @decide (z ∉ V₁) (Classical.propDecidable _)
-    ∀ (z : GaussianInt),
-    let c₁ := p₁.rotate (p₁.idxOf z)
-    let good₁ (w : GaussianInt) : Bool := decide (w ≠ x)
-    (GaussianInt) → (
-    let prefix₂ := c₂.tail.takeWhile good
-    let prefix₁ := c₁.tail.takeWhile good₁
-    let Q := x :: (prefix₂ ++ [z])
-    ((Q ++ prefix₁).Nodup) → (
-    let p := Q ++ prefix₁
-    ∀ (hpne : p ≠ []), (FourNeighborAdjacent (p.getLast hpne) x) → ((p.head? = some x) →
-        ((p.getLast? = some (p.getLast hpne)) → (
-    let v := p.getLast hpne
-    (∀ a, ∀ b, ∀ l₁, ∀ l₂, p = l₁ ++ a :: b :: l₂ → FourNeighborAdjacent a b) → ((4 ≤ p.length) → (
-    let W : Set GaussianInt := (p.toFinset : Set GaussianInt)
-    let F : Set (Finset GaussianInt) := {e | e = {v, x} ∨
-      ∃ a b l₁ l₂, p = l₁ ++ a :: b :: l₂ ∧ e = {a, b}}
-    SimpleGridCycle W F))))))) := by
+    ∀ (V₁ : Set GaussianInt),
+      ∀ (p₁ : List GaussianInt),
+        ∀ (p₂ : List GaussianInt),
+          ∀ (x : GaussianInt),
+            let c₂ := p₂.rotate (p₂.idxOf x);
+            let good (z : GaussianInt) : Bool :=
+              @decide (z ∉ V₁) (Classical.propDecidable _);
+            ∀ (z : GaussianInt),
+              let c₁ := p₁.rotate (p₁.idxOf z);
+              let good₁ (w : GaussianInt) : Bool := decide (w ≠ x);
+              (let prefix₂ := c₂.tail.takeWhile good;
+              let prefix₁ := c₁.tail.takeWhile good₁;
+              let Q := x :: (prefix₂ ++ [z]);
+              ((Q ++ prefix₁).Nodup) →
+                (let p := Q ++ prefix₁;
+                ∀ (hpne : p ≠ []),
+                  (FourNeighborAdjacent (p.getLast hpne) x) →
+                    ((p.head? = some x) →
+                      ((p.getLast? = some (p.getLast hpne)) →
+                        (let v := p.getLast hpne;
+                        (∀ a,
+                            ∀ b,
+                              ∀ l₁,
+                                ∀ l₂,
+                                  p = l₁ ++ a :: b :: l₂ →
+                                    FourNeighborAdjacent a b) →
+                          ((4 ≤ p.length) →
+                            (let W : Set GaussianInt :=
+                              (p.toFinset : Set GaussianInt);
+                            let F : Set (Finset GaussianInt) :=
+                              {e |
+                                e = { v, x } ∨
+                                  ∃ a b l₁ l₂,
+                                    p = l₁ ++ a :: b :: l₂ ∧ e = { a, b }};
+                            SimpleGridCycle W F))))))) := by
   classical
-  intro V₁ p₁ p₂ x c₂ good z c₁ good₁ w prefix₂ prefix₁ Q hpNodup p hpne hcloseP hphead hplast v
+  intro V₁ p₁ p₂ x c₂ good z c₁ good₁ prefix₂ prefix₁ Q hpNodup p hpne hcloseP hphead hplast v
       hadjP hpLength W F
   refine ⟨p, x, v, hpNodup, hpLength, hphead, hplast, ?_, hcloseP, ?_, ?_⟩
   · rfl
@@ -1265,26 +1281,31 @@ private theorem hE₂At785 :
   exact (List.isChain_cons_cons.mp hq).1
 
 private theorem hFfAt790 :
-    ∀ (V₁ : Set GaussianInt), ∀ (p₁ : List GaussianInt), ∀ (p₂ : List GaussianInt), ∀ (x :
-        GaussianInt),
-    let c₂ := p₂.rotate (p₂.idxOf x)
-    let good (z : GaussianInt) : Bool := @decide (z ∉ V₁) (Classical.propDecidable _)
-    ∀ (z : GaussianInt),
-    let c₁ := p₁.rotate (p₁.idxOf z)
-    let good₁ (w : GaussianInt) : Bool := decide (w ≠ x)
-    (GaussianInt) → (
-    let prefix₂ := c₂.tail.takeWhile good
-    let prefix₁ := c₁.tail.takeWhile good₁
-    let Q := x :: (prefix₂ ++ [z])
-    let p := Q ++ prefix₁
-    ∀ (hpne : p ≠ []),
-    let v := p.getLast hpne
-    let F : Set (Finset GaussianInt) := {e | e = {v, x} ∨
-      ∃ a b l₁ l₂, p = l₁ ++ a :: b :: l₂ ∧ e = {a, b}}
-    ∀ (c : GaussianInt), ∀ (cs : List GaussianInt), (prefix₂ = c :: cs) → (({x, c} : Finset
-        GaussianInt) ∈ F)) := by
+    ∀ (V₁ : Set GaussianInt),
+      ∀ (p₁ : List GaussianInt),
+        ∀ (p₂ : List GaussianInt),
+          ∀ (x : GaussianInt),
+            let c₂ := p₂.rotate (p₂.idxOf x);
+            let good (z : GaussianInt) : Bool :=
+              @decide (z ∉ V₁) (Classical.propDecidable _);
+            ∀ (z : GaussianInt),
+              let c₁ := p₁.rotate (p₁.idxOf z);
+              let good₁ (w : GaussianInt) : Bool := decide (w ≠ x);
+              (let prefix₂ := c₂.tail.takeWhile good;
+              let prefix₁ := c₁.tail.takeWhile good₁;
+              let Q := x :: (prefix₂ ++ [z]);
+              let p := Q ++ prefix₁;
+              ∀ (hpne : p ≠ []),
+                let v := p.getLast hpne;
+                let F : Set (Finset GaussianInt) :=
+                  {e |
+                    e = { v, x } ∨
+                      ∃ a b l₁ l₂, p = l₁ ++ a :: b :: l₂ ∧ e = { a, b }};
+                ∀ (c : GaussianInt),
+                  ∀ (cs : List GaussianInt),
+                    (prefix₂ = c :: cs) → (({ x, c } : Finset GaussianInt) ∈ F)) := by
   classical
-  intro V₁ p₁ p₂ x c₂ good z c₁ good₁ w prefix₂ prefix₁ Q p hpne v F c cs hpref₂
+  intro V₁ p₁ p₂ x c₂ good z c₁ good₁ prefix₂ prefix₁ Q p hpne v F c cs hpref₂
   simp only [F, Set.mem_ofPred_eq]
   right
   refine ⟨x, c, [], (cs ++ [z]) ++ prefix₁, ?_, rfl⟩
@@ -1341,7 +1362,7 @@ private theorem hFf :
         MixedCycleDetails.hFfAt774 V₁ p₁ p₂ x z w hpne hpref₂
   | cons c cs =>
       simpa only [List.headD] using
-        MixedCycleDetails.hFfAt790 V₁ p₁ p₂ x z w hpne c cs hpref₂
+        MixedCycleDetails.hFfAt790 V₁ p₁ p₂ x z hpne c cs hpref₂
 
 end MixedClosingEdges
 
@@ -1479,7 +1500,7 @@ theorem P3963T1MixedBoundaryCycle
     intro u v huv
     exact Or.inl huv)
   have hPplusUnion : (Q ++ R.tail).IsChain edgeRel := MixedCycleDetails.hPplusUnion V₁ E₁ E₂ p₁
-      p₂ x z w hQlast hRstepE₁ hQunion hRtailUnion
+      p₂ x z hQlast hRstepE₁ hQunion hRtailUnion
   have hQprefix := MixedCycleDetails.hQprefix V₁ p₂ x takeArc
       z zs hc₂shape hdecomp₂'
   have hQchain := MixedCycleDetails.hQchain V₁ p₂ x hc₂chain z
@@ -1537,7 +1558,7 @@ theorem P3963T1MixedBoundaryCycle
   let W : Set GaussianInt := (p.toFinset : Set GaussianInt)
   let F : Set (Finset GaussianInt) := {e | e = {v, x} ∨
     ∃ a b l₁ l₂, p = l₁ ++ a :: b :: l₂ ∧ e = {a, b}}
-  have hsimple := MixedCycleDetails.hsimple V₁ p₁ p₂ x z w hpNodup hpne
+  have hsimple := MixedCycleDetails.hsimple V₁ p₁ p₂ x z hpNodup hpne
       hcloseP hphead hplast hadjP hpLength
   have hlastE₁ : ({v, x} : Finset GaussianInt) ∈ E₁ := MixedBoundaryCycleProof.hlastE₁ V₁ E₁ p₁
       p₂ x z w hQlast hRtailE₁ hRstepE₁ hpne hRtail

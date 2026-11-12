@@ -166,71 +166,7 @@ private theorem hq3pos :
   have hne : (q 3).1 ≠ 0 := cfg.noLine 3
   omega
 
-private theorem boundary_edge_footprint :
-    (by
-      classical
-      exact
-        ∀ (X : ProtoTile), ∀ (e : Finset GaussianInt), (e ∈ BoundaryFootprintEdges X) → (e ∈
-            FootprintEdges X) ) := by
-  classical
-  intro X e he
-  let I : GaussianInt := ⟨0, 1⟩
-  rcases he with ⟨z, ⟨rfl, h⟩ | ⟨rfl, h⟩⟩
-  · rcases h with ⟨hz, -⟩ | ⟨-, hz⟩
-    · exact ⟨z, hz, Or.inl rfl⟩
-    · refine ⟨z - I, hz, Or.inr (Or.inr (Or.inr ?_))⟩
-      congr 1 <;> simp [I, Zsqrtd.ext_iff]
-  · rcases h with ⟨hz, -⟩ | ⟨-, hz⟩
-    · exact ⟨z, hz, Or.inr (Or.inl rfl)⟩
-    · refine ⟨z - 1, hz, Or.inr (Or.inr (Or.inl ?_))⟩
-      congr 1 <;> simp []
 
-private theorem edge_vertex_footprint :
-    (by
-      classical
-      exact
-        ∀ (X : ProtoTile), ∀ (e : Finset GaussianInt), (e ∈ FootprintEdges X) → (∀ (z :
-            GaussianInt), (z ∈ e) → (z ∈ FootprintVertices X)) ) := by
-  classical
-  intro X e he z hz
-  rcases he with ⟨c, hc, he⟩
-  unfold FootprintVertices
-  rw [ite_eq_left ⟨c, hc⟩]
-  rcases he with h | h | h | h <;> subst e
-  all_goals simp only [Finset.mem_insert, Finset.mem_singleton] at hz
-  · rcases hz with rfl | rfl
-    · exact ⟨_, hc, Or.inl rfl⟩
-    · exact ⟨_, hc, Or.inr (Or.inl rfl)⟩
-  · rcases hz with rfl | rfl
-    · exact ⟨_, hc, Or.inl rfl⟩
-    · exact ⟨_, hc, Or.inr (Or.inr (Or.inl rfl))⟩
-  · rcases hz with rfl | rfl
-    · exact ⟨_, hc, Or.inr (Or.inl rfl)⟩
-    · exact ⟨_, hc, Or.inr (Or.inr (Or.inr rfl))⟩
-  · rcases hz with rfl | rfl
-    · exact ⟨_, hc, Or.inr (Or.inr (Or.inl rfl))⟩
-    · exact ⟨_, hc, Or.inr (Or.inr (Or.inr rfl))⟩
-
-private theorem boundary_to_raw :
-    (by
-      classical
-      exact
-        (∀ (X : ProtoTile), ∀ (e : Finset GaussianInt), (e ∈ BoundaryFootprintEdges X) → (e ∈
-            FootprintEdges X)) → ((∀ (X : ProtoTile), ∀ (e : Finset GaussianInt), (e ∈
-            FootprintEdges X) → (∀ (z : GaussianInt), (z ∈ e) → (z ∈ FootprintVertices X))) → (∀
-            (X : ProtoTile), ∀ (x : GaussianInt), (x ∈ BoundaryFootprintVertices X) → (x ∈
-            FootprintVertices X))) ) := by
-  classical
-  intro boundary_edge_footprint edge_vertex_footprint X x hx
-  by_cases hne : X.cells.Nonempty
-  · unfold BoundaryFootprintVertices at hx
-    rw [ite_eq_left hne] at hx
-    rcases hx with ⟨e, he, hxe⟩
-    exact edge_vertex_footprint X e (boundary_edge_footprint X e he) x hxe
-  · unfold BoundaryFootprintVertices at hx
-    rw [ite_eq_right hne] at hx
-    subst x
-    simp [FootprintVertices, hne]
 
 private theorem boundary_incident :
     (by
@@ -962,15 +898,6 @@ private theorem hP1abs :
     _ = (TileCentroid (cert.P 1 true) - TileCentroid T) + TileCentroid T := by abel
     _ = _ := by rw [hP1cent]; exact add_comm _ _
 
-private theorem pointAdd :
-    (by
-      classical
-      exact
-        ∀ (x : GaussianInt), ∀ (y : GaussianInt), GaussianRealPoint (x + y) = GaussianRealPoint x
-            + GaussianRealPoint y ) := by
-  classical
-  intro x y
-  ext <;> simp [GaussianRealPoint]
 
 private theorem pointDouble :
     (by
@@ -1200,14 +1127,6 @@ private theorem hP1minusabs :
     _ = (TileCentroid (cert.P 1 false) - TileCentroid T) + TileCentroid T := by abel
     _ = _ := by rw [hP1minuscent]; exact add_comm _ _
 
-private theorem pointNeg :
-    (by
-      classical
-      exact
-        ∀ (z : GaussianInt), GaussianRealPoint (-z) = -GaussianRealPoint z ) := by
-  classical
-  intro z
-  ext <;> simp [GaussianRealPoint]
 
 private theorem hfixedMinusCentroid :
     (by
@@ -1890,8 +1809,8 @@ theorem BandOrderedGeneralPositiveCutGeometry
   have hS2check := no_checker _ hS2lat
   have hOcheck := no_checker _ hOlat
   have boundary_incident := PositiveCutGeometry.boundary_incident
-      (PositiveCutGeometry.boundary_to_raw (PositiveCutGeometry.boundary_edge_footprint)
-      (PositiveCutGeometry.edge_vertex_footprint))
+      (BoundaryFootprintInclusion.boundaryVertex (BoundaryFootprintInclusion.boundaryEdge)
+      (BoundaryFootprintInclusion.edgeVertex))
   have raw_incident := PositiveCutGeometry.raw_incident
   have haLeft : cert.exceptionalSegments.a ∈ cert.exceptionalSegments.left :=
     (PositiveCutGeometry.getLast_mem_of_eq_some) _ _ cert.exceptionalSegments.left_last
@@ -1977,7 +1896,7 @@ theorem BandOrderedGeneralPositiveCutGeometry
   have hvector := PositiveCutGeometry.hvector q cfg hρ2 hρ3 hstep hρ0
   have translation_centroid := PositiveCutGeometry.translation_centroid
   have hpoint := PositiveCutGeometry.hpoint q cfg (PositiveCutGeometry.hI2mul hI2)
-      (PositiveCutGeometry.pointAdd) (PositiveCutGeometry.pointDouble)
+      (GaussianRealPointProperties.add) (PositiveCutGeometry.pointDouble)
   have hfixedPlusProto : BandPrototile (q 2)
       (TileTranslation (cert.Q 1 true) (I * BandVectors.1 (q 3) (q 2))) :=
     BandPrototileTranslation (q 2) (cert.Q 1 true)
@@ -2006,7 +1925,7 @@ theorem BandOrderedGeneralPositiveCutGeometry
         (PositiveCutGeometry.hS1abs q cfg C₀ T cert (PositiveCutGeometry.hS1cent q cfg C₀ T cert
         occurrence_centroid)) (PositiveCutGeometry.hP1minusabs q cfg C₀ T cert
         (PositiveCutGeometry.hP1minuscent q cfg C₀ T cert occurrence_centroid))
-        (PositiveCutGeometry.pointNeg))
+        (GaussianRealPointProperties.negation))
   have p2_a_O_row := PositiveCutGeometry.p2_a_O_row q cfg C₀ T cert hO birth hproper
       branchExclusions hOproto hQ2proto hS3proto hneQ1S1 hneA_SO hneB_QO selected_p2_a
       hfixedPlusUnique (PositiveCutGeometry.hfixedPlusAbsent q cfg C₀ T cert hO sector

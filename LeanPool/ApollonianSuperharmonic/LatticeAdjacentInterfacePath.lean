@@ -8,9 +8,7 @@ module
 public import Mathlib.Init
 
 public import LeanPool.ApollonianSuperharmonic.BandTileSimultaneousInduction
-public import LeanPool.ApollonianSuperharmonic.FootprintEdges
 public import LeanPool.ApollonianSuperharmonic.RightLatticeAdjacent
-public import LeanPool.ApollonianSuperharmonic.SimpleGridPathBetween
 public import LeanPool.ApollonianSuperharmonic.SubtileLatticeAdjacent
 
 -- [TABLET NODE: LatticeAdjacentInterfacePath]
@@ -777,15 +775,6 @@ private theorem qturn_iter :
         _ = unitI * (unitI ^ n * z) := by rw [qturn_mul, ih]
         _ = unitI ^ (n + 1) * z := by rw [pow_succ]; ring
 
-private theorem gaussianRealPoint_add :
-    (by
-      classical
-      exact
-        ∀ (x : GaussianInt), ∀ (y : GaussianInt), GaussianRealPoint (x + y) = GaussianRealPoint x
-            + GaussianRealPoint y ) := by
-  classical
-  intro x y
-  ext <;> simp [GaussianRealPoint]
 
 private theorem rotcenter :
     (by
@@ -986,7 +975,7 @@ theorem LatticeAdjacentInterfacePath :
             qturn_mul n z
     have gaussianRealPoint_add (x y : GaussianInt) :
         GaussianRealPoint (x + y) = GaussianRealPoint x + GaussianRealPoint y :=
-            LatticeInterfacePathGeometry.gaussianRealPoint_add x y
+            GaussianRealPointProperties.add x y
     have rotcenter (x y : GaussianInt) :
         GaussianRealPoint ((⟨0, 1⟩ : GaussianInt) ^ s.val * (x + y)) =
           GaussianRealPoint ((GaussianQuarterTurn^[s.val]) x) +

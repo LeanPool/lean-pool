@@ -6,8 +6,8 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.LocalSideScaling
 
-public import LeanPool.ApollonianSuperharmonic.P3934T1LocalSide
 public import LeanPool.ApollonianSuperharmonic.P3934T1SectorSelection
 public import LeanPool.ApollonianSuperharmonic.P3889T1TwoRaySectors
 
@@ -25,36 +25,6 @@ Changes: pool module paths, public exports, project namespace and current Mathli
 namespace ApollonianSuperharmonic
 
 namespace StraightFrontierProof
-
-private theorem scaleLocalSide :
-    (by
-      classical
-      exact
-        ∀ (W : Set (ℝ × ℝ)), ∀ (z : ℝ × ℝ), ∀ (w : ℝ × ℝ), ∀ (c : ℝ), ∀ (e : Bool), (0 : ℝ) < c →
-            P3934T1LocalSide W z w e → P3934T1LocalSide W z (c • w) e
-    ) := by
-  classical
-  intro W z w c e hc hside
-  obtain ⟨r, hr, heq⟩ := hside
-  refine ⟨r, hr, ?_⟩
-  have hdet (q : Real × Real) :
-      (c • w).1 * (q.2 - z.2) - (c • w).2 * (q.1 - z.1) =
-        c * (w.1 * (q.2 - z.2) - w.2 * (q.1 - z.1)) := by
-    simp only [Prod.smul_fst, Prod.smul_snd]
-    ring
-  ext q
-  rw [heq]
-  simp only [Set.mem_ofPred_eq]
-  rw [hdet q]
-  constructor
-  · rintro ⟨hq, hs⟩
-    refine ⟨hq, ?_⟩
-    cases e <;> simp at hs ⊢ <;>
-      nlinarith [hc]
-  · rintro ⟨hq, hs⟩
-    refine ⟨hq, ?_⟩
-    cases e <;> simp at hs ⊢ <;>
-      nlinarith [hc]
 
 private theorem hcol :
     (by
@@ -869,7 +839,7 @@ theorem P5667T1StraightFrontierLocalSides
   have scaleLocalSide (W : Set (Real × Real)) (z w : Real × Real)
       (c : Real) (e : Bool) (hc : 0 < c)
       (hside : P3934T1LocalSide W z w e) :
-      P3934T1LocalSide W z (c • w) e := StraightFrontierProof.scaleLocalSide W z w c e hc hside
+      P3934T1LocalSide W z (c • w) e := LocalSideScaling.positiveScale W z w c e hc hside
   let n : Real := ‖B‖
   have hn : 0 < n := by dsimp [n]; exact norm_pos_iff.mpr hB
   let d : Real × Real := n⁻¹ • B

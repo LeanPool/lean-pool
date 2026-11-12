@@ -6,12 +6,10 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.TileCornerMultiplicity
 
 public import LeanPool.ApollonianSuperharmonic.FiniteBiconnectedHorizontalRunTree
 public import LeanPool.ApollonianSuperharmonic.FiniteSquareIncidenceIdentities
-public import LeanPool.ApollonianSuperharmonic.FootprintEdges
-public import LeanPool.ApollonianSuperharmonic.FootprintVertices
-public import LeanPool.ApollonianSuperharmonic.LatticeTile
 public import LeanPool.ApollonianSuperharmonic.LatticeTileComplementGridConnected
 
 /-!
@@ -122,44 +120,6 @@ private theorem hcornerMem :
   rw [Multiset.mem_toFinset, Multiset.mem_bind]
   exact ⟨z, hz, by simp⟩
 
-private theorem hcornerCount :
-    (by
-      classical
-      exact
-        ∀ (T : ProtoTile),
-        let I : GaussianInt := ⟨0, 1⟩
-        let cornerBag : Multiset GaussianInt := T.cells.1.bind fun c =>
-          ([c, c + 1, c + I, c + 1 + I] : List GaussianInt)
-        ∀ (z : GaussianInt), cornerBag.count z = (if z ∈ T.cells then 1 else 0) + (if z - 1 ∈
-            T.cells then 1 else 0) + (if z - I ∈ T.cells then 1 else 0) + (if z - 1 - I ∈ T.cells
-            then 1 else 0) ) := by
-  classical
-  intro T I cornerBag z
-  dsimp only [cornerBag]
-  rw [Multiset.count_bind, ← Finset.sum_eq_multiset_sum]
-  simp only [Multiset.coe_count, List.count_cons, beq_iff_eq,
-    List.count_nil]
-  have h11 : ∀ c : GaussianInt, (c + 1 + I = z) ↔
-      (c = z - 1 - I) := by
-    intro c
-    constructor <;> intro h
-    · rw [← h]; ring
-    · rw [h]; ring
-  have hI : ∀ c : GaussianInt, (c + I = z) ↔ (c = z - I) := by
-    intro c
-    constructor <;> intro h
-    · rw [← h]; ring
-    · rw [h]; ring
-  have h1 : ∀ c : GaussianInt, (c + 1 = z) ↔ (c = z - 1) := by
-    intro c
-    constructor <;> intro h
-    · rw [← h]; ring
-    · rw [h]; ring
-  simp_rw [h11, hI, h1]
-  simp only [Finset.sum_add_distrib, zero_add]
-  rw [Finset.sum_ite_eq', Finset.sum_ite_eq', Finset.sum_ite_eq',
-    Finset.sum_ite_eq']
-  omega
 
 private theorem hpoint :
     (by
@@ -448,7 +408,7 @@ theorem LatticeTileGridEulerCount (T : ProtoTile) (hT : LatticeTile T) :
       omega
     have hcornerMem {z : GaussianInt} (hz : z ∈ T.cells) := GridEulerGeometry.hcornerMem T (z :=
         z) hz
-    have hcornerCount (z : GaussianInt) := GridEulerGeometry.hcornerCount T z
+    have hcornerCount (z : GaussianInt) := TileCornerMultiplicity.cornerCount T z
     have hpoint (z : GaussianInt) := GridEulerGeometry.hpoint T hcheck hcornerCount z
     have hAB := GridEulerGeometry.hAB T hcornerMem
     have hDC := GridEulerGeometry.hDC T

@@ -6,6 +6,8 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.FordInteriorSquareCoordinates
+public import LeanPool.ApollonianSuperharmonic.FordFareySum
 
 public import LeanPool.ApollonianSuperharmonic.P4062T1RecursiveInteriors
 public import LeanPool.ApollonianSuperharmonic.FourNeighborAdjacent
@@ -26,11 +28,6 @@ namespace ApollonianSuperharmonic
 
 namespace InteriorGeometryProof
 
-private theorem hsum :
-    ∀ (P : FordFareyParameter), P.q = P.q₁ + P.q₂ := by
-  classical
-  intro P
-  exact P.sum_q
 
 private theorem hq1pos :
     ∀ (P : FordFareyParameter), (2 < P.q) → ((P.q = P.q₁ + P.q₂) → (0 < P.q₁)) := by
@@ -49,23 +46,6 @@ private theorem hq1pos :
   · have hp' : 1 ≤ P.p₁ := by omega
     nlinarith
 
-private theorem squareCoordinates :
-    ∀ (q : Nat), ∀ (x : GaussianInt), x ∈ P4062T1InteriorSquare q ↔
-        1 ≤ x.re ∧ x.re ≤ (q : Int) - 1 ∧
-        1 ≤ x.im ∧ x.im ≤ (q : Int) - 1 := by
-  classical
-  intro q x
-  unfold P4062T1InteriorSquare
-  constructor
-  · intro hx
-    obtain ⟨⟨a, b⟩, hab, rfl⟩ := Finset.mem_image.mp hx
-    obtain ⟨ha, hb⟩ := Finset.mem_product.mp hab
-    exact ⟨(Finset.mem_Icc.mp ha).1, (Finset.mem_Icc.mp ha).2,
-      (Finset.mem_Icc.mp hb).1, (Finset.mem_Icc.mp hb).2⟩
-  · intro h
-    exact Finset.mem_image.mpr ⟨(x.re, x.im),
-      Finset.mem_product.mpr ⟨Finset.mem_Icc.mpr ⟨h.1, h.2.1⟩,
-        Finset.mem_Icc.mpr h.2.2⟩, by cases x; rfl⟩
 
 private theorem coord0 :
     ∀ (P : FordFareyParameter),
@@ -386,12 +366,12 @@ theorem P4062T1InteriorGeometry (P : FordFareyParameter)
 -- BODY
   classical
   let A := P4062T1RecursiveInteriors P
-  have hsum : P.q = P.q₁ + P.q₂ := InteriorGeometryProof.hsum P
+  have hsum : P.q = P.q₁ + P.q₂ := FordFareySum.denominatorSum P
   have hq1pos : 0 < P.q₁ := InteriorGeometryProof.hq1pos P hP hsum
   have squareCoordinates (q : Nat) (x : GaussianInt) :
       x ∈ P4062T1InteriorSquare q ↔
         1 ≤ x.re ∧ x.re ≤ (q : Int) - 1 ∧
-        1 ≤ x.im ∧ x.im ≤ (q : Int) - 1 := InteriorGeometryProof.squareCoordinates q x
+        1 ≤ x.im ∧ x.im ≤ (q : Int) - 1 := FordInteriorSquareCoordinates.membership q x
   have coord0 (x : GaussianInt) (hx : x ∈ A 0) :
       1 ≤ x.re ∧ x.re ≤ (P.q₁ : Int)-1 ∧
       1 ≤ x.im ∧ x.im ≤ (P.q₁ : Int)-1 := InteriorGeometryProof.coord0 P squareCoordinates x hx

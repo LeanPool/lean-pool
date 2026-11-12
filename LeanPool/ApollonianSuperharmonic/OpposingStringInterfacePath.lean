@@ -8,9 +8,7 @@ module
 public import Mathlib.Init
 
 public import LeanPool.ApollonianSuperharmonic.CurvatureOneBandPrototileSingleton
-public import LeanPool.ApollonianSuperharmonic.FootprintEdges
 public import LeanPool.ApollonianSuperharmonic.SwappedAffineTriangularChartAlignment
-public import LeanPool.ApollonianSuperharmonic.TileString
 public import LeanPool.ApollonianSuperharmonic.TileStringCoordinateTransport
 public import LeanPool.ApollonianSuperharmonic.UnitSquareOpposingStripInterfacePath
 
@@ -568,30 +566,21 @@ private theorem chainAppendDrop :
 private theorem hfaceLen :
     (by
       classical
-      exact
-        ∀ (base : ProtoTile), ∀ (R : ProtoTile), ∀ (S : ProtoTile), (List ProtoTile) → ((List
-            ProtoTile) → (∀ (a : GaussianInt), ∀ (b : GaussianInt),
-        let tileAt : Int × Int → ProtoTile := fun z =>
-          TileTranslation base ((z.1 : GaussianInt) * a + (z.2 : GaussianInt) * b)
-        ∀ (r : ℤ × ℤ), (R = (fun (z : ℤ × ℤ) => TileTranslation base ((↑z.1 : GaussianInt) * a +
-            (↑z.2 : GaussianInt) * b)) r) → ((∀ (y : ℤ × ℤ), (fun (z : ℤ × ℤ) => R = (fun (z : ℤ
-            × ℤ) => TileTranslation base ((↑z.1 : GaussianInt) * a + (↑z.2 : GaussianInt) * b))
-            z) y → y = r) → (∀ (s : ℤ × ℤ), (S = (fun (z : ℤ × ℤ) => TileTranslation base ((↑z.1
-            : GaussianInt) * a + (↑z.2 : GaussianInt) * b)) s) → ((∀ (y : ℤ × ℤ), (fun (z : ℤ ×
-            ℤ) => S = (fun (z : ℤ × ℤ) => TileTranslation base ((↑z.1 : GaussianInt) * a + (↑z.2
-            : GaussianInt) * b)) z) y → y = s) → ((R = tileAt r) → ((S = tileAt s) → (∀ (F : List
-            (ℤ × ℤ)), ∀ (G : List (ℤ × ℤ)), (TriangularStripSegment r s F) →
-            ((TriangularStripSegment s r G) → ((r ≠ s) → ((¬ TriangularLatticeAdjacent r s) → (∀
-            (faces : List AffineTriangularFace), (faces ≠ []) → ((∃ (f : AffineTriangularFace),
-            faces.head? = some f ∧ r ∈ AffineTriangularFaceVertices f) → ((∃ (f :
-            AffineTriangularFace), faces.getLast? = some f ∧ s ∈ AffineTriangularFaceVertices f)
-            → ((∀ f ∈ faces, (∃ a ∈ (List.drop (1 : ℕ) F).dropLast, a ∈
-            AffineTriangularFaceVertices f) ∧ ∃ b ∈ (List.drop (1 : ℕ) G).dropLast, b ∈
-            AffineTriangularFaceVertices f) → ((List.IsChain (AffineTriangularCorridorStep F G)
-            faces) → (2 ≤ faces.length))))))))))))))))) ) := by
+        exact
+        (∀ (r : ℤ × ℤ),
+          (∀ (s : ℤ × ℤ),
+            ((r ≠ s) →
+              ((¬TriangularLatticeAdjacent r s) →
+                (∀ (faces : List AffineTriangularFace),
+                  (faces ≠ []) →
+                    ((∃ (f : AffineTriangularFace),
+                        faces.head? = some f ∧ r ∈ AffineTriangularFaceVertices f) →
+                      ((∃ (f : AffineTriangularFace),
+                          faces.getLast? = some f ∧
+                            s ∈ AffineTriangularFaceVertices f) →
+                        (2 ≤ faces.length))))))))) := by
   classical
-  intro base R S forward reverse a b tileAt r hrcoord hruniq s hscoord hsuniq hR hS F G hFstrip
-      hGstrip hrs hnadjCoord faces hfacesNe hfirst hlast hfaceVertices hfaceChain
+  intro r s hrs hnadjCoord faces hfacesNe hfirst hlast
   rcases hfirst with ⟨f, hf, hfr⟩
   rcases hlast with ⟨g, hg, hgs⟩
   cases faces with
@@ -1125,9 +1114,8 @@ private theorem finish :
   let joinWalk : List AffineTriangularFace → List GaussianInt := fun L =>
     (L.zip L.tail).foldr
       (fun fg acc => PP.facePath (faceAt fg.1) (faceAt fg.2) ++ acc.drop 1) []
-  have hfaceLen := OpposingInterfaceGeometry.hfaceLen base R S forward reverse a b r hrcoord
-      hruniq s hscoord hsuniq hR hS F G hFstrip hGstrip hrs hnadjCoord faces hfacesNe hfirst
-      hlast hfaceVertices hfaceChain
+  have hfaceLen := OpposingInterfaceGeometry.hfaceLen r s hrs hnadjCoord faces hfacesNe hfirst
+      hlast
   have walkFacts := OpposingInterfaceGeometry.walkFacts base a b F G ι PP faceAt
       (OpposingInterfaceGeometry.faceStepData base a b F G ι PP xi faceAt hadjXi htileXi
       hinjFace incident) chainOfEdges (OpposingInterfaceGeometry.chainAppendDrop base a b F G)

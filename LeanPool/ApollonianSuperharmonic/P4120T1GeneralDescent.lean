@@ -6,6 +6,7 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.InteriorFootprintIncidence
 
 public import LeanPool.ApollonianSuperharmonic.AllowedSubtileIncidenceZeroOppositeChord
 public import LeanPool.ApollonianSuperharmonic.BandOriginalPairSeparation
@@ -27,48 +28,7 @@ namespace ApollonianSuperharmonic
 
 namespace GeneralDescentGeometry
 
-private theorem hneAt129 :
-    (by
-      classical
-      exact
-        ∀ (T : ProtoTile), ∀ (x : GaussianInt), (x ∈ FootprintVertices T) → ((x ∉
-            BoundaryFootprintVertices T) → (T.cells.Nonempty)) ) := by
-  classical
-  intro T x hx hxb
-  by_contra hn
-  simp only [FootprintVertices, ite_eq_right hn, Set.mem_singleton_iff] at hx
-  apply hxb
-  simp [BoundaryFootprintVertices, hn, hx]
 
-private theorem hsome :
-    (by
-      classical
-      exact
-        ∀ (T : ProtoTile), ∀ (x : GaussianInt), (x ∈ FootprintVertices T) → ((x ∉
-            BoundaryFootprintVertices T) → ((T.cells.Nonempty) → (∃ j : Fin 4,
-            LatticeVertexIncidentCell x j ∈ T.cells))) ) := by
-  classical
-  intro T x hx hxb hne
-  rw [FootprintVertices, ite_eq_left hne] at hx
-  rcases hx with ⟨y, hy, rfl | rfl | rfl | rfl⟩
-  · exact ⟨0, by simpa [LatticeVertexIncidentCell] using hy⟩
-  · exact ⟨1, by simpa [LatticeVertexIncidentCell] using hy⟩
-  · exact ⟨3, by simpa [LatticeVertexIncidentCell] using hy⟩
-  · refine ⟨2, ?_⟩
-    simpa [LatticeVertexIncidentCell, sub_eq_add_neg,
-      add_assoc, add_comm, add_left_comm] using hy
-
-private theorem cells :
-    (by
-      classical
-      exact
-        ∀ (T : ProtoTile), ∀ (x : GaussianInt), (x ∉ BoundaryFootprintVertices T) → ((∃ j : Fin
-            4, LatticeVertexIncidentCell x j ∈ T.cells) → (∀ j : Fin 4, LatticeVertexIncidentCell
-            x j ∈ T.cells)) ) := by
-  classical
-  intro T x hxb hsome j
-  by_contra hj
-  exact hxb (P3161T2IncidentBoundary T x hsome ⟨j, hj⟩)
 
 private theorem hpos :
     (by
@@ -1494,8 +1454,9 @@ theorem P4120T1GeneralDescent
           x ∉ BoundaryFootprintVertices (cert.P i s) := by
 -- BODY
   classical
-  have cells := GeneralDescentGeometry.cells T x hxb (GeneralDescentGeometry.hsome T x hx hxb
-      (GeneralDescentGeometry.hneAt129 T x hx hxb))
+  have cells := InteriorFootprintIncidence.allIncidentCells T x hxb
+      (InteriorFootprintIncidence.someIncidentCell T x hx hxb
+      (InteriorFootprintIncidence.nonempty T x hx hxb))
   have hcurv := ProperBandCurvatureStructure q cfg.proper
   have hOsub := GeneralDescentGeometry.hOsub q cfg C T cert
   have modified_cell_owner := GeneralDescentGeometry.modified_cell_owner q cfg C T cert hOsub

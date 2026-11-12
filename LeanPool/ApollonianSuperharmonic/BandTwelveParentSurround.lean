@@ -6,11 +6,10 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.OrderedParentVectorSum
 
 public import LeanPool.ApollonianSuperharmonic.BandOrderedGeneralFinitePatches
 public import LeanPool.ApollonianSuperharmonic.PeriodicTileIntersectionClassification
-public import LeanPool.ApollonianSuperharmonic.UniqueBoundedGridComplementComponent
-public import LeanPool.ApollonianSuperharmonic.IncomingSuperbasisRelation
 public import LeanPool.ApollonianSuperharmonic.P4630T1AffineCellSymmetry
 public import LeanPool.ApollonianSuperharmonic.P4630T1CellRouteLift
 public import LeanPool.ApollonianSuperharmonic.P4630T1ExteriorNeighbors
@@ -33,16 +32,6 @@ namespace ApollonianSuperharmonic
 
 namespace TwelveParentGeometry
 
-private theorem incoming :
-    (by
-      classical
-      exact
-        ∀ (q : Fin 4 → CircleCoordinates), (BandOrderedGeneralConfiguration q) → (BandVectors.1
-            (q 1) (q 0) + BandVectors.1 (q 2) (q 0) + BandVectors.1 (q 3) (q 0) = 0) ) := by
-  classical
-  intro q cfg
-  simpa [Fin.sum_univ_succ, add_assoc] using
-    (IncomingSuperbasisRelation q cfg.proper).1
 
 private theorem outgoing :
     (by
@@ -475,7 +464,7 @@ theorem BandTwelveParentSurround
       Finset.univ.biUnion (fun k : Fin 4 => (R i k).cells)), 0⟩
   have union (x : LatticeCell) : x ∈ ring.cells ↔ ∃ i k, x ∈ (R i k).cells := by
     simp [ring]
-  have incoming := TwelveParentGeometry.incoming q cfg
+  have incoming := OrderedParentVectorSum.incoming q cfg
   have flip := (VectorRecursionLaws q cfg.proper.1).2.2.2.2 cfg.proper
   have outgoing := TwelveParentGeometry.outgoing q incoming flip
   have third := TwelveParentGeometry.third q cfg C₀ T cert outgoing

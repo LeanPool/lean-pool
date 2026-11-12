@@ -8,7 +8,6 @@ module
 public import Mathlib.Init
 
 public import LeanPool.ApollonianSuperharmonic.ExactTileInterfaceTriple
-public import LeanPool.ApollonianSuperharmonic.LatticeTile
 public import LeanPool.ApollonianSuperharmonic.LatticeTileDiskUnionInterface
 public import LeanPool.ApollonianSuperharmonic.LocalLatticeInterfaceSectors
 public import LeanPool.ApollonianSuperharmonic.SimpleGridPathPointTrichotomy
@@ -385,72 +384,6 @@ private theorem hIEeABC :
     (FootprintEdges AB) (FootprintEdges C)
     (edge_finite AB) (edge_finite C)
 
-private theorem hcrossV :
-    (by
-      classical
-      exact
-        ∀ (A : ProtoTile), ∀ (B : ProtoTile), ∀ (C : ProtoTile), ∀ (AB : ProtoTile), ∀ (BC :
-            ProtoTile), ∀ (CA : ProtoTile), ∀ (ABC : ProtoTile), (FourNeighborConnected (↑A.cells
-            : Set LatticeCell) ∧ NoCheckerboardCellVertex (↑A.cells : Set LatticeCell) ∧
-            SimpleGridCycle (BoundaryFootprintVertices A) (BoundaryFootprintEdges A)) →
-            ((FourNeighborConnected (↑B.cells : Set LatticeCell) ∧ NoCheckerboardCellVertex
-            (↑B.cells : Set LatticeCell) ∧ SimpleGridCycle (BoundaryFootprintVertices B)
-            (BoundaryFootprintEdges B)) → ((FourNeighborConnected (↑C.cells : Set LatticeCell) ∧
-            NoCheckerboardCellVertex (↑C.cells : Set LatticeCell) ∧ SimpleGridCycle
-            (BoundaryFootprintVertices C) (BoundaryFootprintEdges C)) → ((FourNeighborConnected
-            (↑AB.cells : Set LatticeCell) ∧ NoCheckerboardCellVertex (↑AB.cells : Set
-            LatticeCell) ∧ SimpleGridCycle (BoundaryFootprintVertices AB) (BoundaryFootprintEdges
-            AB)) → ((FourNeighborConnected (↑BC.cells : Set LatticeCell) ∧
-            NoCheckerboardCellVertex (↑BC.cells : Set LatticeCell) ∧ SimpleGridCycle
-            (BoundaryFootprintVertices BC) (BoundaryFootprintEdges BC)) → ((FourNeighborConnected
-            (↑CA.cells : Set LatticeCell) ∧ NoCheckerboardCellVertex (↑CA.cells : Set
-            LatticeCell) ∧ SimpleGridCycle (BoundaryFootprintVertices CA) (BoundaryFootprintEdges
-            CA)) → ((FourNeighborConnected (↑ABC.cells : Set LatticeCell) ∧
-            NoCheckerboardCellVertex (↑ABC.cells : Set LatticeCell) ∧ SimpleGridCycle
-            (BoundaryFootprintVertices ABC) (BoundaryFootprintEdges ABC)) → ((FootprintVertices
-            AB = FootprintVertices A ∪ FootprintVertices B) → (FootprintVertices AB ∩
-            FootprintVertices C = (FootprintVertices A ∩ FootprintVertices C) ∪
-            (FootprintVertices B ∩ FootprintVertices C))))))))) ) := by
-  classical
-  intro A B C AB BC CA ABC hAgrid hBgrid hCgrid hABgrid hBCgrid hCAgrid hABCgrid hVAB
-  rw [hVAB]
-  ext z
-  simp only [Set.mem_inter_iff, Set.mem_union]
-  tauto
-
-private theorem hcrossE :
-    (by
-      classical
-      exact
-        ∀ (A : ProtoTile), ∀ (B : ProtoTile), ∀ (C : ProtoTile), ∀ (AB : ProtoTile), ∀ (BC :
-            ProtoTile), ∀ (CA : ProtoTile), ∀ (ABC : ProtoTile), (FourNeighborConnected (↑A.cells
-            : Set LatticeCell) ∧ NoCheckerboardCellVertex (↑A.cells : Set LatticeCell) ∧
-            SimpleGridCycle (BoundaryFootprintVertices A) (BoundaryFootprintEdges A)) →
-            ((FourNeighborConnected (↑B.cells : Set LatticeCell) ∧ NoCheckerboardCellVertex
-            (↑B.cells : Set LatticeCell) ∧ SimpleGridCycle (BoundaryFootprintVertices B)
-            (BoundaryFootprintEdges B)) → ((FourNeighborConnected (↑C.cells : Set LatticeCell) ∧
-            NoCheckerboardCellVertex (↑C.cells : Set LatticeCell) ∧ SimpleGridCycle
-            (BoundaryFootprintVertices C) (BoundaryFootprintEdges C)) → ((FourNeighborConnected
-            (↑AB.cells : Set LatticeCell) ∧ NoCheckerboardCellVertex (↑AB.cells : Set
-            LatticeCell) ∧ SimpleGridCycle (BoundaryFootprintVertices AB) (BoundaryFootprintEdges
-            AB)) → ((FourNeighborConnected (↑BC.cells : Set LatticeCell) ∧
-            NoCheckerboardCellVertex (↑BC.cells : Set LatticeCell) ∧ SimpleGridCycle
-            (BoundaryFootprintVertices BC) (BoundaryFootprintEdges BC)) → ((FourNeighborConnected
-            (↑CA.cells : Set LatticeCell) ∧ NoCheckerboardCellVertex (↑CA.cells : Set
-            LatticeCell) ∧ SimpleGridCycle (BoundaryFootprintVertices CA) (BoundaryFootprintEdges
-            CA)) → ((FourNeighborConnected (↑ABC.cells : Set LatticeCell) ∧
-            NoCheckerboardCellVertex (↑ABC.cells : Set LatticeCell) ∧ SimpleGridCycle
-            (BoundaryFootprintVertices ABC) (BoundaryFootprintEdges ABC)) → ((FootprintEdges AB =
-            FootprintEdges A ∪ FootprintEdges B) → (FootprintEdges AB ∩ FootprintEdges C =
-            (FootprintEdges A ∩ FootprintEdges C) ∪ (FootprintEdges B ∩ FootprintEdges C)))))))))
-            ) := by
-  classical
-  intro A B C AB BC CA ABC hAgrid hBgrid hCgrid hABgrid hBCgrid hCAgrid hABCgrid hEAB
-  rw [hEAB]
-  ext e
-  simp only [Set.mem_inter_iff, Set.mem_union]
-  tauto
-
 private theorem hIEvCross :
     (by
       classical
@@ -485,68 +418,6 @@ private theorem hIEeCross :
     (FootprintEdges B ∩ FootprintEdges C)
     ((edge_finite A).inter_of_left (FootprintEdges C))
     ((edge_finite B).inter_of_left (FootprintEdges C))
-
-private theorem htripleVset :
-    (by
-      classical
-      exact
-        ∀ (A : ProtoTile), ∀ (B : ProtoTile), ∀ (C : ProtoTile), ∀ (AB : ProtoTile), ∀ (BC :
-            ProtoTile), ∀ (CA : ProtoTile), ∀ (ABC : ProtoTile), (FourNeighborConnected (↑A.cells
-            : Set LatticeCell) ∧ NoCheckerboardCellVertex (↑A.cells : Set LatticeCell) ∧
-            SimpleGridCycle (BoundaryFootprintVertices A) (BoundaryFootprintEdges A)) →
-            ((FourNeighborConnected (↑B.cells : Set LatticeCell) ∧ NoCheckerboardCellVertex
-            (↑B.cells : Set LatticeCell) ∧ SimpleGridCycle (BoundaryFootprintVertices B)
-            (BoundaryFootprintEdges B)) → ((FourNeighborConnected (↑C.cells : Set LatticeCell) ∧
-            NoCheckerboardCellVertex (↑C.cells : Set LatticeCell) ∧ SimpleGridCycle
-            (BoundaryFootprintVertices C) (BoundaryFootprintEdges C)) → ((FourNeighborConnected
-            (↑AB.cells : Set LatticeCell) ∧ NoCheckerboardCellVertex (↑AB.cells : Set
-            LatticeCell) ∧ SimpleGridCycle (BoundaryFootprintVertices AB) (BoundaryFootprintEdges
-            AB)) → ((FourNeighborConnected (↑BC.cells : Set LatticeCell) ∧
-            NoCheckerboardCellVertex (↑BC.cells : Set LatticeCell) ∧ SimpleGridCycle
-            (BoundaryFootprintVertices BC) (BoundaryFootprintEdges BC)) → ((FourNeighborConnected
-            (↑CA.cells : Set LatticeCell) ∧ NoCheckerboardCellVertex (↑CA.cells : Set
-            LatticeCell) ∧ SimpleGridCycle (BoundaryFootprintVertices CA) (BoundaryFootprintEdges
-            CA)) → ((FourNeighborConnected (↑ABC.cells : Set LatticeCell) ∧
-            NoCheckerboardCellVertex (↑ABC.cells : Set LatticeCell) ∧ SimpleGridCycle
-            (BoundaryFootprintVertices ABC) (BoundaryFootprintEdges ABC)) → ((FootprintVertices A
-            ∩ FootprintVertices C) ∩ (FootprintVertices B ∩ FootprintVertices C) =
-            FootprintVertices A ∩ FootprintVertices B ∩ FootprintVertices C))))))) ) := by
-  classical
-  intro A B C AB BC CA ABC hAgrid hBgrid hCgrid hABgrid hBCgrid hCAgrid hABCgrid
-  ext z
-  simp only [Set.mem_inter_iff]
-  tauto
-
-private theorem htripleEset :
-    (by
-      classical
-      exact
-        ∀ (A : ProtoTile), ∀ (B : ProtoTile), ∀ (C : ProtoTile), ∀ (AB : ProtoTile), ∀ (BC :
-            ProtoTile), ∀ (CA : ProtoTile), ∀ (ABC : ProtoTile), (FourNeighborConnected (↑A.cells
-            : Set LatticeCell) ∧ NoCheckerboardCellVertex (↑A.cells : Set LatticeCell) ∧
-            SimpleGridCycle (BoundaryFootprintVertices A) (BoundaryFootprintEdges A)) →
-            ((FourNeighborConnected (↑B.cells : Set LatticeCell) ∧ NoCheckerboardCellVertex
-            (↑B.cells : Set LatticeCell) ∧ SimpleGridCycle (BoundaryFootprintVertices B)
-            (BoundaryFootprintEdges B)) → ((FourNeighborConnected (↑C.cells : Set LatticeCell) ∧
-            NoCheckerboardCellVertex (↑C.cells : Set LatticeCell) ∧ SimpleGridCycle
-            (BoundaryFootprintVertices C) (BoundaryFootprintEdges C)) → ((FourNeighborConnected
-            (↑AB.cells : Set LatticeCell) ∧ NoCheckerboardCellVertex (↑AB.cells : Set
-            LatticeCell) ∧ SimpleGridCycle (BoundaryFootprintVertices AB) (BoundaryFootprintEdges
-            AB)) → ((FourNeighborConnected (↑BC.cells : Set LatticeCell) ∧
-            NoCheckerboardCellVertex (↑BC.cells : Set LatticeCell) ∧ SimpleGridCycle
-            (BoundaryFootprintVertices BC) (BoundaryFootprintEdges BC)) → ((FourNeighborConnected
-            (↑CA.cells : Set LatticeCell) ∧ NoCheckerboardCellVertex (↑CA.cells : Set
-            LatticeCell) ∧ SimpleGridCycle (BoundaryFootprintVertices CA) (BoundaryFootprintEdges
-            CA)) → ((FourNeighborConnected (↑ABC.cells : Set LatticeCell) ∧
-            NoCheckerboardCellVertex (↑ABC.cells : Set LatticeCell) ∧ SimpleGridCycle
-            (BoundaryFootprintVertices ABC) (BoundaryFootprintEdges ABC)) → ((FootprintEdges A ∩
-            FootprintEdges C) ∩ (FootprintEdges B ∩ FootprintEdges C) = FootprintEdges A ∩
-            FootprintEdges B ∩ FootprintEdges C))))))) ) := by
-  classical
-  intro A B C AB BC CA ABC hAgrid hBgrid hCgrid hABgrid hBCgrid hCAgrid hABCgrid
-  ext e
-  simp only [Set.mem_inter_iff]
-  tauto
 
 private theorem htripleVcard :
     (by
@@ -961,12 +832,14 @@ theorem LatticeTileThreeDiskJunction
   rw [← hEABC] at hIEeABC
   have hcrossV : FootprintVertices AB ∩ FootprintVertices C =
       (FootprintVertices A ∩ FootprintVertices C) ∪
-        (FootprintVertices B ∩ FootprintVertices C) := ThreeDiskJunctionGeometry.hcrossV A B C AB
-            BC CA ABC hAgrid hBgrid hCgrid hABgrid hBCgrid hCAgrid hABCgrid hVAB
+        (FootprintVertices B ∩ FootprintVertices C) := by
+    rw [hVAB]
+    exact Set.union_inter_distrib_right _ _ _
   have hcrossE : FootprintEdges AB ∩ FootprintEdges C =
       (FootprintEdges A ∩ FootprintEdges C) ∪
-        (FootprintEdges B ∩ FootprintEdges C) := ThreeDiskJunctionGeometry.hcrossE A B C AB BC CA
-            ABC hAgrid hBgrid hCgrid hABgrid hBCgrid hCAgrid hABCgrid hEAB
+        (FootprintEdges B ∩ FootprintEdges C) := by
+    rw [hEAB]
+    exact Set.union_inter_distrib_right _ _ _
   rw [hcrossV] at hIEvABC
   rw [hcrossE] at hIEeABC
   have hIEvCross := ThreeDiskJunctionGeometry.hIEvCross A B C vertex_finite
@@ -975,14 +848,12 @@ theorem LatticeTileThreeDiskJunction
       (FootprintVertices A ∩ FootprintVertices C) ∩
           (FootprintVertices B ∩ FootprintVertices C) =
         FootprintVertices A ∩ FootprintVertices B ∩ FootprintVertices C :=
-            ThreeDiskJunctionGeometry.htripleVset A B C AB BC CA ABC hAgrid hBgrid hCgrid hABgrid
-            hBCgrid hCAgrid hABCgrid
+            (Set.inter_inter_distrib_right _ _ _).symm
   have htripleEset :
       (FootprintEdges A ∩ FootprintEdges C) ∩
           (FootprintEdges B ∩ FootprintEdges C) =
         FootprintEdges A ∩ FootprintEdges B ∩ FootprintEdges C :=
-            ThreeDiskJunctionGeometry.htripleEset A B C AB BC CA ABC hAgrid hBgrid hCgrid hABgrid
-            hBCgrid hCAgrid hABCgrid
+            (Set.inter_inter_distrib_right _ _ _).symm
   rw [htripleVset] at hIEvCross
   rw [htripleEset, htripleEdges] at hIEeCross
   simp only [Set.ncard_empty, add_zero] at hIEeCross

@@ -50,48 +50,77 @@ private theorem reverseLocal :
   exact negSign k (B.1 * (q.2 - z.2) - B.2 * (q.1 - z.1))
 
 private theorem hscale :
-    ∀ (S : Set (Real × Real)), ∀ (g : (↑(Set.Icc (0 : ℝ) (1 : ℝ)) : Type) → ℝ × ℝ), ∀ (h :
-        (↑(Set.Icc (0 : ℝ) (1 : ℝ)) : Type) → ℝ × ℝ), ∀ (p : P3723T1PolygonalParameterization
-        g), ∀ (q : P3723T1PolygonalParameterization h), ∀ (hgrange : Set.range g = S), ∀
-            (hhrange : Set.range h = S),
-    let gfun : Set.Icc (0 : Real) 1 → S := fun x =>
-      ⟨g x, by rw [← hgrange]; exact ⟨x, rfl⟩⟩
-    let hfun : Set.Icc (0 : Real) 1 → S := fun x =>
-      ⟨h x, by rw [← hhrange]; exact ⟨x, rfl⟩⟩
-    ∀ (hgfun_inj : Function.Injective gfun), ∀ (hhfun_inj : Function.Injective hfun), ∀
-        (hgfun_surj : Function.Surjective gfun), ∀ (hhfun_surj : Function.Surjective hfun),
-    let ge : Set.Icc (0 : Real) 1 ≃ S := Equiv.ofBijective gfun ⟨hgfun_inj, hgfun_surj⟩
-    let he : Set.Icc (0 : Real) 1 ≃ S := Equiv.ofBijective hfun ⟨hhfun_inj, hhfun_surj⟩
-    ∀ (hgfun_cont : Continuous gfun), ∀ (hhfun_cont : Continuous hfun),
-    let GH :=
-        Continuous.homeoOfEquivCompactToT2 (f := ge) hgfun_cont
-    let HH := Continuous.homeoOfEquivCompactToT2 (f := he) hhfun_cont
-    let phi : Set.Icc (0 : Real) 1 ≃ₜ Set.Icc (0 : Real) 1 := GH.trans HH.symm
-    let i1 : Fin (p.count + 1) := ⟨1, by have hp := p.positive; omega⟩
-    let j1 : Fin (q.count + 1) := ⟨1, by have hq := q.positive; omega⟩
-    ∀ (hpi : 0 < p.time i1), ∀ (hqj : 0 < q.time j1), ∀ (hpi1 : p.time i1 ≤ 1), ∀ (hqj1 : q.time
-        j1 ≤ 1),
-    let α : Set.Icc (0 : Real) 1 := ⟨p.time i1, hpi.le, hpi1⟩
-    let β : Set.Icc (0 : Real) 1 := ⟨q.time j1, hqj.le, hqj1⟩
-    let c : Real := min (phi α : Real) (β : Real)
-    ∀ (hcpos : 0 < c), ((c ≤ (β : Real)) → (∀ (hc_le_one : c ≤ 1),
-    let r1 : Set.Icc (0 : Real) 1
-        := ⟨c / 3,
-      ⟨by linarith [hcpos], by have := hc_le_one; linarith⟩⟩
-    let r2 : Set.Icc (0 : Real) 1 := ⟨2 * c / 3,
-      ⟨by linarith [hcpos], by have := hc_le_one; linarith⟩⟩
-    ((r1 : Real) < (r2 : Real)) → (
-    let xL : Set.Icc (0 : Real) 1 := phi.symm r1
-    let xR : Set.Icc (0 : Real) 1 := phi.symm r2
-    ∀ (Bg : ℝ × ℝ), ∀ (Bh : ℝ × ℝ), (((xR : Real) - (xL : Real)) • Bg = ((r2 : Real) - (r1 :
-        Real)) • Bh) → (
-    let scale : Real := ((xR : Real) - (xL : Real)) / ((r2 : Real) - (r1 :
-        Real))
-    Bh = scale • Bg)))) := by
+    ∀ (S : Set (Real × Real)),
+      ∀ (g : (↑(Set.Icc (0 : ℝ) (1 : ℝ)) : Type) → ℝ × ℝ),
+        ∀ (h : (↑(Set.Icc (0 : ℝ) (1 : ℝ)) : Type) → ℝ × ℝ),
+          ∀ (p : P3723T1PolygonalParameterization g),
+            ∀ (q : P3723T1PolygonalParameterization h),
+              ∀ (hgrange : Set.range g = S),
+                ∀ (hhrange : Set.range h = S),
+                  let gfun : Set.Icc (0 : Real) 1 → S := fun x =>
+                    ⟨g x, by rw [← hgrange]; exact ⟨x, rfl⟩⟩;
+                  let hfun : Set.Icc (0 : Real) 1 → S := fun x =>
+                    ⟨h x, by rw [← hhrange]; exact ⟨x, rfl⟩⟩;
+                  ∀ (hgfun_inj : Function.Injective gfun),
+                    ∀ (hhfun_inj : Function.Injective hfun),
+                      ∀ (hgfun_surj : Function.Surjective gfun),
+                        ∀ (hhfun_surj : Function.Surjective hfun),
+                          let ge : Set.Icc (0 : Real) 1 ≃ S :=
+                            Equiv.ofBijective gfun ⟨hgfun_inj, hgfun_surj⟩;
+                          let he : Set.Icc (0 : Real) 1 ≃ S :=
+                            Equiv.ofBijective hfun ⟨hhfun_inj, hhfun_surj⟩;
+                          ∀ (hgfun_cont : Continuous gfun),
+                            ∀ (hhfun_cont : Continuous hfun),
+                              let GH :=
+                                Continuous.homeoOfEquivCompactToT2 (f := ge)
+                                  hgfun_cont;
+                              let HH :=
+                                Continuous.homeoOfEquivCompactToT2 (f := he)
+                                  hhfun_cont;
+                              let phi :
+                                Set.Icc (0 : Real) 1 ≃ₜ Set.Icc (0 : Real) 1 :=
+                                GH.trans HH.symm;
+                              let i1 : Fin (p.count + 1) :=
+                                ⟨1, by have hp := p.positive; omega⟩;
+                              let j1 : Fin (q.count + 1) :=
+                                ⟨1, by have hq := q.positive; omega⟩;
+                              ∀ (hpi : 0 < p.time i1),
+                                ∀ (hqj : 0 < q.time j1),
+                                  ∀ (hpi1 : p.time i1 ≤ 1),
+                                    ∀ (hqj1 : q.time j1 ≤ 1),
+                                      let α : Set.Icc (0 : Real) 1 :=
+                                        ⟨p.time i1, hpi.le, hpi1⟩;
+                                      let β : Set.Icc (0 : Real) 1 :=
+                                        ⟨q.time j1, hqj.le, hqj1⟩;
+                                      let c : Real := min (phi α : Real) (β : Real);
+                                      ∀ (hcpos : 0 < c),
+                                        (∀ (hc_le_one : c ≤ 1),
+                                          let r1 : Set.Icc (0 : Real) 1 :=
+                                            ⟨c / 3,
+                                              ⟨by linarith [hcpos], by
+                                                have := hc_le_one; linarith⟩⟩;
+                                          let r2 : Set.Icc (0 : Real) 1 :=
+                                            ⟨2 * c / 3,
+                                              ⟨by linarith [hcpos], by
+                                                have := hc_le_one; linarith⟩⟩;
+                                          ((r1 : Real) < (r2 : Real)) →
+                                            (let xL : Set.Icc (0 : Real) 1 :=
+                                              phi.symm r1;
+                                            let xR : Set.Icc (0 : Real) 1 :=
+                                              phi.symm r2;
+                                            ∀ (Bg : ℝ × ℝ),
+                                              ∀ (Bh : ℝ × ℝ),
+                                                (((xR : Real) - (xL : Real)) • Bg =
+                                                    ((r2 : Real) - (r1 : Real)) •
+                                                      Bh) →
+                                                  (let scale : Real :=
+                                                    ((xR : Real) - (xL : Real)) /
+                                                      ((r2 : Real) - (r1 : Real));
+                                                  Bh = scale • Bg))) := by
   classical
   intro S g h p q hgrange hhrange gfun hfun hgfun_inj hhfun_inj hgfun_surj hhfun_surj ge he
-      hgfun_cont hhfun_cont GH HH phi i1 j1 hpi hqj hpi1 hqj1 α β c hcpos hc_le_b hc_le_one r1 r2
-      hr12 xL xR Bg Bh hvel scale
+      hgfun_cont hhfun_cont GH HH phi i1 j1 hpi hqj hpi1 hqj1 α β c hcpos hc_le_one r1 r2 hr12
+      xL xR Bg Bh hvel scale
   have hfst := congrArg Prod.fst hvel
   have hsnd := congrArg Prod.snd hvel
   change ((xR : Real) - (xL : Real)) * Bg.1 =
@@ -534,41 +563,67 @@ private theorem hphi_mono :
     exact False.elim ((not_lt_of_ge hle) this)
 
 private theorem hx0L :
-    ∀ (S : Set (ℝ × ℝ)), ∀ (g : (↑(Set.Icc (0 : ℝ) (1 : ℝ)) : Type) → ℝ × ℝ), ∀ (h : (↑(Set.Icc
-        (0 : ℝ) (1 : ℝ)) : Type) → ℝ × ℝ), ∀ (p : P3723T1PolygonalParameterization g), ∀ (q :
-        P3723T1PolygonalParameterization h), ∀ (hgrange : Set.range g = S), ∀ (hhrange :
-        Set.range h = S),
-    let gfun : Set.Icc (0 : Real) 1 → S := fun x =>
-      ⟨g x, by rw [← hgrange]; exact ⟨x, rfl⟩⟩
-    let hfun : Set.Icc (0 : Real) 1 → S := fun x =>
-      ⟨h x, by rw [← hhrange]; exact ⟨x, rfl⟩⟩
-    ∀ (hgfun_inj : Function.Injective gfun), ∀ (hhfun_inj : Function.Injective hfun), ∀
-        (hgfun_surj : Function.Surjective gfun), ∀ (hhfun_surj : Function.Surjective hfun),
-    let ge : Set.Icc (0 : Real) 1 ≃ S := Equiv.ofBijective gfun ⟨hgfun_inj, hgfun_surj⟩
-    let he : Set.Icc (0 : Real) 1 ≃ S := Equiv.ofBijective hfun ⟨hhfun_inj, hhfun_surj⟩
-    ∀ (hgfun_cont : Continuous gfun), ∀ (hhfun_cont : Continuous hfun),
-    let GH := Continuous.homeoOfEquivCompactToT2 (f := ge) hgfun_cont
-    let HH := Continuous.homeoOfEquivCompactToT2 (f := he) hhfun_cont
-    let phi : Set.Icc (0 : Real) 1 ≃ₜ Set.Icc (0 : Real) 1 := GH.trans HH.symm
-    let x0 : Set.Icc (0 : Real) 1 := ⟨0, by norm_num⟩
-    (phi x0 = x0) → ((StrictMono phi) → (
-    let i1 : Fin (p.count + 1) := ⟨1, by have hp := p.positive; omega⟩
-    let j1 : Fin (q.count + 1) := ⟨1, by have hq := q.positive; omega⟩
-    ∀ (hpi : 0 < p.time i1), ∀ (hqj : 0 < q.time j1), ∀ (hpi1 : p.time i1 ≤ 1), ∀ (hqj1 : q.time
-        j1 ≤ 1),
-    let α : Set.Icc (0 : Real) 1 := ⟨p.time i1, hpi.le, hpi1⟩
-    let β : Set.Icc (0 : Real) 1 := ⟨q.time j1, hqj.le, hqj1⟩
-    let c : Real := min (phi α : Real) (β : Real)
-    ∀ (hcpos : 0 < c), (c ≤ (β : Real)) → (∀ (hc_le_one : c ≤ 1),
-    let r1 : Set.Icc (0 : Real) 1 := ⟨c / 3,
-      ⟨by linarith [hcpos], by have := hc_le_one; linarith⟩⟩
-    (0 < (r1 : Real)) → (
-    let xL : Set.Icc (0 : Real) 1 := phi.symm r1
-    (phi xL = r1) → (x0 < xL))))) := by
+    ∀ (S : Set (ℝ × ℝ)),
+      ∀ (g : (↑(Set.Icc (0 : ℝ) (1 : ℝ)) : Type) → ℝ × ℝ),
+        ∀ (h : (↑(Set.Icc (0 : ℝ) (1 : ℝ)) : Type) → ℝ × ℝ),
+          ∀ (p : P3723T1PolygonalParameterization g),
+            ∀ (q : P3723T1PolygonalParameterization h),
+              ∀ (hgrange : Set.range g = S),
+                ∀ (hhrange : Set.range h = S),
+                  let gfun : Set.Icc (0 : Real) 1 → S := fun x =>
+                    ⟨g x, by rw [← hgrange]; exact ⟨x, rfl⟩⟩;
+                  let hfun : Set.Icc (0 : Real) 1 → S := fun x =>
+                    ⟨h x, by rw [← hhrange]; exact ⟨x, rfl⟩⟩;
+                  ∀ (hgfun_inj : Function.Injective gfun),
+                    ∀ (hhfun_inj : Function.Injective hfun),
+                      ∀ (hgfun_surj : Function.Surjective gfun),
+                        ∀ (hhfun_surj : Function.Surjective hfun),
+                          let ge : Set.Icc (0 : Real) 1 ≃ S :=
+                            Equiv.ofBijective gfun ⟨hgfun_inj, hgfun_surj⟩;
+                          let he : Set.Icc (0 : Real) 1 ≃ S :=
+                            Equiv.ofBijective hfun ⟨hhfun_inj, hhfun_surj⟩;
+                          ∀ (hgfun_cont : Continuous gfun),
+                            ∀ (hhfun_cont : Continuous hfun),
+                              let GH :=
+                                Continuous.homeoOfEquivCompactToT2 (f := ge)
+                                  hgfun_cont;
+                              let HH :=
+                                Continuous.homeoOfEquivCompactToT2 (f := he)
+                                  hhfun_cont;
+                              let phi :
+                                Set.Icc (0 : Real) 1 ≃ₜ Set.Icc (0 : Real) 1 :=
+                                GH.trans HH.symm;
+                              let x0 : Set.Icc (0 : Real) 1 := ⟨0, by norm_num⟩;
+                              (phi x0 = x0) →
+                                ((StrictMono phi) →
+                                  (let i1 : Fin (p.count + 1) :=
+                                    ⟨1, by have hp := p.positive; omega⟩;
+                                  let j1 : Fin (q.count + 1) :=
+                                    ⟨1, by have hq := q.positive; omega⟩;
+                                  ∀ (hpi : 0 < p.time i1),
+                                    ∀ (hqj : 0 < q.time j1),
+                                      ∀ (hpi1 : p.time i1 ≤ 1),
+                                        ∀ (hqj1 : q.time j1 ≤ 1),
+                                          let α : Set.Icc (0 : Real) 1 :=
+                                            ⟨p.time i1, hpi.le, hpi1⟩;
+                                          let β : Set.Icc (0 : Real) 1 :=
+                                            ⟨q.time j1, hqj.le, hqj1⟩;
+                                          let c : Real :=
+                                            min (phi α : Real) (β : Real);
+                                          ∀ (hcpos : 0 < c),
+                                            (∀ (hc_le_one : c ≤ 1),
+                                              let r1 : Set.Icc (0 : Real) 1 :=
+                                                ⟨c / 3,
+                                                  ⟨by linarith [hcpos], by
+                                                    have := hc_le_one; linarith⟩⟩;
+                                              (0 < (r1 : Real)) →
+                                                (let xL : Set.Icc (0 : Real) 1 :=
+                                                  phi.symm r1;
+                                                (phi xL = r1) → (x0 < xL))))) := by
   classical
   intro S g h p q hgrange hhrange gfun hfun hgfun_inj hhfun_inj hgfun_surj hhfun_surj ge he
       hgfun_cont hhfun_cont GH HH phi x0 hphi0 hphi_mono i1 j1 hpi hqj hpi1 hqj1 α β c hcpos
-      hc_le_b hc_le_one r1 hr1pos xL hφL
+      hc_le_one r1 hr1pos xL hφL
   by_contra hh
   have hle : xL ≤ x0 := le_of_not_gt hh
   have hm := hphi_mono.monotone hle
@@ -577,41 +632,67 @@ private theorem hx0L :
   exact (not_le_of_gt h0r) hm
 
 private theorem hx0R :
-    ∀ (S : Set (ℝ × ℝ)), ∀ (g : (↑(Set.Icc (0 : ℝ) (1 : ℝ)) : Type) → ℝ × ℝ), ∀ (h : (↑(Set.Icc
-        (0 : ℝ) (1 : ℝ)) : Type) → ℝ × ℝ), ∀ (p : P3723T1PolygonalParameterization g), ∀ (q :
-        P3723T1PolygonalParameterization h), ∀ (hgrange : Set.range g = S), ∀ (hhrange :
-        Set.range h = S),
-    let gfun : Set.Icc (0 : Real) 1 → S := fun x =>
-      ⟨g x, by rw [← hgrange]; exact ⟨x, rfl⟩⟩
-    let hfun : Set.Icc (0 : Real) 1 → S := fun x =>
-      ⟨h x, by rw [← hhrange]; exact ⟨x, rfl⟩⟩
-    ∀ (hgfun_inj : Function.Injective gfun), ∀ (hhfun_inj : Function.Injective hfun), ∀
-        (hgfun_surj : Function.Surjective gfun), ∀ (hhfun_surj : Function.Surjective hfun),
-    let ge : Set.Icc (0 : Real) 1 ≃ S := Equiv.ofBijective gfun ⟨hgfun_inj, hgfun_surj⟩
-    let he : Set.Icc (0 : Real) 1 ≃ S := Equiv.ofBijective hfun ⟨hhfun_inj, hhfun_surj⟩
-    ∀ (hgfun_cont : Continuous gfun), ∀ (hhfun_cont : Continuous hfun),
-    let GH := Continuous.homeoOfEquivCompactToT2 (f := ge) hgfun_cont
-    let HH := Continuous.homeoOfEquivCompactToT2 (f := he) hhfun_cont
-    let phi : Set.Icc (0 : Real) 1 ≃ₜ Set.Icc (0 : Real) 1 := GH.trans HH.symm
-    let x0 : Set.Icc (0 : Real) 1 := ⟨0, by norm_num⟩
-    (phi x0 = x0) → ((StrictMono phi) → (
-    let i1 : Fin (p.count + 1) := ⟨1, by have hp := p.positive; omega⟩
-    let j1 : Fin (q.count + 1) := ⟨1, by have hq := q.positive; omega⟩
-    ∀ (hpi : 0 < p.time i1), ∀ (hqj : 0 < q.time j1), ∀ (hpi1 : p.time i1 ≤ 1), ∀ (hqj1 : q.time
-        j1 ≤ 1),
-    let α : Set.Icc (0 : Real) 1 := ⟨p.time i1, hpi.le, hpi1⟩
-    let β : Set.Icc (0 : Real) 1 := ⟨q.time j1, hqj.le, hqj1⟩
-    let c : Real := min (phi α : Real) (β : Real)
-    ∀ (hcpos : 0 < c), (c ≤ (β : Real)) → (∀ (hc_le_one : c ≤ 1),
-    let r2 : Set.Icc (0 : Real) 1 := ⟨2 * c / 3,
-      ⟨by linarith [hcpos], by have := hc_le_one; linarith⟩⟩
-    (0 < (r2 : Real)) → (
-    let xR : Set.Icc (0 : Real) 1 := phi.symm r2
-    (phi xR = r2) → (x0 < xR))))) := by
+    ∀ (S : Set (ℝ × ℝ)),
+      ∀ (g : (↑(Set.Icc (0 : ℝ) (1 : ℝ)) : Type) → ℝ × ℝ),
+        ∀ (h : (↑(Set.Icc (0 : ℝ) (1 : ℝ)) : Type) → ℝ × ℝ),
+          ∀ (p : P3723T1PolygonalParameterization g),
+            ∀ (q : P3723T1PolygonalParameterization h),
+              ∀ (hgrange : Set.range g = S),
+                ∀ (hhrange : Set.range h = S),
+                  let gfun : Set.Icc (0 : Real) 1 → S := fun x =>
+                    ⟨g x, by rw [← hgrange]; exact ⟨x, rfl⟩⟩;
+                  let hfun : Set.Icc (0 : Real) 1 → S := fun x =>
+                    ⟨h x, by rw [← hhrange]; exact ⟨x, rfl⟩⟩;
+                  ∀ (hgfun_inj : Function.Injective gfun),
+                    ∀ (hhfun_inj : Function.Injective hfun),
+                      ∀ (hgfun_surj : Function.Surjective gfun),
+                        ∀ (hhfun_surj : Function.Surjective hfun),
+                          let ge : Set.Icc (0 : Real) 1 ≃ S :=
+                            Equiv.ofBijective gfun ⟨hgfun_inj, hgfun_surj⟩;
+                          let he : Set.Icc (0 : Real) 1 ≃ S :=
+                            Equiv.ofBijective hfun ⟨hhfun_inj, hhfun_surj⟩;
+                          ∀ (hgfun_cont : Continuous gfun),
+                            ∀ (hhfun_cont : Continuous hfun),
+                              let GH :=
+                                Continuous.homeoOfEquivCompactToT2 (f := ge)
+                                  hgfun_cont;
+                              let HH :=
+                                Continuous.homeoOfEquivCompactToT2 (f := he)
+                                  hhfun_cont;
+                              let phi :
+                                Set.Icc (0 : Real) 1 ≃ₜ Set.Icc (0 : Real) 1 :=
+                                GH.trans HH.symm;
+                              let x0 : Set.Icc (0 : Real) 1 := ⟨0, by norm_num⟩;
+                              (phi x0 = x0) →
+                                ((StrictMono phi) →
+                                  (let i1 : Fin (p.count + 1) :=
+                                    ⟨1, by have hp := p.positive; omega⟩;
+                                  let j1 : Fin (q.count + 1) :=
+                                    ⟨1, by have hq := q.positive; omega⟩;
+                                  ∀ (hpi : 0 < p.time i1),
+                                    ∀ (hqj : 0 < q.time j1),
+                                      ∀ (hpi1 : p.time i1 ≤ 1),
+                                        ∀ (hqj1 : q.time j1 ≤ 1),
+                                          let α : Set.Icc (0 : Real) 1 :=
+                                            ⟨p.time i1, hpi.le, hpi1⟩;
+                                          let β : Set.Icc (0 : Real) 1 :=
+                                            ⟨q.time j1, hqj.le, hqj1⟩;
+                                          let c : Real :=
+                                            min (phi α : Real) (β : Real);
+                                          ∀ (hcpos : 0 < c),
+                                            (∀ (hc_le_one : c ≤ 1),
+                                              let r2 : Set.Icc (0 : Real) 1 :=
+                                                ⟨2 * c / 3,
+                                                  ⟨by linarith [hcpos], by
+                                                    have := hc_le_one; linarith⟩⟩;
+                                              (0 < (r2 : Real)) →
+                                                (let xR : Set.Icc (0 : Real) 1 :=
+                                                  phi.symm r2;
+                                                (phi xR = r2) → (x0 < xR))))) := by
   classical
   intro S g h p q hgrange hhrange gfun hfun hgfun_inj hhfun_inj hgfun_surj hhfun_surj ge he
       hgfun_cont hhfun_cont GH HH phi x0 hphi0 hphi_mono i1 j1 hpi hqj hpi1 hqj1 α β c hcpos
-      hc_le_b hc_le_one r2 hr2pos xR hφR
+      hc_le_one r2 hr2pos xR hφR
   by_contra hh
   have hle : xR ≤ x0 := le_of_not_gt hh
   have hm := hphi_mono.monotone hle
@@ -620,42 +701,65 @@ private theorem hx0R :
   exact (not_le_of_gt h0r) hm
 
 private theorem hxLa :
-    ∀ (S : Set (ℝ × ℝ)), ∀ (g : (↑(Set.Icc (0 : ℝ) (1 : ℝ)) : Type) → ℝ × ℝ), ∀ (h : (↑(Set.Icc
-        (0 : ℝ) (1 : ℝ)) : Type) → ℝ × ℝ), ∀ (p : P3723T1PolygonalParameterization g), ∀ (q :
-        P3723T1PolygonalParameterization h), ∀ (hgrange : Set.range g = S), ∀ (hhrange :
-        Set.range h = S),
-    let gfun : Set.Icc (0 : Real) 1 → S := fun x =>
-      ⟨g x, by rw [← hgrange]; exact ⟨x, rfl⟩⟩
-    let hfun : Set.Icc (0 : Real) 1 → S := fun x =>
-      ⟨h x, by rw [← hhrange]; exact ⟨x, rfl⟩⟩
-    ∀ (hgfun_inj : Function.Injective gfun), ∀ (hhfun_inj : Function.Injective hfun), ∀
-        (hgfun_surj : Function.Surjective gfun), ∀ (hhfun_surj : Function.Surjective hfun),
-    let ge : Set.Icc (0 : Real) 1 ≃ S := Equiv.ofBijective gfun ⟨hgfun_inj, hgfun_surj⟩
-    let he : Set.Icc (0 : Real) 1 ≃ S := Equiv.ofBijective hfun ⟨hhfun_inj, hhfun_surj⟩
-    ∀ (hgfun_cont : Continuous gfun), ∀ (hhfun_cont : Continuous hfun),
-    let GH := Continuous.homeoOfEquivCompactToT2 (f := ge) hgfun_cont
-    let HH := Continuous.homeoOfEquivCompactToT2 (f := he) hhfun_cont
-    let phi : Set.Icc (0 : Real) 1 ≃ₜ Set.Icc (0 : Real) 1 := GH.trans HH.symm
-    (StrictMono phi) → (
-    let i1 : Fin (p.count + 1) := ⟨1, by have hp := p.positive; omega⟩
-    let j1 : Fin (q.count + 1) := ⟨1, by have hq := q.positive; omega⟩
-    ∀ (hpi : 0 < p.time i1), ∀ (hqj : 0 < q.time j1), ∀ (hpi1 : p.time i1 ≤ 1), ∀ (hqj1 : q.time
-        j1 ≤ 1),
-    let α : Set.Icc (0 : Real) 1 := ⟨p.time i1, hpi.le, hpi1⟩
-    let β : Set.Icc (0 : Real) 1 := ⟨q.time j1, hqj.le, hqj1⟩
-    let c : Real := min (phi α : Real) (β : Real)
-    ∀ (hcpos : 0 < c), (c ≤ (phi α : Real)) → ((c ≤ (β : Real)) → (∀ (hc_le_one : c ≤ 1),
-    let r1 : Set.Icc (0 : Real) 1 := ⟨c / 3,
-      ⟨by linarith [hcpos], by have := hc_le_one; linarith⟩⟩
-    let r2 : Set.Icc (0 : Real) 1 := ⟨2 * c / 3,
-      ⟨by linarith [hcpos], by have := hc_le_one; linarith⟩⟩
-    (0 < (r1 : Real)) → (((r1 : Real) < (r2 : Real)) → (((r2 : Real) < c) → (
-    let xL : Set.Icc (0 : Real) 1 := phi.symm r1
-    (phi xL = r1) → (xL < α))))))) := by
+    ∀ (S : Set (ℝ × ℝ)),
+      ∀ (g : (↑(Set.Icc (0 : ℝ) (1 : ℝ)) : Type) → ℝ × ℝ),
+        ∀ (h : (↑(Set.Icc (0 : ℝ) (1 : ℝ)) : Type) → ℝ × ℝ),
+          ∀ (p : P3723T1PolygonalParameterization g),
+            ∀ (q : P3723T1PolygonalParameterization h),
+              ∀ (hgrange : Set.range g = S),
+                ∀ (hhrange : Set.range h = S),
+                  let gfun : Set.Icc (0 : Real) 1 → S := fun x =>
+                    ⟨g x, by rw [← hgrange]; exact ⟨x, rfl⟩⟩;
+                  let hfun : Set.Icc (0 : Real) 1 → S := fun x =>
+                    ⟨h x, by rw [← hhrange]; exact ⟨x, rfl⟩⟩;
+                  ∀ (hgfun_inj : Function.Injective gfun),
+                    ∀ (hhfun_inj : Function.Injective hfun),
+                      ∀ (hgfun_surj : Function.Surjective gfun),
+                        ∀ (hhfun_surj : Function.Surjective hfun),
+                          let ge : Set.Icc (0 : Real) 1 ≃ S :=
+                            Equiv.ofBijective gfun ⟨hgfun_inj, hgfun_surj⟩;
+                          let he : Set.Icc (0 : Real) 1 ≃ S :=
+                            Equiv.ofBijective hfun ⟨hhfun_inj, hhfun_surj⟩;
+                          ∀ (hgfun_cont : Continuous gfun),
+                            ∀ (hhfun_cont : Continuous hfun),
+                              let GH :=
+                                Continuous.homeoOfEquivCompactToT2 (f := ge)
+                                  hgfun_cont;
+                              let HH :=
+                                Continuous.homeoOfEquivCompactToT2 (f := he)
+                                  hhfun_cont;
+                              let phi :
+                                Set.Icc (0 : Real) 1 ≃ₜ Set.Icc (0 : Real) 1 :=
+                                GH.trans HH.symm;
+                              (StrictMono phi) →
+                                (let i1 : Fin (p.count + 1) :=
+                                  ⟨1, by have hp := p.positive; omega⟩;
+                                let j1 : Fin (q.count + 1) :=
+                                  ⟨1, by have hq := q.positive; omega⟩;
+                                ∀ (hpi : 0 < p.time i1),
+                                  ∀ (hqj : 0 < q.time j1),
+                                    ∀ (hpi1 : p.time i1 ≤ 1),
+                                      ∀ (hqj1 : q.time j1 ≤ 1),
+                                        let α : Set.Icc (0 : Real) 1 :=
+                                          ⟨p.time i1, hpi.le, hpi1⟩;
+                                        let β : Set.Icc (0 : Real) 1 :=
+                                          ⟨q.time j1, hqj.le, hqj1⟩;
+                                        let c : Real :=
+                                          min (phi α : Real) (β : Real);
+                                        ∀ (hcpos : 0 < c),
+                                          (c ≤ (phi α : Real)) →
+                                            (∀ (hc_le_one : c ≤ 1),
+                                              let r1 : Set.Icc (0 : Real) 1 :=
+                                                ⟨c / 3,
+                                                  ⟨by linarith [hcpos], by
+                                                    have := hc_le_one; linarith⟩⟩;
+                                              (let xL : Set.Icc (0 : Real) 1 :=
+                                                phi.symm r1;
+                                              (phi xL = r1) → (xL < α)))) := by
   classical
   intro S g h p q hgrange hhrange gfun hfun hgfun_inj hhfun_inj hgfun_surj hhfun_surj ge he
       hgfun_cont hhfun_cont GH HH phi hphi_mono i1 j1 hpi hqj hpi1 hqj1 α β c hcpos hc_le_a
-      hc_le_b hc_le_one r1 r2 hr1pos hr12 hr2c xL hφL
+      hc_le_one r1 xL hφL
   by_contra hh
   have hle : α ≤ xL := le_of_not_gt hh
   have hm := hphi_mono.monotone hle
@@ -666,40 +770,66 @@ private theorem hxLa :
   exact (not_le_of_gt hrc') hm
 
 private theorem hxRa :
-    ∀ (S : Set (ℝ × ℝ)), ∀ (g : (↑(Set.Icc (0 : ℝ) (1 : ℝ)) : Type) → ℝ × ℝ), ∀ (h : (↑(Set.Icc
-        (0 : ℝ) (1 : ℝ)) : Type) → ℝ × ℝ), ∀ (p : P3723T1PolygonalParameterization g), ∀ (q :
-        P3723T1PolygonalParameterization h), ∀ (hgrange : Set.range g = S), ∀ (hhrange :
-        Set.range h = S),
-    let gfun : Set.Icc (0 : Real) 1 → S := fun x =>
-      ⟨g x, by rw [← hgrange]; exact ⟨x, rfl⟩⟩
-    let hfun : Set.Icc (0 : Real) 1 → S := fun x =>
-      ⟨h x, by rw [← hhrange]; exact ⟨x, rfl⟩⟩
-    ∀ (hgfun_inj : Function.Injective gfun), ∀ (hhfun_inj : Function.Injective hfun), ∀
-        (hgfun_surj : Function.Surjective gfun), ∀ (hhfun_surj : Function.Surjective hfun),
-    let ge : Set.Icc (0 : Real) 1 ≃ S := Equiv.ofBijective gfun ⟨hgfun_inj, hgfun_surj⟩
-    let he : Set.Icc (0 : Real) 1 ≃ S := Equiv.ofBijective hfun ⟨hhfun_inj, hhfun_surj⟩
-    ∀ (hgfun_cont : Continuous gfun), ∀ (hhfun_cont : Continuous hfun),
-    let GH := Continuous.homeoOfEquivCompactToT2 (f := ge) hgfun_cont
-    let HH := Continuous.homeoOfEquivCompactToT2 (f := he) hhfun_cont
-    let phi : Set.Icc (0 : Real) 1 ≃ₜ Set.Icc (0 : Real) 1 := GH.trans HH.symm
-    (StrictMono phi) → (
-    let i1 : Fin (p.count + 1) := ⟨1, by have hp := p.positive; omega⟩
-    let j1 : Fin (q.count + 1) := ⟨1, by have hq := q.positive; omega⟩
-    ∀ (hpi : 0 < p.time i1), ∀ (hqj : 0 < q.time j1), ∀ (hpi1 : p.time i1 ≤ 1), ∀ (hqj1 : q.time
-        j1 ≤ 1),
-    let α : Set.Icc (0 : Real) 1 := ⟨p.time i1, hpi.le, hpi1⟩
-    let β : Set.Icc (0 : Real) 1 := ⟨q.time j1, hqj.le, hqj1⟩
-    let c : Real := min (phi α : Real) (β : Real)
-    ∀ (hcpos : 0 < c), (c ≤ (phi α : Real)) → ((c ≤ (β : Real)) → (∀ (hc_le_one : c ≤ 1),
-    let r2 : Set.Icc (0 : Real) 1 := ⟨2 * c / 3,
-      ⟨by linarith [hcpos], by have := hc_le_one; linarith⟩⟩
-    ((r2 : Real) < c) → (
-    let xR : Set.Icc (0 : Real) 1 := phi.symm r2
-    (phi xR = r2) → (xR < α))))) := by
+    ∀ (S : Set (ℝ × ℝ)),
+      ∀ (g : (↑(Set.Icc (0 : ℝ) (1 : ℝ)) : Type) → ℝ × ℝ),
+        ∀ (h : (↑(Set.Icc (0 : ℝ) (1 : ℝ)) : Type) → ℝ × ℝ),
+          ∀ (p : P3723T1PolygonalParameterization g),
+            ∀ (q : P3723T1PolygonalParameterization h),
+              ∀ (hgrange : Set.range g = S),
+                ∀ (hhrange : Set.range h = S),
+                  let gfun : Set.Icc (0 : Real) 1 → S := fun x =>
+                    ⟨g x, by rw [← hgrange]; exact ⟨x, rfl⟩⟩;
+                  let hfun : Set.Icc (0 : Real) 1 → S := fun x =>
+                    ⟨h x, by rw [← hhrange]; exact ⟨x, rfl⟩⟩;
+                  ∀ (hgfun_inj : Function.Injective gfun),
+                    ∀ (hhfun_inj : Function.Injective hfun),
+                      ∀ (hgfun_surj : Function.Surjective gfun),
+                        ∀ (hhfun_surj : Function.Surjective hfun),
+                          let ge : Set.Icc (0 : Real) 1 ≃ S :=
+                            Equiv.ofBijective gfun ⟨hgfun_inj, hgfun_surj⟩;
+                          let he : Set.Icc (0 : Real) 1 ≃ S :=
+                            Equiv.ofBijective hfun ⟨hhfun_inj, hhfun_surj⟩;
+                          ∀ (hgfun_cont : Continuous gfun),
+                            ∀ (hhfun_cont : Continuous hfun),
+                              let GH :=
+                                Continuous.homeoOfEquivCompactToT2 (f := ge)
+                                  hgfun_cont;
+                              let HH :=
+                                Continuous.homeoOfEquivCompactToT2 (f := he)
+                                  hhfun_cont;
+                              let phi :
+                                Set.Icc (0 : Real) 1 ≃ₜ Set.Icc (0 : Real) 1 :=
+                                GH.trans HH.symm;
+                              (StrictMono phi) →
+                                (let i1 : Fin (p.count + 1) :=
+                                  ⟨1, by have hp := p.positive; omega⟩;
+                                let j1 : Fin (q.count + 1) :=
+                                  ⟨1, by have hq := q.positive; omega⟩;
+                                ∀ (hpi : 0 < p.time i1),
+                                  ∀ (hqj : 0 < q.time j1),
+                                    ∀ (hpi1 : p.time i1 ≤ 1),
+                                      ∀ (hqj1 : q.time j1 ≤ 1),
+                                        let α : Set.Icc (0 : Real) 1 :=
+                                          ⟨p.time i1, hpi.le, hpi1⟩;
+                                        let β : Set.Icc (0 : Real) 1 :=
+                                          ⟨q.time j1, hqj.le, hqj1⟩;
+                                        let c : Real :=
+                                          min (phi α : Real) (β : Real);
+                                        ∀ (hcpos : 0 < c),
+                                          (c ≤ (phi α : Real)) →
+                                            (∀ (hc_le_one : c ≤ 1),
+                                              let r2 : Set.Icc (0 : Real) 1 :=
+                                                ⟨2 * c / 3,
+                                                  ⟨by linarith [hcpos], by
+                                                    have := hc_le_one; linarith⟩⟩;
+                                              ((r2 : Real) < c) →
+                                                (let xR : Set.Icc (0 : Real) 1 :=
+                                                  phi.symm r2;
+                                                (phi xR = r2) → (xR < α)))) := by
   classical
   intro S g h p q hgrange hhrange gfun hfun hgfun_inj hhfun_inj hgfun_surj hhfun_surj ge he
       hgfun_cont hhfun_cont GH HH phi hphi_mono i1 j1 hpi hqj hpi1 hqj1 α β c hcpos hc_le_a
-      hc_le_b hc_le_one r2 hr2c xR hφR
+      hc_le_one r2 hr2c xR hφR
   by_contra hh
   have hle : α ≤ xR := le_of_not_gt hh
   have hm := hphi_mono.monotone hle
@@ -709,43 +839,72 @@ private theorem hxRa :
   exact (not_le_of_gt hrc') hm
 
 private theorem hxLR :
-    ∀ (S : Set (ℝ × ℝ)), ∀ (g : (↑(Set.Icc (0 : ℝ) (1 : ℝ)) : Type) → ℝ × ℝ), ∀ (h : (↑(Set.Icc
-        (0 : ℝ) (1 : ℝ)) : Type) → ℝ × ℝ), ∀ (p : P3723T1PolygonalParameterization g), ∀ (q :
-        P3723T1PolygonalParameterization h), ∀ (hgrange : Set.range g = S), ∀ (hhrange :
-        Set.range h = S),
-    let gfun : Set.Icc (0 : Real) 1 → S := fun x =>
-      ⟨g x, by rw [← hgrange]; exact ⟨x, rfl⟩⟩
-    let hfun : Set.Icc (0 : Real) 1 → S := fun x =>
-      ⟨h x, by rw [← hhrange]; exact ⟨x, rfl⟩⟩
-    ∀ (hgfun_inj : Function.Injective gfun), ∀ (hhfun_inj : Function.Injective hfun), ∀
-        (hgfun_surj : Function.Surjective gfun), ∀ (hhfun_surj : Function.Surjective hfun),
-    let ge : Set.Icc (0 : Real) 1 ≃ S := Equiv.ofBijective gfun ⟨hgfun_inj, hgfun_surj⟩
-    let he : Set.Icc (0 : Real) 1 ≃ S := Equiv.ofBijective hfun ⟨hhfun_inj, hhfun_surj⟩
-    ∀ (hgfun_cont : Continuous gfun), ∀ (hhfun_cont : Continuous hfun),
-    let GH := Continuous.homeoOfEquivCompactToT2 (f := ge) hgfun_cont
-    let HH := Continuous.homeoOfEquivCompactToT2 (f := he) hhfun_cont
-    let phi : Set.Icc (0 : Real) 1 ≃ₜ Set.Icc (0 : Real) 1 := GH.trans HH.symm
-    (StrictMono phi) → (
-    let i1 : Fin (p.count + 1) := ⟨1, by have hp := p.positive; omega⟩
-    let j1 : Fin (q.count + 1) := ⟨1, by have hq := q.positive; omega⟩
-    ∀ (hpi : 0 < p.time i1), ∀ (hqj : 0 < q.time j1), ∀ (hpi1 : p.time i1 ≤ 1), ∀ (hqj1 : q.time
-        j1 ≤ 1),
-    let α : Set.Icc (0 : Real) 1 := ⟨p.time i1, hpi.le, hpi1⟩
-    let β : Set.Icc (0 : Real) 1 := ⟨q.time j1, hqj.le, hqj1⟩
-    let c : Real := min (phi α : Real) (β : Real)
-    ∀ (hcpos : 0 < c), (c ≤ (β : Real)) → (∀ (hc_le_one : c ≤ 1),
-    let r1 : Set.Icc (0 : Real) 1 := ⟨c / 3,
-      ⟨by linarith [hcpos], by have := hc_le_one; linarith⟩⟩
-    let r2 : Set.Icc (0 : Real) 1 := ⟨2 * c / 3,
-      ⟨by linarith [hcpos], by have := hc_le_one; linarith⟩⟩
-    ((r1 : Real) < (r2 : Real)) → (
-    let xL : Set.Icc (0 : Real) 1 := phi.symm r1
-    let xR : Set.Icc (0 : Real) 1 := phi.symm r2
-    (phi xL = r1) → ((phi xR = r2) → (xL < xR))))) := by
+    ∀ (S : Set (ℝ × ℝ)),
+      ∀ (g : (↑(Set.Icc (0 : ℝ) (1 : ℝ)) : Type) → ℝ × ℝ),
+        ∀ (h : (↑(Set.Icc (0 : ℝ) (1 : ℝ)) : Type) → ℝ × ℝ),
+          ∀ (p : P3723T1PolygonalParameterization g),
+            ∀ (q : P3723T1PolygonalParameterization h),
+              ∀ (hgrange : Set.range g = S),
+                ∀ (hhrange : Set.range h = S),
+                  let gfun : Set.Icc (0 : Real) 1 → S := fun x =>
+                    ⟨g x, by rw [← hgrange]; exact ⟨x, rfl⟩⟩;
+                  let hfun : Set.Icc (0 : Real) 1 → S := fun x =>
+                    ⟨h x, by rw [← hhrange]; exact ⟨x, rfl⟩⟩;
+                  ∀ (hgfun_inj : Function.Injective gfun),
+                    ∀ (hhfun_inj : Function.Injective hfun),
+                      ∀ (hgfun_surj : Function.Surjective gfun),
+                        ∀ (hhfun_surj : Function.Surjective hfun),
+                          let ge : Set.Icc (0 : Real) 1 ≃ S :=
+                            Equiv.ofBijective gfun ⟨hgfun_inj, hgfun_surj⟩;
+                          let he : Set.Icc (0 : Real) 1 ≃ S :=
+                            Equiv.ofBijective hfun ⟨hhfun_inj, hhfun_surj⟩;
+                          ∀ (hgfun_cont : Continuous gfun),
+                            ∀ (hhfun_cont : Continuous hfun),
+                              let GH :=
+                                Continuous.homeoOfEquivCompactToT2 (f := ge)
+                                  hgfun_cont;
+                              let HH :=
+                                Continuous.homeoOfEquivCompactToT2 (f := he)
+                                  hhfun_cont;
+                              let phi :
+                                Set.Icc (0 : Real) 1 ≃ₜ Set.Icc (0 : Real) 1 :=
+                                GH.trans HH.symm;
+                              (StrictMono phi) →
+                                (let i1 : Fin (p.count + 1) :=
+                                  ⟨1, by have hp := p.positive; omega⟩;
+                                let j1 : Fin (q.count + 1) :=
+                                  ⟨1, by have hq := q.positive; omega⟩;
+                                ∀ (hpi : 0 < p.time i1),
+                                  ∀ (hqj : 0 < q.time j1),
+                                    ∀ (hpi1 : p.time i1 ≤ 1),
+                                      ∀ (hqj1 : q.time j1 ≤ 1),
+                                        let α : Set.Icc (0 : Real) 1 :=
+                                          ⟨p.time i1, hpi.le, hpi1⟩;
+                                        let β : Set.Icc (0 : Real) 1 :=
+                                          ⟨q.time j1, hqj.le, hqj1⟩;
+                                        let c : Real :=
+                                          min (phi α : Real) (β : Real);
+                                        ∀ (hcpos : 0 < c),
+                                          (∀ (hc_le_one : c ≤ 1),
+                                            let r1 : Set.Icc (0 : Real) 1 :=
+                                              ⟨c / 3,
+                                                ⟨by linarith [hcpos], by
+                                                  have := hc_le_one; linarith⟩⟩;
+                                            let r2 : Set.Icc (0 : Real) 1 :=
+                                              ⟨2 * c / 3,
+                                                ⟨by linarith [hcpos], by
+                                                  have := hc_le_one; linarith⟩⟩;
+                                            ((r1 : Real) < (r2 : Real)) →
+                                              (let xL : Set.Icc (0 : Real) 1 :=
+                                                phi.symm r1;
+                                              let xR : Set.Icc (0 : Real) 1 :=
+                                                phi.symm r2;
+                                              (phi xL = r1) →
+                                                ((phi xR = r2) → (xL < xR))))) := by
   classical
   intro S g h p q hgrange hhrange gfun hfun hgfun_inj hhfun_inj hgfun_surj hhfun_surj ge he
-      hgfun_cont hhfun_cont GH HH phi hphi_mono i1 j1 hpi hqj hpi1 hqj1 α β c hcpos hc_le_b
-      hc_le_one r1 r2 hr12 xL xR hφL hφR
+      hgfun_cont hhfun_cont GH HH phi hphi_mono i1 j1 hpi hqj hpi1 hqj1 α β c hcpos hc_le_one r1
+      r2 hr12 xL xR hφL hφR
   by_contra hh
   have hle : xR ≤ xL := le_of_not_gt hh
   have hm := hphi_mono.monotone hle
@@ -754,41 +913,74 @@ private theorem hxLR :
   exact (not_le_of_gt hlt) hm
 
 private theorem hEqL :
-    ∀ (S : Set (ℝ × ℝ)), ∀ (g : (↑(Set.Icc (0 : ℝ) (1 : ℝ)) : Type) → ℝ × ℝ), ∀ (h : (↑(Set.Icc
-        (0 : ℝ) (1 : ℝ)) : Type) → ℝ × ℝ), ∀ (p : P3723T1PolygonalParameterization g), ∀ (q :
-        P3723T1PolygonalParameterization h), ∀ (hgrange : Set.range g = S), ∀ (hhrange :
-        Set.range h = S),
-    let gfun : Set.Icc (0 : Real) 1 → S := fun x =>
-      ⟨g x, by rw [← hgrange]; exact ⟨x, rfl⟩⟩
-    let hfun : Set.Icc (0 : Real) 1 → S := fun x =>
-      ⟨h x, by rw [← hhrange]; exact ⟨x, rfl⟩⟩
-    ∀ (hgfun_inj : Function.Injective gfun), ∀ (hhfun_inj : Function.Injective hfun), ∀
-        (hgfun_surj : Function.Surjective gfun), ∀ (hhfun_surj : Function.Surjective hfun),
-    let ge : Set.Icc (0 : Real) 1 ≃ S := Equiv.ofBijective gfun ⟨hgfun_inj, hgfun_surj⟩
-    let he : Set.Icc (0 : Real) 1 ≃ S := Equiv.ofBijective hfun ⟨hhfun_inj, hhfun_surj⟩
-    ∀ (hgfun_cont : Continuous gfun), ∀ (hhfun_cont : Continuous hfun),
-    let GH := Continuous.homeoOfEquivCompactToT2 (f := ge) hgfun_cont
-    let HH := Continuous.homeoOfEquivCompactToT2 (f := he) hhfun_cont
-    let phi : Set.Icc (0 : Real) 1 ≃ₜ Set.Icc (0 : Real) 1 := GH.trans HH.symm
-    (∀ (x : Set.Icc (0 : Real) 1), h (phi x) = g x) → (
-    let i1 : Fin (p.count + 1) := ⟨1, by have hp := p.positive; omega⟩
-    let j1 : Fin (q.count + 1) := ⟨1, by have hq := q.positive; omega⟩
-    ∀ (hpi : 0 < p.time i1), ∀ (hqj : 0 < q.time j1), ∀ (hpi1 : p.time i1 ≤ 1), ∀ (hqj1 : q.time
-        j1 ≤ 1),
-    let α : Set.Icc (0 : Real) 1 := ⟨p.time i1, hpi.le, hpi1⟩
-    let β : Set.Icc (0 : Real) 1 := ⟨q.time j1, hqj.le, hqj1⟩
-    let c : Real := min (phi α : Real) (β : Real)
-    ∀ (hcpos : 0 < c), (c ≤ (β : Real)) → (∀ (hc_le_one : c ≤ 1),
-    let r1 : Set.Icc (0 : Real) 1 := ⟨c / 3,
-      ⟨by linarith [hcpos], by have := hc_le_one; linarith⟩⟩
-    let xL : Set.Icc (0 : Real) 1 := phi.symm r1
-    (phi xL = r1) → (∀ (Ag : ℝ × ℝ), ∀ (Bg : ℝ × ℝ), ∀ (Ah : ℝ × ℝ), ∀ (Bh : ℝ × ℝ), (g xL = Ag +
-        (↑xL : ℝ) • Bg) → ((h r1 = Ah + (↑r1 : ℝ) • Bh) → (Ag + (xL : Real) • Bg = Ah + (r1 :
-        Real) • Bh))))) := by
+    ∀ (S : Set (ℝ × ℝ)),
+      ∀ (g : (↑(Set.Icc (0 : ℝ) (1 : ℝ)) : Type) → ℝ × ℝ),
+        ∀ (h : (↑(Set.Icc (0 : ℝ) (1 : ℝ)) : Type) → ℝ × ℝ),
+          ∀ (p : P3723T1PolygonalParameterization g),
+            ∀ (q : P3723T1PolygonalParameterization h),
+              ∀ (hgrange : Set.range g = S),
+                ∀ (hhrange : Set.range h = S),
+                  let gfun : Set.Icc (0 : Real) 1 → S := fun x =>
+                    ⟨g x, by rw [← hgrange]; exact ⟨x, rfl⟩⟩;
+                  let hfun : Set.Icc (0 : Real) 1 → S := fun x =>
+                    ⟨h x, by rw [← hhrange]; exact ⟨x, rfl⟩⟩;
+                  ∀ (hgfun_inj : Function.Injective gfun),
+                    ∀ (hhfun_inj : Function.Injective hfun),
+                      ∀ (hgfun_surj : Function.Surjective gfun),
+                        ∀ (hhfun_surj : Function.Surjective hfun),
+                          let ge : Set.Icc (0 : Real) 1 ≃ S :=
+                            Equiv.ofBijective gfun ⟨hgfun_inj, hgfun_surj⟩;
+                          let he : Set.Icc (0 : Real) 1 ≃ S :=
+                            Equiv.ofBijective hfun ⟨hhfun_inj, hhfun_surj⟩;
+                          ∀ (hgfun_cont : Continuous gfun),
+                            ∀ (hhfun_cont : Continuous hfun),
+                              let GH :=
+                                Continuous.homeoOfEquivCompactToT2 (f := ge)
+                                  hgfun_cont;
+                              let HH :=
+                                Continuous.homeoOfEquivCompactToT2 (f := he)
+                                  hhfun_cont;
+                              let phi :
+                                Set.Icc (0 : Real) 1 ≃ₜ Set.Icc (0 : Real) 1 :=
+                                GH.trans HH.symm;
+                              (∀ (x : Set.Icc (0 : Real) 1), h (phi x) = g x) →
+                                (let i1 : Fin (p.count + 1) :=
+                                  ⟨1, by have hp := p.positive; omega⟩;
+                                let j1 : Fin (q.count + 1) :=
+                                  ⟨1, by have hq := q.positive; omega⟩;
+                                ∀ (hpi : 0 < p.time i1),
+                                  ∀ (hqj : 0 < q.time j1),
+                                    ∀ (hpi1 : p.time i1 ≤ 1),
+                                      ∀ (hqj1 : q.time j1 ≤ 1),
+                                        let α : Set.Icc (0 : Real) 1 :=
+                                          ⟨p.time i1, hpi.le, hpi1⟩;
+                                        let β : Set.Icc (0 : Real) 1 :=
+                                          ⟨q.time j1, hqj.le, hqj1⟩;
+                                        let c : Real :=
+                                          min (phi α : Real) (β : Real);
+                                        ∀ (hcpos : 0 < c),
+                                          (∀ (hc_le_one : c ≤ 1),
+                                            let r1 : Set.Icc (0 : Real) 1 :=
+                                              ⟨c / 3,
+                                                ⟨by linarith [hcpos], by
+                                                  have := hc_le_one; linarith⟩⟩;
+                                            let xL : Set.Icc (0 : Real) 1 :=
+                                              phi.symm r1;
+                                            (phi xL = r1) →
+                                              (∀ (Ag : ℝ × ℝ),
+                                                ∀ (Bg : ℝ × ℝ),
+                                                  ∀ (Ah : ℝ × ℝ),
+                                                    ∀ (Bh : ℝ × ℝ),
+                                                      (g xL = Ag + (↑xL : ℝ) • Bg) →
+                                                        ((h r1 =
+                                                            Ah + (↑r1 : ℝ) • Bh) →
+                                                          (Ag + (xL : Real) • Bg =
+                                                            Ah +
+                                                              (r1 : Real) • Bh))))) := by
   classical
   intro S g h p q hgrange hhrange gfun hfun hgfun_inj hhfun_inj hgfun_surj hhfun_surj ge he
-      hgfun_cont hhfun_cont GH HH phi hrel i1 j1 hpi hqj hpi1 hqj1 α β c hcpos hc_le_b hc_le_one
-      r1 xL hφL Ag Bg Ah Bh hgL hhL
+      hgfun_cont hhfun_cont GH HH phi hrel i1 j1 hpi hqj hpi1 hqj1 α β c hcpos hc_le_one r1 xL
+      hφL Ag Bg Ah Bh hgL hhL
   calc
     Ag + (xL : Real) • Bg = g xL := hgL.symm
     _ = h (phi xL) := (hrel xL).symm
@@ -796,41 +988,74 @@ private theorem hEqL :
     _ = Ah + (r1 : Real) • Bh := hhL
 
 private theorem hEqR :
-    ∀ (S : Set (ℝ × ℝ)), ∀ (g : (↑(Set.Icc (0 : ℝ) (1 : ℝ)) : Type) → ℝ × ℝ), ∀ (h : (↑(Set.Icc
-        (0 : ℝ) (1 : ℝ)) : Type) → ℝ × ℝ), ∀ (p : P3723T1PolygonalParameterization g), ∀ (q :
-        P3723T1PolygonalParameterization h), ∀ (hgrange : Set.range g = S), ∀ (hhrange :
-        Set.range h = S),
-    let gfun : Set.Icc (0 : Real) 1 → S := fun x =>
-      ⟨g x, by rw [← hgrange]; exact ⟨x, rfl⟩⟩
-    let hfun : Set.Icc (0 : Real) 1 → S := fun x =>
-      ⟨h x, by rw [← hhrange]; exact ⟨x, rfl⟩⟩
-    ∀ (hgfun_inj : Function.Injective gfun), ∀ (hhfun_inj : Function.Injective hfun), ∀
-        (hgfun_surj : Function.Surjective gfun), ∀ (hhfun_surj : Function.Surjective hfun),
-    let ge : Set.Icc (0 : Real) 1 ≃ S := Equiv.ofBijective gfun ⟨hgfun_inj, hgfun_surj⟩
-    let he : Set.Icc (0 : Real) 1 ≃ S := Equiv.ofBijective hfun ⟨hhfun_inj, hhfun_surj⟩
-    ∀ (hgfun_cont : Continuous gfun), ∀ (hhfun_cont : Continuous hfun),
-    let GH := Continuous.homeoOfEquivCompactToT2 (f := ge) hgfun_cont
-    let HH := Continuous.homeoOfEquivCompactToT2 (f := he) hhfun_cont
-    let phi : Set.Icc (0 : Real) 1 ≃ₜ Set.Icc (0 : Real) 1 := GH.trans HH.symm
-    (∀ (x : Set.Icc (0 : Real) 1), h (phi x) = g x) → (
-    let i1 : Fin (p.count + 1) := ⟨1, by have hp := p.positive; omega⟩
-    let j1 : Fin (q.count + 1) := ⟨1, by have hq := q.positive; omega⟩
-    ∀ (hpi : 0 < p.time i1), ∀ (hqj : 0 < q.time j1), ∀ (hpi1 : p.time i1 ≤ 1), ∀ (hqj1 : q.time
-        j1 ≤ 1),
-    let α : Set.Icc (0 : Real) 1 := ⟨p.time i1, hpi.le, hpi1⟩
-    let β : Set.Icc (0 : Real) 1 := ⟨q.time j1, hqj.le, hqj1⟩
-    let c : Real := min (phi α : Real) (β : Real)
-    ∀ (hcpos : 0 < c), (c ≤ (β : Real)) → (∀ (hc_le_one : c ≤ 1),
-    let r2 : Set.Icc (0 : Real) 1 := ⟨2 * c / 3,
-      ⟨by linarith [hcpos], by have := hc_le_one; linarith⟩⟩
-    let xR : Set.Icc (0 : Real) 1 := phi.symm r2
-    (phi xR = r2) → (∀ (Ag : ℝ × ℝ), ∀ (Bg : ℝ × ℝ), ∀ (Ah : ℝ × ℝ), ∀ (Bh : ℝ × ℝ), (g xR = Ag +
-        (↑xR : ℝ) • Bg) → ((h r2 = Ah + (↑r2 : ℝ) • Bh) → (Ag + (xR : Real) • Bg = Ah + (r2 :
-        Real) • Bh))))) := by
+    ∀ (S : Set (ℝ × ℝ)),
+      ∀ (g : (↑(Set.Icc (0 : ℝ) (1 : ℝ)) : Type) → ℝ × ℝ),
+        ∀ (h : (↑(Set.Icc (0 : ℝ) (1 : ℝ)) : Type) → ℝ × ℝ),
+          ∀ (p : P3723T1PolygonalParameterization g),
+            ∀ (q : P3723T1PolygonalParameterization h),
+              ∀ (hgrange : Set.range g = S),
+                ∀ (hhrange : Set.range h = S),
+                  let gfun : Set.Icc (0 : Real) 1 → S := fun x =>
+                    ⟨g x, by rw [← hgrange]; exact ⟨x, rfl⟩⟩;
+                  let hfun : Set.Icc (0 : Real) 1 → S := fun x =>
+                    ⟨h x, by rw [← hhrange]; exact ⟨x, rfl⟩⟩;
+                  ∀ (hgfun_inj : Function.Injective gfun),
+                    ∀ (hhfun_inj : Function.Injective hfun),
+                      ∀ (hgfun_surj : Function.Surjective gfun),
+                        ∀ (hhfun_surj : Function.Surjective hfun),
+                          let ge : Set.Icc (0 : Real) 1 ≃ S :=
+                            Equiv.ofBijective gfun ⟨hgfun_inj, hgfun_surj⟩;
+                          let he : Set.Icc (0 : Real) 1 ≃ S :=
+                            Equiv.ofBijective hfun ⟨hhfun_inj, hhfun_surj⟩;
+                          ∀ (hgfun_cont : Continuous gfun),
+                            ∀ (hhfun_cont : Continuous hfun),
+                              let GH :=
+                                Continuous.homeoOfEquivCompactToT2 (f := ge)
+                                  hgfun_cont;
+                              let HH :=
+                                Continuous.homeoOfEquivCompactToT2 (f := he)
+                                  hhfun_cont;
+                              let phi :
+                                Set.Icc (0 : Real) 1 ≃ₜ Set.Icc (0 : Real) 1 :=
+                                GH.trans HH.symm;
+                              (∀ (x : Set.Icc (0 : Real) 1), h (phi x) = g x) →
+                                (let i1 : Fin (p.count + 1) :=
+                                  ⟨1, by have hp := p.positive; omega⟩;
+                                let j1 : Fin (q.count + 1) :=
+                                  ⟨1, by have hq := q.positive; omega⟩;
+                                ∀ (hpi : 0 < p.time i1),
+                                  ∀ (hqj : 0 < q.time j1),
+                                    ∀ (hpi1 : p.time i1 ≤ 1),
+                                      ∀ (hqj1 : q.time j1 ≤ 1),
+                                        let α : Set.Icc (0 : Real) 1 :=
+                                          ⟨p.time i1, hpi.le, hpi1⟩;
+                                        let β : Set.Icc (0 : Real) 1 :=
+                                          ⟨q.time j1, hqj.le, hqj1⟩;
+                                        let c : Real :=
+                                          min (phi α : Real) (β : Real);
+                                        ∀ (hcpos : 0 < c),
+                                          (∀ (hc_le_one : c ≤ 1),
+                                            let r2 : Set.Icc (0 : Real) 1 :=
+                                              ⟨2 * c / 3,
+                                                ⟨by linarith [hcpos], by
+                                                  have := hc_le_one; linarith⟩⟩;
+                                            let xR : Set.Icc (0 : Real) 1 :=
+                                              phi.symm r2;
+                                            (phi xR = r2) →
+                                              (∀ (Ag : ℝ × ℝ),
+                                                ∀ (Bg : ℝ × ℝ),
+                                                  ∀ (Ah : ℝ × ℝ),
+                                                    ∀ (Bh : ℝ × ℝ),
+                                                      (g xR = Ag + (↑xR : ℝ) • Bg) →
+                                                        ((h r2 =
+                                                            Ah + (↑r2 : ℝ) • Bh) →
+                                                          (Ag + (xR : Real) • Bg =
+                                                            Ah +
+                                                              (r2 : Real) • Bh))))) := by
   classical
   intro S g h p q hgrange hhrange gfun hfun hgfun_inj hhfun_inj hgfun_surj hhfun_surj ge he
-      hgfun_cont hhfun_cont GH HH phi hrel i1 j1 hpi hqj hpi1 hqj1 α β c hcpos hc_le_b hc_le_one
-      r2 xR hφR Ag Bg Ah Bh hgR hhR
+      hgfun_cont hhfun_cont GH HH phi hrel i1 j1 hpi hqj hpi1 hqj1 α β c hcpos hc_le_one r2 xR
+      hφR Ag Bg Ah Bh hgR hhR
   calc
     Ag + (xR : Real) • Bg = g xR := hgR.symm
     _ = h (phi xR) := (hrel xR).symm
@@ -838,43 +1063,80 @@ private theorem hEqR :
     _ = Ah + (r2 : Real) • Bh := hhR
 
 private theorem hvel :
-    ∀ (S : Set (ℝ × ℝ)), ∀ (g : (↑(Set.Icc (0 : ℝ) (1 : ℝ)) : Type) → ℝ × ℝ), ∀ (h : (↑(Set.Icc
-        (0 : ℝ) (1 : ℝ)) : Type) → ℝ × ℝ), ∀ (p : P3723T1PolygonalParameterization g), ∀ (q :
-        P3723T1PolygonalParameterization h), ∀ (hgrange : Set.range g = S), ∀ (hhrange :
-        Set.range h = S),
-    let gfun : Set.Icc (0 : Real) 1 → S := fun x =>
-      ⟨g x, by rw [← hgrange]; exact ⟨x, rfl⟩⟩
-    let hfun : Set.Icc (0 : Real) 1 → S := fun x =>
-      ⟨h x, by rw [← hhrange]; exact ⟨x, rfl⟩⟩
-    ∀ (hgfun_inj : Function.Injective gfun), ∀ (hhfun_inj : Function.Injective hfun), ∀
-        (hgfun_surj : Function.Surjective gfun), ∀ (hhfun_surj : Function.Surjective hfun),
-    let ge : Set.Icc (0 : Real) 1 ≃ S := Equiv.ofBijective gfun ⟨hgfun_inj, hgfun_surj⟩
-    let he : Set.Icc (0 : Real) 1 ≃ S := Equiv.ofBijective hfun ⟨hhfun_inj, hhfun_surj⟩
-    ∀ (hgfun_cont : Continuous gfun), ∀ (hhfun_cont : Continuous hfun),
-    let GH := Continuous.homeoOfEquivCompactToT2 (f := ge) hgfun_cont
-    let HH := Continuous.homeoOfEquivCompactToT2 (f := he) hhfun_cont
-    let phi : Set.Icc (0 : Real) 1 ≃ₜ Set.Icc (0 : Real) 1 := GH.trans HH.symm
-    let i1 : Fin (p.count + 1) := ⟨1, by have hp := p.positive; omega⟩
-    let j1 : Fin (q.count + 1) := ⟨1, by have hq := q.positive; omega⟩
-    ∀ (hpi : 0 < p.time i1), ∀ (hqj : 0 < q.time j1), ∀ (hpi1 : p.time i1 ≤ 1), ∀ (hqj1 : q.time
-        j1 ≤ 1),
-    let α : Set.Icc (0 : Real) 1 := ⟨p.time i1, hpi.le, hpi1⟩
-    let β : Set.Icc (0 : Real) 1 := ⟨q.time j1, hqj.le, hqj1⟩
-    let c : Real := min (phi α : Real) (β : Real)
-    ∀ (hcpos : 0 < c), (c ≤ (β : Real)) → (∀ (hc_le_one : c ≤ 1),
-    let r1 : Set.Icc (0 : Real) 1 := ⟨c / 3,
-      ⟨by linarith [hcpos], by have := hc_le_one; linarith⟩⟩
-    let r2 : Set.Icc (0 : Real) 1 := ⟨2 * c / 3,
-      ⟨by linarith [hcpos], by have := hc_le_one; linarith⟩⟩
-    let xL : Set.Icc (0 : Real) 1 := phi.symm r1
-    let xR : Set.Icc (0 : Real) 1 := phi.symm r2
-    ∀ (Ag : ℝ × ℝ), ∀ (Bg : ℝ × ℝ), ∀ (Ah : ℝ × ℝ), ∀ (Bh : ℝ × ℝ), (Ag + (xL : Real) • Bg = Ah +
-        (r1 : Real) • Bh) → ((Ag + (xR : Real) • Bg = Ah + (r2 : Real) • Bh) → (((xR : Real) -
-        (xL : Real)) • Bg = ((r2 : Real) - (r1 : Real)) • Bh))) := by
+    ∀ (S : Set (ℝ × ℝ)),
+      ∀ (g : (↑(Set.Icc (0 : ℝ) (1 : ℝ)) : Type) → ℝ × ℝ),
+        ∀ (h : (↑(Set.Icc (0 : ℝ) (1 : ℝ)) : Type) → ℝ × ℝ),
+          ∀ (p : P3723T1PolygonalParameterization g),
+            ∀ (q : P3723T1PolygonalParameterization h),
+              ∀ (hgrange : Set.range g = S),
+                ∀ (hhrange : Set.range h = S),
+                  let gfun : Set.Icc (0 : Real) 1 → S := fun x =>
+                    ⟨g x, by rw [← hgrange]; exact ⟨x, rfl⟩⟩;
+                  let hfun : Set.Icc (0 : Real) 1 → S := fun x =>
+                    ⟨h x, by rw [← hhrange]; exact ⟨x, rfl⟩⟩;
+                  ∀ (hgfun_inj : Function.Injective gfun),
+                    ∀ (hhfun_inj : Function.Injective hfun),
+                      ∀ (hgfun_surj : Function.Surjective gfun),
+                        ∀ (hhfun_surj : Function.Surjective hfun),
+                          let ge : Set.Icc (0 : Real) 1 ≃ S :=
+                            Equiv.ofBijective gfun ⟨hgfun_inj, hgfun_surj⟩;
+                          let he : Set.Icc (0 : Real) 1 ≃ S :=
+                            Equiv.ofBijective hfun ⟨hhfun_inj, hhfun_surj⟩;
+                          ∀ (hgfun_cont : Continuous gfun),
+                            ∀ (hhfun_cont : Continuous hfun),
+                              let GH :=
+                                Continuous.homeoOfEquivCompactToT2 (f := ge)
+                                  hgfun_cont;
+                              let HH :=
+                                Continuous.homeoOfEquivCompactToT2 (f := he)
+                                  hhfun_cont;
+                              let phi :
+                                Set.Icc (0 : Real) 1 ≃ₜ Set.Icc (0 : Real) 1 :=
+                                GH.trans HH.symm;
+                              let i1 : Fin (p.count + 1) :=
+                                ⟨1, by have hp := p.positive; omega⟩;
+                              let j1 : Fin (q.count + 1) :=
+                                ⟨1, by have hq := q.positive; omega⟩;
+                              ∀ (hpi : 0 < p.time i1),
+                                ∀ (hqj : 0 < q.time j1),
+                                  ∀ (hpi1 : p.time i1 ≤ 1),
+                                    ∀ (hqj1 : q.time j1 ≤ 1),
+                                      let α : Set.Icc (0 : Real) 1 :=
+                                        ⟨p.time i1, hpi.le, hpi1⟩;
+                                      let β : Set.Icc (0 : Real) 1 :=
+                                        ⟨q.time j1, hqj.le, hqj1⟩;
+                                      let c : Real := min (phi α : Real) (β : Real);
+                                      ∀ (hcpos : 0 < c),
+                                        (∀ (hc_le_one : c ≤ 1),
+                                          let r1 : Set.Icc (0 : Real) 1 :=
+                                            ⟨c / 3,
+                                              ⟨by linarith [hcpos], by
+                                                have := hc_le_one; linarith⟩⟩;
+                                          let r2 : Set.Icc (0 : Real) 1 :=
+                                            ⟨2 * c / 3,
+                                              ⟨by linarith [hcpos], by
+                                                have := hc_le_one; linarith⟩⟩;
+                                          let xL : Set.Icc (0 : Real) 1 :=
+                                            phi.symm r1;
+                                          let xR : Set.Icc (0 : Real) 1 :=
+                                            phi.symm r2;
+                                          ∀ (Ag : ℝ × ℝ),
+                                            ∀ (Bg : ℝ × ℝ),
+                                              ∀ (Ah : ℝ × ℝ),
+                                                ∀ (Bh : ℝ × ℝ),
+                                                  (Ag + (xL : Real) • Bg =
+                                                      Ah + (r1 : Real) • Bh) →
+                                                    ((Ag + (xR : Real) • Bg =
+                                                        Ah + (r2 : Real) • Bh) →
+                                                      (((xR : Real) - (xL : Real)) •
+                                                          Bg =
+                                                        ((r2 : Real) -
+                                                            (r1 : Real)) •
+                                                          Bh))) := by
   classical
   intro S g h p q hgrange hhrange gfun hfun hgfun_inj hhfun_inj hgfun_surj hhfun_surj ge he
-      hgfun_cont hhfun_cont GH HH phi i1 j1 hpi hqj hpi1 hqj1 α β c hcpos hc_le_b hc_le_one r1 r2
-      xL xR Ag Bg Ah Bh hEqL hEqR
+      hgfun_cont hhfun_cont GH HH phi i1 j1 hpi hqj hpi1 hqj1 α β c hcpos hc_le_one r1 r2 xL xR
+      Ag Bg Ah Bh hEqL hEqR
   calc
     ((xR : Real) - (xL : Real)) • Bg =
         (Ag + (xR : Real) • Bg) - (Ag + (xL : Real) • Bg) := by module
@@ -987,19 +1249,19 @@ private theorem compareCore :
   have hφR : phi xR = r2 := by simp [xR]
   have hx0L : x0 < xL := ArcComparisonCoreFacts.hx0L S g h p q hgrange hhrange hgfun_inj
       hhfun_inj hgfun_surj hhfun_surj hgfun_cont hhfun_cont hphi0 hphi_mono hpi hqj hpi1 hqj1
-      hcpos hc_le_b hc_le_one hr1pos hφL
+      hcpos hc_le_one hr1pos hφL
   have hx0R : x0 < xR := ArcComparisonCoreFacts.hx0R S g h p q hgrange hhrange hgfun_inj
       hhfun_inj hgfun_surj hhfun_surj hgfun_cont hhfun_cont hphi0 hphi_mono hpi hqj hpi1 hqj1
-      hcpos hc_le_b hc_le_one hr2pos hφR
+      hcpos hc_le_one hr2pos hφR
   have hxLa : xL < α := ArcComparisonCoreFacts.hxLa S g h p q hgrange hhrange hgfun_inj hhfun_inj
       hgfun_surj hhfun_surj hgfun_cont hhfun_cont hphi_mono hpi hqj hpi1 hqj1 hcpos hc_le_a
-      hc_le_b hc_le_one hr1pos hr12 hr2c hφL
+          hc_le_one hφL
   have hxRa : xR < α := ArcComparisonCoreFacts.hxRa S g h p q hgrange hhrange hgfun_inj hhfun_inj
       hgfun_surj hhfun_surj hgfun_cont hhfun_cont hphi_mono hpi hqj hpi1 hqj1 hcpos hc_le_a
-      hc_le_b hc_le_one hr2c hφR
+          hc_le_one hr2c hφR
   have hxLR : xL < xR := ArcComparisonCoreFacts.hxLR S g h p q hgrange hhrange hgfun_inj
       hhfun_inj hgfun_surj hhfun_surj hgfun_cont hhfun_cont hphi_mono hpi hqj hpi1 hqj1 hcpos
-      hc_le_b hc_le_one hr12 hφL hφR
+          hc_le_one hr12 hφL hφR
   have hu1β : r1 < β := by
     have h : (r1 : Real) < (β : Real) := lt_of_lt_of_le (by dsimp [r1]; linarith [hcpos]) hc_le_b
     exact_mod_cast h
@@ -1042,13 +1304,13 @@ private theorem compareCore :
   have hhR := hhline r2 hqLow2 hqUp2
   have hEqL : Ag + (xL : Real) • Bg = Ah + (r1 : Real) • Bh := ArcComparisonCoreFacts.hEqL S g h
       p q hgrange hhrange hgfun_inj hhfun_inj hgfun_surj hhfun_surj hgfun_cont hhfun_cont hrel
-      hpi hqj hpi1 hqj1 hcpos hc_le_b hc_le_one hφL Ag Bg Ah Bh hgL hhL
+      hpi hqj hpi1 hqj1 hcpos hc_le_one hφL Ag Bg Ah Bh hgL hhL
   have hEqR : Ag + (xR : Real) • Bg = Ah + (r2 : Real) • Bh := ArcComparisonCoreFacts.hEqR S g h
       p q hgrange hhrange hgfun_inj hhfun_inj hgfun_surj hhfun_surj hgfun_cont hhfun_cont hrel
-      hpi hqj hpi1 hqj1 hcpos hc_le_b hc_le_one hφR Ag Bg Ah Bh hgR hhR
+      hpi hqj hpi1 hqj1 hcpos hc_le_one hφR Ag Bg Ah Bh hgR hhR
   have hvel : ((xR : Real) - (xL : Real)) • Bg = ((r2 : Real) - (r1 : Real)) • Bh :=
       ArcComparisonCoreFacts.hvel S g h p q hgrange hhrange hgfun_inj hhfun_inj hgfun_surj
-      hhfun_surj hgfun_cont hhfun_cont hpi hqj hpi1 hqj1 hcpos hc_le_b hc_le_one Ag Bg Ah Bh hEqL
+      hhfun_surj hgfun_cont hhfun_cont hpi hqj hpi1 hqj1 hcpos hc_le_one Ag Bg Ah Bh hEqL
       hEqR
   let scale : Real := ((xR : Real) - (xL : Real)) / ((r2 : Real) - (r1 : Real))
   have hscale_pos : 0 < scale := by
@@ -1056,7 +1318,7 @@ private theorem compareCore :
     exact div_pos (sub_pos.mpr (by exact_mod_cast hxLR)) (sub_pos.mpr hr12)
   have hscale := ArcComparisonGeometry.hscale S g h p q hgrange hhrange
       hgfun_inj hhfun_inj hgfun_surj hhfun_surj hgfun_cont hhfun_cont hpi hqj hpi1 hqj1 hcpos
-      hc_le_b hc_le_one hr12 Bg Bh hvel
+          hc_le_one hr12 Bg Bh hvel
   let z : Real × Real := g xL
   have hplowLstrict : p.time i0.castSucc < (xL : Real) := by
     rw [hiCast, hpstart]

@@ -10,13 +10,7 @@ public import Mathlib.Init
 public import LeanPool.ApollonianSuperharmonic.P5630T1MarkedRightOdometerAdjacencyReduction
 public import LeanPool.ApollonianSuperharmonic.BandOrderedGeneralSubtileSelectedRowGeometry
 public import LeanPool.ApollonianSuperharmonic.BandOrderedGeneralSubtileNormalizedBundleExists
-public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryCircleAction
-public import LeanPool.ApollonianSuperharmonic.LeftLatticeAdjacent
 public import LeanPool.ApollonianSuperharmonic.LeftLatticeAdjacentPackingSymmetryTransport
-public import LeanPool.ApollonianSuperharmonic.RightLatticeAdjacent
-public import LeanPool.ApollonianSuperharmonic.SubtileLatticeAdjacent
-public import LeanPool.ApollonianSuperharmonic.TileSubodometer
-public import LeanPool.ApollonianSuperharmonic.TileTranslation
 
 -- [TABLET NODE: MarkedOdometerAdjacencyReduction]
 
@@ -109,61 +103,31 @@ private theorem hr₀ :
 private theorem hrᵢ :
     (by
       classical
-      exact
-        ∀ (C₀ : BandCircle), ∀ (Cᵢ : BandCircle), ∀ (q : Fin (4 : ℕ) → CircleCoordinates), ∀ (i :
-            Fin (3 : ℕ)), ∀ (s : Fin (4 : ℕ)), ∀ (T₀ : ProtoTile), ∀ (Tᵢ : ProtoTile), ∀ (h₀ :
-            PartialOdometer), ∀ (hᵢ : PartialOdometer), ∀ (x : GaussianInt), ∀ (p₀ : ℝ × ℝ), ∀
-            (pᵢ : ℝ × ℝ), (q i.succ = Cᵢ.1.1) → ((TileCentroid Tᵢ - TileCentroid T₀ = (1 / 2 : ℝ)
-            • GaussianRealPoint ((⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt) ^ (↑s : ℕ) * (BandVectors.1
-            (q i.succ) (q (0 : Fin (4 : ℕ))) + BandVectors.1 (q (0 : Fin (4 : ℕ))) (q i.succ))))
-            → ((pᵢ.1 - p₀.1 = ((1 / 2 : ℝ) • GaussianRealPoint ((-(⟨(0 : ℤ), (1 : ℤ)⟩ :
-            GaussianInt)) ^ (↑s : ℕ) * (BandVectors.2 (q i.succ) (q (0 : Fin (4 : ℕ))) +
-            BandVectors.2 (q (0 : Fin (4 : ℕ))) (q i.succ)))).1) → ((pᵢ.2 - p₀.2 = ((1 / 2 : ℝ) •
-            GaussianRealPoint ((-(⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt)) ^ (↑s : ℕ) * (BandVectors.2
-            (q i.succ) (q (0 : Fin (4 : ℕ))) + BandVectors.2 (q (0 : Fin (4 : ℕ))) (q
-            i.succ)))).2) → (∀ (bundle : BandOrderedGeneralNormalizedOccurrenceBundle C₀ Cᵢ T₀ Tᵢ
-            h₀ hᵢ x),
-        let g := bundle.symmetry
-        let normalizationPresentation := BandPackingSymmetryQuadrupleAction g q
-        let sigma : Fin 3 → Fin 3 := fun j =>
-          if BandPackingSymmetryReversesOrientation g then -j else j
-        (0 < (q i.succ).1) → ((TileOdometer (q i.succ) Tᵢ hᵢ) → (∀ (transportedRootSlope : ℝ ×
-            ℝ), ∀ (transportedFixedSlope : ℝ × ℝ), ∀ (transportedRotation : Fin (4 : ℕ)),
-            (TileOdometer (BandPackingSymmetryQuadrupleAction g q ((fun (j : Fin (3 : ℕ)) => if
-            BandPackingSymmetryReversesOrientation g = true then -j else j) i).succ)
-            (BandPackingSymmetryTileAction g Tᵢ) (BandPackingSymmetryPartialOdometerAction g hᵢ))
-            → ((TileCentroid (BandPackingSymmetryTileAction g Tᵢ) - TileCentroid
-            (BandPackingSymmetryTileAction g T₀) = (1 / 2 : ℝ) • GaussianRealPoint ((⟨(0 : ℤ), (1
-            : ℤ)⟩ : GaussianInt) ^ (↑transportedRotation : ℕ) * (BandVectors.1
-            (BandPackingSymmetryQuadrupleAction g q ((fun (j : Fin (3 : ℕ)) => if
-            BandPackingSymmetryReversesOrientation g = true then -j else j) i).succ)
-            (BandPackingSymmetryQuadrupleAction g q (0 : Fin (4 : ℕ))) + BandVectors.1
-            (BandPackingSymmetryQuadrupleAction g q (0 : Fin (4 : ℕ)))
-            (BandPackingSymmetryQuadrupleAction g q ((fun (j : Fin (3 : ℕ)) => if
-            BandPackingSymmetryReversesOrientation g = true then -j else j) i).succ)))) →
-            ((transportedFixedSlope.1 - transportedRootSlope.1 = ((1 / 2 : ℝ) • GaussianRealPoint
-            ((-(⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt)) ^ (↑transportedRotation : ℕ) * (BandVectors.2
-            (BandPackingSymmetryQuadrupleAction g q ((fun (j : Fin (3 : ℕ)) => if
-            BandPackingSymmetryReversesOrientation g = true then -j else j) i).succ)
-            (BandPackingSymmetryQuadrupleAction g q (0 : Fin (4 : ℕ))) + BandVectors.2
-            (BandPackingSymmetryQuadrupleAction g q (0 : Fin (4 : ℕ)))
-            (BandPackingSymmetryQuadrupleAction g q ((fun (j : Fin (3 : ℕ)) => if
-            BandPackingSymmetryReversesOrientation g = true then -j else j) i).succ)))).1) →
-            ((transportedFixedSlope.2 - transportedRootSlope.2 = ((1 / 2 : ℝ) • GaussianRealPoint
-            ((-(⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt)) ^ (↑transportedRotation : ℕ) * (BandVectors.2
-            (BandPackingSymmetryQuadrupleAction g q ((fun (j : Fin (3 : ℕ)) => if
-            BandPackingSymmetryReversesOrientation g = true then -j else j) i).succ)
-            (BandPackingSymmetryQuadrupleAction g q (0 : Fin (4 : ℕ))) + BandVectors.2
-            (BandPackingSymmetryQuadrupleAction g q (0 : Fin (4 : ℕ)))
-            (BandPackingSymmetryQuadrupleAction g q ((fun (j : Fin (3 : ℕ)) => if
-            BandPackingSymmetryReversesOrientation g = true then -j else j) i).succ)))).2) →
-            (normalizationPresentation (sigma i).succ =
-            bundle.normalizedFixedCircle.1.1)))))))))) ) := by
+        exact
+        ∀ (C₀ : BandCircle),
+          ∀ (Cᵢ : BandCircle),
+            ∀ (q : Fin (4 : ℕ) → CircleCoordinates),
+              ∀ (i : Fin (3 : ℕ)),
+                ∀ (T₀ : ProtoTile),
+                  ∀ (Tᵢ : ProtoTile),
+                    ∀ (h₀ : PartialOdometer),
+                      ∀ (hᵢ : PartialOdometer),
+                        ∀ (x : GaussianInt),
+                          (q i.succ = Cᵢ.1.1) →
+                            (∀
+                              (bundle :
+                                BandOrderedGeneralNormalizedOccurrenceBundle C₀ Cᵢ
+                                  T₀ Tᵢ h₀ hᵢ x),
+                              let g := bundle.symmetry;
+                              let normalizationPresentation :=
+                                BandPackingSymmetryQuadrupleAction g q;
+                              let sigma : Fin 3 → Fin 3 := fun j =>
+                                if BandPackingSymmetryReversesOrientation g then -j
+                                else j;
+                              (normalizationPresentation (sigma i).succ =
+                                bundle.normalizedFixedCircle.1.1))) := by
   classical
-  intro C₀ Cᵢ q i s T₀ Tᵢ h₀ hᵢ x p₀ pᵢ hqᵢ hcentroid hslopex hslopey bundle g
-      normalizationPresentation sigma hparentPositive hOᵢq transportedRootSlope
-      transportedFixedSlope transportedRotation hfixedOdometer hcentroidForward hslopeXForward
-      hslopeYForward
+  intro C₀ Cᵢ q i T₀ Tᵢ h₀ hᵢ x hqᵢ bundle g normalizationPresentation sigma
   have hact := congrArg (BandPackingSymmetryCircleAction g) hqᵢ
   have hcoord :
       (BandPackingSymmetryQuadrupleAction g q) (sigma i).succ =
@@ -491,20 +455,6 @@ private theorem hnormAt536 :
       simp [BandPackingSymmetryQuadrupleAction,
         bundle.presentation_child]
 
-private theorem actionCurvature :
-    (by
-      classical
-      exact
-        ∀ (g : BandPackingSymmetry), ∀ (c : CircleCoordinates), (BandPackingSymmetryCircleAction
-            g c).1 = c.1 ) := by
-  classical
-  intro g
-  induction g with
-  | identity => intro c; rfl
-  | negate => intro c; rfl
-  | conjugate => intro c; rfl
-  | shift w => intro c; rfl
-  | comp a b iha ihb => intro c; simp [BandPackingSymmetryCircleAction, iha, ihb]
 
 private theorem hinverseCoordinate :
     (by
@@ -2007,85 +1957,57 @@ private theorem hOFixedOriginalAt1322 :
 private theorem hselectedCoordAt1327 :
     (by
       classical
-      exact
-        ∀ (C₀ : BandCircle), ∀ (Cᵢ : BandCircle), ∀ (q : Fin (4 : ℕ) → CircleCoordinates), ∀ (i :
-            Fin (3 : ℕ)), ∀ (T₀ : ProtoTile), ∀ (Tᵢ : ProtoTile), ∀ (h₀ : PartialOdometer), ∀ (hᵢ
-            : PartialOdometer), ∀ (x : GaussianInt), ∀ (bundle :
-            BandOrderedGeneralNormalizedOccurrenceBundle C₀ Cᵢ T₀ Tᵢ h₀ hᵢ x),
-        let g := bundle.symmetry
-        let normalizationPresentation := BandPackingSymmetryQuadrupleAction g q
-        let sigma : Fin 3 → Fin 3 := fun j =>
-          if BandPackingSymmetryReversesOrientation g then -j else j
-        ∀ (r : Fin (4 : ℕ) → CircleCoordinates), ∀ (j : Fin (3 : ℕ)), (0 < (r j.succ).1) → (∀
-            (transportedRotation : Fin (4 : ℕ)), ∀ (C' : BandCircle), ∀ (selectedSlope : ℝ × ℝ),
-            ∀ (ginv : BandPackingSymmetry),
-        let inversePresentation :=
-          BandPackingSymmetryQuadrupleAction ginv bundle.normalizedPresentation
-        let inverseSlot := if BandPackingSymmetryReversesOrientation ginv then
-            -bundle.selectedSlot else bundle.selectedSlot
-        ∀ (hinverseProper : ProperBandQuadruple inversePresentation), ∀ (hinversePositive : 0 <
-            (inversePresentation inverseSlot.succ).1),
-        let inverseCircle : BandCircle :=
-            ⟨⟨inversePresentation inverseSlot.succ,
-            ⟨Or.inl hinversePositive, inversePresentation, hinverseProper.1,
-              ⟨inverseSlot.succ, rfl⟩⟩⟩, hinversePositive⟩
-        (inverseCircle.1.1 = BandPackingSymmetryCircleAction ginv C'.1.1) → (
-        let selectedSupport := bundle.pieces bundle.selectedSlot bundle.selectedSign
-        let selectedFunction := bundle.functions bundle.selectedSlot bundle.selectedSign
-        ∀ (t : Fin (4 : ℕ)), (r j.succ = C'.1.1) → ((TileCentroid (bundle.pieces
-            bundle.selectedSlot bundle.selectedSign) - TileCentroid bundle.normalizedFixed = (1 /
-            2 : ℝ) • GaussianRealPoint ((⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt) ^ (↑t : ℕ) *
-            (BandVectors.1 (r j.succ) (r (0 : Fin (4 : ℕ))) + BandVectors.1 (r (0 : Fin (4 : ℕ)))
-            (r j.succ)))) → ((selectedSlope.1 - bundle.normalizedFixedSlope.1 = (1 / 2 : ℝ) *
-            (GaussianRealPoint ((-(⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt)) ^ (↑t : ℕ) * (BandVectors.2
-            (r j.succ) (r (0 : Fin (4 : ℕ))) + BandVectors.2 (r (0 : Fin (4 : ℕ))) (r
-            j.succ)))).1) → ((selectedSlope.2 - bundle.normalizedFixedSlope.2 = (1 / 2 : ℝ) *
-            (GaussianRealPoint ((-(⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt)) ^ (↑t : ℕ) * (BandVectors.2
-            (r j.succ) (r (0 : Fin (4 : ℕ))) + BandVectors.2 (r (0 : Fin (4 : ℕ))) (r
-            j.succ)))).2) → ((bundle.normalizedPoint ∈ FootprintVertices (TileTranslation
-            bundle.normalizedRoot ((⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt) ^ (↑transportedRotation :
-            ℕ) * if Even (↑transportedRotation : ℕ) then BandVectors.1 (normalizationPresentation
-            (0 : Fin (4 : ℕ))) (normalizationPresentation (sigma i).succ) else BandVectors.1
-            (normalizationPresentation (sigma i).succ) (normalizationPresentation (0 : Fin (4 :
-            ℕ))))) ↔ bundle.normalizedPoint ∈ FootprintVertices (TileTranslation
-            bundle.normalizedFixed ((⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt) ^ (↑t : ℕ) * if Even (↑t :
-            ℕ) then BandVectors.1 (r (0 : Fin (4 : ℕ))) (r j.succ) else BandVectors.1 (r j.succ)
-            (r (0 : Fin (4 : ℕ)))))) → ((TileOdometer (r j.succ) selectedSupport
-            selectedFunction) → (∀ (pFixed : ℝ × ℝ), ∀ (pSelected : ℝ × ℝ), ∀ (t' : Fin (4 : ℕ)),
-            (TileOdometer (BandPackingSymmetryQuadrupleAction ginv r (if
-            BandPackingSymmetryReversesOrientation ginv = true then -j else j).succ)
-            (BandPackingSymmetryTileAction ginv selectedSupport)
-            (BandPackingSymmetryPartialOdometerAction ginv selectedFunction)) → ((TileCentroid
-            (BandPackingSymmetryTileAction ginv selectedSupport) - TileCentroid
-            (BandPackingSymmetryTileAction ginv bundle.normalizedFixed) = (1 / 2 : ℝ) •
-            GaussianRealPoint ((⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt) ^ (↑t' : ℕ) * (BandVectors.1
-            (BandPackingSymmetryQuadrupleAction ginv r (if BandPackingSymmetryReversesOrientation
-            ginv = true then -j else j).succ) (BandPackingSymmetryQuadrupleAction ginv r (0 : Fin
-            (4 : ℕ))) + BandVectors.1 (BandPackingSymmetryQuadrupleAction ginv r (0 : Fin (4 :
-            ℕ))) (BandPackingSymmetryQuadrupleAction ginv r (if
-            BandPackingSymmetryReversesOrientation ginv = true then -j else j).succ)))) →
-            ((pSelected.1 - pFixed.1 = (1 / 2 : ℝ) * (GaussianRealPoint ((-(⟨(0 : ℤ), (1 : ℤ)⟩ :
-            GaussianInt)) ^ (↑t' : ℕ) * (BandVectors.2 (BandPackingSymmetryQuadrupleAction ginv r
-            (if BandPackingSymmetryReversesOrientation ginv = true then -j else j).succ)
-            (BandPackingSymmetryQuadrupleAction ginv r (0 : Fin (4 : ℕ))) + BandVectors.2
-            (BandPackingSymmetryQuadrupleAction ginv r (0 : Fin (4 : ℕ)))
-            (BandPackingSymmetryQuadrupleAction ginv r (if BandPackingSymmetryReversesOrientation
-            ginv = true then -j else j).succ)))).1) → ((pSelected.2 - pFixed.2 = (1 / 2 : ℝ) *
-            (GaussianRealPoint ((-(⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt)) ^ (↑t' : ℕ) *
-            (BandVectors.2 (BandPackingSymmetryQuadrupleAction ginv r (if
-            BandPackingSymmetryReversesOrientation ginv = true then -j else j).succ)
-            (BandPackingSymmetryQuadrupleAction ginv r (0 : Fin (4 : ℕ))) + BandVectors.2
-            (BandPackingSymmetryQuadrupleAction ginv r (0 : Fin (4 : ℕ)))
-            (BandPackingSymmetryQuadrupleAction ginv r (if BandPackingSymmetryReversesOrientation
-            ginv = true then -j else j).succ)))).2) → ((BandPackingSymmetryQuadrupleAction ginv
-            r) (if BandPackingSymmetryReversesOrientation ginv then -j else j).succ =
-            inverseCircle.1.1)))))))))))) ) := by
+        exact
+        ∀ (C₀ : BandCircle),
+          ∀ (Cᵢ : BandCircle),
+            ∀ (T₀ : ProtoTile),
+              ∀ (Tᵢ : ProtoTile),
+                ∀ (h₀ : PartialOdometer),
+                  ∀ (hᵢ : PartialOdometer),
+                    ∀ (x : GaussianInt),
+                      ∀
+                        (bundle :
+                          BandOrderedGeneralNormalizedOccurrenceBundle C₀ Cᵢ T₀ Tᵢ
+                            h₀ hᵢ x),
+                        ∀ (r : Fin (4 : ℕ) → CircleCoordinates),
+                          ∀ (j : Fin (3 : ℕ)),
+                            (∀ (C' : BandCircle),
+                              ∀ (ginv : BandPackingSymmetry),
+                                let inversePresentation :=
+                                  BandPackingSymmetryQuadrupleAction ginv
+                                    bundle.normalizedPresentation;
+                                let inverseSlot :=
+                                  if
+                                      BandPackingSymmetryReversesOrientation
+                                        ginv then
+                                    -bundle.selectedSlot
+                                  else bundle.selectedSlot;
+                                ∀
+                                  (hinverseProper :
+                                    ProperBandQuadruple inversePresentation),
+                                  ∀
+                                    (hinversePositive :
+                                      0 < (inversePresentation inverseSlot.succ).1),
+                                    let inverseCircle : BandCircle :=
+                                      ⟨⟨inversePresentation inverseSlot.succ,
+                                          ⟨Or.inl hinversePositive,
+                                            inversePresentation, hinverseProper.1,
+                                            ⟨inverseSlot.succ, rfl⟩⟩⟩,
+                                        hinversePositive⟩;
+                                    (inverseCircle.1.1 =
+                                        BandPackingSymmetryCircleAction ginv
+                                          C'.1.1) →
+                                      ((r j.succ = C'.1.1) →
+                                        ((BandPackingSymmetryQuadrupleAction ginv r)
+                                            (if
+                                                  BandPackingSymmetryReversesOrientation
+                                                    ginv then
+                                                -j
+                                              else j).succ =
+                                          inverseCircle.1.1)))) := by
   classical
-  intro C₀ Cᵢ q i T₀ Tᵢ h₀ hᵢ x bundle g normalizationPresentation sigma r j hparentPositive
-      transportedRotation C' selectedSlope ginv inversePresentation inverseSlot hinverseProper
-      hinversePositive inverseCircle hinverseCircle selectedSupport selectedFunction t hrj hcent
-      hslopeRe hslopeIm hmarked hOselected pFixed pSelected t' hOSelectedInv hcentInv hslopeReInv
-      hslopeImInv
+  intro C₀ Cᵢ T₀ Tᵢ h₀ hᵢ x bundle r j C' ginv inversePresentation inverseSlot hinverseProper
+      hinversePositive inverseCircle hinverseCircle hrj
   have neg1 : -(1 : Fin 3) = 2 := rfl
   have neg2 : -(2 : Fin 3) = 1 := rfl
   calc
@@ -2423,74 +2345,36 @@ private theorem hselectedCoordAt1468 :
 private theorem hfixedCoord :
     (by
       classical
-      exact
-        ∀ (C₀ : BandCircle), ∀ (Cᵢ : BandCircle), ∀ (q : Fin (4 : ℕ) → CircleCoordinates), ∀ (i :
-            Fin (3 : ℕ)), ∀ (T₀ : ProtoTile), ∀ (Tᵢ : ProtoTile), ∀ (h₀ : PartialOdometer), ∀ (hᵢ
-            : PartialOdometer), ∀ (x : GaussianInt), ∀ (bundle :
-            BandOrderedGeneralNormalizedOccurrenceBundle C₀ Cᵢ T₀ Tᵢ h₀ hᵢ x),
-        let g := bundle.symmetry
-        let normalizationPresentation := BandPackingSymmetryQuadrupleAction g q
-        let sigma : Fin 3 → Fin 3 := fun j =>
-          if BandPackingSymmetryReversesOrientation g then -j else j
-        ∀ (r : Fin (4 : ℕ) → CircleCoordinates), ∀ (j : Fin (3 : ℕ)), (0 < (r j.succ).1) → (∀
-            (transportedRotation : Fin (4 : ℕ)), ∀ (selectedSlope : ℝ × ℝ), ∀ (ginv :
-            BandPackingSymmetry), (∀ (C : CircleCoordinates), BandPackingSymmetryCircleAction
-            ginv (BandPackingSymmetryCircleAction bundle.symmetry C) = C) → (
-        let selectedSupport := bundle.pieces bundle.selectedSlot bundle.selectedSign
-        ∀ (t : Fin (4 : ℕ)), (r j.succ = bundle.normalizedFixedCircle.1.1) → ((TileCentroid
-            bundle.normalizedFixed - TileCentroid
-            (bundle.pieces bundle.selectedSlot bundle.selectedSign) = (1 / 2 : ℝ) •
-            GaussianRealPoint ((⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt) ^ (↑t : ℕ) * (BandVectors.1 (r
-            j.succ) (r (0 : Fin (4 : ℕ))) + BandVectors.1 (r (0 : Fin (4 : ℕ))) (r j.succ)))) →
-            ((bundle.normalizedFixedSlope.1 - selectedSlope.1 = (1 / 2 : ℝ) * (GaussianRealPoint
-            ((-(⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt)) ^ (↑t : ℕ) * (BandVectors.2 (r j.succ) (r (0 :
-            Fin (4 : ℕ))) + BandVectors.2 (r (0 : Fin (4 : ℕ))) (r j.succ)))).1) →
-            ((bundle.normalizedFixedSlope.2 - selectedSlope.2 = (1 / 2 : ℝ) * (GaussianRealPoint
-            ((-(⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt)) ^ (↑t : ℕ) * (BandVectors.2 (r j.succ) (r (0 :
-            Fin (4 : ℕ))) + BandVectors.2 (r (0 : Fin (4 : ℕ))) (r j.succ)))).2) →
-            ((bundle.normalizedPoint ∈ FootprintVertices (TileTranslation bundle.normalizedRoot
-            ((⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt) ^ (↑transportedRotation : ℕ) * if Even
-            (↑transportedRotation : ℕ) then BandVectors.1 (normalizationPresentation (0 : Fin (4
-            : ℕ))) (normalizationPresentation (sigma i).succ) else BandVectors.1
-            (normalizationPresentation (sigma i).succ) (normalizationPresentation (0 : Fin (4 :
-            ℕ))))) ↔ bundle.normalizedPoint ∈ FootprintVertices (TileTranslation (bundle.pieces
-            bundle.selectedSlot bundle.selectedSign) ((⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt) ^ (↑t :
-            ℕ) * if Even (↑t : ℕ) then BandVectors.1 (r (0 : Fin (4 : ℕ))) (r j.succ) else
-            BandVectors.1 (r j.succ) (r (0 : Fin (4 : ℕ)))))) → ((TileOdometer (r j.succ)
-            bundle.normalizedFixed bundle.normalizedFixedFunction) → (∀ (pSelected : ℝ × ℝ), ∀
-            (pFixed : ℝ × ℝ), ∀ (t' : Fin (4 : ℕ)), (TileOdometer
-            (BandPackingSymmetryQuadrupleAction ginv r (if BandPackingSymmetryReversesOrientation
-            ginv = true then -j else j).succ) (BandPackingSymmetryTileAction ginv
-            bundle.normalizedFixed) (BandPackingSymmetryPartialOdometerAction ginv
-            bundle.normalizedFixedFunction)) → ((TileCentroid (BandPackingSymmetryTileAction ginv
-            bundle.normalizedFixed) - TileCentroid (BandPackingSymmetryTileAction ginv
-            selectedSupport) = (1 / 2 : ℝ) • GaussianRealPoint ((⟨(0 : ℤ), (1 : ℤ)⟩ :
-            GaussianInt) ^ (↑t' : ℕ) * (BandVectors.1 (BandPackingSymmetryQuadrupleAction ginv r
-            (if BandPackingSymmetryReversesOrientation ginv = true then -j else j).succ)
-            (BandPackingSymmetryQuadrupleAction ginv r (0 : Fin (4 : ℕ))) + BandVectors.1
-            (BandPackingSymmetryQuadrupleAction ginv r (0 : Fin (4 : ℕ)))
-            (BandPackingSymmetryQuadrupleAction ginv r (if BandPackingSymmetryReversesOrientation
-            ginv = true then -j else j).succ)))) → ((pFixed.1 - pSelected.1 = (1 / 2 : ℝ) *
-            (GaussianRealPoint ((-(⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt)) ^ (↑t' : ℕ) *
-            (BandVectors.2 (BandPackingSymmetryQuadrupleAction ginv r (if
-            BandPackingSymmetryReversesOrientation ginv = true then -j else j).succ)
-            (BandPackingSymmetryQuadrupleAction ginv r (0 : Fin (4 : ℕ))) + BandVectors.2
-            (BandPackingSymmetryQuadrupleAction ginv r (0 : Fin (4 : ℕ)))
-            (BandPackingSymmetryQuadrupleAction ginv r (if BandPackingSymmetryReversesOrientation
-            ginv = true then -j else j).succ)))).1) → ((pFixed.2 - pSelected.2 = (1 / 2 : ℝ) *
-            (GaussianRealPoint ((-(⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt)) ^ (↑t' : ℕ) *
-            (BandVectors.2 (BandPackingSymmetryQuadrupleAction ginv r (if
-            BandPackingSymmetryReversesOrientation ginv = true then -j else j).succ)
-            (BandPackingSymmetryQuadrupleAction ginv r (0 : Fin (4 : ℕ))) + BandVectors.2
-            (BandPackingSymmetryQuadrupleAction ginv r (0 : Fin (4 : ℕ)))
-            (BandPackingSymmetryQuadrupleAction ginv r (if BandPackingSymmetryReversesOrientation
-            ginv = true then -j else j).succ)))).2) → ((BandPackingSymmetryQuadrupleAction ginv
-            r) (if BandPackingSymmetryReversesOrientation ginv then -j else j).succ =
-            Cᵢ.1.1)))))))))))) ) := by
+        exact
+        ∀ (C₀ : BandCircle),
+          ∀ (Cᵢ : BandCircle),
+            ∀ (T₀ : ProtoTile),
+              ∀ (Tᵢ : ProtoTile),
+                ∀ (h₀ : PartialOdometer),
+                  ∀ (hᵢ : PartialOdometer),
+                    ∀ (x : GaussianInt),
+                      ∀
+                        (bundle :
+                          BandOrderedGeneralNormalizedOccurrenceBundle C₀ Cᵢ T₀ Tᵢ
+                            h₀ hᵢ x),
+                        ∀ (r : Fin (4 : ℕ) → CircleCoordinates),
+                          ∀ (j : Fin (3 : ℕ)),
+                            (∀ (ginv : BandPackingSymmetry),
+                              (∀ (C : CircleCoordinates),
+                                  BandPackingSymmetryCircleAction ginv
+                                      (BandPackingSymmetryCircleAction
+                                        bundle.symmetry C) =
+                                    C) →
+                                ((r j.succ = bundle.normalizedFixedCircle.1.1) →
+                                  ((BandPackingSymmetryQuadrupleAction ginv r)
+                                      (if
+                                            BandPackingSymmetryReversesOrientation
+                                              ginv then
+                                          -j
+                                        else j).succ =
+                                    Cᵢ.1.1)))) := by
   classical
-  intro C₀ Cᵢ q i T₀ Tᵢ h₀ hᵢ x bundle g normalizationPresentation sigma r j hparentPositive
-      transportedRotation selectedSlope ginv hcircleL selectedSupport t hrj hcent hslopeRe
-      hslopeIm hmarked hOfixed pSelected pFixed t' hOFixedInv hcentInv hslopeReInv hslopeImInv
+  intro C₀ Cᵢ T₀ Tᵢ h₀ hᵢ x bundle r j ginv hcircleL hrj
   have neg1 : -(1 : Fin 3) = 2 := rfl
   have neg2 : -(2 : Fin 3) = 1 := rfl
   calc
@@ -3141,11 +3025,9 @@ private theorem forwardAdjacencyCase :
   have hselectedCoord :
         (BandPackingSymmetryQuadrupleAction ginv r)
             (if BandPackingSymmetryReversesOrientation ginv then -j else j).succ =
-          inverseCircle.1.1 := MarkedAdjacencyGeometry.hselectedCoordAt1327 C₀ Cᵢ q i T₀ Tᵢ
-              h₀ hᵢ x bundle r j hparentPositive transportedRotation C' selectedSlope ginv
-              hinverseProper hinversePositive hinverseCircle t hrj hcent hslopeRe hslopeIm
-              hmarked hOselected pFixed pSelected t' hOSelectedInv hcentInv hslopeReInv
-              hslopeImInv
+          inverseCircle.1.1 := MarkedAdjacencyGeometry.hselectedCoordAt1327 C₀ Cᵢ T₀ Tᵢ
+              h₀ hᵢ x bundle r j C' ginv
+              hinverseProper hinversePositive hinverseCircle hrj
   have hOSelectedOriginal : TileOdometer inverseCircle.1.1 T' h' := by
     simpa [hselectedCoord, h', T'] using hOSelectedInv
   have hslopeFixedOriginal : PartialOdometerSlope hᵢ = some pFixed := by
@@ -3342,9 +3224,8 @@ private theorem reverseAdjacencyCase :
       (BandPackingSymmetryQuadrupleAction ginv r) 0 = inverseCircle.1.1 :=
           MarkedAdjacencyGeometry.hselectedCoordAt1468 C₀ Cᵢ T₀ Tᵢ h₀ hᵢ x bundle C' ginv
           hinverseProper hinversePositive hinverseCircle r hr0
-  have hfixedCoord := MarkedAdjacencyGeometry.hfixedCoord C₀ Cᵢ q i T₀ Tᵢ h₀ hᵢ x bundle r j
-      hparentPositive transportedRotation selectedSlope ginv hcircleL t hrj hcent hslopeRe
-      hslopeIm hmarked hOfixed pSelected pFixed t' hOFixedInv hcentInv hslopeReInv hslopeImInv
+  have hfixedCoord := MarkedAdjacencyGeometry.hfixedCoord C₀ Cᵢ T₀ Tᵢ h₀ hᵢ x bundle r j ginv
+      hcircleL hrj
   have hOSelectedOriginal : TileOdometer inverseCircle.1.1 T' h' := by
     simpa [hselectedCoord, T', h'] using hOSelectedInv
   have hOFixedOriginal := MarkedAdjacencyGeometry.hOFixedOriginalAt1498 C₀ Cᵢ T₀ Tᵢ h₀ hᵢ x
@@ -3593,9 +3474,7 @@ theorem MarkedOdometerAdjacencyReduction :
             hᵢ x horbit bundle)
         normalizationPresentation (sigma i) transportedRotation
         hnormalizedProper (MarkedAdjacencyGeometry.hr₀ C₀ Cᵢ q T₀ Tᵢ h₀ hᵢ x hq₀ bundle hnorm)
-            (MarkedAdjacencyGeometry.hrᵢ C₀ Cᵢ q i s T₀ Tᵢ h₀ hᵢ x p₀ pᵢ hqᵢ hcentroid hslopex
-            hslopey bundle hparentPositive hOᵢq transportedRootSlope transportedFixedSlope
-            transportedRotation hfixedOdometer hcentroidForward hslopeXForward hslopeYForward)
+            (MarkedAdjacencyGeometry.hrᵢ C₀ Cᵢ q i T₀ Tᵢ h₀ hᵢ x hqᵢ bundle)
         (MarkedAdjacencyGeometry.hnormalizedCentroid C₀ Cᵢ q i T₀ Tᵢ h₀ hᵢ x bundle
             transportedRotation hcentroidForward)
         (MarkedAdjacencyGeometry.hnormalizedSlopeX C₀ Cᵢ q i T₀ Tᵢ h₀ hᵢ x bundle
@@ -3612,7 +3491,7 @@ theorem MarkedOdometerAdjacencyReduction :
       htileR, hvecL, hvecR, hfunL, hfunR, hphase⟩ :=
       (BandPackingSymmetryInversePhaseCancellation.2 bundle.symmetry)
     have hnorm := MarkedAdjacencyGeometry.hnormAt536 C₀ Cᵢ T₀ Tᵢ h₀ hᵢ x bundle
-    have actionCurvature := MarkedAdjacencyGeometry.actionCurvature
+    have actionCurvature := BandPackingSymmetryCurvature.preserved
     let inversePresentation :=
       BandPackingSymmetryQuadrupleAction ginv bundle.normalizedPresentation
     let inverseSlot := if BandPackingSymmetryReversesOrientation ginv then

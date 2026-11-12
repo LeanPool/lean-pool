@@ -794,36 +794,18 @@ private theorem hne :
 private theorem allowed :
     (by
       classical
-      exact
-        ∀ (q : Fin 4 → CircleCoordinates), ∀ (cfg : BandOrderedGeneralConfiguration q), ∀ (C :
-            BandCircle), ∀ (T : ProtoTile), ∀ (cert : BandOrderedGeneralLayoutCertificate q cfg C
-            T), ∀ (a : PeriodicSubtileIndex), ∀ (b : PeriodicSubtileIndex), ∀ (row :
-            BandOrderedGeneralSelectedContactRow q cfg C T cert a b),
-        let P := cert.P
-        let O := cert.O
-        let u := cert.u
-        let v := cert.v
-        ((FootprintEdges (ModifiedSubtileOccurrenceInterpretation P O u v a) ∩ FootprintEdges
-            (ModifiedSubtileOccurrenceInterpretation P O u v b) = FootprintEdges
-            (SubtileOccurrenceInterpretation P u v a) ∩ FootprintEdges
-            (SubtileOccurrenceInterpretation P u v b)) ∧ (FootprintVertices
-            (ModifiedSubtileOccurrenceInterpretation P O u v a) ∩ FootprintVertices
-            (ModifiedSubtileOccurrenceInterpretation P O u v b) = FootprintVertices
-            (SubtileOccurrenceInterpretation P u v a) ∩ FootprintVertices
-            (SubtileOccurrenceInterpretation P u v b))) → (
-        let owners := P4418T3EndpointOwnerIndices q cfg C T cert a b row
-        let face0 : PeriodicSubtileFaceIndex := selectedFirstFace q cfg C T cert a b row
-        let face1 : PeriodicSubtileFaceIndex := selectedSecondFace q cfg C T cert a b row
-        let F0 := cert.modifiedFaceEquivalence.symm face0
-        let F1 := cert.modifiedFaceEquivalence.symm face1
-        (F0 ≠ F1) → (((∃ iA iB iO : Fin 3, cert.modified.plane.faceVertex F0 iA = a ∧
-            cert.modified.plane.faceVertex F0 iB = b ∧ cert.modified.plane.faceVertex F0 iO =
-            owners.1) ∧ (∃ jA jB jO : Fin 3, cert.modified.plane.faceVertex F1 jA = a ∧
-            cert.modified.plane.faceVertex F1 jB = b ∧ cert.modified.plane.faceVertex F1 jO =
-            owners.2)) → ((a ≠ b) → (AllowedSubtileIncidence a b)))) ) := by
+        exact
+        ∀ (q : Fin 4 → CircleCoordinates),
+          ∀ (cfg : BandOrderedGeneralConfiguration q),
+            ∀ (C : BandCircle),
+              ∀ (T : ProtoTile),
+                ∀ (cert : BandOrderedGeneralLayoutCertificate q cfg C T),
+                  ∀ (a : PeriodicSubtileIndex),
+                    ∀ (b : PeriodicSubtileIndex),
+                      (BandOrderedGeneralSelectedContactRow q cfg C T cert a b) →
+                        (AllowedSubtileIncidence a b)) := by
   classical
-  intro q cfg C T cert a b row P O u v retargeted owners face0 face1 F0 F1 faceDistinct faceTable
-      hne
+  intro q cfg C T cert a b row
   cases row with
   | positiveL1 => exact .AB11 (-1) (-1)
   | positiveL2 => exact .AB01 0 (-1)
@@ -1324,68 +1306,45 @@ private theorem latticeOccurrence :
 private theorem disjointData :
     (by
       classical
-      exact
-        ∀ (q : Fin 4 → CircleCoordinates), ∀ (cfg : BandOrderedGeneralConfiguration q), ∀ (C :
-            BandCircle), ∀ (T : ProtoTile), ∀ (cert : BandOrderedGeneralLayoutCertificate q cfg C
-            T), ∀ (a : PeriodicSubtileIndex), ∀ (b : PeriodicSubtileIndex), ∀ (row :
-            BandOrderedGeneralSelectedContactRow q cfg C T cert a b),
-        let P := cert.P
-        let O := cert.O
-        let u := cert.u
-        let v := cert.v
-        (∀ (x : PeriodicSubtileIndex), ∀ (y : PeriodicSubtileIndex), (x ≠ y) → ((¬ ((x.label = .A
-            ∧ y.label = .B ∨ x.label = .B ∧ y.label = .A) ∧ x.first = y.first ∧ x.second =
-            y.second)) → (Disjoint (SubtileOccurrenceInterpretation P u v x).cells
-            (SubtileOccurrenceInterpretation P u v y).cells))) → (((FootprintEdges
-            (ModifiedSubtileOccurrenceInterpretation P O u v a) ∩ FootprintEdges
-            (ModifiedSubtileOccurrenceInterpretation P O u v b) = FootprintEdges
-            (SubtileOccurrenceInterpretation P u v a) ∩ FootprintEdges
-            (SubtileOccurrenceInterpretation P u v b)) ∧ (FootprintVertices
-            (ModifiedSubtileOccurrenceInterpretation P O u v a) ∩ FootprintVertices
-            (ModifiedSubtileOccurrenceInterpretation P O u v b) = FootprintVertices
-            (SubtileOccurrenceInterpretation P u v a) ∩ FootprintVertices
-            (SubtileOccurrenceInterpretation P u v b))) → (
-        let occurrence := SubtileOccurrenceInterpretation cert.P cert.u cert.v
-        let owners := P4418T3EndpointOwnerIndices q cfg C T cert a b row
-        let face0 : PeriodicSubtileFaceIndex := selectedFirstFace q cfg C T cert a b row
-        let face1 : PeriodicSubtileFaceIndex := selectedSecondFace q cfg C T cert a b row
-        let F0 := cert.modifiedFaceEquivalence.symm face0
-        let F1 := cert.modifiedFaceEquivalence.symm face1
-        (F0 ≠ F1) → ((a ≠ b) → ((AllowedSubtileIncidence a b) → (((FootprintEdges
-            (ModifiedSubtileOccurrenceInterpretation P O u v a) ∩ FootprintEdges
-            (ModifiedSubtileOccurrenceInterpretation P O u v b)).Nonempty) → ((∃ x y :
-            GaussianInt, SimpleGridPathBetween (FootprintVertices
-            (ModifiedSubtileOccurrenceInterpretation P O u v a) ∩ FootprintVertices
-            (ModifiedSubtileOccurrenceInterpretation P O u v b)) (FootprintEdges
-            (ModifiedSubtileOccurrenceInterpretation P O u v a) ∩ FootprintEdges
-            (ModifiedSubtileOccurrenceInterpretation P O u v b)) x y) → ((SimpleGridPathBetween
-            (FootprintVertices (occurrence a) ∩ FootprintVertices (occurrence b)) (FootprintEdges
-            (occurrence a) ∩ FootprintEdges (occurrence b)) (cert.modified.rho F0)
-            (cert.modified.rho F1)) → ((cert.modified.rho F0 ≠ cert.modified.rho F1) → (∀ (iA :
-            Fin (3 : ℕ)), ∀ (iB : Fin (3 : ℕ)), ∀ (iO : Fin (3 : ℕ)),
-            (cert.modified.plane.faceVertex F0 iA = a) → ((cert.modified.plane.faceVertex F0 iB =
-            b) → ((cert.modified.plane.faceVertex F0 iO = owners.1) → (∀ (jA : Fin (3 : ℕ)), ∀
-            (jB : Fin (3 : ℕ)), ∀ (jO : Fin (3 : ℕ)), (cert.modified.plane.faceVertex F1 jA = a)
-            → ((cert.modified.plane.faceVertex F1 jB = b) → ((cert.modified.plane.faceVertex F1
-            jO = owners.2) → ((cert.modified.rho F0 ∈ FootprintVertices
-            (ModifiedSubtileOccurrenceInterpretation P O u v a) ∩ FootprintVertices
-            (ModifiedSubtileOccurrenceInterpretation P O u v b)) → ((cert.modified.rho F1 ∈
-            FootprintVertices (ModifiedSubtileOccurrenceInterpretation P O u v a) ∩
-            FootprintVertices (ModifiedSubtileOccurrenceInterpretation P O u v b)) →
-            ((cert.modified.rho F0 ∈ FootprintVertices (occurrence owners.1)) →
-            ((cert.modified.rho F1 ∈ FootprintVertices (occurrence owners.2)) →
-            ((cert.modified.rho F0 ∈ FootprintVertices (occurrence a) ∩ FootprintVertices
-            (occurrence b)) → ((cert.modified.rho F1 ∈ FootprintVertices (occurrence a) ∩
-            FootprintVertices (occurrence b)) → (Disjoint (occurrence a).cells (occurrence
-            b).cells ∧ Disjoint (occurrence a).cells (occurrence owners.1).cells ∧ Disjoint
-            (occurrence b).cells (occurrence owners.1).cells ∧ Disjoint (occurrence a).cells
-            (occurrence owners.2).cells ∧ Disjoint (occurrence b).cells (occurrence
-            owners.2).cells))))))))))))))))))))) ) := by
+        exact
+        ∀ (q : Fin 4 → CircleCoordinates),
+          ∀ (cfg : BandOrderedGeneralConfiguration q),
+            ∀ (C : BandCircle),
+              ∀ (T : ProtoTile),
+                ∀ (cert : BandOrderedGeneralLayoutCertificate q cfg C T),
+                  ∀ (a : PeriodicSubtileIndex),
+                    ∀ (b : PeriodicSubtileIndex),
+                      ∀
+                        (row :
+                          BandOrderedGeneralSelectedContactRow q cfg C T cert a b),
+                        let P := cert.P;
+                        let u := cert.u;
+                        let v := cert.v;
+                        (∀ (x : PeriodicSubtileIndex),
+                            ∀ (y : PeriodicSubtileIndex),
+                              (x ≠ y) →
+                                ((¬((x.label = .A ∧ y.label = .B ∨
+                                        x.label = .B ∧ y.label = .A) ∧
+                                      x.first = y.first ∧ x.second = y.second)) →
+                                  (Disjoint
+                                    (SubtileOccurrenceInterpretation P u v x).cells
+                                    (SubtileOccurrenceInterpretation P u v
+                                        y).cells))) →
+                          (let occurrence :=
+                            SubtileOccurrenceInterpretation cert.P cert.u cert.v;
+                          let owners :=
+                            P4418T3EndpointOwnerIndices q cfg C T cert a b row;
+                          (Disjoint (occurrence a).cells (occurrence b).cells ∧
+                            Disjoint (occurrence a).cells
+                                (occurrence owners.1).cells ∧
+                              Disjoint (occurrence b).cells
+                                  (occurrence owners.1).cells ∧
+                                Disjoint (occurrence a).cells
+                                    (occurrence owners.2).cells ∧
+                                  Disjoint (occurrence b).cells
+                                    (occurrence owners.2).cells))) := by
   classical
-  intro q cfg C T cert a b row P O u v pairCells retargeted occurrence owners face0 face1 F0 F1
-      faceDistinct hne allowed modifiedEdges modifiedPath pathAtOwners endpointsDistinct iA iB iO
-      ha0 hb0 ho0 jA jB jO ha1 hb1 ho1 commonPair0 commonPair1 ownerPoint0 ownerPoint1
-      originalPair0 originalPair1
+  intro q cfg C T cert a b row P u v pairCells occurrence owners
   cases row <;> dsimp [owners, P4418T3EndpointOwnerIndices] at *
   all_goals
     exact ⟨pairCells _ _ (by decide) (by decide),
@@ -1753,10 +1712,7 @@ private theorem selectedCertificate :
       Disjoint (occurrence b).cells (occurrence owners.1).cells ∧
       Disjoint (occurrence a).cells (occurrence owners.2).cells ∧
       Disjoint (occurrence b).cells (occurrence owners.2).cells :=
-          SelectedInterfaceGeometry.disjointData q cfg C T cert a b row pairCells retargeted
-          faceDistinct hne allowed modifiedEdges modifiedPath pathAtOwners endpointsDistinct iA
-          iB iO ha0 hb0 ho0 jA jB jO ha1 hb1 ho1 commonPair0 commonPair1 ownerPoint0 ownerPoint1
-          originalPair0 originalPair1
+          SelectedInterfaceGeometry.disjointData q cfg C T cert a b row pairCells
   have translateAdd (X : ProtoTile) (x y : GaussianInt) :
       TileTranslation (TileTranslation X x) y = TileTranslation X (x + y) :=
           SelectedInterfaceGeometry.translateAdd X x y
@@ -1948,7 +1904,7 @@ theorem P4418T3SelectedInterfaceExists
   have hne : a ≠ b := SelectedInterfaceGeometry.hne q cfg C T cert a b row retargeted
       faceDistinct faceTable
   have allowed : AllowedSubtileIncidence a b := SelectedInterfaceGeometry.allowed q cfg C T cert
-      a b row retargeted faceDistinct faceTable hne
+      a b row
   have modifiedEdges :
       (FootprintEdges (ModifiedSubtileOccurrenceInterpretation P O u v a) ∩
         FootprintEdges (ModifiedSubtileOccurrenceInterpretation P O u v b)).Nonempty :=

@@ -6,6 +6,7 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.FordFareySum
 public import Mathlib.Topology.MetricSpace.Pseudo.Constructions
 public import Mathlib.Topology.MetricSpace.Pseudo.Real
 
@@ -30,11 +31,6 @@ namespace ApollonianSuperharmonic
 -- [TABLET NODE: P4112T1PathGeometry]
 namespace PathGeometryProof
 
-private theorem hsum :
-    ∀ (P : FordFareyParameter), P.q = P.q₁ + P.q₂ := by
-  classical
-  intro P
-  exact P.sum_q
 
 private theorem hs :
     ∀ (P : FordFareyParameter),
@@ -1333,7 +1329,7 @@ theorem P4112T1PathGeometry (P : FordFareyParameter) (hP : 2 < P.q) :
         (x.re = y.re ∨ x.im = y.im) ∧ Nat.dist (d x) (d y) = 1)
   let r := P.q₁
   let s := P.q₂
-  have hsum := PathGeometryProof.hsum P
+  have hsum := FordFareySum.denominatorSum P
   have hs := PathGeometryProof.hs P
   have hr := PathGeometryProof.hr P hP hsum
   have hrs := PathGeometryProof.hrs P hP hsum

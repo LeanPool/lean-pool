@@ -6,6 +6,7 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.TileTranslationProperties
 
 public import LeanPool.ApollonianSuperharmonic.BandOriginalPairSeparation
 public import LeanPool.ApollonianSuperharmonic.TileDiskAreaCovariance
@@ -137,40 +138,37 @@ private theorem occurrence_subset_block :
           ModifiedSubtileOccurrenceInterpretation] using hz
 
 private theorem root_occurrence_disjoint :
-    ∀ (P : Fin 3 → Bool → ProtoTile), ∀ (O : ProtoTile), ∀ (T : ProtoTile), ∀ (W : ProtoTile), ∀
-        (u : GaussianInt), ∀ (v : GaussianInt), ∀ (g : GaussianInt), ∀ (wShift : GaussianInt), ∀
-        (wBlock : Int × Int), (LatticeTile T) → ((∀ (m : ℤ), ∀ (n : ℤ), ∀ (z : LatticeCell), z ∈
-        (TileTranslation T ((↑m : GaussianInt) * u + (↑n : GaussianInt) * v)).cells ↔ ∃ (label :
-        SixSubtileLabel), z ∈ (ModifiedSubtileOccurrenceInterpretation P O u v ⟨label, m,
-        n⟩).cells) → ((∀ (m : ℤ), ∀ (n : ℤ), ∀ (r : ℤ), ∀ (s : ℤ), (m, n) ≠ (r, s) → Disjoint
-        (TileTranslation T ((↑m : GaussianInt) * u + (↑n : GaussianInt) * v)).cells
-        (TileTranslation T ((↑r : GaussianInt) * u + (↑s : GaussianInt) * v)).cells) → ((W =
-        TileTranslation T wShift) → (((TileTranslation (TileQuarterTurn T) g).cells = T.cells) →
-        (((TileTranslation (TileQuarterTurn W) g).cells = (TileTranslation T ((↑wBlock.1 :
-        GaussianInt) * u + (↑wBlock.2 : GaussianInt) * v)).cells) → ((LatticeTile T) → ((∀ (m :
-            ℤ), ∀ (n : ℤ), ∀ (r : ℤ), ∀ (s : ℤ), (m, n) ≠ (r, s) → Disjoint (TileTranslation T
-            ((↑m :
-        GaussianInt) * u + (↑n : GaussianInt) * v)).cells (TileTranslation T ((↑r : GaussianInt)
-        * u + (↑s : GaussianInt) * v)).cells) → ((∀ (o : PeriodicSubtileIndex),
-            (SubtileOccurrenceInterpretation P u v o).cells ⊆ (TileTranslation T ((o.first :
-        GaussianInt) * u + (o.second : GaussianInt) * v)).cells) → (∀ (o : PeriodicSubtileIndex),
-            (o.first, o.second) ≠ ((0 : ℤ), (0 : ℤ)) → Disjoint T.cells
-        (SubtileOccurrenceInterpretation P u v o).cells))))))))) := by
+    ∀ (P : Fin 3 → Bool → ProtoTile),
+      ∀ (T : ProtoTile),
+        ∀ (u : GaussianInt),
+          ∀ (v : GaussianInt),
+            ((∀ (m : ℤ),
+                ∀ (n : ℤ),
+                  ∀ (r : ℤ),
+                    ∀ (s : ℤ),
+                      (m, n) ≠ (r, s) →
+                        Disjoint
+                          (TileTranslation T
+                              ((↑m : GaussianInt) * u +
+                                (↑n : GaussianInt) * v)).cells
+                          (TileTranslation T
+                              ((↑r : GaussianInt) * u +
+                                (↑s : GaussianInt) * v)).cells) →
+              ((∀ (o : PeriodicSubtileIndex),
+                  (SubtileOccurrenceInterpretation P u v o).cells ⊆
+                    (TileTranslation T
+                        ((o.first : GaussianInt) * u +
+                          (o.second : GaussianInt) * v)).cells) →
+                (∀ (o : PeriodicSubtileIndex),
+                  (o.first, o.second) ≠ ((0 : ℤ), (0 : ℤ)) →
+                    Disjoint T.cells
+                      (SubtileOccurrenceInterpretation P u v o).cells))) := by
   classical
-  intro P O T W u v g wShift wBlock hRootLattice hBlockCells hBlockDisjoint hW hrootBar hWBar
-      hTlattice hblocks occurrence_subset_block o hnonzero
+  intro P T u v hblocks occurrence_subset_block o hnonzero
   have h := hblocks 0 0 o.first o.second (by
     intro heq
     exact hnonzero heq.symm)
-  have hzero : (TileTranslation T 0).cells = T.cells := by
-    have ht : TileTranslation T 0 = T := by
-      cases T with
-      | mk cells anchor =>
-          apply congrArg₂ ProtoTile.mk
-          · ext z
-            simp [GaussianTranslation]
-          · simp [GaussianTranslation]
-    exact congrArg ProtoTile.cells ht
+  have hzero := congrArg ProtoTile.cells (TileTranslationProperties.zero T)
   rw [← hzero]
   simpa using h.mono_right (occurrence_subset_block o)
 
@@ -188,87 +186,240 @@ private theorem turn_map_injective :
     omega
 
 private theorem hrootW :
-    ∀ (P : Fin 3 → Bool → ProtoTile), ∀ (O : ProtoTile), ∀ (T : ProtoTile), ∀ (U : ProtoTile), ∀
-        (W : ProtoTile), ∀ (u : GaussianInt), ∀ (v : GaussianInt), ∀ (g : GaussianInt), ∀ (wShift
-        : GaussianInt), ∀ (parentSlot : Fin 3), ∀ (turn : Fin 4), ∀ (uIndex :
-        PeriodicSubtileIndex), ∀ (uBar : PeriodicSubtileIndex), ∀ (vIndex :
-        PeriodicSubtileIndex), ∀ (vBar : PeriodicSubtileIndex), ∀ (wBlock : Int × Int),
-        (parentSlot = (0 : Fin (3 : ℕ)) ∧ turn = (0 : Fin (4 : ℕ)) ∧ uIndex = ⟨SixSubtileLabel.A,
-        (0 : ℤ), (-1 : ℤ)⟩ ∧ uBar = ⟨SixSubtileLabel.B, (1 : ℤ), (1 : ℤ)⟩ ∧ wBlock = ((1 : ℤ), (0
-        : ℤ)) ∧ vIndex = ⟨SixSubtileLabel.C, (1 : ℤ), (0 : ℤ)⟩ ∧ vBar = ⟨SixSubtileLabel.C, (1 :
-        ℤ), (1 : ℤ)⟩ ∨ parentSlot = (0 : Fin (3 : ℕ)) ∧ turn = (1 : Fin (4 : ℕ)) ∧ uIndex =
-        ⟨SixSubtileLabel.B, (1 : ℤ), (1 : ℤ)⟩ ∧ uBar = ⟨SixSubtileLabel.B, (0 : ℤ), (1 : ℤ)⟩ ∧
-        wBlock = ((-1 : ℤ), (0 : ℤ)) ∧ vIndex = ⟨SixSubtileLabel.F, (1 : ℤ), (0 : ℤ)⟩ ∧ vBar =
-        ⟨SixSubtileLabel.E, (0 : ℤ), (1 : ℤ)⟩ ∨ parentSlot = (0 : Fin (3 : ℕ)) ∧ turn = (2 : Fin
-        (4 : ℕ)) ∧ uIndex = ⟨SixSubtileLabel.B, (0 : ℤ), (1 : ℤ)⟩ ∧ uBar = ⟨SixSubtileLabel.A,
-        (-1 : ℤ), (-1 : ℤ)⟩ ∧ wBlock = ((-1 : ℤ), (0 : ℤ)) ∧ vIndex = ⟨SixSubtileLabel.D, (-1 :
-        ℤ), (0 : ℤ)⟩ ∧ vBar = ⟨SixSubtileLabel.D, (-1 : ℤ), (-1 : ℤ)⟩ ∨ parentSlot = (0 : Fin (3
-        : ℕ)) ∧ turn = (3 : Fin (4 : ℕ)) ∧ uIndex = ⟨SixSubtileLabel.A, (-1 : ℤ), (-1 : ℤ)⟩ ∧
-        uBar = ⟨SixSubtileLabel.A, (0 : ℤ), (-1 : ℤ)⟩ ∧ wBlock = ((1 : ℤ), (0 : ℤ)) ∧ vIndex =
-        ⟨SixSubtileLabel.E, (-1 : ℤ), (0 : ℤ)⟩ ∧ vBar = ⟨SixSubtileLabel.F, (0 : ℤ), (-1 : ℤ)⟩ ∨
-        parentSlot = (1 : Fin (3 : ℕ)) ∧ turn = (0 : Fin (4 : ℕ)) ∧ uIndex = ⟨SixSubtileLabel.C,
-        (1 : ℤ), (1 : ℤ)⟩ ∧ uBar = ⟨SixSubtileLabel.D, (-1 : ℤ), (0 : ℤ)⟩ ∧ wBlock = ((0 : ℤ), (1
-        : ℤ)) ∧ vIndex = ⟨SixSubtileLabel.E, (0 : ℤ), (1 : ℤ)⟩ ∧ vBar = ⟨SixSubtileLabel.E, (-1 :
-        ℤ), (0 : ℤ)⟩ ∨ parentSlot = (1 : Fin (3 : ℕ)) ∧ turn = (1 : Fin (4 : ℕ)) ∧ uIndex =
-        ⟨SixSubtileLabel.D, (-1 : ℤ), (0 : ℤ)⟩ ∧ uBar = ⟨SixSubtileLabel.D, (-1 : ℤ), (-1 : ℤ)⟩ ∧
-        wBlock = ((0 : ℤ), (-1 : ℤ)) ∧ vIndex = ⟨SixSubtileLabel.B, (0 : ℤ), (1 : ℤ)⟩ ∧ vBar =
-        ⟨SixSubtileLabel.A, (-1 : ℤ), (-1 : ℤ)⟩ ∨ parentSlot = (1 : Fin (3 : ℕ)) ∧ turn = (2 :
-        Fin (4 : ℕ)) ∧ uIndex = ⟨SixSubtileLabel.D, (-1 : ℤ), (-1 : ℤ)⟩ ∧ uBar =
-        ⟨SixSubtileLabel.C, (1 : ℤ), (0 : ℤ)⟩ ∧ wBlock = ((0 : ℤ), (-1 : ℤ)) ∧ vIndex =
-        ⟨SixSubtileLabel.F, (0 : ℤ), (-1 : ℤ)⟩ ∧ vBar = ⟨SixSubtileLabel.F, (1 : ℤ), (0 : ℤ)⟩ ∨
-        parentSlot = (1 : Fin (3 : ℕ)) ∧ turn = (3 : Fin (4 : ℕ)) ∧ uIndex = ⟨SixSubtileLabel.C,
-        (1 : ℤ), (0 : ℤ)⟩ ∧ uBar = ⟨SixSubtileLabel.C, (1 : ℤ), (1 : ℤ)⟩ ∧ wBlock = ((0 : ℤ), (1
-        : ℤ)) ∧ vIndex = ⟨SixSubtileLabel.A, (0 : ℤ), (-1 : ℤ)⟩ ∧ vBar = ⟨SixSubtileLabel.B, (1 :
-        ℤ), (1 : ℤ)⟩ ∨ parentSlot = (2 : Fin (3 : ℕ)) ∧ turn = (0 : Fin (4 : ℕ)) ∧ uIndex =
-        ⟨SixSubtileLabel.E, (-1 : ℤ), (0 : ℤ)⟩ ∧ uBar = ⟨SixSubtileLabel.F, (0 : ℤ), (-1 : ℤ)⟩ ∧
-        wBlock = ((-1 : ℤ), (-1 : ℤ)) ∧ vIndex = ⟨SixSubtileLabel.A, (-1 : ℤ), (-1 : ℤ)⟩ ∧ vBar =
-        ⟨SixSubtileLabel.A, (0 : ℤ), (-1 : ℤ)⟩ ∨ parentSlot = (2 : Fin (3 : ℕ)) ∧ turn = (1 : Fin
-        (4 : ℕ)) ∧ uIndex = ⟨SixSubtileLabel.F, (0 : ℤ), (-1 : ℤ)⟩ ∧ uBar = ⟨SixSubtileLabel.F,
-        (1 : ℤ), (0 : ℤ)⟩ ∧ wBlock = ((1 : ℤ), (1 : ℤ)) ∧ vIndex = ⟨SixSubtileLabel.D, (-1 : ℤ),
-        (-1 : ℤ)⟩ ∧ vBar = ⟨SixSubtileLabel.C, (1 : ℤ), (0 : ℤ)⟩ ∨ parentSlot = (2 : Fin (3 : ℕ))
-        ∧ turn = (2 : Fin (4 : ℕ)) ∧ uIndex = ⟨SixSubtileLabel.F, (1 : ℤ), (0 : ℤ)⟩ ∧ uBar =
-        ⟨SixSubtileLabel.E, (0 : ℤ), (1 : ℤ)⟩ ∧ wBlock = ((1 : ℤ), (1 : ℤ)) ∧ vIndex =
-        ⟨SixSubtileLabel.B, (1 : ℤ), (1 : ℤ)⟩ ∧ vBar = ⟨SixSubtileLabel.B, (0 : ℤ), (1 : ℤ)⟩ ∨
-        parentSlot = (2 : Fin (3 : ℕ)) ∧ turn = (3 : Fin (4 : ℕ)) ∧ uIndex = ⟨SixSubtileLabel.E,
-        (0 : ℤ), (1 : ℤ)⟩ ∧ uBar = ⟨SixSubtileLabel.E, (-1 : ℤ), (0 : ℤ)⟩ ∧ wBlock = ((-1 : ℤ),
-        (-1 : ℤ)) ∧ vIndex = ⟨SixSubtileLabel.C, (1 : ℤ), (1 : ℤ)⟩ ∧ vBar = ⟨SixSubtileLabel.D,
-        (-1 : ℤ), (0 : ℤ)⟩) → ((LatticeTile T) → ((∀ (m : ℤ), ∀ (n : ℤ), ∀ (z : LatticeCell), z ∈
-        (TileTranslation T ((↑m : GaussianInt) * u + (↑n : GaussianInt) * v)).cells ↔ ∃ (label :
-        SixSubtileLabel), z ∈ (ModifiedSubtileOccurrenceInterpretation P O u v ⟨label, m,
-        n⟩).cells) → ((∀ (m : ℤ), ∀ (n : ℤ), ∀ (r : ℤ), ∀ (s : ℤ), (m, n) ≠ (r, s) → Disjoint
-        (TileTranslation T ((↑m : GaussianInt) * u + (↑n : GaussianInt) * v)).cells
-        (TileTranslation T ((↑r : GaussianInt) * u + (↑s : GaussianInt) * v)).cells) → ((W =
-        TileTranslation T wShift) → (((TileTranslation (TileQuarterTurn T) g).cells = T.cells) →
-        (((TileTranslation (TileQuarterTurn W) g).cells = (TileTranslation T ((↑wBlock.1 :
-        GaussianInt) * u + (↑wBlock.2 : GaussianInt) * v)).cells) → ((LatticeTile T) → ((∀ (m :
-            ℤ), ∀ (n : ℤ), ∀ (r : ℤ), ∀ (s : ℤ), (m, n) ≠ (r, s) → Disjoint (TileTranslation T
-            ((↑m :
-        GaussianInt) * u + (↑n : GaussianInt) * v)).cells (TileTranslation T ((↑r : GaussianInt)
-        * u + (↑s : GaussianInt) * v)).cells) → ((∀ (o : PeriodicSubtileIndex),
-            (SubtileOccurrenceInterpretation P u v o).cells ⊆ (TileTranslation T ((o.first :
-        GaussianInt) * u + (o.second : GaussianInt) * v)).cells) → ((∀ (o :
-            PeriodicSubtileIndex), ((o.first, o.second) ≠ (0, 0)) → (Disjoint T.cells
-        (SubtileOccurrenceInterpretation P u v o).cells)) → ((∀ (A : ProtoTile), ∀ (B :
-            ProtoTile), (Disjoint (TileTranslation (TileQuarterTurn A) g).cells (TileTranslation
-        (TileQuarterTurn B) g).cells) → (Disjoint A.cells B.cells)) → ((Disjoint T.cells U.cells)
-        → (Disjoint T.cells W.cells))))))))))))) := by
+    ∀ (T : ProtoTile),
+      ∀ (W : ProtoTile),
+        ∀ (u : GaussianInt),
+          ∀ (v : GaussianInt),
+            ∀ (g : GaussianInt),
+              ∀ (parentSlot : Fin 3),
+                ∀ (turn : Fin 4),
+                  ∀ (uIndex : PeriodicSubtileIndex),
+                    ∀ (uBar : PeriodicSubtileIndex),
+                      ∀ (vIndex : PeriodicSubtileIndex),
+                        ∀ (vBar : PeriodicSubtileIndex),
+                          ∀ (wBlock : Int × Int),
+                            (parentSlot = (0 : Fin (3 : ℕ)) ∧
+                                  turn = (0 : Fin (4 : ℕ)) ∧
+                                    uIndex =
+                                        ⟨SixSubtileLabel.A, (0 : ℤ), (-1 : ℤ)⟩ ∧
+                                      uBar = ⟨SixSubtileLabel.B, (1 : ℤ), (1 : ℤ)⟩ ∧
+                                        wBlock = ((1 : ℤ), (0 : ℤ)) ∧
+                                          vIndex =
+                                              ⟨SixSubtileLabel.C, (1 : ℤ),
+                                                (0 : ℤ)⟩ ∧
+                                            vBar =
+                                              ⟨SixSubtileLabel.C, (1 : ℤ),
+                                                (1 : ℤ)⟩ ∨
+                                parentSlot = (0 : Fin (3 : ℕ)) ∧
+                                    turn = (1 : Fin (4 : ℕ)) ∧
+                                      uIndex =
+                                          ⟨SixSubtileLabel.B, (1 : ℤ), (1 : ℤ)⟩ ∧
+                                        uBar =
+                                            ⟨SixSubtileLabel.B, (0 : ℤ), (1 : ℤ)⟩ ∧
+                                          wBlock = ((-1 : ℤ), (0 : ℤ)) ∧
+                                            vIndex =
+                                                ⟨SixSubtileLabel.F, (1 : ℤ),
+                                                  (0 : ℤ)⟩ ∧
+                                              vBar =
+                                                ⟨SixSubtileLabel.E, (0 : ℤ),
+                                                  (1 : ℤ)⟩ ∨
+                                  parentSlot = (0 : Fin (3 : ℕ)) ∧
+                                      turn = (2 : Fin (4 : ℕ)) ∧
+                                        uIndex =
+                                            ⟨SixSubtileLabel.B, (0 : ℤ), (1 : ℤ)⟩ ∧
+                                          uBar =
+                                              ⟨SixSubtileLabel.A, (-1 : ℤ),
+                                                (-1 : ℤ)⟩ ∧
+                                            wBlock = ((-1 : ℤ), (0 : ℤ)) ∧
+                                              vIndex =
+                                                  ⟨SixSubtileLabel.D, (-1 : ℤ),
+                                                    (0 : ℤ)⟩ ∧
+                                                vBar =
+                                                  ⟨SixSubtileLabel.D, (-1 : ℤ),
+                                                    (-1 : ℤ)⟩ ∨
+                                    parentSlot = (0 : Fin (3 : ℕ)) ∧
+                                        turn = (3 : Fin (4 : ℕ)) ∧
+                                          uIndex =
+                                              ⟨SixSubtileLabel.A, (-1 : ℤ),
+                                                (-1 : ℤ)⟩ ∧
+                                            uBar =
+                                                ⟨SixSubtileLabel.A, (0 : ℤ),
+                                                  (-1 : ℤ)⟩ ∧
+                                              wBlock = ((1 : ℤ), (0 : ℤ)) ∧
+                                                vIndex =
+                                                    ⟨SixSubtileLabel.E, (-1 : ℤ),
+                                                      (0 : ℤ)⟩ ∧
+                                                  vBar =
+                                                    ⟨SixSubtileLabel.F, (0 : ℤ),
+                                                      (-1 : ℤ)⟩ ∨
+                                      parentSlot = (1 : Fin (3 : ℕ)) ∧
+                                          turn = (0 : Fin (4 : ℕ)) ∧
+                                            uIndex =
+                                                ⟨SixSubtileLabel.C, (1 : ℤ),
+                                                  (1 : ℤ)⟩ ∧
+                                              uBar =
+                                                  ⟨SixSubtileLabel.D, (-1 : ℤ),
+                                                    (0 : ℤ)⟩ ∧
+                                                wBlock = ((0 : ℤ), (1 : ℤ)) ∧
+                                                  vIndex =
+                                                      ⟨SixSubtileLabel.E, (0 : ℤ),
+                                                        (1 : ℤ)⟩ ∧
+                                                    vBar =
+                                                      ⟨SixSubtileLabel.E, (-1 : ℤ),
+                                                        (0 : ℤ)⟩ ∨
+                                        parentSlot = (1 : Fin (3 : ℕ)) ∧
+                                            turn = (1 : Fin (4 : ℕ)) ∧
+                                              uIndex =
+                                                  ⟨SixSubtileLabel.D, (-1 : ℤ),
+                                                    (0 : ℤ)⟩ ∧
+                                                uBar =
+                                                    ⟨SixSubtileLabel.D, (-1 : ℤ),
+                                                      (-1 : ℤ)⟩ ∧
+                                                  wBlock = ((0 : ℤ), (-1 : ℤ)) ∧
+                                                    vIndex =
+                                                        ⟨SixSubtileLabel.B, (0 : ℤ),
+                                                          (1 : ℤ)⟩ ∧
+                                                      vBar =
+                                                        ⟨SixSubtileLabel.A,
+                                                          (-1 : ℤ), (-1 : ℤ)⟩ ∨
+                                          parentSlot = (1 : Fin (3 : ℕ)) ∧
+                                              turn = (2 : Fin (4 : ℕ)) ∧
+                                                uIndex =
+                                                    ⟨SixSubtileLabel.D, (-1 : ℤ),
+                                                      (-1 : ℤ)⟩ ∧
+                                                  uBar =
+                                                      ⟨SixSubtileLabel.C, (1 : ℤ),
+                                                        (0 : ℤ)⟩ ∧
+                                                    wBlock = ((0 : ℤ), (-1 : ℤ)) ∧
+                                                      vIndex =
+                                                          ⟨SixSubtileLabel.F,
+                                                            (0 : ℤ), (-1 : ℤ)⟩ ∧
+                                                        vBar =
+                                                          ⟨SixSubtileLabel.F,
+                                                            (1 : ℤ), (0 : ℤ)⟩ ∨
+                                            parentSlot = (1 : Fin (3 : ℕ)) ∧
+                                                turn = (3 : Fin (4 : ℕ)) ∧
+                                                  uIndex =
+                                                      ⟨SixSubtileLabel.C, (1 : ℤ),
+                                                        (0 : ℤ)⟩ ∧
+                                                    uBar =
+                                                        ⟨SixSubtileLabel.C, (1 : ℤ),
+                                                          (1 : ℤ)⟩ ∧
+                                                      wBlock = ((0 : ℤ), (1 : ℤ)) ∧
+                                                        vIndex =
+                                                            ⟨SixSubtileLabel.A,
+                                                              (0 : ℤ), (-1 : ℤ)⟩ ∧
+                                                          vBar =
+                                                            ⟨SixSubtileLabel.B,
+                                                              (1 : ℤ), (1 : ℤ)⟩ ∨
+                                              parentSlot = (2 : Fin (3 : ℕ)) ∧
+                                                  turn = (0 : Fin (4 : ℕ)) ∧
+                                                    uIndex =
+                                                        ⟨SixSubtileLabel.E,
+                                                          (-1 : ℤ), (0 : ℤ)⟩ ∧
+                                                      uBar =
+                                                          ⟨SixSubtileLabel.F,
+                                                            (0 : ℤ), (-1 : ℤ)⟩ ∧
+                                                        wBlock =
+                                                            ((-1 : ℤ), (-1 : ℤ)) ∧
+                                                          vIndex =
+                                                              ⟨SixSubtileLabel.A,
+                                                                (-1 : ℤ),
+                                                                (-1 : ℤ)⟩ ∧
+                                                            vBar =
+                                                              ⟨SixSubtileLabel.A,
+                                                                (0 : ℤ), (-1 : ℤ)⟩ ∨
+                                                parentSlot = (2 : Fin (3 : ℕ)) ∧
+                                                    turn = (1 : Fin (4 : ℕ)) ∧
+                                                      uIndex =
+                                                          ⟨SixSubtileLabel.F,
+                                                            (0 : ℤ), (-1 : ℤ)⟩ ∧
+                                                        uBar =
+                                                            ⟨SixSubtileLabel.F,
+                                                              (1 : ℤ), (0 : ℤ)⟩ ∧
+                                                          wBlock =
+                                                              ((1 : ℤ), (1 : ℤ)) ∧
+                                                            vIndex =
+                                                                ⟨SixSubtileLabel.D,
+                                                                  (-1 : ℤ),
+                                                                  (-1 : ℤ)⟩ ∧
+                                                              vBar =
+                                                                ⟨SixSubtileLabel.C,
+                                                                  (1 : ℤ),
+                                                                  (0 : ℤ)⟩ ∨
+                                                  parentSlot = (2 : Fin (3 : ℕ)) ∧
+                                                      turn = (2 : Fin (4 : ℕ)) ∧
+                                                        uIndex =
+                                                            ⟨SixSubtileLabel.F,
+                                                              (1 : ℤ), (0 : ℤ)⟩ ∧
+                                                          uBar =
+                                                              ⟨SixSubtileLabel.E,
+                                                                (0 : ℤ), (1 : ℤ)⟩ ∧
+                                                            wBlock =
+                                                                ((1 : ℤ), (1 : ℤ)) ∧
+                                                              vIndex =
+                                                                  ⟨SixSubtileLabel.B,
+                                                                    (1 : ℤ),
+                                                                    (1 : ℤ)⟩ ∧
+                                                                vBar =
+                                                                  ⟨SixSubtileLabel.B,
+                                                                    (0 : ℤ),
+                                                                    (1 : ℤ)⟩ ∨
+                                                    parentSlot = (2 : Fin (3 : ℕ)) ∧
+                                                      turn = (3 : Fin (4 : ℕ)) ∧
+                                                        uIndex =
+                                                            ⟨SixSubtileLabel.E,
+                                                              (0 : ℤ), (1 : ℤ)⟩ ∧
+                                                          uBar =
+                                                              ⟨SixSubtileLabel.E,
+                                                                (-1 : ℤ), (0 : ℤ)⟩ ∧
+                                                            wBlock =
+                                                                ((-1 : ℤ),
+                                                                  (-1 : ℤ)) ∧
+                                                              vIndex =
+                                                                  ⟨SixSubtileLabel.C,
+                                                                    (1 : ℤ),
+                                                                    (1 : ℤ)⟩ ∧
+                                                                vBar =
+                                                                  ⟨SixSubtileLabel.D,
+                                                                    (-1 : ℤ),
+                                                                    (0 : ℤ)⟩) →
+                              (((TileTranslation (TileQuarterTurn T) g).cells =
+                                  T.cells) →
+                                (((TileTranslation (TileQuarterTurn W) g).cells =
+                                    (TileTranslation T
+                                        ((↑wBlock.1 : GaussianInt) * u +
+                                          (↑wBlock.2 : GaussianInt) * v)).cells) →
+                                  ((∀ (m : ℤ),
+                                      ∀ (n : ℤ),
+                                        ∀ (r : ℤ),
+                                          ∀ (s : ℤ),
+                                            (m, n) ≠ (r, s) →
+                                              Disjoint
+                                                (TileTranslation T
+                                                    ((↑m : GaussianInt) * u +
+                                                      (↑n : GaussianInt) * v)).cells
+                                                (TileTranslation T
+                                                    ((↑r : GaussianInt) * u +
+                                                      (↑s : GaussianInt) *
+                                                        v)).cells) →
+                                    ((∀ (A : ProtoTile),
+                                        ∀ (B : ProtoTile),
+                                          (Disjoint
+                                              (TileTranslation (TileQuarterTurn A)
+                                                  g).cells
+                                              (TileTranslation (TileQuarterTurn B)
+                                                  g).cells) →
+                                            (Disjoint A.cells B.cells)) →
+                                      (Disjoint T.cells W.cells))))) := by
   classical
-  intro P O T U W u v g wShift parentSlot turn uIndex uBar vIndex vBar wBlock hrow hRootLattice
-      hBlockCells hBlockDisjoint hW hrootBar hWBar hTlattice hblocks occurrence_subset_block
-      root_occurrence_disjoint pull_disjoint hrootfixed
+  intro T W u v g parentSlot turn uIndex uBar vIndex vBar wBlock hrow hrootBar hWBar hblocks
+      pull_disjoint
   apply pull_disjoint
   rw [hrootBar, hWBar]
   have h := hblocks 0 0 wBlock.1 wBlock.2 (by
     exact (rowSeparation parentSlot turn uIndex uBar vIndex vBar wBlock hrow).1)
-  have hzero : (TileTranslation T 0).cells = T.cells := by
-    have ht : TileTranslation T 0 = T := by
-      cases T with
-      | mk cells anchor =>
-          apply congrArg₂ ProtoTile.mk
-          · ext z
-            simp [GaussianTranslation]
-          · simp [GaussianTranslation]
-    exact congrArg ProtoTile.cells ht
+  have hzero := congrArg ProtoTile.cells (TileTranslationProperties.zero T)
   simpa [hzero] using h
 
 end GeneralSeparationProof
@@ -396,8 +547,7 @@ theorem BandOrderedGeneralSubtileCanonicalSeparation
   have root_occurrence_disjoint (o : PeriodicSubtileIndex)
       (hnonzero : (o.first, o.second) ≠ (0, 0)) :
       Disjoint T.cells (SubtileOccurrenceInterpretation P u v o).cells :=
-          GeneralSeparationProof.root_occurrence_disjoint P O T W u v g wShift wBlock
-          hRootLattice hBlockCells hBlockDisjoint hW hrootBar hWBar hTlattice hblocks
+          GeneralSeparationProof.root_occurrence_disjoint P T u v hblocks
           occurrence_subset_block o hnonzero
   have turn_map_injective : Function.Injective (fun z : LatticeCell =>
       GaussianTranslation g (GaussianQuarterTurn z - 1)) :=
@@ -418,10 +568,9 @@ theorem BandOrderedGeneralSubtileCanonicalSeparation
     rw [hfixedSource]
     simpa using root_occurrence_disjoint uIndex (by
       exact (rowSeparation parentSlot turn uIndex uBar vIndex vBar wBlock hrow).2.1)
-  have hrootW : Disjoint T.cells W.cells := GeneralSeparationProof.hrootW P O T U W u v g wShift
-      parentSlot turn uIndex uBar vIndex vBar wBlock hrow hRootLattice hBlockCells hBlockDisjoint
-      hW hrootBar hWBar hTlattice hblocks occurrence_subset_block root_occurrence_disjoint
-      pull_disjoint hrootfixed
+  have hrootW : Disjoint T.cells W.cells := GeneralSeparationProof.hrootW T W u v g
+      parentSlot turn uIndex uBar vIndex vBar wBlock hrow hrootBar hWBar hblocks
+      pull_disjoint
   have hfixedW : Disjoint U.cells W.cells := by
     apply pull_disjoint
     rw [hfixedBar, hWBar]

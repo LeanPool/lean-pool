@@ -7,7 +7,6 @@ module
 
 public import Mathlib.Init
 
-public import LeanPool.ApollonianSuperharmonic.FordOdometer
 public import LeanPool.ApollonianSuperharmonic.FordTileOdometerRestriction
 public import LeanPool.ApollonianSuperharmonic.LeftLatticeAdjacent
 public import LeanPool.ApollonianSuperharmonic.LeftLatticeAdjacentPackingSymmetryTransport
@@ -440,59 +439,57 @@ private theorem hvec :
 private theorem haRe :
     (by
       classical
-      exact
-        ∀ (T : ProtoTile), ∀ (T' : ProtoTile), ∀ (p : ℝ × ℝ), ∀ (p' : ℝ × ℝ), ∀ (w : Fin (4 : ℕ)
-            → CircleCoordinates), ∀ (iw : Fin (3 : ℕ)), ∀ (ew : Bool), (TileCentroid T' -
-            TileCentroid T = (if ew = true then (1 : ℝ) else (-1 : ℝ)) • GaussianRealPoint
-            (BandVectors.1 (w iw.succ) (w (0 : Fin (4 : ℕ))))) → ((p'.1 - p.1 = (if ew = true
-            then (1 : ℝ) else (-1 : ℝ)) * (↑(BandVectors.2 (w iw.succ) (w (0 : Fin (4 : ℕ)))).re
-            : ℝ)) → ((p'.2 - p.2 = (if ew = true then (1 : ℝ) else (-1 : ℝ)) * (↑(BandVectors.2
-            (w iw.succ) (w (0 : Fin (4 : ℕ)))).im : ℝ)) → (∀ (r2 : Fin (3 : ℕ)), ∀ (g2 :
-            BandPackingSymmetry), ∀ (P2 : FordFareyParameter),
-        let barq : Fin 4 → CircleCoordinates :=
-          ![w 0, w r2.succ, w (r2 + 1).succ, w (r2 + 2).succ]
-        ∀ (t : Fin (3 : ℕ)), (t + r2 = iw) → ((barq t.succ = w iw.succ) → ((TileCentroid T' -
-            TileCentroid T = (if ew = true then (1 : ℝ) else -1) • GaussianRealPoint
-            (BandVectors.1 (barq t.succ) (barq 0))) → ((p'.1 - p.1 = (if ew = true then (1 : ℝ)
-            else -1) * (BandVectors.2 (barq t.succ) (barq 0)).re) → ((p'.2 - p.2 = (if ew = true
-            then (1 : ℝ) else -1) * (BandVectors.2 (barq t.succ) (barq 0)).im) → (∀ (negative :
-            Bool), ∀ (r : ℝ × ℝ), ∀ (r' : ℝ × ℝ), (BandPackingSymmetryScopedPhase g2 barq
-            negative) → ((TileCentroid (BandPackingSymmetryTileAction g2 T') - TileCentroid
-            (BandPackingSymmetryTileAction g2 T) = (if (ew ^^ negative) = true then (1 : ℝ) else
-            (-1 : ℝ)) • GaussianRealPoint (BandVectors.1 (BandPackingSymmetryQuadrupleAction g2
-            barq ((fun (j : Fin (3 : ℕ)) => if BandPackingSymmetryReversesOrientation g2 = true
-            then -j else j) t).succ) (BandPackingSymmetryQuadrupleAction g2 barq (0 : Fin (4 :
-            ℕ))))) → ((r'.1 - r.1 = (if (ew ^^ negative) = true then (1 : ℝ) else (-1 : ℝ)) *
-            (↑(BandVectors.2 (BandPackingSymmetryQuadrupleAction g2 barq ((fun (j : Fin (3 : ℕ))
-            => if BandPackingSymmetryReversesOrientation g2 = true then -j else j) t).succ)
-            (BandPackingSymmetryQuadrupleAction g2 barq (0 : Fin (4 : ℕ)))).re : ℝ)) → ((r'.2 -
-            r.2 = (if (ew ^^ negative) = true then (1 : ℝ) else (-1 : ℝ)) * (↑(BandVectors.2
-            (BandPackingSymmetryQuadrupleAction g2 barq ((fun (j : Fin (3 : ℕ)) => if
-            BandPackingSymmetryReversesOrientation g2 = true then -j else j) t).succ)
-            (BandPackingSymmetryQuadrupleAction g2 barq (0 : Fin (4 : ℕ)))).im : ℝ)) → (∀ (u :
-            GaussianInt), ∀ (a : GaussianInt), ∀ (u' : GaussianInt), ∀ (a' : GaussianInt), (u' -
-            u = (if ew ^^ negative then 1 else -1) • BandVectors.1
-            (BandPackingSymmetryQuadrupleAction g2 barq t.succ)
-            (BandPackingSymmetryQuadrupleAction g2 barq 0)) → ((u' - u = (if (ew ^^ negative) =
-            true then 1 else -1) • BandVectors.1 (FordRecursiveQuadruple P2 t.succ)
-            (FordRecursiveQuadruple P2 0)) → (∀ (z : ℝ × ℝ), (r'.1 - r.1 = if ew = negative then
-            -((↑(BandVectors.2 (FordRecursiveQuadruple P2 t.succ) (FordRecursiveQuadruple P2 (0 :
-            Fin (4 : ℕ)))).re : ℝ) + ((↑(BandVectors.2 (FordRecursiveQuadruple P2 t.succ)
-            (FordRecursiveQuadruple P2 (0 : Fin (4 : ℕ)))).im : ℝ) * (0 : ℝ) - (0 : ℝ))) else
-            (↑(BandVectors.2 (FordRecursiveQuadruple P2 t.succ) (FordRecursiveQuadruple P2 (0 :
-            Fin (4 : ℕ)))).re : ℝ) + ((↑(BandVectors.2 (FordRecursiveQuadruple P2 t.succ)
-            (FordRecursiveQuadruple P2 (0 : Fin (4 : ℕ)))).im : ℝ) * (0 : ℝ) - (0 : ℝ))) → ((r'.2
-            - r.2 = if ew = negative then -(↑(BandVectors.2 (FordRecursiveQuadruple P2 t.succ)
-            (FordRecursiveQuadruple P2 (0 : Fin (4 : ℕ)))).im : ℝ) else (↑(BandVectors.2
-            (FordRecursiveQuadruple P2 t.succ) (FordRecursiveQuadruple P2 (0 : Fin (4 : ℕ)))).im
-            : ℝ)) → ((r.1 = z.1 + ((↑a.re : ℝ) + ((↑a.im : ℝ) * (0 : ℝ) - (0 : ℝ)))) → ((r'.1 =
-            z.1 + ((↑a'.re : ℝ) + ((↑a'.im : ℝ) * (0 : ℝ) - (0 : ℝ)))) → (a'.re - a.re = (if (ew
-            ^^ negative) = true then 1 else -1) * (BandVectors.2 (FordRecursiveQuadruple P2
-            t.succ) (FordRecursiveQuadruple P2 0)).re)))))))))))))))))) ) := by
+        exact
+        ∀ (ew : Bool),
+          (∀ (P2 : FordFareyParameter),
+            ∀ (t : Fin (3 : ℕ)),
+              (∀ (negative : Bool),
+                ∀ (r : ℝ × ℝ),
+                  ∀ (r' : ℝ × ℝ),
+                    (∀ (a : GaussianInt),
+                      ∀ (a' : GaussianInt),
+                        (∀ (z : ℝ × ℝ),
+                          (r'.1 - r.1 =
+                              if ew = negative then
+                                -((↑(BandVectors.2
+                                            (FordRecursiveQuadruple P2 t.succ)
+                                            (FordRecursiveQuadruple P2
+                                              (0 : Fin (4 : ℕ)))).re :
+                                      ℝ) +
+                                    ((↑(BandVectors.2
+                                                (FordRecursiveQuadruple P2 t.succ)
+                                                (FordRecursiveQuadruple P2
+                                                  (0 : Fin (4 : ℕ)))).im :
+                                          ℝ) *
+                                        (0 : ℝ) -
+                                      (0 : ℝ)))
+                              else
+                                (↑(BandVectors.2 (FordRecursiveQuadruple P2 t.succ)
+                                          (FordRecursiveQuadruple P2
+                                            (0 : Fin (4 : ℕ)))).re :
+                                    ℝ) +
+                                  ((↑(BandVectors.2
+                                              (FordRecursiveQuadruple P2 t.succ)
+                                              (FordRecursiveQuadruple P2
+                                                (0 : Fin (4 : ℕ)))).im :
+                                        ℝ) *
+                                      (0 : ℝ) -
+                                    (0 : ℝ))) →
+                            ((r.1 =
+                                z.1 +
+                                  ((↑a.re : ℝ) +
+                                    ((↑a.im : ℝ) * (0 : ℝ) - (0 : ℝ)))) →
+                              ((r'.1 =
+                                  z.1 +
+                                    ((↑a'.re : ℝ) +
+                                      ((↑a'.im : ℝ) * (0 : ℝ) - (0 : ℝ)))) →
+                                (a'.re - a.re =
+                                  (if (ew ^^ negative) = true then 1 else -1) *
+                                    (BandVectors.2
+                                        (FordRecursiveQuadruple P2 t.succ)
+                                        (FordRecursiveQuadruple P2 0)).re)))))))) := by
   classical
-  intro T T' p p' w iw ew hwcent hwslope hwslope' r2 g2 P2 barq t ht hpoint hcentbar hslopebar
-      hslopebar' negative r r' hphase hcent' hsre' hsim' u a u' a' hshift hvec z hsreFord
-      hsimFord sr sr'
+  intro ew P2 t negative r r' a a' z hsreFord sr sr'
   fin_cases t <;> cases ew <;> cases negative
   all_goals
     simp only [Bool.xor_true, Bool.xor_false,
@@ -509,60 +506,36 @@ private theorem haRe :
 private theorem haIm :
     (by
       classical
-      exact
-        ∀ (T : ProtoTile), ∀ (T' : ProtoTile), ∀ (p : ℝ × ℝ), ∀ (p' : ℝ × ℝ), ∀ (w : Fin (4 : ℕ)
-            → CircleCoordinates), ∀ (iw : Fin (3 : ℕ)), ∀ (ew : Bool), (TileCentroid T' -
-            TileCentroid T = (if ew = true then (1 : ℝ) else (-1 : ℝ)) • GaussianRealPoint
-            (BandVectors.1 (w iw.succ) (w (0 : Fin (4 : ℕ))))) → ((p'.1 - p.1 = (if ew = true
-            then (1 : ℝ) else (-1 : ℝ)) * (↑(BandVectors.2 (w iw.succ) (w (0 : Fin (4 : ℕ)))).re
-            : ℝ)) → ((p'.2 - p.2 = (if ew = true then (1 : ℝ) else (-1 : ℝ)) * (↑(BandVectors.2
-            (w iw.succ) (w (0 : Fin (4 : ℕ)))).im : ℝ)) → (∀ (r2 : Fin (3 : ℕ)), ∀ (g2 :
-            BandPackingSymmetry), ∀ (P2 : FordFareyParameter),
-        let barq : Fin 4 → CircleCoordinates :=
-          ![w 0, w r2.succ, w (r2 + 1).succ, w (r2 + 2).succ]
-        ∀ (t : Fin (3 : ℕ)), (t + r2 = iw) → ((barq t.succ = w iw.succ) → ((TileCentroid T' -
-            TileCentroid T = (if ew = true then (1 : ℝ) else -1) • GaussianRealPoint
-            (BandVectors.1 (barq t.succ) (barq 0))) → ((p'.1 - p.1 = (if ew = true then (1 : ℝ)
-            else -1) * (BandVectors.2 (barq t.succ) (barq 0)).re) → ((p'.2 - p.2 = (if ew = true
-            then (1 : ℝ) else -1) * (BandVectors.2 (barq t.succ) (barq 0)).im) → (∀ (negative :
-            Bool), ∀ (r : ℝ × ℝ), ∀ (r' : ℝ × ℝ), (BandPackingSymmetryScopedPhase g2 barq
-            negative) → ((TileCentroid (BandPackingSymmetryTileAction g2 T') - TileCentroid
-            (BandPackingSymmetryTileAction g2 T) = (if (ew ^^ negative) = true then (1 : ℝ) else
-            (-1 : ℝ)) • GaussianRealPoint (BandVectors.1 (BandPackingSymmetryQuadrupleAction g2
-            barq ((fun (j : Fin (3 : ℕ)) => if BandPackingSymmetryReversesOrientation g2 = true
-            then -j else j) t).succ) (BandPackingSymmetryQuadrupleAction g2 barq (0 : Fin (4 :
-            ℕ))))) → ((r'.1 - r.1 = (if (ew ^^ negative) = true then (1 : ℝ) else (-1 : ℝ)) *
-            (↑(BandVectors.2 (BandPackingSymmetryQuadrupleAction g2 barq ((fun (j : Fin (3 : ℕ))
-            => if BandPackingSymmetryReversesOrientation g2 = true then -j else j) t).succ)
-            (BandPackingSymmetryQuadrupleAction g2 barq (0 : Fin (4 : ℕ)))).re : ℝ)) → ((r'.2 -
-            r.2 = (if (ew ^^ negative) = true then (1 : ℝ) else (-1 : ℝ)) * (↑(BandVectors.2
-            (BandPackingSymmetryQuadrupleAction g2 barq ((fun (j : Fin (3 : ℕ)) => if
-            BandPackingSymmetryReversesOrientation g2 = true then -j else j) t).succ)
-            (BandPackingSymmetryQuadrupleAction g2 barq (0 : Fin (4 : ℕ)))).im : ℝ)) → (∀ (u :
-            GaussianInt), ∀ (a : GaussianInt), ∀ (u' : GaussianInt), ∀ (a' : GaussianInt), (u' -
-            u = (if ew ^^ negative then 1 else -1) • BandVectors.1
-            (BandPackingSymmetryQuadrupleAction g2 barq t.succ)
-            (BandPackingSymmetryQuadrupleAction g2 barq 0)) → ((u' - u = (if (ew ^^ negative) =
-            true then 1 else -1) • BandVectors.1 (FordRecursiveQuadruple P2 t.succ)
-            (FordRecursiveQuadruple P2 0)) → (∀ (z : ℝ × ℝ), (r'.1 - r.1 = if ew = negative then
-            -((↑(BandVectors.2 (FordRecursiveQuadruple P2 t.succ) (FordRecursiveQuadruple P2 (0 :
-            Fin (4 : ℕ)))).re : ℝ) + ((↑(BandVectors.2 (FordRecursiveQuadruple P2 t.succ)
-            (FordRecursiveQuadruple P2 (0 : Fin (4 : ℕ)))).im : ℝ) * (0 : ℝ) - (0 : ℝ))) else
-            (↑(BandVectors.2 (FordRecursiveQuadruple P2 t.succ) (FordRecursiveQuadruple P2 (0 :
-            Fin (4 : ℕ)))).re : ℝ) + ((↑(BandVectors.2 (FordRecursiveQuadruple P2 t.succ)
-            (FordRecursiveQuadruple P2 (0 : Fin (4 : ℕ)))).im : ℝ) * (0 : ℝ) - (0 : ℝ))) → ((r'.2
-            - r.2 = if ew = negative then -(↑(BandVectors.2 (FordRecursiveQuadruple P2 t.succ)
-            (FordRecursiveQuadruple P2 (0 : Fin (4 : ℕ)))).im : ℝ) else (↑(BandVectors.2
-            (FordRecursiveQuadruple P2 t.succ) (FordRecursiveQuadruple P2 (0 : Fin (4 : ℕ)))).im
-            : ℝ)) → ((r.2 = z.2 + (↑a.im : ℝ)) → ((r'.2 = z.2 + (↑a'.im : ℝ)) → ((a'.re - a.re =
-            (if (ew ^^ negative) = true then 1 else -1) * (BandVectors.2 (FordRecursiveQuadruple
-            P2 t.succ) (FordRecursiveQuadruple P2 0)).re) → (a'.im - a.im = (if (ew ^^ negative)
-            = true then 1 else -1) * (BandVectors.2 (FordRecursiveQuadruple P2 t.succ)
-            (FordRecursiveQuadruple P2 0)).im))))))))))))))))))) ) := by
+        exact
+        ∀ (ew : Bool),
+          (∀ (P2 : FordFareyParameter),
+            ∀ (t : Fin (3 : ℕ)),
+              (∀ (negative : Bool),
+                ∀ (r : ℝ × ℝ),
+                  ∀ (r' : ℝ × ℝ),
+                    (∀ (a : GaussianInt),
+                      ∀ (a' : GaussianInt),
+                        (∀ (z : ℝ × ℝ),
+                          ((r'.2 - r.2 =
+                              if ew = negative then
+                                -(↑(BandVectors.2 (FordRecursiveQuadruple P2 t.succ)
+                                          (FordRecursiveQuadruple P2
+                                            (0 : Fin (4 : ℕ)))).im :
+                                    ℝ)
+                              else
+                                (↑(BandVectors.2 (FordRecursiveQuadruple P2 t.succ)
+                                        (FordRecursiveQuadruple P2
+                                          (0 : Fin (4 : ℕ)))).im :
+                                  ℝ)) →
+                            ((r.2 = z.2 + (↑a.im : ℝ)) →
+                              ((r'.2 = z.2 + (↑a'.im : ℝ)) →
+                                (a'.im - a.im =
+                                  (if (ew ^^ negative) = true then 1 else -1) *
+                                    (BandVectors.2
+                                        (FordRecursiveQuadruple P2 t.succ)
+                                        (FordRecursiveQuadruple P2 0)).im))))))))) := by
   classical
-  intro T T' p p' w iw ew hwcent hwslope hwslope' r2 g2 P2 barq t ht hpoint hcentbar hslopebar
-      hslopebar' negative r r' hphase hcent' hsre' hsim' u a u' a' hshift hvec z hsreFord
-      hsimFord si si' haRe
+  intro ew P2 t negative r r' a a' z hsimFord si si'
   fin_cases t <;> cases ew <;> cases negative
   all_goals
     simp only [Bool.xor_true, Bool.xor_false,
@@ -874,17 +847,14 @@ theorem FordLeftBoundaryCompatibility
       have haRe : a'.re - a.re =
           (if (ew ^^ negative) = true then 1 else -1) *
             (BandVectors.2 (FordRecursiveQuadruple P2 t.succ)
-              (FordRecursiveQuadruple P2 0)).re := FordBoundaryCompatibilityGeometry.haRe T T' p
-                  p' w iw ew hwcent hwslope hwslope' r2 g2 P2 t ht hpoint hcentbar hslopebar
-                  hslopebar' negative r r' hphase hcent' hsre' hsim' u a u' a' hshift hvec z
-                  hsreFord hsimFord sr sr'
+              (FordRecursiveQuadruple P2 0)).re := FordBoundaryCompatibilityGeometry.haRe ew P2
+                  t negative r r' a a' z
+                  hsreFord sr sr'
       have haIm : a'.im - a.im =
           (if (ew ^^ negative) = true then 1 else -1) *
             (BandVectors.2 (FordRecursiveQuadruple P2 t.succ)
-              (FordRecursiveQuadruple P2 0)).im := FordBoundaryCompatibilityGeometry.haIm T T' p
-                  p' w iw ew hwcent hwslope hwslope' r2 g2 P2 t ht hpoint hcentbar hslopebar
-                  hslopebar' negative r r' hphase hcent' hsre' hsim' u a u' a' hshift hvec z
-                  hsreFord hsimFord si si' haRe
+              (FordRecursiveQuadruple P2 0)).im := FordBoundaryCompatibilityGeometry.haIm ew P2
+                  t negative r r' a a' z hsimFord si si'
       have hcoc : ∀ y : GaussianInt,
           FordOdometer P2 (y + BandVectors.1 (FordRecursiveQuadruple P2 t.succ)
             (FordRecursiveQuadruple P2 0)) - FordOdometer P2 y =

@@ -477,27 +477,66 @@ private theorem lowFormula :
 
 private theorem highFormula :
     ∀ (P : FordFareyParameter),
-    let g := FordOdometer P
-    (∀ (r : Int), ∀ (s : Int), FourNeighborLaplacian g ⟨r, s⟩ = g ⟨r + 1, s⟩ + g ⟨r - 1, s⟩ + g
-        ⟨r, s + 1⟩ + g ⟨r, s - 1⟩ - 4 * g ⟨r, s⟩) → ((GaussianInt) → (
-    let a : Int := P.q₁
-    let b : Int := P.q₂
-    let A := P.p₁
-    let B := P.p₂
-    let cdiv (n d : Int) := -((-n) / d)
-    ((P.q : Int) = a + b) → ((A * b - B * a = 1) → ((0 < b) → ((0 < a) → (∀ (P₁ :
-        FordFareyParameter), (P₁.q = P.q₁) → (∀ (P₂ : FordFareyParameter), (P₂.q = P.q₂) → ((∀ (d
-        : Int), ∀ (n : Int), ∀ (k : Int), (d ≠ 0) → (cdiv (k * d - n) d = k - n / d)) → ((∀ (d :
-        Int), ∀ (n : Int), ∀ (k : Int), (d ≠ 0) → (cdiv (k * d + n) d = k + cdiv n d)) → ((∀ (r :
-        Int), (a ≤ r) → ((r ≤ P.q) → (g ⟨r, b⟩ = B * r + 1 ∧ g ⟨b, r⟩ = B * r + 1))) → ((∀ (r :
-        Int), (b ≤ r) → ((r ≤ P.q) → (g ⟨r, b + 1⟩ = cdiv (A * (r - b)) a + B * r + B + 1 ∧ g ⟨b
-        + 1, r⟩ = cdiv (A * (r - b)) a + B * r + B + 1))) → ((∀ (r : Int), (a ≤ r) → ((r ≤ P.q) →
-        (g ⟨r, b - 1⟩ = cdiv (B * (r - a) * (b - 1)) b + A * (b - 1) ∧ g ⟨b - 1, r⟩ = cdiv (B *
-        (r - a) * (b - 1)) b + A * (b - 1)))) → (∀ (t : ℤ), (0 : ℤ) < t → t ≤ a → t < b →
-        FourNeighborLaplacian g ⟨(↑P.q : ℤ) - t, b⟩ = cdiv (B * t) b - A * t / a ∧
-        FourNeighborLaplacian g ⟨b, (↑P.q : ℤ) - t⟩ = cdiv (B * t) b - A * t / a))))))))))))) := by
+      let g := FordOdometer P;
+      (∀ (r : Int),
+          ∀ (s : Int),
+            FourNeighborLaplacian g ⟨r, s⟩ =
+              g ⟨r + 1, s⟩ + g ⟨r - 1, s⟩ + g ⟨r, s + 1⟩ + g ⟨r, s - 1⟩ -
+                4 * g ⟨r, s⟩) →
+        (let a : Int := P.q₁;
+        let b : Int := P.q₂;
+        let A := P.p₁;
+        let B := P.p₂;
+        let cdiv (n d : Int) := -((-n) / d);
+        ((P.q : Int) = a + b) →
+          ((A * b - B * a = 1) →
+            ((0 < b) →
+              ((0 < a) →
+                (∀ (P₁ : FordFareyParameter),
+                  (P₁.q = P.q₁) →
+                    (∀ (P₂ : FordFareyParameter),
+                      (P₂.q = P.q₂) →
+                        ((∀ (d : Int),
+                            ∀ (n : Int),
+                              ∀ (k : Int),
+                                (d ≠ 0) → (cdiv (k * d - n) d = k - n / d)) →
+                          ((∀ (d : Int),
+                              ∀ (n : Int),
+                                ∀ (k : Int),
+                                  (d ≠ 0) → (cdiv (k * d + n) d = k + cdiv n d)) →
+                            ((∀ (r : Int),
+                                (a ≤ r) →
+                                  ((r ≤ P.q) →
+                                    (g ⟨r, b⟩ = B * r + 1 ∧
+                                      g ⟨b, r⟩ = B * r + 1))) →
+                              ((∀ (r : Int),
+                                  (b ≤ r) →
+                                    ((r ≤ P.q) →
+                                      (g ⟨r, b + 1⟩ =
+                                          cdiv (A * (r - b)) a + B * r + B + 1 ∧
+                                        g ⟨b + 1, r⟩ =
+                                          cdiv (A * (r - b)) a + B * r + B + 1))) →
+                                ((∀ (r : Int),
+                                    (a ≤ r) →
+                                      ((r ≤ P.q) →
+                                        (g ⟨r, b - 1⟩ =
+                                            cdiv (B * (r - a) * (b - 1)) b +
+                                              A * (b - 1) ∧
+                                          g ⟨b - 1, r⟩ =
+                                            cdiv (B * (r - a) * (b - 1)) b +
+                                              A * (b - 1)))) →
+                                  (∀ (t : ℤ),
+                                    (0 : ℤ) < t →
+                                      t ≤ a →
+                                        t < b →
+                                          FourNeighborLaplacian g
+                                                ⟨(↑P.q : ℤ) - t, b⟩ =
+                                              cdiv (B * t) b - A * t / a ∧
+                                            FourNeighborLaplacian g
+                                                ⟨b, (↑P.q : ℤ) - t⟩ =
+                                              cdiv (B * t) b - A * t / a)))))))))))) := by
   classical
-  intro P g lapCoord x a b A B cdiv hsum hdet hb ha0 P₁ hq₁ P₂ hq₂ cminus cplus edge2 near1 near2
+  intro P g lapCoord a b A B cdiv hsum hdet hb ha0 P₁ hq₁ P₂ hq₂ cminus cplus edge2 near1 near2
       t ht hta htb
   have hc := edge2 ((P.q : Int) - t) (by omega) (by omega)
   have hm := edge2 ((P.q : Int) - t - 1) (by omega) (by omega)
@@ -1142,7 +1181,7 @@ private theorem interiorLaplacian :
   have highFormula (t : Int) (ht : 0 < t) (hta : t ≤ a) (htb : t < b) :
       FourNeighborLaplacian g ⟨(P.q : Int) - t, b⟩ = cdiv (B * t) b - A * t / a ∧
       FourNeighborLaplacian g ⟨b, (P.q : Int) - t⟩ = cdiv (B * t) b - A * t / a :=
-          FordLaplacianProof.highFormula P lapCoord x hsum hdet hb ha0 P₁ hq₁ P₂ hq₂ cminus
+          FordLaplacianProof.highFormula P lapCoord hsum hdet hb ha0 P₁ hq₁ P₂ hq₂ cminus
           (FordLaplacianDetails.cplus) (FordLaplacianProof.edge2 P ha x hsum hdet hb P₁ hq₁ P₂
               hq₂ v2 v3 cmul) (FordLaplacianDetails.near1 P x hsum ha0 P₁ hq₁ P₂ hq₂
               (FordLaplacianProof.v1 P x hsum P₁ hp₁ hq₁ P₂ hq₂ rec1 parentValue))

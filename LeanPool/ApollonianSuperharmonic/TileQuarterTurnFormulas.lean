@@ -6,6 +6,7 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.GaussianCoordinateFacts
 
 public import LeanPool.ApollonianSuperharmonic.BoundaryFootprintVertices
 public import LeanPool.ApollonianSuperharmonic.FootprintEdges
@@ -82,12 +83,7 @@ private theorem quarter_im_base (x : GaussianInt) :
   rcases x with ⟨a, b⟩
   simp [GaussianQuarterTurn, GaussianInt.toComplex_def]
 
-private theorem gaussian_equal (u v : GaussianInt) (hre : u.re = v.re)
-      (him : u.im = v.im) : u = v := by
-  classical
-  rcases u with ⟨u, w⟩
-  rcases v with ⟨v, z⟩
-  simp_all
+private abbrev gaussian_equal := GaussianCoordinateFacts.equal
 
 private theorem turn_up (a : GaussianInt) :
       GaussianQuarterTurn (a + ⟨0, 1⟩) = GaussianQuarterTurn a - 1 := by
@@ -124,10 +120,7 @@ private theorem minus_one_add_up (u : GaussianInt) :
       (him : u.im = v.im) : u = v := gaussian_equal u v hre him
   apply gaussian_equal <;> simp
 
-private theorem pair_swap (u v : GaussianInt) : ({u, v} : Finset GaussianInt) = {v, u} := by
-  classical
-  ext z
-  simp [or_comm]
+private abbrev pair_swap := GaussianCoordinateFacts.pairSwap
 
 private noncomputable def cellInverse : GaussianInt → GaussianInt := fun z =>
       ⟨(z + 1).im, -(z + 1).re⟩
@@ -449,7 +442,7 @@ theorem TileQuarterTurnFormulas : ∀ T : ProtoTile,
   have minus_one_add_up (u : GaussianInt) :
       u - 1 + ⟨0, 1⟩ = ⟨u.re - 1, u.im + 1⟩ := QuarterTurnFormulas.minus_one_add_up u
   have pair_swap (u v : GaussianInt) : ({u, v} : Finset GaussianInt) = {v, u} :=
-      QuarterTurnFormulas.pair_swap u v
+      GaussianCoordinateFacts.pairSwap u v
   dsimp [TileQuarterTurn]
   constructor
   · rfl

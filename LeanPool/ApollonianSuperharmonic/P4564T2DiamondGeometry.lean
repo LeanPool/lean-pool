@@ -6,17 +6,15 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.LatticeTileNonempty
 
 public import LeanPool.ApollonianSuperharmonic.BandPrototileTranslationNormalForm
 public import LeanPool.ApollonianSuperharmonic.BandSubtileOccurrenceTranslation
 public import LeanPool.ApollonianSuperharmonic.TileCellComplementCovariance
 public import LeanPool.ApollonianSuperharmonic.TouchingTripleCovariance
-public import LeanPool.ApollonianSuperharmonic.TileCellComplement
-public import LeanPool.ApollonianSuperharmonic.QuarterTurnSymmetric
 public import LeanPool.ApollonianSuperharmonic.DiamondBaseT1
 public import LeanPool.ApollonianSuperharmonic.DiamondBaseT2
 public import LeanPool.ApollonianSuperharmonic.DiamondBaseTouching
-public import LeanPool.ApollonianSuperharmonic.TileArea
 
 -- [TABLET NODE: P4564T2DiamondGeometry]
 
@@ -92,22 +90,6 @@ private theorem harea :
       rw [hT'cells]
     _ = Int.toNat (q 0).1 := hDarea
 
-private theorem disk_cells_nonempty :
-    (by
-      classical
-      exact
-        ∀ (X : ProtoTile), (LatticeTile X) → (X.cells.Nonempty) ) := by
-  classical
-  intro X hX
-  unfold LatticeTile TopologicalDisk TileRealization at hX
-  rcases hX with ⟨e⟩
-  have hp : (0 : Real × Real) ∈
-      (Metric.closedBall (0 : Real × Real) 1 : Set (Real × Real)) := by
-    simp
-  have hm := (e ⟨(0 : Real × Real), hp⟩).property
-  simp only [Set.mem_iUnion] at hm
-  obtain ⟨x, hx⟩ := hm
-  exact ⟨x, by simpa [TileRealization] using hx.1⟩
 
 private theorem touching_same_cells :
     (by
@@ -875,7 +857,7 @@ theorem P4564T2DiamondGeometry :
     hobs.2.2.1
   have harea := DiamondInterfaceGeometry.harea K T hDarea w hT'cells
   have disk_cells_nonempty (X : ProtoTile) (hX : LatticeTile X) :=
-      DiamondInterfaceGeometry.disk_cells_nonempty X hX
+      LatticeTileNonempty.cells X hX
   have touching_same_cells (A A' B : ProtoTile)
       (hc : A.cells = A'.cells) (hne : A.cells.Nonempty)
       (hbv : BoundaryFootprintVertices A = BoundaryFootprintVertices A')

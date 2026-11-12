@@ -1234,29 +1234,36 @@ private theorem hstraddle :
 private theorem hzeroHit :
     (by
       classical
-      exact
-        ∀ (n : Nat), ∀ (p : P3381T1PolygonBoundary n), ∀ (E : P3650T1ExposedCorner p),
-        let a := p.vertex (E.b - 1)
-        let b := p.vertex E.b
-        let c := p.vertex (E.b + 1)
-        let v : Fin 3 → Real × Real := ![a, b, c]
-        ∀ (hind : AffineIndependent Real v), ∀ (hspan : affineSpan Real (Set.range v) = ⊤),
-        let A : AffineBasis (Fin 3) Real (Real × Real) := ⟨v, hind, hspan⟩
-        ∀ (j : Fin (n + (3 : ℕ))),
-        let q : Real → Real × Real := AffineMap.lineMap (p.vertex j) (p.vertex (j + 1))
-        (Set.Icc ((A.coord (2 : Fin (3 : ℕ)) : ℝ × ℝ → ℝ) (q (0 : ℝ))) ((A.coord (2 : Fin (3 :
-            ℕ)) : ℝ × ℝ → ℝ) (q (1 : ℝ))) ⊆ (fun (s : ℝ) => (A.coord (2 : Fin (3 : ℕ)) : ℝ × ℝ →
-            ℝ) (q s)) '' Set.Icc (0 : ℝ) (1 : ℝ)) → (∀ (x : ℝ × ℝ), ((0 : ℝ) < (A.coord (0 : Fin
-            (3 : ℕ)) : ℝ × ℝ → ℝ) x ∧ (A.coord (1 : Fin (3 : ℕ)) : ℝ × ℝ → ℝ) x = (0 : ℝ) ∧ (0 :
-            ℝ) < (A.coord (2 : Fin (3 : ℕ)) : ℝ × ℝ → ℝ) x) → ((∀ (i : Fin 3), Continuous (fun s
-            => A.coord i (q s))) → (
-        let z0 := A.coord 2 (p.vertex j)
-        let z1 := A.coord 2 (p.vertex (j + 1))
-        (A.coord 0 x + A.coord 1 x + A.coord 2 x = 1) → (((z0 ≤ 0 ∧ 1 ≤ z1) ∨ (z1 ≤ 0 ∧ 1 ≤ z0))
-            → ((A.coord 2 (q 0) = z0) → ((A.coord 2 (q 1) = z1) → (∃ s ∈ Set.Icc (0 : Real) 1,
-            A.coord 2 (q s) = 0))))))) ) := by
+        exact
+        ∀ (n : Nat),
+          ∀ (p : P3381T1PolygonBoundary n),
+            ∀ (E : P3650T1ExposedCorner p),
+              let a := p.vertex (E.b - 1);
+              let b := p.vertex E.b;
+              let c := p.vertex (E.b + 1);
+              let v : Fin 3 → Real × Real := ![a, b, c];
+              ∀ (hind : AffineIndependent Real v),
+                ∀ (hspan : affineSpan Real (Set.range v) = ⊤),
+                  let A : AffineBasis (Fin 3) Real (Real × Real) :=
+                    ⟨v, hind, hspan⟩;
+                  ∀ (j : Fin (n + (3 : ℕ))),
+                    let q : Real → Real × Real :=
+                      AffineMap.lineMap (p.vertex j) (p.vertex (j + 1));
+                    (Set.Icc ((A.coord (2 : Fin (3 : ℕ)) : ℝ × ℝ → ℝ) (q (0 : ℝ)))
+                          ((A.coord (2 : Fin (3 : ℕ)) : ℝ × ℝ → ℝ) (q (1 : ℝ))) ⊆
+                        (fun (s : ℝ) =>
+                            (A.coord (2 : Fin (3 : ℕ)) : ℝ × ℝ → ℝ) (q s)) ''
+                          Set.Icc (0 : ℝ) (1 : ℝ)) →
+                      ((∀ (i : Fin 3), Continuous (fun s => A.coord i (q s))) →
+                        (let z0 := A.coord 2 (p.vertex j);
+                        let z1 := A.coord 2 (p.vertex (j + 1));
+                        (((z0 ≤ 0 ∧ 1 ≤ z1) ∨ (z1 ≤ 0 ∧ 1 ≤ z0)) →
+                          ((A.coord 2 (q 0) = z0) →
+                            ((A.coord 2 (q 1) = z1) →
+                              (∃ s ∈ Set.Icc (0 : Real) 1,
+                                A.coord 2 (q s) = 0))))))) := by
   classical
-  intro n p E a b c v hind hspan A j q hrange x hxb hfc z0 z1 hxsum hstraddle hz0eq hz1eq
+  intro n p E a b c v hind hspan A j q hrange hfc z0 z1 hstraddle hz0eq hz1eq
   rcases hstraddle with ⟨h0, h1⟩ | ⟨h1, h0⟩
   · have hmemRange : 0 ∈ Set.Icc z0 z1 := ⟨h0, by linarith⟩
     obtain ⟨s, hs, heq⟩ := hrange (by simpa [hz0eq, hz1eq] using hmemRange)
@@ -1270,29 +1277,36 @@ private theorem hzeroHit :
 private theorem honeHit :
     (by
       classical
-      exact
-        ∀ (n : Nat), ∀ (p : P3381T1PolygonBoundary n), ∀ (E : P3650T1ExposedCorner p),
-        let a := p.vertex (E.b - 1)
-        let b := p.vertex E.b
-        let c := p.vertex (E.b + 1)
-        let v : Fin 3 → Real × Real := ![a, b, c]
-        ∀ (hind : AffineIndependent Real v), ∀ (hspan : affineSpan Real (Set.range v) = ⊤),
-        let A : AffineBasis (Fin 3) Real (Real × Real) := ⟨v, hind, hspan⟩
-        ∀ (j : Fin (n + (3 : ℕ))),
-        let q : Real → Real × Real := AffineMap.lineMap (p.vertex j) (p.vertex (j + 1))
-        (Set.Icc ((A.coord (2 : Fin (3 : ℕ)) : ℝ × ℝ → ℝ) (q (0 : ℝ))) ((A.coord (2 : Fin (3 :
-            ℕ)) : ℝ × ℝ → ℝ) (q (1 : ℝ))) ⊆ (fun (s : ℝ) => (A.coord (2 : Fin (3 : ℕ)) : ℝ × ℝ →
-            ℝ) (q s)) '' Set.Icc (0 : ℝ) (1 : ℝ)) → (∀ (x : ℝ × ℝ), ((0 : ℝ) < (A.coord (0 : Fin
-            (3 : ℕ)) : ℝ × ℝ → ℝ) x ∧ (A.coord (1 : Fin (3 : ℕ)) : ℝ × ℝ → ℝ) x = (0 : ℝ) ∧ (0 :
-            ℝ) < (A.coord (2 : Fin (3 : ℕ)) : ℝ × ℝ → ℝ) x) → ((∀ (i : Fin 3), Continuous (fun s
-            => A.coord i (q s))) → (
-        let z0 := A.coord 2 (p.vertex j)
-        let z1 := A.coord 2 (p.vertex (j + 1))
-        (A.coord 0 x + A.coord 1 x + A.coord 2 x = 1) → (((z0 ≤ 0 ∧ 1 ≤ z1) ∨ (z1 ≤ 0 ∧ 1 ≤ z0))
-            → ((A.coord 2 (q 0) = z0) → ((A.coord 2 (q 1) = z1) → (∃ s ∈ Set.Icc (0 : Real) 1,
-            A.coord 2 (q s) = 1))))))) ) := by
+        exact
+        ∀ (n : Nat),
+          ∀ (p : P3381T1PolygonBoundary n),
+            ∀ (E : P3650T1ExposedCorner p),
+              let a := p.vertex (E.b - 1);
+              let b := p.vertex E.b;
+              let c := p.vertex (E.b + 1);
+              let v : Fin 3 → Real × Real := ![a, b, c];
+              ∀ (hind : AffineIndependent Real v),
+                ∀ (hspan : affineSpan Real (Set.range v) = ⊤),
+                  let A : AffineBasis (Fin 3) Real (Real × Real) :=
+                    ⟨v, hind, hspan⟩;
+                  ∀ (j : Fin (n + (3 : ℕ))),
+                    let q : Real → Real × Real :=
+                      AffineMap.lineMap (p.vertex j) (p.vertex (j + 1));
+                    (Set.Icc ((A.coord (2 : Fin (3 : ℕ)) : ℝ × ℝ → ℝ) (q (0 : ℝ)))
+                          ((A.coord (2 : Fin (3 : ℕ)) : ℝ × ℝ → ℝ) (q (1 : ℝ))) ⊆
+                        (fun (s : ℝ) =>
+                            (A.coord (2 : Fin (3 : ℕ)) : ℝ × ℝ → ℝ) (q s)) ''
+                          Set.Icc (0 : ℝ) (1 : ℝ)) →
+                      ((∀ (i : Fin 3), Continuous (fun s => A.coord i (q s))) →
+                        (let z0 := A.coord 2 (p.vertex j);
+                        let z1 := A.coord 2 (p.vertex (j + 1));
+                        (((z0 ≤ 0 ∧ 1 ≤ z1) ∨ (z1 ≤ 0 ∧ 1 ≤ z0)) →
+                          ((A.coord 2 (q 0) = z0) →
+                            ((A.coord 2 (q 1) = z1) →
+                              (∃ s ∈ Set.Icc (0 : Real) 1,
+                                A.coord 2 (q s) = 1))))))) := by
   classical
-  intro n p E a b c v hind hspan A j q hrange x hxb hfc z0 z1 hxsum hstraddle hz0eq hz1eq
+  intro n p E a b c v hind hspan A j q hrange hfc z0 z1 hstraddle hz0eq hz1eq
   rcases hstraddle with ⟨h0, h1⟩ | ⟨h1, h0⟩
   · have hmemRange : 1 ∈ Set.Icc z0 z1 := ⟨by linarith, h1⟩
     obtain ⟨s, hs, heq⟩ := hrange (by simpa [hz0eq, hz1eq] using hmemRange)
@@ -1942,14 +1956,14 @@ private theorem hbaseAvoid :
         (by norm_num) (hfc 2).continuousOn
       have hz0eq : A.coord 2 (q 0) = z0 := by simpa [z0] using hline2 0
       have hz1eq : A.coord 2 (q 1) = z1 := by simpa [z1] using hline2 1
-      obtain ⟨s0, hs0, hzs0⟩ := (TriangleDiagonalGeometry.hzeroHit n p E hind hspan j hrange x
-          hxb hfc hxsum hstraddle hz0eq hz1eq)
+      obtain ⟨s0, hs0, hzs0⟩ := (TriangleDiagonalGeometry.hzeroHit n p E hind hspan j hrange hfc
+          hstraddle hz0eq hz1eq)
       have hq1zero : A.coord 1 (q s0) = 0 := hline1 s0
       have hsideA := TriangleDiagonalGeometry.hsideA n p E
           hvertexSide j s0 (TriangleDiagonalGeometry.hqseg0 n p j s0 hs0)
               (TriangleDiagonalGeometry.hqa n p E hind hspan hcoordA j s0 hzs0 hq1zero)
-      obtain ⟨s1, hs1, hzs1⟩ := (TriangleDiagonalGeometry.honeHit n p E hind hspan j hrange x
-          hxb hfc hxsum hstraddle hz0eq hz1eq)
+      obtain ⟨s1, hs1, hzs1⟩ := (TriangleDiagonalGeometry.honeHit n p E hind hspan j hrange hfc
+          hstraddle hz0eq hz1eq)
       have hq1one : A.coord 1 (q s1) = 0 := hline1 s1
       have hsideC := TriangleDiagonalGeometry.hsideC n p E
           hvertexSide j s1 (TriangleDiagonalGeometry.hqseg1 n p j s1 hs1)

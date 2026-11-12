@@ -11,7 +11,6 @@ public import LeanPool.ApollonianSuperharmonic.AncestorOdometer
 public import LeanPool.ApollonianSuperharmonic.P5635T1EndpointDiagonalOwnership
 public import LeanPool.ApollonianSuperharmonic.AffineTriangularNoFourfoldCellOwners
 public import LeanPool.ApollonianSuperharmonic.BandRegularTranslatePeriodicComplex
-public import LeanPool.ApollonianSuperharmonic.ExactTileInterfaceTriple
 public import LeanPool.ApollonianSuperharmonic.P4158T1AncestorCells
 public import LeanPool.ApollonianSuperharmonic.TileString
 public import LeanPool.ApollonianSuperharmonic.P4431T1OwnerTransitionSelector
@@ -62,17 +61,6 @@ private theorem htiles_lattice :
   exact (TileDiskAreaCovariance base (a : GaussianInt)).1.mp
     (BandTileSimultaneousInduction q hproper base hbase').1
 
-private theorem neighbor_ne_center :
-    (by
-      classical
-      exact
-        let neighbor (x : GaussianInt) : Fin 4 → GaussianInt :=
-          ![x + ⟨0, 1⟩, x - 1, x - ⟨0, 1⟩, x + 1]
-        ∀ (x : GaussianInt), ∀ (j : Fin 4), neighbor x j ≠ x ) := by
-  classical
-  intro neighbor x j
-  fin_cases j <;> simp [neighbor, Zsqrtd.ext_iff]
-
 private theorem neighbor_injective :
     (by
       classical
@@ -87,64 +75,7 @@ private theorem neighbor_injective :
   fin_cases j <;> fin_cases k <;>
     simp [neighbor, Zsqrtd.ext_iff] at h ⊢ <;> omega
 
-private theorem edgeAt_mem :
-    (by
-      classical
-      exact
-        let neighbor (x : GaussianInt) : Fin 4 → GaussianInt :=
-          ![x + ⟨0, 1⟩, x - 1, x - ⟨0, 1⟩, x + 1]
-        let edgeAt (x : GaussianInt) : Fin 4 → Finset GaussianInt :=
-          ![{x, x + ⟨0, 1⟩}, {x - 1, x},
-            {x - ⟨0, 1⟩, x}, {x, x + 1}]
-        ∀ (x : GaussianInt), ∀ (j : Fin 4), x ∈ edgeAt x j ∧ neighbor x j ∈ edgeAt x j ) := by
-  classical
-  intro neighbor edgeAt x j
-  fin_cases j <;> simp [neighbor, edgeAt]
 
-private theorem edgeAt_eq_pair :
-    (by
-      classical
-      exact
-        let neighbor (x : GaussianInt) : Fin 4 → GaussianInt :=
-          ![x + ⟨0, 1⟩, x - 1, x - ⟨0, 1⟩, x + 1]
-        let edgeAt (x : GaussianInt) : Fin 4 → Finset GaussianInt :=
-          ![{x, x + ⟨0, 1⟩}, {x - 1, x},
-            {x - ⟨0, 1⟩, x}, {x, x + 1}]
-        ∀ (x : GaussianInt), ∀ (j : Fin 4), edgeAt x j = {x, neighbor x j} ) := by
-  classical
-  intro neighbor edgeAt x j
-  fin_cases j <;> simp [edgeAt, neighbor, Finset.pair_comm]
-
-private theorem edgeAt_injective :
-    (by
-      classical
-      exact
-        let neighbor (x : GaussianInt) : Fin 4 → GaussianInt :=
-          ![x + ⟨0, 1⟩, x - 1, x - ⟨0, 1⟩, x + 1]
-        let edgeAt (x : GaussianInt) : Fin 4 → Finset GaussianInt :=
-          ![{x, x + ⟨0, 1⟩}, {x - 1, x},
-            {x - ⟨0, 1⟩, x}, {x, x + 1}]
-        (∀ (x : GaussianInt), ∀ (j : Fin 4), neighbor x j ≠ x) → ((∀ (x : GaussianInt), ∀
-            {j : Fin 4}, ∀ {k : Fin 4}, (neighbor x j = neighbor x k) → (j = k)) → ((∀ (x :
-            GaussianInt), ∀ (j : Fin 4), x ∈ edgeAt x j ∧ neighbor x j ∈ edgeAt x j) → (∀ (x :
-            GaussianInt), ∀ {j : Fin 4}, ∀ {k : Fin 4}, (edgeAt x j = edgeAt x k) → (j = k)))) )
-            := by
-  classical
-  intro neighbor edgeAt neighbor_ne_center neighbor_injective edgeAt_mem x j k h
-  have hx := (edgeAt_mem x j).1
-  have hn := (edgeAt_mem x j).2
-  have hnm : neighbor x j ∈ edgeAt x k := by rw [← h]; exact hn
-  have hchoices : neighbor x j = x ∨ neighbor x j = neighbor x k := by
-    fin_cases k
-    · simpa [edgeAt, neighbor] using hnm
-    · have hh : neighbor x j = x - 1 ∨ neighbor x j = x := by
-        simpa [edgeAt, neighbor] using hnm
-      exact Or.symm hh
-    · have hh : neighbor x j = x - ⟨0, 1⟩ ∨ neighbor x j = x := by
-        simpa [edgeAt, neighbor] using hnm
-      exact Or.symm hh
-    · simpa [edgeAt, neighbor] using hnm
-  exact neighbor_injective x (hchoices.resolve_left (neighbor_ne_center x j))
 
 private theorem edge_of_sector_cell :
     (by
@@ -204,35 +135,7 @@ private theorem edge_of_sector_cell :
             simpa [LatticeVertexIncidentCell] using h,
             Or.inl rfl⟩)
 
-private theorem label_T0 :
-    (by
-      classical
-      exact
-        ∀ (T0 : ProtoTile), ∀ (T0' : ProtoTile),
-        let outerLabel : GaussianInt → Fin 4 → Fin 3 := fun x j =>
-          if LatticeVertexIncidentCell x j ∈ T0.cells then 0
-          else if LatticeVertexIncidentCell x j ∈ T0'.cells then 1 else 2
-        ∀ (x : GaussianInt), ∀ (j : Fin 4), (LatticeVertexIncidentCell x j ∈ T0.cells) →
-            (outerLabel x j = 0) ) := by
-  classical
-  intro T0 T0' outerLabel x j hc
-  simp [outerLabel, hc]
 
-private theorem label_T0' :
-    (by
-      classical
-      exact
-        ∀ (T0 : ProtoTile), ∀ (T0' : ProtoTile), (Disjoint T0.cells T0'.cells) → (
-        let outerLabel : GaussianInt → Fin 4 → Fin 3 := fun x j =>
-          if LatticeVertexIncidentCell x j ∈ T0.cells then 0
-          else if LatticeVertexIncidentCell x j ∈ T0'.cells then 1 else 2
-        ∀ (x : GaussianInt), ∀ (j : Fin 4), (LatticeVertexIncidentCell x j ∈ T0'.cells) →
-            (outerLabel x j = 1)) ) := by
-  classical
-  intro T0 T0' hdis outerLabel x j hc
-  have hn : LatticeVertexIncidentCell x j ∉ T0.cells :=
-    Finset.disjoint_left.mp hdis.symm hc
-  simp [outerLabel, hn, hc]
 
 private theorem forward_index :
     (by
@@ -1896,18 +1799,18 @@ theorem P4366T2LocalSectors
     let edgeAt (x : GaussianInt) : Fin 4 → Finset GaussianInt :=
       ![{x, x + ⟨0, 1⟩}, {x - 1, x},
         {x - ⟨0, 1⟩, x}, {x, x + 1}]
-    have edgeAt_mem := LocalSectorGeometry.edgeAt_mem
-    have edgeAt_eq_pair := LocalSectorGeometry.edgeAt_eq_pair
+    have edgeAt_mem := LatticeVertexSectorFacts.edgeMembership
+    have edgeAt_eq_pair := LatticeVertexSectorFacts.edgePair
     have edgeAt_injective (x : GaussianInt) {j k : Fin 4}
-        (h : edgeAt x j = edgeAt x k) := LocalSectorGeometry.edgeAt_injective
-            (LocalSectorGeometry.neighbor_ne_center) (LocalSectorGeometry.neighbor_injective Ci
+        (h : edgeAt x j = edgeAt x k) := LatticeVertexSectorFacts.edgeInjective
+            (LatticeVertexSectorFacts.neighborDistinct) (LocalSectorGeometry.neighbor_injective Ci
             path P) edgeAt_mem x (j := j) (k := k) h
     have edge_of_sector_cell := LocalSectorGeometry.edge_of_sector_cell
     let outerLabel : GaussianInt → Fin 4 → Fin 3 := fun x j =>
       if LatticeVertexIncidentCell x j ∈ T0.cells then 0
       else if LatticeVertexIncidentCell x j ∈ T0'.cells then 1 else 2
-    have label_T0 := LocalSectorGeometry.label_T0 T0 T0'
-    have label_T0' := LocalSectorGeometry.label_T0' T0 T0' hdis
+    have label_T0 := LatticeVertexSectorFacts.firstTileLabel T0 T0'
+    have label_T0' := LatticeVertexSectorFacts.secondTileLabel T0 T0' hdis
     rcases hr with ⟨hbaseR, hheadR, hlastR, hpairR, hfamilyR, hchainR, hheightR⟩
     have forward_index := LocalSectorGeometry.forward_index Ci base tiles hs hfamily P regular_index
     have reverse_index := LocalSectorGeometry.reverse_index Ci base reverseTiles reverseHs P

@@ -6,6 +6,7 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.SignSquareProduct
 public import Mathlib.Topology.MetricSpace.Pseudo.Real
 
 public import Mathlib.Analysis.Complex.Norm
@@ -42,9 +43,7 @@ private noncomputable abbrev d (A : ℂ) (B : ℂ) (y : ℝ) := A.re + (B.re - A
 private noncomputable abbrev Q (h : ℝ) (A : ℂ) (B : ℂ) := convexHull ℝ ({A, B, (fA h A), (fB h
     B)} : Set ℂ)
 
-private theorem hσsq (σ : ℝ) (hσ : σ ^ 2 = 1) : σ * σ = 1 := by
-  classical
-  nlinarith [hσ]
+private abbrev hσsq := SignSquareProduct.product
 
 private noncomputable abbrev T (h : ℝ) (σ : ℝ) (A : ℂ) (B : ℂ) : Set ℂ := by
   classical
@@ -922,7 +921,7 @@ theorem P4953T1QuadrilateralSections (h σ : ℝ) (A B : ℂ)
   let fB : ℂ := ⟨h, B.im⟩
   let d (y : ℝ) := A.re + (B.re - A.re) * (y - A.im) / (B.im - A.im)
   let Q := convexHull ℝ ({A, B, fA, fB} : Set ℂ)
-  have hσsq : σ * σ = 1 := QuadrilateralSectionsConstruction.hσsq σ hσ
+  have hσsq : σ * σ = 1 := SignSquareProduct.product σ hσ
   let T : Set ℂ := {z | A.im ≤ z.im ∧ z.im ≤ B.im ∧
     0 ≤ σ * (z.re - h) ∧ 0 ≤ σ * (d z.im - z.re)}
   have hconv : Convex ℝ T := QuadrilateralSectionsConstruction.hconv h σ A B hAB

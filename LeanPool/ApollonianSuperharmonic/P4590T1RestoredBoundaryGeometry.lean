@@ -217,18 +217,6 @@ private theorem hmodifiedCommon :
   simp only [FootprintVertices, hdeletedNe, ite_true, Set.mem_ofPred_eq]
   exact ⟨z, Finset.mem_sdiff.mpr ⟨hz, hzO⟩, hcorner⟩
 
-private theorem translation_zero :
-    (by
-      classical
-      exact
-        ∀ (U : ProtoTile), TileTranslation U 0 = U ) := by
-  classical
-  intro U
-  have hzero : GaussianTranslation (0 : GaussianInt) = id := by
-    funext z
-    simp [GaussianTranslation]
-  cases U
-  simp [TileTranslation, hzero, GaussianTranslation]
 
 private theorem htileA :
     (by
@@ -648,19 +636,6 @@ private theorem hRnonzero :
   rw [hRcoord]
   exact cfg.noLine 3
 
-private theorem touchingDisjoint :
-    (by
-      classical
-      exact
-        ∀ (X : ProtoTile), ∀ (Y : ProtoTile), (X.cells.Nonempty) → ((Y.cells.Nonempty) →
-            ((TileTouching X Y) → (Disjoint X.cells Y.cells))) ) := by
-  classical
-  intro X Y hX hY hxy
-  rcases hxy with ⟨_, _, hd, _⟩ | ⟨he, _⟩ | ⟨he, _⟩
-  · exact hd
-  · simp [he] at hX
-  · simp [he] at hY
-
 private theorem hp1_not :
     (by
       classical
@@ -997,7 +972,7 @@ theorem P4590T1RestoredBoundaryGeometry :
   let ib : PeriodicSubtileIndex := ⟨.B, 0, 0⟩
   let f1 := cert.modifiedFaceEquivalence.symm ⟨.I1, 0, 0⟩
   let f2 := cert.modifiedFaceEquivalence.symm ⟨.I2, 0, 0⟩
-  have translation_zero := RestoredBoundaryGeometry.translation_zero
+  have translation_zero := TileTranslationProperties.zero
   have htileA := RestoredBoundaryGeometry.htileA q cfg C T cert translation_zero
   have htileB := RestoredBoundaryGeometry.htileB q cfg C T cert translation_zero
   have hab : ia ≠ ib := by decide
@@ -1054,7 +1029,7 @@ theorem P4590T1RestoredBoundaryGeometry :
     P4590T1PositivePrototileDisk (cfg.firstPredecessor 3) R
       (cert.plus_occurrence 2 true).1 hRpos
   have hRne : R.cells.Nonempty := (LatticeTileGridStructure _ hRlat).1.1
-  have touchingDisjoint := RestoredBoundaryGeometry.touchingDisjoint
+  have touchingDisjoint := TileTouchingDisjoint.cells
   have hSCdisj : Disjoint S.cells Ctile.cells :=
     touchingDisjoint S Ctile hSne hCne cert.double_first.2.1
   have hCQdisj : Disjoint Ctile.cells Q.cells :=

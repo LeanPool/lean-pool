@@ -6,9 +6,9 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.BandOdometerParentCentroids
 
 public import LeanPool.ApollonianSuperharmonic.BandOrderedGeneralInteriorWebRow
-public import LeanPool.ApollonianSuperharmonic.BandOrderedGeneralOdometerRowData
 public import LeanPool.ApollonianSuperharmonic.OdometerWeb
 
 -- [TABLET NODE: BandOrderedGeneralLargestParentOdometerRows]
@@ -593,25 +593,6 @@ private theorem hslopeDiffAt427 :
       ext <;> dsimp [sOff] <;> ring
     _ = (1 / 2 : Real) • GaussianRealPoint (-I * (B - I * B)) :=
       slopeAlgebra.1
-
-private theorem hP1At441 :
-    (by
-      classical
-      exact
-        ∀ (q : Fin 4 -> CircleCoordinates), ∀ (cfg : BandOrderedGeneralConfiguration q), ∀ (C0 :
-            BandCircle), ∀ (T : ProtoTile), ∀ (cert : BandOrderedGeneralLayoutCertificate q cfg
-            C0 T), ∀ (h : PartialOdometer), ∀ (P : Fin 3 -> Bool -> ProtoTile), ∀ (r : Fin 3 ->
-            Bool -> PartialOdometer), ∀ (Q : Fin 3 -> Bool -> ProtoTile), ∀ (S : Fin 3 -> Bool ->
-            ProtoTile), ∀ (u : Fin 3 -> Bool -> PartialOdometer), ∀ (v : Fin 3 -> Bool ->
-            PartialOdometer), ∀ (g : IntegerLatticeFunction), (BandOrderedGeneralOdometerRowData
-            q cfg C0 T cert h P r Q S u v g) → (
-        let cOff (z : GaussianInt) : Real × Real :=
-          (1 / 2 : Real) • (GaussianRealPoint z -
-            (-(GaussianRealPoint z).2, (GaussianRealPoint z).1))
-        TileCentroid (P 1 true) - TileCentroid T = cOff (BandVectors.1 (q 1) (q 3))) ) := by
-  classical
-  intro q cfg C0 T cert h P r Q S u v g data cOff
-  simpa [cOff, Fin.add_def] using data.hPcent 1 true
 
 private theorem hq13At444 :
     (by
@@ -1250,25 +1231,6 @@ private theorem hslopeDiffAt794 :
         (((-I : GaussianInt) ^ (3 : Nat)) * (B - I * B)) :=
       slopeAlgebra.2
 
-private theorem hP1At810 :
-    (by
-      classical
-      exact
-        ∀ (q : Fin 4 -> CircleCoordinates), ∀ (cfg : BandOrderedGeneralConfiguration q), ∀ (C0 :
-            BandCircle), ∀ (T : ProtoTile), ∀ (cert : BandOrderedGeneralLayoutCertificate q cfg
-            C0 T), ∀ (h : PartialOdometer), ∀ (P : Fin 3 -> Bool -> ProtoTile), ∀ (r : Fin 3 ->
-            Bool -> PartialOdometer), ∀ (Q : Fin 3 -> Bool -> ProtoTile), ∀ (S : Fin 3 -> Bool ->
-            ProtoTile), ∀ (u : Fin 3 -> Bool -> PartialOdometer), ∀ (v : Fin 3 -> Bool ->
-            PartialOdometer), ∀ (g : IntegerLatticeFunction), (BandOrderedGeneralOdometerRowData
-            q cfg C0 T cert h P r Q S u v g) → (
-        let cOff (z : GaussianInt) : Real × Real :=
-          (1 / 2 : Real) • (GaussianRealPoint z -
-            (-(GaussianRealPoint z).2, (GaussianRealPoint z).1))
-        TileCentroid (P 1 false) - TileCentroid T = -cOff (BandVectors.1 (q 1) (q 3))) ) := by
-  classical
-  intro q cfg C0 T cert h P r Q S u v g data cOff
-  simpa [cOff, Fin.add_def] using data.hPcent 1 false
-
 private theorem hform'At819 :
     (by
       classical
@@ -1749,7 +1711,7 @@ private theorem positiveLargestCase :
   have hslopeDiff := LargestParentOdometerGeometry.hslopeDiffAt427 q cfg a21 a13 slopeAlgebra
       pQroot pQ pSroot pS pPplus pRoot' pPminus hQalign hSalign hQdelta hSdelta hPminusDelta
       (LargestParentOdometerGeometry.hPplusDelta' q pRoot pPplus pRoot' hrootAlign hPplusDelta)
-  have hP1 := LargestParentOdometerGeometry.hP1At441 q cfg C0 T cert h P r Q S u v g data
+  have hP1 := BandOdometerParentCentroids.positive q cfg C0 T cert h P r Q S u v g data
   have hq13 := LargestParentOdometerGeometry.hq13At444 q cfg
   have htranslateCent := LargestParentOdometerGeometry.htranslateCentAt448 q cfg T P Q v13
       centroidAlgebra hQleafOff hPplus hP1 hq13
@@ -1952,7 +1914,7 @@ private theorem reflectedLargestCase :
       pQroot pQ pSroot pS pRoot pPplus pPminus hQalign hSalign hQdelta hSdelta hPplusDelta
       (LargestParentOdometerGeometry.hPminusDelta' q pRoot pRoot' pPminus hrootAlign
           hPminusDelta)
-  have hP1 := LargestParentOdometerGeometry.hP1At810 q cfg C0 T cert h P r Q S u v g data
+  have hP1 := BandOdometerParentCentroids.negative q cfg C0 T cert h P r Q S u v g data
   have hq13 := LargestParentOdometerGeometry.hq13At444 q cfg
   have hform := (TileTranslationFormulas (S 1 false)
     (((I : GaussianInt) ^ (3 : Nat)) * W)).2.2.2.2.1

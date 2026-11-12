@@ -531,19 +531,6 @@ private theorem hpieceIndexCentral :
   intro labelOf pieceIndex j e
   fin_cases j <;> cases e <;> simp [pieceIndex, labelOf]
 
-private theorem translation_zero :
-    (by
-      classical
-      exact
-        ∀ (U : ProtoTile), TileTranslation U 0 = U ) := by
-  classical
-  intro U
-  cases U with
-  | mk cells anchor =>
-      have hc : cells.image (GaussianTranslation 0) = cells := by
-        ext z
-        simp [GaussianTranslation]
-      simp [TileTranslation, hc, GaussianTranslation]
 
 private theorem centralOccurrence :
     (by
@@ -1395,7 +1382,7 @@ theorem BandOrderedGeneralSubtileNormalizationCertificateExists
       pieceIndex j e = ⟨.E, 0, 0⟩ ∨ pieceIndex j e = ⟨.F, 0, 0⟩ :=
           SubtileNormalizationGeometry.hpieceIndexCentral j e
   have translation_zero (U : ProtoTile) : TileTranslation U 0 = U :=
-      SubtileNormalizationGeometry.translation_zero U
+      TileTranslationProperties.zero U
   have centralOccurrence (j : Fin 3) (e : Bool) :
       SubtileOccurrenceInterpretation layout.P layout.u layout.v
         (pieceIndex j e) = layout.P j e := SubtileNormalizationGeometry.centralOccurrence q T₀ r

@@ -9,7 +9,8 @@ public import Mathlib.Init
 
 public import LeanPool.ApollonianSuperharmonic.BandOrderedGeneralNormalizedOccurrenceBundle
 public import LeanPool.ApollonianSuperharmonic.BandOrderedGeneralSubtileInterfaceCertificateExists
-public import LeanPool.ApollonianSuperharmonic.BandOrderedGeneralSubtileNormalizationCertificateExists
+public import
+    LeanPool.ApollonianSuperharmonic.BandOrderedGeneralSubtileNormalizationCertificateExists
 public import LeanPool.ApollonianSuperharmonic.BandOrderedGeneralSubtileRoutingCertificateExists
 
 -- [TABLET NODE: BandOrderedGeneralSubtileNormalizedBundleExists]

@@ -254,42 +254,6 @@ private theorem outerBoundary :
   exact (ProtoTileObservableExtensionality (H (cert.P i true))
     (cert.P i false) (outerCells i) hempty).2.1
 
-private theorem splitInternal :
-    (by
-      classical
-      exact
-        ∀ (l : List GaussianInt), ∀ (x : GaussianInt), ∀ (h : GaussianInt), ∀ (t : GaussianInt),
-            l.Nodup → l.head? = some h → l.getLast? = some t → x ∈ l → x ≠ h → x ≠ t → ∃ pre y z
-            post, l = pre ++ y :: x :: z :: post ) := by
-  classical
-  intro l
-  induction l with
-  | nil => intro x h t hn hh ht hx; simp at hx
-  | cons a tail ih =>
-    intro x h t hn hh ht hx hxh hxt
-    have hah : a = h := by simpa using hh
-    subst h
-    rcases List.mem_cons.mp hx with hxa | hx
-    · exact (hxh hxa).elim
-    · cases tail with
-      | nil => simp at hx
-      | cons b rest =>
-        by_cases hxb : x = b
-        · subst x
-          have hrest : rest ≠ [] := by
-            intro he
-            subst rest
-            have hb : b = t := by simpa using ht
-            exact hxt hb
-          cases rest with
-          | nil => exact (hrest rfl).elim
-          | cons c u =>
-            refine ⟨[], a, c, u, ?_⟩
-            simp
-        · obtain ⟨pre, y, z, post, heq⟩ :=
-            ih x b t hn.tail (by rfl) (by simpa using ht) hx hxb hxt
-          refine ⟨a :: pre, y, z, post, ?_⟩
-          simp [heq]
 
 private theorem twoPathEdges :
     (by
@@ -515,18 +479,6 @@ private theorem interfaceConclusion :
   · exact Or.inl hUcell
   · exact Or.inr hVcell
 
-private theorem translation_zero :
-    (by
-      classical
-      exact
-        ∀ (U : ProtoTile), TileTranslation U 0 = U ) := by
-  classical
-  intro U
-  have hzero : GaussianTranslation (0 : GaussianInt) = id := by
-    funext z
-    simp [GaussianTranslation]
-  cases U
-  simp [TileTranslation, hzero, GaussianTranslation]
 
 private theorem htileA :
     (by
@@ -1980,7 +1932,7 @@ private theorem positiveCase :
   let c : PeriodicSubtileIndex := ⟨.C, 0, 0⟩
   let f1 := cert.modifiedFaceEquivalence.symm ⟨.I1, 0, 0⟩
   let f3 := cert.modifiedFaceEquivalence.symm ⟨.I3, 0, 0⟩
-  have translation_zero := RightInteriorGeometry.translation_zero
+  have translation_zero := TileTranslationProperties.zero
   have htileA := RightInteriorGeometry.htileA q cfg C T cert translation_zero
   have htileC := RightInteriorGeometry.htileC q cfg C T cert translation_zero
   have hOA := RightInteriorGeometry.hOA q cfg C T cert
@@ -2134,7 +2086,7 @@ theorem P4590T1RightInteriorGeometry :
       outerNonempty
   have outerBoundary := RightInteriorGeometry.outerBoundary q cfg C T cert u outerCells
       outerNonempty
-  have twoPathEdges := RightInteriorGeometry.twoPathEdges (RightInteriorGeometry.splitInternal)
+  have twoPathEdges := RightInteriorGeometry.twoPathEdges (ListEndpointFacts.internalNeighbors)
   have touching_disjoint := RightInteriorGeometry.touching_disjoint
   have edgeEndpoint := RightInteriorGeometry.edgeEndpoint
   have threeBoundaries := RightInteriorGeometry.threeBoundaries (RightInteriorGeometry.rawIncident)

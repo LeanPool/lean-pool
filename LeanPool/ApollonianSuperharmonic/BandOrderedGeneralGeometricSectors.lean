@@ -838,38 +838,50 @@ private theorem hnd :
 private theorem hnWhole :
     (by
       classical
-      exact
-        ∀ (q : Fin 4 → CircleCoordinates), ∀ (cfg : BandOrderedGeneralConfiguration q), ∀ (C₀ :
-            BandCircle), ∀ (T : ProtoTile), ∀ (cert : BandOrderedGeneralLayoutCertificate q cfg
-            C₀ T),
-        let P := cert.modified
-        (∀ (whole : FiniteInducedTilePatch P.plane P.tile), (whole.indices = ({⟨.A, 0, 0⟩, ⟨.B,
-            0, 0⟩, ⟨.C, 0, 0⟩, ⟨.D, 0, 0⟩, ⟨.E, 0, 0⟩, ⟨.F, 0, 0⟩} : Finset
-            PeriodicSubtileIndex)) → (∀ (a : PeriodicSubtileIndex), (a ∈ whole.indices) →
-            (a.first = 0 ∧ a.second = 0))) → (∀ (whole : FiniteInducedTilePatch
-            cert.modified.plane cert.modified.tile), (whole.indices = {(⟨SixSubtileLabel.A,
-            (0 : ℤ), (0 : ℤ)⟩ : PeriodicSubtileIndex), (⟨SixSubtileLabel.B, (0 : ℤ), (0 : ℤ)⟩ :
-            PeriodicSubtileIndex), (⟨SixSubtileLabel.C, (0 : ℤ), (0 : ℤ)⟩ :
-            PeriodicSubtileIndex), (⟨SixSubtileLabel.D, (0 : ℤ), (0 : ℤ)⟩ :
-            PeriodicSubtileIndex), (⟨SixSubtileLabel.E, (0 : ℤ), (0 : ℤ)⟩ :
-            PeriodicSubtileIndex), (⟨SixSubtileLabel.F, (0 : ℤ), (0 : ℤ)⟩ :
-            PeriodicSubtileIndex)}) → (∀ (d : PeriodicSubtileIndex), (d ∈ whole.indices) → (∀
-            (rest : FiniteInducedTilePatch cert.modified.plane cert.modified.tile), (rest.indices
-            = whole.indices.erase d) → ((rest.unionTile = TileCellComplement T
-            (cert.modified.tile d)) → ((d ∉ rest.indices) → ((Disjoint (rest.unionTile).cells
-            (P.tile d).cells) → ((∀ z : LatticeCell, z ∈ whole.unionTile.cells ↔ z ∈ (P.tile
-            d).cells ∨ z ∈ rest.unionTile.cells) → (
-        let n : PeriodicSubtileIndex := match d.label with
-          | .A => ⟨.B, 0, 0⟩
-          | .B => ⟨.A, 0, 0⟩
-          | .C => ⟨.A, 0, 0⟩
-          | .D => ⟨.A, 0, 0⟩
-          | .E => ⟨.B, 0, 0⟩
-          | .F => ⟨.A, 0, 0⟩
-        (AllowedSubtileIncidence d n) → ((n ≠ d) → (n ∈ whole.indices)))))))))) ) := by
+        exact
+        ∀ (q : Fin 4 → CircleCoordinates),
+          ∀ (cfg : BandOrderedGeneralConfiguration q),
+            ∀ (C₀ : BandCircle),
+              ∀ (T : ProtoTile),
+                ∀ (cert : BandOrderedGeneralLayoutCertificate q cfg C₀ T),
+                  let P := cert.modified;
+                  (∀ (whole : FiniteInducedTilePatch P.plane P.tile),
+                      (whole.indices =
+                          ({⟨.A, 0, 0⟩, ⟨.B, 0, 0⟩, ⟨.C, 0, 0⟩, ⟨.D, 0, 0⟩,
+                              ⟨.E, 0, 0⟩, ⟨.F, 0, 0⟩} :
+                            Finset PeriodicSubtileIndex)) →
+                        (∀ (a : PeriodicSubtileIndex),
+                          (a ∈ whole.indices) → (a.first = 0 ∧ a.second = 0))) →
+                    (∀
+                      (whole :
+                        FiniteInducedTilePatch cert.modified.plane
+                          cert.modified.tile),
+                      (whole.indices =
+                          {(⟨SixSubtileLabel.A, (0 : ℤ), (0 : ℤ)⟩ :
+                              PeriodicSubtileIndex),
+                            (⟨SixSubtileLabel.B, (0 : ℤ), (0 : ℤ)⟩ :
+                              PeriodicSubtileIndex),
+                            (⟨SixSubtileLabel.C, (0 : ℤ), (0 : ℤ)⟩ :
+                              PeriodicSubtileIndex),
+                            (⟨SixSubtileLabel.D, (0 : ℤ), (0 : ℤ)⟩ :
+                              PeriodicSubtileIndex),
+                            (⟨SixSubtileLabel.E, (0 : ℤ), (0 : ℤ)⟩ :
+                              PeriodicSubtileIndex),
+                            (⟨SixSubtileLabel.F, (0 : ℤ), (0 : ℤ)⟩ :
+                              PeriodicSubtileIndex)}) →
+                        (∀ (d : PeriodicSubtileIndex),
+                          (d ∈ whole.indices) →
+                            (let n : PeriodicSubtileIndex :=
+                              match d.label with
+                              | .A => ⟨.B, 0, 0⟩
+                              | .B => ⟨.A, 0, 0⟩
+                              | .C => ⟨.A, 0, 0⟩
+                              | .D => ⟨.A, 0, 0⟩
+                              | .E => ⟨.B, 0, 0⟩
+                              | .F => ⟨.A, 0, 0⟩;
+                            (n ∈ whole.indices))))) := by
   classical
-  intro q cfg C₀ T cert P hzero whole hidx d hd rest hrestIdx hrestUnion hdnot hdisj hunion n hdn
-      hnd
+  intro q cfg C₀ T cert P hzero whole hidx d hd n
   cases d with
   | mk lab i j =>
     have hz := hzero whole hidx ⟨lab, i, j⟩ hd
@@ -1214,7 +1226,7 @@ theorem BandOrderedGeneralGeometricSectors
     have hnd : n ≠ d := GeometricSectorGeometry.hnd q cfg C₀ T cert hzero whole hidx d hd rest
         hrestIdx hrestUnion hdnot hdisj hunion hdn
     have hnWhole : n ∈ whole.indices := GeometricSectorGeometry.hnWhole q cfg C₀ T cert hzero
-        whole hidx d hd rest hrestIdx hrestUnion hdnot hdisj hunion hdn hnd
+        whole hidx d hd
     have hnrest : n ∈ rest.indices := GeometricSectorGeometry.hnrest q cfg C₀ T cert whole d rest
         hrestIdx hnd hnWhole
     have hneAdj : P.plane.adjacent d n :=

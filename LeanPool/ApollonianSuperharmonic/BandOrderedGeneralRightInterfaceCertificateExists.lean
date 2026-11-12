@@ -6,6 +6,8 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.GaussianQuarterTurnProperties
+public import LeanPool.ApollonianSuperharmonic.BandParentVectorQuarterTurn
 public import LeanPool.ApollonianSuperharmonic.BandVectorParentSums
 
 public import LeanPool.ApollonianSuperharmonic.BandOrderedGeneralRightInterfaceCertificate
@@ -245,34 +247,6 @@ private theorem thirdTurnTouching :
     (centeredTurnTouching A _ _ hsym
       (centeredTurnTouching A a b hsym ht))
 
-private theorem turn_flip :
-    (by
-      classical
-      exact
-        ∀ (C : BandCircle), ∀ (T : ProtoTile), ∀ (N : ProtoTile), ∀ (h : PartialOdometer), ∀ (k :
-            PartialOdometer), ∀ (x : GaussianInt), ∀ (normalization :
-            BandOrderedGeneralRightNormalizationCertificate C T N h k x),
-        let q := normalization.normalizedPresentation
-        (∀ (j : Fin (3 : ℕ)), BandVectors.1 (q (0 : Fin (4 : ℕ))) (q j.succ) = (⟨(0 : ℤ), (1 :
-            ℤ)⟩ : GaussianInt) * BandVectors.1 (q j.succ) (q (0 : Fin (4 : ℕ))) ∧ BandVectors.2
-            (q (0 : Fin (4 : ℕ))) (q j.succ) = -(⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt) *
-            BandVectors.2 (q j.succ) (q (0 : Fin (4 : ℕ)))) → (∀ (s : Fin 3), GaussianQuarterTurn
-            (BandVectors.1 (q s.succ) (q 0)) = BandVectors.1 (q 0) (q s.succ)) ) := by
-  classical
-  intro C T N h k x normalization q flip s
-  rw [(flip s).1]
-  rcases BandVectors.1 (q s.succ) (q 0) with ⟨a, b⟩
-  apply Zsqrtd.ext <;> simp [GaussianQuarterTurn]
-
-private theorem turn_neg :
-    (by
-      classical
-      exact
-        ∀ (z : GaussianInt), GaussianQuarterTurn (-z) = -GaussianQuarterTurn z ) := by
-  classical
-  intro z
-  rcases z with ⟨a, b⟩
-  apply Zsqrtd.ext <;> simp [GaussianQuarterTurn]
 
 private theorem turn_three :
     (by
@@ -285,15 +259,6 @@ private theorem turn_three :
   rcases z with ⟨a, b⟩
   apply Zsqrtd.ext <;> simp [GaussianQuarterTurn]
 
-private theorem turn_two :
-    (by
-      classical
-      exact
-        ∀ (z : GaussianInt), GaussianQuarterTurn (GaussianQuarterTurn z) = -z ) := by
-  classical
-  intro z
-  rcases z with ⟨a, b⟩
-  apply Zsqrtd.ext <;> simp [GaussianQuarterTurn]
 
 private theorem touch0p :
     (by
@@ -1057,17 +1022,17 @@ theorem BandOrderedGeneralRightInterfaceCertificateExists
   have flip := laws.2.2.2.2 normalization.configuration.proper
   have turn_flip (s : Fin 3) :
       GaussianQuarterTurn (BandVectors.1 (q s.succ) (q 0)) =
-        BandVectors.1 (q 0) (q s.succ) := RightInterfaceCertificateGeometry.turn_flip C T N h k x
-            normalization flip s
+        BandVectors.1 (q 0) (q s.succ) := BandParentVectorQuarterTurn.turn
+            (normalization).normalizedPresentation (fun j => (flip j).1) s
   have turn_neg (z : GaussianInt) :
       GaussianQuarterTurn (-z) = -GaussianQuarterTurn z :=
-          RightInterfaceCertificateGeometry.turn_neg z
+          GaussianQuarterTurnProperties.negation z
   have turn_three (z : GaussianInt) :
       GaussianQuarterTurn (GaussianQuarterTurn (GaussianQuarterTurn z)) =
         -GaussianQuarterTurn z := RightInterfaceCertificateGeometry.turn_three z
   have turn_two (z : GaussianInt) :
       GaussianQuarterTurn (GaussianQuarterTurn z) = -z :=
-          RightInterfaceCertificateGeometry.turn_two z
+          GaussianQuarterTurnProperties.twice z
   have turn0 : GaussianQuarterTurn (BandVectors.1 (q 1) (q 0)) =
       BandVectors.1 (q 0) (q 1) := by simpa using turn_flip (0 : Fin 3)
   have turn1 : GaussianQuarterTurn (BandVectors.1 (q 2) (q 0)) =

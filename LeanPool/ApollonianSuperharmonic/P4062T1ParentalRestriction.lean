@@ -6,6 +6,7 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.FordInteriorSquareCoordinates
 
 public import LeanPool.ApollonianSuperharmonic.P4062T1RecursiveInteriors
 public import LeanPool.ApollonianSuperharmonic.FordOdometer
@@ -26,23 +27,6 @@ Changes: pool module paths, public exports, project namespace and current Mathli
 namespace ApollonianSuperharmonic
 
 namespace ParentalRestrictionProof
-
-private theorem squareCoordinates :
-    ∀ (q : ℕ), ∀ (x : GaussianInt), x ∈ P4062T1InteriorSquare q ↔ (1 : ℤ) ≤ x.re ∧ x.re ≤ (↑q :
-        ℤ) - (1 : ℤ) ∧ (1 : ℤ) ≤ x.im ∧ x.im ≤ (↑q : ℤ) - (1 : ℤ) := by
-  classical
-  intro q x
-  unfold P4062T1InteriorSquare
-  constructor
-  · intro hx
-    obtain ⟨⟨a, b⟩, hab, rfl⟩ := Finset.mem_image.mp hx
-    obtain ⟨ha, hb⟩ := Finset.mem_product.mp hab
-    exact ⟨(Finset.mem_Icc.mp ha).1, (Finset.mem_Icc.mp ha).2,
-      (Finset.mem_Icc.mp hb).1, (Finset.mem_Icc.mp hb).2⟩
-  · intro h
-    exact Finset.mem_image.mpr ⟨(x.re, x.im),
-      Finset.mem_product.mpr ⟨Finset.mem_Icc.mpr ⟨h.1, h.2.1⟩,
-        Finset.mem_Icc.mpr h.2.2⟩, by cases x; rfl⟩
 
 private theorem hparent₁pos :
     ∀ (P : FordFareyParameter), ((2 : ℕ) < P.q) → ((P.q = P.q₁ + P.q₂) → (1 < P.q → 0 < P.q₁)) := by
@@ -331,7 +315,7 @@ theorem P4062T1ParentalRestriction (P : FordFareyParameter)
   have squareCoordinates (q : Nat) (x : GaussianInt) :
       x ∈ P4062T1InteriorSquare q ↔
         1 ≤ x.re ∧ x.re ≤ (q : Int) - 1 ∧
-        1 ≤ x.im ∧ x.im ≤ (q : Int) - 1 := ParentalRestrictionProof.squareCoordinates q x
+        1 ≤ x.im ∧ x.im ≤ (q : Int) - 1 := FordInteriorSquareCoordinates.membership q x
   have hqpos : 0 < P.q := P.q_pos
   have hsum : P.q = P.q₁ + P.q₂ := P.sum_q
   have hparent₁ : P.q₁ < P.q := P.q₁_lt

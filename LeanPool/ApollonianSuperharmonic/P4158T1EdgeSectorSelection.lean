@@ -271,74 +271,17 @@ private theorem ford_disjoint_im :
   simp [Zsqrtd.im_sub] at hW hV
   omega
 
-private theorem q₁pos :
-    (by
-      classical
-      exact
-        ∀ (P : FordFareyParameter), ∀ (C0 : BandCircle), ∀ (Ci : BandCircle), ∀ (i : Fin (3 :
-            ℕ)), (i = (0 : Fin (3 : ℕ)) ∧ P.q₁ < P.q₂ ∨ i = (1 : Fin (3 : ℕ)) ∧ P.q₂ < P.q₁) →
-            (((0 : ℕ) < P.q₁) → (∀ (T : ProtoTile), ∀ (T' : ProtoTile), ∀ (h : PartialOdometer),
-            ∀ (h' : PartialOdometer), ∀ (u : GaussianInt), (T'.cells = (TileTranslation (FordTile
-            P.q) (u + if i = (0 : Fin (3 : ℕ)) then (⟨(↑P.q : ℤ), (↑P.q₁ : ℤ)⟩ : GaussianInt)
-            else (⟨-(↑P.q : ℤ), (↑P.q₂ : ℤ)⟩ : GaussianInt))).cells) → (∀ (Rminus : ProtoTile), ∀
-            (Rplus : ProtoTile), ∀ (tiles : List ProtoTile), ∀ (reverseTiles : List ProtoTile), ∀
-            (hs : List PartialOdometer), ∀ (reverseHs : List PartialOdometer), (Rminus.cells =
-            (TileTranslation (FordTile (if i = (0 : Fin (3 : ℕ)) then P.q₁ else P.q₂)) (u + if i
-            = (0 : Fin (3 : ℕ)) then (⟨(↑P.q : ℤ), (0 : ℤ)⟩ : GaussianInt) else (⟨(0 : ℤ), (↑P.q
-            : ℤ)⟩ : GaussianInt))).cells) → ((Rplus.cells = (TileTranslation (FordTile (if i = (0
-            : Fin (3 : ℕ)) then P.q₁ else P.q₂)) (u + if i = (0 : Fin (3 : ℕ)) then (⟨(↑P.q₂ :
-            ℤ), (↑P.q : ℤ)⟩ : GaussianInt) else (⟨-(↑P.q₂ : ℤ), (0 : ℤ)⟩ : GaussianInt))).cells)
-            → ((∀ (z : GaussianInt), ((z - u).re = if i = (0 : Fin (3 : ℕ)) then (↑P.q : ℤ) else
-            (0 : ℤ)) → (if i = (0 : Fin (3 : ℕ)) then (↑P.q₁ : ℤ) else (↑P.q₂ : ℤ)) ≤ (z - u).im
-            → (z - u).im < (↑P.q : ℤ) → ∃ (U : ProtoTile) (V : ProtoTile) (g : PartialOdometer)
-            (k : PartialOdometer), U ∈ (List.drop (1 : ℕ) tiles).dropLast ∧ V ∈ (List.drop (1 :
-            ℕ) reverseTiles).dropLast ∧ (U, g) ∈ tiles.zip hs ∧ (V, k) ∈ reverseTiles.zip
-            reverseHs ∧ AncestorOdometer Ci.1.1 C0.1.1 U T g h ∧ AncestorOdometer Ci.1.1 C0.1.1 V
-            T' k h' ∧ {z, z + (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt)} ∈ FootprintEdges U ∧ {z,
-            z + (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt)} ∈ FootprintEdges V) → (∀ (x : GaussianInt),
-            ((x - u).re = if i = (0 : Fin (3 : ℕ)) then (↑P.q : ℤ) else (0 : ℤ)) → (((if i = (0 :
-            Fin (3 : ℕ)) then (↑P.q₁ : ℤ) else (↑P.q₂ : ℤ)) ≤ (x - u).im) → (0 < P.q₁)))))))) )
-            := by
-  classical
-  intro P C0 Ci i hsmall hrpos T T' h h' u hc' Rminus Rplus tiles reverseTiles hs reverseHs hRm
-      hRp hedges x hxr hxl
-  rcases hsmall with ⟨hi, hlt⟩ | ⟨hi, hlt⟩
-  · subst i
-    omega
-  · subst i
-    omega
-
 private theorem lower_lt_q :
     (by
       classical
-      exact
-        ∀ (P : FordFareyParameter), ∀ (C0 : BandCircle), ∀ (Ci : BandCircle), ∀ (i : Fin (3 :
-            ℕ)), (i = (0 : Fin (3 : ℕ)) ∧ P.q₁ < P.q₂ ∨ i = (1 : Fin (3 : ℕ)) ∧ P.q₂ < P.q₁) →
-            (((0 : ℕ) < P.q₁) → (∀ (T : ProtoTile), ∀ (T' : ProtoTile), ∀ (h : PartialOdometer),
-            ∀ (h' : PartialOdometer), ∀ (u : GaussianInt), (T'.cells = (TileTranslation (FordTile
-            P.q) (u + if i = (0 : Fin (3 : ℕ)) then (⟨(↑P.q : ℤ), (↑P.q₁ : ℤ)⟩ : GaussianInt)
-            else (⟨-(↑P.q : ℤ), (↑P.q₂ : ℤ)⟩ : GaussianInt))).cells) → (∀ (Rminus : ProtoTile), ∀
-            (Rplus : ProtoTile), ∀ (tiles : List ProtoTile), ∀ (reverseTiles : List ProtoTile), ∀
-            (hs : List PartialOdometer), ∀ (reverseHs : List PartialOdometer), (Rminus.cells =
-            (TileTranslation (FordTile (if i = (0 : Fin (3 : ℕ)) then P.q₁ else P.q₂)) (u + if i
-            = (0 : Fin (3 : ℕ)) then (⟨(↑P.q : ℤ), (0 : ℤ)⟩ : GaussianInt) else (⟨(0 : ℤ), (↑P.q
-            : ℤ)⟩ : GaussianInt))).cells) → ((Rplus.cells = (TileTranslation (FordTile (if i = (0
-            : Fin (3 : ℕ)) then P.q₁ else P.q₂)) (u + if i = (0 : Fin (3 : ℕ)) then (⟨(↑P.q₂ :
-            ℤ), (↑P.q : ℤ)⟩ : GaussianInt) else (⟨-(↑P.q₂ : ℤ), (0 : ℤ)⟩ : GaussianInt))).cells)
-            → ((∀ (z : GaussianInt), ((z - u).re = if i = (0 : Fin (3 : ℕ)) then (↑P.q : ℤ) else
-            (0 : ℤ)) → (if i = (0 : Fin (3 : ℕ)) then (↑P.q₁ : ℤ) else (↑P.q₂ : ℤ)) ≤ (z - u).im
-            → (z - u).im < (↑P.q : ℤ) → ∃ (U : ProtoTile) (V : ProtoTile) (g : PartialOdometer)
-            (k : PartialOdometer), U ∈ (List.drop (1 : ℕ) tiles).dropLast ∧ V ∈ (List.drop (1 :
-            ℕ) reverseTiles).dropLast ∧ (U, g) ∈ tiles.zip hs ∧ (V, k) ∈ reverseTiles.zip
-            reverseHs ∧ AncestorOdometer Ci.1.1 C0.1.1 U T g h ∧ AncestorOdometer Ci.1.1 C0.1.1 V
-            T' k h' ∧ {z, z + (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt)} ∈ FootprintEdges U ∧ {z,
-            z + (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt)} ∈ FootprintEdges V) → (∀ (x : GaussianInt),
-            ((x - u).re = if i = (0 : Fin (3 : ℕ)) then (↑P.q : ℤ) else (0 : ℤ)) → (((if i = (0 :
-            Fin (3 : ℕ)) then (↑P.q₁ : ℤ) else (↑P.q₂ : ℤ)) ≤ (x - u).im) → (((x - u).im ≤ (↑P.q
-            : ℤ)) → ((if i = 0 then (P.q₁ : Int) else P.q₂) < P.q))))))))) ) := by
+        exact
+        ∀ (P : FordFareyParameter),
+          ∀ (i : Fin (3 : ℕ)),
+            (i = (0 : Fin (3 : ℕ)) ∧ P.q₁ < P.q₂ ∨
+                i = (1 : Fin (3 : ℕ)) ∧ P.q₂ < P.q₁) →
+              ((if i = 0 then (P.q₁ : Int) else P.q₂) < P.q)) := by
   classical
-  intro P C0 Ci i hsmall hrpos T T' h h' u hc' Rminus Rplus tiles reverseTiles hs reverseHs hRm
-      hRp hedges x hxr hxl hxu
+  intro P i hsmall
   rcases hsmall with ⟨hi, hlt⟩ | ⟨hi, hlt⟩
   · subst i
     have hq : (P.q₁ : Int) + P.q₂ = P.q := by exact_mod_cast P.sum_q.symm
@@ -630,62 +573,45 @@ private theorem cross_ne :
 private theorem forward_support :
     (by
       classical
-      exact
-        ∀ (P : FordFareyParameter), ∀ (C0 : BandCircle), ∀ (Ci : BandCircle), ∀ (i : Fin (3 :
-            ℕ)), (i = (0 : Fin (3 : ℕ)) ∧ P.q₁ < P.q₂ ∨ i = (1 : Fin (3 : ℕ)) ∧ P.q₂ < P.q₁) → (∀
-            (T : ProtoTile), ∀ (T' : ProtoTile), ∀ (h : PartialOdometer), ∀ (h' :
-            PartialOdometer), ∀ (u : GaussianInt), (T'.cells = (TileTranslation (FordTile P.q) (u
-            + if i = (0 : Fin (3 : ℕ)) then (⟨(↑P.q : ℤ), (↑P.q₁ : ℤ)⟩ : GaussianInt) else
-            (⟨-(↑P.q : ℤ), (↑P.q₂ : ℤ)⟩ : GaussianInt))).cells) → (∀ (Rminus : ProtoTile), ∀
-            (Rplus : ProtoTile), ∀ (tiles : List ProtoTile), ∀ (reverseTiles : List ProtoTile), ∀
-            (hs : List PartialOdometer), ∀ (reverseHs : List PartialOdometer), (Rminus.cells =
-            (TileTranslation (FordTile (if i = (0 : Fin (3 : ℕ)) then P.q₁ else P.q₂)) (u + if i
-            = (0 : Fin (3 : ℕ)) then (⟨(↑P.q : ℤ), (0 : ℤ)⟩ : GaussianInt) else (⟨(0 : ℤ), (↑P.q
-            : ℤ)⟩ : GaussianInt))).cells) → ((Rplus.cells = (TileTranslation (FordTile (if i = (0
-            : Fin (3 : ℕ)) then P.q₁ else P.q₂)) (u + if i = (0 : Fin (3 : ℕ)) then (⟨(↑P.q₂ :
-            ℤ), (↑P.q : ℤ)⟩ : GaussianInt) else (⟨-(↑P.q₂ : ℤ), (0 : ℤ)⟩ : GaussianInt))).cells)
-            → ((∀ (z : GaussianInt), ((z - u).re = if i = (0 : Fin (3 : ℕ)) then (↑P.q : ℤ) else
-            (0 : ℤ)) → (if i = (0 : Fin (3 : ℕ)) then (↑P.q₁ : ℤ) else (↑P.q₂ : ℤ)) ≤ (z - u).im
-            → (z - u).im < (↑P.q : ℤ) → ∃ (U : ProtoTile) (V : ProtoTile) (g : PartialOdometer)
-            (k : PartialOdometer), U ∈ (List.drop (1 : ℕ) tiles).dropLast ∧ V ∈ (List.drop (1 :
-            ℕ) reverseTiles).dropLast ∧ (U, g) ∈ tiles.zip hs ∧ (V, k) ∈ reverseTiles.zip
-            reverseHs ∧ AncestorOdometer Ci.1.1 C0.1.1 U T g h ∧ AncestorOdometer Ci.1.1 C0.1.1 V
-            T' k h' ∧ {z, z + (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt)} ∈ FootprintEdges U ∧ {z,
-            z + (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt)} ∈ FootprintEdges V) → (∀ (PP :
-            PeriodicTileComplex ↥(TilingLattice Ci)), ∀ (x : GaussianInt), ((x - u).re = if i =
-            (0 : Fin (3 : ℕ)) then (↑P.q : ℤ) else (0 : ℤ)) → (((if i = (0 : Fin (3 : ℕ)) then
-            (↑P.q₁ : ℤ) else (↑P.q₂ : ℤ)) ≤ (x - u).im) → ((∀ (W : ProtoTile), ∀ (w :
-            GaussianInt), ({w, w + ⟨0, 1⟩} ∈ FootprintEdges W) → (w ∈ W.cells ∨ w - 1 ∈ W.cells))
-            → (((if i = 0 then (P.q₁ : Int) else P.q₂) < P.q) → (
-        let z : GaussianInt :=
-          if (x - u).im = (if i = 0 then (P.q₁ : Int) else P.q₂)
-          then x else x - ⟨0, 1⟩
-        (((x - u).im = (if i = 0 then (P.q₁ : Int) else P.q₂)) → (z = x)) → (((¬(x - u).im = (if
-            i = 0 then (P.q₁ : Int) else P.q₂)) → (z = x - ⟨0, 1⟩)) → ((z = x ∨ z = x - ⟨0, 1⟩) →
-            (((z - u).re = (if i = 0 then (P.q : Int) else 0)) → (((if i = 0 then (P.q₁ : Int)
-            else P.q₂) ≤ (z-u).im) → (((z-u).im < P.q) → (∀ (U : ProtoTile), ∀ (V : ProtoTile),
-            ({z, z + (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt)} ∈ FootprintEdges U) → (({z,
-            z + (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt)} ∈ FootprintEdges V) → (∀ (a : ↥(TilingLattice
-            Ci)), ∀ (b : ↥(TilingLattice Ci)), (PP.tile a = U) → ((U.cells ⊆ T.cells) → (({z,
-            z + ⟨0, 1⟩} ∈ FootprintEdges (PP.tile a)) → (({z, z + ⟨0, 1⟩} ∈ FootprintEdges
-            (PP.tile b)) → ((∀ (c : GaussianInt), (c ∈ T.cells) → (0 ≤ (c-u).re ∧ (c-u).re < P.q
-            ∧ 0 ≤ (c-u).im ∧ (c-u).im < P.q)) → ((∀ (c : GaussianInt), (c ∈ T'.cells) → (0 ≤
-            (c-(u + if i = 0 then ⟨(P.q : Int), (P.q₁ : Int)⟩ else ⟨-(P.q : Int), (P.q₂ :
-            Int)⟩)).re ∧ (c-(u + if i = 0 then ⟨(P.q : Int), (P.q₁ : Int)⟩ else ⟨-(P.q : Int),
-            (P.q₂ : Int)⟩)).re < P.q ∧ 0 ≤ (c-(u + if i = 0 then ⟨(P.q : Int), (P.q₁ : Int)⟩ else
-            ⟨-(P.q : Int), (P.q₂ : Int)⟩)).im ∧ (c-(u + if i = 0 then ⟨(P.q : Int), (P.q₁ : Int)⟩
-            else ⟨-(P.q : Int), (P.q₂ : Int)⟩)).im < P.q)) → ((∀ (w : GaussianInt), ((w-u).re =
-            (if i = 0 then (P.q : Int) else 0)) → (((if i = 0 then (P.q₁ : Int) else P.q₂) ≤
-            (w-u).im) → (((w-u).im < P.q) → (∃ (aa bb : TilingLattice Ci) (gg kk :
-            PartialOdometer), aa ≠ bb ∧ (PP.tile aa, gg) ∈ tiles.zip hs ∧ (PP.tile bb, kk) ∈
-            reverseTiles.zip reverseHs ∧ AncestorOdometer Ci.1.1 C0.1.1 (PP.tile aa) T gg h ∧
-            AncestorOdometer Ci.1.1 C0.1.1 (PP.tile bb) T' kk h' ∧ {w, w + ⟨0, 1⟩} ∈
-            FootprintEdges (PP.tile aa) ∧ {w, w + ⟨0, 1⟩} ∈ FootprintEdges (PP.tile bb))))) → (∃
-            c, c ∈ U.cells ∧ (if i = 0 then c = z - 1 else c = z))))))))))))))))))))))))) ) := by
+        exact
+        ∀ (P : FordFareyParameter),
+          ∀ (Ci : BandCircle),
+            ∀ (i : Fin (3 : ℕ)),
+              (i = (0 : Fin (3 : ℕ)) ∧ P.q₁ < P.q₂ ∨
+                  i = (1 : Fin (3 : ℕ)) ∧ P.q₂ < P.q₁) →
+                (∀ (T : ProtoTile),
+                  ∀ (u : GaussianInt),
+                    (∀ (PP : PeriodicTileComplex ↥(TilingLattice Ci)),
+                      ∀ (x : GaussianInt),
+                        ((∀ (W : ProtoTile),
+                            ∀ (w : GaussianInt),
+                              ({w, w + ⟨0, 1⟩} ∈ FootprintEdges W) →
+                                (w ∈ W.cells ∨ w - 1 ∈ W.cells)) →
+                          (let z : GaussianInt :=
+                            if
+                                (x - u).im =
+                                  (if i = 0 then (P.q₁ : Int) else P.q₂) then
+                              x
+                            else x - ⟨0, 1⟩;
+                          (((z - u).re = (if i = 0 then (P.q : Int) else 0)) →
+                            (∀ (U : ProtoTile),
+                              (∀ (a : ↥(TilingLattice Ci)),
+                                (PP.tile a = U) →
+                                  ((U.cells ⊆ T.cells) →
+                                    (({z, z + ⟨0, 1⟩} ∈
+                                        FootprintEdges (PP.tile a)) →
+                                      ((∀ (c : GaussianInt),
+                                          (c ∈ T.cells) →
+                                            (0 ≤ (c - u).re ∧
+                                              (c - u).re < P.q ∧
+                                                0 ≤ (c - u).im ∧
+                                                  (c - u).im < P.q)) →
+                                        (∃ c,
+                                          c ∈ U.cells ∧
+                                            (if i = 0 then c = z - 1
+                                            else c = z))))))))))))) := by
   classical
-  intro P C0 Ci i hsmall T T' h h' u hc' Rminus Rplus tiles reverseTiles hs reverseHs hRm hRp
-      hedges PP x hxr hxl vertical_edge_cells lower_lt_q z z_low z_other z_incident hz_re hz_low
-      hz_high U V hEdgeU hEdgeV a b hUa U_in_T U_edge V_edge T_bounds T'_bounds indexed_edge
+  intro P Ci i hsmall T u PP x vertical_edge_cells z hz_re U a hUa U_in_T U_edge T_bounds
   have hsup := vertical_edge_cells U z (by simpa [hUa] using U_edge)
   rcases hsmall with ⟨hi, hlt⟩ | ⟨hi, hlt⟩
   · subst i
@@ -709,62 +635,76 @@ private theorem forward_support :
 private theorem reverse_support :
     (by
       classical
-      exact
-        ∀ (P : FordFareyParameter), ∀ (C0 : BandCircle), ∀ (Ci : BandCircle), ∀ (i : Fin (3 :
-            ℕ)), (i = (0 : Fin (3 : ℕ)) ∧ P.q₁ < P.q₂ ∨ i = (1 : Fin (3 : ℕ)) ∧ P.q₂ < P.q₁) → (∀
-            (T : ProtoTile), ∀ (T' : ProtoTile), ∀ (h : PartialOdometer), ∀ (h' :
-            PartialOdometer), ∀ (u : GaussianInt), (T'.cells = (TileTranslation (FordTile P.q) (u
-            + if i = (0 : Fin (3 : ℕ)) then (⟨(↑P.q : ℤ), (↑P.q₁ : ℤ)⟩ : GaussianInt) else
-            (⟨-(↑P.q : ℤ), (↑P.q₂ : ℤ)⟩ : GaussianInt))).cells) → (∀ (Rminus : ProtoTile), ∀
-            (Rplus : ProtoTile), ∀ (tiles : List ProtoTile), ∀ (reverseTiles : List ProtoTile), ∀
-            (hs : List PartialOdometer), ∀ (reverseHs : List PartialOdometer), (Rminus.cells =
-            (TileTranslation (FordTile (if i = (0 : Fin (3 : ℕ)) then P.q₁ else P.q₂)) (u + if i
-            = (0 : Fin (3 : ℕ)) then (⟨(↑P.q : ℤ), (0 : ℤ)⟩ : GaussianInt) else (⟨(0 : ℤ), (↑P.q
-            : ℤ)⟩ : GaussianInt))).cells) → ((Rplus.cells = (TileTranslation (FordTile (if i = (0
-            : Fin (3 : ℕ)) then P.q₁ else P.q₂)) (u + if i = (0 : Fin (3 : ℕ)) then (⟨(↑P.q₂ :
-            ℤ), (↑P.q : ℤ)⟩ : GaussianInt) else (⟨-(↑P.q₂ : ℤ), (0 : ℤ)⟩ : GaussianInt))).cells)
-            → ((∀ (z : GaussianInt), ((z - u).re = if i = (0 : Fin (3 : ℕ)) then (↑P.q : ℤ) else
-            (0 : ℤ)) → (if i = (0 : Fin (3 : ℕ)) then (↑P.q₁ : ℤ) else (↑P.q₂ : ℤ)) ≤ (z - u).im
-            → (z - u).im < (↑P.q : ℤ) → ∃ (U : ProtoTile) (V : ProtoTile) (g : PartialOdometer)
-            (k : PartialOdometer), U ∈ (List.drop (1 : ℕ) tiles).dropLast ∧ V ∈ (List.drop (1 :
-            ℕ) reverseTiles).dropLast ∧ (U, g) ∈ tiles.zip hs ∧ (V, k) ∈ reverseTiles.zip
-            reverseHs ∧ AncestorOdometer Ci.1.1 C0.1.1 U T g h ∧ AncestorOdometer Ci.1.1 C0.1.1 V
-            T' k h' ∧ {z, z + (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt)} ∈ FootprintEdges U ∧ {z,
-            z + (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt)} ∈ FootprintEdges V) → (∀ (PP :
-            PeriodicTileComplex ↥(TilingLattice Ci)), ∀ (x : GaussianInt), ((x - u).re = if i =
-            (0 : Fin (3 : ℕ)) then (↑P.q : ℤ) else (0 : ℤ)) → (((if i = (0 : Fin (3 : ℕ)) then
-            (↑P.q₁ : ℤ) else (↑P.q₂ : ℤ)) ≤ (x - u).im) → ((∀ (W : ProtoTile), ∀ (w :
-            GaussianInt), ({w, w + ⟨0, 1⟩} ∈ FootprintEdges W) → (w ∈ W.cells ∨ w - 1 ∈ W.cells))
-            → (((if i = 0 then (P.q₁ : Int) else P.q₂) < P.q) → (
-        let z : GaussianInt :=
-          if (x - u).im = (if i = 0 then (P.q₁ : Int) else P.q₂)
-          then x else x - ⟨0, 1⟩
-        (((x - u).im = (if i = 0 then (P.q₁ : Int) else P.q₂)) → (z = x)) → (((¬(x - u).im = (if
-            i = 0 then (P.q₁ : Int) else P.q₂)) → (z = x - ⟨0, 1⟩)) → ((z = x ∨ z = x - ⟨0, 1⟩) →
-            (((z - u).re = (if i = 0 then (P.q : Int) else 0)) → (((if i = 0 then (P.q₁ : Int)
-            else P.q₂) ≤ (z-u).im) → (((z-u).im < P.q) → (∀ (U : ProtoTile), ∀ (V : ProtoTile),
-            ({z, z + (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt)} ∈ FootprintEdges U) → (({z,
-            z + (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt)} ∈ FootprintEdges V) → (∀ (a : ↥(TilingLattice
-            Ci)), ∀ (b : ↥(TilingLattice Ci)), (PP.tile b = V) → ((V.cells ⊆ T'.cells) → (({z,
-            z + ⟨0, 1⟩} ∈ FootprintEdges (PP.tile a)) → (({z, z + ⟨0, 1⟩} ∈ FootprintEdges
-            (PP.tile b)) → ((∀ (c : GaussianInt), (c ∈ T'.cells) → (0 ≤ (c-(u + if i = 0 then
-            ⟨(P.q : Int), (P.q₁ : Int)⟩ else ⟨-(P.q : Int), (P.q₂ : Int)⟩)).re ∧ (c-(u + if i = 0
-            then ⟨(P.q : Int), (P.q₁ : Int)⟩ else ⟨-(P.q : Int), (P.q₂ : Int)⟩)).re < P.q ∧ 0 ≤
-            (c-(u + if i = 0 then ⟨(P.q : Int), (P.q₁ : Int)⟩ else ⟨-(P.q : Int), (P.q₂ :
-            Int)⟩)).im ∧ (c-(u + if i = 0 then ⟨(P.q : Int), (P.q₁ : Int)⟩ else ⟨-(P.q : Int),
-            (P.q₂ : Int)⟩)).im < P.q)) → ((∀ (w : GaussianInt), ((w-u).re = (if i = 0 then (P.q :
-            Int) else 0)) → (((if i = 0 then (P.q₁ : Int) else P.q₂) ≤ (w-u).im) → (((w-u).im <
-            P.q) → (∃ (aa bb : TilingLattice Ci) (gg kk : PartialOdometer), aa ≠ bb ∧ (PP.tile
-            aa, gg) ∈ tiles.zip hs ∧ (PP.tile bb, kk) ∈ reverseTiles.zip reverseHs ∧
-            AncestorOdometer Ci.1.1 C0.1.1 (PP.tile aa) T gg h ∧ AncestorOdometer Ci.1.1 C0.1.1
-            (PP.tile bb) T' kk h' ∧ {w, w + ⟨0, 1⟩} ∈ FootprintEdges (PP.tile aa) ∧ {w, w + ⟨0,
-            1⟩} ∈ FootprintEdges (PP.tile bb))))) → ((∃ c, c ∈ U.cells ∧ (if i = 0 then c = z - 1
-            else c = z)) → (∃ c, c ∈ V.cells ∧ (if i = 0 then c = z else c = z -
-            1))))))))))))))))))))))))) ) := by
+        exact
+        ∀ (P : FordFareyParameter),
+          ∀ (Ci : BandCircle),
+            ∀ (i : Fin (3 : ℕ)),
+              (i = (0 : Fin (3 : ℕ)) ∧ P.q₁ < P.q₂ ∨
+                  i = (1 : Fin (3 : ℕ)) ∧ P.q₂ < P.q₁) →
+                (∀ (T' : ProtoTile),
+                  ∀ (u : GaussianInt),
+                    (∀ (PP : PeriodicTileComplex ↥(TilingLattice Ci)),
+                      ∀ (x : GaussianInt),
+                        ((∀ (W : ProtoTile),
+                            ∀ (w : GaussianInt),
+                              ({w, w + ⟨0, 1⟩} ∈ FootprintEdges W) →
+                                (w ∈ W.cells ∨ w - 1 ∈ W.cells)) →
+                          (let z : GaussianInt :=
+                            if
+                                (x - u).im =
+                                  (if i = 0 then (P.q₁ : Int) else P.q₂) then
+                              x
+                            else x - ⟨0, 1⟩;
+                          (((z - u).re = (if i = 0 then (P.q : Int) else 0)) →
+                            (∀ (V : ProtoTile),
+                              (∀ (b : ↥(TilingLattice Ci)),
+                                (PP.tile b = V) →
+                                  ((V.cells ⊆ T'.cells) →
+                                    (({z, z + ⟨0, 1⟩} ∈
+                                        FootprintEdges (PP.tile b)) →
+                                      ((∀ (c : GaussianInt),
+                                          (c ∈ T'.cells) →
+                                            (0 ≤
+                                                (c -
+                                                    (u +
+                                                      if i = 0 then
+                                                        ⟨(P.q : Int), (P.q₁ : Int)⟩
+                                                      else
+                                                        ⟨-(P.q : Int),
+                                                          (P.q₂ : Int)⟩)).re ∧
+                                              (c -
+                                                      (u +
+                                                        if i = 0 then
+                                                          ⟨(P.q : Int),
+                                                            (P.q₁ : Int)⟩
+                                                        else
+                                                          ⟨-(P.q : Int),
+                                                            (P.q₂ : Int)⟩)).re <
+                                                  P.q ∧
+                                                0 ≤
+                                                    (c -
+                                                        (u +
+                                                          if i = 0 then
+                                                            ⟨(P.q : Int),
+                                                              (P.q₁ : Int)⟩
+                                                          else
+                                                            ⟨-(P.q : Int),
+                                                              (P.q₂ : Int)⟩)).im ∧
+                                                  (c -
+                                                        (u +
+                                                          if i = 0 then
+                                                            ⟨(P.q : Int),
+                                                              (P.q₁ : Int)⟩
+                                                          else
+                                                            ⟨-(P.q : Int),
+                                                              (P.q₂ : Int)⟩)).im <
+                                                    P.q)) →
+                                        (∃ c,
+                                          c ∈ V.cells ∧
+                                            (if i = 0 then c = z
+                                            else c = z - 1))))))))))))) := by
   classical
-  intro P C0 Ci i hsmall T T' h h' u hc' Rminus Rplus tiles reverseTiles hs reverseHs hRm hRp
-      hedges PP x hxr hxl vertical_edge_cells lower_lt_q z z_low z_other z_incident hz_re hz_low
-      hz_high U V hEdgeU hEdgeV a b hVb V_in_T' U_edge V_edge T'_bounds indexed_edge forward_support
+  intro P Ci i hsmall T' u PP x vertical_edge_cells z hz_re V b hVb V_in_T' V_edge T'_bounds
   have hsup := vertical_edge_cells V z (by simpa [hVb] using V_edge)
   rcases hsmall with ⟨hi, hlt⟩ | ⟨hi, hlt⟩
   · subst i
@@ -2319,10 +2259,8 @@ theorem P4158T1EdgeSectorSelection :
     have translated_ford_cell := EdgeSectorGeometry.translated_ford_cell
     have ford_disjoint_re := EdgeSectorGeometry.ford_disjoint_re P Ci i u x translated_ford_bounds
     have ford_disjoint_im := EdgeSectorGeometry.ford_disjoint_im P Ci i u x translated_ford_bounds
-    have q₁pos := EdgeSectorGeometry.q₁pos P C0 Ci i hsmall hrpos T T' h h' u hc' Rminus Rplus
-        tiles reverseTiles hs reverseHs hRm hRp hedges x hxr hxl
-    have lower_lt_q := EdgeSectorGeometry.lower_lt_q P C0 Ci i hsmall hrpos T T' h h' u hc'
-        Rminus Rplus tiles reverseTiles hs reverseHs hRm hRp hedges x hxr hxl hxu
+    have q₁pos := hrpos
+    have lower_lt_q := EdgeSectorGeometry.lower_lt_q P i hsmall
     let z : GaussianInt :=
       if (x - u).im = (if i = 0 then (P.q₁ : Int) else P.q₂)
       then x else x - ⟨0, 1⟩
@@ -2352,14 +2290,10 @@ theorem P4158T1EdgeSectorSelection :
     have indexed_edge := EdgeSectorGeometry.indexed_edge P C0 Ci i T T' h h' u hdis orientation
         base Rminus Rplus tiles reverseTiles hs reverseHs hf hr hcontain hcontain' hedges PP
         regular_index vertical_edge_cells
-    have forward_support := EdgeSectorGeometry.forward_support P C0 Ci i hsmall T T' h h' u hc'
-        Rminus Rplus tiles reverseTiles hs reverseHs hRm hRp hedges PP x hxr hxl
-        vertical_edge_cells lower_lt_q z_low z_other z_incident hz_re hz_low hz_high U V hEdgeU
-        hEdgeV a b hUa U_in_T U_edge V_edge T_bounds T'_bounds indexed_edge
-    have reverse_support := EdgeSectorGeometry.reverse_support P C0 Ci i hsmall T T' h h' u hc'
-        Rminus Rplus tiles reverseTiles hs reverseHs hRm hRp hedges PP x hxr hxl
-        vertical_edge_cells lower_lt_q z_low z_other z_incident hz_re hz_low hz_high U V hEdgeU
-        hEdgeV a b hVb V_in_T' U_edge V_edge T'_bounds indexed_edge forward_support
+    have forward_support := EdgeSectorGeometry.forward_support P Ci i hsmall T u PP x
+        vertical_edge_cells hz_re U a hUa U_in_T U_edge T_bounds
+    have reverse_support := EdgeSectorGeometry.reverse_support P Ci i hsmall T' u PP x
+        vertical_edge_cells hz_re V b hVb V_in_T' V_edge T'_bounds
     obtain ⟨cf, hcf, hcfSide⟩ := forward_support
     obtain ⟨cb, hcb, hcbSide⟩ := reverse_support
     have hab := EdgeSectorGeometry.hab Ci T T' hdis PP U V a b hUa hVb U_in_T V_in_T' cf hcf

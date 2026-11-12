@@ -511,85 +511,32 @@ private theorem centMinus :
   simpa using h
 
 private theorem centJ :
-    ∀ (C : BandCircle), ∀ (orientation : Bool), ∀ (base : ProtoTile), ∀ (Rminus : ProtoTile), ∀
-        (Rplus : ProtoTile), ∀ (hminus : PartialOdometer), ∀ (hplus : PartialOdometer), ∀ (F :
-        P4458T1BoundaryFrame C orientation base Rminus Rplus hminus hplus), ∀ (D :
-        P4458T1RestrictionFamily F), ∀ (a : Fin 3), ∀ (p : Fin 4 → CircleCoordinates), (![F.q
-        0, F.q a.succ, F.q (a + 1).succ, F.q (a + 2).succ] = ![(2 * (p 0).1 + 2 * (p 2).1 + 2 *
-        (p 3).1 - (p 1).1, 2 * (p 0).2 + 2 * (p 2).2 + 2 * (p 3).2 - (p 1).2), p 0, p 2, p 3]) →
-        ((F.slot = a + 2) → (∀ (J : ProtoTile), (TileCentroid J = TileCentroid (D.tiles F.slot
-        false)) → (
-    let r : Fin 4 → CircleCoordinates :=
-      ![F.q 0, F.q a.succ, F.q (a + 1).succ, F.q (a + 2).succ]
-    (ProperBandQuadruple r) → ((r = ![(2 * (p 0).1 + 2 * (p 2).1 + 2 * (p 3).1 - (p 1).1, 2 * (p
-        0).2 + 2 * (p 2).2 + 2 * (p 3).2 - (p 1).2), p 0, p 2, p 3]) → ((r 1 = p 0) → ((r 2 = p
-        2) → ((r 3 = p 3) → ((F.q F.slot.succ = r 3) → ((F.q 0 = r 0) → (
-    let I : GaussianInt := ⟨0, 1⟩
-    let wv := BandVectors.1 (r 3) (r 2)
-    let xv := BandVectors.1 (r 1) (r 3)
-    let yv := BandVectors.1 (r 2) (r 1)
-    let wa := BandVectors.2 (r 3) (r 2)
-    let xa := BandVectors.2 (r 1) (r 3)
-    let ya := BandVectors.2 (r 2) (r 1)
-    (BandVectors.1 (r (3 : Fin (4 : ℕ))) (r (2 : Fin (4 : ℕ))) + BandVectors.1 (r (1 : Fin (4 :
-        ℕ))) (r (3 : Fin (4 : ℕ))) + BandVectors.1 (r (2 : Fin (4 : ℕ))) (r (1 : Fin (4 : ℕ))) =
-        (0 : GaussianInt) ∧ BandVectors.2 (r (3 : Fin (4 : ℕ))) (r (2 : Fin (4 : ℕ))) +
-        BandVectors.2 (r (1 : Fin (4 : ℕ))) (r (3 : Fin (4 : ℕ))) + BandVectors.2 (r (2 : Fin (4
-        : ℕ))) (r (1 : Fin (4 : ℕ))) = (0 : GaussianInt) ∧ BandVectors.1 (r (1 : Fin (4 : ℕ))) (r
-        (0 : Fin (4 : ℕ))) = BandVectors.1 (r (1 : Fin (4 : ℕ))) (r (3 : Fin (4 : ℕ))) - ⟨(0 :
-        ℤ), (1 : ℤ)⟩ * BandVectors.1 (r (2 : Fin (4 : ℕ))) (r (1 : Fin (4 : ℕ))) ∧ BandVectors.2
-        (r (1 : Fin (4 : ℕ))) (r (0 : Fin (4 : ℕ))) = BandVectors.2 (r (1 : Fin (4 : ℕ))) (r (3 :
-        Fin (4 : ℕ))) + ⟨(0 : ℤ), (1 : ℤ)⟩ * BandVectors.2 (r (2 : Fin (4 : ℕ))) (r (1 : Fin (4 :
-        ℕ))) ∧ (ProperBandQuadruple r → ∀ (j : Fin (3 : ℕ)), BandVectors.1 (r (0 : Fin (4 : ℕ)))
-        (r j.succ) = ⟨(0 : ℤ), (1 : ℤ)⟩ * BandVectors.1 (r j.succ) (r (0 : Fin (4 : ℕ))) ∧
-        BandVectors.2 (r (0 : Fin (4 : ℕ))) (r j.succ) = -⟨(0 : ℤ), (1 : ℤ)⟩ * BandVectors.2 (r
-        j.succ) (r (0 : Fin (4 : ℕ))))) → (
-    let rr : Fin 4 → CircleCoordinates := ![r 0, r 3, r 1, r 2]
-    (ProperBandQuadruple rr) → ((BandVectors.1 (rr (3 : Fin (4 : ℕ))) (rr (2 : Fin (4 : ℕ))) +
-        BandVectors.1 (rr (1 : Fin (4 : ℕ))) (rr (3 : Fin (4 : ℕ))) + BandVectors.1 (rr (2 : Fin
-        (4 : ℕ))) (rr (1 : Fin (4 : ℕ))) = (0 : GaussianInt) ∧ BandVectors.2 (rr (3 : Fin (4 :
-        ℕ))) (rr (2 : Fin (4 : ℕ))) + BandVectors.2 (rr (1 : Fin (4 : ℕ))) (rr (3 : Fin (4 : ℕ)))
-        + BandVectors.2 (rr (2 : Fin (4 : ℕ))) (rr (1 : Fin (4 : ℕ))) = (0 : GaussianInt) ∧
-        BandVectors.1 (rr (1 : Fin (4 : ℕ))) (rr (0 : Fin (4 : ℕ))) = BandVectors.1 (rr (1 : Fin
-        (4 : ℕ))) (rr (3 : Fin (4 : ℕ))) - ⟨(0 : ℤ), (1 : ℤ)⟩ * BandVectors.1 (rr (2 : Fin (4 :
-        ℕ))) (rr (1 : Fin (4 : ℕ))) ∧ BandVectors.2 (rr (1 : Fin (4 : ℕ))) (rr (0 : Fin (4 : ℕ)))
-        = BandVectors.2 (rr (1 : Fin (4 : ℕ))) (rr (3 : Fin (4 : ℕ))) + ⟨(0 : ℤ), (1 : ℤ)⟩ *
-        BandVectors.2 (rr (2 : Fin (4 : ℕ))) (rr (1 : Fin (4 : ℕ))) ∧ (ProperBandQuadruple rr → ∀
-        (j : Fin (3 : ℕ)), BandVectors.1 (rr (0 : Fin (4 : ℕ))) (rr j.succ) = ⟨(0 : ℤ), (1 : ℤ)⟩
-        * BandVectors.1 (rr j.succ) (rr (0 : Fin (4 : ℕ))) ∧ BandVectors.2 (rr (0 : Fin (4 : ℕ)))
-        (rr j.succ) = -⟨(0 : ℤ), (1 : ℤ)⟩ * BandVectors.2 (rr j.succ) (rr (0 : Fin (4 : ℕ))))) →
-        ((BandVectors.1 (r 3) (r 0) = wv - I * xv) → ((BandVectors.2 (r 3) (r 0) = wa + I * xa) →
-        ((-(wv - I * wv) - (xv - I * yv - I * (xv - I * yv)) = (2 : GaussianInt) * yv ∧ xv - I *
-        yv + I * (xv - I * yv) + (wv - I * wv) = (2 : GaussianInt) * I * xv ∧ -(xv - I * xv) -
-        (wv - I * wv) = yv - I * yv ∧ yv - I * wv + I * (yv - I * wv) - (wv - I * wv) = yv + I *
-        yv ∧ wv - I * xv - I * (wv - I * xv) - (wv - I * wv) = -I * xv - xv ∧ -(yv - I * yv) -
-        (wv - I * wv) = -I * xv + xv ∧ yv - I * wv - I * (yv - I * wv) - (yv - I * yv) = -I * wv
-        - wv ∧ -(xv - I * xv) - (yv - I * yv) = -I * wv + wv ∧ -(yv - I * yv) - (xv - I * xv) =
-        wv - I * wv ∧ wv - I * xv + I * (wv - I * xv) - (xv - I * xv) = wv + I * wv) → ((-(wa -
-        -I * wa) - (xa - -I * ya - -I * (xa - -I * ya)) = (2 : GaussianInt) * ya ∧ xa - -I * ya +
-        -I * (xa - -I * ya) + (wa - -I * wa) = (2 : GaussianInt) * -I * xa ∧ -(xa - -I * xa) -
-        (wa - -I * wa) = ya - -I * ya ∧ ya - -I * wa + -I * (ya - -I * wa) - (wa - -I * wa) = ya
-        + -I * ya ∧ wa - -I * xa - -I * (wa - -I * xa) - (wa - -I * wa) = - -I * xa - xa ∧ -(ya -
-        -I * ya) - (wa - -I * wa) = - -I * xa + xa ∧ ya - -I * wa - -I * (ya - -I * wa) - (ya -
-        -I * ya) = - -I * wa - wa ∧ -(xa - -I * xa) - (ya - -I * ya) = - -I * wa + wa ∧ -(ya - -I
-        * ya) - (xa - -I * xa) = wa - -I * wa ∧ wa - -I * xa + -I * (wa - -I * xa) - (xa - -I *
-        xa) = wa + -I * wa) → ((BandVectors.1 (r (0 : Fin (4 : ℕ))) (r (Fin.succ (2 : Fin (3 :
-        ℕ)))) = ⟨(0 : ℤ), (1 : ℤ)⟩ * BandVectors.1 (r (Fin.succ (2 : Fin (3 : ℕ)))) (r (0 : Fin
-        (4 : ℕ))) ∧ BandVectors.2 (r (0 : Fin (4 : ℕ))) (r (Fin.succ (2 : Fin (3 : ℕ)))) = -⟨(0 :
-        ℤ), (1 : ℤ)⟩ * BandVectors.2 (r (Fin.succ (2 : Fin (3 : ℕ)))) (r (0 : Fin (4 : ℕ)))) →
-        ((BandVectors.1 (r (0 : Fin (4 : ℕ))) (r (Fin.succ (2 : Fin (3 : ℕ)))) = ⟨(0 : ℤ), (1 :
-        ℤ)⟩ * BandVectors.1 (r (Fin.succ (2 : Fin (3 : ℕ)))) (r (0 : Fin (4 : ℕ))) ∧
-        BandVectors.2 (r (0 : Fin (4 : ℕ))) (r (Fin.succ (2 : Fin (3 : ℕ)))) = -⟨(0 : ℤ), (1 :
-        ℤ)⟩ * BandVectors.2 (r (Fin.succ (2 : Fin (3 : ℕ)))) (r (0 : Fin (4 : ℕ)))) →
-        ((BandVectors.1 (r 0) (r 3) = I * BandVectors.1 (r 3) (r 0)) → ((BandVectors.2 (r 0) (r
-        3) = -I * BandVectors.2 (r 3) (r 0)) → ((TileCentroid Rminus - TileCentroid F.tile = (1 /
-        2 : ℝ) • GaussianRealPoint ((wv - I * xv) - I * (wv - I * xv))) → (TileCentroid J -
-        TileCentroid F.tile =
-      (1 / 2 : ℝ) • GaussianRealPoint (-(yv - I * yv)))))))))))))))))))))))) := by
+    ∀ (C : BandCircle),
+      ∀ (orientation : Bool),
+        ∀ (base : ProtoTile),
+          ∀ (Rminus : ProtoTile),
+            ∀ (Rplus : ProtoTile),
+              ∀ (hminus : PartialOdometer),
+                ∀ (hplus : PartialOdometer),
+                  ∀
+                    (F :
+                      P4458T1BoundaryFrame C orientation base Rminus Rplus hminus
+                        hplus),
+                    ∀ (D : P4458T1RestrictionFamily F),
+                      ∀ (a : Fin 3),
+                        ((F.slot = a + 2) →
+                          (∀ (J : ProtoTile),
+                            (TileCentroid J = TileCentroid (D.tiles F.slot false)) →
+                              (let r : Fin 4 → CircleCoordinates :=
+                                ![F.q 0, F.q a.succ, F.q (a + 1).succ,
+                                  F.q (a + 2).succ];
+                              (let I : GaussianInt := ⟨0, 1⟩;
+                              let yv := BandVectors.1 (r 2) (r 1);
+                              (TileCentroid J - TileCentroid F.tile =
+                                (1 / 2 : ℝ) •
+                                  GaussianRealPoint (-(yv - I * yv))))))) := by
   classical
-  intro C orientation base Rminus Rplus hminus hplus F D a p hstep hslot J hcent r hr hrstep r1
-      r2 r3 hparentR hzero I wv xv yv wa xa ya laws rr hrr lawsR win ain hv ha vflip aflip vflip'
-      aflip' centMinus
+  intro C orientation base Rminus Rplus hminus hplus F D a hslot J hcent r I yv
   have h := (D.occurrences F.slot false).2.2
   have hs2 : F.slot + 2 = a + 1 := by
     rw [hslot]
@@ -1345,8 +1292,7 @@ theorem P4536T1AFrameD
       p r3
           hparent hzero win vflip'
   have centJ := FrameDiagonalProof.centJ C orientation
-          base Rminus Rplus hminus hplus F D a p hstep hslot J hcent hr hrstep r1 r2 r3 hparentR
-          hzero laws hrr lawsR win ain hv ha vflip aflip vflip' aflip' centMinus
+          base Rminus Rplus hminus hplus F D a hslot J hcent
   have centK := FrameDiagonalProof.centK C orientation
           base Rminus Rplus hminus hplus F D a
   have halfDiff {X Y Z : GaussianInt} (hxy : X - Y = Z) := FrameDiagonalProof.halfDiff (X := X)

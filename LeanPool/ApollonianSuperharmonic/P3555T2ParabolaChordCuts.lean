@@ -8,7 +8,6 @@ module
 public import Mathlib.Init
 public import Mathlib.Tactic.Linarith
 
-public import Mathlib.Analysis.Convex.Hull
 public import Mathlib.Analysis.Convex.Join
 public import LeanPool.ApollonianSuperharmonic.P3381T1TriangleDeterminant
 
@@ -166,17 +165,32 @@ private theorem hBNodup :
       exact haNotV (hxa ▸ hx)⟩
 
 private theorem hsets :
-    ∀ (n : Nat), (Fin (n + 3) → Real × Real) → (∀ (a : Fin (n + 3)), ∀ (b : Fin (n + 3)), ∀ (u :
-        List (Fin (n + 3))), ∀ (v : List (Fin (n + 3))), (∃ k : Nat, (a :: (u ++ b :: v)).Sublist
-        ((List.ofFn (fun i : Fin (n + 3) => i)).rotate k)) → (
-    let A := a :: (u ++ [b])
-    let B := b :: (v ++ [a])
-    ((u ++ b :: v).Nodup) → ((a ≠ b) → ((u.Nodup ∧ (b :: v).Nodup ∧ ∀ a ∈ u, ∀ b_1 ∈ b :: v, a ≠
-        b_1) → ((u.Nodup) → ((b ∉ u) → ((v.Nodup) → ((b ∉ v) → ((a ∉ u) → ((a ∉ v) → ((∀ i, i ∈ u
-        → i ∈ v → False) → ((A.Nodup) → ((B.Nodup) → ({i | i ∈ A} ∩ {i | i ∈ B} = {a,
-        b})))))))))))))) := by
+    ∀ (n : Nat),
+      (∀ (a : Fin (n + 3)),
+        ∀ (b : Fin (n + 3)),
+          ∀ (u : List (Fin (n + 3))),
+            ∀ (v : List (Fin (n + 3))),
+              (∃ k : Nat,
+                  (a :: (u ++ b :: v)).Sublist
+                    ((List.ofFn (fun i : Fin (n + 3) => i)).rotate k)) →
+                (let A := a :: (u ++ [b]);
+                let B := b :: (v ++ [a]);
+                ((u ++ b :: v).Nodup) →
+                  ((a ≠ b) →
+                    ((u.Nodup ∧ (b :: v).Nodup ∧ ∀ a ∈ u, ∀ b_1 ∈ b :: v, a ≠ b_1) →
+                      ((u.Nodup) →
+                        ((b ∉ u) →
+                          ((v.Nodup) →
+                            ((b ∉ v) →
+                              ((a ∉ u) →
+                                ((a ∉ v) →
+                                  ((∀ i, i ∈ u → i ∈ v → False) →
+                                    ((A.Nodup) →
+                                      ((B.Nodup) →
+                                        ({i | i ∈ A} ∩ {i | i ∈ B} =
+                                          {a, b})))))))))))))) := by
   classical
-  intro n q a b u v hcyclic A B htailNodup hne hparts huNodup hbNotU hvNodup hbNotV haNotU haNotV
+  intro n a b u v hcyclic A B htailNodup hne hparts huNodup hbNotU hvNodup hbNotV haNotU haNotV
       huvDisjoint hANodup hBNodup
   ext i
   simp [A, B, List.mem_cons, List.mem_append]; aesop
@@ -1746,7 +1760,7 @@ theorem P3555T2ParabolaChordCuts {n : Nat}
   have huvDisjoint : ∀ i, i ∈ u → i ∈ v → False := ParabolaChordLemmas.huvDisjoint n b u v hparts
   have hANodup : A.Nodup := ParabolaChordLemmas.hANodup n a b u hne huNodup hbNotU haNotU
   have hBNodup : B.Nodup := ParabolaChordLemmas.hBNodup n a b v hne hvNodup hbNotV haNotV
-  have hsets : {i | i ∈ A} ∩ {i | i ∈ B} = {a, b} := ParabolaChordLemmas.hsets n q a b u v
+  have hsets : {i | i ∈ A} ∩ {i | i ∈ B} = {a, b} := ParabolaChordLemmas.hsets n a b u v
       hcyclic htailNodup hne hparts huNodup hbNotU hvNodup hbNotV haNotU haNotV huvDisjoint
       hANodup hBNodup
   have hnil (xs : List (Fin (n + 3))) :

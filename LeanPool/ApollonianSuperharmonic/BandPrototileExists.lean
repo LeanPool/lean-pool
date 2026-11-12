@@ -6,11 +6,11 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.GaussianRealPointProperties
 
 public import LeanPool.ApollonianSuperharmonic.BandGenealogy
 public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryCovariance
 public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryInversePhaseCancellation
-public import LeanPool.ApollonianSuperharmonic.BandPrototile
 public import LeanPool.ApollonianSuperharmonic.BandPrototileReindexedDecomposition
 public import LeanPool.ApollonianSuperharmonic.BandSignedOccurrenceHalfTurn
 public import LeanPool.ApollonianSuperharmonic.BandRegimeClassification
@@ -364,14 +364,6 @@ private theorem hfoot :
   obtain ⟨x, hx, hvertex⟩ := hv
   exact ⟨x, (hcells0 x).2 ⟨i, s, hx⟩, hvertex⟩
 
-private theorem pointNeg :
-    (by
-      classical
-      exact
-        ∀ (z : GaussianInt), GaussianRealPoint (-z) = -GaussianRealPoint z ) := by
-  classical
-  intro z
-  ext <;> simp [GaussianRealPoint]
 
 private theorem pointI :
     (by
@@ -1290,39 +1282,37 @@ private theorem hcentral0 :
 private theorem gridCenter :
     (by
       classical
-      exact
-        (ℕ) → ((BandCircle) → (∀ (q : Fin (4 : ℕ) → CircleCoordinates), ∀ (r : Fin (3 : ℕ)), ∀ (g
-            : BandPackingSymmetry),
-        let q' : Fin 4 → CircleCoordinates :=
-          BandPackingSymmetryQuadrupleAction g
-            ![q 0, q r.succ, q (r + 1).succ, q (r + 2).succ]
-        ∀ (T1 : ProtoTile), ∀ (S : Fin (3 : ℕ) → Bool → ProtoTile),
-        let a : GaussianInt := BandVectors.1 (q' 3) (q' 2)
-        let U : Fin 3 → Bool → ProtoTile := fun i s =>
-          if i = 0 then
-            if s then TileTranslation T1 (a - ⟨0, 1⟩ * a) else T1
-          else if i = 1 then
-            if s then TileTranslation (S 1 s) a
-            else TileTranslation (S 1 s) (-⟨0, 1⟩ * a)
-          else if s then TileTranslation (S 2 s) (-⟨0, 1⟩ * a)
-            else TileTranslation (S 2 s) a
-        let T0 : ProtoTile :=
-          ⟨Finset.univ.biUnion (fun i : Fin 3 =>
-            Finset.univ.biUnion (fun s : Bool => (U i s).cells)), T1.anchor⟩
-        let reCells : Finset Int := T1.cells.image (fun x => x.re)
-        let imCells : Finset Int := T1.cells.image (fun x => x.im)
-        ∀ (reNe : reCells.Nonempty), ∀ (imNe : imCells.Nonempty),
-        let mRe := reCells.min' reNe
-        let MRe := reCells.max' reNe
-        (∃ x ∈ T1.cells, x.re = mRe) → ((∃ x ∈ T1.cells, x.re = MRe) → (
-        let mIm := imCells.min' imNe
-        let MIm := imCells.max' imNe
-        (∃ x ∈ T1.cells, x.im = mIm) → ((∃ x ∈ T1.cells, x.im = MIm) → (∀ (x : GaussianInt),
-            ((x.re : Real) + 1 / 2, (x.im : Real) + 1 / 2) ∈ TileRealization T0 ↔ x ∈
-            T0.cells)))))) ) := by
+        exact
+        (∀ (q : Fin (4 : ℕ) → CircleCoordinates),
+          ∀ (r : Fin (3 : ℕ)),
+            ∀ (g : BandPackingSymmetry),
+              let q' : Fin 4 → CircleCoordinates :=
+                BandPackingSymmetryQuadrupleAction g
+                  ![q 0, q r.succ, q (r + 1).succ, q (r + 2).succ];
+              ∀ (T1 : ProtoTile),
+                ∀ (S : Fin (3 : ℕ) → Bool → ProtoTile),
+                  let a : GaussianInt := BandVectors.1 (q' 3) (q' 2);
+                  let U : Fin 3 → Bool → ProtoTile := fun i s =>
+                    if i = 0 then
+                      if s then TileTranslation T1 (a - ⟨0, 1⟩ * a) else T1
+                    else
+                      if i = 1 then
+                        if s then TileTranslation (S 1 s) a
+                        else TileTranslation (S 1 s) (-⟨0, 1⟩ * a)
+                      else
+                        if s then TileTranslation (S 2 s) (-⟨0, 1⟩ * a)
+                        else TileTranslation (S 2 s) a;
+                  let T0 : ProtoTile :=
+                    ⟨Finset.univ.biUnion
+                        (fun i : Fin 3 =>
+                          Finset.univ.biUnion (fun s : Bool => (U i s).cells)),
+                      T1.anchor⟩;
+                  (∀ (x : GaussianInt),
+                    ((x.re : Real) + 1 / 2, (x.im : Real) + 1 / 2) ∈
+                        TileRealization T0 ↔
+                      x ∈ T0.cells))) := by
   classical
-  intro n C q r g q' T1 S a U T0 reCells imCells reNe imNe mRe MRe minReCell maxReCell mIm MIm
-      minImCell maxImCell x
+  intro q r g q' T1 S a U T0 x
   constructor
   · intro hp
     simp only [TileRealization, Set.mem_iUnion] at hp
@@ -1929,8 +1919,8 @@ private theorem hrootCent :
       PrototileConstruction.hcentral0 q r g T1 S hRinv pairMem pairMem' realization0
   have gridCenter (x : GaussianInt) :
       ((x.re : Real) + 1 / 2, (x.im : Real) + 1 / 2) ∈
-        TileRealization T0 ↔ x ∈ T0.cells := PrototileConstruction.gridCenter n C
-            q r g T1 S reNe imNe minReCell maxReCell minImCell maxImCell x
+        TileRealization T0 ↔ x ∈ T0.cells := PrototileConstruction.gridCenter
+            q r g T1 S x
   let tau : GaussianInt → GaussianInt := fun x => t0 - x - 1 - I
   have tau_invol (x : GaussianInt) : tau (tau x) = x := by
     apply Zsqrtd.ext <;> simp [tau, I] <;> omega
@@ -2079,7 +2069,7 @@ private theorem existence :
                   (-(GaussianRealPoint z).2, (GaussianRealPoint z).1))
               have pointNeg (z : GaussianInt) :
                   GaussianRealPoint (-z) = -GaussianRealPoint z :=
-                      PrototileConstruction.pointNeg z
+                      GaussianRealPointProperties.negation z
               have pointI (z : GaussianInt) :
                   GaussianRealPoint (I * z) =
                     (-(GaussianRealPoint z).2, (GaussianRealPoint z).1) :=

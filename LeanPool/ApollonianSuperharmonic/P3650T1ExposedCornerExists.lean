@@ -193,15 +193,6 @@ private theorem hellw :
     _ = ell c - ell B := map_sub ell c B
     _ < 0 := by simpa [c, B, v] using hh
 
-private theorem hlineMap :
-    (by
-      classical
-      exact
-        ∀ x y : Real × Real, ∀ t : Real, AffineMap.lineMap x y t = x + t • (y - x) ) := by
-  classical
-  intro x y t
-  rw [AffineMap.lineMap_apply_module]
-  module
 
 private theorem hcrosszero :
     (by
@@ -3311,7 +3302,7 @@ theorem P3650T1ExposedCornerExists {n : Nat} (p : P3381T1PolygonBoundary n) :
   have hw : w ≠ 0 := sub_ne_zero.mpr hcB
   have hellu := ExposedCornerGeometry.hellu n p hqexists b hstrict hprevne
   have hellw := ExposedCornerGeometry.hellw n p hqexists b hstrict hnextne
-  have hlineMap := ExposedCornerGeometry.hlineMap
+  have hlineMap := AffineLineMapProperties.coordinates
   let cross (x y : Real × Real) : Real := x.1 * y.2 - x.2 * y.1
   have hdet := ExposedCornerGeometry.hdetAt218 n p hqexists b hprev hprevne hu hw hellu hellw
       hlineMap (ExposedCornerGeometry.hcrosszero)

@@ -516,49 +516,16 @@ private theorem qPredWlt :
 private theorem qPredWeq :
     (by
       classical
-      exact
-        ∀ (K : DiamondParameter), ∀ (hk : (1 : ℕ) < K.1), ∀ (f : IntegerLatticeFunction), ∀ (B :
-            Int),
-        let k : Int := K.1
-        let child := P5352T2Sources K hk 0
-        let pred := P5352T2Sources K hk 3
-        let d : GaussianInt := ⟨-k, 1-k⟩
-        let r : GaussianInt := ⟨-2*k, 0⟩
-        let Q : Int → Int → Int := fun a b =>
-          (Int.natAbs a : Int) * ((Int.natAbs a : Int)-1)/2 - (a-b)^2/4
-        (∀ (m : Int), (1-2*m)^2/4 = m^2-m) → (∀ (t : ℤ), ((1 : ℤ) ≤ t) → ((t ≤ k) → ((⟨-t, t - (1
-            : ℤ)⟩ ∈ FootprintVertices child.1) → ((⟨-t, t - (1 : ℤ)⟩ - d ∈ FootprintVertices
-            pred.1) → ((∀ (y : GaussianInt), y = ⟨-t, t - (1 : ℤ)⟩ ∨ y = ⟨-t, t - (1 : ℤ)⟩ + (1 :
-            GaussianInt) ∨ y = ⟨-t, t - (1 : ℤ)⟩ - (1 : GaussianInt) ∨ y = ⟨-t, t - (1 : ℤ)⟩ +
-            ⟨(0 : ℤ), (1 : ℤ)⟩ ∨ y = ⟨-t, t - (1 : ℤ)⟩ - ⟨(0 : ℤ), (1 : ℤ)⟩ → y ∈
-            FootprintVertices child.1 ∨ y - d ∈ FootprintVertices pred.1) → (((0 : ℤ) ≤ t - (1 :
-            ℤ) ∧ t - (1 : ℤ) ≤ (2 : ℤ) * (↑K.1 : ℤ) ∧ -(↑K.1 : ℤ) ≤ -t ∧ -t ≤ (↑K.1 : ℤ) ∧ -(t -
-            (1 : ℤ)) - (1 : ℤ) ≤ -t ∧ -t ≤ t - (1 : ℤ) + (1 : ℤ) ∧ -((2 : ℤ) * (↑K.1 : ℤ) - (t -
-            (1 : ℤ)) + (1 : ℤ)) ≤ -t ∧ -t ≤ (2 : ℤ) * (↑K.1 : ℤ) - (t - (1 : ℤ)) + (1 : ℤ)) →
-            (((0 : ℤ) ≤ t - (1 : ℤ) - ((1 : ℤ) - k) ∧ t - (1 : ℤ) - ((1 : ℤ) - k) ≤ (2 : ℤ) * (k
-            - (1 : ℤ)) ∧ -(k - (1 : ℤ)) ≤ -t - -k ∧ -t - -k ≤ k - (1 : ℤ) ∧ -(t - (1 : ℤ) - ((1 :
-            ℤ) - k)) - (1 : ℤ) ≤ -t - -k ∧ -t - -k ≤ t - (1 : ℤ) - ((1 : ℤ) - k) + (1 : ℤ) ∧ -((2
-            : ℤ) * (k - (1 : ℤ)) - (t - (1 : ℤ) - ((1 : ℤ) - k)) + (1 : ℤ)) ≤ -t - -k ∧ -t - -k ≤
-            (2 : ℤ) * (k - (1 : ℤ)) - (t - (1 : ℤ) - ((1 : ℤ) - k)) + (1 : ℤ)) → (
-        let x : GaussianInt := ⟨-t,t-1⟩
-        (x-r ∈ FootprintVertices (DiamondTile K.1) ↔ t=k) → ((x ∈ FootprintVertices (DiamondTile
-            K.1)) → (((⟨1-t,t-1⟩ : GaussianInt) ∈ FootprintVertices (DiamondTile K.1)) →
-            (((⟨-t,t⟩ : GaussianInt) ∈ FootprintVertices (DiamondTile K.1)) → ((x-d ∈
-            FootprintVertices (DiamondTile (K.1-1))) → (((⟨k-t-1,k+t-2⟩ : GaussianInt) ∈
-            FootprintVertices (DiamondTile (K.1-1))) → (((⟨k-t,k+t-3⟩ : GaussianInt) ∈
-            FootprintVertices (DiamondTile (K.1-1))) → ((f x = Q (-t) (t-1)) → ((f (⟨1-t,t-1⟩ :
-            GaussianInt) = Q (1-t) (t-1)) → ((f (⟨-t,t⟩ : GaussianInt) = Q (-t) t) → ((f x = Q
-            (k-t) (k+t-2) + (1-k)*(-t) - (t-1)+B) → ((f (⟨-t-1,t-1⟩ : GaussianInt) = Q (k-t-1)
-            (k+t-2) + (1-k)*(-t-1) - (t-1)+B) → ((f (⟨-t,t-2⟩ : GaussianInt) = Q (k-t) (k+t-3) +
-            (1-k)*(-t) - (t-2)+B) → ((Q (-t) (t-1) = -(t*(t-1)/2)) → ((Q (1-t) (t-1) =
-            -(t*(t-1)/2)) → ((Q (-t) t = -(t*(t+1)/2)) → ((Q (k-t) (k+t-2) =
-            (k-t)*(k-t-1)/2-(t-1)^2) → (((t<k) → (Q (k-t-1) (k+t-2) = (k-t-1)*(k-t-2)/2-(t*t-t)))
-            → (t = k → Q (k - t - (1 : ℤ)) (k + t - (2 : ℤ)) = -(t * t -
-            t))))))))))))))))))))))))))) ) := by
+        exact
+        ∀ (K : DiamondParameter),
+          let k : Int := K.1;
+          let Q : Int → Int → Int := fun a b =>
+            (Int.natAbs a : Int) * ((Int.natAbs a : Int) - 1) / 2 - (a - b) ^ 2 / 4;
+          (∀ (m : Int), (1 - 2 * m) ^ 2 / 4 = m ^ 2 - m) →
+            (∀ (t : ℤ),
+              (t = k → Q (k - t - (1 : ℤ)) (k + t - (2 : ℤ)) = -(t * t - t)))) := by
   classical
-  intro K hk f B k child pred d r Q floorOdd t ht1 htk hz hpz hcover hc hp x hComp hX hE hN hPC
-      hPW hPS hChildC hChildE hChildN hPredC hPredW hPredS qChildC qChildE qChildN qPredC
-      qPredWlt ht
+  intro K k Q floorOdd t ht
   subst t
   simp only [Q, Int.natCast_natAbs]
   have ha : k-k-1 = (-1 : Int) := by omega
@@ -609,51 +576,37 @@ private theorem hEastDiff :
 private theorem hWestDiff :
     (by
       classical
-      exact
-        ∀ (K : DiamondParameter), ∀ (hk : (1 : ℕ) < K.1), ∀ (f : IntegerLatticeFunction), ∀ (B :
-            Int),
-        let k : Int := K.1
-        let child := P5352T2Sources K hk 0
-        let pred := P5352T2Sources K hk 3
-        let d : GaussianInt := ⟨-k, 1-k⟩
-        let r : GaussianInt := ⟨-2*k, 0⟩
-        let Q : Int → Int → Int := fun a b =>
-          (Int.natAbs a : Int) * ((Int.natAbs a : Int)-1)/2 - (a-b)^2/4
-        (((K.1-1 : Nat) : Int) = k-1) → (∀ (t : ℤ), ((1 : ℤ) ≤ t) → ((t ≤ k) → ((⟨-t, t - (1 :
-            ℤ)⟩ ∈ FootprintVertices child.1) → ((⟨-t, t - (1 : ℤ)⟩ - d ∈ FootprintVertices
-            pred.1) → ((∀ (y : GaussianInt), y = ⟨-t, t - (1 : ℤ)⟩ ∨ y = ⟨-t, t - (1 : ℤ)⟩ + (1 :
-            GaussianInt) ∨ y = ⟨-t, t - (1 : ℤ)⟩ - (1 : GaussianInt) ∨ y = ⟨-t, t - (1 : ℤ)⟩ +
-            ⟨(0 : ℤ), (1 : ℤ)⟩ ∨ y = ⟨-t, t - (1 : ℤ)⟩ - ⟨(0 : ℤ), (1 : ℤ)⟩ → y ∈
-            FootprintVertices child.1 ∨ y - d ∈ FootprintVertices pred.1) → (((0 : ℤ) ≤ t - (1 :
-            ℤ) ∧ t - (1 : ℤ) ≤ (2 : ℤ) * (↑K.1 : ℤ) ∧ -(↑K.1 : ℤ) ≤ -t ∧ -t ≤ (↑K.1 : ℤ) ∧ -(t -
-            (1 : ℤ)) - (1 : ℤ) ≤ -t ∧ -t ≤ t - (1 : ℤ) + (1 : ℤ) ∧ -((2 : ℤ) * (↑K.1 : ℤ) - (t -
-            (1 : ℤ)) + (1 : ℤ)) ≤ -t ∧ -t ≤ (2 : ℤ) * (↑K.1 : ℤ) - (t - (1 : ℤ)) + (1 : ℤ)) →
-            (((0 : ℤ) ≤ t - (1 : ℤ) - ((1 : ℤ) - k) ∧ t - (1 : ℤ) - ((1 : ℤ) - k) ≤ (2 : ℤ) * (k
-            - (1 : ℤ)) ∧ -(k - (1 : ℤ)) ≤ -t - -k ∧ -t - -k ≤ k - (1 : ℤ) ∧ -(t - (1 : ℤ) - ((1 :
-            ℤ) - k)) - (1 : ℤ) ≤ -t - -k ∧ -t - -k ≤ t - (1 : ℤ) - ((1 : ℤ) - k) + (1 : ℤ) ∧ -((2
-            : ℤ) * (k - (1 : ℤ)) - (t - (1 : ℤ) - ((1 : ℤ) - k)) + (1 : ℤ)) ≤ -t - -k ∧ -t - -k ≤
-            (2 : ℤ) * (k - (1 : ℤ)) - (t - (1 : ℤ) - ((1 : ℤ) - k)) + (1 : ℤ)) → (
-        let x : GaussianInt := ⟨-t,t-1⟩
-        (x-r ∈ FootprintVertices (DiamondTile K.1) ↔ t=k) → ((x ∈ FootprintVertices (DiamondTile
-            K.1)) → (((⟨1-t,t-1⟩ : GaussianInt) ∈ FootprintVertices (DiamondTile K.1)) →
-            (((⟨-t,t⟩ : GaussianInt) ∈ FootprintVertices (DiamondTile K.1)) → ((x-d ∈
-            FootprintVertices (DiamondTile (K.1-1))) → (((⟨k-t-1,k+t-2⟩ : GaussianInt) ∈
-            FootprintVertices (DiamondTile (K.1-1))) → (((⟨k-t,k+t-3⟩ : GaussianInt) ∈
-            FootprintVertices (DiamondTile (K.1-1))) → ((f x = Q (-t) (t-1)) → ((f (⟨1-t,t-1⟩ :
-            GaussianInt) = Q (1-t) (t-1)) → ((f (⟨-t,t⟩ : GaussianInt) = Q (-t) t) → ((f x = Q
-            (k-t) (k+t-2) + (1-k)*(-t) - (t-1)+B) → ((f (⟨-t-1,t-1⟩ : GaussianInt) = Q (k-t-1)
-            (k+t-2) + (1-k)*(-t-1) - (t-1)+B) → ((f (⟨-t,t-2⟩ : GaussianInt) = Q (k-t) (k+t-3) +
-            (1-k)*(-t) - (t-2)+B) → ((∀ (n : Int), n*(n-1)/2-(n-1)*(n-2)/2=n-1) → ((Q (-t) (t-1)
-            = -(t*(t-1)/2)) → ((Q (1-t) (t-1) = -(t*(t-1)/2)) → ((Q (-t) t = -(t*(t+1)/2)) → ((Q
-            (k-t) (k+t-2) = (k-t)*(k-t-1)/2-(t-1)^2) → (((t<k) → (Q (k-t-1) (k+t-2) =
-            (k-t-1)*(k-t-2)/2-(t*t-t))) → (((t=k) → (Q (k-t-1) (k+t-2) = -(t*t-t))) → ((Q (k-t)
-            (k+t-3) = (k-t)*(k-t-1)/2-((t-1)^2-(t-1))) → ((Q (-t) (t-1) = Q (k-t) (k+t-2) +
-            (1-k)*(-t)-(t-1)+B) → ((f (x+1)-f x = 0) → (f (x-1)-f x = if t=k then 0 else
-            1))))))))))))))))))))))))))))))) ) := by
+        exact
+        ∀ (K : DiamondParameter),
+          ∀ (f : IntegerLatticeFunction),
+            ∀ (B : Int),
+              let k : Int := K.1;
+              let Q : Int → Int → Int := fun a b =>
+                (Int.natAbs a : Int) * ((Int.natAbs a : Int) - 1) / 2 -
+                  (a - b) ^ 2 / 4;
+              (∀ (t : ℤ),
+                ((t ≤ k) →
+                  (let x : GaussianInt := ⟨-t, t - 1⟩;
+                  ((f x = Q (-t) (t - 1)) →
+                    ((f (⟨-t - 1, t - 1⟩ : GaussianInt) =
+                        Q (k - t - 1) (k + t - 2) + (1 - k) * (-t - 1) - (t - 1) +
+                          B) →
+                      ((∀ (n : Int),
+                          n * (n - 1) / 2 - (n - 1) * (n - 2) / 2 = n - 1) →
+                        ((Q (k - t) (k + t - 2) =
+                            (k - t) * (k - t - 1) / 2 - (t - 1) ^ 2) →
+                          (((t < k) →
+                              (Q (k - t - 1) (k + t - 2) =
+                                (k - t - 1) * (k - t - 2) / 2 - (t * t - t))) →
+                            (((t = k) →
+                                (Q (k - t - 1) (k + t - 2) = -(t * t - t))) →
+                              ((Q (-t) (t - 1) =
+                                  Q (k - t) (k + t - 2) + (1 - k) * (-t) - (t - 1) +
+                                    B) →
+                                (f (x - 1) - f x =
+                                  if t = k then 0 else 1)))))))))))) := by
   classical
-  intro K hk f B k child pred d r Q hkm t ht1 htk hz hpz hcover hc hp x hComp hX hE hN hPC hPW
-      hPS hChildC hChildE hChildN hPredC hPredW hPredS tdiff qChildC qChildE qChildN qPredC
-      qPredWlt qPredWeq qPredS hAgree hEastDiff
+  intro K f B k Q t htk x hChildC hPredW tdiff qPredC qPredWlt qPredWeq hAgree
   have hw : x-1 = ⟨-t-1,t-1⟩ := by ext <;> simp [x]
   rw [hw, hPredW, hChildC, hAgree]
   by_cases ht : t=k
@@ -990,16 +943,13 @@ theorem P5352T2Predecessor3 (K : DiamondParameter) (hk : 1 < K.1)
       have qPredC := FourthPredecessorCases.qPredC K f B hkm floorEven t htk hChildC hPredC hPredW
       have qPredWlt (ht : t<k) := FourthPredecessorCases.qPredWlt K f B hkm floorOdd t hChildC
           hPredC hPredW ht
-      have qPredWeq (ht : t=k) := FourthPredecessorCases.qPredWeq K hk f B floorOdd t ht1 htk hz
-          hpz hcover hc hp hComp hX hE hN hPC hPW hPS hChildC hChildE hChildN hPredC hPredW
-          hPredS qChildC qChildE qChildN qPredC qPredWlt ht
+      have qPredWeq (ht : t=k) := FourthPredecessorCases.qPredWeq K floorOdd t ht
       have qPredS := FourthPredecessorCases.qPredS K f B hkm floorOdd t htk hChildC hPredC hPredW
       have hAgree : Q (-t) (t-1) = Q (k-t) (k+t-2) +
           (1-k)*(-t)-(t-1)+B := by rw [← hChildC, hPredC]
       have hEastDiff := FourthPredecessorCases.hEastDiff f t hChildC hChildE qChildC qChildE
-      have hWestDiff := FourthPredecessorCases.hWestDiff K hk f B hkm t ht1 htk hz hpz hcover hc
-          hp hComp hX hE hN hPC hPW hPS hChildC hChildE hChildN hPredC hPredW hPredS tdiff
-          qChildC qChildE qChildN qPredC qPredWlt qPredWeq qPredS hAgree hEastDiff
+      have hWestDiff := FourthPredecessorCases.hWestDiff K f B t htk hChildC hPredW tdiff qPredC
+          qPredWlt qPredWeq hAgree
       have hNorthDiff := FourthPredecessorCases.hNorthDiff f t hChildC hChildN tdiff qChildC qChildN
       have hSouthDiff := FourthPredecessorCases.hSouthDiff K f B t hChildC hPredS qPredC qPredS
           hAgree

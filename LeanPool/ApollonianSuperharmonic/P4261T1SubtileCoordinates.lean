@@ -395,46 +395,47 @@ private theorem hparentNonempty :
 private theorem hbandOcc :
     (by
       classical
-      exact
-        ∀ (q : Fin 4 → CircleCoordinates), ∀ (cfg : BandOrderedGeneralConfiguration q), ∀ (C₀ :
-            BandCircle), ∀ (T₀ : ProtoTile), ∀ (cert : BandOrderedGeneralLayoutCertificate q cfg
-            C₀ T₀), ∀ (T : ProtoTile), ∀ (i' : Fin (3 : ℕ)), ∀ (s : Fin (4 : ℕ)), ∀ (r : Fin (3 :
-            ℕ)),
-        let j : Fin 3 := i' + r
-        let incoming : Fin 3 → GaussianInt := fun k =>
-          BandVectors.1 (q k.succ) (q 0)
-        let outgoing : Fin 3 → GaussianInt := fun k =>
-          BandVectors.1 (q 0) (q k.succ)
-        let makeIndex : Fin 3 → Fin 4 → PeriodicSubtileIndex := fun k t =>
-          if k = 0 then
-            if t = 0 then ⟨.A, 0, -1⟩ else if t = 1 then ⟨.B, 1, 1⟩
-              else if t = 2 then ⟨.B, 0, 1⟩ else ⟨.A, -1, -1⟩
-          else if k = 1 then
-            if t = 0 then ⟨.C, 1, 1⟩ else if t = 1 then ⟨.D, -1, 0⟩
-              else if t = 2 then ⟨.D, -1, -1⟩ else ⟨.C, 1, 0⟩
-          else
-            if t = 0 then ⟨.E, -1, 0⟩ else if t = 1 then ⟨.F, 0, -1⟩
-              else if t = 2 then ⟨.F, 1, 0⟩ else ⟨.E, 0, 1⟩
-        let a : PeriodicSubtileIndex := makeIndex j s
-        let slot : SixSubtileLabel → Fin 3 × Bool := fun l => match l with
-          | .A => (0, true)
-          | .B => (0, false)
-          | .C => (1, true)
-          | .D => (1, false)
-          | .E => (2, true)
-          | .F => (2, false)
-        (a ∈ P4261T1ExteriorIndices ∧ (slot a.label).1 = j ∧ (slot a.label).2 = if a.label =
-            SixSubtileLabel.A ∨ a.label = SixSubtileLabel.C ∨ a.label = SixSubtileLabel.E then
-            true else false) → ((a ∈ P4261T1ExteriorIndices) → (((slot a.label).1 = j ∧ (slot
-            a.label).2 = (if a.label = .A ∨ a.label = .C ∨ a.label = .E then true else false)) →
-            ((TileCentroid (SubtileOccurrenceInterpretation cert.P cert.u cert.v a) -
-            TileCentroid T₀ = (1 / 2 : ℝ) • GaussianRealPoint ((⟨0, 1⟩ : GaussianInt) ^ s.val *
-            (incoming j + outgoing j))) → ((TileCentroid T = TileCentroid
-            (SubtileOccurrenceInterpretation cert.P cert.u cert.v a)) → (BandPrototile (q (slot
-            a.label).1.succ) (SubtileOccurrenceInterpretation cert.P cert.u cert.v a)))))) ) := by
+        exact
+        ∀ (q : Fin 4 → CircleCoordinates),
+          ∀ (cfg : BandOrderedGeneralConfiguration q),
+            ∀ (C₀ : BandCircle),
+              ∀ (T₀ : ProtoTile),
+                ∀ (cert : BandOrderedGeneralLayoutCertificate q cfg C₀ T₀),
+                  ∀ (i' : Fin (3 : ℕ)),
+                    ∀ (s : Fin (4 : ℕ)),
+                      ∀ (r : Fin (3 : ℕ)),
+                        let j : Fin 3 := i' + r;
+                        let makeIndex : Fin 3 → Fin 4 → PeriodicSubtileIndex :=
+                          fun k t =>
+                          if k = 0 then
+                            if t = 0 then ⟨.A, 0, -1⟩
+                            else
+                              if t = 1 then ⟨.B, 1, 1⟩
+                              else if t = 2 then ⟨.B, 0, 1⟩ else ⟨.A, -1, -1⟩
+                          else
+                            if k = 1 then
+                              if t = 0 then ⟨.C, 1, 1⟩
+                              else
+                                if t = 1 then ⟨.D, -1, 0⟩
+                                else if t = 2 then ⟨.D, -1, -1⟩ else ⟨.C, 1, 0⟩
+                            else
+                              if t = 0 then ⟨.E, -1, 0⟩
+                              else
+                                if t = 1 then ⟨.F, 0, -1⟩
+                                else if t = 2 then ⟨.F, 1, 0⟩ else ⟨.E, 0, 1⟩;
+                        let a : PeriodicSubtileIndex := makeIndex j s;
+                        let slot : SixSubtileLabel → Fin 3 × Bool := fun l =>
+                          match l with
+                          | .A => (0, true)
+                          | .B => (0, false)
+                          | .C => (1, true)
+                          | .D => (1, false)
+                          | .E => (2, true)
+                          | .F => (2, false);
+                        (BandPrototile (q (slot a.label).1.succ)
+                          (SubtileOccurrenceInterpretation cert.P cert.u cert.v a))) := by
   classical
-  intro q cfg C₀ T₀ cert T i' s r j incoming outgoing makeIndex a slot htable ha hslot
-      hrowCentroid hsuppliedCentroid
+  intro q cfg C₀ T₀ cert i' s r j makeIndex a slot
   rcases a with ⟨lab, m, n⟩
   cases lab <;> simp only [SubtileOccurrenceInterpretation, slot] <;>
     exact BandPrototileTranslation _ _ _ (cert.outer_occurrence _ _).1
@@ -495,49 +496,40 @@ private theorem hcells :
 private theorem hoccNonempty :
     (by
       classical
-      exact
-        ∀ (q : Fin 4 → CircleCoordinates), ∀ (cfg : BandOrderedGeneralConfiguration q), ∀ (C₀ :
-            BandCircle), ∀ (T₀ : ProtoTile), ∀ (cert : BandOrderedGeneralLayoutCertificate q cfg
-            C₀ T₀), ∀ (T : ProtoTile), ∀ (i' : Fin (3 : ℕ)), ∀ (s : Fin (4 : ℕ)), ∀ (r : Fin (3 :
-            ℕ)),
-        let j : Fin 3 := i' + r
-        let incoming : Fin 3 → GaussianInt := fun k =>
-          BandVectors.1 (q k.succ) (q 0)
-        let outgoing : Fin 3 → GaussianInt := fun k =>
-          BandVectors.1 (q 0) (q k.succ)
-        let makeIndex : Fin 3 → Fin 4 → PeriodicSubtileIndex := fun k t =>
-          if k = 0 then
-            if t = 0 then ⟨.A, 0, -1⟩ else if t = 1 then ⟨.B, 1, 1⟩
-              else if t = 2 then ⟨.B, 0, 1⟩ else ⟨.A, -1, -1⟩
-          else if k = 1 then
-            if t = 0 then ⟨.C, 1, 1⟩ else if t = 1 then ⟨.D, -1, 0⟩
-              else if t = 2 then ⟨.D, -1, -1⟩ else ⟨.C, 1, 0⟩
-          else
-            if t = 0 then ⟨.E, -1, 0⟩ else if t = 1 then ⟨.F, 0, -1⟩
-              else if t = 2 then ⟨.F, 1, 0⟩ else ⟨.E, 0, 1⟩
-        let a : PeriodicSubtileIndex := makeIndex j s
-        let slot : SixSubtileLabel → Fin 3 × Bool := fun l => match l with
-          | .A => (0, true)
-          | .B => (0, false)
-          | .C => (1, true)
-          | .D => (1, false)
-          | .E => (2, true)
-          | .F => (2, false)
-        (a ∈ P4261T1ExteriorIndices ∧ (slot a.label).1 = j ∧ (slot a.label).2 = if a.label =
-            SixSubtileLabel.A ∨ a.label = SixSubtileLabel.C ∨ a.label = SixSubtileLabel.E then
-            true else false) → ((a ∈ P4261T1ExteriorIndices) → (((slot a.label).1 = j ∧ (slot
-            a.label).2 = (if a.label = .A ∨ a.label = .C ∨ a.label = .E then true else false)) →
-            ((TileCentroid (SubtileOccurrenceInterpretation cert.P cert.u cert.v a) -
-            TileCentroid T₀ = (1 / 2 : ℝ) • GaussianRealPoint ((⟨0, 1⟩ : GaussianInt) ^ s.val *
-            (incoming j + outgoing j))) → ((TileCentroid T = TileCentroid
-            (SubtileOccurrenceInterpretation cert.P cert.u cert.v a)) → ((∀ k, ∀ e, (cert.P k
-            e).cells.Nonempty) → ((BandPrototile (q (slot a.label).1.succ)
-            (SubtileOccurrenceInterpretation cert.P cert.u cert.v a)) → ((T.cells =
-            (SubtileOccurrenceInterpretation cert.P cert.u cert.v a).cells) →
-            ((SubtileOccurrenceInterpretation cert.P cert.u cert.v a).cells.Nonempty)))))))) ) := by
+        exact
+        ∀ (q : Fin 4 → CircleCoordinates),
+          ∀ (cfg : BandOrderedGeneralConfiguration q),
+            ∀ (C₀ : BandCircle),
+              ∀ (T₀ : ProtoTile),
+                ∀ (cert : BandOrderedGeneralLayoutCertificate q cfg C₀ T₀),
+                  ∀ (i' : Fin (3 : ℕ)),
+                    ∀ (s : Fin (4 : ℕ)),
+                      ∀ (r : Fin (3 : ℕ)),
+                        let j : Fin 3 := i' + r;
+                        let makeIndex : Fin 3 → Fin 4 → PeriodicSubtileIndex :=
+                          fun k t =>
+                          if k = 0 then
+                            if t = 0 then ⟨.A, 0, -1⟩
+                            else
+                              if t = 1 then ⟨.B, 1, 1⟩
+                              else if t = 2 then ⟨.B, 0, 1⟩ else ⟨.A, -1, -1⟩
+                          else
+                            if k = 1 then
+                              if t = 0 then ⟨.C, 1, 1⟩
+                              else
+                                if t = 1 then ⟨.D, -1, 0⟩
+                                else if t = 2 then ⟨.D, -1, -1⟩ else ⟨.C, 1, 0⟩
+                            else
+                              if t = 0 then ⟨.E, -1, 0⟩
+                              else
+                                if t = 1 then ⟨.F, 0, -1⟩
+                                else if t = 2 then ⟨.F, 1, 0⟩ else ⟨.E, 0, 1⟩;
+                        let a : PeriodicSubtileIndex := makeIndex j s;
+                        ((∀ k, ∀ e, (cert.P k e).cells.Nonempty) →
+                          ((SubtileOccurrenceInterpretation cert.P cert.u cert.v
+                              a).cells.Nonempty))) := by
   classical
-  intro q cfg C₀ T₀ cert T i' s r j incoming outgoing makeIndex a slot htable ha hslot
-      hrowCentroid hsuppliedCentroid hparentNonempty hbandOcc hcells
+  intro q cfg C₀ T₀ cert i' s r j makeIndex a hparentNonempty
   rcases a with ⟨lab, m, n⟩
   cases lab <;>
     rcases hparentNonempty _ _ with ⟨x, hx⟩ <;>
@@ -1237,16 +1229,14 @@ theorem P4261T1SubtileCoordinates
     have hsuppliedCentroid := SubtileCoordinateGeometry.hsuppliedCentroid q cfg C₀ T₀ cert T q'
         i' s hq₀ hcent r hparent hrowCentroid
     have hparentNonempty := SubtileCoordinateGeometry.hparentNonempty q cfg C₀ T₀ cert
-    have hbandOcc := SubtileCoordinateGeometry.hbandOcc q cfg C₀ T₀ cert T i' s r htable ha hslot
-        hrowCentroid hsuppliedCentroid
+    have hbandOcc := SubtileCoordinateGeometry.hbandOcc q cfg C₀ T₀ cert i' s r
     have hbandT := SubtileCoordinateGeometry.hbandT q C T h hchild q' i' hqi r hparent
     have hcells : T.cells = (SubtileOccurrenceInterpretation cert.P cert.u cert.v a).cells :=
         SubtileCoordinateGeometry.hcells q cfg C₀ T₀ cert T i' s r hslot hsuppliedCentroid
         hbandOcc hbandT
     have hoccNonempty :
         (SubtileOccurrenceInterpretation cert.P cert.u cert.v a).cells.Nonempty :=
-            SubtileCoordinateGeometry.hoccNonempty q cfg C₀ T₀ cert T i' s r htable ha hslot
-            hrowCentroid hsuppliedCentroid hparentNonempty hbandOcc hcells
+            SubtileCoordinateGeometry.hoccNonempty q cfg C₀ T₀ cert i' s r hparentNonempty
     have hTNonempty : T.cells.Nonempty := by rw [hcells]; exact hoccNonempty
     have hfoot := SubtileCoordinateGeometry.hfoot q cfg C₀ T₀ cert T i' s r hcells hoccNonempty
         hTNonempty

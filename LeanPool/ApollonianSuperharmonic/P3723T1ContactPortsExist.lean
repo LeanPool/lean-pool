@@ -6,6 +6,7 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.PeriodicEdgeContactSymmetry
 
 public import LeanPool.ApollonianSuperharmonic.P3723T1ContactPorts
 public import LeanPool.ApollonianSuperharmonic.P3723T1ContactStabilizer
@@ -399,15 +400,6 @@ private theorem rep_spec :
   intro ι P rep a
   exact Classical.choose_spec (P.vertex_orbit_representatives a).exists
 
-private theorem contact_symmetric :
-    (by
-      classical
-      exact
-        ∀ (ι : Type), ∀ (P : PeriodicTileComplex ι), ∀ (a : ι), ∀ (b : ι), P3723T1EdgeContact P
-            a b ↔ P3723T1EdgeContact P b a ) := by
-  classical
-  intro ι P a b
-  simp only [P3723T1EdgeContact, ne_comm, Set.inter_comm]
 
 private theorem shift_injective :
     (by
@@ -1192,7 +1184,7 @@ private theorem contact_symmetric :
             a b ↔ P3723T1EdgeContact P b a ) := by
   classical
   intro ι P a b
-  exact ContactPortGeometry.contact_symmetric ι P a b
+  exact PeriodicEdgeContactSymmetry.symmetric ι P a b
 
 private theorem common_edge_transport :
     (by

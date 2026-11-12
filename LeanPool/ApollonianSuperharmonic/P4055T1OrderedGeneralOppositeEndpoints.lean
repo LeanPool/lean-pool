@@ -255,31 +255,13 @@ private theorem hq6act :
 private theorem hpower :
     (by
       classical
-      exact
-        ∀ (r : Fin (4 : ℕ) → CircleCoordinates), ∀ (i : Fin (3 : ℕ)), ∀ (s : Fin (4 : ℕ)), ∀ (U :
-            ProtoTile), ∀ (W : ProtoTile), ∀ (Z : ProtoTile), (BandPrototile (r (if (Even s.val)
-            then i - (1 : Fin (3 : ℕ)) else i + (1 : Fin (3 : ℕ))).succ) Z) → (((0 : ℤ) < (r (if
-            Even (↑s : ℕ) then i - (1 : Fin (3 : ℕ)) else i + (1 : Fin (3 : ℕ))).succ).1) →
-            ((TileCentroid W - TileCentroid U = (1 / 2 : ℝ) • GaussianRealPoint ((⟨(0 : ℤ), (1 :
-            ℤ)⟩ : GaussianInt) ^ (↑s : ℕ) * (BandVectors.1 (r i.succ) (r (0 : Fin (4 : ℕ))) +
-            BandVectors.1 (r (0 : Fin (4 : ℕ))) (r i.succ)))) → ((TileCentroid Z - TileCentroid U
-            = (1 / 2 : ℝ) • GaussianRealPoint ((⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt) ^ (↑s : ℕ) * if
-            Even (↑s : ℕ) then BandVectors.1 (r (0 : Fin (4 : ℕ))) (r (i - (1 : Fin (3 :
-            ℕ))).succ) - BandVectors.1 (r (i - (1 : Fin (3 : ℕ))).succ) (r (0 : Fin (4 : ℕ)))
-            else BandVectors.1 (r (i + (1 : Fin (3 : ℕ))).succ) (r (0 : Fin (4 : ℕ))) -
-            BandVectors.1 (r (0 : Fin (4 : ℕ))) (r (i + (1 : Fin (3 : ℕ))).succ))) → (
-        let q : GaussianInt := ⟨0, 1⟩
-        ∀ (aU : GaussianInt), ∀ (aZ : GaussianInt),
-        let Zp := TileTranslation Z (aU - aZ)
-        (BandPrototile (r ((if Even s.val then i - 1 else i + 1).succ)) Zp) → (((-(TileCentroid W
-            - TileCentroid U).2, (TileCentroid W - TileCentroid U).1) = (1 / 2 : Real) •
-            GaussianRealPoint (q * (q ^ s.val * (BandVectors.1 (r i.succ) (r 0) + BandVectors.1
-            (r 0) (r i.succ))))) → (
-        let t : Fin 4 := s + 1
-        (Even t.val ↔ ¬ Even s.val) → ((q ^ 2 = -1) → ((q ^ 4 = 1) → (q ^ t.val = q * q ^
-            s.val))))))))) ) := by
+        exact
+        ∀ (s : Fin (4 : ℕ)),
+          (let q : GaussianInt := ⟨0, 1⟩;
+          (let t : Fin 4 := s + 1;
+          ((q ^ 2 = -1) → ((q ^ 4 = 1) → (q ^ t.val = q * q ^ s.val)))))) := by
   classical
-  intro r i s U W Z hZ hZpos hWcent hZcent q aU aZ Zp hZp hWrot t htpar hq2 hq4
+  intro s q t hq2 hq4
   fin_cases s
   · simp [t]
   · simp [t, pow_succ]
@@ -1321,8 +1303,7 @@ theorem P4055T1OrderedGeneralOppositeEndpoints :
   have hq2act := OppositeEndpointGeometry.hq2act hq2
   have hq4act := OppositeEndpointGeometry.hq4act hq4
   have hq6act := OppositeEndpointGeometry.hq6act (OppositeEndpointGeometry.hq6 hq2)
-  have hpower := OppositeEndpointGeometry.hpower r i s U W Z hZ hZpos
-      hWcent hZcent aU aZ hZp hWrot htpar hq2 hq4
+  have hpower := OppositeEndpointGeometry.hpower s hq2 hq4
   have hWsrc : TileCentroid Wp - TileCentroid U = (1 / 2 : Real) •
       GaussianRealPoint (q ^ t.val *
         (BandVectors.1 (r i.succ) (r 0) + BandVectors.1 (r 0) (r i.succ))) :=

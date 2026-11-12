@@ -6,15 +6,9 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.CircleMatrixSymmetry
 
-public import LeanPool.ApollonianSuperharmonic.BoundaryFootprintVertices
-public import LeanPool.ApollonianSuperharmonic.CircleMatrix
-public import LeanPool.ApollonianSuperharmonic.ExactTileTiling
-public import LeanPool.ApollonianSuperharmonic.FourNeighborAdjacent
-public import LeanPool.ApollonianSuperharmonic.FourNeighborLaplacian
 public import LeanPool.ApollonianSuperharmonic.LatticeEdgeRegularity
-public import LeanPool.ApollonianSuperharmonic.LatticeQuadraticForm
-public import LeanPool.ApollonianSuperharmonic.PartialOdometer
 public import LeanPool.ApollonianSuperharmonic.RegularTileFamily
 public import LeanPool.ApollonianSuperharmonic.QuadraticAffineLaplacian
 public import LeanPool.ApollonianSuperharmonic.RealLaplacianLinearity
@@ -90,43 +84,6 @@ private theorem hordered :
     (D.filter fun z => z + I ∈ D).card)
   omega
 
-private theorem hcornerCount :
-    (by
-      classical
-      exact
-        ∀ (T : ProtoTile),
-        let I : GaussianInt := ⟨0, 1⟩
-        let cornerBag : Multiset GaussianInt := T.cells.1.bind fun c =>
-          ([c, c + 1, c + I, c + 1 + I] : List GaussianInt)
-        ∀ (z : GaussianInt), cornerBag.count z = (if z ∈ T.cells then 1 else 0) + (if z - 1 ∈
-            T.cells then 1 else 0) + (if z - I ∈ T.cells then 1 else 0) + (if z - 1 - I ∈ T.cells
-            then 1 else 0) ) := by
-  classical
-  intro T I cornerBag z
-  dsimp only [cornerBag]
-  rw [Multiset.count_bind, ← Finset.sum_eq_multiset_sum]
-  simp only [Multiset.coe_count, List.count_cons, beq_iff_eq,
-    List.count_nil]
-  have h11 : ∀ c : GaussianInt, (c + 1 + I = z) ↔ (c = z - 1 - I) := by
-    intro c
-    constructor <;> intro h
-    · rw [← h]; ring
-    · rw [h]; ring
-  have hI : ∀ c : GaussianInt, (c + I = z) ↔ (c = z - I) := by
-    intro c
-    constructor <;> intro h
-    · rw [← h]; ring
-    · rw [h]; ring
-  have h1 : ∀ c : GaussianInt, (c + 1 = z) ↔ (c = z - 1) := by
-    intro c
-    constructor <;> intro h
-    · rw [← h]; ring
-    · rw [h]; ring
-  simp_rw [h11, hI, h1]
-  simp only [Finset.sum_add_distrib, zero_add]
-  rw [Finset.sum_ite_eq', Finset.sum_ite_eq', Finset.sum_ite_eq',
-    Finset.sum_ite_eq']
-  omega
 
 private theorem hfull_not_boundary :
     (by
@@ -1627,17 +1584,6 @@ private theorem hFstencil_sum :
   rw [← Finset.mul_sum]
   ring
 
-private theorem hsym :
-    (by
-      classical
-      exact
-        ∀ (C : BandCircle), (CircleMatrix C).IsSymm ) := by
-  classical
-  intro C
-  unfold Matrix.IsSymm CircleMatrix
-  dsimp
-  ext i j
-  fin_cases i <;> fin_cases j <;> rfl
 
 private theorem hF_eq :
     (by
@@ -1966,7 +1912,7 @@ private theorem hcountBridge :
       D.card + (BoundaryFootprintEdges T).ncard  := PeriodicIndegreeGeometry.hvertex_partition T
           D heuler hinc
       (PeriodicIndegreeGeometry.hN4 T D hDmem hsectorAll hcells
-      (PeriodicIndegreeGeometry.hcornerCount T) (PeriodicIndegreeGeometry.hfull_not_boundary T
+      (TileCornerMultiplicity.cornerCount T) (PeriodicIndegreeGeometry.hfull_not_boundary T
       hcells))
   -- A base point and direction give a unique tag for each footprint edge.
   let edgeOf : GaussianInt × Bool → Finset GaussianInt := fun p =>
@@ -2108,7 +2054,7 @@ theorem PeriodicTileTotalIndegree (C : BandCircle)
             g (PeriodicIndegreeGeometry.hsumDelta_one C T g hcell_curv
             (PeriodicIndegreeGeometry.hsumDelta C T g b (PeriodicIndegreeGeometry.hFstencil_sum C
             T g hsumTranslate b hFperiod) (PeriodicIndegreeGeometry.hFlap C g b
-            (PeriodicIndegreeGeometry.hsym C) (PeriodicIndegreeGeometry.hF_eq C g b)))
+            (CircleMatrixSymmetry.symmetric C) (PeriodicIndegreeGeometry.hF_eq C g b)))
             (PeriodicIndegreeGeometry.htrace C) (PeriodicIndegreeGeometry.hcurvCast C))
             (PeriodicIndegreeGeometry.hsum_partition T h hDfilterProp)
             (PeriodicIndegreeGeometry.hB_lap T g hweb)))

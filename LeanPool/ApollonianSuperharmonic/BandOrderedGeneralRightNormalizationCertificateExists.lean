@@ -460,33 +460,38 @@ private theorem hadjbar :
 private theorem houterCentroid :
     (by
       classical
-      exact
-        ∀ (T : ProtoTile), ∀ (N : ProtoTile), ∀ (q : Fin (4 : ℕ) → CircleCoordinates), ∀ (i₀ :
-            Fin (3 : ℕ)), ∀ (e₀ : Bool), ∀ (r : Fin (3 : ℕ)), ∀ (g : BandPackingSymmetry),
-        let qrot : Fin 4 → CircleCoordinates :=
-          ![q 0, q r.succ, q (r + 1).succ, q (r + 2).succ]
-        let irot : Fin 3 := i₀ - r
-        let qbar := BandPackingSymmetryQuadrupleAction g qrot
-        ∀ (negative : Bool), ∀ (pTbar : ℝ × ℝ), ∀ (pNbar : ℝ × ℝ),
-        let reverse := BandPackingSymmetryReversesOrientation g
-        let idir : Fin 3 := if reverse then -irot else irot
-        let ebar : Bool := xor (xor e₀ negative) reverse
-        let positive : Bool := !ebar
-        (TileCentroid (BandPackingSymmetryTileAction g N) - TileCentroid
-            (BandPackingSymmetryTileAction g T) = (if positive = true then (-1 : Real) else 1) •
-            GaussianRealPoint (BandVectors.1 (qbar 0) (qbar idir.succ))) → ((pNbar.1 - pTbar.1 =
-            (if positive = true then (-1 : Real) else 1) * (BandVectors.2 (qbar 0) (qbar
-            idir.succ)).re) → ((pNbar.2 - pTbar.2 = (if positive = true then (-1 : Real) else 1)
-            * (BandVectors.2 (qbar 0) (qbar idir.succ)).im) → (
-        let Tbar := BandPackingSymmetryTileAction g T
-        let Nbar := BandPackingSymmetryTileAction g N
-        let displacement : GaussianInt :=
-          (if positive = true then (1 : GaussianInt) else -1) *
-            BandVectors.1 (qbar 0) (qbar idir.succ)
-        TileCentroid Tbar = TileCentroid (TileTranslation Nbar displacement)))) ) := by
+        exact
+        ∀ (T : ProtoTile),
+          ∀ (N : ProtoTile),
+            ∀ (q : Fin (4 : ℕ) → CircleCoordinates),
+              ∀ (i₀ : Fin (3 : ℕ)),
+                ∀ (e₀ : Bool),
+                  ∀ (r : Fin (3 : ℕ)),
+                    ∀ (g : BandPackingSymmetry),
+                      let qrot : Fin 4 → CircleCoordinates :=
+                        ![q 0, q r.succ, q (r + 1).succ, q (r + 2).succ];
+                      let irot : Fin 3 := i₀ - r;
+                      let qbar := BandPackingSymmetryQuadrupleAction g qrot;
+                      ∀ (negative : Bool),
+                        let reverse := BandPackingSymmetryReversesOrientation g;
+                        let idir : Fin 3 := if reverse then -irot else irot;
+                        let ebar : Bool := xor (xor e₀ negative) reverse;
+                        let positive : Bool := !ebar;
+                        (TileCentroid (BandPackingSymmetryTileAction g N) -
+                              TileCentroid (BandPackingSymmetryTileAction g T) =
+                            (if positive = true then (-1 : Real) else 1) •
+                              GaussianRealPoint
+                                (BandVectors.1 (qbar 0) (qbar idir.succ))) →
+                          (let Tbar := BandPackingSymmetryTileAction g T;
+                          let Nbar := BandPackingSymmetryTileAction g N;
+                          let displacement : GaussianInt :=
+                            (if positive = true then (1 : GaussianInt) else -1) *
+                              BandVectors.1 (qbar 0) (qbar idir.succ);
+                          TileCentroid Tbar =
+                            TileCentroid (TileTranslation Nbar displacement))) := by
   classical
-  intro T N q i₀ e₀ r g qrot irot qbar negative pTbar pNbar reverse idir ebar positive hcentBar'
-      hslopeReBar' hslopeImBar' Tbar Nbar displacement
+  intro T N q i₀ e₀ r g qrot irot qbar negative reverse idir ebar positive hcentBar' Tbar Nbar
+      displacement
   rw [(TileTranslationFormulas Nbar displacement).2.2.2.2.1]
   have h₁ := congrArg Prod.fst hcentBar'
   have h₂ := congrArg Prod.snd hcentBar'
@@ -736,9 +741,8 @@ theorem BandOrderedGeneralRightNormalizationCertificateExists
   let displacement : GaussianInt :=
     (if positive = true then (1 : GaussianInt) else -1) *
       BandVectors.1 (qbar 0) (qbar idir.succ)
-  have houterCentroid := RightNormalizationGeometry.houterCentroid T N q i₀ e₀ r g negative pTbar
-      pNbar
-          hcentBar' hslopeReBar' hslopeImBar'
+  have houterCentroid := RightNormalizationGeometry.houterCentroid T N q i₀ e₀ r g negative
+          hcentBar'
   have htranslatedN :
       BandPrototile (qbar 0) (TileTranslation Nbar displacement) :=
     BandPrototileTranslation _ _ _ hNbarBand

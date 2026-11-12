@@ -6,6 +6,7 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.GaussianCoordinateFacts
 
 public import LeanPool.ApollonianSuperharmonic.BoundaryFootprintVertices
 public import LeanPool.ApollonianSuperharmonic.FootprintEdges
@@ -31,12 +32,7 @@ namespace ReflectionFormulas
 
 private noncomputable def f : GaussianInt → GaussianInt := fun z => GaussianReflection z - ⟨0, 1⟩
 
-private theorem gaussian_ext (u v : GaussianInt) (hre : u.re = v.re)
-      (him : u.im = v.im) : u = v := by
-  classical
-  rcases u with ⟨u, w⟩
-  rcases v with ⟨v, z⟩
-  simp_all
+private abbrev gaussian_ext := GaussianCoordinateFacts.equal
 
 private theorem reflection_involutive (z : GaussianInt) :
       GaussianReflection (GaussianReflection z) = z := by
@@ -197,10 +193,7 @@ private theorem f_im_cast (z : GaussianInt) :
   rcases z with ⟨a, b⟩
   simp [f, GaussianReflection]
 
-private theorem pair_swap (u v : GaussianInt) : ({u, v} : Finset GaussianInt) = {v, u} := by
-  classical
-  ext z
-  simp [or_comm]
+private abbrev pair_swap := GaussianCoordinateFacts.pairSwap
 
 private theorem cell_formula (T : ProtoTile) (z : GaussianInt) :
       z ∈ (TileReflection T).cells ↔ f z ∈ T.cells := by
@@ -326,7 +319,7 @@ theorem TileReflectionFormulas : ∀ T : ProtoTile,
   have f_im_cast (z : GaussianInt) :
       ((f z).im : Real) = -(z.im : Real) - 1 := ReflectionFormulas.f_im_cast z
   have pair_swap (u v : GaussianInt) : ({u, v} : Finset GaussianInt) = {v, u} :=
-      ReflectionFormulas.pair_swap u v
+      GaussianCoordinateFacts.pairSwap u v
   dsimp [TileReflection]
   constructor
   · rfl
