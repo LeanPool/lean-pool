@@ -32,8 +32,10 @@ Adapted from Wesley Pegden's Apache-2.0 Trellis formalization at commit
 Pegden and Smart, *The Apollonian structure of integer superharmonic matrices*.
 Trellis produced the Lean proofs using AI agents; the project records `AI` provenance.
 
-The imported scope is the dependency closure of the five public root theorems.
-The upstream paper, process tooling and development history are not imported.
+The entry module exposes the five headline results. The project also preserves
+explicit Ford and diamond lattice and maximality results, additional odometer
+cocycles, and supporting geometric lemmas from upstream. The upstream paper,
+process tooling and development history are not imported.
 The upstream reference notes explain two local repairs to the printed proof:
 edge-supported interfaces with isolated corners, and occurrence-oriented unit strings.
 -/

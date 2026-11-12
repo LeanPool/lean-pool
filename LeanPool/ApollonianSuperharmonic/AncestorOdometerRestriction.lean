@@ -8,6 +8,7 @@ module
 public import Mathlib.Init
 
 public import LeanPool.ApollonianSuperharmonic.AncestorOdometer
+public import LeanPool.ApollonianSuperharmonic.TileOdometerDomain
 public import LeanPool.ApollonianSuperharmonic.BandPrototileCentroidUnique
 
 -- [TABLET NODE: AncestorOdometerRestriction]
@@ -24,53 +25,6 @@ Changes: pool module paths, public exports, project namespace and current Mathli
 namespace ApollonianSuperharmonic
 
 namespace AncestorRestrictionProof
-
-private theorem domain_from_odo :
-    (by
-      classical
-      exact
-        ∀ (c : CircleCoordinates), ∀ (U : ProtoTile), ∀ (k : PartialOdometer), TileOdometer c U k →
-        (k.domain : Set GaussianInt) = FootprintVertices U ) := by
-  classical
-  intro c U k ho
-  induction ho with
-  | line w x hw k hdom =>
-      simp [hdom, FootprintVertices]
-  | unit z x U k hU hdom htrans =>
-      exact hdom
-  | @decompose q hq S U hs k hU hsub hcells hfoot hcentroid hdom hvalue hcompat hslope ih =>
-      ext y
-      change (y ∈ k.domain) ↔ y ∈ FootprintVertices U
-      rw [hdom]
-      have child (i : Fin 3) (s : Bool) :
-          ((hs i s).domain : Set GaussianInt) = FootprintVertices (S i s) :=
-        ih i s
-      change (∃ i s, y ∈ (hs i s).domain) ↔ y ∈ FootprintVertices U
-      constructor
-      · rintro ⟨i, s, hy⟩
-        exact hfoot i s ((Set.ext_iff.mp (child i s) y).mp hy)
-      · intro hy
-        by_cases hu : U.cells.Nonempty
-        · simp only [FootprintVertices, ite_eq_left hu, Set.mem_ofPred_eq] at hy
-          rcases hy with ⟨x, hx, hv⟩
-          rcases (hcells x).mp hx with ⟨i, s, hxs⟩
-          have hs' : (S i s).cells.Nonempty := ⟨x, hxs⟩
-          refine ⟨i, s, (Set.ext_iff.mp (child i s) y).mpr ?_⟩
-          simp only [FootprintVertices, ite_eq_left hs', Set.mem_ofPred_eq]
-          exact ⟨x, hxs, hv⟩
-        · have hs' : ∀ i s, ¬ (S i s).cells.Nonempty := by
-            intro i s hne
-            rcases hne with ⟨x, hx⟩
-            exact hu ⟨x, (hcells x).mpr ⟨i, s, hx⟩⟩
-          simp only [FootprintVertices, ite_eq_right hu, Set.mem_singleton_iff] at hy
-          have ha : (S 0 false).anchor = U.anchor := by
-            have hh := hfoot 0 false
-            rw [FootprintVertices, ite_eq_right (hs' 0 false),
-              FootprintVertices, ite_eq_right hu] at hh
-            simpa using hh (Set.mem_singleton _)
-          refine ⟨0, false, (Set.ext_iff.mp (child 0 false) y).mpr ?_⟩
-          simp only [FootprintVertices, ite_eq_right (hs' 0 false), Set.mem_singleton_iff]
-          simpa [ha] using hy
 
 private theorem positive_cells :
     (by
@@ -500,7 +454,7 @@ theorem AncestorOdometerRestriction
   have domain_from_odo : ∀ (c : CircleCoordinates) (U : ProtoTile)
       (k : PartialOdometer), TileOdometer c U k →
         (k.domain : Set GaussianInt) = FootprintVertices U :=
-            AncestorRestrictionProof.domain_from_odo
+            TileOdometerDomain
   have positive_cells : ∀ (c : CircleCoordinates) (U : ProtoTile),
       0 < c.1 → BandPrototile c U → U.cells.Nonempty := AncestorRestrictionProof.positive_cells
   let vertices : ProtoTile → Finset GaussianInt := fun U =>
