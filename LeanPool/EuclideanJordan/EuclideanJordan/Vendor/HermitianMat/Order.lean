@@ -430,7 +430,7 @@ theorem convex_cone (hA : 0 ≤ A) (hB : 0 ≤ B) {c₁ c₂ : ℝ} (hc₁ : 0 �
   exact (hA.smul hc₁).add (hB.smul hc₂)
 
 theorem sq_nonneg [DecidableEq n] : 0 ≤ A ^ 2 := by
-  simp? [zero_le_iff, pow_two]
+  simp only [zero_le_iff, mat_pow, pow_two]
   nth_rewrite 1 [←Matrix.IsHermitian.eq A.H]
   exact Matrix.posSemidef_conjTranspose_mul_self A.mat
 

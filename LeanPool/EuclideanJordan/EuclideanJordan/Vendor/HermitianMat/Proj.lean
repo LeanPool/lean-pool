@@ -57,7 +57,13 @@ noncomputable def projector (S : Submodule 𝕜 (EuclideanSpace 𝕜 n)) : Hermi
 theorem projector_add_orthogonal : projector S + projector Sᗮ = 1 := by
   unfold projector;
   erw [ Subtype.mk_eq_mk ];
-  ext i j; simp [ LinearMap.toMatrix_apply, Matrix.one_apply ];
+  ext i j; simp only [ContinuousLinearMap.toLinearMap_comp, Submodule.toLinearMap_subtypeL,
+    Matrix.add_apply, LinearMap.toMatrix_apply, OrthonormalBasis.coe_toBasis,
+    EuclideanSpace.basisFun_apply, LinearMap.coe_comp, Submodule.coe_subtype,
+    ContinuousLinearMap.coe_coe, Function.comp_apply,
+    Submodule.coe_orthogonalProjectionOnto_apply, OrthonormalBasis.coe_toBasis_repr_apply,
+    EuclideanSpace.basisFun_repr, Submodule.starProjection_orthogonal_val, map_sub,
+    Finsupp.coe_sub, Pi.sub_apply, PiLp.single_apply, add_sub_cancel, Matrix.one_apply];
 
 theorem projector_nonneg : 0 ≤ projector S := by
   rw [zero_le_iff]
@@ -89,16 +95,19 @@ theorem trace_projector : (projector S).trace = (Module.finrank 𝕜 S : ℝ) :=
       (EuclideanSpace.basisFun n 𝕜).toBasis
       (EuclideanSpace.basisFun n 𝕜).toBasis).trace = _
     rw [h_trace]
-    simp
+    simp only [RCLike.natCast_re]
   suffices h_trace : ((S.subtype ∘ₗ S.orthogonalProjectionOnto).toMatrix
       (EuclideanSpace.basisFun n 𝕜).toBasis (EuclideanSpace.basisFun n 𝕜).toBasis).trace =
       (LinearMap.id.toMatrix (Module.finBasis 𝕜 S) (Module.finBasis 𝕜 S)).trace by
-    simp [h_trace]
+    simp only [h_trace, LinearMap.toMatrix_id_eq_basis_toMatrix, Module.Basis.toMatrix_self,
+      Matrix.trace_one, Fintype.card_fin]
   rw [LinearMap.toMatrix_comp _ (Module.finBasis 𝕜 ↥S), Matrix.trace_mul_comm, ←
       LinearMap.toMatrix_comp]
   congr 2
   ext1
-  simp [Submodule.orthogonalProjectionOnto_mem_subspace_eq_self]
+  simp only [LinearMap.coe_comp, ContinuousLinearMap.coe_coe, Submodule.coe_subtype,
+    Function.comp_apply, Submodule.orthogonalProjectionOnto_mem_subspace_eq_self,
+    LinearMap.id_coe, id_eq]
 
 /--
 The `HermitianMat.projector` for the `HermitianMat.support` submodule.
@@ -125,7 +134,8 @@ theorem kerProj_add_supportProj : A.kerProj + A.supportProj = 1 := by
 @[simp]
 theorem kerProj_of_nonSingular [NonSingular A] : A.kerProj = 0 := by
   simp only [kerProj, nonSingular_ker_bot, HermitianMat.ext_iff]
-  simp [projector]
+  simp only [projector, Submodule.orthogonalProjectionOnto_bot, ContinuousLinearMap.comp_zero,
+    ContinuousLinearMap.toLinearMap_zero, map_zero, mat_mk, mat_zero]
 
 @[simp]
 theorem supportProj_of_nonSingular [NonSingular A] : A.supportProj = 1 := by
@@ -140,7 +150,8 @@ theorem projector_eq_sum_rankOne (b : OrthonormalBasis ι 𝕜 S) :
   unfold projector;
   ext i j;
   field_simp;
-  simp? [Matrix.vecMulVec]
+  simp only [ContinuousLinearMap.toLinearMap_comp, Submodule.toLinearMap_subtypeL, mat_mk,
+    Matrix.vecMulVec, Submodule.subtype_apply, Pi.star_apply, RCLike.star_def]
   -- By definition of orthogonal projection, we can write the projection of $e_j$ onto $S$ as
   -- $\sum_{k} \langle e_j, b_k \rangle b_k$.
   have h_proj : ∀ j : n, S.orthogonalProjectionOnto (EuclideanSpace.single j 1) = ∑ k, (star (b
@@ -151,9 +162,11 @@ theorem projector_eq_sum_rankOne (b : OrthonormalBasis ι 𝕜 S) :
       convert b.sum_repr ( S.orthogonalProjectionOnto ( EuclideanSpace.single j 1 ) ) using 1;
       constructor <;> intro h <;> simp_all [ Subtype.ext_iff, b.repr_apply_apply ];
     convert! h_proj using 3
-    simp [ inner];
+    simp only [RCLike.star_def, inner, PiLp.single_apply, ite_mul, one_mul, zero_mul,
+      Finset.sum_ite_eq', Finset.mem_univ, ↓reduceIte];
   convert! congr_arg ( fun x : EuclideanSpace ( _ ) n => x i ) ( h_proj j ) using 1
-  simp [ Matrix.sum_apply, mul_comm ]
+  simp only [Matrix.sum_apply, Matrix.of_apply, RCLike.star_def, WithLp.ofLp_sum,
+    WithLp.ofLp_smul, Finset.sum_apply, Pi.smul_apply, smul_eq_mul, mul_comm]
 
 /--
 The projector onto the support of A is the sum of the projections onto the eigenvectors with
@@ -230,9 +243,12 @@ theorem supportProj_eq_cfc : A.supportProj = A.cfc (if · = 0 then 0 else 1) := 
   convert projector_support_eq_sum A using 1;
   refine Finset.sum_congr rfl fun i _ => ?_;
   ext x y
-  simp? [ Matrix.vecMulVec, Matrix.mul_apply ];
-  simp? [ Matrix.single ];
-  simp? [ Finset.sum_ite, Finset.filter_eq, Finset.filter_and ];
+  simp only [Matrix.smul_apply, Matrix.mul_apply, Matrix.IsHermitian.eigenvectorUnitary_apply,
+    Matrix.conjTranspose_apply, RCLike.star_def, ite_smul, zero_smul, one_smul, Matrix.vecMulVec,
+    Pi.star_apply, Matrix.of_apply];
+  simp only [Matrix.single, Matrix.of_apply, mul_ite, mul_one, mul_zero];
+  simp only [Finset.sum_ite, Finset.filter_and, Finset.filter_eq, Finset.mem_univ, ↓reduceIte,
+    Finset.filter_const, not_and, Finset.sum_const_zero, add_zero];
   rw [ Finset.sum_eq_single i ] <;> aesop
 
 /-- Projector onto the non-negative eigenspace of `B - A`. Accessible by the notation
@@ -269,12 +285,14 @@ theorem projLT_def : {A <ₚ B} = (B - A).cfc (fun x ↦ if 0 < x then 1 else 0)
 theorem projLE_sq : {A ≤ₚ B}^2 = {A ≤ₚ B} := by
   rw [projLE_def, ← cfc_pow, ← cfc_comp]
   congr! 2 with x
-  simp
+  simp only [Function.comp_apply, ite_pow, _root_.one_pow, ne_eq, OfNat.ofNat_ne_zero,
+    not_false_eq_true, _root_.zero_pow]
 
 theorem projLT_sq : {A <ₚ B}^2 = {A <ₚ B} := by
   rw [projLT_def, ← cfc_pow, ← cfc_comp]
   congr! 2 with x
-  simp
+  simp only [Function.comp_apply, ite_pow, _root_.one_pow, ne_eq, OfNat.ofNat_ne_zero,
+    not_false_eq_true, _root_.zero_pow]
 
 theorem projLE_zero_cfc : {0 ≤ₚ A} = A.cfc (fun x ↦ if 0 ≤ x then 1 else 0) := by
   simp only [projLE_def, sub_zero]
@@ -288,7 +306,7 @@ theorem projLE_zero_cfc' : {A ≤ₚ 0} = A.cfc (fun x ↦ if x ≤ 0 then 1 els
   nth_rw 1 [← cfc_id A]
   rw [← cfc_neg, ← cfc_comp]
   congr! 2 with x
-  simp
+  simp only [Function.comp_apply, Pi.neg_apply, id_eq, Left.nonneg_neg_iff]
 
 theorem projLT_zero_cfc' : {A <ₚ 0} = A.cfc (fun x ↦ if x < 0 then 1 else 0) := by
   simp only [projLT_def, zero_sub]
@@ -296,7 +314,7 @@ theorem projLT_zero_cfc' : {A <ₚ 0} = A.cfc (fun x ↦ if x < 0 then 1 else 0)
   nth_rw 1 [← cfc_id A]
   rw [← cfc_neg, ← cfc_comp]
   congr! 2 with x
-  simp
+  simp only [Function.comp_apply, Pi.neg_apply, id_eq, Left.neg_pos_iff]
 
 theorem projLE_nonneg : 0 ≤ {A ≤ₚ B} := by
   rw [projLE_def, cfc_nonneg_iff]
@@ -423,13 +441,13 @@ theorem negPart_nonneg : 0 ≤ A⁻ := by
 theorem posPart_le : A ≤ A⁺ := by
   nth_rw 1 [← cfc_id A]
   rw [posPart_eq_cfc_ite, ← sub_nonneg, ← cfc_sub, cfc_nonneg_iff]
-  intro; simp?; split <;> order
+  intro; simp only [Pi.sub_apply, id_eq, sub_nonneg]; split <;> order
 
 theorem posPart_mul_negPart : A⁺.mat * A⁻.mat = 0 := by
   rw [posPart_eq_cfc_ite, negPart_eq_cfc_ite, ← mat_cfc_mul]
   convert congrArg mat (cfc_const A 0)
   · grind [Pi.mul_apply, mul_eq_zero]
-  · simp
+  · simp only [zero_smul, mat_zero]
 
 open RealInnerProductSpace
 
@@ -508,7 +526,7 @@ theorem inner_negPart_nonpos : ⟪A, A⁻⟫ ≤ 0 := by
   split_ifs with h
   · rw [neg_neg]
     exact mul_self_nonneg _
-  · simp
+  · simp only [neg_zero, mul_zero, Std.le_refl]
 
 @[simp]
 theorem posPart_inner_negPart_zero : ⟪A⁺, A⁻⟫ = 0 := by
