@@ -31,7 +31,7 @@ $$
 $$
 Matrix linearity shows directly that this set contains zero and is closed
 under addition and negation, so $L_C$ is regarded as an additive subgroup of
-$\mathbb Z[i]$.  This is the matrix-integrality lattice from equation (1.5)
+$\mathbb Z[i]$.  This is the matrix-integrality lattice from equation (1.4)
 of the paper.
 -/
 def IntegralityLattice (C : BandCircle) : AddSubgroup GaussianInt where
