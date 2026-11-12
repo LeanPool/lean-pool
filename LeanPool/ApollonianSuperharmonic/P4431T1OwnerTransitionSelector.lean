@@ -6,11 +6,8 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
-public import Mathlib.Data.Fintype.Fin
+public import Aesop
 public import Mathlib.Algebra.Group.Fin.Basic
-public import Mathlib.Data.Fin.VecNotation
-public import Mathlib.Tactic.ClearExcept
-public import Mathlib.Tactic.FinCases
 
 
 -- [TABLET NODE: P4431T1OwnerTransitionSelector]
@@ -40,42 +37,10 @@ theorem P4431T1OwnerTransitionSelector {α : Type*}
       (o i = o (i + 3) ∨ o (i + 1) = o (i + 2)) := by
 -- BODY
   classical
-  have finite_selection :
-      ∀ (a b c d : Fin 4) (sa sb sc sd : Bool),
-        let p : Fin 4 → Fin 4 := ![a, b, c, d]
-        let t : Fin 4 → Bool := ![sa, sb, sc, sd]
-        (∀ i k, t i ≠ t (i + 1) →
-          (p k = p i → t k = t i) ∧
-            (p k = p (i + 1) → t k = t (i + 1))) →
-        (a = b ∨ a = c ∨ a = d ∨ b = c ∨ b = d ∨ c = d) →
-        ¬ ((a = c ∧ b ≠ a ∧ d ≠ a) ∨
-          (b = d ∧ a ≠ b ∧ c ≠ b)) →
-        (sa ≠ sc ∨ sb ≠ sd) →
-        ∃ i, t i ≠ t (i + 1) ∧
-          (p i = p (i + 3) ∨ p (i + 1) = p (i + 2)) := by
-    exact ((((by decide +kernel))))
-  let encode : α → Fin 4 := fun a =>
-    if a = o 0 then 0 else if a = o 1 then 1 else if a = o 2 then 2 else 3
-  have encode_eq (i j : Fin 4) : encode (o i) = encode (o j) ↔ o i = o j := by
-    clear * - o encode
-    fin_cases i <;> fin_cases j <;>
-      simp only [ Fin.isValue, Fin.zero_eta, ↓reduceIte, encode, Fin.mk_one, left_eq_ite_iff,
-    Fin.reduceFinMk, ite_eq_left_iff ] <;>
-      (try split_ifs) <;> simp_all [eq_comm]
-  have ho : ![encode (o 0), encode (o 1), encode (o 2), encode (o 3)] =
-      fun i => encode (o i) := by
-    funext i
-    fin_cases i <;> rfl
-  have hs : ![s 0, s 1, s 2, s 3] = s := by
-    funext i
-    fin_cases i <;> rfl
-  have hf := finite_selection (encode (o 0)) (encode (o 1))
-    (encode (o 2)) (encode (o 3)) (s 0) (s 1) (s 2) (s 3)
-  dsimp only at hf
-  rw [ho, hs] at hf
-  simp only [ne_eq, encode_eq] at hf
-  exact hf (fun i k h => ⟨hleft i k h, hright i k h⟩)
-    hrepeat hchecker hopposite
+  cases h0 : s 0 <;> cases h1 : s 1 <;> cases h2 : s 2 <;> cases h3 : s 3
+  all_goals simp [Fin.forall_fin_succ, h0, h1, h2, h3] at hleft hright hopposite
+  all_goals simp [Fin.exists_fin_succ, h0, h1, h2, h3]
+  all_goals aesop
 
 end ApollonianSuperharmonic
 
