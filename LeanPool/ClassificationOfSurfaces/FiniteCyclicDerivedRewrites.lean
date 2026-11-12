@@ -56,7 +56,10 @@ theorem oneFace_edgeMultiplicity {n : ℕ}
     (oneFace word).edgeMultiplicity e =
       (word.map edgeOfDart).count e := by
   classical
-  simp [edgeMultiplicity, faceEdgeMultiplicity, oneFace]
+  simp only [edgeMultiplicity, oneFace, faceEdgeMultiplicity, oneFace_boundary,
+    Finset.sum_const,
+    Finset.card_univ, Fintype.card_fin, List.length_cons, List.length_nil,
+    zero_add, smul_eq_mul, one_mul]
 
 /-- A permutation of the unoriented edge occurrences preserves one-face surface validity.
 Orientation signs and cyclic positions are intentionally irrelevant here. -/
@@ -158,10 +161,10 @@ theorem reverseEdgeRelabeling_word {n : ℕ} (a : Fin n)
       have hda : edgeOfDart d ≠ a := by
         intro h
         apply ha
-        simp [h]
+        simp only [List.map_cons, h, List.mem_cons, List.mem_map, true_or]
       have htail : a ∉ word.map edgeOfDart := by
         intro h
-        exact ha (by simp [h])
+        exact ha (by simp only [List.map_cons, List.mem_cons, h, or_true])
       rw [List.map_cons, ih htail]
       congr 1
       cases d with
@@ -422,7 +425,8 @@ theorem adjacentNormalizationEquivalent {n : ℕ} (a : Fin n)
         ⟨target a Y (inverseWord X), validGenericTarget⟩ :=
     NormalizationEquivalent.ofSignedIso rotation
   have haInverseX : a ∉ (inverseWord X).map edgeOfDart := by
-    simpa [map_edgeOfDart_inverseWord] using haX
+    simpa only [map_edgeOfDart_inverseWord, List.mem_reverse, List.mem_map, not_exists,
+      not_and] using haX
   have hCrosscap :
       NormalizationEquivalent
         ⟨source a Y (inverseWord X), validTarget⟩

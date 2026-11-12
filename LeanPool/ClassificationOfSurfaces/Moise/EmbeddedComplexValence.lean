@@ -219,11 +219,11 @@ theorem edge_valence_le_two_of_isEmbedding
       rw [Finset.card_sdiff_of_subset hes, hcard s hsF, hecard]
     obtain ⟨c, hc⟩ := Finset.card_eq_one.mp hdiffcard
     refine ⟨c, ?_, ?_⟩
-    · have hcMem : c ∈ s \ e := by rw [hc]; simp
+    · have hcMem : c ∈ s \ e := by rw [hc]; simp only [Finset.mem_singleton]
       exact (Finset.mem_sdiff.mp hcMem).2
     · symm
       rw [← Finset.sdiff_union_of_subset hes, hc]
-      simp
+      simp only [Finset.singleton_union]
   obtain ⟨c, hce, htc⟩ := extra_vertex t htF het
   obtain ⟨d, hde, hud⟩ := extra_vertex u huF heu
   obtain ⟨k, hke, hvk⟩ := extra_vertex v hvF hev
@@ -231,32 +231,32 @@ theorem edge_valence_le_two_of_isEmbedding
     intro h
     apply hce
     rw [← h]
-    simp [he]
+    simp only [he, Finset.mem_insert, Finset.mem_singleton, true_or]
   have hbc : b ≠ c := by
     intro h
     apply hce
     rw [← h]
-    simp [he]
+    simp only [he, Finset.mem_insert, Finset.mem_singleton, or_true]
   have had : a ≠ d := by
     intro h
     apply hde
     rw [← h]
-    simp [he]
+    simp only [he, Finset.mem_insert, Finset.mem_singleton, true_or]
   have hbd : b ≠ d := by
     intro h
     apply hde
     rw [← h]
-    simp [he]
+    simp only [he, Finset.mem_insert, Finset.mem_singleton, or_true]
   have hak : a ≠ k := by
     intro h
     apply hke
     rw [← h]
-    simp [he]
+    simp only [he, Finset.mem_insert, Finset.mem_singleton, true_or]
   have hbk : b ≠ k := by
     intro h
     apply hke
     rw [← h]
-    simp [he]
+    simp only [he, Finset.mem_insert, Finset.mem_singleton, or_true]
   have hcd : c ≠ d := by
     intro h
     apply htu
@@ -272,12 +272,12 @@ theorem edge_valence_le_two_of_isEmbedding
   have sum_pi_single (q : V) :
       ∑ z, Pi.single q (1 : ℝ) z = 1 := by
     rw [Fintype.sum_eq_single q]
-    · simp
+    · simp only [Pi.single_eq_same]
     · intro z hz
       exact Pi.single_eq_of_ne hz 1
   obtain ⟨edgeMid, W, hedgeOpen, midpoint_weight, hWsupport⟩ :=
     exists_pair_pages_open_neighborhood F ι hι t u htF huF a b c d hab hac hbc had hbd
-      hcd (by simpa [he] using htc) (by simpa [he] using hud)
+      hcd (by simpa only [he] using htc) (by simpa only [he] using hud)
   let thirdWeight (r : Set.Icc (0 : ℝ) 1) : V → ℝ :=
     ((1 - r.1) / 2) • Pi.single a 1 +
       ((1 - r.1) / 2) • Pi.single b 1 +
@@ -295,7 +295,9 @@ theorem edge_valence_le_two_of_isEmbedding
     by_cases hzk : z = k
     · subst z
       simpa [thirdWeight, hak, hbk] using r.2.1
-    simp [thirdWeight, hza, hzb, hzk]
+    simp only [Pi.add_apply, Pi.smul_apply, ne_eq, hza, not_false_eq_true, Pi.single_eq_of_ne,
+      smul_eq_mul,
+    mul_zero, hzb, add_zero, hzk, Std.le_refl, thirdWeight]
   have third_sum (r : Set.Icc (0 : ℝ) 1) :
       ∑ z, thirdWeight r z = 1 := by
     simp_rw [thirdWeight, Pi.add_apply, Pi.smul_apply]
@@ -307,12 +309,16 @@ theorem edge_valence_le_two_of_isEmbedding
       ∃ s ∈ F, ∀ z ∉ s, thirdWeight r z = 0 := by
     refine ⟨v, hvF, ?_⟩
     intro z hzv
-    have hza : z ≠ a := fun h ↦ hzv (h ▸ hev (by simp [he]))
-    have hzb : z ≠ b := fun h ↦ hzv (h ▸ hev (by simp [he]))
+    have hza : z ≠ a := fun h ↦ hzv (h ▸ hev (by simp only [he, Finset.mem_insert,
+      Finset.mem_singleton, true_or]))
+    have hzb : z ≠ b := fun h ↦ hzv (h ▸ hev (by simp only [he, Finset.mem_insert,
+      Finset.mem_singleton, or_true]))
     have hzk : z ≠ k := fun h ↦ hzv (h ▸ by
       rw [hvk]
       exact Finset.mem_insert_self _ _)
-    simp [thirdWeight, hza, hzb, hzk]
+    simp only [Pi.add_apply, Pi.smul_apply, ne_eq, hza, not_false_eq_true, Pi.single_eq_of_ne,
+      smul_eq_mul,
+    mul_zero, hzb, add_zero, hzk, thirdWeight]
   let third : Set.Icc (0 : ℝ) 1 → GeometricRealization V F :=
     fun r ↦
       ⟨thirdWeight r, ⟨third_nonneg r, third_sum r⟩,
@@ -324,13 +330,16 @@ theorem edge_valence_le_two_of_isEmbedding
     change Continuous fun r : Set.Icc (0 : ℝ) 1 ↦ thirdWeight r z
     simp only [thirdWeight, Pi.add_apply, Pi.smul_apply]
     fun_prop
-  let zeroIcc : Set.Icc (0 : ℝ) 1 := ⟨0, by simp⟩
+  let zeroIcc : Set.Icc (0 : ℝ) 1 := ⟨0, by simp only [Set.mem_Icc, Std.le_refl, zero_le_one,
+    and_self]⟩
   have third_zero : third zeroIcc = edgeMid := by
     apply Subtype.ext
     change thirdWeight zeroIcc = edgeMid.1
     rw [midpoint_weight]
     funext z
-    simp [thirdWeight, zeroIcc]
+    simp only [Set.Icc.mk_zero, Pi.add_apply, Set.Icc.coe_zero, sub_zero, one_div, Pi.smul_apply,
+      smul_eq_mul,
+    zero_mul, add_zero, thirdWeight, zeroIcc]
   have hpre :
       (ι ∘ third) ⁻¹' W ∈ nhds zeroIcc := by
     have hcont : Continuous (ι ∘ third) :=

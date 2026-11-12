@@ -627,7 +627,9 @@ theorem markedTarget_boundary_succ {n : ℕ}
           change i.val + 1 < (W.map P2.retainWord).length + 1
           simp⟩ =
       P2.retainWord (W.get i) := by
-  simp [markedTarget, FiniteCyclicPresentation.boundary]
+  simp only [markedTarget, boundary, List.length_cons, List.get_eq_getElem, List.append_assoc,
+    List.cons_append,
+    List.nil_append, List.getElem_cons_succ, List.getElem_map]
 
 @[simp]
 theorem markedTarget_boundary_succMap {n : ℕ}
@@ -637,12 +639,13 @@ theorem markedTarget_boundary_succMap {n : ℕ}
     (markedTarget U V W).boundary i.succ =
       P2.retainWord
         (W.get ⟨i.val, by simpa using i.isLt⟩) := by
-  let iW : Fin W.length := ⟨i.val, by simpa using i.isLt⟩
+  let iW : Fin W.length := ⟨i.val, by simpa only [List.length_map] using i.isLt⟩
   have hface :
       i.succ =
         (⟨iW.val + 1, by
           change iW.val + 1 < (W.map P2.retainWord).length + 1
-          simp⟩ : (markedTarget U V W).Face) := by
+          simp only [List.length_map, Order.lt_add_one_iff, Order.add_one_le_iff,
+            Fin.is_lt]⟩ : (markedTarget U V W).Face) := by
     apply Fin.ext
     rfl
   rw [hface, markedTarget_boundary_succ]
@@ -665,15 +668,21 @@ theorem markedTarget_isSurfaceValid {n : ℕ}
       (P2.split (markedTarget U V W)
         (markedTargetCut U V W)).IsSurfaceValid :=
     middleIso.isSurfaceValid validExpanded
-  refine ⟨⟨0, by simp [markedTarget]⟩, ?_, ?_, ?_⟩
+  refine ⟨⟨0, by simp only [markedTarget, List.append_assoc, List.cons_append, List.nil_append,
+    List.length_cons,
+    List.length_map, lt_add_iff_pos_left, Order.lt_add_one_iff,
+    zero_le]⟩, ?_, ?_, ?_⟩
   · intro f
     induction f using Fin.cases with
     | zero =>
         rw [markedTarget_boundary_zero]
-        simp
+        simp only [List.append_assoc, List.cons_append, List.nil_append, ne_eq,
+          List.append_eq_nil_iff,
+    P2.retainWord_eq_nil_iff, reduceCtorEq, and_false,
+          not_false_eq_true]
     | succ i =>
         let iW : Fin W.length :=
-          ⟨i.val, by simpa using i.isLt⟩
+          ⟨i.val, by simpa only [List.length_map] using i.isLt⟩
         have hsourceNonempty :=
           validSource.2.1
             (untouchedSourceFace U V W iW)
@@ -682,7 +691,7 @@ theorem markedTarget_isSurfaceValid {n : ℕ}
         intro hnil
         apply hsourceNonempty
         exact (P2.retainWord_eq_nil_iff _).mpr
-          (by simpa [iW] using hnil)
+          (by simpa only [List.get_eq_getElem, P2.retainWord_eq_nil_iff, iW] using hnil)
   · intro f g hfg
     induction f using Fin.cases with
     | zero =>
@@ -690,11 +699,14 @@ theorem markedTarget_isSurfaceValid {n : ℕ}
         | zero => rfl
         | succ j =>
             let jW : Fin W.length :=
-              ⟨j.val, by simpa using j.isLt⟩
+              ⟨j.val, by simpa only [List.length_map] using j.isLt⟩
             have hmarker :
                 SignedDart.pos marker ∈
                   (markedTarget U V W).boundary 0 := by
-              simp [marker]
+              simp only [markedTarget_boundary_zero, List.append_assoc, List.cons_append,
+                List.nil_append, List.mem_append,
+    List.mem_cons, reduceCtorEq, false_or,
+                true_or, or_true, marker]
             have htarget := hfg.mem_iff.mp hmarker
             rw [markedTarget_boundary_succMap] at htarget
             have hmarkerEq :
@@ -708,16 +720,19 @@ theorem markedTarget_isSurfaceValid {n : ℕ}
               exact
                 P2.pos_freshEdge_not_mem_retainWord
                   (target U V W) (W.get jW)
-            exact (hnot (by simpa [jW] using htarget)).elim
+            exact (hnot (by simpa only [List.get_eq_getElem, jW] using htarget)).elim
     | succ i =>
         induction g using Fin.cases with
         | zero =>
             let iW : Fin W.length :=
-              ⟨i.val, by simpa using i.isLt⟩
+              ⟨i.val, by simpa only [List.length_map] using i.isLt⟩
             have hmarker :
                 SignedDart.pos marker ∈
                   (markedTarget U V W).boundary 0 := by
-              simp [marker]
+              simp only [markedTarget_boundary_zero, List.append_assoc, List.cons_append,
+                List.nil_append, List.mem_append,
+    List.mem_cons, reduceCtorEq, false_or,
+                true_or, or_true, marker]
             have hsource := hfg.symm.mem_iff.mp hmarker
             rw [markedTarget_boundary_succMap] at hsource
             have hmarkerEq :
@@ -731,12 +746,12 @@ theorem markedTarget_isSurfaceValid {n : ℕ}
               exact
                 P2.pos_freshEdge_not_mem_retainWord
                   (target U V W) (W.get iW)
-            exact (hnot (by simpa [iW] using hsource)).elim
+            exact (hnot (by simpa only [List.get_eq_getElem, iW] using hsource)).elim
         | succ j =>
             let iW : Fin W.length :=
-              ⟨i.val, by simpa using i.isLt⟩
+              ⟨i.val, by simpa only [List.length_map] using i.isLt⟩
             let jW : Fin W.length :=
-              ⟨j.val, by simpa using j.isLt⟩
+              ⟨j.val, by simpa only [List.length_map] using j.isLt⟩
             have hboundaries :
                 (P2.retainWord (W.get iW)).IsRotated
                   (P2.retainWord (W.get jW)) := by

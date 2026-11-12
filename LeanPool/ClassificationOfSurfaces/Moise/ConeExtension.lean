@@ -104,14 +104,14 @@ theorem exists_frontier_endpoint {S : Set Plane} (hS : Convex ℝ S) (hcompact :
   have hzero : 0 ∈ interior T := by
     change 0 ∈ interior ((-c) +ᵥ S)
     rw [interior_vadd]
-    exact ⟨c, hc, by simp⟩
+    exact ⟨c, hc, by simp only [vadd_eq_add, neg_add_cancel]⟩
   have hTnhds : T ∈ nhds 0 := mem_interior_iff_mem_nhds.mp hzero
   have hTabs : Absorbent ℝ T := absorbent_nhds_zero hTnhds
   have hTbounded : Bornology.IsVonNBounded ℝ T :=
     NormedSpace.isVonNBounded_of_isBounded ℝ hTcompact.isBounded
   let v : Plane := x - c
   have hvT : v ∈ T := by
-    exact ⟨x, hx, by simp [v, sub_eq_add_neg, add_comm]⟩
+    exact ⟨x, hx, by simp only [vadd_eq_add, add_comm, sub_eq_add_neg, v]⟩
   by_cases hv : v = 0
   · obtain ⟨y, hy⟩ := hfrontier
     refine ⟨y, hy, ?_⟩
@@ -125,7 +125,7 @@ theorem exists_frontier_endpoint {S : Set Plane} (hS : Convex ℝ S) (hcompact :
     have hyGauge : gauge T y0 = 1 := by
       change gauge T (g⁻¹ • v) = 1
       rw [gauge_smul_of_nonneg (inv_nonneg.mpr hgpos.le)]
-      simp [g, hgpos.ne']
+      simp only [smul_eq_mul, ne_eq, hgpos.ne', not_false_eq_true, inv_mul_cancel₀, g]
     have hy0 : y0 ∈ frontier T :=
       mem_frontier_of_gauge_eq_one hTconv (mem_of_mem_nhds hTnhds) hTabs hyGauge
     let y : Plane := c + y0
@@ -134,9 +134,9 @@ theorem exists_frontier_endpoint {S : Set Plane} (hS : Convex ℝ S) (hcompact :
       simp only [Homeomorph.coe_addLeft, Set.mem_image, T, Set.mem_vadd_set]
       constructor
       · rintro ⟨w, ⟨q, hq, hqw⟩, rfl⟩
-        simpa [← hqw] using hq
+        simpa only [← hqw, vadd_eq_add, add_neg_cancel_left] using hq
       · intro hz
-        exact ⟨-c + z, ⟨z, hz, by simp⟩, by simp⟩
+        exact ⟨-c + z, ⟨z, hz, by simp only [vadd_eq_add]⟩, by simp only [add_neg_cancel_left]⟩
     have hy : y ∈ frontier S := by
       have hfront := (Homeomorph.addLeft c : Plane ≃ₜ Plane).image_frontier T
       rw [himage] at hfront
@@ -145,7 +145,9 @@ theorem exists_frontier_endpoint {S : Set Plane} (hS : Convex ℝ S) (hcompact :
     refine ⟨y, hy, ?_⟩
     rw [segment_eq_image_lineMap]
     refine ⟨g, ⟨hgpos.le, hgle⟩, ?_⟩
-    simp [y, y0, v, AffineMap.lineMap_apply_module, g, hgpos.ne']
+    simp only [AffineMap.lineMap_apply_module, smul_add, ne_eq, hgpos.ne', not_false_eq_true,
+      smul_inv_smul₀, y,
+    y0, g, v]
     module
 
 /-- Two radial segments from an interior point of a convex set cannot share a non-central point
@@ -399,13 +401,16 @@ noncomputable def activeSimplexes : Finset (Finset K.ActiveVertex) :=
 
 @[simp] theorem mem_activeSimplexes {s : Finset K.ActiveVertex} :
     s ∈ K.activeSimplexes ↔ s.map K.activeEmbedding ∈ K.simplexes := by
-  simp [activeSimplexes]
+  simp only [activeSimplexes, Finset.mem_filter, Finset.mem_univ, true_and]
 
 theorem active_position_image (s : Finset K.ActiveVertex) :
     (fun v : K.ActiveVertex => K.position v.1) '' (s : Set K.ActiveVertex) =
       K.position '' ((s.map K.activeEmbedding : Finset K.Vertex) : Set K.Vertex) := by
   ext x
-  simp [activeEmbedding]
+  simp only [Set.mem_image, SetLike.mem_coe, Subtype.exists, exists_and_right, activeEmbedding,
+    Finset.coe_map,
+    Function.Embedding.subtype_apply, Function.Embedding.coe_subtype,
+    exists_eq_right]
 
 /-- Delete all unused vertices without changing the support or any face geometry. -/
 noncomputable def active : PlaneComplex where
@@ -514,13 +519,14 @@ theorem card_le_two_of_support_eq_frontier {S : Set Plane} (hSclosed : IsClosed 
     omega
   have hspan : affineSpan ℝ (Set.range (fun v : s => K.position v)) = ⊤ :=
     ((K.affineIndependent s hs).affineSpan_eq_top_iff_card_eq_finrank_add_one).mpr (by
-      simp [hcard, Plane])
+      simp only [Fintype.card_coe, hcard, Plane, finrank_euclideanSpace, Fintype.card_fin,
+        Nat.reduceAdd])
   have hne : (interior (K.cellCarrier s)).Nonempty := by
     rw [PlaneComplex.cellCarrier]
     have himage : Set.range (fun v : s => K.position v) =
         K.position '' (s : Set K.Vertex) := by
       ext x
-      simp
+      simp only [Set.mem_range, Subtype.exists, exists_prop, Set.mem_image, SetLike.mem_coe]
     rw [← himage]
     exact interior_convexHull_nonempty_iff_affineSpan_eq_top.mpr hspan
   have hsubset : interior (K.cellCarrier s) ⊆ interior (frontier S) :=
@@ -551,13 +557,16 @@ noncomputable def usedSimplexes : Finset (Finset K.UsedVertex) :=
 
 @[simp] theorem mem_usedSimplexes {s : Finset K.UsedVertex} :
     s ∈ K.usedSimplexes ↔ s.map K.usedEmbedding ∈ K.simplexes := by
-  simp [usedSimplexes]
+  simp only [usedSimplexes, Finset.mem_filter, Finset.mem_univ, true_and]
 
 theorem used_position_image (s : Finset K.UsedVertex) :
     (fun v : K.UsedVertex => K.position v.1) '' (s : Set K.UsedVertex) =
       K.position '' ((s.map K.usedEmbedding : Finset K.Vertex) : Set K.Vertex) := by
   ext x
-  simp [usedEmbedding]
+  simp only [Set.mem_image, SetLike.mem_coe, Subtype.exists, exists_and_right, usedEmbedding,
+    Finset.coe_map,
+    Function.Embedding.subtype_apply, Function.Embedding.coe_subtype,
+    exists_eq_right]
 
 /-- Delete vertices unused by every face, without changing the represented complex. -/
 noncomputable def used : PlaneComplex where
@@ -1082,7 +1091,7 @@ def coneWeights (z : K.Vertex → ℝ) : Option K.Vertex → ℝ
 
 theorem sum_coneWeights (z : K.Vertex → ℝ) :
     ∑ v, K.coneWeights z v = ∑ v, z v := by
-  simp
+  simp only [Fintype.sum_option, coneWeights_none, coneWeights_some, zero_add]
 
 /-- Lift a base face to the non-cone vertices. -/
 def liftFace (s : Finset K.Vertex) : Finset (Option K.Vertex) :=
@@ -1096,12 +1105,14 @@ def baseFace (t : Finset (Option K.Vertex)) : Finset K.Vertex :=
 
 @[simp] theorem mem_baseFace {t : Finset (Option K.Vertex)} {v : K.Vertex} :
     v ∈ K.baseFace t ↔ some v ∈ t := by
-  simp [baseFace]
+  simp only [baseFace, Finset.mem_filterMap, id_eq, exists_eq_right]
 
 @[simp] theorem baseFace_liftFace (s : Finset K.Vertex) :
     K.baseFace (K.liftFace s) = s := by
   ext v
-  simp [liftFace]
+  simp only [liftFace, mem_baseFace, Finset.mem_map, Function.Embedding.some_apply,
+    Option.some.injEq,
+    exists_eq_right]
 
 @[simp] theorem baseFace_inter (t u : Finset (Option K.Vertex)) :
     K.baseFace (t ∩ u) = K.baseFace t ∩ K.baseFace u := by
@@ -1174,7 +1185,9 @@ theorem baseFace_subset_of_subset_cone {s : Finset K.Vertex}
     K.baseFace t ⊆ s := by
   intro v hv
   have hsv := ht (K.mem_baseFace.mp hv)
-  simpa [liftFace] using hsv
+  simpa only [liftFace, Finset.mem_insert, reduceCtorEq, Finset.mem_map,
+    Function.Embedding.some_apply,
+    Option.some.injEq, exists_eq_right, false_or] using hsv
 
 theorem baseFace_mem_of_nonempty {t : Finset (Option K.Vertex)}
     (ht : t ∈ K.coneSimplexes) (hne : (K.baseFace t).Nonempty) :
@@ -1320,7 +1333,7 @@ theorem cone_baryEval_coneWeights (S : Set Plane) (hS : Convex ℝ S) (c : Plane
   change (∑ x : Option K.Vertex, K.coneWeights z x • K.conePosition c x) =
     ∑ v, z v • K.position v
   rw [Fintype.sum_option]
-  simp [coneWeights, conePosition]
+  simp only [coneWeights, conePosition, zero_smul, zero_add]
 
 theorem cone_support_eq (S : Set Plane) (hS : Convex ℝ S) (hcompact : IsCompact S)
     (c : Plane) (hc : c ∈ interior S) (havoid : c ∉ Set.range K.position)
@@ -1345,7 +1358,10 @@ theorem cone_support_eq (S : Set Plane) (hS : Convex ℝ S) (hcompact : IsCompac
       | some v =>
           apply Set.mem_insert_of_mem
           refine ⟨v, ?_, rfl⟩
-          simpa [liftFace] using hvParent
+          simpa only [SetLike.mem_coe, liftFace, Finset.mem_insert, reduceCtorEq,
+            Finset.mem_map,
+    Function.Embedding.some_apply, Option.some.injEq, exists_eq_right,
+            false_or] using hvParent
     apply hcarrier at hxt
     exact (convexHull_min (by
       rintro z (rfl | ⟨v, hv, rfl⟩)
@@ -1358,7 +1374,7 @@ theorem cone_support_eq (S : Set Plane) (hS : Convex ℝ S) (hcompact : IsCompac
   · intro x hx
     obtain ⟨y, hyFrontier, hxy⟩ :=
       exists_frontier_endpoint hS hcompact hc hx hfrontier
-    have hySupport : y ∈ K.support := by simpa [hsupport] using hyFrontier
+    have hySupport : y ∈ K.support := by simpa only [hsupport] using hyFrontier
     rw [PlaneComplex.support] at hySupport
     simp only [Set.mem_iUnion] at hySupport
     obtain ⟨s, hs, hys⟩ := hySupport
@@ -1372,7 +1388,10 @@ theorem cone_support_eq (S : Set Plane) (hS : Convex ℝ S) (hcompact : IsCompac
     rw [K.conePosition_image_eq_of_mem_none ht0]
     have hbase : K.baseFace t = s := by
       ext v
-      simp [t, liftFace]
+      simp only [liftFace, mem_baseFace, Finset.mem_insert, reduceCtorEq,
+        Finset.mem_map,
+    Function.Embedding.some_apply, Option.some.injEq, exists_eq_right,
+        false_or, t]
     rw [hbase]
     exact (convex_convexHull ℝ (insert c (K.position '' (s : Set K.Vertex)))).segment_subset
       (subset_convexHull ℝ _ (Set.mem_insert _ _))

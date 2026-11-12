@@ -205,11 +205,13 @@ theorem edgeParameter_mem_Icc (i : Fin (Fintype.card K.EdgeFace)) {x : Plane}
       (({K.edgeFirst i, K.edgeSecond i} : Finset K.Vertex) : Set K.Vertex) =
       {K.position (K.edgeFirst i), K.position (K.edgeSecond i)} := by
     ext y
-    simp
+    simp only [Finset.coe_insert, Finset.coe_singleton, Set.image_insert_eq,
+      Set.image_singleton,
+    Set.mem_insert_iff, Set.mem_singleton_iff]
   rw [himage, convexHull_pair] at hx
   rw [segment_eq_image_lineMap] at hx
   obtain ⟨t, ht, rfl⟩ := hx
-  simpa [K.edgeParameter_lineMap]
+  simpa only [K.edgeParameter_lineMap, Set.mem_Icc]
 
 theorem lineMap_edgeParameter_eq (i : Fin (Fintype.card K.EdgeFace)) {x : Plane}
     (hx : x ∈ K.cellCarrier (K.edgeAt i).1) :

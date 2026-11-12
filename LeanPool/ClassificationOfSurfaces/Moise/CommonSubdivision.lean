@@ -186,7 +186,7 @@ noncomputable def triangleCoords (T : M.Triangle) :
         (M.orderedVertex_affineIndependent T)).coord
           (M.triangleEquiv T ⟨v, hv⟩) p := by
   classical
-  simp [triangleCoords, hv]
+  simp only [triangleCoords, AffineMap.pi_apply, hv, ↓reduceDIte]
 
 @[simp] theorem triangleCoords_apply_of_notMem (T : M.Triangle)
     {v : M.Vertex} (hv : v ∉ T.1) (p : Plane) :
@@ -274,7 +274,9 @@ noncomputable def coordinateLines : List (Plane →ᵃ[ℝ] ℝ) :=
 
 theorem oppositeCoord_mem_coordinateLines (t : M.Triangle) (k : Fin 3) :
     M.oppositeCoord t k ∈ M.coordinateLines := by
-  simp [coordinateLines]
+  simp only [coordinateLines, Finset.univ_eq_attach, List.mem_flatMap, Finset.mem_toList,
+    Finset.mem_attach,
+    List.mem_map, Finset.mem_univ, true_and, exists_apply_eq_apply2]
 
 /-- Cut `M` by every coordinate hyperplane of `N`. -/
 noncomputable def refineTo (M N : TriangleMesh) : TriangleMesh :=
@@ -951,11 +953,12 @@ theorem inverse_affineOn_of_subdivides_mapComplex
     have hrange : Set.range (fun v : t => K.position v) =
         K.position '' (t : Set K.Vertex) := by
       ext x
-      simp
+      simp only [Set.mem_range, Subtype.exists, exists_prop, Set.mem_image, SetLike.mem_coe]
     rw [← hrange]
     apply interior_convexHull_nonempty_iff_affineSpan_eq_top.mpr
     exact ((K.affineIndependent t htcell).affineSpan_eq_top_iff_card_eq_finrank_add_one).mpr
-      (by simp [htcard, Plane])
+      (by simp only [Fintype.card_coe, htcard, Plane, finrank_euclideanSpace, Fintype.card_fin,
+        Nat.reduceAdd])
   have hgInjOn : Set.InjOn g (K.cellCarrier t) := by
     intro x hx y hy hxy
     apply h.injective

@@ -149,7 +149,7 @@ theorem cutBoundary_get_positiveCutSideIndex
           exact Nat.add_pos_left hl _)),
     List.getElem?_eq_getElem i.isLt] at hpoint
   exact Option.some.inj (by
-    simpa [positiveCutSideIndex, List.length_append] using hpoint)
+    simpa only [positiveCutSideIndex, Option.some.injEq, List.length_append] using hpoint)
 
 /-- The selected source face, with its cyclic starting point aligned to the cut, is exactly the
 local one-polygon-to-two-child quotient model. -/
@@ -426,7 +426,9 @@ theorem positiveSelectedBoundary_get_fresh
       .pos (freshEdge P) := by
   rw [List.get_of_eq
     (selectedBoundary_of_orientation_false P cut horientation)]
-  simp [retainWord]
+  simp only [retainWord, List.get_eq_getElem, List.length_map, Std.le_refl,
+    List.getElem_append_right,
+    tsub_self, List.getElem_cons_zero]
 
 theorem positiveRightBoundary_get_fresh
     (P : FiniteCyclicPresentation) (cut : P2Cut P)
@@ -627,7 +629,7 @@ theorem positiveSelectedChildCellHomeomorph_side
     positiveSelectedChildSideIndex]
   apply Nat.mod_eq_of_lt
   rw [positive_split_boundary_selected_length P cut horientation]
-  simpa using i.isLt
+  simpa only [add_zero, Order.lt_add_one_iff] using i.isLt
 
 @[simp]
 theorem positiveRightChildCellHomeomorph_side
@@ -1466,8 +1468,9 @@ theorem positiveMapOccurrence_injective
               positiveCutSideIndex P cut horientation hl hr i =
                 positiveCutSideIndex P cut horientation hl hr j := by
             apply Fin.ext
-            simpa [positiveSelectedChildSideIndex,
-              positiveLeftSideIndex] using hval
+            simpa only [positiveCutSideIndex_val, positiveLeftSideIndex,
+              positiveSelectedChildSideIndex, Fin.val_castAdd,
+    Fin.castAdd_mk] using hval
           have hij :=
             positiveCutSideIndex_injective
               P cut horientation hl hr hindex
@@ -1564,7 +1567,7 @@ theorem positiveMapOccurrence_injective
         (fun o : (split P cut).BoundaryOccurrence => o.2.val) hmap
       have hij : i = j := by
         apply Fin.ext
-        simpa [retainedSideIndex] using hval
+        simpa only [retainedSideIndex] using hval
       subst j
       rfl
 
@@ -3306,7 +3309,7 @@ theorem map_swap_selectedBoundary
         (swapRawEdgeRelabeling P cut).mapDart |>.IsRotated
       (rightBoundary P cut) := by
   cases h : cut.face.orientation
-  · rw [selectedBoundary_of_orientation_false P cut.swap (by simpa using h),
+  · rw [selectedBoundary_of_orientation_false P cut.swap (by simpa only [P2Cut.swap_face] using h),
       rightBoundary_of_orientation_false P cut h]
     simp only [List.map_append, List.map_singleton,
       swapEdgeRelabeling_pos_fresh,
@@ -3315,7 +3318,7 @@ theorem map_swap_selectedBoundary
       (List.isRotated_append
         (l := retainWord cut.right)
         (l' := [SignedDart.neg (freshEdge P)]))
-  · rw [selectedBoundary_of_orientation_true P cut.swap (by simpa using h),
+  · rw [selectedBoundary_of_orientation_true P cut.swap (by simpa only [P2Cut.swap_face] using h),
       rightBoundary_of_orientation_true P cut h]
     simp only [List.map_cons, swapEdgeRelabeling_neg_fresh,
       ← EdgeRelabeling.inverseWord_map_mapDart,
@@ -3331,7 +3334,7 @@ theorem map_swap_rightBoundary
         (swapRawEdgeRelabeling P cut).mapDart |>.IsRotated
       (selectedBoundary P cut) := by
   cases h : cut.face.orientation
-  · rw [rightBoundary_of_orientation_false P cut.swap (by simpa using h),
+  · rw [rightBoundary_of_orientation_false P cut.swap (by simpa only [P2Cut.swap_face] using h),
       selectedBoundary_of_orientation_false P cut h]
     simp only [List.map_cons, swapEdgeRelabeling_neg_fresh,
       map_swapEdgeRelabeling_retainWord, P2Cut.swap]
@@ -3339,7 +3342,7 @@ theorem map_swap_rightBoundary
       (List.isRotated_append
         (l := [SignedDart.pos (freshEdge P)])
         (l' := retainWord cut.left))
-  · rw [rightBoundary_of_orientation_true P cut.swap (by simpa using h),
+  · rw [rightBoundary_of_orientation_true P cut.swap (by simpa only [P2Cut.swap_face] using h),
       selectedBoundary_of_orientation_true P cut h]
     simp only [List.map_append, List.map_singleton,
       swapEdgeRelabeling_pos_fresh,
@@ -3564,11 +3567,13 @@ theorem negativePolygonallyEquivalent
       (split_isSurfaceValid P cut validP) := by
   have hflipOrientation :
       cut.flip.face.orientation = false := by
-    simp [P2Cut.flip, OrientedFace.flip, horientation]
+    simp only [P2Cut.flip, OrientedFace.flip, horientation, Bool.not_true]
   have hflipLeft : 0 < cut.flip.left.length := by
-    simpa [P2Cut.flip, inverseWord] using hr
+    simpa only [P2Cut.flip, inverseWord, List.map_reverse, List.length_reverse,
+      List.length_map] using hr
   have hflipRight : 0 < cut.flip.right.length := by
-    simpa [P2Cut.flip, inverseWord] using hl
+    simpa only [P2Cut.flip, inverseWord, List.map_reverse, List.length_reverse,
+      List.length_map] using hl
   let validFlip :=
     split_isSurfaceValid P cut.flip validP
   exact

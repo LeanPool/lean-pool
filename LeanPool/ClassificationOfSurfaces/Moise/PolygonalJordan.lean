@@ -589,7 +589,7 @@ theorem puncturedBall_subset_twoSectors_union_rays {a b : Circle} (hab : a ≠ b
         openRadialRay a r ∪ openRadialRay b r := by
   rintro z ⟨hzball, hz0⟩
   rw [Set.mem_singleton_iff] at hz0
-  have hzr : ‖z‖ < r := by simpa [Metric.mem_ball, dist_zero_right] using hzball
+  have hzr : ‖z‖ < r := by simpa only [Metric.mem_ball, dist_zero_right] using hzball
   let d : Circle := complexDirection z hz0
   have hd : d ∈ Set.range (Circle.path a b) ∪ Set.range (Circle.path b a) := by
     rw [Circle.range_path_union_range_path hab]
@@ -723,15 +723,15 @@ theorem incident_complexDirections_ne (i : ZMod J.n) :
   have hxout : x ∈ J.edgeSegment i := by
     have := add_mem_segment_of_mem_segment_zero (p := J.vertex i) hqout
     rw [hx, edgeSegment]
-    convert this using 1; simp only [outgoingVector]; abel
+    convert this using 1; simp only [outgoingVector]; abel_nf
   have hxin : x ∈ J.edgeSegment (i - 1) := by
     have := add_mem_segment_of_mem_segment_zero (p := J.vertex i) hqin
     rw [edgeSegment, segment_symm]
     rw [hx]
-    convert this using 1; simp only [incomingRayVector, sub_add_cancel]; abel
+    convert this using 1; simp only [incomingRayVector, sub_add_cancel]; abel_nf
   have hinter : J.edgeSegment (i - 1) ∩ J.edgeSegment i = {J.vertex i} := by
     convert J.consecutive_inter (i - 1) using 1 <;>
-      simp only [edgeSegment, sub_add_cancel]; ring
+      simp only [edgeSegment, sub_add_cancel]; ring_nf
   have hxvertex : x = J.vertex i := by
     have hxinter : x ∈ J.edgeSegment (i - 1) ∩ J.edgeSegment i := ⟨hxin, hxout⟩
     rw [hinter] at hxinter
@@ -820,7 +820,7 @@ theorem neg_rotation_mem_openAngularSector {a b : Circle} {radius bound θ : ℝ
   have hab : a ≠ b := by
     intro heq
     subst b
-    have : θ < 0 := by simpa [Circle.angleDiff] using hδ
+    have : θ < 0 := by simpa only [Circle.angleDiff, Std.le_refl, ↓reduceIte, sub_self] using hδ
     linarith
   have hδab : 0 < a.angleDiff b := Circle.angleDiff_pos hab
   have ht0 : 0 < t := by rw [ht]; exact sub_pos.mpr ((div_lt_one hδab).mpr hδ)
@@ -889,7 +889,7 @@ theorem complexDirection_sub_eq_of_mem_segment {p q x : Plane} (hpq : p ≠ q)
     intro hzero
     apply hpq.symm
     rw [← sub_eq_zero]
-    exact planeComplexEquiv.injective (by simpa using hzero))]
+    exact planeComplexEquiv.injective (by simpa only [map_sub, map_zero] using hzero))]
   rw [Complex.ofReal_mul]
   ring
 
@@ -1135,7 +1135,7 @@ theorem ball_diff_carrier_eq_vertexSectors {r : ℝ}
       apply Set.mem_iUnion.mpr
       refine ⟨i, ?_⟩
       rw [edgeSegment]
-      convert hseg using 1; simp only [outgoingVector]; abel
+      convert hseg using 1; simp only [outgoingVector]; abel_nf
     · exfalso
       apply hxcarrier
       have hlenPrev := hlen (i - 1)
@@ -1151,7 +1151,7 @@ theorem ball_diff_carrier_eq_vertexSectors {r : ℝ}
       apply Set.mem_iUnion.mpr
       refine ⟨i - 1, ?_⟩
       rw [edgeSegment, segment_symm]
-      convert hseg using 1; simp only [incomingRayVector, sub_add_cancel]; abel
+      convert hseg using 1; simp only [incomingRayVector, sub_add_cancel]; abel_nf
   · intro x hx
     rcases hx with hx | hx
     · exact J.vertexForwardSector_subset_ball_diff_carrier hsep i hx
@@ -1389,13 +1389,13 @@ theorem edgeTube_diff_carrier_eq_sides (i : ZMod J.n) {trim width : ℝ}
           J.edgeCoordinate i x * (J.outgoingDirection i : ℂ)
         congr 1
         rw [← Complex.re_add_im (J.edgeCoordinate i x), ← him]
-        simp
+        simp only [Complex.ofReal_zero, zero_mul, add_zero, Complex.ofReal_re]
       have hseg := vertex_add_symm_mem_segment_of_mem_openRadialRay
         (p := J.vertex i) (J.outgoingVector_ne_zero i) le_rfl hzray
       rw [← edgeCoordinateInv, J.edgeCoordinateInv_edgeCoordinate] at hseg
       exact Set.mem_iUnion.mpr ⟨i, by
         rw [edgeSegment]
-        convert hseg using 1; simp only [outgoingVector]; abel⟩
+        convert hseg using 1; simp only [outgoingVector]; abel_nf⟩
     · exact Or.inr ⟨htube.1, htube.2.1, htube.2.2.1, him⟩
   · rintro x (hx | hx)
     · refine ⟨J.edgePositiveSide_subset_edgeTube i hwidth hx, ?_⟩
@@ -1453,9 +1453,9 @@ theorem exists_ball_inter_carrier_subset_edgeSegment {i : ZMod J.n} {x : Plane}
     have hxEnds := J.edgeSegment_inter_subset_endpoints (Ne.symm hji) ⟨hxEdge, hxj⟩
     rcases hxEnds with hx0 | hx1
     · subst x
-      simp [J.adjacent_ne i] at hx
+      simp only [left_mem_openSegment_iff, J.adjacent_ne i] at hx
     · subst x
-      simp [J.adjacent_ne i] at hx
+      simp only [right_mem_openSegment_iff, J.adjacent_ne i] at hx
   have hnhds : (J.otherEdges i)ᶜ ∈ nhds x :=
     J.isClosed_otherEdges i |>.isOpen_compl.mem_nhds hxNotOther
   obtain ⟨r, hr, hball⟩ := Metric.mem_nhds_iff.mp hnhds
@@ -1463,7 +1463,7 @@ theorem exists_ball_inter_carrier_subset_edgeSegment {i : ZMod J.n} {x : Plane}
   rintro y ⟨hyBall, hyCarrier⟩
   obtain ⟨j, hyj⟩ := Set.mem_iUnion.mp hyCarrier
   by_cases hji : j = i
-  · simpa [hji] using hyj
+  · simpa only [hji] using hyj
   · exact False.elim (hball hyBall <|
       Set.mem_iUnion.mpr ⟨j, Set.mem_iUnion.mpr ⟨hji, hyj⟩⟩)
 
@@ -1586,7 +1586,7 @@ theorem exists_second_basePoint_of_edge_inter_openSegment {P Q x : Plane}
     have hyne : y ≠ x := by
       intro h
       rw [h] at hyOpen
-      simp [hxP] at hyOpen
+      simp only [left_mem_openSegment_iff, hxP] at hyOpen
     exact ⟨y, hyne, hlocal ⟨hyBall, hbase hyBase⟩, hyBase⟩
 
 /-- In normalized ear coordinates, every polygon edge meeting the open base lies on the
@@ -1645,7 +1645,7 @@ theorem edgeCore_subset_edgeSegment (i : ZMod J.n) {trim : ℝ} (htrim : 0 < tri
       segment ℝ (J.vertex i) (J.vertex (i + 1))
   convert hseg using 1
   simp only [outgoingVector]
-  abel
+  abel_nf
 
 theorem disjoint_edgeCore_otherEdges (i : ZMod J.n) {trim : ℝ} (htrim : 0 < trim)
     (hlen : 4 * trim < J.edgeLength i) :
@@ -2188,7 +2188,7 @@ theorem isPathConnected_iUnion_of_reflTransGen {X ι : Type*} [TopologicalSpace 
     induction hij with
     | refl =>
         refine ⟨{i}, Set.mem_singleton i, Set.mem_singleton i, ?_⟩
-        simpa using hs i
+        simpa only [Set.mem_singleton_iff, Set.iUnion_iUnion_eq_left] using hs i
     | @tail j k _ hjk ih =>
         obtain ⟨p, hip, hjp, hp⟩ := ih
         refine ⟨insert k p, Set.mem_insert_of_mem k hip, Set.mem_insert k p, ?_⟩

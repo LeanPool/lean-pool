@@ -130,7 +130,7 @@ theorem adaptiveFanRelabel_extended_apply (hU : IsOpen U)
         apply Subtype.ext
         rfl
     rw [hfilter]
-    simp [q]
+    simp only [Finset.sum_singleton, q]
   · have hp : v.1 ∉ K.adaptiveFanFaceVertices U hU f := by
       exact fun hp ↦ hv ((K.mem_adaptiveGlobalFanFaceVertices_iff U hU f v).mpr hp)
     rw [extendFaceCoordinates_of_notMem _ _ hp,

@@ -398,7 +398,8 @@ theorem planeComplex_baryEval_coordZero_exposed
         affineSpan ℝ (Set.range fun v : t ↦ K.position v) = ⊤ :=
       ((K.affineIndependent t (K.mem_simplexes_of_mem_cells ht))
         |>.affineSpan_eq_top_iff_card_eq_finrank_add_one).mpr (by
-          simpa [Plane] using htcard)
+          simpa only [Fintype.card_coe, Plane, finrank_euclideanSpace, Fintype.card_fin,
+            Nat.reduceAdd] using htcard)
     have hspanH :
         affineSpan ℝ (Set.range fun v : t ↦ K.position v) ≤ H := by
       apply affineSpan_le.mpr
@@ -410,10 +411,10 @@ theorem planeComplex_baryEval_coordZero_exposed
       rw [← hspanTop]
       exact hspanH
     let p : Plane := EuclideanSpace.single 0 1
-    have hpTop : p ∈ (⊤ : AffineSubspace ℝ Plane) := by simp
+    have hpTop : p ∈ (⊤ : AffineSubspace ℝ Plane) := by simp only [AffineSubspace.mem_top]
     have hpH := htopH hpTop
     change p 0 = 0 at hpH
-    simp [p] at hpH
+    simp only [Fin.isValue, PiLp.single_eq_same, one_ne_zero, p] at hpH
   refine ⟨b, hbt, hbcard, ?_⟩
   intro x hxt
   rw [K.baryEval_eq_sum_of_support hxt]
@@ -424,7 +425,7 @@ theorem planeComplex_baryEval_coordZero_exposed
       ((PiLp.projₗ 2 (fun _ : Fin 2 ↦ ℝ) 0) : Plane →ₗ[ℝ] ℝ)
           (∑ v ∈ t, x.1 v • K.position v) =
         ∑ v ∈ t, x.1 v * K.position v 0
-    simp
+    simp only [Fin.isValue, map_sum, map_smul, PiLp.projₗ_apply, smul_eq_mul]
   rw [hcoord]
   constructor
   · intro hsum
@@ -6025,14 +6026,14 @@ theorem PartialTriangulation.exists_glued {S : Type*} [TopologicalSpace S] [T2Sp
   have hglue_left : ∀ (x : GeometricRealization V (F₁ ∪ F₂))
       (hx : (x : V → ℝ) ∈ GeometricRealization V F₁), glue x = e₁ ⟨x.1, hx⟩ := by
     intro x hx
-    simp [hglue, hx]
+    simp only [hglue, hx, ↓reduceDIte]
   have hglue_right : ∀ (x : GeometricRealization V (F₁ ∪ F₂))
       (hx : (x : V → ℝ) ∈ GeometricRealization V F₂), glue x = e₂ ⟨x.1, hx⟩ := by
     intro x hx
     by_cases hx₁ : (x : V → ℝ) ∈ GeometricRealization V F₁
     · rw [hglue_left x hx₁]
       exact hagree ⟨x.1, hx₁⟩ ⟨x.1, hx⟩ rfl
-    · simp [hglue, hx₁]
+    · simp only [hglue, hx₁, ↓reduceDIte]
   -- injectivity
   have hinj : Function.Injective glue := by
     intro x y hxy
@@ -6093,7 +6094,7 @@ theorem PartialTriangulation.exists_glued {S : Type*} [TopologicalSpace S] [T2Sp
   refine ⟨{ Vertex := V, faces := F₁ ∪ F₂, faces_card := hcard, embed := glue,
             isEmbedding := ?_ }, Equiv.refl V, ?_, ?_, ?_, ?_⟩
   · exact (hcont.isClosedEmbedding hinj).isEmbedding
-  · simp [Moise.relabelFaceFamily]
+  · simp only [relabelFaceFamily, Equiv.refl_toEmbedding, Finset.map_refl, Finset.image_id']
   · -- the support is the union of the two images
     apply Set.Subset.antisymm
     · rintro y ⟨x, rfl⟩

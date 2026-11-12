@@ -173,7 +173,8 @@ theorem faceChart_mem_frontier_of_extended_eq
       rw [extendFaceCoordinates_of_mem (K.faceVertices f) x v.2,
         extendFaceCoordinates_of_notMem (K.faceVertices g) y hvNotG] at hc
       exact hc
-    have hzero : (∑ v, x v) = 0 := by simp [hxzero]
+    have hzero : (∑ v, x v) = 0 := by simp only [Finset.univ_eq_attach, hxzero,
+      Finset.sum_const_zero]
     have hone : (∑ v, x v) = 1 := stdSimplex.sum_eq_one x
     rw [hzero] at hone
     norm_num at hone

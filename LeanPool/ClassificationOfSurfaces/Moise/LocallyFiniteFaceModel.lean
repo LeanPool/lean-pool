@@ -313,7 +313,8 @@ theorem supportedOnEdge_endpoint_sum (f : K.Face) (e : K.Edge)
       · exact Or.inr (congrArg Subtype.val h)
   change x a + x b = 1
   calc
-    x a + x b = ∑ v ∈ E, x v := by rw [hE]; simp [hab]
+    x a + x b = ∑ v ∈ E, x v := by rw [hE]; simp only [Finset.mem_singleton, hab,
+      not_false_eq_true, Finset.sum_insert, Finset.sum_singleton]
     _ = ∑ v, x v := by
       apply Finset.sum_subset (Finset.subset_univ E)
       intro v _ hvE
@@ -321,7 +322,7 @@ theorem supportedOnEdge_endpoint_sum (f : K.Face) (e : K.Edge)
       intro hve
       apply hvE
       change v.1 ∈ e.1 at hve
-      simp [E, hve]
+      simp only [Finset.univ_eq_attach, Finset.mem_filter, Finset.mem_attach, hve, and_self, E]
     _ = 1 := x.2.2
 
 theorem faceSide_endpoint_sum (f : K.Face) (i : ZMod 3)
@@ -417,7 +418,7 @@ theorem edgeSimplexInFace_supported (f : K.Face) (e : K.Edge)
     rw [← congrArg Subtype.val hw]
     exact w.2
   rw [hempty]
-  simp
+  simp only [Finset.sum_empty]
 
 /-- Reindexing the canonical edge simplex inside a face gives the same oriented affine
 parameter on the corresponding two standard vertices. -/

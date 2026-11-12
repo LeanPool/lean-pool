@@ -44,11 +44,15 @@ theorem lowerHemisphere_injective : Function.Injective lowerHemisphere := by
   apply PolygonCell.ext
   have hconj : conj z.val = conj w.val := by
     apply Complex.ext
-    · simpa [lowerHemisphere, lowerHemisphereVector] using
+    · simpa only [conj_re, Fin.isValue, lowerHemisphere, lowerHemisphereVector, conj_im,
+      ContinuousMap.coe_mk,
+    Matrix.cons_val_zero] using
         congrArg (fun x : SphereRepresentative ↦ x.val 0) hzw
-    · simpa [lowerHemisphere, lowerHemisphereVector] using
+    · simpa only [conj_im, neg_inj, Fin.isValue, lowerHemisphere, lowerHemisphereVector,
+      conj_re,
+    ContinuousMap.coe_mk, Matrix.cons_val_one, Matrix.cons_val_zero] using
         congrArg (fun x : SphereRepresentative ↦ x.val 1) hzw
-  simpa using congrArg conj hconj
+  simpa only [RingHomCompTriple.comp_apply, RingHom.id_apply] using congrArg conj hconj
 
 /-- Zero hemisphere height means that the disk point lies on its boundary circle. -/
 theorem mem_sphere_of_hemisphereHeight_eq_zero {n : ℕ} (z : PolygonCell n)
@@ -160,8 +164,10 @@ theorem sphereGluingRel_of_upperHemisphere_eq_lowerHemisphere
       ⟨false, z⟩ ⟨true, w⟩ := by
   have hheight :
       PolygonCell.hemisphereHeight z = -PolygonCell.hemisphereHeight w := by
-    simpa [PolygonCell.upperHemisphere, PolygonCell.lowerHemisphere,
-      PolygonCell.upperHemisphereVector, PolygonCell.lowerHemisphereVector] using
+    simpa only [Fin.isValue, PolygonCell.upperHemisphere, PolygonCell.upperHemisphereVector,
+      ContinuousMap.coe_mk,
+    Matrix.cons_val, PolygonCell.lowerHemisphere,
+      PolygonCell.lowerHemisphereVector, conj_re, conj_im] using
       congrArg (fun x : SphereRepresentative ↦ x.val 2) hzw
   have hzheight : PolygonCell.hemisphereHeight z = 0 := by
     nlinarith [PolygonCell.hemisphereHeight_nonneg z,
@@ -175,11 +181,18 @@ theorem sphereGluingRel_of_upperHemisphere_eq_lowerHemisphere
       (PolygonCell.side (0 : Fin 1) t : PolygonCell 1).val = conj w.val := by
     rw [hit]
     apply Complex.ext
-    · simpa [PolygonCell.upperHemisphere, PolygonCell.lowerHemisphere,
-        PolygonCell.upperHemisphereVector, PolygonCell.lowerHemisphereVector] using
+    · simpa only [conj_re, Fin.isValue, PolygonCell.upperHemisphere,
+      PolygonCell.upperHemisphereVector,
+    ContinuousMap.coe_mk, Matrix.cons_val_zero,
+      PolygonCell.lowerHemisphere, PolygonCell.lowerHemisphereVector,
+    conj_im] using
         congrArg (fun x : SphereRepresentative ↦ x.val 0) hzw
-    · simpa [PolygonCell.upperHemisphere, PolygonCell.lowerHemisphere,
-        PolygonCell.upperHemisphereVector, PolygonCell.lowerHemisphereVector] using
+    · simpa only [conj_im, Fin.isValue, PolygonCell.upperHemisphere,
+      PolygonCell.upperHemisphereVector,
+    ContinuousMap.coe_mk, Matrix.cons_val_one,
+      Matrix.cons_val_zero, PolygonCell.lowerHemisphere,
+    PolygonCell.lowerHemisphereVector,
+      conj_re] using
         congrArg (fun x : SphereRepresentative ↦ x.val 1) hzw
   have hw :
       w = PolygonCell.side (0 : Fin 1) (unitInterval.symm t) := by

@@ -181,13 +181,13 @@ theorem expandDart_length_pos {n : ℕ} (a : Fin n)
 theorem dartWeight_eq_two_iff {n : ℕ} (a : Fin n)
     (d : SignedDart (Fin n)) :
     dartWeight a d = 2 ↔ edgeOfDart d = a := by
-  simp [dartWeight]
+  simp only [dartWeight, ite_eq_left_iff, OfNat.one_ne_ofNat, imp_false, Decidable.not_not]
 
 @[simp]
 theorem dartWeight_eq_one_iff {n : ℕ} (a : Fin n)
     (d : SignedDart (Fin n)) :
     dartWeight a d = 1 ↔ edgeOfDart d ≠ a := by
-  simp [dartWeight]
+  simp only [dartWeight, ite_eq_right_iff, OfNat.ofNat_ne_one, imp_false, ne_eq]
 
 /-- More generally, lookup inside an expanded block agrees with lookup in the substituted
 dart-word. -/
@@ -283,7 +283,10 @@ def blockPosition {weights : List ℕ} (p : BlockPosition weights) : ℕ :=
           | zero =>
               have hkl : k = l := by
                 apply Fin.ext
-                simpa [blockPosition] using heq
+                simpa only [List.get_eq_getElem, List.length_cons, Fin.coe_ofNat_eq_mod,
+                  Nat.zero_mod, blockPosition,
+    List.take_zero, List.sum_nil,
+                  zero_add] using heq
               subst l
               rfl
           | succ j =>
@@ -902,7 +905,7 @@ theorem faceHomeomorph_side_of_not_selected
   unfold PolygonCell.sideAngle
   rw [expandedStartIndex_val]
   push_cast
-  ring
+  ring_nf
 
 /-- Rescale the first half of a source side to a complete target side. -/
 def firstHalfParameter (t : unitInterval) (h : (t : ℝ) ≤ 1 / 2) :
@@ -953,7 +956,7 @@ theorem faceHomeomorph_side_firstHalf
   unfold PolygonCell.sideAngle
   rw [expandedStartIndex_val, firstHalfParameter_val]
   push_cast
-  ring
+  ring_nf
 
 theorem faceHomeomorph_side_secondHalf
     (P : FiniteCyclicPresentation) (a : P.Edge)
@@ -983,7 +986,7 @@ theorem faceHomeomorph_side_secondHalf
   unfold PolygonCell.sideAngle
   rw [secondExpandedIndex_val, secondHalfParameter_val]
   push_cast
-  ring
+  ring_nf
 
 theorem preHomeomorph_occurrenceSide_of_not_selected
     (P : FiniteCyclicPresentation) (a : P.Edge)
@@ -1088,7 +1091,7 @@ theorem symm_firstHalfParameter
         change 1 / 2 ≤ 1 - (t : ℝ)
         linarith) := by
   apply Subtype.ext
-  simp [firstHalfParameter, secondHalfParameter, unitInterval.symm]
+  simp only [unitInterval.symm, firstHalfParameter, secondHalfParameter]
   ring
 
 theorem symm_secondHalfParameter
@@ -1098,7 +1101,7 @@ theorem symm_secondHalfParameter
         change 1 - (t : ℝ) ≤ 1 / 2
         linarith) := by
   apply Subtype.ext
-  simp [firstHalfParameter, secondHalfParameter, unitInterval.symm]
+  simp only [unitInterval.symm, secondHalfParameter, firstHalfParameter]
   ring
 
 theorem expandedPairingSame_related
@@ -1168,8 +1171,9 @@ theorem preHomeomorph_generator_related
         simpa only [hdirection] using pairing.compatible
       have hparameter :
           pairing.identification.parameter t = t := by
-        simp [BoundaryPairing.identification, PolygonGluing.Identification.parameter,
-          hdirection]
+        simp only [PolygonGluing.Identification.parameter, BoundaryPairing.identification,
+          hdirection,
+    PolygonGluing.ParameterDirection.homeomorph_same_apply]
       rw [hparameter]
       by_cases hselected : pairing.source.edge = a
       · have htargetSelected : pairing.target.edge = a :=
@@ -1225,8 +1229,9 @@ theorem preHomeomorph_generator_related
         simpa only [hdirection] using pairing.compatible
       have hparameter :
           pairing.identification.parameter t = unitInterval.symm t := by
-        simp [BoundaryPairing.identification, PolygonGluing.Identification.parameter,
-          hdirection, PolygonGluing.ParameterDirection.homeomorph_opposite_apply]
+        simp only [PolygonGluing.Identification.parameter, BoundaryPairing.identification,
+          hdirection,
+    PolygonGluing.ParameterDirection.homeomorph_opposite_apply]
       rw [hparameter]
       by_cases hselected : pairing.source.edge = a
       · have htargetSelected : pairing.target.edge = a :=
@@ -1249,7 +1254,8 @@ theorem preHomeomorph_generator_related
             have hw :
                 dartWeight a pairing.source.dart = 2 :=
               (dartWeight_eq_two_iff a _).2 hselected
-            simp [oppositePairedOffset_val, hw, zeroOffset, oneOffset]
+            simp only [zeroOffset, oppositePairedOffset_val, hw, zero_add, Nat.add_one_sub_one,
+              oneOffset]
           rw [← hoffset, ← symm_firstHalfParameter t ht]
           exact expandedPairingOpposite_related P a validQ pairing hcompatible
             (zeroOffset a pairing.source.dart) (firstHalfParameter t ht)
@@ -1271,7 +1277,8 @@ theorem preHomeomorph_generator_related
             have hw :
                 dartWeight a pairing.source.dart = 2 :=
               (dartWeight_eq_two_iff a _).2 hselected
-            simp [oppositePairedOffset_val, hw, zeroOffset, oneOffset]
+            simp only [oneOffset, oppositePairedOffset_val, hw, Nat.reduceAdd, tsub_self,
+              zeroOffset]
           rw [← hoffset, ← symm_secondHalfParameter t ht']
           exact expandedPairingOpposite_related P a validQ pairing hcompatible
             (oneOffset a pairing.source.dart hselected)
@@ -1291,7 +1298,7 @@ theorem preHomeomorph_generator_related
           have hw :
               dartWeight a pairing.source.dart = 1 :=
             (dartWeight_eq_one_iff a _).2 hselected
-          simp [oppositePairedOffset_val, hw, zeroOffset]
+          simp only [zeroOffset, oppositePairedOffset_val, hw, zero_add, tsub_self]
         rw [← hoffset]
         exact expandedPairingOpposite_related P a validQ pairing hcompatible
           (zeroOffset a pairing.source.dart) t
@@ -1313,7 +1320,9 @@ theorem card_expandedSourcePosition
       rw [← List.sum_ofFn]
       congr 1
       ext i
-      simp [faceWeights]
+      simp only [List.get_eq_getElem, List.ofFn_getElem_eq_map, List.getElem?_map,
+        Option.map_eq_some_iff,
+    faceWeights]
     _ = ∑ q : (expand P a).Face,
           ((expand P a).boundary q).length := by
       apply Fintype.sum_equiv (faceEquiv P a)

@@ -122,7 +122,7 @@ theorem segment_inter_segment_of_affineIndependent {x y z : Plane}
     · rintro rfl
       exact ⟨Or.inr rfl, Or.inl rfl⟩
   rw [← Finset.coe_inter, hinter] at hmain
-  simpa [Finset.coe_insert, Finset.coe_singleton, convexHull_pair, convexHull_singleton]
+  simpa only [Finset.coe_insert, Finset.coe_singleton, convexHull_pair, convexHull_singleton]
     using hmain.symm
 
 /-- Every positive ball about one endpoint of a nondegenerate segment contains a relative
@@ -907,7 +907,7 @@ theorem single_support (p : Fin 3 → Plane) (hp : AffineIndependent ℝ p) :
     subst t
     change x ∈ convexHull ℝ
       (p '' (↑(Finset.univ : Finset (Fin 3)) : Set (Fin 3))) at hxt
-    simpa using hxt
+    simpa only [Finset.coe_univ, Set.image_univ] using hxt
   · intro hx
     refine ⟨Finset.univ, ?_, ?_⟩
     · change (Finset.univ : Finset (Fin 3)) ∈
@@ -915,7 +915,7 @@ theorem single_support (p : Fin 3 → Plane) (hp : AffineIndependent ℝ p) :
       exact Finset.mem_singleton_self _
     · change x ∈ convexHull ℝ
         (p '' (↑(Finset.univ : Finset (Fin 3)) : Set (Fin 3)))
-      simpa using hx
+      simpa only [Finset.coe_univ, Set.image_univ] using hx
 
 theorem toPlaneComplex_isPure2 : M.toPlaneComplex.IsPure2 := by
   intro s hs
@@ -1226,15 +1226,16 @@ theorem exists_weights_of_mem_cellCarrier {p : Plane} {t : Finset K.Vertex}
   obtain ⟨w, hw0, hw1, hwp⟩ := hp
   have himg : ∀ g : Plane → ℝ, ∑ q ∈ t.image K.position, g q = ∑ v ∈ t, g (K.position v) :=
     fun g => Finset.sum_image fun v _ v' _ h => K.position_injective h
-  refine ⟨fun v => if v ∈ t then w (K.position v) else 0, fun v hv => by simp [hv], ?_, ?_, ?_⟩
+  refine ⟨fun v => if v ∈ t then w (K.position v) else 0, fun v hv => by simp only [hv,
+    ↓reduceIte], ?_, ?_, ?_⟩
   · intro v
     by_cases hv : v ∈ t
-    · simpa [hv] using hw0 _ (Finset.mem_image_of_mem _ hv)
-    · simp [hv]
+    · simpa only [hv, ↓reduceIte] using hw0 _ (Finset.mem_image_of_mem _ hv)
+    · simp only [hv, ↓reduceIte, Std.le_refl]
   · rw [Finset.sum_ite_mem, Finset.univ_inter, ← himg]
     exact hw1
   · have hsupp : ∀ v ∉ t, (fun v => if v ∈ t then w (K.position v) else 0) v = 0 :=
-      fun v hv => by simp [hv]
+      fun v hv => by simp only [hv, ↓reduceIte]
     rw [K.baryEval_eq_sum_of_support hsupp]
     have hite : ∑ v ∈ t, (if v ∈ t then w (K.position v) else 0) • K.position v =
         ∑ v ∈ t, w (K.position v) • K.position v :=
@@ -1274,7 +1275,8 @@ theorem baryEval_injOn_face {t : Finset K.Vertex} (ht : t ∈ K.simplexes)
   funext v
   by_cases hv : v ∈ t
   · have := congrFun hind ⟨v, hv⟩
-    simpa using this
+    simpa only [Finset.univ_eq_attach, Finset.coe_attach, Set.mem_univ,
+      Set.indicator_of_mem] using this
   · rw [hx v hv, hy v hv]
 
 end PlaneComplex

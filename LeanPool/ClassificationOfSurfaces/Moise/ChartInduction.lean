@@ -64,10 +64,10 @@ private theorem barycentricVertex_sum {V K : Type*} [Fintype V] [DecidableEq V]
   rw [extendFaceCoordinates_vertex]
   funext k
   rw [Finset.sum_eq_single v.1]
-  · simp
+  · simp only [Pi.single_eq_same, one_mul]
   · intro w _ hw
-    simp [hw]
-  · simp
+    simp only [ne_eq, hw, not_false_eq_true, Pi.single_eq_of_ne, zero_mul]
+  · simp only [Finset.mem_univ, not_true_eq_false, Pi.single_eq_same, one_mul, IsEmpty.forall_iff]
 
 private def simplexLineMap {V : Type*} [Fintype V]
     (x y : stdSimplex ℝ V) (r : Set.Icc (0 : ℝ) 1) : stdSimplex ℝ V :=
@@ -3812,10 +3812,14 @@ private theorem ChartInductionGeometry.canonicalLocalFaceMap_vertex
   rw [ChartInductionGeometry.canonicalLocalFaceMap_val]
   funext k
   rw [Finset.sum_eq_single v]
-  · simp
+  · simp only [stdSimplex.vertex_coe, Pi.single_eq_same, Pi.smul_apply, smul_eq_mul, one_mul]
   · intro w _ hw
-    simp [stdSimplex.vertex, hw]
-  · simp
+    simp only [stdSimplex.vertex, stdSimplex.vertex_coe, ne_eq, hw, not_false_eq_true,
+      Pi.single_eq_of_ne,
+    zero_smul]
+  · simp only [Finset.univ_eq_attach, Finset.mem_attach, not_true_eq_false,
+    stdSimplex.vertex_coe,
+    Pi.single_eq_same, one_smul, IsEmpty.forall_iff]
 
 private theorem ChartInductionGeometry.exists_canonicalLocalVertex_eq_anchor
     {S : Type*} [TopologicalSpace S]
@@ -4959,14 +4963,16 @@ private theorem ChartInductionGeometry.canonicalLocalMark_endpoint_or_selectedEd
     by_cases hr0 : r.1 = 0
     · exact Or.inr (Or.inl (calc
         p = R.refined.edgePath e r := hpath.symm
-        _ = R.refined.edgePath e ⟨0, by simp⟩ := by
+        _ = R.refined.edgePath e ⟨0, by simp only [Set.mem_Icc, Std.le_refl, zero_le_one,
+          and_self]⟩ := by
           apply congrArg (R.refined.edgePath e)
           exact Subtype.ext hr0
         _ = R.refined.edgeFirstPoint e := R.refined.edgePath_zero e))
     · by_cases hr1 : r.1 = 1
       · exact Or.inr (Or.inr (calc
           p = R.refined.edgePath e r := hpath.symm
-          _ = R.refined.edgePath e ⟨1, by simp⟩ := by
+          _ = R.refined.edgePath e ⟨1, by simp only [Set.mem_Icc, zero_le_one, Std.le_refl,
+            and_self]⟩ := by
             apply congrArg (R.refined.edgePath e)
             exact Subtype.ext hr1
           _ = R.refined.edgeSecondPoint e := R.refined.edgePath_one e))

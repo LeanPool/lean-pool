@@ -50,10 +50,10 @@ theorem retainWord_contractWord_of_fresh_not_mem {n : ℕ}
   | cons d word ih =>
       have htail : P1.freshEdge n ∉ word.map edgeOfDart := by
         intro h
-        exact hfresh (by simp [h])
+        exact hfresh (by simp only [List.map_cons, List.mem_cons, h, or_true])
       have hd : edgeOfDart d ≠ P1.freshEdge n := by
         intro h
-        exact hfresh (by simp [h])
+        exact hfresh (by simp only [List.map_cons, h, List.mem_cons, List.mem_map, true_or])
       cases d with
       | pos e =>
           induction e using Fin.lastCases with
@@ -63,7 +63,8 @@ theorem retainWord_contractWord_of_fresh_not_mem {n : ℕ}
               rw [show P1.contractWord
                     (SignedDart.pos e.castSucc :: word) =
                   SignedDart.pos e :: P1.contractWord word by
-                simp [P1.contractWord]]
+                simp only [P1.contractWord, P1.contractDart_pos_castSucc, Option.some.injEq,
+                  List.filterMap_cons_some]]
               change
                 P2.retainWord
                     (SignedDart.pos e :: P1.contractWord word) =
@@ -81,7 +82,8 @@ theorem retainWord_contractWord_of_fresh_not_mem {n : ℕ}
               rw [show P1.contractWord
                     (SignedDart.neg e.castSucc :: word) =
                   SignedDart.neg e :: P1.contractWord word by
-                simp [P1.contractWord]]
+                simp only [P1.contractWord, P1.contractDart_neg_castSucc, Option.some.injEq,
+                  List.filterMap_cons_some]]
               change
                 P2.retainWord
                     (SignedDart.neg e :: P1.contractWord word) =
@@ -281,8 +283,8 @@ theorem target_isSurfaceValid {n : ℕ}
     have hsourceNonempty :
         ([.pos (P1.freshEdge n), .neg (P1.freshEdge n)] ++
           P2.retainWord X) ≠ [] := by
-      simp
-    simpa [target, Dyck.oneFace_boundary] using hX
+      simp only [List.cons_append, List.nil_append, ne_eq, reduceCtorEq, not_false_eq_true]
+    simpa only [target, Dyck.oneFace_boundary, ne_eq] using hX
   · intro f g _h
     exact Dyck.oneFace_face_eq_zero X f |>.trans
       (Dyck.oneFace_face_eq_zero X g).symm

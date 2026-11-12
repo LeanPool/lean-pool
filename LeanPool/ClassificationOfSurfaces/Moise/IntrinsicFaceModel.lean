@@ -254,15 +254,19 @@ noncomputable def faceReindexFromStandard (t : K.Face)
   apply Subtype.ext
   funext v
   by_cases hv : v ∈ t.1
-  · simp [faceReindexFromStandard, faceReindexToStandard, hv]
-  · simp [faceReindexFromStandard, hv, x.2 v hv]
+  · simp only [faceReindexFromStandard, PlaneComplex.toIntrinsic_faces,
+    faceReindexToStandard,
+    Equiv.apply_symm_apply, dite_eq_ite, hv, ↓reduceIte]
+  · simp only [faceReindexFromStandard, PlaneComplex.toIntrinsic_faces, hv, ↓reduceDIte, x.2 v hv]
 
 @[simp] theorem faceReindexToStandard_fromStandard (t : K.Face)
     (z : standardTrianglePlaneComplex.toIntrinsic.realization) :
     K.faceReindexToStandard t (K.faceReindexFromStandard t z) = z := by
   apply Subtype.ext
   funext i
-  simp [faceReindexToStandard, faceReindexFromStandard]
+  simp only [PlaneComplex.toIntrinsic_faces, faceReindexToStandard, faceReindexFromStandard,
+    SetLike.coe_mem,
+    ↓reduceDIte, Subtype.coe_eta, Equiv.symm_apply_apply]
 
 theorem continuous_faceReindexToStandard (t : K.Face) :
     Continuous (K.faceReindexToStandard t) := by

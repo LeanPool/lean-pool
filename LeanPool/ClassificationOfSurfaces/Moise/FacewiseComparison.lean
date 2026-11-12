@@ -70,11 +70,11 @@ theorem continuous_triCoord (j : Fin 3) : Continuous (triCoord j) :=
 
 @[simp] theorem triCoord_vertex_self (j : Fin 3) :
     triCoord j (standardTriangleVertex j) = 1 := by
-  simpa [triCoord] using stdTriBasis.coord_apply_eq j
+  simpa only [triCoord, stdTriBasis_apply] using stdTriBasis.coord_apply_eq j
 
 theorem triCoord_vertex_ne {j k : Fin 3} (hjk : j ≠ k) :
     triCoord j (standardTriangleVertex k) = 0 := by
-  simpa [triCoord] using stdTriBasis.coord_apply_ne hjk
+  simpa only [triCoord, stdTriBasis_apply] using stdTriBasis.coord_apply_ne hjk
 
 theorem sum_triCoord (x : Plane) : ∑ j, triCoord j x = 1 :=
   stdTriBasis.sum_coord_apply_eq_one x
@@ -137,7 +137,7 @@ noncomputable def triCenter : Plane :=
     (s := (Finset.univ : Finset (Fin 3))) (i := j) (Finset.mem_univ j)
   have hcentroid : Finset.univ.centroid ℝ ⇑stdTriBasis = triCenter := rfl
   rw [hcentroid] at h
-  simpa [triCoord] using h
+  simpa only [triCoord, one_div, Finset.card_univ, Fintype.card_fin, Nat.cast_ofNat] using h
 
 theorem triCenter_mem_standardFaceRegion : triCenter ∈ standardFaceRegion := by
   rw [mem_standardFaceRegion_iff]

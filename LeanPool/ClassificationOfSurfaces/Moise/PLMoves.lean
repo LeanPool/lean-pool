@@ -447,7 +447,8 @@ theorem thinKiteAmbientHomeomorph_image (δ : ℝ) (hδ : 0 < δ) :
   have hpull : outer.symm '' thinKitePatch δ = diamondPatch := by
     rw [← houter]
     ext p
-    simp
+    simp only [Set.mem_image, exists_exists_and_eq_and, Homeomorph.symm_apply_apply,
+      exists_eq_right]
   have hmove : move '' diamondPatch = diamondPatch :=
     diamondFanAmbientHomeomorph_image
       (thinKiteSource δ) (thinKiteTarget δ)
@@ -498,7 +499,10 @@ theorem transportedThinKiteHomeomorph_image
   let thin := thinKiteAmbientHomeomorph δ hδ
   have hpull : affine.symm '' (affine '' thinKitePatch δ) = thinKitePatch δ := by
     ext p
-    simp [affine]
+    simp only [affineEquivHomeomorph_symm_apply, affineEquivHomeomorph_apply,
+      Set.mem_image,
+    exists_exists_and_eq_and, AffineEquiv.symm_apply_apply, exists_eq_right,
+      affine]
   change (fun p => affine (thin (affine.symm p))) '' (affine '' thinKitePatch δ) =
     affine '' thinKitePatch δ
   rw [← Set.image_image affine (fun p => thin (affine.symm p)),

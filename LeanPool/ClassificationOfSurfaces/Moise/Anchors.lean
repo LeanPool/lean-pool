@@ -44,8 +44,14 @@ theorem standardTriangle_not_collinear :
     ¬ Collinear ℝ ({!₂[(0 : ℝ), 0], !₂[(1 : ℝ), 0], !₂[(0 : ℝ), 1]} : Set Plane) := by
   intro hcol
   obtain ⟨v, hv⟩ := (collinear_iff_of_mem (Set.mem_insert _ _)).mp hcol
-  obtain ⟨rB, hB⟩ := hv !₂[(1 : ℝ), 0] (by simp)
-  obtain ⟨rC, hC⟩ := hv !₂[(0 : ℝ), 1] (by simp)
+  obtain ⟨rB, hB⟩ := hv !₂[(1 : ℝ), 0] (by simp only [Set.mem_insert_iff, WithLp.toLp.injEq,
+    Matrix.vecCons_inj, one_ne_zero, and_true,
+    Set.mem_singleton_iff, zero_ne_one, and_self,
+    or_false, or_true])
+  obtain ⟨rC, hC⟩ := hv !₂[(0 : ℝ), 1] (by simp only [Set.mem_insert_iff, WithLp.toLp.injEq,
+    Matrix.vecCons_inj, one_ne_zero, and_true, and_false,
+    zero_ne_one, and_self,
+    Set.mem_singleton_iff, or_true])
   have hB0 := congrArg (fun p : Plane => p 0) hB
   have hC0 := congrArg (fun p : Plane => p 0) hC
   have hC1 := congrArg (fun p : Plane => p 1) hC
@@ -156,7 +162,8 @@ theorem interior_convexHull_affineBasis (b : AffineBasis (Fin 3) ℝ Plane) :
     have hcoord : b.coord i y = -δ := by
       dsimp [y]
       rw [AffineMap.apply_lineMap, b.coord_apply_eq, hzero']
-      simp [AffineMap.lineMap_apply_module]
+      simp only [AffineMap.lineMap_apply_module, sub_add_cancel_left, smul_eq_mul, mul_one,
+        mul_zero, add_zero]
     rw [hcoord] at hycoord
     linarith
   · intro x hx

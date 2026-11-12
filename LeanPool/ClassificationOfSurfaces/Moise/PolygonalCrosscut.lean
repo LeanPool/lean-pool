@@ -92,10 +92,10 @@ theorem insertZeroEdgeSegment_zero (J : PolygonalCircle) (p : Plane) :
   have htwo : 1 < J.n + 1 := by
     have := J.three_le
     omega
-  rw [show (0 : ZMod (J.n + 1)) + 1 = 1 by simp]
+  rw [show (0 : ZMod (J.n + 1)) + 1 = 1 by simp only [zero_add]]
   unfold insertZeroVertex
   rw [ZMod.val_one_eq_one_mod, Nat.mod_eq_of_lt htwo]
-  simp
+  simp only [one_ne_zero, ↓reduceIte, Nat.cast_one]
 
 theorem insertZeroEdgeSegment_middle (J : PolygonalCircle) (p : Plane) {m : ℕ}
     (hm0 : 0 < m) (hm : m < J.n) :
@@ -146,7 +146,7 @@ theorem insertZeroVertex_adjacent_ne (J : PolygonalCircle) {p : Plane}
     have htwo : 1 < J.n + 1 := by
       have := J.three_le
       omega
-    have hsucc : (0 : ZMod (J.n + 1)) + 1 = (1 : ZMod (J.n + 1)) := by simp
+    have hsucc : (0 : ZMod (J.n + 1)) + 1 = (1 : ZMod (J.n + 1)) := by simp only [zero_add]
     rw [hsucc]
     unfold insertZeroVertex
     rw [ZMod.val_one_eq_one_mod, Nat.mod_eq_of_lt htwo]
@@ -762,7 +762,7 @@ theorem rotate_carrier (J : PolygonalCircle) (a : ZMod J.n) :
     obtain ⟨i, hi⟩ := hp
     apply J.edgeSegment_subset_carrier (i + a)
     change p ∈ segment ℝ (J.vertex (i + a)) (J.vertex (i + a + 1))
-    convert hi using 1; ring
+    convert hi using 1; ring_nf
   · intro p hp
     unfold carrier at hp
     rw [Set.mem_iUnion] at hp
@@ -771,7 +771,7 @@ theorem rotate_carrier (J : PolygonalCircle) (a : ZMod J.n) :
     unfold carrier rotate edgeSegment
     rw [Set.mem_iUnion]
     refine ⟨i - a, ?_⟩
-    convert hi using 1; ring
+    convert hi using 1; ring_nf
 
 /-- The bounded and unbounded complementary components depend only on the polygon carrier, not
 on its cyclic indexing. -/
@@ -1113,9 +1113,9 @@ theorem exists_vertex_normalization :
   have hd0 : d ≠ 0 := by
     intro hd
     apply hi0
-    have : -d = i := by simp [d]
+    have : -d = i := by simp only [neg_neg, d]
     rw [hd] at this
-    simpa using this.symm
+    simpa only [neg_zero] using this.symm
   have hRcarrier : R.carrier = J.carrier := by
     exact (JQ.rotate_carrier i).trans (hJQcarrier.trans hJPcarrier)
   have hRzero : R.vertex 0 = C.P := by
@@ -1559,7 +1559,7 @@ theorem endpoints_mem_forwardArc {k : ℕ} (hk2 : 2 ≤ k) (_ : k < J.n)
     have hmem : C.P ∈ J.edgeSegment 0 := by
       rw [← hP]
       exact left_mem_segment ℝ _ _
-    simpa using hmem
+    simpa only [Nat.cast_zero] using hmem
   · simp only [forwardArc, Set.mem_iUnion]
     refine ⟨⟨k - 1, by omega⟩, ?_⟩
     change C.Q ∈ J.edgeSegment ((k - 1 : ℕ) : ZMod J.n)
@@ -1581,7 +1581,7 @@ theorem forwardArc_interior_nonempty {k : ℕ} (hk2 : 2 ≤ k) (_ : k < J.n)
     have hmem : J.vertex 1 ∈ J.edgeSegment 0 := by
       unfold edgeSegment
       simpa only [zero_add] using right_mem_segment ℝ (J.vertex 0) (J.vertex 1)
-    simpa using hmem
+    simpa only [Nat.cast_zero] using hmem
   · intro hendpoint
     rcases hendpoint with h | h
     · apply J.adjacent_ne 0
@@ -1915,7 +1915,7 @@ theorem rotate_edgeCrossed_iff (J : PolygonalCircle) (a i : ZMod J.n) (P : Plane
     (J.rotate a).EdgeCrossed i P ↔ J.EdgeCrossed (i + a) P := by
   change SegmentCrossed (J.vertex (i + a)) (J.vertex ((i + 1) + a)) P ↔
     SegmentCrossed (J.vertex (i + a)) (J.vertex (i + a + 1)) P
-  abel
+  abel_nf
 
 namespace ProperChord
 

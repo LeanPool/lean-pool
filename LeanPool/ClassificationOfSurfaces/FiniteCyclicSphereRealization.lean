@@ -216,10 +216,13 @@ theorem twoMonogonPreHomeomorph_boundaryPairing_source
     twoMonogonPreHomeomorph
         (twoMonogonBoundaryPairing.identification.source.point t) =
       SurfaceCellComplex.sphereBoundaryPairing.identification.source.point t := by
-  simp [twoMonogonBoundaryPairing, twoMonogonPositiveOccurrence,
+  simp only [PolygonGluing.Side.point, twoMonogonBoundaryPairing, twoMonogonPositiveOccurrence,
+    Fin.isValue,
+    BoundaryPairing.identification_source, occurrenceSide,
     SurfaceCellComplex.sphereBoundaryPairing,
-    SurfaceCellComplex.spherePositiveOccurrence, occurrenceSide,
-    SurfaceCellComplex.occurrenceSide, PolygonGluing.Side.point]
+    SurfaceCellComplex.spherePositiveOccurrence,
+    SurfaceCellComplex.BoundaryPairing.identification_source,
+    SurfaceCellComplex.occurrenceSide]
   congr 2
 
 theorem twoMonogonPreHomeomorph_boundaryPairing_target
@@ -227,10 +230,13 @@ theorem twoMonogonPreHomeomorph_boundaryPairing_target
     twoMonogonPreHomeomorph
         (twoMonogonBoundaryPairing.identification.target.point t) =
       SurfaceCellComplex.sphereBoundaryPairing.identification.target.point t := by
-  simp [twoMonogonBoundaryPairing, twoMonogonNegativeOccurrence,
+  simp only [PolygonGluing.Side.point, twoMonogonBoundaryPairing, twoMonogonNegativeOccurrence,
+    Fin.isValue,
+    BoundaryPairing.identification_target, occurrenceSide,
     SurfaceCellComplex.sphereBoundaryPairing,
-    SurfaceCellComplex.sphereNegativeOccurrence, occurrenceSide,
-    SurfaceCellComplex.occurrenceSide, PolygonGluing.Side.point]
+    SurfaceCellComplex.sphereNegativeOccurrence,
+    SurfaceCellComplex.BoundaryPairing.identification_target,
+    SurfaceCellComplex.occurrenceSide]
   congr 2
 
 theorem twoMonogonPreHomeomorph_reverseBoundaryPairing_source
@@ -239,11 +245,17 @@ theorem twoMonogonPreHomeomorph_reverseBoundaryPairing_source
         (twoMonogonReverseBoundaryPairing.identification.source.point t) =
       (SurfaceCellComplex.swapIdentification
         SurfaceCellComplex.sphereBoundaryPairing.identification).source.point t := by
-  simp [twoMonogonReverseBoundaryPairing, twoMonogonNegativeOccurrence,
-    SurfaceCellComplex.swapIdentification,
+  simp only [PolygonGluing.Side.point, twoMonogonReverseBoundaryPairing,
+    twoMonogonNegativeOccurrence,
+    Fin.isValue, BoundaryPairing.identification_source,
+    occurrenceSide,
     SurfaceCellComplex.sphereBoundaryPairing,
-    SurfaceCellComplex.sphereNegativeOccurrence, occurrenceSide,
-    SurfaceCellComplex.occurrenceSide, PolygonGluing.Side.point]
+    SurfaceCellComplex.sphereNegativeOccurrence,
+    SurfaceCellComplex.swapIdentification,
+    SurfaceCellComplex.BoundaryPairing.identification_target,
+    SurfaceCellComplex.occurrenceSide,
+    SurfaceCellComplex.BoundaryPairing.identification_source,
+    SurfaceCellComplex.BoundaryPairing.identification_direction]
   congr 2
 
 theorem twoMonogonPreHomeomorph_reverseBoundaryPairing_target
@@ -252,11 +264,17 @@ theorem twoMonogonPreHomeomorph_reverseBoundaryPairing_target
         (twoMonogonReverseBoundaryPairing.identification.target.point t) =
       (SurfaceCellComplex.swapIdentification
         SurfaceCellComplex.sphereBoundaryPairing.identification).target.point t := by
-  simp [twoMonogonReverseBoundaryPairing, twoMonogonPositiveOccurrence,
-    SurfaceCellComplex.swapIdentification,
+  simp only [PolygonGluing.Side.point, twoMonogonReverseBoundaryPairing,
+    twoMonogonPositiveOccurrence,
+    Fin.isValue, BoundaryPairing.identification_target,
+    occurrenceSide,
     SurfaceCellComplex.sphereBoundaryPairing,
-    SurfaceCellComplex.spherePositiveOccurrence, occurrenceSide,
-    SurfaceCellComplex.occurrenceSide, PolygonGluing.Side.point]
+    SurfaceCellComplex.spherePositiveOccurrence,
+    SurfaceCellComplex.swapIdentification,
+    SurfaceCellComplex.BoundaryPairing.identification_target,
+    SurfaceCellComplex.occurrenceSide,
+    SurfaceCellComplex.BoundaryPairing.identification_source,
+    SurfaceCellComplex.BoundaryPairing.identification_direction]
   congr 2
 
 /-- Relabeling the two monogon faces sends the finite-cyclic gluing relation into the typed

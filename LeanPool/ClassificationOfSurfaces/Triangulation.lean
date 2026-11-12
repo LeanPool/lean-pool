@@ -466,7 +466,7 @@ theorem incidenceCertificate_of_surfaceIncidence
     apply Subtype.ext
     exact Finset.eq_of_powersetCard_eq
       ((T.triangle_card f).trans (T.triangle_card g).symm)
-      (by decide) (by simp [T.triangle_card f])
+      (by decide) (by simp only [T.triangle_card f, Nat.reduceLeDiff])
       (T.powersetCard_eq_of_boundary_rotated hrot)
   · intro e
     rcases Finset.mem_biUnion.mp e.2 with ⟨t, ht, hep⟩
