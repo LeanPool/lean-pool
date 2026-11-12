@@ -1,0 +1,56 @@
+slug: descriptive-counting
+title: 'Descriptive counting complexity and parsimonious completeness of #SAT'
+summary: >-
+  Defines counting problems on finite nonempty relational structures, existential second-order
+  witness counts, and first-order counting reductions. Constructs a parsimonious Tseitin
+  interpretation and proves that the number of satisfying assignments of its CNF equals
+  the number of witnesses of the source formula. Consequently #SAT is complete for the
+  library's logically defined #P under parsimonious reductions. Includes the supporting
+  first-order interpretation, second-order definability, fixed-point, and counting-reduction
+  infrastructure. The scope is descriptive complexity; no equivalence with a string-based
+  resource-bounded machine model is claimed by this import.
+branch: computational complexity
+entry_module: LeanPool.DescriptiveCounting
+authors:
+- Pierre Senellart
+source:
+  title: Descriptive Complexity counting release v1.4.0
+  url: https://github.com/PierreSenellart/descriptive-complexity/tree/2d853cdde85a1b5c3d855b6f20b5f07f4c1a73e8
+  github_repo: PierreSenellart/descriptive-complexity
+  commit: 2d853cdde85a1b5c3d855b6f20b5f07f4c1a73e8
+  announcement: https://github.com/PierreSenellart/descriptive-complexity/releases/tag/v1.4.0
+  announcement_date: '2026-10-21T10:25:15Z'
+  material_completion: https://github.com/PierreSenellart/descriptive-complexity/commit/64112ea03f2a66932b07a90897f077208430c393
+  material_completion_date: '2026-10-04T22:24:01Z'
+  upstream_notice: Copyright (c) 2026 Pierre Senellart. All rights reserved.
+license: Apache-2.0
+status: verified
+provenance: AI
+main_declarations:
+- DescriptiveComplexity.sharpSat_sharpTseitin
+- DescriptiveComplexity.sharpSat_sharpP_parsimoniousComplete
+- DescriptiveComplexity.sharpSat_sharpP_complete
+main_results:
+- declaration: DescriptiveComplexity.sharpSat_sharpTseitin
+  informal: >-
+    For every finite nonempty ordered source structure, the CNF produced by the
+    parsimonious Tseitin interpretation has exactly as many satisfying assignments as
+    the source second-order block has witnesses satisfying its first-order kernel.
+- declaration: DescriptiveComplexity.sharpSat_sharpP_parsimoniousComplete
+  informal: >-
+    Counting the satisfying assignments of a CNF is complete under parsimonious
+    first-order reductions for counting problems defined by existential second-order
+    witness counts on finite nonempty relational structures.
+- declaration: DescriptiveComplexity.sharpSat_sharpP_complete
+  informal: >-
+    The same counting problem is complete for the library's #P under its
+    subtractive reduction notion.
+tags:
+- complexity
+- counting
+- finite-model-theory
+- satisfiability
+msc:
+- 68Q15
+- 03C13
+- 68V15
