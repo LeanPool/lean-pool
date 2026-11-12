@@ -32,15 +32,15 @@ lemma lpNorm_supporting_vector_dual_norm_eq_one {p : ℝ} (hp : 1 < p)
   have hpairLower : lpNorm p y ≤ O3.pairing g y := by
     have h := hsupport 0
     have hzero : lpNorm p (0 : Point d) = 0 :=
-      O3.lpNorm_zero (by linarith : 0 < p)
+      O3.lpNorm_zero (by linarith only [hp] : 0 < p)
     have hneg : O3.pairing g ((0 : Point d) - y) = -O3.pairing g y := by
       simp [O3.pairing]
     rw [hzero, hneg] at h
-    linarith
+    linarith only [h]
   have hholder := O3.pairing_le_lpNorm_mul
     (O3.holderConjugate_conjugateExponent hp).symm g y
   have hlower : 1 ≤ lpNorm (conjugateExponent p) g := by
-    nlinarith [O3.lpNorm_nonneg (conjugateExponent p) g]
+    nlinarith only [hholder, hpairLower, hynorm, O3.lpNorm_nonneg (conjugateExponent p) g]
   have hgNorm : 0 < lpNorm (conjugateExponent p) g := lt_of_lt_of_le zero_lt_one hlower
   obtain ⟨hwNorm, hwPair⟩ := V7.normingDirection_correct p hp d g hgNorm
   let w := normingDirection (conjugateExponent p) g
@@ -108,7 +108,7 @@ lemma supporting_vector_eq_coordinate_gradient
     rw [pairingCLM_apply, pairingCLM_apply]
     simp only [O3.pairing, Pi.sub_apply, mul_sub,
       Finset.sum_sub_distrib] at hs ⊢
-    linarith
+    linarith only [hs]
   have hlocal : IsLocalMin F x := Filter.Eventually.of_forall hmin
   have hder : HasFDerivAt F
       (pairingCLM (gradient x) - pairingCLM g) x := by
@@ -122,7 +122,7 @@ lemma supporting_vector_eq_coordinate_gradient
   have happ := congrArg (fun L : Point d →L[ℝ] ℝ => L (coordinateUnit i)) hzero
   simp only [sub_apply, pairingCLM_apply, zero_apply] at happ
   simp [O3.pairing, coordinateUnit] at happ
-  linarith
+  linarith only [happ]
 
 lemma shiftedLpNorm_convex_oneLipschitz {p c : ℝ} (hp : 1 ≤ p) :
     O3.IsConvexObjective (fun x : Point d => lpNorm p x - c) ∧
@@ -135,7 +135,7 @@ lemma shiftedLpNorm_convex_oneLipschitz {p c : ℝ} (hp : 1 ≤ p) :
       (Set.mem_univ x) (Set.mem_univ y) ha hb hab
     have hc := congrArg (fun z : ℝ => z * c) hab
     simp only [smul_eq_mul] at hn ⊢
-    nlinarith
+    linarith only [hc, hn]
   · intro x y
     have hxy := lpNorm_add_le hp (x - y) y
     have hyx := lpNorm_add_le hp (y - x) x
@@ -147,7 +147,7 @@ lemma shiftedLpNorm_convex_oneLipschitz {p c : ℝ} (hp : 1 ≤ p) :
     rw [show y - x + x = y by module, hneg] at hyx
     rw [show lpNorm p x - c - (lpNorm p y - c) =
       lpNorm p x - lpNorm p y by ring]
-    exact abs_le.2 ⟨by linarith, by linarith⟩
+    exact abs_le.2 ⟨by linarith only [hyx], by linarith only [hxy]⟩
 
 lemma partialG_le_lpNorm (data : LowerCompletionData p d T)
     {t : ℕ} (hp : 1 ≤ p) (hdelta : 0 ≤ data.delta)
@@ -158,9 +158,9 @@ lemma partialG_le_lpNorm (data : LowerCompletionData p d T)
   rw [hiEq]
   have hcoord := norm_apply_le_lpNorm hp x (data.sigma i)
   rcases hxi i hit with hxiI | hxiI <;> rw [hxiI] <;> norm_num
-  · nlinarith [le_abs_self (x (data.sigma i)),
+  · linarith only [hcoord, hdelta, le_abs_self (x (data.sigma i)),
       mul_nonneg (Nat.cast_nonneg i) hdelta]
-  · nlinarith [neg_le_abs (x (data.sigma i)),
+  · linarith only [hcoord, hdelta, neg_le_abs (x (data.sigma i)),
       mul_nonneg (Nat.cast_nonneg i) hdelta]
 
 lemma partialH_eq_shiftedLpNorm_of_three_le
@@ -175,7 +175,7 @@ lemma partialH_eq_shiftedLpNorm_of_three_le
   rw [hH]
   apply max_eq_right
   have hG := partialG_le_lpNorm data hp hdelta hxi hres x
-  linarith
+  linarith only [hG, hx]
 
 lemma smooth_shiftedLpNorm_gradient_dual_norm_eq_one
     (kernel : SmoothingKernelData p d) (hp : 1 < p)
@@ -205,11 +205,11 @@ lemma smooth_shiftedLpNorm_gradient_dual_norm_eq_one
       funext i
       have hi := congrFun hy0 i
       simp only [Pi.add_apply, Pi.zero_apply, Pi.neg_apply] at hi ⊢
-      linarith
+      linarith only [hi]
     have hnormvx : lpNorm p v = lpNorm p x := by
       rw [hvx]
       exact O3.lpNorm_neg p x
-    linarith
+    linarith only [hnormvx, hvNorm, hx]
   let g : Point d := -kernel.gradPhi ((1 / chi) • v)
   have hellSupport : ∀ z : Point d,
       lpNorm p y + O3.pairing g (z - y) ≤ lpNorm p z := by
@@ -217,7 +217,7 @@ lemma smooth_shiftedLpNorm_gradient_dual_norm_eq_one
     have hs := minimizer_supporting_inequality kernel hchi ell hell.1 hgradPhi hv z
     change ell y + O3.pairing g (z - y) ≤ ell z at hs
     dsimp [ell] at hs
-    linarith
+    linarith only [hs]
   have hgNorm := lpNorm_supporting_vector_dual_norm_eq_one hp hy hellSupport
   have hlocalSupport : ∀ z : Point d,
       localSmoothingValue kernel chi ell x + O3.pairing g (z - x) ≤

@@ -50,7 +50,10 @@ theorem euclideanEstimateFunction_le_model {d : ℕ}
             (x - observation.point)) ≤
         M / 2 * lpNorm 2 (x - P.x0) ^ (2 : ℕ) +
           (euclideanA k + a) * P.f x
-      nlinarith
+      calc
+        _ ≤ (M / 2 * lpNorm 2 (x - P.x0) ^ 2 + euclideanA k * P.f x) +
+            a * P.f x := add_le_add hprev (mul_le_mul_of_nonneg_left hlinear ha)
+        _ = _ := by ring
 
 /-- One accepted actual step closes with exact cancellation
 `a_(k+1)^2=A_(k+1)`. -/
@@ -91,9 +94,8 @@ theorem euclideanEstimate_oneStep {d : ℕ}
     rw [abs_of_nonneg hratio]
   have hquad : Aplus * (M / 2 * (lpNorm 2 (xNext - y)) ^ (2 : ℕ)) =
       M / 2 * (lpNorm 2 (zNext - z)) ^ (2 : ℕ) := by
-    rw [hnorm]
+    rw [hnorm, mul_pow, div_pow, haSq]
     field_simp [ne_of_gt hAplusPos]
-    nlinarith
   have hlinstep : Aplus * pairing g (xNext - y) =
       a * pairing g (zNext - z) := by
     rw [hdisp, Stage2RouteD.pairing_smul_right]
@@ -137,7 +139,7 @@ theorem euclideanEstimate_oneStep {d : ℕ}
       A * P.f xA + a * (P.f y + pairing g (zNext - y)) := by
     rw [hAplus]
     rw [hsplit, hantisym]
-    nlinarith
+    nlinarith only [hfirst, hbalance, hA]
   have hguardRaw : P.f xNext ≤ P.f y + pairing g (xNext - y) +
       M / 2 * (lpNorm 2 (xNext - y)) ^ (2 : ℕ) := by
     simpa [euclideanEstimateGuard, GuardCheck.Holds, upperModelGuard,
@@ -147,7 +149,7 @@ theorem euclideanEstimate_oneStep {d : ℕ}
   have hupper : Aplus * P.f xNext ≤
       A * P.f xA + a * (P.f y + pairing g (zNext - y)) +
         M / 2 * (lpNorm 2 (zNext - z)) ^ (2 : ℕ) := by
-    nlinarith [hmodel, hlinstep, hquad]
+    linarith only [hmodel, hlinstep, hquad, hguardScaled]
   have hstrong : euclideanEstimateFunction P M k z +
       M / 2 * (lpNorm 2 (zNext - z)) ^ (2 : ℕ) ≤
       euclideanEstimateFunction P M k zNext := by
@@ -161,7 +163,7 @@ theorem euclideanEstimate_oneStep {d : ℕ}
     simpa only [A, xA, z, euclideanEstimateMinimum] using hprev
   change Aplus * P.f xNext ≤ euclideanEstimateFunction P M (k + 1) zNext
   rw [hupdate]
-  nlinarith [hprev']
+  linarith only [hupper, hstrong, hprev']
 
 /-- The source vector estimate-sequence invariant on the actual accepted
 prefix. -/
@@ -210,13 +212,13 @@ theorem euclideanGap : EuclideanGapStatement := by
   have heval : euclideanEstimateMinimum P M m ≤
       M / 2 * D ^ 2 + euclideanA m * P.f xclose := by
     have hsq : (lpNorm 2 (xclose - P.x0)) ^ (2 : ℕ) ≤ D ^ 2 := by
-      nlinarith [lpNorm_nonneg 2 (xclose - P.x0)]
-    exact hmin.trans (hmodel.trans (by nlinarith))
+      exact pow_le_pow_left₀ (lpNorm_nonneg 2 (xclose - P.x0)) hcloseD 2
+    exact hmin.trans (hmodel.trans (by nlinarith only [hM, hsq]))
   have hgapClose :
       P.f (euclideanEstimateState P M m).accelerated - P.f xclose ≤
         M * D ^ 2 / (2 * euclideanA m) := by
     rw [le_div_iff₀ (mul_pos (by norm_num) hA)]
-    nlinarith
+    linarith only [heval, hinvariant]
   intro xstar hxstar
   have hopt : P.f xstar = P.f xclose := by
     exact le_antisymm (hxstar xclose) (hxclose xstar)

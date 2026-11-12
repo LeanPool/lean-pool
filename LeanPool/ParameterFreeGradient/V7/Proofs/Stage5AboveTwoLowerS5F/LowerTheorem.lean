@@ -41,7 +41,7 @@ theorem physical_query_gradient {p : ℝ} {d T : ℕ}
     1 / (128 * repairMpd p d * (T : ℝ) ^ (1 + 2 / p)) at hbar
   let B := L * R / rT
   have hB : 0 < B := by dsimp [B]; positivity
-  have hq := O3.one_lt_conjugateExponent (by linarith : 1 < p)
+  have hq := O3.one_lt_conjugateExponent (by linarith only [hp] : 1 < p)
   change lpNorm (conjugateExponent p)
       (B • data.completedOracle.gradient
         (physicalBackward x0 R rT (physicalForward x0 R rT (data.queries t)))) ≥ _
@@ -55,14 +55,14 @@ theorem physical_query_gradient {p : ℝ} {d T : ℕ}
   have hBquarter : L * R / 4 < B := by
     dsimp [B]
     rw [div_lt_div_iff₀ (by norm_num : (0 : ℝ) < 4) hrT]
-    nlinarith
+    nlinarith only [hLR, hrTupper]
   have hbarPos : 0 < lpNorm (conjugateExponent p)
       (data.completedOracle.gradient (data.queries t)) := by
     have htarget : 0 < 1 / (128 * repairMpd p d * (T : ℝ) ^ (1 + 2 / p)) := by
       apply one_div_pos.mpr
       exact mul_pos (mul_pos (by norm_num) (repairMpd_pos hp hd))
         (Real.rpow_pos_of_pos (by positivity) _)
-    linarith
+    linarith only [hbar, htarget]
   apply le_of_lt
   calc
     B * lpNorm (conjugateExponent p)
@@ -111,7 +111,7 @@ theorem _root_.V7.knownParameterAboveTwoLower :
   have hkernel := repairKernel_assumptions hp hd
   obtain ⟨rT, hrTlower, hrTupper, hradiusAll⟩ :=
     V7.aboveLowerOptimizerRadius p hp d T hd hT hTd kernel hkernel
-  have hrT : 0 < rT := by linarith
+  have hrT : 0 < rT := by linarith only [hrTlower]
   let normAlg := normalizedAdversaryAlgorithm x0 L R rT algorithm
   let data := unitObjectiveData p d T normAlg hT hTd
   have hassum : LowerObjectiveAssumptions data :=
@@ -158,7 +158,7 @@ theorem _root_.V7.knownParameterAboveTwoLower :
     obtain ⟨obs', hhead', hlower⟩ := hquery t ht
     have hobs : obs = obs' := Option.some.inj (hhead.symm.trans hhead')
     subst obs'
-    linarith
+    linarith only [hepsSmall, hlower, hsmall]
   refine ⟨inst, trace, repairMpd p d, rfl, ?_, ?_, ?_,
     repairMpd_pos hp hd, ?_, repairMpd_universal_bound hp hd, ?_⟩
   · change minimizerDistance p (physicalOracle x0 L R rT data.completedOracle) x0 = R
@@ -175,7 +175,7 @@ theorem _root_.V7.knownParameterAboveTwoLower :
       have hminPos : 0 < min p (Real.log d) := by
         have hlog : 0 < Real.log d := Real.log_pos (by exact_mod_cast
           (lt_of_lt_of_le (by decide : 1 < 2) hd))
-        exact lt_min_iff.mpr ⟨by linarith, hlog⟩
+        exact lt_min_iff.mpr ⟨by linarith only [hp], hlog⟩
       have hK : 0 < 512 * C * min p (Real.log d) := by positivity
       have hpower' : (T : ℝ) <
           (L * R / ((512 * C * min p (Real.log d)) * eps)) ^ (p / (p + 2)) := by

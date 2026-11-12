@@ -52,7 +52,7 @@ theorem all_queries_fail_of_left {eps H : ℝ} (heps : 0 < eps)
   intro obs hobs
   have hz := hleft obs hobs
   change eps < |hardSlope eps H (obs.point 0 - x0 0)|
-  rw [hardSlope_of_le hz.le, abs_neg, abs_of_pos (by linarith : 0 < 2 * eps)]
+  rw [hardSlope_of_le hz.le, abs_neg, abs_of_pos (by linarith only [heps] : 0 < 2 * eps)]
   linarith
 
 theorem finite_output_fails_of_left {method : StrictLocalMethod} {eps H : ℝ}
@@ -63,7 +63,7 @@ theorem finite_output_fails_of_left {method : StrictLocalMethod} {eps H : ℝ}
   change method.eps < |hardSlope eps H
     (method.output N trace 0 - method.x0 0)|
   rw [heq, hardSlope_of_le hleft.le, abs_neg,
-    abs_of_pos (by linarith : 0 < 2 * eps)]
+    abs_of_pos (by linarith only [heps] : 0 < 2 * eps)]
   linarith
 
 end V7.Stage6StrictDeterministic

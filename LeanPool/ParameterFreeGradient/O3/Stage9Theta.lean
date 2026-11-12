@@ -47,12 +47,12 @@ theorem thetaZeroStep_pos (t : ℝ) : 0 < thetaZeroStep t := by
 theorem thetaStep_gt_half (t : ℝ) : (1 : ℝ) / 2 < thetaStep t := by
   unfold thetaStep
   have := Real.sqrt_pos.2 (by positivity : (0 : ℝ) < 1 + 4 * t ^ 2)
-  linarith
+  linarith only [this]
 
 theorem thetaZeroStep_gt_half (t : ℝ) : (1 : ℝ) / 2 < thetaZeroStep t := by
   unfold thetaZeroStep
   have := Real.sqrt_pos.2 (by positivity : (0 : ℝ) < 1 + 8 * t ^ 2)
-  linarith
+  linarith only [this]
 
 theorem stage9Theta_pos (n i : ℕ) : 0 < stage9Theta n i := by
   by_cases hi : i = 0
@@ -73,7 +73,7 @@ theorem stage9_two_mul_theta_sub_one_pos (n i : ℕ) :
   · subst i
     rw [stage9Theta_zero, ogmgThetaZero]
     have h := thetaZeroStep_gt_half (ogmgThetaTail (n - 1))
-    linarith
+    linarith only [h]
   · rw [stage9Theta, ite_eq_right hi]
     cases hdist : n - i with
     | zero =>
@@ -81,7 +81,7 @@ theorem stage9_two_mul_theta_sub_one_pos (n i : ℕ) :
     | succ k =>
         rw [ogmgThetaTail]
         have h := thetaStep_gt_half (ogmgThetaTail k)
-        linarith
+        linarith only [h]
 
 theorem stage9_two_mul_theta_sub_one_ne_zero (n i : ℕ) :
     2 * stage9Theta n i - 1 ≠ 0 :=
@@ -166,7 +166,7 @@ theorem stage9Kappa_zero_le_one {n : ℕ} (hn : 1 ≤ n) :
   have ht0 := stage9Theta_pos n 0
   have ht1 := stage9Theta_pos n 1
   rw [le_div_iff₀ (by positivity : 0 < 2 * (stage9Theta n 1) ^ 2)]
-  nlinarith
+  linarith only [hs, ht0]
 
 /-- `kappa_i` is nondecreasing on the entire source interval. -/
 theorem stage9Kappa_mono_succ {n i : ℕ} (hin : i < n) :
@@ -182,8 +182,8 @@ theorem stage9Kappa_mono_succ {n i : ℕ} (hin : i < n) :
     have htis := stage9Theta_pos n (i + 1)
     have hmono := stage9Theta_succ_le hin
     have hsq : (stage9Theta n (i + 1)) ^ 2 ≤ (stage9Theta n i) ^ 2 := by
-      nlinarith
-    exact div_le_div_of_nonneg_left ht0sq (by positivity) (by nlinarith)
+      nlinarith only [hmono, hti, htis]
+    exact div_le_div_of_nonneg_left ht0sq (by positivity) (by linarith only [hsq])
 
 /-- Interval form of monotonicity, convenient for finite certificate sums. -/
 theorem stage9Kappa_mono {n i j : ℕ} (hij : i ≤ j) (hjn : j ≤ n) :
@@ -236,7 +236,7 @@ theorem stage9Kappa_eq_next_mul_one_sub_inv {n i : ℕ} (hin : i < n) :
   unfold stage9Delta at hd
   have ht := stage9Theta_ne_zero n i
   field_simp [ht] at hd ⊢
-  nlinarith
+  linarith only [hd]
 
 /-- The source endpoint lower bound, now exposed through the Nat-indexed
 coefficient representation used by Stage 9. -/

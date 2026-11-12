@@ -125,7 +125,7 @@ theorem abs_pairing_le_lpNorm_mul {p q : ℝ} (hpq : p.HolderConjugate q)
       mul_nonneg (lpNorm_nonneg p x) (lpNorm_nonneg q y)
     have h' : -pairing x y ≤ lpNorm p x * lpNorm q y := by
       simpa only [pairing_neg_left, lpNorm_neg] using h
-    linarith
+    linarith only [h']
   · exact pairing_le_lpNorm_mul hpq x y
 
 /-- The power-duality map `J_p(u)_i = |u_i|^(p-2) u_i` from the TeX source. -/

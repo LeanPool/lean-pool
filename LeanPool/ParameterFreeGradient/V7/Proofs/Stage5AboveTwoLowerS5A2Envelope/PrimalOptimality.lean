@@ -88,7 +88,7 @@ lemma minimizer_supporting_inequality
     rw [slope, hlineZero, hlineT]
     simp only [vsub_eq_sub, smul_eq_mul, sub_zero]
     field_simp [htpos.ne']
-    nlinarith [hell']
+    linarith only [hell', hmin]
   have hlimit : ell y - ell z ≤
       chi * O3.pairing (kernel.gradPhi u) a := by
     apply ge_of_tendsto (htend.const_mul chi)

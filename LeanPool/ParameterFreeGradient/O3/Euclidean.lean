@@ -34,7 +34,7 @@ theorem euclideanWeight_equation {A : ℝ} (hA : 0 ≤ A) :
   have hrad : 0 ≤ 1 + 4 * A := by linarith
   have hsqrt := Real.sq_sqrt hrad
   unfold euclideanWeight
-  nlinarith
+  linear_combination hsqrt / 4
 
 /-- The standard accelerated theta update with discriminant `1 + 4 t²`. -/
 noncomputable def thetaStep (t : ℝ) : ℝ :=
@@ -53,21 +53,23 @@ theorem thetaStep_equation (t : ℝ) :
   have hrad : 0 ≤ 1 + 4 * t ^ 2 := by positivity
   have hsqrt := Real.sq_sqrt hrad
   unfold thetaStep
-  nlinarith
+  linear_combination hsqrt / 4
 
 theorem thetaZeroStep_equation (t : ℝ) :
     (thetaZeroStep t) ^ 2 - thetaZeroStep t = 2 * t ^ 2 := by
   have hrad : 0 ≤ 1 + 8 * t ^ 2 := by positivity
   have hsqrt := Real.sq_sqrt hrad
   unfold thetaZeroStep
-  nlinarith
+  linear_combination hsqrt / 4
 
 theorem thetaStep_ge_add_half {t : ℝ} (ht : 0 ≤ t) :
     t + 1 / 2 ≤ thetaStep t := by
   have hrad : 0 ≤ 1 + 4 * t ^ 2 := by positivity
   have hsqrt_nonneg : 0 ≤ Real.sqrt (1 + 4 * t ^ 2) := Real.sqrt_nonneg _
   have hsqrt_sq := Real.sq_sqrt hrad
-  have hsqrt_ge : 2 * t ≤ Real.sqrt (1 + 4 * t ^ 2) := by nlinarith
+  have hsqrt_ge : 2 * t ≤ Real.sqrt (1 + 4 * t ^ 2) := by
+    apply (sq_le_sq₀ (mul_nonneg (by norm_num) ht) hsqrt_nonneg).mp
+    nlinarith only [hsqrt_sq]
   unfold thetaStep
   linarith
 
@@ -97,7 +99,7 @@ theorem ogmgThetaTail_ge (k : ℕ) :
       rw [ogmgThetaTail]
       have hstep := thetaStep_ge_add_half (le_of_lt (ogmgThetaTail_pos k))
       push_cast
-      linarith
+      linarith only [hstep, ih]
 
 /-- The special doubled first coefficient of the OGM-G certificate. -/
 noncomputable def ogmgThetaZero (n : ℕ) : ℝ :=
@@ -112,7 +114,12 @@ theorem thetaZeroStep_ge_sqrtTwo_mul {t : ℝ} (_ht : 0 ≤ t) :
   have hrsq : (Real.sqrt (1 + 8 * t ^ 2)) ^ 2 = 1 + 8 * t ^ 2 :=
     Real.sq_sqrt hrad
   have hcompare : 2 * Real.sqrt 2 * t ≤ Real.sqrt (1 + 8 * t ^ 2) := by
-    nlinarith [sq_nonneg (Real.sqrt (1 + 8 * t ^ 2) - 2 * Real.sqrt 2 * t)]
+    apply (sq_le_sq₀ (by positivity) hr).mp
+    calc
+      (2 * Real.sqrt 2 * t) ^ 2 = 8 * t ^ 2 := by
+        simp only [mul_pow, hs2sq]
+        ring
+      _ ≤ (Real.sqrt (1 + 8 * t ^ 2)) ^ 2 := by linarith only [hrsq]
   unfold thetaZeroStep
   linarith
 
@@ -126,13 +133,13 @@ theorem ogmgThetaZero_ge {n : ℕ} (hn : 1 ≤ n) :
     norm_num
   have htail' : (n + 1 : ℝ) / 2 ≤ ogmgThetaTail (n - 1) := by
     rw [hcast] at htail
-    linarith
+    linarith only [htail]
   have hzero := thetaZeroStep_ge_sqrtTwo_mul (le_of_lt (ogmgThetaTail_pos (n - 1)))
   rw [ogmgThetaZero]
   calc
     (n + 1 : ℝ) / Real.sqrt 2 = Real.sqrt 2 * ((n + 1 : ℝ) / 2) := by
       field_simp [ne_of_gt hs2pos]
-      nlinarith [Real.sq_sqrt (by norm_num : (0 : ℝ) ≤ 2)]
+      linarith only [Real.sq_sqrt (by norm_num : (0 : ℝ) ≤ 2)]
     _ ≤ Real.sqrt 2 * ogmgThetaTail (n - 1) :=
       mul_le_mul_of_nonneg_left htail' (Real.sqrt_nonneg _)
     _ ≤ thetaZeroStep (ogmgThetaTail (n - 1)) := hzero
@@ -165,7 +172,7 @@ theorem euclideanTrialCallBudget_horizon {kappa : ℝ} (hkappa : 1 ≤ kappa) :
     exact (Real.le_sqrt (by norm_num) hkappa0).2 (by simpa using hkappa)
   rw [euclideanTrialCallBudget_diagonal]
   push_cast
-  nlinarith
+  linarith only [hh, hsqrt]
 
 /-- The two Phase-A oracle calls at each iteration, in chronological order. -/
 def euclideanPhaseTrace {d m : ℕ} (oracle : PairOracle d)
@@ -268,6 +275,6 @@ theorem euclideanGap_scalar : EuclideanGapScalarStatement := by
       have hnum : 0 ≤ M * D ^ 2 := mul_nonneg hM.le (sq_nonneg D)
       apply (div_le_div_iff₀ (by positivity : 0 < 2 * A)
         (by positivity : 0 < ((m : ℝ) + 1) ^ 2)).2
-      nlinarith
+      nlinarith only [hA, hnum]
 
 end O3

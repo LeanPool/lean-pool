@@ -31,13 +31,13 @@ theorem universalMainConstant_one : 1 ≤ universalMainConstant := by
   have hproduct := mul_pos euclideanConstant_pos amortUniversal_pos
   have hanchor := O3.anchorLogConstant_pos
   unfold universalMainConstant
-  linarith
+  linarith only [hanchor, hproduct]
 
 theorem universalMainConstant_anchor :
     1 + O3.anchorLogConstant ≤ universalMainConstant := by
   have hproduct := mul_pos euclideanConstant_pos amortUniversal_pos
   unfold universalMainConstant
-  linarith
+  linarith only [hproduct]
 
 /-- The exponent-dependent constant combining anchor and non-Euclidean trial costs. -/
 noncomputable def regimeMainConstant (p : ℝ) (hp : 1 < p) : ℝ :=
@@ -53,34 +53,34 @@ noncomputable def regimeMainConstant (p : ℝ) (hp : 1 < p) : ℝ :=
 theorem regimeMainConstant_pos (p : ℝ) (hp : 1 < p) :
     0 < regimeMainConstant p hp := by
   by_cases hp2 : p < 2
-  · have hsqrt : 0 < Real.sqrt (p - 1) := Real.sqrt_pos.2 (by linarith)
+  · have hsqrt : 0 < Real.sqrt (p - 1) := Real.sqrt_pos.2 (by linarith only [hp])
     have hcoeff : 0 < 4 / Real.sqrt (p - 1) + 2 := by positivity
     simp [regimeMainConstant, hp2]
-    nlinarith [mul_pos hcoeff (amortFor_pos p hp), O3.anchorLogConstant_pos]
+    linarith only [hcoeff, hp, hp2, mul_pos hcoeff (amortFor_pos p hp), O3.anchorLogConstant_pos]
   · by_cases heq : p = 2
     · simp [regimeMainConstant, heq]
     · have habove : 2 < p := lt_of_le_of_ne (le_of_not_gt hp2) (Ne.symm heq)
       have hproduct := mul_pos (aboveConstant_pos p habove) (amortFor_pos p hp)
       simp [regimeMainConstant, hp2, heq]
-      nlinarith [hproduct, O3.anchorLogConstant_pos]
+      linarith only [habove, heq, hp, hp2, hproduct, hproduct, O3.anchorLogConstant_pos]
 
 theorem regimeMainConstant_one_below (p : ℝ) (hp : 1 < p) (hp2 : p < 2) :
     1 ≤ regimeMainConstant p hp := by
-  have hsqrt : 0 < Real.sqrt (p - 1) := Real.sqrt_pos.2 (by linarith)
+  have hsqrt : 0 < Real.sqrt (p - 1) := Real.sqrt_pos.2 (by linarith only [hp])
   have hcoeff : 0 < 4 / Real.sqrt (p - 1) + 2 := by positivity
   have hproduct := mul_pos hcoeff (amortFor_pos p hp)
   have hanchor := O3.anchorLogConstant_pos
   simp [regimeMainConstant, hp2]
-  linarith
+  linarith only [hanchor, hp, hproduct]
 
 theorem regimeMainConstant_anchor_below (p : ℝ) (hp : 1 < p)
     (hp2 : p < 2) :
     1 + O3.anchorLogConstant ≤ regimeMainConstant p hp := by
-  have hsqrt : 0 < Real.sqrt (p - 1) := Real.sqrt_pos.2 (by linarith)
+  have hsqrt : 0 < Real.sqrt (p - 1) := Real.sqrt_pos.2 (by linarith only [hp])
   have hcoeff : 0 < 4 / Real.sqrt (p - 1) + 2 := by positivity
   have hproduct := mul_pos hcoeff (amortFor_pos p hp)
   simp [regimeMainConstant, hp2]
-  linarith
+  linarith only [hp, hproduct]
 
 theorem regimeMainConstant_one_above (p : ℝ) (hp : 1 < p) (hp2 : 2 < p) :
     1 ≤ regimeMainConstant p hp := by
@@ -89,7 +89,7 @@ theorem regimeMainConstant_one_above (p : ℝ) (hp : 1 < p) (hp2 : 2 < p) :
   have hproduct := mul_pos (aboveConstant_pos p hp2) (amortFor_pos p hp)
   have hanchor := O3.anchorLogConstant_pos
   simp [regimeMainConstant, hnot, hne]
-  linarith
+  linarith only [hanchor, hne, hnot, hp, hp2, hproduct]
 
 theorem regimeMainConstant_anchor_above (p : ℝ) (hp : 1 < p)
     (hp2 : 2 < p) :
@@ -98,7 +98,7 @@ theorem regimeMainConstant_anchor_above (p : ℝ) (hp : 1 < p)
   have hne : p ≠ 2 := ne_of_gt hp2
   have hproduct := mul_pos (aboveConstant_pos p hp2) (amortFor_pos p hp)
   simp [regimeMainConstant, hnot, hne]
-  linarith
+  linarith only [hne, hnot, hp, hp2, hproduct]
 
 theorem main : V7.MainStatement := by
   refine ⟨currentMethodFamily, universalMainConstant,
@@ -117,11 +117,11 @@ theorem main : V7.MainStatement := by
       have hprod : 0 ≤ (4 / Real.sqrt (input.p - 1) + 2) *
           amortFor input.p hp := by
         exact (mul_pos (by
-          have hs : 0 < Real.sqrt (input.p - 1) := Real.sqrt_pos.2 (by linarith)
+          have hs : 0 < Real.sqrt (input.p - 1) := Real.sqrt_pos.2 (by linarith only [hp])
           positivity) (amortFor_pos input.p hp)).le
       simp [runtimeCoefficient, selectedAmort, hpData, hpBelow, hne, Cp,
         regimeMainConstant]
-      linarith [O3.anchorLogConstant_pos]
+      linarith only [hp, hpBelow, O3.anchorLogConstant_pos]
     obtain ⟨run, hexec, htrace, hnonempty, hhead, hqueried, hgradient, hbound⟩ :=
       currentExecution input hp heps hM0 inst hsec hM0L Cp
         (regimeMainConstant_one_below input.p hp hpBelow)

@@ -41,10 +41,10 @@ lemma repairMpd_universal_bound {p : ℝ} {d : ℕ}
   split_ifs with hregime
   · by_cases hsmall : p ≤ Real.log d
     · rw [min_eq_left hsmall]
-      nlinarith [mul_le_mul_of_nonneg_right hexp (by linarith : 0 ≤ p)]
+      nlinarith only [hexp, hp, mul_le_mul_of_nonneg_right hexp (by linarith : 0 ≤ p)]
     · rw [min_eq_right (le_of_not_ge hsmall)]
       have hpLog : p ≤ 3 * Real.log d := hregime
-      nlinarith [mul_le_mul_of_nonneg_right hexp hlog.le]
+      linarith only [hexp, hlog, hregime, mul_le_mul_of_nonneg_right hexp hlog.le]
   · have hle : Real.log d ≤ p := by
       have : 3 * Real.log d < p := lt_of_not_ge hregime
       linarith
@@ -64,12 +64,12 @@ theorem repairKernel_assumptions {p : ℝ} {d : ℕ}
     (repairTheta_lt_101_div_100 hp hd).trans (by norm_num)
   have htr : 2 * theta < r := two_mul_repairTheta_lt_kernelR0 hp hd
   refine ⟨repairMpd_pos hp hd,
-    lowerKernelPhi_convex (by linarith : 1 ≤ r) ht,
+    lowerKernelPhi_convex (by linarith only [ht, htUpper, htr] : 1 ≤ r) ht,
     contDiff_two_lowerKernelPhi hr ht htr,
     lowerKernelPhi_coordinateGradient hr ht htr,
     fun x ↦ hasFDerivAt_kernelGradientVector hr ht htr x,
     lowerKernelPhi_nonneg,
-    lowerKernelPhi_zero (by linarith) (by linarith),
+    lowerKernelPhi_zero (by linarith only [ht, htUpper, htr]) (by linarith),
     kernelGradientVector_zero hr ht htr,
     ?_, ?_, repairKernel_phi_signed_invariant hp hd,
     repairKernel_value_realization, ?_,

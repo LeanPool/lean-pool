@@ -59,7 +59,7 @@ lemma squaredLpEnergy_two_smooth {d : ℕ} (u v : Point d) :
         ring
       _ = _ := by
         rw [Finset.sum_add_distrib, Finset.sum_add_distrib, Finset.mul_sum]
-  nlinarith
+  linarith only [hsum]
 
 lemma hasDerivAt_squaredLpEnergy_line {q : ℝ} (hq : 1 < q) {d : ℕ}
     (u h : Point d) (t : ℝ) :
@@ -70,7 +70,7 @@ lemma hasDerivAt_squaredLpEnergy_line {q : ℝ} (hq : 1 < q) {d : ℕ}
       intro i
       have hi := congrFun hz i
       simp only [Pi.add_apply, Pi.smul_apply, smul_eq_mul, Pi.zero_apply] at hi
-      linarith
+      linarith only [hi]
     have hfun : (fun s : ℝ ↦ squaredLpEnergy q (u + s • h)) =
         fun s : ℝ ↦ (s - t) ^ (2 : ℕ) * squaredLpEnergy q h := by
       funext s
@@ -127,7 +127,7 @@ lemma exists_hasDerivAt_smoothRemainderDeriv_nonpos {q : ℝ} (hq : 2 < q)
       ((q - 1) * (lpNorm q h) ^ (2 : ℕ)) t := by
     simpa [id_eq] using ((hasDerivAt_id t).const_mul (q - 1)).mul_const
       ((lpNorm q h) ^ (2 : ℕ))
-  refine ⟨a - (q - 1) * (lpNorm q h) ^ (2 : ℕ), ?_, by linarith⟩
+  refine ⟨a - (q - 1) * (lpNorm q h) ^ (2 : ℕ), ?_, by linarith only [hale]⟩
   exact ha.sub hlinear
 
 lemma smoothRemainder_concave_above_two {q : ℝ} (hq : 2 < q) {d : ℕ}
@@ -144,7 +144,7 @@ lemma smoothRemainder_concave_above_two {q : ℝ} (hq : 2 < q) {d : ℕ}
   have hGanti : Antitone (smoothRemainderDeriv q u h) :=
     antitone_of_deriv_nonpos hGdiff hGnonpos
   have hFdiff : Differentiable ℝ (smoothRemainder q u h) :=
-    fun t ↦ (hasDerivAt_smoothRemainder (by linarith : 1 < q) u h t).differentiableAt
+    fun t ↦ (hasDerivAt_smoothRemainder (by linarith only [hq] : 1 < q) u h t).differentiableAt
   have hFderiv : deriv (smoothRemainder q u h) = smoothRemainderDeriv q u h := by
     funext t
     exact (hasDerivAt_smoothRemainder (by linarith : 1 < q) u h t).deriv
@@ -165,13 +165,13 @@ lemma squaredLpEnergy_smooth_above_two {q : ℝ} (hq : 2 < q) {d : ℕ}
   have hconc := smoothRemainder_concave_above_two hq u h
   have htangent := hconc.slope_le_of_hasDerivAt
     (x := (0 : ℝ)) (y := (1 : ℝ)) (by simp) (by simp) (by norm_num)
-    (hasDerivAt_smoothRemainder (by linarith : 1 < q) u h 0)
+    (hasDerivAt_smoothRemainder (by linarith only [hq] : 1 < q) u h 0)
   norm_num [slope, smoothRemainder, smoothRemainderDeriv] at htangent
   rw [huv] at htangent
   change squaredLpEnergy q v ≤ squaredLpEnergy q u +
     pairing (dualityMap q u) h +
       ((q - 1) / 2) * (lpNorm q h) ^ (2 : ℕ)
-  nlinarith
+  linarith only [htangent]
 
 theorem conjugateSmoothness : ConjugateSmoothnessStatement := by
   intro p hp hp2 d u v

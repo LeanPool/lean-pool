@@ -71,14 +71,14 @@ theorem euclideanWeight_ge_half_succ {k : ℕ}
   have hk0 : 0 ≤ (k : ℝ) := by positivity
   have hrad : 0 ≤ 1 + 4 * euclideanA k := by
     have := euclideanA_nonneg k
-    linarith
+    linarith only [this]
   have hsqrt_sq := Real.sq_sqrt hrad
   have hsqrt_nonneg := Real.sqrt_nonneg (1 + 4 * euclideanA k)
   have htarget_nonneg : 0 ≤ (k : ℝ) + 1 := by positivity
   have hsqrt_ge : (k : ℝ) + 1 ≤ Real.sqrt (1 + 4 * euclideanA k) := by
-    nlinarith
+    nlinarith only [hA, hsqrt_nonneg, hsqrt_sq]
   unfold euclideanWeight
-  linarith
+  linarith only [hsqrt_ge]
 
 /-- Exact source denominator growth: for every nonzero horizon,
 `Aₘ ≥ (m+1)²/4`. -/
@@ -91,6 +91,6 @@ theorem euclideanA_quadratic_lower {m : ℕ} (hm : 1 ≤ m) :
       rw [euclideanA_succ]
       have ha := euclideanWeight_ge_half_succ ih
       norm_num only [Nat.cast_add, Nat.cast_one]
-      nlinarith
+      linarith only [ha, ih]
 
 end O3

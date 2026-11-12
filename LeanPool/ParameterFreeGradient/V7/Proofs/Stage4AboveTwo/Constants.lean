@@ -19,19 +19,19 @@ namespace V7.Stage4AboveTwo
 theorem uniformConstant_pos {p : ℝ} (hp : 2 < p) :
     0 < aboveUniformConstant p := by
   unfold aboveUniformConstant
-  exact div_pos (Real.rpow_pos_of_pos (by norm_num) _) (by linarith)
+  exact div_pos (Real.rpow_pos_of_pos (by norm_num) _) (by linarith only [hp])
 
 theorem errorPower_gt_one {p : ℝ} (hp : 2 < p) :
     1 < aboveErrorPower p := by
   unfold aboveErrorPower
-  rw [lt_div_iff₀ (by linarith : 0 < p - 2)]
-  linarith
+  rw [lt_div_iff₀ (by linarith only [hp] : 0 < p - 2)]
+  linarith only
 
 theorem errorConstant_pos {p : ℝ} (hp : 2 < p) :
     0 < aboveErrorConstant p := by
   unfold aboveErrorConstant
   have hbase : 0 < p * aboveUniformConstant p :=
-    mul_pos (by linarith) (uniformConstant_pos hp)
+    mul_pos (by linarith only [hp]) (uniformConstant_pos hp)
   exact mul_pos (div_pos (by linarith) (mul_pos (by norm_num) (by linarith)))
     (Real.rpow_pos_of_pos hbase _)
 
@@ -43,18 +43,18 @@ theorem budgetConstant_pos {p : ℝ} (hp : 2 < p) :
 theorem budgetExponent_pos {p : ℝ} (hp : 2 < p) :
     0 < aboveBudgetExponent p := by
   unfold aboveBudgetExponent
-  exact div_pos (by linarith) (by linarith)
+  exact div_pos (by linarith only [hp]) (by linarith only [hp])
 
 theorem budgetExponent_lt_one {p : ℝ} (hp : 2 < p) :
     aboveBudgetExponent p < 1 := by
   unfold aboveBudgetExponent
-  rw [div_lt_one (by linarith : 0 < p)]
-  linarith
+  rw [div_lt_one (by linarith only [hp] : 0 < p)]
+  linarith only
 
 theorem errorPower_mul_budgetExponent {p : ℝ} (hp : 2 < p) :
     aboveErrorPower p * aboveBudgetExponent p = 1 := by
   unfold aboveErrorPower aboveBudgetExponent
-  field_simp [show p ≠ 0 by linarith, show p - 2 ≠ 0 by linarith]
+  field_simp [show p ≠ 0 by linarith only [hp], show p - 2 ≠ 0 by linarith only [hp]]
 
 theorem growthConstant_pos {p : ℝ} (hp : 2 < p) :
     0 < aboveGrowthConstant p := by
@@ -65,12 +65,12 @@ theorem hpConstant_pos {p : ℝ} (hp : 2 < p) :
     0 < aboveHp p := by
   unfold aboveHp
   exact div_pos
-    (mul_pos (by norm_num) (Real.rpow_pos_of_pos (by linarith) _))
-    (mul_pos (mul_pos (by norm_num) (by linarith)) (growthConstant_pos hp))
+    (mul_pos (by norm_num) (Real.rpow_pos_of_pos (by linarith only [hp]) _))
+    (mul_pos (mul_pos (by norm_num) (by linarith only [hp])) (growthConstant_pos hp))
 
 theorem conjugate_pos {p : ℝ} (hp : 2 < p) :
     0 < conjugateExponent p := lt_trans (by norm_num) <|
-      O3.one_lt_conjugateExponent (by linarith)
+      O3.one_lt_conjugateExponent (by linarith only [hp])
 
 theorem jpConstant_pos {p : ℝ} (hp : 2 < p) :
     0 < aboveJp p := by

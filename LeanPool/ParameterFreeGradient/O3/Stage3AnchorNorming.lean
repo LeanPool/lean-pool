@@ -26,14 +26,14 @@ namespace Stage3Anchor
 lemma conjugateExponent_conjugateExponent {p : ℝ} (hp : 1 < p) :
     conjugateExponent (conjugateExponent p) = p := by
   rw [conjugateExponent_eq, conjugateExponent_eq]
-  have hpm : p - 1 ≠ 0 := by linarith
+  have hpm : p - 1 ≠ 0 := by linarith only [hp]
   field_simp [hpm]
   ring
 
 lemma p_mul_conjugateExponent_sub_one {p : ℝ} (hp : 1 < p) :
     p * (conjugateExponent p - 1) = conjugateExponent p := by
   have h := Stage2RouteB.mul_conjugateExponent_sub_one hp
-  nlinarith
+  linarith only [h]
 
 /-- Coordinate identity behind the source sign-power formula.  It covers a
 zero coordinate even when `q - 2` is negative. -/
@@ -41,7 +41,7 @@ lemma sign_mul_abs_rpow_sub_one {q a : ℝ} (hq : 1 < q) :
     (SignType.sign a : ℝ) * |a| ^ (q - 1) = |a| ^ (q - 2) * a := by
   by_cases ha : a = 0
   · subst a
-    simp [Real.zero_rpow (by linarith : q - 1 ≠ 0)]
+    simp [Real.zero_rpow (by linarith only [hq] : q - 1 ≠ 0)]
   · rcases lt_or_gt_of_ne ha with haNeg | haPos
     · have hs : (SignType.sign a : ℝ) = -1 := by
         rw [sign_neg haNeg]
@@ -74,7 +74,7 @@ lemma inv_rpow_anchor_coefficient {q n : ℝ} (hn : 0 < n) :
     rw [hexp, Real.rpow_one]
   have hne : n ^ (q - 1) ≠ 0 := (Real.rpow_pos_of_pos hn _).ne'
   field_simp [hne, hn.ne']
-  nlinarith
+  linarith only [hpow]
 
 /-- The explicit source vector is exactly `J_q(g) / ||g||_q`. -/
 lemma anchorNormingVector_eq_inv_smul_dualityMap {q : ℝ} (hq : 1 < q)
@@ -99,7 +99,7 @@ theorem anchorNormingVector_lpNorm {p : ℝ} (hp : 1 < p) {d : ℕ}
   have hq : 1 < q := one_lt_conjugateExponent hp
   have hn : 0 < lpNorm q g := lpNorm_pos_of_ne_zero hg
   rw [anchorNormingVector_eq_inv_smul_dualityMap hq g hg]
-  rw [Stage2RouteC.lpNorm_smul (by linarith : 1 ≤ p)]
+  rw [Stage2RouteC.lpNorm_smul (by linarith only [hp] : 1 ≤ p)]
   have hJ := Stage2RouteB.lpNorm_dualityMap hq g
   rw [conjugateExponent_conjugateExponent hp] at hJ
   rw [hJ, abs_of_pos (inv_pos.mpr hn)]

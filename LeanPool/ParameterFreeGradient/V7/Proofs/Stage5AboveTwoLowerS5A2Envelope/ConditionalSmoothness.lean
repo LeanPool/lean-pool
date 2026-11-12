@@ -68,7 +68,7 @@ private lemma minimizer_monotonicity_core
   have hsum : O3.pairing (-kernel.gradPhi ux)
         (y + vy - (x + vx)) +
       O3.pairing (-kernel.gradPhi uy)
-        (x + vx - (y + vy)) ≤ 0 := by linarith
+        (x + vx - (y + vy)) ≤ 0 := by linarith only [hx, hy]
   have hpair : O3.pairing (-kernel.gradPhi ux)
         (y + vy - (x + vx)) +
       O3.pairing (-kernel.gradPhi uy)
@@ -93,7 +93,7 @@ private lemma minimizer_monotonicity_core
     ring
   rw [hexpand] at hsum
   dsimp [D, ux, uy] at hsum ⊢
-  linarith
+  linarith only [hsum]
 
 /-- Exact minimizer-gradient Lipschitz estimate, conditional only on the local
 kernel cocoercivity wheel. -/
@@ -141,11 +141,11 @@ lemma minimizer_kernel_gradient_lipschitz
     change G ≤ (M / chi) * lpNorm p (x - y)
     have hcore : chi * G ^ (2 : ℕ) ≤
         M * G * lpNorm p (x - y) := by
-      nlinarith [mul_le_mul_of_nonneg_left hmono hM]
+      nlinarith only [hM, hc, hchi, hholder, hmono, mul_le_mul_of_nonneg_left hmono hM]
     rw [show G ^ (2 : ℕ) = G * G by ring] at hcore
     have hcore' : G * (chi * G) ≤
         G * (M * lpNorm p (x - y)) := by
-      nlinarith
+      linarith only [hcore]
     have hcancel := le_of_mul_le_mul_left hcore' hGpos
     rw [div_mul_eq_mul_div]
     exact (le_div_iff₀ hchi).2

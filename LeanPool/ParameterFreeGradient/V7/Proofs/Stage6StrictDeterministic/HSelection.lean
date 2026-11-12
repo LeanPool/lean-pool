@@ -60,7 +60,7 @@ theorem postTranscriptH_pos (method : StrictLocalMethod) (N : ℕ)
       (method.output N trace 0 - method.x0 0) :=
     (traceDisplacementBound_nonneg method.x0 trace).trans (le_max_left _ _)
   unfold postTranscriptH
-  linarith
+  linarith only [hnonneg]
 
 theorem trace_displacement_lt_postTranscriptH (method : StrictLocalMethod)
     (N : ℕ) (trace : StrictTranscript) :
@@ -71,7 +71,7 @@ theorem trace_displacement_lt_postTranscriptH (method : StrictLocalMethod)
       max (traceDisplacementBound method.x0 trace)
         (method.output N trace 0 - method.x0 0) := le_max_left _ _
   unfold postTranscriptH
-  linarith
+  linarith only [hbound, hmax]
 
 theorem output_displacement_lt_postTranscriptH (method : StrictLocalMethod)
     (N : ℕ) (trace : StrictTranscript) :
@@ -80,6 +80,6 @@ theorem output_displacement_lt_postTranscriptH (method : StrictLocalMethod)
       max (traceDisplacementBound method.x0 trace)
         (method.output N trace 0 - method.x0 0) := le_max_right _ _
   unfold postTranscriptH
-  linarith
+  linarith only [hmax]
 
 end V7.Stage6StrictDeterministic

@@ -39,7 +39,7 @@ lemma coordinate_power_identity {p a : ℝ} (hp : 1 < p) :
   · subst a
     simp only [abs_zero]
     rw [show 0 ^ (p - 2) * 0 * 0 = (0 : ℝ) by ring]
-    exact (Real.zero_rpow (by linarith : p ≠ 0)).symm
+    exact (Real.zero_rpow (by linarith only [hp] : p ≠ 0)).symm
   · have habs : 0 < |a| := abs_pos.mpr ha
     calc
       |a| ^ (p - 2) * a * a = |a| ^ (p - 2) * |a| ^ (2 : ℕ) := by
@@ -62,9 +62,9 @@ lemma pairing_dualityMap_self {p : ℝ} (hp : 1 < p) {d : ℕ} (x : Point d) :
     pairing (dualityMap p x) x = (lpNorm p x) ^ (2 : ℕ) := by
   by_cases hx : x = 0
   · subst x
-    simp [dualityMap, lpNorm_zero (by linarith : 0 < p), pairing]
+    simp [dualityMap, lpNorm_zero (by linarith only [hp] : 0 < p), pairing]
   · have hnpos : 0 < lpNorm p x := lpNorm_pos_of_ne_zero hx
-    have hnpow := lpNorm_rpow_eq_lpPower (p := p) (by linarith : p ≠ 0) x
+    have hnpow := lpNorm_rpow_eq_lpPower (p := p) (by linarith only [hp] : p ≠ 0) x
     rw [dualityMap, ite_eq_right hnpos.ne']
     simp only [pairing]
     rw [show (∑ i, lpNorm p x ^ (2 - p) * (|x i| ^ (p - 2) * x i) * x i) =
@@ -178,7 +178,7 @@ lemma deriv_squaredLpEnergy_line_of_ne {p : ℝ} (hp : 1 < p) {d : ℕ}
     funext s
     simp only [squaredLpEnergy, lpPower, Function.comp_apply, Pi.add_apply, id_eq]
   rw [hfun]
-  rw [pairing_dualityMap_eq_powerSum_factor (by linarith : 0 < p) hxt h]
+  rw [pairing_dualityMap_eq_powerSum_factor (by linarith only [hp] : 0 < p) hxt h]
   rw [← hsumAt]
   convert hd using 1
   · congr 1
@@ -231,7 +231,7 @@ lemma deriv_squaredLpEnergy_line_of_eq_zero {p : ℝ} (hp : 1 < p) {d : ℕ}
     intro i
     have hi := congrFun hxt i
     simp only [Pi.zero_apply] at hi
-    linarith
+    linarith only [hi]
   have hfun : (fun s : ℝ ↦ squaredLpEnergy p (fun i ↦ x i + s * h i)) =
       fun s : ℝ ↦ (s - t) ^ (2 : ℕ) * squaredLpEnergy p h := by
     funext s
@@ -239,10 +239,10 @@ lemma deriv_squaredLpEnergy_line_of_eq_zero {p : ℝ} (hp : 1 < p) {d : ℕ}
       funext i
       rw [hxcoord i]
       ring]
-    exact squaredLpEnergy_scalar_mul (by linarith : 0 < p) h
+    exact squaredLpEnergy_scalar_mul (by linarith only [hp] : 0 < p) h
   rw [hfun]
   have hd := (((hasDerivAt_id t).sub_const t).pow 2).mul_const (squaredLpEnergy p h)
-  rw [hxt, dualityMap_zero (by linarith : 0 < p)]
+  rw [hxt, dualityMap_zero (by linarith only [hp] : 0 < p)]
   simp only [pairing, Pi.zero_apply, zero_mul, Finset.sum_const_zero]
   simp
 
@@ -268,25 +268,25 @@ convexity estimate without constant loss.
 lemma two_le_conjugateExponent {p : ℝ} (hp : 1 < p) (hp2 : p ≤ 2) :
     2 ≤ conjugateExponent p := by
   rw [conjugateExponent_eq]
-  rw [le_div_iff₀ (by linarith : 0 < p - 1)]
-  linarith
+  rw [le_div_iff₀ (by linarith only [hp] : 0 < p - 1)]
+  linarith only [hp2]
 
 lemma conjugateExponent_sub_one {p : ℝ} (hp : 1 < p) :
     conjugateExponent p - 1 = 1 / (p - 1) := by
-  have hne : p - 1 ≠ 0 := by linarith
+  have hne : p - 1 ≠ 0 := by linarith only [hp]
   rw [conjugateExponent_eq]
   field_simp [hne]
   ring
 
 lemma conjugate_constant_cancel {p : ℝ} (hp : 1 < p) :
     (conjugateExponent p - 1) * (p - 1) = 1 := by
-  have hne : p - 1 ≠ 0 := by linarith
+  have hne : p - 1 ≠ 0 := by linarith only [hp]
   rw [conjugateExponent_sub_one hp]
   field_simp [hne]
 
 lemma mul_conjugateExponent_sub_one {p : ℝ} (hp : 1 < p) :
     (p - 1) * conjugateExponent p = p := by
-  have hne : p - 1 ≠ 0 := by linarith
+  have hne : p - 1 ≠ 0 := by linarith only [hp]
   rw [conjugateExponent_eq]
   field_simp [hne]
 
@@ -296,14 +296,14 @@ lemma conjugateExponent_ne_zero {p : ℝ} (hp : 1 < p) : conjugateExponent p ≠
 lemma exponent_balance {p : ℝ} (hp : 1 < p) :
     (2 - p) * conjugateExponent p + p = conjugateExponent p := by
   have h := mul_conjugateExponent_sub_one hp
-  linarith
+  linarith only [h]
 
 lemma abs_powerDuality_coordinate {p a : ℝ} (hp : 1 < p) :
     |(|a| ^ (p - 2) * a)| = |a| ^ (p - 1) := by
   by_cases ha : a = 0
   · subst a
     simp only [abs_zero, mul_zero]
-    rw [Real.zero_rpow (by linarith : p - 1 ≠ 0)]
+    rw [Real.zero_rpow (by linarith only [hp] : p - 1 ≠ 0)]
   · have habs : 0 < |a| := abs_pos.mpr ha
     rw [abs_mul, abs_of_nonneg (Real.rpow_nonneg habs.le _)]
     calc
@@ -328,12 +328,12 @@ lemma lpPower_dualityMap {p : ℝ} (hp : 1 < p) {d : ℕ} (x : Point d) :
       (lpNorm p x) ^ (conjugateExponent p) := by
   by_cases hx : x = 0
   · subst x
-    rw [dualityMap_zero (by linarith : 0 < p)]
+    rw [dualityMap_zero (by linarith only [hp] : 0 < p)]
     rw [lpPower_zero (conjugateExponent_ne_zero hp)]
-    rw [lpNorm_zero (by linarith : 0 < p)]
+    rw [lpNorm_zero (by linarith only [hp] : 0 < p)]
     exact (Real.zero_rpow (conjugateExponent_ne_zero hp)).symm
   · have hn : 0 < lpNorm p x := lpNorm_pos_of_ne_zero hx
-    have hnp := lpNorm_rpow_eq_lpPower (p := p) (by linarith : p ≠ 0) x
+    have hnp := lpNorm_rpow_eq_lpPower (p := p) (by linarith only [hp] : p ≠ 0) x
     simp only [lpPower]
     rw [show (∑ i, |dualityMap p x i| ^ conjugateExponent p) =
         lpNorm p x ^ ((2 - p) * conjugateExponent p) *
@@ -365,12 +365,12 @@ theorem lpNorm_dualityMap {p : ℝ} (hp : 1 < p) {d : ℕ} (x : Point d) :
 lemma inner_comp_exponent {p : ℝ} (hp : 1 < p) :
     (p - 1) * (conjugateExponent p - 2) + (p - 2) = 0 := by
   have h := mul_conjugateExponent_sub_one hp
-  linarith
+  linarith only [h]
 
 lemma outer_comp_exponent {p : ℝ} (hp : 1 < p) :
     (2 - conjugateExponent p) + (2 - p) * (conjugateExponent p - 1) = 0 := by
   have h := mul_conjugateExponent_sub_one hp
-  linarith
+  linarith only [h]
 
 lemma powerDuality_coordinate_comp {p a : ℝ} (hp : 1 < p) :
     |(|a| ^ (p - 2) * a)| ^ (conjugateExponent p - 2) *
@@ -408,7 +408,7 @@ theorem dualityMap_conjugate_comp {p : ℝ} (hp : 1 < p) {d : ℕ} (x : Point d)
     dualityMap (conjugateExponent p) (dualityMap p x) = x := by
   by_cases hx : x = 0
   · subst x
-    rw [dualityMap_zero (by linarith : 0 < p)]
+    rw [dualityMap_zero (by linarith only [hp] : 0 < p)]
     exact dualityMap_zero (lt_trans zero_lt_one (one_lt_conjugateExponent hp))
   · have hn : 0 < lpNorm p x := lpNorm_pos_of_ne_zero hx
     have hJuNorm := lpNorm_dualityMap hp x
@@ -447,7 +447,7 @@ lemma squaredLpEnergy_dualityMap {p : ℝ} (hp : 1 < p) {d : ℕ} (x : Point d) 
     squaredLpEnergy (conjugateExponent p) (dualityMap p x) = squaredLpEnergy p x := by
   rw [squaredLpEnergy_eq_quadraticRegularizer
     (lt_trans zero_lt_one (one_lt_conjugateExponent hp))]
-  rw [squaredLpEnergy_eq_quadraticRegularizer (by linarith : 0 < p)]
+  rw [squaredLpEnergy_eq_quadraticRegularizer (by linarith only [hp] : 0 < p)]
   simp only [quadraticRegularizer, sub_zero]
   rw [lpNorm_dualityMap hp]
 
@@ -456,7 +456,7 @@ lemma fenchelYoung_lower {p : ℝ} (hp : 1 < p) {d : ℕ} (w y : Point d) :
   have hpair := pairing_le_lpNorm_mul (holderConjugate_conjugateExponent hp).symm w y
   rw [squaredLpEnergy_eq_quadraticRegularizer
     (lt_trans zero_lt_one (one_lt_conjugateExponent hp))]
-  rw [squaredLpEnergy_eq_quadraticRegularizer (by linarith : 0 < p)]
+  rw [squaredLpEnergy_eq_quadraticRegularizer (by linarith only [hp] : 0 < p)]
   simp only [quadraticRegularizer, sub_zero]
   have hsq := sq_nonneg (lpNorm (conjugateExponent p) w - lpNorm p y)
   nlinarith
@@ -510,12 +510,12 @@ theorem conjugateSmoothness_implies_belowGeometry
     lpNorm_dualityMap hp h
   rw [hvsub, hJqu, hEu] at hs
   rw [lpNorm_scalar_mul (lt_trans zero_lt_one (one_lt_conjugateExponent hp))] at hs
-  rw [abs_of_pos (by linarith : 0 < p - 1), hnormjh] at hs
+  rw [abs_of_pos (by linarith only [hp] : 0 < p - 1), hnormjh] at hs
   have hconst : ((conjugateExponent p - 1) / 2) *
       ((p - 1) * lpNorm p h) ^ (2 : ℕ) =
       ((p - 1) / 2) * (lpNorm p h) ^ (2 : ℕ) := by
     have hc := conjugate_constant_cancel hp
-    nlinarith
+    linear_combination (p - 1) * lpNorm p h ^ 2 / 2 * hc
   rw [hconst] at hs
   have hfenchel := fenchelYoung_lower hp v y
   have hpairjx : pairing (dualityMap p x) x = (lpNorm p x) ^ (2 : ℕ) :=
@@ -527,9 +527,9 @@ theorem conjugateSmoothness_implies_belowGeometry
     simp only [h, Pi.add_apply, Pi.sub_apply]
     ring
   rw [show quadraticRegularizer p 0 y = squaredLpEnergy p y by
-    exact (squaredLpEnergy_eq_quadraticRegularizer (by linarith : 0 < p) y).symm]
+    exact (squaredLpEnergy_eq_quadraticRegularizer (by linarith only [hp] : 0 < p) y).symm]
   rw [show quadraticRegularizer p 0 x = squaredLpEnergy p x by
-    exact (squaredLpEnergy_eq_quadraticRegularizer (by linarith : 0 < p) x).symm]
+    exact (squaredLpEnergy_eq_quadraticRegularizer (by linarith only [hp] : 0 < p) x).symm]
   change squaredLpEnergy p x + pairing (dualityMap p x) h +
       (p - 1) / 2 * lpNorm p h ^ (2 : ℕ) ≤ squaredLpEnergy p y
   have hvpair : pairing v y = pairing u y + (p - 1) * pairing jh y := by
@@ -544,10 +544,10 @@ theorem conjugateSmoothness_implies_belowGeometry
   rw [pairing_comm x (dualityMap p h)] at hs
   rw [hpairjx, hpairjh] at hfenchel
   rw [hxy]
-  rw [squaredLpEnergy_eq_quadraticRegularizer (by linarith : 0 < p)] at hs hfenchel ⊢
+  rw [squaredLpEnergy_eq_quadraticRegularizer (by linarith only [hp] : 0 < p)] at hs hfenchel ⊢
   simp only [quadraticRegularizer, sub_zero] at hs hfenchel ⊢
-  rw [squaredLpEnergy_eq_quadraticRegularizer (by linarith : 0 < p)]
+  rw [squaredLpEnergy_eq_quadraticRegularizer (by linarith only [hp] : 0 < p)]
   simp only [quadraticRegularizer, sub_zero]
-  nlinarith
+  linarith only [hs, hfenchel]
 
 end O3.Stage2RouteB

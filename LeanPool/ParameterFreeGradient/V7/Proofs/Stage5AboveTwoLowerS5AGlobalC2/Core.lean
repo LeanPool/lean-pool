@@ -26,9 +26,9 @@ lemma kernelGradientVector_zero {r theta : ℝ}
     (_hr : 2 < r) (htheta : 1 < theta) (htr : 2 * theta < r) {d : ℕ} :
     kernelGradientVector r theta (0 : Point d) = 0 := by
   have he : 2 * theta / r - 1 ≠ 0 := by
-    have hr0 : 0 < r := by linarith
+    have hr0 : 0 < r := by linarith only [htheta, htr]
     rw [ne_eq, sub_eq_zero, div_eq_one_iff_eq (ne_of_gt hr0)]
-    linarith
+    linarith only [htr]
   simp [kernelGradientVector, O3.lpPower_zero (by linarith : r ≠ 0),
     Real.zero_rpow he]
 
@@ -45,16 +45,16 @@ theorem hasFDerivAt_lowerKernelPhi_zero {r theta : ℝ}
     HasFDerivAt (lowerKernelPhi (d := d) r theta)
       (kernelFDeriv r theta 0) 0 := by
   rw [kernelFDeriv_zero hr htheta htr]
-  have ha : 1 < 2 * theta := by linarith
+  have ha : 1 < 2 * theta := by linarith only [htheta]
   have hbig :
       (lowerKernelPhi (d := d) r theta) =O[nhds 0]
         (fun x : Point d ↦ ‖x‖ ^ (2 * theta)) :=
     IsBigO.of_bound (2 * lpAmbientConstant r d ^ (2 * theta))
       (Filter.Eventually.of_forall fun x : Point d ↦ by
         have hlp := lpNorm_le_ambientConstant (d := d)
-          (by linarith : 1 ≤ r) x
+          (by linarith only [htheta, htr] : 1 ≤ r) x
         have hrpow := Real.rpow_le_rpow (O3.lpNorm_nonneg r x) hlp
-          (by linarith : 0 ≤ 2 * theta)
+          (by linarith only [htheta] : 0 ≤ 2 * theta)
         rw [Real.norm_eq_abs,
           abs_of_nonneg (Stage5AboveTwoLower.lowerKernelPhi_nonneg x),
           Stage5AboveTwoLower.lowerKernelPhi_eq_norm_power (by linarith : r ≠ 0)]
@@ -84,7 +84,7 @@ theorem hasFDerivAt_lowerKernelPhi {r theta : ℝ}
   by_cases hx : x = 0
   · subst x
     exact hasFDerivAt_lowerKernelPhi_zero hr htheta htr
-  · exact hasFDerivAt_lowerKernelPhi_of_ne_zero (by linarith : 1 < r) x hx
+  · exact hasFDerivAt_lowerKernelPhi_of_ne_zero (by linarith only [htheta, htr] : 1 < r) x hx
 
 /-- Literal coordinate-gradient interface required by the frozen kernel data. -/
 theorem lowerKernelPhi_coordinateGradient {r theta : ℝ}

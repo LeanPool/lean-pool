@@ -70,6 +70,6 @@ lemma localSmoothingValue_supporting_of_minimizers
       -O3.pairing (kernel.gradPhi u) (uw - u) := by
     simp [O3.pairing]
   rw [hneg] at hell
-  nlinarith
+  nlinarith only [hchi, hell, hphi]
 
 end V7.Stage5AboveTwoLowerS5A2Envelope

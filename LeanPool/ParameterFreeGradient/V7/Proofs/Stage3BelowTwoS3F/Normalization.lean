@@ -71,7 +71,7 @@ theorem normalized_convex (inst : PositiveInstance p d x0)
     ext i
     simp only [Pi.add_apply, Pi.smul_apply, smul_eq_mul]
     have hc := congrArg (fun t : ℝ => t * c i) hab
-    nlinarith
+    linarith only [hc]
   rw [harg]
   have hden : 0 < M * D ^ (2 : ℕ) := mul_pos hM (sq_pos_of_pos hD)
   rw [div_le_iff₀ hden]
@@ -83,7 +83,7 @@ theorem normalized_convex (inst : PositiveInstance p d x0)
         inst.oracle.value c) / (M * D ^ (2 : ℕ)) := by
     field_simp [hden.ne']
     have hc := congrArg (fun t : ℝ => t * inst.oracle.value c) hab
-    nlinarith
+    linarith only [hc]
   rw [hcst]
   rw [div_mul_cancel₀ _ hden.ne']
   exact sub_le_sub_right hconv (inst.oracle.value c)
@@ -96,7 +96,7 @@ theorem normalized_bddBelow (inst : PositiveInstance p d x0)
       (M * D ^ (2 : ℕ)), ?_⟩
   rintro r ⟨y, rfl⟩
   dsimp [normalizedPairOracle]
-  exact div_le_div_of_nonneg_right (by linarith [hxstar (c + D • y)])
+  exact div_le_div_of_nonneg_right (by linarith only [hxstar, hxstar (c + D • y)])
     (mul_nonneg hM.le (sq_nonneg D))
 
 end V7.Stage3BelowTwoS3F

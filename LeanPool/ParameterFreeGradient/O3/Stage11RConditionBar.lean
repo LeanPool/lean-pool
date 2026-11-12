@@ -62,7 +62,7 @@ theorem log_exp_one_add_conditionBar_ge_one (P : AdmissibleInstance d p) :
     1 ≤ Real.log (Real.exp 1 + P.conditionBar) := by
   have hpos : 0 < Real.exp 1 := Real.exp_pos 1
   have hle : Real.exp 1 ≤ Real.exp 1 + P.conditionBar := by
-    linarith [conditionBar_nonneg P]
+    linarith only [conditionBar_nonneg P]
   calc
     1 = Real.log (Real.exp 1) := by rw [Real.log_exp]
     _ ≤ Real.log (Real.exp 1 + P.conditionBar) :=
@@ -78,13 +78,13 @@ theorem belowWeight_four_condition_le (P : AdmissibleInstance d p) :
   have hsqrt := sqrt_four_condition_le P
   have harg : Real.exp 1 + 4 * P.condition ≤
       Real.exp 1 + 4 * P.conditionBar := by
-    linarith [condition_le_conditionBar P]
+    linarith only [condition_le_conditionBar P]
   have hpoly : Real.exp 1 + 4 * P.conditionBar ≤
       (Real.exp 1 + P.conditionBar) ^ 2 := by
     have he : 2 < Real.exp 1 := by
       convert Real.add_one_lt_exp (show (1 : ℝ) ≠ 0 by norm_num) using 1;
         norm_num
-    nlinarith [one_le_conditionBar P]
+    nlinarith only [hB, he, one_le_conditionBar P]
   have hleft : 0 < Real.exp 1 + 4 * P.condition := by positivity
   have hright : 0 < (Real.exp 1 + P.conditionBar) ^ 2 := by positivity
   have hlog : Real.log (Real.exp 1 + 4 * P.condition) ≤
@@ -94,7 +94,7 @@ theorem belowWeight_four_condition_le (P : AdmissibleInstance d p) :
   have hlognonneg : 0 ≤ Real.log (Real.exp 1 + 4 * P.condition) := by
     apply Real.log_nonneg
     have : 1 ≤ Real.exp 1 := Real.one_le_exp (by norm_num)
-    linarith
+    linarith only [hK, this]
   have hbarlog : 0 ≤ Real.log (Real.exp 1 + P.conditionBar) :=
     (zero_le_one.trans (log_exp_one_add_conditionBar_ge_one P))
   have hmul := mul_le_mul hsqrt hlog hlognonneg
@@ -130,19 +130,19 @@ theorem anchor_ceiling_le_log_overhead {L M0 : ℝ}
   have hnat : ((1 + Nat.ceil (Real.logb 2 (L / M0)) : ℕ) : ℝ) ≤
       2 + Real.logb 2 (L / M0) := by
     norm_num
-    linarith
+    linarith only [hceil]
   have hlogmono : Real.log (L / M0) ≤
       Real.log (Real.exp 1 + L / M0) := by
     exact Real.strictMonoOn_log.monotoneOn hxpos
       (add_pos (Real.exp_pos 1) hxpos)
-      (by linarith [Real.exp_pos (1 : ℝ)])
+      (by linarith only [Real.exp_pos (1 : ℝ)])
   have hone := show 1 ≤ Real.log (Real.exp 1 + L / M0) by
     calc
       1 = Real.log (Real.exp 1) := by rw [Real.log_exp]
       _ ≤ Real.log (Real.exp 1 + L / M0) :=
         Real.strictMonoOn_log.monotoneOn (Real.exp_pos 1)
           (add_pos (Real.exp_pos 1) hxpos)
-          (by linarith)
+          (by linarith only [hx])
   rw [Real.logb] at hnat
   unfold anchorLogConstant
   have hdiv : Real.log (L / M0) / Real.log 2 ≤
@@ -159,7 +159,7 @@ theorem anchor_ceiling_le_log_overhead {L M0 : ℝ}
         ≤ 2 + Real.log (L / M0) / Real.log 2 := hnat
     _ ≤ 2 * Real.log (Real.exp 1 + L / M0) +
           (1 / Real.log 2) * Real.log (Real.exp 1 + L / M0) := by
-      nlinarith
+      linarith only [hone, hdiv]
     _ = (2 + (Real.log 2)⁻¹) *
           Real.log (Real.exp 1 + L / M0) := by ring
 
@@ -179,14 +179,14 @@ theorem admissible_log_overhead_ge_one (P : AdmissibleInstance d p) :
     1 = Real.log (Real.exp 1) := by rw [Real.log_exp]
     _ ≤ Real.log (Real.exp 1 + P.L / P.M0) :=
       Real.strictMonoOn_log.monotoneOn (Real.exp_pos 1)
-        (add_pos (Real.exp_pos 1) hx) (by linarith)
+        (add_pos (Real.exp_pos 1) hx) (by linarith only [hx])
 
 /-- The positive constant accounting for the initial query and logarithmic anchor overhead. -/
 noncomputable def anchorPrefixConstant : ℝ := 1 + anchorLogConstant
 
 theorem anchorPrefixConstant_pos : 0 < anchorPrefixConstant := by
   unfold anchorPrefixConstant
-  linarith [anchorLogConstant_pos]
+  linarith only [anchorLogConstant_pos]
 
 /-- The controller prefix consists of the initial query plus all anchor
 observations.  This is the exact bridge from the anchor's ceiling count to the
@@ -206,12 +206,12 @@ theorem anchor_prefix_le_log_overhead (P : AdmissibleInstance d p)
       1 = Real.log (Real.exp 1) := by rw [Real.log_exp]
       _ ≤ Real.log (Real.exp 1 + P.L / P.M0) :=
         Real.strictMonoOn_log.monotoneOn (Real.exp_pos 1)
-          (add_pos (Real.exp_pos 1) (zero_lt_one.trans_le hx)) (by linarith)
+          (add_pos (Real.exp_pos 1) (zero_lt_one.trans_le hx)) (by linarith only [hx])
   have hcountReal : ((observations.length : ℕ) : ℝ) ≤
       (1 + Nat.ceil (Real.logb 2 (P.L / P.M0)) : ℕ) := by exact_mod_cast hcount
   unfold anchorPrefixConstant
   norm_num at hcountReal hanchor ⊢
-  nlinarith
+  linarith only [hanchor, hcountReal, hlog]
 
 theorem euclidean_envelope_normalized (P : AdmissibleInstance d p)
     {pre total A : ℝ} (hA : 0 ≤ A)
@@ -230,7 +230,7 @@ theorem euclidean_envelope_normalized (P : AdmissibleInstance d p)
     have : 1 ≤ Real.exp 1 := Real.one_le_exp (by norm_num)
     have hx : 0 ≤ P.L / P.M0 :=
       div_nonneg P.L_pos.le P.secant.2.2.2.le
-    linarith
+    linarith only [hx, this]
   have hAC : 0 ≤ anchorPrefixConstant := anchorPrefixConstant_pos.le
   have hAw := mul_le_mul_of_nonneg_left hw hA
   calc
@@ -243,7 +243,7 @@ theorem euclidean_envelope_normalized (P : AdmissibleInstance d p)
       have hex1 := mul_nonneg hAC hmain
       have hex2 := mul_nonneg
         (mul_nonneg (by norm_num : (0 : ℝ) ≤ 2) hA) hlog
-      nlinarith
+      linarith only [hex1, hex2]
 
 theorem below_envelope_normalized (P : AdmissibleInstance d p)
     {pre total A : ℝ} (hA : 0 ≤ A)
@@ -267,7 +267,7 @@ theorem below_envelope_normalized (P : AdmissibleInstance d p)
     have : 1 ≤ Real.exp 1 := Real.one_le_exp (by norm_num)
     have hx : 0 ≤ P.L / P.M0 :=
       div_nonneg P.L_pos.le P.secant.2.2.2.le
-    linarith
+    linarith only [hx, this]
   have hAw := mul_le_mul_of_nonneg_left hw hA
   unfold belowWrapperWeight at hAw
   rw [← hsqrt] at hAw
@@ -285,7 +285,7 @@ theorem below_envelope_normalized (P : AdmissibleInstance d p)
       have hex1 := mul_nonneg hAC (mul_nonneg hmain hbarlog)
       have hex2 := mul_nonneg
         (mul_nonneg (by norm_num : (0 : ℝ) ≤ 4) hA) hoverlog
-      nlinarith
+      linarith only [hex1, hex2]
 
 theorem above_envelope_normalized (P : AdmissibleInstance d p)
     {a pre total A : ℝ} (ha : 0 ≤ a) (hA : 0 ≤ A)
@@ -305,7 +305,7 @@ theorem above_envelope_normalized (P : AdmissibleInstance d p)
     have : 1 ≤ Real.exp 1 := Real.one_le_exp (by norm_num)
     have hx : 0 ≤ P.L / P.M0 :=
       div_nonneg P.L_pos.le P.secant.2.2.2.le
-    linarith
+    linarith only [hx, this]
   have hAw := mul_le_mul_of_nonneg_left hw hA
   have hAC : 0 ≤ anchorPrefixConstant := anchorPrefixConstant_pos.le
   calc
@@ -317,6 +317,6 @@ theorem above_envelope_normalized (P : AdmissibleInstance d p)
           Real.log (Real.exp 1 + P.L / P.M0) := by
       have hex1 := mul_nonneg hAC hpow
       have hex2 := mul_nonneg (mul_nonneg hfour hA) hoverlog
-      nlinarith
+      linarith only [hex1, hex2]
 
 end O3

@@ -228,7 +228,7 @@ theorem ogmg_certificate_audit_n1
   have hd0' : ogmgThetaZero 1 * 2 - 1 ≠ 0 := by
     intro h
     apply hd0
-    nlinarith
+    linarith only [h]
   unfold scalarOgmgNext
   field_simp [hM, ht0, hd0, hd0']
   ring_nf

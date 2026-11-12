@@ -40,7 +40,7 @@ theorem aboveAlpha_pos {p : ℝ} (hp : AboveTwoRegime p) :
     0 < aboveAlpha p := by
   change 2 < p at hp
   unfold aboveAlpha
-  exact div_pos (mul_pos (by norm_num) (by linarith)) (by linarith)
+  exact div_pos (mul_pos (by norm_num) (by linarith only [hp])) (by linarith only [hp])
 
 /-- `a_p = 2^(2-p)/p` from the uniform-convexity inequality. -/
 noncomputable def aboveAP (p : ℝ) : ℝ := 2 ^ (2 - p) / p
@@ -54,7 +54,7 @@ noncomputable def aboveTheta (p : ℝ) : ℝ := aboveAP p * aboveEta p
 theorem aboveAP_pos {p : ℝ} (hp : AboveTwoRegime p) :
     0 < aboveAP p := by
   change 2 < p at hp
-  exact div_pos (Real.rpow_pos_of_pos (by norm_num) _) (by linarith)
+  exact div_pos (Real.rpow_pos_of_pos (by norm_num) _) (by linarith only [hp])
 
 theorem aboveEta_pos (p : ℝ) : 0 < aboveEta p := by
   exact Real.rpow_pos_of_pos (by norm_num) _
@@ -67,14 +67,14 @@ theorem aboveAP_lt_one {p : ℝ} (hp : AboveTwoRegime p) :
     aboveAP p < 1 := by
   change 2 < p at hp
   have hpow : (2 : ℝ) ^ (2 - p) < 1 :=
-    Real.rpow_lt_one_of_one_lt_of_neg (by norm_num) (by linarith)
-  rw [aboveAP, div_lt_one (by linarith)]
-  linarith
+    Real.rpow_lt_one_of_one_lt_of_neg (by norm_num) (by linarith only [hp])
+  rw [aboveAP, div_lt_one (by linarith only [hp])]
+  linarith only [hp, hpow]
 
 theorem aboveEta_lt_one {p : ℝ} (hp : AboveTwoRegime p) :
     aboveEta p < 1 := by
   change 2 < p at hp
-  exact Real.rpow_lt_one_of_one_lt_of_neg (by norm_num) (by linarith)
+  exact Real.rpow_lt_one_of_one_lt_of_neg (by norm_num) (by linarith only [hp])
 
 theorem aboveTheta_lt_one {p : ℝ} (hp : AboveTwoRegime p) :
     aboveTheta p < 1 := by
@@ -278,14 +278,14 @@ theorem aboveGeometricSum_le {c ratio : ℝ}
       c * ratio ^ S / (ratio - 1) := by
   rw [aboveGeometricSum_eq hratio.ne']
   have hden : 0 < ratio - 1 := sub_pos.mpr hratio
-  have hpow : 0 ≤ ratio ^ S := pow_nonneg (by linarith) _
+  have hpow : 0 ≤ ratio ^ S := pow_nonneg (by linarith only [hratio]) _
   calc
     c * ((ratio ^ S - 1) / (ratio - 1)) =
         c * (ratio ^ S - 1) / (ratio - 1) :=
       (mul_div_assoc c (ratio ^ S - 1) (ratio - 1)).symm
     _ ≤ c * ratio ^ S / (ratio - 1) :=
       div_le_div_of_nonneg_right
-        (mul_le_mul_of_nonneg_left (by linarith) hc) hden.le
+        (mul_le_mul_of_nonneg_left (by linarith only) hc) hden.le
 
 /-- `kappa=MD/eps`. -/
 noncomputable def aboveKappa (M D eps : ℝ) : ℝ := M * D / eps
@@ -308,9 +308,9 @@ theorem aboveKappaThetaRatio_gt_one {p kappa : ℝ}
   have htheta : 0 < aboveTheta p := aboveTheta_pos hp
   have htheta1 : aboveTheta p < 1 := aboveTheta_lt_one hp
   have htheta_sq : (aboveTheta p) ^ 2 < 1 := by nlinarith [sq_nonneg (aboveTheta p)]
-  have hkappa_sq : 1 < kappa ^ 2 := by nlinarith [sq_nonneg kappa]
+  have hkappa_sq : 1 < kappa ^ 2 := by nlinarith only [hkappa, sq_nonneg kappa]
   rw [lt_div_iff₀ (sq_pos_of_pos htheta)]
-  nlinarith
+  linarith only [hkappa_sq, htheta, htheta1, htheta_sq]
 
 /-- One accelerated iteration contributes its two exact pair observations. -/
 def abovePhaseTrace {d N : ℕ} (oracle : PairOracle d)

@@ -23,7 +23,7 @@ private theorem scalarYoung_holderConjugate {p : ℝ} (hp : 2 < p) :
     (p / 2).HolderConjugate (p / (p - 2)) := by
   apply Real.holderConjugate_iff.mpr
   constructor
-  · linarith
+  · linarith only [hp]
   · field_simp
     ring
 
@@ -53,7 +53,7 @@ private theorem scalarYoung_pointwise
     rw [← Real.rpow_mul (le_of_lt hK)]
     rw [← Real.rpow_natCast xi 2]
     rw [← Real.rpow_mul hxi]
-    have hp0 : p ≠ 0 := by linarith
+    have hp0 : p ≠ 0 := by linarith only [hp]
     have htwo : (2 : ℝ) ≠ 0 := by norm_num
     rw [show (2 / p) * (p / 2) = 1 by field_simp]
     norm_num only [Nat.cast_ofNat]
@@ -72,24 +72,24 @@ private theorem scalarYoung_pointwise
           c * xi ^ (2 : ℕ) * (K ^ (2 / p) * K ^ (-2 / p)) := by ring
       _ = c * xi ^ (2 : ℕ) := by rw [hcancel, mul_one]
   have hc_pow : c ^ (p / (p - 2)) ≤ 1 := by
-    have hexp : 0 ≤ p / (p - 2) := (div_pos (by linarith) (by linarith)).le
+    have hexp : 0 ≤ p / (p - 2) := (div_pos (by linarith only [hp]) (by linarith only [hp])).le
     simpa using Real.rpow_le_rpow hc0 hc1 hexp
   have hb_pow : b ^ (p / (p - 2)) / (p / (p - 2)) ≤
       (p - 2) / p * K ^ (-2 / (p - 2)) := by
     dsimp [b]
     rw [Real.mul_rpow hc0 (Real.rpow_nonneg (by positivity) _)]
     rw [← Real.rpow_mul (le_of_lt hK)]
-    have hp0 : p ≠ 0 := by linarith
-    have hp2ne : p - 2 ≠ 0 := by linarith
+    have hp0 : p ≠ 0 := by linarith only [hp]
+    have hp2ne : p - 2 ≠ 0 := by linarith only [hp]
     rw [show (-2 / p) * (p / (p - 2)) = -2 / (p - 2) by field_simp]
     rw [div_eq_mul_inv]
     rw [show (p / (p - 2))⁻¹ = (p - 2) / p by field_simp]
-    nlinarith [mul_le_mul_of_nonneg_right hc_pow
+    linarith only [hap, hc_pow, hgamma, hp, mul_le_mul_of_nonneg_right hc_pow
       (show 0 ≤ (p - 2) / p * K ^ (-2 / (p - 2)) by positivity)]
   have hK_split : (p - 2) / p * K ^ (-2 / (p - 2)) =
       scalarYoungConstant p * gamma ^ (-2 / (p - 2)) := by
     dsimp [K, scalarYoungConstant]
-    have hpa : 0 < p * aboveUniformConstant p := mul_pos (by linarith) hap
+    have hpa : 0 < p * aboveUniformConstant p := mul_pos (by linarith only [hp]) hap
     rw [show p * aboveUniformConstant p * gamma / 2 =
         (p * aboveUniformConstant p / 2) * gamma by ring]
     rw [Real.mul_rpow (div_nonneg hpa.le (by norm_num)) hgamma.le]
@@ -101,7 +101,7 @@ private theorem scalarYoung_pointwise
   rw [hab, ha_pow] at hy
   calc
     c * xi ^ (2 : ℕ) - aboveUniformConstant p * gamma * xi ^ p ≤
-        b ^ (p / (p - 2)) / (p / (p - 2)) := by linarith
+        b ^ (p / (p - 2)) / (p / (p - 2)) := by linarith only [hy]
     _ ≤ (p - 2) / p * K ^ (-2 / (p - 2)) := hb_pow
     _ = scalarYoungConstant p * gamma ^ (-2 / (p - 2)) := hK_split
 
@@ -113,7 +113,7 @@ theorem scalar_power_deficit_le {p t y : ℝ} (hp : 2 < p)
   · subst t
     rw [Real.zero_rpow (by
       have := errorPower_gt_one hp
-      linarith : aboveErrorPower p ≠ 0)]
+      linarith only [this] : aboveErrorPower p ≠ 0)]
     simp only [zero_div, zero_mul]
     rw [mul_zero]
     simpa only [zero_sub] using neg_nonpos.mpr
@@ -136,7 +136,7 @@ theorem scalar_power_deficit_le {p t y : ℝ} (hp : 2 < p)
       _ = aboveErrorConstant p * t ^ (aboveErrorPower p) := by
         unfold scalarYoungConstant aboveErrorConstant aboveErrorPower
         have hap : 0 < aboveUniformConstant p := uniformConstant_pos hp
-        have hpa : 0 < p * aboveUniformConstant p := mul_pos (by linarith) hap
+        have hpa : 0 < p * aboveUniformConstant p := mul_pos (by linarith only [hp]) hap
         rw [Real.div_rpow (by norm_num : (0 : ℝ) ≤ 2) ht]
         rw [Real.div_rpow (by norm_num : (0 : ℝ) ≤ 2) hpa.le]
         have htwo : 0 < (2 : ℝ) := by norm_num
@@ -149,7 +149,7 @@ theorem scalar_power_deficit_le {p t y : ℝ} (hp : 2 < p)
         rw [Real.rpow_neg htwo.le, Real.rpow_neg hpa.le]
         rw [Real.rpow_neg ht]
         have hexp : 1 + 2 / (p - 2) = p / (p - 2) := by
-          field_simp [show p - 2 ≠ 0 by linarith]
+          field_simp [show p - 2 ≠ 0 by linarith only [hp]]
           ring
         have htpower : t * t ^ (2 / (p - 2)) = t ^ (p / (p - 2)) := by
           calc
@@ -174,22 +174,22 @@ theorem mixedResidual_lower {p u d x y : ℝ} (hp : 2 < p)
     nlinarith
   have hscalar := scalar_power_deficit_le hp ht hy
   dsimp [t] at hscalar ⊢
-  linarith
+  linarith only [hquad, hscalar]
 
 theorem mixedVectorResidual_lower {p u d : ℝ} (hp : 2 < p)
     (hu : 0 < u) (hd : 0 ≤ d) (a b : Point m) :
     u / 2 * (lpNorm (conjugateExponent p) a) ^ (2 : ℕ) +
         aboveUniformConstant p * (lpNorm p b) ^ p + d * pairing a b ≥
       -(aboveErrorConstant p * (d ^ (2 : ℕ) / u) ^ (aboveErrorPower p)) := by
-  have hq := O3.holderConjugate_conjugateExponent (by linarith : 1 < p)
+  have hq := O3.holderConjugate_conjugateExponent (by linarith only [hp] : 1 < p)
   have habs := O3.abs_pairing_le_lpNorm_mul hq.symm a b
   have hpair : -(lpNorm (conjugateExponent p) a * lpNorm p b) ≤ pairing a b := by
-    linarith [neg_le_of_abs_le habs]
+    linarith only [habs, neg_le_of_abs_le habs]
   have hdPair := mul_le_mul_of_nonneg_left hpair hd
   have hmix := mixedResidual_lower (p := p) (u := u) (d := d)
     (x := lpNorm (conjugateExponent p) a) (y := lpNorm p b)
     hp hu (O3.lpNorm_nonneg _ _)
-  linarith
+  linarith only [hdPair, hmix]
 
 /-- The sum of quadratic gradient, power mirror, and mixed-pairing residual terms. -/
 noncomputable def aboveMixedResidual (p : ℝ) (n : ℕ)

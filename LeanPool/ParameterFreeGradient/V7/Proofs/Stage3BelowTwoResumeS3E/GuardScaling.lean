@@ -71,8 +71,8 @@ theorem belowGuardScaling : BelowGuardScalingStatement := by
     unfold CocoercivityGuard
     constructor <;> intro h
     · field_simp [hM.ne', hD.ne'] at h ⊢
-      nlinarith
+      linarith only [h]
     · field_simp [hM.ne', hD.ne'] at h ⊢
-      nlinarith
+      linarith only [h]
 
 end V7

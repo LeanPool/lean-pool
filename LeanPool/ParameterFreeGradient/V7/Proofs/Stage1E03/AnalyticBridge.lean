@@ -166,7 +166,10 @@ theorem source_current_gradient_bound (inst : PositiveInstance 2 d x0)
   have hstheta : s ^ 2 ≤ 2 * theta ^ 2 := by
     have hsqrt : 0 < Real.sqrt 2 := Real.sqrt_pos.2 (by norm_num)
     rw [div_le_iff₀ hsqrt] at htheta
-    nlinarith
+    calc
+      s ^ 2 ≤ (theta * Real.sqrt 2) ^ 2 :=
+        (sq_le_sq₀ hs.le (mul_nonneg ht.le (Real.sqrt_nonneg 2))).2 htheta
+      _ = 2 * theta ^ 2 := by rw [mul_pow, hsq2]; ring
   have hgap2 : phaseA.inst.oracle.value (phaseA.x n) - phaseA.inst.fstar ≤
       2 * M * D ^ 2 / s ^ 2 := by
     have hgap := hbridge.1.1.trans hbridge.1.2
@@ -192,16 +195,24 @@ theorem source_current_gradient_bound (inst : PositiveInstance 2 d x0)
     have h1 := mul_le_mul_of_nonneg_right hmul hs2.le
     have h2 := mul_le_mul_of_nonneg_left hgapmul
       (by positivity : 0 ≤ 2 * M)
-    nlinarith
+    linarith only [h1, h2]
   have hfinalSq : (gnorm * s ^ 2) ^ 2 ≤
       (2 * Real.sqrt 2 * M * D) ^ 2 := by
     have hnon : 0 ≤ gnorm ^ 2 * s ^ 2 := by positivity
     have hscale := mul_le_mul_of_nonneg_left hstheta hnon
-    nlinarith
+    calc
+      (gnorm * s ^ 2) ^ 2 = (gnorm ^ 2 * s ^ 2) * s ^ 2 := by ring
+      _ ≤ (gnorm ^ 2 * s ^ 2) * (2 * theta ^ 2) := hscale
+      _ = 2 * (gnorm ^ 2 * theta ^ 2 * s ^ 2) := by ring
+      _ ≤ 2 * (4 * M ^ 2 * D ^ 2) :=
+        mul_le_mul_of_nonneg_left hcore (by norm_num)
+      _ = (2 * Real.sqrt 2 * M * D) ^ 2 := by
+        simp only [mul_pow, hsq2]
+        ring
   have hlinear : gnorm * s ^ 2 ≤ 2 * Real.sqrt 2 * M * D := by
     have hleft : 0 ≤ gnorm * s ^ 2 := by positivity
     have hright : 0 ≤ 2 * Real.sqrt 2 * M * D := by positivity
-    nlinarith
+    exact (sq_le_sq₀ hleft hright).mp hfinalSq
   rw [show s ^ 2 = s * s by ring] at hlinear
   exact (le_div_iff₀ (mul_pos hs hs)).2 (by
     simpa only [gnorm, phaseB, sourcePhaseBData, s] using hlinear)

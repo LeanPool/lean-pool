@@ -79,14 +79,14 @@ theorem anchorAccepted_radius {d : ℕ} {p : ℝ} (hp : 1 < p)
     have hGR : G * lpNorm p (xstar - x₀) ≤ G * R :=
       mul_le_mul_of_nonneg_left hR hGpos.le
     rw [pairing_comm]
-    linarith
+    linarith only [hGR, hholder]
   have hlow : f x₀ - G * R ≤ f xstar := by
     have := hconv x₀ xstar
     linarith
   have hchain : f x₀ - G * R ≤ f x₀ - G * D / 2 :=
     hlow.trans ((hmin y).trans haccept)
-  have : G * D ≤ 2 * (G * R) := by linarith
-  nlinarith
+  have : G * D ≤ 2 * (G * R) := by linarith only [hchain]
+  nlinarith only [hGpos, hchain]
 
 /-- The explicit coordinate norming direction used by the frozen anchor. -/
 noncomputable def anchorNormingVector {d : ℕ} (q : ℝ) (g : Vec d) : Vec d :=
@@ -197,7 +197,7 @@ theorem anchorScaleCap_lt_two_mul {M₀ L : ℝ}
       have hnot := Nat.find_min (exists_anchor_scale_ge (L := L) hM₀) hnlt
       have hn : anchorScale M₀ n < L := lt_of_not_ge hnot
       rw [anchorScale_succ]
-      linarith
+      linarith only [hnot]
 
 /-- If a specified later probe passes, the deterministic loop succeeds no later. -/
 theorem runAnchor_acceptsBy {d : ℕ} (oracle : PairOracle d) (cfg : AnchorConfig d)

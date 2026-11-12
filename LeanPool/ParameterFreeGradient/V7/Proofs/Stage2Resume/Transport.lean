@@ -91,7 +91,7 @@ private theorem alignedListSumLe {α β : Type} (xs : List α) (ys : List β)
           have hsum := ih ys hlenTail htail
           simp only [List.map_cons, List.sum_cons]
           rw [mul_add]
-          linarith
+          linarith only [hhead, hsum]
 
 theorem actualReportCallsLeVisitSum {d : ℕ} {eps C a : ℝ}
     (visits : List ControllerVisit) (reports : List (TrialReport d))

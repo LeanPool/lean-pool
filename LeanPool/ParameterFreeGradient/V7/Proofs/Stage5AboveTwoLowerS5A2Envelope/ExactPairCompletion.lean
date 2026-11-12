@@ -36,7 +36,7 @@ lemma partialG_convex (data : LowerCompletionData p d T) {t : ℕ}
   rw [hiz]
   dsimp [piece] at hix hiy ⊢
   have hconst := congrArg (fun c : ℝ ↦ c * ((i : ℝ) * data.delta)) hab
-  nlinarith
+  nlinarith only [ha, hb, hconst, hix, hiy]
 
 lemma partialG_oneLipschitz (data : LowerCompletionData p d T)
     {t : ℕ} (hp : 1 ≤ p) (ht : t < T)
@@ -58,17 +58,17 @@ lemma partialG_oneLipschitz (data : LowerCompletionData p d T)
     rw [hix]
     rcases hxi with hxi | hxi <;> rw [hxi] at hiy ⊢
     · norm_num at hiy ⊢
-      linarith [le_abs_self (x (data.sigma i) - y (data.sigma i))]
+      linarith only [hcoordI, hiy, le_abs_self (x (data.sigma i) - y (data.sigma i))]
     · norm_num at hiy ⊢
-      linarith [neg_le_abs (x (data.sigma i) - y (data.sigma i))]
+      linarith only [hcoordI, hiy, neg_le_abs (x (data.sigma i) - y (data.sigma i))]
   have hlower : -(lpNorm p (x - y)) ≤
       data.partialG t x - data.partialG t y := by
     rw [hjy]
     rcases hxj with hxj | hxj <;> rw [hxj] at hjx ⊢
     · norm_num at hjx ⊢
-      linarith [neg_le_abs (x (data.sigma j) - y (data.sigma j))]
+      linarith only [hcoordJ, hjx, neg_le_abs (x (data.sigma j) - y (data.sigma j))]
     · norm_num at hjx ⊢
-      linarith [le_abs_self (x (data.sigma j) - y (data.sigma j))]
+      linarith only [hcoordJ, hjx, le_abs_self (x (data.sigma j) - y (data.sigma j))]
   exact (abs_le.2 ⟨hlower, hupper⟩)
 
 lemma partialH_convex_oneLipschitz (data : LowerCompletionData p d T)
@@ -92,13 +92,13 @@ lemma partialH_convex_oneLipschitz (data : LowerCompletionData p d T)
       have hxmax := le_max_left (data.partialG t x / 2) (lpNorm p x - 3 / 2)
       have hymax := le_max_left (data.partialG t y / 2) (lpNorm p y - 3 / 2)
       simp only [smul_eq_mul] at hg ⊢
-      nlinarith
+      nlinarith only [ha, hb, hg, hxmax, hymax]
     · have hn := hNconv.2 (Set.mem_univ x) (Set.mem_univ y) ha hb hab
       have hxmax := le_max_right (data.partialG t x / 2) (lpNorm p x - 3 / 2)
       have hymax := le_max_right (data.partialG t y / 2) (lpNorm p y - 3 / 2)
       have hconst := congrArg (fun c : ℝ ↦ c * (3 / 2 : ℝ)) hab
       simp only [smul_eq_mul] at hn ⊢
-      nlinarith
+      nlinarith only [ha, hab, hb, hn, hxmax, hymax]
   · intro x y
     rw [hH, hH]
     refine (abs_max_sub_max_le_max _ _ _ _).trans (max_le ?_ ?_)
@@ -108,7 +108,7 @@ lemma partialH_convex_oneLipschitz (data : LowerCompletionData p d T)
         (data.partialG t x - data.partialG t y) / 2 by ring]
       rw [abs_div]
       norm_num
-      nlinarith
+      linarith only [hg, hn]
     · have hxy := lpNorm_add_le hp (x - y) y
       have hyx := lpNorm_add_le hp (y - x) x
       have hneg : lpNorm p (y - x) = lpNorm p (x - y) := by
@@ -160,9 +160,9 @@ lemma future_piece_le_at_nearby_query (data : LowerCompletionData p d T)
   have hvT : -data.chi ≤ data.xi t * v (data.sigma t) := by
     rcases hxiT with hxiT | hxiT <;> rw [hxiT]
     · norm_num
-      linarith [neg_le_abs (v (data.sigma t)), hcoordT.trans hv]
+      linarith only [hcoordT, hv, neg_le_abs (v (data.sigma t)), hcoordT.trans hv]
     · norm_num
-      linarith [le_abs_self (v (data.sigma t)), hcoordT.trans hv]
+      linarith only [hcoordT, hv, le_abs_self (v (data.sigma t)), hcoordT.trans hv]
   have hqI : data.xi i * data.queries t (data.sigma i) ≤
       |data.queries t (data.sigma i)| := by
     rcases hxiI with hxiI | hxiI <;> rw [hxiI]
@@ -171,9 +171,10 @@ lemma future_piece_le_at_nearby_query (data : LowerCompletionData p d T)
   have hcast : (t : ℝ) + 1 ≤ (i : ℝ) := by exact_mod_cast (Nat.succ_le_iff.2 hti)
   have hoffset : (t : ℝ) * data.delta + data.delta ≤
       (i : ℝ) * data.delta := by
-    nlinarith [mul_nonneg (sub_nonneg.mpr hcast) (le_of_lt hdelta)]
+    simpa only [add_mul, one_mul] using
+      mul_le_mul_of_nonneg_right hcast hdelta.le
   simp only [Pi.add_apply]
-  nlinarith
+  linarith only [hvI, hvT, hqI, habsI, hoffset, hsignT, hchi]
 
 lemma partialG_final_eq_at_nearby_query (data : LowerCompletionData p d T)
     (hp : 1 ≤ p) (hT : 1 ≤ T) (hdelta : 0 < data.delta)

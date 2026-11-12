@@ -33,7 +33,7 @@ theorem minimizer_gradient_zero (inst : PositiveInstance p d x0)
     rw [← O3.pairing_self_eq_lpNorm_two_sq]
     exact hpair
   have hn := O3.lpNorm_nonneg 2 (inst.oracle.gradient xstar)
-  have hnorm : lpNorm 2 (inst.oracle.gradient xstar) = 0 := by nlinarith
+  have hnorm : lpNorm 2 (inst.oracle.gradient xstar) = 0 := by nlinarith only [hn, hsq]
   exact (O3.lpNorm_eq_zero_iff (by norm_num)).mp hnorm
 
 theorem initial_gradient_le_LR (inst : PositiveInstance p d x0)
@@ -41,7 +41,7 @@ theorem initial_gradient_le_LR (inst : PositiveInstance p d x0)
     (hinstL : inst.L = L) (hinstR : inst.R ≤ R) :
     lpNorm (conjugateExponent p) (inst.oracle.gradient x0) ≤ L * R := by
   obtain ⟨xstar, hxstar, hradius⟩ :=
-    Stage3BelowTwoS3F.exists_minimizer_at_radius inst (by linarith : 1 < p)
+    Stage3BelowTwoS3F.exists_minimizer_at_radius inst (by linarith only [hp] : 1 < p)
   have hgstar := minimizer_gradient_zero inst hxstar
   have hsmooth := inst.smooth x0 xstar
   rw [hgstar, sub_zero, hinstL] at hsmooth

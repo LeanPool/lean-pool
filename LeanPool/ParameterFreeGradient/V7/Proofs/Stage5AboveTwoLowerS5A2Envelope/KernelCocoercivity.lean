@@ -57,7 +57,7 @@ lemma sq_intervalIntegral_le_integral_sq (X : ℝ → ℝ)
     intervalIntegral.integral_const] at hnon
   dsimp [I] at hnon ⊢
   norm_num at hnon ⊢
-  nlinarith
+  linarith only [hnon]
 
 /-- Exact unit-ball cocoercivity of the concrete kernel gradient, derived
 from the genuine Hessian, its PSD Cauchy--Schwarz inequality, and the frozen
@@ -141,7 +141,7 @@ theorem kernelGradient_cocoercive_on_unit_of_hessian_bound
       change 0 ≤ A t at hAnonneg
       rw [heNorm] at hdiag
       norm_num at hdiag
-      nlinarith [mul_le_mul_of_nonneg_right hdiag hAnonneg]
+      linarith only [hAnonneg, hcs, hdiag, mul_le_mul_of_nonneg_right hdiag hAnonneg]
     have hXsqInt : IntervalIntegrable (fun t ↦ X t ^ (2 : ℕ))
         MeasureTheory.volume 0 1 := hX.pow 2 |>.intervalIntegrable _ _
     have hAInt : IntervalIntegrable A MeasureTheory.volume 0 1 :=

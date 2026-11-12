@@ -24,12 +24,12 @@ private theorem positive_quadratic_root_unique {A a b : ℝ}
     (hA : 0 ≤ A) (ha : 0 < a) (hb : 0 < b)
     (haq : a ^ 2 = A + a) (hbq : b ^ 2 = A + b) : a = b := by
   have hfactor : (a - b) * (a + b - 1) = 0 := by
-    nlinarith
+    linarith only [haq, hbq]
   rcases mul_eq_zero.mp hfactor with hab | hsum
-  · linarith
-  · have ha1 : a < 1 := by nlinarith
+  · linarith only [hab]
+  · have ha1 : a < 1 := by linarith only [hb, hsum]
     have hprod : 0 < a * (1 - a) := mul_pos ha (sub_pos.mpr ha1)
-    nlinarith
+    linarith only [hA, haq, hprod]
 
 private theorem euclidean_weights_eq_source (data : EuclideanGapData d m)
     (hdyn : EuclideanGapDynamics data) :
@@ -369,7 +369,7 @@ theorem euclideanGap : EuclideanGapStatement := by
         rw [← O3.pairing_self_eq_lpNorm_two_sq]
         exact hpair
       have hn := O3.lpNorm_nonneg 2 (data.inst.oracle.gradient xstar)
-      have hnorm : lpNorm 2 (data.inst.oracle.gradient xstar) = 0 := by nlinarith
+      have hnorm : lpNorm 2 (data.inst.oracle.gradient xstar) = 0 := by nlinarith only [hn, hsq]
       exact (O3.lpNorm_eq_zero_iff (by norm_num)).mp hnorm
     have hgrad0 : ∀ x, data.inst.oracle.gradient x = 0 := by
       intro x

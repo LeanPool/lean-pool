@@ -50,7 +50,7 @@ lemma eventually_lpNorm_sub_lt {p eta : ℝ} (hp : 1 ≤ p)
   have hzero : lpNorm p (x - x) = 0 := by
     rw [sub_self]
     change O3.lpNorm p (0 : Point d) = 0
-    exact O3.lpNorm_zero (by linarith : 0 < p)
+    exact O3.lpNorm_zero (by linarith only [hp] : 0 < p)
   have hmem : Set.Iio eta ∈ nhds (lpNorm p (x - x)) := by
     rw [hzero]
     exact Iio_mem_nhds heta

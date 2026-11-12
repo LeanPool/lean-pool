@@ -100,7 +100,7 @@ theorem anchor_cap_test_passes {d : ℕ} {p : ℝ}
   change P.f y ≤ P.f P.x0 - G * D / 2
   rw [hypair, hynorm] at hdesc
   have hLM : P.L ≤ M := hscale
-  nlinarith
+  nlinarith only [hD, hMD, hdesc, hscale]
 
 /-- An accepted test controls the radius by the actual infimum distance to
 the nonempty minimizer set.  No closest minimizer is selected or assumed. -/
@@ -124,10 +124,10 @@ theorem anchor_radius_le_two_minimizerDistance {d : ℕ} {p : ℝ}
     have hDx := anchorAccepted_radius P.p_gt_one hfirst hxstar
       (rfl : G = lpNorm (conjugateExponent p) (P.grad P.x0)) hGpos
       (le_refl (lpNorm p (xstar - P.x0))) haccept
-    linarith
+    linarith only [hDx]
   change D ≤ 2 * minimizerDistance p P.f P.x0
   change D ≤ 2 * sInf distances
-  linarith
+  linarith only [hhalf]
 
 /-- Once the deterministic loop has returned, additional unused fuel cannot
 change its first accepted result. -/

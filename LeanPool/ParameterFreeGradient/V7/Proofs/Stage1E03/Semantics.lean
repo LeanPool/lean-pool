@@ -37,7 +37,7 @@ theorem minimizer_gradient_zero (inst : PositiveInstance 2 d x0)
     rw [← O3.pairing_self_eq_lpNorm_two_sq]
     exact hpair
   have hn := O3.lpNorm_nonneg 2 (inst.oracle.gradient xstar)
-  have hnorm : lpNorm 2 (inst.oracle.gradient xstar) = 0 := by nlinarith
+  have hnorm : lpNorm 2 (inst.oracle.gradient xstar) = 0 := by nlinarith only [hn, hsq]
   exact (O3.lpNorm_eq_zero_iff (by norm_num)).mp hnorm
 
 /-- The current positive instance expressed in the original admissible-instance interface. -/
