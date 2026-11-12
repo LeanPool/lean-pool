@@ -5,6 +5,9 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+public import Mathlib.Tactic.Positivity
+
 public import LeanPool.ApollonianSuperharmonic.P4984T1ClosedGap
 public import LeanPool.ApollonianSuperharmonic.P4828T1LineSupport
 public import LeanPool.ApollonianSuperharmonic.P4953T1LiteralHulls

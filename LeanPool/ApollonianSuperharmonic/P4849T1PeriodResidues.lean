@@ -5,8 +5,11 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.ApollonianSuperharmonic.IntegerLatticeFunction
+public import Mathlib.Init
 public import Mathlib.Algebra.Ring.Periodic
+public import Mathlib.Tactic.Linarith
+
+public import LeanPool.ApollonianSuperharmonic.IntegerLatticeFunction
 public import Mathlib.Data.Int.Interval
 
 -- [TABLET NODE: P4849T1PeriodResidues]

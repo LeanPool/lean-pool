@@ -5,15 +5,11 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.AffineTriangularComplexChart
-public import LeanPool.ApollonianSuperharmonic.CommonFootprintEdgeVertices
-public import LeanPool.ApollonianSuperharmonic.FootprintEdges
-public import LeanPool.ApollonianSuperharmonic.FootprintVertices
-public import LeanPool.ApollonianSuperharmonic.PeriodicTileIndexedMultiplicityOne
 public import LeanPool.ApollonianSuperharmonic.PeriodicTileIntersectionClassification
-public import LeanPool.ApollonianSuperharmonic.TriangularLatticeAdjacent
 public import LeanPool.ApollonianSuperharmonic.OppositeRoutedCommonEdgeOutsideCellUnique
-public import Mathlib.Tactic.Abel
 
 -- [TABLET NODE: AffineTriangularNoFourfoldCellOwners]
 

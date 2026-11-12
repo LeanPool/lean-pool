@@ -5,10 +5,9 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P3861T1FacialDomains
-public import LeanPool.ApollonianSuperharmonic.P3767T1BarrierRegionMaximal
-public import LeanPool.ApollonianSuperharmonic.P3767T1VertexEdgeIncidence
-public import LeanPool.ApollonianSuperharmonic.P3776T1FixedGeometry
 public import LeanPool.ApollonianSuperharmonic.P3889T1ExactRadialStar
 public import LeanPool.ApollonianSuperharmonic.P3889T1TwoRaySectors
 public import LeanPool.ApollonianSuperharmonic.P3889T1FaceGapCoverage

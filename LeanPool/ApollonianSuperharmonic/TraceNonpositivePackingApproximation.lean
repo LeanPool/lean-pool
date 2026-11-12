@@ -5,7 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
-public import Mathlib.Topology.Instances.Matrix
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.BandDiskExteriorDensity
 public import LeanPool.ApollonianSuperharmonic.CircleMatrixEnclosureCriterion
 

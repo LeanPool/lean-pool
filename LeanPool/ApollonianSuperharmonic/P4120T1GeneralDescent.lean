@@ -5,14 +5,12 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.ApollonianSuperharmonic.BandOrderedGeneralFinitePatches
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.AllowedSubtileIncidenceZeroOppositeChord
 public import LeanPool.ApollonianSuperharmonic.BandOriginalPairSeparation
-public import LeanPool.ApollonianSuperharmonic.PeriodicTileIndexedMultiplicityOne
 public import LeanPool.ApollonianSuperharmonic.PeriodicTileIntersectionClassification
-public import LeanPool.ApollonianSuperharmonic.P3161T2IncidentBoundary
-public import LeanPool.ApollonianSuperharmonic.FootprintVertices
-public import LeanPool.ApollonianSuperharmonic.ProperBandCurvatureStructure
+public import LeanPool.ApollonianSuperharmonic.BandOrderedGeneralLayoutCertificate
 
 -- [TABLET NODE: P4120T1GeneralDescent]
 
@@ -1410,7 +1408,7 @@ private theorem parentMap_injective :
             ⟨owner (parentCellIndex q),
             Finset.mem_image.mpr ⟨parentCellIndex q, Finset.mem_univ _, rfl⟩⟩ := by
           have hsum := hpq
-          simp? [parentMap, hp, hq] at hsum
+          simp only [Fin.isValue, hp, ↓reduceIte, hq, Sum.inl.injEq, parentMap] at hsum
           exact hsum
         exact congrArg Subtype.val hsub
       apply Subtype.ext

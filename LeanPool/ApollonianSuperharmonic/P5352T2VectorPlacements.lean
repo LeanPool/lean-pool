@@ -5,8 +5,13 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P5352T2PlacementData
 public import LeanPool.ApollonianSuperharmonic.DiamondCoordinateConfiguration
+public import LeanPool.ApollonianSuperharmonic.GaussianRealPoint
+public import LeanPool.ApollonianSuperharmonic.P5352T2Sources
+public import Mathlib.Tactic.Polynomial.Basic
 
 -- [TABLET NODE: P5352T2VectorPlacements]
 

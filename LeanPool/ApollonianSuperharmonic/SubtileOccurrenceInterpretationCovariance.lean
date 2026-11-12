@@ -5,12 +5,11 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.ApollonianSuperharmonic.GaussianQuarterTurn
-public import LeanPool.ApollonianSuperharmonic.GaussianReflection
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.SubtileOccurrenceInterpretation
-public import LeanPool.ApollonianSuperharmonic.TileQuarterTurnFormulas
-public import LeanPool.ApollonianSuperharmonic.TileReflectionFormulas
-public import LeanPool.ApollonianSuperharmonic.TileTranslationFormulas
+public import LeanPool.ApollonianSuperharmonic.TileQuarterTurn
+public import LeanPool.ApollonianSuperharmonic.TileReflection
 
 -- [TABLET NODE: SubtileOccurrenceInterpretationCovariance]
 
@@ -104,7 +103,7 @@ theorem SubtileOccurrenceInterpretationCovariance
   cases o with
   | mk label first second =>
     cases label <;>
-      simp? [SubtileOccurrenceInterpretation]
+      simp only [SubtileOccurrenceInterpretation, Fin.isValue]
       <;> rw [translation_commute]
       <;> rw [quarter_commute]
       <;> rw [reflection_commute]

@@ -5,8 +5,9 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.TilingLatticeIndex
-public import LeanPool.ApollonianSuperharmonic.VectorRecursionLaws
 
 -- [TABLET NODE: TilingLatticeBasis]
 
@@ -43,7 +44,8 @@ private theorem relation :
   have e0 := first.2.2.1
   have e1 := second.2.2.1
   have e2 := third.2.2.1
-  simp? [r, s] at e1 e2
+  simp only [Fin.isValue, Matrix.cons_val_one, Matrix.cons_val_zero, Int.reduceNeg,
+      Matrix.cons_val, r, s] at e1 e2
   rw [e0, e1, e2]
   calc
     _ = (1 - (⟨0, 1⟩ : GaussianInt)) *
@@ -180,7 +182,7 @@ private theorem generator_mem :
   · rw [hx, ← hk, ← hl, hr0, ← hC]
     exact AddSubgroup.subset_closure (by simp)
   · rw [hx, ← hk, ← hl, hr0, ← hC]
-    simp? at hl ⊢
+    simp only [Fin.reduceFinMk, Fin.reduceSucc, Fin.isValue] at hl ⊢
     have cneg : BandVectors.1 (q 3) (q 0) =
         -(BandVectors.1 (q 1) (q 0) + BandVectors.1 (q 2) (q 0)) := by
       apply eq_neg_of_add_eq_zero_left
@@ -406,7 +408,9 @@ private theorem unique_coordinates :
   intro q determinantNumber determinant_nonzero m n h
   have realpart := congrArg (fun z : GaussianInt => z.re) h
   have imagpart := congrArg (fun z : GaussianInt => z.im) h
-  simp? at realpart imagpart
+  simp only [Int.reduceNeg, Fin.isValue, Zsqrtd.re_add, Zsqrtd.re_mul, Zsqrtd.re_intCast,
+      Zsqrtd.im_intCast, mul_zero, zero_mul, add_zero, Zsqrtd.im_add, Zsqrtd.im_mul]
+      at realpart imagpart
   have realzero :
       (m.1 - n.1) * (BandVectors.1 (q 1) (q 0)).re +
         (m.2 - n.2) * (BandVectors.1 (q 2) (q 0)).re = 0 := by

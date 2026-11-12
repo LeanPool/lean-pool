@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.AcyclicIndegreeOrientation
 
 -- [TABLET NODE: P4062T1OrientationTransport]
@@ -61,7 +63,7 @@ theorem P4062T1OrientationTransport
       · right; right; right; rw [h]; abel
   let t : AcyclicIndegreeOrientation E τ := {
     edge := fun x y => o.edge (x-u) (y-u)
-    edge_decidable := fun x y => o.edge_decidable (x-u) (y-u)
+    edgeDecidable := fun x y => o.edgeDecidable (x-u) (y-u)
     rank := fun x => o.rank (x-u)
     supported := by
       intro x y he
@@ -74,9 +76,9 @@ theorem P4062T1OrientationTransport
     indegree := by
       intro x hx
       have hc : (E.filter (fun y => @decide (o.edge (y-u) (x-u))
-          (o.edge_decidable (y-u) (x-u)))).card =
+          (o.edgeDecidable (y-u) (x-u)))).card =
           (D.filter (fun y => @decide (o.edge y (x-u))
-            (o.edge_decidable y (x-u)))).card := by
+            (o.edgeDecidable y (x-u)))).card := by
         apply Finset.card_bij (fun y _ => y-u)
         · intro y hy
           simp only [Finset.mem_filter, decide_eq_true_eq] at hy ⊢

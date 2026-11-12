@@ -5,20 +5,15 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.ApollonianSuperharmonic.BoundaryFootprintEdges
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.BoundaryFootprintVertices
-public import LeanPool.ApollonianSuperharmonic.CellDisjointCommonFootprintIncidence
-public import LeanPool.ApollonianSuperharmonic.ClosedSquareRealization
 public import LeanPool.ApollonianSuperharmonic.CommonFootprintEdgeVertices
 public import LeanPool.ApollonianSuperharmonic.ConnectedCommonBoundaryPath
-public import LeanPool.ApollonianSuperharmonic.FootprintEdges
 public import LeanPool.ApollonianSuperharmonic.FootprintVertices
 public import LeanPool.ApollonianSuperharmonic.LatticeTile
 public import LeanPool.ApollonianSuperharmonic.LatticeDiskUnionIntersectionConnected
-public import LeanPool.ApollonianSuperharmonic.LatticeTileGridStructure
-public import LeanPool.ApollonianSuperharmonic.ProtoTile
 public import LeanPool.ApollonianSuperharmonic.SimpleGridPathBetween
-public import LeanPool.ApollonianSuperharmonic.TileRealization
 
 -- [TABLET NODE: LatticeTileDiskUnionInterface]
 

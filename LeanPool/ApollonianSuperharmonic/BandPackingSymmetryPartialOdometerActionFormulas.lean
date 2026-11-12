@@ -5,15 +5,13 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryPartialOdometerAction
 public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetrySlopeAction
 public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryVectorAction
-public import LeanPool.ApollonianSuperharmonic.GaussianQuarterTurn
-public import LeanPool.ApollonianSuperharmonic.GaussianReflection
 public import LeanPool.ApollonianSuperharmonic.OdometerCompatibility
-public import LeanPool.ApollonianSuperharmonic.PartialOdometerSquares
 public import LeanPool.ApollonianSuperharmonic.PartialOdometerSlope
-public import LeanPool.ApollonianSuperharmonic.P2999T1CompleteSquareTransport
 public import LeanPool.ApollonianSuperharmonic.P2999T1OrthogonalSlopeTransport
 public import LeanPool.ApollonianSuperharmonic.P2999T1ShiftSlopeTransport
 

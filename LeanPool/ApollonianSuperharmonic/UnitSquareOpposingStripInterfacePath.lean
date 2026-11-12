@@ -5,15 +5,13 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.AffineOpposingStripCorridor
-public import LeanPool.ApollonianSuperharmonic.AffineTriangularCorridorStep
-public import LeanPool.ApollonianSuperharmonic.AffineTriangularFaceVertices
 public import LeanPool.ApollonianSuperharmonic.FootprintEdges
 public import LeanPool.ApollonianSuperharmonic.FootprintVertices
 public import LeanPool.ApollonianSuperharmonic.TileTranslation
-public import LeanPool.ApollonianSuperharmonic.TriangularLatticeAdjacent
 public import LeanPool.ApollonianSuperharmonic.TriangularStripSegment
-public import Mathlib.Data.List.Chain
 
 -- [TABLET NODE: UnitSquareOpposingStripInterfacePath]
 

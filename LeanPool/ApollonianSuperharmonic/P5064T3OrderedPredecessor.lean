@@ -5,8 +5,9 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.FordCoordinateConfiguration
-public import LeanPool.ApollonianSuperharmonic.BandPredecessorNoCollision
 
 -- [TABLET NODE: P5064T3OrderedPredecessor]
 

@@ -5,17 +5,12 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryProjectiveVectorCovariance
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryCovariance
 public import LeanPool.ApollonianSuperharmonic.BandPrototileCentroidUnique
-public import LeanPool.ApollonianSuperharmonic.BandPrototileTranslation
 public import LeanPool.ApollonianSuperharmonic.FordRegimeConverse
 public import LeanPool.ApollonianSuperharmonic.FordTileRecursiveIdentification
-public import LeanPool.ApollonianSuperharmonic.FordCoordinateConfiguration
-public import LeanPool.ApollonianSuperharmonic.P4210T1FordSquareCentroid
-public import LeanPool.ApollonianSuperharmonic.TileTranslationFormulas
-public import LeanPool.ApollonianSuperharmonic.TileQuarterTurnFormulas
-public import LeanPool.ApollonianSuperharmonic.TileReflectionFormulas
 
 -- [TABLET NODE: P4638T1EmptyFordLocalization]
 
@@ -64,7 +59,12 @@ private theorem hp :
   intro r hr p
   refine ⟨SemiProperQuadruple.rotate hr.1, ?_⟩
   intro j
-  fin_cases j <;> simp? [p] <;> first | exact hr.2 0 | exact hr.2 1 | exact hr.2 2
+  fin_cases j <;> simp only [Fin.isValue, Fin.mk_one, Fin.succ_one_eq_two, Matrix.cons_val,
+      Matrix.cons_val_zero, p, Fin.reduceFinMk, Fin.reduceSucc, Fin.zero_eta,
+      Fin.succ_zero_eq_one, Matrix.cons_val_one]
+  · exact hr.2 1
+  · exact hr.2 2
+  · exact hr.2 0
 
 private theorem hq1 :
     (by

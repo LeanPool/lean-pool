@@ -5,12 +5,12 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.TileCellComplement
-public import LeanPool.ApollonianSuperharmonic.FootprintVertices
-public import LeanPool.ApollonianSuperharmonic.TileCentroid
-public import LeanPool.ApollonianSuperharmonic.TileQuarterTurnFormulas
-public import LeanPool.ApollonianSuperharmonic.TileReflectionFormulas
-public import LeanPool.ApollonianSuperharmonic.TileTranslationFormulas
+public import LeanPool.ApollonianSuperharmonic.TileQuarterTurn
+public import LeanPool.ApollonianSuperharmonic.TileReflection
+public import LeanPool.ApollonianSuperharmonic.TileTranslation
 
 -- [TABLET NODE: TileCellComplementCovariance]
 

@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P5332T1LiteralNormalization
 public import LeanPool.ApollonianSuperharmonic.P5332T1VectorPlacements
 public import LeanPool.ApollonianSuperharmonic.P5332T1RightFirstValues

@@ -5,13 +5,14 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.DiamondTileRecursiveIdentification
 public import LeanPool.ApollonianSuperharmonic.DiamondVertexDomains
 public import LeanPool.ApollonianSuperharmonic.BandSubtileOccurrenceTranslation
 public import LeanPool.ApollonianSuperharmonic.BandPrototileCentroidUnique
 public import LeanPool.ApollonianSuperharmonic.ProtoTileObservableExtensionality
 public import LeanPool.ApollonianSuperharmonic.P4194T1DiamondBoundaryLedger
-public import LeanPool.ApollonianSuperharmonic.P4194T1DiamondCentroid
 
 -- [TABLET NODE: P4120T1DiamondGeometry]
 

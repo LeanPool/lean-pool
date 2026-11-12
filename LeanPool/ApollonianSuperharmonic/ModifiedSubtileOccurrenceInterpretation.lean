@@ -5,8 +5,12 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.ApollonianSuperharmonic.SubtileOccurrenceInterpretation
+public import Mathlib.Init
+public import Mathlib.Algebra.Group.Fin.Basic
+
 public import LeanPool.ApollonianSuperharmonic.TileCellComplement
+public import LeanPool.ApollonianSuperharmonic.PeriodicSubtileIndex
+public import LeanPool.ApollonianSuperharmonic.TileTranslation
 
 -- [TABLET NODE: ModifiedSubtileOccurrenceInterpretation]
 

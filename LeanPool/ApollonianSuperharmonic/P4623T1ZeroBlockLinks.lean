@@ -5,9 +5,14 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+public import Mathlib.Data.Fintype.Fin
+public import Mathlib.Data.Fintype.Prod
+public import Mathlib.Data.Finset.Card
+public import Mathlib.Tactic.FinCases
+
 public import LeanPool.ApollonianSuperharmonic.AllowedSubtileIncidence
 public import LeanPool.ApollonianSuperharmonic.SixSubtileFaceVertices
-public import Mathlib.Tactic.FinCases
 
 -- [TABLET NODE: P4623T1ZeroBlockLinks]
 

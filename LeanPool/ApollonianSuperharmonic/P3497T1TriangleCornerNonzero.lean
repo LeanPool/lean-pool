@@ -5,8 +5,9 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P3497T1StrictCornerSplice
-public import Mathlib.Tactic.FinCases
 public import LeanPool.ApollonianSuperharmonic.P3381T1PolygonBoundary
 
 -- [TABLET NODE: P3497T1TriangleCornerNonzero]

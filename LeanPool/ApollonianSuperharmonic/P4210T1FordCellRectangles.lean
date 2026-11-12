@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.FordTile
 public import LeanPool.ApollonianSuperharmonic.TileTranslation
 

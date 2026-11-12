@@ -5,7 +5,16 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.ApollonianSuperharmonic.P4715T1HexagonTessellation
+public import Mathlib.Init
+
+public import LeanPool.ApollonianSuperharmonic.P4715T1CoefficientTranslation
+public import LeanPool.ApollonianSuperharmonic.P4780T1NeighborFacets
+public import LeanPool.ApollonianSuperharmonic.P4780T1OverlapBound
+public import Mathlib.Algebra.Order.Field.Power
+public import Mathlib.Analysis.Normed.Group.Basic
+public import Mathlib.Analysis.Real.Sqrt
+public import Mathlib.Data.EReal.Inv
+public import Mathlib.Tactic.IntervalCases
 
 -- [TABLET NODE: P4802T1HexagonOverlapSide]
 

@@ -5,16 +5,9 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P4456T2CrosscutIndex
-public import LeanPool.ApollonianSuperharmonic.LatticeTileFourNeighborConnected
-public import LeanPool.ApollonianSuperharmonic.TouchingTriple
-public import LeanPool.ApollonianSuperharmonic.ClosedSquareRealization
-public import LeanPool.ApollonianSuperharmonic.TileTouching
-public import LeanPool.ApollonianSuperharmonic.SimpleGridPath
-public import LeanPool.ApollonianSuperharmonic.FootprintEdges
-public import LeanPool.ApollonianSuperharmonic.P4397T1UnitEdgeCells
-public import LeanPool.ApollonianSuperharmonic.ModifiedSubtileOccurrenceInterpretation
-public import LeanPool.ApollonianSuperharmonic.SubtileOccurrenceInterpretation
 public import LeanPool.ApollonianSuperharmonic.P4456T2ParentSide
 public import LeanPool.ApollonianSuperharmonic.BandOrderedGeneralLayoutCertificate
 public import LeanPool.ApollonianSuperharmonic.BandSignedOccurrenceHalfTurn

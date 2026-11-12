@@ -5,9 +5,12 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.ApollonianSuperharmonic.P3723T1AllContactRouting
+public import Mathlib.Init
+public import Mathlib.Topology.MetricSpace.Pseudo.Lemmas
+public import Mathlib.Topology.Order.IntermediateValue
 public import Mathlib.Topology.Order.DenselyOrdered
-public import Mathlib.Tactic.FinCases
+
+public import LeanPool.ApollonianSuperharmonic.P3723T1AllContactRouting
 
 -- [TABLET NODE: P3913T1RoutedArcExterior]
 

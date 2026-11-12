@@ -5,13 +5,11 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.BandPrototileTranslation
-public import LeanPool.ApollonianSuperharmonic.CurvatureOneOdometer
-public import LeanPool.ApollonianSuperharmonic.OdometerCompatibility
-public import LeanPool.ApollonianSuperharmonic.OdometerTranslation
 public import LeanPool.ApollonianSuperharmonic.PartialOdometerAffineTranslateFormulas
 public import LeanPool.ApollonianSuperharmonic.TileOdometer
-public import LeanPool.ApollonianSuperharmonic.TileTranslationFormulas
 
 -- [TABLET NODE: TileOdometerAffineTranslation]
 

@@ -5,9 +5,11 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+public import Mathlib.Tactic.FinCases
+
 public import LeanPool.ApollonianSuperharmonic.AllowedSubtileIncidence
 public import LeanPool.ApollonianSuperharmonic.SixSubtileFaceVertices
-public import Mathlib.Tactic.FinCases
 public import Mathlib.Data.Int.Interval
 
 
@@ -23,6 +25,30 @@ Changes: pool module paths, public exports, project namespace and current Mathli
 @[expose] public section
 
 namespace ApollonianSuperharmonic
+
+private theorem incidenceFaceEdges (f : PeriodicSubtileFaceIndex) :
+    AllowedSubtileIncidence (SixSubtileFaceVertices f 0) (SixSubtileFaceVertices f 1) ∧
+    AllowedSubtileIncidence (SixSubtileFaceVertices f 0) (SixSubtileFaceVertices f 2) ∧
+    AllowedSubtileIncidence (SixSubtileFaceVertices f 1) (SixSubtileFaceVertices f 2) := by
+  rcases f with ⟨l, m, n⟩
+  cases l <;> dsimp [SixSubtileFaceVertices]
+  · exact ⟨.AB m n, .AC m n, .BC m n⟩
+  · exact ⟨.AB m n, .AD m n, .BD m n⟩
+  · exact ⟨.AC m n, .AF m n, .CF m n⟩
+  · exact ⟨.BD m n, .BE m n, .DE m n⟩
+  · exact ⟨.AB01 m n, .AE01 m n, .BE m (n + 1)⟩
+  · refine ⟨.AB01 m n, .AF m n, ?_⟩
+    simpa using AllowedSubtileIncidence.BF0m1 m (n + 1)
+  · exact ⟨.AB11 m n, .AC11 m n, .BC (m + 1) (n + 1)⟩
+  · refine ⟨.AB11 m n, .AD m n, ?_⟩
+    simpa using AllowedSubtileIncidence.BDm1m1 (m + 1) (n + 1)
+  · refine ⟨.AC11 m n, .AE01 m n, ?_⟩
+    simpa using AllowedSubtileIncidence.CEm10 (m + 1) (n + 1)
+  · refine ⟨.BDm1m1 m n, .BF0m1 m n, ?_⟩
+    simpa using AllowedSubtileIncidence.DF10 (m - 1) (n - 1)
+  · exact ⟨.CDm10 m n, .CEm10 m n, .DE (m - 1) n⟩
+  · refine ⟨.CDm10 m n, .CF m n, ?_⟩
+    simpa using AllowedSubtileIncidence.DF10 (m - 1) n
 
 theorem P4677T2IncidenceLedger :
     (∀ a b, AllowedSubtileIncidence a b ↔ AllowedSubtileIncidence b a) ∧
@@ -74,44 +100,38 @@ theorem P4677T2IncidenceLedger :
     rcases a with ⟨al, m, n⟩
     rcases b with ⟨bl, p, q⟩
     cases al <;> cases bl <;> simp only [forward] at h
-    all_goals repeat' (rcases h with h | h)
-    all_goals first
-      | (convert AllowedSubtileIncidence.AB m n using 1 <;> simp [PeriodicSubtileIndex.mk.injEq]
-          <;> omega)
-      | (convert AllowedSubtileIncidence.AB01 m n using 1 <;> simp
-          [PeriodicSubtileIndex.mk.injEq] <;> omega)
-      | (convert AllowedSubtileIncidence.AB11 m n using 1 <;> simp
-          [PeriodicSubtileIndex.mk.injEq] <;> omega)
-      | (convert AllowedSubtileIncidence.AC m n using 1 <;> simp [PeriodicSubtileIndex.mk.injEq]
-          <;> omega)
-      | (convert AllowedSubtileIncidence.AC11 m n using 1 <;> simp
-          [PeriodicSubtileIndex.mk.injEq] <;> omega)
-      | (convert AllowedSubtileIncidence.AD m n using 1 <;> simp [PeriodicSubtileIndex.mk.injEq]
-          <;> omega)
-      | (convert AllowedSubtileIncidence.AE01 m n using 1 <;> simp
-          [PeriodicSubtileIndex.mk.injEq] <;> omega)
-      | (convert AllowedSubtileIncidence.AF m n using 1 <;> simp [PeriodicSubtileIndex.mk.injEq]
-          <;> omega)
-      | (convert AllowedSubtileIncidence.BC m n using 1 <;> simp [PeriodicSubtileIndex.mk.injEq]
-          <;> omega)
-      | (convert AllowedSubtileIncidence.BDm1m1 m n using 1 <;> simp
-          [PeriodicSubtileIndex.mk.injEq] <;> omega)
-      | (convert AllowedSubtileIncidence.BD m n using 1 <;> simp [PeriodicSubtileIndex.mk.injEq]
-          <;> omega)
-      | (convert AllowedSubtileIncidence.BE m n using 1 <;> simp [PeriodicSubtileIndex.mk.injEq]
-          <;> omega)
-      | (convert AllowedSubtileIncidence.BF0m1 m n using 1 <;> simp
-          [PeriodicSubtileIndex.mk.injEq] <;> omega)
-      | (convert AllowedSubtileIncidence.CDm10 m n using 1 <;> simp
-          [PeriodicSubtileIndex.mk.injEq] <;> omega)
-      | (convert AllowedSubtileIncidence.CEm10 m n using 1 <;> simp
-          [PeriodicSubtileIndex.mk.injEq] <;> omega)
-      | (convert AllowedSubtileIncidence.CF m n using 1 <;> simp [PeriodicSubtileIndex.mk.injEq]
-          <;> omega)
-      | (convert AllowedSubtileIncidence.DE m n using 1;
-          simp [PeriodicSubtileIndex.mk.injEq]; omega)
-      | (convert AllowedSubtileIncidence.DF10 m n using 1; simp
-          [PeriodicSubtileIndex.mk.injEq]; omega)
+    · rcases h with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩
+      · exact AllowedSubtileIncidence.AB _ _
+      · exact AllowedSubtileIncidence.AB01 _ _
+      · exact AllowedSubtileIncidence.AB11 _ _
+    · rcases h with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩
+      · exact AllowedSubtileIncidence.AC _ _
+      · exact AllowedSubtileIncidence.AC11 _ _
+    · rcases h with ⟨rfl, rfl⟩
+      exact AllowedSubtileIncidence.AD _ _
+    · rcases h with ⟨rfl, rfl⟩
+      exact AllowedSubtileIncidence.AE01 _ _
+    · rcases h with ⟨rfl, rfl⟩
+      exact AllowedSubtileIncidence.AF _ _
+    · rcases h with ⟨rfl, rfl⟩
+      exact AllowedSubtileIncidence.BC _ _
+    · rcases h with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩
+      · exact AllowedSubtileIncidence.BD _ _
+      · exact AllowedSubtileIncidence.BDm1m1 _ _
+    · rcases h with ⟨rfl, rfl⟩
+      exact AllowedSubtileIncidence.BE _ _
+    · rcases h with ⟨rfl, rfl⟩
+      exact AllowedSubtileIncidence.BF0m1 _ _
+    · rcases h with ⟨rfl, rfl⟩
+      exact AllowedSubtileIncidence.CDm10 _ _
+    · rcases h with ⟨rfl, rfl⟩
+      exact AllowedSubtileIncidence.CEm10 _ _
+    · rcases h with ⟨rfl, rfl⟩
+      exact AllowedSubtileIncidence.CF _ _
+    · rcases h with ⟨rfl, rfl⟩
+      exact AllowedSubtileIncidence.DE _ _
+    · rcases h with ⟨rfl, rfl⟩
+      exact AllowedSubtileIncidence.DF10 _ _
   have normal_iff (a b) : AllowedSubtileIncidence a b ↔ forward a b ∨ forward b a :=
     ⟨normal, fun h => h.elim (positive a b) (fun h => .symm (positive b a h))⟩
   refine ⟨fun a b => ⟨AllowedSubtileIncidence.symm, AllowedSubtileIncidence.symm⟩,
@@ -145,10 +165,12 @@ theorem P4677T2IncidenceLedger :
     cases l <;> fin_cases i <;> fin_cases j <;>
       simp [SixSubtileFaceVertices, PeriodicSubtileIndex.mk.injEq] at hij ⊢
   · intro f i j hij
-    rcases f with ⟨l, m, n⟩
-    cases l <;> fin_cases i <;> fin_cases j <;> try contradiction
-    all_goals rw [normal_iff]
-    all_goals simp [SixSubtileFaceVertices, forward]
+    obtain ⟨h01, h02, h12⟩ := incidenceFaceEdges f
+    fin_cases i <;> fin_cases j
+    all_goals first
+      | exact (hij rfl).elim
+      | assumption
+      | apply AllowedSubtileIncidence.symm; assumption
   · intro a b hab
     have occurs (f : PeriodicSubtileFaceIndex) (a : PeriodicSubtileIndex) :
         (∃ i, SixSubtileFaceVertices f i = a) ↔
@@ -188,8 +210,6 @@ theorem P4677T2IncidenceLedger :
     case' DE m n => refine ⟨⟨.I4, m, n⟩, ⟨.J7, m + 1, n⟩, ?_, ?_, ?_, ?_⟩
     case' DF10 m n => refine ⟨⟨.J6, m + 1, n + 1⟩, ⟨.J8, m + 1, n⟩, ?_, ?_, ?_, ?_⟩
     all_goals first
-      | (solve | (try simp only [occurs]); simp [SixSubtileFaceVertices,
-          PeriodicSubtileIndex.mk.injEq, PeriodicSubtileFaceIndex.mk.injEq])
       | (intro h hh
          simp only [occurs] at hh
          rcases h with ⟨hl, p, q⟩
@@ -197,6 +217,8 @@ theorem P4677T2IncidenceLedger :
            simp [SixSubtileFaceVertices,
              PeriodicSubtileIndex.mk.injEq, PeriodicSubtileFaceIndex.mk.injEq] at hh ⊢ <;>
            omega)
+      | (solve | (try simp only [occurs]); simp [SixSubtileFaceVertices,
+          PeriodicSubtileIndex.mk.injEq, PeriodicSubtileFaceIndex.mk.injEq])
 
 end ApollonianSuperharmonic
 

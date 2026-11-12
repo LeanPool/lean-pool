@@ -5,21 +5,11 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.ApollonianSuperharmonic.AffineTriangularNoFourfoldCellOwners
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.AncestorOdometer
-public import LeanPool.ApollonianSuperharmonic.BandGenealogy
-public import LeanPool.ApollonianSuperharmonic.BandRegularTileTouchingClassification
-public import LeanPool.ApollonianSuperharmonic.BandRegularTranslatePeriodicComplex
 public import LeanPool.ApollonianSuperharmonic.CircleMatrixIncomingVector
-public import LeanPool.ApollonianSuperharmonic.FootprintEdges
-public import LeanPool.ApollonianSuperharmonic.FootprintVertices
-public import LeanPool.ApollonianSuperharmonic.LatticeTileGridStructure
 public import LeanPool.ApollonianSuperharmonic.OpposingBoundaryInterfaceExhaustion
-public import LeanPool.ApollonianSuperharmonic.PeriodicTileIntersectionClassification
-public import LeanPool.ApollonianSuperharmonic.PositiveCurvatureTileOdometerDomain
-public import LeanPool.ApollonianSuperharmonic.ProperBandQuadruple
-public import LeanPool.ApollonianSuperharmonic.ProperBandCurvatureStructure
-public import LeanPool.ApollonianSuperharmonic.TileTranslationFormulas
 
 -- [TABLET NODE: OpposingBoundaryStarLocalization]
 

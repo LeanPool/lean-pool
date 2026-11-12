@@ -5,6 +5,9 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+public import Mathlib.Data.List.Infix
+
 public import LeanPool.ApollonianSuperharmonic.P3019T1ChamberSegmentOrder
 public import LeanPool.ApollonianSuperharmonic.P3019T1UnimodularStripWindow
 

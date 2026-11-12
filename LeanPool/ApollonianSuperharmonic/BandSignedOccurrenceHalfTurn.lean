@@ -5,15 +5,12 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.BandPrototileCentralSymmetry
-public import LeanPool.ApollonianSuperharmonic.BandPrototileCentroidUnique
-public import LeanPool.ApollonianSuperharmonic.BandPrototileTranslation
 public import LeanPool.ApollonianSuperharmonic.CentrallyReflectedAt
-public import LeanPool.ApollonianSuperharmonic.FootprintVertices
 public import LeanPool.ApollonianSuperharmonic.GaussianQuarterTurn
-public import LeanPool.ApollonianSuperharmonic.GaussianRealPoint
 public import LeanPool.ApollonianSuperharmonic.TileArea
-public import LeanPool.ApollonianSuperharmonic.TileTranslationFormulas
 
 -- [TABLET NODE: BandSignedOccurrenceHalfTurn]
 

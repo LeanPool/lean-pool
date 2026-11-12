@@ -5,11 +5,13 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P3934T1PolygonalSide
-public import LeanPool.ApollonianSuperharmonic.P3934T1SectorSelection
 public import LeanPool.ApollonianSuperharmonic.P3934T1SectorContinuation
-public import LeanPool.ApollonianSuperharmonic.P3889T1TwoRaySectors
 public import LeanPool.ApollonianSuperharmonic.P5667T1StraightFrontierLocalSides
+public import Mathlib.Algebra.EuclideanDomain.Basic
+public import Mathlib.Algebra.EuclideanDomain.Field
 
 -- [TABLET NODE: P3934T1PolygonalSidePropagation]
 

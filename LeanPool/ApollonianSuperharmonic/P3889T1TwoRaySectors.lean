@@ -5,16 +5,12 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.ApollonianSuperharmonic.P3889T1TwoRaySectorDecomposition
-public import Mathlib.Analysis.Convex.PathConnected
-public import Mathlib.Analysis.Normed.Module.Convex
-public import Mathlib.Tactic.FieldSimp
-public import Mathlib.Tactic.FunProp
-public import Mathlib.Tactic.Linarith
-public import Mathlib.Tactic.NormNum
+public import Mathlib.Init
 public import Mathlib.Tactic.Positivity
-public import Mathlib.Tactic.Push
-public import Mathlib.Tactic.Ring
+
+public import LeanPool.ApollonianSuperharmonic.P3889T1TwoRaySectorDecomposition
+public import Mathlib.Analysis.Normed.Module.Convex
+public import Mathlib.Tactic.Positivity.Finset
 
 -- [TABLET NODE: P3889T1TwoRaySectors]
 

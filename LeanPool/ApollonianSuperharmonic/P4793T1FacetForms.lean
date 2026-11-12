@@ -5,10 +5,13 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.ApollonianSuperharmonic.Preamble
-public import Mathlib.LinearAlgebra.AffineSpace.AffineMap
+public import Mathlib.Init
+public import Mathlib.Algebra.Group.Fin.Basic
+public import Mathlib.Basic.Real.Basic
 public import Mathlib.Data.Fin.VecNotation
 public import Mathlib.Tactic.Ring
+
+public import Mathlib.LinearAlgebra.AffineSpace.AffineMap
 
 -- [TABLET NODE: P4793T1FacetForms]
 

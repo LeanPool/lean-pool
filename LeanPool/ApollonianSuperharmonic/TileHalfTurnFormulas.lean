@@ -5,7 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.ApollonianSuperharmonic.ClosedSquareRealization
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.FootprintVertices
 public import LeanPool.ApollonianSuperharmonic.TileCentroid
 public import LeanPool.ApollonianSuperharmonic.TileHalfTurn
@@ -89,7 +90,7 @@ theorem TileHalfTurnFormulas : ∀ T : ProtoTile,
   · exact image_empty T.cells
   constructor
   · apply proto_equal
-    · simp? [TileHalfTurn]
+    · simp only [TileHalfTurn, Int.reduceNeg, Finset.image_nonempty]
       change (T.cells.image (fun x => -x - 1 - ⟨0, 1⟩)).image
         (fun x => -x - 1 - ⟨0, 1⟩) = T.cells
       rw [Finset.image_image]

@@ -5,8 +5,10 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P3723T1AllContactRouting
-public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
+public import Mathlib.Analysis.Convex.Segment
 
 -- [TABLET NODE: P3913T1RoutedFaceSubdivision]
 
@@ -846,7 +848,7 @@ private theorem block_edge :
       have hlast : i = Fin.last (n + 2) := by
         apply Fin.ext
         change i.val = (Fin.last (n + 2)).val
-        simp?
+        simp only [Fin.val_last]
         rw [hval]
         omega
       have hnext : i + 1 = (⟨0, by omega⟩ : Fin (n + 3)) := by
@@ -1578,8 +1580,8 @@ private theorem no_cross01 :
       classical
       exact
         ∀ (ι : Type), ∀ (P : PeriodicTileComplex ι), ∀ (D : P3723T1AllContactRouting P), ∀ (f :
-            P.plane.Face), ∀ (g : Fin (3 : ℕ) → (↑(Set.Icc (0 : ℝ) (1 : ℝ)) : Type) → ℝ × ℝ), ∀
-            (hi : ∀ (k : Fin (3 : ℕ)), Function.Injective (g k)), ∀ (s : (k : Fin (3 : ℕ)) →
+            P.plane.Face), ∀ (g : Fin (3 : ℕ) → (↑(Set.Icc (0 : ℝ) (1 : ℝ)) : Type) → ℝ × ℝ),  ∀
+                (s : (k : Fin (3 : ℕ)) →
             P3723T1PolygonalParameterization (g k)),
         let m0 := (s 0).count
         let m1 := (s 1).count
@@ -1600,7 +1602,7 @@ private theorem no_cross01 :
             m0), ∀ (j : Fin m1), w (0 : Fin (3 : ℕ)) i.castSucc = w (1 : Fin (3 : ℕ)) j.castSucc
             → False))) ) := by
   classical
-  intro ι P D f g hi s m0 m1 τ w v w_arc w_ne_finish arc01 i j h
+  intro ι P D f g s m0 m1 τ w v w_arc w_ne_finish arc01 i j h
   have hx : w 0 i.castSucc ∈ D.edgeArc (v 0) (v 1) ∩ D.edgeArc (v 1) (v 2) :=
     ⟨w_arc 0 i.castSucc, h ▸ w_arc 1 j.castSucc⟩
   rw [arc01] at hx
@@ -1612,8 +1614,8 @@ private theorem no_cross12 :
       classical
       exact
         ∀ (ι : Type), ∀ (P : PeriodicTileComplex ι), ∀ (D : P3723T1AllContactRouting P), ∀ (f :
-            P.plane.Face), ∀ (g : Fin (3 : ℕ) → (↑(Set.Icc (0 : ℝ) (1 : ℝ)) : Type) → ℝ × ℝ), ∀
-            (hi : ∀ (k : Fin (3 : ℕ)), Function.Injective (g k)), ∀ (s : (k : Fin (3 : ℕ)) →
+            P.plane.Face), ∀ (g : Fin (3 : ℕ) → (↑(Set.Icc (0 : ℝ) (1 : ℝ)) : Type) → ℝ × ℝ),  ∀
+                (s : (k : Fin (3 : ℕ)) →
             P3723T1PolygonalParameterization (g k)),
         let m1 := (s 1).count
         let m2 := (s 2).count
@@ -1634,7 +1636,7 @@ private theorem no_cross12 :
             m1), ∀ (j : Fin m2), w (1 : Fin (3 : ℕ)) i.castSucc = w (2 : Fin (3 : ℕ)) j.castSucc
             → False))) ) := by
   classical
-  intro ι P D f g hi s m1 m2 τ w v w_arc w_ne_finish arc12 i j h
+  intro ι P D f g s m1 m2 τ w v w_arc w_ne_finish arc12 i j h
   have hx : w 1 i.castSucc ∈ D.edgeArc (v 1) (v 2) ∩ D.edgeArc (v 2) (v 0) :=
     ⟨w_arc 1 i.castSucc, h ▸ w_arc 2 j.castSucc⟩
   rw [arc12] at hx
@@ -1646,8 +1648,8 @@ private theorem no_cross02 :
       classical
       exact
         ∀ (ι : Type), ∀ (P : PeriodicTileComplex ι), ∀ (D : P3723T1AllContactRouting P), ∀ (f :
-            P.plane.Face), ∀ (g : Fin (3 : ℕ) → (↑(Set.Icc (0 : ℝ) (1 : ℝ)) : Type) → ℝ × ℝ), ∀
-            (hi : ∀ (k : Fin (3 : ℕ)), Function.Injective (g k)), ∀ (s : (k : Fin (3 : ℕ)) →
+            P.plane.Face), ∀ (g : Fin (3 : ℕ) → (↑(Set.Icc (0 : ℝ) (1 : ℝ)) : Type) → ℝ × ℝ),  ∀
+                (s : (k : Fin (3 : ℕ)) →
             P3723T1PolygonalParameterization (g k)),
         let m0 := (s 0).count
         let m2 := (s 2).count
@@ -1668,7 +1670,7 @@ private theorem no_cross02 :
             m0), ∀ (j : Fin m2), w (0 : Fin (3 : ℕ)) i.castSucc = w (2 : Fin (3 : ℕ)) j.castSucc
             → False))) ) := by
   classical
-  intro ι P D f g hi s m0 m2 τ w v w_arc w_ne_finish arc20 i j h
+  intro ι P D f g s m0 m2 τ w v w_arc w_ne_finish arc20 i j h
   have hx : w 2 j.castSucc ∈ D.edgeArc (v 2) (v 0) ∩ D.edgeArc (v 0) (v 1) :=
     ⟨w_arc 2 j.castSucc, h.symm ▸ w_arc 0 i.castSucc⟩
   rw [arc20] at hx
@@ -1976,10 +1978,10 @@ theorem P3913T1RoutedFaceSubdivision :
       w k i.castSucc ≠ D.position (v (k + 1)) := RoutedSubdivisionProof.w_ne_finish ι P D f g hi
           s (RoutedFaceDetails.w_finish ι P D f g hi h1 s) k i
   have q_injective : Function.Injective q := RoutedSubdivisionProof.q_injective g hi s q0 q1 q2
-      (RoutedFaceDetails.no_cross01 ι P D f g hi s w_arc w_ne_finish (RoutedFaceDetails.arc01 ι P
-          D f arc_inter_singleton)) (RoutedFaceDetails.no_cross12 ι P D f g hi s w_arc
+      (RoutedFaceDetails.no_cross01 ι P D f g s w_arc w_ne_finish (RoutedFaceDetails.arc01 ι P
+          D f arc_inter_singleton)) (RoutedFaceDetails.no_cross12 ι P D f g s w_arc
           w_ne_finish (RoutedFaceDetails.arc12 ι P D f arc_inter_singleton))
-          (RoutedFaceDetails.no_cross02 ι P D f g hi s w_arc w_ne_finish (RoutedFaceDetails.arc20
+          (RoutedFaceDetails.no_cross02 ι P D f g s w_arc w_ne_finish (RoutedFaceDetails.arc20
           ι P D f arc_inter_singleton)) (RoutedFaceDetails.w_block_injective g hi s)
   let b0 (i : Fin m0) : Fin M := Fin.castAdd (m1 + m2) i
   let b1 (i : Fin m1) : Fin M := Fin.natAdd m0 (Fin.castAdd m2 i)

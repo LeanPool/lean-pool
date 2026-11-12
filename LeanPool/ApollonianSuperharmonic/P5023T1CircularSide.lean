@@ -5,11 +5,15 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+public import Mathlib.Tactic.Positivity
+
 public import LeanPool.ApollonianSuperharmonic.P5023T1ContactVertices
 public import LeanPool.ApollonianSuperharmonic.P4828T1Gap
 public import LeanPool.ApollonianSuperharmonic.P4828T1LineSupport
 public import LeanPool.ApollonianSuperharmonic.ProperBandCurvatureStructure
 public import LeanPool.ApollonianSuperharmonic.TangencyCoordinateIdentity
+public import LeanPool.ApollonianSuperharmonic.P4828T1Disk
 
 -- [TABLET NODE: P5023T1CircularSide]
 

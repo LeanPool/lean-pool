@@ -5,19 +5,15 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.AncestorOdometerTrans
 public import LeanPool.ApollonianSuperharmonic.AncestorOdometerRestriction
-public import LeanPool.ApollonianSuperharmonic.BandOrientedBoundaryOccurrenceGenealogy
-public import LeanPool.ApollonianSuperharmonic.BandParentBoundaryGenealogy
-public import LeanPool.ApollonianSuperharmonic.PrimitiveVectorOrientationUnique
 public import LeanPool.ApollonianSuperharmonic.BoundaryStringConcatenation
 public import LeanPool.ApollonianSuperharmonic.SubtileLatticeAdjacent
 public import LeanPool.ApollonianSuperharmonic.TileOdometerReindexedDecomposition
-public import LeanPool.ApollonianSuperharmonic.TileOdometerBandPrototile
-public import LeanPool.ApollonianSuperharmonic.PositiveCurvatureTileOdometerDomain
 public import LeanPool.ApollonianSuperharmonic.TileStringExists
 public import LeanPool.ApollonianSuperharmonic.TileStringUnique
-public import LeanPool.ApollonianSuperharmonic.VectorRecursionLaws
 public import LeanPool.ApollonianSuperharmonic.P4458T1FirstProperRows
 public import LeanPool.ApollonianSuperharmonic.P4458T1LargestParentRows
 public import LeanPool.ApollonianSuperharmonic.P4458T1SmallPairRows
@@ -539,7 +535,7 @@ private theorem hxk :
             minus_family := htiles.2.2.2.2.1 _ (List.mem_of_mem_head? htiles.2.1)
             plus_family := htiles.2.2.2.2.1 _ (List.mem_of_getLast? htiles.2.2.1)
             chart := hchart, minus_centroid := hcminus, plus_centroid := hcplus
-            outer_slope := p₀, minus_slope := pminus, plus_slope := pplus
+            outerSlope := p₀, minusSlope := pminus, plusSlope := pplus
             slope_outer := hs₀, slope_minus := hsminus, slope_plus := hsplus
             minus_difference := dm, plus_difference := dp }
         ∀ (U : ProtoTile), ∀ (k : PartialOdometer), (AncestorOdometer Cᵢ.1.1 initial.outer.1.1 U
@@ -598,7 +594,7 @@ theorem BoundaryStringOdometerRespect :
       minus_family := htiles.2.2.2.2.1 _ (List.mem_of_mem_head? htiles.2.1)
       plus_family := htiles.2.2.2.2.1 _ (List.mem_of_getLast? htiles.2.2.1)
       chart := hchart, minus_centroid := hcminus, plus_centroid := hcplus
-      outer_slope := p₀, minus_slope := pminus, plus_slope := pplus
+      outerSlope := p₀, minusSlope := pminus, plusSlope := pplus
       slope_outer := hs₀, slope_minus := hsminus, slope_plus := hsplus
       minus_difference := dm, plus_difference := dp }
   have construct : ∀ n : ℕ, ∀ (C : BandCircle) (ε : Bool)

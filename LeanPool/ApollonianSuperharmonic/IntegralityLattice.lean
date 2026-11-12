@@ -5,7 +5,10 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.CircleMatrix
+public import Mathlib.LinearAlgebra.Matrix.Notation
 
 -- [TABLET NODE: IntegralityLattice]
 

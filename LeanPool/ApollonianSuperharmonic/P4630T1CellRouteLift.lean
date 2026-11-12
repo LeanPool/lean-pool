@@ -5,14 +5,14 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.BandOrderedGeneralLayoutCertificate
 public import LeanPool.ApollonianSuperharmonic.P4630T1RingIndex
 public import LeanPool.ApollonianSuperharmonic.LatticeTileGridStructure
 public import LeanPool.ApollonianSuperharmonic.P3102T2CommonEdgeSectorTransition
 public import LeanPool.ApollonianSuperharmonic.PeriodicTileIndexedMultiplicityOne
 public import LeanPool.ApollonianSuperharmonic.TileDiskAreaCovariance
-public import Mathlib.Data.List.Chain
-public import Mathlib.Logic.Relation
 
 -- [TABLET NODE: P4630T1CellRouteLift]
 
@@ -233,7 +233,9 @@ private theorem disk :
     by_contra hc
     obtain ⟨i, k, hl, he, _⟩ := dirty a ha x hx hc
     fin_cases i <;> fin_cases k <;>
-      simp? [P4630T1RingIndex] at hl he
+      simp only [P4630T1RingIndex, Int.reduceNeg, Fin.mk_one, Fin.isValue, Fin.reduceFinMk,
+          Matrix.cons_val', Matrix.cons_val, Matrix.cons_val_fin_one, Matrix.cons_val_one,
+          Matrix.cons_val_zero, reduceCtorEq, Fin.zero_eta] at hl he
     · exact h₁ he
     · exact h₂ he
   change TopologicalDisk (TileRealization (V a))

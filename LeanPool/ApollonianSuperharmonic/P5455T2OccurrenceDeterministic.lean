@@ -5,11 +5,12 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.ApollonianSuperharmonic.P5455T2CurvatureGrowth
-public import LeanPool.ApollonianSuperharmonic.P5455T2OccurrenceRotation
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P5455T2RootAlignment
 public import LeanPool.ApollonianSuperharmonic.P5455T2AlignedPredecessor
 public import LeanPool.ApollonianSuperharmonic.PrimitiveVectorOrientationUnique
+public import LeanPool.ApollonianSuperharmonic.UnitOccurrenceOrientation
 
 -- [TABLET NODE: P5455T2OccurrenceDeterministic]
 
@@ -230,7 +231,8 @@ private theorem main :
         have hnpre : (p 0).1.toNat = (p 0).1.toNat := rfl
         rcases rowA with ⟨hj, hpre, stateA⟩ | ⟨hj, hpre, stateA⟩
         · rw [← hjEq] at rowB
-          simp? [hj] at rowB
+          simp only [hj, Fin.isValue, ne_eq, true_and, Fin.reduceEq, false_and, or_false]
+              at rowB
           rcases rowB with ⟨hpre', stateB⟩
           have hunit : (p 2).1 = 1 := by
             have hidx : i + r = 1 := by rw [hia, hj]; exact sub_add_cancel 1 r
@@ -267,7 +269,8 @@ private theorem main :
             · exact (hsib hF.1).elim
             · exact (hsib hR.1).elim
         · rw [← hjEq] at rowB
-          simp? [hj] at rowB
+          simp only [hj, Fin.isValue, Fin.reduceEq, ne_eq, false_and, true_and, false_or]
+              at rowB
           rcases rowB with ⟨hpre', stateB⟩
           have hunit : (p 3).1 = 1 := by
             have hidx : i + r = 2 := by rw [hia, hj]; exact sub_add_cancel 2 r

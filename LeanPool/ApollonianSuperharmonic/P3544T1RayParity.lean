@@ -5,8 +5,10 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.ApollonianSuperharmonic.P3544T1BoundaryCarrier
+public import Mathlib.Init
 public import Mathlib.Data.Set.Card
+
+public import LeanPool.ApollonianSuperharmonic.P3544T1BoundaryCarrier
 
 -- [TABLET NODE: P3544T1RayParity]
 

@@ -5,13 +5,17 @@ Authors: Wesley Pegden
 -/
 module
 
-public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
-public import Mathlib.Data.Multiset.Bind
+public import Mathlib.Init
+public import Mathlib.Data.Finset.Card
+public import Mathlib.Data.Set.Card
+public import Mathlib.Tactic.NormNum
+public import Mathlib.Tactic.Ring
+
 public import LeanPool.ApollonianSuperharmonic.BoundaryFootprintEdges
 public import LeanPool.ApollonianSuperharmonic.FootprintVertices
 public import LeanPool.ApollonianSuperharmonic.FootprintEdges
 public import LeanPool.ApollonianSuperharmonic.NoCheckerboardCellVertex
-public import LeanPool.ApollonianSuperharmonic.ProtoTile
+public import Mathlib.Algebra.Order.Ring.Star
 
 /-!
 # FiniteSquareIncidenceIdentities

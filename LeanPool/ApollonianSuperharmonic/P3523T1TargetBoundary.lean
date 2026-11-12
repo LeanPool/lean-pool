@@ -5,7 +5,10 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.ApollonianSuperharmonic.P3523T1OrderedInsertion
+public import Mathlib.Init
+public import Mathlib.Tactic.Linarith
+
+public import LeanPool.ApollonianSuperharmonic.P3523T1InterpolatedTarget
 
 -- [TABLET NODE: P3523T1TargetBoundary]
 

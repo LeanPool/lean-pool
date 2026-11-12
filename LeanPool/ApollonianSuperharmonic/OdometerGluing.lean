@@ -5,10 +5,11 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.LatticeTile
 public import LeanPool.ApollonianSuperharmonic.OdometerCompatibility
 public import LeanPool.ApollonianSuperharmonic.FootprintVertices
-public import LeanPool.ApollonianSuperharmonic.LatticeTileGridStructure
 public import LeanPool.ApollonianSuperharmonic.P3221T2ClosedWalkCirculation
 public import LeanPool.ApollonianSuperharmonic.P3221T2ConnectedPathIntegration
 
@@ -463,9 +464,7 @@ private theorem hgcompat :
       exact
         ∀ (adjacent_symm : ∀ (a : GaussianInt), ∀ (b : GaussianInt), (FourNeighborAdjacent a b) →
             (FourNeighborAdjacent b a)), ∀ (adjacent_irrefl : ∀ (a : GaussianInt), ¬
-            FourNeighborAdjacent a a), ∀ (corner : ∀ (T : ProtoTile), ∀ (x : GaussianInt), (x ∈
-            T.cells) → (∀ (a : GaussianInt), (a = x ∨ a = x + 1 ∨ a = x + ⟨0, 1⟩ ∨ a = x + 1 +
-            ⟨0, 1⟩) → (a ∈ FootprintVertices T))), ∀ (edge_vertices : ∀ (T : ProtoTile), ∀ (a :
+            FourNeighborAdjacent a a),  ∀ (edge_vertices : ∀ (T : ProtoTile), ∀ (a :
             GaussianInt), ∀ (b : GaussianInt), (({a, b} : Finset GaussianInt) ∈ FootprintEdges T)
             → (a ∈ FootprintVertices T ∧ b ∈ FootprintVertices T)), ∀ (footprint_constant : ∀ (W
             : ProtoTile), (LatticeTile W) → (∀ (F : GaussianInt → ℤ), (∀ a, ∀ b,
@@ -512,8 +511,8 @@ private theorem hgcompat :
         (∀ (x : {x // x ∈ FootprintVertices T}), g.value x = f x) → (∀ i, OdometerCompatibility g
             (h i)) ) := by
   classical
-  intro adjacent_symm adjacent_irrefl corner edge_vertices footprint_constant n T U h hU hdom
-      hcells hverts E covered D dmember G z hz f hfedge dom hdomain g hgvalue i
+  intro adjacent_symm adjacent_irrefl edge_vertices footprint_constant n T U h hU hdom
+    hcells hverts E covered D dmember G z hz f hfedge dom hdomain g hgvalue i
   obtain ⟨c, hc⟩ := footprint_constant (U i) (hU i)
     (fun x => g.value x - (h i).value x) (by
       intro a b hadj he
@@ -927,7 +926,7 @@ theorem OdometerGluing :
         simp [hx'] }
     have hgvalue (x : {x // x ∈ FootprintVertices T}) : g.value x = f x := by
       simp [g, x.property]
-    have hgcompat := OdometerGluingProof.hgcompat adjacent_symm adjacent_irrefl corner
+    have hgcompat := OdometerGluingProof.hgcompat adjacent_symm adjacent_irrefl
         edge_vertices footprint_constant n T U h hU hdom hcells hverts dmember z hz f hfedge
         hdomain hgvalue
     refine ⟨g, hdomain, hgcompat, ?_⟩

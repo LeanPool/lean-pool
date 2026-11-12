@@ -5,13 +5,17 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+public import Mathlib.Data.Finset.Card
+public import Mathlib.Tactic.FinCases
+public import Mathlib.Tactic.NormNum
+public import Mathlib.Tactic.Ring
+
 public import LeanPool.ApollonianSuperharmonic.P5260T1PlacementLedger
 public import LeanPool.ApollonianSuperharmonic.P5253T1TopSquareContacts
 public import LeanPool.ApollonianSuperharmonic.P5253T1LeftSquareContacts
 public import LeanPool.ApollonianSuperharmonic.P5253T1BottomSquareContact
 public import LeanPool.ApollonianSuperharmonic.P5253T1OneEdgeInterface
-public import LeanPool.ApollonianSuperharmonic.TileReflectionFormulas
-public import LeanPool.ApollonianSuperharmonic.TileQuarterTurnFormulas
 public import LeanPool.ApollonianSuperharmonic.SimpleGridPathBetween
 
 -- [TABLET NODE: P5290T1UnitContactPaths]
@@ -335,8 +339,10 @@ private theorem zeroUnitContacts (k : Nat) (hk : 0 < k) (hk1 : 1 < k) :
     (Or.inr (Or.inr (Or.inl rfl)))
   refine ⟨?_, ?_, ?_, ?_⟩
   · intro T U a b hmem
-    simp? [P5260T1PlacementLedger,
-      P5124T1ParentModel] at hmem
+    simp only [P5260T1PlacementLedger, Bool.false_eq_true, ↓reduceIte, Nat.succ_eq_add_one,
+        Nat.reduceAdd, P5124T1ParentModel, Int.reduceNeg, Fin.isValue, Matrix.cons_val_zero,
+        Matrix.cons_val_one, Matrix.cons_val, neg_mul, Zsqrtd.add_def, add_zero,
+        List.mem_cons, Prod.mk.injEq, List.not_mem_nil, or_false] at hmem
     rcases hmem with hmem | hmem | hmem | hmem | hmem
     · rcases hmem with ⟨rfl, rfl, rfl, rfl⟩
       simpa [D, x0, y0] using hTopPath
@@ -547,8 +553,10 @@ private theorem oneUnitContacts (k : Nat) (hk : 0 < k) :
     (Or.inr (Or.inr (Or.inl rfl)))
   refine ⟨?_, ?_, ?_, ?_⟩
   · intro T U a b hmem
-    simp? [P5260T1PlacementLedger,
-      P5124T1ParentModel] at hmem
+    simp only [P5260T1PlacementLedger, Bool.false_eq_true, ↓reduceIte, Nat.succ_eq_add_one,
+        Nat.reduceAdd, P5124T1ParentModel, Int.reduceNeg, Fin.isValue, Matrix.cons_val_zero,
+        Matrix.cons_val_one, Matrix.cons_val, neg_mul, Fin.reduceEq, List.mem_cons,
+        Prod.mk.injEq, List.not_mem_nil, or_false] at hmem
     rcases hmem with hmem | hmem | hmem | hmem | hmem
     · rcases hmem with ⟨rfl, rfl, rfl, rfl⟩
       simpa [D, c1, x1, y1] using hDWPath

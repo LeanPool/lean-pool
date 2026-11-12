@@ -5,12 +5,11 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.ApollonianSuperharmonic.BandOriginalPairSeparation
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.BandOrderedGeneralLayoutCertificate
 public import LeanPool.ApollonianSuperharmonic.BandTileSimultaneousInduction
 public import LeanPool.ApollonianSuperharmonic.CurvatureOneTileBase
-public import LeanPool.ApollonianSuperharmonic.LatticeTileGridStructure
-public import LeanPool.ApollonianSuperharmonic.TileDiskAreaCovariance
 
 -- [TABLET NODE: P4339T1PrecursorSupportGeometry]
 

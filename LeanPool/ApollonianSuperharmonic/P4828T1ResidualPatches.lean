@@ -5,15 +5,19 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P4828T1Gap
 public import LeanPool.ApollonianSuperharmonic.P4828T1LineSupport
 public import LeanPool.ApollonianSuperharmonic.P4828T1Rotate
 public import LeanPool.ApollonianSuperharmonic.P4828T1Step
-public import LeanPool.ApollonianSuperharmonic.P4828T1ParentsDistinct
 public import LeanPool.ApollonianSuperharmonic.P4909T1TriangleFan
 public import LeanPool.ApollonianSuperharmonic.P4909T1LineFan
 public import LeanPool.ApollonianSuperharmonic.P4909T1OmittedDiskBarrier
 public import LeanPool.ApollonianSuperharmonic.P4909T1TangentSegments
+public import LeanPool.ApollonianSuperharmonic.P4828T1Disk
+public import LeanPool.ApollonianSuperharmonic.ProperBandCurvatureStructure
+public import LeanPool.ApollonianSuperharmonic.TangencyCoordinateIdentity
 
 -- [TABLET NODE: P4828T1ResidualPatches]
 

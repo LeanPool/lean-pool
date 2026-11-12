@@ -5,10 +5,12 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.BandPrototileReindexedDecomposition
 public import LeanPool.ApollonianSuperharmonic.BandPrototileTranslation
-public import LeanPool.ApollonianSuperharmonic.TileTranslationFormulas
 public import LeanPool.ApollonianSuperharmonic.VectorRecursionLaws
+public import Mathlib.Algebra.Order.Ring.Star
 
 -- [TABLET NODE: P3996T1AdjacentParentPlacement]
 
@@ -118,7 +120,13 @@ theorem P3996T1AdjacentParentPlacement
   have hc1 := congrArg Prod.fst hc
   have hc2 := congrArg Prod.snd hc
   cases hs : sign <;>
-    simp? [hs, GaussianRealPoint, I] at hc1 hc2 ⊢ <;>
+    simp only [hs, Prod.fst_sub, Bool.false_eq_true, ↓reduceIte, one_div, GaussianRealPoint,
+        Int.reduceNeg, GaussianInt.intCast_re, GaussianInt.intCast_im, Prod.mk_sub_mk,
+        sub_neg_eq_add, Prod.smul_mk, smul_eq_mul, neg_smul, one_smul, Prod.neg_mk,
+        Prod.snd_sub, neg_mul, one_mul, neg_sub, Zsqrtd.re_add, Zsqrtd.re_sub, Zsqrtd.re_mul,
+        zero_mul, mul_one, zero_add, Zsqrtd.re_ofNat, Nat.cast_ofNat, Zsqrtd.im_ofNat,
+        mul_zero, add_zero, Int.cast_add, Int.cast_sub, Int.cast_neg, Int.cast_mul,
+        Int.cast_ofNat, Zsqrtd.im_add, Zsqrtd.im_sub, Zsqrtd.im_mul, I] at hc1 hc2 ⊢ <;>
     apply Prod.ext <;> simp <;> linarith
 
 end ApollonianSuperharmonic

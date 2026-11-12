@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.BandOrderedGeneralLayoutCertificate
 public import LeanPool.ApollonianSuperharmonic.VectorRecursionLaws
 public import LeanPool.ApollonianSuperharmonic.TileTranslationFormulas

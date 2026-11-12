@@ -5,9 +5,9 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.ApollonianSuperharmonic.P4339T1PrecursorSupportGeometry
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.BandOrderedGeneralInteriorStarClassification
-public import LeanPool.ApollonianSuperharmonic.P3161T2IncidentBoundary
 
 -- [TABLET NODE: P4339T1PositivePrecursorRoots]
 
@@ -235,12 +235,12 @@ private theorem haPlus :
         ∀ (C : BandCircle), ∀ (q : Fin 4 → CircleCoordinates), ∀ (cfg :
             BandOrderedGeneralConfiguration q), ∀ (T : ProtoTile), ∀ (cert :
             BandOrderedGeneralLayoutCertificate q cfg C T), ∀ (plusArc : List GaussianInt),
-            (plusArc.head? = some cert.precursor_boundary.a) → (cert.precursor_boundary.a ∈
+            (plusArc.head? = some cert.precursorBoundary.a) → (cert.precursorBoundary.a ∈
             (plusArc.toFinset : Set GaussianInt)) ) := by
   classical
   intro C q cfg T cert plusArc hplusHead
   have hn : plusArc ≠ [] := by intro h; simp [h] at hplusHead
-  have heq : plusArc.head hn = cert.precursor_boundary.a := by
+  have heq : plusArc.head hn = cert.precursorBoundary.a := by
     have hh := hplusHead
     rw [List.head?_eq_some_head hn] at hh
     exact Option.some.inj hh
@@ -253,12 +253,12 @@ private theorem hbPlus :
         ∀ (C : BandCircle), ∀ (q : Fin 4 → CircleCoordinates), ∀ (cfg :
             BandOrderedGeneralConfiguration q), ∀ (T : ProtoTile), ∀ (cert :
             BandOrderedGeneralLayoutCertificate q cfg C T), ∀ (plusArc : List GaussianInt),
-            (plusArc.getLast? = some cert.precursor_boundary.b) → (cert.precursor_boundary.b ∈
+            (plusArc.getLast? = some cert.precursorBoundary.b) → (cert.precursorBoundary.b ∈
             (plusArc.toFinset : Set GaussianInt)) ) := by
   classical
   intro C q cfg T cert plusArc hplusLast
   have hn : plusArc ≠ [] := by intro h; simp [h] at hplusLast
-  have heq : plusArc.getLast hn = cert.precursor_boundary.b := by
+  have heq : plusArc.getLast hn = cert.precursorBoundary.b := by
     have hh := hplusLast
     rw [List.getLast?_eq_getLast_of_ne_nil hn] at hh
     exact Option.some.inj hh
@@ -271,12 +271,12 @@ private theorem hbMinus :
         ∀ (C : BandCircle), ∀ (q : Fin 4 → CircleCoordinates), ∀ (cfg :
             BandOrderedGeneralConfiguration q), ∀ (T : ProtoTile), ∀ (cert :
             BandOrderedGeneralLayoutCertificate q cfg C T), ∀ (minusArc : List GaussianInt),
-            (minusArc.head? = some cert.precursor_boundary.b) → (cert.precursor_boundary.b ∈
+            (minusArc.head? = some cert.precursorBoundary.b) → (cert.precursorBoundary.b ∈
             (minusArc.toFinset : Set GaussianInt)) ) := by
   classical
   intro C q cfg T cert minusArc hminusHead
   have hn : minusArc ≠ [] := by intro h; simp [h] at hminusHead
-  have heq : minusArc.head hn = cert.precursor_boundary.b := by
+  have heq : minusArc.head hn = cert.precursorBoundary.b := by
     have hh := hminusHead
     rw [List.head?_eq_some_head hn] at hh
     exact Option.some.inj hh
@@ -289,12 +289,12 @@ private theorem haMinus :
         ∀ (C : BandCircle), ∀ (q : Fin 4 → CircleCoordinates), ∀ (cfg :
             BandOrderedGeneralConfiguration q), ∀ (T : ProtoTile), ∀ (cert :
             BandOrderedGeneralLayoutCertificate q cfg C T), ∀ (minusArc : List GaussianInt),
-            (minusArc.getLast? = some cert.precursor_boundary.a) → (cert.precursor_boundary.a ∈
+            (minusArc.getLast? = some cert.precursorBoundary.a) → (cert.precursorBoundary.a ∈
             (minusArc.toFinset : Set GaussianInt)) ) := by
   classical
   intro C q cfg T cert minusArc hminusLast
   have hn : minusArc ≠ [] := by intro h; simp [h] at hminusLast
-  have heq : minusArc.getLast hn = cert.precursor_boundary.a := by
+  have heq : minusArc.getLast hn = cert.precursorBoundary.a := by
     have hh := hminusLast
     rw [List.getLast?_eq_getLast_of_ne_nil hn] at hh
     exact Option.some.inj hh
@@ -341,8 +341,8 @@ private theorem hR :
         ∀ (C : BandCircle), ∀ (q : Fin 4 → CircleCoordinates), ∀ (cfg :
             BandOrderedGeneralConfiguration q), ∀ (T : ProtoTile), ∀ (cert :
             BandOrderedGeneralLayoutCertificate q cfg C T), ∀ (x : GaussianInt), x ∈
-            ({cert.precursor_boundary.a, cert.precursor_boundary.b} : Finset GaussianInt) ↔ x =
-            cert.precursor_boundary.a ∨ x = cert.precursor_boundary.b ) := by
+            ({cert.precursorBoundary.a, cert.precursorBoundary.b} : Finset GaussianInt) ↔ x =
+            cert.precursorBoundary.a ∨ x = cert.precursorBoundary.b ) := by
   classical
   intro C q cfg T cert x
   simp
@@ -354,18 +354,18 @@ private theorem endpoint_boundaries :
         ∀ (C : BandCircle), ∀ (q : Fin 4 → CircleCoordinates), ∀ (cfg :
             BandOrderedGeneralConfiguration q), ∀ (T : ProtoTile), ∀ (cert :
             BandOrderedGeneralLayoutCertificate q cfg C T), ∀ (plusArc : List GaussianInt), ∀
-            (minusArc : List GaussianInt), (cert.precursor_boundary.a ∈ (plusArc.toFinset : Set
-            GaussianInt)) → ((cert.precursor_boundary.b ∈ (plusArc.toFinset : Set GaussianInt)) →
-            ((cert.precursor_boundary.b ∈ (minusArc.toFinset : Set GaussianInt)) →
-            ((cert.precursor_boundary.a ∈ (minusArc.toFinset : Set GaussianInt)) → ((∀ (x :
+            (minusArc : List GaussianInt), (cert.precursorBoundary.a ∈ (plusArc.toFinset : Set
+            GaussianInt)) → ((cert.precursorBoundary.b ∈ (plusArc.toFinset : Set GaussianInt)) →
+            ((cert.precursorBoundary.b ∈ (minusArc.toFinset : Set GaussianInt)) →
+            ((cert.precursorBoundary.a ∈ (minusArc.toFinset : Set GaussianInt)) → ((∀ (x :
             GaussianInt), (x ∈ (plusArc.toFinset : Set GaussianInt)) → (x ∈
             BoundaryFootprintVertices (TileCellComplement (cert.P 0 true) cert.O) ∧ x ∈
             BoundaryFootprintVertices cert.O)) → ((∀ (x : GaussianInt), (x ∈ (minusArc.toFinset :
             Set GaussianInt)) → (x ∈ BoundaryFootprintVertices (TileCellComplement (cert.P 0
             false) cert.O) ∧ x ∈ BoundaryFootprintVertices cert.O)) → ((∀ (x : GaussianInt), x ∈
-            ({cert.precursor_boundary.a, cert.precursor_boundary.b} : Finset GaussianInt) ↔ x =
-            cert.precursor_boundary.a ∨ x = cert.precursor_boundary.b) → (∀ (x : GaussianInt), (x
-            ∈ ({cert.precursor_boundary.a, cert.precursor_boundary.b} : Finset GaussianInt)) → (x
+            ({cert.precursorBoundary.a, cert.precursorBoundary.b} : Finset GaussianInt) ↔ x =
+            cert.precursorBoundary.a ∨ x = cert.precursorBoundary.b) → (∀ (x : GaussianInt), (x
+            ∈ ({cert.precursorBoundary.a, cert.precursorBoundary.b} : Finset GaussianInt)) → (x
             ∈ BoundaryFootprintVertices (TileCellComplement (cert.P 0 true) cert.O) ∧ x ∈
             BoundaryFootprintVertices (TileCellComplement (cert.P 0 false) cert.O) ∧ x ∈
             BoundaryFootprintVertices cert.O)))))))) ) := by
@@ -391,13 +391,13 @@ private theorem hboundaryA :
             BoundaryFootprintVertices U) → (∃ j : Fin 4, LatticeVertexIncidentCell x j ∈
             U.cells))) → ((∀ (U : ProtoTile), ∀ (x : GaussianInt), (U.cells.Nonempty) → ((x ∈
             BoundaryFootprintVertices U) → (x ∈ FootprintVertices U))) → ((∀ (x : GaussianInt),
-            (x ∈ ({cert.precursor_boundary.a, cert.precursor_boundary.b} : Finset GaussianInt)) →
+            (x ∈ ({cert.precursorBoundary.a, cert.precursorBoundary.b} : Finset GaussianInt)) →
             (x ∈ BoundaryFootprintVertices (TileCellComplement (cert.P 0 true) cert.O) ∧ x ∈
             BoundaryFootprintVertices (TileCellComplement (cert.P 0 false) cert.O) ∧ x ∈
             BoundaryFootprintVertices cert.O)) → (((TileCellComplement (cert.P 0 true)
             cert.O).cells.Nonempty) → (((TileCellComplement (cert.P 0 false)
-            cert.O).cells.Nonempty) → (∀ (x : GaussianInt), (x ∈ ({cert.precursor_boundary.a,
-            cert.precursor_boundary.b} : Finset GaussianInt)) → (x ∈ BoundaryFootprintVertices
+            cert.O).cells.Nonempty) → (∀ (x : GaussianInt), (x ∈ ({cert.precursorBoundary.a,
+            cert.precursorBoundary.b} : Finset GaussianInt)) → (x ∈ BoundaryFootprintVertices
             (cert.P 0 true)))))))))) ) := by
   classical
   intro C q cfg T cert hO hpair raw_incident boundary_incident boundary_footprint
@@ -428,13 +428,13 @@ private theorem hboundaryB :
             true).cells ∩ (cert.P (0 : Fin (3 : ℕ)) false).cells = cert.O.cells) → ((∀ (U :
             ProtoTile), ∀ (x : GaussianInt), (U.cells.Nonempty) → ((x ∈ BoundaryFootprintVertices
             U) → (∃ j : Fin 4, LatticeVertexIncidentCell x j ∈ U.cells))) → ((∀ (x :
-            GaussianInt), (x ∈ ({cert.precursor_boundary.a, cert.precursor_boundary.b} : Finset
+            GaussianInt), (x ∈ ({cert.precursorBoundary.a, cert.precursorBoundary.b} : Finset
             GaussianInt)) → (x ∈ BoundaryFootprintVertices (TileCellComplement (cert.P 0 true)
             cert.O) ∧ x ∈ BoundaryFootprintVertices (TileCellComplement (cert.P 0 false) cert.O)
             ∧ x ∈ BoundaryFootprintVertices cert.O)) → (((TileCellComplement (cert.P 0 true)
             cert.O).cells.Nonempty) → (((TileCellComplement (cert.P 0 false)
-            cert.O).cells.Nonempty) → (∀ (x : GaussianInt), (x ∈ ({cert.precursor_boundary.a,
-            cert.precursor_boundary.b} : Finset GaussianInt)) → (x ∈ BoundaryFootprintVertices
+            cert.O).cells.Nonempty) → (∀ (x : GaussianInt), (x ∈ ({cert.precursorBoundary.a,
+            cert.precursorBoundary.b} : Finset GaussianInt)) → (x ∈ BoundaryFootprintVertices
             (cert.P 0 false))))))) ) := by
   classical
   intro C q cfg T cert hpair boundary_incident endpoint_boundaries hcompA_nonempty
@@ -466,11 +466,11 @@ private theorem other_absent :
             Fin 4, LatticeVertexIncidentCell x j ∈ (cert.P 0 true).cells ∨
             LatticeVertexIncidentCell x j ∈ (cert.P 0 false).cells)) → ((∀ (U : ProtoTile), ∀ (x
             : GaussianInt), (U.cells.Nonempty) → ((x ∈ BoundaryFootprintVertices U) → (x ∈
-            FootprintVertices U))) → ((∀ (x : GaussianInt), (x ∈ ({cert.precursor_boundary.a,
-            cert.precursor_boundary.b} : Finset GaussianInt)) → (x ∈ BoundaryFootprintVertices
+            FootprintVertices U))) → ((∀ (x : GaussianInt), (x ∈ ({cert.precursorBoundary.a,
+            cert.precursorBoundary.b} : Finset GaussianInt)) → (x ∈ BoundaryFootprintVertices
             (TileCellComplement (cert.P 0 true) cert.O) ∧ x ∈ BoundaryFootprintVertices
             (TileCellComplement (cert.P 0 false) cert.O) ∧ x ∈ BoundaryFootprintVertices cert.O))
-            → (∀ (x : GaussianInt), (x ∈ ({cert.precursor_boundary.a, cert.precursor_boundary.b}
+            → (∀ (x : GaussianInt), (x ∈ ({cert.precursorBoundary.a, cert.precursorBoundary.b}
             : Finset GaussianInt)) → (∀ (i : Fin 3), ∀ (s : Bool), (i ≠ 0) → (∀ (j : Fin 4),
             LatticeVertexIncidentCell x j ∉ (cert.P i s).cells))))))) ) := by
   classical
@@ -493,14 +493,14 @@ private theorem hboundary :
             BandOrderedGeneralLayoutCertificate q cfg C T), (∀ (U : ProtoTile), ∀ (x :
             GaussianInt), (U.cells.Nonempty) → ((x ∈ BoundaryFootprintVertices U) → (∃ j : Fin 4,
             LatticeVertexIncidentCell x j ∈ U.cells))) → ((∀ (x : GaussianInt), (x ∈
-            ({cert.precursor_boundary.a, cert.precursor_boundary.b} : Finset GaussianInt)) → (x ∈
+            ({cert.precursorBoundary.a, cert.precursorBoundary.b} : Finset GaussianInt)) → (x ∈
             BoundaryFootprintVertices (cert.P 0 true))) → ((∀ (x : GaussianInt), (x ∈
-            ({cert.precursor_boundary.a, cert.precursor_boundary.b} : Finset GaussianInt)) → (x ∈
+            ({cert.precursorBoundary.a, cert.precursorBoundary.b} : Finset GaussianInt)) → (x ∈
             BoundaryFootprintVertices (cert.P 0 false))) → ((∀ (x : GaussianInt), (x ∈
-            ({cert.precursor_boundary.a, cert.precursor_boundary.b} : Finset GaussianInt)) → (∀
+            ({cert.precursorBoundary.a, cert.precursorBoundary.b} : Finset GaussianInt)) → (∀
             (i : Fin 3), ∀ (s : Bool), (i ≠ 0) → (∀ (j : Fin 4), LatticeVertexIncidentCell x j ∉
-            (cert.P i s).cells))) → (∀ (x : GaussianInt), (x ∈ ({cert.precursor_boundary.a,
-            cert.precursor_boundary.b} : Finset GaussianInt)) → (∀ (i : Fin 3), ∀ (s : Bool), x ∈
+            (cert.P i s).cells))) → (∀ (x : GaussianInt), (x ∈ ({cert.precursorBoundary.a,
+            cert.precursorBoundary.b} : Finset GaussianInt)) → (∀ (i : Fin 3), ∀ (s : Bool), x ∈
             BoundaryFootprintVertices (cert.P i s) ↔ i = 0))))) ) := by
   classical
   intro C q cfg T cert boundary_incident hboundaryA hboundaryB other_absent x hxR i s
@@ -524,11 +524,11 @@ private theorem endpoint_inD :
             (Finset.Nonempty cert.O.cells) → ((∀ (x : GaussianInt), (x ∈ FootprintVertices
             cert.O) → (x ∈ D)) → ((∀ (U : ProtoTile), ∀ (x : GaussianInt), (U.cells.Nonempty) →
             ((x ∈ BoundaryFootprintVertices U) → (x ∈ FootprintVertices U))) → ((∀ (x :
-            GaussianInt), (x ∈ ({cert.precursor_boundary.a, cert.precursor_boundary.b} : Finset
+            GaussianInt), (x ∈ ({cert.precursorBoundary.a, cert.precursorBoundary.b} : Finset
             GaussianInt)) → (x ∈ BoundaryFootprintVertices (TileCellComplement (cert.P 0 true)
             cert.O) ∧ x ∈ BoundaryFootprintVertices (TileCellComplement (cert.P 0 false) cert.O)
             ∧ x ∈ BoundaryFootprintVertices cert.O)) → (∀ (x : GaussianInt), (x ∈
-            ({cert.precursor_boundary.a, cert.precursor_boundary.b} : Finset GaussianInt)) → (x ∈
+            ({cert.precursorBoundary.a, cert.precursorBoundary.b} : Finset GaussianInt)) → (x ∈
             D))))) ) := by
   classical
   intro C q cfg T cert D hO inD boundary_footprint endpoint_boundaries x hxR
@@ -545,12 +545,12 @@ private theorem endpoint_notP :
             Bool), x ∈ FootprintVertices (cert.P i s) ∧ x ∉ BoundaryFootprintVertices (cert.P i
             s)) → ((∀ (U : ProtoTile), ∀ (x : GaussianInt), (U.cells.Nonempty) → ((x ∈
             FootprintVertices U) → (∃ j : Fin 4, LatticeVertexIncidentCell x j ∈ U.cells))) → ((∀
-            (x : GaussianInt), (x ∈ ({cert.precursor_boundary.a, cert.precursor_boundary.b} :
+            (x : GaussianInt), (x ∈ ({cert.precursorBoundary.a, cert.precursorBoundary.b} :
             Finset GaussianInt)) → (∀ (i : Fin 3), ∀ (s : Bool), (i ≠ 0) → (∀ (j : Fin 4),
             LatticeVertexIncidentCell x j ∉ (cert.P i s).cells))) → ((∀ (x : GaussianInt), (x ∈
-            ({cert.precursor_boundary.a, cert.precursor_boundary.b} : Finset GaussianInt)) → (∀
+            ({cert.precursorBoundary.a, cert.precursorBoundary.b} : Finset GaussianInt)) → (∀
             (i : Fin 3), ∀ (s : Bool), x ∈ BoundaryFootprintVertices (cert.P i s) ↔ i = 0)) → (∀
-            (x : GaussianInt), (x ∈ ({cert.precursor_boundary.a, cert.precursor_boundary.b} :
+            (x : GaussianInt), (x ∈ ({cert.precursorBoundary.a, cert.precursorBoundary.b} :
             Finset GaussianInt)) → (x ∉ P))))) ) := by
   classical
   intro C q cfg T cert D P hP raw_incident other_absent hboundary x hxR hp
@@ -568,10 +568,10 @@ private theorem hRsubset :
         ∀ (C : BandCircle), ∀ (q : Fin 4 → CircleCoordinates), ∀ (cfg :
             BandOrderedGeneralConfiguration q), ∀ (T : ProtoTile), ∀ (cert :
             BandOrderedGeneralLayoutCertificate q cfg C T), ∀ (D : Finset GaussianInt), ∀ (P :
-            Finset GaussianInt), (∀ (x : GaussianInt), (x ∈ ({cert.precursor_boundary.a,
-            cert.precursor_boundary.b} : Finset GaussianInt)) → (x ∈ D)) → ((∀ (x : GaussianInt),
-            (x ∈ ({cert.precursor_boundary.a, cert.precursor_boundary.b} : Finset GaussianInt)) →
-            (x ∉ P)) → (({cert.precursor_boundary.a, cert.precursor_boundary.b} : Finset
+            Finset GaussianInt), (∀ (x : GaussianInt), (x ∈ ({cert.precursorBoundary.a,
+            cert.precursorBoundary.b} : Finset GaussianInt)) → (x ∈ D)) → ((∀ (x : GaussianInt),
+            (x ∈ ({cert.precursorBoundary.a, cert.precursorBoundary.b} : Finset GaussianInt)) →
+            (x ∉ P)) → (({cert.precursorBoundary.a, cert.precursorBoundary.b} : Finset
             GaussianInt) ⊆ D \ P)) ) := by
   classical
   intro C q cfg T cert D P endpoint_inD endpoint_notP x hx
@@ -603,14 +603,14 @@ private theorem hWfoot :
             cert.O) ∩ BoundaryFootprintVertices cert.O) → ((BoundaryFootprintVertices cert.O =
             (↑plusArc.toFinset : Set GaussianInt) ∪ (↑minusArc.toFinset : Set GaussianInt)) →
             (((↑plusArc.toFinset : Set GaussianInt) ∩ (↑minusArc.toFinset : Set GaussianInt) =
-            {cert.precursor_boundary.a, cert.precursor_boundary.b}) → ((∀ (x : GaussianInt), x ∈
-            ({cert.precursor_boundary.a, cert.precursor_boundary.b} : Finset GaussianInt) ↔ x =
-            cert.precursor_boundary.a ∨ x = cert.precursor_boundary.b) → ((∀ (x : GaussianInt),
-            (x ∈ ({cert.precursor_boundary.a, cert.precursor_boundary.b} : Finset GaussianInt)) →
+            {cert.precursorBoundary.a, cert.precursorBoundary.b}) → ((∀ (x : GaussianInt), x ∈
+            ({cert.precursorBoundary.a, cert.precursorBoundary.b} : Finset GaussianInt) ↔ x =
+            cert.precursorBoundary.a ∨ x = cert.precursorBoundary.b) → ((∀ (x : GaussianInt),
+            (x ∈ ({cert.precursorBoundary.a, cert.precursorBoundary.b} : Finset GaussianInt)) →
             (x ∈ BoundaryFootprintVertices (TileCellComplement (cert.P 0 true) cert.O) ∧ x ∈
             BoundaryFootprintVertices (TileCellComplement (cert.P 0 false) cert.O) ∧ x ∈
             BoundaryFootprintVertices cert.O)) → (∀ x ∈ D \ P, x ∈ FootprintVertices cert.O ↔ x ∈
-            ({cert.precursor_boundary.a, cert.precursor_boundary.b} : Finset
+            ({cert.precursorBoundary.a, cert.precursorBoundary.b} : Finset
             GaussianInt))))))))))))))) ) := by
   classical
   intro C q cfg T cert D P hP hO raw_incident full_nonboundary hallAB hOA hOB boundary_footprint
@@ -640,10 +640,10 @@ private theorem hWfoot :
       exact hxOB
     rcases hxArcs with hxplus | hxminus
     · by_cases hxR : x ∈
-          ({cert.precursor_boundary.a, cert.precursor_boundary.b} : Finset GaussianInt)
+          ({cert.precursorBoundary.a, cert.precursorBoundary.b} : Finset GaussianInt)
       · exact hxR
-      · have hxnotA : x ≠ cert.precursor_boundary.a ∧
-            x ≠ cert.precursor_boundary.b := by
+      · have hxnotA : x ≠ cert.precursorBoundary.a ∧
+            x ≠ cert.precursorBoundary.b := by
           simpa [hR] using hxR
         have noBcomp (j : Fin 4) :
             LatticeVertexIncidentCell x j ∉
@@ -686,10 +686,10 @@ private theorem hWfoot :
         have hAnotb := full_nonboundary (cert.P 0 true) x hallA
         exact (hxnotP ((hP x).mpr ⟨hxD, 0, true, hAfoot, hAnotb⟩)).elim
     · by_cases hxR : x ∈
-          ({cert.precursor_boundary.a, cert.precursor_boundary.b} : Finset GaussianInt)
+          ({cert.precursorBoundary.a, cert.precursorBoundary.b} : Finset GaussianInt)
       · exact hxR
-      · have hxnotA : x ≠ cert.precursor_boundary.a ∧
-            x ≠ cert.precursor_boundary.b := by
+      · have hxnotA : x ≠ cert.precursorBoundary.a ∧
+            x ≠ cert.precursorBoundary.b := by
           simpa [hR] using hxR
         have noAcomp (j : Fin 4) :
             LatticeVertexIncidentCell x j ∉
@@ -741,9 +741,9 @@ private theorem hcount :
         ∀ (C : BandCircle), ∀ (q : Fin 4 → CircleCoordinates), ∀ (cfg :
             BandOrderedGeneralConfiguration q), ∀ (T : ProtoTile), ∀ (cert :
             BandOrderedGeneralLayoutCertificate q cfg C T), (∀ (x : GaussianInt), (x ∈
-            ({cert.precursor_boundary.a, cert.precursor_boundary.b} : Finset GaussianInt)) → (∀
+            ({cert.precursorBoundary.a, cert.precursorBoundary.b} : Finset GaussianInt)) → (∀
             (i : Fin 3), ∀ (s : Bool), x ∈ BoundaryFootprintVertices (cert.P i s) ↔ i = 0)) → (∀
-            (x : GaussianInt), (x ∈ ({cert.precursor_boundary.a, cert.precursor_boundary.b} :
+            (x : GaussianInt), (x ∈ ({cert.precursorBoundary.a, cert.precursorBoundary.b} :
             Finset GaussianInt)) → (Nat.card
             {is : Fin 3 × Bool // x ∈ BoundaryFootprintVertices (cert.P is.1 is.2)} = 2)) ) := by
   classical
@@ -772,11 +772,11 @@ private theorem hnoncentral :
             GaussianInt), (∀ (x : GaussianInt), x ∈ D ↔ x ∈ FootprintVertices T ∧ x ∉
             BoundaryFootprintVertices T) → ((Finset.Nonempty cert.O.cells) → ((cert.O.cells = ∅ ↔
             (cfg.firstPredecessor (1 : Fin (4 : ℕ))).1 = (0 : ℤ)) → ((∀ (x : GaussianInt), (x ∈
-            ({cert.precursor_boundary.a, cert.precursor_boundary.b} : Finset GaussianInt)) → (x ∈
-            D)) → ((∀ (x : GaussianInt), (x ∈ ({cert.precursor_boundary.a,
-            cert.precursor_boundary.b} : Finset GaussianInt)) → (Nat.card
+            ({cert.precursorBoundary.a, cert.precursorBoundary.b} : Finset GaussianInt)) → (x ∈
+            D)) → ((∀ (x : GaussianInt), (x ∈ ({cert.precursorBoundary.a,
+            cert.precursorBoundary.b} : Finset GaussianInt)) → (Nat.card
             {is : Fin 3 × Bool // x ∈ BoundaryFootprintVertices (cert.P is.1 is.2)} = 2)) → (∀ (x
-            : GaussianInt), (x ∈ ({cert.precursor_boundary.a, cert.precursor_boundary.b} : Finset
+            : GaussianInt), (x ∈ ({cert.precursorBoundary.a, cert.precursorBoundary.b} : Finset
             GaussianInt)) → (GaussianRealPoint x ≠ TileCentroid T))))))) ) := by
   classical
   intro C q cfg T cert hlat D hD hO hzero endpoint_inD hcount x hxR
@@ -802,7 +802,7 @@ theorem P4339T1PositivePrecursorRoots
         x ∉ BoundaryFootprintVertices (cert.P i s))
     (hO : cert.O.cells.Nonempty) :
     let W := D \ P
-    let R : Finset GaussianInt := {cert.precursor_boundary.a, cert.precursor_boundary.b}
+    let R : Finset GaussianInt := {cert.precursorBoundary.a, cert.precursorBoundary.b}
     R ⊆ W ∧
     (∀ x ∈ W, x ∈ FootprintVertices cert.O ↔ x ∈ R) ∧
     (∀ x ∈ R,
@@ -828,7 +828,7 @@ theorem P4339T1PositivePrecursorRoots
   have hOB := PositivePrecursorGeometry.hOB C q cfg T cert
   have boundary_footprint := PositivePrecursorGeometry.boundary_footprint boundary_incident
       (PositivePrecursorGeometry.incident_footprint)
-  have hbranch := cert.precursor_boundary.branch
+  have hbranch := cert.precursorBoundary.branch
   rcases hbranch with ⟨_, plusArc, minusArc, _, _, hplusHead, hplusLast,
     hminusHead, hminusLast, hplusSet, hminusSet, _, _, hunion, hinter, _, _⟩ | hdeg
   · have haPlus := PositivePrecursorGeometry.haPlus C q cfg T cert plusArc hplusHead

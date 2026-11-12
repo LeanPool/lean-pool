@@ -5,30 +5,15 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.AncestorOdometerInnerSupportNormalization
-public import LeanPool.ApollonianSuperharmonic.BandCircleEuclideanData
 public import LeanPool.ApollonianSuperharmonic.BandPrototileCentroidUnique
 public import LeanPool.ApollonianSuperharmonic.BandPrototileTranslation
-public import LeanPool.ApollonianSuperharmonic.BandVectorOrientationDichotomy
-public import LeanPool.ApollonianSuperharmonic.BandVectors
-public import LeanPool.ApollonianSuperharmonic.CircleMatrix
-public import LeanPool.ApollonianSuperharmonic.LeftLatticeAdjacent
 public import LeanPool.ApollonianSuperharmonic.P4458T1BoundaryPlacement
 public import LeanPool.ApollonianSuperharmonic.PositiveCurvatureTileOdometerDomain
 public import LeanPool.ApollonianSuperharmonic.PositiveCurvatureTileOdometerSupportTransport
-public import LeanPool.ApollonianSuperharmonic.ProperBandCurvatureStructure
-public import LeanPool.ApollonianSuperharmonic.RecursiveVectorSystem
-public import LeanPool.ApollonianSuperharmonic.RecursiveVectorsExistUnique
-public import LeanPool.ApollonianSuperharmonic.SemiProperForestClassification
-public import LeanPool.ApollonianSuperharmonic.SemiProperQuadruple
-public import LeanPool.ApollonianSuperharmonic.TangencyCoordinateIdentity
-public import LeanPool.ApollonianSuperharmonic.TileTranslationFormulas
-public import LeanPool.ApollonianSuperharmonic.TilingLattice
-public import LeanPool.ApollonianSuperharmonic.UnitOccurrenceOrientation
 public import LeanPool.ApollonianSuperharmonic.UnitOccurrenceOrientationUnique
-public import LeanPool.ApollonianSuperharmonic.UnitTriangularStep
-public import LeanPool.ApollonianSuperharmonic.VectorRecursionLaws
-public import LeanPool.ApollonianSuperharmonic.VectorSquareProduct
 
 -- [TABLET NODE: P4458T1FirstProperRows]
 
@@ -887,9 +872,9 @@ private theorem hDoffset :
           ![q 0, q i.succ, q ((i + 1).succ), q ((i + 2).succ)]
         let r : Fin 4 → CircleCoordinates := cyc F.q F.slot
         let wa := BandVectors.2 (r 3) (r 2)
-        ∀ (joinSlope : ℝ × ℝ), (joinSlope.1 - F.outer_slope.1 = -(1 / 2 : ℝ) * ((↑wa.re : ℝ) -
-            (↑wa.im : ℝ))) → ((joinSlope.2 - F.outer_slope.2 = -(1 / 2 : ℝ) * ((↑wa.im : ℝ) +
-            (↑wa.re : ℝ))) → (joinSlope - F.outer_slope = -(1 / 2 : ℝ) • GaussianRealPoint ((1 +
+        ∀ (joinSlope : ℝ × ℝ), (joinSlope.1 - F.outerSlope.1 = -(1 / 2 : ℝ) * ((↑wa.re : ℝ) -
+            (↑wa.im : ℝ))) → ((joinSlope.2 - F.outerSlope.2 = -(1 / 2 : ℝ) * ((↑wa.im : ℝ) +
+            (↑wa.re : ℝ))) → (joinSlope - F.outerSlope = -(1 / 2 : ℝ) • GaussianRealPoint ((1 +
             I) * wa))) ) := by
   classical
   intro C orientation base Rminus Rplus hminus hplus F I cyc r wa joinSlope hre him
@@ -917,15 +902,15 @@ private theorem hminusSlope :
         let wa := BandVectors.2 (r 3) (r 2)
         (wa = -xa - ya) → ((BandVectors.2 (r 1) (r 0) = xa + I * ya) → ((BandVectors.2 (r 0) (r
             1) = -I * BandVectors.2 (r 1) (r 0)) → (∀ (joinSlope : ℝ × ℝ), (joinSlope -
-            F.outer_slope = -(1 / 2 : ℝ) • GaussianRealPoint ((1 + I) * wa)) → ((F.minus_slope -
-            F.outer_slope = (1 / 2 : ℝ) • GaussianRealPoint (BandVectors.2 (r 1) (r 0) -
-            BandVectors.2 (r 0) (r 1))) → (joinSlope - F.minus_slope = GaussianRealPoint ya)))))
+            F.outerSlope = -(1 / 2 : ℝ) • GaussianRealPoint ((1 + I) * wa)) → ((F.minusSlope -
+            F.outerSlope = (1 / 2 : ℝ) • GaussianRealPoint (BandVectors.2 (r 1) (r 0) -
+            BandVectors.2 (r 0) (r 1))) → (joinSlope - F.minusSlope = GaussianRealPoint ya)))))
             ) := by
   classical
   intro C orientation base Rminus Rplus hminus hplus F I cyc r xa ya wa hwa harec haflip
       joinSlope hDoffset hFminus
-  rw [show joinSlope - F.minus_slope =
-    (joinSlope - F.outer_slope) - (F.minus_slope - F.outer_slope) by abel]
+  rw [show joinSlope - F.minusSlope =
+    (joinSlope - F.outerSlope) - (F.minusSlope - F.outerSlope) by abel]
   rw [hDoffset, hFminus, haflip, harec, hwa]
   apply Prod.ext <;>
     norm_num [GaussianRealPoint, I, Prod.smul_mk,
@@ -947,15 +932,15 @@ private theorem hplusSlope :
         let wa := BandVectors.2 (r 3) (r 2)
         (wa = -xa - ya) → ((BandVectors.2 (r 1) (r 0) = xa + I * ya) → ((BandVectors.2 (r 0) (r
             1) = -I * BandVectors.2 (r 1) (r 0)) → (∀ (joinSlope : ℝ × ℝ), (joinSlope -
-            F.outer_slope = -(1 / 2 : ℝ) • GaussianRealPoint ((1 + I) * wa)) → ((F.plus_slope -
-            F.outer_slope = (1 / 2 : ℝ) • GaussianRealPoint (BandVectors.2 (r 1) (r 0) +
-            BandVectors.2 (r 0) (r 1))) → (F.plus_slope - joinSlope = GaussianRealPoint (-I *
+            F.outerSlope = -(1 / 2 : ℝ) • GaussianRealPoint ((1 + I) * wa)) → ((F.plusSlope -
+            F.outerSlope = (1 / 2 : ℝ) • GaussianRealPoint (BandVectors.2 (r 1) (r 0) +
+            BandVectors.2 (r 0) (r 1))) → (F.plusSlope - joinSlope = GaussianRealPoint (-I *
             xa)))))) ) := by
   classical
   intro C orientation base Rminus Rplus hminus hplus F I cyc r xa ya wa hwa harec haflip
       joinSlope hDoffset hFplus
-  rw [show F.plus_slope - joinSlope =
-    (F.plus_slope - F.outer_slope) - (joinSlope - F.outer_slope) by abel]
+  rw [show F.plusSlope - joinSlope =
+    (F.plusSlope - F.outerSlope) - (joinSlope - F.outerSlope) by abel]
   rw [hFplus, hDoffset, haflip, harec, hwa]
   apply Prod.ext <;>
     norm_num [GaussianRealPoint, I, Prod.smul_mk,
@@ -983,13 +968,13 @@ private theorem hleftAdjacent :
         let join := TileTranslation base (u + y)
         (TileCentroid join - TileCentroid Rminus = GaussianRealPoint y) → ((TileOdometer C.1.1
             join (D.functions F.slot false)) → (∀ (joinSlope : ℝ × ℝ), (PartialOdometerSlope
-            (D.functions F.slot false) = some joinSlope) → ((joinSlope - F.minus_slope =
+            (D.functions F.slot false) = some joinSlope) → ((joinSlope - F.minusSlope =
             GaussianRealPoint ya) → (LeftLatticeAdjacent C Rminus join hminus (D.functions F.slot
             false))))))))) ) := by
   classical
   intro C orientation base Rminus Rplus hminus hplus F D cyc hunit r y ya hyStep hyRe hyIm u join
       hjoinCenter hjoinOdo joinSlope hjoinSlope hminusSlope
-  refine ⟨F.minus_odo, hjoinOdo, F.minus_slope, joinSlope,
+  refine ⟨F.minus_odo, hjoinOdo, F.minusSlope, joinSlope,
     F.slope_minus, hjoinSlope, Or.inl ⟨hunit, orientation, y, hyStep, hjoinCenter, ?_, ?_⟩⟩
   · rw [← hyRe]
     exact congrArg Prod.fst hminusSlope
@@ -1020,13 +1005,13 @@ private theorem hrightAdjacent :
         let join := TileTranslation base (u + y)
         (TileOdometer C.1.1 join (D.functions F.slot false)) → ((TileCentroid Rplus -
             TileCentroid join = GaussianRealPoint (I * x)) → (∀ (joinSlope : ℝ × ℝ),
-            (PartialOdometerSlope (D.functions F.slot false) = some joinSlope) → ((F.plus_slope -
+            (PartialOdometerSlope (D.functions F.slot false) = some joinSlope) → ((F.plusSlope -
             joinSlope = GaussianRealPoint (-I * xa)) → (LeftLatticeAdjacent C join Rplus
             (D.functions F.slot false) hplus)))))))) ) := by
   classical
   intro C orientation base Rminus Rplus hminus hplus F D I cyc hunit r x y xa hxStep hxRe hxIm u
       join hjoinOdo hrightCenter joinSlope hjoinSlope hplusSlope
-  refine ⟨hjoinOdo, F.plus_odo, joinSlope, F.plus_slope,
+  refine ⟨hjoinOdo, F.plus_odo, joinSlope, F.plusSlope,
     hjoinSlope, F.slope_plus, Or.inl ⟨hunit, orientation, I * x, hxStep, hrightCenter, ?_, ?_⟩⟩
   · rw [← hxRe]
     exact congrArg Prod.fst hplusSlope
@@ -1209,10 +1194,10 @@ theorem P4458T1FirstProperRows
       child.2 - root.2 = -(1 / 2 : ℝ) * ((wa.im : ℝ) + (wa.re : ℝ)) :=
           FirstProperRowProof.hSlopeInfo C orientation base Rminus Rplus hminus hplus F D hCpositive
   rcases hSlopeInfo with ⟨rootSlope, joinSlope, hrootSlope, hjoinSlope, hre, him⟩
-  have hrootSlopeEq : rootSlope = F.outer_slope :=
+  have hrootSlopeEq : rootSlope = F.outerSlope :=
     Option.some.inj (hrootSlope.symm.trans F.slope_outer)
   rw [hrootSlopeEq] at hre him
-  have hDoffset : joinSlope - F.outer_slope =
+  have hDoffset : joinSlope - F.outerSlope =
       -(1 / 2 : ℝ) • GaussianRealPoint ((1 + I) * wa) := FirstProperRowDetails.hDoffset C
           orientation base Rminus Rplus hminus hplus F joinSlope hre him
   have pairString (U V : ProtoTile) (d : GaussianInt)

@@ -5,12 +5,11 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.CommonFootprintEdgeVertices
-public import LeanPool.ApollonianSuperharmonic.ClosedSquareRealization
-public import LeanPool.ApollonianSuperharmonic.FootprintEdges
 public import LeanPool.ApollonianSuperharmonic.FootprintVertices
 public import LeanPool.ApollonianSuperharmonic.GridEdgeCarrier
-public import LeanPool.ApollonianSuperharmonic.ProtoTile
 public import LeanPool.ApollonianSuperharmonic.TileRealization
 
 -- [TABLET NODE: DisjointSquareUnionCommonEdgeCarrier]

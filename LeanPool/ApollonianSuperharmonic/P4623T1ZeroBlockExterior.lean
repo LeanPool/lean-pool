@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P3161T1AggregateComplementConnectivity
 
 -- [TABLET NODE: P4623T1ZeroBlockExterior]

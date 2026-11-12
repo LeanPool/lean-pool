@@ -5,17 +5,10 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.ApollonianSuperharmonic.BandPredecessorNoCollision
-public import LeanPool.ApollonianSuperharmonic.BandGenealogy
-public import LeanPool.ApollonianSuperharmonic.BandTangency
-public import LeanPool.ApollonianSuperharmonic.CircleCoordinates
-public import LeanPool.ApollonianSuperharmonic.PrimitiveVectorOrientation
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.PrimitiveVectorOrientationUnique
-public import LeanPool.ApollonianSuperharmonic.ProperBandCurvatureStructure
-public import LeanPool.ApollonianSuperharmonic.ProperBandQuadruple
 public import LeanPool.ApollonianSuperharmonic.RecursiveVectorSystem
-public import LeanPool.ApollonianSuperharmonic.SemiProperForestClassification
-public import LeanPool.ApollonianSuperharmonic.SemiProperQuadruple
 public import LeanPool.ApollonianSuperharmonic.P4981T1PrescriptionCoherence
 public import LeanPool.ApollonianSuperharmonic.P4981T1PrescriptionLocality
 public import LeanPool.ApollonianSuperharmonic.P4981T1ProperEquations

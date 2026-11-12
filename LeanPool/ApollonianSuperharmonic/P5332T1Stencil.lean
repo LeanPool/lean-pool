@@ -5,7 +5,10 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.ApollonianSuperharmonic.FordFareyParameter
+public import Mathlib.Init
+public import Mathlib.Algebra.Group.Fin.Basic
+
+public import Mathlib.NumberTheory.Zsqrtd.GaussianInt
 
 -- [TABLET NODE: P5332T1Stencil]
 

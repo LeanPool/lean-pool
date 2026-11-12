@@ -5,11 +5,11 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P5260T1LiteralPlacement
-public import LeanPool.ApollonianSuperharmonic.P5260T1PlacementLedger
 public import LeanPool.ApollonianSuperharmonic.P5260T1UnitInterfaces
 public import LeanPool.ApollonianSuperharmonic.P5260T1PredecessorInterfaces
-public import LeanPool.ApollonianSuperharmonic.P4055T1ExactTripleImage
 
 -- [TABLET NODE: DiamondOrientedChildParentEndpoints]
 

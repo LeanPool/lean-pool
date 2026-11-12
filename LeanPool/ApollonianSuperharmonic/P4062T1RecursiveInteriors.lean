@@ -5,6 +5,10 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+public import Mathlib.Algebra.Group.Fin.Basic
+public import Mathlib.Topology.Basic
+
 public import LeanPool.ApollonianSuperharmonic.P4062T1InteriorSquare
 public import LeanPool.ApollonianSuperharmonic.FordFareyParameter
 

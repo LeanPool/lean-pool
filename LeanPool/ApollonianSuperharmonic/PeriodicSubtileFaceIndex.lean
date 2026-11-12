@@ -5,6 +5,9 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+public import Mathlib.Algebra.Order.Ring.Int
+
 public import LeanPool.ApollonianSuperharmonic.SixSubtileFaceLabel
 
 -- [TABLET NODE: PeriodicSubtileFaceIndex]

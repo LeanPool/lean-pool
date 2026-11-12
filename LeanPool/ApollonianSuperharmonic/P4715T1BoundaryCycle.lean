@@ -5,6 +5,10 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+public import Mathlib.Algebra.Group.Fin.Basic
+public import Mathlib.Data.Fin.VecNotation
+
 public import LeanPool.ApollonianSuperharmonic.PeriodicSubtileIndex
 
 -- [TABLET NODE: P4715T1BoundaryCycle]

@@ -5,16 +5,12 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.BandCircle
-public import LeanPool.ApollonianSuperharmonic.BandGeneralCircle
 public import LeanPool.ApollonianSuperharmonic.BandVectors
-public import LeanPool.ApollonianSuperharmonic.FordFareyParentsExist
 public import LeanPool.ApollonianSuperharmonic.FordRecursiveQuadruple
-public import LeanPool.ApollonianSuperharmonic.PrimitiveVectorOrientation
-public import LeanPool.ApollonianSuperharmonic.ProperBandQuadruple
-public import LeanPool.ApollonianSuperharmonic.RecursiveVectorSystem
 public import LeanPool.ApollonianSuperharmonic.VectorRecursionLaws
-public import LeanPool.ApollonianSuperharmonic.SemiProperQuadruple
 
 -- [TABLET NODE: FordCoordinateConfiguration]
 
@@ -206,8 +202,11 @@ private theorem hsemiAt342 :
   classical
   intro n Q q1pos hgtq pd qd hqdpos hqdlt hd1 hd2 hred hq1gt R hsucc
   convert hsucc using 1;
-    simp? [FordRecursiveQuadruple, R, pd, qd, Q.sum_p, Q.sum_q,
-      FordCircleCoordinate, hqdpos.ne']
+    simp only [FordRecursiveQuadruple, FordCircleCoordinate, Q.sum_q, Nat.cast_mul,
+        Nat.cast_add, Int.reduceNeg, Q.sum_p, hqdpos.ne', ↓reduceIte, Fin.isValue,
+        Matrix.cons_val_zero, Matrix.cons_val, mul_zero, add_zero, Matrix.cons_val_one,
+        mul_neg, mul_one, Matrix.vecCons_inj, Prod.mk.injEq, ite_eq_right_iff, zero_eq_mul,
+        Int.natCast_eq_zero, or_self, and_true, qd, pd, R]
   all_goals try rw [Nat.cast_sub (by omega)]
   repeat' first | constructor | (ext <;> simp; ring)
   all_goals try ring
@@ -254,7 +253,8 @@ private theorem hv13At359 :
   intro n Q q1pos hgtq pd qd hqdlt hd1 hd2 hred hq1gt R rv32 rv13 direct
   have hx := direct.2.1
   rw [rv13, rv32] at hx
-  simp? [FordRecursiveQuadruple, R] at hx
+  simp only [FordRecursiveQuadruple, Fin.isValue, Matrix.cons_val_zero, Matrix.cons_val,
+      Int.reduceNeg, mul_neg, R] at hx
   have hqdrel : qd + Q.q₂ = Q.q₁ := by
     dsimp [qd]
     omega
@@ -456,15 +456,25 @@ private theorem hsemiAt448 :
       FordCircleCoordinate Q.p₁ Q.q₁ := by
     simp [FordRecursiveQuadruple, R, q1pos'.ne']
   convert hfinal using 1;
-    simp? [FordRecursiveQuadruple, R, Q.sum_p, Q.sum_q,
-      FordCircleCoordinate, rcond]
-  all_goals try simp? [rotatedTuple]
-  repeat' first | constructor | (ext <;> simp? <;> ring)
+    simp only [FordRecursiveQuadruple, FordCircleCoordinate, Q.sum_q, Nat.cast_mul,
+        Nat.cast_add, Int.reduceNeg, Q.sum_p, rcond, ↓reduceIte, Nat.succ_eq_add_one,
+        Nat.reduceAdd, Fin.isValue, Matrix.cons_val_zero, Matrix.cons_val,
+        Matrix.cons_val_one, Matrix.vecCons_inj, Prod.mk.injEq, and_true, R]
+  all_goals try simp only [Fin.isValue, Matrix.cons_val_zero, Matrix.cons_val,
+      Matrix.cons_val_one, Int.reduceNeg, rotatedTuple]
+  repeat' first | constructor | (ext <;> simp only [Fin.isValue, Int.reduceNeg, Zsqrtd.im_sub,
+      Zsqrtd.im_add, Zsqrtd.im_mul, Zsqrtd.re_ofNat, Nat.cast_ofNat, Zsqrtd.im_ofNat,
+      zero_mul, add_zero, Zsqrtd.re_sub, Zsqrtd.re_add, Zsqrtd.re_mul, mul_zero] <;> ring)
   all_goals try ring
   all_goals try rw [rentry]
-  all_goals try simp? [FordCircleCoordinate]
-  all_goals try simp? [FordRecursiveQuadruple, R, q1pos'.ne']
-  all_goals try simp? [FordCircleCoordinate, pd, qd]
+  all_goals try simp only [Fin.isValue, FordCircleCoordinate, Nat.cast_mul, Int.reduceNeg,
+      one_mul]
+  all_goals try simp only [FordRecursiveQuadruple, q1pos'.ne', ↓reduceIte, Fin.isValue,
+      Matrix.cons_val_zero, Matrix.cons_val, zero_mul, add_zero, R, Int.reduceNeg,
+      Zsqrtd.im_neg, Zsqrtd.im_one, neg_zero, Zsqrtd.re_neg, Zsqrtd.re_one, neg_mul, one_mul,
+      neg_add_cancel_right]
+  all_goals try simp only [FordCircleCoordinate, Nat.cast_mul, Int.reduceNeg, qd, pd, one_mul,
+      Int.reduceSub]
   all_goals try rw [Nat.cast_sub (by omega)]
   all_goals try ring
 
@@ -577,7 +587,9 @@ private theorem ha32At503 :
       (⟨0, 1⟩ : GaussianInt) * (Q.p₁ : GaussianInt) := by
     simpa [rotatedTuple, FordRecursiveQuadruple, R, q1pos'.ne'] using ra13
   rw [ra32', ra13'] at hx
-  simp? [rotatedTuple, FordRecursiveQuadruple, R, q1pos'.ne'] at hx
+  simp only [FordRecursiveQuadruple, q1pos'.ne', ↓reduceIte, Fin.isValue,
+      Matrix.cons_val_zero, Matrix.cons_val, Matrix.cons_val_one, Int.reduceNeg, rotatedTuple,
+      R] at hx
   calc
     BandVectors.2 ((FordRecursiveQuadruple Q) 3)
         ((FordRecursiveQuadruple Q) 2) =
@@ -657,13 +669,18 @@ private theorem hproper :
   refine ⟨hs.1, ?_⟩
   intro j
   fin_cases j
-  · simp? [FordRecursiveQuadruple, FordCircleCoordinate, hq1pos.ne', Nat.cast_mul]
+  · simp only [FordRecursiveQuadruple, FordCircleCoordinate, Nat.cast_mul, Int.reduceNeg,
+      hq1pos.ne', ↓reduceIte, Fin.zero_eta, Fin.isValue, Fin.succ_zero_eq_one,
+      Matrix.cons_val_one, Matrix.cons_val_zero]
     change (P.q₁ : Int) * P.q₁ < (P.q : Int) * P.q
     exact_mod_cast Nat.mul_self_lt_mul_self P.q₁_lt
-  · simp? [FordRecursiveQuadruple, FordCircleCoordinate, Nat.cast_mul]
+  · simp only [FordRecursiveQuadruple, FordCircleCoordinate, Nat.cast_mul, Int.reduceNeg,
+      Fin.mk_one, Fin.isValue, Fin.succ_one_eq_two, Matrix.cons_val, Matrix.cons_val_zero]
     change (P.q₂ : Int) * P.q₂ < (P.q : Int) * P.q
     exact_mod_cast Nat.mul_self_lt_mul_self hq2lt
-  · simp? [FordRecursiveQuadruple, FordCircleCoordinate, Nat.cast_mul]
+  · simp only [FordRecursiveQuadruple, FordCircleCoordinate, Nat.cast_mul, Int.reduceNeg,
+      Fin.reduceFinMk, Fin.reduceSucc, Matrix.cons_val, Fin.isValue, Matrix.cons_val_zero,
+      mul_self_pos, ne_eq, Int.natCast_eq_zero]
     exact Nat.ne_of_gt P.q_pos
 
 end FordConfigurationProof
@@ -1197,17 +1214,22 @@ theorem FordCoordinateConfiguration (P : FordFareyParameter) :
         have coord2 := FordConfigurationDetails.coord2 Q
         have hsemi : SemiProperQuadruple (FordRecursiveQuadruple Q) := by
           convert ht using 1;
-            simp? [FordRecursiveQuadruple, FordCircleCoordinate, z, qone,
-              hqone, hp, hq, Q.sum_p]
+            simp only [FordRecursiveQuadruple, FordCircleCoordinate, hq, Nat.reduceMul,
+                Nat.cast_ofNat, Int.reduceNeg, Q.sum_p, hp, qone, one_ne_zero, ↓reduceIte,
+                mul_one, Nat.cast_one, hqone, Fin.isValue, Matrix.cons_val_zero,
+                Matrix.cons_val, Matrix.cons_val_one, mul_zero, add_zero, Int.reduceAdd,
+                sub_zero, mul_neg, Matrix.vecCons_inj, Prod.mk.injEq, true_and, and_true, z]
           constructor
           · ext <;> simp; ring
           constructor
           · ext <;> simp; ring
           · ext <;> simp
         have b1 := baseLaw z
-        simp? at b1
+        simp only [Int.reduceNeg, Fin.isValue, Matrix.cons_val, Matrix.cons_val_one,
+            Matrix.cons_val_zero] at b1
         have b2 := baseLaw ⟨0, Q.p₂ - 1⟩
-        simp? at b2
+        simp only [Int.reduceNeg, Fin.isValue, Matrix.cons_val, Matrix.cons_val_one,
+            Matrix.cons_val_zero, Zsqrtd.add_def, add_zero, sub_add_cancel] at b2
         have f1 := flipLaw _ _ (PrimitiveVectorOrientation.base31 ⟨0, Q.p₂ - 1⟩)
         have hv13 := FordConfigurationDetails.hv13At868 Q qone hqone hp hq coord1 b1
         have hv32 := FordConfigurationProof.hv32At253 Q qone hqone hp hq coord2 b2 f1

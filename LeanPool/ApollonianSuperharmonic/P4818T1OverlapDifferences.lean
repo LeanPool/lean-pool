@@ -5,11 +5,10 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P4818T1ClosedOverlaps
 public import LeanPool.ApollonianSuperharmonic.P4207T1FloorArithmetic
-public import Mathlib.Algebra.Ring.Int.Parity
-public import Mathlib.Tactic.Linarith
-public import Mathlib.Tactic.Ring
 
 -- [TABLET NODE: P4818T1OverlapDifferences]
 

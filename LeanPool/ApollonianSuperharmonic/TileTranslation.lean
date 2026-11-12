@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.GaussianTranslation
 public import LeanPool.ApollonianSuperharmonic.ProtoTile
 

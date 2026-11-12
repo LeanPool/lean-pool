@@ -5,12 +5,10 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.ApollonianSuperharmonic.FordCoordinateConfiguration
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.FordTileOdometerRestriction
-public import LeanPool.ApollonianSuperharmonic.P4062T1CanonicalSupport
 public import LeanPool.ApollonianSuperharmonic.TileOdometerTranslationUniqueness
-public import LeanPool.ApollonianSuperharmonic.TileTranslationFormulas
-public import LeanPool.ApollonianSuperharmonic.PositiveCurvatureTileOdometerDomain
 
 -- [TABLET NODE: P4158T1MatchedFordPair]
 
@@ -57,17 +55,19 @@ private theorem hqgt :
   have hsumq : (P.q : Int) = (P.q₁ : Int) + (P.q₂ : Int) := by
     exact_mod_cast P.sum_q
   have hc := congrArg (fun x : CircleCoordinates => x.1) hCi
-  simp? [FordRecursiveQuadruple, FordCircleCoordinate] at hc
+  simp only [FordRecursiveQuadruple, FordCircleCoordinate, Nat.cast_mul, Int.reduceNeg,
+      Matrix.cons_val_succ] at hc
   have : 1 < P.q := by
     fin_cases i
-    · simp? [] at hc
+    · simp only [Int.reduceNeg, Fin.zero_eta, Fin.isValue, Matrix.cons_val_zero] at hc
       split at hc
       · norm_num at hc
         exact (by omega : False).elim
       · have hq : 1 < P.q₁ := by nlinarith [hlarge, hc]
         have hqNat : 1 < P.q₁ := by exact_mod_cast hq
         omega
-    · simp? [] at hc
+    · simp only [Int.reduceNeg, Fin.mk_one, Fin.isValue, Matrix.cons_val_one,
+        Matrix.cons_val_zero] at hc
       have hq : 1 < P.q₂ := by nlinarith [hlarge, hc]
       have hqNat : 1 < P.q₂ := by exact_mod_cast hq
       omega
@@ -114,14 +114,17 @@ private theorem hneq :
   have hselected : 1 < P.q₁ := by
     fin_cases i
     · have hc := congrArg (fun x : CircleCoordinates => x.1) hCi
-      simp? [FordRecursiveQuadruple, FordCircleCoordinate] at hc
+      simp only [FordRecursiveQuadruple, FordCircleCoordinate, Nat.cast_mul, Int.reduceNeg,
+          Fin.zero_eta, Fin.isValue, Fin.succ_zero_eq_one, Matrix.cons_val_one,
+          Matrix.cons_val_zero] at hc
       split at hc
       · norm_num at hc
         exact (by omega : False).elim
       · have hh : 1 < P.q₁ := by nlinarith [hlarge, hc]
         exact hh
     · have hc := congrArg (fun x : CircleCoordinates => x.1) hCi
-      simp? [FordRecursiveQuadruple, FordCircleCoordinate] at hc
+      simp only [FordRecursiveQuadruple, FordCircleCoordinate, Nat.cast_mul, Int.reduceNeg,
+          Fin.mk_one, Fin.isValue, Fin.succ_one_eq_two, Matrix.cons_val] at hc
       have hh : 1 < P.q₂ := by nlinarith [hlarge, hc]
       omega
     · exact False.elim (hidx rfl)
@@ -277,7 +280,10 @@ private theorem hfordcent :
         (P.q : Int) * ((P.q - 1 : Nat) : Int) / 2 := by
       rw [← Nat.cast_sum]
       simp [Finset.sum_range_id]
-    simp? [domain, Finset.sum_product]
+    simp only [Int.reduceNeg, Finset.product_eq_sprod, Finset.coe_product, Finset.coe_range,
+        Zsqrtd.mk.injEq, Nat.cast_inj, Prod.forall, Prod.mk.injEq, implies_true,
+        Set.injOn_of_eq_iff_eq, Finset.sum_image, Finset.sum_product, Finset.sum_const,
+        Finset.card_range, Int.nsmul_eq_mul, domain]
     conv_lhs => rw [← Finset.mul_sum (Finset.range P.q)
       (fun n => (n : Int)) (P.q : Int)]
     rw [hrange]
@@ -288,7 +294,10 @@ private theorem hfordcent :
         (P.q : Int) * ((P.q - 1 : Nat) : Int) / 2 := by
       rw [← Nat.cast_sum]
       simp [Finset.sum_range_id]
-    simp? [domain, Finset.sum_product]
+    simp only [Int.reduceNeg, Finset.product_eq_sprod, Finset.coe_product, Finset.coe_range,
+        Zsqrtd.mk.injEq, Nat.cast_inj, Prod.forall, Prod.mk.injEq, implies_true,
+        Set.injOn_of_eq_iff_eq, Finset.sum_image, Finset.sum_product, Finset.sum_const,
+        Finset.card_range, Int.nsmul_eq_mul, domain]
     rw [hrange]
     ring
   change (if domain.Nonempty then

@@ -5,8 +5,11 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.TileArea
 public import LeanPool.ApollonianSuperharmonic.TouchingTriple
+public import LeanPool.ApollonianSuperharmonic.FootprintVertices
 
 -- [TABLET NODE: OuterTouchingAlternative]
 

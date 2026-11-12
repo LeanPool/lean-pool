@@ -5,11 +5,15 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.ApollonianSuperharmonic.CircleMatrix
-public import LeanPool.ApollonianSuperharmonic.FordCoordinateConfiguration
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.FordExceptionalLattice
 public import LeanPool.ApollonianSuperharmonic.FordPeakMatrix
 public import LeanPool.ApollonianSuperharmonic.IntegralityLattice
+public import LeanPool.ApollonianSuperharmonic.FordCircleCoordinate
+public import Mathlib.Algebra.Order.Algebra
+public import Mathlib.Analysis.Normed.Field.Basic
+public import Mathlib.Data.EReal.Inv
 
 -- [TABLET NODE: FordExceptionalMatrixLatticeIdentification]
 
@@ -54,8 +58,13 @@ theorem FordExceptionalMatrixLatticeIdentification (P : FordFareyParameter)
         ![((u.re : ℤ) : ℝ), ((u.im : ℤ) : ℝ)] i = (n : ℝ) at hu
       have hzero := hu 0
       have hone := hu 1
-      simp? [hmatrix, hC, FordCircleCoordinate, Matrix.mulVec,
-        ] at hzero hone
+      simp only [Matrix.mulVec, Fin.isValue, hmatrix, Nat.succ_eq_add_one, Nat.reduceAdd, hC,
+          FordCircleCoordinate, Nat.cast_mul, Int.reduceNeg, Int.cast_mul, Int.cast_natCast,
+          mul_inv_rev, Int.cast_one, Int.cast_ofNat, sub_self, Matrix.smul_cons, smul_eq_mul,
+          Matrix.smul_empty, mul_zero, Matrix.cons_val', Matrix.cons_val_fin_one,
+          Matrix.cons_val_zero, GaussianInt.intCast_re, GaussianInt.intCast_im,
+          Matrix.dotProduct_cons, Matrix.head_cons, Matrix.tail_cons,
+          Matrix.dotProduct_of_isEmpty, add_zero, Matrix.cons_val_one, zero_mul] at hzero hone
       rcases hzero with ⟨zeroValue, zeroEquation⟩
       rcases hone with ⟨oneValue, oneEquation⟩
       rw [GaussianInt.toComplex_def₂] at zeroEquation oneEquation

@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P4418T3EndpointOwnerIndices
 public import LeanPool.ApollonianSuperharmonic.P3055T1ParentVectorNormalForms
 

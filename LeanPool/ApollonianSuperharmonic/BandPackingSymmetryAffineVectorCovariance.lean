@@ -5,21 +5,11 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetry
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryAffineVectorAction
-public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryCircleAction
 public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryProjectiveVectorCovariance
-public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryProperCovariance
-public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryQuadrupleAction
-public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryReversesOrientation
 public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryScopedPhase
-public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryVectorAction
-public import LeanPool.ApollonianSuperharmonic.BandVectors
-public import LeanPool.ApollonianSuperharmonic.GaussianQuarterTurn
-public import LeanPool.ApollonianSuperharmonic.ProperBandQuadruple
-public import LeanPool.ApollonianSuperharmonic.ProperBandCurvatureStructure
-public import LeanPool.ApollonianSuperharmonic.TangencyCoordinateIdentity
-public import LeanPool.ApollonianSuperharmonic.VectorSquareProduct
 
 -- [TABLET NODE: BandPackingSymmetryAffineVectorCovariance]
 
@@ -76,8 +66,8 @@ private theorem affineFacts :
         ⟨hv, ha⟩
   | shift w =>
       intro D E v a hv ha
-      simp? [BandPackingSymmetryAffineVectorAction,
-        BandPackingSymmetryVectorAction, BandPackingSymmetryCircleAction]
+      simp only [BandPackingSymmetryAffineVectorAction, BandPackingSymmetryVectorAction,
+          Int.reduceNeg, BandPackingSymmetryCircleAction, true_and]
       constructor
       · exact hv
       · have reflectionProduct : v * GaussianReflection v =
@@ -940,7 +930,8 @@ theorem BandPackingSymmetryAffineVectorCovariance
         V ≠ 0 → c * d = 1 → 2 * V * A = 2 * (c * V) * b →
         b = d * A := AffineSymmetryCoordinates.unitCancel
     by_cases hrev : BandPackingSymmetryReversesOrientation g = true
-    · simp? [hrev] at hspatial
+    · simp only [hrev, ↓reduceIte, Fin.isValue, ite_mul, neg_mul, one_mul, mul_neg]
+        at hspatial
       let j : Fin 4 := (i + 2).succ
       let k : Fin 4 := (i + 1).succ
       let V := (BandPackingSymmetryAffineVectorAction g
@@ -991,13 +982,14 @@ theorem BandPackingSymmetryAffineVectorCovariance
               BandVectors.2 (q (i + 2).succ) (q (i + 1).succ))).2 = A :=
                   AffineSymmetryCoordinates.slopeIndex g q i
       rw [slopeIndex]
-      cases negative <;> simp? [epsilon, hrev, j,
-        mul_comm] at final ⊢
+      cases negative <;> simp only [Fin.isValue, Bool.false_eq_true, ↓reduceIte, mul_comm,
+          mul_neg, one_mul, neg_mul, hrev, epsilon, j, neg_neg] at final ⊢
       · rw [quarterMul A]
         exact final
       · rw [quarterMul A]
         exact final
-    · simp? [hrev] at hspatial
+    · simp only [hrev, Bool.false_eq_true, ↓reduceIte, Fin.isValue, ite_mul, neg_mul, one_mul]
+        at hspatial
       let j : Fin 4 := (i + 2).succ
       let k : Fin 4 := (i + 1).succ
       let V := (BandPackingSymmetryAffineVectorAction g
@@ -1030,7 +1022,8 @@ theorem BandPackingSymmetryAffineVectorCovariance
       have hi2 : ((if BandPackingSymmetryReversesOrientation g then -i else i) + 1).succ =
           (i + 1).succ := by simp [hrev]
       rw [hi1, hi2]
-      cases negative <;> simp? [epsilon, hrev] at final ⊢
+      cases negative <;> simp only [Fin.isValue, Bool.false_eq_true, ↓reduceIte, one_mul,
+          hrev, epsilon, neg_mul] at final ⊢
       · exact final
       · exact final
 

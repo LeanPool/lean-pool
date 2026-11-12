@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P3544T1BoundaryCarrier
 
 -- [TABLET NODE: P3650T1CyclicChildren]
@@ -43,19 +45,19 @@ structure P3650T1CyclicChildren {n : Nat} (p : P3381T1PolygonBoundary n)
     (a b : Fin (n + 3)) where
 -- BODY
   /-- The size parameter of the left child polygon. -/
-  left_n : Nat
+  leftParameter : Nat
   /-- The size parameter of the right child polygon. -/
-  right_n : Nat
-  left_lt : left_n < n
-  right_lt : right_n < n
+  rightParameter : Nat
+  left_lt : leftParameter < n
+  right_lt : rightParameter < n
   /-- The boundary following the first saved cyclic arc and the diagonal. -/
-  left : P3381T1PolygonBoundary left_n
+  left : P3381T1PolygonBoundary leftParameter
   /-- The boundary following the complementary saved cyclic arc and the diagonal. -/
-  right : P3381T1PolygonBoundary right_n
+  right : P3381T1PolygonBoundary rightParameter
   /-- Embed the left child labels into the original cyclic boundary. -/
-  il : Fin (left_n + 3) → Fin (n + 3)
+  il : Fin (leftParameter + 3) → Fin (n + 3)
   /-- Embed the right child labels into the original cyclic boundary. -/
-  ir : Fin (right_n + 3) → Fin (n + 3)
+  ir : Fin (rightParameter + 3) → Fin (n + 3)
   il_injective : Function.Injective il
   ir_injective : Function.Injective ir
   left_vertex : left.vertex = p.vertex ∘ il

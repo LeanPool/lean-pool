@@ -5,9 +5,12 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+public import Mathlib.Algebra.Group.Fin.Basic
+
 public import LeanPool.ApollonianSuperharmonic.P5157T1StaircasePoint
 public import Mathlib.Data.List.ChainOfFn
-public import Mathlib.Data.List.FinRange
+public import LeanPool.ApollonianSuperharmonic.SimpleGridPath
 
 -- [TABLET NODE: P5157T1AlternatingStaircase]
 

@@ -5,13 +5,11 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.ApollonianSuperharmonic.CurvatureOneBandCircleClassification
-public import LeanPool.ApollonianSuperharmonic.CurvatureOneBandPrototileSingleton
-public import LeanPool.ApollonianSuperharmonic.CurvatureOneOdometer
-public import LeanPool.ApollonianSuperharmonic.TileOdometerBandPrototile
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.PartialOdometerAffineTranslateFormulas
-public import LeanPool.ApollonianSuperharmonic.PositiveCurvatureTileOdometerDomain
 public import LeanPool.ApollonianSuperharmonic.CircleMatrix
+public import LeanPool.ApollonianSuperharmonic.TileOdometer
 
 -- [TABLET NODE: P4261T2UnitBoundary]
 
@@ -439,8 +437,10 @@ private theorem verticalPositive :
     have h11 : (x + 1 + ⟨0, 1⟩) - x = 1 + ⟨0, 1⟩ := by abel
     have h00 : (x + ⟨0, 1⟩) - (x + ⟨0, 1⟩) = 0 := by simp
     have h10 : (x + 1 + ⟨0, 1⟩) - (x + ⟨0, 1⟩) = 1 := by abel
-    simp? [CurvatureOneOdometer, h01, h11, h10,
-      Zsqrtd.ext_iff]
+    simp only [CurvatureOneOdometer, Int.reduceNeg, Zsqrtd.ext_iff, Zsqrtd.re_add,
+        Zsqrtd.re_one, add_zero, Zsqrtd.im_add, Zsqrtd.im_one, zero_add, h10, zero_ne_one,
+        and_false, ↓reduceIte, h11, and_self, sub_self, Zsqrtd.re_zero, Zsqrtd.im_zero, h01,
+        and_true]
     have hcoefMul : x.re * β.re - x.re * α.re = x.re * z.im := by
       calc
         x.re * β.re - x.re * α.re = x.re * (β.re - α.re) := by ring
@@ -605,7 +605,8 @@ private theorem hRe :
   classical
   intro C z hCz
   have he := congrArg (fun q : CircleCoordinates => q.2.re) hCz
-  simp? at he
+  simp only [Int.reduceNeg, Zsqrtd.re_add, Zsqrtd.re_one, Zsqrtd.re_mul, Zsqrtd.re_ofNat,
+      Nat.cast_ofNat, Zsqrtd.im_ofNat, mul_zero, zero_mul, add_zero] at he
   exact_mod_cast he
 
 private theorem hIm :
@@ -618,7 +619,8 @@ private theorem hIm :
   classical
   intro C z hCz
   have he := congrArg (fun q : CircleCoordinates => q.2.im) hCz
-  simp? at he
+  simp only [Int.reduceNeg, Zsqrtd.im_add, Zsqrtd.im_one, Zsqrtd.im_mul, Zsqrtd.re_ofNat,
+      Nat.cast_ofNat, Zsqrtd.im_ofNat, zero_mul, add_zero, zero_add] at he
   exact_mod_cast he
 
 private theorem hmatrixUnit :

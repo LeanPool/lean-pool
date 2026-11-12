@@ -5,12 +5,12 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.FordTile
 public import LeanPool.ApollonianSuperharmonic.FordVertexDomain
 public import LeanPool.ApollonianSuperharmonic.FootprintVertices
 public import LeanPool.ApollonianSuperharmonic.BoundaryFootprintVertices
-public import Mathlib.Tactic.NormNum
-public import Mathlib.Tactic.Linarith
 
 -- [TABLET NODE: P4062T1CanonicalSupport]
 
@@ -67,7 +67,9 @@ private theorem hfootSquare (q : Nat) (hqpos : 0 < q) :
   classical
   have hc : (FordTile q).cells.Nonempty := by
     refine ⟨⟨0, 0⟩, ?_⟩
-    simp? [FordTile, FordCellDomain]
+    simp only [FordTile, FordCellDomain, Int.reduceNeg, Finset.product_eq_sprod,
+        Finset.mem_image, Finset.mem_product, Finset.mem_range, Zsqrtd.mk.injEq,
+        Int.natCast_eq_zero, Prod.exists, exists_eq_right_right, exists_eq_right, and_self]
     exact hqpos
   ext x
   simp only [FootprintVertices, ite_eq_left hc, FordVertexDomain,
@@ -148,7 +150,9 @@ private theorem hfootSquare (q : Nat) (hqpos : 0 < q) :
 private theorem hFcells (q : Nat) (hqpos : 0 < q) : (FordTile q).cells.Nonempty := by
   classical
   refine ⟨⟨0, 0⟩, ?_⟩
-  simp? [FordTile, FordCellDomain]
+  simp only [FordTile, FordCellDomain, Int.reduceNeg, Finset.product_eq_sprod,
+      Finset.mem_image, Finset.mem_product, Finset.mem_range, Zsqrtd.mk.injEq,
+      Int.natCast_eq_zero, Prod.exists, exists_eq_right_right, exists_eq_right, and_self]
   exact hqpos
 
 private theorem hcellTiles (q : Nat) (z : GaussianInt) :

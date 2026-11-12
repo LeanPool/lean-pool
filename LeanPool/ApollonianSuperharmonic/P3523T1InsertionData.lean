@@ -5,8 +5,9 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.ApollonianSuperharmonic.Preamble
-public import Mathlib.Data.Finset.Union
+public import Mathlib.Init
+public import Mathlib.Data.Finset.Card
+
 
 -- [TABLET NODE: P3523T1InsertionData]
 

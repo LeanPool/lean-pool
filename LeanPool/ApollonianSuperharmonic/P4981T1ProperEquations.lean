@@ -5,8 +5,11 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P4981T1PrescriptionValue
 public import LeanPool.ApollonianSuperharmonic.P4981T1Recursion
+public import LeanPool.ApollonianSuperharmonic.PrimitiveVectorOrientation
 
 -- [TABLET NODE: P4981T1ProperEquations]
 

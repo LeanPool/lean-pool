@@ -5,12 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.ApollonianSuperharmonic.BandCircle
-public import LeanPool.ApollonianSuperharmonic.CurvatureOneBandPrototileSingleton
-public import LeanPool.ApollonianSuperharmonic.FootprintVertices
-public import LeanPool.ApollonianSuperharmonic.ProperBandCurvatureStructure
-public import LeanPool.ApollonianSuperharmonic.SemiProperQuadruple
-public import LeanPool.ApollonianSuperharmonic.TileCentroid
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.TileOdometer
 
 -- [TABLET NODE: PositiveCurvatureTileOdometerSupportTransport]

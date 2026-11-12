@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P3650T1CyclicChildren
 
 -- [TABLET NODE: P3650T1CyclicChildrenExists]
@@ -708,7 +710,7 @@ private theorem hright_order (n : Nat) (a : Fin (n + 3)) (b : Fin (n + 3)) (hab 
           (by simpa only [List.length_ofFn] using hbound)
         have hirlast : ir ⟨N - k, hbound⟩ = a := by
           change rot ⟨posR ⟨N - k, hbound⟩, hposRlt _⟩ = a
-          simp? [posR]
+          simp only [↓reduceIte, Fin.zero_eta, posR]
           exact hrotzero
         simpa only [hpos] using hget.trans hirlast
       · have hjlt : j + 1 < N - k := by
@@ -958,7 +960,7 @@ private theorem hopen_old_disjoint (n : Nat) (p : P3381T1PolygonBoundary n) (a :
   dsimp only [CyclicChildrenConstruction.N] at *
   intro hxj
   have hxC : x ∈ P3544T1BoundaryCarrier p := by
-    simp? [P3544T1BoundaryCarrier]
+    simp only [P3544T1BoundaryCarrier, Set.mem_iUnion]
     exact ⟨j, hxj⟩
   exact (Set.disjoint_left.mp hclear) hx hxC
 
@@ -2334,8 +2336,8 @@ theorem P3650T1CyclicChildrenExists {n : Nat} (p : P3381T1PolygonBoundary n)
   classical
   have hk_bounds := CyclicChildrenConstruction.hk_bounds n a b hab hnext hprev
   refine ⟨{
-    left_n := (CyclicChildrenConstruction.leftN n a b)
-    right_n := (CyclicChildrenConstruction.rightN n a b)
+    leftParameter := (CyclicChildrenConstruction.leftN n a b)
+    rightParameter := (CyclicChildrenConstruction.rightN n a b)
     left_lt := (CyclicChildrenConstruction.hleftLt n a b hab hnext hprev)
     right_lt := (CyclicChildrenConstruction.hrightLt n a b hab hnext hprev)
     left := (CyclicChildrenConstruction.leftPoly n p a b hab hnext hprev hclear)

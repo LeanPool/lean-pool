@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryPartialOdometerAction
 public import LeanPool.ApollonianSuperharmonic.PartialOdometerSlope
 public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetrySlopeAction

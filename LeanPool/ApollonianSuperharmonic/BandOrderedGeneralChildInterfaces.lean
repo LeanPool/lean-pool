@@ -5,33 +5,14 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.ApollonianSuperharmonic.AllowedSubtileIncidence
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.BandOrderedGeneralAggregatePatches
-public import LeanPool.ApollonianSuperharmonic.BandOrderedGeneralConfiguration
 public import LeanPool.ApollonianSuperharmonic.BandOrderedGeneralLayoutCertificate
 public import LeanPool.ApollonianSuperharmonic.BandOrderedGeneralMixedAggregatePatches
 public import LeanPool.ApollonianSuperharmonic.BandOrderedGeneralPeriodicBlockCells
-public import LeanPool.ApollonianSuperharmonic.ExactTileInterfaceTripleRetargetMiddle
-public import LeanPool.ApollonianSuperharmonic.FinitePatchTopology
-public import LeanPool.ApollonianSuperharmonic.FootprintEdges
-public import LeanPool.ApollonianSuperharmonic.FootprintVertices
 public import LeanPool.ApollonianSuperharmonic.IncomingSuperbasisRelation
-public import LeanPool.ApollonianSuperharmonic.LatticeTileThreeDiskJunction
-public import LeanPool.ApollonianSuperharmonic.ModifiedSubtileOccurrenceInterpretation
-public import LeanPool.ApollonianSuperharmonic.PeriodicTileIndexedMultiplicityOne
-public import LeanPool.ApollonianSuperharmonic.PeriodicTileMultiplicityOne
-public import LeanPool.ApollonianSuperharmonic.QuarterTurnSymmetric
-public import LeanPool.ApollonianSuperharmonic.QuarterTurnSymmetricCenteredTransport
 public import LeanPool.ApollonianSuperharmonic.QuarterTurnSymmetricExactInterfaceTransport
-public import LeanPool.ApollonianSuperharmonic.SimpleGridPathEquivariance
-public import LeanPool.ApollonianSuperharmonic.SixSubtileFaceVertices
-public import LeanPool.ApollonianSuperharmonic.SubtileOccurrenceInterpretation
-public import LeanPool.ApollonianSuperharmonic.TileCellComplement
-public import LeanPool.ApollonianSuperharmonic.TileCentroid
-public import LeanPool.ApollonianSuperharmonic.TileQuarterTurnFormulas
-public import LeanPool.ApollonianSuperharmonic.TileTranslation
-public import LeanPool.ApollonianSuperharmonic.TileTranslationFormulas
-public import LeanPool.ApollonianSuperharmonic.VectorRecursionLaws
 
 -- [TABLET NODE: BandOrderedGeneralChildInterfaces]
 
@@ -298,7 +279,9 @@ private theorem blockEq :
   · rintro ⟨a, ha, hx⟩
     have hcoords : a.first = m ∧ a.second = n := by
       cases a with
-      | mk l r s => cases l <;> simp? [K] at ha <;> exact ha
+      | mk l r s => cases l <;> simp only [Finset.mem_insert, PeriodicSubtileIndex.mk.injEq,
+          reduceCtorEq, false_and, Finset.mem_singleton, true_and, false_or, K, or_false,
+          or_self] at ha <;> exact ha
     have haeq : a = ⟨a.label, m, n⟩ := by
       cases a with
       | mk l r s =>

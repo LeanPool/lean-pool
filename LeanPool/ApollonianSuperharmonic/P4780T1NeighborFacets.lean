@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P4780T1ActiveFacets
 
 -- [TABLET NODE: P4780T1NeighborFacets]
@@ -42,7 +44,12 @@ theorem P4780T1NeighborFacets (j : Fin 6) :
   ext p
   fin_cases j
   all_goals
-    simp? [ht, P4780T1HullHalfspaces]
+    simp only [P4780T1HullHalfspaces, neg_le_sub_iff_le_add, tsub_le_iff_right, zero_add,
+        Nat.succ_eq_add_one, Nat.reduceAdd, Int.reduceNeg, Fin.mk_one, Fin.isValue,
+        Matrix.cons_val_one, Matrix.cons_val_zero, Int.cast_zero, Int.cast_neg, Int.cast_one,
+        ht, Set.mem_ofPred_eq, Prod.snd_sub, sub_neg_eq_add, Prod.fst_sub, sub_zero,
+        Set.mem_inter_iff, and_congr_right_iff, and_imp, Fin.reduceFinMk, Matrix.cons_val,
+        sub_add_cancel, Fin.zero_eta]
     intro ha1 ha2 ha3 ha4 ha5 ha6
     constructor
     · rintro ⟨hb1, hb2, hb3, hb4, hb5, hb6⟩

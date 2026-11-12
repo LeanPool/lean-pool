@@ -5,18 +5,12 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.ApollonianSuperharmonic.BandPrototile
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.BandPrototileTranslation
 public import LeanPool.ApollonianSuperharmonic.BandSubtileOccurrence
-public import LeanPool.ApollonianSuperharmonic.DiamondCellDomain
 public import LeanPool.ApollonianSuperharmonic.DiamondCoordinateConfiguration
 public import LeanPool.ApollonianSuperharmonic.DiamondTile
-public import LeanPool.ApollonianSuperharmonic.FootprintVertices
-public import LeanPool.ApollonianSuperharmonic.ProperBandQuadruple
-public import LeanPool.ApollonianSuperharmonic.TileCentroid
-public import LeanPool.ApollonianSuperharmonic.TileTranslationFormulas
-public import LeanPool.ApollonianSuperharmonic.VectorRecursionLaws
-public import LeanPool.ApollonianSuperharmonic.P4194T1DiamondCellRows
 public import LeanPool.ApollonianSuperharmonic.P4194T1DiamondCentroid
 
 -- [TABLET NODE: DiamondTileRecursiveIdentification]

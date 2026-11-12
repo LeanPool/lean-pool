@@ -5,6 +5,9 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+public import Mathlib.Tactic.Ring
+
 public import LeanPool.ApollonianSuperharmonic.P4994T6Chamber
 
 -- [TABLET NODE: P4994T6ChamberAdditions]

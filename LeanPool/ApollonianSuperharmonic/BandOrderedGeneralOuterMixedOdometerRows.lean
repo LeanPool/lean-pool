@@ -5,16 +5,11 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.ApollonianSuperharmonic.BandOrderedGeneralConfiguration
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.BandOrderedGeneralInteriorWebRow
 public import LeanPool.ApollonianSuperharmonic.BandOrderedGeneralOdometerRowData
 public import LeanPool.ApollonianSuperharmonic.OdometerWeb
-public import LeanPool.ApollonianSuperharmonic.PartialOdometerSlope
-public import LeanPool.ApollonianSuperharmonic.PositiveCurvatureTileOdometerDomain
-public import LeanPool.ApollonianSuperharmonic.ProperBandCurvatureStructure
-public import LeanPool.ApollonianSuperharmonic.SubtileLatticeAdjacent
-public import LeanPool.ApollonianSuperharmonic.TileTranslationFormulas
-public import LeanPool.ApollonianSuperharmonic.VectorRecursionLaws
 
 -- [TABLET NODE: BandOrderedGeneralOuterMixedOdometerRows]
 

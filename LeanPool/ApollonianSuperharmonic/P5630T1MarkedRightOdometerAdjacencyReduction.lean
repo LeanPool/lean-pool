@@ -5,17 +5,15 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.BandOrderedGeneralRightNormalizedBundleExists
 public import LeanPool.ApollonianSuperharmonic.BandOrderedGeneralRoutedSelectedContact
-public import LeanPool.ApollonianSuperharmonic.BandOrderedGeneralRightSelectedRowGeometry
 public import LeanPool.ApollonianSuperharmonic.BandOrderedGeneralRightSelectedAdjacency
 public import LeanPool.ApollonianSuperharmonic.BandOrderedGeneralRightOuterMarkingCriterion
 public import LeanPool.ApollonianSuperharmonic.BandOrderedGeneralMarkedSectorTransport
-public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryInversePhaseCancellation
 public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryMarkedDataCovariance
-public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryPartialOdometerActionFormulas
 public import LeanPool.ApollonianSuperharmonic.SubtileLatticeAdjacentPackingSymmetryTransport
-public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryProperCovariance
 
 -- [TABLET NODE: P5630T1MarkedRightOdometerAdjacencyReduction]
 
@@ -689,7 +687,9 @@ private theorem coverShape :
   intro a A B
   constructor
   · intro h j
-    fin_cases j <;> simp? [LatticeVertexIncidentCell] <;>
+    fin_cases j <;> simp only [LatticeVertexIncidentCell, Int.reduceNeg, Fin.mk_one,
+        Fin.isValue, Matrix.cons_val_one, Matrix.cons_val_zero, Fin.reduceFinMk,
+        Matrix.cons_val, Fin.zero_eta] <;>
       first | exact h _ (by simp)
   · intro h z hz
     rcases hz with hz | hz | hz | hz

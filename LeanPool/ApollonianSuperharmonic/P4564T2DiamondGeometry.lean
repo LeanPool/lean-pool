@@ -5,23 +5,17 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.BandPrototileTranslationNormalForm
-public import LeanPool.ApollonianSuperharmonic.BandPrototileTranslation
 public import LeanPool.ApollonianSuperharmonic.BandSubtileOccurrenceTranslation
-public import LeanPool.ApollonianSuperharmonic.BandPrototileCentroidUnique
-public import LeanPool.ApollonianSuperharmonic.ProtoTileObservableExtensionality
-public import LeanPool.ApollonianSuperharmonic.TileDiskAreaCovariance
 public import LeanPool.ApollonianSuperharmonic.TileCellComplementCovariance
-public import LeanPool.ApollonianSuperharmonic.TileTouchingCovariance
 public import LeanPool.ApollonianSuperharmonic.TouchingTripleCovariance
-public import LeanPool.ApollonianSuperharmonic.TileTranslationFormulas
 public import LeanPool.ApollonianSuperharmonic.TileCellComplement
 public import LeanPool.ApollonianSuperharmonic.QuarterTurnSymmetric
 public import LeanPool.ApollonianSuperharmonic.DiamondBaseT1
 public import LeanPool.ApollonianSuperharmonic.DiamondBaseT2
 public import LeanPool.ApollonianSuperharmonic.DiamondBaseTouching
-public import LeanPool.ApollonianSuperharmonic.DiamondTileRecursiveIdentification
-public import LeanPool.ApollonianSuperharmonic.DiamondTileGeometry
 public import LeanPool.ApollonianSuperharmonic.TileArea
 
 -- [TABLET NODE: P4564T2DiamondGeometry]

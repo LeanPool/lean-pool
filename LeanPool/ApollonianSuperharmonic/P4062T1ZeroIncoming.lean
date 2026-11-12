@@ -5,8 +5,9 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.AcyclicIndegreeOrientation
-public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 
 -- [TABLET NODE: P4062T1ZeroIncoming]
 

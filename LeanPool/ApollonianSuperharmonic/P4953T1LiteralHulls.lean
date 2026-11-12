@@ -5,7 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
-public import Mathlib.Tactic.Tauto
+public import Mathlib.Init
+
 
 public import LeanPool.ApollonianSuperharmonic.P4909T1ParentPolygon
 public import LeanPool.ApollonianSuperharmonic.P4828T1Rotate

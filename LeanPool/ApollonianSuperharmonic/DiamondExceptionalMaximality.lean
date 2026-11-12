@@ -5,23 +5,18 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.ApollonianSuperharmonic.AcyclicIndegreeOrientation
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.DiamondExceptionalLattice
-public import LeanPool.ApollonianSuperharmonic.DiamondExceptionalMatrixLatticeIdentification
 public import LeanPool.ApollonianSuperharmonic.DiamondLaplacianTable
 public import LeanPool.ApollonianSuperharmonic.DiamondOdometer
-public import LeanPool.ApollonianSuperharmonic.DiamondOdometerExistsUnique
-public import LeanPool.ApollonianSuperharmonic.DiamondParameter
 public import LeanPool.ApollonianSuperharmonic.DiamondPeakMatrix
-public import LeanPool.ApollonianSuperharmonic.DiamondVertexDomains
 public import LeanPool.ApollonianSuperharmonic.FiniteAcyclicOrientationObstruction
-public import LeanPool.ApollonianSuperharmonic.FourNeighborAdjacent
 public import LeanPool.ApollonianSuperharmonic.FourNeighborConnected
 public import LeanPool.ApollonianSuperharmonic.FourNeighborLaplacian
 public import LeanPool.ApollonianSuperharmonic.P5435T1Cocycle
 public import LeanPool.ApollonianSuperharmonic.P5435T1WebGeometry
 public import LeanPool.ApollonianSuperharmonic.P5432T1EdgeLedger
-public import Mathlib.Data.List.Chain
 
 -- [TABLET NODE: DiamondExceptionalMaximality]
 
@@ -563,7 +558,7 @@ theorem DiamondExceptionalMaximality (K : DiamondParameter) :
     { edge := fun x y => x ∈ Df ∧ y ∈ Df ∧ FourNeighborAdjacent x y ∧
         (x.re.natAbs < y.re.natAbs ∨
           (x.re = y.re ∧ ¬ Even (x.re+x.im) ∧ Even (y.re+y.im)))
-      edge_decidable := fun _ _ => Classical.propDecidable _
+      edgeDecidable := fun _ _ => Classical.propDecidable _
       rank := fun x => 2*x.re.natAbs + if Even (x.re+x.im) then 1 else 0
       supported := hsupp
       oriented := horient

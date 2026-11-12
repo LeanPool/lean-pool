@@ -5,7 +5,10 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.ApollonianSuperharmonic.Preamble
+public import Mathlib.Init
+public import Mathlib.Tactic.Positivity
+public import Mathlib.Topology.MetricSpace.Pseudo.Real
+
 public import Mathlib.Analysis.Complex.Norm
 public import Mathlib.Analysis.Convex.Hull
 public import Mathlib.LinearAlgebra.Complex.Module
@@ -930,7 +933,7 @@ private theorem hfaceAB (σ : ℝ) (A : ℂ) (x : ℂ) (B : ℂ) (hAx : A.im < x
         linarith [ht.2]
       · change 0 ≤ b.coord 2 (AffineMap.lineMap A B t)
         rw [(b.coord 2).apply_lineMap, hcoord20, hcoord22]
-        simp? [AffineMap.lineMap_apply_ring]
+        simp only [AffineMap.lineMap_apply_ring, mul_zero, mul_one, zero_add]
         exact ht.1
     · change b.coord 0 (AffineMap.lineMap A B t) = 0
       rw [(b.coord 0).apply_lineMap, hcoord01, hcoord02]
@@ -991,7 +994,7 @@ private theorem hfacexB (σ : ℝ) (A : ℂ) (x : ℂ) (B : ℂ) (hAx : A.im < x
         simp []
       · change 0 ≤ b.coord 2 (AffineMap.lineMap x B t)
         rw [(b.coord 2).apply_lineMap, hcoord20x, hcoord22]
-        simp? [AffineMap.lineMap_apply_ring]
+        simp only [AffineMap.lineMap_apply_ring, mul_zero, mul_one, zero_add]
         exact ht.1
     · change b.coord 1 (AffineMap.lineMap x B t) = 0
       rw [(b.coord 1).apply_lineMap, hcoord10, hcoord12]
@@ -1049,7 +1052,7 @@ private theorem hfacexA (σ : ℝ) (A : ℂ) (x : ℂ) (B : ℂ) (hAx : A.im < x
         linarith [ht.2]
       · change 0 ≤ b.coord 1 (AffineMap.lineMap x A t)
         rw [(b.coord 1).apply_lineMap, hcoord10, hcoord11]
-        simp? [AffineMap.lineMap_apply_ring]
+        simp only [AffineMap.lineMap_apply_ring, mul_zero, mul_one, zero_add]
         exact ht.1
       · change 0 ≤ b.coord 2 (AffineMap.lineMap x A t)
         rw [(b.coord 2).apply_lineMap, hcoord20x, hcoord20]

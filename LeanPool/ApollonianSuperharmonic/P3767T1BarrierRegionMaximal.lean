@@ -5,8 +5,10 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.ApollonianSuperharmonic.Preamble
+public import Mathlib.Init
 public import Mathlib.Topology.Connected.Basic
+public import Mathlib.Topology.Defs.Basic
+
 
 -- [TABLET NODE: P3767T1BarrierRegionMaximal]
 

@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.FourNeighborAdjacent
 public import LeanPool.ApollonianSuperharmonic.GridHorizontalLogLiftDelta
 public import LeanPool.ApollonianSuperharmonic.GridVerticalDownLogLiftDelta
@@ -81,7 +83,8 @@ theorem GridStepLogLiftDelta (q a b : GaussianInt)
     rw [ite_eq_right (by intro hc; exact hneU hc.1)]
     simp only [true_and]
     by_cases hc : a.im - 1 = q.im ∧ a.re ≤ q.re
-    · simp? [hc] at h ⊢
+    · simp only [Icc.mk_one, Icc.mk_zero, Int.reduceNeg, map_sub, Zsqrtd.im_sub, hc, and_self,
+        ↓reduceIte, Int.cast_neg, Int.cast_one, mul_neg, mul_one, sub_neg_eq_add] at h ⊢
       convert h using 1
     · simpa [hc] using h
 

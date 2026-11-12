@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P3523T1InsertionIncidence
 public import LeanPool.ApollonianSuperharmonic.P3523T1TargetBoundary
 public import LeanPool.ApollonianSuperharmonic.P3523T1TargetHull

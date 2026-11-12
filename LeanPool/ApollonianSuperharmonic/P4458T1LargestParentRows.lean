@@ -5,24 +5,15 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.AncestorOdometerInnerSupportNormalization
-public import LeanPool.ApollonianSuperharmonic.BandPrototileCentroidUnique
-public import LeanPool.ApollonianSuperharmonic.BandPrototileTranslation
 public import LeanPool.ApollonianSuperharmonic.BandRegularTileTouchingClassification
 public import LeanPool.ApollonianSuperharmonic.BandVectorOrientationDichotomy
-public import LeanPool.ApollonianSuperharmonic.LeftLatticeAdjacent
-public import LeanPool.ApollonianSuperharmonic.P4458T1BoundaryFrame
 public import LeanPool.ApollonianSuperharmonic.P4458T1BoundaryPlacement
-public import LeanPool.ApollonianSuperharmonic.P4458T1RestrictionFamily
 public import LeanPool.ApollonianSuperharmonic.ParentVectorsInTilingLattice
-public import LeanPool.ApollonianSuperharmonic.PositiveCurvatureTileOdometerDomain
 public import LeanPool.ApollonianSuperharmonic.PositiveCurvatureTileOdometerSupportTransport
-public import LeanPool.ApollonianSuperharmonic.ProperBandCurvatureStructure
-public import LeanPool.ApollonianSuperharmonic.TileString
 public import LeanPool.ApollonianSuperharmonic.TileOdometerBandPrototile
-public import LeanPool.ApollonianSuperharmonic.TileTranslationFormulas
-public import LeanPool.ApollonianSuperharmonic.VectorNonvanishing
-public import LeanPool.ApollonianSuperharmonic.VectorRecursionLaws
 
 -- [TABLET NODE: P4458T1LargestParentRows]
 
@@ -817,7 +808,7 @@ private theorem hFminusSlope :
         let r : Fin 4 → CircleCoordinates :=
           ![F.q 0, F.q F.slot.succ, F.q ((F.slot + 1).succ),
             F.q ((F.slot + 2).succ)]
-        F.minus_slope - F.outer_slope = ((1 / 2 : ℝ) * ((GaussianInt.toComplex (BandVectors.2 (r
+        F.minusSlope - F.outerSlope = ((1 / 2 : ℝ) * ((GaussianInt.toComplex (BandVectors.2 (r
             1) (r 0))).re - (GaussianInt.toComplex (BandVectors.2 (r 0) (r 1))).re), (1 / 2 : ℝ)
             * ((GaussianInt.toComplex (BandVectors.2 (r 1) (r 0))).im - (GaussianInt.toComplex
             (BandVectors.2 (r 0) (r 1))).im)) ) := by
@@ -835,7 +826,7 @@ private theorem hFplusSlope :
         let r : Fin 4 → CircleCoordinates :=
           ![F.q 0, F.q F.slot.succ, F.q ((F.slot + 1).succ),
             F.q ((F.slot + 2).succ)]
-        F.plus_slope - F.outer_slope = ((1 / 2 : ℝ) * ((GaussianInt.toComplex (BandVectors.2 (r
+        F.plusSlope - F.outerSlope = ((1 / 2 : ℝ) * ((GaussianInt.toComplex (BandVectors.2 (r
             1) (r 0))).re + (GaussianInt.toComplex (BandVectors.2 (r 0) (r 1))).re), (1 / 2 : ℝ)
             * ((GaussianInt.toComplex (BandVectors.2 (r 1) (r 0))).im + (GaussianInt.toComplex
             (BandVectors.2 (r 0) (r 1))).im)) ) := by
@@ -1254,10 +1245,10 @@ private theorem hminusSlope :
         let wa : GaussianInt := BandVectors.2 (r 3) (r 2)
         let xa : GaussianInt := BandVectors.2 (r 1) (r 3)
         let ya : GaussianInt := BandVectors.2 (r 2) (r 1)
-        ∀ (rootSlope : ℝ × ℝ), ∀ (joinSlope : ℝ × ℝ), (rootSlope = F.outer_slope) → ((joinSlope -
+        ∀ (rootSlope : ℝ × ℝ), ∀ (joinSlope : ℝ × ℝ), (rootSlope = F.outerSlope) → ((joinSlope -
             rootSlope = (-(1 / 2 : ℝ) * ((wa.re : ℤ) : ℝ) + (1 / 2 : ℝ) * ((wa.im : ℤ) : ℝ), -(1
-            / 2 : ℝ) * ((wa.im : ℤ) : ℝ) - (1 / 2 : ℝ) * ((wa.re : ℤ) : ℝ))) → ((F.minus_slope -
-            F.outer_slope = ((1 / 2 : ℝ) * ((GaussianInt.toComplex (BandVectors.2 (r 1) (r
+            / 2 : ℝ) * ((wa.im : ℤ) : ℝ) - (1 / 2 : ℝ) * ((wa.re : ℤ) : ℝ))) → ((F.minusSlope -
+            F.outerSlope = ((1 / 2 : ℝ) * ((GaussianInt.toComplex (BandVectors.2 (r 1) (r
             0))).re - (GaussianInt.toComplex (BandVectors.2 (r 0) (r 1))).re), (1 / 2 : ℝ) *
             ((GaussianInt.toComplex (BandVectors.2 (r 1) (r 0))).im - (GaussianInt.toComplex
             (BandVectors.2 (r 0) (r 1))).im))) → ((-(1 + I) * wa - BandVectors.2 (r 1) (r 0) +
@@ -1270,7 +1261,7 @@ private theorem hminusSlope :
             xa).re + (GaussianInt.toComplex ya).im) → (((GaussianInt.toComplex wa).re +
             (GaussianInt.toComplex xa).re + (GaussianInt.toComplex ya).re = 0) →
             (((GaussianInt.toComplex wa).im + (GaussianInt.toComplex xa).im +
-            (GaussianInt.toComplex ya).im = 0) → (joinSlope - F.minus_slope = GaussianRealPoint
+            (GaussianInt.toComplex ya).im = 0) → (joinSlope - F.minusSlope = GaussianRealPoint
             ya)))))))))) ) := by
   classical
   intro C orientation base Rminus Rplus hminus hplus F r I wa xa ya rootSlope joinSlope
@@ -1284,7 +1275,7 @@ private theorem hminusSlope :
           (1 / 2 : ℝ) * ((wa.im : ℤ) : ℝ),
        -(1 / 2 : ℝ) * ((wa.im : ℤ) : ℝ) -
           (1 / 2 : ℝ) * ((wa.re : ℤ) : ℝ)) := hDoffset
-  have hFminusSlope' : F.minus_slope - rootSlope =
+  have hFminusSlope' : F.minusSlope - rootSlope =
       ((1 / 2 : ℝ) *
           ((GaussianInt.toComplex (BandVectors.2 (r 1) (r 0))).re -
             (GaussianInt.toComplex (BandVectors.2 (r 0) (r 1))).re),
@@ -1293,8 +1284,8 @@ private theorem hminusSlope :
             (GaussianInt.toComplex (BandVectors.2 (r 0) (r 1))).im)) := by
     rw [hrootSlopeEq]
     exact hFminusSlope
-  rw [show joinSlope - F.minus_slope =
-    (joinSlope - rootSlope) - (F.minus_slope - rootSlope) by
+  rw [show joinSlope - F.minusSlope =
+    (joinSlope - rootSlope) - (F.minusSlope - rootSlope) by
       ext <;> dsimp <;> ring]
   rw [hDoffset', hFminusSlope']
   apply Prod.ext
@@ -1319,10 +1310,10 @@ private theorem hplusSlope :
         let wa : GaussianInt := BandVectors.2 (r 3) (r 2)
         let xa : GaussianInt := BandVectors.2 (r 1) (r 3)
         let ya : GaussianInt := BandVectors.2 (r 2) (r 1)
-        ∀ (rootSlope : ℝ × ℝ), ∀ (joinSlope : ℝ × ℝ), (rootSlope = F.outer_slope) → ((joinSlope -
+        ∀ (rootSlope : ℝ × ℝ), ∀ (joinSlope : ℝ × ℝ), (rootSlope = F.outerSlope) → ((joinSlope -
             rootSlope = (-(1 / 2 : ℝ) * ((wa.re : ℤ) : ℝ) + (1 / 2 : ℝ) * ((wa.im : ℤ) : ℝ), -(1
-            / 2 : ℝ) * ((wa.im : ℤ) : ℝ) - (1 / 2 : ℝ) * ((wa.re : ℤ) : ℝ))) → ((F.plus_slope -
-            F.outer_slope = ((1 / 2 : ℝ) * ((GaussianInt.toComplex (BandVectors.2 (r 1) (r
+            / 2 : ℝ) * ((wa.im : ℤ) : ℝ) - (1 / 2 : ℝ) * ((wa.re : ℤ) : ℝ))) → ((F.plusSlope -
+            F.outerSlope = ((1 / 2 : ℝ) * ((GaussianInt.toComplex (BandVectors.2 (r 1) (r
             0))).re + (GaussianInt.toComplex (BandVectors.2 (r 0) (r 1))).re), (1 / 2 : ℝ) *
             ((GaussianInt.toComplex (BandVectors.2 (r 1) (r 0))).im + (GaussianInt.toComplex
             (BandVectors.2 (r 0) (r 1))).im))) → (((1 - I) * BandVectors.2 (r 1) (r 0) + (1 + I)
@@ -1335,7 +1326,7 @@ private theorem hplusSlope :
             xa).re + (GaussianInt.toComplex ya).im) → (((GaussianInt.toComplex wa).re +
             (GaussianInt.toComplex xa).re + (GaussianInt.toComplex ya).re = 0) →
             (((GaussianInt.toComplex wa).im + (GaussianInt.toComplex xa).im +
-            (GaussianInt.toComplex ya).im = 0) → (F.plus_slope - joinSlope = GaussianRealPoint
+            (GaussianInt.toComplex ya).im = 0) → (F.plusSlope - joinSlope = GaussianRealPoint
             (-I * xa))))))))))) ) := by
   classical
   intro C orientation base Rminus Rplus hminus hplus F r I wa xa ya rootSlope joinSlope
@@ -1348,7 +1339,7 @@ private theorem hplusSlope :
           (1 / 2 : ℝ) * ((wa.im : ℤ) : ℝ),
        -(1 / 2 : ℝ) * ((wa.im : ℤ) : ℝ) -
           (1 / 2 : ℝ) * ((wa.re : ℤ) : ℝ)) := hDoffset
-  have hFplusSlope' : F.plus_slope - rootSlope =
+  have hFplusSlope' : F.plusSlope - rootSlope =
       ((1 / 2 : ℝ) *
           ((GaussianInt.toComplex (BandVectors.2 (r 1) (r 0))).re +
             (GaussianInt.toComplex (BandVectors.2 (r 0) (r 1))).re),
@@ -1357,8 +1348,8 @@ private theorem hplusSlope :
             (GaussianInt.toComplex (BandVectors.2 (r 0) (r 1))).im)) := by
     rw [hrootSlopeEq]
     exact hFplusSlope
-  rw [show F.plus_slope - joinSlope =
-    (F.plus_slope - rootSlope) - (joinSlope - rootSlope) by
+  rw [show F.plusSlope - joinSlope =
+    (F.plusSlope - rootSlope) - (joinSlope - rootSlope) by
       ext <;> dsimp <;> ring]
   rw [hFplusSlope', hDoffset']
   apply Prod.ext
@@ -1502,8 +1493,8 @@ private theorem hleftSlope1 :
           ![F.q 0, F.q F.slot.succ, F.q ((F.slot + 1).succ),
             F.q ((F.slot + 2).succ)]
         let ya : GaussianInt := BandVectors.2 (r 2) (r 1)
-        ∀ (joinSlope : ℝ × ℝ), (joinSlope - F.minus_slope = GaussianRealPoint ya) → (joinSlope.1
-            - F.minus_slope.1 = (ya.re : ℝ)) ) := by
+        ∀ (joinSlope : ℝ × ℝ), (joinSlope - F.minusSlope = GaussianRealPoint ya) → (joinSlope.1
+            - F.minusSlope.1 = (ya.re : ℝ)) ) := by
   classical
   intro C orientation base Rminus Rplus hminus hplus F r ya joinSlope hleftSlope
   have h := congrArg Prod.fst hleftSlope
@@ -1520,8 +1511,8 @@ private theorem hleftSlope2 :
           ![F.q 0, F.q F.slot.succ, F.q ((F.slot + 1).succ),
             F.q ((F.slot + 2).succ)]
         let ya : GaussianInt := BandVectors.2 (r 2) (r 1)
-        ∀ (joinSlope : ℝ × ℝ), (joinSlope - F.minus_slope = GaussianRealPoint ya) → (joinSlope.2
-            - F.minus_slope.2 = (ya.im : ℝ)) ) := by
+        ∀ (joinSlope : ℝ × ℝ), (joinSlope - F.minusSlope = GaussianRealPoint ya) → (joinSlope.2
+            - F.minusSlope.2 = (ya.im : ℝ)) ) := by
   classical
   intro C orientation base Rminus Rplus hminus hplus F r ya joinSlope hleftSlope
   have h := congrArg Prod.snd hleftSlope
@@ -1546,13 +1537,13 @@ private theorem hleftAdjacent :
         (TileOdometer C.1.1 join (D.functions F.slot false)) → (∀ (joinSlope : ℝ × ℝ),
             (PartialOdometerSlope (D.functions F.slot false) = some joinSlope) → ((y =
             BandVectors.1 (p 2) (p 0)) → ((ya = BandVectors.2 (p 2) (p 0)) → ((TileCentroid join
-            - TileCentroid Rminus = GaussianRealPoint y) → ((joinSlope.1 - F.minus_slope.1 =
-            (ya.re : ℝ)) → ((joinSlope.2 - F.minus_slope.2 = (ya.im : ℝ)) → (LeftLatticeAdjacent
+            - TileCentroid Rminus = GaussianRealPoint y) → ((joinSlope.1 - F.minusSlope.1 =
+            (ya.re : ℝ)) → ((joinSlope.2 - F.minusSlope.2 = (ya.im : ℝ)) → (LeftLatticeAdjacent
             C Rminus join hminus (D.functions F.slot false)))))))))) ) := by
   classical
   intro C orientation base Rminus Rplus hminus hplus F D p hp r y ya hCcoord u join hjoinOdo
       joinSlope hjoinSlope hy haya hleftCent hleftSlope1 hleftSlope2
-  refine ⟨F.minus_odo, hjoinOdo, F.minus_slope, joinSlope,
+  refine ⟨F.minus_odo, hjoinOdo, F.minusSlope, joinSlope,
     F.slope_minus, hjoinSlope, ?_⟩
   · right
     refine ⟨p, 1, true, hp, hCcoord.symm, ?_, ?_, ?_⟩
@@ -1573,8 +1564,8 @@ private theorem hrightSlope1 :
             F.q ((F.slot + 2).succ)]
         let I : GaussianInt := ⟨0, 1⟩
         let xa : GaussianInt := BandVectors.2 (r 1) (r 3)
-        ∀ (joinSlope : ℝ × ℝ), (F.plus_slope - joinSlope = GaussianRealPoint (-I * xa)) →
-            (F.plus_slope.1 - joinSlope.1 = ((-I * xa).re : ℝ)) ) := by
+        ∀ (joinSlope : ℝ × ℝ), (F.plusSlope - joinSlope = GaussianRealPoint (-I * xa)) →
+            (F.plusSlope.1 - joinSlope.1 = ((-I * xa).re : ℝ)) ) := by
   classical
   intro C orientation base Rminus Rplus hminus hplus F r I xa joinSlope hrightSlope
   have h := congrArg Prod.fst hrightSlope
@@ -1592,8 +1583,8 @@ private theorem hrightSlope2 :
             F.q ((F.slot + 2).succ)]
         let I : GaussianInt := ⟨0, 1⟩
         let xa : GaussianInt := BandVectors.2 (r 1) (r 3)
-        ∀ (joinSlope : ℝ × ℝ), (F.plus_slope - joinSlope = GaussianRealPoint (-I * xa)) →
-            (F.plus_slope.2 - joinSlope.2 = ((-I * xa).im : ℝ)) ) := by
+        ∀ (joinSlope : ℝ × ℝ), (F.plusSlope - joinSlope = GaussianRealPoint (-I * xa)) →
+            (F.plusSlope.2 - joinSlope.2 = ((-I * xa).im : ℝ)) ) := by
   classical
   intro C orientation base Rminus Rplus hminus hplus F r I xa joinSlope hrightSlope
   have h := congrArg Prod.snd hrightSlope
@@ -1629,13 +1620,13 @@ private theorem hrightAdjacent :
             GaussianInt) * BandVectors.2 (p (0 : Fin (4 : ℕ))) (p (3 : Fin (4 : ℕ))) =
             -BandVectors.2 (p (3 : Fin (4 : ℕ))) (p (0 : Fin (4 : ℕ)))) → ((x = BandVectors.1 (p
             0) (p 3)) → ((xa = BandVectors.2 (p 0) (p 3)) → (((3 : Fin 4) = Fin.succ (2 : Fin 3))
-            → ((F.plus_slope.1 - joinSlope.1 = ((-I * xa).re : ℝ)) → ((F.plus_slope.2 -
+            → ((F.plusSlope.1 - joinSlope.1 = ((-I * xa).re : ℝ)) → ((F.plusSlope.2 -
             joinSlope.2 = ((-I * xa).im : ℝ)) → (LeftLatticeAdjacent C join Rplus (D.functions
             F.slot false) hplus))))))))))) ) := by
   classical
   intro C orientation base Rminus Rplus hminus hplus F D p hp r I x y xa hCcoord u join hjoinOdo
       hPlusJoin joinSlope hjoinSlope horientation hx hxa hindex3 hrightSlope1 hrightSlope2
-  refine ⟨hjoinOdo, F.plus_odo, joinSlope, F.plus_slope,
+  refine ⟨hjoinOdo, F.plus_odo, joinSlope, F.plusSlope,
     hjoinSlope, F.slope_plus, ?_⟩
   rcases horientation with horient | horient
   · right
@@ -1643,14 +1634,14 @@ private theorem hrightAdjacent :
     · rw [hPlusJoin, hx, horient.1]
       simp [GaussianRealPoint, ← hindex3]
     · simpa [hindex3] using (calc
-        F.plus_slope.1 - joinSlope.1 = ((-I * xa).re : ℝ) := hrightSlope1
+        F.plusSlope.1 - joinSlope.1 = ((-I * xa).re : ℝ) := hrightSlope1
         _ = ((BandVectors.2 (p 3) (p 0)).re : ℝ) := by
           rw [hxa]
           have ha := congrArg (fun z : GaussianInt => z.re) horient.2
           exact_mod_cast ha
         )
     · simpa [hindex3] using (calc
-        F.plus_slope.2 - joinSlope.2 = ((-I * xa).im : ℝ) := hrightSlope2
+        F.plusSlope.2 - joinSlope.2 = ((-I * xa).im : ℝ) := hrightSlope2
         _ = ((BandVectors.2 (p 3) (p 0)).im : ℝ) := by
           rw [hxa]
           have ha := congrArg (fun z : GaussianInt => z.im) horient.2
@@ -1661,14 +1652,14 @@ private theorem hrightAdjacent :
     · rw [hPlusJoin, hx, horient.1]
       simp [GaussianRealPoint]
     · simpa [hindex3] using (calc
-        F.plus_slope.1 - joinSlope.1 = ((-I * xa).re : ℝ) := hrightSlope1
+        F.plusSlope.1 - joinSlope.1 = ((-I * xa).re : ℝ) := hrightSlope1
         _ = -((BandVectors.2 (p 3) (p 0)).re : ℝ) := by
           rw [hxa]
           have ha := congrArg (fun z : GaussianInt => z.re) horient.2
           exact_mod_cast ha
         )
     · simpa [hindex3] using (calc
-        F.plus_slope.2 - joinSlope.2 = ((-I * xa).im : ℝ) := hrightSlope2
+        F.plusSlope.2 - joinSlope.2 = ((-I * xa).im : ℝ) := hrightSlope2
         _ = -((BandVectors.2 (p 3) (p 0)).im : ℝ) := by
           rw [hxa]
           have ha := congrArg (fun z : GaussianInt => z.im) horient.2
@@ -1827,13 +1818,13 @@ private theorem leftString :
             ((PartialOdometerSlope (D.functions F.slot false) = some joinSlope) → ((joinSlope.1 -
             rootSlope.1 = -(1 / 2 : ℝ) * ((↑wa.re : ℝ) - (↑wa.im : ℝ))) → ((joinSlope.2 -
             rootSlope.2 = -(1 / 2 : ℝ) * ((↑wa.im : ℝ) + (↑wa.re : ℝ))) → ((rootSlope =
-            F.outer_slope) → ((joinSlope - rootSlope = (-(1 / 2 : ℝ) * ((wa.re : ℤ) : ℝ) + (1 / 2
+            F.outerSlope) → ((joinSlope - rootSlope = (-(1 / 2 : ℝ) * ((wa.re : ℤ) : ℝ) + (1 / 2
             : ℝ) * ((wa.im : ℤ) : ℝ), -(1 / 2 : ℝ) * ((wa.im : ℤ) : ℝ) - (1 / 2 : ℝ) * ((wa.re :
-            ℤ) : ℝ))) → ((F.minus_slope - F.outer_slope = ((1 / 2 : ℝ) * ((GaussianInt.toComplex
+            ℤ) : ℝ))) → ((F.minusSlope - F.outerSlope = ((1 / 2 : ℝ) * ((GaussianInt.toComplex
             (BandVectors.2 (r 1) (r 0))).re - (GaussianInt.toComplex (BandVectors.2 (r 0) (r
             1))).re), (1 / 2 : ℝ) * ((GaussianInt.toComplex (BandVectors.2 (r 1) (r 0))).im -
-            (GaussianInt.toComplex (BandVectors.2 (r 0) (r 1))).im))) → ((F.plus_slope -
-            F.outer_slope = ((1 / 2 : ℝ) * ((GaussianInt.toComplex (BandVectors.2 (r 1) (r
+            (GaussianInt.toComplex (BandVectors.2 (r 0) (r 1))).im))) → ((F.plusSlope -
+            F.outerSlope = ((1 / 2 : ℝ) * ((GaussianInt.toComplex (BandVectors.2 (r 1) (r
             0))).re + (GaussianInt.toComplex (BandVectors.2 (r 0) (r 1))).re), (1 / 2 : ℝ) *
             ((GaussianInt.toComplex (BandVectors.2 (r 1) (r 0))).im + (GaussianInt.toComplex
             (BandVectors.2 (r 0) (r 1))).im))) → ((wa.re + xa.re + ya.re = 0) → ((wa.im + xa.im +
@@ -1863,15 +1854,15 @@ private theorem leftString :
             (((GaussianInt.toComplex (BandVectors.2 (r 1) (r 0))).im - (GaussianInt.toComplex
             (BandVectors.2 (r 1) (r 0))).re + (GaussianInt.toComplex wa).im +
             (GaussianInt.toComplex wa).re = -2 * (GaussianInt.toComplex xa).re) → ((joinSlope -
-            F.minus_slope = GaussianRealPoint ya) → ((F.plus_slope - joinSlope =
+            F.minusSlope = GaussianRealPoint ya) → ((F.plusSlope - joinSlope =
             GaussianRealPoint (-I * xa)) → ((y = BandVectors.1 (p 2) (p 0)) → ((x = BandVectors.1
             (p 0) (p 3)) → ((xa = BandVectors.2 (p 0) (p 3)) → ((ya = BandVectors.2 (p 2) (p 0))
             → ((TileCentroid join - TileCentroid Rminus = GaussianRealPoint y) → ((TileTouching
-            Rminus join) → ((TileTouching join Rplus) → ((joinSlope - F.minus_slope =
-            GaussianRealPoint ya) → ((joinSlope.1 - F.minus_slope.1 = (ya.re : ℝ)) →
-            ((joinSlope.2 - F.minus_slope.2 = (ya.im : ℝ)) → ((LeftLatticeAdjacent C Rminus join
-            hminus (D.functions F.slot false)) → ((F.plus_slope - joinSlope = GaussianRealPoint
-            (-I * xa)) → ((F.plus_slope.1 - joinSlope.1 = ((-I * xa).re : ℝ)) → ((F.plus_slope.2
+            Rminus join) → ((TileTouching join Rplus) → ((joinSlope - F.minusSlope =
+            GaussianRealPoint ya) → ((joinSlope.1 - F.minusSlope.1 = (ya.re : ℝ)) →
+            ((joinSlope.2 - F.minusSlope.2 = (ya.im : ℝ)) → ((LeftLatticeAdjacent C Rminus join
+            hminus (D.functions F.slot false)) → ((F.plusSlope - joinSlope = GaussianRealPoint
+            (-I * xa)) → ((F.plusSlope.1 - joinSlope.1 = ((-I * xa).re : ℝ)) → ((F.plusSlope.2
             - joinSlope.2 = ((-I * xa).im : ℝ)) → ((LeftLatticeAdjacent C join Rplus (D.functions
             F.slot false) hplus) → ((Rminus.cells.Nonempty) → ((Rminus ≠ join) → ((join ≠ Rplus)
             → ((C.1.1.1 ≠ 1) → (TileString C orientation base Rminus join [Rminus,
@@ -1995,13 +1986,13 @@ private theorem rightString :
             ((PartialOdometerSlope (D.functions F.slot false) = some joinSlope) → ((joinSlope.1 -
             rootSlope.1 = -(1 / 2 : ℝ) * ((↑wa.re : ℝ) - (↑wa.im : ℝ))) → ((joinSlope.2 -
             rootSlope.2 = -(1 / 2 : ℝ) * ((↑wa.im : ℝ) + (↑wa.re : ℝ))) → ((rootSlope =
-            F.outer_slope) → ((joinSlope - rootSlope = (-(1 / 2 : ℝ) * ((wa.re : ℤ) : ℝ) + (1 / 2
+            F.outerSlope) → ((joinSlope - rootSlope = (-(1 / 2 : ℝ) * ((wa.re : ℤ) : ℝ) + (1 / 2
             : ℝ) * ((wa.im : ℤ) : ℝ), -(1 / 2 : ℝ) * ((wa.im : ℤ) : ℝ) - (1 / 2 : ℝ) * ((wa.re :
-            ℤ) : ℝ))) → ((F.minus_slope - F.outer_slope = ((1 / 2 : ℝ) * ((GaussianInt.toComplex
+            ℤ) : ℝ))) → ((F.minusSlope - F.outerSlope = ((1 / 2 : ℝ) * ((GaussianInt.toComplex
             (BandVectors.2 (r 1) (r 0))).re - (GaussianInt.toComplex (BandVectors.2 (r 0) (r
             1))).re), (1 / 2 : ℝ) * ((GaussianInt.toComplex (BandVectors.2 (r 1) (r 0))).im -
-            (GaussianInt.toComplex (BandVectors.2 (r 0) (r 1))).im))) → ((F.plus_slope -
-            F.outer_slope = ((1 / 2 : ℝ) * ((GaussianInt.toComplex (BandVectors.2 (r 1) (r
+            (GaussianInt.toComplex (BandVectors.2 (r 0) (r 1))).im))) → ((F.plusSlope -
+            F.outerSlope = ((1 / 2 : ℝ) * ((GaussianInt.toComplex (BandVectors.2 (r 1) (r
             0))).re + (GaussianInt.toComplex (BandVectors.2 (r 0) (r 1))).re), (1 / 2 : ℝ) *
             ((GaussianInt.toComplex (BandVectors.2 (r 1) (r 0))).im + (GaussianInt.toComplex
             (BandVectors.2 (r 0) (r 1))).im))) → ((wa.re + xa.re + ya.re = 0) → ((wa.im + xa.im +
@@ -2031,15 +2022,15 @@ private theorem rightString :
             (((GaussianInt.toComplex (BandVectors.2 (r 1) (r 0))).im - (GaussianInt.toComplex
             (BandVectors.2 (r 1) (r 0))).re + (GaussianInt.toComplex wa).im +
             (GaussianInt.toComplex wa).re = -2 * (GaussianInt.toComplex xa).re) → ((joinSlope -
-            F.minus_slope = GaussianRealPoint ya) → ((F.plus_slope - joinSlope =
+            F.minusSlope = GaussianRealPoint ya) → ((F.plusSlope - joinSlope =
             GaussianRealPoint (-I * xa)) → ((y = BandVectors.1 (p 2) (p 0)) → ((x = BandVectors.1
             (p 0) (p 3)) → ((xa = BandVectors.2 (p 0) (p 3)) → ((ya = BandVectors.2 (p 2) (p 0))
             → ((TileCentroid join - TileCentroid Rminus = GaussianRealPoint y) → ((TileTouching
-            Rminus join) → ((TileTouching join Rplus) → ((joinSlope - F.minus_slope =
-            GaussianRealPoint ya) → ((joinSlope.1 - F.minus_slope.1 = (ya.re : ℝ)) →
-            ((joinSlope.2 - F.minus_slope.2 = (ya.im : ℝ)) → ((LeftLatticeAdjacent C Rminus join
-            hminus (D.functions F.slot false)) → ((F.plus_slope - joinSlope = GaussianRealPoint
-            (-I * xa)) → ((F.plus_slope.1 - joinSlope.1 = ((-I * xa).re : ℝ)) → ((F.plus_slope.2
+            Rminus join) → ((TileTouching join Rplus) → ((joinSlope - F.minusSlope =
+            GaussianRealPoint ya) → ((joinSlope.1 - F.minusSlope.1 = (ya.re : ℝ)) →
+            ((joinSlope.2 - F.minusSlope.2 = (ya.im : ℝ)) → ((LeftLatticeAdjacent C Rminus join
+            hminus (D.functions F.slot false)) → ((F.plusSlope - joinSlope = GaussianRealPoint
+            (-I * xa)) → ((F.plusSlope.1 - joinSlope.1 = ((-I * xa).re : ℝ)) → ((F.plusSlope.2
             - joinSlope.2 = ((-I * xa).im : ℝ)) → ((LeftLatticeAdjacent C join Rplus (D.functions
             F.slot false) hplus) → ((Rplus.cells.Nonempty) → ((Rminus ≠ join) → ((join ≠ Rplus) →
             ((C.1.1.1 ≠ 1) → ((TileString C orientation base Rminus join [Rminus, join]) →
@@ -2373,7 +2364,7 @@ private theorem largestParentCertificate :
             (F.slot + (1 : Fin (3 : ℕ))).succ, F.q (F.slot + (2 : Fin (3 : ℕ))).succ] (3 : Fin (4
             : ℕ))) (![F.q (0 : Fin (4 : ℕ)), F.q F.slot.succ, F.q (F.slot + (1 : Fin (3 :
             ℕ))).succ, F.q (F.slot + (2 : Fin (3 : ℕ))).succ] (2 : Fin (4 : ℕ)))).re : ℝ))) →
-            ((rootSlope = F.outer_slope) → ((joinSlope - rootSlope = (-(1 / 2 : ℝ) *
+            ((rootSlope = F.outerSlope) → ((joinSlope - rootSlope = (-(1 / 2 : ℝ) *
             (↑(BandVectors.2 (![F.q (0 : Fin (4 : ℕ)), F.q F.slot.succ, F.q (F.slot + (1 : Fin (3
             : ℕ))).succ, F.q (F.slot + (2 : Fin (3 : ℕ))).succ] (3 : Fin (4 : ℕ))) (![F.q (0 :
             Fin (4 : ℕ)), F.q F.slot.succ, F.q (F.slot + (1 : Fin (3 : ℕ))).succ, F.q (F.slot +
@@ -2391,7 +2382,7 @@ private theorem largestParentCertificate :
             F.slot.succ, F.q (F.slot + (1 : Fin (3 : ℕ))).succ, F.q (F.slot + (2 : Fin (3 :
             ℕ))).succ] (2 : Fin (4 : ℕ)))).re : ℝ))) → ((
         let r := ![F.q (0 : Fin (4 : ℕ)), F.q F.slot.succ, F.q (F.slot + (1 : Fin (3 : ℕ))).succ,
-            F.q (F.slot + (2 : Fin (3 : ℕ))).succ]; F.minus_slope - F.outer_slope = ((1 / 2 : ℝ)
+            F.q (F.slot + (2 : Fin (3 : ℕ))).succ]; F.minusSlope - F.outerSlope = ((1 / 2 : ℝ)
             * (((GaussianInt.toComplex : GaussianInt → ℂ) (BandVectors.2 (r (1 : Fin (4 : ℕ))) (r
             (0 : Fin (4 : ℕ))))).re - ((GaussianInt.toComplex : GaussianInt → ℂ) (BandVectors.2
             (r (0 : Fin (4 : ℕ))) (r (1 : Fin (4 : ℕ))))).re), (1 / 2 : ℝ) *
@@ -2399,7 +2390,7 @@ private theorem largestParentCertificate :
             (0 : Fin (4 : ℕ))))).im - ((GaussianInt.toComplex : GaussianInt → ℂ) (BandVectors.2
             (r (0 : Fin (4 : ℕ))) (r (1 : Fin (4 : ℕ))))).im))) → ((
         let r := ![F.q (0 : Fin (4 : ℕ)), F.q F.slot.succ, F.q (F.slot + (1 : Fin (3 : ℕ))).succ,
-            F.q (F.slot + (2 : Fin (3 : ℕ))).succ]; F.plus_slope - F.outer_slope = ((1 / 2 : ℝ) *
+            F.q (F.slot + (2 : Fin (3 : ℕ))).succ]; F.plusSlope - F.outerSlope = ((1 / 2 : ℝ) *
             (((GaussianInt.toComplex : GaussianInt → ℂ) (BandVectors.2 (r (1 : Fin (4 : ℕ))) (r
             (0 : Fin (4 : ℕ))))).re + ((GaussianInt.toComplex : GaussianInt → ℂ) (BandVectors.2
             (r (0 : Fin (4 : ℕ))) (r (1 : Fin (4 : ℕ))))).re), (1 / 2 : ℝ) *
@@ -2679,8 +2670,8 @@ private theorem largestParentCertificate :
             (![F.q (0 : Fin (4 : ℕ)), F.q F.slot.succ, F.q (F.slot + (1 : Fin (3 : ℕ))).succ, F.q
             (F.slot + (2 : Fin (3 : ℕ))).succ] (1 : Fin (4 : ℕ))) (![F.q (0 : Fin (4 : ℕ)), F.q
             F.slot.succ, F.q (F.slot + (1 : Fin (3 : ℕ))).succ, F.q (F.slot + (2 : Fin (3 :
-            ℕ))).succ] (3 : Fin (4 : ℕ))))).re) → ((joinSlope - F.minus_slope = GaussianRealPoint
-            ya) → ((F.plus_slope - joinSlope = GaussianRealPoint (-(⟨(0 : ℤ), (1 : ℤ)⟩ :
+            ℕ))).succ] (3 : Fin (4 : ℕ))))).re) → ((joinSlope - F.minusSlope = GaussianRealPoint
+            ya) → ((F.plusSlope - joinSlope = GaussianRealPoint (-(⟨(0 : ℤ), (1 : ℤ)⟩ :
             GaussianInt) * BandVectors.2 (![F.q (0 : Fin (4 : ℕ)), F.q F.slot.succ, F.q (F.slot +
             (1 : Fin (3 : ℕ))).succ, F.q (F.slot + (2 : Fin (3 : ℕ))).succ] (1 : Fin (4 : ℕ)))
             (![F.q (0 : Fin (4 : ℕ)), F.q F.slot.succ, F.q (F.slot + (1 : Fin (3 : ℕ))).succ, F.q
@@ -2722,7 +2713,7 @@ private theorem largestParentCertificate :
       hplus F p hp hCcoord u hjoinFamily hy hleftCent hbasep
   have hrightTouch := LargestParentGeometry.hrightTouch C orientation base Rminus Rplus hminus
       hplus F p hp hCcoord u hjoinFamily hPlusJoin horientation hx hbasep hindex3
-  have hleftSlope : joinSlope - F.minus_slope = GaussianRealPoint ya := by
+  have hleftSlope : joinSlope - F.minusSlope = GaussianRealPoint ya := by
     rw [hminusSlope]
   have hleftSlope1 := LargestParentGeometry.hleftSlope1 C orientation base Rminus Rplus hminus
       hplus F joinSlope hleftSlope
@@ -2731,7 +2722,7 @@ private theorem largestParentCertificate :
   have hleftAdjacent := LargestParentGeometry.hleftAdjacent C orientation base Rminus Rplus
       hminus hplus F D p hp hCcoord u hjoinOdo joinSlope hjoinSlope hy haya hleftCent hleftSlope1
       hleftSlope2
-  have hrightSlope : F.plus_slope - joinSlope = GaussianRealPoint (-I * xa) := hplusSlope
+  have hrightSlope : F.plusSlope - joinSlope = GaussianRealPoint (-I * xa) := hplusSlope
   have hrightSlope1 := LargestParentGeometry.hrightSlope1 C orientation base Rminus Rplus hminus
       hplus F joinSlope hrightSlope
   have hrightSlope2 := LargestParentGeometry.hrightSlope2 C orientation base Rminus Rplus hminus
@@ -2895,7 +2886,7 @@ theorem P4458T1LargestParentRows
       hplus F D hCpositive
   rcases hSlopeInfo with ⟨rootSlope, joinSlope, hrootSlope, hjoinSlope,
     hjoinSlopeRe, hjoinSlopeIm⟩
-  have hrootSlopeEq : rootSlope = F.outer_slope :=
+  have hrootSlopeEq : rootSlope = F.outerSlope :=
     Option.some.inj (hrootSlope.symm.trans F.slope_outer)
   have hDoffset := LargestParentGeometry.hDoffset C orientation base Rminus Rplus hminus hplus F
       rootSlope joinSlope hjoinSlopeRe hjoinSlopeIm
@@ -2943,7 +2934,7 @@ theorem P4458T1LargestParentRows
       hminus hplus F toRealRe toRealIm hplusVectorRe'
   have hplusVectorImC := LargestParentGeometry.hplusVectorImC C orientation base Rminus Rplus
       hminus hplus F toRealRe toRealIm hplusVectorIm'
-  have hminusSlope : joinSlope - F.minus_slope = GaussianRealPoint ya :=
+  have hminusSlope : joinSlope - F.minusSlope = GaussianRealPoint ya :=
       LargestParentGeometry.hminusSlope C orientation base Rminus Rplus hminus hplus F rootSlope
       joinSlope hrootSlopeEq hDoffset hFminusSlope hminusSlopeVector ha10ReC ha10ImC ha01ReC
       ha01ImC hsumReC hsumImC

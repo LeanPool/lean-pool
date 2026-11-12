@@ -5,10 +5,12 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P5352T2PlacementData
 public import LeanPool.ApollonianSuperharmonic.P5352T2DomainRows
-public import LeanPool.ApollonianSuperharmonic.P4207T1FloorArithmetic
 public import LeanPool.ApollonianSuperharmonic.DiamondLaplacianTable
+public import LeanPool.ApollonianSuperharmonic.P5352T2Sources
 
 -- [TABLET NODE: P5352T2Predecessor1]
 
@@ -435,8 +437,7 @@ private theorem hPcenterQ :
     (by
       classical
       exact
-        ∀ (K : DiamondParameter), ∀ (hk : (1 : ℕ) < K.1), ∀ (f : IntegerLatticeFunction), ∀ (B :
-            Int),
+        ∀ (K : DiamondParameter), ∀ (hk : (1 : ℕ) < K.1),
         let k : Int := K.1
         let d : GaussianInt := ⟨k,k+1⟩
         let pred := P5352T2Sources K hk 3
@@ -447,7 +448,7 @@ private theorem hPcenterQ :
             (p-k) : Int)=k-p), DiamondOdometer (⟨K.1-1,by omega⟩) ⟨p-k,k-p⟩=Q (p-k)
             (k-p)))) := by
   classical
-  intro K hk f B k d pred p hcast hpz Q absP absPm absKm
+  intro K hk k d pred p hcast hpz Q absP absPm absKm
   have he : (⟨p,2*k+1-p⟩:GaussianInt)-d=⟨p-k,k-p⟩ := by ext <;> simp [d]; ring
   have hm : (⟨p-k,k-p⟩:GaussianInt) ∈ FootprintVertices (DiamondTile (K.1-1)) := by
     have hh := hpz
@@ -455,65 +456,13 @@ private theorem hPcenterQ :
     simpa [pred,P5352T2Sources] using hh
   simpa [Q] using (P5352T2DomainRows ⟨K.1-1,by omega⟩ ⟨p-k,k-p⟩).2 hm
 
-private theorem absKme :
-    (by
-      classical
-      exact
-        ∀ (K : DiamondParameter), ∀ (hk : (1 : ℕ) < K.1), ∀ (f : IntegerLatticeFunction), ∀ (B :
-            Int),
-        let k : Int := K.1
-        let d : GaussianInt := ⟨k,k+1⟩
-        let child := P5352T2Sources K hk 0
-        let pred := P5352T2Sources K hk 3
-        ∀ (p : ℤ), ∀ (hcast : (↑(K.1 - (1 : ℕ)) : ℤ) = k - (1 : ℤ)), ∀ (hp1 : (1 : ℤ) ≤ p), ∀
-            (hpk : p ≤ k), ∀ (hz : ⟨p, (2 : ℤ) * k + (1 : ℤ) - p⟩ ∈ FootprintVertices child.1), ∀
-            (hpz : ⟨p, (2 : ℤ) * k + (1 : ℤ) - p⟩ - d ∈ FootprintVertices pred.1), ∀ (hcover : ∀
-            (y : GaussianInt), y = ⟨p, (2 : ℤ) * k + (1 : ℤ) - p⟩ ∨ y = ⟨p, (2 : ℤ) * k + (1 : ℤ)
-            - p⟩ + (1 : GaussianInt) ∨ y = ⟨p, (2 : ℤ) * k + (1 : ℤ) - p⟩ - (1 : GaussianInt) ∨ y
-            = ⟨p, (2 : ℤ) * k + (1 : ℤ) - p⟩ + ⟨(0 : ℤ), (1 : ℤ)⟩ ∨ y = ⟨p, (2 : ℤ) * k + (1 : ℤ)
-            - p⟩ - ⟨(0 : ℤ), (1 : ℤ)⟩ → y ∈ FootprintVertices child.1 ∨ y - d ∈ FootprintVertices
-            pred.1), ∀ (hdpred : k < (2 : ℤ) * k + (1 : ℤ) - p ∧ (2 : ℤ) * k + (1 : ℤ) - p ≤ (2 :
-            ℤ) * (k - (1 : ℤ)) + (k + (1 : ℤ)) ∧ k ≤ p + (k - (1 : ℤ)) ∧ p ≤ k - (1 : ℤ) + k ∧ k
-            < p - k + (1 : ℤ) + ((2 : ℤ) * k + (1 : ℤ) - p) ∧ p ≤ (2 : ℤ) * k + (1 : ℤ) - p - (k
-            + (1 : ℤ)) + (1 : ℤ) + k ∧ (2 : ℤ) * k + (1 : ℤ) - p ≤ (1 : ℤ) + (p - k) + (2 : ℤ) *
-            (k - (1 : ℤ)) + (k + (1 : ℤ)) ∧ p ≤ (2 : ℤ) * (k - (1 : ℤ)) - ((2 : ℤ) * k + (1 : ℤ)
-            - p - (k + (1 : ℤ))) + (1 : ℤ) + k), ∀ (hdchild : (0 : ℤ) ≤ (2 : ℤ) * k + (1 : ℤ) - p
-            ∧ (2 : ℤ) * k + (1 : ℤ) - p ≤ (2 : ℤ) * k ∧ -k ≤ p ∧ p ≤ k ∧ -((2 : ℤ) * k + (1 : ℤ)
-            - p) - (1 : ℤ) ≤ p ∧ p ≤ (2 : ℤ) * k + (1 : ℤ) - p + (1 : ℤ) ∧ -((2 : ℤ) * k - ((2 :
-            ℤ) * k + (1 : ℤ) - p) + (1 : ℤ)) ≤ p ∧ p ≤ (2 : ℤ) * k - ((2 : ℤ) * k + (1 : ℤ) - p)
-            + (1 : ℤ)), ∀ (hW : (⟨p-1,2*k+1-p⟩ : GaussianInt) ∈ FootprintVertices (DiamondTile
-            K.1)), ∀ (hS : (⟨p,2*k-p⟩ : GaussianInt) ∈ FootprintVertices (DiamondTile K.1)), ∀
-                (hPe : (⟨p+1-k,k-p⟩ : GaussianInt) ∈ FootprintVertices (DiamondTile (K.1-1))), ∀
-                (hPn : (⟨p-k,k+1-p⟩ : GaussianInt) ∈ FootprintVertices (DiamondTile (K.1-1))), ∀
-                (hearg : (⟨p,2*k+1-p⟩:GaussianInt)+1-d=⟨p+1-k,k-p⟩), ∀ (hnarg :
-                (⟨p,2*k+1-p⟩:GaussianInt)+⟨0,1⟩-d=⟨p-k,k+1-p⟩), ∀ (hcenterC : f ⟨p,2*k+1-p⟩ =
-            DiamondOdometer K ⟨p,2*k+1-p⟩), ∀ (hWval : f (⟨p,2*k+1-p⟩-1)=DiamondOdometer K
-            (⟨p,2*k+1-p⟩-1)), ∀ (hSval : f (⟨p,2*k+1-p⟩-⟨0,1⟩)=DiamondOdometer K
-            (⟨p,2*k+1-p⟩-⟨0,1⟩)), ∀ (hPval : ∀ (y : GaussianInt), ∀ (w : GaussianInt), (y-d ∈
-                FootprintVertices pred.1) → ((y-d=w) → (f y = DiamondOdometer (⟨K.1-1,by
-            omega⟩) w + k*y.re+B))), ∀ (hPcenter : f ⟨p,2*k+1-p⟩ =
-          DiamondOdometer (⟨K.1-1,by omega⟩) ⟨p-k,k-p⟩ + k*p+B), ∀ (hPeval : f (⟨p,2*k+1-p⟩+1) =
-          DiamondOdometer (⟨K.1-1,by omega⟩) ⟨p+1-k,k-p⟩ + k*(p+1)+B), ∀ (hPnval : f
-              (⟨p,2*k+1-p⟩+⟨0,1⟩) =
-          DiamondOdometer (⟨K.1-1,by omega⟩) ⟨p-k,k+1-p⟩ + k*p+B),
-        let Q (a b : Int) : Int := (Int.natAbs a : Int)*((Int.natAbs a : Int)-1)/2-(a-b)^2/4
-        ∀ (qc : DiamondOdometer K ⟨p,2*k+1-p⟩=Q p (2*k+1-p)), ∀ (qw : DiamondOdometer K
-            ⟨p-1,2*k+1-p⟩=Q (p-1) (2*k+1-p)), ∀ (qs : DiamondOdometer K ⟨p,2*k-p⟩=Q p (2*k-p)), ∀
-                (qe : DiamondOdometer (⟨K.1-1,by omega⟩) ⟨p+1-k,k-p⟩=Q (p+1-k) (k-p)), ∀ (qn :
-                DiamondOdometer (⟨K.1-1,by omega⟩) ⟨p-k,k+1-p⟩=Q (p-k) (k+1-p)), ∀ (absP :
-                (Int.natAbs p : Int)=p), ∀ (absPm : (Int.natAbs (p-1) : Int)=p-1), ∀ (absKm :
-                (Int.natAbs (p-k) : Int)=k-p), (Q (p-k) (k-p)=(k-p)*(k-p-1)/2-(p-k)^2) →
-                ((DiamondOdometer (⟨K.1-1,by omega⟩) ⟨p-k,k-p⟩=Q (p-k) (k-p)) → ((f ⟨p,2*k+1-p⟩=Q
-            (p-k) (k-p)+k*p+B) → ((Int.natAbs (p+1-k) : Int)=if p=k then 1 else k-p-1)))) := by
-  classical
-  intro K hk f B k d child pred p hcast hp1 hpk hz hpz hcover hdpred hdchild hW hS hPe hPn hearg
-      hnarg hcenterC hWval hSval hPval hPcenter hPeval hPnval Q qc qw qs qe qn absP absPm absKm
-      qpc hPcenterQ hPcval
-  by_cases hpk : p=k
+private theorem absKme (p k : Int) (hpk : p ≤ k) :
+    (Int.natAbs (p + 1 - k) : Int) = if p = k then 1 else k - p - 1 := by
+  by_cases equal : p = k
   · subst p
     norm_num
-  · rw [Int.natCast_natAbs,abs_of_nonpos (by omega)]
-    simp [hpk]
+  · rw [Int.natCast_natAbs, abs_of_nonpos (by omega)]
+    simp [equal]
     omega
 
 private theorem hqvals :
@@ -553,7 +502,7 @@ private theorem hqvals :
   · simp only [Q,absKme]
     by_cases hp : p=k
     · simp [hp]
-    · simp? [hp]
+    · simp only [hp, ↓reduceIte]
       rw [show (p+1-k)-(k-p)=2*(p-k)+1 by ring,sqOdd]
       congr 1; ring
   · simp only [Q,absKm]
@@ -612,81 +561,24 @@ private theorem hsval :
     _ = DiamondOdometer K ⟨p,2*k-p⟩ := by rw [hscoord]
     _ = Q p (2*k-p) := qs
 
-private theorem hEAt404 :
-    (by
-      classical
-      exact
-        ∀ (K : DiamondParameter), ∀ (hk : (1 : ℕ) < K.1), ∀ (f : IntegerLatticeFunction), ∀ (B :
-            Int),
-        let k : Int := K.1
-        let d : GaussianInt := ⟨k,k+1⟩
-        let child := P5352T2Sources K hk 0
-        let pred := P5352T2Sources K hk 3
-        ∀ (p : ℤ), ∀ (hcast : (↑(K.1 - (1 : ℕ)) : ℤ) = k - (1 : ℤ)), ∀ (hp1 : (1 : ℤ) ≤ p), ∀
-            (hpk : p ≤ k), ∀ (hz : ⟨p, (2 : ℤ) * k + (1 : ℤ) - p⟩ ∈ FootprintVertices child.1), ∀
-            (hpz : ⟨p, (2 : ℤ) * k + (1 : ℤ) - p⟩ - d ∈ FootprintVertices pred.1), ∀ (hcover : ∀
-            (y : GaussianInt), y = ⟨p, (2 : ℤ) * k + (1 : ℤ) - p⟩ ∨ y = ⟨p, (2 : ℤ) * k + (1 : ℤ)
-            - p⟩ + (1 : GaussianInt) ∨ y = ⟨p, (2 : ℤ) * k + (1 : ℤ) - p⟩ - (1 : GaussianInt) ∨ y
-            = ⟨p, (2 : ℤ) * k + (1 : ℤ) - p⟩ + ⟨(0 : ℤ), (1 : ℤ)⟩ ∨ y = ⟨p, (2 : ℤ) * k + (1 : ℤ)
-            - p⟩ - ⟨(0 : ℤ), (1 : ℤ)⟩ → y ∈ FootprintVertices child.1 ∨ y - d ∈ FootprintVertices
-            pred.1), ∀ (hdpred : k < (2 : ℤ) * k + (1 : ℤ) - p ∧ (2 : ℤ) * k + (1 : ℤ) - p ≤ (2 :
-            ℤ) * (k - (1 : ℤ)) + (k + (1 : ℤ)) ∧ k ≤ p + (k - (1 : ℤ)) ∧ p ≤ k - (1 : ℤ) + k ∧ k
-            < p - k + (1 : ℤ) + ((2 : ℤ) * k + (1 : ℤ) - p) ∧ p ≤ (2 : ℤ) * k + (1 : ℤ) - p - (k
-            + (1 : ℤ)) + (1 : ℤ) + k ∧ (2 : ℤ) * k + (1 : ℤ) - p ≤ (1 : ℤ) + (p - k) + (2 : ℤ) *
-            (k - (1 : ℤ)) + (k + (1 : ℤ)) ∧ p ≤ (2 : ℤ) * (k - (1 : ℤ)) - ((2 : ℤ) * k + (1 : ℤ)
-            - p - (k + (1 : ℤ))) + (1 : ℤ) + k), ∀ (hdchild : (0 : ℤ) ≤ (2 : ℤ) * k + (1 : ℤ) - p
-            ∧ (2 : ℤ) * k + (1 : ℤ) - p ≤ (2 : ℤ) * k ∧ -k ≤ p ∧ p ≤ k ∧ -((2 : ℤ) * k + (1 : ℤ)
-            - p) - (1 : ℤ) ≤ p ∧ p ≤ (2 : ℤ) * k + (1 : ℤ) - p + (1 : ℤ) ∧ -((2 : ℤ) * k - ((2 :
-            ℤ) * k + (1 : ℤ) - p) + (1 : ℤ)) ≤ p ∧ p ≤ (2 : ℤ) * k - ((2 : ℤ) * k + (1 : ℤ) - p)
-            + (1 : ℤ)), ∀ (hW : (⟨p-1,2*k+1-p⟩ : GaussianInt) ∈ FootprintVertices (DiamondTile
-            K.1)), ∀ (hS : (⟨p,2*k-p⟩ : GaussianInt) ∈ FootprintVertices (DiamondTile K.1)), ∀
-                (hPe : (⟨p+1-k,k-p⟩ : GaussianInt) ∈ FootprintVertices (DiamondTile (K.1-1))), ∀
-                (hPn : (⟨p-k,k+1-p⟩ : GaussianInt) ∈ FootprintVertices (DiamondTile (K.1-1))), ∀
-                (hearg : (⟨p,2*k+1-p⟩:GaussianInt)+1-d=⟨p+1-k,k-p⟩), ∀ (hnarg :
-                (⟨p,2*k+1-p⟩:GaussianInt)+⟨0,1⟩-d=⟨p-k,k+1-p⟩), ∀ (hcenterC : f ⟨p,2*k+1-p⟩ =
-            DiamondOdometer K ⟨p,2*k+1-p⟩), ∀ (hWval : f (⟨p,2*k+1-p⟩-1)=DiamondOdometer K
-            (⟨p,2*k+1-p⟩-1)), ∀ (hSval : f (⟨p,2*k+1-p⟩-⟨0,1⟩)=DiamondOdometer K
-            (⟨p,2*k+1-p⟩-⟨0,1⟩)), ∀ (hPval : ∀ (y : GaussianInt), ∀ (w : GaussianInt), (y-d ∈
-                FootprintVertices pred.1) → ((y-d=w) → (f y = DiamondOdometer (⟨K.1-1,by
-            omega⟩) w + k*y.re+B))), ∀ (hPcenter : f ⟨p,2*k+1-p⟩ =
-          DiamondOdometer (⟨K.1-1,by omega⟩) ⟨p-k,k-p⟩ + k*p+B), ∀ (hPeval : f (⟨p,2*k+1-p⟩+1) =
-          DiamondOdometer (⟨K.1-1,by omega⟩) ⟨p+1-k,k-p⟩ + k*(p+1)+B), ∀ (hPnval : f
-              (⟨p,2*k+1-p⟩+⟨0,1⟩) =
-          DiamondOdometer (⟨K.1-1,by omega⟩) ⟨p-k,k+1-p⟩ + k*p+B),
-        let Q (a b : Int) : Int := (Int.natAbs a : Int)*((Int.natAbs a : Int)-1)/2-(a-b)^2/4
-        ∀ (qc : DiamondOdometer K ⟨p,2*k+1-p⟩=Q p (2*k+1-p)), ∀ (qw : DiamondOdometer K
-            ⟨p-1,2*k+1-p⟩=Q (p-1) (2*k+1-p)), ∀ (qs : DiamondOdometer K ⟨p,2*k-p⟩=Q p (2*k-p)), ∀
-                (qe : DiamondOdometer (⟨K.1-1,by omega⟩) ⟨p+1-k,k-p⟩=Q (p+1-k) (k-p)), ∀ (qn :
-                DiamondOdometer (⟨K.1-1,by omega⟩) ⟨p-k,k+1-p⟩=Q (p-k) (k+1-p)), ∀ (tdiffRev : ∀
-                (a : Int), (a-1)*(a-2)/2-a*(a-1)/2=1-a), ∀ (absP : (Int.natAbs p : Int)=p), ∀
-                (absPm : (Int.natAbs (p-1) : Int)=p-1), ∀ (absKm : (Int.natAbs (p-k) : Int)=k-p), (Q
-            (p-k) (k-p)=(k-p)*(k-p-1)/2-(p-k)^2) → ((DiamondOdometer (⟨K.1-1,by omega⟩) ⟨p-k,k-p⟩=Q
-            (p-k) (k-p)) → ((f ⟨p,2*k+1-p⟩=Q (p-k) (k-p)+k*p+B) → (((Int.natAbs (p+1-k) : Int)=if
-            p=k then 1 else k-p-1) → ((Q p ((2 : ℤ) * k + (1 : ℤ) - p) = p * (p - (1 : ℤ)) / (2 :
-            ℤ) - (p - k) * (p - k - (1 : ℤ))) → ((Q (p - (1 : ℤ)) ((2 : ℤ) * k + (1 : ℤ) - p) =
-            (p - (1 : ℤ)) * (p - (2 : ℤ)) / (2 : ℤ) - (p - k - (1 : ℤ)) ^ (2 : ℕ)) → ((Q p ((2 :
-            ℤ) * k - p) = p * (p - (1 : ℤ)) / (2 : ℤ) - (p - k) ^ (2 : ℕ)) → ((Q (p + (1 : ℤ) -
-            k) (k - p) = if p = k then (0 : ℤ) else (k - p - (1 : ℤ)) * (k - p - (2 : ℤ)) / (2 :
-            ℤ) - ((p - k) ^ (2 : ℕ) + (p - k))) → ((Q (p - k) (k + (1 : ℤ) - p) = (k - p) * (k -
-            p - (1 : ℤ)) / (2 : ℤ) - ((p - k - (1 : ℤ)) ^ (2 : ℕ) + (p - k - (1 : ℤ)))) → ((f
-            ⟨p,2*k+1-p⟩=Q p (2*k+1-p)) → (((⟨p,2*k+1-p⟩:GaussianInt)-1=⟨p-1,2*k+1-p⟩) →
-            (((⟨p,2*k+1-p⟩:GaussianInt)-⟨0,1⟩=⟨p,2*k-p⟩) → ((f (⟨p,2*k+1-p⟩-1)=Q (p-1) (2*k+1-p))
-            → ((f (⟨p,2*k+1-p⟩-⟨0,1⟩)=Q p (2*k-p)) → ((f (⟨p,2*k+1-p⟩+1)=Q (p+1-k)
-            (k-p)+k*(p+1)+B) → ((f (⟨p,2*k+1-p⟩+⟨0,1⟩)=Q (p-k) (k+1-p)+k*p+B) → (f
-            (⟨p,2*k+1-p⟩+1)-f ⟨p,2*k+1-p⟩ = if p=k then k else k+1))))))))))))))))) := by
-  classical
-  intro K hk f B k d child pred p hcast hp1 hpk hz hpz hcover hdpred hdchild hW hS hPe hPn hearg
-      hnarg hcenterC hWval hSval hPval hPcenter hPeval hPnval Q qc qw qs qe qn tdiffRev absP
-      absPm absKm qpc hPcenterQ hPcval absKme hqc hqw hqs hqe hqn hcval hwcoord hscoord hwval
-      hsval heval hnval
-  rw [heval,hPcval,hqe,qpc]
-  by_cases hp : p=k
+private theorem hEAt404 (p k B : Int) (f : IntegerLatticeFunction)
+    (Q : Int → Int → Int)
+    (triangular : ∀ a : Int, (a - 1) * (a - 2) / 2 - a * (a - 1) / 2 = 1 - a)
+    (east : f (⟨p, 2 * k + 1 - p⟩ + 1) = Q (p + 1 - k) (k - p) + k * (p + 1) + B)
+    (center : f ⟨p, 2 * k + 1 - p⟩ = Q (p - k) (k - p) + k * p + B)
+    (eastFormula : Q (p + 1 - k) (k - p) = if p = k then 0 else
+      (k - p - 1) * (k - p - 2) / 2 - ((p - k) ^ 2 + (p - k)))
+    (centerFormula : Q (p - k) (k - p) = (k - p) * (k - p - 1) / 2 - (p - k) ^ 2) :
+    f (⟨p, 2 * k + 1 - p⟩ + 1) - f ⟨p, 2 * k + 1 - p⟩ =
+      if p = k then k else k + 1 := by
+  rw [east, center, eastFormula, centerFormula]
+  by_cases equal : p = k
   · subst p
     simp
     ring
-  · simp only [ite_eq_right hp]
-    have ht := tdiffRev (k-p)
-    nlinarith only [ht]
+  · simp only [ite_eq_right equal]
+    have difference := triangular (k - p)
+    nlinarith only [difference]
 
 private theorem hWdiff :
     (by
@@ -710,251 +602,50 @@ private theorem hWdiff :
     _ = (1-p)+(p-k-1) := by rw [tdiffRev p]; ring
     _ = -k := by ring
 
-private theorem hNdiff :
-    (by
-      classical
-      exact
-        ∀ (K : DiamondParameter), ∀ (hk : (1 : ℕ) < K.1), ∀ (f : IntegerLatticeFunction), ∀ (B :
-            Int),
-        let k : Int := K.1
-        let d : GaussianInt := ⟨k,k+1⟩
-        let child := P5352T2Sources K hk 0
-        let pred := P5352T2Sources K hk 3
-        ∀ (p : ℤ), ∀ (hcast : (↑(K.1 - (1 : ℕ)) : ℤ) = k - (1 : ℤ)), ∀ (hp1 : (1 : ℤ) ≤ p), ∀
-            (hpk : p ≤ k), ∀ (hz : ⟨p, (2 : ℤ) * k + (1 : ℤ) - p⟩ ∈ FootprintVertices child.1), ∀
-            (hpz : ⟨p, (2 : ℤ) * k + (1 : ℤ) - p⟩ - d ∈ FootprintVertices pred.1), ∀ (hcover : ∀
-            (y : GaussianInt), y = ⟨p, (2 : ℤ) * k + (1 : ℤ) - p⟩ ∨ y = ⟨p, (2 : ℤ) * k + (1 : ℤ)
-            - p⟩ + (1 : GaussianInt) ∨ y = ⟨p, (2 : ℤ) * k + (1 : ℤ) - p⟩ - (1 : GaussianInt) ∨ y
-            = ⟨p, (2 : ℤ) * k + (1 : ℤ) - p⟩ + ⟨(0 : ℤ), (1 : ℤ)⟩ ∨ y = ⟨p, (2 : ℤ) * k + (1 : ℤ)
-            - p⟩ - ⟨(0 : ℤ), (1 : ℤ)⟩ → y ∈ FootprintVertices child.1 ∨ y - d ∈ FootprintVertices
-            pred.1), ∀ (hdpred : k < (2 : ℤ) * k + (1 : ℤ) - p ∧ (2 : ℤ) * k + (1 : ℤ) - p ≤ (2 :
-            ℤ) * (k - (1 : ℤ)) + (k + (1 : ℤ)) ∧ k ≤ p + (k - (1 : ℤ)) ∧ p ≤ k - (1 : ℤ) + k ∧ k
-            < p - k + (1 : ℤ) + ((2 : ℤ) * k + (1 : ℤ) - p) ∧ p ≤ (2 : ℤ) * k + (1 : ℤ) - p - (k
-            + (1 : ℤ)) + (1 : ℤ) + k ∧ (2 : ℤ) * k + (1 : ℤ) - p ≤ (1 : ℤ) + (p - k) + (2 : ℤ) *
-            (k - (1 : ℤ)) + (k + (1 : ℤ)) ∧ p ≤ (2 : ℤ) * (k - (1 : ℤ)) - ((2 : ℤ) * k + (1 : ℤ)
-            - p - (k + (1 : ℤ))) + (1 : ℤ) + k), ∀ (hdchild : (0 : ℤ) ≤ (2 : ℤ) * k + (1 : ℤ) - p
-            ∧ (2 : ℤ) * k + (1 : ℤ) - p ≤ (2 : ℤ) * k ∧ -k ≤ p ∧ p ≤ k ∧ -((2 : ℤ) * k + (1 : ℤ)
-            - p) - (1 : ℤ) ≤ p ∧ p ≤ (2 : ℤ) * k + (1 : ℤ) - p + (1 : ℤ) ∧ -((2 : ℤ) * k - ((2 :
-            ℤ) * k + (1 : ℤ) - p) + (1 : ℤ)) ≤ p ∧ p ≤ (2 : ℤ) * k - ((2 : ℤ) * k + (1 : ℤ) - p)
-            + (1 : ℤ)), ∀ (hW : (⟨p-1,2*k+1-p⟩ : GaussianInt) ∈ FootprintVertices (DiamondTile
-            K.1)), ∀ (hS : (⟨p,2*k-p⟩ : GaussianInt) ∈ FootprintVertices (DiamondTile K.1)), ∀
-                (hPe : (⟨p+1-k,k-p⟩ : GaussianInt) ∈ FootprintVertices (DiamondTile (K.1-1))), ∀
-                (hPn : (⟨p-k,k+1-p⟩ : GaussianInt) ∈ FootprintVertices (DiamondTile (K.1-1))), ∀
-                (hearg : (⟨p,2*k+1-p⟩:GaussianInt)+1-d=⟨p+1-k,k-p⟩), ∀ (hnarg :
-                (⟨p,2*k+1-p⟩:GaussianInt)+⟨0,1⟩-d=⟨p-k,k+1-p⟩), ∀ (hcenterC : f ⟨p,2*k+1-p⟩ =
-            DiamondOdometer K ⟨p,2*k+1-p⟩), ∀ (hWval : f (⟨p,2*k+1-p⟩-1)=DiamondOdometer K
-            (⟨p,2*k+1-p⟩-1)), ∀ (hSval : f (⟨p,2*k+1-p⟩-⟨0,1⟩)=DiamondOdometer K
-            (⟨p,2*k+1-p⟩-⟨0,1⟩)), ∀ (hPval : ∀ (y : GaussianInt), ∀ (w : GaussianInt), (y-d ∈
-                FootprintVertices pred.1) → ((y-d=w) → (f y = DiamondOdometer (⟨K.1-1,by
-            omega⟩) w + k*y.re+B))), ∀ (hPcenter : f ⟨p,2*k+1-p⟩ =
-          DiamondOdometer (⟨K.1-1,by omega⟩) ⟨p-k,k-p⟩ + k*p+B), ∀ (hPeval : f (⟨p,2*k+1-p⟩+1) =
-          DiamondOdometer (⟨K.1-1,by omega⟩) ⟨p+1-k,k-p⟩ + k*(p+1)+B), ∀ (hPnval : f
-              (⟨p,2*k+1-p⟩+⟨0,1⟩) =
-          DiamondOdometer (⟨K.1-1,by omega⟩) ⟨p-k,k+1-p⟩ + k*p+B),
-        let Q (a b : Int) : Int := (Int.natAbs a : Int)*((Int.natAbs a : Int)-1)/2-(a-b)^2/4
-        ∀ (qc : DiamondOdometer K ⟨p,2*k+1-p⟩=Q p (2*k+1-p)), ∀ (qw : DiamondOdometer K
-            ⟨p-1,2*k+1-p⟩=Q (p-1) (2*k+1-p)), ∀ (qs : DiamondOdometer K ⟨p,2*k-p⟩=Q p (2*k-p)), ∀
-                (qe : DiamondOdometer (⟨K.1-1,by omega⟩) ⟨p+1-k,k-p⟩=Q (p+1-k) (k-p)), ∀ (qn :
-                DiamondOdometer (⟨K.1-1,by omega⟩) ⟨p-k,k+1-p⟩=Q (p-k) (k+1-p)), ∀ (absP :
-                (Int.natAbs p : Int)=p), ∀ (absPm : (Int.natAbs (p-1) : Int)=p-1), ∀ (absKm :
-                (Int.natAbs (p-k) : Int)=k-p), (Q (p-k) (k-p)=(k-p)*(k-p-1)/2-(p-k)^2) →
-                ((DiamondOdometer (⟨K.1-1,by omega⟩) ⟨p-k,k-p⟩=Q (p-k) (k-p)) → ((f ⟨p,2*k+1-p⟩=Q
-            (p-k) (k-p)+k*p+B) → (((Int.natAbs (p+1-k) : Int)=if p=k then 1 else k-p-1) → ((Q p
-            ((2 : ℤ) * k + (1 : ℤ) - p) = p * (p - (1 : ℤ)) / (2 : ℤ) - (p - k) * (p - k - (1 :
-            ℤ))) → ((Q (p - (1 : ℤ)) ((2 : ℤ) * k + (1 : ℤ) - p) = (p - (1 : ℤ)) * (p - (2 : ℤ))
-            / (2 : ℤ) - (p - k - (1 : ℤ)) ^ (2 : ℕ)) → ((Q p ((2 : ℤ) * k - p) = p * (p - (1 :
-            ℤ)) / (2 : ℤ) - (p - k) ^ (2 : ℕ)) → ((Q (p + (1 : ℤ) - k) (k - p) = if p = k then (0
-            : ℤ) else (k - p - (1 : ℤ)) * (k - p - (2 : ℤ)) / (2 : ℤ) - ((p - k) ^ (2 : ℕ) + (p -
-            k))) → ((Q (p - k) (k + (1 : ℤ) - p) = (k - p) * (k - p - (1 : ℤ)) / (2 : ℤ) - ((p -
-            k - (1 : ℤ)) ^ (2 : ℕ) + (p - k - (1 : ℤ)))) → ((f ⟨p,2*k+1-p⟩=Q p (2*k+1-p)) →
-            (((⟨p,2*k+1-p⟩:GaussianInt)-1=⟨p-1,2*k+1-p⟩) →
-            (((⟨p,2*k+1-p⟩:GaussianInt)-⟨0,1⟩=⟨p,2*k-p⟩) → ((f (⟨p,2*k+1-p⟩-1)=Q (p-1) (2*k+1-p))
-            → ((f (⟨p,2*k+1-p⟩-⟨0,1⟩)=Q p (2*k-p)) → ((f (⟨p,2*k+1-p⟩+1)=Q (p+1-k)
-            (k-p)+k*(p+1)+B) → ((f (⟨p,2*k+1-p⟩+⟨0,1⟩)=Q (p-k) (k+1-p)+k*p+B) → ((f
-            (⟨p,2*k+1-p⟩+1)-f ⟨p,2*k+1-p⟩ = if p=k then k else k+1) → ((f (⟨p,2*k+1-p⟩-1)-f
-            ⟨p,2*k+1-p⟩ = -k) → (f (⟨p,2*k+1-p⟩+⟨0,1⟩)-f ⟨p,2*k+1-p⟩ = if p=k then 0 else
-            p-k))))))))))))))))))) := by
-  classical
-  intro K hk f B k d child pred p hcast hp1 hpk hz hpz hcover hdpred hdchild hW hS hPe hPn hearg
-      hnarg hcenterC hWval hSval hPval hPcenter hPeval hPnval Q qc qw qs qe qn absP absPm absKm
-      qpc hPcenterQ hPcval absKme hqc hqw hqs hqe hqn hcval hwcoord hscoord hwval hsval heval
-      hnval hE hWdiff
-  rw [hnval,hPcval,hqn,qpc]
-  by_cases hp : p=k
+private theorem hNdiff (p k B : Int) (f : IntegerLatticeFunction)
+    (Q : Int → Int → Int)
+    (north : f (⟨p, 2 * k + 1 - p⟩ + ⟨0, 1⟩) = Q (p - k) (k + 1 - p) + k * p + B)
+    (center : f ⟨p, 2 * k + 1 - p⟩ = Q (p - k) (k - p) + k * p + B)
+    (northFormula : Q (p - k) (k + 1 - p) =
+      (k - p) * (k - p - 1) / 2 - ((p - k - 1) ^ 2 + (p - k - 1)))
+    (centerFormula : Q (p - k) (k - p) = (k - p) * (k - p - 1) / 2 - (p - k) ^ 2) :
+    f (⟨p, 2 * k + 1 - p⟩ + ⟨0, 1⟩) - f ⟨p, 2 * k + 1 - p⟩ =
+      if p = k then 0 else p - k := by
+  rw [north, center, northFormula, centerFormula]
+  by_cases equal : p = k
   · subst p
     simp
-  · simp only [ite_eq_right hp]
+  · simp only [ite_eq_right equal]
     ring
 
-private theorem hSdiff :
-    (by
-      classical
-      exact
-        ∀ (K : DiamondParameter), ∀ (hk : (1 : ℕ) < K.1), ∀ (f : IntegerLatticeFunction), ∀ (B :
-            Int),
-        let k : Int := K.1
-        let d : GaussianInt := ⟨k,k+1⟩
-        let child := P5352T2Sources K hk 0
-        let pred := P5352T2Sources K hk 3
-        ∀ (p : ℤ), ∀ (hcast : (↑(K.1 - (1 : ℕ)) : ℤ) = k - (1 : ℤ)), ∀ (hp1 : (1 : ℤ) ≤ p), ∀
-            (hpk : p ≤ k), ∀ (hz : ⟨p, (2 : ℤ) * k + (1 : ℤ) - p⟩ ∈ FootprintVertices child.1), ∀
-            (hpz : ⟨p, (2 : ℤ) * k + (1 : ℤ) - p⟩ - d ∈ FootprintVertices pred.1), ∀ (hcover : ∀
-            (y : GaussianInt), y = ⟨p, (2 : ℤ) * k + (1 : ℤ) - p⟩ ∨ y = ⟨p, (2 : ℤ) * k + (1 : ℤ)
-            - p⟩ + (1 : GaussianInt) ∨ y = ⟨p, (2 : ℤ) * k + (1 : ℤ) - p⟩ - (1 : GaussianInt) ∨ y
-            = ⟨p, (2 : ℤ) * k + (1 : ℤ) - p⟩ + ⟨(0 : ℤ), (1 : ℤ)⟩ ∨ y = ⟨p, (2 : ℤ) * k + (1 : ℤ)
-            - p⟩ - ⟨(0 : ℤ), (1 : ℤ)⟩ → y ∈ FootprintVertices child.1 ∨ y - d ∈ FootprintVertices
-            pred.1), ∀ (hdpred : k < (2 : ℤ) * k + (1 : ℤ) - p ∧ (2 : ℤ) * k + (1 : ℤ) - p ≤ (2 :
-            ℤ) * (k - (1 : ℤ)) + (k + (1 : ℤ)) ∧ k ≤ p + (k - (1 : ℤ)) ∧ p ≤ k - (1 : ℤ) + k ∧ k
-            < p - k + (1 : ℤ) + ((2 : ℤ) * k + (1 : ℤ) - p) ∧ p ≤ (2 : ℤ) * k + (1 : ℤ) - p - (k
-            + (1 : ℤ)) + (1 : ℤ) + k ∧ (2 : ℤ) * k + (1 : ℤ) - p ≤ (1 : ℤ) + (p - k) + (2 : ℤ) *
-            (k - (1 : ℤ)) + (k + (1 : ℤ)) ∧ p ≤ (2 : ℤ) * (k - (1 : ℤ)) - ((2 : ℤ) * k + (1 : ℤ)
-            - p - (k + (1 : ℤ))) + (1 : ℤ) + k), ∀ (hdchild : (0 : ℤ) ≤ (2 : ℤ) * k + (1 : ℤ) - p
-            ∧ (2 : ℤ) * k + (1 : ℤ) - p ≤ (2 : ℤ) * k ∧ -k ≤ p ∧ p ≤ k ∧ -((2 : ℤ) * k + (1 : ℤ)
-            - p) - (1 : ℤ) ≤ p ∧ p ≤ (2 : ℤ) * k + (1 : ℤ) - p + (1 : ℤ) ∧ -((2 : ℤ) * k - ((2 :
-            ℤ) * k + (1 : ℤ) - p) + (1 : ℤ)) ≤ p ∧ p ≤ (2 : ℤ) * k - ((2 : ℤ) * k + (1 : ℤ) - p)
-            + (1 : ℤ)), ∀ (hW : (⟨p-1,2*k+1-p⟩ : GaussianInt) ∈ FootprintVertices (DiamondTile
-            K.1)), ∀ (hS : (⟨p,2*k-p⟩ : GaussianInt) ∈ FootprintVertices (DiamondTile K.1)), ∀
-                (hPe : (⟨p+1-k,k-p⟩ : GaussianInt) ∈ FootprintVertices (DiamondTile (K.1-1))), ∀
-                (hPn : (⟨p-k,k+1-p⟩ : GaussianInt) ∈ FootprintVertices (DiamondTile (K.1-1))), ∀
-                (hearg : (⟨p,2*k+1-p⟩:GaussianInt)+1-d=⟨p+1-k,k-p⟩), ∀ (hnarg :
-                (⟨p,2*k+1-p⟩:GaussianInt)+⟨0,1⟩-d=⟨p-k,k+1-p⟩), ∀ (hcenterC : f ⟨p,2*k+1-p⟩ =
-            DiamondOdometer K ⟨p,2*k+1-p⟩), ∀ (hWval : f (⟨p,2*k+1-p⟩-1)=DiamondOdometer K
-            (⟨p,2*k+1-p⟩-1)), ∀ (hSval : f (⟨p,2*k+1-p⟩-⟨0,1⟩)=DiamondOdometer K
-            (⟨p,2*k+1-p⟩-⟨0,1⟩)), ∀ (hPval : ∀ (y : GaussianInt), ∀ (w : GaussianInt), (y-d ∈
-                FootprintVertices pred.1) → ((y-d=w) → (f y = DiamondOdometer (⟨K.1-1,by
-            omega⟩) w + k*y.re+B))), ∀ (hPcenter : f ⟨p,2*k+1-p⟩ =
-          DiamondOdometer (⟨K.1-1,by omega⟩) ⟨p-k,k-p⟩ + k*p+B), ∀ (hPeval : f (⟨p,2*k+1-p⟩+1) =
-          DiamondOdometer (⟨K.1-1,by omega⟩) ⟨p+1-k,k-p⟩ + k*(p+1)+B), ∀ (hPnval : f
-              (⟨p,2*k+1-p⟩+⟨0,1⟩) =
-          DiamondOdometer (⟨K.1-1,by omega⟩) ⟨p-k,k+1-p⟩ + k*p+B),
-        let Q (a b : Int) : Int := (Int.natAbs a : Int)*((Int.natAbs a : Int)-1)/2-(a-b)^2/4
-        ∀ (qc : DiamondOdometer K ⟨p,2*k+1-p⟩=Q p (2*k+1-p)), ∀ (qw : DiamondOdometer K
-            ⟨p-1,2*k+1-p⟩=Q (p-1) (2*k+1-p)), ∀ (qs : DiamondOdometer K ⟨p,2*k-p⟩=Q p (2*k-p)), ∀
-                (qe : DiamondOdometer (⟨K.1-1,by omega⟩) ⟨p+1-k,k-p⟩=Q (p+1-k) (k-p)), ∀ (qn :
-                DiamondOdometer (⟨K.1-1,by omega⟩) ⟨p-k,k+1-p⟩=Q (p-k) (k+1-p)), ∀ (absP :
-                (Int.natAbs p : Int)=p), ∀ (absPm : (Int.natAbs (p-1) : Int)=p-1), ∀ (absKm :
-                (Int.natAbs (p-k) : Int)=k-p), (Q (p-k) (k-p)=(k-p)*(k-p-1)/2-(p-k)^2) →
-                ((DiamondOdometer (⟨K.1-1,by omega⟩) ⟨p-k,k-p⟩=Q (p-k) (k-p)) → ((f ⟨p,2*k+1-p⟩=Q
-            (p-k) (k-p)+k*p+B) → (((Int.natAbs (p+1-k) : Int)=if p=k then 1 else k-p-1) → ((Q p
-            ((2 : ℤ) * k + (1 : ℤ) - p) = p * (p - (1 : ℤ)) / (2 : ℤ) - (p - k) * (p - k - (1 :
-            ℤ))) → ((Q (p - (1 : ℤ)) ((2 : ℤ) * k + (1 : ℤ) - p) = (p - (1 : ℤ)) * (p - (2 : ℤ))
-            / (2 : ℤ) - (p - k - (1 : ℤ)) ^ (2 : ℕ)) → ((Q p ((2 : ℤ) * k - p) = p * (p - (1 :
-            ℤ)) / (2 : ℤ) - (p - k) ^ (2 : ℕ)) → ((Q (p + (1 : ℤ) - k) (k - p) = if p = k then (0
-            : ℤ) else (k - p - (1 : ℤ)) * (k - p - (2 : ℤ)) / (2 : ℤ) - ((p - k) ^ (2 : ℕ) + (p -
-            k))) → ((Q (p - k) (k + (1 : ℤ) - p) = (k - p) * (k - p - (1 : ℤ)) / (2 : ℤ) - ((p -
-            k - (1 : ℤ)) ^ (2 : ℕ) + (p - k - (1 : ℤ)))) → ((f ⟨p,2*k+1-p⟩=Q p (2*k+1-p)) →
-            (((⟨p,2*k+1-p⟩:GaussianInt)-1=⟨p-1,2*k+1-p⟩) →
-            (((⟨p,2*k+1-p⟩:GaussianInt)-⟨0,1⟩=⟨p,2*k-p⟩) → ((f (⟨p,2*k+1-p⟩-1)=Q (p-1) (2*k+1-p))
-            → ((f (⟨p,2*k+1-p⟩-⟨0,1⟩)=Q p (2*k-p)) → ((f (⟨p,2*k+1-p⟩+1)=Q (p+1-k)
-            (k-p)+k*(p+1)+B) → ((f (⟨p,2*k+1-p⟩+⟨0,1⟩)=Q (p-k) (k+1-p)+k*p+B) → ((f
-            (⟨p,2*k+1-p⟩+1)-f ⟨p,2*k+1-p⟩ = if p=k then k else k+1) → ((f (⟨p,2*k+1-p⟩-1)-f
-            ⟨p,2*k+1-p⟩ = -k) → ((f (⟨p,2*k+1-p⟩+⟨0,1⟩)-f ⟨p,2*k+1-p⟩ = if p=k then 0 else p-k) →
-            (f (⟨p,2*k+1-p⟩-⟨0,1⟩)-f ⟨p,2*k+1-p⟩ = if p=k then 0 else k-p)))))))))))))))))))) := by
-  classical
-  intro K hk f B k d child pred p hcast hp1 hpk hz hpz hcover hdpred hdchild hW hS hPe hPn hearg
-      hnarg hcenterC hWval hSval hPval hPcenter hPeval hPnval Q qc qw qs qe qn absP absPm absKm
-      qpc hPcenterQ hPcval absKme hqc hqw hqs hqe hqn hcval hwcoord hscoord hwval hsval heval
-      hnval hE hWdiff hNdiff
-  rw [hsval,hcval,hqs,hqc]
-  by_cases hp : p=k
+private theorem hSdiff (p k : Int) (f : IntegerLatticeFunction)
+    (Q : Int → Int → Int)
+    (south : f (⟨p, 2 * k + 1 - p⟩ - ⟨0, 1⟩) = Q p (2 * k - p))
+    (center : f ⟨p, 2 * k + 1 - p⟩ = Q p (2 * k + 1 - p))
+    (southFormula : Q p (2 * k - p) = p * (p - 1) / 2 - (p - k) ^ 2)
+    (centerFormula : Q p (2 * k + 1 - p) = p * (p - 1) / 2 - (p - k) * (p - k - 1)) :
+    f (⟨p, 2 * k + 1 - p⟩ - ⟨0, 1⟩) - f ⟨p, 2 * k + 1 - p⟩ =
+      if p = k then 0 else k - p := by
+  rw [south, center, southFormula, centerFormula]
+  by_cases equal : p = k
   · subst p
     simp
-  · simp only [ite_eq_right hp]
+  · simp only [ite_eq_right equal]
     ring
 
-private theorem hcompAt434 :
-    (by
-      classical
-      exact
-        ∀ (K : DiamondParameter), ∀ (hk : (1 : ℕ) < K.1), ∀ (f : IntegerLatticeFunction), ∀ (B :
-            Int),
-        let k : Int := K.1
-        let d : GaussianInt := ⟨k,k+1⟩
-        let r : GaussianInt := ⟨2*k,0⟩
-        let child := P5352T2Sources K hk 0
-        let pred := P5352T2Sources K hk 3
-        ∀ (hchildTile : child.1 = DiamondTile K.1), ∀ (p : ℤ), ∀ (hcast : (↑(K.1 - (1 : ℕ)) : ℤ)
-            = k - (1 : ℤ)), ∀ (hp1 : (1 : ℤ) ≤ p), ∀ (hpk : p ≤ k), ∀ (childMem : ∀ (a : Int), ∀
-                (b : Int), (0≤b) → ((b≤2*k) → ((-k≤a) → ((a≤k) → ((-b-1≤a) → ((a≤b+1) →
-            ((-(2*k-b+1)≤a) → ((a≤2*k-b+1) → ((⟨a,b⟩ : GaussianInt) ∈ FootprintVertices
-            (DiamondTile K.1)))))))))), ∀ (hz : ⟨p, (2 : ℤ) * k + (1 : ℤ) - p⟩ ∈
-            FootprintVertices child.1), ∀ (hpz : ⟨p, (2 : ℤ) * k + (1 : ℤ) - p⟩ - d ∈
-            FootprintVertices pred.1), ∀ (hcover : ∀ (y : GaussianInt), y = ⟨p, (2 : ℤ) * k + (1
-            : ℤ) - p⟩ ∨ y = ⟨p, (2 : ℤ) * k + (1 : ℤ) - p⟩ + (1 : GaussianInt) ∨ y = ⟨p, (2 : ℤ)
-            * k + (1 : ℤ) - p⟩ - (1 : GaussianInt) ∨ y = ⟨p, (2 : ℤ) * k + (1 : ℤ) - p⟩ + ⟨(0 :
-            ℤ), (1 : ℤ)⟩ ∨ y = ⟨p, (2 : ℤ) * k + (1 : ℤ) - p⟩ - ⟨(0 : ℤ), (1 : ℤ)⟩ → y ∈
-            FootprintVertices child.1 ∨ y - d ∈ FootprintVertices pred.1), ∀ (hdpred : k < (2 :
-            ℤ) * k + (1 : ℤ) - p ∧ (2 : ℤ) * k + (1 : ℤ) - p ≤ (2 : ℤ) * (k - (1 : ℤ)) + (k + (1
-            : ℤ)) ∧ k ≤ p + (k - (1 : ℤ)) ∧ p ≤ k - (1 : ℤ) + k ∧ k < p - k + (1 : ℤ) + ((2 : ℤ)
-            * k + (1 : ℤ) - p) ∧ p ≤ (2 : ℤ) * k + (1 : ℤ) - p - (k + (1 : ℤ)) + (1 : ℤ) + k ∧ (2
-            : ℤ) * k + (1 : ℤ) - p ≤ (1 : ℤ) + (p - k) + (2 : ℤ) * (k - (1 : ℤ)) + (k + (1 : ℤ))
-            ∧ p ≤ (2 : ℤ) * (k - (1 : ℤ)) - ((2 : ℤ) * k + (1 : ℤ) - p - (k + (1 : ℤ))) + (1 : ℤ)
-            + k), ∀ (hdchild : (0 : ℤ) ≤ (2 : ℤ) * k + (1 : ℤ) - p ∧ (2 : ℤ) * k + (1 : ℤ) - p ≤
-            (2 : ℤ) * k ∧ -k ≤ p ∧ p ≤ k ∧ -((2 : ℤ) * k + (1 : ℤ) - p) - (1 : ℤ) ≤ p ∧ p ≤ (2 :
-            ℤ) * k + (1 : ℤ) - p + (1 : ℤ) ∧ -((2 : ℤ) * k - ((2 : ℤ) * k + (1 : ℤ) - p) + (1 :
-            ℤ)) ≤ p ∧ p ≤ (2 : ℤ) * k - ((2 : ℤ) * k + (1 : ℤ) - p) + (1 : ℤ)), ∀ (hW :
-                (⟨p-1,2*k+1-p⟩ : GaussianInt) ∈ FootprintVertices (DiamondTile K.1)), ∀ (hS :
-                (⟨p,2*k-p⟩ : GaussianInt) ∈ FootprintVertices (DiamondTile K.1)), ∀ (hPe :
-                (⟨p+1-k,k-p⟩ : GaussianInt) ∈ FootprintVertices (DiamondTile (K.1-1))), ∀ (hPn :
-                (⟨p-k,k+1-p⟩ : GaussianInt) ∈ FootprintVertices (DiamondTile (K.1-1))), ∀ (hearg
-                : (⟨p,2*k+1-p⟩:GaussianInt)+1-d=⟨p+1-k,k-p⟩), ∀ (hnarg :
-                (⟨p,2*k+1-p⟩:GaussianInt)+⟨0,1⟩-d=⟨p-k,k+1-p⟩), ∀ (hcenterC : f ⟨p,2*k+1-p⟩ =
-            DiamondOdometer K ⟨p,2*k+1-p⟩), ∀ (hWval : f (⟨p,2*k+1-p⟩-1)=DiamondOdometer K
-            (⟨p,2*k+1-p⟩-1)), ∀ (hSval : f (⟨p,2*k+1-p⟩-⟨0,1⟩)=DiamondOdometer K
-            (⟨p,2*k+1-p⟩-⟨0,1⟩)), ∀ (hPval : ∀ (y : GaussianInt), ∀ (w : GaussianInt), (y-d ∈
-                FootprintVertices pred.1) → ((y-d=w) → (f y = DiamondOdometer (⟨K.1-1,by
-            omega⟩) w + k*y.re+B))), ∀ (hPcenter : f ⟨p,2*k+1-p⟩ =
-          DiamondOdometer (⟨K.1-1,by omega⟩) ⟨p-k,k-p⟩ + k*p+B), ∀ (hPeval : f (⟨p,2*k+1-p⟩+1) =
-          DiamondOdometer (⟨K.1-1,by omega⟩) ⟨p+1-k,k-p⟩ + k*(p+1)+B), ∀ (hPnval : f
-              (⟨p,2*k+1-p⟩+⟨0,1⟩) =
-          DiamondOdometer (⟨K.1-1,by omega⟩) ⟨p-k,k+1-p⟩ + k*p+B),
-        let Q (a b : Int) : Int := (Int.natAbs a : Int)*((Int.natAbs a : Int)-1)/2-(a-b)^2/4
-        ∀ (qc : DiamondOdometer K ⟨p,2*k+1-p⟩=Q p (2*k+1-p)), ∀ (qw : DiamondOdometer K
-            ⟨p-1,2*k+1-p⟩=Q (p-1) (2*k+1-p)), ∀ (qs : DiamondOdometer K ⟨p,2*k-p⟩=Q p (2*k-p)), ∀
-                (qe : DiamondOdometer (⟨K.1-1,by omega⟩) ⟨p+1-k,k-p⟩=Q (p+1-k) (k-p)), ∀ (qn :
-                DiamondOdometer (⟨K.1-1,by omega⟩) ⟨p-k,k+1-p⟩=Q (p-k) (k+1-p)), ∀ (absP :
-                (Int.natAbs p : Int)=p), ∀ (absPm : (Int.natAbs (p-1) : Int)=p-1), ∀ (absKm :
-                (Int.natAbs (p-k) : Int)=k-p), (Q (p-k) (k-p)=(k-p)*(k-p-1)/2-(p-k)^2) →
-                ((DiamondOdometer (⟨K.1-1,by omega⟩) ⟨p-k,k-p⟩=Q (p-k) (k-p)) → ((f ⟨p,2*k+1-p⟩=Q
-            (p-k) (k-p)+k*p+B) → (((Int.natAbs (p+1-k) : Int)=if p=k then 1 else k-p-1) → ((Q p
-            ((2 : ℤ) * k + (1 : ℤ) - p) = p * (p - (1 : ℤ)) / (2 : ℤ) - (p - k) * (p - k - (1 :
-            ℤ))) → ((Q (p - (1 : ℤ)) ((2 : ℤ) * k + (1 : ℤ) - p) = (p - (1 : ℤ)) * (p - (2 : ℤ))
-            / (2 : ℤ) - (p - k - (1 : ℤ)) ^ (2 : ℕ)) → ((Q p ((2 : ℤ) * k - p) = p * (p - (1 :
-            ℤ)) / (2 : ℤ) - (p - k) ^ (2 : ℕ)) → ((Q (p + (1 : ℤ) - k) (k - p) = if p = k then (0
-            : ℤ) else (k - p - (1 : ℤ)) * (k - p - (2 : ℤ)) / (2 : ℤ) - ((p - k) ^ (2 : ℕ) + (p -
-            k))) → ((Q (p - k) (k + (1 : ℤ) - p) = (k - p) * (k - p - (1 : ℤ)) / (2 : ℤ) - ((p -
-            k - (1 : ℤ)) ^ (2 : ℕ) + (p - k - (1 : ℤ)))) → ((f ⟨p,2*k+1-p⟩=Q p (2*k+1-p)) →
-            (((⟨p,2*k+1-p⟩:GaussianInt)-1=⟨p-1,2*k+1-p⟩) →
-            (((⟨p,2*k+1-p⟩:GaussianInt)-⟨0,1⟩=⟨p,2*k-p⟩) → ((f (⟨p,2*k+1-p⟩-1)=Q (p-1) (2*k+1-p))
-            → ((f (⟨p,2*k+1-p⟩-⟨0,1⟩)=Q p (2*k-p)) → ((f (⟨p,2*k+1-p⟩+1)=Q (p+1-k)
-            (k-p)+k*(p+1)+B) → ((f (⟨p,2*k+1-p⟩+⟨0,1⟩)=Q (p-k) (k+1-p)+k*p+B) → ((f
-            (⟨p,2*k+1-p⟩+1)-f ⟨p,2*k+1-p⟩ = if p=k then k else k+1) → ((f (⟨p,2*k+1-p⟩-1)-f
-            ⟨p,2*k+1-p⟩ = -k) → ((f (⟨p,2*k+1-p⟩+⟨0,1⟩)-f ⟨p,2*k+1-p⟩ = if p=k then 0 else p-k) →
-            ((f (⟨p,2*k+1-p⟩-⟨0,1⟩)-f ⟨p,2*k+1-p⟩ = if p=k then 0 else k-p) →
-            ((⟨p,2*k+1-p⟩:GaussianInt)-r ∈ FootprintVertices child.1 ↔ p=k)))))))))))))))))))))
-            := by
-  classical
-  intro K hk f B k d r child pred hchildTile p hcast hp1 hpk childMem hz hpz hcover hdpred
-      hdchild hW hS hPe hPn hearg hnarg hcenterC hWval hSval hPval hPcenter hPeval hPnval Q qc qw
-      qs qe qn absP absPm absKm qpc hPcenterQ hPcval absKme hqc hqw hqs hqe hqn hcval hwcoord
-      hscoord hwval hsval heval hnval hE hWdiff hNdiff hSdiff
+private theorem hcompAt434 (K : DiamondParameter) (hk : 1 < K.1) (p : Int)
+    (upper : p ≤ (K.1 : Int)) :
+    (⟨p, 2 * (K.1 : Int) + 1 - p⟩ : GaussianInt) - ⟨2 * (K.1 : Int), 0⟩ ∈
+      FootprintVertices (DiamondTile K.1) ↔ p = (K.1 : Int) := by
+  have positive : 2 ≤ (K.1 : Int) := by exact_mod_cast (show 2 ≤ K.1 by omega)
+  rw [(P5352T2DomainRows K _).1]
+  simp only [Zsqrtd.im_sub, Zsqrtd.re_sub, sub_zero]
   constructor
-  · intro hh
-    have hb := (P5352T2DomainRows K ((⟨p,2*k+1-p⟩:GaussianInt)-r)).1.mp (hchildTile ▸ hh)
-    simp [r] at hb
+  · intro bounds
     omega
-  · intro hp
+  · intro equal
     subst p
-    have he : (⟨k,k+1⟩:GaussianInt)-r=⟨-k,k+1⟩ := by ext <;> simp [r]; ring
-    have hc : (⟨k,2*k+1-k⟩:GaussianInt)=⟨k,k+1⟩ := by ext <;> simp; omega
-    have heFull : (⟨k,2*k+1-k⟩:GaussianInt)-r=⟨-k,k+1⟩ := by rw [hc,he]
-    have hm := childMem (-k) (k+1) (by omega) (by omega) (by omega) (by omega)
-      (by omega) (by omega) (by omega) (by omega)
-    have hm' : (⟨-k,k+1⟩:GaussianInt) ∈ FootprintVertices child.1 := by
-      rw [hchildTile]
-      exact hm
-    rw [heFull]
-    exact hm'
+    omega
 
 private theorem hlap0 :
     (by
@@ -1038,7 +729,9 @@ theorem P5352T2Predecessor1 (K : DiamondParameter) (hk : 1 < K.1)
     have hdchild := (P5352T2DomainRows K z).1.mp hz
     have hdpred := (P5352T2DomainRows ⟨K.1-1,by omega⟩ (z-d)).1.mp hpz
     rcases z with ⟨p,q⟩
-    simp? [d] at hdpred
+    simp only [Int.reduceNeg, Zsqrtd.im_sub, Int.sub_nonneg, Order.add_one_le_iff,
+        tsub_le_iff_right, Zsqrtd.re_sub, neg_le_sub_iff_le_add, neg_sub, neg_add_rev,
+        neg_add_le_iff_le_add, d] at hdpred
     have hcast : ((K.1-1 : Nat) : Int)=k-1 := by dsimp [k]; omega
     rw [hcast] at hdpred
     change (0≤q ∧ q≤2*k ∧ -k≤p ∧ p≤k ∧ -q-1≤p ∧ p≤q+1 ∧
@@ -1143,13 +836,10 @@ theorem P5352T2Predecessor1 (K : DiamondParameter) (hk : 1 < K.1)
         rw [Int.natCast_natAbs,abs_of_nonpos (by omega)]; omega
       have qpc := FirstPredecessorProof.qpc K p sqEven absKm
       have hPcenterQ : DiamondOdometer (⟨K.1-1,by omega⟩) ⟨p-k,k-p⟩=Q (p-k) (k-p) :=
-          FirstPredecessorProof.hPcenterQ K hk f B p hcast hpz absP absPm absKm
+          FirstPredecessorProof.hPcenterQ K hk p hcast hpz absP absPm absKm
       have hPcval : f ⟨p,2*k+1-p⟩=Q (p-k) (k-p)+k*p+B := by
         rw [hPcenter,hPcenterQ]
-      have absKme := FirstPredecessorProof.absKme K hk f B p hcast hp1 hpk hz hpz hcover hdpred
-          hdchild hW
-          hS hPe hPn hearg hnarg hcenterC hWval hSval hPval hPcenter hPeval hPnval qc qw qs qe qn
-          absP absPm absKm qpc hPcenterQ hPcval
+      have absKme := FirstPredecessorProof.absKme p k hpk
       have hqvals := FirstPredecessorProof.hqvals K p
               sqEven sqOdd absP absPm absKm absKme
       rcases hqvals with ⟨hqc,hqw,hqs,hqe,hqn⟩
@@ -1162,28 +852,13 @@ theorem P5352T2Predecessor1 (K : DiamondParameter) (hk : 1 < K.1)
           qs hscoord
       have heval : f (⟨p,2*k+1-p⟩+1)=Q (p+1-k) (k-p)+k*(p+1)+B := by simpa [qe] using hPeval
       have hnval : f (⟨p,2*k+1-p⟩+⟨0,1⟩)=Q (p-k) (k+1-p)+k*p+B := by simpa [qn] using hPnval
-      have hE := FirstPredecessorProof.hEAt404 K hk f B p hcast hp1 hpk hz hpz hcover hdpred
-          hdchild hW
-          hS hPe hPn hearg hnarg hcenterC hWval hSval hPval hPcenter hPeval hPnval qc qw qs qe qn
-          tdiffRev absP absPm absKm qpc hPcenterQ hPcval absKme hqc hqw hqs hqe hqn hcval hwcoord
-          hscoord hwval hsval heval hnval
+      have hE := FirstPredecessorProof.hEAt404 p k B f Q tdiffRev heval hPcval hqe qpc
       have hWdiff := FirstPredecessorProof.hWdiff K f p
           tdiffRev hqc hqw hcval hwval
-      have hNdiff := FirstPredecessorProof.hNdiff K hk f B p hcast hp1 hpk hz hpz hcover hdpred
-          hdchild hW
-          hS hPe hPn hearg hnarg hcenterC hWval hSval hPval hPcenter hPeval hPnval qc qw qs qe qn
-          absP absPm absKm qpc hPcenterQ hPcval absKme hqc hqw hqs hqe hqn hcval hwcoord hscoord
-          hwval hsval heval hnval hE hWdiff
-      have hSdiff := FirstPredecessorProof.hSdiff K hk f B p hcast hp1 hpk hz hpz hcover hdpred
-          hdchild hW
-          hS hPe hPn hearg hnarg hcenterC hWval hSval hPval hPcenter hPeval hPnval qc qw qs qe qn
-          absP absPm absKm qpc hPcenterQ hPcval absKme hqc hqw hqs hqe hqn hcval hwcoord hscoord
-          hwval hsval heval hnval hE hWdiff hNdiff
-      have hcomp := FirstPredecessorProof.hcompAt434 K hk f B hchildTile p hcast hp1 hpk childMem
-          hz hpz
-          hcover hdpred hdchild hW hS hPe hPn hearg hnarg hcenterC hWval hSval hPval hPcenter
-          hPeval hPnval qc qw qs qe qn absP absPm absKm qpc hPcenterQ hPcval absKme hqc hqw hqs
-          hqe hqn hcval hwcoord hscoord hwval hsval heval hnval hE hWdiff hNdiff hSdiff
+      have hNdiff := FirstPredecessorProof.hNdiff p k B f Q hnval hPcval hqn qpc
+      have hSdiff := FirstPredecessorProof.hSdiff p k f Q hsval hcval hqs hqc
+      have hcomp := (by
+        simpa only [hchildTile] using FirstPredecessorProof.hcompAt434 K hk p hpk)
       have hlap0 (hp : p=k) := FirstPredecessorProof.hlap0 K f lap_identity p hE hWdiff hNdiff
           hSdiff hp
       have hlap1 (hp : p≠k) := FirstPredecessorProof.hlap1 K f lap_identity p hE hWdiff hNdiff

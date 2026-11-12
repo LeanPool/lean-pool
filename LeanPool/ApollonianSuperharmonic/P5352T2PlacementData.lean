@@ -5,7 +5,27 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.ApollonianSuperharmonic.P5352T2Sources
+public import Mathlib.Init
+
+public import Mathlib.Analysis.SpecialFunctions.Pow.NNReal
+public import Mathlib.NumberTheory.Zsqrtd.GaussianInt
+public import Mathlib.Tactic.Echelon.Zsqrtd
+public import Mathlib.Tactic.Inclusion.Extension.Core.Core
+public import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
+public import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Rational
+public import Mathlib.Tactic.Measurability.Init
+public import Mathlib.Tactic.NormNum.Irrational
+public import Mathlib.Tactic.NormNum.IsCoprime
+public import Mathlib.Tactic.NormNum.IsSquare
+public import Mathlib.Tactic.NormNum.LegendreSymbol
+public import Mathlib.Tactic.NormNum.ModEq
+public import Mathlib.Tactic.NormNum.NatFib
+public import Mathlib.Tactic.NormNum.NatLog
+public import Mathlib.Tactic.NormNum.NatSqrt
+public import Mathlib.Tactic.NormNum.Ordinal
+public import Mathlib.Tactic.NormNum.Parity
+public import Mathlib.Tactic.NormNum.Prime
+public import Mathlib.Tactic.NormNum.RealSqrt
 
 -- [TABLET NODE: P5352T2PlacementData]
 

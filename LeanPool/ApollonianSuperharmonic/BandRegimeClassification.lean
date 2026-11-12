@@ -5,8 +5,9 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.BandRetainedBoundaryGenealogy
-public import LeanPool.ApollonianSuperharmonic.DiamondCoordinateConfiguration
 public import LeanPool.ApollonianSuperharmonic.DiamondRegimeConverse
 public import LeanPool.ApollonianSuperharmonic.FordRegimeConverse
 

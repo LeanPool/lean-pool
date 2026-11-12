@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P4339T1PrecursorSupportGeometry
 public import LeanPool.ApollonianSuperharmonic.P4366T1PrecursorRemainderFamily
 

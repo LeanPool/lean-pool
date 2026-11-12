@@ -5,9 +5,17 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+public import Mathlib.Topology.MetricSpace.Pseudo.Real
+
 public import LeanPool.ApollonianSuperharmonic.P3723T1PolygonalParameterization
-public import LeanPool.ApollonianSuperharmonic.P3381T1PiecewiseAffinePolygonModel
-public import Mathlib.Data.Finset.Sort
+public import LeanPool.ApollonianSuperharmonic.P3381T1PairedTriangulation
+public import Mathlib.Algebra.Order.Ring.Star
+public import Mathlib.Analysis.Convex.Topology
+public import Mathlib.Analysis.Normed.Group.Basic
+public import Mathlib.Data.EReal.Inv
+public import Mathlib.Topology.Algebra.InfiniteSum.Order
+public import Mathlib.Topology.Metrizable.Uniformity
 
 -- [TABLET NODE: P3723T1PairedModelSegmentPullback]
 
@@ -77,7 +85,7 @@ private theorem hFbounds :
     rcases hxpair with rfl | rfl <;> norm_num
   · obtain ⟨k, _, hxk⟩ := Finset.mem_biUnion.mp hxends
     by_cases hk : (I k).Nonempty
-    · simp? [hk] at hxk
+    · simp only [hk, ↓reduceIte, Finset.mem_insert, Finset.mem_singleton] at hxk
       rcases hxk with hxlo | hxhi
       · subst x
         have hm := hlo_mem k hk

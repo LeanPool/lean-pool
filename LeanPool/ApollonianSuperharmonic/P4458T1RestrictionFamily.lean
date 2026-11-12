@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P4458T1BoundaryFrame
 public import LeanPool.ApollonianSuperharmonic.AncestorOdometer
 public import LeanPool.ApollonianSuperharmonic.BandSubtileOccurrence

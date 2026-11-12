@@ -5,11 +5,10 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.ApollonianSuperharmonic.BandGenealogy
-public import LeanPool.ApollonianSuperharmonic.BandPredecessorNoCollision
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.BandPrototileCentroidUnique
 public import LeanPool.ApollonianSuperharmonic.BandPrototileTranslation
-public import LeanPool.ApollonianSuperharmonic.TileTranslationFormulas
 
 -- [TABLET NODE: BandPrototileTranslationNormalForm]
 

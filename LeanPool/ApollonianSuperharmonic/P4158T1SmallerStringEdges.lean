@@ -5,23 +5,13 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.AncestorOdometer
-public import LeanPool.ApollonianSuperharmonic.FordCoordinateConfiguration
-public import LeanPool.ApollonianSuperharmonic.FordFareyParentsExist
-public import LeanPool.ApollonianSuperharmonic.FordTileRecursiveIdentification
-public import LeanPool.ApollonianSuperharmonic.BandPrototileTranslation
-public import LeanPool.ApollonianSuperharmonic.BandPrototileCentroidUnique
 public import LeanPool.ApollonianSuperharmonic.TileOdometerBandPrototile
-public import LeanPool.ApollonianSuperharmonic.P4062T1CanonicalSupport
-public import LeanPool.ApollonianSuperharmonic.BandGenealogy
-public import LeanPool.ApollonianSuperharmonic.BandRegularTileTouchingClassification
-public import LeanPool.ApollonianSuperharmonic.VectorSquareProduct
-public import LeanPool.ApollonianSuperharmonic.TangencyCoordinateIdentity
 public import LeanPool.ApollonianSuperharmonic.OpposingStringInterfacePath
 public import LeanPool.ApollonianSuperharmonic.OdometerStringRespect
 public import LeanPool.ApollonianSuperharmonic.PositiveCurvatureTileOdometerDomain
-public import LeanPool.ApollonianSuperharmonic.ProtoTileObservableExtensionality
-public import LeanPool.ApollonianSuperharmonic.TileQuarterTurnFormulas
 
 -- [TABLET NODE: P4158T1SmallerStringEdges]
 
@@ -65,7 +55,8 @@ private theorem hqone :
   have he : P.q = 1 := by have := P.q_pos; omega
   have hunit := P.unit_case he
   rcases hsmall with ⟨rfl, hlt⟩ | ⟨rfl, hlt⟩
-  · simp? [FordRecursiveQuadruple, hunit.2.1] at hCi
+  · simp only [FordRecursiveQuadruple, hunit.2.1, ↓reduceIte, Fin.isValue,
+      Fin.succ_zero_eq_one, Matrix.cons_val_one, Matrix.cons_val_zero] at hCi
     have := congrArg Prod.fst hCi
     omega
   · have hq2 : P.q₂ = 1 := hunit.2.2.2
@@ -98,7 +89,8 @@ private theorem hC0pos :
   classical
   intro P C0 hC0 hqone
   rw [← hC0]
-  simp? [FordRecursiveQuadruple, FordCircleCoordinate]
+  simp only [FordRecursiveQuadruple, FordCircleCoordinate, Nat.cast_mul, Int.reduceNeg,
+      Fin.isValue, Matrix.cons_val_zero, mul_self_pos, ne_eq, Int.natCast_eq_zero]
   positivity
 
 private theorem hCicurv :

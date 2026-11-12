@@ -5,8 +5,12 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+public import Mathlib.Tactic.Linarith
+
 public import LeanPool.ApollonianSuperharmonic.P3523T1InsertionConstruction
 public import LeanPool.ApollonianSuperharmonic.P3523T1SubdivisionExit
+public import LeanPool.ApollonianSuperharmonic.P3523T1InterpolatedTarget
 
 /-!
 # P3523T1OrderedInsertion
@@ -1294,18 +1298,11 @@ private theorem getNotTake :
   have hidx := hn.getElem_inj_iff.mp heq'
   omega
 
-private theorem hkpos :
-    ∀ (r : Nat), ∀ (n : Nat), ∀ (q : P3381T1PolygonBoundary r), ∀ (p : P3381T1PolygonBoundary
-        n), ∀ (s : P3475T1BoundarySubdivision q p), ∀ (X : Set (Real × Real)), ∀ (K : Set (Real
-        × Real)), ∀ (t : P3475T1TriangleTree q X K), ∀ (h : ℕ), ∀ [NeZero (n + (3 : ℕ))],
-    ∀ (j : Fin (n + (3 : ℕ))), ∀ (k : Fin (n + (3 : ℕ))), ∀ (hk : s.start (0 : Fin (r + (3 : ℕ)))
-        + k = j), ∀ (hparam : s.parameter j ≠ 0), ∀ (hp : (j - 1) + 1 = j), (∀ {α : Type}, ∀ (l :
-            List α), ∀ (p : α → Bool), ∀ (k : Nat), ∀ (h : Nat), ∀ (hn : l.Nodup), ∀ (hk : k <
-        l.length), ∀ (hpos : 0 < k), ∀ (hlen : h < (l.filter p).length), (p (l.get ⟨k - 1,
-        by omega⟩) = true) → (((l.filter p).get ⟨h, hlen⟩ = l.get ⟨k, hk⟩) → (l.get ⟨k - 1,
-        by omega⟩ ∈ (l.filter p).take h))) → (0 < k.val) := by
+private theorem hkpos (r n : Nat) (q : P3381T1PolygonBoundary r)
+    (p : P3381T1PolygonBoundary n) (s : P3475T1BoundarySubdivision q p)
+    [NeZero (n + 3)] (j k : Fin (n + 3))
+    (hk : s.start 0 + k = j) (hparam : s.parameter j ≠ 0) : 0 < k.val := by
   classical
-  intro r n q p s X K t h this j k hk hparam hp filterPrev
   by_contra hnot
   have hkval : k.val = 0 := by omega
   have hkz : k = 0 := Fin.ext hkval
@@ -1313,37 +1310,21 @@ private theorem hkpos :
   have hjstart : j = s.start 0 := by simpa using hk.symm
   exact hparam (by rw [hjstart]; exact s.parameter_start 0)
 
-private theorem hkprev :
-    ∀ (r : Nat), ∀ (n : Nat), ∀ (q : P3381T1PolygonBoundary r), ∀ (p : P3381T1PolygonBoundary
-        n), ∀ (s : P3475T1BoundarySubdivision q p), ∀ (X : Set (Real × Real)), ∀ (K : Set (Real
-        × Real)), ∀ (t : P3475T1TriangleTree q X K), ∀ (h : ℕ), ∀ [NeZero (n + (3 : ℕ))],
-    ∀ (j : Fin (n + (3 : ℕ))), ∀ (k : Fin (n + (3 : ℕ))), ∀ (hp : (j - 1) + 1 = j),
-    let raw := List.ofFn (fun k : Fin (n + 3) => s.start 0 + k)
-    let kp : Fin (n + 3) := ⟨k.val - 1, by omega⟩
-    (raw.length = n + 3) → ((0 < k.val) → (kp + 1 = k)) := by
+private theorem hkprev (n : Nat) (k : Fin (n + 3)) (positive : 0 < k.val) :
+    let previous : Fin (n + 3) := ⟨k.val - 1, by omega⟩
+    previous + 1 = k := by
   classical
-  intro r n q p s X K t h this j k hp raw kp hrawLen hkpos
+  intro previous
   apply Fin.ext
-  rw [Fin.val_add_eq_of_add_lt (by simp [kp]; omega)]
-  simp [kp]
+  rw [Fin.val_add_eq_of_add_lt (by simp [previous]; omega)]
+  simp [previous]
   omega
 
-private theorem hprevLabel :
-    ∀ (r : Nat), ∀ (n : Nat), ∀ (q : P3381T1PolygonBoundary r), ∀ (p : P3381T1PolygonBoundary
-        n), ∀ (s : P3475T1BoundarySubdivision q p), ∀ (X : Set (Real × Real)), ∀ (K : Set (Real
-        × Real)), ∀ (t : P3475T1TriangleTree q X K), ∀ (h : ℕ), ∀ [NeZero (n + (3 : ℕ))],
-    ∀ (j : Fin (n + (3 : ℕ))), ∀ (k : Fin (n + (3 : ℕ))), ∀ (hk : s.start (0 : Fin (r + (3 : ℕ)))
-        + k = j), ∀ (hp : (j - 1) + 1 = j),
-    let kp : Fin (n + 3) := ⟨k.val - 1, by omega⟩
-    (kp + 1 = k) → (s.start 0 + kp = j - 1) := by
-  classical
-  intro r n q p s X K t h this j k hk hp kp hkprev
-  apply add_right_cancel
-  calc
-    (s.start 0 + kp) + 1 = s.start 0 + (kp + 1) := by simp [add_assoc]
-    _ = s.start 0 + k := by rw [hkprev]
-    _ = j := hk
-    _ = (j - 1) + 1 := hp.symm
+private theorem hprevLabel {n : Nat} [NeZero n]
+    (start previous current target : Fin n) (step : previous + 1 = current)
+    (alignment : start + current = target) : start + previous = target - 1 := by
+  apply (eq_sub_iff_add_eq).2
+  rw [add_assoc, step, alignment]
 
 private theorem hfilterCur :
     ∀ (r : Nat), ∀ (n : Nat), ∀ (q : P3381T1PolygonBoundary r), ∀ (p : P3381T1PolygonBoundary
@@ -1717,12 +1698,9 @@ theorem P3523T1OrderedInsertion {r n : Nat}
           let pred := fun z : Fin (n + 3) => decide (s.parameter z ≠ 0)
           let kp : Fin (n + 3) := ⟨k.val - 1, by omega⟩
           have hrawLen : raw.length = n + 3 := by simp [raw]
-          have hkpos := OrderedInsertionDetails.hkpos r n q p s X K t h j k hk hparam
-              hp filterPrev
-          have hkprev := OrderedInsertionDetails.hkprev r n q p s X K t h j k hp
-              hrawLen hkpos
-          have hprevLabel := OrderedInsertionDetails.hprevLabel r n q p
-              s X K t h j k hk hp hkprev
+          have hkpos := OrderedInsertionDetails.hkpos r n q p s j k hk hparam
+          have hkprev := OrderedInsertionDetails.hkprev n k hkpos
+          have hprevLabel := OrderedInsertionDetails.hprevLabel (s.start 0) kp k j hkprev hk
           have hrawPrev := OrderedInsertionGeometry.hrawPrevAt546 r n q p s X K t h j k hp
               hrawLen hprevLabel
           have hrawCur := OrderedInsertionGeometry.hrawCurAt556 r n q p s j k hk hrawLen

@@ -5,17 +5,11 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryTilingTransport
-public import LeanPool.ApollonianSuperharmonic.BandPrototileTranslation
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.BandOrientedChildParentEndpoints
-public import LeanPool.ApollonianSuperharmonic.BandTileSimultaneousInduction
 public import LeanPool.ApollonianSuperharmonic.ExactTileInterfaceTriplePackingSymmetryCovariance
 public import LeanPool.ApollonianSuperharmonic.FordOrientedChildParentIncomingEndpoint
-public import LeanPool.ApollonianSuperharmonic.OrientedTouchingCovariance
-public import LeanPool.ApollonianSuperharmonic.ProperBandCurvatureStructure
-public import LeanPool.ApollonianSuperharmonic.TileTranslationFormulas
-public import LeanPool.ApollonianSuperharmonic.VectorRecursionLaws
-public import LeanPool.ApollonianSuperharmonic.P4055T1BandQuarterTurn
 public import LeanPool.ApollonianSuperharmonic.P4085T1FordIncomingNormalization
 public import LeanPool.ApollonianSuperharmonic.P4085T1MinusTouching
 
@@ -147,7 +141,11 @@ theorem BandOrientedChildParentIncomingEndpoint
         rw [(TileTranslationFormulas W _).2.2.2.2.1]
         have h₁ := congrArg Prod.fst hminus
         have h₂ := congrArg Prod.snd hminus
-        simp? [GaussianRealPoint, GaussianQuarterTurn] at h₁ h₂ ⊢
+        simp only [Prod.fst_sub, one_div, GaussianRealPoint, Int.reduceNeg,
+            GaussianQuarterTurn, Zsqrtd.re_sub, sub_neg_eq_add, Int.cast_add,
+            GaussianInt.intCast_re, GaussianInt.intCast_im, Zsqrtd.im_sub, Int.cast_sub,
+            Prod.smul_mk, smul_eq_mul, Prod.snd_sub, Int.cast_neg, Zsqrtd.re_add,
+            Zsqrtd.im_add] at h₁ h₂ ⊢
         apply Prod.ext <;> dsimp <;> linarith
       have hp := oriented (TileTranslation W (GaussianQuarterTurn y)) t
         (BandPrototileTranslation _ _ _ hW) hcplus

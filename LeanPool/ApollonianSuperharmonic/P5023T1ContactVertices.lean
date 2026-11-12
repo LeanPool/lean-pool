@@ -5,7 +5,12 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.ApollonianSuperharmonic.P4909T1ParentPolygon
+public import Mathlib.Init
+
+public import LeanPool.ApollonianSuperharmonic.CircleCoordinates
+public import Mathlib.Algebra.Order.Algebra
+public import Mathlib.Analysis.Normed.Group.Basic
+public import Mathlib.Analysis.Real.Sqrt
 
 -- [TABLET NODE: P5023T1ContactVertices]
 

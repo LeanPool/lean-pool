@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.BandOrderedGeneralRightSelectedRowGeometry
 public import LeanPool.ApollonianSuperharmonic.BandOrderedGeneralSelectedSCompanionGeometry
 public import LeanPool.ApollonianSuperharmonic.P4418T3SelectedInterfaceExists

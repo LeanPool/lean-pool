@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.AcyclicIndegreeOrientation
 
 -- [TABLET NODE: P5532T1OrientationPullback]
@@ -38,7 +40,7 @@ theorem P5532T1OrientationPullback (D E : Finset GaussianInt)
       exact hinj heq ▸ hy
   refine ⟨{
     edge := fun x y => o.edge (L x) (L y)
-    edge_decidable := fun x y => o.edge_decidable (L x) (L y)
+    edgeDecidable := fun x y => o.edgeDecidable (L x) (L y)
     rank := fun x => o.rank (L x)
     supported := ?_
     oriented := ?_
@@ -54,9 +56,9 @@ theorem P5532T1OrientationPullback (D E : Finset GaussianInt)
   · intro x hx
     have hc :
         (D.filter fun y => @decide (o.edge (L y) (L x))
-          (o.edge_decidable (L y) (L x))).card =
+          (o.edgeDecidable (L y) (L x))).card =
         (E.filter fun y => @decide (o.edge y (L x))
-          (o.edge_decidable y (L x))).card := by
+          (o.edgeDecidable y (L x))).card := by
       apply Finset.card_bij (fun y _ => L y)
       · intro y hy
         exact Finset.mem_filter.mpr ⟨(hmem y).mp (Finset.mem_filter.mp hy).1,

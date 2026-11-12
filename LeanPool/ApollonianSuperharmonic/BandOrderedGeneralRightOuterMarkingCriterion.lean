@@ -5,10 +5,9 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.ApollonianSuperharmonic.BandOrderedGeneralPeriodicBlockCells
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.BandOrderedGeneralRightSelectedRowGeometry
-public import LeanPool.ApollonianSuperharmonic.TileDiskAreaCovariance
-public import LeanPool.ApollonianSuperharmonic.TileTranslationFormulas
 public import LeanPool.ApollonianSuperharmonic.P5478T1ExteriorPlacementIndex
 public import LeanPool.ApollonianSuperharmonic.P4418T3SelectedInterfaceExists
 public import LeanPool.ApollonianSuperharmonic.P5485T1OtherCompanionCoordinates

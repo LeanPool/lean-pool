@@ -5,17 +5,10 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.BandOrderedGeneralLayoutCertificate
-public import LeanPool.ApollonianSuperharmonic.BandSubtileOccurrence
-public import LeanPool.ApollonianSuperharmonic.BandOrderedGeneralConfiguration
-public import LeanPool.ApollonianSuperharmonic.ProperBandCurvatureStructure
-public import LeanPool.ApollonianSuperharmonic.VectorRecursionLaws
 public import LeanPool.ApollonianSuperharmonic.BandOrientedChildParentEndpoints
-public import LeanPool.ApollonianSuperharmonic.BoundaryFootprintVertices
-public import LeanPool.ApollonianSuperharmonic.BoundaryFootprintEdges
-public import LeanPool.ApollonianSuperharmonic.FootprintVertices
-public import LeanPool.ApollonianSuperharmonic.ExceptionalConnectorSegments
-public import LeanPool.ApollonianSuperharmonic.ExactTileInterfaceTriple
 
 -- [TABLET NODE: BandPositiveCutBranchCompanionExclusion]
 
@@ -617,16 +610,16 @@ private theorem hnotA :
             (birth (0 : Fin (4 : ℕ))) (birth (Fin.succ (2 : Fin (3 : ℕ)))))) cert.O), ∀ (adjacent
             : ExactTileInterfaceTriple (cert.Q (1 : Fin (3 : ℕ)) true) cert.O (cert.S (2 : Fin (3
             : ℕ)) false)), (right.point ≠ incoming.point) → ((adjacent.point = incoming.point) →
-            ((cert.exceptional_segments.a ∈ FootprintVertices (cert.Q (1 : Fin (3 : ℕ)) true)) →
-            ((cert.exceptional_segments.a ∈ FootprintVertices (cert.S (2 : Fin (3 : ℕ)) false)) →
-            ((cert.exceptional_segments.a ∈ FootprintVertices cert.O) →
-            (cert.exceptional_segments.a ∉ FootprintVertices (TileTranslation (cert.Q 1 true)
+            ((cert.exceptionalSegments.a ∈ FootprintVertices (cert.Q (1 : Fin (3 : ℕ)) true)) →
+            ((cert.exceptionalSegments.a ∈ FootprintVertices (cert.S (2 : Fin (3 : ℕ)) false)) →
+            ((cert.exceptionalSegments.a ∈ FootprintVertices cert.O) →
+            (cert.exceptionalSegments.a ∉ FootprintVertices (TileTranslation (cert.Q 1 true)
             u)))))))) ) := by
   classical
   intro q cfg C₀ T cert birth exact_exclusion u hforward' right incoming adjacent hne halign haU
       haZ haW
   have hn := exact_exclusion _ _ _ _ right adjacent incoming.point hne halign
-    cert.exceptional_segments.a haU haW haZ
+    cert.exceptionalSegments.a haU haW haZ
   simpa [hforward'] using hn
 
 private theorem hWcent'At413 :
@@ -726,16 +719,16 @@ private theorem hnotB :
             BandVectors.1 (birth (0 : Fin (4 : ℕ))) (birth (Fin.succ (2 : Fin (3 : ℕ))))))
             cert.O), ∀ (adjacent' : ExactTileInterfaceTriple (cert.S (1 : Fin (3 : ℕ)) false)
             cert.O (cert.Q (2 : Fin (3 : ℕ)) true)), (right'.point ≠ incoming'.point) →
-            ((adjacent'.point = incoming'.point) → ((cert.exceptional_segments.b ∈
-            FootprintVertices (cert.S (1 : Fin (3 : ℕ)) false)) → ((cert.exceptional_segments.b ∈
-            FootprintVertices (cert.Q (2 : Fin (3 : ℕ)) true)) → ((cert.exceptional_segments.b ∈
-            FootprintVertices cert.O) → (cert.exceptional_segments.b ∉ FootprintVertices
+            ((adjacent'.point = incoming'.point) → ((cert.exceptionalSegments.b ∈
+            FootprintVertices (cert.S (1 : Fin (3 : ℕ)) false)) → ((cert.exceptionalSegments.b ∈
+            FootprintVertices (cert.Q (2 : Fin (3 : ℕ)) true)) → ((cert.exceptionalSegments.b ∈
+            FootprintVertices cert.O) → (cert.exceptionalSegments.b ∉ FootprintVertices
             (TileTranslation (cert.S 1 false) (-u)))))))))) ) := by
   classical
   intro q cfg C₀ T cert birth exact_exclusion I hI2 u hforward' right' incoming' adjacent' hne'
       halign' hbU hbZ hbW
   have hn := exact_exclusion _ _ _ _ right' adjacent' incoming'.point hne' halign'
-    cert.exceptional_segments.b hbU hbW hbZ
+    cert.exceptionalSegments.b hbU hbW hbZ
   simpa [I, hI2, hforward'] using hn
 
 private theorem hback3 :
@@ -1198,9 +1191,9 @@ private theorem hnotA1 :
             FootprintVertices Z) → (cut ∉ FootprintVertices V)))))) → (
         let I : GaussianInt := ⟨0, 1⟩
         let u : GaussianInt := BandVectors.1 (q 2) (cfg.firstPredecessor 1)
-        (BandVectors.1 (birth 2) (birth 0) = u) → ((cert.exceptional_segments.a ∈
-            FootprintVertices cert.O) → ((cert.exceptional_segments.a ∈ FootprintVertices (cert.Q
-            (1 : Fin (3 : ℕ)) true)) → ((cert.exceptional_segments.a ∈ FootprintVertices (cert.S
+        (BandVectors.1 (birth 2) (birth 0) = u) → ((cert.exceptionalSegments.a ∈
+            FootprintVertices cert.O) → ((cert.exceptionalSegments.a ∈ FootprintVertices (cert.Q
+            (1 : Fin (3 : ℕ)) true)) → ((cert.exceptionalSegments.a ∈ FootprintVertices (cert.S
             (2 : Fin (3 : ℕ)) false)) → (∀ (rightA1 : ExactTileInterfaceTriple cert.O
             (TileTranslation cert.O ((⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt) ^ (↑(1 : Fin (4 : ℕ)) :
             ℕ) * if Even (↑(1 : Fin (4 : ℕ)) : ℕ) then BandVectors.1 (birth (0 : Fin (4 : ℕ)))
@@ -1213,13 +1206,13 @@ private theorem hnotA1 :
             (cert.Q (1 : Fin (3 : ℕ)) true)), ∀ (adjacentA1 : ExactTileInterfaceTriple cert.O
             (cert.Q (1 : Fin (3 : ℕ)) true) (cert.S (2 : Fin (3 : ℕ)) false)), (rightA1.point ≠
             incomingA1.point) → ((adjacentA1.point = incomingA1.point) →
-            (cert.exceptional_segments.a ∉ FootprintVertices (TileTranslation cert.O (I *
+            (cert.exceptionalSegments.a ∉ FootprintVertices (TileTranslation cert.O (I *
             u))))))))) ) := by
   classical
   intro q cfg C₀ T cert birth exact_exclusion I u hback2 haO haQ2 haS3 rightA1 incomingA1
       adjacentA1 hneA1 halignA1
   have hn := exact_exclusion _ _ _ _ rightA1 adjacentA1 incomingA1.point
-    hneA1 halignA1 cert.exceptional_segments.a haO haQ2 haS3
+    hneA1 halignA1 cert.exceptionalSegments.a haO haQ2 haS3
   simpa [I, hback2] using hn
 
 private theorem hnotA2 :
@@ -1235,9 +1228,9 @@ private theorem hnotA2 :
             GaussianInt), (cut ∈ FootprintVertices U) → ((cut ∈ FootprintVertices W) → ((cut ∈
             FootprintVertices Z) → (cut ∉ FootprintVertices V)))))) → (
         let t : GaussianInt := BandVectors.1 (cfg.firstPredecessor 1) (q 3)
-        (BandVectors.1 (birth 0) (birth 3) = t) → ((cert.exceptional_segments.a ∈
-            FootprintVertices cert.O) → ((cert.exceptional_segments.a ∈ FootprintVertices (cert.Q
-            (1 : Fin (3 : ℕ)) true)) → ((cert.exceptional_segments.a ∈ FootprintVertices (cert.S
+        (BandVectors.1 (birth 0) (birth 3) = t) → ((cert.exceptionalSegments.a ∈
+            FootprintVertices cert.O) → ((cert.exceptionalSegments.a ∈ FootprintVertices (cert.Q
+            (1 : Fin (3 : ℕ)) true)) → ((cert.exceptionalSegments.a ∈ FootprintVertices (cert.S
             (2 : Fin (3 : ℕ)) false)) → (∀ (rightA2 : ExactTileInterfaceTriple cert.O
             (TileTranslation cert.O ((⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt) ^ (↑(0 : Fin (4 : ℕ)) :
             ℕ) * if Even (↑(0 : Fin (4 : ℕ)) : ℕ) then BandVectors.1 (birth (0 : Fin (4 : ℕ)))
@@ -1250,13 +1243,13 @@ private theorem hnotA2 :
             (cert.S (2 : Fin (3 : ℕ)) false)), ∀ (adjacentA2 : ExactTileInterfaceTriple cert.O
             (cert.S (2 : Fin (3 : ℕ)) false) (cert.Q (1 : Fin (3 : ℕ)) true)), (rightA2.point ≠
             incomingA2.point) → ((adjacentA2.point = incomingA2.point) →
-            (cert.exceptional_segments.a ∉ FootprintVertices (TileTranslation cert.O t)))))))) )
+            (cert.exceptionalSegments.a ∉ FootprintVertices (TileTranslation cert.O t)))))))) )
             := by
   classical
   intro q cfg C₀ T cert birth exact_exclusion t hforward3 haO haQ2 haS3 rightA2 incomingA2
       adjacentA2 hneA2 halignA2
   have hn := exact_exclusion _ _ _ _ rightA2 adjacentA2 incomingA2.point
-    hneA2 halignA2 cert.exceptional_segments.a haO haS3 haQ2
+    hneA2 halignA2 cert.exceptionalSegments.a haO haS3 haQ2
   simpa [hforward3] using hn
 
 private theorem hnotB1 :
@@ -1274,9 +1267,9 @@ private theorem hnotB1 :
         let I : GaussianInt := ⟨0, 1⟩
         (I ^ 3 = -I) → (
         let u : GaussianInt := BandVectors.1 (q 2) (cfg.firstPredecessor 1)
-        (BandVectors.1 (birth 2) (birth 0) = u) → ((cert.exceptional_segments.b ∈
-            FootprintVertices cert.O) → ((cert.exceptional_segments.b ∈ FootprintVertices (cert.Q
-            (2 : Fin (3 : ℕ)) true)) → ((cert.exceptional_segments.b ∈ FootprintVertices (cert.S
+        (BandVectors.1 (birth 2) (birth 0) = u) → ((cert.exceptionalSegments.b ∈
+            FootprintVertices cert.O) → ((cert.exceptionalSegments.b ∈ FootprintVertices (cert.Q
+            (2 : Fin (3 : ℕ)) true)) → ((cert.exceptionalSegments.b ∈ FootprintVertices (cert.S
             (1 : Fin (3 : ℕ)) false)) → (∀ (rightB1 : ExactTileInterfaceTriple cert.O
             (TileTranslation cert.O ((⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt) ^ (↑(3 : Fin (4 : ℕ)) :
             ℕ) * if Even (↑(3 : Fin (4 : ℕ)) : ℕ) then BandVectors.1 (birth (0 : Fin (4 : ℕ)))
@@ -1289,21 +1282,21 @@ private theorem hnotB1 :
             (cert.S (1 : Fin (3 : ℕ)) false)), ∀ (adjacentB1 : ExactTileInterfaceTriple cert.O
             (cert.S (1 : Fin (3 : ℕ)) false) (cert.Q (2 : Fin (3 : ℕ)) true)), (rightB1.point ≠
             incomingB1.point) → ((adjacentB1.point = incomingB1.point) →
-            (cert.exceptional_segments.b ∉ FootprintVertices (TileTranslation cert.O (-((⟨0, 1⟩ :
+            (cert.exceptionalSegments.b ∉ FootprintVertices (TileTranslation cert.O (-((⟨0, 1⟩ :
             GaussianInt) * BandVectors.1 (q 2) (cfg.firstPredecessor 1)))))))))))) ) := by
   classical
   intro q cfg C₀ T cert birth exact_exclusion I hI3 u hback2 hbO hbQ3 hbS2 rightB1 incomingB1
       adjacentB1 hneB1 halignB1
   have hn := exact_exclusion _ _ _ _ rightB1 adjacentB1 incomingB1.point
-    hneB1 halignB1 cert.exceptional_segments.b hbO hbS2 hbQ3
+    hneB1 halignB1 cert.exceptionalSegments.b hbO hbS2 hbQ3
   have hn' := hn
-  have hn'' : cert.exceptional_segments.b ∉ FootprintVertices
+  have hn'' : cert.exceptionalSegments.b ∉ FootprintVertices
       (TileTranslation cert.O (I ^ 3 * BandVectors.1 (birth 2) (birth 0))) := by
     split_ifs at hn' with hparity
     · rcases hparity with ⟨k, hk⟩
       omega
     · simpa [I] using hn'
-  have hn''' : cert.exceptional_segments.b ∉
+  have hn''' : cert.exceptionalSegments.b ∉
       FootprintVertices (TileTranslation cert.O (-I * u)) := by
     simpa [hI3, hback2] using hn''
   have hshift : -I * u = -((⟨0, 1⟩ : GaussianInt) *
@@ -1328,9 +1321,9 @@ private theorem hnotB2 :
         let I : GaussianInt := ⟨0, 1⟩
         (I ^ 2 = -1) → (
         let t : GaussianInt := BandVectors.1 (cfg.firstPredecessor 1) (q 3)
-        (BandVectors.1 (birth 0) (birth 3) = t) → ((Even 2) → ((cert.exceptional_segments.b ∈
-            FootprintVertices cert.O) → ((cert.exceptional_segments.b ∈ FootprintVertices (cert.Q
-            (2 : Fin (3 : ℕ)) true)) → ((cert.exceptional_segments.b ∈ FootprintVertices (cert.S
+        (BandVectors.1 (birth 0) (birth 3) = t) → ((Even 2) → ((cert.exceptionalSegments.b ∈
+            FootprintVertices cert.O) → ((cert.exceptionalSegments.b ∈ FootprintVertices (cert.Q
+            (2 : Fin (3 : ℕ)) true)) → ((cert.exceptionalSegments.b ∈ FootprintVertices (cert.S
             (1 : Fin (3 : ℕ)) false)) → (∀ (rightB2 : ExactTileInterfaceTriple cert.O
             (TileTranslation cert.O ((⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt) ^ (↑(2 : Fin (4 : ℕ)) :
             ℕ) * if Even (↑(2 : Fin (4 : ℕ)) : ℕ) then BandVectors.1 (birth (0 : Fin (4 : ℕ)))
@@ -1343,13 +1336,13 @@ private theorem hnotB2 :
             (cert.Q (2 : Fin (3 : ℕ)) true)), ∀ (adjacentB2 : ExactTileInterfaceTriple cert.O
             (cert.Q (2 : Fin (3 : ℕ)) true) (cert.S (1 : Fin (3 : ℕ)) false)), (rightB2.point ≠
             incomingB2.point) → ((adjacentB2.point = incomingB2.point) →
-            (cert.exceptional_segments.b ∉ FootprintVertices (TileTranslation cert.O
+            (cert.exceptionalSegments.b ∉ FootprintVertices (TileTranslation cert.O
             (-t))))))))))) ) := by
   classical
   intro q cfg C₀ T cert birth exact_exclusion I hI2 t hforward3 hEven2 hbO hbQ3 hbS2 rightB2
       incomingB2 adjacentB2 hneB2 halignB2
   have hn := exact_exclusion _ _ _ _ rightB2 adjacentB2 incomingB2.point
-    hneB2 halignB2 cert.exceptional_segments.b hbO hbQ3 hbS2
+    hneB2 halignB2 cert.exceptionalSegments.b hbO hbQ3 hbS2
   simpa [I, hI2, hEven2, hforward3] using hn
 
 end PositiveCutExclusionGeometry
@@ -1416,16 +1409,16 @@ private theorem fourthParentExclusion :
             : ℝ)) → ((birth (0 : Fin (4 : ℕ)) = cfg.firstPredecessor (1 : Fin (4 : ℕ)) ∧ birth (2
             : Fin (4 : ℕ)) = q (2 : Fin (4 : ℕ)) ∧ birth (3 : Fin (4 : ℕ)) = q (3 : Fin (4 : ℕ)))
             → (((birth 0 = q 2 ∧ birth 2 = q 3 ∧ birth 3 = cfg.firstPredecessor 1) ∧
-            cert.exceptional_segments.a ∉ FootprintVertices (TileTranslation (cert.Q 1 true)
-            (BandVectors.1 (q 2) (cfg.firstPredecessor 1))) ∧ cert.exceptional_segments.b ∉
+            cert.exceptionalSegments.a ∉ FootprintVertices (TileTranslation (cert.Q 1 true)
+            (BandVectors.1 (q 2) (cfg.firstPredecessor 1))) ∧ cert.exceptionalSegments.b ∉
             FootprintVertices (TileTranslation (cert.S 1 false) (-BandVectors.1 (q 2)
             (cfg.firstPredecessor 1)))) ∨ ((birth 0 = cfg.firstPredecessor 1 ∧ birth 2 = q 2 ∧
-            birth 3 = q 3) ∧ cert.exceptional_segments.a ∉ FootprintVertices (TileTranslation
+            birth 3 = q 3) ∧ cert.exceptionalSegments.a ∉ FootprintVertices (TileTranslation
             cert.O ((⟨0, 1⟩ : GaussianInt) * BandVectors.1 (q 2) (cfg.firstPredecessor 1))) ∧
-            cert.exceptional_segments.a ∉ FootprintVertices (TileTranslation cert.O
-            (BandVectors.1 (cfg.firstPredecessor 1) (q 3))) ∧ cert.exceptional_segments.b ∉
+            cert.exceptionalSegments.a ∉ FootprintVertices (TileTranslation cert.O
+            (BandVectors.1 (cfg.firstPredecessor 1) (q 3))) ∧ cert.exceptionalSegments.b ∉
             FootprintVertices (TileTranslation cert.O (-((⟨0, 1⟩ : GaussianInt) * BandVectors.1
-            (q 2) (cfg.firstPredecessor 1)))) ∧ cert.exceptional_segments.b ∉ FootprintVertices
+            (q 2) (cfg.firstPredecessor 1)))) ∧ cert.exceptionalSegments.b ∉ FootprintVertices
             (TileTranslation cert.O (-BandVectors.1 (cfg.firstPredecessor 1) (q
             3)))))))))))))))))))))))) ) := by
   classical
@@ -1511,16 +1504,16 @@ private theorem fourthParentExclusion :
         (I ^ 2 * (BandVectors.1 (birth 0) (birth 2) - BandVectors.1 (birth 2) (birth 0))) :=
             PositiveCutExclusionGeometry.hB2Z q cfg C₀ T cert birth hS2O
                 (PositiveCutExclusionGeometry.hB2Zvec q cfg birth hI2 hforward2 hback2)
-  have haBoundary := (cert.exceptional_segments.first_cut_unique
-    cert.exceptional_segments.a).mpr rfl
-  have haO := boundary_to_raw cert.O cert.exceptional_segments.a haBoundary.2.2
-  have haQ2 := boundary_to_raw (cert.Q 1 true) cert.exceptional_segments.a haBoundary.1
-  have haS3 := boundary_to_raw (cert.S 2 false) cert.exceptional_segments.a haBoundary.2.1
-  have hbBoundary := (cert.exceptional_segments.second_cut_unique
-    cert.exceptional_segments.b).mpr rfl
-  have hbO := boundary_to_raw cert.O cert.exceptional_segments.b hbBoundary.2.2
-  have hbQ3 := boundary_to_raw (cert.Q 2 true) cert.exceptional_segments.b hbBoundary.1
-  have hbS2 := boundary_to_raw (cert.S 1 false) cert.exceptional_segments.b hbBoundary.2.1
+  have haBoundary := (cert.exceptionalSegments.first_cut_unique
+    cert.exceptionalSegments.a).mpr rfl
+  have haO := boundary_to_raw cert.O cert.exceptionalSegments.a haBoundary.2.2
+  have haQ2 := boundary_to_raw (cert.Q 1 true) cert.exceptionalSegments.a haBoundary.1
+  have haS3 := boundary_to_raw (cert.S 2 false) cert.exceptionalSegments.a haBoundary.2.1
+  have hbBoundary := (cert.exceptionalSegments.second_cut_unique
+    cert.exceptionalSegments.b).mpr rfl
+  have hbO := boundary_to_raw cert.O cert.exceptionalSegments.b hbBoundary.2.2
+  have hbQ3 := boundary_to_raw (cert.Q 2 true) cert.exceptionalSegments.b hbBoundary.1
+  have hbS2 := boundary_to_raw (cert.S 1 false) cert.exceptionalSegments.b hbBoundary.2.1
   have endpointA1 := BandOrientedChildParentEndpoints birth hproper
     (1 : Fin 3) 1 cert.O (cert.Q 1 true) (cert.S 2 false)
     hOproto hQ2proto hS3proto hbirth0pos hbirth2pos hbirth3pos
@@ -1579,26 +1572,26 @@ theorem BandPositiveCutBranchCompanionExclusion
         birth 3 = q 3)) :
     ((birth 0 = q 2 ∧ birth 2 = q 3 ∧
         birth 3 = cfg.firstPredecessor 1) ∧
-      cert.exceptional_segments.a ∉ FootprintVertices
+      cert.exceptionalSegments.a ∉ FootprintVertices
         (TileTranslation (cert.Q 1 true)
           (BandVectors.1 (q 2) (cfg.firstPredecessor 1))) ∧
-      cert.exceptional_segments.b ∉ FootprintVertices
+      cert.exceptionalSegments.b ∉ FootprintVertices
         (TileTranslation (cert.S 1 false)
           (-BandVectors.1 (q 2) (cfg.firstPredecessor 1)))) ∨
     ((birth 0 = cfg.firstPredecessor 1 ∧ birth 2 = q 2 ∧
         birth 3 = q 3) ∧
-      cert.exceptional_segments.a ∉ FootprintVertices
+      cert.exceptionalSegments.a ∉ FootprintVertices
         (TileTranslation cert.O
           ((⟨0, 1⟩ : GaussianInt) *
             BandVectors.1 (q 2) (cfg.firstPredecessor 1))) ∧
-      cert.exceptional_segments.a ∉ FootprintVertices
+      cert.exceptionalSegments.a ∉ FootprintVertices
         (TileTranslation cert.O
           (BandVectors.1 (cfg.firstPredecessor 1) (q 3))) ∧
-      cert.exceptional_segments.b ∉ FootprintVertices
+      cert.exceptionalSegments.b ∉ FootprintVertices
         (TileTranslation cert.O
           (-((⟨0, 1⟩ : GaussianInt) *
             BandVectors.1 (q 2) (cfg.firstPredecessor 1)))) ∧
-      cert.exceptional_segments.b ∉ FootprintVertices
+      cert.exceptionalSegments.b ∉ FootprintVertices
         (TileTranslation cert.O
           (-BandVectors.1 (cfg.firstPredecessor 1) (q 3)))) := by
 -- BODY
@@ -1678,11 +1671,11 @@ theorem BandPositiveCutBranchCompanionExclusion
       hU hW hZ hUpos hWpos hZpos hWcent'
       (by simpa [I, hargAdj, gaussianPoint_Iminus_one] using hZcent')
     rcases endpoint with ⟨right, incoming, adjacent, hne, halign, _, _, _⟩
-    have haBoundary := (cert.exceptional_segments.first_cut_unique
-      cert.exceptional_segments.a).mpr rfl
-    have haU := boundary_to_raw (cert.Q 1 true) cert.exceptional_segments.a haBoundary.1
-    have haZ := boundary_to_raw (cert.S 2 false) cert.exceptional_segments.a haBoundary.2.1
-    have haW := boundary_to_raw cert.O cert.exceptional_segments.a haBoundary.2.2
+    have haBoundary := (cert.exceptionalSegments.first_cut_unique
+      cert.exceptionalSegments.a).mpr rfl
+    have haU := boundary_to_raw (cert.Q 1 true) cert.exceptionalSegments.a haBoundary.1
+    have haZ := boundary_to_raw (cert.S 2 false) cert.exceptionalSegments.a haBoundary.2.1
+    have haW := boundary_to_raw cert.O cert.exceptionalSegments.a haBoundary.2.2
     have hnotA := PositiveCutExclusionGeometry.hnotA q cfg C₀ T cert
             birth exact_exclusion hforward' right incoming adjacent hne halign haU haZ haW
     have hU' : BandPrototile (birth 0) (cert.S 1 false) := by
@@ -1703,37 +1696,37 @@ theorem BandPositiveCutBranchCompanionExclusion
       (by simpa [I, hI2, hargA, gaussianPoint_neg] using hWcent')
       (by simpa [I, hI2, hargAdj, gaussianPoint_Iminus_one, gaussianPoint_neg] using hZcent')
     rcases endpoint' with ⟨right', incoming', adjacent', hne', halign', _, _, _⟩
-    have hbBoundary := (cert.exceptional_segments.second_cut_unique
-      cert.exceptional_segments.b).mpr rfl
-    have hbU := boundary_to_raw (cert.S 1 false) cert.exceptional_segments.b hbBoundary.2.1
-    have hbZ := boundary_to_raw (cert.Q 2 true) cert.exceptional_segments.b hbBoundary.1
-    have hbW := boundary_to_raw cert.O cert.exceptional_segments.b hbBoundary.2.2
+    have hbBoundary := (cert.exceptionalSegments.second_cut_unique
+      cert.exceptionalSegments.b).mpr rfl
+    have hbU := boundary_to_raw (cert.S 1 false) cert.exceptionalSegments.b hbBoundary.2.1
+    have hbZ := boundary_to_raw (cert.Q 2 true) cert.exceptionalSegments.b hbBoundary.1
+    have hbW := boundary_to_raw cert.O cert.exceptionalSegments.b hbBoundary.2.2
     exact Or.inl ⟨hp2, hnotA, (PositiveCutExclusionGeometry.hnotB q cfg C₀ T cert birth
         exact_exclusion hI2 hforward' right' incoming' adjacent' hne' halign' hbU hbZ hbW)⟩
   · -- The four p4 endpoint packages are used only in this branch.
     have fourthParentExclusion :
       ((birth 0 = q 2 ∧ birth 2 = q 3 ∧
           birth 3 = cfg.firstPredecessor 1) ∧
-        cert.exceptional_segments.a ∉ FootprintVertices
+        cert.exceptionalSegments.a ∉ FootprintVertices
           (TileTranslation (cert.Q 1 true)
             (BandVectors.1 (q 2) (cfg.firstPredecessor 1))) ∧
-        cert.exceptional_segments.b ∉ FootprintVertices
+        cert.exceptionalSegments.b ∉ FootprintVertices
           (TileTranslation (cert.S 1 false)
             (-BandVectors.1 (q 2) (cfg.firstPredecessor 1)))) ∨
       ((birth 0 = cfg.firstPredecessor 1 ∧ birth 2 = q 2 ∧
           birth 3 = q 3) ∧
-        cert.exceptional_segments.a ∉ FootprintVertices
+        cert.exceptionalSegments.a ∉ FootprintVertices
           (TileTranslation cert.O
             ((⟨0, 1⟩ : GaussianInt) *
               BandVectors.1 (q 2) (cfg.firstPredecessor 1))) ∧
-        cert.exceptional_segments.a ∉ FootprintVertices
+        cert.exceptionalSegments.a ∉ FootprintVertices
           (TileTranslation cert.O
             (BandVectors.1 (cfg.firstPredecessor 1) (q 3))) ∧
-        cert.exceptional_segments.b ∉ FootprintVertices
+        cert.exceptionalSegments.b ∉ FootprintVertices
           (TileTranslation cert.O
             (-((⟨0, 1⟩ : GaussianInt) *
               BandVectors.1 (q 2) (cfg.firstPredecessor 1)))) ∧
-        cert.exceptional_segments.b ∉ FootprintVertices
+        cert.exceptionalSegments.b ∉ FootprintVertices
           (TileTranslation cert.O
             (-BandVectors.1 (cfg.firstPredecessor 1) (q 3)))) :=
                 PositiveCutBranchConclusion.fourthParentExclusion q cfg C₀ T cert birth hproper

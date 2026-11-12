@@ -5,8 +5,9 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.TileTouching
-public import Mathlib.Tactic.NormNum
 
 -- [TABLET NODE: P5253T1OneEdgeInterface]
 

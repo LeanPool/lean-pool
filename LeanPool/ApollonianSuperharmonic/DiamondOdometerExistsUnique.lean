@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P4818T1Representatives
 public import LeanPool.ApollonianSuperharmonic.P4818T1BoundaryRecovery
 public import LeanPool.ApollonianSuperharmonic.P4818T1OverlapDifferences

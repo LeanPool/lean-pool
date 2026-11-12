@@ -5,7 +5,9 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.ApollonianSuperharmonic.P4984T1ClosedGap
+public import Mathlib.Init
+public import Mathlib.Tactic.Positivity
+
 public import LeanPool.ApollonianSuperharmonic.P4828T1LineSupport
 public import LeanPool.ApollonianSuperharmonic.P4828T1Step
 public import LeanPool.ApollonianSuperharmonic.P4828T1Rotate
@@ -13,7 +15,6 @@ public import LeanPool.ApollonianSuperharmonic.P4953T1LiteralHulls
 public import LeanPool.ApollonianSuperharmonic.ProperBandCurvatureStructure
 public import LeanPool.ApollonianSuperharmonic.TangencyCoordinateIdentity
 public import Mathlib.Analysis.Complex.Basic
-public import Mathlib.Analysis.Convex.Topology
 
 -- [TABLET NODE: P5050T1OmittedHullSeparation]
 

@@ -5,8 +5,13 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.ApollonianSuperharmonic.Preamble
-public import Mathlib.Analysis.Convex.Segment
+public import Mathlib.Init
+public import Mathlib.Order.Fin.Basic
+public import Mathlib.Algebra.Group.Fin.Basic
+public import Mathlib.Basic.Real.Basic
+public import Mathlib.Order.Interval.Set.Basic
+
+public import Mathlib.Algebra.Order.Algebra
 
 -- [TABLET NODE: P3723T1PolygonalParameterization]
 

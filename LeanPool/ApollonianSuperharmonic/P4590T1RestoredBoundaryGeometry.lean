@@ -5,22 +5,12 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.ApollonianSuperharmonic.BandOrderedGeneralRawSupport
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.BandExceptionalRestorationSectorOrder
 public import LeanPool.ApollonianSuperharmonic.P4339T1PrecursorSupportGeometry
 public import LeanPool.ApollonianSuperharmonic.P4590T1PositivePrototileDisk
-public import LeanPool.ApollonianSuperharmonic.P4456T2VertexInterior
 public import LeanPool.ApollonianSuperharmonic.P4590T1OppositeCellsStar
-public import LeanPool.ApollonianSuperharmonic.PeriodicTileIntersectionClassification
-public import LeanPool.ApollonianSuperharmonic.PeriodicTileIntersectionPaths
-public import LeanPool.ApollonianSuperharmonic.P3161T2PathExhaustion
-public import LeanPool.ApollonianSuperharmonic.BandOrderedGeneralRawSupport
-public import LeanPool.ApollonianSuperharmonic.PrecursorBoundaryArcData
-public import LeanPool.ApollonianSuperharmonic.TileCentroid
-public import LeanPool.ApollonianSuperharmonic.BandOriginalPairSeparation
-public import LeanPool.ApollonianSuperharmonic.ExceptionalConnectorSegments
-public import LeanPool.ApollonianSuperharmonic.SixSubtileFaceVertices
-public import LeanPool.ApollonianSuperharmonic.AllowedSubtileIncidence
 
 -- [TABLET NODE: P4590T1RestoredBoundaryGeometry]
 
@@ -45,7 +35,7 @@ private theorem hempty_anchor :
             (C : BandCircle), ∀ (T : ProtoTile), ∀ (cert : BandOrderedGeneralLayoutCertificate q
             cfg C T),
         let O := cert.O
-        let seg := cert.exceptional_segments
+        let seg := cert.exceptionalSegments
         (TileCentroid O = TileCentroid T) → (O.cells = ∅ → GaussianRealPoint seg.a = TileCentroid
             T) ) := by
   classical
@@ -65,7 +55,7 @@ private theorem hnonemptyO :
             (C : BandCircle), ∀ (T : ProtoTile), ∀ (cert : BandOrderedGeneralLayoutCertificate q
             cfg C T), ∀ (x : GaussianInt), (GaussianRealPoint x ≠ TileCentroid T) → (
         let O := cert.O
-        let seg := cert.exceptional_segments
+        let seg := cert.exceptionalSegments
         (O.cells = ∅ → GaussianRealPoint seg.a = TileCentroid T) → (O.cells.Nonempty ∨ x ≠
             seg.a)) ) := by
   classical
@@ -90,7 +80,7 @@ private theorem rawBoundary :
             (cert.P (0 : Fin (3 : ℕ)) true)) → ((x ∈ BoundaryFootprintVertices (cert.P (0 : Fin
             (3 : ℕ)) false)) → (
         let O := cert.O
-        let seg := cert.exceptional_segments
+        let seg := cert.exceptionalSegments
         (O.cells.Nonempty ∨ x ≠ seg.a) → (∀ (U : ProtoTile), (U.cells.Nonempty) → ((x ∈
             BoundaryFootprintVertices U) → (x ∈ FootprintVertices U))))))))) ) := by
   classical
@@ -121,7 +111,7 @@ private theorem boundary_sectors :
             (cert.P (0 : Fin (3 : ℕ)) true)) → ((x ∈ BoundaryFootprintVertices (cert.P (0 : Fin
             (3 : ℕ)) false)) → (
         let O := cert.O
-        let seg := cert.exceptional_segments
+        let seg := cert.exceptionalSegments
         (O.cells.Nonempty ∨ x ≠ seg.a) → ((∀ (U : ProtoTile), (U.cells.Nonempty) → ((x ∈
             BoundaryFootprintVertices U) → (x ∈ FootprintVertices U))) → (∀ (U : ProtoTile),
             (U.cells.Nonempty) → ((x ∈ BoundaryFootprintVertices U) → ((∃ j : Fin 4,
@@ -296,7 +286,7 @@ private theorem hf1 :
             cfg C T),
         let ia : PeriodicSubtileIndex := ⟨.A, 0, 0⟩
         let ib : PeriodicSubtileIndex := ⟨.B, 0, 0⟩
-        let f1 := cert.modified_face_equiv.symm ⟨.I1, 0, 0⟩
+        let f1 := cert.modifiedFaceEquivalence.symm ⟨.I1, 0, 0⟩
         ∀ (f : cert.modified.plane.Face), ∀ (g : cert.modified.plane.Face), (∀ (h :
             cert.modified.plane.Face), ((∃ (i : Fin (3 : ℕ)), cert.modified.plane.faceVertex h i
             = ia) ∧ ∃ (i : Fin (3 : ℕ)), cert.modified.plane.faceVertex h i = ib) → h = f ∨ h =
@@ -317,7 +307,7 @@ private theorem hf2 :
             cfg C T),
         let ia : PeriodicSubtileIndex := ⟨.A, 0, 0⟩
         let ib : PeriodicSubtileIndex := ⟨.B, 0, 0⟩
-        let f2 := cert.modified_face_equiv.symm ⟨.I2, 0, 0⟩
+        let f2 := cert.modifiedFaceEquivalence.symm ⟨.I2, 0, 0⟩
         ∀ (f : cert.modified.plane.Face), ∀ (g : cert.modified.plane.Face), (∀ (h :
             cert.modified.plane.Face), ((∃ (i : Fin (3 : ℕ)), cert.modified.plane.faceVertex h i
             = ia) ∧ ∃ (i : Fin (3 : ℕ)), cert.modified.plane.faceVertex h i = ib) → h = f ∨ h =
@@ -336,12 +326,12 @@ private theorem hf12 :
         ∀ (q : Fin (4 : ℕ) → CircleCoordinates), ∀ (cfg : BandOrderedGeneralConfiguration q), ∀
             (C : BandCircle), ∀ (T : ProtoTile), ∀ (cert : BandOrderedGeneralLayoutCertificate q
             cfg C T),
-        let f1 := cert.modified_face_equiv.symm ⟨.I1, 0, 0⟩
-        let f2 := cert.modified_face_equiv.symm ⟨.I2, 0, 0⟩
+        let f1 := cert.modifiedFaceEquivalence.symm ⟨.I1, 0, 0⟩
+        let f2 := cert.modifiedFaceEquivalence.symm ⟨.I2, 0, 0⟩
         f1 ≠ f2 ) := by
   classical
   intro q cfg C T cert f1 f2 h
-  have := congrArg cert.modified_face_equiv h
+  have := congrArg cert.modifiedFaceEquivalence h
   simp [f1, f2] at this
 
 private theorem hexhaust :
@@ -354,11 +344,11 @@ private theorem hexhaust :
         let A := cert.P 0 true
         let B := cert.P 0 false
         let O := cert.O
-        let seg := cert.exceptional_segments
+        let seg := cert.exceptionalSegments
         let ia : PeriodicSubtileIndex := ⟨.A, 0, 0⟩
         let ib : PeriodicSubtileIndex := ⟨.B, 0, 0⟩
-        let f1 := cert.modified_face_equiv.symm ⟨.I1, 0, 0⟩
-        let f2 := cert.modified_face_equiv.symm ⟨.I2, 0, 0⟩
+        let f1 := cert.modifiedFaceEquivalence.symm ⟨.I1, 0, 0⟩
+        let f2 := cert.modifiedFaceEquivalence.symm ⟨.I2, 0, 0⟩
         (cert.modified.tile ia = TileCellComplement A O) → ((cert.modified.tile ib = B) →
             ((FootprintVertices (cert.modified.tile ia) ∩ FootprintVertices (cert.modified.tile
             ib) = CommonFootprintEdgeVertices (cert.modified.tile ia) (cert.modified.tile ib)) →
@@ -407,7 +397,7 @@ private theorem hsegMembership :
         let A := cert.P 0 true
         let B := cert.P 0 false
         let O := cert.O
-        let seg := cert.exceptional_segments
+        let seg := cert.exceptionalSegments
         (x ∉ FootprintVertices O → x ∈ FootprintVertices (TileCellComplement A O) ∩
             FootprintVertices B) → ((∀ z ∈ FootprintVertices (TileCellComplement A O) ∩
             FootprintVertices B, z ∈ seg.connector) → ((seg.connector.Sublist seg.walk) → (x ∉
@@ -438,7 +428,7 @@ private theorem incidentRaw :
         let A := cert.P 0 true
         let B := cert.P 0 false
         let O := cert.O
-        let seg := cert.exceptional_segments
+        let seg := cert.exceptionalSegments
         (O.cells.Nonempty ∨ x ≠ seg.a) → ((∀ (U : ProtoTile), (U.cells.Nonempty) → ((x ∈
             BoundaryFootprintVertices U) → (x ∈ FootprintVertices U))) → ((∀ (U : ProtoTile),
             (U.cells.Nonempty) → ((x ∈ BoundaryFootprintVertices U) → ((∃ j : Fin 4,
@@ -503,7 +493,7 @@ private theorem hOcuts :
         let A := cert.P 0 true
         let B := cert.P 0 false
         let O := cert.O
-        let seg := cert.exceptional_segments
+        let seg := cert.exceptionalSegments
         (TileCentroid cert.O = TileCentroid T ∧ (cert.O.cells = ∅ ↔ (cfg.firstPredecessor (1 :
             Fin (4 : ℕ))).1 = (0 : ℤ)) ∧ BandPrototile (cfg.firstPredecessor (1 : Fin (4 : ℕ)))
             cert.O ∧ (Finset.Nonempty cert.O.cells → LatticeTile cert.O) ∧ Finset.Nonempty
@@ -582,7 +572,7 @@ private theorem hOcuts :
     exact P3161T2IncidentBoundary _ x ⟨jB, hDplusIn⟩ ⟨jA, hOoutsidePlus⟩
   have hDminusB : x ∈ BoundaryFootprintVertices (TileCellComplement B O) := by
     exact P3161T2IncidentBoundary _ x ⟨jA, hDminusIn⟩ ⟨jB, hOoutsideMinus⟩
-  rcases cert.precursor_boundary.branch with hbranch | hempty
+  rcases cert.precursorBoundary.branch with hbranch | hempty
   · rcases hbranch with ⟨_, plusArc, minusArc, _, _, _, _, _, _, hplusSet,
       hminusSet, _, _, _, hinter, _, _⟩
     have hplus : x ∈ (plusArc.toFinset : Set GaussianInt) := by
@@ -591,14 +581,14 @@ private theorem hOcuts :
     have hminus : x ∈ (minusArc.toFinset : Set GaussianInt) := by
       rw [hminusSet]
       exact ⟨hDminusB, hOB⟩
-    have haa : cert.precursor_boundary.a = seg.a := by
-      apply (seg.first_cut_unique cert.precursor_boundary.a).mp
-      exact (cert.precursor_boundary.first_transition cert.precursor_boundary.a).mpr rfl
-    have hbb : cert.precursor_boundary.b = seg.b := by
-      apply (seg.second_cut_unique cert.precursor_boundary.b).mp
-      exact (cert.precursor_boundary.second_transition cert.precursor_boundary.b).mpr rfl
-    have hpair : x ∈ ({cert.precursor_boundary.a,
-        cert.precursor_boundary.b} : Set GaussianInt) := by
+    have haa : cert.precursorBoundary.a = seg.a := by
+      apply (seg.first_cut_unique cert.precursorBoundary.a).mp
+      exact (cert.precursorBoundary.first_transition cert.precursorBoundary.a).mpr rfl
+    have hbb : cert.precursorBoundary.b = seg.b := by
+      apply (seg.second_cut_unique cert.precursorBoundary.b).mp
+      exact (cert.precursorBoundary.second_transition cert.precursorBoundary.b).mpr rfl
+    have hpair : x ∈ ({cert.precursorBoundary.a,
+        cert.precursorBoundary.b} : Set GaussianInt) := by
       rw [← hinter]
       exact ⟨hplus, hminus⟩
     rw [haa, hbb] at hpair
@@ -690,7 +680,7 @@ private theorem hp1_not :
             PeriodicSubtileFaceIndex))) (cert.unmodified.core.rho
             ((cert.unmodified.faceEquiv.symm : PeriodicSubtileFaceIndex →
             cert.unmodified.core.plane.Face) (⟨SixSubtileFaceLabel.I2, (0 : ℤ), (0 : ℤ)⟩ :
-            PeriodicSubtileFaceIndex))) cert.exceptional_segments) → ((∀ (i : Fin 3), ∀ (s :
+            PeriodicSubtileFaceIndex))) cert.exceptionalSegments) → ((∀ (i : Fin 3), ∀ (s :
             Bool), ((i, s) ≠ ((0 : Fin 3), true)) → (((i, s) ≠ ((0 : Fin 3), false)) → ((x ∈
             BoundaryFootprintVertices (cert.P i s)) → (False)))) → (
         let p1 := cert.unmodified.core.rho
@@ -731,7 +721,7 @@ private theorem hp2_not :
             PeriodicSubtileFaceIndex))) (cert.unmodified.core.rho
             ((cert.unmodified.faceEquiv.symm : PeriodicSubtileFaceIndex →
             cert.unmodified.core.plane.Face) (⟨SixSubtileFaceLabel.I2, (0 : ℤ), (0 : ℤ)⟩ :
-            PeriodicSubtileFaceIndex))) cert.exceptional_segments) → ((∀ (i : Fin 3), ∀ (s :
+            PeriodicSubtileFaceIndex))) cert.exceptionalSegments) → ((∀ (i : Fin 3), ∀ (s :
             Bool), ((i, s) ≠ ((0 : Fin 3), true)) → (((i, s) ≠ ((0 : Fin 3), false)) → ((x ∈
             BoundaryFootprintVertices (cert.P i s)) → (False)))) → (
         let p2 := cert.unmodified.core.rho
@@ -761,7 +751,7 @@ private theorem hcutApositive :
             (C : BandCircle), ∀ (T : ProtoTile), ∀ (cert : BandOrderedGeneralLayoutCertificate q
             cfg C T), ∀ (x : GaussianInt),
         let O := cert.O
-        let seg := cert.exceptional_segments
+        let seg := cert.exceptionalSegments
         (O.cells.Nonempty ∨ x ≠ seg.a) → (x = seg.a → O.cells.Nonempty) ) := by
   classical
   intro q cfg C T cert x O seg hnonemptyO hxa
@@ -777,7 +767,7 @@ private theorem hcutBpositive :
             (C : BandCircle), ∀ (T : ProtoTile), ∀ (cert : BandOrderedGeneralLayoutCertificate q
             cfg C T), ∀ (x : GaussianInt), (GaussianRealPoint x ≠ TileCentroid T) → (
         let O := cert.O
-        let seg := cert.exceptional_segments
+        let seg := cert.exceptionalSegments
         (O.cells = ∅ → GaussianRealPoint seg.a = TileCentroid T) → (x = seg.b →
             O.cells.Nonempty)) ) := by
   classical
@@ -800,7 +790,7 @@ private theorem hCnone :
             cfg C T), ∀ (x : GaussianInt),
         let Ctile := cert.P 1 true
         let O := cert.O
-        let seg := cert.exceptional_segments
+        let seg := cert.exceptionalSegments
         (ExceptionalRestorationSectorData (cert.P (0 : Fin (3 : ℕ)) true) (cert.P (0 : Fin (3 :
             ℕ)) false) cert.O (cert.Q (1 : Fin (3 : ℕ)) true) (cert.S (2 : Fin (3 : ℕ)) false)
             (cert.Q (2 : Fin (3 : ℕ)) true) (cert.S (1 : Fin (3 : ℕ)) false) (cert.P (1 : Fin (3
@@ -810,7 +800,7 @@ private theorem hCnone :
             PeriodicSubtileFaceIndex))) (cert.unmodified.core.rho
             ((cert.unmodified.faceEquiv.symm : PeriodicSubtileFaceIndex →
             cert.unmodified.core.plane.Face) (⟨SixSubtileFaceLabel.I2, (0 : ℤ), (0 : ℤ)⟩ :
-            PeriodicSubtileFaceIndex))) cert.exceptional_segments) → ((O.cells.Nonempty ∨ x ≠
+            PeriodicSubtileFaceIndex))) cert.exceptionalSegments) → ((O.cells.Nonempty ∨ x ≠
             seg.a) → (
         let p1 := cert.unmodified.core.rho
           (cert.unmodified.faceEquiv.symm ⟨.I1, 0, 0⟩)
@@ -832,7 +822,7 @@ private theorem hOnoneAt589 :
             (C : BandCircle), ∀ (T : ProtoTile), ∀ (cert : BandOrderedGeneralLayoutCertificate q
             cfg C T), ∀ (x : GaussianInt),
         let O := cert.O
-        let seg := cert.exceptional_segments
+        let seg := cert.exceptionalSegments
         (ExceptionalRestorationSectorData (cert.P (0 : Fin (3 : ℕ)) true) (cert.P (0 : Fin (3 :
             ℕ)) false) cert.O (cert.Q (1 : Fin (3 : ℕ)) true) (cert.S (2 : Fin (3 : ℕ)) false)
             (cert.Q (2 : Fin (3 : ℕ)) true) (cert.S (1 : Fin (3 : ℕ)) false) (cert.P (1 : Fin (3
@@ -842,7 +832,7 @@ private theorem hOnoneAt589 :
             PeriodicSubtileFaceIndex))) (cert.unmodified.core.rho
             ((cert.unmodified.faceEquiv.symm : PeriodicSubtileFaceIndex →
             cert.unmodified.core.plane.Face) (⟨SixSubtileFaceLabel.I2, (0 : ℤ), (0 : ℤ)⟩ :
-            PeriodicSubtileFaceIndex))) cert.exceptional_segments) → ((x ∈ seg.left) → ((¬x =
+            PeriodicSubtileFaceIndex))) cert.exceptionalSegments) → ((x ∈ seg.left) → ((¬x =
             seg.a) → (∀ j : Fin 4, LatticeVertexIncidentCell x j ∉ O.cells))) ) := by
   classical
   intro q cfg C T cert x O seg sec hleft hxa j hj
@@ -858,7 +848,7 @@ private theorem hguardR :
         ∀ (q : Fin (4 : ℕ) → CircleCoordinates), ∀ (cfg : BandOrderedGeneralConfiguration q), ∀
             (C : BandCircle), ∀ (T : ProtoTile), ∀ (cert : BandOrderedGeneralLayoutCertificate q
             cfg C T), ∀ (x : GaussianInt),
-        let seg := cert.exceptional_segments
+        let seg := cert.exceptionalSegments
         (¬x = seg.b) → (
         let O := cert.O
         O.cells.Nonempty ∨ x ≠ seg.b) ) := by
@@ -877,7 +867,7 @@ private theorem hDnone :
             cfg C T), ∀ (x : GaussianInt),
         let Dtile := cert.P 1 false
         let O := cert.O
-        let seg := cert.exceptional_segments
+        let seg := cert.exceptionalSegments
         (ExceptionalRestorationSectorData (cert.P (0 : Fin (3 : ℕ)) true) (cert.P (0 : Fin (3 :
             ℕ)) false) cert.O (cert.Q (1 : Fin (3 : ℕ)) true) (cert.S (2 : Fin (3 : ℕ)) false)
             (cert.Q (2 : Fin (3 : ℕ)) true) (cert.S (1 : Fin (3 : ℕ)) false) (cert.P (1 : Fin (3
@@ -887,7 +877,7 @@ private theorem hDnone :
             PeriodicSubtileFaceIndex))) (cert.unmodified.core.rho
             ((cert.unmodified.faceEquiv.symm : PeriodicSubtileFaceIndex →
             cert.unmodified.core.plane.Face) (⟨SixSubtileFaceLabel.I2, (0 : ℤ), (0 : ℤ)⟩ :
-            PeriodicSubtileFaceIndex))) cert.exceptional_segments) → (
+            PeriodicSubtileFaceIndex))) cert.exceptionalSegments) → (
         let p2 := cert.unmodified.core.rho
           (cert.unmodified.faceEquiv.symm ⟨.I2, 0, 0⟩)
         (x ≠ p2) → ((x ∈ seg.right) → ((O.cells.Nonempty ∨ x ≠ seg.b) → (∀ j : Fin 4,
@@ -905,7 +895,7 @@ private theorem hOnoneAt624 :
         ∀ (q : Fin (4 : ℕ) → CircleCoordinates), ∀ (cfg : BandOrderedGeneralConfiguration q), ∀
             (C : BandCircle), ∀ (T : ProtoTile), ∀ (cert : BandOrderedGeneralLayoutCertificate q
             cfg C T), ∀ (x : GaussianInt),
-        let seg := cert.exceptional_segments
+        let seg := cert.exceptionalSegments
         (¬x = seg.b) → (
         let O := cert.O
         (ExceptionalRestorationSectorData (cert.P (0 : Fin (3 : ℕ)) true) (cert.P (0 : Fin (3 :
@@ -917,7 +907,7 @@ private theorem hOnoneAt624 :
             PeriodicSubtileFaceIndex))) (cert.unmodified.core.rho
             ((cert.unmodified.faceEquiv.symm : PeriodicSubtileFaceIndex →
             cert.unmodified.core.plane.Face) (⟨SixSubtileFaceLabel.I2, (0 : ℤ), (0 : ℤ)⟩ :
-            PeriodicSubtileFaceIndex))) cert.exceptional_segments) → ((x ∈ seg.right) → (∀ j :
+            PeriodicSubtileFaceIndex))) cert.exceptionalSegments) → ((x ∈ seg.right) → (∀ j :
             Fin 4, LatticeVertexIncidentCell x j ∉ O.cells))) ) := by
   classical
   intro q cfg C T cert x seg hxb O sec hright j hj
@@ -946,8 +936,8 @@ theorem P4590T1RestoredBoundaryGeometry :
           y = x + ⟨0, 1⟩ ∨ y = x - ⟨0, 1⟩ →
         y ∈ FootprintVertices (cert.Q 2 true) ∨ y ∈ FootprintVertices (cert.S 1 false)) ∧
       x ∉ FootprintVertices (cert.P 1 false)) ∨
-    (x = cert.exceptional_segments.a ∧ cert.O.cells.Nonempty) ∨
-    (x = cert.exceptional_segments.b ∧ cert.O.cells.Nonempty)))))))) := by
+    (x = cert.exceptionalSegments.a ∧ cert.O.cells.Nonempty) ∨
+    (x = cert.exceptionalSegments.b ∧ cert.O.cells.Nonempty)))))))) := by
   intro q cfg C T cert hT x hx hxb hk hnoncentral hA hB
 -- BODY
   classical
@@ -960,7 +950,7 @@ theorem P4590T1RestoredBoundaryGeometry :
   let S := cert.S 2 false
   let R := cert.Q 2 true
   let V := cert.S 1 false
-  let seg := cert.exceptional_segments
+  let seg := cert.exceptionalSegments
   let sec := BandExceptionalRestorationSectorOrder q cfg C T cert
   have hsec := sec
   have hpre := P4339T1PrecursorSupportGeometry C q cfg T cert
@@ -1005,8 +995,8 @@ theorem P4590T1RestoredBoundaryGeometry :
       hxB' hdeletedNe
   let ia : PeriodicSubtileIndex := ⟨.A, 0, 0⟩
   let ib : PeriodicSubtileIndex := ⟨.B, 0, 0⟩
-  let f1 := cert.modified_face_equiv.symm ⟨.I1, 0, 0⟩
-  let f2 := cert.modified_face_equiv.symm ⟨.I2, 0, 0⟩
+  let f1 := cert.modifiedFaceEquivalence.symm ⟨.I1, 0, 0⟩
+  let f2 := cert.modifiedFaceEquivalence.symm ⟨.I2, 0, 0⟩
   have translation_zero := RestoredBoundaryGeometry.translation_zero
   have htileA := RestoredBoundaryGeometry.htileA q cfg C T cert translation_zero
   have htileB := RestoredBoundaryGeometry.htileB q cfg C T cert translation_zero

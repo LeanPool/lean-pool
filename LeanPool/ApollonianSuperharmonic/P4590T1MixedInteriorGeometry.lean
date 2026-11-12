@@ -5,22 +5,10 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.ApollonianSuperharmonic.TileDiskAreaCovariance
-public import LeanPool.ApollonianSuperharmonic.TileQuarterTurnFormulas
-public import LeanPool.ApollonianSuperharmonic.TileTranslationFormulas
-public import LeanPool.ApollonianSuperharmonic.BandOrderedGeneralGeometricSectors
-public import LeanPool.ApollonianSuperharmonic.BandOrderedGeneralFinitePatches
-public import LeanPool.ApollonianSuperharmonic.PeriodicTileIntersectionClassification
-public import LeanPool.ApollonianSuperharmonic.PeriodicTileIntersectionPaths
-public import LeanPool.ApollonianSuperharmonic.FootprintDeletionRetention
-public import LeanPool.ApollonianSuperharmonic.LocalLatticeInterfaceSectors
-public import LeanPool.ApollonianSuperharmonic.BandOrderedGeneralPeriodicBlockCells
-public import LeanPool.ApollonianSuperharmonic.BandSignedOccurrenceHalfTurn
-public import LeanPool.ApollonianSuperharmonic.TouchingTripleCovariance
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P4590T1OppositeCellsStar
-public import LeanPool.ApollonianSuperharmonic.P4456T2VertexInterior
 public import LeanPool.ApollonianSuperharmonic.P4339T1PrecursorSupportGeometry
-public import LeanPool.ApollonianSuperharmonic.SixSubtileFaceVertices
 
 -- [TABLET NODE: P4590T1MixedInteriorGeometry]
 

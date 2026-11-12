@@ -5,10 +5,13 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.CircleCoordinates
-public import Mathlib.Analysis.Complex.Norm
 public import Mathlib.Analysis.Convex.Hull
 public import Mathlib.LinearAlgebra.Complex.Module
+public import Mathlib.Analysis.Normed.Group.Basic
+public import Mathlib.Analysis.Real.Sqrt
 
 -- [TABLET NODE: P4909T1ParentPolygon]
 

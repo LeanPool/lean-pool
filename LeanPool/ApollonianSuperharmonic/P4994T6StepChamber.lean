@@ -5,6 +5,9 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+public import Mathlib.Tactic.NormNum
+
 public import LeanPool.ApollonianSuperharmonic.P4994T6Chamber
 public import LeanPool.ApollonianSuperharmonic.TriangularLatticeAdjacent
 

@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryTilingTransport
 public import LeanPool.ApollonianSuperharmonic.P4055T1PackingGridEquivalence
 public import LeanPool.ApollonianSuperharmonic.P4055T1ExactTripleImage

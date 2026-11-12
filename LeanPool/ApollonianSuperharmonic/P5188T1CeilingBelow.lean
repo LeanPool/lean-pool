@@ -5,9 +5,10 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.ApollonianSuperharmonic.IntegerCeilDiv
-public import Mathlib.Tactic.Linarith
+public import Mathlib.Init
 public import Mathlib.Tactic.Ring
+
+public import LeanPool.ApollonianSuperharmonic.IntegerCeilDiv
 
 -- [TABLET NODE: P5188T1CeilingBelow]
 

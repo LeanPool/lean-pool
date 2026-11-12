@@ -5,22 +5,16 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryCovariance
-public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryCircleAction
 public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryInversePhaseCancellation
-public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryProperCovariance
 public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryScopedPhase
 public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryTilingTransport
-public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryVectorAction
 public import LeanPool.ApollonianSuperharmonic.BandPrototileTranslation
-public import LeanPool.ApollonianSuperharmonic.GaussianQuarterTurn
 public import LeanPool.ApollonianSuperharmonic.QuarterTurnSymmetricCenteredTransport
 public import LeanPool.ApollonianSuperharmonic.ProtoTileObservableExtensionality
-public import LeanPool.ApollonianSuperharmonic.TileQuarterTurnFormulas
-public import LeanPool.ApollonianSuperharmonic.TileReflectionFormulas
-public import LeanPool.ApollonianSuperharmonic.TileTranslationFormulas
 public import LeanPool.ApollonianSuperharmonic.TouchingTriplePermutations
-public import LeanPool.ApollonianSuperharmonic.VectorRecursionLaws
 
 -- [TABLET NODE: BandPackingSymmetryT3T5Covariance]
 

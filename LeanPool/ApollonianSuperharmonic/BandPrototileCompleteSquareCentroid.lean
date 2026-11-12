@@ -5,10 +5,10 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.BandPrototileCentralSymmetry
-public import LeanPool.ApollonianSuperharmonic.FootprintVertices
 public import LeanPool.ApollonianSuperharmonic.PartialOdometerSquares
-public import LeanPool.ApollonianSuperharmonic.TileCentroid
 
 -- [TABLET NODE: BandPrototileCompleteSquareCentroid]
 
@@ -504,7 +504,8 @@ private theorem sumRe_formula :
   push_cast at hs
   rw [Finset.sum_sub_distrib, Finset.sum_sub_distrib,
     Finset.sum_add_distrib, Finset.sum_const] at hs
-  simp? at hs
+  simp only [Int.reduceNeg, GaussianInt.intCast_re, smul_add, nsmul_eq_mul, Finset.sum_const,
+      mul_one] at hs
   have hEq : squares.sum (fun x => (x.re : Real)) =
       squares.sum (fun x => (GaussianInt.toComplex x).re) := by
     apply Finset.sum_congr rfl
@@ -549,7 +550,8 @@ private theorem sumIm_formula :
   push_cast at hs
   rw [Finset.sum_sub_distrib, Finset.sum_sub_distrib,
     Finset.sum_add_distrib, Finset.sum_const] at hs
-  simp? at hs
+  simp only [Int.reduceNeg, GaussianInt.intCast_im, smul_add, nsmul_eq_mul, Finset.sum_const,
+      mul_one] at hs
   have hEq : squares.sum (fun x => (x.im : Real)) =
       squares.sum (fun x => (GaussianInt.toComplex x).im) := by
     apply Finset.sum_congr rfl

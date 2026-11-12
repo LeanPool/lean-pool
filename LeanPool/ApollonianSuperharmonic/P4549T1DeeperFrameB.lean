@@ -5,9 +5,10 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P4458T1RestrictionFamily
 public import LeanPool.ApollonianSuperharmonic.P4536T1EndpointAlgebra
-public import LeanPool.ApollonianSuperharmonic.ProperBandCurvatureStructure
 public import LeanPool.ApollonianSuperharmonic.TileOdometerBandPrototile
 public import LeanPool.ApollonianSuperharmonic.VectorRecursionLaws
 
@@ -125,9 +126,9 @@ theorem P4549T1DeeperFrameB
     ext <;> simp [GaussianRealPoint, y, I, Zsqrtd.re_mul, Zsqrtd.im_mul]
   rcases D.slopes F.slot false with hz | ⟨root, sJ, hroot, hsJ, hre, him⟩
   · omega
-  have hrootEq : root = F.outer_slope := Option.some.inj (hroot.symm.trans F.slope_outer)
+  have hrootEq : root = F.outerSlope := Option.some.inj (hroot.symm.trans F.slope_outer)
   subst root
-  have an : sJ - F.outer_slope =
+  have an : sJ - F.outerSlope =
       (1 / 2 : ℝ) • GaussianRealPoint (-(xa - (-I) * xa)) := by
     rw [hslot, idx3, idx4, hqA, hqE] at hre him
     apply Prod.ext <;>
@@ -135,15 +136,15 @@ theorem P4549T1DeeperFrameB
       linarith
   rcases D.slopes (a + 2) true with hz | ⟨root, sE, hroot, hsE, hre, him⟩
   · omega
-  have hrootEq : root = F.outer_slope := Option.some.inj (hroot.symm.trans F.slope_outer)
+  have hrootEq : root = F.outerSlope := Option.some.inj (hroot.symm.trans F.slope_outer)
   subst root
-  have ae : sE - F.outer_slope =
+  have ae : sE - F.outerSlope =
       (1 / 2 : ℝ) • GaussianRealPoint (ya - (-I) * ya) := by
     rw [idx1, idx2, hqA, hqB] at hre him
     apply Prod.ext <;>
       simp [GaussianRealPoint, ya, I, Zsqrtd.re_mul, Zsqrtd.im_mul] at hre him ⊢ <;>
       linarith
-  have am : F.minus_slope - F.outer_slope = (1 / 2 : ℝ) •
+  have am : F.minusSlope - F.outerSlope = (1 / 2 : ℝ) •
       GaussianRealPoint ((ya - (-I) * wa) - (-I) * (ya - (-I) * wa)) := by
     rw [F.minus_difference, aflip, arec]
   have vmE : TileCentroid Rminus - TileCentroid (D.tiles (a + 2) true) =
@@ -158,14 +159,14 @@ theorem P4549T1DeeperFrameB
       _ = (TileCentroid J - TileCentroid F.tile) -
           (TileCentroid (D.tiles (a + 2) true) - TileCentroid F.tile) := by abel
       _ = _ := by rw [vn, ve]; exact half_sub _ _ _ hv.2
-  have amE : F.minus_slope - sE =
+  have amE : F.minusSlope - sE =
       (1 / 2 : ℝ) • GaussianRealPoint (za - wa) := by
     calc
-      _ = (F.minus_slope - F.outer_slope) - (sE - F.outer_slope) := by abel
+      _ = (F.minusSlope - F.outerSlope) - (sE - F.outerSlope) := by abel
       _ = _ := by rw [am, ae]; exact half_sub _ _ _ ha.1
   have anE : sJ - sE = (1 / 2 : ℝ) • GaussianRealPoint (za + wa) := by
     calc
-      _ = (sJ - F.outer_slope) - (sE - F.outer_slope) := by abel
+      _ = (sJ - F.outerSlope) - (sE - F.outerSlope) := by abel
       _ = _ := by rw [an, ae]; exact half_sub _ _ _ ha.2
   let outer : BandCircle :=
     ⟨⟨p 3, Or.inl hEpos, t, ht.1, 0, ht0⟩, hEpos⟩
@@ -190,9 +191,9 @@ theorem P4549T1DeeperFrameB
     chart := hchart
     minus_centroid := by simpa only [Fin.succ_zero_eq_one, ht0, ht1, z, w] using vmE
     plus_centroid := by simpa only [Fin.succ_zero_eq_one, ht0, ht1, z, w] using vnE
-    outer_slope := sE
-    minus_slope := F.minus_slope
-    plus_slope := sJ
+    outerSlope := sE
+    minusSlope := F.minusSlope
+    plusSlope := sJ
     slope_outer := hsE
     slope_minus := F.slope_minus
     slope_plus := hsJ

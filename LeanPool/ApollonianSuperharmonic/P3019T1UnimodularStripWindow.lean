@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P3019T1ChamberStripGeometry
 public import Mathlib.Tactic.LinearCombination
 

@@ -5,8 +5,9 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.BoundaryFootprintVertices
-public import Mathlib.Tactic.Tauto
 
 -- [TABLET NODE: P5253T1SingletonBoundary]
 

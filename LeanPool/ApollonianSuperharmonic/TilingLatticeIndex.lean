@@ -5,13 +5,12 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.VectorDeterminant
 public import LeanPool.ApollonianSuperharmonic.TilingLattice
 public import LeanPool.ApollonianSuperharmonic.LatticeFundamentalSet
 public import LeanPool.ApollonianSuperharmonic.BandGenealogy
-public import LeanPool.ApollonianSuperharmonic.SemiProperQuadruple
-public import LeanPool.ApollonianSuperharmonic.VectorRecursionLaws
-public import LeanPool.ApollonianSuperharmonic.Preamble
 public import Mathlib.LinearAlgebra.FreeModule.Finite.CardQuotient
 
 -- [TABLET NODE: TilingLatticeIndex]
@@ -49,7 +48,8 @@ private theorem relation :
   have e0 := first.2.2.1
   have e1 := second.2.2.1
   have e2 := third.2.2.1
-  simp? [r, s] at e1 e2
+  simp only [Fin.isValue, Matrix.cons_val_one, Matrix.cons_val_zero, Int.reduceNeg,
+      Matrix.cons_val, r, s] at e1 e2
   rw [e0, e1, e2]
   calc
     _ = (1 - (⟨0, 1⟩ : GaussianInt)) *
@@ -251,7 +251,9 @@ private theorem f_injective :
   intro q a b K determinant_positive f x y hxy
   have hre := congrArg (fun z : GaussianInt => z.re) (congrArg Subtype.val hxy)
   have him := congrArg (fun z : GaussianInt => z.im) (congrArg Subtype.val hxy)
-  simp? [f] at hre him
+  simp only [Int.reduceNeg, Fin.isValue, zsmul_eq_mul, LinearMap.coe_mk, AddHom.coe_mk,
+      Zsqrtd.re_add, Zsqrtd.re_mul, Zsqrtd.re_intCast, Zsqrtd.im_intCast, mul_zero, zero_mul,
+      add_zero, Zsqrtd.im_add, Zsqrtd.im_mul, f] at hre him
   have h0 : (a.re * b.im - a.im * b.re) * (x 0 - y 0) = 0 := by
     calc
       _ = b.im * ((x 0 * a.re + x 1 * b.re) - (y 0 * a.re + y 1 * b.re)) -

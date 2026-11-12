@@ -5,14 +5,15 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import Mathlib.Topology.Algebra.Ring.Real
-public import Mathlib.Topology.Instances.Matrix
-public import Mathlib.Topology.MetricSpace.ProperSpace.Real
 public import Mathlib.Topology.Sequences
 public import LeanPool.ApollonianSuperharmonic.IntegerLaplacianCastBridge
 public import LeanPool.ApollonianSuperharmonic.LocalExponentialEstimate
 public import LeanPool.ApollonianSuperharmonic.QuadraticAffineLaplacian
 public import LeanPool.ApollonianSuperharmonic.RealLaplacianLinearity
+public import Mathlib.Algebra.Order.Ring.Star
 
 -- [TABLET NODE: PointwiseDiagonalCompactness]
 
@@ -196,8 +197,13 @@ private theorem hub :
   have hb1 := hb k 1
   dsimp [w] at hw
   dsimp [w] at hp
-  simp? [LatticeQuadraticForm, Matrix.mulVec, dotProduct] at hw ⊢
-  simp? [LatticeQuadraticForm, Matrix.mulVec, dotProduct] at hp
+  simp only [LatticeQuadraticForm, one_div, dotProduct, Int.reduceNeg, GaussianInt.intCast_re,
+      GaussianInt.intCast_im, Matrix.mulVec, Fin.sum_univ_two, Fin.isValue,
+      Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val_fin_one, mul_zero, zero_add,
+      tsub_le_iff_right, ge_iff_le] at hw ⊢
+  simp only [LatticeQuadraticForm, one_div, dotProduct, Int.reduceNeg, GaussianInt.intCast_re,
+      GaussianInt.intCast_im, Matrix.mulVec, Fin.sum_univ_two, Fin.isValue,
+      Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val_fin_one, sub_nonneg] at hp
   have e00 : |B k 0 0| ≤ |l00| + |u00| := by
     rw [abs_le]
     constructor <;> nlinarith [h00'.1, h00'.2, neg_le_abs l00, neg_le_abs u00,
@@ -782,7 +788,8 @@ theorem PointwiseDiagonalCompactness :
     have e2 := h2 K (by dsimp [K]; omega)
     have e3 := h3 K (by dsimp [K]; omega)
     have e4 := h4 K (by dsimp [K]; omega)
-    simp? [FourNeighborLaplacian, e0, e1, e2, e3, e4] at hu ⊢
+    simp only [FourNeighborLaplacian, e1, e2, Int.reduceNeg, e3, e4, e0, tsub_le_iff_right,
+        ge_iff_le] at hu ⊢
     exact hu
   · intro x
     have h00 := (hconv 0 0).comp output_mono.tendsto_atTop

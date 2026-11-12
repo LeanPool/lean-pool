@@ -5,58 +5,18 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.BandInterfaceRootedForest
 public import LeanPool.ApollonianSuperharmonic.AcyclicIndegreeOrientation
-public import LeanPool.ApollonianSuperharmonic.BandCanonicalPeriodicExtension
 public import LeanPool.ApollonianSuperharmonic.BandCircle
-public import LeanPool.ApollonianSuperharmonic.BandGeneralCircle
-public import LeanPool.ApollonianSuperharmonic.BandOrderedGeneralConfiguration
-public import LeanPool.ApollonianSuperharmonic.BandOrderedGeneralLayout
-public import LeanPool.ApollonianSuperharmonic.BandOrderedGeneralLayoutCertificate
-public import LeanPool.ApollonianSuperharmonic.BandOriginalPairSeparation
-public import LeanPool.ApollonianSuperharmonic.BandPackingShiftPotential
-public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetry
-public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryCovariance
-public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryGlobalOdometerTransport
-public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryPartialOdometerAction
-public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryTileAction
-public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryTileOdometerCovariance
-public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryVectorAction
-public import LeanPool.ApollonianSuperharmonic.BandRegimeClassification
-public import LeanPool.ApollonianSuperharmonic.BandPrototile
-public import LeanPool.ApollonianSuperharmonic.BandPrototileCentroidUnique
-public import LeanPool.ApollonianSuperharmonic.BandSubtileOccurrence
-public import LeanPool.ApollonianSuperharmonic.BandTileSimultaneousInduction
-public import LeanPool.ApollonianSuperharmonic.BoundaryFootprintEdges
 public import LeanPool.ApollonianSuperharmonic.BoundaryFootprintVertices
-public import LeanPool.ApollonianSuperharmonic.ClosedSquareRealization
 public import LeanPool.ApollonianSuperharmonic.DiamondTileAcyclicIndegree
-public import LeanPool.ApollonianSuperharmonic.FootprintVertices
-public import LeanPool.ApollonianSuperharmonic.FordCircleCoordinate
 public import LeanPool.ApollonianSuperharmonic.FordTileAcyclicIndegree
-public import LeanPool.ApollonianSuperharmonic.FourNeighborAdjacent
 public import LeanPool.ApollonianSuperharmonic.FourNeighborLaplacian
-public import LeanPool.ApollonianSuperharmonic.GaussianQuarterTurn
-public import LeanPool.ApollonianSuperharmonic.GaussianReflection
 public import LeanPool.ApollonianSuperharmonic.GlobalOdometerExtends
-public import LeanPool.ApollonianSuperharmonic.LatticeEdgeRegularity
-public import LeanPool.ApollonianSuperharmonic.LatticeTile
-public import LeanPool.ApollonianSuperharmonic.ParentalOrientationGluing
-public import LeanPool.ApollonianSuperharmonic.PeriodicTileTotalIndegree
-public import LeanPool.ApollonianSuperharmonic.PositiveCurvatureTileOdometerDomain
-public import LeanPool.ApollonianSuperharmonic.PositiveCurvatureTileOdometerSupportTransport
-public import LeanPool.ApollonianSuperharmonic.ProperBandQuadruple
-public import LeanPool.ApollonianSuperharmonic.ProperBandCurvatureStructure
-public import LeanPool.ApollonianSuperharmonic.TileRealization
 public import LeanPool.ApollonianSuperharmonic.TileOdometer
-public import LeanPool.ApollonianSuperharmonic.TileOdometerReindexedDecomposition
-public import LeanPool.ApollonianSuperharmonic.TileQuarterTurnFormulas
-public import LeanPool.ApollonianSuperharmonic.TileReflectionFormulas
-public import LeanPool.ApollonianSuperharmonic.TopologicalDisk
-public import LeanPool.ApollonianSuperharmonic.P4564T2ElementaryQuarterTurn
-public import LeanPool.ApollonianSuperharmonic.P5532T1OrientationPullback
 public import LeanPool.ApollonianSuperharmonic.P5532T1SymmetryOrientationTransport
-public import LeanPool.ApollonianSuperharmonic.AncestorOdometerRestriction
 public import LeanPool.ApollonianSuperharmonic.P5532T1RestrictionMassBalance
 public import LeanPool.ApollonianSuperharmonic.P5532T1ParentInteriorGeometry
 public import LeanPool.ApollonianSuperharmonic.P5532T1OverlapNoEntry
@@ -88,7 +48,7 @@ private theorem emptyOrientation :
   intro σ
   exact ⟨{
     edge := fun _ _ => False
-    edge_decidable := fun _ _ => Classical.propDecidable _
+    edgeDecidable := fun _ _ => Classical.propDecidable _
     rank := fun _ => 0
     supported := by intro x y he; cases he
     oriented := by simp

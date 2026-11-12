@@ -5,9 +5,11 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+public import Mathlib.Order.Interval.Set.Infinite
+
 public import LeanPool.ApollonianSuperharmonic.P3650T1ExposedCorner
-public import Mathlib.Data.Set.Finite.Range
-public import Mathlib.Tactic.Linarith
+public import LeanPool.ApollonianSuperharmonic.P3544T1LocalParity
 
 -- [TABLET NODE: P3650T1ExposedCornerExists]
 
@@ -430,7 +432,8 @@ private theorem hFc :
         F c = 0 ) := by
   classical
   intro n p v b B a c cross D L F
-  simp? [F, L, cross]
+  simp only [Prod.fst_sub, Prod.snd_sub, LinearMap.coe_mk, AddHom.coe_mk, mul_eq_zero,
+      inv_eq_zero, F, L, cross]
   left
   ring
 

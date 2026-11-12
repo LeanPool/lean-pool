@@ -5,6 +5,13 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+public import Mathlib.Topology.MetricSpace.Basic
+public import Mathlib.Basic.Real.Basic
+public import Mathlib.Data.Finset.Card
+public import Mathlib.Topology.Connected.Basic
+public import Mathlib.Topology.Order.IntermediateValue
+
 public import Mathlib.Combinatorics.SimpleGraph.Connectivity.Connected
 public import LeanPool.ApollonianSuperharmonic.FourNeighborAdjacent
 public import LeanPool.ApollonianSuperharmonic.GridEdgeCarrier

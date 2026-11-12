@@ -5,9 +5,16 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+public import Mathlib.Data.ZMod.Basic
+public import Mathlib.Data.Finset.Card
+public import Mathlib.Data.List.Cycle
+public import Mathlib.Tactic.ByContra
+public import Mathlib.Tactic.NormNum
+public import Mathlib.Tactic.Ring
+
 public import LeanPool.ApollonianSuperharmonic.SimpleGridCycle
 public import Mathlib.Data.List.TakeWhile
-public import Mathlib.Data.List.Cycle
 
 -- [TABLET NODE: P3963T1MixedBoundaryCycle]
 
@@ -32,7 +39,7 @@ private theorem rotate_chain :
   classical
   intro p k a b hh ht hc hchain hk
   by_cases hz : k = 0
-  · simp? [hz]
+  · simp only [hz, List.rotate_zero]
     exact hchain
   · have hp : 0 < k := Nat.pos_of_ne_zero hz
     rw [List.rotate_eq_drop_append_take (Nat.le_of_lt hk)]
@@ -152,7 +159,7 @@ private theorem hcross :
       (List.mem_rotate (l := p₁) (a := v) (n := p₁.idxOf z)).mp hvc₁
     rw [hV₁]
     exact List.mem_toFinset.mpr hvp₁
-  simp? [Q] at hv
+  simp only [List.mem_cons, List.mem_append, List.not_mem_nil, or_false, Q] at hv
   rcases hv with rfl | hv | rfl
   · exact hxnotprefix₁ hw
   · have hvnot : v ∉ V₁ := by

@@ -5,11 +5,12 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.BandPrototileTranslationNormalForm
 public import LeanPool.ApollonianSuperharmonic.TileOdometerBandPrototile
 public import LeanPool.ApollonianSuperharmonic.TileOdometerAffineTranslation
 public import LeanPool.ApollonianSuperharmonic.PositiveCurvatureTileOdometerSupportTransport
-public import LeanPool.ApollonianSuperharmonic.PartialOdometerAffineTranslateFormulas
 
 -- [TABLET NODE: P4250T1IntegralAffinePlacement]
 

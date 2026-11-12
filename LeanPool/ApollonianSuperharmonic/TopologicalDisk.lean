@@ -5,7 +5,13 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.ApollonianSuperharmonic.Preamble
+public import Mathlib.Init
+public import Mathlib.Topology.MetricSpace.Pseudo.Constructions
+public import Mathlib.Basic.Real.Basic
+public import Mathlib.Data.Set.Basic
+public import Mathlib.Topology.Homeomorph.Defs
+public import Mathlib.Topology.MetricSpace.Pseudo.Real
+
 
 -- [TABLET NODE: TopologicalDisk]
 

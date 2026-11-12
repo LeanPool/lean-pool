@@ -5,14 +5,13 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.BandPrototile
 public import LeanPool.ApollonianSuperharmonic.BandPrototileCentroidUnique
 public import LeanPool.ApollonianSuperharmonic.BandPrototileTranslation
 public import LeanPool.ApollonianSuperharmonic.CentrallyReflectedAt
 public import LeanPool.ApollonianSuperharmonic.GaussianQuarterTurn
-public import LeanPool.ApollonianSuperharmonic.TileCentroid
-public import LeanPool.ApollonianSuperharmonic.TileRealization
-public import LeanPool.ApollonianSuperharmonic.TileTranslationFormulas
 
 -- [TABLET NODE: BandPrototileCentralSymmetry]
 

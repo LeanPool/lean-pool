@@ -5,10 +5,10 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.TileOdometer
-public import LeanPool.ApollonianSuperharmonic.ProperBandCurvatureStructure
 public import LeanPool.ApollonianSuperharmonic.PartialOdometerAffineTranslateFormulas
-public import LeanPool.ApollonianSuperharmonic.PositiveCurvatureTileOdometerDomain
 public import LeanPool.ApollonianSuperharmonic.GaussianQuarterTurn
 
 -- [TABLET NODE: P4250T1DefinedHalfIntegralSlope]

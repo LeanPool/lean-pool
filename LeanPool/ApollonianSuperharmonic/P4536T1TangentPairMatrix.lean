@@ -5,9 +5,10 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.CircleMatrix
 public import LeanPool.ApollonianSuperharmonic.VectorNonvanishing
-public import LeanPool.ApollonianSuperharmonic.VectorSquareProduct
 
 -- [TABLET NODE: P4536T1TangentPairMatrix]
 
@@ -64,7 +65,10 @@ theorem P4536T1TangentPairMatrix (C : BandCircle)
         ring
   have hre := congrArg Zsqrtd.re hgauss
   have him := congrArg Zsqrtd.im hgauss
-  simp? at hre him
+  simp only [Int.reduceNeg, Zsqrtd.re_add, Zsqrtd.re_mul, Zsqrtd.re_star, neg_mul, one_mul,
+      Zsqrtd.im_star, mul_neg, neg_neg, Zsqrtd.re_ofNat, Nat.cast_ofNat, Zsqrtd.re_intCast,
+      Zsqrtd.im_ofNat, mul_zero, Zsqrtd.im_intCast, add_zero, Zsqrtd.im_mul, zero_mul,
+      Zsqrtd.im_add] at hre him
   rw [hC] at hre him
   have hrer : ((BandVectors.1 (q i) C.1.1).re : ℝ) +
       ((C.1.1.2.re : ℝ) * (BandVectors.1 (q i) C.1.1).re +

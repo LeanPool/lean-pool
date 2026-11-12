@@ -5,11 +5,18 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P4715T1CoefficientTranslation
-public import LeanPool.ApollonianSuperharmonic.P4715T1BoundaryCycle
 public import LeanPool.ApollonianSuperharmonic.P4793T1SupportingFace
 public import LeanPool.ApollonianSuperharmonic.P4793T1FacetForms
-public import LeanPool.ApollonianSuperharmonic.P4715T1HexagonTessellation
+public import LeanPool.ApollonianSuperharmonic.P4780T1ActiveFacets
+public import Mathlib.Algebra.Order.Field.Power
+public import Mathlib.Analysis.Normed.Field.Basic
+public import Mathlib.Analysis.Real.Sqrt
+public import Mathlib.Data.EReal.Inv
+public import Mathlib.Logic.Equiv.PartialEquiv
+public import Mathlib.Tactic.IntervalCases
 
 
 -- [TABLET NODE: P4802T1SideRestriction]

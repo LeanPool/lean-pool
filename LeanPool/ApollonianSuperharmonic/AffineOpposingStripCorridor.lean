@@ -5,9 +5,12 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.ApollonianSuperharmonic.AffineTriangularCorridorStep
-public import LeanPool.ApollonianSuperharmonic.TriangularStripSegmentOrderInterval
+public import Mathlib.Init
 public import Mathlib.Data.List.Range
+public import Mathlib.Topology.Basic
+
+public import LeanPool.ApollonianSuperharmonic.AffineTriangularCorridorStep
+public import LeanPool.ApollonianSuperharmonic.AffineTriangularStrip
 
 -- [TABLET NODE: AffineOpposingStripCorridor]
 

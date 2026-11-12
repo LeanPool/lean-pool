@@ -5,12 +5,14 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.LatticeTile
 public import LeanPool.ApollonianSuperharmonic.TileArea
 public import LeanPool.ApollonianSuperharmonic.TileQuarterTurnFormulas
 public import LeanPool.ApollonianSuperharmonic.TileReflectionFormulas
 public import LeanPool.ApollonianSuperharmonic.TileTranslationFormulas
-public import LeanPool.ApollonianSuperharmonic.TopologicalDisk
+public import Mathlib.Topology.MetricSpace.Isometry
 
 -- [TABLET NODE: TileDiskAreaCovariance]
 

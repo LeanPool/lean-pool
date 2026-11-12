@@ -5,8 +5,10 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.ApollonianSuperharmonic.Preamble
+public import Mathlib.Init
+public import Mathlib.Tactic.ByContra
 public import Mathlib.Tactic.Linarith
+
 
 -- [TABLET NODE: P5098T1PeriodWindow]
 

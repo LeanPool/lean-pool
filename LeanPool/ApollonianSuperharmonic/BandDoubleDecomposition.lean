@@ -5,16 +5,14 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.BandPrototile
 public import LeanPool.ApollonianSuperharmonic.BandPrototileCentroidUnique
 public import LeanPool.ApollonianSuperharmonic.BandPrototileTranslation
 public import LeanPool.ApollonianSuperharmonic.BandParentBoundaryGenealogy
-public import LeanPool.ApollonianSuperharmonic.GaussianQuarterTurn
 public import LeanPool.ApollonianSuperharmonic.ProtoTileObservableExtensionality
 public import LeanPool.ApollonianSuperharmonic.QuarterTurnSymmetricCenteredTransport
-public import LeanPool.ApollonianSuperharmonic.SemiProperForestClassification
-public import LeanPool.ApollonianSuperharmonic.TileQuarterTurnFormulas
-public import LeanPool.ApollonianSuperharmonic.TileTranslationFormulas
 public import LeanPool.ApollonianSuperharmonic.TouchingTripleCovariance
 public import LeanPool.ApollonianSuperharmonic.TouchingTriplePermutations
 public import LeanPool.ApollonianSuperharmonic.VectorRecursionLaws
@@ -159,8 +157,10 @@ private theorem rotatedT5 :
       have huy := congrArg Prod.snd hu
       have hvx := congrArg Prod.fst hv
       have hvy := congrArg Prod.snd hv
-      simp? [Function.iterate_succ_apply', GaussianRealPoint, GaussianQuarterTurn]
-        at hux huy hvx hvy
+      simp only [Prod.fst_sub, one_div, GaussianRealPoint, Int.reduceNeg, Fin.isValue,
+          Function.iterate_succ_apply', GaussianQuarterTurn, Int.cast_neg,
+          GaussianInt.intCast_im, GaussianInt.intCast_re, Prod.mk_add_mk, Prod.smul_mk,
+          smul_eq_mul, Prod.snd_sub, Prod.mk_sub_mk, sub_neg_eq_add] at hux huy hvx hvy
       have h : TouchingTriple T' U' V' := by
         apply ih T' U' V' hT' hU' hV'
         · apply Prod.ext <;> simp [GaussianRealPoint] <;>
@@ -959,9 +959,22 @@ theorem BandDoubleDecomposition :
   have s1y := congrArg Prod.snd cs1
   have s2x := congrArg Prod.fst cs2
   have s2y := congrArg Prod.snd cs2
-  simp? [GaussianRealPoint] at p0x p0y m0x m0y p1x p1y m1x m1y
-  simp? [GaussianRealPoint, hc] at p2x p2y m2x m2y q0x q0y s0x s0y
-  simp? [GaussianRealPoint, hd, he, hc, I] at q1x q1y q2x q2y s1x s1y s2x s2y
+  simp only [Fin.isValue, Prod.fst_sub, one_div, GaussianRealPoint, Int.reduceNeg,
+      GaussianInt.intCast_re, GaussianInt.intCast_im, Prod.mk_sub_mk, sub_neg_eq_add,
+      Prod.smul_mk, smul_eq_mul, one_smul, Prod.snd_sub, neg_smul, Prod.neg_mk]
+      at p0x p0y m0x m0y p1x p1y m1x m1y
+  simp only [Fin.isValue, Prod.fst_sub, one_div, GaussianRealPoint, Int.reduceNeg, hc,
+      Zsqrtd.re_sub, Zsqrtd.re_neg, Int.cast_sub, Int.cast_neg, GaussianInt.intCast_re,
+      Zsqrtd.im_sub, Zsqrtd.im_neg, GaussianInt.intCast_im, neg_sub, sub_neg_eq_add,
+      Prod.mk_sub_mk, Prod.smul_mk, smul_eq_mul, one_smul, Prod.snd_sub, neg_smul,
+      Prod.neg_mk] at p2x p2y m2x m2y q0x q0y s0x s0y
+  simp only [Fin.isValue, Prod.fst_sub, one_div, GaussianRealPoint, Int.reduceNeg, hd,
+      Zsqrtd.re_sub, Zsqrtd.re_mul, zero_mul, mul_one, neg_mul, one_mul, zero_add,
+      sub_neg_eq_add, Int.cast_add, GaussianInt.intCast_re, GaussianInt.intCast_im,
+      Zsqrtd.im_sub, Zsqrtd.im_mul, Int.cast_sub, neg_sub, Prod.mk_sub_mk, Prod.smul_mk,
+      smul_eq_mul, one_smul, Prod.snd_sub, he, hc, Zsqrtd.re_add, Zsqrtd.re_neg, Int.cast_neg,
+      Zsqrtd.im_add, Zsqrtd.im_neg, neg_add_rev, neg_smul, Prod.neg_mk, I]
+      at q1x q1y q2x q2y s1x s1y s2x s2y
   have qcenter : TileCentroid (Q 0 false) = x := by
     apply Prod.ext
     · linarith only [p0x, q0x]

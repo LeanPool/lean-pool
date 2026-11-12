@@ -5,12 +5,10 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P5332T1ParentRows
 public import LeanPool.ApollonianSuperharmonic.FordOdometer
-public import LeanPool.ApollonianSuperharmonic.FordVertexDomain
-public import LeanPool.ApollonianSuperharmonic.P4210T1FordCellRectangles
-public import LeanPool.ApollonianSuperharmonic.FordDoubledBoundary
-public import LeanPool.ApollonianSuperharmonic.P5188T1CeilingShift
 
 -- [TABLET NODE: P5332T1Parent2Rotation0Values]
 
@@ -114,21 +112,26 @@ private theorem values :
   intro P A hq f hbase qsum rpos spos hsn Y hAqInt hdisp hx0 hx'0 hY hlow t valLeft valChildEast
       valA hother l
   fin_cases l
-  · simp? []
+  · simp only [Int.reduceNeg, Nat.succ_eq_add_one, Nat.reduceAdd, Fin.zero_eta, Fin.isValue,
+      Matrix.cons_val_zero, add_zero]
     have hh := hbase ⟨0,Y⟩ hx0
     rw [hh, valLeft Y (by omega) (by omega)]
     simp [P5332T1ParentRows]
-  · simp? []
+  · simp only [Int.reduceNeg, Nat.succ_eq_add_one, Nat.reduceAdd, Fin.mk_one, Fin.isValue,
+      Matrix.cons_val_one, Matrix.cons_val_zero]
     have eastArg : (⟨0,Y⟩ : GaussianInt) + 1 = ⟨1,Y⟩ := by ext <;> simp
     rw [eastArg]
     have hh := hbase ⟨1,Y⟩ (by
       change 0 ≤ (1 : Int) ∧ 1 ≤ (P.q : Int) ∧ 0 ≤ Y ∧ Y ≤ P.q
       omega)
     rw [hh, valChildEast Y (by omega) (by omega)]
-    simp? [P5332T1ParentRows, IntegerCeilDiv]
+    simp only [IntegerCeilDiv, P5332T1ParentRows, Nat.succ_eq_add_one, Nat.reduceAdd,
+        Int.reduceNeg, neg_add_rev, neg_sub, Fin.isValue, Matrix.cons_val',
+        Matrix.cons_val_zero, Matrix.cons_val_fin_one, Matrix.cons_val_one, neg_inj]
     have hy : Y = (P.q₂ : Int)-t := by dsimp [t]; omega
     rw [hy]
-  · simp? [Fin.reduceFinMk]
+  · simp only [Int.reduceNeg, Nat.succ_eq_add_one, Nat.reduceAdd, Fin.reduceFinMk,
+      Matrix.cons_val, Fin.isValue]
     have arg : (⟨0,Y⟩ : GaussianInt)-1 = ⟨-1,Y⟩ := by ext <;> simp
     have hp := hother (⟨0,Y⟩-1) (by
       rw [arg]
@@ -159,14 +162,16 @@ private theorem values :
         -(P.p₂*((P.q₂ : Int)-t)/(P.q₂ : Int)) := by rfl
     rw [hrowval]
     simpa only [hy] using hp
-  · simp? [Fin.reduceFinMk]
+  · simp only [Int.reduceNeg, Nat.succ_eq_add_one, Nat.reduceAdd, Fin.reduceFinMk,
+      Matrix.cons_val, Zsqrtd.add_def, add_zero, Fin.isValue]
     have northArg : (⟨0,Y⟩ : GaussianInt) + ⟨0,1⟩ = ⟨0,Y+1⟩ := by ext <;> simp
     have hh := hbase ⟨0,Y+1⟩ (by
       change (0 : Int) ≤ 0 ∧ 0 ≤ (P.q : Int) ∧ 0 ≤ Y+1 ∧ Y+1 ≤ (P.q : Int)
       omega)
     rw [hh, valLeft (Y+1) (by omega) (by omega)]
     simp [P5332T1ParentRows]
-  · simp? [Fin.reduceFinMk]
+  · simp only [Int.reduceNeg, Nat.succ_eq_add_one, Nat.reduceAdd, Fin.reduceFinMk,
+      Matrix.cons_val, Fin.isValue]
     have southArg : (⟨0,Y⟩ : GaussianInt) - ⟨0,1⟩ = ⟨0,Y-1⟩ := by ext <;> simp
     have southPlus : (⟨0,Y⟩ : GaussianInt) + (-⟨0,1⟩) = ⟨0,Y-1⟩ := by
       ext <;> simp; ring

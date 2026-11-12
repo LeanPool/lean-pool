@@ -5,13 +5,11 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.ApollonianSuperharmonic.P3161T2IncidentBoundary
-public import LeanPool.ApollonianSuperharmonic.FootprintVertices
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.GlobalOdometerExtends
 public import LeanPool.ApollonianSuperharmonic.FourNeighborLaplacian
 public import LeanPool.ApollonianSuperharmonic.TileOdometerTranslationUniqueness
-public import LeanPool.ApollonianSuperharmonic.PositiveCurvatureTileOdometerDomain
-public import Mathlib.Tactic.Abel
 
 -- [TABLET NODE: P4120T1AffineComparison]
 

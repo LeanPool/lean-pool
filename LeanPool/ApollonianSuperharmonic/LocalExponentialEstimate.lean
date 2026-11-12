@@ -5,7 +5,10 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.RealFourNeighborLaplacian
+public meta import Lean.Meta.Tactic.NormCast
 
 -- [TABLET NODE: LocalExponentialEstimate]
 

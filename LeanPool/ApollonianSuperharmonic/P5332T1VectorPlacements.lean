@@ -5,10 +5,11 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P5332T1RightRows
 public import LeanPool.ApollonianSuperharmonic.P5332T1ParentRows
 public import LeanPool.ApollonianSuperharmonic.FordCoordinateConfiguration
-public import LeanPool.ApollonianSuperharmonic.VectorRecursionLaws
 public import LeanPool.ApollonianSuperharmonic.GaussianRealPoint
 
 -- [TABLET NODE: P5332T1VectorPlacements]

@@ -5,8 +5,9 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.SemiProperQuadruple
-public import LeanPool.ApollonianSuperharmonic.Preamble
 public import LeanPool.ApollonianSuperharmonic.TangencyCoordinateBaseTables
 public import LeanPool.ApollonianSuperharmonic.TangencyCoordinateRotation
 public import LeanPool.ApollonianSuperharmonic.TangencyCoordinateSuccessorNorm

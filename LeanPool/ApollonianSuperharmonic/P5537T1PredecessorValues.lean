@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P5537T1ScaledDiamondFormula
 
 -- [TABLET NODE: P5537T1PredecessorValues]

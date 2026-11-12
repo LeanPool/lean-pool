@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P3523T1OrderedInsertion
 public import LeanPool.ApollonianSuperharmonic.P3523T1FaceEnumeration
 
@@ -60,7 +62,7 @@ private theorem hsplit_card :
   rw [Finset.mem_biUnion] at hG
   rcases hG with ⟨F, hF, hG⟩
   by_cases hp : a ∈ F ∧ b ∈ F
-  · simp? [hp] at hG
+  · simp only [hp, and_self, ↓reduceIte, Finset.mem_insert, Finset.mem_singleton] at hG
     rcases hG with hG | hG
     · subst G
       have hnot : d ∉ F.erase b := fun hx => hd F hF (Finset.mem_of_mem_erase hx)
@@ -70,7 +72,7 @@ private theorem hsplit_card :
       have hnot : d ∉ F.erase a := fun hx => hd F hF (Finset.mem_of_mem_erase hx)
       rw [Finset.card_insert_of_notMem hnot, Finset.card_erase_of_mem hp.1]
       rw [hf F hF]
-  · simp? [hp] at hG
+  · simp only [hp, ↓reduceIte, Finset.mem_singleton] at hG
     subst G
     exact hf F hF
 
@@ -90,7 +92,7 @@ private theorem hsplit_sub :
   rw [Finset.mem_biUnion] at hG
   rcases hG with ⟨F, hF, hG⟩
   by_cases hp : a ∈ F ∧ b ∈ F
-  · simp? [hp] at hG
+  · simp only [hp, and_self, ↓reduceIte, Finset.mem_insert, Finset.mem_singleton] at hG
     rcases hG with hG | hG
     · subst G
       intro x hx
@@ -104,7 +106,7 @@ private theorem hsplit_sub :
       rcases hx with rfl | hx
       · exact Or.inl rfl
       · exact Or.inr (hf F hF (Finset.mem_of_mem_erase hx))
-  · simp? [hp] at hG
+  · simp only [hp, ↓reduceIte, Finset.mem_singleton] at hG
     subst G
     intro x hx
     simp only [Finset.mem_insert]
@@ -613,9 +615,9 @@ private theorem hindexed_ledger :
   by_cases hbnd : {i, j} ∈ c.boundary c.steps.length
   · have hbSucc := (hboundary_final_pair i j hij).mp hbnd
     by_cases hex : ∃ F ∈ fs, i ∈ F ∧ j ∈ F
-    · simp? [hbnd, hbSucc] at h ⊢
+    · simp only [hbnd, ↓reduceIte, hbSucc] at h ⊢
       exact h
-    · simp? [hbnd, hbSucc] at h ⊢
+    · simp only [hbnd, ↓reduceIte, hbSucc] at h ⊢
       exact h
   · have hbSucc : ¬(j = i + 1 ∨ i = j + 1) := by
       intro hsucc
@@ -626,7 +628,7 @@ private theorem hindexed_ledger :
       have hidx := (hindexed_exists i j).2 hex
       have hidx' : ∃ k : Fin fs.card, (∃ y, f k y = i) ∧ ∃ y, f k y = j := by
         simpa only [Set.mem_range] using hidx
-      simp? [hbnd, hbSucc, hex', hidx'] at h ⊢
+      simp only [hbnd, ↓reduceIte, hex', hbSucc, Set.mem_range, hidx'] at h ⊢
       exact h
     · have hidx : ¬∃ k : Fin fs.card, i ∈ Set.range (f k) ∧ j ∈ Set.range (f k) := by
         intro hk
@@ -635,7 +637,8 @@ private theorem hindexed_ledger :
         simpa [fs] using hex
       have hidx' : ¬∃ k : Fin fs.card, (∃ y, f k y = i) ∧ ∃ y, f k y = j := by
         simpa only [Set.mem_range] using hidx
-      simp? [hbnd, hbSucc, hex', hidx'] at h ⊢
+      simp only [hbnd, ↓reduceIte, hex', Finset.card_eq_zero, Finset.filter_eq_empty_iff,
+          not_and, hbSucc, Set.mem_range, hidx'] at h ⊢
       exact h
 
 private theorem hboundary0_pair :
@@ -842,7 +845,7 @@ private theorem hsplit_eq :
     by_cases hp : a ∈ H ∧ b ∈ H
     · have hEq := huniq H hH hp
       subst H
-      simp? [hpF] at hGH
+      simp only [hpF, and_self, ↓reduceIte, Finset.mem_insert, Finset.mem_singleton] at hGH
       rcases hGH with rfl | rfl
       · simp [FL, FR, hFL, hFLFR]
       · simp [FR, hFR]

@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.BoundaryFootprintVertices
 public import LeanPool.ApollonianSuperharmonic.FootprintEdges
 public import LeanPool.ApollonianSuperharmonic.FootprintVertices
@@ -354,7 +356,8 @@ private theorem quarterTurnCentroid (T : ProtoTile) :
       intro a b hab
       rcases a with ⟨a, c⟩
       rcases b with ⟨b, d⟩
-      simp? [GaussianQuarterTurn] at hab ⊢
+      simp only [GaussianQuarterTurn, Int.reduceNeg, sub_left_inj, Zsqrtd.mk.injEq, neg_inj]
+          at hab ⊢
       exact ⟨hab.2, hab.1⟩
     have coordRe (x : GaussianInt) :
         (GaussianInt.toComplex x).re = (x.re : Real) := by
@@ -376,7 +379,9 @@ private theorem quarterTurnCentroid (T : ProtoTile) :
     have sumImInt (x : GaussianInt) :
         ((GaussianQuarterTurn x - 1).im : Real) = (x.re : Real) :=
       quarter_im_cast x
-    simp? [TileCentroid, h]
+    simp only [TileCentroid, Finset.image_nonempty, h, ↓reduceIte, Int.reduceNeg,
+        Int.cast_sum, GaussianInt.intCast_re, one_div, GaussianInt.intCast_im, neg_add_rev,
+        Prod.mk.injEq, add_left_inj]
     rw [Finset.card_image_of_injective T.cells hinj]
     rw [Finset.sum_image hinj.injOn]
     rw [Finset.sum_image hinj.injOn]
@@ -486,7 +491,8 @@ theorem TileQuarterTurnFormulas : ∀ T : ProtoTile,
     by_cases h : T.cells.Nonempty
     · have hnew : (T.cells.image (fun x => GaussianQuarterTurn x - 1)).Nonempty :=
         h.image _
-      simp? [FootprintVertices, h, hnew]
+      simp only [FootprintVertices, hnew, ↓reduceIte, Finset.mem_image, Int.reduceNeg,
+          exists_exists_and_eq_and, sub_add_cancel, Set.mem_ofPred_eq, h, Set.mem_image]
       constructor
       · rintro ⟨a, ha, hv⟩
         rcases hv with rfl | rfl | rfl | rfl
@@ -562,8 +568,8 @@ theorem TileQuarterTurnFormulas : ∀ T : ProtoTile,
           minus_one_add_one, minus_one_add_up]
       · refine Or.inr (Or.inl ?_)
         rw [← he, h3]
-        simp? [Finset.image_insert, turn_up, pair_swap,
-          minus_one_add_up]
+        simp only [Int.reduceNeg, pair_swap, Finset.image_insert, turn_up,
+            Finset.image_singleton, minus_one_add_up]
         rw [turn_shift, ← minus_one_add_up]
   have edge_formula :
         BoundaryFootprintEdges (TileQuarterTurn T) =

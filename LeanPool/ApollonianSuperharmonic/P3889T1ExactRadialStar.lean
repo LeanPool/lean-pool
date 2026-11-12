@@ -5,8 +5,10 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+public import Mathlib.Tactic.Positivity
+
 public import LeanPool.ApollonianSuperharmonic.P3723T1AllContactRouting
-public import LeanPool.ApollonianSuperharmonic.P3767T1VertexEdgeIncidence
 public import LeanPool.ApollonianSuperharmonic.P3776T1FixedGeometry
 public import Mathlib.Analysis.Normed.MulAction
 

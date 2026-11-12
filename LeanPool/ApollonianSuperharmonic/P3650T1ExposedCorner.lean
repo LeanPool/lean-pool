@@ -5,7 +5,14 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.ApollonianSuperharmonic.P3544T1LocalParity
+public import Mathlib.Init
+public import Mathlib.Topology.MetricSpace.Pseudo.Real
+
+public import LeanPool.ApollonianSuperharmonic.P3381T1TriangleDeterminant
+public import LeanPool.ApollonianSuperharmonic.P3544T1RayParity
+public import Mathlib.Analysis.Normed.Group.Basic
+public import Mathlib.Data.EReal.Inv
+public import Mathlib.Topology.Algebra.InfiniteSum.Order
 
 -- [TABLET NODE: P3650T1ExposedCorner]
 

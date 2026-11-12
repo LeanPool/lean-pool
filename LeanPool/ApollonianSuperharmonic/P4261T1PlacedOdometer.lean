@@ -5,10 +5,10 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.BandOrderedGeneralLayoutCertificate
-public import LeanPool.ApollonianSuperharmonic.SixSubtileLabel
 public import LeanPool.ApollonianSuperharmonic.P4250T1SlopeOffset
-public import LeanPool.ApollonianSuperharmonic.SubtileOccurrenceInterpretation
 public import LeanPool.ApollonianSuperharmonic.TileOdometer
 
 -- [TABLET NODE: P4261T1PlacedOdometer]

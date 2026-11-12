@@ -5,10 +5,14 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+public import Mathlib.Tactic.Positivity
+
 public import LeanPool.ApollonianSuperharmonic.BandCircleEuclideanData
 public import LeanPool.ApollonianSuperharmonic.BandSuccessorClassification
 public import LeanPool.ApollonianSuperharmonic.ProperBandCurvatureStructure
 public import LeanPool.ApollonianSuperharmonic.TangencyCoordinateIdentity
+public import Mathlib.Analysis.Complex.Basic
 
 -- [TABLET NODE: BandDescartesGapSubdivision]
 

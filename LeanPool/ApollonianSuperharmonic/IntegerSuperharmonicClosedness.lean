@@ -5,7 +5,9 @@ Authors: Wesley Pegden
 -/
 module
 
-public import Mathlib.Topology.Instances.Matrix
+public import Mathlib.Init
+public import Mathlib.Topology.MetricSpace.Pseudo.Real
+
 public import LeanPool.ApollonianSuperharmonic.IntegerPreservingNormalization
 public import LeanPool.ApollonianSuperharmonic.PointwiseDiagonalCompactness
 public import LeanPool.ApollonianSuperharmonic.TranslatedMinimumEnvelope

@@ -5,8 +5,9 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P3889T1TwoRaySectorDecomposition
-public import Mathlib.Topology.MetricSpace.Pseudo.Defs
 
 -- [TABLET NODE: P3934T1SectorSelection]
 

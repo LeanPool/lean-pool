@@ -5,12 +5,12 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P5352T2PlacementData
-public import LeanPool.ApollonianSuperharmonic.P5352T2DomainRows
-public import LeanPool.ApollonianSuperharmonic.P4207T1FloorArithmetic
-public import LeanPool.ApollonianSuperharmonic.DiamondLaplacianTable
 public import LeanPool.ApollonianSuperharmonic.P5416T1SecondUnitGeometry
 public import LeanPool.ApollonianSuperharmonic.P5416T1DiamondAxialDifferences
+public import LeanPool.ApollonianSuperharmonic.FourNeighborLaplacian
 
 -- [TABLET NODE: P5352T2SecondUnit]
 

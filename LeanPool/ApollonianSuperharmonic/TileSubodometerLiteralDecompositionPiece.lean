@@ -5,12 +5,13 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.BandPrototileCentroidUnique
-public import LeanPool.ApollonianSuperharmonic.FootprintVertices
 public import LeanPool.ApollonianSuperharmonic.PositiveCurvatureTileOdometerDomain
-public import LeanPool.ApollonianSuperharmonic.ProperBandCurvatureStructure
 public import LeanPool.ApollonianSuperharmonic.TileOdometerReindexedDecomposition
 public import LeanPool.ApollonianSuperharmonic.TileSubodometer
+public import LeanPool.ApollonianSuperharmonic.BandCircle
 
 -- [TABLET NODE: TileSubodometerLiteralDecompositionPiece]
 

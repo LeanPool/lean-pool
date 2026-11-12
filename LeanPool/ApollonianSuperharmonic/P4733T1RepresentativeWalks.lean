@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P4733T1EdgeRow
 public import LeanPool.ApollonianSuperharmonic.P4733T1RowIncidence
 public import LeanPool.ApollonianSuperharmonic.P4733T1ContainedWalk

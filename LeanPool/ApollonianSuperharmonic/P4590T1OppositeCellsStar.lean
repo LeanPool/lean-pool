@@ -5,9 +5,10 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.LatticeVertexIncidentCell
 public import LeanPool.ApollonianSuperharmonic.FootprintVertices
-public import Mathlib.Tactic.FinCases
 
 -- [TABLET NODE: P4590T1OppositeCellsStar]
 

@@ -5,8 +5,9 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P4339T1PrecursorSupportGeometry
-public import LeanPool.ApollonianSuperharmonic.P3161T2IncidentBoundary
 
 -- [TABLET NODE: P4339T1EmptyPrecursorRoots]
 
@@ -33,7 +34,7 @@ theorem P4339T1EmptyPrecursorRoots
         x ∉ BoundaryFootprintVertices (cert.P i s))
     (hO : cert.O.cells = ∅) :
     let W := D \ P
-    let R : Finset GaussianInt := {cert.precursor_boundary.a, cert.precursor_boundary.b}
+    let R : Finset GaussianInt := {cert.precursorBoundary.a, cert.precursorBoundary.b}
     R ⊆ W ∧
     (∀ x ∈ W, x ∈ FootprintVertices cert.O ↔ x ∈ R) ∧
     (∀ x ∈ R,
@@ -45,14 +46,14 @@ theorem P4339T1EmptyPrecursorRoots
   dsimp only
   obtain ⟨hcent, _, _, _, hQ, hS, hpair, hdisjoint⟩ :=
     P4339T1PrecursorSupportGeometry C q cfg T cert
-  obtain ⟨hab, hanchor⟩ : cert.precursor_boundary.a = cert.precursor_boundary.b ∧
-      cert.precursor_boundary.a = cert.O.anchor := by
-    rcases cert.precursor_boundary.branch with hp | ⟨_, hab, ha, _⟩
+  obtain ⟨hab, hanchor⟩ : cert.precursorBoundary.a = cert.precursorBoundary.b ∧
+      cert.precursorBoundary.a = cert.O.anchor := by
+    rcases cert.precursorBoundary.branch with hp | ⟨_, hab, ha, _⟩
     · exact ((Finset.nonempty_iff_ne_empty.mp hp.1) hO).elim
     · exact ⟨hab, ha⟩
-  let a := cert.precursor_boundary.a
+  let a := cert.precursorBoundary.a
   have hR (x : GaussianInt) :
-      x ∈ ({cert.precursor_boundary.a, cert.precursor_boundary.b} :
+      x ∈ ({cert.precursorBoundary.a, cert.precursorBoundary.b} :
         Finset GaussianInt) ↔ x = a := by
     simp [← hab, a]
   have hfootO (x : GaussianInt) : x ∈ FootprintVertices cert.O ↔ x = a := by
@@ -134,13 +135,13 @@ theorem P4339T1EmptyPrecursorRoots
         (hfootO a).mpr rfl) (LatticeVertexIncidentCell a j) hcorner
     simpa only [SubtileOccurrenceInterpretation, Int.cast_zero, zero_mul,
       zero_add, trans_zero] using hisolated
-  have hfirst := (cert.precursor_boundary.first_transition a).mpr rfl
+  have hfirst := (cert.precursorBoundary.first_transition a).mpr rfl
   obtain ⟨jA, hjA⟩ := boundary_incident _ a hQ hfirst.1
   obtain ⟨jB, hjB⟩ := boundary_incident _ a hS hfirst.2.1
   have hA : LatticeVertexIncidentCell a jA ∈ (cert.P 0 true).cells :=
-    (Finset.mem_sdiff.mp (cert.precursor_boundary.first_plus_child hjA)).1
+    (Finset.mem_sdiff.mp (cert.precursorBoundary.first_plus_child hjA)).1
   have hB : LatticeVertexIncidentCell a jB ∈ (cert.P 0 false).cells :=
-    (Finset.mem_sdiff.mp (cert.precursor_boundary.first_minus_child hjB)).1
+    (Finset.mem_sdiff.mp (cert.precursorBoundary.first_minus_child hjB)).1
   have hAB : Disjoint (cert.P 0 true).cells (cert.P 0 false).cells :=
     Finset.disjoint_iff_inter_eq_empty.mpr (hpair.trans hO)
   have hboundaryA : a ∈ BoundaryFootprintVertices (cert.P 0 true) :=

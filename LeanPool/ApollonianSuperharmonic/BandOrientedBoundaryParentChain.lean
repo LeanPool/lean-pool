@@ -5,9 +5,10 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.ProperBandQuadruple
 public import LeanPool.ApollonianSuperharmonic.SemiProperForestClassification
-public import LeanPool.ApollonianSuperharmonic.SemiProperQuadruple
 
 -- [TABLET NODE: BandOrientedBoundaryParentChain]
 

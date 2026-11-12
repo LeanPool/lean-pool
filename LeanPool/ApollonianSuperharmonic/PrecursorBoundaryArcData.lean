@@ -5,8 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.ApollonianSuperharmonic.BoundaryFootprintEdges
-public import LeanPool.ApollonianSuperharmonic.BoundaryFootprintVertices
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.GaussianRealPoint
 public import LeanPool.ApollonianSuperharmonic.TileCentroid
 public import LeanPool.ApollonianSuperharmonic.TouchingTriple

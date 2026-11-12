@@ -5,12 +5,20 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.ApollonianSuperharmonic.BoundaryFootprintEdges
+public import Mathlib.Init
+public import Mathlib.Topology.MetricSpace.Basic
+public import Mathlib.Topology.Order.Real
+public import Mathlib.Topology.MetricSpace.Pseudo.Constructions
+public import Mathlib.Basic.Real.Basic
+public import Mathlib.Tactic.ByContra
+public import Mathlib.Tactic.Linarith
+public import Mathlib.Tactic.NormNum
+public import Mathlib.Topology.Connected.Basic
+public import Mathlib.Topology.MetricSpace.Pseudo.Real
+
 public import LeanPool.ApollonianSuperharmonic.BoundaryFootprintVertices
 public import LeanPool.ApollonianSuperharmonic.CommonFootprintEdgeVertices
-public import LeanPool.ApollonianSuperharmonic.FootprintEdges
 public import LeanPool.ApollonianSuperharmonic.FootprintVertices
-public import LeanPool.ApollonianSuperharmonic.ProtoTile
 public import LeanPool.ApollonianSuperharmonic.TileRealization
 
 -- [TABLET NODE: CellDisjointCommonFootprintIncidence]

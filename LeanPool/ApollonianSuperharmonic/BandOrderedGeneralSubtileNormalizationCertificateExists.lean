@@ -5,33 +5,14 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P5658T1FivePointDomainCoverSymmetryCovariance
 public import LeanPool.ApollonianSuperharmonic.BandOrderedGeneralSubtileNormalizationCertificate
-public import LeanPool.ApollonianSuperharmonic.BandOrderedGeneralLayout
 public import LeanPool.ApollonianSuperharmonic.BandOrderedGeneralSubtileCanonicalRows
-public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryInversePhaseCancellation
-public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryPartialOdometerActionFormulas
-public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryProperCovariance
-public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryReversesOrientation
-public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryTileOdometerCovariance
-public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryVectorAction
-public import LeanPool.ApollonianSuperharmonic.BandPrototile
-public import LeanPool.ApollonianSuperharmonic.BandPrototileCentroidUnique
-public import LeanPool.ApollonianSuperharmonic.BandPrototileTranslation
-public import LeanPool.ApollonianSuperharmonic.BandRegimeClassification
-public import LeanPool.ApollonianSuperharmonic.BandSubtileOccurrence
 public import LeanPool.ApollonianSuperharmonic.BandTileSimultaneousInduction
-public import LeanPool.ApollonianSuperharmonic.ClosedSquareRealization
-public import LeanPool.ApollonianSuperharmonic.PositiveCurvatureTileOdometerDomain
-public import LeanPool.ApollonianSuperharmonic.ProperBandCurvatureStructure
-public import LeanPool.ApollonianSuperharmonic.ProperBandQuadruple
-public import LeanPool.ApollonianSuperharmonic.ProtoTileObservableExtensionality
-public import LeanPool.ApollonianSuperharmonic.SemiProperQuadruple
 public import LeanPool.ApollonianSuperharmonic.SubtileLatticeAdjacentPackingSymmetryTransport
-public import LeanPool.ApollonianSuperharmonic.TileOdometerBandPrototile
 public import LeanPool.ApollonianSuperharmonic.TileOdometerReindexedDecomposition
-public import LeanPool.ApollonianSuperharmonic.TileTranslationFormulas
-public import LeanPool.ApollonianSuperharmonic.VectorRecursionLaws
 
 -- [TABLET NODE: BandOrderedGeneralSubtileNormalizationCertificateExists]
 
@@ -52,8 +33,8 @@ private theorem hqrotSemi :
     (by
       classical
       exact
-        ∀ (q : Fin 4 → CircleCoordinates), (ProperBandQuadruple q) → (∀ (q' : Fin (4 : ℕ) →
-            CircleCoordinates), ∀ (r : Fin (3 : ℕ)), ∀ (g : BandPackingSymmetry), (
+        ∀ (q : Fin 4 → CircleCoordinates), (ProperBandQuadruple q) → ( ∀ (r : Fin (3 : ℕ)), ∀ (g
+            : BandPackingSymmetry), (
         let q' := BandPackingSymmetryQuadrupleAction g ![q (0 : Fin (4 : ℕ)), q r.succ, q (r + (1
             : Fin (3 : ℕ))).succ, q (r + (2 : Fin (3 : ℕ))).succ]; Xor (∃ (P :
             FordFareyParameter), (1 : ℕ) < P.q ∧ q' = FordRecursiveQuadruple P) (Xor (∃ (K :
@@ -63,7 +44,7 @@ private theorem hqrotSemi :
           ![q 0, q r.succ, q (r + 1).succ, q (r + 2).succ]
         SemiProperQuadruple qrot)) ) := by
   classical
-  intro q hq q' r g hregime qrot
+  intro q hq r g hregime qrot
   fin_cases r
   · convert hq.1 using 1; funext j; fin_cases j <;> simp [qrot]
   · convert SemiProperQuadruple.rotate hq.1 using 1;
@@ -76,8 +57,8 @@ private theorem hqrot :
     (by
       classical
       exact
-        ∀ (q : Fin 4 → CircleCoordinates), (ProperBandQuadruple q) → (∀ (q' : Fin (4 : ℕ) →
-            CircleCoordinates), ∀ (r : Fin (3 : ℕ)), ∀ (g : BandPackingSymmetry), (
+        ∀ (q : Fin 4 → CircleCoordinates), (ProperBandQuadruple q) → ( ∀ (r : Fin (3 : ℕ)), ∀ (g
+            : BandPackingSymmetry), (
         let q' := BandPackingSymmetryQuadrupleAction g ![q (0 : Fin (4 : ℕ)), q r.succ, q (r + (1
             : Fin (3 : ℕ))).succ, q (r + (2 : Fin (3 : ℕ))).succ]; Xor (∃ (P :
             FordFareyParameter), (1 : ℕ) < P.q ∧ q' = FordRecursiveQuadruple P) (Xor (∃ (K :
@@ -87,7 +68,7 @@ private theorem hqrot :
           ![q 0, q r.succ, q (r + 1).succ, q (r + 2).succ]
         (SemiProperQuadruple qrot) → (ProperBandQuadruple qrot))) ) := by
   classical
-  intro q hq q' r g hregime qrot hqrotSemi
+  intro q hq r g hregime qrot hqrotSemi
   refine ⟨hqrotSemi, ?_⟩
   intro j
   fin_cases r <;> fin_cases j <;> simp [qrot]
@@ -109,8 +90,8 @@ private theorem hgeneral :
             (P : FordFareyParameter), BandPackingSymmetryCircleAction g (FordCircleCoordinate P.p
             P.q) = C₀.1.1) ∨ ∃ (g : BandPackingSymmetry) (K : DiamondParameter),
             BandPackingSymmetryCircleAction g (DiamondRecursiveQuadruple K (0 : Fin (4 : ℕ))) =
-            C₀.1.1)) → ((q (0 : Fin (4 : ℕ)) = C₀.1.1) → (∀ (q' : Fin (4 : ℕ) →
-            CircleCoordinates), ∀ (r : Fin (3 : ℕ)), ∀ (g : BandPackingSymmetry), (
+            C₀.1.1)) → ((q (0 : Fin (4 : ℕ)) = C₀.1.1) → ( ∀ (r : Fin (3 : ℕ)), ∀ (g :
+                BandPackingSymmetry), (
         let q' := BandPackingSymmetryQuadrupleAction g ![q (0 : Fin (4 : ℕ)), q r.succ, q (r + (1
             : Fin (3 : ℕ))).succ, q (r + (2 : Fin (3 : ℕ))).succ]; Xor (∃ (P :
             FordFareyParameter), (1 : ℕ) < P.q ∧ q' = FordRecursiveQuadruple P) (Xor (∃ (K :
@@ -121,7 +102,7 @@ private theorem hgeneral :
         let qbar := BandPackingSymmetryQuadrupleAction g qrot
         Nonempty (BandOrderedGeneralConfiguration qbar)))) ) := by
   classical
-  intro C₀ q horbit hq₀ q' r g hregime qrot qbar
+  intro C₀ q horbit hq₀ r g hregime qrot qbar
   dsimp [qbar, qrot] at hregime
   rcases hregime with hford | hrest
   · exfalso
@@ -877,7 +858,10 @@ private theorem hexteriorBand :
   generalize hi : ibar = j at ⊢
   generalize hs : sbar = t at ⊢
   fin_cases j <;> fin_cases t <;>
-    simp? [exteriorIndex, hi, hs, SubtileOccurrenceInterpretation]
+    simp only [Fin.mk_one, Fin.isValue, Fin.succ_one_eq_two, SubtileOccurrenceInterpretation,
+        hi, one_ne_zero, ↓reduceIte, hs, Fin.reduceFinMk, Fin.reduceEq, Int.cast_one, one_mul,
+        Int.cast_zero, zero_mul, add_zero, exteriorIndex, Int.reduceNeg, Int.cast_neg,
+        neg_mul, Fin.zero_eta, Fin.reduceSucc, zero_add, Fin.succ_zero_eq_one]
   all_goals first
     | exact BandPrototileTranslation _ _ _ (layout.outer_occurrence 0 false).1
     | exact BandPrototileTranslation _ _ _ (layout.outer_occurrence 0 true).1
@@ -1269,9 +1253,9 @@ theorem BandOrderedGeneralSubtileNormalizationCertificateExists
   obtain ⟨r, g, hregime⟩ := BandRegimeClassification q hq
   let qrot : Fin 4 → CircleCoordinates :=
     ![q 0, q r.succ, q (r + 1).succ, q (r + 2).succ]
-  have hqrotSemi : SemiProperQuadruple qrot := SubtileNormalizationGeometry.hqrotSemi q hq q' r g
+  have hqrotSemi : SemiProperQuadruple qrot := SubtileNormalizationGeometry.hqrotSemi q hq r g
       hregime
-  have hqrot : ProperBandQuadruple qrot := SubtileNormalizationGeometry.hqrot q hq q' r g hregime
+  have hqrot : ProperBandQuadruple qrot := SubtileNormalizationGeometry.hqrot q hq r g hregime
       hqrotSemi
   let irot : Fin 3 := i - r
   have hrotParent : qrot irot.succ = q i.succ := by
@@ -1283,7 +1267,7 @@ theorem BandOrderedGeneralSubtileNormalizationCertificateExists
   have hqbar₀ : qbar 0 = BandPackingSymmetryCircleAction g C₀.1.1 := by
     simp [qbar, qrot, BandPackingSymmetryQuadrupleAction, hq₀]
   have hgeneral : Nonempty (BandOrderedGeneralConfiguration qbar) :=
-      SubtileNormalizationGeometry.hgeneral C₀ q horbit hq₀ q' r g hregime
+      SubtileNormalizationGeometry.hgeneral C₀ q horbit hq₀ r g hregime
   obtain ⟨cfg⟩ := hgeneral
   have hO₀rot : TileOdometer (qrot 0) T₀ h₀ := SubtileNormalizationGeometry.hO₀rot C₀ q T₀ h₀ hO₀
       r hqrot₀

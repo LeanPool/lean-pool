@@ -5,40 +5,12 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.BandExceptionalRestorationSectorOrder
-public import LeanPool.ApollonianSuperharmonic.BandOrderedGeneralConfiguration
-public import LeanPool.ApollonianSuperharmonic.BandOrderedGeneralLayoutCertificate
-public import LeanPool.ApollonianSuperharmonic.BandParentBoundaryGenealogy
 public import LeanPool.ApollonianSuperharmonic.BandPositiveCutBranchCompanionExclusion
-public import LeanPool.ApollonianSuperharmonic.BandOriginalPairSeparation
-public import LeanPool.ApollonianSuperharmonic.BandPrototile
-public import LeanPool.ApollonianSuperharmonic.BandPrototileCentroidUnique
-public import LeanPool.ApollonianSuperharmonic.BandPrototileTranslation
-public import LeanPool.ApollonianSuperharmonic.BandSubtileOccurrence
-public import LeanPool.ApollonianSuperharmonic.BandTileSimultaneousInduction
-public import LeanPool.ApollonianSuperharmonic.BoundaryFootprintEdges
-public import LeanPool.ApollonianSuperharmonic.BoundaryFootprintVertices
-public import LeanPool.ApollonianSuperharmonic.ClosedSquareRealization
-public import LeanPool.ApollonianSuperharmonic.ExceptionalConnectorSegments
-public import LeanPool.ApollonianSuperharmonic.ExceptionalRestorationSectorData
-public import LeanPool.ApollonianSuperharmonic.FordTile
-public import LeanPool.ApollonianSuperharmonic.FordTileGeometry
-public import LeanPool.ApollonianSuperharmonic.FootprintVertices
-public import LeanPool.ApollonianSuperharmonic.LatticeTile
-public import LeanPool.ApollonianSuperharmonic.LatticeTileGridStructure
-public import LeanPool.ApollonianSuperharmonic.LatticeVertexIncidentCell
 public import LeanPool.ApollonianSuperharmonic.PositiveCutCompanionRow
-public import LeanPool.ApollonianSuperharmonic.ProperBandCurvatureStructure
-public import LeanPool.ApollonianSuperharmonic.RecursiveVectorsExistUnique
-public import LeanPool.ApollonianSuperharmonic.RecursiveVectorSystem
 public import LeanPool.ApollonianSuperharmonic.ThreeOwnerDesignatedOppositePair
-public import LeanPool.ApollonianSuperharmonic.TileRealization
-public import LeanPool.ApollonianSuperharmonic.TileDiskAreaCovariance
-public import LeanPool.ApollonianSuperharmonic.TileTranslationFormulas
-public import LeanPool.ApollonianSuperharmonic.TileTouching
-public import LeanPool.ApollonianSuperharmonic.TopologicalDisk
-public import LeanPool.ApollonianSuperharmonic.TouchingTriple
-public import LeanPool.ApollonianSuperharmonic.VectorRecursionLaws
 
 -- [TABLET NODE: BandOrderedGeneralPositiveCutGeometry]
 
@@ -353,14 +325,14 @@ private theorem hAowners :
             (0 : ℤ), (0 : ℤ)⟩ : PeriodicSubtileFaceIndex))) (cert.unmodified.core.rho
             ((cert.unmodified.faceEquiv.symm : PeriodicSubtileFaceIndex →
             cert.unmodified.core.plane.Face) (⟨SixSubtileFaceLabel.I2, (0 : ℤ), (0 : ℤ)⟩ :
-            PeriodicSubtileFaceIndex))) cert.exceptional_segments) →
-            ((cert.exceptional_segments.a ∈ cert.exceptional_segments.left) → (∀ j : Fin 4,
-            LatticeVertexIncidentCell cert.exceptional_segments.a j ∈ (cert.Q 1 true).cells ∨
-            LatticeVertexIncidentCell cert.exceptional_segments.a j ∈ (cert.S 2 false).cells ∨
-            LatticeVertexIncidentCell cert.exceptional_segments.a j ∈ cert.O.cells))) ) := by
+            PeriodicSubtileFaceIndex))) cert.exceptionalSegments) →
+            ((cert.exceptionalSegments.a ∈ cert.exceptionalSegments.left) → (∀ j : Fin 4,
+            LatticeVertexIncidentCell cert.exceptionalSegments.a j ∈ (cert.Q 1 true).cells ∨
+            LatticeVertexIncidentCell cert.exceptionalSegments.a j ∈ (cert.S 2 false).cells ∨
+            LatticeVertexIncidentCell cert.exceptionalSegments.a j ∈ cert.O.cells))) ) := by
   classical
   intro q cfg C₀ T cert hO sector haLeft j
-  have ho := sector.left_owners cert.exceptional_segments.a haLeft (Or.inl hO) j
+  have ho := sector.left_owners cert.exceptionalSegments.a haLeft (Or.inl hO) j
   rcases ho with hq | hs | hc | ho
   · exact Or.inl hq
   · exact Or.inr (Or.inl hs)
@@ -382,14 +354,14 @@ private theorem hBowners :
             (0 : ℤ), (0 : ℤ)⟩ : PeriodicSubtileFaceIndex))) (cert.unmodified.core.rho
             ((cert.unmodified.faceEquiv.symm : PeriodicSubtileFaceIndex →
             cert.unmodified.core.plane.Face) (⟨SixSubtileFaceLabel.I2, (0 : ℤ), (0 : ℤ)⟩ :
-            PeriodicSubtileFaceIndex))) cert.exceptional_segments) →
-            ((cert.exceptional_segments.b ∈ cert.exceptional_segments.right) → (∀ j : Fin 4,
-            LatticeVertexIncidentCell cert.exceptional_segments.b j ∈ (cert.Q 2 true).cells ∨
-            LatticeVertexIncidentCell cert.exceptional_segments.b j ∈ (cert.S 1 false).cells ∨
-            LatticeVertexIncidentCell cert.exceptional_segments.b j ∈ cert.O.cells))) ) := by
+            PeriodicSubtileFaceIndex))) cert.exceptionalSegments) →
+            ((cert.exceptionalSegments.b ∈ cert.exceptionalSegments.right) → (∀ j : Fin 4,
+            LatticeVertexIncidentCell cert.exceptionalSegments.b j ∈ (cert.Q 2 true).cells ∨
+            LatticeVertexIncidentCell cert.exceptionalSegments.b j ∈ (cert.S 1 false).cells ∨
+            LatticeVertexIncidentCell cert.exceptionalSegments.b j ∈ cert.O.cells))) ) := by
   classical
   intro q cfg C₀ T cert hO sector hbRight j
-  have ho := sector.right_owners cert.exceptional_segments.b hbRight (Or.inl hO) j
+  have ho := sector.right_owners cert.exceptionalSegments.b hbRight (Or.inl hO) j
   rcases ho with hq | hs | hc | ho
   · exact Or.inl hq
   · exact Or.inr (Or.inl hs)
@@ -426,8 +398,8 @@ private theorem houterIntersection :
   simpa [SubtileOccurrenceInterpretation, TileTranslation, GaussianTranslation,
     gzero] using
     (BandOriginalPairSeparation cert.P cert.O cert.u cert.v
-      cert.exceptional_segments.precursor_in_left
-      cert.exceptional_segments.precursor_in_right cert.partition).1 0 0
+      cert.exceptionalSegments.precursor_in_left
+      cert.exceptionalSegments.precursor_in_right cert.partition).1 0 0
 
 private theorem hQ1S1 :
     (by
@@ -493,13 +465,13 @@ private theorem selectA_Q :
             true).cells : Set LatticeCell)) → ((NoCheckerboardCellVertex (↑(cert.S (2 : Fin (3 :
             ℕ)) false).cells : Set LatticeCell)) → ((NoCheckerboardCellVertex (↑cert.O.cells :
             Set LatticeCell)) → ((∃ j : Fin 4, LatticeVertexIncidentCell
-            cert.exceptional_segments.a j ∈ (cert.Q 1 true).cells) → ((∃ j : Fin 4,
-            LatticeVertexIncidentCell cert.exceptional_segments.a j ∈ (cert.S 2 false).cells) →
-            ((∀ j : Fin 4, LatticeVertexIncidentCell cert.exceptional_segments.a j ∈ (cert.Q 1
-            true).cells ∨ LatticeVertexIncidentCell cert.exceptional_segments.a j ∈ (cert.S 2
-            false).cells ∨ LatticeVertexIncidentCell cert.exceptional_segments.a j ∈
+            cert.exceptionalSegments.a j ∈ (cert.Q 1 true).cells) → ((∃ j : Fin 4,
+            LatticeVertexIncidentCell cert.exceptionalSegments.a j ∈ (cert.S 2 false).cells) →
+            ((∀ j : Fin 4, LatticeVertexIncidentCell cert.exceptionalSegments.a j ∈ (cert.Q 1
+            true).cells ∨ LatticeVertexIncidentCell cert.exceptionalSegments.a j ∈ (cert.S 2
+            false).cells ∨ LatticeVertexIncidentCell cert.exceptionalSegments.a j ∈
             cert.O.cells) → ((∃ (j : Fin (4 : ℕ)), LatticeVertexIncidentCell
-            cert.exceptional_segments.a j ∈ cert.O.cells) → ((Disjoint (cert.Q (1 : Fin (3 : ℕ))
+            cert.exceptionalSegments.a j ∈ cert.O.cells) → ((Disjoint (cert.Q (1 : Fin (3 : ℕ))
             true).cells (cert.S (2 : Fin (3 : ℕ)) false).cells) → ((Disjoint (cert.S (2 : Fin (3
             : ℕ)) false).cells cert.O.cells) → ((Disjoint cert.O.cells (cert.Q (1 : Fin (3 : ℕ))
             true).cells) → (∀ D, D = cert.Q 1 true ∨ D = cert.S 2 false ∨ D = cert.O → ∃ U V R :
@@ -508,18 +480,18 @@ private theorem selectA_Q :
             cert.O ∧ R = cert.S 2 false) ∨ (U = cert.O ∧ V = cert.Q 1 true ∧ R = cert.S 2 false)
             ∨ (U = cert.S 2 false ∧ V = cert.O ∧ R = cert.Q 1 true) ∨ (U = cert.O ∧ V = cert.S 2
             false ∧ R = cert.Q 1 true)) ∧ (∃ j : Fin 4, LatticeVertexIncidentCell
-            cert.exceptional_segments.a j ∈ U.cells ∧ LatticeVertexIncidentCell
-            cert.exceptional_segments.a (j + 2) ∈ V.cells) ∧ cert.exceptional_segments.a ∈
-            FootprintVertices U ∧ cert.exceptional_segments.a ∈ FootprintVertices V ∧ (∀ y, y =
-            cert.exceptional_segments.a ∨ y = cert.exceptional_segments.a + 1 ∨ y =
-            cert.exceptional_segments.a - 1 ∨ y = cert.exceptional_segments.a + ⟨0, 1⟩ ∨ y =
-            cert.exceptional_segments.a - ⟨0, 1⟩ → y ∈ FootprintVertices U ∨ y ∈
+            cert.exceptionalSegments.a j ∈ U.cells ∧ LatticeVertexIncidentCell
+            cert.exceptionalSegments.a (j + 2) ∈ V.cells) ∧ cert.exceptionalSegments.a ∈
+            FootprintVertices U ∧ cert.exceptionalSegments.a ∈ FootprintVertices V ∧ (∀ y, y =
+            cert.exceptionalSegments.a ∨ y = cert.exceptionalSegments.a + 1 ∨ y =
+            cert.exceptionalSegments.a - 1 ∨ y = cert.exceptionalSegments.a + ⟨0, 1⟩ ∨ y =
+            cert.exceptionalSegments.a - ⟨0, 1⟩ → y ∈ FootprintVertices U ∨ y ∈
             FootprintVertices V)))))))))))))) ) := by
   classical
   intro q cfg C₀ T cert hQ2lat hS3lat hOlat hQ2check hS3check hOcheck hQ2occ hS3occ hAowners
       hOoccA hQS hSO hOQ D hD
   exact ThreeOwnerDesignatedOppositePair (cert.Q 1 true) (cert.S 2 false) cert.O
-    cert.exceptional_segments.a hQ2lat hS3lat hOlat hQS hSO hOQ
+    cert.exceptionalSegments.a hQ2lat hS3lat hOlat hQS hSO hOQ
     hQ2check hS3check hOcheck hAowners hQ2occ hS3occ hOoccA D hD
 
 private theorem selectB_Q :
@@ -533,13 +505,13 @@ private theorem selectB_Q :
             true).cells : Set LatticeCell)) → ((NoCheckerboardCellVertex (↑(cert.S (1 : Fin (3 :
             ℕ)) false).cells : Set LatticeCell)) → ((NoCheckerboardCellVertex (↑cert.O.cells :
             Set LatticeCell)) → ((∃ j : Fin 4, LatticeVertexIncidentCell
-            cert.exceptional_segments.b j ∈ (cert.Q 2 true).cells) → ((∃ j : Fin 4,
-            LatticeVertexIncidentCell cert.exceptional_segments.b j ∈ (cert.S 1 false).cells) →
-            ((∀ j : Fin 4, LatticeVertexIncidentCell cert.exceptional_segments.b j ∈ (cert.Q 2
-            true).cells ∨ LatticeVertexIncidentCell cert.exceptional_segments.b j ∈ (cert.S 1
-            false).cells ∨ LatticeVertexIncidentCell cert.exceptional_segments.b j ∈
+            cert.exceptionalSegments.b j ∈ (cert.Q 2 true).cells) → ((∃ j : Fin 4,
+            LatticeVertexIncidentCell cert.exceptionalSegments.b j ∈ (cert.S 1 false).cells) →
+            ((∀ j : Fin 4, LatticeVertexIncidentCell cert.exceptionalSegments.b j ∈ (cert.Q 2
+            true).cells ∨ LatticeVertexIncidentCell cert.exceptionalSegments.b j ∈ (cert.S 1
+            false).cells ∨ LatticeVertexIncidentCell cert.exceptionalSegments.b j ∈
             cert.O.cells) → ((∃ (j : Fin (4 : ℕ)), LatticeVertexIncidentCell
-            cert.exceptional_segments.b j ∈ cert.O.cells) → ((Disjoint (cert.Q (2 : Fin (3 : ℕ))
+            cert.exceptionalSegments.b j ∈ cert.O.cells) → ((Disjoint (cert.Q (2 : Fin (3 : ℕ))
             true).cells (cert.S (1 : Fin (3 : ℕ)) false).cells) → ((Disjoint (cert.S (1 : Fin (3
             : ℕ)) false).cells cert.O.cells) → ((Disjoint cert.O.cells (cert.Q (2 : Fin (3 : ℕ))
             true).cells) → (∀ D, D = cert.Q 2 true ∨ D = cert.S 1 false ∨ D = cert.O → ∃ U V R :
@@ -548,18 +520,18 @@ private theorem selectB_Q :
             cert.O ∧ R = cert.S 1 false) ∨ (U = cert.O ∧ V = cert.Q 2 true ∧ R = cert.S 1 false)
             ∨ (U = cert.S 1 false ∧ V = cert.O ∧ R = cert.Q 2 true) ∨ (U = cert.O ∧ V = cert.S 1
             false ∧ R = cert.Q 2 true)) ∧ (∃ j : Fin 4, LatticeVertexIncidentCell
-            cert.exceptional_segments.b j ∈ U.cells ∧ LatticeVertexIncidentCell
-            cert.exceptional_segments.b (j + 2) ∈ V.cells) ∧ cert.exceptional_segments.b ∈
-            FootprintVertices U ∧ cert.exceptional_segments.b ∈ FootprintVertices V ∧ (∀ y, y =
-            cert.exceptional_segments.b ∨ y = cert.exceptional_segments.b + 1 ∨ y =
-            cert.exceptional_segments.b - 1 ∨ y = cert.exceptional_segments.b + ⟨0, 1⟩ ∨ y =
-            cert.exceptional_segments.b - ⟨0, 1⟩ → y ∈ FootprintVertices U ∨ y ∈
+            cert.exceptionalSegments.b j ∈ U.cells ∧ LatticeVertexIncidentCell
+            cert.exceptionalSegments.b (j + 2) ∈ V.cells) ∧ cert.exceptionalSegments.b ∈
+            FootprintVertices U ∧ cert.exceptionalSegments.b ∈ FootprintVertices V ∧ (∀ y, y =
+            cert.exceptionalSegments.b ∨ y = cert.exceptionalSegments.b + 1 ∨ y =
+            cert.exceptionalSegments.b - 1 ∨ y = cert.exceptionalSegments.b + ⟨0, 1⟩ ∨ y =
+            cert.exceptionalSegments.b - ⟨0, 1⟩ → y ∈ FootprintVertices U ∨ y ∈
             FootprintVertices V)))))))))))))) ) := by
   classical
   intro q cfg C₀ T cert hQ3lat hS2lat hOlat hQ3check hS2check hOcheck hQ3occ hS2occ hBowners
       hOoccB hQ3S2 hS2O hOQ3 D hD
   exact ThreeOwnerDesignatedOppositePair (cert.Q 2 true) (cert.S 1 false) cert.O
-    cert.exceptional_segments.b hQ3lat hS2lat hOlat hQ3S2 hS2O hOQ3
+    cert.exceptionalSegments.b hQ3lat hS2lat hOlat hQ3S2 hS2O hOQ3
     hQ3check hS2check hOcheck hBowners hQ3occ hS2occ hOoccB D hD
 
 private theorem normalize_selected :
@@ -667,13 +639,13 @@ private theorem selectB_S :
             true).cells : Set LatticeCell)) → ((NoCheckerboardCellVertex (↑(cert.S (1 : Fin (3 :
             ℕ)) false).cells : Set LatticeCell)) → ((NoCheckerboardCellVertex (↑cert.O.cells :
             Set LatticeCell)) → ((∃ j : Fin 4, LatticeVertexIncidentCell
-            cert.exceptional_segments.b j ∈ (cert.Q 2 true).cells) → ((∃ j : Fin 4,
-            LatticeVertexIncidentCell cert.exceptional_segments.b j ∈ (cert.S 1 false).cells) →
-            ((∀ j : Fin 4, LatticeVertexIncidentCell cert.exceptional_segments.b j ∈ (cert.Q 2
-            true).cells ∨ LatticeVertexIncidentCell cert.exceptional_segments.b j ∈ (cert.S 1
-            false).cells ∨ LatticeVertexIncidentCell cert.exceptional_segments.b j ∈
+            cert.exceptionalSegments.b j ∈ (cert.Q 2 true).cells) → ((∃ j : Fin 4,
+            LatticeVertexIncidentCell cert.exceptionalSegments.b j ∈ (cert.S 1 false).cells) →
+            ((∀ j : Fin 4, LatticeVertexIncidentCell cert.exceptionalSegments.b j ∈ (cert.Q 2
+            true).cells ∨ LatticeVertexIncidentCell cert.exceptionalSegments.b j ∈ (cert.S 1
+            false).cells ∨ LatticeVertexIncidentCell cert.exceptionalSegments.b j ∈
             cert.O.cells) → ((∃ (j : Fin (4 : ℕ)), LatticeVertexIncidentCell
-            cert.exceptional_segments.b j ∈ cert.O.cells) → ((Disjoint (cert.Q (2 : Fin (3 : ℕ))
+            cert.exceptionalSegments.b j ∈ cert.O.cells) → ((Disjoint (cert.Q (2 : Fin (3 : ℕ))
             true).cells (cert.S (1 : Fin (3 : ℕ)) false).cells) → ((Disjoint (cert.S (1 : Fin (3
             : ℕ)) false).cells cert.O.cells) → ((Disjoint cert.O.cells (cert.Q (2 : Fin (3 : ℕ))
             true).cells) → (∀ D, D = cert.S 1 false ∨ D = cert.Q 2 true ∨ D = cert.O → ∃ U V R :
@@ -682,27 +654,27 @@ private theorem selectB_S :
             cert.O ∧ R = cert.Q 2 true) ∨ (U = cert.O ∧ V = cert.S 1 false ∧ R = cert.Q 2 true) ∨
             (U = cert.Q 2 true ∧ V = cert.O ∧ R = cert.S 1 false) ∨ (U = cert.O ∧ V = cert.Q 2
             true ∧ R = cert.S 1 false)) ∧ (∃ j : Fin 4, LatticeVertexIncidentCell
-            cert.exceptional_segments.b j ∈ U.cells ∧ LatticeVertexIncidentCell
-            cert.exceptional_segments.b (j + 2) ∈ V.cells) ∧ cert.exceptional_segments.b ∈
-            FootprintVertices U ∧ cert.exceptional_segments.b ∈ FootprintVertices V ∧ (∀ y, y =
-            cert.exceptional_segments.b ∨ y = cert.exceptional_segments.b + 1 ∨ y =
-            cert.exceptional_segments.b - 1 ∨ y = cert.exceptional_segments.b + ⟨0, 1⟩ ∨ y =
-            cert.exceptional_segments.b - ⟨0, 1⟩ → y ∈ FootprintVertices U ∨ y ∈
+            cert.exceptionalSegments.b j ∈ U.cells ∧ LatticeVertexIncidentCell
+            cert.exceptionalSegments.b (j + 2) ∈ V.cells) ∧ cert.exceptionalSegments.b ∈
+            FootprintVertices U ∧ cert.exceptionalSegments.b ∈ FootprintVertices V ∧ (∀ y, y =
+            cert.exceptionalSegments.b ∨ y = cert.exceptionalSegments.b + 1 ∨ y =
+            cert.exceptionalSegments.b - 1 ∨ y = cert.exceptionalSegments.b + ⟨0, 1⟩ ∨ y =
+            cert.exceptionalSegments.b - ⟨0, 1⟩ → y ∈ FootprintVertices U ∨ y ∈
             FootprintVertices V)))))))))))))) ) := by
   classical
   intro q cfg C₀ T cert hQ3lat hS2lat hOlat hQ3check hS2check hOcheck hQ3occ hS2occ hBowners
       hOoccB hQ3S2 hS2O hOQ3 D hD
   have owners : ∀ j : Fin 4,
-      LatticeVertexIncidentCell cert.exceptional_segments.b j ∈ (cert.S 1 false).cells ∨
-      LatticeVertexIncidentCell cert.exceptional_segments.b j ∈ (cert.Q 2 true).cells ∨
-      LatticeVertexIncidentCell cert.exceptional_segments.b j ∈ cert.O.cells := by
+      LatticeVertexIncidentCell cert.exceptionalSegments.b j ∈ (cert.S 1 false).cells ∨
+      LatticeVertexIncidentCell cert.exceptionalSegments.b j ∈ (cert.Q 2 true).cells ∨
+      LatticeVertexIncidentCell cert.exceptionalSegments.b j ∈ cert.O.cells := by
     intro j
     rcases hBowners j with hq | hs | ho
     · exact Or.inr (Or.inl hq)
     · exact Or.inl hs
     · exact Or.inr (Or.inr ho)
   exact ThreeOwnerDesignatedOppositePair (cert.S 1 false) (cert.Q 2 true) cert.O
-    cert.exceptional_segments.b hS2lat hQ3lat hOlat hQ3S2.symm hOQ3.symm hS2O.symm
+    cert.exceptionalSegments.b hS2lat hQ3lat hOlat hQ3S2.symm hOQ3.symm hS2O.symm
     hS2check hQ3check hOcheck owners hS2occ hQ3occ hOoccB D hD
 
 private theorem selectA_O :
@@ -716,13 +688,13 @@ private theorem selectA_O :
             true).cells : Set LatticeCell)) → ((NoCheckerboardCellVertex (↑(cert.S (2 : Fin (3 :
             ℕ)) false).cells : Set LatticeCell)) → ((NoCheckerboardCellVertex (↑cert.O.cells :
             Set LatticeCell)) → ((∃ j : Fin 4, LatticeVertexIncidentCell
-            cert.exceptional_segments.a j ∈ (cert.Q 1 true).cells) → ((∃ j : Fin 4,
-            LatticeVertexIncidentCell cert.exceptional_segments.a j ∈ (cert.S 2 false).cells) →
-            ((∀ j : Fin 4, LatticeVertexIncidentCell cert.exceptional_segments.a j ∈ (cert.Q 1
-            true).cells ∨ LatticeVertexIncidentCell cert.exceptional_segments.a j ∈ (cert.S 2
-            false).cells ∨ LatticeVertexIncidentCell cert.exceptional_segments.a j ∈
+            cert.exceptionalSegments.a j ∈ (cert.Q 1 true).cells) → ((∃ j : Fin 4,
+            LatticeVertexIncidentCell cert.exceptionalSegments.a j ∈ (cert.S 2 false).cells) →
+            ((∀ j : Fin 4, LatticeVertexIncidentCell cert.exceptionalSegments.a j ∈ (cert.Q 1
+            true).cells ∨ LatticeVertexIncidentCell cert.exceptionalSegments.a j ∈ (cert.S 2
+            false).cells ∨ LatticeVertexIncidentCell cert.exceptionalSegments.a j ∈
             cert.O.cells) → ((∃ (j : Fin (4 : ℕ)), LatticeVertexIncidentCell
-            cert.exceptional_segments.a j ∈ cert.O.cells) → ((Disjoint (cert.Q (1 : Fin (3 : ℕ))
+            cert.exceptionalSegments.a j ∈ cert.O.cells) → ((Disjoint (cert.Q (1 : Fin (3 : ℕ))
             true).cells (cert.S (2 : Fin (3 : ℕ)) false).cells) → ((Disjoint (cert.S (2 : Fin (3
             : ℕ)) false).cells cert.O.cells) → ((Disjoint cert.O.cells (cert.Q (1 : Fin (3 : ℕ))
             true).cells) → (∀ D, D = cert.O ∨ D = cert.Q 1 true ∨ D = cert.S 2 false → ∃ U V R :
@@ -731,27 +703,27 @@ private theorem selectA_O :
             false ∧ R = cert.Q 1 true) ∨ (U = cert.S 2 false ∧ V = cert.O ∧ R = cert.Q 1 true) ∨
             (U = cert.Q 1 true ∧ V = cert.S 2 false ∧ R = cert.O) ∨ (U = cert.S 2 false ∧ V =
             cert.Q 1 true ∧ R = cert.O)) ∧ (∃ j : Fin 4, LatticeVertexIncidentCell
-            cert.exceptional_segments.a j ∈ U.cells ∧ LatticeVertexIncidentCell
-            cert.exceptional_segments.a (j + 2) ∈ V.cells) ∧ cert.exceptional_segments.a ∈
-            FootprintVertices U ∧ cert.exceptional_segments.a ∈ FootprintVertices V ∧ (∀ y, y =
-            cert.exceptional_segments.a ∨ y = cert.exceptional_segments.a + 1 ∨ y =
-            cert.exceptional_segments.a - 1 ∨ y = cert.exceptional_segments.a + ⟨0, 1⟩ ∨ y =
-            cert.exceptional_segments.a - ⟨0, 1⟩ → y ∈ FootprintVertices U ∨ y ∈
+            cert.exceptionalSegments.a j ∈ U.cells ∧ LatticeVertexIncidentCell
+            cert.exceptionalSegments.a (j + 2) ∈ V.cells) ∧ cert.exceptionalSegments.a ∈
+            FootprintVertices U ∧ cert.exceptionalSegments.a ∈ FootprintVertices V ∧ (∀ y, y =
+            cert.exceptionalSegments.a ∨ y = cert.exceptionalSegments.a + 1 ∨ y =
+            cert.exceptionalSegments.a - 1 ∨ y = cert.exceptionalSegments.a + ⟨0, 1⟩ ∨ y =
+            cert.exceptionalSegments.a - ⟨0, 1⟩ → y ∈ FootprintVertices U ∨ y ∈
             FootprintVertices V)))))))))))))) ) := by
   classical
   intro q cfg C₀ T cert hQ2lat hS3lat hOlat hQ2check hS3check hOcheck hQ2occ hS3occ hAowners
       hOoccA hQS hSO hOQ D hD
   have owners : ∀ j : Fin 4,
-      LatticeVertexIncidentCell cert.exceptional_segments.a j ∈ cert.O.cells ∨
-      LatticeVertexIncidentCell cert.exceptional_segments.a j ∈ (cert.Q 1 true).cells ∨
-      LatticeVertexIncidentCell cert.exceptional_segments.a j ∈ (cert.S 2 false).cells := by
+      LatticeVertexIncidentCell cert.exceptionalSegments.a j ∈ cert.O.cells ∨
+      LatticeVertexIncidentCell cert.exceptionalSegments.a j ∈ (cert.Q 1 true).cells ∨
+      LatticeVertexIncidentCell cert.exceptionalSegments.a j ∈ (cert.S 2 false).cells := by
     intro j
     rcases hAowners j with hq | hs | ho
     · exact Or.inr (Or.inl hq)
     · exact Or.inr (Or.inr hs)
     · exact Or.inl ho
   exact ThreeOwnerDesignatedOppositePair cert.O (cert.Q 1 true) (cert.S 2 false)
-    cert.exceptional_segments.a hOlat hQ2lat hS3lat hOQ hQS hSO
+    cert.exceptionalSegments.a hOlat hQ2lat hS3lat hOQ hQS hSO
     hOcheck hQ2check hS3check owners hOoccA hQ2occ hS3occ D hD
 
 private theorem selectB_O :
@@ -765,13 +737,13 @@ private theorem selectB_O :
             true).cells : Set LatticeCell)) → ((NoCheckerboardCellVertex (↑(cert.S (1 : Fin (3 :
             ℕ)) false).cells : Set LatticeCell)) → ((NoCheckerboardCellVertex (↑cert.O.cells :
             Set LatticeCell)) → ((∃ j : Fin 4, LatticeVertexIncidentCell
-            cert.exceptional_segments.b j ∈ (cert.Q 2 true).cells) → ((∃ j : Fin 4,
-            LatticeVertexIncidentCell cert.exceptional_segments.b j ∈ (cert.S 1 false).cells) →
-            ((∀ j : Fin 4, LatticeVertexIncidentCell cert.exceptional_segments.b j ∈ (cert.Q 2
-            true).cells ∨ LatticeVertexIncidentCell cert.exceptional_segments.b j ∈ (cert.S 1
-            false).cells ∨ LatticeVertexIncidentCell cert.exceptional_segments.b j ∈
+            cert.exceptionalSegments.b j ∈ (cert.Q 2 true).cells) → ((∃ j : Fin 4,
+            LatticeVertexIncidentCell cert.exceptionalSegments.b j ∈ (cert.S 1 false).cells) →
+            ((∀ j : Fin 4, LatticeVertexIncidentCell cert.exceptionalSegments.b j ∈ (cert.Q 2
+            true).cells ∨ LatticeVertexIncidentCell cert.exceptionalSegments.b j ∈ (cert.S 1
+            false).cells ∨ LatticeVertexIncidentCell cert.exceptionalSegments.b j ∈
             cert.O.cells) → ((∃ (j : Fin (4 : ℕ)), LatticeVertexIncidentCell
-            cert.exceptional_segments.b j ∈ cert.O.cells) → ((Disjoint (cert.Q (2 : Fin (3 : ℕ))
+            cert.exceptionalSegments.b j ∈ cert.O.cells) → ((Disjoint (cert.Q (2 : Fin (3 : ℕ))
             true).cells (cert.S (1 : Fin (3 : ℕ)) false).cells) → ((Disjoint (cert.S (1 : Fin (3
             : ℕ)) false).cells cert.O.cells) → ((Disjoint cert.O.cells (cert.Q (2 : Fin (3 : ℕ))
             true).cells) → (∀ D, D = cert.O ∨ D = cert.S 1 false ∨ D = cert.Q 2 true → ∃ U V R :
@@ -780,27 +752,27 @@ private theorem selectB_O :
             true ∧ R = cert.S 1 false) ∨ (U = cert.Q 2 true ∧ V = cert.O ∧ R = cert.S 1 false) ∨
             (U = cert.S 1 false ∧ V = cert.Q 2 true ∧ R = cert.O) ∨ (U = cert.Q 2 true ∧ V =
             cert.S 1 false ∧ R = cert.O)) ∧ (∃ j : Fin 4, LatticeVertexIncidentCell
-            cert.exceptional_segments.b j ∈ U.cells ∧ LatticeVertexIncidentCell
-            cert.exceptional_segments.b (j + 2) ∈ V.cells) ∧ cert.exceptional_segments.b ∈
-            FootprintVertices U ∧ cert.exceptional_segments.b ∈ FootprintVertices V ∧ (∀ y, y =
-            cert.exceptional_segments.b ∨ y = cert.exceptional_segments.b + 1 ∨ y =
-            cert.exceptional_segments.b - 1 ∨ y = cert.exceptional_segments.b + ⟨0, 1⟩ ∨ y =
-            cert.exceptional_segments.b - ⟨0, 1⟩ → y ∈ FootprintVertices U ∨ y ∈
+            cert.exceptionalSegments.b j ∈ U.cells ∧ LatticeVertexIncidentCell
+            cert.exceptionalSegments.b (j + 2) ∈ V.cells) ∧ cert.exceptionalSegments.b ∈
+            FootprintVertices U ∧ cert.exceptionalSegments.b ∈ FootprintVertices V ∧ (∀ y, y =
+            cert.exceptionalSegments.b ∨ y = cert.exceptionalSegments.b + 1 ∨ y =
+            cert.exceptionalSegments.b - 1 ∨ y = cert.exceptionalSegments.b + ⟨0, 1⟩ ∨ y =
+            cert.exceptionalSegments.b - ⟨0, 1⟩ → y ∈ FootprintVertices U ∨ y ∈
             FootprintVertices V)))))))))))))) ) := by
   classical
   intro q cfg C₀ T cert hQ3lat hS2lat hOlat hQ3check hS2check hOcheck hQ3occ hS2occ hBowners
       hOoccB hQ3S2 hS2O hOQ3 D hD
   have owners : ∀ j : Fin 4,
-      LatticeVertexIncidentCell cert.exceptional_segments.b j ∈ cert.O.cells ∨
-      LatticeVertexIncidentCell cert.exceptional_segments.b j ∈ (cert.S 1 false).cells ∨
-      LatticeVertexIncidentCell cert.exceptional_segments.b j ∈ (cert.Q 2 true).cells := by
+      LatticeVertexIncidentCell cert.exceptionalSegments.b j ∈ cert.O.cells ∨
+      LatticeVertexIncidentCell cert.exceptionalSegments.b j ∈ (cert.S 1 false).cells ∨
+      LatticeVertexIncidentCell cert.exceptionalSegments.b j ∈ (cert.Q 2 true).cells := by
     intro j
     rcases hBowners j with hq | hs | ho
     · exact Or.inr (Or.inr hq)
     · exact Or.inr (Or.inl hs)
     · exact Or.inl ho
   exact ThreeOwnerDesignatedOppositePair cert.O (cert.S 1 false) (cert.Q 2 true)
-    cert.exceptional_segments.b hOlat hS2lat hQ3lat hS2O.symm hQ3S2.symm hOQ3.symm
+    cert.exceptionalSegments.b hOlat hS2lat hQ3lat hS2O.symm hQ3S2.symm hOQ3.symm
     hOcheck hS2check hQ3check owners hOoccB hS2occ hQ3occ D hD
 
 private theorem hI2mul :
@@ -1094,7 +1066,7 @@ private theorem hfixedPlusAbsent :
             (0 : ℤ), (0 : ℤ)⟩ : PeriodicSubtileFaceIndex))) (cert.unmodified.core.rho
             ((cert.unmodified.faceEquiv.symm : PeriodicSubtileFaceIndex →
             cert.unmodified.core.plane.Face) (⟨SixSubtileFaceLabel.I2, (0 : ℤ), (0 : ℤ)⟩ :
-            PeriodicSubtileFaceIndex))) cert.exceptional_segments) → ((∀ (X : ProtoTile), ∀ (x :
+            PeriodicSubtileFaceIndex))) cert.exceptionalSegments) → ((∀ (X : ProtoTile), ∀ (x :
             GaussianInt), (X.cells.Nonempty) → ((x ∈ FootprintVertices X) → (∃ j : Fin 4,
             LatticeVertexIncidentCell x j ∈ X.cells))) → (
         let I : GaussianInt := ⟨0, 1⟩
@@ -1104,13 +1076,13 @@ private theorem hfixedPlusAbsent :
             ℕ))) (q (2 : Fin (4 : ℕ))))).cells = ∅ → (TileTranslation (cert.Q (1 : Fin (3 : ℕ))
             true) (I * BandVectors.1 (q (3 : Fin (4 : ℕ))) (q (2 : Fin (4 : ℕ))))).anchor =
             (cert.P (1 : Fin (3 : ℕ)) true).anchor)) → (((TileTranslation (cert.Q 1 true) (I *
-            BandVectors.1 (q 3) (q 2))).cells.Nonempty) → (cert.exceptional_segments.a ∉
+            BandVectors.1 (q 3) (q 2))).cells.Nonempty) → (cert.exceptionalSegments.a ∉
             FootprintVertices (TileTranslation (cert.Q 1 true) (I * BandVectors.1 (q 3) (q
             2)))))))) ) := by
   classical
   intro q cfg C₀ T cert hO sector raw_incident I hfixedPlusUnique hfixedPlusNonempty ha
   rcases raw_incident _ _ hfixedPlusNonempty ha with ⟨j, hj⟩
-  have hp : LatticeVertexIncidentCell cert.exceptional_segments.a j ∈
+  have hp : LatticeVertexIncidentCell cert.exceptionalSegments.a j ∈
       (cert.P 1 true).cells := by rw [hfixedPlusUnique.1] at hj; exact hj
   exact (sector.positive_first_cut_no_companion hO j) hp
 
@@ -1299,7 +1271,7 @@ private theorem hfixedMinusAbsent :
             (0 : ℤ), (0 : ℤ)⟩ : PeriodicSubtileFaceIndex))) (cert.unmodified.core.rho
             ((cert.unmodified.faceEquiv.symm : PeriodicSubtileFaceIndex →
             cert.unmodified.core.plane.Face) (⟨SixSubtileFaceLabel.I2, (0 : ℤ), (0 : ℤ)⟩ :
-            PeriodicSubtileFaceIndex))) cert.exceptional_segments) → ((∀ (X : ProtoTile), ∀ (x :
+            PeriodicSubtileFaceIndex))) cert.exceptionalSegments) → ((∀ (X : ProtoTile), ∀ (x :
             GaussianInt), (X.cells.Nonempty) → ((x ∈ FootprintVertices X) → (∃ j : Fin 4,
             LatticeVertexIncidentCell x j ∈ X.cells))) → (
         let I : GaussianInt := ⟨0, 1⟩
@@ -1309,13 +1281,13 @@ private theorem hfixedMinusAbsent :
             : ℕ))) (q (2 : Fin (4 : ℕ))))).cells = ∅ → (TileTranslation (cert.S (1 : Fin (3 : ℕ))
             false) (-I * BandVectors.1 (q (3 : Fin (4 : ℕ))) (q (2 : Fin (4 : ℕ))))).anchor =
             (cert.P (1 : Fin (3 : ℕ)) false).anchor)) → (((TileTranslation (cert.S 1 false) (-I *
-            BandVectors.1 (q 3) (q 2))).cells.Nonempty) → (cert.exceptional_segments.b ∉
+            BandVectors.1 (q 3) (q 2))).cells.Nonempty) → (cert.exceptionalSegments.b ∉
             FootprintVertices (TileTranslation (cert.S 1 false) (-I * BandVectors.1 (q 3) (q
             2)))))))) ) := by
   classical
   intro q cfg C₀ T cert hO sector raw_incident I hfixedMinusUnique hfixedMinusNonempty hb
   rcases raw_incident _ _ hfixedMinusNonempty hb with ⟨j, hj⟩
-  have hp : LatticeVertexIncidentCell cert.exceptional_segments.b j ∈
+  have hp : LatticeVertexIncidentCell cert.exceptionalSegments.b j ∈
       (cert.P 1 false).cells := by rw [hfixedMinusUnique.1] at hj; exact hj
   exact (sector.positive_second_cut_no_companion hO j) hp
 
@@ -1330,33 +1302,33 @@ private theorem p2_a_O_row :
         ∀ (birth : Fin (4 : ℕ) → CircleCoordinates), (ProperBandQuadruple birth) → (((birth (0 :
             Fin (4 : ℕ)) = q (2 : Fin (4 : ℕ)) ∧ birth (2 : Fin (4 : ℕ)) = q (3 : Fin (4 : ℕ)) ∧
             birth (3 : Fin (4 : ℕ)) = cfg.firstPredecessor (1 : Fin (4 : ℕ))) ∧
-            cert.exceptional_segments.a ∉ FootprintVertices (TileTranslation (cert.Q (1 : Fin (3
+            cert.exceptionalSegments.a ∉ FootprintVertices (TileTranslation (cert.Q (1 : Fin (3
             : ℕ)) true) (BandVectors.1 (q (2 : Fin (4 : ℕ))) (cfg.firstPredecessor (1 : Fin (4 :
-            ℕ))))) ∧ cert.exceptional_segments.b ∉ FootprintVertices (TileTranslation (cert.S (1
+            ℕ))))) ∧ cert.exceptionalSegments.b ∉ FootprintVertices (TileTranslation (cert.S (1
             : Fin (3 : ℕ)) false) (-BandVectors.1 (q (2 : Fin (4 : ℕ))) (cfg.firstPredecessor (1
             : Fin (4 : ℕ))))) ∨ (birth (0 : Fin (4 : ℕ)) = cfg.firstPredecessor (1 : Fin (4 : ℕ))
             ∧ birth (2 : Fin (4 : ℕ)) = q (2 : Fin (4 : ℕ)) ∧ birth (3 : Fin (4 : ℕ)) = q (3 :
-            Fin (4 : ℕ))) ∧ cert.exceptional_segments.a ∉ FootprintVertices (TileTranslation
+            Fin (4 : ℕ))) ∧ cert.exceptionalSegments.a ∉ FootprintVertices (TileTranslation
             cert.O ((⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt) * BandVectors.1 (q (2 : Fin (4 : ℕ)))
-            (cfg.firstPredecessor (1 : Fin (4 : ℕ))))) ∧ cert.exceptional_segments.a ∉
+            (cfg.firstPredecessor (1 : Fin (4 : ℕ))))) ∧ cert.exceptionalSegments.a ∉
             FootprintVertices (TileTranslation cert.O (BandVectors.1 (cfg.firstPredecessor (1 :
-            Fin (4 : ℕ))) (q (3 : Fin (4 : ℕ))))) ∧ cert.exceptional_segments.b ∉
+            Fin (4 : ℕ))) (q (3 : Fin (4 : ℕ))))) ∧ cert.exceptionalSegments.b ∉
             FootprintVertices (TileTranslation cert.O (-((⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt) *
             BandVectors.1 (q (2 : Fin (4 : ℕ))) (cfg.firstPredecessor (1 : Fin (4 : ℕ)))))) ∧
-            cert.exceptional_segments.b ∉ FootprintVertices (TileTranslation cert.O
+            cert.exceptionalSegments.b ∉ FootprintVertices (TileTranslation cert.O
             (-BandVectors.1 (cfg.firstPredecessor (1 : Fin (4 : ℕ))) (q (3 : Fin (4 : ℕ)))))) →
             ((BandPrototile (ρ 1) cert.O) → ((BandPrototile (q 2) (cert.Q 1 true)) →
             ((BandPrototile (q 3) (cert.S 2 false)) → ((cert.Q (1 : Fin (3 : ℕ)) true ≠ cert.S (1
             : Fin (3 : ℕ)) false) → ((cert.S (2 : Fin (3 : ℕ)) false ≠ cert.O) → ((cert.Q (2 :
             Fin (3 : ℕ)) true ≠ cert.O) → ((∃ (W : ProtoTile), (W = cert.S (2 : Fin (3 : ℕ))
             false ∨ W = cert.O) ∧ ∃ (j : Fin (4 : ℕ)), LatticeVertexIncidentCell
-            cert.exceptional_segments.a j ∈ (cert.Q (1 : Fin (3 : ℕ)) true).cells ∧
-            LatticeVertexIncidentCell cert.exceptional_segments.a (j + (2 : Fin (4 : ℕ))) ∈
-            W.cells ∧ cert.exceptional_segments.a ∈ FootprintVertices (cert.Q (1 : Fin (3 : ℕ))
-            true) ∧ cert.exceptional_segments.a ∈ FootprintVertices W ∧ ∀ (y : GaussianInt), y =
-            cert.exceptional_segments.a ∨ y = cert.exceptional_segments.a + (1 : GaussianInt) ∨ y
-            = cert.exceptional_segments.a - (1 : GaussianInt) ∨ y = cert.exceptional_segments.a +
-            (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt) ∨ y = cert.exceptional_segments.a - (⟨(0 : ℤ), (1
+            cert.exceptionalSegments.a j ∈ (cert.Q (1 : Fin (3 : ℕ)) true).cells ∧
+            LatticeVertexIncidentCell cert.exceptionalSegments.a (j + (2 : Fin (4 : ℕ))) ∈
+            W.cells ∧ cert.exceptionalSegments.a ∈ FootprintVertices (cert.Q (1 : Fin (3 : ℕ))
+            true) ∧ cert.exceptionalSegments.a ∈ FootprintVertices W ∧ ∀ (y : GaussianInt), y =
+            cert.exceptionalSegments.a ∨ y = cert.exceptionalSegments.a + (1 : GaussianInt) ∨ y
+            = cert.exceptionalSegments.a - (1 : GaussianInt) ∨ y = cert.exceptionalSegments.a +
+            (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt) ∨ y = cert.exceptionalSegments.a - (⟨(0 : ℤ), (1
             : ℤ)⟩ : GaussianInt) → y ∈ FootprintVertices (cert.Q (1 : Fin (3 : ℕ)) true) ∨ y ∈
             FootprintVertices W) → (
         let I : GaussianInt := ⟨0, 1⟩
@@ -1365,10 +1337,10 @@ private theorem p2_a_O_row :
             ((TileTranslation (cert.Q (1 : Fin (3 : ℕ)) true) (I * BandVectors.1 (q (3 : Fin (4 :
             ℕ))) (q (2 : Fin (4 : ℕ))))).cells = ∅ → (TileTranslation (cert.Q (1 : Fin (3 : ℕ))
             true) (I * BandVectors.1 (q (3 : Fin (4 : ℕ))) (q (2 : Fin (4 : ℕ))))).anchor =
-            (cert.P (1 : Fin (3 : ℕ)) true).anchor)) → ((cert.exceptional_segments.a ∉
+            (cert.P (1 : Fin (3 : ℕ)) true).anchor)) → ((cert.exceptionalSegments.a ∉
             FootprintVertices (TileTranslation (cert.Q 1 true) (I * BandVectors.1 (q 3) (q 2))))
             → ((birth 0 = q 2 ∧ birth 2 = q 3 ∧ birth 3 = ρ 1) → (Nonempty
-            (PositiveCutCompanionRow cert cert.exceptional_segments.a)))))))))))))) ) := by
+            (PositiveCutCompanionRow cert cert.exceptionalSegments.a)))))))))))))) ) := by
   classical
   intro q cfg C₀ T cert hO ρ birth hproper branchExclusions hOproto hQ2proto hS3proto hneQ1S1
       hneA_SO hneB_QO selected_p2_a I hfixedPlusUnique hfixedPlusAbsent hp2
@@ -1379,7 +1351,7 @@ private theorem p2_a_O_row :
     · rfl
     · exact hp2.2.1
     · exact hp2.2.2
-  have hnotQ2a : cert.exceptional_segments.a ∉ FootprintVertices
+  have hnotQ2a : cert.exceptionalSegments.a ∉ FootprintVertices
       (TileTranslation (cert.Q 1 true) (BandVectors.1 (q 2) (ρ 1))) := by
     rcases branchExclusions with hEx | hEx
     · exact hEx.2.1
@@ -1468,33 +1440,33 @@ private theorem p2_b_O_row :
         ∀ (birth : Fin (4 : ℕ) → CircleCoordinates), (ProperBandQuadruple birth) → (((birth (0 :
             Fin (4 : ℕ)) = q (2 : Fin (4 : ℕ)) ∧ birth (2 : Fin (4 : ℕ)) = q (3 : Fin (4 : ℕ)) ∧
             birth (3 : Fin (4 : ℕ)) = cfg.firstPredecessor (1 : Fin (4 : ℕ))) ∧
-            cert.exceptional_segments.a ∉ FootprintVertices (TileTranslation (cert.Q (1 : Fin (3
+            cert.exceptionalSegments.a ∉ FootprintVertices (TileTranslation (cert.Q (1 : Fin (3
             : ℕ)) true) (BandVectors.1 (q (2 : Fin (4 : ℕ))) (cfg.firstPredecessor (1 : Fin (4 :
-            ℕ))))) ∧ cert.exceptional_segments.b ∉ FootprintVertices (TileTranslation (cert.S (1
+            ℕ))))) ∧ cert.exceptionalSegments.b ∉ FootprintVertices (TileTranslation (cert.S (1
             : Fin (3 : ℕ)) false) (-BandVectors.1 (q (2 : Fin (4 : ℕ))) (cfg.firstPredecessor (1
             : Fin (4 : ℕ))))) ∨ (birth (0 : Fin (4 : ℕ)) = cfg.firstPredecessor (1 : Fin (4 : ℕ))
             ∧ birth (2 : Fin (4 : ℕ)) = q (2 : Fin (4 : ℕ)) ∧ birth (3 : Fin (4 : ℕ)) = q (3 :
-            Fin (4 : ℕ))) ∧ cert.exceptional_segments.a ∉ FootprintVertices (TileTranslation
+            Fin (4 : ℕ))) ∧ cert.exceptionalSegments.a ∉ FootprintVertices (TileTranslation
             cert.O ((⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt) * BandVectors.1 (q (2 : Fin (4 : ℕ)))
-            (cfg.firstPredecessor (1 : Fin (4 : ℕ))))) ∧ cert.exceptional_segments.a ∉
+            (cfg.firstPredecessor (1 : Fin (4 : ℕ))))) ∧ cert.exceptionalSegments.a ∉
             FootprintVertices (TileTranslation cert.O (BandVectors.1 (cfg.firstPredecessor (1 :
-            Fin (4 : ℕ))) (q (3 : Fin (4 : ℕ))))) ∧ cert.exceptional_segments.b ∉
+            Fin (4 : ℕ))) (q (3 : Fin (4 : ℕ))))) ∧ cert.exceptionalSegments.b ∉
             FootprintVertices (TileTranslation cert.O (-((⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt) *
             BandVectors.1 (q (2 : Fin (4 : ℕ))) (cfg.firstPredecessor (1 : Fin (4 : ℕ)))))) ∧
-            cert.exceptional_segments.b ∉ FootprintVertices (TileTranslation cert.O
+            cert.exceptionalSegments.b ∉ FootprintVertices (TileTranslation cert.O
             (-BandVectors.1 (cfg.firstPredecessor (1 : Fin (4 : ℕ))) (q (3 : Fin (4 : ℕ)))))) →
             ((BandPrototile (ρ 1) cert.O) → ((BandPrototile (q 3) (cert.Q 2 true)) →
             ((BandPrototile (q 2) (cert.S 1 false)) → ((cert.Q (1 : Fin (3 : ℕ)) true ≠ cert.S (1
             : Fin (3 : ℕ)) false) → ((cert.Q (2 : Fin (3 : ℕ)) true ≠ cert.O) → ((∃ (W :
             ProtoTile), (W = cert.Q (2 : Fin (3 : ℕ)) true ∨ W = cert.O) ∧ ∃ (j : Fin (4 : ℕ)),
-            LatticeVertexIncidentCell cert.exceptional_segments.b j ∈ (cert.S (1 : Fin (3 : ℕ))
-            false).cells ∧ LatticeVertexIncidentCell cert.exceptional_segments.b (j + (2 : Fin (4
-            : ℕ))) ∈ W.cells ∧ cert.exceptional_segments.b ∈ FootprintVertices (cert.S (1 : Fin
-            (3 : ℕ)) false) ∧ cert.exceptional_segments.b ∈ FootprintVertices W ∧ ∀ (y :
-            GaussianInt), y = cert.exceptional_segments.b ∨ y = cert.exceptional_segments.b + (1
-            : GaussianInt) ∨ y = cert.exceptional_segments.b - (1 : GaussianInt) ∨ y =
-            cert.exceptional_segments.b + (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt) ∨ y =
-            cert.exceptional_segments.b - (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt) → y ∈
+            LatticeVertexIncidentCell cert.exceptionalSegments.b j ∈ (cert.S (1 : Fin (3 : ℕ))
+            false).cells ∧ LatticeVertexIncidentCell cert.exceptionalSegments.b (j + (2 : Fin (4
+            : ℕ))) ∈ W.cells ∧ cert.exceptionalSegments.b ∈ FootprintVertices (cert.S (1 : Fin
+            (3 : ℕ)) false) ∧ cert.exceptionalSegments.b ∈ FootprintVertices W ∧ ∀ (y :
+            GaussianInt), y = cert.exceptionalSegments.b ∨ y = cert.exceptionalSegments.b + (1
+            : GaussianInt) ∨ y = cert.exceptionalSegments.b - (1 : GaussianInt) ∨ y =
+            cert.exceptionalSegments.b + (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt) ∨ y =
+            cert.exceptionalSegments.b - (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt) → y ∈
             FootprintVertices (cert.S (1 : Fin (3 : ℕ)) false) ∨ y ∈ FootprintVertices W) → (
         let I : GaussianInt := ⟨0, 1⟩
         (I ^ 2 = -1) → ((I ^ 3 = -I) → ((¬ (∃ r : ℕ, 3 = r + r)) → (((TileTranslation (cert.S (1
@@ -1503,10 +1475,10 @@ private theorem p2_b_O_row :
             : Fin (3 : ℕ)) false) (-I * BandVectors.1 (q (3 : Fin (4 : ℕ))) (q (2 : Fin (4 :
             ℕ))))).cells = ∅ → (TileTranslation (cert.S (1 : Fin (3 : ℕ)) false) (-I *
             BandVectors.1 (q (3 : Fin (4 : ℕ))) (q (2 : Fin (4 : ℕ))))).anchor = (cert.P (1 : Fin
-            (3 : ℕ)) false).anchor)) → ((cert.exceptional_segments.b ∉ FootprintVertices
+            (3 : ℕ)) false).anchor)) → ((cert.exceptionalSegments.b ∉ FootprintVertices
             (TileTranslation (cert.S 1 false) (-I * BandVectors.1 (q 3) (q 2)))) → ((birth 0 = q
             2 ∧ birth 2 = q 3 ∧ birth 3 = ρ 1) → (Nonempty (PositiveCutCompanionRow cert
-            cert.exceptional_segments.b)))))))))))))))) ) := by
+            cert.exceptionalSegments.b)))))))))))))))) ) := by
   classical
   intro q cfg C₀ T cert hO ρ birth hproper branchExclusions hOproto hQ3proto hS2proto hneQ1S1
       hneB_QO' selected_p2_b I hI2 hI3 hodd3 hfixedMinusUnique hfixedMinusAbsent hp2
@@ -1517,7 +1489,7 @@ private theorem p2_b_O_row :
     · rfl
     · exact hp2.2.1
     · exact hp2.2.2
-  have hnotS2b : cert.exceptional_segments.b ∉ FootprintVertices
+  have hnotS2b : cert.exceptionalSegments.b ∉ FootprintVertices
       (TileTranslation (cert.S 1 false) (-BandVectors.1 (q 2) (ρ 1))) := by
     rcases branchExclusions with hEx | hEx
     · exact hEx.2.2
@@ -1564,7 +1536,7 @@ private theorem p2_b_O_row :
       literalRow := Or.inr (Or.inr (Or.inl ⟨hbP2, rfl, rfl, rfl, rfl, rfl⟩))
     }⟩
   · subst W
-    have hnotS2b' : cert.exceptional_segments.b ∉ FootprintVertices
+    have hnotS2b' : cert.exceptionalSegments.b ∉ FootprintVertices
         (TileTranslation (cert.S 1 false) (-BandVectors.1 (q 2) (ρ 1))) := hnotS2b
     refine ⟨{
       precursorNonempty := hO,
@@ -1608,28 +1580,28 @@ private theorem p4_exclusions :
         ∀ (birth : Fin (4 : ℕ) → CircleCoordinates), (ProperBandQuadruple birth) → (((birth (0 :
             Fin (4 : ℕ)) = q (2 : Fin (4 : ℕ)) ∧ birth (2 : Fin (4 : ℕ)) = q (3 : Fin (4 : ℕ)) ∧
             birth (3 : Fin (4 : ℕ)) = cfg.firstPredecessor (1 : Fin (4 : ℕ))) ∧
-            cert.exceptional_segments.a ∉ FootprintVertices (TileTranslation (cert.Q (1 : Fin (3
+            cert.exceptionalSegments.a ∉ FootprintVertices (TileTranslation (cert.Q (1 : Fin (3
             : ℕ)) true) (BandVectors.1 (q (2 : Fin (4 : ℕ))) (cfg.firstPredecessor (1 : Fin (4 :
-            ℕ))))) ∧ cert.exceptional_segments.b ∉ FootprintVertices (TileTranslation (cert.S (1
+            ℕ))))) ∧ cert.exceptionalSegments.b ∉ FootprintVertices (TileTranslation (cert.S (1
             : Fin (3 : ℕ)) false) (-BandVectors.1 (q (2 : Fin (4 : ℕ))) (cfg.firstPredecessor (1
             : Fin (4 : ℕ))))) ∨ (birth (0 : Fin (4 : ℕ)) = cfg.firstPredecessor (1 : Fin (4 : ℕ))
             ∧ birth (2 : Fin (4 : ℕ)) = q (2 : Fin (4 : ℕ)) ∧ birth (3 : Fin (4 : ℕ)) = q (3 :
-            Fin (4 : ℕ))) ∧ cert.exceptional_segments.a ∉ FootprintVertices (TileTranslation
+            Fin (4 : ℕ))) ∧ cert.exceptionalSegments.a ∉ FootprintVertices (TileTranslation
             cert.O ((⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt) * BandVectors.1 (q (2 : Fin (4 : ℕ)))
-            (cfg.firstPredecessor (1 : Fin (4 : ℕ))))) ∧ cert.exceptional_segments.a ∉
+            (cfg.firstPredecessor (1 : Fin (4 : ℕ))))) ∧ cert.exceptionalSegments.a ∉
             FootprintVertices (TileTranslation cert.O (BandVectors.1 (cfg.firstPredecessor (1 :
-            Fin (4 : ℕ))) (q (3 : Fin (4 : ℕ))))) ∧ cert.exceptional_segments.b ∉
+            Fin (4 : ℕ))) (q (3 : Fin (4 : ℕ))))) ∧ cert.exceptionalSegments.b ∉
             FootprintVertices (TileTranslation cert.O (-((⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt) *
             BandVectors.1 (q (2 : Fin (4 : ℕ))) (cfg.firstPredecessor (1 : Fin (4 : ℕ)))))) ∧
-            cert.exceptional_segments.b ∉ FootprintVertices (TileTranslation cert.O
+            cert.exceptionalSegments.b ∉ FootprintVertices (TileTranslation cert.O
             (-BandVectors.1 (cfg.firstPredecessor (1 : Fin (4 : ℕ))) (q (3 : Fin (4 : ℕ)))))) → (
         let I : GaussianInt := ⟨0, 1⟩
-        (birth 0 = ρ 1 ∧ birth 2 = q 2 ∧ birth 3 = q 3) → (cert.exceptional_segments.a ∉
+        (birth 0 = ρ 1 ∧ birth 2 = q 2 ∧ birth 3 = q 3) → (cert.exceptionalSegments.a ∉
             FootprintVertices (TileTranslation cert.O (I * BandVectors.1 (q 2) (ρ 1))) ∧
-            cert.exceptional_segments.a ∉ FootprintVertices (TileTranslation cert.O
-            (BandVectors.1 (ρ 1) (q 3))) ∧ cert.exceptional_segments.b ∉ FootprintVertices
+            cert.exceptionalSegments.a ∉ FootprintVertices (TileTranslation cert.O
+            (BandVectors.1 (ρ 1) (q 3))) ∧ cert.exceptionalSegments.b ∉ FootprintVertices
             (TileTranslation cert.O (-I * BandVectors.1 (q 2) (ρ 1))) ∧
-            cert.exceptional_segments.b ∉ FootprintVertices (TileTranslation cert.O
+            cert.exceptionalSegments.b ∉ FootprintVertices (TileTranslation cert.O
             (-BandVectors.1 (ρ 1) (q 3)))))) ) := by
   classical
   intro q cfg C₀ T cert ρ birth hproper branchExclusions I hp4
@@ -1655,23 +1627,23 @@ private theorem p4_a_row :
             ((BandPrototile (q 3) (cert.S 2 false)) → ((cert.O ≠ cert.Q (1 : Fin (3 : ℕ)) true) →
             ((cert.O ≠ cert.S (1 : Fin (3 : ℕ)) false) → ((∃ (W : ProtoTile), (W = cert.Q (1 :
             Fin (3 : ℕ)) true ∨ W = cert.S (2 : Fin (3 : ℕ)) false) ∧ ∃ (j : Fin (4 : ℕ)),
-            LatticeVertexIncidentCell cert.exceptional_segments.a j ∈ cert.O.cells ∧
-            LatticeVertexIncidentCell cert.exceptional_segments.a (j + (2 : Fin (4 : ℕ))) ∈
-            W.cells ∧ cert.exceptional_segments.a ∈ FootprintVertices cert.O ∧
-            cert.exceptional_segments.a ∈ FootprintVertices W ∧ ∀ (y : GaussianInt), y =
-            cert.exceptional_segments.a ∨ y = cert.exceptional_segments.a + (1 : GaussianInt) ∨ y
-            = cert.exceptional_segments.a - (1 : GaussianInt) ∨ y = cert.exceptional_segments.a +
-            (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt) ∨ y = cert.exceptional_segments.a - (⟨(0 : ℤ), (1
+            LatticeVertexIncidentCell cert.exceptionalSegments.a j ∈ cert.O.cells ∧
+            LatticeVertexIncidentCell cert.exceptionalSegments.a (j + (2 : Fin (4 : ℕ))) ∈
+            W.cells ∧ cert.exceptionalSegments.a ∈ FootprintVertices cert.O ∧
+            cert.exceptionalSegments.a ∈ FootprintVertices W ∧ ∀ (y : GaussianInt), y =
+            cert.exceptionalSegments.a ∨ y = cert.exceptionalSegments.a + (1 : GaussianInt) ∨ y
+            = cert.exceptionalSegments.a - (1 : GaussianInt) ∨ y = cert.exceptionalSegments.a +
+            (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt) ∨ y = cert.exceptionalSegments.a - (⟨(0 : ℤ), (1
             : ℤ)⟩ : GaussianInt) → y ∈ FootprintVertices cert.O ∨ y ∈ FootprintVertices W) → (
         let I : GaussianInt := ⟨0, 1⟩
-        ((birth 0 = ρ 1 ∧ birth 2 = q 2 ∧ birth 3 = q 3) → (cert.exceptional_segments.a ∉
+        ((birth 0 = ρ 1 ∧ birth 2 = q 2 ∧ birth 3 = q 3) → (cert.exceptionalSegments.a ∉
             FootprintVertices (TileTranslation cert.O (I * BandVectors.1 (q 2) (ρ 1))) ∧
-            cert.exceptional_segments.a ∉ FootprintVertices (TileTranslation cert.O
-            (BandVectors.1 (ρ 1) (q 3))) ∧ cert.exceptional_segments.b ∉ FootprintVertices
+            cert.exceptionalSegments.a ∉ FootprintVertices (TileTranslation cert.O
+            (BandVectors.1 (ρ 1) (q 3))) ∧ cert.exceptionalSegments.b ∉ FootprintVertices
             (TileTranslation cert.O (-I * BandVectors.1 (q 2) (ρ 1))) ∧
-            cert.exceptional_segments.b ∉ FootprintVertices (TileTranslation cert.O
+            cert.exceptionalSegments.b ∉ FootprintVertices (TileTranslation cert.O
             (-BandVectors.1 (ρ 1) (q 3))))) → ((birth 0 = ρ 1 ∧ birth 2 = q 2 ∧ birth 3 = q 3) →
-            (Nonempty (PositiveCutCompanionRow cert cert.exceptional_segments.a))))))))))) ) := by
+            (Nonempty (PositiveCutCompanionRow cert cert.exceptionalSegments.a))))))))))) ) := by
   classical
   intro q cfg C₀ T cert hO ρ birth hproper hOproto hQ2proto hS3proto hneA_OQ hneB_OS
       selected_p4_a I p4_exclusions hp4
@@ -1760,24 +1732,24 @@ private theorem p4_b_row :
             ((BandPrototile (q 2) (cert.S 1 false)) → ((cert.O ≠ cert.Q (1 : Fin (3 : ℕ)) true) →
             ((cert.O ≠ cert.S (1 : Fin (3 : ℕ)) false) → ((∃ (W : ProtoTile), (W = cert.S (1 :
             Fin (3 : ℕ)) false ∨ W = cert.Q (2 : Fin (3 : ℕ)) true) ∧ ∃ (j : Fin (4 : ℕ)),
-            LatticeVertexIncidentCell cert.exceptional_segments.b j ∈ cert.O.cells ∧
-            LatticeVertexIncidentCell cert.exceptional_segments.b (j + (2 : Fin (4 : ℕ))) ∈
-            W.cells ∧ cert.exceptional_segments.b ∈ FootprintVertices cert.O ∧
-            cert.exceptional_segments.b ∈ FootprintVertices W ∧ ∀ (y : GaussianInt), y =
-            cert.exceptional_segments.b ∨ y = cert.exceptional_segments.b + (1 : GaussianInt) ∨ y
-            = cert.exceptional_segments.b - (1 : GaussianInt) ∨ y = cert.exceptional_segments.b +
-            (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt) ∨ y = cert.exceptional_segments.b - (⟨(0 : ℤ), (1
+            LatticeVertexIncidentCell cert.exceptionalSegments.b j ∈ cert.O.cells ∧
+            LatticeVertexIncidentCell cert.exceptionalSegments.b (j + (2 : Fin (4 : ℕ))) ∈
+            W.cells ∧ cert.exceptionalSegments.b ∈ FootprintVertices cert.O ∧
+            cert.exceptionalSegments.b ∈ FootprintVertices W ∧ ∀ (y : GaussianInt), y =
+            cert.exceptionalSegments.b ∨ y = cert.exceptionalSegments.b + (1 : GaussianInt) ∨ y
+            = cert.exceptionalSegments.b - (1 : GaussianInt) ∨ y = cert.exceptionalSegments.b +
+            (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt) ∨ y = cert.exceptionalSegments.b - (⟨(0 : ℤ), (1
             : ℤ)⟩ : GaussianInt) → y ∈ FootprintVertices cert.O ∨ y ∈ FootprintVertices W) → (
         let I : GaussianInt := ⟨0, 1⟩
         (I ^ 2 = -1) → ((I ^ 3 = -I) → ((¬ (∃ r : ℕ, 3 = r + r)) → (((birth 0 = ρ 1 ∧ birth 2 = q
-            2 ∧ birth 3 = q 3) → (cert.exceptional_segments.a ∉ FootprintVertices
+            2 ∧ birth 3 = q 3) → (cert.exceptionalSegments.a ∉ FootprintVertices
             (TileTranslation cert.O (I * BandVectors.1 (q 2) (ρ 1))) ∧
-            cert.exceptional_segments.a ∉ FootprintVertices (TileTranslation cert.O
-            (BandVectors.1 (ρ 1) (q 3))) ∧ cert.exceptional_segments.b ∉ FootprintVertices
+            cert.exceptionalSegments.a ∉ FootprintVertices (TileTranslation cert.O
+            (BandVectors.1 (ρ 1) (q 3))) ∧ cert.exceptionalSegments.b ∉ FootprintVertices
             (TileTranslation cert.O (-I * BandVectors.1 (q 2) (ρ 1))) ∧
-            cert.exceptional_segments.b ∉ FootprintVertices (TileTranslation cert.O
+            cert.exceptionalSegments.b ∉ FootprintVertices (TileTranslation cert.O
             (-BandVectors.1 (ρ 1) (q 3))))) → ((birth 0 = ρ 1 ∧ birth 2 = q 2 ∧ birth 3 = q 3) →
-            (Nonempty (PositiveCutCompanionRow cert cert.exceptional_segments.b)))))))))))))) )
+            (Nonempty (PositiveCutCompanionRow cert cert.exceptionalSegments.b)))))))))))))) )
             := by
   classical
   intro q cfg C₀ T cert hO ρ birth hproper hOproto hQ3proto hS2proto hneA_OQ hneB_OS
@@ -1864,8 +1836,8 @@ theorem BandOrderedGeneralPositiveCutGeometry
     (C₀ : BandCircle) (T : ProtoTile)
     (cert : BandOrderedGeneralLayoutCertificate q cfg C₀ T)
     (hO : cert.O.cells.Nonempty) :
-    Nonempty (PositiveCutCompanionRow cert cert.exceptional_segments.a) ∧
-      Nonempty (PositiveCutCompanionRow cert cert.exceptional_segments.b) := by
+    Nonempty (PositiveCutCompanionRow cert cert.exceptionalSegments.a) ∧
+      Nonempty (PositiveCutCompanionRow cert cert.exceptionalSegments.b) := by
 -- BODY
   let ρ := cfg.firstPredecessor
   have genealogy := BandParentBoundaryGenealogy ρ cfg.firstProper
@@ -1921,25 +1893,25 @@ theorem BandOrderedGeneralPositiveCutGeometry
       (PositiveCutGeometry.boundary_to_raw (PositiveCutGeometry.boundary_edge_footprint)
       (PositiveCutGeometry.edge_vertex_footprint))
   have raw_incident := PositiveCutGeometry.raw_incident
-  have haLeft : cert.exceptional_segments.a ∈ cert.exceptional_segments.left :=
-    (PositiveCutGeometry.getLast_mem_of_eq_some) _ _ cert.exceptional_segments.left_last
-  have hbRight : cert.exceptional_segments.b ∈ cert.exceptional_segments.right :=
-    (PositiveCutGeometry.head_mem_of_eq_some) _ _ cert.exceptional_segments.right_head
-  have hcutA := (cert.exceptional_segments.first_cut_unique
-    cert.exceptional_segments.a).mpr rfl
-  have hcutB := (cert.exceptional_segments.second_cut_unique
-    cert.exceptional_segments.b).mpr rfl
+  have haLeft : cert.exceptionalSegments.a ∈ cert.exceptionalSegments.left :=
+    (PositiveCutGeometry.getLast_mem_of_eq_some) _ _ cert.exceptionalSegments.left_last
+  have hbRight : cert.exceptionalSegments.b ∈ cert.exceptionalSegments.right :=
+    (PositiveCutGeometry.head_mem_of_eq_some) _ _ cert.exceptionalSegments.right_head
+  have hcutA := (cert.exceptionalSegments.first_cut_unique
+    cert.exceptionalSegments.a).mpr rfl
+  have hcutB := (cert.exceptionalSegments.second_cut_unique
+    cert.exceptionalSegments.b).mpr rfl
   have hQ2occ : ∃ j : Fin 4,
-      LatticeVertexIncidentCell cert.exceptional_segments.a j ∈ (cert.Q 1 true).cells :=
+      LatticeVertexIncidentCell cert.exceptionalSegments.a j ∈ (cert.Q 1 true).cells :=
     boundary_incident _ _ hQ2ne hcutA.1
   have hS3occ : ∃ j : Fin 4,
-      LatticeVertexIncidentCell cert.exceptional_segments.a j ∈ (cert.S 2 false).cells :=
+      LatticeVertexIncidentCell cert.exceptionalSegments.a j ∈ (cert.S 2 false).cells :=
     boundary_incident _ _ hS3ne hcutA.2.1
   have hQ3occ : ∃ j : Fin 4,
-      LatticeVertexIncidentCell cert.exceptional_segments.b j ∈ (cert.Q 2 true).cells :=
+      LatticeVertexIncidentCell cert.exceptionalSegments.b j ∈ (cert.Q 2 true).cells :=
     boundary_incident _ _ hQ3ne hcutB.1
   have hS2occ : ∃ j : Fin 4,
-      LatticeVertexIncidentCell cert.exceptional_segments.b j ∈ (cert.S 1 false).cells :=
+      LatticeVertexIncidentCell cert.exceptionalSegments.b j ∈ (cert.S 1 false).cells :=
     boundary_incident _ _ hS2ne hcutB.2.1
   have hAowners := PositiveCutGeometry.hAowners q cfg C₀ T cert hO sector haLeft
   have hBowners := PositiveCutGeometry.hBowners q cfg C₀ T cert hO sector hbRight
@@ -1977,19 +1949,19 @@ theorem BandOrderedGeneralPositiveCutGeometry
   have hneB_OS := ne_of_disjoint _ _ hS2O.symm hOne
   have hneB_OQ := ne_of_disjoint _ _ hOQ3 hOne
   have selected_p2_a := normalize_selected (cert.Q 1 true) (cert.S 2 false) cert.O
-    cert.exceptional_segments.a hneA_QS hneA_QO hneA_SO
+    cert.exceptionalSegments.a hneA_QS hneA_QO hneA_SO
     ((PositiveCutGeometry.selectA_Q q cfg C₀ T cert hQ2lat hS3lat hOlat hQ2check hS3check hOcheck
         hQ2occ hS3occ hAowners hOoccA hQS hSO hOQ) (cert.Q 1 true) (Or.inl rfl))
   have selected_p2_b := normalize_selected (cert.S 1 false) (cert.Q 2 true) cert.O
-    cert.exceptional_segments.b hneB_SQ hneB_SO' hneB_QO'
+    cert.exceptionalSegments.b hneB_SQ hneB_SO' hneB_QO'
     ((PositiveCutGeometry.selectB_S q cfg C₀ T cert hQ3lat hS2lat hOlat hQ3check hS2check hOcheck
         hQ3occ hS2occ hBowners hOoccB hQ3S2 hS2O hOQ3) (cert.S 1 false) (Or.inl rfl))
   have selected_p4_a := normalize_selected cert.O (cert.Q 1 true) (cert.S 2 false)
-    cert.exceptional_segments.a hneA_OQ hneA_OS hneA_QS
+    cert.exceptionalSegments.a hneA_OQ hneA_OS hneA_QS
     ((PositiveCutGeometry.selectA_O q cfg C₀ T cert hQ2lat hS3lat hOlat hQ2check hS3check hOcheck
         hQ2occ hS3occ hAowners hOoccA hQS hSO hOQ) cert.O (Or.inl rfl))
   have selected_p4_b := normalize_selected cert.O (cert.S 1 false) (cert.Q 2 true)
-    cert.exceptional_segments.b hneB_OS hneB_OQ hneB_SQ
+    cert.exceptionalSegments.b hneB_OS hneB_OQ hneB_SQ
     ((PositiveCutGeometry.selectB_O q cfg C₀ T cert hQ3lat hS2lat hOlat hQ3check hS2check hOcheck
         hQ3occ hS2occ hBowners hOoccB hQ3S2 hS2O hOQ3) cert.O (Or.inl rfl))
   let I : GaussianInt := ⟨0, 1⟩

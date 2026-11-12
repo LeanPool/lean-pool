@@ -5,7 +5,10 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.BandCircleEuclideanData
+public import Mathlib.Analysis.Complex.Basic
 
 -- [TABLET NODE: BandPackingExterior]
 

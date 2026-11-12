@@ -5,10 +5,11 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P4194T1DiamondVertexIncidence
-public import LeanPool.ApollonianSuperharmonic.P5124T1BoundaryGeometry
 public import LeanPool.ApollonianSuperharmonic.P5157T1AlternatingStaircase
-public import LeanPool.ApollonianSuperharmonic.SimpleGridPathEquivariance
+public import LeanPool.ApollonianSuperharmonic.TileTranslationFormulas
 
 -- [TABLET NODE: P5203T1IncreasingInterface]
 

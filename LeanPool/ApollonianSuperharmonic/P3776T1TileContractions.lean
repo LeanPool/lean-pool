@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.PeriodicTileCore
 
 -- [TABLET NODE: P3776T1TileContractions]

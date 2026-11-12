@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P4458T1RestrictionFamily
 public import LeanPool.ApollonianSuperharmonic.AncestorOdometerInnerSupportNormalization
 public import LeanPool.ApollonianSuperharmonic.BandPrototileCentroidUnique
@@ -12,7 +14,6 @@ public import LeanPool.ApollonianSuperharmonic.BandPrototileTranslation
 public import LeanPool.ApollonianSuperharmonic.ParentVectorsInTilingLattice
 public import LeanPool.ApollonianSuperharmonic.PositiveCurvatureTileOdometerDomain
 public import LeanPool.ApollonianSuperharmonic.PositiveCurvatureTileOdometerSupportTransport
-public import LeanPool.ApollonianSuperharmonic.TileTranslationFormulas
 
 -- [TABLET NODE: P4536T1RegularJoin]
 

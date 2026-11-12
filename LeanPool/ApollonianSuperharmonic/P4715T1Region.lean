@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P4715T1Position
 public import LeanPool.ApollonianSuperharmonic.SixSubtileFaceVertices
 

@@ -5,12 +5,9 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.ApollonianSuperharmonic.Preamble
+public import Mathlib.Init
+
 public import Mathlib.Analysis.Convex.Topology
-public import Mathlib.Analysis.Convex.PathConnected
-public import Mathlib.Topology.Homeomorph.Lemmas
-public import Mathlib.Tactic.FieldSimp
-public import Mathlib.Tactic.Linarith
 
 /-!
 # P3723T1ConvexRadialIntersection

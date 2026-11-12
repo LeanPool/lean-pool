@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P4793T1PatchFacetLedger
 public import LeanPool.ApollonianSuperharmonic.P4793T1SupportingFace
 public import LeanPool.ApollonianSuperharmonic.P4783T1PatchCoverage

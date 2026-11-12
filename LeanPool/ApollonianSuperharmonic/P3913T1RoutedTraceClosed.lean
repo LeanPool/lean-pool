@@ -5,9 +5,10 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P3723T1AllContactRouting
 public import LeanPool.ApollonianSuperharmonic.P3776T1FixedGeometry
-public import LeanPool.ApollonianSuperharmonic.P3767T1VertexEdgeIncidence
 
 -- [TABLET NODE: P3913T1RoutedTraceClosed]
 

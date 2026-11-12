@@ -5,11 +5,13 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.ApollonianSuperharmonic.Preamble
-public import Mathlib.Analysis.Convex.Combination
-public import Mathlib.Data.Fin.VecNotation
+public import Mathlib.Init
+public import Mathlib.Basic.Real.Basic
 public import Mathlib.Tactic.FinCases
+
 public import Mathlib.Tactic.LinearCombination
+public import Mathlib.Algebra.Order.Algebra
+public import Mathlib.LinearAlgebra.AffineSpace.Independent
 
 -- [TABLET NODE: P4802T1TriangleIndependent]
 

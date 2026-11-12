@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P4194T1DiamondCellRows
 public import LeanPool.ApollonianSuperharmonic.DiamondTile
 public import LeanPool.ApollonianSuperharmonic.TileTranslationFormulas

@@ -5,6 +5,9 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+public import Mathlib.Tactic.Positivity
+
 public import LeanPool.ApollonianSuperharmonic.P4909T1ParentEdges
 public import LeanPool.ApollonianSuperharmonic.P4828T1Rotate
 public import LeanPool.ApollonianSuperharmonic.P4828T1Step
@@ -12,7 +15,8 @@ public import Mathlib.LinearAlgebra.AffineSpace.FiniteDimensional
 public import Mathlib.LinearAlgebra.Complex.FiniteDimensional
 public import Mathlib.Analysis.Convex.Combination
 public import Mathlib.Topology.MetricSpace.Lipschitz
-public import Mathlib.Topology.Order.OrderClosed
+public import LeanPool.ApollonianSuperharmonic.P4909T1ParentPolygon
+public import Mathlib.Analysis.Complex.Norm
 
 -- [TABLET NODE: P4909T1TriangleFan]
 

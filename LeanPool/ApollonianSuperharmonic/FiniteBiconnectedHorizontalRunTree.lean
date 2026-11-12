@@ -5,11 +5,11 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import Mathlib.Combinatorics.SimpleGraph.Acyclic
-public import Mathlib.Data.Finset.Card
 public import LeanPool.ApollonianSuperharmonic.FourNeighborConnected
 public import LeanPool.ApollonianSuperharmonic.GridRayCrossingIndexAdjacentCell
-public import LeanPool.ApollonianSuperharmonic.ProtoTile
 
 /-!
 # FiniteBiconnectedHorizontalRunTree

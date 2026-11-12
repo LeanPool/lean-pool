@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P4780T1HullHalfspaces
 
 -- [TABLET NODE: P4780T1OverlapBound]

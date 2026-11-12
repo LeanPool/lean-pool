@@ -5,7 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.ApollonianSuperharmonic.FootprintVertices
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.TileOdometer
 
 -- [TABLET NODE: PositiveCurvatureTileOdometerDomain]

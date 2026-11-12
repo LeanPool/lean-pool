@@ -5,11 +5,10 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.BandOrderedGeneralLayoutCertificate
-public import LeanPool.ApollonianSuperharmonic.PeriodicTileIntersectionPaths
-public import LeanPool.ApollonianSuperharmonic.FootprintDeletionRetention
 public import LeanPool.ApollonianSuperharmonic.P4339T1PrecursorSupportGeometry
-public import LeanPool.ApollonianSuperharmonic.SixSubtileFaceVertices
 
 -- [TABLET NODE: P4616T1OriginalMixedPaths]
 
@@ -133,8 +132,8 @@ theorem P4616T1OriginalMixedPaths
     have liftFace (F : PeriodicSubtileFaceIndex)
         (hF : (∃ i, SixSubtileFaceVertices F i = a) ∧
           ∃ i, SixSubtileFaceVertices F i = b) :
-        (∃ i, cert.modified.plane.faceVertex (cert.modified_face_equiv.symm F) i = a) ∧
-        ∃ i, cert.modified.plane.faceVertex (cert.modified_face_equiv.symm F) i = b := by
+        (∃ i, cert.modified.plane.faceVertex (cert.modifiedFaceEquivalence.symm F) i = a) ∧
+        ∃ i, cert.modified.plane.faceVertex (cert.modifiedFaceEquivalence.symm F) i = b := by
       constructor
       · obtain ⟨i, hi⟩ := hF.1
         exact ⟨i, by rw [cert.modified_face_vertices]; simpa using hi⟩
@@ -142,14 +141,14 @@ theorem P4616T1OriginalMixedPaths
         exact ⟨i, by rw [cert.modified_face_vertices]; simpa using hi⟩
     have hfc := allFaces _ (liftFace f hf)
     have hgc := allFaces _ (liftFace g hg)
-    have hne : cert.modified_face_equiv.symm f ≠ cert.modified_face_equiv.symm g :=
-      fun h => hfg (cert.modified_face_equiv.symm.injective h)
+    have hne : cert.modifiedFaceEquivalence.symm f ≠ cert.modifiedFaceEquivalence.symm g :=
+      fun h => hfg (cert.modifiedFaceEquivalence.symm.injective h)
     rw [regular.adjacent_raw_eq_edge_vertices a b hadj']
     have hpath : SimpleGridPathBetween
         (CommonFootprintEdgeVertices (cert.modified.tile a) (cert.modified.tile b))
         (FootprintEdges (cert.modified.tile a) ∩ FootprintEdges (cert.modified.tile b))
-        (cert.modified.rho (cert.modified_face_equiv.symm f))
-        (cert.modified.rho (cert.modified_face_equiv.symm g)) := by
+        (cert.modified.rho (cert.modifiedFaceEquivalence.symm f))
+        (cert.modified.rho (cert.modifiedFaceEquivalence.symm g)) := by
       rcases hfc with hfc | hfc <;> rcases hgc with hgc | hgc
       · exact (hne (hfc.trans hgc.symm)).elim
       · simpa only [hfc, hgc] using hp

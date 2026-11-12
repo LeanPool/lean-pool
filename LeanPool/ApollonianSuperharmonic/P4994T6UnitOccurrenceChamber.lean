@@ -5,10 +5,10 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.ApollonianSuperharmonic.P4994T6UnitRootTable
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P4994T6UnitCoordinates
 public import LeanPool.ApollonianSuperharmonic.P4994T6ChamberAdditions
-public import LeanPool.ApollonianSuperharmonic.VectorRecursionLaws
 public import LeanPool.ApollonianSuperharmonic.UnitOccurrenceOrientationUnique
 public import LeanPool.ApollonianSuperharmonic.P4566T1UnitPairCharts
 

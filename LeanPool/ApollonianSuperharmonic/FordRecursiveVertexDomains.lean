@@ -5,8 +5,11 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+public import Mathlib.Algebra.Group.Fin.Basic
+
 public import LeanPool.ApollonianSuperharmonic.FordFareyParameter
-public import LeanPool.ApollonianSuperharmonic.IntegerLatticeFunction
+public import Mathlib.NumberTheory.Zsqrtd.GaussianInt
 
 -- [TABLET NODE: FordRecursiveVertexDomains]
 

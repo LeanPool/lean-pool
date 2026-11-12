@@ -5,15 +5,13 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P3996T1SRowTable
 public import LeanPool.ApollonianSuperharmonic.P3045T1RightBoundaryDisplacementAlgebra
 public import LeanPool.ApollonianSuperharmonic.P3055T1ParentVectorNormalForms
 public import LeanPool.ApollonianSuperharmonic.BandOrderedGeneralNormalizedOccurrenceBundle
 public import LeanPool.ApollonianSuperharmonic.BandTileSimultaneousInduction
-public import LeanPool.ApollonianSuperharmonic.ProtoTileObservableExtensionality
-public import LeanPool.ApollonianSuperharmonic.TileDiskAreaCovariance
-public import LeanPool.ApollonianSuperharmonic.VectorNonvanishing
-public import LeanPool.ApollonianSuperharmonic.VectorRecursionLaws
 
 -- [TABLET NODE: P3996T1PlacementCompanionBlocks]
 

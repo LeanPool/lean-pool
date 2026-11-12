@@ -5,9 +5,11 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.ApollonianSuperharmonic.Preamble
+public import Mathlib.Init
+public import Mathlib.Algebra.Group.Fin.Basic
+public import Mathlib.Data.Fin.VecNotation
 public import Mathlib.Data.List.Rotate
-public import Mathlib.Data.List.OfFn
+
 
 -- [TABLET NODE: P3511T1CyclicDissection]
 

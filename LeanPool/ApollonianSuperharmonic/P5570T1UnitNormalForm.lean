@@ -5,12 +5,13 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P5570T1UnitQuadratic
 public import LeanPool.ApollonianSuperharmonic.CurvatureOnePeriodicOdometer
 public import LeanPool.ApollonianSuperharmonic.CurvatureOneBandPrototileSingleton
 public import LeanPool.ApollonianSuperharmonic.TileOdometerBandPrototile
 public import LeanPool.ApollonianSuperharmonic.TileOdometerTranslationUniqueness
-public import LeanPool.ApollonianSuperharmonic.PartialOdometerAffineTranslateFormulas
 
 -- [TABLET NODE: P5570T1UnitNormalForm]
 

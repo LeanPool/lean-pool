@@ -5,12 +5,12 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.FootprintEdges
 public import LeanPool.ApollonianSuperharmonic.FootprintVertices
 public import LeanPool.ApollonianSuperharmonic.FourNeighborAdjacent
-public import LeanPool.ApollonianSuperharmonic.CellDisjointCommonEdgesBoundary
 public import LeanPool.ApollonianSuperharmonic.LatticeTile
-public import LeanPool.ApollonianSuperharmonic.LatticeTileGridStructure
 public import LeanPool.ApollonianSuperharmonic.LatticeVertexIncidentCell
 public import LeanPool.ApollonianSuperharmonic.LocalLatticeInterfaceSectors
 public import LeanPool.ApollonianSuperharmonic.SimpleGridPathPointTrichotomy

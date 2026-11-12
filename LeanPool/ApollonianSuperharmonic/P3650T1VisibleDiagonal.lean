@@ -5,7 +5,10 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P3650T1ExposedCorner
+public import Mathlib.Analysis.Convex.Hull
 
 -- [TABLET NODE: P3650T1VisibleDiagonal]
 

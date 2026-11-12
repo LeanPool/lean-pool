@@ -5,18 +5,16 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+public import Mathlib.Topology.MetricSpace.Pseudo.Real
+
 public import LeanPool.ApollonianSuperharmonic.BoundaryFootprintEdges
 public import LeanPool.ApollonianSuperharmonic.FourNeighborConnected
 public import LeanPool.ApollonianSuperharmonic.GaussianRealPoint
 public import LeanPool.ApollonianSuperharmonic.P3381T1PolygonBoundary
 public import LeanPool.ApollonianSuperharmonic.P3475T1UnitSegmentIntersection
-public import Mathlib.Analysis.Convex.Basic
-public import Mathlib.Analysis.Convex.Segment
 public import Mathlib.Analysis.Convex.PathConnected
-public import Mathlib.Topology.EMetricSpace.Lipschitz
 public import Mathlib.Topology.MetricSpace.Lipschitz
-public import Mathlib.Tactic.Linarith
-public import Mathlib.Tactic.NormNum
 public import LeanPool.ApollonianSuperharmonic.TileRealization
 
 -- [TABLET NODE: P3475T1SquareUnionIdentification]
@@ -137,9 +135,9 @@ private theorem east_center_segment_outside :
   simp only [TileRealization, Set.mem_iUnion] at htile
   rcases htile with ⟨c, hc, hq⟩
   simp only [ClosedSquareRealization, Set.mem_Icc, Prod.le_def] at hq
-  simp? [cellCenter,
-    add_zero,
-    smul_eq_mul] at hq
+  simp only [Int.reduceNeg, GaussianInt.intCast_re, one_div, GaussianInt.intCast_im,
+      Prod.smul_mk, smul_eq_mul, map_add, map_one, Complex.add_re, Complex.one_re,
+      Complex.add_im, Complex.one_im, add_zero, Prod.mk_add_mk, cellCenter] at hq
   simp only [GaussianInt.toComplex_def] at hq
   norm_num [Complex.mul_re, Complex.mul_im] at hq
   have hreC : (GaussianInt.toComplex c).re = (c.re : Real) := by
@@ -192,9 +190,10 @@ private theorem north_center_segment_outside :
   simp only [TileRealization, Set.mem_iUnion] at htile
   rcases htile with ⟨c, hc, hq⟩
   simp only [ClosedSquareRealization, Set.mem_Icc, Prod.le_def] at hq
-  simp? [cellCenter,
-    Int.cast_zero, Int.cast_one, add_zero,
-    smul_eq_mul] at hq
+  simp only [Int.reduceNeg, GaussianInt.intCast_re, one_div, GaussianInt.intCast_im,
+      Prod.smul_mk, smul_eq_mul, map_add, Complex.add_re, GaussianInt.re_toComplex,
+      Int.cast_zero, add_zero, Complex.add_im, GaussianInt.im_toComplex, Int.cast_one,
+      Prod.mk_add_mk, cellCenter] at hq
   simp only [GaussianInt.toComplex_def] at hq
   norm_num [Complex.mul_re, Complex.mul_im] at hq
   have hreC : (GaussianInt.toComplex c).re = (c.re : Real) :=
@@ -270,7 +269,8 @@ private theorem center_not_tile :
   intro T cellCenter a ha htile
   simp only [TileRealization, Set.mem_iUnion] at htile
   obtain ⟨c, hc, hq⟩ := htile
-  simp? [ClosedSquareRealization, cellCenter, Prod.le_def] at hq
+  simp only [ClosedSquareRealization, Int.reduceNeg, GaussianInt.intCast_re,
+      GaussianInt.intCast_im, one_div, Set.mem_Icc, Prod.le_def, cellCenter] at hq
   have hreC : (GaussianInt.toComplex c).re = (c.re : Real) :=
     (GaussianInt.intCast_re c).symm
   have himC : (GaussianInt.toComplex c).im = (c.im : Real) :=
@@ -370,7 +370,7 @@ private theorem list_center_transport :
       simp at hx
   | singleton a =>
       intro hx hy _ _
-      simp? at hx hy
+      simp only [List.head?_cons, Option.some.injEq, List.getLast?_singleton] at hx hy
       subst x
       subst y
       exact Iff.rfl
@@ -731,8 +731,9 @@ private theorem east_same_center_segment_avoids :
       rw [segment_eq_image]
       refine ⟨q.2 - (a.im : Real), ⟨by linarith [hylo], by linarith [hyhi]⟩, ?_⟩
       apply Prod.ext
-      · simp? [GaussianRealPoint, Zsqrtd.re_add, Zsqrtd.re_one,
-          Int.cast_add, Int.cast_one, smul_eq_mul]
+      · simp only [Int.reduceNeg, GaussianInt.intCast_im, GaussianRealPoint, Zsqrtd.re_add,
+          Zsqrtd.re_one, Int.cast_add, GaussianInt.intCast_re, Int.cast_one, Zsqrtd.im_add,
+          Zsqrtd.im_one, add_zero, Prod.smul_mk, smul_eq_mul, Prod.mk_add_mk]
         rw [(GaussianInt.intCast_re a).symm, hqxMid]
         ring
       · simp [GaussianRealPoint, Zsqrtd.im_add, Zsqrtd.im_one,
@@ -839,11 +840,13 @@ private theorem north_same_center_segment_avoids :
       rw [segment_eq_image]
       refine ⟨q.1 - (a.re : Real), ⟨by linarith [hxlo], by linarith [hxhi]⟩, ?_⟩
       apply Prod.ext
-      · simp? [GaussianRealPoint, Zsqrtd.re_add, Zsqrtd.re_one,
-          Int.cast_add, Int.cast_one, smul_eq_mul]
+      · simp only [Int.reduceNeg, GaussianInt.intCast_re, GaussianRealPoint, Zsqrtd.re_add,
+          add_zero, Zsqrtd.im_add, Int.cast_add, GaussianInt.intCast_im, Int.cast_one,
+          Prod.smul_mk, smul_eq_mul, Zsqrtd.re_one, Zsqrtd.im_one, Prod.mk_add_mk]
         ring
-      · simp? [GaussianRealPoint, Zsqrtd.im_add, Zsqrtd.im_one,
-          Int.cast_add, Int.cast_one, smul_eq_mul]
+      · simp only [Int.reduceNeg, GaussianInt.intCast_re, GaussianRealPoint, Zsqrtd.re_add,
+          add_zero, Zsqrtd.im_add, Int.cast_add, GaussianInt.intCast_im, Int.cast_one,
+          Prod.smul_mk, smul_eq_mul, Zsqrtd.re_one, Zsqrtd.im_one, Prod.mk_add_mk]
         rw [(GaussianInt.intCast_im a).symm, hqyMid]
         ring
     change q ∈ ⋃ i, segment ℝ (p.vertex i) (p.vertex (i + 1)) at hC
@@ -873,8 +876,9 @@ private theorem north_same_center_segment_avoids :
         rw [hpoint] at hx
         linarith [hqx]
       · have hpoint : (GaussianRealPoint (a + ⟨0, 1⟩ + 1)).1 = (a.re : Real) + 1 := by
-          simp? [GaussianRealPoint, Zsqrtd.re_add, Zsqrtd.re_one,
-            Int.cast_add, Int.cast_one, GaussianInt.intCast_re, add_assoc]
+          simp only [GaussianRealPoint, Int.reduceNeg, add_assoc, Zsqrtd.re_add,
+              Zsqrtd.re_one, zero_add, Int.cast_add, GaussianInt.intCast_re, Int.cast_one,
+              Zsqrtd.im_add, Zsqrtd.im_one, add_zero, GaussianInt.intCast_im]
         have hx := congrArg Prod.fst hqend
         rw [hpoint] at hx
         linarith [hqx]
@@ -965,7 +969,7 @@ private theorem list_occupied_center_transport :
       simp at hx
   | singleton a =>
       intro hx hy _ _
-      simp? at hx hy
+      simp only [List.head?_cons, Option.some.injEq, List.getLast?_singleton] at hx hy
       subst x
       subst y
       exact Iff.rfl
@@ -1196,15 +1200,14 @@ private theorem qSeedSide :
   rw [segment_eq_image]
   refine ⟨1 / 2, by norm_num, ?_⟩
   apply Prod.ext
-  · simp? [qSeed, GaussianRealPoint, Zsqrtd.re_add, Zsqrtd.im_add,
-      Zsqrtd.re_one, Zsqrtd.im_one, Int.cast_add, Int.cast_one,
-      add_zero,
-      smul_eq_mul]
+  · simp only [one_div, GaussianRealPoint, Int.reduceNeg, Zsqrtd.re_add, Zsqrtd.re_one,
+      Int.cast_add, GaussianInt.intCast_re, Int.cast_one, Zsqrtd.im_add, Zsqrtd.im_one,
+      add_zero, GaussianInt.intCast_im, Prod.smul_mk, smul_eq_mul, Prod.mk_add_mk, qSeed]
     rw [(GaussianInt.intCast_re seed).symm]
     ring
-  · simp? [qSeed, GaussianRealPoint, Zsqrtd.re_add, Zsqrtd.im_add,
-      Zsqrtd.re_one, Zsqrtd.im_one, Int.cast_add, Int.cast_one,
-      add_zero, smul_eq_mul]
+  · simp only [one_div, GaussianRealPoint, Int.reduceNeg, Zsqrtd.re_add, Zsqrtd.re_one,
+      Int.cast_add, GaussianInt.intCast_re, Int.cast_one, Zsqrtd.im_add, Zsqrtd.im_one,
+      add_zero, GaussianInt.intCast_im, Prod.smul_mk, smul_eq_mul, Prod.mk_add_mk, qSeed]
     rw [(GaussianInt.intCast_im seed).symm]
     ring
 
@@ -1377,8 +1380,9 @@ private theorem hrNotSide :
     rw [segment_eq_image]
     refine ⟨r.2 - (seed.im : Real), ⟨by linarith [hryLower], by linarith [hryUpper]⟩, ?_⟩
     apply Prod.ext
-    · simp? [GaussianRealPoint, Zsqrtd.re_add, Zsqrtd.re_one,
-        Int.cast_add, Int.cast_one, smul_eq_mul]
+    · simp only [Int.reduceNeg, GaussianInt.intCast_im, GaussianRealPoint, Zsqrtd.re_add,
+        Zsqrtd.re_one, Int.cast_add, GaussianInt.intCast_re, Int.cast_one, Zsqrtd.im_add,
+        Zsqrtd.im_one, add_zero, Prod.smul_mk, smul_eq_mul, Prod.mk_add_mk]
       rw [hr, (GaussianInt.intCast_re seed).symm]
       ring
     · simp [GaussianRealPoint, Zsqrtd.im_add, Zsqrtd.im_one,
@@ -1484,7 +1488,7 @@ private theorem tile_cover :
       · exact boundary_carrier_in_tile hqBoundary
       · let c : GaussianInt := ⟨Int.floor q.1, Int.floor q.2⟩
         have hqSquare : q ∈ ClosedSquareRealization c := by
-          simp? [ClosedSquareRealization, c, Set.mem_Icc, Prod.le_def]
+          simp only [ClosedSquareRealization, Set.mem_Icc, Prod.le_def, c]
           constructor
           · constructor
             · exact_mod_cast Int.floor_le q.1

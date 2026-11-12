@@ -5,17 +5,17 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P4418T3EndpointOwnerIndices
 public import LeanPool.ApollonianSuperharmonic.P4418T3SelectedInterfaceData
-public import LeanPool.ApollonianSuperharmonic.AllowedSubtileIncidence
 public import LeanPool.ApollonianSuperharmonic.BandOriginalPairSeparation
 public import LeanPool.ApollonianSuperharmonic.FootprintDeletionRetention
-public import LeanPool.ApollonianSuperharmonic.PeriodicTileIntersectionClassification
 public import LeanPool.ApollonianSuperharmonic.PeriodicTileIntersectionPaths
-public import LeanPool.ApollonianSuperharmonic.SixSubtileFaceVertices
 public import LeanPool.ApollonianSuperharmonic.TileDiskAreaCovariance
 public import LeanPool.ApollonianSuperharmonic.TouchingTripleCovariance
 public import LeanPool.ApollonianSuperharmonic.TouchingTriplePermutations
+public import LeanPool.ApollonianSuperharmonic.TileCellComplementCovariance
 
 -- [TABLET NODE: P4418T3SelectedInterfaceExists]
 
@@ -630,10 +630,10 @@ private theorem faceVertex :
         ∀ (q : Fin 4 → CircleCoordinates), ∀ (cfg : BandOrderedGeneralConfiguration q), ∀ (C :
             BandCircle), ∀ (T : ProtoTile), ∀ (cert : BandOrderedGeneralLayoutCertificate q cfg C
             T), ∀ (f : PeriodicSubtileFaceIndex), ∀ (i : Fin 3), cert.modified.plane.faceVertex
-            (cert.modified_face_equiv.symm f) i = SixSubtileFaceVertices f i ) := by
+            (cert.modifiedFaceEquivalence.symm f) i = SixSubtileFaceVertices f i ) := by
   classical
   intro q cfg C T cert f i
-  simpa using cert.modified_face_vertices (cert.modified_face_equiv.symm f) i
+  simpa using cert.modified_face_vertices (cert.modifiedFaceEquivalence.symm f) i
 
 private theorem faceDistinct :
     (by
@@ -657,12 +657,12 @@ private theorem faceDistinct :
             (SubtileOccurrenceInterpretation P u v b))) → (
         let face0 : PeriodicSubtileFaceIndex := selectedFirstFace q cfg C T cert a b row
         let face1 : PeriodicSubtileFaceIndex := selectedSecondFace q cfg C T cert a b row
-        let F0 := cert.modified_face_equiv.symm face0
-        let F1 := cert.modified_face_equiv.symm face1
+        let F0 := cert.modifiedFaceEquivalence.symm face0
+        let F1 := cert.modifiedFaceEquivalence.symm face1
         F0 ≠ F1) ) := by
   classical
   intro q cfg C T cert a b row P O u v retargeted face0 face1 F0 F1 h
-  have hf := congrArg cert.modified_face_equiv h
+  have hf := congrArg cert.modifiedFaceEquivalence h
   cases row <;> simp [F0, F1, face0, face1, selectedFirstFace, selectedSecondFace] at hf
 
 private theorem faceTable :
@@ -688,10 +688,10 @@ private theorem faceTable :
         let owners := P4418T3EndpointOwnerIndices q cfg C T cert a b row
         let face0 : PeriodicSubtileFaceIndex := selectedFirstFace q cfg C T cert a b row
         let face1 : PeriodicSubtileFaceIndex := selectedSecondFace q cfg C T cert a b row
-        let F0 := cert.modified_face_equiv.symm face0
-        let F1 := cert.modified_face_equiv.symm face1
+        let F0 := cert.modifiedFaceEquivalence.symm face0
+        let F1 := cert.modifiedFaceEquivalence.symm face1
         (∀ (f : PeriodicSubtileFaceIndex), ∀ (i : Fin 3), cert.modified.plane.faceVertex
-            (cert.modified_face_equiv.symm f) i =
+            (cert.modifiedFaceEquivalence.symm f) i =
             SixSubtileFaceVertices f i) → ((F0 ≠ F1) → ((∃ iA iB iO : Fin 3,
             cert.modified.plane.faceVertex F0 iA = a ∧ cert.modified.plane.faceVertex F0 iB = b ∧
             cert.modified.plane.faceVertex F0 iO = owners.1) ∧ (∃ jA jB jO : Fin 3,
@@ -700,8 +700,9 @@ private theorem faceTable :
   classical
   intro q cfg C T cert a b row P O u v retargeted owners face0 face1 F0 F1 faceVertex faceDistinct
   cases row <;>
-    simp? [F0, F1, face0, face1, owners, P4418T3EndpointOwnerIndices,
-      faceVertex, SixSubtileFaceVertices, selectedFirstFace, selectedSecondFace] <;> decide
+    simp only [selectedFirstFace, Int.reduceNeg, faceVertex, SixSubtileFaceVertices,
+        neg_add_cancel, P4418T3EndpointOwnerIndices, exists_and_left, exists_and_right,
+        selectedSecondFace, F0, face0, owners, F1, face1, zero_add, zero_sub, sub_self] <;> decide
 
 private theorem reversePath :
     (by
@@ -766,8 +767,8 @@ private theorem hne :
         let owners := P4418T3EndpointOwnerIndices q cfg C T cert a b row
         let face0 : PeriodicSubtileFaceIndex := selectedFirstFace q cfg C T cert a b row
         let face1 : PeriodicSubtileFaceIndex := selectedSecondFace q cfg C T cert a b row
-        let F0 := cert.modified_face_equiv.symm face0
-        let F1 := cert.modified_face_equiv.symm face1
+        let F0 := cert.modifiedFaceEquivalence.symm face0
+        let F1 := cert.modifiedFaceEquivalence.symm face1
         (F0 ≠ F1) → (((∃ iA iB iO : Fin 3, cert.modified.plane.faceVertex F0 iA = a ∧
             cert.modified.plane.faceVertex F0 iB = b ∧ cert.modified.plane.faceVertex F0 iO =
             owners.1) ∧ (∃ jA jB jO : Fin 3, cert.modified.plane.faceVertex F1 jA = a ∧
@@ -800,8 +801,8 @@ private theorem allowed :
         let owners := P4418T3EndpointOwnerIndices q cfg C T cert a b row
         let face0 : PeriodicSubtileFaceIndex := selectedFirstFace q cfg C T cert a b row
         let face1 : PeriodicSubtileFaceIndex := selectedSecondFace q cfg C T cert a b row
-        let F0 := cert.modified_face_equiv.symm face0
-        let F1 := cert.modified_face_equiv.symm face1
+        let F0 := cert.modifiedFaceEquivalence.symm face0
+        let F1 := cert.modifiedFaceEquivalence.symm face1
         (F0 ≠ F1) → (((∃ iA iB iO : Fin 3, cert.modified.plane.faceVertex F0 iA = a ∧
             cert.modified.plane.faceVertex F0 iB = b ∧ cert.modified.plane.faceVertex F0 iO =
             owners.1) ∧ (∃ jA jB jO : Fin 3, cert.modified.plane.faceVertex F1 jA = a ∧
@@ -933,8 +934,8 @@ private theorem pathAtOwners :
         let owners := P4418T3EndpointOwnerIndices q cfg C T cert a b row
         let face0 : PeriodicSubtileFaceIndex := selectedFirstFace q cfg C T cert a b row
         let face1 : PeriodicSubtileFaceIndex := selectedSecondFace q cfg C T cert a b row
-        let F0 := cert.modified_face_equiv.symm face0
-        let F1 := cert.modified_face_equiv.symm face1
+        let F0 := cert.modifiedFaceEquivalence.symm face0
+        let F1 := cert.modifiedFaceEquivalence.symm face1
         (F0 ≠ F1) → (((∃ iA iB iO : Fin 3, cert.modified.plane.faceVertex F0 iA = a ∧
             cert.modified.plane.faceVertex F0 iB = b ∧ cert.modified.plane.faceVertex F0 iO =
             owners.1) ∧ (∃ jA jB jO : Fin 3, cert.modified.plane.faceVertex F1 jA = a ∧
@@ -1005,8 +1006,8 @@ private theorem endpointsDistinct :
         let occurrence := SubtileOccurrenceInterpretation cert.P cert.u cert.v
         let face0 : PeriodicSubtileFaceIndex := selectedFirstFace q cfg C T cert a b row
         let face1 : PeriodicSubtileFaceIndex := selectedSecondFace q cfg C T cert a b row
-        let F0 := cert.modified_face_equiv.symm face0
-        let F1 := cert.modified_face_equiv.symm face1
+        let F0 := cert.modifiedFaceEquivalence.symm face0
+        let F1 := cert.modifiedFaceEquivalence.symm face1
         (∀ (p : List GaussianInt), (p.Nodup) → ((2 ≤ p.length) → (p.head? ≠ p.getLast?))) →
             ((SimpleGridPathBetween (FootprintVertices (occurrence a) ∩ FootprintVertices
             (occurrence b)) (FootprintEdges (occurrence a) ∩ FootprintEdges (occurrence b))
@@ -1041,7 +1042,7 @@ private theorem commonPair0 :
             (SubtileOccurrenceInterpretation P u v a) ∩ FootprintVertices
             (SubtileOccurrenceInterpretation P u v b))) → (
         let face0 : PeriodicSubtileFaceIndex := selectedFirstFace q cfg C T cert a b row
-        let F0 := cert.modified_face_equiv.symm face0
+        let F0 := cert.modifiedFaceEquivalence.symm face0
         ∀ (iA : Fin (3 : ℕ)), ∀ (iB : Fin (3 : ℕ)), (cert.modified.plane.faceVertex F0 iA = a) →
             ((cert.modified.plane.faceVertex F0 iB = b) → (cert.modified.rho F0 ∈
             FootprintVertices (ModifiedSubtileOccurrenceInterpretation P O u v a) ∩
@@ -1072,7 +1073,7 @@ private theorem commonPair1 :
             (SubtileOccurrenceInterpretation P u v a) ∩ FootprintVertices
             (SubtileOccurrenceInterpretation P u v b))) → (
         let face1 : PeriodicSubtileFaceIndex := selectedSecondFace q cfg C T cert a b row
-        let F1 := cert.modified_face_equiv.symm face1
+        let F1 := cert.modifiedFaceEquivalence.symm face1
         ∀ (jA : Fin (3 : ℕ)), ∀ (jB : Fin (3 : ℕ)), (cert.modified.plane.faceVertex F1 jA = a) →
             ((cert.modified.plane.faceVertex F1 jB = b) → (cert.modified.rho F1 ∈
             FootprintVertices (ModifiedSubtileOccurrenceInterpretation P O u v a) ∩
@@ -1107,7 +1108,7 @@ private theorem ownerPoint0 :
         let occurrence := SubtileOccurrenceInterpretation cert.P cert.u cert.v
         let owners := P4418T3EndpointOwnerIndices q cfg C T cert a b row
         let face0 : PeriodicSubtileFaceIndex := selectedFirstFace q cfg C T cert a b row
-        let F0 := cert.modified_face_equiv.symm face0
+        let F0 := cert.modifiedFaceEquivalence.symm face0
         ∀ (iO : Fin (3 : ℕ)), (cert.modified.plane.faceVertex F0 iO = owners.1) →
             (cert.modified.rho F0 ∈ FootprintVertices (occurrence owners.1)))) ) := by
   classical
@@ -1142,7 +1143,7 @@ private theorem ownerPoint1 :
         let occurrence := SubtileOccurrenceInterpretation cert.P cert.u cert.v
         let owners := P4418T3EndpointOwnerIndices q cfg C T cert a b row
         let face1 : PeriodicSubtileFaceIndex := selectedSecondFace q cfg C T cert a b row
-        let F1 := cert.modified_face_equiv.symm face1
+        let F1 := cert.modifiedFaceEquivalence.symm face1
         ∀ (jO : Fin (3 : ℕ)), (cert.modified.plane.faceVertex F1 jO = owners.2) →
             (cert.modified.rho F1 ∈ FootprintVertices (occurrence owners.2)))) ) := by
   classical
@@ -1174,7 +1175,7 @@ private theorem originalPair0 :
             (SubtileOccurrenceInterpretation P u v b))) → (
         let occurrence := SubtileOccurrenceInterpretation cert.P cert.u cert.v
         let face0 : PeriodicSubtileFaceIndex := selectedFirstFace q cfg C T cert a b row
-        let F0 := cert.modified_face_equiv.symm face0
+        let F0 := cert.modifiedFaceEquivalence.symm face0
         (cert.modified.rho F0 ∈ FootprintVertices (ModifiedSubtileOccurrenceInterpretation P O u
             v a) ∩ FootprintVertices (ModifiedSubtileOccurrenceInterpretation P O u v b)) →
             (cert.modified.rho F0 ∈ FootprintVertices (occurrence a) ∩ FootprintVertices
@@ -1205,7 +1206,7 @@ private theorem originalPair1 :
             (SubtileOccurrenceInterpretation P u v b))) → (
         let occurrence := SubtileOccurrenceInterpretation cert.P cert.u cert.v
         let face1 : PeriodicSubtileFaceIndex := selectedSecondFace q cfg C T cert a b row
-        let F1 := cert.modified_face_equiv.symm face1
+        let F1 := cert.modifiedFaceEquivalence.symm face1
         (cert.modified.rho F1 ∈ FootprintVertices (ModifiedSubtileOccurrenceInterpretation P O u
             v a) ∩ FootprintVertices (ModifiedSubtileOccurrenceInterpretation P O u v b)) →
             (cert.modified.rho F1 ∈ FootprintVertices (occurrence a) ∩ FootprintVertices
@@ -1289,8 +1290,8 @@ private theorem disjointData :
         let owners := P4418T3EndpointOwnerIndices q cfg C T cert a b row
         let face0 : PeriodicSubtileFaceIndex := selectedFirstFace q cfg C T cert a b row
         let face1 : PeriodicSubtileFaceIndex := selectedSecondFace q cfg C T cert a b row
-        let F0 := cert.modified_face_equiv.symm face0
-        let F1 := cert.modified_face_equiv.symm face1
+        let F0 := cert.modifiedFaceEquivalence.symm face0
+        let F1 := cert.modifiedFaceEquivalence.symm face1
         (F0 ≠ F1) → ((a ≠ b) → ((AllowedSubtileIncidence a b) → (((FootprintEdges
             (ModifiedSubtileOccurrenceInterpretation P O u v a) ∩ FootprintEdges
             (ModifiedSubtileOccurrenceInterpretation P O u v b)).Nonempty) → ((∃ x y :
@@ -1390,8 +1391,8 @@ private theorem touchingData :
         let owners := P4418T3EndpointOwnerIndices q cfg C T cert a b row
         let face0 : PeriodicSubtileFaceIndex := selectedFirstFace q cfg C T cert a b row
         let face1 : PeriodicSubtileFaceIndex := selectedSecondFace q cfg C T cert a b row
-        let F0 := cert.modified_face_equiv.symm face0
-        let F1 := cert.modified_face_equiv.symm face1
+        let F0 := cert.modifiedFaceEquivalence.symm face0
+        let F1 := cert.modifiedFaceEquivalence.symm face1
         (F0 ≠ F1) → ((a ≠ b) → ((AllowedSubtileIncidence a b) → (((FootprintEdges
             (ModifiedSubtileOccurrenceInterpretation P O u v a) ∩ FootprintEdges
             (ModifiedSubtileOccurrenceInterpretation P O u v b)).Nonempty) → ((∃ x y :
@@ -1636,8 +1637,8 @@ private theorem selectedCertificate :
         let owners := P4418T3EndpointOwnerIndices q cfg C T cert a b row
         let face0 : PeriodicSubtileFaceIndex := selectedFirstFace q cfg C T cert a b row
         let face1 : PeriodicSubtileFaceIndex := selectedSecondFace q cfg C T cert a b row
-        let F0 := cert.modified_face_equiv.symm face0
-        let F1 := cert.modified_face_equiv.symm face1
+        let F0 := cert.modifiedFaceEquivalence.symm face0
+        let F1 := cert.modifiedFaceEquivalence.symm face1
         (F0 ≠ F1) → (((∃ iA iB iO : Fin 3, cert.modified.plane.faceVertex F0 iA = a ∧
             cert.modified.plane.faceVertex F0 iB = b ∧ cert.modified.plane.faceVertex F0 iO =
             owners.1) ∧ (∃ jA jB jO : Fin 3, cert.modified.plane.faceVertex F1 jA = a ∧
@@ -1864,10 +1865,10 @@ theorem P4418T3SelectedInterfaceExists
   let owners := P4418T3EndpointOwnerIndices q cfg C T cert a b row
   let face0 : PeriodicSubtileFaceIndex := selectedFirstFace q cfg C T cert a b row
   let face1 : PeriodicSubtileFaceIndex := selectedSecondFace q cfg C T cert a b row
-  let F0 := cert.modified_face_equiv.symm face0
-  let F1 := cert.modified_face_equiv.symm face1
+  let F0 := cert.modifiedFaceEquivalence.symm face0
+  let F1 := cert.modifiedFaceEquivalence.symm face1
   have faceVertex (f : PeriodicSubtileFaceIndex) (i : Fin 3) :
-      cert.modified.plane.faceVertex (cert.modified_face_equiv.symm f) i =
+      cert.modified.plane.faceVertex (cert.modifiedFaceEquivalence.symm f) i =
         SixSubtileFaceVertices f i := SelectedInterfaceGeometry.faceVertex q cfg C T cert f i
   have faceDistinct : F0 ≠ F1 := SelectedInterfaceGeometry.faceDistinct q cfg C T cert a b row
       retargeted

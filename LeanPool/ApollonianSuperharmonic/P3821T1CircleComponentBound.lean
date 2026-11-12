@@ -5,13 +5,11 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P3821T1ControlledNeighborhood
 public import LeanPool.ApollonianSuperharmonic.P3821T1ComponentContours
-public import LeanPool.ApollonianSuperharmonic.P3821T1LoopIndexLaws
-public import Mathlib.Analysis.Complex.Basic
 public import Mathlib.Analysis.Normed.Module.Connected
-public import Mathlib.Topology.Connected.PathConnected
-public import Mathlib.Topology.Homeomorph.Lemmas
 public import Mathlib.LinearAlgebra.Complex.FiniteDimensional
 
 -- [TABLET NODE: P3821T1CircleComponentBound]

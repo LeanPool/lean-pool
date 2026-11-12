@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P3381T1PolygonBoundary
 
 -- [TABLET NODE: P3544T1BoundaryCarrier]

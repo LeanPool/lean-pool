@@ -5,10 +5,11 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P3861T1FacialDomains
 public import LeanPool.ApollonianSuperharmonic.P3861T1FixedFacialDeletion
 public import LeanPool.ApollonianSuperharmonic.PlaneFaceOrientation
-public import LeanPool.ApollonianSuperharmonic.P3767T1BarrierRegionMaximal
 public import LeanPool.ApollonianSuperharmonic.P3934T1PolygonalSidePropagation
 public import LeanPool.ApollonianSuperharmonic.P3934T1ArcSideComparison
 

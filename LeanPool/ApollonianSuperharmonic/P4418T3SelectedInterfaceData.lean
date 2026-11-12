@@ -5,9 +5,13 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.SimpleGridPathBetween
 public import LeanPool.ApollonianSuperharmonic.LatticeTile
 public import LeanPool.ApollonianSuperharmonic.TouchingTriple
+public import LeanPool.ApollonianSuperharmonic.FootprintEdges
+public import LeanPool.ApollonianSuperharmonic.FootprintVertices
 
 -- [TABLET NODE: P4418T3SelectedInterfaceData]
 

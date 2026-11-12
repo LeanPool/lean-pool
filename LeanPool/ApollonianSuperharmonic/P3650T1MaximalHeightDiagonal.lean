@@ -5,12 +5,12 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P3650T1VisibleDiagonal
-public import LeanPool.ApollonianSuperharmonic.P3650T1TriangleEntry
 public import Mathlib.Analysis.Normed.Affine.AddTorsorBases
-public import Mathlib.Analysis.Convex.Combination
-public import Mathlib.Analysis.Convex.Topology
-public import Mathlib.Topology.Connected.PathConnected
+public import LeanPool.ApollonianSuperharmonic.P3544T1LocalParity
+public import Mathlib.LinearAlgebra.AffineSpace.FiniteDimensional
 
 -- [TABLET NODE: P3650T1MaximalHeightDiagonal]
 

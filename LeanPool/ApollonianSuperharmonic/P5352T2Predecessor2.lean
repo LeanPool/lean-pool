@@ -5,10 +5,12 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P5352T2PlacementData
 public import LeanPool.ApollonianSuperharmonic.P5352T2DomainRows
-public import LeanPool.ApollonianSuperharmonic.P4207T1FloorArithmetic
 public import LeanPool.ApollonianSuperharmonic.DiamondLaplacianTable
+public import LeanPool.ApollonianSuperharmonic.P5352T2Sources
 
 -- [TABLET NODE: P5352T2Predecessor2]
 
@@ -984,7 +986,9 @@ theorem P5352T2Predecessor2 (K : DiamondParameter) (hk : 1 < K.1)
     have hdchild := (P5352T2DomainRows K z).1.mp hz
     have hdpred := (P5352T2DomainRows ⟨K.1-1,by omega⟩ (z-d)).1.mp hpz
     rcases z with ⟨a,b⟩
-    simp? [d] at hdpred
+    simp only [Int.reduceNeg, Zsqrtd.im_sub, Int.sub_nonneg, Order.add_one_le_iff,
+        tsub_le_iff_right, Zsqrtd.re_sub, sub_neg_eq_add, neg_sub, neg_add_rev,
+        neg_add_le_iff_le_add, d] at hdpred
     have hcast : ((K.1-1 : Nat) : Int)=k-1 := by dsimp [k]; omega
     rw [hcast] at hdpred
     change (0≤b ∧ b≤2*k ∧ -k≤a ∧ a≤k ∧ -b-1≤a ∧ a≤b+1 ∧

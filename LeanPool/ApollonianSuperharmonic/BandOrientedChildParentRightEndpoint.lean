@@ -5,28 +5,13 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryCovariance
-public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryProjectiveVectorCovariance
-public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryProperCovariance
-public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryQuadrupleAction
-public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryReversesOrientation
-public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryScopedPhase
-public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryTileAction
-public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryTilingTransport
-public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryVectorAction
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.BandPrototile
 public import LeanPool.ApollonianSuperharmonic.BandOrientedChildParentEndpoints
 public import LeanPool.ApollonianSuperharmonic.ExactTileInterfaceTriplePackingSymmetryCovariance
 public import LeanPool.ApollonianSuperharmonic.FordOrientedChildParentRightEndpoint
-public import LeanPool.ApollonianSuperharmonic.FordRegimeConverse
-public import LeanPool.ApollonianSuperharmonic.ProperBandCurvatureStructure
-public import LeanPool.ApollonianSuperharmonic.ProperBandQuadruple
-public import LeanPool.ApollonianSuperharmonic.SemiProperQuadruple
-public import LeanPool.ApollonianSuperharmonic.TileCentroid
-public import LeanPool.ApollonianSuperharmonic.TileQuarterTurnFormulas
-public import LeanPool.ApollonianSuperharmonic.TileReflectionFormulas
 public import LeanPool.ApollonianSuperharmonic.TileTranslation
-public import LeanPool.ApollonianSuperharmonic.VectorRecursionLaws
 
 -- [TABLET NODE: BandOrientedChildParentRightEndpoint]
 
@@ -634,9 +619,9 @@ private theorem middleVector :
   classical
   intro r i s a P g k phaseForward phaseBackward actionCommute
   by_cases parity : Even s.val
-  · simp? [parity]
+  · simp only [Int.reduceNeg, parity, ↓reduceIte, Fin.isValue]
     rw [actionCommute, phaseBackward]
-  · simp? [parity]
+  · simp only [Int.reduceNeg, parity, ↓reduceIte, Fin.isValue]
     rw [actionCommute, phaseForward]
 
 private theorem transformedTriple :

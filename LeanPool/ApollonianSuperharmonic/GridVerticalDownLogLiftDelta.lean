@@ -5,10 +5,10 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.ApollonianSuperharmonic.FourNeighborAdjacent
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.GridCellCenter
 public import LeanPool.ApollonianSuperharmonic.GridSegmentLogLiftDelta
-public import Mathlib.Analysis.SpecialFunctions.Complex.Arg
 
 /-!
 # GridVerticalDownLogLiftDelta
@@ -105,7 +105,14 @@ theorem GridVerticalDownLogLiftDelta (q a : GaussianInt)
       rw [← sq_eq_sq₀ (norm_nonneg _) (norm_nonneg _),
         Complex.sq_norm, Complex.sq_norm]
       dsimp [z0, z1, GridCellCenter]
-      simp? [Complex.normSq_apply]
+      simp only [Int.reduceNeg, map_sub, one_div, Complex.ofReal_inv, Complex.ofReal_ofNat,
+          Complex.normSq_apply, Complex.sub_re, GaussianInt.re_toComplex, Int.cast_zero,
+          sub_zero, Complex.add_re, Complex.intCast_re, GaussianInt.intCast_re,
+          Complex.inv_re, Complex.re_ofNat, div_self_mul_self',
+          Complex.mul_re, GaussianInt.intCast_im, Complex.I_re, mul_zero, Complex.add_im,
+          Complex.intCast_im, Complex.inv_im, Complex.im_ofNat, neg_zero, zero_div, add_zero,
+          Complex.I_im, mul_one, sub_self, Complex.sub_im, GaussianInt.im_toComplex,
+          Int.cast_one, Complex.mul_im, zero_add, add_right_inj]
       rw [← hiC]
       ring
     rw [show M ⟨1, by norm_num⟩ - M ⟨0, by norm_num⟩ =

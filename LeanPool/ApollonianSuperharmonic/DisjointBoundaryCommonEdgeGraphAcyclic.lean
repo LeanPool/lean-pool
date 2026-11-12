@@ -5,12 +5,11 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import Mathlib.Combinatorics.SimpleGraph.Acyclic
-public import LeanPool.ApollonianSuperharmonic.BoundaryFootprintEdges
 public import LeanPool.ApollonianSuperharmonic.BoundaryFootprintVertices
 public import LeanPool.ApollonianSuperharmonic.CommonFootprintEdgeVertices
-public import LeanPool.ApollonianSuperharmonic.FootprintEdges
-public import LeanPool.ApollonianSuperharmonic.ProtoTile
 public import LeanPool.ApollonianSuperharmonic.SimpleGridCycle
 
 -- [TABLET NODE: DisjointBoundaryCommonEdgeGraphAcyclic]

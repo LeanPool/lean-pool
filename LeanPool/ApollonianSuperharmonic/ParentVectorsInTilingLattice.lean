@@ -5,9 +5,9 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.ApollonianSuperharmonic.BandGenealogy
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.TilingLattice
-public import LeanPool.ApollonianSuperharmonic.VectorRecursionLaws
 
 -- [TABLET NODE: ParentVectorsInTilingLattice]
 

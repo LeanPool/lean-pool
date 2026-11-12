@@ -5,12 +5,11 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P5332T1RightRows
 public import LeanPool.ApollonianSuperharmonic.FordOdometer
-public import LeanPool.ApollonianSuperharmonic.FordVertexDomain
 public import LeanPool.ApollonianSuperharmonic.P4210T1FordCellRectangles
-public import LeanPool.ApollonianSuperharmonic.FordDoubledBoundary
-public import LeanPool.ApollonianSuperharmonic.P5188T1CeilingShift
 
 -- [TABLET NODE: P5332T1RightHorizontalValues]
 

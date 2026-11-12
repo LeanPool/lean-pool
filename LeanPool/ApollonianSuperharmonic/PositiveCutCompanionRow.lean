@@ -5,13 +5,10 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.BandOrderedGeneralLayoutCertificate
-public import LeanPool.ApollonianSuperharmonic.BandPrototile
-public import LeanPool.ApollonianSuperharmonic.BandVectors
-public import LeanPool.ApollonianSuperharmonic.FootprintVertices
 public import LeanPool.ApollonianSuperharmonic.LatticeVertexIncidentCell
-public import LeanPool.ApollonianSuperharmonic.ProperBandQuadruple
-public import LeanPool.ApollonianSuperharmonic.TileTranslation
 
 -- [TABLET NODE: PositiveCutCompanionRow]
 
@@ -139,35 +136,35 @@ structure PositiveCutCompanionRow
   literalRow :
     (birth = ![q 2, birth 1, q 3, cfg.firstPredecessor 1] ∧
       parentIndex = 1 ∧ rotation = 1 ∧
-      x = cert.exceptional_segments.a ∧
+      x = cert.exceptionalSegments.a ∧
       child = cert.Q 1 true ∧ parent = cert.S 2 false) ∨
     (birth = ![q 2, birth 1, q 3, cfg.firstPredecessor 1] ∧
       parentIndex = 2 ∧ rotation = 0 ∧
-      x = cert.exceptional_segments.a ∧
+      x = cert.exceptionalSegments.a ∧
       child = cert.Q 1 true ∧ parent = cert.O) ∨
     (birth = ![q 2, birth 1, q 3, cfg.firstPredecessor 1] ∧
       parentIndex = 1 ∧ rotation = 3 ∧
-      x = cert.exceptional_segments.b ∧
+      x = cert.exceptionalSegments.b ∧
       child = cert.S 1 false ∧ parent = cert.Q 2 true) ∨
     (birth = ![q 2, birth 1, q 3, cfg.firstPredecessor 1] ∧
       parentIndex = 2 ∧ rotation = 2 ∧
-      x = cert.exceptional_segments.b ∧
+      x = cert.exceptionalSegments.b ∧
       child = cert.S 1 false ∧ parent = cert.O) ∨
     (birth = ![cfg.firstPredecessor 1, birth 1, q 2, q 3] ∧
       parentIndex = 1 ∧ rotation = 1 ∧
-      x = cert.exceptional_segments.a ∧
+      x = cert.exceptionalSegments.a ∧
       child = cert.O ∧ parent = cert.Q 1 true) ∨
     (birth = ![cfg.firstPredecessor 1, birth 1, q 2, q 3] ∧
       parentIndex = 2 ∧ rotation = 0 ∧
-      x = cert.exceptional_segments.a ∧
+      x = cert.exceptionalSegments.a ∧
       child = cert.O ∧ parent = cert.S 2 false) ∨
     (birth = ![cfg.firstPredecessor 1, birth 1, q 2, q 3] ∧
       parentIndex = 1 ∧ rotation = 3 ∧
-      x = cert.exceptional_segments.b ∧
+      x = cert.exceptionalSegments.b ∧
       child = cert.O ∧ parent = cert.S 1 false) ∨
     (birth = ![cfg.firstPredecessor 1, birth 1, q 2, q 3] ∧
       parentIndex = 2 ∧ rotation = 2 ∧
-      x = cert.exceptional_segments.b ∧
+      x = cert.exceptionalSegments.b ∧
       child = cert.O ∧ parent = cert.Q 2 true)
 
 end ApollonianSuperharmonic

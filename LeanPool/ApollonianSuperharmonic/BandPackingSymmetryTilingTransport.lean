@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryTileAction
 public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryVectorAction
 public import LeanPool.ApollonianSuperharmonic.FootprintEdges
@@ -17,8 +19,6 @@ public import LeanPool.ApollonianSuperharmonic.TileArea
 public import LeanPool.ApollonianSuperharmonic.TileCellComplement
 public import LeanPool.ApollonianSuperharmonic.TileDiskAreaCovariance
 public import LeanPool.ApollonianSuperharmonic.TileCellComplementCovariance
-public import LeanPool.ApollonianSuperharmonic.TileTouching
-public import LeanPool.ApollonianSuperharmonic.TileTouchingCovariance
 public import LeanPool.ApollonianSuperharmonic.TouchingTriple
 public import LeanPool.ApollonianSuperharmonic.TouchingTripleCovariance
 
@@ -535,13 +535,14 @@ private theorem conjugation :
     cases T with
     | mk cells anchor =>
       apply congrArg₂ (fun c : FiniteTile => fun d : GaussianInt => ProtoTile.mk c d)
-      · simp? [TileQuarterTurn, TileReflection, TileTranslation,
+      · simp only [TileQuarterTurn, TileReflection, Int.reduceNeg, TileTranslation,
           GaussianTranslation, Finset.image_image, Function.comp_def]
         congr 1
         funext x
         ext <;> simp [GaussianQuarterTurn, GaussianReflection]; ring
-      · simp? [TileQuarterTurn, TileReflection, TileTranslation,
-          GaussianTranslation, GaussianQuarterTurn, GaussianReflection]
+      · simp only [GaussianQuarterTurn, Int.reduceNeg, TileQuarterTurn, TileReflection,
+          GaussianReflection, TileTranslation, GaussianTranslation, Zsqrtd.re_add,
+          Zsqrtd.im_add, neg_add_rev, neg_neg]
         ext <;> simp []; ring
   · intro T
     simp only [BandPackingSymmetryTileAction, BandPackingSymmetryVectorAction]

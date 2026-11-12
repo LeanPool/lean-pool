@@ -5,11 +5,11 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.BandTangency
 public import LeanPool.ApollonianSuperharmonic.PrimitiveVectorOrientation
-public import LeanPool.ApollonianSuperharmonic.ProperBandQuadruple
 public import LeanPool.ApollonianSuperharmonic.SemiProperForestClassification
-public import LeanPool.ApollonianSuperharmonic.SemiProperQuadruple
 
 -- [TABLET NODE: PrimitiveVectorOrientationUnique]
 
@@ -42,7 +42,8 @@ private theorem baseGood : ∀ z, Good (![ (1, 1 + 2 * z),
     all_goals norm_num [Zsqrtd.ext_iff] at hsame
   · intro i j hij
     fin_cases i <;> fin_cases j
-    all_goals simp?
+    all_goals simp only [Int.reduceNeg, Fin.mk_one, Fin.isValue, Matrix.cons_val_one,
+        Matrix.cons_val_zero, Fin.reduceFinMk, Matrix.cons_val, Fin.zero_eta, or_self]
     · exact (hij rfl).elim
     · exact Or.inr (PrimitiveVectorOrientation.base10 z)
     · convert Or.inr (PrimitiveVectorOrientation.base21 (z - ⟨0, 1⟩)) using 1; ring

@@ -5,10 +5,10 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P3776T1DualEdges
 public import LeanPool.ApollonianSuperharmonic.P3776T1WalkMapProperties
-public import Mathlib.Topology.Algebra.Field
-public import Mathlib.Topology.Algebra.Order.Field
 
 -- [TABLET NODE: P3776T1DualEdgesExist]
 

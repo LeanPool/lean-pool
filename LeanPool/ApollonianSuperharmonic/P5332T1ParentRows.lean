@@ -5,7 +5,10 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P5332T1Stencil
+public import LeanPool.ApollonianSuperharmonic.FordFareyParameter
 
 -- [TABLET NODE: P5332T1ParentRows]
 

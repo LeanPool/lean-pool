@@ -5,14 +5,15 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.FordTileRecursiveIdentification
 public import LeanPool.ApollonianSuperharmonic.FordBoundaryMultiplicity
 public import LeanPool.ApollonianSuperharmonic.BandSubtileOccurrenceTranslation
 public import LeanPool.ApollonianSuperharmonic.BandPrototileCentroidUnique
 public import LeanPool.ApollonianSuperharmonic.ProtoTileObservableExtensionality
 public import LeanPool.ApollonianSuperharmonic.P3161T2IncidentBoundary
-public import LeanPool.ApollonianSuperharmonic.FootprintVertices
-public import LeanPool.ApollonianSuperharmonic.P4062T1CanonicalSupport
+public import Mathlib.Algebra.Order.Ring.Star
 
 -- [TABLET NODE: P4120T1FordGeometry]
 
@@ -195,7 +196,10 @@ private theorem fordCentroid :
         (P.q : Int) * ((P.q - 1 : Nat) : Int) / 2 := by
       rw [← Nat.cast_sum]
       simp [Finset.sum_range_id]
-    simp? [domain, Finset.sum_product]
+    simp only [Int.reduceNeg, Finset.product_eq_sprod, Finset.coe_product, Finset.coe_range,
+        Zsqrtd.mk.injEq, Nat.cast_inj, Prod.forall, Prod.mk.injEq, implies_true,
+        Set.injOn_of_eq_iff_eq, Finset.sum_image, Finset.sum_product, Finset.sum_const,
+        Finset.card_range, Int.nsmul_eq_mul, domain]
     conv_lhs => rw [← Finset.mul_sum (Finset.range P.q)
       (fun n => (n : Int)) (P.q : Int)]
     rw [hrange]
@@ -206,7 +210,10 @@ private theorem fordCentroid :
         (P.q : Int) * ((P.q - 1 : Nat) : Int) / 2 := by
       rw [← Nat.cast_sum]
       simp [Finset.sum_range_id]
-    simp? [domain, Finset.sum_product]
+    simp only [Int.reduceNeg, Finset.product_eq_sprod, Finset.coe_product, Finset.coe_range,
+        Zsqrtd.mk.injEq, Nat.cast_inj, Prod.forall, Prod.mk.injEq, implies_true,
+        Set.injOn_of_eq_iff_eq, Finset.sum_image, Finset.sum_product, Finset.sum_const,
+        Finset.card_range, Int.nsmul_eq_mul, domain]
     rw [hrange]
     ring
   change (if domain.Nonempty then
@@ -417,7 +424,9 @@ private theorem hSc00 :
   intro P Sc h00 hrpos
   have hne : (FordTile P.q₁).cells.Nonempty := by
     refine ⟨⟨0, 0⟩, ?_⟩
-    simp? [FordTile, FordCellDomain]
+    simp only [FordTile, FordCellDomain, Int.reduceNeg, Finset.product_eq_sprod,
+        Finset.mem_image, Finset.mem_product, Finset.mem_range, Zsqrtd.mk.injEq,
+        Int.natCast_eq_zero, Prod.exists, exists_eq_right_right, exists_eq_right, and_self]
     exact hrpos
   have ha : (Sc 0 true).cells = ∅ →
       (Sc 0 true).anchor = (FordTile P.q₁).anchor := by

@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P3861T1FacialDomains
 public import LeanPool.ApollonianSuperharmonic.P3861T1FixedFacialDeletion
 public import LeanPool.ApollonianSuperharmonic.P3861T1RealPolygonDomains

@@ -5,11 +5,15 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.ApollonianSuperharmonic.CircleMatrix
-public import LeanPool.ApollonianSuperharmonic.DiamondCoordinateConfiguration
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.DiamondExceptionalLattice
 public import LeanPool.ApollonianSuperharmonic.DiamondPeakMatrix
 public import LeanPool.ApollonianSuperharmonic.IntegralityLattice
+public meta import Lean.Meta.Tactic.NormCast
+public import LeanPool.ApollonianSuperharmonic.DiamondRecursiveQuadruple
+public import Mathlib.Algebra.Order.Algebra
+public import Mathlib.Data.EReal.Inv
 
 -- [TABLET NODE: DiamondExceptionalMatrixLatticeIdentification]
 
@@ -56,7 +60,12 @@ theorem DiamondExceptionalMatrixLatticeIdentification (K : DiamondParameter)
       rw [matrixIdentity] at hu
       have first := hu 0
       have second := hu 1
-      simp? [DiamondPeakMatrix, Matrix.mulVec] at first second
+      simp only [Matrix.mulVec, DiamondPeakMatrix, Nat.succ_eq_add_one, Nat.reduceAdd,
+          one_div, Matrix.smul_cons, smul_eq_mul, mul_one, Matrix.smul_empty, Fin.isValue,
+          Matrix.cons_val', Matrix.cons_val_fin_one, Matrix.cons_val_zero, Int.reduceNeg,
+          GaussianInt.intCast_re, GaussianInt.intCast_im, Matrix.dotProduct_cons,
+          Matrix.head_cons, Matrix.tail_cons, Matrix.dotProduct_of_isEmpty, add_zero,
+          Matrix.cons_val_one] at first second
       rcases first with ⟨n, first⟩
       rcases second with ⟨m, second⟩
       field_simp at first second

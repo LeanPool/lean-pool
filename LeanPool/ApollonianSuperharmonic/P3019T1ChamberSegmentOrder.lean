@@ -5,9 +5,12 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.ApollonianSuperharmonic.P3019T1ChamberStripGeometry
+public import Mathlib.Init
+public import Mathlib.Data.List.Nodup
 public import Mathlib.Data.List.Chain
-public import Mathlib.Data.List.Pairwise
+
+public import LeanPool.ApollonianSuperharmonic.P3019T1ChamberStripGeometry
+public import LeanPool.ApollonianSuperharmonic.TriangularStripSegment
 
 -- [TABLET NODE: P3019T1ChamberSegmentOrder]
 

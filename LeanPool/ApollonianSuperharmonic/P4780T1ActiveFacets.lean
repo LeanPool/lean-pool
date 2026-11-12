@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P4780T1HullHalfspaces
 public import LeanPool.ApollonianSuperharmonic.P4715T1Arc
 
@@ -34,8 +36,12 @@ theorem P4780T1ActiveFacets (j : Fin 6) :
   · intro hp
     fin_cases j
     all_goals
-      simp? [P4715T1Arc, P4715T1Position, P4715T1BoundaryCycle,
-        P4715T1Offsets] at hp ⊢
+      simp only [P4715T1Arc, P4715T1Position, P4715T1BoundaryCycle, Int.reduceNeg, Fin.mk_one,
+          Fin.isValue, Matrix.cons_val_one, Matrix.cons_val_zero, Int.cast_zero,
+          P4715T1Offsets, Prod.mk_add_mk, zero_add, Fin.reduceAdd, Matrix.cons_val,
+          Int.cast_neg, Int.cast_one, add_zero, neg_le_sub_iff_le_add, tsub_le_iff_right,
+          Nat.succ_eq_add_one, Nat.reduceAdd, Set.mem_inter_iff, Set.mem_ofPred_eq,
+          Fin.reduceFinMk, Fin.zero_eta] at hp ⊢
       rw [segment_eq_image] at hp
       rcases hp with ⟨θ, ⟨hθ0, hθ1⟩, hp⟩
       have hfst := congrArg Prod.fst hp
@@ -45,8 +51,12 @@ theorem P4780T1ActiveFacets (j : Fin 6) :
   · intro hp
     fin_cases j
     all_goals
-      simp? [P4715T1Arc, P4715T1Position, P4715T1BoundaryCycle,
-        P4715T1Offsets] at hp ⊢
+      simp only [neg_le_sub_iff_le_add, tsub_le_iff_right, zero_add, Nat.succ_eq_add_one,
+          Nat.reduceAdd, Fin.mk_one, Fin.isValue, Matrix.cons_val_one, Matrix.cons_val_zero,
+          Set.mem_inter_iff, Set.mem_ofPred_eq, P4715T1Arc, P4715T1Position,
+          P4715T1BoundaryCycle, Int.reduceNeg, Int.cast_zero, P4715T1Offsets, Prod.mk_add_mk,
+          Fin.reduceAdd, Matrix.cons_val, Int.cast_neg, Int.cast_one, add_zero,
+          Fin.reduceFinMk, Fin.zero_eta] at hp ⊢
       rcases hp with ⟨⟨hx0, hx1, hy0, hy1, hz0, hz1⟩, heq⟩
       rw [segment_eq_image]
     · refine ⟨-3*p.1, ⟨by linarith, by linarith⟩, ?_⟩

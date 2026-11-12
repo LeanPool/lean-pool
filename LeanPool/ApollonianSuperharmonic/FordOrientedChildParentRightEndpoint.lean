@@ -5,14 +5,11 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.ApollonianSuperharmonic.FordCoordinateConfiguration
-public import LeanPool.ApollonianSuperharmonic.VectorRecursionLaws
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P5269T1FordSquareNormalForm
 public import LeanPool.ApollonianSuperharmonic.P5327T1RightSquareJunctions
 public import LeanPool.ApollonianSuperharmonic.P5269T1CenteredSquareTripleTransport
-public import LeanPool.ApollonianSuperharmonic.P4210T1FordSquareCentroid
-public import LeanPool.ApollonianSuperharmonic.P4210T1FordCellRectangles
-public import LeanPool.ApollonianSuperharmonic.ProtoTileObservableExtensionality
 
 -- [TABLET NODE: FordOrientedChildParentRightEndpoint]
 

@@ -5,9 +5,14 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.ApollonianSuperharmonic.Preamble
+public import Mathlib.Init
+public import Mathlib.Basic.Real.Basic
+public import Mathlib.Data.Fin.VecNotation
+public import Mathlib.Tactic.FinCases
+public import Mathlib.Tactic.Linarith
+public import Mathlib.Tactic.Ring
+
 public import Mathlib.Analysis.Convex.Combination
-public import Mathlib.Tactic.Module
 
 -- [TABLET NODE: P4783T1ParallelogramFan]
 

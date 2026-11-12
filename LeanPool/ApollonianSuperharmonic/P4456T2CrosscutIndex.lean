@@ -5,13 +5,11 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P4456T2EdgeInterior
-public import LeanPool.ApollonianSuperharmonic.P4397T1UnitEdgeCells
-public import LeanPool.ApollonianSuperharmonic.BoundaryFootprintEdges
-public import LeanPool.ApollonianSuperharmonic.GridRayCrossingIndex
 public import LeanPool.ApollonianSuperharmonic.FootprintEdges
 public import LeanPool.ApollonianSuperharmonic.LatticeTileBoundarySimpleGridCycle
-public import LeanPool.ApollonianSuperharmonic.GridRayCrossingIndexAdjacentCell
 
 -- [TABLET NODE: P4456T2CrosscutIndex]
 

@@ -5,9 +5,10 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.ApollonianSuperharmonic.P4715T1Position
-public import Mathlib.Tactic.NormNum
+public import Mathlib.Init
 public import Mathlib.Tactic.Linarith
+
+public import LeanPool.ApollonianSuperharmonic.P4715T1Position
 
 -- [TABLET NODE: P4715T1PositionInjective]
 

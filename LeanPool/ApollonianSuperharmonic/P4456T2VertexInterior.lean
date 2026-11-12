@@ -5,10 +5,19 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+public import Mathlib.Topology.MetricSpace.Pseudo.Constructions
+public import Mathlib.Basic.Real.Basic
+public import Mathlib.Data.Finset.Card
+public import Mathlib.Tactic.ByContra
+public import Mathlib.Tactic.FinCases
+public import Mathlib.Tactic.Linarith
+public import Mathlib.Tactic.NormNum
+public import Mathlib.Tactic.Positivity
+public import Mathlib.Topology.MetricSpace.Pseudo.Real
+
 public import LeanPool.ApollonianSuperharmonic.P3161T2IncidentBoundary
 public import LeanPool.ApollonianSuperharmonic.LatticeVertexIncidentCell
-public import LeanPool.ApollonianSuperharmonic.ClosedSquareRealization
-public import LeanPool.ApollonianSuperharmonic.BoundaryFootprintEdges
 public import LeanPool.ApollonianSuperharmonic.BoundaryFootprintVertices
 public import LeanPool.ApollonianSuperharmonic.FootprintVertices
 public import LeanPool.ApollonianSuperharmonic.TileRealization
@@ -244,8 +253,11 @@ theorem P4456T2VertexInterior (T : ProtoTile) (hne : T.cells.Nonempty)
         if k = 2 then (X - δ, Y - δ) else (X + δ, Y - δ)
       have hQball (k : Fin 4) : Q k ∈ Metric.ball (GaussianRealPoint x) ε := by
         fin_cases k <;>
-          simp? [Q, X, Y, GaussianRealPoint, Metric.mem_ball, Prod.dist_eq,
-            Real.dist_eq, hδabs] <;> exact hδeps
+          simp only [GaussianRealPoint, Int.reduceNeg, GaussianInt.intCast_re,
+              GaussianInt.intCast_im, Fin.isValue, Fin.mk_one, ↓reduceIte,
+              Metric.mem_ball, Prod.dist_eq, Real.dist_eq, sub_sub_cancel_left, abs_neg,
+              hδabs, add_sub_cancel_left, max_self, Q, X, Y, Fin.reduceFinMk, Fin.reduceEq,
+              Fin.zero_eta] <;> exact hδeps
       have hQreal (k : Fin 4) : Q k ∈ TileRealization T := hsub (hQball k)
       have hsector : LatticeVertexIncidentCell x j ∈ T.cells := VertexInteriorLemmas.hsector T x
           j hnot ε hδpos hδone hQreal

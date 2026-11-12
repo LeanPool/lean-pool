@@ -5,12 +5,12 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.BandOrderedGeneralRightInterfaceCertificate
 public import LeanPool.ApollonianSuperharmonic.BandOrderedGeneralSelectedContactRow
 public import LeanPool.ApollonianSuperharmonic.FourNeighborAdjacent
 public import LeanPool.ApollonianSuperharmonic.LatticeVertexIncidentCell
-public import LeanPool.ApollonianSuperharmonic.PeriodicSubtileIndex
-public import LeanPool.ApollonianSuperharmonic.SubtileOccurrenceInterpretation
 
 -- [TABLET NODE: BandOrderedGeneralRightRoutingCertificate]
 

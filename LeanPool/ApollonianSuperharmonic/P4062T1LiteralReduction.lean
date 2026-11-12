@@ -5,11 +5,12 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.FordTileOdometerRestriction
 public import LeanPool.ApollonianSuperharmonic.FourNeighborLaplacian
 public import LeanPool.ApollonianSuperharmonic.GlobalOdometerExtends
 public import LeanPool.ApollonianSuperharmonic.TileOdometerTranslationUniqueness
-public import LeanPool.ApollonianSuperharmonic.P4062T1CanonicalSupport
 public import LeanPool.ApollonianSuperharmonic.P4062T1InteriorSquare
 
 -- [TABLET NODE: P4062T1LiteralReduction]
@@ -65,7 +66,9 @@ private theorem hFcells :
   classical
   intro P
   refine ⟨⟨0, 0⟩, ?_⟩
-  simp? [FordTile, FordCellDomain]
+  simp only [FordTile, FordCellDomain, Int.reduceNeg, Finset.product_eq_sprod,
+      Finset.mem_image, Finset.mem_product, Finset.mem_range, Zsqrtd.mk.injEq,
+      Int.natCast_eq_zero, Prod.exists, exists_eq_right_right, exists_eq_right, and_self]
   exact P.q_pos
 
 private theorem hTcells :
@@ -232,7 +235,7 @@ private theorem hcanonicalFoot :
   classical
   intro P k hkdom y hy hy' hz hz'
   have hbox : y ∈ FordVertexDomain P.q := by
-    simp? [FordVertexDomain]
+    simp only [FordVertexDomain, Int.reduceNeg, Set.mem_ofPred_eq]
     exact ⟨hy, hy', hz, hz'⟩
   have hset : y ∈ (k.domain : Set GaussianInt) := by
     rw [hkdom]

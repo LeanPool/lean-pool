@@ -5,8 +5,11 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.ApollonianSuperharmonic.ModifiedSubtileOccurrenceInterpretation
+public import Mathlib.Init
+public import Mathlib.Algebra.Group.Fin.Basic
+
 public import LeanPool.ApollonianSuperharmonic.TileArea
+public import LeanPool.ApollonianSuperharmonic.TileCellComplement
 
 -- [TABLET NODE: BandModifiedOrbitArea]
 

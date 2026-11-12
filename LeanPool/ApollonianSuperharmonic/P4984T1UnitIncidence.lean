@@ -5,9 +5,10 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P4984T1RootGaps
 public import LeanPool.ApollonianSuperharmonic.P4828T1Evaluate
-public import Mathlib.Analysis.Normed.Module.Connected
 public import Mathlib.Analysis.SpecialFunctions.Pow.Real
 
 -- [TABLET NODE: P4984T1UnitIncidence]
@@ -148,10 +149,10 @@ private theorem hQimage :
     have hx' : (if left then -(Real.sqrt (1 - t^2)) else Real.sqrt (1 - t^2)) =
         p.re - u.re := by
       cases left
-      · simp? at hx ⊢
+      · simp only [Bool.false_eq_true, ↓reduceIte, sub_nonneg] at hx ⊢
         have hxrel : 0 ≤ p.re - u.re := by linarith [hx]
         rw [hsqrt, abs_of_nonneg hxrel]
-      · simp? at hx ⊢
+      · simp only [↓reduceIte, tsub_le_iff_right, zero_add] at hx ⊢
         have hxrel : p.re - u.re ≤ 0 := by linarith [hx]
         rw [hsqrt, abs_of_nonpos hxrel]
         ring
@@ -725,12 +726,16 @@ private theorem upperLeftRootGap :
             Fin 4) = 0 ∨ (0 : Fin 4) = 2) ((0 : Fin 4) = 0 ∨ (0 : Fin 4) = 1))) := by
   classical
   intro a u huDef Q roots A hu
-  simp? [A, roots, P4828T1Evaluate]
+  simp only [Int.reduceNeg, GaussianInt.intCast_re, P4828T1Evaluate, List.foldl_nil,
+      Fin.isValue, Matrix.cons_val_zero, Fin.reduceEq, or_false, decide_true, zero_ne_one, A,
+      roots]
   have hL := UnitIncidenceDetails.hLAt468 a
   rw [hL]
   rw [P4984T1RootGaps.1 a]
   ext p
-  simp? [Q, dist_eq_norm]
+  simp only [Int.reduceNeg, GaussianInt.intCast_re, GaussianInt.intCast_im, map_add, map_one,
+      map_mul, dist_eq_norm, Set.mem_inter_iff, Set.mem_ofPred_eq, mem_sphere_iff_norm,
+      tsub_le_iff_right, zero_add, sub_nonneg, ↓reduceIte, Q]
   constructor
   · rintro ⟨⟨hxl, hxr, hyl, hyr, _, _⟩, hnorm⟩
     refine ⟨hnorm, ?_, ?_⟩
@@ -798,12 +803,16 @@ private theorem upperRightRootGap :
             Fin 4) = 0 ∨ (1 : Fin 4) = 2) ((1 : Fin 4) = 0 ∨ (1 : Fin 4) = 1))) := by
   classical
   intro a u huDef Q roots A hu
-  simp? [A, roots, P4828T1Evaluate]
+  simp only [Int.reduceNeg, GaussianInt.intCast_re, P4828T1Evaluate, List.foldl_nil,
+      Fin.isValue, Matrix.cons_val_one, Matrix.cons_val_zero, one_ne_zero, Fin.reduceEq,
+      or_self, decide_false, or_true, decide_true, A, roots]
   have hL := UnitIncidenceDetails.hLAt542 a
   rw [hL]
   rw [P4984T1RootGaps.2.1 a]
   ext p
-  simp? [Q, dist_eq_norm]
+  simp only [Int.reduceNeg, GaussianInt.intCast_re, GaussianInt.intCast_im, map_add, map_one,
+      map_mul, dist_eq_norm, Set.mem_inter_iff, Set.mem_ofPred_eq, mem_sphere_iff_norm,
+      tsub_le_iff_right, zero_add, sub_nonneg, Bool.false_eq_true, ↓reduceIte, Q]
   constructor
   · rintro ⟨⟨hxl, hxr, hyl, hyr, _, _⟩, hnorm⟩
     refine ⟨hnorm, ?_, ?_⟩
@@ -873,12 +882,18 @@ private theorem lowerLeftRootGap :
             Fin 4) = 0 ∨ (2 : Fin 4) = 2) ((2 : Fin 4) = 0 ∨ (2 : Fin 4) = 1))) := by
   classical
   intro a u huDef Q roots A hu
-  simp? [A, roots, P4828T1Evaluate]
+  simp only [Int.reduceNeg, GaussianInt.intCast_re, P4828T1Evaluate, List.foldl_nil,
+      Fin.isValue, Matrix.cons_val, map_sub, Complex.sub_re, GaussianInt.re_toComplex,
+      Int.cast_zero, sub_zero, Fin.reduceEq, or_true, decide_true, or_self, decide_false, A,
+      roots]
   have hLz := UnitIncidenceDetails.hLzAt615 a
   rw [← hLz]
   rw [P4984T1RootGaps.1 (a - ⟨0, 1⟩)]
   ext p
-  simp? [Q, dist_eq_norm]
+  simp only [Int.reduceNeg, Zsqrtd.re_sub, sub_zero, GaussianInt.intCast_re, Zsqrtd.im_sub,
+      Int.cast_sub, GaussianInt.intCast_im, Int.cast_one, map_add, map_one, map_mul, map_sub,
+      dist_eq_norm, Set.mem_inter_iff, Set.mem_ofPred_eq, mem_sphere_iff_norm,
+      tsub_le_iff_right, zero_add, sub_nonneg, ↓reduceIte, Bool.false_eq_true, Q]
   constructor
   · rintro ⟨⟨hxl, hxr, hyl, hyr, _, _⟩, hnorm⟩
     refine ⟨hnorm, ?_, ?_⟩
@@ -951,12 +966,17 @@ private theorem lowerRightRootGap :
             Fin 4) = 0 ∨ (3 : Fin 4) = 2) ((3 : Fin 4) = 0 ∨ (3 : Fin 4) = 1))) := by
   classical
   intro a u huDef Q roots A hu
-  simp? [A, roots, P4828T1Evaluate]
+  simp only [Int.reduceNeg, GaussianInt.intCast_re, P4828T1Evaluate, List.foldl_nil,
+      Fin.isValue, Matrix.cons_val, map_sub, Complex.sub_re, GaussianInt.re_toComplex,
+      Int.cast_zero, sub_zero, Fin.reduceEq, or_self, decide_false, A, roots]
   have hLz := UnitIncidenceDetails.hLzAt692 a
   rw [← hLz]
   rw [P4984T1RootGaps.2.1 (a - ⟨0, 1⟩)]
   ext p
-  simp? [Q, dist_eq_norm]
+  simp only [Int.reduceNeg, Zsqrtd.re_sub, sub_zero, GaussianInt.intCast_re, Zsqrtd.im_sub,
+      Int.cast_sub, GaussianInt.intCast_im, Int.cast_one, map_add, map_one, map_mul, map_sub,
+      dist_eq_norm, Set.mem_inter_iff, Set.mem_ofPred_eq, mem_sphere_iff_norm,
+      tsub_le_iff_right, zero_add, sub_nonneg, Bool.false_eq_true, ↓reduceIte, Q]
   constructor
   · rintro ⟨⟨hxl, hxr, hyl, hyr, _, _⟩, hnorm⟩
     refine ⟨hnorm, ?_, ?_⟩

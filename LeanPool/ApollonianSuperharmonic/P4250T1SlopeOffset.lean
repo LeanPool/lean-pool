@@ -5,7 +5,9 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.ApollonianSuperharmonic.GaussianRealPoint
+public import Mathlib.Init
+
+public import Mathlib.NumberTheory.Zsqrtd.GaussianInt
 
 -- [TABLET NODE: P4250T1SlopeOffset]
 

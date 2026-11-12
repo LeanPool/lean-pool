@@ -5,6 +5,9 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+public import Mathlib.Algebra.Group.Prod
+
 public import LeanPool.ApollonianSuperharmonic.PeriodicSubtileFaceIndex
 
 -- [TABLET NODE: P4715T1FaceShift]

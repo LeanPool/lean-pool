@@ -5,12 +5,11 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.BandRegularTileTouchingClassification
 public import LeanPool.ApollonianSuperharmonic.LeftLatticeAdjacent
-public import LeanPool.ApollonianSuperharmonic.ProperBandCurvatureStructure
 public import LeanPool.ApollonianSuperharmonic.TileString
-public import LeanPool.ApollonianSuperharmonic.VectorNonvanishing
-public import LeanPool.ApollonianSuperharmonic.VectorRecursionLaws
 
 -- [TABLET NODE: P4549T1NegativeIncomingSide]
 

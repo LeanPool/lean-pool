@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.FootprintVertices
 public import LeanPool.ApollonianSuperharmonic.LatticeTileGridStructure
 public import LeanPool.ApollonianSuperharmonic.P3161T2IncidentBoundary

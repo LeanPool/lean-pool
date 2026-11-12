@@ -5,8 +5,9 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.DiamondTileOdometerRestriction
-public import LeanPool.ApollonianSuperharmonic.P4194T1DiamondCellRows
 
 -- [TABLET NODE: P5352T2DomainRows]
 

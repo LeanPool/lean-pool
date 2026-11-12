@@ -5,13 +5,12 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P3723T1ContactPorts
 public import LeanPool.ApollonianSuperharmonic.P3723T1ContactStabilizer
 public import LeanPool.ApollonianSuperharmonic.PeriodicTileIndexedMultiplicityOne
 public import LeanPool.ApollonianSuperharmonic.LatticeTileGridStructure
-public import LeanPool.ApollonianSuperharmonic.TileTranslationFormulas
-public import Mathlib.Topology.Order.DenselyOrdered
-public import Mathlib.Data.Quot
 
 -- [TABLET NODE: P3723T1ContactPortsExist]
 

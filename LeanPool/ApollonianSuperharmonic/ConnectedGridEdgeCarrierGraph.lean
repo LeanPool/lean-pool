@@ -5,9 +5,20 @@ Authors: Wesley Pegden
 -/
 module
 
-public import Mathlib.Combinatorics.SimpleGraph.Matching
+public import Mathlib.Init
+public import Mathlib.Topology.MetricSpace.Basic
+public import Mathlib.Basic.Real.Basic
+public import Mathlib.Data.Finset.Card
+public import Mathlib.Tactic.ByContra
+public import Mathlib.Tactic.Linarith
+public import Mathlib.Tactic.NormNum
+public import Mathlib.Tactic.Ring
+public import Mathlib.Topology.Connected.Basic
+public import Mathlib.Topology.Order.Compact
+
 public import LeanPool.ApollonianSuperharmonic.FourNeighborAdjacent
 public import LeanPool.ApollonianSuperharmonic.GridEdgeCarrier
+public import Mathlib.Combinatorics.SimpleGraph.Connectivity.Connected
 
 -- [TABLET NODE: ConnectedGridEdgeCarrierGraph]
 
@@ -79,7 +90,11 @@ private theorem horizontal_inter (a c : GaussianInt) :
         Set.uIcc (GaussianRealPoint a) (GaussianRealPoint b) := carrier_pair a b
   rintro ⟨⟨x, y⟩, hx, hy⟩
   rw [carrier_pair] at hx hy
-  simp? [Set.uIcc, GaussianRealPoint] at hx hy
+  simp only [Set.uIcc, GaussianRealPoint, Int.reduceNeg, GaussianInt.intCast_re,
+      GaussianInt.intCast_im, Zsqrtd.re_add, Zsqrtd.re_one, Int.cast_add, Int.cast_one,
+      Zsqrtd.im_add, Zsqrtd.im_one, add_zero, Prod.mk_le_mk, le_add_iff_nonneg_right,
+      zero_le_one, Std.le_refl, and_self, inf_of_le_left, sup_of_le_right, Set.mem_Icc]
+      at hx hy
   rw [← GaussianInt.intCast_re a, ← GaussianInt.intCast_im a] at hx
   rw [← GaussianInt.intCast_re c, ← GaussianInt.intCast_im c] at hy
   have him : a.im = c.im := by
@@ -122,7 +137,10 @@ private theorem vertical_inter (a c : GaussianInt) :
           z ∈ ({c, c + J} : Finset GaussianInt))
   rintro ⟨⟨x, y⟩, hx, hy⟩
   rw [carrier_pair] at hx hy
-  simp? [Set.uIcc, GaussianRealPoint, J] at hx hy
+  simp only [Set.uIcc, GaussianRealPoint, Int.reduceNeg, GaussianInt.intCast_re,
+      GaussianInt.intCast_im, Zsqrtd.re_add, add_zero, Zsqrtd.im_add, Int.cast_add,
+      Int.cast_one, Prod.mk_le_mk, Std.le_refl, le_add_iff_nonneg_right, zero_le_one,
+      and_self, inf_of_le_left, sup_of_le_right, Set.mem_Icc, J] at hx hy
   rw [← GaussianInt.intCast_re a, ← GaussianInt.intCast_im a] at hx
   rw [← GaussianInt.intCast_re c, ← GaussianInt.intCast_im c] at hy
   have hre : a.re = c.re := by
@@ -165,7 +183,11 @@ private theorem cross_inter (a c : GaussianInt) :
           z ∈ ({c, c + J} : Finset GaussianInt))
   rintro ⟨⟨x, y⟩, hx, hy⟩
   rw [carrier_pair] at hx hy
-  simp? [Set.uIcc, GaussianRealPoint, J] at hx hy
+  simp only [Set.uIcc, GaussianRealPoint, Int.reduceNeg, GaussianInt.intCast_re,
+      GaussianInt.intCast_im, Zsqrtd.re_add, Zsqrtd.re_one, Int.cast_add, Int.cast_one,
+      Zsqrtd.im_add, Zsqrtd.im_one, add_zero, Prod.mk_le_mk, le_add_iff_nonneg_right,
+      zero_le_one, Std.le_refl, and_self, inf_of_le_left, sup_of_le_right, Set.mem_Icc, J]
+      at hx hy
   rw [← GaussianInt.intCast_re a, ← GaussianInt.intCast_im a] at hx
   rw [← GaussianInt.intCast_re c, ← GaussianInt.intCast_im c] at hy
   have hca : c.re = a.re ∨ c.re = a.re + 1 := by

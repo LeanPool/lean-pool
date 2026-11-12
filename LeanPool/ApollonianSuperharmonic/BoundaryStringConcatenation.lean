@@ -5,19 +5,12 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.ApollonianSuperharmonic.AffineTriangularStrip
-public import LeanPool.ApollonianSuperharmonic.BandPrototile
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.BoundaryString
 public import LeanPool.ApollonianSuperharmonic.BoundaryJoinChamberCertificate
 public import LeanPool.ApollonianSuperharmonic.OrientedUnimodularStripConcatenation
-public import LeanPool.ApollonianSuperharmonic.TileString
 public import LeanPool.ApollonianSuperharmonic.TileStringCoordinateTransport
-public import LeanPool.ApollonianSuperharmonic.TileTranslationFormulas
-public import LeanPool.ApollonianSuperharmonic.TriangularBoundaryStrip
-public import LeanPool.ApollonianSuperharmonic.TriangularMaxIncrement
-public import LeanPool.ApollonianSuperharmonic.TriangularStripSegment
-public import LeanPool.ApollonianSuperharmonic.UnitOccurrenceOrientationUnique
-public import LeanPool.ApollonianSuperharmonic.VectorRecursionLaws
 
 -- [TABLET NODE: BoundaryStringConcatenation]
 
@@ -572,8 +565,11 @@ private theorem hmaxRep :
             D.sup' hDne (fun z => |TriangularSignedHeight u v (u + z)|) ) := by
   classical
   intro D hDne u v
-  simp? [D, TriangularMaxIncrement, TriangularSignedHeight, Prod.add_def,
-    abs_sub_comm, max_left_comm]
+  simp only [TriangularMaxIncrement, abs_sub_comm, Int.reduceNeg, TriangularSignedHeight,
+      Prod.add_def, add_sub_cancel_left, Finset.insert_nonempty, Finset.sup'_insert, mul_zero,
+      mul_one, zero_sub, neg_sub, sub_zero, mul_neg, Finset.singleton_nonempty,
+      Finset.sup'_singleton, max_left_comm, le_max_iff, Std.le_refl, true_or, sup_of_le_right,
+      or_true, D]
   have hcross : u.1 - v.1 - (u.2 - v.2) =
       -(v.1 - u.1 - (v.2 - u.2)) := by ring
   rw [hcross, abs_neg]
@@ -917,8 +913,12 @@ theorem BoundaryStringConcatenation
   have hGplusIm := congrArg (fun z : GaussianInt => (z.im : ℝ)) hGplus
   have hGminusRe := congrArg (fun z : GaussianInt => (z.re : ℝ)) hGminus
   have hGminusIm := congrArg (fun z : GaussianInt => (z.im : ℝ)) hGminus
-  simp? [Zsqrtd.re_add, Zsqrtd.im_add, Zsqrtd.re_sub, Zsqrtd.im_sub,
-    Zsqrtd.re_mul, Zsqrtd.im_mul] at hGplusRe hGplusIm hGminusRe hGminusIm
+  simp only [Int.reduceNeg, Fin.isValue, Zsqrtd.re_sub, Zsqrtd.re_add, Zsqrtd.re_mul,
+      zero_mul, mul_one, neg_mul, one_mul, zero_add, sub_neg_eq_add, Int.cast_add,
+      GaussianInt.intCast_re, GaussianInt.intCast_im, Zsqrtd.re_ofNat, Nat.cast_ofNat,
+      mul_neg, Zsqrtd.im_ofNat, mul_zero, Zsqrtd.im_mul, add_zero, Int.cast_neg, Int.cast_mul,
+      Int.cast_ofNat, Zsqrtd.im_sub, Zsqrtd.im_add, Int.cast_sub, neg_zero, Zsqrtd.re_neg,
+      Zsqrtd.im_neg] at hGplusRe hGplusIm hGminusRe hGminusIm
   have hplus := BoundaryConcatenationGeometry.hplus q i T₀ Tminus Rplus hRplus hminus' hGplusRe
       hGplusIm
   have hminusInc := BoundaryConcatenationGeometry.hminusInc q i T₀ Tminus Rminus hRminus hminus'

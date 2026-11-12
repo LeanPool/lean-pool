@@ -5,11 +5,10 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P3996T1SRowTable
 public import LeanPool.ApollonianSuperharmonic.BandPrototileTranslation
-public import LeanPool.ApollonianSuperharmonic.ProperBandCurvatureStructure
-public import LeanPool.ApollonianSuperharmonic.TileTranslationFormulas
-public import LeanPool.ApollonianSuperharmonic.VectorRecursionLaws
 public import LeanPool.ApollonianSuperharmonic.P3055T1ParentVectorNormalForms
 
 -- [TABLET NODE: P3996T1SRowAlignment]
@@ -688,10 +687,18 @@ private theorem rowAlignment :
       cOff p0plus p0minus p1plus p1minus p0plusAbs p0minusAbs p1plusAbs p1minusAbs edgeVector w
       q13 certU certV qnormal q31 q23
   cases row <;> simp only [P3996T1SRowTable] at hz <;> cases hz <;> rename_i presentation
-  all_goals simp? [SubtileOccurrenceInterpretation,
-    hfp, hsp, hfc, hft, hfr, hsc, hsr, q1pos, q2pos, q3pos,
-    certU, certV, p0plus, p0minus, p1plus, p1minus,
-    cOff, I, GaussianRealPoint]
+  all_goals simp only [hfp, Fin.isValue, hfc, Fin.succ_zero_eq_one,
+      SubtileOccurrenceInterpretation, Int.cast_one, certU, Int.reduceNeg, one_mul, certV,
+      Fin.succ_one_eq_two, hft, Int.cast_zero, zero_mul, add_zero, q1pos, q2pos, ↓reduceIte,
+      and_self, Fin.coe_ofNat_eq_mod, Nat.reduceMod, even_two, one_div, GaussianRealPoint,
+      Zsqrtd.re_mul, Zsqrtd.re_add, neg_mul, Zsqrtd.im_add, Int.cast_add, Int.cast_mul,
+      GaussianInt.intCast_re, map_pow, Int.cast_neg, GaussianInt.intCast_im, Zsqrtd.im_mul,
+      Prod.smul_mk, smul_eq_mul, p0plus, Prod.mk_sub_mk, sub_neg_eq_add, true_and, I, cOff,
+      neg_add_rev, zero_add, Fin.reduceSucc, hfr, q3pos, Nat.mod_succ, mul_ite,
+      right_eq_ite_iff, mul_eq_mul_left_iff, ne_eq, OfNat.ofNat_ne_zero, not_false_eq_true,
+      pow_eq_zero_iff, Nat.one_mod, pow_one, Nat.not_even_one, mul_one, neg_sub, p0minus,
+      Prod.neg_mk, neg_neg, Bool.false_eq_true, Nat.zero_mod, pow_zero, Even.zero, hsp, hsc,
+      hsr, p1minus, p1plus]
   all_goals refine ⟨?_, ?_, ?_⟩
   case positiveS1.refl.refine_1 =>
     simpa [SubtileOccurrenceInterpretation, TileTranslation, GaussianTranslation, certU, certV,

@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P5098T1PeriodWindow
 public import Mathlib.Tactic.IntervalCases
 

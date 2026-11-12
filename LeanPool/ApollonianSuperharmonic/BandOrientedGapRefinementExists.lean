@@ -5,22 +5,11 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.ApollonianSuperharmonic.BandDescartesGapSubdivision
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.BandGenealogy
 public import LeanPool.ApollonianSuperharmonic.CurvatureOneBandCircleClassification
 public import LeanPool.ApollonianSuperharmonic.BandOrientedGapRefinement
-public import LeanPool.ApollonianSuperharmonic.TangencyCoordinateIdentity
-public import LeanPool.ApollonianSuperharmonic.SemiProperQuadruple
-public import LeanPool.ApollonianSuperharmonic.BandCircle
-public import LeanPool.ApollonianSuperharmonic.BandPredecessorNoCollision
-public import LeanPool.ApollonianSuperharmonic.BandPackingExterior
-public import LeanPool.ApollonianSuperharmonic.ProperBandCurvatureStructure
-public import LeanPool.ApollonianSuperharmonic.BandGeneralCircle
-public import LeanPool.ApollonianSuperharmonic.P4828T1HistoryRealization
-public import LeanPool.ApollonianSuperharmonic.P4828T1HistoryNormalForm
-public import LeanPool.ApollonianSuperharmonic.P4984T1RootGaps
-public import LeanPool.ApollonianSuperharmonic.P4984T1ClosedSubdivision
-public import LeanPool.ApollonianSuperharmonic.P4984T1ContactDiameter
 public import LeanPool.ApollonianSuperharmonic.P4984T1IncidentArcs
 public import LeanPool.ApollonianSuperharmonic.P4984T1UnitIncidence
 public import LeanPool.ApollonianSuperharmonic.P4984T1BranchDecay

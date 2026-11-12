@@ -5,23 +5,16 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.BandPeriodicOdometer
-public import LeanPool.ApollonianSuperharmonic.BandPrototile
-public import LeanPool.ApollonianSuperharmonic.BandTileSimultaneousInduction
-public import LeanPool.ApollonianSuperharmonic.BandTileTopologyApplication
-public import LeanPool.ApollonianSuperharmonic.BoundaryFootprintEdges
 public import LeanPool.ApollonianSuperharmonic.BoundaryFootprintVertices
 public import LeanPool.ApollonianSuperharmonic.CircleMatrix
-public import LeanPool.ApollonianSuperharmonic.FootprintVertices
 public import LeanPool.ApollonianSuperharmonic.FourNeighborLaplacian
 public import LeanPool.ApollonianSuperharmonic.GlobalOdometerExtends
 public import LeanPool.ApollonianSuperharmonic.LatticeQuadraticForm
-public import LeanPool.ApollonianSuperharmonic.LatticeTile
 public import LeanPool.ApollonianSuperharmonic.PeriodicBoundaryWebLaplacian
-public import LeanPool.ApollonianSuperharmonic.ProperBandCurvatureStructure
-public import LeanPool.ApollonianSuperharmonic.ProperBandQuadruple
 public import LeanPool.ApollonianSuperharmonic.TileOdometer
-public import LeanPool.ApollonianSuperharmonic.TileOdometerTranslationUniqueness
 
 -- [TABLET NODE: BandCanonicalPeriodicExtension]
 
@@ -122,7 +115,8 @@ theorem BandCanonicalPeriodicExtension (C : BandCircle)
       apply hxb
       simp [BoundaryFootprintVertices, hn, hxa]
     have hfoot' := hfoot
-    simp? [FootprintVertices, hnonempty] at hfoot'
+    simp only [FootprintVertices, hnonempty, ↓reduceIte, Int.reduceNeg, Set.mem_ofPred_eq]
+        at hfoot'
     have some : x ∈ T.cells ∨ x - 1 ∈ T.cells ∨
         x - 1 - ⟨0, 1⟩ ∈ T.cells ∨ x - ⟨0, 1⟩ ∈ T.cells := by
       rcases hfoot' with ⟨z, hz, rfl | rfl | rfl | rfl⟩

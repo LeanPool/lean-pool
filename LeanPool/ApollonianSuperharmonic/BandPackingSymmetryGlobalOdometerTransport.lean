@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P5686T1UniformGlobalOdometerTransport
 
 -- [TABLET NODE: BandPackingSymmetryGlobalOdometerTransport]

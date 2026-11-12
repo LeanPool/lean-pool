@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P3723T1GridDiskPairedModel
 public import LeanPool.ApollonianSuperharmonic.P3723T1ConvexRadialIntersection
 public import LeanPool.ApollonianSuperharmonic.P3723T1ConvexRadialParameterization

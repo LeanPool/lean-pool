@@ -5,28 +5,12 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P5625T1CentroidSlopeDifferenceCovariance
-public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetry
-public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryAffineVectorCovariance
-public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryAffineVectorAction
-public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryPartialOdometerActionFormulas
-public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryProperCovariance
-public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryReversesOrientation
 public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryScopedPhase
-public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetrySlopeAction
 public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryTileOdometerCovariance
 public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryTileAction
-public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryVectorAction
-public import LeanPool.ApollonianSuperharmonic.FootprintVertices
-public import LeanPool.ApollonianSuperharmonic.OdometerCompatibility
-public import LeanPool.ApollonianSuperharmonic.PartialOdometerSquares
-public import LeanPool.ApollonianSuperharmonic.PartialOdometerSlope
-public import LeanPool.ApollonianSuperharmonic.PositiveCurvatureTileOdometerDomain
-public import LeanPool.ApollonianSuperharmonic.ProperBandCurvatureStructure
-public import LeanPool.ApollonianSuperharmonic.RightLatticeAdjacent
-public import LeanPool.ApollonianSuperharmonic.TileQuarterTurnFormulas
-public import LeanPool.ApollonianSuperharmonic.TileReflectionFormulas
-public import LeanPool.ApollonianSuperharmonic.VectorRecursionLaws
 
 -- [TABLET NODE: RightLatticeAdjacentPackingSymmetryTransport]
 
@@ -218,7 +202,8 @@ private theorem affine_neg :
       rcases w with ⟨wa, wb⟩
       apply Prod.ext
       · simp [BandPackingSymmetryAffineVectorAction, GaussianReflection]
-      · simp? [BandPackingSymmetryAffineVectorAction, GaussianReflection]
+      · simp only [BandPackingSymmetryAffineVectorAction, Int.reduceNeg, GaussianReflection,
+          Zsqrtd.re_neg, Zsqrtd.im_neg, neg_neg, Prod.neg_mk, neg_add_rev]
         have hrel : ({re := -va, im := vb} : GaussianInt) =
             -({re := va, im := -vb} : GaussianInt) := by
           ext <;> simp
@@ -366,9 +351,10 @@ private theorem affine_flip_second :
       rcases v with ⟨va,vb⟩
       rcases u with ⟨ua,ub⟩
       rcases w with ⟨wa,wb⟩
-      simp? [BandPackingSymmetryAffineVectorAction,
-        BandPackingSymmetryReversesOrientation, GaussianQuarterTurn,
-        GaussianReflection]
+      simp only [BandPackingSymmetryAffineVectorAction, GaussianQuarterTurn, Int.reduceNeg,
+          GaussianReflection, BandPackingSymmetryReversesOrientation, Bool.false_eq_true,
+          ↓reduceIte, Zsqrtd.im_add, Zsqrtd.im_mul, mul_neg, neg_add_rev, neg_neg,
+          Zsqrtd.re_add, Zsqrtd.re_mul, neg_mul, one_mul]
       ext <;> simp; ring
   | negate =>
       intro v u
@@ -379,9 +365,9 @@ private theorem affine_flip_second :
       intro v u
       rcases v with ⟨va,vb⟩
       rcases u with ⟨ua,ub⟩
-      simp? [BandPackingSymmetryAffineVectorAction,
-        BandPackingSymmetryReversesOrientation, GaussianQuarterTurn,
-        GaussianReflection]
+      simp only [BandPackingSymmetryAffineVectorAction, GaussianReflection, Int.reduceNeg,
+          GaussianQuarterTurn, Zsqrtd.re_neg, neg_neg, Zsqrtd.im_neg,
+          BandPackingSymmetryReversesOrientation, ↓reduceIte]
       ext <;> simp
   | comp a b iha ihb =>
       intro v u
@@ -764,6 +750,9 @@ private theorem transportedAdjacency :
   intro g q i e T T' h h' p p' hcent hslopeRe hslopeIm negative hphase hvec hOT hOT' hsr hsr'
       centroid_transport vector_sign vector_neg affine_neg real_coord imag_coord slope_transport
       newIndex newIndex_eq oldPair newFlipRe newFlipIm affineRightRe affineRightIm
+  have hv := (hvec i).1
+  have hvr := congrArg (fun z : GaussianInt => (z.re : ℝ)) hv
+  have hvi := congrArg (fun z : GaussianInt => (z.im : ℝ)) hv
   refine ⟨negative, BandPackingSymmetrySlopeAction g T p,
     BandPackingSymmetrySlopeAction g T' p', ?_⟩
   refine ⟨hphase, ?_, ?_, hsr, hsr', ?_, ?_, ?_, ?_⟩
@@ -794,25 +783,29 @@ private theorem transportedAdjacency :
         (BandVectors.2 (q 0) (q i.succ)) hc
         (by simpa [he] using hslopeRe) (by simpa [he] using hslopeIm)
       rw [oldPair] at hs
-      have hv := (hvec i).1
-      have hvr := congrArg (fun z : GaussianInt => (z.re : ℝ)) hv
-      have hvi := congrArg (fun z : GaussianInt => (z.im : ℝ)) hv
       by_cases hn : negative <;>
         by_cases hr : BandPackingSymmetryReversesOrientation g = true
-      all_goals simp? [he, hn, hr] at ⊢
-      all_goals simp? [newIndex_eq, hr] at newFlipRe newFlipIm
+      all_goals simp only [he, hn, Bool.bne_false, hr, bne_self_eq_false, Bool.false_eq_true,
+          ↓reduceIte, Int.reduceNeg, Fin.isValue, GaussianInt.intCast_re, neg_mul, one_mul,
+          Bool.bne_true, Bool.not_false] at ⊢
+      all_goals simp only [Int.reduceNeg, Fin.isValue, newIndex_eq, hr, Bool.false_eq_true,
+          ↓reduceIte, GaussianInt.intCast_re, GaussianInt.intCast_im] at newFlipRe newFlipIm
       all_goals try rw [real_coord] at newFlipRe
       all_goals try rw [imag_coord] at newFlipIm
       all_goals simp only [hn, hr] at hvr hvi
       all_goals norm_num at hvr hvi
       all_goals rw [← GaussianInt.intCast_re] at hvr ⊢
       all_goals rw [← GaussianInt.intCast_im] at hvi
-      all_goals simp? [hr] at affineRightRe affineRightIm
+      all_goals simp only [Int.reduceNeg, Fin.isValue, GaussianInt.intCast_re, hr,
+          Bool.false_eq_true, ↓reduceIte, map_neg, Complex.neg_re, GaussianInt.re_toComplex,
+          Int.cast_neg, GaussianInt.intCast_im, neg_neg, Complex.neg_im,
+          GaussianInt.im_toComplex] at affineRightRe affineRightIm
       all_goals rw [← GaussianInt.intCast_re] at affineRightRe
       all_goals rw [← GaussianInt.intCast_im] at affineRightIm
       all_goals rw [real_coord] at hvr affineRightIm
       all_goals rw [imag_coord] at hvi affineRightRe
-      all_goals simp? [GaussianQuarterTurn] at hs
+      all_goals simp only [Int.reduceNeg, GaussianQuarterTurn, Fin.isValue,
+          GaussianInt.intCast_re, GaussianInt.intCast_im] at hs
       all_goals rw [real_coord] at hs
       all_goals rw [imag_coord] at hs
       all_goals ring_nf at hs ⊢
@@ -831,25 +824,28 @@ private theorem transportedAdjacency :
       rw [affine_neg] at hs
       rw [oldPair] at hs
       norm_num at hs
-      have hv := (hvec i).1
-      have hvr := congrArg (fun z : GaussianInt => (z.re : ℝ)) hv
-      have hvi := congrArg (fun z : GaussianInt => (z.im : ℝ)) hv
       by_cases hn : negative <;>
         by_cases hr : BandPackingSymmetryReversesOrientation g = true
-      all_goals simp? [he, hn, hr] at ⊢
-      all_goals simp? [newIndex_eq, hr] at newFlipRe newFlipIm
+      all_goals simp only [he, hn, Bool.bne_true, Bool.not_false, hr, Bool.bne_false,
+          ↓reduceIte, Int.reduceNeg, Fin.isValue, Bool.false_eq_true, GaussianInt.intCast_re,
+          one_mul, bne_self_eq_false, neg_mul] at ⊢
+      all_goals simp only [Int.reduceNeg, Fin.isValue, newIndex_eq, hr, Bool.false_eq_true,
+          ↓reduceIte, GaussianInt.intCast_re, GaussianInt.intCast_im] at newFlipRe newFlipIm
       all_goals try rw [real_coord] at newFlipRe
       all_goals try rw [imag_coord] at newFlipIm
       all_goals simp only [hn, hr] at hvr hvi
       all_goals norm_num at hvr hvi
       all_goals rw [← GaussianInt.intCast_re] at hvr ⊢
       all_goals rw [← GaussianInt.intCast_im] at hvi
-      all_goals simp? [hr] at affineRightRe affineRightIm
+      all_goals simp only [Int.reduceNeg, Fin.isValue, GaussianInt.intCast_re, hr,
+          Bool.false_eq_true, ↓reduceIte, map_neg, Complex.neg_re, GaussianInt.re_toComplex,
+          Int.cast_neg, GaussianInt.intCast_im, neg_neg, Complex.neg_im,
+          GaussianInt.im_toComplex] at affineRightRe affineRightIm
       all_goals rw [← GaussianInt.intCast_re] at affineRightRe
       all_goals rw [← GaussianInt.intCast_im] at affineRightIm
       all_goals rw [real_coord] at hvr affineRightIm
       all_goals rw [imag_coord] at hvi affineRightRe
-      all_goals simp? [GaussianQuarterTurn] at hs
+      all_goals simp only [GaussianQuarterTurn, Int.reduceNeg, Fin.isValue] at hs
       all_goals rw [real_coord] at hs
       all_goals rw [imag_coord] at hs
       all_goals ring_nf at hs ⊢
@@ -865,13 +861,13 @@ private theorem transportedAdjacency :
         (BandVectors.1 (q 0) (q i.succ)) (BandVectors.2 (q 0) (q i.succ)) hc
         (by simpa [he] using hslopeRe) (by simpa [he] using hslopeIm)
       rw [oldPair] at hs
-      have hv := (hvec i).1
-      have hvi := congrArg (fun z : GaussianInt => (z.im : ℝ)) hv
-      have hvr := congrArg (fun z : GaussianInt => (z.re : ℝ)) hv
       by_cases hn : negative <;>
         by_cases hr : BandPackingSymmetryReversesOrientation g = true
-      all_goals simp? [he, hn, hr] at ⊢
-      all_goals simp? [newIndex_eq, hr] at newFlipRe newFlipIm
+      all_goals simp only [he, hn, Bool.bne_false, hr, bne_self_eq_false, Bool.false_eq_true,
+          ↓reduceIte, Int.reduceNeg, Fin.isValue, GaussianInt.intCast_im, neg_mul, one_mul,
+          Bool.bne_true, Bool.not_false] at ⊢
+      all_goals simp only [Int.reduceNeg, Fin.isValue, newIndex_eq, hr, Bool.false_eq_true,
+          ↓reduceIte, GaussianInt.intCast_re, GaussianInt.intCast_im] at newFlipRe newFlipIm
       all_goals try rw [real_coord] at newFlipRe
       all_goals try rw [imag_coord] at newFlipIm
       all_goals simp only [hn, hr] at hvi
@@ -881,13 +877,17 @@ private theorem transportedAdjacency :
       all_goals rw [← GaussianInt.intCast_im] at ⊢
       all_goals rw [← GaussianInt.intCast_im] at hvi
       all_goals rw [← GaussianInt.intCast_re] at hvr
-      all_goals simp? [hr] at affineRightRe affineRightIm
+      all_goals simp only [Int.reduceNeg, Fin.isValue, GaussianInt.intCast_re, hr,
+          Bool.false_eq_true, ↓reduceIte, map_neg, Complex.neg_re, GaussianInt.re_toComplex,
+          Int.cast_neg, GaussianInt.intCast_im, neg_neg, Complex.neg_im,
+          GaussianInt.im_toComplex] at affineRightRe affineRightIm
       all_goals rw [← GaussianInt.intCast_re] at affineRightRe
       all_goals rw [← GaussianInt.intCast_im] at affineRightIm
       all_goals rw [imag_coord] at hvi affineRightRe
       all_goals rw [real_coord] at hvr
       all_goals rw [real_coord] at affineRightIm
-      all_goals simp? [GaussianQuarterTurn] at hs
+      all_goals simp only [Int.reduceNeg, GaussianQuarterTurn, Fin.isValue,
+          GaussianInt.intCast_re, GaussianInt.intCast_im] at hs
       all_goals rw [real_coord] at hs
       all_goals rw [imag_coord] at hs
       all_goals ring_nf at hs ⊢
@@ -906,13 +906,13 @@ private theorem transportedAdjacency :
       rw [affine_neg] at hs
       rw [oldPair] at hs
       norm_num at hs
-      have hv := (hvec i).1
-      have hvi := congrArg (fun z : GaussianInt => (z.im : ℝ)) hv
-      have hvr := congrArg (fun z : GaussianInt => (z.re : ℝ)) hv
       by_cases hn : negative <;>
         by_cases hr : BandPackingSymmetryReversesOrientation g = true
-      all_goals simp? [he, hn, hr] at ⊢
-      all_goals simp? [newIndex_eq, hr] at newFlipRe newFlipIm
+      all_goals simp only [he, hn, Bool.bne_true, Bool.not_false, hr, Bool.bne_false,
+          ↓reduceIte, Int.reduceNeg, Fin.isValue, Bool.false_eq_true, GaussianInt.intCast_im,
+          one_mul, bne_self_eq_false, neg_mul] at ⊢
+      all_goals simp only [Int.reduceNeg, Fin.isValue, newIndex_eq, hr, Bool.false_eq_true,
+          ↓reduceIte, GaussianInt.intCast_re, GaussianInt.intCast_im] at newFlipRe newFlipIm
       all_goals try rw [real_coord] at newFlipRe
       all_goals try rw [imag_coord] at newFlipIm
       all_goals simp only [hn, hr] at hvi
@@ -922,13 +922,16 @@ private theorem transportedAdjacency :
       all_goals rw [← GaussianInt.intCast_im] at ⊢
       all_goals rw [← GaussianInt.intCast_im] at hvi
       all_goals rw [← GaussianInt.intCast_re] at hvr
-      all_goals simp? [hr] at affineRightRe affineRightIm
+      all_goals simp only [Int.reduceNeg, Fin.isValue, GaussianInt.intCast_re, hr,
+          Bool.false_eq_true, ↓reduceIte, map_neg, Complex.neg_re, GaussianInt.re_toComplex,
+          Int.cast_neg, GaussianInt.intCast_im, neg_neg, Complex.neg_im,
+          GaussianInt.im_toComplex] at affineRightRe affineRightIm
       all_goals rw [← GaussianInt.intCast_re] at affineRightRe
       all_goals rw [← GaussianInt.intCast_im] at affineRightIm
       all_goals rw [imag_coord] at hvi affineRightRe
       all_goals rw [real_coord] at hvr
       all_goals rw [real_coord] at affineRightIm
-      all_goals simp? [GaussianQuarterTurn] at hs
+      all_goals simp only [GaussianQuarterTurn, Int.reduceNeg, Fin.isValue] at hs
       all_goals rw [real_coord] at hs
       all_goals rw [imag_coord] at hs
       all_goals ring_nf at hs ⊢
@@ -1051,8 +1054,12 @@ theorem RightLatticeAdjacentPackingSymmetryTransport
   have phaseSlope := (hvec i).2
   have phaseSlopeRe := congrArg (fun z : GaussianInt => (z.re : ℝ)) phaseSlope
   have phaseSlopeIm := congrArg (fun z : GaussianInt => (z.im : ℝ)) phaseSlope
-  simp? [] at oldFlipRe oldFlipIm newFlipRe newFlipIm
-  simp? [] at oldFlipVecRe oldFlipVecIm newFlipVecRe newFlipVecIm
+  simp only [Int.reduceNeg, Fin.isValue, GaussianInt.intCast_re, neg_mul, Zsqrtd.re_neg,
+      Zsqrtd.re_mul, zero_mul, mul_one, one_mul, zero_add, neg_neg, GaussianInt.intCast_im,
+      Zsqrtd.im_neg, Zsqrtd.im_mul, Int.cast_neg] at oldFlipRe oldFlipIm newFlipRe newFlipIm
+  simp only [Int.reduceNeg, Fin.isValue, GaussianInt.intCast_re, Zsqrtd.re_mul, zero_mul,
+      mul_one, neg_mul, one_mul, zero_add, Int.cast_neg, GaussianInt.intCast_im,
+      Zsqrtd.im_mul] at oldFlipVecRe oldFlipVecIm newFlipVecRe newFlipVecIm
   simp only [real_coord, imag_coord] at newFlipRe newFlipIm
   try
   try
@@ -1060,7 +1067,9 @@ theorem RightLatticeAdjacentPackingSymmetryTransport
   rw [imag_coord] at oldFlipVecIm newFlipVecIm
   rw [imag_coord] at oldFlipVecRe newFlipVecRe
   rw [real_coord] at oldFlipVecIm newFlipVecIm
-  simp? [GaussianQuarterTurn] at affineRightRe affineRightIm phaseSlopeRe phaseSlopeIm
+  simp only [Int.reduceNeg, GaussianQuarterTurn, Fin.isValue, GaussianInt.intCast_re,
+      GaussianInt.intCast_im, mul_ite, mul_neg, ite_mul, neg_mul, one_mul]
+      at affineRightRe affineRightIm phaseSlopeRe phaseSlopeIm
   try rw [← GaussianInt.intCast_re] at oldFlipRe
   try
   try rw [← GaussianInt.intCast_re] at affineRightRe

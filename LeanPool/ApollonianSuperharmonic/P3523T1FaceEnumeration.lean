@@ -5,8 +5,12 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.ApollonianSuperharmonic.P3523T1InsertionConstruction
-public import Mathlib.Data.Fintype.EquivFin
+public import Mathlib.Init
+public import Mathlib.Algebra.Group.Fin.Basic
+public import Mathlib.Data.Finset.Sort
+public import Mathlib.Data.Finset.Card
+
+public import Mathlib.Algebra.Order.Algebra
 
 -- [TABLET NODE: P3523T1FaceEnumeration]
 

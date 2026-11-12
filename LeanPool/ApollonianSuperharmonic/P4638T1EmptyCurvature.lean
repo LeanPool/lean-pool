@@ -5,8 +5,9 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.BandPrototile
-public import LeanPool.ApollonianSuperharmonic.ProperBandCurvatureStructure
 
 -- [TABLET NODE: P4638T1EmptyCurvature]
 

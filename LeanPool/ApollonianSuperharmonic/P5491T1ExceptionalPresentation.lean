@@ -5,10 +5,10 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryInversePhaseCancellation
-public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryProperCovariance
 public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryCovariance
-public import LeanPool.ApollonianSuperharmonic.BandPredecessorNoCollision
 public import LeanPool.ApollonianSuperharmonic.FordCoordinateConfiguration
 public import LeanPool.ApollonianSuperharmonic.DiamondCoordinateConfiguration
 public import LeanPool.ApollonianSuperharmonic.FordFareyParentsExist

@@ -5,7 +5,11 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P3821T1AngularIncrement
+public import Mathlib.Analysis.Complex.Circle
+public import Mathlib.Topology.CompactOpen
 
 -- [TABLET NODE: P3821T1LoopIndex]
 

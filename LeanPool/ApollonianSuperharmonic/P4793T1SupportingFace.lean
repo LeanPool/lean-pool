@@ -5,9 +5,12 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.ApollonianSuperharmonic.Preamble
-public import Mathlib.Analysis.Convex.Hull
+public import Mathlib.Init
+public import Mathlib.Basic.Real.Basic
 public import Mathlib.Tactic.Linarith
+public import Mathlib.Tactic.Ring
+
+public import Mathlib.Analysis.Convex.Hull
 
 -- [TABLET NODE: P4793T1SupportingFace]
 

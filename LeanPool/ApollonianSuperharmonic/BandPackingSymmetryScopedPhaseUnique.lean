@@ -5,9 +5,9 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryScopedPhase
-public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryVectorAction
-public import LeanPool.ApollonianSuperharmonic.ProperBandCurvatureStructure
 public import LeanPool.ApollonianSuperharmonic.VectorNonvanishing
 
 -- [TABLET NODE: BandPackingSymmetryScopedPhaseUnique]
@@ -42,7 +42,8 @@ theorem BandPackingSymmetryScopedPhaseUnique
         apply hv
         cases v
         rw [Zsqrtd.ext_iff] at hz
-        simp? [BandPackingSymmetryVectorAction, GaussianQuarterTurn] at hz
+        simp only [Int.reduceNeg, BandPackingSymmetryVectorAction, GaussianQuarterTurn,
+            Zsqrtd.re_zero, neg_eq_zero, Zsqrtd.im_zero] at hz
         rcases hz with ⟨hre, him⟩
         ext <;> simp_all [Zsqrtd.re_zero, Zsqrtd.im_zero]
     | conjugate =>
@@ -50,7 +51,9 @@ theorem BandPackingSymmetryScopedPhaseUnique
         apply hv
         cases v
         rw [Zsqrtd.ext_iff] at hz
-        simp? [BandPackingSymmetryVectorAction, GaussianReflection] at hz
+        simp only [Int.reduceNeg, BandPackingSymmetryVectorAction, GaussianReflection,
+            Zsqrtd.re_neg, Zsqrtd.re_zero, neg_eq_zero, Zsqrtd.im_neg, neg_neg,
+            Zsqrtd.im_zero] at hz
         rcases hz with ⟨hre, him⟩
         ext <;> simp_all [Zsqrtd.re_zero, Zsqrtd.im_zero]
     | shift w =>
@@ -72,7 +75,8 @@ theorem BandPackingSymmetryScopedPhaseUnique
   cases negative₁ <;> cases negative₂
   · rfl
   · have equal := (h₁ 0).1.symm.trans (h₂ 0).1
-    simp? at equal
+    simp only [Bool.false_eq_true, ↓reduceIte, Fin.isValue, Fin.succ_zero_eq_one, one_mul,
+        neg_mul] at equal
     have opposite :
         BandPackingSymmetryVectorAction g
             (BandVectors.1 (q ((0 : Fin 3).succ : Fin 4)) (q 0)) =

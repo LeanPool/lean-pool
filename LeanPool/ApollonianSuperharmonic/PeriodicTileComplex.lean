@@ -5,9 +5,10 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.PeriodicTileCore
 public import LeanPool.ApollonianSuperharmonic.TileArea
-public import LeanPool.ApollonianSuperharmonic.CommonFootprintEdgeVertices
 
 -- [TABLET NODE: PeriodicTileComplex]
 

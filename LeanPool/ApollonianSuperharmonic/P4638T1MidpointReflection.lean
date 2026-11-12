@@ -5,9 +5,10 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.BandPrototileCentralSymmetry
 public import LeanPool.ApollonianSuperharmonic.BandPrototileTranslationNormalForm
-public import LeanPool.ApollonianSuperharmonic.TileTranslationFormulas
 
 -- [TABLET NODE: P4638T1MidpointReflection]
 

@@ -5,12 +5,12 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import Mathlib.LinearAlgebra.AffineSpace.FiniteDimensional
 
 public import LeanPool.ApollonianSuperharmonic.P3650T1ExposedCorner
 public import Mathlib.Analysis.Normed.Affine.AddTorsorBases
-public import Mathlib.Analysis.Convex.Combination
-public import Mathlib.Analysis.Convex.Topology
 
 -- [TABLET NODE: P3650T1TriangleEntry]
 

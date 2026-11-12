@@ -5,8 +5,9 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.SimpleGridPath
-public import Mathlib.Data.List.Basic
 
 -- [TABLET NODE: P3161T2PathSubwalk]
 

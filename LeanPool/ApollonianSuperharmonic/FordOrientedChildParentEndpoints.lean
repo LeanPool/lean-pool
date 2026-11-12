@@ -5,28 +5,11 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.ApollonianSuperharmonic.BandPrototileCentroidUnique
-public import LeanPool.ApollonianSuperharmonic.BandPrototileTranslation
-public import LeanPool.ApollonianSuperharmonic.BandPrototileTranslationNormalForm
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.ExactTileInterfaceTriple
-public import LeanPool.ApollonianSuperharmonic.FootprintEdges
-public import LeanPool.ApollonianSuperharmonic.FootprintVertices
-public import LeanPool.ApollonianSuperharmonic.FordCellDomain
-public import LeanPool.ApollonianSuperharmonic.FordCoordinateConfiguration
-public import LeanPool.ApollonianSuperharmonic.FordFareyParameter
-public import LeanPool.ApollonianSuperharmonic.FordTile
-public import LeanPool.ApollonianSuperharmonic.FordTileRecursiveIdentification
-public import LeanPool.ApollonianSuperharmonic.GaussianRealPoint
-public import LeanPool.ApollonianSuperharmonic.SimpleGridPathBetween
-public import LeanPool.ApollonianSuperharmonic.TileCentroid
-public import LeanPool.ApollonianSuperharmonic.TileQuarterTurnFormulas
 public import LeanPool.ApollonianSuperharmonic.TileTranslation
-public import LeanPool.ApollonianSuperharmonic.TileTranslationFormulas
-public import LeanPool.ApollonianSuperharmonic.VectorRecursionLaws
-public import LeanPool.ApollonianSuperharmonic.P4055T1ExactTripleImage
-public import LeanPool.ApollonianSuperharmonic.ProtoTileObservableExtensionality
 public import LeanPool.ApollonianSuperharmonic.ExactTileInterfaceTripleSwapLast
-public import Mathlib.Data.List.Chain
 public import LeanPool.ApollonianSuperharmonic.P5269T1FordSquareNormalForm
 public import LeanPool.ApollonianSuperharmonic.P5269T1CenteredSquareTripleTransport
 
@@ -1007,7 +990,8 @@ private theorem norm2 :
   classical
   intro P hq sq hs T hT
   obtain ⟨w, hw⟩ := P5269T1FordSquareNormalForm P hq 2 T hT
-    (by simp? [FordRecursiveQuadruple, FordCircleCoordinate]; positivity)
+    (by simp only [FordRecursiveQuadruple, FordCircleCoordinate, Nat.cast_mul, Int.reduceNeg,
+        Fin.isValue, Matrix.cons_val, mul_self_pos, ne_eq, Int.natCast_eq_zero]; positivity)
   exact ⟨w.re, w.im, hw⟩
 
 private theorem indices :

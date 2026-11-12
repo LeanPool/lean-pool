@@ -5,28 +5,16 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.ApollonianSuperharmonic.BoundaryFootprintEdges
-public import LeanPool.ApollonianSuperharmonic.ClosedSquareRealization
-public import LeanPool.ApollonianSuperharmonic.CommonFootprintEdgeVertices
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.FinitePatchTopology
-public import LeanPool.ApollonianSuperharmonic.FootprintEdges
-public import LeanPool.ApollonianSuperharmonic.FootprintVertices
-public import LeanPool.ApollonianSuperharmonic.FourNeighborConnected
-public import LeanPool.ApollonianSuperharmonic.LatticeTileGridStructure
 public import LeanPool.ApollonianSuperharmonic.LatticeTileDiskUnionInterface
-public import LeanPool.ApollonianSuperharmonic.NoCheckerboardCellVertex
 public import LeanPool.ApollonianSuperharmonic.PeriodicTileAdjacentContactRegularity
-public import LeanPool.ApollonianSuperharmonic.PeriodicTileComplex
 public import LeanPool.ApollonianSuperharmonic.PeriodicTileContactRoutingRigidity
-public import LeanPool.ApollonianSuperharmonic.PeriodicTileIndexedMultiplicityOne
 public import LeanPool.ApollonianSuperharmonic.PeriodicTileMultiplicityOne
 public import LeanPool.ApollonianSuperharmonic.P3963T1DeletedPairExteriorConnected
 public import LeanPool.ApollonianSuperharmonic.P3963T1EdgeFreeDiskCorners
-public import LeanPool.ApollonianSuperharmonic.PlaneTriangulation
-public import LeanPool.ApollonianSuperharmonic.ProtoTile
-public import LeanPool.ApollonianSuperharmonic.SimpleGridCycle
 public import LeanPool.ApollonianSuperharmonic.SimpleGridPath
-public import LeanPool.ApollonianSuperharmonic.TileRealization
 
 -- [TABLET NODE: PeriodicTileIntersectionClassification]
 

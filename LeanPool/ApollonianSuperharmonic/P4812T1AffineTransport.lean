@@ -5,9 +5,9 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P4812T1AffineDrawing
-public import Mathlib.Data.List.Chain
-public import Mathlib.Topology.Homeomorph.Lemmas
 
 -- [TABLET NODE: P4812T1AffineTransport]
 

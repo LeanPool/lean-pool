@@ -5,18 +5,14 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.BandVectorOrientationDichotomy
-public import LeanPool.ApollonianSuperharmonic.BandTangency
 public import LeanPool.ApollonianSuperharmonic.BoundaryString
-public import LeanPool.ApollonianSuperharmonic.ProperBandQuadruple
-public import LeanPool.ApollonianSuperharmonic.RegularTileFamily
 public import LeanPool.ApollonianSuperharmonic.TileOdometerReindexedDecomposition
 public import LeanPool.ApollonianSuperharmonic.TileStringExists
 public import LeanPool.ApollonianSuperharmonic.ParentVectorsInTilingLattice
-public import LeanPool.ApollonianSuperharmonic.PartialOdometerAffineTranslateFormulas
 public import LeanPool.ApollonianSuperharmonic.TileOdometerAffineTranslation
-public import LeanPool.ApollonianSuperharmonic.TileTranslationFormulas
-public import LeanPool.ApollonianSuperharmonic.VectorRecursionLaws
 public import LeanPool.ApollonianSuperharmonic.TileOdometerBandPrototile
 
 -- [TABLET NODE: ForwardBoundaryStringData]

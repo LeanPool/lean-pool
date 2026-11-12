@@ -5,9 +5,9 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.BandTileSimultaneousInduction
-public import LeanPool.ApollonianSuperharmonic.FordTileGeometry
-public import LeanPool.ApollonianSuperharmonic.TileDiskAreaCovariance
 
 -- [TABLET NODE: P4590T1PositivePrototileDisk]
 

@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P3381T1PairedTriangulation
 
 -- [TABLET NODE: P3475T1TriangleTree]

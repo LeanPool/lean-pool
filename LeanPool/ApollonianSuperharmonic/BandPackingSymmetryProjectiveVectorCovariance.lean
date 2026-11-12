@@ -5,17 +5,11 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryCircleAction
-public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryQuadrupleAction
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryProperCovariance
-public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryReversesOrientation
 public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryScopedPhase
-public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryVectorAction
-public import LeanPool.ApollonianSuperharmonic.ProperBandQuadruple
-public import LeanPool.ApollonianSuperharmonic.ProperBandCurvatureStructure
 public import LeanPool.ApollonianSuperharmonic.VectorNonvanishing
-public import LeanPool.ApollonianSuperharmonic.VectorRecursionLaws
-public import LeanPool.ApollonianSuperharmonic.VectorSquareProduct
 
 -- [TABLET NODE: BandPackingSymmetryProjectiveVectorCovariance]
 
@@ -177,8 +171,11 @@ private theorem squareEdges :
     (j + 2).succ (j + 1).succ hj).1
   cases he : O h <;> fin_cases i
   all_goals
-    simp? [j, W, T, O, A, BandPackingSymmetryQuadrupleAction,
-      he, neg1, neg2, zsmul_eq_mul] at hs' hs ⊢
+    simp only [he, Bool.false_eq_true, ↓reduceIte, Fin.mk_one, Fin.isValue, Fin.reduceAdd,
+        Fin.succ_zero_eq_one, BandPackingSymmetryQuadrupleAction, Fin.succ_one_eq_two,
+        Fin.reduceSucc, Matrix.cons_val_one, Matrix.cons_val_zero, Matrix.cons_val,
+        zsmul_eq_mul, T, j, O, W, A, Fin.reduceFinMk, Fin.zero_eta, zero_add, neg1, neg_zero,
+        neg2] at hs' hs ⊢
     first
     | exact hs'.trans hs.symm
     | rw [mul_pow, ii_sq, hs', hs]; ring
@@ -285,7 +282,10 @@ private theorem phaseExists :
     simp only [sub_eq_add_neg, ladd, lneg, lquarter]
     cases he : O h <;> fin_cases i
     all_goals
-      simp? [s, b, he, neg1, neg2, e] at c0 c1 c2 row ⊢
+      simp only [he, Bool.false_eq_true, ↓reduceIte, Fin.isValue, ite_mul, neg_mul, one_mul,
+          Fin.mk_one, Fin.succ_one_eq_two, Fin.reduceAdd, neg_add_rev, neg_neg, s, b, e,
+          Fin.reduceFinMk, Fin.reduceSucc, Fin.zero_eta, Fin.succ_zero_eq_one, zero_add,
+          neg_zero, neg1, neg2] at c0 c1 c2 row ⊢
       rw [row]
       simp only [c0, c1, c2]
       cases d <;> simp <;> ring_nf <;> (try simp only [ii_sq]) <;> ring

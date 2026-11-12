@@ -5,10 +5,13 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+public import Mathlib.Data.Set.Card
+
 public import LeanPool.ApollonianSuperharmonic.P3511T1CyclicDissection
 public import LeanPool.ApollonianSuperharmonic.P3381T1PolygonBoundary
 public import LeanPool.ApollonianSuperharmonic.P3381T1TriangleDeterminant
-public import Mathlib.Data.Set.Card
+public import Mathlib.Analysis.Convex.Hull
 
 -- [TABLET NODE: P3511T1SourceDissection]
 

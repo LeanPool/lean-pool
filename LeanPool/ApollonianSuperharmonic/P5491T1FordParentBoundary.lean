@@ -5,10 +5,10 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P5332T1ParentRows
 public import LeanPool.ApollonianSuperharmonic.FordOdometer
-public import LeanPool.ApollonianSuperharmonic.FordVertexDomain
-public import LeanPool.ApollonianSuperharmonic.FordDoubledBoundary
 
 -- [TABLET NODE: P5491T1FordParentBoundary]
 

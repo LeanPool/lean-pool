@@ -5,10 +5,14 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.DiamondExceptionalLattice
 public import LeanPool.ApollonianSuperharmonic.DiamondOdometer
 public import LeanPool.ApollonianSuperharmonic.DiamondPeakMatrix
-public import Mathlib.Tactic
+public import Mathlib.Algebra.Order.Ring.Star
+public import Mathlib.Tactic.ENatToNat
+public import Mathlib.Tactic.Polynomial.Basic
 
 -- [TABLET NODE: P5435T1Cocycle]
 

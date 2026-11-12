@@ -5,13 +5,10 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.ApollonianSuperharmonic.BandDescartesGapSubdivision
-public import LeanPool.ApollonianSuperharmonic.BandGenealogy
-public import LeanPool.ApollonianSuperharmonic.BandPredecessorNoCollision
-public import LeanPool.ApollonianSuperharmonic.CurvatureOneBandCircleClassification
-public import LeanPool.ApollonianSuperharmonic.TangencyCoordinateIdentity
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.BandOrientedGapRefinementExists
-public import LeanPool.ApollonianSuperharmonic.BandOrientedGapRefinement
+public import Mathlib.Algebra.Order.Ring.Star
 
 -- [TABLET NODE: BandTangencyDensity]
 

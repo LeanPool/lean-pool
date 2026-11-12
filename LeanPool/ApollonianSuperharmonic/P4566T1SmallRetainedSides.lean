@@ -5,10 +5,13 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.ApollonianSuperharmonic.P4566T1LiteralSuccessorCharts
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.BandVectors
 public import LeanPool.ApollonianSuperharmonic.UnitTriangularStep
 public import LeanPool.ApollonianSuperharmonic.P4566T1SmallPairCoordinates
+public import LeanPool.ApollonianSuperharmonic.P4566T1UnitPairCharts
+public import LeanPool.ApollonianSuperharmonic.UnitOccurrenceOrientationUnique
 
 -- [TABLET NODE: P4566T1SmallRetainedSides]
 

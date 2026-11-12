@@ -5,9 +5,9 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.FourNeighborConnected
-public import Mathlib.Data.List.Chain
-public import Mathlib.Logic.Relation
 
 -- [TABLET NODE: P5617T1RectangleReachabilityAndBasepointConnectivity]
 

@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.BandOrderedGeneralSelectedContactRow
 public import LeanPool.ApollonianSuperharmonic.P3996T1SRowParameters
 

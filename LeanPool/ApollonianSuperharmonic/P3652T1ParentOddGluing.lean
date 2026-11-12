@@ -5,9 +5,11 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P3544T1DiagonalSplit
-public import Mathlib.Analysis.Convex.PathConnected
-public import Mathlib.Analysis.Normed.Module.Convex
+public import LeanPool.ApollonianSuperharmonic.P3544T1LocalParity
+public import Mathlib.Algebra.CharP.Invertible
 
 -- [TABLET NODE: P3652T1ParentOddGluing]
 

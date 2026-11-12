@@ -5,10 +5,14 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P3776T1TileContractions
-public import LeanPool.ApollonianSuperharmonic.P3776T1FixedGeometry
 public import LeanPool.ApollonianSuperharmonic.TileTranslationFormulas
-public import Mathlib.Analysis.Normed.Module.Convex
+public import Mathlib.Algebra.Order.Algebra
+public import Mathlib.Analysis.Normed.Module.Basic
+public import Mathlib.Data.EReal.Inv
+public import Mathlib.Tactic.Bound
 
 -- [TABLET NODE: P3776T1TileContractionsExist]
 

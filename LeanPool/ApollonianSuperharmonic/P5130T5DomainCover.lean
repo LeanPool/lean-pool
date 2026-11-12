@@ -5,9 +5,10 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.FordRecursiveVertexDomains
 public import LeanPool.ApollonianSuperharmonic.FordVertexDomain
-public import Mathlib.Tactic.FinCases
 
 -- [TABLET NODE: P5130T5DomainCover]
 

@@ -5,12 +5,14 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.ApollonianSuperharmonic.TriangularStripSegment
+public import Mathlib.Init
 public import Mathlib.Data.List.Chain
 public import Mathlib.Data.List.Nodup
+public import Mathlib.GroupTheory.Perm.Basic
 public import Mathlib.Tactic.Linarith
-public import Mathlib.Tactic.NormNum
 public import Mathlib.Tactic.Ring
+
+public import LeanPool.ApollonianSuperharmonic.TriangularStripSegment
 
 -- [TABLET NODE: AffineTriangularStrip]
 

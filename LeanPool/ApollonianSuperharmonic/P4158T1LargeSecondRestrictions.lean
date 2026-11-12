@@ -5,16 +5,15 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.AncestorOdometer
-public import LeanPool.ApollonianSuperharmonic.FordCoordinateConfiguration
 public import LeanPool.ApollonianSuperharmonic.FordTileRecursiveIdentification
-public import LeanPool.ApollonianSuperharmonic.FordFareyParentsExist
 public import LeanPool.ApollonianSuperharmonic.BandPrototileCentroidUnique
-public import LeanPool.ApollonianSuperharmonic.BandPrototileTranslation
 public import LeanPool.ApollonianSuperharmonic.TileOdometerBandPrototile
 public import LeanPool.ApollonianSuperharmonic.TileOdometerReindexedDecomposition
 public import LeanPool.ApollonianSuperharmonic.PositiveCurvatureTileOdometerDomain
-public import LeanPool.ApollonianSuperharmonic.TileTranslationFormulas
+public import Mathlib.Algebra.Order.Ring.Star
 
 -- [TABLET NODE: P4158T1LargeSecondRestrictions]
 
@@ -333,7 +332,10 @@ private theorem fordCentroid :
         (n : Int) * ((n - 1 : Nat) : Int) / 2 := by
       rw [← Nat.cast_sum]
       simp [Finset.sum_range_id]
-    simp? [domain, FordCellDomain, Finset.sum_product]
+    simp only [FordCellDomain, Int.reduceNeg, Finset.product_eq_sprod, Finset.coe_product,
+        Finset.coe_range, Zsqrtd.mk.injEq, Nat.cast_inj, Prod.forall, Prod.mk.injEq,
+        implies_true, Set.injOn_of_eq_iff_eq, Finset.sum_image, Finset.sum_product,
+        Finset.sum_const, Finset.card_range, Int.nsmul_eq_mul, domain]
     conv_lhs => rw [← Finset.mul_sum (Finset.range n) (fun x => (x : Int)) (n : Int)]
     rw [hrange]
     ring
@@ -343,7 +345,10 @@ private theorem fordCentroid :
         (n : Int) * ((n - 1 : Nat) : Int) / 2 := by
       rw [← Nat.cast_sum]
       simp [Finset.sum_range_id]
-    simp? [domain, FordCellDomain, Finset.sum_product]
+    simp only [FordCellDomain, Int.reduceNeg, Finset.product_eq_sprod, Finset.coe_product,
+        Finset.coe_range, Zsqrtd.mk.injEq, Nat.cast_inj, Prod.forall, Prod.mk.injEq,
+        implies_true, Set.injOn_of_eq_iff_eq, Finset.sum_image, Finset.sum_product,
+        Finset.sum_const, Finset.card_range, Int.nsmul_eq_mul, domain]
     rw [hrange]
     ring
   change (if domain.Nonempty then

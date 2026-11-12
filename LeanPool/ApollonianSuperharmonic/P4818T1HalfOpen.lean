@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.DiamondVertexDomains
 
 -- [TABLET NODE: P4818T1HalfOpen]

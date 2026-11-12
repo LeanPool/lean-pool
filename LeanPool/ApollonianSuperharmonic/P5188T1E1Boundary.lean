@@ -5,12 +5,14 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P5130T5ParentArithmetic
 public import LeanPool.ApollonianSuperharmonic.FordDoubledBoundary
 public import LeanPool.ApollonianSuperharmonic.IntegerCeilDiv
 public import LeanPool.ApollonianSuperharmonic.P5188T1CeilingStability
 public import LeanPool.ApollonianSuperharmonic.P5188T1CeilingBelow
-public import Mathlib.Tactic.Ring
+public import LeanPool.ApollonianSuperharmonic.IntegerLatticeFunction
 
 -- [TABLET NODE: P5188T1E1Boundary]
 

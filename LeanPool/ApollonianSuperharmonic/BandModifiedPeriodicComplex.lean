@@ -5,18 +5,14 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.ApollonianSuperharmonic.BandModifiedCellPartition
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.BandOriginalPairSeparation
 public import LeanPool.ApollonianSuperharmonic.BandUnmodifiedCoreCertificate
 public import LeanPool.ApollonianSuperharmonic.FootprintDeletionRetention
 public import LeanPool.ApollonianSuperharmonic.ModifiedSubtileOccurrenceInterpretation
 public import LeanPool.ApollonianSuperharmonic.PeriodicTileComplex
-public import LeanPool.ApollonianSuperharmonic.PlaneTriangulation
-public import LeanPool.ApollonianSuperharmonic.LatticeTile
-public import LeanPool.ApollonianSuperharmonic.SixSubtileFaceVertices
-public import LeanPool.ApollonianSuperharmonic.TileRealization
 public import LeanPool.ApollonianSuperharmonic.TileCellComplementCovariance
-public import LeanPool.ApollonianSuperharmonic.TileTranslationFormulas
 
 -- [TABLET NODE: BandModifiedPeriodicComplex]
 

@@ -5,28 +5,21 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.BandSubtileOccurrence
-public import LeanPool.ApollonianSuperharmonic.BoundaryFootprintEdges
-public import LeanPool.ApollonianSuperharmonic.BoundaryFootprintVertices
-public import LeanPool.ApollonianSuperharmonic.DiamondCellDomain
-public import LeanPool.ApollonianSuperharmonic.DiamondCoordinateConfiguration
 public import LeanPool.ApollonianSuperharmonic.DiamondRecursiveQuadruple
 public import LeanPool.ApollonianSuperharmonic.DiamondTile
 public import LeanPool.ApollonianSuperharmonic.DiamondTileGeometry
 public import LeanPool.ApollonianSuperharmonic.LatticeTile
-public import LeanPool.ApollonianSuperharmonic.SimpleGridPath
 public import LeanPool.ApollonianSuperharmonic.TileCellComplement
 public import LeanPool.ApollonianSuperharmonic.TileArea
 public import LeanPool.ApollonianSuperharmonic.TileTouching
-public import LeanPool.ApollonianSuperharmonic.TileTranslationFormulas
-public import LeanPool.ApollonianSuperharmonic.TopologicalDisk
 public import LeanPool.ApollonianSuperharmonic.DiamondTileRecursiveIdentification
 public import LeanPool.ApollonianSuperharmonic.BandPrototileCentroidUnique
 public import LeanPool.ApollonianSuperharmonic.P5116T1UnitDeletionDisk
 public import LeanPool.ApollonianSuperharmonic.P5116T1PredecessorDeletionDisk
-public import LeanPool.ApollonianSuperharmonic.P3092T1CenteredRectangleDisk
 public import LeanPool.ApollonianSuperharmonic.LatticeTileDiskUnionInterface
-public import LeanPool.ApollonianSuperharmonic.LatticeTileFourNeighborConnected
 public import LeanPool.ApollonianSuperharmonic.TileDiskAreaCovariance
 
 -- [TABLET NODE: DiamondBaseT1]

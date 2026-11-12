@@ -5,17 +5,14 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.AncestorOdometer
 public import LeanPool.ApollonianSuperharmonic.P5635T1EndpointDiagonalOwnership
 public import LeanPool.ApollonianSuperharmonic.AffineTriangularNoFourfoldCellOwners
-public import LeanPool.ApollonianSuperharmonic.BandGenealogy
 public import LeanPool.ApollonianSuperharmonic.BandRegularTranslatePeriodicComplex
 public import LeanPool.ApollonianSuperharmonic.ExactTileInterfaceTriple
-public import LeanPool.ApollonianSuperharmonic.ExactTileInterfaceTripleLatticeTouching
-public import LeanPool.ApollonianSuperharmonic.LatticeEdgeRegularity
-public import LeanPool.ApollonianSuperharmonic.LocalLatticeInterfaceSectors
 public import LeanPool.ApollonianSuperharmonic.P4158T1AncestorCells
-public import LeanPool.ApollonianSuperharmonic.SimpleGridPathVertexIncidentEdge
 public import LeanPool.ApollonianSuperharmonic.TileString
 public import LeanPool.ApollonianSuperharmonic.P4431T1OwnerTransitionSelector
 

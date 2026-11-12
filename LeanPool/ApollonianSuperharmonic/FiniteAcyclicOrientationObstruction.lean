@@ -5,7 +5,11 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.AcyclicIndegreeOrientation
+public meta import Lean.Meta.Tactic.NormCast
+public import LeanPool.ApollonianSuperharmonic.FourNeighborLaplacian
 
 -- [TABLET NODE: FiniteAcyclicOrientationObstruction]
 
@@ -32,13 +36,13 @@ theorem FiniteAcyclicOrientationObstruction
   obtain ⟨x, hx, hmax⟩ := Finset.exists_max_image Y o.rank hY
   have hxD : x ∈ D := hsub hx
   have hsubset : Y.filter (fun y => o.edge y x) ⊆
-      D.filter (fun y => @decide (o.edge y x) (o.edge_decidable y x)) := by
+      D.filter (fun y => @decide (o.edge y x) (o.edgeDecidable y x)) := by
     intro y hy
     have hyY := (Finset.mem_filter.mp hy).1
     have hye := (Finset.mem_filter.mp hy).2
     exact Finset.mem_filter.mpr ⟨hsub hyY, by simp [hye]⟩
   have hcard : ((Y.filter (fun y => o.edge y x)).card : ℤ) ≤
-      ((D.filter (fun y => @decide (o.edge y x) (o.edge_decidable y x))).card : ℤ) := by
+      ((D.filter (fun y => @decide (o.edge y x) (o.edgeDecidable y x))).card : ℤ) := by
     exact_mod_cast Finset.card_le_card hsubset
   have hneighbor : ∀ y ∈ Y, FourNeighborAdjacent x y → o.edge y x := by
     intro y hy hxy
@@ -54,7 +58,7 @@ theorem FiniteAcyclicOrientationObstruction
     exact Finset.mem_filter.mpr ⟨(Finset.mem_filter.mp hy).1,
       hneighbor y (Finset.mem_filter.mp hy).1 (Finset.mem_filter.mp hy).2⟩
   have hcount' : ((Y.filter (fun y => FourNeighborAdjacent x y)).card : ℤ) ≤
-      ((D.filter (fun y => @decide (o.edge y x) (o.edge_decidable y x))).card : ℤ) := by
+      ((D.filter (fun y => @decide (o.edge y x) (o.edgeDecidable y x))).card : ℤ) := by
     have hcountInt : ((Y.filter (fun y => FourNeighborAdjacent x y)).card : ℤ) ≤
         ((Y.filter (fun y => o.edge y x)).card : ℤ) := by
       exact_mod_cast hcount
@@ -117,7 +121,7 @@ theorem FiniteAcyclicOrientationObstruction
   unfold FourNeighborLaplacian
   simp only []
   unfold FourNeighborLaplacian at hineq
-  simp? [hx] at hineq ⊢
+  simp only [Int.reduceNeg, hx, ↓reduceIte] at hineq ⊢
   clear hcount'
   linarith [hineq]
 

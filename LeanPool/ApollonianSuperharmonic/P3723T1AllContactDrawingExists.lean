@@ -5,10 +5,11 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P3723T1AllContactRouting
 public import LeanPool.ApollonianSuperharmonic.P3723T1GridDiskBoundaryStars
 public import LeanPool.ApollonianSuperharmonic.PeriodicTileIndexedMultiplicityOne
-public import LeanPool.ApollonianSuperharmonic.TileTranslationFormulas
 
 /-!
 # P3723T1AllContactDrawingExists

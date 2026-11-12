@@ -5,10 +5,9 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.ApollonianSuperharmonic.BandOrderedGeneralChildInterfaces
-public import LeanPool.ApollonianSuperharmonic.ModifiedSubtileOccurrenceInterpretation
-public import LeanPool.ApollonianSuperharmonic.PeriodicTileMultiplicityOne
-public import LeanPool.ApollonianSuperharmonic.TouchingTriple
+public import Mathlib.Init
+
+public import LeanPool.ApollonianSuperharmonic.BandOrderedGeneralMixedAggregatePatches
 
 -- [TABLET NODE: TileT4ParentTranslateTouching]
 

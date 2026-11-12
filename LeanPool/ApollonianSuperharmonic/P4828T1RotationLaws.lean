@@ -5,6 +5,10 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+public import Mathlib.Algebra.Group.Fin.Basic
+public import Mathlib.Tactic.FinCases
+
 public import LeanPool.ApollonianSuperharmonic.P4828T1Rotate
 public import LeanPool.ApollonianSuperharmonic.ProperBandQuadruple
 

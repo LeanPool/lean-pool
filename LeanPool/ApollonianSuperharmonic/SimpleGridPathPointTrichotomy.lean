@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.SimpleGridPathBetween
 
 -- [TABLET NODE: SimpleGridPathPointTrichotomy]
@@ -110,7 +112,8 @@ lemma SimpleGridPathPointTrichotomy
     intro hzx
     have hbad := hp
     rw [hsplit, ← hlt, htform] at hbad
-    simp? [List.nodup_append] at hbad
+    simp only [List.append_assoc, List.cons_append, List.nil_append, List.nodup_append,
+        List.nodup_cons, List.mem_cons, not_or, ne_eq, forall_eq_or_imp] at hbad
     exact hbad.2.1.1.1 hzx
   rcases hzw with hzx | hzw
   · exact hznotx hzx

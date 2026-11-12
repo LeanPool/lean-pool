@@ -5,17 +5,10 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.BandTwelveParentSurround
 public import LeanPool.ApollonianSuperharmonic.BandOrderedGeneralLayoutCertificate
-public import LeanPool.ApollonianSuperharmonic.GaussianQuarterTurn
-public import LeanPool.ApollonianSuperharmonic.ProtoTile
-public import LeanPool.ApollonianSuperharmonic.QuarterTurnSymmetric
-public import LeanPool.ApollonianSuperharmonic.QuarterTurnSymmetricCenteredTransport
-public import LeanPool.ApollonianSuperharmonic.TileCentroid
-public import LeanPool.ApollonianSuperharmonic.TileQuarterTurnFormulas
-public import LeanPool.ApollonianSuperharmonic.TileRealization
-public import LeanPool.ApollonianSuperharmonic.TileTranslationFormulas
-public import LeanPool.ApollonianSuperharmonic.UniqueBoundedGridComplementComponent
 
 -- [TABLET NODE: TileT2QuarterTurn]
 

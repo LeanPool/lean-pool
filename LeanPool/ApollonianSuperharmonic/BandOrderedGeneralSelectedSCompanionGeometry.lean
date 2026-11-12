@@ -5,17 +5,15 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.BandOrderedGeneralNormalizedOccurrenceBundle
-public import LeanPool.ApollonianSuperharmonic.BandOrderedGeneralRightPlacement
 public import LeanPool.ApollonianSuperharmonic.BandOrderedGeneralSelectedContactRow
-public import LeanPool.ApollonianSuperharmonic.BandPrototileCentroidUnique
-public import LeanPool.ApollonianSuperharmonic.BandPrototileTranslation
 public import LeanPool.ApollonianSuperharmonic.P3996T1CenteredQuarterTurnInclusion
 public import LeanPool.ApollonianSuperharmonic.P3996T1PlacementCompanionBlocks
 public import LeanPool.ApollonianSuperharmonic.P3996T1AdjacentParentPlacement
 public import LeanPool.ApollonianSuperharmonic.BandOrientedChildParentRightEndpoint
 public import LeanPool.ApollonianSuperharmonic.P3996T1SRowAlignment
-public import LeanPool.ApollonianSuperharmonic.TileT2QuarterTurn
 
 -- [TABLET NODE: BandOrderedGeneralSelectedSCompanionGeometry]
 

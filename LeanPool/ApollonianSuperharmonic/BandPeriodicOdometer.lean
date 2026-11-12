@@ -5,10 +5,11 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.CurvatureOnePeriodicOdometer
-public import LeanPool.ApollonianSuperharmonic.CurvatureOneBandCircleClassification
 public import LeanPool.ApollonianSuperharmonic.PeriodicQuadraticRemainder
-public import LeanPool.ApollonianSuperharmonic.PositiveCurvatureGeneratorCocycles
+public import LeanPool.ApollonianSuperharmonic.TilingLatticeCocycleExtension
 
 -- [TABLET NODE: BandPeriodicOdometer]
 

@@ -5,12 +5,11 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+public import Mathlib.Tactic.Linarith
+
 public import Mathlib.Analysis.Convex.Basic
 public import LeanPool.ApollonianSuperharmonic.P3381T1TriangleDeterminant
-public import Mathlib.Tactic.FieldSimp
-public import Mathlib.Tactic.Linarith
-public import Mathlib.Tactic.NormNum
-public import Mathlib.Tactic.Ring
 
 -- [TABLET NODE: P3497T1StrictCornerSplice]
 

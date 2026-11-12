@@ -5,14 +5,11 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.ApollonianSuperharmonic.BandPrototileCentroidUnique
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.BandPrototileTranslation
-public import LeanPool.ApollonianSuperharmonic.GaussianQuarterTurn
 public import LeanPool.ApollonianSuperharmonic.QuarterTurnSymmetricCenteredTransport
-public import LeanPool.ApollonianSuperharmonic.TileQuarterTurnFormulas
-public import LeanPool.ApollonianSuperharmonic.TileTranslationFormulas
 public import LeanPool.ApollonianSuperharmonic.TouchingTripleCovariance
-public import LeanPool.ApollonianSuperharmonic.TouchingTriplePermutations
 
 -- [TABLET NODE: OrientedTouchingCovariance]
 
@@ -96,9 +93,9 @@ private theorem same_touch :
   by_cases ha0 : A.cells = ∅ <;> by_cases hb0 : B.cells = ∅ <;>
     by_cases hc0 : C.cells = ∅ <;>
     first
-    | simp? [ha0, hb0, hc0, ba, bb, bc,
-        haa ha0, hbb hb0, hcc hc0]
-    | simp? [ha0, hb0, hc0, ha, hb, hc, ba, bb, bc]
+    | simp only [ha0, Finset.not_nonempty_empty, hb0, disjoint_self, Finset.bot_eq_empty, ba,
+        bb, true_and, false_and, and_self, haa ha0, hbb hb0, false_or, hc0, bc, hcc hc0]
+    | simp only [ha, hb, ba, bb, hc, bc]
   all_goals first
     | simp [ha0, hb0, hc0, ← haa ha0, ← hbb hb0, ← hcc hc0, ← ha, ← hb, ← hc, ← ba, ← bb, ← bc,
         ← ea, ← eb, ← ec]

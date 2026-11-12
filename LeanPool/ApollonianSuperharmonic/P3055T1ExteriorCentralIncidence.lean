@@ -5,6 +5,9 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+public import Mathlib.Algebra.Group.Basic
+
 public import LeanPool.ApollonianSuperharmonic.AllowedSubtileIncidence
 
 -- [TABLET NODE: P3055T1ExteriorCentralIncidence]

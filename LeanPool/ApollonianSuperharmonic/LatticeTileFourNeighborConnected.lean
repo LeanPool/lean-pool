@@ -5,12 +5,11 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.ApollonianSuperharmonic.ClosedSquareRealization
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.FourNeighborConnected
 public import LeanPool.ApollonianSuperharmonic.LatticeTile
 public import LeanPool.ApollonianSuperharmonic.LatticeTileNoCheckerboard
-public import LeanPool.ApollonianSuperharmonic.ProtoTile
-public import LeanPool.ApollonianSuperharmonic.TileRealization
 
 -- [TABLET NODE: LatticeTileFourNeighborConnected]
 

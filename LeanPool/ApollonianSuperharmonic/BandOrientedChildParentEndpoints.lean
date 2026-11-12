@@ -5,15 +5,13 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.ApollonianSuperharmonic.BandRegimeClassification
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.FordOrientedChildParentEndpoints
 public import LeanPool.ApollonianSuperharmonic.DiamondOrientedChildParentEndpoints
-public import LeanPool.ApollonianSuperharmonic.BandOrderedGeneralLayout
 public import LeanPool.ApollonianSuperharmonic.P4055T1PlacementNormalization
 public import LeanPool.ApollonianSuperharmonic.P4055T1BandQuarterTurn
 public import LeanPool.ApollonianSuperharmonic.P4055T1OrderedGeneralOppositeEndpoints
-public import LeanPool.ApollonianSuperharmonic.P4055T1PackingGridEquivalence
-public import LeanPool.ApollonianSuperharmonic.P4055T1ExactTripleImage
 
 -- [TABLET NODE: BandOrientedChildParentEndpoints]
 

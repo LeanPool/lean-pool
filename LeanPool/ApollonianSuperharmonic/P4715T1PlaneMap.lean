@@ -5,15 +5,13 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.GaussianRealPoint
 public import Mathlib.Topology.Algebra.Module.Equiv.Basic
-public import Mathlib.Topology.Algebra.Module.Equiv.Pi
-public import Mathlib.Topology.Algebra.Module.Equiv.Prod
-public import Mathlib.Topology.Algebra.Module.Equiv.Submodule
-public import Mathlib.Analysis.Normed.Module.Basic
-public import Mathlib.Tactic.FunProp
-public import Mathlib.Tactic.Linarith
-public import Mathlib.Tactic.Ring
+public import Mathlib.Analysis.Normed.Group.Basic
+public import Mathlib.Topology.Algebra.InfiniteSum.Order
+public import Mathlib.Topology.Algebra.Ring.Real
 
 -- [TABLET NODE: P4715T1PlaneMap]
 

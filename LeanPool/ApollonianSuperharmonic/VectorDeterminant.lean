@@ -5,6 +5,9 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.SemiProperForestClassification
+
 public import LeanPool.ApollonianSuperharmonic.VectorNonvanishing
 
 -- [TABLET NODE: VectorDeterminant]
@@ -39,34 +42,8 @@ theorem VectorDeterminant (q : Fin 4 → CircleCoordinates)
   have hnon13 := VectorNonvanishing q hq 1 3 (by decide) (Or.inl hc)
   have hnon21 := VectorNonvanishing q hq 2 1 (by decide) (Or.inr hc)
   have nonnegative : ∀ r : Fin 4 → CircleCoordinates,
-      SemiProperQuadruple r → ∀ k : Fin 4, 0 ≤ (r k).1 := by
-    intro r hr
-    induction hr with
-    | base z => intro k; fin_cases k <;> simp
-    | rotate hr ih =>
-        intro k
-        fin_cases k
-        · simpa using ih 0
-        · simpa using ih 2
-        · simpa using ih 3
-        · simpa using ih 1
-    | @successor r hr ih =>
-        intro k
-        have classification := BandSuccessorClassification r hr
-        dsimp at classification
-        rcases classification with special | proper
-        · fin_cases k
-          · simp [special]
-          · simpa using ih 0
-          · simpa using ih 2
-          · simpa using ih 3
-        · rcases proper with ⟨_, larger0, larger2, larger3⟩
-          fin_cases k
-          · change 0 ≤ 2 * (r 0).1 + 2 * (r 2).1 + 2 * (r 3).1 - (r 1).1
-            exact (ih 0).trans larger0.le
-          · exact ih 0
-          · exact ih 2
-          · exact ih 3
+      SemiProperQuadruple r → ∀ k : Fin 4, 0 ≤ (r k).1 :=
+    fun r hr => (SemiProperForestClassification r hr).1
   have hcurv := nonnegative q hq
   have hnorm13sq : Zsqrtd.norm
       (BandVectors.1 (q 1) (q 3) * BandVectors.1 (q 1) (q 3)) =
@@ -182,7 +159,11 @@ theorem VectorDeterminant (q : Fin 4 → CircleCoordinates)
       have realpart := congrArg (fun z : GaussianInt => z.re) hfirst
       have determinant := congrArg (fun z : GaussianInt => z.im) flip'
       have determinant' := congrArg (fun z : GaussianInt => z.re) flip'
-      simp? at realpart determinant determinant'
+      simp only [Int.reduceNeg, Fin.isValue, Zsqrtd.re_add, Zsqrtd.re_mul, Zsqrtd.re_star,
+          Zsqrtd.im_star, mul_neg, neg_mul, one_mul, neg_neg, Int.cast_neg, Int.cast_mul,
+          Int.cast_ofNat, Zsqrtd.re_neg, Zsqrtd.re_ofNat, Nat.cast_ofNat, Zsqrtd.re_intCast,
+          Zsqrtd.im_ofNat, mul_zero, Zsqrtd.im_intCast, add_zero, Zsqrtd.im_mul, zero_mul,
+          zero_add, mul_one] at realpart determinant determinant'
       rw [determinant, determinant']
       have dot :
           (BandVectors.1 (q 1) (q 3)).re * (BandVectors.1 (q 2) (q 1)).re +
@@ -207,7 +188,11 @@ theorem VectorDeterminant (q : Fin 4 → CircleCoordinates)
       have realpart := congrArg (fun z : GaussianInt => z.re) hfirst
       have determinant := congrArg (fun z : GaussianInt => z.im) flip'
       have determinant' := congrArg (fun z : GaussianInt => z.re) flip'
-      simp? at realpart determinant determinant'
+      simp only [Int.reduceNeg, Fin.isValue, Zsqrtd.re_add, Zsqrtd.re_mul, Zsqrtd.re_star,
+          Zsqrtd.im_star, mul_neg, neg_mul, one_mul, neg_neg, Int.cast_neg, Int.cast_mul,
+          Int.cast_ofNat, Zsqrtd.re_neg, Zsqrtd.re_ofNat, Nat.cast_ofNat, Zsqrtd.re_intCast,
+          Zsqrtd.im_ofNat, mul_zero, Zsqrtd.im_intCast, add_zero, Zsqrtd.im_mul, zero_mul,
+          zero_add, mul_one] at realpart determinant determinant'
       have imagpart : (BandVectors.1 (q 3) (q 1)).im =
           -(BandVectors.1 (q 1) (q 3)).re := by omega
       rw [← determinant, imagpart]

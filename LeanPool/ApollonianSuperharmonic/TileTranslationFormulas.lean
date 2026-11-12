@@ -5,10 +5,11 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.BoundaryFootprintVertices
 public import LeanPool.ApollonianSuperharmonic.FootprintEdges
 public import LeanPool.ApollonianSuperharmonic.FootprintVertices
-public import LeanPool.ApollonianSuperharmonic.GaussianRealPoint
 public import LeanPool.ApollonianSuperharmonic.TileCentroid
 public import LeanPool.ApollonianSuperharmonic.TileRealization
 public import LeanPool.ApollonianSuperharmonic.TileTranslation
@@ -95,7 +96,8 @@ private theorem translationCentroid (T : ProtoTile) (u : GaussianInt) :
         (GaussianInt.toComplex (GaussianTranslation u x)).im =
           (GaussianInt.toComplex x).im + (GaussianInt.toComplex u).im := by
       cases x; cases u; simp [GaussianTranslation]
-    simp? [TileCentroid, h]
+    simp only [TileCentroid, Finset.image_nonempty, h, ↓reduceIte, Int.reduceNeg,
+        Int.cast_sum, GaussianInt.intCast_re, one_div, GaussianInt.intCast_im, Prod.mk.injEq]
     rw [Finset.card_image_of_injective T.cells hinj]
     rw [Finset.sum_image hinj.injOn]
     rw [Finset.sum_image hinj.injOn]
@@ -121,7 +123,9 @@ private theorem translationVertices (T : ProtoTile) (u : GaussianInt) :
   dsimp [TileTranslation]
   by_cases h : T.cells.Nonempty
   · ext v
-    simp? [FootprintVertices, h, GaussianTranslation]
+    simp only [FootprintVertices, Finset.image_nonempty, h, ↓reduceIte, Finset.mem_image,
+        GaussianTranslation, Int.reduceNeg, exists_exists_and_eq_and, Set.mem_ofPred_eq,
+        Set.mem_image]
     constructor
     · rintro ⟨a, ha, hv⟩
       rcases hv with h0 | h1 | h2 | h3
@@ -145,7 +149,8 @@ private theorem translationEdges (T : ProtoTile) (u : GaussianInt) :
         FootprintEdges T := by
   dsimp [TileTranslation]
   ext e
-  simp? [FootprintEdges, GaussianTranslation]
+  simp only [FootprintEdges, Finset.mem_image, GaussianTranslation, Int.reduceNeg,
+      exists_exists_and_eq_and, Set.mem_ofPred_eq, Set.mem_image]
   constructor
   · rintro ⟨a, ha, he⟩
     rcases he with h0 | h1 | h2 | h3

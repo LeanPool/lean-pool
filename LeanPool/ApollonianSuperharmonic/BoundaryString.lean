@@ -5,8 +5,9 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.TileString
-public import LeanPool.ApollonianSuperharmonic.BandPrototile
 public import LeanPool.ApollonianSuperharmonic.UnitOccurrenceOrientation
 
 -- [TABLET NODE: BoundaryString]

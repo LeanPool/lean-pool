@@ -5,10 +5,11 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.ExactTileInterfaceTriple
 public import LeanPool.ApollonianSuperharmonic.LocalLatticeInterfaceSectors
 public import LeanPool.ApollonianSuperharmonic.SimpleGridPathPointTrichotomy
-public import LeanPool.ApollonianSuperharmonic.LatticeTileGridStructure
 
 -- [TABLET NODE: P5485T1FullInterfaceMarking]
 

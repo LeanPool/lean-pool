@@ -5,8 +5,11 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.ApollonianSuperharmonic.TriangularStripSegment
+public import Mathlib.Init
 public import Mathlib.Tactic.Linarith
+
+public import LeanPool.ApollonianSuperharmonic.TriangularBoundaryStrip
+public import LeanPool.ApollonianSuperharmonic.TriangularLatticeAdjacent
 
 -- [TABLET NODE: P3019T1ChamberStripGeometry]
 

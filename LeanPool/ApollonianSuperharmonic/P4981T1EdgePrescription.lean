@@ -5,7 +5,9 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.ApollonianSuperharmonic.PrimitiveVectorOrientation
+public import Mathlib.Init
+
+public import LeanPool.ApollonianSuperharmonic.ProperBandQuadruple
 
 -- [TABLET NODE: P4981T1EdgePrescription]
 

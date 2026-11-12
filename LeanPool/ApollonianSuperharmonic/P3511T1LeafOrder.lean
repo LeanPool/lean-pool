@@ -5,9 +5,9 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P3511T1SourceDissection
-public import Mathlib.Data.List.FinRange
-public import Mathlib.Data.List.TakeDrop
 
 -- [TABLET NODE: P3511T1LeafOrder]
 

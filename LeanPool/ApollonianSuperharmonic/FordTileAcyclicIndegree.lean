@@ -5,15 +5,15 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P4062T1LiteralReduction
 public import LeanPool.ApollonianSuperharmonic.P4062T1OrientationTransport
 public import LeanPool.ApollonianSuperharmonic.P4062T1ParentalRestriction
 public import LeanPool.ApollonianSuperharmonic.P4062T1OverlapDescent
-public import LeanPool.ApollonianSuperharmonic.P4062T1InteriorGeometry
 public import LeanPool.ApollonianSuperharmonic.P4062T1ParentGluing
 public import LeanPool.ApollonianSuperharmonic.P4062T1RemainderGeometry
 public import LeanPool.ApollonianSuperharmonic.P4062T1RankedAttachment
-public import LeanPool.ApollonianSuperharmonic.FordLaplacianTable
 
 -- [TABLET NODE: FordTileAcyclicIndegree]
 
@@ -68,7 +68,7 @@ theorem FordTileAcyclicIndegree (P : FordFareyParameter)
         subst D
         exact ⟨{
           edge := fun _ _ => False
-          edge_decidable := fun _ _ => Classical.propDecidable _
+          edgeDecidable := fun _ _ => Classical.propDecidable _
           rank := fun _ => 0
           supported := by intro x y he; cases he
           oriented := by intro x hx; simp at hx
@@ -142,7 +142,7 @@ theorem FordTileAcyclicIndegree (P : FordFareyParameter)
         have hsigma : σ x₀ = 0 := by simp [σ, hlap]
         let o₀ : AcyclicIndegreeOrientation {x₀} σ := {
           edge := fun _ _ => False
-          edge_decidable := fun _ _ => Classical.propDecidable _
+          edgeDecidable := fun _ _ => Classical.propDecidable _
           rank := fun _ => 0
           supported := by intro x y he; cases he
           oriented := by

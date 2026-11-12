@@ -5,9 +5,10 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.OdometerStringRespect
 public import LeanPool.ApollonianSuperharmonic.CircleMatrixIncomingVector
-public import LeanPool.ApollonianSuperharmonic.ProperBandCurvatureStructure
 
 -- [TABLET NODE: P4158T1StringSlopeTelescoping]
 

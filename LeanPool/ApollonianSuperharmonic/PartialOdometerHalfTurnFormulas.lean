@@ -5,9 +5,10 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.PartialOdometerHalfTurn
 public import LeanPool.ApollonianSuperharmonic.PartialOdometerSlope
-public import LeanPool.ApollonianSuperharmonic.PartialOdometerSquares
 
 -- [TABLET NODE: PartialOdometerHalfTurnFormulas]
 

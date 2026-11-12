@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P5472T1FordNormalization
 public import LeanPool.ApollonianSuperharmonic.P5472T1CyclicPhaseCovariance
 public import LeanPool.ApollonianSuperharmonic.P5472T1LiteralFordPlacement

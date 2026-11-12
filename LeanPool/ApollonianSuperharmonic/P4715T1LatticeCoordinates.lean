@@ -5,8 +5,9 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.ApollonianSuperharmonic.GaussianRealPoint
-public import Mathlib.Tactic.Ring
+public import Mathlib.Init
+
+public import Mathlib.NumberTheory.Zsqrtd.GaussianInt
 
 -- [TABLET NODE: P4715T1LatticeCoordinates]
 

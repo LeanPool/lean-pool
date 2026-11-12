@@ -5,9 +5,10 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P5124T1ParentModel
 public import LeanPool.ApollonianSuperharmonic.P5124T1TranslatedDiamonds
-public import LeanPool.ApollonianSuperharmonic.P5253T1SingletonBoundary
 public import LeanPool.ApollonianSuperharmonic.P5253T1OneEdgeInterface
 public import LeanPool.ApollonianSuperharmonic.P5253T1TopSquareContacts
 public import LeanPool.ApollonianSuperharmonic.P5253T1LeftSquareContacts

@@ -5,7 +5,10 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.TileOdometer
+public import LeanPool.ApollonianSuperharmonic.BandCircle
 
 -- [TABLET NODE: RightLatticeAdjacent]
 

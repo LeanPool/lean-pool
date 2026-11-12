@@ -5,9 +5,13 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.ApollonianSuperharmonic.Preamble
-public import Mathlib.Data.Fintype.Pi
+public import Mathlib.Init
+public import Mathlib.Data.Fintype.Fin
+public import Mathlib.Algebra.Group.Fin.Basic
+public import Mathlib.Data.Fin.VecNotation
+public import Mathlib.Tactic.ClearExcept
 public import Mathlib.Tactic.FinCases
+
 
 -- [TABLET NODE: P4431T1OwnerTransitionSelector]
 
@@ -56,7 +60,7 @@ theorem P4431T1OwnerTransitionSelector {α : Type*}
     clear * - o encode
     fin_cases i <;> fin_cases j <;>
       simp only [ Fin.isValue, Fin.zero_eta, ↓reduceIte, encode, Fin.mk_one, left_eq_ite_iff,
-    zero_ne_one, imp_false, Decidable.not_not, Fin.reduceFinMk, ite_eq_left_iff, one_ne_zero ] <;>
+    Fin.reduceFinMk, ite_eq_left_iff ] <;>
       (try split_ifs) <;> simp_all [eq_comm]
   have ho : ![encode (o 0), encode (o 1), encode (o 2), encode (o 3)] =
       fun i => encode (o i) := by

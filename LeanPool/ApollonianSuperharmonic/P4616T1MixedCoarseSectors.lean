@@ -5,9 +5,10 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P4339T1PrecursorSupportGeometry
 public import LeanPool.ApollonianSuperharmonic.LatticeVertexIncidentCell
-public import LeanPool.ApollonianSuperharmonic.LatticeTileGridStructure
 
 -- [TABLET NODE: P4616T1MixedCoarseSectors]
 

@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P5352T2DomainRows
 
 -- [TABLET NODE: P5537T1PredecessorCoordinates]

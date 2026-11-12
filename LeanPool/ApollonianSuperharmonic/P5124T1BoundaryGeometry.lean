@@ -5,9 +5,11 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P4194T1DiamondCellRows
-public import LeanPool.ApollonianSuperharmonic.P4194T1DiamondVertexIncidence
-public import LeanPool.ApollonianSuperharmonic.TileTranslationFormulas
+public import LeanPool.ApollonianSuperharmonic.BoundaryFootprintVertices
+public import LeanPool.ApollonianSuperharmonic.DiamondTile
 
 -- [TABLET NODE: P5124T1BoundaryGeometry]
 

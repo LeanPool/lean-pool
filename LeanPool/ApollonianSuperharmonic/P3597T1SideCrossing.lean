@@ -5,16 +5,13 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P3597T1DirectionParity
 public import LeanPool.ApollonianSuperharmonic.P3381T1TriangleDeterminant
-public import Mathlib.Tactic.FunProp
-public import Mathlib.Tactic.Linarith
-public import Mathlib.Tactic.Ring
-public import Mathlib.Topology.Algebra.GroupWithZero
-public import Mathlib.Topology.MetricSpace.Algebra
-public import Mathlib.Topology.Algebra.UniformRing
-public import Mathlib.Analysis.Normed.Ring.Lemmas
-public import Mathlib.Analysis.Normed.Module.Basic
+public import LeanPool.ApollonianSuperharmonic.P3544T1RayParity
+public import Mathlib.Analysis.Normed.Field.Basic
+public import Mathlib.Analysis.Normed.Group.Uniform
 
 -- [TABLET NODE: P3597T1SideCrossing]
 
@@ -668,7 +665,7 @@ private theorem hQline :
       field_simp [hsecond]
     have hy1 : y.1 = a.1 := by
       have : (y.1 - a.1) * (b.2 - a.2) = 0 := by
-        simp? [hfirst] at hF'
+        simp only [hfirst, zero_mul, zero_sub, zero_eq_neg, mul_eq_zero] at hF'
         rcases hF' with h | h
         · rw [h]
           ring

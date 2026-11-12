@@ -5,12 +5,12 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.CentrallyReflectedAt
 public import LeanPool.ApollonianSuperharmonic.LatticeTileGridStructure
-public import LeanPool.ApollonianSuperharmonic.P4590T1CentralDiskSectors
 public import LeanPool.ApollonianSuperharmonic.PrecursorBoundaryArcData
 public import LeanPool.ApollonianSuperharmonic.QuarterTurnSymmetric
-public import LeanPool.ApollonianSuperharmonic.SimpleGridPathVertexIncidentEdge
 public import LeanPool.ApollonianSuperharmonic.QuarterTurnSymmetricCenteredTransport
 public import LeanPool.ApollonianSuperharmonic.P4651T1GridHalfTurnTransport
 public import LeanPool.ApollonianSuperharmonic.P4651T1FreeBoundaryHalfTurn

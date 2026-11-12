@@ -5,8 +5,9 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.QuarterTurnSymmetric
-public import LeanPool.ApollonianSuperharmonic.ClosedSquareRealization
 
 -- [TABLET NODE: P4564T2ElementaryQuarterTurn]
 

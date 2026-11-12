@@ -5,10 +5,11 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.BandOrderedGeneralLayoutCertificate
 public import LeanPool.ApollonianSuperharmonic.LatticeVertexIncidentCell
 public import LeanPool.ApollonianSuperharmonic.SubtileLatticeAdjacent
-public import LeanPool.ApollonianSuperharmonic.SubtileOccurrenceInterpretation
 
 -- [TABLET NODE: BandOrderedGeneralSubtilePlacement]
 

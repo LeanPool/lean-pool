@@ -5,9 +5,10 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.ApollonianSuperharmonic.P3475T1BoundarySubdivision
+public import Mathlib.Init
 public import Mathlib.Tactic.Linarith
-public import Mathlib.Tactic.Ring
+
+public import LeanPool.ApollonianSuperharmonic.P3475T1BoundarySubdivision
 
 -- [TABLET NODE: P3497T1SubdivisionComposition]
 

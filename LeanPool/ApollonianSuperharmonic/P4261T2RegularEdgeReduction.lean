@@ -5,17 +5,14 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P4261T2UnitBoundary
 public import LeanPool.ApollonianSuperharmonic.LeftLatticeAdjacent
-public import LeanPool.ApollonianSuperharmonic.BandGenealogy
 public import LeanPool.ApollonianSuperharmonic.BandRegularTranslatePeriodicComplex
-public import LeanPool.ApollonianSuperharmonic.PeriodicTileIntersectionClassification
 public import LeanPool.ApollonianSuperharmonic.CircleMatrixIncomingVector
 public import LeanPool.ApollonianSuperharmonic.TileOdometerTranslationUniqueness
-public import LeanPool.ApollonianSuperharmonic.TileOdometerBandPrototile
 public import LeanPool.ApollonianSuperharmonic.P4250T1DefinedHalfIntegralSlope
-public import LeanPool.ApollonianSuperharmonic.TileTranslationFormulas
-public import LeanPool.ApollonianSuperharmonic.PartialOdometerAffineTranslateFormulas
 public import LeanPool.ApollonianSuperharmonic.RegularTileFamilyTranslationUnique
 
 -- [TABLET NODE: P4261T2RegularEdgeReduction]

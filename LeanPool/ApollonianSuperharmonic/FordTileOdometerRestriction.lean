@@ -5,34 +5,17 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.ApollonianSuperharmonic.BandPrototile
-public import LeanPool.ApollonianSuperharmonic.BandSubtileOccurrence
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.FordOdometer
-public import LeanPool.ApollonianSuperharmonic.FordOdometerFamilyExistsUnique
 public import LeanPool.ApollonianSuperharmonic.FordCircleCoordinate
-public import LeanPool.ApollonianSuperharmonic.FordCoordinateConfiguration
-public import LeanPool.ApollonianSuperharmonic.FordDoubledBoundary
-public import LeanPool.ApollonianSuperharmonic.FordFareyParameter
-public import LeanPool.ApollonianSuperharmonic.FordFareyParentsExist
-public import LeanPool.ApollonianSuperharmonic.FordRecursiveVertexDomains
 public import LeanPool.ApollonianSuperharmonic.FordTile
 public import LeanPool.ApollonianSuperharmonic.FordTileRecursiveIdentification
-public import LeanPool.ApollonianSuperharmonic.FordVertexDomain
-public import LeanPool.ApollonianSuperharmonic.CurvatureOneOdometer
-public import LeanPool.ApollonianSuperharmonic.IntegerCeilDiv
-public import LeanPool.ApollonianSuperharmonic.OdometerCompatibility
-public import LeanPool.ApollonianSuperharmonic.OdometerTranslation
-public import LeanPool.ApollonianSuperharmonic.PartialOdometer
-public import LeanPool.ApollonianSuperharmonic.PartialOdometerAffineTranslateFormulas
-public import LeanPool.ApollonianSuperharmonic.PartialOdometerSlope
-public import LeanPool.ApollonianSuperharmonic.PartialOdometerSquares
 public import LeanPool.ApollonianSuperharmonic.PositiveCurvatureTileOdometerSupportTransport
-public import LeanPool.ApollonianSuperharmonic.VectorRecursionLaws
 public import LeanPool.ApollonianSuperharmonic.TileOdometer
 public import LeanPool.ApollonianSuperharmonic.TileOdometerAffineTranslation
 public import LeanPool.ApollonianSuperharmonic.P4217T2SquareGeometry
 public import LeanPool.ApollonianSuperharmonic.P4217T2RectangularBoundarySlope
-public import LeanPool.ApollonianSuperharmonic.P4062T1CanonicalSupport
 
 -- [TABLET NODE: FordTileOdometerRestriction]
 
@@ -249,7 +232,7 @@ private theorem red :
   rw [hd] at gd
   have he := Int.eq_one_of_dvd_one (by omega : 0 ≤ (g : Int)) gd
   have : g = 1 := by exact_mod_cast he
-  simp? [g] at this ⊢
+  simp only [Nat.dvd_one, g] at this ⊢
   exact this
 
 private theorem kcert :
@@ -408,7 +391,10 @@ private theorem dom :
     have hx := (kd i s x).mp hx
     have hs := R.sum_q
     fin_cases i <;> cases s <;>
-      simp? [FordRecursiveVertexDomains, FordVertexDomain] at hx ⊢ <;>
+      simp only [Fin.mk_one, Fin.isValue, one_ne_zero, ↓reduceIte, FordRecursiveVertexDomains,
+          Int.reduceNeg, Bool.false_eq_true, Matrix.cons_val, Set.mem_ofPred_eq,
+          FordVertexDomain, Fin.reduceFinMk, Fin.reduceEq, Fin.zero_eta, Matrix.cons_val_one,
+          Matrix.cons_val_zero] at hx ⊢ <;>
       (try subst x) <;> dsimp at * <;> omega
 
 private theorem values :

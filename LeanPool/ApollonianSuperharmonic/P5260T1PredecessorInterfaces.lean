@@ -5,23 +5,18 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P5260T1PlacementLedger
 public import LeanPool.ApollonianSuperharmonic.ExactTileInterfaceTriple
-public import LeanPool.ApollonianSuperharmonic.P5203T1CapInterface
-public import LeanPool.ApollonianSuperharmonic.P5157T1DiamondStaircaseIntersections
-public import LeanPool.ApollonianSuperharmonic.P5157T1AlternatingStaircase
 public import LeanPool.ApollonianSuperharmonic.P5253T1BottomSquareContact
 public import LeanPool.ApollonianSuperharmonic.P5253T1LeftSquareContacts
 public import LeanPool.ApollonianSuperharmonic.P5253T1OneEdgeInterface
-public import LeanPool.ApollonianSuperharmonic.P3161T2IncidentBoundary
-public import LeanPool.ApollonianSuperharmonic.TileQuarterTurnFormulas
-public import LeanPool.ApollonianSuperharmonic.TileReflectionFormulas
 public import LeanPool.ApollonianSuperharmonic.P4055T1ExactTripleImage
 public import LeanPool.ApollonianSuperharmonic.CellDisjointCommonEdgesBoundary
 public import LeanPool.ApollonianSuperharmonic.DiamondBaseT2
 public import LeanPool.ApollonianSuperharmonic.P4194T1DiamondCentroid
 public import LeanPool.ApollonianSuperharmonic.QuarterTurnSymmetricCenteredTransport
-public import LeanPool.ApollonianSuperharmonic.GaussianQuarterTurn
 public import LeanPool.ApollonianSuperharmonic.P5124T1SmallerParents
 public import LeanPool.ApollonianSuperharmonic.P5691T1DiamondReflectionFootprints
 
@@ -1085,7 +1080,8 @@ private theorem pathRAB0 :
   rw [← translateZero D] at hi
   rw [quarterVertices shiftLow, quarterVertices 0,
     quarterEdges shiftLow, quarterEdges 0] at hi
-  simp? [Q, GaussianQuarterTurn] at hi
+  simp only [GaussianQuarterTurn, Int.reduceNeg, Zsqrtd.im_zero, neg_zero, Zsqrtd.re_zero, Q]
+      at hi
   have hQshift : (⟨-shiftLow.im, shiftLow.re⟩ : GaussianInt) = shiftR := by
     simpa [Q, GaussianQuarterTurn] using shiftQuarter
   rw [show u + (⟨-shiftLow.im, shiftLow.re⟩ : GaussianInt) = u + shiftR by
@@ -3139,7 +3135,8 @@ theorem P5260T1PredecessorInterfaces (k : Nat) (hk : 1 < k) (b : Bool) :
     QuarterTurnSymmetricCenteredTransport D (DiamondBaseT2 ⟨k, hkpos⟩)
   have hcentroid := P4194T1DiamondCentroid k hkpos
   rw [hcentroid] at hu
-  simp? [GaussianRealPoint] at hu
+  simp only [GaussianRealPoint, Int.reduceNeg, GaussianInt.intCast_re, GaussianInt.intCast_im,
+      zero_add, sub_zero, Prod.mk.injEq] at hu
   have huEq := PredecessorInterfaceGeometry.huEq k u hu
   let Q : GaussianInt → GaussianInt := GaussianQuarterTurn
   let F : GaussianInt → GaussianInt := fun z => Q z + u

@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.PlaneTriangulation
 
 -- [TABLET NODE: P3767T1FixedTrace]

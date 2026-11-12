@@ -5,11 +5,11 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.BandRegularTranslatePeriodicComplex
-public import LeanPool.ApollonianSuperharmonic.PeriodicTileIntersectionClassification
 public import LeanPool.ApollonianSuperharmonic.RegularTileFamilyTranslationUnique
 public import LeanPool.ApollonianSuperharmonic.TileBordering
-public import LeanPool.ApollonianSuperharmonic.TileTouchingCovariance
 
 -- [TABLET NODE: BandRegularTileTouchingClassification]
 

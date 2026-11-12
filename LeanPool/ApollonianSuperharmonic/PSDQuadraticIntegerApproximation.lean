@@ -5,13 +5,14 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import Mathlib.Order.Int.LeastGreatest
 
 public import LeanPool.ApollonianSuperharmonic.FourNeighborLaplacian
 public import LeanPool.ApollonianSuperharmonic.IntegerLaplacianCastBridge
 public import LeanPool.ApollonianSuperharmonic.LatticeQuadraticForm
 public import LeanPool.ApollonianSuperharmonic.RealLaplacianContactComparison
-public import LeanPool.ApollonianSuperharmonic.RealLaplacianLinearity
 public import LeanPool.ApollonianSuperharmonic.P5667T1RoundedSupportingSlope
 
 -- [TABLET NODE: PSDQuadraticIntegerApproximation]

@@ -5,9 +5,9 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.IntegerLatticeFunction
-public import Mathlib.Tactic.Abel
-public import Mathlib.Tactic.Ring
 
 -- [TABLET NODE: P4818T1AffineTransversalExtension]
 

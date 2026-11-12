@@ -5,6 +5,9 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+public import Mathlib.Tactic.Linarith
+
 public import LeanPool.ApollonianSuperharmonic.P3381T1TriangleDeterminant
 public import Mathlib.Analysis.Convex.Combination
 

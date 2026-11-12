@@ -5,9 +5,9 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.ApollonianSuperharmonic.BandOrderedGeneralFinitePatches
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.BandOrderedGeneralGeometricSectors
-public import LeanPool.ApollonianSuperharmonic.PeriodicTileIntersectionClassification
 public import LeanPool.ApollonianSuperharmonic.P4339T1PrecursorSupportGeometry
 
 -- [TABLET NODE: P4590T1OriginalNonedges]

@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.BandParentRotationOccurrenceCovariance
 public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryCovariance
 public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryTilingTransport

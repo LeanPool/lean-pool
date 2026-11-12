@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryVectorAction
 
 -- [TABLET NODE: P4055T1PackingGridEquivalence]

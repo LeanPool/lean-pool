@@ -5,8 +5,11 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P4062T1RecursiveInteriors
 public import LeanPool.ApollonianSuperharmonic.FourNeighborAdjacent
+public meta import Lean.Meta.Tactic.NormCast
 
 -- [TABLET NODE: P4062T1InteriorGeometry]
 

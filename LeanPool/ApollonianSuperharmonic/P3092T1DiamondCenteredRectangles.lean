@@ -5,11 +5,11 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.DiamondTile
 public import LeanPool.ApollonianSuperharmonic.TileRealization
-public import Mathlib.Order.Interval.Finset.Nat
-public import Mathlib.Algebra.Order.Floor.Semiring
-public import Mathlib.Tactic.Linarith
+public meta import Lean.Meta.Tactic.NormCast
 
 -- [TABLET NODE: P3092T1DiamondCenteredRectangles]
 

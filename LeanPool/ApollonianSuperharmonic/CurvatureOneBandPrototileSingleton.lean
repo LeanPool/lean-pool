@@ -5,9 +5,10 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.BandPrototile
-public import LeanPool.ApollonianSuperharmonic.CircleCoordinates
-public import LeanPool.ApollonianSuperharmonic.ProperBandCurvatureStructure
+public import LeanPool.ApollonianSuperharmonic.BandCircle
 
 -- [TABLET NODE: CurvatureOneBandPrototileSingleton]
 

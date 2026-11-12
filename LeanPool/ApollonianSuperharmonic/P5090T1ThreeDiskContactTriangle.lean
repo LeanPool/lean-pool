@@ -5,11 +5,13 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.ApollonianSuperharmonic.Preamble
+public import Mathlib.Init
+public import Mathlib.Tactic.Positivity
+public import Mathlib.Topology.MetricSpace.Pseudo.Real
+
 public import Mathlib.Analysis.Convex.Combination
 public import Mathlib.Analysis.Complex.Norm
 public import Mathlib.LinearAlgebra.Complex.Module
-public import Mathlib.Analysis.Normed.Module.Basic
 
 -- [TABLET NODE: P5090T1ThreeDiskContactTriangle]
 

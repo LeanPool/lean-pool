@@ -5,23 +5,14 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.BandOrderedGeneralRightRoutingCertificate
-public import LeanPool.ApollonianSuperharmonic.BandOrderedGeneralLayoutCertificate
-public import LeanPool.ApollonianSuperharmonic.BandOrderedGeneralRightInterfaceCertificate
 public import LeanPool.ApollonianSuperharmonic.BandOrderedGeneralShiftedRoutedBoundaryLocalization
-public import LeanPool.ApollonianSuperharmonic.BandPrototileCentroidUnique
-public import LeanPool.ApollonianSuperharmonic.BandPrototileTranslation
-public import LeanPool.ApollonianSuperharmonic.BandSubtileOccurrence
 public import LeanPool.ApollonianSuperharmonic.CoveredInterfaceOppositeIncidentCells
 public import LeanPool.ApollonianSuperharmonic.LatticeEdgeRegularity
 public import LeanPool.ApollonianSuperharmonic.PositiveCurvatureTileOdometerDomain
-public import LeanPool.ApollonianSuperharmonic.ProtoTileObservableExtensionality
-public import LeanPool.ApollonianSuperharmonic.SimpleGridPathBetween
-public import LeanPool.ApollonianSuperharmonic.SimpleGridPathVertexIncidentEdge
-public import LeanPool.ApollonianSuperharmonic.SubtileOccurrenceInterpretation
 public import LeanPool.ApollonianSuperharmonic.TileOdometerBandPrototile
-public import LeanPool.ApollonianSuperharmonic.TileTranslationFormulas
-public import LeanPool.ApollonianSuperharmonic.VectorRecursionLaws
 
 -- [TABLET NODE: BandOrderedGeneralRightRoutingCertificateExists]
 
@@ -141,7 +132,8 @@ private theorem incoming_relation :
   have e0 := laws.2.2.1
   have e1 := second.2.2.1
   have e2 := third.2.2.1
-  simp? [r, s] at e1 e2
+  simp only [Fin.isValue, Matrix.cons_val_one, Matrix.cons_val_zero, Int.reduceNeg,
+      Matrix.cons_val, r, s] at e1 e2
   rw [e0, e1, e2]
   calc
     _ = (1 - (⟨0, 1⟩ : GaussianInt)) *
@@ -776,8 +768,10 @@ private theorem hstar :
       centralSlot centralSign hcentral m n labelOf exteriorIndex centralIndex hexteriorCell
       hcentralCell exteriorCorners centralCorners y hy
   fin_cases j <;>
-    simp? [LatticeVertexIncidentCell, sub_eq_add_neg, add_assoc,
-      add_comm, add_left_comm] at exteriorCorners centralCorners
+    simp only [LatticeVertexIncidentCell, sub_eq_add_neg, Int.reduceNeg, add_assoc,
+        Fin.mk_one, Fin.isValue, Matrix.cons_val_one, Matrix.cons_val_zero, add_comm,
+        add_left_comm, add_neg_cancel, add_zero, Fin.reduceAdd, Matrix.cons_val, zero_add,
+        Fin.reduceFinMk, add_neg_cancel_left, Fin.zero_eta] at exteriorCorners centralCorners
   · rcases hy with rfl | rfl | rfl | rfl | rfl
     · exact Or.inl exteriorCorners.1
     · exact Or.inl exteriorCorners.2.1

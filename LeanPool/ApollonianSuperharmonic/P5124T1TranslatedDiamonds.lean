@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P5203T1IncreasingInterface
 public import LeanPool.ApollonianSuperharmonic.P5203T1DecreasingInterface
 public import LeanPool.ApollonianSuperharmonic.P5203T1CapInterface

@@ -5,11 +5,11 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.ExactTileInterfaceTripleLatticeTouching
-public import LeanPool.ApollonianSuperharmonic.LatticeEdgeRegularity
 public import LeanPool.ApollonianSuperharmonic.LocalLatticeInterfaceSectors
 public import LeanPool.ApollonianSuperharmonic.PeriodicTileComplex
-public import LeanPool.ApollonianSuperharmonic.SimpleGridPathVertexIncidentEdge
 
 -- [TABLET NODE: P5635T1EndpointDiagonalOwnership]
 

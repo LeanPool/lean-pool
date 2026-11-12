@@ -5,16 +5,10 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.DiamondOdometer
-public import LeanPool.ApollonianSuperharmonic.DiamondOdometerExistsUnique
-public import LeanPool.ApollonianSuperharmonic.DiamondParameter
-public import LeanPool.ApollonianSuperharmonic.DiamondVertexDomains
 public import LeanPool.ApollonianSuperharmonic.FourNeighborLaplacian
-public import Mathlib.Tactic.Abel
-public import Mathlib.Tactic.Linarith
-public import Mathlib.Tactic.LinearCombination
-public import Mathlib.Tactic.Ring
-public import Mathlib.Algebra.Group.Int.Even
 
 -- [TABLET NODE: DiamondLaplacianTable]
 

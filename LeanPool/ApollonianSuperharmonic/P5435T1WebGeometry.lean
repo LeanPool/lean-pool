@@ -5,10 +5,11 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P5435T1ShellPaths
 public import LeanPool.ApollonianSuperharmonic.P5435T1PeriodGap
 public import LeanPool.ApollonianSuperharmonic.P4818T1Representatives
-public import Mathlib.Data.List.Chain
 
 -- [TABLET NODE: P5435T1WebGeometry]
 

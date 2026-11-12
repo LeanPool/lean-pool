@@ -5,9 +5,11 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.ApollonianSuperharmonic.BandDescartesGapSubdivision
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.BandPackingExterior
 public import LeanPool.ApollonianSuperharmonic.BandOrientedGapRefinementExists
+public import Mathlib.Algebra.Order.Ring.Star
 
 -- [TABLET NODE: BandDiskExteriorDensity]
 

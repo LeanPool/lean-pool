@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P5455T2CurvatureGrowth
 public import LeanPool.ApollonianSuperharmonic.BandPredecessorNoCollision
 
@@ -40,18 +42,24 @@ theorem P5455T2AlignedPredecessor
       have b := hp'.2 2
       change (p 2).1 < (p 0).1 at a
       change (p' 3).1 < (p' 0).1 at b
-      simp? [P4828T1Step] at e0 e2
+      simp only [P4828T1Step, Fin.isValue, Fin.succ_zero_eq_one, Matrix.cons_val_one,
+          Matrix.cons_val_zero, Fin.mk_one, zero_add, Fin.succ_one_eq_two, Matrix.cons_val,
+          Fin.reduceSucc, Fin.reduceAdd] at e0 e2
       rw [e0, e2] at b
       omega
     · have a := hp.2 2
       have b := hp'.2 1
       change (p 3).1 < (p 0).1 at a
       change (p' 2).1 < (p' 0).1 at b
-      simp? [P4828T1Step] at e0 e1
+      simp only [P4828T1Step, Fin.isValue, Fin.succ_zero_eq_one, Matrix.cons_val_one,
+          Matrix.cons_val_zero, Fin.reduceFinMk, zero_add, Fin.reduceSucc, Matrix.cons_val,
+          Fin.succ_one_eq_two, Fin.reduceAdd] at e0 e1
       rw [e0, e1] at b
       omega
   subst r
-  simp? [P4828T1Step] at e0 e1 e2
+  simp only [P4828T1Step, Fin.isValue, Fin.succ_zero_eq_one, Matrix.cons_val_one,
+      Matrix.cons_val_zero, add_zero, Fin.succ_one_eq_two, Matrix.cons_val, Fin.reduceSucc]
+      at e0 e1 e2
   have cx := congrArg Prod.fst hchild
   have wx := congrArg Prod.snd hchild
   simp only [P4828T1Step, Matrix.cons_val_zero] at cx wx

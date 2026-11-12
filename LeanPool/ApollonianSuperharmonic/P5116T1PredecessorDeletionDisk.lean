@@ -5,12 +5,14 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.FinitePolyominoDiskCriterion
 public import
     LeanPool.ApollonianSuperharmonic.P5617T1RectangleReachabilityAndBasepointConnectivity
 public import LeanPool.ApollonianSuperharmonic.DiamondTile
 public import LeanPool.ApollonianSuperharmonic.P4194T1DiamondCellRows
-public import LeanPool.ApollonianSuperharmonic.TileTranslationFormulas
+public import LeanPool.ApollonianSuperharmonic.TileTranslation
 
 -- [TABLET NODE: P5116T1PredecessorDeletionDisk]
 

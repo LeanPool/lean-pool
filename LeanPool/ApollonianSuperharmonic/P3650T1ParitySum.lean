@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P3650T1CyclicChildren
 public import LeanPool.ApollonianSuperharmonic.P3544T1LocalParity
 
@@ -198,19 +200,20 @@ private theorem hleftCount :
           ((edges L).map fun e => weight x d e.1 e.2).sum
         (∀ {k : Nat}, ∀ (f : Fin (k + 3) → Fin (n + 3)), ∀ (x : Real × Real), ∀ (d : Real ×
             Real), (∑ i : Fin (k + 3), weight x d (f i) (f (i + 1))) = edgeWeight x d (List.ofFn
-            f)) → (∀ (x : ℝ × ℝ), ∀ (d : ℝ × ℝ), {i : Fin (C.left_n + (3 : ℕ)) | ∃ (t : ℝ), (0 :
+            f)) → (∀ (x : ℝ × ℝ), ∀ (d : ℝ × ℝ), {i : Fin (C.leftParameter + (3 : ℕ)) | ∃ (t :
+                ℝ), (0 :
             ℝ) < t ∧ x + t • d ∈ segment ℝ (C.left.vertex i) (C.left.vertex (i + (1 : Fin
-            (C.left_n + (3 : ℕ)))))}.ncard = edgeWeight x d (a :: (C.u ++ [b])))) ) := by
+            (C.leftParameter + (3 : ℕ)))))}.ncard = edgeWeight x d (a :: (C.u ++ [b])))) ) := by
   classical
   intro n p a b C hit weight cardPred edges edgeWeight hsum_ofFn x d
   rw [cardPred]
   have h := hsum_ofFn C.il x d
   rw [C.left_order] at h
   calc
-    (∑ i : Fin (C.left_n + 3),
+    (∑ i : Fin (C.leftParameter + 3),
         if ∃ t : Real, 0 < t ∧ x + t • d ∈
             segment Real (C.left.vertex i) (C.left.vertex (i + 1)) then 1 else 0) =
-        ∑ i : Fin (C.left_n + 3), weight x d (C.il i) (C.il (i + 1)) := by
+        ∑ i : Fin (C.leftParameter + 3), weight x d (C.il i) (C.il (i + 1)) := by
       apply Finset.sum_congr rfl
       intro i hi
       simp [weight, hit, C.left_vertex]
@@ -234,19 +237,20 @@ private theorem hrightCount :
           ((edges L).map fun e => weight x d e.1 e.2).sum
         (∀ {k : Nat}, ∀ (f : Fin (k + 3) → Fin (n + 3)), ∀ (x : Real × Real), ∀ (d : Real ×
             Real), (∑ i : Fin (k + 3), weight x d (f i) (f (i + 1))) = edgeWeight x d (List.ofFn
-            f)) → (∀ (x : ℝ × ℝ), ∀ (d : ℝ × ℝ), {i : Fin (C.right_n + (3 : ℕ)) | ∃ (t : ℝ), (0 :
+            f)) → (∀ (x : ℝ × ℝ), ∀ (d : ℝ × ℝ), {i : Fin (C.rightParameter + (3 : ℕ)) | ∃ (t :
+                ℝ), (0 :
             ℝ) < t ∧ x + t • d ∈ segment ℝ (C.right.vertex i) (C.right.vertex (i + (1 : Fin
-            (C.right_n + (3 : ℕ)))))}.ncard = edgeWeight x d (b :: (C.v ++ [a])))) ) := by
+            (C.rightParameter + (3 : ℕ)))))}.ncard = edgeWeight x d (b :: (C.v ++ [a])))) ) := by
   classical
   intro n p a b C hit weight cardPred edges edgeWeight hsum_ofFn x d
   rw [cardPred]
   have h := hsum_ofFn C.ir x d
   rw [C.right_order] at h
   calc
-    (∑ i : Fin (C.right_n + 3),
+    (∑ i : Fin (C.rightParameter + 3),
         if ∃ t : Real, 0 < t ∧ x + t • d ∈
             segment Real (C.right.vertex i) (C.right.vertex (i + 1)) then 1 else 0) =
-        ∑ i : Fin (C.right_n + 3), weight x d (C.ir i) (C.ir (i + 1)) := by
+        ∑ i : Fin (C.rightParameter + 3), weight x d (C.ir i) (C.ir (i + 1)) := by
       apply Finset.sum_congr rfl
       intro i hi
       simp [weight, hit, C.right_vertex]
@@ -357,10 +361,10 @@ private theorem hcount :
           List.zipWith Prod.mk l (l.rotate 1)
         let edgeWeight (x d : Real × Real) (L : List (Fin (n + 3))) : Nat :=
           ((edges L).map fun e => weight x d e.1 e.2).sum
-        (∀ (x : Real × Real), ∀ (d : Real × Real), Set.ncard {i : Fin (C.left_n + 3) | ∃ t :
+        (∀ (x : Real × Real), ∀ (d : Real × Real), Set.ncard {i : Fin (C.leftParameter + 3) | ∃ t :
             Real, 0 < t ∧ x + t • d ∈ segment Real (C.left.vertex i) (C.left.vertex (i + 1))} =
             edgeWeight x d (a :: (C.u ++ [b]))) → ((∀ (x : Real × Real), ∀ (d : Real × Real),
-            Set.ncard {i : Fin (C.right_n + 3) | ∃ t : Real, 0 < t ∧ x + t • d ∈ segment Real
+            Set.ncard {i : Fin (C.rightParameter + 3) | ∃ t : Real, 0 < t ∧ x + t • d ∈ segment Real
             (C.right.vertex i) (C.right.vertex (i + 1))} = edgeWeight x d (b :: (C.v ++ [a]))) →
             ((∀ (x : Real × Real), ∀ (d : Real × Real), Set.ncard {i : Fin (n + 3) | ∃ t : Real,
             0 < t ∧ x + t • d ∈ segment Real (p.vertex i) (p.vertex (i + 1))} = edgeWeight x d
@@ -368,11 +372,14 @@ private theorem hcount :
             edgeWeight x d (List.ofFn (fun i : Fin (n + 3) => i)) = edgeWeight x d (a :: (C.u ++
             b :: C.v))) → ((∀ (x : Real × Real), ∀ (d : Real × Real), edgeWeight x d (a :: (C.u
             ++ [b])) + edgeWeight x d (b :: (C.v ++ [a])) = edgeWeight x d (a :: (C.u ++ b ::
-            C.v)) + 2 * weight x d a b) → (∀ (x : ℝ × ℝ), ∀ (d : ℝ × ℝ), {i : Fin (C.left_n + (3
+            C.v)) + 2 * weight x d a b) → (∀ (x : ℝ × ℝ), ∀ (d : ℝ × ℝ), {i : Fin
+                (C.leftParameter + (3
             : ℕ)) | ∃ (t : ℝ), (0 : ℝ) < t ∧ x + t • d ∈ segment ℝ (C.left.vertex i)
-            (C.left.vertex (i + (1 : Fin (C.left_n + (3 : ℕ)))))}.ncard + {i : Fin (C.right_n +
+            (C.left.vertex (i + (1 : Fin (C.leftParameter + (3 : ℕ)))))}.ncard + {i : Fin
+                (C.rightParameter +
             (3 : ℕ)) | ∃ (t : ℝ), (0 : ℝ) < t ∧ x + t • d ∈ segment ℝ (C.right.vertex i)
-            (C.right.vertex (i + (1 : Fin (C.right_n + (3 : ℕ)))))}.ncard = {i : Fin (n + (3 :
+            (C.right.vertex (i + (1 : Fin (C.rightParameter + (3 : ℕ)))))}.ncard = {i : Fin (n +
+                (3 :
             ℕ)) | ∃ (t : ℝ), (0 : ℝ) < t ∧ x + t • d ∈ segment ℝ (p.vertex i) (p.vertex (i + (1 :
             Fin (n + (3 : ℕ)))))}.ncard + (2 : ℕ) * if ∃ (t : ℝ), (0 : ℝ) < t ∧ x + t • d ∈
             segment ℝ (p.vertex a) (p.vertex b) then (1 : ℕ) else (0 : ℕ)))))) ) := by
@@ -391,14 +398,18 @@ private theorem hcommon :
             ∉ P3544T1BoundaryCarrier C.right → ∃ (d : ℝ × ℝ), (∀ (i : Fin (n + (3 : ℕ))), d.1 *
             (p.vertex i - x).2 - d.2 * (p.vertex i - x).1 ≠ (0 : ℝ)) ∧ (∀ (i : Fin (n + (3 :
             ℕ))), d.1 * (p.vertex (i + (1 : Fin (n + (3 : ℕ)))) - p.vertex i).2 - d.2 * (p.vertex
-            (i + (1 : Fin (n + (3 : ℕ)))) - p.vertex i).1 ≠ (0 : ℝ)) ∧ (∀ (i : Fin (C.left_n + (3
+            (i + (1 : Fin (n + (3 : ℕ)))) - p.vertex i).1 ≠ (0 : ℝ)) ∧ (∀ (i : Fin
+                (C.leftParameter + (3
             : ℕ))), d.1 * (C.left.vertex i - x).2 - d.2 * (C.left.vertex i - x).1 ≠ (0 : ℝ)) ∧ (∀
-            (i : Fin (C.left_n + (3 : ℕ))), d.1 * (C.left.vertex (i + (1 : Fin (C.left_n + (3 :
-            ℕ)))) - C.left.vertex i).2 - d.2 * (C.left.vertex (i + (1 : Fin (C.left_n + (3 :
-            ℕ)))) - C.left.vertex i).1 ≠ (0 : ℝ)) ∧ (∀ (i : Fin (C.right_n + (3 : ℕ))), d.1 *
+            (i : Fin (C.leftParameter + (3 : ℕ))), d.1 * (C.left.vertex (i + (1 : Fin
+                (C.leftParameter + (3 :
+            ℕ)))) - C.left.vertex i).2 - d.2 * (C.left.vertex (i + (1 : Fin (C.leftParameter + (3 :
+            ℕ)))) - C.left.vertex i).1 ≠ (0 : ℝ)) ∧ (∀ (i : Fin (C.rightParameter + (3 : ℕ))), d.1 *
             (C.right.vertex i - x).2 - d.2 * (C.right.vertex i - x).1 ≠ (0 : ℝ)) ∧ ∀ (i : Fin
-            (C.right_n + (3 : ℕ))), d.1 * (C.right.vertex (i + (1 : Fin (C.right_n + (3 : ℕ)))) -
-            C.right.vertex i).2 - d.2 * (C.right.vertex (i + (1 : Fin (C.right_n + (3 : ℕ)))) -
+            (C.rightParameter + (3 : ℕ))), d.1 * (C.right.vertex (i + (1 : Fin (C.rightParameter
+                + (3 : ℕ)))) -
+            C.right.vertex i).2 - d.2 * (C.right.vertex (i + (1 : Fin (C.rightParameter + (3 :
+                ℕ)))) -
             C.right.vertex i).1 ≠ (0 : ℝ) ) := by
   classical
   intro n p a b C x hxL hxR
@@ -426,7 +437,7 @@ private theorem hcommon :
       simp at hv
       omega
   let Idx := (Fin (n + 3) × Bool) ⊕
-    ((Fin (C.left_n + 3) × Bool) ⊕ (Fin (C.right_n + 3) × Bool))
+    ((Fin (C.leftParameter + 3) × Bool) ⊕ (Fin (C.rightParameter + 3) × Bool))
   let vec : Idx → Real × Real := fun j =>
     match j with
     | Sum.inl (i, isVertex) =>
@@ -441,35 +452,35 @@ private theorem hcommon :
     intro j
     rcases j with ⟨i, isVertex⟩ | j
     · by_cases htag : isVertex
-      · simp? [vec, htag]
+      · simp only [htag, ↓reduceIte, ne_eq, vec]
         intro hzero
         have hv : p.vertex i ∈ P3544T1BoundaryCarrier p := by
           exact Set.mem_iUnion.mpr ⟨i, left_mem_segment Real _ _⟩
         exact hxParent ((sub_eq_zero.mp hzero) ▸ hv)
-      · simp? [vec, htag]
+      · simp only [htag, Bool.false_eq_true, ↓reduceIte, ne_eq, vec]
         intro hzero
         apply finSucc_ne i
         apply p.injective
         exact sub_eq_zero.mp hzero
     · rcases j with ⟨i, isVertex⟩ | ⟨i, isVertex⟩
       · by_cases htag : isVertex
-        · simp? [vec, htag]
+        · simp only [htag, ↓reduceIte, ne_eq, vec]
           intro hzero
           have hv : C.left.vertex i ∈ P3544T1BoundaryCarrier C.left := by
             exact Set.mem_iUnion.mpr ⟨i, left_mem_segment Real _ _⟩
           exact hxL ((sub_eq_zero.mp hzero) ▸ hv)
-        · simp? [vec, htag]
+        · simp only [htag, Bool.false_eq_true, ↓reduceIte, ne_eq, vec]
           intro hzero
           apply finSucc_ne i
           apply C.left.injective
           exact sub_eq_zero.mp hzero
       · by_cases htag : isVertex
-        · simp? [vec, htag]
+        · simp only [htag, ↓reduceIte, ne_eq, vec]
           intro hzero
           have hv : C.right.vertex i ∈ P3544T1BoundaryCarrier C.right := by
             exact Set.mem_iUnion.mpr ⟨i, left_mem_segment Real _ _⟩
           exact hxR ((sub_eq_zero.mp hzero) ▸ hv)
-        · simp? [vec, htag]
+        · simp only [htag, Bool.false_eq_true, ↓reduceIte, ne_eq, vec]
           intro hzero
           apply finSucc_ne i
           apply C.right.injective
@@ -541,9 +552,9 @@ theorem P3650T1ParitySum {n : Nat} (p : P3381T1PolygonBoundary n)
       classical
       exact
         (∀ x d : Real × Real,
-          Set.ncard {i : Fin (C.left_n + 3) | ∃ t : Real, 0 < t ∧
+          Set.ncard {i : Fin (C.leftParameter + 3) | ∃ t : Real, 0 < t ∧
             x + t • d ∈ segment Real (C.left.vertex i) (C.left.vertex (i + 1))} +
-          Set.ncard {i : Fin (C.right_n + 3) | ∃ t : Real, 0 < t ∧
+          Set.ncard {i : Fin (C.rightParameter + 3) | ∃ t : Real, 0 < t ∧
             x + t • d ∈ segment Real (C.right.vertex i) (C.right.vertex (i + 1))} =
           Set.ncard {i : Fin (n + 3) | ∃ t : Real, 0 < t ∧
             x + t • d ∈ segment Real (p.vertex i) (p.vertex (i + 1))} +

@@ -5,24 +5,16 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.ApollonianSuperharmonic.BandOrderedGeneralConfiguration
-public import LeanPool.ApollonianSuperharmonic.BandOrderedGeneralLayoutCertificate
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.BandOrderedGeneralRightPlacement
 public import LeanPool.ApollonianSuperharmonic.BandOrderedGeneralSubtilePlacement
-public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetry
-public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryCircleAction
 public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryPartialOdometerAction
 public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryQuadrupleAction
 public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryTileAction
 public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryVectorAction
 public import LeanPool.ApollonianSuperharmonic.ExactTileInterfaceTriple
 public import LeanPool.ApollonianSuperharmonic.FourNeighborAdjacent
-public import LeanPool.ApollonianSuperharmonic.LatticeTile
-public import LeanPool.ApollonianSuperharmonic.LatticeVertexIncidentCell
-public import LeanPool.ApollonianSuperharmonic.RightLatticeAdjacent
-public import LeanPool.ApollonianSuperharmonic.SubtileLatticeAdjacent
-public import LeanPool.ApollonianSuperharmonic.SubtileOccurrenceInterpretation
-public import LeanPool.ApollonianSuperharmonic.TileOdometer
 
 -- [TABLET NODE: BandOrderedGeneralNormalizedOccurrenceBundle]
 

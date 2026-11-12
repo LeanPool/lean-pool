@@ -5,8 +5,9 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P4207T1DiamondFormula
-public import Mathlib.Tactic.Ring
 
 -- [TABLET NODE: P4207T1FloorArithmetic]
 

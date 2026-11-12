@@ -5,8 +5,11 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P5124T1BoundaryGeometry
 public import LeanPool.ApollonianSuperharmonic.P5157T1StaircasePoint
+public import LeanPool.ApollonianSuperharmonic.TileTranslationFormulas
 
 -- [TABLET NODE: P5250T1ConsecutiveEdges]
 

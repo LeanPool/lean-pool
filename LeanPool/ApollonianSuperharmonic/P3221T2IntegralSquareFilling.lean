@@ -5,11 +5,10 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.ApollonianSuperharmonic.Preamble
-public import Mathlib.Data.Finsupp.Basic
-public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
-public import Mathlib.Data.Set.Finite.Lattice
+public import Mathlib.Init
+
 public import Mathlib.Data.Int.Interval
+public import Mathlib.NumberTheory.Zsqrtd.GaussianInt
 
 -- [TABLET NODE: P3221T2IntegralSquareFilling]
 

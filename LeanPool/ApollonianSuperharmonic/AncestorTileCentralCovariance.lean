@@ -5,9 +5,9 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.AncestorTile
-public import LeanPool.ApollonianSuperharmonic.BandPrototileCentralSymmetry
-public import LeanPool.ApollonianSuperharmonic.BandPrototileTranslation
 public import LeanPool.ApollonianSuperharmonic.TileHalfTurnFormulas
 public import LeanPool.ApollonianSuperharmonic.TileTranslationFormulas
 

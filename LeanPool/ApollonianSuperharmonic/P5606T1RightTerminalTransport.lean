@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P5596T1CommonExtensionTransport
 public import LeanPool.ApollonianSuperharmonic.FordTerminalWebStencilLedger
 public import LeanPool.ApollonianSuperharmonic.DiamondTerminalWebStencilLedger

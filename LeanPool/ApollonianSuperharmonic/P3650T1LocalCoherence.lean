@@ -5,8 +5,11 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P3650T1CyclicChildren
 public import LeanPool.ApollonianSuperharmonic.P3544T1LocalParity
+public import Mathlib.Algebra.Order.Ring.Star
 
 -- [TABLET NODE: P3650T1LocalCoherence]
 
@@ -160,7 +163,7 @@ private theorem hidxL :
       exact
         ∀ (n : Nat), ∀ (p : P3381T1PolygonBoundary n), ∀ (a : Fin (n + 3)), ∀ (b : Fin (n +
             3)), ∀ (C : P3650T1CyclicChildren p a b), ∀ t : Fin (n + 3), t ∈ ({a, b} : Set (Fin
-            (n + 3))) → ∃ i : Fin (C.left_n + 3), C.left.vertex i = p.vertex t ) := by
+            (n + 3))) → ∃ i : Fin (C.leftParameter + 3), C.left.vertex i = p.vertex t ) := by
   classical
   intro n p a b C t ht
   have ht' : t ∈ Set.range C.il ∩ Set.range C.ir := by
@@ -177,7 +180,7 @@ private theorem hidxR :
       exact
         ∀ (n : Nat), ∀ (p : P3381T1PolygonBoundary n), ∀ (a : Fin (n + 3)), ∀ (b : Fin (n +
             3)), ∀ (C : P3650T1CyclicChildren p a b), ∀ t : Fin (n + 3), t ∈ ({a, b} : Set (Fin
-            (n + 3))) → ∃ i : Fin (C.right_n + 3), C.right.vertex i = p.vertex t ) := by
+            (n + 3))) → ∃ i : Fin (C.rightParameter + 3), C.right.vertex i = p.vertex t ) := by
   classical
   intro n p a b C t ht
   have ht' : t ∈ Set.range C.il ∩ Set.range C.ir := by
@@ -195,7 +198,7 @@ private theorem hidxLz :
         ∀ (n : Nat), ∀ (p : P3381T1PolygonBoundary n), ∀ (a : Fin (n + 3)), ∀ (b : Fin (n +
             3)), ∀ (C : P3650T1CyclicChildren p a b), ∀ (z : ℝ × ℝ), (z = p.vertex a ∨ z =
             p.vertex b) → ((∀ t : Fin (n + 3), t ∈ ({a, b} : Set (Fin (n + 3))) → ∃ i : Fin
-            (C.left_n + 3), C.left.vertex i = p.vertex t) → (∃ i : Fin (C.left_n + 3),
+            (C.leftParameter + 3), C.left.vertex i = p.vertex t) → (∃ i : Fin (C.leftParameter + 3),
             C.left.vertex i = z)) ) := by
   classical
   intro n p a b C z hzab hidxL
@@ -212,7 +215,8 @@ private theorem hidxRz :
         ∀ (n : Nat), ∀ (p : P3381T1PolygonBoundary n), ∀ (a : Fin (n + 3)), ∀ (b : Fin (n +
             3)), ∀ (C : P3650T1CyclicChildren p a b), ∀ (z : ℝ × ℝ), (z = p.vertex a ∨ z =
             p.vertex b) → ((∀ t : Fin (n + 3), t ∈ ({a, b} : Set (Fin (n + 3))) → ∃ i : Fin
-            (C.right_n + 3), C.right.vertex i = p.vertex t) → (∃ i : Fin (C.right_n + 3),
+            (C.rightParameter + 3), C.right.vertex i = p.vertex t) → (∃ i : Fin (C.rightParameter
+                + 3),
             C.right.vertex i = z)) ) := by
   classical
   intro n p a b C z hzab hidxR
@@ -303,7 +307,8 @@ private theorem hOLin :
         let OL := P3544T1RayParity C.left
         (Disjoint OL Cp) → ((∀ (O : Set (Real × Real)), ∀ (K : Set (Real × Real)), (closure O = O
             ∪ K) → ((IsOpen O) → (∀ (S : Set (Real × Real)), (IsPreconnected S) → ((Disjoint S K)
-            → (((S ∩ O).Nonempty) → (S ⊆ O)))))) → (∀ (z : ℝ × ℝ), ∀ (iL : Fin (C.left_n + (3 :
+            → (((S ∩ O).Nonempty) → (S ⊆ O)))))) → (∀ (z : ℝ × ℝ), ∀ (iL : Fin (C.leftParameter +
+                (3 :
             ℕ))), (C.left.vertex iL = z) → (∀ (rL : ℝ), (IsPathConnected (Metric.ball
             (C.left.vertex iL) rL ∩ P3544T1RayParity C.left)) → ((IsOpen Op) → ((closure Op =
             Op ∪ Cp) → ((((Metric.ball z rL ∩ OL) ∩ Op).Nonempty) → (Metric.ball z rL ∩ OL ⊆
@@ -330,7 +335,8 @@ private theorem hORin :
         let OR := P3544T1RayParity C.right
         (Disjoint OR Cp) → ((∀ (O : Set (Real × Real)), ∀ (K : Set (Real × Real)), (closure O = O
             ∪ K) → ((IsOpen O) → (∀ (S : Set (Real × Real)), (IsPreconnected S) → ((Disjoint S K)
-            → (((S ∩ O).Nonempty) → (S ⊆ O)))))) → (∀ (z : ℝ × ℝ), ∀ (iR : Fin (C.right_n + (3 :
+            → (((S ∩ O).Nonempty) → (S ⊆ O)))))) → (∀ (z : ℝ × ℝ), ∀ (iR : Fin (C.rightParameter
+                + (3 :
             ℕ))), (C.right.vertex iR = z) → (∀ (rR : ℝ), (IsPathConnected (Metric.ball
             (C.right.vertex iR) rR ∩ P3544T1RayParity C.right)) → ((IsOpen Op) → ((closure Op =
             Op ∪ Cp) → ((((Metric.ball z rR ∩ OR) ∩ Op).Nonempty) → (Metric.ball z rR ∩ OR ⊆
@@ -461,7 +467,7 @@ private theorem hlastL :
       exact
         ∀ (n : Nat), ∀ (p : P3381T1PolygonBoundary n), ∀ (a : Fin (n + 3)), ∀ (b : Fin (n +
             3)), ∀ (C : P3650T1CyclicChildren p a b),
-        let ilast : Fin (C.left_n + 3) := Fin.last (C.left_n + 2)
+        let ilast : Fin (C.leftParameter + 3) := Fin.last (C.leftParameter + 2)
         C.il ilast = b ) := by
   classical
   intro n p a b C ilast
@@ -470,7 +476,7 @@ private theorem hlastL :
       (List.ofFn C.il).getLast? =
           some ((List.ofFn C.il).getLast (by simp)) :=
         List.getLast?_eq_getLast_of_ne_nil (by simp)
-      _ = some (C.il (Fin.last (C.left_n + 2))) :=
+      _ = some (C.il (Fin.last (C.leftParameter + 2))) :=
         congrArg some (List.getLast_ofFn_succ C.il)
       _ = some (C.il ilast) := by simp [ilast]
   have ho : (List.ofFn C.il).getLast? = some b := by
@@ -486,7 +492,7 @@ private theorem hlastR :
       exact
         ∀ (n : Nat), ∀ (p : P3381T1PolygonBoundary n), ∀ (a : Fin (n + 3)), ∀ (b : Fin (n +
             3)), ∀ (C : P3650T1CyclicChildren p a b),
-        let irlast : Fin (C.right_n + 3) := Fin.last (C.right_n + 2)
+        let irlast : Fin (C.rightParameter + 3) := Fin.last (C.rightParameter + 2)
         C.ir irlast = a ) := by
   classical
   intro n p a b C irlast
@@ -495,7 +501,7 @@ private theorem hlastR :
       (List.ofFn C.ir).getLast? =
           some ((List.ofFn C.ir).getLast (by simp)) :=
         List.getLast?_eq_getLast_of_ne_nil (by simp)
-      _ = some (C.ir (Fin.last (C.right_n + 2))) :=
+      _ = some (C.ir (Fin.last (C.rightParameter + 2))) :=
         congrArg some (List.getLast_ofFn_succ C.ir)
       _ = some (C.ir irlast) := by simp [irlast]
   have ho : (List.ofFn C.ir).getLast? = some a := by
@@ -511,7 +517,7 @@ private theorem hwrapL :
       exact
         ∀ (n : Nat), ∀ (p : P3381T1PolygonBoundary n), ∀ (a : Fin (n + 3)), ∀ (b : Fin (n +
             3)), ∀ (C : P3650T1CyclicChildren p a b),
-        let ilast : Fin (C.left_n + 3) := Fin.last (C.left_n + 2)
+        let ilast : Fin (C.leftParameter + 3) := Fin.last (C.leftParameter + 2)
         ilast + 1 = 0 ) := by
   classical
   intro n p a b C ilast
@@ -524,7 +530,7 @@ private theorem hwrapR :
       exact
         ∀ (n : Nat), ∀ (p : P3381T1PolygonBoundary n), ∀ (a : Fin (n + 3)), ∀ (b : Fin (n +
             3)), ∀ (C : P3650T1CyclicChildren p a b),
-        let irlast : Fin (C.right_n + 3) := Fin.last (C.right_n + 2)
+        let irlast : Fin (C.rightParameter + 3) := Fin.last (C.rightParameter + 2)
         irlast + 1 = 0 ) := by
   classical
   intro n p a b C irlast
@@ -537,7 +543,7 @@ private theorem hleftB :
       exact
         ∀ (n : Nat), ∀ (p : P3381T1PolygonBoundary n), ∀ (a : Fin (n + 3)), ∀ (b : Fin (n +
             3)), ∀ (C : P3650T1CyclicChildren p a b),
-        let ilast : Fin (C.left_n + 3) := Fin.last (C.left_n + 2)
+        let ilast : Fin (C.leftParameter + 3) := Fin.last (C.leftParameter + 2)
         (C.il ilast = b) → (C.left.vertex ilast = p.vertex b) ) := by
   classical
   intro n p a b C ilast hlastL
@@ -551,7 +557,7 @@ private theorem hleftA :
       exact
         ∀ (n : Nat), ∀ (p : P3381T1PolygonBoundary n), ∀ (a : Fin (n + 3)), ∀ (b : Fin (n +
             3)), ∀ (C : P3650T1CyclicChildren p a b),
-        let ilast : Fin (C.left_n + 3) := Fin.last (C.left_n + 2)
+        let ilast : Fin (C.leftParameter + 3) := Fin.last (C.leftParameter + 2)
         (C.il 0 = a) → ((ilast + 1 = 0) → (C.left.vertex (ilast + 1) = p.vertex a)) ) := by
   classical
   intro n p a b C ilast hfirstL hwrapL
@@ -565,7 +571,7 @@ private theorem hrightA :
       exact
         ∀ (n : Nat), ∀ (p : P3381T1PolygonBoundary n), ∀ (a : Fin (n + 3)), ∀ (b : Fin (n +
             3)), ∀ (C : P3650T1CyclicChildren p a b),
-        let irlast : Fin (C.right_n + 3) := Fin.last (C.right_n + 2)
+        let irlast : Fin (C.rightParameter + 3) := Fin.last (C.rightParameter + 2)
         (C.ir irlast = a) → (C.right.vertex irlast = p.vertex a) ) := by
   classical
   intro n p a b C irlast hlastR
@@ -579,7 +585,7 @@ private theorem hrightB :
       exact
         ∀ (n : Nat), ∀ (p : P3381T1PolygonBoundary n), ∀ (a : Fin (n + 3)), ∀ (b : Fin (n +
             3)), ∀ (C : P3650T1CyclicChildren p a b),
-        let irlast : Fin (C.right_n + 3) := Fin.last (C.right_n + 2)
+        let irlast : Fin (C.rightParameter + 3) := Fin.last (C.rightParameter + 2)
         (C.ir 0 = b) → ((irlast + 1 = 0) → (C.right.vertex (irlast + 1) = p.vertex b)) ) := by
   classical
   intro n p a b C irlast hfirstR hwrapR
@@ -608,12 +614,13 @@ private theorem hcanonL :
             3)), ∀ (C : P3650T1CyclicChildren p a b),
         let OL := P3544T1RayParity C.left
         ∀ (x : ℝ × ℝ),
-        let ilast : Fin (C.left_n + 3) := Fin.last (C.left_n + 2)
+        let ilast : Fin (C.leftParameter + 3) := Fin.last (C.leftParameter + 2)
         (C.left.vertex ilast = p.vertex b) → ((C.left.vertex (ilast + 1) = p.vertex a) → (∀ (rL :
             ℝ), ∀ (sL : Bool), (∀ y ∈ Metric.ball x rL, y ∈ P3544T1RayParity C.left ↔ if sL =
             true then (0 : ℝ) < P3381T1TriangleDeterminant ![C.left.vertex ilast, C.left.vertex
-            (ilast + (1 : Fin (C.left_n + (3 : ℕ)))), y] else P3381T1TriangleDeterminant
-            ![C.left.vertex ilast, C.left.vertex (ilast + (1 : Fin (C.left_n + (3 : ℕ)))), y] <
+            (ilast + (1 : Fin (C.leftParameter + (3 : ℕ)))), y] else P3381T1TriangleDeterminant
+            ![C.left.vertex ilast, C.left.vertex (ilast + (1 : Fin (C.leftParameter + (3 : ℕ)))),
+                y] <
             (0 : ℝ)) → (
         let H : Real × Real → Real := fun y =>
           P3381T1TriangleDeterminant ![p.vertex a, p.vertex b, y]
@@ -634,13 +641,13 @@ private theorem hcanonR :
             3)), ∀ (C : P3650T1CyclicChildren p a b),
         let OR := P3544T1RayParity C.right
         ∀ (x : ℝ × ℝ),
-        let irlast : Fin (C.right_n + 3) := Fin.last (C.right_n + 2)
+        let irlast : Fin (C.rightParameter + 3) := Fin.last (C.rightParameter + 2)
         (C.right.vertex irlast = p.vertex a) → ((C.right.vertex (irlast + 1) = p.vertex b) → (∀
             (rR : ℝ), ∀ (sR : Bool), (∀ y ∈ Metric.ball x rR, y ∈ P3544T1RayParity C.right ↔ if
             sR = true then (0 : ℝ) < P3381T1TriangleDeterminant ![C.right.vertex irlast,
-            C.right.vertex (irlast + (1 : Fin (C.right_n + (3 : ℕ)))), y] else
+            C.right.vertex (irlast + (1 : Fin (C.rightParameter + (3 : ℕ)))), y] else
             P3381T1TriangleDeterminant ![C.right.vertex irlast, C.right.vertex (irlast + (1 :
-            Fin (C.right_n + (3 : ℕ)))), y] < (0 : ℝ)) → (
+            Fin (C.rightParameter + (3 : ℕ)))), y] < (0 : ℝ)) → (
         let H : Real × Real → Real := fun y =>
           P3381T1TriangleDeterminant ![p.vertex a, p.vertex b, y]
         ∀ y ∈ Metric.ball x rR, (y ∈ OR ↔ if sR then 0 < H y else H y < 0)))) ) := by
@@ -686,19 +693,21 @@ private theorem hxdet :
         let OL := P3544T1RayParity C.left
         let OR := P3544T1RayParity C.right
         ∀ (x : ℝ × ℝ), (x ∈ openSegment ℝ (p.vertex a) (p.vertex b)) → (
-        let ilast : Fin (C.left_n + 3) := Fin.last (C.left_n + 2)
-        let irlast : Fin (C.right_n + 3) := Fin.last (C.right_n + 2)
+        let ilast : Fin (C.leftParameter + 3) := Fin.last (C.leftParameter + 2)
+        let irlast : Fin (C.rightParameter + 3) := Fin.last (C.rightParameter + 2)
         (x ∈ openSegment Real (C.left.vertex ilast) (C.left.vertex (ilast + 1))) → ((x ∈
             openSegment Real (C.right.vertex irlast) (C.right.vertex (irlast + 1))) → (∀ (rL :
             ℝ), ∀ (sL : Bool), (∀ y ∈ Metric.ball x rL, y ∈ P3544T1RayParity C.left ↔ if sL =
             true then (0 : ℝ) < P3381T1TriangleDeterminant ![C.left.vertex ilast, C.left.vertex
-            (ilast + (1 : Fin (C.left_n + (3 : ℕ)))), y] else P3381T1TriangleDeterminant
-            ![C.left.vertex ilast, C.left.vertex (ilast + (1 : Fin (C.left_n + (3 : ℕ)))), y] <
+            (ilast + (1 : Fin (C.leftParameter + (3 : ℕ)))), y] else P3381T1TriangleDeterminant
+            ![C.left.vertex ilast, C.left.vertex (ilast + (1 : Fin (C.leftParameter + (3 : ℕ)))),
+                y] <
             (0 : ℝ)) → (∀ (rR : ℝ), ∀ (sR : Bool), (∀ y ∈ Metric.ball x rR, y ∈
             P3544T1RayParity C.right ↔ if sR = true then (0 : ℝ) < P3381T1TriangleDeterminant
-            ![C.right.vertex irlast, C.right.vertex (irlast + (1 : Fin (C.right_n + (3 : ℕ)))),
+            ![C.right.vertex irlast, C.right.vertex (irlast + (1 : Fin (C.rightParameter + (3 :
+                ℕ)))),
             y] else P3381T1TriangleDeterminant ![C.right.vertex irlast, C.right.vertex (irlast
-            + (1 : Fin (C.right_n + (3 : ℕ)))), y] < (0 : ℝ)) → (
+            + (1 : Fin (C.rightParameter + (3 : ℕ)))), y] < (0 : ℝ)) → (
         let H : Real × Real → Real := fun y =>
           P3381T1TriangleDeterminant ![p.vertex a, p.vertex b, y]
         (∀ y ∈ Metric.ball x rL, (y ∈ OL ↔ if !sL then 0 < H y else H y < 0)) → ((∀ y ∈
@@ -867,17 +876,18 @@ private theorem hsignsOpp :
         let OL := P3544T1RayParity C.left
         let OR := P3544T1RayParity C.right
         ∀ (x : ℝ × ℝ),
-        let ilast : Fin (C.left_n + 3) := Fin.last (C.left_n + 2)
-        let irlast : Fin (C.right_n + 3) := Fin.last (C.right_n + 2)
+        let ilast : Fin (C.leftParameter + 3) := Fin.last (C.leftParameter + 2)
+        let irlast : Fin (C.rightParameter + 3) := Fin.last (C.rightParameter + 2)
         ∀ (rL : ℝ), ∀ (sL : Bool), (∀ y ∈ Metric.ball x rL, y ∈ P3544T1RayParity C.left ↔ if sL
             = true then (0 : ℝ) < P3381T1TriangleDeterminant ![C.left.vertex ilast,
-            C.left.vertex (ilast + (1 : Fin (C.left_n + (3 : ℕ)))), y] else
+            C.left.vertex (ilast + (1 : Fin (C.leftParameter + (3 : ℕ)))), y] else
             P3381T1TriangleDeterminant ![C.left.vertex ilast, C.left.vertex (ilast + (1 : Fin
-            (C.left_n + (3 : ℕ)))), y] < (0 : ℝ)) → (∀ (rR : ℝ), ∀ (sR : Bool), (∀ y ∈
+            (C.leftParameter + (3 : ℕ)))), y] < (0 : ℝ)) → (∀ (rR : ℝ), ∀ (sR : Bool), (∀ y ∈
             Metric.ball x rR, y ∈ P3544T1RayParity C.right ↔ if sR = true then (0 : ℝ) <
             P3381T1TriangleDeterminant ![C.right.vertex irlast, C.right.vertex (irlast + (1 :
-            Fin (C.right_n + (3 : ℕ)))), y] else P3381T1TriangleDeterminant ![C.right.vertex
-            irlast, C.right.vertex (irlast + (1 : Fin (C.right_n + (3 : ℕ)))), y] < (0 : ℝ)) → (
+            Fin (C.rightParameter + (3 : ℕ)))), y] else P3381T1TriangleDeterminant ![C.right.vertex
+            irlast, C.right.vertex (irlast + (1 : Fin (C.rightParameter + (3 : ℕ)))), y] < (0 :
+                ℝ)) → (
         let H : Real × Real → Real := fun y =>
           P3381T1TriangleDeterminant ![p.vertex a, p.vertex b, y]
         (∀ y ∈ Metric.ball x rL, (y ∈ OL ↔ if !sL then 0 < H y else H y < 0)) → ((∀ y ∈
@@ -981,14 +991,18 @@ theorem P3650T1LocalCoherence {n : Nat} (p : P3381T1PolygonBoundary n)
     have hzclosure : z ∈ closure (openSegment Real (p.vertex a) (p.vertex b)) :=
         LocalCoherenceProof.hzclosure n p a b z hzab
     have hidxL : ∀ t : Fin (n + 3), t ∈ ({a, b} : Set (Fin (n + 3))) →
-        ∃ i : Fin (C.left_n + 3), C.left.vertex i = p.vertex t := LocalCoherenceProof.hidxL n p a
+        ∃ i : Fin (C.leftParameter + 3), C.left.vertex i = p.vertex t :=
+            LocalCoherenceProof.hidxL n p a
             b C
     have hidxR : ∀ t : Fin (n + 3), t ∈ ({a, b} : Set (Fin (n + 3))) →
-        ∃ i : Fin (C.right_n + 3), C.right.vertex i = p.vertex t := LocalCoherenceProof.hidxR n p
+        ∃ i : Fin (C.rightParameter + 3), C.right.vertex i = p.vertex t :=
+            LocalCoherenceProof.hidxR n p
             a b C
-    have hidxLz : ∃ i : Fin (C.left_n + 3), C.left.vertex i = z := LocalCoherenceProof.hidxLz n p
+    have hidxLz : ∃ i : Fin (C.leftParameter + 3), C.left.vertex i = z :=
+        LocalCoherenceProof.hidxLz n p
         a b C z hzab hidxL
-    have hidxRz : ∃ i : Fin (C.right_n + 3), C.right.vertex i = z := LocalCoherenceProof.hidxRz n
+    have hidxRz : ∃ i : Fin (C.rightParameter + 3), C.right.vertex i = z :=
+        LocalCoherenceProof.hidxRz n
         p a b C z hzab hidxR
     obtain ⟨iL, hiL⟩ := hidxLz
     obtain ⟨iR, hiR⟩ := hidxRz
@@ -1049,8 +1063,8 @@ theorem P3650T1LocalCoherence {n : Nat} (p : P3381T1PolygonBoundary n)
         (y ∈ OR ↔ if s then P3381T1TriangleDeterminant ![p.vertex a, p.vertex b, y] < 0
           else 0 < P3381T1TriangleDeterminant ![p.vertex a, p.vertex b, y]) := by
     intro x hx
-    let ilast : Fin (C.left_n + 3) := Fin.last (C.left_n + 2)
-    let irlast : Fin (C.right_n + 3) := Fin.last (C.right_n + 2)
+    let ilast : Fin (C.leftParameter + 3) := Fin.last (C.leftParameter + 2)
+    let irlast : Fin (C.rightParameter + 3) := Fin.last (C.rightParameter + 2)
     have hfirstL : C.il 0 = a := LocalCoherenceProof.hfirstL n p a b C
     have hfirstR : C.ir 0 = b := LocalCoherenceProof.hfirstR n p a b C
     have hlastL : C.il ilast = b := LocalCoherenceProof.hlastL n p a b C

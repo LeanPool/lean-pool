@@ -5,22 +5,12 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.ApollonianSuperharmonic.AllowedSubtileIncidence
-public import LeanPool.ApollonianSuperharmonic.BandOrderedGeneralConfiguration
-public import LeanPool.ApollonianSuperharmonic.BandOrderedGeneralLayoutCertificate
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.BandOrderedGeneralSelectedContactRow
 public import LeanPool.ApollonianSuperharmonic.BandOriginalOccurrenceIntersectionClassification
-public import LeanPool.ApollonianSuperharmonic.BandSubtileOccurrence
-public import LeanPool.ApollonianSuperharmonic.FootprintEdges
-public import LeanPool.ApollonianSuperharmonic.GaussianRealPoint
-public import LeanPool.ApollonianSuperharmonic.PeriodicSubtileIndex
 public import LeanPool.ApollonianSuperharmonic.P3055T1ExteriorCentralIncidence
-public import LeanPool.ApollonianSuperharmonic.P3055T1ParentVectorNormalForms
 public import LeanPool.ApollonianSuperharmonic.P3055T1SignedCentroidNormalForms
-public import LeanPool.ApollonianSuperharmonic.ProperBandQuadruple
-public import LeanPool.ApollonianSuperharmonic.SubtileOccurrenceInterpretation
-public import LeanPool.ApollonianSuperharmonic.TileTranslationFormulas
-public import LeanPool.ApollonianSuperharmonic.VectorRecursionLaws
 
 -- [TABLET NODE: BandOrderedGeneralSelectedContactRowExists]
 

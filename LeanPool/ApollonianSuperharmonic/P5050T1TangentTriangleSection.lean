@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P5050T1RadialSection
 public import LeanPool.ApollonianSuperharmonic.P4909T1TangentSegments
 

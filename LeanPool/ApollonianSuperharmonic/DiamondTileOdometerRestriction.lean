@@ -5,15 +5,18 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.DiamondOdometer
 public import LeanPool.ApollonianSuperharmonic.DiamondTileRecursiveIdentification
 public import LeanPool.ApollonianSuperharmonic.TileOdometerAffineTranslation
 public import LeanPool.ApollonianSuperharmonic.P4194T1DiamondVertexIncidence
-public import LeanPool.ApollonianSuperharmonic.DiamondVertexDomains
 public import LeanPool.ApollonianSuperharmonic.DiamondTileGeometry
 public import LeanPool.ApollonianSuperharmonic.P4207T1UnitRestrictions
 public import LeanPool.ApollonianSuperharmonic.P4207T1ShiftedPredecessor
 public import LeanPool.ApollonianSuperharmonic.P4223T1DiamondRowNumerators
+public import Mathlib.Tactic.ENatToNat
+public import Mathlib.Tactic.Polynomial.Basic
 
 -- [TABLET NODE: DiamondTileOdometerRestriction]
 

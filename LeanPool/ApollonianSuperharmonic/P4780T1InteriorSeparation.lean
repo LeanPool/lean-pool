@@ -5,9 +5,10 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P4780T1OverlapBound
 public import LeanPool.ApollonianSuperharmonic.P4780T1StrictInterior
-public import Mathlib.Topology.Algebra.Group.Basic
 
 -- [TABLET NODE: P4780T1InteriorSeparation]
 

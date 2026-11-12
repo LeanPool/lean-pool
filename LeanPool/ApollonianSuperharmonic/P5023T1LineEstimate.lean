@@ -5,9 +5,9 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.ApollonianSuperharmonic.Preamble
+public import Mathlib.Init
+
 public import Mathlib.Analysis.Real.Sqrt
-public import Mathlib.Tactic.Linarith
 
 -- [TABLET NODE: P5023T1LineEstimate]
 

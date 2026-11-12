@@ -5,9 +5,11 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P5064T3Rectangles
 public import LeanPool.ApollonianSuperharmonic.SubtileOccurrenceInterpretation
-public import Mathlib.Tactic.Ring
+public import Mathlib.LinearAlgebra.Matrix.Notation
 
 -- [TABLET NODE: P5098T1OccurrenceSquares]
 
@@ -43,9 +45,13 @@ theorem P5098T1OccurrenceSquares (r s : Nat) (o : PeriodicSubtileIndex) :
   rcases o with ⟨l, m, n⟩
   cases l
   all_goals
-    simp? [SubtileOccurrenceInterpretation, P5064T3Rectangles,
-      TileTranslation, GaussianTranslation, FordTile, FordCellDomain,
-      Finset.image_image]
+    simp only [SubtileOccurrenceInterpretation, TileTranslation, Int.reduceNeg, Nat.cast_add,
+        Zsqrtd.smul_val, mul_neg, neg_add_rev, Zsqrtd.add_def, P5064T3Rectangles, FordTile,
+        FordCellDomain, Finset.product_eq_sprod, Finset.image_image, GaussianTranslation,
+        zero_add, Fin.isValue, Matrix.cons_val', Bool.false_eq_true, ↓reduceIte,
+        Matrix.cons_val_fin_one, Matrix.cons_val, Matrix.cons_val_one, Finset.image_empty,
+        neg_mul, Finset.range_zero, Finset.product_empty, ProtoTile.mk.injEq, Zsqrtd.mk.injEq,
+        add_right_inj, true_and, Matrix.cons_val_zero]
     try { constructor
           · apply Finset.image_congr
             intro x hx

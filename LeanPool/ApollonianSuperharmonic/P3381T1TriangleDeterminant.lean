@@ -5,7 +5,10 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.ApollonianSuperharmonic.Preamble
+public import Mathlib.Init
+public import Mathlib.Algebra.Group.Fin.Basic
+public import Mathlib.Basic.Real.Basic
+
 
 -- [TABLET NODE: P3381T1TriangleDeterminant]
 

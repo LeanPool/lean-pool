@@ -5,10 +5,10 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.AncestorOdometer
 public import LeanPool.ApollonianSuperharmonic.AncestorTileCentralCovariance
-public import LeanPool.ApollonianSuperharmonic.PartialOdometerAffineTranslateFormulas
-public import LeanPool.ApollonianSuperharmonic.PartialOdometerHalfTurnFormulas
 public import LeanPool.ApollonianSuperharmonic.TileOdometerAffineTranslation
 public import LeanPool.ApollonianSuperharmonic.TileOdometerCentralSymmetry
 

@@ -5,12 +5,21 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P3650T1VisibleDiagonal
 public import LeanPool.ApollonianSuperharmonic.P3650T1CyclicChildren
-public import LeanPool.ApollonianSuperharmonic.P3650T1ParitySum
-public import LeanPool.ApollonianSuperharmonic.P3650T1TriangleEntry
 public import LeanPool.ApollonianSuperharmonic.P3544T1TriangleRayGeometry
 public import LeanPool.ApollonianSuperharmonic.P5667T1CyclicChildrenOldArcsPreconnected
+public import Mathlib.Algebra.Order.BigOperators.Expect
+public import Mathlib.Algebra.Order.Field.Power
+public import Mathlib.Algebra.Order.Ring.Star
+public import Mathlib.Analysis.Normed.Group.AddTorsor
+public import Mathlib.Analysis.Real.Sqrt
+public import Mathlib.LinearAlgebra.AffineSpace.FiniteDimensional
+public import Mathlib.Logic.Equiv.PartialEquiv
+public import Mathlib.RingTheory.SimpleModule.Basic
+public import Mathlib.Topology.Algebra.Module.ModuleTopology
 
 -- [TABLET NODE: P3650T1OldArcEven]
 
@@ -211,7 +220,10 @@ private theorem leftFirstIndex :
   have hu0 : C.u[0]? = some (D.a + 1) := by
     simpa [List.getElem?_append, C.hu] using hrot1
   have hleft1 := congrArg (fun l => l[1]?) C.left_order
-  simp? at hleft1
+  simp only [List.ofFn_succ, Fin.succ_zero_eq_one, Fin.succ_one_eq_two, List.length_cons,
+      List.length_ofFn, lt_add_iff_pos_left, add_pos_iff, Order.lt_two_iff, zero_le, or_true,
+      getElem?_pos, List.getElem_cons_succ, List.getElem_cons_zero, List.length_append,
+      List.length_nil, zero_add, Order.lt_add_one_iff, Option.some.injEq] at hleft1
   have hu0val : C.u[0]'C.hu = D.a + 1 := by
     have hopt := hu0
     rw [List.getElem?_eq_getElem C.hu] at hopt
@@ -289,7 +301,7 @@ private theorem cyclicStep :
   · rw [ite_eq_left hz]
     have hmod : m + 2 + (2 : Nat) = m + 3 + 1 := by omega
     norm_num [hmod, hz]
-  · simp? [hz]
+  · simp only [hz, ↓reduceIte, Fin.coe_ofNat_eq_mod, Nat.add_mod_mod]
     have hwrap : i.val + 1 = m + 3 ∨ i.val + 1 < m + 3 := by omega
     rcases hwrap with hwrap | hlt
     · have hleft : i.val - 1 + 2 = m + 3 := by omega
@@ -532,7 +544,7 @@ private theorem rightPreviousParent :
             P3650T1VisibleDiagonal p E), (P3650T1CyclicChildren p D.a D.b) → (∀ {m : Nat}, ∀
             (q : P3381T1PolygonBoundary m), ∀ (a : Fin (m + 3)), ∀ (b : Fin (m +
             3)), ∀ (K : P3650T1CyclicChildren q a b), (K.rotation % (m + 3) = a.val) → (K.ir
-                ⟨K.right_n + 1, by omega⟩ = a - 1))) := by
+                ⟨K.rightParameter + 1, by omega⟩ = a - 1))) := by
   classical
   intro n p E D C m q a b K hrot
   have hidx : (m + 2 + K.rotation) % (m + 3) = (a - 1).val := by
@@ -574,22 +586,22 @@ private theorem rightPreviousParent :
     exact List.getLast?_append_of_ne_nil [b] (List.ne_nil_of_length_pos K.hv)
   rw [K.parent_order, hparentlast] at hrotlast?
   have hvlast : K.v.getLast? = some (a-1) := hrotlast?
-  have hlenV : K.v.length = K.right_n + 1 := by
+  have hlenV : K.v.length = K.rightParameter + 1 := by
     have h := congrArg List.length K.right_order
     simp at h
     omega
-  have hget : (List.ofFn K.ir)[K.right_n+1]? =
-      some (K.ir ⟨K.right_n+1, by omega⟩) := by
-    have hbnd : K.right_n+1 < (List.ofFn K.ir).length := by simp
+  have hget : (List.ofFn K.ir)[K.rightParameter+1]? =
+      some (K.ir ⟨K.rightParameter+1, by omega⟩) := by
+    have hbnd : K.rightParameter+1 < (List.ofFn K.ir).length := by simp
     rw [List.getElem?_eq_getElem hbnd, List.getElem_ofFn hbnd]
   rw [K.right_order] at hget
   simp only [List.getElem?_cons_succ] at hget
-  rw [List.getElem?_append_left (by omega : K.right_n < K.v.length)] at hget
-  have hvget : K.v.getLast? = some (K.ir ⟨K.right_n+1, by omega⟩) := by
+  rw [List.getElem?_append_left (by omega : K.rightParameter < K.v.length)] at hget
+  have hvget : K.v.getLast? = some (K.ir ⟨K.rightParameter+1, by omega⟩) := by
     rw [List.getLast?_eq_getElem?]
-    rw [show K.v.length - 1 = K.right_n by omega]
+    rw [show K.v.length - 1 = K.rightParameter by omega]
     exact hget
-  have hright : some (a - 1) = some (K.ir ⟨K.right_n+1, by omega⟩) :=
+  have hright : some (a - 1) = some (K.ir ⟨K.rightParameter+1, by omega⟩) :=
     hvlast.symm.trans hvget
   have hne : K.v ≠ [] := List.ne_nil_of_length_pos K.hv
   have hright' := hright
@@ -603,7 +615,7 @@ private theorem hbaseChild :
             P3650T1VisibleDiagonal p E), ∀ (C : P3650T1CyclicChildren p D.a D.b), (C.il 1 =
             D.a + 1) → ((∀ {m : Nat}, ∀ (i : Fin (m + 3)), (i - 1) + 2 = i + 1) → ((D.a = E.b -
             (1 : Fin (n + (3 : ℕ)))) → ((D.b = E.b + (1 : Fin (n + (3 : ℕ)))) → (C.u = [E.b] ∧
-            C.left_n = 0)))) ) := by
+            C.leftParameter = 0)))) ) := by
   classical
   intro n p E D C leftFirstIndex cyclicStep ha hb
   have hN : 0 < n + 3 := by omega
@@ -614,7 +626,9 @@ private theorem hbaseChild :
   conv_rhs at hrot0 =>
     rw [List.getElem?_eq_getElem (Nat.mod_lt _ (by simp []))]
     rw [List.getElem_ofFn]
-  simp? at hrot0
+  simp only [List.length_cons, List.length_append, lt_add_iff_pos_left, Order.lt_add_one_iff,
+      zero_le, getElem?_pos, List.getElem_cons_zero, zero_add, List.ofFn_succ,
+      Fin.succ_zero_eq_one, Fin.succ_one_eq_two, List.length_ofFn, Option.some.injEq] at hrot0
   have hrLen : C.rotation % (List.ofFn (fun i : Fin (n + 3) => i)).length = D.a.val := by
     simpa only [hrotLen] using (congrArg Fin.val hrot0).symm
   have hr : C.rotation % (n + 3) = D.a.val := by simpa [hrotLen] using hrLen
@@ -698,7 +712,7 @@ private theorem hbaseChild :
     have hposeq := (hnd.getElem_inj_iff).mp (hleftCell.trans hlast.symm)
     omega
   have huval : (C.u)[0]'(by omega) = E.b := by
-    have hleftn : 1 < C.left_n + 3 := by omega
+    have hleftn : 1 < C.leftParameter + 3 := by omega
     have hleftOrder := congrArg (fun l => l[1]?) C.left_order
     simp only [List.getElem?_ofFn, dite_eq_left hleftn] at hleftOrder
     simp only [List.getElem?_cons_succ,
@@ -726,7 +740,8 @@ private theorem hleftIndices :
       exact
         ∀ (n : Nat), ∀ (p : P3381T1PolygonBoundary n), ∀ (E : P3650T1ExposedCorner p), ∀ (D :
             P3650T1VisibleDiagonal p E), ∀ (C : P3650T1CyclicChildren p D.a D.b), (D.a = E.b
-            - (1 : Fin (n + (3 : ℕ)))) → ((C.u = [E.b] ∧ C.left_n = 0) → (List.ofFn C.il = [D.a,
+            - (1 : Fin (n + (3 : ℕ)))) → ((C.u = [E.b] ∧ C.leftParameter = 0) → (List.ofFn C.il =
+                [D.a,
             E.b, D.b])) ) := by
   classical
   intro n p E D C ha hbaseChild
@@ -810,13 +825,13 @@ private theorem hseedRAt680 :
     · intro hdiag
       exact middleNotSegment (by simpa [ha, hb, P3381T1TriangleDeterminant] using
           E.nondegenerate) hdiag
-  · let S : Finset Real := Finset.univ.image (fun i : Fin (C.right_n + 3) =>
+  · let S : Finset Real := Finset.univ.image (fun i : Fin (C.rightParameter + 3) =>
       E.ell (C.right.vertex i))
     have hS : S.Nonempty := by
       refine ⟨E.ell (C.right.vertex 0), ?_⟩
       exact Finset.mem_image.mpr ⟨0, Finset.mem_univ _, rfl⟩
     let H := S.max' hS
-    have hbound (i : Fin (C.right_n + 3)) : E.ell (C.right.vertex i) <
+    have hbound (i : Fin (C.rightParameter + 3)) : E.ell (C.right.vertex i) <
         E.ell (p.vertex E.b) := by
       have hirne : C.ir i ≠ E.b := by
         intro heq
@@ -839,7 +854,7 @@ private theorem hseedRAt680 :
       intro y hy
       rcases Finset.mem_image.mp hy with ⟨i, hi, rfl⟩
       exact hbound i
-    have hbelow (i : Fin (C.right_n + 3)) : E.ell (C.right.vertex i) ≤ H := by
+    have hbelow (i : Fin (C.rightParameter + 3)) : E.ell (C.right.vertex i) ≤ H := by
       apply Finset.le_max'
       exact Finset.mem_image.mpr ⟨i, Finset.mem_univ _, rfl⟩
     have hB : H < E.ell (p.vertex E.b) := hH
@@ -862,7 +877,7 @@ private theorem hseedLAt728 :
             Fin (n + (3 : ℕ))), p.vertex i ∈ (convexHull ℝ : Set (ℝ × ℝ) → Set (ℝ × ℝ))
             {p.vertex (E.b - (1 : Fin (n + (3 : ℕ)))), p.vertex E.b,
             p.vertex (E.b + (1 : Fin (n + (3 : ℕ))))} → i = E.b - (1 : Fin (n + (3 : ℕ))) ∨ i =
-            E.b ∨ i = E.b + (1 : Fin (n + (3 : ℕ)))) → ((C.u = [E.b] ∧ C.left_n = 0) →
+            E.b ∨ i = E.b + (1 : Fin (n + (3 : ℕ)))) → ((C.u = [E.b] ∧ C.leftParameter = 0) →
             ((Set.range C.il = {D.a, E.b, D.b}) → ((Set.range C.left.vertex =
             {p.vertex (E.b - 1), p.vertex E.b, p.vertex (E.b + 1)}) → (∃ x, x ∈ CR \ e ∧ x ∉
             OL))))))))) ) := by
@@ -876,9 +891,9 @@ private theorem hseedLAt728 :
     have hfirst : C.ir 0 = D.b := by
       have h := congrArg List.head? C.right_order
       simpa using h
-    have hlast : C.ir (Fin.last (C.right_n + 2)) = D.a := by
+    have hlast : C.ir (Fin.last (C.rightParameter + 2)) = D.a := by
       have hlast? : (List.ofFn C.ir).getLast? =
-          some (C.ir (Fin.last (C.right_n + 2))) := by
+          some (C.ir (Fin.last (C.rightParameter + 2))) := by
         rw [List.getLast?_eq_getLast_of_ne_nil (by simp)]
         rw [List.getLast_ofFn_succ]
       have h := congrArg List.getLast? C.right_order
@@ -890,18 +905,18 @@ private theorem hseedLAt728 :
         simp
       rw [hrhs] at h
       exact Option.some.inj h
-    have hii : (1 : Fin (C.right_n + 3)) ≠ Fin.last (C.right_n + 2) := by
+    have hii : (1 : Fin (C.rightParameter + 3)) ≠ Fin.last (C.rightParameter + 2) := by
       intro he
       have hv := congrArg Fin.val he
       simp at hv
-    have heq' : C.ir 1 = C.ir (Fin.last (C.right_n + 2)) := heq.trans hlast.symm
+    have heq' : C.ir 1 = C.ir (Fin.last (C.rightParameter + 2)) := heq.trans hlast.symm
     exact hii (C.ir_injective heq')
   have hjneB : j ≠ D.b := by
     intro heq
     have hfirst : C.ir 0 = D.b := by
       have h := congrArg List.head? C.right_order
       simpa using h
-    have hi' : (1 : Fin (C.right_n + 3)) ≠ 0 := by
+    have hi' : (1 : Fin (C.rightParameter + 3)) ≠ 0 := by
       intro he
       have hv := congrArg Fin.val he
       norm_num at hv
@@ -1291,7 +1306,7 @@ private theorem hrightLast :
       exact
         ∀ (n : Nat), ∀ (p : P3381T1PolygonBoundary n), ∀ (E : P3650T1ExposedCorner p), ∀ (D :
             P3650T1VisibleDiagonal p E), ∀ (C : P3650T1CyclicChildren p D.a D.b), C.ir
-            (Fin.last (C.right_n + 2)) = D.a ) := by
+            (Fin.last (C.rightParameter + 2)) = D.a ) := by
   classical
   intro n p E D C
   have hlast? : (List.ofFn C.ir).getLast? = some (C.ir (Fin.last _)) := by
@@ -1325,7 +1340,7 @@ private theorem hleftLast :
       exact
         ∀ (n : Nat), ∀ (p : P3381T1PolygonBoundary n), ∀ (E : P3650T1ExposedCorner p), ∀ (D :
             P3650T1VisibleDiagonal p E), ∀ (C : P3650T1CyclicChildren p D.a D.b), C.il
-            (Fin.last (C.left_n + 2)) = D.b ) := by
+            (Fin.last (C.leftParameter + 2)) = D.b ) := by
   classical
   intro n p E D C
   have hlast? : (List.ofFn C.il).getLast? = some (C.il (Fin.last _)) := by
@@ -1833,7 +1848,8 @@ private theorem hrightCenterAt1156 :
             P3650T1VisibleDiagonal p E), ∀ (C : P3650T1CyclicChildren p D.a D.b), (D.a = E.b)
             → (
         let vb := p.vertex E.b
-        (C.ir (Fin.last (C.right_n + 2)) = D.a) → (C.right.vertex (Fin.last (C.right_n + 2)) =
+        (C.ir (Fin.last (C.rightParameter + 2)) = D.a) → (C.right.vertex (Fin.last
+            (C.rightParameter + 2)) =
             vb)) ) := by
   classical
   intro n p E D C ha vb hrightLast
@@ -1858,7 +1874,7 @@ private theorem hrightWrap :
       exact
         ∀ (n : Nat), ∀ (p : P3381T1PolygonBoundary n), ∀ (E : P3650T1ExposedCorner p), ∀ (D :
             P3650T1VisibleDiagonal p E), ∀ (C : P3650T1CyclicChildren p D.a D.b), Fin.last
-            (C.right_n + 2) + 1 = (0 : Fin (C.right_n + 3)) ) := by
+            (C.rightParameter + 2) + 1 = (0 : Fin (C.rightParameter + 3)) ) := by
   classical
   intro n p E D C
   apply Fin.ext
@@ -1871,7 +1887,7 @@ private theorem hrightIncidentPrevAt1166 :
         ∀ (n : Nat), ∀ (p : P3381T1PolygonBoundary n), ∀ (E : P3650T1ExposedCorner p), ∀ (D :
             P3650T1VisibleDiagonal p E), ∀ (C : P3650T1CyclicChildren p D.a D.b),
         let va := p.vertex (E.b - 1)
-        (C.ir ⟨C.right_n+1, by omega⟩ = E.b - 1) → (C.right.vertex ⟨C.right_n + 1,
+        (C.ir ⟨C.rightParameter+1, by omega⟩ = E.b - 1) → (C.right.vertex ⟨C.rightParameter + 1,
             by omega⟩ = va)) := by
   classical
   intro n p E D C va hrightPrev
@@ -1921,19 +1937,22 @@ private theorem havoidAt1176 :
                 i (AffineMap.lineMap x y t) = (1 - t) * A.coord i x + t * A.coord i
             y) → (∀ (r₀ : ℝ),
         let r : Real := min r₀ 1
-        (∀ x ∈ Metric.ball (C.right.vertex (Fin.last (C.right_n + (2 : ℕ)))) r, x ∉ ⋃
-            (j : Fin (C.right_n + (3 : ℕ))), if j ≠ Fin.last (C.right_n + (2 : ℕ)) ∧ j + (1 : Fin
-            (C.right_n + (3 : ℕ))) ≠ Fin.last (C.right_n + (2 : ℕ)) then segment ℝ
-            (C.right.vertex j) (C.right.vertex (j + (1 : Fin (C.right_n + (3 : ℕ))))) else ∅) → (
+        (∀ x ∈ Metric.ball (C.right.vertex (Fin.last (C.rightParameter + (2 : ℕ)))) r, x ∉ ⋃
+            (j : Fin (C.rightParameter + (3 : ℕ))), if j ≠ Fin.last (C.rightParameter + (2 : ℕ))
+                ∧ j + (1 : Fin
+            (C.rightParameter + (3 : ℕ))) ≠ Fin.last (C.rightParameter + (2 : ℕ)) then segment ℝ
+            (C.right.vertex j) (C.right.vertex (j + (1 : Fin (C.rightParameter + (3 : ℕ))))) else
+                ∅) → (
         let δ₀ : Real := r / (2 * (‖va - vb‖ + ‖vc - vb‖ + 1))
         let δ : Real := min δ₀ (1/2)
         let U : Real × Real := AffineMap.lineMap vb va (-δ)
         let X : Real × Real := AffineMap.lineMap vb vc δ
         let γ : Real → Real × Real := fun t => AffineMap.lineMap U X t
         (0 < δ) → ((∀ (t : Real), A.coord 0 (γ t) = -(1-t)*δ) → ((∀ (t : Real), A.coord 2 (γ t) =
-            t*δ) → ((C.right.vertex (Fin.last (C.right_n
-            + 2)) = vb) → ((C.right.vertex 0 = p.vertex D.b) → ((Fin.last (C.right_n + 2) + 1 =
-                (0 : Fin (C.right_n + 3))) → ((C.right.vertex ⟨C.right_n
+            t*δ) → ((C.right.vertex (Fin.last (C.rightParameter
+            + 2)) = vb) → ((C.right.vertex 0 = p.vertex D.b) → ((Fin.last (C.rightParameter + 2)
+                + 1 =
+                (0 : Fin (C.rightParameter + 3))) → ((C.right.vertex ⟨C.rightParameter
             + 1, by omega⟩ = va) → ((∀ (t : Real), (t ∈ Set.Icc (0 : Real) 1) → (γ t ∈
             Metric.ball vb r)) → (∀ t ∈ Set.Icc (0 : Real) 1, γ t ∉ CR)))))))))))))))) := by
   classical
@@ -1942,19 +1961,19 @@ private theorem havoidAt1176 :
       hrightIncidentPrev hballPath t ht hcarrier
   have hnear' := hnear (γ t) (by rw [hrightCenter]; exact hballPath t ht)
   obtain ⟨i, hi⟩ := Set.mem_iUnion.mp hcarrier
-  have hinc : i = Fin.last (C.right_n + 2) ∨
-      i + 1 = Fin.last (C.right_n + 2) := by
+  have hinc : i = Fin.last (C.rightParameter + 2) ∨
+      i + 1 = Fin.last (C.rightParameter + 2) := by
     by_contra hn
-    have hnot : i ≠ Fin.last (C.right_n + 2) ∧
-        i + 1 ≠ Fin.last (C.right_n + 2) := by
+    have hnot : i ≠ Fin.last (C.rightParameter + 2) ∧
+        i + 1 ≠ Fin.last (C.rightParameter + 2) := by
       constructor
       · intro he
         exact hn (Or.inl he)
       · intro he
         exact hn (Or.inr he)
     have hsegment :
-        γ t ∈ (if i ≠ Fin.last (C.right_n + 2) ∧
-            i + 1 ≠ Fin.last (C.right_n + 2) then
+        γ t ∈ (if i ≠ Fin.last (C.rightParameter + 2) ∧
+            i + 1 ≠ Fin.last (C.rightParameter + 2) then
           segment Real (C.right.vertex i) (C.right.vertex (i + 1)) else ∅) := by
       rw [ite_eq_left hnot]
       exact hi
@@ -1985,24 +2004,24 @@ private theorem havoidAt1176 :
     rw [ht1] at h2
     simp at h2
     exact (ne_of_gt hδ) h2.symm
-  · have hidx : i = ⟨C.right_n + 1, by omega⟩ := by
+  · have hidx : i = ⟨C.rightParameter + 1, by omega⟩ := by
       have hv0 := congrArg Fin.val hprevEdge
-      have hnotlast : i ≠ Fin.last (C.right_n + 2) := by
+      have hnotlast : i ≠ Fin.last (C.rightParameter + 2) := by
         intro he
         rw [he, Fin.val_add_one] at hv0
         simp at hv0
-      have hv : i.val + 1 = C.right_n + 2 := by
+      have hv : i.val + 1 = C.rightParameter + 2 := by
         simpa [Fin.val_add_one, hnotlast] using hv0
-      have hv' : i.val + 1 = (C.right_n + 1) + 1 := by
+      have hv' : i.val + 1 = (C.rightParameter + 1) + 1 := by
         simpa [Nat.add_assoc] using hv
       exact Fin.ext (Nat.add_right_cancel hv')
     rw [hidx] at hi
     have hnextLast :
-        (⟨C.right_n + 1, by omega⟩ : Fin (C.right_n + 3)) + 1 =
-          Fin.last (C.right_n + 2) := by
+        (⟨C.rightParameter + 1, by omega⟩ : Fin (C.rightParameter + 3)) + 1 =
+          Fin.last (C.rightParameter + 2) := by
       apply Fin.ext
-      have hne : (⟨C.right_n + 1, by omega⟩ : Fin (C.right_n + 3)) ≠
-          Fin.last (C.right_n + 2) := by
+      have hne : (⟨C.rightParameter + 1, by omega⟩ : Fin (C.rightParameter + 3)) ≠
+          Fin.last (C.rightParameter + 2) := by
         intro he
         have hv := congrArg Fin.val he
         simp at hv
@@ -2517,7 +2536,7 @@ private theorem hleftWrap :
       exact
         ∀ (n : Nat), ∀ (p : P3381T1PolygonBoundary n), ∀ (E : P3650T1ExposedCorner p), ∀ (D :
             P3650T1VisibleDiagonal p E), ∀ (C : P3650T1CyclicChildren p D.a D.b), Fin.last
-            (C.left_n + 2) + 1 = (0 : Fin (C.left_n + 3)) ) := by
+            (C.leftParameter + 2) + 1 = (0 : Fin (C.leftParameter + 3)) ) := by
   classical
   intro n p E D C
   apply Fin.ext
@@ -2529,7 +2548,8 @@ private theorem hleftEnd :
       exact
         ∀ (n : Nat), ∀ (p : P3381T1PolygonBoundary n), ∀ (E : P3650T1ExposedCorner p), ∀ (D :
             P3650T1VisibleDiagonal p E), ∀ (C : P3650T1CyclicChildren p D.a D.b), (C.il
-            (Fin.last (C.left_n + 2)) = D.b) → (C.left.vertex (Fin.last (C.left_n + 2)) =
+            (Fin.last (C.leftParameter + 2)) = D.b) → (C.left.vertex (Fin.last (C.leftParameter +
+                2)) =
             p.vertex D.b) ) := by
   classical
   intro n p E D C hleftLast
@@ -2580,18 +2600,21 @@ private theorem havoidAt1419 :
             Real), ∀ (t : Real), A.coord i (AffineMap.lineMap x y t) = (1 - t) * A.coord i x + t
             * A.coord i y) → (∀ (r₀ : ℝ),
         let r : Real := min r₀ 1
-        (∀ x ∈ Metric.ball (C.left.vertex (0 : Fin (C.left_n + (3 : ℕ)))) r, x ∉ ⋃ (j : Fin
-            (C.left_n + (3 : ℕ))), if j ≠ (0 : Fin (C.left_n + (3 : ℕ))) ∧ j + (1 : Fin (C.left_n
-            + (3 : ℕ))) ≠ (0 : Fin (C.left_n + (3 : ℕ))) then segment ℝ (C.left.vertex j)
-            (C.left.vertex (j + (1 : Fin (C.left_n + (3 : ℕ))))) else ∅) → (
+        (∀ x ∈ Metric.ball (C.left.vertex (0 : Fin (C.leftParameter + (3 : ℕ)))) r, x ∉ ⋃ (j : Fin
+            (C.leftParameter + (3 : ℕ))), if j ≠ (0 : Fin (C.leftParameter + (3 : ℕ))) ∧ j + (1 :
+                Fin (C.leftParameter
+            + (3 : ℕ))) ≠ (0 : Fin (C.leftParameter + (3 : ℕ))) then segment ℝ (C.left.vertex j)
+            (C.left.vertex (j + (1 : Fin (C.leftParameter + (3 : ℕ))))) else ∅) → (
         let δ₀ : Real := r / (2 * (‖va - vb‖ + ‖vc - vb‖ + 1))
         let δ : Real := min δ₀ (1/2)
         let U : Real × Real := AffineMap.lineMap vb vc (-δ)
         let X : Real × Real := AffineMap.lineMap vb va δ
         let γ : Real → Real × Real := fun t => AffineMap.lineMap U X t
         (0 < δ) → ((∀ (t : Real), A.coord 0 (γ t) = t*δ) → ((∀ (t : Real), A.coord 2 (γ t) =
-            -(1-t)*δ) → ((C.left.vertex 0 = vb) → ((C.left.vertex 1 = vc) → ((Fin.last (C.left_n
-            + 2) + 1 = (0 : Fin (C.left_n + 3))) → ((C.left.vertex (Fin.last (C.left_n + 2)) =
+            -(1-t)*δ) → ((C.left.vertex 0 = vb) → ((C.left.vertex 1 = vc) → ((Fin.last
+                (C.leftParameter
+            + 2) + 1 = (0 : Fin (C.leftParameter + 3))) → ((C.left.vertex (Fin.last
+                (C.leftParameter + 2)) =
             p.vertex D.b) → ((∀ (t : Real), (t ∈ Set.Icc (0 : Real) 1) → (γ t ∈ Metric.ball
             (C.left.vertex 0) r)) → (∀ t ∈ Set.Icc (0 : Real) 1, γ t ∉ CL))))))))))))))) ) := by
   classical
@@ -2635,7 +2658,7 @@ private theorem havoidAt1419 :
     have hsnonneg : 0 ≤ s := hs.1
     have hδneg : -δ < 0 := neg_lt_zero.mpr hδ
     linarith only [h2', hsnonneg, hδneg]
-  · have hidx : i = Fin.last (C.left_n + 2) := by
+  · have hidx : i = Fin.last (C.leftParameter + 2) := by
       have hv := congrArg Fin.val hlastEdge
       rw [Fin.val_add_one] at hv
       split_ifs at hv with hwrap
@@ -2707,7 +2730,8 @@ private theorem hrightCenterAt1503 :
             P3650T1VisibleDiagonal p E), ∀ (C : P3650T1CyclicChildren p D.a D.b), (D.a = E.b)
             → (
         let vb := p.vertex E.b
-        (C.ir (Fin.last (C.right_n + 2)) = D.a) → (C.right.vertex (Fin.last (C.right_n + 2)) =
+        (C.ir (Fin.last (C.rightParameter + 2)) = D.a) → (C.right.vertex (Fin.last
+            (C.rightParameter + 2)) =
             vb)) ) := by
   classical
   intro n p E D C ha vb hrightLast
@@ -2721,7 +2745,7 @@ private theorem hrightIncidentPrevAt1506 :
         ∀ (n : Nat), ∀ (p : P3381T1PolygonBoundary n), ∀ (E : P3650T1ExposedCorner p), ∀ (D :
             P3650T1VisibleDiagonal p E), ∀ (C : P3650T1CyclicChildren p D.a D.b),
         let va := p.vertex (E.b - 1)
-        (C.ir ⟨C.right_n+1, by omega⟩ = E.b - 1) → (C.right.vertex ⟨C.right_n + 1,
+        (C.ir ⟨C.rightParameter+1, by omega⟩ = E.b - 1) → (C.right.vertex ⟨C.rightParameter + 1,
             by omega⟩ = va)) := by
   classical
   intro n p E D C va hrightPrev
@@ -2733,14 +2757,14 @@ private theorem hrightNextLast :
       classical
       exact
         ∀ (n : Nat), ∀ (p : P3381T1PolygonBoundary n), ∀ (E : P3650T1ExposedCorner p), ∀ (D :
-            P3650T1VisibleDiagonal p E), ∀ (C : P3650T1CyclicChildren p D.a D.b), (⟨C.right_n
-            + 1, by omega⟩ : Fin (C.right_n + 3)) + 1 =
-            Fin.last (C.right_n + 2) ) := by
+            P3650T1VisibleDiagonal p E), ∀ (C : P3650T1CyclicChildren p D.a D.b), (⟨C.rightParameter
+            + 1, by omega⟩ : Fin (C.rightParameter + 3)) + 1 =
+            Fin.last (C.rightParameter + 2) ) := by
   classical
   intro n p E D C
   apply Fin.ext
-  have hne : (⟨C.right_n + 1, by omega⟩ : Fin (C.right_n + 3)) ≠
-      Fin.last (C.right_n + 2) := by
+  have hne : (⟨C.rightParameter + 1, by omega⟩ : Fin (C.rightParameter + 3)) ≠
+      Fin.last (C.rightParameter + 2) := by
     intro he
     have hv := congrArg Fin.val he
     simp at hv
@@ -2762,15 +2786,16 @@ private theorem hXcarrierAt1521 :
         let δ₀ : Real := r / (2 * (‖va - vb‖ + ‖vc - vb‖ + 1))
         let δ : Real := min δ₀ (1/2)
         let X : Real × Real := AffineMap.lineMap vb va δ
-        (0 < δ) → ((δ < 1) → ((C.right.vertex (Fin.last (C.right_n
-            + 2)) = vb) → ((C.right.vertex ⟨C.right_n + 1, by omega⟩ = va) → (((⟨C.right_n + 1,
-                by omega⟩ : Fin (C.right_n + 3)) + 1 =
-            Fin.last (C.right_n + 2)) → (X ∈ CR)))))) := by
+        (0 < δ) → ((δ < 1) → ((C.right.vertex (Fin.last (C.rightParameter
+            + 2)) = vb) → ((C.right.vertex ⟨C.rightParameter + 1, by omega⟩ = va) →
+                (((⟨C.rightParameter + 1,
+                by omega⟩ : Fin (C.rightParameter + 3)) + 1 =
+            Fin.last (C.rightParameter + 2)) → (X ∈ CR)))))) := by
   classical
   intro n p E D C CR va vb vc r₀ r δ₀ δ X hδ hδlt1 hrightCenter hrightIncidentPrev hrightNextLast
   change X ∈ P3544T1BoundaryCarrier C.right
   change X ∈ ⋃ i, segment Real (C.right.vertex i) (C.right.vertex (i + 1))
-  refine Set.mem_iUnion.mpr ⟨⟨C.right_n + 1, by omega⟩, ?_⟩
+  refine Set.mem_iUnion.mpr ⟨⟨C.rightParameter + 1, by omega⟩, ?_⟩
   rw [hrightNextLast, hrightIncidentPrev, hrightCenter]
   rw [segment_symm]
   rw [segment_eq_image_lineMap]
@@ -2917,7 +2942,7 @@ private theorem rightPreviousParent :
             P3650T1VisibleDiagonal p E), (P3650T1CyclicChildren p D.a D.b) → (∀ {m : Nat}, ∀
             (q : P3381T1PolygonBoundary m), ∀ (a : Fin (m + 3)), ∀ (b : Fin (m +
             3)), ∀ (K : P3650T1CyclicChildren q a b), (K.rotation % (m + 3) = a.val) → (K.ir
-                ⟨K.right_n + 1, by omega⟩ = a - 1))) := by
+                ⟨K.rightParameter + 1, by omega⟩ = a - 1))) := by
   classical
   intro n p E D C m q a b K hrot
   exact OldArcParityProof.rightPreviousParent n p E D C
@@ -2955,8 +2980,10 @@ private theorem hseedRAt3047 :
         let A : AffineBasis (Fin 3) Real (Real × Real) := ⟨vv, hind, hspan⟩
         ((0 : ℝ) < (A.coord
             (0 : Fin (3 : ℕ)) : ℝ × ℝ → ℝ) (p.vertex D.b)) → ((C.ir (Fin.last
-            (C.right_n + (2 : ℕ))) = D.a) → ((C.ir ⟨C.right_n+1, by omega⟩ = E.b - 1) → ((C.ir (0 :
-            Fin (C.right_n + (3 : ℕ))) = D.b) → ((C.il (0 : Fin (C.left_n + (3 : ℕ))) = D.a) →
+            (C.rightParameter + (2 : ℕ))) = D.a) → ((C.ir ⟨C.rightParameter+1, by omega⟩ = E.b -
+                1) → ((C.ir (0 :
+            Fin (C.rightParameter + (3 : ℕ))) = D.b) → ((C.il (0 : Fin (C.leftParameter + (3 :
+                ℕ))) = D.a) →
             ((C.il 1 = E.b + 1) → ((
          (A.coord (0 : Fin (3
             : ℕ)) : ℝ × ℝ → ℝ) (p.vertex (E.b - (1 : Fin (n + (3 : ℕ))))) = (1 : ℝ)) → ((
@@ -2981,11 +3008,11 @@ private theorem hseedRAt3047 :
       va vb vc vv hind hspan A hcoord0 hrightLast hrightPrev hrightFirst hleftFirst hleftNext
       hcoordA0 hcoordA2 hcoordB0 hcoordB2 hcoordC0 hcoordC2 hcoordLine lineMapSub
   let CR := P3544T1BoundaryCarrier C.right
-  obtain ⟨r₀, hr₀, hnear₀⟩ := nonincidentBall C.right (Fin.last (C.right_n + 2))
+  obtain ⟨r₀, hr₀, hnear₀⟩ := nonincidentBall C.right (Fin.last (C.rightParameter + 2))
   let r : Real := min r₀ 1
   have hr : 0 < r := lt_min hr₀ zero_lt_one
   have hnear (x : Real × Real) (hx : x ∈
-      Metric.ball (C.right.vertex (Fin.last (C.right_n + 2))) r) :=
+      Metric.ball (C.right.vertex (Fin.last (C.rightParameter + 2))) r) :=
     hnear₀ x (Metric.ball_subset_ball (min_le_left r₀ 1) hx)
   let δ₀ : Real := r / (2 * (‖va - vb‖ + ‖vc - vb‖ + 1))
   let δ : Real := min δ₀ (1/2)
@@ -3067,8 +3094,10 @@ private theorem hseedLAt3101 :
         let A : AffineBasis (Fin 3) Real (Real × Real) := ⟨vv, hind, hspan⟩
         ((0 : ℝ) < (A.coord
             (2 : Fin (3 : ℕ)) : ℝ × ℝ → ℝ) (p.vertex D.b)) → ((C.ir (Fin.last
-            (C.right_n + (2 : ℕ))) = D.a) → ((C.ir ⟨C.right_n+1, by omega⟩ = E.b - 1) → ((C.il
-            (Fin.last (C.left_n + (2 : ℕ))) = D.b) → ((C.il (0 : Fin (C.left_n + (3 : ℕ))) = D.a)
+            (C.rightParameter + (2 : ℕ))) = D.a) → ((C.ir ⟨C.rightParameter+1, by omega⟩ = E.b -
+                1) → ((C.il
+            (Fin.last (C.leftParameter + (2 : ℕ))) = D.b) → ((C.il (0 : Fin (C.leftParameter + (3
+                : ℕ))) = D.a)
             → ((C.il 1 = E.b + 1) → ((
          (A.coord (0 : Fin (3
             : ℕ)) : ℝ × ℝ → ℝ) (p.vertex (E.b - (1 : Fin (n + (3 : ℕ))))) = (1 : ℝ)) → ((
@@ -3224,7 +3253,8 @@ theorem P3650T1OldArcEven {n : Nat} (p : P3381T1PolygonBoundary n)
   have rightPreviousParent {m : Nat} (q : P3381T1PolygonBoundary m)
       (a b : Fin (m + 3)) (K : P3650T1CyclicChildren q a b)
       (hrot : K.rotation % (m + 3) = a.val) :
-      K.ir ⟨K.right_n + 1, by omega⟩ = a - 1 := OldArcAssembly.rightPreviousParent n p E D C (m
+      K.ir ⟨K.rightParameter + 1, by omega⟩ = a - 1 := OldArcAssembly.rightPreviousParent n p E D
+          C (m
           := m) q a b K hrot
   rcases D.route with hbase | htop
   · rcases hbase with ⟨ha, hb, hempty⟩
@@ -3269,7 +3299,7 @@ theorem P3650T1OldArcEven {n : Nat} (p : P3381T1PolygonBoundary n)
       rw [List.getElem_ofFn]
     have hrotval : C.rotation % (n + 3) = D.a.val := OldArcParityProof.hrotvalAt999 n p E D C hrot0
     have hrightLast := OldArcParityProof.hrightLast n p E D C
-    have hrightPrev : C.ir ⟨C.right_n+1, by omega⟩ = E.b - 1 := by
+    have hrightPrev : C.ir ⟨C.rightParameter+1, by omega⟩ = E.b - 1 := by
       rw [rightPreviousParent p D.a D.b C hrotval, ha]
     have hrightFirst := OldArcParityProof.hrightFirst n p E D C
     have hleftLast := OldArcParityProof.hleftLast n p E D C

@@ -5,56 +5,9 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.ApollonianSuperharmonic.BandPrototile
-public import LeanPool.ApollonianSuperharmonic.BandPrototileCentroidUnique
-public import LeanPool.ApollonianSuperharmonic.BandGenealogy
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.BandPrototileExists
-public import LeanPool.ApollonianSuperharmonic.BandPrototileTranslation
-public import LeanPool.ApollonianSuperharmonic.BandPrototileTranslationNormalForm
-public import LeanPool.ApollonianSuperharmonic.BandRegimeClassification
-public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryCovariance
-public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryCircleAction
-public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryPartialOdometerActionFormulas
-public import LeanPool.ApollonianSuperharmonic.BandPackingShiftPotential
-public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryTileAction
-public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryTileOdometerCovariance
-public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryVectorAction
-public import LeanPool.ApollonianSuperharmonic.BandOrderedGeneralLayout
-public import LeanPool.ApollonianSuperharmonic.BandOrderedGeneralRawSupport
-public import LeanPool.ApollonianSuperharmonic.BandTileSimultaneousInduction
-public import LeanPool.ApollonianSuperharmonic.BandOriginalOccurrenceIntersectionClassification
-public import LeanPool.ApollonianSuperharmonic.BandSignedOccurrenceHalfTurn
-public import LeanPool.ApollonianSuperharmonic.ClosedSquareRealization
-public import LeanPool.ApollonianSuperharmonic.CurvatureOneBandCircleClassification
-public import LeanPool.ApollonianSuperharmonic.CurvatureOneOdometer
-public import LeanPool.ApollonianSuperharmonic.DiamondTileOdometerRestriction
-public import LeanPool.ApollonianSuperharmonic.FordTileOdometerRestriction
-public import LeanPool.ApollonianSuperharmonic.OdometerCompatibility
-public import LeanPool.ApollonianSuperharmonic.OdometerGluing
-public import LeanPool.ApollonianSuperharmonic.OdometerTranslation
-public import LeanPool.ApollonianSuperharmonic.PartialOdometerAffineTranslateFormulas
-public import LeanPool.ApollonianSuperharmonic.PartialOdometerHalfTurnFormulas
-public import LeanPool.ApollonianSuperharmonic.PartialOdometerSlope
-public import LeanPool.ApollonianSuperharmonic.PositiveCurvatureTileOdometerDomain
-public import LeanPool.ApollonianSuperharmonic.PositiveCurvatureTileOdometerSupportTransport
-public import LeanPool.ApollonianSuperharmonic.ProperBandCurvatureStructure
-public import LeanPool.ApollonianSuperharmonic.ProperBandQuadruple
-public import LeanPool.ApollonianSuperharmonic.QuarterTurnSymmetric
-public import LeanPool.ApollonianSuperharmonic.RecursiveVectorSystem
-public import LeanPool.ApollonianSuperharmonic.RightSubtileOdometerCompatibility
-public import LeanPool.ApollonianSuperharmonic.SemiProperQuadruple
-public import LeanPool.ApollonianSuperharmonic.SemiProperForestClassification
-public import LeanPool.ApollonianSuperharmonic.TileOdometerAffineTranslation
-public import LeanPool.ApollonianSuperharmonic.TileOdometerCentralSymmetry
-public import LeanPool.ApollonianSuperharmonic.TileOdometerReindexedDecomposition
-public import LeanPool.ApollonianSuperharmonic.TileOdometerTranslationUniqueness
-public import LeanPool.ApollonianSuperharmonic.TileHalfTurnFormulas
-public import LeanPool.ApollonianSuperharmonic.TileCentroid
-public import LeanPool.ApollonianSuperharmonic.TileRealization
-public import LeanPool.ApollonianSuperharmonic.VectorRecursionLaws
-public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryInversePhaseCancellation
-public import LeanPool.ApollonianSuperharmonic.TileOdometerBandPrototile
-public import LeanPool.ApollonianSuperharmonic.P4250T1DefinedHalfIntegralSlope
 public import LeanPool.ApollonianSuperharmonic.P4250T1ParentSlopePhase
 public import LeanPool.ApollonianSuperharmonic.P4250T1IntegralAffinePlacement
 public import LeanPool.ApollonianSuperharmonic.P4250T1OrdinaryCompatibility
@@ -411,7 +364,8 @@ private theorem hnvalue :
   have hv := (PartialOdometerAffineTranslateFormulas
     (hs i s) 0 0 (-c i s)).2.2.1 x hx
   have he := hc i s x ((hndom i s x).1 hx)
-  simp? at hv
+  simp only [sub_zero, Int.reduceNeg, Zsqrtd.re_zero, zero_mul, add_zero, Zsqrtd.im_zero]
+      at hv
   change (hn i s).value x = (hs i s).value x + -c i s at hv
   omega
 

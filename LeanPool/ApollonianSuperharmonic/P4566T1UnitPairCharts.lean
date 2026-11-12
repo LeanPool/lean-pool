@@ -5,9 +5,10 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.UnitOccurrenceOrientation
 public import LeanPool.ApollonianSuperharmonic.PrimitiveVectorOrientationUnique
-public import LeanPool.ApollonianSuperharmonic.SemiProperForestClassification
 public import LeanPool.ApollonianSuperharmonic.ProperBandCurvatureStructure
 
 -- [TABLET NODE: P4566T1UnitPairCharts]
@@ -46,7 +47,9 @@ theorem P4566T1UnitPairCharts
         (1, 1 + 2 * z), (0, -1), (1, 1 + 2 * z + 2 * ⟨0, 1⟩)] := by
     intro a b hab ha hb hd
     fin_cases a <;> fin_cases b
-    all_goals simp? at ha hb hd
+    all_goals simp only [Int.reduceNeg, Fin.mk_one, Fin.isValue, Fin.succ_one_eq_two,
+        Matrix.cons_val, zero_ne_one, Fin.reduceFinMk, Fin.reduceSucc, Fin.zero_eta,
+        Fin.succ_zero_eq_one, Matrix.cons_val_one, Matrix.cons_val_zero] at ha hb hd
     all_goals try { exact (hab rfl).elim }
     · exact (noReverse (PrimitiveVectorOrientation.base10 z) hd).elim
     · exact ⟨UnitOccurrenceOrientation.leftUpper z, UnitOccurrenceOrientation.leftLower z⟩
@@ -55,7 +58,9 @@ theorem P4566T1UnitPairCharts
         (1, 1 + 2 * z), (1, 1 + 2 * z + 2 * ⟨0, 1⟩), (0, 1)] := by
     intro a b hab ha hb hd
     fin_cases a <;> fin_cases b
-    all_goals simp? at ha hb hd
+    all_goals simp only [Int.reduceNeg, Fin.mk_one, Fin.isValue, Fin.succ_one_eq_two,
+        Matrix.cons_val, Fin.reduceFinMk, Fin.reduceSucc, zero_ne_one, Fin.zero_eta,
+        Fin.succ_zero_eq_one, Matrix.cons_val_one, Matrix.cons_val_zero] at ha hb hd
     all_goals try { exact (hab rfl).elim }
     · exact (noReverse (PrimitiveVectorOrientation.base10 z) hd).elim
     · exact ⟨UnitOccurrenceOrientation.rightLower z, UnitOccurrenceOrientation.rightUpper z⟩

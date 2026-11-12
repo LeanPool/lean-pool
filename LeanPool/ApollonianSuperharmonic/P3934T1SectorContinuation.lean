@@ -5,11 +5,12 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+public import Mathlib.Tactic.Positivity
+
 public import LeanPool.ApollonianSuperharmonic.P3889T1TwoRaySectorDecomposition
 public import LeanPool.ApollonianSuperharmonic.P3934T1LocalSide
-public import Mathlib.Analysis.Convex.PathConnected
 public import Mathlib.Analysis.Normed.Module.Convex
-public import Mathlib.Tactic.FunProp
 
 -- [TABLET NODE: P3934T1SectorContinuation]
 

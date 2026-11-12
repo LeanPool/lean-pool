@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.FourNeighborLaplacian
 
 -- [TABLET NODE: P4849T1MinimumTruncation]

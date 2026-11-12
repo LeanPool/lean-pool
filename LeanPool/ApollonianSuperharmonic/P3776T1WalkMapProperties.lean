@@ -5,15 +5,17 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P3776T1WalkMap
 public import LeanPool.ApollonianSuperharmonic.FootprintEdges
 public import LeanPool.ApollonianSuperharmonic.FootprintVertices
 public import LeanPool.ApollonianSuperharmonic.LatticeTile
-public import Mathlib.Tactic.Linarith
-public import Mathlib.Topology.Algebra.Module.Basic
-public import Mathlib.Analysis.Normed.Module.Basic
 public import Mathlib.Tactic.Module
 public import Mathlib.Data.List.GetD
+public import Mathlib.Analysis.Normed.Group.Basic
+public import Mathlib.Topology.Algebra.InfiniteSum.Order
+public import Mathlib.Topology.Algebra.Ring.Real
 
 -- [TABLET NODE: P3776T1WalkMapProperties]
 
@@ -377,12 +379,12 @@ private theorem walk_end :
     have hlen : n + 1 = p.length := by dsimp [n]; omega
     have hleft : ((n - 1 : Nat) : Real) / ((p.length : Real) - 1) ≤ (t1 : Real) := by
       rw [div_le_iff₀ hden]
-      simp? [t1]
+      simp only [one_mul, t1]
       rw [← hncast]
       exact_mod_cast (Nat.sub_le n 1)
     have hright' : (t1 : Real) ≤ ((n - 1 + 1 : Nat) : Real) / ((p.length : Real) - 1) := by
       rw [le_div_iff₀ hden]
-      simp? [t1, Nat.sub_add_cancel (by omega : 1 ≤ n)]
+      simp only [one_mul, Nat.sub_add_cancel (by omega : 1 ≤ n), tsub_le_iff_right, t1]
       exact_mod_cast hlen.symm.le
     have hval := hseg p (n - 1) (by dsimp [n]; omega) t1 hleft hright'
     rw [← hlen] at hval

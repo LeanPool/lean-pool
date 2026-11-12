@@ -5,8 +5,9 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P4566T1UnitPairCharts
-public import LeanPool.ApollonianSuperharmonic.BandSuccessorClassification
 public import LeanPool.ApollonianSuperharmonic.UnitOccurrenceOrientationUnique
 
 -- [TABLET NODE: P4566T1LiteralSuccessorCharts]

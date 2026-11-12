@@ -5,13 +5,13 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.AncestorOdometer
 public import LeanPool.ApollonianSuperharmonic.FordFareyParameter
 public import LeanPool.ApollonianSuperharmonic.FordTile
 public import LeanPool.ApollonianSuperharmonic.TileString
-public import LeanPool.ApollonianSuperharmonic.FootprintEdges
 public import LeanPool.ApollonianSuperharmonic.AffineTriangularNoFourfoldCellOwners
-public import LeanPool.ApollonianSuperharmonic.PeriodicTileIndexedMultiplicityOne
 
 -- [TABLET NODE: P4158T1EdgeSectorSelection]
 
@@ -1575,7 +1575,7 @@ private theorem hxroot :
   apply Zsqrtd.ext_iff.mpr
   constructor
   · simp [Zsqrtd.re_add]
-  · simp? [Zsqrtd.im_add]
+  · simp only [Int.reduceNeg, Zsqrtd.im_add]
     rw [← hqsum]
     ring
 

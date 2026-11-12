@@ -5,26 +5,11 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.ApollonianSuperharmonic.BandGenealogy
-public import LeanPool.ApollonianSuperharmonic.BandRegularTranslatePeriodicComplex
-public import LeanPool.ApollonianSuperharmonic.CircleMatrixIncomingVector
-public import LeanPool.ApollonianSuperharmonic.IncomingSuperbasisRelation
-public import LeanPool.ApollonianSuperharmonic.LeftAdjacentOdometerCompatibility
-public import LeanPool.ApollonianSuperharmonic.LeftLatticeAdjacent
-public import LeanPool.ApollonianSuperharmonic.LambdaTiling
-public import LeanPool.ApollonianSuperharmonic.OdometerCompatibility
-public import LeanPool.ApollonianSuperharmonic.PartialOdometerAffineTranslateFormulas
-public import LeanPool.ApollonianSuperharmonic.PeriodicTileIntersectionClassification
-public import LeanPool.ApollonianSuperharmonic.PositiveCurvatureTileOdometerDomain
-public import LeanPool.ApollonianSuperharmonic.ProperBandCurvatureStructure
-public import LeanPool.ApollonianSuperharmonic.ProperBandQuadruple
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.TileOdometer
-public import LeanPool.ApollonianSuperharmonic.TileOdometerAffineTranslation
 public import LeanPool.ApollonianSuperharmonic.TileOdometerExists
-public import LeanPool.ApollonianSuperharmonic.TileOdometerTranslationUniqueness
 public import LeanPool.ApollonianSuperharmonic.TileTranslation
-public import LeanPool.ApollonianSuperharmonic.TileTranslationFormulas
-public import LeanPool.ApollonianSuperharmonic.TilingLatticeBasis
 
 -- [TABLET NODE: PositiveCurvatureTranslatedOdometers]
 
@@ -512,15 +497,18 @@ private theorem adjacentCompatibility :
             ((BandVectors.1 (q i.succ) (q 0)).im : ℝ) :=
                 PositiveTranslationGeometry.hi'At344 C q lattice_coords kl mn i hi
         apply Prod.ext
-        · simp? [GaussianRealPoint]
+        · simp only [Int.reduceNeg, GaussianInt.intCast_re, GaussianInt.intCast_im,
+            Prod.mk_sub_mk, add_sub_add_left_eq_sub, GaussianRealPoint, Fin.isValue, one_smul]
           rw [← GaussianInt.intCast_re, ← GaussianInt.intCast_re,
             ← GaussianInt.intCast_re]
           linarith
-        · simp? [GaussianRealPoint]
+        · simp only [Int.reduceNeg, GaussianInt.intCast_re, GaussianInt.intCast_im,
+            Prod.mk_sub_mk, add_sub_add_left_eq_sub, GaussianRealPoint, Fin.isValue, one_smul]
           rw [← GaussianInt.intCast_im, ← GaussianInt.intCast_im,
             ← GaussianInt.intCast_im]
           linarith
-      · simp? []
+      · simp only [Int.reduceNeg, GaussianInt.intCast_re, add_sub_add_left_eq_sub, ↓reduceIte,
+          Fin.isValue, one_mul]
         rw [← GaussianInt.intCast_re, ← GaussianInt.intCast_re,
           ← GaussianInt.intCast_re]
         have hslope := slope_step kl mn i hstep
@@ -529,7 +517,8 @@ private theorem adjacentCompatibility :
             ((BandVectors.2 (q i.succ) (q 0)).re : ℝ) :=
                 PositiveTranslationGeometry.hr'At361 q kl mn i hr
         linarith
-      · simp? []
+      · simp only [Int.reduceNeg, GaussianInt.intCast_im, add_sub_add_left_eq_sub, ↓reduceIte,
+          Fin.isValue, one_mul]
         rw [← GaussianInt.intCast_im, ← GaussianInt.intCast_im,
           ← GaussianInt.intCast_im]
         have hslope := slope_step kl mn i hstep
@@ -567,7 +556,9 @@ private theorem adjacentCompatibility :
         have hr := congrArg (fun z : GaussianInt => z.re) hstep''
         have hi := congrArg (fun z : GaussianInt => z.im) hstep''
         apply Prod.ext
-        · simp? [GaussianRealPoint]
+        · simp only [Int.reduceNeg, GaussianInt.intCast_re, GaussianInt.intCast_im,
+            Prod.mk_sub_mk, add_sub_add_left_eq_sub, Bool.false_eq_true, ↓reduceIte,
+            GaussianRealPoint, Fin.isValue, neg_smul, one_smul, Prod.neg_mk]
           rw [← GaussianInt.intCast_re, ← GaussianInt.intCast_re,
             ← GaussianInt.intCast_re]
           have hr' : ((shift mn).re : ℝ) - (shift kl).re =
@@ -577,7 +568,9 @@ private theorem adjacentCompatibility :
           rw [← GaussianInt.intCast_re, ← GaussianInt.intCast_re,
             ← GaussianInt.intCast_re] at hr'
           linarith
-        · simp? [GaussianRealPoint]
+        · simp only [Int.reduceNeg, GaussianInt.intCast_re, GaussianInt.intCast_im,
+            Prod.mk_sub_mk, add_sub_add_left_eq_sub, Bool.false_eq_true, ↓reduceIte,
+            GaussianRealPoint, Fin.isValue, neg_smul, one_smul, Prod.neg_mk]
           rw [← GaussianInt.intCast_im, ← GaussianInt.intCast_im,
             ← GaussianInt.intCast_im]
           have hi' : ((shift mn).im : ℝ) - (shift kl).im =

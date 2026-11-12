@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P5110T1SquareInterface
 public import LeanPool.ApollonianSuperharmonic.TouchingTriple
 

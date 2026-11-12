@@ -5,8 +5,12 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.ApollonianSuperharmonic.P4062T1ParentalRestriction
-public import LeanPool.ApollonianSuperharmonic.FordFareyParentsExist
+public import Mathlib.Init
+
+public import LeanPool.ApollonianSuperharmonic.FordOdometer
+public import LeanPool.ApollonianSuperharmonic.FourNeighborLaplacian
+public import LeanPool.ApollonianSuperharmonic.P4062T1RecursiveInteriors
+public import Mathlib.RingTheory.Int.Basic
 
 -- [TABLET NODE: P4062T1OverlapDescent]
 

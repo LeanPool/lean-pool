@@ -5,11 +5,9 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.ApollonianSuperharmonic.BandSuccessorClassification
-public import LeanPool.ApollonianSuperharmonic.DiamondParameter
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.DiamondRecursiveQuadruple
-public import LeanPool.ApollonianSuperharmonic.ProperBandCurvatureStructure
-public import LeanPool.ApollonianSuperharmonic.SemiProperForestClassification
 public import LeanPool.ApollonianSuperharmonic.P4840T6ProperGrowth
 public import LeanPool.ApollonianSuperharmonic.P4840T6ShiftRoot
 public import LeanPool.ApollonianSuperharmonic.P4840T6NegatedRoot

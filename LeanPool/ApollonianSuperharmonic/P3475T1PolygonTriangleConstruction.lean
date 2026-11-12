@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P3475T1TriangleTree
 public import LeanPool.ApollonianSuperharmonic.P3511T1SourceConstruction
 public import LeanPool.ApollonianSuperharmonic.P3511T1ConvexComparison

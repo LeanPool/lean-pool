@@ -5,10 +5,11 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P4397T1UnitEdgeCells
 public import LeanPool.ApollonianSuperharmonic.P3776T1CellCenterMembership
 public import LeanPool.ApollonianSuperharmonic.CentrallyReflectedAt
-public import Mathlib.Tactic.Linarith
 
 -- [TABLET NODE: P4397T1ReflectedEdgeNotBoundary]
 

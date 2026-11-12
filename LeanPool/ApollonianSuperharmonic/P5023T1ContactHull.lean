@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P5023T1ContactVertices
 public import LeanPool.ApollonianSuperharmonic.P4984T1ClosedGap
 public import LeanPool.ApollonianSuperharmonic.P4828T1LineSupport

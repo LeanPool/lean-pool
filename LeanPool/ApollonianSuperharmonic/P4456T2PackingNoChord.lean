@@ -5,12 +5,14 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+public import Mathlib.Topology.MetricSpace.Pseudo.Real
+
 public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryTileAction
 public import LeanPool.ApollonianSuperharmonic.TileQuarterTurnFormulas
 public import LeanPool.ApollonianSuperharmonic.TileReflectionFormulas
 public import LeanPool.ApollonianSuperharmonic.OpenLatticeEdge
 public import LeanPool.ApollonianSuperharmonic.FourNeighborAdjacent
-public import Mathlib.Topology.Algebra.Ring.Basic
 public import Mathlib.Topology.Algebra.Ring.Real
 
 -- [TABLET NODE: P4456T2PackingNoChord]

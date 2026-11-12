@@ -5,8 +5,9 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import Mathlib.Combinatorics.SimpleGraph.Acyclic
-public import Mathlib.Data.Set.Card
 public import LeanPool.ApollonianSuperharmonic.FourNeighborAdjacent
 
 -- [TABLET NODE: FiniteGridEdgeGraphEncoding]

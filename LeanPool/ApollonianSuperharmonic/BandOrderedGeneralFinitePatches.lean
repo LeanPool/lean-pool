@@ -5,14 +5,13 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.BandOrderedGeneralLayoutCertificate
 public import LeanPool.ApollonianSuperharmonic.ConsecutivePatchInterface
-public import LeanPool.ApollonianSuperharmonic.FiniteInducedTilePatch
-public import LeanPool.ApollonianSuperharmonic.TileCellComplement
 public import LeanPool.ApollonianSuperharmonic.P4623T1ZeroBlockPaths
 public import LeanPool.ApollonianSuperharmonic.P4623T1ZeroBlockExterior
 public import LeanPool.ApollonianSuperharmonic.P4623T1ZeroBlockLinks
-public import Mathlib.Data.List.Chain
 
 -- [TABLET NODE: BandOrderedGeneralFinitePatches]
 
@@ -197,9 +196,9 @@ theorem BandOrderedGeneralFinitePatches
     length := n
     positive := hn
     neighbor := N
-    face := cert.modified_face_equiv.symm ∘ F
+    face := cert.modifiedFaceEquivalence.symm ∘ F
     neighbor_injective := hN
-    face_injective := cert.modified_face_equiv.symm.injective.comp hF
+    face_injective := cert.modifiedFaceEquivalence.symm.injective.comp hF
     neighbors_exact := ?_
     consecutive_faces := ?_
   }⟩⟩

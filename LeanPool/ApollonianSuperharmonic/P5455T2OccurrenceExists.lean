@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P5455T2CurvatureGrowth
 public import LeanPool.ApollonianSuperharmonic.UnitOccurrenceOrientation
 public import LeanPool.ApollonianSuperharmonic.PrimitiveVectorOrientationUnique

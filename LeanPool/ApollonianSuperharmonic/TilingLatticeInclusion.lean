@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.CircleMatrixIncomingVector
 public import LeanPool.ApollonianSuperharmonic.IntegralityLattice
 public import LeanPool.ApollonianSuperharmonic.TilingLattice

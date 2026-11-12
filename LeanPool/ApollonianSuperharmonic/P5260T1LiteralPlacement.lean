@@ -5,14 +5,11 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P5260T1PlacementLedger
-public import LeanPool.ApollonianSuperharmonic.BandPrototileCentroidUnique
 public import LeanPool.ApollonianSuperharmonic.BandPrototileTranslationNormalForm
 public import LeanPool.ApollonianSuperharmonic.P5124T1ParentPlacement
-public import LeanPool.ApollonianSuperharmonic.ProtoTileObservableExtensionality
-public import LeanPool.ApollonianSuperharmonic.TileQuarterTurnFormulas
-public import LeanPool.ApollonianSuperharmonic.P4194T1DiamondCellRows
-public import LeanPool.ApollonianSuperharmonic.VectorRecursionLaws
 public import LeanPool.ApollonianSuperharmonic.P5300T1CanonicalRowArithmetic
 public import LeanPool.ApollonianSuperharmonic.P5300T1CenteredCellGeometry
 public import LeanPool.ApollonianSuperharmonic.P5300T1AffineCellObservables

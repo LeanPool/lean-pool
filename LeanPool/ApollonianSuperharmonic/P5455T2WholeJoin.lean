@@ -5,8 +5,9 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P4994T6UnitRootTable
-public import LeanPool.ApollonianSuperharmonic.P4828T1LeftRootGeometry
 public import LeanPool.ApollonianSuperharmonic.UnitTriangularStep
 
 -- [TABLET NODE: P5455T2WholeJoin]

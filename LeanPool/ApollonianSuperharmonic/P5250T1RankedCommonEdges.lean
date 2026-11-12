@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.BoundaryFootprintVertices
 
 -- [TABLET NODE: P5250T1RankedCommonEdges]

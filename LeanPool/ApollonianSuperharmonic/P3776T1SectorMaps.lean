@@ -5,10 +5,11 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P3776T1DualEdges
 public import LeanPool.ApollonianSuperharmonic.P3776T1TileContractions
 public import LeanPool.ApollonianSuperharmonic.StandardSimplex
-public import Mathlib.Topology.ContinuousMap.Basic
 
 -- [TABLET NODE: P3776T1SectorMaps]
 

@@ -5,8 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.ApollonianSuperharmonic.BandPredecessorNoCollision
-public import LeanPool.ApollonianSuperharmonic.ProperBandCurvatureStructure
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.TileOdometer
 
 -- [TABLET NODE: TileOdometerReindexedDecomposition]

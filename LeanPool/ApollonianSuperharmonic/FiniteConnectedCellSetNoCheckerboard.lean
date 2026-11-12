@@ -5,10 +5,10 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.FourNeighborConnected
 public import LeanPool.ApollonianSuperharmonic.NoCheckerboardCellVertex
-public import Mathlib.Data.List.Chain
-public import Mathlib.Tactic.Abel
 
 -- [TABLET NODE: FiniteConnectedCellSetNoCheckerboard]
 

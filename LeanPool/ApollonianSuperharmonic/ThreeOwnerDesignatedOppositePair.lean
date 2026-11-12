@@ -5,12 +5,12 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.FootprintVertices
 public import LeanPool.ApollonianSuperharmonic.LatticeTile
 public import LeanPool.ApollonianSuperharmonic.LatticeVertexIncidentCell
 public import LeanPool.ApollonianSuperharmonic.NoCheckerboardCellVertex
-public import Mathlib.Tactic.FinCases
-public import Mathlib.Tactic.NormNum
 
 -- [TABLET NODE: ThreeOwnerDesignatedOppositePair]
 

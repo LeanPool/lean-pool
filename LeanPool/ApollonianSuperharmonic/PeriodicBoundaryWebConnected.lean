@@ -5,13 +5,11 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.ApollonianSuperharmonic.LambdaTiling
-public import LeanPool.ApollonianSuperharmonic.LatticeEdgeRegularity
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.CurvatureOneBandPrototileSingleton
 public import LeanPool.ApollonianSuperharmonic.BandRegularTranslatePeriodicComplex
-public import LeanPool.ApollonianSuperharmonic.PeriodicTileIndexedMultiplicityOne
-public import LeanPool.ApollonianSuperharmonic.LatticeTileGridStructure
-public import LeanPool.ApollonianSuperharmonic.CellDisjointCommonEdgesBoundary
+public import LeanPool.ApollonianSuperharmonic.RegularTileFamily
 
 -- [TABLET NODE: PeriodicBoundaryWebConnected]
 
@@ -439,7 +437,7 @@ private theorem pathConcat :
             have hzy : z' = y := Option.some.inj (by simpa using hqlast)
             have hzz : z' = z := Option.some.inj (by simpa using hqhead)
             have hzy' : z = y := hzz.symm.trans hzy
-            simp? [r, hplast]
+            simp only [List.tail_cons, List.append_nil, hplast, Option.some.injEq, r]
             rw [hzy']
         | cons w ws =>
             have hqs : (w :: ws).getLast? = some y := by simpa using hqlast

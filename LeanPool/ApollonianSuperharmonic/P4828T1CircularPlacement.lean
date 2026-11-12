@@ -5,12 +5,15 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+public import Mathlib.Tactic.Positivity
+
 public import LeanPool.ApollonianSuperharmonic.P4828T1Gap
 public import LeanPool.ApollonianSuperharmonic.ProperBandCurvatureStructure
 public import LeanPool.ApollonianSuperharmonic.TangencyCoordinateIdentity
 public import Mathlib.Analysis.Convex.Combination
-public import Mathlib.Analysis.Complex.Norm
 public import Mathlib.Topology.MetricSpace.Lipschitz
+public import LeanPool.ApollonianSuperharmonic.P4828T1Disk
 
 -- [TABLET NODE: P4828T1CircularPlacement]
 

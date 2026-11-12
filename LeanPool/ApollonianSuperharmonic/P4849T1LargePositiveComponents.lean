@@ -5,9 +5,12 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P4849T1Component
 public import LeanPool.ApollonianSuperharmonic.FourNeighborLaplacian
 public import Mathlib.Combinatorics.SimpleGraph.Connectivity.Connected
+public meta import Lean.Meta.Tactic.NormCast
 
 -- [TABLET NODE: P4849T1LargePositiveComponents]
 

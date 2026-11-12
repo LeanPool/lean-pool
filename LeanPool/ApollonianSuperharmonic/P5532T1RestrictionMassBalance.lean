@@ -5,10 +5,10 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.BandCanonicalPeriodicExtension
 public import LeanPool.ApollonianSuperharmonic.PeriodicTileTotalIndegree
-public import LeanPool.ApollonianSuperharmonic.TileOdometerBandPrototile
-public import LeanPool.ApollonianSuperharmonic.PositiveCurvatureTileOdometerDomain
 
 -- [TABLET NODE: P5532T1RestrictionMassBalance]
 

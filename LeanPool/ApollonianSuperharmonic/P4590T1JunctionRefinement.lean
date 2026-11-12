@@ -5,27 +5,10 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.ApollonianSuperharmonic.TileDiskAreaCovariance
-public import LeanPool.ApollonianSuperharmonic.TileQuarterTurnFormulas
-public import LeanPool.ApollonianSuperharmonic.BandOrderedGeneralFinitePatches
-public import LeanPool.ApollonianSuperharmonic.BandOrderedGeneralGeometricSectors
-public import LeanPool.ApollonianSuperharmonic.PeriodicTileIntersectionClassification
-public import LeanPool.ApollonianSuperharmonic.PeriodicTileIntersectionPaths
-public import LeanPool.ApollonianSuperharmonic.BandOrderedGeneralPeriodicBlockCells
-public import LeanPool.ApollonianSuperharmonic.FootprintDeletionRetention
-public import LeanPool.ApollonianSuperharmonic.BandSignedOccurrenceHalfTurn
-public import LeanPool.ApollonianSuperharmonic.TouchingTripleCovariance
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P4590T1PositivePrototileDisk
-public import LeanPool.ApollonianSuperharmonic.P4456T2VertexInterior
 public import LeanPool.ApollonianSuperharmonic.P4339T1PrecursorSupportGeometry
-public import LeanPool.ApollonianSuperharmonic.LocalLatticeInterfaceSectors
-public import LeanPool.ApollonianSuperharmonic.SixSubtileFaceVertices
-public import LeanPool.ApollonianSuperharmonic.P4055T1BandQuarterTurn
-public import LeanPool.ApollonianSuperharmonic.BandPrototileCentroidUnique
-public import LeanPool.ApollonianSuperharmonic.BandPrototileTranslation
-public import LeanPool.ApollonianSuperharmonic.ProtoTileObservableExtensionality
-public import LeanPool.ApollonianSuperharmonic.TileTranslationFormulas
-public import LeanPool.ApollonianSuperharmonic.SimpleGridPathEndpointPairUnique
 public import LeanPool.ApollonianSuperharmonic.P4616T1ThirdOwnerPathEndpoint
 
 -- [TABLET NODE: P4590T1JunctionRefinement]
@@ -329,14 +312,15 @@ private theorem classifyBCface :
         let b : PeriodicSubtileIndex := ⟨.B, 0, 0⟩
         let c : PeriodicSubtileIndex := ⟨.C, 0, 0⟩
         ∀ (F : cert.modified.plane.Face), ((∃ i, cert.modified.plane.faceVertex F i = b) ∧
-            ∃ i, cert.modified.plane.faceVertex F i = c) → (cert.modified_face_equiv F = ⟨.I1, 0,
-                0⟩ ∨ cert.modified_face_equiv F = ⟨.J3, -1, -1⟩) ) := by
+            ∃ i, cert.modified.plane.faceVertex F i = c) → (cert.modifiedFaceEquivalence F =
+                ⟨.I1, 0,
+                0⟩ ∨ cert.modifiedFaceEquivalence F = ⟨.J3, -1, -1⟩) ) := by
   classical
   intro q cfg C T cert b c F hF
   obtain ⟨i, hi⟩ := hF.1
   obtain ⟨j, hj⟩ := hF.2
   rw [cert.modified_face_vertices] at hi hj
-  generalize hidx : cert.modified_face_equiv F = face at hi hj ⊢
+  generalize hidx : cert.modifiedFaceEquivalence F = face at hi hj ⊢
   rcases face with ⟨label, m, n⟩
   cases label <;> fin_cases i <;> fin_cases j <;>
     simp [SixSubtileFaceVertices, b, c] at hi hj ⊢ <;> omega
@@ -348,12 +332,13 @@ private theorem rhoFace :
         ∀ (q : Fin 4 → CircleCoordinates), ∀ (cfg : BandOrderedGeneralConfiguration q), ∀ (C :
             BandCircle), ∀ (T : ProtoTile), ∀ (cert : BandOrderedGeneralLayoutCertificate q cfg C
             T), ∀ (F : cert.modified.plane.Face), ∀ (face : PeriodicSubtileFaceIndex),
-            (cert.modified_face_equiv F = face) → (cert.modified.rho F = cert.unmodified.core.rho
+            (cert.modifiedFaceEquivalence F = face) → (cert.modified.rho F =
+                cert.unmodified.core.rho
             (cert.unmodified.faceEquiv.symm face)) ) := by
   classical
   intro q cfg C T cert F face hF
-  have hEq : F = cert.modified_face_equiv.symm face := by
-    have hh := congrArg cert.modified_face_equiv.symm hF
+  have hEq : F = cert.modifiedFaceEquivalence.symm face := by
+    have hh := congrArg cert.modifiedFaceEquivalence.symm hF
     simpa using hh
   rw [hEq, cert.modified_face_points]
 
@@ -363,9 +348,9 @@ private theorem hfpoint :
       exact
         ∀ (q : Fin 4 → CircleCoordinates), ∀ (cfg : BandOrderedGeneralConfiguration q), ∀ (C :
             BandCircle), ∀ (T : ProtoTile), ∀ (cert : BandOrderedGeneralLayoutCertificate q cfg C
-            T), ∀ (f : cert.modified.plane.Face), ((cert.modified_face_equiv :
+            T), ∀ (f : cert.modified.plane.Face), ((cert.modifiedFaceEquivalence :
             cert.modified.plane.Face → PeriodicSubtileFaceIndex) f = (⟨SixSubtileFaceLabel.I1, (0
-            : ℤ), (0 : ℤ)⟩ : PeriodicSubtileFaceIndex) ∨ (cert.modified_face_equiv :
+            : ℤ), (0 : ℤ)⟩ : PeriodicSubtileFaceIndex) ∨ (cert.modifiedFaceEquivalence :
             cert.modified.plane.Face → PeriodicSubtileFaceIndex) f = (⟨SixSubtileFaceLabel.J3,
             (-1 : ℤ), (-1 : ℤ)⟩ : PeriodicSubtileFaceIndex)) → (
         let p1 := cert.unmodified.core.rho
@@ -373,7 +358,8 @@ private theorem hfpoint :
         let pJ := cert.unmodified.core.rho
           (cert.unmodified.faceEquiv.symm ⟨.J3, -1, -1⟩)
         (∀ (F : cert.modified.plane.Face), ∀ (face : PeriodicSubtileFaceIndex),
-            (cert.modified_face_equiv F = face) → (cert.modified.rho F = cert.unmodified.core.rho
+            (cert.modifiedFaceEquivalence F = face) → (cert.modified.rho F =
+                cert.unmodified.core.rho
             (cert.unmodified.faceEquiv.symm face))) → (cert.modified.rho f = p1 ∨
             cert.modified.rho f = pJ)) ) := by
   classical
@@ -388,9 +374,9 @@ private theorem hgpoint :
       exact
         ∀ (q : Fin 4 → CircleCoordinates), ∀ (cfg : BandOrderedGeneralConfiguration q), ∀ (C :
             BandCircle), ∀ (T : ProtoTile), ∀ (cert : BandOrderedGeneralLayoutCertificate q cfg C
-            T), ∀ (g : cert.modified.plane.Face), ((cert.modified_face_equiv :
+            T), ∀ (g : cert.modified.plane.Face), ((cert.modifiedFaceEquivalence :
             cert.modified.plane.Face → PeriodicSubtileFaceIndex) g = (⟨SixSubtileFaceLabel.I1, (0
-            : ℤ), (0 : ℤ)⟩ : PeriodicSubtileFaceIndex) ∨ (cert.modified_face_equiv :
+            : ℤ), (0 : ℤ)⟩ : PeriodicSubtileFaceIndex) ∨ (cert.modifiedFaceEquivalence :
             cert.modified.plane.Face → PeriodicSubtileFaceIndex) g = (⟨SixSubtileFaceLabel.J3,
             (-1 : ℤ), (-1 : ℤ)⟩ : PeriodicSubtileFaceIndex)) → (
         let p1 := cert.unmodified.core.rho
@@ -398,7 +384,8 @@ private theorem hgpoint :
         let pJ := cert.unmodified.core.rho
           (cert.unmodified.faceEquiv.symm ⟨.J3, -1, -1⟩)
         (∀ (F : cert.modified.plane.Face), ∀ (face : PeriodicSubtileFaceIndex),
-            (cert.modified_face_equiv F = face) → (cert.modified.rho F = cert.unmodified.core.rho
+            (cert.modifiedFaceEquivalence F = face) → (cert.modified.rho F =
+                cert.unmodified.core.rho
             (cert.unmodified.faceEquiv.symm face))) → (cert.modified.rho g = p1 ∨
             cert.modified.rho g = pJ)) ) := by
   classical
@@ -440,7 +427,7 @@ private theorem hJvertex :
             T),
         let faceJ : PeriodicSubtileFaceIndex := ⟨.J3, -1, -1⟩
         let aJ : PeriodicSubtileIndex := ⟨.A, -1, -1⟩
-        cert.modified.plane.faceVertex (cert.modified_face_equiv.symm faceJ) 0 = aJ ) := by
+        cert.modified.plane.faceVertex (cert.modifiedFaceEquivalence.symm faceJ) 0 = aJ ) := by
   classical
   intro q cfg C T cert faceJ aJ
   rw [cert.modified_face_vertices]
@@ -457,11 +444,11 @@ private theorem hpJa :
           (cert.unmodified.faceEquiv.symm ⟨.J3, -1, -1⟩)
         let faceJ : PeriodicSubtileFaceIndex := ⟨.J3, -1, -1⟩
         let aJ : PeriodicSubtileIndex := ⟨.A, -1, -1⟩
-        (cert.modified.plane.faceVertex (cert.modified_face_equiv.symm faceJ) 0 = aJ) → (pJ ∈
+        (cert.modified.plane.faceVertex (cert.modifiedFaceEquivalence.symm faceJ) 0 = aJ) → (pJ ∈
             FootprintVertices (cert.modified.tile aJ)) ) := by
   classical
   intro q cfg C T cert pJ faceJ aJ hJvertex
-  have h := cert.modified.rho_common (cert.modified_face_equiv.symm faceJ) 0
+  have h := cert.modified.rho_common (cert.modifiedFaceEquivalence.symm faceJ) 0
   rw [cert.modified_face_points, hJvertex] at h
   simpa [pJ, faceJ] using h
 
@@ -510,11 +497,11 @@ private theorem hp1C :
   let faceI : PeriodicSubtileFaceIndex := ⟨.I1, 0, 0⟩
   let cI : PeriodicSubtileIndex := ⟨.C, 0, 0⟩
   have hvertex : cert.modified.plane.faceVertex
-      (cert.modified_face_equiv.symm faceI) 2 = cI := by
+      (cert.modifiedFaceEquivalence.symm faceI) 2 = cI := by
     rw [cert.modified_face_vertices]
     simp [faceI, cI, SixSubtileFaceVertices]
   have h := cert.modified.rho_common
-    (cert.modified_face_equiv.symm faceI) 2
+    (cert.modifiedFaceEquivalence.symm faceI) 2
   rw [hvertex, cert.modified_tile, cert.modified_face_points] at h
   simpa [p1, faceI, cI, ModifiedSubtileOccurrenceInterpretation,
     TileTranslation, GaussianTranslation, htransZero, Finset.image_id] using h
@@ -702,14 +689,14 @@ private theorem classifyADface :
         let a0 : PeriodicSubtileIndex := ⟨.A, 0, 0⟩
         let d0 : PeriodicSubtileIndex := ⟨.D, 0, 0⟩
         ∀ (F : cert.modified.plane.Face), ((∃ i, cert.modified.plane.faceVertex F i = a0) ∧
-            ∃ i, cert.modified.plane.faceVertex F i = d0) → (cert.modified_face_equiv F = ⟨.I2,
-                0, 0⟩ ∨ cert.modified_face_equiv F = ⟨.J4, 0, 0⟩) ) := by
+            ∃ i, cert.modified.plane.faceVertex F i = d0) → (cert.modifiedFaceEquivalence F = ⟨.I2,
+                0, 0⟩ ∨ cert.modifiedFaceEquivalence F = ⟨.J4, 0, 0⟩) ) := by
   classical
   intro q cfg C T cert a0 d0 F hF
   obtain ⟨i, hi⟩ := hF.1
   obtain ⟨j, hj⟩ := hF.2
   rw [cert.modified_face_vertices] at hi hj
-  generalize hidx : cert.modified_face_equiv F = face at hi hj ⊢
+  generalize hidx : cert.modifiedFaceEquivalence F = face at hi hj ⊢
   rcases face with ⟨label, m, n⟩
   cases label <;> fin_cases i <;> fin_cases j <;>
     simp [SixSubtileFaceVertices, a0, d0] at hi hj ⊢ <;> omega
@@ -721,12 +708,13 @@ private theorem rhoFace2 :
         ∀ (q : Fin 4 → CircleCoordinates), ∀ (cfg : BandOrderedGeneralConfiguration q), ∀ (C :
             BandCircle), ∀ (T : ProtoTile), ∀ (cert : BandOrderedGeneralLayoutCertificate q cfg C
             T), ∀ (F : cert.modified.plane.Face), ∀ (face : PeriodicSubtileFaceIndex),
-            (cert.modified_face_equiv F = face) → (cert.modified.rho F = cert.unmodified.core.rho
+            (cert.modifiedFaceEquivalence F = face) → (cert.modified.rho F =
+                cert.unmodified.core.rho
             (cert.unmodified.faceEquiv.symm face)) ) := by
   classical
   intro q cfg C T cert F face hF
-  have hEq : F = cert.modified_face_equiv.symm face := by
-    have hh := congrArg cert.modified_face_equiv.symm hF
+  have hEq : F = cert.modifiedFaceEquivalence.symm face := by
+    have hh := congrArg cert.modifiedFaceEquivalence.symm hF
     simpa using hh
   rw [hEq, cert.modified_face_points]
 
@@ -736,9 +724,9 @@ private theorem hf2point :
       exact
         ∀ (q : Fin 4 → CircleCoordinates), ∀ (cfg : BandOrderedGeneralConfiguration q), ∀ (C :
             BandCircle), ∀ (T : ProtoTile), ∀ (cert : BandOrderedGeneralLayoutCertificate q cfg C
-            T), ∀ (f2 : cert.modified.plane.Face), ((cert.modified_face_equiv :
+            T), ∀ (f2 : cert.modified.plane.Face), ((cert.modifiedFaceEquivalence :
             cert.modified.plane.Face → PeriodicSubtileFaceIndex) f2 = (⟨SixSubtileFaceLabel.I2,
-            (0 : ℤ), (0 : ℤ)⟩ : PeriodicSubtileFaceIndex) ∨ (cert.modified_face_equiv :
+            (0 : ℤ), (0 : ℤ)⟩ : PeriodicSubtileFaceIndex) ∨ (cert.modifiedFaceEquivalence :
             cert.modified.plane.Face → PeriodicSubtileFaceIndex) f2 = (⟨SixSubtileFaceLabel.J4,
             (0 : ℤ), (0 : ℤ)⟩ : PeriodicSubtileFaceIndex)) → (
         let p2 := cert.unmodified.core.rho
@@ -746,7 +734,8 @@ private theorem hf2point :
         let pJ4 := cert.unmodified.core.rho
           (cert.unmodified.faceEquiv.symm ⟨.J4, 0, 0⟩)
         (∀ (F : cert.modified.plane.Face), ∀ (face : PeriodicSubtileFaceIndex),
-            (cert.modified_face_equiv F = face) → (cert.modified.rho F = cert.unmodified.core.rho
+            (cert.modifiedFaceEquivalence F = face) → (cert.modified.rho F =
+                cert.unmodified.core.rho
             (cert.unmodified.faceEquiv.symm face))) → (cert.modified.rho f2 = p2 ∨
             cert.modified.rho f2 = pJ4)) ) := by
   classical
@@ -761,9 +750,9 @@ private theorem hg2point :
       exact
         ∀ (q : Fin 4 → CircleCoordinates), ∀ (cfg : BandOrderedGeneralConfiguration q), ∀ (C :
             BandCircle), ∀ (T : ProtoTile), ∀ (cert : BandOrderedGeneralLayoutCertificate q cfg C
-            T), ∀ (g2 : cert.modified.plane.Face), ((cert.modified_face_equiv :
+            T), ∀ (g2 : cert.modified.plane.Face), ((cert.modifiedFaceEquivalence :
             cert.modified.plane.Face → PeriodicSubtileFaceIndex) g2 = (⟨SixSubtileFaceLabel.I2,
-            (0 : ℤ), (0 : ℤ)⟩ : PeriodicSubtileFaceIndex) ∨ (cert.modified_face_equiv :
+            (0 : ℤ), (0 : ℤ)⟩ : PeriodicSubtileFaceIndex) ∨ (cert.modifiedFaceEquivalence :
             cert.modified.plane.Face → PeriodicSubtileFaceIndex) g2 = (⟨SixSubtileFaceLabel.J4,
             (0 : ℤ), (0 : ℤ)⟩ : PeriodicSubtileFaceIndex)) → (
         let p2 := cert.unmodified.core.rho
@@ -771,7 +760,8 @@ private theorem hg2point :
         let pJ4 := cert.unmodified.core.rho
           (cert.unmodified.faceEquiv.symm ⟨.J4, 0, 0⟩)
         (∀ (F : cert.modified.plane.Face), ∀ (face : PeriodicSubtileFaceIndex),
-            (cert.modified_face_equiv F = face) → (cert.modified.rho F = cert.unmodified.core.rho
+            (cert.modifiedFaceEquivalence F = face) → (cert.modified.rho F =
+                cert.unmodified.core.rho
             (cert.unmodified.faceEquiv.symm face))) → (cert.modified.rho g2 = p2 ∨
             cert.modified.rho g2 = pJ4)) ) := by
   classical
@@ -813,7 +803,7 @@ private theorem hJ4vertex :
             T),
         let faceJ4 : PeriodicSubtileFaceIndex := ⟨.J4, 0, 0⟩
         let bJ4 : PeriodicSubtileIndex := ⟨.B, 1, 1⟩
-        cert.modified.plane.faceVertex (cert.modified_face_equiv.symm faceJ4) 1 = bJ4 ) := by
+        cert.modified.plane.faceVertex (cert.modifiedFaceEquivalence.symm faceJ4) 1 = bJ4 ) := by
   classical
   intro q cfg C T cert faceJ4 bJ4
   rw [cert.modified_face_vertices]
@@ -830,11 +820,11 @@ private theorem hpJ4b :
           (cert.unmodified.faceEquiv.symm ⟨.J4, 0, 0⟩)
         let faceJ4 : PeriodicSubtileFaceIndex := ⟨.J4, 0, 0⟩
         let bJ4 : PeriodicSubtileIndex := ⟨.B, 1, 1⟩
-        (cert.modified.plane.faceVertex (cert.modified_face_equiv.symm faceJ4) 1 = bJ4) → (pJ4 ∈
+        (cert.modified.plane.faceVertex (cert.modifiedFaceEquivalence.symm faceJ4) 1 = bJ4) → (pJ4 ∈
             FootprintVertices (cert.modified.tile bJ4)) ) := by
   classical
   intro q cfg C T cert pJ4 faceJ4 bJ4 hJ4vertex
-  have hh := cert.modified.rho_common (cert.modified_face_equiv.symm faceJ4) 1
+  have hh := cert.modified.rho_common (cert.modifiedFaceEquivalence.symm faceJ4) 1
   rw [cert.modified_face_points, hJ4vertex] at hh
   simpa [pJ4, faceJ4] using hh
 
@@ -853,11 +843,11 @@ private theorem hp2D :
   let faceI2 : PeriodicSubtileFaceIndex := ⟨.I2, 0, 0⟩
   let dI2 : PeriodicSubtileIndex := ⟨.D, 0, 0⟩
   have hvertex : cert.modified.plane.faceVertex
-      (cert.modified_face_equiv.symm faceI2) 2 = dI2 := by
+      (cert.modifiedFaceEquivalence.symm faceI2) 2 = dI2 := by
     rw [cert.modified_face_vertices]
     simp [faceI2, dI2, SixSubtileFaceVertices]
   have hh := cert.modified.rho_common
-    (cert.modified_face_equiv.symm faceI2) 2
+    (cert.modifiedFaceEquivalence.symm faceI2) 2
   rw [hvertex, cert.modified_tile, cert.modified_face_points] at hh
   simpa [p2, faceI2, dI2, ModifiedSubtileOccurrenceInterpretation,
     TileTranslation, GaussianTranslation, htransZero, Finset.image_id] using hh
@@ -1001,14 +991,14 @@ private theorem classifyCFface :
         let c0 : PeriodicSubtileIndex := ⟨.C, 0, 0⟩
         let f0 : PeriodicSubtileIndex := ⟨.F, 0, 0⟩
         ∀ (F : cert.modified.plane.Face), ((∃ i, cert.modified.plane.faceVertex F i = c0) ∧
-            ∃ i, cert.modified.plane.faceVertex F i = f0) → (cert.modified_face_equiv F = ⟨.I3,
-                0, 0⟩ ∨ cert.modified_face_equiv F = ⟨.J8, 0, 0⟩) ) := by
+            ∃ i, cert.modified.plane.faceVertex F i = f0) → (cert.modifiedFaceEquivalence F = ⟨.I3,
+                0, 0⟩ ∨ cert.modifiedFaceEquivalence F = ⟨.J8, 0, 0⟩) ) := by
   classical
   intro q cfg C T cert c0 f0 F hF
   obtain ⟨i, hi⟩ := hF.1
   obtain ⟨j, hj⟩ := hF.2
   rw [cert.modified_face_vertices] at hi hj
-  generalize hidx : cert.modified_face_equiv F = face at hi hj ⊢
+  generalize hidx : cert.modifiedFaceEquivalence F = face at hi hj ⊢
   rcases face with ⟨label, m, n⟩
   cases label <;> fin_cases i <;> fin_cases j <;>
     simp [SixSubtileFaceVertices, c0, f0] at hi hj ⊢ <;> omega
@@ -1020,12 +1010,13 @@ private theorem rhoFace3 :
         ∀ (q : Fin 4 → CircleCoordinates), ∀ (cfg : BandOrderedGeneralConfiguration q), ∀ (C :
             BandCircle), ∀ (T : ProtoTile), ∀ (cert : BandOrderedGeneralLayoutCertificate q cfg C
             T), ∀ (F : cert.modified.plane.Face), ∀ (face : PeriodicSubtileFaceIndex),
-            (cert.modified_face_equiv F = face) → (cert.modified.rho F = cert.unmodified.core.rho
+            (cert.modifiedFaceEquivalence F = face) → (cert.modified.rho F =
+                cert.unmodified.core.rho
             (cert.unmodified.faceEquiv.symm face)) ) := by
   classical
   intro q cfg C T cert F face hF
-  have hEq : F = cert.modified_face_equiv.symm face := by
-    have hh := congrArg cert.modified_face_equiv.symm hF
+  have hEq : F = cert.modifiedFaceEquivalence.symm face := by
+    have hh := congrArg cert.modifiedFaceEquivalence.symm hF
     simpa using hh
   rw [hEq, cert.modified_face_points]
 
@@ -1035,9 +1026,9 @@ private theorem hf3point :
       exact
         ∀ (q : Fin 4 → CircleCoordinates), ∀ (cfg : BandOrderedGeneralConfiguration q), ∀ (C :
             BandCircle), ∀ (T : ProtoTile), ∀ (cert : BandOrderedGeneralLayoutCertificate q cfg C
-            T), ∀ (f3 : cert.modified.plane.Face), ((cert.modified_face_equiv :
+            T), ∀ (f3 : cert.modified.plane.Face), ((cert.modifiedFaceEquivalence :
             cert.modified.plane.Face → PeriodicSubtileFaceIndex) f3 = (⟨SixSubtileFaceLabel.I3,
-            (0 : ℤ), (0 : ℤ)⟩ : PeriodicSubtileFaceIndex) ∨ (cert.modified_face_equiv :
+            (0 : ℤ), (0 : ℤ)⟩ : PeriodicSubtileFaceIndex) ∨ (cert.modifiedFaceEquivalence :
             cert.modified.plane.Face → PeriodicSubtileFaceIndex) f3 = (⟨SixSubtileFaceLabel.J8,
             (0 : ℤ), (0 : ℤ)⟩ : PeriodicSubtileFaceIndex)) → (
         let p3 := cert.unmodified.core.rho
@@ -1045,7 +1036,8 @@ private theorem hf3point :
         let pJ8 := cert.unmodified.core.rho
           (cert.unmodified.faceEquiv.symm ⟨.J8, 0, 0⟩)
         (∀ (F : cert.modified.plane.Face), ∀ (face : PeriodicSubtileFaceIndex),
-            (cert.modified_face_equiv F = face) → (cert.modified.rho F = cert.unmodified.core.rho
+            (cert.modifiedFaceEquivalence F = face) → (cert.modified.rho F =
+                cert.unmodified.core.rho
             (cert.unmodified.faceEquiv.symm face))) → (cert.modified.rho f3 = p3 ∨
             cert.modified.rho f3 = pJ8)) ) := by
   classical
@@ -1060,9 +1052,9 @@ private theorem hg3point :
       exact
         ∀ (q : Fin 4 → CircleCoordinates), ∀ (cfg : BandOrderedGeneralConfiguration q), ∀ (C :
             BandCircle), ∀ (T : ProtoTile), ∀ (cert : BandOrderedGeneralLayoutCertificate q cfg C
-            T), ∀ (g3 : cert.modified.plane.Face), ((cert.modified_face_equiv :
+            T), ∀ (g3 : cert.modified.plane.Face), ((cert.modifiedFaceEquivalence :
             cert.modified.plane.Face → PeriodicSubtileFaceIndex) g3 = (⟨SixSubtileFaceLabel.I3,
-            (0 : ℤ), (0 : ℤ)⟩ : PeriodicSubtileFaceIndex) ∨ (cert.modified_face_equiv :
+            (0 : ℤ), (0 : ℤ)⟩ : PeriodicSubtileFaceIndex) ∨ (cert.modifiedFaceEquivalence :
             cert.modified.plane.Face → PeriodicSubtileFaceIndex) g3 = (⟨SixSubtileFaceLabel.J8,
             (0 : ℤ), (0 : ℤ)⟩ : PeriodicSubtileFaceIndex)) → (
         let p3 := cert.unmodified.core.rho
@@ -1070,7 +1062,8 @@ private theorem hg3point :
         let pJ8 := cert.unmodified.core.rho
           (cert.unmodified.faceEquiv.symm ⟨.J8, 0, 0⟩)
         (∀ (F : cert.modified.plane.Face), ∀ (face : PeriodicSubtileFaceIndex),
-            (cert.modified_face_equiv F = face) → (cert.modified.rho F = cert.unmodified.core.rho
+            (cert.modifiedFaceEquivalence F = face) → (cert.modified.rho F =
+                cert.unmodified.core.rho
             (cert.unmodified.faceEquiv.symm face))) → (cert.modified.rho g3 = p3 ∨
             cert.modified.rho g3 = pJ8)) ) := by
   classical
@@ -1112,7 +1105,7 @@ private theorem hJ8vertex :
             T),
         let faceJ8 : PeriodicSubtileFaceIndex := ⟨.J8, 0, 0⟩
         let dJ8 : PeriodicSubtileIndex := ⟨.D, -1, 0⟩
-        cert.modified.plane.faceVertex (cert.modified_face_equiv.symm faceJ8) 1 = dJ8 ) := by
+        cert.modified.plane.faceVertex (cert.modifiedFaceEquivalence.symm faceJ8) 1 = dJ8 ) := by
   classical
   intro q cfg C T cert faceJ8 dJ8
   rw [cert.modified_face_vertices]
@@ -1129,11 +1122,11 @@ private theorem hpJ8d :
           (cert.unmodified.faceEquiv.symm ⟨.J8, 0, 0⟩)
         let faceJ8 : PeriodicSubtileFaceIndex := ⟨.J8, 0, 0⟩
         let dJ8 : PeriodicSubtileIndex := ⟨.D, -1, 0⟩
-        (cert.modified.plane.faceVertex (cert.modified_face_equiv.symm faceJ8) 1 = dJ8) → (pJ8 ∈
+        (cert.modified.plane.faceVertex (cert.modifiedFaceEquivalence.symm faceJ8) 1 = dJ8) → (pJ8 ∈
             FootprintVertices (cert.modified.tile dJ8)) ) := by
   classical
   intro q cfg C T cert pJ8 faceJ8 dJ8 hJ8vertex
-  have hh := cert.modified.rho_common (cert.modified_face_equiv.symm faceJ8) 1
+  have hh := cert.modified.rho_common (cert.modifiedFaceEquivalence.symm faceJ8) 1
   rw [cert.modified_face_points, hJ8vertex] at hh
   simpa [pJ8, faceJ8] using hh
 
@@ -1152,11 +1145,11 @@ private theorem hp3F :
   let faceI3 : PeriodicSubtileFaceIndex := ⟨.I3, 0, 0⟩
   let fI3 : PeriodicSubtileIndex := ⟨.F, 0, 0⟩
   have hvertex : cert.modified.plane.faceVertex
-      (cert.modified_face_equiv.symm faceI3) 2 = fI3 := by
+      (cert.modifiedFaceEquivalence.symm faceI3) 2 = fI3 := by
     rw [cert.modified_face_vertices]
     simp [faceI3, fI3, SixSubtileFaceVertices]
   have hh := cert.modified.rho_common
-    (cert.modified_face_equiv.symm faceI3) 2
+    (cert.modifiedFaceEquivalence.symm faceI3) 2
   rw [hvertex, cert.modified_tile, cert.modified_face_points] at hh
   simpa [p3, faceI3, fI3, ModifiedSubtileOccurrenceInterpretation,
     TileTranslation, GaussianTranslation, htransZero, Finset.image_id] using hh
@@ -1297,12 +1290,13 @@ private theorem rhoFace4 :
         ∀ (q : Fin 4 → CircleCoordinates), ∀ (cfg : BandOrderedGeneralConfiguration q), ∀ (C :
             BandCircle), ∀ (T : ProtoTile), ∀ (cert : BandOrderedGeneralLayoutCertificate q cfg C
             T), ∀ (F : cert.modified.plane.Face), ∀ (face : PeriodicSubtileFaceIndex),
-            (cert.modified_face_equiv F = face) → (cert.modified.rho F = cert.unmodified.core.rho
+            (cert.modifiedFaceEquivalence F = face) → (cert.modified.rho F =
+                cert.unmodified.core.rho
             (cert.unmodified.faceEquiv.symm face)) ) := by
   classical
   intro q cfg C T cert F face hF
-  have hEq : F = cert.modified_face_equiv.symm face := by
-    have hh := congrArg cert.modified_face_equiv.symm hF
+  have hEq : F = cert.modifiedFaceEquivalence.symm face := by
+    have hh := congrArg cert.modifiedFaceEquivalence.symm hF
     simpa using hh
   rw [hEq, cert.modified_face_points]
 
@@ -1312,9 +1306,9 @@ private theorem hf4point :
       exact
         ∀ (q : Fin 4 → CircleCoordinates), ∀ (cfg : BandOrderedGeneralConfiguration q), ∀ (C :
             BandCircle), ∀ (T : ProtoTile), ∀ (cert : BandOrderedGeneralLayoutCertificate q cfg C
-            T), ∀ (f4 : cert.modified.plane.Face), ((cert.modified_face_equiv :
+            T), ∀ (f4 : cert.modified.plane.Face), ((cert.modifiedFaceEquivalence :
             cert.modified.plane.Face → PeriodicSubtileFaceIndex) f4 = (⟨SixSubtileFaceLabel.I4,
-            (0 : ℤ), (0 : ℤ)⟩ : PeriodicSubtileFaceIndex) ∨ (cert.modified_face_equiv :
+            (0 : ℤ), (0 : ℤ)⟩ : PeriodicSubtileFaceIndex) ∨ (cert.modifiedFaceEquivalence :
             cert.modified.plane.Face → PeriodicSubtileFaceIndex) f4 = (⟨SixSubtileFaceLabel.J7,
             (1 : ℤ), (0 : ℤ)⟩ : PeriodicSubtileFaceIndex)) → (
         let p4 := cert.unmodified.core.rho
@@ -1322,7 +1316,8 @@ private theorem hf4point :
         let pJ7 := cert.unmodified.core.rho
           (cert.unmodified.faceEquiv.symm ⟨.J7, 1, 0⟩)
         (∀ (F : cert.modified.plane.Face), ∀ (face : PeriodicSubtileFaceIndex),
-            (cert.modified_face_equiv F = face) → (cert.modified.rho F = cert.unmodified.core.rho
+            (cert.modifiedFaceEquivalence F = face) → (cert.modified.rho F =
+                cert.unmodified.core.rho
             (cert.unmodified.faceEquiv.symm face))) → (cert.modified.rho f4 = p4 ∨
             cert.modified.rho f4 = pJ7)) ) := by
   classical
@@ -1337,9 +1332,9 @@ private theorem hg4point :
       exact
         ∀ (q : Fin 4 → CircleCoordinates), ∀ (cfg : BandOrderedGeneralConfiguration q), ∀ (C :
             BandCircle), ∀ (T : ProtoTile), ∀ (cert : BandOrderedGeneralLayoutCertificate q cfg C
-            T), ∀ (g4 : cert.modified.plane.Face), ((cert.modified_face_equiv :
+            T), ∀ (g4 : cert.modified.plane.Face), ((cert.modifiedFaceEquivalence :
             cert.modified.plane.Face → PeriodicSubtileFaceIndex) g4 = (⟨SixSubtileFaceLabel.I4,
-            (0 : ℤ), (0 : ℤ)⟩ : PeriodicSubtileFaceIndex) ∨ (cert.modified_face_equiv :
+            (0 : ℤ), (0 : ℤ)⟩ : PeriodicSubtileFaceIndex) ∨ (cert.modifiedFaceEquivalence :
             cert.modified.plane.Face → PeriodicSubtileFaceIndex) g4 = (⟨SixSubtileFaceLabel.J7,
             (1 : ℤ), (0 : ℤ)⟩ : PeriodicSubtileFaceIndex)) → (
         let p4 := cert.unmodified.core.rho
@@ -1347,7 +1342,8 @@ private theorem hg4point :
         let pJ7 := cert.unmodified.core.rho
           (cert.unmodified.faceEquiv.symm ⟨.J7, 1, 0⟩)
         (∀ (F : cert.modified.plane.Face), ∀ (face : PeriodicSubtileFaceIndex),
-            (cert.modified_face_equiv F = face) → (cert.modified.rho F = cert.unmodified.core.rho
+            (cert.modifiedFaceEquivalence F = face) → (cert.modified.rho F =
+                cert.unmodified.core.rho
             (cert.unmodified.faceEquiv.symm face))) → (cert.modified.rho g4 = p4 ∨
             cert.modified.rho g4 = pJ7)) ) := by
   classical
@@ -1389,7 +1385,7 @@ private theorem hJ7vertex :
             T),
         let faceJ7 : PeriodicSubtileFaceIndex := ⟨.J7, 1, 0⟩
         let cJ7 : PeriodicSubtileIndex := ⟨.C, 1, 0⟩
-        cert.modified.plane.faceVertex (cert.modified_face_equiv.symm faceJ7) 0 = cJ7 ) := by
+        cert.modified.plane.faceVertex (cert.modifiedFaceEquivalence.symm faceJ7) 0 = cJ7 ) := by
   classical
   intro q cfg C T cert faceJ7 cJ7
   rw [cert.modified_face_vertices]
@@ -1406,11 +1402,11 @@ private theorem hpJ7c :
           (cert.unmodified.faceEquiv.symm ⟨.J7, 1, 0⟩)
         let faceJ7 : PeriodicSubtileFaceIndex := ⟨.J7, 1, 0⟩
         let cJ7 : PeriodicSubtileIndex := ⟨.C, 1, 0⟩
-        (cert.modified.plane.faceVertex (cert.modified_face_equiv.symm faceJ7) 0 = cJ7) → (pJ7 ∈
+        (cert.modified.plane.faceVertex (cert.modifiedFaceEquivalence.symm faceJ7) 0 = cJ7) → (pJ7 ∈
             FootprintVertices (cert.modified.tile cJ7)) ) := by
   classical
   intro q cfg C T cert pJ7 faceJ7 cJ7 hJ7vertex
-  have hh := cert.modified.rho_common (cert.modified_face_equiv.symm faceJ7) 0
+  have hh := cert.modified.rho_common (cert.modifiedFaceEquivalence.symm faceJ7) 0
   rw [cert.modified_face_points, hJ7vertex] at hh
   simpa [pJ7, faceJ7] using hh
 
@@ -2053,13 +2049,13 @@ private theorem fourthJunction :
   have classifyDEface (F : cert.modified.plane.Face)
       (hF : (∃ i, cert.modified.plane.faceVertex F i = d0) ∧
         ∃ i, cert.modified.plane.faceVertex F i = e0) :
-      cert.modified_face_equiv F = ⟨.I4, 0, 0⟩ ∨
-      cert.modified_face_equiv F = ⟨.J7, 1, 0⟩ :=
+      cert.modifiedFaceEquivalence F = ⟨.I4, 0, 0⟩ ∨
+      cert.modifiedFaceEquivalence F = ⟨.J7, 1, 0⟩ :=
     (by
     obtain ⟨i, hi⟩ := hF.1
     obtain ⟨j, hj⟩ := hF.2
     rw [cert.modified_face_vertices] at hi hj
-    generalize hidx : cert.modified_face_equiv F = face at hi hj ⊢
+    generalize hidx : cert.modifiedFaceEquivalence F = face at hi hj ⊢
     rcases face with ⟨label, m, n⟩
     cases label <;> fin_cases i <;> fin_cases j <;>
       simp [SixSubtileFaceVertices, d0, e0] at hi hj ⊢ <;> omega)

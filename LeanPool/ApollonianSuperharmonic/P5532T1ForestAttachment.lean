@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.RootedFourNeighborForest
 public import LeanPool.ApollonianSuperharmonic.P4062T1RankedAttachment
 

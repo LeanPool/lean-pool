@@ -5,14 +5,14 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.BandOrderedGeneralLayoutCertificate
-public import LeanPool.ApollonianSuperharmonic.BandOrderedGeneralNormalizedOccurrenceBundle
 public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryPartialOdometerAction
 public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryQuadrupleAction
 public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryTileAction
 public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryVectorAction
-public import LeanPool.ApollonianSuperharmonic.LatticeTile
-public import LeanPool.ApollonianSuperharmonic.QuarterTurnSymmetric
+public import LeanPool.ApollonianSuperharmonic.RightLatticeAdjacent
 
 -- [TABLET NODE: BandOrderedGeneralRightNormalizationCertificate]
 

@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.GaussianReflection
 public import LeanPool.ApollonianSuperharmonic.GaussianTranslation
 public import LeanPool.ApollonianSuperharmonic.GaussianQuarterTurn
@@ -54,7 +56,7 @@ private theorem transport : ∀ (p : List GaussianInt) (f : GaussianInt → Gaus
       intro a b l₁ l₂ h
       cases l₁ with
       | nil =>
-        simp? at h
+        simp only [List.map_cons, List.nil_append, List.cons.injEq] at h
         rcases h with ⟨rfl, rfl, hys⟩
         exact hstep x y (hp x y [] ys (by simp))
       | cons z zs =>
@@ -120,18 +122,18 @@ private theorem forward : ∀ (f : GaussianInt → GaussianInt), Function.Inject
           intro k m a b h
           cases k with
           | nil =>
-            simp? at h
+            simp only [List.map_cons, List.nil_append, List.cons.injEq] at h
             cases xs with
             | nil => simp_all
             | cons y ys =>
-              simp? at h
+              simp only [List.map_cons, List.cons.injEq] at h
               have hxa : x = a := hf h.1
               have hya : y = b := hf h.2.1
               subst a
               subst b
               exact ⟨[], ys, by simp []⟩
           | cons z zs =>
-            simp? at h
+            simp only [List.map_cons, List.cons_append, List.cons.injEq] at h
             have hz : z = f x := h.1.symm
             subst z
             rcases ih zs m a b h.2 with ⟨k₀, m₀, hm⟩

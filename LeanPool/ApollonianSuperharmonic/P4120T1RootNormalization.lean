@@ -5,13 +5,12 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.BandRegimeClassification
 public import LeanPool.ApollonianSuperharmonic.BandParentRotationOccurrenceCovariance
-public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryCovariance
 public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryTileOdometerCovariance
 public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryGlobalOdometerTransport
-public import LeanPool.ApollonianSuperharmonic.TileQuarterTurnFormulas
-public import LeanPool.ApollonianSuperharmonic.TileReflectionFormulas
 
 -- [TABLET NODE: P4120T1RootNormalization]
 

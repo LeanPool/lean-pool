@@ -5,8 +5,9 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.GaussianRealPoint
-public import Mathlib.Algebra.Order.Floor.Ring
 
 /-!
 # P3776T1WalkMap

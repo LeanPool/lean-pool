@@ -5,9 +5,11 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+public import Mathlib.Data.Fintype.Card
+
 public import LeanPool.ApollonianSuperharmonic.P4715T1VertexShift
 public import LeanPool.ApollonianSuperharmonic.P4715T1BoundaryCycle
-public import Mathlib.Data.Fintype.Sets
 
 -- [TABLET NODE: P4780T1NeighborCorners]
 

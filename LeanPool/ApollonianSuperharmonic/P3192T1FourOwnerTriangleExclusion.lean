@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P3102T2CommonEdgeSectorTransition
 public import LeanPool.ApollonianSuperharmonic.CommonFootprintEdgeVertices
 public import LeanPool.ApollonianSuperharmonic.FootprintVertices

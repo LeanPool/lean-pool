@@ -5,11 +5,13 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.TileTouching
 public import LeanPool.ApollonianSuperharmonic.FootprintEdges
 public import LeanPool.ApollonianSuperharmonic.P3161T2IncidentBoundary
 public import LeanPool.ApollonianSuperharmonic.SimpleGridPathVertexIncidentEdge
-public import Mathlib.Data.List.Chain
+public import LeanPool.ApollonianSuperharmonic.FootprintVertices
 
 -- [TABLET NODE: P4677T2TouchingWalk]
 

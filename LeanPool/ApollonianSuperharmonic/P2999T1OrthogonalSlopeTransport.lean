@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P2999T1CompleteSquareTransport
 public import LeanPool.ApollonianSuperharmonic.PartialOdometerSlope
 

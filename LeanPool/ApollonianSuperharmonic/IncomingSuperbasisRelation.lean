@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.VectorRecursionLaws
 
 -- [TABLET NODE: IncomingSuperbasisRelation]
@@ -45,8 +47,10 @@ theorem IncomingSuperbasisRelation (q : Fin 4 → CircleCoordinates)
   rcases firstLaw with ⟨sumFirst, sumSecond, incomingFirst, incomingSecond, _⟩
   rcases secondLaw with ⟨_, _, rotatedFirst, rotatedSecond, _⟩
   rcases thirdLaw with ⟨_, _, rotatedAgainFirst, rotatedAgainSecond, _⟩
-  simp? at rotatedFirst rotatedSecond rotatedAgainFirst rotatedAgainSecond
-  simp? [Fin.sum_univ_succ]
+  simp only [Fin.isValue, Matrix.cons_val_one, Matrix.cons_val_zero, Int.reduceNeg,
+      Matrix.cons_val] at rotatedFirst rotatedSecond rotatedAgainFirst rotatedAgainSecond
+  simp only [Fin.isValue, Fin.sum_univ_succ, Fin.succ_zero_eq_one, Fin.succ_one_eq_two,
+      Finset.univ_unique, Fin.default_eq_zero, Finset.sum_singleton, Fin.reduceSucc]
   constructor
   · rw [incomingFirst, rotatedFirst, rotatedAgainFirst]
     calc

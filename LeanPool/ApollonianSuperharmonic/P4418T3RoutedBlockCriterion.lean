@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P4418T3EndpointOwnerIndices
 public import LeanPool.ApollonianSuperharmonic.P4418T3SelectedInterfaceData
 public import LeanPool.ApollonianSuperharmonic.P3996T1SRowTable
@@ -13,8 +15,6 @@ public import LeanPool.ApollonianSuperharmonic.LocalLatticeInterfaceSectors
 public import LeanPool.ApollonianSuperharmonic.OppositeRoutedCommonEdgeOutsideCellUnique
 public import LeanPool.ApollonianSuperharmonic.SimpleGridPathPointTrichotomy
 public import LeanPool.ApollonianSuperharmonic.TileDiskAreaCovariance
-public import LeanPool.ApollonianSuperharmonic.TileTranslationFormulas
-public import LeanPool.ApollonianSuperharmonic.LatticeTileGridStructure
 
 -- [TABLET NODE: P4418T3RoutedBlockCriterion]
 

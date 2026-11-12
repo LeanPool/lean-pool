@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P3652T1TriangleFaceRestriction
 public import LeanPool.ApollonianSuperharmonic.P3652T1IndexedFaceLedger
 

@@ -5,8 +5,10 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.ApollonianSuperharmonic.FordCellDomain
+public import Mathlib.Init
+
 public import Mathlib.Data.Int.Interval
+public import Mathlib.NumberTheory.Zsqrtd.GaussianInt
 
 -- [TABLET NODE: P4062T1InteriorSquare]
 

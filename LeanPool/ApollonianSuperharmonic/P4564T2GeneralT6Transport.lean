@@ -5,16 +5,15 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.BandOriginalOccurrenceIntersectionClassification
 public import LeanPool.ApollonianSuperharmonic.BandOrderedGeneralRawSupport
 public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryCovariance
-public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryProperCovariance
 public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryScopedPhaseUnique
 public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryTilingTransport
-public import LeanPool.ApollonianSuperharmonic.BandPredecessorNoCollision
 public import LeanPool.ApollonianSuperharmonic.BandPrototileCentroidUnique
 public import LeanPool.ApollonianSuperharmonic.ProtoTileObservableExtensionality
-public import LeanPool.ApollonianSuperharmonic.TileTranslationFormulas
 public import LeanPool.ApollonianSuperharmonic.P4055T1PackingGridEquivalence
 
 -- [TABLET NODE: P4564T2GeneralT6Transport]

@@ -5,6 +5,9 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+public import Mathlib.Data.Fintype.Prod
+
 public import LeanPool.ApollonianSuperharmonic.P4733T1EdgeRow
 
 -- [TABLET NODE: P4733T1RowLabelRigidity]

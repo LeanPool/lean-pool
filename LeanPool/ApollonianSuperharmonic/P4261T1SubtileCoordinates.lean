@@ -5,12 +5,11 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P4261T1PlacedOdometer
 public import LeanPool.ApollonianSuperharmonic.P4261T1ExteriorIndices
 public import LeanPool.ApollonianSuperharmonic.BandOrderedGeneralSubtileCanonicalRows
-public import LeanPool.ApollonianSuperharmonic.P3055T1ParentVectorNormalForms
-public import LeanPool.ApollonianSuperharmonic.P3055T1SignedCentroidNormalForms
-public import LeanPool.ApollonianSuperharmonic.BandPredecessorNoCollision
 public import LeanPool.ApollonianSuperharmonic.BandPrototileCentroidUnique
 public import LeanPool.ApollonianSuperharmonic.BandPrototileTranslation
 public import LeanPool.ApollonianSuperharmonic.TileOdometerBandPrototile

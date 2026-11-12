@@ -5,29 +5,19 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.BandSubtileOccurrence
-public import LeanPool.ApollonianSuperharmonic.BoundaryFootprintEdges
-public import LeanPool.ApollonianSuperharmonic.BoundaryFootprintVertices
-public import LeanPool.ApollonianSuperharmonic.ClosedSquareRealization
-public import LeanPool.ApollonianSuperharmonic.FordCircleCoordinate
-public import LeanPool.ApollonianSuperharmonic.FordCoordinateConfiguration
-public import LeanPool.ApollonianSuperharmonic.FordFareyParameter
 public import LeanPool.ApollonianSuperharmonic.FordRecursiveQuadruple
 public import LeanPool.ApollonianSuperharmonic.FordTileGeometry
 public import LeanPool.ApollonianSuperharmonic.LatticeTile
-public import LeanPool.ApollonianSuperharmonic.SimpleGridPath
 public import LeanPool.ApollonianSuperharmonic.TileCellComplement
-public import LeanPool.ApollonianSuperharmonic.TileRealization
 public import LeanPool.ApollonianSuperharmonic.TileTouching
-public import LeanPool.ApollonianSuperharmonic.TopologicalDisk
 public import LeanPool.ApollonianSuperharmonic.FordTileRecursiveIdentification
 public import LeanPool.ApollonianSuperharmonic.BandPrototileCentroidUnique
 public import LeanPool.ApollonianSuperharmonic.P5104T1CornerDeletionDisk
 public import LeanPool.ApollonianSuperharmonic.LatticeTileDiskUnionInterface
-public import LeanPool.ApollonianSuperharmonic.LatticeTileFourNeighborConnected
 public import LeanPool.ApollonianSuperharmonic.TileDiskAreaCovariance
-public import LeanPool.ApollonianSuperharmonic.P4210T1FordCellRectangles
-public import LeanPool.ApollonianSuperharmonic.TileTranslation
 
 -- [TABLET NODE: FordBaseT1]
 

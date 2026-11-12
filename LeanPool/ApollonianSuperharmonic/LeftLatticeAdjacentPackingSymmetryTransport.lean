@@ -5,14 +5,10 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P5625T1CentroidSlopeDifferenceCovariance
-public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryAffineVectorCovariance
-public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryPartialOdometerActionFormulas
-public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetrySlopeAction
 public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryTileOdometerCovariance
-public import LeanPool.ApollonianSuperharmonic.LeftLatticeAdjacent
-public import LeanPool.ApollonianSuperharmonic.OdometerCompatibility
-public import LeanPool.ApollonianSuperharmonic.PositiveCurvatureTileOdometerDomain
 
 -- [TABLET NODE: LeftLatticeAdjacentPackingSymmetryTransport]
 
@@ -204,7 +200,8 @@ private theorem affine_neg :
       rcases w with ⟨wa, wb⟩
       apply Prod.ext
       · simp [BandPackingSymmetryAffineVectorAction, GaussianReflection]
-      · simp? [BandPackingSymmetryAffineVectorAction, GaussianReflection]
+      · simp only [BandPackingSymmetryAffineVectorAction, Int.reduceNeg, GaussianReflection,
+          Zsqrtd.re_neg, Zsqrtd.im_neg, neg_neg, Prod.neg_mk, neg_add_rev]
         have hrel : ({re := -va, im := vb} : GaussianInt) =
             -({re := va, im := -vb} : GaussianInt) := by
           ext <;> simp
@@ -527,12 +524,15 @@ theorem LeftLatticeAdjacentPackingSymmetryTransport
       have hv := (hvec i).1
       have hvr := congrArg (fun z : GaussianInt => (z.re : ℝ)) hv
       by_cases hn : negative
-      · simp? [he, hn] at hvr ⊢
+      · simp only [Int.reduceNeg, Fin.isValue, GaussianInt.intCast_re, hn, ↓reduceIte,
+          neg_mul, one_mul, Zsqrtd.re_neg, Int.cast_neg, he, bne_self_eq_false,
+          Bool.false_eq_true] at hvr ⊢
         rw [← GaussianInt.intCast_re] at ⊢
         have hcoord := hvr
         try simp only [real_coord] at hcoord
         linarith [hs.1, hcoord]
-      · simp? [he, hn] at hvr ⊢
+      · simp only [Int.reduceNeg, Fin.isValue, GaussianInt.intCast_re, hn, Bool.false_eq_true,
+          ↓reduceIte, one_mul, he, Bool.bne_false] at hvr ⊢
         rw [← GaussianInt.intCast_re] at ⊢
         have hcoord := hvr
         try simp only [real_coord] at hcoord
@@ -549,7 +549,9 @@ theorem LeftLatticeAdjacentPackingSymmetryTransport
       have hv := (hvec i).1
       have hvr := congrArg (fun z : GaussianInt => (z.re : ℝ)) hv
       by_cases hn : negative
-      · simp? [he, hn] at hvr ⊢
+      · simp only [Int.reduceNeg, Fin.isValue, GaussianInt.intCast_re, hn, ↓reduceIte,
+          neg_mul, one_mul, Zsqrtd.re_neg, Int.cast_neg, he, Bool.bne_true, Bool.not_false]
+          at hvr ⊢
         try rw [← GaussianInt.intCast_re] at ⊢
         have hcoord := hvr
         try simp only [real_coord] at hcoord
@@ -561,7 +563,8 @@ theorem LeftLatticeAdjacentPackingSymmetryTransport
                   BandVectors.2 (q i.succ) (q 0))).2.re : ℝ) :=
                       LeftLatticeTransportGeometry.hscoordAt393 g q i T T' p p' hs
         linarith [hscoord, hcoord]
-      · simp? [he, hn] at hvr ⊢
+      · simp only [Int.reduceNeg, Fin.isValue, GaussianInt.intCast_re, hn, Bool.false_eq_true,
+          ↓reduceIte, one_mul, he, bne_self_eq_false, neg_mul] at hvr ⊢
         try rw [← GaussianInt.intCast_re] at ⊢
         have hcoord := hvr
         try simp only [real_coord] at hcoord
@@ -585,12 +588,15 @@ theorem LeftLatticeAdjacentPackingSymmetryTransport
       have hv := (hvec i).1
       have hvi := congrArg (fun z : GaussianInt => (z.im : ℝ)) hv
       by_cases hn : negative
-      · simp? [he, hn] at hvi ⊢
+      · simp only [Int.reduceNeg, Fin.isValue, GaussianInt.intCast_im, hn, ↓reduceIte,
+          neg_mul, one_mul, Zsqrtd.im_neg, Int.cast_neg, he, bne_self_eq_false,
+          Bool.false_eq_true] at hvi ⊢
         rw [← GaussianInt.intCast_im] at ⊢
         have hcoord := hvi
         try simp only [imag_coord] at hcoord
         linarith [hs.2, hcoord]
-      · simp? [he, hn] at hvi ⊢
+      · simp only [Int.reduceNeg, Fin.isValue, GaussianInt.intCast_im, hn, Bool.false_eq_true,
+          ↓reduceIte, one_mul, he, Bool.bne_false] at hvi ⊢
         rw [← GaussianInt.intCast_im] at ⊢
         have hcoord := hvi
         try simp only [imag_coord] at hcoord
@@ -607,7 +613,9 @@ theorem LeftLatticeAdjacentPackingSymmetryTransport
       have hv := (hvec i).1
       have hvi := congrArg (fun z : GaussianInt => (z.im : ℝ)) hv
       by_cases hn : negative
-      · simp? [he, hn] at hvi ⊢
+      · simp only [Int.reduceNeg, Fin.isValue, GaussianInt.intCast_im, hn, ↓reduceIte,
+          neg_mul, one_mul, Zsqrtd.im_neg, Int.cast_neg, he, Bool.bne_true, Bool.not_false]
+          at hvi ⊢
         try rw [← GaussianInt.intCast_im] at ⊢
         have hcoord := hvi
         try simp only [imag_coord] at hcoord
@@ -619,7 +627,8 @@ theorem LeftLatticeAdjacentPackingSymmetryTransport
                   BandVectors.2 (q i.succ) (q 0))).2.im : ℝ) :=
                       LeftLatticeTransportGeometry.hscoordAt451 g q i T T' p p' hs
         linarith [hscoord, hcoord]
-      · simp? [he, hn] at hvi ⊢
+      · simp only [Int.reduceNeg, Fin.isValue, GaussianInt.intCast_im, hn, Bool.false_eq_true,
+          ↓reduceIte, one_mul, he, bne_self_eq_false, neg_mul] at hvi ⊢
         try rw [← GaussianInt.intCast_im] at ⊢
         have hcoord := hvi
         try simp only [imag_coord] at hcoord

@@ -5,9 +5,10 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.BandCircleEnclosureDichotomy
 public import LeanPool.ApollonianSuperharmonic.CircleMatrixEnclosureCriterion
-public import LeanPool.ApollonianSuperharmonic.SymmetricMatrixCoordinates
 
 -- [TABLET NODE: PositiveTracePackingDichotomy]
 

@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P5332T1ParentRows
 public import LeanPool.ApollonianSuperharmonic.P5130T5ParentArithmetic
 public import LeanPool.ApollonianSuperharmonic.P5332T1SignedParentIntervals
@@ -41,20 +43,20 @@ theorem P5332T1ParentRounding (P : FordFareyParameter) (hq : 1 < P.q)
     nlinarith [P.det₂]
   have fm (K : Int) : (K*(P.q : Int)-1)/(P.q : Int) = K-1 := by
     apply (Int.ediv_eq_iff_of_pos (by omega)).mpr
-    constructor <;> nlinarith
+    constructor <;> nlinarith only [hq']
   have fp (K : Int) : (K*(P.q : Int)+1)/(P.q : Int) = K := by
     apply (Int.ediv_eq_iff_of_pos (by omega)).mpr
-    constructor <;> nlinarith
+    constructor <;> nlinarith only [hq']
   have cm (K : Int) : -((-(K*(P.q : Int)-1))/(P.q : Int)) = K := by
     have hh : (-(K*(P.q : Int)-1))/(P.q : Int) = -K := by
       apply (Int.ediv_eq_iff_of_pos (by omega)).mpr
-      constructor <;> nlinarith
+      constructor <;> nlinarith only [hq']
     rw [hh]
     ring
   have cp (K : Int) : -((-(K*(P.q : Int)+1))/(P.q : Int)) = K+1 := by
     have hh : (-(K*(P.q : Int)+1))/(P.q : Int) = -(K+1) := by
       apply (Int.ediv_eq_iff_of_pos (by omega)).mpr
-      constructor <;> nlinarith
+      constructor <;> nlinarith only [hq']
     rw [hh]
     ring
   by_cases ht0 : t = 0

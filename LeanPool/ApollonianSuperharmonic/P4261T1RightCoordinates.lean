@@ -5,17 +5,14 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P4261T1PlacedOdometer
 public import LeanPool.ApollonianSuperharmonic.TileSubodometerLiteralDecompositionPiece
-public import LeanPool.ApollonianSuperharmonic.TileOdometerReindexedDecomposition
 public import LeanPool.ApollonianSuperharmonic.TileOdometerBandPrototile
-public import LeanPool.ApollonianSuperharmonic.PositiveCurvatureTileOdometerDomain
 public import LeanPool.ApollonianSuperharmonic.RightLatticeAdjacent
 public import LeanPool.ApollonianSuperharmonic.P3055T1ParentVectorNormalForms
-public import LeanPool.ApollonianSuperharmonic.P3055T1SignedCentroidNormalForms
 public import LeanPool.ApollonianSuperharmonic.BandPrototileTranslation
-public import LeanPool.ApollonianSuperharmonic.TileTranslationFormulas
-public import LeanPool.ApollonianSuperharmonic.VectorRecursionLaws
 
 -- [TABLET NODE: P4261T1RightCoordinates]
 
@@ -1039,7 +1036,9 @@ theorem P4261T1RightCoordinates
       hselectedValue rH r hdomainT hdomainSuppliedFresh hvalueSuppliedFresh
   have hsumA := RightCoordinateGeometry.hsumA q cfg
   have hsumAPoint := congrArg GaussianRealPoint hsumA
-  simp? [GaussianRealPoint] at hsumAPoint
+  simp only [GaussianRealPoint, Int.reduceNeg, Fin.isValue, GaussianInt.intCast_re,
+      GaussianInt.intCast_im, Zsqrtd.re_sub, Zsqrtd.re_neg, Int.cast_sub, Int.cast_neg,
+      Zsqrtd.im_sub, Zsqrtd.im_neg, Prod.mk.injEq] at hsumAPoint
   have hsumARe := RightCoordinateGeometry.hsumARe q hsumAPoint
   have hsumAIm := RightCoordinateGeometry.hsumAIm q hsumAPoint
   have hSlopePeriod := RightCoordinateGeometry.hSlopePeriod q cfg C₀ T₀ cert N T pN p0 q' i' e'

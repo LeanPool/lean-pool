@@ -5,12 +5,15 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P5130T5Prescription
 public import LeanPool.ApollonianSuperharmonic.FordDoubledBoundary
 public import LeanPool.ApollonianSuperharmonic.IntegerCeilDiv
 public import LeanPool.ApollonianSuperharmonic.P5188T1E1Boundary
 public import LeanPool.ApollonianSuperharmonic.P5188T1E2Boundary
 public import LeanPool.ApollonianSuperharmonic.P5188T1E3E4Boundary
+public import LeanPool.ApollonianSuperharmonic.FordRecursiveVertexDomains
 
 -- [TABLET NODE: P5130T5BoundaryConsistency]
 

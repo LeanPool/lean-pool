@@ -5,12 +5,12 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P4366T1PrecursorRemainderFamily
 public import LeanPool.ApollonianSuperharmonic.P4339T1PrecursorSupportGeometry
-public import LeanPool.ApollonianSuperharmonic.BandPrototileCentralSymmetry
 public import LeanPool.ApollonianSuperharmonic.LatticeEdgeRegularity
 public import LeanPool.ApollonianSuperharmonic.SimpleGridPathBetween
-public import LeanPool.ApollonianSuperharmonic.P3161T2IncidentBoundary
 public import LeanPool.ApollonianSuperharmonic.P4397T1PathAvoidsPrecursorEdges
 public import LeanPool.ApollonianSuperharmonic.P4397T1SimplePathSplicing
 
@@ -267,12 +267,12 @@ private theorem ordered :
         ∀ (C : BandCircle), ∀ (q : Fin 4 → CircleCoordinates), ∀ (cfg :
             BandOrderedGeneralConfiguration q), ∀ (T : ProtoTile), ∀ (cert :
             BandOrderedGeneralLayoutCertificate q cfg C T), ∀ (a : GaussianInt), ∀ (b :
-            GaussianInt), (a ∈ ({cert.precursor_boundary.a, cert.precursor_boundary.b} : Finset
+            GaussianInt), (a ∈ ({cert.precursorBoundary.a, cert.precursorBoundary.b} : Finset
                 GaussianInt)) → ((b ∈
-            ({cert.precursor_boundary.a, cert.precursor_boundary.b} : Finset GaussianInt)) → ((a
+            ({cert.precursorBoundary.a, cert.precursorBoundary.b} : Finset GaussianInt)) → ((a
                 ≠ b) → ((a =
-            cert.precursor_boundary.a ∧ b = cert.precursor_boundary.b) ∨ (a =
-            cert.precursor_boundary.b ∧ b = cert.precursor_boundary.a)))) ) := by
+            cert.precursorBoundary.a ∧ b = cert.precursorBoundary.b) ∨ (a =
+            cert.precursorBoundary.b ∧ b = cert.precursorBoundary.a)))) ) := by
   classical
   intro C q cfg T cert a b ha hb hab
   simp only [Finset.mem_insert, Finset.mem_singleton] at ha hb
@@ -289,16 +289,16 @@ private theorem hreflectab :
         ∀ (C : BandCircle), ∀ (q : Fin 4 → CircleCoordinates), ∀ (cfg :
             BandOrderedGeneralConfiguration q), ∀ (T : ProtoTile), ∀ (cert :
             BandOrderedGeneralLayoutCertificate q cfg C T), ∀ (a : GaussianInt), ∀ (b :
-            GaussianInt), (a ∈ ({cert.precursor_boundary.a, cert.precursor_boundary.b} : Finset
+            GaussianInt), (a ∈ ({cert.precursorBoundary.a, cert.precursorBoundary.b} : Finset
                 GaussianInt)) → ((b ∈
-            ({cert.precursor_boundary.a, cert.precursor_boundary.b} : Finset GaussianInt)) → ((a
+            ({cert.precursorBoundary.a, cert.precursorBoundary.b} : Finset GaussianInt)) → ((a
                 ≠ b) → (∀ (g : List
             GaussianInt), (g.head? = some a) → ((g.getLast? = some b) → (((a =
-            cert.precursor_boundary.a ∧ b = cert.precursor_boundary.b) ∨ (a =
-            cert.precursor_boundary.b ∧ b = cert.precursor_boundary.a)) → ((GaussianRealPoint
-            cert.precursor_boundary.b = ((2 : ℝ) * (TileCentroid cert.O).1 - (GaussianRealPoint
-            cert.precursor_boundary.a).1, (2 : ℝ) * (TileCentroid cert.O).2 - (GaussianRealPoint
-            cert.precursor_boundary.a).2)) → (GaussianRealPoint b = (2 * (TileCentroid cert.O).1
+            cert.precursorBoundary.a ∧ b = cert.precursorBoundary.b) ∨ (a =
+            cert.precursorBoundary.b ∧ b = cert.precursorBoundary.a)) → ((GaussianRealPoint
+            cert.precursorBoundary.b = ((2 : ℝ) * (TileCentroid cert.O).1 - (GaussianRealPoint
+            cert.precursorBoundary.a).1, (2 : ℝ) * (TileCentroid cert.O).2 - (GaussianRealPoint
+            cert.precursorBoundary.a).2)) → (GaussianRealPoint b = (2 * (TileCentroid cert.O).1
             - (GaussianRealPoint a).1, 2 * (TileCentroid cert.O).2 - (GaussianRealPoint
             a).2)))))))) ) := by
   classical
@@ -320,16 +320,16 @@ private theorem roots_ab :
         ∀ (C : BandCircle), ∀ (q : Fin 4 → CircleCoordinates), ∀ (cfg :
             BandOrderedGeneralConfiguration q), ∀ (T : ProtoTile), ∀ (cert :
             BandOrderedGeneralLayoutCertificate q cfg C T), ∀ (a : GaussianInt), ∀ (b :
-            GaussianInt), (a ∈ ({cert.precursor_boundary.a, cert.precursor_boundary.b} : Finset
+            GaussianInt), (a ∈ ({cert.precursorBoundary.a, cert.precursorBoundary.b} : Finset
                 GaussianInt)) → ((b ∈
-            ({cert.precursor_boundary.a, cert.precursor_boundary.b} : Finset GaussianInt)) → ((a
+            ({cert.precursorBoundary.a, cert.precursorBoundary.b} : Finset GaussianInt)) → ((a
                 ≠ b) → (∀ (g : List
             GaussianInt), (g.head? = some a) → ((g.getLast? = some b) → (((a =
-            cert.precursor_boundary.a ∧ b = cert.precursor_boundary.b) ∨ (a =
-            cert.precursor_boundary.b ∧ b = cert.precursor_boundary.a)) → ((GaussianRealPoint b =
+            cert.precursorBoundary.a ∧ b = cert.precursorBoundary.b) ∨ (a =
+            cert.precursorBoundary.b ∧ b = cert.precursorBoundary.a)) → ((GaussianRealPoint b =
             (2 * (TileCentroid cert.O).1 - (GaussianRealPoint a).1, 2 * (TileCentroid cert.O).2 -
-            (GaussianRealPoint a).2)) → (∀ (z : GaussianInt), (z ∈ ({cert.precursor_boundary.a,
-            cert.precursor_boundary.b} :
+            (GaussianRealPoint a).2)) → (∀ (z : GaussianInt), (z ∈ ({cert.precursorBoundary.a,
+            cert.precursorBoundary.b} :
             Finset GaussianInt)) → (z = a ∨ z = b)))))))) ) := by
   classical
   intro C q cfg T cert a b ha hb hab g hga hgb ordered hreflectab z hz
@@ -615,12 +615,12 @@ theorem P4366T1PrecursorPathLoop
     (hOband : BandPrototile (cfg.firstPredecessor 1) cert.O)
     (hroots : ∀ x ∈ D \ P,
       x ∈ FootprintVertices cert.O ↔
-        x ∈ ({cert.precursor_boundary.a, cert.precursor_boundary.b} :
+        x ∈ ({cert.precursorBoundary.a, cert.precursorBoundary.b} :
           Finset GaussianInt))
     (a b : GaussianInt)
-    (ha : a ∈ ({cert.precursor_boundary.a, cert.precursor_boundary.b} :
+    (ha : a ∈ ({cert.precursorBoundary.a, cert.precursorBoundary.b} :
       Finset GaussianInt))
-    (hb : b ∈ ({cert.precursor_boundary.a, cert.precursor_boundary.b} :
+    (hb : b ∈ ({cert.precursorBoundary.a, cert.precursorBoundary.b} :
       Finset GaussianInt))
     (hab : a ≠ b) (V : Set GaussianInt) (E : Set (Finset GaussianInt))
     (hpath : SimpleGridPathBetween V E a b)
@@ -684,7 +684,7 @@ theorem P4366T1PrecursorPathLoop
   obtain ⟨plusArc, minusArc, hpn, hmn, hph, hpl, hmh, hml,
       hpf, hmf, hpe, hme, _, _, hreflect, _⟩ :=
     (show ∃ plusArc minusArc : List GaussianInt, _ from by
-      rcases cert.precursor_boundary.branch with hp | hn
+      rcases cert.precursorBoundary.branch with hp | hn
       · exact hp.2
       · exact ((Finset.nonempty_iff_ne_empty.mp hO) hn.1).elim)
   have hreflectab := PrecursorLoopGeometry.hreflectab C q cfg T cert a b ha hb hab g hga hgb

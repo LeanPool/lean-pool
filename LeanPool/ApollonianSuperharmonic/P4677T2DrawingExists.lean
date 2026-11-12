@@ -5,12 +5,13 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P4677T2DrawingData
 public import LeanPool.ApollonianSuperharmonic.P4715T1LatticeCoordinates
 public import LeanPool.ApollonianSuperharmonic.P4715T1PlaneMap
 public import LeanPool.ApollonianSuperharmonic.P4715T1CoefficientEdges
 public import LeanPool.ApollonianSuperharmonic.P4715T1CoefficientFaces
-public import LeanPool.ApollonianSuperharmonic.P4715T1CoefficientTranslation
 public import LeanPool.ApollonianSuperharmonic.P4715T1OrbitRepresentatives
 
 -- [TABLET NODE: P4677T2DrawingExists]

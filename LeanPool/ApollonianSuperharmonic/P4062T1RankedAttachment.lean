@@ -5,8 +5,9 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.AcyclicIndegreeOrientation
-public import Mathlib.Order.Interval.Finset.Nat
 
 /-!
 # P4062T1RankedAttachment
@@ -96,7 +97,7 @@ theorem P4062T1RankedAttachment (D E : Finset GaussianInt)
       omega
   let t : AcyclicIndegreeOrientation D σ := {
     edge := edge
-    edge_decidable := fun _ _ => Classical.propDecidable _
+    edgeDecidable := fun _ _ => Classical.propDecidable _
     rank := rank
     supported := support
     oriented := oriented

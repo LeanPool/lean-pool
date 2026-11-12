@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.SimpleGridPathBetween
 
 -- [TABLET NODE: SimpleGridPathEndpointPairUnique]
@@ -175,13 +177,14 @@ private theorem interior_edges :
     intro he
     subst l
     rw [hrt] at hu
-    simp? at hu
+    simp only [List.nil_append, List.head?_cons, Option.some.injEq] at hu
     exact hzu hu
   have ht : t ≠ [] := by
     intro he
     subst t
     rw [hrt] at hv
-    simp? at hv
+    simp only [List.getLast?_append, List.getLast?_singleton, Option.some_or,
+        Option.some.injEq] at hv
     exact hzv hv
   let a := l.getLast hl
   let l₀ := l.dropLast
@@ -206,7 +209,8 @@ private theorem interior_edges :
     · subst a
       have hbad := hr
       rw [hrt, ← hlt] at hbad
-      simp? [List.nodup_append] at hbad
+      simp only [List.append_assoc, List.cons_append, List.nil_append, List.nodup_append,
+          List.nodup_cons, List.mem_cons, not_or, ne_eq, forall_eq_or_imp] at hbad
       exact hbad.2.1.1.1 haz
     · subst b
       have hbad := hr

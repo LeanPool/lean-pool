@@ -5,12 +5,13 @@ Authors: Wesley Pegden
 -/
 module
 
-public import Mathlib.Analysis.SpecialFunctions.Complex.Circle
-public import Mathlib.Topology.ContinuousMap.Basic
-public import Mathlib.Topology.UniformSpace.HeineCantor
-public import Mathlib.Topology.MetricSpace.Pseudo.Basic
+public import Mathlib.Init
+public import Mathlib.Tactic.Positivity
+
 public import Mathlib.Algebra.BigOperators.Field
-public import LeanPool.ApollonianSuperharmonic.Preamble
+public import Mathlib.Algebra.Order.Algebra
+public import Mathlib.Analysis.Complex.Circle
+public import Mathlib.Analysis.SpecialFunctions.Log.Basic
 
 -- [TABLET NODE: P3821T1ControlledNeighborhood]
 

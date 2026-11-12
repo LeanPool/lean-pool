@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P4261T2AdjacentMatrixSlope
 public import LeanPool.ApollonianSuperharmonic.P4250T1DefinedHalfIntegralSlope
 public import LeanPool.ApollonianSuperharmonic.OdometerStringRespect

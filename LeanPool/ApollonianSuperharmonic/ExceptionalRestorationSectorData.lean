@@ -5,10 +5,10 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.ApollonianSuperharmonic.BoundaryFootprintVertices
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.ExceptionalConnectorSegments
 public import LeanPool.ApollonianSuperharmonic.LatticeVertexIncidentCell
-public import LeanPool.ApollonianSuperharmonic.TileCellComplement
 
 -- [TABLET NODE: ExceptionalRestorationSectorData]
 

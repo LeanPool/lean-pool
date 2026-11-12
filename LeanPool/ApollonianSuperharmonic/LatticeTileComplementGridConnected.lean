@@ -5,14 +5,11 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.ApollonianSuperharmonic.BoundaryFootprintEdges
-public import LeanPool.ApollonianSuperharmonic.BoundaryFootprintVertices
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.FourNeighborConnected
 public import LeanPool.ApollonianSuperharmonic.LatticeTile
 public import LeanPool.ApollonianSuperharmonic.LatticeTileGridStructure
-public import LeanPool.ApollonianSuperharmonic.NoCheckerboardCellVertex
-public import LeanPool.ApollonianSuperharmonic.ProtoTile
-public import LeanPool.ApollonianSuperharmonic.SimpleGridCycle
 
 -- [TABLET NODE: LatticeTileComplementGridConnected]
 

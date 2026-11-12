@@ -5,14 +5,12 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.ApollonianSuperharmonic.FordTileGeometry
+public import Mathlib.Init
+
 
 public import LeanPool.ApollonianSuperharmonic.BandLatticeEquality
 public import LeanPool.ApollonianSuperharmonic.BandOdometerMaximality
-public import LeanPool.ApollonianSuperharmonic.BandPeriodicOdometer
 public import LeanPool.ApollonianSuperharmonic.BandPeriodicSuperharmonicity
-public import LeanPool.ApollonianSuperharmonic.BandTileTopologyApplication
-public import LeanPool.ApollonianSuperharmonic.CurvatureOneTileBase
 
 -- [TABLET NODE: BandOdometerTheorem]
 
@@ -141,7 +139,9 @@ theorem BandOdometerTheorem : ∀ C : BandCircle,
           · simp [sub_eq_add_neg]
           · intro V hV hy
             rcases hV with ⟨a, ha, rfl⟩
-            simp? [TileTranslation, GaussianTranslation] at hy ⊢
+            simp only [TileTranslation, Finset.image_singleton, GaussianTranslation,
+                Finset.mem_singleton, add_sub_cancel, ProtoTile.mk.injEq,
+                Finset.singleton_inj, add_right_inj] at hy ⊢
             obtain rfl := hy
             constructor
             · rfl

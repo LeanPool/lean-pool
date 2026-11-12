@@ -5,10 +5,11 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P4802T1SimplexFaces
 public import LeanPool.ApollonianSuperharmonic.P4802T1TriangleIndependent
 public import LeanPool.ApollonianSuperharmonic.P4715T1HexagonSubdivision
-public import LeanPool.ApollonianSuperharmonic.P4715T1PositionInjective
 
 -- [TABLET NODE: P4802T1PatchFaceRestriction]
 

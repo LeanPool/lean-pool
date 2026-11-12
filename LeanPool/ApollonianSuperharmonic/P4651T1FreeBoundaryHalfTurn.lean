@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P4590T1CentralDiskSectors
 public import LeanPool.ApollonianSuperharmonic.P4397T1ReflectedEdgeNotBoundary
 public import LeanPool.ApollonianSuperharmonic.P4456T2VertexInterior

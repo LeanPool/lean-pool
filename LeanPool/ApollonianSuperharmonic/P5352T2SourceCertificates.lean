@@ -5,8 +5,11 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P5352T2Sources
-public import LeanPool.ApollonianSuperharmonic.P4194T1DiamondCentroid
+public import LeanPool.ApollonianSuperharmonic.DiamondTileOdometerRestriction
+public import Mathlib.Algebra.Order.Ring.Star
 
 -- [TABLET NODE: P5352T2SourceCertificates]
 

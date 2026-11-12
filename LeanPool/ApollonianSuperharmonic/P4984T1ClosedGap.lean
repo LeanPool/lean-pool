@@ -5,7 +5,11 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+public import Mathlib.Topology.MetricSpace.Pseudo.Real
+
 public import LeanPool.ApollonianSuperharmonic.P4909T1ParentPolygon
+public import Mathlib.Analysis.Complex.Norm
 
 -- [TABLET NODE: P4984T1ClosedGap]
 

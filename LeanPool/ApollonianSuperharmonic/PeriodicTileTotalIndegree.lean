@@ -5,29 +5,20 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.ApollonianSuperharmonic.BandCircleEuclideanData
-public import LeanPool.ApollonianSuperharmonic.BoundaryFootprintEdges
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.BoundaryFootprintVertices
 public import LeanPool.ApollonianSuperharmonic.CircleMatrix
 public import LeanPool.ApollonianSuperharmonic.ExactTileTiling
-public import LeanPool.ApollonianSuperharmonic.FootprintVertices
 public import LeanPool.ApollonianSuperharmonic.FourNeighborAdjacent
 public import LeanPool.ApollonianSuperharmonic.FourNeighborLaplacian
 public import LeanPool.ApollonianSuperharmonic.LatticeEdgeRegularity
 public import LeanPool.ApollonianSuperharmonic.LatticeQuadraticForm
-public import LeanPool.ApollonianSuperharmonic.LatticeTile
-public import LeanPool.ApollonianSuperharmonic.LatticeTileGridStructure
 public import LeanPool.ApollonianSuperharmonic.PartialOdometer
-public import LeanPool.ApollonianSuperharmonic.ProtoTile
 public import LeanPool.ApollonianSuperharmonic.RegularTileFamily
-public import LeanPool.ApollonianSuperharmonic.SimpleGridCycle
-public import LeanPool.ApollonianSuperharmonic.TileTranslation
-public import LeanPool.ApollonianSuperharmonic.TilingLatticeIndex
-public import LeanPool.ApollonianSuperharmonic.LatticeTileGridEulerCount
 public import LeanPool.ApollonianSuperharmonic.QuadraticAffineLaplacian
 public import LeanPool.ApollonianSuperharmonic.RealLaplacianLinearity
 public import LeanPool.ApollonianSuperharmonic.IntegerLaplacianCastBridge
-public import LeanPool.ApollonianSuperharmonic.FiniteSquareIncidenceIdentities
 
 -- [TABLET NODE: PeriodicTileTotalIndegree]
 
@@ -1836,7 +1827,7 @@ private theorem hB_lap :
       apply Finset.sum_congr rfl
       intro x hx
       have hx' : x ∈ BoundaryFootprintVertices T := by
-        simp? [B, Finset.mem_filter] at hx
+        simp only [Finset.mem_filter, B] at hx
         exact hx.2
       rw [hweb x hx']
       norm_num

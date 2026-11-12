@@ -5,15 +5,13 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.BandOrderedGeneralOdometerRowData
-public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryCovariance
-public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryScopedPhaseUnique
 public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryTileOdometerCovariance
 public import LeanPool.ApollonianSuperharmonic.BandPrototileTranslationNormalForm
 public import LeanPool.ApollonianSuperharmonic.FordTileOdometerRestriction
-public import LeanPool.ApollonianSuperharmonic.P4210T1FordSquareCentroid
 public import LeanPool.ApollonianSuperharmonic.ProtoTileObservableExtensionality
-public import LeanPool.ApollonianSuperharmonic.TileOdometerAffineTranslation
 
 -- [TABLET NODE: P5472T1LiteralFordPlacement]
 
@@ -537,7 +535,8 @@ private theorem hcurvPos :
         ∀ (F : FordFareyParameter), 0 < (FordCircleCoordinate F.p F.q).1 ) := by
   classical
   intro F
-  simp? [FordCircleCoordinate]
+  simp only [FordCircleCoordinate, Nat.cast_mul, Int.reduceNeg, mul_self_pos, ne_eq,
+      Int.natCast_eq_zero]
   exact Nat.ne_of_gt F.q_pos
 
 private theorem hfootFord :

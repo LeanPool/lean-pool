@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P5432T1Normalization
 public import LeanPool.ApollonianSuperharmonic.P5432T1EdgeLedger
 public import LeanPool.ApollonianSuperharmonic.P4062T1OrientationTransport
@@ -59,7 +61,7 @@ theorem DiamondTileAcyclicIndegree :
   let o : AcyclicIndegreeOrientation E
       (fun x => 2 + FourNeighborLaplacian (DiamondOdometer K) x) := {
     edge := edge
-    edge_decidable := fun _ _ => Classical.propDecidable _
+    edgeDecidable := fun _ _ => Classical.propDecidable _
     rank := rank
     supported := hsupported
     oriented := horiented

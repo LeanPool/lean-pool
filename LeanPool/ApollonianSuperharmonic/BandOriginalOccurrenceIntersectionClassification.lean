@@ -5,24 +5,13 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.ApollonianSuperharmonic.AllowedSubtileIncidence
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.BandOrderedGeneralLayoutCertificate
 public import LeanPool.ApollonianSuperharmonic.BandOriginalPairSeparation
-public import LeanPool.ApollonianSuperharmonic.CellSupportedFootprintVertices
 public import LeanPool.ApollonianSuperharmonic.FootprintDeletionRetention
-public import LeanPool.ApollonianSuperharmonic.FootprintEdges
-public import LeanPool.ApollonianSuperharmonic.FootprintVertices
-public import LeanPool.ApollonianSuperharmonic.LatticeTile
-public import LeanPool.ApollonianSuperharmonic.ModifiedSubtileOccurrenceInterpretation
 public import LeanPool.ApollonianSuperharmonic.PeriodicTileIntersectionClassification
-public import LeanPool.ApollonianSuperharmonic.PeriodicTileIntersectionPaths
-public import LeanPool.ApollonianSuperharmonic.SixSubtileFaceVertices
-public import LeanPool.ApollonianSuperharmonic.SubtileOccurrenceInterpretation
-public import LeanPool.ApollonianSuperharmonic.TileCellComplement
 public import LeanPool.ApollonianSuperharmonic.TileCellComplementCovariance
-public import LeanPool.ApollonianSuperharmonic.TileRealization
-public import LeanPool.ApollonianSuperharmonic.TileTranslationFormulas
-public import LeanPool.ApollonianSuperharmonic.TopologicalDisk
 
 -- [TABLET NODE: BandOriginalOccurrenceIntersectionClassification]
 

@@ -5,12 +5,13 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+public import Mathlib.Tactic.Positivity
+
 public import LeanPool.ApollonianSuperharmonic.P4984T1ClosedGap
 public import LeanPool.ApollonianSuperharmonic.P4828T1Root
 public import LeanPool.ApollonianSuperharmonic.BandPackingExterior
-public import LeanPool.ApollonianSuperharmonic.P4953T1LiteralHulls
 public import Mathlib.Analysis.Convex.Combination
-public import Mathlib.Basic.Complex.BigOperators
 
 -- [TABLET NODE: P4984T1RootGaps]
 
@@ -115,7 +116,8 @@ private theorem rectHull :
     have ht1 : t ≤ 1 := by change (z.im - v) / 2 ≤ 1; linarith
     have hw : ∀ i, 0 ≤ w i := by
       intro i
-      fin_cases i <;> simp? [w] <;> positivity
+      fin_cases i <;> simp only [Fin.mk_one, Fin.isValue, Matrix.cons_val_one,
+          Matrix.cons_val_zero, w, Fin.reduceFinMk, Matrix.cons_val, Fin.zero_eta] <;> positivity
     have hsum : (∑ i : Fin 4, w i) = 1 := by
       simp [Fin.sum_univ_succ, w]; ring
     have heq : (∑ i : Fin 4, w i • c i) = z := by

@@ -5,8 +5,9 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P4733T1FacePairOrbit
-public import LeanPool.ApollonianSuperharmonic.P4733T1RowIncidence
 
 -- [TABLET NODE: P4733T1WalkExtension]
 

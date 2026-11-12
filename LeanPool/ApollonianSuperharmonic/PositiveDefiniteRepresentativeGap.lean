@@ -5,10 +5,11 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+public import Mathlib.Tactic.Positivity
+
 public import LeanPool.ApollonianSuperharmonic.CircleMatrix
 public import LeanPool.ApollonianSuperharmonic.IntegerSuperharmonicRepresentative
-public import LeanPool.ApollonianSuperharmonic.LatticeQuadraticForm
-public import LeanPool.ApollonianSuperharmonic.QuadraticGrowthAtInfinity
 public import LeanPool.ApollonianSuperharmonic.P5691T1PosDefQuadraticLowerBound
 
 -- [TABLET NODE: PositiveDefiniteRepresentativeGap]

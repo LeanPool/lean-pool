@@ -5,7 +5,11 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.ApollonianSuperharmonic.GaussianRealPoint
+public import Mathlib.Init
+public import Mathlib.Algebra.Group.Fin.Basic
+
+public import Mathlib.Data.Matrix.Mul
+public import Mathlib.NumberTheory.Zsqrtd.GaussianInt
 
 -- [TABLET NODE: LatticeQuadraticForm]
 

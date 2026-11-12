@@ -5,11 +5,13 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+public import Mathlib.Tactic.Positivity
+
 public import LeanPool.ApollonianSuperharmonic.P3555T2ParabolaSupporting
 public import Mathlib.Analysis.Convex.Topology
-public import Mathlib.Analysis.Convex.Combination
-public import Mathlib.Algebra.Order.Floor.Semiring
 public import LeanPool.ApollonianSuperharmonic.P3381T1AffineTriangleMap
+public import Mathlib.Algebra.Order.Ring.Star
 
 -- [TABLET NODE: P3555T2ParabolaHullFrontier]
 

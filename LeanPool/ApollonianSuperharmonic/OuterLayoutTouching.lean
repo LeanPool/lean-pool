@@ -5,13 +5,14 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.BandPrototile
 public import LeanPool.ApollonianSuperharmonic.BandPrototileCentroidUnique
 public import LeanPool.ApollonianSuperharmonic.BandPrototileTranslation
 public import LeanPool.ApollonianSuperharmonic.GaussianQuarterTurn
 public import LeanPool.ApollonianSuperharmonic.OuterTouchingAlternative
 public import LeanPool.ApollonianSuperharmonic.ProtoTileObservableExtensionality
-public import LeanPool.ApollonianSuperharmonic.TouchingTripleCovariance
 public import LeanPool.ApollonianSuperharmonic.TouchingTriplePermutations
 public import LeanPool.ApollonianSuperharmonic.TileTranslation
 public import LeanPool.ApollonianSuperharmonic.VectorRecursionLaws
@@ -792,7 +793,11 @@ theorem OuterLayoutTouching :
   have hEy := congrArg Prod.snd centerE
   have hFx := congrArg Prod.fst centerF
   have hFy := congrArg Prod.snd centerF
-  simp? [GaussianRealPoint] at hAx hAy hBx hBy hCx hCy hDx hDy hEx hEy hFx hFy
+  simp only [Prod.fst_sub, one_div, GaussianRealPoint, Int.reduceNeg, GaussianInt.intCast_re,
+      GaussianInt.intCast_im, Prod.mk_sub_mk, sub_neg_eq_add, Prod.smul_mk, smul_eq_mul,
+      one_smul, Prod.snd_sub, neg_smul, Prod.neg_mk, Zsqrtd.re_sub, Zsqrtd.re_neg,
+      Int.cast_sub, Int.cast_neg, Zsqrtd.im_sub, Zsqrtd.im_neg, neg_sub]
+      at hAx hAy hBx hBy hCx hCy hDx hDy hEx hEy hFx hFy
   have literal (K : CircleCoordinates) (X X' Y : ProtoTile) (z : GaussianInt)
       (hX : BandPrototile K X) (hX' : BandPrototile K X')
       (hoff : TileCentroid X' - TileCentroid X = GaussianRealPoint z)

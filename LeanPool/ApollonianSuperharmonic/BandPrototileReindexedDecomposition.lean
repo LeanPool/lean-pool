@@ -5,8 +5,11 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.SemiProperForestClassification
+
 public import LeanPool.ApollonianSuperharmonic.BandSubtileOccurrence
-public import LeanPool.ApollonianSuperharmonic.BandPredecessorNoCollision
+public import LeanPool.ApollonianSuperharmonic.BandSuccessorClassification
 
 -- [TABLET NODE: BandPrototileReindexedDecomposition]
 
@@ -29,26 +32,8 @@ theorem BandPrototileReindexedDecomposition (q : Fin 4 → CircleCoordinates)
       (∀ x, x ∈ T.cells ↔ ∃ i s, x ∈ (S i s).cells) := by
 -- BODY
   have nonnegative : ∀ r : Fin 4 → CircleCoordinates,
-      SemiProperQuadruple r → ∀ k : Fin 4, 0 ≤ (r k).1 := by
-    intro r hr
-    induction hr with
-    | base z => intro k; fin_cases k <;> simp
-    | rotate hr ih =>
-        intro k
-        fin_cases k <;> simp_all
-    | @successor r hr ih =>
-        intro k
-        have cl := BandSuccessorClassification r hr
-        dsimp at cl
-        rcases cl with special | proper
-        · fin_cases k <;> simp_all
-        · rcases proper with ⟨_, h0, h2, h3⟩
-          fin_cases k
-          · change 0 ≤ 2 * (r 0).1 + 2 * (r 2).1 + 2 * (r 3).1 - (r 1).1
-            exact (ih 0).trans h0.le
-          · exact ih 0
-          · exact ih 2
-          · exact ih 3
+      SemiProperQuadruple r → ∀ k : Fin 4, 0 ≤ (r k).1 :=
+    fun r hr => (SemiProperForestClassification r hr).1
   have noUnit : ∀ r : Fin 4 → CircleCoordinates,
       SemiProperQuadruple r → (r 0).1 = 1 → ¬ ProperBandQuadruple r := by
     intro r hr

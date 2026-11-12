@@ -5,11 +5,11 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P3776T1FixedGeometry
 public import LeanPool.ApollonianSuperharmonic.P3776T1StarWeights
 public import Mathlib.Topology.MetricSpace.HausdorffDistance
-public import Mathlib.Topology.Algebra.Monoid
-public import Mathlib.Algebra.BigOperators.Finprod
 
 -- [TABLET NODE: P3776T1StarWeightsExist]
 

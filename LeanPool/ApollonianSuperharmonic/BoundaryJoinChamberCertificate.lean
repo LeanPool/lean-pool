@@ -5,30 +5,16 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.ApollonianSuperharmonic.BandRegularTileTouchingClassification
-public import LeanPool.ApollonianSuperharmonic.BandSuccessorClassification
-public import LeanPool.ApollonianSuperharmonic.BandTangency
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.BandVectorOrientationDichotomy
-public import LeanPool.ApollonianSuperharmonic.BandVectors
-public import LeanPool.ApollonianSuperharmonic.IncomingSuperbasisRelation
 public import LeanPool.ApollonianSuperharmonic.ParentVectorsInTilingLattice
-public import LeanPool.ApollonianSuperharmonic.PrimitiveVectorOrientation
-public import LeanPool.ApollonianSuperharmonic.RecursiveVectorSystem
-public import LeanPool.ApollonianSuperharmonic.SemiProperForestClassification
-public import LeanPool.ApollonianSuperharmonic.SemiProperQuadruple
-public import LeanPool.ApollonianSuperharmonic.TileTranslationFormulas
 public import LeanPool.ApollonianSuperharmonic.TilingLattice
-public import LeanPool.ApollonianSuperharmonic.TilingLatticeBasis
-public import LeanPool.ApollonianSuperharmonic.TilingLatticeIndex
 public import LeanPool.ApollonianSuperharmonic.TriangularLatticeAdjacent
 public import LeanPool.ApollonianSuperharmonic.TriangularSignedHeight
 public import LeanPool.ApollonianSuperharmonic.UnitOccurrenceOrientation
-public import LeanPool.ApollonianSuperharmonic.UnitOccurrenceOrientationUnique
 public import LeanPool.ApollonianSuperharmonic.UnitTriangularStep
-public import LeanPool.ApollonianSuperharmonic.VectorDeterminant
-public import LeanPool.ApollonianSuperharmonic.VectorRecursionLaws
 public import LeanPool.ApollonianSuperharmonic.P4994T6RotationLaws
-public import LeanPool.ApollonianSuperharmonic.P4994T6ChartCovolume
 public import LeanPool.ApollonianSuperharmonic.P4994T6NonunitChamber
 public import LeanPool.ApollonianSuperharmonic.P4994T6UnitOccurrenceChamber
 public import LeanPool.ApollonianSuperharmonic.P4994T6UnitChartRotation
@@ -136,7 +122,9 @@ theorem BoundaryJoinChamberCertificate
     have hpim := congrArg (fun z : GaussianInt => z.im) hp
     have hrre := congrArg (fun z : GaussianInt => z.re) hr
     have hrim := congrArg (fun z : GaussianInt => z.im) hr
-    simp? at hpre hpim hrre hrim
+    simp only [Int.reduceNeg, Zsqrtd.re_add, Zsqrtd.re_mul, Zsqrtd.re_intCast,
+        Zsqrtd.im_intCast, mul_zero, zero_mul, add_zero, Zsqrtd.im_add, Zsqrtd.im_mul]
+        at hpre hpim hrre hrim
     have factor : u.re * v.im - u.im * v.re =
         (e.re * f.im - e.im * f.re) * (p.1 * r.2 - p.2 * r.1) := by
       rw [← hpre, ← hpim, ← hrre, ← hrim]

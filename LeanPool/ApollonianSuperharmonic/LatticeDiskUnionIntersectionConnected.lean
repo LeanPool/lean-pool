@@ -5,25 +5,17 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.ApollonianSuperharmonic.BoundaryFootprintEdges
-public import LeanPool.ApollonianSuperharmonic.BoundaryFootprintVertices
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.CellDisjointCommonEdgesBoundary
-public import LeanPool.ApollonianSuperharmonic.ClosedSquareRealization
 public import LeanPool.ApollonianSuperharmonic.CommonFootprintEdgeVertices
 public import LeanPool.ApollonianSuperharmonic.ConnectedGridEdgeCarrierUnion
 public import LeanPool.ApollonianSuperharmonic.DisjointBoundaryCommonEdgeGraphAcyclic
 public import LeanPool.ApollonianSuperharmonic.DisjointSquareUnionCommonEdgeCarrier
 public import LeanPool.ApollonianSuperharmonic.FiniteAcyclicGraphCardConnected
 public import LeanPool.ApollonianSuperharmonic.FiniteGridEdgeGraphEncoding
-public import LeanPool.ApollonianSuperharmonic.FootprintEdges
-public import LeanPool.ApollonianSuperharmonic.FootprintVertices
-public import LeanPool.ApollonianSuperharmonic.FourNeighborAdjacent
 public import LeanPool.ApollonianSuperharmonic.LatticeTile
 public import LeanPool.ApollonianSuperharmonic.LatticeTileGridEulerCount
-public import LeanPool.ApollonianSuperharmonic.LatticeTileGridStructure
-public import LeanPool.ApollonianSuperharmonic.ProtoTile
-public import LeanPool.ApollonianSuperharmonic.SimpleGridCycle
-public import LeanPool.ApollonianSuperharmonic.TileRealization
 
 -- [TABLET NODE: LatticeDiskUnionIntersectionConnected]
 

@@ -5,26 +5,11 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.ApollonianSuperharmonic.AffineTriangularStrip
-public import LeanPool.ApollonianSuperharmonic.BandCircle
-public import LeanPool.ApollonianSuperharmonic.BandPrototile
-public import LeanPool.ApollonianSuperharmonic.BandPrototileCentroidUnique
-public import LeanPool.ApollonianSuperharmonic.BandPrototileCentralSymmetry
-public import LeanPool.ApollonianSuperharmonic.BandPrototileTranslation
-public import LeanPool.ApollonianSuperharmonic.ClosedSquareRealization
-public import LeanPool.ApollonianSuperharmonic.GaussianRealPoint
-public import LeanPool.ApollonianSuperharmonic.ProperBandCurvatureStructure
-public import LeanPool.ApollonianSuperharmonic.RegularTileFamily
-public import LeanPool.ApollonianSuperharmonic.TileHalfTurnFormulas
-public import LeanPool.ApollonianSuperharmonic.TileRealization
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.TileString
 public import LeanPool.ApollonianSuperharmonic.TileStringCoordinateTransport
 public import LeanPool.ApollonianSuperharmonic.TileStringCentralCovariance
-public import LeanPool.ApollonianSuperharmonic.TileTranslationFormulas
-public import LeanPool.ApollonianSuperharmonic.TriangularLatticeAdjacent
-public import LeanPool.ApollonianSuperharmonic.TriangularMaxIncrement
-public import LeanPool.ApollonianSuperharmonic.TriangularSignedHeight
-public import LeanPool.ApollonianSuperharmonic.TriangularStripSegment
 
 -- [TABLET NODE: TileStringRegularFamilyCentralCovariance]
 

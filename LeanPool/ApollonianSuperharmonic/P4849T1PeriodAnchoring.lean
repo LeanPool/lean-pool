@@ -5,10 +5,10 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.FourNeighborConnected
 public import LeanPool.ApollonianSuperharmonic.FourNeighborLaplacian
-public import Mathlib.Data.Fintype.Pigeonhole
-public import Mathlib.Order.Interval.Finset.Nat
 
 -- [TABLET NODE: P4849T1PeriodAnchoring]
 

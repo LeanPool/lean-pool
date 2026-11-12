@@ -5,12 +5,10 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.TilingLatticeBasis
 public import LeanPool.ApollonianSuperharmonic.GaussianRealPoint
-public import Mathlib.Tactic.FunProp
-public import Mathlib.Tactic.FieldSimp
-public import Mathlib.Tactic.Ring
-public import Mathlib.Analysis.Convex.Topology
 
 -- [TABLET NODE: P4812T1LatticeCoordinates]
 

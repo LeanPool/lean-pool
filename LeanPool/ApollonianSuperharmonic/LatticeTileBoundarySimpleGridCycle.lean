@@ -5,19 +5,15 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.ApollonianSuperharmonic.BoundaryFootprintEdges
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.BoundaryFootprintVertices
 public import LeanPool.ApollonianSuperharmonic.BoundaryFootprintVertexDegreeTwo
-public import LeanPool.ApollonianSuperharmonic.ClosedSquareRealization
-public import LeanPool.ApollonianSuperharmonic.FourNeighborAdjacent
 public import LeanPool.ApollonianSuperharmonic.P5620T1BoundaryComponentCycle
 public import LeanPool.ApollonianSuperharmonic.GridRayCrossingIndexAdjacentCell
 public import LeanPool.ApollonianSuperharmonic.LatticeTile
 public import LeanPool.ApollonianSuperharmonic.LatticeTileFourNeighborConnected
-public import LeanPool.ApollonianSuperharmonic.LatticeTileNoCheckerboard
-public import LeanPool.ApollonianSuperharmonic.ProtoTile
 public import LeanPool.ApollonianSuperharmonic.SimpleGridCycle
-public import LeanPool.ApollonianSuperharmonic.TileRealization
 public import LeanPool.ApollonianSuperharmonic.TopologicalDiskGridRayCrossingIndexZero
 
 -- [TABLET NODE: LatticeTileBoundarySimpleGridCycle]

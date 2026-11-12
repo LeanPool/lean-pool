@@ -5,27 +5,11 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.ApollonianSuperharmonic.BandOrderedGeneralRawSupport
-public import LeanPool.ApollonianSuperharmonic.BandOrderedGeneralGeometricSectors
-public import LeanPool.ApollonianSuperharmonic.BandOrderedGeneralFinitePatches
-public import LeanPool.ApollonianSuperharmonic.PeriodicTileIntersectionClassification
-public import LeanPool.ApollonianSuperharmonic.PeriodicTileIntersectionPaths
-public import LeanPool.ApollonianSuperharmonic.BandSignedOccurrenceHalfTurn
-public import LeanPool.ApollonianSuperharmonic.P4055T1BandQuarterTurn
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P4590T1PositivePrototileDisk
 public import LeanPool.ApollonianSuperharmonic.P4590T1OppositeCellsStar
-public import LeanPool.ApollonianSuperharmonic.P3161T2IncidentBoundary
-public import LeanPool.ApollonianSuperharmonic.P3776T1CellCenterMembership
-public import LeanPool.ApollonianSuperharmonic.BandPrototileCentroidUnique
-public import LeanPool.ApollonianSuperharmonic.BandPrototileTranslation
-public import LeanPool.ApollonianSuperharmonic.ProtoTileObservableExtensionality
-public import LeanPool.ApollonianSuperharmonic.LocalLatticeInterfaceSectors
 public import LeanPool.ApollonianSuperharmonic.LatticeEdgeRegularity
-public import LeanPool.ApollonianSuperharmonic.TileTranslationFormulas
-public import LeanPool.ApollonianSuperharmonic.VectorRecursionLaws
-public import LeanPool.ApollonianSuperharmonic.P4339T1PrecursorSupportGeometry
-public import LeanPool.ApollonianSuperharmonic.FootprintDeletionRetention
-public import LeanPool.ApollonianSuperharmonic.QuarterTurnSymmetricCenteredTransport
 public import LeanPool.ApollonianSuperharmonic.TileHalfTurnFormulas
 
 -- [TABLET NODE: P4590T1RightInteriorGeometry]
@@ -672,7 +656,7 @@ private theorem hf1 :
             cfg C T),
         let a : PeriodicSubtileIndex := ⟨.A, 0, 0⟩
         let c : PeriodicSubtileIndex := ⟨.C, 0, 0⟩
-        let f1 := cert.modified_face_equiv.symm ⟨.I1, 0, 0⟩
+        let f1 := cert.modifiedFaceEquivalence.symm ⟨.I1, 0, 0⟩
         ∀ (f : cert.modified.plane.Face), ∀ (g : cert.modified.plane.Face), (∀ (h :
             cert.modified.plane.Face), ((∃ (i : Fin (3 : ℕ)), cert.modified.plane.faceVertex h i
             = a) ∧ ∃ (i : Fin (3 : ℕ)), cert.modified.plane.faceVertex h i = c) → h = f ∨ h = g)
@@ -693,7 +677,7 @@ private theorem hf3 :
             cfg C T),
         let a : PeriodicSubtileIndex := ⟨.A, 0, 0⟩
         let c : PeriodicSubtileIndex := ⟨.C, 0, 0⟩
-        let f3 := cert.modified_face_equiv.symm ⟨.I3, 0, 0⟩
+        let f3 := cert.modifiedFaceEquivalence.symm ⟨.I3, 0, 0⟩
         ∀ (f : cert.modified.plane.Face), ∀ (g : cert.modified.plane.Face), (∀ (h :
             cert.modified.plane.Face), ((∃ (i : Fin (3 : ℕ)), cert.modified.plane.faceVertex h i
             = a) ∧ ∃ (i : Fin (3 : ℕ)), cert.modified.plane.faceVertex h i = c) → h = f ∨ h = g)
@@ -712,12 +696,12 @@ private theorem hf13 :
         ∀ (q : Fin (4 : ℕ) → CircleCoordinates), ∀ (cfg : BandOrderedGeneralConfiguration q), ∀
             (C : BandCircle), ∀ (T : ProtoTile), ∀ (cert : BandOrderedGeneralLayoutCertificate q
             cfg C T),
-        let f1 := cert.modified_face_equiv.symm ⟨.I1, 0, 0⟩
-        let f3 := cert.modified_face_equiv.symm ⟨.I3, 0, 0⟩
+        let f1 := cert.modifiedFaceEquivalence.symm ⟨.I1, 0, 0⟩
+        let f3 := cert.modifiedFaceEquivalence.symm ⟨.I3, 0, 0⟩
         f1 ≠ f3 ) := by
   classical
   intro q cfg C T cert f1 f3 h
-  have hh := congrArg cert.modified_face_equiv h
+  have hh := congrArg cert.modifiedFaceEquivalence h
   simp [f1, f3] at hh
 
 private theorem hpair :
@@ -727,8 +711,8 @@ private theorem hpair :
         ∀ (q : Fin (4 : ℕ) → CircleCoordinates), ∀ (cfg : BandOrderedGeneralConfiguration q), ∀
             (C : BandCircle), ∀ (T : ProtoTile), ∀ (cert : BandOrderedGeneralLayoutCertificate q
             cfg C T),
-        let f1 := cert.modified_face_equiv.symm ⟨.I1, 0, 0⟩
-        let f3 := cert.modified_face_equiv.symm ⟨.I3, 0, 0⟩
+        let f1 := cert.modifiedFaceEquivalence.symm ⟨.I1, 0, 0⟩
+        let f3 := cert.modifiedFaceEquivalence.symm ⟨.I3, 0, 0⟩
         ∀ (f : cert.modified.plane.Face), ∀ (g : cert.modified.plane.Face), (f1 = f ∨ f1 = g) →
             ((f3 = f ∨ f3 = g) → ((f1 ≠ f3) → ((f1 = f ∧ f3 = g) ∨ (f1 = g ∧ f3 = f)))) ) := by
   classical
@@ -774,8 +758,8 @@ private theorem hz13 :
         ∀ (q : Fin (4 : ℕ) → CircleCoordinates), ∀ (cfg : BandOrderedGeneralConfiguration q), ∀
             (C : BandCircle), ∀ (T : ProtoTile), ∀ (cert : BandOrderedGeneralLayoutCertificate q
             cfg C T),
-        let f1 := cert.modified_face_equiv.symm ⟨.I1, 0, 0⟩
-        let f3 := cert.modified_face_equiv.symm ⟨.I3, 0, 0⟩
+        let f1 := cert.modifiedFaceEquivalence.symm ⟨.I1, 0, 0⟩
+        let f3 := cert.modifiedFaceEquivalence.symm ⟨.I3, 0, 0⟩
         ∀ (f : cert.modified.plane.Face), ∀ (g : cert.modified.plane.Face), ((f1 = f ∧ f3 = g) ∨
             (f1 = g ∧ f3 = f)) → ((cert.modified.rho f1 = cert.unmodified.core.rho
             (cert.unmodified.faceEquiv.symm ⟨.I1, 0, 0⟩)) → ((cert.modified.rho f3 =
@@ -799,8 +783,8 @@ private theorem hcomplete :
             cfg C T),
         let a : PeriodicSubtileIndex := ⟨.A, 0, 0⟩
         let c : PeriodicSubtileIndex := ⟨.C, 0, 0⟩
-        let f1 := cert.modified_face_equiv.symm ⟨.I1, 0, 0⟩
-        let f3 := cert.modified_face_equiv.symm ⟨.I3, 0, 0⟩
+        let f1 := cert.modifiedFaceEquivalence.symm ⟨.I1, 0, 0⟩
+        let f3 := cert.modifiedFaceEquivalence.symm ⟨.I3, 0, 0⟩
         (cert.modified.tile a = TileCellComplement (cert.P 0 true) cert.O) → ((cert.modified.tile
             c = cert.P 1 true) → ((FootprintVertices (cert.modified.tile a) ∩ FootprintVertices
             (cert.modified.tile c) = CommonFootprintEdgeVertices (cert.modified.tile a)
@@ -900,7 +884,7 @@ private theorem hz1Amod :
             (C : BandCircle), ∀ (T : ProtoTile), ∀ (cert : BandOrderedGeneralLayoutCertificate q
             cfg C T),
         let a : PeriodicSubtileIndex := ⟨.A, 0, 0⟩
-        let f1 := cert.modified_face_equiv.symm ⟨.I1, 0, 0⟩
+        let f1 := cert.modifiedFaceEquivalence.symm ⟨.I1, 0, 0⟩
         (cert.modified.tile a = TileCellComplement (cert.P 0 true) cert.O) → ((cert.modified.rho
             f1 = cert.unmodified.core.rho (cert.unmodified.faceEquiv.symm ⟨.I1, 0, 0⟩)) →
             ((cert.modified.plane.faceVertex f1 0 = a) → (
@@ -920,7 +904,7 @@ private theorem hz1B :
         ∀ (q : Fin (4 : ℕ) → CircleCoordinates), ∀ (cfg : BandOrderedGeneralConfiguration q), ∀
             (C : BandCircle), ∀ (T : ProtoTile), ∀ (cert : BandOrderedGeneralLayoutCertificate q
             cfg C T),
-        let f1 := cert.modified_face_equiv.symm ⟨.I1, 0, 0⟩
+        let f1 := cert.modifiedFaceEquivalence.symm ⟨.I1, 0, 0⟩
         (cert.modified.rho f1 = cert.unmodified.core.rho (cert.unmodified.faceEquiv.symm ⟨.I1, 0,
             0⟩)) → (
         let b : PeriodicSubtileIndex := ⟨.B, 0, 0⟩
@@ -942,7 +926,7 @@ private theorem hz1C :
             (C : BandCircle), ∀ (T : ProtoTile), ∀ (cert : BandOrderedGeneralLayoutCertificate q
             cfg C T),
         let c : PeriodicSubtileIndex := ⟨.C, 0, 0⟩
-        let f1 := cert.modified_face_equiv.symm ⟨.I1, 0, 0⟩
+        let f1 := cert.modifiedFaceEquivalence.symm ⟨.I1, 0, 0⟩
         (cert.modified.tile c = cert.P 1 true) → ((cert.modified.rho f1 =
             cert.unmodified.core.rho (cert.unmodified.faceEquiv.symm ⟨.I1, 0, 0⟩)) →
             ((cert.modified.plane.faceVertex f1 2 = c) → (
@@ -982,7 +966,7 @@ private theorem hz3Amod :
             (C : BandCircle), ∀ (T : ProtoTile), ∀ (cert : BandOrderedGeneralLayoutCertificate q
             cfg C T),
         let a : PeriodicSubtileIndex := ⟨.A, 0, 0⟩
-        let f3 := cert.modified_face_equiv.symm ⟨.I3, 0, 0⟩
+        let f3 := cert.modifiedFaceEquivalence.symm ⟨.I3, 0, 0⟩
         (cert.modified.tile a = TileCellComplement (cert.P 0 true) cert.O) → ((cert.modified.rho
             f3 = cert.unmodified.core.rho (cert.unmodified.faceEquiv.symm ⟨.I3, 0, 0⟩)) →
             ((cert.modified.plane.faceVertex f3 0 = a) → (
@@ -1003,7 +987,7 @@ private theorem hz3C :
             (C : BandCircle), ∀ (T : ProtoTile), ∀ (cert : BandOrderedGeneralLayoutCertificate q
             cfg C T),
         let c : PeriodicSubtileIndex := ⟨.C, 0, 0⟩
-        let f3 := cert.modified_face_equiv.symm ⟨.I3, 0, 0⟩
+        let f3 := cert.modifiedFaceEquivalence.symm ⟨.I3, 0, 0⟩
         (cert.modified.tile c = cert.P 1 true) → ((cert.modified.rho f3 =
             cert.unmodified.core.rho (cert.unmodified.faceEquiv.symm ⟨.I3, 0, 0⟩)) →
             ((cert.modified.plane.faceVertex f3 1 = c) → (
@@ -1023,7 +1007,7 @@ private theorem hz3F :
         ∀ (q : Fin (4 : ℕ) → CircleCoordinates), ∀ (cfg : BandOrderedGeneralConfiguration q), ∀
             (C : BandCircle), ∀ (T : ProtoTile), ∀ (cert : BandOrderedGeneralLayoutCertificate q
             cfg C T),
-        let f3 := cert.modified_face_equiv.symm ⟨.I3, 0, 0⟩
+        let f3 := cert.modifiedFaceEquivalence.symm ⟨.I3, 0, 0⟩
         (cert.modified.rho f3 = cert.unmodified.core.rho (cert.unmodified.faceEquiv.symm ⟨.I3, 0,
             0⟩)) → (
         let fidx : PeriodicSubtileIndex := ⟨.F, 0, 0⟩
@@ -1994,8 +1978,8 @@ private theorem positiveCase :
     (LatticeTileGridStructure _ hCtile).1.1
   let a : PeriodicSubtileIndex := ⟨.A, 0, 0⟩
   let c : PeriodicSubtileIndex := ⟨.C, 0, 0⟩
-  let f1 := cert.modified_face_equiv.symm ⟨.I1, 0, 0⟩
-  let f3 := cert.modified_face_equiv.symm ⟨.I3, 0, 0⟩
+  let f1 := cert.modifiedFaceEquivalence.symm ⟨.I1, 0, 0⟩
+  let f3 := cert.modifiedFaceEquivalence.symm ⟨.I3, 0, 0⟩
   have translation_zero := RightInteriorGeometry.translation_zero
   have htileA := RightInteriorGeometry.htileA q cfg C T cert translation_zero
   have htileC := RightInteriorGeometry.htileC q cfg C T cert translation_zero

@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.GaussianRealPoint
 public import LeanPool.ApollonianSuperharmonic.QuarterTurnSymmetric
 public import LeanPool.ApollonianSuperharmonic.TileQuarterTurnFormulas

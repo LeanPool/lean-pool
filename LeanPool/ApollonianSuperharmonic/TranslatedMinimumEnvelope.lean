@@ -5,12 +5,13 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.IntegerSuperharmonicRepresentative
 public import LeanPool.ApollonianSuperharmonic.IntegerLaplacianCastBridge
-public import LeanPool.ApollonianSuperharmonic.QuadraticAffineLaplacian
-public import LeanPool.ApollonianSuperharmonic.QuadraticGrowthAtInfinity
 public import LeanPool.ApollonianSuperharmonic.RealLaplacianContactComparison
 public import Mathlib.Order.Int.LeastGreatest
+public import Mathlib.Algebra.BigOperators.Fin
 
 -- [TABLET NODE: TranslatedMinimumEnvelope]
 

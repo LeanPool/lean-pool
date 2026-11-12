@@ -5,8 +5,11 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.AllowedSubtileIncidence
 public import LeanPool.ApollonianSuperharmonic.P4630T1RingIndex
+public import Mathlib.LinearAlgebra.Matrix.Notation
 
 -- [TABLET NODE: P4630T1ExteriorNeighbors]
 

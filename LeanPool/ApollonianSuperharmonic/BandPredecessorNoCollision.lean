@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P4828T1HistoryNormalForm
 public import LeanPool.ApollonianSuperharmonic.P4828T1HistoryRealization
 public import LeanPool.ApollonianSuperharmonic.P4828T1RootSeparation

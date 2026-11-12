@@ -5,11 +5,10 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.ApollonianSuperharmonic.Preamble
+public import Mathlib.Init
+public import Mathlib.Tactic.Positivity
+
 public import Mathlib.Analysis.Real.Sqrt
-public import Mathlib.Tactic.FieldSimp
-public import Mathlib.Tactic.Linarith
-public import Mathlib.Tactic.Ring
 
 -- [TABLET NODE: P5023T1CircularEstimate]
 

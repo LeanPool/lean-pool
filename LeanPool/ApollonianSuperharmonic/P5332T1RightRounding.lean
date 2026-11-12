@@ -5,8 +5,10 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P5332T1RightRows
-public import LeanPool.ApollonianSuperharmonic.IntegerCeilDiv
+public meta import Lean.Meta.Tactic.NormCast
 
 -- [TABLET NODE: P5332T1RightRounding]
 
@@ -49,27 +51,28 @@ theorem P5332T1RightRounding (P : FordFareyParameter) (hq : 1 < P.q)
     nlinarith only [hm, hk]
   have fm (K : Int) : (K*(P.q : Int)-1)/(P.q : Int) = K-1 := by
     apply (Int.ediv_eq_iff_of_pos (by omega)).mpr
-    constructor <;> nlinarith
+    constructor <;> nlinarith only [hq']
   have fp (K : Int) : (K*(P.q : Int)+1)/(P.q : Int) = K := by
     apply (Int.ediv_eq_iff_of_pos (by omega)).mpr
-    constructor <;> nlinarith
+    constructor <;> nlinarith only [hq']
   have ceil (N K : Int) (lo : K*(P.q : Int) < N) (hi : N ≤ K*(P.q : Int)+P.q) :
       -((-N)/(P.q : Int)) = K+1 := by
     have hh : (-N)/(P.q : Int) = -(K+1) := by
       apply (Int.ediv_eq_iff_of_pos (by omega)).mpr
-      constructor <;> nlinarith
+      constructor <;> nlinarith only [hq', lo, hi]
     rw [hh]
     ring
   have cm (K : Int) : -((-(K*(P.q : Int)-1))/(P.q : Int)) = K := by
-    convert ceil (K*(P.q : Int)-1) (K-1) (by nlinarith) (by nlinarith) using 1; ring
+    convert ceil (K*(P.q : Int)-1) (K-1)
+      (by nlinarith only [hq']) (by nlinarith only [hq']) using 1; ring
   have cp (K : Int) : -((-(K*(P.q : Int)+1))/(P.q : Int)) = K+1 :=
     ceil _ K (by omega) (by omega)
   have fnm (K : Int) : (1-K*(P.q : Int))/(P.q : Int) = -K := by
     apply (Int.ediv_eq_iff_of_pos (by omega)).mpr
-    constructor <;> nlinarith
+    constructor <;> nlinarith only [hq']
   have fnp (K : Int) : (-1-K*(P.q : Int))/(P.q : Int) = -(K+1) := by
     apply (Int.ediv_eq_iff_of_pos (by omega)).mpr
-    constructor <;> nlinarith
+    constructor <;> nlinarith only [hq']
   have dq (K : Int) : K*(P.q : Int)/(P.q : Int) = K :=
     Int.mul_ediv_cancel K (by omega)
   have cq (K : Int) : -((-(K*(P.q : Int)))/(P.q : Int)) = K := by

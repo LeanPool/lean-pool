@@ -5,18 +5,13 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.ApollonianSuperharmonic.ClosedSquareRealization
-public import LeanPool.ApollonianSuperharmonic.DiamondCellDomain
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.DiamondTile
 public import LeanPool.ApollonianSuperharmonic.LatticeTile
 public import LeanPool.ApollonianSuperharmonic.TileArea
-public import LeanPool.ApollonianSuperharmonic.TileRealization
-public import LeanPool.ApollonianSuperharmonic.TopologicalDisk
 public import LeanPool.ApollonianSuperharmonic.P3092T1DiamondCenteredRectangles
 public import LeanPool.ApollonianSuperharmonic.P3092T1CenteredRectangleDisk
-public import Mathlib.Algebra.BigOperators.Intervals
-public import Mathlib.Tactic.Linarith
-public import Mathlib.Tactic.Ring
 
 -- [TABLET NODE: DiamondTileGeometry]
 

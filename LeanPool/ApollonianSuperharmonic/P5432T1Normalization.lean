@@ -5,10 +5,11 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P5432T1Interior
 public import LeanPool.ApollonianSuperharmonic.DiamondTileOdometerRestriction
 public import LeanPool.ApollonianSuperharmonic.TileOdometerTranslationUniqueness
-public import LeanPool.ApollonianSuperharmonic.ProtoTileObservableExtensionality
 public import LeanPool.ApollonianSuperharmonic.GlobalOdometerExtends
 public import LeanPool.ApollonianSuperharmonic.FourNeighborLaplacian
 

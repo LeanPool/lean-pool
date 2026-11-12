@@ -5,8 +5,10 @@ Authors: Wesley Pegden
 -/
 module
 
-public import Mathlib.Combinatorics.SimpleGraph.Matching
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.SimpleGridCycle
+public import Mathlib.Combinatorics.SimpleGraph.Connectivity.Subgraph
 
 -- [TABLET NODE: SimpleGridCycleSubgraphDegreeTwo]
 

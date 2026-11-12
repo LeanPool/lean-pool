@@ -5,7 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.ApollonianSuperharmonic.Preamble
+public import Mathlib.Init
+
 public import Mathlib.Analysis.Convex.PathConnected
 public import Mathlib.Analysis.Convex.Join
 public import Mathlib.Analysis.Complex.Basic

@@ -5,6 +5,9 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+public import Mathlib.Tactic.Linarith
+
 public import LeanPool.ApollonianSuperharmonic.P4783T1PatchCoordinates
 
 -- [TABLET NODE: P4793T1PatchSeparators]

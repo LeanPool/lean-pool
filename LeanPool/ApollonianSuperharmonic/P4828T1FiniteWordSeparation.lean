@@ -5,9 +5,11 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.ApollonianSuperharmonic.Preamble
+public import Mathlib.Init
 public import Mathlib.Data.List.Induction
-public import Mathlib.Order.SetNotation
+public import Mathlib.Data.Set.Basic
+public import Mathlib.Data.Set.Lattice.Disjoint
+
 
 -- [TABLET NODE: P4828T1FiniteWordSeparation]
 

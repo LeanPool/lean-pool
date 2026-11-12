@@ -5,10 +5,11 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.ApollonianSuperharmonic.OdometerGluing
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.PositiveCurvatureTranslatedOdometers
 public import LeanPool.ApollonianSuperharmonic.GlobalOdometerExtends
-public import LeanPool.ApollonianSuperharmonic.IncomingSuperbasisRelation
+public import LeanPool.ApollonianSuperharmonic.BandTileTopologyApplication
 
 -- [TABLET NODE: PositiveCurvatureGeneratorCocycles]
 
@@ -460,7 +461,9 @@ theorem PositiveCurvatureGeneratorCocycles (C : BandCircle)
         (BandVectors.1 (q 3) (q 0)) (BandVectors.2 (q 3) (q 0))
         (by
           have rr := rel.1
-          simp? [Fin.sum_univ_succ] at rr
+          simp only [Fin.isValue, Fin.sum_univ_succ, Fin.succ_zero_eq_one,
+              Fin.succ_one_eq_two, Finset.univ_unique, Fin.default_eq_zero,
+              Finset.sum_singleton, Fin.reduceSucc] at rr
           have hv : BandVectors.1 (q 3) (q 0) =
               -(BandVectors.1 (q 1) (q 0) + BandVectors.1 (q 2) (q 0)) :=
                   GeneratorCocycleGeometry.hvAt384 q rr
@@ -470,7 +473,9 @@ theorem PositiveCurvatureGeneratorCocycles (C : BandCircle)
           ring)
         (by
           have rr := rel.2
-          simp? [Fin.sum_univ_succ] at rr
+          simp only [Fin.isValue, Fin.sum_univ_succ, Fin.succ_zero_eq_one,
+              Fin.succ_one_eq_two, Finset.univ_unique, Fin.default_eq_zero,
+              Finset.sum_singleton, Fin.reduceSucc] at rr
           have hv : BandVectors.2 (q 3) (q 0) =
               -(BandVectors.2 (q 1) (q 0) + BandVectors.2 (q 2) (q 0)) :=
                   GeneratorCocycleGeometry.hvAt395 q rr

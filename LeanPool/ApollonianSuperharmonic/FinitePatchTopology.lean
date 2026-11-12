@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.ExactTileTiling
 public import LeanPool.ApollonianSuperharmonic.FiniteConnectedCellSetNoCheckerboard
 public import LeanPool.ApollonianSuperharmonic.FiniteInducedTilePatch

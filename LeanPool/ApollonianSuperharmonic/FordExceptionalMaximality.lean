@@ -5,31 +5,16 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.ApollonianSuperharmonic.AcyclicIndegreeOrientation
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.FiniteAcyclicOrientationObstruction
-public import LeanPool.ApollonianSuperharmonic.FordDoubledBoundary
 public import LeanPool.ApollonianSuperharmonic.FordExceptionalLattice
-public import LeanPool.ApollonianSuperharmonic.FordExceptionalMatrixLatticeIdentification
-public import LeanPool.ApollonianSuperharmonic.FordBoundaryMultiplicity
-public import LeanPool.ApollonianSuperharmonic.FordFareyParameter
-public import LeanPool.ApollonianSuperharmonic.FordLaplacianTable
 public import LeanPool.ApollonianSuperharmonic.FordOdometer
-public import LeanPool.ApollonianSuperharmonic.FordOdometerFamilyExistsUnique
 public import LeanPool.ApollonianSuperharmonic.FordPeakMatrix
-public import LeanPool.ApollonianSuperharmonic.FordRecursiveVertexDomains
-public import LeanPool.ApollonianSuperharmonic.FourNeighborAdjacent
 public import LeanPool.ApollonianSuperharmonic.FourNeighborConnected
 public import LeanPool.ApollonianSuperharmonic.FourNeighborLaplacian
-public import LeanPool.ApollonianSuperharmonic.IntegerCeilDiv
-public import LeanPool.ApollonianSuperharmonic.LatticeVertexBoundary
-public import LeanPool.ApollonianSuperharmonic.P5442T1Cocycle
 public import LeanPool.ApollonianSuperharmonic.P5442T1LaplacianBound
 public import LeanPool.ApollonianSuperharmonic.FordTileAcyclicIndegree
-public import LeanPool.ApollonianSuperharmonic.FordTileOdometerRestriction
-public import LeanPool.ApollonianSuperharmonic.FordTileRecursiveIdentification
-public import LeanPool.ApollonianSuperharmonic.P4062T1CanonicalSupport
-public import LeanPool.ApollonianSuperharmonic.P4062T1OrientationTransport
-public import Mathlib.Data.List.Chain
 
 -- [TABLET NODE: FordExceptionalMaximality]
 

@@ -5,10 +5,10 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P4261T1ExteriorIndices
 public import LeanPool.ApollonianSuperharmonic.BandOriginalOccurrenceIntersectionClassification
-public import LeanPool.ApollonianSuperharmonic.FootprintEdges
-public import LeanPool.ApollonianSuperharmonic.TileTranslation
 
 -- [TABLET NODE: P4261T1EdgeExterior]
 

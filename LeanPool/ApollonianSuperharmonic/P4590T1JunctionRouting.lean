@@ -5,13 +5,11 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P4590T1MixedCompanionMarks
-public import LeanPool.ApollonianSuperharmonic.P4590T1PositivePrototileDisk
 public import LeanPool.ApollonianSuperharmonic.P4590T1OppositeCellsStar
 public import LeanPool.ApollonianSuperharmonic.BandOrderedGeneralInteriorWebRow
-public import LeanPool.ApollonianSuperharmonic.LocalLatticeInterfaceSectors
-public import LeanPool.ApollonianSuperharmonic.ProperBandCurvatureStructure
-public import LeanPool.ApollonianSuperharmonic.LatticeTileGridStructure
 
 -- [TABLET NODE: P4590T1JunctionRouting]
 

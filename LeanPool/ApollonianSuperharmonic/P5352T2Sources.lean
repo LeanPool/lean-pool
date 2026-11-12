@@ -5,8 +5,11 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.ApollonianSuperharmonic.DiamondTileOdometerRestriction
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.CurvatureOneOdometer
+public import LeanPool.ApollonianSuperharmonic.DiamondOdometer
+public import LeanPool.ApollonianSuperharmonic.DiamondTile
 
 -- [TABLET NODE: P5352T2Sources]
 

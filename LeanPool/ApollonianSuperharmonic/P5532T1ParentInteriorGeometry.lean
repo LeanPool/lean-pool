@@ -5,11 +5,10 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P4339T1PrecursorSupportGeometry
 public import LeanPool.ApollonianSuperharmonic.LatticeEdgeRegularity
-public import LeanPool.ApollonianSuperharmonic.PositiveCurvatureTileOdometerDomain
-public import LeanPool.ApollonianSuperharmonic.P4456T2VertexInterior
-public import LeanPool.ApollonianSuperharmonic.P4397T1UnitEdgeCells
 
 -- [TABLET NODE: P5532T1ParentInteriorGeometry]
 

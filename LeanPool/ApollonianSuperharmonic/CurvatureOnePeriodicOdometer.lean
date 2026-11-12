@@ -5,10 +5,11 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.CircleMatrix
 public import LeanPool.ApollonianSuperharmonic.GlobalOdometerExtends
 public import LeanPool.ApollonianSuperharmonic.IntegerSuperharmonicRepresentative
-public import LeanPool.ApollonianSuperharmonic.LatticeQuadraticForm
 public import LeanPool.ApollonianSuperharmonic.TileOdometer
 public import LeanPool.ApollonianSuperharmonic.TilingLattice
 
@@ -77,7 +78,11 @@ private theorem linear_difference :
     apply (eq_div_iff (by norm_num : (2 : ℝ) ≠ 0)).2
     exact_mod_cast hh'
   rw [circle_formula]
-  simp? [g, LatticeQuadraticForm, Matrix.mulVec, dotProduct]
+  simp only [Int.reduceNeg, Int.cast_add, Int.cast_sub, Int.cast_mul, Int.cast_one,
+      GaussianInt.intCast_re, GaussianInt.intCast_im, LatticeQuadraticForm, one_div,
+      dotProduct, Matrix.mulVec, Nat.succ_eq_add_one, Nat.reduceAdd, Matrix.cons_val',
+      Matrix.cons_val_fin_one, Fin.sum_univ_two, Fin.isValue, Matrix.cons_val_zero,
+      Matrix.cons_val_one, neg_mul, neg_add_rev, g]
   rw [half x.re, half x.im]
   rw [← GaussianInt.intCast_re z, ← GaussianInt.intCast_im z,
     ← GaussianInt.intCast_re x, ← GaussianInt.intCast_im x]
@@ -97,7 +102,11 @@ private theorem difference :
   classical
   intro C z g circle_formula α β half x
   rw [circle_formula]
-  simp? [g, LatticeQuadraticForm, Matrix.mulVec, dotProduct]
+  simp only [Int.reduceNeg, Int.cast_add, Int.cast_sub, Int.cast_mul, Int.cast_one,
+      GaussianInt.intCast_re, GaussianInt.intCast_im, LatticeQuadraticForm, one_div,
+      dotProduct, Matrix.mulVec, Nat.succ_eq_add_one, Nat.reduceAdd, Matrix.cons_val',
+      Matrix.cons_val_fin_one, Fin.sum_univ_two, Fin.isValue, Matrix.cons_val_zero,
+      Matrix.cons_val_one, neg_mul, g]
   rw [half x.re, half x.im]
   rw [← GaussianInt.intCast_re z, ← GaussianInt.intCast_im z,
     ← GaussianInt.intCast_re x, ← GaussianInt.intCast_im x]
@@ -176,11 +185,13 @@ theorem CurvatureOnePeriodicOdometer (C : BandCircle)
   · ext x
     simp [CurvatureOneOdometer, FootprintVertices]
   · intro x hx
-    simp? [CurvatureOneOdometer] at hx ⊢
+    simp only [CurvatureOneOdometer, Int.reduceNeg, Finset.mem_insert, Finset.mem_singleton]
+        at hx ⊢
     rcases hx with rfl | rfl | rfl | rfl <;> simp [hne0, hne1]
   · refine ⟨0, ?_⟩
     intro x hx
-    simp? [CurvatureOneOdometer] at hx ⊢
+    simp only [CurvatureOneOdometer, Int.reduceNeg, Finset.mem_insert, Finset.mem_singleton,
+        add_zero] at hx ⊢
     rcases hx with rfl | rfl | rfl | rfl <;> simp [hne0, hne1]
   · unfold IntegerSuperharmonicRepresentative
     constructor
@@ -246,7 +257,9 @@ theorem CurvatureOnePeriodicOdometer (C : BandCircle)
           _ = ε * ((x.re : ℝ) ^ 2 + (x.im : ℝ) ^ 2) / 2 := by ring
       nlinarith [habs, hbound]
     · intro x
-      simp? [FourNeighborLaplacian]
+      simp only [FourNeighborLaplacian, Int.reduceNeg, Zsqrtd.re_add, Zsqrtd.re_one,
+          add_sub_cancel_right, Zsqrtd.im_add, Zsqrtd.im_one, add_zero, Zsqrtd.re_sub,
+          Zsqrtd.im_sub, sub_zero, tsub_le_iff_right]
       have hp : (x.re + 1) * x.re / 2 = x.re * (x.re - 1) / 2 + 1 * 0 / 2 + x.re * 1 := by
         convert triangular x.re 1 using 1 <;> ring
       have hm : (x.re - 1) * (x.re - 1 - 1) / 2 = x.re * (x.re - 1) / 2 + (-1) * (-1 - 1) / 2 +
@@ -268,13 +281,15 @@ theorem CurvatureOnePeriodicOdometer (C : BandCircle)
     rw [hlat] at hv
     refine ⟨⟨(1 + z.re) * v.re + z.im * v.im, z.im * v.re - z.re * v.im⟩, ?_, ?_⟩
     · rw [circle_formula]
-      simp? []
+      simp only [Nat.succ_eq_add_one, Nat.reduceAdd, Int.reduceNeg, Int.cast_add,
+          Int.cast_one, GaussianInt.intCast_re, GaussianInt.intCast_im, Int.cast_mul,
+          Int.cast_sub]
       rw [← GaussianInt.intCast_re z, ← GaussianInt.intCast_im z,
         ← GaussianInt.intCast_re v, ← GaussianInt.intCast_im v]
       ext i; fin_cases i <;> simp [Matrix.mulVec, dotProduct]
       ring
     · intro x
-      simp? []
+      simp only [Int.reduceNeg]
       rw [triangular x.re v.re, triangular x.im v.im]
       ring
   · refine ⟨(-(1 + (z.re : ℝ)) / 2, (z.re : ℝ) / 2), ?_⟩

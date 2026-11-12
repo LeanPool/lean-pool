@@ -5,7 +5,13 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+public import Mathlib.Algebra.Group.Fin.Basic
+public import Mathlib.Basic.Real.Basic
+public import Mathlib.Data.Fin.VecNotation
+
 public import LeanPool.ApollonianSuperharmonic.DiamondParameter
+public import Mathlib.LinearAlgebra.Matrix.Defs
 
 -- [TABLET NODE: DiamondPeakMatrix]
 

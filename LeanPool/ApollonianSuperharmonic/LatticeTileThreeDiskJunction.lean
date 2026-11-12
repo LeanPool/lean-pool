@@ -5,21 +5,13 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.ApollonianSuperharmonic.ClosedSquareRealization
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.ExactTileInterfaceTriple
-public import LeanPool.ApollonianSuperharmonic.FootprintEdges
-public import LeanPool.ApollonianSuperharmonic.FootprintVertices
 public import LeanPool.ApollonianSuperharmonic.LatticeTile
 public import LeanPool.ApollonianSuperharmonic.LatticeTileDiskUnionInterface
-public import LeanPool.ApollonianSuperharmonic.LatticeTileGridEulerCount
-public import LeanPool.ApollonianSuperharmonic.LatticeTileGridStructure
-public import LeanPool.ApollonianSuperharmonic.LatticeVertexIncidentCell
 public import LeanPool.ApollonianSuperharmonic.LocalLatticeInterfaceSectors
-public import LeanPool.ApollonianSuperharmonic.NoCheckerboardCellVertex
-public import LeanPool.ApollonianSuperharmonic.ProtoTile
-public import LeanPool.ApollonianSuperharmonic.SimpleGridPathBetween
 public import LeanPool.ApollonianSuperharmonic.SimpleGridPathPointTrichotomy
-public import LeanPool.ApollonianSuperharmonic.TileRealization
 
 -- [TABLET NODE: LatticeTileThreeDiskJunction]
 

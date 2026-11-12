@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P4158T1MatchedFordPair
 public import LeanPool.ApollonianSuperharmonic.P4158T1LargeFirstRestrictions
 public import LeanPool.ApollonianSuperharmonic.P4158T1LargeSecondRestrictions
@@ -12,14 +14,7 @@ public import LeanPool.ApollonianSuperharmonic.P4158T1AncestorCells
 public import LeanPool.ApollonianSuperharmonic.P4158T1SmallerStringEdges
 public import LeanPool.ApollonianSuperharmonic.P4158T1EdgeSectorSelection
 public import LeanPool.ApollonianSuperharmonic.P4158T1StringSlopeTelescoping
-public import LeanPool.ApollonianSuperharmonic.BandRegularTranslatePeriodicComplex
-public import LeanPool.ApollonianSuperharmonic.BandGenealogy
-public import LeanPool.ApollonianSuperharmonic.CircleMatrixIncomingVector
-public import LeanPool.ApollonianSuperharmonic.FordCoordinateConfiguration
 public import LeanPool.ApollonianSuperharmonic.OpposingBoundaryOdometerStrings
-public import LeanPool.ApollonianSuperharmonic.PeriodicTileIntersectionClassification
-public import LeanPool.ApollonianSuperharmonic.PositiveCurvatureTileOdometerDomain
-public import LeanPool.ApollonianSuperharmonic.TileTranslationFormulas
 
 -- [TABLET NODE: FordOpposingBoundaryStarLocalization]
 

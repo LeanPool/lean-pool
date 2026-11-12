@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P3475T1BoundarySubdivision
 public import LeanPool.ApollonianSuperharmonic.P3497T1StrictCornerSplice
 

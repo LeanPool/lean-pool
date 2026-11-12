@@ -5,6 +5,9 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+public import Mathlib.Data.Finset.Card
+
 public import LeanPool.ApollonianSuperharmonic.P3161T1BlockTreeReachability
 
 -- [TABLET NODE: P3161T1AggregateInducedConnectivity]

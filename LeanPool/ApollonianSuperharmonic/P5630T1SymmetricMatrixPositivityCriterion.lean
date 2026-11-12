@@ -5,8 +5,11 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.ApollonianSuperharmonic.Preamble
+public import Mathlib.Init
+public import Mathlib.Tactic.Positivity
+
 public import Mathlib.Analysis.Real.Sqrt
+public import Mathlib.LinearAlgebra.Matrix.PosDef
 
 -- [TABLET NODE: P5630T1SymmetricMatrixPositivityCriterion]
 

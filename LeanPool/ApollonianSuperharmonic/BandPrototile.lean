@@ -5,9 +5,10 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.BandVectors
 public import LeanPool.ApollonianSuperharmonic.GaussianRealPoint
-public import LeanPool.ApollonianSuperharmonic.ProperBandQuadruple
 public import LeanPool.ApollonianSuperharmonic.FootprintVertices
 public import LeanPool.ApollonianSuperharmonic.TileCentroid
 

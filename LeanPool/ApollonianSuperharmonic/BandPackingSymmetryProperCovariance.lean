@@ -5,14 +5,16 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetry
-public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryCircleAction
+public import Mathlib.Init
+public import Mathlib.Algebra.Group.Fin.Basic
+public import Mathlib.Data.Fin.VecNotation
+public import Mathlib.Tactic.FinCases
+public import Mathlib.Tactic.NormNum
+public import Mathlib.Tactic.Ring
+
 public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryQuadrupleAction
-public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryReversesOrientation
 public import LeanPool.ApollonianSuperharmonic.ProperBandQuadruple
-public import LeanPool.ApollonianSuperharmonic.ProperBandCurvatureStructure
 public import LeanPool.ApollonianSuperharmonic.SemiProperForestClassification
-public import LeanPool.ApollonianSuperharmonic.SemiProperQuadruple
 
 -- [TABLET NODE: BandPackingSymmetryProperCovariance]
 

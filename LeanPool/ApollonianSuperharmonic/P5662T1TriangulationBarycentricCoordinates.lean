@@ -5,11 +5,11 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P3381T1PairedTriangulation
 public import LeanPool.ApollonianSuperharmonic.P3381T1AffineTriangleMap
 public import Mathlib.Analysis.Convex.Combination
-public import Mathlib.Tactic.FinCases
-public import Mathlib.Tactic.NormNum
 
 -- [TABLET NODE: P5662T1TriangulationBarycentricCoordinates]
 

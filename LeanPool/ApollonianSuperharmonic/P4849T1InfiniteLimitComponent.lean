@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P4849T1Component
 
 -- [TABLET NODE: P4849T1InfiniteLimitComponent]
@@ -193,7 +195,7 @@ private theorem hXinf :
       subst x
       cases rest with
       | nil =>
-        simp? at hlast
+        simp only [List.getLast?_singleton, Option.some.injEq] at hlast
         subst b
         exact (hbX huX).elim
       | cons v tail =>

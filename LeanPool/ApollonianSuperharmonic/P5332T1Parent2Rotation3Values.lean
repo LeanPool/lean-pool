@@ -5,12 +5,10 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P5332T1ParentRows
 public import LeanPool.ApollonianSuperharmonic.FordOdometer
-public import LeanPool.ApollonianSuperharmonic.FordVertexDomain
-public import LeanPool.ApollonianSuperharmonic.P4210T1FordCellRectangles
-public import LeanPool.ApollonianSuperharmonic.FordDoubledBoundary
-public import LeanPool.ApollonianSuperharmonic.P5188T1CeilingShift
 
 -- [TABLET NODE: P5332T1Parent2Rotation3Values]
 
@@ -134,7 +132,8 @@ theorem P5332T1Parent2Rotation3Values (P A : FordFareyParameter) (hq : 1 < P.q)
         have hn : ¬ (2 ≤ X ∧ X ≤ (A.q : Int)-2 ∧ 2 ≤ (0:Int) ∧ 0 ≤ (A.q : Int)-2) := by omega
         exact ⟨by omega, hn⟩
       have hzbd := hab hmem
-      simp? [IntegerCeilDiv] at hzbd
+      simp only [Int.reduceNeg, IntegerCeilDiv, Fin.isValue, mul_zero, neg_zero,
+          EuclideanDomain.zero_div] at hzbd
       exact hzbd
     rw [hz] at hh
     norm_num at hh ⊢

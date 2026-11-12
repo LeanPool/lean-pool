@@ -5,21 +5,13 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryPartialOdometerAction
-public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryPartialOdometerActionFormulas
-public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryProperCovariance
 public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryProjectiveVectorCovariance
-public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryCircleAction
-public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryQuadrupleAction
-public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryReversesOrientation
 public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryScopedPhase
 public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryScopedPhaseUnique
 public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryTileAction
-public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryTilingTransport
-public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryVectorAction
-public import LeanPool.ApollonianSuperharmonic.BandPackingShiftPotential
-public import LeanPool.ApollonianSuperharmonic.TileQuarterTurnFormulas
-public import LeanPool.ApollonianSuperharmonic.TileReflectionFormulas
 
 -- [TABLET NODE: BandPackingSymmetryInversePhaseCancellation]
 
@@ -104,7 +96,11 @@ private theorem phaseComposition :
     cases rb : BandPackingSymmetryReversesOrientation b <;>
     cases db <;> cases da <;> fin_cases i
   all_goals
-    simp? [BandPackingSymmetryReversesOrientation, ra, rb] at hbi hai ⊢
+    simp only [rb, Bool.false_eq_true, ↓reduceIte, Fin.mk_one, Fin.isValue,
+        Fin.succ_one_eq_two, neg_mul, one_mul, Fin.reduceAdd, Fin.succ_zero_eq_one,
+        Fin.reduceSucc, ra, BandPackingSymmetryReversesOrientation, bne_self_eq_false,
+        Bool.bne_false, mul_neg, neg_add_cancel, neg_neg, Bool.bne_true, Bool.not_false,
+        Fin.reduceFinMk, Fin.zero_eta, zero_add, neg_zero] at hbi hai ⊢
     simp only [composition]
     rcases hbi with ⟨bin, brev, bcyc⟩
     rcases hai with ⟨ain, arev, acyc⟩

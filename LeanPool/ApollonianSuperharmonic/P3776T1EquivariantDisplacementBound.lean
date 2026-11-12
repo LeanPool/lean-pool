@@ -5,13 +5,12 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.LatticeFundamentalSet
 public import LeanPool.ApollonianSuperharmonic.GaussianRealPoint
-public import Mathlib.Topology.MetricSpace.ProperSpace
 public import Mathlib.Analysis.Normed.Group.Bounded
 public import Mathlib.Analysis.Normed.Group.Real
-public import Mathlib.Algebra.Order.Floor.Ring
-public import Mathlib.Tactic.Linarith
 
 -- [TABLET NODE: P3776T1EquivariantDisplacementBound]
 

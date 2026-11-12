@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.BandPrototile
 public import LeanPool.ApollonianSuperharmonic.TileTranslationFormulas
 
@@ -28,10 +30,10 @@ theorem BandPrototileTranslation : ∀ (C : CircleCoordinates) (T : ProtoTile)
   intro C T u h
   induction h generalizing u with
   | line w x hw =>
-      simp? [TileTranslation, GaussianTranslation]
+      simp only [TileTranslation, Finset.image_empty, GaussianTranslation]
       exact BandPrototile.line w (x + u) hw
   | unit z x anchor =>
-      simp? [TileTranslation, GaussianTranslation]
+      simp only [TileTranslation, Finset.image_singleton, GaussianTranslation]
       exact BandPrototile.unit z (x + u) (anchor + u)
   | @decompose q hq S T hS hcells hfoot hcentroid ih =>
       refine @BandPrototile.decompose q hq

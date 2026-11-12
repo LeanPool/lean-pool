@@ -5,10 +5,11 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P5157T1DiamondStaircaseIntersections
 public import LeanPool.ApollonianSuperharmonic.P5157T1AlternatingStaircase
 public import LeanPool.ApollonianSuperharmonic.TileReflectionFormulas
-public import LeanPool.ApollonianSuperharmonic.TileTranslationFormulas
 public import LeanPool.ApollonianSuperharmonic.SimpleGridPathBetween
 
 -- [TABLET NODE: P5290T1PredecessorPath]

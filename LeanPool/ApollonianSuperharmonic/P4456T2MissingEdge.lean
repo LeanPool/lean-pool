@@ -5,22 +5,11 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P4456T2BandGraphTriangle
-public import LeanPool.ApollonianSuperharmonic.PeriodicTileCore
 public import LeanPool.ApollonianSuperharmonic.BandRegularTranslatePeriodicComplex
-public import LeanPool.ApollonianSuperharmonic.TileTranslationFormulas
-public import LeanPool.ApollonianSuperharmonic.PeriodicTileComplex
 public import LeanPool.ApollonianSuperharmonic.FourNeighborAdjacent
-public import LeanPool.ApollonianSuperharmonic.P4397T1UnitEdgeCells
-public import LeanPool.ApollonianSuperharmonic.FootprintVertices
-public import LeanPool.ApollonianSuperharmonic.LatticeVertexIncidentCell
-public import LeanPool.ApollonianSuperharmonic.P3161T2IncidentBoundary
-public import LeanPool.ApollonianSuperharmonic.TouchingTriple
-public import LeanPool.ApollonianSuperharmonic.P4456T2EdgeInterior
-public import LeanPool.ApollonianSuperharmonic.P4456T2VertexInterior
-public import LeanPool.ApollonianSuperharmonic.PeriodicTileIndexedMultiplicityOne
-public import LeanPool.ApollonianSuperharmonic.PeriodicTileIntersectionClassification
-public import LeanPool.ApollonianSuperharmonic.LatticeTileFourNeighborConnected
 
 -- [TABLET NODE: P4456T2MissingEdge]
 

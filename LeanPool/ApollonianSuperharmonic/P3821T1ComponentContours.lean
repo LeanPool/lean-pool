@@ -5,30 +5,14 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P3821T1LoopIndex
-public import LeanPool.ApollonianSuperharmonic.P3821T1AngularIncrementLaws
-public import Mathlib.Topology.Connected.LocallyConnected
-public import Mathlib.Topology.MetricSpace.Bounded
-public import Mathlib.Topology.MetricSpace.Thickening
-public import Mathlib.Analysis.Convex.PathConnected
-public import Mathlib.Analysis.Normed.Module.Connected
 public import Mathlib.GroupTheory.Perm.Cycle.Concrete
-public import Mathlib.GroupTheory.Perm.Cycle.Factors
-public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
-public import Mathlib.Data.List.Chain
-public import Mathlib.Basic.Real.Basic
 public import LeanPool.ApollonianSuperharmonic.FourNeighborAdjacent
-public import Mathlib.Data.Fin.VecNotation
-public import Mathlib.Algebra.BigOperators.Fin
 public import Mathlib.Algebra.BigOperators.Field
 public import LeanPool.ApollonianSuperharmonic.P3821T1LoopIndexLaws
 public import LeanPool.ApollonianSuperharmonic.GridStepLogLiftDelta
-public import Mathlib.Analysis.Normed.Group.Bounded
-public import LeanPool.ApollonianSuperharmonic.GridCellCenter
-public import Mathlib.Topology.Algebra.Order.Floor
-public import Mathlib.Order.Interval.Set.Infinite
-public import Mathlib.Analysis.Complex.Norm
-public import Mathlib.Analysis.Complex.Basic
 
 -- [TABLET NODE: P3821T1ComponentContours]
 
@@ -125,23 +109,47 @@ private theorem grid_edge_avoids :
     omega
   rcases hab with rfl | rfl | rfl | rfl
   · have hi := congrArg Complex.im ht
-    simp? [Path.segment_apply, AffineMap.lineMap_apply, GridCellCenter,
-      Complex.real_smul, Complex.mul_im] at hi
+    simp only [Path.segment_apply, map_add, map_one, AffineMap.lineMap_apply, vsub_eq_sub,
+        add_sub_cancel_left, Complex.real_smul, mul_one, vadd_eq_add, Complex.add_im,
+        Complex.ofReal_im, zero_add, GridCellCenter, Int.reduceNeg, GaussianInt.intCast_re,
+        one_div, Complex.ofReal_inv, Complex.ofReal_ofNat, GaussianInt.intCast_im,
+        Complex.inv_im, Complex.im_ofNat, neg_zero, Complex.normSq_ofNat, zero_div, add_zero,
+        Complex.mul_im, Complex.add_re, Complex.ofReal_re, Complex.inv_re, Complex.re_ofNat,
+        div_self_mul_self', Complex.I_im, Complex.I_re, mul_zero] at hi
     rw [← GaussianInt.intCast_im a, ← GaussianInt.intCast_im r] at hi
     exact hhalf a.im r.im (by linarith)
   · have hi := congrArg Complex.im ht
-    simp? [Path.segment_apply, AffineMap.lineMap_apply, GridCellCenter,
-      Complex.real_smul, Complex.mul_im] at hi
+    simp only [Path.segment_apply, map_sub, map_one, AffineMap.lineMap_apply, vsub_eq_sub,
+        sub_sub_cancel_left, smul_neg, Complex.real_smul, mul_one, vadd_eq_add,
+        Complex.add_im, Complex.neg_im, Complex.ofReal_im, neg_zero, zero_add, GridCellCenter,
+        Int.reduceNeg, GaussianInt.intCast_re, one_div, Complex.ofReal_inv,
+        Complex.ofReal_ofNat, GaussianInt.intCast_im, Complex.inv_im, Complex.im_ofNat,
+        Complex.normSq_ofNat, zero_div, add_zero, Complex.mul_im, Complex.add_re,
+        Complex.ofReal_re, Complex.inv_re, Complex.re_ofNat, div_self_mul_self', Complex.I_im,
+        Complex.I_re, mul_zero] at hi
     rw [← GaussianInt.intCast_im a, ← GaussianInt.intCast_im r] at hi
     exact hhalf a.im r.im (by linarith)
   · have hi := congrArg Complex.re ht
-    simp? [Path.segment_apply, AffineMap.lineMap_apply, GridCellCenter,
-      Complex.real_smul, Complex.mul_re] at hi
+    simp only [Int.reduceNeg, Path.segment_apply, map_add, AffineMap.lineMap_apply,
+        vsub_eq_sub, add_sub_cancel_left, Complex.real_smul, vadd_eq_add, Complex.add_re,
+        Complex.mul_re, Complex.ofReal_re, GaussianInt.re_toComplex, Int.cast_zero, mul_zero,
+        Complex.ofReal_im, GaussianInt.im_toComplex, Int.cast_one, mul_one, sub_self,
+        zero_add, GridCellCenter, GaussianInt.intCast_re, one_div, Complex.ofReal_inv,
+        Complex.ofReal_ofNat, GaussianInt.intCast_im, Complex.inv_re, Complex.re_ofNat,
+        Complex.normSq_ofNat, div_self_mul_self', Complex.I_re, Complex.add_im,
+        Complex.inv_im, Complex.im_ofNat, neg_zero, zero_div, add_zero, Complex.I_im] at hi
     rw [← GaussianInt.intCast_re a, ← GaussianInt.intCast_re r] at hi
     exact hhalf a.re r.re (by linarith)
   · have hi := congrArg Complex.re ht
-    simp? [Path.segment_apply, AffineMap.lineMap_apply, GridCellCenter,
-      Complex.real_smul, Complex.mul_re] at hi
+    simp only [Int.reduceNeg, Path.segment_apply, map_sub, AffineMap.lineMap_apply,
+        vsub_eq_sub, sub_sub_cancel_left, smul_neg, Complex.real_smul, vadd_eq_add,
+        Complex.add_re, Complex.neg_re, Complex.mul_re, Complex.ofReal_re,
+        GaussianInt.re_toComplex, Int.cast_zero, mul_zero, Complex.ofReal_im,
+        GaussianInt.im_toComplex, Int.cast_one, mul_one, sub_self, neg_zero, zero_add,
+        GridCellCenter, GaussianInt.intCast_re, one_div, Complex.ofReal_inv,
+        Complex.ofReal_ofNat, GaussianInt.intCast_im, Complex.inv_re, Complex.re_ofNat,
+        Complex.normSq_ofNat, div_self_mul_self', Complex.I_re, Complex.add_im,
+        Complex.inv_im, Complex.im_ofNat, zero_div, add_zero, Complex.I_im] at hi
     rw [← GaussianInt.intCast_re a, ← GaussianInt.intCast_re r] at hi
     exact hhalf a.re r.re (by linarith)
 
@@ -965,13 +973,17 @@ private theorem edge_not_openbox :
   · have h1 : (v.im : ℝ) < (a.im : ℝ) := by
       have hx := hv.2.2.1
       rw [segment_im] at hx
-      simp? [corner] at hx
+      simp only [Int.reduceNeg, GaussianInt.intCast_im, Fin.zero_eta, Fin.isValue,
+          Matrix.cons_val_zero, zero_add, Matrix.cons_val_one, map_add, map_one,
+          Complex.add_im, Complex.one_im, add_zero, corner] at hx
       rw [← GaussianInt.intCast_im v, ← GaussianInt.intCast_im a] at hx
       nlinarith [t₀.2.1, t₀.2.2]
     have h2 : (a.im : ℝ) < (v.im : ℝ) + 1 := by
       have hx := hv.2.2.2
       rw [segment_im] at hx
-      simp? [corner] at hx
+      simp only [Int.reduceNeg, Fin.zero_eta, Fin.isValue, Matrix.cons_val_zero, zero_add,
+          Matrix.cons_val_one, map_add, map_one, Complex.add_im, Complex.one_im, add_zero,
+          GaussianInt.intCast_im, corner] at hx
       rw [← GaussianInt.intCast_im a, ← GaussianInt.intCast_im v] at hx
       nlinarith [t₀.2.1, t₀.2.2]
     have h1' : v.im < a.im := by exact_mod_cast h1
@@ -980,13 +992,19 @@ private theorem edge_not_openbox :
   · have h1 : (v.re : ℝ) < (a.re : ℝ) + 1 := by
       have hx := hv.1
       rw [segment_re] at hx
-      simp? [corner] at hx
+      simp only [Int.reduceNeg, GaussianInt.intCast_re, Fin.mk_one, Fin.isValue,
+          Matrix.cons_val_one, Matrix.cons_val_zero, map_add, map_one, Complex.add_re,
+          Complex.one_re, Fin.reduceAdd, Matrix.cons_val, GaussianInt.re_toComplex,
+          Int.cast_zero, add_zero, corner] at hx
       rw [← GaussianInt.intCast_re v, ← GaussianInt.intCast_re a] at hx
       nlinarith [t₀.2.1, t₀.2.2]
     have h2 : (a.re : ℝ) + 1 < (v.re : ℝ) + 1 := by
       have hx := hv.2.1
       rw [segment_re] at hx
-      simp? [corner] at hx
+      simp only [Int.reduceNeg, Fin.mk_one, Fin.isValue, Matrix.cons_val_one,
+          Matrix.cons_val_zero, map_add, map_one, Complex.add_re, Complex.one_re,
+          Fin.reduceAdd, Matrix.cons_val, GaussianInt.re_toComplex, Int.cast_zero, add_zero,
+          GaussianInt.intCast_re, corner] at hx
       rw [← GaussianInt.intCast_re a, ← GaussianInt.intCast_re v] at hx
       nlinarith [t₀.2.1, t₀.2.2]
     have h1' : v.re < a.re + 1 := by exact_mod_cast h1
@@ -995,13 +1013,17 @@ private theorem edge_not_openbox :
   · have h1 : (v.im : ℝ) < (a.im : ℝ) + 1 := by
       have hx := hv.2.2.1
       rw [segment_im] at hx
-      simp? [corner] at hx
+      simp only [Int.reduceNeg, GaussianInt.intCast_im, Fin.reduceFinMk, Matrix.cons_val,
+          map_add, map_one, Complex.add_im, Complex.one_im, add_zero,
+          GaussianInt.im_toComplex, Int.cast_one, Fin.isValue, Fin.reduceAdd, corner] at hx
       rw [← GaussianInt.intCast_im v, ← GaussianInt.intCast_im a] at hx
       nlinarith [t₀.2.1, t₀.2.2]
     have h2 : (a.im : ℝ) + 1 < (v.im : ℝ) + 1 := by
       have hx := hv.2.2.2
       rw [segment_im] at hx
-      simp? [corner] at hx
+      simp only [Int.reduceNeg, Fin.reduceFinMk, Matrix.cons_val, map_add, map_one,
+          Complex.add_im, Complex.one_im, add_zero, GaussianInt.im_toComplex, Int.cast_one,
+          Fin.isValue, Fin.reduceAdd, GaussianInt.intCast_im, corner] at hx
       rw [← GaussianInt.intCast_im a, ← GaussianInt.intCast_im v] at hx
       nlinarith [t₀.2.1, t₀.2.2]
     have h1' : v.im < a.im + 1 := by exact_mod_cast h1
@@ -1010,13 +1032,17 @@ private theorem edge_not_openbox :
   · have h1 : (v.re : ℝ) < (a.re : ℝ) := by
       have hx := hv.1
       rw [segment_re] at hx
-      simp? [corner] at hx
+      simp only [Int.reduceNeg, GaussianInt.intCast_re, Fin.reduceFinMk, Matrix.cons_val,
+          map_add, Complex.add_re, GaussianInt.re_toComplex, Int.cast_zero, add_zero,
+          Fin.isValue, Fin.reduceAdd, Matrix.cons_val_zero, corner] at hx
       rw [← GaussianInt.intCast_re v, ← GaussianInt.intCast_re a] at hx
       nlinarith [t₀.2.1, t₀.2.2]
     have h2 : (a.re : ℝ) < (v.re : ℝ) + 1 := by
       have hx := hv.2.1
       rw [segment_re] at hx
-      simp? [corner] at hx
+      simp only [Int.reduceNeg, Fin.reduceFinMk, Matrix.cons_val, map_add, Complex.add_re,
+          GaussianInt.re_toComplex, Int.cast_zero, add_zero, Fin.isValue, Fin.reduceAdd,
+          Matrix.cons_val_zero, GaussianInt.intCast_re, corner] at hx
       rw [← GaussianInt.intCast_re a, ← GaussianInt.intCast_re v] at hx
       nlinarith [t₀.2.1, t₀.2.2]
     have h1' : v.re < a.re := by exact_mod_cast h1

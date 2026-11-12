@@ -5,17 +5,11 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.ApollonianSuperharmonic.PeriodicTileMultiplicityOne
-public import LeanPool.ApollonianSuperharmonic.BandRegularTranslatePeriodicComplex
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.BandRegularTileTouchingClassification
-public import LeanPool.ApollonianSuperharmonic.BandTileSimultaneousInduction
-public import LeanPool.ApollonianSuperharmonic.IncomingSuperbasisRelation
-public import LeanPool.ApollonianSuperharmonic.PeriodicTileIntersectionClassification
-public import LeanPool.ApollonianSuperharmonic.ProperBandCurvatureStructure
 public import LeanPool.ApollonianSuperharmonic.TileBordering
 public import LeanPool.ApollonianSuperharmonic.RegularTileFamily
-public import LeanPool.ApollonianSuperharmonic.TileTranslationFormulas
-public import LeanPool.ApollonianSuperharmonic.TilingLatticeBasis
 
 -- [TABLET NODE: BandTileTopologyApplication]
 
@@ -262,7 +256,8 @@ private theorem hcAt267 :
   classical
   intro q hsum
   have hsum' := hsum.1
-  simp? [Fin.sum_univ_succ] at hsum'
+  simp only [Fin.isValue, Fin.sum_univ_succ, Fin.succ_zero_eq_one, Fin.succ_one_eq_two,
+      Finset.univ_unique, Fin.default_eq_zero, Finset.sum_singleton, Fin.reduceSucc] at hsum'
   have heq : BandVectors.1 (q 3) (q 0) =
       -(BandVectors.1 (q 1) (q 0) + BandVectors.1 (q 2) (q 0)) := by
     apply (eq_neg_iff_add_eq_zero).2

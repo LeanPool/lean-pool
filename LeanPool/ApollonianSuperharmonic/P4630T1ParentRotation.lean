@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.BandOrderedGeneralLayoutCertificate
 public import LeanPool.ApollonianSuperharmonic.BandSignedOccurrenceHalfTurn
 public import LeanPool.ApollonianSuperharmonic.P4630T1RingIndex
@@ -88,7 +90,12 @@ theorem P4630T1ParentRotation
     have him := congrArg Zsqrtd.im laws.1
     fin_cases i
     all_goals
-      simp? [W, r, s, U, V, GaussianQuarterTurn] at hre him ⊢
+      simp only [Int.reduceNeg, Fin.isValue, Zsqrtd.re_add, Zsqrtd.re_zero, Zsqrtd.im_add,
+          Zsqrtd.im_zero, V, GaussianQuarterTurn, neg_add_rev, U, Fin.mk_one,
+          Matrix.cons_val_one, Matrix.cons_val_zero, Fin.reduceAdd, Fin.succ_zero_eq_one,
+          Fin.reduceSucc, Zsqrtd.add_def, s, W, r, Fin.reduceFinMk, Matrix.cons_val,
+          Fin.succ_one_eq_two, Fin.zero_eta, zero_add, Zsqrtd.im_sub, Zsqrtd.im_neg, neg_sub,
+          Zsqrtd.re_sub, Zsqrtd.re_neg, neg_neg] at hre him ⊢
       apply Zsqrtd.ext_iff.mpr
       simp
       constructor <;> omega

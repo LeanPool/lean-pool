@@ -5,9 +5,12 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P5442T1WebGeometry
 public import LeanPool.ApollonianSuperharmonic.P4062T1ParentalRestriction
 public import LeanPool.ApollonianSuperharmonic.P4062T1RemainderGeometry
+public import Mathlib.Algebra.Order.Ring.Star
 
 -- [TABLET NODE: P5442T1LaplacianBound]
 

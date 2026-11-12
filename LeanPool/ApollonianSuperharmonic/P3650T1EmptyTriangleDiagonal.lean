@@ -5,13 +5,12 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import Mathlib.LinearAlgebra.AffineSpace.FiniteDimensional
 
 public import LeanPool.ApollonianSuperharmonic.P3650T1VisibleDiagonal
 public import Mathlib.Analysis.Normed.Affine.AddTorsorBases
-public import Mathlib.Analysis.Convex.Combination
-public import Mathlib.Analysis.Convex.Topology
-public import Mathlib.Topology.Order.IntermediateValue
 public import LeanPool.ApollonianSuperharmonic.P3544T1LocalParity
 
 -- [TABLET NODE: P3650T1EmptyTriangleDiagonal]

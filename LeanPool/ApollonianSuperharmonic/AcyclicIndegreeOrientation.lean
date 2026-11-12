@@ -5,8 +5,9 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.FourNeighborAdjacent
-public import LeanPool.ApollonianSuperharmonic.FourNeighborLaplacian
 
 -- [TABLET NODE: AcyclicIndegreeOrientation]
 
@@ -37,7 +38,7 @@ structure AcyclicIndegreeOrientation (D : Finset GaussianInt)
   /-- The chosen direction of each edge of the finite lattice graph. -/
   edge : GaussianInt → GaussianInt → Prop
   /-- Decidable membership in the chosen directed edge relation. -/
-  edge_decidable : ∀ x y, Decidable (edge x y)
+  edgeDecidable : ∀ x y, Decidable (edge x y)
   /-- A natural rank that increases strictly along each directed edge. -/
   rank : GaussianInt → ℕ
   supported : ∀ x y, edge x y →
@@ -46,7 +47,7 @@ structure AcyclicIndegreeOrientation (D : Finset GaussianInt)
     (edge x y ∧ ¬ edge y x) ∨ (edge y x ∧ ¬ edge x y)
   increasing : ∀ x y, edge x y → rank x < rank y
   indegree : ∀ x ∈ D,
-    ((D.filter fun y => @decide (edge y x) (edge_decidable y x)).card : ℤ) = σ x
+    ((D.filter fun y => @decide (edge y x) (edgeDecidable y x)).card : ℤ) = σ x
 
 end ApollonianSuperharmonic
 

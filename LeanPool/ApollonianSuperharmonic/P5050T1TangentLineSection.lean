@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P5050T1RadialSection
 public import LeanPool.ApollonianSuperharmonic.P4953T1QuadrilateralSections
 public import Mathlib.Analysis.Normed.Module.Convex

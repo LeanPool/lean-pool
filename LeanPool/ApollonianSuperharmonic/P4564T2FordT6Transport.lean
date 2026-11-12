@@ -5,23 +5,15 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.FordBaseT6
 public import LeanPool.ApollonianSuperharmonic.FordRegimeConverse
-public import LeanPool.ApollonianSuperharmonic.FordCircleCoordinate
-public import LeanPool.ApollonianSuperharmonic.FordFareyParameter
-public import LeanPool.ApollonianSuperharmonic.FordTileRecursiveIdentification
-public import LeanPool.ApollonianSuperharmonic.FordTileGeometry
 public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryCovariance
-public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryProjectiveVectorCovariance
 public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryScopedPhaseUnique
-public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryProperCovariance
 public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryTilingTransport
 public import LeanPool.ApollonianSuperharmonic.BandPrototileTranslationNormalForm
 public import LeanPool.ApollonianSuperharmonic.BandSubtileOccurrenceTranslation
-public import LeanPool.ApollonianSuperharmonic.ProtoTileObservableExtensionality
-public import LeanPool.ApollonianSuperharmonic.TileTranslationFormulas
-public import LeanPool.ApollonianSuperharmonic.SubtileOccurrenceInterpretationCovariance
-public import LeanPool.ApollonianSuperharmonic.TileArea
 
 -- [TABLET NODE: P4564T2FordT6Transport]
 
@@ -63,7 +55,11 @@ private theorem hlineq :
   have hparent : ∃ j : Fin 3, (q j.succ).1 = 0 := by
     cases hor : BandPackingSymmetryReversesOrientation g <;>
       fin_cases a <;>
-      simp? [BandPackingSymmetryQuadrupleAction, hor] at hact
+      simp only [BandPackingSymmetryQuadrupleAction, Fin.isValue, Fin.mk_one,
+          Fin.succ_one_eq_two, Fin.reduceAdd, Fin.reduceSucc, Fin.succ_zero_eq_one,
+          Matrix.cons_val_zero, hor, Bool.false_eq_true, ↓reduceIte, Matrix.cons_val_one,
+          Matrix.cons_val, neg_zero, Matrix.cons_val_succ, Fin.reduceFinMk, Fin.zero_eta,
+          zero_add] at hact
     all_goals
       first
       | exact ⟨0, (hcurv (q 1)).symm.trans hact⟩
@@ -216,7 +212,9 @@ private theorem horder :
   have hc : ∀ C, (BandPackingSymmetryCircleAction gN C).1 = C.1 :=
     (BandPackingSymmetryCovariance gN).1
   rw [← hr2hat, ← hr0hat]
-  simp? [BandPackingSymmetryQuadrupleAction, horientationAdapt, hrev, hc, hr2, hr0]
+  simp only [BandPackingSymmetryQuadrupleAction, Fin.isValue, hr0, horientationAdapt, hrev,
+      Bool.false_eq_true, ↓reduceIte, Fin.succ_zero_eq_one, Fin.succ_one_eq_two, hr2,
+      Fin.reduceSucc, Matrix.cons_val, hc, Matrix.cons_val_zero, ge_iff_le]
   exact h12
 
 private theorem hlarge' :
@@ -235,7 +233,9 @@ private theorem hlarge' :
   have hc : ∀ C, (BandPackingSymmetryCircleAction gN C).1 = C.1 :=
     (BandPackingSymmetryCovariance gN).1
   rw [← hr2hat]
-  simp? [BandPackingSymmetryQuadrupleAction, horientationAdapt, hrev, hc, hr2]
+  simp only [BandPackingSymmetryQuadrupleAction, Fin.isValue, horientationAdapt, hrev,
+      Bool.false_eq_true, ↓reduceIte, Fin.succ_zero_eq_one, Fin.succ_one_eq_two, hr2,
+      Fin.reduceSucc, Matrix.cons_val, hc, gt_iff_lt]
   exact hlarge
 
 private theorem hT' :

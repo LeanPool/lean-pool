@@ -5,9 +5,10 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.BandOrderedGeneralOdometerRowData
 public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryTileOdometerCovariance
-public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryCovariance
 public import LeanPool.ApollonianSuperharmonic.PartialOdometerAffineTranslateFormulas
 public import LeanPool.ApollonianSuperharmonic.P5472T1AffineDifferenceTransport
 public import LeanPool.ApollonianSuperharmonic.FordFareyParameter
@@ -67,7 +68,7 @@ theorem P5472T1FordSlopeDifference
   have hq1pos : 0 < (q 1).1 := by
     have hh := congrArg Prod.fst hrootCircle
     rw [hcurvSym] at hh
-    simp? [FordCircleCoordinate] at hh
+    simp only [Fin.isValue, FordCircleCoordinate, Nat.cast_mul, Int.reduceNeg] at hh
     have : 0 < F.q * F.q := Nat.mul_pos F.q_pos F.q_pos
     omega
   let I : GaussianInt := ⟨0, 1⟩

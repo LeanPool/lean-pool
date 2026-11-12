@@ -5,9 +5,9 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.ApollonianSuperharmonic.Preamble
+public import Mathlib.Init
 public import Mathlib.Topology.ContinuousMap.Basic
-public import Mathlib.Topology.LocallyFinite
+
 
 -- [TABLET NODE: P3832T1FiniteClosedCoverPasting]
 

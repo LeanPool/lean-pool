@@ -5,6 +5,9 @@ Authors: Alexander Bentkamp, Yury Kudryashov, Yaël Dillies, Joël Riou
 -/
 module
 
+public import Mathlib.Init
+public import Mathlib.Data.Fintype.Card
+
 public import Mathlib.Basic.Real.Basic
 public import Mathlib.Algebra.BigOperators.Group.Finset.Defs
 

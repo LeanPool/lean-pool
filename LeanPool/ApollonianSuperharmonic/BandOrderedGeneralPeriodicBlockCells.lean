@@ -5,9 +5,9 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.BandOrderedGeneralLayoutCertificate
-public import LeanPool.ApollonianSuperharmonic.ModifiedSubtileOccurrenceInterpretation
-public import LeanPool.ApollonianSuperharmonic.TileCellComplement
 public import LeanPool.ApollonianSuperharmonic.TileTranslationFormulas
 
 -- [TABLET NODE: BandOrderedGeneralPeriodicBlockCells]
@@ -77,7 +77,7 @@ theorem BandOrderedGeneralPeriodicBlockCells
           have hs' : x ∈ (TileCellComplement (layout.P 0 true) layout.O).cells := by
             simpa [ModifiedSubtileOccurrenceInterpretation, TileTranslation,
               GaussianTranslation] using hs
-          simp? [TileCellComplement] at hs'
+          simp only [TileCellComplement, Fin.isValue, Finset.mem_sdiff] at hs'
           exact ⟨0, true, hs'.1⟩
       | B => exact ⟨0, false, by simpa [ModifiedSubtileOccurrenceInterpretation,
           TileTranslation, GaussianTranslation] using hs⟩

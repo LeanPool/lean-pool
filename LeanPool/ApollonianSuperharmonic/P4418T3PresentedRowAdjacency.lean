@@ -5,14 +5,13 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P4418T3OuterCompanionAlignment
-public import LeanPool.ApollonianSuperharmonic.P4261T1ContactAdjacency
-public import LeanPool.ApollonianSuperharmonic.P4261T1CentralCoordinates
 public import LeanPool.ApollonianSuperharmonic.P4387T1ParentSlopeNormalForms
-public import LeanPool.ApollonianSuperharmonic.P4387T1PlacedCoordinates
 public import LeanPool.ApollonianSuperharmonic.P3996T1SRowAlignment
-public import LeanPool.ApollonianSuperharmonic.PositiveCurvatureTileOdometerDomain
-public import LeanPool.ApollonianSuperharmonic.VectorRecursionLaws
+public import LeanPool.ApollonianSuperharmonic.LeftLatticeAdjacent
+public import LeanPool.ApollonianSuperharmonic.TileSubodometer
 
 -- [TABLET NODE: P4418T3PresentedRowAdjacency]
 

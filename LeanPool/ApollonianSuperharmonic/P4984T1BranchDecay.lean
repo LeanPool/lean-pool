@@ -5,9 +5,10 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P4984T1ContactDiameter
 public import LeanPool.ApollonianSuperharmonic.P4828T1HistoryRealization
-public import Mathlib.Analysis.SpecificLimits.Basic
 
 -- [TABLET NODE: P4984T1BranchDecay]
 

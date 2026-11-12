@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P4994T6UnitCoordinates
 public import LeanPool.ApollonianSuperharmonic.P4994T6Rotation
 public import LeanPool.ApollonianSuperharmonic.UnitTriangularStep

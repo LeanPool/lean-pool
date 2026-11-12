@@ -5,9 +5,10 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.LatticeQuadraticForm
-public import LeanPool.ApollonianSuperharmonic.TilingLatticeBasis
-public import LeanPool.ApollonianSuperharmonic.TilingLatticeCocycleExtension
+public import LeanPool.ApollonianSuperharmonic.PositiveCurvatureGeneratorCocycles
 
 -- [TABLET NODE: PeriodicQuadraticRemainder]
 
@@ -90,7 +91,9 @@ theorem PeriodicQuadraticRemainder (C : BandCircle)
         · intro mn hm
           have hr := congrArg (fun z : GaussianInt => z.re) hm
           have hi := congrArg (fun z : GaussianInt => z.im) hm
-          simp? at hr hi
+          simp only [Int.reduceNeg, mul_one, Zsqrtd.smul_val, mul_zero, Zsqrtd.re_add,
+              Zsqrtd.re_intCast, add_zero, Zsqrtd.im_add, Zsqrtd.im_intCast, zero_add]
+              at hr hi
           exact Prod.ext (by exact_mod_cast hr) (by exact_mod_cast hi)
     · have hpos := C.2
       have hgt : 1 < C.1.1.1 := by omega

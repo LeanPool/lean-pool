@@ -5,15 +5,14 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P5532T1OrientationPullback
 public import LeanPool.ApollonianSuperharmonic.P5686T1UniformGlobalOdometerTransport
 public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryTileOdometerCovariance
 public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryPartialOdometerAction
-public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryVectorAction
 public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryTileAction
 public import LeanPool.ApollonianSuperharmonic.GlobalOdometerExtends
-public import LeanPool.ApollonianSuperharmonic.TileQuarterTurnFormulas
-public import LeanPool.ApollonianSuperharmonic.TileReflectionFormulas
 
 -- [TABLET NODE: P5532T1SymmetryOrientationTransport]
 

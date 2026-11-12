@@ -5,8 +5,15 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+public import Mathlib.Basic.Real.Basic
+public import Mathlib.Tactic.FinCases
+public import Mathlib.Tactic.Linarith
+public import Mathlib.Tactic.NormNum
+
 public import LeanPool.ApollonianSuperharmonic.SubtileOccurrenceInterpretation
 public import LeanPool.ApollonianSuperharmonic.TileTranslationFormulas
+public import LeanPool.ApollonianSuperharmonic.GaussianRealPoint
 
 
 -- [TABLET NODE: BandOrderedGeneralSubtileCanonicalRows]
@@ -115,7 +122,9 @@ theorem BandOrderedGeneralSubtileCanonicalRows
     rw [smul_fst] at hc1 ⊢
     rw [smul_snd] at hc2 ⊢
     fin_cases e
-    · simp? at hreInt himInt
+    · simp only [Int.reduceNeg, ↓reduceIte, one_mul, Zsqrtd.re_sub, Zsqrtd.re_mul, zero_mul,
+        mul_one, neg_mul, zero_add, sub_neg_eq_add, Zsqrtd.im_sub, Zsqrtd.im_mul]
+        at hreInt himInt
       norm_num only [Bool.true_eq, ↓reduceIte, GaussianRealPoint] at hc1 hc2 ⊢
       dsimp at hc1 hc2 ⊢
       constructor
@@ -125,7 +134,9 @@ theorem BandOrderedGeneralSubtileCanonicalRows
       · have him : ((edge j).im : ℝ) - ((edge j).re : ℝ) +
             2 * (d.im : ℝ) = (z.im : ℝ) := by exact_mod_cast himInt
         linarith
-    · simp? at hreInt himInt
+    · simp only [Int.reduceNeg, Bool.false_eq_true, ↓reduceIte, neg_mul, one_mul, neg_sub,
+        Zsqrtd.re_sub, Zsqrtd.re_mul, zero_mul, mul_one, zero_add, Zsqrtd.im_sub,
+        Zsqrtd.im_mul] at hreInt himInt
       norm_num only [Bool.false_eq_true, ↓reduceIte, GaussianRealPoint] at hc1 hc2 ⊢
       dsimp at hc1 hc2 ⊢
       constructor
@@ -166,21 +177,26 @@ theorem BandOrderedGeneralSubtileCanonicalRows
   all_goals
     focus
       refine ⟨?_, ?_⟩
-      · simp? [SubtileOccurrenceInterpretation]
+      · simp only [SubtileOccurrenceInterpretation, Fin.isValue, Int.cast_one, one_mul,
+          Int.cast_zero, zero_mul, add_zero, one_div, Int.reduceNeg, zero_add, Int.cast_neg,
+          neg_mul]
         norm_num
         rw [one_div]
         apply translatedCentroid
         apply Zsqrtd.ext <;>
-          simp [hu, hv, pow_succ,
-            ] at hsre hsim h0re h0im h1re h1im h2re h2im f0re f0im f1re f1im f2re f2im ⊢ <;>
+          simp at hsre hsim h0re h0im h1re h1im h2re h2im <;>
+          simp [hu, hv, pow_succ] at f0re f0im f1re f1im f2re f2im ⊢ <;>
           omega
-      · simp? [SubtileOccurrenceInterpretation]
+      · simp only [SubtileOccurrenceInterpretation, Fin.isValue, Int.cast_one, one_mul,
+          Int.cast_zero, zero_mul, add_zero, one_div, Int.reduceNeg, zero_add, Int.cast_neg,
+          neg_mul]
         norm_num
         rw [one_div]
         apply translatedCentroid
         apply Zsqrtd.ext <;>
-          simp [hu, hv, Fin.neg_def, pow_succ,
-            notEven3] at hsre hsim h0re h0im h1re h1im h2re h2im f0re f0im f1re f1im f2re f2im ⊢ <;>
+          simp at hsre hsim h0re h0im h1re h1im h2re h2im <;>
+          simp [hu, hv, pow_succ, notEven3, show (-1 : Fin 3) = 2 by decide]
+            at f0re f0im f1re f1im f2re f2im ⊢ <;>
           omega
 
 end ApollonianSuperharmonic

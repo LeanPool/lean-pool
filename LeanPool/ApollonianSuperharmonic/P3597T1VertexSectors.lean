@@ -5,9 +5,11 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+public import Mathlib.Tactic.Positivity
+
 public import LeanPool.ApollonianSuperharmonic.P3597T1SideCrossing
 public import Mathlib.Topology.Connected.PathConnected
-public import Mathlib.Analysis.Convex.Topology
 public import Mathlib.Analysis.Normed.Module.Convex
 public import Mathlib.Topology.LocallyConstant.Basic
 
@@ -2206,7 +2208,7 @@ private theorem hprev :
   by_cases h : i.val = 0
   · simp [prev, h]
   · have hiv := i.isLt
-    simp? [prev, h]
+    simp only [h, ↓reduceIte, Fin.coe_ofNat_eq_mod, Nat.one_mod, prev]
     rw [Nat.sub_add_cancel (Nat.one_le_iff_ne_zero.mpr h), Nat.mod_eq_of_lt hiv]
 
 private theorem hprevne :

@@ -5,8 +5,9 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P4566T1LiteralSuccessorCharts
-public import LeanPool.ApollonianSuperharmonic.BandOrientedBoundaryParentChain
 
 -- [TABLET NODE: P4566T1StrictRetainedGenealogy]
 

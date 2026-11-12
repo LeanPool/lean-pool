@@ -5,10 +5,11 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P4062T1RemainderPaths
 public import LeanPool.ApollonianSuperharmonic.P4062T1InteriorGeometry
 public import LeanPool.ApollonianSuperharmonic.FordLaplacianTable
-public import LeanPool.ApollonianSuperharmonic.P4112T1PathGeometry
 public import LeanPool.ApollonianSuperharmonic.P4112T1BoundaryMultiplicity
 public import LeanPool.ApollonianSuperharmonic.P4112T1ParentalNeighbors
 public import LeanPool.ApollonianSuperharmonic.P4112T1LowerNeighbors

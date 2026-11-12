@@ -5,11 +5,10 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.ApollonianSuperharmonic.BandPrototile
-public import LeanPool.ApollonianSuperharmonic.BandPrototileTranslation
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.OdometerStringRespectCentralCovariance
 public import LeanPool.ApollonianSuperharmonic.PositiveCurvatureTileOdometerSupportTransport
-public import LeanPool.ApollonianSuperharmonic.ProperBandCurvatureStructure
 
 -- [TABLET NODE: OdometerStringRespectRegularFamilyCentralCovariance]
 

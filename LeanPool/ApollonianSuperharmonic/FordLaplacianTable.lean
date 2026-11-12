@@ -5,18 +5,12 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.FordOdometer
 public import LeanPool.ApollonianSuperharmonic.FordBoundaryMultiplicity
-public import LeanPool.ApollonianSuperharmonic.FordDoubledBoundary
-public import LeanPool.ApollonianSuperharmonic.FordRecursiveVertexDomains
-public import LeanPool.ApollonianSuperharmonic.FordVertexDomain
 public import LeanPool.ApollonianSuperharmonic.FourNeighborLaplacian
-public import LeanPool.ApollonianSuperharmonic.IntegerCeilDiv
-public import LeanPool.ApollonianSuperharmonic.LatticeVertexBoundary
 public import Mathlib.RingTheory.Int.Basic
-public import Mathlib.Algebra.BigOperators.Group.Finset.Piecewise
-public import Mathlib.Algebra.BigOperators.Fin
-public import Mathlib.Tactic.ClearExcept
 
 -- [TABLET NODE: FordLaplacianTable]
 

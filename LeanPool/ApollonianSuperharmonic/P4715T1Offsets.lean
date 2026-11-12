@@ -5,6 +5,9 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+public import Mathlib.Basic.Real.Basic
+
 public import LeanPool.ApollonianSuperharmonic.SixSubtileLabel
 
 -- [TABLET NODE: P4715T1Offsets]

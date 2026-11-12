@@ -5,10 +5,11 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.ApollonianSuperharmonic.BandGenealogy
-public import LeanPool.ApollonianSuperharmonic.BandPredecessorNoCollision
+public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.SemiProperForestClassification
+
 public import LeanPool.ApollonianSuperharmonic.BandPrototile
-public import LeanPool.ApollonianSuperharmonic.VectorRecursionLaws
+public import LeanPool.ApollonianSuperharmonic.BandSuccessorClassification
 
 -- [TABLET NODE: BandPrototileCentroidUnique]
 
@@ -32,34 +33,8 @@ theorem BandPrototileCentroidUnique (C : CircleCoordinates) (T U : ProtoTile)
   revert hU
   revert U
   have nonnegative : ∀ r : Fin 4 → CircleCoordinates,
-      SemiProperQuadruple r → ∀ k : Fin 4, 0 ≤ (r k).1 := by
-    intro r hr
-    induction hr with
-    | base z => intro k; fin_cases k <;> simp
-    | rotate hr ih =>
-        intro k
-        fin_cases k
-        · simpa using ih 0
-        · simpa using ih 2
-        · simpa using ih 3
-        · simpa using ih 1
-    | @successor r hr ih =>
-        intro k
-        have classification := BandSuccessorClassification r hr
-        dsimp at classification
-        rcases classification with special | proper
-        · fin_cases k
-          · simp [special]
-          · simpa using ih 0
-          · simpa using ih 2
-          · simpa using ih 3
-        · rcases proper with ⟨_, larger0, larger2, larger3⟩
-          fin_cases k
-          · change 0 ≤ 2 * (r 0).1 + 2 * (r 2).1 + 2 * (r 3).1 - (r 1).1
-            exact (ih 0).trans larger0.le
-          · exact ih 0
-          · exact ih 2
-          · exact ih 3
+      SemiProperQuadruple r → ∀ k : Fin 4, 0 ≤ (r k).1 :=
+    fun r hr => (SemiProperForestClassification r hr).1
   have no_unit : ∀ r : Fin 4 → CircleCoordinates, SemiProperQuadruple r →
       (r 0).1 = 1 → ¬ ProperBandQuadruple r := by
     intro r hr
@@ -98,7 +73,9 @@ theorem BandPrototileCentroidUnique (C : CircleCoordinates) (T U : ProtoTile)
       generalize coordinate : ((0 : ℤ), w) = D at hU ⊢
       cases hU with
       | line w' y hw' =>
-          simp? [TileCentroid] at hcent ⊢
+          simp only [TileCentroid, Finset.not_nonempty_empty, ↓reduceIte, Int.reduceNeg,
+              GaussianInt.intCast_re, GaussianInt.intCast_im, Prod.mk.injEq, forall_const,
+              true_and] at hcent ⊢
           apply GaussianInt.toComplex_injective
           apply Complex.ext
           · exact hcent.1
@@ -122,7 +99,11 @@ theorem BandPrototileCentroidUnique (C : CircleCoordinates) (T U : ProtoTile)
       cases hU with
       | line w' y hw' => simp_all []
       | unit z' y =>
-          simp? [TileCentroid] at hcent ⊢
+          simp only [TileCentroid, Finset.singleton_nonempty, ↓reduceIte, Int.reduceNeg,
+              Finset.sum_singleton, GaussianInt.intCast_re, Finset.card_singleton,
+              Nat.cast_one, div_one, one_div, GaussianInt.intCast_im, Prod.mk.injEq,
+              add_left_inj, Finset.singleton_inj, Finset.singleton_ne_empty,
+              IsEmpty.forall_iff, and_true] at hcent ⊢
           have equal : x = y := by
             apply GaussianInt.toComplex_injective
             apply Complex.ext
@@ -222,7 +203,9 @@ theorem BandPrototileCentroidUnique (C : CircleCoordinates) (T U : ProtoTile)
           intro hempty
           have centered := hcent
           have uempty : U.cells = ∅ := by rw [← cells_equal]; exact hempty
-          simp? [TileCentroid, hempty, uempty] at centered
+          simp only [TileCentroid, hempty, Finset.not_nonempty_empty, ↓reduceIte,
+              Int.reduceNeg, GaussianInt.intCast_re, GaussianInt.intCast_im, uempty,
+              Prod.mk.injEq] at centered
           apply GaussianInt.toComplex_injective
           apply Complex.ext
           · exact centered.1

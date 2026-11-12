@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P4217T2SquareRestriction
 public import LeanPool.ApollonianSuperharmonic.PartialOdometerSquares
 public import LeanPool.ApollonianSuperharmonic.P4210T1FordCellRectangles

@@ -5,10 +5,12 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.FordDoubledBoundary
 public import LeanPool.ApollonianSuperharmonic.FordFareyParameter
 public import LeanPool.ApollonianSuperharmonic.IntegerCeilDiv
-public import Mathlib.Tactic.Ring
+public import LeanPool.ApollonianSuperharmonic.IntegerLatticeFunction
 
 -- [TABLET NODE: P5130T5UnitCase]
 

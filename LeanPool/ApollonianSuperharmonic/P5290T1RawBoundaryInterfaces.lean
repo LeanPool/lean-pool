@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.CellDisjointCommonEdgesBoundary
 public import LeanPool.ApollonianSuperharmonic.P3161T2IncidentBoundary
 public import LeanPool.ApollonianSuperharmonic.FootprintVertices

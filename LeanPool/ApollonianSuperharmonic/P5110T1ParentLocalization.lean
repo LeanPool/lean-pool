@@ -5,14 +5,12 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P5110T1ParentModel
 public import LeanPool.ApollonianSuperharmonic.FordTileRecursiveIdentification
 public import LeanPool.ApollonianSuperharmonic.BandPrototileCentroidUnique
-public import LeanPool.ApollonianSuperharmonic.P4210T1FordSquareCentroid
 public import LeanPool.ApollonianSuperharmonic.ProtoTileObservableExtensionality
-public import LeanPool.ApollonianSuperharmonic.BandPrototileTranslation
-public import LeanPool.ApollonianSuperharmonic.P4210T1FordCellRectangles
-public import LeanPool.ApollonianSuperharmonic.TileTranslationFormulas
 
 -- [TABLET NODE: P5110T1ParentLocalization]
 
@@ -73,14 +71,17 @@ theorem P5110T1ParentLocalization (P : FordFareyParameter) (hq : 1 < P.q)
   have ncells (j : Fin 3) (b : Bool) :
       (N j b).cells = (P5110T1ParentModel P.q₁ P.q₂ j b).cells := by
     fin_cases j <;> cases b
-    all_goals simp? [N, P5110T1ParentModel, TileTranslation, h0, h1, h2,
-      Finset.image_image, ← P.sum_q]
+    all_goals simp only [Nat.succ_eq_add_one, Nat.reduceAdd, TileTranslation, Int.reduceNeg,
+        Fin.isValue, h0, h1, Finset.image_image, h2, Finset.image_empty, Fin.mk_one,
+        Bool.false_eq_true, ↓reduceIte, Matrix.cons_val_one, Matrix.cons_val_zero,
+        P5110T1ParentModel, ← P.sum_q, N, Fin.reduceFinMk, Matrix.cons_val, Fin.zero_eta]
     all_goals
       apply Finset.image_congr
       intro z hz
       have hsum := P.sum_q
       apply Zsqrtd.ext
-      all_goals simp? [GaussianTranslation]
+      all_goals simp only [Int.reduceNeg, Function.comp_apply, GaussianTranslation,
+          Zsqrtd.im_add, add_zero, Zsqrtd.re_add, add_neg_cancel_right]
       all_goals omega
   have square_nonempty (n : Nat) (hn : 0 < n) (u : GaussianInt) :
       (TileTranslation (FordTile n) u).cells.Nonempty := by
@@ -95,7 +96,10 @@ theorem P5110T1ParentLocalization (P : FordFareyParameter) (hq : 1 < P.q)
     · exact ((square_nonempty P.q₁ hr _).ne_empty hmempty).elim
     · exact ((square_nonempty P.q₂ P.q₂_pos _).ne_empty hmempty).elim
     · exact ((square_nonempty P.q₂ P.q₂_pos _).ne_empty hmempty).elim
-    · simp? [N, P5110T1ParentModel, TileTranslation, ha2, GaussianTranslation]
+    · simp only [Nat.succ_eq_add_one, Nat.reduceAdd, TileTranslation, Int.reduceNeg,
+        Fin.isValue, GaussianTranslation, ha2, Zsqrtd.add_def, add_zero, add_neg_cancel,
+        Fin.reduceFinMk, Bool.false_eq_true, ↓reduceIte, Matrix.cons_val, P5110T1ParentModel,
+        Nat.cast_add, N]
       ext <;> simp
     · simp [N, P5110T1ParentModel, TileTranslation, ha2, GaussianTranslation]
   have ncent : TileCentroid (N i plus) =
@@ -146,8 +150,15 @@ theorem P5110T1ParentLocalization (P : FordFareyParameter) (hq : 1 < P.q)
                 ((FordRecursiveQuadruple P) i.succ)))) := by
     fin_cases i <;> cases plus
     all_goals
-      simp? [P5110T1ParentModel, ct, ce, croot, c1, c2,
-        f0, f1, f2, h10, h20, h30, GaussianRealPoint]
+      simp only [P5110T1ParentModel, Bool.false_eq_true, ↓reduceIte, Nat.succ_eq_add_one,
+          Nat.reduceAdd, Int.reduceNeg, Nat.cast_add, Fin.mk_one, Fin.isValue,
+          Matrix.cons_val_one, Matrix.cons_val_zero, ct, c2, Int.cast_zero, add_zero,
+          Int.cast_add, Int.cast_natCast, croot, Prod.mk_sub_mk, one_div, GaussianRealPoint,
+          Fin.succ_one_eq_two, h20, Int.cast_neg, f1, Prod.neg_mk, neg_neg, Prod.mk_add_mk,
+          Prod.smul_mk, smul_eq_mul, Prod.mk.injEq, Fin.reduceFinMk, Matrix.cons_val, ce,
+          Zsqrtd.re_zero, Zsqrtd.im_zero, zero_sub, Fin.reduceSucc, h30, f2, neg_zero,
+          zero_add, mul_neg, neg_inj, and_self, Fin.zero_eta, c1, Fin.succ_zero_eq_one, h10,
+          f0]
       have hsum : (P.q : Real) = (P.q₁ : Real) + (P.q₂ : Real) := by
         exact_mod_cast P.sum_q
       first | (constructor <;> linarith) | linarith

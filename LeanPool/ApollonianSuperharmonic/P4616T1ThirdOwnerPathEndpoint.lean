@@ -5,9 +5,10 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.LocalLatticeInterfaceSectors
 public import LeanPool.ApollonianSuperharmonic.SimpleGridPathPointTrichotomy
-public import LeanPool.ApollonianSuperharmonic.SimpleGridPathVertexIncidentEdge
 
 -- [TABLET NODE: P4616T1ThirdOwnerPathEndpoint]
 

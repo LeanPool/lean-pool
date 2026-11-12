@@ -5,18 +5,12 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.PlaneTriangulation
 public import LeanPool.ApollonianSuperharmonic.TriangularLatticeAdjacent
-public import Mathlib.Tactic.FinCases
-public import Mathlib.Tactic.NormNum
-public import Mathlib.Data.List.Chain
 public import Mathlib.Analysis.Convex.Topology
 public import Mathlib.Analysis.Convex.PathConnected
-public import Mathlib.Topology.Homeomorph.Lemmas
-public import Mathlib.Tactic.Linarith
-public import Mathlib.Tactic.Ring
-public import Mathlib.Tactic.FunProp
-public import Mathlib.Tactic.ClearExclamation
 
 -- [TABLET NODE: AffineTriangularPlaneTriangulation]
 
@@ -148,13 +142,16 @@ private theorem two_faces :
         all_goals
           first
           | solve | simp [fv, Prod.ext_iff] at h ⊢
-          | simp? [fv, Prod.ext_iff] at h ⊢
+          | simp only [Prod.ext_iff, Prod.fst_sub, Prod.snd_sub, Fin.isValue,
+              Matrix.cons_val_one, add_sub_cancel_right, Matrix.cons_val_zero, Prod.fst_add,
+              add_zero, Prod.snd_add, fv] at h ⊢
             omega
       · refine ⟨⟨1, ?_⟩, ⟨2, ?_⟩⟩
         all_goals
           first
           | solve | simp [fv, Prod.ext_iff] at h ⊢
-          | simp? [fv, Prod.ext_iff] at h ⊢
+          | simp only [Prod.ext_iff, Prod.fst_sub, Prod.snd_sub, Fin.isValue, Matrix.cons_val,
+              Prod.fst_add, add_zero, Prod.snd_add, fv] at h ⊢
             omega
       · intro f i j hi hj
         cases f <;> fin_cases i <;> fin_cases j <;>
@@ -863,7 +860,11 @@ private theorem endpoint_parameters :
   classical
   intro coord delta fraction_integer fraction_gap x y k l s t hs ht h hne
   fin_cases k <;> fin_cases l
-  all_goals simp? [delta, coord, Prod.ext_iff, smul_eq_mul] at h
+  all_goals simp only [Fin.mk_one, Fin.isValue, Matrix.cons_val_one, Matrix.cons_val_zero,
+      Prod.fst_add, add_zero, Prod.snd_add, Int.cast_add, Int.cast_one, Prod.mk_sub_mk,
+      sub_self, add_sub_cancel_left, Prod.smul_mk, smul_eq_mul, mul_zero, mul_one,
+      Prod.mk_add_mk, Fin.reduceFinMk, Matrix.cons_val, Prod.ext_iff, coord, delta,
+      Fin.zero_eta, Int.cast_inj] at h
   · have hx : x.1 ≠ y.1 := by
       intro hx
       have hy : x.2 = y.2 := by exact_mod_cast h.2

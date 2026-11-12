@@ -5,9 +5,15 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+public import Mathlib.Topology.MetricSpace.Pseudo.Constructions
+public import Mathlib.Topology.MetricSpace.Pseudo.Real
+
 public import LeanPool.ApollonianSuperharmonic.P4062T1RemainderPaths
 public import LeanPool.ApollonianSuperharmonic.FourNeighborAdjacent
 public import Mathlib.Data.Nat.Dist
+public meta import Lean.Meta.Tactic.NormCast
+public import LeanPool.ApollonianSuperharmonic.P4062T1RecursiveInteriors
 
 /-!
 # P4112T1PathGeometry
@@ -240,7 +246,8 @@ private theorem memB0Large :
   classical
   intro P B r s hsum hs hr squareCoordinates x hlarge
   change P.q₂ < P.q₁ at hlarge
-  simp? [B, P4062T1RemainderPaths, hlarge, Finset.mem_filter]
+  simp only [P4062T1RemainderPaths, hlarge, ↓reduceIte, Int.reduceNeg, Fin.isValue,
+      Matrix.cons_val_zero, Finset.mem_filter, B]
   rw [squareCoordinates]
   omega
 
@@ -257,7 +264,8 @@ private theorem memB1Large :
   classical
   intro P B r s hsum hs hr squareCoordinates x hlarge
   change P.q₂ < P.q₁ at hlarge
-  simp? [B, P4062T1RemainderPaths, hlarge, Finset.mem_filter]
+  simp only [P4062T1RemainderPaths, hlarge, ↓reduceIte, Int.reduceNeg, Fin.isValue,
+      Matrix.cons_val_one, Matrix.cons_val_fin_one, Finset.mem_filter, B]
   rw [squareCoordinates]
   omega
 
@@ -275,7 +283,8 @@ private theorem memB0Small :
   intro P B r s hsum hs hr squareCoordinates x hsmall
   change P.q₁ < P.q₂ at hsmall
   have hfalse : ¬ P.q₂ < P.q₁ := by omega
-  simp? [B, P4062T1RemainderPaths, hfalse, Finset.mem_filter]
+  simp only [P4062T1RemainderPaths, hfalse, ↓reduceIte, Int.reduceNeg, Fin.isValue,
+      Matrix.cons_val_zero, Finset.mem_filter, B]
   rw [squareCoordinates]
   omega
 
@@ -293,7 +302,8 @@ private theorem memB1Small :
   intro P B r s hsum hs hr squareCoordinates x hsmall
   change P.q₁ < P.q₂ at hsmall
   have hfalse : ¬ P.q₂ < P.q₁ := by omega
-  simp? [B, P4062T1RemainderPaths, hfalse, Finset.mem_filter]
+  simp only [P4062T1RemainderPaths, hfalse, ↓reduceIte, Int.reduceNeg, Fin.isValue,
+      Matrix.cons_val_one, Matrix.cons_val_fin_one, Finset.mem_filter, B]
   rw [squareCoordinates]
   omega
 

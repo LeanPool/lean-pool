@@ -5,13 +5,19 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryProperCovariance
-public import LeanPool.ApollonianSuperharmonic.BandSuccessorClassification
-public import LeanPool.ApollonianSuperharmonic.FordCircleCoordinate
-public import LeanPool.ApollonianSuperharmonic.FordFareyParameter
+public import Mathlib.Init
+public import Mathlib.Algebra.CharP.Defs
+public import Mathlib.Data.Fin.VecNotation
+public import Mathlib.Tactic.FinCases
+public import Mathlib.Tactic.Linarith
+public import Mathlib.Tactic.NormNum
+public import Mathlib.Tactic.Ring
+
 public import LeanPool.ApollonianSuperharmonic.FordRecursiveQuadruple
 public import LeanPool.ApollonianSuperharmonic.ProperBandCurvatureStructure
-public import LeanPool.ApollonianSuperharmonic.SemiProperForestClassification
+public meta import Lean.Meta.Tactic.NormCast
+public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryQuadrupleAction
+public import Mathlib.Algebra.Order.Ring.Star
 
 -- [TABLET NODE: FordRegimeConverse]
 
@@ -191,8 +197,15 @@ private theorem desiredAt325 :
   intro predecessor i predecessorLine g P hP successorAction determinantCoprime next0
       actionPredecessor
   rw [successorAction predecessor, actionPredecessor]
-  simp? [next0, FordRecursiveQuadruple, FordCircleCoordinate]
-  split_ifs <;> simp_all? [P.sum_q, P.sum_p] <;> ring
+  simp only [Nat.succ_eq_add_one, Nat.reduceAdd, FordRecursiveQuadruple, FordCircleCoordinate,
+      Nat.cast_mul, Int.reduceNeg, Fin.isValue, Matrix.cons_val_zero, Matrix.cons_val,
+      mul_zero, add_zero, Matrix.cons_val_one, mul_neg, mul_one, Nat.cast_add,
+      Matrix.vecCons_inj, Prod.mk.injEq, right_eq_ite_iff, mul_eq_zero, Int.natCast_eq_zero,
+      or_self, and_true, next0]
+  split_ifs <;> simp_all only [Fin.isValue, Nat.succ_eq_add_one, Nat.reduceAdd, P.sum_q,
+      Nat.cast_add, Int.reduceNeg, P.sum_p, Nat.add_eq_zero_iff, false_and, true_and,
+      IsEmpty.forall_iff, and_true, zero_add, sub_zero, add_zero, CharP.cast_eq_zero,
+      mul_zero] <;> ring
   repeat' first | constructor | (ext <;> simp; ring)
   all_goals try (intro hp; have := P.q₂_pos; omega)
 
@@ -290,14 +303,25 @@ private theorem desiredAt381 :
   have successorY := successorAction y
   rw [actionY, actionPredecessor] at successorY
   convert successorY using 1 <;>
-    simp? [y, next2, FordRecursiveQuadruple,
-      FordCircleCoordinate, P.sum_q, P.sum_p] <;>
+    simp only [Fin.isValue, Matrix.cons_val_zero, Matrix.cons_val, Matrix.cons_val_one, y,
+        FordRecursiveQuadruple, FordCircleCoordinate, P.sum_q, Nat.cast_mul, Nat.cast_add,
+        Int.reduceNeg, P.sum_p, Nat.succ_eq_add_one, Nat.reduceAdd, mul_zero, add_zero,
+        mul_neg, mul_one, Matrix.vecCons_inj, Prod.mk.injEq, and_true, next2] <;>
     ring
   all_goals split_ifs <;>
-    simp_all? [] <;>
+    simp_all only [Fin.isValue, Nat.succ_eq_add_one, Nat.reduceAdd, Matrix.cons_val,
+        Matrix.cons_val_one, Matrix.cons_val_zero, CharP.cast_eq_zero, zero_mul, ne_eq,
+        OfNat.ofNat_ne_zero, not_false_eq_true, zero_pow, add_zero, zero_add, Int.reduceNeg,
+        one_mul, neg_add_cancel, true_and] <;>
     try constructor
   all_goals try ring
   all_goals ext <;> simp_all; ring
+
+private theorem existsLineBeforeRotation (q : Fin 4 → CircleCoordinates)
+    (line : ∃ i : Fin 4, (![q 0, q 2, q 3, q 1] i).1 = 0) :
+    ∃ i : Fin 4, (q i).1 = 0 := by
+  obtain ⟨i, coordinate⟩ := line
+  fin_cases i <;> simp_all <;> aesop
 
 end FordRegimeProof
 
@@ -320,9 +344,7 @@ theorem FordRegimeConverse (q : Fin 4 → CircleCoordinates)
     simp at bad
   | @rotate q hq ih =>
     have predecessorProper : ProperBandQuadruple q := FordRegimeProof.predecessorProper q hq
-    obtain ⟨i, hi⟩ := hline
-    have predecessorLine : ∃ i : Fin 4, (q i).1 = 0 := by
-      fin_cases i <;> simp_all <;> aesop
+    have predecessorLine := FordRegimeProof.existsLineBeforeRotation q hline
     obtain ⟨r, g, P, hP, hg, hw, hz, heq⟩ := ih predecessorProper predecessorLine
     fin_cases r
     · refine ⟨2, g, P, hP, hg, hw, ?_, ?_⟩
@@ -352,9 +374,16 @@ theorem FordRegimeConverse (q : Fin 4 → CircleCoordinates)
       refine ⟨2, .shift (-z), standard, by norm_num, by rfl, ?_, ?_, ?_⟩
       · exact ⟨-z, Or.inl rfl⟩
       · simp [hz]
-      · simp? [standard, hz, FordRecursiveQuadruple, FordCircleCoordinate,
-          BandPackingSymmetryQuadrupleAction, BandPackingSymmetryCircleAction,
-          BandPackingSymmetryReversesOrientation]
+      · simp only [BandPackingSymmetryQuadrupleAction, BandPackingSymmetryCircleAction, hz,
+          Nat.succ_eq_add_one, Nat.reduceAdd, Int.reduceNeg, Fin.isValue,
+          Matrix.cons_val_zero, mul_one, Matrix.cons_val, mul_zero, add_zero, Int.reduceAdd,
+          Matrix.cons_val_one, sub_zero, mul_neg, Fin.reduceSucc, Fin.reduceAdd,
+          Fin.succ_zero_eq_one, Fin.succ_one_eq_two, Int.cast_ofNat,
+          BandPackingSymmetryReversesOrientation, Bool.false_eq_true, ↓reduceIte,
+          Int.cast_one, add_neg_cancel_right, Int.cast_zero, zero_mul, neg_zero,
+          FordRecursiveQuadruple, FordCircleCoordinate, Nat.reduceMul, Nat.cast_ofNat,
+          Int.reduceMul, one_ne_zero, Nat.cast_one, Matrix.vecCons_inj, Prod.mk.injEq,
+          true_and, and_true, standard]
         repeat' first | constructor | (ext <;> simp <;> ring)
     · rcases root with ⟨z, hz⟩
       let standard : FordFareyParameter :=
@@ -368,9 +397,15 @@ theorem FordRegimeConverse (q : Fin 4 → CircleCoordinates)
         by norm_num, by rfl, ?_, ?_, ?_⟩
       · exact ⟨z + 1 + ⟨0, 1⟩, Or.inr rfl⟩
       · simp [hz]
-      · simp? [standard, hz, FordRecursiveQuadruple, FordCircleCoordinate,
-          BandPackingSymmetryQuadrupleAction, BandPackingSymmetryCircleAction,
-          BandPackingSymmetryReversesOrientation]
+      · simp only [BandPackingSymmetryQuadrupleAction, BandPackingSymmetryCircleAction, hz,
+          Nat.succ_eq_add_one, Nat.reduceAdd, Int.reduceNeg, Fin.isValue,
+          Matrix.cons_val_zero, mul_one, Matrix.cons_val, Int.reduceAdd, mul_zero, add_zero,
+          Matrix.cons_val_one, sub_zero, sub_neg_eq_add, Fin.succ_zero_eq_one,
+          Fin.succ_one_eq_two, Fin.reduceSucc, neg_add_rev, Int.cast_ofNat,
+          BandPackingSymmetryReversesOrientation, bne_self_eq_false, Bool.false_eq_true,
+          ↓reduceIte, Int.cast_one, FordRecursiveQuadruple,
+          FordCircleCoordinate, Nat.reduceMul, Nat.cast_ofNat, Int.reduceMul, one_ne_zero,
+          Nat.cast_one, Matrix.vecCons_inj, Prod.mk.injEq, true_and, and_true, standard]
         repeat' first | constructor | (ext <;> simp <;> ring)
     · obtain ⟨i, hi⟩ := hline
       have retainedLine :

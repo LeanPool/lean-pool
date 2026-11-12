@@ -5,10 +5,11 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.BandTileAcyclicIndegree
 public import LeanPool.ApollonianSuperharmonic.FiniteAcyclicOrientationObstruction
 public import LeanPool.ApollonianSuperharmonic.PeriodicBoundaryWebConnected
-public import LeanPool.ApollonianSuperharmonic.TileTranslationFormulas
 
 -- [TABLET NODE: PeriodicOdometerIndicatorRigidity]
 

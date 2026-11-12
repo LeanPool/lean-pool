@@ -5,67 +5,18 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P5630T1MarkedRightOdometerAdjacencyReduction
-public import LeanPool.ApollonianSuperharmonic.AllowedSubtileIncidence
-public import LeanPool.ApollonianSuperharmonic.BandOriginalOccurrenceIntersectionClassification
-public import LeanPool.ApollonianSuperharmonic.BandOrderedGeneralChildInterfaces
-public import LeanPool.ApollonianSuperharmonic.BandOrderedGeneralLayout
-public import LeanPool.ApollonianSuperharmonic.BandOrderedGeneralLayoutCertificate
-public import LeanPool.ApollonianSuperharmonic.BandOrderedGeneralMarkedSectorTransport
-public import LeanPool.ApollonianSuperharmonic.BandOrderedGeneralNormalizedOccurrenceBundle
-public import LeanPool.ApollonianSuperharmonic.BandOrderedGeneralRoutedSelectedContact
-public import LeanPool.ApollonianSuperharmonic.BandOrderedGeneralRightOuterMarkingCriterion
-public import LeanPool.ApollonianSuperharmonic.BandOrderedGeneralRightSelectedAdjacency
-public import LeanPool.ApollonianSuperharmonic.BandOrderedGeneralRightSelectedRowGeometry
-public import LeanPool.ApollonianSuperharmonic.BandOrderedGeneralRightNormalizedBundleExists
-public import LeanPool.ApollonianSuperharmonic.BandOrderedGeneralSelectedContactRow
-public import LeanPool.ApollonianSuperharmonic.BandOrderedGeneralSelectedContactRowExists
 public import LeanPool.ApollonianSuperharmonic.BandOrderedGeneralSubtileSelectedRowGeometry
 public import LeanPool.ApollonianSuperharmonic.BandOrderedGeneralSubtileNormalizedBundleExists
-public import LeanPool.ApollonianSuperharmonic.BandOrderedGeneralMixedAggregatePatches
-public import LeanPool.ApollonianSuperharmonic.BandOrientedChildParentEndpoints
-public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryCovariance
 public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryCircleAction
-public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryInversePhaseCancellation
-public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryMarkedDataCovariance
-public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryPartialOdometerActionFormulas
-public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetrySlopeAction
-public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryTileAction
-public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryTileOdometerCovariance
-public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryTilingTransport
-public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryVectorAction
-public import LeanPool.ApollonianSuperharmonic.BandPrototile
-public import LeanPool.ApollonianSuperharmonic.BandPrototileCentroidUnique
-public import LeanPool.ApollonianSuperharmonic.BandPrototileTranslation
-public import LeanPool.ApollonianSuperharmonic.BandRegimeClassification
-public import LeanPool.ApollonianSuperharmonic.BandTileSimultaneousInduction
-public import LeanPool.ApollonianSuperharmonic.CoveredInterfaceOppositeIncidentCells
-public import LeanPool.ApollonianSuperharmonic.LatticeEdgeRegularity
-public import LeanPool.ApollonianSuperharmonic.LatticeAdjacentInterfacePath
-public import LeanPool.ApollonianSuperharmonic.LatticeTileGridStructure
-public import LeanPool.ApollonianSuperharmonic.LatticeTileThreeDiskJunction
 public import LeanPool.ApollonianSuperharmonic.LeftLatticeAdjacent
 public import LeanPool.ApollonianSuperharmonic.LeftLatticeAdjacentPackingSymmetryTransport
-public import LeanPool.ApollonianSuperharmonic.LocalLatticeInterfaceSectors
-public import LeanPool.ApollonianSuperharmonic.PositiveCurvatureTileOdometerDomain
-public import LeanPool.ApollonianSuperharmonic.ProtoTileObservableExtensionality
-public import LeanPool.ApollonianSuperharmonic.ProperBandCurvatureStructure
-public import LeanPool.ApollonianSuperharmonic.ProperBandQuadruple
-public import LeanPool.ApollonianSuperharmonic.QuarterTurnSymmetricCenteredTransport
 public import LeanPool.ApollonianSuperharmonic.RightLatticeAdjacent
-public import LeanPool.ApollonianSuperharmonic.RightLatticeAdjacentPackingSymmetryTransport
 public import LeanPool.ApollonianSuperharmonic.SubtileLatticeAdjacent
-public import LeanPool.ApollonianSuperharmonic.SubtileLatticeAdjacentPackingSymmetryTransport
-public import LeanPool.ApollonianSuperharmonic.TileOdometerReindexedDecomposition
-public import LeanPool.ApollonianSuperharmonic.TileOdometer
 public import LeanPool.ApollonianSuperharmonic.TileSubodometer
-public import LeanPool.ApollonianSuperharmonic.TileTouchingCovariance
 public import LeanPool.ApollonianSuperharmonic.TileTranslation
-public import LeanPool.ApollonianSuperharmonic.VectorRecursionLaws
-public import LeanPool.ApollonianSuperharmonic.ExactTileInterfaceTriple
-public import LeanPool.ApollonianSuperharmonic.FootprintEdges
-public import LeanPool.ApollonianSuperharmonic.QuarterTurnSymmetric
-public import LeanPool.ApollonianSuperharmonic.SimpleGridPathBetween
 
 -- [TABLET NODE: MarkedOdometerAdjacencyReduction]
 
@@ -1323,8 +1274,9 @@ private theorem slopeDiffCov :
       rcases p' with ⟨p'x, p'y⟩
       have h1 := congrArg Prod.fst hdiff
       have h2 := congrArg Prod.snd hdiff
-      simp? [BandPackingSymmetrySlopeAction,
-        slopeDifferenceAction] at h1 h2 ⊢
+      simp only [Prod.mk_sub_mk, BandPackingSymmetrySlopeAction, sub_neg_eq_add,
+          Int.reduceNeg, GaussianInt.intCast_re, GaussianInt.intCast_im, Prod.mk.injEq,
+          slopeDifferenceAction] at h1 h2 ⊢
       exact ⟨by linarith [h2], by linarith [h1]⟩
   | conjugate =>
       intro c U V p p' w hc hcent hdiff
@@ -1332,8 +1284,9 @@ private theorem slopeDiffCov :
       rcases p' with ⟨p'x, p'y⟩
       have h1 := congrArg Prod.fst hdiff
       have h2 := congrArg Prod.snd hdiff
-      simp? [BandPackingSymmetrySlopeAction,
-        slopeDifferenceAction] at h1 h2 ⊢
+      simp only [Prod.mk_sub_mk, BandPackingSymmetrySlopeAction, sub_neg_eq_add,
+          Int.reduceNeg, GaussianInt.intCast_re, GaussianInt.intCast_im, Prod.mk.injEq,
+          slopeDifferenceAction] at h1 h2 ⊢
       exact ⟨by linarith [h1], by linarith [h2]⟩
   | comp a b iha ihb =>
       intro c U V p p' w hc hcent hdiff

@@ -5,8 +5,12 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.ApollonianSuperharmonic.P3544T1RayParity
+public import Mathlib.Init
+public import Mathlib.Topology.MetricSpace.Pseudo.Real
+public import Mathlib.Algebra.CharZero.Infinite
+
 public import Mathlib.Analysis.Convex.Topology
+public import LeanPool.ApollonianSuperharmonic.P3544T1BoundaryCarrier
 
 -- [TABLET NODE: P3597T1GenericRayStability]
 
@@ -47,7 +51,7 @@ private theorem genericRayDirection {n : Nat} (p : P3381T1PolygonBoundary n) :
     intro hz
     have hz' : w.2 - q * w.1 = 0 := by simpa [w] using hz
     by_cases hzero : w.1 = 0
-    · simp? [hzero] at hz'
+    · simp only [hzero, mul_zero, sub_zero] at hz'
       exact hw (Prod.ext hzero hz')
     · apply hnot
       apply (eq_div_iff hzero).2
@@ -79,7 +83,7 @@ private theorem genericRayDirection {n : Nat} (p : P3381T1PolygonBoundary n) :
     intro hz
     have hz' : w.2 - q * w.1 = 0 := by simpa [w] using hz
     by_cases hzero : w.1 = 0
-    · simp? [hzero] at hz'
+    · simp only [hzero, mul_zero, sub_zero] at hz'
       exact hw (Prod.ext hzero hz')
     · apply hnot
       apply (eq_div_iff hzero).2

@@ -5,16 +5,14 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.ApollonianSuperharmonic.P4715T1HexagonTessellation
+public import Mathlib.Init
+public import Mathlib.Tactic.Positivity
+
 public import LeanPool.ApollonianSuperharmonic.P4715T1HexagonSubdivision
 public import LeanPool.ApollonianSuperharmonic.P4715T1PatchEnumeration
-public import LeanPool.ApollonianSuperharmonic.P4715T1PositionInjective
 public import LeanPool.ApollonianSuperharmonic.P4715T1Region
 public import LeanPool.ApollonianSuperharmonic.P4677T2IncidenceLedger
 public import Mathlib.Analysis.Convex.PathConnected
-public import Mathlib.Tactic.Ring
-public import Mathlib.Tactic.NormNum
-public import Mathlib.Tactic.Linarith
 
 -- [TABLET NODE: P4715T1CoefficientFaces]
 
@@ -184,7 +182,9 @@ private theorem mem_bottom_segment :
   · rintro ⟨t, ht, heq⟩
     have h1 := congrArg Prod.fst heq
     have h2 := congrArg Prod.snd heq
-    simp? [AffineMap.lineMap_apply] at h1 h2
+    simp only [AffineMap.lineMap_apply, vsub_eq_sub, Prod.mk_sub_mk, sub_zero, sub_self,
+        Prod.smul_mk, smul_eq_mul, mul_one, mul_zero, vadd_eq_add, Prod.mk_add_mk, add_zero]
+        at h1 h2
     exact ⟨h2.symm, by simpa [h1] using ht.1, by simpa [h1] using ht.2⟩
   · rintro ⟨h2,h1,h1le⟩
     refine ⟨z.1, ⟨h1,h1le⟩, ?_⟩
@@ -203,7 +203,9 @@ private theorem mem_diagonal_segment :
   · rintro ⟨t, ht, heq⟩
     have h1 := congrArg Prod.fst heq
     have h2 := congrArg Prod.snd heq
-    simp? [AffineMap.lineMap_apply] at h1 h2
+    simp only [AffineMap.lineMap_apply, vsub_eq_sub, Prod.mk_sub_mk, zero_sub, sub_zero,
+        Prod.smul_mk, smul_eq_mul, mul_neg, mul_one, vadd_eq_add, Prod.mk_add_mk, add_zero]
+        at h1 h2
     exact ⟨by linarith [h1,h2], by linarith [h1,ht.2], by linarith [h2,ht.1]⟩
   · rintro ⟨hsum,h1,h2⟩
     refine ⟨z.2, ⟨h2, by linarith [hsum,h1]⟩, ?_⟩
@@ -222,7 +224,9 @@ private theorem mem_left_segment :
   · rintro ⟨t, ht, heq⟩
     have h1 := congrArg Prod.fst heq
     have h2 := congrArg Prod.snd heq
-    simp? [AffineMap.lineMap_apply] at h1 h2
+    simp only [AffineMap.lineMap_apply, vsub_eq_sub, Prod.mk_sub_mk, sub_self, sub_zero,
+        Prod.smul_mk, smul_eq_mul, mul_zero, mul_one, vadd_eq_add, Prod.mk_add_mk, add_zero]
+        at h1 h2
     exact ⟨h1.symm, by simpa [h2] using ht.1, by simpa [h2] using ht.2⟩
   · rintro ⟨h1,h2,h2le⟩
     refine ⟨z.2, ⟨h2,h2le⟩, ?_⟩

@@ -5,8 +5,15 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.ApollonianSuperharmonic.FordFareyParameter
+public import Mathlib.Init
+public import Mathlib.Algebra.Ring.Divisibility.Basic
+public import Mathlib.Algebra.Group.Int.Units
+public import Mathlib.Tactic.ByContra
 public import Mathlib.Tactic.Linarith
+public import Mathlib.Tactic.NormNum
+
+public import LeanPool.ApollonianSuperharmonic.FordFareyParameter
+public meta import Lean.Meta.Tactic.NormCast
 
 -- [TABLET NODE: P5130T5ParentArithmetic]
 

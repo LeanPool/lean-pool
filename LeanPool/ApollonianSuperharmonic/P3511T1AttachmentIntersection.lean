@@ -5,9 +5,11 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.ApollonianSuperharmonic.Preamble
-public import Mathlib.Analysis.Convex.Hull
+public import Mathlib.Init
+public import Mathlib.Basic.Real.Basic
 public import Mathlib.Data.Set.Card
+
+public import Mathlib.Analysis.Convex.Hull
 
 -- [TABLET NODE: P3511T1AttachmentIntersection]
 

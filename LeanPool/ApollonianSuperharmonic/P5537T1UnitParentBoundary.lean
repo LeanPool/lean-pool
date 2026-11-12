@@ -5,9 +5,12 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P5352T2PlacementData
 public import LeanPool.ApollonianSuperharmonic.P5352T2DomainRows
 public import LeanPool.ApollonianSuperharmonic.P5537T1ScaledDiamondFormula
+public import LeanPool.ApollonianSuperharmonic.P5352T2Sources
 
 -- [TABLET NODE: P5537T1UnitParentBoundary]
 

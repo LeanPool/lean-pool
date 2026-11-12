@@ -5,9 +5,10 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.BandSubtileOccurrence
 public import LeanPool.ApollonianSuperharmonic.FordTileGeometry
-public import LeanPool.ApollonianSuperharmonic.SemiProperForestClassification
 public import LeanPool.ApollonianSuperharmonic.TileDiskAreaCovariance
 
 -- [TABLET NODE: P4670T1SmallerGeometry]

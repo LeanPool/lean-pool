@@ -5,9 +5,10 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.ApollonianSuperharmonic.Preamble
-public import Mathlib.Tactic.LinearCombination
+public import Mathlib.Init
 public import Mathlib.Tactic.Ring
+
+public import Mathlib.Tactic.LinearCombination
 
 -- [TABLET NODE: P4536T1EndpointAlgebra]
 

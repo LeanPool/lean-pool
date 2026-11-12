@@ -5,10 +5,9 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.ApollonianSuperharmonic.P3381T1AffineTriangleMap
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P3381T1TriangulationBoundary
-public import Mathlib.Analysis.Convex.Combination
-public import Mathlib.Data.Set.Card
 
 -- [TABLET NODE: P3381T1PiecewiseAffinePolygonModel]
 

@@ -5,13 +5,15 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+public import Mathlib.Algebra.Group.Fin.Basic
+
 public import LeanPool.ApollonianSuperharmonic.P4207T1FormulaRestriction
 public import LeanPool.ApollonianSuperharmonic.DiamondParameter
-public import LeanPool.ApollonianSuperharmonic.P4207T1FloorArithmetic
 public import LeanPool.ApollonianSuperharmonic.CurvatureOneOdometer
 public import LeanPool.ApollonianSuperharmonic.OdometerTranslation
 public import LeanPool.ApollonianSuperharmonic.PartialOdometerSlope
-public import Mathlib.Algebra.Ring.Int.Parity
+public import Mathlib.LinearAlgebra.Matrix.Notation
 
 -- [TABLET NODE: P4207T1UnitRestrictions]
 

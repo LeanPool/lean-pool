@@ -5,19 +5,11 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.BandSuccessorClassification
 public import LeanPool.ApollonianSuperharmonic.BandVectors
 public import LeanPool.ApollonianSuperharmonic.VectorRecursionLaws
-public import LeanPool.ApollonianSuperharmonic.TangencyCoordinateIdentity
-public import LeanPool.ApollonianSuperharmonic.RecursiveVectorsExistUnique
-public import LeanPool.ApollonianSuperharmonic.RecursiveVectorSystem
-public import LeanPool.ApollonianSuperharmonic.ProperBandQuadruple
-public import LeanPool.ApollonianSuperharmonic.PrimitiveVectorOrientation
-public import LeanPool.ApollonianSuperharmonic.SemiProperForestClassification
-public import LeanPool.ApollonianSuperharmonic.SemiProperQuadruple
-public import Mathlib.Tactic.FinCases
-public import Mathlib.Tactic.LinearCombination
-public import Mathlib.Tactic.Ring
 
 -- [TABLET NODE: VectorSquareProduct]
 

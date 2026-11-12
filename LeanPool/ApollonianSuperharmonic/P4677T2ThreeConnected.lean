@@ -5,13 +5,10 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P4677T2IncidenceLedger
 public import LeanPool.ApollonianSuperharmonic.P3161T1BlockTreeReachability
-public import Mathlib.Logic.Relation
-public import Mathlib.Data.List.Basic
-public import Mathlib.Data.List.Nodup
-public import Mathlib.Data.List.Chain
-public import Mathlib.Tactic.FinCases
 
 -- [TABLET NODE: P4677T2ThreeConnected]
 
@@ -142,7 +139,7 @@ private theorem adjacent :
   | mk l m n =>
     cases l
     · intro u hu
-      simp? [linkList] at hu
+      simp only [List.mem_cons, List.not_mem_nil, or_false, linkList] at hu
       rcases hu with rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl
       · exact .AB m n
       · exact .AD m n
@@ -153,7 +150,7 @@ private theorem adjacent :
       · exact .AF m n
       · exact .AC m n
     · intro u hu
-      simp? [linkList] at hu
+      simp only [List.mem_cons, List.not_mem_nil, or_false, linkList] at hu
       rcases hu with rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl
       · simpa [sub_add_cancel] using (AllowedSubtileIncidence.AB11 (m-1) (n-1)).symm
       · exact AllowedSubtileIncidence.BDm1m1 m n
@@ -164,7 +161,7 @@ private theorem adjacent :
       · exact (AllowedSubtileIncidence.AB m n).symm
       · exact .BC m n
     · intro u hu
-      simp? [linkList] at hu
+      simp only [List.mem_cons, List.not_mem_nil, or_false, linkList] at hu
       rcases hu with rfl | rfl | rfl | rfl | rfl | rfl
       · simpa [sub_add_cancel] using (AllowedSubtileIncidence.AC11 (m-1) (n-1)).symm
       · exact (AllowedSubtileIncidence.BC m n).symm
@@ -173,7 +170,7 @@ private theorem adjacent :
       · exact AllowedSubtileIncidence.CDm10 m n
       · exact AllowedSubtileIncidence.CEm10 m n
     · intro u hu
-      simp? [linkList] at hu
+      simp only [List.mem_cons, List.not_mem_nil, or_false, linkList] at hu
       rcases hu with rfl | rfl | rfl | rfl | rfl | rfl
       · exact (AllowedSubtileIncidence.AD m n).symm
       · exact (AllowedSubtileIncidence.BD m n).symm
@@ -183,14 +180,14 @@ private theorem adjacent :
       · simpa [add_sub_cancel_right] using
           (AllowedSubtileIncidence.BDm1m1 (m+1) (n+1)).symm
     · intro u hu
-      simp? [linkList] at hu
+      simp only [List.mem_cons, List.not_mem_nil, or_false, linkList] at hu
       rcases hu with rfl | rfl | rfl | rfl
       · simpa [sub_add_cancel] using (AllowedSubtileIncidence.AE01 m (n-1)).symm
       · simpa [add_sub_cancel_right] using (AllowedSubtileIncidence.CEm10 (m+1) n).symm
       · exact (AllowedSubtileIncidence.DE m n).symm
       · exact (AllowedSubtileIncidence.BE m n).symm
     · intro u hu
-      simp? [linkList] at hu
+      simp only [List.mem_cons, List.not_mem_nil, or_false, linkList] at hu
       rcases hu with rfl | rfl | rfl | rfl
       · exact (AllowedSubtileIncidence.AF m n).symm
       · simpa [add_sub_cancel_right] using (AllowedSubtileIncidence.BF0m1 m (n+1)).symm
@@ -310,7 +307,7 @@ private theorem cut_chain :
     rw [hi] at hdchain
     simpa [hi, List.drop] using hdchain
   · by_cases hd : p.drop (i + 1) = []
-    · simp? [hd]
+    · simp only [hd, List.nil_append]
       exact htchain
     · apply List.IsChain.append hdchain htchain
       intro x hx y hy
@@ -577,7 +574,9 @@ private theorem common_neighbor :
     have hyy : AllowedSubtileIncidence y y := by simpa [this] using h
     exact (P4677T2IncidenceLedger.2.1 y) hyy
   have hk : ∃ k : Fin 3, k ≠ i ∧ k ≠ j := by
-    fin_cases i <;> fin_cases j <;> simp_all? <;>
+    fin_cases i <;> fin_cases j <;> simp_all only [ne_eq, and_imp, forall_exists_index,
+        Fin.mk_one, Fin.isValue, Fin.reduceFinMk, Fin.reduceEq, not_false_eq_true,
+        Fin.zero_eta, not_true_eq_false] <;>
       first | exact ⟨0, by decide, by decide⟩
             | exact ⟨1, by decide, by decide⟩
             | exact ⟨2, by decide, by decide⟩
@@ -800,7 +799,7 @@ private theorem closure_list :
     · intro w hw
       rcases List.mem_append.mp hw with hwp | hwz
       · exact hsafe w hwp
-      · simp? at hwz
+      · simp only [List.mem_cons, List.not_mem_nil, or_false] at hwz
         subst w
         exact hyz.2.2
 

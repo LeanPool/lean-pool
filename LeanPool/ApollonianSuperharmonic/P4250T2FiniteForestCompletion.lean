@@ -5,11 +5,12 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.RootedFourNeighborForest
 public import LeanPool.ApollonianSuperharmonic.SimpleGridCycle
 public import LeanPool.ApollonianSuperharmonic.SimpleGridPathBetween
 public import Mathlib.Combinatorics.SimpleGraph.Acyclic
-public import Mathlib.Combinatorics.SimpleGraph.DegreeSum
 
 -- [TABLET NODE: P4250T2FiniteForestCompletion]
 
@@ -67,7 +68,7 @@ private theorem hHacyclic :
     intro z hz
     induction p with
     | nil =>
-      simp? [SimpleGraph.Walk.support] at hz
+      simp only [SimpleGraph.Walk.support, List.mem_cons, List.not_mem_nil, or_false] at hz
       subst z
       exact hu
     | @cons u v w hadj p ih =>
@@ -390,7 +391,7 @@ private theorem allWalkW :
   intro W R adjacentSymm H u v q hu z hz
   induction q with
   | nil =>
-    simp? [SimpleGraph.Walk.support] at hz
+    simp only [SimpleGraph.Walk.support, List.mem_cons, List.not_mem_nil, or_false] at hz
     subst z
     exact hu
   | @cons u v w hadj q ih =>

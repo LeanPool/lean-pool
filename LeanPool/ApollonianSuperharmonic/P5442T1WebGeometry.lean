@@ -5,11 +5,12 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P5442T1Cocycle
 public import LeanPool.ApollonianSuperharmonic.P4062T1InteriorSquare
 public import LeanPool.ApollonianSuperharmonic.FordLaplacianTable
 public import LeanPool.ApollonianSuperharmonic.FourNeighborConnected
-public import Mathlib.Data.List.Chain
 
 -- [TABLET NODE: P5442T1WebGeometry]
 

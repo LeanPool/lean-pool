@@ -5,11 +5,15 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P5130T5Prescription
 public import LeanPool.ApollonianSuperharmonic.P5130T5ParentArithmetic
 public import LeanPool.ApollonianSuperharmonic.FordFareyParentsExist
 public import LeanPool.ApollonianSuperharmonic.FordDoubledBoundary
 public import LeanPool.ApollonianSuperharmonic.IntegerCeilDiv
+public import LeanPool.ApollonianSuperharmonic.FordRecursiveVertexDomains
+public import Mathlib.LinearAlgebra.Matrix.Notation
 
 -- [TABLET NODE: P5130T5SameParentOverlaps]
 

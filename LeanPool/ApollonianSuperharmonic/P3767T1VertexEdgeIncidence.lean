@@ -5,7 +5,10 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.PlaneTriangulation
+public import Mathlib.Algebra.Order.Ring.Star
 
 -- [TABLET NODE: P3767T1VertexEdgeIncidence]
 

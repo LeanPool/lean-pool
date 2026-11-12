@@ -5,10 +5,10 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P4994T6NonunitBirth
-public import LeanPool.ApollonianSuperharmonic.VectorRecursionLaws
 public import LeanPool.ApollonianSuperharmonic.P4994T6ChamberAdditions
-public import LeanPool.ApollonianSuperharmonic.SemiProperForestClassification
 
 -- [TABLET NODE: P4994T6NonunitChamber]
 

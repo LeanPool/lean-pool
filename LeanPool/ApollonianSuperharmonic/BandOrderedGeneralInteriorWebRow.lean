@@ -5,10 +5,9 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.ApollonianSuperharmonic.BandOrderedGeneralLayoutCertificate
-public import LeanPool.ApollonianSuperharmonic.FootprintVertices
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.PositiveCutCompanionRow
-public import LeanPool.ApollonianSuperharmonic.TileTranslation
 
 -- [TABLET NODE: BandOrderedGeneralInteriorWebRow]
 
@@ -276,12 +275,12 @@ inductive BandOrderedGeneralInteriorWebRow
       BandOrderedGeneralInteriorWebRow cert x marked
   | leftPositiveCut
       (unmarked : marked = false)
-      (at_cut : x = cert.exceptional_segments.a)
+      (at_cut : x = cert.exceptionalSegments.a)
       (geometry : PositiveCutCompanionRow cert x) :
       BandOrderedGeneralInteriorWebRow cert x marked
   | rightPositiveCut
       (unmarked : marked = false)
-      (at_cut : x = cert.exceptional_segments.b)
+      (at_cut : x = cert.exceptionalSegments.b)
       (geometry : PositiveCutCompanionRow cert x) :
       BandOrderedGeneralInteriorWebRow cert x marked
 

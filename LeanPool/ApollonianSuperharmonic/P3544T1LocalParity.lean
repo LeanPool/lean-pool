@@ -5,12 +5,11 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P3544T1RayParity
 public import LeanPool.ApollonianSuperharmonic.P3381T1TriangleDeterminant
 public import Mathlib.Topology.Connected.PathConnected
-public import LeanPool.ApollonianSuperharmonic.P3597T1GenericRayStability
-public import LeanPool.ApollonianSuperharmonic.P3597T1DirectionParity
-public import LeanPool.ApollonianSuperharmonic.P3597T1SideCrossing
 public import LeanPool.ApollonianSuperharmonic.P3597T1VertexSectors
 
 -- [TABLET NODE: P3544T1LocalParity]

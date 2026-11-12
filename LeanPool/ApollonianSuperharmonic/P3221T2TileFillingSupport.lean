@@ -5,9 +5,10 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.FootprintEdges
 public import LeanPool.ApollonianSuperharmonic.LatticeTileComplementGridConnected
-public import Mathlib.Data.Finsupp.Basic
 
 -- [TABLET NODE: P3221T2TileFillingSupport]
 

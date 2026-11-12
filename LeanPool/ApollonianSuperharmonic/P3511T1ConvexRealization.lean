@@ -5,8 +5,12 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.ApollonianSuperharmonic.P3381T1PolygonBoundary
+public import Mathlib.Init
+public import Mathlib.Topology.Basic
+public import Mathlib.Topology.MetricSpace.Bounded
+
 public import LeanPool.ApollonianSuperharmonic.P3381T1TriangleDeterminant
+public import Mathlib.Analysis.Convex.Hull
 
 -- [TABLET NODE: P3511T1ConvexRealization]
 

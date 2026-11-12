@@ -5,6 +5,9 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+public import Mathlib.Tactic.Linarith
+
 public import LeanPool.ApollonianSuperharmonic.P4715T1Hexagon
 public import Mathlib.Analysis.Convex.Combination
 
@@ -58,11 +61,14 @@ theorem P4780T1HullHalfspaces :
       let zz : Fin 3 → Real × Real := ![a, b, c]
       apply mem_convexHull_of_exists_fintype (w := ww) (z := zz)
       · intro i
-        fin_cases i <;> simp? [ww] <;> assumption
+        fin_cases i <;> simp only [Fin.mk_one, Fin.isValue, Matrix.cons_val_one,
+            Matrix.cons_val_zero, ww, Fin.reduceFinMk, Matrix.cons_val, Fin.zero_eta] <;> assumption
       · simp [ww, Fin.sum_univ_succ]
         linarith
       · intro i
-        fin_cases i <;> simp? [zz] <;> assumption
+        fin_cases i <;> simp only [Fin.mk_one, Fin.isValue, Matrix.cons_val_one,
+            Matrix.cons_val_zero, Set.mem_range, Function.comp_apply, zz, Fin.reduceFinMk,
+            Matrix.cons_val, Fin.zero_eta] <;> assumption
       · simpa [ww, zz, Fin.sum_univ_succ, add_assoc] using hp
     have hv0 : (0, 0) ∈ V := by
       exact ⟨0, by norm_num [P4715T1Position, P4715T1BoundaryCycle, P4715T1Offsets]⟩

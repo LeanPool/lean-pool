@@ -5,11 +5,11 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P3511T1SourceDissection
-public import LeanPool.ApollonianSuperharmonic.P3544T1TriangleRayGeometry
 public import LeanPool.ApollonianSuperharmonic.P3544T1DiagonalSelection
 public import LeanPool.ApollonianSuperharmonic.P3544T1IndexedGluing
-public import Mathlib.Tactic.FinCases
 
 -- [TABLET NODE: P3511T1SourceConstruction]
 
@@ -96,8 +96,8 @@ theorem P3511T1SourceConstruction :
           simp [f, hneighbor]
       | succ m =>
         obtain ⟨S⟩ := P3544T1DiagonalSelection q (Nat.succ_pos m)
-        obtain ⟨XL, ⟨L⟩, hL, hcL⟩ := ih S.left_n S.left_lt S.left
-        obtain ⟨XR, ⟨R⟩, hR, hcR⟩ := ih S.right_n S.right_lt S.right
+        obtain ⟨XL, ⟨L⟩, hL, hcL⟩ := ih S.leftParameter S.left_lt S.left
+        obtain ⟨XR, ⟨R⟩, hR, hcR⟩ := ih S.rightParameter S.right_lt S.right
         have hLfill := hL.trans (P3544T1LocalParity S.left).1
         have hRfill := hR.trans (P3544T1LocalParity S.right).1
         obtain ⟨Z, _hfaces, hfill, hpath⟩ :=

@@ -5,9 +5,13 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+public import Mathlib.Data.Fintype.Fin
+public import Mathlib.Tactic.FinCases
+
 public import LeanPool.ApollonianSuperharmonic.P4733T1EdgeRow
 public import LeanPool.ApollonianSuperharmonic.AllowedSubtileIncidence
-public import Mathlib.Tactic.FinCases
+public import LeanPool.ApollonianSuperharmonic.SixSubtileFaceVertices
 
 -- [TABLET NODE: P4733T1RowIncidence]
 

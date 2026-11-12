@@ -5,10 +5,11 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P4984T1ClosedGap
 public import LeanPool.ApollonianSuperharmonic.P4828T1Gap
 public import LeanPool.ApollonianSuperharmonic.P4828T1LineSupport
-public import LeanPool.ApollonianSuperharmonic.ProperBandCurvatureStructure
 public import LeanPool.ApollonianSuperharmonic.P5023T1ContactHull
 public import LeanPool.ApollonianSuperharmonic.P5023T1CircularSide
 public import LeanPool.ApollonianSuperharmonic.P5023T1CircularEstimate

@@ -5,8 +5,12 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.ApollonianSuperharmonic.Preamble
-public import Mathlib.Analysis.Normed.Module.Basic
+public import Mathlib.Init
+public import Mathlib.Topology.MetricSpace.Pseudo.Real
+
+public import Mathlib.Analysis.Normed.Group.Basic
+public import Mathlib.Data.EReal.Operations
+public import Mathlib.Topology.Algebra.InfiniteSum.Order
 
 -- [TABLET NODE: P3934T1LocalSide]
 

@@ -5,9 +5,9 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P3776T1DiskMapExponentialLift
-public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Complex
-public import Mathlib.Analysis.SpecialFunctions.Complex.Log
 
 -- [TABLET NODE: P3776T1BoundedDisplacementSurjective]
 

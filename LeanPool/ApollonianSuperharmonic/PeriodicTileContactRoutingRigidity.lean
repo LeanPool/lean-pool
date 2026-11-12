@@ -5,14 +5,14 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.PlaneEmbeddingAgreement
 public import LeanPool.ApollonianSuperharmonic.P3723T1ContactPortsExist
 public import LeanPool.ApollonianSuperharmonic.P3723T1AllContactDrawingExists
 public import LeanPool.ApollonianSuperharmonic.P3861T1RoutedFacialDomains
 public import LeanPool.ApollonianSuperharmonic.P3861T1RoutedFaceOrientation
 public import LeanPool.ApollonianSuperharmonic.P3861T1ExtraArcLocalization
-public import Mathlib.Tactic.Linarith
-public import Mathlib.Tactic.FinCases
 
 -- [TABLET NODE: PeriodicTileContactRoutingRigidity]
 

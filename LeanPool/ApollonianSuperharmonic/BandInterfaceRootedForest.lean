@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.BandOdometerInteriorTable
 public import LeanPool.ApollonianSuperharmonic.PeriodicTileTotalIndegree
 public import LeanPool.ApollonianSuperharmonic.P4250T2InterfaceCycleExclusion
@@ -78,7 +80,7 @@ theorem BandInterfaceRootedForest
     @decide (∃ i s, x ∈ (hs i s).domain ∧
       x ∉ BoundaryFootprintVertices (cert.P i s)) (Classical.propDecidable _)
   let W := D \ P
-  let R : Finset GaussianInt := {cert.precursor_boundary.a, cert.precursor_boundary.b}
+  let R : Finset GaussianInt := {cert.precursorBoundary.a, cert.precursorBoundary.b}
   have hD : ∀ x, x ∈ D ↔
       x ∈ FootprintVertices T ∧ x ∉ BoundaryFootprintVertices T := by
     intro x

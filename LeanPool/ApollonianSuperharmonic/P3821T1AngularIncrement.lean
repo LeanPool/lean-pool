@@ -5,9 +5,12 @@ Authors: Wesley Pegden
 -/
 module
 
-public import Mathlib.Analysis.SpecialFunctions.Complex.Circle
-public import Mathlib.Topology.Homotopy.Path
-public import LeanPool.ApollonianSuperharmonic.Preamble
+public import Mathlib.Init
+
+public import Mathlib.Algebra.Order.Algebra
+public import Mathlib.Analysis.SpecialFunctions.Log.Basic
+public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
+public import Mathlib.Topology.UnitInterval
 
 -- [TABLET NODE: P3821T1AngularIncrement]
 

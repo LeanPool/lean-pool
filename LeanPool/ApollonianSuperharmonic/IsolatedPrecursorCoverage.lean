@@ -5,9 +5,10 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.TileArea
 public import LeanPool.ApollonianSuperharmonic.TileCellComplement
-public import LeanPool.ApollonianSuperharmonic.FordTileGeometry
 public import LeanPool.ApollonianSuperharmonic.P4638T1AntipodalContactArcs
 public import LeanPool.ApollonianSuperharmonic.P4638T1ContactStarCoverage
 public import LeanPool.ApollonianSuperharmonic.P4638T1EmptyCurvature

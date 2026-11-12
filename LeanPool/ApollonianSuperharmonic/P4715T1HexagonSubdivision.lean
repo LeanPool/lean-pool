@@ -5,14 +5,14 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P4715T1Hexagon
 public import LeanPool.ApollonianSuperharmonic.P4715T1PatchFaces
 public import LeanPool.ApollonianSuperharmonic.SixSubtileFaceVertices
-public import LeanPool.ApollonianSuperharmonic.P4783T1PatchCoverage
 public import LeanPool.ApollonianSuperharmonic.P4783T1PatchDeterminants
 public import LeanPool.ApollonianSuperharmonic.P4793T1PatchIntersections
 public import LeanPool.ApollonianSuperharmonic.P4793T1PatchBoundaryTraces
-public import Mathlib.Analysis.Convex.Topology
 
 -- [TABLET NODE: P4715T1HexagonSubdivision]
 

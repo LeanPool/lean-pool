@@ -5,7 +5,10 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.ApollonianSuperharmonic.SemiProperQuadruple
+public import Mathlib.Init
+public import Mathlib.Algebra.Group.Fin.Basic
+
+public import LeanPool.ApollonianSuperharmonic.CircleCoordinates
 
 -- [TABLET NODE: TangencyCoordinateNormLaw]
 

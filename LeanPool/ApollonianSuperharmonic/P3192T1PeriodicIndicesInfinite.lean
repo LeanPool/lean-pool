@@ -5,8 +5,9 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.PeriodicTileIndexedMultiplicityOne
-public import Mathlib.Data.Set.Finite.Lattice
 
 -- [TABLET NODE: P3192T1PeriodicIndicesInfinite]
 

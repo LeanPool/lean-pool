@@ -5,9 +5,12 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+public import Mathlib.Topology.MetricSpace.Pseudo.Constructions
+public import Mathlib.Topology.MetricSpace.Pseudo.Real
+
 public import LeanPool.ApollonianSuperharmonic.P4397T1UnitEdgeCells
 public import LeanPool.ApollonianSuperharmonic.OpenLatticeEdge
-public import LeanPool.ApollonianSuperharmonic.ClosedSquareRealization
 public import LeanPool.ApollonianSuperharmonic.TileRealization
 
 -- [TABLET NODE: P4456T2EdgeInterior]
@@ -94,11 +97,13 @@ private theorem vertical :
   let pR : ℝ × ℝ := ((q.re : ℝ)+1+ε, (q.im : ℝ)+1/2)
   have hLball : pL ∈ Metric.ball m r := by
     rw [Metric.mem_ball, Prod.dist_eq]
-    simp? [pL, m, Real.dist_eq, abs_of_pos hε]
+    simp only [Int.reduceNeg, GaussianInt.intCast_re, Real.dist_eq, sub_sub_cancel_left,
+        abs_neg, abs_of_pos hε, GaussianInt.intCast_im, one_div, dist_self, max_lt_iff, m, pL]
     exact ⟨hεr, hr⟩
   have hRball : pR ∈ Metric.ball m r := by
     rw [Metric.mem_ball, Prod.dist_eq]
-    simp? [pR, m, Real.dist_eq, abs_of_pos hε]
+    simp only [Int.reduceNeg, GaussianInt.intCast_re, Real.dist_eq, add_sub_cancel_left,
+        abs_of_pos hε, GaussianInt.intCast_im, one_div, dist_self, max_lt_iff, m, pR]
     exact ⟨hεr, hr⟩
   have hpL : pL ∈ TileRealization T := interior_subset (hball hLball)
   have hpR : pR ∈ TileRealization T := interior_subset (hball hRball)
@@ -200,11 +205,15 @@ private theorem horizontal :
   let pU : ℝ × ℝ := ((q.re : ℝ)+1/2, (q.im : ℝ)+1+ε)
   have hDball : pD ∈ Metric.ball m r := by
     rw [Metric.mem_ball, Prod.dist_eq]
-    simp? [pD, m, Real.dist_eq, abs_of_pos hε]
+    simp only [Int.reduceNeg, GaussianInt.intCast_re, one_div, dist_self,
+        GaussianInt.intCast_im, Real.dist_eq, sub_sub_cancel_left, abs_neg, abs_of_pos hε,
+        max_lt_iff, m, pD]
     exact ⟨hr, hεr⟩
   have hUball : pU ∈ Metric.ball m r := by
     rw [Metric.mem_ball, Prod.dist_eq]
-    simp? [pU, m, Real.dist_eq, abs_of_pos hε]
+    simp only [Int.reduceNeg, GaussianInt.intCast_re, one_div, dist_self,
+        GaussianInt.intCast_im, Real.dist_eq, add_sub_cancel_left, abs_of_pos hε, max_lt_iff,
+        m, pU]
     exact ⟨hr, hεr⟩
   have hpD : pD ∈ TileRealization T := interior_subset (hball hDball)
   have hpU : pU ∈ TileRealization T := interior_subset (hball hUball)

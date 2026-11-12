@@ -5,10 +5,11 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.FordExceptionalLattice
 public import LeanPool.ApollonianSuperharmonic.FordOdometer
 public import LeanPool.ApollonianSuperharmonic.FordPeakMatrix
-public import Mathlib.Tactic.LinearCombination
 
 -- [TABLET NODE: P5442T1Cocycle]
 

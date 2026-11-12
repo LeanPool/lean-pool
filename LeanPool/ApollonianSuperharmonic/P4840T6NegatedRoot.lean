@@ -5,9 +5,11 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryQuadrupleAction
 public import LeanPool.ApollonianSuperharmonic.DiamondRecursiveQuadruple
-public import LeanPool.ApollonianSuperharmonic.SemiProperQuadruple
+public import Mathlib.Algebra.Order.Ring.Star
 
 -- [TABLET NODE: P4840T6NegatedRoot]
 

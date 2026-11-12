@@ -5,10 +5,11 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.AffineTriangularComplexChart
 public import LeanPool.ApollonianSuperharmonic.AffineTriangularFaceCoordinateSwap
 public import LeanPool.ApollonianSuperharmonic.AffineTriangularFaceVertices
-public import LeanPool.ApollonianSuperharmonic.TileTranslation
 
 -- [TABLET NODE: SwappedAffineTriangularChartAlignment]
 

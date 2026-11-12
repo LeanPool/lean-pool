@@ -5,19 +5,12 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P3381T1PairedTriangulation
-public import LeanPool.ApollonianSuperharmonic.P3381T1AffineTriangleMap
 public import LeanPool.ApollonianSuperharmonic.P5662T1TriangulationBarycentricCoordinates
 public import Mathlib.Topology.Connected.PathConnected
-public import Mathlib.Analysis.Convex.Topology
-public import Mathlib.Tactic.FinCases
-public import Mathlib.Tactic.NormNum
-public import Mathlib.Analysis.Convex.Combination
-public import Mathlib.Analysis.Convex.PathConnected
-public import Mathlib.Data.Set.Card
 public import Mathlib.Analysis.Normed.Module.Convex
-public import Mathlib.Algebra.Group.Fin.Basic
-public import Mathlib.Tactic.LinearCombination
 
 -- [TABLET NODE: P3381T1TriangulationBoundary]
 

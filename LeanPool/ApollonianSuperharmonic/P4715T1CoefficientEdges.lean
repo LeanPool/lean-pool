@@ -5,15 +5,12 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.ApollonianSuperharmonic.P4715T1HexagonTessellation
-public import LeanPool.ApollonianSuperharmonic.P4715T1HexagonSubdivision
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P4715T1PatchEnumeration
-public import LeanPool.ApollonianSuperharmonic.P4715T1PositionInjective
 public import LeanPool.ApollonianSuperharmonic.P4677T2IncidenceLedger
 public import LeanPool.ApollonianSuperharmonic.P4802T1PatchFaceRestriction
 public import LeanPool.ApollonianSuperharmonic.P4802T1CrossPatchFaces
-public import Mathlib.Topology.Homeomorph.Lemmas
-public import Mathlib.Tactic.FunProp
 
 -- [TABLET NODE: P4715T1CoefficientEdges]
 

@@ -5,7 +5,9 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.ApollonianSuperharmonic.Preamble
+public import Mathlib.Init
+public import Mathlib.Topology.MetricSpace.Pseudo.Real
+
 public import Mathlib.Analysis.Complex.Norm
 public import Mathlib.LinearAlgebra.Complex.Module
 

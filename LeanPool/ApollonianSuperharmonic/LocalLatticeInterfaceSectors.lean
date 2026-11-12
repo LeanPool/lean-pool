@@ -5,9 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.ApollonianSuperharmonic.BoundaryFootprintEdges
-public import LeanPool.ApollonianSuperharmonic.BoundaryFootprintVertices
-public import LeanPool.ApollonianSuperharmonic.CellDisjointCommonEdgesBoundary
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.FootprintEdges
 public import LeanPool.ApollonianSuperharmonic.FootprintVertices
 public import LeanPool.ApollonianSuperharmonic.LatticeTile
@@ -16,7 +15,6 @@ public import LeanPool.ApollonianSuperharmonic.LatticeVertexIncidentCell
 public import LeanPool.ApollonianSuperharmonic.P3102T2CommonEdgeSectorTransition
 public import LeanPool.ApollonianSuperharmonic.P3161T2IncidentBoundary
 public import LeanPool.ApollonianSuperharmonic.SimpleGridPathVertexIncidentEdge
-public import LeanPool.ApollonianSuperharmonic.TileRealization
 public import LeanPool.ApollonianSuperharmonic.TouchingTriple
 
 -- [TABLET NODE: LocalLatticeInterfaceSectors]

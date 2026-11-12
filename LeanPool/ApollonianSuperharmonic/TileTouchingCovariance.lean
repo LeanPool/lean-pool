@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.SimpleGridPathEquivariance
 public import LeanPool.ApollonianSuperharmonic.TileQuarterTurnFormulas
 public import LeanPool.ApollonianSuperharmonic.TileReflectionFormulas

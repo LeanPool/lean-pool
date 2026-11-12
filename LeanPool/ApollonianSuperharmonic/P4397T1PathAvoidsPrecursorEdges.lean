@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P4397T1ReflectedEdgeNotBoundary
 
 -- [TABLET NODE: P4397T1PathAvoidsPrecursorEdges]

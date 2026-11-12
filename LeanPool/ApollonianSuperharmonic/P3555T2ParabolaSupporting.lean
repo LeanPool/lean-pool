@@ -5,7 +5,13 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+public import Mathlib.Data.Fin.VecNotation
+public import Mathlib.Tactic.Linarith
+public import Mathlib.Tactic.Ring
+
 public import LeanPool.ApollonianSuperharmonic.P3381T1TriangleDeterminant
+public meta import Lean.Meta.Tactic.NormCast
 
 -- [TABLET NODE: P3555T2ParabolaSupporting]
 

@@ -5,25 +5,17 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.BandPrototileTranslationNormalForm
-public import LeanPool.ApollonianSuperharmonic.BandPrototileTranslation
 public import LeanPool.ApollonianSuperharmonic.BandSubtileOccurrenceTranslation
-public import LeanPool.ApollonianSuperharmonic.BandPrototileCentroidUnique
-public import LeanPool.ApollonianSuperharmonic.ProtoTileObservableExtensionality
-public import LeanPool.ApollonianSuperharmonic.TileDiskAreaCovariance
 public import LeanPool.ApollonianSuperharmonic.TileCellComplementCovariance
-public import LeanPool.ApollonianSuperharmonic.TileTouchingCovariance
 public import LeanPool.ApollonianSuperharmonic.TouchingTripleCovariance
-public import LeanPool.ApollonianSuperharmonic.TileTranslationFormulas
 public import LeanPool.ApollonianSuperharmonic.TileCellComplement
 public import LeanPool.ApollonianSuperharmonic.QuarterTurnSymmetric
 public import LeanPool.ApollonianSuperharmonic.FordBaseT1
 public import LeanPool.ApollonianSuperharmonic.FordBaseT2
 public import LeanPool.ApollonianSuperharmonic.FordBaseTouching
-public import LeanPool.ApollonianSuperharmonic.FordTileRecursiveIdentification
-public import LeanPool.ApollonianSuperharmonic.FordTileGeometry
-public import LeanPool.ApollonianSuperharmonic.FordCircleCoordinate
-public import LeanPool.ApollonianSuperharmonic.FordCoordinateConfiguration
 public import LeanPool.ApollonianSuperharmonic.TileArea
 
 -- [TABLET NODE: P4564T2FordGeometry]

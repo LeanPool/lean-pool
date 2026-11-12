@@ -5,9 +5,12 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.DiamondTile
 public import LeanPool.ApollonianSuperharmonic.DiamondParameter
 public import LeanPool.ApollonianSuperharmonic.QuarterTurnSymmetric
+public meta import Lean.Meta.Tactic.NormCast
 
 -- [TABLET NODE: DiamondBaseT2]
 
@@ -53,7 +56,7 @@ private theorem mem_domain (K : DiamondParameter) (z : GaussianInt) : z ∈ Diam
     refine ⟨y, hy, ?_⟩
     have hre := congrArg Zsqrtd.re hz
     have him := congrArg Zsqrtd.im hz
-    simp? at hre him
+    simp only [Nat.cast_min, Nat.cast_add, Nat.cast_one, Int.reduceNeg] at hre him
     have hj' : (j : Int) < 2 * ((y + 1).min (2 * k - y) : Int) := by
       exact_mod_cast hj
     norm_num [Nat.cast_min] at hre ⊢
@@ -158,7 +161,7 @@ private theorem reflectY_mem (K : DiamondParameter) (z : GaussianInt) (hz : z �
     rw [hfirst, hsecond]
     exact Nat.min_comm _ _
   refine ⟨2 * k - 1 - y, by omega, ?_, ?_, ?_⟩
-  · simp? [reflectY]
+  · simp only [Int.reduceNeg, reflectY]
     have hsub : ((2 * k - 1 - y : Nat) : Int) = 2 * (k : Int) - 1 - y := by omega
     rw [hsub]
     omega
@@ -185,7 +188,7 @@ private theorem sum_re_reflect (K : DiamondParameter) : (domain K).sum (fun z =>
     apply Zsqrtd.ext
     · simp [reflectX] at heq ⊢
       omega
-    · simp? [reflectX] at heq ⊢
+    · simp only [Int.reduceNeg, Zsqrtd.mk.injEq, sub_left_inj, neg_inj, reflectX] at heq ⊢
       exact heq.2
   · intro z hz
     refine ⟨reflectX z, reflectX_mem z hz, ?_⟩
@@ -224,7 +227,7 @@ private theorem sum_im_reflect (K : DiamondParameter) : (domain K).sum (fun z =>
   · exact fun z hz => reflectY_mem z hz
   · intro z hz w hw heq
     apply Zsqrtd.ext
-    · simp? [reflectY] at heq ⊢
+    · simp only [Int.reduceNeg, Zsqrtd.mk.injEq, sub_right_inj, reflectY] at heq ⊢
       exact heq.1
     · simp [reflectY] at heq ⊢
       omega

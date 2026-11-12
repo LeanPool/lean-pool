@@ -5,9 +5,12 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P5124T1ParentModel
 public import LeanPool.ApollonianSuperharmonic.P5124T1BoundaryGeometry
 public import LeanPool.ApollonianSuperharmonic.TouchingTriple
+public import LeanPool.ApollonianSuperharmonic.TileTranslationFormulas
 
 -- [TABLET NODE: P5124T1EmptyParents]
 
@@ -242,8 +245,9 @@ private theorem hUe :
     rcases he with ⟨z, he⟩
     cases z with
     | mk x y =>
-        simp? [hUc, Zsqrtd.ext_iff,
-          sub_eq_add_neg, add_comm] at he
+        simp only [Int.reduceNeg, add_comm, hUc, Finset.mem_singleton, Zsqrtd.ext_iff,
+            sub_eq_add_neg, Zsqrtd.re_add, Zsqrtd.re_neg, neg_zero, add_zero, Zsqrtd.im_add,
+            Zsqrtd.im_neg, not_and, Zsqrtd.add_def, Zsqrtd.re_one, Zsqrtd.im_one] at he
         rcases he with ⟨he, hc⟩ | ⟨he, hc⟩
         all_goals
           rcases hc with hc | hc

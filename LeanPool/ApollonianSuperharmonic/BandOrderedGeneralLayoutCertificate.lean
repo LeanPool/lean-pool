@@ -5,16 +5,17 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.ApollonianSuperharmonic.BandModifiedPeriodicComplex
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.BandOrderedGeneralConfiguration
 public import LeanPool.ApollonianSuperharmonic.BandSubtileOccurrence
 public import LeanPool.ApollonianSuperharmonic.BandUnmodifiedCoreCertificate
 public import LeanPool.ApollonianSuperharmonic.ExceptionalConnectorSegments
 public import LeanPool.ApollonianSuperharmonic.PrecursorBoundaryArcData
 public import LeanPool.ApollonianSuperharmonic.QuarterTurnSymmetric
-public import LeanPool.ApollonianSuperharmonic.TileCellComplement
-public import LeanPool.ApollonianSuperharmonic.TilingLatticeBasis
-public import LeanPool.ApollonianSuperharmonic.TouchingTriple
+public import LeanPool.ApollonianSuperharmonic.ModifiedSubtileOccurrenceInterpretation
+public import LeanPool.ApollonianSuperharmonic.PeriodicTileComplex
+public import LeanPool.ApollonianSuperharmonic.TilingLattice
 
 -- [TABLET NODE: BandOrderedGeneralLayoutCertificate]
 
@@ -214,20 +215,22 @@ structure BandOrderedGeneralLayoutCertificate
         (P 2 false)
   precursor_first : TouchingTriple (Q 1 true) (S 2 false) O
   precursor_second : TouchingTriple (Q 2 true) (S 1 false) O
-  precursor_boundary : PrecursorBoundaryArcData
+  /-- The boundary-arc decomposition around the common precursor tile. -/
+  precursorBoundary : PrecursorBoundaryArcData
     (TileCellComplement (P 0 true) O)
     (TileCellComplement (P 0 false) O) O (S 0 true)
     (Q 1 true) (S 2 false) (Q 2 true) (S 1 false)
   precursor_zero_curvature : O.cells = ∅ →
     (cfg.firstPredecessor 1).1 = 0
-  exceptional_segments : ExceptionalConnectorSegments
+  /-- The exceptional connector segments between the two distinguished unmodified vertices. -/
+  exceptionalSegments : ExceptionalConnectorSegments
     (P 0 true) (P 0 false) O
     (Q 1 true) (S 2 false) (Q 2 true) (S 1 false)
     (unmodified.core.rho (unmodified.faceEquiv.symm ⟨.I1, 0, 0⟩))
     (unmodified.core.rho (unmodified.faceEquiv.symm ⟨.I2, 0, 0⟩))
   /-- The retained loop-erased connector between the two selected inner interfaces. -/
   connector : List GaussianInt
-  connector_segmented : connector = exceptional_segments.connector
+  connector_segmented : connector = exceptionalSegments.connector
   connector_nodup : connector.Nodup
   connector_head : connector.head? = some
     (unmodified.core.rho (unmodified.faceEquiv.symm ⟨.I1, 0, 0⟩))
@@ -258,16 +261,16 @@ structure BandOrderedGeneralLayoutCertificate
   modified_adjacency : ∀ a b,
     modified.plane.adjacent a b ↔ AllowedSubtileIncidence a b
   /-- Identify modified-complex faces with the fixed twelve-label periodic face ledger. -/
-  modified_face_equiv : modified.plane.Face ≃ PeriodicSubtileFaceIndex
+  modifiedFaceEquivalence : modified.plane.Face ≃ PeriodicSubtileFaceIndex
   modified_face_points : ∀ f : PeriodicSubtileFaceIndex,
-    modified.rho (modified_face_equiv.symm f) =
+    modified.rho (modifiedFaceEquivalence.symm f) =
       unmodified.core.rho (unmodified.faceEquiv.symm f)
   modified_face_vertices : ∀ f i,
     modified.plane.faceVertex f i =
-      SixSubtileFaceVertices (modified_face_equiv f) i
+      SixSubtileFaceVertices (modifiedFaceEquivalence f) i
   modified_face_reps : ∀ f, f ∈ modified.faceOrbitReps ↔
-    (modified_face_equiv f).first = 0 ∧
-      (modified_face_equiv f).second = 0
+    (modifiedFaceEquivalence f).first = 0 ∧
+      (modifiedFaceEquivalence f).second = 0
   precursor_isolated : ∀ m n : Int,
     ∀ x ∈ FootprintVertices
         (TileTranslation O ((m : GaussianInt) * u + (n : GaussianInt) * v)),

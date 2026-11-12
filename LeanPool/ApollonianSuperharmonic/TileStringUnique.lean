@@ -5,8 +5,9 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.TileStringCoordinateTransport
-public import LeanPool.ApollonianSuperharmonic.AffineTriangularStrip
 
 -- [TABLET NODE: TileStringUnique]
 

@@ -5,9 +5,10 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.FourNeighborConnected
 public import LeanPool.ApollonianSuperharmonic.UniqueBoundedGridComplementComponent
-public import Mathlib.Data.List.Chain
 
 -- [TABLET NODE: P4630T1GridComplementCriterion]
 

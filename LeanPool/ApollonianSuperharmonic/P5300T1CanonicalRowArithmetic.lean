@@ -5,9 +5,14 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P5260T1PlacementLedger
-public import LeanPool.ApollonianSuperharmonic.P5124T1ParentPlacement
 public import LeanPool.ApollonianSuperharmonic.P4194T1DiamondCentroid
+public import LeanPool.ApollonianSuperharmonic.DiamondCoordinateConfiguration
+public import LeanPool.ApollonianSuperharmonic.GaussianRealPoint
+public import LeanPool.ApollonianSuperharmonic.TileTranslationFormulas
+public import Mathlib.Algebra.Order.Ring.Star
 
 -- [TABLET NODE: P5300T1CanonicalRowArithmetic]
 
@@ -120,7 +125,12 @@ theorem P5300T1CanonicalRowArithmetic (K : DiamondParameter)
         (-(K.1 : Real) - 1 / 2, (K.1 : Real) - 1 / 2),
         ((K.1 : Real), 0)] t := by
     fin_cases t <;>
-      simp? [P, P5124T1ParentModel, singleton, ht, centroid, Nat.cast_sub hk];
+      simp only [P5124T1ParentModel, ↓reduceIte, Nat.succ_eq_add_one, Nat.reduceAdd,
+          Int.reduceNeg, Fin.mk_one, Fin.isValue, Matrix.cons_val_one, Matrix.cons_val_zero,
+          singleton, Int.cast_sub, Int.cast_neg, Int.cast_natCast, Int.cast_one, one_div,
+          Prod.mk.injEq, P, Fin.reduceFinMk, Matrix.cons_val, ht, centroid, Nat.cast_sub hk,
+          Nat.cast_one, zero_add, sub_add_sub_cancel, sub_self, Fin.zero_eta, Int.cast_zero,
+          Int.cast_mul, Int.cast_ofNat];
       first | (constructor <;> ring)
   have image_add (A : Finset GaussianInt) (u v : GaussianInt) :
       (A.image (GaussianTranslation u)).image (GaussianTranslation v) =
@@ -158,15 +168,26 @@ theorem P5300T1CanonicalRowArithmetic (K : DiamondParameter)
       first | ring1
   · change M.1.1.cells = (TileTranslation (P i) tW).cells
     fin_cases i <;> fin_cases s <;>
-      simp? [M, b, P, tW, P5260T1PlacementLedger, P5124T1ParentModel,
-        TileTranslation, GaussianTranslation, image_add, Zsqrtd.ext_iff] <;>
+      simp only [P5260T1PlacementLedger, Nat.mod_self, zero_ne_one, decide_false,
+          Bool.false_eq_true, ↓reduceIte, Nat.succ_eq_add_one, Nat.reduceAdd,
+          P5124T1ParentModel, Int.reduceNeg, TileTranslation, GaussianTranslation,
+          Fin.isValue, Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val, neg_mul,
+          Fin.mk_one, Finset.image_singleton, add_zero, M, b, tW, P, Fin.reduceFinMk,
+          image_add, Fin.zero_eta, Nat.mod_succ, decide_true, Zsqrtd.add_def,
+          sub_add_add_cancel, neg_add_cancel, Finset.singleton_inj, Zsqrtd.ext_iff, true_and,
+          zero_add, Nat.reduceMod, Nat.zero_mod] <;>
       ring
   · change M.1.2.cells = (TileTranslation (P j) tZ).cells
     fin_cases i <;> fin_cases s <;>
-      simp? [M, b, P, j, tZ, P5260T1PlacementLedger, P5124T1ParentModel,
-        TileTranslation, GaussianTranslation, image_add, Nat.even_iff,
-        hp0, hp2, hn0, hn1, hn2,
-        Zsqrtd.ext_iff] <;>
+      simp only [P5260T1PlacementLedger, Nat.mod_self, zero_ne_one, decide_false,
+          Bool.false_eq_true, ↓reduceIte, Nat.succ_eq_add_one, Nat.reduceAdd,
+          P5124T1ParentModel, Int.reduceNeg, TileTranslation, GaussianTranslation,
+          Fin.isValue, Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val, neg_mul,
+          Fin.mk_one, even_two, sub_self, Finset.image_singleton, Zsqrtd.add_def, zero_add,
+          Finset.singleton_inj, Zsqrtd.ext_iff, true_and, M, b, tZ, P, j, Fin.reduceFinMk,
+          hp2, sub_add_add_cancel, neg_add_cancel, Fin.zero_eta, hp0, image_add, add_zero,
+          Nat.mod_succ, decide_true, Nat.even_iff, one_ne_zero, hn1, hn2, hn0, Nat.reduceMod,
+          Nat.zero_mod, Even.zero] <;>
       ring
   · change TileCentroid (TileTranslation (P i)
         (if s.val < 2 then tW else C - tW - c i)) -

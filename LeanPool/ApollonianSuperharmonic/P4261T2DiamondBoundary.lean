@@ -5,13 +5,10 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.DiamondTileOdometerRestriction
-public import LeanPool.ApollonianSuperharmonic.DiamondCoordinateConfiguration
-public import LeanPool.ApollonianSuperharmonic.DiamondOdometerExistsUnique
 public import LeanPool.ApollonianSuperharmonic.TileOdometerTranslationUniqueness
-public import LeanPool.ApollonianSuperharmonic.TileTranslationFormulas
-public import LeanPool.ApollonianSuperharmonic.PartialOdometerAffineTranslateFormulas
-public import LeanPool.ApollonianSuperharmonic.ProtoTileObservableExtensionality
 
 -- [TABLET NODE: P4261T2DiamondBoundary]
 

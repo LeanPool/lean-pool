@@ -5,9 +5,11 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.ApollonianSuperharmonic.FordCellDomain
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.FordTile
 public import LeanPool.ApollonianSuperharmonic.TileCentroid
+public meta import Lean.Meta.Tactic.NormCast
 
 -- [TABLET NODE: P4210T1FordSquareCentroid]
 
@@ -54,13 +56,19 @@ theorem P4210T1FordSquareCentroid (q : Nat) (hq : 0 < q) :
     simp [Finset.sum_range_id]
   have domain_re_sum : domain.sum (fun z : GaussianInt => z.re) =
       (q : Int) * ((q - 1 : Nat) : Int) / 2 * (q : Int) := by
-    simp? [domain, FordCellDomain, Finset.sum_product]
+    simp only [FordCellDomain, Int.reduceNeg, Finset.product_eq_sprod, Finset.coe_product,
+        Finset.coe_range, Zsqrtd.mk.injEq, Nat.cast_inj, Prod.forall, Prod.mk.injEq,
+        implies_true, Set.injOn_of_eq_iff_eq, Finset.sum_image, Finset.sum_product,
+        Finset.sum_const, Finset.card_range, Int.nsmul_eq_mul, domain]
     conv_lhs => rw [← Finset.mul_sum (Finset.range q) (fun x => (x : Int)) (q : Int)]
     rw [range_sum]
     ring
   have domain_im_sum : domain.sum (fun z : GaussianInt => z.im) =
       (q : Int) * ((q - 1 : Nat) : Int) / 2 * (q : Int) := by
-    simp? [domain, FordCellDomain, Finset.sum_product]
+    simp only [FordCellDomain, Int.reduceNeg, Finset.product_eq_sprod, Finset.coe_product,
+        Finset.coe_range, Zsqrtd.mk.injEq, Nat.cast_inj, Prod.forall, Prod.mk.injEq,
+        implies_true, Set.injOn_of_eq_iff_eq, Finset.sum_image, Finset.sum_product,
+        Finset.sum_const, Finset.card_range, Int.nsmul_eq_mul, domain]
     rw [range_sum]
     ring
   change (if domain.Nonempty then

@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P4677T2DrawingData
 
 -- [TABLET NODE: P4733T1Coordinates]

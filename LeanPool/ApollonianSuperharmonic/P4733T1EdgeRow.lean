@@ -5,7 +5,11 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.ApollonianSuperharmonic.SixSubtileFaceVertices
+public import Mathlib.Init
+public import Mathlib.Algebra.Group.Fin.Basic
+
+public import LeanPool.ApollonianSuperharmonic.PeriodicSubtileFaceIndex
+public import LeanPool.ApollonianSuperharmonic.PeriodicSubtileIndex
 
 -- [TABLET NODE: P4733T1EdgeRow]
 

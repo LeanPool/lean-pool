@@ -5,56 +5,14 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.ApollonianSuperharmonic.AllowedSubtileIncidence
-public import LeanPool.ApollonianSuperharmonic.BandOrderedGeneralConfiguration
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.BandOrderedGeneralLayoutCertificate
-public import LeanPool.ApollonianSuperharmonic.BandPrototile
-public import LeanPool.ApollonianSuperharmonic.BandPrototileCentroidUnique
-public import LeanPool.ApollonianSuperharmonic.BandPrototileTranslation
-public import LeanPool.ApollonianSuperharmonic.BandSubtileOccurrence
-public import LeanPool.ApollonianSuperharmonic.CellSupportedFootprintVertices
 public import LeanPool.ApollonianSuperharmonic.ExactTileInterfaceTriple
-public import LeanPool.ApollonianSuperharmonic.ExactTileInterfaceTripleRetargetMiddle
 public import LeanPool.ApollonianSuperharmonic.ExactTileInterfaceTripleSwapLast
-public import LeanPool.ApollonianSuperharmonic.FiniteConnectedCellSetNoCheckerboard
-public import LeanPool.ApollonianSuperharmonic.FiniteInducedTilePatch
-public import LeanPool.ApollonianSuperharmonic.FinitePatchTopology
-public import LeanPool.ApollonianSuperharmonic.FinitePolyominoDiskCriterion
-public import LeanPool.ApollonianSuperharmonic.FootprintDeletionRetention
-public import LeanPool.ApollonianSuperharmonic.FootprintEdges
-public import LeanPool.ApollonianSuperharmonic.FootprintVertices
-public import LeanPool.ApollonianSuperharmonic.FourNeighborConnected
-public import LeanPool.ApollonianSuperharmonic.LatticeTile
-public import LeanPool.ApollonianSuperharmonic.LatticeTileComplementGridConnected
-public import LeanPool.ApollonianSuperharmonic.LatticeTileGridStructure
 public import LeanPool.ApollonianSuperharmonic.LatticeTileThreeDiskJunction
-public import LeanPool.ApollonianSuperharmonic.LatticeVertexIncidentCell
-public import LeanPool.ApollonianSuperharmonic.ModifiedSubtileOccurrenceInterpretation
 public import LeanPool.ApollonianSuperharmonic.P1BandOrderedGeneralMixedAggregateJunctionData
-public import LeanPool.ApollonianSuperharmonic.PeriodicSubtileIndex
-public import LeanPool.ApollonianSuperharmonic.PeriodicTileComplex
-public import LeanPool.ApollonianSuperharmonic.PeriodicTileCore
-public import LeanPool.ApollonianSuperharmonic.PeriodicTileIndexedMultiplicityOne
-public import LeanPool.ApollonianSuperharmonic.PeriodicTileIntersectionClassification
-public import LeanPool.ApollonianSuperharmonic.PeriodicTileIntersectionPaths
-public import LeanPool.ApollonianSuperharmonic.PeriodicTileMultiplicityOne
-public import LeanPool.ApollonianSuperharmonic.ProperBandQuadruple
-public import LeanPool.ApollonianSuperharmonic.ProtoTile
-public import LeanPool.ApollonianSuperharmonic.ProtoTileObservableExtensionality
-public import LeanPool.ApollonianSuperharmonic.QuarterTurnSymmetric
-public import LeanPool.ApollonianSuperharmonic.QuarterTurnSymmetricCenteredTransport
-public import LeanPool.ApollonianSuperharmonic.SimpleGridPathBetween
 public import LeanPool.ApollonianSuperharmonic.SimpleGridPathEndpointPairUnique
-public import LeanPool.ApollonianSuperharmonic.SixSubtileFaceVertices
-public import LeanPool.ApollonianSuperharmonic.TileCellComplement
-public import LeanPool.ApollonianSuperharmonic.TileDiskAreaCovariance
-public import LeanPool.ApollonianSuperharmonic.TileQuarterTurnFormulas
-public import LeanPool.ApollonianSuperharmonic.TileRealization
-public import LeanPool.ApollonianSuperharmonic.TileTouching
-public import LeanPool.ApollonianSuperharmonic.TileTranslationFormulas
-public import LeanPool.ApollonianSuperharmonic.TopologicalDisk
-public import LeanPool.ApollonianSuperharmonic.TouchingTriple
-public import LeanPool.ApollonianSuperharmonic.VectorRecursionLaws
 
 -- [TABLET NODE: P1BandOrderedGeneralMixedAggregatePairedEndpoints]
 
@@ -262,7 +220,13 @@ private theorem literalData :
     all_goals
       simp only [Fin.reduceAdd, Fin.reduceSucc, ↓reduceIte, one_smul] at h0 h1 h2
       simp only [Fin.reduceSucc] at f0 f1 f2
-      simp? [cert.period_u, cert.period_v, f0, f1, f2, w1, w2, w3]
+      simp only [Fin.mk_one, Fin.isValue, Fin.reduceAdd, Int.reduceNeg, one_ne_zero,
+          ↓reduceIte, cert.period_v, f1, w2, Zsqrtd.re_mul, Zsqrtd.re_sub, zero_mul, mul_one,
+          neg_mul, one_mul, zero_add, sub_neg_eq_add, Zsqrtd.im_sub, Zsqrtd.im_mul, neg_sub,
+          Int.cast_sub, GaussianInt.intCast_re, GaussianInt.intCast_im, Int.cast_add, one_div,
+          Fin.reduceSucc, w3, f2, cert.period_u, f0, w1, Zsqrtd.re_add, Zsqrtd.im_add,
+          Fin.succ_one_eq_two, smul_add, Fin.reduceFinMk, Fin.reduceEq, Zsqrtd.re_neg,
+          Zsqrtd.im_neg, neg_add_rev, Int.cast_neg, Fin.succ_zero_eq_one, Fin.zero_eta]
       have re := congrArg (fun z : GaussianInt => z.re) superbasis
       have im := congrArg (fun z : GaussianInt => z.im) superbasis
       have r0 := congrArg Prod.fst h0
@@ -271,8 +235,13 @@ private theorem literalData :
       have s1 := congrArg Prod.snd h1
       have r2 := congrArg Prod.fst h2
       have s2 := congrArg Prod.snd h2
-      simp? [GaussianRealPoint, Prod.smul_mk, smul_eq_mul] at r0 s0 r1 s1 r2 s2 ⊢
-      simp? at re im
+      simp only [Fin.isValue, Prod.fst_sub, one_div, GaussianRealPoint, Int.reduceNeg,
+          GaussianInt.intCast_re, GaussianInt.intCast_im, Prod.mk_sub_mk, sub_neg_eq_add,
+          Prod.smul_mk, smul_eq_mul, Prod.snd_sub, Zsqrtd.re_sub, Zsqrtd.re_mul, zero_mul,
+          mul_one, neg_mul, one_mul, zero_add, Int.cast_add, Zsqrtd.im_sub, Zsqrtd.im_mul,
+          Int.cast_sub, neg_sub, Prod.mk_add_mk] at r0 s0 r1 s1 r2 s2 ⊢
+      simp only [Int.reduceNeg, Fin.isValue, Zsqrtd.re_add, Zsqrtd.re_zero, Zsqrtd.im_add,
+          Zsqrtd.im_zero] at re im
       have rr : ((BandVectors.1 (q 3) (q 2)).re : Real) +
           ((BandVectors.1 (q 1) (q 3)).re : Real) +
           ((BandVectors.1 (q 2) (q 1)).re : Real) = 0 := by exact_mod_cast re
@@ -479,8 +448,13 @@ private theorem markedMembership :
   have h2 := rho_mem f 2
   fin_cases i
   all_goals
-    simp? [pLit, qLit, markedPoint, f, SixSubtileFaceVertices,
-      SubtileOccurrenceInterpretation, trzero] at h0 h1 h2 ⊢
+    simp only [SubtileOccurrenceInterpretation, SixSubtileFaceVertices, Fin.mk_one,
+        Fin.isValue, Fin.reduceEq, ↓reduceIte, zero_add, Matrix.cons_val_zero, Int.cast_zero,
+        zero_mul, add_zero, trzero, Matrix.cons_val_one, Int.cast_one, one_mul,
+        Matrix.cons_val, one_ne_zero, Fin.reduceAdd, Int.reduceNeg, Set.mem_inter_iff,
+        Fin.succ_one_eq_two, f, pLit, qLit, markedPoint, Fin.reduceFinMk, neg_add_cancel,
+        Int.cast_neg, neg_mul, Fin.reduceSucc, Fin.zero_eta, zero_ne_one,
+        Fin.succ_zero_eq_one] at h0 h1 h2 ⊢
   · exact ⟨⟨⟨(cert.outer_occurrence 2 true).2.1 h2, h0⟩, h1⟩,
       (by
         rw [← cert.period_u]
@@ -725,8 +699,13 @@ private theorem oddMembership :
   have h2 := rho_mem f 2
   fin_cases i
   all_goals
-    simp? [pOdd, qOdd, oddPoint, show (-1 : Fin 3) = 2 by decide,
-      f, SixSubtileFaceVertices, SubtileOccurrenceInterpretation, trzero] at h0 h1 h2 ⊢
+    simp only [SubtileOccurrenceInterpretation, SixSubtileFaceVertices, Fin.mk_one,
+        Fin.isValue, one_ne_zero, ↓reduceIte, Fin.reduceEq, zero_sub, Int.reduceNeg, sub_self,
+        Matrix.cons_val_zero, Int.cast_zero, zero_mul, Int.cast_one, one_mul, zero_add,
+        Matrix.cons_val_one, Int.cast_neg, neg_mul, add_zero, Matrix.cons_val, trzero,
+        Set.mem_inter_iff, Fin.succ_one_eq_two, f, pOdd, qOdd, oddPoint, Fin.reduceFinMk,
+        Fin.reduceSub, Fin.reduceSucc, Fin.zero_eta, show (-1 : Fin 3) = 2 by decide,
+        Fin.succ_zero_eq_one] at h0 h1 h2 ⊢
   · exact ⟨⟨⟨(cert.outer_occurrence 1 false).2.1 h1, h0⟩, h2⟩,
       (by
         rw [← cert.period_u]

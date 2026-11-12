@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P4261T2UnitStringTelescoping
 public import LeanPool.ApollonianSuperharmonic.P5570T1UnitNormalForm
 public import LeanPool.ApollonianSuperharmonic.AncestorOdometer

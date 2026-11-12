@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.DiamondRecursiveQuadruple
 
 -- [TABLET NODE: P4840T6DiamondRecurrence]

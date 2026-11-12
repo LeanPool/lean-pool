@@ -5,12 +5,15 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P4828T1Root
 public import LeanPool.ApollonianSuperharmonic.P4828T1Gap
 public import LeanPool.ApollonianSuperharmonic.P4828T1LineSupport
 public import LeanPool.ApollonianSuperharmonic.ProperBandQuadruple
 public import Mathlib.Analysis.Convex.Combination
 public import Mathlib.Analysis.Complex.ReImTopology
+public import LeanPool.ApollonianSuperharmonic.P4828T1Disk
 
 -- [TABLET NODE: P4828T1LeftRootGeometry]
 
@@ -132,7 +135,11 @@ private theorem hvertices (a : GaussianInt) : (vertices a) = {(bl a), (br a), (t
   constructor
   · rintro ⟨j, hj, hp⟩
     fin_cases j
-    · simp? [q, P4828T1Root] at hj hp
+    · simp only [P4828T1Root, Bool.false_eq_true, ↓reduceIte, Int.reduceNeg, Fin.zero_eta,
+        Fin.isValue, Fin.succ_zero_eq_one, Matrix.cons_val_one, Matrix.cons_val_zero,
+        zero_lt_one, map_add, map_one, map_mul, Int.cast_one, Complex.ofReal_one, div_one,
+        Matrix.cons_val_succ, Complex.add_im, Complex.one_im, Complex.mul_im, zero_add, q]
+        at hj hp
       rcases hp with hp | ⟨k, hk, hp⟩
       · subst p
         simp only [Set.mem_insert_iff, Set.mem_singleton_iff]
@@ -148,7 +155,11 @@ private theorem hvertices (a : GaussianInt) : (vertices a) = {(bl a), (br a), (t
             ]
         · simp [] at hk
     · simp [q, P4828T1Root] at hj
-    · simp? [q, P4828T1Root] at hj hp
+    · simp only [P4828T1Root, Bool.false_eq_true, ↓reduceIte, Int.reduceNeg, Fin.reduceFinMk,
+        Fin.reduceSucc, Matrix.cons_val, zero_lt_one, map_add, map_one, map_mul, Int.cast_one,
+        Complex.ofReal_one, div_one, Matrix.cons_val_succ, Complex.add_im, Complex.one_im,
+        Complex.mul_im, zero_add, GaussianInt.im_toComplex, mul_one, GaussianInt.re_toComplex,
+        Int.cast_zero, mul_zero, add_zero, q] at hj hp
       rcases hp with hp | ⟨k, hk, hp⟩
       · subst p
         simp only [Set.mem_insert_iff, Set.mem_singleton_iff]

@@ -5,11 +5,11 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.ApollonianSuperharmonic.IntegerLaplacianCastBridge
+public import Mathlib.Init
+public import Mathlib.Tactic.Positivity
+
 public import LeanPool.ApollonianSuperharmonic.IntegerSuperharmonicRepresentative
 public import LeanPool.ApollonianSuperharmonic.PSDQuadraticIntegerApproximation
-public import LeanPool.ApollonianSuperharmonic.QuadraticGrowthAtInfinity
-public import LeanPool.ApollonianSuperharmonic.RealLaplacianLinearity
 
 -- [TABLET NODE: SuperharmonicDownwardClosure]
 

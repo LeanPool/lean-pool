@@ -5,9 +5,11 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P5352T2PlacementData
 public import LeanPool.ApollonianSuperharmonic.P5352T2DomainRows
-public import LeanPool.ApollonianSuperharmonic.P4207T1FloorArithmetic
+public import LeanPool.ApollonianSuperharmonic.P5352T2Sources
 
 -- [TABLET NODE: P5491T1DiamondRightBoundary]
 
@@ -534,12 +536,18 @@ private theorem hpositive :
             i.val = 0 then -(n*(n+1))/2 else if i.val = 1 then n*(n-1)/2 else n*(n-1)))))) ) := by
   classical
   intro K hk n hF hfloorEven hfloorOdd tri foot i x hx hxD
+  have habsB : |(K.1 : Int)| = (K.1 : Int) :=
+    abs_of_nonneg (show 0 ≤ (K.1 : Int) by omega)
+  have triangularCurvature := tri (K.1 : Int)
   let u : Int := x.re
   let v : Int := x.im
   have hxy := (foot x).mp hx
   have hxyD := (foot (x-(P5352T2PlacementData K.1 i).1.1)).mp hxD
   fin_cases i
-  · simp? [P5352T2PlacementData] at hxyD
+  · simp only [Int.reduceNeg, P5352T2PlacementData, Nat.succ_eq_add_one, Nat.reduceAdd,
+      neg_mul, Fin.zero_eta, Fin.isValue, Matrix.cons_val_zero, Zsqrtd.im_sub, Int.sub_nonneg,
+      Order.add_one_le_iff, tsub_le_iff_right, Zsqrtd.re_sub, sub_neg_eq_add,
+      add_le_iff_nonpos_left, neg_sub, neg_add_rev, neg_add_le_iff_le_add] at hxyD
     have hd : v-u = 2*n ∨ v-u = 2*n+1 := by
       omega
     rcases hd with hd | hd
@@ -549,7 +557,8 @@ private theorem hpositive :
       have hxe : x = ⟨-n+1+r,n+1+r⟩ := by
         ext <;> simp [r,v]; omega
       rw [hxe]
-      simp? [P5352T2PlacementData]
+      simp only [Fin.isValue, Int.reduceNeg, P5352T2PlacementData, Nat.succ_eq_add_one,
+          Nat.reduceAdd, neg_mul, Fin.zero_eta, Matrix.cons_val_zero, one_mul, ↓reduceIte]
       rw [hF _ (by simpa [P5352T2PlacementData, n, hxe] using hxD),
         hF _ (by simpa [hxe] using hx)]
       simp only [n]
@@ -580,7 +589,8 @@ private theorem hpositive :
       have hxe : x = ⟨-n+r,n+1+r⟩ := by
         ext <;> simp [r,v]; omega
       rw [hxe]
-      simp? [P5352T2PlacementData]
+      simp only [Fin.isValue, Int.reduceNeg, P5352T2PlacementData, Nat.succ_eq_add_one,
+          Nat.reduceAdd, neg_mul, Fin.zero_eta, Matrix.cons_val_zero, one_mul, ↓reduceIte]
       rw [hF _ (by simpa [P5352T2PlacementData, n, hxe] using hxD),
         hF _ (by simpa [hxe] using hx)]
       simp only [n, Zsqrtd.re_sub, Zsqrtd.im_sub, Int.natCast_natAbs]
@@ -604,7 +614,10 @@ private theorem hpositive :
       have habsRe : -(-(K.1:Int)+r) = (K.1:Int)-r := by ring
       rw [habsRe]
       linear_combination ht1 - ht2 + hpoly + ht3'
-  · simp? [P5352T2PlacementData] at hxyD
+  · simp only [Int.reduceNeg, P5352T2PlacementData, Nat.succ_eq_add_one, Nat.reduceAdd,
+      neg_mul, Fin.mk_one, Fin.isValue, Matrix.cons_val_one, Matrix.cons_val_zero,
+      Zsqrtd.im_sub, Int.sub_nonneg, tsub_le_iff_right, Zsqrtd.re_sub, sub_neg_eq_add,
+      add_le_iff_nonpos_left, neg_sub, neg_add_rev, neg_add_le_iff_le_add] at hxyD
     have hd : u+v = -1 ∨ u+v = 0 := by omega
     rcases hd with hd | hd
     · let r : Int := v
@@ -612,7 +625,9 @@ private theorem hpositive :
       have hrn : r < n := by dsimp [r]; omega
       have hxe : x = ⟨-r-1,r⟩ := by ext <;> simp [r,v]; omega
       rw [hxe]
-      simp? [P5352T2PlacementData]
+      simp only [Fin.isValue, Int.reduceNeg, P5352T2PlacementData, Nat.succ_eq_add_one,
+          Nat.reduceAdd, neg_mul, Fin.mk_one, Matrix.cons_val_one, Matrix.cons_val_zero,
+          zero_mul, add_zero, one_ne_zero, ↓reduceIte]
       rw [hF _ (by simpa [P5352T2PlacementData, n, hxe] using hxD),
         hF _ (by simpa [hxe] using hx)]
       simp only [n, Zsqrtd.re_sub, Zsqrtd.im_sub, Int.natCast_natAbs]
@@ -626,22 +641,21 @@ private theorem hpositive :
       have ht1 := tri ((K.1:Int)-r-1)
       have ht2 := tri (r+1)
       have hpoly := DiamondBoundaryDetails.hpolyAt356 K x
-      have ht3 := tri (K.1:Int)
-      have ht3' : 2*((K.1:Int)*((K.1:Int)-1)/2) =
-          (K.1:Int)*((K.1:Int)-1) := by simpa using ht3
       apply (mul_left_cancel₀ (by norm_num : (2:Int) ≠ 0))
       have hre : -r-1 - (-(K.1:Int)) = (K.1:Int)-r-1 := by ring
       have hbr : -(-r-1) = r+1 := by ring
       rw [hre, hbr]
       have htr : r+1-1 = r := by omega
       rw [htr] at ht2 ⊢
-      linear_combination ht1 - ht2 + hpoly - ht3'
+      linear_combination ht1 - ht2 + hpoly - triangularCurvature
     · let r : Int := v
       have hr0 : 0 ≤ r := by dsimp [r]; omega
       have hrn : r < n := by dsimp [r]; omega
       have hxe : x = ⟨-r,r⟩ := by ext <;> simp [r,v]; omega
       rw [hxe]
-      simp? [P5352T2PlacementData]
+      simp only [Fin.isValue, Int.reduceNeg, P5352T2PlacementData, Nat.succ_eq_add_one,
+          Nat.reduceAdd, neg_mul, Fin.mk_one, Matrix.cons_val_one, Matrix.cons_val_zero,
+          mul_neg, neg_neg, zero_mul, add_zero, one_ne_zero, ↓reduceIte]
       rw [hF _ (by simpa [P5352T2PlacementData, n, hxe] using hxD),
         hF _ (by simpa [hxe] using hx)]
       simp only [n, Zsqrtd.re_sub, Zsqrtd.im_sub, Int.natCast_natAbs]
@@ -655,28 +669,28 @@ private theorem hpositive :
       have ht1 := tri ((K.1:Int)-r)
       have ht2 := tri r
       have hpoly := DiamondBoundaryDetails.hpolyAt395 K x
-      have ht3 := tri (K.1:Int)
-      have ht3' : 2*((K.1:Int)*((K.1:Int)-1)/2) =
-          (K.1:Int)*((K.1:Int)-1) := by simpa using ht3
       apply (mul_left_cancel₀ (by norm_num : (2:Int) ≠ 0))
       have hre : -r - (-(K.1:Int)) = (K.1:Int)-r := by ring
       have hbaseT : -(-r)*(-(-r)-1) = r*(r-1) := by ring
       rw [hre, hbaseT]
-      linear_combination ht1 - ht2 + hpoly - ht3'
-  · simp? [P5352T2PlacementData] at hxyD
+      linear_combination ht1 - ht2 + hpoly - triangularCurvature
+  · simp only [Int.reduceNeg, P5352T2PlacementData, Nat.succ_eq_add_one, Nat.reduceAdd,
+      neg_mul, Fin.reduceFinMk, Matrix.cons_val, Zsqrtd.im_sub, sub_zero, Zsqrtd.re_sub,
+      neg_le_sub_iff_le_add, tsub_le_iff_right, neg_add_rev, neg_sub, neg_add_le_iff_le_add]
+      at hxyD
     have hu : u = n := by omega
     have hv : v = n-1 ∨ v = n ∨ v = n+1 := by omega
     rcases hv with hv | hv | hv
     · have hxe : x = ⟨n,n-1⟩ := by ext <;> simp [u,v,hu,hv]
       rw [hxe]
-      simp? [P5352T2PlacementData]
+      simp only [Fin.isValue, Int.reduceNeg, P5352T2PlacementData, Nat.succ_eq_add_one,
+          Nat.reduceAdd, neg_mul, Fin.reduceFinMk, Matrix.cons_val, OfNat.ofNat_ne_zero,
+          ↓reduceIte, OfNat.ofNat_ne_one]
       rw [hF _ (by simpa [P5352T2PlacementData, n, hxe] using hxD),
         hF _ (by simpa [hxe] using hx)]
       simp only [n, Zsqrtd.re_sub, Zsqrtd.im_sub, Int.natCast_natAbs]
       have habsT := DiamondBoundaryDetails.habsTAt417 K
           hk x hxy hxyD
-      have habsB : |(K.1:Int)| = (K.1:Int) :=
-        abs_of_nonneg (show 0 ≤ (K.1:Int) by omega)
       rw [habsT, habsB]
       simp only [sub_zero]
       have hf := DiamondBoundaryDetails.hfAt425 K hfloorOdd
@@ -685,14 +699,14 @@ private theorem hpositive :
       ring
     · have hxe : x = ⟨n,n⟩ := by ext <;> simp [u,v,hu,hv]
       rw [hxe]
-      simp? [P5352T2PlacementData]
+      simp only [Fin.isValue, Int.reduceNeg, P5352T2PlacementData, Nat.succ_eq_add_one,
+          Nat.reduceAdd, neg_mul, Fin.reduceFinMk, Matrix.cons_val, OfNat.ofNat_ne_zero,
+          ↓reduceIte, OfNat.ofNat_ne_one]
       rw [hF _ (by simpa [P5352T2PlacementData, n, hxe] using hxD),
         hF _ (by simpa [hxe] using hx)]
       simp only [n, Zsqrtd.re_sub, Zsqrtd.im_sub, Int.natCast_natAbs]
       have habsT := DiamondBoundaryDetails.habsTAt438 K
           hk x hxy hxyD
-      have habsB : |(K.1:Int)| = (K.1:Int) :=
-        abs_of_nonneg (show 0 ≤ (K.1:Int) by omega)
       rw [habsT, habsB]
       simp only [sub_zero]
       have hf := DiamondBoundaryDetails.hfAt446 K hfloorEven
@@ -701,14 +715,14 @@ private theorem hpositive :
       ring
     · have hxe : x = ⟨n,n+1⟩ := by ext <;> simp [u,v,hu,hv]
       rw [hxe]
-      simp? [P5352T2PlacementData]
+      simp only [Fin.isValue, Int.reduceNeg, P5352T2PlacementData, Nat.succ_eq_add_one,
+          Nat.reduceAdd, neg_mul, Fin.reduceFinMk, Matrix.cons_val, OfNat.ofNat_ne_zero,
+          ↓reduceIte, OfNat.ofNat_ne_one]
       rw [hF _ (by simpa [P5352T2PlacementData, n, hxe] using hxD),
         hF _ (by simpa [hxe] using hx)]
       simp only [n, Zsqrtd.re_sub, Zsqrtd.im_sub, Int.natCast_natAbs]
       have habsT := DiamondBoundaryDetails.habsTAt459 K
           hk x hxy hxyD
-      have habsB : |(K.1:Int)| = (K.1:Int) :=
-        abs_of_nonneg (show 0 ≤ (K.1:Int) by omega)
       rw [habsT, habsB]
       simp only [sub_zero]
       have hf := DiamondBoundaryDetails.hfAt467 K hfloorOdd

@@ -5,11 +5,13 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P5130T5Prescription
 public import LeanPool.ApollonianSuperharmonic.P5130T5ParentArithmetic
 public import LeanPool.ApollonianSuperharmonic.FordDoubledBoundary
 public import LeanPool.ApollonianSuperharmonic.IntegerCeilDiv
-public import Mathlib.Tactic.Ring
+public import LeanPool.ApollonianSuperharmonic.FordRecursiveVertexDomains
 
 -- [TABLET NODE: P5130T5MixedOverlaps]
 
@@ -79,7 +81,8 @@ theorem P5130T5MixedOverlaps (P P₁ P₂ : FordFareyParameter)
   have hcross := (P5130T5ParentArithmetic P hq).2.2.2.2.2.2
   refine ⟨?_, ?_, ?_, ?_⟩
   · intro x hx hy
-    simp? [FordRecursiveVertexDomains] at hx hy
+    simp only [FordRecursiveVertexDomains, Int.reduceNeg, Fin.isValue, Matrix.cons_val_zero,
+        Set.mem_ofPred_eq, Matrix.cons_val] at hx hy
     have hr : x.re = (P.q₁ : Int) := by omega
     have ex : x = ⟨P.q₁, x.im⟩ := by ext <;> simp [hr]
     have ey : x - ⟨(P.q₁ : Int), 0⟩ = (⟨0, x.im⟩ : GaussianInt) := by
@@ -91,7 +94,8 @@ theorem P5130T5MixedOverlaps (P P₁ P₂ : FordFareyParameter)
       _ = g₂ (x - ⟨(P.q₁ : Int), 0⟩) + P.p₁ * x.im := by
         rw [ey, (eb x.im (by omega) (by omega)).2.2.1, zero_add]
   · intro x hx hy
-    simp? [FordRecursiveVertexDomains] at hx hy
+    simp only [FordRecursiveVertexDomains, Int.reduceNeg, Fin.isValue, Matrix.cons_val_zero,
+        Set.mem_ofPred_eq, Matrix.cons_val] at hx hy
     have hi : x.im = (P.q₁ : Int) := by omega
     have ex : x = ⟨x.re, P.q₁⟩ := by ext <;> simp [hi]
     have ey : x - ⟨0, (P.q₁ : Int)⟩ = (⟨x.re, 0⟩ : GaussianInt) := by
@@ -103,7 +107,8 @@ theorem P5130T5MixedOverlaps (P P₁ P₂ : FordFareyParameter)
       _ = g₂ (x - ⟨0, (P.q₁ : Int)⟩) + P.p₁ * x.re := by
         rw [ey, (eb x.re (by omega) (by omega)).2.2.2, zero_add]
   · intro x hx hy
-    simp? [FordRecursiveVertexDomains] at hx hy
+    simp only [FordRecursiveVertexDomains, Int.reduceNeg, Fin.isValue, Matrix.cons_val_one,
+        Matrix.cons_val_zero, Set.mem_ofPred_eq, Matrix.cons_val] at hx hy
     have hi : x.im = (P.q₂ : Int) := by omega
     have ex : x - ⟨(P.q₂ : Int), (P.q₂ : Int)⟩ = (⟨x.re - P.q₂, 0⟩ : GaussianInt) := by
       ext <;> simp [Zsqrtd.re_sub, Zsqrtd.im_sub, hi]
@@ -116,7 +121,8 @@ theorem P5130T5MixedOverlaps (P P₁ P₂ : FordFareyParameter)
       (eb (x.re - P.q₁) (by omega) (by omega)).2.1, hi]
     nlinarith [hcross]
   · intro x hx hy
-    simp? [FordRecursiveVertexDomains] at hx hy
+    simp only [FordRecursiveVertexDomains, Int.reduceNeg, Fin.isValue, Matrix.cons_val_one,
+        Matrix.cons_val_zero, Set.mem_ofPred_eq, Matrix.cons_val] at hx hy
     have hr : x.re = (P.q₂ : Int) := by omega
     have ex : x - ⟨(P.q₂ : Int), (P.q₂ : Int)⟩ = (⟨0, x.im - P.q₂⟩ : GaussianInt) := by
       ext <;> simp [Zsqrtd.re_sub, Zsqrtd.im_sub, hr]

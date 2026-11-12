@@ -5,8 +5,11 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P3544T1DiagonalSplit
 public import LeanPool.ApollonianSuperharmonic.P3511T1SourceDissection
+public import Mathlib.Algebra.Order.Ring.Star
 
 -- [TABLET NODE: P3652T1IndexedFaceLedger]
 
@@ -269,7 +272,7 @@ private theorem hlenL :
       classical
       exact
         ∀ (n : Nat), ∀ (p : P3381T1PolygonBoundary n), ∀ (S : P3544T1DiagonalSplit p),
-            S.left_n + 3 = S.u.length + 2 ) := by
+            S.leftParameter + 3 = S.u.length + 2 ) := by
   classical
   intro n p S
   have h := congrArg List.length S.left_order
@@ -281,7 +284,7 @@ private theorem hlenR :
       classical
       exact
         ∀ (n : Nat), ∀ (p : P3381T1PolygonBoundary n), ∀ (S : P3544T1DiagonalSplit p),
-            S.right_n + 3 = S.v.length + 2 ) := by
+            S.rightParameter + 3 = S.v.length + 2 ) := by
   classical
   intro n p S
   have h := congrArg List.length S.right_order
@@ -293,8 +296,10 @@ private theorem hleftcoord :
       classical
       exact
         ∀ (n : Nat), ∀ (p : P3381T1PolygonBoundary n), ∀ (S : P3544T1DiagonalSplit p), (n + 3
-            = S.u.length + S.v.length + 2) → ((S.left_n + 3 = S.u.length + 2) → ((S.right_n + 3 =
-            S.v.length + 2) → (∀ (x : Fin (S.left_n + (3 : ℕ))), (↑(S.il x) : ℕ) = ((↑x : ℕ) +
+            = S.u.length + S.v.length + 2) → ((S.leftParameter + 3 = S.u.length + 2) →
+                ((S.rightParameter + 3 =
+            S.v.length + 2) → (∀ (x : Fin (S.leftParameter + (3 : ℕ))), (↑(S.il x) : ℕ) = ((↑x :
+                ℕ) +
             S.rotation) % (n + (3 : ℕ))))) ) := by
   classical
   intro n p S hlenP hlenL hlenR x
@@ -342,7 +347,8 @@ private theorem haCoord :
       classical
       exact
         ∀ (n : Nat), ∀ (p : P3381T1PolygonBoundary n), ∀ (S : P3544T1DiagonalSplit p), (n + 3
-            = S.u.length + S.v.length + 2) → ((S.left_n + 3 = S.u.length + 2) → ((S.right_n + 3 =
+            = S.u.length + S.v.length + 2) → ((S.leftParameter + 3 = S.u.length + 2) →
+                ((S.rightParameter + 3 =
             S.v.length + 2) → (S.a.val = S.rotation % (n + 3)))) ) := by
   classical
   intro n p S hlenP hlenL hlenR
@@ -364,8 +370,10 @@ private theorem hrightcoord :
       classical
       exact
         ∀ (n : Nat), ∀ (p : P3381T1PolygonBoundary n), ∀ (S : P3544T1DiagonalSplit p), (n + 3
-            = S.u.length + S.v.length + 2) → ((S.left_n + 3 = S.u.length + 2) → ((S.right_n + 3 =
-            S.v.length + 2) → ((S.a.val = S.rotation % (n + 3)) → (∀ (y : Fin (S.right_n + (3 :
+            = S.u.length + S.v.length + 2) → ((S.leftParameter + 3 = S.u.length + 2) →
+                ((S.rightParameter + 3 =
+            S.v.length + 2) → ((S.a.val = S.rotation % (n + 3)) → (∀ (y : Fin (S.rightParameter +
+                (3 :
             ℕ))), (↑(S.ir y) : ℕ) = (S.u.length + (1 : ℕ) + (↑y : ℕ) + S.rotation) % (n + (3 :
             ℕ)))))) ) := by
   classical
@@ -537,12 +545,13 @@ private theorem hleftA :
       classical
       exact
         ∀ (n : Nat), ∀ (p : P3381T1PolygonBoundary n), ∀ (S : P3544T1DiagonalSplit p), (∀ (x
-            : Fin (S.left_n + 3)), (S.il x).val = (x.val + S.rotation) % (n + 3)) → ((S.a.val =
-            S.rotation % (n + 3)) → (S.il (0 : Fin (S.left_n + 3)) = S.a)) ) := by
+            : Fin (S.leftParameter + 3)), (S.il x).val = (x.val + S.rotation) % (n + 3)) →
+                ((S.a.val =
+            S.rotation % (n + 3)) → (S.il (0 : Fin (S.leftParameter + 3)) = S.a)) ) := by
   classical
   intro n p S hleftcoord haCoord
   apply Fin.ext
-  have h := hleftcoord (0 : Fin (S.left_n + 3))
+  have h := hleftcoord (0 : Fin (S.leftParameter + 3))
   simpa only [Fin.val_zero, Nat.zero_add, haCoord] using h
 
 private theorem hleftB :
@@ -550,7 +559,7 @@ private theorem hleftB :
       classical
       exact
         ∀ (n : Nat), ∀ (p : P3381T1PolygonBoundary n), ∀ (S : P3544T1DiagonalSplit p), S.il
-            (Fin.last (S.left_n + 2)) = S.b ) := by
+            (Fin.last (S.leftParameter + 2)) = S.b ) := by
   classical
   intro n p S
   have h := congrArg List.getLast? S.left_order
@@ -562,7 +571,7 @@ private theorem hrightB :
       classical
       exact
         ∀ (n : Nat), ∀ (p : P3381T1PolygonBoundary n), ∀ (S : P3544T1DiagonalSplit p), S.ir
-            (0 : Fin (S.right_n + 3)) = S.b ) := by
+            (0 : Fin (S.rightParameter + 3)) = S.b ) := by
   classical
   intro n p S
   have h := congrArg List.head? S.right_order
@@ -573,7 +582,7 @@ private theorem hrightA :
       classical
       exact
         ∀ (n : Nat), ∀ (p : P3381T1PolygonBoundary n), ∀ (S : P3544T1DiagonalSplit p), S.ir
-            (Fin.last (S.right_n + 2)) = S.a ) := by
+            (Fin.last (S.rightParameter + 2)) = S.a ) := by
   classical
   intro n p S
   have h := congrArg List.getLast? S.right_order
@@ -585,12 +594,15 @@ private theorem hleftSucc :
       classical
       exact
         ∀ (n : Nat), ∀ (p : P3381T1PolygonBoundary n), ∀ (S : P3544T1DiagonalSplit p), (n + 3
-            = S.u.length + S.v.length + 2) → ((S.left_n + 3 = S.u.length + 2) → ((S.right_n + 3 =
-            S.v.length + 2) → ((∀ (x : Fin (S.left_n + 3)), (S.il x).val = (x.val + S.rotation) %
+            = S.u.length + S.v.length + 2) → ((S.leftParameter + 3 = S.u.length + 2) →
+                ((S.rightParameter + 3 =
+            S.v.length + 2) → ((∀ (x : Fin (S.leftParameter + 3)), (S.il x).val = (x.val +
+                S.rotation) %
             (n + 3)) → ((∀ {m : Nat}, ∀ {r : Nat}, ∀ {x : Nat}, ∀ {y : Nat}, (0 < m) → ((x < m) →
             ((y < m) → (((r + x) % m = (r + y) % m) → (x = y))))) → ((∀ {m : Nat}, ∀ {r : Nat}, ∀
             {x : Nat}, (1 < m) → (((r + x) % m + 1) % m = (r + (x + 1)) % m)) → (∀ (x : Fin
-            (S.left_n + (3 : ℕ))), ∀ (y : Fin (S.left_n + (3 : ℕ))), (↑(S.il y) : ℕ) = ((↑(S.il
+            (S.leftParameter + (3 : ℕ))), ∀ (y : Fin (S.leftParameter + (3 : ℕ))), (↑(S.il y) :
+                ℕ) = ((↑(S.il
             x) : ℕ) + (1 : ℕ)) % (n + (3 : ℕ)) ↔ (↑y : ℕ) = (↑x : ℕ) + (1 : ℕ))))))) ) := by
   classical
   intro n p S hlenP hlenL hlenR hleftcoord hmodShift hmodSucc x y
@@ -618,9 +630,11 @@ private theorem hleftOrd :
       classical
       exact
         ∀ (n : Nat), ∀ (p : P3381T1PolygonBoundary n), ∀ (S : P3544T1DiagonalSplit p), (∀ (z
-            : Fin (n + 3)), (z + 1).val = (z.val + 1) % (n + 3)) → ((∀ (x : Fin (S.left_n + 3)),
-            ∀ (y : Fin (S.left_n + 3)), (S.il y).val = ((S.il x).val + 1) % (n + 3) ↔ y.val =
-            x.val + 1) → (∀ (x : Fin (S.left_n + (3 : ℕ))), ∀ (y : Fin (S.left_n + (3 : ℕ))),
+            : Fin (n + 3)), (z + 1).val = (z.val + 1) % (n + 3)) → ((∀ (x : Fin (S.leftParameter
+                + 3)),
+            ∀ (y : Fin (S.leftParameter + 3)), (S.il y).val = ((S.il x).val + 1) % (n + 3) ↔ y.val =
+            x.val + 1) → (∀ (x : Fin (S.leftParameter + (3 : ℕ))), ∀ (y : Fin (S.leftParameter +
+                (3 : ℕ))),
             S.il y = S.il x + (1 : Fin (n + (3 : ℕ))) ∨ S.il x = S.il y + (1 : Fin (n + (3 : ℕ)))
             ↔ (↑y : ℕ) = (↑x : ℕ) + (1 : ℕ) ∨ (↑x : ℕ) = (↑y : ℕ) + (1 : ℕ))) ) := by
   classical
@@ -648,17 +662,20 @@ private theorem hrightSucc :
       classical
       exact
         ∀ (n : Nat), ∀ (p : P3381T1PolygonBoundary n), ∀ (S : P3544T1DiagonalSplit p), (n + 3
-            = S.u.length + S.v.length + 2) → ((S.left_n + 3 = S.u.length + 2) → ((S.right_n + 3 =
-            S.v.length + 2) → ((∀ (y : Fin (S.right_n + 3)), (S.ir y).val = (S.u.length + 1 +
+            = S.u.length + S.v.length + 2) → ((S.leftParameter + 3 = S.u.length + 2) →
+                ((S.rightParameter + 3 =
+            S.v.length + 2) → ((∀ (y : Fin (S.rightParameter + 3)), (S.ir y).val = (S.u.length + 1 +
             y.val + S.rotation) % (n + 3)) → ((∀ {m : Nat}, ∀ {r : Nat}, ∀ {x : Nat}, ∀
             {y : Nat}, (0 < m) → ((x < m) → ((y < m) → (((r + x) % m = (r + y) % m) → (x = y)))))
             → ((∀ {m : Nat}, ∀ {r : Nat}, ∀ {x : Nat}, (1 < m) → (((r + x) % m + 1) % m = (r + (x
-            + 1)) % m)) → (∀ (x : Fin (S.right_n + (3 : ℕ))), ∀ (y : Fin (S.right_n + (3 : ℕ))),
-            (↑x : ℕ) + (1 : ℕ) < S.right_n + (3 : ℕ) → (((↑(S.ir x) : ℕ) + (1 : ℕ)) % (n + (3 :
+            + 1)) % m)) → (∀ (x : Fin (S.rightParameter + (3 : ℕ))), ∀ (y : Fin (S.rightParameter
+                + (3 : ℕ))),
+            (↑x : ℕ) + (1 : ℕ) < S.rightParameter + (3 : ℕ) → (((↑(S.ir x) : ℕ) + (1 : ℕ)) % (n +
+                (3 :
             ℕ)) = (↑(S.ir y) : ℕ) ↔ (↑y : ℕ) = (↑x : ℕ) + (1 : ℕ)))))))) ) := by
   classical
   intro n p S hlenP hlenL hlenR hrightcoord hmodShift hmodSucc x y hx
-  have hoff : S.u.length + 1 + (S.right_n + 2) = n + 3 := by omega
+  have hoff : S.u.length + 1 + (S.rightParameter + 2) = n + 3 := by omega
   have hxCoord : (S.ir x).val =
       (S.rotation + (S.u.length + 1 + x.val)) % (n + 3) := by
     simpa [Nat.add_assoc, Nat.add_comm, Nat.add_left_comm] using hrightcoord x
@@ -677,7 +694,7 @@ private theorem hrightSucc :
   · intro h
     have he : (S.rotation + (tx + 1)) % (n + 3) =
         (S.rotation + ty) % (n + 3) := hs.symm.trans h
-    by_cases hyLast : y.val = S.right_n + 2
+    by_cases hyLast : y.val = S.rightParameter + 2
     · have htyM : ty = n + 3 := by dsimp [ty]; omega
       by_cases htxM : tx + 1 = n + 3
       · have hval : y.val = x.val + 1 := by dsimp [tx, ty] at htxM htyM ⊢; omega
@@ -711,36 +728,39 @@ private theorem hrightOrd :
       classical
       exact
         ∀ (n : Nat), ∀ (p : P3381T1PolygonBoundary n), ∀ (S : P3544T1DiagonalSplit p), (n + 3
-            = S.u.length + S.v.length + 2) → ((S.left_n + 3 = S.u.length + 2) → ((S.right_n + 3 =
-            S.v.length + 2) → ((∀ (y : Fin (S.right_n + 3)), (S.ir y).val = (S.u.length + 1 +
+            = S.u.length + S.v.length + 2) → ((S.leftParameter + 3 = S.u.length + 2) →
+                ((S.rightParameter + 3 =
+            S.v.length + 2) → ((∀ (y : Fin (S.rightParameter + 3)), (S.ir y).val = (S.u.length + 1 +
             y.val + S.rotation) % (n + 3)) → ((∀ {m : Nat}, ∀ {r : Nat}, ∀ {x : Nat}, ∀
             {y : Nat}, (0 < m) → ((x < m) → ((y < m) → (((r + x) % m = (r + y) % m) → (x = y)))))
             → ((∀ {m : Nat}, ∀ {r : Nat}, ∀ {x : Nat}, (1 < m) → (((r + x) % m + 1) % m = (r + (x
             + 1)) % m)) → ((∀ (z : Fin (n + 3)), (z + 1).val = (z.val + 1) % (n + 3)) → ((∀ (x :
-            Fin (S.right_n + 3)), ∀ (y : Fin (S.right_n + 3)), (x.val + 1 < S.right_n + 3) →
+            Fin (S.rightParameter + 3)), ∀ (y : Fin (S.rightParameter + 3)), (x.val + 1 <
+                S.rightParameter + 3) →
             (((S.ir x).val + 1) % (n + 3) = (S.ir y).val ↔ y.val = x.val + 1)) → (∀ (x : Fin
-            (S.right_n + (3 : ℕ))), ∀ (y : Fin (S.right_n + (3 : ℕ))), x ≠ y → (S.ir y = S.ir x +
+            (S.rightParameter + (3 : ℕ))), ∀ (y : Fin (S.rightParameter + (3 : ℕ))), x ≠ y →
+                (S.ir y = S.ir x +
             (1 : Fin (n + (3 : ℕ))) ∨ S.ir x = S.ir y + (1 : Fin (n + (3 : ℕ))) ↔ (↑y : ℕ) = (↑x
             : ℕ) + (1 : ℕ) ∨ (↑x : ℕ) = (↑y : ℕ) + (1 : ℕ)))))))))) ) := by
   classical
   intro n p S hlenP hlenL hlenR hrightcoord hmodShift hmodSucc hparentSuccVal hrightSucc x y hxy
-  have hxlast : x.val + 1 = S.right_n + 3 ∨ x.val + 1 < S.right_n + 3 := by omega
-  have hylast : y.val + 1 = S.right_n + 3 ∨ y.val + 1 < S.right_n + 3 := by omega
+  have hxlast : x.val + 1 = S.rightParameter + 3 ∨ x.val + 1 < S.rightParameter + 3 := by omega
+  have hylast : y.val + 1 = S.rightParameter + 3 ∨ y.val + 1 < S.rightParameter + 3 := by omega
   constructor
   · rintro (h | h)
     · have hv := congrArg Fin.val h
       rw [hparentSuccVal] at hv
       rcases hxlast with hxlast | hxlt
-      · have hylt : y.val + 1 < S.right_n + 3 := by
+      · have hylt : y.val + 1 < S.rightParameter + 3 := by
           rcases hylast with hylast | hylt
           · exfalso; exact hxy (Fin.ext (by omega))
           · exact hylt
-        have hM : S.u.length + 1 + (S.right_n + 2) = n + 3 := by omega
+        have hM : S.u.length + 1 + (S.rightParameter + 2) = n + 3 := by omega
         have hxEndCoord : (S.ir x).val = S.rotation % (n + 3) := by
-          have hxl : x.val = S.right_n + 2 := by omega
+          have hxl : x.val = S.rightParameter + 2 := by omega
           rw [hrightcoord, hxl]
           calc
-            (S.u.length + 1 + (S.right_n + 2) + S.rotation) % (n + 3) =
+            (S.u.length + 1 + (S.rightParameter + 2) + S.rotation) % (n + 3) =
                 ((n + 3) + S.rotation) % (n + 3) := by rw [hM]
             _ = S.rotation % (n + 3) := by
               rw [Nat.add_mod, Nat.mod_self, zero_add]
@@ -764,12 +784,12 @@ private theorem hrightOrd :
       rcases hylast with hylast | hylt
       · rcases hxlast with hxlast | hxlt
         · exfalso; exact hxy.symm (Fin.ext (by omega))
-        · have hM : S.u.length + 1 + (S.right_n + 2) = n + 3 := by omega
+        · have hM : S.u.length + 1 + (S.rightParameter + 2) = n + 3 := by omega
           have hyEndCoord : (S.ir y).val = S.rotation % (n + 3) := by
-            have hyl : y.val = S.right_n + 2 := by omega
+            have hyl : y.val = S.rightParameter + 2 := by omega
             rw [hrightcoord, hyl]
             calc
-              (S.u.length + 1 + (S.right_n + 2) + S.rotation) % (n + 3) =
+              (S.u.length + 1 + (S.rightParameter + 2) + S.rotation) % (n + 3) =
                   ((n + 3) + S.rotation) % (n + 3) := by rw [hM]
             _ = S.rotation % (n + 3) := by
               rw [Nat.add_mod, Nat.mod_self, zero_add]
@@ -789,13 +809,13 @@ private theorem hrightOrd :
           omega
       · exact Or.inr (hrightSucc y x hylt |>.mp hv.symm)
   · rintro (h | h)
-    · have hxlt : x.val + 1 < S.right_n + 3 := by omega
+    · have hxlt : x.val + 1 < S.rightParameter + 3 := by omega
       have hv := (hrightSucc x y hxlt).mpr h
       left
       apply Fin.ext
       rw [hparentSuccVal]
       exact hv.symm
-    · have hylt : y.val + 1 < S.right_n + 3 := by omega
+    · have hylt : y.val + 1 < S.rightParameter + 3 := by omega
       have hv := (hrightSucc y x hylt).mpr h
       right
       apply Fin.ext
@@ -807,33 +827,36 @@ private theorem hleftWrap :
       classical
       exact
         ∀ (n : Nat), ∀ (p : P3381T1PolygonBoundary n), ∀ (S : P3544T1DiagonalSplit p), (S.il
-            (0 : Fin (S.left_n + 3)) = S.a) → ((S.il (Fin.last (S.left_n + 2)) = S.b) → (∀ (x :
-            Fin (S.left_n + (3 : ℕ))), ∀ (y : Fin (S.left_n + (3 : ℕ))), (↑x : ℕ) + (1 : ℕ) =
-            S.left_n + (3 : ℕ) ∧ (↑y : ℕ) = (0 : ℕ) ∨ (↑y : ℕ) + (1 : ℕ) = S.left_n + (3 : ℕ) ∧
+            (0 : Fin (S.leftParameter + 3)) = S.a) → ((S.il (Fin.last (S.leftParameter + 2)) =
+                S.b) → (∀ (x :
+            Fin (S.leftParameter + (3 : ℕ))), ∀ (y : Fin (S.leftParameter + (3 : ℕ))), (↑x : ℕ) +
+                (1 : ℕ) =
+            S.leftParameter + (3 : ℕ) ∧ (↑y : ℕ) = (0 : ℕ) ∨ (↑y : ℕ) + (1 : ℕ) = S.leftParameter
+                + (3 : ℕ) ∧
             (↑x : ℕ) = (0 : ℕ) ↔ S.il x = S.b ∧ S.il y = S.a ∨ S.il y = S.b ∧ S.il x = S.a)) ) := by
   classical
   intro n p S hleftA hleftB x y
   constructor
   · rintro (h | h)
-    · have hx : x = Fin.last (S.left_n + 2) := by
+    · have hx : x = Fin.last (S.leftParameter + 2) := by
         apply Fin.ext
         simp only [Fin.val_last]
         omega
       have hy : y = 0 := Fin.ext (by simpa only [Fin.val_zero] using h.2)
       exact Or.inl ⟨by rw [hx, hleftB], by rw [hy, hleftA]⟩
-    · have hy : y = Fin.last (S.left_n + 2) := by
+    · have hy : y = Fin.last (S.leftParameter + 2) := by
         apply Fin.ext
         simp only [Fin.val_last]
         omega
       have hx : x = 0 := Fin.ext (by simpa only [Fin.val_zero] using h.2)
       exact Or.inr ⟨by rw [hy, hleftB], by rw [hx, hleftA]⟩
   · rintro (h | h)
-    · have hx : x = Fin.last (S.left_n + 2) := S.il_injective (h.1.trans hleftB.symm)
+    · have hx : x = Fin.last (S.leftParameter + 2) := S.il_injective (h.1.trans hleftB.symm)
       have hy : y = 0 := S.il_injective (h.2.trans hleftA.symm)
       subst x
       subst y
       exact Or.inl ⟨by simp, by simp⟩
-    · have hy : y = Fin.last (S.left_n + 2) := S.il_injective (h.1.trans hleftB.symm)
+    · have hy : y = Fin.last (S.leftParameter + 2) := S.il_injective (h.1.trans hleftB.symm)
       have hx : x = 0 := S.il_injective (h.2.trans hleftA.symm)
       subst x
       subst y
@@ -846,13 +869,18 @@ private theorem hleftAdj :
         ∀ (n : Nat), ∀ (p : P3381T1PolygonBoundary n), ∀ (S : P3544T1DiagonalSplit p), (∀
             {m : Nat}, ∀ (x : Fin (m + 3)), ∀ (y : Fin (m + 3)), (y = x + 1 ∨ x = y + 1) ↔ (y.val
             = x.val + 1 ∨ x.val = y.val + 1 ∨ (x.val + 1 = m + 3 ∧ y.val = 0) ∨ (y.val + 1 = m +
-            3 ∧ x.val = 0))) → ((∀ (x : Fin (S.left_n + 3)), ∀ (y : Fin (S.left_n + 3)), (S.il y
+            3 ∧ x.val = 0))) → ((∀ (x : Fin (S.leftParameter + 3)), ∀ (y : Fin (S.leftParameter +
+                3)), (S.il y
             = S.il x + 1 ∨ S.il x = S.il y + 1) ↔ (y.val = x.val + 1 ∨ x.val = y.val + 1)) → ((∀
-            (x : Fin (S.left_n + 3)), ∀ (y : Fin (S.left_n + 3)), ((x.val + 1 = S.left_n + 3 ∧
-            y.val = 0) ∨ (y.val + 1 = S.left_n + 3 ∧ x.val = 0)) ↔ ((S.il x = S.b ∧ S.il y = S.a)
-            ∨ (S.il y = S.b ∧ S.il x = S.a))) → (∀ (x : Fin (S.left_n + (3 : ℕ))), ∀ (y : Fin
-            (S.left_n + (3 : ℕ))), y = x + (1 : Fin (S.left_n + (3 : ℕ))) ∨ x = y + (1 : Fin
-            (S.left_n + (3 : ℕ))) ↔ (S.il y = S.il x + (1 : Fin (n + (3 : ℕ))) ∨ S.il x = S.il y
+            (x : Fin (S.leftParameter + 3)), ∀ (y : Fin (S.leftParameter + 3)), ((x.val + 1 =
+                S.leftParameter + 3 ∧
+            y.val = 0) ∨ (y.val + 1 = S.leftParameter + 3 ∧ x.val = 0)) ↔ ((S.il x = S.b ∧ S.il y
+                = S.a)
+            ∨ (S.il y = S.b ∧ S.il x = S.a))) → (∀ (x : Fin (S.leftParameter + (3 : ℕ))), ∀ (y : Fin
+            (S.leftParameter + (3 : ℕ))), y = x + (1 : Fin (S.leftParameter + (3 : ℕ))) ∨ x = y +
+                (1 : Fin
+            (S.leftParameter + (3 : ℕ))) ↔ (S.il y = S.il x + (1 : Fin (n + (3 : ℕ))) ∨ S.il x =
+                S.il y
             + (1 : Fin (n + (3 : ℕ)))) ∨ S.il x = S.a ∧ S.il y = S.b ∨ S.il y = S.a ∧ S.il x =
             S.b))) ) := by
   classical
@@ -865,33 +893,36 @@ private theorem hrightWrap :
       classical
       exact
         ∀ (n : Nat), ∀ (p : P3381T1PolygonBoundary n), ∀ (S : P3544T1DiagonalSplit p), (S.ir
-            (0 : Fin (S.right_n + 3)) = S.b) → ((S.ir (Fin.last (S.right_n + 2)) = S.a) → (∀ (x :
-            Fin (S.right_n + (3 : ℕ))), ∀ (y : Fin (S.right_n + (3 : ℕ))), (↑x : ℕ) + (1 : ℕ) =
-            S.right_n + (3 : ℕ) ∧ (↑y : ℕ) = (0 : ℕ) ∨ (↑y : ℕ) + (1 : ℕ) = S.right_n + (3 : ℕ) ∧
+            (0 : Fin (S.rightParameter + 3)) = S.b) → ((S.ir (Fin.last (S.rightParameter + 2)) =
+                S.a) → (∀ (x :
+            Fin (S.rightParameter + (3 : ℕ))), ∀ (y : Fin (S.rightParameter + (3 : ℕ))), (↑x : ℕ)
+                + (1 : ℕ) =
+            S.rightParameter + (3 : ℕ) ∧ (↑y : ℕ) = (0 : ℕ) ∨ (↑y : ℕ) + (1 : ℕ) =
+                S.rightParameter + (3 : ℕ) ∧
             (↑x : ℕ) = (0 : ℕ) ↔ S.ir x = S.a ∧ S.ir y = S.b ∨ S.ir y = S.a ∧ S.ir x = S.b)) ) := by
   classical
   intro n p S hrightB hrightA x y
   constructor
   · rintro (h | h)
-    · have hx : x = Fin.last (S.right_n + 2) := by
+    · have hx : x = Fin.last (S.rightParameter + 2) := by
         apply Fin.ext
         simp only [Fin.val_last]
         omega
       have hy : y = 0 := Fin.ext (by simpa only [Fin.val_zero] using h.2)
       exact Or.inl ⟨by rw [hx, hrightA], by rw [hy, hrightB]⟩
-    · have hy : y = Fin.last (S.right_n + 2) := by
+    · have hy : y = Fin.last (S.rightParameter + 2) := by
         apply Fin.ext
         simp only [Fin.val_last]
         omega
       have hx : x = 0 := Fin.ext (by simpa only [Fin.val_zero] using h.2)
       exact Or.inr ⟨by rw [hy, hrightA], by rw [hx, hrightB]⟩
   · rintro (h | h)
-    · have hx : x = Fin.last (S.right_n + 2) := S.ir_injective (h.1.trans hrightA.symm)
+    · have hx : x = Fin.last (S.rightParameter + 2) := S.ir_injective (h.1.trans hrightA.symm)
       have hy : y = 0 := S.ir_injective (h.2.trans hrightB.symm)
       subst x
       subst y
       exact Or.inl ⟨by simp, by simp⟩
-    · have hy : y = Fin.last (S.right_n + 2) := S.ir_injective (h.1.trans hrightA.symm)
+    · have hy : y = Fin.last (S.rightParameter + 2) := S.ir_injective (h.1.trans hrightA.symm)
       have hx : x = 0 := S.ir_injective (h.2.trans hrightB.symm)
       subst x
       subst y
@@ -904,13 +935,19 @@ private theorem hrightAdj :
         ∀ (n : Nat), ∀ (p : P3381T1PolygonBoundary n), ∀ (S : P3544T1DiagonalSplit p), (∀
             {m : Nat}, ∀ (x : Fin (m + 3)), ∀ (y : Fin (m + 3)), (y = x + 1 ∨ x = y + 1) ↔ (y.val
             = x.val + 1 ∨ x.val = y.val + 1 ∨ (x.val + 1 = m + 3 ∧ y.val = 0) ∨ (y.val + 1 = m +
-            3 ∧ x.val = 0))) → ((∀ (x : Fin (S.right_n + 3)), ∀ (y : Fin (S.right_n + 3)), (x ≠
+            3 ∧ x.val = 0))) → ((∀ (x : Fin (S.rightParameter + 3)), ∀ (y : Fin (S.rightParameter
+                + 3)), (x ≠
             y) → ((S.ir y = S.ir x + 1 ∨ S.ir x = S.ir y + 1) ↔ (y.val = x.val + 1 ∨ x.val =
-            y.val + 1))) → ((∀ (x : Fin (S.right_n + 3)), ∀ (y : Fin (S.right_n + 3)), ((x.val +
-            1 = S.right_n + 3 ∧ y.val = 0) ∨ (y.val + 1 = S.right_n + 3 ∧ x.val = 0)) ↔ ((S.ir x
-            = S.a ∧ S.ir y = S.b) ∨ (S.ir y = S.a ∧ S.ir x = S.b))) → (∀ (x : Fin (S.right_n + (3
-            : ℕ))), ∀ (y : Fin (S.right_n + (3 : ℕ))), x ≠ y → (y = x + (1 : Fin (S.right_n + (3
-            : ℕ))) ∨ x = y + (1 : Fin (S.right_n + (3 : ℕ))) ↔ (S.ir y = S.ir x + (1 : Fin (n +
+            y.val + 1))) → ((∀ (x : Fin (S.rightParameter + 3)), ∀ (y : Fin (S.rightParameter +
+                3)), ((x.val +
+            1 = S.rightParameter + 3 ∧ y.val = 0) ∨ (y.val + 1 = S.rightParameter + 3 ∧ x.val =
+                0)) ↔ ((S.ir x
+            = S.a ∧ S.ir y = S.b) ∨ (S.ir y = S.a ∧ S.ir x = S.b))) → (∀ (x : Fin
+                (S.rightParameter + (3
+            : ℕ))), ∀ (y : Fin (S.rightParameter + (3 : ℕ))), x ≠ y → (y = x + (1 : Fin
+                (S.rightParameter + (3
+            : ℕ))) ∨ x = y + (1 : Fin (S.rightParameter + (3 : ℕ))) ↔ (S.ir y = S.ir x + (1 : Fin
+                (n +
             (3 : ℕ))) ∨ S.ir x = S.ir y + (1 : Fin (n + (3 : ℕ)))) ∨ S.ir x = S.a ∧ S.ir y = S.b
             ∨ S.ir y = S.a ∧ S.ir x = S.b)))) ) := by
   classical
@@ -944,16 +981,22 @@ private theorem hcrossNoAdj :
       classical
       exact
         ∀ (n : Nat), ∀ (p : P3381T1PolygonBoundary n), ∀ (S : P3544T1DiagonalSplit p), (n + 3
-            = S.u.length + S.v.length + 2) → ((S.left_n + 3 = S.u.length + 2) → ((S.right_n + 3 =
-            S.v.length + 2) → ((∀ (x : Fin (S.left_n + 3)), (S.il x).val = (x.val + S.rotation) %
-            (n + 3)) → ((∀ (y : Fin (S.right_n + 3)), (S.ir y).val = (S.u.length + 1 + y.val +
+            = S.u.length + S.v.length + 2) → ((S.leftParameter + 3 = S.u.length + 2) →
+                ((S.rightParameter + 3 =
+            S.v.length + 2) → ((∀ (x : Fin (S.leftParameter + 3)), (S.il x).val = (x.val +
+                S.rotation) %
+            (n + 3)) → ((∀ (y : Fin (S.rightParameter + 3)), (S.ir y).val = (S.u.length + 1 +
+                y.val +
             S.rotation) % (n + 3)) → ((∀ {m : Nat}, ∀ {r : Nat}, ∀ {x : Nat}, ∀ {y : Nat}, (0 <
             m) → ((x < m) → ((y < m) → (((r + x) % m = (r + y) % m) → (x = y))))) → ((∀
             {m : Nat}, ∀ {r : Nat}, ∀ {x : Nat}, (1 < m) → (((r + x) % m + 1) % m = (r + (x + 1))
-            % m)) → ((S.il (0 : Fin (S.left_n + 3)) = S.a) → ((S.il (Fin.last (S.left_n + 2)) =
-            S.b) → ((S.ir (0 : Fin (S.right_n + 3)) = S.b) → ((S.ir (Fin.last (S.right_n + 2)) =
+            % m)) → ((S.il (0 : Fin (S.leftParameter + 3)) = S.a) → ((S.il (Fin.last
+                (S.leftParameter + 2)) =
+            S.b) → ((S.ir (0 : Fin (S.rightParameter + 3)) = S.b) → ((S.ir (Fin.last
+                (S.rightParameter + 2)) =
             S.a) → ((∀ (z : Fin (n + 3)), (z + 1).val = (z.val + 1) % (n + 3)) → (∀ (x : Fin
-            (S.left_n + (3 : ℕ))), ∀ (y : Fin (S.right_n + (3 : ℕ))), S.il x ∉ Set.range S.ir →
+            (S.leftParameter + (3 : ℕ))), ∀ (y : Fin (S.rightParameter + (3 : ℕ))), S.il x ∉
+                Set.range S.ir →
             S.ir y ∉ Set.range S.il → ¬(S.ir y = S.il x + (1 : Fin (n + (3 : ℕ))) ∨ S.il x = S.ir
             y + (1 : Fin (n + (3 : ℕ)))))))))))))))) ) := by
   classical
@@ -964,11 +1007,11 @@ private theorem hcrossNoAdj :
     apply hxNot
     have hx' : x = 0 := Fin.ext (by simpa only [Fin.val_zero] using hx)
     rw [hx', hleftA]
-    exact ⟨Fin.last (S.right_n + 2), hrightA⟩
-  have hxlast : x.val ≠ S.left_n + 2 := by
+    exact ⟨Fin.last (S.rightParameter + 2), hrightA⟩
+  have hxlast : x.val ≠ S.leftParameter + 2 := by
     intro hx
     apply hxNot
-    have hx' : x = Fin.last (S.left_n + 2) := by
+    have hx' : x = Fin.last (S.leftParameter + 2) := by
       apply Fin.ext
       simp only [Fin.val_last]
       omega
@@ -982,11 +1025,11 @@ private theorem hcrossNoAdj :
     apply hyNot
     have hy' : y = 0 := Fin.ext (by simpa only [Fin.val_zero] using hy)
     rw [hy', hrightB]
-    exact ⟨Fin.last (S.left_n + 2), hleftB⟩
-  have hylast : y.val ≠ S.right_n + 2 := by
+    exact ⟨Fin.last (S.leftParameter + 2), hleftB⟩
+  have hylast : y.val ≠ S.rightParameter + 2 := by
     intro hy
     apply hyNot
-    have hy' : y = Fin.last (S.right_n + 2) := by
+    have hy' : y = Fin.last (S.rightParameter + 2) := by
       apply Fin.ext
       simp only [Fin.val_last]
       omega
@@ -1048,8 +1091,10 @@ private theorem hparentPairCover :
       classical
       exact
         ∀ (n : Nat), ∀ (p : P3381T1PolygonBoundary n), ∀ (S : P3544T1DiagonalSplit p), (∀ (i
-            : Fin (n + 3)), i ∈ Set.range S.il ∨ i ∈ Set.range S.ir) → ((∀ (x : Fin (S.left_n +
-            3)), ∀ (y : Fin (S.right_n + 3)), (S.il x ∉ Set.range S.ir) → ((S.ir y ∉ Set.range
+            : Fin (n + 3)), i ∈ Set.range S.il ∨ i ∈ Set.range S.ir) → ((∀ (x : Fin
+                (S.leftParameter +
+            3)), ∀ (y : Fin (S.rightParameter + 3)), (S.il x ∉ Set.range S.ir) → ((S.ir y ∉
+                Set.range
             S.il) → (¬(S.ir y = S.il x + 1 ∨ S.il x = S.ir y + 1)))) → (∀ (i : Fin (n + (3 :
             ℕ))), ∀ (j : Fin (n + (3 : ℕ))), j = i + (1 : Fin (n + (3 : ℕ))) ∨ i = j + (1 : Fin
             (n + (3 : ℕ))) → i ∈ Set.range S.il ∧ j ∈ Set.range S.il ∨ i ∈ Set.range S.ir ∧ j ∈
@@ -1086,8 +1131,10 @@ private theorem hdiagPair :
       classical
       exact
         ∀ (n : Nat), ∀ (p : P3381T1PolygonBoundary n), ∀ (S : P3544T1DiagonalSplit p), (S.il
-            (0 : Fin (S.left_n + 3)) = S.a) → ((S.il (Fin.last (S.left_n + 2)) = S.b) → ((S.ir (0
-            : Fin (S.right_n + 3)) = S.b) → ((S.ir (Fin.last (S.right_n + 2)) = S.a) → (∀ (i :
+            (0 : Fin (S.leftParameter + 3)) = S.a) → ((S.il (Fin.last (S.leftParameter + 2)) =
+                S.b) → ((S.ir (0
+            : Fin (S.rightParameter + 3)) = S.b) → ((S.ir (Fin.last (S.rightParameter + 2)) =
+                S.a) → (∀ (i :
             Fin (n + (3 : ℕ))), ∀ (j : Fin (n + (3 : ℕ))), i ≠ j → (i ∈ Set.range S.il ∧ i ∈
             Set.range S.ir ∧ j ∈ Set.range S.il ∧ j ∈ Set.range S.ir ↔ i = S.a ∧ j = S.b ∨ i =
             S.b ∧ j = S.a))))) ) := by
@@ -1113,10 +1160,10 @@ private theorem hdiagPair :
       subst j
       exact False.elim (hij rfl)
   · rintro (⟨rfl, rfl⟩ | ⟨rfl, rfl⟩)
-    · exact ⟨⟨0, hleftA⟩, ⟨Fin.last (S.right_n + 2), hrightA⟩,
-        ⟨Fin.last (S.left_n + 2), hleftB⟩, ⟨0, hrightB⟩⟩
-    · exact ⟨⟨Fin.last (S.left_n + 2), hleftB⟩, ⟨0, hrightB⟩,
-        ⟨0, hleftA⟩, ⟨Fin.last (S.right_n + 2), hrightA⟩⟩
+    · exact ⟨⟨0, hleftA⟩, ⟨Fin.last (S.rightParameter + 2), hrightA⟩,
+        ⟨Fin.last (S.leftParameter + 2), hleftB⟩, ⟨0, hrightB⟩⟩
+    · exact ⟨⟨Fin.last (S.leftParameter + 2), hleftB⟩, ⟨0, hrightB⟩,
+        ⟨0, hleftA⟩, ⟨Fin.last (S.rightParameter + 2), hrightA⟩⟩
 
 private theorem hleftCountImage :
     (by
@@ -1124,9 +1171,11 @@ private theorem hleftCountImage :
       exact
         ∀ (n : Nat), ∀ (p : P3381T1PolygonBoundary n), ∀ (S : P3544T1DiagonalSplit p), ∀ (XL
             : Set (Real × Real)), ∀ (L : P3511T1SourceDissection S.left XL), ∀ (x : Fin
-            (S.left_n + (3 : ℕ))), ∀ (y : Fin (S.left_n + (3 : ℕ))), x ≠ y → {k : Fin L.count |
+            (S.leftParameter + (3 : ℕ))), ∀ (y : Fin (S.leftParameter + (3 : ℕ))), x ≠ y → {k :
+                Fin L.count |
             S.il x ∈ Set.range (S.il ∘ L.face k) ∧ S.il y ∈ Set.range (S.il ∘ L.face k)}.ncard =
-            if y = x + (1 : Fin (S.left_n + (3 : ℕ))) ∨ x = y + (1 : Fin (S.left_n + (3 : ℕ)))
+            if y = x + (1 : Fin (S.leftParameter + (3 : ℕ))) ∨ x = y + (1 : Fin (S.leftParameter
+                + (3 : ℕ)))
             then (1 : ℕ) else if ∃ (k : Fin L.count), x ∈ Set.range (L.face k) ∧ y ∈ Set.range
             (L.face k) then (2 : ℕ) else (0 : ℕ) ) := by
   classical
@@ -1163,9 +1212,11 @@ private theorem hrightCountImage :
       exact
         ∀ (n : Nat), ∀ (p : P3381T1PolygonBoundary n), ∀ (S : P3544T1DiagonalSplit p), ∀ (XR
             : Set (Real × Real)), ∀ (R : P3511T1SourceDissection S.right XR), ∀ (x : Fin
-            (S.right_n + (3 : ℕ))), ∀ (y : Fin (S.right_n + (3 : ℕ))), x ≠ y → {k : Fin R.count |
+            (S.rightParameter + (3 : ℕ))), ∀ (y : Fin (S.rightParameter + (3 : ℕ))), x ≠ y → {k :
+                Fin R.count |
             S.ir x ∈ Set.range (S.ir ∘ R.face k) ∧ S.ir y ∈ Set.range (S.ir ∘ R.face k)}.ncard =
-            if y = x + (1 : Fin (S.right_n + (3 : ℕ))) ∨ x = y + (1 : Fin (S.right_n + (3 : ℕ)))
+            if y = x + (1 : Fin (S.rightParameter + (3 : ℕ))) ∨ x = y + (1 : Fin
+                (S.rightParameter + (3 : ℕ)))
             then (1 : ℕ) else if ∃ (k : Fin R.count), x ∈ Set.range (R.face k) ∧ y ∈ Set.range
             (R.face k) then (2 : ℕ) else (0 : ℕ) ) := by
   classical
@@ -1282,7 +1333,8 @@ private theorem hleftFaceMem :
       exact
         ∀ (n : Nat), ∀ (p : P3381T1PolygonBoundary n), ∀ (S : P3544T1DiagonalSplit p), ∀ (XL
             : Set (Real × Real)), ∀ (L : P3511T1SourceDissection S.left XL), ∀ (x : Fin
-            (S.left_n + (3 : ℕ))), ∀ (k : Fin L.count), S.il x ∈ Set.range (S.il ∘ L.face k) ↔ x
+            (S.leftParameter + (3 : ℕ))), ∀ (k : Fin L.count), S.il x ∈ Set.range (S.il ∘ L.face
+                k) ↔ x
             ∈ Set.range (L.face k) ) := by
   classical
   intro n p S XL L x k
@@ -1299,7 +1351,8 @@ private theorem hrightFaceMem :
       exact
         ∀ (n : Nat), ∀ (p : P3381T1PolygonBoundary n), ∀ (S : P3544T1DiagonalSplit p), ∀ (XR
             : Set (Real × Real)), ∀ (R : P3511T1SourceDissection S.right XR), ∀ (x : Fin
-            (S.right_n + (3 : ℕ))), ∀ (k : Fin R.count), S.ir x ∈ Set.range (S.ir ∘ R.face k) ↔ x
+            (S.rightParameter + (3 : ℕ))), ∀ (k : Fin R.count), S.ir x ∈ Set.range (S.ir ∘ R.face
+                k) ↔ x
             ∈ Set.range (R.face k) ) := by
   classical
   intro n p S XR R x k
@@ -1316,8 +1369,9 @@ private theorem hleftUsedMap :
       exact
         ∀ (n : Nat), ∀ (p : P3381T1PolygonBoundary n), ∀ (S : P3544T1DiagonalSplit p), ∀ (XL
             : Set (Real × Real)), ∀ (L : P3511T1SourceDissection S.left XL), (∀ (x : Fin
-            (S.left_n + 3)), ∀ (k : Fin L.count), S.il x ∈ Set.range (S.il ∘ L.face k) ↔ x ∈
-            Set.range (L.face k)) → (∀ (x : Fin (S.left_n + (3 : ℕ))), ∀ (y : Fin (S.left_n + (3
+            (S.leftParameter + 3)), ∀ (k : Fin L.count), S.il x ∈ Set.range (S.il ∘ L.face k) ↔ x ∈
+            Set.range (L.face k)) → (∀ (x : Fin (S.leftParameter + (3 : ℕ))), ∀ (y : Fin
+                (S.leftParameter + (3
             : ℕ))), (∃ (k : Fin L.count), x ∈ Set.range (L.face k) ∧ y ∈ Set.range (L.face k)) ↔
             ∃ (k : Fin L.count), S.il x ∈ Set.range (S.il ∘ L.face k) ∧ S.il y ∈ Set.range (S.il
             ∘ L.face k)) ) := by
@@ -1335,8 +1389,9 @@ private theorem hrightUsedMap :
       exact
         ∀ (n : Nat), ∀ (p : P3381T1PolygonBoundary n), ∀ (S : P3544T1DiagonalSplit p), ∀ (XR
             : Set (Real × Real)), ∀ (R : P3511T1SourceDissection S.right XR), (∀ (x : Fin
-            (S.right_n + 3)), ∀ (k : Fin R.count), S.ir x ∈ Set.range (S.ir ∘ R.face k) ↔ x ∈
-            Set.range (R.face k)) → (∀ (x : Fin (S.right_n + (3 : ℕ))), ∀ (y : Fin (S.right_n +
+            (S.rightParameter + 3)), ∀ (k : Fin R.count), S.ir x ∈ Set.range (S.ir ∘ R.face k) ↔ x ∈
+            Set.range (R.face k)) → (∀ (x : Fin (S.rightParameter + (3 : ℕ))), ∀ (y : Fin
+                (S.rightParameter +
             (3 : ℕ))), (∃ (k : Fin R.count), x ∈ Set.range (R.face k) ∧ y ∈ Set.range (R.face k))
             ↔ ∃ (k : Fin R.count), S.ir x ∈ Set.range (S.ir ∘ R.face k) ∧ S.ir y ∈ Set.range
             (S.ir ∘ R.face k)) ) := by
@@ -1354,13 +1409,16 @@ private theorem hleftCountMapped :
       exact
         ∀ (n : Nat), ∀ (p : P3381T1PolygonBoundary n), ∀ (S : P3544T1DiagonalSplit p), ∀ (XL
             : Set (Real × Real)), ∀ (L : P3511T1SourceDissection S.left XL), (∀ (x : Fin
-            (S.left_n + 3)), ∀ (y : Fin (S.left_n + 3)), (y = x + 1 ∨ x = y + 1) ↔ (S.il y = S.il
+            (S.leftParameter + 3)), ∀ (y : Fin (S.leftParameter + 3)), (y = x + 1 ∨ x = y + 1) ↔
+                (S.il y = S.il
             x + 1 ∨ S.il x = S.il y + 1) ∨ (S.il x = S.a ∧ S.il y = S.b) ∨ (S.il y = S.a ∧ S.il x
-            = S.b)) → ((∀ (x : Fin (S.left_n + 3)), ∀ (y : Fin (S.left_n + 3)), (x ≠ y) →
+            = S.b)) → ((∀ (x : Fin (S.leftParameter + 3)), ∀ (y : Fin (S.leftParameter + 3)), (x
+                ≠ y) →
             (Set.ncard {k : Fin L.count | S.il x ∈ Set.range (S.il ∘ L.face k) ∧ S.il y ∈
             Set.range (S.il ∘ L.face k)} = if y = x + 1 ∨ x = y + 1 then 1 else if ∃ k, x ∈
             Set.range (L.face k) ∧ y ∈ Set.range (L.face k) then 2 else 0)) → ((∀ (x : Fin
-            (S.left_n + 3)), ∀ (y : Fin (S.left_n + 3)), (∃ k : Fin L.count, x ∈ Set.range
+            (S.leftParameter + 3)), ∀ (y : Fin (S.leftParameter + 3)), (∃ k : Fin L.count, x ∈
+                Set.range
             (L.face k) ∧ y ∈ Set.range (L.face k)) ↔ (∃ k : Fin L.count, S.il x ∈ Set.range (S.il
             ∘ L.face k) ∧ S.il y ∈ Set.range (S.il ∘ L.face k))) → (∀ (i : Fin (n + (3 : ℕ))), ∀
             (j : Fin (n + (3 : ℕ))), i ∈ Set.range S.il → j ∈ Set.range S.il → i ≠ j → {k : Fin
@@ -1387,13 +1445,16 @@ private theorem hrightCountMapped :
       exact
         ∀ (n : Nat), ∀ (p : P3381T1PolygonBoundary n), ∀ (S : P3544T1DiagonalSplit p), ∀ (XR
             : Set (Real × Real)), ∀ (R : P3511T1SourceDissection S.right XR), (∀ (x : Fin
-            (S.right_n + 3)), ∀ (y : Fin (S.right_n + 3)), (x ≠ y) → ((y = x + 1 ∨ x = y + 1) ↔
+            (S.rightParameter + 3)), ∀ (y : Fin (S.rightParameter + 3)), (x ≠ y) → ((y = x + 1 ∨
+                x = y + 1) ↔
             (S.ir y = S.ir x + 1 ∨ S.ir x = S.ir y + 1) ∨ (S.ir x = S.a ∧ S.ir y = S.b) ∨ (S.ir y
-            = S.a ∧ S.ir x = S.b))) → ((∀ (x : Fin (S.right_n + 3)), ∀ (y : Fin (S.right_n + 3)),
+            = S.a ∧ S.ir x = S.b))) → ((∀ (x : Fin (S.rightParameter + 3)), ∀ (y : Fin
+                (S.rightParameter + 3)),
             (x ≠ y) → (Set.ncard {k : Fin R.count | S.ir x ∈ Set.range (S.ir ∘ R.face k) ∧ S.ir y
             ∈ Set.range (S.ir ∘ R.face k)} = if y = x + 1 ∨ x = y + 1 then 1 else if ∃ k, x ∈
             Set.range (R.face k) ∧ y ∈ Set.range (R.face k) then 2 else 0)) → ((∀ (x : Fin
-            (S.right_n + 3)), ∀ (y : Fin (S.right_n + 3)), (∃ k : Fin R.count, x ∈ Set.range
+            (S.rightParameter + 3)), ∀ (y : Fin (S.rightParameter + 3)), (∃ k : Fin R.count, x ∈
+                Set.range
             (R.face k) ∧ y ∈ Set.range (R.face k)) ↔ (∃ k : Fin R.count, S.ir x ∈ Set.range (S.ir
             ∘ R.face k) ∧ S.ir y ∈ Set.range (S.ir ∘ R.face k))) → (∀ (i : Fin (n + (3 : ℕ))), ∀
             (j : Fin (n + (3 : ℕ))), i ∈ Set.range S.ir → j ∈ Set.range S.ir → i ≠ j → {k : Fin
@@ -1475,8 +1536,10 @@ private theorem hnotDiagBoundary :
       classical
       exact
         ∀ (n : Nat), ∀ (p : P3381T1PolygonBoundary n), ∀ (S : P3544T1DiagonalSplit p), (S.il
-            (0 : Fin (S.left_n + 3)) = S.a) → ((S.il (Fin.last (S.left_n + 2)) = S.b) → ((∀ (x :
-            Fin (S.left_n + 3)), ∀ (y : Fin (S.left_n + 3)), (S.il y = S.il x + 1 ∨ S.il x = S.il
+            (0 : Fin (S.leftParameter + 3)) = S.a) → ((S.il (Fin.last (S.leftParameter + 2)) =
+                S.b) → ((∀ (x :
+            Fin (S.leftParameter + 3)), ∀ (y : Fin (S.leftParameter + 3)), (S.il y = S.il x + 1 ∨
+                S.il x = S.il
             y + 1) ↔ (y.val = x.val + 1 ∨ x.val = y.val + 1)) → (∀ (i : Fin (n + (3 : ℕ))), ∀ (j
             : Fin (n + (3 : ℕ))), i = S.a ∧ j = S.b ∨ j = S.a ∧ i = S.b → ¬(j = i + (1 : Fin (n +
             (3 : ℕ))) ∨ i = j + (1 : Fin (n + (3 : ℕ))))))) ) := by
@@ -1484,22 +1547,24 @@ private theorem hnotDiagBoundary :
   intro n p S hleftA hleftB hleftOrd i j hdiag
   rcases hdiag with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩
   · intro h
-    have hlocal : S.il (Fin.last (S.left_n + 2)) =
-        S.il (0 : Fin (S.left_n + 3)) + 1 ∨
-        S.il (0 : Fin (S.left_n + 3)) =
-          S.il (Fin.last (S.left_n + 2)) + 1 := by
+    have hlocal : S.il (Fin.last (S.leftParameter + 2)) =
+        S.il (0 : Fin (S.leftParameter + 3)) + 1 ∨
+        S.il (0 : Fin (S.leftParameter + 3)) =
+          S.il (Fin.last (S.leftParameter + 2)) + 1 := by
       simpa only [hleftA, hleftB] using h
-    have hnum := (hleftOrd (0 : Fin (S.left_n + 3)) (Fin.last (S.left_n + 2))).mp hlocal
+    have hnum := (hleftOrd (0 : Fin (S.leftParameter + 3)) (Fin.last (S.leftParameter + 2))).mp
+        hlocal
     have hu : 0 < S.u.length := S.hu
     simp only [Fin.val_zero, Fin.val_last] at hnum
     omega
   · intro h
-    have hlocal : S.il (0 : Fin (S.left_n + 3)) =
-        S.il (Fin.last (S.left_n + 2)) + 1 ∨
-        S.il (Fin.last (S.left_n + 2)) =
-          S.il (0 : Fin (S.left_n + 3)) + 1 := by
+    have hlocal : S.il (0 : Fin (S.leftParameter + 3)) =
+        S.il (Fin.last (S.leftParameter + 2)) + 1 ∨
+        S.il (Fin.last (S.leftParameter + 2)) =
+          S.il (0 : Fin (S.leftParameter + 3)) + 1 := by
       simpa only [hleftA, hleftB] using h
-    have hnum := (hleftOrd (Fin.last (S.left_n + 2)) (0 : Fin (S.left_n + 3))).mp hlocal
+    have hnum := (hleftOrd (Fin.last (S.leftParameter + 2)) (0 : Fin (S.leftParameter + 3))).mp
+        hlocal
     have hu : 0 < S.u.length := S.hu
     simp only [Fin.val_zero, Fin.val_last] at hnum
     omega
@@ -2037,13 +2102,16 @@ private theorem hleftOrd :
       classical
       exact
         ∀ (n : Nat), ∀ (p : P3381T1PolygonBoundary n), ∀ (S : P3544T1DiagonalSplit p), (n +
-            (3 : ℕ) = S.u.length + S.v.length + (2 : ℕ)) → ((S.left_n + (3 : ℕ) = S.u.length + (2
-            : ℕ)) → ((S.right_n + (3 : ℕ) = S.v.length + (2 : ℕ)) → ((∀ (x : Fin (S.left_n + (3 :
+            (3 : ℕ) = S.u.length + S.v.length + (2 : ℕ)) → ((S.leftParameter + (3 : ℕ) =
+                S.u.length + (2
+            : ℕ)) → ((S.rightParameter + (3 : ℕ) = S.v.length + (2 : ℕ)) → ((∀ (x : Fin
+                (S.leftParameter + (3 :
             ℕ))), (↑(S.il x) : ℕ) = ((↑x : ℕ) + S.rotation) % (n + (3 : ℕ))) → ((∀ {m : ℕ}, ∀
             {r : ℕ}, ∀ {x : ℕ}, ∀ {y : ℕ}, (0 : ℕ) < m → x < m → y < m → (r + x) % m = (r + y) %
             m → x = y) → ((∀ {m : ℕ}, ∀ {r : ℕ}, ∀ {x : ℕ}, (1 : ℕ) < m → ((r + x) % m + (1 : ℕ))
             % m = (r + (x + (1 : ℕ))) % m) → ((∀ (z : Fin (n + 3)), (z + 1).val = (z.val + 1) %
-            (n + 3)) → (∀ (x : Fin (S.left_n + (3 : ℕ))), ∀ (y : Fin (S.left_n + (3 : ℕ))), S.il
+            (n + 3)) → (∀ (x : Fin (S.leftParameter + (3 : ℕ))), ∀ (y : Fin (S.leftParameter + (3
+                : ℕ))), S.il
             y = S.il x + (1 : Fin (n + (3 : ℕ))) ∨ S.il x = S.il y + (1 : Fin (n + (3 : ℕ))) ↔
             (↑y : ℕ) = (↑x : ℕ) + (1 : ℕ) ∨ (↑x : ℕ) = (↑y : ℕ) + (1 : ℕ)))))))) ) := by
   classical
@@ -2061,9 +2129,12 @@ private theorem hleftCountMapped :
             Fin (m + (3 : ℕ))), ∀ (y : Fin (m + (3 : ℕ))), y = x + (1 : Fin (m + (3 : ℕ))) ∨ x =
             y + (1 : Fin (m + (3 : ℕ))) ↔ (↑y : ℕ) = (↑x : ℕ) + (1 : ℕ) ∨ (↑x : ℕ) = (↑y : ℕ) +
             (1 : ℕ) ∨ (↑x : ℕ) + (1 : ℕ) = m + (3 : ℕ) ∧ (↑y : ℕ) = (0 : ℕ) ∨ (↑y : ℕ) + (1 : ℕ)
-            = m + (3 : ℕ) ∧ (↑x : ℕ) = (0 : ℕ)) → ((S.il (0 : Fin (S.left_n + (3 : ℕ))) = S.a) →
-            ((S.il (Fin.last (S.left_n + (2 : ℕ))) = S.b) → ((∀ (x : Fin (S.left_n + (3 : ℕ))), ∀
-            (y : Fin (S.left_n + (3 : ℕ))), S.il y = S.il x + (1 : Fin (n + (3 : ℕ))) ∨ S.il x =
+            = m + (3 : ℕ) ∧ (↑x : ℕ) = (0 : ℕ)) → ((S.il (0 : Fin (S.leftParameter + (3 : ℕ))) =
+                S.a) →
+            ((S.il (Fin.last (S.leftParameter + (2 : ℕ))) = S.b) → ((∀ (x : Fin (S.leftParameter
+                + (3 : ℕ))), ∀
+            (y : Fin (S.leftParameter + (3 : ℕ))), S.il y = S.il x + (1 : Fin (n + (3 : ℕ))) ∨
+                S.il x =
             S.il y + (1 : Fin (n + (3 : ℕ))) ↔ (↑y : ℕ) = (↑x : ℕ) + (1 : ℕ) ∨ (↑x : ℕ) = (↑y :
             ℕ) + (1 : ℕ)) → (∀ (i : Fin (n + (3 : ℕ))), ∀ (j : Fin (n + (3 : ℕ))), i ∈ Set.range
             S.il → j ∈ Set.range S.il → i ≠ j → {k : Fin L.count | i ∈ Set.range (S.il ∘ L.face
@@ -2085,8 +2156,10 @@ private theorem hrightCountMapped :
       exact
         ∀ (n : Nat), ∀ (p : P3381T1PolygonBoundary n), ∀ (S : P3544T1DiagonalSplit p), ∀ (XR
             : Set (Real × Real)), ∀ (R : P3511T1SourceDissection S.right XR), (n + (3 : ℕ) =
-            S.u.length + S.v.length + (2 : ℕ)) → ((S.left_n + (3 : ℕ) = S.u.length + (2 : ℕ)) →
-            ((S.right_n + (3 : ℕ) = S.v.length + (2 : ℕ)) → ((∀ (y : Fin (S.right_n + (3 : ℕ))),
+            S.u.length + S.v.length + (2 : ℕ)) → ((S.leftParameter + (3 : ℕ) = S.u.length + (2 :
+                ℕ)) →
+            ((S.rightParameter + (3 : ℕ) = S.v.length + (2 : ℕ)) → ((∀ (y : Fin (S.rightParameter
+                + (3 : ℕ))),
             (↑(S.ir y) : ℕ) = (S.u.length + (1 : ℕ) + (↑y : ℕ) + S.rotation) % (n + (3 : ℕ))) →
             ((∀ {m : ℕ}, ∀ {r : ℕ}, ∀ {x : ℕ}, ∀ {y : ℕ}, (0 : ℕ) < m → x < m → y < m → (r + x) %
             m = (r + y) % m → x = y) → ((∀ {m : ℕ}, ∀ {r : ℕ}, ∀ {x : ℕ}, (1 : ℕ) < m → ((r + x)
@@ -2094,8 +2167,9 @@ private theorem hrightCountMapped :
             ℕ))), ∀ (y : Fin (m + (3 : ℕ))), y = x + (1 : Fin (m + (3 : ℕ))) ∨ x = y + (1 : Fin
             (m + (3 : ℕ))) ↔ (↑y : ℕ) = (↑x : ℕ) + (1 : ℕ) ∨ (↑x : ℕ) = (↑y : ℕ) + (1 : ℕ) ∨ (↑x
             : ℕ) + (1 : ℕ) = m + (3 : ℕ) ∧ (↑y : ℕ) = (0 : ℕ) ∨ (↑y : ℕ) + (1 : ℕ) = m + (3 : ℕ)
-            ∧ (↑x : ℕ) = (0 : ℕ)) → ((S.ir (0 : Fin (S.right_n + (3 : ℕ))) = S.b) → ((S.ir
-            (Fin.last (S.right_n + (2 : ℕ))) = S.a) → ((∀ (z : Fin (n + 3)), (z + 1).val = (z.val
+            ∧ (↑x : ℕ) = (0 : ℕ)) → ((S.ir (0 : Fin (S.rightParameter + (3 : ℕ))) = S.b) → ((S.ir
+            (Fin.last (S.rightParameter + (2 : ℕ))) = S.a) → ((∀ (z : Fin (n + 3)), (z + 1).val =
+                (z.val
             + 1) % (n + 3)) → (∀ (i : Fin (n + (3 : ℕ))), ∀ (j : Fin (n + (3 : ℕ))), i ∈
             Set.range S.ir → j ∈ Set.range S.ir → i ≠ j → {k : Fin R.count | i ∈ Set.range (S.ir
             ∘ R.face k) ∧ j ∈ Set.range (S.ir ∘ R.face k)}.ncard = if j = i + (1 : Fin (n + (3 :
@@ -2145,8 +2219,10 @@ private theorem hnotDiagBoundary :
       classical
       exact
         ∀ (n : Nat), ∀ (p : P3381T1PolygonBoundary n), ∀ (S : P3544T1DiagonalSplit p), (S.il
-            (0 : Fin (S.left_n + (3 : ℕ))) = S.a) → ((S.il (Fin.last (S.left_n + (2 : ℕ))) = S.b)
-            → ((∀ (x : Fin (S.left_n + (3 : ℕ))), ∀ (y : Fin (S.left_n + (3 : ℕ))), S.il y = S.il
+            (0 : Fin (S.leftParameter + (3 : ℕ))) = S.a) → ((S.il (Fin.last (S.leftParameter + (2
+                : ℕ))) = S.b)
+            → ((∀ (x : Fin (S.leftParameter + (3 : ℕ))), ∀ (y : Fin (S.leftParameter + (3 : ℕ))),
+                S.il y = S.il
             x + (1 : Fin (n + (3 : ℕ))) ∨ S.il x = S.il y + (1 : Fin (n + (3 : ℕ))) ↔ (↑y : ℕ) =
             (↑x : ℕ) + (1 : ℕ) ∨ (↑x : ℕ) = (↑y : ℕ) + (1 : ℕ)) → (∀ (i : Fin (n + (3 : ℕ))), ∀
             (j : Fin (n + (3 : ℕ))), i = S.a ∧ j = S.b ∨ j = S.a ∧ i = S.b → ¬(j = i + (1 : Fin
@@ -2160,15 +2236,19 @@ private theorem hcoverPair :
       classical
       exact
         ∀ (n : Nat), ∀ (p : P3381T1PolygonBoundary n), ∀ (S : P3544T1DiagonalSplit p), (n +
-            (3 : ℕ) = S.u.length + S.v.length + (2 : ℕ)) → ((S.left_n + (3 : ℕ) = S.u.length + (2
-            : ℕ)) → ((S.right_n + (3 : ℕ) = S.v.length + (2 : ℕ)) → ((∀ (x : Fin (S.left_n + (3 :
+            (3 : ℕ) = S.u.length + S.v.length + (2 : ℕ)) → ((S.leftParameter + (3 : ℕ) =
+                S.u.length + (2
+            : ℕ)) → ((S.rightParameter + (3 : ℕ) = S.v.length + (2 : ℕ)) → ((∀ (x : Fin
+                (S.leftParameter + (3 :
             ℕ))), (↑(S.il x) : ℕ) = ((↑x : ℕ) + S.rotation) % (n + (3 : ℕ))) → ((∀ (y : Fin
-            (S.right_n + (3 : ℕ))), (↑(S.ir y) : ℕ) = (S.u.length + (1 : ℕ) + (↑y : ℕ) +
+            (S.rightParameter + (3 : ℕ))), (↑(S.ir y) : ℕ) = (S.u.length + (1 : ℕ) + (↑y : ℕ) +
             S.rotation) % (n + (3 : ℕ))) → ((∀ {m : ℕ}, ∀ {r : ℕ}, ∀ {x : ℕ}, ∀ {y : ℕ}, (0 : ℕ)
             < m → x < m → y < m → (r + x) % m = (r + y) % m → x = y) → ((∀ {m : ℕ}, ∀ {r : ℕ}, ∀
             {x : ℕ}, (1 : ℕ) < m → ((r + x) % m + (1 : ℕ)) % m = (r + (x + (1 : ℕ))) % m) →
-            ((S.il (0 : Fin (S.left_n + (3 : ℕ))) = S.a) → ((S.il (Fin.last (S.left_n + (2 : ℕ)))
-            = S.b) → ((S.ir (0 : Fin (S.right_n + (3 : ℕ))) = S.b) → ((S.ir (Fin.last (S.right_n
+            ((S.il (0 : Fin (S.leftParameter + (3 : ℕ))) = S.a) → ((S.il (Fin.last
+                (S.leftParameter + (2 : ℕ)))
+            = S.b) → ((S.ir (0 : Fin (S.rightParameter + (3 : ℕ))) = S.b) → ((S.ir (Fin.last
+                (S.rightParameter
             + (2 : ℕ))) = S.a) → ((∀ (z : Fin (n + 3)), (z + 1).val = (z.val + 1) % (n + 3)) → (∀
             (i : Fin (n + (3 : ℕ))), ∀ (j : Fin (n + (3 : ℕ))), (j = i + (1 : Fin (n + (3 : ℕ)))
             ∨ i = j + (1 : Fin (n + (3 : ℕ)))) → (i ∈ Set.range S.il ∧ j ∈ Set.range S.il ∨ i ∈
@@ -2534,10 +2614,11 @@ theorem P3652T1IndexedFaceLedger {n : Nat} {p : P3381T1PolygonBoundary n}
     have hlenP := IndexedFaceLedgerProof.hlenP n p S
     have hlenL := IndexedFaceLedgerProof.hlenL n p S
     have hlenR := IndexedFaceLedgerProof.hlenR n p S
-    have hleftcoord (x : Fin (S.left_n + 3)) := IndexedFaceLedgerProof.hleftcoord n p S hlenP
+    have hleftcoord (x : Fin (S.leftParameter + 3)) := IndexedFaceLedgerProof.hleftcoord n p S hlenP
         hlenL hlenR x
     have haCoord := IndexedFaceLedgerProof.haCoord n p S hlenP hlenL hlenR
-    have hrightcoord (y : Fin (S.right_n + 3)) := IndexedFaceLedgerProof.hrightcoord n p S hlenP
+    have hrightcoord (y : Fin (S.rightParameter + 3)) := IndexedFaceLedgerProof.hrightcoord n p S
+        hlenP
         hlenL hlenR haCoord y
     have hmodShift {m r x y : Nat} (hm : 0 < m) (hx : x < m) (hy : y < m)
         (he : (r + x) % m = (r + y) % m) := IndexedLedgerAssembly.hmodShift n p S (m := m) (r :=
@@ -2551,7 +2632,8 @@ theorem P3652T1IndexedFaceLedger {n : Nat} {p : P3381T1PolygonBoundary n}
     have hrightA := IndexedFaceLedgerProof.hrightA n p S
     have hparentSuccVal (z : Fin (n + 3)) : (z + 1).val = (z.val + 1) % (n + 3) := by
       rw [Fin.val_add, Fin.val_one]
-    have hleftOrd (x y : Fin (S.left_n + 3)) := IndexedLedgerAssembly.hleftOrd n p S hlenP hlenL
+    have hleftOrd (x y : Fin (S.leftParameter + 3)) := IndexedLedgerAssembly.hleftOrd n p S hlenP
+        hlenL
         hlenR hleftcoord hmodShift hmodSucc hparentSuccVal x y
     have hdiagPair (i j : Fin (n + 3)) (hij : i ≠ j) := IndexedFaceLedgerProof.hdiagPair n p S
         hleftA hleftB hrightB hrightA i j hij

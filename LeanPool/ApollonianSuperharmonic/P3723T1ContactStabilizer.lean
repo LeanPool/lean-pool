@@ -5,8 +5,9 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.PeriodicTileCore
-public import Mathlib.Tactic.Linarith
 
 -- [TABLET NODE: P3723T1ContactStabilizer]
 

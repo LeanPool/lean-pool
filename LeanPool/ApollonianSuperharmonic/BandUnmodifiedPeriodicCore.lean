@@ -5,18 +5,15 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.BandUnmodifiedCoreCertificate
-public import LeanPool.ApollonianSuperharmonic.LatticeTile
 public import LeanPool.ApollonianSuperharmonic.P4677T2DrawingExists
-public import LeanPool.ApollonianSuperharmonic.P4677T2IncidenceLedger
 public import LeanPool.ApollonianSuperharmonic.P4677T2ThreeConnected
 public import LeanPool.ApollonianSuperharmonic.P4677T2FacePoints
-public import LeanPool.ApollonianSuperharmonic.P4677T2TouchingWalk
 public import LeanPool.ApollonianSuperharmonic.P4677T2PrecursorWalk
 public import LeanPool.ApollonianSuperharmonic.P4677T2PeriodicWalkAssembly
 public import LeanPool.ApollonianSuperharmonic.TileDiskAreaCovariance
-public import LeanPool.ApollonianSuperharmonic.LatticeFundamentalSet
-public import LeanPool.ApollonianSuperharmonic.TileTranslationFormulas
 public import LeanPool.ApollonianSuperharmonic.TouchingTriple
 
 -- [TABLET NODE: BandUnmodifiedPeriodicCore]

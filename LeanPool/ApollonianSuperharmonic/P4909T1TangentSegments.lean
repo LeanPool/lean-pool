@@ -5,9 +5,12 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.ApollonianSuperharmonic.P4828T1Disk
-public import Mathlib.Analysis.Convex.Hull
+public import Mathlib.Init
+public import Mathlib.Topology.MetricSpace.Pseudo.Real
+
 public import Mathlib.LinearAlgebra.Complex.Module
+public import Mathlib.Analysis.Complex.Norm
+public import Mathlib.Analysis.Convex.Segment
 
 -- [TABLET NODE: P4909T1TangentSegments]
 

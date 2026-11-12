@@ -5,13 +5,12 @@ Authors: Wesley Pegden
 -/
 module
 
-public import Mathlib.Topology.Homeomorph.Lemmas
-public import Mathlib.Topology.Instances.Real.Lemmas
-public import Mathlib.Tactic.FunProp
-public import Mathlib.Tactic.FieldSimp
-public import Mathlib.Tactic.Ring
-public import Mathlib.Tactic.Linarith
+public import Mathlib.Init
+public import Mathlib.Topology.MetricSpace.Pseudo.Real
+
 public import LeanPool.ApollonianSuperharmonic.P3381T1TriangleDeterminant
+public import Mathlib.Algebra.BigOperators.Fin
+public import Mathlib.Topology.Algebra.Ring.Real
 
 -- [TABLET NODE: P3381T1AffineTriangleMap]
 

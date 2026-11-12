@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P4802T1HexagonOverlapSide
 public import LeanPool.ApollonianSuperharmonic.P4802T1SideRestriction
 public import LeanPool.ApollonianSuperharmonic.P4802T1SimplexFaces

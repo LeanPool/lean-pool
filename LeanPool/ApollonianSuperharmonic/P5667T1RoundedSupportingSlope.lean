@@ -5,7 +5,10 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.LatticeQuadraticForm
+public import Mathlib.LinearAlgebra.Matrix.PosDef
 
 -- [TABLET NODE: P5667T1RoundedSupportingSlope]
 

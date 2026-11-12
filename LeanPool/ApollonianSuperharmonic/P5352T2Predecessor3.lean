@@ -5,10 +5,12 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P5352T2PlacementData
 public import LeanPool.ApollonianSuperharmonic.P5352T2DomainRows
-public import LeanPool.ApollonianSuperharmonic.P4207T1FloorArithmetic
 public import LeanPool.ApollonianSuperharmonic.DiamondLaplacianTable
+public import LeanPool.ApollonianSuperharmonic.P5352T2Sources
 
 -- [TABLET NODE: P5352T2Predecessor3]
 
@@ -561,7 +563,8 @@ private theorem qPredWeq :
   simp only [Q, Int.natCast_natAbs]
   have ha : k-k-1 = (-1 : Int) := by omega
   rw [ha]
-  simp?
+  simp only [Int.reduceNeg, abs_neg, abs_one, sub_self, mul_zero, EuclideanDomain.zero_div,
+      zero_sub, neg_sub]
   rw [show (-1:Int)-(k+k-2)=1-2*k by ring, floorOdd]
   norm_num
   ring

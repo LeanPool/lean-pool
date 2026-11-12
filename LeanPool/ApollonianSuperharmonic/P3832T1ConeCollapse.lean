@@ -5,8 +5,9 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.ApollonianSuperharmonic.Preamble
-public import Mathlib.Topology.Instances.Real.Lemmas
+public import Mathlib.Init
+
+public import Mathlib.Data.EReal.Operations
 
 -- [TABLET NODE: P3832T1ConeCollapse]
 

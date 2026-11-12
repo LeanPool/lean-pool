@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.AcyclicIndegreeOrientation
 
 -- [TABLET NODE: ParentalOrientationGluing]
@@ -27,8 +29,8 @@ private theorem incoming_one :
         AcyclicIndegreeOrientation D₁ σ), (∀ x ∈ D₁ ∩ D₂, ∀ y ∈ D₁, o₁.edge y x → y ∈ D₂) →
     let I := D₁ ∩ D₂
     ∀ x ∈ I,
-      (D₁.filter (fun y => @decide (o₁.edge y x) (o₁.edge_decidable y x))) =
-        (I.filter (fun y => @decide (o₁.edge y x) (o₁.edge_decidable y x))) := by
+      (D₁.filter (fun y => @decide (o₁.edge y x) (o₁.edgeDecidable y x))) =
+        (I.filter (fun y => @decide (o₁.edge y x) (o₁.edgeDecidable y x))) := by
   classical
   intro D₁ D₂ σ o₁ hclosed₁ I x hx
   change x ∈ D₁ ∩ D₂ at hx
@@ -39,7 +41,7 @@ private theorem incoming_one :
     refine ⟨Finset.mem_inter.mpr ⟨h.1, ?_⟩, h.2⟩
     exact hclosed₁ x hx y
       h.1
-      (@of_decide_eq_true (o₁.edge y x) (o₁.edge_decidable y x) h.2)
+      (@of_decide_eq_true (o₁.edge y x) (o₁.edgeDecidable y x) h.2)
   · intro h
     exact ⟨(Finset.mem_inter.mp (show y ∈ D₁ ∩ D₂ from h.1)).1, h.2⟩
 
@@ -48,8 +50,8 @@ private theorem incoming_two :
         AcyclicIndegreeOrientation D₂ σ), (∀ x ∈ D₁ ∩ D₂, ∀ y ∈ D₂, o₂.edge y x → y ∈ D₁) →
     let I := D₁ ∩ D₂
     ∀ x ∈ I,
-      (D₂.filter (fun y => @decide (o₂.edge y x) (o₂.edge_decidable y x))) =
-        (I.filter (fun y => @decide (o₂.edge y x) (o₂.edge_decidable y x))) := by
+      (D₂.filter (fun y => @decide (o₂.edge y x) (o₂.edgeDecidable y x))) =
+        (I.filter (fun y => @decide (o₂.edge y x) (o₂.edgeDecidable y x))) := by
   classical
   intro D₁ D₂ σ o₂ hclosed₂ I x hx
   change x ∈ D₁ ∩ D₂ at hx
@@ -60,7 +62,7 @@ private theorem incoming_two :
     refine ⟨Finset.mem_inter.mpr ⟨?_, h.1⟩, h.2⟩
     exact hclosed₂ x hx y
       h.1
-      (@of_decide_eq_true (o₂.edge y x) (o₂.edge_decidable y x) h.2)
+      (@of_decide_eq_true (o₂.edge y x) (o₂.edgeDecidable y x) h.2)
   · intro h
     exact ⟨(Finset.mem_inter.mp (show y ∈ D₁ ∩ D₂ from h.1)).2, h.2⟩
 
@@ -68,12 +70,12 @@ private theorem incoming_card :
     ∀ (D₁ : Finset GaussianInt), ∀ (D₂ : Finset GaussianInt), ∀ (σ : GaussianInt → ℤ), ∀ (o₁ :
         AcyclicIndegreeOrientation D₁ σ), ∀ (o₂ : AcyclicIndegreeOrientation D₂ σ),
     let I := D₁ ∩ D₂
-    (∀ x ∈ I, (D₁.filter (fun y => @decide (o₁.edge y x) (o₁.edge_decidable y x))) = (I.filter
-        (fun y => @decide (o₁.edge y x) (o₁.edge_decidable y x)))) → (∀ x ∈ I, (D₂.filter (fun y
-        => @decide (o₂.edge y x) (o₂.edge_decidable y x))) = (I.filter (fun y => @decide (o₂.edge
-        y x) (o₂.edge_decidable y x)))) → ∀ x ∈ I,
-      (I.filter (fun y => @decide (o₁.edge y x) (o₁.edge_decidable y x))).card =
-        (I.filter (fun y => @decide (o₂.edge y x) (o₂.edge_decidable y x))).card := by
+    (∀ x ∈ I, (D₁.filter (fun y => @decide (o₁.edge y x) (o₁.edgeDecidable y x))) = (I.filter
+        (fun y => @decide (o₁.edge y x) (o₁.edgeDecidable y x)))) → (∀ x ∈ I, (D₂.filter (fun y
+        => @decide (o₂.edge y x) (o₂.edgeDecidable y x))) = (I.filter (fun y => @decide (o₂.edge
+        y x) (o₂.edgeDecidable y x)))) → ∀ x ∈ I,
+      (I.filter (fun y => @decide (o₁.edge y x) (o₁.edgeDecidable y x))).card =
+        (I.filter (fun y => @decide (o₂.edge y x) (o₂.edgeDecidable y x))).card := by
   classical
   intro D₁ D₂ σ o₁ o₂ I incoming_one incoming_two x hx
   change x ∈ D₁ ∩ D₂ at hx
@@ -88,8 +90,8 @@ private theorem agreement :
     ∀ (D₁ : Finset GaussianInt), ∀ (D₂ : Finset GaussianInt), ∀ (σ : GaussianInt → ℤ), ∀ (o₁ :
         AcyclicIndegreeOrientation D₁ σ), ∀ (o₂ : AcyclicIndegreeOrientation D₂ σ),
     let I := D₁ ∩ D₂
-    (∀ x ∈ I, (I.filter (fun y => @decide (o₁.edge y x) (o₁.edge_decidable y x))).card =
-        (I.filter (fun y => @decide (o₂.edge y x) (o₂.edge_decidable y x))).card) →
+    (∀ x ∈ I, (I.filter (fun y => @decide (o₁.edge y x) (o₁.edgeDecidable y x))).card =
+        (I.filter (fun y => @decide (o₂.edge y x) (o₂.edgeDecidable y x))).card) →
     ∀ x ∈ I, ∀ y ∈ I, o₁.edge x y ↔ o₂.edge x y := by
   classical
   intro D₁ D₂ σ o₁ o₂ I incoming_card
@@ -111,26 +113,26 @@ private theorem agreement :
         intro he
         exact hn (he ▸ hwz)⟩⟩
     exact (Nat.not_lt_of_ge (hmin w hwb)) (o₁.increasing w z hwz)
-  have hsub : I.filter (fun w => @decide (o₁.edge w z) (o₁.edge_decidable w z)) ⊆
-      I.filter (fun w => @decide (o₂.edge w z) (o₂.edge_decidable w z)) := by
+  have hsub : I.filter (fun w => @decide (o₁.edge w z) (o₁.edgeDecidable w z)) ⊆
+      I.filter (fun w => @decide (o₂.edge w z) (o₂.edgeDecidable w z)) := by
     intro w hw
     have hwI := (Finset.mem_filter.mp hw).1
     have he := (Finset.mem_filter.mp hw).2
     have he' : o₁.edge w z := @of_decide_eq_true (o₁.edge w z)
-      (o₁.edge_decidable w z) he
+      (o₁.edgeDecidable w z) he
     have ho := hin w hwI he'
-    have hot : @decide (o₂.edge w z) (o₂.edge_decidable w z) = true := by
-      exact (show @decide (o₂.edge w z) (o₂.edge_decidable w z) = true from
-        (@decide_eq_true_eq (o₂.edge w z) (o₂.edge_decidable w z)).mpr ho)
+    have hot : @decide (o₂.edge w z) (o₂.edgeDecidable w z) = true := by
+      exact (show @decide (o₂.edge w z) (o₂.edgeDecidable w z) = true from
+        (@decide_eq_true_eq (o₂.edge w z) (o₂.edgeDecidable w z)).mpr ho)
     exact Finset.mem_filter.mpr ⟨hwI, hot⟩
   have heq := Finset.eq_of_subset_of_card_le hsub
     (by rw [incoming_card z (Finset.mem_filter.mp hz).1])
   have hback : ∀ w ∈ I, o₂.edge w z → o₁.edge w z := by
     intro w hw hwz
-    have hm : w ∈ I.filter (fun q => @decide (o₂.edge q z) (o₂.edge_decidable q z)) :=
+    have hm : w ∈ I.filter (fun q => @decide (o₂.edge q z) (o₂.edgeDecidable q z)) :=
       Finset.mem_filter.mpr ⟨hw, by simp [hwz]⟩
     have hm' := heq ▸ hm
-    exact @of_decide_eq_true (o₁.edge w z) (o₁.edge_decidable w z)
+    exact @of_decide_eq_true (o₁.edge w z) (o₁.edgeDecidable w z)
       (Finset.mem_filter.mp hm').2
   have hzall : ∀ w ∈ I, o₁.edge w z ↔ o₂.edge w z := by
     intro w hw
@@ -305,7 +307,7 @@ private theorem rank_increasing :
     have hyI : y ∈ I ↔ y ∈ D₂ := by simp [I, h1.2]
     by_cases hx' : x ∈ I
     · by_cases hy' : y ∈ I
-      · simp? [rank, hx', hy']
+      · simp only [hx', ↓reduceIte, hy', gt_iff_lt, rank]
         exact o₁.increasing x y he
       · simp [rank, hx', hy', h1.2]
         have hm : 0 < M := by simp [M]
@@ -316,22 +318,22 @@ private theorem rank_increasing :
     · by_cases hy' : y ∈ I
       · have hbad : x ∈ D₂ := hclosed₁ y hy' x h1.1 he
         exact (hx' (Finset.mem_inter.mpr ⟨h1.1, hbad⟩)).elim
-      · simp? [rank, hx', hy', h1.1, h1.2]
+      · simp only [hx', ↓reduceIte, h1.1, hy', h1.2, add_lt_add_iff_right, gt_iff_lt, rank]
         exact o₁.increasing x y he
   · by_cases h2 : x ∈ D₂ ∧ y ∈ D₂
     · have he := (by simpa [edge, h1, h2] using hxy : o₂.edge x y)
       by_cases hx' : x ∈ I
       · by_cases hy' : y ∈ I
-        · simp? [rank, hx', hy']
+        · simp only [hx', ↓reduceIte, hy', gt_iff_lt, rank]
           exact o₁.increasing x y ((agreement x hx' y hy').2 he)
-        · simp? [rank, hx', hy']
+        · simp only [hx', ↓reduceIte, hy', gt_iff_lt, rank]
           by_cases hyD1 : y ∈ D₁
           · simp [hyD1]
             have hp := rank_one_bound x (Finset.mem_inter.mp (show x ∈ D₁ ∩ D₂ from hx')).1
             have hm : 0 < M := by simp [M]
             simp [M] at *
             omega
-          · simp? [hyD1]
+          · simp only [hyD1, ↓reduceIte]
             have hp := rank_one_bound x (Finset.mem_inter.mp (show x ∈ D₁ ∩ D₂ from hx')).1
             have hm : 0 < M := by simp [M]
             simp [M] at *
@@ -343,7 +345,7 @@ private theorem rank_increasing :
             intro q; exact hy' (Finset.mem_inter.mpr ⟨q, h2.2⟩)
           have hxD1 : ¬ x ∈ D₁ := by
             intro q; exact hx' (Finset.mem_inter.mpr ⟨q, h2.1⟩)
-          simp? [rank, hx', hy', hyD1, hxD1]
+          simp only [hx', ↓reduceIte, hxD1, hy', hyD1, add_lt_add_iff_right, gt_iff_lt, rank]
           exact o₂.increasing x y he
     · simp [edge, h1, h2] at hxy
 
@@ -367,16 +369,16 @@ theorem ParentalOrientationGluing
   let I := D₁ ∩ D₂
   let U := D₁ ∪ D₂
   have incoming_one : ∀ x ∈ I,
-      (D₁.filter (fun y => @decide (o₁.edge y x) (o₁.edge_decidable y x))) =
-        (I.filter (fun y => @decide (o₁.edge y x) (o₁.edge_decidable y x))) :=
+      (D₁.filter (fun y => @decide (o₁.edge y x) (o₁.edgeDecidable y x))) =
+        (I.filter (fun y => @decide (o₁.edge y x) (o₁.edgeDecidable y x))) :=
             ParentalOrientationLemmas.incoming_one D₁ D₂ σ o₁ hclosed₁
   have incoming_two : ∀ x ∈ I,
-      (D₂.filter (fun y => @decide (o₂.edge y x) (o₂.edge_decidable y x))) =
-        (I.filter (fun y => @decide (o₂.edge y x) (o₂.edge_decidable y x))) :=
+      (D₂.filter (fun y => @decide (o₂.edge y x) (o₂.edgeDecidable y x))) =
+        (I.filter (fun y => @decide (o₂.edge y x) (o₂.edgeDecidable y x))) :=
             ParentalOrientationLemmas.incoming_two D₁ D₂ σ o₂ hclosed₂
   have incoming_card : ∀ x ∈ I,
-      (I.filter (fun y => @decide (o₁.edge y x) (o₁.edge_decidable y x))).card =
-        (I.filter (fun y => @decide (o₂.edge y x) (o₂.edge_decidable y x))).card :=
+      (I.filter (fun y => @decide (o₁.edge y x) (o₁.edgeDecidable y x))).card =
+        (I.filter (fun y => @decide (o₂.edge y x) (o₂.edgeDecidable y x))).card :=
             ParentalOrientationLemmas.incoming_card D₁ D₂ σ o₁ o₂ incoming_one incoming_two
   let B := I.filter (fun x => ∃ y ∈ I, o₁.edge x y ≠ o₂.edge x y)
   have agreement : ∀ x ∈ I, ∀ y ∈ I, o₁.edge x y ↔ o₂.edge x y :=
@@ -406,7 +408,7 @@ theorem ParentalOrientationGluing
       rank_one_bound
   let o : AcyclicIndegreeOrientation U σ :=
     { edge := edge
-      edge_decidable := fun x y => Classical.propDecidable _
+      edgeDecidable := fun x y => Classical.propDecidable _
       rank := rank
       supported := edge_support
       oriented := edge_oriented
@@ -416,7 +418,7 @@ theorem ParentalOrientationGluing
         by_cases hx1 : x ∈ D₁
         · have hi := o₁.indegree x hx1
           have hf : U.filter (fun y => @decide (edge y x) (Classical.propDecidable _)) =
-              D₁.filter (fun y => @decide (o₁.edge y x) (o₁.edge_decidable y x)) := by
+              D₁.filter (fun y => @decide (o₁.edge y x) (o₁.edgeDecidable y x)) := by
             ext y
             simp only [Finset.mem_filter]
             constructor
@@ -440,7 +442,7 @@ theorem ParentalOrientationGluing
         · have hx2 : x ∈ D₂ := Finset.mem_union.mp hx |>.resolve_left hx1
           have hi := o₂.indegree x hx2
           have hf : U.filter (fun y => @decide (edge y x) (Classical.propDecidable _)) =
-              D₂.filter (fun y => @decide (o₂.edge y x) (o₂.edge_decidable y x)) := by
+              D₂.filter (fun y => @decide (o₂.edge y x) (o₂.edgeDecidable y x)) := by
             ext y
             simp only [Finset.mem_filter]
             constructor

@@ -5,12 +5,10 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P5332T1ParentRows
 public import LeanPool.ApollonianSuperharmonic.FordOdometer
-public import LeanPool.ApollonianSuperharmonic.FordVertexDomain
-public import LeanPool.ApollonianSuperharmonic.P4210T1FordCellRectangles
-public import LeanPool.ApollonianSuperharmonic.FordDoubledBoundary
-public import LeanPool.ApollonianSuperharmonic.P5188T1CeilingShift
 
 -- [TABLET NODE: P5332T1Parent1Rotation2Values]
 
@@ -99,7 +97,11 @@ theorem P5332T1Parent1Rotation2Values (P A : FordFareyParameter) (hq : 1 < P.q)
   have hx0 := hx
   have hx'0 := hx'
   change 0 ≤ X ∧ X ≤ (P.q : Int) ∧ 0 ≤ Y ∧ Y ≤ (P.q : Int) at hx0
-  simp? [P5332T1ParentRows, FordVertexDomain] at hx'0
+  simp only [FordVertexDomain, Int.reduceNeg, P5332T1ParentRows, Nat.succ_eq_add_one,
+      Nat.reduceAdd, add_zero, mul_zero, neg_zero, EuclideanDomain.zero_div, zero_add,
+      sub_zero, zero_sub, neg_neg, Fin.isValue, Matrix.cons_val', Matrix.cons_val,
+      Matrix.cons_val_fin_one, Matrix.cons_val_zero, Set.mem_ofPred_eq, Zsqrtd.re_sub,
+      Zsqrtd.im_sub, sub_neg_eq_add] at hx'0
   have hY : Y = 0 := by omega
   subst Y
   have hXr : X ≤ (P.q₁ : Int) := by simpa [hAq] using hx'0.2.1

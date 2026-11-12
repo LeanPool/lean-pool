@@ -5,13 +5,13 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P5064T3Rectangles
 public import LeanPool.ApollonianSuperharmonic.AllowedSubtileIncidence
 public import LeanPool.ApollonianSuperharmonic.SubtileOccurrenceInterpretation
 public import LeanPool.ApollonianSuperharmonic.FootprintEdges
 public import LeanPool.ApollonianSuperharmonic.FootprintVertices
-public import LeanPool.ApollonianSuperharmonic.TileTranslationFormulas
-public import LeanPool.ApollonianSuperharmonic.P4062T1CanonicalSupport
 public import LeanPool.ApollonianSuperharmonic.P5098T1SquareIntersection
 public import LeanPool.ApollonianSuperharmonic.P5098T1OccurrenceSquares
 public import LeanPool.ApollonianSuperharmonic.P5098T1EqualIntervals

@@ -5,7 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.ApollonianSuperharmonic.LatticeTileGridStructure
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.LatticeTileComplementGridConnected
 public import LeanPool.ApollonianSuperharmonic.P3475T1GridBoundary
 public import LeanPool.ApollonianSuperharmonic.P3475T1BoundaryReduction
@@ -13,7 +14,6 @@ public import LeanPool.ApollonianSuperharmonic.P3475T1PolygonTriangleConstructio
 public import LeanPool.ApollonianSuperharmonic.P3475T1PolygonalSeparation
 public import LeanPool.ApollonianSuperharmonic.P3475T1SquareUnionIdentification
 public import LeanPool.ApollonianSuperharmonic.P3475T1BoundaryRestoration
-public import LeanPool.ApollonianSuperharmonic.P3381T1PiecewiseAffinePolygonModel
 
 -- [TABLET NODE: P3723T1GridDiskPairedModel]
 

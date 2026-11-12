@@ -5,9 +5,10 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.DiamondVertexDomains
 public import LeanPool.ApollonianSuperharmonic.FourNeighborAdjacent
-public import Mathlib.Algebra.Group.Int.Even
 
 -- [TABLET NODE: P5432T1EdgeLedger]
 

@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P5260T1PlacementLedger
 public import LeanPool.ApollonianSuperharmonic.TileReflectionFormulas
 public import LeanPool.ApollonianSuperharmonic.TileTranslationFormulas

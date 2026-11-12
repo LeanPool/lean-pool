@@ -5,9 +5,12 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.ApollonianSuperharmonic.LatticeCell
+public import Mathlib.Init
+
 public import Mathlib.Topology.Sequences
 public import Mathlib.Topology.Instances.Discrete
+public import Mathlib.Algebra.Order.Ring.Star
+public import Mathlib.NumberTheory.Zsqrtd.GaussianInt
 
 -- [TABLET NODE: P4849T1SetDiagonalSubsequence]
 

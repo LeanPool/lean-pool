@@ -5,12 +5,12 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.ApollonianSuperharmonic.P3555T2ParabolaSupporting
+public import Mathlib.Init
+public import Mathlib.Tactic.Linarith
+
 public import Mathlib.Analysis.Convex.Hull
 public import Mathlib.Analysis.Convex.Join
-public import Mathlib.Data.List.Rotate
-public import Mathlib.Data.List.OfFn
-public import Mathlib.Data.List.NodupEquivFin
+public import LeanPool.ApollonianSuperharmonic.P3381T1TriangleDeterminant
 
 -- [TABLET NODE: P3555T2ParabolaChordCuts]
 
@@ -256,7 +256,7 @@ private theorem hrankDiff :
   by_cases hwrap : x + (s-p) < m
   · rw [Nat.mod_eq_of_lt hwrap,
       show x + (s-p) + m - x = m + (s-p) by omega, Nat.add_mod]
-    simp? [Nat.mod_self]
+    simp only [Nat.mod_self, zero_add, dvd_refl, Nat.mod_mod_of_dvd]
     exact Nat.mod_eq_of_lt hd
   · have hwrap' : m ≤ x + (s-p) := by omega
     have hmod : (x + (s-p)) % m = x + (s-p) - m := by
@@ -691,7 +691,8 @@ private theorem hrankV :
     simpa [hidx] using hji
   have hposB : ib < p := by
     apply Fin.lt_def.mpr
-    simp [ib, p]
+    dsimp [ib, p]
+    omega
   have hiaB : ia ≤ ib := by
     apply Fin.le_iff_val_le_val.mpr
     simp [ia, ib]

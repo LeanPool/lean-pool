@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P5250T1SeparatedCells
 public import LeanPool.ApollonianSuperharmonic.P5250T1CommonVertices
 public import LeanPool.ApollonianSuperharmonic.P5250T1ConsecutiveEdges

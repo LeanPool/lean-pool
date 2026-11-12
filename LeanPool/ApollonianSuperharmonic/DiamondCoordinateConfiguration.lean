@@ -5,15 +5,12 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.BandCircle
-public import LeanPool.ApollonianSuperharmonic.BandGeneralCircle
 public import LeanPool.ApollonianSuperharmonic.BandVectors
 public import LeanPool.ApollonianSuperharmonic.DiamondRecursiveQuadruple
-public import LeanPool.ApollonianSuperharmonic.PrimitiveVectorOrientation
-public import LeanPool.ApollonianSuperharmonic.ProperBandQuadruple
-public import LeanPool.ApollonianSuperharmonic.RecursiveVectorSystem
 public import LeanPool.ApollonianSuperharmonic.VectorRecursionLaws
-public import LeanPool.ApollonianSuperharmonic.SemiProperQuadruple
 
 -- [TABLET NODE: DiamondCoordinateConfiguration]
 
@@ -88,7 +85,8 @@ private theorem root10'At246 :
       ⟨1, 1⟩)))) := by
   classical
   intro r21 r13 root10 coordU
-  simp? at root10
+  simp only [Nat.succ_eq_add_one, Nat.reduceAdd, Int.reduceNeg, Fin.isValue,
+      Matrix.cons_val_one, Matrix.cons_val_zero, Matrix.cons_val] at root10
   try
   change BandVectors.1 (1, 1 + 2 * (⟨0, 1⟩ : GaussianInt)) (1, 1) =
     BandVectors.1 (1, 1 + 2 * (⟨0, 1⟩ : GaussianInt)) (0, -1) -
@@ -370,10 +368,15 @@ private theorem circleWitness :
   intro K currentSemi
   refine ⟨⟨⟨(DiamondRecursiveQuadruple K) 0, ?_⟩, ?_⟩, rfl⟩
   · constructor
-    · simp? [DiamondRecursiveQuadruple]
+    · simp only [DiamondRecursiveQuadruple, Nat.cast_mul, Nat.cast_ofNat, Nat.cast_add,
+        Nat.cast_one, Int.reduceNeg, Fin.isValue, Matrix.cons_val_zero, Int.succ_ofNat_pos,
+        mul_pos_iff_of_pos_right, Nat.ofNat_pos, mul_pos_iff_of_pos_left, Int.natCast_pos,
+        mul_eq_zero, OfNat.ofNat_ne_zero, Int.natCast_eq_zero, false_or]
       exact Or.inl (by exact_mod_cast K.2)
     · exact ⟨DiamondRecursiveQuadruple K, currentSemi, 0, rfl⟩
-  · simp? [DiamondRecursiveQuadruple]
+  · simp only [DiamondRecursiveQuadruple, Nat.cast_mul, Nat.cast_ofNat, Nat.cast_add,
+      Nat.cast_one, Int.reduceNeg, Fin.isValue, Matrix.cons_val_zero, Int.succ_ofNat_pos,
+      mul_pos_iff_of_pos_right, Nat.ofNat_pos, mul_pos_iff_of_pos_left, Int.natCast_pos]
     exact_mod_cast K.2
 
 private theorem proper :
@@ -448,7 +451,9 @@ private theorem claims :
   induction n with
   | zero =>
       have root := baseLaw (0 : GaussianInt)
-      simp? at root
+      simp only [Nat.succ_eq_add_one, Nat.reduceAdd, mul_zero, add_zero, Int.reduceNeg,
+          Fin.isValue, Matrix.cons_val, Matrix.cons_val_one, Matrix.cons_val_zero, sub_zero,
+          zero_add] at root
       have rootStep := stepLaw
         (![(1, 1), (1, 1 + 2 * (⟨0, 1⟩ : GaussianInt)), (0, 1), (0, -1)])
         (SemiProperQuadruple.base (0 : GaussianInt))
@@ -479,7 +484,7 @@ private theorem claims :
       have hy : BandVectors.1 (configuration 0 2) (configuration 0 1) =
           ⟨-1, 1⟩ := by
         have hh := root01
-        simp? at hh
+        simp only [mul_zero, add_zero, Int.reduceNeg] at hh
         change BandVectors.1 (1, 1) (1, 1 + 2 * (⟨0, 1⟩ : GaussianInt)) =
           (⟨0, 1⟩ : GaussianInt) *
             BandVectors.1 (1, 1 + 2 * (⟨0, 1⟩ : GaussianInt)) (1, 1) at hh
@@ -602,7 +607,9 @@ private theorem slopeClaims :
   induction n with
   | zero =>
       have root := baseLaw (0 : GaussianInt)
-      simp? at root
+      simp only [Nat.succ_eq_add_one, Nat.reduceAdd, mul_zero, add_zero, Int.reduceNeg,
+          Fin.isValue, Matrix.cons_val, Matrix.cons_val_one, Matrix.cons_val_zero, sub_zero,
+          zero_add] at root
       have rootRec := VectorRecursionLaws
         (![(1, 1), (1, 1 + 2 * (⟨0, 1⟩ : GaussianInt)), (0, 1), (0, -1)])
         (SemiProperQuadruple.base (0 : GaussianInt))

@@ -5,13 +5,10 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.FordTileOdometerRestriction
 public import LeanPool.ApollonianSuperharmonic.TileOdometerTranslationUniqueness
-public import LeanPool.ApollonianSuperharmonic.P4210T1FordSquareCentroid
-public import LeanPool.ApollonianSuperharmonic.P4210T1FordCellRectangles
-public import LeanPool.ApollonianSuperharmonic.P4062T1CanonicalSupport
-public import LeanPool.ApollonianSuperharmonic.P4217T2SquareGeometry
-public import LeanPool.ApollonianSuperharmonic.P4217T2RectangularBoundarySlope
 public import LeanPool.ApollonianSuperharmonic.GlobalOdometerExtends
 public import LeanPool.ApollonianSuperharmonic.FourNeighborLaplacian
 

@@ -5,7 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.ApollonianSuperharmonic.GridRayCrossingIndexAdjacentCell
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.LatticeTileGridStructure
 
 -- [TABLET NODE: P4366T1AttachedRemainderIndexZero]

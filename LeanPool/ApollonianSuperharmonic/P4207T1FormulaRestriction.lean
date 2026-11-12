@@ -5,9 +5,11 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P4207T1DiamondFormula
 public import LeanPool.ApollonianSuperharmonic.PartialOdometer
-public import LeanPool.ApollonianSuperharmonic.FootprintVertices
+public import LeanPool.ApollonianSuperharmonic.ProtoTile
 
 -- [TABLET NODE: P4207T1FormulaRestriction]
 

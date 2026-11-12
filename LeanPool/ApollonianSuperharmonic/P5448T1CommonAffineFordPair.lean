@@ -5,12 +5,11 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.FordTileOdometerRestriction
 public import LeanPool.ApollonianSuperharmonic.TileOdometerTranslationUniqueness
-public import LeanPool.ApollonianSuperharmonic.PartialOdometerAffineTranslateFormulas
 public import LeanPool.ApollonianSuperharmonic.P5448T1CanonicalFordBoundary
-public import Mathlib.Tactic.Linarith
-public import Mathlib.Tactic.Ring
 
 -- [TABLET NODE: P5448T1CommonAffineFordPair]
 

@@ -5,8 +5,9 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.RecursiveVectorsExistUnique
-public import LeanPool.ApollonianSuperharmonic.PrimitiveVectorOrientation
 
 -- [TABLET NODE: BandVectors]
 

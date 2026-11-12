@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P3650T1CyclicChildren
 public import Mathlib.Analysis.Convex.PathConnected
 public import Mathlib.Analysis.Convex.Topology
@@ -216,7 +218,7 @@ theorem P5667T1CyclicChildrenOldArcsPreconnected {n : Nat} (p : P3381T1PolygonBo
     have hfirst : C.il 0 = a := by
       have h := congrArg List.head? C.left_order
       simpa using h
-    have hlast : C.il (Fin.last (C.left_n + 2)) = b := by
+    have hlast : C.il (Fin.last (C.leftParameter + 2)) = b := by
       have hlast? : (List.ofFn C.il).getLast? = some (C.il (Fin.last _)) := by
         rw [List.getLast?_eq_getLast_of_ne_nil (by simp)]
         rw [List.getLast_ofFn_succ]
@@ -232,19 +234,19 @@ theorem P5667T1CyclicChildrenOldArcsPreconnected {n : Nat} (p : P3381T1PolygonBo
     have hvfirst : C.left.vertex 0 = p.vertex a := by
       rw [C.left_vertex]
       simpa using congrArg p.vertex hfirst
-    have hvlast : C.left.vertex (Fin.last (C.left_n + 2)) = p.vertex b := by
+    have hvlast : C.left.vertex (Fin.last (C.leftParameter + 2)) = p.vertex b := by
       rw [C.left_vertex]
       simpa using congrArg p.vertex hlast
     have hq := polygonOldArcPreconnected C.left
     have heq : segment Real (C.left.vertex 0)
-        (C.left.vertex (Fin.last (C.left_n + 2))) = e := by
+        (C.left.vertex (Fin.last (C.leftParameter + 2))) = e := by
       rw [hvfirst, hvlast]
     simpa [CL, e, heq] using hq
   have rightArcPreconnected : IsPreconnected (CR \ e) := by
     have hfirst : C.ir 0 = b := by
       have h := congrArg List.head? C.right_order
       simpa using h
-    have hlast : C.ir (Fin.last (C.right_n + 2)) = a := by
+    have hlast : C.ir (Fin.last (C.rightParameter + 2)) = a := by
       have hlast? : (List.ofFn C.ir).getLast? = some (C.ir (Fin.last _)) := by
         rw [List.getLast?_eq_getLast_of_ne_nil (by simp)]
         rw [List.getLast_ofFn_succ]
@@ -260,12 +262,12 @@ theorem P5667T1CyclicChildrenOldArcsPreconnected {n : Nat} (p : P3381T1PolygonBo
     have hvfirst : C.right.vertex 0 = p.vertex b := by
       rw [C.right_vertex]
       simpa using congrArg p.vertex hfirst
-    have hvlast : C.right.vertex (Fin.last (C.right_n + 2)) = p.vertex a := by
+    have hvlast : C.right.vertex (Fin.last (C.rightParameter + 2)) = p.vertex a := by
       rw [C.right_vertex]
       simpa using congrArg p.vertex hlast
     have hq := polygonOldArcPreconnected C.right
     have heq : segment Real (C.right.vertex 0)
-        (C.right.vertex (Fin.last (C.right_n + 2))) = e := by
+        (C.right.vertex (Fin.last (C.rightParameter + 2))) = e := by
       rw [hvfirst, hvlast]
       exact segment_symm Real _ _
     simpa [CR, e, heq] using hq

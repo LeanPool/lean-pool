@@ -5,20 +5,14 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.ApollonianSuperharmonic.BandPredecessorNoCollision
-public import LeanPool.ApollonianSuperharmonic.BandPrototileCentroidUnique
-public import LeanPool.ApollonianSuperharmonic.BandPrototileTranslation
-public import LeanPool.ApollonianSuperharmonic.BandPrototileTranslationNormalForm
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.BandTileSimultaneousInduction
-public import LeanPool.ApollonianSuperharmonic.CurvatureOneOdometer
 public import LeanPool.ApollonianSuperharmonic.OdometerGluing
-public import LeanPool.ApollonianSuperharmonic.OdometerTranslation
 public import LeanPool.ApollonianSuperharmonic.PartialOdometerAffineTranslateFormulas
 public import LeanPool.ApollonianSuperharmonic.PositiveCurvatureTileOdometerDomain
-public import LeanPool.ApollonianSuperharmonic.ProperBandCurvatureStructure
 public import LeanPool.ApollonianSuperharmonic.TileOdometer
 public import LeanPool.ApollonianSuperharmonic.TileOdometerReindexedDecomposition
-public import LeanPool.ApollonianSuperharmonic.TileTranslationFormulas
 
 -- [TABLET NODE: TileOdometerTranslationUniqueness]
 
@@ -283,7 +277,9 @@ private theorem square_disk :
     constructor <;> constructor <;> linarith [hp.1.1, hp.1.2, hp.2.1, hp.2.2]
   have hg : ∀ p, p ∈ TileRealization V → g p ∈ Metric.closedBall (0 : ℝ × ℝ) 1 := by
     intro p hp
-    simp? [TileRealization, hx, ClosedSquareRealization, Prod.le_def] at hp
+    simp only [TileRealization, hx, Finset.mem_singleton, ClosedSquareRealization,
+        Int.reduceNeg, GaussianInt.intCast_re, GaussianInt.intCast_im,
+        Set.iUnion_iUnion_eq_left, Set.mem_Icc, Prod.le_def] at hp
     rw [← GaussianInt.intCast_re, ← GaussianInt.intCast_im] at hp
     simp only [Metric.mem_closedBall, Prod.dist_eq, Real.dist_eq,
       Prod.fst_zero, Prod.snd_zero, sub_zero, max_le_iff, abs_le, g]

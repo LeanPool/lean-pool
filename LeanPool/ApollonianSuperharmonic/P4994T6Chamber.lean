@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P4994T6Rotation
 
 -- [TABLET NODE: P4994T6Chamber]

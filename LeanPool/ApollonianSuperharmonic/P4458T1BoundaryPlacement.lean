@@ -5,7 +5,10 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P4458T1BoundarySide
+public import LeanPool.ApollonianSuperharmonic.P4458T1RestrictionFamily
 
 -- [TABLET NODE: P4458T1BoundaryPlacement]
 

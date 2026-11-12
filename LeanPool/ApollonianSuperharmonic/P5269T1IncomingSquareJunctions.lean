@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P5682T1AlignedSquareRawInterfaces
 public import LeanPool.ApollonianSuperharmonic.ExactTileInterfaceTripleLatticeTouching
 public import LeanPool.ApollonianSuperharmonic.FordTileGeometry

@@ -5,11 +5,11 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.BandOrderedGeneralSubtileInterfaceCertificate
 public import LeanPool.ApollonianSuperharmonic.FourNeighborAdjacent
 public import LeanPool.ApollonianSuperharmonic.LatticeVertexIncidentCell
-public import LeanPool.ApollonianSuperharmonic.PeriodicSubtileIndex
-public import LeanPool.ApollonianSuperharmonic.SubtileOccurrenceInterpretation
 
 -- [TABLET NODE: BandOrderedGeneralSubtileRoutingCertificate]
 

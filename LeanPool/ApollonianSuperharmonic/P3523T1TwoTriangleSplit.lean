@@ -5,10 +5,12 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+public import Mathlib.Tactic.Linarith
+
 public import LeanPool.ApollonianSuperharmonic.P3381T1TriangleDeterminant
 public import Mathlib.Analysis.Convex.Hull
 public import Mathlib.Analysis.Convex.Combination
-public import Mathlib.Data.Fin.VecNotation
 
 -- [TABLET NODE: P3523T1TwoTriangleSplit]
 
@@ -88,7 +90,9 @@ private theorem hull3 (P Q R x : Real × Real) (hPQ : P ≠ Q) (hPR : P ≠ R)
   rw [Finset.mem_convexHull']
   constructor
   · rintro ⟨w, hpos, hsum, hvec⟩
-    simp? [Finset.sum_insert, hPQ, hPR, hQR] at hpos hsum hvec
+    simp only [Finset.mem_insert, Finset.mem_singleton, forall_eq_or_imp, forall_eq, hPQ, hPR,
+        or_self, not_false_eq_true, Finset.sum_insert, hQR, Finset.sum_singleton]
+        at hpos hsum hvec
     rcases hpos with ⟨hP, hQ, hR⟩
     refine ⟨w P, w Q, w R, ?_, ?_, ?_, ?_, ?_⟩
     · exact hP

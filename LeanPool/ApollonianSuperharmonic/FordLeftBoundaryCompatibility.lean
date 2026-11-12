@@ -5,21 +5,13 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.ApollonianSuperharmonic.BandPredecessorNoCollision
-public import LeanPool.ApollonianSuperharmonic.BandTileSimultaneousInduction
-public import LeanPool.ApollonianSuperharmonic.FordCoordinateConfiguration
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.FordOdometer
-public import LeanPool.ApollonianSuperharmonic.FordOdometerFamilyExistsUnique
-public import LeanPool.ApollonianSuperharmonic.FordRecursiveQuadruple
-public import LeanPool.ApollonianSuperharmonic.FordRegimeConverse
 public import LeanPool.ApollonianSuperharmonic.FordTileOdometerRestriction
 public import LeanPool.ApollonianSuperharmonic.LeftLatticeAdjacent
 public import LeanPool.ApollonianSuperharmonic.LeftLatticeAdjacentPackingSymmetryTransport
-public import LeanPool.ApollonianSuperharmonic.OdometerCompatibility
-public import LeanPool.ApollonianSuperharmonic.PartialOdometerAffineTranslateFormulas
 public import LeanPool.ApollonianSuperharmonic.TileOdometerTranslationUniqueness
-public import LeanPool.ApollonianSuperharmonic.TileCentroid
-public import LeanPool.ApollonianSuperharmonic.TileTranslationFormulas
 
 -- [TABLET NODE: FordLeftBoundaryCompatibility]
 
@@ -49,7 +41,8 @@ private theorem hcurv :
   have hc := (BandPackingSymmetryCovariance g0).1 (q 0)
   have he := congrFun heq0 0
   have hecurv := congrArg Prod.fst he
-  simp? [BandPackingSymmetryQuadrupleAction] at hecurv
+  simp only [BandPackingSymmetryQuadrupleAction, Fin.isValue, Matrix.cons_val_zero, neg_zero,
+      ite_self, Fin.succ_zero_eq_one, Matrix.cons_val_one, Matrix.cons_val_succ] at hecurv
   rw [hc] at hecurv
   have hqp : (1 : ℝ) < P0.q := by exact_mod_cast hP0
   simp [FordRecursiveQuadruple, FordCircleCoordinate] at hecurv
@@ -331,9 +324,12 @@ private theorem hshift :
   rw [hcentT, hcentT'] at hc2
   rw [(TileTranslationFormulas (FordTile P2.q) u).2.2.2.2.1,
     (TileTranslationFormulas (FordTile P2.q) u').2.2.2.2.1] at hc2
-  simp? [hg2] at hc hc2
+  simp only [Int.reduceNeg, GaussianInt.intCast_re, GaussianInt.intCast_im, Prod.mk_sub_mk,
+      add_sub_add_left_eq_sub, bne_iff_ne, ne_eq, ite_not, hg2, Bool.false_eq_true,
+      ↓reduceIte, Fin.isValue, ite_smul, neg_smul, one_smul] at hc hc2
   by_cases hs : ew = negative
-  · simp? [hs] at hc hc2 ⊢
+  · simp only [hs, ↓reduceIte, Fin.isValue, Prod.fst_neg, Prod.snd_neg, bne_self_eq_false,
+      Bool.false_eq_true, Int.reduceNeg, neg_smul, one_smul] at hc hc2 ⊢
     unfold GaussianRealPoint at hc hc2
     simp only [GaussianInt.toComplex, Zsqrtd.lift_apply_apply, Complex.add_re,
       Complex.add_im, Complex.mul_re, Complex.mul_im, Complex.intCast_re,
@@ -345,7 +341,8 @@ private theorem hshift :
       exact_mod_cast hc
     · dsimp at hc2 ⊢
       exact_mod_cast hc2
-  · simp? [hs] at hc hc2 ⊢
+  · simp only [hs, ↓reduceIte, Fin.isValue, bne_iff_ne, ne_eq, not_false_eq_true, one_smul]
+      at hc hc2 ⊢
     unfold GaussianRealPoint at hc hc2
     simp only [GaussianInt.toComplex, Zsqrtd.lift_apply_apply, Complex.add_re,
       Complex.add_im, Complex.mul_re, Complex.mul_im, Complex.intCast_re,
@@ -856,13 +853,16 @@ theorem FordLeftBoundaryCompatibility
     cases hkS : PartialOdometerSlope k with
     | none => simp [hkS] at hslopeH
     | some z =>
-      simp? [hkS] at hslopeH hslopeH'
+      simp only [Int.reduceNeg, GaussianInt.intCast_re, GaussianInt.intCast_im, hkS,
+          Option.map_some, Option.some.injEq] at hslopeH hslopeH'
       have hsreFord := hsre'
       have hsimFord := hsim'
       have heq2bar : BandPackingSymmetryQuadrupleAction g2 barq =
           FordRecursiveQuadruple P2 := by simpa [barq] using heq2
       rw [heq2bar] at hsreFord hsimFord
-      simp? [hg2] at hsreFord hsimFord
+      simp only [bne_iff_ne, ne_eq, ite_not, Int.reduceNeg, hg2, Bool.false_eq_true,
+          ↓reduceIte, Fin.isValue, GaussianInt.intCast_re, ite_mul, neg_mul, one_mul,
+          GaussianInt.intCast_im] at hsreFord hsimFord
       simp only [GaussianInt.toComplex, Zsqrtd.lift_apply_apply, Complex.add_re,
         Complex.add_im, Complex.mul_re, Complex.mul_im, Complex.intCast_re,
         Complex.intCast_im, Complex.I_re, Complex.I_im, zero_mul, add_zero,

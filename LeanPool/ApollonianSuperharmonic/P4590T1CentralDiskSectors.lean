@@ -5,14 +5,14 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P4590T1RotationalDiskCenter
 public import LeanPool.ApollonianSuperharmonic.P3776T1CellCenterMembership
 public import LeanPool.ApollonianSuperharmonic.QuarterTurnSymmetric
 public import LeanPool.ApollonianSuperharmonic.LatticeTile
 public import LeanPool.ApollonianSuperharmonic.LatticeVertexIncidentCell
-public import LeanPool.ApollonianSuperharmonic.ClosedSquareRealization
 public import LeanPool.ApollonianSuperharmonic.GaussianRealPoint
-public import Mathlib.Tactic.FinCases
 
 -- [TABLET NODE: P4590T1CentralDiskSectors]
 

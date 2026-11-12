@@ -5,7 +5,13 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.ApollonianSuperharmonic.P4909T1ParentPolygon
+public import Mathlib.Init
+
+public import LeanPool.ApollonianSuperharmonic.CircleCoordinates
+public import Mathlib.Analysis.Convex.Segment
+public import Mathlib.Analysis.Normed.Group.Basic
+public import Mathlib.Analysis.Real.Sqrt
+public import Mathlib.LinearAlgebra.Complex.Module
 
 -- [TABLET NODE: P4909T1ParentEdges]
 

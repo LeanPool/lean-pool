@@ -5,6 +5,10 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+public import Mathlib.Algebra.Group.Prod
+public import Mathlib.Data.Finset.Card
+
 public import LeanPool.ApollonianSuperharmonic.AffineTriangularFace
 
 -- [TABLET NODE: AffineTriangularFaceVertices]

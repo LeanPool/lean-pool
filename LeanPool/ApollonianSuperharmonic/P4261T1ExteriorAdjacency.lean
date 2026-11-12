@@ -5,11 +5,11 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P4261T1PlacedOdometer
 public import LeanPool.ApollonianSuperharmonic.P4261T1ExteriorIndices
 public import LeanPool.ApollonianSuperharmonic.P3045T1RightBoundaryDisplacementAlgebra
-public import LeanPool.ApollonianSuperharmonic.P3055T1ParentVectorNormalForms
-public import LeanPool.ApollonianSuperharmonic.P3055T1SignedCentroidNormalForms
 public import LeanPool.ApollonianSuperharmonic.SubtileLatticeAdjacent
 public import LeanPool.ApollonianSuperharmonic.TileTranslationFormulas
 

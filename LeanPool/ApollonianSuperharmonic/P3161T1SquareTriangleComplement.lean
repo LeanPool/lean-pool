@@ -5,9 +5,13 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.ApollonianSuperharmonic.Preamble
-public import Mathlib.Order.SuccPred.Int
+public import Mathlib.Init
+public import Mathlib.Algebra.Group.Prod
+public import Mathlib.Data.Finset.Card
 public import Mathlib.Order.SuccPred.Relation
+public import Mathlib.Tactic.NormNum
+
+public import Mathlib.Order.SuccPred.Int
 
 -- [TABLET NODE: P3161T1SquareTriangleComplement]
 

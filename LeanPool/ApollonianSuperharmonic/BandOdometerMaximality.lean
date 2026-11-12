@@ -5,13 +5,11 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.ApollonianSuperharmonic.BandPeriodicSuperharmonicity
-public import LeanPool.ApollonianSuperharmonic.BandGenealogy
-public import LeanPool.ApollonianSuperharmonic.PeriodicBoundaryWebLaplacian
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.PeriodicOdometerIndicatorRigidity
 public import LeanPool.ApollonianSuperharmonic.SufficientBoundedMaximality
 public import LeanPool.ApollonianSuperharmonic.TilingLattice
-public import LeanPool.ApollonianSuperharmonic.TilingLatticeBasis
 
 -- [TABLET NODE: BandOdometerMaximality]
 

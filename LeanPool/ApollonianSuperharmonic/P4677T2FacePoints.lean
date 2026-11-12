@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P4677T2DrawingData
 public import LeanPool.ApollonianSuperharmonic.SubtileOccurrenceInterpretation
 public import LeanPool.ApollonianSuperharmonic.TouchingTriple
@@ -471,7 +473,10 @@ private theorem occurrence_shift (P : Fin 3 → Bool → ProtoTile) (u : Gaussia
   cases f with
   | mk l m n =>
     cases l <;> fin_cases i <;>
-      simp? [SixSubtileFaceVertices, SubtileOccurrenceInterpretation] <;>
+      simp only [SubtileOccurrenceInterpretation, SixSubtileFaceVertices, Fin.mk_one,
+          Fin.isValue, Matrix.cons_val_one, Matrix.cons_val_zero, Int.cast_add, Int.cast_one,
+          zero_add, Int.cast_zero, zero_mul, one_mul, Int.cast_sub, zero_sub, Int.reduceNeg,
+          Int.cast_neg, neg_mul, add_zero, Fin.reduceFinMk, Matrix.cons_val, Fin.zero_eta] <;>
       rw [translate_comp] <;> congr 1 <;> ring_nf
 
 private noncomputable abbrev rho (u : GaussianInt) (v : GaussianInt) (p1 : GaussianInt) (p2 :

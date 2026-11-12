@@ -5,10 +5,13 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+public import Mathlib.Topology.MetricSpace.Pseudo.Constructions
+public import Mathlib.Topology.MetricSpace.Pseudo.Real
+
 public import LeanPool.ApollonianSuperharmonic.AllowedSubtileIncidence
 public import LeanPool.ApollonianSuperharmonic.SixSubtileFaceVertices
 public import LeanPool.ApollonianSuperharmonic.GaussianRealPoint
-public import LeanPool.ApollonianSuperharmonic.PlaneTriangulation
 
 -- [TABLET NODE: P4677T2DrawingData]
 

@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P4418T3EndpointOwnerIndices
 public import LeanPool.ApollonianSuperharmonic.P4418T3SelectedInterfaceData
 public import LeanPool.ApollonianSuperharmonic.P3996T1SRowAlignment
@@ -72,12 +74,12 @@ private theorem hpath :
   intro q cfg C T cert a b z E occ V W hindices
   cases hchild : z.childIsExterior
   · have hi := hindices
-    simp? [hchild] at hi
+    simp only [hchild, Bool.false_eq_true, ↓reduceIte] at hi
     rcases hi with ⟨hc, hp⟩
     simpa [V, W, occ, SubtileOccurrenceInterpretation, hc, hp,
       Set.inter_comm] using E.pathCA
   · have hi := hindices
-    simp? [hchild] at hi
+    simp only [hchild, ↓reduceIte] at hi
     rcases hi with ⟨hc, hp⟩
     simpa [V, W, occ, SubtileOccurrenceInterpretation, hc, hp,
       Set.inter_comm] using E.pathCA
@@ -114,11 +116,11 @@ private theorem hdataEndpoints :
       (FootprintEdges (occ a) ∩ FootprintEdges (occ b)) E.point E.otherCA := by
     cases hchild : z.childIsExterior
     · have hi := hindices
-      simp? [hchild] at hi
+      simp only [hchild, Bool.false_eq_true, ↓reduceIte] at hi
       rcases hi with ⟨hc, hp⟩
       simpa [V, W, occ, hc, hp, Set.inter_comm] using hpath
     · have hi := hindices
-      simp? [hchild] at hi
+      simp only [hchild, ↓reduceIte] at hi
       rcases hi with ⟨hc, hp⟩
       simpa [V, W, occ, hc, hp, Set.inter_comm] using hpath
   have hp := SimpleGridPathEndpointPairUnique data.path hpath'
@@ -347,7 +349,8 @@ private theorem holdShift :
   classical
   intro q cfg C T cert a b row data z hz E hsub occ V W K hindices hpath hdataEndpoints
       hpointPair hKDisjoint hLV hLW hLK oldCoords
-  cases row <;> simp? [P3996T1SRowTable] at hz
+  cases row <;> simp only [P3996T1SRowTable, Fin.isValue, Int.reduceNeg, Option.some.injEq,
+      reduceCtorEq] at hz
   all_goals cases hz
   all_goals simp [oldCoords, nestedOldCoordinates]
   all_goals ring
@@ -389,7 +392,8 @@ private theorem hchildBlockNe :
   classical
   intro q cfg C T cert a b row data z hz E hsub occ V W K hindices hpath hdataEndpoints
       hpointPair hKDisjoint hLV hLW hLK oldCoords holdShift
-  cases row <;> simp? [P3996T1SRowTable] at hz
+  cases row <;> simp only [P3996T1SRowTable, Fin.isValue, Int.reduceNeg, Option.some.injEq,
+      reduceCtorEq] at hz
   all_goals
     cases hz
     simp [oldCoords, nestedOldCoordinates]
@@ -432,7 +436,8 @@ private theorem hparentBlockNe :
   classical
   intro q cfg C T cert a b row data z hz E hsub occ V W K hindices hpath hdataEndpoints
       hpointPair hKDisjoint hLV hLW hLK oldCoords holdShift hchildBlockNe
-  cases row <;> simp? [P3996T1SRowTable] at hz
+  cases row <;> simp only [P3996T1SRowTable, Fin.isValue, Int.reduceNeg, Option.some.injEq,
+      reduceCtorEq] at hz
   all_goals
     cases hz
     simp [oldCoords, nestedOldCoordinates]
@@ -479,7 +484,8 @@ private theorem hwrongBlockNe :
   intro q cfg C T cert a b row data z hz E hsub occ V W K hindices hpath hdataEndpoints
       hpointPair hKDisjoint hLV hLW hLK oldCoords holdShift hchildBlockNe hparentBlockNe owners
       wrongOwner
-  cases row <;> simp? [P3996T1SRowTable] at hz
+  cases row <;> simp only [P3996T1SRowTable, Fin.isValue, Int.reduceNeg, Option.some.injEq,
+      reduceCtorEq] at hz
   all_goals
     cases hz
     simp [wrongOwner, owners, oldCoords,
@@ -696,7 +702,7 @@ private theorem hNoWrong :
       hLV hLK hLW hET hpointE
     obtain ⟨j, hjK⟩ := hsectorE.2.2.1
     have hjData := hsectorData.1 j
-    simp? [hslot] at heq
+    simp only [hslot, Fin.isValue, ↓reduceIte] at heq
     rw [← heq] at hjData
     rcases hjData with hjV | hjW | hjG
     · exact (Finset.disjoint_left.mp hKV) hjK hjV
@@ -712,7 +718,7 @@ private theorem hNoWrong :
       hLV hLK hLW hET hpointE
     obtain ⟨j, hjK⟩ := hsectorE.2.2.1
     have hjData := hsectorData.1 j
-    simp? [hslot] at heq
+    simp only [Fin.isValue, hslot, ↓reduceIte] at heq
     rw [← heq] at hjData
     rcases hjData with hjV | hjW | hjG
     · exact (Finset.disjoint_left.mp hKV) hjK hjV
@@ -803,12 +809,12 @@ theorem P4418T3NestedCompanionEndpoint
       hKV hKW hKGwrong hTVW hTVW' hcommon₀ hcommon₁ hET
   by_cases hslot : z.parentSlot = 0
   · have hn := hNoWrong
-    simp? [hslot] at hn
+    simp only [hslot, Fin.isValue, ↓reduceIte, ne_eq] at hn
     rcases hpointPair with hp | hp
     · simpa [hslot] using hp
     · exact False.elim (hn hp)
   · have hn := hNoWrong
-    simp? [hslot] at hn
+    simp only [Fin.isValue, hslot, ↓reduceIte, ne_eq] at hn
     rcases hpointPair with hp | hp
     · exact False.elim (hn hp)
     · simpa [hslot] using hp

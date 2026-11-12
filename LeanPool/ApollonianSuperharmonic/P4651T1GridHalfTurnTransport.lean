@@ -5,10 +5,11 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.CentrallyReflectedAt
 public import LeanPool.ApollonianSuperharmonic.BoundaryFootprintVertices
 public import LeanPool.ApollonianSuperharmonic.P3776T1CellCenterMembership
-public import Mathlib.Tactic.Linarith
 
 -- [TABLET NODE: P4651T1GridHalfTurnTransport]
 

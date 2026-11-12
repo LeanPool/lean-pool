@@ -5,9 +5,9 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P3723T1AllContactRouting
-public import LeanPool.ApollonianSuperharmonic.P3767T1VertexEdgeIncidence
-public import LeanPool.ApollonianSuperharmonic.P3776T1FixedGeometry
 public import LeanPool.ApollonianSuperharmonic.P3913T1PeriodicPositionUnbounded
 
 -- [TABLET NODE: P3913T1OffFaceExterior]

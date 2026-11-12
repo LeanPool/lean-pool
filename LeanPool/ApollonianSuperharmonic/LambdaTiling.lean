@@ -5,11 +5,11 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.BandPrototileExists
 public import LeanPool.ApollonianSuperharmonic.BandTileTopologyApplication
 public import LeanPool.ApollonianSuperharmonic.CurvatureOneTileBase
-public import LeanPool.ApollonianSuperharmonic.BandTileSimultaneousInduction
-public import LeanPool.ApollonianSuperharmonic.BandGenealogy
 
 -- [TABLET NODE: LambdaTiling]
 

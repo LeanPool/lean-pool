@@ -5,8 +5,12 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P4062T1RemainderPaths
 public import LeanPool.ApollonianSuperharmonic.FordBoundaryMultiplicity
+public meta import Lean.Meta.Tactic.NormCast
+public import Mathlib.Algebra.BigOperators.Fin
 
 /-!
 # P4112T1BoundaryMultiplicity
@@ -145,13 +149,16 @@ theorem P4112T1BoundaryMultiplicity (P : FordFareyParameter) (hP : 2 < P.q) :
   · fin_cases j
     · simp only [P4062T1RemainderPaths, hlt] at ⊢
       have hle : P.q₂ ≤ P.q₁ := Nat.le_of_lt hlt
-      simp? [P4062T1RemainderPaths, P4062T1InteriorSquare, hlt] at hx
+      simp only [P4062T1RemainderPaths, hlt, ↓reduceIte, Int.reduceNeg, P4062T1InteriorSquare,
+          Finset.product_eq_sprod, Fin.zero_eta, Fin.isValue, Matrix.cons_val_zero,
+          Finset.mem_filter, Finset.mem_image, Finset.mem_product, Finset.mem_Icc,
+          Prod.exists] at hx
       rcases hx with ⟨⟨a, b, hmem, heq⟩, hp⟩
       rcases hmem with ⟨⟨ha1, ha2⟩, hb1, hb2⟩
       subst x
-      simp? at hp
+      simp only at hp
       by_cases hroot : (⟨a, b⟩ : GaussianInt) = ⟨(P.q₁ : Int), (P.q₂ : Int)⟩
-      · simp? at hroot
+      · simp only [Int.reduceNeg, Zsqrtd.mk.injEq] at hroot
         rcases hroot with ⟨rfl, rfl⟩
         simp_all []
       · rcases hp with hp | hp <;> rcases hp with ⟨h1, h2⟩ <;>
@@ -159,13 +166,16 @@ theorem P4112T1BoundaryMultiplicity (P : FordFareyParameter) (hP : 2 < P.q) :
             split_ifs <;> omega
     · simp only [P4062T1RemainderPaths, hlt] at ⊢
       have hle : P.q₂ ≤ P.q₁ := Nat.le_of_lt hlt
-      simp? [P4062T1RemainderPaths, P4062T1InteriorSquare, hlt] at hx
+      simp only [P4062T1RemainderPaths, hlt, ↓reduceIte, Int.reduceNeg, P4062T1InteriorSquare,
+          Finset.product_eq_sprod, Fin.mk_one, Fin.isValue, Matrix.cons_val_one,
+          Matrix.cons_val_fin_one, Finset.mem_filter, Finset.mem_image, Finset.mem_product,
+          Finset.mem_Icc, Prod.exists] at hx
       rcases hx with ⟨⟨a, b, hmem, heq⟩, hp⟩
       rcases hmem with ⟨⟨ha1, ha2⟩, hb1, hb2⟩
       subst x
-      simp? at hp
+      simp only at hp
       by_cases hroot : (⟨a, b⟩ : GaussianInt) = ⟨(P.q₂ : Int), (P.q₁ : Int)⟩
-      · simp? at hroot
+      · simp only [Int.reduceNeg, Zsqrtd.mk.injEq] at hroot
         rcases hroot with ⟨rfl, rfl⟩
         simp_all []
       · rcases hp with hp | hp <;> rcases hp with ⟨h1, h2⟩ <;>
@@ -176,13 +186,16 @@ theorem P4112T1BoundaryMultiplicity (P : FordFareyParameter) (hP : 2 < P.q) :
       have hleNat : P.q₁ ≤ P.q₂ := Nat.le_of_not_gt hlt
       have hlt' : P.q₁ < P.q₂ := Nat.lt_of_le_of_ne hleNat hneq
       have hle : P.q₁ ≤ P.q₂ := Nat.le_of_lt hlt'
-      simp? [P4062T1RemainderPaths, P4062T1InteriorSquare, hlt] at hx
+      simp only [P4062T1RemainderPaths, hlt, ↓reduceIte, Int.reduceNeg, P4062T1InteriorSquare,
+          Finset.product_eq_sprod, Fin.zero_eta, Fin.isValue, Matrix.cons_val_zero,
+          Finset.mem_filter, Finset.mem_image, Finset.mem_product, Finset.mem_Icc,
+          Prod.exists] at hx
       rcases hx with ⟨⟨a, b, hmem, heq⟩, hp⟩
       rcases hmem with ⟨⟨ha1, ha2⟩, hb1, hb2⟩
       subst x
-      simp? at hp
+      simp only at hp
       by_cases hroot : (⟨a, b⟩ : GaussianInt) = ⟨(P.q₁ : Int), (P.q₁ : Int)⟩
-      · simp? at hroot
+      · simp only [Int.reduceNeg, Zsqrtd.mk.injEq] at hroot
         rcases hroot with ⟨rfl, rfl⟩
         simp_all []
       · rcases hp with hp | hp <;> rcases hp with ⟨h1, h2⟩ <;>
@@ -192,13 +205,16 @@ theorem P4112T1BoundaryMultiplicity (P : FordFareyParameter) (hP : 2 < P.q) :
       have hleNat : P.q₁ ≤ P.q₂ := Nat.le_of_not_gt hlt
       have hlt' : P.q₁ < P.q₂ := Nat.lt_of_le_of_ne hleNat hneq
       have hle : P.q₁ ≤ P.q₂ := Nat.le_of_lt hlt'
-      simp? [P4062T1RemainderPaths, P4062T1InteriorSquare, hlt] at hx
+      simp only [P4062T1RemainderPaths, hlt, ↓reduceIte, Int.reduceNeg, P4062T1InteriorSquare,
+          Finset.product_eq_sprod, Fin.mk_one, Fin.isValue, Matrix.cons_val_one,
+          Matrix.cons_val_fin_one, Finset.mem_filter, Finset.mem_image, Finset.mem_product,
+          Finset.mem_Icc, Prod.exists] at hx
       rcases hx with ⟨⟨a, b, hmem, heq⟩, hp⟩
       rcases hmem with ⟨⟨ha1, ha2⟩, hb1, hb2⟩
       subst x
-      simp? at hp
+      simp only at hp
       by_cases hroot : (⟨a, b⟩ : GaussianInt) = ⟨(P.q₂ : Int), (P.q₂ : Int)⟩
-      · simp? at hroot
+      · simp only [Int.reduceNeg, Zsqrtd.mk.injEq] at hroot
         rcases hroot with ⟨rfl, rfl⟩
         simp_all []
       · rcases hp with hp | hp <;> rcases hp with ⟨h1, h2⟩ <;>

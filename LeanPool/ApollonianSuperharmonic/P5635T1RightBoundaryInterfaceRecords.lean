@@ -5,15 +5,12 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.BandOrderedGeneralNormalizedOccurrenceBundle
-public import LeanPool.ApollonianSuperharmonic.BandOrderedGeneralRightPlacement
 public import LeanPool.ApollonianSuperharmonic.BandOrientedChildParentRightEndpoint
-public import LeanPool.ApollonianSuperharmonic.BandPrototileTranslation
 public import LeanPool.ApollonianSuperharmonic.P3045T1RightBoundaryDisplacementAlgebra
-public import LeanPool.ApollonianSuperharmonic.ProperBandCurvatureStructure
 public import LeanPool.ApollonianSuperharmonic.TileOdometerBandPrototile
-public import LeanPool.ApollonianSuperharmonic.TileTranslationFormulas
-public import LeanPool.ApollonianSuperharmonic.VectorRecursionLaws
 
 -- [TABLET NODE: P5635T1RightBoundaryInterfaceRecords]
 

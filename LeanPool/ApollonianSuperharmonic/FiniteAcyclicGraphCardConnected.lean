@@ -5,8 +5,9 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import Mathlib.Combinatorics.SimpleGraph.Acyclic
-public import LeanPool.ApollonianSuperharmonic.Preamble
 
 -- [TABLET NODE: FiniteAcyclicGraphCardConnected]
 

@@ -5,9 +5,10 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P3776T1WalkMap
 public import LeanPool.ApollonianSuperharmonic.PeriodicTileCore
-public import Mathlib.Tactic.Linarith
 
 -- [TABLET NODE: P3776T1DualEdges]
 

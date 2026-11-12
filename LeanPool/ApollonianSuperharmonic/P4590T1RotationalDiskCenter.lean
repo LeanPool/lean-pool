@@ -5,8 +5,9 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.TopologicalDiskExponentialLift
-public import Mathlib.Topology.Connected.TotallyDisconnected
 
 -- [TABLET NODE: P4590T1RotationalDiskCenter]
 
@@ -75,7 +76,12 @@ theorem P4590T1RotationalDiskCenter (S : Set (Real × Real)) (hS : TopologicalDi
     have h1i := congrArg Complex.im h1
     have h2i := congrArg Complex.im h2
     have hni := congrArg Complex.im hn
-    simp? [a] at h0i h1i h2i hni
+    simp only [Complex.ofReal_div, Complex.ofReal_ofNat, Complex.sub_im, Complex.mul_im,
+        Complex.div_ofNat_re, Complex.ofReal_re, Complex.I_im, mul_one, Complex.div_ofNat_im,
+        Complex.ofReal_im, zero_div, Complex.I_re, mul_zero, add_zero, sub_left_inj,
+        Complex.add_im, Complex.intCast_re, Complex.mul_re, Complex.re_ofNat,
+        Complex.im_ofNat, sub_zero, zero_mul, Complex.intCast_im, sub_self, a]
+        at h0i h1i h2i hni
     have hreal : (1 : Real) + 4 * (n : Real) = 0 := by
       nlinarith [Real.pi_pos]
     exact_mod_cast hreal

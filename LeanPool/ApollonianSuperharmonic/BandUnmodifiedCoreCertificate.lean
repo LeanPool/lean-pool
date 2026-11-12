@@ -5,8 +5,9 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.AllowedSubtileIncidence
-public import LeanPool.ApollonianSuperharmonic.PeriodicSubtileFaceIndex
 public import LeanPool.ApollonianSuperharmonic.PeriodicTileCore
 public import LeanPool.ApollonianSuperharmonic.SixSubtileFaceVertices
 public import LeanPool.ApollonianSuperharmonic.SubtileOccurrenceInterpretation

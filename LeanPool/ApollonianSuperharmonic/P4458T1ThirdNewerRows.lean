@@ -5,24 +5,9 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.ApollonianSuperharmonic.AncestorOdometerInnerSupportNormalization
-public import LeanPool.ApollonianSuperharmonic.BandPrototileCentroidUnique
-public import LeanPool.ApollonianSuperharmonic.BandPrototileTranslation
-public import LeanPool.ApollonianSuperharmonic.BandRegularTileTouchingClassification
-public import LeanPool.ApollonianSuperharmonic.BandVectorOrientationDichotomy
-public import LeanPool.ApollonianSuperharmonic.LeftLatticeAdjacent
-public import LeanPool.ApollonianSuperharmonic.P4458T1BoundaryFrame
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P4458T1BoundaryPlacement
-public import LeanPool.ApollonianSuperharmonic.P4458T1BoundarySide
-public import LeanPool.ApollonianSuperharmonic.P4458T1RestrictionFamily
-public import LeanPool.ApollonianSuperharmonic.ParentVectorsInTilingLattice
-public import LeanPool.ApollonianSuperharmonic.PositiveCurvatureTileOdometerDomain
-public import LeanPool.ApollonianSuperharmonic.PositiveCurvatureTileOdometerSupportTransport
-public import LeanPool.ApollonianSuperharmonic.TileOdometerBandPrototile
-public import LeanPool.ApollonianSuperharmonic.TileString
-public import LeanPool.ApollonianSuperharmonic.TileTranslationFormulas
-public import LeanPool.ApollonianSuperharmonic.VectorNonvanishing
-public import LeanPool.ApollonianSuperharmonic.VectorRecursionLaws
 public import LeanPool.ApollonianSuperharmonic.P4536T1AFrameB
 public import LeanPool.ApollonianSuperharmonic.P4536T1AFrameD
 public import LeanPool.ApollonianSuperharmonic.P4536T1EndpointDifferences
@@ -115,12 +100,12 @@ theorem P4458T1ThirdNewerRows :
         GaussianRealPoint ((⟨0, 1⟩ : GaussianInt) * BandVectors.1 (t 0) (t 1)) := by
       rw [hcent]
       simpa only [hslot, idx, hqE, hqB, ht0, ht1] using hright
-    have hrightDiff : F.plus_slope - s =
+    have hrightDiff : F.plusSlope - s =
         GaussianRealPoint (-(⟨0, 1⟩ : GaussianInt) * BandVectors.2 (t 0) (t 1)) := by
       simpa only [hslot, idx, hqE, hqB, ht0, ht1] using hrightSlope
     obtain ⟨hstring, hlink⟩ := P4549T1NegativeIncomingSide t ht htC
       base J Rplus (D.functions F.slot false) hplus F.base_band hfamily F.plus_family
-      hodo F.plus_odo s F.plus_slope hs F.slope_plus hrightCent hrightDiff
+      hodo F.plus_odo s F.plusSlope hs F.slope_plus hrightCent hrightDiff
     exact ⟨⟨J, hcells, hodo, hanc, hocc,
       .recursive G a houter hancestor, .direct hstring hlink⟩⟩
 

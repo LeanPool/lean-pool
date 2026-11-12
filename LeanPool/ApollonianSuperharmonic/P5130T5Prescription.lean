@@ -5,7 +5,11 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.ApollonianSuperharmonic.FordRecursiveVertexDomains
+public import Mathlib.Init
+public import Mathlib.Algebra.Group.Fin.Basic
+
+public import LeanPool.ApollonianSuperharmonic.FordFareyParameter
+public import LeanPool.ApollonianSuperharmonic.IntegerLatticeFunction
 
 -- [TABLET NODE: P5130T5Prescription]
 

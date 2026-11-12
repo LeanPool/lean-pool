@@ -5,18 +5,13 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.BandOrientedBoundaryParentChain
 public import LeanPool.ApollonianSuperharmonic.BandOrderedGeneralConfiguration
 public import LeanPool.ApollonianSuperharmonic.BandParentBoundaryGenealogy
-public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryCircleAction
 public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryProperCovariance
 public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryQuadrupleAction
-public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryReversesOrientation
-public import LeanPool.ApollonianSuperharmonic.BandPredecessorNoCollision
-public import LeanPool.ApollonianSuperharmonic.BandSuccessorClassification
-public import LeanPool.ApollonianSuperharmonic.ProperBandCurvatureStructure
-public import LeanPool.ApollonianSuperharmonic.ProperBandQuadruple
-public import LeanPool.ApollonianSuperharmonic.SemiProperForestClassification
 
 -- [TABLET NODE: BandRetainedBoundaryGenealogy]
 
@@ -195,7 +190,8 @@ private theorem hq0large :
   have hp1lt := hp.2 0
   have hqformula := congrArg
     (fun z : Fin 4 → CircleCoordinates => (z 0).1) hsucc
-  simp? at hqformula
+  simp only [Fin.isValue, Nat.succ_eq_add_one, Nat.reduceAdd, Matrix.cons_val_zero]
+      at hqformula
   have hqformula' : (q 0).1 =
       2 * (p 0).1 + 2 * (p 2).1 + 2 * (p 3).1 - (p 1).1 := by
     simpa using hqformula
@@ -293,9 +289,14 @@ private theorem hs'At413 :
     (fun z => BandPackingSymmetryQuadrupleAction .conjugate z) hsucc
   change BandPackingSymmetryQuadrupleAction .conjugate q = _
   convert hss using 1;
-    simp? [pp, pr, BandPackingSymmetryQuadrupleAction,
-      BandPackingSymmetryReversesOrientation, BandPackingSymmetryCircleAction,
-      GaussianReflection, negOneSucc, negTwoSucc];
+    simp only [Nat.succ_eq_add_one, Nat.reduceAdd, BandPackingSymmetryQuadrupleAction,
+        BandPackingSymmetryCircleAction, Fin.isValue, GaussianReflection, Int.reduceNeg,
+        BandPackingSymmetryReversesOrientation, ↓reduceIte, neg_zero, Fin.succ_zero_eq_one,
+        negOneSucc, negTwoSucc, Matrix.cons_val_zero, Matrix.cons_val, Matrix.cons_val_one,
+        Zsqrtd.re_sub, Zsqrtd.re_add, Zsqrtd.re_mul, Zsqrtd.re_ofNat, Nat.cast_ofNat,
+        Zsqrtd.im_ofNat, mul_zero, zero_mul, add_zero, Zsqrtd.im_sub, Zsqrtd.im_add,
+        Zsqrtd.im_mul, neg_sub, Matrix.vecCons_inj, Prod.mk.injEq, sub_left_inj, and_true, pp,
+        pr];
     try { constructor
           · ring
           · ext <;> simp [] <;> ring }
@@ -318,9 +319,13 @@ private theorem hs'At528 :
   have hss := congrArg (fun z => BandPackingSymmetryQuadrupleAction .conjugate z) hsucc
   change BandPackingSymmetryQuadrupleAction .conjugate base = _
   convert hss using 1;
-    simp? [pp, BandPackingSymmetryQuadrupleAction,
-    BandPackingSymmetryReversesOrientation, BandPackingSymmetryCircleAction,
-    GaussianReflection, negOneSucc, negTwoSucc];
+    simp only [Nat.succ_eq_add_one, Nat.reduceAdd, BandPackingSymmetryQuadrupleAction,
+        BandPackingSymmetryCircleAction, Fin.isValue, GaussianReflection, Int.reduceNeg,
+        BandPackingSymmetryReversesOrientation, ↓reduceIte, neg_zero, Fin.succ_zero_eq_one,
+        negOneSucc, negTwoSucc, Matrix.cons_val_zero, Matrix.cons_val, Matrix.cons_val_one,
+        Zsqrtd.re_sub, Zsqrtd.re_add, Zsqrtd.re_mul, Zsqrtd.re_ofNat, Nat.cast_ofNat,
+        Zsqrtd.im_ofNat, mul_zero, zero_mul, add_zero, Zsqrtd.im_sub, Zsqrtd.im_add,
+        Zsqrtd.im_mul, neg_sub, Matrix.vecCons_inj, Prod.mk.injEq, sub_left_inj, and_true, pp];
     try { constructor
           · ring
           · ext <;> simp [] <;> ring }
@@ -343,9 +348,13 @@ private theorem hs'At631 :
   have hss := congrArg (fun z => BandPackingSymmetryQuadrupleAction .conjugate z) hsucc
   change BandPackingSymmetryQuadrupleAction .conjugate base = _
   convert hss using 1;
-    simp? [pp, BandPackingSymmetryQuadrupleAction,
-    BandPackingSymmetryReversesOrientation, BandPackingSymmetryCircleAction,
-    GaussianReflection, negOneSucc, negTwoSucc];
+    simp only [Nat.succ_eq_add_one, Nat.reduceAdd, BandPackingSymmetryQuadrupleAction,
+        BandPackingSymmetryCircleAction, Fin.isValue, GaussianReflection, Int.reduceNeg,
+        BandPackingSymmetryReversesOrientation, ↓reduceIte, neg_zero, Fin.succ_zero_eq_one,
+        negOneSucc, negTwoSucc, Matrix.cons_val_zero, Matrix.cons_val, Matrix.cons_val_one,
+        Zsqrtd.re_sub, Zsqrtd.re_add, Zsqrtd.re_mul, Zsqrtd.re_ofNat, Nat.cast_ofNat,
+        Zsqrtd.im_ofNat, mul_zero, zero_mul, add_zero, Zsqrtd.im_sub, Zsqrtd.im_add,
+        Zsqrtd.im_mul, neg_sub, Matrix.vecCons_inj, Prod.mk.injEq, sub_left_inj, and_true, pp];
     try { constructor
           · ring
           · ext <;> simp [] <;> ring }
@@ -461,8 +470,10 @@ private theorem hnl'At549 :
     ∀ i : Fin 4, (u i).1 ≠ 0) := by
   classical
   intro q hnoLine u i
-  fin_cases i <;> simp? [u, BandPackingSymmetryQuadrupleAction,
-    BandPackingSymmetryReversesOrientation, BandPackingSymmetryCircleAction] <;>
+  fin_cases i <;> simp only [BandPackingSymmetryQuadrupleAction,
+      BandPackingSymmetryCircleAction, Fin.isValue, BandPackingSymmetryReversesOrientation,
+      ↓reduceIte, neg_zero, Fin.succ_zero_eq_one, Fin.mk_one, Matrix.cons_val_one,
+      Matrix.cons_val_zero, ne_eq, u, Fin.reduceFinMk, Matrix.cons_val, Fin.zero_eta] <;>
     apply hnoLine
 
 private theorem h0'At562 :
@@ -615,7 +626,9 @@ private theorem hnl'At620 :
     ∀ i : Fin 4, (u i).1 ≠ 0) := by
   classical
   intro q hnoLine u i
-  fin_cases i <;> simp? [u] <;> apply hnoLine
+  fin_cases i <;> simp only [Fin.isValue, Fin.mk_one, Matrix.cons_val_one,
+      Matrix.cons_val_zero, ne_eq, u, Fin.reduceFinMk, Matrix.cons_val, Fin.zero_eta] <;> apply
+          hnoLine
 
 private theorem haum'At623 :
     ∀ (q : Fin 4 → CircleCoordinates), (∀ (i : Fin (4 : ℕ)), ∀ (j : Fin (4 : ℕ)), (q i).1 = (1 :
@@ -633,7 +646,9 @@ private theorem haum'At623 :
     ∀ i j : Fin 4, (u i).1 = 1 → (u j).1 = 1 → i = j)) := by
   classical
   intro q hatMostOneUnit p hsecond u i j hi hj
-  fin_cases i <;> fin_cases j <;> simp? [u] at hi hj ⊢ <;>
+  fin_cases i <;> fin_cases j <;> simp only [Fin.isValue, Fin.mk_one, Matrix.cons_val_one,
+      Matrix.cons_val_zero, Fin.reduceFinMk, Matrix.cons_val, Fin.reduceEq, u, Fin.zero_eta,
+      one_ne_zero, zero_ne_one] at hi hj ⊢ <;>
     (exfalso; have e := hatMostOneUnit _ _ hi hj; omega)
 
 private theorem huAt646 :
@@ -657,8 +672,11 @@ private theorem hnl'At656 :
     let u := BandPackingSymmetryQuadrupleAction .conjugate base
     ∀ i : Fin 4, (u i).1 ≠ 0) := by
   classical
-  intro q hnoLine base u i; fin_cases i <;> simp? [u, base, BandPackingSymmetryQuadrupleAction,
-      BandPackingSymmetryReversesOrientation, BandPackingSymmetryCircleAction] <;> apply hnoLine
+  intro q hnoLine base u i; fin_cases i <;> simp only [BandPackingSymmetryQuadrupleAction,
+      BandPackingSymmetryCircleAction, Fin.isValue, Matrix.cons_val_zero,
+      BandPackingSymmetryReversesOrientation, ↓reduceIte, neg_zero, Fin.succ_zero_eq_one,
+      Matrix.cons_val_one, Matrix.cons_val_succ, Matrix.cons_val, Fin.mk_one, ne_eq, u, base,
+      Fin.reduceFinMk, Fin.zero_eta] <;> apply hnoLine
 
 private theorem haum'At660 :
     ∀ (q : Fin 4 → CircleCoordinates), (∀ (i : Fin (4 : ℕ)), ∀ (j : Fin (4 : ℕ)), (q i).1 = (1 :
@@ -677,8 +695,11 @@ private theorem haum'At660 :
     ∀ i j : Fin 4, (u i).1 = 1 → (u j).1 = 1 → i = j)) := by
   classical
   intro q hatMostOneUnit p hsecond base u i j hi hj
-  fin_cases i <;> fin_cases j <;> simp? [u, base, BandPackingSymmetryQuadrupleAction,
-    BandPackingSymmetryReversesOrientation, BandPackingSymmetryCircleAction] at hi hj ⊢ <;>
+  fin_cases i <;> fin_cases j <;> simp only [BandPackingSymmetryQuadrupleAction,
+      BandPackingSymmetryCircleAction, Fin.isValue, Matrix.cons_val_zero,
+      BandPackingSymmetryReversesOrientation, ↓reduceIte, neg_zero, Fin.succ_zero_eq_one,
+      Matrix.cons_val_one, Matrix.cons_val_succ, Matrix.cons_val, Fin.mk_one, Fin.reduceFinMk,
+      Fin.reduceEq, u, base, Fin.zero_eta, one_ne_zero, zero_ne_one] at hi hj ⊢ <;>
     (exfalso; have e := hatMostOneUnit _ _ hi hj; omega)
 
 private theorem h0'At670 :
@@ -799,7 +820,9 @@ private theorem hnl'At720 :
     ∀ i : Fin 4, (u i).1 ≠ 0) := by
   classical
   intro q hnoLine u i
-  fin_cases i <;> simp? [u] <;> apply hnoLine
+  fin_cases i <;> simp only [Fin.isValue, Fin.mk_one, Matrix.cons_val_one,
+      Matrix.cons_val_zero, ne_eq, u, Fin.reduceFinMk, Matrix.cons_val, Fin.zero_eta] <;> apply
+          hnoLine
 
 private theorem haum'At723 :
     ∀ (q : Fin 4 → CircleCoordinates), (∀ (i : Fin (4 : ℕ)), ∀ (j : Fin (4 : ℕ)), (q i).1 = (1 :
@@ -817,7 +840,9 @@ private theorem haum'At723 :
     ∀ i j : Fin 4, (u i).1 = 1 → (u j).1 = 1 → i = j)) := by
   classical
   intro q hatMostOneUnit p hthird u i j hi hj
-  fin_cases i <;> fin_cases j <;> simp? [u] at hi hj ⊢ <;>
+  fin_cases i <;> fin_cases j <;> simp only [Fin.isValue, Fin.mk_one, Matrix.cons_val_one,
+      Matrix.cons_val_zero, Fin.reduceFinMk, Matrix.cons_val, Fin.reduceEq, u, Fin.zero_eta,
+      one_ne_zero, zero_ne_one] at hi hj ⊢ <;>
     (exfalso; have e := hatMostOneUnit _ _ hi hj; omega)
 
 private theorem hs'At727 :
@@ -853,8 +878,11 @@ private theorem hnl'At757 :
     let u := BandPackingSymmetryQuadrupleAction .conjugate base
     ∀ i : Fin 4, (u i).1 ≠ 0) := by
   classical
-  intro q hnoLine base u i; fin_cases i <;> simp? [u, base, BandPackingSymmetryQuadrupleAction,
-      BandPackingSymmetryReversesOrientation, BandPackingSymmetryCircleAction] <;> apply hnoLine
+  intro q hnoLine base u i; fin_cases i <;> simp only [BandPackingSymmetryQuadrupleAction,
+      BandPackingSymmetryCircleAction, Fin.isValue, Matrix.cons_val_zero,
+      BandPackingSymmetryReversesOrientation, ↓reduceIte, neg_zero, Fin.succ_zero_eq_one,
+      Matrix.cons_val_one, Matrix.cons_val_succ, Matrix.cons_val, Fin.mk_one, ne_eq, u, base,
+      Fin.reduceFinMk, Fin.zero_eta] <;> apply hnoLine
 
 private theorem haum'At761 :
     ∀ (q : Fin 4 → CircleCoordinates), (∀ (i : Fin (4 : ℕ)), ∀ (j : Fin (4 : ℕ)), (q i).1 = (1 :
@@ -873,8 +901,11 @@ private theorem haum'At761 :
     ∀ i j : Fin 4, (u i).1 = 1 → (u j).1 = 1 → i = j)) := by
   classical
   intro q hatMostOneUnit p hthird base u i j hi hj
-  fin_cases i <;> fin_cases j <;> simp? [u, base, BandPackingSymmetryQuadrupleAction,
-    BandPackingSymmetryReversesOrientation, BandPackingSymmetryCircleAction] at hi hj ⊢ <;>
+  fin_cases i <;> fin_cases j <;> simp only [BandPackingSymmetryQuadrupleAction,
+      BandPackingSymmetryCircleAction, Fin.isValue, Matrix.cons_val_zero,
+      BandPackingSymmetryReversesOrientation, ↓reduceIte, neg_zero, Fin.succ_zero_eq_one,
+      Matrix.cons_val_one, Matrix.cons_val_succ, Matrix.cons_val, Fin.mk_one, Fin.reduceFinMk,
+      Fin.reduceEq, u, base, Fin.zero_eta, one_ne_zero, zero_ne_one] at hi hj ⊢ <;>
     (exfalso; have e := hatMostOneUnit _ _ hi hj; omega)
 
 private theorem h0'At771 :

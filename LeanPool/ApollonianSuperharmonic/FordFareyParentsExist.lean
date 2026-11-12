@@ -5,7 +5,16 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+public import Mathlib.Data.Nat.ModEq
+public import Mathlib.Basic.ExistsUnique
+public import Mathlib.Tactic.ByContra
+public import Mathlib.Tactic.Linarith
+public import Mathlib.Tactic.NormNum
+public import Mathlib.Tactic.Ring
+
 public import LeanPool.ApollonianSuperharmonic.FordFareyParameter
+public meta import Lean.Meta.Tactic.NormCast
 
 -- [TABLET NODE: FordFareyParentsExist]
 

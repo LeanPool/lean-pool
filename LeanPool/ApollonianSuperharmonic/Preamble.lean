@@ -5,17 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
--- Preamble: shared imports for all tablet nodes.
--- Add specific Mathlib imports here (never `import Mathlib`).
-public import Mathlib.NumberTheory.Zsqrtd.GaussianInt
-public import Mathlib.Data.Fin.VecNotation
-public import Mathlib.LinearAlgebra.Matrix.ToLin
-public import Mathlib.LinearAlgebra.Matrix.Trace
-public import Mathlib.LinearAlgebra.Matrix.PosDef
-public import Mathlib.Data.Finset.Card
-public import Mathlib.Topology.Homeomorph.Defs
-public import Mathlib.Topology.MetricSpace.Isometry
-public import Mathlib.SetTheory.Cardinal.Finite
+-- Keep standard syntax linters active; each module imports its mathematical dependencies.
+public import Mathlib.Init
 
 /-!
 # Preamble

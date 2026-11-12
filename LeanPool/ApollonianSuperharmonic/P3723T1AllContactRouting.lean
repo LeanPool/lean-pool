@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P3723T1ContactPorts
 public import LeanPool.ApollonianSuperharmonic.P3723T1PolygonalParameterization
 

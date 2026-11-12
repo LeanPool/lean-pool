@@ -5,9 +5,12 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P3523T1BoundaryFaceSplit
-public import LeanPool.ApollonianSuperharmonic.P3523T1InterpolatedTarget
-public import Mathlib.Data.Finset.Image
+public import LeanPool.ApollonianSuperharmonic.P3475T1BoundarySubdivision
+public import LeanPool.ApollonianSuperharmonic.P3475T1TriangleTree
+public import LeanPool.ApollonianSuperharmonic.P3523T1InsertionData
 
 -- [TABLET NODE: P3523T1InsertionConstruction]
 

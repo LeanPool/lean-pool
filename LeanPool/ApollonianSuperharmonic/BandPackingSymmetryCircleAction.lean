@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetry
 public import LeanPool.ApollonianSuperharmonic.CircleCoordinates
 public import LeanPool.ApollonianSuperharmonic.GaussianReflection

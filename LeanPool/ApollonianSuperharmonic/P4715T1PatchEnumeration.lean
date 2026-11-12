@@ -5,9 +5,12 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+public import Mathlib.Data.Fintype.Fin
+public import Mathlib.Tactic.FinCases
+
 public import LeanPool.ApollonianSuperharmonic.P4715T1PatchFaces
 public import LeanPool.ApollonianSuperharmonic.P4715T1FaceShift
-public import Mathlib.Tactic.FinCases
 
 -- [TABLET NODE: P4715T1PatchEnumeration]
 

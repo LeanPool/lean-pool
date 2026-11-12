@@ -5,14 +5,12 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P5596T1CommonExtensionTransport
 public import LeanPool.ApollonianSuperharmonic.P5332T1LiteralNormalization
-public import LeanPool.ApollonianSuperharmonic.FordOdometerFamilyExistsUnique
 public import LeanPool.ApollonianSuperharmonic.FordLaplacianTable
-public import LeanPool.ApollonianSuperharmonic.FordRegimeConverse
-public import LeanPool.ApollonianSuperharmonic.FordCoordinateConfiguration
 public import LeanPool.ApollonianSuperharmonic.LeftLatticeAdjacentPackingSymmetryTransport
-public import LeanPool.ApollonianSuperharmonic.ProperBandCurvatureStructure
 
 -- [TABLET NODE: P5596T1LineParent]
 

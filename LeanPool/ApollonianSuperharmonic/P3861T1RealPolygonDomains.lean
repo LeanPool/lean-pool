@@ -5,14 +5,13 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P3475T1BoundaryReduction
 public import LeanPool.ApollonianSuperharmonic.P3475T1PolygonTriangleConstruction
-public import LeanPool.ApollonianSuperharmonic.P3475T1BoundaryRestoration
 public import LeanPool.ApollonianSuperharmonic.P3475T1PolygonalSeparation
-public import Mathlib.Topology.MetricSpace.Lipschitz
 public import Mathlib.Topology.MetricSpace.Contracting
 public import Mathlib.Analysis.Normed.Affine.AddTorsor
-public import Mathlib.Topology.Order.Compact
 
 -- [TABLET NODE: P3861T1RealPolygonDomains]
 

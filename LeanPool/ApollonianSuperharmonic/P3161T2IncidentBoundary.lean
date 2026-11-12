@@ -5,9 +5,10 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.LatticeVertexIncidentCell
 public import LeanPool.ApollonianSuperharmonic.BoundaryFootprintVertices
-public import Mathlib.Tactic.FinCases
 
 -- [TABLET NODE: P3161T2IncidentBoundary]
 

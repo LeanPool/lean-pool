@@ -5,13 +5,12 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P4120T1RootNormalization
 public import LeanPool.ApollonianSuperharmonic.P4120T1AffineComparison
 public import LeanPool.ApollonianSuperharmonic.P4120T1FordGeometry
 public import LeanPool.ApollonianSuperharmonic.P4120T1DiamondGeometry
-public import LeanPool.ApollonianSuperharmonic.BandOrderedGeneralLayout
-public import LeanPool.ApollonianSuperharmonic.BandTileSimultaneousInduction
-public import LeanPool.ApollonianSuperharmonic.ClosedSquareRealization
 public import LeanPool.ApollonianSuperharmonic.P4120T1GeneralRowData
 public import LeanPool.ApollonianSuperharmonic.P4120T1GeneralDescent
 public import LeanPool.ApollonianSuperharmonic.BandOrderedGeneralInteriorStarClassification
@@ -20,10 +19,6 @@ public import LeanPool.ApollonianSuperharmonic.BandOrderedGeneralNestedRightOdom
 public import LeanPool.ApollonianSuperharmonic.BandOrderedGeneralLargestParentOdometerRows
 public import LeanPool.ApollonianSuperharmonic.BandOrderedGeneralPositiveCutOdometerRows
 public import LeanPool.ApollonianSuperharmonic.FordCenteredInteriorOdometerStencil
-public import LeanPool.ApollonianSuperharmonic.FordTileOdometerRestriction
-public import LeanPool.ApollonianSuperharmonic.FordLaplacianTable
-public import LeanPool.ApollonianSuperharmonic.DiamondTileOdometerRestriction
-public import LeanPool.ApollonianSuperharmonic.DiamondLaplacianTable
 
 -- [TABLET NODE: BandOdometerInteriorTable]
 

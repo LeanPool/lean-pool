@@ -5,11 +5,12 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P4210T1FordCellRectangles
 public import LeanPool.ApollonianSuperharmonic.TileTranslationFormulas
-public import LeanPool.ApollonianSuperharmonic.TileTouching
 public import LeanPool.ApollonianSuperharmonic.P4062T1CanonicalSupport
-public import Mathlib.Data.List.Chain
+public import LeanPool.ApollonianSuperharmonic.SimpleGridPath
 
 -- [TABLET NODE: P5110T1SquareInterface]
 

@@ -5,19 +5,12 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P4812T1AffineDrawing
-public import LeanPool.ApollonianSuperharmonic.TouchingTripleCovariance
 public import LeanPool.ApollonianSuperharmonic.P4677T2TouchingWalk
 public import LeanPool.ApollonianSuperharmonic.P4733T1WalkTransport
-public import LeanPool.ApollonianSuperharmonic.TileTranslationFormulas
-public import LeanPool.ApollonianSuperharmonic.PlaneTriangulation
 public import LeanPool.ApollonianSuperharmonic.TouchingTriple
-public import LeanPool.ApollonianSuperharmonic.TileTouching
-public import LeanPool.ApollonianSuperharmonic.SimpleGridPath
-public import LeanPool.ApollonianSuperharmonic.BoundaryFootprintVertices
-public import LeanPool.ApollonianSuperharmonic.BoundaryFootprintEdges
-public import LeanPool.ApollonianSuperharmonic.FootprintVertices
-public import LeanPool.ApollonianSuperharmonic.FootprintEdges
 
 -- [TABLET NODE: P4812T1RegularFaceWalks]
 

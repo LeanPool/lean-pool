@@ -5,6 +5,9 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+public import Mathlib.Tactic.FinCases
+
 public import LeanPool.ApollonianSuperharmonic.P3767T1FixedTrace
 public import LeanPool.ApollonianSuperharmonic.P3767T1BarrierRegionMaximal
 public import LeanPool.ApollonianSuperharmonic.P3767T1VertexEdgeIncidence

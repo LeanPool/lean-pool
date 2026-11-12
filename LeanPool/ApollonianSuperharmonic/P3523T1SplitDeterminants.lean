@@ -5,8 +5,11 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.ApollonianSuperharmonic.P3381T1TriangleDeterminant
+public import Mathlib.Init
 public import Mathlib.Data.Fin.VecNotation
+public import Mathlib.Tactic.Ring
+
+public import LeanPool.ApollonianSuperharmonic.P3381T1TriangleDeterminant
 
 -- [TABLET NODE: P3523T1SplitDeterminants]
 

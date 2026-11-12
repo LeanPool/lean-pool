@@ -5,18 +5,15 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.ApollonianSuperharmonic.PeriodicTileIndexedMultiplicityOne
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.PeriodicTileAdjacentContactRegularity
 public import LeanPool.ApollonianSuperharmonic.PeriodicTileIntersectionClassification
-public import LeanPool.ApollonianSuperharmonic.LatticeTileGridStructure
 public import LeanPool.ApollonianSuperharmonic.SimpleGridPathBetween
 public import LeanPool.ApollonianSuperharmonic.LocalLatticeInterfaceSectors
 public import LeanPool.ApollonianSuperharmonic.P3192T1SimplePathOrientation
 public import LeanPool.ApollonianSuperharmonic.P3192T1FourOwnerTriangleExclusion
 public import LeanPool.ApollonianSuperharmonic.P3192T1PeriodicIndicesInfinite
-public import LeanPool.ApollonianSuperharmonic.P3767T1FixedFaceComponents
-public import LeanPool.ApollonianSuperharmonic.P3821T1ThreeArcCircle
-public import LeanPool.ApollonianSuperharmonic.P3821T1CircleComponentBound
 
 -- [TABLET NODE: PeriodicTileIntersectionPaths]
 

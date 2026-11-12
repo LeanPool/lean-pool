@@ -5,20 +5,14 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P4250T1SlopeOffset
 public import LeanPool.ApollonianSuperharmonic.P4250T1DefinedHalfIntegralSlope
 public import LeanPool.ApollonianSuperharmonic.BandOrderedGeneralLayoutCertificate
-public import LeanPool.ApollonianSuperharmonic.BandSignedOccurrenceHalfTurn
 public import LeanPool.ApollonianSuperharmonic.TileOdometerCentralSymmetry
-public import LeanPool.ApollonianSuperharmonic.TileOdometerTranslationUniqueness
 public import LeanPool.ApollonianSuperharmonic.TileOdometerAffineTranslation
-public import LeanPool.ApollonianSuperharmonic.TileOdometerBandPrototile
 public import LeanPool.ApollonianSuperharmonic.PositiveCurvatureTileOdometerSupportTransport
-public import LeanPool.ApollonianSuperharmonic.PositiveCurvatureTileOdometerDomain
-public import LeanPool.ApollonianSuperharmonic.PartialOdometerHalfTurnFormulas
-public import LeanPool.ApollonianSuperharmonic.PartialOdometerAffineTranslateFormulas
-public import LeanPool.ApollonianSuperharmonic.TileHalfTurnFormulas
-public import LeanPool.ApollonianSuperharmonic.TileTranslationFormulas
 
 -- [TABLET NODE: P4250T1ReflectedGluingSlope]
 
@@ -305,7 +299,8 @@ private theorem reflectedChild :
     have hi := congrArg Prod.snd hcentSum
     have hur := congrArg Prod.fst hu
     have hui := congrArg Prod.snd hu
-    simp? [GaussianRealPoint] at hur hui
+    simp only [Prod.smul_fst, smul_eq_mul, GaussianRealPoint, Int.reduceNeg,
+        GaussianInt.intCast_re, GaussianInt.intCast_im, Prod.smul_snd] at hur hui
     rw [← GaussianInt.intCast_re u] at hur
     rw [← GaussianInt.intCast_im u] at hui
     dsimp at hr hi
@@ -588,11 +583,13 @@ private theorem childOdoConst :
     have he := congrArg Prod.fst (Option.some.inj hslopes)
     have hi := congrArg Prod.snd (Option.some.inj hslopes)
     have hrealr : (aa.re : Real) = 0 := by
-      simp? [] at he
+      simp only [Fin.isValue, ite_smul, one_smul, neg_smul, Prod.fst_add, Int.reduceNeg,
+          GaussianInt.intCast_re, add_eq_left] at he
       rw [← GaussianInt.intCast_re aa] at he
       linarith
     have hreali : (aa.im : Real) = 0 := by
-      simp? [] at hi
+      simp only [Fin.isValue, ite_smul, one_smul, neg_smul, Prod.snd_add, Int.reduceNeg,
+          GaussianInt.intCast_im, add_eq_left] at hi
       rw [← GaussianInt.intCast_im aa] at hi
       linarith
     apply Zsqrtd.ext
@@ -624,7 +621,8 @@ private theorem gChildConst :
   rcases hgcompat j s with hdisj | ⟨c, hc⟩
   · obtain ⟨z, hz⟩ := childNonempty j s
     have hzfoot : z ∈ FootprintVertices (cert.P j s) := by
-      simp? [FootprintVertices, childNonempty j s]
+      simp only [FootprintVertices, childNonempty j s, ↓reduceIte, Int.reduceNeg,
+          Set.mem_ofPred_eq]
       exact ⟨z, hz, Or.inl rfl⟩
     have hdomChild := PositiveCurvatureTileOdometerDomain (q j.succ)
       (cert.P j s) (h j s) (positive j) (ho j s)

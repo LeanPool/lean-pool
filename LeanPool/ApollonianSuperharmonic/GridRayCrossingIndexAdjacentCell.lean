@@ -5,6 +5,9 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+public import Mathlib.Algebra.Group.Fin.Basic
+
 public import LeanPool.ApollonianSuperharmonic.FourNeighborAdjacent
 public import LeanPool.ApollonianSuperharmonic.GridRayCrossingIndex
 
@@ -212,11 +215,17 @@ private theorem northDeltaWest (q a : GaussianInt) :
 
 private theorem northDeltaNorth (q a : GaussianInt) :
     NorthStepDelta q a (a + ⟨0, 1⟩) := by
-  simp [NorthStepDelta, gaussian_eq_iff]; omega
+  by_cases horizontal : a.re ≤ q.re <;>
+    by_cases same : a.im = q.im <;>
+    by_cases above : a.im = q.im + 1 <;>
+    simp [NorthStepDelta, gaussian_eq_iff, horizontal, same, above] <;> omega
 
 private theorem northDeltaSouth (q a : GaussianInt) :
     NorthStepDelta q a (a - ⟨0, 1⟩) := by
-  simp [NorthStepDelta, gaussian_eq_iff]; omega
+  by_cases horizontal : a.re ≤ q.re <;>
+    by_cases same : a.im = q.im <;>
+    by_cases above : a.im = q.im + 1 <;>
+    simp [NorthStepDelta, gaussian_eq_iff, horizontal, same, above] <;> omega
 
 private theorem north_step_delta (q a b : GaussianInt) (hab : FourNeighborAdjacent a b) :
     (if b = a + ⟨0, 1⟩ ∧ a.im = (q + ⟨0, 1⟩).im ∧

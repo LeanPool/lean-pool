@@ -5,12 +5,9 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryProjectiveVectorCovariance
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryCovariance
-public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryProperCovariance
-public import LeanPool.ApollonianSuperharmonic.TileQuarterTurnFormulas
-public import LeanPool.ApollonianSuperharmonic.TileReflectionFormulas
-public import LeanPool.ApollonianSuperharmonic.VectorRecursionLaws
 
 -- [TABLET NODE: P4055T1PlacementNormalization]
 
@@ -894,9 +891,11 @@ private theorem reversedAdjacent :
   · have hn : ¬ Even (-s₀ - 1).val := by
       intro ht
       exact (hp.mp ht) h
-    simp? [h, hn]; fin_cases a₀ <;> fin_cases i₀ <;> decide +kernel
+    simp only [Fin.isValue, hn, ↓reduceIte, neg_sub, h]; fin_cases a₀ <;> fin_cases i₀ <;> decide
+        +kernel
   · have he : Even (-s₀ - 1).val := hp.mpr h
-    simp? [h, he]; fin_cases a₀ <;> fin_cases i₀ <;> decide +kernel
+    simp only [Fin.isValue, he, ↓reduceIte, neg_sub, h]; fin_cases a₀ <;> fin_cases i₀ <;> decide
+        +kernel
 
 private theorem normalizedAdjacent :
     (by
@@ -915,9 +914,9 @@ private theorem normalizedAdjacent :
   cases rev
   · simp only [Bool.false_eq_true, ↓reduceIte]
     by_cases h : Even s₀.val
-    · simp? [h]; fin_cases a₀ <;> fin_cases i₀ <;>
+    · simp only [h, ↓reduceIte, Fin.isValue]; fin_cases a₀ <;> fin_cases i₀ <;>
         fin_cases s₀ <;> decide +kernel
-    · simp? [h]; fin_cases a₀ <;> fin_cases i₀ <;>
+    · simp only [h, ↓reduceIte, Fin.isValue]; fin_cases a₀ <;> fin_cases i₀ <;>
         fin_cases s₀ <;> decide +kernel
   · simp only [↓reduceIte]
     exact reversedAdjacent a₀ i₀ s₀

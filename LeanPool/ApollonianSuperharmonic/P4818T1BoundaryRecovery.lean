@@ -5,9 +5,10 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P4818T1HalfOpen
 public import LeanPool.ApollonianSuperharmonic.P4818T1ClosedOverlaps
-public import Mathlib.Tactic.Ring
 
 -- [TABLET NODE: P4818T1BoundaryRecovery]
 

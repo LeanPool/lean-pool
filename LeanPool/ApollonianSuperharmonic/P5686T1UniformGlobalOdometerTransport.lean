@@ -5,14 +5,12 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import Mathlib.Tactic.LinearCombination
-public import LeanPool.ApollonianSuperharmonic.BandPackingShiftPotential
-public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetry
 public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryPartialOdometerAction
 public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryVectorAction
 public import LeanPool.ApollonianSuperharmonic.FourNeighborLaplacian
-public import LeanPool.ApollonianSuperharmonic.GaussianQuarterTurn
-public import LeanPool.ApollonianSuperharmonic.GaussianReflection
 public import LeanPool.ApollonianSuperharmonic.GlobalOdometerExtends
 
 -- [TABLET NODE: P5686T1UniformGlobalOdometerTransport]

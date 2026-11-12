@@ -5,32 +5,16 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.BandOdometerInteriorTable
-public import LeanPool.ApollonianSuperharmonic.BandGenealogy
 public import LeanPool.ApollonianSuperharmonic.BandTileTopologyApplication
-public import LeanPool.ApollonianSuperharmonic.BandPrototile
-public import LeanPool.ApollonianSuperharmonic.BandSubtileOccurrence
-public import LeanPool.ApollonianSuperharmonic.BoundaryFootprintEdges
-public import LeanPool.ApollonianSuperharmonic.BoundaryFootprintVertices
 public import LeanPool.ApollonianSuperharmonic.CircleMatrix
-public import LeanPool.ApollonianSuperharmonic.DiamondExceptionalMaximality
-public import LeanPool.ApollonianSuperharmonic.ExactTileTiling
-public import LeanPool.ApollonianSuperharmonic.FootprintVertices
-public import LeanPool.ApollonianSuperharmonic.FourNeighborLaplacian
-public import LeanPool.ApollonianSuperharmonic.FordExceptionalMaximality
 public import LeanPool.ApollonianSuperharmonic.GlobalOdometerExtends
 public import LeanPool.ApollonianSuperharmonic.IntegerSuperharmonicRepresentative
-public import LeanPool.ApollonianSuperharmonic.LatticeFundamentalSet
-public import LeanPool.ApollonianSuperharmonic.LatticeQuadraticForm
 public import LeanPool.ApollonianSuperharmonic.PeriodicBoundaryWebLaplacian
-public import LeanPool.ApollonianSuperharmonic.ProperBandCurvatureStructure
-public import LeanPool.ApollonianSuperharmonic.ProperBandQuadruple
-public import LeanPool.ApollonianSuperharmonic.QuadraticGrowthAtInfinity
-public import LeanPool.ApollonianSuperharmonic.RegularTileFamily
 public import LeanPool.ApollonianSuperharmonic.TileOdometer
-public import LeanPool.ApollonianSuperharmonic.TileTranslationFormulas
 public import LeanPool.ApollonianSuperharmonic.TilingLattice
-public import LeanPool.ApollonianSuperharmonic.TilingLatticeIndex
 
 -- [TABLET NODE: BandPeriodicSuperharmonicity]
 
@@ -227,7 +211,7 @@ private theorem tile_band :
   | unit z x U k hU hd ht =>
       cases U with
       | mk cells anchor =>
-          simp_all?
+          simp_all only
           exact BandPrototile.unit z x anchor
   | @decompose q hq S U hs k hU hsub hc hf hcent hd hv hcomp hsl ih =>
       exact BandPrototile.decompose hq (fun i s => ih i s) hc hf hcent

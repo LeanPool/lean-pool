@@ -5,28 +5,14 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.ApollonianSuperharmonic.AffineOpposingStripCorridor
-public import LeanPool.ApollonianSuperharmonic.AffineTriangularComplexChart
-public import LeanPool.ApollonianSuperharmonic.AffineTriangularCorridorStep
-public import LeanPool.ApollonianSuperharmonic.AffineTriangularFaceCoordinateSwap
-public import LeanPool.ApollonianSuperharmonic.AffineTriangularFaceVertices
-public import LeanPool.ApollonianSuperharmonic.BandRegularTranslatePeriodicComplex
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.CurvatureOneBandPrototileSingleton
 public import LeanPool.ApollonianSuperharmonic.FootprintEdges
-public import LeanPool.ApollonianSuperharmonic.FootprintVertices
-public import LeanPool.ApollonianSuperharmonic.GaussianQuarterTurn
-public import LeanPool.ApollonianSuperharmonic.PeriodicTileCore
-public import LeanPool.ApollonianSuperharmonic.ProperBandQuadruple
 public import LeanPool.ApollonianSuperharmonic.SwappedAffineTriangularChartAlignment
-public import LeanPool.ApollonianSuperharmonic.TileQuarterTurnFormulas
 public import LeanPool.ApollonianSuperharmonic.TileString
 public import LeanPool.ApollonianSuperharmonic.TileStringCoordinateTransport
-public import LeanPool.ApollonianSuperharmonic.TileTouching
-public import LeanPool.ApollonianSuperharmonic.TileTranslationFormulas
-public import LeanPool.ApollonianSuperharmonic.TriangularLatticeAdjacent
-public import LeanPool.ApollonianSuperharmonic.TriangularStripSegment
 public import LeanPool.ApollonianSuperharmonic.UnitSquareOpposingStripInterfacePath
-public import LeanPool.ApollonianSuperharmonic.UnitTriangularStep
 
 -- [TABLET NODE: OpposingStringInterfacePath]
 
@@ -274,8 +260,10 @@ private theorem hcellCalc :
         ∀ (z : Int × Int), (tileAt z).cells = (turnedAt z).cells)) ) := by
   classical
   intro C base x hcells tileAt x0 unitAt turnedAt z
-  simp? [tileAt, turnedAt, unitAt, TileTranslation, TileQuarterTurn,
-    GaussianTranslation, hcells, x0, GaussianQuarterTurn]
+  simp only [TileTranslation, Int.reduceNeg, Zsqrtd.smul_val, mul_zero, mul_one, mul_neg,
+      hcells, Finset.image_singleton, GaussianTranslation, TileQuarterTurn,
+      GaussianQuarterTurn, Zsqrtd.add_def, neg_add_rev, neg_sub, sub_neg_eq_add,
+      Finset.singleton_inj, tileAt, turnedAt, unitAt, x0]
   ext <;> simp []; omega
 
 private theorem hvertsEqAt314 :

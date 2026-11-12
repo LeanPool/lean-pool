@@ -5,9 +5,12 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P3555T2ParabolaChordCuts
 public import LeanPool.ApollonianSuperharmonic.P3511T1CyclicDissection
 public import Mathlib.Analysis.Convex.Combination
+public import LeanPool.ApollonianSuperharmonic.P3555T2ParabolaSupporting
 
 -- [TABLET NODE: P3555T2SavedDissectionGeometry]
 
@@ -39,7 +42,7 @@ private theorem hsetAt164 :
   change (∃ i, i ∈ [a, b, c] ∧ q i = x) ↔ ∃ j : Fin 3, q (f j) = x
   constructor
   · rintro ⟨i, hi, hix⟩
-    simp? at hi
+    simp only [List.mem_cons, List.not_mem_nil, or_false] at hi
     rcases hi with rfl | rfl | rfl
     · exact ⟨0, by simpa [f] using hix⟩
     · exact ⟨1, by simpa [f] using hix⟩
@@ -356,8 +359,11 @@ private theorem hendpoint_intersection :
           · simp [hxa, hxb, haT, hbT] at hx
     rw [hSform] at hzS ⊢
     rw [hTform] at hzT ⊢
-    simp? [haS, hbS, haT, hbT, convexHull_pair,
-      ] at hzS hzT ⊢
+    simp only [haS, ↓reduceIte, hbS, Set.image_empty, convexHull_empty,
+        Set.mem_empty_iff_false, Set.image_insert_eq, Set.image_singleton, convexHull_pair,
+        haT, hbT, Set.inter_self, convexHull_singleton, Set.mem_singleton_iff,
+        Set.mem_insert_iff, or_true, Set.inter_singleton_of_mem, true_or,
+        Set.singleton_inter_of_mem] at hzS hzT ⊢
     all_goals
       first
       | exact hzS
@@ -663,8 +669,8 @@ private theorem hfaces :
 
 private theorem hchildNextAt805 :
     ∀ (n : Nat), ∀ (a : Fin (n + (3 : ℕ))), ∀ (b : Fin (n + (3 : ℕ))), ∀ (u : List (Fin (n + (3 :
-        ℕ)))), ∀ (v : List (Fin (n + (3 : ℕ)))), ∀ (k : Fin (a :: (u ++ b :: v)).length), ∀
-        (hlenL : (a :: (u ++ b :: v)).length = u.length + v.length + 2), ∀ (hkA : (↑k : ℕ) ≤
+        ℕ)))), ∀ (v : List (Fin (n + (3 : ℕ)))), ∀ (k : Fin (a :: (u ++ b :: v)).length),  ∀ (hkA
+            : (↑k : ℕ) ≤
         u.length),
     let iA : Fin (a :: (u ++ [b])).length :=
       ⟨k.val, by have hlen : (a :: (u ++ [b])).length = u.length + 2 := by simp
@@ -677,7 +683,7 @@ private theorem hchildNextAt805 :
             Nat.mod_lt _ (Nat.zero_lt_of_lt iA.isLt)⟩ =
         (a :: (u ++ [b])).get iA1) := by
   classical
-  intro n a b u v k hlenL hkA iA iA1 hk1Lt
+  intro n a b u v k hkA iA iA1 hk1Lt
   apply congrArg
   apply Fin.ext
   have hlen : (a :: (u ++ [b])).length = u.length + 2 := by simp
@@ -775,7 +781,7 @@ private theorem hchildNextAt907 :
   apply Fin.ext
   have hlen : (b :: (v ++ [a])).length = v.length + 2 := by simp
   have hstep : iB.val + 1 < (b :: (v ++ [a])).length := by
-    have hvlen : v.length < (b :: (v ++ [a])).length := by simp
+    have hvlen : v.length < (b :: (v ++ [a])).length := by omega
     omega
   have hiB1 : iB1.val = iB.val + 1 := by dsimp [iB, iB1, k1]; omega
   exact (Nat.mod_eq_of_lt hstep).trans hiB1.symm
@@ -973,8 +979,7 @@ private theorem leftBoundaryCase :
         rw [hnextIndex]
       _ = (a :: (u ++ [b])).get iA1 := by
         exact hAget k1 (by dsimp [k1]; omega)
-  have hchildNext := SavedDissectionProof.hchildNextAt805 n a b u v k
-            hlenL hkA hk1Lt
+  have hchildNext := SavedDissectionProof.hchildNextAt805 n a b u v k hkA hk1Lt
   have hincA := (hgoodA hndA hcycA).2.2.2.2 iA
   rcases hincA with ⟨f, hfA, huniqA⟩
   have hfAfirst : (a :: (u ++ [b])).get iA ∈ Set.range f := hfA.2.1

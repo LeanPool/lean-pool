@@ -5,12 +5,12 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.FordDoubledBoundary
 public import LeanPool.ApollonianSuperharmonic.FordFareyParameter
 public import LeanPool.ApollonianSuperharmonic.IntegerCeilDiv
 public import LeanPool.ApollonianSuperharmonic.P4818T1AffineTransversalExtension
-public import Mathlib.Tactic.Ring
-public import Mathlib.Tactic.Abel
 
 -- [TABLET NODE: P5130T5PeriodicExtension]
 
@@ -137,7 +137,8 @@ private theorem hrep (P : FordFareyParameter) (hq : 0 < (q P)) (x : GaussianInt)
   have hwi : 0 ≤ w.im ∧ w.im < q := ⟨hwi0, hwi1⟩
   have hwrep := congr_arg Zsqrtd.re hwt
   have himrep := congr_arg Zsqrtd.im hwt
-  simp? [a, b, zsmul_eq_mul] at hwrep himrep
+  simp only [Int.reduceNeg, zsmul_eq_mul, Zsqrtd.smul_val, mul_zero, mul_neg, Zsqrtd.re_add,
+      add_zero, Zsqrtd.im_add, a, b] at hwrep himrep
   have hdivr : x.re / q = l := by
     apply (Int.ediv_eq_iff_of_pos hq).2
     constructor <;> rw [hwrep] <;> nlinarith [hwr.1, hwr.2]
@@ -368,7 +369,7 @@ theorem P5130T5PeriodicExtension (P : FordFareyParameter)
     have hrel : y + a + b = x := by
       apply Zsqrtd.ext
       · simp [y, a, b, q]
-      · simp? [y, a, b, q]
+      · simp only [Int.reduceNeg, Zsqrtd.im_add, y, a, q, b]
         rw [hqs]
         ring
     have hstep : g x = g y + α y + β (y + a) + (P.q₁ : Int) * P.p := by
@@ -377,7 +378,8 @@ theorem P5130T5PeriodicExtension (P : FordFareyParameter)
         _ = g (y + a) + β (y + a) + (P.q₁ : Int) * P.p := hb (y + a)
         _ = g y + α y + β (y + a) + (P.q₁ : Int) * P.p := by rw [ha y]; ring
     rw [hstep]
-    simp? [α, β, y, a, q]
+    simp only [Int.reduceNeg, neg_mul, AddMonoidHom.coe_mk, ZeroHom.coe_mk, Zsqrtd.re_add,
+        add_zero, Zsqrtd.im_add, y, α, β, a, q]
     have hps : P.p = P.p₁ + P.p₂ := P.sum_p
     rw [hqs, hps]
     ring

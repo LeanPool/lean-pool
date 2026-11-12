@@ -5,9 +5,10 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P4981T1PrescriptionValue
 public import LeanPool.ApollonianSuperharmonic.BandPredecessorNoCollision
-public import LeanPool.ApollonianSuperharmonic.P4828T1ParentsDistinct
 
 -- [TABLET NODE: P4981T1PrescriptionCoherence]
 

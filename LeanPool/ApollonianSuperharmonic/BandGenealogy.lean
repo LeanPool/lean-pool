@@ -5,10 +5,11 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.BandCircle
 public import LeanPool.ApollonianSuperharmonic.BandPredecessorNoCollision
 public import LeanPool.ApollonianSuperharmonic.BandSuccessorClassification
-public import LeanPool.ApollonianSuperharmonic.Preamble
 
 -- [TABLET NODE: BandGenealogy]
 

@@ -5,26 +5,18 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.BandGenealogy
-public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetry
-public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryCircleAction
 public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryCovariance
 public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryInversePhaseCancellation
-public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryTileAction
 public import LeanPool.ApollonianSuperharmonic.BandPrototile
-public import LeanPool.ApollonianSuperharmonic.BandPrototileCentralSymmetry
-public import LeanPool.ApollonianSuperharmonic.BandPrototileCentroidUnique
 public import LeanPool.ApollonianSuperharmonic.BandPrototileReindexedDecomposition
-public import LeanPool.ApollonianSuperharmonic.BandPrototileTranslation
 public import LeanPool.ApollonianSuperharmonic.BandSignedOccurrenceHalfTurn
 public import LeanPool.ApollonianSuperharmonic.BandRegimeClassification
 public import LeanPool.ApollonianSuperharmonic.CurvatureOneBandCircleClassification
 public import LeanPool.ApollonianSuperharmonic.DiamondTileRecursiveIdentification
-public import LeanPool.ApollonianSuperharmonic.FootprintVertices
 public import LeanPool.ApollonianSuperharmonic.FordTileRecursiveIdentification
-public import LeanPool.ApollonianSuperharmonic.ProperBandCurvatureStructure
-public import LeanPool.ApollonianSuperharmonic.TileTranslationFormulas
-public import LeanPool.ApollonianSuperharmonic.VectorRecursionLaws
 
 -- [TABLET NODE: BandPrototileExists]
 
@@ -314,7 +306,8 @@ private theorem hcells0 :
         ∀ (x : GaussianInt), x ∈ T0.cells ↔ ∃ i s, x ∈ (U i s).cells ) := by
   classical
   intro q r g q' T1 S a U T0 x
-  simp? [T0]
+  simp only [Fintype.univ_bool, Finset.biUnion_insert, Finset.singleton_biUnion,
+      Finset.mem_biUnion, Finset.mem_univ, Finset.mem_union, true_and, Bool.exists_bool, T0]
   constructor
   · rintro ⟨i, hi | hi⟩
     · exact ⟨i, Or.inr hi⟩
@@ -721,13 +714,16 @@ private theorem hcent' :
       hs2m hs2p transCent i s
   fin_cases i <;> cases s
   · simp [U, p0, a]
-  · simp? [U, p0]
+  · simp only [Fin.isValue, Int.reduceNeg, neg_mul, Fin.zero_eta, ↓reduceIte, zero_add,
+      Fin.reduceSucc, Fin.succ_one_eq_two, one_smul, U, p0]
     change TileCentroid (TileTranslation T1 (a - I * a)) -
       p0 = d a
     rw [transCent]
     dsimp [p0]
     ext <;> simp [d, I, GaussianRealPoint] <;> ring
-  · simp? [U, p0]
+  · simp only [Fin.isValue, Int.reduceNeg, neg_mul, Fin.mk_one, one_ne_zero, ↓reduceIte,
+      Bool.false_eq_true, Fin.reduceAdd, Fin.succ_zero_eq_one, Fin.reduceSucc, neg_smul,
+      one_smul, U, p0]
     change TileCentroid (TileTranslation (S 1 false) (-((⟨0, 1⟩ : GaussianInt) *
         a))) -
       p0 = -d (BandVectors.1 (q' 1) (q' 3))
@@ -747,7 +743,8 @@ private theorem hcent' :
       rw [pointI] at hd
       dsimp [d] at hh hd ⊢
       linarith
-  · simp? [U, p0]
+  · simp only [Fin.isValue, Int.reduceNeg, neg_mul, Fin.mk_one, one_ne_zero, ↓reduceIte,
+      Fin.reduceAdd, Fin.succ_zero_eq_one, Fin.reduceSucc, one_smul, U, p0]
     change TileCentroid (TileTranslation (S 1 true) a) -
       p0 = d (BandVectors.1 (q' 1) (q' 3))
     rw [transCent]
@@ -761,7 +758,9 @@ private theorem hcent' :
       have hd := congrArg Prod.snd dIdent1
       simp [GaussianRealPoint] at hh hd ⊢
       linarith
-  · simp? [U, p0]
+  · simp only [Fin.isValue, Int.reduceNeg, neg_mul, Fin.reduceFinMk, Fin.reduceEq, ↓reduceIte,
+      Bool.false_eq_true, Fin.reduceAdd, Fin.succ_one_eq_two, Fin.succ_zero_eq_one, neg_smul,
+      one_smul, U, p0]
     change TileCentroid (TileTranslation (S 2 false) a) -
       p0 = -d v
     rw [transCent]
@@ -775,7 +774,8 @@ private theorem hcent' :
       have hd := congrArg Prod.snd dIdent4
       simp [GaussianRealPoint] at hh hd ⊢
       linarith
-  · simp? [U, p0]
+  · simp only [Fin.isValue, Int.reduceNeg, neg_mul, Fin.reduceFinMk, Fin.reduceEq, ↓reduceIte,
+      Fin.reduceAdd, Fin.succ_one_eq_two, Fin.succ_zero_eq_one, one_smul, U, p0]
     change TileCentroid (TileTranslation (S 2 true) (-((⟨0, 1⟩ : GaussianInt) *
         a))) -
       p0 = d v
@@ -1679,7 +1679,7 @@ private theorem sRe :
   simp_rw [hre] at hs
   rw [Finset.sum_sub_distrib, Finset.sum_sub_distrib,
     Finset.sum_const, Finset.sum_const] at hs
-  simp? at hs
+  simp only [Int.reduceNeg, GaussianInt.intCast_re, nsmul_eq_mul, mul_one] at hs
   have hEq : T0.cells.sum (fun x => (x.re : Real)) =
       T0.cells.sum (fun x => (GaussianInt.toComplex x).re) := by
     apply Finset.sum_congr rfl
@@ -1736,7 +1736,7 @@ private theorem sIm :
   simp_rw [him] at hs
   rw [Finset.sum_sub_distrib, Finset.sum_sub_distrib,
     Finset.sum_const, Finset.sum_const] at hs
-  simp? at hs
+  simp only [Int.reduceNeg, GaussianInt.intCast_im, nsmul_eq_mul, mul_one] at hs
   have hEq : T0.cells.sum (fun x => (x.im : Real)) =
       T0.cells.sum (fun x => (GaussianInt.toComplex x).im) := by
     apply Finset.sum_congr rfl

@@ -5,17 +5,15 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P4418T3SelectedInterfaceExists
-public import LeanPool.ApollonianSuperharmonic.P4418T3OuterCompanionAlignment
 public import LeanPool.ApollonianSuperharmonic.P4418T3PresentedRowAdjacency
 public import LeanPool.ApollonianSuperharmonic.P4418T3RoutedBlockCriterion
 public import LeanPool.ApollonianSuperharmonic.P4418T3NestedCompanionGeometry
 public import LeanPool.ApollonianSuperharmonic.P4418T3NestedCompanionEndpoint
 public import LeanPool.ApollonianSuperharmonic.PositiveCurvatureTileOdometerDomain
-public import LeanPool.ApollonianSuperharmonic.ProperBandCurvatureStructure
-public import LeanPool.ApollonianSuperharmonic.ProtoTileObservableExtensionality
 public import LeanPool.ApollonianSuperharmonic.TileSubodometer
-public import LeanPool.ApollonianSuperharmonic.TileTranslationFormulas
 
 -- [TABLET NODE: BandOrderedGeneralSubtileSelectedRowGeometry]
 

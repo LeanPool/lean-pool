@@ -5,13 +5,13 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P5260T1PlacementLedger
 public import LeanPool.ApollonianSuperharmonic.P5203T1IncreasingInterface
 public import LeanPool.ApollonianSuperharmonic.P5203T1DecreasingInterface
-public import LeanPool.ApollonianSuperharmonic.TileQuarterTurnFormulas
 public import LeanPool.ApollonianSuperharmonic.SimpleGridPathBetween
 public import LeanPool.ApollonianSuperharmonic.P4055T1GridPathImage
-public import LeanPool.ApollonianSuperharmonic.P5157T1AlternatingStaircase
 public import LeanPool.ApollonianSuperharmonic.QuarterTurnSymmetricCenteredTransport
 public import LeanPool.ApollonianSuperharmonic.DiamondBaseT2
 public import LeanPool.ApollonianSuperharmonic.P4194T1DiamondCentroid
@@ -589,7 +589,8 @@ private theorem hcEq :
   intro k hk D c hc
   have hcent := P4194T1DiamondCentroid k hk
   rw [hcent] at hc
-  simp? [GaussianRealPoint] at hc
+  simp only [GaussianRealPoint, Int.reduceNeg, GaussianInt.intCast_re, GaussianInt.intCast_im,
+      zero_add, sub_zero, Prod.mk.injEq] at hc
   rcases hc with ⟨hr, hi⟩
   apply Zsqrtd.ext
   · rw [← GaussianInt.intCast_re c] at hr

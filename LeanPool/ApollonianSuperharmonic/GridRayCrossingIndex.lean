@@ -5,7 +5,9 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.ApollonianSuperharmonic.ProtoTile
+public import Mathlib.Init
+
+public import LeanPool.ApollonianSuperharmonic.LatticeCell
 
 -- [TABLET NODE: GridRayCrossingIndex]
 

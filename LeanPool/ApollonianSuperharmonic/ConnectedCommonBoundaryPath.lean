@@ -5,17 +5,15 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.ApollonianSuperharmonic.BoundaryFootprintEdges
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.BoundaryFootprintVertices
 public import LeanPool.ApollonianSuperharmonic.CellDisjointCommonFootprintIncidence
-public import LeanPool.ApollonianSuperharmonic.ClosedSquareRealization
 public import LeanPool.ApollonianSuperharmonic.CommonFootprintEdgeVertices
 public import LeanPool.ApollonianSuperharmonic.ConnectedGridEdgeCarrierGraph
 public import LeanPool.ApollonianSuperharmonic.DisjointBoundaryCommonEdgeGraphAcyclic
 public import LeanPool.ApollonianSuperharmonic.DisjointSquareUnionCommonEdgeCarrier
 public import LeanPool.ApollonianSuperharmonic.FiniteConnectedAcyclicDegreeTwoGridPath
-public import LeanPool.ApollonianSuperharmonic.FootprintEdges
-public import LeanPool.ApollonianSuperharmonic.ProtoTile
 public import LeanPool.ApollonianSuperharmonic.SimpleGridCycle
 public import LeanPool.ApollonianSuperharmonic.SimpleGridCycleSubgraphDegreeTwo
 public import LeanPool.ApollonianSuperharmonic.SimpleGridPathBetween

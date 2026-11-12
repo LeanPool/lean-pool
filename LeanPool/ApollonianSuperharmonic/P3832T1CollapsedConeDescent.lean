@@ -5,11 +5,10 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P3832T1ConeCollapse
-public import Mathlib.Topology.ContinuousMap.Basic
-public import Mathlib.Topology.Separation.Hausdorff
-public import Mathlib.Topology.Defs.Induced
-public import Mathlib.Tactic.FieldSimp
+public import Mathlib.Topology.Algebra.Ring.Real
 
 -- [TABLET NODE: P3832T1CollapsedConeDescent]
 

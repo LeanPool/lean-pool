@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.FordTileGeometry
 public import LeanPool.ApollonianSuperharmonic.TileDiskAreaCovariance
 public import LeanPool.ApollonianSuperharmonic.ExactTileTiling

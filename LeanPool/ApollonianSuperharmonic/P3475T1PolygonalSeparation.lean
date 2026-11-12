@@ -5,14 +5,10 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P3475T1TriangleTree
-public import LeanPool.ApollonianSuperharmonic.P3381T1TriangulationBoundary
-public import LeanPool.ApollonianSuperharmonic.P5662T1TriangulationBarycentricCoordinates
 public import LeanPool.ApollonianSuperharmonic.P3381T1PiecewiseAffinePolygonModel
-public import LeanPool.ApollonianSuperharmonic.P3381T1AffineTriangleMap
-public import Mathlib.Analysis.Convex.PathConnected
-public import Mathlib.Analysis.Convex.Topology
-public import Mathlib.Topology.Connected.Clopen
 
 -- [TABLET NODE: P3475T1PolygonalSeparation]
 

@@ -5,11 +5,13 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P5630T1SymmetricMatrixPositivityCriterion
-public import LeanPool.ApollonianSuperharmonic.BandCircleEuclideanData
 public import LeanPool.ApollonianSuperharmonic.CircleMatrix
 public import LeanPool.ApollonianSuperharmonic.SymmetricMatrixCoordinateIdentity
 public import LeanPool.ApollonianSuperharmonic.SymmetricMatrixCoordinates
+public import Mathlib.Analysis.Complex.Basic
 
 -- [TABLET NODE: CircleMatrixEnclosureCriterion]
 

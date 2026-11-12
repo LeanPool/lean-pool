@@ -5,8 +5,10 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.DiamondParameter
-public import LeanPool.ApollonianSuperharmonic.IntegerLatticeFunction
+public import Mathlib.NumberTheory.Zsqrtd.GaussianInt
 
 -- [TABLET NODE: DiamondExceptionalLattice]
 

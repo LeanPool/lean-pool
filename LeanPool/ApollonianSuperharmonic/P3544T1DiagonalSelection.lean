@@ -5,10 +5,9 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P3544T1DiagonalSplit
-public import LeanPool.ApollonianSuperharmonic.P3650T1ExposedCorner
-public import LeanPool.ApollonianSuperharmonic.P3650T1VisibleDiagonal
-public import LeanPool.ApollonianSuperharmonic.P3650T1CyclicChildren
 public import LeanPool.ApollonianSuperharmonic.P3650T1ExposedCornerExists
 public import LeanPool.ApollonianSuperharmonic.P3650T1TriangleEntry
 public import LeanPool.ApollonianSuperharmonic.P3650T1EmptyTriangleDiagonal
@@ -53,8 +52,8 @@ theorem P3544T1DiagonalSelection {n : Nat} (p : P3381T1PolygonBoundary n)
   obtain ⟨hsides, hendpoints⟩ := P3650T1LocalCoherence p D.a D.b D.distinct C
     D.odd hleft hright hsum
   exact ⟨{
-    left_n := C.left_n
-    right_n := C.right_n
+    leftParameter := C.leftParameter
+    rightParameter := C.rightParameter
     left_lt := C.left_lt
     right_lt := C.right_lt
     left := C.left

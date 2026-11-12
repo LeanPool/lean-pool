@@ -5,8 +5,11 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.ApollonianSuperharmonic.AllowedSubtileIncidence
+public import Mathlib.Init
+public import Mathlib.Data.Finset.Card
 public import Mathlib.Logic.Relation
+
+public import LeanPool.ApollonianSuperharmonic.AllowedSubtileIncidence
 
 -- [TABLET NODE: P4623T1ZeroBlockPaths]
 

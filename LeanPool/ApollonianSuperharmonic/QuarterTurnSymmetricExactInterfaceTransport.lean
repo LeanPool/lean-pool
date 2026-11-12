@@ -5,19 +5,14 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.ExactTileInterfaceTriple
-public import LeanPool.ApollonianSuperharmonic.FootprintEdges
 public import LeanPool.ApollonianSuperharmonic.GaussianQuarterTurn
 public import LeanPool.ApollonianSuperharmonic.GaussianRealPoint
-public import LeanPool.ApollonianSuperharmonic.ProtoTileObservableExtensionality
 public import LeanPool.ApollonianSuperharmonic.QuarterTurnSymmetric
 public import LeanPool.ApollonianSuperharmonic.QuarterTurnSymmetricCenteredTransport
-public import LeanPool.ApollonianSuperharmonic.SimpleGridPathBetween
-public import LeanPool.ApollonianSuperharmonic.SimpleGridPathEquivariance
-public import LeanPool.ApollonianSuperharmonic.TileCentroid
-public import LeanPool.ApollonianSuperharmonic.TileQuarterTurnFormulas
 public import LeanPool.ApollonianSuperharmonic.TileTranslation
-public import LeanPool.ApollonianSuperharmonic.TileTranslationFormulas
 
 -- [TABLET NODE: QuarterTurnSymmetricExactInterfaceTransport]
 
@@ -241,14 +236,14 @@ private theorem path_map :
           intro k m h
           cases k with
           | nil =>
-            simp? at h
+            simp only [List.map_cons, List.nil_append, List.cons.injEq, add_left_inj] at h
             rcases h with ⟨hz, hrest⟩
             have hz' : z = c := qinj hz
             subst z
             cases q with
             | nil => simp_all
             | cons w q =>
-              simp? at hrest
+              simp only [List.map_cons, List.cons.injEq, add_left_inj] at hrest
               have hw' : w = d := qinj hrest.1
               subst w
               exact ⟨[], q, by simp []⟩

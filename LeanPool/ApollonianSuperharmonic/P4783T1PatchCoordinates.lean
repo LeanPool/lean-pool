@@ -5,9 +5,13 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+public import Mathlib.Tactic.NormNum
+
 public import LeanPool.ApollonianSuperharmonic.P4715T1Position
 public import LeanPool.ApollonianSuperharmonic.P4715T1PatchFaces
 public import LeanPool.ApollonianSuperharmonic.SixSubtileFaceVertices
+public import Mathlib.LinearAlgebra.Matrix.Notation
 
 -- [TABLET NODE: P4783T1PatchCoordinates]
 

@@ -5,9 +5,9 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.FordOdometer
-public import LeanPool.ApollonianSuperharmonic.P5130T5ParentArithmetic
-public import LeanPool.ApollonianSuperharmonic.P5188T1CeilingBelow
 
 -- [TABLET NODE: P5448T1CanonicalFordBoundary]
 

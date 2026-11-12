@@ -5,12 +5,10 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.OrderedGeneralOdometerAdjacencyClassification
-public import LeanPool.ApollonianSuperharmonic.RightLatticeAdjacentPackingSymmetryTransport
-public import LeanPool.ApollonianSuperharmonic.SubtileLatticeAdjacentPackingSymmetryTransport
-public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryCovariance
 public import LeanPool.ApollonianSuperharmonic.FordTileOdometerRestriction
-public import LeanPool.ApollonianSuperharmonic.FordFareyParentsExist
 public import LeanPool.ApollonianSuperharmonic.P5491T1ExceptionalPresentation
 public import LeanPool.ApollonianSuperharmonic.P5491T1AffinePairReduction
 public import LeanPool.ApollonianSuperharmonic.P5491T1FordBoundarySlope
@@ -21,8 +19,6 @@ public import LeanPool.ApollonianSuperharmonic.P5491T1DiamondParentBoundary
 public import LeanPool.ApollonianSuperharmonic.P5332T1VectorPlacements
 public import LeanPool.ApollonianSuperharmonic.P5352T2VectorPlacements
 public import LeanPool.ApollonianSuperharmonic.P5352T2SourceCertificates
-public import LeanPool.ApollonianSuperharmonic.P4210T1FordSquareCentroid
-public import LeanPool.ApollonianSuperharmonic.P5130T5ParentArithmetic
 
 -- [TABLET NODE: OdometerAdjacencyInduction]
 

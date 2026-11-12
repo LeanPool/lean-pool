@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.SimpleGridCycle
 public import LeanPool.ApollonianSuperharmonic.SimpleGridPath
 public import LeanPool.ApollonianSuperharmonic.SimpleGridCycleSubgraphDegreeTwo
@@ -38,7 +40,7 @@ private theorem splitInterior :
       cases s with
       | nil =>
           intro hn x hx hh hl
-          simp? at hx
+          simp only [List.mem_cons, List.not_mem_nil, or_false] at hx
           subst x
           exact False.elim (hh rfl)
       | cons v t =>

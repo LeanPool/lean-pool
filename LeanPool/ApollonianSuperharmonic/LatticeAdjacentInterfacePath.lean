@@ -5,36 +5,13 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.ApollonianSuperharmonic.BandPrototile
-public import LeanPool.ApollonianSuperharmonic.BandPrototileCentroidUnique
-public import LeanPool.ApollonianSuperharmonic.BandPrototileTranslation
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.BandTileSimultaneousInduction
-public import LeanPool.ApollonianSuperharmonic.CellDisjointCommonEdgesBoundary
-public import LeanPool.ApollonianSuperharmonic.BoundaryFootprintEdges
-public import LeanPool.ApollonianSuperharmonic.BoundaryFootprintVertices
-public import LeanPool.ApollonianSuperharmonic.ClosedSquareRealization
 public import LeanPool.ApollonianSuperharmonic.FootprintEdges
-public import LeanPool.ApollonianSuperharmonic.FootprintVertices
-public import LeanPool.ApollonianSuperharmonic.GaussianQuarterTurn
-public import LeanPool.ApollonianSuperharmonic.OrientedTouchingCovariance
-public import LeanPool.ApollonianSuperharmonic.ProperBandCurvatureStructure
-public import LeanPool.ApollonianSuperharmonic.ProperBandQuadruple
-public import LeanPool.ApollonianSuperharmonic.P3161T2IncidentBoundary
-public import LeanPool.ApollonianSuperharmonic.QuarterTurnSymmetric
-public import LeanPool.ApollonianSuperharmonic.QuarterTurnSymmetricCenteredTransport
 public import LeanPool.ApollonianSuperharmonic.RightLatticeAdjacent
-public import LeanPool.ApollonianSuperharmonic.SimpleGridPath
 public import LeanPool.ApollonianSuperharmonic.SimpleGridPathBetween
 public import LeanPool.ApollonianSuperharmonic.SubtileLatticeAdjacent
-public import LeanPool.ApollonianSuperharmonic.TileCentroid
-public import LeanPool.ApollonianSuperharmonic.TileOdometer
-public import LeanPool.ApollonianSuperharmonic.TileQuarterTurnFormulas
-public import LeanPool.ApollonianSuperharmonic.TileRealization
-public import LeanPool.ApollonianSuperharmonic.TileTouching
-public import LeanPool.ApollonianSuperharmonic.TileTouchingCovariance
-public import LeanPool.ApollonianSuperharmonic.TileTranslationFormulas
-public import LeanPool.ApollonianSuperharmonic.TouchingTriple
-public import LeanPool.ApollonianSuperharmonic.VectorRecursionLaws
 
 -- [TABLET NODE: LatticeAdjacentInterfacePath]
 
@@ -171,7 +148,8 @@ private theorem boundary_subset_footprint :
         · have : x = z + ⟨0, 1⟩ := by simpa using hxz
           subst x
           exact Or.inr (Or.inr (Or.inr (by simp [sub_eq_add_neg, add_comm, add_left_comm])))
-  · simp? [BoundaryFootprintVertices, FootprintVertices, hne] at hx ⊢
+  · simp only [BoundaryFootprintVertices, hne, ↓reduceIte, Set.mem_singleton_iff,
+      FootprintVertices] at hx ⊢
     exact hx
 
 private theorem touching_path :
@@ -318,8 +296,8 @@ private theorem quarter_translate :
   | mk cells anchor =>
     apply congrArg₂ (fun c : Finset GaussianInt => fun a : GaussianInt =>
       (⟨c, a⟩ : ProtoTile))
-    · simp? [TileQuarterTurn, TileTranslation, GaussianTranslation,
-        Finset.image_image, Function.comp_def]
+    · simp only [TileTranslation, GaussianTranslation, Finset.image_image, Function.comp_def,
+        TileQuarterTurn]
       congr 1
       funext z
       ext <;> simp [GaussianQuarterTurn]; ring
@@ -706,7 +684,8 @@ private theorem hT2 :
             ((x.im : Int) : Real) + 1 / 2) := by
         simp [TileCentroid]
       rw [hcent]
-      simp? [TileRealization]
+      simp only [TileRealization, Finset.mem_singleton, Set.iUnion_iUnion_eq_left,
+          Int.reduceNeg, GaussianInt.intCast_re, one_div, GaussianInt.intCast_im]
       rw [← GaussianInt.intCast_re x, ← GaussianInt.intCast_im x]
       change (r, t) ∈ ClosedSquareRealization x ↔
         ((((x.re : Int) : Real) + (2 : Real)⁻¹) -
@@ -755,7 +734,7 @@ private theorem hT5 :
     (by
       classical
       exact
-        ∀ (q : Fin (4 : ℕ) → CircleCoordinates), ∀ (i : Fin (3 : ℕ)), (ProperBandQuadruple q) →
+        ∀ (q : Fin (4 : ℕ) → CircleCoordinates),  (ProperBandQuadruple q) →
             (((0 : ℤ) < (q (0 : Fin (4 : ℕ))).1 ∧ (∀ (i : Fin (3 : ℕ)), (0 : ℤ) ≤ (q i.succ).1) ∧
             ∀ (i : Fin (3 : ℕ)), ∀ (j : Fin (3 : ℕ)), (q i.succ).1 = (0 : ℤ) → (q j.succ).1 = (0
             : ℤ) → i = j) → (∀ (A : ProtoTile), ∀ (B : ProtoTile), ∀ (D : ProtoTile), ∀ (j : Fin
@@ -766,7 +745,7 @@ private theorem hT5 :
             (BandVectors.1 (q ((j + 1).succ)) (q 0)) - GaussianRealPoint (BandVectors.1 (q 0) (q
             ((j + 1).succ)))) → TouchingTriple A B D)) ) := by
   classical
-  intro q i hq hrootPos A B D j hA hB hD hcentB hcentD
+  intro q hq hrootPos A B D j hA hB hD hcentB hcentD
   have hgt : 1 < (q 0).1 := by
     by_contra hn
     have hzero : ∀ k : Fin 3, (q k.succ).1 = 0 := by
@@ -998,7 +977,7 @@ theorem LatticeAdjacentInterfacePath :
           (1 / 2 : Real) •
             (GaussianRealPoint (BandVectors.1 (q ((j + 1).succ)) (q 0)) -
               GaussianRealPoint (BandVectors.1 (q 0) (q ((j + 1).succ)))) →
-        TouchingTriple A B D := LatticeInterfacePathGeometry.hT5 q i hq hrootPos
+        TouchingTriple A B D := LatticeInterfacePathGeometry.hT5 q hq hrootPos
     let unitI : GaussianInt := ⟨0, 1⟩
     have qturn_mul (z : GaussianInt) : GaussianQuarterTurn z = unitI * z := by
       ext <;> simp [GaussianQuarterTurn, unitI]

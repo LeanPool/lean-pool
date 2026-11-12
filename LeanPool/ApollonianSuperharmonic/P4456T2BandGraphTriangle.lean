@@ -5,18 +5,11 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.ApollonianSuperharmonic.BandRegularTranslatePeriodicComplex
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.BandTileSimultaneousInduction
-public import LeanPool.ApollonianSuperharmonic.QuarterTurnSymmetricCenteredTransport
-public import LeanPool.ApollonianSuperharmonic.TileQuarterTurnFormulas
-public import LeanPool.ApollonianSuperharmonic.TileTranslationFormulas
-public import LeanPool.ApollonianSuperharmonic.LatticeTileFourNeighborConnected
-public import LeanPool.ApollonianSuperharmonic.TouchingTripleCovariance
 public import LeanPool.ApollonianSuperharmonic.TouchingTriple
 public import LeanPool.ApollonianSuperharmonic.AffineTriangularComplexChart
-public import LeanPool.ApollonianSuperharmonic.TriangularLatticeAdjacent
-public import LeanPool.ApollonianSuperharmonic.TouchingTriplePermutations
-public import LeanPool.ApollonianSuperharmonic.ProtoTileObservableExtensionality
 
 -- [TABLET NODE: P4456T2BandGraphTriangle]
 

@@ -5,8 +5,9 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import Mathlib.Analysis.Convex.GaugeRescale
-public import LeanPool.ApollonianSuperharmonic.ClosedSquareRealization
 public import LeanPool.ApollonianSuperharmonic.FourNeighborConnected
 public import LeanPool.ApollonianSuperharmonic.LatticeTile
 public import LeanPool.ApollonianSuperharmonic.NoCheckerboardCellVertex
@@ -16,9 +17,6 @@ public import LeanPool.ApollonianSuperharmonic.P3475T1GridBoundary
 public import LeanPool.ApollonianSuperharmonic.P3475T1PolygonTriangleConstruction
 public import LeanPool.ApollonianSuperharmonic.P3475T1PolygonalSeparation
 public import LeanPool.ApollonianSuperharmonic.P3475T1SquareUnionIdentification
-public import LeanPool.ApollonianSuperharmonic.P3381T1PiecewiseAffinePolygonModel
-public import LeanPool.ApollonianSuperharmonic.ProtoTile
-public import LeanPool.ApollonianSuperharmonic.TileRealization
 
 -- [TABLET NODE: FinitePolyominoDiskCriterion]
 

@@ -5,12 +5,15 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import Mathlib.Algebra.Order.Interval.Set.Instances
 
 public import LeanPool.ApollonianSuperharmonic.P3776T1SectorMaps
 public import LeanPool.ApollonianSuperharmonic.P3832T1CollapsedConeDescent
 public import LeanPool.ApollonianSuperharmonic.P3832T1ChamberOverlap
 public import LeanPool.ApollonianSuperharmonic.P3832T1FiniteClosedCoverPasting
+public import Mathlib.Algebra.BigOperators.Fin
 
 -- [TABLET NODE: P3776T1SectorMapsExist]
 
@@ -1625,7 +1628,7 @@ private theorem sectorGlobalChosen_edge :
     have hrad : (sectorParam o s ho).1.1 = rad := by
       apply Subtype.ext
       have vals := sectorParam_values o s ho
-      simp? [o, sectorJ, sectorK] at vals
+      simp only [ne_eq, o, sectorJ, sectorK] at vals
       calc
         (sectorParam o s ho).1.1 = 2*(s.1 i-s.1 k)+3*s.1 k := vals.1
         _ = 2*(r:ℝ) := by rw [hi,hk]; ring
@@ -1633,7 +1636,7 @@ private theorem sectorGlobalChosen_edge :
     have hbeta : (sectorParam o s ho).1.2 = rad := by
       apply Subtype.ext
       have vals := sectorParam_values o s ho
-      simp? [o, sectorJ, sectorK] at vals
+      simp only [ne_eq, o, sectorJ, sectorK] at vals
       calc
         (sectorParam o s ho).1.2 = 2*(s.1 i-s.1 k) := vals.2
         _ = 2*(r:ℝ) := by rw [hi,hk]; ring
@@ -1671,7 +1674,7 @@ private theorem sectorGlobalChosen_edge :
     have hrad : (sectorParam o s ho).1.1 = rad := by
       apply Subtype.ext
       have vals := sectorParam_values o s ho
-      simp? [o, sectorJ, sectorK] at vals
+      simp only [ne_eq, o, sectorJ, sectorK] at vals
       calc
         (sectorParam o s ho).1.1 = 2*(s.1 j-s.1 k)+3*s.1 k := vals.1
         _ = 2*(1-(r:ℝ)) := by rw [hj,hk]; ring
@@ -1679,7 +1682,7 @@ private theorem sectorGlobalChosen_edge :
     have hbeta : (sectorParam o s ho).1.2 = rad := by
       apply Subtype.ext
       have vals := sectorParam_values o s ho
-      simp? [o, sectorJ, sectorK] at vals
+      simp only [ne_eq, o, sectorJ, sectorK] at vals
       calc
         (sectorParam o s ho).1.2 = 2*(s.1 j-s.1 k) := vals.2
         _ = 2*(1-(r:ℝ)) := by rw [hj,hk]; ring

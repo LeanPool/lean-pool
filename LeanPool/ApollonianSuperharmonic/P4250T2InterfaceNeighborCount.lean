@@ -5,14 +5,9 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.BandOrderedGeneralInteriorStarClassification
-public import LeanPool.ApollonianSuperharmonic.BandOriginalPairSeparation
-public import LeanPool.ApollonianSuperharmonic.BandTileSimultaneousInduction
-public import LeanPool.ApollonianSuperharmonic.CurvatureOneTileBase
-public import LeanPool.ApollonianSuperharmonic.LatticeEdgeRegularity
-public import LeanPool.ApollonianSuperharmonic.LocalLatticeInterfaceSectors
-public import LeanPool.ApollonianSuperharmonic.P3161T2IncidentBoundary
-public import LeanPool.ApollonianSuperharmonic.TileDiskAreaCovariance
 
 -- [TABLET NODE: P4250T2InterfaceNeighborCount]
 
@@ -219,7 +214,10 @@ private theorem edge_endpoint :
   as_aux_lemma =>
   intro hy
   fin_cases j
-  all_goals simp? [LatticeVertexIncidentCell] at hj hj' hy
+  all_goals simp only [LatticeVertexIncidentCell, Int.reduceNeg, Fin.mk_one, Fin.isValue,
+      Matrix.cons_val_one, Matrix.cons_val_zero, Fin.reduceAdd, Matrix.cons_val,
+      Nat.succ_eq_add_one, Nat.reduceAdd, Fin.reduceFinMk, Fin.zero_eta, zero_add]
+      at hj hj' hy
   · have he := vertical_interior U z hj hj'
     apply hreg z (z + ⟨0, 1⟩)
     · exact Or.inr (Or.inr (Or.inl rfl))
@@ -740,11 +738,11 @@ private theorem hnoO :
             BandOrderedGeneralConfiguration q), ∀ (T : ProtoTile), ∀ (cert :
             BandOrderedGeneralLayoutCertificate q cfg C T), ∀ (D : Finset GaussianInt), ∀ (P :
             Finset GaussianInt), (∀ x ∈ D \ P, x ∈ FootprintVertices cert.O ↔ x ∈
-            ({cert.precursor_boundary.a, cert.precursor_boundary.b} : Finset GaussianInt)) → ((∀
+            ({cert.precursorBoundary.a, cert.precursorBoundary.b} : Finset GaussianInt)) → ((∀
                 (U : ProtoTile), ∀ (z :
             GaussianInt), ∀ (j : Fin 4), (LatticeVertexIncidentCell z j ∈ U.cells) → (z ∈
             FootprintVertices U)) → (∀ (x : GaussianInt), (x ∈ D \ P) → ((x ∉
-            ({cert.precursor_boundary.a, cert.precursor_boundary.b} : Finset GaussianInt)) → (∀
+            ({cert.precursorBoundary.a, cert.precursorBoundary.b} : Finset GaussianInt)) → (∀
                 (j : Fin 4),
             LatticeVertexIncidentCell x j ∉ cert.O.cells)))) ) := by
   classical
@@ -983,11 +981,11 @@ private theorem hcoverAt684 :
             BandOrderedGeneralConfiguration q), ∀ (T : ProtoTile), ∀ (cert :
             BandOrderedGeneralLayoutCertificate q cfg C T), ∀ (D : Finset GaussianInt), ∀ (P :
             Finset GaussianInt), (∀ x ∈ D \ P, x ∈ FootprintVertices cert.O ↔ x ∈
-            ({cert.precursor_boundary.a, cert.precursor_boundary.b} : Finset GaussianInt)) → ((∀
+            ({cert.precursorBoundary.a, cert.precursorBoundary.b} : Finset GaussianInt)) → ((∀
                 (U : ProtoTile), ∀ (z :
             GaussianInt), ∀ (j : Fin 4), (LatticeVertexIncidentCell z j ∈ U.cells) → (z ∈
             FootprintVertices U)) → (∀ (x : GaussianInt), (x ∈ D \ P) → ((x ∈
-            ({cert.precursor_boundary.a, cert.precursor_boundary.b} : Finset GaussianInt)) → ((∀
+            ({cert.precursorBoundary.a, cert.precursorBoundary.b} : Finset GaussianInt)) → ((∀
                 (U : ProtoTile),
             TileTranslation U 0 = U) → (∀ (j : Fin 4), LatticeVertexIncidentCell x j ∈ (cert.P 0
             true).cells ∨ LatticeVertexIncidentCell x j ∈ (cert.P 0 false).cells))))) ) := by
@@ -1154,7 +1152,10 @@ private theorem hFdAt757 :
   intro c ha hb
   have hcAB : (c ∈ (cert.P 0 true).cells ∧ c ∈ (cert.P 0 false).cells) ↔
       c ∈ cert.O.cells := by rw [← Finset.mem_inter, hAB]
-  fin_cases a <;> fin_cases b <;> simp? [F, TileCellComplement] at hne ha hb
+  fin_cases a <;> fin_cases b <;> simp only [Fin.mk_one, Fin.isValue, Fin.reduceFinMk, ne_eq,
+      Fin.reduceEq, not_false_eq_true, TileCellComplement, Matrix.cons_val_one,
+      Matrix.cons_val_zero, Finset.mem_sdiff, Matrix.cons_val, F, Fin.zero_eta, one_ne_zero,
+      not_true_eq_false, zero_ne_one] at hne ha hb
   all_goals
     clear * - hcAB ha hb
     tauto
@@ -1208,7 +1209,7 @@ private theorem hsectors :
             BandOrderedGeneralLayoutCertificate q cfg C T), (∀ (i : Fin 3), ∀ (s : Bool), (i = 1
             ∨ i = 2) → (LatticeTile (cert.Q i s))) → ((∀ (i : Fin 3), ∀ (s : Bool), (i = 1 ∨ i =
             2) → (LatticeTile (cert.S i s))) → (∀ (x : GaussianInt), (x ∈
-            ({cert.precursor_boundary.a, cert.precursor_boundary.b} : Finset GaussianInt)) → (
+            ({cert.precursorBoundary.a, cert.precursorBoundary.b} : Finset GaussianInt)) → (
         let F : Fin 3 → ProtoTile :=
           ![TileCellComplement (cert.P 0 true) cert.O,
             TileCellComplement (cert.P 0 false) cert.O, cert.O]
@@ -1230,14 +1231,14 @@ private theorem hsectors :
   rcases Finset.mem_insert.mp hxR with ha | hb
   · exact triple_sectors (cert.Q 1 true) (cert.S 2 false)
       (Q_lattice 1 true (Or.inl rfl)) (S_lattice 2 false (Or.inr rfl))
-      cert.precursor_boundary.first_touching
-      cert.precursor_boundary.first_plus_child cert.precursor_boundary.first_minus_child
-      ((cert.precursor_boundary.first_transition x).mpr ha)
+      cert.precursorBoundary.first_touching
+      cert.precursorBoundary.first_plus_child cert.precursorBoundary.first_minus_child
+      ((cert.precursorBoundary.first_transition x).mpr ha)
   · exact triple_sectors (cert.Q 2 true) (cert.S 1 false)
       (Q_lattice 2 true (Or.inr rfl)) (S_lattice 1 false (Or.inl rfl))
-      cert.precursor_boundary.second_touching
-      cert.precursor_boundary.second_plus_child cert.precursor_boundary.second_minus_child
-      ((cert.precursor_boundary.second_transition x).mpr (Finset.mem_singleton.mp hb))
+      cert.precursorBoundary.second_touching
+      cert.precursorBoundary.second_plus_child cert.precursorBoundary.second_minus_child
+      ((cert.precursorBoundary.second_transition x).mpr (Finset.mem_singleton.mp hb))
 
 private theorem hcoverAt811 :
     (by
@@ -1414,7 +1415,7 @@ private theorem rootNeighborCount :
             BandOrderedGeneralConfiguration q), ∀ (T : ProtoTile), ∀ (cert :
             BandOrderedGeneralLayoutCertificate q cfg C T), ∀ (D : Finset GaussianInt), ∀ (P :
             Finset GaussianInt), (∀ x ∈ D \ P, x ∈ FootprintVertices cert.O ↔ x ∈
-            ({cert.precursor_boundary.a, cert.precursor_boundary.b} : Finset GaussianInt)) → ((∀
+            ({cert.precursorBoundary.a, cert.precursorBoundary.b} : Finset GaussianInt)) → ((∀
                 (U : ProtoTile), ∀ (z :
             GaussianInt), ∀ (j : Fin 4), (LatticeVertexIncidentCell z j ∈ U.cells) → (z ∈
             FootprintVertices U)) → ((∀ (U : ProtoTile), (U.cells.Nonempty) → (∀ (z :
@@ -1444,7 +1445,7 @@ private theorem rootNeighborCount :
             (FourNeighborAdjacent y x) (Classical.propDecidable _)).card = (Finset.univ.filter
             fun j : Fin 4 => ∃ i s, LatticeVertexIncidentCell x j ∈ (cert.P i s).cells ∧
             LatticeVertexIncidentCell x (j + 1) ∈ (cert.P i s).cells).card) → ((x ∈
-            ({cert.precursor_boundary.a, cert.precursor_boundary.b} : Finset GaussianInt)) →
+            ({cert.precursorBoundary.a, cert.precursorBoundary.b} : Finset GaussianInt)) →
                 ((P.filter fun y => @decide
             (FourNeighborAdjacent y x) (Classical.propDecidable _)).card = if cert.O.cells = ∅
             then 2 else 3)))))))))))))))) ) := by
@@ -1454,12 +1455,12 @@ private theorem rootNeighborCount :
       neighbor_count hxR
   by_cases hempty : cert.O.cells = ∅
   · rw [ite_eq_left hempty, neighbor_count]
-    have hbranch := cert.precursor_boundary.branch
+    have hbranch := cert.precursorBoundary.branch
     rcases hbranch with ⟨hne, _⟩ | hbranch
     · exact (Finset.nonempty_iff_ne_empty.mp hne hempty).elim
-    have hxa : x = cert.precursor_boundary.a := by
+    have hxa : x = cert.precursorBoundary.a := by
       simpa [hbranch.2.1] using hxR
-    have htransition := (cert.precursor_boundary.first_transition x).mpr hxa
+    have htransition := (cert.precursorBoundary.first_transition x).mpr hxa
     have hQlat := Q_lattice 1 true (Or.inl rfl)
     have hSlat := S_lattice 2 false (Or.inr rfl)
     obtain ⟨jA, hjA⟩ := foot_incident _ (LatticeTileGridStructure _ hQlat).1.1 x
@@ -1467,9 +1468,9 @@ private theorem rootNeighborCount :
     obtain ⟨jB, hjB⟩ := foot_incident _ (LatticeTileGridStructure _ hSlat).1.1 x
       (boundary_foot _ x htransition.2.1)
     have hA : LatticeVertexIncidentCell x jA ∈ (cert.P 0 true).cells :=
-      (Finset.mem_sdiff.mp (cert.precursor_boundary.first_plus_child hjA)).1
+      (Finset.mem_sdiff.mp (cert.precursorBoundary.first_plus_child hjA)).1
     have hB : LatticeVertexIncidentCell x jB ∈ (cert.P 0 false).cells :=
-      (Finset.mem_sdiff.mp (cert.precursor_boundary.first_minus_child hjB)).1
+      (Finset.mem_sdiff.mp (cert.precursorBoundary.first_minus_child hjB)).1
     have hzero (U : ProtoTile) : TileTranslation U 0 = U :=
         InterfaceNeighborGeometry.hzeroAt680 U
     have hcover (j : Fin 4) :
@@ -1592,14 +1593,14 @@ theorem P4250T2InterfaceNeighborCount :
       x ∈ FootprintVertices (cert.P i s) ∧
         x ∉ BoundaryFootprintVertices (cert.P i s)) → ((∀ x ∈ D \ P,
       x ∈ FootprintVertices cert.O ↔
-        x ∈ ({cert.precursor_boundary.a, cert.precursor_boundary.b} : Finset GaussianInt)) → ((∀
+        x ∈ ({cert.precursorBoundary.a, cert.precursorBoundary.b} : Finset GaussianInt)) → ((∀
             x ∈ D \ P,
       Nat.card {is : Fin 3 × Bool //
         x ∈ BoundaryFootprintVertices (cert.P is.1 is.2)} = 2 →
       GaussianRealPoint x = TileCentroid T →
-        x ∈ ({cert.precursor_boundary.a, cert.precursor_boundary.b} : Finset GaussianInt)) → (
+        x ∈ ({cert.precursorBoundary.a, cert.precursorBoundary.b} : Finset GaussianInt)) → (
     let W := D \ P
-    let R : Finset GaussianInt := {cert.precursor_boundary.a, cert.precursor_boundary.b}
+    let R : Finset GaussianInt := {cert.precursorBoundary.a, cert.precursorBoundary.b}
     ∀ x ∈ W,
     let k := Nat.card {is : Fin 3 × Bool //
         x ∈ BoundaryFootprintVertices (cert.P is.1 is.2)}

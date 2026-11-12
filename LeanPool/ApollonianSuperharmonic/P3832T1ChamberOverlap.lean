@@ -5,10 +5,18 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.ApollonianSuperharmonic.Preamble
+public import Mathlib.Init
+public import Mathlib.Data.Fintype.Prod
+public import Mathlib.Data.Fintype.Sets
+public import Mathlib.Data.Fintype.Fin
+public import Mathlib.Algebra.Group.Fin.Basic
+public import Mathlib.Data.Fintype.Card
 public import Mathlib.Basic.Real.Basic
+public import Mathlib.Data.Finset.Card
+public import Mathlib.Data.Set.Basic
 public import Mathlib.Tactic.FinCases
 public import Mathlib.Tactic.Linarith
+
 
 -- [TABLET NODE: P3832T1ChamberOverlap]
 

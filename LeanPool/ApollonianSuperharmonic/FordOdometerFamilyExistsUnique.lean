@@ -5,9 +5,9 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.ApollonianSuperharmonic.FordFareyParentsExist
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P5130T5DomainCover
-public import LeanPool.ApollonianSuperharmonic.P5130T5ParentArithmetic
 public import LeanPool.ApollonianSuperharmonic.P5130T5MixedOverlaps
 public import LeanPool.ApollonianSuperharmonic.P5130T5SameParentOverlaps
 public import LeanPool.ApollonianSuperharmonic.P5130T5BoundaryConsistency

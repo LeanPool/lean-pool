@@ -5,7 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.ApollonianSuperharmonic.P1BandOrderedGeneralMixedAggregateJunctionData
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P1BandOrderedGeneralMixedAggregatePairedEndpoints
 
 -- [TABLET NODE: BandOrderedGeneralMixedAggregatePatches]

@@ -5,10 +5,11 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P4715T1IndexAction
 public import LeanPool.ApollonianSuperharmonic.P4715T1Arc
 public import LeanPool.ApollonianSuperharmonic.P4715T1Region
-public import Mathlib.Tactic.Module
 
 -- [TABLET NODE: P4715T1CoefficientTranslation]
 

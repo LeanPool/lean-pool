@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P4828T1Root
 public import LeanPool.ApollonianSuperharmonic.P4828T1Rotate
 

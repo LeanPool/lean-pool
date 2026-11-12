@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.IntegerLatticeFunction
 
 -- [TABLET NODE: P4207T1DiamondFormula]

@@ -5,12 +5,10 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P4250T1SlopeOffset
-public import LeanPool.ApollonianSuperharmonic.BandOriginalOccurrenceIntersectionClassification
 public import LeanPool.ApollonianSuperharmonic.RightSubtileOdometerCompatibility
-public import LeanPool.ApollonianSuperharmonic.VectorRecursionLaws
-public import LeanPool.ApollonianSuperharmonic.PositiveCurvatureTileOdometerDomain
-public import LeanPool.ApollonianSuperharmonic.SubtileLatticeAdjacent
 
 -- [TABLET NODE: P4250T1OrdinaryCompatibility]
 

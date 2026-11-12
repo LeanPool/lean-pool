@@ -5,12 +5,10 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.ApollonianSuperharmonic.Preamble
+public import Mathlib.Init
+
 public import Mathlib.Analysis.Complex.CoveringMap
-public import Mathlib.Analysis.SpecialFunctions.Complex.Arg
 public import Mathlib.Analysis.Convex.Contractible
-public import Mathlib.Topology.Algebra.Order.Support
-public import Mathlib.Topology.Algebra.Module.LocallyConvex
 public import Mathlib.Topology.Homotopy.Lifting
 
 /-!

@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.BoundaryFootprintVertexDegreeTwo
 public import LeanPool.ApollonianSuperharmonic.P5620T1BoundaryComponentCycle
 public import LeanPool.ApollonianSuperharmonic.FourNeighborConnected

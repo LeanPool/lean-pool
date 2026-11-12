@@ -5,9 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.ApollonianSuperharmonic.P4339T1PrecursorSupportGeometry
-public import LeanPool.ApollonianSuperharmonic.GridRayCrossingIndexAdjacentCell
-public import LeanPool.ApollonianSuperharmonic.TopologicalDiskGridRayCrossingIndexZero
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P4366T1RemainderOuterAttachments
 public import LeanPool.ApollonianSuperharmonic.P4366T1PrecursorPathLoop
 public import LeanPool.ApollonianSuperharmonic.P4366T1AttachedRemainderIndexZero
@@ -36,10 +35,10 @@ theorem P4339T1PrecursorArcSeparation :
       e ∈ BoundaryFootprintEdges (cert.P i s) ∧
         e ∈ BoundaryFootprintEdges T) → ((cert.O.cells.Nonempty) → ((∀ x ∈ D \ P,
       x ∈ FootprintVertices cert.O ↔
-        x ∈ ({cert.precursor_boundary.a, cert.precursor_boundary.b} :
+        x ∈ ({cert.precursorBoundary.a, cert.precursorBoundary.b} :
           Finset GaussianInt)) → (
     let W := D \ P
-    let R : Finset GaussianInt := {cert.precursor_boundary.a, cert.precursor_boundary.b}
+    let R : Finset GaussianInt := {cert.precursorBoundary.a, cert.precursorBoundary.b}
     ∀ a ∈ R, ∀ b ∈ R, ∀ V, ∀ E, SimpleGridPathBetween V E a b → V ⊆ (W : Set GaussianInt) → a =
         b))))))) := by
   intro C q cfg T cert hT hlat D P hD hP hattach hO hroots

@@ -5,14 +5,11 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.BandOrderedGeneralSubtileRoutingCertificate
 public import LeanPool.ApollonianSuperharmonic.CoveredInterfaceOppositeIncidentCells
 public import LeanPool.ApollonianSuperharmonic.LatticeEdgeRegularity
-public import LeanPool.ApollonianSuperharmonic.LatticeVertexIncidentCell
-public import LeanPool.ApollonianSuperharmonic.PositiveCurvatureTileOdometerDomain
-public import LeanPool.ApollonianSuperharmonic.ProtoTileObservableExtensionality
-public import LeanPool.ApollonianSuperharmonic.SimpleGridPathBetween
-public import LeanPool.ApollonianSuperharmonic.SimpleGridPathVertexIncidentEdge
 public import LeanPool.ApollonianSuperharmonic.TileOdometerBandPrototile
 
 -- [TABLET NODE: BandOrderedGeneralSubtileRoutingCertificateExists]
@@ -130,7 +127,9 @@ theorem BandOrderedGeneralSubtileRoutingCertificateExists
       (LatticeVertexIncidentCell normalization.normalizedPoint (direction + 2)) hexteriorCell
     intro y hy
     fin_cases direction <;>
-    simp? [LatticeVertexIncidentCell] at hcentralCell hexteriorCell ⊢ <;>
+    simp only [LatticeVertexIncidentCell, Int.reduceNeg, Fin.mk_one, Fin.isValue,
+        Matrix.cons_val_one, Matrix.cons_val_zero, Fin.reduceAdd, Matrix.cons_val,
+        Fin.reduceFinMk, Fin.zero_eta, zero_add] at hcentralCell hexteriorCell ⊢ <;>
     rcases hy with rfl | rfl | rfl | rfl | rfl <;>
     solve
     | apply Or.inr

@@ -5,9 +5,10 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P5124T1ParentModel
 public import LeanPool.ApollonianSuperharmonic.DiamondTileRecursiveIdentification
-public import LeanPool.ApollonianSuperharmonic.P4194T1DiamondCentroid
 
 -- [TABLET NODE: P5124T1ParentPlacement]
 

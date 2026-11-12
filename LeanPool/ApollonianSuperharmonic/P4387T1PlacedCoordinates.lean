@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P4261T1PlacedOdometer
 public import LeanPool.ApollonianSuperharmonic.P3055T1SignedCentroidNormalForms
 public import LeanPool.ApollonianSuperharmonic.P4387T1ParentSlopeNormalForms
@@ -66,7 +68,10 @@ theorem P4387T1PlacedCoordinates
   · have hs := pa.slope_offset
     cases hl : a.label <;> simp only [hl] at hs ⊢
     all_goals
-      simp? [af.1, af.2.2.2.2.1, af.2.2.2.2.2.1] at hs
+      simp only [Bool.false_eq_true, ↓reduceIte, Fin.isValue, Fin.reduceAdd,
+          Fin.succ_one_eq_two, Fin.succ_zero_eq_one, neg_smul, one_smul, af.2.2.2.2.1,
+          Int.reduceNeg, neg_mul, sub_neg_eq_add, af.2.2.2.2.2.1, Fin.reduceSucc, af.1,
+          zero_add] at hs
       have h₁ := congrArg Prod.fst hs
       have h₂ := congrArg Prod.snd hs
       apply Prod.ext

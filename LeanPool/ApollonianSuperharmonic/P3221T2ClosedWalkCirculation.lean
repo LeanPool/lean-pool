@@ -5,10 +5,10 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P3221T2IntegralSquareFilling
 public import LeanPool.ApollonianSuperharmonic.P3221T2TileFillingSupport
-public import Mathlib.Algebra.BigOperators.Group.List.Basic
-public import Mathlib.Data.List.Chain
 
 -- [TABLET NODE: P3221T2ClosedWalkCirculation]
 

@@ -5,11 +5,12 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.BandOrderedGeneralConfiguration
-public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryCovariance
 public import LeanPool.ApollonianSuperharmonic.FordCoordinateConfiguration
 public import LeanPool.ApollonianSuperharmonic.FordRegimeConverse
-public import LeanPool.ApollonianSuperharmonic.VectorRecursionLaws
+public import LeanPool.ApollonianSuperharmonic.GaussianQuarterTurn
 
 -- [TABLET NODE: P5472T1FordNormalization]
 
@@ -126,15 +127,22 @@ private theorem hsuccCov :
   · rw [hs]
     funext i
     fin_cases i <;>
-      simp? [succ, BandPackingSymmetryQuadrupleAction,
-        BandPackingSymmetryCircleAction, BandPackingSymmetryReversesOrientation];
+      simp only [BandPackingSymmetryQuadrupleAction, BandPackingSymmetryCircleAction,
+          Fin.isValue, Matrix.cons_val_zero, Int.cast_sub, Int.cast_add, Int.cast_mul,
+          Int.cast_ofNat, BandPackingSymmetryReversesOrientation, Bool.false_eq_true,
+          ↓reduceIte, Fin.succ_zero_eq_one, Matrix.cons_val_one, Fin.succ_one_eq_two,
+          Matrix.cons_val, Fin.reduceSucc, Fin.mk_one, succ, Fin.reduceFinMk, Fin.zero_eta,
+          Prod.mk.injEq, true_and];
       (try ext) <;> simp [] <;> ring
   · rw [hs]
     funext i
     fin_cases i <;>
-      simp? [succ, BandPackingSymmetryQuadrupleAction,
-        BandPackingSymmetryCircleAction, BandPackingSymmetryReversesOrientation,
-        ]; (try ext) <;>
+      simp only [BandPackingSymmetryQuadrupleAction, BandPackingSymmetryCircleAction,
+          Fin.isValue, Matrix.cons_val_zero, neg_sub, Int.cast_sub, Int.cast_add,
+          Int.cast_mul, Int.cast_ofNat, BandPackingSymmetryReversesOrientation,
+          bne_self_eq_false, Bool.false_eq_true, ↓reduceIte, Fin.succ_zero_eq_one,
+          Matrix.cons_val_one, Fin.succ_one_eq_two, Matrix.cons_val, Fin.reduceSucc,
+          Fin.mk_one, succ, Fin.reduceFinMk, Fin.zero_eta, Prod.mk.injEq, true_and]; (try ext) <;>
       simp [] <;> ring
 
 private theorem hF0 :
@@ -243,7 +251,8 @@ private theorem houter :
   rw [hqSucc, hsuccCov]
   funext i
   fin_cases i
-  · simp? [succ]
+  · simp only [Fin.isValue, Fin.zero_eta, Matrix.cons_val_zero, Nat.succ_eq_add_one,
+      Nat.reduceAdd, Prod.mk.injEq, succ]
     constructor
     · rw [hsF0, hsF2, hsF3, hsF1]
     · rw [hsF0, hsF2, hsF3, hsF1]

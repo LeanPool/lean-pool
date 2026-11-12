@@ -5,6 +5,9 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+public import Mathlib.Tactic.Positivity
+
 public import LeanPool.ApollonianSuperharmonic.P3821T1LoopIndex
 public import LeanPool.ApollonianSuperharmonic.P3821T1AngularIncrementLaws
 public import Mathlib.Topology.Algebra.Order.Floor

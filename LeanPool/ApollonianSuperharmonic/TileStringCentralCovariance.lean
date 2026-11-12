@@ -5,12 +5,11 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.ApollonianSuperharmonic.BandPrototileCentralSymmetry
-public import LeanPool.ApollonianSuperharmonic.BandPrototileTranslation
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.TileHalfTurnFormulas
 public import LeanPool.ApollonianSuperharmonic.TileString
 public import LeanPool.ApollonianSuperharmonic.TileTouchingCovariance
-public import LeanPool.ApollonianSuperharmonic.TileTranslationFormulas
 
 -- [TABLET NODE: TileStringCentralCovariance]
 
@@ -116,8 +115,9 @@ private theorem transform_translate :
     rw [ProtoTile.mk.injEq]
     constructor
     · ext x
-      simp? [transform, TileTranslation, TileHalfTurn,
-        GaussianTranslation, Finset.image_image]
+      simp only [TileTranslation, TileHalfTurn, Int.reduceNeg, GaussianTranslation,
+          Finset.image_image, Finset.image_nonempty, neg_add_rev, Finset.mem_image,
+          Function.comp_apply, transform]
       constructor
       · rintro ⟨a, ha, heq⟩
         refine ⟨a, ha, ?_⟩
@@ -485,12 +485,12 @@ theorem TileStringCentralCovariance
     have hpre₀ : pre₀ ≠ [] := by
       intro hz
       subst pre₀
-      simp? at hpreeq
+      simp only [List.map_nil] at hpreeq
       exact hpre hpreeq
     have hpost₀ : post₀ ≠ [] := by
       intro hz
       subst post₀
-      simp? at hposteq
+      simp only [List.map_nil] at hposteq
       exact hpost hposteq
     rcases hbelow pre₀ V post₀ hdecomp hpre₀ hpost₀ with
       ⟨hpos, W, hWreg, hVW, hWneg⟩

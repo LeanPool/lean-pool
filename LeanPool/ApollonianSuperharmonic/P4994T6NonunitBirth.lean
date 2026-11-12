@@ -5,12 +5,11 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P4994T6StepChamber
 public import LeanPool.ApollonianSuperharmonic.P4994T6ChartCovolume
-public import LeanPool.ApollonianSuperharmonic.VectorDeterminant
 public import LeanPool.ApollonianSuperharmonic.BandRegularTileTouchingClassification
-public import LeanPool.ApollonianSuperharmonic.IncomingSuperbasisRelation
-public import LeanPool.ApollonianSuperharmonic.TileTranslationFormulas
 
 -- [TABLET NODE: P4994T6NonunitBirth]
 
@@ -69,7 +68,9 @@ theorem P4994T6NonunitBirth :
     have hpim := congrArg (fun z : GaussianInt => z.im) hp
     have hrre := congrArg (fun z : GaussianInt => z.re) hr
     have hrim := congrArg (fun z : GaussianInt => z.im) hr
-    simp? at hpre hpim hrre hrim
+    simp only [Int.reduceNeg, Zsqrtd.re_add, Zsqrtd.re_mul, Zsqrtd.re_intCast,
+        Zsqrtd.im_intCast, mul_zero, zero_mul, add_zero, Fin.isValue, Zsqrtd.im_add,
+        Zsqrtd.im_mul, Zsqrtd.re_neg, Zsqrtd.im_neg] at hpre hpim hrre hrim
     have factor :
         (BandVectors.1 (q 2) (q 0)).re * (-BandVectors.1 (q 3) (q 0)).im -
           (BandVectors.1 (q 2) (q 0)).im * (-BandVectors.1 (q 3) (q 0)).re =

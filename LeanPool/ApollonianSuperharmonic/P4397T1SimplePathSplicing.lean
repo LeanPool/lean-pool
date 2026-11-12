@@ -5,8 +5,10 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.ApollonianSuperharmonic.Preamble
-public import Mathlib.Data.List.Zip
+public import Mathlib.Init
+public import Mathlib.Data.List.Nodup
+public import Mathlib.Data.List.Pairwise
+
 
 -- [TABLET NODE: P4397T1SimplePathSplicing]
 

@@ -5,12 +5,13 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P3544T1DiagonalSplit
 public import LeanPool.ApollonianSuperharmonic.P3511T1SourceDissection
 public import LeanPool.ApollonianSuperharmonic.P3652T1ChildFillSeparation
 public import LeanPool.ApollonianSuperharmonic.P3652T1ParentOddGluing
 public import LeanPool.ApollonianSuperharmonic.P3652T1DiagonalFaceIntersections
-public import LeanPool.ApollonianSuperharmonic.P3652T1IndexedFaceLedger
 
 -- [TABLET NODE: P3544T1IndexedGluing]
 

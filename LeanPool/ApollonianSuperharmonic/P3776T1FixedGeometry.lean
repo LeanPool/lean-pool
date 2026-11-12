@@ -5,21 +5,13 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P3776T1OpenStar
 public import LeanPool.ApollonianSuperharmonic.P3767T1FixedFaceComponents
-public import Mathlib.Topology.Compactness.LocallyFinite
-public import Mathlib.Topology.MetricSpace.ProperSpace
 public import Mathlib.Analysis.Normed.Group.Bounded
 public import Mathlib.Analysis.Normed.Group.Real
 public import Mathlib.Analysis.Normed.Group.Constructions
-public import Mathlib.Topology.Order.IntermediateValue
-public import Mathlib.Topology.Algebra.Group.Basic
-public import Mathlib.Tactic.FinCases
-public import Mathlib.Tactic.Linarith
-public import Mathlib.Tactic.NormNum
-public import Mathlib.Tactic.Tauto
-public import Mathlib.Data.Int.Interval
-public import Mathlib.Algebra.Order.Floor.Ring
 
 -- [TABLET NODE: P3776T1FixedGeometry]
 

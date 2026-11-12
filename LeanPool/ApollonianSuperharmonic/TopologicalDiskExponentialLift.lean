@@ -5,10 +5,11 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.TopologicalDisk
 public import Mathlib.Analysis.Complex.CoveringMap
 public import Mathlib.Analysis.Normed.Module.Connected
-public import Mathlib.Topology.Algebra.Module.LocallyConvex
 public import Mathlib.Topology.Homotopy.Lifting
 
 /-!

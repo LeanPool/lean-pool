@@ -5,9 +5,10 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.BandDiskExteriorDensity
 public import LeanPool.ApollonianSuperharmonic.BandTangencyDensity
-public import LeanPool.ApollonianSuperharmonic.EuclideanCircleData
 
 -- [TABLET NODE: BandCircleEnclosureDichotomy]
 

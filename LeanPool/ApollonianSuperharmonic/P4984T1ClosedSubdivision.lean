@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P4984T1ClosedGap
 public import LeanPool.ApollonianSuperharmonic.P4828T1Gap
 public import LeanPool.ApollonianSuperharmonic.P4828T1LineSupport
@@ -15,9 +17,9 @@ public import LeanPool.ApollonianSuperharmonic.P4909T1LineFan
 public import LeanPool.ApollonianSuperharmonic.P4909T1OmittedDiskBarrier
 public import LeanPool.ApollonianSuperharmonic.P4909T1TangentSegments
 public import Mathlib.Analysis.Convex.Topology
-public import Mathlib.Analysis.Normed.Group.Uniform
 public import Mathlib.Analysis.Normed.Module.RCLike.Real
-public import Mathlib.Analysis.RCLike.Basic
+public import LeanPool.ApollonianSuperharmonic.P4828T1Disk
+public import Mathlib.Algebra.Order.BigOperators.Expect
 
 -- [TABLET NODE: P4984T1ClosedSubdivision]
 
@@ -196,7 +198,7 @@ private theorem support :
   have hci : ((q i).1 : ℝ) ≠ 0 := by exact_mod_cast ne_of_gt hi
   have hre : (p i).re = (q i).2.re / (q i).1 := by simp [p]
   rcases hs.normals k hk with hn | hn
-  · simp? [hn]
+  · simp only [hn, ↓reduceIte]
     rw [hn] at hh
     norm_num at hh
     rw [hnum] at hh
@@ -228,11 +230,11 @@ private theorem footDist :
   have hh := support k i hk hi
   rw [Complex.dist_eq]
   by_cases hn : (q k).2 = -1
-  · simp? [hn] at hh ⊢
+  · simp only [hn, ↓reduceIte] at hh ⊢
     have hv : p i - (⟨L, (p i).im⟩ : ℂ) = (r i : ℂ) := by
       apply Complex.ext <;> simp [hh]
     rw [hv, Complex.norm_real, Real.norm_eq_abs, abs_of_nonneg hr]
-  · simp? [hn] at hh ⊢
+  · simp only [hn, ↓reduceIte] at hh ⊢
     have hv : p i - (⟨L + 2, (p i).im⟩ : ℂ) = (-r i : ℂ) := by
       apply Complex.ext <;> simp [hh]
     rw [hv, norm_neg, Complex.norm_real, Real.norm_eq_abs, abs_of_nonneg hr]
@@ -270,11 +272,11 @@ private theorem lineDist :
   rw [Complex.sub_re, hz] at hab
   rw [Complex.dist_eq]
   by_cases hn : (q k).2 = -1
-  · simp? [hn] at hh hab
+  · simp only [hn, ↓reduceIte] at hh hab
     have heq : L - (p i).re = -r i := by linarith
     rw [heq, abs_neg, abs_of_pos (rpos i hi)] at hab
     exact hab
-  · simp? [hn] at hh hab
+  · simp only [hn, ↓reduceIte] at hh hab
     have heq : L + 2 - (p i).re = r i := by linarith
     rw [heq, abs_of_pos (rpos i hi)] at hab
     exact hab
@@ -620,7 +622,10 @@ theorem P4984T1ClosedSubdivision (L : Real)
   have oldRetained (b j : Fin 3) (hjb : j ≠ b) :
       ∃ k : Fin 3, idx b k = j.succ := by
     clear * - b j hjb idx
-    fin_cases b <;> fin_cases j <;> simp_all? [idx]
+    fin_cases b <;> fin_cases j <;> simp_all only [Fin.mk_one, Fin.isValue, Fin.reduceFinMk,
+        ne_eq, Fin.reduceEq, not_false_eq_true, Nat.reduceAdd, Nat.succ_eq_add_one,
+        Fin.reduceAdd, Fin.succ_zero_eq_one, Fin.succ_one_eq_two, idx, Fin.zero_eta,
+        one_ne_zero, zero_add, Fin.reduceSucc, not_true_eq_false, zero_ne_one]
     all_goals first | exact ⟨1, rfl⟩ | exact ⟨2, rfl⟩
   have rpos (i : Fin 4) (hi : 0 < (q i).1) : 0 < r i := by
     dsimp [r]

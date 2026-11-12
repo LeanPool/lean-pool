@@ -5,19 +5,11 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.ApollonianSuperharmonic.BandOrientedBoundaryParentChain
-public import LeanPool.ApollonianSuperharmonic.BandPredecessorNoCollision
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.BandVectors
-public import LeanPool.ApollonianSuperharmonic.PrimitiveVectorOrientation
-public import LeanPool.ApollonianSuperharmonic.PrimitiveVectorOrientationUnique
-public import LeanPool.ApollonianSuperharmonic.ProperBandQuadruple
-public import LeanPool.ApollonianSuperharmonic.RecursiveVectorSystem
-public import LeanPool.ApollonianSuperharmonic.RecursiveVectorsExistUnique
-public import LeanPool.ApollonianSuperharmonic.SemiProperForestClassification
 public import LeanPool.ApollonianSuperharmonic.UnitOccurrenceOrientation
-public import LeanPool.ApollonianSuperharmonic.UnitOccurrenceOrientationUnique
 public import LeanPool.ApollonianSuperharmonic.UnitTriangularStep
-public import LeanPool.ApollonianSuperharmonic.P4566T1LiteralSuccessorCharts
 public import LeanPool.ApollonianSuperharmonic.P4566T1SmallRetainedSides
 public import LeanPool.ApollonianSuperharmonic.P4566T1StrictRetainedGenealogy
 

@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryAffineVectorAction
 
 -- [TABLET NODE: P5472T1CyclicAffineCommutation]

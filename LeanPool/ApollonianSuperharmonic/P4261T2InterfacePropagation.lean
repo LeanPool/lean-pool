@@ -5,9 +5,10 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P4261T2LiteralInterface
 public import LeanPool.ApollonianSuperharmonic.PositiveCurvatureTileOdometerDomain
-public import Mathlib.Data.List.Chain
 
 -- [TABLET NODE: P4261T2InterfacePropagation]
 

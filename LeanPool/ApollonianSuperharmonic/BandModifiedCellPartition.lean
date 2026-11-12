@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.LatticeFundamentalSet
 public import LeanPool.ApollonianSuperharmonic.ModifiedSubtileOccurrenceInterpretation
 public import LeanPool.ApollonianSuperharmonic.TileArea

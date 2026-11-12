@@ -5,10 +5,14 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.ApollonianSuperharmonic.FordCellDomain
+public import Mathlib.Init
+public import Mathlib.Tactic.Positivity
+
 public import LeanPool.ApollonianSuperharmonic.FordTile
 public import LeanPool.ApollonianSuperharmonic.LatticeTile
 public import LeanPool.ApollonianSuperharmonic.TileArea
+public meta import Lean.Meta.Tactic.NormCast
+public import Mathlib.Algebra.Order.Ring.Star
 
 -- [TABLET NODE: FordTileGeometry]
 
@@ -28,7 +32,12 @@ private theorem squareRealization (q : ℕ) (hq : 0 < q) : TileRealization (Ford
   ext p
   constructor
   · intro hp
-    simp? [TileRealization, FordTile, FordCellDomain, ClosedSquareRealization] at hp
+    simp only [TileRealization, FordTile, FordCellDomain, Int.reduceNeg,
+        Finset.product_eq_sprod, Finset.mem_image, Finset.mem_product, Finset.mem_range,
+        Prod.exists, ClosedSquareRealization, GaussianInt.intCast_re, GaussianInt.intCast_im,
+        Set.iUnion_exists, Set.mem_iUnion, Set.mem_Icc, exists_and_left, exists_prop,
+        exists_and_right, ↓existsAndEq, GaussianInt.re_toComplex, Int.cast_natCast,
+        GaussianInt.im_toComplex, and_true] at hp
     rcases hp with ⟨x, y, hxy, hlt, hup⟩
     rcases hxy with ⟨hxl, hyl⟩
     rcases hup with ⟨hxu, hyu⟩
@@ -120,7 +129,8 @@ theorem FordTileGeometry (q : Nat) (hq : 0 < q) :
       ⟨((q : Real) * (p.1.1 / 2 + 1 / 2),
         (q : Real) * (p.1.2 / 2 + 1 / 2)), by
         have hp := Metric.mem_closedBall.mp p.2
-        simp? [Prod.dist_eq, Real.dist_eq] at hp
+        simp only [Prod.dist_eq, Prod.fst_zero, Real.dist_eq, sub_zero, Prod.snd_zero,
+            sup_le_iff] at hp
         rcases abs_le.mp hp.1 with ⟨hx1, hx2⟩
         rcases abs_le.mp hp.2 with ⟨hy1, hy2⟩
         have hqreal : (0 : Real) < q := by exact_mod_cast hq
@@ -133,7 +143,8 @@ theorem FordTileGeometry (q : Nat) (hq : 0 < q) :
     let backward : Set.Icc (0, 0) ((q : Real), (q : Real)) →
         (Metric.closedBall (0 : Real × Real) 1 : Set (Real × Real)) := fun p =>
       ⟨(2 * (p.1.1 / q - 1 / 2), 2 * (p.1.2 / q - 1 / 2)), by
-        simp? [Metric.mem_closedBall, Prod.dist_eq, Real.dist_eq]
+        simp only [one_div, Metric.mem_closedBall, Prod.dist_eq, Prod.fst_zero, Real.dist_eq,
+            sub_zero, abs_mul, Nat.abs_ofNat, Prod.snd_zero, sup_le_iff]
         have hqreal : (0 : Real) < q := by exact_mod_cast hq
         rcases p.2 with ⟨⟨hx1, hy1⟩, ⟨hx2, hy2⟩⟩
         have hx : -(1 / 2 : Real) ≤ (p.1.1 / q - 1 / 2) ∧
@@ -200,7 +211,7 @@ theorem FordTileGeometry (q : Nat) (hq : 0 < q) :
         refine ⟨2 * e / q, by positivity, ?_⟩
         intro a hab
         change dist (a : Real × Real) (b : Real × Real) < 2 * e / q at hab
-        simp? [Prod.dist_eq, Real.dist_eq] at hab ⊢
+        simp only [Prod.dist_eq, Real.dist_eq, max_lt_iff, one_div] at hab ⊢
         constructor
         · rw [show (q : Real) * (((a : Real × Real).1) / 2 + 2⁻¹) -
               (q : Real) * (((b : Real × Real).1) / 2 + 2⁻¹) =
@@ -238,7 +249,7 @@ theorem FordTileGeometry (q : Nat) (hq : 0 < q) :
         refine ⟨e * q / 2, by positivity, ?_⟩
         intro a hab
         change dist (a : Real × Real) (b : Real × Real) < e * q / 2 at hab
-        simp? [Prod.dist_eq, Real.dist_eq] at hab ⊢
+        simp only [Prod.dist_eq, Real.dist_eq, max_lt_iff, one_div] at hab ⊢
         constructor
         · rw [show 2 * (((a : Real × Real).1) / q - 2⁻¹) -
               2 * (((b : Real × Real).1) / q - 2⁻¹) =

@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P4458T1RestrictionFamily
 public import LeanPool.ApollonianSuperharmonic.P4536T1EndpointAlgebra
 public import LeanPool.ApollonianSuperharmonic.P4536T1HalfOffsetBridge
@@ -35,9 +37,9 @@ theorem P4536T1EndpointDifferences
       TileCentroid Rplus - TileCentroid (D.tiles F.slot false) =
         GaussianRealPoint ((⟨0, 1⟩ : GaussianInt) *
           BandVectors.1 (F.q F.slot.succ) (F.q (F.slot + 2).succ)) ∧
-      s - F.minus_slope =
+      s - F.minusSlope =
         GaussianRealPoint (BandVectors.2 (F.q (F.slot + 1).succ) (F.q F.slot.succ)) ∧
-      F.plus_slope - s =
+      F.plusSlope - s =
         GaussianRealPoint (-(⟨0, 1⟩ : GaussianInt) *
           BandVectors.2 (F.q F.slot.succ) (F.q (F.slot + 2).succ)) := by
 -- BODY
@@ -103,30 +105,30 @@ theorem P4536T1EndpointDifferences
   have pos : 0 < (F.q F.slot.succ).1 := F.parent ▸ C.2
   rcases D.slopes F.slot false with hz | ⟨root, s, hroot, hs, hre, him⟩
   · omega
-  have hrootEq : root = F.outer_slope := Option.some.inj (hroot.symm.trans F.slope_outer)
+  have hrootEq : root = F.outerSlope := Option.some.inj (hroot.symm.trans F.slope_outer)
   subst root
-  have an : s - F.outer_slope =
+  have an : s - F.outerSlope =
       (1 / 2 : ℝ) • GaussianRealPoint (-(wa - (-I) * wa)) := by
-    change s.1 - F.outer_slope.1 = -1 * (1 / 2 : ℝ) *
+    change s.1 - F.outerSlope.1 = -1 * (1 / 2 : ℝ) *
       ((wa.re : ℝ) - (wa.im : ℝ)) at hre
-    change s.2 - F.outer_slope.2 = -1 * (1 / 2 : ℝ) *
+    change s.2 - F.outerSlope.2 = -1 * (1 / 2 : ℝ) *
       ((wa.im : ℝ) + (wa.re : ℝ)) at him
     apply Prod.ext
     · simp [GaussianRealPoint, I, Zsqrtd.re_mul, Zsqrtd.im_mul] at hre ⊢
       linarith [hre]
     · simp [GaussianRealPoint, I, Zsqrtd.re_mul, Zsqrtd.im_mul] at him ⊢
       linarith [him]
-  have am : F.minus_slope - F.outer_slope = (1 / 2 : ℝ) •
+  have am : F.minusSlope - F.outerSlope = (1 / 2 : ℝ) •
       GaussianRealPoint ((xa - (-I) * ya) - (-I) * (xa - (-I) * ya)) := by
     have h := F.minus_difference
-    change F.minus_slope - F.outer_slope = (1 / 2 : ℝ) • GaussianRealPoint
+    change F.minusSlope - F.outerSlope = (1 / 2 : ℝ) • GaussianRealPoint
       (BandVectors.2 (r 1) (r 0) - BandVectors.2 (r 0) (r 1)) at h
     rw [aflip, laws.2.2.2.1] at h
     simpa only [sub_neg_eq_add, neg_mul] using h
-  have ap : F.plus_slope - F.outer_slope = (1 / 2 : ℝ) •
+  have ap : F.plusSlope - F.outerSlope = (1 / 2 : ℝ) •
       GaussianRealPoint ((xa - (-I) * ya) + (-I) * (xa - (-I) * ya)) := by
     have h := F.plus_difference
-    change F.plus_slope - F.outer_slope = (1 / 2 : ℝ) • GaussianRealPoint
+    change F.plusSlope - F.outerSlope = (1 / 2 : ℝ) • GaussianRealPoint
       (BandVectors.2 (r 1) (r 0) + BandVectors.2 (r 0) (r 1)) at h
     rw [aflip, laws.2.2.2.1] at h
     simpa only [sub_neg_eq_add, neg_mul] using h
@@ -144,13 +146,13 @@ theorem P4536T1EndpointDifferences
         rw [vp, vn]
         apply P4536T1HalfOffsetBridge
         simpa only [sub_neg_eq_add, mul_assoc] using hv.2.1
-  · change s - F.minus_slope = GaussianRealPoint ya
+  · change s - F.minusSlope = GaussianRealPoint ya
     calc
-      _ = (s - F.outer_slope) - (F.minus_slope - F.outer_slope) := by abel
+      _ = (s - F.outerSlope) - (F.minusSlope - F.outerSlope) := by abel
       _ = _ := by rw [an, am]; exact P4536T1HalfOffsetBridge _ _ _ ha.1
-  · change F.plus_slope - s = GaussianRealPoint (-I * xa)
+  · change F.plusSlope - s = GaussianRealPoint (-I * xa)
     calc
-      _ = (F.plus_slope - F.outer_slope) - (s - F.outer_slope) := by abel
+      _ = (F.plusSlope - F.outerSlope) - (s - F.outerSlope) := by abel
       _ = _ := by
         rw [ap, an]
         apply P4536T1HalfOffsetBridge

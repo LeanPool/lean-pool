@@ -5,9 +5,13 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+public import Mathlib.Algebra.CharP.Defs
+public import Mathlib.Data.Finset.Card
+public import Mathlib.Tactic.NormNum
+
 public import LeanPool.ApollonianSuperharmonic.P5124T1ParentModel
 public import LeanPool.ApollonianSuperharmonic.P5124T1TranslatedDiamonds
-public import LeanPool.ApollonianSuperharmonic.P5157T1AlternatingStaircase
 public import LeanPool.ApollonianSuperharmonic.P5157T1DiamondStaircaseIntersections
 public import LeanPool.ApollonianSuperharmonic.P5157T1DiamondSingletonIntersections
 
@@ -69,15 +73,24 @@ theorem P5124T1SmallerParents (k : Nat) (hk : 1 < k) :
   have horizontalPath (z : GaussianInt) :
       SimpleGridPath {z, z + 1} {{z, z + 1}} := by
     have H := (P5157T1AlternatingStaircase z true 1 (Or.inl rfl) 1 (by decide)).2
-    simp? [P5157T1StaircasePoint, Nat.le_one_iff_eq_zero_or_eq_one,
-      or_and_right, exists_or, show (⟨0, 0⟩ : GaussianInt) = 0 from rfl,
-      show (⟨1, 0⟩ : GaussianInt) = 1 from rfl] at H
+    simp only [Nat.le_one_iff_eq_zero_or_eq_one, P5157T1StaircasePoint, Int.reduceNeg,
+        ↓reduceIte, Int.natCast_ediv, Nat.cast_add, Nat.cast_one, Nat.cast_ofNat, one_mul,
+        or_and_right, exists_or, ↓existsAndEq, CharP.cast_eq_zero, zero_add, Int.reduceDiv,
+        EuclideanDomain.zero_div, show (⟨0, 0⟩ : GaussianInt) = 0 from rfl, add_zero,
+        true_and, Int.reduceAdd, ne_eq, OfNat.ofNat_ne_zero, not_false_eq_true,
+        EuclideanDomain.div_self, show (⟨1, 0⟩ : GaussianInt) = 1 from rfl, Order.lt_one_iff,
+        exists_eq_left, Set.ofPred_eq_eq_singleton] at H
     convert H using 1; ext v; simp
   have verticalPath (z : GaussianInt) :
       SimpleGridPath {z, z + ⟨0, 1⟩} {{z, z + ⟨0, 1⟩}} := by
     have H := (P5157T1AlternatingStaircase z false 1 (Or.inl rfl) 1 (by decide)).2
-    simp? [P5157T1StaircasePoint, Nat.le_one_iff_eq_zero_or_eq_one,
-      or_and_right, exists_or, show (⟨0, 0⟩ : GaussianInt) = 0 from rfl] at H
+    simp only [Nat.le_one_iff_eq_zero_or_eq_one, P5157T1StaircasePoint, Int.reduceNeg,
+        Bool.false_eq_true, ↓reduceIte, Int.natCast_ediv, Nat.cast_ofNat, Nat.cast_add,
+        Nat.cast_one, one_mul, or_and_right, exists_or, ↓existsAndEq, CharP.cast_eq_zero,
+        EuclideanDomain.zero_div, zero_add, Int.reduceDiv,
+        show (⟨0, 0⟩ : GaussianInt) = 0 from rfl, add_zero, true_and, Int.reduceAdd, ne_eq,
+        OfNat.ofNat_ne_zero, not_false_eq_true, EuclideanDomain.div_self, Order.lt_one_iff,
+        exists_eq_left, Set.ofPred_eq_eq_singleton] at H
     convert H using 1; ext v; simp
   have tp : TileTouching D Eplus := Or.inl ⟨dne, epne, dp, by rw [vp, ep]; exact hp⟩
   have tq : TileTouching L Eplus := Or.inl ⟨lne, epne, dq, by rw [vq, eq]; exact hq⟩

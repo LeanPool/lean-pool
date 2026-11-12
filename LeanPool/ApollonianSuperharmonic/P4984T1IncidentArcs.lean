@@ -5,13 +5,14 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P4984T1ClosedGap
 public import LeanPool.ApollonianSuperharmonic.P4984T1ClosedSubdivision
 public import LeanPool.ApollonianSuperharmonic.P4828T1Gap
 public import LeanPool.ApollonianSuperharmonic.P4828T1LineSupport
 public import LeanPool.ApollonianSuperharmonic.P4828T1ConstructorSupport
 public import LeanPool.ApollonianSuperharmonic.P4828T1ParentsDistinct
-public import LeanPool.ApollonianSuperharmonic.TangencyCoordinateIdentity
 public import LeanPool.ApollonianSuperharmonic.P5050T1ParentSphereSection
 public import LeanPool.ApollonianSuperharmonic.P5050T1OmittedHullSeparation
 

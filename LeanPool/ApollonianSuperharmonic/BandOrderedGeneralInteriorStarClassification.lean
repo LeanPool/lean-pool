@@ -5,21 +5,17 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.BandOrderedGeneralInteriorWebRow
-public import LeanPool.ApollonianSuperharmonic.BandSignedOccurrenceHalfTurn
-public import LeanPool.ApollonianSuperharmonic.P4055T1BandQuarterTurn
-public import LeanPool.ApollonianSuperharmonic.P4339T1PrecursorSupportGeometry
-public import LeanPool.ApollonianSuperharmonic.P4590T1CentralDiskSectors
 public import LeanPool.ApollonianSuperharmonic.P4590T1OriginalNonedges
 public import LeanPool.ApollonianSuperharmonic.P4590T1ReflectedCenterBoundary
 public import LeanPool.ApollonianSuperharmonic.P4590T1SixLabelBoundaryCount
 public import LeanPool.ApollonianSuperharmonic.P4590T1MixedInteriorGeometry
 public import LeanPool.ApollonianSuperharmonic.P4590T1RightInteriorGeometry
 public import LeanPool.ApollonianSuperharmonic.P4590T1RestoredBoundaryGeometry
-public import LeanPool.ApollonianSuperharmonic.P4590T1JunctionRefinement
 public import LeanPool.ApollonianSuperharmonic.P4590T1JunctionRouting
 public import LeanPool.ApollonianSuperharmonic.BandOrderedGeneralPositiveCutGeometry
-public import LeanPool.ApollonianSuperharmonic.P4456T2VertexInterior
 
 -- [TABLET NODE: BandOrderedGeneralInteriorStarClassification]
 
@@ -183,7 +179,7 @@ theorem BandOrderedGeneralInteriorStarClassification
       exact ((P4456T2VertexInterior _ (hne 0 true) x
         (boundary_raw 0 true hAB.1)).2.mpr hall) hAB.1
     obtain ⟨j, hj⟩ := hmissing
-    exact hj (cert.exceptional_segments.precursor_in_left (all_precursor j))
+    exact hj (cert.exceptionalSegments.precursor_in_left (all_precursor j))
 
 end ApollonianSuperharmonic
 

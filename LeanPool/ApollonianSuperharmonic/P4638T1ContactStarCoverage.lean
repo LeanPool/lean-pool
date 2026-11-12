@@ -5,11 +5,13 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.PrecursorBoundaryArcData
 public import LeanPool.ApollonianSuperharmonic.LatticeTileGridStructure
-public import LeanPool.ApollonianSuperharmonic.LatticeVertexIncidentCell
 public import LeanPool.ApollonianSuperharmonic.SimpleGridPathVertexIncidentEdge
 public import LeanPool.ApollonianSuperharmonic.P3102T2CommonEdgeSectorTransition
+public import LeanPool.ApollonianSuperharmonic.FootprintVertices
 
 -- [TABLET NODE: P4638T1ContactStarCoverage]
 

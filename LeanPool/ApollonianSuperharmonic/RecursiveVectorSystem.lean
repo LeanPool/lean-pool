@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.BandTangency
 public import LeanPool.ApollonianSuperharmonic.PrimitiveVectorOrientation
 

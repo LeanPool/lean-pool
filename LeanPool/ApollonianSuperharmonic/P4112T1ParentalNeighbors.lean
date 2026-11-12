@@ -5,8 +5,12 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P4062T1RemainderPaths
 public import LeanPool.ApollonianSuperharmonic.FourNeighborAdjacent
+public meta import Lean.Meta.Tactic.NormCast
+public import LeanPool.ApollonianSuperharmonic.P4062T1RecursiveInteriors
 
 /-!
 # P4112T1ParentalNeighbors
@@ -934,25 +938,29 @@ theorem P4112T1ParentalNeighbors (P : FordFareyParameter) (hP : 2 < P.q) :
   fin_cases j
   · rcases x with ⟨u, v⟩
     by_cases h : P.q₂ < P.q₁
-    · simp? [P4062T1RemainderPaths, h, Finset.mem_filter] at hx
+    · simp only [P4062T1RemainderPaths, h, ↓reduceIte, Int.reduceNeg, Fin.zero_eta,
+        Fin.isValue, Matrix.cons_val_zero, Finset.mem_filter] at hx
       rcases hx with ⟨hxbox, hxline⟩
       have hb := (squareCoordinates P.q ⟨u, v⟩).mp hxbox
       exact rowR u v hb hxline h
-    · simp? [P4062T1RemainderPaths, h, Finset.mem_filter] at hx
+    · simp only [P4062T1RemainderPaths, h, ↓reduceIte, Int.reduceNeg, Fin.zero_eta,
+        Fin.isValue, Matrix.cons_val_zero, Finset.mem_filter] at hx
       rcases hx with ⟨hxbox, hxline⟩
       have hb := (squareCoordinates P.q ⟨u, v⟩).mp hxbox
       have ho : P.q₁ < P.q₂ := by omega
       exact rowSmall u v hb hxline ho
   · rcases x with ⟨u, v⟩
     by_cases h : P.q₂ < P.q₁
-    · simp? [P4062T1RemainderPaths, h, Finset.mem_filter] at hx
+    · simp only [P4062T1RemainderPaths, h, ↓reduceIte, Int.reduceNeg, Fin.mk_one, Fin.isValue,
+        Matrix.cons_val_one, Matrix.cons_val_fin_one, Finset.mem_filter] at hx
       rcases hx with ⟨hxbox, hxline⟩
       have hb := (squareCoordinates P.q ⟨u, v⟩).mp hxbox
       have hb' : 1 ≤ v ∧ v ≤ (P.q : Int)-1 ∧ 1 ≤ u ∧ u ≤ (P.q : Int)-1 :=
         ⟨hb.2.2.1, hb.2.2.2, hb.1, hb.2.1⟩
       rw [transpose_filter_card]
       exact rowR v u hb' hxline h
-    · simp? [P4062T1RemainderPaths, h, Finset.mem_filter] at hx
+    · simp only [P4062T1RemainderPaths, h, ↓reduceIte, Int.reduceNeg, Fin.mk_one, Fin.isValue,
+        Matrix.cons_val_one, Matrix.cons_val_fin_one, Finset.mem_filter] at hx
       rcases hx with ⟨hxbox, hxline⟩
       have hb := (squareCoordinates P.q ⟨u, v⟩).mp hxbox
       have ho : P.q₁ < P.q₂ := by omega

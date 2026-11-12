@@ -5,32 +5,17 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P5625T1CentroidSlopeDifferenceCovariance
-public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryAffineVectorCovariance
-public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryAffineVectorAction
-public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryCircleAction
 public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryInversePhaseCancellation
-public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryPartialOdometerActionFormulas
-public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryProjectiveVectorCovariance
-public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryProperCovariance
-public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryQuadrupleAction
-public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryReversesOrientation
 public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryScopedPhase
-public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryScopedPhaseUnique
-public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetrySlopeAction
 public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryTileAction
 public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryTileOdometerCovariance
 public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryTilingTransport
-public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryVectorAction
 public import LeanPool.ApollonianSuperharmonic.LatticeVertexIncidentCell
-public import LeanPool.ApollonianSuperharmonic.BandPrototile
-public import LeanPool.ApollonianSuperharmonic.ProperBandCurvatureStructure
 public import LeanPool.ApollonianSuperharmonic.TileSubodometer
-public import LeanPool.ApollonianSuperharmonic.TileOdometer
-public import LeanPool.ApollonianSuperharmonic.TileQuarterTurnFormulas
-public import LeanPool.ApollonianSuperharmonic.TileReflectionFormulas
 public import LeanPool.ApollonianSuperharmonic.TileTranslation
-public import LeanPool.ApollonianSuperharmonic.VectorRecursionLaws
 
 -- [TABLET NODE: BandPackingSymmetryMarkedDataCovariance]
 
@@ -55,8 +40,12 @@ private theorem negCellMap :
             GaussianQuarterTurn (LatticeVertexIncidentCell x (j - 1)) - 1 ) := by
   classical
   intro x j
-  fin_cases j <;> simp? [LatticeVertexIncidentCell, GaussianQuarterTurn,
-    Fin.sub_def] <;> ext <;> simp
+  fin_cases j <;> simp only [LatticeVertexIncidentCell, GaussianQuarterTurn, Int.reduceNeg,
+      Fin.mk_one, Fin.isValue, Matrix.cons_val_one, Matrix.cons_val_zero, sub_self,
+      Fin.reduceFinMk, Matrix.cons_val, Fin.sub_def, Fin.coe_ofNat_eq_mod, Nat.one_mod,
+      Nat.add_one_sub_one, Nat.mod_succ, Nat.reduceAdd, Nat.reduceMod, Zsqrtd.im_sub,
+      Zsqrtd.im_one, sub_zero, neg_sub, Zsqrtd.re_sub, Zsqrtd.re_one, Fin.zero_eta, zero_sub] <;>
+          ext <;> simp
 
 private theorem negStar :
     (by
@@ -120,8 +109,11 @@ private theorem conjugateCellMap :
             -GaussianReflection (LatticeVertexIncidentCell x (1 - j)) - 1 ) := by
   classical
   intro x j
-  fin_cases j <;> simp? [LatticeVertexIncidentCell, GaussianReflection,
-    Fin.sub_def] <;> ext <;> simp
+  fin_cases j <;> simp only [LatticeVertexIncidentCell, GaussianReflection, Int.reduceNeg,
+      Fin.mk_one, Fin.isValue, Matrix.cons_val_one, Matrix.cons_val_zero, sub_self,
+      Fin.reduceFinMk, Matrix.cons_val, Fin.sub_def, Fin.coe_ofNat_eq_mod, Nat.mod_succ,
+      Nat.reduceSub, Nat.one_mod, Nat.reduceAdd, Nat.reduceMod, Zsqrtd.re_sub, Zsqrtd.re_one,
+      sub_zero, Zsqrtd.im_sub, Zsqrtd.im_one, neg_sub, Fin.zero_eta] <;> ext <;> simp
 
 private theorem conjugateCells :
     (by
@@ -590,7 +582,7 @@ private theorem hAphase :
       classical
       exact
         ∀ (g : BandPackingSymmetry), ∀ (q : Fin (4 : ℕ) → CircleCoordinates), ∀ (i : Fin (3 :
-            ℕ)), ∀ (e : Bool), ∀ (delta : Bool), (∀ (i : Fin (3 : ℕ)),
+            ℕ)),  ∀ (delta : Bool), (∀ (i : Fin (3 : ℕ)),
         let e := if delta = true then (-1 : GaussianInt) else (1 : GaussianInt);
         let incoming := BandPackingSymmetryAffineVectorAction g (BandVectors.1 (q i.succ) (q (0 :
             Fin (4 : ℕ))), BandVectors.2 (q i.succ) (q (0 : Fin (4 : ℕ))));
@@ -619,7 +611,7 @@ private theorem hAphase :
             (BandPackingSymmetryAffineVectorAction g Z).2 else
             (BandPackingSymmetryAffineVectorAction g Z).2)) ) := by
   classical
-  intro g q i e delta hcyc q' sigma W A Z A'
+  intro g q i delta hcyc q' sigma W A Z A'
   simpa [A', Z, q', sigma, BandPackingSymmetryReversesOrientation] using
     (hcyc i).2
 
@@ -778,8 +770,11 @@ private theorem hcentGoal :
         cases delta <;> simpa [GaussianRealPoint, smul_eq_mul] using hh
       rw [hpointSign]
       cases e <;> cases delta <;>
-        simp? [e', k, eReal, smul_eq_mul,
-          GaussianRealPoint] <;> ring <;> trivial
+        simp only [Bool.false_eq_true, ↓reduceIte, GaussianRealPoint, Int.reduceNeg,
+            GaussianInt.intCast_re, GaussianInt.intCast_im, Prod.smul_mk, smul_eq_mul,
+            Bool.bne_true, Bool.not_false, one_div, neg_smul, one_smul, Prod.neg_mk, mul_neg,
+            Prod.mk.injEq, k, eReal, e', bne_self_eq_false, Bool.bne_false, neg_neg] <;> ring <;>
+                trivial
     _ = _ := by rfl
 
 private theorem hposC :
@@ -921,7 +916,7 @@ private theorem hAphase2 :
       classical
       exact
         ∀ (g : BandPackingSymmetry), ∀ (q : Fin (4 : ℕ) → CircleCoordinates), ∀ (i : Fin (3 :
-            ℕ)), ∀ (e : Bool), ∀ (delta : Bool), (∀ (i : Fin (3 : ℕ)),
+            ℕ)),  ∀ (delta : Bool), (∀ (i : Fin (3 : ℕ)),
         let e := if delta = true then (-1 : GaussianInt) else (1 : GaussianInt);
         let incoming := BandPackingSymmetryAffineVectorAction g (BandVectors.1 (q i.succ) (q (0 :
             Fin (4 : ℕ))), BandVectors.2 (q i.succ) (q (0 : Fin (4 : ℕ))));
@@ -950,7 +945,7 @@ private theorem hAphase2 :
             (BandPackingSymmetryAffineVectorAction g Z).2 else
             (BandPackingSymmetryAffineVectorAction g Z).2)) ) := by
   classical
-  intro g q i e delta hcyc q' sigma W A Z A'
+  intro g q i delta hcyc q' sigma W A Z A'
   simpa [A', Z, q', sigma, BandPackingSymmetryReversesOrientation] using
     (hcyc i).2
 
@@ -1060,7 +1055,7 @@ private theorem hpointSignAt762 :
       classical
       exact
         ∀ (g : BandPackingSymmetry), ∀ (q : Fin (4 : ℕ) → CircleCoordinates), ∀ (i : Fin (3 :
-            ℕ)), ∀ (e : Bool), ∀ (delta : Bool), (BandPackingSymmetryScopedPhase g q delta) → ((∀
+            ℕ)),  ∀ (delta : Bool), (BandPackingSymmetryScopedPhase g q delta) → ((∀
             (i : Fin (3 : ℕ)),
         let e := if delta = true then (-1 : GaussianInt) else (1 : GaussianInt);
         let incoming := BandPackingSymmetryAffineVectorAction g (BandVectors.1 (q i.succ) (q (0 :
@@ -1101,7 +1096,7 @@ private theorem hpointSignAt762 :
             GaussianQuarterTurn A') = (if delta then (-1 : ℝ) else 1) • GaussianRealPoint
             (BandPackingSymmetryAffineVectorAction g M).2))))) ) := by
   classical
-  intro g q i e delta hphase hcyc q' sigma W A Z M W' A' hWphase2 hAphase2 hMphase2
+  intro g q i delta hphase hcyc q' sigma W A Z M W' A' hWphase2 hAphase2 hMphase2
   have hh := congrArg (fun z : GaussianInt × GaussianInt =>
     GaussianRealPoint z.2) hMphase2
   cases delta <;> simpa [GaussianRealPoint, smul_eq_mul] using hh
@@ -1615,7 +1610,7 @@ private theorem forwardSub :
       have hpat : M = Z + -affineQuarter Z := by
         ext <;> simp [M, Z, affineQuarter, GaussianQuarterTurn]; ring
       have hactM := MarkedCovarianceGeometry.hactM affineFacts g q i hpat
-      have hAphase := MarkedCovarianceGeometry.hAphase g q i e delta hcyc
+      have hAphase := MarkedCovarianceGeometry.hAphase g q i delta hcyc
       have hMphase := MarkedCovarianceGeometry.hMphase g q i e delta hphase hcyc hWphase
           haffFst hactM hAphase
       have hmFst := congrArg Prod.fst hMphase
@@ -1647,13 +1642,13 @@ private theorem forwardSub :
         let r' := BandPackingSymmetrySlopeAction g T' p'
         have hdiff := MarkedCovarianceGeometry.hdiff g T T' q i e p p' htrSlope
         have hWphase2 := MarkedCovarianceGeometry.hWphase2 g q i delta hphase
-        have hAphase2 := MarkedCovarianceGeometry.hAphase2 g q i e delta hcyc
+        have hAphase2 := MarkedCovarianceGeometry.hAphase2 g q i delta hcyc
         have hpat2 : M = Z + -affineQuarter Z := by
           ext <;> simp [M, Z, affineQuarter, GaussianQuarterTurn]; ring
         have hactM2 := MarkedCovarianceGeometry.hactM2 affineFacts g q i hpat2
         have hMphase2 := MarkedCovarianceGeometry.hMphase2 affineFirst g q i e delta hphase
             hcyc hWphase2 hAphase2 hactM2
-        have hpointSign := MarkedCovarianceGeometry.hpointSignAt762 g q i e delta hphase hcyc
+        have hpointSign := MarkedCovarianceGeometry.hpointSignAt762 g q i delta hphase hcyc
             hWphase2 hAphase2 hMphase2
         have hdiff' := MarkedCovarianceGeometry.hdiff' g T T' q i e hcent delta hphase hcyc
             hcentM p p' hRe hIm hsourceSlope htrSlope hdiff hWphase2 hAphase2 hMphase2 hpointSign

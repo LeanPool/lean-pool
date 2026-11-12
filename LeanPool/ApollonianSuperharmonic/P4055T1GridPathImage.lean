@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.SimpleGridPathBetween
 
 -- [TABLET NODE: P4055T1GridPathImage]
@@ -59,11 +61,11 @@ theorem P4055T1GridPathImage : ∀ (f : GaussianInt → GaussianInt),
               cases q with
               | nil => simp_all
               | cons w q =>
-                  simp? at hm
+                  simp only [List.map_cons, List.nil_append, List.cons.injEq] at hm
                   rw [← hm.1, ← hm.2.1]
                   exact st z w (hs z w [] q (by simp))
           | cons z' l' =>
-              simp? at hm
+              simp only [List.map_cons, List.cons_append, List.cons.injEq] at hm
               apply ih (fun c d k m hcm => hs c d (z :: k) m (by simp [hcm]))
                 a b l' l₂ hm.2
     exact recover p hs a b l₁ l₂ hmap
@@ -89,17 +91,17 @@ theorem P4055T1GridPathImage : ∀ (f : GaussianInt → GaussianInt),
             intro k m r s h
             cases k with
             | nil =>
-                simp? at h
+                simp only [List.map_cons, List.nil_append, List.cons.injEq] at h
                 cases q with
                 | nil => simp_all
                 | cons w q =>
-                    simp? at h
+                    simp only [List.map_cons, List.cons.injEq] at h
                     have hz : z = r := fi h.1
                     have hw : w = s := fi h.2.1
                     subst r; subst s
                     exact ⟨[], q, by simp []⟩
             | cons z' k' =>
-                simp? at h
+                simp only [List.map_cons, List.cons_append, List.cons.injEq] at h
                 rcases ihq k' m r s h.2 with ⟨k₀, m₀, hm⟩
                 exact ⟨z :: k₀, m₀, by simp [hm]⟩
       have hdecomp : ∃ k m, p = k ++ a₀ :: b₀ :: m := by

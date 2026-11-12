@@ -5,7 +5,10 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.ApollonianSuperharmonic.Preamble
+public import Mathlib.Init
+public import Mathlib.Algebra.Group.Prod
+public import Mathlib.Algebra.Order.Ring.Int
+
 
 -- [TABLET NODE: AffineTriangularFace]
 

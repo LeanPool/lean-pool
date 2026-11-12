@@ -5,23 +5,16 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryAffineVectorCovariance
 public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryScopedPhaseUnique
 public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryCircleAction
 public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryCovariance
-public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryPartialOdometerActionFormulas
-public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryTileAction
-public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryProperCovariance
 public import LeanPool.ApollonianSuperharmonic.BandPrototileFootprintSlopeCovariance
-public import LeanPool.ApollonianSuperharmonic.BandPackingShiftPotential
-public import LeanPool.ApollonianSuperharmonic.CurvatureOneOdometer
-public import LeanPool.ApollonianSuperharmonic.OdometerTranslation
 public import LeanPool.ApollonianSuperharmonic.PositiveCurvatureTileOdometerDomain
-public import LeanPool.ApollonianSuperharmonic.ProperBandCurvatureStructure
 public import LeanPool.ApollonianSuperharmonic.TileOdometer
 public import LeanPool.ApollonianSuperharmonic.TileOdometerBandPrototile
-public import LeanPool.ApollonianSuperharmonic.TileQuarterTurnFormulas
-public import LeanPool.ApollonianSuperharmonic.TileReflectionFormulas
 
 -- [TABLET NODE: BandPackingSymmetryTileOdometerCovariance]
 
@@ -1163,7 +1156,7 @@ private theorem hvalue' :
   have hxOuter : x ∈ h.domain := (hdom x).mpr ⟨p.1, p.2, hx⟩
   have hd := actionDiff a h (hs p.1 p.2) x hxOuter hx
   rw [hvalue p.1 p.2 x hx] at hd
-  simp? at hd
+  simp only [sub_self] at hd
   exact (sub_eq_zero.mp hd).symm
 
 private theorem hcompat' :
@@ -1452,16 +1445,21 @@ private theorem hslopeMix :
         (BandVectors.2 (q ((p.1 + 2).succ)) (q ((p.1 + 1).succ))),
         GaussianInt.intCast_im
         (BandVectors.2 (q ((p.1 + 2).succ)) (q ((p.1 + 1).succ)))] at hh
-      simp? [u0, umix, scale, GaussianRealPoint,
-        GaussianQuarterTurn, smul_eq_mul, hp] at hh ⊢
+      simp only [hp, Bool.false_eq_true, ↓reduceIte, one_div, neg_mul, one_mul, Fin.isValue,
+          Prod.fst_sub, ite_mul, GaussianRealPoint, Int.reduceNeg, GaussianQuarterTurn,
+          Zsqrtd.re_add, Int.cast_add, GaussianInt.intCast_re, Int.cast_neg,
+          GaussianInt.intCast_im, Zsqrtd.im_add, neg_smul, Prod.smul_mk, smul_eq_mul,
+          Prod.neg_mk, scale, umix, u0] at hh ⊢
       exact hh
     · have hh := hdx
       rw [GaussianInt.intCast_re
         (BandVectors.2 (q ((p.1 + 2).succ)) (q ((p.1 + 1).succ))),
         GaussianInt.intCast_im
         (BandVectors.2 (q ((p.1 + 2).succ)) (q ((p.1 + 1).succ)))] at hh
-      simp? [u0, umix, scale, GaussianRealPoint,
-        GaussianQuarterTurn, smul_eq_mul, hp] at hh ⊢
+      simp only [hp, ↓reduceIte, one_div, one_mul, Fin.isValue, Prod.fst_sub, ite_mul,
+          GaussianRealPoint, Int.reduceNeg, GaussianQuarterTurn, Zsqrtd.re_add, Int.cast_add,
+          GaussianInt.intCast_re, Int.cast_neg, GaussianInt.intCast_im, Zsqrtd.im_add,
+          Prod.smul_mk, smul_eq_mul, scale, umix, u0] at hh ⊢
       exact hh
   · cases hp : p.2
     · have hh := hdy
@@ -1469,16 +1467,21 @@ private theorem hslopeMix :
         (BandVectors.2 (q ((p.1 + 2).succ)) (q ((p.1 + 1).succ))),
         GaussianInt.intCast_im
         (BandVectors.2 (q ((p.1 + 2).succ)) (q ((p.1 + 1).succ)))] at hh
-      simp? [u0, umix, scale, GaussianRealPoint,
-        GaussianQuarterTurn, smul_eq_mul, hp] at hh ⊢
+      simp only [hp, Bool.false_eq_true, ↓reduceIte, one_div, neg_mul, one_mul, Fin.isValue,
+          Prod.snd_sub, ite_mul, GaussianRealPoint, Int.reduceNeg, GaussianQuarterTurn,
+          Zsqrtd.re_add, Int.cast_add, GaussianInt.intCast_re, Int.cast_neg,
+          GaussianInt.intCast_im, Zsqrtd.im_add, neg_smul, Prod.smul_mk, smul_eq_mul,
+          Prod.neg_mk, scale, umix, u0] at hh ⊢
       exact hh
     · have hh := hdy
       rw [GaussianInt.intCast_re
         (BandVectors.2 (q ((p.1 + 2).succ)) (q ((p.1 + 1).succ))),
         GaussianInt.intCast_im
         (BandVectors.2 (q ((p.1 + 2).succ)) (q ((p.1 + 1).succ)))] at hh
-      simp? [u0, umix, scale, GaussianRealPoint,
-        GaussianQuarterTurn, smul_eq_mul, hp] at hh ⊢
+      simp only [hp, ↓reduceIte, one_div, one_mul, Fin.isValue, Prod.snd_sub, ite_mul,
+          GaussianRealPoint, Int.reduceNeg, GaussianQuarterTurn, Zsqrtd.re_add, Int.cast_add,
+          GaussianInt.intCast_re, Int.cast_neg, GaussianInt.intCast_im, Zsqrtd.im_add,
+          Prod.smul_mk, smul_eq_mul, scale, umix, u0] at hh ⊢
       exact hh
 
 private theorem hmix' :

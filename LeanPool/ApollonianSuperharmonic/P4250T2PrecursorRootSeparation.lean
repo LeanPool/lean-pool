@@ -5,7 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.ApollonianSuperharmonic.BandOrderedGeneralInteriorStarClassification
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P4339T1EmptyPrecursorRoots
 public import LeanPool.ApollonianSuperharmonic.P4339T1PositivePrecursorRoots
 public import LeanPool.ApollonianSuperharmonic.P4339T1PrecursorArcSeparation
@@ -38,7 +39,7 @@ theorem P4250T2PrecursorRootSeparation
       e ∈ BoundaryFootprintEdges (cert.P i s) ∧
         e ∈ BoundaryFootprintEdges T) :
     let W := D \ P
-    let R : Finset GaussianInt := {cert.precursor_boundary.a, cert.precursor_boundary.b}
+    let R : Finset GaussianInt := {cert.precursorBoundary.a, cert.precursorBoundary.b}
     R ⊆ W ∧
     (∀ x ∈ W, x ∈ FootprintVertices cert.O ↔ x ∈ R) ∧
     (∀ x ∈ R,
@@ -70,8 +71,8 @@ theorem P4250T2PrecursorRootSeparation
     · intro x hx
       exact ⟨(hcount x hx).1, iff_of_true (hcount x hx).2 hO⟩
     · intro x _ _ hcentral
-      have ha : cert.precursor_boundary.a ∈
-          ({cert.precursor_boundary.a, cert.precursor_boundary.b} :
+      have ha : cert.precursorBoundary.a ∈
+          ({cert.precursorBoundary.a, cert.precursorBoundary.b} :
             Finset GaussianInt) := by simp
       have hxa := realPoint_injective (hcentral.trans (hcount _ ha).2.symm)
       simpa only [hxa] using ha

@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P5064T3Rectangles
 public import LeanPool.ApollonianSuperharmonic.P4062T1CanonicalSupport
 public import LeanPool.ApollonianSuperharmonic.TileTranslationFormulas

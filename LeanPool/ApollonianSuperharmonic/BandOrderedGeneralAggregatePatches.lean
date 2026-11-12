@@ -5,15 +5,12 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.ApollonianSuperharmonic.AllowedSubtileIncidence
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.BandOrderedGeneralLayoutCertificate
 public import LeanPool.ApollonianSuperharmonic.FiniteInducedTilePatch
-public import LeanPool.ApollonianSuperharmonic.PeriodicSubtileIndex
-public import LeanPool.ApollonianSuperharmonic.PeriodicTileComplex
-public import LeanPool.ApollonianSuperharmonic.ProtoTile
 public import LeanPool.ApollonianSuperharmonic.P3161T1AggregateInducedConnectivity
 public import LeanPool.ApollonianSuperharmonic.P3161T1AggregateComplementConnectivity
-public import Mathlib.Data.List.Chain
 
 -- [TABLET NODE: BandOrderedGeneralAggregatePatches]
 

@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.BoundaryFootprintVertices
 public import LeanPool.ApollonianSuperharmonic.FootprintEdges
 public import LeanPool.ApollonianSuperharmonic.FootprintVertices
@@ -366,7 +368,9 @@ theorem TileReflectionFormulas : ∀ T : ProtoTile,
     · have hinj : Function.Injective f := by
         intro a b hab
         simpa only [f_involutive] using congrArg f hab
-      simp? [TileCentroid, h]
+      simp only [TileCentroid, Int.reduceNeg, Finset.image_nonempty, h, ↓reduceIte,
+          Int.cast_sum, GaussianInt.intCast_re, one_div, GaussianInt.intCast_im, neg_add_rev,
+          Prod.mk.injEq, add_left_inj]
       rw [Finset.card_image_of_injective T.cells hinj]
       rw [Finset.sum_image hinj.injOn]
       rw [Finset.sum_image hinj.injOn]
@@ -386,7 +390,8 @@ theorem TileReflectionFormulas : ∀ T : ProtoTile,
     · have hnew :
           (T.cells.image (fun x => GaussianReflection x - ⟨0, 1⟩)).Nonempty :=
         h.image _
-      simp? [FootprintVertices, h, hnew]
+      simp only [FootprintVertices, Int.reduceNeg, hnew, ↓reduceIte, Finset.mem_image,
+          exists_exists_and_eq_and, sub_add_cancel, Set.mem_ofPred_eq, h, Set.mem_image]
       constructor
       · rintro ⟨a, ha, hv⟩
         rcases hv with rfl | rfl | rfl | rfl

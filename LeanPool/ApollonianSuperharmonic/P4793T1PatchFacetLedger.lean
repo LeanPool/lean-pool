@@ -5,6 +5,9 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+public import Mathlib.Tactic.Linarith
+
 public import LeanPool.ApollonianSuperharmonic.P4793T1FacetForms
 public import LeanPool.ApollonianSuperharmonic.P4783T1PatchCoordinates
 public import LeanPool.ApollonianSuperharmonic.P4715T1BoundaryCycle

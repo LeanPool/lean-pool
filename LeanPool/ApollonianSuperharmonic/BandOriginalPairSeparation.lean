@@ -5,9 +5,11 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.ApollonianSuperharmonic.BandModifiedCellPartition
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.SubtileOccurrenceInterpretation
 public import LeanPool.ApollonianSuperharmonic.TileTranslationFormulas
+public import LeanPool.ApollonianSuperharmonic.ModifiedSubtileOccurrenceInterpretation
 
 -- [TABLET NODE: BandOriginalPairSeparation]
 

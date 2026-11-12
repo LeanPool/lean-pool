@@ -5,17 +5,9 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P3544T1LocalParity
-public import Mathlib.Analysis.Convex.Combination
-public import Mathlib.Analysis.Convex.PathConnected
-public import Mathlib.Tactic.FieldSimp
-public import Mathlib.Tactic.FinCases
-public import Mathlib.Tactic.FunProp
-public import Mathlib.Tactic.Linarith
-public import Mathlib.Tactic.LinearCombination
-public import Mathlib.Tactic.Module
-public import Mathlib.Tactic.NormNum
-public import Mathlib.Tactic.Ring
 
 -- [TABLET NODE: P3544T1TriangleRayGeometry]
 

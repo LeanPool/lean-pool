@@ -5,13 +5,13 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.OpposingBoundaryOdometerStrings
 public import LeanPool.ApollonianSuperharmonic.OpposingStringInterfacePath
 public import LeanPool.ApollonianSuperharmonic.P4366T2OuterGeometry
 public import LeanPool.ApollonianSuperharmonic.P4366T2WalkExhaustion
 public import LeanPool.ApollonianSuperharmonic.P4366T2LocalSectors
-public import LeanPool.ApollonianSuperharmonic.P4158T1AncestorCells
-public import LeanPool.ApollonianSuperharmonic.PositiveCurvatureTileOdometerDomain
 
 -- [TABLET NODE: OpposingBoundaryInterfaceExhaustion]
 

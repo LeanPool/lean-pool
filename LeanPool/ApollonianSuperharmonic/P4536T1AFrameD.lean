@@ -5,10 +5,11 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P4458T1RestrictionFamily
 public import LeanPool.ApollonianSuperharmonic.P4536T1EndpointAlgebra
 public import LeanPool.ApollonianSuperharmonic.TileOdometerBandPrototile
-public import LeanPool.ApollonianSuperharmonic.ProperBandCurvatureStructure
 public import LeanPool.ApollonianSuperharmonic.VectorRecursionLaws
 
 -- [TABLET NODE: P4536T1AFrameD]
@@ -1248,7 +1249,7 @@ private theorem hrootAEq :
     ∀ (C : BandCircle), ∀ (orientation : Bool), ∀ (base : ProtoTile), ∀ (Rminus : ProtoTile), ∀
         (Rplus : ProtoTile), ∀ (hminus : PartialOdometer), ∀ (hplus : PartialOdometer), ∀ (F :
         P4458T1BoundaryFrame C orientation base Rminus Rplus hminus hplus), ∀ (rootA : ℝ × ℝ),
-        (PartialOdometerSlope F.odometer = some rootA) → (rootA = F.outer_slope) := by
+        (PartialOdometerSlope F.odometer = some rootA) → (rootA = F.outerSlope) := by
   classical
   intro C orientation base Rminus Rplus hminus hplus F rootA hrootA
   exact Option.some.inj (hrootA.symm.trans F.slope_outer)
@@ -1257,7 +1258,7 @@ private theorem hrootJEq :
     ∀ (C : BandCircle), ∀ (orientation : Bool), ∀ (base : ProtoTile), ∀ (Rminus : ProtoTile), ∀
         (Rplus : ProtoTile), ∀ (hminus : PartialOdometer), ∀ (hplus : PartialOdometer), ∀ (F :
         P4458T1BoundaryFrame C orientation base Rminus Rplus hminus hplus), ∀ (rootJ : ℝ × ℝ),
-        (PartialOdometerSlope F.odometer = some rootJ) → (rootJ = F.outer_slope) := by
+        (PartialOdometerSlope F.odometer = some rootJ) → (rootJ = F.outerSlope) := by
   classical
   intro C orientation base Rminus Rplus hminus hplus F rootJ hrootJ
   exact Option.some.inj (hrootJ.symm.trans F.slope_outer)
@@ -1272,22 +1273,22 @@ private theorem slopeK :
     let wa := BandVectors.2 (r 3) (r 2)
     let e : GaussianInt := -I
     (BandVectors.2 (F.q ((a + 2).succ)) (F.q ((a + 1).succ)) = wa) → (∀ (sA : ℝ × ℝ), (sA.1 -
-        F.outer_slope.1 = (if true = true then (1 : ℝ) else (-1 : ℝ)) * (1 / 2 : ℝ) *
+        F.outerSlope.1 = (if true = true then (1 : ℝ) else (-1 : ℝ)) * (1 / 2 : ℝ) *
         ((↑(BandVectors.2 (F.q (a + (2 : Fin (3 : ℕ))).succ) (F.q (a + (1 : Fin (3 :
         ℕ))).succ)).re : ℝ) - (↑(BandVectors.2 (F.q (a + (2 : Fin (3 : ℕ))).succ) (F.q (a + (1 :
-        Fin (3 : ℕ))).succ)).im : ℝ))) → ((sA.2 - F.outer_slope.2 = (if true = true then (1 : ℝ)
+        Fin (3 : ℕ))).succ)).im : ℝ))) → ((sA.2 - F.outerSlope.2 = (if true = true then (1 : ℝ)
         else (-1 : ℝ)) * (1 / 2 : ℝ) * ((↑(BandVectors.2 (F.q (a + (2 : Fin (3 : ℕ))).succ) (F.q
         (a + (1 : Fin (3 : ℕ))).succ)).im : ℝ) + (↑(BandVectors.2 (F.q (a + (2 : Fin (3 :
-        ℕ))).succ) (F.q (a + (1 : Fin (3 : ℕ))).succ)).re : ℝ))) → (sA - F.outer_slope =
+        ℕ))).succ) (F.q (a + (1 : Fin (3 : ℕ))).succ)).re : ℝ))) → (sA - F.outerSlope =
       (1 / 2 : ℝ) • GaussianRealPoint (wa - e * wa)))) := by
   classical
   intro C orientation base Rminus Rplus hminus hplus F a r I wa e hvecA sA hARe hAIm
   have hre := hARe
   have him := hAIm
   rw [hvecA] at hre him
-  change sA.1 - F.outer_slope.1 = 1 * (1 / 2 : ℝ) *
+  change sA.1 - F.outerSlope.1 = 1 * (1 / 2 : ℝ) *
     (((wa.re : ℤ) : ℝ) - ((wa.im : ℤ) : ℝ)) at hre
-  change sA.2 - F.outer_slope.2 = 1 * (1 / 2 : ℝ) *
+  change sA.2 - F.outerSlope.2 = 1 * (1 / 2 : ℝ) *
     (((wa.im : ℤ) : ℝ) + ((wa.re : ℤ) : ℝ)) at him
   apply Prod.ext
   · simp [GaussianRealPoint, e, I, Zsqrtd.re_mul, Zsqrtd.im_mul] at hre ⊢
@@ -1305,23 +1306,23 @@ private theorem slopeJ :
     let ya := BandVectors.2 (r 2) (r 1)
     let e : GaussianInt := -I
     (BandVectors.2 (F.q ((F.slot + 2).succ)) (F.q ((F.slot + 1).succ)) = ya) → (∀ (sJ : ℝ × ℝ),
-        (sJ.1 - F.outer_slope.1 = (if false = true then (1 : ℝ) else (-1 : ℝ)) * (1 / 2 : ℝ) *
+        (sJ.1 - F.outerSlope.1 = (if false = true then (1 : ℝ) else (-1 : ℝ)) * (1 / 2 : ℝ) *
         ((↑(BandVectors.2 (F.q (F.slot + (2 : Fin (3 : ℕ))).succ) (F.q (F.slot + (1 : Fin (3 :
         ℕ))).succ)).re : ℝ) - (↑(BandVectors.2 (F.q (F.slot + (2 : Fin (3 : ℕ))).succ) (F.q
-        (F.slot + (1 : Fin (3 : ℕ))).succ)).im : ℝ))) → ((sJ.2 - F.outer_slope.2 = (if false =
+        (F.slot + (1 : Fin (3 : ℕ))).succ)).im : ℝ))) → ((sJ.2 - F.outerSlope.2 = (if false =
         true then (1 : ℝ) else (-1 : ℝ)) * (1 / 2 : ℝ) * ((↑(BandVectors.2 (F.q (F.slot + (2 :
         Fin (3 : ℕ))).succ) (F.q (F.slot + (1 : Fin (3 : ℕ))).succ)).im : ℝ) + (↑(BandVectors.2
         (F.q (F.slot + (2 : Fin (3 : ℕ))).succ) (F.q (F.slot + (1 : Fin (3 : ℕ))).succ)).re :
-        ℝ))) → (sJ - F.outer_slope =
+        ℝ))) → (sJ - F.outerSlope =
       (1 / 2 : ℝ) • GaussianRealPoint (-(ya - e * ya))))) := by
   classical
   intro C orientation base Rminus Rplus hminus hplus F a r I ya e hvecJ sJ hJRe hJIm
   have hre := hJRe
   have him := hJIm
   rw [hvecJ] at hre him
-  change sJ.1 - F.outer_slope.1 = -1 * (1 / 2 : ℝ) *
+  change sJ.1 - F.outerSlope.1 = -1 * (1 / 2 : ℝ) *
     (((ya.re : ℤ) : ℝ) - ((ya.im : ℤ) : ℝ)) at hre
-  change sJ.2 - F.outer_slope.2 = -1 * (1 / 2 : ℝ) *
+  change sJ.2 - F.outerSlope.2 = -1 * (1 / 2 : ℝ) *
     (((ya.im : ℤ) : ℝ) + ((ya.re : ℤ) : ℝ)) at him
   apply Prod.ext
   · simp [GaussianRealPoint, e, I, Zsqrtd.re_mul, Zsqrtd.im_mul] at hre ⊢
@@ -1342,12 +1343,12 @@ private theorem slopeMinusRoot :
     (BandVectors.2 (r 3) (r 0) = wa + I * xa) → ((BandVectors.2 (r 0) (r 3) = -I * BandVectors.2
         (r 3) (r 0)) → (
     let e : GaussianInt := -I
-    F.minus_slope - F.outer_slope =
+    F.minusSlope - F.outerSlope =
       (1 / 2 : ℝ) • GaussianRealPoint ((wa - e * xa) - e * (wa - e * xa)))))) := by
   classical
   intro C orientation base Rminus Rplus hminus hplus F a r hparentR hzero I wa xa ain aflip' e
   have h := F.minus_difference
-  change F.minus_slope - F.outer_slope = (1 / 2 : ℝ) • GaussianRealPoint
+  change F.minusSlope - F.outerSlope = (1 / 2 : ℝ) • GaussianRealPoint
     (BandVectors.2 (F.q F.slot.succ) (F.q 0) -
       BandVectors.2 (F.q 0) (F.q F.slot.succ)) at h
   rw [hparentR, hzero, aflip', ain] at h
@@ -1374,15 +1375,15 @@ private theorem slopeMinusA :
         {Z : GaussianInt}, (X - Y = Z) → ((1 / 2 : ℝ) • GaussianRealPoint X - (1 / 2 : ℝ) •
         GaussianRealPoint Y = (1 / 2 : ℝ) • GaussianRealPoint Z)) → (
     let e : GaussianInt := -I
-    ∀ (sA : ℝ × ℝ), (sA - F.outer_slope = (1 / 2 : ℝ) • GaussianRealPoint (wa - e * wa)) →
-        ((F.minus_slope - F.outer_slope = (1 / 2 : ℝ) • GaussianRealPoint ((wa - e * xa) - e *
-        (wa - e * xa))) → (F.minus_slope - sA =
+    ∀ (sA : ℝ × ℝ), (sA - F.outerSlope = (1 / 2 : ℝ) • GaussianRealPoint (wa - e * wa)) →
+        ((F.minusSlope - F.outerSlope = (1 / 2 : ℝ) • GaussianRealPoint ((wa - e * xa) - e *
+        (wa - e * xa))) → (F.minusSlope - sA =
       (1 / 2 : ℝ) • GaussianRealPoint (-e * xa - xa))))) := by
   classical
   intro C orientation base Rminus Rplus hminus hplus F a r I wa xa ya ha halfDiff e sA slopeK
       slopeMinusRoot
   calc
-    _ = (F.minus_slope - F.outer_slope) - (sA - F.outer_slope) := by abel
+    _ = (F.minusSlope - F.outerSlope) - (sA - F.outerSlope) := by abel
     _ = _ := by rw [slopeMinusRoot, slopeK]; exact halfDiff ha.2.2.2.2.1
 
 private theorem slopeJminusA :
@@ -1406,15 +1407,15 @@ private theorem slopeJminusA :
         {Z : GaussianInt}, (X - Y = Z) → ((1 / 2 : ℝ) • GaussianRealPoint X - (1 / 2 : ℝ) •
         GaussianRealPoint Y = (1 / 2 : ℝ) • GaussianRealPoint Z)) → (
     let e : GaussianInt := -I
-    ∀ (sA : ℝ × ℝ), ∀ (sJ : ℝ × ℝ), (sA - F.outer_slope = (1 / 2 : ℝ) • GaussianRealPoint (wa - e
-        * wa)) → ((sJ - F.outer_slope = (1 / 2 : ℝ) • GaussianRealPoint (-(ya - e * ya))) → (sJ -
+    ∀ (sA : ℝ × ℝ), ∀ (sJ : ℝ × ℝ), (sA - F.outerSlope = (1 / 2 : ℝ) • GaussianRealPoint (wa - e
+        * wa)) → ((sJ - F.outerSlope = (1 / 2 : ℝ) • GaussianRealPoint (-(ya - e * ya))) → (sJ -
         sA =
       (1 / 2 : ℝ) • GaussianRealPoint (-e * xa + xa))))) := by
   classical
   intro C orientation base Rminus Rplus hminus hplus F a r I wa xa ya ha halfDiff e sA sJ slopeK
       slopeJ
   calc
-    _ = (sJ - F.outer_slope) - (sA - F.outer_slope) := by abel
+    _ = (sJ - F.outerSlope) - (sA - F.outerSlope) := by abel
     _ = _ := by rw [slopeJ, slopeK]; exact halfDiff ha.2.2.2.2.2.1
 
 private theorem centMinusA :
@@ -1647,9 +1648,9 @@ theorem P4536T1AFrameD
     chart := hchart
     minus_centroid := centMinusA
     plus_centroid := centJA
-    outer_slope := sA
-    minus_slope := F.minus_slope
-    plus_slope := sJ
+    outerSlope := sA
+    minusSlope := F.minusSlope
+    plusSlope := sJ
     slope_outer := hsA
     slope_minus := F.slope_minus
     slope_plus := hsJ

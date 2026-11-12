@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.OpposingStringInterfacePath
 public import LeanPool.ApollonianSuperharmonic.P4366T2WalkExhaustion
 public import LeanPool.ApollonianSuperharmonic.OdometerStringRespect
@@ -13,11 +15,7 @@ public import LeanPool.ApollonianSuperharmonic.ExactTileInterfaceTriple
 public import LeanPool.ApollonianSuperharmonic.TouchingTriple
 public import LeanPool.ApollonianSuperharmonic.PositiveCurvatureTileOdometerDomain
 public import LeanPool.ApollonianSuperharmonic.P4158T1AncestorCells
-public import LeanPool.ApollonianSuperharmonic.CurvatureOneBandPrototileSingleton
 public import LeanPool.ApollonianSuperharmonic.TileOdometerBandPrototile
-public import LeanPool.ApollonianSuperharmonic.P3102T2CommonEdgeSectorTransition
-public import LeanPool.ApollonianSuperharmonic.SimpleGridPathPointTrichotomy
-public import LeanPool.ApollonianSuperharmonic.SimpleGridPathVertexIncidentEdge
 
 -- [TABLET NODE: P5589T1UnitInterfaceSelection]
 

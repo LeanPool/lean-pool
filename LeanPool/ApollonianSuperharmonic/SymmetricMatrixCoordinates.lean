@@ -5,8 +5,11 @@ Authors: Wesley Pegden
 -/
 module
 
-public import Mathlib.Analysis.Complex.Basic
-public import LeanPool.ApollonianSuperharmonic.Preamble
+public import Mathlib.Init
+
+public import Mathlib.Algebra.Order.BigOperators.Expect
+public import Mathlib.Analysis.Complex.Order
+public import Mathlib.LinearAlgebra.Matrix.Trace
 
 -- [TABLET NODE: SymmetricMatrixCoordinates]
 

@@ -5,17 +5,16 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P4715T1Hexagon
 public import LeanPool.ApollonianSuperharmonic.P4715T1VertexShift
 public import LeanPool.ApollonianSuperharmonic.P4715T1Arc
-public import LeanPool.ApollonianSuperharmonic.P4780T1StrictInterior
-public import LeanPool.ApollonianSuperharmonic.P4780T1ActiveFacets
 public import LeanPool.ApollonianSuperharmonic.P4780T1IntegerCoverage
 public import LeanPool.ApollonianSuperharmonic.P4780T1InteriorSeparation
 public import LeanPool.ApollonianSuperharmonic.P4780T1NeighborFacets
 public import LeanPool.ApollonianSuperharmonic.P4780T1NeighborCorners
 public import LeanPool.ApollonianSuperharmonic.P4715T1CoefficientTranslation
-public import Mathlib.Tactic.Abel
 
 -- [TABLET NODE: P4715T1HexagonTessellation]
 

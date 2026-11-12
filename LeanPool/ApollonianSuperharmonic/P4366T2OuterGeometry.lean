@@ -5,23 +5,14 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.ApollonianSuperharmonic.BandOrderedGeneralChildInterfaces
-public import LeanPool.ApollonianSuperharmonic.BandOrderedGeneralMixedAggregatePatches
-public import LeanPool.ApollonianSuperharmonic.BandPrototileCentroidUnique
-public import LeanPool.ApollonianSuperharmonic.BandPrototileTranslation
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.BandRegularTileTouchingClassification
-public import LeanPool.ApollonianSuperharmonic.BandGenealogy
 public import LeanPool.ApollonianSuperharmonic.BoundaryString
 public import LeanPool.ApollonianSuperharmonic.ExactTileInterfaceTripleRetargetMiddle
 public import LeanPool.ApollonianSuperharmonic.LatticeEdgeRegularity
-public import LeanPool.ApollonianSuperharmonic.SimpleGridPathEndpointPairUnique
-public import LeanPool.ApollonianSuperharmonic.SimpleGridPathEquivariance
-public import LeanPool.ApollonianSuperharmonic.TileDiskAreaCovariance
-public import LeanPool.ApollonianSuperharmonic.TileHalfTurnFormulas
 public import LeanPool.ApollonianSuperharmonic.TileOdometerAffineTranslation
 public import LeanPool.ApollonianSuperharmonic.TileOdometerCentralSymmetry
-public import LeanPool.ApollonianSuperharmonic.TileOdometerBandPrototile
-public import LeanPool.ApollonianSuperharmonic.VectorNonvanishing
 
 -- [TABLET NODE: P4366T2OuterGeometry]
 
@@ -265,7 +256,9 @@ private theorem hsumCent :
   have hminy := congrArg Prod.snd hmin
   have hplx := congrArg Prod.fst hpl
   have hply := congrArg Prod.snd hpl
-  simp? [GaussianRealPoint] at hminx hminy hplx hply
+  simp only [Prod.fst_sub, one_div, GaussianRealPoint, Int.reduceNeg, Fin.isValue,
+      GaussianInt.intCast_re, GaussianInt.intCast_im, Prod.mk_sub_mk, Prod.smul_mk,
+      smul_eq_mul, Prod.snd_sub, Prod.mk_add_mk] at hminx hminy hplx hply
   apply Prod.ext
   · simp only [Prod.fst_add]
     simp only [GaussianRealPoint]
@@ -320,7 +313,9 @@ private theorem hFrootCent :
   have hcy := congrArg Prod.snd hcentroid
   have hux := congrArg Prod.fst huCenter
   have huy := congrArg Prod.snd huCenter
-  simp? [GaussianRealPoint] at hcx hcy hux huy
+  simp only [Prod.fst_sub, GaussianRealPoint, Int.reduceNeg, Fin.isValue,
+      GaussianInt.intCast_re, GaussianInt.intCast_im, Prod.snd_sub, Prod.fst_add,
+      Prod.smul_fst, smul_eq_mul, Prod.snd_add, Prod.smul_snd] at hcx hcy hux huy
   apply Prod.ext
   · change -(TileCentroid T0).1 + (centerShift.re : Real) =
       (TileCentroid T0').1
@@ -359,7 +354,9 @@ private theorem hFroot'Cent :
   have hcy := congrArg Prod.snd hcentroid
   have hux := congrArg Prod.fst huCenter
   have huy := congrArg Prod.snd huCenter
-  simp? [GaussianRealPoint] at hcx hcy hux huy
+  simp only [Prod.fst_sub, GaussianRealPoint, Int.reduceNeg, Fin.isValue,
+      GaussianInt.intCast_re, GaussianInt.intCast_im, Prod.snd_sub, Prod.fst_add,
+      Prod.smul_fst, smul_eq_mul, Prod.snd_add, Prod.smul_snd] at hcx hcy hux huy
   apply Prod.ext
   · change -(TileCentroid T0').1 + (centerShift.re : Real) = (TileCentroid T0).1
     rw [GaussianInt.intCast_re centerShift] at ⊢

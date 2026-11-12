@@ -5,18 +5,11 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.AffineTriangularStrip
-public import LeanPool.ApollonianSuperharmonic.BandGenealogy
 public import LeanPool.ApollonianSuperharmonic.BandRegularTileTouchingClassification
-public import LeanPool.ApollonianSuperharmonic.IncomingSuperbasisRelation
-public import LeanPool.ApollonianSuperharmonic.ProperBandQuadruple
-public import LeanPool.ApollonianSuperharmonic.RegularTileFamilyTranslationUnique
 public import LeanPool.ApollonianSuperharmonic.TileString
-public import LeanPool.ApollonianSuperharmonic.TileTranslationFormulas
-public import LeanPool.ApollonianSuperharmonic.TilingLatticeBasis
-public import LeanPool.ApollonianSuperharmonic.VectorDeterminant
-public import Mathlib.Data.List.Forall2
-public import Mathlib.Data.List.Nodup
 
 -- [TABLET NODE: TileStringCoordinateTransport]
 
@@ -68,7 +61,9 @@ private theorem chart :
         · intro z hz
           have hr := congrArg Zsqrtd.re hz
           have hi := congrArg Zsqrtd.im hz
-          simp? [a, b, ho] at hr hi
+          simp only [Int.reduceNeg, ho, ↓reduceIte, mul_one, Zsqrtd.smul_val, mul_zero,
+              Zsqrtd.re_add, Zsqrtd.re_intCast, add_zero, Zsqrtd.im_add, Zsqrtd.im_intCast,
+              zero_add, a, b] at hr hi
           exact Prod.ext hr hi
     · cases ho : orientation <;> simp [a, b, ho]
   · obtain ⟨q, hsemi, hqC, hsmall, _⟩ := Or.resolve_left (BandGenealogy C) hc

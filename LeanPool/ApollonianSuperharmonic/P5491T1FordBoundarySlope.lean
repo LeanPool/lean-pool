@@ -5,9 +5,9 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.FordOdometer
-public import LeanPool.ApollonianSuperharmonic.FordDoubledBoundary
-public import LeanPool.ApollonianSuperharmonic.FordVertexDomain
 public import LeanPool.ApollonianSuperharmonic.P4217T2RectangularBoundarySlope
 
 -- [TABLET NODE: P5491T1FordBoundarySlope]

@@ -5,9 +5,10 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P4780T1HullHalfspaces
 public import Mathlib.Topology.Algebra.Module.FiniteDimension
-public import Mathlib.Topology.Maps.Basic
 
 -- [TABLET NODE: P4780T1StrictInterior]
 

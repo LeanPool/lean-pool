@@ -5,10 +5,9 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.BandVectors
-public import LeanPool.ApollonianSuperharmonic.PrimitiveVectorOrientation
-public import LeanPool.ApollonianSuperharmonic.RecursiveVectorSystem
-public import LeanPool.ApollonianSuperharmonic.RecursiveVectorsExistUnique
 
 -- [TABLET NODE: VectorRecursionLaws]
 
@@ -50,7 +49,8 @@ theorem VectorRecursionLaws (q : Fin 4 → CircleCoordinates)
   induction hq with
   | base z =>
       have baseFacts := baseLaw z
-      simp? at baseFacts
+      simp only [Int.reduceNeg, Fin.isValue, Matrix.cons_val, Matrix.cons_val_one,
+          Matrix.cons_val_zero] at baseFacts
       rcases baseFacts with ⟨v32, v21, v13, a32, a21, a13⟩
       have rotatedFacts := stepLaw (![(1, 1 + 2 * z),
         (0, -1), (1, 1 + 2 * z + 2 * (⟨0, 1⟩ : GaussianInt)), (0, 1)])

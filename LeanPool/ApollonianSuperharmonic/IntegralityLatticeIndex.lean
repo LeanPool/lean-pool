@@ -5,10 +5,10 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.TilingLatticeIndex
 public import LeanPool.ApollonianSuperharmonic.TilingLatticeInclusion
-public import LeanPool.ApollonianSuperharmonic.CircleMatrix
-public import LeanPool.ApollonianSuperharmonic.Preamble
 
 -- [TABLET NODE: IntegralityLatticeIndex]
 

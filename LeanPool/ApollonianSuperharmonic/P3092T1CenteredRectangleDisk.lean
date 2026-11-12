@@ -5,13 +5,11 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.TopologicalDisk
-public import Mathlib.Analysis.Normed.Group.Constructions
 public import Mathlib.Analysis.Normed.Module.Basic
 public import Mathlib.Topology.Order.Lattice
-public import Mathlib.Topology.Homeomorph.Lemmas
-public import Mathlib.Tactic.FieldSimp
-public import Mathlib.Tactic.Linarith
 
 -- [TABLET NODE: P3092T1CenteredRectangleDisk]
 

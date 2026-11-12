@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P3597T1GenericRayStability
 
 -- [TABLET NODE: P3597T1DirectionParity]

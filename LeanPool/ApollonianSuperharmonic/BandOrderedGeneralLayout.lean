@@ -5,13 +5,13 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.BandDoubleDecomposition
 public import LeanPool.ApollonianSuperharmonic.BandModifiedCoverage
 public import LeanPool.ApollonianSuperharmonic.BandModifiedOrbitArea
 public import LeanPool.ApollonianSuperharmonic.BandOrderedGeneralLayoutCertificate
-public import LeanPool.ApollonianSuperharmonic.BandOriginalPairSeparation
 public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryTilingTransport
-public import LeanPool.ApollonianSuperharmonic.BandPrototileCentralSymmetry
 public import LeanPool.ApollonianSuperharmonic.BandPrototileReindexedDecomposition
 public import LeanPool.ApollonianSuperharmonic.BandSignedOccurrenceHalfTurn
 public import LeanPool.ApollonianSuperharmonic.BandUnmodifiedPeriodicCore
@@ -22,7 +22,9 @@ public import LeanPool.ApollonianSuperharmonic.OuterLayoutTouching
 public import LeanPool.ApollonianSuperharmonic.P4670T1SmallerGeometry
 public import LeanPool.ApollonianSuperharmonic.P4670T1ComplementReflection
 public import LeanPool.ApollonianSuperharmonic.P4670T1OrdinaryEdges
-public import LeanPool.ApollonianSuperharmonic.P4638T1EmptyFordLocalization
+public import LeanPool.ApollonianSuperharmonic.BandModifiedCellPartition
+public import LeanPool.ApollonianSuperharmonic.BandModifiedPeriodicComplex
+public import LeanPool.ApollonianSuperharmonic.TilingLatticeBasis
 
 -- [TABLET NODE: BandOrderedGeneralLayout]
 
@@ -925,9 +927,9 @@ private theorem layoutCertificate :
     outer_touching := houter
     precursor_first := crossO1
     precursor_second := crossO2
-    precursor_boundary := Classical.choice arcs
+    precursorBoundary := Classical.choice arcs
     precursor_zero_curvature := zero
-    exceptional_segments := segments
+    exceptionalSegments := segments
     connector := segments.connector
     connector_segmented := rfl
     connector_nodup := segments.connector_nodup
@@ -942,7 +944,7 @@ private theorem layoutCertificate :
     modified_lattice := mlattice
     modified_tile := mtiles
     modified_adjacency := madj
-    modified_face_equiv := me
+    modifiedFaceEquivalence := me
     modified_face_points := mpoints
     modified_face_vertices := mvertices
     modified_face_reps := mreps

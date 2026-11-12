@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.PeriodicTileCore
 public import LeanPool.ApollonianSuperharmonic.P3776T1PlaneMapExists
 public import LeanPool.ApollonianSuperharmonic.P3776T1EquivariantDisplacementBound

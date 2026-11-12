@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.ParentalOrientationGluing
 
 -- [TABLET NODE: P5532T1FiniteOrientationGluing]
@@ -39,7 +41,7 @@ theorem P5532T1FiniteOrientationGluing {ι : Type*} [Fintype ι]
     | empty =>
       refine ⟨{
         edge := fun _ _ => False
-        edge_decidable := fun _ _ => Classical.propDecidable _
+        edgeDecidable := fun _ _ => Classical.propDecidable _
         rank := fun _ => 0
         supported := by intro x y he; cases he
         oriented := by simp

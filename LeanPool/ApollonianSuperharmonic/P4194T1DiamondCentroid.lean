@@ -5,10 +5,12 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P4194T1DiamondCellRows
 public import LeanPool.ApollonianSuperharmonic.DiamondTile
 public import LeanPool.ApollonianSuperharmonic.TileCentroid
-public import Mathlib.Tactic.Linarith
+public meta import Lean.Meta.Tactic.NormCast
 
 -- [TABLET NODE: P4194T1DiamondCentroid]
 
@@ -51,7 +53,7 @@ theorem P4194T1DiamondCentroid (n : Nat) (hn : 0 < n) :
       apply Zsqrtd.ext
       · simp [reflectX] at heq ⊢
         omega
-      · simp? [reflectX] at heq ⊢
+      · simp only [Int.reduceNeg, Zsqrtd.mk.injEq, sub_left_inj, neg_inj, reflectX] at heq ⊢
         exact heq.2
     · intro z hz
       refine ⟨reflectX z, reflectX_mem z hz, ?_⟩
@@ -70,7 +72,7 @@ theorem P4194T1DiamondCentroid (n : Nat) (hn : 0 < n) :
     · exact fun z hz => reflectY_mem z hz
     · intro z hz w hw heq
       apply Zsqrtd.ext
-      · simp? [reflectY] at heq ⊢
+      · simp only [Int.reduceNeg, Zsqrtd.mk.injEq, sub_right_inj, reflectY] at heq ⊢
         exact heq.1
       · simp [reflectY] at heq ⊢
         omega

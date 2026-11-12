@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.BandOdometerTheorem
 public import LeanPool.ApollonianSuperharmonic.IntegerSuperharmonicClosedness
 public import LeanPool.ApollonianSuperharmonic.PositiveDefiniteRepresentativeGap

@@ -5,7 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryCovariance
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryPartialOdometerActionFormulas
 public import LeanPool.ApollonianSuperharmonic.BandPrototileCompleteSquareCentroid
 public import LeanPool.ApollonianSuperharmonic.TileQuarterTurnFormulas
@@ -110,27 +111,17 @@ theorem BandPrototileFootprintSlopeCovariance
       · have hc := congrArg Prod.fst centroid.2
         simp only [TileCentroid, ite_eq_left hne] at hc
         norm_num [Finset.sum_add_distrib] at hc ⊢
-        have hnS : (squares.card : ℝ) ≠ 0 := by
+        have cardNonzero : ((PartialOdometerSquares h).card : ℝ) ≠ 0 := by
           exact_mod_cast (Nat.ne_of_gt (Finset.card_pos.mpr squares_nonempty))
-        have hnT : (T.cells.card : ℝ) ≠ 0 := by
-          exact_mod_cast (Nat.ne_of_gt (Finset.card_pos.mpr hne))
-        have hnS' : (PartialOdometerSquares h).card ≠ 0 := by
-          exact Nat.ne_of_gt (by simpa [squares] using Finset.card_pos.mpr squares_nonempty)
-        have hnT' : T.cells.card ≠ 0 := Nat.ne_of_gt (Finset.card_pos.mpr hne)
-        field_simp [hnS, hnT, hnS', hnT'] at hc ⊢
-        linarith
+        rw [add_div, mul_div_cancel_left₀ _ cardNonzero] at hc
+        linarith only [hc]
       · have hc := congrArg Prod.snd centroid.2
         simp only [TileCentroid, ite_eq_left hne] at hc
         norm_num [Finset.sum_add_distrib] at hc ⊢
-        have hnS : (squares.card : ℝ) ≠ 0 := by
+        have cardNonzero : ((PartialOdometerSquares h).card : ℝ) ≠ 0 := by
           exact_mod_cast (Nat.ne_of_gt (Finset.card_pos.mpr squares_nonempty))
-        have hnT : (T.cells.card : ℝ) ≠ 0 := by
-          exact_mod_cast (Nat.ne_of_gt (Finset.card_pos.mpr hne))
-        have hnS' : (PartialOdometerSquares h).card ≠ 0 := by
-          exact Nat.ne_of_gt (by simpa [squares] using Finset.card_pos.mpr squares_nonempty)
-        have hnT' : T.cells.card ≠ 0 := Nat.ne_of_gt (Finset.card_pos.mpr hne)
-        field_simp [hnS, hnT, hnS', hnT'] at hc ⊢
-        linarith
+        rw [add_div, mul_div_cancel_left₀ _ cardNonzero] at hc
+        linarith only [hc]
     exact hcent
   have result := formulas.2.2.2.2.2.2.2 replacement replacement_nonempty
     replacement_cells

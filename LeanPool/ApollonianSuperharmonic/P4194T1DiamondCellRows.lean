@@ -5,10 +5,10 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.DiamondCellDomain
 public import LeanPool.ApollonianSuperharmonic.LatticeVertexIncidentCell
-public import Mathlib.Tactic.FinCases
-public import Mathlib.Tactic.NormNum
 
 -- [TABLET NODE: P4194T1DiamondCellRows]
 

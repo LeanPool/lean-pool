@@ -5,11 +5,10 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.PartialOdometerAffineTranslate
-public import LeanPool.ApollonianSuperharmonic.PartialOdometer
-public import LeanPool.ApollonianSuperharmonic.PartialOdometerSquares
 public import LeanPool.ApollonianSuperharmonic.PartialOdometerSlope
-public import LeanPool.ApollonianSuperharmonic.GaussianTranslation
 public import LeanPool.ApollonianSuperharmonic.TileTranslationFormulas
 
 -- [TABLET NODE: PartialOdometerAffineTranslateFormulas]

@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.ProperBandQuadruple
 public import LeanPool.ApollonianSuperharmonic.SemiProperForestClassification
 
@@ -106,7 +108,9 @@ theorem ProperBandCurvatureStructure (q : Fin 4 → CircleCoordinates)
           · have old := ih proper
             rcases old with ⟨child, oldnonneg, oldunique⟩
             fin_cases i <;> fin_cases j
-            all_goals simp? at hi hj
+            all_goals simp only [Fin.isValue, Fin.mk_one, Fin.succ_one_eq_two,
+                Matrix.cons_val, Fin.reduceFinMk, Fin.reduceSucc, Fin.zero_eta,
+                Fin.succ_zero_eq_one, Matrix.cons_val_one, Matrix.cons_val_zero] at hi hj
             · omega
             · omega
             · omega

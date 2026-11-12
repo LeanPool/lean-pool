@@ -5,6 +5,9 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+public import Mathlib.Algebra.Group.Fin.Basic
+
 public import LeanPool.ApollonianSuperharmonic.FordCircleCoordinate
 public import LeanPool.ApollonianSuperharmonic.FordFareyParameter
 

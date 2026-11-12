@@ -5,21 +5,15 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.ApollonianSuperharmonic.BandPrototile
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.BandPrototileTranslation
 public import LeanPool.ApollonianSuperharmonic.BandSubtileOccurrence
 public import LeanPool.ApollonianSuperharmonic.FordCoordinateConfiguration
-public import LeanPool.ApollonianSuperharmonic.FordCellDomain
-public import LeanPool.ApollonianSuperharmonic.FordFareyParameter
 public import LeanPool.ApollonianSuperharmonic.FordFareyParentsExist
 public import LeanPool.ApollonianSuperharmonic.FordRecursiveQuadruple
 public import LeanPool.ApollonianSuperharmonic.FordTile
-public import LeanPool.ApollonianSuperharmonic.FootprintVertices
-public import LeanPool.ApollonianSuperharmonic.ProperBandQuadruple
-public import LeanPool.ApollonianSuperharmonic.TileCentroid
 public import LeanPool.ApollonianSuperharmonic.TileTranslation
-public import LeanPool.ApollonianSuperharmonic.TileTranslationFormulas
-public import LeanPool.ApollonianSuperharmonic.VectorRecursionLaws
 public import LeanPool.ApollonianSuperharmonic.P4210T1FordCellRectangles
 public import LeanPool.ApollonianSuperharmonic.P4210T1FordSquareCentroid
 public import LeanPool.ApollonianSuperharmonic.P4062T1CanonicalSupport
@@ -36,6 +30,24 @@ Changes: pool module paths, public exports, project namespace and current Mathli
 @[expose] public section
 
 namespace ApollonianSuperharmonic
+
+private theorem fordDeterminantCoprime : ∀ (a : Int) (b d : Nat) (c : Int),
+        a * (d : Int) - (b : Int) * c = 1 → Nat.Coprime b a.natAbs := by
+  intro a b d c hd
+  rw [Nat.coprime_iff_gcd_eq_one]
+  apply Nat.dvd_one.mp
+  let g := Nat.gcd b a.natAbs
+  have gb : g ∣ b := Nat.gcd_dvd_left _ _
+  have ga : g ∣ a.natAbs := Nat.gcd_dvd_right _ _
+  have gb' : (g : Int) ∣ (b : Int) := by exact_mod_cast gb
+  have ga' : (g : Int) ∣ a := (Int.dvd_natAbs).mp (by exact_mod_cast ga)
+  have gd : (g : Int) ∣ a * (d : Int) - (b : Int) * c :=
+    dvd_sub (dvd_mul_of_dvd_left ga' _) (dvd_mul_of_dvd_left gb' _)
+  have gd1 : (g : Int) ∣ 1 := by simpa [hd] using gd
+  have ge : (g : Int) = 1 :=
+    Int.eq_one_of_dvd_one (by exact_mod_cast (Nat.zero_le g)) gd1
+  have gn : g = 1 := by exact_mod_cast ge
+  simp [g, gn]
 
 theorem FordTileRecursiveIdentification (P : FordFareyParameter) :
     BandPrototile (FordCircleCoordinate P.p P.q) (FordTile P.q) ∧
@@ -71,7 +83,8 @@ theorem FordTileRecursiveIdentification (P : FordFareyParameter) :
       refine ⟨?_, fun _ => htile, ?_⟩
       · rw [htile]
         convert BandPrototile.unit ⟨0, P.p⟩ 0 0 using 1;
-          simp? [FordCircleCoordinate, hu]
+          simp only [FordCircleCoordinate, hu, mul_one, Nat.cast_one, Int.reduceNeg,
+              Prod.mk.injEq, true_and]
         ext <;> simp
       · intro hgt
         omega
@@ -91,23 +104,7 @@ theorem FordTileRecursiveIdentification (P : FordFareyParameter) :
         simpa [P.sum_q, P.sum_p] using P.det₁
       norm_num [Nat.cast_add] at h1
       nlinarith [h1]
-    have determinantCoprime : ∀ (a : Int) (b d : Nat) (c : Int),
-        a * (d : Int) - (b : Int) * c = 1 → Nat.Coprime b a.natAbs := by
-      intro a b d c hd
-      rw [Nat.coprime_iff_gcd_eq_one]
-      apply Nat.dvd_one.mp
-      let g := Nat.gcd b a.natAbs
-      have gb : g ∣ b := Nat.gcd_dvd_left _ _
-      have ga : g ∣ a.natAbs := Nat.gcd_dvd_right _ _
-      have gb' : (g : Int) ∣ (b : Int) := by exact_mod_cast gb
-      have ga' : (g : Int) ∣ a := (Int.dvd_natAbs).mp (by exact_mod_cast ga)
-      have gd : (g : Int) ∣ a * (d : Int) - (b : Int) * c :=
-        dvd_sub (dvd_mul_of_dvd_left ga' _) (dvd_mul_of_dvd_left gb' _)
-      have gd1 : (g : Int) ∣ 1 := by simpa [hd] using gd
-      have ge : (g : Int) = 1 :=
-        Int.eq_one_of_dvd_one (by exact_mod_cast (Nat.zero_le g)) gd1
-      have gn : g = 1 := by exact_mod_cast ge
-      simp [g, gn]
+    have determinantCoprime := fordDeterminantCoprime
     have red1 := determinantCoprime P.p₁ P.q₁ P.q₂ P.p₂ cross
     have red2 : Nat.Coprime P.q₂ P.p₂.natAbs := by
       have h := determinantCoprime (-P.p₂) P.q₂ P.q₁ (-P.p₁) (by nlinarith [cross])
@@ -242,8 +239,14 @@ theorem FordTileRecursiveIdentification (P : FordFareyParameter) :
       have cempty (a : GaussianInt) : TileCentroid (⟨∅, a⟩ : ProtoTile) =
           ((a.re : Real), (a.im : Real)) := by simp [TileCentroid]
       fin_cases i <;> cases s <;>
-        simp? [S, h32, h13, h21, ctrans, cr, c1, c2, cempty,
-          GaussianRealPoint, Prod.ext_iff] <;>
+        simp only [Int.reduceNeg, Fin.mk_one, Fin.isValue, Matrix.cons_val',
+            Bool.false_eq_true, ↓reduceIte, Matrix.cons_val_fin_one, Matrix.cons_val_one,
+            Matrix.cons_val_zero, ctrans, c2, Int.cast_zero, add_zero, Int.cast_natCast, cr,
+            Prod.mk_sub_mk, one_div, GaussianRealPoint, Fin.reduceAdd, Fin.succ_zero_eq_one,
+            Fin.reduceSucc, h13, neg_zero, sub_zero, zero_sub, Prod.smul_mk, smul_eq_mul,
+            mul_neg, neg_smul, one_smul, Prod.neg_mk, neg_neg, Prod.ext_iff, S,
+            Fin.reduceFinMk, Matrix.cons_val, cempty, Fin.succ_one_eq_two, h21, Int.cast_neg,
+            sub_neg_eq_add, neg_inj, Fin.zero_eta, c1, zero_add, h32, and_self] <;>
         (try constructor) <;> linarith only [cs]
     refine ⟨?_, ?_, ?_⟩
     · exact BandPrototile.decompose hq hS hcells hfoot hcentroid

@@ -5,10 +5,12 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.FootprintEdges
 public import LeanPool.ApollonianSuperharmonic.FootprintVertices
-public import LeanPool.ApollonianSuperharmonic.PrecursorBoundaryArcData
 public import LeanPool.ApollonianSuperharmonic.TileCellComplement
+public import LeanPool.ApollonianSuperharmonic.BoundaryFootprintVertices
 
 -- [TABLET NODE: ExceptionalConnectorSegments]
 

@@ -5,27 +5,15 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.BandOrderedGeneralSubtileInterfaceCertificate
 public import LeanPool.ApollonianSuperharmonic.BandOrderedGeneralSubtileCanonicalRows
 public import LeanPool.ApollonianSuperharmonic.BandOrderedGeneralSubtileCanonicalSeparation
-public import LeanPool.ApollonianSuperharmonic.BandOrderedGeneralMixedAggregatePatches
-public import LeanPool.ApollonianSuperharmonic.BandOrderedGeneralPeriodicBlockCells
-public import LeanPool.ApollonianSuperharmonic.BandOriginalPairSeparation
-public import LeanPool.ApollonianSuperharmonic.BandPrototileCentroidUnique
-public import LeanPool.ApollonianSuperharmonic.BandPrototileTranslation
 public import LeanPool.ApollonianSuperharmonic.BandTileSimultaneousInduction
-public import LeanPool.ApollonianSuperharmonic.ExactTileInterfaceTripleLatticeTouching
 public import LeanPool.ApollonianSuperharmonic.ExactTileInterfaceTripleRetargetMiddle
-public import LeanPool.ApollonianSuperharmonic.ExactTileInterfaceTripleSwapLast
 public import LeanPool.ApollonianSuperharmonic.PositiveCurvatureTileOdometerDomain
-public import LeanPool.ApollonianSuperharmonic.ProtoTileObservableExtensionality
-public import LeanPool.ApollonianSuperharmonic.QuarterTurnSymmetricCenteredTransport
-public import LeanPool.ApollonianSuperharmonic.TileDiskAreaCovariance
 public import LeanPool.ApollonianSuperharmonic.TileOdometerBandPrototile
-public import LeanPool.ApollonianSuperharmonic.TileQuarterTurnFormulas
-public import LeanPool.ApollonianSuperharmonic.TileTranslationFormulas
-public import LeanPool.ApollonianSuperharmonic.TouchingTriple
-public import LeanPool.ApollonianSuperharmonic.VectorRecursionLaws
 
 
 -- [TABLET NODE: BandOrderedGeneralSubtileInterfaceCertificateExists]
@@ -252,7 +240,9 @@ private theorem occurrenceBand :
   classical
   intro C₀ Cᵢ q i T₀ Tᵢ h₀ hᵢ x normalization Q j e m n
   fin_cases j <;> cases e <;>
-    simp? [subtileOccurrenceLabel, Q, SubtileOccurrenceInterpretation]
+    simp only [Fin.mk_one, Fin.isValue, Fin.succ_one_eq_two, SubtileOccurrenceInterpretation,
+        subtileOccurrenceLabel, Q, Fin.reduceFinMk, Fin.reduceSucc, Fin.zero_eta,
+        Fin.succ_zero_eq_one]
   all_goals first
     | exact BandPrototileTranslation _ _ _
         (normalization.layout.outer_occurrence 0 false).1
@@ -470,7 +460,10 @@ private theorem hUBand :
   generalize hp : normalization.normalizedParentSlot = p
   generalize ht : normalization.normalizedQuarterTurn = t
   fin_cases p <;> fin_cases t <;>
-    simp? [Q, U, uIndex, hp, ht, SubtileOccurrenceInterpretation]
+    simp only [Fin.mk_one, Fin.isValue, Fin.succ_one_eq_two, SubtileOccurrenceInterpretation,
+        hp, one_ne_zero, ↓reduceIte, ht, Fin.reduceFinMk, Fin.reduceEq, Int.cast_one, one_mul,
+        Int.cast_zero, zero_mul, add_zero, Q, U, uIndex, Int.reduceNeg, Int.cast_neg, neg_mul,
+        Fin.zero_eta, Fin.reduceSucc, zero_add, Fin.succ_zero_eq_one]
   all_goals first
     | exact BandPrototileTranslation _ _ _
         (normalization.layout.outer_occurrence 0 true).1
@@ -519,7 +512,12 @@ private theorem hVBand :
   generalize hp : normalization.normalizedParentSlot = p
   generalize ht : normalization.normalizedQuarterTurn = t
   fin_cases p <;> fin_cases t <;>
-    simp? [V, vIndex, hp, ht, SubtileOccurrenceInterpretation] <;>
+    simp only [Even.zero, ↓reduceIte, Fin.mk_one, Fin.isValue, Fin.reduceAdd, Fin.reduceSucc,
+        SubtileOccurrenceInterpretation, hp, one_ne_zero, ht, Fin.zero_eta, Int.cast_zero,
+        zero_mul, Int.cast_one, one_mul, zero_add, V, vIndex, Fin.reduceFinMk,
+        Fin.succ_zero_eq_one, Fin.reduceEq, Int.reduceNeg, Int.cast_neg, neg_mul,
+        Fin.succ_one_eq_two, add_zero, sub_self, Fin.reduceSub, zero_sub, Nat.not_even_one,
+        even_two] <;>
     first
     | exact BandPrototileTranslation _ _ _
         (normalization.layout.outer_occurrence 0 true).1
@@ -567,7 +565,10 @@ private theorem hUSym :
   generalize hp : normalization.normalizedParentSlot = p
   generalize ht : normalization.normalizedQuarterTurn = t
   fin_cases p <;> fin_cases t <;>
-    simp? [U, uIndex, hp, ht, SubtileOccurrenceInterpretation] <;>
+    simp only [SubtileOccurrenceInterpretation, hp, Fin.mk_one, Fin.isValue, one_ne_zero,
+        ↓reduceIte, ht, Fin.reduceFinMk, Fin.reduceEq, Int.cast_one, one_mul, Int.cast_zero,
+        zero_mul, add_zero, U, uIndex, Int.reduceNeg, Int.cast_neg, neg_mul, Fin.zero_eta,
+        zero_add] <;>
     apply quarterSymmetricTranslation <;>
     first
     | exact normalization.layout.parent_quarter_turn 0 true
@@ -874,7 +875,10 @@ private theorem hUbarBand :
   generalize hp : normalization.normalizedParentSlot = p
   generalize ht : normalization.normalizedQuarterTurn = t
   fin_cases p <;> fin_cases t <;>
-    simp? [Q, Ubar, uBar, hp, ht, SubtileOccurrenceInterpretation]
+    simp only [Fin.mk_one, Fin.isValue, Fin.succ_one_eq_two, SubtileOccurrenceInterpretation,
+        hp, one_ne_zero, ↓reduceIte, ht, Fin.reduceFinMk, Fin.reduceEq, Int.cast_one, one_mul,
+        Int.cast_zero, zero_mul, add_zero, Q, Ubar, uBar, Fin.zero_eta, Int.reduceNeg,
+        Int.cast_neg, neg_mul, Fin.reduceSucc, zero_add, Fin.succ_zero_eq_one]
   all_goals first
     | exact BandPrototileTranslation _ _ _
         (normalization.layout.outer_occurrence 0 true).1
@@ -1135,7 +1139,10 @@ private theorem hVbarBand :
   generalize hp : normalization.normalizedParentSlot = p
   generalize ht : normalization.normalizedQuarterTurn = t
   fin_cases p <;> fin_cases t <;>
-    simp? [Vbar, vBar, hp, ht] <;>
+    simp only [Even.zero, ↓reduceIte, Fin.mk_one, Fin.isValue, Fin.reduceAdd, Fin.reduceSucc,
+        hp, one_ne_zero, ht, Fin.zero_eta, Int.reduceNeg, Vbar, vBar, Fin.reduceFinMk,
+        Fin.succ_zero_eq_one, Fin.reduceEq, zero_add, Fin.succ_one_eq_two, sub_self,
+        Fin.reduceSub, zero_sub, Nat.not_even_one, even_two] <;>
     first
     | exact occurrenceBand 0 true _ _
     | exact occurrenceBand 0 false _ _
@@ -1177,7 +1184,10 @@ private theorem hVSym :
   generalize hp : normalization.normalizedParentSlot = p
   generalize ht : normalization.normalizedQuarterTurn = t
   fin_cases p <;> fin_cases t <;>
-    simp? [V, vIndex, hp, ht, SubtileOccurrenceInterpretation] <;>
+    simp only [SubtileOccurrenceInterpretation, hp, Fin.mk_one, Fin.isValue, one_ne_zero,
+        ↓reduceIte, ht, Fin.reduceFinMk, Fin.reduceEq, Int.reduceNeg, Int.cast_zero, zero_mul,
+        Int.cast_neg, Int.cast_one, neg_mul, one_mul, zero_add, V, vIndex, Fin.zero_eta,
+        add_zero] <;>
     apply quarterSymmetricTranslation <;>
     first
     | exact normalization.layout.parent_quarter_turn 0 true

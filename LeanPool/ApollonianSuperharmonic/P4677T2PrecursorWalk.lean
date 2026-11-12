@@ -5,11 +5,11 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P4677T2TouchingWalk
-public import LeanPool.ApollonianSuperharmonic.LatticeTileFourNeighborConnected
 public import LeanPool.ApollonianSuperharmonic.TouchingTriple
 public import LeanPool.ApollonianSuperharmonic.LatticeTileBoundarySimpleGridCycle
-public import Mathlib.Data.List.Chain
 
 -- [TABLET NODE: P4677T2PrecursorWalk]
 

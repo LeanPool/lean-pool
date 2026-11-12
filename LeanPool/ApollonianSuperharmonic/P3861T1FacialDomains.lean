@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P3723T1AllContactRouting
 
 -- [TABLET NODE: P3861T1FacialDomains]

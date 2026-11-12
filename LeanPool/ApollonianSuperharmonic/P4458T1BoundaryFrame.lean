@@ -5,8 +5,12 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.ApollonianSuperharmonic.BoundaryString
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.TileOdometer
+public import LeanPool.ApollonianSuperharmonic.RegularTileFamily
+public import LeanPool.ApollonianSuperharmonic.TilingLattice
+public import LeanPool.ApollonianSuperharmonic.UnitOccurrenceOrientation
 
 -- [TABLET NODE: P4458T1BoundaryFrame]
 
@@ -68,18 +72,18 @@ structure P4458T1BoundaryFrame (C : BandCircle) (orientation : Bool)
     (1 / 2 : ℝ) • GaussianRealPoint
       (BandVectors.1 (q slot.succ) (q 0) + BandVectors.1 (q 0) (q slot.succ))
   /-- The defined slope of the outer odometer. -/
-  outer_slope : ℝ × ℝ
+  outerSlope : ℝ × ℝ
   /-- The defined slope at the initial boundary endpoint. -/
-  minus_slope : ℝ × ℝ
+  minusSlope : ℝ × ℝ
   /-- The defined slope at the terminal boundary endpoint. -/
-  plus_slope : ℝ × ℝ
-  slope_outer : PartialOdometerSlope odometer = some outer_slope
-  slope_minus : PartialOdometerSlope hminus = some minus_slope
-  slope_plus : PartialOdometerSlope hplus = some plus_slope
-  minus_difference : minus_slope - outer_slope =
+  plusSlope : ℝ × ℝ
+  slope_outer : PartialOdometerSlope odometer = some outerSlope
+  slope_minus : PartialOdometerSlope hminus = some minusSlope
+  slope_plus : PartialOdometerSlope hplus = some plusSlope
+  minus_difference : minusSlope - outerSlope =
     (1 / 2 : ℝ) • GaussianRealPoint
       (BandVectors.2 (q slot.succ) (q 0) - BandVectors.2 (q 0) (q slot.succ))
-  plus_difference : plus_slope - outer_slope =
+  plus_difference : plusSlope - outerSlope =
     (1 / 2 : ℝ) • GaussianRealPoint
       (BandVectors.2 (q slot.succ) (q 0) + BandVectors.2 (q 0) (q slot.succ))
 

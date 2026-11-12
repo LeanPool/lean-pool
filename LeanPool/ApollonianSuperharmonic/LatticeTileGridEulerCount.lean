@@ -5,15 +5,14 @@ Authors: Wesley Pegden
 -/
 module
 
-public import Mathlib.Data.Set.Card
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.FiniteBiconnectedHorizontalRunTree
 public import LeanPool.ApollonianSuperharmonic.FiniteSquareIncidenceIdentities
 public import LeanPool.ApollonianSuperharmonic.FootprintEdges
 public import LeanPool.ApollonianSuperharmonic.FootprintVertices
 public import LeanPool.ApollonianSuperharmonic.LatticeTile
 public import LeanPool.ApollonianSuperharmonic.LatticeTileComplementGridConnected
-public import LeanPool.ApollonianSuperharmonic.LatticeTileGridStructure
-public import LeanPool.ApollonianSuperharmonic.ProtoTile
 
 /-!
 # LatticeTileGridEulerCount
@@ -405,7 +404,8 @@ private theorem hsum :
   simp only [Finset.sum_add_distrib] at hp
   simp_rw [← Finset.mul_sum] at hp
   simp only [Finset.sum_add_distrib] at hp
-  simp? [hAB, hBD, hDC, hCA, hfull] at hp
+  simp only [Finset.sum_boole, Nat.cast_id, hAB, hBD, hDC, hCA, Multiset.mem_toFinset,
+      imp_self, implies_true, Multiset.sum_count_eq_card, hfull] at hp
   have hbag : cornerBag.card = 4 * T.cells.card := by
     simp [cornerBag, Nat.mul_comm]
   dsimp only [N]

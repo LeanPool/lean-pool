@@ -5,9 +5,9 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.OdometerStringRespect
-public import LeanPool.ApollonianSuperharmonic.PartialOdometerAffineTranslateFormulas
-public import LeanPool.ApollonianSuperharmonic.PartialOdometerHalfTurnFormulas
 public import LeanPool.ApollonianSuperharmonic.TileOdometerAffineTranslation
 public import LeanPool.ApollonianSuperharmonic.TileOdometerCentralSymmetry
 public import LeanPool.ApollonianSuperharmonic.TileStringCentralCovariance
@@ -91,7 +91,8 @@ theorem OdometerStringRespectCentralCovariance
     · left
       rcases hunit with ⟨hor, orig, v, hv, hct, hx, hy⟩
       refine ⟨hor, orig, -v, ?_, ?_, ?_, ?_⟩
-      · cases orig <;> simp? [UnitTriangularStep] at hv
+      · cases orig <;> simp only [UnitTriangularStep, Bool.false_eq_true, ↓reduceIte,
+          Int.reduceNeg, neg_add_rev, neg_neg, Finset.mem_insert, Finset.mem_singleton] at hv
         all_goals rcases hv with rfl | rfl | rfl | rfl | rfl | rfl <;>
           simp [UnitTriangularStep]
       · rw [hcent]

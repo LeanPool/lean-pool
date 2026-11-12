@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P3776T1FixedGeometry
 public import LeanPool.ApollonianSuperharmonic.P3821T1ThreeArcCircle
 public import LeanPool.ApollonianSuperharmonic.P3821T1CircleComponentBound

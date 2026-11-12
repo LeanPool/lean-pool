@@ -5,24 +5,14 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.AncestorOdometer
-public import LeanPool.ApollonianSuperharmonic.BandPrototileCentroidUnique
-public import LeanPool.ApollonianSuperharmonic.BandPrototileTranslation
-public import LeanPool.ApollonianSuperharmonic.DiamondCellDomain
-public import LeanPool.ApollonianSuperharmonic.DiamondCoordinateConfiguration
-public import LeanPool.ApollonianSuperharmonic.DiamondParameter
 public import LeanPool.ApollonianSuperharmonic.DiamondRecursiveQuadruple
 public import LeanPool.ApollonianSuperharmonic.DiamondTileOdometerRestriction
-public import LeanPool.ApollonianSuperharmonic.DiamondTileRecursiveIdentification
-public import LeanPool.ApollonianSuperharmonic.DiamondVertexDomains
-public import LeanPool.ApollonianSuperharmonic.FootprintVertices
 public import LeanPool.ApollonianSuperharmonic.LeftLatticeAdjacent
-public import LeanPool.ApollonianSuperharmonic.PositiveCurvatureTileOdometerDomain
-public import LeanPool.ApollonianSuperharmonic.TileOdometerReindexedDecomposition
 public import LeanPool.ApollonianSuperharmonic.TileOdometerBandPrototile
 public import LeanPool.ApollonianSuperharmonic.TileOdometerTranslationUniqueness
-public import LeanPool.ApollonianSuperharmonic.TileTranslationFormulas
-public import LeanPool.ApollonianSuperharmonic.VectorSquareProduct
 
 -- [TABLET NODE: DiamondOpposingBoundaryStarLocalization]
 
@@ -193,12 +183,16 @@ private theorem hshift :
   rw [hT0'cent, hT0cent, hv30'] at hh
   have hr' : (u'.re : ℝ) - u.re = 0 := by
     have h := congrArg Prod.fst hh
-    simp? [GaussianRealPoint] at h
+    simp only [GaussianRealPoint, Int.reduceNeg, GaussianInt.intCast_re,
+        GaussianInt.intCast_im, add_sub_add_left_eq_sub, Prod.mk_sub_mk, Int.cast_zero,
+        Int.cast_neg, Int.cast_mul, Int.cast_ofNat, Int.cast_natCast] at h
     rw [← GaussianInt.intCast_re, ← GaussianInt.intCast_re] at h
     linarith
   have hi' : (u'.im : ℝ) - u.im = -(2 * (K.1 : Int)) := by
     have h := congrArg Prod.snd hh
-    simp? [GaussianRealPoint] at h
+    simp only [GaussianRealPoint, Int.reduceNeg, GaussianInt.intCast_re,
+        GaussianInt.intCast_im, add_sub_add_left_eq_sub, Prod.mk_sub_mk, Int.cast_zero,
+        Int.cast_neg, Int.cast_mul, Int.cast_ofNat, Int.cast_natCast] at h
     rw [← GaussianInt.intCast_im, ← GaussianInt.intCast_im] at h
     push_cast at h ⊢
     simpa [GaussianInt.intCast_im] using h

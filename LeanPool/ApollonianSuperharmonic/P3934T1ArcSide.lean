@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P3934T1PolygonalSide
 
 -- [TABLET NODE: P3934T1ArcSide]

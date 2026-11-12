@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P4062T1InteriorGeometry
 public import LeanPool.ApollonianSuperharmonic.P4062T1ZeroIncoming
 public import LeanPool.ApollonianSuperharmonic.ParentalOrientationGluing

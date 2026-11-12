@@ -5,12 +5,14 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P4536T1EndpointDifferences
 public import LeanPool.ApollonianSuperharmonic.P4536T1TangentPairMatrix
 public import LeanPool.ApollonianSuperharmonic.BandOrientedBoundaryOccurrenceGenealogy
 public import LeanPool.ApollonianSuperharmonic.BandVectorOrientationDichotomy
 public import LeanPool.ApollonianSuperharmonic.LeftLatticeAdjacent
-public import LeanPool.ApollonianSuperharmonic.ProperBandCurvatureStructure
+public import LeanPool.ApollonianSuperharmonic.TileString
 
 -- [TABLET NODE: P4536T1SmallUnitSides]
 
@@ -150,7 +152,7 @@ theorem P4536T1SmallUnitSides
       exact hrot
     have hi : (a + 1) + 1 = a + 2 := by fin_cases a <;> decide
     rw [hslot, hi, hqD, hqB] at cvL caL
-    exact unit_side Rminus J hminus _ F.minus_slope s _ _ hu F.minus_odo hodo
+    exact unit_side Rminus J hminus _ F.minusSlope s _ _ hu F.minus_odo hodo
       F.minus_family hfamily F.slope_minus hs (steps.1 orientation chart) cvL caL
       (P4536T1TangentPairMatrix C p hp.1 3 2 (by decide) hc)
   · intro hslot
@@ -171,7 +173,7 @@ theorem P4536T1SmallUnitSides
       exact hrot
     have hi : (a + 2) + 2 = a + 1 := by fin_cases a <;> decide
     rw [hslot, hi, hqD, hqB] at cvR caR
-    apply unit_side J Rplus _ hplus s F.plus_slope _ _ hu hodo F.plus_odo
+    apply unit_side J Rplus _ hplus s F.plusSlope _ _ hu hodo F.plus_odo
       hfamily F.plus_family hs F.slope_plus (steps.2 orientation chart) cvR caR
     have hm := P4536T1TangentPairMatrix C p hp.1 2 3 (by decide) hc
     rcases BandVectorOrientationDichotomy (p 3) (p 2)

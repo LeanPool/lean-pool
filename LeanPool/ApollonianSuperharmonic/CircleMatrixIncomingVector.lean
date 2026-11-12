@@ -5,7 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.ApollonianSuperharmonic.VectorSquareProduct
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.VectorNonvanishing
 public import LeanPool.ApollonianSuperharmonic.CircleMatrix
 
@@ -120,7 +121,10 @@ theorem CircleMatrixIncomingVector (C : BandCircle)
         ring
   have hre := congr_arg Zsqrtd.re hgauss
   have him := congr_arg Zsqrtd.im hgauss
-  simp? at hre him
+  simp only [Int.reduceNeg, Fin.isValue, Zsqrtd.re_add, Zsqrtd.re_mul, Zsqrtd.re_star,
+      neg_mul, one_mul, Zsqrtd.im_star, mul_neg, neg_neg, Zsqrtd.re_ofNat, Nat.cast_ofNat,
+      Zsqrtd.re_intCast, Zsqrtd.im_ofNat, mul_zero, Zsqrtd.im_intCast, add_zero,
+      Zsqrtd.im_mul, zero_mul, Zsqrtd.im_add] at hre him
   rw [hchild] at hre him
   have hrer :
       ((BandVectors.1 (q j.succ) (C.1.1)).re : ℝ) +

@@ -5,8 +5,12 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.ApollonianSuperharmonic.P4458T1RestrictionFamily
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.LeftLatticeAdjacent
+public import LeanPool.ApollonianSuperharmonic.AncestorOdometer
+public import LeanPool.ApollonianSuperharmonic.P4458T1BoundaryFrame
+public import LeanPool.ApollonianSuperharmonic.TileString
 
 -- [TABLET NODE: P4458T1BoundarySide]
 

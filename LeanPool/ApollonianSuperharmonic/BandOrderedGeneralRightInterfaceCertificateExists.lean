@@ -5,24 +5,14 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.ApollonianSuperharmonic.BandOrderedGeneralChildInterfaces
-public import LeanPool.ApollonianSuperharmonic.BandOrderedGeneralConfiguration
-public import LeanPool.ApollonianSuperharmonic.BandOrderedGeneralLayoutCertificate
-public import LeanPool.ApollonianSuperharmonic.BandOrderedGeneralPeriodicBlockCells
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.BandOrderedGeneralRightInterfaceCertificate
-public import LeanPool.ApollonianSuperharmonic.BandOrderedGeneralRightNormalizationCertificate
-public import LeanPool.ApollonianSuperharmonic.ExactTileInterfaceTriple
 public import LeanPool.ApollonianSuperharmonic.ExactTileInterfaceDisjointCompanionEndpoints
-public import LeanPool.ApollonianSuperharmonic.FootprintEdges
 public import LeanPool.ApollonianSuperharmonic.PositiveCurvatureTileOdometerDomain
-public import LeanPool.ApollonianSuperharmonic.ProtoTileObservableExtensionality
-public import LeanPool.ApollonianSuperharmonic.QuarterTurnSymmetricCenteredTransport
-public import LeanPool.ApollonianSuperharmonic.QuarterTurnSymmetricExactInterfaceTransport
-public import LeanPool.ApollonianSuperharmonic.TileDiskAreaCovariance
 public import LeanPool.ApollonianSuperharmonic.TileT3TranslateTouching
 public import LeanPool.ApollonianSuperharmonic.TouchingTripleCovariance
 public import LeanPool.ApollonianSuperharmonic.TouchingTriplePermutations
-public import LeanPool.ApollonianSuperharmonic.VectorRecursionLaws
 
 -- [TABLET NODE: BandOrderedGeneralRightInterfaceCertificateExists]
 
@@ -497,7 +487,8 @@ private theorem incoming_relation :
   have e0 := laws.2.2.1
   have e1 := second.2.2.1
   have e2 := third.2.2.1
-  simp? [r, s] at e1 e2
+  simp only [Fin.isValue, Matrix.cons_val_one, Matrix.cons_val_zero, Int.reduceNeg,
+      Matrix.cons_val, r, s] at e1 e2
   rw [e0, e1, e2]
   calc
     _ = (1 - (⟨0, 1⟩ : GaussianInt)) *

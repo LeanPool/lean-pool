@@ -5,10 +5,10 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Init
+
 public import LeanPool.ApollonianSuperharmonic.P4456T2EdgeInterior
-public import LeanPool.ApollonianSuperharmonic.FordCellDomain
 public import LeanPool.ApollonianSuperharmonic.FootprintVertices
-public import LeanPool.ApollonianSuperharmonic.P4397T1UnitEdgeCells
 public import LeanPool.ApollonianSuperharmonic.FootprintEdges
 public import LeanPool.ApollonianSuperharmonic.P4456T2VertexInterior
 public import LeanPool.ApollonianSuperharmonic.FordTile
