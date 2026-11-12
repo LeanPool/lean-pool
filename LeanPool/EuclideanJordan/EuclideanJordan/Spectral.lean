@@ -194,10 +194,10 @@ theorem exists_annihilator_generator [Module.Finite ℝ J] (x : J) :
     intro h
     have hco : (∑ i : Fin n, monomial (i : ℕ) (c i)).coeff (i₀ : ℕ) = c i₀ := by
       rw [Polynomial.finsetSum_coeff, Finset.sum_eq_single i₀]
-      · simp
+      · simp only [coeff_monomial_same]
       · intro b _ hb
-        simp [Polynomial.coeff_monomial, Fin.val_ne_of_ne hb]
-      · simp
+        simp only [coeff_monomial, Fin.val_ne_of_ne hb, ↓reduceIte]
+      · simp only [Finset.mem_univ, not_true_eq_false, coeff_monomial_same, IsEmpty.forall_iff]
     rw [h, Polynomial.coeff_zero] at hco
     exact hi₀ hco.symm
   refine ⟨Submodule.IsPrincipal.generator (jann x), ?_, fun f => ?_⟩
@@ -212,7 +212,7 @@ theorem exists_annihilator_generator [Module.Finite ℝ J] (x : J) :
 theorem jpow_jeval (x : J) (f : Polynomial ℝ) (n : ℕ) :
     jpow (jeval x f) n = jeval x (X ^ n * f ^ (n + 1)) := by
   induction n with
-  | zero => simp
+  | zero => simp only [jpow_zero, pow_zero, zero_add, pow_one, one_mul]
   | succ n ih =>
       rw [jpow_succ, ih, jeval_mul]
       congr 1
@@ -281,7 +281,7 @@ theorem annihilator_aeval_ne_zero_of_im_ne_zero {x : J} {m : Polynomial ℝ}
   set g : Polynomial ℝ := (β * u - C c * m).divX with hgdef
   have hXg : X * g = β * u - C c * m := by
     have hc0 : (β * u - C c * m).coeff 0 = 0 := by
-      simp [hcdef, div_mul_cancel₀ _ h0]
+      simp only [hcdef, mul_coeff_zero, coeff_sub, coeff_C_zero, div_mul_cancel₀ _ h0, sub_self]
     rw [hgdef]
     conv_rhs => rw [← Polynomial.X_mul_divX_add (β * u - C c * m)]
     rw [hc0, map_zero, add_zero]
@@ -349,7 +349,7 @@ theorem exists_split_annihilator (x : J) :
     obtain ⟨W, hW⟩ := hPm
     have hWnr : ∀ r : ℝ, W.eval r ≠ 0 := by
       intro r hr
-      have hmr : m.IsRoot r := by rw [hW]; simp [Polynomial.IsRoot.def, hr]
+      have hmr : m.IsRoot r := by rw [hW]; simp only [IsRoot.def, eval_mul, hr, mul_zero]
       have hrS : r ∈ m.roots.toFinset :=
         Multiset.mem_toFinset.mpr (Polynomial.mem_roots'.mpr ⟨hm0, hmr⟩)
       have hdd : (X - C r) * (X - C r) ∣ m := by
@@ -520,7 +520,7 @@ theorem spectral_resolution_complete (e : J) (he : ∀ y : J, e * y = y) (x : J)
         | cast j =>
             simpa using hfam.orth i j fun h => hij (by rw [h])
   · rw [Fin.sum_univ_castSucc]
-    simp
+    simp only [Fin.snoc_castSucc, Fin.snoc_last, add_sub_cancel]
   · rw [Fin.sum_univ_castSucc]
     simpa using hx
 

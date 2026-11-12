@@ -142,8 +142,8 @@ lemma Multiset.map_univ_eq_iff {α β : Type*} [Fintype α] (f g : α → β) :
           Finset.card (Finset.filter (fun x => g x = y) Finset.univ) := by
         intro y;
         replace a := congr_arg ( fun m => m.count y ) a;
-        simp_all? ( config := { decide := Bool.true } ) [ Multiset.count_map ];
-        simp_all? [ eq_comm ]
+        simp_all (config := { decide := Bool.true }) only [count_map];
+        simp_all only [eq_comm]
         exact a
       have h_perm : ∀ y : β, ∃ e : { x : α // f x = y } ≃ { x : α // g x = y }, True := by
         intro y
