@@ -25,13 +25,6 @@ vertices are the parts of `P` and whose edges are the uniform, dense cluster pai
 Must be sorry-free and axiom-clean `[propext, Classical.choice, Quot.sound]`.
 -/
 public import LeanPool.AsymptoticTrianglePacking.Internal.AX1.CoreGapClusterLP
-public import LeanPool.AsymptoticTrianglePacking.Internal.AX1.CoreGapPackingEdges
-public import LeanPool.AsymptoticTrianglePacking.Internal.AX1.CoreGapRegularCover
-public import LeanPool.AsymptoticTrianglePacking.Internal.AX1.YusterEdge
-public import Mathlib.Tactic.IntervalCases
-public import LeanPool.AsymptoticTrianglePacking.Internal.AX1.CoreGapClusterCapacity
-public import Mathlib.Algebra.BigOperators.Field
-public import Mathlib.Algebra.Order.Ring.Star
 
 
 /-! # CoreGapBlowUp -/

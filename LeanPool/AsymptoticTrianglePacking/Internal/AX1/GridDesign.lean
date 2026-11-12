@@ -28,7 +28,6 @@ hypothesis `hpair` of `Nibble.AX1.hasNearRegularFamily_of_subTripleDesign`.
 Must be sorry-free and axiom-clean `[propext, Classical.choice, Quot.sound]`.
 -/
 public import LeanPool.AsymptoticTrianglePacking.Internal.AX1.CoreGapDesign
-public import LeanPool.AsymptoticTrianglePacking.Internal.Prelude
 
 
 /-! # GridShiftUnique -/

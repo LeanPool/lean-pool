@@ -9,13 +9,8 @@ module
 public import Mathlib.Analysis.Complex.ExponentialBounds
 public import Mathlib.Data.Finset.Functor
 public import Mathlib.Data.List.GetD
-public import Mathlib.Analysis.Real.Sqrt
-public import Mathlib.MeasureTheory.Integral.Average
 public import Mathlib.Probability.Moments.SubGaussian
 public import Mathlib.Probability.ProbabilityMassFunction.Integrals
-public import Mathlib.Tactic.NormNum.BigOperators
-public import Mathlib.Tactic.NormNum.Prime
-public import Mathlib.Tactic.NormNum.RealSqrt
 public import Mathlib.Tactic
 
 /-!
