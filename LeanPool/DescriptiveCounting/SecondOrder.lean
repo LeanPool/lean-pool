@@ -69,6 +69,17 @@ structure SOBlock : Type 1 where
 
 attribute [instance] SOBlock.ιFinite
 
+open Classical in
+/-- The relation variables of a block, as a finite list. -/
+noncomputable def SOBlock.idxList (B : SOBlock) : List B.ι :=
+  letI : Fintype B.ι := Fintype.ofFinite B.ι
+  (Finset.univ : Finset B.ι).toList
+
+open Classical in
+theorem SOBlock.mem_idxList (B : SOBlock) (i : B.ι) : i ∈ B.idxList := by
+  let : Fintype B.ι := Fintype.ofFinite B.ι
+  exact Finset.mem_toList.mpr (Finset.mem_univ i)
+
 /-- The (relational) vocabulary of a block: one relation symbol per relation
 variable. -/
 def SOBlock.lang (B : SOBlock) : Language :=
@@ -94,12 +105,24 @@ variables of a block. -/
 def SOBlock.Assignment (B : SOBlock) (A : Type) : Type :=
   ∀ i : B.ι, (Fin (B.arity i) → A) → Prop
 
+/-- Block assignments on a finite universe are finitely many. -/
+instance SOBlock.finite_assignment (B : SOBlock) (A : Type) [Finite A] :
+    Finite (B.Assignment A) :=
+  inferInstanceAs (Finite (∀ i : B.ι, (Fin (B.arity i) → A) → Prop))
+
 /-- The structure over the block's vocabulary determined by an assignment. -/
 @[instance_reducible]
 def SOBlock.structure (B : SOBlock) {A : Type} (ρ : B.Assignment A) :
     B.lang.Structure A where
   funMap f := isEmptyElim f
   RelMap := fun {_} r x => ρ r.1 fun j => x (Fin.cast r.2 j)
+
+/-- The structure over `L` expanded by one copy of a block's vocabulary,
+interpreted by an assignment. -/
+@[instance_reducible]
+def SOBlock.structure₁ {L : Language.{0, 0}} (B : SOBlock) {A : Type} [inst : L.Structure A]
+    (ρ : B.Assignment A) : (L.sum B.lang).Structure A :=
+  @sumStructure L B.lang A inst (B.structure ρ)
 
 /-- The base language expanded by the vocabularies of a list of blocks. -/
 def soLang (L : Language.{0, 0}) : List SOBlock → Language.{0, 0}
@@ -150,6 +173,23 @@ def SOBlock.mapAssign (B : SOBlock) {A A' : Type} (e : A ≃ A') (ρ : B.Assignm
     B.Assignment A' :=
   fun i x => ρ i fun j => e.symm (x j)
 
+/-- Transport of block assignments along an equivalence of universes. -/
+def SOBlock.assignEquiv (B : SOBlock) {A A' : Type} (e : A ≃ A') :
+    B.Assignment A ≃ B.Assignment A' where
+  toFun := B.mapAssign e
+  invFun := B.mapAssign e.symm
+  left_inv ρ := by
+    funext i x
+    exact congrArg (ρ i) (funext fun j => e.symm_apply_apply (x j))
+  right_inv ρ := by
+    funext i x
+    exact congrArg (ρ i) (funext fun j => e.apply_symm_apply (x j))
+
+@[simp]
+theorem SOBlock.assignEquiv_apply (B : SOBlock) {A A' : Type} (e : A ≃ A')
+    (ρ : B.Assignment A) : B.assignEquiv e ρ = B.mapAssign e ρ :=
+  rfl
+
 /-- An `L`-isomorphism extends to the vocabulary expanded by a block, when
 the block is interpreted by an assignment on one side and its transport on
 the other. -/
@@ -173,6 +213,25 @@ def SOBlock.extendEquiv (B : SOBlock) {A A' : Type} [L.Structure A] [L.Structure
         rw [SOBlock.mapAssign]
         refine iff_of_eq (congrArg _ (funext fun j => ?_))
         exact e.toEquiv.symm_apply_apply _ }
+
+/-- Realization is invariant under an isomorphism with explicit structures. -/
+theorem realize_sentence_of_equiv {L' : Language.{0, 0}} {M N : Type}
+    {instM : L'.Structure M} {instN : L'.Structure N}
+    (e : @Language.Equiv L' M N instM instN) (φ : L'.Sentence) :
+    @Sentence.Realize L' M instM φ ↔ @Sentence.Realize L' N instN φ :=
+  letI := instM
+  letI := instN
+  StrongHomClass.realize_sentence e φ
+
+/-- Extend an isomorphism with explicitly supplied block expansions. -/
+def SOBlock.extendEquiv' (B : SOBlock) {L' : Language.{0, 0}} {M N : Type}
+    {instM : L'.Structure M} {instN : L'.Structure N}
+    (e : @Language.Equiv L' M N instM instN) (ρ : B.Assignment M) :
+    @Language.Equiv (L'.sum B.lang) M N (B.structure₁ ρ)
+      (B.structure₁ (B.mapAssign e.toEquiv ρ)) :=
+  letI := instM
+  letI := instN
+  B.extendEquiv e ρ
 
 private theorem sorealize_iso_aux :
     ∀ (Bs : List SOBlock) (L : Language.{0, 0}) (A A' : Type) (instA : L.Structure A)

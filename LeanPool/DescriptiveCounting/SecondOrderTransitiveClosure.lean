@@ -85,65 +85,12 @@ variable {L : Language.{0, 0}}
 
 section Expand
 
-/-- `FirstOrder.Language.StrongHomClass.realize_sentence` with the two structures
-passed explicitly rather than by instance search. The structures a walk is read
-against are built from block assignments (`DescriptiveComplexity.SOBlock.structure₁`,
-`DescriptiveComplexity.SOBlock.structure₂`) and are never instances, so every
-transport in this file and in
-`DescriptiveComplexity.SecondOrderTransitiveClosurePull` goes through this form. -/
-theorem realize_sentence_of_equiv {L' : Language.{0, 0}} {M N : Type}
-    {instM : L'.Structure M} {instN : L'.Structure N}
-    (e : @Language.Equiv L' M N instM instN) (φ : L'.Sentence) :
-    @Sentence.Realize L' M instM φ ↔ @Sentence.Realize L' N instN φ :=
-  letI := instM
-  letI := instN
-  StrongHomClass.realize_sentence e φ
-
-/-- The structure over `L` expanded by one copy of a block's vocabulary,
-interpreted by an assignment. -/
-@[instance_reducible]
-def SOBlock.structure₁ (B : SOBlock) {A : Type} [inst : L.Structure A]
-    (ρ : B.Assignment A) : (L.sum B.lang).Structure A :=
-  @sumStructure L B.lang A inst (B.structure ρ)
-
 /-- The structure over `L` expanded by *two* copies of a block's vocabulary –
 the current state and the next one – interpreted by two assignments. -/
 @[instance_reducible]
 def SOBlock.structure₂ (B : SOBlock) {A : Type} [inst : L.Structure A]
     (ρ σ : B.Assignment A) : ((L.sum B.lang).sum B.lang).Structure A :=
   @sumStructure (L.sum B.lang) B.lang A (B.structure₁ ρ) (B.structure σ)
-
-/-- `DescriptiveComplexity.SOBlock.extendEquiv` with the two structures passed
-explicitly rather than by instance search, for the same reason as
-`DescriptiveComplexity.realize_sentence_of_equiv`: the layers a walk is read
-against are block expansions, which are not instances. -/
-def SOBlock.extendEquiv' (B : SOBlock) {L' : Language.{0, 0}} {M N : Type}
-    {instM : L'.Structure M} {instN : L'.Structure N}
-    (e : @Language.Equiv L' M N instM instN) (ρ : B.Assignment M) :
-    @Language.Equiv (L'.sum B.lang) M N (B.structure₁ ρ)
-      (B.structure₁ (B.mapAssign e.toEquiv ρ)) :=
-  letI := instM
-  letI := instN
-  B.extendEquiv e ρ
-
-/-- Transport of block assignments along an equivalence of universes, as an
-equivalence: the states of the walk are in bijection with the states of the
-transported walk. -/
-def SOBlock.assignEquiv (B : SOBlock) {A A' : Type} (e : A ≃ A') :
-    B.Assignment A ≃ B.Assignment A' where
-  toFun := B.mapAssign e
-  invFun := B.mapAssign e.symm
-  left_inv ρ := by
-    funext i x
-    exact congrArg (ρ i) (funext fun j => e.symm_apply_apply (x j))
-  right_inv ρ := by
-    funext i x
-    exact congrArg (ρ i) (funext fun j => e.apply_symm_apply (x j))
-
-@[simp]
-theorem SOBlock.assignEquiv_apply (B : SOBlock) {A A' : Type} (e : A ≃ A')
-    (ρ : B.Assignment A) : B.assignEquiv e ρ = B.mapAssign e ρ :=
-  rfl
 
 /-- An `L`-isomorphism extends to `L` expanded by two copies of a block, the
 two assignments being transported. -/

@@ -64,32 +64,15 @@ noncomputable def witnessCount (B : SOBlock) (φ : (L.sum B.lang).Sentence) (A :
   Nat.card {ρ : B.Assignment A //
     @Sentence.Realize (L.sum B.lang) A (@sumStructure L B.lang A inst (B.structure ρ)) φ}
 
-/-- Transport of block assignments along an equivalence, as an equivalence. -/
-def SOBlock.mapAssignEquiv (B : SOBlock) {A A' : Type} (e : A ≃ A') :
-    B.Assignment A ≃ B.Assignment A' where
-  toFun := B.mapAssign e
-  invFun := B.mapAssign e.symm
-  left_inv ρ := by
-    funext i x
-    simp [SOBlock.mapAssign]
-  right_inv ρ := by
-    funext i x
-    simp [SOBlock.mapAssign]
-
 /-- The witness count is isomorphism-invariant. -/
 theorem witnessCount_iso (B : SOBlock) (φ : (L.sum B.lang).Sentence) {A A' : Type}
     [L.Structure A] [L.Structure A'] (e : A ≃[L] A') :
     witnessCount B φ A = witnessCount B φ A' :=
-  Nat.card_congr (Equiv.subtypeEquiv (B.mapAssignEquiv e.toEquiv) fun ρ =>
+  Nat.card_congr (Equiv.subtypeEquiv (B.assignEquiv e.toEquiv) fun ρ =>
     @StrongHomClass.realize_sentence (L.sum B.lang) A A'
       (@sumStructure L B.lang A _ (B.structure ρ))
       (@sumStructure L B.lang A' _ (B.structure (B.mapAssign e.toEquiv ρ))) _ _ _
       (B.extendEquiv e ρ) φ)
-
-/-- Block assignments on a finite universe are finitely many. -/
-instance SOBlock.finite_assignment (B : SOBlock) (A : Type) [Finite A] :
-    Finite (B.Assignment A) :=
-  inferInstanceAs (Finite (∀ i : B.ι, (Fin (B.arity i) → A) → Prop))
 
 /-- On a finite structure, the witness count is positive exactly when there is
 a witness. -/

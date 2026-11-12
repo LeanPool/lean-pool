@@ -246,14 +246,6 @@ noncomputable def acAt (j : Fin (hs d)) (x : SubIx d)
 
 /-! ### The rules of the translated program -/
 
-/-- The relation variables, as a list. -/
-noncomputable def iotaList : List d.B.ι :=
-  (@Finset.univ d.B.ι (Fintype.ofFinite _)).toList
-
-private theorem mem_iotaList (i : d.B.ι) : i ∈ iotaList d := by
-  rw [iotaList, Finset.mem_toList]
-  exact @Finset.mem_univ _ (Fintype.ofFinite _) i
-
 /-- The stage-successor pairs of copies: within one copy, or crossing to the
 next (as in `DescriptiveComplexity.LFPHorn.stagePairs`). -/
 noncomputable def stagePairs : List (Fin (hs d) × Fin (hs d)) :=
@@ -278,7 +270,7 @@ noncomputable def rootSel (i : d.B.ι) : Fin ((rootSub d i).2.1.1) → Fin (kk d
 /-- Carry: a derived atom stays derived at the next stage. -/
 noncomputable def sCarry : HornProgram (L.sum Language.order) (trBlock d) (kk d) :=
   (stagePairs d).flatMap fun jj =>
-    (iotaList d).map fun i =>
+    (d.B.idxList).map fun i =>
       { guard := stageG d jj.1 jj.2
         body := [sAt d jj.1 i (vT1 d) (xa d i)]
         head := some (sAt d jj.2 i (vT2 d) (xa d i)) }
@@ -288,14 +280,14 @@ next stage. This is where inflation is *used*: the new stage is the old one
 plus what the step formulas add. -/
 noncomputable def sDerive : HornProgram (L.sum Language.order) (trBlock d) (kk d) :=
   (stagePairs d).flatMap fun jj =>
-    (iotaList d).map fun i =>
+    (d.B.idxList).map fun i =>
       { guard := stageG d jj.1 jj.2
         body := [tfAt d jj.1 (rootSub d i) true (vT1 d) (rootSel d i)]
         head := some (sAt d jj.2 i (vT2 d) (rootSel d i)) }
 
 /-- Base: at the first stage, nothing is derived. -/
 noncomputable def nBase : HornProgram (L.sum Language.order) (trBlock d) (kk d) :=
-  (iotaList d).map fun i =>
+  (d.B.idxList).map fun i =>
     { guard := minTupF (vT1 d)
       body := []
       head := some (nAt d (j0 d) i (vT1 d) (xa d i)) }
@@ -305,7 +297,7 @@ stage stays underived at the next stage. This is where inflation *pays*:
 non-membership in the next stage is a conjunction of two positive atoms. -/
 noncomputable def nStep : HornProgram (L.sum Language.order) (trBlock d) (kk d) :=
   (stagePairs d).flatMap fun jj =>
-    (iotaList d).map fun i =>
+    (d.B.idxList).map fun i =>
       { guard := stageG d jj.1 jj.2
         body := [nAt d jj.1 i (vT1 d) (rootSel d i),
           tfAt d jj.1 (rootSub d i) false (vT1 d) (rootSel d i)]
@@ -313,7 +305,7 @@ noncomputable def nStep : HornProgram (L.sum Language.order) (trBlock d) (kk d) 
 
 /-- Read-off: the answer variables hold the maximal stage. -/
 noncomputable def rRules : HornProgram (L.sum Language.order) (trBlock d) (kk d) :=
-  (iotaList d).map fun i =>
+  (d.B.idxList).map fun i =>
     { guard := maxTupF (vT1 d)
       body := [sAt d (jTop d) i (vT1 d) (xa d i)]
       head := some (rAt d i (xa d i)) }
@@ -428,7 +420,7 @@ noncomputable def evalClauses (j : Fin (hs d)) (x : SubIx d) :
 of its step formula. -/
 noncomputable def evalRules : HornProgram (L.sum Language.order) (trBlock d) (kk d) :=
   (List.finRange (hs d)).flatMap fun j =>
-    (iotaList d).flatMap fun i =>
+    (d.B.idxList).flatMap fun i =>
       (subs (stepB d i)).attach.flatMap fun x => evalClauses d j ⟨i, ⟨x.1, x.2⟩⟩
 
 /-- The rules of the translated program. -/
@@ -1165,7 +1157,7 @@ private theorem mem_trRules_evalClauses {j : Fin (hs d)} {x : SubIx d} {c}
     (h : c ∈ evalClauses d j x) : c ∈ trRules d := by
   rw [trRules]
   refine List.mem_append_right _ (List.mem_flatMap.mpr ⟨j, List.mem_finRange j, ?_⟩)
-  refine List.mem_flatMap.mpr ⟨x.1, mem_iotaList d x.1, ?_⟩
+  refine List.mem_flatMap.mpr ⟨x.1, d.B.mem_idxList x.1, ?_⟩
   refine List.mem_flatMap.mpr ⟨⟨x.2.1, x.2.2⟩, List.mem_attach _ _, ?_⟩
   exact h
 
@@ -1781,7 +1773,7 @@ theorem derives_SN (u : Fin (hs d) ×ₗ Lex (Fin (hm d) → A)) :
     · intro i xt _
       have hcmem : (HornClause.mk (minTupF (L := L) (vT1 d)) []
           (some (nAt d (j0 d) i (vT1 d) (xa d i)))) ∈ trRules d :=
-        mem_trRules_nBase (List.mem_map.mpr ⟨i, mem_iotaList d i, rfl⟩)
+        mem_trRules_nBase (List.mem_map.mpr ⟨i, d.B.mem_idxList i, rfl⟩)
       set V : Fin (kk d) → A := packV (ofLex (ofLex u₀).2) (ofLex (ofLex u₀).2)
         (padF xt) (fun _ => Classical.arbitrary A) (Classical.arbitrary A) with hV
       have hT1 : (fun q => V (vT1 d q)) = ofLex (ofLex u₀).2 := by
@@ -1840,7 +1832,7 @@ theorem derives_SN (u : Fin (hs d) ×ₗ Lex (Fin (hm d) → A)) :
             [sAt d (ofLex u₀).1 i (vT1 d) (xa d i)]
             (some (sAt d (ofLex u₁).1 i (vT2 d) (xa d i)))) ∈ trRules d :=
           mem_trRules_sCarry (List.mem_flatMap.mpr ⟨((ofLex u₀).1, (ofLex u₁).1), hjj,
-            List.mem_map.mpr ⟨i, mem_iotaList d i, rfl⟩⟩)
+            List.mem_map.mpr ⟨i, d.B.mem_idxList i, rfl⟩⟩)
         have hb : ∀ b ∈ [sAt d (ofLex u₀).1 i (vT1 d) (xa d i)],
             Derives (trRules d) ⟨b.idx, fun q => V (b.args q)⟩ := by
           intro b hb
@@ -1859,7 +1851,7 @@ theorem derives_SN (u : Fin (hs d) ×ₗ Lex (Fin (hm d) → A)) :
             [tfAt d (ofLex u₀).1 (rootSub d i) true (vT1 d) (rootSel d i)]
             (some (sAt d (ofLex u₁).1 i (vT2 d) (rootSel d i)))) ∈ trRules d :=
           mem_trRules_sDerive (List.mem_flatMap.mpr ⟨((ofLex u₀).1, (ofLex u₁).1),
-            hjj, List.mem_map.mpr ⟨i, mem_iotaList d i, rfl⟩⟩)
+            hjj, List.mem_map.mpr ⟨i, d.B.mem_idxList i, rfl⟩⟩)
         have hT : evalT d A (srank d A (ofLex u₀).1 (ofLex (ofLex u₀).2))
             (stepB d i) (xt : Fin (d.B.arity i + 0) → A) := by
           refine evalT_stepB.mpr ?_
@@ -1917,7 +1909,7 @@ theorem derives_SN (u : Fin (hs d) ×ₗ Lex (Fin (hm d) → A)) :
             tfAt d (ofLex u₀).1 (rootSub d i) false (vT1 d) (rootSel d i)]
           (some (nAt d (ofLex u₁).1 i (vT2 d) (rootSel d i)))) ∈ trRules d :=
         mem_trRules_nStep (List.mem_flatMap.mpr ⟨((ofLex u₀).1, (ofLex u₁).1), hjj,
-          List.mem_map.mpr ⟨i, mem_iotaList d i, rfl⟩⟩)
+          List.mem_map.mpr ⟨i, d.B.mem_idxList i, rfl⟩⟩)
       have hb : ∀ b ∈ [nAt d (ofLex u₀).1 i (vT1 d) (rootSel d i),
           tfAt d (ofLex u₀).1 (rootSub d i) false (vT1 d) (rootSel d i)],
           Derives (trRules d) ⟨b.idx, fun q => V (b.args q)⟩ := by
@@ -1957,7 +1949,7 @@ theorem derives_r {i : d.B.ι} {x : Fin (d.B.arity i) → A}
       Fin (hs d) × Lex (Fin (hm d) → A)))).1 i x (by rw [hlim']; exact h)
   have hcmem : (HornClause.mk (maxTupF (L := L) (vT1 d))
       [sAt d (jTop d) i (vT1 d) (xa d i)] (some (rAt d i (xa d i)))) ∈ trRules d :=
-    mem_trRules_rRules (List.mem_map.mpr ⟨i, mem_iotaList d i, rfl⟩)
+    mem_trRules_rRules (List.mem_map.mpr ⟨i, d.B.mem_idxList i, rfl⟩)
   set V : Fin (kk d) → A := packV (fun _ => mA) (fun _ => mA) (padF x)
     (fun _ => Classical.arbitrary A) (Classical.arbitrary A) with hV
   have hT1 : (fun q => V (vT1 d q)) = fun _ => mA := by rw [hV, packV_comp_vT1]

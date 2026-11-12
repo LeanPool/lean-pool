@@ -65,20 +65,6 @@ open Function (IsFixedPt)
 
 variable {L : Language.{0, 0}}
 
-/-! ### Enumerating the variables of a block -/
-
-open Classical in
-/-- The relation variables of a block, as a list: the sentences below conjoin
-one clause per variable. -/
-noncomputable def SOBlock.idxList (B : SOBlock) : List B.ι :=
-  letI : Fintype B.ι := Fintype.ofFinite B.ι
-  (Finset.univ : Finset B.ι).toList
-
-open Classical in
-theorem SOBlock.mem_idxList (B : SOBlock) (i : B.ι) : i ∈ B.idxList := by
-  let : Fintype B.ι := Fintype.ofFinite B.ι
-  exact Finset.mem_toList.mpr (Finset.mem_univ i)
-
 namespace StepDef
 
 variable (d : StepDef L)

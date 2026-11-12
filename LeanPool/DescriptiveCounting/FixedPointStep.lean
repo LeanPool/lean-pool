@@ -6,7 +6,6 @@ Authors: Pierre Senellart
 module
 
 public import LeanPool.DescriptiveCounting.FixedPoint
-public import LeanPool.DescriptiveCounting.SecondOrderTransitiveClosure
 import all LeanPool.DescriptiveCounting.SecondOrderPull
 
 /-!
@@ -96,9 +95,6 @@ assignment. -/
 theorem SOBlock.mapAssign_botAssign (B : SOBlock) {A A' : Type} (e : A ≃ A') :
     B.mapAssign e (B.botAssign A) = B.botAssign A' :=
   rfl
-
-instance {B : SOBlock} {A : Type} [Finite A] : Finite (B.Assignment A) :=
-  inferInstanceAs (Finite (∀ i : B.ι, (Fin (B.arity i) → A) → Prop))
 
 /-! ### Realization transport with explicit structures
 

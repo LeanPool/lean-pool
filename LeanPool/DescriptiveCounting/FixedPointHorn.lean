@@ -434,14 +434,6 @@ noncomputable def acAt (x : SubIx d) (es : Fin (x.1.1 + 1) → Fin (kk d)) :
 
 /-! ### The rules of the translated program -/
 
-/-- The relation variables, as a list. -/
-noncomputable def iotaList : List d.B.ι :=
-  (@Finset.univ d.B.ι (Fintype.ofFinite _)).toList
-
-private theorem mem_iotaList (i : d.B.ι) : i ∈ iotaList d := by
-  rw [iotaList, Finset.mem_toList]
-  exact @Finset.mem_univ _ (Fintype.ofFinite _) i
-
 /-- An original atom, over the lifted block and variables. -/
 noncomputable def liftAtom (a : SOAtom d.B d.k) : SOAtom (trBlock d) (kk d) :=
   rAt d a.idx fun q => vW1 d (a.args q)
@@ -473,7 +465,7 @@ noncomputable def stageG (j j' : Fin (hs d)) :
 
 /-- Base rules: at the first stage, nothing is derived. -/
 noncomputable def nBase : HornProgram (L.sum Language.order) (trBlock d) (kk d) :=
-  (iotaList d).map fun i =>
+  (d.B.idxList).map fun i =>
     { guard := minTupF (vT1 d)
       body := []
       head := some (nAt d (j0 d) i (vT1 d) (xa d i)) }
@@ -483,7 +475,7 @@ derivations fail to fire stays underivable at the next stage. -/
 noncomputable def nStep : HornProgram (L.sum Language.order) (trBlock d) (kk d) :=
   open Classical in
   (stagePairs d).flatMap fun jj =>
-    (iotaList d).map fun i =>
+    (d.B.idxList).map fun i =>
       { guard := stageG d jj.1 jj.2 ⊓ maxTupF (vW1 d)
         body := nAt d jj.1 i (vT1 d) (xa d i) ::
           (((headed d).attach.filter fun ca => ca.1.2.idx = i).map fun ca =>
@@ -1433,7 +1425,7 @@ private theorem derives_nBase {i : d.B.ι} {t : Fin (hm d) → A}
     Derives (trProg d) ⟨nIx d (j0 d) i, Fin.addCases t xt⟩ := by
   have hmem : (HornClause.mk (minTupF (L := L) (vT1 d)) []
       (some (nAt d (j0 d) i (vT1 d) (xa d i)))) ∈ trProg d :=
-    mem_trProg_nBase (List.mem_map.mpr ⟨i, mem_iotaList d i, rfl⟩)
+    mem_trProg_nBase (List.mem_map.mpr ⟨i, d.B.mem_idxList i, rfl⟩)
   set V : Fin (kk d) → A := packV t t (padF xt) (fun _ => Classical.arbitrary A)
     (fun _ => Classical.arbitrary A) (fun _ => Classical.arbitrary A)
     (Classical.arbitrary A) with hV
@@ -1673,7 +1665,7 @@ theorem derives_n (S : Fin (hs d) ×ₗ Lex (Fin (hm d) → A)) :
             nfAt d (ofLex S₀).1 ca (vT1 d) (xa d ca.1.2.idx) (vW1 d)))
         (some (nAt d (ofLex S₁).1 i (vT2 d) (xa d i)))) ∈ trProg d :=
       mem_trProg_nStep (List.mem_flatMap.mpr ⟨((ofLex S₀).1, (ofLex S₁).1), hjj,
-        List.mem_map.mpr ⟨i, mem_iotaList d i, rfl⟩⟩)
+        List.mem_map.mpr ⟨i, d.B.mem_idxList i, rfl⟩⟩)
     have hT1 : (fun q => V (vT1 d q)) = ofLex (ofLex S₀).2 := by
       rw [hV, packV_comp_vT1]
     have hT2 : (fun q => V (vT2 d q)) = ofLex (ofLex S₁).2 := by
