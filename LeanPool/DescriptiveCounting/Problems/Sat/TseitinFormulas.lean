@@ -50,7 +50,7 @@ the coordinates selected by `c`. -/
 noncomputable def tTerm {m : ℕ} (h : m ≤ D)
     (t : (L.sum B.lang).Term (Empty ⊕ Fin m)) (c : Fin D → γ) :
     (L.sum Language.order).Term γ :=
-  (LHom.sumInl.onTerm (termToL t)).relabel
+  (LHom.sumInl.onTerm (stripTerm t)).relabel
     (Sum.elim isEmptyElim fun j => c (Fin.castLE h j))
 
 /-- The equality atom of the kernel, as a formula over the ordered
@@ -96,9 +96,9 @@ variable {B : SOBlock}
 private theorem realize_tTerm {m : ℕ} (h : m ≤ D)
     (t : (L.sum B.lang).Term (Empty ⊕ Fin m)) (c : Fin D → γ) :
     (tTerm h t c).realize v =
-      (termToL t).realize (Sum.elim isEmptyElim fun j => v (c (Fin.castLE h j))) := by
+      (stripTerm t).realize (Sum.elim isEmptyElim fun j => v (c (Fin.castLE h j))) := by
   rw [tTerm, Term.realize_relabel, LHom.realize_onTerm]
-  refine congrArg (fun g => Term.realize (M := A) g (termToL t)) (funext fun a => ?_)
+  refine congrArg (fun g => Term.realize (M := A) g (stripTerm t)) (funext fun a => ?_)
   cases a with
   | inl e => exact isEmptyElim e
   | inr j => rfl
@@ -147,19 +147,19 @@ variable {L : Language.{0, 0}} {B : SOBlock} {γ : Type} {D : ℕ}
 `DescriptiveComplexity.Tseitin.IsClauseSem`: the clause tuple is read from the
 coordinates selected by `c`. -/
 noncomputable def isClauseF :
-    ∀ {n : ℕ} (f : (L.sum B.lang).BoundedFormula Empty n), maxCtx f ≤ D →
+    ∀ {n : ℕ} (f : (L.sum B.lang).BoundedFormula Empty n), contextBound f ≤ D →
       ∀ {m : ℕ}, NodeAt f m → Fin 3 → (Fin D → γ) →
         (L.sum Language.order).Formula γ
   | n, .falsum, _, _, _, k, c => if k = 0 then canonF n c else ⊥
   | n, .equal t₁ t₂, h, _, _, k, c =>
-      if k = 0 then canonF n c ⊓ termEqF ((le_maxCtx _).trans h) t₁ t₂ c
-      else if k = 1 then canonF n c ⊓ ∼(termEqF ((le_maxCtx _).trans h) t₁ t₂ c)
+      if k = 0 then canonF n c ⊓ termEqF ((le_contextBound _).trans h) t₁ t₂ c
+      else if k = 1 then canonF n c ⊓ ∼(termEqF ((le_contextBound _).trans h) t₁ t₂ c)
       else ⊥
   | n, .rel R ts, h, _, _, k, c =>
       (match R with
        | Sum.inl r =>
-           if k = 0 then canonF n c ⊓ relAtF ((le_maxCtx _).trans h) r ts c
-           else if k = 1 then canonF n c ⊓ ∼(relAtF ((le_maxCtx _).trans h) r ts c)
+           if k = 0 then canonF n c ⊓ relAtF ((le_contextBound _).trans h) r ts c
+           else if k = 1 then canonF n c ⊓ ∼(relAtF ((le_contextBound _).trans h) r ts c)
            else ⊥
        | Sum.inr _ => if k = 0 ∨ k = 1 then canonF n c else ⊥)
   | n, .imp f₁ f₂, h, _, p, k, c =>
@@ -185,7 +185,7 @@ private theorem realize_ite_bot (P : Prop) [Decidable P]
 
 /-- Realization of the clause-existence formulas. -/
 theorem realize_isClauseF :
-    ∀ {n : ℕ} (f : (L.sum B.lang).BoundedFormula Empty n) (hctx : maxCtx f ≤ D)
+    ∀ {n : ℕ} (f : (L.sum B.lang).BoundedFormula Empty n) (hctx : contextBound f ≤ D)
       {m : ℕ} (p : NodeAt f m) (k : Fin 3) (c : Fin D → γ),
       (isClauseF f hctx p k c).Realize v ↔
         IsClauseSem f hctx p k fun j => v (c j)
@@ -198,7 +198,7 @@ theorem realize_isClauseF :
       obtain ⟨rfl⟩ := p
       by_cases hk : k = 0
       · subst hk
-        change (canonF n c ⊓ termEqF ((le_maxCtx _).trans hctx) t₁ t₂ c).Realize v ↔ _
+        change (canonF n c ⊓ termEqF ((le_contextBound _).trans hctx) t₁ t₂ c).Realize v ↔ _
         rw [Formula.realize_inf, realize_canonF, realize_termEqF]
         constructor
         · rintro ⟨hc, hg⟩
@@ -209,7 +209,7 @@ theorem realize_isClauseF :
       · by_cases hk1 : k = 1
         · subst hk1
           change (canonF n c ⊓
-            ∼(termEqF ((le_maxCtx _).trans hctx) t₁ t₂ c)).Realize v ↔ _
+            ∼(termEqF ((le_contextBound _).trans hctx) t₁ t₂ c)).Realize v ↔ _
           rw [Formula.realize_inf, Formula.realize_not, realize_canonF,
             realize_termEqF]
           constructor
@@ -218,9 +218,9 @@ theorem realize_isClauseF :
           · rintro ⟨hc, ⟨h0, -⟩ | ⟨-, hg⟩⟩
             · exact absurd h0 (by decide)
             · exact ⟨hc, hg⟩
-        · change (if k = 0 then canonF n c ⊓ termEqF ((le_maxCtx _).trans hctx) t₁ t₂ c
+        · change (if k = 0 then canonF n c ⊓ termEqF ((le_contextBound _).trans hctx) t₁ t₂ c
               else if k = 1 then
-                canonF n c ⊓ ∼(termEqF ((le_maxCtx _).trans hctx) t₁ t₂ c)
+                canonF n c ⊓ ∼(termEqF ((le_contextBound _).trans hctx) t₁ t₂ c)
               else ⊥).Realize v ↔ _
           rw [ite_eq_right hk, ite_eq_right hk1, Formula.realize_bot]
           refine iff_of_false id ?_
@@ -233,7 +233,7 @@ theorem realize_isClauseF :
           by_cases hk : k = 0
           · subst hk
             change (canonF n c ⊓
-              relAtF ((le_maxCtx _).trans hctx) r ts c).Realize v ↔ _
+              relAtF ((le_contextBound _).trans hctx) r ts c).Realize v ↔ _
             rw [Formula.realize_inf, realize_canonF, realize_relAtF]
             constructor
             · rintro ⟨hc, hg⟩
@@ -244,7 +244,7 @@ theorem realize_isClauseF :
           · by_cases hk1 : k = 1
             · subst hk1
               change (canonF n c ⊓
-                ∼(relAtF ((le_maxCtx _).trans hctx) r ts c)).Realize v ↔ _
+                ∼(relAtF ((le_contextBound _).trans hctx) r ts c)).Realize v ↔ _
               rw [Formula.realize_inf, Formula.realize_not, realize_canonF,
                 realize_relAtF]
               constructor
@@ -254,9 +254,9 @@ theorem realize_isClauseF :
                 · exact absurd h0 (by decide)
                 · exact ⟨hc, hg⟩
             · change (if k = 0 then
-                  canonF n c ⊓ relAtF ((le_maxCtx _).trans hctx) r ts c
+                  canonF n c ⊓ relAtF ((le_contextBound _).trans hctx) r ts c
                 else if k = 1 then
-                  canonF n c ⊓ ∼(relAtF ((le_maxCtx _).trans hctx) r ts c)
+                  canonF n c ⊓ ∼(relAtF ((le_contextBound _).trans hctx) r ts c)
                 else ⊥).Realize v ↔ _
               rw [ite_eq_right hk, ite_eq_right hk1, Formula.realize_bot]
               refine iff_of_false id ?_
@@ -309,7 +309,7 @@ open Classical in
 selected by `u`, the literal tuple from those selected by `x`. Root positions
 of subformulas are recognized by `DescriptiveComplexity.Tseitin.isRootB`. -/
 noncomputable def litF (s : Bool) :
-    ∀ {n : ℕ} (f : (L.sum B.lang).BoundedFormula Empty n), maxCtx f ≤ D →
+    ∀ {n : ℕ} (f : (L.sum B.lang).BoundedFormula Empty n), contextBound f ≤ D →
       ∀ {m : ℕ}, NodeAt f m → Fin 3 → (B.ι ⊕ Σ m', NodeAt f m') →
         (Fin D → γ) → (Fin D → γ) → (L.sum Language.order).Formula γ
   | _, .falsum, _, _, _, k, vt, u, x =>
@@ -334,7 +334,7 @@ noncomputable def litF (s : Bool) :
                 if (s = false ∧ k = 0) ∨ (s = true ∧ k = 1) then eqTupF u x else ⊥
             | Sum.inl i =>
                 if i = r.1 ∧ ((s = true ∧ k = 0) ∨ (s = false ∧ k = 1)) then
-                  atomLitF ((le_maxCtx _).trans h) ts u x
+                  atomLitF ((le_contextBound _).trans h) ts u x
                 else ⊥))
   | _, .imp f₁ f₂, h, _, p, k, vt, u, x =>
       (match p with
@@ -392,7 +392,7 @@ variable {A : Type} [L.Structure A] [LinearOrder A] {v : γ → A}
 
 /-- Realization of the literal formulas. -/
 theorem realize_litF (s : Bool) :
-    ∀ {n : ℕ} (f : (L.sum B.lang).BoundedFormula Empty n) (hctx : maxCtx f ≤ D)
+    ∀ {n : ℕ} (f : (L.sum B.lang).BoundedFormula Empty n) (hctx : contextBound f ≤ D)
       {m : ℕ} (p : NodeAt f m) (k : Fin 3) (vt : B.ι ⊕ Σ m', NodeAt f m')
       (u x : Fin D → γ),
       (litF s f hctx p k vt u x).Realize v ↔
@@ -450,7 +450,7 @@ theorem realize_litF (s : Bool) :
       | inr r =>
           rcases vt with i | ⟨m', q⟩
           · change (if i = r.1 ∧ ((s = true ∧ k = 0) ∨ (s = false ∧ k = 1)) then
-                atomLitF ((le_maxCtx _).trans hctx) ts u x
+                atomLitF ((le_contextBound _).trans hctx) ts u x
               else ⊥).Realize v ↔ _
             rw [realize_ite_bot, realize_atomLitF]
             constructor

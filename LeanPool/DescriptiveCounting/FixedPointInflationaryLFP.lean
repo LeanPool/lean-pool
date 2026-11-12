@@ -106,12 +106,12 @@ open Classical in
 bound on the binder depths of all their subformulas. -/
 noncomputable def hX : ℕ :=
   letI := Fintype.ofFinite d.B.ι
-  (Finset.univ.sup fun i => ctxB (stepB d i) : ℕ)
+  (Finset.univ.sup fun i => contextBound (stepB d i) : ℕ)
 
-private theorem ctxB_le_hX (i : d.B.ι) : ctxB (stepB d i) ≤ hX d := by
+private theorem contextBound_le_hX (i : d.B.ι) : contextBound (stepB d i) ≤ hX d := by
   let := Fintype.ofFinite d.B.ι
-  have h : ctxB (stepB d i) ≤ (Finset.univ.sup fun i => ctxB (stepB d i) : ℕ) :=
-    Finset.le_sup (f := fun i => ctxB (stepB d i)) (Finset.mem_univ i)
+  have h : contextBound (stepB d i) ≤ (Finset.univ.sup fun i => contextBound (stepB d i) : ℕ) :=
+    Finset.le_sup (f := fun i => contextBound (stepB d i)) (Finset.mem_univ i)
   exact h
 
 /-- The universally quantified first-order variables shared by all clauses:
@@ -140,7 +140,7 @@ instance : Finite (SubIx d) :=
 
 /-- The binder depth of a subformula index is within the evaluation block. -/
 theorem subIx_le_hX (x : SubIx d) : x.2.1.1 ≤ hX d :=
-  le_trans (fst_le_ctxB x.2.2) (ctxB_le_hX d x.1)
+  le_trans (fst_le_contextBound x.2.2) (contextBound_le_hX d x.1)
 
 /-- The relation variables of the translated program: the answer variables
 `R`, the stages `S`, their complements `N`, the truth/falsity relations
@@ -775,8 +775,8 @@ private theorem realize_evTerm {r n : ℕ} (hn : n ≤ hX d) {V : Fin (kk d) →
     | inl e => exact e.elim
     | inr q => rfl
   rw [hval]
-  exact @realize_stripTerm (L.sum Language.order) d.B.lang _ _ A _
-    (d.B.structure (d.inflStage A r)) _ t
+  let : d.B.lang.Structure A := d.B.structure (d.inflStage A r)
+  exact realize_stripTerm (L₀ := L.sum Language.order) (R := d.B.lang) (A := A) _ t
 
 omit [L.Structure A] [LinearOrder A] in
 /-- The evaluation tuple of a wider context, as a `snoc`. -/

@@ -30,6 +30,7 @@ public import LeanPool.DescriptiveCounting.FixedPointReductionComposition
 public import LeanPool.DescriptiveCounting.FixedPointStep
 public import LeanPool.DescriptiveCounting.FixedPointStepRel
 public import LeanPool.DescriptiveCounting.FixedPointStratify
+public import LeanPool.DescriptiveCounting.Formula
 public import LeanPool.DescriptiveCounting.Hierarchy
 public import LeanPool.DescriptiveCounting.Interpretation
 public import LeanPool.DescriptiveCounting.Iterate

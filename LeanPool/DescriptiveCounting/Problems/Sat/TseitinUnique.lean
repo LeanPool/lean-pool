@@ -88,7 +88,7 @@ def VarCanon {n : ℕ} {f : (L.sum B.lang).BoundedFormula Empty n}
 clause of the Tseitin encoding is a propositional variable at a tuple that is
 canonical for it. -/
 theorem litSem_varCanon (s : Bool) :
-    ∀ {n : ℕ} (f : (L.sum B.lang).BoundedFormula Empty n) (h : maxCtx f ≤ D)
+    ∀ {n : ℕ} (f : (L.sum B.lang).BoundedFormula Empty n) (h : contextBound f ≤ D)
       {m : ℕ} (p : NodeAt f m) (k : Fin 3) (u : Fin D → A)
       (v : B.ι ⊕ Σ m', NodeAt f m') (x : Fin D → A),
       IsClauseSem f h p k u → LitSem s f h p k u v x → VarCanon v x

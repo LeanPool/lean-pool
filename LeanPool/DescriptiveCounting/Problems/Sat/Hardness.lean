@@ -67,9 +67,9 @@ variable {L : Language.{0, 0}} (B : SOBlock) (φ : (L.sum B.lang).Sentence)
 /-- The dimension of the Tseitin interpretation: large enough for every
 context tuple of the kernel and every argument tuple of a block variable. -/
 noncomputable def tseitinDim : ℕ :=
-  max (maxCtx φ) (blockArityBound B)
+  max (contextBound φ) (blockArityBound B)
 
-theorem maxCtx_le_tseitinDim : maxCtx φ ≤ tseitinDim B φ :=
+theorem contextBound_le_tseitinDim : contextBound φ ≤ tseitinDim B φ :=
   le_max_left _ _
 
 theorem arity_le_tseitinDim (i : B.ι) : B.arity i ≤ tseitinDim B φ :=
@@ -96,7 +96,7 @@ noncomputable def tseitinLitFml (s : Bool) (tc tx : TseitinTag B φ) :
     (L.sum Language.order).Formula (Fin 2 × Fin (tseitinDim B φ)) :=
   match tc, tx with
   | Sum.inl (Sum.inl (σp, k)), Sum.inr vt =>
-      litF s φ (maxCtx_le_tseitinDim B φ) σp.2 k vt
+      litF s φ (contextBound_le_tseitinDim B φ) σp.2 k vt
         (fun j => ((0 : Fin 2), j)) fun j => ((1 : Fin 2), j)
   | Sum.inl (Sum.inr _), Sum.inr (Sum.inr σp') =>
       if isRootB φ σp'.2 && s then
@@ -114,7 +114,7 @@ noncomputable def tseitinInterp :
     | _, .isClause => fun t =>
         (match t 0 with
          | Sum.inl (Sum.inl (σp, k)) =>
-             isClauseF φ (maxCtx_le_tseitinDim B φ) σp.2 k fun j => ((0 : Fin 1), j)
+             isClauseF φ (contextBound_le_tseitinDim B φ) σp.2 k fun j => ((0 : Fin 1), j)
          | Sum.inl (Sum.inr _) => canonF 0 fun j => ((0 : Fin 1), j)
          | Sum.inr _ => ⊥)
     | _, .posIn => fun t => tseitinLitFml B φ true (t 0) (t 1)
@@ -130,9 +130,9 @@ private theorem tseitin_isClause_node (σp : Σ m, NodeAt φ m) (k : Fin 3)
     (u : Fin (tseitinDim B φ) → A) :
     RelMap (M := (tseitinInterp B φ).Map A) satIsClause
         ![(Sum.inl (Sum.inl (σp, k)), u)] ↔
-      IsClauseSem φ (maxCtx_le_tseitinDim B φ) σp.2 k u := by
+      IsClauseSem φ (contextBound_le_tseitinDim B φ) σp.2 k u := by
   rw [FOInterpretation.relMap_map]
-  exact realize_isClauseF φ (maxCtx_le_tseitinDim B φ) σp.2 k fun j => (0, j)
+  exact realize_isClauseF φ (contextBound_le_tseitinDim B φ) σp.2 k fun j => (0, j)
 
 private theorem tseitin_isClause_top (u : Fin (tseitinDim B φ) → A) :
     RelMap (M := (tseitinInterp B φ).Map A) satIsClause
@@ -152,7 +152,7 @@ def TseitinLitSem (s : Bool) (tc tx : TseitinTag B φ)
     (u x : Fin (tseitinDim B φ) → A) : Prop :=
   match tc, tx with
   | Sum.inl (Sum.inl (σp, k)), Sum.inr vt =>
-      LitSem s φ (maxCtx_le_tseitinDim B φ) σp.2 k u vt x
+      LitSem s φ (contextBound_le_tseitinDim B φ) σp.2 k u vt x
   | Sum.inl (Sum.inr _), Sum.inr (Sum.inr σp') =>
       s = true ∧ σp' = ⟨0, rootAt φ⟩ ∧ Canon 0 u ∧ Canon 0 x
   | _, _ => False
@@ -175,7 +175,7 @@ private theorem tseitin_lit_iff (s : Bool) (tc tx : TseitinTag B φ)
   · rcases tcl with ⟨σp, k⟩ | u'
     · rcases tx with txl | vt
       · exact iff_of_false id id
-      · exact realize_litF s φ (maxCtx_le_tseitinDim B φ) σp.2 k vt
+      · exact realize_litF s φ (contextBound_le_tseitinDim B φ) σp.2 k vt
           (fun j => (0, j)) fun j => (1, j)
     · rcases tx with txl | vt
       · exact iff_of_false id id
@@ -228,7 +228,7 @@ def tseitinVal (μ : B.Assignment A) (vt : B.ι ⊕ Σ m, NodeAt φ m)
   | Sum.inl i => μ i fun j => x (Fin.castLE (arity_le_tseitinDim B φ i) j)
   | Sum.inr σp =>
       canonVal μ φ σp.1 σp.2
-        (pref ((nodeAt_le_maxCtx φ σp.2).trans (maxCtx_le_tseitinDim B φ)) x)
+        (pref ((nodeAt_le_contextBound φ σp.2).trans (contextBound_le_tseitinDim B φ)) x)
 
 omit [LinearOrder A] in
 theorem padAssign_tseitinVal (a₀ : A) (μ : B.Assignment A) :
@@ -242,7 +242,7 @@ theorem padVal_tseitinVal (a₀ : A) (μ : B.Assignment A) :
     padVal a₀ (tseitinVal B φ μ) = canonVal μ φ := by
   funext m p w
   change canonVal μ φ m p
-    (pref ((nodeAt_le_maxCtx φ p).trans (maxCtx_le_tseitinDim B φ)) (pad a₀ w)) =
+    (pref ((nodeAt_le_contextBound φ p).trans (contextBound_le_tseitinDim B φ)) (pad a₀ w)) =
       canonVal μ φ m p w
   exact congrArg (canonVal μ φ m p) (pref_pad a₀ _ w)
 
@@ -257,7 +257,7 @@ theorem tseitin_gates_of_clauses {a₀ : A} (ha₀ : IsBot a₀)
     Gates (padAssign a₀ fun vt x => ν (Sum.inr vt, x)) φ
         (padVal a₀ fun vt x => ν (Sum.inr vt, x)) ∧
       RealizeWith (padAssign a₀ fun vt x => ν (Sum.inr vt, x)) φ finZeroElim := by
-  have hctx := maxCtx_le_tseitinDim B φ
+  have hctx := contextBound_le_tseitinDim B φ
   have harity := arity_le_tseitinDim B φ
   have hsat : SatCond φ hctx fun vt x => ν (Sum.inr vt, x) := by
     intro m p k u hcl
@@ -307,7 +307,7 @@ private theorem tseitin_clauses_of_realize {a₀ : A} (ha₀ : IsBot a₀) (μ :
     (hνμ : ∀ vt x, ν (Sum.inr vt, x) ↔ tseitinVal B φ μ vt x)
     (c : (tseitinInterp B φ).Map A) (hcl : RelMap satIsClause ![c]) :
     ∃ x, (RelMap satPosIn ![c, x] ∧ ν x) ∨ (RelMap satNegIn ![c, x] ∧ ¬ν x) := by
-  have hctx := maxCtx_le_tseitinDim B φ
+  have hctx := contextBound_le_tseitinDim B φ
   have harity := arity_le_tseitinDim B φ
   have hg : Gates (padAssign a₀ (tseitinVal B φ μ)) φ (padVal a₀ (tseitinVal B φ μ)) := by
     rw [padAssign_tseitinVal, padVal_tseitinVal]
@@ -334,9 +334,9 @@ private theorem tseitin_clauses_of_realize {a₀ : A} (ha₀ : IsBot a₀) (μ :
         (Sum.inr (Sum.inr ⟨0, rootAt φ⟩)) u _).mpr
         ⟨rfl, rfl, hcl, canon_pad ha₀ 0 _⟩
     · change canonVal μ φ 0 (rootAt φ)
-        (pref ((nodeAt_le_maxCtx φ (rootAt φ)).trans hctx) (pad a₀ finZeroElim))
+        (pref ((nodeAt_le_contextBound φ (rootAt φ)).trans hctx) (pad a₀ finZeroElim))
       refine (canonVal_rootAt μ φ _).mpr ?_
-      have he : (pref ((nodeAt_le_maxCtx φ (rootAt φ)).trans hctx)
+      have he : (pref ((nodeAt_le_contextBound φ (rootAt φ)).trans hctx)
           (pad a₀ finZeroElim) : Fin 0 → A) = finZeroElim :=
         Subsingleton.elim _ _
       rw [he]
@@ -369,7 +369,7 @@ theorem sorealize_head_iff {A : Type} [L.Structure A] :
   refine exists_congr fun μ => ?_
   exact iff_of_eq (congrArg₂
     (fun (v : Empty → A) (xs : Fin 0 → A) =>
-      @BoundedFormula.Realize _ A (assignStructure L μ) _ _ φ v xs)
+      @BoundedFormula.Realize _ A (B.structure₁ (L := L) μ) _ _ φ v xs)
     (Subsingleton.elim _ _) (Subsingleton.elim _ _))
 
 /-- **The generic Tseitin reduction**: an ordered first-order reduction to

@@ -258,7 +258,7 @@ theorem sharp_occurs_canon {e : (sharpTseitinInterp B φ).Map A}
     rcases tcl with ⟨σp, k⟩ | u'
     · rcases tx with txl | vt
       · exact hls.elim
-      · exact ⟨vt, x, rfl, litSem_varCanon s φ (maxCtx_le_tseitinDim B φ) σp.2 k u vt x
+      · exact ⟨vt, x, rfl, litSem_varCanon s φ (contextBound_le_tseitinDim B φ) σp.2 k u vt x
           ((tseitin_isClause_node B φ σp k u).mp hc') hls⟩
     · rcases tx with txl | vt
       · exact hls.elim
@@ -361,7 +361,8 @@ noncomputable def sharpModelEquiv (A : Type) [L.Structure A] [LinearOrder A] {a�
     rcases vt with i | ⟨m, p⟩
     · have hx := pad_pref_of_canon ha₀ (arity_le_tseitinDim B φ i) hcan
       exact iff_of_eq (congrArg (fun y => ν (sharpOldPt (tseitinVarPt (Sum.inl i) y))) hx)
-    · have hm : m ≤ tseitinDim B φ := (nodeAt_le_maxCtx φ p).trans (maxCtx_le_tseitinDim B φ)
+    · have hm : m ≤ tseitinDim B φ :=
+        (nodeAt_le_contextBound φ p).trans (contextBound_le_tseitinDim B φ)
       have hx := pad_pref_of_canon ha₀ hm hcan
       refine (gates_unique _ φ _ hg m p (pref hm x)).symm.trans ?_
       exact iff_of_eq (congrArg (fun y => ν (sharpOldPt (tseitinVarPt (Sum.inr ⟨m, p⟩) y))) hx)
@@ -383,7 +384,7 @@ private theorem realize_iff_realizeWith {A : Type} [L.Structure A] (μ : B.Assig
       RealizeWith μ φ finZeroElim :=
   iff_of_eq (congrArg₂
     (fun (v : Empty → A) (xs : Fin 0 → A) =>
-      @BoundedFormula.Realize _ A (assignStructure L μ) _ _ φ v xs)
+      @BoundedFormula.Realize _ A (B.structure₁ (L := L) μ) _ _ φ v xs)
     (Subsingleton.elim _ _) (Subsingleton.elim _ _))
 
 /-- **Correctness of the parsimonious Tseitin interpretation**: the interpreted

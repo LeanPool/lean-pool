@@ -5,6 +5,8 @@ Authors: Pierre Senellart
 -/
 module
 
+public import LeanPool.DescriptiveCounting.Formula
+
 public import LeanPool.DescriptiveCounting.SecondOrder
 public import LeanPool.DescriptiveCounting.Padding
 import Mathlib.Tactic.FinCases
@@ -137,37 +139,21 @@ private theorem sigma_map_eq_iff {β β' : ℕ → Type} (F : ∀ m, β m → β
     subst h1
     exact congrArg (Sigma.mk m₁) (congrArg (F m₁) (eq_of_heq h2))
 
-/-- The largest context length occurring in a formula. -/
-def maxCtx : ∀ {n : ℕ}, L'.BoundedFormula Empty n → ℕ
-  | n, .falsum => n
-  | n, .equal _ _ => n
-  | n, .rel _ _ => n
-  | _, .imp f₁ f₂ => max (maxCtx f₁) (maxCtx f₂)
-  | _, .all f => maxCtx f
-
-/-- A formula's own index is a context length, hence bounded by `maxCtx`. -/
-theorem le_maxCtx : ∀ {n : ℕ} (f : L'.BoundedFormula Empty n), n ≤ maxCtx f
-  | _, .falsum => le_rfl
-  | _, .equal _ _ => le_rfl
-  | _, .rel _ _ => le_rfl
-  | _, .imp f₁ _ => (le_maxCtx f₁).trans (le_max_left _ _)
-  | n, .all f => (Nat.le_succ n).trans (le_maxCtx f)
-
-/-- Context lengths of actual positions are bounded by `maxCtx`. -/
-theorem nodeAt_le_maxCtx :
-    ∀ {n : ℕ} (f : L'.BoundedFormula Empty n) {m : ℕ}, NodeAt f m → m ≤ maxCtx f
+/-- Context lengths of actual positions are bounded by `contextBound`. -/
+theorem nodeAt_le_contextBound :
+    ∀ {n : ℕ} (f : L'.BoundedFormula Empty n) {m : ℕ}, NodeAt f m → m ≤ contextBound f
   | _, .falsum, _, p => by obtain ⟨rfl⟩ := p; exact le_rfl
   | _, .equal _ _, _, p => by obtain ⟨rfl⟩ := p; exact le_rfl
   | _, .rel _ _, _, p => by obtain ⟨rfl⟩ := p; exact le_rfl
   | _, .imp f₁ f₂, _, p => by
       obtain ⟨⟨rfl⟩⟩ | q | q := p
-      · exact le_maxCtx _
-      · exact (nodeAt_le_maxCtx f₁ q).trans (le_max_left _ _)
-      · exact (nodeAt_le_maxCtx f₂ q).trans (le_max_right _ _)
+      · exact le_contextBound _
+      · exact (nodeAt_le_contextBound f₁ q).trans (le_max_left _ _)
+      · exact (nodeAt_le_contextBound f₂ q).trans (le_max_right _ _)
   | _, .all f, _, p => by
       obtain ⟨⟨rfl⟩⟩ | q := p
-      · exact le_maxCtx _
-      · exact nodeAt_le_maxCtx f q
+      · exact le_contextBound _
+      · exact nodeAt_le_contextBound f q
 
 private def rootSigmaEquiv (n : ℕ) : PUnit.{1} ≃ (Σ m, PLift (n = m)) where
   toFun _ := ⟨n, ⟨rfl⟩⟩
@@ -196,64 +182,17 @@ instance finite_sigma_nodeAt :
 
 end Nodes
 
-/-! ### Terms of the expanded language -/
-
-section Terms
-
-variable {L : Language.{0, 0}} {B : SOBlock}
-
-/-- A term of the language expanded by a (relational) block is a term of the
-base language. -/
-def termToL {α : Type} : (L.sum B.lang).Term α → L.Term α
-  | .var a => .var a
-  | .func f ts =>
-      match f with
-      | Sum.inl f => .func f fun i => termToL (ts i)
-      | Sum.inr f => isEmptyElim f
-
-/-- Reembedding `termToL` into the expanded language gives the term back. -/
-private theorem sumInl_onTerm_termToL {α : Type} (t : (L.sum B.lang).Term α) :
-    LHom.sumInl.onTerm (termToL t) = t := by
-  induction t with
-  | var a => rfl
-  | func f ts ih =>
-      cases f with
-      | inl f =>
-          change Term.func (Sum.inl f) (fun i => LHom.sumInl.onTerm (termToL (ts i))) = _
-          exact congrArg _ (funext ih)
-      | inr f => exact isEmptyElim f
-
-variable {A : Type}
-
-/-- Realization of `termToL` in the base structure agrees with realization of
-the term in any expansion. -/
-private theorem realize_termToL [L.Structure A] [(L.sum B.lang).Structure A]
-    [(LHom.sumInl : L →ᴸ L.sum B.lang).IsExpansionOn A] {α : Type}
-    (t : (L.sum B.lang).Term α) (v : α → A) :
-    (termToL t).realize v = t.realize v := by
-  conv_rhs => rw [← sumInl_onTerm_termToL t]
-  exact (LHom.realize_onTerm _ _ _).symm
-
-end Terms
-
 /-! ### Gates: correctness of a valuation of the position variables -/
 
 section Gates
 
 variable {L : Language.{0, 0}} {B : SOBlock} {A : Type}
 
-/-- The expansion of an `L`-structure by a block assignment. -/
-@[instance_reducible]
-def assignStructure (L : Language.{0, 0}) [L.Structure A] {B : SOBlock}
-    (μ : B.Assignment A) : (L.sum B.lang).Structure A :=
-  letI := B.structure μ
-  inferInstance
-
 /-- Realization of a kernel formula in the expansion of an `L`-structure by a
 block assignment. -/
 def RealizeWith [L.Structure A] (μ : B.Assignment A) {n : ℕ}
     (f : (L.sum B.lang).BoundedFormula Empty n) (w : Fin n → A) : Prop :=
-  letI := assignStructure L μ
+  letI := B.structure₁ (L := L) μ
   f.Realize isEmptyElim w
 
 variable [L.Structure A]
@@ -261,20 +200,20 @@ variable [L.Structure A]
 /-- The truth value of an equality atom of the kernel under a context
 tuple. -/
 def eqGuard {m : ℕ} (t₁ t₂ : (L.sum B.lang).Term (Empty ⊕ Fin m)) (w : Fin m → A) : Prop :=
-  (termToL t₁).realize (Sum.elim isEmptyElim w) =
-    (termToL t₂).realize (Sum.elim isEmptyElim w)
+  (stripTerm t₁).realize (Sum.elim isEmptyElim w) =
+    (stripTerm t₂).realize (Sum.elim isEmptyElim w)
 
 /-- The truth value of an input-relation atom of the kernel under a context
 tuple. -/
 def relGuard {m l : ℕ} (r : L.Relations l)
     (ts : Fin l → (L.sum B.lang).Term (Empty ⊕ Fin m)) (w : Fin m → A) : Prop :=
-  RelMap r fun k => (termToL (ts k)).realize (Sum.elim isEmptyElim w)
+  RelMap r fun k => (stripTerm (ts k)).realize (Sum.elim isEmptyElim w)
 
 /-- The truth value of a block-variable atom of the kernel under an
 assignment and a context tuple. -/
 def blockAtom (μ : B.Assignment A) {m l : ℕ} (r : B.lang.Relations l)
     (ts : Fin l → (L.sum B.lang).Term (Empty ⊕ Fin m)) (w : Fin m → A) : Prop :=
-  μ r.1 fun k => (termToL (ts (Fin.cast r.2 k))).realize (Sum.elim isEmptyElim w)
+  μ r.1 fun k => (stripTerm (ts (Fin.cast r.2 k))).realize (Sum.elim isEmptyElim w)
 
 /-- The truth value of an arbitrary atom of the kernel. -/
 def atomHolds (μ : B.Assignment A) {m l : ℕ} (R : (L.sum B.lang).Relations l)
@@ -346,7 +285,7 @@ private theorem realizeWith_equal {n : ℕ} (t₁ t₂ : (L.sum B.lang).Term (Em
     (w : Fin n → A) : RealizeWith μ (.equal t₁ t₂) w ↔ eqGuard t₁ t₂ w := by
   let := B.structure μ
   change t₁.realize (Sum.elim isEmptyElim w) = t₂.realize (Sum.elim isEmptyElim w) ↔ _
-  rw [eqGuard, realize_termToL t₁, realize_termToL t₂]
+  rw [eqGuard, realize_stripTerm _ t₁, realize_stripTerm _ t₂]
 
 private theorem realizeWith_rel {n l : ℕ} (R : (L.sum B.lang).Relations l)
     (ts : Fin l → (L.sum B.lang).Term (Empty ⊕ Fin n)) (w : Fin n → A) :
@@ -357,12 +296,12 @@ private theorem realizeWith_rel {n l : ℕ} (R : (L.sum B.lang).Relations l)
       change RelMap r (fun k => (ts k).realize (Sum.elim isEmptyElim w)) ↔
         relGuard r ts w
       rw [relGuard]
-      simp only [realize_termToL]
+      simp only [realize_stripTerm]
   | inr r =>
       change μ r.1 (fun j => (ts (Fin.cast r.2 j)).realize (Sum.elim isEmptyElim w)) ↔
         blockAtom μ r ts w
       rw [blockAtom]
-      simp only [realize_termToL]
+      simp only [realize_stripTerm]
 
 private theorem realizeWith_imp {n : ℕ} (f₁ f₂ : (L.sum B.lang).BoundedFormula Empty n)
     (w : Fin n → A) :
@@ -424,7 +363,7 @@ term values as prefix. -/
 def atomLit {m l : ℕ} (ts : Fin l → (L.sum B.lang).Term (Empty ⊕ Fin m))
     (w : Fin m → A) (x : Fin D → A) : Prop :=
   Canon l x ∧ ∀ (j : Fin D) (hj : (j : ℕ) < l),
-    x j = (termToL (ts ⟨(j : ℕ), hj⟩)).realize (Sum.elim isEmptyElim w)
+    x j = (stripTerm (ts ⟨(j : ℕ), hj⟩)).realize (Sum.elim isEmptyElim w)
 
 /-- The clauses of the Tseitin encoding, as a predicate on positions, clause
 kinds (`Fin 3`) and canonical `D`-tuples:
@@ -440,19 +379,19 @@ kinds (`Fin 3`) and canonical `D`-tuples:
   `¬v(p, w) ∨ c(w ⌢ a)`; kind 1, the wide clause
   `v(p, w) ∨ ⋁_a ¬c(w ⌢ a)`. -/
 def IsClauseSem :
-    ∀ {n : ℕ} (f : (L.sum B.lang).BoundedFormula Empty n), maxCtx f ≤ D →
+    ∀ {n : ℕ} (f : (L.sum B.lang).BoundedFormula Empty n), contextBound f ≤ D →
       ∀ {m : ℕ}, NodeAt f m → Fin 3 → (Fin D → A) → Prop
   | n, .falsum, _, _, _, k, u => k = 0 ∧ Canon n u
   | n, .equal t₁ t₂, h, _, _, k, u =>
       Canon n u ∧
-        ((k = 0 ∧ eqGuard t₁ t₂ (pref ((le_maxCtx _).trans h) u)) ∨
-         (k = 1 ∧ ¬eqGuard t₁ t₂ (pref ((le_maxCtx _).trans h) u)))
+        ((k = 0 ∧ eqGuard t₁ t₂ (pref ((le_contextBound _).trans h) u)) ∨
+         (k = 1 ∧ ¬eqGuard t₁ t₂ (pref ((le_contextBound _).trans h) u)))
   | n, .rel R ts, h, _, _, k, u =>
       (match R with
        | Sum.inl r =>
            Canon n u ∧
-             ((k = 0 ∧ relGuard r ts (pref ((le_maxCtx _).trans h) u)) ∨
-              (k = 1 ∧ ¬relGuard r ts (pref ((le_maxCtx _).trans h) u)))
+             ((k = 0 ∧ relGuard r ts (pref ((le_contextBound _).trans h) u)) ∨
+              (k = 1 ∧ ¬relGuard r ts (pref ((le_contextBound _).trans h) u)))
        | Sum.inr _ => Canon n u ∧ (k = 0 ∨ k = 1))
   | n, .imp f₁ f₂, h, _, p, k, u =>
       (match p with
@@ -470,7 +409,7 @@ or a position) at tuple `x` occurs with sign `s` in the clause `(p, k, u)`.
 The clause-existence guards of `DescriptiveComplexity.Tseitin.IsClauseSem` are not
 repeated here. -/
 def LitSem (s : Bool) :
-    ∀ {n : ℕ} (f : (L.sum B.lang).BoundedFormula Empty n), maxCtx f ≤ D →
+    ∀ {n : ℕ} (f : (L.sum B.lang).BoundedFormula Empty n), contextBound f ≤ D →
       ∀ {m : ℕ}, NodeAt f m → Fin 3 → (Fin D → A) →
         (B.ι ⊕ Σ m', NodeAt f m') → (Fin D → A) → Prop
   | n, .falsum, _, _, _, k, u, v, x =>
@@ -487,7 +426,7 @@ def LitSem (s : Bool) :
            (v = Sum.inr ⟨n, ⟨rfl⟩⟩ ∧ x = u ∧
               ((s = false ∧ k = 0) ∨ (s = true ∧ k = 1))) ∨
            (v = Sum.inl r.1 ∧
-              atomLit ts (pref ((le_maxCtx _).trans h) u) x ∧
+              atomLit ts (pref ((le_contextBound _).trans h) u) x ∧
               ((s = true ∧ k = 0) ∨ (s = false ∧ k = 1))))
   | n, .imp f₁ f₂, h, _, p, k, u, v, x =>
       (match p with
@@ -542,7 +481,7 @@ variable [L.Structure A] [LinearOrder A]
 
 /-- Every clause of the encoding contains a literal made true by the
 valuation `tv` of the propositional variables. -/
-def SatCond {n : ℕ} (f : (L.sum B.lang).BoundedFormula Empty n) (hctx : maxCtx f ≤ D)
+def SatCond {n : ℕ} (f : (L.sum B.lang).BoundedFormula Empty n) (hctx : contextBound f ≤ D)
     (tv : (B.ι ⊕ Σ m, NodeAt f m) → (Fin D → A) → Prop) : Prop :=
   ∀ (m : ℕ) (p : NodeAt f m) (k : Fin 3) (u : Fin D → A),
     IsClauseSem f hctx p k u →
@@ -566,11 +505,11 @@ propositional variables makes every clause of the Tseitin encoding true iff
 the valuation it induces on positions (through canonical padding) satisfies
 every gate, with the block variables read off the atom variables. -/
 theorem satCond_iff_gates {a₀ : A} (h₀ : IsBot a₀) (harity : ∀ i : B.ι, B.arity i ≤ D) :
-    ∀ {n : ℕ} (f : (L.sum B.lang).BoundedFormula Empty n) (hctx : maxCtx f ≤ D)
+    ∀ {n : ℕ} (f : (L.sum B.lang).BoundedFormula Empty n) (hctx : contextBound f ≤ D)
       (tv : (B.ι ⊕ Σ m, NodeAt f m) → (Fin D → A) → Prop),
       SatCond f hctx tv ↔ Gates (padAssign a₀ tv) f (padVal a₀ tv)
   | n, .falsum, hctx, tv => by
-      have hn : n ≤ D := (le_maxCtx _).trans hctx
+      have hn : n ≤ D := (le_contextBound _).trans hctx
       constructor
       · intro hsat w
         obtain ⟨v, x, ⟨hlit, -⟩ | ⟨hlit, hv⟩⟩ :=
@@ -585,7 +524,7 @@ theorem satCond_iff_gates {a₀ : A} (h₀ : IsBot a₀) (harity : ∀ i : B.ι,
         rw [← pad_pref_of_canon h₀ hn hu]
         exact hg (pref hn u)
   | n, .equal t₁ t₂, hctx, tv => by
-      have hn : n ≤ D := (le_maxCtx _).trans hctx
+      have hn : n ≤ D := (le_contextBound _).trans hctx
       constructor
       · intro hsat w
         constructor
@@ -620,7 +559,7 @@ theorem satCond_iff_gates {a₀ : A} (h₀ : IsBot a₀) (harity : ∀ i : B.ι,
           rw [← pad_pref_of_canon h₀ hn hu] at hv
           exact hguard ((hg (pref hn u)).mp hv)
   | n, .rel R ts, hctx, tv => by
-      have hn : n ≤ D := (le_maxCtx _).trans hctx
+      have hn : n ≤ D := (le_contextBound _).trans hctx
       cases R with
       | inl r =>
           constructor
@@ -664,7 +603,7 @@ theorem satCond_iff_gates {a₀ : A} (h₀ : IsBot a₀) (harity : ∀ i : B.ι,
           have hAL : ∀ (w : Fin n → A) (x : Fin D → A),
               atomLit (D := D) ts w x ↔
                 x = pad a₀
-                  (fun k => (termToL (ts k)).realize (Sum.elim isEmptyElim w)) := by
+                  (fun k => (stripTerm (ts k)).realize (Sum.elim isEmptyElim w)) := by
             intro w x
             constructor
             · rintro ⟨hcx, hval⟩
@@ -714,7 +653,7 @@ theorem satCond_iff_gates {a₀ : A} (h₀ : IsBot a₀) (harity : ∀ i : B.ι,
             obtain ⟨hu, hk⟩ := hcl
             have hgu : tv (Sum.inr ⟨n, ⟨rfl⟩⟩) (pad a₀ (pref hn u)) ↔
                 tv (Sum.inl i) (pad a₀ (fun k =>
-                  (termToL (ts k)).realize (Sum.elim isEmptyElim (pref hn u)))) :=
+                  (stripTerm (ts k)).realize (Sum.elim isEmptyElim (pref hn u)))) :=
               hg (pref hn u)
             rw [pad_pref_of_canon h₀ hn hu] at hgu
             rcases hk with rfl | rfl
@@ -731,9 +670,9 @@ theorem satCond_iff_gates {a₀ : A} (h₀ : IsBot a₀) (harity : ∀ i : B.ι,
                   Or.inr ⟨Or.inr ⟨rfl, (hAL (pref hn u) _).mpr rfl,
                     Or.inr ⟨rfl, rfl⟩⟩, fun h => hv (hgu.mpr h)⟩⟩
   | n, .imp f₁ f₂, hctx, tv => by
-      have hn : n ≤ D := (le_maxCtx (f₁.imp f₂)).trans hctx
-      have h₁ : maxCtx f₁ ≤ D := (le_max_left _ _).trans hctx
-      have h₂ : maxCtx f₂ ≤ D := (le_max_right _ _).trans hctx
+      have hn : n ≤ D := (le_contextBound (f₁.imp f₂)).trans hctx
+      have h₁ : contextBound f₁ ≤ D := (le_max_left _ _).trans hctx
+      have h₂ : contextBound f₂ ≤ D := (le_max_right _ _).trans hctx
       constructor
       · intro hsat
         refine ⟨fun w => ?_, ?_, ?_⟩
@@ -891,8 +830,8 @@ theorem satCond_iff_gates {a₀ : A} (h₀ : IsBot a₀) (harity : ∀ i : B.ι,
           · exact ⟨Sum.inl i, x, hor⟩
           · exact ⟨Sum.inr ⟨m', Sum.inr (Sum.inr q')⟩, x, hor⟩
   | n, .all f, hctx, tv => by
-      have hn : n ≤ D := (le_maxCtx f.all).trans hctx
-      have hn1 : n + 1 ≤ D := (le_maxCtx f).trans hctx
+      have hn : n ≤ D := (le_contextBound f.all).trans hctx
+      have hn1 : n + 1 ≤ D := (le_contextBound f).trans hctx
       have hnD : n < D := Nat.lt_of_lt_of_le (Nat.lt_succ_self n) hn1
       constructor
       · intro hsat

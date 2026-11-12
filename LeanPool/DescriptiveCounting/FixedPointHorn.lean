@@ -5,6 +5,8 @@ Authors: Pierre Senellart
 -/
 module
 
+public import LeanPool.DescriptiveCounting.Formula
+
 public import Mathlib.Algebra.Order.BigOperators.Group.Finset
 public import LeanPool.DescriptiveCounting.FixedPoint
 public import LeanPool.DescriptiveCounting.OrderWalk
@@ -80,150 +82,6 @@ open FirstOrder
 
 open Language Structure
 
-/-! ### Stripping a relational summand out of terms -/
-
-section Strip
-
-variable {L₀ R : Language.{0, 0}} [R.IsRelational] {α : Type}
-
-/-- A term over `L₀.sum R` with `R` relational is a term over `L₀`: the
-summand contributes no function symbols. -/
-def stripTerm : (L₀.sum R).Term α → L₀.Term α
-  | .var a => .var a
-  | .func (Sum.inl f) ts => .func f fun i => stripTerm (ts i)
-  | .func (Sum.inr f) _ => isEmptyElim f
-
-private theorem realize_stripTerm {A : Type} [L₀.Structure A] [R.Structure A] (v : α → A)
-    (t : (L₀.sum R).Term α) :
-    (stripTerm t).realize v = Term.realize (L := L₀.sum R) v t := by
-  induction t with
-  | var a => rfl
-  | func f ts ih =>
-    cases f with
-    | inl f =>
-      rw [stripTerm]
-      simp only [Term.realize_func]
-      exact congrArg _ (funext fun i => ih i)
-    | inr f => exact isEmptyElim f
-
-end Strip
-
-/-! ### The subformula closure of a sentence, as a list -/
-
-section Subformulas
-
-variable {Lg : Language.{0, 0}}
-
-/-- The subformulas of a bounded formula over `Empty`, each with its binder
-depth, as a list; the formula itself is included. -/
-def subs : ∀ {n : ℕ}, Lg.BoundedFormula Empty n → List (Σ n' : ℕ, Lg.BoundedFormula Empty n')
-  | n, .falsum => [⟨n, .falsum⟩]
-  | n, .equal t u => [⟨n, .equal t u⟩]
-  | n, .rel r ts => [⟨n, .rel r ts⟩]
-  | n, .imp a b => ⟨n, a.imp b⟩ :: (subs a ++ subs b)
-  | n, .all a => ⟨n, a.all⟩ :: subs a
-
-theorem self_mem_subs {n : ℕ} (φ : Lg.BoundedFormula Empty n) : ⟨n, φ⟩ ∈ subs φ := by
-  cases φ <;> simp [subs]
-
-theorem subs_trans {n : ℕ} {φ : Lg.BoundedFormula Empty n}
-    {x : Σ n', Lg.BoundedFormula Empty n'} (hx : x ∈ subs φ) : subs x.2 ⊆ subs φ := by
-  obtain ⟨nx, ψ⟩ := x
-  induction φ with
-  | falsum =>
-    rw [subs, List.mem_singleton] at hx
-    obtain ⟨rfl, h⟩ := Sigma.mk.injEq .. ▸ hx
-    obtain rfl := eq_of_heq h
-    exact fun y hy => hy
-  | equal t u =>
-    rw [subs, List.mem_singleton] at hx
-    obtain ⟨rfl, h⟩ := Sigma.mk.injEq .. ▸ hx
-    obtain rfl := eq_of_heq h
-    exact fun y hy => hy
-  | rel r ts =>
-    rw [subs, List.mem_singleton] at hx
-    obtain ⟨rfl, h⟩ := Sigma.mk.injEq .. ▸ hx
-    obtain rfl := eq_of_heq h
-    exact fun y hy => hy
-  | imp a b iha ihb =>
-    rw [subs, List.mem_cons] at hx
-    rcases hx with hx | hx
-    · obtain ⟨rfl, h⟩ := Sigma.mk.injEq .. ▸ hx
-      obtain rfl := eq_of_heq h
-      exact fun y hy => hy
-    · rcases List.mem_append.mp hx with hx | hx
-      · exact List.Subset.trans (iha hx)
-          (List.subset_cons_of_subset _ (List.subset_append_left _ _))
-      · exact List.Subset.trans (ihb hx)
-          (List.subset_cons_of_subset _ (List.subset_append_right _ _))
-  | all a iha =>
-    rw [subs, List.mem_cons] at hx
-    rcases hx with hx | hx
-    · obtain ⟨rfl, h⟩ := Sigma.mk.injEq .. ▸ hx
-      obtain rfl := eq_of_heq h
-      exact fun y hy => hy
-    · exact List.Subset.trans (iha hx) (List.subset_cons_self _ _)
-
-theorem left_mem_subs_imp {n : ℕ} (a b : Lg.BoundedFormula Empty n) :
-    (⟨n, a⟩ : Σ n', Lg.BoundedFormula Empty n') ∈ subs (a.imp b) := by
-  rw [subs, List.mem_cons]
-  exact Or.inr (List.mem_append_left _ (self_mem_subs a))
-
-theorem right_mem_subs_imp {n : ℕ} (a b : Lg.BoundedFormula Empty n) :
-    (⟨n, b⟩ : Σ n', Lg.BoundedFormula Empty n') ∈ subs (a.imp b) := by
-  rw [subs, List.mem_cons]
-  exact Or.inr (List.mem_append_right _ (self_mem_subs b))
-
-theorem mem_subs_all {n : ℕ} (a : Lg.BoundedFormula Empty (n + 1)) :
-    (⟨n + 1, a⟩ : Σ n', Lg.BoundedFormula Empty n') ∈ subs a.all := by
-  rw [subs, List.mem_cons]
-  exact Or.inr (self_mem_subs a)
-
-/-- A bound on the binder depths of the subformula closure. -/
-def ctxB : ∀ {n : ℕ}, Lg.BoundedFormula Empty n → ℕ
-  | _, .imp a b => max (ctxB a) (ctxB b)
-  | _, .all a => ctxB a
-  | n, _ => n
-
-private theorem le_ctxB : ∀ {n : ℕ} (φ : Lg.BoundedFormula Empty n), n ≤ ctxB φ
-  | _, .falsum => le_rfl
-  | _, .equal _ _ => le_rfl
-  | _, .rel _ _ => le_rfl
-  | _, .imp a _ => le_trans (le_ctxB a) (le_max_left _ _)
-  | _, .all a => le_trans (Nat.le_succ _) (le_ctxB a)
-
-private theorem fst_le_ctxB {n : ℕ} {φ : Lg.BoundedFormula Empty n}
-    {x : Σ n', Lg.BoundedFormula Empty n'} (hx : x ∈ subs φ) : x.1 ≤ ctxB φ := by
-  induction φ with
-  | falsum =>
-    rw [subs, List.mem_singleton] at hx
-    rw [congrArg Sigma.fst hx]
-    exact le_rfl
-  | equal t u =>
-    rw [subs, List.mem_singleton] at hx
-    rw [congrArg Sigma.fst hx]
-    exact le_rfl
-  | rel r ts =>
-    rw [subs, List.mem_singleton] at hx
-    rw [congrArg Sigma.fst hx]
-    exact le_rfl
-  | imp a b iha ihb =>
-    rw [subs, List.mem_cons] at hx
-    rcases hx with hx | hx
-    · rw [congrArg Sigma.fst hx]
-      exact le_ctxB _
-    · rcases List.mem_append.mp hx with hx | hx
-      · exact le_trans (iha hx) (le_max_left _ _)
-      · exact le_trans (ihb hx) (le_max_right _ _)
-  | all a iha =>
-    rw [subs, List.mem_cons] at hx
-    rcases hx with hx | hx
-    · rw [congrArg Sigma.fst hx]
-      exact le_ctxB _
-    · exact iha hx
-
-end Subformulas
-
 namespace LFPHorn
 
 variable {L : Language.{0, 0}} (d : LFPDef L)
@@ -261,7 +119,7 @@ structure. -/
 noncomputable def hs : ℕ := hc d + 1
 
 /-- The number of variables reserved for evaluating the output sentence. -/
-noncomputable def hX : ℕ := ctxB d.out
+noncomputable def hX : ℕ := contextBound d.out
 
 /-- The universally quantified first-order variables shared by all clauses of
 the translated program: three stage-tuple blocks, two valuation blocks, the
@@ -275,7 +133,7 @@ theorem ctx_le_hX {n : ℕ}
     {ψ : ((L.sum Language.order).sum d.B.lang).BoundedFormula Empty n}
     (h : (⟨n, ψ⟩ : Σ n', ((L.sum Language.order).sum d.B.lang).BoundedFormula
       Empty n') ∈ subs d.out) : n ≤ hX d :=
-  fst_le_ctxB h
+  fst_le_contextBound h
 
 /-- The left subformula of an implication in the output. -/
 theorem left_mem_out {n : ℕ}
@@ -1010,8 +868,8 @@ private theorem realize_evTerm {n : ℕ} (hn : n ≤ hX d) {V : Fin (kk d) → A
     | inl e => exact e.elim
     | inr q => rfl
   rw [hval]
-  exact @realize_stripTerm (L.sum Language.order) d.B.lang _ _ A _
-    (d.B.structure (lfpAssign d.rules)) _ t
+  let : d.B.lang.Structure A := d.B.structure (lfpAssign d.rules)
+  exact realize_stripTerm (L₀ := L.sum Language.order) (R := d.B.lang) (A := A) _ t
 
 omit [L.Structure A] [LinearOrder A] in
 /-- The evaluation tuple of a wider context, as a `snoc`. -/
