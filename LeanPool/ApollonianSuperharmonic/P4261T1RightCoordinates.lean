@@ -46,40 +46,32 @@ private theorem hvector :
     (by
       classical
       exact
-        ∀ (q : Fin 4 → CircleCoordinates), ∀ (C : BandCircle), ∀ (T : ProtoTile), ∀ (h :
-            PartialOdometer), ∀ (q'' : Fin (4 : ℕ) → CircleCoordinates), ∀ (i'' : Fin (3 : ℕ)), ∀
-            (s : Bool), ∀ (S' : Fin (3 : ℕ) → Bool → ProtoTile), ∀ (hs' : Fin (3 : ℕ) → Bool →
-            PartialOdometer), (q'' i''.succ = C.1.1) → ((T.cells = (S' i'' s).cells) →
-            (((↑h.domain : Set GaussianInt) = (↑(hs' i'' s).domain : Set GaussianInt)) → ((∀ x ∈
-            h.domain, h.value x = (hs' i'' s).value x) → (∀ (r : Fin (3 : ℕ)), (∀ (j : Fin (3 :
-            ℕ)), q'' j.succ = q (j + r).succ) → (
-        let j : Fin 3 := i'' + r
-        (q'' i''.succ = q j.succ) → (BandVectors.1 (q'' ((i'' + 2).succ)) (q'' ((i'' + 1).succ))
-            = BandVectors.1 (q ((j + 2).succ)) (q ((j + 1).succ)))))))) ) := by
+        ∀ (q q'' : Fin (4 : ℕ) → CircleCoordinates)
+          (i'' r : Fin (3 : ℕ)),
+          (∀ (j : Fin (3 : ℕ)), q'' j.succ = q (j + r).succ) →
+            let j := i'' + r;
+            BandVectors.1 (q'' (i'' + (2 : Fin (3 : ℕ))).succ)
+                (q'' (i'' + (1 : Fin (3 : ℕ))).succ) =
+              BandVectors.1 (q (j + (2 : Fin (3 : ℕ))).succ)
+                (q (j + (1 : Fin (3 : ℕ))).succ)) := by
   classical
-  intro q C T h q'' i'' s S' hs' hq''i hselectedCells hselectedDomain hselectedValue r hrotate j
-      hparent
+  intro q q'' i'' r hrotate j
   rw [hrotate (i'' + 2), hrotate (i'' + 1)]; dsimp [j]; fin_cases r <;> fin_cases i'' <;> rfl
 
 private theorem hslopeVector :
     (by
       classical
       exact
-        ∀ (q : Fin 4 → CircleCoordinates), ∀ (C : BandCircle), ∀ (T : ProtoTile), ∀ (h :
-            PartialOdometer), ∀ (q'' : Fin (4 : ℕ) → CircleCoordinates), ∀ (i'' : Fin (3 : ℕ)), ∀
-            (s : Bool), ∀ (S' : Fin (3 : ℕ) → Bool → ProtoTile), ∀ (hs' : Fin (3 : ℕ) → Bool →
-            PartialOdometer), (q'' i''.succ = C.1.1) → ((T.cells = (S' i'' s).cells) →
-            (((↑h.domain : Set GaussianInt) = (↑(hs' i'' s).domain : Set GaussianInt)) → ((∀ x ∈
-            h.domain, h.value x = (hs' i'' s).value x) → (∀ (r : Fin (3 : ℕ)), (∀ (j : Fin (3 :
-            ℕ)), q'' j.succ = q (j + r).succ) → (
-        let j : Fin 3 := i'' + r
-        (q'' i''.succ = q j.succ) → ((BandVectors.1 (q'' ((i'' + 2).succ)) (q'' ((i'' + 1).succ))
-            = BandVectors.1 (q ((j + 2).succ)) (q ((j + 1).succ))) → (BandVectors.2 (q'' ((i'' +
-            2).succ)) (q'' ((i'' + 1).succ)) = BandVectors.2 (q ((j + 2).succ)) (q ((j +
-            1).succ))))))))) ) := by
+        ∀ (q q'' : Fin (4 : ℕ) → CircleCoordinates)
+          (i'' r : Fin (3 : ℕ)),
+          (∀ (j : Fin (3 : ℕ)), q'' j.succ = q (j + r).succ) →
+            let j := i'' + r;
+            BandVectors.2 (q'' (i'' + (2 : Fin (3 : ℕ))).succ)
+                (q'' (i'' + (1 : Fin (3 : ℕ))).succ) =
+              BandVectors.2 (q (j + (2 : Fin (3 : ℕ))).succ)
+                (q (j + (1 : Fin (3 : ℕ))).succ)) := by
   classical
-  intro q C T h q'' i'' s S' hs' hq''i hselectedCells hselectedDomain hselectedValue r hrotate j
-      hparent hvector
+  intro q q'' i'' r hrotate j
   rw [hrotate (i'' + 2), hrotate (i'' + 1)]; dsimp [j]; fin_cases r <;> fin_cases i'' <;> rfl
 
 private theorem hsCent :
@@ -979,10 +971,8 @@ theorem P4261T1RightCoordinates
   let j : Fin 3 := i'' + r
   have hparent : q'' i''.succ = q j.succ := by
     simpa [j] using hrotate i''
-  have hvector := RightCoordinateGeometry.hvector q C T h q'' i'' s S' hs' hq''i hselectedCells
-      hselectedDomain hselectedValue r hrotate hparent
-  have hslopeVector := RightCoordinateGeometry.hslopeVector q C T h q'' i'' s S' hs' hq''i
-      hselectedCells hselectedDomain hselectedValue r hrotate hparent hvector
+  have hvector := RightCoordinateGeometry.hvector q q'' i'' r hrotate
+  have hslopeVector := RightCoordinateGeometry.hslopeVector q q'' i'' r hrotate
   have hsCent := RightCoordinateGeometry.hsCent q N q'' i'' s S' hcent' R hrootCent r hvector
   have hbandSelected := RightCoordinateGeometry.hbandSelected q q'' i'' s S' hs' hchild' r hparent
   have hbandFresh : BandPrototile (q j.succ) (R j s) :=

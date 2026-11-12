@@ -316,39 +316,23 @@ private theorem holdShift :
     (by
       classical
       exact
-        ∀ (q : Fin 4 → CircleCoordinates), ∀ (cfg : BandOrderedGeneralConfiguration q), ∀ (C :
-            BandCircle), ∀ (T : ProtoTile), ∀ (cert : BandOrderedGeneralLayoutCertificate q cfg C
-            T), ∀ (a : PeriodicSubtileIndex), ∀ (b : PeriodicSubtileIndex), ∀ (row :
-            BandOrderedGeneralSelectedContactRow q cfg C T cert a b), ∀ (data :
-            P4418T3SelectedInterfaceData (SubtileOccurrenceInterpretation cert.P cert.u cert.v
-            a) (SubtileOccurrenceInterpretation cert.P cert.u cert.v b)
-            (SubtileOccurrenceInterpretation cert.P cert.u cert.v (P4418T3EndpointOwnerIndices
-            q cfg C T cert a b row).1) (SubtileOccurrenceInterpretation cert.P cert.u cert.v
-            (P4418T3EndpointOwnerIndices q cfg C T cert a b row).2)), ∀ (z :
-            P3996T1SRowParameters), (P3996T1SRowTable q cfg C T cert row = some z) → (∀ (E :
-            ExactTileInterfaceTriple (SubtileOccurrenceInterpretation cert.P cert.u cert.v
-            z.childIndex) (TileTranslation (SubtileOccurrenceInterpretation cert.P cert.u cert.v
-            z.childIndex) z.rightShift) (SubtileOccurrenceInterpretation cert.P cert.u cert.v
-            z.parentIndex)), ((TileTranslation (SubtileOccurrenceInterpretation cert.P cert.u
-            cert.v z.childIndex) z.rightShift).cells ⊆ (TileTranslation T z.oldShift).cells) → (
-        let occ := SubtileOccurrenceInterpretation cert.P cert.u cert.v
-        let V := occ z.childIndex
-        let W := occ z.parentIndex
-        let K := TileTranslation V z.rightShift
-        (if z.childIsExterior = true then z.childIndex = a ∧ z.parentIndex = b else z.childIndex
-            = b ∧ z.parentIndex = a) → ((SimpleGridPathBetween (FootprintVertices V ∩
-            FootprintVertices W) (FootprintEdges V ∩ FootprintEdges W) E.point E.otherCA) →
-            ((({data.first, data.last} : Finset GaussianInt) = ({E.point, E.otherCA} : Finset
-            GaussianInt)) → ((E.point = data.first ∨ E.point = data.last) → ((∀ (i :
-            PeriodicSubtileIndex), ∀ (r : Int), ∀ (s : Int), (z.oldShift = (r : GaussianInt) *
-            cert.u + (s : GaussianInt) * cert.v) → (((i.first, i.second) ≠ (r, s)) → (Disjoint
-            K.cells (occ i).cells))) → ((LatticeTile V) → ((LatticeTile W) → ((LatticeTile K) → (
-        let oldCoords : Int × Int := nestedOldCoordinates row
-        z.oldShift = (oldCoords.1 : GaussianInt) * cert.u + (oldCoords.2 : GaussianInt) *
-            cert.v)))))))))) ) := by
+        ∀ (q : Fin (4 : ℕ) → CircleCoordinates)
+          (cfg : BandOrderedGeneralConfiguration q)
+          (C : BandCircle)
+          (T : ProtoTile)
+          (cert : BandOrderedGeneralLayoutCertificate q cfg C T)
+          (a b : PeriodicSubtileIndex)
+          (row :
+            BandOrderedGeneralSelectedContactRow q cfg C T cert
+              a b)
+          (z : P3996T1SRowParameters),
+          P3996T1SRowTable q cfg C T cert row = some z →
+            let oldCoords := nestedOldCoordinates row;
+            z.oldShift =
+              (↑oldCoords.1 : GaussianInt) * cert.u +
+                (↑oldCoords.2 : GaussianInt) * cert.v) := by
   classical
-  intro q cfg C T cert a b row data z hz E hsub occ V W K hindices hpath hdataEndpoints
-      hpointPair hKDisjoint hLV hLW hLK oldCoords
+  intro q cfg C T cert a b row z hz oldCoords
   cases row <;> simp only [P3996T1SRowTable, Fin.isValue, Int.reduceNeg, Option.some.injEq,
       reduceCtorEq] at hz
   all_goals cases hz
@@ -359,39 +343,21 @@ private theorem hchildBlockNe :
     (by
       classical
       exact
-        ∀ (q : Fin 4 → CircleCoordinates), ∀ (cfg : BandOrderedGeneralConfiguration q), ∀ (C :
-            BandCircle), ∀ (T : ProtoTile), ∀ (cert : BandOrderedGeneralLayoutCertificate q cfg C
-            T), ∀ (a : PeriodicSubtileIndex), ∀ (b : PeriodicSubtileIndex), ∀ (row :
-            BandOrderedGeneralSelectedContactRow q cfg C T cert a b), ∀ (data :
-            P4418T3SelectedInterfaceData (SubtileOccurrenceInterpretation cert.P cert.u cert.v
-            a) (SubtileOccurrenceInterpretation cert.P cert.u cert.v b)
-            (SubtileOccurrenceInterpretation cert.P cert.u cert.v (P4418T3EndpointOwnerIndices
-            q cfg C T cert a b row).1) (SubtileOccurrenceInterpretation cert.P cert.u cert.v
-            (P4418T3EndpointOwnerIndices q cfg C T cert a b row).2)), ∀ (z :
-            P3996T1SRowParameters), (P3996T1SRowTable q cfg C T cert row = some z) → (∀ (E :
-            ExactTileInterfaceTriple (SubtileOccurrenceInterpretation cert.P cert.u cert.v
-            z.childIndex) (TileTranslation (SubtileOccurrenceInterpretation cert.P cert.u cert.v
-            z.childIndex) z.rightShift) (SubtileOccurrenceInterpretation cert.P cert.u cert.v
-            z.parentIndex)), ((TileTranslation (SubtileOccurrenceInterpretation cert.P cert.u
-            cert.v z.childIndex) z.rightShift).cells ⊆ (TileTranslation T z.oldShift).cells) → (
-        let occ := SubtileOccurrenceInterpretation cert.P cert.u cert.v
-        let V := occ z.childIndex
-        let W := occ z.parentIndex
-        let K := TileTranslation V z.rightShift
-        (if z.childIsExterior = true then z.childIndex = a ∧ z.parentIndex = b else z.childIndex
-            = b ∧ z.parentIndex = a) → ((SimpleGridPathBetween (FootprintVertices V ∩
-            FootprintVertices W) (FootprintEdges V ∩ FootprintEdges W) E.point E.otherCA) →
-            ((({data.first, data.last} : Finset GaussianInt) = ({E.point, E.otherCA} : Finset
-            GaussianInt)) → ((E.point = data.first ∨ E.point = data.last) → ((∀ (i :
-            PeriodicSubtileIndex), ∀ (r : Int), ∀ (s : Int), (z.oldShift = (r : GaussianInt) *
-            cert.u + (s : GaussianInt) * cert.v) → (((i.first, i.second) ≠ (r, s)) → (Disjoint
-            K.cells (occ i).cells))) → ((LatticeTile V) → ((LatticeTile W) → ((LatticeTile K) → (
-        let oldCoords : Int × Int := nestedOldCoordinates row
-        (z.oldShift = (oldCoords.1 : GaussianInt) * cert.u + (oldCoords.2 : GaussianInt) *
-            cert.v) → ((z.childIndex.first, z.childIndex.second) ≠ oldCoords))))))))))) ) := by
+        ∀ (q : Fin (4 : ℕ) → CircleCoordinates)
+          (cfg : BandOrderedGeneralConfiguration q)
+          (C : BandCircle)
+          (T : ProtoTile)
+          (cert : BandOrderedGeneralLayoutCertificate q cfg C T)
+          (a b : PeriodicSubtileIndex)
+          (row :
+            BandOrderedGeneralSelectedContactRow q cfg C T cert
+              a b)
+          (z : P3996T1SRowParameters),
+          P3996T1SRowTable q cfg C T cert row = some z →
+            let oldCoords := nestedOldCoordinates row;
+            (z.childIndex.first, z.childIndex.second) ≠ oldCoords) := by
   classical
-  intro q cfg C T cert a b row data z hz E hsub occ V W K hindices hpath hdataEndpoints
-      hpointPair hKDisjoint hLV hLW hLK oldCoords holdShift
+  intro q cfg C T cert a b row z hz oldCoords
   cases row <;> simp only [P3996T1SRowTable, Fin.isValue, Int.reduceNeg, Option.some.injEq,
       reduceCtorEq] at hz
   all_goals
@@ -402,40 +368,21 @@ private theorem hparentBlockNe :
     (by
       classical
       exact
-        ∀ (q : Fin 4 → CircleCoordinates), ∀ (cfg : BandOrderedGeneralConfiguration q), ∀ (C :
-            BandCircle), ∀ (T : ProtoTile), ∀ (cert : BandOrderedGeneralLayoutCertificate q cfg C
-            T), ∀ (a : PeriodicSubtileIndex), ∀ (b : PeriodicSubtileIndex), ∀ (row :
-            BandOrderedGeneralSelectedContactRow q cfg C T cert a b), ∀ (data :
-            P4418T3SelectedInterfaceData (SubtileOccurrenceInterpretation cert.P cert.u cert.v
-            a) (SubtileOccurrenceInterpretation cert.P cert.u cert.v b)
-            (SubtileOccurrenceInterpretation cert.P cert.u cert.v (P4418T3EndpointOwnerIndices
-            q cfg C T cert a b row).1) (SubtileOccurrenceInterpretation cert.P cert.u cert.v
-            (P4418T3EndpointOwnerIndices q cfg C T cert a b row).2)), ∀ (z :
-            P3996T1SRowParameters), (P3996T1SRowTable q cfg C T cert row = some z) → (∀ (E :
-            ExactTileInterfaceTriple (SubtileOccurrenceInterpretation cert.P cert.u cert.v
-            z.childIndex) (TileTranslation (SubtileOccurrenceInterpretation cert.P cert.u cert.v
-            z.childIndex) z.rightShift) (SubtileOccurrenceInterpretation cert.P cert.u cert.v
-            z.parentIndex)), ((TileTranslation (SubtileOccurrenceInterpretation cert.P cert.u
-            cert.v z.childIndex) z.rightShift).cells ⊆ (TileTranslation T z.oldShift).cells) → (
-        let occ := SubtileOccurrenceInterpretation cert.P cert.u cert.v
-        let V := occ z.childIndex
-        let W := occ z.parentIndex
-        let K := TileTranslation V z.rightShift
-        (if z.childIsExterior = true then z.childIndex = a ∧ z.parentIndex = b else z.childIndex
-            = b ∧ z.parentIndex = a) → ((SimpleGridPathBetween (FootprintVertices V ∩
-            FootprintVertices W) (FootprintEdges V ∩ FootprintEdges W) E.point E.otherCA) →
-            ((({data.first, data.last} : Finset GaussianInt) = ({E.point, E.otherCA} : Finset
-            GaussianInt)) → ((E.point = data.first ∨ E.point = data.last) → ((∀ (i :
-            PeriodicSubtileIndex), ∀ (r : Int), ∀ (s : Int), (z.oldShift = (r : GaussianInt) *
-            cert.u + (s : GaussianInt) * cert.v) → (((i.first, i.second) ≠ (r, s)) → (Disjoint
-            K.cells (occ i).cells))) → ((LatticeTile V) → ((LatticeTile W) → ((LatticeTile K) → (
-        let oldCoords : Int × Int := nestedOldCoordinates row
-        (z.oldShift = (oldCoords.1 : GaussianInt) * cert.u + (oldCoords.2 : GaussianInt) *
-            cert.v) → (((z.childIndex.first, z.childIndex.second) ≠ oldCoords) →
-            ((z.parentIndex.first, z.parentIndex.second) ≠ oldCoords)))))))))))) ) := by
+        ∀ (q : Fin (4 : ℕ) → CircleCoordinates)
+          (cfg : BandOrderedGeneralConfiguration q)
+          (C : BandCircle)
+          (T : ProtoTile)
+          (cert : BandOrderedGeneralLayoutCertificate q cfg C T)
+          (a b : PeriodicSubtileIndex)
+          (row :
+            BandOrderedGeneralSelectedContactRow q cfg C T cert
+              a b)
+          (z : P3996T1SRowParameters),
+          P3996T1SRowTable q cfg C T cert row = some z →
+            let oldCoords := nestedOldCoordinates row;
+            (z.parentIndex.first, z.parentIndex.second) ≠ oldCoords) := by
   classical
-  intro q cfg C T cert a b row data z hz E hsub occ V W K hindices hpath hdataEndpoints
-      hpointPair hKDisjoint hLV hLW hLK oldCoords holdShift hchildBlockNe
+  intro q cfg C T cert a b row z hz oldCoords
   cases row <;> simp only [P3996T1SRowTable, Fin.isValue, Int.reduceNeg, Option.some.injEq,
       reduceCtorEq] at hz
   all_goals
@@ -446,44 +393,26 @@ private theorem hwrongBlockNe :
     (by
       classical
       exact
-        ∀ (q : Fin 4 → CircleCoordinates), ∀ (cfg : BandOrderedGeneralConfiguration q), ∀ (C :
-            BandCircle), ∀ (T : ProtoTile), ∀ (cert : BandOrderedGeneralLayoutCertificate q cfg C
-            T), ∀ (a : PeriodicSubtileIndex), ∀ (b : PeriodicSubtileIndex), ∀ (row :
-            BandOrderedGeneralSelectedContactRow q cfg C T cert a b), ∀ (data :
-            P4418T3SelectedInterfaceData (SubtileOccurrenceInterpretation cert.P cert.u cert.v
-            a) (SubtileOccurrenceInterpretation cert.P cert.u cert.v b)
-            (SubtileOccurrenceInterpretation cert.P cert.u cert.v (P4418T3EndpointOwnerIndices
-            q cfg C T cert a b row).1) (SubtileOccurrenceInterpretation cert.P cert.u cert.v
-            (P4418T3EndpointOwnerIndices q cfg C T cert a b row).2)), ∀ (z :
-            P3996T1SRowParameters), (P3996T1SRowTable q cfg C T cert row = some z) → (∀ (E :
-            ExactTileInterfaceTriple (SubtileOccurrenceInterpretation cert.P cert.u cert.v
-            z.childIndex) (TileTranslation (SubtileOccurrenceInterpretation cert.P cert.u cert.v
-            z.childIndex) z.rightShift) (SubtileOccurrenceInterpretation cert.P cert.u cert.v
-            z.parentIndex)), ((TileTranslation (SubtileOccurrenceInterpretation cert.P cert.u
-            cert.v z.childIndex) z.rightShift).cells ⊆ (TileTranslation T z.oldShift).cells) → (
-        let occ := SubtileOccurrenceInterpretation cert.P cert.u cert.v
-        let V := occ z.childIndex
-        let W := occ z.parentIndex
-        let K := TileTranslation V z.rightShift
-        (if z.childIsExterior = true then z.childIndex = a ∧ z.parentIndex = b else z.childIndex
-            = b ∧ z.parentIndex = a) → ((SimpleGridPathBetween (FootprintVertices V ∩
-            FootprintVertices W) (FootprintEdges V ∩ FootprintEdges W) E.point E.otherCA) →
-            ((({data.first, data.last} : Finset GaussianInt) = ({E.point, E.otherCA} : Finset
-            GaussianInt)) → ((E.point = data.first ∨ E.point = data.last) → ((∀ (i :
-            PeriodicSubtileIndex), ∀ (r : Int), ∀ (s : Int), (z.oldShift = (r : GaussianInt) *
-            cert.u + (s : GaussianInt) * cert.v) → (((i.first, i.second) ≠ (r, s)) → (Disjoint
-            K.cells (occ i).cells))) → ((LatticeTile V) → ((LatticeTile W) → ((LatticeTile K) → (
-        let oldCoords : Int × Int := nestedOldCoordinates row
-        (z.oldShift = (oldCoords.1 : GaussianInt) * cert.u + (oldCoords.2 : GaussianInt) *
-            cert.v) → (((z.childIndex.first, z.childIndex.second) ≠ oldCoords) →
-            (((z.parentIndex.first, z.parentIndex.second) ≠ oldCoords) → (
-        let owners := P4418T3EndpointOwnerIndices q cfg C T cert a b row
-        let wrongOwner := if z.parentSlot = 0 then owners.2 else owners.1
-        (wrongOwner.first, wrongOwner.second) ≠ oldCoords))))))))))))) ) := by
+        ∀ (q : Fin (4 : ℕ) → CircleCoordinates)
+          (cfg : BandOrderedGeneralConfiguration q)
+          (C : BandCircle)
+          (T : ProtoTile)
+          (cert : BandOrderedGeneralLayoutCertificate q cfg C T)
+          (a b : PeriodicSubtileIndex)
+          (row :
+            BandOrderedGeneralSelectedContactRow q cfg C T cert
+              a b)
+          (z : P3996T1SRowParameters),
+          P3996T1SRowTable q cfg C T cert row = some z →
+            let oldCoords := nestedOldCoordinates row;
+            let owners :=
+              P4418T3EndpointOwnerIndices q cfg C T cert a b
+                row;
+            let wrongOwner :=
+              if z.parentSlot = (0 : Fin (3 : ℕ)) then owners.2 else owners.1;
+            (wrongOwner.first, wrongOwner.second) ≠ oldCoords) := by
   classical
-  intro q cfg C T cert a b row data z hz E hsub occ V W K hindices hpath hdataEndpoints
-      hpointPair hKDisjoint hLV hLW hLK oldCoords holdShift hchildBlockNe hparentBlockNe owners
-      wrongOwner
+  intro q cfg C T cert a b row z hz oldCoords owners wrongOwner
   cases row <;> simp only [P3996T1SRowTable, Fin.isValue, Int.reduceNeg, Option.some.injEq,
       reduceCtorEq] at hz
   all_goals
@@ -780,17 +709,12 @@ theorem P4418T3NestedCompanionEndpoint
   have hLK : LatticeTile K :=
     (TileDiskAreaCovariance V z.rightShift).1.mp hLV
   let oldCoords : Int × Int := nestedOldCoordinates row
-  have holdShift := NestedCompanionGeometry.holdShift q cfg C T cert a b row data z hz E hsub
-      hindices hpath hdataEndpoints hpointPair hKDisjoint hLV hLW hLK
-  have hchildBlockNe := NestedCompanionGeometry.hchildBlockNe q cfg C T cert a b row data z hz E
-      hsub hindices hpath hdataEndpoints hpointPair hKDisjoint hLV hLW hLK holdShift
-  have hparentBlockNe := NestedCompanionGeometry.hparentBlockNe q cfg C T cert a b row data z hz
-      E hsub hindices hpath hdataEndpoints hpointPair hKDisjoint hLV hLW hLK holdShift hchildBlockNe
+  have holdShift := NestedCompanionGeometry.holdShift q cfg C T cert a b row z hz
+  have hchildBlockNe := NestedCompanionGeometry.hchildBlockNe q cfg C T cert a b row z hz
+  have hparentBlockNe := NestedCompanionGeometry.hparentBlockNe q cfg C T cert a b row z hz
   let owners := P4418T3EndpointOwnerIndices q cfg C T cert a b row
   let wrongOwner := if z.parentSlot = 0 then owners.2 else owners.1
-  have hwrongBlockNe := NestedCompanionGeometry.hwrongBlockNe q cfg C T cert a b row data z hz E
-      hsub hindices hpath hdataEndpoints hpointPair hKDisjoint hLV hLW hLK holdShift
-      hchildBlockNe hparentBlockNe
+  have hwrongBlockNe := NestedCompanionGeometry.hwrongBlockNe q cfg C T cert a b row z hz
   have hKV : Disjoint K.cells V.cells :=
     hKDisjoint z.childIndex oldCoords.1 oldCoords.2 holdShift hchildBlockNe
   have hKW : Disjoint K.cells W.cells :=

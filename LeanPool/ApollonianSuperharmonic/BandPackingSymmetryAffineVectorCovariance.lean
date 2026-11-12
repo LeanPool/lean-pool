@@ -621,42 +621,15 @@ private theorem hu :
     (by
       classical
       exact
-        ∀ (g : BandPackingSymmetry), ∀ (q : Fin 4 → CircleCoordinates), ∀ (negative : Bool),
-            (BandPackingSymmetryScopedPhase g q negative) → (∀ (i : Fin (3 : ℕ)),
-        let epsilon : GaussianInt := if negative then -1 else 1
-        (epsilon * epsilon = 1) → ((∀ (V : GaussianInt), ∀ (A : GaussianInt), ∀ (b :
-            GaussianInt), V ≠ 0 → 2 * V * A = 2 * (epsilon * V) * b → b = epsilon * A) →
-            ((BandVectors.2 (BandPackingSymmetryQuadrupleAction g q (if
-            BandPackingSymmetryReversesOrientation g = true then -i else i).succ)
-            (BandPackingSymmetryQuadrupleAction g q (0 : Fin (4 : ℕ))) = epsilon *
-            (BandPackingSymmetryAffineVectorAction g (BandVectors.1 (q i.succ) (q (0 : Fin (4 :
-            ℕ))), BandVectors.2 (q i.succ) (q (0 : Fin (4 : ℕ))))).2) → (((BandVectors.1
-            (BandPackingSymmetryQuadrupleAction g q (-i).succ)
-            (BandPackingSymmetryQuadrupleAction g q (0 : Fin (4 : ℕ))) = if negative = true then
-            -BandPackingSymmetryVectorAction g (BandVectors.1 (q i.succ) (q (0 : Fin (4 : ℕ))))
-            else BandPackingSymmetryVectorAction g (BandVectors.1 (q i.succ) (q (0 : Fin (4 :
-            ℕ))))) ∧ (BandVectors.1 (BandPackingSymmetryQuadrupleAction g q (0 : Fin (4 : ℕ)))
-            (BandPackingSymmetryQuadrupleAction g q (-i).succ) = -if negative = true then
-            -BandPackingSymmetryVectorAction g (BandVectors.1 (q (0 : Fin (4 : ℕ))) (q i.succ))
-            else BandPackingSymmetryVectorAction g (BandVectors.1 (q (0 : Fin (4 : ℕ))) (q
-            i.succ))) ∧ BandVectors.1 (BandPackingSymmetryQuadrupleAction g q (-i + (2 : Fin (3 :
-            ℕ))).succ) (BandPackingSymmetryQuadrupleAction g q (-i + (1 : Fin (3 : ℕ))).succ) =
-            if negative = true then -GaussianQuarterTurn (BandPackingSymmetryVectorAction g
-            (BandVectors.1 (q (i + (2 : Fin (3 : ℕ))).succ) (q (i + (1 : Fin (3 : ℕ))).succ)))
-            else GaussianQuarterTurn (BandPackingSymmetryVectorAction g (BandVectors.1 (q (i + (2
-            : Fin (3 : ℕ))).succ) (q (i + (1 : Fin (3 : ℕ))).succ)))) → (
-        let j : Fin 4 := (i + 2).succ
-        let k : Fin 4 := (i + 1).succ
-        let V := (BandPackingSymmetryAffineVectorAction g
-          (BandVectors.1 (q j) (q k), BandVectors.2 (q j) (q k))).1
-        let A := (BandPackingSymmetryAffineVectorAction g
-          (BandVectors.1 (q j) (q k), BandVectors.2 (q j) (q k))).2
-        (2 * V * A = 2 * (epsilon * GaussianQuarterTurn V) * (BandVectors.2
-            (BandPackingSymmetryQuadrupleAction g q (-i + 2).succ)
-            (BandPackingSymmetryQuadrupleAction g q (-i + 1).succ))) → ((epsilon *
-            GaussianQuarterTurn 1) * (-epsilon * GaussianQuarterTurn 1) = 1)))))) ) := by
+        ∀ (negative : Bool),
+          let epsilon :=
+            if negative = true then (-1 : GaussianInt) else (1 : GaussianInt);
+          epsilon * GaussianQuarterTurn (1 : GaussianInt) *
+              (-epsilon *
+                GaussianQuarterTurn (1 : GaussianInt)) =
+            (1 : GaussianInt)) := by
   classical
-  intro g q negative hphase i epsilon epsilonSquare slopeCancel incomingSlope hspatial j k V A hprod
+  intro negative epsilon
   cases negative <;> ext <;> norm_num [epsilon, GaussianQuarterTurn]
 
 private theorem quarterMul :
@@ -959,8 +932,7 @@ theorem BandPackingSymmetryAffineVectorCovariance
       have hv : V ≠ 0 := by
         exact cyclicFacts j k hjk
       have hu : (epsilon * GaussianQuarterTurn 1) *
-          (-epsilon * GaussianQuarterTurn 1) = 1 := AffineSymmetryCoordinates.hu g q negative
-              hphase i epsilonSquare slopeCancel incomingSlope hspatial hprod
+          (-epsilon * GaussianQuarterTurn 1) = 1 := AffineSymmetryCoordinates.hu negative
       have qmul : GaussianQuarterTurn V = GaussianQuarterTurn 1 * V := by
         ext <;> simp [GaussianQuarterTurn]
       have quarterMul : ∀ z : GaussianInt,

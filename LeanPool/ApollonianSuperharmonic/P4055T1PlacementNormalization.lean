@@ -95,43 +95,23 @@ private theorem hWlabel :
     (by
       classical
       exact
-        ∀ (r : Fin 4 → CircleCoordinates), ∀ (i : Fin 3), ∀ (s : Fin 4), ∀ (U : ProtoTile), ∀ (W
-            : ProtoTile), ∀ (Z : ProtoTile), (BandPrototile (r i.succ) W) → ((BandPrototile (r
-            (if Even (↑s : ℕ) then i - (1 : Fin (3 : ℕ)) else i + (1 : Fin (3 : ℕ))).succ) Z) →
-            (((0 : ℤ) < (r i.succ).1) → (((0 : ℤ) < (r (if Even (↑s : ℕ) then i - (1 : Fin (3 :
-            ℕ)) else i + (1 : Fin (3 : ℕ))).succ).1) → ((TileCentroid W - TileCentroid U = (1 / 2
-            : ℝ) • GaussianRealPoint ((⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt) ^ (↑s : ℕ) *
-            (BandVectors.1 (r i.succ) (r (0 : Fin (4 : ℕ))) + BandVectors.1 (r (0 : Fin (4 : ℕ)))
-            (r i.succ)))) → ((TileCentroid Z - TileCentroid U = (1 / 2 : ℝ) • GaussianRealPoint
-            ((⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt) ^ (↑s : ℕ) * if Even (↑s : ℕ) then BandVectors.1
-            (r (0 : Fin (4 : ℕ))) (r (i - (1 : Fin (3 : ℕ))).succ) - BandVectors.1 (r (i - (1 :
-            Fin (3 : ℕ))).succ) (r (0 : Fin (4 : ℕ))) else BandVectors.1 (r (i + (1 : Fin (3 :
-            ℕ))).succ) (r (0 : Fin (4 : ℕ))) - BandVectors.1 (r (0 : Fin (4 : ℕ))) (r (i + (1 :
-            Fin (3 : ℕ))).succ))) → (∀ (a : Fin 3), ∀ (g : BandPackingSymmetry),
-        let q : Fin 4 → CircleCoordinates :=
-          ![r 0, r a.succ, r (a + 1).succ, r (a + 2).succ]
-        (ProperBandQuadruple q) → (∀ (negative : Bool), (BandPackingSymmetryScopedPhase g q
-            negative) → ((∀ (r : Fin (4 : ℕ) → CircleCoordinates), ProperBandQuadruple r → r (0 :
-            Fin (4 : ℕ)) = q (1 : Fin (4 : ℕ)) → r (2 : Fin (4 : ℕ)) = q (2 : Fin (4 : ℕ)) → r (3
-            : Fin (4 : ℕ)) = q (3 : Fin (4 : ℕ)) → BandPackingSymmetryScopedPhase g r negative) →
-            ((∀ (t : Fin (4 : ℕ) → CircleCoordinates), ProperBandQuadruple t → t (0 : Fin (4 :
-            ℕ)) = q (2 : Fin (4 : ℕ)) → t (1 : Fin (4 : ℕ)) = q (3 : Fin (4 : ℕ)) →
-            BandPackingSymmetryScopedPhase g t negative) → (∀ (g' : BandPackingSymmetry),
-            (BandPackingSymmetryScopedPhase g' q false) → ((∀ (r : Fin (4 : ℕ) →
-            CircleCoordinates), ProperBandQuadruple r → r (0 : Fin (4 : ℕ)) = q (1 : Fin (4 : ℕ))
-            → r (2 : Fin (4 : ℕ)) = q (2 : Fin (4 : ℕ)) → r (3 : Fin (4 : ℕ)) = q (3 : Fin (4 :
-            ℕ)) → BandPackingSymmetryScopedPhase g' r false) → ((∀ (t : Fin (4 : ℕ) →
-            CircleCoordinates), ProperBandQuadruple t → t (0 : Fin (4 : ℕ)) = q (2 : Fin (4 : ℕ))
-            → t (1 : Fin (4 : ℕ)) = q (3 : Fin (4 : ℕ)) → BandPackingSymmetryScopedPhase g' t
-            false) → (
-        let qg := BandPackingSymmetryQuadrupleAction g' q
-        let k : Fin 3 := if BandPackingSymmetryReversesOrientation g'
-          then -(i - a) else i - a
-        (ProperBandQuadruple qg) → ((BandPrototile (qg 0) (BandPackingSymmetryTileAction g' U)) →
-            (qg k.succ = BandPackingSymmetryCircleAction g' (r i.succ)))))))))))))))) ) := by
+        ∀ (r : Fin (4 : ℕ) → CircleCoordinates)
+          (i a : Fin (3 : ℕ)),
+          let q :=
+            ![r (0 : Fin (4 : ℕ)), r a.succ, r (a + (1 : Fin (3 : ℕ))).succ,
+              r (a + (2 : Fin (3 : ℕ))).succ];
+          ∀ (g' : BandPackingSymmetry),
+            let qg := BandPackingSymmetryQuadrupleAction g' q;
+            let k :=
+              if
+                  BandPackingSymmetryReversesOrientation g' =
+                    true then
+                -(i - a)
+              else i - a;
+            qg k.succ =
+              BandPackingSymmetryCircleAction g' (r i.succ)) := by
   classical
-  intro r i s U W Z hW hZ hWpos hZpos hWcent hZcent a g q hq negative hphase hphase1 hphase2 g'
-      hfalse hfalse1 hfalse2 qg k hproperG hU'
+  intro r i a q g' qg k
   dsimp [qg, k, q, BandPackingSymmetryQuadrupleAction]
   cases ho : BandPackingSymmetryReversesOrientation g' <;>
     fin_cases a <;> fin_cases i <;>
@@ -141,33 +121,14 @@ private theorem cyclicIndex :
     (by
       classical
       exact
-        ∀ (r : Fin 4 → CircleCoordinates), ∀ (i : Fin 3), ∀ (U : ProtoTile), ∀ (a : Fin 3), ∀ (g
-            : BandPackingSymmetry),
-        let q : Fin 4 → CircleCoordinates :=
-          ![r 0, r a.succ, r (a + 1).succ, r (a + 2).succ]
-        (ProperBandQuadruple q) → (∀ (negative : Bool), (BandPackingSymmetryScopedPhase g q
-            negative) → ((∀ (r : Fin (4 : ℕ) → CircleCoordinates), ProperBandQuadruple r → r (0 :
-            Fin (4 : ℕ)) = q (1 : Fin (4 : ℕ)) → r (2 : Fin (4 : ℕ)) = q (2 : Fin (4 : ℕ)) → r (3
-            : Fin (4 : ℕ)) = q (3 : Fin (4 : ℕ)) → BandPackingSymmetryScopedPhase g r negative) →
-            ((∀ (t : Fin (4 : ℕ) → CircleCoordinates), ProperBandQuadruple t → t (0 : Fin (4 :
-            ℕ)) = q (2 : Fin (4 : ℕ)) → t (1 : Fin (4 : ℕ)) = q (3 : Fin (4 : ℕ)) →
-            BandPackingSymmetryScopedPhase g t negative) → (∀ (g' : BandPackingSymmetry),
-            (BandPackingSymmetryScopedPhase g' q false) → ((∀ (r : Fin (4 : ℕ) →
-            CircleCoordinates), ProperBandQuadruple r → r (0 : Fin (4 : ℕ)) = q (1 : Fin (4 : ℕ))
-            → r (2 : Fin (4 : ℕ)) = q (2 : Fin (4 : ℕ)) → r (3 : Fin (4 : ℕ)) = q (3 : Fin (4 :
-            ℕ)) → BandPackingSymmetryScopedPhase g' r false) → ((∀ (t : Fin (4 : ℕ) →
-            CircleCoordinates), ProperBandQuadruple t → t (0 : Fin (4 : ℕ)) = q (2 : Fin (4 : ℕ))
-            → t (1 : Fin (4 : ℕ)) = q (3 : Fin (4 : ℕ)) → BandPackingSymmetryScopedPhase g' t
-            false) → (
-        let qg := BandPackingSymmetryQuadrupleAction g' q
-        let k : Fin 3 := if BandPackingSymmetryReversesOrientation g'
-          then -(i - a) else i - a
-        (ProperBandQuadruple qg) → ((BandPrototile (qg 0) (BandPackingSymmetryTileAction g' U)) →
-            ((qg k.succ = BandPackingSymmetryCircleAction g' (r i.succ)) → (∀ (j₀ : Fin 3), q
-            j₀.succ = r (a + j₀).succ)))))))))) ) := by
+        ∀ (r : Fin (4 : ℕ) → CircleCoordinates)
+          (a : Fin (3 : ℕ)),
+          let q :=
+            ![r (0 : Fin (4 : ℕ)), r a.succ, r (a + (1 : Fin (3 : ℕ))).succ,
+              r (a + (2 : Fin (3 : ℕ))).succ];
+          ∀ (j₀ : Fin (3 : ℕ)), q j₀.succ = r (a + j₀).succ) := by
   classical
-  intro r i U a g q hq negative hphase hphase1 hphase2 g' hfalse hfalse1 hfalse2 qg k hproperG
-      hU' hWlabel j₀
+  intro r a q j₀
   dsimp [q]
   fin_cases a <;> fin_cases j₀ <;> rfl
 
@@ -1769,106 +1730,83 @@ private theorem hdR :
     (by
       classical
       exact
-        ∀ (r : Fin 4 → CircleCoordinates), ∀ (i : Fin 3), ∀ (s : Fin 4), ∀ (U : ProtoTile), ∀ (W
-            : ProtoTile), ∀ (Z : ProtoTile), (BandPrototile (r (if Even (↑s : ℕ) then i - (1 :
-            Fin (3 : ℕ)) else i + (1 : Fin (3 : ℕ))).succ) Z) → (((0 : ℤ) < (r (if Even (↑s : ℕ)
-            then i - (1 : Fin (3 : ℕ)) else i + (1 : Fin (3 : ℕ))).succ).1) → ((TileCentroid W -
-            TileCentroid U = (1 / 2 : ℝ) • GaussianRealPoint ((⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt)
-            ^ (↑s : ℕ) * (BandVectors.1 (r i.succ) (r (0 : Fin (4 : ℕ))) + BandVectors.1 (r (0 :
-            Fin (4 : ℕ))) (r i.succ)))) → ((TileCentroid Z - TileCentroid U = (1 / 2 : ℝ) •
-            GaussianRealPoint ((⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt) ^ (↑s : ℕ) * if Even (↑s : ℕ)
-            then BandVectors.1 (r (0 : Fin (4 : ℕ))) (r (i - (1 : Fin (3 : ℕ))).succ) -
-            BandVectors.1 (r (i - (1 : Fin (3 : ℕ))).succ) (r (0 : Fin (4 : ℕ))) else
-            BandVectors.1 (r (i + (1 : Fin (3 : ℕ))).succ) (r (0 : Fin (4 : ℕ))) - BandVectors.1
-            (r (0 : Fin (4 : ℕ))) (r (i + (1 : Fin (3 : ℕ))).succ))) → (∀ (a : Fin 3),
-        let q : Fin 4 → CircleCoordinates :=
-          ![r 0, r a.succ, r (a + 1).succ, r (a + 2).succ]
-        ∀ (g' : BandPackingSymmetry),
-        let qg := BandPackingSymmetryQuadrupleAction g' q
-        let k : Fin 3 := if BandPackingSymmetryReversesOrientation g'
-          then -(i - a) else i - a
-        let sigma : Fin 3 → Fin 3 := fun m =>
-          if BandPackingSymmetryReversesOrientation g' then -m else m
-        (Even 0) → ((Even 2) → ((¬ Even 1) → ((¬ Even 3) → ((∀ (s₀ : Fin 4), ((-s₀ - 1 : Fin 4) :
-            Nat) = (3 - s₀.val) % 4) → (
-        let ii : GaussianInt := ⟨0, 1⟩
-        (ii ^ 2 = -1) → ((ii ^ 3 = -ii) → (((-ii) ^ 2 = -1) → (((-ii) ^ 3 = ii) → ((∀ (g₀ :
-            BandPackingSymmetry), ∀ (n : Nat), ∀ (x : GaussianInt),
-            BandPackingSymmetryVectorAction g₀ (ii ^ n * x) = (if
-            BandPackingSymmetryReversesOrientation g₀ then (-ii) ^ n else ii ^ n) *
-            BandPackingSymmetryVectorAction g₀ x) → (
-        let vR := BandVectors.1 (r i.succ) (r 0)
-        let vL := BandVectors.1 (r 0) (r i.succ)
-        let vR' := BandVectors.1 (qg k.succ) (qg 0)
-        let vL' := BandVectors.1 (qg 0) (qg k.succ)
-        (vL' = ii * vR') → (
-        let t : Fin 4 := if BandPackingSymmetryReversesOrientation g'
-          then -s - 1 else s
-        (BandPackingSymmetryVectorAction g' (ii ^ s.val * (vR + vL)) = ii ^ t.val * (vR' + vL'))
-            → (((if Even t.val then k - 1 else k + 1) = if BandPackingSymmetryReversesOrientation
-            g' then -((if Even s.val then i - 1 else i + 1) - a) else (if Even s.val then i - 1
-            else i + 1) - a) → (
-        let j : Fin 3 := if Even t.val then k - 1 else k + 1
-        ((if BandPackingSymmetryReversesOrientation g' then -j else j) = (if Even s.val then i -
-            1 else i + 1) - a) → ((q ((if BandPackingSymmetryReversesOrientation g' then -j else
-            j).succ) = r ((if Even s.val then i - 1 else i + 1).succ)) → ((qg j.succ =
-            BandPackingSymmetryCircleAction g' (r ((if Even s.val then i - 1 else i + 1).succ))) → (
-        let adj : Fin 3 := if Even s.val then i - 1 else i + 1
-        let mZ : Fin 3 := adj - a
-        ((if BandPackingSymmetryReversesOrientation g' then -j else j) = mZ) → (((if
-            BandPackingSymmetryReversesOrientation g' then -mZ else mZ) = j) → ((sigma mZ = j) →
-            ((BandVectors.1 (qg j.succ) (qg 0) = BandPackingSymmetryVectorAction g'
-            (BandVectors.1 (r adj.succ) (r 0))) → ((BandVectors.1 (qg 0) (qg j.succ) = if
-            BandPackingSymmetryReversesOrientation g' then -BandPackingSymmetryVectorAction g'
-            (BandVectors.1 (r 0) (r adj.succ)) else BandPackingSymmetryVectorAction g'
-            (BandVectors.1 (r 0) (r adj.succ))) → (
-        let xZ := BandVectors.1 (r adj.succ) (r 0)
-        let yZ := BandVectors.1 (r 0) (r adj.succ)
-        let xZ' := BandVectors.1 (qg j.succ) (qg 0)
-        let yZ' := BandVectors.1 (qg 0) (qg j.succ)
-        (yZ' = ii * xZ') → ((BandPackingSymmetryVectorAction g' xZ = xZ') →
-            ((BandPackingSymmetryVectorAction g' yZ = if BandPackingSymmetryReversesOrientation
-            g' then -yZ' else yZ') → ((BandPackingSymmetryVectorAction g' (if Even s.val then yZ
-            - xZ else xZ - yZ) = if Even s.val then (if BandPackingSymmetryReversesOrientation g'
-            then -yZ' - xZ' else yZ' - xZ') else (if BandPackingSymmetryReversesOrientation g'
-            then xZ' + yZ' else xZ' - yZ')) → ((BandPackingSymmetryVectorAction g' (ii ^ s.val *
-            (if Even s.val then yZ - xZ else xZ - yZ)) = ii ^ t.val * (if Even t.val then yZ' -
-            xZ' else xZ' - yZ')) → ((BandPrototile (qg j.succ) (BandPackingSymmetryTileAction g'
-            Z)) → ((0 < (qg j.succ).1) → ((TileCentroid (BandPackingSymmetryTileAction g' W) -
-            TileCentroid (BandPackingSymmetryTileAction g' U) = (1 / 2 : Real) •
-            GaussianRealPoint (BandPackingSymmetryVectorAction g' ((⟨0, 1⟩ : GaussianInt) ^ s.val
-            * (BandVectors.1 (r i.succ) (r 0) + BandVectors.1 (r 0) (r i.succ))))) →
-            ((TileCentroid (BandPackingSymmetryTileAction g' Z) - TileCentroid
-            (BandPackingSymmetryTileAction g' U) = (1 / 2 : Real) • GaussianRealPoint
-            (BandPackingSymmetryVectorAction g' ((⟨0, 1⟩ : GaussianInt) ^ s.val * (if Even s.val
-            then BandVectors.1 (r 0) (r ((i - 1).succ)) - BandVectors.1 (r ((i - 1).succ)) (r 0)
-            else BandVectors.1 (r ((i + 1).succ)) (r 0) - BandVectors.1 (r 0) (r ((i +
-            1).succ)))))) → ((BandPackingSymmetryVectorAction g' ((⟨0, 1⟩ : GaussianInt) ^ s.val
-            * (BandVectors.1 (r i.succ) (r 0) + BandVectors.1 (r 0) (r i.succ))) = ii ^ t.val *
-            (BandVectors.1 (qg k.succ) (qg 0) + BandVectors.1 (qg 0) (qg k.succ))) →
-            ((TileCentroid (BandPackingSymmetryTileAction g' W) - TileCentroid
-            (BandPackingSymmetryTileAction g' U) = (1 / 2 : Real) • GaussianRealPoint (ii ^ t.val
-            * (BandVectors.1 (qg k.succ) (qg 0) + BandVectors.1 (qg 0) (qg k.succ)))) →
-            ((BandPackingSymmetryVectorAction g' ((⟨0, 1⟩ : GaussianInt) ^ s.val * (if Even s.val
-            then BandVectors.1 (r 0) (r adj.succ) - BandVectors.1 (r adj.succ) (r 0) else
-            BandVectors.1 (r adj.succ) (r 0) - BandVectors.1 (r 0) (r adj.succ))) = ii ^ t.val *
-            (if Even t.val then BandVectors.1 (qg 0) (qg j.succ) - BandVectors.1 (qg j.succ) (qg
-            0) else BandVectors.1 (qg j.succ) (qg 0) - BandVectors.1 (qg 0) (qg j.succ))) →
-            ((TileCentroid (BandPackingSymmetryTileAction g' Z) - TileCentroid
-            (BandPackingSymmetryTileAction g' U) = (1 / 2 : Real) • GaussianRealPoint (ii ^ t.val
-            * (if Even t.val then BandVectors.1 (qg 0) (qg j.succ) - BandVectors.1 (qg j.succ)
-            (qg 0) else BandVectors.1 (qg j.succ) (qg 0) - BandVectors.1 (qg 0) (qg j.succ)))) →
-            ((BandPackingSymmetryVectorAction g' vR = vR') → ((BandPackingSymmetryVectorAction g'
-            vL = if BandPackingSymmetryReversesOrientation g' then -vL' else vL') →
-            (BandPackingSymmetryVectorAction g' (ii ^ s.val * (if Even s.val then vL else vR)) =
-            ii ^ t.val * (if Even t.val then vL' else
-            vR'))))))))))))))))))))))))))))))))))))))))) ) := by
+        ∀ (r : Fin (4 : ℕ) → CircleCoordinates)
+          (i : Fin (3 : ℕ)) (s : Fin (4 : ℕ)) (a : Fin (3 : ℕ)),
+          let q :=
+            ![r (0 : Fin (4 : ℕ)), r a.succ, r (a + (1 : Fin (3 : ℕ))).succ,
+              r (a + (2 : Fin (3 : ℕ))).succ];
+          ∀ (g' : BandPackingSymmetry),
+            let qg := BandPackingSymmetryQuadrupleAction g' q;
+            let k :=
+              if
+                  BandPackingSymmetryReversesOrientation g' =
+                    true then
+                -(i - a)
+              else i - a;
+            Even (0 : ℕ) →
+              Even (2 : ℕ) →
+                ¬Even (1 : ℕ) →
+                  ¬Even (3 : ℕ) →
+                    (∀ (s₀ : Fin (4 : ℕ)),
+                        (↑(-s₀ - (1 : Fin (4 : ℕ))) : ℕ) =
+                          ((3 : ℕ) - (↑s₀ : ℕ)) % (4 : ℕ)) →
+                      let ii := { re := (0 : ℤ), im := (1 : ℤ) };
+                      ii ^ (2 : ℕ) = (-1 : GaussianInt) →
+                        ii ^ (3 : ℕ) = -ii →
+                          (-ii) ^ (2 : ℕ) = (-1 : GaussianInt) →
+                            (-ii) ^ (3 : ℕ) = ii →
+                              (∀ (g₀ : BandPackingSymmetry)
+                                  (n : ℕ) (x : GaussianInt),
+                                  BandPackingSymmetryVectorAction
+                                      g₀ (ii ^ n * x) =
+                                    (if
+                                          BandPackingSymmetryReversesOrientation
+                                              g₀ =
+                                            true then
+                                        (-ii) ^ n
+                                      else ii ^ n) *
+                                      BandPackingSymmetryVectorAction
+                                        g₀ x) →
+                                let vR :=
+                                  BandVectors.1 (r i.succ)
+                                    (r (0 : Fin (4 : ℕ)));
+                                let vL :=
+                                  BandVectors.1
+                                    (r (0 : Fin (4 : ℕ))) (r i.succ);
+                                let vR' :=
+                                  BandVectors.1 (qg k.succ)
+                                    (qg (0 : Fin (4 : ℕ)));
+                                let vL' :=
+                                  BandVectors.1
+                                    (qg (0 : Fin (4 : ℕ))) (qg k.succ);
+                                vL' = ii * vR' →
+                                  let t :=
+                                    if
+                                        BandPackingSymmetryReversesOrientation
+                                            g' =
+                                          true then
+                                      -s - (1 : Fin (4 : ℕ))
+                                    else s;
+                                  BandPackingSymmetryVectorAction
+                                        g' vR =
+                                      vR' →
+                                    (BandPackingSymmetryVectorAction
+                                          g' vL =
+                                        if
+                                            BandPackingSymmetryReversesOrientation
+                                                g' =
+                                              true then
+                                          -vL'
+                                        else vL') →
+                                      BandPackingSymmetryVectorAction
+                                          g'
+                                          (ii ^ (↑s : ℕ) *
+                                            if Even (↑s : ℕ) then vL else vR) =
+                                        ii ^ (↑t : ℕ) *
+                                          if Even (↑t : ℕ) then vL' else vR') := by
   classical
-  intro r i s U W Z hZ hZpos hWcent hZcent a q g' qg k sigma evenZero evenTwo notEvenOne
-      notEvenThree hnegVal ii iiSq iiCube negIiSq negIiCube lpow vR vL vR' vL' hbackEq' t hdispW
-      hZindex j hZparentIndex hZcircle hZlabel adj mZ hZrel hZsigma hZsigma' hZphaseForward
-      hZphaseBackward xZ yZ xZ' yZ' hZflip hZactionForward hZactionBackward hZsourceAction hZvec
-      hZ' hZpos' hWcent' hZcent' hWvec hWcentNorm hZvec' hZcentNorm hvR hvL
+  intro r i s a q g' qg k evenZero evenTwo notEvenOne notEvenThree hnegVal ii iiSq iiCube
+      negIiSq negIiCube lpow vR vL vR' vL' hbackEq' t hvR hvL
   rw [lpow]
   cases ho : BandPackingSymmetryReversesOrientation g' <;> fin_cases s <;>
     simp [t, ho, evenZero, evenTwo, notEvenOne, notEvenThree,
@@ -1879,107 +1817,83 @@ private theorem hdL :
     (by
       classical
       exact
-        ∀ (r : Fin 4 → CircleCoordinates), ∀ (i : Fin 3), ∀ (s : Fin 4), ∀ (U : ProtoTile), ∀ (W
-            : ProtoTile), ∀ (Z : ProtoTile), (BandPrototile (r (if Even (↑s : ℕ) then i - (1 :
-            Fin (3 : ℕ)) else i + (1 : Fin (3 : ℕ))).succ) Z) → (((0 : ℤ) < (r (if Even (↑s : ℕ)
-            then i - (1 : Fin (3 : ℕ)) else i + (1 : Fin (3 : ℕ))).succ).1) → ((TileCentroid W -
-            TileCentroid U = (1 / 2 : ℝ) • GaussianRealPoint ((⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt)
-            ^ (↑s : ℕ) * (BandVectors.1 (r i.succ) (r (0 : Fin (4 : ℕ))) + BandVectors.1 (r (0 :
-            Fin (4 : ℕ))) (r i.succ)))) → ((TileCentroid Z - TileCentroid U = (1 / 2 : ℝ) •
-            GaussianRealPoint ((⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt) ^ (↑s : ℕ) * if Even (↑s : ℕ)
-            then BandVectors.1 (r (0 : Fin (4 : ℕ))) (r (i - (1 : Fin (3 : ℕ))).succ) -
-            BandVectors.1 (r (i - (1 : Fin (3 : ℕ))).succ) (r (0 : Fin (4 : ℕ))) else
-            BandVectors.1 (r (i + (1 : Fin (3 : ℕ))).succ) (r (0 : Fin (4 : ℕ))) - BandVectors.1
-            (r (0 : Fin (4 : ℕ))) (r (i + (1 : Fin (3 : ℕ))).succ))) → (∀ (a : Fin 3),
-        let q : Fin 4 → CircleCoordinates :=
-          ![r 0, r a.succ, r (a + 1).succ, r (a + 2).succ]
-        ∀ (g' : BandPackingSymmetry),
-        let qg := BandPackingSymmetryQuadrupleAction g' q
-        let k : Fin 3 := if BandPackingSymmetryReversesOrientation g'
-          then -(i - a) else i - a
-        let sigma : Fin 3 → Fin 3 := fun m =>
-          if BandPackingSymmetryReversesOrientation g' then -m else m
-        (Even 0) → ((Even 2) → ((¬ Even 1) → ((¬ Even 3) → ((∀ (s₀ : Fin 4), ((-s₀ - 1 : Fin 4) :
-            Nat) = (3 - s₀.val) % 4) → (
-        let ii : GaussianInt := ⟨0, 1⟩
-        (ii ^ 2 = -1) → ((ii ^ 3 = -ii) → (((-ii) ^ 2 = -1) → (((-ii) ^ 3 = ii) → ((∀ (g₀ :
-            BandPackingSymmetry), ∀ (n : Nat), ∀ (x : GaussianInt),
-            BandPackingSymmetryVectorAction g₀ (ii ^ n * x) = (if
-            BandPackingSymmetryReversesOrientation g₀ then (-ii) ^ n else ii ^ n) *
-            BandPackingSymmetryVectorAction g₀ x) → (
-        let vR := BandVectors.1 (r i.succ) (r 0)
-        let vL := BandVectors.1 (r 0) (r i.succ)
-        let vR' := BandVectors.1 (qg k.succ) (qg 0)
-        let vL' := BandVectors.1 (qg 0) (qg k.succ)
-        (vL' = ii * vR') → (
-        let t : Fin 4 := if BandPackingSymmetryReversesOrientation g'
-          then -s - 1 else s
-        (BandPackingSymmetryVectorAction g' (ii ^ s.val * (vR + vL)) = ii ^ t.val * (vR' + vL'))
-            → (((if Even t.val then k - 1 else k + 1) = if BandPackingSymmetryReversesOrientation
-            g' then -((if Even s.val then i - 1 else i + 1) - a) else (if Even s.val then i - 1
-            else i + 1) - a) → (
-        let j : Fin 3 := if Even t.val then k - 1 else k + 1
-        ((if BandPackingSymmetryReversesOrientation g' then -j else j) = (if Even s.val then i -
-            1 else i + 1) - a) → ((q ((if BandPackingSymmetryReversesOrientation g' then -j else
-            j).succ) = r ((if Even s.val then i - 1 else i + 1).succ)) → ((qg j.succ =
-            BandPackingSymmetryCircleAction g' (r ((if Even s.val then i - 1 else i + 1).succ))) → (
-        let adj : Fin 3 := if Even s.val then i - 1 else i + 1
-        let mZ : Fin 3 := adj - a
-        ((if BandPackingSymmetryReversesOrientation g' then -j else j) = mZ) → (((if
-            BandPackingSymmetryReversesOrientation g' then -mZ else mZ) = j) → ((sigma mZ = j) →
-            ((BandVectors.1 (qg j.succ) (qg 0) = BandPackingSymmetryVectorAction g'
-            (BandVectors.1 (r adj.succ) (r 0))) → ((BandVectors.1 (qg 0) (qg j.succ) = if
-            BandPackingSymmetryReversesOrientation g' then -BandPackingSymmetryVectorAction g'
-            (BandVectors.1 (r 0) (r adj.succ)) else BandPackingSymmetryVectorAction g'
-            (BandVectors.1 (r 0) (r adj.succ))) → (
-        let xZ := BandVectors.1 (r adj.succ) (r 0)
-        let yZ := BandVectors.1 (r 0) (r adj.succ)
-        let xZ' := BandVectors.1 (qg j.succ) (qg 0)
-        let yZ' := BandVectors.1 (qg 0) (qg j.succ)
-        (yZ' = ii * xZ') → ((BandPackingSymmetryVectorAction g' xZ = xZ') →
-            ((BandPackingSymmetryVectorAction g' yZ = if BandPackingSymmetryReversesOrientation
-            g' then -yZ' else yZ') → ((BandPackingSymmetryVectorAction g' (if Even s.val then yZ
-            - xZ else xZ - yZ) = if Even s.val then (if BandPackingSymmetryReversesOrientation g'
-            then -yZ' - xZ' else yZ' - xZ') else (if BandPackingSymmetryReversesOrientation g'
-            then xZ' + yZ' else xZ' - yZ')) → ((BandPackingSymmetryVectorAction g' (ii ^ s.val *
-            (if Even s.val then yZ - xZ else xZ - yZ)) = ii ^ t.val * (if Even t.val then yZ' -
-            xZ' else xZ' - yZ')) → ((BandPrototile (qg j.succ) (BandPackingSymmetryTileAction g'
-            Z)) → ((0 < (qg j.succ).1) → ((TileCentroid (BandPackingSymmetryTileAction g' W) -
-            TileCentroid (BandPackingSymmetryTileAction g' U) = (1 / 2 : Real) •
-            GaussianRealPoint (BandPackingSymmetryVectorAction g' ((⟨0, 1⟩ : GaussianInt) ^ s.val
-            * (BandVectors.1 (r i.succ) (r 0) + BandVectors.1 (r 0) (r i.succ))))) →
-            ((TileCentroid (BandPackingSymmetryTileAction g' Z) - TileCentroid
-            (BandPackingSymmetryTileAction g' U) = (1 / 2 : Real) • GaussianRealPoint
-            (BandPackingSymmetryVectorAction g' ((⟨0, 1⟩ : GaussianInt) ^ s.val * (if Even s.val
-            then BandVectors.1 (r 0) (r ((i - 1).succ)) - BandVectors.1 (r ((i - 1).succ)) (r 0)
-            else BandVectors.1 (r ((i + 1).succ)) (r 0) - BandVectors.1 (r 0) (r ((i +
-            1).succ)))))) → ((BandPackingSymmetryVectorAction g' ((⟨0, 1⟩ : GaussianInt) ^ s.val
-            * (BandVectors.1 (r i.succ) (r 0) + BandVectors.1 (r 0) (r i.succ))) = ii ^ t.val *
-            (BandVectors.1 (qg k.succ) (qg 0) + BandVectors.1 (qg 0) (qg k.succ))) →
-            ((TileCentroid (BandPackingSymmetryTileAction g' W) - TileCentroid
-            (BandPackingSymmetryTileAction g' U) = (1 / 2 : Real) • GaussianRealPoint (ii ^ t.val
-            * (BandVectors.1 (qg k.succ) (qg 0) + BandVectors.1 (qg 0) (qg k.succ)))) →
-            ((BandPackingSymmetryVectorAction g' ((⟨0, 1⟩ : GaussianInt) ^ s.val * (if Even s.val
-            then BandVectors.1 (r 0) (r adj.succ) - BandVectors.1 (r adj.succ) (r 0) else
-            BandVectors.1 (r adj.succ) (r 0) - BandVectors.1 (r 0) (r adj.succ))) = ii ^ t.val *
-            (if Even t.val then BandVectors.1 (qg 0) (qg j.succ) - BandVectors.1 (qg j.succ) (qg
-            0) else BandVectors.1 (qg j.succ) (qg 0) - BandVectors.1 (qg 0) (qg j.succ))) →
-            ((TileCentroid (BandPackingSymmetryTileAction g' Z) - TileCentroid
-            (BandPackingSymmetryTileAction g' U) = (1 / 2 : Real) • GaussianRealPoint (ii ^ t.val
-            * (if Even t.val then BandVectors.1 (qg 0) (qg j.succ) - BandVectors.1 (qg j.succ)
-            (qg 0) else BandVectors.1 (qg j.succ) (qg 0) - BandVectors.1 (qg 0) (qg j.succ)))) →
-            ((BandPackingSymmetryVectorAction g' vR = vR') → ((BandPackingSymmetryVectorAction g'
-            vL = if BandPackingSymmetryReversesOrientation g' then -vL' else vL') →
-            ((BandPackingSymmetryVectorAction g' (ii ^ s.val * (if Even s.val then vL else vR)) =
-            ii ^ t.val * (if Even t.val then vL' else vR')) → (BandPackingSymmetryVectorAction g'
-            (ii ^ s.val * (if Even s.val then vR else vL)) = ii ^ t.val * (if Even t.val then vR'
-            else vL')))))))))))))))))))))))))))))))))))))))))) ) := by
+        ∀ (r : Fin (4 : ℕ) → CircleCoordinates)
+          (i : Fin (3 : ℕ)) (s : Fin (4 : ℕ)) (a : Fin (3 : ℕ)),
+          let q :=
+            ![r (0 : Fin (4 : ℕ)), r a.succ, r (a + (1 : Fin (3 : ℕ))).succ,
+              r (a + (2 : Fin (3 : ℕ))).succ];
+          ∀ (g' : BandPackingSymmetry),
+            let qg := BandPackingSymmetryQuadrupleAction g' q;
+            let k :=
+              if
+                  BandPackingSymmetryReversesOrientation g' =
+                    true then
+                -(i - a)
+              else i - a;
+            Even (0 : ℕ) →
+              Even (2 : ℕ) →
+                ¬Even (1 : ℕ) →
+                  ¬Even (3 : ℕ) →
+                    (∀ (s₀ : Fin (4 : ℕ)),
+                        (↑(-s₀ - (1 : Fin (4 : ℕ))) : ℕ) =
+                          ((3 : ℕ) - (↑s₀ : ℕ)) % (4 : ℕ)) →
+                      let ii := { re := (0 : ℤ), im := (1 : ℤ) };
+                      ii ^ (2 : ℕ) = (-1 : GaussianInt) →
+                        ii ^ (3 : ℕ) = -ii →
+                          (-ii) ^ (2 : ℕ) = (-1 : GaussianInt) →
+                            (-ii) ^ (3 : ℕ) = ii →
+                              (∀ (g₀ : BandPackingSymmetry)
+                                  (n : ℕ) (x : GaussianInt),
+                                  BandPackingSymmetryVectorAction
+                                      g₀ (ii ^ n * x) =
+                                    (if
+                                          BandPackingSymmetryReversesOrientation
+                                              g₀ =
+                                            true then
+                                        (-ii) ^ n
+                                      else ii ^ n) *
+                                      BandPackingSymmetryVectorAction
+                                        g₀ x) →
+                                let vR :=
+                                  BandVectors.1 (r i.succ)
+                                    (r (0 : Fin (4 : ℕ)));
+                                let vL :=
+                                  BandVectors.1
+                                    (r (0 : Fin (4 : ℕ))) (r i.succ);
+                                let vR' :=
+                                  BandVectors.1 (qg k.succ)
+                                    (qg (0 : Fin (4 : ℕ)));
+                                let vL' :=
+                                  BandVectors.1
+                                    (qg (0 : Fin (4 : ℕ))) (qg k.succ);
+                                vL' = ii * vR' →
+                                  let t :=
+                                    if
+                                        BandPackingSymmetryReversesOrientation
+                                            g' =
+                                          true then
+                                      -s - (1 : Fin (4 : ℕ))
+                                    else s;
+                                  BandPackingSymmetryVectorAction
+                                        g' vR =
+                                      vR' →
+                                    (BandPackingSymmetryVectorAction
+                                          g' vL =
+                                        if
+                                            BandPackingSymmetryReversesOrientation
+                                                g' =
+                                              true then
+                                          -vL'
+                                        else vL') →
+                                      BandPackingSymmetryVectorAction
+                                          g'
+                                          (ii ^ (↑s : ℕ) *
+                                            if Even (↑s : ℕ) then vR else vL) =
+                                        ii ^ (↑t : ℕ) *
+                                          if Even (↑t : ℕ) then vR' else vL') := by
   classical
-  intro r i s U W Z hZ hZpos hWcent hZcent a q g' qg k sigma evenZero evenTwo notEvenOne
-      notEvenThree hnegVal ii iiSq iiCube negIiSq negIiCube lpow vR vL vR' vL' hbackEq' t hdispW
-      hZindex j hZparentIndex hZcircle hZlabel adj mZ hZrel hZsigma hZsigma' hZphaseForward
-      hZphaseBackward xZ yZ xZ' yZ' hZflip hZactionForward hZactionBackward hZsourceAction hZvec
-      hZ' hZpos' hWcent' hZcent' hWvec hWcentNorm hZvec' hZcentNorm hvR hvL hdR
+  intro r i s a q g' qg k evenZero evenTwo notEvenOne notEvenThree hnegVal ii iiSq iiCube
+      negIiSq negIiCube lpow vR vL vR' vL' hbackEq' t hvR hvL
   rw [lpow]
   cases ho : BandPackingSymmetryReversesOrientation g' <;> fin_cases s <;>
     simp [t, ho, evenZero, evenTwo, notEvenOne, notEvenThree,
@@ -2067,10 +1981,9 @@ theorem P4055T1PlacementNormalization
   let W' : ProtoTile := BandPackingSymmetryTileAction g' W
   let Z' : ProtoTile := BandPackingSymmetryTileAction g' Z
   have hU' := PlacementNormalizationProof.hU' r U hU a g g' horientg htileCov
-  have hWlabel := PlacementNormalizationProof.hWlabel r i s U W Z hW hZ hWpos hZpos hWcent hZcent
-      a g hq negative hphase hphase1 hphase2 g' hfalse hfalse1 hfalse2 hproperG hU'
-  have cyclicIndex (j₀ : Fin 3) := PlacementNormalizationProof.cyclicIndex r i U a g hq negative
-      hphase hphase1 hphase2 g' hfalse hfalse1 hfalse2 hproperG hU' hWlabel j₀
+  have hWlabel := PlacementNormalizationProof.hWlabel r i
+      a g'
+  have cyclicIndex (j₀ : Fin 3) := PlacementNormalizationProof.cyclicIndex r a j₀
   have cyclicCancel (x y : Fin 3) : x + (y - x) = y := by
     fin_cases x <;> fin_cases y <;> decide +kernel
   have actionParent (j₀ : Fin 3) := PlacementNormalizationProof.actionParent r a g' j₀
@@ -2213,16 +2126,10 @@ theorem P4055T1PlacementNormalization
   have hvR : BandPackingSymmetryVectorAction g' vR = vR' := by
     simpa [vR, vR'] using hvectorForward.symm
   have hvL := PlacementNormalizationProof.hvL r i a g' hvectorBackward
-  have hdR := PlacementNormalizationProof.hdR r i s U W Z hZ hZpos hWcent hZcent a g' evenZero
-      evenTwo notEvenOne notEvenThree hnegVal iiSq iiCube negIiSq negIiCube lpow hbackEq' hdispW
-      hZindex hZparentIndex hZcircle hZlabel hZrel hZsigma hZsigma' hZphaseForward
-      hZphaseBackward hZflip hZactionForward hZactionBackward hZsourceAction hZvec hZ' hZpos'
-      hWcent' hZcent' hWvec hWcentNorm hZvec' hZcentNorm hvR hvL
-  have hdL := PlacementNormalizationProof.hdL r i s U W Z hZ hZpos hWcent hZcent a g' evenZero
-      evenTwo notEvenOne notEvenThree hnegVal iiSq iiCube negIiSq negIiCube lpow hbackEq' hdispW
-      hZindex hZparentIndex hZcircle hZlabel hZrel hZsigma hZsigma' hZphaseForward
-      hZphaseBackward hZflip hZactionForward hZactionBackward hZsourceAction hZvec hZ' hZpos'
-      hWcent' hZcent' hWvec hWcentNorm hZvec' hZcentNorm hvR hvL hdR
+  have hdR := PlacementNormalizationProof.hdR r i s a g' evenZero
+      evenTwo notEvenOne notEvenThree hnegVal iiSq iiCube negIiSq negIiCube lpow hbackEq' hvR hvL
+  have hdL := PlacementNormalizationProof.hdL r i s a g' evenZero
+      evenTwo notEvenOne notEvenThree hnegVal iiSq iiCube negIiSq negIiCube lpow hbackEq' hvR hvL
   exact ⟨g', hquadg, hproperG, hU', hW', hZ', hUpos', hWpos', hZpos',
     hWcentNorm, hZcentNorm, hdR, hdL⟩
 

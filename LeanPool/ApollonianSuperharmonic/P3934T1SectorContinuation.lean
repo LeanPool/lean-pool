@@ -873,19 +873,19 @@ private theorem flipSide :
           exact ⟨hb, by rw [hfg] at hg; linarith⟩
 
 private theorem hform :
-    ∀ (x : Real × Real), ∀ (r : Real), ∀ (u : Real × Real), ∀ (v : Real × Real), (‖u‖ = 1) → ((u
-        ≠ v) → ((P3889T1TwoRaySectorDecomposition x r u v) → (
-    let det : (Real × Real) → (Real ×
-        Real) → Real :=
-      fun a b => a.1 * b.2 - a.2 * b.1
-    (u ≠ (0, 0)) → ((u.1 ≠ 0 ∨ u.2 ≠ 0) → ((v = -u) → (
-    let A : (Real × Real) → Real := fun p =>
-        det u (p - x)
-    ∀ (w : Real × Real), (w = u ∨ w = v) → (∀ (t : Real), ∀ (q : Real × Real), -u.1 * (q.2 - (x.2
-        + t * w.2)) -
-        -u.2 * (q.1 - (x.1 + t * w.1)) = -A q))))))) := by
+    (by
+      classical
+      exact
+        ∀ (x u v : ℝ × ℝ),
+          let det := fun (a b : ℝ × ℝ) => a.1 * b.2 - a.2 * b.1;
+          v = -u →
+            let A := fun (p : ℝ × ℝ) => det u (p - x);
+            ∀ (w : ℝ × ℝ),
+              w = u ∨ w = v →
+                ∀ (t : ℝ) (q : ℝ × ℝ),
+                  -u.1 * (q.2 - (x.2 + t * w.2)) - -u.2 * (q.1 - (x.1 + t * w.1)) = -A q) := by
   classical
-  intro x r u v hu huv E det hu_ne hcoord hvneg A w hw t q
+  intro x u v det hvneg A w hw t q
   rcases hw with rfl | hwv
   · dsimp [A, det]
     ring
@@ -2278,8 +2278,7 @@ private theorem oppositeContinuation :
   have hform (w : Real × Real) (hw : w = u ∨ w = v)
   (t : Real) (q : Real × Real) :
   -u.1 * (q.2 - (x.2 + t * w.2)) -
-    -u.2 * (q.1 - (x.1 + t * w.1)) = -A q := SectorContinuationGeometry.hform x r u v hu huv
-        E hu_ne hcoord hvneg w hw t q
+    -u.2 * (q.1 - (x.1 + t * w.1)) = -A q := SectorContinuationGeometry.hform x u v hvneg w hw t q
   have hdist (w : Real × Real) (hw : ‖w‖ = 1) (t : Real)
     (ht : 0 < t) := SectorContinuationFacts.hdist x w hw t ht
   have hdelta (t : Real) (htr : t < r) : 0 < r - t := by

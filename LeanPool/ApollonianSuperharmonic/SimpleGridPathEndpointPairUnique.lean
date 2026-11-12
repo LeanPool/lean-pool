@@ -347,20 +347,13 @@ private theorem endpoint_ne :
   simp at hrl
 
 private theorem hx'q :
-    ∀ (V : Set GaussianInt), ∀ (E : Set (Finset GaussianInt)), ∀ (x : GaussianInt), ∀ (y :
-        GaussianInt), ∀ (x' : GaussianInt), ∀ (y' : GaussianInt), ∀ (q : List GaussianInt),
-        (q.Nodup) → (((2 : ℕ) ≤ q.length) → ((q.head? = some x') → ((q.getLast? = some y') → ((V
-        = (↑q.toFinset : Set GaussianInt)) → ((∀ (a : GaussianInt), ∀ (b : GaussianInt), ∀ (l₁ :
-        List GaussianInt), ∀ (l₂ : List GaussianInt), q = l₁ ++ a :: b :: l₂ → b = a + (1 :
-        GaussianInt) ∨ b = a - (1 : GaussianInt) ∨ b = a + { re := (0 : ℤ), im := (1 : ℤ) } ∨ b =
-        a - { re := (0 : ℤ), im := (1 : ℤ) }) → ((∀ (e : Finset GaussianInt), e ∈ E ↔ ∃ (a :
-        GaussianInt) (b : GaussianInt) (l₁ : List GaussianInt) (l₂ : List GaussianInt), q = l₁ ++
-        a :: b :: l₂ ∧ e = {a, b}) → ((q ≠ []) → ((∃ r, q = x' :: r) → ((∀ z : GaussianInt, z ∈ q
-        → q.head? = some z → z = x ∨ z = y) → ((∀ z : GaussianInt, z ∈ q → q.getLast? = some z →
-        z = x ∨ z = y) → (x' ∈ q))))))))))) := by
+    (by
+      classical
+      exact
+        ∀ (x' : GaussianInt) (q : List GaussianInt),
+          (2 : ℕ) ≤ q.length → q.head? = some x' → x' ∈ q) := by
   classical
-  intro V E x y x' y' q hq hqlen hx' hy' hV' hstep' hE' hqne hqform endpoint_class
-      endpoint_class_last
+  intro x' q hqlen hx'
   cases q with
   | nil => simp at hqlen
   | cons a r =>
@@ -468,8 +461,7 @@ theorem SimpleGridPathEndpointPairUnique
   have endpoint_ne : ∀ (r : List GaussianInt) (u v : GaussianInt),
       r.Nodup → 2 ≤ r.length → r.head? = some u →
       r.getLast? = some v → u ≠ v := EndpointPairProof.endpoint_ne
-  have hx'q : x' ∈ q := EndpointPairProof.hx'q V E x y x' y' q hq hqlen hx' hy' hV' hstep' hE'
-      hqne hqform endpoint_class endpoint_class_last
+  have hx'q : x' ∈ q := EndpointPairProof.hx'q x' q hqlen hx'
   have hy'q : y' ∈ q := EndpointPairProof.hy'q y' q hy' hqne
   have hxclass : x' = x ∨ x' = y := EndpointPairProof.hxclass x y x' q hx' endpoint_class hx'q
   have hyclass : y' = x ∨ y' = y := EndpointPairProof.hyclass x y y' q hy' endpoint_class_last hy'q

@@ -1561,66 +1561,22 @@ private theorem hpne :
   simp [h] at hlen
 
 private theorem huMem :
-    ∀ (W : Set GaussianInt), ∀ (F : Set (Finset GaussianInt)), ∀ (p : List GaussianInt), ∀ (u :
-        GaussianInt), ∀ (v : GaussianInt), (p.Nodup) → (((4 : ℕ) ≤ p.length) → ((p.head? = some
-        u) → ((p.getLast? = some v) → ((W = (↑p.toFinset : Set GaussianInt)) → ((∀ (a :
-        GaussianInt), ∀ (b : GaussianInt), ∀ (l₁ : List GaussianInt), ∀ (l₂ : List GaussianInt),
-        p = l₁ ++ a :: b :: l₂ → FourNeighborAdjacent a b) → ((∀ (e : Finset GaussianInt), e ∈ F
-        ↔ e = {v, u} ∨ ∃ (a : GaussianInt) (b : GaussianInt) (l₁ : List GaussianInt) (l₂ : List
-        GaussianInt), p = l₁ ++ a :: b :: l₂ ∧ e = {a, b}) → ((3 ≤ p.length) → ((
-    let cyclicEdges := p.zip p.tail ++ [(v, u)];
-    ∀ (q : LatticeCell), ((q + (1 : LatticeCell), q + (1 :
-        LatticeCell) + ⟨(0 : ℤ), (1 : ℤ)⟩) ∉ cyclicEdges ∧ (q + (1 : LatticeCell) + ⟨(0 : ℤ), (1
-        : ℤ)⟩, q + (1 : LatticeCell)) ∉ cyclicEdges → GridRayCrossingIndex (q + (1 :
-        LatticeCell)) p = GridRayCrossingIndex q p) ∧ ((q + (1 : LatticeCell), q + (1 :
-        LatticeCell) + ⟨(0 : ℤ), (1 : ℤ)⟩) ∈ cyclicEdges ∨ (q + (1 : LatticeCell) + ⟨(0 : ℤ), (1
-        : ℤ)⟩, q + (1 : LatticeCell)) ∈ cyclicEdges → (GridRayCrossingIndex (q + (1 :
-        LatticeCell)) p - GridRayCrossingIndex q p).natAbs = (1 : ℕ)) ∧ ((q + (1 : LatticeCell) +
-        ⟨(0 : ℤ), (1 : ℤ)⟩, q + ⟨(0 : ℤ), (1 : ℤ)⟩) ∉ cyclicEdges ∧ (q + ⟨(0 : ℤ), (1 : ℤ)⟩, q +
-        (1 : LatticeCell) + ⟨(0 : ℤ), (1 : ℤ)⟩) ∉ cyclicEdges → GridRayCrossingIndex (q + ⟨(0 :
-        ℤ), (1 : ℤ)⟩) p = GridRayCrossingIndex q p) ∧ ((q + (1 : LatticeCell) + ⟨(0 : ℤ), (1 :
-        ℤ)⟩, q + ⟨(0 : ℤ), (1 : ℤ)⟩) ∈ cyclicEdges ∨ (q + ⟨(0 : ℤ), (1 : ℤ)⟩, q + (1 :
-        LatticeCell) + ⟨(0 : ℤ), (1 : ℤ)⟩) ∈ cyclicEdges → (GridRayCrossingIndex (q + ⟨(0 : ℤ),
-        (1 : ℤ)⟩) p - GridRayCrossingIndex q p).natAbs = (1 : ℕ))) → ((∀ (g : Finset
-        GaussianInt), (g ∈ F) → (g = {v, u} ∨ ∃ a b l₁ l₂, p = l₁ ++ a :: b :: l₂ ∧ g = {a, b}))
-        → ((∀ (a : GaussianInt), ∀ (b : GaussianInt), (({a, b} : Finset GaussianInt) ∈ F) → ((a,
-        b) ∈ (p.zip p.tail) ++ [(v, u)] ∨ (b, a) ∈ (p.zip p.tail) ++ [(v, u)])) → ((p ≠ []) → (u
-        ∈ p)))))))))))) := by
+    (by
+      classical
+      exact
+        ∀ (p : List GaussianInt) (u : GaussianInt), p.head? = some u → u ∈ p) := by
   classical
-  intro W F p u v hnodup hlen hhead hlast hvertices hsteps hedges hlen3 hcross hcycleEdge
-      cyclicPair hpne
+  intro p u hhead
   rcases (List.head?_eq_some_iff.mp hhead) with ⟨l, rfl⟩
   simp
 
 private theorem hvMem :
-    ∀ (W : Set GaussianInt), ∀ (F : Set (Finset GaussianInt)), ∀ (p : List GaussianInt), ∀ (u :
-        GaussianInt), ∀ (v : GaussianInt), (p.Nodup) → (((4 : ℕ) ≤ p.length) → ((p.head? = some
-        u) → ((p.getLast? = some v) → ((W = (↑p.toFinset : Set GaussianInt)) → ((∀ (a :
-        GaussianInt), ∀ (b : GaussianInt), ∀ (l₁ : List GaussianInt), ∀ (l₂ : List GaussianInt),
-        p = l₁ ++ a :: b :: l₂ → FourNeighborAdjacent a b) → ((∀ (e : Finset GaussianInt), e ∈ F
-        ↔ e = {v, u} ∨ ∃ (a : GaussianInt) (b : GaussianInt) (l₁ : List GaussianInt) (l₂ : List
-        GaussianInt), p = l₁ ++ a :: b :: l₂ ∧ e = {a, b}) → ((3 ≤ p.length) → ((
-    let cyclicEdges := p.zip p.tail ++ [(v, u)];
-    ∀ (q : LatticeCell), ((q + (1 : LatticeCell), q + (1 :
-        LatticeCell) + ⟨(0 : ℤ), (1 : ℤ)⟩) ∉ cyclicEdges ∧ (q + (1 : LatticeCell) + ⟨(0 : ℤ), (1
-        : ℤ)⟩, q + (1 : LatticeCell)) ∉ cyclicEdges → GridRayCrossingIndex (q + (1 :
-        LatticeCell)) p = GridRayCrossingIndex q p) ∧ ((q + (1 : LatticeCell), q + (1 :
-        LatticeCell) + ⟨(0 : ℤ), (1 : ℤ)⟩) ∈ cyclicEdges ∨ (q + (1 : LatticeCell) + ⟨(0 : ℤ), (1
-        : ℤ)⟩, q + (1 : LatticeCell)) ∈ cyclicEdges → (GridRayCrossingIndex (q + (1 :
-        LatticeCell)) p - GridRayCrossingIndex q p).natAbs = (1 : ℕ)) ∧ ((q + (1 : LatticeCell) +
-        ⟨(0 : ℤ), (1 : ℤ)⟩, q + ⟨(0 : ℤ), (1 : ℤ)⟩) ∉ cyclicEdges ∧ (q + ⟨(0 : ℤ), (1 : ℤ)⟩, q +
-        (1 : LatticeCell) + ⟨(0 : ℤ), (1 : ℤ)⟩) ∉ cyclicEdges → GridRayCrossingIndex (q + ⟨(0 :
-        ℤ), (1 : ℤ)⟩) p = GridRayCrossingIndex q p) ∧ ((q + (1 : LatticeCell) + ⟨(0 : ℤ), (1 :
-        ℤ)⟩, q + ⟨(0 : ℤ), (1 : ℤ)⟩) ∈ cyclicEdges ∨ (q + ⟨(0 : ℤ), (1 : ℤ)⟩, q + (1 :
-        LatticeCell) + ⟨(0 : ℤ), (1 : ℤ)⟩) ∈ cyclicEdges → (GridRayCrossingIndex (q + ⟨(0 : ℤ),
-        (1 : ℤ)⟩) p - GridRayCrossingIndex q p).natAbs = (1 : ℕ))) → ((∀ (g : Finset
-        GaussianInt), (g ∈ F) → (g = {v, u} ∨ ∃ a b l₁ l₂, p = l₁ ++ a :: b :: l₂ ∧ g = {a, b}))
-        → ((∀ (a : GaussianInt), ∀ (b : GaussianInt), (({a, b} : Finset GaussianInt) ∈ F) → ((a,
-        b) ∈ (p.zip p.tail) ++ [(v, u)] ∨ (b, a) ∈ (p.zip p.tail) ++ [(v, u)])) → ((p ≠ []) → ((u
-        ∈ p) → (v ∈ p))))))))))))) := by
+    (by
+      classical
+      exact
+        ∀ (p : List GaussianInt) (v : GaussianInt), p.getLast? = some v → v ∈ p) := by
   classical
-  intro W F p u v hnodup hlen hhead hlast hvertices hsteps hedges hlen3 hcross hcycleEdge
-      cyclicPair hpne huMem
+  intro p v hlast
   rcases (List.getLast?_eq_some_iff.mp hlast) with ⟨l, rfl⟩
   simp
 
@@ -2068,10 +2024,8 @@ theorem P3963T1ExteriorMixedCycleObstruction
           hlast hclose hsteps hedges hcross hcycleEdge (ExteriorMixedCycleProof.adjNe p)
               pairCases (ExteriorMixedCycleProof.adjacentMemZip) a b hab
   have hpne : p ≠ [] := ExteriorIndexCases.hpne p hlen
-  have huMem : u ∈ p := ExteriorIndexCases.huMem W F p u v hnodup hlen hhead hlast hvertices
-      hsteps hedges hlen3 hcross hcycleEdge cyclicPair hpne
-  have hvMem : v ∈ p := ExteriorIndexCases.hvMem W F p u v hnodup hlen hhead hlast hvertices
-      hsteps hedges hlen3 hcross hcycleEdge cyclicPair hpne huMem
+  have huMem : u ∈ p := ExteriorIndexCases.huMem p u hhead
+  have hvMem : v ∈ p := ExteriorIndexCases.hvMem p v hlast
   have vertexInW (z : GaussianInt) (hz : z ∈ p) : z ∈ W := ExteriorIndexCases.vertexInW W p
       hvertices z hz
   have hWfinite : W.Finite := ExteriorIndexCases.hWfinite W p hvertices

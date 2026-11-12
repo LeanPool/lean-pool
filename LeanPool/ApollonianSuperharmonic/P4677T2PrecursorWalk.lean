@@ -391,21 +391,10 @@ private theorem qhead :
     (by
       classical
       exact
-        ∀ (O : ProtoTile), ∀ (a : GaussianInt), ∀ (b : GaussianInt), ∀ (q : List GaussianInt), ∀
-            (q₀ : GaussianInt), ∀ (q₁ : GaussianInt), (q.Nodup) → (((4 : ℕ) ≤ q.length) →
-            ((q.head? = some q₀) → ((q.getLast? = some q₁) → ((BoundaryFootprintVertices O =
-            (↑q.toFinset : Set GaussianInt)) → ((∀ (a : GaussianInt), ∀ (b : GaussianInt), ∀ (l₁
-            : List GaussianInt), ∀ (l₂ : List GaussianInt), q = l₁ ++ a :: b :: l₂ →
-            FourNeighborAdjacent a b) → ((∀ (e : Finset GaussianInt), e ∈ BoundaryFootprintEdges
-            O ↔ e = {q₁, q₀} ∨ ∃ (a : GaussianInt) (b : GaussianInt) (l₁ : List GaussianInt) (l₂
-            : List GaussianInt), q = l₁ ++ a :: b :: l₂ ∧ e = {a, b}) → ((∀ (z : GaussianInt), (z
-            ∈ q) → (z ∈ BoundaryFootprintVertices O)) → ((a ∈ q) → ((b ∈ q) → (
-        let S : GaussianInt → GaussianInt → Prop := fun u v =>
-          u ∈ BoundaryFootprintVertices O ∧ v ∈ BoundaryFootprintVertices O ∧
-            {u, v} ∈ BoundaryFootprintEdges O
-        (List.IsChain S q) → (∃ c l, q = c :: l))))))))))) ) := by
+        ∀ (q : List GaussianInt) (q₀ : GaussianInt),
+          q.head? = some q₀ → ∃ (c : GaussianInt) (l : List GaussianInt), q = c :: l) := by
   classical
-  intro O a b q q₀ q₁ hqnd hqlen hqhead hqlast hqvertices hqstep hqedges qmem aq bq S qchain
+  intro q q₀ hqhead
   cases q with
   | nil => simp at hqhead
   | cons c l => exact ⟨c, l, rfl⟩
@@ -567,8 +556,7 @@ theorem P4677T2PrecursorWalk :
     have qreverse {u v : GaussianInt}
         (h : Relation.ReflTransGen S u v) : Relation.ReflTransGen S v u :=
             PrecursorWalkGeometry.qreverse O S_symm (u := u) (v := v) h
-    have qhead : ∃ c l, q = c :: l := PrecursorWalkGeometry.qhead O a b q q₀ q₁ hqnd hqlen hqhead
-        hqlast hqvertices hqstep hqedges qmem aq bq qchain
+    have qhead : ∃ c l, q = c :: l := PrecursorWalkGeometry.qhead q q₀ hqhead
     rcases qhead with ⟨c, l, rfl⟩
     have hca : c = q₀ := by simpa using hqhead
     subst c

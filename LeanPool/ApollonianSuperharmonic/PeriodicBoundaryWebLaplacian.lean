@@ -316,26 +316,32 @@ private theorem hvnotfour :
     (by
       classical
       exact
-        ∀ (C : BandCircle), ∀ (T : ProtoTile), ∀ (x : GaussianInt), ∀ (v : GaussianInt), ∀ (hv :
-            v ∈ TilingLattice C), (x ∈ BoundaryFootprintVertices (TileTranslation T v)) → (∀ (P :
-            PeriodicTileComplex ↥(TilingLattice C)),
-        let iv : TilingLattice C := ⟨v, hv⟩
-        (x ∈ BoundaryFootprintVertices (P.tile iv)) → ((∃ y ∈ (P.tile iv).cells, y = x ∨ y = x -
-            1 ∨ y = x - 1 - ⟨0, 1⟩ ∨ y = x - ⟨0, 1⟩) → ((∃ y, y ∉ (P.tile iv).cells ∧ (y = x ∨ y
-            = x - 1 ∨ y = x - 1 - ⟨0, 1⟩ ∨ y = x - ⟨0, 1⟩)) → (∀ (a0 : ↥(TilingLattice C)), (x ∈
-            (P.tile a0).cells) → ((∀ (y : ↥(TilingLattice C)), (fun (a : ↥(TilingLattice C)) => x
-            ∈ (P.tile a).cells) y → y = a0) → (∀ (a1 : ↥(TilingLattice C)), (x - (1 :
-            LatticeCell) ∈ (P.tile a1).cells) → ((∀ (y : ↥(TilingLattice C)), (fun (a :
-            ↥(TilingLattice C)) => x - (1 : LatticeCell) ∈ (P.tile a).cells) y → y = a1) → (∀ (a2
-            : ↥(TilingLattice C)), (x - (1 : LatticeCell) - (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt) ∈
-            (P.tile a2).cells) → ((∀ (y : ↥(TilingLattice C)), (fun (a : ↥(TilingLattice C)) => x
-            - (1 : LatticeCell) - (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt) ∈ (P.tile a).cells) y → y =
-            a2) → (∀ (a3 : ↥(TilingLattice C)), (x - (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt) ∈ (P.tile
-            a3).cells) → ((∀ (y : ↥(TilingLattice C)), (fun (a : ↥(TilingLattice C)) => x - (⟨(0
-            : ℤ), (1 : ℤ)⟩ : GaussianInt) ∈ (P.tile a).cells) y → y = a3) → (¬ (iv = a0 ∧ iv = a1
-            ∧ iv = a2 ∧ iv = a3))))))))))))) ) := by
+        ∀ (C : BandCircle) (x v : GaussianInt)
+          (hv : v ∈ TilingLattice C)
+          (P :
+            PeriodicTileComplex
+              ↥(TilingLattice C)),
+          let iv := ⟨v, hv⟩;
+          (∃ y ∉ (P.tile iv).cells,
+              y = x ∨
+                y = x - (1 : LatticeCell) ∨
+                  y =
+                      x - (1 : LatticeCell) -
+                        { re := (0 : ℤ), im := (1 : ℤ) } ∨
+                    y = x - { re := (0 : ℤ), im := (1 : ℤ) }) →
+            ∀ (a0 : ↥(TilingLattice C)),
+              x ∈ (P.tile a0).cells →
+                ∀ (a1 : ↥(TilingLattice C)),
+                  x - (1 : LatticeCell) ∈ (P.tile a1).cells →
+                    ∀ (a2 : ↥(TilingLattice C)),
+                      x - (1 : LatticeCell) -
+                            { re := (0 : ℤ), im := (1 : ℤ) } ∈
+                          (P.tile a2).cells →
+                        ∀ (a3 : ↥(TilingLattice C)),
+                          x - { re := (0 : ℤ), im := (1 : ℤ) } ∈ (P.tile a3).cells →
+                            ¬(iv = a0 ∧ iv = a1 ∧ iv = a2 ∧ iv = a3)) := by
   classical
-  intro C T x v hv hx P iv hxi hcorner hcornerOutside a0 ha0 hu0 a1 ha1 hu1 a2 ha2 hu2 a3 ha3 hu3
+  intro C x v hv P iv hcornerOutside a0 ha0 a1 ha1 a2 ha2 a3 ha3
   rintro ⟨h0, h1, h2, h3⟩
   rcases hcornerOutside with ⟨y, hy, rfl | rfl | rfl | rfl⟩
   · exact hy (by simpa [h0] using ha0)
@@ -1644,8 +1650,8 @@ theorem PeriodicBoundaryWebLaplacian (C : BandCircle)
     obtain ⟨a2, ha2, hu2⟩ :=
       PeriodicTileIndexedMultiplicityOne P (x - 1 - ⟨0, 1⟩)
     obtain ⟨a3, ha3, hu3⟩ := PeriodicTileIndexedMultiplicityOne P (x - ⟨0, 1⟩)
-    have hvnotfour := WebLaplacianGeometry.hvnotfour C T x v hv hx P hxi hcorner hcornerOutside
-        a0 ha0 hu0 a1 ha1 hu1 a2 ha2 hu2 a3 ha3 hu3
+    have hvnotfour := WebLaplacianGeometry.hvnotfour C x v hv P hcornerOutside
+        a0 ha0 a1 ha1 a2 ha2 a3 ha3
     have hfour := AffineTriangularNoFourfoldCellOwners P tileAt chart x
       a0 a1 a2 a3 ha0 ha1 ha2 ha3
     have secondOwnerCoversThree {I : Type} (f : Fin 4 → I)

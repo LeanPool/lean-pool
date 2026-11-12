@@ -230,21 +230,13 @@ private theorem hpos :
     (by
       classical
       exact
-        ∀ (q : Fin 4 → CircleCoordinates), ∀ (cfg : BandOrderedGeneralConfiguration q), ∀ (C₀ :
-            BandCircle), ∀ (T : ProtoTile), ∀ (cert : BandOrderedGeneralLayoutCertificate q cfg
-            C₀ T),
-        let P := cert.modified
-        ∀ (hindexed : ∀ (x : LatticeCell), ∃! a : PeriodicSubtileIndex, x ∈ (P.tile a).cells), ∀
-            (a : PeriodicSubtileIndex), ∀ (x : GaussianInt), ∀ (j : Fin (4 : ℕ)),
-            (LatticeVertexIncidentCell x j ∈ (P.tile a).cells) → (∀ (k : Fin (4 : ℕ)),
-        let owner : Fin 4 → PeriodicSubtileIndex := fun r =>
-          (hindexed (LatticeVertexIncidentCell x r)).choose
-        (owner j = a) → ((j ≠ k) → ((¬ (k = j + 1 ∨ j = k + 1)) → ((k = j + 2) → (
-        let l := j + 1
-        let m := j + 3
-        j ≠ l ∧ j ≠ k ∧ j ≠ m ∧ l ≠ k ∧ l ≠ m ∧ k ≠ m))))) ) := by
+        ∀ (j k : Fin (4 : ℕ)),
+          k = j + (2 : Fin (4 : ℕ)) →
+            let l := j + (1 : Fin (4 : ℕ));
+            let m := j + (3 : Fin (4 : ℕ));
+            j ≠ l ∧ j ≠ k ∧ j ≠ m ∧ l ≠ k ∧ l ≠ m ∧ k ≠ m) := by
   classical
-  intro q cfg C₀ T cert P hindexed a x j hja k owner hja' hjk hnotconsecutive hop l m
+  intro j k hop l m
   rw [hop]
   fin_cases j <;> decide
 
@@ -252,21 +244,12 @@ private theorem hlk :
     (by
       classical
       exact
-        ∀ (q : Fin 4 → CircleCoordinates), ∀ (cfg : BandOrderedGeneralConfiguration q), ∀ (C₀ :
-            BandCircle), ∀ (T : ProtoTile), ∀ (cert : BandOrderedGeneralLayoutCertificate q cfg
-            C₀ T),
-        let P := cert.modified
-        ∀ (hindexed : ∀ (x : LatticeCell), ∃! a : PeriodicSubtileIndex, x ∈ (P.tile a).cells), ∀
-            (a : PeriodicSubtileIndex), ∀ (x : GaussianInt), ∀ (j : Fin (4 : ℕ)),
-            (LatticeVertexIncidentCell x j ∈ (P.tile a).cells) → (∀ (k : Fin (4 : ℕ)),
-        let owner : Fin 4 → PeriodicSubtileIndex := fun r =>
-          (hindexed (LatticeVertexIncidentCell x r)).choose
-        (owner j = a) → ((j ≠ k) → ((¬ (k = j + 1 ∨ j = k + 1)) → ((k = j + 2) → (
-        let l := j + 1
-        let m := j + 3
-        (j ≠ l ∧ j ≠ k ∧ j ≠ m ∧ l ≠ k ∧ l ≠ m ∧ k ≠ m) → (l + 1 = k)))))) ) := by
+        ∀ (j k : Fin (4 : ℕ)),
+          k = j + (2 : Fin (4 : ℕ)) →
+            let l := j + (1 : Fin (4 : ℕ));
+            l + (1 : Fin (4 : ℕ)) = k) := by
   classical
-  intro q cfg C₀ T cert P hindexed a x j hja k owner hja' hjk hnotconsecutive hop l m hpos
+  intro j k hop l
   rw [hop]
   fin_cases j <;> decide
 
@@ -274,21 +257,12 @@ private theorem hkm :
     (by
       classical
       exact
-        ∀ (q : Fin 4 → CircleCoordinates), ∀ (cfg : BandOrderedGeneralConfiguration q), ∀ (C₀ :
-            BandCircle), ∀ (T : ProtoTile), ∀ (cert : BandOrderedGeneralLayoutCertificate q cfg
-            C₀ T),
-        let P := cert.modified
-        ∀ (hindexed : ∀ (x : LatticeCell), ∃! a : PeriodicSubtileIndex, x ∈ (P.tile a).cells), ∀
-            (a : PeriodicSubtileIndex), ∀ (x : GaussianInt), ∀ (j : Fin (4 : ℕ)),
-            (LatticeVertexIncidentCell x j ∈ (P.tile a).cells) → (∀ (k : Fin (4 : ℕ)),
-        let owner : Fin 4 → PeriodicSubtileIndex := fun r =>
-          (hindexed (LatticeVertexIncidentCell x r)).choose
-        (owner j = a) → ((j ≠ k) → ((¬ (k = j + 1 ∨ j = k + 1)) → ((k = j + 2) → (
-        let l := j + 1
-        let m := j + 3
-        (j ≠ l ∧ j ≠ k ∧ j ≠ m ∧ l ≠ k ∧ l ≠ m ∧ k ≠ m) → ((l + 1 = k) → (k + 1 = m))))))) ) := by
+        ∀ (j k : Fin (4 : ℕ)),
+          k = j + (2 : Fin (4 : ℕ)) →
+            let m := j + (3 : Fin (4 : ℕ));
+            k + (1 : Fin (4 : ℕ)) = m) := by
   classical
-  intro q cfg C₀ T cert P hindexed a x j hja k owner hja' hjk hnotconsecutive hop l m hpos hlk
+  intro j k hop m
   rw [hop]
   fin_cases j <;> decide
 
@@ -1045,12 +1019,11 @@ private theorem hnoPinch :
       -- The remaining incident sectors are owned by the two other labels.
       have hfalse : False := by
         have hpos : j ≠ l ∧ j ≠ k ∧ j ≠ m ∧ l ≠ k ∧ l ≠ m ∧ k ≠ m :=
-            GeometricSectorGeometry.hpos q cfg C₀ T cert hindexed a x j hja k hja' hjk
-            hnotconsecutive hop
-        have hlk : l + 1 = k := GeometricSectorGeometry.hlk q cfg C₀ T cert hindexed a x j hja
-            k hja' hjk hnotconsecutive hop hpos
-        have hkm : k + 1 = m := GeometricSectorGeometry.hkm q cfg C₀ T cert hindexed a x j hja
-            k hja' hjk hnotconsecutive hop hpos hlk
+            GeometricSectorGeometry.hpos j k hop
+        have hlk : l + 1 = k := GeometricSectorGeometry.hlk j
+            k hop
+        have hkm : k + 1 = m := GeometricSectorGeometry.hkm j
+            k hop
         have hmj : m + 1 = j := by fin_cases j <;> simp [m]
         have hlA : owner l ≠ a := GeometricSectorGeometry.hlA q cfg C₀ T cert hindexed
             radialMembers a b hnoedge x j k ho hkb' hlk

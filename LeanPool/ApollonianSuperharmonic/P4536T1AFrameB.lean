@@ -947,23 +947,24 @@ private theorem hE :
   simpa [r] using this
 
 private theorem hparent :
-    ∀ (C : BandCircle), ∀ (orientation : Bool), ∀ (base : ProtoTile), ∀ (Rminus : ProtoTile), ∀
-        (Rplus : ProtoTile), ∀ (hminus : PartialOdometer), ∀ (hplus : PartialOdometer), ∀ (F :
-        P4458T1BoundaryFrame C orientation base Rminus Rplus hminus hplus), ∀ (a : Fin 3), ∀ (p
-        : Fin 4 → CircleCoordinates), (![F.q (0 : Fin (4 : ℕ)), F.q a.succ, F.q (a + (1 : Fin (3
-        : ℕ))).succ, F.q (a + (2 : Fin (3 : ℕ))).succ] = ![((2 : ℤ) * (p (0 : Fin (4 : ℕ))).1 +
-        (2 : ℤ) * (p (2 : Fin (4 : ℕ))).1 + (2 : ℤ) * (p (3 : Fin (4 : ℕ))).1 - (p (1 : Fin (4 :
-        ℕ))).1, (2 : GaussianInt) * (p (0 : Fin (4 : ℕ))).2 + (2 : GaussianInt) * (p (2 : Fin (4
-        : ℕ))).2 + (2 : GaussianInt) * (p (3 : Fin (4 : ℕ))).2 - (p (1 : Fin (4 : ℕ))).2), p (0 :
-        Fin (4 : ℕ)), p (2 : Fin (4 : ℕ)), p (3 : Fin (4 : ℕ))]) → ((F.slot = a + (1 : Fin (3 :
-        ℕ))) → (
-    let r : Fin 4 → CircleCoordinates :=
-      ![F.q 0, F.q a.succ, F.q (a + 1).succ, F.q (a + 2).succ]
-    (ProperBandQuadruple r) → ((r 0 = (2 * (p 0).1 + 2 * (p 2).1 + 2 * (p 3).1 - (p 1).1, 2 * (p
-        0).2 + 2 * (p 2).2 + 2 * (p 3).2 - (p 1).2)) → ((r 1 = p 0) → ((r 2 = p 2) → ((r 3 = p 3)
-        → (r 2 = C.1.1))))))) := by
+    (by
+      classical
+      exact
+        ∀ (C : BandCircle) (orientation : Bool)
+          (base Rminus Rplus : ProtoTile)
+          (hminus hplus : PartialOdometer)
+          (F :
+            P4458T1BoundaryFrame C orientation base Rminus Rplus
+              hminus hplus)
+          (a : Fin (3 : ℕ)),
+          F.slot = a + (1 : Fin (3 : ℕ)) →
+            let r :=
+              ![F.q (0 : Fin (4 : ℕ)), F.q a.succ, F.q (a + (1 : Fin (3 : ℕ))).succ,
+                F.q (a + (2 : Fin (3 : ℕ))).succ];
+            r (2 : Fin (4 : ℕ)) =
+              C.1.1) := by
   classical
-  intro C orientation base Rminus Rplus hminus hplus F a p hstep hslot r hr hcoord hA hB hE
+  intro C orientation base Rminus Rplus hminus hplus F a hslot r
   rw [← F.parent, hslot]
   fin_cases a <;> simp [r]
 
@@ -1388,7 +1389,7 @@ theorem P4536T1AFrameB
       have hE : r 3 = p 3 := AFrameBDetails.hE C orientation base Rminus Rplus hminus hplus F a p
           hstep
       have hparent : r 2 = C.1.1 := AFrameBDetails.hparent C orientation base Rminus Rplus hminus
-          hplus F a p hstep hslot hr hcoord hA hB hE
+          hplus F a hslot
       have hpB : p 2 = C.1.1 := hB.symm.trans hparent
       have hposA : 0 < (p 0).1 := (ProperBandCurvatureStructure p hp).1
       have hposB : 0 < (p 2).1 := by rw [hpB]; exact C.2

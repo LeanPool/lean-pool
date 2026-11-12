@@ -8,8 +8,6 @@ module
 public import Mathlib.Init
 public import LeanPool.ApollonianSuperharmonic.LatticeAdjacentPackingSymmetryFacts
 
-public import LeanPool.ApollonianSuperharmonic.P5625T1CentroidSlopeDifferenceCovariance
-public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryTileOdometerCovariance
 
 -- [TABLET NODE: LeftLatticeAdjacentPackingSymmetryTransport]
 

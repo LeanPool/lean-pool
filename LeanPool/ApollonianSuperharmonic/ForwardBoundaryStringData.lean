@@ -121,45 +121,13 @@ private theorem htangent :
     (by
       classical
       exact
-        ∀ (q : Fin 4 -> CircleCoordinates), (ProperBandQuadruple q) → (∀ (Cᵢ : BandCircle), ∀ (i
-            : Fin 3), (q i.succ = Cᵢ.1.1) → (∀ (orientation : Bool), (Cᵢ.1.1.1 = (1 : ℤ) →
-            UnitOccurrenceOrientation q i orientation) → ((0 < (q i.succ).1) → (∀ (S : Fin (3 :
-            ℕ) → Bool → ProtoTile), ∀ (hs : Fin (3 : ℕ) → Bool → PartialOdometer),
-        let B := S i false
-        let g := hs i false
-        (TileOdometer Cᵢ.1.1 B g) → ((BandPrototile Cᵢ.1.1 B) → (∀ (pouter : ℝ × ℝ), ∀ (pseed : ℝ
-            × ℝ), (PartialOdometerSlope (hs i false) = some pseed) → ((pseed.1 - pouter.1 = (if
-            false = true then (1 : ℝ) else (-1 : ℝ)) * (1 / 2 : ℝ) * ((↑(BandVectors.2 (q (i + (2
-            : Fin (3 : ℕ))).succ) (q (i + (1 : Fin (3 : ℕ))).succ)).re : ℝ) - (↑(BandVectors.2 (q
-            (i + (2 : Fin (3 : ℕ))).succ) (q (i + (1 : Fin (3 : ℕ))).succ)).im : ℝ))) → ((pseed.2
-            - pouter.2 = (if false = true then (1 : ℝ) else (-1 : ℝ)) * (1 / 2 : ℝ) *
-            ((↑(BandVectors.2 (q (i + (2 : Fin (3 : ℕ))).succ) (q (i + (1 : Fin (3 :
-            ℕ))).succ)).im : ℝ) + (↑(BandVectors.2 (q (i + (2 : Fin (3 : ℕ))).succ) (q (i + (1 :
-            Fin (3 : ℕ))).succ)).re : ℝ))) → ((BandVectors.1 (q (i + (2 : Fin (3 : ℕ))).succ) (q
-            (i + (1 : Fin (3 : ℕ))).succ) + BandVectors.1 (q i.succ) (q (i + (2 : Fin (3 :
-            ℕ))).succ) + BandVectors.1 (q (i + (1 : Fin (3 : ℕ))).succ) (q i.succ) = (0 :
-            GaussianInt)) → ((BandVectors.2 (q (i + (2 : Fin (3 : ℕ))).succ) (q (i + (1 : Fin (3
-            : ℕ))).succ) + BandVectors.2 (q i.succ) (q (i + (2 : Fin (3 : ℕ))).succ) +
-            BandVectors.2 (q (i + (1 : Fin (3 : ℕ))).succ) (q i.succ) = (0 : GaussianInt)) →
-            ((BandVectors.1 (q i.succ) (q (0 : Fin (4 : ℕ))) = BandVectors.1 (q i.succ) (q (i +
-            (2 : Fin (3 : ℕ))).succ) - (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt) * BandVectors.1 (q (i +
-            (1 : Fin (3 : ℕ))).succ) (q i.succ)) → ((BandVectors.2 (q i.succ) (q (0 : Fin (4 :
-            ℕ))) = BandVectors.2 (q i.succ) (q (i + (2 : Fin (3 : ℕ))).succ) + (⟨(0 : ℤ), (1 :
-            ℤ)⟩ : GaussianInt) * BandVectors.2 (q (i + (1 : Fin (3 : ℕ))).succ) (q i.succ)) →
-            ((BandVectors.1 (q (0 : Fin (4 : ℕ))) (q i.succ) = (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt)
-            * BandVectors.1 (q i.succ) (q (0 : Fin (4 : ℕ)))) → ((BandVectors.2 (q (0 : Fin (4 :
-            ℕ))) (q i.succ) = -(⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt) * BandVectors.2 (q i.succ) (q
-            (0 : Fin (4 : ℕ)))) → ((pseed + GaussianRealPoint (-BandVectors.2 (q ((i + 1).succ))
-            (q i.succ)) = pouter + (1 / 2 : Real) • GaussianRealPoint (BandVectors.2 (q i.succ)
-            (q 0) - BandVectors.2 (q 0) (q i.succ))) → (
-        let uminus := -BandVectors.1 (q ((i + 1).succ)) (q i.succ)
-        (BandVectors.1 (q (i + (1 : Fin (3 : ℕ))).succ) (q i.succ) ∈ TilingLattice Cᵢ) →
-            ((BandVectors.1 (q (i + (2 : Fin (3 : ℕ))).succ) (q i.succ) ∈ TilingLattice Cᵢ) →
-            ((uminus ∈ TilingLattice Cᵢ) → (BandTangency (q i.succ) (q ((i +
-            2).succ))))))))))))))))))))) ) := by
+        ∀ (q : Fin (4 : ℕ) → CircleCoordinates),
+          ProperBandQuadruple q →
+            ∀ (i : Fin (3 : ℕ)),
+              BandTangency (q i.succ)
+                (q (i + (2 : Fin (3 : ℕ))).succ)) := by
   classical
-  intro q hq Cᵢ i hCᵢ orientation horientation hparent S hs B g hBodometer hB pouter pseed hpseed
-      hpre hpim hvsum hasum hvchild hachild hvflip haflip hseedIdentity uminus hvji hvki huminus
+  intro q hq i
   refine ⟨q, hq.1, i.succ, (i + 2).succ, ?_, rfl, rfl⟩
   fin_cases i <;> decide
 
@@ -325,8 +293,7 @@ theorem ForwardBoundaryStringData
   have huminus : uminus ∈ TilingLattice Cᵢ :=
     (TilingLattice Cᵢ).neg_mem hvji
   have htangent : BandTangency (q i.succ) (q ((i + 2).succ)) := ForwardBoundaryGeometry.htangent
-      q hq Cᵢ i hCᵢ orientation horientation hparent S hs hBodometer hB pouter pseed hpseed hpre
-      hpim hvsum hasum hvchild hachild hvflip haflip hseedIdentity hvji hvki huminus
+      q hq i
   have huplus : uplus ∈ TilingLattice Cᵢ := ForwardBoundaryGeometry.huplus q Cᵢ i hvki htangent
   have hRminus : Rminus ∈ RegularTileFamily B (TilingLattice Cᵢ) :=
     ⟨uminus, huminus, rfl⟩

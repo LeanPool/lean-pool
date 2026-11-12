@@ -327,47 +327,20 @@ private theorem hpos' :
     (by
       classical
       exact
-        ∀ (D : BandCircle), ∀ (T : ProtoTile), ∀ (S : ProtoTile), ∀ (k : PartialOdometer), ∀ (p :
-            ℝ × ℝ), ∀ (q : ℝ × ℝ), ∀ (Q : Fin (4 : ℕ) → CircleCoordinates), ∀ (i : Fin (3 : ℕ)),
-            (TileOdometer (Q i.succ) S k) → (∀ (s : Fin (4 : ℕ)), (Q i.succ = D.1.1) →
-            ((TileCentroid S - TileCentroid T = (1 / 2 : ℝ) • GaussianRealPoint ((⟨(0 : ℤ), (1 :
-            ℤ)⟩ : GaussianInt) ^ (↑s : ℕ) * (BandVectors.1 (Q i.succ) (Q (0 : Fin (4 : ℕ))) +
-            BandVectors.1 (Q (0 : Fin (4 : ℕ))) (Q i.succ)))) → ((q.1 - p.1 = ((1 / 2 : ℝ) •
-            GaussianRealPoint ((-(⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt)) ^ (↑s : ℕ) * (BandVectors.2
-            (Q i.succ) (Q (0 : Fin (4 : ℕ))) + BandVectors.2 (Q (0 : Fin (4 : ℕ))) (Q
-            i.succ)))).1) → ((q.2 - p.2 = ((1 / 2 : ℝ) • GaussianRealPoint ((-(⟨(0 : ℤ), (1 : ℤ)⟩
-            : GaussianInt)) ^ (↑s : ℕ) * (BandVectors.2 (Q i.succ) (Q (0 : Fin (4 : ℕ))) +
-            BandVectors.2 (Q (0 : Fin (4 : ℕ))) (Q i.succ)))).2) → (((0 : ℤ) < (Q i.succ).1) → (∀
-            (g : BandPackingSymmetry), ∀ (r : ℝ × ℝ), ∀ (t : ℝ × ℝ), ∀ (s' : Fin (4 : ℕ)),
-            (TileOdometer (BandPackingSymmetryQuadrupleAction g Q ((fun (j : Fin (3 : ℕ)) => if
-            BandPackingSymmetryReversesOrientation g = true then -j else j) i).succ)
-            (BandPackingSymmetryTileAction g S) (BandPackingSymmetryPartialOdometerAction g k)) →
-            ((TileCentroid (BandPackingSymmetryTileAction g S) - TileCentroid
-            (BandPackingSymmetryTileAction g T) = (1 / 2 : ℝ) • GaussianRealPoint ((⟨(0 : ℤ), (1
-            : ℤ)⟩ : GaussianInt) ^ (↑s' : ℕ) * (BandVectors.1 (BandPackingSymmetryQuadrupleAction
-            g Q ((fun (j : Fin (3 : ℕ)) => if BandPackingSymmetryReversesOrientation g = true
-            then -j else j) i).succ) (BandPackingSymmetryQuadrupleAction g Q (0 : Fin (4 : ℕ))) +
-            BandVectors.1 (BandPackingSymmetryQuadrupleAction g Q (0 : Fin (4 : ℕ)))
-            (BandPackingSymmetryQuadrupleAction g Q ((fun (j : Fin (3 : ℕ)) => if
-            BandPackingSymmetryReversesOrientation g = true then -j else j) i).succ)))) → ((t.1 -
-            r.1 = ((1 / 2 : ℝ) • GaussianRealPoint ((-(⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt)) ^ (↑s'
-            : ℕ) * (BandVectors.2 (BandPackingSymmetryQuadrupleAction g Q ((fun (j : Fin (3 : ℕ))
-            => if BandPackingSymmetryReversesOrientation g = true then -j else j) i).succ)
-            (BandPackingSymmetryQuadrupleAction g Q (0 : Fin (4 : ℕ))) + BandVectors.2
-            (BandPackingSymmetryQuadrupleAction g Q (0 : Fin (4 : ℕ)))
-            (BandPackingSymmetryQuadrupleAction g Q ((fun (j : Fin (3 : ℕ)) => if
-            BandPackingSymmetryReversesOrientation g = true then -j else j) i).succ)))).1) →
-            ((t.2 - r.2 = ((1 / 2 : ℝ) • GaussianRealPoint ((-(⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt))
-            ^ (↑s' : ℕ) * (BandVectors.2 (BandPackingSymmetryQuadrupleAction g Q ((fun (j : Fin
-            (3 : ℕ)) => if BandPackingSymmetryReversesOrientation g = true then -j else j)
-            i).succ) (BandPackingSymmetryQuadrupleAction g Q (0 : Fin (4 : ℕ))) + BandVectors.2
-            (BandPackingSymmetryQuadrupleAction g Q (0 : Fin (4 : ℕ)))
-            (BandPackingSymmetryQuadrupleAction g Q ((fun (j : Fin (3 : ℕ)) => if
-            BandPackingSymmetryReversesOrientation g = true then -j else j) i).succ)))).2) → (0 <
-            ((BandPackingSymmetryQuadrupleAction g Q) (if BandPackingSymmetryReversesOrientation
-            g then -i else i).succ).1)))))))))) ) := by
+        ∀ (Q : Fin (4 : ℕ) → CircleCoordinates)
+          (i : Fin (3 : ℕ)),
+          (0 : ℤ) < (Q i.succ).1 →
+            ∀ (g : BandPackingSymmetry),
+              (0 : ℤ) <
+                (BandPackingSymmetryQuadrupleAction g Q
+                    (if
+                          BandPackingSymmetryReversesOrientation
+                              g =
+                            true then
+                        -i
+                      else i).succ).1) := by
   classical
-  intro D T S k p q Q i hk s hparent hc ha hb hpos g r t s' hk' hc' ha' hb'
+  intro Q i hpos g
   have hp' := (BandPackingSymmetryCovariance g).1 (Q i.succ)
   cases hg : BandPackingSymmetryReversesOrientation g <;> fin_cases i <;>
     simpa [BandPackingSymmetryQuadrupleAction,hg] using hp'.symm ▸ hpos
@@ -538,8 +511,7 @@ theorem OdometerAdjacencyInduction :
     apply hcompat.mp
     have hpos' : 0 < ((BandPackingSymmetryQuadrupleAction g Q)
         (if BandPackingSymmetryReversesOrientation g then -i else i).succ).1 :=
-            AdjacencyInductionGeometry.hpos' D T S k p q Q i hk s hparent hc ha hb hpos g r t s'
-            hk' hc' ha' hb'
+            AdjacencyInductionGeometry.hpos' Q i hpos g
     rcases hcanon with ⟨P,hP,h0,hparents⟩ | ⟨K,hK,h0,hparents⟩
     · obtain ⟨j,hj⟩ := hparents (if BandPackingSymmetryReversesOrientation g then -i else i)
       rw [h0] at hh'

@@ -62,26 +62,10 @@ private theorem htranslateZero :
     (by
       classical
       exact
-        ∀ (q : Fin 4 -> CircleCoordinates), ∀ (C₀ : BandCircle), ∀ (Cᵢ : BandCircle), ∀ (i : Fin
-            3), ∀ (T₀ : ProtoTile), ∀ (horientationExists : ∃ o : Bool, Cᵢ.1.1.1 = 1 →
-            UnitOccurrenceOrientation q i o),
-        let orientation := Classical.choose horientationExists
-        ∀ (base : ProtoTile), ∀ (Rminus : ProtoTile), ∀ (Rplus : ProtoTile), ∀ (tiles : List
-            ProtoTile), ∀ (hseed : PartialOdometer), (Rminus ∈ RegularTileFamily base
-            (TilingLattice Cᵢ)) → ((TileOdometer Cᵢ.1.1 Rminus hseed) → ((BoundaryString C₀ Cᵢ i
-            orientation T₀ base Rminus Rplus tiles) → (∀ (q' : Fin (4 : ℕ) → CircleCoordinates),
-            (TileString Cᵢ orientation base Rminus Rplus tiles) → ((TileCentroid Rminus -
-            TileCentroid T₀ = (1 / 2 : ℝ) • GaussianRealPoint (BandVectors.1 (q' i.succ) (q' (0 :
-            Fin (4 : ℕ))) - BandVectors.1 (q' (0 : Fin (4 : ℕ))) (q' i.succ))) → (∀ (centerShift
-            : GaussianInt), ∀ (reverseTiles : List ProtoTile), (GaussianRealPoint centerShift =
-            TileCentroid Rminus + TileCentroid Rplus) → ((TileString Cᵢ orientation base Rplus
-            Rminus reverseTiles) → (((TileTranslation (TileHalfTurn Rminus) centerShift).cells =
-            Rplus.cells) → (((TileTranslation (TileHalfTurn Rplus) centerShift).cells =
-            Rminus.cells) → (TileTranslation Rminus (0 : GaussianInt) = Rminus))))))))) ) := by
+        ∀ (Rminus : ProtoTile),
+          TileTranslation Rminus (0 : GaussianInt) = Rminus) := by
   classical
-  intro q C₀ Cᵢ i T₀ horientationExists orientation base Rminus Rplus tiles hseed hRminus hseedO
-      hboundaryOriginal q' hstring hcentroidMinus centerShift reverseTiles hcenters hreverse
-      hminusCells hplusCells
+  intro Rminus
   cases Rminus with
   | mk cs anchor =>
     have hfun : GaussianTranslation (0 : GaussianInt) = id := by
@@ -454,28 +438,19 @@ private theorem hRplusBand :
     (by
       classical
       exact
-        ∀ (q : Fin 4 -> CircleCoordinates), ∀ (C₀ : BandCircle), ∀ (Cᵢ : BandCircle), ∀ (i : Fin
-            3), ∀ (T₀ : ProtoTile), ∀ (horientationExists : ∃ o : Bool, Cᵢ.1.1.1 = 1 →
-            UnitOccurrenceOrientation q i o),
-        let orientation := Classical.choose horientationExists
-        ∀ (base : ProtoTile), ∀ (Rminus : ProtoTile), ∀ (Rplus : ProtoTile), ∀ (tiles : List
-            ProtoTile), (BandPrototile Cᵢ.1.1 base) → ((Rplus ∈ RegularTileFamily base
-            (TilingLattice Cᵢ)) → ((BoundaryString C₀ Cᵢ i orientation T₀ base Rminus Rplus
-            tiles) → (∀ (q' : Fin (4 : ℕ) → CircleCoordinates), (TileString Cᵢ orientation base
-            Rminus Rplus tiles) → ((TileCentroid Rplus - TileCentroid T₀ = (1 / 2 : ℝ) •
-            GaussianRealPoint (BandVectors.1 (q' i.succ) (q' (0 : Fin (4 : ℕ))) + BandVectors.1
-            (q' (0 : Fin (4 : ℕ))) (q' i.succ))) → (∀ (centerShift : GaussianInt), ∀
-            (reverseTiles : List ProtoTile), (GaussianRealPoint centerShift = TileCentroid Rminus
-            + TileCentroid Rplus) → ((TileString Cᵢ orientation base Rplus Rminus reverseTiles) →
-            (((TileTranslation (TileHalfTurn Rminus) centerShift).cells = Rplus.cells) →
-            (((TileTranslation (TileHalfTurn Rplus) centerShift).cells = Rminus.cells) →
-            ((TileCentroid Rminus + TileCentroid Rplus = TileCentroid T₀ + TileCentroid T₀ +
-            GaussianRealPoint (BandVectors.1 (q i.succ) (q 0))) → (BandPrototile Cᵢ.1.1
-            Rplus)))))))))) ) := by
+        ∀ (Cᵢ : BandCircle)
+          (base Rplus : ProtoTile),
+          BandPrototile
+              Cᵢ.1.1
+              base →
+            Rplus ∈
+                RegularTileFamily base
+                  (TilingLattice Cᵢ) →
+              BandPrototile
+                Cᵢ.1.1
+                Rplus) := by
   classical
-  intro q C₀ Cᵢ i T₀ horientationExists orientation base Rminus Rplus tiles hbase hRplus
-      hboundaryOriginal q' hstring hcentroidPlus centerShift reverseTiles hcenters hreverse
-      hminusCells hplusCells hsumCentroid
+  intro Cᵢ base Rplus hbase hRplus
   rcases hRplus with ⟨w, hw, rfl⟩
   exact BandPrototileTranslation Cᵢ.1.1 base w hbase
 
@@ -610,37 +585,19 @@ private theorem hRminusBand :
     (by
       classical
       exact
-        ∀ (q : Fin 4 -> CircleCoordinates), ∀ (C₀ : BandCircle), ∀ (Cᵢ : BandCircle), ∀ (i : Fin
-            3), ∀ (T₀ : ProtoTile), ∀ (horientationExists : ∃ o : Bool, Cᵢ.1.1.1 = 1 →
-            UnitOccurrenceOrientation q i o),
-        let orientation := Classical.choose horientationExists
-        ∀ (base : ProtoTile), ∀ (Rminus : ProtoTile), ∀ (Rplus : ProtoTile), ∀ (tiles : List
-            ProtoTile), ∀ (hseed : PartialOdometer), (BandPrototile Cᵢ.1.1 base) → ((Rminus ∈
-            RegularTileFamily base (TilingLattice Cᵢ)) → ((TileOdometer Cᵢ.1.1 Rminus hseed) →
-            ((BoundaryString C₀ Cᵢ i orientation T₀ base Rminus Rplus tiles) → (∀ (q' : Fin (4 :
-            ℕ) → CircleCoordinates), (TileString Cᵢ orientation base Rminus Rplus tiles) →
-            ((TileCentroid Rminus - TileCentroid T₀ = (1 / 2 : ℝ) • GaussianRealPoint
-            (BandVectors.1 (q' i.succ) (q' (0 : Fin (4 : ℕ))) - BandVectors.1 (q' (0 : Fin (4 :
-            ℕ))) (q' i.succ))) → (∀ (centerShift : GaussianInt), ∀ (reverseTiles : List
-            ProtoTile), (GaussianRealPoint centerShift = TileCentroid Rminus + TileCentroid
-            Rplus) → ((TileString Cᵢ orientation base Rplus Rminus reverseTiles) →
-            (((TileTranslation (TileHalfTurn Rminus) centerShift).cells = Rplus.cells) →
-            (((TileTranslation (TileHalfTurn Rplus) centerShift).cells = Rminus.cells) → (
-        let d : GaussianInt := -BandVectors.2 (q ((i + 1).succ)) (q i.succ)
-        let hminus := PartialOdometerAffineTranslate hseed 0 d 0
-        (TileTranslation Rminus (0 : GaussianInt) = Rminus) → ((TileOdometer Cᵢ.1.1 Rminus
-            hminus) → ((TileCentroid Rminus + TileCentroid Rplus = TileCentroid T₀ + TileCentroid
-            T₀ + GaussianRealPoint (BandVectors.1 (q i.succ) (q 0))) → (∀ (couter : GaussianInt),
-        let a : GaussianInt := -couter
-        let hplus := PartialOdometerAffineTranslate
-          (PartialOdometerHalfTurn hminus) centerShift a 0
-        (TileOdometer Cᵢ.1.1 (TileTranslation (TileHalfTurn Rminus) centerShift) hplus) →
-            (BandPrototile Cᵢ.1.1 Rminus)))))))))))))) ) := by
+        ∀ (Cᵢ : BandCircle)
+          (base Rminus : ProtoTile),
+          BandPrototile
+              Cᵢ.1.1
+              base →
+            Rminus ∈
+                RegularTileFamily base
+                  (TilingLattice Cᵢ) →
+              BandPrototile
+                Cᵢ.1.1
+                Rminus) := by
   classical
-  intro q C₀ Cᵢ i T₀ horientationExists orientation base Rminus Rplus tiles hseed hbase hRminus
-      hseedO hboundaryOriginal q' hstring hcentroidMinus centerShift reverseTiles hcenters
-      hreverse hminusCells hplusCells d hminus htranslateZero hOminus hsumCentroid couter a hplus
-      hplusRawO
+  intro Cᵢ base Rminus hbase hRminus
   rcases hRminus with ⟨w, hw, rfl⟩
   exact BandPrototileTranslation Cᵢ.1.1 base w hbase
 
@@ -1280,31 +1237,25 @@ private theorem hinteriorCells :
     (by
       classical
       exact
-        ∀ (q : Fin 4 -> CircleCoordinates), ∀ (C₀ : BandCircle), ∀ (Cᵢ : BandCircle), ∀ (i : Fin
-            3), ∀ (T₀ : ProtoTile), ∀ (h₀ : PartialOdometer), ∀ (horientationExists : ∃ o : Bool,
-            Cᵢ.1.1.1 = 1 → UnitOccurrenceOrientation q i o),
-        let orientation := Classical.choose horientationExists
-        ∀ (base : ProtoTile), ∀ (Rminus : ProtoTile), ∀ (Rplus : ProtoTile), ∀ (tiles : List
-            ProtoTile), (BoundaryString C₀ Cᵢ i orientation T₀ base Rminus Rplus tiles) →
-            ((TileString Cᵢ orientation base Rminus Rplus tiles) → (∀ (centerShift :
-            GaussianInt), ∀ (reverseTiles : List ProtoTile), (TileString Cᵢ orientation base
-            Rplus Rminus reverseTiles) → ((List.Forall₂ (fun (T U : ProtoTile) =>
-            (TileTranslation (TileHalfTurn T) centerShift).cells = U.cells) tiles reverseTiles) →
-            ((tiles.head? = some Rminus) → ((tiles.getLast? = some Rplus) → ((2 ≤ tiles.length) →
-            (∀ (hs : List PartialOdometer), (OdometerStringRespect Cᵢ orientation base Rminus
-            Rplus tiles hs) → ((∀ T ∈ (List.drop (1 : ℕ) tiles).dropLast, ∃ (h :
-            PartialOdometer), (T, h) ∈ tiles.zip hs ∧ AncestorOdometer Cᵢ.1.1 C₀.1.1 T T₀ h h₀) →
-            ((hs.length = tiles.length) → ((∀ {α : Type}, ∀ {β : Type}, ∀ (r : α → β → Prop), ∀
-            {xs : List α}, ∀ {ys : List β}, List.Forall₂ r xs ys → List.Forall₂ r xs.dropLast
-            ys.dropLast) → (
-        let cellRelation : ProtoTile → ProtoTile → Prop := fun T U =>
-          (TileTranslation (TileHalfTurn T) centerShift).cells = U.cells
-        List.Forall₂ cellRelation ((tiles.drop 1).dropLast) ((reverseTiles.drop
-            1).dropLast)))))))))))) ) := by
+        ∀ (tiles : List ProtoTile) (centerShift : GaussianInt)
+          (reverseTiles : List ProtoTile),
+          List.Forall₂
+              (fun (T U : ProtoTile) =>
+                (TileTranslation
+                      (TileHalfTurn T) centerShift).cells =
+                  U.cells)
+              tiles reverseTiles →
+            (2 : ℕ) ≤ tiles.length →
+              (∀ {α β : Type} (r : α → β → Prop) {xs : List α} {ys : List β},
+                  List.Forall₂ r xs ys → List.Forall₂ r xs.dropLast ys.dropLast) →
+                let cellRelation := fun (T U : ProtoTile) =>
+                  (TileTranslation
+                        (TileHalfTurn T) centerShift).cells =
+                    U.cells;
+                List.Forall₂ cellRelation (List.drop (1 : ℕ) tiles).dropLast
+                  (List.drop (1 : ℕ) reverseTiles).dropLast) := by
   classical
-  intro q C₀ Cᵢ i T₀ h₀ horientationExists orientation base Rminus Rplus tiles hboundaryOriginal
-      hstring centerShift reverseTiles hreverse hcellPairs htilesHead htilesLast htilesLength hs
-      hrespect hancestorForward hlengthEq forall2_dropLast cellRelation
+  intro tiles centerShift reverseTiles hcellPairs htilesLength forall2_dropLast cellRelation
   cases hcellPairs with
   | nil => simp at htilesLength
   | cons hfirst htail =>
@@ -1996,35 +1947,27 @@ private theorem hTband :
     (by
       classical
       exact
-        ∀ (q : Fin 4 -> CircleCoordinates), ∀ (Cᵢ : BandCircle), ∀ (i : Fin 3), ∀
-            (horientationExists : ∃ o : Bool, Cᵢ.1.1.1 = 1 → UnitOccurrenceOrientation q i o),
-        let orientation := Classical.choose horientationExists
-        ∀ (base : ProtoTile), ∀ (Rminus : ProtoTile), ∀ (Rplus : ProtoTile), ∀ (centerShift :
-            GaussianInt), ∀ (reverseTiles : List ProtoTile), (TileString Cᵢ orientation base
-            Rplus Rminus reverseTiles) → (∀ (couter : GaussianInt), ∀ (eouter : ℤ),
-        let a : GaussianInt := -couter
-        let b : Int := -eouter
-        ∀ (eback : ℤ),
-        let bplus : Int := -eback
-        ∀ (hs : List PartialOdometer),
-        let constAt : Nat → Int := fun n =>
-          if n = 0 then 0 else if n + 1 = hs.length then bplus else b
-        let transformAt : Nat → PartialOdometer → PartialOdometer := fun n h =>
-          PartialOdometerAffineTranslate (PartialOdometerHalfTurn h) centerShift a (constAt n)
-        let gs := hs.mapIdx transformAt
-        let cellRelation : ProtoTile → ProtoTile → Prop := fun T U =>
-          (TileTranslation (TileHalfTurn T) centerShift).cells = U.cells
-        (∀ (xs : List ProtoTile), ((xs.drop 1).dropLast).Sublist xs) → (∀ (T : ProtoTile), (T ∈
-            (List.drop (1 : ℕ) reverseTiles).dropLast) → (∀ (g : PartialOdometer), ((T, g) ∈
-            (List.drop (1 : ℕ) reverseTiles).dropLast.zip (List.drop (1 : ℕ) gs).dropLast) →
-            (((T, g) ∈ ((reverseTiles.zip gs).drop 1).dropLast) → (∀ (U : ProtoTile), ∀ (h :
-            PartialOdometer), (cellRelation (U, h).1 (T, g).1 ∧ (T, g).2 =
-            PartialOdometerAffineTranslate (PartialOdometerHalfTurn (U, h).2) centerShift a b) →
-            (BandPrototile Cᵢ.1.1 T)))))) ) := by
+        ∀ (q : Fin (4 : ℕ) → CircleCoordinates)
+          (Cᵢ : BandCircle) (i : Fin (3 : ℕ))
+          (horientationExists :
+            ∃ (o : Bool),
+              Cᵢ.1.1.1 =
+                  (1 : ℤ) →
+                UnitOccurrenceOrientation q i o),
+          let orientation := Classical.choose horientationExists;
+          ∀ (base Rminus Rplus : ProtoTile)
+            (reverseTiles : List ProtoTile),
+            TileString Cᵢ orientation base Rplus Rminus
+                reverseTiles →
+              (∀ (xs : List ProtoTile),
+                  (List.drop (1 : ℕ) xs).dropLast.Sublist xs) →
+                ∀ T ∈ (List.drop (1 : ℕ) reverseTiles).dropLast,
+                  BandPrototile
+                    Cᵢ.1.1
+                    T) := by
   classical
-  intro q Cᵢ i horientationExists orientation base Rminus Rplus centerShift reverseTiles hreverse
-      couter eouter a b eback bplus hs constAt transformAt gs cellRelation trimSublist T hT g
-      hTgInterior hTgTrim U h hpairedData
+  intro q Cᵢ i horientationExists orientation base Rminus Rplus reverseTiles hreverse
+      trimSublist T hT
   rcases hreverse with ⟨hbaseR, _, _, _, hmemR, _, _⟩
   have hTmem : T ∈ reverseTiles := (trimSublist reverseTiles).subset hT
   rcases hmemR T hTmem with ⟨v, hv, rfl⟩
@@ -2158,10 +2101,8 @@ private theorem opposingBoundaryConclusion :
       touter couter eouter eback hminusBackEq htilesLength hs hhsLast hlengthEq
   let cellRelation : ProtoTile → ProtoTile → Prop := fun T U =>
     (TileTranslation (TileHalfTurn T) centerShift).cells = U.cells
-  have hinteriorCells := OpposingBoundaryGeometry.hinteriorCells q C₀ Cᵢ i T₀ h₀
-      horientationExists base Rminus Rplus tiles hboundaryOriginal hstring centerShift
-      reverseTiles hreverse hcellPairs htilesHead htilesLast htilesLength hs hrespect
-      hancestorForward hlengthEq (OpposingBoundaryGeometry.forall2_dropLast)
+  have hinteriorCells := OpposingBoundaryGeometry.hinteriorCells tiles centerShift
+      reverseTiles hcellPairs htilesLength (OpposingBoundaryGeometry.forall2_dropLast)
   have interiorTransforms := OpposingBoundaryGeometry.interiorTransforms C₀ Cᵢ i T₀' tiles q'
       centerShift touter couter eouter eback hs
   have hgsTail := OpposingBoundaryGeometry.hgsTail q C₀ Cᵢ i T₀ h₀ horientationExists base Rminus
@@ -2277,8 +2218,7 @@ private theorem opposingBoundaryConclusion :
     T (TileTranslation (TileHalfTurn T₀) centerShift) g houterAffine
     hpositive hstrict (OpposingBoundaryGeometry.hcentralTarget C₀ Cᵢ T₀ h₀ centerShift couter
         eouter T g U h hpairedData hcentral) (OpposingBoundaryGeometry.hTband q Cᵢ i
-        horientationExists base Rminus Rplus centerShift reverseTiles hreverse couter eouter
-        eback hs trimSublist T hT g hTgInterior hTgTrim U h hpairedData) hpairedData.1
+        horientationExists base Rminus Rplus reverseTiles hreverse trimSublist T hT) hpairedData.1
   have houter := AncestorOdometerOuterSupportNormalization
     Cᵢ.1.1 C₀.1.1 T (TileTranslation (TileHalfTurn T₀) centerShift)
     T₀' g houterAffine hC₀positive hstrict hinner hT₀'band houterCells
@@ -2372,9 +2312,7 @@ theorem OpposingBoundaryOdometerStrings
     (BandVectors.2 (q i.succ) (q 0) + BandVectors.2 (q 0) (q i.succ))
   let d : GaussianInt := -BandVectors.2 (q ((i + 1).succ)) (q i.succ)
   let hminus := PartialOdometerAffineTranslate hseed 0 d 0
-  have htranslateZero := OpposingBoundaryGeometry.htranslateZero q C₀ Cᵢ i T₀ horientationExists
-      base Rminus Rplus tiles hseed hRminus hseedO hboundaryOriginal q' hstring hcentroidMinus
-      centerShift reverseTiles hcenters hreverse hminusCells hplusCells
+  have htranslateZero := OpposingBoundaryGeometry.htranslateZero Rminus
   have hOminus := OpposingBoundaryGeometry.hOminus q Cᵢ i Rminus hseed hseedO htranslateZero
   have hminusSlopeCalc : pseed + GaussianRealPoint d = pminus := by
     simpa [pminus, d, hpouter_eq] using hseedSlopeData
@@ -2452,9 +2390,8 @@ theorem OpposingBoundaryOdometerStrings
   have hOplus : TileOdometer Cᵢ.1.1 Rplus hplus :=
     PositiveCurvatureTileOdometerSupportTransport Cᵢ.1.1
       (TileTranslation (TileHalfTurn Rminus) centerShift) Rplus hplus
-      hpositive hplusRawO (OpposingBoundaryGeometry.hRplusBand q C₀ Cᵢ i T₀ horientationExists
-          base Rminus Rplus tiles hbase hRplus hboundaryOriginal q' hstring hcentroidPlus
-          centerShift reverseTiles hcenters hreverse hminusCells hplusCells hsumCentroid)
+      hpositive hplusRawO (OpposingBoundaryGeometry.hRplusBand Cᵢ
+          base Rplus hbase hRplus)
           hminusCells
   have haRe : p₀.1 + p₀'.1 = (a.re : Real) := by
     simpa only [Prod.fst_add, GaussianRealPoint] using congrArg Prod.fst haSlope
@@ -2466,10 +2403,8 @@ theorem OpposingBoundaryOdometerStrings
   have hsplus := OpposingBoundaryGeometry.hsplus q i p₀ hseed centerShift hsminus couter
       hplusSlopeCalc
   have finiteTranslationFix := OpposingBoundaryGeometry.finiteTranslationFix
-  have hRminusBand := OpposingBoundaryGeometry.hRminusBand q C₀ Cᵢ i T₀ horientationExists base
-      Rminus Rplus tiles hseed hbase hRminus hseedO hboundaryOriginal q' hstring hcentroidMinus
-      centerShift reverseTiles hcenters hreverse hminusCells hplusCells htranslateZero hOminus
-      hsumCentroid couter hplusRawO
+  have hRminusBand := OpposingBoundaryGeometry.hRminusBand Cᵢ base
+      Rminus hbase hRminus
   let hback := PartialOdometerAffineTranslate
     (PartialOdometerHalfTurn hplus) centerShift a 0
   have hbackO : TileOdometer Cᵢ.1.1 Rminus hback :=

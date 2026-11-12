@@ -9,7 +9,6 @@ public import Mathlib.Init
 public import LeanPool.ApollonianSuperharmonic.ProperBandQuadruple
 public import LeanPool.ApollonianSuperharmonic.VectorRecursionLaws
 public import LeanPool.ApollonianSuperharmonic.GaussianQuarterTurn
-public import Mathlib.Tactic.FinCases
 public import Mathlib.Tactic.Ring
 
 /-!

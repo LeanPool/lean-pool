@@ -687,35 +687,15 @@ private theorem hxdet :
     (by
       classical
       exact
-        ∀ (n : Nat), ∀ (p : P3381T1PolygonBoundary n), ∀ (a : Fin (n + 3)), ∀ (b : Fin (n +
-            3)), ∀ (C : P3650T1CyclicChildren p a b),
-        let Op := P3544T1RayParity p
-        let OL := P3544T1RayParity C.left
-        let OR := P3544T1RayParity C.right
-        ∀ (x : ℝ × ℝ), (x ∈ openSegment ℝ (p.vertex a) (p.vertex b)) → (
-        let ilast : Fin (C.leftParameter + 3) := Fin.last (C.leftParameter + 2)
-        let irlast : Fin (C.rightParameter + 3) := Fin.last (C.rightParameter + 2)
-        (x ∈ openSegment Real (C.left.vertex ilast) (C.left.vertex (ilast + 1))) → ((x ∈
-            openSegment Real (C.right.vertex irlast) (C.right.vertex (irlast + 1))) → (∀ (rL :
-            ℝ), ∀ (sL : Bool), (∀ y ∈ Metric.ball x rL, y ∈ P3544T1RayParity C.left ↔ if sL =
-            true then (0 : ℝ) < P3381T1TriangleDeterminant ![C.left.vertex ilast, C.left.vertex
-            (ilast + (1 : Fin (C.leftParameter + (3 : ℕ)))), y] else P3381T1TriangleDeterminant
-            ![C.left.vertex ilast, C.left.vertex (ilast + (1 : Fin (C.leftParameter + (3 : ℕ)))),
-                y] <
-            (0 : ℝ)) → (∀ (rR : ℝ), ∀ (sR : Bool), (∀ y ∈ Metric.ball x rR, y ∈
-            P3544T1RayParity C.right ↔ if sR = true then (0 : ℝ) < P3381T1TriangleDeterminant
-            ![C.right.vertex irlast, C.right.vertex (irlast + (1 : Fin (C.rightParameter + (3 :
-                ℕ)))),
-            y] else P3381T1TriangleDeterminant ![C.right.vertex irlast, C.right.vertex (irlast
-            + (1 : Fin (C.rightParameter + (3 : ℕ)))), y] < (0 : ℝ)) → (
-        let H : Real × Real → Real := fun y =>
-          P3381T1TriangleDeterminant ![p.vertex a, p.vertex b, y]
-        (∀ y ∈ Metric.ball x rL, (y ∈ OL ↔ if !sL then 0 < H y else H y < 0)) → ((∀ y ∈
-            Metric.ball x rR, (y ∈ OR ↔ if sR then 0 < H y else H y < 0)) → ((x ∈ Op) → (∀ (rp :
-            ℝ), (Metric.ball x rp ⊆ Op) → (H x = 0))))))))) ) := by
+        ∀ (n : ℕ) (p : P3381T1PolygonBoundary n)
+          (a b : Fin (n + (3 : ℕ))),
+          ∀ x ∈ openSegment ℝ (p.vertex a) (p.vertex b),
+            let H := fun (y : ℝ × ℝ) =>
+              P3381T1TriangleDeterminant
+                ![p.vertex a, p.vertex b, y];
+            H x = (0 : ℝ)) := by
   classical
-  intro n p a b C Op OL OR x hx ilast irlast hxL hxR rL sL hsideL rR sR hsideR H hcanonL hcanonR
-      hxop rp hparentball
+  intro n p a b x hx H
   have hxseg : x ∈ segment Real (p.vertex a) (p.vertex b) :=
     openSegment_subset_segment Real (p.vertex a) (p.vertex b) hx
   rw [segment_eq_image] at hxseg
@@ -1105,8 +1085,7 @@ theorem P3650T1LocalCoherence {n : Nat} (p : P3381T1PolygonBoundary n)
     let dx := (p.vertex b).1 - (p.vertex a).1
     let dy := (p.vertex b).2 - (p.vertex a).2
     have hcoord : dx ≠ 0 ∨ dy ≠ 0 := LocalCoherenceProof.hcoord n p a b hABne
-    have hxdet : H x = 0 := LocalCoherenceProof.hxdet n p a b C x hx hxL hxR rL sL hsideL rR sR
-        hsideR hcanonL hcanonR hxop rp hparentball
+    have hxdet : H x = 0 := LocalCoherenceProof.hxdet n p a b x hx
     have hshift (u v : Real) : H (x.1 + u, x.2 + v) = H x + dx * v - dy * u :=
         LocalCoherenceProof.hshift n p a b x u v
     have hshiftV (v : Real) : H (x.1, x.2 + v) = H x + dx * v := by

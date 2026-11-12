@@ -963,24 +963,14 @@ private theorem hfinishIndex :
     (by
       classical
       exact
-        ∀ (T : ProtoTile), ∀ (U : ProtoTile), ∀ (Rplus : ProtoTile), ∀ (Epositive :
-            ExactTileInterfaceTriple T U Rplus), ∀ (path : List GaussianInt), (path.Nodup) → (((2
-            : ℕ) ≤ path.length) → ((path.head? = some Epositive.point) → ((path.getLast? = some
-            Epositive.otherAB) → ((FootprintVertices T ∩ FootprintVertices U = (↑path.toFinset :
-            Set GaussianInt)) → ((∀ (a : GaussianInt), ∀ (b : GaussianInt), ∀ (l₁ : List
-            GaussianInt), ∀ (l₂ : List GaussianInt), path = l₁ ++ a :: b :: l₂ → b = a + (1 :
-            GaussianInt) ∨ b = a - (1 : GaussianInt) ∨ b = a + (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt)
-            ∨ b = a - (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt)) → ((∀ (e : Finset GaussianInt), e ∈
-            FootprintEdges T ∩ FootprintEdges U ↔ ∃ (a : GaussianInt) (b : GaussianInt) (l₁ :
-            List GaussianInt) (l₂ : List GaussianInt), path = l₁ ++ a :: b :: l₂ ∧ e = {a, b}) →
-            ((∀ a b : GaussianInt, {a, b} ∈ FootprintEdges T ∩ FootprintEdges U → path.idxOf a +
-            1 = path.idxOf b ∨ path.idxOf b + 1 = path.idxOf a) → ((∀ {a : GaussianInt}, ∀
-            {b : GaussianInt}, (a ∈ path) → ((path.idxOf a = path.idxOf b) → (a = b))) →
-            ((path.idxOf Epositive.otherAB = path.length - 1) → (path.idxOf Epositive.point =
-            0)))))))))) ) := by
+        ∀ (T U Rplus : ProtoTile)
+          (Epositive : ExactTileInterfaceTriple T U Rplus)
+          (path : List GaussianInt),
+          (2 : ℕ) ≤ path.length →
+            path.head? = some Epositive.point →
+              List.idxOf Epositive.point path = (0 : ℕ)) := by
   classical
-  intro T U Rplus Epositive path hpathNodup hpathLength hpathHead hpathLast hpathVertices
-      hpathStep hpathEdges hpathIndex hpathIndexInjective hstartIndex
+  intro T U Rplus Epositive path hpathLength hpathHead
   cases path with
   | nil => simp at hpathLength
   | cons a rest =>
@@ -1387,9 +1377,8 @@ theorem P4261T2UnitInterface
         reverseFunctions hrestrictionsForward hrestrictionsBackward walk hwalkEdges path
         (UnitInterfaceGeometry.hcovered q C D i T U Rplus Epositive walk hwalkOuterEdges path
         hpathLength hpathIndex hpathIndexInjective hstartIndex
-        (UnitInterfaceGeometry.hfinishIndex T U Rplus Epositive path hpathNodup hpathLength
-        hpathHead hpathLast hpathVertices hpathStep hpathEdges hpathIndex hpathIndexInjective
-        hstartIndex) (UnitInterfaceGeometry.hpathIndexEdge path hpathNodup)
+        (UnitInterfaceGeometry.hfinishIndex T U Rplus Epositive path hpathLength
+        hpathHead) (UnitInterfaceGeometry.hpathIndexEdge path hpathNodup)
         (UnitInterfaceGeometry.hwalkHeadPos T U centerShift Rminus Rplus Epositive Eimage hvFT
         hvFU hvFR heFT heFU heFR hnegativePoint walk hwalkStart)
         (UnitInterfaceGeometry.hwalkLastPos T U Rplus Epositive walk hwalkFinish)

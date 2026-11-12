@@ -97,26 +97,17 @@ private theorem hCicurv :
     (by
       classical
       exact
-        ∀ (P : FordFareyParameter), ∀ (Ci : BandCircle), ∀ (i : Fin 3), (FordRecursiveQuadruple P
-            i.succ = Ci.1.1) → ((i = (0 : Fin (3 : ℕ)) ∧ P.q₁ < P.q₂ ∨ i = (1 : Fin (3 : ℕ)) ∧
-            P.q₂ < P.q₁) → (∀ (T : ProtoTile), ∀ (T' : ProtoTile), ∀ (u : GaussianInt), (T'.cells
-            = (TileTranslation (FordTile P.q) (u + if i = (0 : Fin (3 : ℕ)) then (⟨(↑P.q : ℤ),
-            (↑P.q₁ : ℤ)⟩ : GaussianInt) else (⟨-(↑P.q : ℤ), (↑P.q₂ : ℤ)⟩ : GaussianInt))).cells)
-            → ((∀ (x : GaussianInt), x ∈ FootprintVertices T ∩ FootprintVertices T' ↔ ((x - u).re
-            = if i = (0 : Fin (3 : ℕ)) then (↑P.q : ℤ) else (0 : ℤ)) ∧ (if i = (0 : Fin (3 : ℕ))
-            then (↑P.q₁ : ℤ) else (↑P.q₂ : ℤ)) ≤ (x - u).im ∧ (x - u).im ≤ (↑P.q : ℤ)) → (∀
-            (Rminus : ProtoTile), ∀ (Rplus : ProtoTile), (TileCentroid Rminus - TileCentroid T =
-            (1 / 2 : ℝ) • GaussianRealPoint (BandVectors.1 (FordRecursiveQuadruple P i.succ)
-            (FordRecursiveQuadruple P (0 : Fin (4 : ℕ))) - BandVectors.1 (FordRecursiveQuadruple
-            P (0 : Fin (4 : ℕ))) (FordRecursiveQuadruple P i.succ))) → ((TileCentroid Rplus -
-            TileCentroid T = (1 / 2 : ℝ) • GaussianRealPoint (BandVectors.1
-            (FordRecursiveQuadruple P i.succ) (FordRecursiveQuadruple P (0 : Fin (4 : ℕ))) +
-            BandVectors.1 (FordRecursiveQuadruple P (0 : Fin (4 : ℕ))) (FordRecursiveQuadruple P
-            i.succ))) → ((0 < P.q₁) → (
-        let n := if i = 0 then P.q₁ else P.q₂
-        (0 < n) → ((n < P.q) → (Ci.1.1.1 = (n : Int) ^ 2))))))))) ) := by
+        ∀ (P : FordFareyParameter)
+          (Ci : BandCircle) (i : Fin (3 : ℕ)),
+          FordRecursiveQuadruple P i.succ =
+              Ci.1.1 →
+            i = (0 : Fin (3 : ℕ)) ∧ P.q₁ < P.q₂ ∨ i = (1 : Fin (3 : ℕ)) ∧ P.q₂ < P.q₁ →
+              (0 : ℕ) < P.q₁ →
+                let n := if i = (0 : Fin (3 : ℕ)) then P.q₁ else P.q₂;
+                Ci.1.1.1 =
+                  (↑n : ℤ) ^ (2 : ℕ)) := by
   classical
-  intro P Ci i hCi hsmall T T' u hc' hsegment Rminus Rplus hcm hcp hrpos n hnpos hnq
+  intro P Ci i hCi hsmall hrpos n
   rw [← hCi]
   rcases hsmall with ⟨rfl, _⟩ | ⟨rfl, _⟩
   · simp [n, FordRecursiveQuadruple, FordCircleCoordinate, ne_of_gt hrpos, pow_two]
@@ -1022,8 +1013,7 @@ theorem P4158T1SmallerStringEdges
   have hnq : n < P.q := by dsimp [n]; split_ifs <;> omega
   have hCipos : 0 < Ci.1.1.1 := by omega
   have hC0pos := SmallerStringGeometry.hC0pos P C0 hC0 hqone
-  have hCicurv := SmallerStringGeometry.hCicurv P Ci i hCi hsmall T T' u hc' hsegment Rminus
-      Rplus hcm hcp hrpos hnpos hnq
+  have hCicurv := SmallerStringGeometry.hCicurv P Ci i hCi hsmall hrpos
   have hnlarge := SmallerStringGeometry.hnlarge P C0 Ci i hlarge hnpos hCicurv
   have hFord := SmallerStringGeometry.hFord P Ci i hCi hsmall T T' u hc' hsegment Rminus Rplus
       hcm hcp hrpos (P.q₂_pos) hnpos hnq hCicurv hnlarge

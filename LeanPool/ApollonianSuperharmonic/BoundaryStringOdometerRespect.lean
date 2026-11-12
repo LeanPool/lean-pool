@@ -635,17 +635,12 @@ theorem BoundaryStringOdometerRespect :
               R S g h F hn (U := U) (V := V) (k := k) (l := l) side
       obtain ⟨left, hl, hlhead, hllast, hleft, hleftAnc⟩ := realize P.left
       obtain ⟨right, hr, hrhead, hrlast, hright, hrightAnc⟩ := realize P.right
-      have joinOdometer : TileOdometer C.1.1 P.join (D.functions F.slot false) :=
-        AncestorOdometerRestriction C.1.1 F.outer.1.1 P.join F.tile
-          (D.functions F.slot false) F.odometer P.ancestor
       have chart (hc : (F.q F.slot.succ).1 = 1) :
           UnitOccurrenceOrientation F.q F.slot ε := F.chart (by simpa [F.parent] using hc)
       obtain ⟨_, _, joined⟩ :=
         BoundaryStringConcatenation F.q F.proper F.outer C F.slot F.child F.parent
           ε ε ε chart chart chart F.tile B P.join R S left right
           (by simpa only [F.child] using F.outer_band)
-          (by simpa only [F.parent] using
-            TileOdometerBandPrototile _ _ _ joinOdometer)
           (by simpa using P.occurrence.2.2)
           F.minus_centroid F.plus_centroid hleft.1 hright.1
       obtain ⟨_, _, _, _, _, _, hjoined, _, _⟩ := joined

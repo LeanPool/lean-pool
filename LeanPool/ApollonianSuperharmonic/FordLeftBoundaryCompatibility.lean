@@ -112,23 +112,14 @@ private theorem hpoint :
     (by
       classical
       exact
-        ∀ (T : ProtoTile), ∀ (T' : ProtoTile), ∀ (q : Fin 4 -> CircleCoordinates), ∀ (p : ℝ × ℝ),
-            ∀ (p' : ℝ × ℝ), ∀ (w : Fin (4 : ℕ) → CircleCoordinates), ∀ (iw : Fin (3 : ℕ)), ∀ (ew
-            : Bool), (TileCentroid T' - TileCentroid T = (if ew = true then (1 : ℝ) else (-1 :
-            ℝ)) • GaussianRealPoint (BandVectors.1 (w iw.succ) (w (0 : Fin (4 : ℕ))))) → ((p'.1 -
-            p.1 = (if ew = true then (1 : ℝ) else (-1 : ℝ)) * (↑(BandVectors.2 (w iw.succ) (w (0
-            : Fin (4 : ℕ)))).re : ℝ)) → ((p'.2 - p.2 = (if ew = true then (1 : ℝ) else (-1 : ℝ))
-            * (↑(BandVectors.2 (w iw.succ) (w (0 : Fin (4 : ℕ)))).im : ℝ)) → (∀ (r2 : Fin (3 :
-            ℕ)), ∀ (g2 : BandPackingSymmetry), ∀ (P2 : FordFareyParameter), ((w (r2 + (2 : Fin (3
-            : ℕ))).succ).1 = (0 : ℤ)) → ((BandPackingSymmetryQuadrupleAction g2 ![w (0 : Fin (4 :
-            ℕ)), w r2.succ, w (r2 + (1 : Fin (3 : ℕ))).succ, w (r2 + (2 : Fin (3 : ℕ))).succ] =
-            FordRecursiveQuadruple P2) → (
-        let barq : Fin 4 → CircleCoordinates :=
-          ![w 0, w r2.succ, w (r2 + 1).succ, w (r2 + 2).succ]
-        (ProperBandQuadruple barq) → ((barq 0 = q 0) → (∀ (t : Fin (3 : ℕ)), (t + r2 = iw) →
-            (barq t.succ = w iw.succ)))))))) ) := by
+        ∀ (w : Fin (4 : ℕ) → CircleCoordinates)
+          (iw r2 : Fin (3 : ℕ)),
+          let barq :=
+            ![w (0 : Fin (4 : ℕ)), w r2.succ, w (r2 + (1 : Fin (3 : ℕ))).succ,
+              w (r2 + (2 : Fin (3 : ℕ))).succ];
+          ∀ (t : Fin (3 : ℕ)), t + r2 = iw → barq t.succ = w iw.succ) := by
   classical
-  intro T T' q p p' w iw ew hwcent hwslope hwslope' r2 g2 P2 hz2 heq2 barq hbar hbar0 t ht
+  intro w iw r2 barq t ht
   revert ht
   fin_cases r2 <;> fin_cases t <;> fin_cases iw <;> simp [barq]
 
@@ -799,8 +790,8 @@ theorem FordLeftBoundaryCompatibility
     have hidx : ∃ t : Fin 3, (t + r2 : Fin 3) = iw := by
       fin_cases r2 <;> fin_cases iw <;> decide
     obtain ⟨t, ht⟩ := hidx
-    have hpoint := FordBoundaryCompatibilityGeometry.hpoint T T' q p p'
-        w iw ew hwcent hwslope hwslope' r2 g2 P2 hz2 heq2 hbar hbar0 t ht
+    have hpoint := FordBoundaryCompatibilityGeometry.hpoint
+        w iw r2 t ht
     have hcentbar := FordBoundaryCompatibilityGeometry.hcentbar C T T' q hC w iw ew hwchild
         hwcent r2
               hbar0 t hpoint

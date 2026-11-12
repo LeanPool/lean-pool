@@ -270,30 +270,25 @@ private theorem hv₁ :
     (by
       classical
       exact
-        ∀ (L : ℝ), ∀ (q : Fin (4 : ℕ) → CircleCoordinates), ∀ (i : Fin (3 : ℕ)), ((0 : ℤ) < (q
-        i.succ).1) → (
-        let p (a : Fin 4) : ℂ := (q a).2 / ((q a).1 : ℝ)
-        let rad (a : Fin 4) : ℝ := 1 / ((q a).1 : ℝ)
-        let j : Fin 3 := i + 1
-        let k : Fin 3 := i + 2
-        (0 < (q i.succ).1) → ((0 < rad i.succ) → (((q i.succ).1 < (q 0).1) → ((rad 0 < rad i.succ) →
-        ((0 < rad i.succ + rad 0) → ((j ≠ i) → ((k ≠ i) → ((j ≠ k) → ((0 < (q j.succ).1 ∨ (q
-        j.succ).1 = 0) → ((0 < (q k.succ).1 ∨ (q k.succ).1 = 0) → ((¬ ((q j.succ).1 = 0 ∧ (q
-        k.succ).1 = 0)) → ((dist (p 0) (p i.succ) = rad 0 + rad i.succ) → ((0 ≤ (q j.succ).1 ∧ 0
-        ≤ (q k.succ).1) → (
-        let A : ℂ := p i.succ
-        let X : ℂ := p 0
-        let e : ℂ := (X - A) / ((rad i.succ + rad 0 : ℝ) : ℂ)
-        (‖X - A‖ = rad i.succ + rad 0) → ((‖e‖ = 1) → ((Complex.normSq e = 1) → (((q i.succ).1 ≠
-            0) →
-        (
-        let v₁ : ℂ := P5023T1ContactVertices L q (i + 1)
-        v₁ = if (q k.succ).1 = 0 then ⟨if (q k.succ).2 = -1 then L else L + 2, (p i.succ).im⟩ else
-        ((q i.succ).2 + (q k.succ).2 : ℂ) / (((q i.succ).1 : ℝ) + ((q k.succ).1 :
-        ℝ)))))))))))))))))))) ) := by
+        ∀ (L : ℝ) (q : Fin (4 : ℕ) → CircleCoordinates)
+          (i : Fin (3 : ℕ)),
+          let p := fun (a : Fin (4 : ℕ)) =>
+            (GaussianInt.toComplex : GaussianInt → ℂ) (q a).2 / (↑(↑(q a).1 : ℝ) : ℂ);
+          let k := i + (2 : Fin (3 : ℕ));
+          (q i.succ).1 ≠ (0 : ℤ) →
+            let v₁ :=
+              P5023T1ContactVertices L q
+                (i + (1 : Fin (3 : ℕ)));
+            v₁ =
+              if (q k.succ).1 = (0 : ℤ) then
+                { re := if (q k.succ).2 = (-1 : GaussianInt) then L else L + (2 : ℝ),
+                  im := (p i.succ).im }
+              else
+                ((GaussianInt.toComplex : GaussianInt → ℂ) (q i.succ).2 +
+                    (GaussianInt.toComplex : GaussianInt → ℂ) (q k.succ).2) /
+                  ((↑(↑(q i.succ).1 : ℝ) : ℂ) + (↑(↑(q k.succ).1 : ℝ) : ℂ))) := by
   classical
-  intro L q i hpos p rad j k hparent hr hless hRr hden hji hki hjk hjpos hkpos hnotbothzero
-      hchild_parent hside_nonneg A X e hcenterNorm heNorm heSq hparne v₁
+  intro L q i p k hparne v₁
   fin_cases i
   · have hp : (q (1 : Fin 4)).1 ≠ 0 := by simpa using hparne
     simp [v₁, P5023T1ContactVertices, p, k, hp, add_comm]
@@ -306,33 +301,25 @@ private theorem hv₂ :
     (by
       classical
       exact
-        ∀ (L : ℝ), ∀ (q : Fin (4 : ℕ) → CircleCoordinates), ∀ (i : Fin (3 : ℕ)), ((0 : ℤ) < (q
-        i.succ).1) → (
-        let p (a : Fin 4) : ℂ := (q a).2 / ((q a).1 : ℝ)
-        let rad (a : Fin 4) : ℝ := 1 / ((q a).1 : ℝ)
-        let j : Fin 3 := i + 1
-        let k : Fin 3 := i + 2
-        (0 < (q i.succ).1) → ((0 < rad i.succ) → (((q i.succ).1 < (q 0).1) → ((rad 0 < rad i.succ) →
-        ((0 < rad i.succ + rad 0) → ((j ≠ i) → ((k ≠ i) → ((j ≠ k) → ((0 < (q j.succ).1 ∨ (q
-        j.succ).1 = 0) → ((0 < (q k.succ).1 ∨ (q k.succ).1 = 0) → ((¬ ((q j.succ).1 = 0 ∧ (q
-        k.succ).1 = 0)) → ((dist (p 0) (p i.succ) = rad 0 + rad i.succ) → ((0 ≤ (q j.succ).1 ∧ 0
-        ≤ (q k.succ).1) → (
-        let A : ℂ := p i.succ
-        let X : ℂ := p 0
-        let e : ℂ := (X - A) / ((rad i.succ + rad 0 : ℝ) : ℂ)
-        (‖X - A‖ = rad i.succ + rad 0) → ((‖e‖ = 1) → ((Complex.normSq e = 1) → (((q i.succ).1 ≠
-            0) →
-        (
-        let v₁ : ℂ := P5023T1ContactVertices L q (i + 1)
-        let v₂ : ℂ := P5023T1ContactVertices L q (i + 2)
-        (v₁ = if (q k.succ).1 = 0 then ⟨if (q k.succ).2 = -1 then L else L + 2, (p i.succ).im⟩ else
-        ((q i.succ).2 + (q k.succ).2 : ℂ) / (((q i.succ).1 : ℝ) + ((q k.succ).1 : ℝ))) → (v₂ = if
-        (q j.succ).1 = 0 then ⟨if (q j.succ).2 = -1 then L else L + 2, (p i.succ).im⟩ else ((q
-        i.succ).2 + (q j.succ).2 : ℂ) / (((q i.succ).1 : ℝ) + ((q j.succ).1 :
-        ℝ))))))))))))))))))))) ) := by
+        ∀ (L : ℝ) (q : Fin (4 : ℕ) → CircleCoordinates)
+          (i : Fin (3 : ℕ)),
+          let p := fun (a : Fin (4 : ℕ)) =>
+            (GaussianInt.toComplex : GaussianInt → ℂ) (q a).2 / (↑(↑(q a).1 : ℝ) : ℂ);
+          let j := i + (1 : Fin (3 : ℕ));
+          (q i.succ).1 ≠ (0 : ℤ) →
+            let v₂ :=
+              P5023T1ContactVertices L q
+                (i + (2 : Fin (3 : ℕ)));
+            v₂ =
+              if (q j.succ).1 = (0 : ℤ) then
+                { re := if (q j.succ).2 = (-1 : GaussianInt) then L else L + (2 : ℝ),
+                  im := (p i.succ).im }
+              else
+                ((GaussianInt.toComplex : GaussianInt → ℂ) (q i.succ).2 +
+                    (GaussianInt.toComplex : GaussianInt → ℂ) (q j.succ).2) /
+                  ((↑(↑(q i.succ).1 : ℝ) : ℂ) + (↑(↑(q j.succ).1 : ℝ) : ℂ))) := by
   classical
-  intro L q i hpos p rad j k hparent hr hless hRr hden hji hki hjk hjpos hkpos hnotbothzero
-      hchild_parent hside_nonneg A X e hcenterNorm heNorm heSq hparne v₁ v₂ hv₁
+  intro L q i p j hparne v₂
   fin_cases i
   · have hp : (q (1 : Fin 4)).1 ≠ 0 := by simpa using hparne
     simp [v₂, P5023T1ContactVertices, p, j, hp, add_comm]
@@ -1125,15 +1112,11 @@ theorem P5023T1CircularSide :
   have hv₁ : v₁ = if (q k.succ).1 = 0 then
       ⟨if (q k.succ).2 = -1 then L else L + 2, (p i.succ).im⟩ else
       ((q i.succ).2 + (q k.succ).2 : ℂ) /
-        (((q i.succ).1 : ℝ) + ((q k.succ).1 : ℝ)) := CircularSideProof.hv₁ L q i hpos hparent hr
-            hless hRr hden hji hki hjk hjpos hkpos hnotbothzero hchild_parent hside_nonneg
-            hcenterNorm heNorm heSq hparne
+        (((q i.succ).1 : ℝ) + ((q k.succ).1 : ℝ)) := CircularSideProof.hv₁ L q i hparne
   have hv₂ : v₂ = if (q j.succ).1 = 0 then
       ⟨if (q j.succ).2 = -1 then L else L + 2, (p i.succ).im⟩ else
       ((q i.succ).2 + (q j.succ).2 : ℂ) /
-        (((q i.succ).1 : ℝ) + ((q j.succ).1 : ℝ)) := CircularSideProof.hv₂ L q i hpos hparent hr
-            hless hRr hden hji hki hjk hjpos hkpos hnotbothzero hchild_parent hside_nonneg
-            hcenterNorm heNorm heSq hparne hv₁
+        (((q i.succ).1 : ℝ) + ((q j.succ).1 : ℝ)) := CircularSideProof.hv₂ L q i hparne
   let V (a : Fin 3) : ℂ :=
     if (q a.succ).1 = 0 then
       ⟨if (q a.succ).2 = -1 then L else L + 2, A.im⟩

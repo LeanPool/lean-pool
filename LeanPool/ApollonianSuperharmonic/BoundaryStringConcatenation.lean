@@ -75,27 +75,18 @@ private theorem hcyc :
     (by
       classical
       exact
-        ∀ (q : Fin 4 → CircleCoordinates), (ProperBandQuadruple q) → (∀ (Cᵢ : BandCircle), ∀ (i :
-            Fin 3), (q i.succ = Cᵢ.1.1) → (∀ (orientation : Bool), ∀ (leftOrientation : Bool), ∀
-            (rightOrientation : Bool), ((q i.succ).1 = (1 : ℤ) → UnitOccurrenceOrientation q i
-            orientation) → (((q i.succ).1 = (1 : ℤ) → UnitOccurrenceOrientation q i
-            leftOrientation) → (((q i.succ).1 = (1 : ℤ) → UnitOccurrenceOrientation q i
-            rightOrientation) → (∀ (T₀ : ProtoTile), ∀ (Tminus : ProtoTile), ∀ (Rminus :
-            ProtoTile), ∀ (Rplus : ProtoTile), (BandPrototile (q i.succ) Tminus) → ((TileCentroid
-            Tminus - TileCentroid T₀ = (-1 : ℝ) • (1 / 2 : ℝ) • (GaussianRealPoint (BandVectors.1
-            (q (i + (2 : Fin (3 : ℕ))).succ) (q (i + (1 : Fin (3 : ℕ))).succ)) -
-            (-(GaussianRealPoint (BandVectors.1 (q (i + (2 : Fin (3 : ℕ))).succ) (q (i + (1 : Fin
-            (3 : ℕ))).succ))).2, (GaussianRealPoint (BandVectors.1 (q (i + (2 : Fin (3 :
-            ℕ))).succ) (q (i + (1 : Fin (3 : ℕ))).succ))).1))) → ((TileCentroid Rminus -
-            TileCentroid T₀ = (1 / 2 : ℝ) • GaussianRealPoint (BandVectors.1 (q i.succ) (q (0 :
-            Fin (4 : ℕ))) - BandVectors.1 (q (0 : Fin (4 : ℕ))) (q i.succ))) → ((TileCentroid
-            Rplus - TileCentroid T₀ = (1 / 2 : ℝ) • GaussianRealPoint (BandVectors.1 (q i.succ)
-            (q (0 : Fin (4 : ℕ))) + BandVectors.1 (q (0 : Fin (4 : ℕ))) (q i.succ))) →
-            (BandVectors.1 (q ((i + 2).succ)) (q ((i + 1).succ)) + BandVectors.1 (q ((i +
-            1).succ)) (q i.succ) + BandVectors.1 (q i.succ) (q ((i + 2).succ)) = 0))))))))) ) := by
+        ∀ (q : Fin (4 : ℕ) → CircleCoordinates),
+          ProperBandQuadruple q →
+            ∀ (i : Fin (3 : ℕ)),
+              BandVectors.1 (q (i + (2 : Fin (3 : ℕ))).succ)
+                      (q (i + (1 : Fin (3 : ℕ))).succ) +
+                    BandVectors.1
+                      (q (i + (1 : Fin (3 : ℕ))).succ) (q i.succ) +
+                  BandVectors.1 (q i.succ)
+                    (q (i + (2 : Fin (3 : ℕ))).succ) =
+                (0 : GaussianInt)) := by
   classical
-  intro q hq Cᵢ i hCᵢ orientation leftOrientation rightOrientation horientation hleftOrientation
-      hrightOrientation T₀ Tminus Rminus Rplus hTminus hminus hRminus hRplus
+  intro q hq i
   fin_cases i
   all_goals
     convert (VectorRecursionLaws q hq.1).1 using 1;
@@ -105,29 +96,17 @@ private theorem hin :
     (by
       classical
       exact
-        ∀ (q : Fin 4 → CircleCoordinates), (ProperBandQuadruple q) → (∀ (Cᵢ : BandCircle), ∀ (i :
-            Fin 3), (q i.succ = Cᵢ.1.1) → (∀ (orientation : Bool), ∀ (leftOrientation : Bool), ∀
-            (rightOrientation : Bool), ((q i.succ).1 = (1 : ℤ) → UnitOccurrenceOrientation q i
-            orientation) → (((q i.succ).1 = (1 : ℤ) → UnitOccurrenceOrientation q i
-            leftOrientation) → (((q i.succ).1 = (1 : ℤ) → UnitOccurrenceOrientation q i
-            rightOrientation) → (∀ (T₀ : ProtoTile), ∀ (Tminus : ProtoTile), ∀ (Rminus :
-            ProtoTile), ∀ (Rplus : ProtoTile), (BandPrototile (q i.succ) Tminus) → ((TileCentroid
-            Tminus - TileCentroid T₀ = (-1 : ℝ) • (1 / 2 : ℝ) • (GaussianRealPoint (BandVectors.1
-            (q (i + (2 : Fin (3 : ℕ))).succ) (q (i + (1 : Fin (3 : ℕ))).succ)) -
-            (-(GaussianRealPoint (BandVectors.1 (q (i + (2 : Fin (3 : ℕ))).succ) (q (i + (1 : Fin
-            (3 : ℕ))).succ))).2, (GaussianRealPoint (BandVectors.1 (q (i + (2 : Fin (3 :
-            ℕ))).succ) (q (i + (1 : Fin (3 : ℕ))).succ))).1))) → ((TileCentroid Rminus -
-            TileCentroid T₀ = (1 / 2 : ℝ) • GaussianRealPoint (BandVectors.1 (q i.succ) (q (0 :
-            Fin (4 : ℕ))) - BandVectors.1 (q (0 : Fin (4 : ℕ))) (q i.succ))) → ((TileCentroid
-            Rplus - TileCentroid T₀ = (1 / 2 : ℝ) • GaussianRealPoint (BandVectors.1 (q i.succ)
-            (q (0 : Fin (4 : ℕ))) + BandVectors.1 (q (0 : Fin (4 : ℕ))) (q i.succ))) →
-            ((BandVectors.1 (q ((i + 2).succ)) (q ((i + 1).succ)) + BandVectors.1 (q ((i +
-            1).succ)) (q i.succ) + BandVectors.1 (q i.succ) (q ((i + 2).succ)) = 0) →
-            (BandVectors.1 (q i.succ) (q 0) = BandVectors.1 (q i.succ) (q ((i + 2).succ)) - (⟨0,
-            1⟩ : GaussianInt) * BandVectors.1 (q ((i + 1).succ)) (q i.succ))))))))))) ) := by
+        ∀ (q : Fin (4 : ℕ) → CircleCoordinates),
+          ProperBandQuadruple q →
+            ∀ (i : Fin (3 : ℕ)),
+              BandVectors.1 (q i.succ) (q (0 : Fin (4 : ℕ))) =
+                BandVectors.1 (q i.succ)
+                    (q (i + (2 : Fin (3 : ℕ))).succ) -
+                  { re := (0 : ℤ), im := (1 : ℤ) } *
+                    BandVectors.1
+                      (q (i + (1 : Fin (3 : ℕ))).succ) (q i.succ)) := by
   classical
-  intro q hq Cᵢ i hCᵢ orientation leftOrientation rightOrientation horientation hleftOrientation
-      hrightOrientation T₀ Tminus Rminus Rplus hTminus hminus hRminus hRplus hcyc
+  intro q hq i
   fin_cases i
   · exact (VectorRecursionLaws q hq.1).2.2.1
   · have h := (VectorRecursionLaws (![q 0, q 2, q 3, q 1])
@@ -833,7 +812,6 @@ theorem BoundaryStringConcatenation
     (T₀ base Tminus Rminus Rplus : ProtoTile)
     (left right : List ProtoTile)
     (hT₀ : BandPrototile (q 0) T₀)
-    (hTminus : BandPrototile (q i.succ) Tminus)
     (hminus : TileCentroid Tminus - TileCentroid T₀ =
       (-1 : ℝ) • ((1 / 2 : ℝ) •
         (GaussianRealPoint
@@ -883,15 +861,11 @@ theorem BoundaryStringConcatenation
   obtain ⟨s, hs, hsuniq⟩ := (hfamily Rplus).mp hRplusMem
   obtain ⟨P, hP, hPuniq⟩ := (htransport Rminus Tminus left r m hr hm).mp hleft'
   obtain ⟨Q, hQ, hQuniq⟩ := (htransport Tminus Rplus right m s hm hs).mp hright'
-  have hcyc := BoundaryConcatenationGeometry.hcyc q hq Cᵢ i hCᵢ orientation leftOrientation
-      rightOrientation horientation hleftOrientation hrightOrientation T₀ Tminus Rminus Rplus
-      hTminus hminus hRminus hRplus
+  have hcyc := BoundaryConcatenationGeometry.hcyc q hq i
   have hin : BandVectors.1 (q i.succ) (q 0) =
       BandVectors.1 (q i.succ) (q ((i + 2).succ)) -
         (⟨0, 1⟩ : GaussianInt) *
-          BandVectors.1 (q ((i + 1).succ)) (q i.succ) := BoundaryConcatenationGeometry.hin q hq
-              Cᵢ i hCᵢ orientation leftOrientation rightOrientation horientation hleftOrientation
-              hrightOrientation T₀ Tminus Rminus Rplus hTminus hminus hRminus hRplus hcyc
+          BandVectors.1 (q ((i + 1).succ)) (q i.succ) := BoundaryConcatenationGeometry.hin q hq i
   have hflip := (VectorRecursionLaws q hq.1).2.2.2.2 hq i
   let I : GaussianInt := ⟨0, 1⟩
   let w := BandVectors.1 (q ((i + 2).succ)) (q ((i + 1).succ))

@@ -1485,38 +1485,51 @@ private theorem hincomingPoint :
     (by
       classical
       exact
-        ∀ (C₀ : BandCircle), ∀ (Cᵢ : BandCircle), ∀ (q : Fin 4 → CircleCoordinates), ∀ (i : Fin
-            3), ∀ (T₀ : ProtoTile), ∀ (Tᵢ : ProtoTile), ∀ (h₀ : PartialOdometer), ∀ (hᵢ :
-            PartialOdometer), ∀ (x : GaussianInt), ∀ (normalization :
-            BandOrderedGeneralSubtileNormalizationCertificate C₀ Cᵢ q i T₀ Tᵢ h₀ hᵢ x),
-        let Q := normalization.normalizedPresentation
-        ∀ (g : GaussianInt), ∀ (uIndex : PeriodicSubtileIndex), ∀ (wBlock : ℤ × ℤ), ∀ (wShift :
-            GaussianInt), ∀ (V : ProtoTile), ∀ (W : ProtoTile), (W = TileTranslation
-            normalization.normalizedRoot wShift) → (((TileTranslation (TileQuarterTurn W)
-            g).cells = (TileTranslation normalization.normalizedRoot ((↑wBlock.1 : GaussianInt) *
-            normalization.layout.u + (↑wBlock.2 : GaussianInt) * normalization.layout.v)).cells)
-            → ((LatticeTile W) → ((Disjoint normalization.normalizedRoot.cells W.cells) →
-            ((Disjoint normalization.normalizedFixed.cells W.cells) → ((Disjoint W.cells V.cells)
-            → (
-        let source := SubtileOccurrenceInterpretation normalization.layout.P
-          normalization.layout.u normalization.layout.v uIndex
-        ∀ (incomingRaw : ExactTileInterfaceTriple normalization.normalizedRoot (TileTranslation
-            normalization.normalizedRoot ((⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt) ^
-            (↑normalization.normalizedQuarterTurn : ℕ) * if Even
-            (↑normalization.normalizedQuarterTurn : ℕ) then BandVectors.1 (Q
-            normalization.normalizedParentSlot.succ) (Q (0 : Fin (4 : ℕ))) else BandVectors.1 (Q
-            (0 : Fin (4 : ℕ))) (Q normalization.normalizedParentSlot.succ))) source), ∀ (hWExact
-            : W = TileTranslation normalization.normalizedRoot ((⟨0, 1⟩ : GaussianInt) ^
-            normalization.normalizedQuarterTurn.val * (if Even
-            normalization.normalizedQuarterTurn.val then BandVectors.1 (Q
-            normalization.normalizedParentSlot.succ) (Q 0) else BandVectors.1 (Q 0) (Q
-            normalization.normalizedParentSlot.succ)))),
-        let incomingData : ExactTileInterfaceTriple
-            normalization.normalizedRoot W source := hWExact.symm ▸ incomingRaw
-        incomingData.point = incomingRaw.point)))))) ) := by
+        ∀ (C₀ Cᵢ : BandCircle)
+          (q : Fin (4 : ℕ) → CircleCoordinates)
+          (i : Fin (3 : ℕ)) (T₀ Tᵢ : ProtoTile)
+          (h₀ hᵢ : PartialOdometer) (x : GaussianInt)
+          (normalization :
+            BandOrderedGeneralSubtileNormalizationCertificate C₀
+              Cᵢ q i T₀ Tᵢ h₀ hᵢ x),
+          let Q := normalization.normalizedPresentation;
+          ∀ (uIndex : PeriodicSubtileIndex)
+            (W : ProtoTile),
+            let source :=
+              SubtileOccurrenceInterpretation
+                normalization.layout.P normalization.layout.u normalization.layout.v
+                uIndex;
+            ∀
+              (incomingRaw :
+                ExactTileInterfaceTriple
+                  normalization.normalizedRoot
+                  (TileTranslation normalization.normalizedRoot
+                    ({ re := (0 : ℤ), im := (1 : ℤ) } ^
+                        (↑normalization.normalizedQuarterTurn : ℕ) *
+                      if Even (↑normalization.normalizedQuarterTurn : ℕ) then
+                        BandVectors.1
+                          (Q normalization.normalizedParentSlot.succ)
+                          (Q (0 : Fin (4 : ℕ)))
+                      else
+                        BandVectors.1 (Q (0 : Fin (4 : ℕ)))
+                          (Q normalization.normalizedParentSlot.succ)))
+                  source)
+              (hWExact :
+                W =
+                  TileTranslation normalization.normalizedRoot
+                    ({ re := (0 : ℤ), im := (1 : ℤ) } ^
+                        (↑normalization.normalizedQuarterTurn : ℕ) *
+                      if Even (↑normalization.normalizedQuarterTurn : ℕ) then
+                        BandVectors.1
+                          (Q normalization.normalizedParentSlot.succ)
+                          (Q (0 : Fin (4 : ℕ)))
+                      else
+                        BandVectors.1 (Q (0 : Fin (4 : ℕ)))
+                          (Q normalization.normalizedParentSlot.succ))),
+              let incomingData := Eq.symm hWExact ▸ incomingRaw;
+              incomingData.point = incomingRaw.point) := by
   classical
-  intro C₀ Cᵢ q i T₀ Tᵢ h₀ hᵢ x normalization Q g uIndex wBlock wShift V W hW hWBar hWLattice
-      hRootW hFixedW hWV source incomingRaw hWExact incomingData
+  intro C₀ Cᵢ q i T₀ Tᵢ h₀ hᵢ x normalization Q uIndex W source incomingRaw hWExact incomingData
   dsimp [incomingData]
   cases hWExact
   rfl
@@ -1525,39 +1538,51 @@ private theorem hincomingOtherCA :
     (by
       classical
       exact
-        ∀ (C₀ : BandCircle), ∀ (Cᵢ : BandCircle), ∀ (q : Fin 4 → CircleCoordinates), ∀ (i : Fin
-            3), ∀ (T₀ : ProtoTile), ∀ (Tᵢ : ProtoTile), ∀ (h₀ : PartialOdometer), ∀ (hᵢ :
-            PartialOdometer), ∀ (x : GaussianInt), ∀ (normalization :
-            BandOrderedGeneralSubtileNormalizationCertificate C₀ Cᵢ q i T₀ Tᵢ h₀ hᵢ x),
-        let Q := normalization.normalizedPresentation
-        ∀ (g : GaussianInt), ∀ (uIndex : PeriodicSubtileIndex), ∀ (wBlock : ℤ × ℤ), ∀ (wShift :
-            GaussianInt), ∀ (V : ProtoTile), ∀ (W : ProtoTile), (W = TileTranslation
-            normalization.normalizedRoot wShift) → (((TileTranslation (TileQuarterTurn W)
-            g).cells = (TileTranslation normalization.normalizedRoot ((↑wBlock.1 : GaussianInt) *
-            normalization.layout.u + (↑wBlock.2 : GaussianInt) * normalization.layout.v)).cells)
-            → ((LatticeTile W) → ((Disjoint normalization.normalizedRoot.cells W.cells) →
-            ((Disjoint normalization.normalizedFixed.cells W.cells) → ((Disjoint W.cells V.cells)
-            → (
-        let source := SubtileOccurrenceInterpretation normalization.layout.P
-          normalization.layout.u normalization.layout.v uIndex
-        ∀ (incomingRaw : ExactTileInterfaceTriple normalization.normalizedRoot (TileTranslation
-            normalization.normalizedRoot ((⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt) ^
-            (↑normalization.normalizedQuarterTurn : ℕ) * if Even
-            (↑normalization.normalizedQuarterTurn : ℕ) then BandVectors.1 (Q
-            normalization.normalizedParentSlot.succ) (Q (0 : Fin (4 : ℕ))) else BandVectors.1 (Q
-            (0 : Fin (4 : ℕ))) (Q normalization.normalizedParentSlot.succ))) source), ∀ (hWExact
-            : W = TileTranslation normalization.normalizedRoot ((⟨0, 1⟩ : GaussianInt) ^
-            normalization.normalizedQuarterTurn.val * (if Even
-            normalization.normalizedQuarterTurn.val then BandVectors.1 (Q
-            normalization.normalizedParentSlot.succ) (Q 0) else BandVectors.1 (Q 0) (Q
-            normalization.normalizedParentSlot.succ)))),
-        let incomingData : ExactTileInterfaceTriple
-            normalization.normalizedRoot W source := hWExact.symm ▸ incomingRaw
-        (incomingData.point = incomingRaw.point) → (incomingData.otherCA =
-            incomingRaw.otherCA))))))) ) := by
+        ∀ (C₀ Cᵢ : BandCircle)
+          (q : Fin (4 : ℕ) → CircleCoordinates)
+          (i : Fin (3 : ℕ)) (T₀ Tᵢ : ProtoTile)
+          (h₀ hᵢ : PartialOdometer) (x : GaussianInt)
+          (normalization :
+            BandOrderedGeneralSubtileNormalizationCertificate C₀
+              Cᵢ q i T₀ Tᵢ h₀ hᵢ x),
+          let Q := normalization.normalizedPresentation;
+          ∀ (uIndex : PeriodicSubtileIndex)
+            (W : ProtoTile),
+            let source :=
+              SubtileOccurrenceInterpretation
+                normalization.layout.P normalization.layout.u normalization.layout.v
+                uIndex;
+            ∀
+              (incomingRaw :
+                ExactTileInterfaceTriple
+                  normalization.normalizedRoot
+                  (TileTranslation normalization.normalizedRoot
+                    ({ re := (0 : ℤ), im := (1 : ℤ) } ^
+                        (↑normalization.normalizedQuarterTurn : ℕ) *
+                      if Even (↑normalization.normalizedQuarterTurn : ℕ) then
+                        BandVectors.1
+                          (Q normalization.normalizedParentSlot.succ)
+                          (Q (0 : Fin (4 : ℕ)))
+                      else
+                        BandVectors.1 (Q (0 : Fin (4 : ℕ)))
+                          (Q normalization.normalizedParentSlot.succ)))
+                  source)
+              (hWExact :
+                W =
+                  TileTranslation normalization.normalizedRoot
+                    ({ re := (0 : ℤ), im := (1 : ℤ) } ^
+                        (↑normalization.normalizedQuarterTurn : ℕ) *
+                      if Even (↑normalization.normalizedQuarterTurn : ℕ) then
+                        BandVectors.1
+                          (Q normalization.normalizedParentSlot.succ)
+                          (Q (0 : Fin (4 : ℕ)))
+                      else
+                        BandVectors.1 (Q (0 : Fin (4 : ℕ)))
+                          (Q normalization.normalizedParentSlot.succ))),
+              let incomingData := Eq.symm hWExact ▸ incomingRaw;
+              incomingData.otherCA = incomingRaw.otherCA) := by
   classical
-  intro C₀ Cᵢ q i T₀ Tᵢ h₀ hᵢ x normalization Q g uIndex wBlock wShift V W hW hWBar hWLattice
-      hRootW hFixedW hWV source incomingRaw hWExact incomingData hincomingPoint
+  intro C₀ Cᵢ q i T₀ Tᵢ h₀ hᵢ x normalization Q uIndex W source incomingRaw hWExact incomingData
   dsimp [incomingData]
   cases hWExact
   rfl
@@ -2149,11 +2174,9 @@ private theorem subtileInterfaceCertificate :
   let incomingData : ExactTileInterfaceTriple
       normalization.normalizedRoot W source := hWExact.symm ▸ incomingRaw
   have hincomingPoint := SubtileInterfaceAssembly.hincomingPoint C₀ Cᵢ q i T₀ Tᵢ h₀ hᵢ x
-      normalization g uIndex
-      wBlock wShift V W hW hWBar hWLattice hRootW hFixedW hWV incomingRaw hWExact
+      normalization uIndex W incomingRaw hWExact
   have hincomingOtherCA := SubtileInterfaceAssembly.hincomingOtherCA C₀ Cᵢ q i T₀ Tᵢ h₀ hᵢ x
-      normalization g uIndex
-      wBlock wShift V W hW hWBar hWLattice hRootW hFixedW hWV incomingRaw hWExact hincomingPoint
+      normalization uIndex W incomingRaw hWExact
   obtain ⟨startSource, hswapPoint, hswapOtherAB, hswapOtherBC,
       hswapOtherCA⟩ := ExactTileInterfaceTripleSwapLast
         normalization.normalizedRoot W source incomingData

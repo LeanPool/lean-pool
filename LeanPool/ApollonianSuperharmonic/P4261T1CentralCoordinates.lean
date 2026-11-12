@@ -43,19 +43,16 @@ private theorem hvector :
     (by
       classical
       exact
-        ∀ (q : Fin 4 → CircleCoordinates), ∀ (C : BandCircle), ∀ (T : ProtoTile), ∀ (h :
-            PartialOdometer), ∀ (q' : Fin (4 : ℕ) → CircleCoordinates), ∀ (i' : Fin (3 : ℕ)), ∀
-            (hs : Bool), ∀ (S' : Fin (3 : ℕ) → Bool → ProtoTile), ∀ (hs' : Fin (3 : ℕ) → Bool →
-            PartialOdometer), (q' i'.succ = C.1.1) → ((T.cells = (S' i' hs).cells) → (((↑h.domain
-            : Set GaussianInt) = (↑(hs' i' hs).domain : Set GaussianInt)) → ((∀ x ∈ h.domain,
-            h.value x = (hs' i' hs).value x) → (∀ (r : Fin (3 : ℕ)), (∀ (j : Fin (3 : ℕ)), q'
-            j.succ = q (j + r).succ) → (
-        let j : Fin 3 := i' + r
-        (q' i'.succ = q j.succ) → (BandVectors.1 (q' ((i' + 2).succ)) (q' ((i' + 1).succ)) =
-            BandVectors.1 (q ((j + 2).succ)) (q ((j + 1).succ)))))))) ) := by
+        ∀ (q q' : Fin (4 : ℕ) → CircleCoordinates)
+          (i' r : Fin (3 : ℕ)),
+          (∀ (j : Fin (3 : ℕ)), q' j.succ = q (j + r).succ) →
+            let j := i' + r;
+            BandVectors.1 (q' (i' + (2 : Fin (3 : ℕ))).succ)
+                (q' (i' + (1 : Fin (3 : ℕ))).succ) =
+              BandVectors.1 (q (j + (2 : Fin (3 : ℕ))).succ)
+                (q (j + (1 : Fin (3 : ℕ))).succ)) := by
   classical
-  intro q C T h q' i' hs S' hs' hq'i' hselectedCells hselectedDomain hselectedValue r hrotate j
-      hparent
+  intro q q' i' r hrotate j
   rw [hrotate (i' + 2), hrotate (i' + 1)]; dsimp [j]; fin_cases r <;> fin_cases i' <;> rfl
 
 private theorem hsCent :
@@ -523,8 +520,7 @@ theorem P4261T1CentralCoordinates
   let j : Fin 3 := i' + r
   have hparent : q' i'.succ = q j.succ := by
     simpa [j] using hrotate i'
-  have hvector := CentralCoordinateGeometry.hvector q C T h q' i' hs S' hs' hq'i' hselectedCells
-      hselectedDomain hselectedValue r hrotate hparent
+  have hvector := CentralCoordinateGeometry.hvector q q' i' r hrotate
   have hsCent := CentralCoordinateGeometry.hsCent q T₀ q' i' hs S' hcent' R hrootCent r hvector
   have hbandSelected := CentralCoordinateGeometry.hbandSelected q q' i' hs S' hs' hchild' r hparent
   have hbandFresh : BandPrototile (q j.succ) (R j hs) :=

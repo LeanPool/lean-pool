@@ -550,27 +550,12 @@ private theorem he'At460 :
     (by
       classical
       exact
-        ∀ (C : BandCircle), ∀ (q : Fin 4 → CircleCoordinates), ∀ (cfg :
-            BandOrderedGeneralConfiguration q), ∀ (T : ProtoTile), ∀ (cert :
-            BandOrderedGeneralLayoutCertificate q cfg C T),
-        let F := P4366T1PrecursorRemainderFamily cert.P cert.O
-        ∀ (g : List GaussianInt), ∀ (k : List GaussianInt), ∀ (x : GaussianInt), ∀ (y :
-            GaussianInt), ((g.dropLast ++ k.dropLast).head? = some x) → (((g.dropLast ++
-            k.dropLast).getLast? = some y) → (((g.dropLast ++ k.dropLast).zip (g.dropLast ++
-            k.dropLast).tail ++ [(y, x)] = g.zip g.tail ++ k.zip k.tail) → (
-        let p := g.dropLast ++ k.dropLast
-        let edges := (p.zip p.tail) ++ [(y, x)]
-        (∀ (u : GaussianInt), ∀ (v : GaussianInt), (u, v) ∈ edges ↔ (u, v) ∈ g.zip g.tail ∨ (u,
-            v) ∈ k.zip k.tail) → ((∀ (u : GaussianInt), ∀ (v : GaussianInt), ((u, v) ∈ edges) →
-            (FourNeighborAdjacent u v)) → ((∀ (u : GaussianInt), ∀ (v : GaussianInt), ∀ (z :
-            GaussianInt), ∀ (w : GaussianInt), ((((u = z + 1 ∧ v = z + 1 + ⟨0, 1⟩) ∨ (v = z + 1 ∧
-            u = z + 1 + ⟨0, 1⟩)) ∧ w = z + 1 ∨ ((u = z + 1 + ⟨0, 1⟩ ∧ v = z + ⟨0, 1⟩) ∨ (v = z +
-            1 + ⟨0, 1⟩ ∧ u = z + ⟨0, 1⟩)) ∧ w = z + ⟨0, 1⟩)) → (∀ (i : Fin 3), ∀ (s : Bool), (z ∈
-            (F i s).cells) → ((w ∈ (F i s).cells) → ((u, v) ∉ edges)))) → (∀ (u : GaussianInt), ∀
-            (v : GaussianInt), ((u, v) ∈ p.zip p.tail ∨ u = y ∧ v = x) → ((u, v) ∈ edges))))))) )
-            := by
+        ∀ (g k : List GaussianInt) (x y : GaussianInt),
+          let p := g.dropLast ++ k.dropLast;
+          let edges := p.zip p.tail ++ [(y, x)];
+          ∀ (u v : GaussianInt), (u, v) ∈ p.zip p.tail ∨ u = y ∧ v = x → (u, v) ∈ edges) := by
   classical
-  intro C q cfg T cert F g k x y hhead hlast hedges p edges hcycles allsteps exclude_pair u v he
+  intro g k x y p edges u v he
   rcases he with he | ⟨rfl, rfl⟩
   · simp only [edges, List.mem_append]; exact Or.inl he
   · simp [edges]
@@ -740,8 +725,7 @@ theorem P4366T1PrecursorPathLoop
     exact allsteps u v (by simp only [edges, List.mem_append]; exact Or.inl he)
   · exact allsteps y x (by simp [edges])
   · intro u v he
-    have he' := PrecursorLoopGeometry.he'At460 C q cfg T cert g k x y hhead hlast hedges hcycles
-        allsteps exclude_pair u v he
+    have he' := PrecursorLoopGeometry.he'At460 g k x y u v he
     exact ((hcycles u v).mp he').elim ((PrecursorLoopGeometry.gsegments T edge_vertices g gsteps
         gstar) u v) ((PrecursorLoopGeometry.ksegments C q cfg T cert hOT realization_mono k
         ksteps kedge_raw) u v)

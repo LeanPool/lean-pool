@@ -954,54 +954,40 @@ private theorem hdispR :
     (by
       classical
       exact
-        ∀ (r : Fin (4 : ℕ) → CircleCoordinates), ∀ (i : Fin (3 : ℕ)), ∀ (s : Fin (4 : ℕ)), ∀ (U :
-            ProtoTile), ∀ (W : ProtoTile), ∀ (Z : ProtoTile), (BandPrototile (r (if (Even s.val)
-            then i - (1 : Fin (3 : ℕ)) else i + (1 : Fin (3 : ℕ))).succ) Z) → (((0 : ℤ) < (r (if
-            Even (↑s : ℕ) then i - (1 : Fin (3 : ℕ)) else i + (1 : Fin (3 : ℕ))).succ).1) →
-            ((TileCentroid W - TileCentroid U = (1 / 2 : ℝ) • GaussianRealPoint ((⟨(0 : ℤ), (1 :
-            ℤ)⟩ : GaussianInt) ^ (↑s : ℕ) * (BandVectors.1 (r i.succ) (r (0 : Fin (4 : ℕ))) +
-            BandVectors.1 (r (0 : Fin (4 : ℕ))) (r i.succ)))) → ((TileCentroid Z - TileCentroid U
-            = (1 / 2 : ℝ) • GaussianRealPoint ((⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt) ^ (↑s : ℕ) * if
-            Even (↑s : ℕ) then BandVectors.1 (r (0 : Fin (4 : ℕ))) (r (i - (1 : Fin (3 :
-            ℕ))).succ) - BandVectors.1 (r (i - (1 : Fin (3 : ℕ))).succ) (r (0 : Fin (4 : ℕ)))
-            else BandVectors.1 (r (i + (1 : Fin (3 : ℕ))).succ) (r (0 : Fin (4 : ℕ))) -
-            BandVectors.1 (r (0 : Fin (4 : ℕ))) (r (i + (1 : Fin (3 : ℕ))).succ))) → (
-        let q : GaussianInt := ⟨0, 1⟩
-        ∀ (aU : GaussianInt), ∀ (aW : GaussianInt), ∀ (aZ : GaussianInt),
-        let Wp := TileTranslation W (aU - aW)
-        let Zp := TileTranslation Z (aU - aZ)
-        (BandPrototile (r ((if Even s.val then i - 1 else i + 1).succ)) Zp) → (((-(TileCentroid W
-            - TileCentroid U).2, (TileCentroid W - TileCentroid U).1) = (1 / 2 : Real) •
-            GaussianRealPoint (q * (q ^ s.val * (BandVectors.1 (r i.succ) (r 0) + BandVectors.1
-            (r 0) (r i.succ))))) → (
-        let t : Fin 4 := s + 1
-        (Even t.val ↔ ¬ Even s.val) → ((q ^ 2 = -1) → ((q ^ 3 = -q) → ((∀ (x : GaussianInt), q *
-            (q * x) = -x) → ((q ^ t.val = q * q ^ s.val) → ((TileCentroid Wp - TileCentroid U =
-            (1 / 2 : Real) • GaussianRealPoint (q ^ t.val * (BandVectors.1 (r i.succ) (r 0) +
-            BandVectors.1 (r 0) (r i.succ)))) → (((-(TileCentroid Z - TileCentroid U).2,
-            (TileCentroid Z - TileCentroid U).1) = (1 / 2 : Real) • GaussianRealPoint (q * (q ^
-            s.val * (if Even s.val then BandVectors.1 (r 0) (r ((i - 1).succ)) - BandVectors.1 (r
-            ((i - 1).succ)) (r 0) else BandVectors.1 (r ((i + 1).succ)) (r 0) - BandVectors.1 (r
-            0) (r ((i + 1).succ)))))) → ((TileCentroid Zp - TileCentroid U = (1 / 2 : Real) •
-            GaussianRealPoint (q ^ t.val * (if Even t.val then BandVectors.1 (r ((i + 1).succ))
-            (r 0) - BandVectors.1 (r 0) (r ((i + 1).succ)) else BandVectors.1 (r 0) (r ((i -
-            1).succ)) - BandVectors.1 (r ((i - 1).succ)) (r 0)))) → (((r ((if Even t.val then i +
-            1 else i - 1).succ)) = (r ((if Even s.val then i - 1 else i + 1).succ))) → (
-        let uL : GaussianInt := q ^ s.val *
-          (if Even s.val then BandVectors.1 (r i.succ) (r 0)
-            else BandVectors.1 (r 0) (r i.succ))
-        ((pairedEndpointPackage r U) i t Wp
-            Zp) → (
-        let q3 : GaussianInt → GaussianInt := fun x =>
-          GaussianQuarterTurn (GaussianQuarterTurn (GaussianQuarterTurn x))
-        let vR : GaussianInt := q ^ t.val *
-          (if Even t.val then BandVectors.1 (r 0) (r i.succ)
-            else BandVectors.1 (r i.succ) (r 0))
-        (Even (0 : Nat)) → ((Even (2 : Nat)) → ((¬ Even (1 : Nat)) → ((¬ Even (3 : Nat)) → ((∀ (x
-            : GaussianInt), q3 x = q ^ 3 * x) → (q3 vR = uL))))))))))))))))))))) ) := by
+        ∀ (r : Fin (4 : ℕ) → CircleCoordinates)
+          (i : Fin (3 : ℕ)) (s : Fin (4 : ℕ)),
+          let q := { re := (0 : ℤ), im := (1 : ℤ) };
+          let t := s + (1 : Fin (4 : ℕ));
+          q ^ (2 : ℕ) = (-1 : GaussianInt) →
+            q ^ (3 : ℕ) = -q →
+              (∀ (x : GaussianInt), q * (q * x) = -x) →
+                let uL :=
+                  q ^ (↑s : ℕ) *
+                    if Even (↑s : ℕ) then
+                      BandVectors.1 (r i.succ)
+                        (r (0 : Fin (4 : ℕ)))
+                    else
+                      BandVectors.1 (r (0 : Fin (4 : ℕ)))
+                        (r i.succ);
+                let q3 := fun (x : GaussianInt) =>
+                  GaussianQuarterTurn
+                    (GaussianQuarterTurn
+                      (GaussianQuarterTurn x));
+                let vR :=
+                  q ^ (↑t : ℕ) *
+                    if Even (↑t : ℕ) then
+                      BandVectors.1 (r (0 : Fin (4 : ℕ)))
+                        (r i.succ)
+                    else
+                      BandVectors.1 (r i.succ)
+                        (r (0 : Fin (4 : ℕ)));
+                Even (0 : ℕ) →
+                  Even (2 : ℕ) →
+                    ¬Even (1 : ℕ) →
+                      ¬Even (3 : ℕ) →
+                        (∀ (x : GaussianInt), q3 x = q ^ (3 : ℕ) * x) → q3 vR = uL) := by
   classical
-  intro r i s U W Z hZ hZpos hWcent hZcent q aU aW aZ Wp Zp hZp hWrot t htpar hq2 hq3 hq2act
-      hpower hWsrc hZrot hZsrc hZlabel uL sourceData q3 vR even0 even2 notEven1 notEven3 hq3mul
+  intro r i s q t hq2 hq3 hq2act uL q3 vR even0 even2 notEven1 notEven3 hq3mul
   let uR : GaussianInt := q ^ s.val *
     (if Even s.val then BandVectors.1 (r 0) (r i.succ)
       else BandVectors.1 (r i.succ) (r 0))
@@ -1014,62 +1000,40 @@ private theorem hdispL :
     (by
       classical
       exact
-        ∀ (r : Fin (4 : ℕ) → CircleCoordinates), ∀ (i : Fin (3 : ℕ)), ∀ (s : Fin (4 : ℕ)), ∀ (U :
-            ProtoTile), ∀ (W : ProtoTile), ∀ (Z : ProtoTile), (BandPrototile (r (if (Even s.val)
-            then i - (1 : Fin (3 : ℕ)) else i + (1 : Fin (3 : ℕ))).succ) Z) → (((0 : ℤ) < (r (if
-            Even (↑s : ℕ) then i - (1 : Fin (3 : ℕ)) else i + (1 : Fin (3 : ℕ))).succ).1) →
-            ((TileCentroid W - TileCentroid U = (1 / 2 : ℝ) • GaussianRealPoint ((⟨(0 : ℤ), (1 :
-            ℤ)⟩ : GaussianInt) ^ (↑s : ℕ) * (BandVectors.1 (r i.succ) (r (0 : Fin (4 : ℕ))) +
-            BandVectors.1 (r (0 : Fin (4 : ℕ))) (r i.succ)))) → ((TileCentroid Z - TileCentroid U
-            = (1 / 2 : ℝ) • GaussianRealPoint ((⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt) ^ (↑s : ℕ) * if
-            Even (↑s : ℕ) then BandVectors.1 (r (0 : Fin (4 : ℕ))) (r (i - (1 : Fin (3 :
-            ℕ))).succ) - BandVectors.1 (r (i - (1 : Fin (3 : ℕ))).succ) (r (0 : Fin (4 : ℕ)))
-            else BandVectors.1 (r (i + (1 : Fin (3 : ℕ))).succ) (r (0 : Fin (4 : ℕ))) -
-            BandVectors.1 (r (0 : Fin (4 : ℕ))) (r (i + (1 : Fin (3 : ℕ))).succ))) → (
-        let q : GaussianInt := ⟨0, 1⟩
-        ∀ (aU : GaussianInt), ∀ (aW : GaussianInt), ∀ (aZ : GaussianInt),
-        let Wp := TileTranslation W (aU - aW)
-        let Zp := TileTranslation Z (aU - aZ)
-        (BandPrototile (r ((if Even s.val then i - 1 else i + 1).succ)) Zp) → (((-(TileCentroid W
-            - TileCentroid U).2, (TileCentroid W - TileCentroid U).1) = (1 / 2 : Real) •
-            GaussianRealPoint (q * (q ^ s.val * (BandVectors.1 (r i.succ) (r 0) + BandVectors.1
-            (r 0) (r i.succ))))) → (
-        let t : Fin 4 := s + 1
-        (Even t.val ↔ ¬ Even s.val) → ((q ^ 2 = -1) → ((q ^ 3 = -q) → ((∀ (x : GaussianInt), q *
-            (q * x) = -x) → ((q ^ t.val = q * q ^ s.val) → ((TileCentroid Wp - TileCentroid U =
-            (1 / 2 : Real) • GaussianRealPoint (q ^ t.val * (BandVectors.1 (r i.succ) (r 0) +
-            BandVectors.1 (r 0) (r i.succ)))) → (((-(TileCentroid Z - TileCentroid U).2,
-            (TileCentroid Z - TileCentroid U).1) = (1 / 2 : Real) • GaussianRealPoint (q * (q ^
-            s.val * (if Even s.val then BandVectors.1 (r 0) (r ((i - 1).succ)) - BandVectors.1 (r
-            ((i - 1).succ)) (r 0) else BandVectors.1 (r ((i + 1).succ)) (r 0) - BandVectors.1 (r
-            0) (r ((i + 1).succ)))))) → ((TileCentroid Zp - TileCentroid U = (1 / 2 : Real) •
-            GaussianRealPoint (q ^ t.val * (if Even t.val then BandVectors.1 (r ((i + 1).succ))
-            (r 0) - BandVectors.1 (r 0) (r ((i + 1).succ)) else BandVectors.1 (r 0) (r ((i -
-            1).succ)) - BandVectors.1 (r ((i - 1).succ)) (r 0)))) → (((r ((if Even t.val then i +
-            1 else i - 1).succ)) = (r ((if Even s.val then i - 1 else i + 1).succ))) → (
-        let uR : GaussianInt := q ^ s.val *
-          (if Even s.val then BandVectors.1 (r 0) (r i.succ)
-            else BandVectors.1 (r i.succ) (r 0))
-        let uL : GaussianInt := q ^ s.val *
-          (if Even s.val then BandVectors.1 (r i.succ) (r 0)
-            else BandVectors.1 (r 0) (r i.succ))
-        ((pairedEndpointPackage r U) i t Wp
-            Zp) → (
-        let q3 : GaussianInt → GaussianInt := fun x =>
-          GaussianQuarterTurn (GaussianQuarterTurn (GaussianQuarterTurn x))
-        let vR : GaussianInt := q ^ t.val *
-          (if Even t.val then BandVectors.1 (r 0) (r i.succ)
-            else BandVectors.1 (r i.succ) (r 0))
-        let vL : GaussianInt := q ^ t.val *
-          (if Even t.val then BandVectors.1 (r i.succ) (r 0)
-            else BandVectors.1 (r 0) (r i.succ))
-        (Even (0 : Nat)) → ((Even (2 : Nat)) → ((¬ Even (1 : Nat)) → ((¬ Even (3 : Nat)) → ((∀ (x
-            : GaussianInt), q3 x = q ^ 3 * x) → ((q3 vR = uL) → (q3 vL = uR))))))))))))))))))))))
-            ) := by
+        ∀ (r : Fin (4 : ℕ) → CircleCoordinates)
+          (i : Fin (3 : ℕ)) (s : Fin (4 : ℕ)),
+          let q := { re := (0 : ℤ), im := (1 : ℤ) };
+          let t := s + (1 : Fin (4 : ℕ));
+          q ^ (2 : ℕ) = (-1 : GaussianInt) →
+            q ^ (3 : ℕ) = -q →
+              (∀ (x : GaussianInt), q * (q * x) = -x) →
+                let uR :=
+                  q ^ (↑s : ℕ) *
+                    if Even (↑s : ℕ) then
+                      BandVectors.1 (r (0 : Fin (4 : ℕ)))
+                        (r i.succ)
+                    else
+                      BandVectors.1 (r i.succ)
+                        (r (0 : Fin (4 : ℕ)));
+                let q3 := fun (x : GaussianInt) =>
+                  GaussianQuarterTurn
+                    (GaussianQuarterTurn
+                      (GaussianQuarterTurn x));
+                let vL :=
+                  q ^ (↑t : ℕ) *
+                    if Even (↑t : ℕ) then
+                      BandVectors.1 (r i.succ)
+                        (r (0 : Fin (4 : ℕ)))
+                    else
+                      BandVectors.1 (r (0 : Fin (4 : ℕ)))
+                        (r i.succ);
+                Even (0 : ℕ) →
+                  Even (2 : ℕ) →
+                    ¬Even (1 : ℕ) →
+                      ¬Even (3 : ℕ) →
+                        (∀ (x : GaussianInt), q3 x = q ^ (3 : ℕ) * x) → q3 vL = uR) := by
   classical
-  intro r i s U W Z hZ hZpos hWcent hZcent q aU aW aZ Wp Zp hZp hWrot t htpar hq2 hq3 hq2act
-      hpower hWsrc hZrot hZsrc hZlabel uR uL sourceData q3 vR vL even0 even2 notEven1 notEven3
-      hq3mul hdispR
+  intro r i s q t hq2 hq3 hq2act uR q3 vL even0 even2 notEven1 notEven3 hq3mul
   rw [hq3mul]
   fin_cases s <;> simp [vL, uR, t,
     even0, even2, notEven1, notEven3, hq2, hq3] <;>
@@ -1441,12 +1405,10 @@ theorem P4055T1OrderedGeneralOppositeEndpoints :
   have notEven1 := OppositeEndpointGeometry.notEven1 r i s
   have notEven3 := OppositeEndpointGeometry.notEven3 r i s
   have hq3mul := OppositeEndpointGeometry.hq3mul hq3
-  have hdispR := OppositeEndpointGeometry.hdispR r i s U W Z hZ hZpos hWcent hZcent
-      aU aW aZ hZp hWrot htpar hq2 hq3 hq2act hpower hWsrc hZrot hZsrc hZlabel sourceData even0
+  have hdispR := OppositeEndpointGeometry.hdispR r i s hq2 hq3 hq2act even0
       even2 notEven1 notEven3 hq3mul
-  have hdispL := OppositeEndpointGeometry.hdispL r i s U W Z hZ hZpos hWcent hZcent
-      aU aW aZ hZp hWrot htpar hq2 hq3 hq2act hpower hWsrc hZrot hZsrc hZlabel sourceData even0
-      even2 notEven1 notEven3 hq3mul hdispR
+  have hdispL := OppositeEndpointGeometry.hdispL r i s hq2 hq3 hq2act even0
+      even2 notEven1 notEven3 hq3mul
   have hstep := OppositeEndpointGeometry.hstep r i s U W Z aU
             haU hUc hUa hUv aW aZ hWp hZp haUre haUim hWpCent hZpCent hWsrc hZsrc sourceData hFf
             hfF hf hUedges hFvU hFeU hFvW hFvZ hFeW hFeZ hinvV hinvE hFtranslate hFtranslateE
