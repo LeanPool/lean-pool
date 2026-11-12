@@ -1142,50 +1142,6 @@ private theorem hSpackAt712 :
     exact False.elim ((cfg.noLine 2) hbad)
   · simpa [Fin.add_def] using hgood
 
-private theorem hPplusPackAt731 :
-    (by
-      classical
-      exact
-        ∀ (q : Fin 4 -> CircleCoordinates), ∀ (cfg : BandOrderedGeneralConfiguration q), ∀ (C0 :
-            BandCircle), ∀ (T : ProtoTile), ∀ (cert : BandOrderedGeneralLayoutCertificate q cfg
-            C0 T), ∀ (h : PartialOdometer), ∀ (P : Fin 3 -> Bool -> ProtoTile), ∀ (r : Fin 3 ->
-            Bool -> PartialOdometer), ∀ (Q : Fin 3 -> Bool -> ProtoTile), ∀ (S : Fin 3 -> Bool ->
-            ProtoTile), ∀ (u : Fin 3 -> Bool -> PartialOdometer), ∀ (v : Fin 3 -> Bool ->
-            PartialOdometer), ∀ (g : IntegerLatticeFunction), (BandOrderedGeneralOdometerRowData
-            q cfg C0 T cert h P r Q S u v g) → (
-        let B : GaussianInt := BandVectors.2 (q 3) (q 2)
-        ∃ p pP : Real × Real, PartialOdometerSlope h = some p ∧ PartialOdometerSlope (r 0 true) =
-            some pP ∧ pP.1 - p.1 = (1 / 2) * (((B.re : Int) : Real) - ((B.im : Int) : Real)) ∧
-            pP.2 - p.2 = (1 / 2) * (((B.im : Int) : Real) + ((B.re : Int) : Real))) ) := by
-  classical
-  intro q cfg C0 T cert h P r Q S u v g data B
-  rcases data.hPslope 0 true with hzero | hgood
-  · have hbad : (q 1).1 = 0 := by simpa using hzero
-    exact False.elim ((cfg.noLine 1) hbad)
-  · simpa [Fin.add_def, B] using hgood
-
-private theorem hPminusPackAt742 :
-    (by
-      classical
-      exact
-        ∀ (q : Fin 4 -> CircleCoordinates), ∀ (cfg : BandOrderedGeneralConfiguration q), ∀ (C0 :
-            BandCircle), ∀ (T : ProtoTile), ∀ (cert : BandOrderedGeneralLayoutCertificate q cfg
-            C0 T), ∀ (h : PartialOdometer), ∀ (P : Fin 3 -> Bool -> ProtoTile), ∀ (r : Fin 3 ->
-            Bool -> PartialOdometer), ∀ (Q : Fin 3 -> Bool -> ProtoTile), ∀ (S : Fin 3 -> Bool ->
-            ProtoTile), ∀ (u : Fin 3 -> Bool -> PartialOdometer), ∀ (v : Fin 3 -> Bool ->
-            PartialOdometer), ∀ (g : IntegerLatticeFunction), (BandOrderedGeneralOdometerRowData
-            q cfg C0 T cert h P r Q S u v g) → (
-        let B : GaussianInt := BandVectors.2 (q 3) (q 2)
-        ∃ p pP : Real × Real, PartialOdometerSlope h = some p ∧ PartialOdometerSlope (r 0 false)
-            = some pP ∧ pP.1 - p.1 = -(1 / 2) * (((B.re : Int) : Real) - ((B.im : Int) : Real)) ∧
-            pP.2 - p.2 = -(1 / 2) * (((B.im : Int) : Real) + ((B.re : Int) : Real))) ) := by
-  classical
-  intro q cfg C0 T cert h P r Q S u v g data B
-  rcases data.hPslope 0 false with hzero | hgood
-  · have hbad : (q 1).1 = 0 := by simpa using hzero
-    exact False.elim ((cfg.noLine 1) hbad)
-  · simpa [Fin.add_def, B] using hgood
-
 private theorem hQdeltaAt765 :
     (by
       classical
@@ -1235,48 +1191,6 @@ private theorem hSdeltaAt772 :
     simpa [sOff, Prod.smul_mk] using hSre
   · change pS.2 - pSroot.2 = _
     simpa [sOff, Prod.smul_mk] using hSim
-
-private theorem hPplusDeltaAt779 :
-    (by
-      classical
-      exact
-        ∀ (q : Fin 4 -> CircleCoordinates),
-        let sOff (z : GaussianInt) : Real × Real :=
-          (1 / 2 : Real) •
-            (((z.re : Int) : Real) - ((z.im : Int) : Real),
-              ((z.im : Int) : Real) + ((z.re : Int) : Real))
-        let B : GaussianInt := BandVectors.2 (q 3) (q 2)
-        ∀ (pRoot : ℝ × ℝ), ∀ (pPplus : ℝ × ℝ), (pPplus.1 - pRoot.1 = (1 / 2 : ℝ) * ((↑B.re : ℝ) -
-            (↑B.im : ℝ))) → ((pPplus.2 - pRoot.2 = (1 / 2 : ℝ) * ((↑B.im : ℝ) + (↑B.re : ℝ))) →
-            (pPplus - pRoot = sOff B)) ) := by
-  classical
-  intro q sOff B pRoot pPplus hPplusRe hPplusIm
-  apply Prod.ext
-  · change pPplus.1 - pRoot.1 = _
-    simpa [sOff, Prod.smul_mk] using hPplusRe
-  · change pPplus.2 - pRoot.2 = _
-    simpa [sOff, Prod.smul_mk] using hPplusIm
-
-private theorem hPminusDeltaAt785 :
-    (by
-      classical
-      exact
-        ∀ (q : Fin 4 -> CircleCoordinates),
-        let sOff (z : GaussianInt) : Real × Real :=
-          (1 / 2 : Real) •
-            (((z.re : Int) : Real) - ((z.im : Int) : Real),
-              ((z.im : Int) : Real) + ((z.re : Int) : Real))
-        let B : GaussianInt := BandVectors.2 (q 3) (q 2)
-        ∀ (pRoot' : ℝ × ℝ), ∀ (pPminus : ℝ × ℝ), (pPminus.1 - pRoot'.1 = -(1 / 2 : ℝ) * ((↑B.re :
-            ℝ) - (↑B.im : ℝ))) → ((pPminus.2 - pRoot'.2 = -(1 / 2 : ℝ) * ((↑B.im : ℝ) + (↑B.re :
-            ℝ))) → (pPminus - pRoot' = -sOff B)) ) := by
-  classical
-  intro q sOff B pRoot' pPminus hPminusRe hPminusIm
-  apply Prod.ext
-  · change pPminus.1 - pRoot'.1 = _
-    simpa [sOff, Prod.smul_mk] using hPminusRe
-  · change pPminus.2 - pRoot'.2 = _
-    simpa [sOff, Prod.smul_mk] using hPminusIm
 
 private theorem hPminusDelta' :
     (by
@@ -1354,20 +1268,6 @@ private theorem hP1At810 :
   classical
   intro q cfg C0 T cert h P r Q S u v g data cOff
   simpa [cOff, Fin.add_def] using data.hPcent 1 false
-
-private theorem hq13At813 :
-    (by
-      classical
-      exact
-        ∀ (q : Fin 4 -> CircleCoordinates), (BandOrderedGeneralConfiguration q) → (
-        let U : GaussianInt := BandVectors.1 (q 2) (q 1)
-        let W : GaussianInt := BandVectors.1 (q 3) (q 2)
-        BandVectors.1 (q 1) (q 3) = -U - W) ) := by
-  classical
-  intro q cfg U W
-  have hsum := (VectorRecursionLaws q cfg.proper.1).1
-  dsimp [U, W]
-  linear_combination hsum
 
 private theorem hform'At819 :
     (by
@@ -1496,38 +1396,6 @@ private theorem htranslateCentAt864 :
         dsimp [cOff] at hf ⊢
         linear_combination hf
     _ = TileCentroid (P 1 false) := hP1centre.symm
-
-private theorem hsumVAt899 :
-    (by
-      classical
-      exact
-        ∀ (q : Fin 4 -> CircleCoordinates), ∀ (cfg : BandOrderedGeneralConfiguration q),
-        let I : GaussianInt := ⟨0, 1⟩
-        let W : GaussianInt := BandVectors.1 (q 3) (q 2)
-        (BandVectors.1 (q (2 : Fin (4 : ℕ))) (q (3 : Fin (4 : ℕ))) = I * BandVectors.1 (q (3 :
-            Fin (4 : ℕ))) (q (2 : Fin (4 : ℕ)))) → (BandVectors.1 (cfg.secondPredecessor 1)
-            (cfg.secondPredecessor 0) + BandVectors.1 (cfg.secondPredecessor 0)
-            (cfg.secondPredecessor 1) = W + I * W) ) := by
-  classical
-  intro q cfg I W hflipV0
-  rw [cfg.secondVectorOne, cfg.secondChild, cfg.secondParentOne, hflipV0]
-
-private theorem hsumAAt903 :
-    (by
-      classical
-      exact
-        ∀ (q : Fin 4 -> CircleCoordinates), ∀ (cfg : BandOrderedGeneralConfiguration q),
-        let I : GaussianInt := ⟨0, 1⟩
-        let B : GaussianInt := BandVectors.2 (q 3) (q 2)
-        (BandVectors.2 (q (2 : Fin (4 : ℕ))) (q (3 : Fin (4 : ℕ))) = -I * BandVectors.2 (q (3 :
-            Fin (4 : ℕ))) (q (2 : Fin (4 : ℕ)))) → (BandVectors.2 (cfg.secondPredecessor 1)
-            (cfg.secondPredecessor 0) + BandVectors.2 (cfg.secondPredecessor 0)
-            (cfg.secondPredecessor 1) = B - I * B) ) := by
-  classical
-  intro q cfg I B hflipA
-  rw [cfg.secondParentOne, cfg.secondChild, hflipA]
-  dsimp [B]
-  ring
 
 private theorem hcentTargetAt909 :
     (by
@@ -2058,9 +1926,9 @@ private theorem reflectedLargestCase :
       centroidAlgebra hQleafOff hSleafOff hPplus hPminus
   have hQpack := LargestParentOdometerGeometry.hQpackAt693 q cfg C0 T cert h P r Q S u v g data
   have hSpack := LargestParentOdometerGeometry.hSpackAt712 q cfg C0 T cert h P r Q S u v g data
-  have hPplusPack := LargestParentOdometerGeometry.hPplusPackAt731 q cfg C0 T cert h P r Q S u
+  have hPplusPack := LargestParentOdometerGeometry.hPplusPackAt364 q cfg C0 T cert h P r Q S u
       v g data
-  have hPminusPack := LargestParentOdometerGeometry.hPminusPackAt742 q cfg C0 T cert h P r Q S
+  have hPminusPack := LargestParentOdometerGeometry.hPminusPackAt375 q cfg C0 T cert h P r Q S
       u v g data
   obtain ⟨pQroot, pQ, hQroot, hQleafSlope, hQre, hQim⟩ := hQpack
   obtain ⟨pSroot, pS, hSroot, hSleafSlope, hSre, hSim⟩ := hSpack
@@ -2076,16 +1944,16 @@ private theorem reflectedLargestCase :
     Option.some.inj (hRoot.symm.trans hRoot')
   have hQdelta := LargestParentOdometerGeometry.hQdeltaAt765 q cfg pQroot pQ hQre hQim
   have hSdelta := LargestParentOdometerGeometry.hSdeltaAt772 q cfg pSroot pS hSre hSim
-  have hPplusDelta := LargestParentOdometerGeometry.hPplusDeltaAt779 q pRoot pPplus hPplusRe
+  have hPplusDelta := LargestParentOdometerGeometry.hPplusDeltaAt412 q pRoot pPplus hPplusRe
       hPplusIm
-  have hPminusDelta := LargestParentOdometerGeometry.hPminusDeltaAt785 q pRoot' pPminus
+  have hPminusDelta := LargestParentOdometerGeometry.hPminusDeltaAt418 q pRoot' pPminus
       hPminusRe hPminusIm
   have hslopeDiff := LargestParentOdometerGeometry.hslopeDiffAt794 q cfg a21 a13 slopeAlgebra
       pQroot pQ pSroot pS pRoot pPplus pPminus hQalign hSalign hQdelta hSdelta hPplusDelta
       (LargestParentOdometerGeometry.hPminusDelta' q pRoot pRoot' pPminus hrootAlign
           hPminusDelta)
   have hP1 := LargestParentOdometerGeometry.hP1At810 q cfg C0 T cert h P r Q S u v g data
-  have hq13 := LargestParentOdometerGeometry.hq13At813 q cfg
+  have hq13 := LargestParentOdometerGeometry.hq13At444 q cfg
   have hform := (TileTranslationFormulas (S 1 false)
     (((I : GaussianInt) ^ (3 : Nat)) * W)).2.2.2.2.1
   have htranslateCent := LargestParentOdometerGeometry.htranslateCentAt864 q cfg T P S v13
@@ -2106,8 +1974,8 @@ private theorem reflectedLargestCase :
         BandVectors.2 (cfg.secondPredecessor 1)
           (cfg.secondPredecessor 0) at hflipA
   rw [cfg.secondChild, cfg.secondParentOne] at hflipV0 hflipA
-  have hsumV := LargestParentOdometerGeometry.hsumVAt899 q cfg hflipV0
-  have hsumA := LargestParentOdometerGeometry.hsumAAt903 q cfg hflipA
+  have hsumV := LargestParentOdometerGeometry.hsumVAt525 q cfg hflipV0
+  have hsumA := LargestParentOdometerGeometry.hsumAAt529 q cfg hflipA
   have hcentTarget := LargestParentOdometerGeometry.hcentTargetAt909 q cfg Q S hcentdiff hsumV
   have hslopePair := LargestParentOdometerGeometry.hslopePairAt916 q cfg pQ pS hslopeDiff hsumA
   have hadj := LargestParentOdometerGeometry.hadjAt922 q cfg C0 T cert h P r Q S u v g data

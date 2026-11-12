@@ -6,6 +6,7 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.LatticeAdjacentPackingSymmetryFacts
 
 public import LeanPool.ApollonianSuperharmonic.P5625T1CentroidSlopeDifferenceCovariance
 public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryScopedPhase
@@ -26,228 +27,6 @@ Changes: pool module paths, public exports, project namespace and current Mathli
 namespace ApollonianSuperharmonic
 
 namespace RightLatticeTransportGeometry
-
-private theorem hTne :
-    (by
-      classical
-      exact
-        ∀ (q : Fin 4 → CircleCoordinates), (ProperBandQuadruple q) → (∀ (T : ProtoTile), ∀ (h :
-            PartialOdometer), ∀ (p : ℝ × ℝ), (TileOdometer (q (0 : Fin (4 : ℕ))) T h) →
-            ((PartialOdometerSlope h = some p) → (T.cells.Nonempty))) ) := by
-  classical
-  intro q hq T h p hO hp
-  have hd := PositiveCurvatureTileOdometerDomain (q 0) T h
-    (ProperBandCurvatureStructure q hq).1 hO
-  by_contra hn
-  have hde : (h.domain : Set GaussianInt) = {T.anchor} := by
-    rw [hd]
-    simp [FootprintVertices, hn]
-  have hs : (PartialOdometerSquares h).Nonempty := by
-    by_contra hs
-    simp [PartialOdometerSlope, hs] at hp
-  rcases hs with ⟨x, hx⟩
-  simp only [PartialOdometerSquares, Finset.mem_filter] at hx
-  have hz : x + 1 = T.anchor := by
-    apply Set.mem_singleton_iff.mp
-    rw [← hde]
-    exact hx.2.1
-  have hz0 : x = T.anchor := by
-    apply Set.mem_singleton_iff.mp
-    rw [← hde]
-    exact hx.1
-  have hzbad : x + 1 = x := hz.trans hz0.symm
-  have hzbad' := congrArg (fun z : GaussianInt => z.re) hzbad
-  norm_num at hzbad'
-
-private theorem hT'ne :
-    (by
-      classical
-      exact
-        ∀ (q : Fin 4 → CircleCoordinates), (ProperBandQuadruple q) → (∀ (T' : ProtoTile), ∀ (h' :
-            PartialOdometer), ∀ (p' : ℝ × ℝ), (TileOdometer (q (0 : Fin (4 : ℕ))) T' h') →
-            ((PartialOdometerSlope h' = some p') → (T'.cells.Nonempty))) ) := by
-  classical
-  intro q hq T' h' p' hO' hp'
-  have hd := PositiveCurvatureTileOdometerDomain (q 0) T' h'
-    (ProperBandCurvatureStructure q hq).1 hO'
-  by_contra hn
-  have hde : (h'.domain : Set GaussianInt) = {T'.anchor} := by
-    rw [hd]
-    simp [FootprintVertices, hn]
-  have hs : (PartialOdometerSquares h').Nonempty := by
-    by_contra hs
-    simp [PartialOdometerSlope, hs] at hp'
-  rcases hs with ⟨x, hx⟩
-  simp only [PartialOdometerSquares, Finset.mem_filter] at hx
-  have hz : x + 1 = T'.anchor := by
-    apply Set.mem_singleton_iff.mp
-    rw [← hde]
-    exact hx.2.1
-  have hz0 : x = T'.anchor := by
-    apply Set.mem_singleton_iff.mp
-    rw [← hde]
-    exact hx.1
-  have hzbad : x + 1 = x := hz.trans hz0.symm
-  have hzbad' := congrArg (fun z : GaussianInt => z.re) hzbad
-  norm_num at hzbad'
-
-private theorem hsr :
-    (by
-      classical
-      exact
-        ∀ (g : BandPackingSymmetry), ∀ (T : ProtoTile), ∀ (h : PartialOdometer), ∀ (p : ℝ × ℝ),
-            (PartialOdometerSlope h = some p) → ((T.cells.Nonempty) → ((Finset.Nonempty T.cells →
-            PartialOdometerSlope (BandPackingSymmetryPartialOdometerAction g h) = Option.map
-            (BandPackingSymmetrySlopeAction g T) (PartialOdometerSlope h)) →
-            (PartialOdometerSlope (BandPackingSymmetryPartialOdometerAction g h) = some
-            (BandPackingSymmetrySlopeAction g T p)))) ) := by
-  classical
-  intro g T h p hp hTne hST
-  simpa [Option.map] using (hST hTne).trans (congrArg (Option.map
-    (BandPackingSymmetrySlopeAction g T)) hp)
-
-private theorem hsr' :
-    (by
-      classical
-      exact
-        ∀ (g : BandPackingSymmetry), ∀ (T' : ProtoTile), ∀ (h' : PartialOdometer), ∀ (p' : ℝ ×
-            ℝ), (PartialOdometerSlope h' = some p') → ((T'.cells.Nonempty) → ((Finset.Nonempty
-            T'.cells → PartialOdometerSlope (BandPackingSymmetryPartialOdometerAction g h') =
-            Option.map (BandPackingSymmetrySlopeAction g T') (PartialOdometerSlope h')) →
-            (PartialOdometerSlope (BandPackingSymmetryPartialOdometerAction g h') = some
-            (BandPackingSymmetrySlopeAction g T' p')))) ) := by
-  classical
-  intro g T' h' p' hp' hT'ne hST'
-  simpa [Option.map] using (hST' hT'ne).trans (congrArg (Option.map
-    (BandPackingSymmetrySlopeAction g T')) hp')
-
-private theorem centroid_transport :
-    (by
-      classical
-      exact
-        ∀ (a : BandPackingSymmetry), ∀ (U : ProtoTile), ∀ (V : ProtoTile), ∀ (v : GaussianInt),
-            TileCentroid V - TileCentroid U = GaussianRealPoint v → TileCentroid
-            (BandPackingSymmetryTileAction a V) - TileCentroid (BandPackingSymmetryTileAction a
-            U) = GaussianRealPoint (BandPackingSymmetryVectorAction a v) ) := by
-  classical
-  intro a U V v hv
-  have hc := (P5625T1CentroidSlopeDifferenceCovariance.2
-    a U V (0, 0) (0, 0) v 0 1
-    (by simpa using hv) (by ext <;> simp [GaussianRealPoint])).1
-  simpa only [one_smul, P5625T1CentroidSlopeDifferenceCovariance.1] using hc
-
-private theorem vector_signAt246 :
-    (by
-      classical
-      exact
-        ∀ (g : BandPackingSymmetry), ∀ (q : Fin 4 → CircleCoordinates), ∀ (negative : Bool),
-            (BandPackingSymmetryScopedPhase g q negative) → (∀ (j : Fin 3), GaussianRealPoint
-            (BandPackingSymmetryVectorAction g (BandVectors.1 (q j.succ) (q 0))) = (if negative
-            then (-1 : ℝ) else 1) • GaussianRealPoint (BandVectors.1
-            (BandPackingSymmetryQuadrupleAction g q (if BandPackingSymmetryReversesOrientation g
-            then -j else j).succ) (BandPackingSymmetryQuadrupleAction g q 0))) ) := by
-  classical
-  intro g q negative hphase j
-  have hp := hphase j
-  dsimp [BandPackingSymmetryScopedPhase] at hp
-  have hv := hp.1
-  by_cases hn : negative
-  · have hh := congrArg Neg.neg (congrArg GaussianRealPoint hv)
-    simpa [hn, GaussianRealPoint] using hh.symm
-  · have hh := (congrArg GaussianRealPoint hv).symm
-    simpa [hn, GaussianRealPoint] using hh
-
-private theorem vector_neg :
-    (by
-      classical
-      exact
-        ∀ (a : BandPackingSymmetry), ∀ (v : GaussianInt), BandPackingSymmetryVectorAction a (-v)
-            = -BandPackingSymmetryVectorAction a v ) := by
-  classical
-  intro a
-  induction a with
-  | identity => intro v; rfl
-  | negate =>
-      intro v
-      rcases v with ⟨a, b⟩
-      rfl
-  | conjugate =>
-      intro v
-      rcases v with ⟨a, b⟩
-      rfl
-  | shift w => intro v; rfl
-  | comp a b iha ihb =>
-      intro v
-      change BandPackingSymmetryVectorAction a
-          (BandPackingSymmetryVectorAction b (-v)) =
-        -BandPackingSymmetryVectorAction a
-          (BandPackingSymmetryVectorAction b v)
-      rw [ihb, iha]
-
-private theorem affine_neg :
-    (by
-      classical
-      exact
-        ∀ (a : BandPackingSymmetry), ∀ (v : GaussianInt), ∀ (u : GaussianInt),
-            BandPackingSymmetryAffineVectorAction a (-v, -u) =
-            -BandPackingSymmetryAffineVectorAction a (v, u) ) := by
-  classical
-  intro a
-  induction a with
-  | identity => intro v u; rfl
-  | shift w =>
-      intro v u
-      rcases v with ⟨va, vb⟩
-      rcases u with ⟨ua, ub⟩
-      rcases w with ⟨wa, wb⟩
-      apply Prod.ext
-      · simp [BandPackingSymmetryAffineVectorAction, GaussianReflection]
-      · simp only [BandPackingSymmetryAffineVectorAction, Int.reduceNeg, GaussianReflection,
-          Zsqrtd.re_neg, Zsqrtd.im_neg, neg_neg, Prod.neg_mk, neg_add_rev]
-        have hrel : ({re := -va, im := vb} : GaussianInt) =
-            -({re := va, im := -vb} : GaussianInt) := by
-          ext <;> simp
-        rw [hrel]
-        ring
-  | negate =>
-      intro v u
-      rcases v with ⟨va, vb⟩
-      rcases u with ⟨ua, ub⟩
-      rfl
-  | conjugate =>
-      intro v u
-      rcases v with ⟨va, vb⟩
-      rcases u with ⟨ua, ub⟩
-      rfl
-  | comp a b iha ihb =>
-      intro v u
-      change BandPackingSymmetryAffineVectorAction a
-          (BandPackingSymmetryAffineVectorAction b (-v, -u)) = _
-      rw [ihb]
-      apply iha
-
-private theorem slope_transport :
-    (by
-      classical
-      exact
-        ∀ (a : BandPackingSymmetry), ∀ (U : ProtoTile), ∀ (V : ProtoTile), ∀ (x : ℝ × ℝ), ∀ (y :
-            ℝ × ℝ), ∀ (v : GaussianInt), ∀ (u : GaussianInt), TileCentroid V - TileCentroid U =
-            GaussianRealPoint v → x.1 - y.1 = (u.re : ℝ) → x.2 - y.2 = (u.im : ℝ) →
-            (BandPackingSymmetrySlopeAction a V x).1 - (BandPackingSymmetrySlopeAction a U y).1 =
-            (BandPackingSymmetryAffineVectorAction a (v, u)).2.re ∧
-            (BandPackingSymmetrySlopeAction a V x).2 - (BandPackingSymmetrySlopeAction a U y).2 =
-            (BandPackingSymmetryAffineVectorAction a (v, u)).2.im ) := by
-  classical
-  intro a U V x y v u hc hx hy
-  have hp : x - y = (1 : ℝ) • GaussianRealPoint u := by
-    apply Prod.ext
-    · simpa [GaussianRealPoint] using hx
-    · simpa [GaussianRealPoint] using hy
-  have hs := (P5625T1CentroidSlopeDifferenceCovariance.2
-    a U V x y v u 1 (by simpa using hc) hp).2
-  constructor
-  · simpa [GaussianRealPoint] using congrArg Prod.fst hs
-  · simpa [GaussianRealPoint] using congrArg Prod.snd hs
 
 private theorem vector_signAt350 :
     (by
@@ -563,58 +342,6 @@ private theorem hcAt637 :
   intro q i e T T' hcent he
   simpa [he, GaussianRealPoint] using hcent
 
-private theorem hcAt647 :
-    (by
-      classical
-      exact
-        ∀ (q : Fin 4 → CircleCoordinates), ∀ (i : Fin 3), ∀ (e : Bool), ∀ (T : ProtoTile), ∀ (T'
-            : ProtoTile), (TileCentroid T' - TileCentroid T = (if e = true then (1 : ℝ) else (-1
-            : ℝ)) • GaussianRealPoint (BandVectors.1 (q (0 : Fin (4 : ℕ))) (q i.succ))) → ((e =
-            true) → (TileCentroid T' - TileCentroid T = GaussianRealPoint (BandVectors.1 (q 0) (q
-            i.succ)))) ) := by
-  classical
-  intro q i e T T' hcent he
-  simpa [he] using hcent
-
-private theorem hcAt695 :
-    (by
-      classical
-      exact
-        ∀ (q : Fin 4 → CircleCoordinates), ∀ (i : Fin 3), ∀ (e : Bool), ∀ (T : ProtoTile), ∀ (T'
-            : ProtoTile), (TileCentroid T' - TileCentroid T = (if e = true then (1 : ℝ) else (-1
-            : ℝ)) • GaussianRealPoint (BandVectors.1 (q (0 : Fin (4 : ℕ))) (q i.succ))) → ((¬e =
-            true) → (TileCentroid T' - TileCentroid T = GaussianRealPoint (-(BandVectors.1 (q 0)
-            (q i.succ))))) ) := by
-  classical
-  intro q i e T T' hcent he
-  simpa [he, GaussianRealPoint] using hcent
-
-private theorem hcAt742 :
-    (by
-      classical
-      exact
-        ∀ (q : Fin 4 → CircleCoordinates), ∀ (i : Fin 3), ∀ (e : Bool), ∀ (T : ProtoTile), ∀ (T'
-            : ProtoTile), (TileCentroid T' - TileCentroid T = (if e = true then (1 : ℝ) else (-1
-            : ℝ)) • GaussianRealPoint (BandVectors.1 (q (0 : Fin (4 : ℕ))) (q i.succ))) → ((e =
-            true) → (TileCentroid T' - TileCentroid T = GaussianRealPoint (BandVectors.1 (q 0) (q
-            i.succ)))) ) := by
-  classical
-  intro q i e T T' hcent he
-  simpa [he] using hcent
-
-private theorem hcAt785 :
-    (by
-      classical
-      exact
-        ∀ (q : Fin 4 → CircleCoordinates), ∀ (i : Fin 3), ∀ (e : Bool), ∀ (T : ProtoTile), ∀ (T'
-            : ProtoTile), (TileCentroid T' - TileCentroid T = (if e = true then (1 : ℝ) else (-1
-            : ℝ)) • GaussianRealPoint (BandVectors.1 (q (0 : Fin (4 : ℕ))) (q i.succ))) → ((¬e =
-            true) → (TileCentroid T' - TileCentroid T = GaussianRealPoint (-(BandVectors.1 (q 0)
-            (q i.succ))))) ) := by
-  classical
-  intro q i e T T' hcent he
-  simpa [he, GaussianRealPoint] using hcent
-
 end RightLatticeTransportGeometry
 
 namespace RightAdjacencyAssembly
@@ -777,7 +504,7 @@ private theorem transportedAdjacency :
   · by_cases he : e = true
     · have hc : TileCentroid T' - TileCentroid T =
           GaussianRealPoint (BandVectors.1 (q 0) (q i.succ)) :=
-              RightLatticeTransportGeometry.hcAt647 q i e T T' hcent he
+              RightLatticeTransportGeometry.hcAt631 q i e T T' hcent he
       have hs := slope_transport g T T' p' p
         (BandVectors.1 (q 0) (q i.succ))
         (BandVectors.2 (q 0) (q i.succ)) hc
@@ -815,7 +542,7 @@ private theorem transportedAdjacency :
         affineRightIm]
     · have hc : TileCentroid T' - TileCentroid T =
           GaussianRealPoint (-(BandVectors.1 (q 0) (q i.succ))) :=
-              RightLatticeTransportGeometry.hcAt695 q i e T T' hcent he
+              RightLatticeTransportGeometry.hcAt637 q i e T T' hcent he
       have hs := slope_transport g T T' p' p
         (-(BandVectors.1 (q 0) (q i.succ)))
         (-(BandVectors.2 (q 0) (q i.succ))) hc
@@ -856,7 +583,7 @@ private theorem transportedAdjacency :
   · by_cases he : e = true
     · have hc : TileCentroid T' - TileCentroid T =
           GaussianRealPoint (BandVectors.1 (q 0) (q i.succ)) :=
-              RightLatticeTransportGeometry.hcAt742 q i e T T' hcent he
+              RightLatticeTransportGeometry.hcAt631 q i e T T' hcent he
       have hs := slope_transport g T T' p' p
         (BandVectors.1 (q 0) (q i.succ)) (BandVectors.2 (q 0) (q i.succ)) hc
         (by simpa [he] using hslopeRe) (by simpa [he] using hslopeIm)
@@ -897,7 +624,7 @@ private theorem transportedAdjacency :
         affineRightIm]
     · have hc : TileCentroid T' - TileCentroid T =
           GaussianRealPoint (-(BandVectors.1 (q 0) (q i.succ))) :=
-              RightLatticeTransportGeometry.hcAt785 q i e T T' hcent he
+              RightLatticeTransportGeometry.hcAt637 q i e T T' hcent he
       have hs := slope_transport g T T' p' p
         (-(BandVectors.1 (q 0) (q i.succ)))
         (-(BandVectors.2 (q 0) (q i.succ))) hc
@@ -993,17 +720,17 @@ theorem RightLatticeAdjacentPackingSymmetryTransport
   dsimp
   obtain ⟨negative, hphase, hvec⟩ :=
     BandPackingSymmetryAffineVectorCovariance g q hq
-  have hTne := RightLatticeTransportGeometry.hTne q hq T h p hO hp
-  have hT'ne := RightLatticeTransportGeometry.hT'ne q hq T' h' p' hO' hp'
+  have hTne := LatticeAdjacentPackingSymmetryFacts.tileCellsNonempty (q 0) T h p hO hp
+  have hT'ne := LatticeAdjacentPackingSymmetryFacts.tileCellsNonempty (q 0) T' h' p' hO' hp'
   obtain ⟨hOT, _, hST⟩ := BandPackingSymmetryTileOdometerCovariance g (q 0) T h hO
   obtain ⟨hOT', _, hST'⟩ := BandPackingSymmetryTileOdometerCovariance g (q 0) T' h' hO'
-  have hsr := RightLatticeTransportGeometry.hsr g T h p hp hTne hST
-  have hsr' := RightLatticeTransportGeometry.hsr' g T' h' p' hp' hT'ne hST'
-  have centroid_transport := RightLatticeTransportGeometry.centroid_transport
-  have vector_sign (j : Fin 3) := RightLatticeTransportGeometry.vector_signAt246 g q negative
+  have hsr := LatticeAdjacentPackingSymmetryFacts.slopeAction g T h p hp hTne hST
+  have hsr' := LatticeAdjacentPackingSymmetryFacts.slopeAction g T' h' p' hp' hT'ne hST'
+  have centroid_transport := LatticeAdjacentPackingSymmetryFacts.centroidTransport
+  have vector_sign (j : Fin 3) := LatticeAdjacentPackingSymmetryFacts.vectorSign g q negative
       hphase j
-  have vector_neg := RightLatticeTransportGeometry.vector_neg
-  have affine_neg := RightLatticeTransportGeometry.affine_neg
+  have vector_neg := LatticeAdjacentPackingSymmetryFacts.vectorNegation
+  have affine_neg := LatticeAdjacentPackingSymmetryFacts.affineNegation
   have affine_first (a : BandPackingSymmetry) (v u : GaussianInt) :
       (BandPackingSymmetryAffineVectorAction a (v, u)).1 =
         BandPackingSymmetryVectorAction a v :=
@@ -1014,7 +741,7 @@ theorem RightLatticeAdjacentPackingSymmetryTransport
   have imag_coord (z : GaussianInt) :
       (GaussianInt.toComplex z).im = (z.im : ℝ) :=
     (GaussianInt.intCast_im z).symm
-  have slope_transport := RightLatticeTransportGeometry.slope_transport
+  have slope_transport := LatticeAdjacentPackingSymmetryFacts.slopeTransport
   have vector_sign (j : Fin 3) := RightLatticeTransportGeometry.vector_signAt350 g q negative
       hphase j
   have vector_flip := RightLatticeTransportGeometry.vector_flip vector_neg

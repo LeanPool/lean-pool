@@ -716,24 +716,6 @@ private theorem htriple'At567 :
     hobsV.2.2).mp
   exact hbaseTouch.2.1 i U' hU'band hcenter'
 
-private theorem hperiodVAt575 :
-    (by
-      classical
-      exact
-        ∀ (K : DiamondParameter), ∀ (T : ProtoTile),
-        let q := DiamondRecursiveQuadruple K
-        ∀ (w : GaussianInt),
-        let T' := TileTranslation T (-w)
-        (∀ (X : ProtoTile), ∀ (a : GaussianInt), ∀ (b : GaussianInt), TileTranslation
-            (TileTranslation X a) b = TileTranslation (TileTranslation X b) a) →
-            ((TileTranslation T' w = T) → (∀ (i : Fin (3 : ℕ)),
-        let v := BandVectors.1 (q i.succ) (q 0)
-        TileTranslation (TileTranslation T' v) w = TileTranslation T v)) ) := by
-  classical
-  intro K T q w T' translate_swap hTrestore i v
-  rw [← hTrestore]
-  exact translate_swap T' v w
-
 private theorem hcenterU' :
     (by
       classical
@@ -1001,7 +983,7 @@ theorem P4564T2DiamondGeometry :
     have htripleW := (TouchingTripleCovariance T'
       (TileTranslation T' v) U' w).1.mp htriple'
     have hperiodV : TileTranslation (TileTranslation T' v) w =
-        TileTranslation T v := DiamondInterfaceGeometry.hperiodVAt575 K T w translate_swap
+        TileTranslation T v := DiamondInterfaceGeometry.hperiodVAt540 K T w translate_swap
             hTrestore i
     have hUrestore : TileTranslation U' w = U := by
       simpa [U'] using cancel_translation U

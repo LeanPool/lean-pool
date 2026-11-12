@@ -6,6 +6,7 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.BoundaryFrameRowGeometry
 
 public import LeanPool.ApollonianSuperharmonic.AncestorOdometerInnerSupportNormalization
 public import LeanPool.ApollonianSuperharmonic.BandRegularTileTouchingClassification
@@ -136,39 +137,6 @@ private theorem hnegativeSlope :
   · have hz' : (F.q F.slot.succ).1 = 0 := hz
     omega
   · exact ⟨child, hchild⟩
-
-private theorem hr :
-    (by
-      classical
-      exact
-        ∀ (C : BandCircle), ∀ (orientation : Bool), ∀ (base : ProtoTile), ∀ (Rminus : ProtoTile),
-            ∀ (Rplus : ProtoTile), ∀ (hminus : PartialOdometer), ∀ (hplus : PartialOdometer), ∀
-            (F : P4458T1BoundaryFrame C orientation base Rminus Rplus hminus hplus),
-        let r : Fin 4 → CircleCoordinates :=
-          ![F.q 0, F.q F.slot.succ, F.q ((F.slot + 1).succ),
-            F.q ((F.slot + 2).succ)]
-        ProperBandQuadruple r ) := by
-  classical
-  intro C orientation base Rminus Rplus hminus hplus F r
-  have rot : ∀ i : Fin 3,
-      ProperBandQuadruple
-        ![F.q 0, F.q i.succ, F.q ((i + 1).succ), F.q ((i + 2).succ)] := by
-    intro i
-    fin_cases i
-    · convert F.proper using 1; funext j; fin_cases j <;> rfl
-    · refine ⟨SemiProperQuadruple.rotate F.proper.1, ?_⟩
-      intro j
-      fin_cases j
-      · simpa using F.proper.2 1
-      · simpa using F.proper.2 2
-      · simpa using F.proper.2 0
-    · refine ⟨SemiProperQuadruple.rotate (SemiProperQuadruple.rotate F.proper.1), ?_⟩
-      intro j
-      fin_cases j
-      · simpa using F.proper.2 2
-      · simpa using F.proper.2 0
-      · simpa using F.proper.2 1
-  simpa [r] using rot F.slot
 
 private theorem hrstep :
     (by
@@ -330,46 +298,6 @@ private theorem hcenterVector :
   apply Zsqrtd.ext <;>
     norm_num [I, Zsqrtd.ext_iff, Zsqrtd.re_mul, Zsqrtd.im_mul] <;>
     omega
-
-private theorem hcenter :
-    (by
-      classical
-      exact
-        ∀ (C : BandCircle), ∀ (orientation : Bool), ∀ (base : ProtoTile), ∀ (Rminus : ProtoTile),
-            ∀ (Rplus : ProtoTile), ∀ (hminus : PartialOdometer), ∀ (hplus : PartialOdometer), ∀
-            (F : P4458T1BoundaryFrame C orientation base Rminus Rplus hminus hplus), ∀ (D :
-            P4458T1RestrictionFamily F),
-        let r : Fin 4 → CircleCoordinates :=
-          ![F.q 0, F.q F.slot.succ, F.q ((F.slot + 1).succ),
-            F.q ((F.slot + 2).succ)]
-        let I : GaussianInt := ⟨0, 1⟩
-        let w : GaussianInt := BandVectors.1 (r 3) (r 2)
-        let y : GaussianInt := BandVectors.1 (r 2) (r 1)
-        (TileCentroid (D.tiles F.slot false) - TileCentroid F.tile = -(1 / 2 : ℝ) •
-            (GaussianRealPoint w - (-(GaussianRealPoint w).2, (GaussianRealPoint w).1))) →
-            ((TileCentroid Rminus - TileCentroid F.tile = (1 / 2 : ℝ) • GaussianRealPoint
-            (BandVectors.1 (r 1) (r 0) - BandVectors.1 (r 0) (r 1))) → (((↑(-w + I * w -
-            BandVectors.1 (r (1 : Fin (4 : ℕ))) (r (0 : Fin (4 : ℕ))) + BandVectors.1 (r (0 : Fin
-            (4 : ℕ))) (r (1 : Fin (4 : ℕ)))).re : ℝ) = (↑((2 : GaussianInt) * y).re : ℝ)) →
-            (((↑(-w + I * w - BandVectors.1 (r (1 : Fin (4 : ℕ))) (r (0 : Fin (4 : ℕ))) +
-            BandVectors.1 (r (0 : Fin (4 : ℕ))) (r (1 : Fin (4 : ℕ)))).im : ℝ) = (↑((2 :
-            GaussianInt) * y).im : ℝ)) → (TileCentroid (D.tiles F.slot false) - TileCentroid
-            Rminus = GaussianRealPoint y)))) ) := by
-  classical
-  intro C orientation base Rminus Rplus hminus hplus F D r I w y hUcenter hMcenter hcenterRe
-      hcenterIm
-  rw [show TileCentroid (D.tiles F.slot false) - TileCentroid Rminus =
-    (TileCentroid (D.tiles F.slot false) - TileCentroid F.tile) -
-      (TileCentroid Rminus - TileCentroid F.tile) by
-        ext <;> dsimp <;> ring]
-  rw [hUcenter, hMcenter]
-  apply Prod.ext
-  · simp [GaussianRealPoint, w, y, Prod.smul_mk]
-    norm_num at hcenterRe ⊢
-    linarith
-  · simp [GaussianRealPoint, w, y, Prod.smul_mk]
-    norm_num at hcenterIm ⊢
-    linarith
 
 private theorem hyLattice :
     (by
@@ -2803,7 +2731,8 @@ theorem P4458T1LargestParentRows
   let r : Fin 4 → CircleCoordinates :=
     ![F.q 0, F.q F.slot.succ, F.q ((F.slot + 1).succ),
       F.q ((F.slot + 2).succ)]
-  have hr : ProperBandQuadruple r := LargestParentGeometry.hr C orientation base Rminus Rplus
+  have hr : ProperBandQuadruple r :=
+    BoundaryFrameRowGeometry.presentationProper C orientation base Rminus Rplus
       hminus hplus F
   have hrstep := LargestParentGeometry.hrstep C orientation base Rminus Rplus hminus hplus F p hstep
   have hr1 : r 1 = p 0 := by simpa [r] using hq1
@@ -2836,7 +2765,8 @@ theorem P4458T1LargestParentRows
       hminus hplus F hvrec hvflip hvsumRe hvsumIm
   have hcenterRe := congrArg (fun z : GaussianInt => (z.re : ℝ)) hcenterVector
   have hcenterIm := congrArg (fun z : GaussianInt => (z.im : ℝ)) hcenterVector
-  have hcenter := LargestParentGeometry.hcenter C orientation base Rminus Rplus hminus hplus F D
+  have hcenter :=
+    BoundaryFrameRowGeometry.centroidDifference C orientation base Rminus Rplus hminus hplus F D
       hUcenter hMcenter hcenterRe hcenterIm
   have hCcoord : C.1.1 = p 0 := F.parent.symm.trans hq1
   have hRparent : r 1 = C.1.1 := by simpa [r] using F.parent

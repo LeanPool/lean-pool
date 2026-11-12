@@ -1471,58 +1471,6 @@ private theorem hcell2side :
         (h.1.symm.trans hA.1))
     · exact Or.inl (hGood.2.trans h.2)
 
-private theorem hside0At880 :
-    (by
-      classical
-      exact
-        ∀ (T0 : ProtoTile), ∀ (T0' : ProtoTile), ∀ (x : GaussianInt), ∀ (jAB : Fin (4 : ℕ)),
-            (LatticeVertexIncidentCell x jAB ∈ T0.cells ∧ LatticeVertexIncidentCell x (jAB + (1 :
-            Fin (4 : ℕ))) ∈ T0'.cells ∨ LatticeVertexIncidentCell x jAB ∈ T0'.cells ∧
-            LatticeVertexIncidentCell x (jAB + (1 : Fin (4 : ℕ))) ∈ T0.cells) →
-            (LatticeVertexIncidentCell x jAB ∈ T0.cells ∨ LatticeVertexIncidentCell x jAB ∈
-            T0'.cells) ) := by
-  classical
-  intro T0 T0' x jAB htransABx
-  rcases htransABx with h | h
-  · exact Or.inl h.1
-  · exact Or.inr h.1
-
-private theorem hside1At885 :
-    (by
-      classical
-      exact
-        ∀ (T0 : ProtoTile), ∀ (T0' : ProtoTile), ∀ (x : GaussianInt), ∀ (jAB : Fin (4 : ℕ)),
-            (LatticeVertexIncidentCell x jAB ∈ T0.cells ∧ LatticeVertexIncidentCell x (jAB + (1 :
-            Fin (4 : ℕ))) ∈ T0'.cells ∨ LatticeVertexIncidentCell x jAB ∈ T0'.cells ∧
-            LatticeVertexIncidentCell x (jAB + (1 : Fin (4 : ℕ))) ∈ T0.cells) →
-            (LatticeVertexIncidentCell x (jAB + 1) ∈ T0.cells ∨ LatticeVertexIncidentCell x (jAB
-            + 1) ∈ T0'.cells) ) := by
-  classical
-  intro T0 T0' x jAB htransABx
-  rcases htransABx with h | h
-  · exact Or.inr h.2
-  · exact Or.inl h.2
-
-private theorem ho01neAt890 :
-    (by
-      classical
-      exact
-        ∀ (ι : Type), ∀ (owner : GaussianInt → ι), ∀ (T0 : ProtoTile), ∀ (T0' : ProtoTile), ∀ (ia
-            : ι), ∀ (ib : ι), (ia ≠ ib) → (∀ (x : GaussianInt),
-        let outerLabel : GaussianInt → Fin 4 → Fin 3 := fun x j =>
-          if LatticeVertexIncidentCell x j ∈ T0.cells then 0
-          else if LatticeVertexIncidentCell x j ∈ T0'.cells then 1 else 2
-        ∀ (jAB : Fin (4 : ℕ)),
-        let o0 := owner (LatticeVertexIncidentCell x jAB)
-        let o1 := owner (LatticeVertexIncidentCell x (jAB + 1))
-        ((outerLabel x jAB = 0 ∧ o0 = ia ∧ o1 = ib) ∨ (outerLabel x jAB = 1 ∧ o0 = ib ∧ o1 = ia))
-            → (o0 ≠ o1)) ) := by
-  classical
-  intro ι owner T0 T0' ia ib hidxne x outerLabel jAB o0 o1 hownerAligned' heq
-  rcases hownerAligned' with hA | hA
-  · exact hidxne (hA.2.1.symm.trans (heq.trans hA.2.2))
-  · exact hidxne (hA.2.1.symm.trans (heq.trans hA.2.2)).symm
-
 private theorem ho02neAt895 :
     (by
       classical
@@ -1958,9 +1906,9 @@ theorem P5635T1EndpointDiagonalOwnership {ι : Type}
       simpa [o3] using owner_eq_endpoint x (jAB + 3) hcell3
     have hcell2side := EndpointDiagonalGeometry.hcell2side ι owner T0 T0' R ia ib x
         label_side_mem hsectorCover jAB hlabelsAB hownerAligned' hGood
-    have hside0 := EndpointDiagonalGeometry.hside0At880 T0 T0' x jAB htransABx
-    have hside1 := EndpointDiagonalGeometry.hside1At885 T0 T0' x jAB htransABx
-    have ho01ne := EndpointDiagonalGeometry.ho01neAt890 ι owner T0 T0' ia ib hidxne x jAB
+    have hside0 := EndpointDiagonalGeometry.hside0At763 T0 T0' x jAB htransABx
+    have hside1 := EndpointDiagonalGeometry.hside1At768 T0 T0' x jAB htransABx
+    have ho01ne := EndpointDiagonalGeometry.ho01neAt773 ι owner T0 T0' ia ib hidxne x jAB
         hownerAligned'
     have ho02ne := EndpointDiagonalGeometry.ho02neAt895 ι P owner T0 T0' R U V ia ib hUidx hVidx
         hUsub hVsub x label_eq_zero_mem label_eq_one_mem owner_ne_T0_index owner_ne_T0'_index

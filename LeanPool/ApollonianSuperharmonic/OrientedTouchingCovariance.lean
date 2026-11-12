@@ -384,40 +384,6 @@ private theorem firstAt463 :
     (hT2 0 X hX) (hT2 i.succ Y hY)
     (fun A B hA hB hz => hT4 A B i hA hB hz) hcent
 
-private theorem firstAt482 :
-    (by
-      classical
-      exact
-        ∀ (q : Fin (4 : ℕ) → CircleCoordinates), (∀ (a : Fin (4 : ℕ)), ∀ (T : ProtoTile),
-            BandPrototile (q a) T → QuarterTurnSymmetric T) → ((∀ (T₀ : ProtoTile), ∀ (Tᵢ :
-            ProtoTile), ∀ (i : Fin (3 : ℕ)), BandPrototile (q (0 : Fin (4 : ℕ))) T₀ →
-            BandPrototile (q i.succ) Tᵢ → TileCentroid Tᵢ - TileCentroid T₀ = (1 / 2 : ℝ) •
-            (GaussianRealPoint (BandVectors.1 (q i.succ) (q (0 : Fin (4 : ℕ)))) +
-            GaussianRealPoint (BandVectors.1 (q (0 : Fin (4 : ℕ))) (q i.succ))) → TouchingTriple
-            T₀ (TileTranslation T₀ (BandVectors.1 (q i.succ) (q (0 : Fin (4 : ℕ))))) Tᵢ) → ((∀ (C
-            : CircleCoordinates), ∀ (D : CircleCoordinates), ∀ (T : ProtoTile), ∀ (U :
-            ProtoTile), ∀ (x : GaussianInt), ∀ (y : GaussianInt), BandPrototile C T →
-            BandPrototile D U → QuarterTurnSymmetric T → QuarterTurnSymmetric U → (∀ (X :
-            ProtoTile), ∀ (Y : ProtoTile), BandPrototile C X → BandPrototile D Y → TileCentroid Y
-            - TileCentroid X = (1 / 2 : Real) • (GaussianRealPoint x + GaussianRealPoint y) →
-            TouchingTriple X (TileTranslation X x) Y) → (TileCentroid U - TileCentroid T = (1 / 2
-            : Real) • (GaussianRealPoint (GaussianQuarterTurn x) + GaussianRealPoint
-            (GaussianQuarterTurn y))) → TouchingTriple T (TileTranslation T (GaussianQuarterTurn
-            x)) U) → (∀ (i : Fin (3 : ℕ)), ∀ (X : ProtoTile), ∀ (Y : ProtoTile), BandPrototile (q
-            0) X → BandPrototile (q i.succ) Y → TileCentroid Y - TileCentroid X = (1 / 2 : Real)
-            • (GaussianRealPoint (GaussianQuarterTurn (BandVectors.1 (q i.succ) (q 0))) +
-            GaussianRealPoint (GaussianQuarterTurn (BandVectors.1 (q 0) (q i.succ)))) →
-            TouchingTriple X (TileTranslation X (GaussianQuarterTurn (BandVectors.1 (q i.succ) (q
-            0)))) Y)))
-    ) := by
-  classical
-  intro q hT2 hT4 turn4 i X Y hX hY hcent
-  exact turn4 (q 0) (q i.succ) X Y
-    (BandVectors.1 (q i.succ) (q 0))
-    (BandVectors.1 (q 0) (q i.succ)) hX hY
-    (hT2 0 X hX) (hT2 i.succ Y hY)
-    (fun A B hA hB hz => hT4 A B i hA hB hz) hcent
-
 private theorem base :
     (by
       classical
@@ -459,50 +425,6 @@ private theorem base :
     (BandVectors.1 (q i.succ) (q 0)) (BandVectors.1 (q 0) (q i.succ))
     (BandVectors.1 (q ((i + 1).succ)) (q 0)) (BandVectors.1 (q 0) (q ((i + 1).succ)))
     hX hY hZ (hT2 0 X hX) (hT2 i.succ Y hY) (hT2 (i + 1).succ Z hZ)
-    (fun A B C hA hB hC ha' hb' => hT5 A B C i hA hB hC ha' hb') ha hb
-
-private theorem firstAt532 :
-    (by
-      classical
-      exact
-        ∀ (q : Fin (4 : ℕ) → CircleCoordinates), (∀ (a : Fin (4 : ℕ)), ∀ (T : ProtoTile),
-            BandPrototile (q a) T → QuarterTurnSymmetric T) → ((∀ (T₀ : ProtoTile), ∀ (Tᵢ :
-            ProtoTile), ∀ (Tⱼ : ProtoTile), ∀ (i : Fin (3 : ℕ)), BandPrototile (q (0 : Fin (4 :
-            ℕ))) T₀ → BandPrototile (q i.succ) Tᵢ → BandPrototile (q (i + (1 : Fin (3 :
-            ℕ))).succ) Tⱼ → TileCentroid Tᵢ - TileCentroid T₀ = (1 / 2 : ℝ) • (GaussianRealPoint
-            (BandVectors.1 (q i.succ) (q (0 : Fin (4 : ℕ)))) + GaussianRealPoint (BandVectors.1
-            (q (0 : Fin (4 : ℕ))) (q i.succ))) → TileCentroid Tⱼ - TileCentroid T₀ = (1 / 2 : ℝ)
-            • (GaussianRealPoint (BandVectors.1 (q (i + (1 : Fin (3 : ℕ))).succ) (q (0 : Fin (4 :
-            ℕ)))) - GaussianRealPoint (BandVectors.1 (q (0 : Fin (4 : ℕ))) (q (i + (1 : Fin (3 :
-            ℕ))).succ))) → TouchingTriple T₀ Tᵢ Tⱼ) → ((∀ (C : CircleCoordinates), ∀ (D :
-            CircleCoordinates), ∀ (E : CircleCoordinates), ∀ (T : ProtoTile), ∀ (U : ProtoTile),
-            ∀ (V : ProtoTile), ∀ (x : GaussianInt), ∀ (y : GaussianInt), ∀ (z : GaussianInt), ∀
-            (w : GaussianInt), BandPrototile C T → BandPrototile D U → BandPrototile E V →
-            QuarterTurnSymmetric T → QuarterTurnSymmetric U → QuarterTurnSymmetric V → (∀ (X :
-            ProtoTile), ∀ (Y : ProtoTile), ∀ (Z : ProtoTile), BandPrototile C X → BandPrototile D
-            Y → BandPrototile E Z → TileCentroid Y - TileCentroid X = (1 / 2 : Real) •
-            (GaussianRealPoint x + GaussianRealPoint y) → TileCentroid Z - TileCentroid X = (1 /
-            2 : Real) • (GaussianRealPoint z - GaussianRealPoint w) → TouchingTriple X Y Z) →
-            TileCentroid U - TileCentroid T = (1 / 2 : Real) • (GaussianRealPoint
-            (GaussianQuarterTurn x) + GaussianRealPoint (GaussianQuarterTurn y)) → TileCentroid V
-            - TileCentroid T = (1 / 2 : Real) • (GaussianRealPoint (GaussianQuarterTurn z) -
-            GaussianRealPoint (GaussianQuarterTurn w)) → TouchingTriple T U V) → (∀ (i : Fin (3 :
-            ℕ)), ∀ (X : ProtoTile), ∀ (Y : ProtoTile), ∀ (Z : ProtoTile), BandPrototile (q 0) X →
-            BandPrototile (q i.succ) Y → BandPrototile (q ((i + 1).succ)) Z → TileCentroid Y -
-            TileCentroid X = (1 / 2 : Real) • (GaussianRealPoint (GaussianQuarterTurn
-            (BandVectors.1 (q i.succ) (q 0))) + GaussianRealPoint (GaussianQuarterTurn
-            (BandVectors.1 (q 0) (q i.succ)))) → TileCentroid Z - TileCentroid X = (1 / 2 : Real)
-            • (GaussianRealPoint (GaussianQuarterTurn (BandVectors.1 (q ((i + 1).succ)) (q 0))) -
-            GaussianRealPoint (GaussianQuarterTurn (BandVectors.1 (q 0) (q ((i + 1).succ))))) →
-            TouchingTriple X Y Z)))
-    ) := by
-  classical
-  intro q hT2 hT5 turn5 i X Y Z hX hY hZ ha hb
-  exact turn5 (q 0) (q i.succ) (q ((i + 1).succ)) X Y Z
-    (BandVectors.1 (q i.succ) (q 0)) (BandVectors.1 (q 0) (q i.succ))
-    (BandVectors.1 (q ((i + 1).succ)) (q 0))
-    (BandVectors.1 (q 0) (q ((i + 1).succ))) hX hY hZ
-    (hT2 0 X hX) (hT2 i.succ Y hY) (hT2 (i + 1).succ Z hZ)
     (fun A B C hA hB hC ha' hb' => hT5 A B C i hA hB hC ha' hb') ha hb
 
 private theorem base3 :
@@ -747,7 +669,7 @@ theorem OrientedTouchingCovariance :
                 GaussianRealPoint (GaussianQuarterTurn (BandVectors.1 (q 0) (q i.succ)))) →
           TouchingTriple X (TileTranslation X
             (GaussianQuarterTurn (BandVectors.1 (q i.succ) (q 0)))) Y :=
-                TouchingCovarianceProof.firstAt482 q hT2 hT4 turn4 i
+                TouchingCovarianceProof.firstAt463 q hT2 hT4 turn4 i
       exact turn4 (q 0) (q i.succ) T₀ Tᵢ
         (GaussianQuarterTurn (GaussianQuarterTurn (BandVectors.1 (q i.succ) (q 0))))
         (GaussianQuarterTurn (GaussianQuarterTurn (BandVectors.1 (q 0) (q i.succ)))) h₀ hᵢ
@@ -786,7 +708,7 @@ theorem OrientedTouchingCovariance :
           TileCentroid Z - TileCentroid X = (1 / 2 : Real) •
             (GaussianRealPoint (GaussianQuarterTurn (BandVectors.1 (q ((i + 1).succ)) (q 0))) -
               GaussianRealPoint (GaussianQuarterTurn (BandVectors.1 (q 0) (q ((i + 1).succ))))) →
-          TouchingTriple X Y Z := TouchingCovarianceProof.firstAt532 q hT2 hT5 turn5 i
+          TouchingTriple X Y Z := TouchingCovarianceProof.base q hT2 hT5 turn5 i
       exact turn5 (q 0) (q i.succ) (q ((i + 1).succ)) T₀ Tᵢ Tⱼ
         (GaussianQuarterTurn (BandVectors.1 (q i.succ) (q 0)))
         (GaussianQuarterTurn (BandVectors.1 (q 0) (q i.succ)))

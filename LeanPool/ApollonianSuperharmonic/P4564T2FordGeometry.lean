@@ -703,34 +703,6 @@ private theorem hbaseAt490 :
   rw [translated_center_diff U]
   exact hcent
 
-private theorem hAneAt500 :
-    (by
-      classical
-      exact
-        ∀ (P : FordFareyParameter),
-        let F := FordTile P.q
-        ∀ (w : GaussianInt), (F.cells.Nonempty) → ((TileTranslation F w).cells.Nonempty) ) := by
-  classical
-  intro P F w hFcells
-  rw [(TileTranslationFormulas F w).1]
-  exact hFcells.image _
-
-private theorem hBneAt503 :
-    (by
-      classical
-      exact
-        ∀ (P : FordFareyParameter),
-        let q := FordRecursiveQuadruple P
-        let F := FordTile P.q
-        ∀ (w : GaussianInt), (F.cells.Nonempty) → (∀ (i : Fin (3 : ℕ)),
-        let a := BandVectors.1 (q i.succ) (q 0)
-        (TileTranslation (TileTranslation F a) w).cells.Nonempty) ) := by
-  classical
-  intro P q F w hFcells i a
-  rw [(TileTranslationFormulas (TileTranslation F a) w).1,
-    (TileTranslationFormulas F a).1]
-  exact (hFcells.image _).image _
-
 private theorem hbaseAt517 :
     (by
       classical
@@ -759,18 +731,6 @@ private theorem hbaseAt517 :
     exact hUcent
   · rw [translated_center_diff V]
     exact hVcent
-
-private theorem hAneAt528 :
-    (by
-      classical
-      exact
-        ∀ (P : FordFareyParameter),
-        let F := FordTile P.q
-        ∀ (w : GaussianInt), (F.cells.Nonempty) → ((TileTranslation F w).cells.Nonempty) ) := by
-  classical
-  intro P F w hFcells
-  rw [(TileTranslationFormulas F w).1]
-  exact hFcells.image _
 
 end FordInterfaceGeometry
 
@@ -951,8 +911,8 @@ theorem P4564T2FordGeometry (P : FordFareyParameter) (hP : 1 < P.q)
       (TileTranslation (TileTranslation F a) w)
       (TileTranslation (TileTranslation U (-w)) w) at hmove
     rw [translate_cancel U] at hmove
-    have hAne := FordInterfaceGeometry.hAneAt500 P w hFcells
-    have hBne := FordInterfaceGeometry.hBneAt503 P w hFcells i
+    have hAne := FordInterfaceGeometry.hAneAt467 P w hFcells
+    have hBne := FordInterfaceGeometry.hBneAt470 P w hFcells i
     exact (triple_same_cells (TileTranslation F w) T
       (TileTranslation (TileTranslation F a) w) (TileTranslation T a) U
       hcellsT.symm (translated_root_cells a) hAne hBne).mp hmove
@@ -970,7 +930,7 @@ theorem P4564T2FordGeometry (P : FordFareyParameter) (hP : 1 < P.q)
       (TileTranslation (TileTranslation U (-w)) w)
       (TileTranslation (TileTranslation V (-w)) w) at hmove
     rw [translate_cancel U, translate_cancel V] at hmove
-    have hAne := FordInterfaceGeometry.hAneAt528 P w hFcells
+    have hAne := FordInterfaceGeometry.hAneAt467 P w hFcells
     exact (triple_same_root (TileTranslation F w) T U V
       hcellsT.symm hAne).mp hmove
 

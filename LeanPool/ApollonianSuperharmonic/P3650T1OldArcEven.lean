@@ -2161,73 +2161,6 @@ private theorem hXnotDiagAt1281 :
   simp at h2
   exact (ne_of_gt hδ) h2.symm
 
-private theorem hscaleAt1324 :
-    (by
-      classical
-      exact
-        ∀ (n : Nat), ∀ (p : P3381T1PolygonBoundary n), ∀ (E : P3650T1ExposedCorner p),
-        let va := p.vertex (E.b - 1)
-        let vb := p.vertex E.b
-        let vc := p.vertex (E.b + 1)
-        ∀ (r₀ : ℝ),
-        let r : Real := min r₀ 1
-        (0 < r) → (
-        let δ₀ : Real := r / (2 * (‖va - vb‖ + ‖vc - vb‖ + 1))
-        δ₀ * (2 * (‖va - vb‖ + ‖vc - vb‖ + 1)) = r) ) := by
-  classical
-  intro n p E va vb vc r₀ r hr δ₀
-  change (r / (2 * (‖va - vb‖ + ‖vc - vb‖ + 1))) *
-    (2 * (‖va - vb‖ + ‖vc - vb‖ + 1)) = r
-  field_simp
-
-private theorem hδaAt1328 :
-    (by
-      classical
-      exact
-        ∀ (n : Nat), ∀ (p : P3381T1PolygonBoundary n), ∀ (E : P3650T1ExposedCorner p),
-        let va := p.vertex (E.b - 1)
-        let vb := p.vertex E.b
-        let vc := p.vertex (E.b + 1)
-        ∀ (r₀ : ℝ),
-        let r : Real := min r₀ 1
-        let δ₀ : Real := r / (2 * (‖va - vb‖ + ‖vc - vb‖ + 1))
-        let δ : Real := min δ₀ (1/2)
-        (0 < δ₀) → ((δ₀ * (2 * (‖va - vb‖ + ‖vc - vb‖ + 1)) = r) → (δ * ‖va - vb‖ < r)) ) := by
-  classical
-  intro n p E va vb vc r₀ r δ₀ δ hδ₀ hscale
-  have hbound : ‖va - vb‖ < 2 * (‖va - vb‖ + ‖vc - vb‖ + 1) := by
-    linarith only [norm_nonneg (va - vb), norm_nonneg (vc - vb)]
-  calc
-    δ * ‖va - vb‖ ≤ δ₀ * ‖va - vb‖ :=
-      mul_le_mul_of_nonneg_right (min_le_left δ₀ (1/2)) (norm_nonneg _)
-    _ < δ₀ * (2 * (‖va - vb‖ + ‖vc - vb‖ + 1)) :=
-      mul_lt_mul_of_pos_left hbound hδ₀
-    _ = r := hscale
-
-private theorem hδcAt1337 :
-    (by
-      classical
-      exact
-        ∀ (n : Nat), ∀ (p : P3381T1PolygonBoundary n), ∀ (E : P3650T1ExposedCorner p),
-        let va := p.vertex (E.b - 1)
-        let vb := p.vertex E.b
-        let vc := p.vertex (E.b + 1)
-        ∀ (r₀ : ℝ),
-        let r : Real := min r₀ 1
-        let δ₀ : Real := r / (2 * (‖va - vb‖ + ‖vc - vb‖ + 1))
-        let δ : Real := min δ₀ (1/2)
-        (0 < δ₀) → ((δ₀ * (2 * (‖va - vb‖ + ‖vc - vb‖ + 1)) = r) → (δ * ‖vc - vb‖ < r)) ) := by
-  classical
-  intro n p E va vb vc r₀ r δ₀ δ hδ₀ hscale
-  have hbound : ‖vc - vb‖ < 2 * (‖va - vb‖ + ‖vc - vb‖ + 1) := by
-    linarith only [norm_nonneg (va - vb), norm_nonneg (vc - vb)]
-  calc
-    δ * ‖vc - vb‖ ≤ δ₀ * ‖vc - vb‖ :=
-      mul_le_mul_of_nonneg_right (min_le_left δ₀ (1/2)) (norm_nonneg _)
-    _ < δ₀ * (2 * (‖va - vb‖ + ‖vc - vb‖ + 1)) :=
-      mul_lt_mul_of_pos_left hbound hδ₀
-    _ = r := hscale
-
 private theorem hUdiffAt1346 :
     (by
       classical
@@ -2722,36 +2655,6 @@ private theorem hXnotAt1500 :
   have h := hXeven 1 ⟨by norm_num, by norm_num⟩
   simpa only [γ, AffineMap.lineMap_apply_one] using h
 
-private theorem hrightCenterAt1503 :
-    (by
-      classical
-      exact
-        ∀ (n : Nat), ∀ (p : P3381T1PolygonBoundary n), ∀ (E : P3650T1ExposedCorner p), ∀ (D :
-            P3650T1VisibleDiagonal p E), ∀ (C : P3650T1CyclicChildren p D.a D.b), (D.a = E.b)
-            → (
-        let vb := p.vertex E.b
-        (C.ir (Fin.last (C.rightParameter + 2)) = D.a) → (C.right.vertex (Fin.last
-            (C.rightParameter + 2)) =
-            vb)) ) := by
-  classical
-  intro n p E D C ha vb hrightLast
-  rw [C.right_vertex]
-  simp [hrightLast, ha, vb]
-
-private theorem hrightIncidentPrevAt1506 :
-    (by
-      classical
-      exact
-        ∀ (n : Nat), ∀ (p : P3381T1PolygonBoundary n), ∀ (E : P3650T1ExposedCorner p), ∀ (D :
-            P3650T1VisibleDiagonal p E), ∀ (C : P3650T1CyclicChildren p D.a D.b),
-        let va := p.vertex (E.b - 1)
-        (C.ir ⟨C.rightParameter+1, by omega⟩ = E.b - 1) → (C.right.vertex ⟨C.rightParameter + 1,
-            by omega⟩ = va)) := by
-  classical
-  intro n p E D C va hrightPrev
-  rw [C.right_vertex]
-  exact congrArg p.vertex hrightPrev
-
 private theorem hrightNextLast :
     (by
       classical
@@ -3137,9 +3040,9 @@ private theorem hseedLAt3101 :
   have hδ₀ : 0 < δ₀ := by dsimp [δ₀]; positivity
   have hδ : 0 < δ := lt_min hδ₀ (by norm_num)
   have hδlt1 : δ < 1 := lt_of_le_of_lt (min_le_right δ₀ (1/2)) (by norm_num)
-  have hscale := OldArcParityProof.hscaleAt1324 n p E r₀ hr
-  have hδa := OldArcParityProof.hδaAt1328 n p E r₀ hδ₀ hscale
-  have hδc := OldArcParityProof.hδcAt1337 n p E r₀ hδ₀ hscale
+  have hscale := OldArcParityProof.hscaleAt1080 n p E r₀ hr
+  have hδa := OldArcParityProof.hδaAt1084 n p E r₀ hδ₀ hscale
+  have hδc := OldArcParityProof.hδcAt1093 n p E r₀ hδ₀ hscale
   have hUdiff := OldArcParityProof.hUdiffAt1346 n p E lineMapSub r₀
   have hXdiff := OldArcParityProof.hXdiffAt1349 n p E lineMapSub r₀
   have hUball := OldArcParityProof.hUballAt1352 n p E r₀ hδ hδc hUdiff
@@ -3168,8 +3071,8 @@ private theorem hseedLAt3101 :
   have hXeven := parityEvenAlongPath C.left γ hcont havoid
     (by simpa only [γ, AffineMap.lineMap_apply_zero] using hUeven)
   have hXnot := OldArcParityProof.hXnotAt1500 n p E D C r₀ hXeven
-  have hrightCenter := OldArcParityProof.hrightCenterAt1503 n p E D C ha hrightLast
-  have hrightIncidentPrev := OldArcParityProof.hrightIncidentPrevAt1506 n p E D C hrightPrev
+  have hrightCenter := OldArcParityProof.hrightCenterAt1156 n p E D C ha hrightLast
+  have hrightIncidentPrev := OldArcParityProof.hrightIncidentPrevAt1166 n p E D C hrightPrev
   have hrightNextLast := OldArcParityProof.hrightNextLast n p E D C
   have hXcarrier := OldArcParityProof.hXcarrierAt1521 n p E D C r₀ hδ hδlt1 hrightCenter
       hrightIncidentPrev hrightNextLast

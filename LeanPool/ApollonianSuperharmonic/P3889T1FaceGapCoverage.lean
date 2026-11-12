@@ -704,47 +704,6 @@ private theorem hqsecAt467 :
   rw [S.cover]
   exact ⟨hq.2, hqNotRay⟩
 
-private theorem hqNotRayAt479 :
-    (by
-      classical
-      exact
-        ∀ (ι : Type), ∀ (P : PeriodicTileComplex ι), ∀ (D : P3723T1AllContactRouting P), ∀ (F :
-            P3861T1FacialDomains P D), ∀ (a : ι), ∀ (r : ℝ), ∀ (u : ι → ℝ × ℝ),
-        let x := D.position a
-        let B := Metric.ball x r
-        ∀ (f : P.plane.Face), ∀ (c : ι), ∀ (d : ι),
-        let U := F.region f
-        (∀ (q : Real × Real), (q ∈ B) → ((q ∈ {q | ∃ t : Real, 0 ≤ t ∧ q = x + t • u c} ∪ {q | ∃
-            t : Real, 0 ≤ t ∧ q = x + t • u d}) → (q ∈ frontier U))) → ((IsOpen U) → (∀ (q : ℝ ×
-            ℝ), (q ∈ F.region f ∩ B) → (q ∉ ({q | ∃ t : Real, 0 ≤ t ∧ q = x + t • u c} ∪ {q | ∃ t
-            : Real, 0 ≤ t ∧ q = x + t • u d})))) ) := by
-  classical
-  intro ι P D F a r u x B f c d U rayFront hUopen q hq hqRay
-  have hqf : q ∈ frontier U := rayFront q hq.2 hqRay
-  have hqnotU : q ∉ U := by
-    intro hqU
-    have : q ∈ frontier U := hqf
-    rw [frontier, hUopen.interior_eq] at this
-    exact this.2 hqU
-  exact hqnotU hq.1
-
-private theorem hqsecAt489 :
-    (by
-      classical
-      exact
-        ∀ (ι : Type), ∀ (P : PeriodicTileComplex ι), ∀ (D : P3723T1AllContactRouting P), ∀ (F :
-            P3861T1FacialDomains P D), ∀ (a : ι), ∀ (r : ℝ), ∀ (u : ι → ℝ × ℝ),
-        let x := D.position a
-        let B := Metric.ball x r
-        ∀ (f : P.plane.Face), ∀ (c : ι), ∀ (d : ι), ∀ (S : P3889T1TwoRaySectorDecomposition x r
-            (u c) (u d)), ∀ (q : ℝ × ℝ), (q ∈ F.region f ∩ B) → ((q ∉ ({q | ∃ t : Real, 0 ≤ t ∧ q
-            = x + t • u c} ∪ {q | ∃ t : Real, 0 ≤ t ∧ q = x + t • u d})) → (q ∈ S.left ∪
-            S.right)) ) := by
-  classical
-  intro ι P D F a r u x B f c d S q hq hqNotRay
-  rw [S.cover]
-  exact ⟨hq.2, hqNotRay⟩
-
 private theorem hrho :
     (by
       classical
@@ -1462,36 +1421,6 @@ private theorem hdetplus :
   rw [heq]
   exact mul_pos heps hsum
 
-private theorem huAt935 :
-    (by
-      classical
-      exact
-        ∀ (ι : Type), ∀ (P : PeriodicTileComplex ι), ∀ (a : ι), ∀ (u : ι → ℝ × ℝ), (∀ (c : ι),
-            P.plane.adjacent a c → ‖u c‖ = (1 : ℝ)) → (∀ (e : ι), (P.plane.adjacent a e) → (u e ≠
-            0)) ) := by
-  classical
-  intro ι P a u hunit e hae heq
-  have h := hunit e hae
-  rw [heq, norm_zero] at h
-  norm_num at h
-
-private theorem hsumAt940 :
-    (by
-      classical
-      exact
-        ∀ (ι : Type), ∀ (u : ι → ℝ × ℝ), ∀ (e : ι), (u e ≠ 0) → (0 < (u e).1 ^ 2 + (u e).2 ^ 2) )
-            := by
-  classical
-  intro ι u e hu
-  have hne : (u e).1 ^ 2 + (u e).2 ^ 2 ≠ 0 := by
-    intro hs
-    have h1 : (u e).1 = 0 := by nlinarith [sq_nonneg (u e).1, sq_nonneg (u e).2]
-    have h2 : (u e).2 = 0 := by nlinarith [sq_nonneg (u e).1, sq_nonneg (u e).2]
-    exact hu (by ext <;> assumption)
-  have hnonneg : 0 ≤ (u e).1 ^ 2 + (u e).2 ^ 2 :=
-    add_nonneg (sq_nonneg _) (sq_nonneg _)
-  exact lt_of_le_of_ne hnonneg (Ne.symm hne)
-
 private theorem hqminus1 :
     (by
       classical
@@ -1628,20 +1557,6 @@ private theorem hdistAt997 :
     have hsub : x - (x + t • u d) = -(t • u d) := by abel
     rw [hsub, norm_neg, hnorm]
   simpa [dist_comm] using this
-
-private theorem ht'At1003 :
-    (by
-      classical
-      exact
-        ∀ (ι : Type), ∀ (P : PeriodicTileComplex ι), ∀ (D : P3723T1AllContactRouting P), ∀ (a :
-            ι), ∀ (p : ℝ × ℝ),
-        let x := D.position a
-        let rho : Real := ‖p - x‖
-        ∀ (z : ℝ × ℝ), (z ∈ Metric.sphere x rho) → (∀ (t : ℝ), (dist z x = t) → (t = rho)) ) := by
-  classical
-  intro ι P D a p x rho z hzS t hdist
-  calc t = dist z x := hdist.symm
-    _ = rho := by simpa [Metric.mem_sphere, dist_eq_norm] using hzS
 
 private theorem hSphereConnected :
     (by
@@ -1873,9 +1788,9 @@ private theorem hfaceFillsSector :
     ext q
     constructor
     · intro hq
-      have hqNotRay := FaceGapProof.hqNotRayAt479 ι P D F a r
+      have hqNotRay := FaceGapProof.hqNotRayAt457 ι P D F a r
               u f c d rayFront hUopen q hq
-      have hqsec := FaceGapProof.hqsecAt489 ι P D F a r u f c d S q hq
+      have hqsec := FaceGapProof.hqsecAt467 ι P D F a r u f c d S q hq
           hqNotRay
       rcases hqsec with hqL | hqR
       · exact ((Set.disjoint_left.mp hUV) hq.1 (hL hqL)).elim
@@ -2008,8 +1923,8 @@ private theorem hKlocal :
         let v : Real × Real := (-(u e).2, (u e).1)
         have hvnorm : ‖v‖ = 1 := by
           simpa [v, Prod.norm_def, Real.norm_eq_abs, max_comm] using hunit e hae
-        have hu := FaceGapProof.huAt935 ι P a u hunit e hae
-        have hsum := FaceGapProof.hsumAt940 ι u e hu
+        have hu := FaceGapProof.huAt878 ι P a u hunit e hae
+        have hsum := FaceGapProof.hsumAt883 ι u e hu
         let qminus := z + eps • (-v)
         have hdetminus := FaceGapProof.hdetminus ι u z e t δ₁ δ₂ heps hsum
         exact (Set.disjoint_left.mp (hd hfg) (hneg₁ qminus (FaceGapProof.hqminus1 ι u z e t δ₁
@@ -2026,7 +1941,7 @@ private theorem hKlocal :
     · obtain ⟨t, ht0, hzeq⟩ := hzd.2
       have hnorm := FaceGapProof.hnormAt994 ι P a u hunit d had t ht0
       have hdist := FaceGapProof.hdistAt997 ι P D a u z d t hzeq hnorm
-      have ht' := FaceGapProof.ht'At1003 ι P D a p z hzS t hdist
+      have ht' := FaceGapProof.ht'At987 ι P D a p z hzS t hdist
       have htpos : 0 < t := by rw [ht']; exact hrho
       have htr : t < r := by rw [ht']; exact hrho'
       exact finishRay d hdi hda had t htpos htr hzeq

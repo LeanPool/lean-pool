@@ -999,33 +999,6 @@ private theorem hWeqAt1029 :
   have h := crossNorthEq c2 hnc
   simpa [I, c1, c2, c2i] using h
 
-private theorem hWeqAt1062 :
-    ∀ (F : Set (Finset GaussianInt)), ∀ (x : GaussianInt), ∀ (p : List GaussianInt), ∀ (u :
-        GaussianInt), ∀ (v : GaussianInt),
-    let c1 : GaussianInt := x - 1
-    let c2 : GaussianInt := x - 1 - ⟨0, 1⟩
-    (∀ (a : GaussianInt), ∀ (b : GaussianInt), ((a, b) ∈ p.zip p.tail ++ [(v, u)]) → (({a, b} :
-        Finset GaussianInt) ∈ F)) → (
-    let I : GaussianInt → Int := fun q => GridRayCrossingIndex q p
-    (∀ (q : GaussianInt), ((q + 1 + ⟨0, 1⟩, q + ⟨0, 1⟩) ∉ p.zip p.tail ++ [(v, u)] ∧ (q + ⟨0, 1⟩,
-        q + 1 + ⟨0, 1⟩) ∉ p.zip p.tail ++ [(v, u)]) → (GridRayCrossingIndex (q + ⟨0, 1⟩) p =
-        GridRayCrossingIndex q p)) → ((c2 + 1 + ⟨0, 1⟩ = x) → ((c2 + ⟨0, 1⟩ = x - 1) → ((({x - 1,
-        x} : Finset GaussianInt) ∉ F) → (I c1 = I c2))))) := by
-  classical
-  intro F x p u v c1 c2 cyclicToEdge I crossNorthEq c2addi c2i hWabsent
-  have hnc :
-      (c2 + 1 + ⟨0, 1⟩, c2 + ⟨0, 1⟩) ∉ p.zip p.tail ++ [(v, u)] ∧
-      (c2 + ⟨0, 1⟩, c2 + 1 + ⟨0, 1⟩) ∉ p.zip p.tail ++ [(v, u)] := by
-    constructor
-    · intro h
-      apply hWabsent
-      simpa [c2, c2addi, c2i, Finset.pair_comm] using cyclicToEdge _ _ h
-    · intro h
-      apply hWabsent
-      convert cyclicToEdge _ _ h using 1; simp [c2]; ring
-  have h := crossNorthEq c2 hnc
-  simpa [I, c1, c2, c2i] using h
-
 private theorem hNeqAt1093 :
     ∀ (F : Set (Finset GaussianInt)), ∀ (x : GaussianInt), ∀ (p : List GaussianInt), ∀ (u :
         GaussianInt), ∀ (v : GaussianInt),
@@ -1052,61 +1025,6 @@ private theorem hNeqAt1093 :
       convert cyclicToEdge _ _ h using 1; simp [c1, Finset.pair_comm]
   have h := crossEastEq c1 hnc
   simpa [I, c0, c1, c1add] using h
-
-private theorem hEeqAt1127 :
-    ∀ (F : Set (Finset GaussianInt)), ∀ (x : GaussianInt), ∀ (p : List GaussianInt), ∀ (u :
-        GaussianInt), ∀ (v : GaussianInt),
-    let c0 : GaussianInt := x
-    let c3 : GaussianInt := x - ⟨0, 1⟩
-    (∀ (a : GaussianInt), ∀ (b : GaussianInt), ((a, b) ∈ p.zip p.tail ++ [(v, u)]) → (({a, b} :
-        Finset GaussianInt) ∈ F)) → (
-    let I : GaussianInt → Int := fun q => GridRayCrossingIndex q p
-    (∀ (q : GaussianInt), ((q + 1 + ⟨0, 1⟩, q + ⟨0, 1⟩) ∉ p.zip p.tail ++ [(v, u)] ∧ (q + ⟨0, 1⟩,
-        q + 1 + ⟨0, 1⟩) ∉ p.zip p.tail ++ [(v, u)]) → (GridRayCrossingIndex (q + ⟨0, 1⟩) p =
-        GridRayCrossingIndex q p)) → ((c3 + ⟨0, 1⟩ = x) → ((({x, x + 1} : Finset GaussianInt) ∉
-        F) → (I c0 = I c3)))) := by
-  classical
-  intro F x p u v c0 c3 cyclicToEdge I crossNorthEq c3i hEabsent
-  have hnc :
-      (c3 + 1 + ⟨0, 1⟩, c3 + ⟨0, 1⟩) ∉ p.zip p.tail ++ [(v, u)] ∧
-      (c3 + ⟨0, 1⟩, c3 + 1 + ⟨0, 1⟩) ∉ p.zip p.tail ++ [(v, u)] := by
-    constructor
-    · intro h
-      apply hEabsent
-      convert cyclicToEdge _ _ h using 1; simp [c3, Finset.pair_comm]; ring
-    · intro h
-      apply hEabsent
-      convert cyclicToEdge _ _ h using 1; simp [c3, Finset.pair_comm]; ring
-  have h := crossNorthEq c3 hnc
-  simpa [I, c0, c3, c3i] using h
-
-private theorem hSeqAt1158 :
-    ∀ (F : Set (Finset GaussianInt)), ∀ (x : GaussianInt), ∀ (p : List GaussianInt), ∀ (u :
-        GaussianInt), ∀ (v : GaussianInt),
-    let c2 : GaussianInt := x - 1 - ⟨0, 1⟩
-    let c3 : GaussianInt := x - ⟨0, 1⟩
-    (∀ (a : GaussianInt), ∀ (b : GaussianInt), ((a, b) ∈ p.zip p.tail ++ [(v, u)]) → (({a, b} :
-        Finset GaussianInt) ∈ F)) → (
-    let I : GaussianInt → Int := fun q => GridRayCrossingIndex q p
-    (∀ (q : GaussianInt), ((q + 1, q + 1 + ⟨0, 1⟩) ∉ p.zip p.tail ++ [(v, u)] ∧ (q + 1 + ⟨0, 1⟩,
-        q + 1) ∉ p.zip p.tail ++ [(v, u)]) → (GridRayCrossingIndex (q + 1) p =
-        GridRayCrossingIndex q p)) → ((c2 + 1 = x - ⟨0, 1⟩) → ((({x - ⟨0, 1⟩, x} : Finset
-        GaussianInt) ∉ F) → (I c3 = I c2)))) := by
-  classical
-  intro F x p u v c2 c3 cyclicToEdge I crossEastEq c2add hSabsent
-  have c2addi : c2 + 1 + ⟨0, 1⟩ = x := by dsimp [c2]; ring
-  have hnc :
-      (c2 + 1, c2 + 1 + ⟨0, 1⟩) ∉ p.zip p.tail ++ [(v, u)] ∧
-      (c2 + 1 + ⟨0, 1⟩, c2 + 1) ∉ p.zip p.tail ++ [(v, u)] := by
-    constructor
-    · intro h
-      apply hSabsent
-      convert cyclicToEdge _ _ h using 1; simp [c2]; ring
-    · intro h
-      apply hSabsent
-      simpa [c2, c2add, c2addi, Finset.pair_comm] using cyclicToEdge _ _ h
-  have h := crossEastEq c2 hnc
-  simpa [I, c2, c3, c2add] using h
 
 private theorem verticalSupport :
     (List GaussianInt) → ((∀ (a : GaussianInt), ∀ (b : GaussianInt), ∀ (c : GaussianInt), ∀ (d :
@@ -1976,7 +1894,7 @@ private theorem hindexDiff :
           simpa [c1, c1add, c1addi] using hNcyc
         have h := crossEastJump c1 hc
         simpa [I, c0, c1, c1add] using h
-      have hWeq : I c1 = I c2 := ExteriorMixedCycleProof.hWeqAt1062 F x p u v cyclicToEdge
+      have hWeq : I c1 = I c2 := ExteriorMixedCycleProof.hWeqAt1029 F x p u v cyclicToEdge
           crossNorthEq c2addi c2i hWabsent
       refine Or.inr ⟨hexterior, ?_⟩
       have hneg : I c0 - I c2 = I c0 - I c1 := by rw [hWeq]
@@ -2020,7 +1938,7 @@ private theorem hindexDiff :
           simpa [c2, c2add] using hScyc
         have h := crossEastJump c2 hc
         simpa [I, c2, c3, c2add] using h
-      have hEeq : I c0 = I c3 := ExteriorMixedCycleProof.hEeqAt1127 F x p u v cyclicToEdge
+      have hEeq : I c0 = I c3 := ExteriorMixedCycleProof.hEeqAt936 F x p u v cyclicToEdge
           crossNorthEq c3i hEabsent
       refine Or.inr ⟨hexterior, ?_⟩
       have hEq : I c0 - I c2 = I c3 - I c2 := by rw [hEeq]
@@ -2040,7 +1958,7 @@ private theorem hindexDiff :
           simpa [c3, c3i, c3addi] using Or.symm hEcyc
         have h := crossNorthJump c3 hc
         simpa [I, c0, c3, c3i] using h
-      have hSeq : I c3 = I c2 := ExteriorMixedCycleProof.hSeqAt1158 F x p u v cyclicToEdge
+      have hSeq : I c3 = I c2 := ExteriorMixedCycleProof.hSeqAt999 F x p u v cyclicToEdge
           crossEastEq c2add hSabsent
       refine Or.inr ⟨hexterior, ?_⟩
       have hEq : I c0 - I c2 = I c0 - I c3 := by rw [hSeq]

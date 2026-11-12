@@ -637,20 +637,6 @@ private theorem hpathLast :
     path = pre ++ x :: [] := hsplit
     _ = pre' ++ z :: x :: [] := by rw [← hpreEq]; simp [List.append_assoc]
 
-private theorem hUVAt597 :
-    (by
-      classical
-      exact
-        ∀ (Ci : BandCircle), ∀ (P : PeriodicTileComplex ↥(TilingLattice Ci)), (∀ (a :
-            TilingLattice Ci), ∀ (b : TilingLattice Ci), (P.tile a = P.tile b) → (a = b)) → (∀ (U
-            : ProtoTile), ∀ (V : ProtoTile), ∀ (ia : ↥(TilingLattice Ci)), ∀ (ib :
-            ↥(TilingLattice Ci)), (P.tile ia = U) → ((P.tile ib = V) → ((ia ≠ ib) → (U ≠ V)))) )
-            := by
-  classical
-  intro Ci P index_eq_of_tile_eq U V ia ib hUidx hVidx hidxne hEq
-  exact hidxne (index_eq_of_tile_eq ia ib
-    (hUidx.trans (hEq.trans hVidx.symm)))
-
 private theorem hleft :
     (by
       classical
@@ -1642,7 +1628,7 @@ private theorem terminalSector :
         simpa [Finset.pair_comm] using
           last_edge_unique path hnodup x z pre' hpathLast e
             ((hedgesPath e).mp he) hxe)
-  have hUV : U ≠ V := LocalSectorGeometry.hUVAt597 Ci P index_eq_of_tile_eq U V ia ib hUidx
+  have hUV : U ≠ V := LocalSectorGeometry.hUVAt563 Ci P index_eq_of_tile_eq U V ia ib hUidx
       hVidx hidxne
   exact ⟨z, U, V, g, k, Or.inr ⟨pre', [], hpathLast⟩,
     hUV, ⟨by simpa [Finset.pair_comm] using hedgeU,

@@ -663,35 +663,6 @@ private theorem hvertices :
           List.mem_filter.mpr ⟨hxsource, by simp [hz]⟩
         simpa [List.map_map] using hxfilter
 
-private theorem pairCasesAt830 :
-    ∀ (n : Nat), ∀ {a : Fin (n + 3)}, ∀ {b : Fin (n + 3)}, ∀ {c : Fin (n + 3)}, ∀
-        {d : Fin (n + 3)}, (a ≠ b) → ((({a, b} : Finset (Fin (n + 3))) = {c, d}) → ((a = c ∧ b =
-        d) ∨ (a = d ∧ b = c))) := by
-  classical
-  intro n a b c d hab h
-  have hac : a = c ∨ a = d := by
-    have ha : a ∈ ({c, d} : Finset (Fin (n + 3))) := by
-      rw [← h]
-      simp
-    simpa only [Finset.mem_insert, Finset.mem_singleton] using ha
-  rcases hac with hac | had
-  · have hb : b = c ∨ b = d := by
-      have hb' : b ∈ ({c, d} : Finset (Fin (n + 3))) := by
-        rw [← h]
-        simp
-      simpa only [Finset.mem_insert, Finset.mem_singleton] using hb'
-    rcases hb with hbc | hbd
-    · exact False.elim (hab (hac.trans hbc.symm))
-    · exact Or.inl ⟨hac, hbd⟩
-  · have hb : b = c ∨ b = d := by
-      have hb' : b ∈ ({c, d} : Finset (Fin (n + 3))) := by
-        rw [← h]
-        simp
-      simpa only [Finset.mem_insert, Finset.mem_singleton] using hb'
-    rcases hb with hbc | hbd
-    · exact Or.inr ⟨had, hbc⟩
-    · exact False.elim (hab (had.trans hbd.symm))
-
 private theorem boundaryEdgeInj :
     ∀ (r : Nat), ∀ (n : Nat), ∀ (q : P3381T1PolygonBoundary r), ∀ (p : P3381T1PolygonBoundary
         n), ∀ (s : P3475T1BoundarySubdivision q p), (∀ {a : Fin (n + 3)}, ∀ {b : Fin (n + 3)},
@@ -895,50 +866,6 @@ private theorem targetPairInj :
     change 2 % (n + 3) = 0 at hv
     rw [Nat.mod_eq_of_lt (by omega : 2 < n + 3)] at hv
     omega
-
-private theorem keepBoundaryAt1047 :
-    ∀ (n : Nat),
-    let boundaryStep := fun
-        (es : Finset (Finset (Fin (n + 3))))
-        (e : Fin (n + 3) × Fin (n + 3) × Fin (n + 3)) =>
-          insert {e.1, e.2.1}
-            (insert {e.2.1, e.2.2} (es.erase {e.1, e.2.2}))
-    ∀ (l : List (Fin (n + 3) × Fin (n + 3) × Fin (n + 3))), ∀ (A : Finset (Finset (Fin (n +
-        3)))), ∀ (P : Finset (Fin (n + 3))), (P ∈ A ∨ ∃ e ∈ l,
-        P = {e.1, e.2.1} ∨ P = {e.2.1, e.2.2}) → ((∀ e ∈ l, P ≠ {e.1, e.2.2}) → (P ∈ l.foldl
-            boundaryStep A)) := by
-  classical
-  intro n boundaryStep l A P hseed hno
-  induction l generalizing A with
-  | nil =>
-      rcases hseed with hA | ⟨e, he, _⟩
-      · simpa using hA
-      · simp at he
-  | cons a l ih =>
-      simp only [List.foldl_cons]
-      rcases hseed with hA | ⟨e, he, hedge⟩
-      · apply ih (A := boundaryStep A a)
-        · left
-          change P ∈ insert {a.1, a.2.1}
-            (insert {a.2.1, a.2.2} (A.erase {a.1, a.2.2}))
-          simp only [Finset.mem_insert, Finset.mem_erase]
-          exact Or.inr (Or.inr ⟨hno a (by simp), hA⟩)
-        · intro b hb
-          exact hno b (by simp [hb])
-      · rcases List.mem_cons.mp he with heq | heTail
-        · subst e
-          apply ih (A := boundaryStep A a)
-          · left
-            rcases hedge with h1 | h2
-            · simp [boundaryStep, h1]
-            · simp [boundaryStep, h2]
-          · intro b hb
-            exact hno b (by simp [hb])
-        · apply ih (A := boundaryStep A a)
-          · right
-            exact ⟨e, heTail, hedge⟩
-          · intro b hb
-            exact hno b (by simp [hb])
 
 private theorem memStep :
     ∀ (r : Nat), ∀ (n : Nat), ∀ (q : P3381T1PolygonBoundary r), ∀ (p : P3381T1PolygonBoundary
@@ -1446,7 +1373,7 @@ private theorem hboundary :
           (insert {e.2.1, e.2.2} (es.erase {e.1, e.2.2}))
   have pairCases {a b c d : Fin (n + 3)} (hab : a ≠ b)
       (h : ({a, b} : Finset (Fin (n + 3))) = {c, d}) :
-      (a = c ∧ b = d) ∨ (a = d ∧ b = c) := OrderedInsertionGeometry.pairCasesAt830 n (a := a)
+      (a = c ∧ b = d) ∨ (a = d ∧ b = c) := OrderedInsertionGeometry.pairCasesAt487 n (a := a)
           (b := b) (c := c) (d := d) hab h
   have adjacentNe (i : Fin (r + 3)) : i ≠ i + 1 := by
     intro heq
@@ -1511,7 +1438,7 @@ private theorem hboundary :
       (hseed : P ∈ A ∨ ∃ e ∈ l,
         P = {e.1, e.2.1} ∨ P = {e.2.1, e.2.2})
       (hno : ∀ e ∈ l, P ≠ {e.1, e.2.2}) :
-      P ∈ l.foldl boundaryStep A := OrderedInsertionGeometry.keepBoundaryAt1047 n l A P hseed
+      P ∈ l.foldl boundaryStep A := OrderedInsertionGeometry.keepBoundaryAt383 n l A P hseed
           hno
   have hinjShift : Function.Injective (fun k : Fin (n + 3) => s.start 0 + k) := by
     intro a b hab

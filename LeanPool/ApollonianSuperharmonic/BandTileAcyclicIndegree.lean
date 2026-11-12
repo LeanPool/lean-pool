@@ -618,43 +618,6 @@ private theorem closed :
       rw [hpair a b hab, ite_eq_right hz]
     simp [hempty] at hx
 
-private theorem hPo :
-    (by
-      classical
-      exact
-        ∀ (U : ProtoTile), ∀ (k : PartialOdometer), ∀ (q : Fin (4 : ℕ) → CircleCoordinates), ∀ (r
-            : Fin (3 : ℕ)), ∀ (s : BandPackingSymmetry),
-        let qr : Fin 4 → CircleCoordinates :=
-          ![q 0, q r.succ, q (r + 1).succ, q (r + 2).succ]
-        let p := BandPackingSymmetryQuadrupleAction s qr
-        let V := BandPackingSymmetryTileAction s U
-        let l := BandPackingSymmetryPartialOdometerAction s k
-        ∀ (hp : ProperBandQuadruple p), ∀ (hpos : 0 < (p 0).1), ∀ (cfg :
-            BandOrderedGeneralConfiguration p),
-        let B : BandCircle := ⟨⟨p 0, Or.inl hpos, p, hp.1, 0, rfl⟩, hpos⟩
-        ∀ (cert : BandOrderedGeneralLayoutCertificate p cfg B V),
-        let restrict (W : ProtoTile) : PartialOdometer :=
-          let d := l.domain.filter fun x => decide (x ∈ FootprintVertices W)
-          { domain := d
-            value := fun x => if x ∈ d then l.value x else 0
-            value_outside := by intro x hx; exact ite_eq_right hx }
-        let ls := fun i s => restrict (cert.P i s)
-        ∀ (G : IntegerLatticeFunction),
-        let D := l.domain.filter fun x =>
-          @decide (x ∉ BoundaryFootprintVertices V) (Classical.propDecidable _)
-        let A := fun a : Fin 3 × Bool => (ls a.1 a.2).domain.filter fun x =>
-          @decide (x ∉ BoundaryFootprintVertices (cert.P a.1 a.2))
-            (Classical.propDecidable _)
-        let σ := fun x => 2 + FourNeighborLaplacian G x
-        (AcyclicIndegreeOrientation (Finset.univ.biUnion A) σ) → (
-        let P := D.filter fun x => @decide (∃ i t, x ∈ (ls i t).domain ∧
-          x ∉ BoundaryFootprintVertices (cert.P i t)) (Classical.propDecidable _)
-        (Finset.univ.biUnion A = P) → (Nonempty (AcyclicIndegreeOrientation P σ))) ) := by
-  classical
-  intro U k q r s qr p V l hp hpos cfg B cert restrict ls G D A σ oUnion P hUnion
-  rw [← hUnion]
-  exact ⟨oUnion⟩
-
 end BandAcyclicIndegreeGeometry
 
 theorem BandTileAcyclicIndegree :
@@ -817,7 +780,9 @@ theorem BandTileAcyclicIndegree :
         let P := D.filter fun x => @decide (∃ i t, x ∈ (ls i t).domain ∧
           x ∉ BoundaryFootprintVertices (cert.P i t)) (Classical.propDecidable _)
         change Finset.univ.biUnion A = P at hUnion
-        have hPo := BandAcyclicIndegreeGeometry.hPo U k q r s hp hpos cfg cert G oUnion hUnion
+        have hPo : Nonempty (AcyclicIndegreeOrientation P σ) := by
+          rw [← hUnion]
+          exact ⟨oUnion⟩
         obtain ⟨R, hf, hcard, hres⟩ := BandInterfaceRootedForest B p cfg V cert l ls G
           hV hlat hl hldom hls hlsdom heG hrest htile hweb hperiod hPo
         obtain ⟨oD, _⟩ := P5532T1ForestAttachment D P R σ (Finset.filter_subset _ _)

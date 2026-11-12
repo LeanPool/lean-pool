@@ -1137,87 +1137,6 @@ private theorem hchildrenAt804 :
   · exact ⟨F, hF, by simp [hhit]⟩
   · exact ⟨F, hF, by simp [hhit]⟩
 
-private theorem hleftFaceAt816 :
-    (by
-      classical
-      exact
-        ∀ (r : Nat), ∀ (n : Nat), ∀ (q : P3381T1PolygonBoundary r), ∀ (p :
-            P3381T1PolygonBoundary n), ∀ (s : P3475T1BoundarySubdivision q p), ∀ (X : Set
-            (Real × Real)), ∀ (K : Set (Real × Real)), ∀ (t : P3475T1TriangleTree q X K),
-        let c := P3523T1InsertionConstruction s t
-        ∀ (h : ℕ), ∀ (hh : h < c.steps.length),
-        let e := c.steps.get ⟨h, hh⟩
-        (((P3523T1InsertionConstruction s t).steps.get ⟨h, hh⟩).1 ≠
-            ((P3523T1InsertionConstruction s t).steps.get ⟨h, hh⟩).2.2) → (∀ (F : Finset (Fin
-            (n + (3 : ℕ)))), ∀ (z : Fin (n + (3 : ℕ))), (e.2.2 ≠ z) → ((F = {e.1, e.2.2, z}) →
-            (insert e.2.1 (F.erase e.2.2) = ({e.1, e.2.1, z} : Finset (Fin (n + 3)))))) ) := by
-  classical
-  intro r n q p s X K t c h hh e hab F z hbz hFeq
-  rw [hFeq]
-  ext y
-  simp only [Finset.mem_insert, Finset.mem_erase,
-    Finset.mem_singleton]
-  constructor
-  · rintro (hd | ⟨hne, ha | hb | hz⟩)
-    · exact Or.inr (Or.inl hd)
-    · exact Or.inl ha
-    · exact (hne hb).elim
-    · exact Or.inr (Or.inr hz)
-  · rintro (ha | hd | hz)
-    · exact Or.inr ⟨fun h => hab (ha.symm.trans h), Or.inl ha⟩
-    · exact Or.inl hd
-    · exact Or.inr ⟨fun h => hbz (h.symm.trans hz), Or.inr (Or.inr hz)⟩
-
-private theorem hrightFaceAt832 :
-    (by
-      classical
-      exact
-        ∀ (r : Nat), ∀ (n : Nat), ∀ (q : P3381T1PolygonBoundary r), ∀ (p :
-            P3381T1PolygonBoundary n), ∀ (s : P3475T1BoundarySubdivision q p), ∀ (X : Set
-            (Real × Real)), ∀ (K : Set (Real × Real)), ∀ (t : P3475T1TriangleTree q X K),
-        let c := P3523T1InsertionConstruction s t
-        ∀ (h : ℕ), ∀ (hh : h < c.steps.length),
-        let e := c.steps.get ⟨h, hh⟩
-        (((P3523T1InsertionConstruction s t).steps.get ⟨h, hh⟩).1 ≠
-            ((P3523T1InsertionConstruction s t).steps.get ⟨h, hh⟩).2.2) → (∀ (F : Finset (Fin
-            (n + (3 : ℕ)))), ∀ (z : Fin (n + (3 : ℕ))), (e.1 ≠ z) → ((F = {e.1, e.2.2, z}) →
-            (insert e.2.1 (F.erase e.1) = ({e.2.1, e.2.2, z} : Finset (Fin (n + 3)))))) ) := by
-  classical
-  intro r n q p s X K t c h hh e hab F z haz hFeq
-  rw [hFeq]
-  ext y
-  simp only [Finset.mem_insert, Finset.mem_erase,
-    Finset.mem_singleton]
-  constructor
-  · rintro (hd | ⟨hne, ha | hb | hz⟩)
-    · exact Or.inl hd
-    · exact (hne ha).elim
-    · exact Or.inr (Or.inl hb)
-    · exact Or.inr (Or.inr hz)
-  · rintro (hd | hb | hz)
-    · exact Or.inl hd
-    · exact Or.inr ⟨fun h => hab (h.symm.trans hb), Or.inr (Or.inl hb)⟩
-    · exact Or.inr ⟨fun h => haz (h.symm.trans hz), Or.inr (Or.inr hz)⟩
-
-private theorem hdet'At850 :
-    (by
-      classical
-      exact
-        ∀ (r : Nat), ∀ (n : Nat), ∀ (q : P3381T1PolygonBoundary r), ∀ (p :
-            P3381T1PolygonBoundary n), ∀ (s : P3475T1BoundarySubdivision q p), ∀ (X : Set
-            (Real × Real)), ∀ (K : Set (Real × Real)), ∀ (t : P3475T1TriangleTree q X K),
-        let c := P3523T1InsertionConstruction s t
-        (∀ {I : Type}, ∀ {J : Type}, ∀ (v : I → J), ∀ (a : I), ∀ (b : I), ∀ (z : I), v ∘ ![a, b,
-            z] = ![v a, v b, v z]) → (∀ (v : Fin (n + (3 : ℕ)) → ℝ × ℝ), ∀ (h : ℕ), ∀ (hh : h <
-            c.steps.length),
-        let e := c.steps.get ⟨h, hh⟩
-        ∀ (z : Fin (n + (3 : ℕ))), (P3381T1TriangleDeterminant (v ∘ ![e.1, e.2.2, z]) ≠ (0 :
-            ℝ)) → (P3381T1TriangleDeterminant ![v e.1, v e.2.2, v z] ≠ 0)) ) := by
-  classical
-  intro r n q p s X K t c mapTriple v h hh e z hdet
-  rw [mapTriple v e.1 e.2.2 z] at hdet
-  exact hdet
-
 private theorem hxSplit :
     (by
       classical
@@ -1630,32 +1549,6 @@ private theorem mixedPair :
           (H : Set _))) := hright
       _ = convexHull Real (v '' ((H : Set _) ∩
           ((insert d (F.erase a) : Finset _) : Set _))) := by rw [Set.inter_comm]
-
-private theorem hfacesRecAt1185 :
-    (by
-      classical
-      exact
-        ∀ (r : Nat), ∀ (n : Nat), ∀ (q : P3381T1PolygonBoundary r), ∀ (p :
-            P3381T1PolygonBoundary n), ∀ (s : P3475T1BoundarySubdivision q p), ∀ (X : Set
-            (Real × Real)), ∀ (K : Set (Real × Real)), ∀ (t : P3475T1TriangleTree q X K),
-        let c := P3523T1InsertionConstruction s t
-        ∀ (h : ℕ), ∀ (hh : h < c.steps.length),
-        let e := c.steps.get ⟨h, hh⟩
-        c.faces (h + 1) = P3523T1BoundaryFaceSplit (c.faces h) e.1 e.2.1 e.2.2 ) := by
-  classical
-  intro r n q p s X K t c h hh e
-  change (c.steps.take (h + 1)).foldl
-    (fun fs e => P3523T1BoundaryFaceSplit fs e.1 e.2.1 e.2.2)
-    (Finset.univ.image fun k : Fin t.count =>
-      Finset.univ.image (s.start ∘ t.face k)) =
-    P3523T1BoundaryFaceSplit
-      ((c.steps.take h).foldl
-        (fun fs e => P3523T1BoundaryFaceSplit fs e.1 e.2.1 e.2.2)
-        (Finset.univ.image fun k : Fin t.count =>
-          Finset.univ.image (s.start ∘ t.face k)))
-      (c.steps[h].1) (c.steps[h].2.1) (c.steps[h].2.2)
-  rw [List.take_succ_eq_append_getElem hh]
-  simp only [List.foldl_append, List.foldl_cons, List.foldl_nil]
 
 private theorem splitFacts :
     (by
@@ -2326,13 +2219,13 @@ private theorem coverState :
             existsThird hshape.1 hhit.1 hhit.2 hab
           have hleftFace : insert e.2.1 (F.erase e.2.2) =
               ({e.1, e.2.1, z} : Finset (Fin (n + 3))) :=
-                  FacialInsertionGeometry.hleftFaceAt816 r n q p s X K t h hh hab F z hbz hFeq
+                  FacialInsertionGeometry.hleftFaceAt728 r n q p s X K t h hh hab F z hbz hFeq
           have hrightFace : insert e.2.1 (F.erase e.1) =
               ({e.2.1, e.2.2, z} : Finset (Fin (n + 3))) :=
-                  FacialInsertionGeometry.hrightFaceAt832 r n q p s X K t h hh hab F z haz hFeq
+                  FacialInsertionGeometry.hrightFaceAt744 r n q p s X K t h hh hab F z haz hFeq
           have hdet := hnondeg h hleFace F hF ![e.1, e.2.2, z]
             (tripleInj hab haz hbz) (by rw [hFeq]; exact tripleRange _ _ _)
-          have hdet' := FacialInsertionGeometry.hdet'At850 r n q p s X K t mapTriple v h hh z hdet
+          have hdet' := FacialInsertionGeometry.hdet'At762 r n q p s X K t mapTriple v h hh z hdet
           obtain ⟨u, hu0, hu1, hvalue⟩ := hinterp h hh
           have hgeo := splitHull v e.1 e.2.1 e.2.2 z hab haz hbz u
             ⟨hu0, hu1⟩ hvalue hdet'
@@ -2476,7 +2369,7 @@ private theorem pairState :
       rcases hstep h hh with ⟨hab, haV, hbV, hdV, hboundary, _⟩
       have hfacesRec : c.faces (h + 1) =
           P3523T1BoundaryFaceSplit (c.faces h) e.1 e.2.1 e.2.2 :=
-              FacialInsertionGeometry.hfacesRecAt1185 r n q p s X K t h hh
+              FacialInsertionGeometry.hfacesRecAt698 r n q p s X K t h hh
       rw [hfacesRec] at hF hG
       obtain ⟨F₀, hF₀, hbranchF⟩ :=
         (split_mem_cases (c.faces h) e.1 e.2.1 e.2.2 F).mp hF

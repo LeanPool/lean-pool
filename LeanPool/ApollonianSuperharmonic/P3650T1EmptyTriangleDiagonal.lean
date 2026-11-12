@@ -840,50 +840,6 @@ private theorem hfalseAt549 :
   rw [← hintAvoid]
   exact ⟨hqint, Set.mem_iUnion.mpr ⟨j, hqseg⟩⟩
 
-private theorem hqt0At555 :
-    (by
-      classical
-      exact
-        ∀ (n : Nat), ∀ (p : P3381T1PolygonBoundary n), ∀ (E : P3650T1ExposedCorner p),
-        let a := p.vertex (E.b - 1)
-        let b := p.vertex E.b
-        let c := p.vertex (E.b + 1)
-        let v : Fin 3 → Real × Real := ![a, b, c]
-        ∀ (hind : AffineIndependent Real v), ∀ (hspan : affineSpan Real (Set.range v) = ⊤),
-        let A : AffineBasis (Fin 3) Real (Real × Real) := ⟨v, hind, hspan⟩
-        ∀ (x : ℝ × ℝ), ∀ (j : Fin (n + (3 : ℕ))), ((0 : ℝ) < (A.coord (0 : Fin (3 : ℕ)) : ℝ × ℝ →
-            ℝ) x ∧ (A.coord (1 : Fin (3 : ℕ)) : ℝ × ℝ → ℝ) x = (0 : ℝ) ∧ (0 : ℝ) < (A.coord (2 :
-            Fin (3 : ℕ)) : ℝ × ℝ → ℝ) x) → (∀ (t : ℝ),
-        let q : Real → Real × Real := AffineMap.lineMap (p.vertex j) (p.vertex (j + 1))
-        (q t = x) → (0 < A.coord 0 (q t))) ) := by
-  classical
-  intro n p E a b c v hind hspan A x j hxb t q hqtq
-  calc
-     _ = A.coord 0 x := congrArg _ hqtq
-     _ > 0 := hxb.1
-
-private theorem hqt2At558 :
-    (by
-      classical
-      exact
-        ∀ (n : Nat), ∀ (p : P3381T1PolygonBoundary n), ∀ (E : P3650T1ExposedCorner p),
-        let a := p.vertex (E.b - 1)
-        let b := p.vertex E.b
-        let c := p.vertex (E.b + 1)
-        let v : Fin 3 → Real × Real := ![a, b, c]
-        ∀ (hind : AffineIndependent Real v), ∀ (hspan : affineSpan Real (Set.range v) = ⊤),
-        let A : AffineBasis (Fin 3) Real (Real × Real) := ⟨v, hind, hspan⟩
-        ∀ (x : ℝ × ℝ), ∀ (j : Fin (n + (3 : ℕ))), ((0 : ℝ) < (A.coord (0 : Fin (3 : ℕ)) : ℝ × ℝ →
-            ℝ) x ∧ (A.coord (1 : Fin (3 : ℕ)) : ℝ × ℝ → ℝ) x = (0 : ℝ) ∧ (0 : ℝ) < (A.coord (2 :
-            Fin (3 : ℕ)) : ℝ × ℝ → ℝ) x) → (∀ (t : ℝ),
-        let q : Real → Real × Real := AffineMap.lineMap (p.vertex j) (p.vertex (j + 1))
-        (q t = x) → (0 < A.coord 2 (q t))) ) := by
-  classical
-  intro n p E a b c v hind hspan A x j hxb t q hqtq
-  calc
-     _ = A.coord 2 x := congrArg _ hqtq
-     _ > 0 := hxb.2.2
-
 private theorem hq1At579 :
     (by
       classical
@@ -915,37 +871,6 @@ private theorem hq1At579 :
     ring
   rw [this]
   exact mul_pos (div_pos (sub_pos.mpr hts) (sub_pos.mpr ht'.2)) hposnext
-
-private theorem hqsegAt597 :
-    (by
-      classical
-      exact
-        ∀ (n : Nat), ∀ (p : P3381T1PolygonBoundary n), ∀ (j : Fin (n + (3 : ℕ))),
-        let q : Real → Real × Real := AffineMap.lineMap (p.vertex j) (p.vertex (j + 1))
-        ∀ (s : ℝ), (s ∈ Set.Ioo (0 : Real) 1) → (q s ∈ segment Real (p.vertex j) (p.vertex (j +
-            1))) ) := by
-  classical
-  intro n p j q s hs01
-  rw [segment_eq_image_lineMap]
-  exact ⟨s, ⟨le_of_lt hs01.1, le_of_lt hs01.2⟩, rfl⟩
-
-private theorem hfalseAt600 :
-    (by
-      classical
-      exact
-        ∀ (n : Nat), ∀ (p : P3381T1PolygonBoundary n), ∀ (E : P3650T1ExposedCorner p),
-        let a := p.vertex (E.b - 1)
-        let b := p.vertex E.b
-        let c := p.vertex (E.b + 1)
-        let T := convexHull Real ({a, b, c} : Set (Real × Real))
-        (interior T ∩ P3544T1BoundaryCarrier p = ∅) → (∀ (j : Fin (n + (3 : ℕ))),
-        let q : Real → Real × Real := AffineMap.lineMap (p.vertex j) (p.vertex (j + 1))
-        ∀ (s : ℝ), (q s ∈ interior T) → ((q s ∈ segment Real (p.vertex j) (p.vertex (j + 1))) →
-            (q s ∈ (∅ : Set (Real × Real))))) ) := by
-  classical
-  intro n p E a b c T hintAvoid j q s hqint hqseg
-  rw [← hintAvoid]
-  exact ⟨hqint, Set.mem_iUnion.mpr ⟨j, hqseg⟩⟩
 
 private theorem hα0 :
     (by
@@ -1946,9 +1871,9 @@ private theorem hbaseAvoid :
         hintAvoid j s hqint hqseg
     simp at hfalse
   · by_cases hposnext : 0 < A.coord 1 (p.vertex (j + 1))
-    · have hqt0 := TriangleDiagonalGeometry.hqt0At555 n p E hind hspan x
+    · have hqt0 := TriangleDiagonalGeometry.hqt0At504 n p E hind hspan x
           j hxb t hqtq
-      have hqt2 := TriangleDiagonalGeometry.hqt2At558 n p E hind hspan x
+      have hqt2 := TriangleDiagonalGeometry.hqt2At507 n p E hind hspan x
           j hxb t hqtq
       have hn : (fun s => A.coord 0 (q s)) ⁻¹' Set.Ioi (0 : Real) ∈ nhds t :=
         (hfc 0).continuousAt.preimage_mem_nhds
@@ -1977,8 +1902,8 @@ private theorem hbaseAvoid :
         · exact hq0
         · exact hq1
         · exact hq2)
-      have hqseg := TriangleDiagonalGeometry.hqsegAt597 n p j s hs01
-      have hfalse : q s ∈ (∅ : Set (Real × Real)) := TriangleDiagonalGeometry.hfalseAt600 n p E
+      have hqseg := TriangleDiagonalGeometry.hqsegAt546 n p j s hs01
+      have hfalse : q s ∈ (∅ : Set (Real × Real)) := TriangleDiagonalGeometry.hfalseAt549 n p E
           hintAvoid j s hqint hqseg
       simp at hfalse
     · have hαnonpos : A.coord 1 (p.vertex j) ≤ 0 := le_of_not_gt hposj

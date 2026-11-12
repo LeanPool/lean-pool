@@ -2631,22 +2631,6 @@ private theorem hnewAdjAt1521 :
     t', BandPackingSymmetryProperCovariance ginv r hr,
     hselectedCoord, hfixedCoord, hcentOriginal, hslopeReInv, hslopeImInv⟩
 
-private theorem hpointInvAt1538 :
-    (by
-      classical
-      exact
-        ∀ (C₀ : BandCircle), ∀ (Cᵢ : BandCircle), ∀ (T₀ : ProtoTile), ∀ (Tᵢ : ProtoTile), ∀ (h₀ :
-            PartialOdometer), ∀ (hᵢ : PartialOdometer), ∀ (x : GaussianInt), ∀ (bundle :
-            BandOrderedGeneralNormalizedOccurrenceBundle C₀ Cᵢ T₀ Tᵢ h₀ hᵢ x), ∀ (ginv :
-            BandPackingSymmetry), (∀ (v : GaussianInt), BandPackingSymmetryVectorAction ginv
-            (BandPackingSymmetryVectorAction bundle.symmetry v) = v) →
-            ((BandPackingSymmetryVectorAction bundle.symmetry x = bundle.normalizedPoint) →
-            (BandPackingSymmetryVectorAction ginv bundle.normalizedPoint = x)) ) := by
-  classical
-  intro C₀ Cᵢ T₀ Tᵢ h₀ hᵢ x bundle ginv hvecL hpoint
-  rw [← hpoint]
-  exact hvecL x
-
 private theorem hmarkedOriginalAt1545 :
     (by
       classical
@@ -3383,7 +3367,7 @@ private theorem reverseAdjacencyCase :
     ((⟨0, 1⟩ : GaussianInt) ^ t.val *
       (if Even t.val then BandVectors.1 (r 0) (r j.succ)
         else BandVectors.1 (r j.succ) (r 0)))
-  have hpointInv := MarkedAdjacencyGeometry.hpointInvAt1538 C₀ Cᵢ T₀ Tᵢ h₀ hᵢ x bundle ginv
+  have hpointInv := MarkedAdjacencyGeometry.hpointInvAt1389 C₀ Cᵢ T₀ Tᵢ h₀ hᵢ x bundle ginv
       hvecL hpoint
   have hmarkCov :=
     (markedData.2.2 ginv r hr j t delta hphaseInv

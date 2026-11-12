@@ -6,6 +6,7 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.ExposedCornerAffineBasis
 
 public import LeanPool.ApollonianSuperharmonic.P3650T1VisibleDiagonal
 public import Mathlib.Analysis.Normed.Affine.AddTorsorBases
@@ -50,57 +51,6 @@ private theorem hSne :
   have hm : i ≠ E.b - 1 ∧ i ≠ E.b ∧ i ≠ E.b + 1 ∧ p.vertex i ∈ Δ := by
     exact ⟨by aesop, by aesop, by aesop, hi⟩
   exact h ⟨i, Finset.mem_filter.mpr ⟨Finset.mem_univ _, hm⟩⟩
-
-private theorem hbasis :
-    (by
-      classical
-      exact
-        ∀ (n : Nat), ∀ (p : P3381T1PolygonBoundary n), ∀ (E : P3650T1ExposedCorner p), ∃ A :
-            AffineBasis (Fin 3) Real (Real × Real), (∀ i, A i = ![p.vertex (E.b - 1), p.vertex
-            E.b, p.vertex (E.b + 1)] i) ∧ E.height = A.coord 1 ) := by
-  classical
-  intro n p E
-  let a := p.vertex (E.b - 1)
-  let b := p.vertex E.b
-  let c := p.vertex (E.b + 1)
-  let v : Fin 3 → Real × Real := ![a, b, c]
-  have hdet : (b.1 - a.1) * (c.2 - a.2) -
-      (c.1 - a.1) * (b.2 - a.2) ≠ 0 := by
-    simpa [P3381T1TriangleDeterminant, a, b, c] using E.nondegenerate
-  have hind : AffineIndependent Real v := by
-    apply (affineIndependent_iff_of_fintype Real v).mpr
-    intro z hz hsum i
-    rw [Finset.weightedVSub_eq_linear_combination Finset.univ hz] at hsum
-    have hz' : z 0 + z 1 + z 2 = 0 := by
-      simpa [Fin.sum_univ_succ, ← add_assoc] using hz
-    have hx : z 0 * a.1 + z 1 * b.1 + z 2 * c.1 = 0 := by
-      simpa [Fin.sum_univ_succ, v, ← add_assoc] using congrArg Prod.fst hsum
-    have hy : z 0 * a.2 + z 1 * b.2 + z 2 * c.2 = 0 := by
-      simpa [Fin.sum_univ_succ, v, ← add_assoc] using congrArg Prod.snd hsum
-    have hx' : z 1 * (b.1 - a.1) + z 2 * (c.1 - a.1) = 0 := by
-      linear_combination hx - a.1 * hz'
-    have hy' : z 1 * (b.2 - a.2) + z 2 * (c.2 - a.2) = 0 := by
-      linear_combination hy - a.2 * hz'
-    have hz1 : z 1 = 0 := by
-      apply (mul_eq_zero.mp (show z 1 * ((b.1 - a.1) * (c.2 - a.2) -
-          (c.1 - a.1) * (b.2 - a.2)) = 0 by
-        linear_combination (c.2 - a.2) * hx' - (c.1 - a.1) * hy')).resolve_right hdet
-    have hz2 : z 2 = 0 := by
-      apply (mul_eq_zero.mp (show z 2 * ((b.1 - a.1) * (c.2 - a.2) -
-          (c.1 - a.1) * (b.2 - a.2)) = 0 by
-        linear_combination (b.1 - a.1) * hy' - (b.2 - a.2) * hx')).resolve_right hdet
-    fin_cases i <;> simp_all
-  have hspan : affineSpan Real (Set.range v) = ⊤ := by
-    apply hind.affineSpan_eq_top_iff_card_eq_finrank_add_one.mpr
-    simp [Module.finrank_prod]
-  let A : AffineBasis (Fin 3) Real (Real × Real) := ⟨v, hind, hspan⟩
-  refine ⟨A, fun _ => rfl, ?_⟩
-  apply AffineMap.ext_on A.tot
-  rintro x ⟨i, rfl⟩
-  fin_cases i <;> simp only [AffineBasis.coord_apply]
-  · exact E.height_prev
-  · exact E.height_top
-  · exact E.height_next
 
 private theorem hrange :
     (by
@@ -833,7 +783,7 @@ theorem P3650T1MaximalHeightDiagonal {n : Nat} (p : P3381T1PolygonBoundary n)
   have hdprev : d ≠ E.b - 1 := hdprops.1
   have hdb : d ≠ E.b := hdprops.2.1
   have hdnext : d ≠ E.b + 1 := hdprops.2.2.1
-  have hbasis := MaximalHeightGeometry.hbasis n p E
+  have hbasis := ExposedCornerAffineBasis n p E
   obtain ⟨A, hA, hheight⟩ := hbasis
   have hA0 : A 0 = p.vertex (E.b - 1) := hA 0
   have hA1 : A 1 = p.vertex E.b := hA 1

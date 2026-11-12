@@ -45,45 +45,7 @@ private theorem hdistAt190 :
     ((1 + 2 * a + 2 * ⟨0, 1⟩ : GaussianInt) : Complex))
   nlinarith [hn, hsum, hyone]
 
-private theorem hdistAt273 :
-    ∀ (a : GaussianInt), ∀ (u : ℂ), ∀ (p : ℂ), ((p.re - u.re)^2 + (p.im - u.im)^2 = 1) → ((p.im -
-        u.im ≤ 1) → ((((1 + 2 * a + 2 * ⟨0, 1⟩ : GaussianInt) : Complex) = ⟨u.re, u.im + 2⟩) → (1
-        ≤ ‖p - ((1 + 2 * a + 2 * ⟨0, 1⟩ : GaussianInt) : Complex)‖))) := by
-  classical
-  intro a u p hsum hyone hupper
-  have hs : Complex.normSq
-      (p - ((1 + 2 * a + 2 * ⟨0, 1⟩ : GaussianInt) : Complex)) =
-      (p.re - u.re)^2 + (p.im - (u.im + 2))^2 := by
-    rw [hupper]
-    simp [Complex.normSq, Complex.sub_re, Complex.sub_im, pow_two]
-  have hn : ‖p - ((1 + 2 * a + 2 * ⟨0, 1⟩ : GaussianInt) : Complex)‖^2 =
-      (p.re - u.re)^2 + (p.im - (u.im + 2))^2 := by
-    rw [← Complex.normSq_eq_norm_sq]
-    exact hs
-  have hnn := norm_nonneg (p -
-    ((1 + 2 * a + 2 * ⟨0, 1⟩ : GaussianInt) : Complex))
-  nlinarith [hn, hsum, hyone]
-
 private theorem hdistAt357 :
-    ∀ (a : GaussianInt), ∀ (u : ℂ), ∀ (p : ℂ), ((p.re - u.re)^2 + (p.im - u.im)^2 = 1) → ((-1 ≤
-        p.im - u.im) → ((((1 + 2 * (a - ⟨0, 1⟩) : GaussianInt) : Complex) = ⟨u.re, u.im - 2⟩) →
-        (1 ≤ ‖p - ((1 + 2 * (a - ⟨0, 1⟩) : GaussianInt) : Complex)‖))) := by
-  classical
-  intro a u p hsum hyminus hbelow
-  have hs : Complex.normSq
-      (p - ((1 + 2 * (a - ⟨0, 1⟩) : GaussianInt) : Complex)) =
-      (p.re - u.re)^2 + (p.im - (u.im - 2))^2 := by
-    rw [hbelow]
-    simp [Complex.normSq, Complex.sub_re, Complex.sub_im, pow_two]
-  have hn : ‖p - ((1 + 2 * (a - ⟨0, 1⟩) : GaussianInt) : Complex)‖^2 =
-      (p.re - u.re)^2 + (p.im - (u.im - 2))^2 := by
-    rw [← Complex.normSq_eq_norm_sq]
-    exact hs
-  have hnn := norm_nonneg (p -
-    ((1 + 2 * (a - ⟨0, 1⟩) : GaussianInt) : Complex))
-  nlinarith [hn, hsum, hyminus]
-
-private theorem hdistAt445 :
     ∀ (a : GaussianInt), ∀ (u : ℂ), ∀ (p : ℂ), ((p.re - u.re)^2 + (p.im - u.im)^2 = 1) → ((-1 ≤
         p.im - u.im) → ((((1 + 2 * (a - ⟨0, 1⟩) : GaussianInt) : Complex) = ⟨u.re, u.im - 2⟩) →
         (1 ≤ ‖p - ((1 + 2 * (a - ⟨0, 1⟩) : GaussianInt) : Complex)‖))) := by
@@ -416,54 +378,6 @@ private theorem hupper'At534 :
   simp only [GaussianInt.toComplex_add, GaussianInt.toComplex_mul,
     GaussianInt.toComplex_one]
 
-private theorem hLAt542 :
-    ∀ (a : GaussianInt), 2 * (GaussianInt.toComplex a).re = 2 * (a.re : Real) := by
-  classical
-  intro a
-  calc
-    _ = 2 * ((a.re : ℤ) : Real) := by rw [← GaussianInt.intCast_re]
-    _ = _ := rfl
-
-private theorem hsumAt566 :
-    ∀ (u : ℂ), ∀ (p : ℂ), (‖p - u‖ = (1 : ℝ)) → ((p.re - u.re)^2 + (p.im - u.im)^2 = 1) := by
-  classical
-  intro u p hnorm
-  have hs : Complex.normSq (p - u) = 1 := by
-    calc
-      Complex.normSq (p - u) = ‖p - u‖^2 := Complex.normSq_eq_norm_sq _
-      _ = 1 := by rw [hnorm]; norm_num
-  change (p - u).re * (p - u).re + (p - u).im * (p - u).im = 1 at hs
-  rw [Complex.sub_re, Complex.sub_im] at hs
-  nlinarith [hs]
-
-private theorem hupperAt575 :
-    ∀ (a : GaussianInt), ∀ (u : ℂ), ((u : Complex) = ⟨2 * (a.re : Real) + 1, 2 * (a.im : Real)⟩)
-        → (((1 + 2 * a + 2 * ⟨0, 1⟩ : GaussianInt) : Complex) = ⟨u.re, u.im + 2⟩) := by
-  classical
-  intro a u hu
-  rw [GaussianInt.toComplex_def₂]
-  apply Complex.ext <;> simp [hu, Zsqrtd.re_add, Zsqrtd.re_mul,
-    Zsqrtd.im_add, Zsqrtd.im_mul]; ring
-
-private theorem hownAt601 :
-    ∀ (a : GaussianInt), ∀ (u : ℂ), (u = (GaussianInt.toComplex : GaussianInt → ℂ) ((1 :
-        GaussianInt) + (2 : GaussianInt) * a)) → ((1 + GaussianInt.toComplex 2 *
-        GaussianInt.toComplex a) = u) := by
-  classical
-  intro a u huDef
-  rw [huDef]
-  simp only [GaussianInt.toComplex_add, GaussianInt.toComplex_mul,
-    GaussianInt.toComplex_one]
-
-private theorem hupper'At607 :
-    ∀ (a : GaussianInt), (1 + GaussianInt.toComplex 2 * GaussianInt.toComplex a +
-        GaussianInt.toComplex 2 * GaussianInt.toComplex (⟨0, 1⟩ : GaussianInt)) =
-        GaussianInt.toComplex (1 + 2 * a + 2 * (⟨0, 1⟩ : GaussianInt)) := by
-  classical
-  intro a
-  simp only [GaussianInt.toComplex_add, GaussianInt.toComplex_mul,
-    GaussianInt.toComplex_one]
-
 private theorem hLzAt615 :
     ∀ (a : GaussianInt), 2 * (((a - ⟨0, 1⟩ : GaussianInt).re : ℤ) : Real) = 2 *
         (GaussianInt.toComplex a).re := by
@@ -471,18 +385,6 @@ private theorem hLzAt615 :
   intro a
   rw [GaussianInt.intCast_re, GaussianInt.toComplex_sub, Complex.sub_re]
   simp
-
-private theorem hsumAt639 :
-    ∀ (u : ℂ), ∀ (p : ℂ), (‖p - u‖ = (1 : ℝ)) → ((p.re - u.re)^2 + (p.im - u.im)^2 = 1) := by
-  classical
-  intro u p hnorm
-  have hs : Complex.normSq (p - u) = 1 := by
-    calc
-      Complex.normSq (p - u) = ‖p - u‖^2 := Complex.normSq_eq_norm_sq _
-      _ = 1 := by rw [hnorm]; norm_num
-  change (p - u).re * (p - u).re + (p - u).im * (p - u).im = 1 at hs
-  rw [Complex.sub_re, Complex.sub_im] at hs
-  nlinarith [hs]
 
 private theorem hbelowAt648 :
     ∀ (a : GaussianInt), ∀ (u : ℂ), ((u : Complex) = ⟨2 * (a.re : Real) + 1, 2 * (a.im : Real)⟩)
@@ -502,55 +404,6 @@ private theorem hbelow'At673 :
     GaussianInt.toComplex_one]
 
 private theorem hown'At681 :
-    ∀ (a : GaussianInt), ∀ (u : ℂ), (u = (GaussianInt.toComplex : GaussianInt → ℂ) ((1 :
-        GaussianInt) + (2 : GaussianInt) * a)) → ((1 + GaussianInt.toComplex 2 *
-        GaussianInt.toComplex (a - ⟨0, 1⟩ : GaussianInt) + GaussianInt.toComplex 2 *
-        GaussianInt.toComplex (⟨0, 1⟩ : GaussianInt)) = u) := by
-  classical
-  intro a u huDef
-  rw [huDef]
-  simp only [GaussianInt.toComplex_add, GaussianInt.toComplex_mul,
-    GaussianInt.toComplex_one, GaussianInt.toComplex_sub]
-  ring
-
-private theorem hLzAt692 :
-    ∀ (a : GaussianInt), 2 * (((a - ⟨0, 1⟩ : GaussianInt).re : ℤ) : Real) = 2 *
-        (GaussianInt.toComplex a).re := by
-  classical
-  intro a
-  rw [GaussianInt.intCast_re, GaussianInt.toComplex_sub, Complex.sub_re]
-  simp
-
-private theorem hsumAt716 :
-    ∀ (u : ℂ), ∀ (p : ℂ), (‖p - u‖ = (1 : ℝ)) → ((p.re - u.re)^2 + (p.im - u.im)^2 = 1) := by
-  classical
-  intro u p hnorm
-  have hs : Complex.normSq (p - u) = 1 := by
-    calc
-      Complex.normSq (p - u) = ‖p - u‖^2 := Complex.normSq_eq_norm_sq _
-      _ = 1 := by rw [hnorm]; norm_num
-  change (p - u).re * (p - u).re + (p - u).im * (p - u).im = 1 at hs
-  rw [Complex.sub_re, Complex.sub_im] at hs
-  nlinarith [hs]
-
-private theorem hbelowAt725 :
-    ∀ (a : GaussianInt), ∀ (u : ℂ), ((u : Complex) = ⟨2 * (a.re : Real) + 1, 2 * (a.im : Real)⟩)
-        → (((1 + 2 * (a - ⟨0, 1⟩) : GaussianInt) : Complex) = ⟨u.re, u.im - 2⟩) := by
-  classical
-  intro a u hu
-  rw [GaussianInt.toComplex_def₂]
-  apply Complex.ext <;> simp [hu, Zsqrtd.re_add, Zsqrtd.re_mul,
-    Zsqrtd.im_add, Zsqrtd.im_mul, Zsqrtd.re_sub, Zsqrtd.im_sub] <;> ring
-
-private theorem hbelow'At751 :
-    ∀ (a : GaussianInt), (1 + GaussianInt.toComplex 2 * GaussianInt.toComplex (a - ⟨0, 1⟩ :
-        GaussianInt)) = GaussianInt.toComplex (1 + 2 * (a - ⟨0, 1⟩)) := by
-  classical
-  intro a
-  simp only [GaussianInt.toComplex_add, GaussianInt.toComplex_mul,
-    GaussianInt.toComplex_one]
-
-private theorem hown'At759 :
     ∀ (a : GaussianInt), ∀ (u : ℂ), (u = (GaussianInt.toComplex : GaussianInt → ℂ) ((1 :
         GaussianInt) + (2 : GaussianInt) * a)) → ((1 + GaussianInt.toComplex 2 *
         GaussianInt.toComplex (a - ⟨0, 1⟩ : GaussianInt) + GaussianInt.toComplex 2 *
@@ -806,7 +659,7 @@ private theorem upperRightRootGap :
   simp only [Int.reduceNeg, GaussianInt.intCast_re, P4828T1Evaluate, List.foldl_nil,
       Fin.isValue, Matrix.cons_val_one, Matrix.cons_val_zero, one_ne_zero, Fin.reduceEq,
       or_self, decide_false, or_true, decide_true, A, roots]
-  have hL := UnitIncidenceDetails.hLAt542 a
+  have hL := UnitIncidenceDetails.hLAt468 a
   rw [hL]
   rw [P4984T1RootGaps.2.1 a]
   ext p
@@ -829,11 +682,11 @@ private theorem upperRightRootGap :
       rw [hu]; simp [GaussianInt.intCast_re]
     have huIm : u.im = 2 * (GaussianInt.toComplex a).im := by
       rw [hu]; simp [GaussianInt.intCast_im]
-    have hsum := UnitIncidenceDetails.hsumAt566 u
+    have hsum := UnitIncidenceDetails.hsumAt494 u
         p hnorm
     have hyone : p.im - u.im ≤ 1 := by nlinarith [hsum]
-    have hupper := UnitIncidenceDetails.hupperAt575 a u hu
-    have hdist := UnitIncidenceProof.hdistAt273 a u p hsum hyone hupper
+    have hupper := UnitIncidenceDetails.hupperAt503 a u hu
+    have hdist := UnitIncidenceProof.hdistAt190 a u p hsum hyone hupper
     refine ⟨?_, hnorm⟩
     change (2 * (GaussianInt.toComplex a).re + 1 ≤ p.re ∧
       p.re ≤ 2 * (GaussianInt.toComplex a).re + 2 ∧
@@ -854,13 +707,13 @@ private theorem upperRightRootGap :
     · rw [← huIm]
       nlinarith [hyone]
     · have hown : (1 + GaussianInt.toComplex 2 * GaussianInt.toComplex a) = u :=
-        UnitIncidenceDetails.hownAt601 a u huDef
+        UnitIncidenceDetails.hownAt528 a u huDef
       rw [hown]
       linarith [hnorm]
     · have hupper' : (1 + GaussianInt.toComplex 2 * GaussianInt.toComplex a +
           GaussianInt.toComplex 2 * GaussianInt.toComplex (⟨0, 1⟩ : GaussianInt)) =
           GaussianInt.toComplex (1 + 2 * a + 2 * (⟨0, 1⟩ : GaussianInt)) :=
-              UnitIncidenceDetails.hupper'At607 a
+              UnitIncidenceDetails.hupper'At534 a
       rw [hupper']
       exact hdist
 
@@ -910,7 +763,7 @@ private theorem lowerLeftRootGap :
       rw [hu]; simp [GaussianInt.intCast_re]
     have huIm : u.im = 2 * (GaussianInt.toComplex a).im := by
       rw [hu]; simp [GaussianInt.intCast_im]
-    have hsum := UnitIncidenceDetails.hsumAt639 u
+    have hsum := UnitIncidenceDetails.hsumAt494 u
         p hnorm
     have hyminus : -1 ≤ p.im - u.im := by nlinarith [hsum]
     have hbelow := UnitIncidenceDetails.hbelowAt648 a u hu
@@ -969,7 +822,7 @@ private theorem lowerRightRootGap :
   simp only [Int.reduceNeg, GaussianInt.intCast_re, P4828T1Evaluate, List.foldl_nil,
       Fin.isValue, Matrix.cons_val, map_sub, Complex.sub_re, GaussianInt.re_toComplex,
       Int.cast_zero, sub_zero, Fin.reduceEq, or_self, decide_false, A, roots]
-  have hLz := UnitIncidenceDetails.hLzAt692 a
+  have hLz := UnitIncidenceDetails.hLzAt615 a
   rw [← hLz]
   rw [P4984T1RootGaps.2.1 (a - ⟨0, 1⟩)]
   ext p
@@ -993,11 +846,11 @@ private theorem lowerRightRootGap :
       rw [hu]; simp [GaussianInt.intCast_re]
     have huIm : u.im = 2 * (GaussianInt.toComplex a).im := by
       rw [hu]; simp [GaussianInt.intCast_im]
-    have hsum := UnitIncidenceDetails.hsumAt716 u
+    have hsum := UnitIncidenceDetails.hsumAt494 u
         p hnorm
     have hyminus : -1 ≤ p.im - u.im := by nlinarith [hsum]
-    have hbelow := UnitIncidenceDetails.hbelowAt725 a u hu
-    have hdist := UnitIncidenceProof.hdistAt445 a u p hsum hyminus hbelow
+    have hbelow := UnitIncidenceDetails.hbelowAt648 a u hu
+    have hdist := UnitIncidenceProof.hdistAt357 a u p hsum hyminus hbelow
     refine ⟨?_, hnorm⟩
     change (2 * (GaussianInt.toComplex a).re + 1 ≤ p.re ∧
       p.re ≤ 2 * (GaussianInt.toComplex a).re + 2 ∧
@@ -1020,14 +873,14 @@ private theorem lowerRightRootGap :
     · have hbelow' : (1 + GaussianInt.toComplex 2 *
           GaussianInt.toComplex (a - ⟨0, 1⟩ : GaussianInt)) =
           GaussianInt.toComplex (1 + 2 * (a - ⟨0, 1⟩)) :=
-              UnitIncidenceDetails.hbelow'At751 a
+              UnitIncidenceDetails.hbelow'At673 a
       rw [GaussianInt.toComplex_sub] at hbelow'
       rw [hbelow']
       exact hdist
     · have hown' : (1 + GaussianInt.toComplex 2 *
           GaussianInt.toComplex (a - ⟨0, 1⟩ : GaussianInt) +
           GaussianInt.toComplex 2 * GaussianInt.toComplex (⟨0, 1⟩ : GaussianInt)) = u :=
-              UnitIncidenceDetails.hown'At759 a u huDef
+              UnitIncidenceDetails.hown'At681 a u huDef
       rw [GaussianInt.toComplex_sub] at hown'
       rw [hown']
       linarith [hnorm]

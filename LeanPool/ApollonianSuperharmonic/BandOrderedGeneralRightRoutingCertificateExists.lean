@@ -6,6 +6,7 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.BandVectorParentSums
 
 public import LeanPool.ApollonianSuperharmonic.BandOrderedGeneralRightRoutingCertificate
 public import LeanPool.ApollonianSuperharmonic.BandOrderedGeneralShiftedRoutedBoundaryLocalization
@@ -94,79 +95,6 @@ private theorem turn_flip :
   rw [(flip s).1]
   rcases BandVectors.1 (q s.succ) (q 0) with ⟨a, b⟩
   apply Zsqrtd.ext <;> simp [GaussianQuarterTurn]
-
-private theorem incoming_relation :
-    (by
-      classical
-      exact
-        ∀ (C : BandCircle), ∀ (T : ProtoTile), ∀ (N : ProtoTile), ∀ (h : PartialOdometer), ∀ (k :
-            PartialOdometer), ∀ (x : GaussianInt), ∀ (normalization :
-            BandOrderedGeneralRightNormalizationCertificate C T N h k x),
-        let q := normalization.normalizedPresentation
-        (BandVectors.1 (q (3 : Fin (4 : ℕ))) (q (2 : Fin (4 : ℕ))) + BandVectors.1 (q (1 : Fin (4
-            : ℕ))) (q (3 : Fin (4 : ℕ))) + BandVectors.1 (q (2 : Fin (4 : ℕ))) (q (1 : Fin (4 :
-            ℕ))) = (0 : GaussianInt) ∧ BandVectors.2 (q (3 : Fin (4 : ℕ))) (q (2 : Fin (4 : ℕ)))
-            + BandVectors.2 (q (1 : Fin (4 : ℕ))) (q (3 : Fin (4 : ℕ))) + BandVectors.2 (q (2 :
-            Fin (4 : ℕ))) (q (1 : Fin (4 : ℕ))) = (0 : GaussianInt) ∧ BandVectors.1 (q (1 : Fin
-            (4 : ℕ))) (q (0 : Fin (4 : ℕ))) = BandVectors.1 (q (1 : Fin (4 : ℕ))) (q (3 : Fin (4
-            : ℕ))) - (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt) * BandVectors.1 (q (2 : Fin (4 : ℕ))) (q
-            (1 : Fin (4 : ℕ))) ∧ BandVectors.2 (q (1 : Fin (4 : ℕ))) (q (0 : Fin (4 : ℕ))) =
-            BandVectors.2 (q (1 : Fin (4 : ℕ))) (q (3 : Fin (4 : ℕ))) + (⟨(0 : ℤ), (1 : ℤ)⟩ :
-            GaussianInt) * BandVectors.2 (q (2 : Fin (4 : ℕ))) (q (1 : Fin (4 : ℕ))) ∧
-            (ProperBandQuadruple q → ∀ (j : Fin (3 : ℕ)), BandVectors.1 (q (0 : Fin (4 : ℕ))) (q
-            j.succ) = (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt) * BandVectors.1 (q j.succ) (q (0 : Fin
-            (4 : ℕ))) ∧ BandVectors.2 (q (0 : Fin (4 : ℕ))) (q j.succ) = -(⟨(0 : ℤ), (1 : ℤ)⟩ :
-            GaussianInt) * BandVectors.2 (q j.succ) (q (0 : Fin (4 : ℕ))))) → (BandVectors.1 (q
-            1) (q 0) + BandVectors.1 (q 2) (q 0) + BandVectors.1 (q 3) (q 0) = 0) ) := by
-  classical
-  intro C T N h k x normalization q laws
-  let r : Fin 4 -> CircleCoordinates := ![q 0, q 2, q 3, q 1]
-  have hr : SemiProperQuadruple r := by
-    simpa [r] using SemiProperQuadruple.rotate
-      normalization.configuration.proper.1
-  let s : Fin 4 -> CircleCoordinates := ![r 0, r 2, r 3, r 1]
-  have hs : SemiProperQuadruple s := by
-    simpa [s] using SemiProperQuadruple.rotate hr
-  have second := VectorRecursionLaws r hr
-  have third := VectorRecursionLaws s hs
-  have e0 := laws.2.2.1
-  have e1 := second.2.2.1
-  have e2 := third.2.2.1
-  simp only [Fin.isValue, Matrix.cons_val_one, Matrix.cons_val_zero, Int.reduceNeg,
-      Matrix.cons_val, r, s] at e1 e2
-  rw [e0, e1, e2]
-  calc
-    _ = (1 - (⟨0, 1⟩ : GaussianInt)) *
-        (BandVectors.1 (q 3) (q 2) + BandVectors.1 (q 1) (q 3) +
-          BandVectors.1 (q 2) (q 1)) := by ring
-    _ = 0 := by rw [laws.1]; simp
-
-private theorem outgoing_relation :
-    (by
-      classical
-      exact
-        ∀ (C : BandCircle), ∀ (T : ProtoTile), ∀ (N : ProtoTile), ∀ (h : PartialOdometer), ∀ (k :
-            PartialOdometer), ∀ (x : GaussianInt), ∀ (normalization :
-            BandOrderedGeneralRightNormalizationCertificate C T N h k x),
-        let q := normalization.normalizedPresentation
-        (GaussianQuarterTurn (BandVectors.1 (q 1) (q 0)) = BandVectors.1 (q 0) (q 1)) →
-            ((GaussianQuarterTurn (BandVectors.1 (q 2) (q 0)) = BandVectors.1 (q 0) (q 2)) →
-            ((GaussianQuarterTurn (BandVectors.1 (q 3) (q 0)) = BandVectors.1 (q 0) (q 3)) →
-            ((BandVectors.1 (q 1) (q 0) + BandVectors.1 (q 2) (q 0) + BandVectors.1 (q 3) (q 0) =
-            0) → (BandVectors.1 (q 0) (q 1) + BandVectors.1 (q 0) (q 2) + BandVectors.1 (q 0) (q
-            3) = 0)))) ) := by
-  classical
-  intro C T N h k x normalization q turn0 turn1 turn2 incoming_relation
-  rw [← turn0, ← turn1, ← turn2]
-  calc
-    _ = GaussianQuarterTurn (BandVectors.1 (q 1) (q 0) +
-        BandVectors.1 (q 2) (q 0) + BandVectors.1 (q 3) (q 0)) := by
-          rcases BandVectors.1 (q 1) (q 0) with ⟨a0, b0⟩
-          rcases BandVectors.1 (q 2) (q 0) with ⟨a1, b1⟩
-          rcases BandVectors.1 (q 3) (q 0) with ⟨a2, b2⟩
-          apply Zsqrtd.ext <;> simp [GaussianQuarterTurn]; ring
-    _ = GaussianQuarterTurn 0 := congrArg GaussianQuarterTurn incoming_relation
-    _ = 0 := by rfl
 
 private theorem period2 :
     (by
@@ -1099,8 +1027,7 @@ theorem BandOrderedGeneralRightRoutingCertificateExists
   have hexteriorOccurrence := RightRoutingGeometry.hexteriorOccurrence C T N h k x normalization
       j selectedSlot selectedSign hselected (RightRoutingGeometry.hdisplacement C T N h k x
       normalization period0 period1 (RightRoutingGeometry.period2 C T N h k x normalization
-      (RightRoutingGeometry.outgoing_relation C T N h k x normalization turn0 turn1 turn2
-      (RightRoutingGeometry.incoming_relation C T N h k x normalization laws)) period0 period1))
+      (BandVectorOutgoingSum q normalization.configuration.proper) period0 period1))
       hshift
   have houterObservables := ProtoTileObservableExtensionality
     normalization.normalizedRoot

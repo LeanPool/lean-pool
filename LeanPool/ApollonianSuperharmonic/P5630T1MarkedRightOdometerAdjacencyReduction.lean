@@ -622,21 +622,6 @@ private theorem hnewAdj :
     t', BandPackingSymmetryProperCovariance ginv bundle.normalizedPresentation hq,
     hrootCoord, hselectedCoord, hcentOriginal, hslopeReInv, hslopeImInv⟩
 
-private theorem actionCurvatureAt449 :
-    (by
-      classical
-      exact
-        ∀ (g : BandPackingSymmetry), ∀ (c : CircleCoordinates), (BandPackingSymmetryCircleAction
-            g c).1 = c.1 ) := by
-  classical
-  intro g
-  induction g with
-  | identity => intro c; rfl
-  | negate => intro c; rfl
-  | conjugate => intro c; rfl
-  | shift w => intro c; rfl
-  | comp a b iha ihb => intro c; simp [BandPackingSymmetryCircleAction, iha, ihb]
-
 private theorem hsizeOriginal :
     (by
       classical
@@ -1050,7 +1035,7 @@ theorem P5630T1MarkedRightOdometerAdjacencyReduction :
       hselectedCoord (MarkedRightAdjacencyGeometry.hOFixedOriginal C T T₀ h h₀ x bundle ginv
       htileL hfunL hOFixedInv (MarkedRightAdjacencyGeometry.hrootAction C T T₀ h h₀ x bundle ginv
       hcircleL hnorm)) hOSelectedOriginal hslopeFixedOriginal hcentOriginal hrootCoord
-  have actionCurvature := MarkedRightAdjacencyGeometry.actionCurvatureAt449
+  have actionCurvature := MarkedRightAdjacencyGeometry.actionCurvatureAt244
   have hsizeOriginal := MarkedRightAdjacencyGeometry.hsizeOriginal C T T₀ h h₀ x bundle C' hsize
       ginv hnorm actionCurvature hinverseProper hinversePositive hinverseCircle
   have hcoverOriginal := MarkedRightAdjacencyGeometry.hcoverOriginal C T T₀ h h₀ x markedData

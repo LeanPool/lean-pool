@@ -277,18 +277,6 @@ private theorem hpolyAt310 :
   intro K n x v r
   ring
 
-private theorem hdvdAt315 :
-    (by
-      classical
-      exact
-        ∀ (K : DiamondParameter), ((2 : ℤ) * (((↑K.1 : ℤ) + (1 : ℤ)) * ((↑K.1 : ℤ) + (1
-            : ℤ) - (1 : ℤ)) / (2 : ℤ)) = ((↑K.1 : ℤ) + (1 : ℤ)) * ((↑K.1 : ℤ) + (1 : ℤ)
-            - (1 : ℤ))) → ((2:Int) ∣ (K.1:Int)*((K.1:Int)+1)) ) := by
-  classical
-  intro K ht3
-  refine ⟨((K.1:Int)+1)*(K.1:Int)/2, ?_⟩
-  simpa [mul_comm] using ht3.symm
-
 private theorem hs1At341 :
     (by
       classical
@@ -410,27 +398,6 @@ private theorem hfAt425 :
   rw [he, hfloorOdd (-(K.1:Int))]
   ring
 
-private theorem habsTAt438 :
-    (by
-      classical
-      exact
-        ∀ (K : DiamondParameter), ((1 : ℕ) < K.1) → (
-        let n : Int := K.1
-        ∀ (x : GaussianInt), ((0 : ℤ) ≤ x.im ∧ x.im ≤ (2 : ℤ) * n ∧ -n ≤ x.re ∧ x.re ≤ n ∧ -x.im
-            - (1 : ℤ) ≤ x.re ∧ x.re ≤ x.im + (1 : ℤ) ∧ -((2 : ℤ) * n - x.im + (1 : ℤ)) ≤ x.re ∧
-            x.re ≤ (2 : ℤ) * n - x.im + (1 : ℤ)) → (((0 : ℤ) ≤ x.im ∧ x.im ≤ (2 : ℤ) * (↑K.1
-            : ℤ) ∧ (2 : ℤ) * (↑K.1 : ℤ) ≤ x.re + (↑K.1 : ℤ) ∧ x.re ≤ (↑K.1 : ℤ) +
-            (2 : ℤ) * (↑K.1 : ℤ) ∧ -x.im ≤ x.re - (2 : ℤ) * (↑K.1 : ℤ) + (1 : ℤ) ∧ x.re
-            ≤ x.im + (1 : ℤ) + (2 : ℤ) * (↑K.1 : ℤ) ∧ x.im ≤ (1 : ℤ) + (x.re - (2 : ℤ) *
-            (↑K.1 : ℤ)) + (2 : ℤ) * (↑K.1 : ℤ) ∧ x.re ≤ (2 : ℤ) * (↑K.1 : ℤ) -
-            x.im + (1 : ℤ) + (2 : ℤ) * (↑K.1 : ℤ)) → (|(K.1:Int)-2*(K.1:Int)| = (K.1:Int))))
-            ) := by
-  classical
-  intro K hk n x hxy hxyD
-  rw [show (K.1:Int)-2*(K.1:Int) = -(K.1:Int) by ring]
-  rw [abs_of_neg (show -(K.1:Int) < 0 by omega)]
-  simp
-
 private theorem hfAt446 :
     (by
       classical
@@ -442,27 +409,6 @@ private theorem hfAt446 :
   have he : (K.1:Int)-2*(K.1:Int)-(K.1:Int) = 2*(-(K.1:Int)) := by ring
   rw [he, hfloorEven]
   ring
-
-private theorem habsTAt459 :
-    (by
-      classical
-      exact
-        ∀ (K : DiamondParameter), ((1 : ℕ) < K.1) → (
-        let n : Int := K.1
-        ∀ (x : GaussianInt), ((0 : ℤ) ≤ x.im ∧ x.im ≤ (2 : ℤ) * n ∧ -n ≤ x.re ∧ x.re ≤ n ∧ -x.im
-            - (1 : ℤ) ≤ x.re ∧ x.re ≤ x.im + (1 : ℤ) ∧ -((2 : ℤ) * n - x.im + (1 : ℤ)) ≤ x.re ∧
-            x.re ≤ (2 : ℤ) * n - x.im + (1 : ℤ)) → (((0 : ℤ) ≤ x.im ∧ x.im ≤ (2 : ℤ) * (↑K.1
-            : ℤ) ∧ (2 : ℤ) * (↑K.1 : ℤ) ≤ x.re + (↑K.1 : ℤ) ∧ x.re ≤ (↑K.1 : ℤ) +
-            (2 : ℤ) * (↑K.1 : ℤ) ∧ -x.im ≤ x.re - (2 : ℤ) * (↑K.1 : ℤ) + (1 : ℤ) ∧ x.re
-            ≤ x.im + (1 : ℤ) + (2 : ℤ) * (↑K.1 : ℤ) ∧ x.im ≤ (1 : ℤ) + (x.re - (2 : ℤ) *
-            (↑K.1 : ℤ)) + (2 : ℤ) * (↑K.1 : ℤ) ∧ x.re ≤ (2 : ℤ) * (↑K.1 : ℤ) -
-            x.im + (1 : ℤ) + (2 : ℤ) * (↑K.1 : ℤ)) → (|(K.1:Int)-2*(K.1:Int)| = (K.1:Int))))
-            ) := by
-  classical
-  intro K hk n x hxy hxyD
-  rw [show (K.1:Int)-2*(K.1:Int) = -(K.1:Int) by ring]
-  rw [abs_of_neg (show -(K.1:Int) < 0 by omega)]
-  simp
 
 private theorem hfAt467 :
     (by
@@ -606,7 +552,7 @@ private theorem hpositive :
       have ht2 := tri ((K.1:Int)-r)
       have hpoly := DiamondBoundaryDetails.hpolyAt310 K x
       have ht3 := tri ((K.1:Int)+1)
-      have hdvd := DiamondBoundaryDetails.hdvdAt315 K ht3
+      have hdvd := DiamondBoundaryDetails.hdvdAt275 K ht3
       have ht3' : 2*((K.1:Int)*((K.1:Int)+1)/2) =
           (K.1:Int)*((K.1:Int)+1) := by simpa [mul_comm] using ht3
       rw [Int.neg_ediv_of_dvd hdvd]
@@ -705,7 +651,7 @@ private theorem hpositive :
       rw [hF _ (by simpa [P5352T2PlacementData, n, hxe] using hxD),
         hF _ (by simpa [hxe] using hx)]
       simp only [n, Zsqrtd.re_sub, Zsqrtd.im_sub, Int.natCast_natAbs]
-      have habsT := DiamondBoundaryDetails.habsTAt438 K
+      have habsT := DiamondBoundaryDetails.habsTAt417 K
           hk x hxy hxyD
       rw [habsT, habsB]
       simp only [sub_zero]
@@ -721,7 +667,7 @@ private theorem hpositive :
       rw [hF _ (by simpa [P5352T2PlacementData, n, hxe] using hxD),
         hF _ (by simpa [hxe] using hx)]
       simp only [n, Zsqrtd.re_sub, Zsqrtd.im_sub, Int.natCast_natAbs]
-      have habsT := DiamondBoundaryDetails.habsTAt459 K
+      have habsT := DiamondBoundaryDetails.habsTAt417 K
           hk x hxy hxyD
       rw [habsT, habsB]
       simp only [sub_zero]

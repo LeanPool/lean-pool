@@ -702,24 +702,6 @@ private theorem hsetAt695 :
   · simpa [hu, hv] using heq
   · simpa [hu, hv, Finset.pair_comm] using heq
 
-private theorem hcdEqAt703 :
-    (by
-      classical
-      exact
-        ∀ (x : GaussianInt), ∀ (y : GaussianInt), ∀ (p : List GaussianInt),
-        let k := p.idxOf x
-        let q := p.rotate k
-        let j := q.idxOf y
-        let r := q.take (j + 1)
-        ∀ (c : LatticeCell), ∀ (d : LatticeCell), ∀ (z : GaussianInt), ∀ (w : GaussianInt), (z =
-            c ∧ w = d ∨ z = d ∧ w = c) → ((GridRayCrossingIndex w r = GridRayCrossingIndex z r) →
-            (GridRayCrossingIndex c r = GridRayCrossingIndex d r)) ) := by
-  classical
-  intro x y p k q j r c d z w hincident hzero'
-  rcases hincident with ⟨hzc, hwd⟩ | ⟨hzd, hwc⟩
-  · simpa [hzc, hwd] using hzero'.symm
-  · simpa [hzd, hwc] using hzero'
-
 end CrosscutIndexProof
 
 theorem P4456T2CrosscutIndex (T : ProtoTile) (hT : LatticeTile T)
@@ -954,7 +936,7 @@ theorem P4456T2CrosscutIndex (T : ProtoTile) (hT : LatticeTile T)
         have hzero := (hcross z).2.2.1 (by simpa [edges] using habsent)
         have hzero' : GridRayCrossingIndex w r = GridRayCrossingIndex z r := by
           simpa [hwz] using hzero
-        have hcdEq := CrosscutIndexProof.hcdEqAt703 x y p c d z w hincident hzero'
+        have hcdEq := CrosscutIndexProof.hcdEqAt689 x y p c d z w hincident hzero'
         change GridRayCrossingIndex c r ≠ GridRayCrossingIndex d r at hsideDiff
         exact False.elim (hsideDiff hcdEq)
 

@@ -383,22 +383,6 @@ private theorem hr'At433 :
   intro q slopeShift kl mn i hr
   exact_mod_cast hr
 
-private theorem hslope'At443 :
-    (by
-      classical
-      exact
-        ∀ (q : Fin (4 : ℕ) → CircleCoordinates),
-        let slopeShift (kl : Int × Int) : GaussianInt :=
-          (kl.1 : GaussianInt) * BandVectors.2 (q 1) (q 0) +
-            (kl.2 : GaussianInt) * BandVectors.2 (q 2) (q 0)
-        ∀ (kl : ℤ × ℤ), ∀ (mn : ℤ × ℤ), ∀ (i : Fin (3 : ℕ)), (slopeShift kl - slopeShift mn =
-            BandVectors.2 (q i.succ) (q (0 : Fin (4 : ℕ)))) → (slopeShift mn - slopeShift kl =
-            -BandVectors.2 (q i.succ) (q 0)) ) := by
-  classical
-  intro q slopeShift kl mn i hslope
-  rw [← hslope]
-  ring
-
 private theorem hi'At448 :
     (by
       classical
@@ -600,7 +584,7 @@ private theorem adjacentCompatibility :
           -1 * (BandVectors.2 (q i.succ) (q 0)).im
         have hslope := slope_step mn kl i hstep'
         have hslope' : slopeShift mn - slopeShift kl =
-            -BandVectors.2 (q i.succ) (q 0) := PositiveTranslationGeometry.hslope'At443 q
+            -BandVectors.2 (q i.succ) (q 0) := PositiveTranslationGeometry.hslope'At428 q
                 kl mn i hslope
         have hi := congrArg (fun z : GaussianInt => z.im) hslope'
         have hi' : ((slopeShift mn).im : ℝ) - (slopeShift kl).im =

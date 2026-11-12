@@ -3142,19 +3142,6 @@ private theorem hMconstant :
   intro n p i O C v rK prev a b cross r u hconstOn Lm hLmoff hLmpath xM hxM x hx
   exact hconstOn Lm hLmpath.isConnected (fun y hy => hLmoff y hy) x hx xM hxM
 
-private theorem hOoffAt2603 :
-    (by
-      classical
-      exact
-        ∀ (n : Nat), ∀ (p : P3381T1PolygonBoundary n),
-        let O := P3544T1RayParity p
-        let C := P3544T1BoundaryCarrier p
-        ∀ x, x ∈ O → x ∉ C ) := by
-  classical
-  intro n p O C x hx
-  change x ∉ C ∧ _ at hx
-  exact hx.1
-
 end VertexSectorDetails
 
 theorem P3597T1VertexSectors {n : Nat} (p : P3381T1PolygonBoundary n)
@@ -3344,7 +3331,7 @@ theorem P3597T1VertexSectors {n : Nat} (p : P3381T1PolygonBoundary n)
         hconstOn hLpoff hLppath xP hxP
     have hMconstant := VertexSectorDetails.hMconstant n p i rK
         hconstOn hLmoff hLmpath xM hxM
-    have hOoff := VertexSectorDetails.hOoffAt2603 n p
+    have hOoff := VertexSectorDetails.hOoffAt2413 n p
     by_cases hn : xP ∈ O
     · have hOddEq : Metric.ball v r ∩ O = Lp := VertexSectorProof.hOddEqAt1554 n p i rK hLcover
         xP xM hOpp hPconstant hMconstant hOoff hn

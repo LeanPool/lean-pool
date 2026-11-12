@@ -405,84 +405,6 @@ private theorem hZlabel :
   · have ht : Even t.val := htpar.mpr hs
     simp [hs, ht]
 
-private theorem hFf :
-    (by
-      classical
-      exact
-        ∀ (r : Fin (4 : ℕ) → CircleCoordinates), ∀ (i : Fin (3 : ℕ)), ∀ (s : Fin (4 : ℕ)), ∀ (U :
-            ProtoTile), ∀ (W : ProtoTile), ∀ (Z : ProtoTile),
-        let q : GaussianInt := ⟨0, 1⟩
-        ∀ (aU : GaussianInt), (GaussianRealPoint aU = ((TileCentroid U).1 + (TileCentroid U).2,
-            (TileCentroid U).2 - (TileCentroid U).1)) → (((TileTranslation (TileQuarterTurn U)
-            aU).cells = U.cells) → ((U.cells = ∅ → (TileTranslation (TileQuarterTurn U)
-            aU).anchor = U.anchor) → ((FootprintVertices (TileTranslation (TileQuarterTurn U) aU)
-            = FootprintVertices U) → (∀ (aW : GaussianInt), ∀ (aZ : GaussianInt),
-        let Wp := TileTranslation W (aU - aW)
-        let Zp := TileTranslation Z (aU - aZ)
-        (BandPrototile (r i.succ) Wp) → ((BandPrototile (r ((if Even s.val then i - 1 else i +
-            1).succ)) Zp) → (((aU.re : Real) = (TileCentroid U).1 + (TileCentroid U).2) →
-            (((aU.im : Real) = (TileCentroid U).2 - (TileCentroid U).1) → ((TileCentroid Wp -
-            TileCentroid U = (-(TileCentroid W - TileCentroid U).2, (TileCentroid W -
-            TileCentroid U).1)) → ((TileCentroid Zp - TileCentroid U = (-(TileCentroid Z -
-            TileCentroid U).2, (TileCentroid Z - TileCentroid U).1)) → (
-        let t : Fin 4 := s + 1
-        (TileCentroid Wp - TileCentroid U = (1 / 2 : Real) • GaussianRealPoint (q ^ t.val *
-            (BandVectors.1 (r i.succ) (r 0) + BandVectors.1 (r 0) (r i.succ)))) → ((TileCentroid
-            Zp - TileCentroid U = (1 / 2 : Real) • GaussianRealPoint (q ^ t.val * (if Even t.val
-            then BandVectors.1 (r ((i + 1).succ)) (r 0) - BandVectors.1 (r 0) (r ((i + 1).succ))
-            else BandVectors.1 (r 0) (r ((i - 1).succ)) - BandVectors.1 (r ((i - 1).succ)) (r
-            0)))) → (((pairedEndpointPackage r U) i t Wp
-            Zp) → (
-        let F : GaussianInt → GaussianInt := fun x => GaussianQuarterTurn x + aU
-        let f : GaussianInt → GaussianInt := fun x =>
-          GaussianQuarterTurn (GaussianQuarterTurn (GaussianQuarterTurn (x - aU)))
-        ∀ (x : GaussianInt), f (F x) = x))))))))))))) ) := by
-  classical
-  intro r i s U W Z q aU haU hUc hUa hUv aW aZ Wp Zp hWp hZp haUre haUim hWpCent hZpCent t hWsrc
-      hZsrc sourceData F f x
-  rcases x with ⟨xr, xi⟩
-  rcases aU with ⟨ar, ai⟩
-  simp [f, F, GaussianQuarterTurn]
-
-private theorem hfF :
-    (by
-      classical
-      exact
-        ∀ (r : Fin (4 : ℕ) → CircleCoordinates), ∀ (i : Fin (3 : ℕ)), ∀ (s : Fin (4 : ℕ)), ∀ (U :
-            ProtoTile), ∀ (W : ProtoTile), ∀ (Z : ProtoTile),
-        let q : GaussianInt := ⟨0, 1⟩
-        ∀ (aU : GaussianInt), (GaussianRealPoint aU = ((TileCentroid U).1 + (TileCentroid U).2,
-            (TileCentroid U).2 - (TileCentroid U).1)) → (((TileTranslation (TileQuarterTurn U)
-            aU).cells = U.cells) → ((U.cells = ∅ → (TileTranslation (TileQuarterTurn U)
-            aU).anchor = U.anchor) → ((FootprintVertices (TileTranslation (TileQuarterTurn U) aU)
-            = FootprintVertices U) → (∀ (aW : GaussianInt), ∀ (aZ : GaussianInt),
-        let Wp := TileTranslation W (aU - aW)
-        let Zp := TileTranslation Z (aU - aZ)
-        (BandPrototile (r i.succ) Wp) → ((BandPrototile (r ((if Even s.val then i - 1 else i +
-            1).succ)) Zp) → (((aU.re : Real) = (TileCentroid U).1 + (TileCentroid U).2) →
-            (((aU.im : Real) = (TileCentroid U).2 - (TileCentroid U).1) → ((TileCentroid Wp -
-            TileCentroid U = (-(TileCentroid W - TileCentroid U).2, (TileCentroid W -
-            TileCentroid U).1)) → ((TileCentroid Zp - TileCentroid U = (-(TileCentroid Z -
-            TileCentroid U).2, (TileCentroid Z - TileCentroid U).1)) → (
-        let t : Fin 4 := s + 1
-        (TileCentroid Wp - TileCentroid U = (1 / 2 : Real) • GaussianRealPoint (q ^ t.val *
-            (BandVectors.1 (r i.succ) (r 0) + BandVectors.1 (r 0) (r i.succ)))) → ((TileCentroid
-            Zp - TileCentroid U = (1 / 2 : Real) • GaussianRealPoint (q ^ t.val * (if Even t.val
-            then BandVectors.1 (r ((i + 1).succ)) (r 0) - BandVectors.1 (r 0) (r ((i + 1).succ))
-            else BandVectors.1 (r 0) (r ((i - 1).succ)) - BandVectors.1 (r ((i - 1).succ)) (r
-            0)))) → (((pairedEndpointPackage r U) i t Wp
-            Zp) → (
-        let F : GaussianInt → GaussianInt := fun x => GaussianQuarterTurn x + aU
-        let f : GaussianInt → GaussianInt := fun x =>
-          GaussianQuarterTurn (GaussianQuarterTurn (GaussianQuarterTurn (x - aU)))
-        (∀ (x : GaussianInt), f (F x) = x) → (∀ (x : GaussianInt), F (f x) = x)))))))))))))) ) := by
-  classical
-  intro r i s U W Z q aU haU hUc hUa hUv aW aZ Wp Zp hWp hZp haUre haUim hWpCent hZpCent t hWsrc
-      hZsrc sourceData F f hFf x
-  rcases x with ⟨xr, xi⟩
-  rcases aU with ⟨ar, ai⟩
-  simp [f, F, GaussianQuarterTurn]
-
 private theorem hf :
     (by
       classical
@@ -1462,10 +1384,14 @@ theorem P4055T1OrderedGeneralOppositeEndpoints :
   let F : GaussianInt → GaussianInt := fun x => GaussianQuarterTurn x + aU
   let f : GaussianInt → GaussianInt := fun x =>
     GaussianQuarterTurn (GaussianQuarterTurn (GaussianQuarterTurn (x - aU)))
-  have hFf := OppositeEndpointGeometry.hFf r i s U W Z aU haU hUc hUa hUv aW aZ hWp hZp haUre
-      haUim hWpCent hZpCent hWsrc hZsrc sourceData
-  have hfF := OppositeEndpointGeometry.hfF r i s U W Z aU haU hUc hUa hUv aW aZ hWp hZp haUre
-      haUim hWpCent hZpCent hWsrc hZsrc sourceData hFf
+  have hFf (x : GaussianInt) : f (F x) = x := by
+    rcases x with ⟨xr, xi⟩
+    rcases aU with ⟨ar, ai⟩
+    simp [f, F, GaussianQuarterTurn]
+  have hfF (x : GaussianInt) : F (f x) = x := by
+    rcases x with ⟨xr, xi⟩
+    rcases aU with ⟨ar, ai⟩
+    simp [f, F, GaussianQuarterTurn]
   have hf := OppositeEndpointGeometry.hf aU hfF
   have hUedges := OppositeEndpointGeometry.hUedges U aU hUc
   have hFvU := OppositeEndpointGeometry.hFvU U

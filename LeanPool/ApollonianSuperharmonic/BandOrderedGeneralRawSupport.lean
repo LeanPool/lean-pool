@@ -544,34 +544,6 @@ private theorem hzmodified :
   rw [hretain]
   exact hz
 
-private theorem translation_zeroAt397 :
-    (by
-      classical
-      exact
-        ∀ (U : ProtoTile), TileTranslation U 0 = U ) := by
-  classical
-  intro U
-  have hzero : GaussianTranslation (0 : GaussianInt) = id := by
-    funext z
-    simp [GaussianTranslation]
-  cases U
-  simp [TileTranslation, hzero, GaussianTranslation]
-
-private theorem htileAAt403 :
-    (by
-      classical
-      exact
-        ∀ (q : Fin 4 → CircleCoordinates), ∀ (cfg : BandOrderedGeneralConfiguration q), ∀ (C₀ :
-            BandCircle), ∀ (T : ProtoTile), ∀ (cert : BandOrderedGeneralLayoutCertificate q cfg
-            C₀ T),
-        let a : PeriodicSubtileIndex := ⟨.A, 0, 0⟩
-        (∀ (U : ProtoTile), TileTranslation U 0 = U) → (cert.modified.tile a = TileCellComplement
-            (cert.P 0 true) cert.O) ) := by
-  classical
-  intro q cfg C₀ T cert a translation_zero
-  rw [cert.modified_tile]
-  simp [a, ModifiedSubtileOccurrenceInterpretation, translation_zero]
-
 private theorem htileB :
     (by
       classical
@@ -908,9 +880,9 @@ theorem BandOrderedGeneralRawSupport
     let f1 := cert.modifiedFaceEquivalence.symm ⟨.I1, 0, 0⟩
     let f2 := cert.modifiedFaceEquivalence.symm ⟨.I2, 0, 0⟩
     have translation_zero (U : ProtoTile) : TileTranslation U 0 = U :=
-        RawSupportGeometry.translation_zeroAt397 U
+        RawSupportGeometry.translation_zeroAt149 U
     have htileA : cert.modified.tile a =
-        TileCellComplement (cert.P 0 true) cert.O := RawSupportGeometry.htileAAt403 q cfg C₀ T
+        TileCellComplement (cert.P 0 true) cert.O := RawSupportGeometry.htileAAt155 q cfg C₀ T
             cert translation_zero
     have htileB : cert.modified.tile b = cert.P 0 false := RawSupportGeometry.htileB q cfg C₀ T
         cert translation_zero
