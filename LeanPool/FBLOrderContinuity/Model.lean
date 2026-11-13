@@ -948,6 +948,15 @@ instance freeBanachLattice (p : Exponent) : BanachLattice (Free p E) :=
   VectorSublattice.banachLatticeCoe _
     (VectorSublattice.isClosed_topologicalClosure _)
 
+/-- Evaluation is bounded by the dual norm times the free-lattice norm. -/
+theorem free_apply_abs_le (p : Exponent) (f : Free p E) (φ : Dual E) :
+    |f φ| ≤ ‖φ‖ * ‖f‖ := hp_apply_abs_le p f.1 φ
+
+/-- Free homogeneous functions vanish at the zero dual vector. -/
+theorem free_apply_zero (p : Exponent) (f : Free p E) : f (0 : Dual E) = 0 := by
+  have h := f.1.2.1 0 (le_refl 0) (0 : Dual E)
+  simpa only [zero_smul, zero_mul] using h
+
 /-- Membership in the free lattice for a full-dual function, including its homogeneity. -/
 def InFree (p : Exponent) (f : Dual E → ℝ) : Prop :=
   ∃ g : Free p E, ∀ φ, g φ = f φ
@@ -2353,6 +2362,17 @@ def endpointRangeEquiv (p : Exponent) :
   LinearEquiv.ofInjective (ofFVL p (E := E)).toLinearMap
     (ofFVL_embedding p).1
 
+private theorem endpointRangeEquiv_apply (p : Exponent) (v : FVLv E) :
+    (endpointRange (E := E) p).subtype ((endpointRangeEquiv p) v) = ofFVL p v :=
+  LinearEquiv.ofInjective_apply (f := (ofFVL p (E := E)).toLinearMap)
+    (h := (ofFVL_embedding p).1) v
+
+private theorem endpointRangeEquiv_symm_apply (p : Exponent)
+    (z : endpointRange (E := E) p) :
+    ofFVL p ((endpointRangeEquiv p).symm z) = (z : Free p E) :=
+  LinearEquiv.ofInjective_symm_apply (f := (ofFVL p (E := E)).toLinearMap)
+    (h := (ofFVL_embedding p).1) z
+
 /-- The algebraic change-of-exponent map from the core to the infinity model. -/
 def endpointRangeMap (p : Exponent) :
     endpointRange (E := E) p →ₗ[ℝ] Free Exponent.infinity E :=
@@ -2388,27 +2408,18 @@ private theorem endpointRangeMap_bound (p : Exponent) (x : endpointRange (E := E
 def endpointExtension (p : Exponent) : Free p E →L[ℝ] Free Exponent.infinity E :=
   (endpointRangeMap p).extendOfNorm (endpointRange (E := E) p).subtype
 
+private theorem endpointExtension_apply_range (p : Exponent)
+    (z : endpointRange (E := E) p) :
+    endpointExtension p ((endpointRange (E := E) p).subtype z) = endpointRangeMap p z :=
+  LinearMap.extendOfNorm_eq (f := endpointRangeMap p)
+    (e := (endpointRange (E := E) p).subtype) (endpointRange_dense p)
+    ⟨1, fun x => by simpa using endpointRangeMap_bound p x⟩ z
+
 private theorem endpointExtension_ofFVL (p : Exponent) (v : FBLOrderContinuousLH.FVL E) :
     endpointExtension p (ofFVL p v) = ofFVL Exponent.infinity v := by
-  have hb : ∃ C, ∀ x : endpointRange (E := E) p,
-      ‖endpointRangeMap p x‖ ≤ C * ‖(endpointRange (E := E) p).subtype x‖ :=
-    ⟨1, by intro x; simpa using endpointRangeMap_bound p x⟩
-  have he := LinearMap.extendOfNorm_eq (f := endpointRangeMap p)
-    (e := (endpointRange (E := E) p).subtype) (endpointRange_dense p) hb ((endpointRangeEquiv p) v)
-  have he' : endpointExtension p (ofFVL p v) = endpointRangeMap p ((endpointRangeEquiv p) v) := by
-    have hv : (endpointRange (E := E) p).subtype ((endpointRangeEquiv p) v) = ofFVL p v := by
-      have h := LinearEquiv.ofInjective_apply
-        (f := (ofFVL p (E := E)).toLinearMap) (h := (ofFVL_embedding p).1) v
-      change (endpointRange (E := E) p).subtype ((endpointRangeEquiv p) v) = ofFVL p v at h
-      exact h
-    rw [← hv]
-    exact he
-  calc
-    endpointExtension p (ofFVL p v) = endpointRangeMap p ((endpointRangeEquiv p) v) := he'
-    _ = ofFVL Exponent.infinity v := by
-      dsimp only [endpointRangeMap, LinearMap.comp_apply]
-      simp
-      rfl
+  rw [← endpointRangeEquiv_apply p v, endpointExtension_apply_range]
+  exact congrArg (ofFVL Exponent.infinity (E := E))
+    ((endpointRangeEquiv p).symm_apply_apply v)
 
 private theorem endpointExtension_norm_le (p : Exponent) (x : Free p E) :
     ‖endpointExtension p x‖ ≤ ‖x‖ := by
@@ -2529,30 +2540,18 @@ private theorem parameterRangeMap_bound {p q : Exponent} (hpq : p ≤ q)
 def parameterExtension {p q : Exponent} (_hpq : p ≤ q) : Free p E →L[ℝ] Free q E :=
   (parameterRangeMap p q).extendOfNorm (endpointRange (E := E) p).subtype
 
+private theorem parameterExtension_apply_range {p q : Exponent} (hpq : p ≤ q)
+    (z : endpointRange (E := E) p) :
+    parameterExtension hpq ((endpointRange (E := E) p).subtype z) =
+      parameterRangeMap p q z :=
+  LinearMap.extendOfNorm_eq (f := parameterRangeMap p q)
+    (e := (endpointRange (E := E) p).subtype) (endpointRange_dense p)
+    ⟨1, fun x => by simpa using parameterRangeMap_bound hpq x⟩ z
+
 private theorem parameterExtension_ofFVL {p q : Exponent} (hpq : p ≤ q) (v : FVL E) :
     parameterExtension hpq (ofFVL p v) = ofFVL q v := by
-  have hb : ∃ C, ∀ x : endpointRange (E := E) p,
-      ‖parameterRangeMap p q x‖ ≤ C * ‖(endpointRange (E := E) p).subtype x‖ :=
-    ⟨1, by intro x; simpa using parameterRangeMap_bound hpq x⟩
-  have he := LinearMap.extendOfNorm_eq (f := parameterRangeMap p q)
-    (e := (endpointRange (E := E) p).subtype) (endpointRange_dense p) hb
-      ((endpointRangeEquiv p) v)
-  have he' : parameterExtension hpq (ofFVL p v) =
-      parameterRangeMap p q ((endpointRangeEquiv p) v) := by
-    have hv : (endpointRange (E := E) p).subtype ((endpointRangeEquiv p) v) = ofFVL p v := by
-      have h := LinearEquiv.ofInjective_apply
-        (f := (ofFVL p (E := E)).toLinearMap) (h := (ofFVL_embedding p).1) v
-      change (endpointRange (E := E) p).subtype ((endpointRangeEquiv p) v) = ofFVL p v at h
-      exact h
-    rw [← hv]
-    exact he
-  calc
-    parameterExtension hpq (ofFVL p v) =
-        parameterRangeMap p q ((endpointRangeEquiv p) v) := he'
-    _ = ofFVL q v := by
-      dsimp only [parameterRangeMap, LinearMap.comp_apply]
-      simp
-      rfl
+  rw [← endpointRangeEquiv_apply p v, parameterExtension_apply_range]
+  exact congrArg (ofFVL q (E := E)) ((endpointRangeEquiv p).symm_apply_apply v)
 
 private theorem parameterExtension_norm_le {p q : Exponent} (hpq : p ≤ q)
     (x : Free p E) : ‖parameterExtension hpq x‖ ≤ ‖x‖ := by
@@ -3647,7 +3646,7 @@ theorem fvl_lift_pConvex_norm_le (p : Exponent) {C : ℝ} (hC : ConvexWith p C X
         (mul_le_mul_of_nonneg_right hψnorm (le_trans zero_le_one hC.1)) (norm_nonneg _)
     _ ≤ C * (‖S‖ * ‖ofFVL p v‖) := by
       simpa only [one_mul] using mul_le_mul_of_nonneg_left hop (le_trans zero_le_one hC.1)
-    _ = (C * ‖S‖) * ‖ofFVL p v‖ := by ring
+    _ = (C * ‖S‖) * ‖ofFVL p v‖ := (mul_assoc C ‖S‖ ‖ofFVL p v‖).symm
 
 end PConvexLiftBound
 
@@ -3668,89 +3667,57 @@ def piLpEvalVec (p : Exponent) (n : ℕ) (i : Fin n) :
   map_sup' := by intros; rfl
   map_inf' := by intros; rfl
 
+private theorem fvl_lift_piLp_apply (p : Exponent) (n : ℕ)
+    (S : E →L[ℝ] PiLp p.1 (fun _ : Fin n => ℝ)) (v : FVLv E) (i : Fin n) :
+    (FVLv.lift S.toLinearMap v) i = ofFVL p v ((piLpEvalCLM p n i).comp S) := by
+  let φ : Dual E := (piLpEvalCLM p n i).comp S
+  let ev := evalVecLatHom p φ
+  have hleft : (piLpEvalVec p n i).comp (FVLv.lift S.toLinearMap) =
+      FVLv.lift (φ : E →ₗ[ℝ] ℝ) := by
+    apply FVLv.lift_unique
+    intro x
+    change (FVLv.lift S.toLinearMap (FVLv.of x)) i = φ x
+    rw [FVLv.lift_of]
+    rfl
+  have hright : ev.comp (ofFVL p) = FVLv.lift (φ : E →ₗ[ℝ] ℝ) := by
+    apply FVLv.lift_unique
+    intro x
+    change ofFVL p (FVLv.of x) φ = φ x
+    rw [ofFVL_of]
+    rfl
+  exact DFunLike.congr_fun (hleft.trans hright.symm) v
+
 /-- The algebraic free-lattice lift has the sharp bound for a finite `ℓᵖ` target. -/
 theorem fvl_lift_piLp_norm_le (p : Exponent) (n : ℕ)
     (S : E →L[ℝ] PiLp p.1 (fun _ : Fin n => ℝ)) (v : FVLv E) :
     ‖FVLv.lift S.toLinearMap v‖ ≤ ‖S‖ * ‖ofFVL p v‖ := by
   let φ : Fin n → Dual E := fun i => (piLpEvalCLM p n i).comp S
-  have hcoord (i : Fin n) : (FVLv.lift S.toLinearMap v) i = ofFVL p v (φ i) := by
-    let ev : VecLatHom (Free p E) ℝ := {
-      toFun f := f (φ i)
-      map_add' := by intros; rfl
-      map_smul' := by intros; rfl
-      map_sup' := by intros; rfl
-      map_inf' := by intros; rfl }
-    have hleft : (piLpEvalVec p n i).comp (FVLv.lift S.toLinearMap) =
-        FVLv.lift ((φ i) : E →ₗ[ℝ] ℝ) := by
-      apply FVLv.lift_unique
-      intro x
-      change (FVLv.lift S.toLinearMap (FVLv.of x)) i = φ i x
-      rw [FVLv.lift_of]
-      rfl
-    have hright : ev.comp (ofFVL p) = FVLv.lift ((φ i) : E →ₗ[ℝ] ℝ) := by
-      apply FVLv.lift_unique
-      intro x
-      change ofFVL p (FVLv.of x) (φ i) = φ i x
-      rw [ofFVL_of]
-      rfl
-    exact DFunLike.congr_fun (hleft.trans hright.symm) v
   have hnormcoord : ‖FVLv.lift S.toLinearMap v‖ =
       scalarPSum p (fun i => ofFVL p v (φ i)) := by
     rw [scalarPSum_eq_piLp_norm]
     congr 1
     apply PiLp.ext
     intro i
-    exact hcoord i
+    exact fvl_lift_piLp_apply p n S v i
+  rw [hnormcoord]
   by_cases hS : S = 0
-  · have hφzero (i : Fin n) : φ i = 0 := by
-      simp [φ, hS]
-    let y : Free p E := ofFVL p v
-    have hyhom : PosHomogeneous (fun θ : Dual E => y θ) := y.val.property.1
-    have hyzero : y (0 : Dual E) = 0 := by
-      have h := hyhom 0 (le_refl 0) (0 : Dual E)
-      simpa using h
-    have hz : (fun i : Fin n => ofFVL p v (φ i)) = fun _ => 0 := by
+  · have hφzero (i : Fin n) : φ i = 0 := by simp [φ, hS]
+    have hz : (fun i => ofFVL p v (φ i)) = (0 : Fin n → ℝ) := by
       funext i
       rw [hφzero i]
-      exact hyzero
-    rw [hnormcoord, hz, scalarPSum_eq_piLp_norm]
-    have hzero : (WithLp.toLp p.1 (fun _ : Fin n => (0 : ℝ)) :
-        PiLp p.1 (fun _ : Fin n => ℝ)) = 0 := rfl
-    rw [hzero, norm_zero, hS, norm_zero, zero_mul]
+      exact free_apply_zero p (ofFVL p v)
+    rw [hz, scalarPSum_eq_piLp_norm]
+    change ‖(0 : PiLp p.1 (fun _ : Fin n => ℝ))‖ ≤ ‖S‖ * ‖ofFVL p v‖
+    simp only [hS, norm_zero, zero_mul, le_refl]
   have hSpos : 0 < ‖S‖ := norm_pos_iff.mpr hS
-  let ψ : Fin n → Dual E := fun i => ‖S‖⁻¹ • φ i
-  have hφscale (i : Fin n) : φ i = ‖S‖ • ψ i := by
-    simp only [ψ, smul_smul, mul_inv_cancel₀ hSpos.ne', one_smul]
-  have hψ : NormAdmissible p ψ := by
-    intro x hx
-    have hnormSx : ‖S x‖ ≤ ‖S‖ := by
-      calc
-        ‖S x‖ ≤ ‖S‖ * ‖x‖ := S.le_opNorm x
-        _ ≤ ‖S‖ * 1 := mul_le_mul_of_nonneg_left hx (norm_nonneg S)
-        _ = ‖S‖ := mul_one _
-    have hscalar : scalarPSum p (fun i => φ i x) = ‖S x‖ := by
-      rw [scalarPSum_eq_piLp_norm]
-      congr 1
-    change scalarPSum p (fun i => (‖S‖⁻¹ • φ i) x) ≤ 1
-    have hfun : (fun i => (‖S‖⁻¹ • φ i) x) =
-        (fun i => ‖S‖⁻¹ * φ i x) := rfl
-    rw [hfun, scalarPSum_smul, abs_of_pos (inv_pos.mpr hSpos), hscalar]
-    calc
-      ‖S‖⁻¹ * ‖S x‖ ≤ ‖S‖⁻¹ * ‖S‖ :=
-        mul_le_mul_of_nonneg_left hnormSx (le_of_lt (inv_pos.mpr hSpos))
-      _ = 1 := inv_mul_cancel₀ hSpos.ne'
-  let y : Free p E := ofFVL p v
-  have hscale : scalarPSum p (fun i => y (φ i)) =
-      ‖S‖ * scalarPSum p (fun i => y (ψ i)) := by
-    have hyhom : PosHomogeneous (fun θ : Dual E => y θ) := y.val.property.1
-    have hval (i : Fin n) : y (φ i) = ‖S‖ * y (ψ i) := by
-      rw [hφscale i]
-      exact hyhom ‖S‖ hSpos.le (ψ i)
-    simp_rw [hval]
-    simpa only [abs_of_nonneg (norm_nonneg S)] using
-      scalarPSum_smul p ‖S‖ (fun i => y (ψ i))
-  rw [hnormcoord, hscale]
-  exact mul_le_mul_of_nonneg_left (freeNorm_family_le p y ψ hψ) (norm_nonneg S)
+  apply freeNorm_scaled_family_le p (ofFVL p v) φ hSpos
+  intro x hx
+  have hscalar : scalarPSum p (fun i => φ i x) = ‖S x‖ := by
+    rw [scalarPSum_eq_piLp_norm]
+    rfl
+  rw [hscalar]
+  exact (S.le_opNorm x).trans
+    ((mul_le_mul_of_nonneg_left hx (norm_nonneg S)).trans_eq (mul_one _))
 
 section ContinuousMapLift
 private theorem fvl_lift_continuousMap_apply {K : Type*}
@@ -3807,9 +3774,7 @@ theorem fvl_lift_continuousMap_norm_le {K : Type*}
       _ ≤ ‖S‖ * ‖x‖ := S.le_opNorm x
   calc
     ‖ofFVL p v φ‖ ≤ ‖φ‖ * ‖ofFVL p v‖ := by
-      have h := hp_apply_abs_le p (ofFVL p v).1 φ
-      change |ofFVL p v φ| ≤ ‖φ‖ * ‖ofFVL p v‖ at h
-      simpa only [Real.norm_eq_abs] using h
+      simpa only [Real.norm_eq_abs] using free_apply_abs_le p (ofFVL p v) φ
     _ ≤ ‖S‖ * ‖ofFVL p v‖ :=
       mul_le_mul_of_nonneg_right hφnorm (norm_nonneg _)
 end ContinuousMapLift
@@ -3828,17 +3793,6 @@ private theorem exists_bounded_linear_extension
   · apply A.opNorm_le_bound hC
     exact LinearMap.norm_extendOfNorm_apply_le he C hB
 
-private theorem endpointRangeEquiv_apply (p : Exponent) (v : FVLv E) :
-    (endpointRange (E := E) p).subtype ((endpointRangeEquiv p) v) = ofFVL p v :=
-  LinearEquiv.ofInjective_apply (f := (ofFVL p (E := E)).toLinearMap)
-    (h := (ofFVL_embedding p).1) v
-
-private theorem endpointRangeEquiv_symm_apply (p : Exponent)
-    (z : endpointRange (E := E) p) :
-    ofFVL p ((endpointRangeEquiv p).symm z) = (z : Free p E) :=
-  LinearEquiv.ofInjective_symm_apply (f := (ofFVL p (E := E)).toLinearMap)
-    (h := (ofFVL_embedding p).1) z
-
 private theorem exists_algebraic_lift_extension (p : Exponent) {X : Type w}
     [NormedAddCommGroup X] [Lattice X] [IsOrderedAddMonoid X] [BanachLattice X]
     (S : E →L[ℝ] X) (C : ℝ) (hC : 0 ≤ C)
@@ -3846,21 +3800,8 @@ private theorem exists_algebraic_lift_extension (p : Exponent) {X : Type w}
       ‖FVLv.lift S.toLinearMap v‖ ≤ C * ‖ofFVL p v‖) :
     ∃ A : Free p E →L[ℝ] X,
       (∀ v : FVLv E, A (ofFVL p v) = FVLv.lift S.toLinearMap v) ∧ ‖A‖ ≤ C := by
-  let B : endpointRange (E := E) p →ₗ[ℝ] X :=
-    (FVLv.lift S.toLinearMap).toLinearMap.comp
-      (endpointRangeEquiv p).symm.toLinearMap
-  have hB (z : endpointRange (E := E) p) :
-      ‖B z‖ ≤ C * ‖(endpointRange (E := E) p).subtype z‖ := by
-    change ‖FVLv.lift S.toLinearMap ((endpointRangeEquiv p).symm z)‖ ≤ C * ‖(z : Free p E)‖
-    rw [← endpointRangeEquiv_symm_apply p z]
-    exact hb _
-  obtain ⟨A, hA, hnorm⟩ := exists_bounded_linear_extension
-    (endpointRange (E := E) p).subtype (endpointRange_dense p) B C hC hB
-  refine ⟨A, fun v => ?_, hnorm⟩
-  rw [← endpointRangeEquiv_apply p v, hA]
-  change FVLv.lift S.toLinearMap
-    ((endpointRangeEquiv p).symm ((endpointRangeEquiv p) v)) = _
-  rw [LinearEquiv.symm_apply_apply]
+  exact exists_bounded_linear_extension (ofFVL p (E := E)).toLinearMap
+    (denseRange_ofFVL p) (FVLv.lift S.toLinearMap).toLinearMap C hC hb
 
 private theorem algebraic_lift_extension_map_sup (p : Exponent) {X : Type w}
     [NormedAddCommGroup X] [Lattice X] [IsOrderedAddMonoid X] [NormedVectorLattice X]
@@ -4806,7 +4747,7 @@ private theorem induced_denseRange_dual_ker (p : Exponent) (T : F →L[ℝ] E)
     rintro _ ⟨f, rfl⟩
     change f (φ.comp T) = 0
     rw [hφ]
-    simpa using f.1.2.1 0 le_rfl (0 : Dual F)
+    exact free_apply_zero p f
   have hall : ∀ g : Free p E, g φ = 0 := by
     intro g
     have hg : g ∈ closure (Set.range (induced p T)) := by
