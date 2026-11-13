@@ -330,185 +330,6 @@ private theorem subD (L : ℝ) (q : Fin 4 → CircleCoordinates) (l : Fin 3) (hi
   · exact hvertices.2.2.1
   · exact hfxP
 
-private theorem sub (L : ℝ) (q : Fin 4 → CircleCoordinates) (l : Fin 3) (hl : (q l.succ).1 = 0)
-    (hpos : ∀ i : Fin 3, i ≠ l → 0 < (q i.succ).1) (hzero : 0 < (q 0).1) (hnormal : (q l.succ).2
-    = -1 ∨ (q l.succ).2 = 1) (hside : ∀ i : Fin 4, 0 < (q i).1 → if (q l.succ).2 = -1 then L <
-    (((q i).2 : ℂ) / ((q i).1 : ℝ)).re else (((q i).2 : ℂ) / ((q i).1 : ℝ)).re < L + 2) (hinside
-    : ((q 0).2 : ℂ) / ((q 0).1 : ℝ) ∈ interior (P4909T1ParentPolygon L q)) (a : Fin 3) (b : Fin
-    3) (qmem : ∀ (z : ℂ), z ∈ ((P L q)) ↔ (A q a).im ≤ z.im ∧ z.im ≤ (B q b).im ∧ 0 ≤ (σ q l) *
-    (z.re - (h L q l)) ∧ 0 ≤ (σ q l) * ((fun y => (A q a).re + ((B q b).re - (A q a).re) * (y -
-    (A q a).im) / ((B q b).im - (A q a).im)) z.im - z.re)) (dmem : ∀ (z : ℂ), z ∈ ((F L q) b) ↔
-    (A q a).im ≤ z.im ∧ z.im ≤ (x q).im ∧ 0 ≤ (σ q l) * (z.re - (h L q l)) ∧ 0 ≤ (σ q l) * ((fun
-    y => (A q a).re + ((x q).re - (A q a).re) * (y - (A q a).im) / ((x q).im - (A q a).im)) z.im
-    - z.re)) (tlower : ∀ (z : ℂ), (A q a).im ≤ z.im → z.im ≤ (x q).im → (z ∈ ((F L q) l) ↔ 0 ≤ (σ
-    q l) * (z.re - (fun y => (A q a).re + ((x q).re - (A q a).re) * (y - (A q a).im) / ((x q).im
-    - (A q a).im)) z.im) ∧ 0 ≤ (σ q l) * ((fun y => (A q a).re + ((B q b).re - (A q a).re) * (y -
-    (A q a).im) / ((B q b).im - (A q a).im)) z.im - z.re))) (umem : ∀ (z : ℂ), z ∈ ((F L q) a) ↔
-    (x q).im ≤ z.im ∧ z.im ≤ (B q b).im ∧ 0 ≤ (σ q l) * (z.re - (h L q l)) ∧ 0 ≤ (σ q l) * ((fun
-    y => (x q).re + ((B q b).re - (x q).re) * (y - (x q).im) / ((B q b).im - (x q).im)) z.im -
-    z.re)) (tupper : ∀ (z : ℂ), (x q).im ≤ z.im → z.im ≤ (B q b).im → (z ∈ ((F L q) l) ↔ 0 ≤ (σ q
-    l) * (z.re - (fun y => (x q).re + ((B q b).re - (x q).re) * (y - (x q).im) / ((B q b).im - (x
-    q).im)) z.im) ∧ 0 ≤ (σ q l) * ((fun y => (A q a).re + ((B q b).re - (A q a).re) * (y - (A q
-    a).im) / ((B q b).im - (A q a).im)) z.im - z.re))) (qint : ∀ (z : ℂ), z ∈ interior (((P L
-    q))) ↔ (A q a).im < z.im ∧ z.im < (B q b).im ∧ 0 < (σ q l) * (z.re - (h L q l)) ∧ 0 < (σ q l)
-    * ((fun y => (A q a).re + ((B q b).re - (A q a).re) * (y - (A q a).im) / ((B q b).im - (A q
-    a).im)) z.im - z.re)) (qfront : frontier (((P L q))) = segment ℝ (A q a) (B q b) ∪ segment ℝ
-    (A q a) ⟨(h L q l), (A q a).im⟩ ∪ segment ℝ (B q b) ⟨(h L q l), (B q b).im⟩ ∪ segment ℝ ⟨(h L
-    q l), (A q a).im⟩ ⟨(h L q l), (B q b).im⟩) (dint : ∀ (z : ℂ), z ∈ interior (((F L q) b)) ↔ (A
-    q a).im < z.im ∧ z.im < (x q).im ∧ 0 < (σ q l) * (z.re - (h L q l)) ∧ 0 < (σ q l) * ((fun y
-    => (A q a).re + ((x q).re - (A q a).re) * (y - (A q a).im) / ((x q).im - (A q a).im)) z.im -
-    z.re)) (dfront : frontier (((F L q) b)) = segment ℝ (A q a) (x q) ∪ segment ℝ (A q a) ⟨(h L q
-    l), (A q a).im⟩ ∪ segment ℝ (x q) ⟨(h L q l), (x q).im⟩ ∪ segment ℝ ⟨(h L q l), (A q a).im⟩
-    ⟨(h L q l), (x q).im⟩) (uint : ∀ (z : ℂ), z ∈ interior (((F L q) a)) ↔ (x q).im < z.im ∧ z.im
-    < (B q b).im ∧ 0 < (σ q l) * (z.re - (h L q l)) ∧ 0 < (σ q l) * ((fun y => (x q).re + ((B q
-    b).re - (x q).re) * (y - (x q).im) / ((B q b).im - (x q).im)) z.im - z.re)) (ufront :
-    frontier (((F L q) a)) = segment ℝ (x q) (B q b) ∪ segment ℝ (x q) ⟨(h L q l), (x q).im⟩ ∪
-    segment ℝ (B q b) ⟨(h L q l), (B q b).im⟩ ∪ segment ℝ ⟨(h L q l), (x q).im⟩ ⟨(h L q l), (B q
-    b).im⟩) (tint : ∀ (z : ℂ), z ∈ interior (((F L q) l)) ↔ 0 < (σ q l) * ((fun y => (A q a).re +
-    ((B q b).re - (A q a).re) * (y - (A q a).im) / ((B q b).im - (A q a).im)) z.im - z.re) ∧ 0 <
-    (σ q l) * (z.re - (fun y => (A q a).re + ((x q).re - (A q a).re) * (y - (A q a).im) / ((x
-    q).im - (A q a).im)) z.im) ∧ 0 < (σ q l) * (z.re - (fun y => (x q).re + ((B q b).re - (x
-    q).re) * (y - (x q).im) / ((B q b).im - (x q).im)) z.im)) (tfront : frontier (((F L q) l)) =
-    segment ℝ (x q) (A q a) ∪ segment ℝ (x q) (B q b) ∪ segment ℝ (A q a) (B q b)) (hal : a ≠ l)
-    (hbl : b ≠ l) (hab : a ≠ b) (hP : (P L q) = convexHull ℝ ({(A q a), (B q b), ⟨(h L q l), (A q
-    a).im⟩, ⟨(h L q l), (B q b).im⟩} : Set ℂ)) (hD : (F L q) b = convexHull ℝ ({(A q a), (x q),
-    ⟨(h L q l), (A q a).im⟩, ⟨(h L q l), (x q).im⟩} : Set ℂ)) (hC : (F L q) l = convexHull ℝ ({(x
-    q), (A q a), (B q b)} : Set ℂ)) (hU : (F L q) a = convexHull ℝ ({(x q), (B q b), ⟨(h L q l),
-    (x q).im⟩, ⟨(h L q l), (B q b).im⟩} : Set ℂ)) (hAx : ((p q) a.succ).im < (x q).im) (hxB : (x
-    q).im < ((p q) b.succ).im) (c : Fin 3) : (F L q) c ⊆ (P L q) := by
-  classical
-  let p (i : Fin 4) : ℂ := (q i).2 / ((q i).1 : ℝ)
-  let s (c : Fin 3) := P4828T1Step (P4828T1Rotate q c)
-  let P := P4909T1ParentPolygon L q
-  let F (c : Fin 3) := P4909T1ParentPolygon L (s c)
-  let h := if (q l.succ).2 = -1 then L else L + 2
-  let σ : ℝ := if (q l.succ).2 = -1 then 1 else -1
-  let foot (z : ℂ) : ℂ := ⟨h, z.im⟩
-  let x := p 0
-  have hσ : σ ^ 2 = 1 := hσ q l
-  have side (i : Fin 4) (hi : 0 < (q i).1) : 0 < σ * ((p i).re - h) := side L q l hside i hi
-  let a₀ : Fin 3 := if l = 0 then 1 else 0
-  let b₀ : Fin 3 := if l = 2 then 1 else 2
-  have ha₀ : a₀ ≠ l := ha₀ L q l hl hpos hnormal hside
-  have hb₀ : b₀ ≠ l := hb₀ L q l hl hpos hnormal hside
-  have hab₀ : a₀ ≠ b₀ := hab₀ L q l hl hpos hnormal hside
-  have hp₀ := (P4953T1LiteralHulls L q l a₀ b₀ ha₀ hb₀ hab₀ hl
-    (hpos a₀ ha₀) (hpos b₀ hb₀) hzero).1
-  have hheight := P4953T1HullHeight h (p a₀.succ) (p b₀.succ) x (by
-    rw [← hp₀]; exact hinside)
-  have hne : (p a₀.succ).im ≠ (p b₀.succ).im := hne L q l hl hpos hzero hnormal hside hinside
-  let A := p a.succ
-  let B := p b.succ
-  have ha := hpos a hal
-  have hb := hpos b hbl
-  have classes (c : Fin 3) : c = l ∨ c = a ∨ c = b := classes l a b hal hbl hab c
-  have hA := side a.succ ha
-  have hB := side b.succ hb
-  have hx := side 0 hzero
-  have hxi := (qint x).mp hinside
-  have hvertices : A ∈ P ∧ B ∈ P ∧ foot A ∈ P ∧ foot B ∈ P := hvertices L q l a b hP
-  have hfxP : foot x ∈ P := hfxP L q l hinside a b qmem qint hAx hxB
-  have subC : F l ⊆ P := subC L q l hinside a b hP hC
-  have subU : F a ⊆ P := subU L q l hinside a b qmem qint hP hU hAx hxB
-  have subD : F b ⊆ P := subD L q l hinside a b qmem qint hP hD hAx hxB
-  change (F c ⊆ P)
-  rcases classes c with rfl | rfl | rfl
-  · exact subC
-  · exact subU
-  · exact subD
-
-private theorem omitted (L : ℝ) (q : Fin 4 → CircleCoordinates) (l : Fin 3) (hl : (q l.succ).1 =
-    0) (hpos : ∀ i : Fin 3, i ≠ l → 0 < (q i.succ).1) (hzero : 0 < (q 0).1) (hnormal : (q
-    l.succ).2 = -1 ∨ (q l.succ).2 = 1) (hside : ∀ i : Fin 4, 0 < (q i).1 → if (q l.succ).2 = -1
-    then L < (((q i).2 : ℂ) / ((q i).1 : ℝ)).re else (((q i).2 : ℂ) / ((q i).1 : ℝ)).re < L + 2)
-    (hinside : ((q 0).2 : ℂ) / ((q 0).1 : ℝ) ∈ interior (P4909T1ParentPolygon L q)) (a : Fin 3)
-    (b : Fin 3) (qmem : ∀ (z : ℂ), z ∈ ((P L q)) ↔ (A q a).im ≤ z.im ∧ z.im ≤ (B q b).im ∧ 0 ≤ (σ
-    q l) * (z.re - (h L q l)) ∧ 0 ≤ (σ q l) * ((fun y => (A q a).re + ((B q b).re - (A q a).re) *
-    (y - (A q a).im) / ((B q b).im - (A q a).im)) z.im - z.re)) (dmem : ∀ (z : ℂ), z ∈ ((F L q)
-    b) ↔ (A q a).im ≤ z.im ∧ z.im ≤ (x q).im ∧ 0 ≤ (σ q l) * (z.re - (h L q l)) ∧ 0 ≤ (σ q l) *
-    ((fun y => (A q a).re + ((x q).re - (A q a).re) * (y - (A q a).im) / ((x q).im - (A q a).im))
-    z.im - z.re)) (tlower : ∀ (z : ℂ), (A q a).im ≤ z.im → z.im ≤ (x q).im → (z ∈ ((F L q) l) ↔ 0
-    ≤ (σ q l) * (z.re - (fun y => (A q a).re + ((x q).re - (A q a).re) * (y - (A q a).im) / ((x
-    q).im - (A q a).im)) z.im) ∧ 0 ≤ (σ q l) * ((fun y => (A q a).re + ((B q b).re - (A q a).re)
-    * (y - (A q a).im) / ((B q b).im - (A q a).im)) z.im - z.re))) (umem : ∀ (z : ℂ), z ∈ ((F L
-    q) a) ↔ (x q).im ≤ z.im ∧ z.im ≤ (B q b).im ∧ 0 ≤ (σ q l) * (z.re - (h L q l)) ∧ 0 ≤ (σ q l)
-    * ((fun y => (x q).re + ((B q b).re - (x q).re) * (y - (x q).im) / ((B q b).im - (x q).im))
-    z.im - z.re)) (tupper : ∀ (z : ℂ), (x q).im ≤ z.im → z.im ≤ (B q b).im → (z ∈ ((F L q) l) ↔ 0
-    ≤ (σ q l) * (z.re - (fun y => (x q).re + ((B q b).re - (x q).re) * (y - (x q).im) / ((B q
-    b).im - (x q).im)) z.im) ∧ 0 ≤ (σ q l) * ((fun y => (A q a).re + ((B q b).re - (A q a).re) *
-    (y - (A q a).im) / ((B q b).im - (A q a).im)) z.im - z.re))) (qint : ∀ (z : ℂ), z ∈ interior
-    (((P L q))) ↔ (A q a).im < z.im ∧ z.im < (B q b).im ∧ 0 < (σ q l) * (z.re - (h L q l)) ∧ 0 <
-    (σ q l) * ((fun y => (A q a).re + ((B q b).re - (A q a).re) * (y - (A q a).im) / ((B q b).im
-    - (A q a).im)) z.im - z.re)) (qfront : frontier (((P L q))) = segment ℝ (A q a) (B q b) ∪
-    segment ℝ (A q a) ⟨(h L q l), (A q a).im⟩ ∪ segment ℝ (B q b) ⟨(h L q l), (B q b).im⟩ ∪
-    segment ℝ ⟨(h L q l), (A q a).im⟩ ⟨(h L q l), (B q b).im⟩) (dint : ∀ (z : ℂ), z ∈ interior
-    (((F L q) b)) ↔ (A q a).im < z.im ∧ z.im < (x q).im ∧ 0 < (σ q l) * (z.re - (h L q l)) ∧ 0 <
-    (σ q l) * ((fun y => (A q a).re + ((x q).re - (A q a).re) * (y - (A q a).im) / ((x q).im - (A
-    q a).im)) z.im - z.re)) (dfront : frontier (((F L q) b)) = segment ℝ (A q a) (x q) ∪ segment
-    ℝ (A q a) ⟨(h L q l), (A q a).im⟩ ∪ segment ℝ (x q) ⟨(h L q l), (x q).im⟩ ∪ segment ℝ ⟨(h L q
-    l), (A q a).im⟩ ⟨(h L q l), (x q).im⟩) (uint : ∀ (z : ℂ), z ∈ interior (((F L q) a)) ↔ (x
-    q).im < z.im ∧ z.im < (B q b).im ∧ 0 < (σ q l) * (z.re - (h L q l)) ∧ 0 < (σ q l) * ((fun y
-    => (x q).re + ((B q b).re - (x q).re) * (y - (x q).im) / ((B q b).im - (x q).im)) z.im -
-    z.re)) (ufront : frontier (((F L q) a)) = segment ℝ (x q) (B q b) ∪ segment ℝ (x q) ⟨(h L q
-    l), (x q).im⟩ ∪ segment ℝ (B q b) ⟨(h L q l), (B q b).im⟩ ∪ segment ℝ ⟨(h L q l), (x q).im⟩
-    ⟨(h L q l), (B q b).im⟩) (tint : ∀ (z : ℂ), z ∈ interior (((F L q) l)) ↔ 0 < (σ q l) * ((fun
-    y => (A q a).re + ((B q b).re - (A q a).re) * (y - (A q a).im) / ((B q b).im - (A q a).im))
-    z.im - z.re) ∧ 0 < (σ q l) * (z.re - (fun y => (A q a).re + ((x q).re - (A q a).re) * (y - (A
-    q a).im) / ((x q).im - (A q a).im)) z.im) ∧ 0 < (σ q l) * (z.re - (fun y => (x q).re + ((B q
-    b).re - (x q).re) * (y - (x q).im) / ((B q b).im - (x q).im)) z.im)) (tfront : frontier (((F
-    L q) l)) = segment ℝ (x q) (A q a) ∪ segment ℝ (x q) (B q b) ∪ segment ℝ (A q a) (B q b))
-    (hal : a ≠ l) (hbl : b ≠ l) (hab : a ≠ b) (hP : (P L q) = convexHull ℝ ({(A q a), (B q b),
-    ⟨(h L q l), (A q a).im⟩, ⟨(h L q l), (B q b).im⟩} : Set ℂ)) (hD : (F L q) b = convexHull ℝ
-    ({(A q a), (x q), ⟨(h L q l), (A q a).im⟩, ⟨(h L q l), (x q).im⟩} : Set ℂ)) (hC : (F L q) l =
-    convexHull ℝ ({(x q), (A q a), (B q b)} : Set ℂ)) (hU : (F L q) a = convexHull ℝ ({(x q), (B
-    q b), ⟨(h L q l), (x q).im⟩, ⟨(h L q l), (B q b).im⟩} : Set ℂ)) (hAx : ((p q) a.succ).im < (x
-    q).im) (hxB : (x q).im < ((p q) b.succ).im) (c : Fin 3) (hc : 0 < (q c.succ).1) : (p q)
-    c.succ ∉ (F L q) c := by
-  classical
-  let p (i : Fin 4) : ℂ := (q i).2 / ((q i).1 : ℝ)
-  let s (c : Fin 3) := P4828T1Step (P4828T1Rotate q c)
-  let P := P4909T1ParentPolygon L q
-  let F (c : Fin 3) := P4909T1ParentPolygon L (s c)
-  let h := if (q l.succ).2 = -1 then L else L + 2
-  let σ : ℝ := if (q l.succ).2 = -1 then 1 else -1
-  let foot (z : ℂ) : ℂ := ⟨h, z.im⟩
-  let x := p 0
-  have hσ : σ ^ 2 = 1 := hσ q l
-  have side (i : Fin 4) (hi : 0 < (q i).1) : 0 < σ * ((p i).re - h) := side L q l hside i hi
-  let a₀ : Fin 3 := if l = 0 then 1 else 0
-  let b₀ : Fin 3 := if l = 2 then 1 else 2
-  have ha₀ : a₀ ≠ l := ha₀ L q l hl hpos hnormal hside
-  have hb₀ : b₀ ≠ l := hb₀ L q l hl hpos hnormal hside
-  have hab₀ : a₀ ≠ b₀ := hab₀ L q l hl hpos hnormal hside
-  have hp₀ := (P4953T1LiteralHulls L q l a₀ b₀ ha₀ hb₀ hab₀ hl
-    (hpos a₀ ha₀) (hpos b₀ hb₀) hzero).1
-  have hheight := P4953T1HullHeight h (p a₀.succ) (p b₀.succ) x (by
-    rw [← hp₀]; exact hinside)
-  have hne : (p a₀.succ).im ≠ (p b₀.succ).im := hne L q l hl hpos hzero hnormal hside hinside
-  let A := p a.succ
-  let B := p b.succ
-  have ha := hpos a hal
-  have hb := hpos b hbl
-  have classes (c : Fin 3) : c = l ∨ c = a ∨ c = b := classes l a b hal hbl hab c
-  have hA := side a.succ ha
-  have hB := side b.succ hb
-  have hx := side 0 hzero
-  have hxi := (qint x).mp hinside
-  have hvertices : A ∈ P ∧ B ∈ P ∧ foot A ∈ P ∧ foot B ∈ P := hvertices L q l a b hP
-  have hfxP : foot x ∈ P := hfxP L q l hinside a b qmem qint hAx hxB
-  have subC : F l ⊆ P := subC L q l hinside a b hP hC
-  have subU : F a ⊆ P := subU L q l hinside a b qmem qint hP hU hAx hxB
-  have subD : F b ⊆ P := subD L q l hinside a b qmem qint hP hD hAx hxB
-  change (p c.succ ∉ F c)
-  rcases classes c with rfl | rfl | rfl
-  · omega
-  · intro hz
-    have hh := ((umem A).mp hz).1
-    exact (not_le_of_gt hAx) hh
-  · intro hz
-    have hh := ((dmem B).mp hz).2.1
-    exact (not_le_of_gt hxB) hh
-
 private theorem root (q : Fin 4 → CircleCoordinates) (slots : ∀ (c j : Fin 3), (fun c =>
     ApollonianSuperharmonic.P4828T1Step (ApollonianSuperharmonic.P4828T1Rotate q c)) c j.succ
     = if j = 0 then q 0 else q (j + c).succ) (c : Fin 3) : (s q) c (0 : Fin 3).succ = q 0 := by
@@ -720,111 +541,6 @@ private theorem frontD (L : ℝ) (q : Fin 4 → CircleCoordinates) (l : Fin 3) (
     (retainedFoot b a hbl.symm hab ha)) (rootFoot b hbl.symm))
     ((footLine A x).trans (lineCarrier b hbl.symm))
 
-private theorem front (L : ℝ) (q : Fin 4 → CircleCoordinates) (l : Fin 3) (hl : (q l.succ).1 = 0)
-    (hpos : ∀ i : Fin 3, i ≠ l → 0 < (q i.succ).1) (hzero : 0 < (q 0).1) (hnormal : (q l.succ).2
-    = -1 ∨ (q l.succ).2 = 1) (hside : ∀ i : Fin 4, 0 < (q i).1 → if (q l.succ).2 = -1 then L <
-    (((q i).2 : ℂ) / ((q i).1 : ℝ)).re else (((q i).2 : ℂ) / ((q i).1 : ℝ)).re < L + 2) (hinside
-    : ((q 0).2 : ℂ) / ((q 0).1 : ℝ) ∈ interior (P4909T1ParentPolygon L q)) (a : Fin 3) (b : Fin
-    3) (qmem : ∀ (z : ℂ), z ∈ ((P L q)) ↔ (A q a).im ≤ z.im ∧ z.im ≤ (B q b).im ∧ 0 ≤ (σ q l) *
-    (z.re - (h L q l)) ∧ 0 ≤ (σ q l) * ((fun y => (A q a).re + ((B q b).re - (A q a).re) * (y -
-    (A q a).im) / ((B q b).im - (A q a).im)) z.im - z.re)) (dmem : ∀ (z : ℂ), z ∈ ((F L q) b) ↔
-    (A q a).im ≤ z.im ∧ z.im ≤ (x q).im ∧ 0 ≤ (σ q l) * (z.re - (h L q l)) ∧ 0 ≤ (σ q l) * ((fun
-    y => (A q a).re + ((x q).re - (A q a).re) * (y - (A q a).im) / ((x q).im - (A q a).im)) z.im
-    - z.re)) (tlower : ∀ (z : ℂ), (A q a).im ≤ z.im → z.im ≤ (x q).im → (z ∈ ((F L q) l) ↔ 0 ≤ (σ
-    q l) * (z.re - (fun y => (A q a).re + ((x q).re - (A q a).re) * (y - (A q a).im) / ((x q).im
-    - (A q a).im)) z.im) ∧ 0 ≤ (σ q l) * ((fun y => (A q a).re + ((B q b).re - (A q a).re) * (y -
-    (A q a).im) / ((B q b).im - (A q a).im)) z.im - z.re))) (umem : ∀ (z : ℂ), z ∈ ((F L q) a) ↔
-    (x q).im ≤ z.im ∧ z.im ≤ (B q b).im ∧ 0 ≤ (σ q l) * (z.re - (h L q l)) ∧ 0 ≤ (σ q l) * ((fun
-    y => (x q).re + ((B q b).re - (x q).re) * (y - (x q).im) / ((B q b).im - (x q).im)) z.im -
-    z.re)) (tupper : ∀ (z : ℂ), (x q).im ≤ z.im → z.im ≤ (B q b).im → (z ∈ ((F L q) l) ↔ 0 ≤ (σ q
-    l) * (z.re - (fun y => (x q).re + ((B q b).re - (x q).re) * (y - (x q).im) / ((B q b).im - (x
-    q).im)) z.im) ∧ 0 ≤ (σ q l) * ((fun y => (A q a).re + ((B q b).re - (A q a).re) * (y - (A q
-    a).im) / ((B q b).im - (A q a).im)) z.im - z.re))) (qint : ∀ (z : ℂ), z ∈ interior (((P L
-    q))) ↔ (A q a).im < z.im ∧ z.im < (B q b).im ∧ 0 < (σ q l) * (z.re - (h L q l)) ∧ 0 < (σ q l)
-    * ((fun y => (A q a).re + ((B q b).re - (A q a).re) * (y - (A q a).im) / ((B q b).im - (A q
-    a).im)) z.im - z.re)) (qfront : frontier (((P L q))) = segment ℝ (A q a) (B q b) ∪ segment ℝ
-    (A q a) ⟨(h L q l), (A q a).im⟩ ∪ segment ℝ (B q b) ⟨(h L q l), (B q b).im⟩ ∪ segment ℝ ⟨(h L
-    q l), (A q a).im⟩ ⟨(h L q l), (B q b).im⟩) (dint : ∀ (z : ℂ), z ∈ interior (((F L q) b)) ↔ (A
-    q a).im < z.im ∧ z.im < (x q).im ∧ 0 < (σ q l) * (z.re - (h L q l)) ∧ 0 < (σ q l) * ((fun y
-    => (A q a).re + ((x q).re - (A q a).re) * (y - (A q a).im) / ((x q).im - (A q a).im)) z.im -
-    z.re)) (dfront : frontier (((F L q) b)) = segment ℝ (A q a) (x q) ∪ segment ℝ (A q a) ⟨(h L q
-    l), (A q a).im⟩ ∪ segment ℝ (x q) ⟨(h L q l), (x q).im⟩ ∪ segment ℝ ⟨(h L q l), (A q a).im⟩
-    ⟨(h L q l), (x q).im⟩) (uint : ∀ (z : ℂ), z ∈ interior (((F L q) a)) ↔ (x q).im < z.im ∧ z.im
-    < (B q b).im ∧ 0 < (σ q l) * (z.re - (h L q l)) ∧ 0 < (σ q l) * ((fun y => (x q).re + ((B q
-    b).re - (x q).re) * (y - (x q).im) / ((B q b).im - (x q).im)) z.im - z.re)) (ufront :
-    frontier (((F L q) a)) = segment ℝ (x q) (B q b) ∪ segment ℝ (x q) ⟨(h L q l), (x q).im⟩ ∪
-    segment ℝ (B q b) ⟨(h L q l), (B q b).im⟩ ∪ segment ℝ ⟨(h L q l), (x q).im⟩ ⟨(h L q l), (B q
-    b).im⟩) (tint : ∀ (z : ℂ), z ∈ interior (((F L q) l)) ↔ 0 < (σ q l) * ((fun y => (A q a).re +
-    ((B q b).re - (A q a).re) * (y - (A q a).im) / ((B q b).im - (A q a).im)) z.im - z.re) ∧ 0 <
-    (σ q l) * (z.re - (fun y => (A q a).re + ((x q).re - (A q a).re) * (y - (A q a).im) / ((x
-    q).im - (A q a).im)) z.im) ∧ 0 < (σ q l) * (z.re - (fun y => (x q).re + ((B q b).re - (x
-    q).re) * (y - (x q).im) / ((B q b).im - (x q).im)) z.im)) (tfront : frontier (((F L q) l)) =
-    segment ℝ (x q) (A q a) ∪ segment ℝ (x q) (B q b) ∪ segment ℝ (A q a) (B q b)) (slots : ∀ (c
-    j : Fin 3), (fun c => ApollonianSuperharmonic.P4828T1Step
-    (ApollonianSuperharmonic.P4828T1Rotate q c)) c j.succ = if j = 0 then q 0 else q (j +
-    c).succ) (hal : a ≠ l) (hbl : b ≠ l) (hab : a ≠ b) (hP : (P L q) = convexHull ℝ ({(A q a), (B
-    q b), ⟨(h L q l), (A q a).im⟩, ⟨(h L q l), (B q b).im⟩} : Set ℂ)) (hD : (F L q) b =
-    convexHull ℝ ({(A q a), (x q), ⟨(h L q l), (A q a).im⟩, ⟨(h L q l), (x q).im⟩} : Set ℂ)) (hC
-    : (F L q) l = convexHull ℝ ({(x q), (A q a), (B q b)} : Set ℂ)) (hU : (F L q) a = convexHull
-    ℝ ({(x q), (B q b), ⟨(h L q l), (x q).im⟩, ⟨(h L q l), (B q b).im⟩} : Set ℂ)) (hAx : ((p q)
-    a.succ).im < (x q).im) (hxB : (x q).im < ((p q) b.succ).im) (c : Fin 3) : frontier ((F L q)
-    c) ⊆ P4909T1ParentEdges L ((s q) c) := by
-  classical
-  let p (i : Fin 4) : ℂ := (q i).2 / ((q i).1 : ℝ)
-  let s (c : Fin 3) := P4828T1Step (P4828T1Rotate q c)
-  let P := P4909T1ParentPolygon L q
-  let F (c : Fin 3) := P4909T1ParentPolygon L (s c)
-  let h := if (q l.succ).2 = -1 then L else L + 2
-  let σ : ℝ := if (q l.succ).2 = -1 then 1 else -1
-  let foot (z : ℂ) : ℂ := ⟨h, z.im⟩
-  let x := p 0
-  have hσ : σ ^ 2 = 1 := hσ q l
-  have side (i : Fin 4) (hi : 0 < (q i).1) : 0 < σ * ((p i).re - h) := side L q l hside i hi
-  let a₀ : Fin 3 := if l = 0 then 1 else 0
-  let b₀ : Fin 3 := if l = 2 then 1 else 2
-  have ha₀ : a₀ ≠ l := ha₀ L q l hl hpos hnormal hside
-  have hb₀ : b₀ ≠ l := hb₀ L q l hl hpos hnormal hside
-  have hab₀ : a₀ ≠ b₀ := hab₀ L q l hl hpos hnormal hside
-  have hp₀ := (P4953T1LiteralHulls L q l a₀ b₀ ha₀ hb₀ hab₀ hl
-    (hpos a₀ ha₀) (hpos b₀ hb₀) hzero).1
-  have hheight := P4953T1HullHeight h (p a₀.succ) (p b₀.succ) x (by
-    rw [← hp₀]; exact hinside)
-  have hne : (p a₀.succ).im ≠ (p b₀.succ).im := hne L q l hl hpos hzero hnormal hside hinside
-  let A := p a.succ
-  let B := p b.succ
-  have ha := hpos a hal
-  have hb := hpos b hbl
-  have classes (c : Fin 3) : c = l ∨ c = a ∨ c = b := classes l a b hal hbl hab c
-  have hA := side a.succ ha
-  have hB := side b.succ hb
-  have hx := side 0 hzero
-  have hxi := (qint x).mp hinside
-  have hvertices : A ∈ P ∧ B ∈ P ∧ foot A ∈ P ∧ foot B ∈ P := hvertices L q l a b hP
-  have hfxP : foot x ∈ P := hfxP L q l hinside a b qmem qint hAx hxB
-  have subC : F l ⊆ P := subC L q l hinside a b hP hC
-  have subU : F a ⊆ P := subU L q l hinside a b qmem qint hP hU hAx hxB
-  have subD : F b ⊆ P := subD L q l hinside a b qmem qint hP hD hAx hxB
-  have rootFoot (c : Fin 3) (hc : l ≠ c) :
-      segment ℝ x (foot x) ⊆ P4909T1ParentEdges L (s c) := rootFoot L q l hl hzero slots c hc
-  have retainedFoot (c i : Fin 3) (hc : l ≠ c) (hi : i ≠ c)
-      (hpi : 0 < (q i.succ).1) :
-      segment ℝ (p i.succ) (foot (p i.succ)) ⊆ P4909T1ParentEdges L (s c) := retainedFoot L q l
-          hl slots c i hc hi hpi
-  have lineCarrier (c : Fin 3) (hc : l ≠ c) :
-      {z : ℂ | z.re = h} ⊆ P4909T1ParentEdges L (s c) := lineCarrier L q l hl slots c hc
-  have footLine (u v : ℂ) : segment ℝ (foot u) (foot v) ⊆ {z : ℂ | z.re = h} := footLine L q l u v
-  have frontC : frontier (F l) ⊆ P4909T1ParentEdges L (s l) := frontC L q l hpos hzero a b
-      tfront slots hal hbl hab
-  have frontU : frontier (F a) ⊆ P4909T1ParentEdges L (s a) := frontU L q l hl hpos hzero a b
-      ufront slots hal hbl hab
-  have frontD : frontier (F b) ⊆ P4909T1ParentEdges L (s b) := frontD L q l hl hpos hzero a b
-      dfront slots hal hbl hab
-  change (frontier (F c) ⊆ P4909T1ParentEdges L (s c))
-  rcases classes c with rfl | rfl | rfl
-  · exact frontC
-  · exact frontU
-  · exact frontD
-
 private theorem sepCU (L : ℝ) (q : Fin 4 → CircleCoordinates) (l : Fin 3) (a : Fin 3) (b : Fin 3)
     (uint : ∀ (z : ℂ), z ∈ interior (((F L q) a)) ↔ (x q).im < z.im ∧ z.im < (B q b).im ∧ 0 < (σ
     q l) * (z.re - (h L q l)) ∧ 0 < (σ q l) * ((fun y => (x q).re + ((B q b).re - (x q).re) * (y
@@ -877,123 +593,6 @@ private theorem sepUD (L : ℝ) (q : Fin 4 → CircleCoordinates) (l : Fin 3) (a
   apply Set.disjoint_left.mpr
   intro z hu hd
   exact (not_lt_of_gt ((uint z).mp hu).1) ((dint z).mp hd).2.1
-
-private theorem sep (L : ℝ) (q : Fin 4 → CircleCoordinates) (l : Fin 3) (hl : (q l.succ).1 = 0)
-    (hpos : ∀ i : Fin 3, i ≠ l → 0 < (q i.succ).1) (hzero : 0 < (q 0).1) (hnormal : (q l.succ).2
-    = -1 ∨ (q l.succ).2 = 1) (hside : ∀ i : Fin 4, 0 < (q i).1 → if (q l.succ).2 = -1 then L <
-    (((q i).2 : ℂ) / ((q i).1 : ℝ)).re else (((q i).2 : ℂ) / ((q i).1 : ℝ)).re < L + 2) (hinside
-    : ((q 0).2 : ℂ) / ((q 0).1 : ℝ) ∈ interior (P4909T1ParentPolygon L q)) (a : Fin 3) (b : Fin
-    3) (qmem : ∀ (z : ℂ), z ∈ ((P L q)) ↔ (A q a).im ≤ z.im ∧ z.im ≤ (B q b).im ∧ 0 ≤ (σ q l) *
-    (z.re - (h L q l)) ∧ 0 ≤ (σ q l) * ((fun y => (A q a).re + ((B q b).re - (A q a).re) * (y -
-    (A q a).im) / ((B q b).im - (A q a).im)) z.im - z.re)) (dmem : ∀ (z : ℂ), z ∈ ((F L q) b) ↔
-    (A q a).im ≤ z.im ∧ z.im ≤ (x q).im ∧ 0 ≤ (σ q l) * (z.re - (h L q l)) ∧ 0 ≤ (σ q l) * ((fun
-    y => (A q a).re + ((x q).re - (A q a).re) * (y - (A q a).im) / ((x q).im - (A q a).im)) z.im
-    - z.re)) (tlower : ∀ (z : ℂ), (A q a).im ≤ z.im → z.im ≤ (x q).im → (z ∈ ((F L q) l) ↔ 0 ≤ (σ
-    q l) * (z.re - (fun y => (A q a).re + ((x q).re - (A q a).re) * (y - (A q a).im) / ((x q).im
-    - (A q a).im)) z.im) ∧ 0 ≤ (σ q l) * ((fun y => (A q a).re + ((B q b).re - (A q a).re) * (y -
-    (A q a).im) / ((B q b).im - (A q a).im)) z.im - z.re))) (umem : ∀ (z : ℂ), z ∈ ((F L q) a) ↔
-    (x q).im ≤ z.im ∧ z.im ≤ (B q b).im ∧ 0 ≤ (σ q l) * (z.re - (h L q l)) ∧ 0 ≤ (σ q l) * ((fun
-    y => (x q).re + ((B q b).re - (x q).re) * (y - (x q).im) / ((B q b).im - (x q).im)) z.im -
-    z.re)) (tupper : ∀ (z : ℂ), (x q).im ≤ z.im → z.im ≤ (B q b).im → (z ∈ ((F L q) l) ↔ 0 ≤ (σ q
-    l) * (z.re - (fun y => (x q).re + ((B q b).re - (x q).re) * (y - (x q).im) / ((B q b).im - (x
-    q).im)) z.im) ∧ 0 ≤ (σ q l) * ((fun y => (A q a).re + ((B q b).re - (A q a).re) * (y - (A q
-    a).im) / ((B q b).im - (A q a).im)) z.im - z.re))) (qint : ∀ (z : ℂ), z ∈ interior (((P L
-    q))) ↔ (A q a).im < z.im ∧ z.im < (B q b).im ∧ 0 < (σ q l) * (z.re - (h L q l)) ∧ 0 < (σ q l)
-    * ((fun y => (A q a).re + ((B q b).re - (A q a).re) * (y - (A q a).im) / ((B q b).im - (A q
-    a).im)) z.im - z.re)) (qfront : frontier (((P L q))) = segment ℝ (A q a) (B q b) ∪ segment ℝ
-    (A q a) ⟨(h L q l), (A q a).im⟩ ∪ segment ℝ (B q b) ⟨(h L q l), (B q b).im⟩ ∪ segment ℝ ⟨(h L
-    q l), (A q a).im⟩ ⟨(h L q l), (B q b).im⟩) (dint : ∀ (z : ℂ), z ∈ interior (((F L q) b)) ↔ (A
-    q a).im < z.im ∧ z.im < (x q).im ∧ 0 < (σ q l) * (z.re - (h L q l)) ∧ 0 < (σ q l) * ((fun y
-    => (A q a).re + ((x q).re - (A q a).re) * (y - (A q a).im) / ((x q).im - (A q a).im)) z.im -
-    z.re)) (dfront : frontier (((F L q) b)) = segment ℝ (A q a) (x q) ∪ segment ℝ (A q a) ⟨(h L q
-    l), (A q a).im⟩ ∪ segment ℝ (x q) ⟨(h L q l), (x q).im⟩ ∪ segment ℝ ⟨(h L q l), (A q a).im⟩
-    ⟨(h L q l), (x q).im⟩) (uint : ∀ (z : ℂ), z ∈ interior (((F L q) a)) ↔ (x q).im < z.im ∧ z.im
-    < (B q b).im ∧ 0 < (σ q l) * (z.re - (h L q l)) ∧ 0 < (σ q l) * ((fun y => (x q).re + ((B q
-    b).re - (x q).re) * (y - (x q).im) / ((B q b).im - (x q).im)) z.im - z.re)) (ufront :
-    frontier (((F L q) a)) = segment ℝ (x q) (B q b) ∪ segment ℝ (x q) ⟨(h L q l), (x q).im⟩ ∪
-    segment ℝ (B q b) ⟨(h L q l), (B q b).im⟩ ∪ segment ℝ ⟨(h L q l), (x q).im⟩ ⟨(h L q l), (B q
-    b).im⟩) (tint : ∀ (z : ℂ), z ∈ interior (((F L q) l)) ↔ 0 < (σ q l) * ((fun y => (A q a).re +
-    ((B q b).re - (A q a).re) * (y - (A q a).im) / ((B q b).im - (A q a).im)) z.im - z.re) ∧ 0 <
-    (σ q l) * (z.re - (fun y => (A q a).re + ((x q).re - (A q a).re) * (y - (A q a).im) / ((x
-    q).im - (A q a).im)) z.im) ∧ 0 < (σ q l) * (z.re - (fun y => (x q).re + ((B q b).re - (x
-    q).re) * (y - (x q).im) / ((B q b).im - (x q).im)) z.im)) (tfront : frontier (((F L q) l)) =
-    segment ℝ (x q) (A q a) ∪ segment ℝ (x q) (B q b) ∪ segment ℝ (A q a) (B q b)) (slots : ∀ (c
-    j : Fin 3), (fun c => ApollonianSuperharmonic.P4828T1Step
-    (ApollonianSuperharmonic.P4828T1Rotate q c)) c j.succ = if j = 0 then q 0 else q (j +
-    c).succ) (hal : a ≠ l) (hbl : b ≠ l) (hab : a ≠ b) (hP : (P L q) = convexHull ℝ ({(A q a), (B
-    q b), ⟨(h L q l), (A q a).im⟩, ⟨(h L q l), (B q b).im⟩} : Set ℂ)) (hD : (F L q) b =
-    convexHull ℝ ({(A q a), (x q), ⟨(h L q l), (A q a).im⟩, ⟨(h L q l), (x q).im⟩} : Set ℂ)) (hC
-    : (F L q) l = convexHull ℝ ({(x q), (A q a), (B q b)} : Set ℂ)) (hU : (F L q) a = convexHull
-    ℝ ({(x q), (B q b), ⟨(h L q l), (x q).im⟩, ⟨(h L q l), (B q b).im⟩} : Set ℂ)) (hAx : ((p q)
-    a.succ).im < (x q).im) (hxB : (x q).im < ((p q) b.succ).im) (c d : Fin 3) (hcd : c ≠ d) :
-    Disjoint (interior ((F L q) c)) (interior ((F L q) d)) := by
-  classical
-  let p (i : Fin 4) : ℂ := (q i).2 / ((q i).1 : ℝ)
-  let s (c : Fin 3) := P4828T1Step (P4828T1Rotate q c)
-  let P := P4909T1ParentPolygon L q
-  let F (c : Fin 3) := P4909T1ParentPolygon L (s c)
-  let h := if (q l.succ).2 = -1 then L else L + 2
-  let σ : ℝ := if (q l.succ).2 = -1 then 1 else -1
-  let foot (z : ℂ) : ℂ := ⟨h, z.im⟩
-  let x := p 0
-  have hσ : σ ^ 2 = 1 := hσ q l
-  have side (i : Fin 4) (hi : 0 < (q i).1) : 0 < σ * ((p i).re - h) := side L q l hside i hi
-  let a₀ : Fin 3 := if l = 0 then 1 else 0
-  let b₀ : Fin 3 := if l = 2 then 1 else 2
-  have ha₀ : a₀ ≠ l := ha₀ L q l hl hpos hnormal hside
-  have hb₀ : b₀ ≠ l := hb₀ L q l hl hpos hnormal hside
-  have hab₀ : a₀ ≠ b₀ := hab₀ L q l hl hpos hnormal hside
-  have hp₀ := (P4953T1LiteralHulls L q l a₀ b₀ ha₀ hb₀ hab₀ hl
-    (hpos a₀ ha₀) (hpos b₀ hb₀) hzero).1
-  have hheight := P4953T1HullHeight h (p a₀.succ) (p b₀.succ) x (by
-    rw [← hp₀]; exact hinside)
-  have hne : (p a₀.succ).im ≠ (p b₀.succ).im := hne L q l hl hpos hzero hnormal hside hinside
-  let A := p a.succ
-  let B := p b.succ
-  have ha := hpos a hal
-  have hb := hpos b hbl
-  have classes (c : Fin 3) : c = l ∨ c = a ∨ c = b := classes l a b hal hbl hab c
-  have hA := side a.succ ha
-  have hB := side b.succ hb
-  have hx := side 0 hzero
-  have hxi := (qint x).mp hinside
-  have hvertices : A ∈ P ∧ B ∈ P ∧ foot A ∈ P ∧ foot B ∈ P := hvertices L q l a b hP
-  have hfxP : foot x ∈ P := hfxP L q l hinside a b qmem qint hAx hxB
-  have subC : F l ⊆ P := subC L q l hinside a b hP hC
-  have subU : F a ⊆ P := subU L q l hinside a b qmem qint hP hU hAx hxB
-  have subD : F b ⊆ P := subD L q l hinside a b qmem qint hP hD hAx hxB
-  have rootFoot (c : Fin 3) (hc : l ≠ c) :
-      segment ℝ x (foot x) ⊆ P4909T1ParentEdges L (s c) := rootFoot L q l hl hzero slots c hc
-  have retainedFoot (c i : Fin 3) (hc : l ≠ c) (hi : i ≠ c)
-      (hpi : 0 < (q i.succ).1) :
-      segment ℝ (p i.succ) (foot (p i.succ)) ⊆ P4909T1ParentEdges L (s c) := retainedFoot L q l
-          hl slots c i hc hi hpi
-  have lineCarrier (c : Fin 3) (hc : l ≠ c) :
-      {z : ℂ | z.re = h} ⊆ P4909T1ParentEdges L (s c) := lineCarrier L q l hl slots c hc
-  have footLine (u v : ℂ) : segment ℝ (foot u) (foot v) ⊆ {z : ℂ | z.re = h} := footLine L q l u v
-  have frontC : frontier (F l) ⊆ P4909T1ParentEdges L (s l) := frontC L q l hpos hzero a b
-      tfront slots hal hbl hab
-  have frontU : frontier (F a) ⊆ P4909T1ParentEdges L (s a) := frontU L q l hl hpos hzero a b
-      ufront slots hal hbl hab
-  have frontD : frontier (F b) ⊆ P4909T1ParentEdges L (s b) := frontD L q l hl hpos hzero a b
-      dfront slots hal hbl hab
-  have sepCU : Disjoint (interior (F l)) (interior (F a)) := sepCU L q l a b uint tint
-  have sepCD : Disjoint (interior (F l)) (interior (F b)) := sepCD L q l a b dint tint
-  have sepUD : Disjoint (interior (F a)) (interior (F b)) := sepUD L q l a b dint uint
-  change (Disjoint (interior (F c)) (interior (F d)))
-  rcases classes c with rfl | rfl | rfl
-  · rcases classes d with rfl | rfl | rfl
-    · exact (hcd rfl).elim
-    · exact sepCU
-    · exact sepCD
-  · rcases classes d with rfl | rfl | rfl
-    · exact sepCU.symm
-    · exact (hcd rfl).elim
-    · exact sepUD
-  · rcases classes d with rfl | rfl | rfl
-    · exact sepCD.symm
-    · exact sepUD.symm
-    · exact (hcd rfl).elim
 
 private theorem cover (L : ℝ) (q : Fin 4 → CircleCoordinates) (l : Fin 3) (a : Fin 3) (b : Fin 3)
     (qmem : ∀ (z : ℂ), z ∈ ((P L q)) ↔ (A q a).im ≤ z.im ∧ z.im ≤ (B q b).im ∧ 0 ≤ (σ q l) *
@@ -1126,30 +725,22 @@ theorem P4909T1LineFan (L : ℝ) (q : Fin 4 → CircleCoordinates)
     P4953T1TriangleSections σ A x B hAx hxB hxi.2.2.2
   rw [← hC] at tint tlower tupper tfront
   -- Containment uses only convexity and the inserted foot's actual height.
-  have hvertices : A ∈ P ∧ B ∈ P ∧ foot A ∈ P ∧ foot B ∈ P := LineFanConstruction.hvertices L q l
-      a b hP
-  have hfxP : foot x ∈ P := LineFanConstruction.hfxP L q l hinside a b qmem qint hAx hxB
   have subC : F l ⊆ P := LineFanConstruction.subC L q l hinside a b hP hC
   have subU : F a ⊆ P := LineFanConstruction.subU L q l hinside a b qmem qint hP hU hAx hxB
   have subD : F b ⊆ P := LineFanConstruction.subD L q l hinside a b qmem qint hP hD hAx hxB
-  have sub (c : Fin 3) : F c ⊆ P := LineFanConstruction.sub L q l hl hpos hzero hnormal hside
-      hinside a b qmem dmem tlower umem tupper qint qfront dint dfront uint ufront tint tfront
-      hal hbl hab hP hD hC hU hAx hxB c
-  have omitted (c : Fin 3) (hc : 0 < (q c.succ).1) : p c.succ ∉ F c :=
-      LineFanConstruction.omitted L q l hl hpos hzero hnormal hside hinside a b qmem dmem tlower
-      umem tupper qint qfront dint dfront uint ufront tint tfront hal hbl hab hP hD hC hU hAx hxB
-      c hc
+  have sub (c : Fin 3) : F c ⊆ P := by
+    rcases classes c with rfl | rfl | rfl
+    · exact subC
+    · exact subU
+    · exact subD
+  have omitted (c : Fin 3) (hc : 0 < (q c.succ).1) : p c.succ ∉ F c := by
+    rcases classes c with rfl | rfl | rfl
+    · omega
+    · intro hz
+      exact (not_le_of_gt hAx) ((umem A).mp hz).1
+    · intro hz
+      exact (not_le_of_gt hxB) ((dmem B).mp hz).2.1
   -- Build the literal edge witnesses without identifying same-center records.
-  have rootFoot (c : Fin 3) (hc : l ≠ c) :
-      segment ℝ x (foot x) ⊆ P4909T1ParentEdges L (s c) := LineFanConstruction.rootFoot L q l
-          hl hzero slots c hc
-  have retainedFoot (c i : Fin 3) (hc : l ≠ c) (hi : i ≠ c)
-      (hpi : 0 < (q i.succ).1) :
-      segment ℝ (p i.succ) (foot (p i.succ)) ⊆ P4909T1ParentEdges L (s c) :=
-          LineFanConstruction.retainedFoot L q l hl slots c i hc hi hpi
-  have lineCarrier (c : Fin 3) (hc : l ≠ c) :
-      {z : ℂ | z.re = h} ⊆ P4909T1ParentEdges L (s c) := LineFanConstruction.lineCarrier L q l
-          hl slots c hc
   have footLine (u v : ℂ) : segment ℝ (foot u) (foot v) ⊆ {z : ℂ | z.re = h} :=
       LineFanConstruction.footLine L q l u v
   have frontC : frontier (F l) ⊆ P4909T1ParentEdges L (s l) := LineFanConstruction.frontC L q l
@@ -1158,10 +749,11 @@ theorem P4909T1LineFan (L : ℝ) (q : Fin 4 → CircleCoordinates)
       hl hpos hzero a b ufront slots hal hbl hab
   have frontD : frontier (F b) ⊆ P4909T1ParentEdges L (s b) := LineFanConstruction.frontD L q l
       hl hpos hzero a b dfront slots hal hbl hab
-  have front (c : Fin 3) : frontier (F c) ⊆ P4909T1ParentEdges L (s c) :=
-      LineFanConstruction.front L q l hl hpos hzero hnormal hside hinside a b qmem dmem tlower
-      umem tupper qint qfront dint dfront uint ufront tint tfront slots hal hbl hab hP hD hC hU
-      hAx hxB c
+  have front (c : Fin 3) : frontier (F c) ⊆ P4909T1ParentEdges L (s c) := by
+    rcases classes c with rfl | rfl | rfl
+    · exact frontC
+    · exact frontU
+    · exact frontD
   -- Strict affine inequalities separate the central and lateral interiors.
   have sepCU : Disjoint (interior (F l)) (interior (F a)) := LineFanConstruction.sepCU L q l a b
       uint tint
@@ -1169,10 +761,20 @@ theorem P4909T1LineFan (L : ℝ) (q : Fin 4 → CircleCoordinates)
       dint tint
   have sepUD : Disjoint (interior (F a)) (interior (F b)) := LineFanConstruction.sepUD L q l a b
       dint uint
-  have sep (c d : Fin 3) (hcd : c ≠ d) : Disjoint (interior (F c)) (interior (F d)) :=
-      LineFanConstruction.sep L q l hl hpos hzero hnormal hside hinside a b qmem dmem tlower umem
-      tupper qint qfront dint dfront uint ufront tint tfront slots hal hbl hab hP hD hC hU hAx
-      hxB c d hcd
+  have sep (c d : Fin 3) (hcd : c ≠ d) : Disjoint (interior (F c)) (interior (F d)) := by
+    rcases classes c with rfl | rfl | rfl
+    · rcases classes d with rfl | rfl | rfl
+      · exact (hcd rfl).elim
+      · exact sepCU
+      · exact sepCD
+    · rcases classes d with rfl | rfl | rfl
+      · exact sepCU.symm
+      · exact (hcd rfl).elim
+      · exact sepUD
+    · rcases classes d with rfl | rfl | rfl
+      · exact sepCD.symm
+      · exact sepUD.symm
+      · exact (hcd rfl).elim
   have cover (z : ℂ) (hz : z ∈ P) : ∃ c, z ∈ F c := LineFanConstruction.cover L q l a b qmem dmem
       tlower umem tupper z hz
   refine ⟨fun c => ⟨sub c, omitted c, front c⟩, sep, ?_, ?_⟩

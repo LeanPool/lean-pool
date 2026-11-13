@@ -6,6 +6,7 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.TileStringPair
 public import LeanPool.ApollonianSuperharmonic.BandPrototileNonempty
 public import LeanPool.ApollonianSuperharmonic.BoundaryFrameJoinGeometry
 public import LeanPool.ApollonianSuperharmonic.BoundaryFrameRowGeometry
@@ -1335,122 +1336,6 @@ private theorem hrightNe :
   · exact hPnonempty.ne_empty h.1
   · exact hPnonempty.ne_empty h.1
 
-private theorem leftString :
-    (by
-      classical
-      exact
-        ∀ (C : BandCircle),
-          ∀ (orientation : Bool),
-            ∀ (base : ProtoTile),
-              ∀ (Rminus : ProtoTile),
-                ∀ (Rplus : ProtoTile),
-                  ∀ (hminus : PartialOdometer),
-                    ∀ (hplus : PartialOdometer),
-                      ∀
-                        (F :
-                          P4458T1BoundaryFrame C orientation base Rminus Rplus hminus
-                            hplus),
-                        let r : Fin 4 → CircleCoordinates :=
-                          ![F.q 0, F.q F.slot.succ, F.q (F.slot + 1).succ,
-                            F.q (F.slot + 2).succ];
-                        let y : GaussianInt := BandVectors.1 (r 2) (r 1);
-                        ∀ (u : ↥(TilingLattice C)),
-                          let join : ProtoTile := TileTranslation base (u + y);
-                          join ∈ RegularTileFamily base (TilingLattice C) →
-                            TileTouching Rminus join →
-                              Rminus ≠ join →
-                                C.1.1.1 ≠ 1 →
-                                TileString C orientation base Rminus join [Rminus, join]
-    ) := by
-  classical
-  intro C orientation base Rminus Rplus hminus hplus F r y u join hjoinFamily hleftTouch hleftNe
-      hnonunit
-  unfold TileString
-  refine ⟨F.base_band, ?_, ?_, ?_, ?_, ?_, ?_⟩
-  · rfl
-  · rfl
-  · simpa using hleftNe
-  · intro T hT
-    simp only [List.mem_cons] at hT
-    rcases hT with hT | hT
-    · rcases hT with rfl
-      exact F.minus_family
-    · rcases hT with hT | hT
-      · rcases hT with rfl
-        exact hjoinFamily
-      · simp at hT
-  · simpa [List.IsChain, List.isChain_pair, hnonunit] using hleftTouch
-  · intro pre T post heq hpre hpost
-    have hlen := congrArg List.length heq
-    have hp : 1 ≤ pre.length := by
-      cases pre with
-      | nil => simp at hpre
-      | cons x xs => simp
-    have hq : 1 ≤ post.length := by
-      cases post with
-      | nil => simp at hpost
-      | cons x xs => simp
-    simp at hlen
-    omega
-
-private theorem rightString :
-    (by
-      classical
-      exact
-        ∀ (C : BandCircle),
-          ∀ (orientation : Bool),
-            ∀ (base : ProtoTile),
-              ∀ (Rminus : ProtoTile),
-                ∀ (Rplus : ProtoTile),
-                  ∀ (hminus : PartialOdometer),
-                    ∀ (hplus : PartialOdometer),
-                      ∀
-                        (F :
-                          P4458T1BoundaryFrame C orientation base Rminus Rplus hminus
-                            hplus),
-                        let r : Fin 4 → CircleCoordinates :=
-                          ![F.q 0, F.q F.slot.succ, F.q (F.slot + 1).succ,
-                            F.q (F.slot + 2).succ];
-                        let y : GaussianInt := BandVectors.1 (r 2) (r 1);
-                        ∀ (u : ↥(TilingLattice C)),
-                          let join : ProtoTile := TileTranslation base (u + y);
-                          join ∈ RegularTileFamily base (TilingLattice C) →
-                            TileTouching join Rplus →
-                              join ≠ Rplus →
-                                C.1.1.1 ≠ 1 →
-                                TileString C orientation base join Rplus [join, Rplus]
-    ) := by
-  classical
-  intro C orientation base Rminus Rplus hminus hplus F r y u join hjoinFamily hrightTouch
-      hrightNe hnonunit
-  unfold TileString
-  refine ⟨F.base_band, ?_, ?_, ?_, ?_, ?_, ?_⟩
-  · rfl
-  · rfl
-  · simpa using hrightNe
-  · intro T hT
-    simp only [List.mem_cons] at hT
-    rcases hT with hT | hT
-    · rcases hT with rfl
-      exact hjoinFamily
-    · rcases hT with hT | hT
-      · rcases hT with rfl
-        exact F.plus_family
-      · simp at hT
-  · simpa [List.IsChain, List.isChain_pair, hnonunit] using hrightTouch
-  · intro pre T post heq hpre hpost
-    have hlen := congrArg List.length heq
-    have hp : 1 ≤ pre.length := by
-      cases pre with
-      | nil => simp at hpre
-      | cons x xs => simp
-    have hq : 1 ≤ post.length := by
-      cases post with
-      | nil => simp at hpost
-      | cons x xs => simp
-    simp at hlen
-    omega
-
 end LargestParentGeometry
 
 namespace LargestParentConclusion
@@ -2111,12 +1996,12 @@ private theorem largestParentCertificate :
   have hrightNe := LargestParentGeometry.hrightNe C orientation base Rminus Rplus hminus hplus F
       u hrightTouch hPnonempty
   have hnonunit : C.1.1.1 ≠ 1 := by omega
-  have leftString := LargestParentGeometry.leftString C orientation base Rminus Rplus hminus
-      hplus F u hjoinFamily hleftTouch hleftNe hnonunit
+  have leftString := TileStringPairOfNonunit C orientation base Rminus join F.base_band
+    F.minus_family hjoinFamily hleftNe hnonunit hleftTouch
   refine ⟨⟨join, hjoinCells.1.symm, hjoinOdo, hjoinAncestor,
     hjoinOccurrence, .direct leftString hleftAdjacent,
-    .direct (LargestParentGeometry.rightString C orientation base Rminus Rplus hminus hplus F u
-        hjoinFamily hrightTouch hrightNe hnonunit) hrightAdjacent⟩⟩
+    .direct (TileStringPairOfNonunit C orientation base join Rplus F.base_band
+      hjoinFamily F.plus_family hrightNe hnonunit hrightTouch) hrightAdjacent⟩⟩
 
 end LargestParentConclusion
 

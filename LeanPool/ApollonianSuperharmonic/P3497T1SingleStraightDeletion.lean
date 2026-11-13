@@ -709,7 +709,6 @@ private noncomputable abbrev q (n : Nat) (p : P3381T1PolygonBoundary (n + 1)) (i
   have hsigSucc (k : Fin L) (hk : k.val ≠ 0) :
       sig (k + 1) = sig k + 1 := hsigSucc n k hk
   let r : Fin M → Real × Real := fun h => p.vertex (rot h)
-  have ha : r 0 ≠ r 1 := ha n p i
   have oldInt (a b : Fin M) (hab : a ≠ b) :
       segment Real (r a) (r (a + 1)) ∩ segment Real (r b) (r (b + 1)) =
         {x | (x = r a ∨ x = r (a + 1)) ∧ (x = r b ∨ x = r (b + 1))} := oldInt n p i a b hab
@@ -756,9 +755,6 @@ private noncomputable abbrev q (n : Nat) (p : P3381T1PolygonBoundary (n + 1)) (i
 
 private noncomputable def boundarySubdivision {n : Nat} (p : P3381T1PolygonBoundary (n + 1))
     (i : Fin ((n + 1) + 3))
-    (hdet : P3381T1TriangleDeterminant (fun j : Fin 3 =>
-      p.vertex (i + ⟨j.val, Nat.lt_of_lt_of_le j.isLt
-        (Nat.le_add_left 3 (n + 1))⟩)) = 0)
     (t : Real) (ht0 : 0 < t) (ht1 : t < 1)
     (hsplice : r n p i 1 = (1 - t) • r n p i 0 + t • r n p i 2)
     (hunion : segment Real (r n p i 0) (r n p i 1) ∪
@@ -773,40 +769,17 @@ private noncomputable def boundarySubdivision {n : Nat} (p : P3381T1PolygonBound
     ⟨if k.val = 0 then 0 else k.val + 1, by split_ifs <;> omega⟩
   have hM : 4 ≤ M := StraightDeletionConstruction.hM n
   have hM1 : 1 < M := StraightDeletionConstruction.hM1 n
-  have hM2 : 2 < M := StraightDeletionConstruction.hM2 n
-  have hM3 : 3 < M := StraightDeletionConstruction.hM3 n
-  have hL1 : 1 < L := StraightDeletionConstruction.hL1 n
-  have hLM : L + 1 = M := StraightDeletionConstruction.hLM n
   have hrot : Function.Injective rot := StraightDeletionConstruction.hrot n i
   have hsig : Function.Injective sig := StraightDeletionConstruction.hsig n
   have hrotSucc (h : Fin M) : rot (h + 1) = rot h + 1 := StraightDeletionConstruction.hrotSucc n i h
-  have hsigSucc (k : Fin L) (hk : k.val ≠ 0) :
-      sig (k + 1) = sig k + 1 := StraightDeletionConstruction.hsigSucc n k hk
   let r : Fin M → Real × Real := fun h => p.vertex (rot h)
-  have hr : Function.Injective r := StraightDeletionConstruction.hr n p i
-  have ha : r 0 ≠ r 1 := StraightDeletionConstruction.ha n p i
-  have hbc : r 1 ≠ r 2 := StraightDeletionConstruction.hbc n p i
-  have hac : r 0 ≠ r 2 := StraightDeletionConstruction.hac n p i
-  have hdet' : P3381T1TriangleDeterminant ![r 0, r 1, r 2] = 0 :=
-      StraightDeletionConstruction.hdet' n p i hdet
-  have hint : segment Real (r 0) (r 1) ∩ segment Real (r 1) (r 2) = {r 1} :=
-      StraightDeletionConstruction.hint n p i
-  have oldInt (a b : Fin M) (hab : a ≠ b) :
-      segment Real (r a) (r (a + 1)) ∩ segment Real (r b) (r (b + 1)) =
-        {x | (x = r a ∨ x = r (a + 1)) ∧ (x = r b ∨ x = r (b + 1))} :=
-            StraightDeletionConstruction.oldInt n p i a b hab
-  have rEq (a b : Fin M) : r a = r b ↔ a = b := StraightDeletionConstruction.rEq n p i a b
   have sig0 : sig (0 : Fin L) = 0 := StraightDeletionConstruction.sig0 n
-  have hval1L : (1 : Fin L).val = 1 := StraightDeletionConstruction.hval1L n
-  have hval2M : (2 : Fin M).val = 2 := StraightDeletionConstruction.hval2M n
   have hmod1M : 1 % M = 1 := StraightDeletionConstruction.hmod1M n
   have hmod2M : 2 % M = 2 := StraightDeletionConstruction.hmod2M n
-  have hmod3M : 3 % M = 3 := StraightDeletionConstruction.hmod3M n
   have new01 : (0 : Fin L) + 1 = 1 := StraightDeletionConstruction.new01 n
   have sig1 : sig (1 : Fin L) = 2 := StraightDeletionConstruction.sig1 n
   have old01 : (0 : Fin M) + 1 = 1 := StraightDeletionConstruction.old01 n
   have old12 : (1 : Fin M) + 1 = 2 := StraightDeletionConstruction.old12 n
-  have old23 : (2 : Fin M) + 1 = 3 := StraightDeletionConstruction.old23 n
   have qedge0 : segment Real (r (sig 0)) (r (sig (0 + 1))) =
       segment Real (r 0) (r 2) := StraightDeletionConstruction.qedge0 n p i
   have qedgePos (k : Fin L) (hk : k.val ≠ 0) :
@@ -829,12 +802,6 @@ private noncomputable def boundarySubdivision {n : Nat} (p : P3381T1PolygonBound
       col (h + 1) = col h + 1 := StraightDeletionConstruction.colSucc n h hh
   have invSucc (j : Fin M) : invrot (j + 1) = invrot j + 1 :=
       StraightDeletionConstruction.invSucc n i j
-  have firstInt (c : Fin L) (hc : c.val ≠ 0) :
-      segment Real (r (sig 0)) (r (sig (0 + 1))) ∩
-          segment Real (r (sig c)) (r (sig (c + 1))) =
-        {x | (x = r (sig 0) ∨ x = r (sig (0 + 1))) ∧
-          (x = r (sig c) ∨ x = r (sig (c + 1)))} := StraightDeletionConstruction.firstInt n p i
-              hunion c hc
   let q : P3381T1PolygonBoundary n := StraightDeletionConstruction.q n p i hunion
   change r 1 = (1 - t) • r 0 + t • r 2 at hsplice
   change segment Real (r 0) (r 1) ∪ segment Real (r 1) (r 2) =
@@ -1063,7 +1030,7 @@ theorem P3497T1SingleStraightDeletion {n : Nat}
       (StraightDeletionConstruction.hbc n p i) (StraightDeletionConstruction.hdet' n p i hdet)
       (StraightDeletionConstruction.hint n p i)
   refine ⟨StraightDeletionConstruction.q n p i hunion, ?_,
-    ⟨StraightDeletionConstruction.boundarySubdivision p i hdet t ht0 ht1 hsplice hunion⟩⟩
+    ⟨StraightDeletionConstruction.boundarySubdivision p i t ht0 ht1 hsplice hunion⟩⟩
   intro k
   rfl
 

@@ -283,17 +283,6 @@ private theorem edges (n : Nat) (m : Nat) (hn : 0 < n) (hm : 0 < m) (a : Gaussia
             apply Zsqrtd.ext <;> simp
         · dsimp; omega
 
-private theorem hlu (n : Nat) (m : Nat) (a : GaussianInt) (b : GaussianInt) (vertical : Bool)
-    (hoverlap : max (if vertical then a.im else a.re) (if vertical then b.im else b.re) < min
-    ((if vertical then a.im else a.re) + (n : Int)) ((if vertical then b.im else b.re) + (m :
-    Int))) : (l a b vertical) < (u n m a b vertical) := by
-  classical
-  let l := max (if vertical then a.im else a.re) (if vertical then b.im else b.re)
-  let u := min ((if vertical then a.im else a.re) + (n : Int))
-    ((if vertical then b.im else b.re) + (m : Int))
-  change (l < u)
-  exact hoverlap
-
 private theorem hdelta (n : Nat) (m : Nat) (a : GaussianInt) (b : GaussianInt) (vertical : Bool)
     (hoverlap : max (if vertical then a.im else a.re) (if vertical then b.im else b.re) < min
     ((if vertical then a.im else a.re) + (n : Int)) ((if vertical then b.im else b.re) + (m :
@@ -306,43 +295,8 @@ private theorem hdelta (n : Nat) (m : Nat) (a : GaussianInt) (b : GaussianInt) (
   change ((((u - l).toNat : Nat) : Int) = u - l)
   omega
 
-private theorem positive_length (n : Nat) (m : Nat) (a : GaussianInt) (b : GaussianInt) (vertical
-    : Bool) (hoverlap : max (if vertical then a.im else a.re) (if vertical then b.im else b.re) <
-    min ((if vertical then a.im else a.re) + (n : Int)) ((if vertical then b.im else b.re) + (m :
-    Int))) : 0 < ((u n m a b vertical) - (l a b vertical)).toNat := by
-  classical
-  let l := max (if vertical then a.im else a.re) (if vertical then b.im else b.re)
-  let u := min ((if vertical then a.im else a.re) + (n : Int))
-    ((if vertical then b.im else b.re) + (m : Int))
-  have hdelta : (((u - l).toNat : Nat) : Int) = u - l := hdelta n m a b vertical hoverlap
-  change (0 < (u - l).toNat)
-  omega
-
-private theorem finj (n : Nat) (m : Nat) (hn : 0 < n) (hm : 0 < m) (a : GaussianInt) (b :
-    GaussianInt) (vertical : Bool) (hside : if vertical then b.re = a.re + (n : Int) else b.im =
-    a.im + (n : Int)) (hoverlap : max (if vertical then a.im else a.re) (if vertical then b.im
-    else b.re) < min ((if vertical then a.im else a.re) + (n : Int)) ((if vertical then b.im else
-    b.re) + (m : Int))) : Function.Injective (f a b vertical) := by
-  classical
-  let A := TileTranslation (FordTile n) a
-  let B := TileTranslation (FordTile m) b
-  let l := max (if vertical then a.im else a.re) (if vertical then b.im else b.re)
-  let u := min ((if vertical then a.im else a.re) + (n : Int))
-    ((if vertical then b.im else b.re) + (m : Int))
-  let f := fun k : Nat => if vertical then (⟨b.re, l + (k : Int)⟩ : GaussianInt)
-    else (⟨l + (k : Int), b.im⟩ : GaussianInt)
-  have vertices : BoundaryFootprintVertices A ∩ BoundaryFootprintVertices B =
-      {z | if vertical then z.re = b.re ∧ l ≤ z.im ∧ z.im ≤ u
-        else z.im = b.im ∧ l ≤ z.re ∧ z.re ≤ u} := vertices n m hn hm a b vertical hside hoverlap
-  have edges : BoundaryFootprintEdges A ∩ BoundaryFootprintEdges B =
-      {e | ∃ t : Int, l ≤ t ∧ t < u ∧ e = if vertical then
-        {(⟨b.re, t⟩ : GaussianInt), ⟨b.re, t + 1⟩}
-        else {(⟨t, b.im⟩ : GaussianInt), ⟨t + 1, b.im⟩}} := edges n m hn hm a b vertical hside
-            hoverlap
-  have hlu : l < u := hlu n m a b vertical hoverlap
-  have hdelta : (((u - l).toNat : Nat) : Int) = u - l := hdelta n m a b vertical hoverlap
-  have positive_length : 0 < (u - l).toNat := positive_length n m a b vertical hoverlap
-  change (Function.Injective f)
+private theorem finj (a b : GaussianInt) (vertical : Bool) :
+    Function.Injective (f a b vertical) := by
   intro j k he
   cases vertical
   · have h := congrArg Zsqrtd.re he
@@ -352,21 +306,9 @@ private theorem finj (n : Nat) (m : Nat) (hn : 0 < n) (hm : 0 < m) (a : Gaussian
     dsimp [f] at h
     omega
 
-private theorem pnd (n : Nat) (m : Nat) (hn : 0 < n) (hm : 0 < m) (a : GaussianInt) (b :
-    GaussianInt) (vertical : Bool) (hside : if vertical then b.re = a.re + (n : Int) else b.im =
-    a.im + (n : Int)) (hoverlap : max (if vertical then a.im else a.re) (if vertical then b.im
-    else b.re) < min ((if vertical then a.im else a.re) + (n : Int)) ((if vertical then b.im else
-    b.re) + (m : Int))) : (p n m a b vertical).Nodup := by
-  classical
-  let l := max (if vertical then a.im else a.re) (if vertical then b.im else b.re)
-  let u := min ((if vertical then a.im else a.re) + (n : Int))
-    ((if vertical then b.im else b.re) + (m : Int))
-  let f := fun k : Nat => if vertical then (⟨b.re, l + (k : Int)⟩ : GaussianInt)
-    else (⟨l + (k : Int), b.im⟩ : GaussianInt)
-  let p := (List.range ((u - l).toNat + 1)).map f
-  have finj : Function.Injective f := finj n m hn hm a b vertical hside hoverlap
-  change (p.Nodup)
-  exact List.nodup_range.map finj
+private theorem pnd (n m : Nat) (a b : GaussianInt) (vertical : Bool) :
+    (p n m a b vertical).Nodup := by
+  exact List.nodup_range.map (finj a b vertical)
 
 private theorem plen (n : Nat) (m : Nat) (a : GaussianInt) (b : GaussianInt) (vertical : Bool)
     (hoverlap : max (if vertical then a.im else a.re) (if vertical then b.im else b.re) < min
@@ -401,17 +343,7 @@ private theorem pvertices (n : Nat) (m : Nat) (hn : 0 < n) (hm : 0 < m) (a : Gau
   have vertices : BoundaryFootprintVertices A ∩ BoundaryFootprintVertices B =
       {z | if vertical then z.re = b.re ∧ l ≤ z.im ∧ z.im ≤ u
         else z.im = b.im ∧ l ≤ z.re ∧ z.re ≤ u} := vertices n m hn hm a b vertical hside hoverlap
-  have edges : BoundaryFootprintEdges A ∩ BoundaryFootprintEdges B =
-      {e | ∃ t : Int, l ≤ t ∧ t < u ∧ e = if vertical then
-        {(⟨b.re, t⟩ : GaussianInt), ⟨b.re, t + 1⟩}
-        else {(⟨t, b.im⟩ : GaussianInt), ⟨t + 1, b.im⟩}} := edges n m hn hm a b vertical hside
-            hoverlap
-  have hlu : l < u := hlu n m a b vertical hoverlap
   have hdelta : (((u - l).toNat : Nat) : Int) = u - l := hdelta n m a b vertical hoverlap
-  have positive_length : 0 < (u - l).toNat := positive_length n m a b vertical hoverlap
-  have finj : Function.Injective f := finj n m hn hm a b vertical hside hoverlap
-  have pnd : p.Nodup := pnd n m hn hm a b vertical hside hoverlap
-  have plen : 2 ≤ p.length := plen n m a b vertical hoverlap
   change (BoundaryFootprintVertices A ∩ BoundaryFootprintVertices B =
       (p.toFinset : Set GaussianInt))
   ext z
@@ -433,79 +365,21 @@ private theorem pvertices (n : Nat) (m : Nat) (hn : 0 < n) (hm : 0 < m) (a : Gau
 private noncomputable abbrev adj := fun x y : GaussianInt => y = x + 1 ∨ y = x - 1 ∨
     y = x + ⟨0, 1⟩ ∨ y = x - ⟨0, 1⟩
 
-private theorem fstep (n : Nat) (m : Nat) (hn : 0 < n) (hm : 0 < m) (a : GaussianInt) (b :
-    GaussianInt) (vertical : Bool) (hside : if vertical then b.re = a.re + (n : Int) else b.im =
-    a.im + (n : Int)) (hoverlap : max (if vertical then a.im else a.re) (if vertical then b.im
-    else b.re) < min ((if vertical then a.im else a.re) + (n : Int)) ((if vertical then b.im else
-    b.re) + (m : Int))) (k : Nat) : adj ((f a b vertical) k) ((f a b vertical) (k + 1)) := by
-  classical
-  let A := TileTranslation (FordTile n) a
-  let B := TileTranslation (FordTile m) b
-  let l := max (if vertical then a.im else a.re) (if vertical then b.im else b.re)
-  let u := min ((if vertical then a.im else a.re) + (n : Int))
-    ((if vertical then b.im else b.re) + (m : Int))
-  let f := fun k : Nat => if vertical then (⟨b.re, l + (k : Int)⟩ : GaussianInt)
-    else (⟨l + (k : Int), b.im⟩ : GaussianInt)
-  let p := (List.range ((u - l).toNat + 1)).map f
-  have vertices : BoundaryFootprintVertices A ∩ BoundaryFootprintVertices B =
-      {z | if vertical then z.re = b.re ∧ l ≤ z.im ∧ z.im ≤ u
-        else z.im = b.im ∧ l ≤ z.re ∧ z.re ≤ u} := vertices n m hn hm a b vertical hside hoverlap
-  have edges : BoundaryFootprintEdges A ∩ BoundaryFootprintEdges B =
-      {e | ∃ t : Int, l ≤ t ∧ t < u ∧ e = if vertical then
-        {(⟨b.re, t⟩ : GaussianInt), ⟨b.re, t + 1⟩}
-        else {(⟨t, b.im⟩ : GaussianInt), ⟨t + 1, b.im⟩}} := edges n m hn hm a b vertical hside
-            hoverlap
-  have hlu : l < u := hlu n m a b vertical hoverlap
-  have hdelta : (((u - l).toNat : Nat) : Int) = u - l := hdelta n m a b vertical hoverlap
-  have positive_length : 0 < (u - l).toNat := positive_length n m a b vertical hoverlap
-  have finj : Function.Injective f := finj n m hn hm a b vertical hside hoverlap
-  have pnd : p.Nodup := pnd n m hn hm a b vertical hside hoverlap
-  have plen : 2 ≤ p.length := plen n m a b vertical hoverlap
-  have pvertices : BoundaryFootprintVertices A ∩ BoundaryFootprintVertices B =
-      (p.toFinset : Set GaussianInt) := pvertices n m hn hm a b vertical hside hoverlap
-  let adj := fun x y : GaussianInt => y = x + 1 ∨ y = x - 1 ∨
-    y = x + ⟨0, 1⟩ ∨ y = x - ⟨0, 1⟩
-  change (adj (f k) (f (k + 1)))
+private theorem fstep (a b : GaussianInt) (vertical : Bool) (k : Nat) :
+    adj (f a b vertical k) (f a b vertical (k + 1)) := by
   cases vertical
   · left; apply Zsqrtd.ext <;> simp [f, add_assoc]
   · right; right; left; apply Zsqrtd.ext <;> simp [f, add_assoc]
 
-private theorem chain (n : Nat) (m : Nat) (hn : 0 < n) (hm : 0 < m) (a : GaussianInt) (b :
-    GaussianInt) (vertical : Bool) (hside : if vertical then b.re = a.re + (n : Int) else b.im =
-    a.im + (n : Int)) (hoverlap : max (if vertical then a.im else a.re) (if vertical then b.im
-    else b.re) < min ((if vertical then a.im else a.re) + (n : Int)) ((if vertical then b.im else
-    b.re) + (m : Int))) : (p n m a b vertical).IsChain adj := by
-  classical
-  let l := max (if vertical then a.im else a.re) (if vertical then b.im else b.re)
-  let u := min ((if vertical then a.im else a.re) + (n : Int))
-    ((if vertical then b.im else b.re) + (m : Int))
-  let f := fun k : Nat => if vertical then (⟨b.re, l + (k : Int)⟩ : GaussianInt)
-    else (⟨l + (k : Int), b.im⟩ : GaussianInt)
-  let p := (List.range ((u - l).toNat + 1)).map f
-  let adj := fun x y : GaussianInt => y = x + 1 ∨ y = x - 1 ∨
-    y = x + ⟨0, 1⟩ ∨ y = x - ⟨0, 1⟩
-  have fstep (k : Nat) : adj (f k) (f (k + 1)) := fstep n m hn hm a b vertical hside hoverlap k
-  change (p.IsChain adj)
-  apply (List.isChain_map f).mpr
-  exact (List.isChain_range_succ _ (u - l).toNat).mpr (fun k _ => fstep k)
+private theorem chain (n m : Nat) (a b : GaussianInt) (vertical : Bool) :
+    (p n m a b vertical).IsChain adj := by
+  apply (List.isChain_map (f a b vertical)).mpr
+  exact (List.isChain_range_succ _ (u n m a b vertical - l a b vertical).toNat).mpr
+    (fun k _ => fstep a b vertical k)
 
-private theorem step (n : Nat) (m : Nat) (hn : 0 < n) (hm : 0 < m) (a : GaussianInt) (b :
-    GaussianInt) (vertical : Bool) (hside : if vertical then b.re = a.re + (n : Int) else b.im =
-    a.im + (n : Int)) (hoverlap : max (if vertical then a.im else a.re) (if vertical then b.im
-    else b.re) < min ((if vertical then a.im else a.re) + (n : Int)) ((if vertical then b.im else
-    b.re) + (m : Int))) : ∀ x y l₁ l₂, (p n m a b vertical) = l₁ ++ x :: y :: l₂ → adj x y := by
-  classical
-  let l := max (if vertical then a.im else a.re) (if vertical then b.im else b.re)
-  let u := min ((if vertical then a.im else a.re) + (n : Int))
-    ((if vertical then b.im else b.re) + (m : Int))
-  let f := fun k : Nat => if vertical then (⟨b.re, l + (k : Int)⟩ : GaussianInt)
-    else (⟨l + (k : Int), b.im⟩ : GaussianInt)
-  let p := (List.range ((u - l).toNat + 1)).map f
-  let adj := fun x y : GaussianInt => y = x + 1 ∨ y = x - 1 ∨
-    y = x + ⟨0, 1⟩ ∨ y = x - ⟨0, 1⟩
-  have chain : p.IsChain adj := chain n m hn hm a b vertical hside hoverlap
-  change (∀ x y l₁ l₂, p = l₁ ++ x :: y :: l₂ → adj x y)
-  exact List.isChain_iff_forall_rel_of_append_cons_cons.mp chain
+private theorem step (n m : Nat) (a b : GaussianInt) (vertical : Bool) :
+    ∀ x y l₁ l₂, p n m a b vertical = l₁ ++ x :: y :: l₂ → adj x y := by
+  exact List.isChain_iff_forall_rel_of_append_cons_cons.mp (chain n m a b vertical)
 
 private theorem occurs (n : Nat) (m : Nat) (a : GaussianInt) (b : GaussianInt) (vertical : Bool)
     (k : Nat) (hk : k < ((u n m a b vertical) - (l a b vertical)).toNat) :
@@ -542,80 +416,20 @@ private theorem edge_step (n : Nat) (m : Nat) (hn : 0 < n) (hm : 0 < m) (a : Gau
     ((if vertical then b.im else b.re) + (m : Int))
   let f := fun k : Nat => if vertical then (⟨b.re, l + (k : Int)⟩ : GaussianInt)
     else (⟨l + (k : Int), b.im⟩ : GaussianInt)
-  let p := (List.range ((u - l).toNat + 1)).map f
-  have vertices : BoundaryFootprintVertices A ∩ BoundaryFootprintVertices B =
-      {z | if vertical then z.re = b.re ∧ l ≤ z.im ∧ z.im ≤ u
-        else z.im = b.im ∧ l ≤ z.re ∧ z.re ≤ u} := vertices n m hn hm a b vertical hside hoverlap
   have edges : BoundaryFootprintEdges A ∩ BoundaryFootprintEdges B =
       {e | ∃ t : Int, l ≤ t ∧ t < u ∧ e = if vertical then
         {(⟨b.re, t⟩ : GaussianInt), ⟨b.re, t + 1⟩}
         else {(⟨t, b.im⟩ : GaussianInt), ⟨t + 1, b.im⟩}} := edges n m hn hm a b vertical hside
             hoverlap
-  have hlu : l < u := hlu n m a b vertical hoverlap
   have hdelta : (((u - l).toNat : Nat) : Int) = u - l := hdelta n m a b vertical hoverlap
-  have positive_length : 0 < (u - l).toNat := positive_length n m a b vertical hoverlap
-  have finj : Function.Injective f := finj n m hn hm a b vertical hside hoverlap
-  have pnd : p.Nodup := pnd n m hn hm a b vertical hside hoverlap
-  have plen : 2 ≤ p.length := plen n m a b vertical hoverlap
-  have pvertices : BoundaryFootprintVertices A ∩ BoundaryFootprintVertices B =
-      (p.toFinset : Set GaussianInt) := pvertices n m hn hm a b vertical hside hoverlap
-  let adj := fun x y : GaussianInt => y = x + 1 ∨ y = x - 1 ∨
-    y = x + ⟨0, 1⟩ ∨ y = x - ⟨0, 1⟩
-  have fstep (k : Nat) : adj (f k) (f (k + 1)) := fstep n m hn hm a b vertical hside hoverlap k
-  have chain : p.IsChain adj := chain n m hn hm a b vertical hside hoverlap
-  have step : ∀ x y l₁ l₂, p = l₁ ++ x :: y :: l₂ → adj x y := step n m hn hm a b vertical hside
-      hoverlap
-  have occurs (k : Nat) (hk : k < (u - l).toNat) :
-      ∃ l₁ l₂, p = l₁ ++ f k :: f (k + 1) :: l₂ := occurs n m a b vertical k hk
   change k < (u - l).toNat at hk
   change ({f k, f (k + 1)} ∈ BoundaryFootprintEdges A ∩ BoundaryFootprintEdges B)
   rw [edges]
   refine ⟨l + (k : Int), by omega, by omega, ?_⟩
   cases vertical <;> simp [f, add_assoc]
 
-private theorem adjacent_indices (n : Nat) (m : Nat) (hn : 0 < n) (hm : 0 < m) (a : GaussianInt)
-    (b : GaussianInt) (vertical : Bool) (hside : if vertical then b.re = a.re + (n : Int) else
-    b.im = a.im + (n : Int)) (hoverlap : max (if vertical then a.im else a.re) (if vertical then
-    b.im else b.re) < min ((if vertical then a.im else a.re) + (n : Int)) ((if vertical then b.im
-    else b.re) + (m : Int))) (j k : Nat) (h : adj ((f a b vertical) j) ((f a b vertical) k)) :
-      k = j + 1 ∨ j = k + 1 := by
-  classical
-  let A := TileTranslation (FordTile n) a
-  let B := TileTranslation (FordTile m) b
-  let l := max (if vertical then a.im else a.re) (if vertical then b.im else b.re)
-  let u := min ((if vertical then a.im else a.re) + (n : Int))
-    ((if vertical then b.im else b.re) + (m : Int))
-  let f := fun k : Nat => if vertical then (⟨b.re, l + (k : Int)⟩ : GaussianInt)
-    else (⟨l + (k : Int), b.im⟩ : GaussianInt)
-  let p := (List.range ((u - l).toNat + 1)).map f
-  have vertices : BoundaryFootprintVertices A ∩ BoundaryFootprintVertices B =
-      {z | if vertical then z.re = b.re ∧ l ≤ z.im ∧ z.im ≤ u
-        else z.im = b.im ∧ l ≤ z.re ∧ z.re ≤ u} := vertices n m hn hm a b vertical hside hoverlap
-  have edges : BoundaryFootprintEdges A ∩ BoundaryFootprintEdges B =
-      {e | ∃ t : Int, l ≤ t ∧ t < u ∧ e = if vertical then
-        {(⟨b.re, t⟩ : GaussianInt), ⟨b.re, t + 1⟩}
-        else {(⟨t, b.im⟩ : GaussianInt), ⟨t + 1, b.im⟩}} := edges n m hn hm a b vertical hside
-            hoverlap
-  have hlu : l < u := hlu n m a b vertical hoverlap
-  have hdelta : (((u - l).toNat : Nat) : Int) = u - l := hdelta n m a b vertical hoverlap
-  have positive_length : 0 < (u - l).toNat := positive_length n m a b vertical hoverlap
-  have finj : Function.Injective f := finj n m hn hm a b vertical hside hoverlap
-  have pnd : p.Nodup := pnd n m hn hm a b vertical hside hoverlap
-  have plen : 2 ≤ p.length := plen n m a b vertical hoverlap
-  have pvertices : BoundaryFootprintVertices A ∩ BoundaryFootprintVertices B =
-      (p.toFinset : Set GaussianInt) := pvertices n m hn hm a b vertical hside hoverlap
-  let adj := fun x y : GaussianInt => y = x + 1 ∨ y = x - 1 ∨
-    y = x + ⟨0, 1⟩ ∨ y = x - ⟨0, 1⟩
-  have fstep (k : Nat) : adj (f k) (f (k + 1)) := fstep n m hn hm a b vertical hside hoverlap k
-  have chain : p.IsChain adj := chain n m hn hm a b vertical hside hoverlap
-  have step : ∀ x y l₁ l₂, p = l₁ ++ x :: y :: l₂ → adj x y := step n m hn hm a b vertical hside
-      hoverlap
-  have occurs (k : Nat) (hk : k < (u - l).toNat) :
-      ∃ l₁ l₂, p = l₁ ++ f k :: f (k + 1) :: l₂ := occurs n m a b vertical k hk
-  have edge_step (k : Nat) (hk : k < (u - l).toNat) :
-      {f k, f (k + 1)} ∈ BoundaryFootprintEdges A ∩ BoundaryFootprintEdges B := edge_step n m hn
-          hm a b vertical hside hoverlap k hk
-  change adj (f j) (f k) at h
+private theorem adjacent_indices (a b : GaussianInt) (vertical : Bool) (j k : Nat)
+    (h : adj (f a b vertical j) (f a b vertical k)) : k = j + 1 ∨ j = k + 1 := by
   cases vertical <;> simp [adj, f, Zsqrtd.ext_iff] at h <;> omega
 
 private theorem path (n : Nat) (m : Nat) (hn : 0 < n) (hm : 0 < m) (a : GaussianInt) (b :
@@ -634,35 +448,26 @@ private theorem path (n : Nat) (m : Nat) (hn : 0 < n) (hm : 0 < m) (a : Gaussian
   let f := fun k : Nat => if vertical then (⟨b.re, l + (k : Int)⟩ : GaussianInt)
     else (⟨l + (k : Int), b.im⟩ : GaussianInt)
   let p := (List.range ((u - l).toNat + 1)).map f
-  have vertices : BoundaryFootprintVertices A ∩ BoundaryFootprintVertices B =
-      {z | if vertical then z.re = b.re ∧ l ≤ z.im ∧ z.im ≤ u
-        else z.im = b.im ∧ l ≤ z.re ∧ z.re ≤ u} := vertices n m hn hm a b vertical hside hoverlap
   have edges : BoundaryFootprintEdges A ∩ BoundaryFootprintEdges B =
       {e | ∃ t : Int, l ≤ t ∧ t < u ∧ e = if vertical then
         {(⟨b.re, t⟩ : GaussianInt), ⟨b.re, t + 1⟩}
         else {(⟨t, b.im⟩ : GaussianInt), ⟨t + 1, b.im⟩}} := edges n m hn hm a b vertical hside
             hoverlap
-  have hlu : l < u := hlu n m a b vertical hoverlap
   have hdelta : (((u - l).toNat : Nat) : Int) = u - l := hdelta n m a b vertical hoverlap
-  have positive_length : 0 < (u - l).toNat := positive_length n m a b vertical hoverlap
-  have finj : Function.Injective f := finj n m hn hm a b vertical hside hoverlap
-  have pnd : p.Nodup := pnd n m hn hm a b vertical hside hoverlap
+  have pnd : p.Nodup := pnd n m a b vertical
   have plen : 2 ≤ p.length := plen n m a b vertical hoverlap
   have pvertices : BoundaryFootprintVertices A ∩ BoundaryFootprintVertices B =
       (p.toFinset : Set GaussianInt) := pvertices n m hn hm a b vertical hside hoverlap
   let adj := fun x y : GaussianInt => y = x + 1 ∨ y = x - 1 ∨
     y = x + ⟨0, 1⟩ ∨ y = x - ⟨0, 1⟩
-  have fstep (k : Nat) : adj (f k) (f (k + 1)) := fstep n m hn hm a b vertical hside hoverlap k
-  have chain : p.IsChain adj := chain n m hn hm a b vertical hside hoverlap
-  have step : ∀ x y l₁ l₂, p = l₁ ++ x :: y :: l₂ → adj x y := step n m hn hm a b vertical hside
-      hoverlap
+  have step : ∀ x y l₁ l₂, p = l₁ ++ x :: y :: l₂ → adj x y := step n m a b vertical
   have occurs (k : Nat) (hk : k < (u - l).toNat) :
       ∃ l₁ l₂, p = l₁ ++ f k :: f (k + 1) :: l₂ := occurs n m a b vertical k hk
   have edge_step (k : Nat) (hk : k < (u - l).toNat) :
       {f k, f (k + 1)} ∈ BoundaryFootprintEdges A ∩ BoundaryFootprintEdges B := edge_step n m hn
           hm a b vertical hside hoverlap k hk
   have adjacent_indices (j k : Nat) (h : adj (f j) (f k)) :
-      k = j + 1 ∨ j = k + 1 := adjacent_indices n m hn hm a b vertical hside hoverlap j k h
+      k = j + 1 ∨ j = k + 1 := adjacent_indices a b vertical j k h
   change (SimpleGridPath (BoundaryFootprintVertices A ∩ BoundaryFootprintVertices B)
       (BoundaryFootprintEdges A ∩ BoundaryFootprintEdges B))
   refine ⟨p, pnd, plen, pvertices, step, ?_⟩
@@ -746,7 +551,7 @@ theorem P5110T1SquareInterface (n m : Nat) (hn : 0 < n) (hm : 0 < m)
         {(⟨b.re, t⟩ : GaussianInt), ⟨b.re, t + 1⟩}
         else {(⟨t, b.im⟩ : GaussianInt), ⟨t + 1, b.im⟩}} := SquareInterfaceConstruction.edges n m
             hn hm a b vertical hside hoverlap
-  have pnd : p.Nodup := SquareInterfaceConstruction.pnd n m hn hm a b vertical hside hoverlap
+  have pnd : p.Nodup := SquareInterfaceConstruction.pnd n m a b vertical
   have plen : 2 ≤ p.length := SquareInterfaceConstruction.plen n m a b vertical hoverlap
   have pvertices : BoundaryFootprintVertices A ∩ BoundaryFootprintVertices B =
       (p.toFinset : Set GaussianInt) := SquareInterfaceConstruction.pvertices n m hn hm a b

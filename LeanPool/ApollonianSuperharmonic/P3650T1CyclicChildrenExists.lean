@@ -469,7 +469,6 @@ private noncomputable abbrev il (n : Nat) (a : Fin (n + 3)) (b : Fin (n + 3)) (h
   let N := n + 3
   let rot : Fin N → Fin N := fun i => a + i
   let k : Nat := (b.val + N - a.val) % N
-  have hklt : k < N := hklt n a b
   have hkv : k = if a.val ≤ b.val then b.val - a.val else b.val + N - a.val := hkv n a b
   have hkle : k + 2 ≤ N := hkle n a b hprev
   let root : List (Fin N) := List.ofFn (fun i : Fin N => i)
@@ -1537,22 +1536,16 @@ private noncomputable abbrev leftPoly (n : Nat) (p : P3381T1PolygonBoundary n) (
   let N := n + 3
   let rot : Fin N → Fin N := fun i => a + i
   let k : Nat := (b.val + N - a.val) % N
-  have hklt : k < N := hklt n a b
   have hkv : k = if a.val ≤ b.val then b.val - a.val else b.val + N - a.val := hkv n a b
   have hkle : k + 2 ≤ N := hkle n a b hprev
   let root : List (Fin N) := List.ofFn (fun i : Fin N => i)
   have hrootlen : root.length = N := hrootlen n
   let leftN := k - 2
-  let rightN := N - k - 2
   have hleftLen : leftN + 3 = k + 1 := hleftLen n a b hab hnext hprev
   let il : Fin (leftN + 3) → Fin N := fun i => rot ⟨i.val, by rw [hleftLen] at i; omega⟩
-  let posR : Fin (rightN + 3) → Nat := fun i =>
-    if i.val = N - k then 0 else k + i.val
-  have hposRlt (i : Fin (rightN + 3)) : posR i < N := hposRlt n a b hab hnext hprev i
   have hleft_inj : Function.Injective il := hleft_inj n a b hab hnext hprev
   have hik : k < leftN + 3 := hik n a b hab hnext hprev
   let ik : Fin (leftN + 3) := ⟨k, hik⟩
-  have hlastRlt : N - k < rightN + 3 := hlastRlt n a b hab hnext hprev
   have hleft_old_old (i j : Fin (leftN + 3)) (hi : i.val < k)
       (hj : j.val < k) (hij : i ≠ j) :
       segment Real (p.vertex (il i)) (p.vertex (il (i + 1))) ∩
@@ -1617,21 +1610,13 @@ private noncomputable abbrev rightPoly (n : Nat) (p : P3381T1PolygonBoundary n) 
   let N := n + 3
   let rot : Fin N → Fin N := fun i => a + i
   let k : Nat := (b.val + N - a.val) % N
-  have hklt : k < N := hklt n a b
-  have hkv : k = if a.val ≤ b.val then b.val - a.val else b.val + N - a.val := hkv n a b
-  have hkle : k + 2 ≤ N := hkle n a b hprev
-  let root : List (Fin N) := List.ofFn (fun i : Fin N => i)
-  have hrootlen : root.length = N := hrootlen n
-  let leftN := k - 2
   let rightN := N - k - 2
-  have hleftLen : leftN + 3 = k + 1 := hleftLen n a b hab hnext hprev
   have hrightLen : rightN + 3 = N - k + 1 := hrightLen n a b hab hnext hprev
   let posR : Fin (rightN + 3) → Nat := fun i =>
     if i.val = N - k then 0 else k + i.val
   have hposRlt (i : Fin (rightN + 3)) : posR i < N := hposRlt n a b hab hnext hprev i
   let ir : Fin (rightN + 3) → Fin N := fun i => rot ⟨posR i, hposRlt i⟩
   have hright_inj : Function.Injective ir := hright_inj n a b hab hnext hprev
-  have hik : k < leftN + 3 := hik n a b hab hnext hprev
   have hlastRlt : N - k < rightN + 3 := hlastRlt n a b hab hnext hprev
   let lastR : Fin (rightN + 3) := ⟨N - k, hlastRlt⟩
   have hright_old_old (i j : Fin (rightN + 3)) (hi : i.val < N - k)

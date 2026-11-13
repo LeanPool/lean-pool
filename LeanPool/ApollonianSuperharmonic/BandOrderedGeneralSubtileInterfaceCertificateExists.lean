@@ -601,55 +601,6 @@ private theorem hfixedCent :
   intro C₀ Cᵢ q i T₀ Tᵢ h₀ hᵢ x normalization Q incoming outgoing
   simpa [Q, incoming, outgoing] using normalization.normalized_adjacency_centroid
 
-private theorem hcentUF :
-    (by
-      classical
-      exact
-        ∀ (C₀ : BandCircle), ∀ (Cᵢ : BandCircle), ∀ (q : Fin 4 → CircleCoordinates), ∀ (i : Fin
-            3), ∀ (T₀ : ProtoTile), ∀ (Tᵢ : ProtoTile), ∀ (h₀ : PartialOdometer), ∀ (hᵢ :
-            PartialOdometer), ∀ (x : GaussianInt), ∀ (normalization :
-            BandOrderedGeneralSubtileNormalizationCertificate C₀ Cᵢ q i T₀ Tᵢ h₀ hᵢ x),
-        let Q := normalization.normalizedPresentation
-        let incoming : Fin 3 → GaussianInt := fun j =>
-          BandVectors.1 (Q j.succ) (Q 0)
-        let outgoing : Fin 3 → GaussianInt := fun j =>
-          BandVectors.1 (Q 0) (Q j.succ)
-        let uIndex : PeriodicSubtileIndex :=
-          if normalization.normalizedParentSlot = 0 then
-            if normalization.normalizedQuarterTurn = 0 then ⟨.A, 0, -1⟩
-            else if normalization.normalizedQuarterTurn = 1 then ⟨.B, 1, 1⟩
-            else if normalization.normalizedQuarterTurn = 2 then ⟨.B, 0, 1⟩
-            else ⟨.A, -1, -1⟩
-          else if normalization.normalizedParentSlot = 1 then
-            if normalization.normalizedQuarterTurn = 0 then ⟨.C, 1, 1⟩
-            else if normalization.normalizedQuarterTurn = 1 then ⟨.D, -1, 0⟩
-            else if normalization.normalizedQuarterTurn = 2 then ⟨.D, -1, -1⟩
-            else ⟨.C, 1, 0⟩
-          else if normalization.normalizedQuarterTurn = 0 then ⟨.E, -1, 0⟩
-          else if normalization.normalizedQuarterTurn = 1 then ⟨.F, 0, -1⟩
-          else if normalization.normalizedQuarterTurn = 2 then ⟨.F, 1, 0⟩
-          else ⟨.E, 0, 1⟩
-        let U := SubtileOccurrenceInterpretation normalization.layout.P
-          normalization.layout.u normalization.layout.v uIndex
-        (TileCentroid U - TileCentroid normalization.normalizedRoot = (1 / 2 : Real) •
-            GaussianRealPoint ((⟨0, 1⟩ : GaussianInt) ^ normalization.normalizedQuarterTurn.val *
-            (incoming normalization.normalizedParentSlot + outgoing
-            normalization.normalizedParentSlot))) → ((TileCentroid normalization.normalizedFixed
-            - TileCentroid normalization.normalizedRoot = (1 / 2 : Real) • GaussianRealPoint
-            ((⟨0, 1⟩ : GaussianInt) ^ normalization.normalizedQuarterTurn.val * (incoming
-            normalization.normalizedParentSlot + outgoing normalization.normalizedParentSlot))) →
-            (TileCentroid U = TileCentroid normalization.normalizedFixed)) ) := by
-  classical
-  intro C₀ Cᵢ q i T₀ Tᵢ h₀ hᵢ x normalization Q incoming outgoing uIndex U hUcent hfixedCent
-  calc
-    TileCentroid U =
-        (TileCentroid U - TileCentroid normalization.normalizedRoot) +
-          TileCentroid normalization.normalizedRoot := by abel
-    _ = (TileCentroid normalization.normalizedFixed -
-          TileCentroid normalization.normalizedRoot) +
-          TileCentroid normalization.normalizedRoot := by rw [hUcent, hfixedCent]
-    _ = TileCentroid normalization.normalizedFixed := by abel
-
 private theorem hrow' :
     (by
       classical
@@ -1238,60 +1189,6 @@ private theorem hVbarCent :
       apply Zsqrtd.ext <;>
         simp [hf1, notEven3, Fin.sub_def, pow_succ] <;> ring
 
-private theorem hEndpoints :
-    (by
-      classical
-      exact
-        ∀ (C₀ : BandCircle), ∀ (Cᵢ : BandCircle), ∀ (q : Fin 4 → CircleCoordinates), ∀ (i : Fin
-            3), ∀ (T₀ : ProtoTile), ∀ (Tᵢ : ProtoTile), ∀ (h₀ : PartialOdometer), ∀ (hᵢ :
-            PartialOdometer), ∀ (x : GaussianInt), ∀ (normalization :
-            BandOrderedGeneralSubtileNormalizationCertificate C₀ Cᵢ q i T₀ Tᵢ h₀ hᵢ x),
-        let Q := normalization.normalizedPresentation
-        ∀ (uIndex : PeriodicSubtileIndex), ∀ (V : ProtoTile), ∀ (W : ProtoTile),
-        let source := SubtileOccurrenceInterpretation normalization.layout.P
-          normalization.layout.u normalization.layout.v uIndex
-        ∀ (incomingRaw : ExactTileInterfaceTriple normalization.normalizedRoot (TileTranslation
-            normalization.normalizedRoot ((⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt) ^
-            (↑normalization.normalizedQuarterTurn : ℕ) * if Even
-            (↑normalization.normalizedQuarterTurn : ℕ) then BandVectors.1 (Q
-            normalization.normalizedParentSlot.succ) (Q (0 : Fin (4 : ℕ))) else BandVectors.1 (Q
-            (0 : Fin (4 : ℕ))) (Q normalization.normalizedParentSlot.succ))) source), ∀ (t5Data :
-            ExactTileInterfaceTriple normalization.normalizedRoot source V), (incomingRaw.otherCA
-            = t5Data.point) → ((t5Data.otherAB = incomingRaw.point) → (∀ (hWExact : W =
-            TileTranslation normalization.normalizedRoot ((⟨0, 1⟩ : GaussianInt) ^
-            normalization.normalizedQuarterTurn.val * (if Even
-            normalization.normalizedQuarterTurn.val then BandVectors.1 (Q
-            normalization.normalizedParentSlot.succ) (Q 0) else BandVectors.1 (Q 0) (Q
-            normalization.normalizedParentSlot.succ)))),
-        let incomingData : ExactTileInterfaceTriple
-            normalization.normalizedRoot W source := hWExact.symm ▸ incomingRaw
-        (incomingData.point = incomingRaw.point) → ((incomingData.otherCA = incomingRaw.otherCA)
-            → (∀ (startSource : ExactTileInterfaceTriple normalization.normalizedRoot source W),
-            (startSource.point = incomingData.point) → ((startSource.otherAB =
-            incomingData.otherCA) → (∀ (startData : ExactTileInterfaceTriple
-            normalization.normalizedRoot normalization.normalizedFixed W), (startData.point =
-            startSource.point) → ((startData.otherAB = startSource.otherAB) → (∀ (endData :
-            ExactTileInterfaceTriple normalization.normalizedRoot normalization.normalizedFixed
-            V), (endData.point = t5Data.point) → ((endData.otherAB = t5Data.otherAB) →
-            (endData.point = startData.otherAB ∧ endData.otherAB = startData.point)))))))))) ) := by
-  classical
-  intro C₀ Cᵢ q i T₀ Tᵢ h₀ hᵢ x normalization Q uIndex V W source incomingRaw t5Data
-      hincomingOther ht5Other hWExact incomingData hincomingPoint hincomingOtherCA startSource
-      hswapPoint hswapOtherAB startData hstartPoint hstartOtherAB endData hendPoint hendOtherAB
-  constructor
-  · calc
-      endData.point = t5Data.point := hendPoint
-      _ = incomingRaw.otherCA := hincomingOther.symm
-      _ = incomingData.otherCA := hincomingOtherCA.symm
-      _ = startSource.otherAB := hswapOtherAB.symm
-      _ = startData.otherAB := hstartOtherAB.symm
-  · calc
-      endData.otherAB = t5Data.otherAB := hendOtherAB
-      _ = incomingRaw.point := ht5Other
-      _ = incomingData.point := hincomingPoint.symm
-      _ = startSource.point := hswapPoint.symm
-      _ = startData.point := hstartPoint.symm
-
 end SubtileInterfaceAssembly
 
 namespace SubtileInterfaceRowPackage
@@ -1597,8 +1494,8 @@ private theorem rowPackage :
   have hfixedEq := BandPrototileCentroidUnique
     (Q normalization.normalizedParentSlot.succ) U normalization.normalizedFixed
     hUBand (SubtileInterfaceAssembly.hFixedBand C₀ Cᵢ q i T₀ Tᵢ h₀ hᵢ x normalization)
-        (SubtileInterfaceAssembly.hcentUF C₀ Cᵢ q i T₀ Tᵢ h₀ hᵢ x normalization hUcent
-        (SubtileInterfaceAssembly.hfixedCent C₀ Cᵢ q i T₀ Tᵢ h₀ hᵢ x normalization))
+        (sub_left_inj.mp (hUcent.trans
+      (SubtileInterfaceAssembly.hfixedCent C₀ Cᵢ q i T₀ Tᵢ h₀ hᵢ x normalization).symm))
   refine ⟨W, V, g, wShift, uIndex, uBar, vIndex, vBar, wBlock,
     (SubtileInterfaceAssembly.hrow' C₀ Cᵢ q i T₀ Tᵢ h₀ hᵢ x normalization), hfixedEq.1.symm,
         rfl, rfl, rfl, hrootBar, ?_, ?_, ?_,
@@ -1870,10 +1767,12 @@ private theorem subtileInterfaceCertificate :
     startData := startData
     endData := endData
     normalized_point_on_start_path := ⟨hPointRoot, hPointFixed⟩
-    interface_endpoints := (SubtileInterfaceAssembly.hEndpoints C₀ Cᵢ q i T₀ Tᵢ h₀ hᵢ x
-        normalization uIndex V W incomingRaw t5Data hincomingOther ht5Other hWExact
-        hincomingPoint hincomingOtherCA startSource hswapPoint hswapOtherAB startData
-        hstartPoint hstartOtherAB endData hendPoint hendOtherAB)
+    interface_endpoints := (by
+      constructor
+      · exact hendPoint.trans (hincomingOther.symm.trans (hincomingOtherCA.symm.trans
+          (hswapOtherAB.symm.trans hstartOtherAB.symm)))
+      · exact hendOtherAB.trans (ht5Other.trans (hincomingPoint.symm.trans
+          (hswapPoint.symm.trans hstartPoint.symm))))
     root_lattice := hRootLattice
     fixed_lattice := hFixedLattice
     start_lattice := hWLattice

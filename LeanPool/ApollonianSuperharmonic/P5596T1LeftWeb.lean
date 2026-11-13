@@ -580,121 +580,6 @@ private theorem hnadj :
   have hlt := hq.2 i
   omega
 
-private theorem hUn :
-    (by
-      classical
-      exact
-        (
-        (∀ (q : Fin (4 : ℕ) → CircleCoordinates),
-        ((ProperBandQuadruple q) → (∀ (U : ProtoTile), ∀ (V : ProtoTile), (LatticeTile U ∧
-            TileArea U = (q (0 : Fin (4 : ℕ))).1.toNat ∧ (∀ (S : Fin (3 : ℕ) → Bool → ProtoTile),
-                (∀ (i : Fin (3 : ℕ)), ∀ (s : Bool), BandSubtileOccurrence q U i s (S i s)) → (∀
-                (x : LatticeCell), x ∈ U.cells ↔ ∃ (i : Fin (3 : ℕ)) (s : Bool), x ∈ (S i
-                s).cells) → ∀ (i : Fin (3 : ℕ)), ∀ (s : Bool), LatticeTile (TileCellComplement U
-                (S i s)) ∧
-            TileTouching (TileCellComplement U (S i s)) (S i s)) ∧ QuarterTurnSymmetric U ∧ ((1 :
-            ℤ) < (q (0 : Fin (4 : ℕ))).1 → ∀ (i : Fin (3 : ℕ)), TouchingTriple U (TileTranslation
-            U (BandVectors.1 (q i.succ) (q (0 : Fin (4 : ℕ))))) (TileTranslation U
-            (-BandVectors.1 (q (i + (1 : Fin (3 : ℕ))).succ) (q (0 : Fin (4 : ℕ)))))) ∧ ((1 : ℤ)
-            < (q (0 : Fin (4 : ℕ))).1 → ∀ (i : Fin (3 : ℕ)), ∀ (U_1 : ProtoTile), BandPrototile
-            (q i.succ) U_1 → TileCentroid U_1 - TileCentroid U = (1 / 2 : ℝ) • (GaussianRealPoint
-            (BandVectors.1 (q i.succ) (q (0 : Fin (4 : ℕ)))) + GaussianRealPoint (BandVectors.1
-            (q (0 : Fin (4 : ℕ))) (q i.succ))) → TouchingTriple U (TileTranslation U
-            (BandVectors.1 (q i.succ) (q (0 : Fin (4 : ℕ))))) U_1) ∧ (∀ (i : Fin (3 : ℕ)), ∀ (U_1
-                : ProtoTile), ∀ (V : ProtoTile), BandPrototile (q i.succ) U_1 → BandPrototile (q
-                (i +
-            (1 : Fin (3 : ℕ))).succ) V → TileCentroid U_1 - TileCentroid U = (1 / 2 : ℝ) •
-            (GaussianRealPoint (BandVectors.1 (q i.succ) (q (0 : Fin (4 : ℕ)))) +
-            GaussianRealPoint (BandVectors.1 (q (0 : Fin (4 : ℕ))) (q i.succ))) → TileCentroid V
-            - TileCentroid U = (1 / 2 : ℝ) • (GaussianRealPoint (BandVectors.1 (q (i + (1 : Fin
-            (3 : ℕ))).succ) (q (0 : Fin (4 : ℕ)))) - GaussianRealPoint (BandVectors.1 (q (0 : Fin
-            (4 : ℕ))) (q (i + (1 : Fin (3 : ℕ))).succ))) → TouchingTriple U U_1 V) ∧ ∀ (r : Fin
-            (4 : ℕ) → CircleCoordinates), ProperBandQuadruple r → r (0 : Fin (4 : ℕ)) = q (1 :
-            Fin (4 : ℕ)) → r (2 : Fin (4 : ℕ)) = q (2 : Fin (4 : ℕ)) → r (3 : Fin (4 : ℕ)) = q (3
-            : Fin (4 : ℕ)) → (q (2 : Fin (4 : ℕ))).1 ≤ (q (1 : Fin (4 : ℕ))).1 → (q (3 : Fin (4 :
-            ℕ))).1 ≤ (q (2 : Fin (4 : ℕ))).1 → (1 : ℤ) < (q (2 : Fin (4 : ℕ))).1 → ∀ (P : Fin (3
-            : ℕ) → Bool → ProtoTile), ∀ (Q : Fin (3 : ℕ) → Bool → ProtoTile), ∀ (S : Fin (3 : ℕ)
-            → Bool → ProtoTile), (∀ (i : Fin (3 : ℕ)), ∀ (s : Bool), BandSubtileOccurrence q U i
-            s (P i s)) → (∀ (x : LatticeCell), x ∈ U.cells ↔ ∃ (i : Fin (3 : ℕ)) (s : Bool), x ∈
-            (P i s).cells) → (∀ (i : Fin (3 : ℕ)), ∀ (s : Bool), BandSubtileOccurrence r (P (0 :
-            Fin (3 : ℕ)) true) i s (Q i s)) → (∀ (x : LatticeCell), x ∈ (P (0 : Fin (3 : ℕ))
-            true).cells ↔ ∃ (i : Fin (3 : ℕ)) (s : Bool), x ∈ (Q i s).cells) → (∀ (i : Fin (3 :
-            ℕ)), ∀ (s : Bool), BandSubtileOccurrence r (P (0 : Fin (3 : ℕ)) false) i s (S i s)) →
-            (∀ (x : LatticeCell), x ∈ (P (0 : Fin (3 : ℕ)) false).cells ↔ ∃ (i : Fin (3 : ℕ)) (s
-            : Bool), x ∈ (S i s).cells) →
-        let u := BandVectors.1 (q (0 : Fin (4 : ℕ))) (q (1 : Fin (4 : ℕ)));
-        let v := BandVectors.1 (q (0 : Fin (4 : ℕ))) (q (2 : Fin (4 : ℕ))); (∀ (a :
-            PeriodicSubtileIndex), ∀ (b : PeriodicSubtileIndex), a ≠ b → ((FootprintEdges
-            (SubtileOccurrenceInterpretation P u v a) ∩ FootprintEdges
-            (SubtileOccurrenceInterpretation P u v b)).Nonempty → AllowedSubtileIncidence a b) ∧
-            (¬AllowedSubtileIncidence a b → FootprintVertices (SubtileOccurrenceInterpretation P
-            u v a) ∩ FootprintVertices (SubtileOccurrenceInterpretation P u v b) = ∅ ∨
-            (FootprintVertices (SubtileOccurrenceInterpretation P u v a) ∩ FootprintVertices
-            (SubtileOccurrenceInterpretation P u v b)).Subsingleton)) ∧ FootprintVertices (P (0 :
-            Fin (3 : ℕ)) true) ∩ FootprintVertices (P (1 : Fin (3 : ℕ)) true) ⊆ FootprintVertices
-            (Q (1 : Fin (3 : ℕ)) true) ∩ FootprintVertices (P (1 : Fin (3 : ℕ)) true) ∧
-            FootprintVertices (P (0 : Fin (3 : ℕ)) true) ∩ FootprintVertices (P (0 : Fin (3 : ℕ))
-            false) ⊆ FootprintVertices (Q (1 : Fin (3 : ℕ)) true) ∩ FootprintVertices (S (2 : Fin
-            (3 : ℕ)) false) ∪ FootprintVertices (Q (0 : Fin (3 : ℕ)) false) ∪ FootprintVertices
-            (Q (2 : Fin (3 : ℕ)) true) ∩ FootprintVertices (S (1 : Fin (3 : ℕ)) false)) →
-            ((LatticeTile V ∧ TileArea V = (q (0 : Fin (4 : ℕ))).1.toNat ∧ (∀ (S : Fin (3 : ℕ) →
-            Bool → ProtoTile), (∀ (i : Fin (3 : ℕ)), ∀ (s : Bool), BandSubtileOccurrence q V i s
-            (S i s)) → (∀ (x : LatticeCell), x ∈ V.cells ↔ ∃ (i : Fin (3 : ℕ)) (s : Bool), x ∈ (S
-            i s).cells) → ∀ (i : Fin (3 : ℕ)), ∀ (s : Bool), LatticeTile (TileCellComplement V (S
-            i s)) ∧ TileTouching (TileCellComplement V (S i s)) (S i s)) ∧ QuarterTurnSymmetric V
-            ∧ ((1 : ℤ) < (q (0 : Fin (4 : ℕ))).1 → ∀ (i : Fin (3 : ℕ)), TouchingTriple V
-            (TileTranslation V (BandVectors.1 (q i.succ) (q (0 : Fin (4 : ℕ))))) (TileTranslation
-            V (-BandVectors.1 (q (i + (1 : Fin (3 : ℕ))).succ) (q (0 : Fin (4 : ℕ)))))) ∧ ((1 :
-            ℤ) < (q (0 : Fin (4 : ℕ))).1 → ∀ (i : Fin (3 : ℕ)), ∀ (U : ProtoTile), BandPrototile
-            (q i.succ) U → TileCentroid U - TileCentroid V = (1 / 2 : ℝ) • (GaussianRealPoint
-            (BandVectors.1 (q i.succ) (q (0 : Fin (4 : ℕ)))) + GaussianRealPoint (BandVectors.1
-            (q (0 : Fin (4 : ℕ))) (q i.succ))) → TouchingTriple V (TileTranslation V
-            (BandVectors.1 (q i.succ) (q (0 : Fin (4 : ℕ))))) U) ∧ (∀ (i : Fin (3 : ℕ)), ∀ (U :
-                ProtoTile), ∀ (V_1 : ProtoTile), BandPrototile (q i.succ) U → BandPrototile (q (i +
-            (1 : Fin (3 : ℕ))).succ) V_1 → TileCentroid U - TileCentroid V = (1 / 2 : ℝ) •
-            (GaussianRealPoint (BandVectors.1 (q i.succ) (q (0 : Fin (4 : ℕ)))) +
-            GaussianRealPoint (BandVectors.1 (q (0 : Fin (4 : ℕ))) (q i.succ))) → TileCentroid
-            V_1 - TileCentroid V = (1 / 2 : ℝ) • (GaussianRealPoint (BandVectors.1 (q (i + (1 :
-            Fin (3 : ℕ))).succ) (q (0 : Fin (4 : ℕ)))) - GaussianRealPoint (BandVectors.1 (q (0 :
-            Fin (4 : ℕ))) (q (i + (1 : Fin (3 : ℕ))).succ))) → TouchingTriple V U V_1) ∧ ∀ (r :
-                Fin (4 : ℕ) → CircleCoordinates), ProperBandQuadruple r → r (0 : Fin (4 : ℕ)) = q (1
-            : Fin (4 : ℕ)) → r (2 : Fin (4 : ℕ)) = q (2 : Fin (4 : ℕ)) → r (3 : Fin (4 : ℕ)) = q
-            (3 : Fin (4 : ℕ)) → (q (2 : Fin (4 : ℕ))).1 ≤ (q (1 : Fin (4 : ℕ))).1 → (q (3 : Fin
-            (4 : ℕ))).1 ≤ (q (2 : Fin (4 : ℕ))).1 → (1 : ℤ) < (q (2 : Fin (4 : ℕ))).1 → ∀ (P :
-                Fin (3 : ℕ) → Bool → ProtoTile), ∀ (Q : Fin (3 : ℕ) → Bool → ProtoTile), ∀ (S : Fin
-            (3 : ℕ) → Bool → ProtoTile), (∀ (i : Fin (3 : ℕ)), ∀ (s : Bool),
-                BandSubtileOccurrence q V i s (P i s)) → (∀ (x : LatticeCell), x ∈ V.cells ↔ ∃ (i :
-            Fin (3 : ℕ)) (s : Bool), x ∈ (P i s).cells) → (∀ (i : Fin (3 : ℕ)), ∀ (s : Bool),
-                BandSubtileOccurrence r (P (0 : Fin (3 : ℕ)) true) i s (Q i s)) → (∀ (x :
-                LatticeCell), x ∈ (P (0 : Fin (3 : ℕ)) true).cells ↔ ∃ (i : Fin (3 : ℕ)) (s : Bool),
-            x ∈ (Q i s).cells) → (∀ (i : Fin (3 : ℕ)), ∀ (s : Bool), BandSubtileOccurrence r (P
-            (0 : Fin (3 : ℕ)) false) i s (S i s)) → (∀ (x : LatticeCell), x ∈ (P (0 : Fin (3 :
-            ℕ)) false).cells ↔ ∃ (i : Fin (3 : ℕ)) (s : Bool), x ∈ (S i s).cells) →
-        let u := BandVectors.1 (q (0 : Fin (4 : ℕ))) (q (1 : Fin (4 : ℕ)));
-        let v := BandVectors.1 (q (0 : Fin (4 : ℕ))) (q (2 : Fin (4 : ℕ))); (∀ (a :
-            PeriodicSubtileIndex), ∀ (b : PeriodicSubtileIndex), a ≠ b → ((FootprintEdges
-            (SubtileOccurrenceInterpretation P u v a) ∩ FootprintEdges
-            (SubtileOccurrenceInterpretation P u v b)).Nonempty → AllowedSubtileIncidence a b) ∧
-            (¬AllowedSubtileIncidence a b → FootprintVertices (SubtileOccurrenceInterpretation P
-            u v a) ∩ FootprintVertices (SubtileOccurrenceInterpretation P u v b) = ∅ ∨
-            (FootprintVertices (SubtileOccurrenceInterpretation P u v a) ∩ FootprintVertices
-            (SubtileOccurrenceInterpretation P u v b)).Subsingleton)) ∧ FootprintVertices (P (0 :
-            Fin (3 : ℕ)) true) ∩ FootprintVertices (P (1 : Fin (3 : ℕ)) true) ⊆ FootprintVertices
-            (Q (1 : Fin (3 : ℕ)) true) ∩ FootprintVertices (P (1 : Fin (3 : ℕ)) true) ∧
-            FootprintVertices (P (0 : Fin (3 : ℕ)) true) ∩ FootprintVertices (P (0 : Fin (3 : ℕ))
-            false) ⊆ FootprintVertices (Q (1 : Fin (3 : ℕ)) true) ∩ FootprintVertices (S (2 : Fin
-            (3 : ℕ)) false) ∪ FootprintVertices (Q (0 : Fin (3 : ℕ)) false) ∪ FootprintVertices
-            (Q (2 : Fin (3 : ℕ)) true) ∩ FootprintVertices (S (1 : Fin (3 : ℕ)) false)) →
-            (U.cells.Nonempty)))))) ) := by
-  classical
-  intro q hq U V hgeomU hgeomV
-  have ha := hgeomU.2.1
-  have hp := (ProperBandCurvatureStructure q hq).1
-  by_contra he
-  simp only [TileArea, Finset.not_nonempty_iff_eq_empty.mp he,
-    Finset.card_empty] at ha
-  omega
-
 private theorem hmatrixAt529 :
     (by
       classical
@@ -1006,7 +891,12 @@ private theorem positiveStep :
       TileCentroid Rplus - TileCentroid Rminus = GaussianRealPoint v :=
           LeftWebGeometry.hnadj q i hq hunit hpos U orientation Rminus
           Rplus r hcminus hcplus hnorm
-  have hUn : U.cells.Nonempty := LeftWebGeometry.hUn q hq U V hgeomU hgeomV
+  have hUn : U.cells.Nonempty := by
+    apply Finset.card_pos.mp
+    change 0 < TileArea U
+    rw [hgeomU.2.1]
+    have positive := (ProperBandCurvatureStructure q hq).1
+    omega
   have hVn : V.cells.Nonempty := Finset.nonempty_iff_ne_empty.mpr hnV
   have hselection := P5589T1UnitInterfaceSelection C Ci hunit orientation
     base Rminus Rplus U V tiles reverseTiles hs reverseHs hminus hplus f k

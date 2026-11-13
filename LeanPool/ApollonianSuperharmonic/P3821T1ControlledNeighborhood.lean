@@ -762,46 +762,10 @@ private noncomputable abbrev phiVal (e : C(Circle, ℂ)) (he : Function.Injectiv
     (heps : 0 < eps) (S : Set ↑(Set.range ⇑e)) (δ₀ : ℝ) (η : ℝ) (hSf : S.Finite) (hη : η > 0)
     (hδ₀ : δ₀ > 0) (hηψ : ∀ ⦃a b : ↑(Set.range ⇑e)⦄, dist a b < η → dist ((u e he) a) ((u e he)
     b) < (δ δ₀)) : (N e eps S η hSf) → Circle := by
-  classical
-  let f : Circle ≃ Set.range e := Equiv.ofBijective
-    (fun x => (⟨e x, ⟨x, rfl⟩⟩ : Set.range e)) (by
-      constructor
-      · intro x y h
-        apply he
-        exact congrArg Subtype.val h
-      · rintro ⟨z, x, rfl⟩
-        exact ⟨x, rfl⟩)
-  let ψ : Set.range e → Circle := f.symm
-  let u : Set.range e → ℂ := fun k => (ψ k : ℂ)
-  let δ := min (δ₀ / 4) (1 / 8)
-  have hδpos : 0 < δ := hδpos δ₀ hδ₀
-  have hδlt : δ < 1 / 4 := hδlt δ₀ hδ₀
-  let r := min (η / 8) (eps / 8)
-  have hrpos : 0 < r := hrpos eps heps η hη
-  have hψclose : ∀ k l : Set.range e, dist k l < 4 * r →
-      dist ((ψ k : Circle) : ℂ) ((ψ l : Circle) : ℂ) < δ := hψclose e he eps heps δ₀ η hη hηψ
-  let F : Finset (Set.range e) := hSf.toFinset
-  let w : Set.range e → ℂ → ℝ := fun c z => max 0 (2 * r - dist z (c : ℂ))
-  let W : ℂ → ℝ := fun z => ∑ c ∈ F, w c z
-  let N : Set ℂ := {z | 0 < W z}
-  let a : N → Set.range e → ℝ := fun z c => w c (z : ℂ) / W (z : ℂ)
-  let v : N → ℂ := fun z => ∑ c ∈ F, (a z c : ℂ) * u c
-  have hactive (z : N) : ∃ i ∈ F, 0 < w i (z : ℂ) := hactive e eps S η hSf z
-  have hw_active_dist (z : N) (c : Set.range e) (hc : 0 < w c (z : ℂ)) :
-      dist (z : ℂ) (c : ℂ) < 2 * r := hw_active_dist e eps S η hSf z c hc
-  have ha_nonneg (z : N) (c : Set.range e) : 0 ≤ a z c := ha_nonneg e eps S η hSf z c
-  have hsum_a (z : N) : (∑ c ∈ F, a z c) = 1 := hsum_a e eps S η hSf z
-  have hv_close (z : N) (i : Set.range e) (hi : i ∈ F)
-      (hwi : 0 < w i (z : ℂ)) : ‖v z - u i‖ < δ := hv_close e he eps heps S δ₀ η hSf hη hδ₀ hηψ z
-          i hi hwi
-  have hunit (c : Set.range e) : ‖u c‖ = 1 := hunit e he c
-  have hv_lower (z : N) : 1 - δ < ‖v z‖ := hv_lower e he eps heps S δ₀ η hSf hη hδ₀ hηψ z
-  have hv_pos (z : N) : 0 < ‖v z‖ := hv_pos e he eps heps S δ₀ η hSf hη hδ₀ hηψ z
-  let p : N → ℂ := fun z => v z / (‖v z‖ : ℂ)
-  have hp_norm (z : N) : ‖p z‖ = 1 := hp_norm e he eps heps S δ₀ η hSf hη hδ₀ hηψ z
-  dsimp only [ControlledNeighborhoodConstruction.N] at *
-  change (N → Circle)
-  exact fun z => ⟨p z, (mem_sphere_zero_iff_norm).2 (hp_norm z)⟩
+  exact fun z =>
+    ⟨p e he eps S η hSf z,
+      (mem_sphere_zero_iff_norm).2 (hp_norm e he eps heps S δ₀ η hSf hη hδ₀ hηψ z)⟩
+
 
 private theorem hp_cont (e : C(Circle, ℂ)) (he : Function.Injective e) (eps : ℝ) (heps : 0 < eps)
     (S : Set ↑(Set.range ⇑e)) (δ₀ : ℝ) (η : ℝ) (hSf : S.Finite) (hη : η > 0) (hδ₀ : δ₀ > 0) (hηψ

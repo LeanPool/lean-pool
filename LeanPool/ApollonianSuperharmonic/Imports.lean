@@ -1250,6 +1250,7 @@ public import LeanPool.ApollonianSuperharmonic.TileString
 public import LeanPool.ApollonianSuperharmonic.TileStringCentralCovariance
 public import LeanPool.ApollonianSuperharmonic.TileStringCoordinateTransport
 public import LeanPool.ApollonianSuperharmonic.TileStringExists
+public import LeanPool.ApollonianSuperharmonic.TileStringPair
 public import LeanPool.ApollonianSuperharmonic.TileStringRegularFamilyCentralCovariance
 public import LeanPool.ApollonianSuperharmonic.TileStringUnique
 public import LeanPool.ApollonianSuperharmonic.TileSubodometer

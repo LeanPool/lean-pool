@@ -132,7 +132,6 @@ private theorem supported {α : Type} {l : List α} {fs : List (Face α)}
 
 private noncomputable abbrev Shell {α : Type} (fs : List (Face α)) : Prop := by
   classical
-  let Face (α : Type) := Fin 3 → α
   exact ∀ pre f post, fs = pre ++ f :: post → pre ≠ [] →
       ∃ a b c : α, a ≠ b ∧ a ≠ c ∧ b ≠ c ∧ Set.range f = {a, b, c} ∧
         (∀ g ∈ pre, c ∉ Set.range g) ∧
