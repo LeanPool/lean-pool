@@ -2106,17 +2106,9 @@ private theorem pivot_scan_false
       (pivotConfiguration 0 (false :: input) output) =
       some (pivotConfiguration 0 input (true :: output)) := by
   machineStackEquality [
-      binaryGaussianPivotMachine,
-      pivotConfiguration,
-      pivotPeek,
-      pivotGoto,
-      pivotScanStatement,
-      pivotSuccessDrainStatement,
-      pivotFailureStatement,
-      Turing.haltList,
-      Turing.FinTM2.step,
-      Turing.TM2.step,
-      Turing.TM2.stepAux]
+      binaryGaussianPivotMachine, pivotConfiguration, pivotPeek, pivotGoto, pivotScanStatement,
+      pivotSuccessDrainStatement, pivotFailureStatement, Turing.haltList, Turing.FinTM2.step,
+      Turing.TM2.step, Turing.TM2.stepAux]
 
 private theorem pivot_scan_true
     (input output : List Bool) :
@@ -2124,17 +2116,9 @@ private theorem pivot_scan_true
       (pivotConfiguration 0 (true :: input) output) =
       some (pivotConfiguration 1 input (true :: output)) := by
   machineStackEquality [
-      binaryGaussianPivotMachine,
-      pivotConfiguration,
-      pivotPeek,
-      pivotGoto,
-      pivotScanStatement,
-      pivotSuccessDrainStatement,
-      pivotFailureStatement,
-      Turing.haltList,
-      Turing.FinTM2.step,
-      Turing.TM2.step,
-      Turing.TM2.stepAux]
+      binaryGaussianPivotMachine, pivotConfiguration, pivotPeek, pivotGoto, pivotScanStatement,
+      pivotSuccessDrainStatement, pivotFailureStatement, Turing.haltList, Turing.FinTM2.step,
+      Turing.TM2.step, Turing.TM2.stepAux]
 
 private theorem pivot_scan_missing (output : List Bool) :
     binaryGaussianPivotMachine.step
@@ -2148,34 +2132,18 @@ private theorem pivot_success_drain_step
       (pivotConfiguration 1 (bit :: input) output) =
       some (pivotConfiguration 1 input output) := by
   machineStackEquality [
-      binaryGaussianPivotMachine,
-      pivotConfiguration,
-      pivotPeek,
-      pivotGoto,
-      pivotScanStatement,
-      pivotSuccessDrainStatement,
-      pivotFailureStatement,
-      Turing.haltList,
-      Turing.FinTM2.step,
-      Turing.TM2.step,
-      Turing.TM2.stepAux]
+      binaryGaussianPivotMachine, pivotConfiguration, pivotPeek, pivotGoto, pivotScanStatement,
+      pivotSuccessDrainStatement, pivotFailureStatement, Turing.haltList, Turing.FinTM2.step,
+      Turing.TM2.step, Turing.TM2.stepAux]
 
 private theorem pivot_success_finish (output : List Bool) :
     binaryGaussianPivotMachine.step
       (pivotConfiguration 1 [] output) =
       some (Turing.haltList binaryGaussianPivotMachine output) := by
   machineStackEquality [
-      binaryGaussianPivotMachine,
-      pivotConfiguration,
-      pivotPeek,
-      pivotGoto,
-      pivotScanStatement,
-      pivotSuccessDrainStatement,
-      pivotFailureStatement,
-      Turing.haltList,
-      Turing.FinTM2.step,
-      Turing.TM2.step,
-      Turing.TM2.stepAux]
+      binaryGaussianPivotMachine, pivotConfiguration, pivotPeek, pivotGoto, pivotScanStatement,
+      pivotSuccessDrainStatement, pivotFailureStatement, Turing.haltList, Turing.FinTM2.step,
+      Turing.TM2.step, Turing.TM2.stepAux]
 
 private theorem pivot_failure_drain_step
     (bit : Bool) (output : List Bool) :
@@ -2183,34 +2151,18 @@ private theorem pivot_failure_drain_step
       (pivotConfiguration 2 [] (bit :: output)) =
       some (pivotConfiguration 2 [] output) := by
   machineStackEquality [
-      binaryGaussianPivotMachine,
-      pivotConfiguration,
-      pivotPeek,
-      pivotGoto,
-      pivotScanStatement,
-      pivotSuccessDrainStatement,
-      pivotFailureStatement,
-      Turing.haltList,
-      Turing.FinTM2.step,
-      Turing.TM2.step,
-      Turing.TM2.stepAux]
+      binaryGaussianPivotMachine, pivotConfiguration, pivotPeek, pivotGoto, pivotScanStatement,
+      pivotSuccessDrainStatement, pivotFailureStatement, Turing.haltList, Turing.FinTM2.step,
+      Turing.TM2.step, Turing.TM2.stepAux]
 
 private theorem pivot_failure_finish :
     binaryGaussianPivotMachine.step
       (pivotConfiguration 2 [] []) =
       some (Turing.haltList binaryGaussianPivotMachine [false]) := by
   machineStackEquality [
-      binaryGaussianPivotMachine,
-      pivotConfiguration,
-      pivotPeek,
-      pivotGoto,
-      pivotScanStatement,
-      pivotSuccessDrainStatement,
-      pivotFailureStatement,
-      Turing.haltList,
-      Turing.FinTM2.step,
-      Turing.TM2.step,
-      Turing.TM2.stepAux]
+      binaryGaussianPivotMachine, pivotConfiguration, pivotPeek, pivotGoto, pivotScanStatement,
+      pivotSuccessDrainStatement, pivotFailureStatement, Turing.haltList, Turing.FinTM2.step,
+      Turing.TM2.step, Turing.TM2.stepAux]
 
 private def pivot_successDrainTrace
     (input output : List Bool) :

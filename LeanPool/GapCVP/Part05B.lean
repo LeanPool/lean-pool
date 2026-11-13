@@ -912,16 +912,9 @@ private theorem sourceMarker_copy_step (bit : Bool)
       some (sourceMarkerConfiguration 0
         input (bit :: scratch) output) := by
   machineStackEquality [
-      sourceMarkerRotationMachine,
-      sourceMarkerConfiguration,
-      sourceMarkerPeek,
-      sourceMarkerPop,
-      sourceMarkerPush,
-      sourceMarkerGoto,
-      Turing.haltList,
-      Turing.FinTM2.step,
-      Turing.TM2.step,
-      Turing.TM2.stepAux]
+      sourceMarkerRotationMachine, sourceMarkerConfiguration, sourceMarkerPeek,
+      sourceMarkerPop, sourceMarkerPush, sourceMarkerGoto, Turing.haltList, Turing.FinTM2.step,
+      Turing.TM2.step, Turing.TM2.stepAux]
 
 private theorem sourceMarker_copy_finish
     (scratch output : List Bool) :
@@ -936,32 +929,18 @@ private theorem sourceMarker_extract_step (bit : Bool)
       (sourceMarkerConfiguration 1 [] (bit :: scratch) output) =
       some (sourceMarkerConfiguration 2 [bit] scratch output) := by
   machineStackEquality [
-      sourceMarkerRotationMachine,
-      sourceMarkerConfiguration,
-      sourceMarkerPeek,
-      sourceMarkerPop,
-      sourceMarkerPush,
-      sourceMarkerGoto,
-      Turing.haltList,
-      Turing.FinTM2.step,
-      Turing.TM2.step,
-      Turing.TM2.stepAux]
+      sourceMarkerRotationMachine, sourceMarkerConfiguration, sourceMarkerPeek,
+      sourceMarkerPop, sourceMarkerPush, sourceMarkerGoto, Turing.haltList, Turing.FinTM2.step,
+      Turing.TM2.step, Turing.TM2.stepAux]
 
 private theorem sourceMarker_extract_missing (output : List Bool) :
     sourceMarkerRotationMachine.step
       (sourceMarkerConfiguration 1 [] [] output) =
       some (sourceMarkerConfiguration 2 [false] [] output) := by
   machineStackEquality [
-      sourceMarkerRotationMachine,
-      sourceMarkerConfiguration,
-      sourceMarkerPeek,
-      sourceMarkerPop,
-      sourceMarkerPush,
-      sourceMarkerGoto,
-      Turing.haltList,
-      Turing.FinTM2.step,
-      Turing.TM2.step,
-      Turing.TM2.stepAux]
+      sourceMarkerRotationMachine, sourceMarkerConfiguration, sourceMarkerPeek,
+      sourceMarkerPop, sourceMarkerPush, sourceMarkerGoto, Turing.haltList, Turing.FinTM2.step,
+      Turing.TM2.step, Turing.TM2.stepAux]
 
 private theorem sourceMarker_restore_step (bit : Bool)
     (input scratch output : List Bool) :
@@ -971,16 +950,9 @@ private theorem sourceMarker_restore_step (bit : Bool)
       some (sourceMarkerConfiguration 2
         input scratch (bit :: output)) := by
   machineStackEquality [
-      sourceMarkerRotationMachine,
-      sourceMarkerConfiguration,
-      sourceMarkerPeek,
-      sourceMarkerPop,
-      sourceMarkerPush,
-      sourceMarkerGoto,
-      Turing.haltList,
-      Turing.FinTM2.step,
-      Turing.TM2.step,
-      Turing.TM2.stepAux]
+      sourceMarkerRotationMachine, sourceMarkerConfiguration, sourceMarkerPeek,
+      sourceMarkerPop, sourceMarkerPush, sourceMarkerGoto, Turing.haltList, Turing.FinTM2.step,
+      Turing.TM2.step, Turing.TM2.stepAux]
 
 private theorem sourceMarker_restore_finish
     (input output : List Bool) :
@@ -996,16 +968,9 @@ private theorem sourceMarker_output_finish (bit : Bool)
       some (Turing.haltList sourceMarkerRotationMachine
         (bit :: output)) := by
   machineStackEquality [
-      sourceMarkerRotationMachine,
-      sourceMarkerConfiguration,
-      sourceMarkerPeek,
-      sourceMarkerPop,
-      sourceMarkerPush,
-      sourceMarkerGoto,
-      Turing.haltList,
-      Turing.FinTM2.step,
-      Turing.TM2.step,
-      Turing.TM2.stepAux]
+      sourceMarkerRotationMachine, sourceMarkerConfiguration, sourceMarkerPeek,
+      sourceMarkerPop, sourceMarkerPush, sourceMarkerGoto, Turing.haltList, Turing.FinTM2.step,
+      Turing.TM2.step, Turing.TM2.stepAux]
 
 private def sourceMarker_copyTrace
     (input scratch output : List Bool) :
@@ -1308,18 +1273,10 @@ private theorem radiusMarkerTail_empty_finish :
       (radiusMarkerTailConfiguration 0 [] [] []) =
       some (Turing.haltList radiusMarkerTailMachine []) := by
   machineStackEquality [
-      radiusMarkerTailMachine,
-      radiusMarkerTailConfiguration,
-      radiusMarkerTailPeek,
-      radiusMarkerTailPop,
-      radiusMarkerTailPush,
-      radiusMarkerTailGoto,
-      radiusMarkerTailDropStatement,
-      radiusMarkerTailCopyStatement,
-      radiusMarkerTailOutputStatement,
-      Turing.haltList,
-      Turing.FinTM2.step,
-      Turing.TM2.step,
+      radiusMarkerTailMachine, radiusMarkerTailConfiguration, radiusMarkerTailPeek,
+      radiusMarkerTailPop, radiusMarkerTailPush, radiusMarkerTailGoto,
+      radiusMarkerTailDropStatement, radiusMarkerTailCopyStatement,
+      radiusMarkerTailOutputStatement, Turing.haltList, Turing.FinTM2.step, Turing.TM2.step,
       Turing.TM2.stepAux]
 
 private theorem radiusMarkerTail_drop_step (bit : Bool)
@@ -1330,18 +1287,10 @@ private theorem radiusMarkerTail_drop_step (bit : Bool)
       some (radiusMarkerTailConfiguration 1
         input scratch output) := by
   machineStackEquality [
-      radiusMarkerTailMachine,
-      radiusMarkerTailConfiguration,
-      radiusMarkerTailPeek,
-      radiusMarkerTailPop,
-      radiusMarkerTailPush,
-      radiusMarkerTailGoto,
-      radiusMarkerTailDropStatement,
-      radiusMarkerTailCopyStatement,
-      radiusMarkerTailOutputStatement,
-      Turing.haltList,
-      Turing.FinTM2.step,
-      Turing.TM2.step,
+      radiusMarkerTailMachine, radiusMarkerTailConfiguration, radiusMarkerTailPeek,
+      radiusMarkerTailPop, radiusMarkerTailPush, radiusMarkerTailGoto,
+      radiusMarkerTailDropStatement, radiusMarkerTailCopyStatement,
+      radiusMarkerTailOutputStatement, Turing.haltList, Turing.FinTM2.step, Turing.TM2.step,
       Turing.TM2.stepAux]
 
 private theorem radiusMarkerTail_copy_step (bit : Bool)
@@ -1352,18 +1301,10 @@ private theorem radiusMarkerTail_copy_step (bit : Bool)
       some (radiusMarkerTailConfiguration 1
         input (bit :: scratch) output) := by
   machineStackEquality [
-      radiusMarkerTailMachine,
-      radiusMarkerTailConfiguration,
-      radiusMarkerTailPeek,
-      radiusMarkerTailPop,
-      radiusMarkerTailPush,
-      radiusMarkerTailGoto,
-      radiusMarkerTailDropStatement,
-      radiusMarkerTailCopyStatement,
-      radiusMarkerTailOutputStatement,
-      Turing.haltList,
-      Turing.FinTM2.step,
-      Turing.TM2.step,
+      radiusMarkerTailMachine, radiusMarkerTailConfiguration, radiusMarkerTailPeek,
+      radiusMarkerTailPop, radiusMarkerTailPush, radiusMarkerTailGoto,
+      radiusMarkerTailDropStatement, radiusMarkerTailCopyStatement,
+      radiusMarkerTailOutputStatement, Turing.haltList, Turing.FinTM2.step, Turing.TM2.step,
       Turing.TM2.stepAux]
 
 private theorem radiusMarkerTail_copy_finish
@@ -1381,18 +1322,10 @@ private theorem radiusMarkerTail_output_step (bit : Bool)
       some (radiusMarkerTailConfiguration 2
         [] scratch (bit :: output)) := by
   machineStackEquality [
-      radiusMarkerTailMachine,
-      radiusMarkerTailConfiguration,
-      radiusMarkerTailPeek,
-      radiusMarkerTailPop,
-      radiusMarkerTailPush,
-      radiusMarkerTailGoto,
-      radiusMarkerTailDropStatement,
-      radiusMarkerTailCopyStatement,
-      radiusMarkerTailOutputStatement,
-      Turing.haltList,
-      Turing.FinTM2.step,
-      Turing.TM2.step,
+      radiusMarkerTailMachine, radiusMarkerTailConfiguration, radiusMarkerTailPeek,
+      radiusMarkerTailPop, radiusMarkerTailPush, radiusMarkerTailGoto,
+      radiusMarkerTailDropStatement, radiusMarkerTailCopyStatement,
+      radiusMarkerTailOutputStatement, Turing.haltList, Turing.FinTM2.step, Turing.TM2.step,
       Turing.TM2.stepAux]
 
 private theorem radiusMarkerTail_output_finish (output : List Bool) :
@@ -1400,18 +1333,10 @@ private theorem radiusMarkerTail_output_finish (output : List Bool) :
       (radiusMarkerTailConfiguration 2 [] [] output) =
       some (Turing.haltList radiusMarkerTailMachine output) := by
   machineStackEquality [
-      radiusMarkerTailMachine,
-      radiusMarkerTailConfiguration,
-      radiusMarkerTailPeek,
-      radiusMarkerTailPop,
-      radiusMarkerTailPush,
-      radiusMarkerTailGoto,
-      radiusMarkerTailDropStatement,
-      radiusMarkerTailCopyStatement,
-      radiusMarkerTailOutputStatement,
-      Turing.haltList,
-      Turing.FinTM2.step,
-      Turing.TM2.step,
+      radiusMarkerTailMachine, radiusMarkerTailConfiguration, radiusMarkerTailPeek,
+      radiusMarkerTailPop, radiusMarkerTailPush, radiusMarkerTailGoto,
+      radiusMarkerTailDropStatement, radiusMarkerTailCopyStatement,
+      radiusMarkerTailOutputStatement, Turing.haltList, Turing.FinTM2.step, Turing.TM2.step,
       Turing.TM2.stepAux]
 
 private def radiusMarkerTail_copyTrace
@@ -1640,17 +1565,9 @@ theorem rationalRadius_marker_true_step
       some (rationalRadiusConfiguration 1
         input base outer restore (true :: output)) := by
   machineStackEquality [
-      rationalRadiusMachine,
-      rationalRadiusConfiguration,
-      rationalRadiusFailureStatement,
-      normalizedRadiusPeek,
-      normalizedRadiusPop,
-      normalizedRadiusPush,
-      normalizedRadiusGoto,
-      normalizedRadiusFailureCheck,
-      Turing.haltList,
-      Turing.FinTM2.step,
-      Turing.TM2.step,
+      rationalRadiusMachine, rationalRadiusConfiguration, rationalRadiusFailureStatement,
+      normalizedRadiusPeek, normalizedRadiusPop, normalizedRadiusPush, normalizedRadiusGoto,
+      normalizedRadiusFailureCheck, Turing.haltList, Turing.FinTM2.step, Turing.TM2.step,
       Turing.TM2.stepAux]
 
 /-- Internal support shared across GapCVP continuation modules. -/
@@ -1662,17 +1579,9 @@ theorem rationalRadius_marker_false_step
       some (rationalRadiusConfiguration 6
         input base outer restore output) := by
   machineStackEquality [
-      rationalRadiusMachine,
-      rationalRadiusConfiguration,
-      rationalRadiusFailureStatement,
-      normalizedRadiusPeek,
-      normalizedRadiusPop,
-      normalizedRadiusPush,
-      normalizedRadiusGoto,
-      normalizedRadiusFailureCheck,
-      Turing.haltList,
-      Turing.FinTM2.step,
-      Turing.TM2.step,
+      rationalRadiusMachine, rationalRadiusConfiguration, rationalRadiusFailureStatement,
+      normalizedRadiusPeek, normalizedRadiusPop, normalizedRadiusPush, normalizedRadiusGoto,
+      normalizedRadiusFailureCheck, Turing.haltList, Turing.FinTM2.step, Turing.TM2.step,
       Turing.TM2.stepAux]
 
 /-- Internal support shared across GapCVP continuation modules. -/
@@ -1696,17 +1605,9 @@ theorem rationalRadius_scan_true_step
         (true :: true :: outer)
         restore (true :: true :: output)) := by
   machineStackEquality [
-      rationalRadiusMachine,
-      rationalRadiusConfiguration,
-      rationalRadiusFailureStatement,
-      normalizedRadiusPeek,
-      normalizedRadiusPop,
-      normalizedRadiusPush,
-      normalizedRadiusGoto,
-      normalizedRadiusFailureCheck,
-      Turing.haltList,
-      Turing.FinTM2.step,
-      Turing.TM2.step,
+      rationalRadiusMachine, rationalRadiusConfiguration, rationalRadiusFailureStatement,
+      normalizedRadiusPeek, normalizedRadiusPop, normalizedRadiusPush, normalizedRadiusGoto,
+      normalizedRadiusFailureCheck, Turing.haltList, Turing.FinTM2.step, Turing.TM2.step,
       Turing.TM2.stepAux]
 
 /-- Internal support shared across GapCVP continuation modules. -/
@@ -1718,17 +1619,9 @@ theorem rationalRadius_scan_false_step
       some (rationalRadiusConfiguration 6
         input base outer restore output) := by
   machineStackEquality [
-      rationalRadiusMachine,
-      rationalRadiusConfiguration,
-      rationalRadiusFailureStatement,
-      normalizedRadiusPeek,
-      normalizedRadiusPop,
-      normalizedRadiusPush,
-      normalizedRadiusGoto,
-      normalizedRadiusFailureCheck,
-      Turing.haltList,
-      Turing.FinTM2.step,
-      Turing.TM2.step,
+      rationalRadiusMachine, rationalRadiusConfiguration, rationalRadiusFailureStatement,
+      normalizedRadiusPeek, normalizedRadiusPop, normalizedRadiusPush, normalizedRadiusGoto,
+      normalizedRadiusFailureCheck, Turing.haltList, Turing.FinTM2.step, Turing.TM2.step,
       Turing.TM2.stepAux]
 
 /-- Internal support shared across GapCVP continuation modules. -/
@@ -1750,17 +1643,9 @@ theorem rationalRadius_outer_step
       some (rationalRadiusConfiguration 3 []
         base outer restore output) := by
   machineStackEquality [
-      rationalRadiusMachine,
-      rationalRadiusConfiguration,
-      rationalRadiusFailureStatement,
-      normalizedRadiusPeek,
-      normalizedRadiusPop,
-      normalizedRadiusPush,
-      normalizedRadiusGoto,
-      normalizedRadiusFailureCheck,
-      Turing.haltList,
-      Turing.FinTM2.step,
-      Turing.TM2.step,
+      rationalRadiusMachine, rationalRadiusConfiguration, rationalRadiusFailureStatement,
+      normalizedRadiusPeek, normalizedRadiusPop, normalizedRadiusPush, normalizedRadiusGoto,
+      normalizedRadiusFailureCheck, Turing.haltList, Turing.FinTM2.step, Turing.TM2.step,
       Turing.TM2.stepAux]
 
 /-- Internal support shared across GapCVP continuation modules. -/
@@ -1782,17 +1667,9 @@ theorem rationalRadius_copy_step
       some (rationalRadiusConfiguration 3 []
         base outer (true :: restore) (true :: output)) := by
   machineStackEquality [
-      rationalRadiusMachine,
-      rationalRadiusConfiguration,
-      rationalRadiusFailureStatement,
-      normalizedRadiusPeek,
-      normalizedRadiusPop,
-      normalizedRadiusPush,
-      normalizedRadiusGoto,
-      normalizedRadiusFailureCheck,
-      Turing.haltList,
-      Turing.FinTM2.step,
-      Turing.TM2.step,
+      rationalRadiusMachine, rationalRadiusConfiguration, rationalRadiusFailureStatement,
+      normalizedRadiusPeek, normalizedRadiusPop, normalizedRadiusPush, normalizedRadiusGoto,
+      normalizedRadiusFailureCheck, Turing.haltList, Turing.FinTM2.step, Turing.TM2.step,
       Turing.TM2.stepAux]
 
 /-- Internal support shared across GapCVP continuation modules. -/
@@ -1814,17 +1691,9 @@ theorem rationalRadius_restore_step
       some (rationalRadiusConfiguration 4 []
         (true :: base) outer restore output) := by
   machineStackEquality [
-      rationalRadiusMachine,
-      rationalRadiusConfiguration,
-      rationalRadiusFailureStatement,
-      normalizedRadiusPeek,
-      normalizedRadiusPop,
-      normalizedRadiusPush,
-      normalizedRadiusGoto,
-      normalizedRadiusFailureCheck,
-      Turing.haltList,
-      Turing.FinTM2.step,
-      Turing.TM2.step,
+      rationalRadiusMachine, rationalRadiusConfiguration, rationalRadiusFailureStatement,
+      normalizedRadiusPeek, normalizedRadiusPop, normalizedRadiusPush, normalizedRadiusGoto,
+      normalizedRadiusFailureCheck, Turing.haltList, Turing.FinTM2.step, Turing.TM2.step,
       Turing.TM2.stepAux]
 
 /-- Internal support shared across GapCVP continuation modules. -/
@@ -1846,17 +1715,9 @@ theorem rationalRadius_cleanup_base_step
       some (rationalRadiusConfiguration 5 []
         base [] [] output) := by
   machineStackEquality [
-      rationalRadiusMachine,
-      rationalRadiusConfiguration,
-      rationalRadiusFailureStatement,
-      normalizedRadiusPeek,
-      normalizedRadiusPop,
-      normalizedRadiusPush,
-      normalizedRadiusGoto,
-      normalizedRadiusFailureCheck,
-      Turing.haltList,
-      Turing.FinTM2.step,
-      Turing.TM2.step,
+      rationalRadiusMachine, rationalRadiusConfiguration, rationalRadiusFailureStatement,
+      normalizedRadiusPeek, normalizedRadiusPop, normalizedRadiusPush, normalizedRadiusGoto,
+      normalizedRadiusFailureCheck, Turing.haltList, Turing.FinTM2.step, Turing.TM2.step,
       Turing.TM2.stepAux]
 
 /-- Internal support shared across GapCVP continuation modules. -/
@@ -1866,17 +1727,9 @@ theorem rationalRadius_cleanup_finish (output : List Bool) :
       some (Turing.haltList rationalRadiusMachine
         (true :: output)) := by
   machineStackEquality [
-      rationalRadiusMachine,
-      rationalRadiusConfiguration,
-      rationalRadiusFailureStatement,
-      normalizedRadiusPeek,
-      normalizedRadiusPop,
-      normalizedRadiusPush,
-      normalizedRadiusGoto,
-      normalizedRadiusFailureCheck,
-      Turing.haltList,
-      Turing.FinTM2.step,
-      Turing.TM2.step,
+      rationalRadiusMachine, rationalRadiusConfiguration, rationalRadiusFailureStatement,
+      normalizedRadiusPeek, normalizedRadiusPop, normalizedRadiusPush, normalizedRadiusGoto,
+      normalizedRadiusFailureCheck, Turing.haltList, Turing.FinTM2.step, Turing.TM2.step,
       Turing.TM2.stepAux]
 
 /-- Internal support shared across GapCVP continuation modules. -/
@@ -1888,17 +1741,9 @@ theorem rationalRadius_failure_input_step
       some (rationalRadiusConfiguration 6
         input base outer restore output) := by
   machineStackEquality [
-      rationalRadiusMachine,
-      rationalRadiusConfiguration,
-      rationalRadiusFailureStatement,
-      normalizedRadiusPeek,
-      normalizedRadiusPop,
-      normalizedRadiusPush,
-      normalizedRadiusGoto,
-      normalizedRadiusFailureCheck,
-      Turing.haltList,
-      Turing.FinTM2.step,
-      Turing.TM2.step,
+      rationalRadiusMachine, rationalRadiusConfiguration, rationalRadiusFailureStatement,
+      normalizedRadiusPeek, normalizedRadiusPop, normalizedRadiusPush, normalizedRadiusGoto,
+      normalizedRadiusFailureCheck, Turing.haltList, Turing.FinTM2.step, Turing.TM2.step,
       Turing.TM2.stepAux]
 
 /-- Internal support shared across GapCVP continuation modules. -/
@@ -1910,17 +1755,9 @@ theorem rationalRadius_failure_base_step
       some (rationalRadiusConfiguration 6 []
         base outer restore output) := by
   machineStackEquality [
-      rationalRadiusMachine,
-      rationalRadiusConfiguration,
-      rationalRadiusFailureStatement,
-      normalizedRadiusPeek,
-      normalizedRadiusPop,
-      normalizedRadiusPush,
-      normalizedRadiusGoto,
-      normalizedRadiusFailureCheck,
-      Turing.haltList,
-      Turing.FinTM2.step,
-      Turing.TM2.step,
+      rationalRadiusMachine, rationalRadiusConfiguration, rationalRadiusFailureStatement,
+      normalizedRadiusPeek, normalizedRadiusPop, normalizedRadiusPush, normalizedRadiusGoto,
+      normalizedRadiusFailureCheck, Turing.haltList, Turing.FinTM2.step, Turing.TM2.step,
       Turing.TM2.stepAux]
 
 /-- Internal support shared across GapCVP continuation modules. -/
@@ -1932,17 +1769,9 @@ theorem rationalRadius_failure_outer_step
       some (rationalRadiusConfiguration 6 [] []
         outer restore output) := by
   machineStackEquality [
-      rationalRadiusMachine,
-      rationalRadiusConfiguration,
-      rationalRadiusFailureStatement,
-      normalizedRadiusPeek,
-      normalizedRadiusPop,
-      normalizedRadiusPush,
-      normalizedRadiusGoto,
-      normalizedRadiusFailureCheck,
-      Turing.haltList,
-      Turing.FinTM2.step,
-      Turing.TM2.step,
+      rationalRadiusMachine, rationalRadiusConfiguration, rationalRadiusFailureStatement,
+      normalizedRadiusPeek, normalizedRadiusPop, normalizedRadiusPush, normalizedRadiusGoto,
+      normalizedRadiusFailureCheck, Turing.haltList, Turing.FinTM2.step, Turing.TM2.step,
       Turing.TM2.stepAux]
 
 /-- Internal support shared across GapCVP continuation modules. -/
@@ -1954,17 +1783,9 @@ theorem rationalRadius_failure_restore_step
       some (rationalRadiusConfiguration 6 [] [] []
         restore output) := by
   machineStackEquality [
-      rationalRadiusMachine,
-      rationalRadiusConfiguration,
-      rationalRadiusFailureStatement,
-      normalizedRadiusPeek,
-      normalizedRadiusPop,
-      normalizedRadiusPush,
-      normalizedRadiusGoto,
-      normalizedRadiusFailureCheck,
-      Turing.haltList,
-      Turing.FinTM2.step,
-      Turing.TM2.step,
+      rationalRadiusMachine, rationalRadiusConfiguration, rationalRadiusFailureStatement,
+      normalizedRadiusPeek, normalizedRadiusPop, normalizedRadiusPush, normalizedRadiusGoto,
+      normalizedRadiusFailureCheck, Turing.haltList, Turing.FinTM2.step, Turing.TM2.step,
       Turing.TM2.stepAux]
 
 /-- Internal support shared across GapCVP continuation modules. -/
@@ -1975,17 +1796,9 @@ theorem rationalRadius_failure_output_step
         (bit :: output)) =
       some (rationalRadiusConfiguration 6 [] [] [] [] output) := by
   machineStackEquality [
-      rationalRadiusMachine,
-      rationalRadiusConfiguration,
-      rationalRadiusFailureStatement,
-      normalizedRadiusPeek,
-      normalizedRadiusPop,
-      normalizedRadiusPush,
-      normalizedRadiusGoto,
-      normalizedRadiusFailureCheck,
-      Turing.haltList,
-      Turing.FinTM2.step,
-      Turing.TM2.step,
+      rationalRadiusMachine, rationalRadiusConfiguration, rationalRadiusFailureStatement,
+      normalizedRadiusPeek, normalizedRadiusPop, normalizedRadiusPush, normalizedRadiusGoto,
+      normalizedRadiusFailureCheck, Turing.haltList, Turing.FinTM2.step, Turing.TM2.step,
       Turing.TM2.stepAux]
 
 /-- Internal support shared across GapCVP continuation modules. -/
@@ -1994,17 +1807,9 @@ theorem rationalRadius_failure_finish :
       (rationalRadiusConfiguration 6 [] [] [] [] []) =
       some (Turing.haltList rationalRadiusMachine [false]) := by
   machineStackEquality [
-      rationalRadiusMachine,
-      rationalRadiusConfiguration,
-      rationalRadiusFailureStatement,
-      normalizedRadiusPeek,
-      normalizedRadiusPop,
-      normalizedRadiusPush,
-      normalizedRadiusGoto,
-      normalizedRadiusFailureCheck,
-      Turing.haltList,
-      Turing.FinTM2.step,
-      Turing.TM2.step,
+      rationalRadiusMachine, rationalRadiusConfiguration, rationalRadiusFailureStatement,
+      normalizedRadiusPeek, normalizedRadiusPop, normalizedRadiusPush, normalizedRadiusGoto,
+      normalizedRadiusFailureCheck, Turing.haltList, Turing.FinTM2.step, Turing.TM2.step,
       Turing.TM2.stepAux]
 
 end SourceLatticeStructuralRationalRadiusTM

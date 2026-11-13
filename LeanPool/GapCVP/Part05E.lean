@@ -997,20 +997,11 @@ theorem cappedUnaryMinimum_first_true
       some (cappedUnaryMinimumConfiguration 0
         input (true :: first) output) := by
   machineStackEquality [
-      actualCappedUnaryMinimumMachine,
-      cappedUnaryMinimumConfiguration,
-      cappedUnaryMinimumPeek,
-      cappedUnaryMinimumPop,
-      cappedUnaryMinimumPush,
-      cappedUnaryMinimumGoto,
-      cappedUnaryMinimumFirstStatement,
-      cappedUnaryMinimumSecondStatement,
-      cappedUnaryMinimumSuccessStatement,
-      cappedUnaryMinimumFailureStatement,
-      Turing.haltList,
-      Turing.FinTM2.step,
-      Turing.TM2.step,
-      Turing.TM2.stepAux]
+      actualCappedUnaryMinimumMachine, cappedUnaryMinimumConfiguration, cappedUnaryMinimumPeek,
+      cappedUnaryMinimumPop, cappedUnaryMinimumPush, cappedUnaryMinimumGoto,
+      cappedUnaryMinimumFirstStatement, cappedUnaryMinimumSecondStatement,
+      cappedUnaryMinimumSuccessStatement, cappedUnaryMinimumFailureStatement, Turing.haltList,
+      Turing.FinTM2.step, Turing.TM2.step, Turing.TM2.stepAux]
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem cappedUnaryMinimum_first_false
@@ -1021,20 +1012,11 @@ theorem cappedUnaryMinimum_first_false
       some (cappedUnaryMinimumConfiguration 1
         input first output) := by
   machineStackEquality [
-      actualCappedUnaryMinimumMachine,
-      cappedUnaryMinimumConfiguration,
-      cappedUnaryMinimumPeek,
-      cappedUnaryMinimumPop,
-      cappedUnaryMinimumPush,
-      cappedUnaryMinimumGoto,
-      cappedUnaryMinimumFirstStatement,
-      cappedUnaryMinimumSecondStatement,
-      cappedUnaryMinimumSuccessStatement,
-      cappedUnaryMinimumFailureStatement,
-      Turing.haltList,
-      Turing.FinTM2.step,
-      Turing.TM2.step,
-      Turing.TM2.stepAux]
+      actualCappedUnaryMinimumMachine, cappedUnaryMinimumConfiguration, cappedUnaryMinimumPeek,
+      cappedUnaryMinimumPop, cappedUnaryMinimumPush, cappedUnaryMinimumGoto,
+      cappedUnaryMinimumFirstStatement, cappedUnaryMinimumSecondStatement,
+      cappedUnaryMinimumSuccessStatement, cappedUnaryMinimumFailureStatement, Turing.haltList,
+      Turing.FinTM2.step, Turing.TM2.step, Turing.TM2.stepAux]
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem cappedUnaryMinimum_first_missing
@@ -1054,20 +1036,11 @@ theorem cappedUnaryMinimum_second_true_counter
       some (cappedUnaryMinimumConfiguration 1
         input first (true :: output)) := by
   machineStackEquality [
-      actualCappedUnaryMinimumMachine,
-      cappedUnaryMinimumConfiguration,
-      cappedUnaryMinimumPeek,
-      cappedUnaryMinimumPop,
-      cappedUnaryMinimumPush,
-      cappedUnaryMinimumGoto,
-      cappedUnaryMinimumFirstStatement,
-      cappedUnaryMinimumSecondStatement,
-      cappedUnaryMinimumSuccessStatement,
-      cappedUnaryMinimumFailureStatement,
-      Turing.haltList,
-      Turing.FinTM2.step,
-      Turing.TM2.step,
-      Turing.TM2.stepAux]
+      actualCappedUnaryMinimumMachine, cappedUnaryMinimumConfiguration, cappedUnaryMinimumPeek,
+      cappedUnaryMinimumPop, cappedUnaryMinimumPush, cappedUnaryMinimumGoto,
+      cappedUnaryMinimumFirstStatement, cappedUnaryMinimumSecondStatement,
+      cappedUnaryMinimumSuccessStatement, cappedUnaryMinimumFailureStatement, Turing.haltList,
+      Turing.FinTM2.step, Turing.TM2.step, Turing.TM2.stepAux]
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem cappedUnaryMinimum_second_true_empty
@@ -1078,20 +1051,11 @@ theorem cappedUnaryMinimum_second_true_empty
       some (cappedUnaryMinimumConfiguration 1
         input [] output) := by
   machineStackEquality [
-      actualCappedUnaryMinimumMachine,
-      cappedUnaryMinimumConfiguration,
-      cappedUnaryMinimumPeek,
-      cappedUnaryMinimumPop,
-      cappedUnaryMinimumPush,
-      cappedUnaryMinimumGoto,
-      cappedUnaryMinimumFirstStatement,
-      cappedUnaryMinimumSecondStatement,
-      cappedUnaryMinimumSuccessStatement,
-      cappedUnaryMinimumFailureStatement,
-      Turing.haltList,
-      Turing.FinTM2.step,
-      Turing.TM2.step,
-      Turing.TM2.stepAux]
+      actualCappedUnaryMinimumMachine, cappedUnaryMinimumConfiguration, cappedUnaryMinimumPeek,
+      cappedUnaryMinimumPop, cappedUnaryMinimumPush, cappedUnaryMinimumGoto,
+      cappedUnaryMinimumFirstStatement, cappedUnaryMinimumSecondStatement,
+      cappedUnaryMinimumSuccessStatement, cappedUnaryMinimumFailureStatement, Turing.haltList,
+      Turing.FinTM2.step, Turing.TM2.step, Turing.TM2.stepAux]
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem cappedUnaryMinimum_second_false
@@ -1102,20 +1066,11 @@ theorem cappedUnaryMinimum_second_false
       some (cappedUnaryMinimumConfiguration 2
         input first output) := by
   machineStackEquality [
-      actualCappedUnaryMinimumMachine,
-      cappedUnaryMinimumConfiguration,
-      cappedUnaryMinimumPeek,
-      cappedUnaryMinimumPop,
-      cappedUnaryMinimumPush,
-      cappedUnaryMinimumGoto,
-      cappedUnaryMinimumFirstStatement,
-      cappedUnaryMinimumSecondStatement,
-      cappedUnaryMinimumSuccessStatement,
-      cappedUnaryMinimumFailureStatement,
-      Turing.haltList,
-      Turing.FinTM2.step,
-      Turing.TM2.step,
-      Turing.TM2.stepAux]
+      actualCappedUnaryMinimumMachine, cappedUnaryMinimumConfiguration, cappedUnaryMinimumPeek,
+      cappedUnaryMinimumPop, cappedUnaryMinimumPush, cappedUnaryMinimumGoto,
+      cappedUnaryMinimumFirstStatement, cappedUnaryMinimumSecondStatement,
+      cappedUnaryMinimumSuccessStatement, cappedUnaryMinimumFailureStatement, Turing.haltList,
+      Turing.FinTM2.step, Turing.TM2.step, Turing.TM2.stepAux]
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem cappedUnaryMinimum_second_missing
@@ -1135,20 +1090,11 @@ theorem cappedUnaryMinimum_success_input
       some (cappedUnaryMinimumConfiguration 2
         input first output) := by
   machineStackEquality [
-      actualCappedUnaryMinimumMachine,
-      cappedUnaryMinimumConfiguration,
-      cappedUnaryMinimumPeek,
-      cappedUnaryMinimumPop,
-      cappedUnaryMinimumPush,
-      cappedUnaryMinimumGoto,
-      cappedUnaryMinimumFirstStatement,
-      cappedUnaryMinimumSecondStatement,
-      cappedUnaryMinimumSuccessStatement,
-      cappedUnaryMinimumFailureStatement,
-      Turing.haltList,
-      Turing.FinTM2.step,
-      Turing.TM2.step,
-      Turing.TM2.stepAux]
+      actualCappedUnaryMinimumMachine, cappedUnaryMinimumConfiguration, cappedUnaryMinimumPeek,
+      cappedUnaryMinimumPop, cappedUnaryMinimumPush, cappedUnaryMinimumGoto,
+      cappedUnaryMinimumFirstStatement, cappedUnaryMinimumSecondStatement,
+      cappedUnaryMinimumSuccessStatement, cappedUnaryMinimumFailureStatement, Turing.haltList,
+      Turing.FinTM2.step, Turing.TM2.step, Turing.TM2.stepAux]
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem cappedUnaryMinimum_success_first
@@ -1159,20 +1105,11 @@ theorem cappedUnaryMinimum_success_first
       some (cappedUnaryMinimumConfiguration 2
         [] first output) := by
   machineStackEquality [
-      actualCappedUnaryMinimumMachine,
-      cappedUnaryMinimumConfiguration,
-      cappedUnaryMinimumPeek,
-      cappedUnaryMinimumPop,
-      cappedUnaryMinimumPush,
-      cappedUnaryMinimumGoto,
-      cappedUnaryMinimumFirstStatement,
-      cappedUnaryMinimumSecondStatement,
-      cappedUnaryMinimumSuccessStatement,
-      cappedUnaryMinimumFailureStatement,
-      Turing.haltList,
-      Turing.FinTM2.step,
-      Turing.TM2.step,
-      Turing.TM2.stepAux]
+      actualCappedUnaryMinimumMachine, cappedUnaryMinimumConfiguration, cappedUnaryMinimumPeek,
+      cappedUnaryMinimumPop, cappedUnaryMinimumPush, cappedUnaryMinimumGoto,
+      cappedUnaryMinimumFirstStatement, cappedUnaryMinimumSecondStatement,
+      cappedUnaryMinimumSuccessStatement, cappedUnaryMinimumFailureStatement, Turing.haltList,
+      Turing.FinTM2.step, Turing.TM2.step, Turing.TM2.stepAux]
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem cappedUnaryMinimum_success_finish
@@ -1182,20 +1119,11 @@ theorem cappedUnaryMinimum_success_finish
       some (Turing.haltList actualCappedUnaryMinimumMachine
         output) := by
   machineStackEquality [
-      actualCappedUnaryMinimumMachine,
-      cappedUnaryMinimumConfiguration,
-      cappedUnaryMinimumPeek,
-      cappedUnaryMinimumPop,
-      cappedUnaryMinimumPush,
-      cappedUnaryMinimumGoto,
-      cappedUnaryMinimumFirstStatement,
-      cappedUnaryMinimumSecondStatement,
-      cappedUnaryMinimumSuccessStatement,
-      cappedUnaryMinimumFailureStatement,
-      Turing.haltList,
-      Turing.FinTM2.step,
-      Turing.TM2.step,
-      Turing.TM2.stepAux]
+      actualCappedUnaryMinimumMachine, cappedUnaryMinimumConfiguration, cappedUnaryMinimumPeek,
+      cappedUnaryMinimumPop, cappedUnaryMinimumPush, cappedUnaryMinimumGoto,
+      cappedUnaryMinimumFirstStatement, cappedUnaryMinimumSecondStatement,
+      cappedUnaryMinimumSuccessStatement, cappedUnaryMinimumFailureStatement, Turing.haltList,
+      Turing.FinTM2.step, Turing.TM2.step, Turing.TM2.stepAux]
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem cappedUnaryMinimum_failure_input
@@ -1206,20 +1134,11 @@ theorem cappedUnaryMinimum_failure_input
       some (cappedUnaryMinimumConfiguration 3
         input first output) := by
   machineStackEquality [
-      actualCappedUnaryMinimumMachine,
-      cappedUnaryMinimumConfiguration,
-      cappedUnaryMinimumPeek,
-      cappedUnaryMinimumPop,
-      cappedUnaryMinimumPush,
-      cappedUnaryMinimumGoto,
-      cappedUnaryMinimumFirstStatement,
-      cappedUnaryMinimumSecondStatement,
-      cappedUnaryMinimumSuccessStatement,
-      cappedUnaryMinimumFailureStatement,
-      Turing.haltList,
-      Turing.FinTM2.step,
-      Turing.TM2.step,
-      Turing.TM2.stepAux]
+      actualCappedUnaryMinimumMachine, cappedUnaryMinimumConfiguration, cappedUnaryMinimumPeek,
+      cappedUnaryMinimumPop, cappedUnaryMinimumPush, cappedUnaryMinimumGoto,
+      cappedUnaryMinimumFirstStatement, cappedUnaryMinimumSecondStatement,
+      cappedUnaryMinimumSuccessStatement, cappedUnaryMinimumFailureStatement, Turing.haltList,
+      Turing.FinTM2.step, Turing.TM2.step, Turing.TM2.stepAux]
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem cappedUnaryMinimum_failure_first
@@ -1230,20 +1149,11 @@ theorem cappedUnaryMinimum_failure_first
       some (cappedUnaryMinimumConfiguration 3
         [] first output) := by
   machineStackEquality [
-      actualCappedUnaryMinimumMachine,
-      cappedUnaryMinimumConfiguration,
-      cappedUnaryMinimumPeek,
-      cappedUnaryMinimumPop,
-      cappedUnaryMinimumPush,
-      cappedUnaryMinimumGoto,
-      cappedUnaryMinimumFirstStatement,
-      cappedUnaryMinimumSecondStatement,
-      cappedUnaryMinimumSuccessStatement,
-      cappedUnaryMinimumFailureStatement,
-      Turing.haltList,
-      Turing.FinTM2.step,
-      Turing.TM2.step,
-      Turing.TM2.stepAux]
+      actualCappedUnaryMinimumMachine, cappedUnaryMinimumConfiguration, cappedUnaryMinimumPeek,
+      cappedUnaryMinimumPop, cappedUnaryMinimumPush, cappedUnaryMinimumGoto,
+      cappedUnaryMinimumFirstStatement, cappedUnaryMinimumSecondStatement,
+      cappedUnaryMinimumSuccessStatement, cappedUnaryMinimumFailureStatement, Turing.haltList,
+      Turing.FinTM2.step, Turing.TM2.step, Turing.TM2.stepAux]
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem cappedUnaryMinimum_failure_output
@@ -1254,20 +1164,11 @@ theorem cappedUnaryMinimum_failure_output
       some (cappedUnaryMinimumConfiguration 3
         [] [] output) := by
   machineStackEquality [
-      actualCappedUnaryMinimumMachine,
-      cappedUnaryMinimumConfiguration,
-      cappedUnaryMinimumPeek,
-      cappedUnaryMinimumPop,
-      cappedUnaryMinimumPush,
-      cappedUnaryMinimumGoto,
-      cappedUnaryMinimumFirstStatement,
-      cappedUnaryMinimumSecondStatement,
-      cappedUnaryMinimumSuccessStatement,
-      cappedUnaryMinimumFailureStatement,
-      Turing.haltList,
-      Turing.FinTM2.step,
-      Turing.TM2.step,
-      Turing.TM2.stepAux]
+      actualCappedUnaryMinimumMachine, cappedUnaryMinimumConfiguration, cappedUnaryMinimumPeek,
+      cappedUnaryMinimumPop, cappedUnaryMinimumPush, cappedUnaryMinimumGoto,
+      cappedUnaryMinimumFirstStatement, cappedUnaryMinimumSecondStatement,
+      cappedUnaryMinimumSuccessStatement, cappedUnaryMinimumFailureStatement, Turing.haltList,
+      Turing.FinTM2.step, Turing.TM2.step, Turing.TM2.stepAux]
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem cappedUnaryMinimum_failure_finish :
@@ -1276,20 +1177,11 @@ theorem cappedUnaryMinimum_failure_finish :
       some (Turing.haltList actualCappedUnaryMinimumMachine
         []) := by
   machineStackEquality [
-      actualCappedUnaryMinimumMachine,
-      cappedUnaryMinimumConfiguration,
-      cappedUnaryMinimumPeek,
-      cappedUnaryMinimumPop,
-      cappedUnaryMinimumPush,
-      cappedUnaryMinimumGoto,
-      cappedUnaryMinimumFirstStatement,
-      cappedUnaryMinimumSecondStatement,
-      cappedUnaryMinimumSuccessStatement,
-      cappedUnaryMinimumFailureStatement,
-      Turing.haltList,
-      Turing.FinTM2.step,
-      Turing.TM2.step,
-      Turing.TM2.stepAux]
+      actualCappedUnaryMinimumMachine, cappedUnaryMinimumConfiguration, cappedUnaryMinimumPeek,
+      cappedUnaryMinimumPop, cappedUnaryMinimumPush, cappedUnaryMinimumGoto,
+      cappedUnaryMinimumFirstStatement, cappedUnaryMinimumSecondStatement,
+      cappedUnaryMinimumSuccessStatement, cappedUnaryMinimumFailureStatement, Turing.haltList,
+      Turing.FinTM2.step, Turing.TM2.step, Turing.TM2.stepAux]
 
 end CNFCappedUnaryMinimumTM
 

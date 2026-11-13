@@ -14,7 +14,6 @@ public import Mathlib.RingTheory.Valuation.Basic
 import Mathlib.Algebra.Order.Floor.Semifield
 import Mathlib.Algebra.Order.Star.Int
 import Mathlib.FieldTheory.RatFunc.AsPolynomial
-import Mathlib.RingTheory.Flat.TorsionFree
 import Mathlib.RingTheory.Henselian
 import Mathlib.RingTheory.MvPolynomial.Symmetric.FundamentalTheorem
 import Mathlib.RingTheory.MvPolynomial.Symmetric.NewtonIdentities
@@ -5785,17 +5784,9 @@ private theorem preservingXor_first_step
       some (preservingXorConfiguration 1
         (some first) remaining archive output) := by
   cases first <;> machineStackEquality [
-      preservingXorMachine,
-      preservingXorConfiguration,
-      preservingXorPeek,
-      preservingXorGoto,
-      preservingXorFirstStatement,
-      preservingXorSecondStatement,
-      preservingXorScanStatement,
-      preservingXorRestoreStatement,
-      Turing.haltList,
-      Turing.FinTM2.step,
-      Turing.TM2.step,
+      preservingXorMachine, preservingXorConfiguration, preservingXorPeek, preservingXorGoto,
+      preservingXorFirstStatement, preservingXorSecondStatement, preservingXorScanStatement,
+      preservingXorRestoreStatement, Turing.haltList, Turing.FinTM2.step, Turing.TM2.step,
       Turing.TM2.stepAux]
 
 private theorem preservingXor_first_missing
@@ -5833,17 +5824,9 @@ private theorem preservingXor_scan_step
       some (preservingXorConfiguration 2 none
         remaining (bit :: archive) output) := by
   machineStackEquality [
-      preservingXorMachine,
-      preservingXorConfiguration,
-      preservingXorPeek,
-      preservingXorGoto,
-      preservingXorFirstStatement,
-      preservingXorSecondStatement,
-      preservingXorScanStatement,
-      preservingXorRestoreStatement,
-      Turing.haltList,
-      Turing.FinTM2.step,
-      Turing.TM2.step,
+      preservingXorMachine, preservingXorConfiguration, preservingXorPeek, preservingXorGoto,
+      preservingXorFirstStatement, preservingXorSecondStatement, preservingXorScanStatement,
+      preservingXorRestoreStatement, Turing.haltList, Turing.FinTM2.step, Turing.TM2.step,
       Turing.TM2.stepAux]
 
 private theorem preservingXor_scan_finish
@@ -5861,17 +5844,9 @@ private theorem preservingXor_restore_step
       some (preservingXorConfiguration 3 none []
         archive (bit :: output)) := by
   machineStackEquality [
-      preservingXorMachine,
-      preservingXorConfiguration,
-      preservingXorPeek,
-      preservingXorGoto,
-      preservingXorFirstStatement,
-      preservingXorSecondStatement,
-      preservingXorScanStatement,
-      preservingXorRestoreStatement,
-      Turing.haltList,
-      Turing.FinTM2.step,
-      Turing.TM2.step,
+      preservingXorMachine, preservingXorConfiguration, preservingXorPeek, preservingXorGoto,
+      preservingXorFirstStatement, preservingXorSecondStatement, preservingXorScanStatement,
+      preservingXorRestoreStatement, Turing.haltList, Turing.FinTM2.step, Turing.TM2.step,
       Turing.TM2.stepAux]
 
 private theorem preservingXor_restore_finish
@@ -5880,17 +5855,9 @@ private theorem preservingXor_restore_finish
       (preservingXorConfiguration 3 none [] [] output) =
       some (Turing.haltList preservingXorMachine output) := by
   machineStackEquality [
-      preservingXorMachine,
-      preservingXorConfiguration,
-      preservingXorPeek,
-      preservingXorGoto,
-      preservingXorFirstStatement,
-      preservingXorSecondStatement,
-      preservingXorScanStatement,
-      preservingXorRestoreStatement,
-      Turing.haltList,
-      Turing.FinTM2.step,
-      Turing.TM2.step,
+      preservingXorMachine, preservingXorConfiguration, preservingXorPeek, preservingXorGoto,
+      preservingXorFirstStatement, preservingXorSecondStatement, preservingXorScanStatement,
+      preservingXorRestoreStatement, Turing.haltList, Turing.FinTM2.step, Turing.TM2.step,
       Turing.TM2.stepAux]
 
 private def preservingXor_scanTrace
@@ -6430,16 +6397,9 @@ private theorem binaryGaussianXor_first_step
       some (binaryGaussianXorConfiguration 1
         (some first) remaining output) := by
   cases first <;> machineStackEquality [
-      binaryGaussianXorMachine,
-      binaryGaussianXorConfiguration,
-      binaryGaussianXorPeek,
-      binaryGaussianXorGoto,
-      binaryGaussianXorFirstStatement,
-      binaryGaussianXorSecondStatement,
-      binaryGaussianXorDrainStatement,
-      Turing.haltList,
-      Turing.FinTM2.step,
-      Turing.TM2.step,
+      binaryGaussianXorMachine, binaryGaussianXorConfiguration, binaryGaussianXorPeek,
+      binaryGaussianXorGoto, binaryGaussianXorFirstStatement, binaryGaussianXorSecondStatement,
+      binaryGaussianXorDrainStatement, Turing.haltList, Turing.FinTM2.step, Turing.TM2.step,
       Turing.TM2.stepAux]
 
 private theorem binaryGaussianXor_first_missing
@@ -6477,16 +6437,9 @@ private theorem binaryGaussianXor_drain_step
       some (binaryGaussianXorConfiguration 2 none
         remaining output) := by
   machineStackEquality [
-      binaryGaussianXorMachine,
-      binaryGaussianXorConfiguration,
-      binaryGaussianXorPeek,
-      binaryGaussianXorGoto,
-      binaryGaussianXorFirstStatement,
-      binaryGaussianXorSecondStatement,
-      binaryGaussianXorDrainStatement,
-      Turing.haltList,
-      Turing.FinTM2.step,
-      Turing.TM2.step,
+      binaryGaussianXorMachine, binaryGaussianXorConfiguration, binaryGaussianXorPeek,
+      binaryGaussianXorGoto, binaryGaussianXorFirstStatement, binaryGaussianXorSecondStatement,
+      binaryGaussianXorDrainStatement, Turing.haltList, Turing.FinTM2.step, Turing.TM2.step,
       Turing.TM2.stepAux]
 
 private theorem binaryGaussianXor_drain_finish (output : List Bool) :
@@ -6494,16 +6447,9 @@ private theorem binaryGaussianXor_drain_finish (output : List Bool) :
       (binaryGaussianXorConfiguration 2 none [] output) =
       some (Turing.haltList binaryGaussianXorMachine output) := by
   machineStackEquality [
-      binaryGaussianXorMachine,
-      binaryGaussianXorConfiguration,
-      binaryGaussianXorPeek,
-      binaryGaussianXorGoto,
-      binaryGaussianXorFirstStatement,
-      binaryGaussianXorSecondStatement,
-      binaryGaussianXorDrainStatement,
-      Turing.haltList,
-      Turing.FinTM2.step,
-      Turing.TM2.step,
+      binaryGaussianXorMachine, binaryGaussianXorConfiguration, binaryGaussianXorPeek,
+      binaryGaussianXorGoto, binaryGaussianXorFirstStatement, binaryGaussianXorSecondStatement,
+      binaryGaussianXorDrainStatement, Turing.haltList, Turing.FinTM2.step, Turing.TM2.step,
       Turing.TM2.stepAux]
 
 private def binaryGaussianXor_drainTrace

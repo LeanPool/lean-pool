@@ -743,8 +743,7 @@ theorem variableFailureDropInput
       (variableConfiguration 6 (bit :: input) counter count) =
       some (variableConfiguration 6 input counter count) := by
   machineStackEquality [
-      variableClauseMachine,
-      variableConfiguration]
+      variableClauseMachine, variableConfiguration]
 
 theorem variableFailureDropCounter
     (bit : Bool) (counter : List Bool) (count : ℕ) :
@@ -752,8 +751,7 @@ theorem variableFailureDropCounter
       (variableConfiguration 6 [] (bit :: counter) count) =
       some (variableConfiguration 6 [] counter count) := by
   machineStackEquality [
-      variableClauseMachine,
-      variableConfiguration]
+      variableClauseMachine, variableConfiguration]
 
 theorem variableFailureFinish (count : ℕ) :
     variableClauseMachine.step
@@ -761,8 +759,7 @@ theorem variableFailureFinish (count : ℕ) :
       some (Turing.haltList variableClauseMachine
         (false :: List.replicate count true)) := by
   machineStackEquality [
-      variableClauseMachine,
-      variableConfiguration]
+      variableClauseMachine, variableConfiguration]
 
 /-- Clear the decoder work stacks and emit a failure marker. -/
 def variableFailureTrace
@@ -1335,8 +1332,7 @@ theorem canonical_header_prefix_true
       some (canonicalConfiguration 0 input
         (true :: counter) field binary borrow output) := by
   machineStackEquality [
-      canonicalFormulaMachine,
-      canonicalConfiguration]
+      canonicalFormulaMachine, canonicalConfiguration]
 
 theorem canonicalHeaderPrefixDelimiter
     (input counter field binary borrow output : List Bool) :
@@ -1346,8 +1342,7 @@ theorem canonicalHeaderPrefixDelimiter
       some (canonicalConfiguration 1 input
         counter field binary borrow output) := by
   machineStackEquality [
-      canonicalFormulaMachine,
-      canonicalConfiguration]
+      canonicalFormulaMachine, canonicalConfiguration]
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem canonical_header_prefix_missing
@@ -1368,8 +1363,7 @@ theorem canonical_header_payload_step
       some (canonicalConfiguration 1 input
         counter (bit :: field) binary borrow output) := by
   machineStackEquality [
-      canonicalFormulaMachine,
-      canonicalConfiguration]
+      canonicalFormulaMachine, canonicalConfiguration]
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem canonical_header_payload_missing
@@ -1429,8 +1423,7 @@ theorem canonicalHeaderReverseStep
       some (canonicalConfiguration 3 input []
         field (bit :: binary) borrow output) := by
   machineStackEquality [
-      canonicalFormulaMachine,
-      canonicalConfiguration]
+      canonicalFormulaMachine, canonicalConfiguration]
 
 theorem canonicalHeaderReverseComplete
     (input binary borrow output : List Bool) :
@@ -1449,8 +1442,7 @@ theorem canonicalBorrowZero
       some (canonicalConfiguration 13 input counter field
         binary (true :: borrow) output) := by
   machineStackEquality [
-      canonicalFormulaMachine,
-      canonicalConfiguration]
+      canonicalFormulaMachine, canonicalConfiguration]
 
 theorem canonicalBorrowOne
     (input counter field binary borrow output : List Bool) :
@@ -1460,8 +1452,7 @@ theorem canonicalBorrowOne
       some (canonicalConfiguration 14 input counter field
         (false :: binary) borrow output) := by
   machineStackEquality [
-      canonicalFormulaMachine,
-      canonicalConfiguration]
+      canonicalFormulaMachine, canonicalConfiguration]
 
 theorem canonicalBorrowExhausted
     (input counter field borrow output : List Bool) :
@@ -1480,8 +1471,7 @@ theorem canonicalBorrowRestoreStep
       some (canonicalConfiguration 14 input counter field
         (true :: binary) borrow output) := by
   machineStackEquality [
-      canonicalFormulaMachine,
-      canonicalConfiguration]
+      canonicalFormulaMachine, canonicalConfiguration]
 
 theorem canonicalBorrowRestoreComplete
     (input counter field binary output : List Bool) :
@@ -1500,8 +1490,7 @@ theorem canonicalZeroCheckFalse
       some (canonicalConfiguration 16 input counter field
         binary borrow output) := by
   machineStackEquality [
-      canonicalFormulaMachine,
-      canonicalConfiguration]
+      canonicalFormulaMachine, canonicalConfiguration]
 
 theorem canonicalZeroCheckTrue
     (input counter field binary borrow output : List Bool) :
@@ -1816,8 +1805,7 @@ theorem canonicalFailureDropInput
       some (canonicalConfiguration 15 input
         counter field binary borrow output) := by
   machineStackEquality [
-      canonicalFormulaMachine,
-      canonicalConfiguration]
+      canonicalFormulaMachine, canonicalConfiguration]
 
 theorem canonicalFailureDropCounter
     (bit : Bool)
@@ -1828,8 +1816,7 @@ theorem canonicalFailureDropCounter
       some (canonicalConfiguration 15 []
         counter field binary borrow output) := by
   machineStackEquality [
-      canonicalFormulaMachine,
-      canonicalConfiguration]
+      canonicalFormulaMachine, canonicalConfiguration]
 
 theorem canonicalFailureDropField
     (bit : Bool) (field binary borrow output : List Bool) :
@@ -1839,8 +1826,7 @@ theorem canonicalFailureDropField
       some (canonicalConfiguration 15 [] []
         field binary borrow output) := by
   machineStackEquality [
-      canonicalFormulaMachine,
-      canonicalConfiguration]
+      canonicalFormulaMachine, canonicalConfiguration]
 
 theorem canonicalFailureDropBinary
     (bit : Bool) (binary borrow output : List Bool) :
@@ -1850,8 +1836,7 @@ theorem canonicalFailureDropBinary
       some (canonicalConfiguration 15 [] [] []
         binary borrow output) := by
   machineStackEquality [
-      canonicalFormulaMachine,
-      canonicalConfiguration]
+      canonicalFormulaMachine, canonicalConfiguration]
 
 theorem canonicalFailureDropBorrow
     (bit : Bool) (borrow output : List Bool) :
@@ -1861,8 +1846,7 @@ theorem canonicalFailureDropBorrow
       some (canonicalConfiguration 15 [] [] [] []
         borrow output) := by
   machineStackEquality [
-      canonicalFormulaMachine,
-      canonicalConfiguration]
+      canonicalFormulaMachine, canonicalConfiguration]
 
 theorem canonicalFailureFinish (output : List Bool) :
     canonicalFormulaMachine.step
@@ -1870,8 +1854,7 @@ theorem canonicalFailureFinish (output : List Bool) :
       some (Turing.haltList canonicalFormulaMachine
         (false :: output)) := by
   machineStackEquality [
-      canonicalFormulaMachine,
-      canonicalConfiguration]
+      canonicalFormulaMachine, canonicalConfiguration]
 
 /-- Internal support shared across GapCVP continuation modules. -/
 def canonicalFailureTrace

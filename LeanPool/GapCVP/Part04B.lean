@@ -1131,27 +1131,15 @@ theorem polynomialRowMarker_scan_step
           input (bit :: source) (true :: base) baseScratch
           accumulator product output) := by
   machineStackEquality [
-      polynomialRowMarkerMachine,
-      polynomialRowMarkerConfiguration,
-      polynomialRowMarkerPeek,
-      polynomialRowMarkerPop,
-      polynomialRowMarkerPushBit,
-      polynomialRowMarkerPushConstant,
-      polynomialRowMarkerGoto,
-      polynomialRowMarkerScanStatement,
-      polynomialRowMarkerMultiplyStatement,
-      polynomialRowMarkerBaseStatement,
-      polynomialRowMarkerRestoreBaseStatement,
-      polynomialRowMarkerCoefficientStatement,
-      polynomialRowMarkerPayloadStatement,
-      polynomialRowMarkerHeaderStatement,
-      polynomialRowMarkerSourceStatement,
-      polynomialRowMarkerPrefixStatement,
-      polynomialRowMarkerPushBits_stepAux,
-      Turing.haltList,
-      Turing.FinTM2.step,
-      Turing.TM2.step,
-      Turing.TM2.stepAux]
+      polynomialRowMarkerMachine, polynomialRowMarkerConfiguration, polynomialRowMarkerPeek,
+      polynomialRowMarkerPop, polynomialRowMarkerPushBit, polynomialRowMarkerPushConstant,
+      polynomialRowMarkerGoto, polynomialRowMarkerScanStatement,
+      polynomialRowMarkerMultiplyStatement, polynomialRowMarkerBaseStatement,
+      polynomialRowMarkerRestoreBaseStatement, polynomialRowMarkerCoefficientStatement,
+      polynomialRowMarkerPayloadStatement, polynomialRowMarkerHeaderStatement,
+      polynomialRowMarkerSourceStatement, polynomialRowMarkerPrefixStatement,
+      polynomialRowMarkerPushBits_stepAux, Turing.haltList, Turing.FinTM2.step,
+      Turing.TM2.step, Turing.TM2.stepAux]
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem polynomialRowMarker_scan_finish
@@ -1181,27 +1169,15 @@ theorem polynomialRowMarker_multiply_step
         (polynomialRowMarkerConfiguration polynomial 2 stage
           [] source base baseScratch accumulator product output) := by
   machineStackEquality [
-      polynomialRowMarkerMachine,
-      polynomialRowMarkerConfiguration,
-      polynomialRowMarkerPeek,
-      polynomialRowMarkerPop,
-      polynomialRowMarkerPushBit,
-      polynomialRowMarkerPushConstant,
-      polynomialRowMarkerGoto,
-      polynomialRowMarkerScanStatement,
-      polynomialRowMarkerMultiplyStatement,
-      polynomialRowMarkerBaseStatement,
-      polynomialRowMarkerRestoreBaseStatement,
-      polynomialRowMarkerCoefficientStatement,
-      polynomialRowMarkerPayloadStatement,
-      polynomialRowMarkerHeaderStatement,
-      polynomialRowMarkerSourceStatement,
-      polynomialRowMarkerPrefixStatement,
-      polynomialRowMarkerPushBits_stepAux,
-      Turing.haltList,
-      Turing.FinTM2.step,
-      Turing.TM2.step,
-      Turing.TM2.stepAux]
+      polynomialRowMarkerMachine, polynomialRowMarkerConfiguration, polynomialRowMarkerPeek,
+      polynomialRowMarkerPop, polynomialRowMarkerPushBit, polynomialRowMarkerPushConstant,
+      polynomialRowMarkerGoto, polynomialRowMarkerScanStatement,
+      polynomialRowMarkerMultiplyStatement, polynomialRowMarkerBaseStatement,
+      polynomialRowMarkerRestoreBaseStatement, polynomialRowMarkerCoefficientStatement,
+      polynomialRowMarkerPayloadStatement, polynomialRowMarkerHeaderStatement,
+      polynomialRowMarkerSourceStatement, polynomialRowMarkerPrefixStatement,
+      polynomialRowMarkerPushBits_stepAux, Turing.haltList, Turing.FinTM2.step,
+      Turing.TM2.step, Turing.TM2.stepAux]
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem polynomialRowMarker_multiply_finish
@@ -1231,27 +1207,15 @@ theorem polynomialRowMarker_base_step
           [] source base (true :: baseScratch)
           accumulator (true :: product) output) := by
   machineStackEquality [
-      polynomialRowMarkerMachine,
-      polynomialRowMarkerConfiguration,
-      polynomialRowMarkerPeek,
-      polynomialRowMarkerPop,
-      polynomialRowMarkerPushBit,
-      polynomialRowMarkerPushConstant,
-      polynomialRowMarkerGoto,
-      polynomialRowMarkerScanStatement,
-      polynomialRowMarkerMultiplyStatement,
-      polynomialRowMarkerBaseStatement,
-      polynomialRowMarkerRestoreBaseStatement,
-      polynomialRowMarkerCoefficientStatement,
-      polynomialRowMarkerPayloadStatement,
-      polynomialRowMarkerHeaderStatement,
-      polynomialRowMarkerSourceStatement,
-      polynomialRowMarkerPrefixStatement,
-      polynomialRowMarkerPushBits_stepAux,
-      Turing.haltList,
-      Turing.FinTM2.step,
-      Turing.TM2.step,
-      Turing.TM2.stepAux]
+      polynomialRowMarkerMachine, polynomialRowMarkerConfiguration, polynomialRowMarkerPeek,
+      polynomialRowMarkerPop, polynomialRowMarkerPushBit, polynomialRowMarkerPushConstant,
+      polynomialRowMarkerGoto, polynomialRowMarkerScanStatement,
+      polynomialRowMarkerMultiplyStatement, polynomialRowMarkerBaseStatement,
+      polynomialRowMarkerRestoreBaseStatement, polynomialRowMarkerCoefficientStatement,
+      polynomialRowMarkerPayloadStatement, polynomialRowMarkerHeaderStatement,
+      polynomialRowMarkerSourceStatement, polynomialRowMarkerPrefixStatement,
+      polynomialRowMarkerPushBits_stepAux, Turing.haltList, Turing.FinTM2.step,
+      Turing.TM2.step, Turing.TM2.stepAux]
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem polynomialRowMarker_base_finish
@@ -1281,27 +1245,15 @@ theorem polynomialRowMarker_restoreBase_step
           [] source (true :: base) baseScratch
           accumulator product output) := by
   machineStackEquality [
-      polynomialRowMarkerMachine,
-      polynomialRowMarkerConfiguration,
-      polynomialRowMarkerPeek,
-      polynomialRowMarkerPop,
-      polynomialRowMarkerPushBit,
-      polynomialRowMarkerPushConstant,
-      polynomialRowMarkerGoto,
-      polynomialRowMarkerScanStatement,
-      polynomialRowMarkerMultiplyStatement,
-      polynomialRowMarkerBaseStatement,
-      polynomialRowMarkerRestoreBaseStatement,
-      polynomialRowMarkerCoefficientStatement,
-      polynomialRowMarkerPayloadStatement,
-      polynomialRowMarkerHeaderStatement,
-      polynomialRowMarkerSourceStatement,
-      polynomialRowMarkerPrefixStatement,
-      polynomialRowMarkerPushBits_stepAux,
-      Turing.haltList,
-      Turing.FinTM2.step,
-      Turing.TM2.step,
-      Turing.TM2.stepAux]
+      polynomialRowMarkerMachine, polynomialRowMarkerConfiguration, polynomialRowMarkerPeek,
+      polynomialRowMarkerPop, polynomialRowMarkerPushBit, polynomialRowMarkerPushConstant,
+      polynomialRowMarkerGoto, polynomialRowMarkerScanStatement,
+      polynomialRowMarkerMultiplyStatement, polynomialRowMarkerBaseStatement,
+      polynomialRowMarkerRestoreBaseStatement, polynomialRowMarkerCoefficientStatement,
+      polynomialRowMarkerPayloadStatement, polynomialRowMarkerHeaderStatement,
+      polynomialRowMarkerSourceStatement, polynomialRowMarkerPrefixStatement,
+      polynomialRowMarkerPushBits_stepAux, Turing.haltList, Turing.FinTM2.step,
+      Turing.TM2.step, Turing.TM2.stepAux]
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem polynomialRowMarker_restoreBase_finish
@@ -1328,27 +1280,15 @@ theorem polynomialRowMarker_product_step
         (polynomialRowMarkerConfiguration polynomial 4 stage
           [] source base [] (true :: accumulator) product output) := by
   machineStackEquality [
-      polynomialRowMarkerMachine,
-      polynomialRowMarkerConfiguration,
-      polynomialRowMarkerPeek,
-      polynomialRowMarkerPop,
-      polynomialRowMarkerPushBit,
-      polynomialRowMarkerPushConstant,
-      polynomialRowMarkerGoto,
-      polynomialRowMarkerScanStatement,
-      polynomialRowMarkerMultiplyStatement,
-      polynomialRowMarkerBaseStatement,
-      polynomialRowMarkerRestoreBaseStatement,
-      polynomialRowMarkerCoefficientStatement,
-      polynomialRowMarkerPayloadStatement,
-      polynomialRowMarkerHeaderStatement,
-      polynomialRowMarkerSourceStatement,
-      polynomialRowMarkerPrefixStatement,
-      polynomialRowMarkerPushBits_stepAux,
-      Turing.haltList,
-      Turing.FinTM2.step,
-      Turing.TM2.step,
-      Turing.TM2.stepAux]
+      polynomialRowMarkerMachine, polynomialRowMarkerConfiguration, polynomialRowMarkerPeek,
+      polynomialRowMarkerPop, polynomialRowMarkerPushBit, polynomialRowMarkerPushConstant,
+      polynomialRowMarkerGoto, polynomialRowMarkerScanStatement,
+      polynomialRowMarkerMultiplyStatement, polynomialRowMarkerBaseStatement,
+      polynomialRowMarkerRestoreBaseStatement, polynomialRowMarkerCoefficientStatement,
+      polynomialRowMarkerPayloadStatement, polynomialRowMarkerHeaderStatement,
+      polynomialRowMarkerSourceStatement, polynomialRowMarkerPrefixStatement,
+      polynomialRowMarkerPushBits_stepAux, Turing.haltList, Turing.FinTM2.step,
+      Turing.TM2.step, Turing.TM2.stepAux]
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem polynomialRowMarker_coefficient_zero_step
@@ -1368,27 +1308,15 @@ theorem polynomialRowMarker_coefficient_zero_step
   have hstage' : stage = (0 : PolynomialRowMarkerStage polynomial) :=
     Fin.ext hstage
   machineStackEquality [
-      polynomialRowMarkerMachine,
-      polynomialRowMarkerConfiguration,
-      polynomialRowMarkerPeek,
-      polynomialRowMarkerPop,
-      polynomialRowMarkerPushBit,
-      polynomialRowMarkerPushConstant,
-      polynomialRowMarkerGoto,
-      polynomialRowMarkerScanStatement,
-      polynomialRowMarkerMultiplyStatement,
-      polynomialRowMarkerBaseStatement,
-      polynomialRowMarkerRestoreBaseStatement,
-      polynomialRowMarkerCoefficientStatement,
-      polynomialRowMarkerPayloadStatement,
-      polynomialRowMarkerHeaderStatement,
-      polynomialRowMarkerSourceStatement,
-      polynomialRowMarkerPrefixStatement,
-      polynomialRowMarkerPushBits_stepAux,
-      Turing.haltList,
-      Turing.FinTM2.step,
-      Turing.TM2.step,
-      Turing.TM2.stepAux];
+      polynomialRowMarkerMachine, polynomialRowMarkerConfiguration, polynomialRowMarkerPeek,
+      polynomialRowMarkerPop, polynomialRowMarkerPushBit, polynomialRowMarkerPushConstant,
+      polynomialRowMarkerGoto, polynomialRowMarkerScanStatement,
+      polynomialRowMarkerMultiplyStatement, polynomialRowMarkerBaseStatement,
+      polynomialRowMarkerRestoreBaseStatement, polynomialRowMarkerCoefficientStatement,
+      polynomialRowMarkerPayloadStatement, polynomialRowMarkerHeaderStatement,
+      polynomialRowMarkerSourceStatement, polynomialRowMarkerPrefixStatement,
+      polynomialRowMarkerPushBits_stepAux, Turing.haltList, Turing.FinTM2.step,
+      Turing.TM2.step, Turing.TM2.stepAux];
     simp only [Fin.isValue, hstage', ↓reduceDIte, Fin.coe_ofNat_eq_mod, Nat.zero_mod,
       polynomialRowMarkerPushBits_stepAux, TM2.stepAux, List.reverse_replicate, Matrix.cons_val];
     try { congr 2; funext stack; fin_cases stack <;>
@@ -1434,27 +1362,15 @@ theorem polynomialRowMarker_payload_step
           [] source base [] accumulator
           (true :: product) (true :: output)) := by
   machineStackEquality [
-      polynomialRowMarkerMachine,
-      polynomialRowMarkerConfiguration,
-      polynomialRowMarkerPeek,
-      polynomialRowMarkerPop,
-      polynomialRowMarkerPushBit,
-      polynomialRowMarkerPushConstant,
-      polynomialRowMarkerGoto,
-      polynomialRowMarkerScanStatement,
-      polynomialRowMarkerMultiplyStatement,
-      polynomialRowMarkerBaseStatement,
-      polynomialRowMarkerRestoreBaseStatement,
-      polynomialRowMarkerCoefficientStatement,
-      polynomialRowMarkerPayloadStatement,
-      polynomialRowMarkerHeaderStatement,
-      polynomialRowMarkerSourceStatement,
-      polynomialRowMarkerPrefixStatement,
-      polynomialRowMarkerPushBits_stepAux,
-      Turing.haltList,
-      Turing.FinTM2.step,
-      Turing.TM2.step,
-      Turing.TM2.stepAux]
+      polynomialRowMarkerMachine, polynomialRowMarkerConfiguration, polynomialRowMarkerPeek,
+      polynomialRowMarkerPop, polynomialRowMarkerPushBit, polynomialRowMarkerPushConstant,
+      polynomialRowMarkerGoto, polynomialRowMarkerScanStatement,
+      polynomialRowMarkerMultiplyStatement, polynomialRowMarkerBaseStatement,
+      polynomialRowMarkerRestoreBaseStatement, polynomialRowMarkerCoefficientStatement,
+      polynomialRowMarkerPayloadStatement, polynomialRowMarkerHeaderStatement,
+      polynomialRowMarkerSourceStatement, polynomialRowMarkerPrefixStatement,
+      polynomialRowMarkerPushBits_stepAux, Turing.haltList, Turing.FinTM2.step,
+      Turing.TM2.step, Turing.TM2.stepAux]
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem polynomialRowMarker_payload_finish
@@ -1468,27 +1384,15 @@ theorem polynomialRowMarker_payload_finish
         (polynomialRowMarkerConfiguration polynomial 6 stage
           [] source base [] [] product (false :: output)) := by
   machineStackEquality [
-      polynomialRowMarkerMachine,
-      polynomialRowMarkerConfiguration,
-      polynomialRowMarkerPeek,
-      polynomialRowMarkerPop,
-      polynomialRowMarkerPushBit,
-      polynomialRowMarkerPushConstant,
-      polynomialRowMarkerGoto,
-      polynomialRowMarkerScanStatement,
-      polynomialRowMarkerMultiplyStatement,
-      polynomialRowMarkerBaseStatement,
-      polynomialRowMarkerRestoreBaseStatement,
-      polynomialRowMarkerCoefficientStatement,
-      polynomialRowMarkerPayloadStatement,
-      polynomialRowMarkerHeaderStatement,
-      polynomialRowMarkerSourceStatement,
-      polynomialRowMarkerPrefixStatement,
-      polynomialRowMarkerPushBits_stepAux,
-      Turing.haltList,
-      Turing.FinTM2.step,
-      Turing.TM2.step,
-      Turing.TM2.stepAux]
+      polynomialRowMarkerMachine, polynomialRowMarkerConfiguration, polynomialRowMarkerPeek,
+      polynomialRowMarkerPop, polynomialRowMarkerPushBit, polynomialRowMarkerPushConstant,
+      polynomialRowMarkerGoto, polynomialRowMarkerScanStatement,
+      polynomialRowMarkerMultiplyStatement, polynomialRowMarkerBaseStatement,
+      polynomialRowMarkerRestoreBaseStatement, polynomialRowMarkerCoefficientStatement,
+      polynomialRowMarkerPayloadStatement, polynomialRowMarkerHeaderStatement,
+      polynomialRowMarkerSourceStatement, polynomialRowMarkerPrefixStatement,
+      polynomialRowMarkerPushBits_stepAux, Turing.haltList, Turing.FinTM2.step,
+      Turing.TM2.step, Turing.TM2.stepAux]
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem polynomialRowMarker_header_step
@@ -1502,27 +1406,15 @@ theorem polynomialRowMarker_header_step
         (polynomialRowMarkerConfiguration polynomial 6 stage
           [] source base [] [] product (true :: output)) := by
   machineStackEquality [
-      polynomialRowMarkerMachine,
-      polynomialRowMarkerConfiguration,
-      polynomialRowMarkerPeek,
-      polynomialRowMarkerPop,
-      polynomialRowMarkerPushBit,
-      polynomialRowMarkerPushConstant,
-      polynomialRowMarkerGoto,
-      polynomialRowMarkerScanStatement,
-      polynomialRowMarkerMultiplyStatement,
-      polynomialRowMarkerBaseStatement,
-      polynomialRowMarkerRestoreBaseStatement,
-      polynomialRowMarkerCoefficientStatement,
-      polynomialRowMarkerPayloadStatement,
-      polynomialRowMarkerHeaderStatement,
-      polynomialRowMarkerSourceStatement,
-      polynomialRowMarkerPrefixStatement,
-      polynomialRowMarkerPushBits_stepAux,
-      Turing.haltList,
-      Turing.FinTM2.step,
-      Turing.TM2.step,
-      Turing.TM2.stepAux]
+      polynomialRowMarkerMachine, polynomialRowMarkerConfiguration, polynomialRowMarkerPeek,
+      polynomialRowMarkerPop, polynomialRowMarkerPushBit, polynomialRowMarkerPushConstant,
+      polynomialRowMarkerGoto, polynomialRowMarkerScanStatement,
+      polynomialRowMarkerMultiplyStatement, polynomialRowMarkerBaseStatement,
+      polynomialRowMarkerRestoreBaseStatement, polynomialRowMarkerCoefficientStatement,
+      polynomialRowMarkerPayloadStatement, polynomialRowMarkerHeaderStatement,
+      polynomialRowMarkerSourceStatement, polynomialRowMarkerPrefixStatement,
+      polynomialRowMarkerPushBits_stepAux, Turing.haltList, Turing.FinTM2.step,
+      Turing.TM2.step, Turing.TM2.stepAux]
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem polynomialRowMarker_header_finish
@@ -1550,27 +1442,15 @@ theorem polynomialRowMarker_source_step
         (polynomialRowMarkerConfiguration polynomial 7 stage
           [] source base [] [] [] (bit :: output)) := by
   machineStackEquality [
-      polynomialRowMarkerMachine,
-      polynomialRowMarkerConfiguration,
-      polynomialRowMarkerPeek,
-      polynomialRowMarkerPop,
-      polynomialRowMarkerPushBit,
-      polynomialRowMarkerPushConstant,
-      polynomialRowMarkerGoto,
-      polynomialRowMarkerScanStatement,
-      polynomialRowMarkerMultiplyStatement,
-      polynomialRowMarkerBaseStatement,
-      polynomialRowMarkerRestoreBaseStatement,
-      polynomialRowMarkerCoefficientStatement,
-      polynomialRowMarkerPayloadStatement,
-      polynomialRowMarkerHeaderStatement,
-      polynomialRowMarkerSourceStatement,
-      polynomialRowMarkerPrefixStatement,
-      polynomialRowMarkerPushBits_stepAux,
-      Turing.haltList,
-      Turing.FinTM2.step,
-      Turing.TM2.step,
-      Turing.TM2.stepAux]
+      polynomialRowMarkerMachine, polynomialRowMarkerConfiguration, polynomialRowMarkerPeek,
+      polynomialRowMarkerPop, polynomialRowMarkerPushBit, polynomialRowMarkerPushConstant,
+      polynomialRowMarkerGoto, polynomialRowMarkerScanStatement,
+      polynomialRowMarkerMultiplyStatement, polynomialRowMarkerBaseStatement,
+      polynomialRowMarkerRestoreBaseStatement, polynomialRowMarkerCoefficientStatement,
+      polynomialRowMarkerPayloadStatement, polynomialRowMarkerHeaderStatement,
+      polynomialRowMarkerSourceStatement, polynomialRowMarkerPrefixStatement,
+      polynomialRowMarkerPushBits_stepAux, Turing.haltList, Turing.FinTM2.step,
+      Turing.TM2.step, Turing.TM2.stepAux]
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem polynomialRowMarker_source_finish
@@ -1584,27 +1464,15 @@ theorem polynomialRowMarker_source_finish
         (polynomialRowMarkerConfiguration polynomial 8 stage
           [] [] base [] [] [] (false :: output)) := by
   machineStackEquality [
-      polynomialRowMarkerMachine,
-      polynomialRowMarkerConfiguration,
-      polynomialRowMarkerPeek,
-      polynomialRowMarkerPop,
-      polynomialRowMarkerPushBit,
-      polynomialRowMarkerPushConstant,
-      polynomialRowMarkerGoto,
-      polynomialRowMarkerScanStatement,
-      polynomialRowMarkerMultiplyStatement,
-      polynomialRowMarkerBaseStatement,
-      polynomialRowMarkerRestoreBaseStatement,
-      polynomialRowMarkerCoefficientStatement,
-      polynomialRowMarkerPayloadStatement,
-      polynomialRowMarkerHeaderStatement,
-      polynomialRowMarkerSourceStatement,
-      polynomialRowMarkerPrefixStatement,
-      polynomialRowMarkerPushBits_stepAux,
-      Turing.haltList,
-      Turing.FinTM2.step,
-      Turing.TM2.step,
-      Turing.TM2.stepAux]
+      polynomialRowMarkerMachine, polynomialRowMarkerConfiguration, polynomialRowMarkerPeek,
+      polynomialRowMarkerPop, polynomialRowMarkerPushBit, polynomialRowMarkerPushConstant,
+      polynomialRowMarkerGoto, polynomialRowMarkerScanStatement,
+      polynomialRowMarkerMultiplyStatement, polynomialRowMarkerBaseStatement,
+      polynomialRowMarkerRestoreBaseStatement, polynomialRowMarkerCoefficientStatement,
+      polynomialRowMarkerPayloadStatement, polynomialRowMarkerHeaderStatement,
+      polynomialRowMarkerSourceStatement, polynomialRowMarkerPrefixStatement,
+      polynomialRowMarkerPushBits_stepAux, Turing.haltList, Turing.FinTM2.step,
+      Turing.TM2.step, Turing.TM2.stepAux]
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem polynomialRowMarker_prefix_step
@@ -1618,27 +1486,15 @@ theorem polynomialRowMarker_prefix_step
         (polynomialRowMarkerConfiguration polynomial 8 stage
           [] [] base [] [] [] (true :: output)) := by
   machineStackEquality [
-      polynomialRowMarkerMachine,
-      polynomialRowMarkerConfiguration,
-      polynomialRowMarkerPeek,
-      polynomialRowMarkerPop,
-      polynomialRowMarkerPushBit,
-      polynomialRowMarkerPushConstant,
-      polynomialRowMarkerGoto,
-      polynomialRowMarkerScanStatement,
-      polynomialRowMarkerMultiplyStatement,
-      polynomialRowMarkerBaseStatement,
-      polynomialRowMarkerRestoreBaseStatement,
-      polynomialRowMarkerCoefficientStatement,
-      polynomialRowMarkerPayloadStatement,
-      polynomialRowMarkerHeaderStatement,
-      polynomialRowMarkerSourceStatement,
-      polynomialRowMarkerPrefixStatement,
-      polynomialRowMarkerPushBits_stepAux,
-      Turing.haltList,
-      Turing.FinTM2.step,
-      Turing.TM2.step,
-      Turing.TM2.stepAux]
+      polynomialRowMarkerMachine, polynomialRowMarkerConfiguration, polynomialRowMarkerPeek,
+      polynomialRowMarkerPop, polynomialRowMarkerPushBit, polynomialRowMarkerPushConstant,
+      polynomialRowMarkerGoto, polynomialRowMarkerScanStatement,
+      polynomialRowMarkerMultiplyStatement, polynomialRowMarkerBaseStatement,
+      polynomialRowMarkerRestoreBaseStatement, polynomialRowMarkerCoefficientStatement,
+      polynomialRowMarkerPayloadStatement, polynomialRowMarkerHeaderStatement,
+      polynomialRowMarkerSourceStatement, polynomialRowMarkerPrefixStatement,
+      polynomialRowMarkerPushBits_stepAux, Turing.haltList, Turing.FinTM2.step,
+      Turing.TM2.step, Turing.TM2.stepAux]
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem polynomialRowMarker_finish
@@ -1652,27 +1508,15 @@ theorem polynomialRowMarker_finish
         (Turing.haltList
           (polynomialRowMarkerMachine polynomial) output) := by
   machineStackEquality [
-      polynomialRowMarkerMachine,
-      polynomialRowMarkerConfiguration,
-      polynomialRowMarkerPeek,
-      polynomialRowMarkerPop,
-      polynomialRowMarkerPushBit,
-      polynomialRowMarkerPushConstant,
-      polynomialRowMarkerGoto,
-      polynomialRowMarkerScanStatement,
-      polynomialRowMarkerMultiplyStatement,
-      polynomialRowMarkerBaseStatement,
-      polynomialRowMarkerRestoreBaseStatement,
-      polynomialRowMarkerCoefficientStatement,
-      polynomialRowMarkerPayloadStatement,
-      polynomialRowMarkerHeaderStatement,
-      polynomialRowMarkerSourceStatement,
-      polynomialRowMarkerPrefixStatement,
-      polynomialRowMarkerPushBits_stepAux,
-      Turing.haltList,
-      Turing.FinTM2.step,
-      Turing.TM2.step,
-      Turing.TM2.stepAux]
+      polynomialRowMarkerMachine, polynomialRowMarkerConfiguration, polynomialRowMarkerPeek,
+      polynomialRowMarkerPop, polynomialRowMarkerPushBit, polynomialRowMarkerPushConstant,
+      polynomialRowMarkerGoto, polynomialRowMarkerScanStatement,
+      polynomialRowMarkerMultiplyStatement, polynomialRowMarkerBaseStatement,
+      polynomialRowMarkerRestoreBaseStatement, polynomialRowMarkerCoefficientStatement,
+      polynomialRowMarkerPayloadStatement, polynomialRowMarkerHeaderStatement,
+      polynomialRowMarkerSourceStatement, polynomialRowMarkerPrefixStatement,
+      polynomialRowMarkerPushBits_stepAux, Turing.haltList, Turing.FinTM2.step,
+      Turing.TM2.step, Turing.TM2.stepAux]
 
 end CNFPolynomialRowMarkerTM
 

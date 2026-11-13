@@ -626,22 +626,12 @@ theorem sourcePairPrefix_first_true
       some (sourcePairPrefixConfiguration 0
         input (true :: first) second output) := by
   machineStackEquality [
-      actualSourcePairPrefixMachine,
-      sourcePairPrefixConfiguration,
-      sourcePairPrefixPeek,
-      sourcePairPrefixPop,
-      sourcePairPrefixPush,
-      sourcePairPrefixGoto,
-      sourcePairPrefixFirstStatement,
-      sourcePairPrefixSecondStatement,
-      sourcePairPrefixSuffixStatement,
-      sourcePairPrefixSecondRestoreStatement,
-      sourcePairPrefixFirstRestoreStatement,
-      sourcePairPrefixFailureStatement,
-      Turing.haltList,
-      Turing.FinTM2.step,
-      Turing.TM2.step,
-      Turing.TM2.stepAux]
+      actualSourcePairPrefixMachine, sourcePairPrefixConfiguration, sourcePairPrefixPeek,
+      sourcePairPrefixPop, sourcePairPrefixPush, sourcePairPrefixGoto,
+      sourcePairPrefixFirstStatement, sourcePairPrefixSecondStatement,
+      sourcePairPrefixSuffixStatement, sourcePairPrefixSecondRestoreStatement,
+      sourcePairPrefixFirstRestoreStatement, sourcePairPrefixFailureStatement, Turing.haltList,
+      Turing.FinTM2.step, Turing.TM2.step, Turing.TM2.stepAux]
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem sourcePairPrefix_first_false
@@ -652,22 +642,12 @@ theorem sourcePairPrefix_first_false
       some (sourcePairPrefixConfiguration 1
         input first second output) := by
   machineStackEquality [
-      actualSourcePairPrefixMachine,
-      sourcePairPrefixConfiguration,
-      sourcePairPrefixPeek,
-      sourcePairPrefixPop,
-      sourcePairPrefixPush,
-      sourcePairPrefixGoto,
-      sourcePairPrefixFirstStatement,
-      sourcePairPrefixSecondStatement,
-      sourcePairPrefixSuffixStatement,
-      sourcePairPrefixSecondRestoreStatement,
-      sourcePairPrefixFirstRestoreStatement,
-      sourcePairPrefixFailureStatement,
-      Turing.haltList,
-      Turing.FinTM2.step,
-      Turing.TM2.step,
-      Turing.TM2.stepAux]
+      actualSourcePairPrefixMachine, sourcePairPrefixConfiguration, sourcePairPrefixPeek,
+      sourcePairPrefixPop, sourcePairPrefixPush, sourcePairPrefixGoto,
+      sourcePairPrefixFirstStatement, sourcePairPrefixSecondStatement,
+      sourcePairPrefixSuffixStatement, sourcePairPrefixSecondRestoreStatement,
+      sourcePairPrefixFirstRestoreStatement, sourcePairPrefixFailureStatement, Turing.haltList,
+      Turing.FinTM2.step, Turing.TM2.step, Turing.TM2.stepAux]
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem sourcePairPrefix_first_missing
@@ -686,22 +666,12 @@ theorem sourcePairPrefix_second_true
       some (sourcePairPrefixConfiguration 1
         input first (true :: second) output) := by
   machineStackEquality [
-      actualSourcePairPrefixMachine,
-      sourcePairPrefixConfiguration,
-      sourcePairPrefixPeek,
-      sourcePairPrefixPop,
-      sourcePairPrefixPush,
-      sourcePairPrefixGoto,
-      sourcePairPrefixFirstStatement,
-      sourcePairPrefixSecondStatement,
-      sourcePairPrefixSuffixStatement,
-      sourcePairPrefixSecondRestoreStatement,
-      sourcePairPrefixFirstRestoreStatement,
-      sourcePairPrefixFailureStatement,
-      Turing.haltList,
-      Turing.FinTM2.step,
-      Turing.TM2.step,
-      Turing.TM2.stepAux]
+      actualSourcePairPrefixMachine, sourcePairPrefixConfiguration, sourcePairPrefixPeek,
+      sourcePairPrefixPop, sourcePairPrefixPush, sourcePairPrefixGoto,
+      sourcePairPrefixFirstStatement, sourcePairPrefixSecondStatement,
+      sourcePairPrefixSuffixStatement, sourcePairPrefixSecondRestoreStatement,
+      sourcePairPrefixFirstRestoreStatement, sourcePairPrefixFailureStatement, Turing.haltList,
+      Turing.FinTM2.step, Turing.TM2.step, Turing.TM2.stepAux]
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem sourcePairPrefix_second_false
@@ -712,22 +682,12 @@ theorem sourcePairPrefix_second_false
       some (sourcePairPrefixConfiguration 2
         input first second (false :: output)) := by
   machineStackEquality [
-      actualSourcePairPrefixMachine,
-      sourcePairPrefixConfiguration,
-      sourcePairPrefixPeek,
-      sourcePairPrefixPop,
-      sourcePairPrefixPush,
-      sourcePairPrefixGoto,
-      sourcePairPrefixFirstStatement,
-      sourcePairPrefixSecondStatement,
-      sourcePairPrefixSuffixStatement,
-      sourcePairPrefixSecondRestoreStatement,
-      sourcePairPrefixFirstRestoreStatement,
-      sourcePairPrefixFailureStatement,
-      Turing.haltList,
-      Turing.FinTM2.step,
-      Turing.TM2.step,
-      Turing.TM2.stepAux]
+      actualSourcePairPrefixMachine, sourcePairPrefixConfiguration, sourcePairPrefixPeek,
+      sourcePairPrefixPop, sourcePairPrefixPush, sourcePairPrefixGoto,
+      sourcePairPrefixFirstStatement, sourcePairPrefixSecondStatement,
+      sourcePairPrefixSuffixStatement, sourcePairPrefixSecondRestoreStatement,
+      sourcePairPrefixFirstRestoreStatement, sourcePairPrefixFailureStatement, Turing.haltList,
+      Turing.FinTM2.step, Turing.TM2.step, Turing.TM2.stepAux]
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem sourcePairPrefix_second_missing
@@ -746,22 +706,12 @@ theorem sourcePairPrefix_suffix_step
       some (sourcePairPrefixConfiguration 2
         input first second output) := by
   machineStackEquality [
-      actualSourcePairPrefixMachine,
-      sourcePairPrefixConfiguration,
-      sourcePairPrefixPeek,
-      sourcePairPrefixPop,
-      sourcePairPrefixPush,
-      sourcePairPrefixGoto,
-      sourcePairPrefixFirstStatement,
-      sourcePairPrefixSecondStatement,
-      sourcePairPrefixSuffixStatement,
-      sourcePairPrefixSecondRestoreStatement,
-      sourcePairPrefixFirstRestoreStatement,
-      sourcePairPrefixFailureStatement,
-      Turing.haltList,
-      Turing.FinTM2.step,
-      Turing.TM2.step,
-      Turing.TM2.stepAux]
+      actualSourcePairPrefixMachine, sourcePairPrefixConfiguration, sourcePairPrefixPeek,
+      sourcePairPrefixPop, sourcePairPrefixPush, sourcePairPrefixGoto,
+      sourcePairPrefixFirstStatement, sourcePairPrefixSecondStatement,
+      sourcePairPrefixSuffixStatement, sourcePairPrefixSecondRestoreStatement,
+      sourcePairPrefixFirstRestoreStatement, sourcePairPrefixFailureStatement, Turing.haltList,
+      Turing.FinTM2.step, Turing.TM2.step, Turing.TM2.stepAux]
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem sourcePairPrefix_suffix_finish
@@ -781,22 +731,12 @@ theorem sourcePairPrefix_secondRestore_step
       some (sourcePairPrefixConfiguration 3
         [] first second (true :: output)) := by
   machineStackEquality [
-      actualSourcePairPrefixMachine,
-      sourcePairPrefixConfiguration,
-      sourcePairPrefixPeek,
-      sourcePairPrefixPop,
-      sourcePairPrefixPush,
-      sourcePairPrefixGoto,
-      sourcePairPrefixFirstStatement,
-      sourcePairPrefixSecondStatement,
-      sourcePairPrefixSuffixStatement,
-      sourcePairPrefixSecondRestoreStatement,
-      sourcePairPrefixFirstRestoreStatement,
-      sourcePairPrefixFailureStatement,
-      Turing.haltList,
-      Turing.FinTM2.step,
-      Turing.TM2.step,
-      Turing.TM2.stepAux]
+      actualSourcePairPrefixMachine, sourcePairPrefixConfiguration, sourcePairPrefixPeek,
+      sourcePairPrefixPop, sourcePairPrefixPush, sourcePairPrefixGoto,
+      sourcePairPrefixFirstStatement, sourcePairPrefixSecondStatement,
+      sourcePairPrefixSuffixStatement, sourcePairPrefixSecondRestoreStatement,
+      sourcePairPrefixFirstRestoreStatement, sourcePairPrefixFailureStatement, Turing.haltList,
+      Turing.FinTM2.step, Turing.TM2.step, Turing.TM2.stepAux]
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem sourcePairPrefix_secondRestore_finish
@@ -806,22 +746,12 @@ theorem sourcePairPrefix_secondRestore_finish
       some (sourcePairPrefixConfiguration 4
         [] first [] (false :: output)) := by
   machineStackEquality [
-      actualSourcePairPrefixMachine,
-      sourcePairPrefixConfiguration,
-      sourcePairPrefixPeek,
-      sourcePairPrefixPop,
-      sourcePairPrefixPush,
-      sourcePairPrefixGoto,
-      sourcePairPrefixFirstStatement,
-      sourcePairPrefixSecondStatement,
-      sourcePairPrefixSuffixStatement,
-      sourcePairPrefixSecondRestoreStatement,
-      sourcePairPrefixFirstRestoreStatement,
-      sourcePairPrefixFailureStatement,
-      Turing.haltList,
-      Turing.FinTM2.step,
-      Turing.TM2.step,
-      Turing.TM2.stepAux]
+      actualSourcePairPrefixMachine, sourcePairPrefixConfiguration, sourcePairPrefixPeek,
+      sourcePairPrefixPop, sourcePairPrefixPush, sourcePairPrefixGoto,
+      sourcePairPrefixFirstStatement, sourcePairPrefixSecondStatement,
+      sourcePairPrefixSuffixStatement, sourcePairPrefixSecondRestoreStatement,
+      sourcePairPrefixFirstRestoreStatement, sourcePairPrefixFailureStatement, Turing.haltList,
+      Turing.FinTM2.step, Turing.TM2.step, Turing.TM2.stepAux]
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem sourcePairPrefix_firstRestore_step
@@ -832,22 +762,12 @@ theorem sourcePairPrefix_firstRestore_step
       some (sourcePairPrefixConfiguration 4
         [] first [] (true :: output)) := by
   machineStackEquality [
-      actualSourcePairPrefixMachine,
-      sourcePairPrefixConfiguration,
-      sourcePairPrefixPeek,
-      sourcePairPrefixPop,
-      sourcePairPrefixPush,
-      sourcePairPrefixGoto,
-      sourcePairPrefixFirstStatement,
-      sourcePairPrefixSecondStatement,
-      sourcePairPrefixSuffixStatement,
-      sourcePairPrefixSecondRestoreStatement,
-      sourcePairPrefixFirstRestoreStatement,
-      sourcePairPrefixFailureStatement,
-      Turing.haltList,
-      Turing.FinTM2.step,
-      Turing.TM2.step,
-      Turing.TM2.stepAux]
+      actualSourcePairPrefixMachine, sourcePairPrefixConfiguration, sourcePairPrefixPeek,
+      sourcePairPrefixPop, sourcePairPrefixPush, sourcePairPrefixGoto,
+      sourcePairPrefixFirstStatement, sourcePairPrefixSecondStatement,
+      sourcePairPrefixSuffixStatement, sourcePairPrefixSecondRestoreStatement,
+      sourcePairPrefixFirstRestoreStatement, sourcePairPrefixFailureStatement, Turing.haltList,
+      Turing.FinTM2.step, Turing.TM2.step, Turing.TM2.stepAux]
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem sourcePairPrefix_firstRestore_finish
@@ -856,22 +776,12 @@ theorem sourcePairPrefix_firstRestore_finish
       (sourcePairPrefixConfiguration 4 [] [] [] output) =
       some (Turing.haltList actualSourcePairPrefixMachine output) := by
   machineStackEquality [
-      actualSourcePairPrefixMachine,
-      sourcePairPrefixConfiguration,
-      sourcePairPrefixPeek,
-      sourcePairPrefixPop,
-      sourcePairPrefixPush,
-      sourcePairPrefixGoto,
-      sourcePairPrefixFirstStatement,
-      sourcePairPrefixSecondStatement,
-      sourcePairPrefixSuffixStatement,
-      sourcePairPrefixSecondRestoreStatement,
-      sourcePairPrefixFirstRestoreStatement,
-      sourcePairPrefixFailureStatement,
-      Turing.haltList,
-      Turing.FinTM2.step,
-      Turing.TM2.step,
-      Turing.TM2.stepAux]
+      actualSourcePairPrefixMachine, sourcePairPrefixConfiguration, sourcePairPrefixPeek,
+      sourcePairPrefixPop, sourcePairPrefixPush, sourcePairPrefixGoto,
+      sourcePairPrefixFirstStatement, sourcePairPrefixSecondStatement,
+      sourcePairPrefixSuffixStatement, sourcePairPrefixSecondRestoreStatement,
+      sourcePairPrefixFirstRestoreStatement, sourcePairPrefixFailureStatement, Turing.haltList,
+      Turing.FinTM2.step, Turing.TM2.step, Turing.TM2.stepAux]
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem sourcePairPrefix_failure_input_step
@@ -882,22 +792,12 @@ theorem sourcePairPrefix_failure_input_step
       some (sourcePairPrefixConfiguration 5
         input first second output) := by
   machineStackEquality [
-      actualSourcePairPrefixMachine,
-      sourcePairPrefixConfiguration,
-      sourcePairPrefixPeek,
-      sourcePairPrefixPop,
-      sourcePairPrefixPush,
-      sourcePairPrefixGoto,
-      sourcePairPrefixFirstStatement,
-      sourcePairPrefixSecondStatement,
-      sourcePairPrefixSuffixStatement,
-      sourcePairPrefixSecondRestoreStatement,
-      sourcePairPrefixFirstRestoreStatement,
-      sourcePairPrefixFailureStatement,
-      Turing.haltList,
-      Turing.FinTM2.step,
-      Turing.TM2.step,
-      Turing.TM2.stepAux]
+      actualSourcePairPrefixMachine, sourcePairPrefixConfiguration, sourcePairPrefixPeek,
+      sourcePairPrefixPop, sourcePairPrefixPush, sourcePairPrefixGoto,
+      sourcePairPrefixFirstStatement, sourcePairPrefixSecondStatement,
+      sourcePairPrefixSuffixStatement, sourcePairPrefixSecondRestoreStatement,
+      sourcePairPrefixFirstRestoreStatement, sourcePairPrefixFailureStatement, Turing.haltList,
+      Turing.FinTM2.step, Turing.TM2.step, Turing.TM2.stepAux]
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem sourcePairPrefix_failure_first_step
@@ -908,22 +808,12 @@ theorem sourcePairPrefix_failure_first_step
       some (sourcePairPrefixConfiguration 5
         [] first second output) := by
   machineStackEquality [
-      actualSourcePairPrefixMachine,
-      sourcePairPrefixConfiguration,
-      sourcePairPrefixPeek,
-      sourcePairPrefixPop,
-      sourcePairPrefixPush,
-      sourcePairPrefixGoto,
-      sourcePairPrefixFirstStatement,
-      sourcePairPrefixSecondStatement,
-      sourcePairPrefixSuffixStatement,
-      sourcePairPrefixSecondRestoreStatement,
-      sourcePairPrefixFirstRestoreStatement,
-      sourcePairPrefixFailureStatement,
-      Turing.haltList,
-      Turing.FinTM2.step,
-      Turing.TM2.step,
-      Turing.TM2.stepAux]
+      actualSourcePairPrefixMachine, sourcePairPrefixConfiguration, sourcePairPrefixPeek,
+      sourcePairPrefixPop, sourcePairPrefixPush, sourcePairPrefixGoto,
+      sourcePairPrefixFirstStatement, sourcePairPrefixSecondStatement,
+      sourcePairPrefixSuffixStatement, sourcePairPrefixSecondRestoreStatement,
+      sourcePairPrefixFirstRestoreStatement, sourcePairPrefixFailureStatement, Turing.haltList,
+      Turing.FinTM2.step, Turing.TM2.step, Turing.TM2.stepAux]
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem sourcePairPrefix_failure_second_step
@@ -934,22 +824,12 @@ theorem sourcePairPrefix_failure_second_step
       some (sourcePairPrefixConfiguration 5
         [] [] second output) := by
   machineStackEquality [
-      actualSourcePairPrefixMachine,
-      sourcePairPrefixConfiguration,
-      sourcePairPrefixPeek,
-      sourcePairPrefixPop,
-      sourcePairPrefixPush,
-      sourcePairPrefixGoto,
-      sourcePairPrefixFirstStatement,
-      sourcePairPrefixSecondStatement,
-      sourcePairPrefixSuffixStatement,
-      sourcePairPrefixSecondRestoreStatement,
-      sourcePairPrefixFirstRestoreStatement,
-      sourcePairPrefixFailureStatement,
-      Turing.haltList,
-      Turing.FinTM2.step,
-      Turing.TM2.step,
-      Turing.TM2.stepAux]
+      actualSourcePairPrefixMachine, sourcePairPrefixConfiguration, sourcePairPrefixPeek,
+      sourcePairPrefixPop, sourcePairPrefixPush, sourcePairPrefixGoto,
+      sourcePairPrefixFirstStatement, sourcePairPrefixSecondStatement,
+      sourcePairPrefixSuffixStatement, sourcePairPrefixSecondRestoreStatement,
+      sourcePairPrefixFirstRestoreStatement, sourcePairPrefixFailureStatement, Turing.haltList,
+      Turing.FinTM2.step, Turing.TM2.step, Turing.TM2.stepAux]
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem sourcePairPrefix_failure_output_step
@@ -958,22 +838,12 @@ theorem sourcePairPrefix_failure_output_step
       (sourcePairPrefixConfiguration 5 [] [] [] (bit :: output)) =
       some (sourcePairPrefixConfiguration 5 [] [] [] output) := by
   machineStackEquality [
-      actualSourcePairPrefixMachine,
-      sourcePairPrefixConfiguration,
-      sourcePairPrefixPeek,
-      sourcePairPrefixPop,
-      sourcePairPrefixPush,
-      sourcePairPrefixGoto,
-      sourcePairPrefixFirstStatement,
-      sourcePairPrefixSecondStatement,
-      sourcePairPrefixSuffixStatement,
-      sourcePairPrefixSecondRestoreStatement,
-      sourcePairPrefixFirstRestoreStatement,
-      sourcePairPrefixFailureStatement,
-      Turing.haltList,
-      Turing.FinTM2.step,
-      Turing.TM2.step,
-      Turing.TM2.stepAux]
+      actualSourcePairPrefixMachine, sourcePairPrefixConfiguration, sourcePairPrefixPeek,
+      sourcePairPrefixPop, sourcePairPrefixPush, sourcePairPrefixGoto,
+      sourcePairPrefixFirstStatement, sourcePairPrefixSecondStatement,
+      sourcePairPrefixSuffixStatement, sourcePairPrefixSecondRestoreStatement,
+      sourcePairPrefixFirstRestoreStatement, sourcePairPrefixFailureStatement, Turing.haltList,
+      Turing.FinTM2.step, Turing.TM2.step, Turing.TM2.stepAux]
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem sourcePairPrefix_failure_finish :
@@ -981,22 +851,12 @@ theorem sourcePairPrefix_failure_finish :
       (sourcePairPrefixConfiguration 5 [] [] [] []) =
       some (Turing.haltList actualSourcePairPrefixMachine []) := by
   machineStackEquality [
-      actualSourcePairPrefixMachine,
-      sourcePairPrefixConfiguration,
-      sourcePairPrefixPeek,
-      sourcePairPrefixPop,
-      sourcePairPrefixPush,
-      sourcePairPrefixGoto,
-      sourcePairPrefixFirstStatement,
-      sourcePairPrefixSecondStatement,
-      sourcePairPrefixSuffixStatement,
-      sourcePairPrefixSecondRestoreStatement,
-      sourcePairPrefixFirstRestoreStatement,
-      sourcePairPrefixFailureStatement,
-      Turing.haltList,
-      Turing.FinTM2.step,
-      Turing.TM2.step,
-      Turing.TM2.stepAux]
+      actualSourcePairPrefixMachine, sourcePairPrefixConfiguration, sourcePairPrefixPeek,
+      sourcePairPrefixPop, sourcePairPrefixPush, sourcePairPrefixGoto,
+      sourcePairPrefixFirstStatement, sourcePairPrefixSecondStatement,
+      sourcePairPrefixSuffixStatement, sourcePairPrefixSecondRestoreStatement,
+      sourcePairPrefixFirstRestoreStatement, sourcePairPrefixFailureStatement, Turing.haltList,
+      Turing.FinTM2.step, Turing.TM2.step, Turing.TM2.stepAux]
 
 end CNFSourcePairPrefixWorkerTM
 

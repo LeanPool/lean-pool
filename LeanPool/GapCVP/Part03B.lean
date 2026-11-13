@@ -550,8 +550,7 @@ theorem suffix_prefix_true
       some (suffixConfiguration 0 input (true :: counter)
         reversed output) := by
   machineStackEquality [
-      suffixDecoderMachine,
-      suffixConfiguration]
+      suffixDecoderMachine, suffixConfiguration]
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem suffix_prefix_delimiter
@@ -560,8 +559,7 @@ theorem suffix_prefix_delimiter
       (suffixConfiguration 0 (false :: input) counter reversed output) =
       some (suffixConfiguration 1 input counter reversed output) := by
   machineStackEquality [
-      suffixDecoderMachine,
-      suffixConfiguration]
+      suffixDecoderMachine, suffixConfiguration]
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem suffix_prefix_missing_delimiter
@@ -580,8 +578,7 @@ theorem suffix_copy_step
       some (suffixConfiguration 1 input counter
         (bit :: reversed) output) := by
   machineStackEquality [
-      suffixDecoderMachine,
-      suffixConfiguration]
+      suffixDecoderMachine, suffixConfiguration]
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem suffix_insufficient
@@ -607,8 +604,7 @@ theorem suffix_discard_step
       (suffixConfiguration 2 input [] (bit :: reversed) output) =
       some (suffixConfiguration 2 input [] reversed output) := by
   machineStackEquality [
-      suffixDecoderMachine,
-      suffixConfiguration]
+      suffixDecoderMachine, suffixConfiguration]
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem suffix_discard_complete
@@ -626,8 +622,7 @@ theorem suffix_collect_step
       some (suffixConfiguration 3 input []
         (bit :: reversed) output) := by
   machineStackEquality [
-      suffixDecoderMachine,
-      suffixConfiguration]
+      suffixDecoderMachine, suffixConfiguration]
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem suffix_collect_complete
@@ -644,8 +639,7 @@ theorem suffix_restore_step
       (suffixConfiguration 4 [] [] (bit :: reversed) output) =
       some (suffixConfiguration 4 [] [] reversed (bit :: output)) := by
   machineStackEquality [
-      suffixDecoderMachine,
-      suffixConfiguration]
+      suffixDecoderMachine, suffixConfiguration]
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem suffix_restore_finish
@@ -654,8 +648,7 @@ theorem suffix_restore_finish
       (suffixConfiguration 4 [] [] [] output) =
       some (Turing.haltList suffixDecoderMachine output) := by
   machineStackEquality [
-      suffixDecoderMachine,
-      suffixConfiguration]
+      suffixDecoderMachine, suffixConfiguration]
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem suffix_failure_drop_input
@@ -664,8 +657,7 @@ theorem suffix_failure_drop_input
       (suffixConfiguration 5 (bit :: input) counter reversed output) =
       some (suffixConfiguration 5 input counter reversed output) := by
   machineStackEquality [
-      suffixDecoderMachine,
-      suffixConfiguration]
+      suffixDecoderMachine, suffixConfiguration]
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem suffix_failure_drop_counter
@@ -674,8 +666,7 @@ theorem suffix_failure_drop_counter
       (suffixConfiguration 5 [] (bit :: counter) reversed output) =
       some (suffixConfiguration 5 [] counter reversed output) := by
   machineStackEquality [
-      suffixDecoderMachine,
-      suffixConfiguration]
+      suffixDecoderMachine, suffixConfiguration]
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem suffix_failure_drop_reversed
@@ -684,8 +675,7 @@ theorem suffix_failure_drop_reversed
       (suffixConfiguration 5 [] [] (bit :: reversed) output) =
       some (suffixConfiguration 5 [] [] reversed output) := by
   machineStackEquality [
-      suffixDecoderMachine,
-      suffixConfiguration]
+      suffixDecoderMachine, suffixConfiguration]
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem suffix_failure_finish
@@ -694,8 +684,7 @@ theorem suffix_failure_finish
       (suffixConfiguration 5 [] [] [] output) =
       some (Turing.haltList suffixDecoderMachine output) := by
   machineStackEquality [
-      suffixDecoderMachine,
-      suffixConfiguration]
+      suffixDecoderMachine, suffixConfiguration]
 
 end SourceFormulaStructuralDecoder
 
