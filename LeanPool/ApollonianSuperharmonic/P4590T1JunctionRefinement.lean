@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.ApollonianSuperharmonic.BoundaryFootprintInclusion
+
 public import Mathlib.Init
 public import LeanPool.ApollonianSuperharmonic.LatticeFootprintIncidence
 
@@ -1241,27 +1243,6 @@ private theorem hS1disk :
   have h := cfg.secondLarge
   omega
 
-private theorem boundaryFootprint :
-    (by
-      classical
-      exact
-        ∀ (U : ProtoTile), (U.cells.Nonempty) → (∀ (z : GaussianInt), (z ∈
-            BoundaryFootprintVertices U) → (z ∈ FootprintVertices U)) ) := by
-  classical
-  intro U hne z hz
-  simp only [BoundaryFootprintVertices, hne, ite_true, Set.mem_ofPred_eq] at hz
-  obtain ⟨e, he, hz⟩ := hz
-  simp only [FootprintVertices, hne, ite_true, Set.mem_ofPred_eq]
-  obtain ⟨a, ⟨rfl, ha⟩ | ⟨rfl, ha⟩⟩ := he
-  all_goals
-    simp only [Finset.mem_insert, Finset.mem_singleton] at hz
-    rcases ha with ⟨ha, _⟩ | ⟨_, ha⟩
-    · refine ⟨a, ha, ?_⟩
-      rcases hz with rfl | rfl <;> simp
-    · refine ⟨_, ha, ?_⟩
-      rcases hz with rfl | rfl <;>
-        simp [sub_eq_add_neg, add_comm, add_left_comm, add_assoc]
-
 private theorem nestedCellsInsideT :
     (by
       classical
@@ -2041,7 +2022,8 @@ private theorem fourthJunction :
       T cert
   have hS1ne : (cert.S 1 false).cells.Nonempty :=
     (LatticeTileGridStructure _ hS1disk).1.1
-  have boundaryFootprint := JunctionRefinementGeometry.boundaryFootprint
+  have boundaryFootprint := fun (U : ProtoTile) (_ : U.cells.Nonempty) =>
+    BoundaryFootprintInclusion.boundaryVertex_mem U
   obtain ⟨pN, hpN, hpNUnique⟩ := cert.double_fourth.2.2.2
   have hpNS : pN ∈ FootprintVertices (cert.S 1 false) :=
     boundaryFootprint _ hS1ne _ hpN.1

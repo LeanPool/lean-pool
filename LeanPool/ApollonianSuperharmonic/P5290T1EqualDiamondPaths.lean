@@ -1713,87 +1713,6 @@ private theorem rows1 :
     rcases hm with ⟨rfl, rfl, rfl, rfl⟩
     exact rowSecond1
 
-private theorem h0 :
-    (by
-      classical
-      exact
-        ∀ (k : Nat),
-        let dV : Set GaussianInt := {z | 1 ≤ z.re ∧ z.re ≤ k ∧
-          2 * (k : Int) ≤ z.re + z.im ∧ z.re + z.im ≤ 2 * (k : Int) + 1}
-        let D := DiamondTile k
-        let Q := GaussianQuarterTurn
-        ∀ (c : GaussianInt),
-        let F : GaussianInt → GaussianInt := fun z => Q z + c
-        let da : GaussianInt := ⟨(k : Int) + 1, (k : Int)⟩
-        (BoundaryFootprintVertices D ∩ BoundaryFootprintVertices (TileTranslation D ⟨-(k : Int),
-            (k : Int) + 1⟩) = F '' dV) → ((BoundaryFootprintVertices D ∩
-            BoundaryFootprintVertices (TileTranslation D da) = dV) → ((F '' dV = {z : GaussianInt
-            | -(k : Int) ≤ z.re ∧ z.re ≤ 0 ∧ (k : Int) + 1 ≤ z.im ∧ z.im ≤ 2 * (k : Int) ∧ 2 * (k
-            : Int) ≤ z.im - z.re ∧ z.im - z.re ≤ 2 * (k : Int) + 1}) → ((dV = {z : GaussianInt |
-            1 ≤ z.re ∧ z.re ≤ (k : Int) ∧ (k : Int) ≤ z.im ∧ z.im ≤ 2 * (k : Int) ∧ 2 * (k : Int)
-            ≤ z.re + z.im ∧ z.re + z.im ≤ 2 * (k : Int) + 1}) → ((∀ T, ∀ U, ∀ a, ∀ e, (T, U, a,
-            e) ∈ [(D, TileTranslation D ⟨-(k : Int), (k : Int) + 1⟩, (⟨0, 2 * (k : Int)⟩ :
-            GaussianInt), ⟨-(k : Int), (k : Int) + 1⟩), (D, TileTranslation D da, (⟨1, 2 * (k :
-            Int)⟩ : GaussianInt), ⟨(k : Int), (k : Int)⟩)] → Finset.Nonempty T.cells ∧
-            Finset.Nonempty U.cells ∧ Disjoint T.cells U.cells ∧ SimpleGridPathBetween
-            (BoundaryFootprintVertices T ∩ BoundaryFootprintVertices U) (BoundaryFootprintEdges T
-            ∩ BoundaryFootprintEdges U) a e) → ((∀ T, ∀ U, ∀ a, ∀ e, (T, U, a, e) ∈ [(D,
-            TileTranslation D ⟨-(k : Int), (k : Int) + 1⟩, (⟨0, 2 * (k : Int)⟩ : GaussianInt),
-            ⟨-(k : Int), (k : Int) + 1⟩), (D, TileTranslation D da, (⟨1, 2 * (k : Int)⟩ :
-            GaussianInt), ⟨(k : Int), (k : Int)⟩)] → Finset.Nonempty T.cells ∧ Finset.Nonempty
-            U.cells ∧ Disjoint T.cells U.cells ∧ SimpleGridPathBetween (BoundaryFootprintVertices
-            T ∩ BoundaryFootprintVertices U) (BoundaryFootprintEdges T ∩ BoundaryFootprintEdges
-            U) a e) ∧ (BoundaryFootprintVertices D ∩ BoundaryFootprintVertices (TileTranslation D
-            ⟨-(k : Int), (k : Int) + 1⟩) = {z | -(k : Int) ≤ z.re ∧ z.re ≤ 0 ∧ (k : Int) + 1 ≤
-            z.im ∧ z.im ≤ 2 * (k : Int) ∧ 2 * (k : Int) ≤ z.im - z.re ∧ z.im - z.re ≤ 2 * (k :
-            Int) + 1}) ∧ (BoundaryFootprintVertices D ∩ BoundaryFootprintVertices
-            (TileTranslation D da) = {z | 1 ≤ z.re ∧ z.re ≤ (k : Int) ∧ (k : Int) ≤ z.im ∧ z.im ≤
-            2 * (k : Int) ∧ 2 * (k : Int) ≤ z.re + z.im ∧ z.re + z.im ≤ 2 * (k : Int) + 1}))))))
-            ) := by
-  classical
-  intro k dV D Q c F da firstVertices secondVertices firstSet secondSet rows0
-  exact ⟨rows0, by rw [firstVertices, firstSet], by rw [secondVertices, secondSet]⟩
-
-private theorem h1 :
-    (by
-      classical
-      exact
-        ∀ (k : Nat),
-        let iV : Set GaussianInt := {z | 1 ≤ z.re ∧ z.re ≤ k ∧
-          z.re - 1 ≤ z.im ∧ z.im ≤ z.re}
-        let D := DiamondTile k
-        let Qinv : GaussianInt → GaussianInt := fun z => ⟨z.im, -z.re⟩
-        let G : GaussianInt → GaussianInt := fun z =>
-          ⟨z.im - (k : Int), (k : Int) - z.re⟩
-        let ia : GaussianInt := ⟨(k : Int) + 1, -(k : Int)⟩
-        let shift : GaussianInt := ⟨-(k : Int) - 1, (k : Int)⟩
-        (BoundaryFootprintVertices D ∩ BoundaryFootprintVertices (TileTranslation D (Qinv ia)) =
-            G '' iV) → ((BoundaryFootprintVertices D ∩ BoundaryFootprintVertices (TileTranslation
-            D shift) = GaussianTranslation shift '' iV) → ((G '' iV = {z : GaussianInt | -(k :
-            Int) ≤ z.re ∧ z.re ≤ 0 ∧ 0 ≤ z.im ∧ z.im ≤ (k : Int) - 1 ∧ -1 ≤ z.re + z.im ∧ z.re +
-            z.im ≤ 0}) → ((GaussianTranslation shift '' iV = {z : GaussianInt | -(k : Int) ≤ z.re
-            ∧ z.re ≤ -1 ∧ (k : Int) ≤ z.im ∧ z.im ≤ 2 * (k : Int) ∧ 2 * (k : Int) ≤ z.im - z.re ∧
-            z.im - z.re ≤ 2 * (k : Int) + 1}) → ((∀ T, ∀ U, ∀ a, ∀ e, (T, U, a, e) ∈ [(D,
-            TileTranslation D (Qinv ia), (⟨-(k : Int), (k : Int) - 1⟩ : GaussianInt), 0), (D,
-            TileTranslation D shift, (⟨-(k : Int), (k : Int)⟩ : GaussianInt), ⟨-1, 2 * (k :
-            Int)⟩)] → Finset.Nonempty T.cells ∧ Finset.Nonempty U.cells ∧ Disjoint T.cells
-            U.cells ∧ SimpleGridPathBetween (BoundaryFootprintVertices T ∩
-            BoundaryFootprintVertices U) (BoundaryFootprintEdges T ∩ BoundaryFootprintEdges U) a
-            e) → ((∀ T, ∀ U, ∀ a, ∀ e, (T, U, a, e) ∈ [(D, TileTranslation D (Qinv ia), (⟨-(k :
-            Int), (k : Int) - 1⟩ : GaussianInt), 0), (D, TileTranslation D shift, (⟨-(k : Int),
-            (k : Int)⟩ : GaussianInt), ⟨-1, 2 * (k : Int)⟩)] → Finset.Nonempty T.cells ∧
-            Finset.Nonempty U.cells ∧ Disjoint T.cells U.cells ∧ SimpleGridPathBetween
-            (BoundaryFootprintVertices T ∩ BoundaryFootprintVertices U) (BoundaryFootprintEdges T
-            ∩ BoundaryFootprintEdges U) a e) ∧ (BoundaryFootprintVertices D ∩
-            BoundaryFootprintVertices (TileTranslation D (Qinv ia)) = {z | -(k : Int) ≤ z.re ∧
-            z.re ≤ 0 ∧ 0 ≤ z.im ∧ z.im ≤ (k : Int) - 1 ∧ -1 ≤ z.re + z.im ∧ z.re + z.im ≤ 0}) ∧
-            (BoundaryFootprintVertices D ∩ BoundaryFootprintVertices (TileTranslation D shift) =
-            {z | -(k : Int) ≤ z.re ∧ z.re ≤ -1 ∧ (k : Int) ≤ z.im ∧ z.im ≤ 2 * (k : Int) ∧ 2 * (k
-            : Int) ≤ z.im - z.re ∧ z.im - z.re ≤ 2 * (k : Int) + 1})))))) ) := by
-  classical
-  intro k iV D Qinv G ia shift thirdVertices fourthVertices thirdSet fourthSet rows1
-  exact ⟨rows1, by rw [thirdVertices, thirdSet], by rw [fourthVertices, fourthSet]⟩
-
 end DiamondPathComparison
 
 namespace DiamondRowConclusions
@@ -2017,13 +1936,12 @@ private theorem h0 :
   classical
   intro k dV decVertices D Q dzeroD c hcEq F_inj quarterVerticesAt dShift zeroQ da secondVertices
       rowFirst0 rowSecond0
-  exact DiamondPathComparison.h0 k c
-                (DiamondPathComparison.firstVertices k decVertices c F_inj
-                (DiamondPathComparison.zeroFvertices k dzeroD c quarterVerticesAt zeroQ)
-                (DiamondPathComparison.rightFvertices k c quarterVerticesAt dShift))
-                secondVertices (DiamondPathComparison.firstSet k c hcEq)
-                    (DiamondPathComparison.secondSet k) (DiamondPathComparison.rows0 k
-                    rowFirst0 rowSecond0)
+  have firstVertices := DiamondPathComparison.firstVertices k decVertices c F_inj
+    (DiamondPathComparison.zeroFvertices k dzeroD c quarterVerticesAt zeroQ)
+    (DiamondPathComparison.rightFvertices k c quarterVerticesAt dShift)
+  exact ⟨DiamondPathComparison.rows0 k rowFirst0 rowSecond0,
+    by rw [firstVertices]; exact DiamondPathComparison.firstSet k c hcEq,
+    by rw [secondVertices]; exact DiamondPathComparison.secondSet k⟩
 
 private theorem h1 :
     (by
@@ -2072,13 +1990,13 @@ private theorem h1 :
   classical
   intro k incVertices D Qinv G_inj inverseVerticesAt inverseVerticesZero ia shift translateInj
       hnestedV rowFirst1 rowSecond1
-  exact DiamondPathComparison.h1 k
-                (DiamondPathComparison.thirdVertices k incVertices G_inj inverseVerticesAt
-                inverseVerticesZero)
-                (DiamondPathComparison.fourthVertices k (DiamondPathComparison.shiftVertices k
-                    incVertices translateInj hnestedV)) (DiamondPathComparison.thirdSet k)
-                    (DiamondPathComparison.fourthSet k) (DiamondPathComparison.rows1 k
-                    rowFirst1 rowSecond1)
+  have thirdVertices := DiamondPathComparison.thirdVertices k incVertices G_inj
+    inverseVerticesAt inverseVerticesZero
+  have fourthVertices := DiamondPathComparison.fourthVertices k
+    (DiamondPathComparison.shiftVertices k incVertices translateInj hnestedV)
+  exact ⟨DiamondPathComparison.rows1 k rowFirst1 rowSecond1,
+    by rw [thirdVertices]; exact DiamondPathComparison.thirdSet k,
+    by rw [fourthVertices]; exact DiamondPathComparison.fourthSet k⟩
 
 end DiamondRowConclusions
 

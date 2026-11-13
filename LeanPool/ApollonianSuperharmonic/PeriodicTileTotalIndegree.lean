@@ -5,6 +5,10 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.ApollonianSuperharmonic.LatticeCellEdges
+
+public import LeanPool.ApollonianSuperharmonic.BoundaryFootprintInclusion
+
 public import Mathlib.Init
 public import LeanPool.ApollonianSuperharmonic.PairAssignmentFacts
 public import LeanPool.ApollonianSuperharmonic.TileCornerMultiplicity
@@ -188,88 +192,8 @@ private theorem hvertex_partition :
   intro T D heuler I cornerBag N hinc hN4
   omega
 
-private abbrev pair_eq :=
-  @PairAssignmentFacts.finsetPair GaussianInt inferInstance
-
-private theorem edgeOf_injective :
-    (by
-      classical
-      exact
-        let I : GaussianInt := ⟨0, 1⟩
-        let edgeOf : GaussianInt × Bool → Finset GaussianInt := fun p =>
-          if p.2 then {p.1, p.1 + I} else {p.1, p.1 + 1}
-        (∀ {a : GaussianInt},
-            ∀ {b : GaussianInt},
-              ∀ {c : GaussianInt},
-                ∀ {d : GaussianInt},
-                  ({ a, b } : Finset GaussianInt) = { c, d } →
-                    a = c ∧ b = d ∨ a = d ∧ b = c) →
-          Function.Injective edgeOf
-    ) := by
-  classical
-  intro I edgeOf pair_eq
-  rintro ⟨z, b⟩ ⟨w, d⟩ h
-  cases b <;> cases d
-  · change ({z, z + 1} : Finset GaussianInt) = {w, w + 1} at h
-    replace h := pair_eq h
-    rcases h with ⟨h, _⟩ | ⟨h1, h2⟩
-    · subst w; rfl
-    · exfalso
-      have h1r := congrArg Zsqrtd.re h1
-      have h2r := congrArg Zsqrtd.re h2
-      norm_num at h1r h2r
-      omega
-  · change ({z, z + 1} : Finset GaussianInt) = {w, w + I} at h
-    replace h := pair_eq h
-    rcases h with ⟨h1, h2⟩ | ⟨h1, h2⟩ <;> exfalso
-    · have h1i := congrArg Zsqrtd.im h1
-      have h2i := congrArg Zsqrtd.im h2
-      dsimp only [I] at h1i h2i
-      norm_num at h1i h2i
-      omega
-    · have h1r := congrArg Zsqrtd.re h1
-      have h2r := congrArg Zsqrtd.re h2
-      norm_num at h1r h2r
-      omega
-  · change ({z, z + I} : Finset GaussianInt) = {w, w + 1} at h
-    replace h := pair_eq h
-    rcases h with ⟨h1, h2⟩ | ⟨h1, h2⟩ <;> exfalso
-    · have h1r := congrArg Zsqrtd.re h1
-      have h2r := congrArg Zsqrtd.re h2
-      norm_num at h1r h2r
-      omega
-    · have h1i := congrArg Zsqrtd.im h1
-      have h2i := congrArg Zsqrtd.im h2
-      dsimp only [I] at h1i h2i
-      norm_num at h1i h2i
-      omega
-  · change ({z, z + I} : Finset GaussianInt) = {w, w + I} at h
-    replace h := pair_eq h
-    rcases h with ⟨h, _⟩ | ⟨h1, h2⟩
-    · subst w; rfl
-    · exfalso
-      have h1i := congrArg Zsqrtd.im h1
-      have h2i := congrArg Zsqrtd.im h2
-      dsimp only [I] at h1i h2i
-      norm_num at h1i h2i
-      omega
-
 private abbrev hV :=
   TileCornerMultiplicity.vertexSupport
-
-private theorem hEV :
-    (by
-      classical
-      exact
-        ∀ (T : ProtoTile), (T.cells.Nonempty) → (∀ (e : Finset GaussianInt), (e ∈ FootprintEdges
-            T) → (∀ (z : GaussianInt), (z ∈ e) → (z ∈ FootprintVertices T))) ) := by
-  classical
-  intro T hcells e he z hz
-  rcases he with ⟨c, hc, rfl | rfl | rfl | rfl⟩
-  all_goals rw [FootprintVertices, ite_eq_left hcells]
-  all_goals refine ⟨c, hc, ?_⟩
-  all_goals simp only [Finset.mem_insert, Finset.mem_singleton] at hz
-  all_goals rcases hz with rfl | rfl <;> simp
 
 private theorem hEmem :
     (by
@@ -1882,10 +1806,9 @@ private theorem hcountBridge :
   -- A base point and direction give a unique tag for each footprint edge.
   let edgeOf : GaussianInt × Bool → Finset GaussianInt := fun p =>
     if p.2 then {p.1, p.1 + I} else {p.1, p.1 + 1}
-  have edgeOf_injective := PeriodicIndegreeGeometry.edgeOf_injective
-      (PeriodicIndegreeGeometry.pair_eq)
+  have edgeOf_injective := LatticeCellEdges.edge_encoding_injective
   let V := cornerBag.toFinset
-  have hEV := PeriodicIndegreeGeometry.hEV T hcells
+  have hEV := BoundaryFootprintInclusion.edgeVertex T
   let E := (V.product (Finset.univ : Finset Bool)).filter
     fun e => edgeOf e ∈ FootprintEdges T
   have hEmem := PeriodicIndegreeGeometry.hEmem T (PeriodicIndegreeGeometry.hV T hcells) hEV

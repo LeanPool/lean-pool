@@ -92,6 +92,11 @@ theorem boundaryVertex :
     subst x
     simp [FootprintVertices, hne]
 
+/-- Every boundary footprint vertex is a footprint vertex, including empty tiles. -/
+theorem boundaryVertex_mem (T : ProtoTile) (x : GaussianInt)
+    (hx : x ∈ BoundaryFootprintVertices T) : x ∈ FootprintVertices T :=
+  boundaryVertex boundaryEdge edgeVertex T x hx
+
 end BoundaryFootprintInclusion
 end ApollonianSuperharmonic
 

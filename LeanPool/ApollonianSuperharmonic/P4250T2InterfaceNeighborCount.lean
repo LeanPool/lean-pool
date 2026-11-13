@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.ApollonianSuperharmonic.BoundaryFootprintInclusion
+
 public import LeanPool.ApollonianSuperharmonic.AdjacentCellInterior
 
 public import LeanPool.ApollonianSuperharmonic.LatticeFootprintIncidence
@@ -87,34 +89,6 @@ private theorem full_iff :
         · exact hw.2 (by simpa [LatticeVertexIncidentCell, sub_eq_add_neg,
             add_assoc, add_comm, add_left_comm] using hall 2)
         · exact hw.1 (by simpa [LatticeVertexIncidentCell] using hall 3)
-
-private theorem boundary_foot :
-    (by
-      classical
-      exact
-        (∀ (U : ProtoTile), ∀ (z : GaussianInt), ∀ (j : Fin 4), (LatticeVertexIncidentCell z j ∈
-            U.cells) → (z ∈ FootprintVertices U)) → (∀ (U : ProtoTile), ∀ (z : GaussianInt), (z ∈
-            BoundaryFootprintVertices U) → (z ∈ FootprintVertices U)) ) := by
-  classical
-  intro incident_foot U z hz
-  as_aux_lemma =>
-  by_cases hne : U.cells.Nonempty
-  · rw [BoundaryFootprintVertices, ite_eq_left hne] at hz
-    rcases hz with ⟨e, ⟨w, (⟨rfl, hw⟩ | ⟨rfl, hw⟩)⟩, hze⟩
-    all_goals simp only [Finset.mem_insert, Finset.mem_singleton] at hze
-    · rcases hze with rfl | rfl <;> rcases hw with hw | hw
-      · exact incident_foot U _ 0 hw.1
-      · exact incident_foot U _ 3 (by simpa [LatticeVertexIncidentCell] using hw.2)
-      · exact incident_foot U (w + 1) 1 (by simpa [LatticeVertexIncidentCell] using hw.1)
-      · exact incident_foot U (w + 1) 2 (by simpa [LatticeVertexIncidentCell, sub_sub] using
-          hw.2)
-    · rcases hze with rfl | rfl <;> rcases hw with hw | hw
-      · exact incident_foot U _ 0 hw.1
-      · exact incident_foot U _ 1 (by simpa [LatticeVertexIncidentCell] using hw.2)
-      · exact incident_foot U (w + ⟨0, 1⟩) 3 (by simpa [LatticeVertexIncidentCell] using hw.1)
-      · exact incident_foot U (w + ⟨0, 1⟩) 2 (by simpa [LatticeVertexIncidentCell,
-          sub_eq_add_neg, add_assoc, add_comm, add_left_comm] using hw.2)
-  · simpa [FootprintVertices, BoundaryFootprintVertices, hne] using hz
 
 private theorem edge_endpoint :
     (by
@@ -1487,7 +1461,7 @@ theorem P4250T2InterfaceNeighborCount :
     have foot_incident := fun (U : ProtoTile) (hne : U.cells.Nonempty) (z : GaussianInt) =>
       LatticeFootprintIncidence.incidentCell U z hne
     have full_iff := InterfaceNeighborGeometry.full_iff incident_foot foot_incident
-    have boundary_foot := InterfaceNeighborGeometry.boundary_foot incident_foot
+    have boundary_foot := BoundaryFootprintInclusion.boundaryVertex_mem
     have hOA := InterfaceNeighborGeometry.hOA C q cfg T cert
     have hOB := InterfaceNeighborGeometry.hOB C q cfg T cert
     have hsep := BandOriginalPairSeparation cert.P cert.O cert.u cert.v hOA hOB cert.partition

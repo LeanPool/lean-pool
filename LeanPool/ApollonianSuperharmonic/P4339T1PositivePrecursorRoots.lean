@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.ApollonianSuperharmonic.BoundaryFootprintInclusion
+
 public import Mathlib.Init
 public import LeanPool.ApollonianSuperharmonic.LatticeFootprintIncidence
 
@@ -189,35 +191,6 @@ private theorem hOB :
   classical
   intro C q cfg T cert z hz
   exact (cert.minus_union z).mpr ⟨0, true, by rw [← cert.precursor_cells]; exact hz⟩
-
-private theorem incident_footprint :
-    (by
-      classical
-      exact
-        ∀ (U : ProtoTile), ∀ (x : GaussianInt), ∀ (j : Fin 4), (LatticeVertexIncidentCell x j ∈
-            U.cells) → (x ∈ FootprintVertices U) ) := by
-  classical
-  intro U x j hj
-  have hn : U.cells.Nonempty := ⟨_, hj⟩
-  rw [FootprintVertices, ite_eq_left hn]
-  refine ⟨LatticeVertexIncidentCell x j, hj, ?_⟩
-  fin_cases j <;> simp [LatticeVertexIncidentCell, sub_eq_add_neg,
-    add_comm, add_left_comm, add_assoc]
-
-private theorem boundary_footprint :
-    (by
-      classical
-      exact
-        (∀ (U : ProtoTile), ∀ (x : GaussianInt), (U.cells.Nonempty) → ((x ∈
-            BoundaryFootprintVertices U) → (∃ j : Fin 4, LatticeVertexIncidentCell x j ∈
-            U.cells))) → ((∀ (U : ProtoTile), ∀ (x : GaussianInt), ∀ (j : Fin 4),
-            (LatticeVertexIncidentCell x j ∈ U.cells) → (x ∈ FootprintVertices U)) → (∀ (U :
-            ProtoTile), ∀ (x : GaussianInt), (U.cells.Nonempty) → ((x ∈ BoundaryFootprintVertices
-            U) → (x ∈ FootprintVertices U)))) ) := by
-  classical
-  intro boundary_incident incident_footprint U x hn hb
-  obtain ⟨j, hj⟩ := boundary_incident U x hn hb
-  exact incident_footprint U x j hj
 
 private theorem haPlus :
     (by
@@ -816,8 +789,8 @@ theorem P4339T1PositivePrecursorRoots
       (PositivePrecursorGeometry.hallT C q cfg T cert hallAB)
   have hOA := PositivePrecursorGeometry.hOA C q cfg T cert
   have hOB := PositivePrecursorGeometry.hOB C q cfg T cert
-  have boundary_footprint := PositivePrecursorGeometry.boundary_footprint boundary_incident
-      (PositivePrecursorGeometry.incident_footprint)
+  have boundary_footprint := fun (U : ProtoTile) (x : GaussianInt)
+      (_ : U.cells.Nonempty) => BoundaryFootprintInclusion.boundaryVertex_mem U x
   have hbranch := cert.precursorBoundary.branch
   rcases hbranch with ⟨_, plusArc, minusArc, _, _, hplusHead, hplusLast,
     hminusHead, hminusLast, hplusSet, hminusSet, _, _, hunion, hinter, _, _⟩ | hdeg

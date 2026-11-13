@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.ApollonianSuperharmonic.BoundaryFootprintInclusion
+
 public import Mathlib.Init
 public import LeanPool.ApollonianSuperharmonic.TileQuarterTurnTranslation
 public import LeanPool.ApollonianSuperharmonic.ObservableTileRetargeting
@@ -28,24 +30,6 @@ Changes: pool module paths, public exports, project namespace and current Mathli
 namespace ApollonianSuperharmonic
 
 namespace SelectedRowGeometry
-
-private theorem edgeVertex :
-    (by
-      classical
-      exact
-        ∀ (tile : ProtoTile), (tile.cells.Nonempty) → (∀ (edge : Finset GaussianInt), (edge ∈
-            FootprintEdges tile) → (∀ (point : GaussianInt), (point ∈ edge) → (point ∈
-            FootprintVertices tile))) ) := by
-  classical
-  intro tile hnon edge hedge point hpoint
-  rcases hedge with ⟨a, ha, hshape⟩
-  rcases hshape with hshape | hshape | hshape | hshape
-  all_goals rw [hshape] at hpoint
-  all_goals simp only [Finset.mem_insert, Finset.mem_singleton] at hpoint
-  all_goals simp only [FootprintVertices, ite_eq_left hnon, Set.mem_ofPred_eq]
-  all_goals rcases hpoint with hpoint | hpoint
-  all_goals rw [hpoint]
-  all_goals refine ⟨a, ha, ?_⟩; simp
 
 private theorem turnOutgoing :
     (by
@@ -2681,16 +2665,14 @@ private noncomputable def certificate
     normalized_point_eq := bundle.normalized_point_eq
     normalized_point_root_domain := by
       obtain ⟨edge, hp, he⟩ := bundle.edgeAtPoint
-      have hne := (LatticeTileGridStructure root bundle.root_lattice).1.1
-      have hvert := SelectedRowGeometry.edgeVertex root hne edge he.1 bundle.normalizedPoint hp
+      have hvert := BoundaryFootprintInclusion.edgeVertex root edge he.1 bundle.normalizedPoint hp
       have hdom := PositiveCurvatureTileOdometerDomain (q 0) root
         bundle.normalizedRootFunction (ProperBandCurvatureStructure q cfg.proper).1
         bundle.normalized_root_odometer
       exact (Set.ext_iff.mp hdom bundle.normalizedPoint).mpr hvert
     normalized_point_fixed_domain := by
       obtain ⟨edge, hp, he⟩ := bundle.edgeAtPoint
-      have hne := (LatticeTileGridStructure F bundle.fixed_lattice).1.1
-      have hvert := SelectedRowGeometry.edgeVertex F hne edge he.2 bundle.normalizedPoint hp
+      have hvert := BoundaryFootprintInclusion.edgeVertex F edge he.2 bundle.normalizedPoint hp
       have hdom := PositiveCurvatureTileOdometerDomain
         bundle.normalizedCircle.1.1 F bundle.normalizedFixedFunction
         bundle.normalizedCircle.property placement.adjacency.2.1
@@ -4065,7 +4047,8 @@ theorem BandOrderedGeneralRightSelectedRowGeometry
   let q := bundle.normalizedPresentation
   let cfg := bundle.configuration
   let F := bundle.normalizedFixed
-  have edgeVertex := SelectedRowGeometry.edgeVertex
+  have edgeVertex := fun (T : ProtoTile) (_ : T.cells.Nonempty) =>
+    BoundaryFootprintInclusion.edgeVertex T
   have childInterfaces := BandOrderedGeneralChildInterfaces q cfg
     bundle.normalizedCircle F placement.layout
       (TileT2QuarterTurn q cfg bundle.normalizedCircle F placement.layout)

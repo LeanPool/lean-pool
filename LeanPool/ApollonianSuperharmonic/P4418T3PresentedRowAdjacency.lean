@@ -28,6 +28,18 @@ namespace ApollonianSuperharmonic
 
 namespace PresentedRowAdjacencyGeometry
 
+private theorem exteriorSlot (label : SixSubtileLabel) :
+    (match label with
+      | .A | .B => (1 : Fin 4)
+      | .C | .D => 2
+      | .E | .F => 3) =
+    (match label with
+      | .A | .B => (0 : Fin 3)
+      | .C | .D => 1
+      | .E | .F => 2).succ := by
+  cases label <;> rfl
+
+
 private theorem selected_cells :
     (by
       classical
@@ -1138,8 +1150,9 @@ theorem P4418T3PresentedRowAdjacency :
   have selected_circle : C'.1.1 = q (slot placement.centralIndex.label).succ := by
     exact hC'.trans (congrArg (fun j : Fin 3 => q j.succ) selected_slot)
   have fixed_circle : bundle.normalizedFixedCircle.1.1 =
-      q (slot placement.exteriorIndex.label).succ := by
-    cases he : placement.exteriorIndex.label <;> simpa [slot, he, q] using outer.1
+      q (slot placement.exteriorIndex.label).succ :=
+    outer.1.trans (congrArg q (PresentedRowAdjacencyGeometry.exteriorSlot
+      placement.exteriorIndex.label))
   have selected_slope : p - bundle.normalizedRootSlope =
       (if sign placement.centralIndex.label = true then (1 : ℝ) else -1) •
         ((1 / 2 : ℝ) • GaussianRealPoint

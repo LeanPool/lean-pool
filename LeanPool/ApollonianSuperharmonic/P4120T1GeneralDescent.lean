@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.ApollonianSuperharmonic.BoundaryFootprintInclusion
+
 public import Mathlib.Init
 public import LeanPool.ApollonianSuperharmonic.TileTranslationProperties
 public import LeanPool.ApollonianSuperharmonic.InteriorFootprintIncidence
@@ -273,29 +275,6 @@ private theorem edge_support :
           add_comm, add_left_comm] using hz
       · refine Or.inr (Or.inl ⟨?_, Or.inr rfl⟩)
         simp [I, add_comm, add_left_comm]
-
-private theorem boundary_edge_is_footprint :
-    (by
-      classical
-      exact
-        let I : GaussianInt := ⟨0, 1⟩
-        (∀ (U : ProtoTile), ∀ (z : GaussianInt), (z ∈ U.cells) → ({z, z + I} ∈ FootprintEdges U))
-            → ((∀ (U : ProtoTile), ∀ (z : GaussianInt), (z ∈ U.cells) → ({z + 1, z + 1 + I} ∈
-            FootprintEdges U)) → ((∀ (U : ProtoTile), ∀ (z : GaussianInt), (z ∈ U.cells) → ({z,
-            z + 1} ∈ FootprintEdges U)) → ((∀ (U : ProtoTile), ∀ (z : GaussianInt), (z ∈ U.cells)
-            → ({z + I, z + 1 + I} ∈ FootprintEdges U)) → (∀ (U : ProtoTile), ∀ (e : Finset
-            GaussianInt), (e ∈ BoundaryFootprintEdges U) → (e ∈ FootprintEdges U))))) ) := by
-  classical
-  intro I cell_edge_vleft cell_edge_vright cell_edge_hbottom cell_edge_htop U e he
-  rcases he with ⟨z, ⟨rfl, hside⟩ | ⟨rfl, hside⟩⟩
-  · rcases hside with ⟨hz, _⟩ | ⟨_, hz⟩
-    · exact cell_edge_hbottom U z hz
-    · have hz' := cell_edge_htop U (z - I) hz
-      simpa [I, sub_eq_add_neg, add_assoc, add_comm, add_left_comm] using hz'
-  · rcases hside with ⟨hz, _⟩ | ⟨_, hz⟩
-    · exact cell_edge_vleft U z hz
-    · have hz' := cell_edge_vright U (z - 1) hz
-      simpa [sub_eq_add_neg, add_assoc, add_comm, add_left_comm] using hz'
 
 private theorem parent_boundary_incident_cell :
     (by
@@ -1473,8 +1452,7 @@ theorem P4120T1GeneralDescent
       (cert.P i s).cells.Nonempty :=
     (LatticeTileGridStructure _ (cert.parent_lattice i s)).1.1
   have parent_boundary_incident_cell := GeneralDescentGeometry.parent_boundary_incident_cell q
-      cfg C T cert x edge_support (GeneralDescentGeometry.boundary_edge_is_footprint
-      cell_edge_vleft cell_edge_vright cell_edge_hbottom cell_edge_htop) parent_cells_nonempty
+      cfg C T cert x edge_support (BoundaryFootprintInclusion.boundaryEdge) parent_cells_nonempty
   have pair_left_mem {a b c d : GaussianInt}
       (h : ({a, b} : Finset GaussianInt) = {c, d}) := GeneralDescentGeometry.pair_left_mem (a :=
           a) (b := b) (c := c) (d := d) h

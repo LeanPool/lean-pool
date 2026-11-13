@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.ApollonianSuperharmonic.BoundaryFootprintInclusion
+
 public import Mathlib.Init
 public import LeanPool.ApollonianSuperharmonic.TileQuarterTurnTranslation
 public import LeanPool.ApollonianSuperharmonic.BandPrototileQuarterTurn
@@ -48,60 +50,6 @@ private theorem incident_boundary :
   · apply P3161T2IncidentBoundary V x hv
     obtain ⟨j, hj⟩ := hu
     exact ⟨j, fun h => hd' hj h⟩
-
-private theorem boundary_subset_footprint :
-    (by
-      classical
-      exact
-        ∀ (T : ProtoTile), BoundaryFootprintVertices T ⊆ FootprintVertices T ) := by
-  classical
-  intro T x hx
-  by_cases hne : T.cells.Nonempty
-  · have hx' : ∃ e ∈ BoundaryFootprintEdges T, x ∈ e := by
-      simpa [BoundaryFootprintVertices, hne] using hx
-    obtain ⟨e, he, hxe⟩ := hx'
-    rcases he with ⟨z, ⟨rfl, hcross⟩ | ⟨rfl, hcross⟩⟩
-    · rcases hcross with ⟨hz, _⟩ | ⟨_, hz⟩
-      · change x ∈ FootprintVertices T
-        simp only [FootprintVertices, ite_eq_left hne, Set.mem_ofPred_eq]
-        refine ⟨z, hz, ?_⟩
-        rcases Finset.mem_insert.mp hxe with h | h
-        · subst x; exact Or.inl rfl
-        · have hxz : x = z + 1 := by simpa using h
-          subst x; exact Or.inr (Or.inl rfl)
-      · have hz' : z - ⟨0, 1⟩ ∈ T.cells := hz
-        change x ∈ FootprintVertices T
-        simp only [FootprintVertices, ite_eq_left hne, Set.mem_ofPred_eq]
-        refine ⟨z - ⟨0, 1⟩, hz', ?_⟩
-        rcases (Finset.mem_insert.mp hxe) with hxz | hxz
-        · subst x
-          exact Or.inr (Or.inr (Or.inl (by simp)))
-        · have : x = z + 1 := by simpa using hxz
-          subst x
-          exact Or.inr (Or.inr (Or.inr (by simp [sub_eq_add_neg, add_comm, add_left_comm])))
-    · rcases hcross with ⟨hz, _⟩ | ⟨_, hz⟩
-      · change x ∈ FootprintVertices T
-        simp only [FootprintVertices, ite_eq_left hne, Set.mem_ofPred_eq]
-        refine ⟨z, hz, ?_⟩
-        rcases (Finset.mem_insert.mp hxe) with hxz | hxz
-        · subst x
-          exact Or.inl rfl
-        · have : x = z + ⟨0, 1⟩ := by simpa using hxz
-          subst x
-          exact Or.inr (Or.inr (Or.inl rfl))
-      · have hz' : z - 1 ∈ T.cells := hz
-        change x ∈ FootprintVertices T
-        simp only [FootprintVertices, ite_eq_left hne, Set.mem_ofPred_eq]
-        refine ⟨z - 1, hz', ?_⟩
-        rcases (Finset.mem_insert.mp hxe) with hxz | hxz
-        · subst x
-          exact Or.inr (Or.inl (by simp))
-        · have : x = z + ⟨0, 1⟩ := by simpa using hxz
-          subst x
-          exact Or.inr (Or.inr (Or.inr (by simp [sub_eq_add_neg, add_comm, add_left_comm])))
-  · simp only [BoundaryFootprintVertices, hne, ↓reduceIte, Set.mem_singleton_iff,
-      FootprintVertices] at hx ⊢
-    exact hx
 
 private theorem touching_path :
     (by
@@ -648,7 +596,7 @@ theorem LatticeAdjacentInterfacePath :
           LatticeInterfacePathGeometry.incident_boundary U V x hd hu hv
   have boundary_subset_footprint (T : ProtoTile) :
       BoundaryFootprintVertices T ⊆ FootprintVertices T :=
-          LatticeInterfacePathGeometry.boundary_subset_footprint T
+          BoundaryFootprintInclusion.boundaryVertex_mem T
   have touching_path (U V : ProtoTile) (hU : U.cells.Nonempty) (hV : V.cells.Nonempty)
       (ht : TileTouching U V) :
       ∃ x y, SimpleGridPathBetween

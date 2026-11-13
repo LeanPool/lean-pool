@@ -20,47 +20,6 @@ Changes: pool module paths, public exports, project namespace and current Mathli
 @[expose] public section
 namespace ApollonianSuperharmonic
 namespace RegularFaceWalkProof
-private theorem boundaryFoot :
-    (by
-      classical
-      exact
-        ∀ (W : ProtoTile), ∀ z ∈ BoundaryFootprintVertices W, z ∈ FootprintVertices W
-    ) := by
-  classical
-  intro W z hz
-  by_cases hW : W.cells.Nonempty
-  · simp only [BoundaryFootprintVertices, ite_eq_left hW, Set.mem_ofPred_eq] at hz
-    rcases hz with ⟨e, he, hze⟩
-    have he' : e ∈ FootprintEdges W := by
-      change ∃ c ∈ W.cells,
-        e = {c, c + 1} ∨ e = {c, c + ⟨0, 1⟩} ∨
-          e = {c + 1, c + 1 + ⟨0, 1⟩} ∨
-            e = {c + ⟨0, 1⟩, c + 1 + ⟨0, 1⟩}
-      rcases he with ⟨w, ⟨rfl, h⟩ | ⟨rfl, h⟩⟩
-      · rcases h with ⟨hw, _⟩ | ⟨_, hw⟩
-        · exact ⟨w, hw, Or.inl rfl⟩
-        · refine ⟨w - ⟨0, 1⟩, hw, Or.inr (Or.inr (Or.inr ?_))⟩
-          congr 1 <;> simp [Zsqrtd.ext_iff]
-      · rcases h with ⟨hw, _⟩ | ⟨_, hw⟩
-        · exact ⟨w, hw, Or.inr (Or.inl rfl)⟩
-        · refine ⟨w - 1, hw, Or.inr (Or.inr (Or.inl ?_))⟩
-          congr 1 <;> simp []
-    rcases he' with ⟨c, hc, hcE⟩
-    rcases hcE with hcE | hcE | hcE | hcE
-    all_goals
-      simp only [FootprintVertices, ite_eq_left hW]
-      rw [hcE] at hze
-      simp only [Finset.mem_insert, Finset.mem_singleton] at hze
-      rcases hze with hze | hze <;> subst z
-    · exact ⟨c, hc, Or.inl rfl⟩
-    · exact ⟨c, hc, Or.inr (Or.inl rfl)⟩
-    · exact ⟨c, hc, Or.inl rfl⟩
-    · exact ⟨c, hc, Or.inr (Or.inr (Or.inl rfl))⟩
-    · exact ⟨c, hc, Or.inr (Or.inl rfl)⟩
-    · exact ⟨c, hc, Or.inr (Or.inr (Or.inr rfl))⟩
-    · exact ⟨c, hc, Or.inr (Or.inr (Or.inl rfl))⟩
-    · exact ⟨c, hc, Or.inr (Or.inr (Or.inr rfl))⟩
-  · simpa [BoundaryFootprintVertices, FootprintVertices, hW] using hz
 private abbrev translateComp := ApollonianSuperharmonic.TileTranslationProperties.add
 private theorem edgeDiff :
     (by
@@ -2150,7 +2109,8 @@ theorem P4812T1RegularFaceWalks
       have rho_mem (q : Sum L L) (i : Fin 3) :
           rho (D.faces q) ∈ FootprintVertices
             (TileTranslation T (D.plane.faceVertex (D.faces q) i : GaussianInt)) :=
-                RegularFaceWalkProof.rho_mem L k D T ru rd (RegularFaceWalkProof.boundaryFoot)
+                RegularFaceWalkProof.rho_mem L k D T ru rd
+                  (BoundaryFootprintInclusion.boundaryVertex_mem)
                     (RegularFaceDetails.translateBoundary)
                 translateComp ru0 rua rub rd0 rda rdb q i
       have transZero (W : ProtoTile) : TileTranslation W 0 = W := RegularFaceWalkProof.transZero W

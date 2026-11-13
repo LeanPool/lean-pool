@@ -77,6 +77,17 @@ theorem horizontal_ne_vertical (x y : GaussianInt) :
     simp at hre him hre1 him1
     omega
 
+/-- A lattice edge has a unique base point and horizontal/vertical direction tag. -/
+theorem edge_encoding_injective :
+    Function.Injective (fun p : GaussianInt × Bool =>
+      if p.2 then ({p.1, p.1 + ⟨0, 1⟩} : Finset GaussianInt) else {p.1, p.1 + 1}) := by
+  rintro ⟨z, b⟩ ⟨w, d⟩ h
+  cases b <;> cases d
+  · exact Prod.ext (horizontal_unique z w h) rfl
+  · exact (horizontal_ne_vertical z w h).elim
+  · exact (horizontal_ne_vertical w z h.symm).elim
+  · exact Prod.ext (vertical_unique z w h) rfl
+
 end ApollonianSuperharmonic.LatticeCellEdges
 
 end

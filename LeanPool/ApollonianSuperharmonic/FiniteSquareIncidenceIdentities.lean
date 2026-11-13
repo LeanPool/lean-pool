@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.ApollonianSuperharmonic.LatticeCellEdges
+
 public import Mathlib.Init
 public import LeanPool.ApollonianSuperharmonic.PairAssignmentFacts
 public import LeanPool.ApollonianSuperharmonic.TileCornerMultiplicity
@@ -354,67 +356,6 @@ private theorem hedgeIdentity :
   intro T I edgeBag hedgeBagCard hedgeMultiplicity hedgePartition
   rw [hedgePartition, ← hedgeBagCard] at ⊢
   omega
-
-private abbrev pair_eq :=
-  @PairAssignmentFacts.finsetPair GaussianInt inferInstance
-
-private theorem edgeOf_injective :
-    let I : GaussianInt := ⟨0, 1⟩
-    let edgeOf : GaussianInt × Bool → Finset GaussianInt := fun p =>
-      if p.2 then {p.1, p.1 + I} else {p.1, p.1 + 1}
-    (∀ {a : GaussianInt},
-        ∀ {b : GaussianInt},
-          ∀ {c : GaussianInt},
-            ∀ {d : GaussianInt},
-              ({ a, b } : Finset GaussianInt) = { c, d } → a = c ∧ b = d ∨ a = d ∧ b = c) →
-      Function.Injective edgeOf := by
-  classical
-  intro I edgeOf pair_eq
-  rintro ⟨z, b⟩ ⟨w, d⟩ h
-  cases b <;> cases d
-  · change ({z, z + 1} : Finset GaussianInt) = {w, w + 1} at h
-    replace h := pair_eq h
-    rcases h with ⟨h, _⟩ | ⟨h1, h2⟩
-    · subst w; rfl
-    · exfalso
-      have h1r := congrArg Zsqrtd.re h1
-      have h2r := congrArg Zsqrtd.re h2
-      norm_num at h1r h2r
-      omega
-  · change ({z, z + 1} : Finset GaussianInt) = {w, w + I} at h
-    replace h := pair_eq h
-    rcases h with ⟨h1, h2⟩ | ⟨h1, h2⟩ <;> exfalso
-    · have h1i := congrArg Zsqrtd.im h1
-      have h2i := congrArg Zsqrtd.im h2
-      dsimp only [I] at h1i h2i
-      norm_num at h1i h2i
-      omega
-    · have h1r := congrArg Zsqrtd.re h1
-      have h2r := congrArg Zsqrtd.re h2
-      norm_num at h1r h2r
-      omega
-  · change ({z, z + I} : Finset GaussianInt) = {w, w + 1} at h
-    replace h := pair_eq h
-    rcases h with ⟨h1, h2⟩ | ⟨h1, h2⟩ <;> exfalso
-    · have h1r := congrArg Zsqrtd.re h1
-      have h2r := congrArg Zsqrtd.re h2
-      norm_num at h1r h2r
-      omega
-    · have h1i := congrArg Zsqrtd.im h1
-      have h2i := congrArg Zsqrtd.im h2
-      dsimp only [I] at h1i h2i
-      norm_num at h1i h2i
-      omega
-  · change ({z, z + I} : Finset GaussianInt) = {w, w + I} at h
-    replace h := pair_eq h
-    rcases h with ⟨h, _⟩ | ⟨h1, h2⟩
-    · subst w; rfl
-    · exfalso
-      have h1i := congrArg Zsqrtd.im h1
-      have h2i := congrArg Zsqrtd.im h2
-      dsimp only [I] at h1i h2i
-      norm_num at h1i h2i
-      omega
 
 private theorem hedgeSet :
     ∀ (T : ProtoTile),
@@ -900,12 +841,8 @@ theorem FiniteSquareIncidenceIdentities (T : ProtoTile) (hne : T.cells.Nonempty)
           SquareIncidenceProof.hedgeIdentity T hedgeBagCard hedgeMultiplicity hedgePartition
   let edgeOf : GaussianInt × Bool → Finset GaussianInt := fun p =>
     if p.2 then {p.1, p.1 + I} else {p.1, p.1 + 1}
-  have pair_eq {a b c d : GaussianInt}
-      (h : ({a, b} : Finset GaussianInt) = {c, d}) :
-      (a = c ∧ b = d) ∨ (a = d ∧ b = c) := SquareIncidenceProof.pair_eq (a := a) (b := b) (c :=
-          c) (d := d) h
-  have edgeOf_injective : Function.Injective edgeOf := SquareIncidenceProof.edgeOf_injective
-      pair_eq
+  have edgeOf_injective : Function.Injective edgeOf :=
+    LatticeCellEdges.edge_encoding_injective
   have hedgeSet :
       ((edgeBag.toFinset.image edgeOf : Finset (Finset GaussianInt)) :
         Set (Finset GaussianInt)) = FootprintEdges T := SquareIncidenceProof.hedgeSet T

@@ -434,41 +434,6 @@ private theorem hOFixedOriginal :
     bundle.normalized_fixed_function_eq, hfunL] at h
   exact h
 
-private theorem hcentOriginal :
-    (by
-      classical
-      exact
-        ∀ (C : BandCircle), ∀ (T : ProtoTile), ∀ (T₀ : ProtoTile), ∀ (h : PartialOdometer), ∀ (h₀
-            : PartialOdometer), ∀ (x : GaussianInt), ∀ (bundle :
-            BandOrderedGeneralNormalizedOccurrenceBundle C C T T₀ h h₀ x), ∀ (ginv :
-            BandPackingSymmetry), (∀ (T_1 : ProtoTile), BandPackingSymmetryTileAction ginv
-            (BandPackingSymmetryTileAction bundle.symmetry T_1) = T_1) → (∀ (t' : Fin (4 : ℕ)),
-            (TileCentroid (BandPackingSymmetryTileAction ginv (bundle.pieces bundle.selectedSlot
-            bundle.selectedSign)) - TileCentroid (BandPackingSymmetryTileAction ginv
-            bundle.normalizedFixed) = (1 / 2 : ℝ) • GaussianRealPoint ((⟨(0 : ℤ), (1 : ℤ)⟩ :
-            GaussianInt) ^ (↑t' : ℕ) * (BandVectors.1 (BandPackingSymmetryQuadrupleAction ginv
-            bundle.normalizedPresentation (if BandPackingSymmetryReversesOrientation ginv = true
-            then -bundle.selectedSlot else bundle.selectedSlot).succ)
-            (BandPackingSymmetryQuadrupleAction ginv bundle.normalizedPresentation (0 : Fin (4 :
-            ℕ))) + BandVectors.1 (BandPackingSymmetryQuadrupleAction ginv
-            bundle.normalizedPresentation (0 : Fin (4 : ℕ))) (BandPackingSymmetryQuadrupleAction
-            ginv bundle.normalizedPresentation (if BandPackingSymmetryReversesOrientation ginv =
-            true then -bundle.selectedSlot else bundle.selectedSlot).succ)))) → (
-        let selectedSupport := bundle.pieces bundle.selectedSlot bundle.selectedSign
-        let T' := BandPackingSymmetryTileAction ginv selectedSupport
-        TileCentroid T' - TileCentroid T₀ = (1 / 2 : ℝ) • GaussianRealPoint ((⟨0, 1⟩ :
-            GaussianInt) ^ t'.val * (BandVectors.1 ((BandPackingSymmetryQuadrupleAction ginv
-            bundle.normalizedPresentation) (if BandPackingSymmetryReversesOrientation ginv then
-            -bundle.selectedSlot else bundle.selectedSlot).succ)
-            ((BandPackingSymmetryQuadrupleAction ginv bundle.normalizedPresentation) 0) +
-            BandVectors.1 ((BandPackingSymmetryQuadrupleAction ginv
-            bundle.normalizedPresentation) 0) ((BandPackingSymmetryQuadrupleAction ginv
-            bundle.normalizedPresentation) (if BandPackingSymmetryReversesOrientation ginv then
-            -bundle.selectedSlot else bundle.selectedSlot).succ))))) ) := by
-  classical
-  intro C T T₀ h h₀ x bundle ginv htileL t' hcentInv selectedSupport T'
-  simpa [T', bundle.normalized_fixed_eq, htileL] using hcentInv
-
 private theorem hrootCoord :
     (by
       classical
@@ -860,8 +825,8 @@ theorem P5630T1MarkedRightOdometerAdjacencyReduction :
     simpa [hselectedCoord, T', h'] using hOSelectedInv
   have hslopeFixedOriginal : PartialOdometerSlope h₀ = some pFixed := by
     simpa [bundle.normalized_fixed_function_eq, hfunL] using hslopeFixedInv
-  have hcentOriginal := MarkedRightAdjacencyGeometry.hcentOriginal C T T₀ h h₀ x bundle ginv
-      htileL t' hcentInv
+  have hcentOriginal := hcentInv
+  rw [bundle.normalized_fixed_eq, htileL] at hcentOriginal
   have hrootCoord := MarkedRightAdjacencyGeometry.hrootCoord C T T₀ h h₀ x bundle ginv hcircleL
       hnorm
   have hnewAdj := MarkedRightAdjacencyGeometry.hnewAdj C T T₀ h h₀ x bundle hq ginv pFixed

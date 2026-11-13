@@ -1862,8 +1862,9 @@ private theorem opposingBoundaryConclusion :
       (fun h g => g = PartialOdometerAffineTranslate
         (PartialOdometerHalfTurn h) centerShift (-couter) (-eouter))
       ((hs.drop 1).dropLast) ((gs.drop 1).dropLast) := by
-    rw [hgsTail]
-    simpa only [List.drop_one] using interiorTransforms 1 hs.tail (by omega) htailLength
+    exact (congrArg List.dropLast (List.drop_one (l := hs))).symm ▸
+      ((congrArg List.dropLast hgsTail).symm ▸
+        interiorTransforms 1 hs.tail (by omega) htailLength)
   have hinteriorZip : List.Forall₂
       (fun X Y => cellRelation X.1 Y.1 ∧
         Y.2 = PartialOdometerAffineTranslate

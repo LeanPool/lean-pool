@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.ApollonianSuperharmonic.BoundaryFootprintInclusion
+
 public import Mathlib.Init
 public import LeanPool.ApollonianSuperharmonic.TileTranslationProperties
 
@@ -27,57 +29,6 @@ Changes: pool module paths, public exports, project namespace and current Mathli
 namespace ApollonianSuperharmonic
 
 namespace FacePointConstruction
-
-private theorem boundary_to_footprint (T : ProtoTile) (x : GaussianInt)
-      (hx : x ∈ BoundaryFootprintVertices T) : x ∈ FootprintVertices T := by
-  classical
-  have edge_to_footprint (e : Finset GaussianInt)
-      (he : e ∈ BoundaryFootprintEdges T) : e ∈ FootprintEdges T := by
-    change ∃ z : GaussianInt,
-      (e = {z, z + 1} ∧
-        ((z ∈ T.cells ∧ z - ⟨0, 1⟩ ∉ T.cells) ∨
-          (z ∉ T.cells ∧ z - ⟨0, 1⟩ ∈ T.cells))) ∨
-      (e = {z, z + ⟨0, 1⟩} ∧
-        ((z ∈ T.cells ∧ z - 1 ∉ T.cells) ∨
-          (z ∉ T.cells ∧ z - 1 ∈ T.cells))) at he
-    change ∃ c ∈ T.cells,
-      e = {c, c + 1} ∨ e = {c, c + ⟨0, 1⟩} ∨
-        e = {c + 1, c + 1 + ⟨0, 1⟩} ∨
-          e = {c + ⟨0, 1⟩, c + 1 + ⟨0, 1⟩}
-    rcases he with ⟨z, ⟨rfl, h⟩ | ⟨rfl, h⟩⟩
-    · rcases h with ⟨hz, -⟩ | ⟨-, hz⟩
-      · exact ⟨z, hz, Or.inl rfl⟩
-      · refine ⟨z - ⟨0, 1⟩, hz, Or.inr (Or.inr (Or.inr ?_))⟩
-        congr 1 <;> simp [Zsqrtd.ext_iff]
-    · rcases h with ⟨hz, -⟩ | ⟨-, hz⟩
-      · exact ⟨z, hz, Or.inr (Or.inl rfl)⟩
-      · refine ⟨z - 1, hz, Or.inr (Or.inr (Or.inl ?_))⟩
-        congr 1 <;> simp []
-  by_cases hne : T.cells.Nonempty
-  · simp only [BoundaryFootprintVertices, ite_eq_left hne, Set.mem_ofPred_eq] at hx
-    rcases hx with ⟨e, he, hxe⟩
-    have he' := edge_to_footprint e he
-    rcases he' with ⟨z, hz, he⟩
-    rcases he with h | h | h | h
-    all_goals
-      rw [h] at hxe
-      simp only [Finset.mem_insert, Finset.mem_singleton] at hxe
-      simp only [FootprintVertices, ite_eq_left hne]
-    · rcases hxe with hxe | hxe
-      · subst x; exact ⟨z, hz, Or.inl rfl⟩
-      · subst x; exact ⟨z, hz, Or.inr (Or.inl rfl)⟩
-    · rcases hxe with hxe | hxe
-      · subst x; exact ⟨z, hz, Or.inl rfl⟩
-      · subst x; exact ⟨z, hz, Or.inr (Or.inr (Or.inl rfl))⟩
-    · rcases hxe with hxe | hxe
-      · subst x; exact ⟨z, hz, Or.inr (Or.inl rfl)⟩
-      · subst x; exact ⟨z, hz, Or.inr (Or.inr (Or.inr rfl))⟩
-    · rcases hxe with hxe | hxe
-      · subst x; exact ⟨z, hz, Or.inr (Or.inr (Or.inl rfl))⟩
-      · subst x; exact ⟨z, hz, Or.inr (Or.inr (Or.inr rfl))⟩
-  · simp only [BoundaryFootprintVertices, ite_eq_right hne, Set.mem_singleton_iff] at hx
-    subst x
-    simp [FootprintVertices, hne]
 
 private theorem touching_point (A B C : ProtoTile) (h : TouchingTriple A B C) :
       ∃ x : GaussianInt, x ∈ BoundaryFootprintVertices A ∧
@@ -559,7 +510,7 @@ theorem P4677T2FacePoints
   classical
   have boundary_to_footprint (T : ProtoTile) (x : GaussianInt)
       (hx : x ∈ BoundaryFootprintVertices T) : x ∈ FootprintVertices T :=
-          FacePointConstruction.boundary_to_footprint T x hx
+          BoundaryFootprintInclusion.boundaryVertex_mem T x hx
   have touching_point (A B C : ProtoTile) (h : TouchingTriple A B C) :
       ∃ x : GaussianInt, x ∈ BoundaryFootprintVertices A ∧
         x ∈ BoundaryFootprintVertices B ∧ x ∈ BoundaryFootprintVertices C :=
