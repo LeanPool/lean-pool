@@ -1321,25 +1321,6 @@ def banlatEval (ψ : FVLv.dualUnitBall E) : VecLatHom (_root_.FBL E) ℝ where
   map_sup' := by intros; rfl
   map_inf' := by intros; rfl
 
-private theorem banlat_ofFVLv_apply (v : FVL E) (ψ : FVLv.dualUnitBall E) :
-    (_root_.FBL.ofFVLv v : _root_.FBL E) ψ = v ψ := by
-  let φ : Dual E := WeakDual.toStrongDual ψ.1
-  have hleft : (banlatEval ψ).comp (FVLv.lift (_root_.FBL.ofLinear (E := E))) =
-      FVLv.lift (φ : E →ₗ[ℝ] ℝ) := by
-    apply FVLv.lift_unique
-    intro x
-    rw [VecLatHom.comp_apply, FVLv.lift_of]
-    change (_root_.FBL.of x : _root_.FBL E) ψ = φ x
-    rw [_root_.FBL.of_apply]
-    rfl
-  have hright : evalFVLv ψ = FVLv.lift (φ : E →ₗ[ℝ] ℝ) := by
-    apply FVLv.lift_unique
-    intro x
-    change (FVLv.of x) ψ = φ x
-    rw [FVLv.of_apply]
-    rfl
-  exact DFunLike.congr_fun (hleft.trans hright.symm) v
-
 private theorem normAdmissible_one_iff_ball {n : ℕ}
     (ψ : Fin n → FVLv.dualUnitBall E) :
     NormAdmissible Exponent.one (fun i => WeakDual.toStrongDual (ψ i).1) ↔
@@ -1402,7 +1383,7 @@ private theorem freeNormExt_one_ofFVL_eq_banlat (v : FVL E) :
       _root_.FBL.freeNormExt E (_root_.FBL.ofFVLv v).1.1 := by
   apply freeNormExt_one_eq_of_restriction
   intro ψ
-  exact (ofFVL_apply_ball Exponent.one v ψ).trans (banlat_ofFVLv_apply v ψ).symm
+  exact (ofFVL_apply_ball Exponent.one v ψ).trans (_root_.FBL.ofFVLv_apply v ψ).symm
 
 theorem norm_ofFVL_one_eq_banlat (v : FVL E) :
     ‖ofFVL Exponent.one v‖ = ‖_root_.FBL.ofFVLv v‖ := by
@@ -1521,7 +1502,7 @@ private theorem banlatLinearEquiv_apply (f : Free Exponent.one E)
     funext v
     change banlatLinearEquiv (ofFVL Exponent.one v) ψ =
       ofFVL Exponent.one v φ
-    rw [banlatLinearEquiv_ofFVL, banlat_ofFVLv_apply]
+    rw [banlatLinearEquiv_ofFVL, _root_.FBL.ofFVLv_apply]
     exact (ofFVL_apply_ball Exponent.one v ψ).symm)
   exact congrFun hEq f
 
@@ -2498,24 +2479,6 @@ def latticePSum (p : Exponent) {X : Type u} [NormedAddCommGroup X] [Lattice X]
   letI := isUniformlyCompleteVectorLattice_of_banachLattice X
   PosHomFunction.functionalCalculus x (pSumFunction p n)
 
-private theorem posHomFunctionalCalculus_map_universes {n : ℕ}
-    {X : Type u} {Y : Type v}
-    [AddCommGroup X] [Lattice X] [IsOrderedAddMonoid X] [VectorLattice X]
-    [IsUniformlyCompleteVectorLattice X]
-    [AddCommGroup Y] [Lattice Y] [IsOrderedAddMonoid Y] [VectorLattice Y]
-    [IsUniformlyCompleteVectorLattice Y]
-    (T : VecLatHom X Y) (x : Fin n → X) (h : posHomFunctions n) :
-    T (PosHomFunction.functionalCalculus x h) =
-      PosHomFunction.functionalCalculus (fun i => T (x i)) h := by
-  have hcomp : ∀ i,
-      (T.comp (PosHomFunction.functionalCalculus x))
-        (PosHomFunction.coordinate i) = T (x i) := by
-    intro i
-    rw [VecLatHom.comp_apply, PosHomFunction.functionalCalculus_coordinate]
-  have heq := PosHomFunction.eq_functionalCalculus_of_map_coordinate
-    (fun i => T (x i)) (T.comp (PosHomFunction.functionalCalculus x)) hcomp
-  simpa [VecLatHom.comp_apply] using DFunLike.congr_fun heq h
-
 /-- Evaluation of a continuous positively homogeneous function at a real vector. -/
 def realPosHomEval {n : ℕ} (x : Fin n → ℝ) : VecLatHom (posHomFunctions n) ℝ where
   toFun f := f x
@@ -2545,7 +2508,7 @@ theorem latticePSum_apply (p q : Exponent) {n : ℕ} (f : Fin n → Free p E) (�
     evalVecLatHom p φ (PosHomFunction.functionalCalculus f (pSumFunction q n)) =
         PosHomFunction.functionalCalculus (fun i => evalVecLatHom p φ (f i))
           (pSumFunction q n) := by
-      exact posHomFunctionalCalculus_map_universes (evalVecLatHom p φ) f
+      exact PosHomFunction.functionalCalculus_map (evalVecLatHom p φ) f
         (pSumFunction q n)
     _ = scalarPSum q (fun i => f i φ) := by
       rw [realPosHomFunctionalCalculus]

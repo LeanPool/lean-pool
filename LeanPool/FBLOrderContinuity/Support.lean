@@ -49,7 +49,7 @@ variable {E : Type u} {F : Type v}
 /-- The absolute support function of A: the supremum of `|φ x|` over x in A. The
 real supremum is conditional, so the seminorm and continuity statements require A to
 be nonempty and bounded. Compact and p-compact sets provide these hypotheses below. -/
-def support (A : Set E) (φ : Dual E) : ℝ := sSup ((fun x : E => |φ x|) '' A)
+def support (A : Set E) (φ : Dual E) : ℝ := compactSupport A φ
 
 private theorem support_bddAbove (A : Set E) (hb : Bornology.IsBounded A) (φ : Dual E) :
     BddAbove ((fun x : E => |φ x|) '' A) := by
@@ -63,11 +63,8 @@ private theorem le_support (A : Set E) (hb : Bornology.IsBounded A) (φ : Dual E
   le_csSup (support_bddAbove A hb φ) (mem_image_of_mem _ hx)
 
 private theorem support_smul (A : Set E) (a : ℝ) (φ : Dual E) :
-    support A (a • φ) = |a| * support A φ := by
-  unfold support
-  simp only [smul_apply, smul_eq_mul, abs_mul]
-  simpa only [← Set.image_smul, Set.image_image, smul_eq_mul, Function.comp_def]
-    using Real.sSup_smul_of_nonneg (abs_nonneg a) ((fun x : E => |φ x|) '' A)
+    support A (a • φ) = |a| * support A φ :=
+  compactSupport_smul A a φ
 
 private theorem support_zero (A : Set E) : support A (0 : Dual E) = 0 := by
   simpa only [zero_smul, abs_zero, zero_mul] using support_smul A 0 (0 : Dual E)
@@ -76,14 +73,14 @@ private theorem support_zero (A : Set E) : support A (0 : Dual E) = 0 := by
 def supportSeminorm (A : Set E) (hA : A.Nonempty) (hb : Bornology.IsBounded A) :
     Seminorm ℝ (Dual E) where
   toFun := support A
-  map_zero' := by simp [support, hA]
+  map_zero' := by simp [support, compactSupport, hA]
   add_le' := by
     intro φ ψ
     apply csSup_le (hA.image _)
     rintro _ ⟨x, hx, rfl⟩
     exact (abs_add_le (φ x) (ψ x)).trans
       (add_le_add (le_support A hb φ hx) (le_support A hb ψ hx))
-  neg' := by simp [support]
+  neg' := by simp [support, compactSupport]
   smul' := by simpa only [Real.norm_eq_abs] using support_smul A
 
 /-- Section 4.1: norm continuity of bounded support functions. -/
@@ -103,22 +100,9 @@ theorem support_continuous (A : Set E) (hA : A.Nonempty) (hb : Bornology.IsBound
 
 /-- A norm-compact support function belongs to the endpoint free lattice. -/
 theorem compact_support_inFree_infinity (K : Set E) (hK : IsCompact K) :
-    InFree Exponent.infinity (support K) := by
-  apply (infinity_representation (support K)).mpr
-  constructor
-  · intro a ha φ
-    rw [support_smul, abs_of_nonneg ha]
-  · apply hK.continuous_sSup
-    apply Continuous.abs
-    apply continuous_prod_of_continuous_lipschitzWith' _ 1
-    · intro φ
-      exact φ.1.toStrongDual.lipschitzWith.weaken (by
-        have h : ‖φ.1.toStrongDual‖ ≤ 1 := by
-          simpa only [FVLv.dualUnitBall, Set.mem_preimage, Metric.mem_closedBall,
-            dist_zero_right] using φ.2
-        exact_mod_cast h)
-    · intro x
-      exact (WeakDual.eval_continuous x).comp continuous_subtype_val
+    InFree Exponent.infinity (support K) :=
+  (infinity_representation (compactSupport K)).mpr
+    ⟨compactSupport_homogeneous K, compactSupport_continuous hK⟩
 
 /-- The auxiliary weak p-norm of a finite family. -/
 def weakPNorm (p : Exponent) {n : ℕ} (φ : Fin n → Dual E) : ℝ :=
@@ -2225,7 +2209,7 @@ theorem finite_family_disk_in_span (p : Exponent) (hp : p.IsFinite)
   · rintro _ ⟨a, _, rfl⟩
     exact a.2
   · intro φ
-    rw [support, Set.image_image]
+    rw [support, compactSupport, Set.image_image]
     exact hsupport (φ.comp N.subtypeL)
 
 /-- A bound on the absolute value of a linear functional on A extends to the absolutely

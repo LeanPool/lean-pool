@@ -256,7 +256,7 @@ private theorem section_support_inFree [CompleteSpace E] (p : Exponent) (hp : p.
       exact congrArg l (ContinuousLinearMap.ext hφ).symm
     _ = support (K ∩ (M : Set E)) φ := hs φ
     _ = support {x : M | (x : E) ∈ K} ψ := by
-      unfold support
+      unfold support compactSupport
       congr 1
       ext r
       constructor
@@ -551,7 +551,7 @@ theorem poe_necessity [CompleteSpace E] (p : Exponent) (hp : p.IsFinite)
           simp [Subsingleton.elim x 0]
         · rintro rfl
           exact ⟨0, hDac.1.zero_mem hDne, by simp⟩
-      simp only [support, himage, csSup_singleton]
+      simp only [support, compactSupport, himage, csSup_singleton]
     rw [hz, freeNormExt_zero] at hinf
     exact ENNReal.zero_ne_top hinf
   obtain ⟨e, he⟩ := exists_norm_eq M (c := ‖∑' n, r n‖ + 1) (by positivity)

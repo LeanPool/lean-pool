@@ -146,7 +146,7 @@ private theorem infinity_compact_majorant [CompleteSpace E] (v : FVL E) :
   obtain ⟨h, hh⟩ := compact_support_inFree_infinity K hc
   have hs (φ : Dual E) : support K φ = c * ‖φ.comp M.subtypeL‖ := by
     change support (L '' Metric.closedBall 0 1) φ = _
-    simp only [support, Set.image_image]
+    simp only [support, compactSupport, Set.image_image]
     change support (Metric.closedBall 0 1) (φ.comp L) = _
     rw [support_unitBall, show φ.comp L = c • φ.comp M.subtypeL from
       ContinuousLinearMap.comp_smul φ c M.subtypeL, norm_smul, Real.norm_eq_abs,
@@ -443,7 +443,7 @@ theorem parameter_failure_witness [CompleteSpace E] {p q : Exponent} (hpq : p < 
           simp [Subsingleton.elim x 0]
         · rintro rfl
           exact ⟨0, hac.1.zero_mem hne, by simp⟩
-      simp only [support, heq, csSup_singleton]
+      simp only [support, compactSupport, heq, csSup_singleton]
     rw [hz, freeNormExt_zero] at hinf
     exact ENNReal.zero_ne_top hinf
   obtain ⟨e, he⟩ := exists_norm_eq E (c := 2) (by norm_num)

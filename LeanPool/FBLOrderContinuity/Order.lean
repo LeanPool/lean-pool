@@ -1559,19 +1559,26 @@ theorem necessary [CompleteSpace F] (p : Exponent) (T : F →L[ℝ] E)
         (by simpa only [abs_of_nonneg hepos] using hdle))
   exact (norm_pos_iff.mpr hv).not_ge (by linarith)
 
-/-- The support function of a norm-compact set, used for the endpoint minorant. -/
+/-- The absolute support function of a set, using the conditional real supremum. -/
 def compactSupport (K : Set E) (φ : Dual E) : ℝ :=
   sSup ((fun x => |φ x|) '' K)
 
-private theorem compactSupport_homogeneous (K : Set E) :
+/-- Scaling a functional scales its absolute support by the scalar's absolute value. -/
+theorem compactSupport_smul (K : Set E) (a : ℝ) (φ : Dual E) :
+    compactSupport K (a • φ) = |a| * compactSupport K φ := by
+  unfold compactSupport
+  simp only [smul_apply, smul_eq_mul, abs_mul]
+  simpa only [← Set.image_smul, Set.image_image, smul_eq_mul, Function.comp_def]
+    using Real.sSup_smul_of_nonneg (abs_nonneg a) ((fun x : E => |φ x|) '' K)
+
+/-- Absolute support is positively homogeneous on the continuous dual. -/
+theorem compactSupport_homogeneous (K : Set E) :
     PosHomogeneous (compactSupport K) := by
   intro a ha φ
-  unfold compactSupport
-  simp only [smul_apply, smul_eq_mul, abs_mul, abs_of_nonneg ha]
-  simpa only [← Set.image_smul, Set.image_image, smul_eq_mul, Function.comp_def] using
-    Real.sSup_smul_of_nonneg ha ((fun x => |φ x|) '' K)
+  rw [compactSupport_smul, abs_of_nonneg ha]
 
-private theorem compactSupport_continuous {K : Set E} (hK : IsCompact K) :
+/-- Compact-set support is weak-star continuous on the dual unit ball. -/
+theorem compactSupport_continuous {K : Set E} (hK : IsCompact K) :
     WeakStarContinuousOnBall (compactSupport K) := by
   apply hK.continuous_sSup
   apply Continuous.abs
