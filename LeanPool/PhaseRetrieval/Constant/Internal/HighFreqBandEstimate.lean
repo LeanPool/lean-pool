@@ -345,7 +345,9 @@ private lemma parseval_partition {N L : ℕ}
   simp only [smul_eq_mul]
   unfold totalDelta Q
   have hT_ne' : T ≠ 0 := ne_of_gt hT_pos
-  field_simp
+  have hcoefficient : (1 / T) * (T / (N : ℝ)) = 1 / (N : ℝ) := by
+    rw [one_div, div_eq_mul_inv, ← mul_assoc, inv_mul_cancel₀ hT_ne', one_mul, one_div]
+  rw [mul_add, ← mul_assoc, hcoefficient]
 
 /-! ## Parseval identity for finite Fourier sums indexed by Fin L -/
 
@@ -935,7 +937,8 @@ private lemma assembly {N L : ℕ} (hN : 1 ≤ N)
         ((1/2) * (rho (fourier (N : ℤ) (↑t : AddCircle T) * qAvg b N k)) ^ 2 -
           ‖slowFactor b (↑t : AddCircle T) - qAvg b N k‖ ^ 2) =
       (1/2) * A - B := by
-      simp_all
+      rw [intervalIntegral.integral_sub (hi_rho.const_mul _) hi_norm,
+        intervalIntegral.integral_const_mul]
     rw [h_split] at h_int_bound
     -- Multiply by 1/T
     have h_mul := mul_le_mul_of_nonneg_left h_int_bound hT_inv_pos.le
@@ -998,9 +1001,12 @@ The hypothesis `1343 * L^2 ≤ N^2` implies `136π²(L-1)² ≤ 136π²L² ≤ 1
 
 -- Numerical fact: 136 * π² < 1343
 private lemma pi_sq_bound : 136 * Real.pi ^ 2 < 1343 := by
-  have hpi : Real.pi < 3.141593 := Real.pi_lt_d6
-  have hpi_pos : (0 : ℝ) < Real.pi := Real.pi_pos
-  nlinarith only [hpi, hpi_pos, sq_nonneg (3.141593 - Real.pi)]
+  calc
+    136 * Real.pi ^ 2 < 136 * (3.1416 : ℝ) ^ 2 :=
+      mul_lt_mul_of_pos_left
+        ((sq_lt_sq₀ Real.pi_pos.le (by norm_num : (0 : ℝ) ≤ 3.1416)).2 Real.pi_lt_d4)
+        (by norm_num)
+    _ < 1343 := by norm_num
 
 private lemma rho_integral_lower_bound {N L : ℕ}
     (hN : 1 ≤ N) (hL : 1 ≤ L)
@@ -1036,16 +1042,23 @@ private lemma rho_integral_lower_bound {N L : ℕ}
     exact_mod_cast this
   -- Key: 4π²(L-1)² ≤ N²/34
   have h_rate_bound : 34 * (4 * Real.pi ^ 2 * (↑L - 1) ^ 2) ≤ (↑N : ℝ) ^ 2 := by
-    have hLm1_sq : ((↑L : ℝ) - 1) ^ 2 ≤ (↑L : ℝ) ^ 2 := by apply sq_le_sq' <;> linarith
-    -- 34 * 4π² * (L-1)² ≤ 136π² * L² < 1343 * L² ≤ N²
-    nlinarith only [hpi2, hL_real, hNL_cast, sq_nonneg Real.pi, sq_nonneg (↑L : ℝ)]
+    have hLm1_sq : ((↑L : ℝ) - 1) ^ 2 ≤ (↑L : ℝ) ^ 2 := by
+      apply sq_le_sq' <;> linarith only [hL_real]
+    calc
+      34 * (4 * Real.pi ^ 2 * (↑L - 1) ^ 2) =
+          (136 * Real.pi ^ 2) * (↑L - 1) ^ 2 := by ring
+      _ ≤ (136 * Real.pi ^ 2) * (↑L : ℝ) ^ 2 :=
+        mul_le_mul_of_nonneg_left hLm1_sq (by positivity)
+      _ ≤ 1343 * (↑L : ℝ) ^ 2 :=
+        mul_le_mul_of_nonneg_right hpi2.le (sq_nonneg _)
+      _ ≤ (↑N : ℝ) ^ 2 := hNL_cast
   -- r·C ≤ C/34 where r = 4π²(L-1)²/N²
   have h_key : 4 * Real.pi ^ 2 * (↑L - 1) ^ 2 / ↑N ^ 2 * C ≤ C / 34 := by
     have h1 : 4 * Real.pi ^ 2 * (↑L - 1) ^ 2 / ↑N ^ 2 ≤ 1 / 34 := by
       rw [div_le_div_iff₀ hN2_pos (by norm_num : (0:ℝ) < 34)]
       linarith only [h_rate_bound]
     calc 4 * Real.pi ^ 2 * (↑L - 1) ^ 2 / ↑N ^ 2 * C
-        ≤ (1 / 34) * C := by nlinarith only [h_nn, h1]
+        ≤ (1 / 34) * C := mul_le_mul_of_nonneg_right h1 h_nn
       _ = C / 34 := by ring
   -- Combine: ∫ρ² ≥ C/16 - (17/16)δ ≥ C/16 - (17/16)·(C/34) = C/16 - C/32 = C/32
   linarith only [h_asm, h_poi, h_key]

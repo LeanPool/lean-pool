@@ -352,59 +352,12 @@ theorem toFun_ofPkappa
 private theorem summable_sq_hermite_phi_eval
     (k : Nat) (z : ℂ) :
     Summable (fun n : Nat => ‖HermitekLEAN.Phi k n z‖ ^ 2) := by
-  obtain ⟨C, hC_nonneg, hC⟩ := HermitekLEAN.point_eval_bounded (k := k) z
-  apply summable_of_sum_range_le (c := C ^ 2) (fun n => sq_nonneg _)
-  intro J
-  let a' : Fin J -> ℂ := fun n => star (HermitekLEAN.Phi k n.1 z)
-  have hNS :
-      HermitekLEAN.weightedNormSq (HermitekLEAN.finiteHermiteSum k a') =
-        Finset.sum Finset.univ (fun n : Fin J => ‖HermitekLEAN.Phi k n.1 z‖ ^ 2) := by
-    rw [HermitekLEAN.finiteHermiteSum_normSq]
-    refine Finset.sum_congr rfl ?_
-    intro n hn
-    simp [a']
-  let S : ℝ := Finset.sum Finset.univ
-    (fun n : Fin J => ‖HermitekLEAN.Phi k n.1 z‖ ^ 2)
-  have hS_nonneg : 0 <= S := by
-    dsimp [S]
-    exact Finset.sum_nonneg fun n hn => sq_nonneg _
-  have hWN :
-      HermitekLEAN.weightedNorm (HermitekLEAN.finiteHermiteSum k a') =
-        Real.sqrt S := by
-    change Real.sqrt (HermitekLEAN.weightedNormSq (HermitekLEAN.finiteHermiteSum k a')) =
-      Real.sqrt S
-    rw [hNS]
-  have hFz : HermitekLEAN.finiteHermiteSum k a' z = (S : ℂ) := by
-    simp only [HermitekLEAN.finiteHermiteSum, a', S]
-    push_cast
-    congr 1
-    ext1 n
-    calc
-      star (HermitekLEAN.Phi k n.1 z) * HermitekLEAN.Phi k n.1 z
-          = HermitekLEAN.Phi k n.1 z * star (HermitekLEAN.Phi k n.1 z) := by ring
-      _ = (‖HermitekLEAN.Phi k n.1 z‖ ^ 2 : ℂ) := by
-        simpa [Complex.normSq_eq_norm_sq] using
-          Complex.mul_conj (HermitekLEAN.Phi k n.1 z)
-  have hev :
-      ‖HermitekLEAN.finiteHermiteSum k a' z‖ <=
-        C * HermitekLEAN.weightedNorm (HermitekLEAN.finiteHermiteSum k a') :=
-    hC (HermitekLEAN.finiteHermiteSum_mem_Hk k a')
-  have hFz_bound : S <= ‖HermitekLEAN.finiteHermiteSum k a' z‖ := by
-    calc
-      S <= |S| := le_abs_self S
-      _ = ‖(S : ℂ)‖ := (Complex.norm_real S).symm
-      _ = ‖HermitekLEAN.finiteHermiteSum k a' z‖ := by rw [hFz]
-  have hSle : S <= C ^ 2 := by
-    have hev' : ‖HermitekLEAN.finiteHermiteSum k a' z‖ <= C * Real.sqrt S := by
-      simpa [hWN] using hev
-    linarith only [
-      hS_nonneg, hFz_bound, hev', Real.sq_sqrt hS_nonneg, sq_nonneg (Real.sqrt S - C),
-      hC_nonneg
-    ]
-  calc
-    Finset.sum (Finset.range J) (fun n => ‖HermitekLEAN.Phi k n z‖ ^ 2)
-        = S := (Fin.sum_univ_eq_sum_range (fun n : Nat => ‖HermitekLEAN.Phi k n z‖ ^ 2) J).symm
-    _ <= C ^ 2 := hSle
+  -- Preserve the imported definition's local equation lemma.
+  have hsum_apply {D : ℕ} (a : Fin D → ℂ) (w : ℂ) :
+      HermitekLEAN.finiteHermiteSum k a w =
+        ∑ n : Fin D, a n * HermitekLEAN.Phi k n.1 w := by
+    simp only [HermitekLEAN.finiteHermiteSum]
+  exact HermitekLEAN.summable_norm_sq_Phi_eval k z
 
 private theorem summable_sq_phi1D_eval
     (k : Nat) (z : ℂ) :

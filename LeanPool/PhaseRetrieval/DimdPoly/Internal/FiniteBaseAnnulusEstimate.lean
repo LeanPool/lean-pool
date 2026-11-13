@@ -79,15 +79,12 @@ private theorem toFun_ofPkappa_annulus
 private lemma continuous_Phi_annulus
     {d : Nat} (kappa alpha : MultiIndex d) :
     Continuous (Phi kappa alpha) := by
-  unfold Phi phi1D complexHermite
-  continuity
+  exact DimdPolyLEAN.continuous_Phi kappa alpha
 
 private lemma continuous_evalPkappa_annulus
     {d : Nat} (kappa : MultiIndex d) (F : Pkappa d kappa) :
     Continuous (evalPkappa kappa F) := by
-  unfold evalPkappa
-  exact continuous_finsetSum _ fun alpha _ =>
-    continuous_const.mul (continuous_Phi_annulus kappa alpha)
+  exact DimdPolyLEAN.continuous_evalPkappa kappa F
 
 private lemma measurableSet_productAnnulus_annulus
     {d : Nat} (j : Idx d) :
@@ -421,21 +418,7 @@ private theorem norm_ne_zero_of_ne_zero_pkappa_annulus
 private theorem integrable_evalPkappa_sq_annulus
     {d : Nat} (hd : 0 < d) (kappa : MultiIndex d) (F : Pkappa d kappa) :
     Integrable (fun z : Cd d => ‖evalPkappa kappa F z‖ ^ 2) (gammaD d) := by
-  by_cases hF : F = 0
-  · subst hF
-    simp [evalPkappa]
-  · have hmeas :
-        AEStronglyMeasurable (fun z : Cd d => ‖evalPkappa kappa F z‖ ^ 2) (gammaD d) :=
-      ((continuous_evalPkappa_annulus kappa F).norm.pow 2).stronglyMeasurable.aestronglyMeasurable
-    by_contra hInt
-    have hundef :
-        (∫ z : Cd d, ‖evalPkappa kappa F z‖ ^ 2 ∂ gammaD d) = 0 :=
-      MeasureTheory.integral_undef hInt
-    have hmass :
-        (∫ z : Cd d, ‖evalPkappa kappa F z‖ ^ 2 ∂ gammaD d) = ‖F‖ ^ 2 :=
-      evalPkappa_total_mass hd kappa F
-    have hnorm_ne : ‖F‖ ≠ 0 := norm_ne_zero_of_ne_zero_pkappa_annulus hF
-    simp_all
+  exact DimdPolyLEAN.integrable_evalPkappa_sq hd kappa F
 
 private theorem evalPkappa_add_apply_annulus
     {d : Nat} (kappa : MultiIndex d)
@@ -1373,28 +1356,7 @@ private theorem Phi_rotate_one_exp_annulus
     Phi kappa alpha (Function.update z q0 (Complex.exp (Complex.I * t) * z q0)) =
       Complex.exp (Complex.I * (((alpha q0 : ℤ) - (kappa q0 : ℤ) : ℂ) * t)) *
         Phi kappa alpha z := by
-  classical
-  rw [Phi_eq_PhiKappaAlpha_annulus, Phi_eq_PhiKappaAlpha_annulus]
-  unfold Hermite1DimdLEAN.PhiKappaAlpha
-  have hupdate :
-      (fun q : Fin d =>
-        Hermite1DimdLEAN.oneDimPhi (kappa q) (alpha q)
-          (Function.update z q0 (Complex.exp (Complex.I * t) * z q0) q)) =
-        Function.update
-          (fun q : Fin d => Hermite1DimdLEAN.oneDimPhi (kappa q) (alpha q) (z q))
-          q0
-          (Hermite1DimdLEAN.oneDimPhi (kappa q0) (alpha q0)
-            (Complex.exp (Complex.I * t) * z q0)) := by
-    funext q
-    by_cases hq : q = q0
-    · simp_all
-    · simp [Function.update, hq]
-  rw [hupdate,
-    Finset.prod_update_of_mem (s := Finset.univ) (i := q0) (by simp),
-    oneDimPhi_phaseLaw_annulus]
-  conv_rhs =>
-    rw [Finset.prod_eq_mul_prod_sdiff_singleton_of_mem (s := Finset.univ) (i := q0) (by simp)]
-  ring_nf
+  exact DimdPolyLEAN.Phi_rotate_one_exp kappa alpha q0 t z
 
 private lemma fourier_mk_eq_exp_annulus
     (n : ℤ) (θ : ℝ) :
@@ -1413,27 +1375,7 @@ private theorem Phi_rotateCoord_circle_phase_annulus
         (Function.update z q0 ((fourier (1 : Int) x : ℂ) * z q0)) =
     (fourier ((alpha q0 : Nat) : Int) x : ℂ) *
       Phi kappa alpha z := by
-  induction x using Quotient.inductionOn with
-  | h θ =>
-      rw [fourier_mk_eq_exp_annulus ((kappa q0 : Nat) : Int) θ,
-        fourier_mk_eq_exp_annulus ((alpha q0 : Nat) : Int) θ,
-        fourier_mk_eq_exp_annulus (1 : Int) θ]
-      have hone :
-        Complex.exp (Complex.I * ((1 : ℤ) : ℂ) * θ) =
-            Complex.exp (Complex.I * θ) := by
-        simp_all
-      rw [hone, Phi_rotate_one_exp_annulus]
-      have hphase :
-          Complex.exp (Complex.I * (((kappa q0 : Nat) : Int) : ℂ) * θ) *
-              (Complex.exp (Complex.I * (((alpha q0 : ℤ) - (kappa q0 : ℤ) : ℂ) * θ)) *
-                Phi kappa alpha z) =
-            Complex.exp (Complex.I * (((alpha q0 : Nat) : Int) : ℂ) * θ) *
-              Phi kappa alpha z := by
-        rw [← mul_assoc, ← Complex.exp_add]
-        congr 1
-        push_cast
-        ring_nf
-      exact hphase
+  exact DimdPolyLEAN.Phi_rotateCoord_circle_phase kappa alpha q0 x z
 
 private def fiberIndexLow
     {d : Nat} (q0 : Fin d) (D : Nat) (alpha : Idx d) : Fin (D + 1) :=
@@ -1475,29 +1417,7 @@ private theorem evalPkappa_rotateCoord_circle_phase_sum_annulus
         (Function.update z q0 ((fourier (1 : Int) x : ℂ) * z q0)) =
       ∑ alpha ∈ F.support,
         F alpha * Phi kappa alpha z * circleChar (alpha q0) x := by
-  classical
-  unfold evalPkappa
-  rw [Finsupp.sum, Finset.mul_sum]
-  refine Finset.sum_congr rfl ?_
-  intro alpha halpha
-  have hphase :=
-    Phi_rotateCoord_circle_phase_annulus
-      (kappa := kappa) (alpha := alpha) (q0 := q0) x z
-  have hchar : circleChar (alpha q0) x = (fourier ((alpha q0 : Nat) : Int) x : ℂ) :=
-    circleChar_eq_fourier_nat (alpha q0) x
-  calc
-    (fourier ((kappa q0 : Nat) : Int) x : ℂ) *
-        (F alpha *
-          Phi kappa alpha
-            (Function.update z q0 ((fourier (1 : Int) x : ℂ) * z q0)))
-      = F alpha *
-          ((fourier ((kappa q0 : Nat) : Int) x : ℂ) *
-            Phi kappa alpha
-              (Function.update z q0 ((fourier (1 : Int) x : ℂ) * z q0))) := by ring
-    _ = F alpha * ((fourier ((alpha q0 : Nat) : Int) x : ℂ) * Phi kappa alpha z) := by rw [hphase]
-    _ = F alpha * Phi kappa alpha z * circleChar (alpha q0) x := by
-          rw [hchar]
-          ring
+  exact DimdPolyLEAN.evalPkappa_rotateCoord_circle_phase_sum kappa q0 F x z
 
 private theorem lowPoly_fiberCoeffLow_eq_sum_annulus
     {d : Nat} {kappa : MultiIndex d}

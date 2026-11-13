@@ -948,7 +948,7 @@ theorem oneVariableAngularFactorization
     simp only [Finset.mem_range, Nat.lt_add_one_iff, le_min_iff] at hj
     obtain ⟨hjk, hjn⟩ := hj
     rw [hstar_z, mul_pow, mul_pow]
-    simpa [mul_assoc, mul_left_comm, mul_comm] using
+    simpa only [mul_assoc, mul_left_comm, mul_comm] using
       oneVariableAngularFactorization_termwise r t k n j hjk hjn
   have hsum' :
       Finset.sum (Finset.range (min k n + 1))
@@ -968,7 +968,7 @@ theorem oneVariableAngularFactorization
                   ((r : ℂ) ^ (n + k - j * 2) *
                     ((↑(Real.sqrt (Nat.factorial k : ℝ)))⁻¹ *
                       (↑(Real.sqrt (Nat.factorial n : ℝ)))⁻¹))))) := by
-    simpa [mul_assoc, mul_left_comm, mul_comm] using hsum
+    simpa only [mul_assoc, mul_left_comm, mul_comm] using hsum
   rw [hsum']
   congr 1
   simp [radial, Polynomial.eval₂_finsetSum, Polynomial.eval₂_monomial,

@@ -69,8 +69,7 @@ theorem phase_normalized_orthogonal_reduction
       ∀ h : H, ∀ a : ℝ, defect (h - (a : ℂ) • f0) ≤ |a| + defect h) :
     ∃ δ Mloc : ℝ, 0 < δ ∧ 0 < Mloc ∧
       ∀ h : H, ‖h‖ ≤ δ → (inner ℂ h f0).im = 0 → ‖h‖ ≤ Mloc * defect h := by
-  exact
-    HermiteLEAN.phase_normalized_orthogonal_reduction
-      defect hdefect_nonneg f0 hf0 C hC horth hscalar hcompare
+  exact HermiteLEAN.phase_normalized_orthogonal_reduction
+    defect hdefect_nonneg f0 hf0 C hC horth hscalar hcompare
 
 end HermitekLEAN
