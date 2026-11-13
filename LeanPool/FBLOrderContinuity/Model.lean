@@ -60,6 +60,9 @@ namespace Exponent
 def one : Exponent := ⟨1, le_rfl⟩
 /-- The endpoint exponent ∞, whose free norm is the supremum on the dual unit ball. -/
 def infinity : Exponent := ⟨⊤, le_top⟩
+/-- Every convexity exponent is bounded by the infinity endpoint. -/
+theorem le_infinity (p : Exponent) : p ≤ infinity :=
+  (show p.1 ≤ (⊤ : ℝ≥0∞) from le_top)
 /-- The exponent 2, used for Euclidean admissibility and the Hilbert comparison. -/
 def two : Exponent := ⟨2, by norm_num⟩
 /-- The condition that a convexity exponent is strictly below ∞. Together with membership
@@ -2353,6 +2356,12 @@ theorem induced_norm_generators (p : Exponent) (T : F →L[ℝ] E) :
           rw [(delta p).norm_map])
   exact ⟨le_antisymm hupper hlower, hgen⟩
 
+/-- An induced homomorphism satisfies the original operator's norm bound. -/
+theorem induced_norm_le (p : Exponent) (T : F →L[ℝ] E) (f : Free p F) :
+    ‖induced p T f‖ ≤ ‖T‖ * ‖f‖ := by
+  have h := (induced p T).toContinuousLinearMap.le_opNorm f
+  rwa [(induced_norm_generators p T).1] at h
+
 /-- The algebraic core, regarded as a submodule of the free Banach lattice. -/
 abbrev endpointRange (p : Exponent) := LinearMap.range (ofFVL p (E := E)).toLinearMap
 
@@ -2373,11 +2382,6 @@ private theorem endpointRangeEquiv_symm_apply (p : Exponent)
   LinearEquiv.ofInjective_symm_apply (f := (ofFVL p (E := E)).toLinearMap)
     (h := (ofFVL_embedding p).1) z
 
-/-- The algebraic change-of-exponent map from the core to the infinity model. -/
-def endpointRangeMap (p : Exponent) :
-    endpointRange (E := E) p →ₗ[ℝ] Free Exponent.infinity E :=
-  (ofFVL Exponent.infinity (E := E)).toLinearMap.comp (endpointRangeEquiv p).symm.toLinearMap
-
 private theorem endpointRange_dense (p : Exponent) :
     DenseRange (endpointRange (E := E) p).subtype := by
   apply denseRange_iff_closure_range.mpr
@@ -2392,132 +2396,6 @@ private theorem endpointRange_dense (p : Exponent) :
     rintro _ ⟨v, rfl⟩
     exact ⟨⟨ofFVL p v, ⟨v, rfl⟩⟩, rfl⟩
 
-private theorem endpointRangeMap_bound (p : Exponent) (x : endpointRange (E := E) p) :
-    ‖endpointRangeMap p x‖ ≤ ‖(x : Free p E)‖ := by
-  let v := (endpointRangeEquiv p).symm x
-  have hx : ofFVL p v = (x : Free p E) := by
-    have h := LinearEquiv.ofInjective_symm_apply
-      (f := (ofFVL p (E := E)).toLinearMap) (h := (ofFVL_embedding p).1) x
-    change ofFVL p v = (x : Free p E) at h
-    exact h
-  change ‖ofFVL Exponent.infinity v‖ ≤ ‖(x : Free p E)‖
-  rw [← hx]
-  exact norm_ofFVL_infinity_le p v
-
-/-- The continuous extension of the algebraic map into the infinity model. -/
-def endpointExtension (p : Exponent) : Free p E →L[ℝ] Free Exponent.infinity E :=
-  (endpointRangeMap p).extendOfNorm (endpointRange (E := E) p).subtype
-
-private theorem endpointExtension_apply_range (p : Exponent)
-    (z : endpointRange (E := E) p) :
-    endpointExtension p ((endpointRange (E := E) p).subtype z) = endpointRangeMap p z :=
-  LinearMap.extendOfNorm_eq (f := endpointRangeMap p)
-    (e := (endpointRange (E := E) p).subtype) (endpointRange_dense p)
-    ⟨1, fun x => by simpa using endpointRangeMap_bound p x⟩ z
-
-private theorem endpointExtension_ofFVL (p : Exponent) (v : FBLOrderContinuousLH.FVL E) :
-    endpointExtension p (ofFVL p v) = ofFVL Exponent.infinity v := by
-  rw [← endpointRangeEquiv_apply p v, endpointExtension_apply_range]
-  exact congrArg (ofFVL Exponent.infinity (E := E))
-    ((endpointRangeEquiv p).symm_apply_apply v)
-
-private theorem endpointExtension_norm_le (p : Exponent) (x : Free p E) :
-    ‖endpointExtension p x‖ ≤ ‖x‖ := by
-  have hb : ∀ y : endpointRange (E := E) p,
-      ‖endpointRangeMap p y‖ ≤ (1 : ℝ) * ‖(endpointRange (E := E) p).subtype y‖ := by
-    intro y
-    simpa using endpointRangeMap_bound p y
-  simpa [endpointExtension] using
-    (LinearMap.norm_extendOfNorm_apply_le (f := endpointRangeMap p)
-      (e := (endpointRange (E := E) p).subtype) (endpointRange_dense p) 1 hb x)
-
-theorem endpointExtension_map_sup (p : Exponent) (f g : Free p E) :
-    endpointExtension p (f ⊔ g) = endpointExtension p f ⊔ endpointExtension p g := by
-  refine map_binary_of_dense_range (ofFVL p (E := E)) (denseRange_ofFVL p)
-    (endpointExtension p) (endpointExtension p).continuous
-    (· ⊔ ·) (· ⊔ ·) (continuous_fst.sup continuous_snd)
-    (continuous_fst.sup continuous_snd) ?_ f g
-  intro v w
-  rw [← map_sup (ofFVL p (E := E)) v w,
-    endpointExtension_ofFVL, endpointExtension_ofFVL, endpointExtension_ofFVL,
-    map_sup (ofFVL Exponent.infinity (E := E)) v w]
-
-theorem endpointExtension_map_inf (p : Exponent) (f g : Free p E) :
-    endpointExtension p (f ⊓ g) = endpointExtension p f ⊓ endpointExtension p g := by
-  refine map_binary_of_dense_range (ofFVL p (E := E)) (denseRange_ofFVL p)
-    (endpointExtension p) (endpointExtension p).continuous
-    (· ⊓ ·) (· ⊓ ·) (continuous_fst.inf continuous_snd)
-    (continuous_fst.inf continuous_snd) ?_ f g
-  intro v w
-  rw [← map_inf (ofFVL p (E := E)) v w,
-    endpointExtension_ofFVL, endpointExtension_ofFVL, endpointExtension_ofFVL,
-    map_inf (ofFVL Exponent.infinity (E := E)) v w]
-
-private theorem endpointExtension_apply (p : Exponent) (f : Free p E) (φ : Dual E) :
-    endpointExtension p f φ = f φ := by
-  have hleft : Continuous (fun g : Free p E => endpointExtension p g φ) :=
-    ((hpEvaluation Exponent.infinity φ).continuous.comp continuous_subtype_val).comp
-      (endpointExtension p).continuous
-  have hright : Continuous (fun g : Free p E => g φ) :=
-    (hpEvaluation p φ).continuous.comp continuous_subtype_val
-  have heq := (denseRange_ofFVL p (E := E)).equalizer hleft hright (by
-    funext v
-    change endpointExtension p (ofFVL p v) φ = ofFVL p v φ
-    rw [endpointExtension_ofFVL]
-    rfl)
-  exact congrFun heq f
-
-/-- The canonical inclusion into the endpoint free lattice, constructed from the dense FVL. -/
-def inclusionInfinity (p : Exponent) :
-    LatticeOperator (Free p E) (Free Exponent.infinity E) where
-  toContinuousLinearMap := endpointExtension p
-  map_sup' := endpointExtension_map_sup p
-  map_inf' := endpointExtension_map_inf p
-
-/-- The canonical map to the infinity free lattice preserves every full-dual evaluation. -/
-theorem inclusionInfinity_apply (p : Exponent) (f : Free p E) (φ : Dual E) :
-    inclusionInfinity p f φ = f φ := endpointExtension_apply p f φ
-
-/-- The canonical map into the infinity free lattice has operator norm at most one. -/
-theorem inclusionInfinity_norm_le (p : Exponent) :
-    ‖(inclusionInfinity p (E := E)).toContinuousLinearMap‖ ≤ 1 := by
-  apply (inclusionInfinity p (E := E)).toContinuousLinearMap.opNorm_le_bound zero_le_one
-  intro f
-  change ‖endpointExtension p f‖ ≤ 1 * ‖f‖
-  simpa only [one_mul] using endpointExtension_norm_le p f
-
-/-- The endpoint inclusion maps each canonical generator to the same generator at ∞. -/
-theorem inclusionInfinity_generators (p : Exponent) (x : E) :
-    inclusionInfinity p (delta p x) = delta Exponent.infinity x := by
-  rw [← ofFVL_of p x, ← ofFVL_of Exponent.infinity x]
-  exact endpointExtension_ofFVL p (FVLv.of x)
-
-/-- The endpoint inclusion is injective because it leaves the underlying dual function unchanged. -/
-theorem inclusionInfinity_injective (p : Exponent) :
-    Function.Injective (inclusionInfinity p (E := E)) := by
-  intro f g h
-  apply Subtype.ext
-  apply Subtype.ext
-  funext φ
-  have hφ := congrArg (fun k : Free Exponent.infinity E => k φ) h
-  simpa only [inclusionInfinity_apply] using hφ
-
-/-- The endpoint inclusion has norm-dense range, since its range contains the algebraic
-generators. -/
-theorem inclusionInfinity_denseRange (p : Exponent) :
-    DenseRange (inclusionInfinity p (E := E)) := by
-  apply denseRange_iff_closure_range.mpr
-  ext z
-  constructor
-  · intro _; trivial
-  · intro _
-    have hz : z ∈ closure (Set.range (ofFVL Exponent.infinity (E := E))) := by
-      rw [(denseRange_ofFVL Exponent.infinity (E := E)).closure_range]
-      trivial
-    apply closure_mono ?_ hz
-    rintro _ ⟨v, rfl⟩
-    exact ⟨ofFVL p v, endpointExtension_ofFVL p v⟩
-
 /-- The algebraic change-of-exponent map between two free-lattice models. -/
 def parameterRangeMap (p q : Exponent) :
     endpointRange (E := E) p →ₗ[ℝ] Free q E :=
@@ -2528,10 +2406,7 @@ private theorem parameterRangeMap_bound {p q : Exponent} (hpq : p ≤ q)
     ‖parameterRangeMap p q x‖ ≤ ‖(x : Free p E)‖ := by
   let v := (endpointRangeEquiv p).symm x
   have hx : ofFVL p v = (x : Free p E) := by
-    have h := LinearEquiv.ofInjective_symm_apply
-      (f := (ofFVL p (E := E)).toLinearMap) (h := (ofFVL_embedding p).1) x
-    change ofFVL p v = (x : Free p E) at h
-    exact h
+    exact endpointRangeEquiv_symm_apply p x
   change ‖ofFVL q v‖ ≤ ‖(x : Free p E)‖
   rw [← hx]
   exact norm_ofFVL_mono hpq v
@@ -3626,27 +3501,29 @@ private theorem positive_dual_fvl_lift_le (p : Exponent) {C : ℝ} (hC : ConvexW
       rw [Finset.sum_add_distrib, ← sum_apply, hχsum]
     _ ≤ ‖ψ‖ * C * ‖f‖ + ψ (N.neg.eval y) := add_le_add hbound le_rfl
 
+private theorem norm_fvl_lift_le_induced (p : Exponent) {C : ℝ} (hC : ConvexWith p C X)
+    (S : E →L[ℝ] X) (v : FVLv E) :
+    ‖FVLv.lift S.toLinearMap v‖ ≤ C * ‖induced p S (ofFVL p |v|)‖ := by
+  obtain ⟨ψ, hψ, hψnorm, hψval⟩ := StrongDual.exists_positive_dual_norming
+    (x := |FVLv.lift S.toLinearMap v|) (abs_nonneg _)
+  have h := positive_dual_fvl_lift_le p hC S |v| ψ hψ
+  rw [VecLatHom.map_abs, hψval, norm_abs_eq_norm] at h
+  apply h.trans
+  simpa only [one_mul] using mul_le_mul_of_nonneg_right
+    (mul_le_mul_of_nonneg_right hψnorm (le_trans zero_le_one hC.1))
+    (norm_nonneg (induced p S (ofFVL p |v|)))
+
 /-- The algebraic free-vector-lattice lift into a p-convex Banach lattice satisfies the required
 sharp bound. -/
 theorem fvl_lift_pConvex_norm_le (p : Exponent) {C : ℝ} (hC : ConvexWith p C X)
     (S : E →L[ℝ] X) (v : FVLv E) :
     ‖FVLv.lift S.toLinearMap v‖ ≤ (C * ‖S‖) * ‖ofFVL p v‖ := by
-  obtain ⟨ψ, hψ, hψnorm, hψval⟩ := StrongDual.exists_positive_dual_norming
-    (x := |FVLv.lift S.toLinearMap v|) (abs_nonneg _)
-  have h := positive_dual_fvl_lift_le p hC S |v| ψ hψ
-  rw [VecLatHom.map_abs, hψval, norm_abs_eq_norm] at h
   have hop : ‖induced p S (ofFVL p |v|)‖ ≤ ‖S‖ * ‖ofFVL p v‖ := by
-    have ho := (induced p S).toContinuousLinearMap.le_opNorm (ofFVL p |v|)
-    rw [(induced_norm_generators p S).1, VecLatHom.map_abs, norm_abs_eq_norm] at ho
-    simpa only [VecLatHom.map_abs] using ho
-  calc
-    ‖FVLv.lift S.toLinearMap v‖ ≤ ‖ψ‖ * C * ‖induced p S (ofFVL p |v|)‖ := h
-    _ ≤ 1 * C * ‖induced p S (ofFVL p |v|)‖ :=
-      mul_le_mul_of_nonneg_right
-        (mul_le_mul_of_nonneg_right hψnorm (le_trans zero_le_one hC.1)) (norm_nonneg _)
-    _ ≤ C * (‖S‖ * ‖ofFVL p v‖) := by
-      simpa only [one_mul] using mul_le_mul_of_nonneg_left hop (le_trans zero_le_one hC.1)
-    _ = (C * ‖S‖) * ‖ofFVL p v‖ := (mul_assoc C ‖S‖ ‖ofFVL p v‖).symm
+    simpa only [VecLatHom.map_abs, norm_abs_eq_norm] using
+      induced_norm_le p S (ofFVL p |v|)
+  exact (norm_fvl_lift_le_induced p hC S v).trans
+    ((mul_le_mul_of_nonneg_left hop (le_trans zero_le_one hC.1)).trans_eq
+      (mul_assoc C ‖S‖ ‖ofFVL p v‖).symm)
 
 end PConvexLiftBound
 
@@ -3687,30 +3564,31 @@ private theorem fvl_lift_piLp_apply (p : Exponent) (n : ℕ)
     rfl
   exact DFunLike.congr_fun (hleft.trans hright.symm) v
 
-/-- The algebraic free-lattice lift has the sharp bound for a finite `ℓᵖ` target. -/
-theorem fvl_lift_piLp_norm_le (p : Exponent) (n : ℕ)
+private theorem norm_fvl_lift_piLp (p : Exponent) (n : ℕ)
     (S : E →L[ℝ] PiLp p.1 (fun _ : Fin n => ℝ)) (v : FVLv E) :
-    ‖FVLv.lift S.toLinearMap v‖ ≤ ‖S‖ * ‖ofFVL p v‖ := by
+    ‖FVLv.lift S.toLinearMap v‖ =
+      scalarPSum p (fun i => ofFVL p v ((piLpEvalCLM p n i).comp S)) := by
+  rw [scalarPSum_eq_piLp_norm]
+  congr 1
+  apply PiLp.ext
+  intro i
+  exact fvl_lift_piLp_apply p n S v i
+
+private theorem free_family_piLp_le (p : Exponent) (n : ℕ)
+    (S : E →L[ℝ] PiLp p.1 (fun _ : Fin n => ℝ)) (f : Free p E) :
+    scalarPSum p (fun i => f ((piLpEvalCLM p n i).comp S)) ≤ ‖S‖ * ‖f‖ := by
   let φ : Fin n → Dual E := fun i => (piLpEvalCLM p n i).comp S
-  have hnormcoord : ‖FVLv.lift S.toLinearMap v‖ =
-      scalarPSum p (fun i => ofFVL p v (φ i)) := by
-    rw [scalarPSum_eq_piLp_norm]
-    congr 1
-    apply PiLp.ext
-    intro i
-    exact fvl_lift_piLp_apply p n S v i
-  rw [hnormcoord]
   by_cases hS : S = 0
   · have hφzero (i : Fin n) : φ i = 0 := by simp [φ, hS]
-    have hz : (fun i => ofFVL p v (φ i)) = (0 : Fin n → ℝ) := by
+    have hz : (fun i => f (φ i)) = (0 : Fin n → ℝ) := by
       funext i
       rw [hφzero i]
-      exact free_apply_zero p (ofFVL p v)
+      exact free_apply_zero p f
     rw [hz, scalarPSum_eq_piLp_norm]
-    change ‖(0 : PiLp p.1 (fun _ : Fin n => ℝ))‖ ≤ ‖S‖ * ‖ofFVL p v‖
+    change ‖(0 : PiLp p.1 (fun _ : Fin n => ℝ))‖ ≤ ‖S‖ * ‖f‖
     simp only [hS, norm_zero, zero_mul, le_refl]
   have hSpos : 0 < ‖S‖ := norm_pos_iff.mpr hS
-  apply freeNorm_scaled_family_le p (ofFVL p v) φ hSpos
+  apply freeNorm_scaled_family_le p f φ hSpos
   intro x hx
   have hscalar : scalarPSum p (fun i => φ i x) = ‖S x‖ := by
     rw [scalarPSum_eq_piLp_norm]
@@ -3718,6 +3596,13 @@ theorem fvl_lift_piLp_norm_le (p : Exponent) (n : ℕ)
   rw [hscalar]
   exact (S.le_opNorm x).trans
     ((mul_le_mul_of_nonneg_left hx (norm_nonneg S)).trans_eq (mul_one _))
+
+/-- The algebraic free-lattice lift has the sharp bound for a finite `ℓᵖ` target. -/
+theorem fvl_lift_piLp_norm_le (p : Exponent) (n : ℕ)
+    (S : E →L[ℝ] PiLp p.1 (fun _ : Fin n => ℝ)) (v : FVLv E) :
+    ‖FVLv.lift S.toLinearMap v‖ ≤ ‖S‖ * ‖ofFVL p v‖ := by
+  rw [norm_fvl_lift_piLp]
+  exact free_family_piLp_le p n S (ofFVL p v)
 
 section ContinuousMapLift
 private theorem fvl_lift_continuousMap_apply {K : Type*}
@@ -3754,6 +3639,19 @@ private theorem fvl_lift_continuousMap_apply {K : Type*}
     rfl
   exact DFunLike.congr_fun (hleft.trans hright.symm) v
 
+private theorem free_eval_continuousMap_le {K : Type*}
+    [TopologicalSpace K] [CompactSpace K] (p : Exponent)
+    (S : E →L[ℝ] C(K, ℝ)) (f : Free p E) (k : K) :
+    ‖f ((ContinuousMap.evalCLM ℝ k).comp S)‖ ≤ ‖S‖ * ‖f‖ := by
+  let φ : Dual E := (ContinuousMap.evalCLM ℝ k).comp S
+  have hφnorm : ‖φ‖ ≤ ‖S‖ := by
+    apply φ.opNorm_le_bound (norm_nonneg S)
+    intro x
+    exact (ContinuousMap.norm_coe_le_norm (S x) k).trans (S.le_opNorm x)
+  have h : ‖f φ‖ ≤ ‖φ‖ * ‖f‖ := by
+    simpa only [Real.norm_eq_abs] using free_apply_abs_le p f φ
+  exact h.trans (mul_le_mul_of_nonneg_right hφnorm (norm_nonneg _))
+
 /-- The algebraic free-lattice lift is bounded for every compact-space continuous-function target.
 The estimate holds for every exponent because one dual functional norms each point evaluation. -/
 theorem fvl_lift_continuousMap_norm_le {K : Type*}
@@ -3763,20 +3661,9 @@ theorem fvl_lift_continuousMap_norm_le {K : Type*}
   apply (ContinuousMap.norm_le (FVLv.lift S.toLinearMap v)
     (mul_nonneg (norm_nonneg S) (norm_nonneg (ofFVL p v)))).mpr
   intro k
-  let φ : Dual E := (ContinuousMap.evalCLM ℝ k).comp S
-  rw [fvl_lift_continuousMap_apply p S v k]
-  have hφnorm : ‖φ‖ ≤ ‖S‖ := by
-    apply φ.opNorm_le_bound (norm_nonneg S)
-    intro x
-    calc
-      ‖φ x‖ = ‖S x k‖ := rfl
-      _ ≤ ‖S x‖ := ContinuousMap.norm_coe_le_norm (S x) k
-      _ ≤ ‖S‖ * ‖x‖ := S.le_opNorm x
-  calc
-    ‖ofFVL p v φ‖ ≤ ‖φ‖ * ‖ofFVL p v‖ := by
-      simpa only [Real.norm_eq_abs] using free_apply_abs_le p (ofFVL p v) φ
-    _ ≤ ‖S‖ * ‖ofFVL p v‖ :=
-      mul_le_mul_of_nonneg_right hφnorm (norm_nonneg _)
+  exact (congrArg norm (fvl_lift_continuousMap_apply p S v k)).le.trans
+    (free_eval_continuousMap_le p S (ofFVL p v) k)
+
 end ContinuousMapLift
 
 section AlgebraicLiftExtension
@@ -4945,6 +4832,55 @@ theorem inclusion_properties {p q : Exponent} (hpq : p ≤ q) :
   · intro x
     rw [← ofFVL_of p x, ← ofFVL_of q x]
     exact parameterExtension_ofFVL hpq (FVLv.of x)
+
+/-- The algebraic change-of-exponent map from the core to the infinity model. -/
+def endpointRangeMap (p : Exponent) :
+    endpointRange (E := E) p →ₗ[ℝ] Free Exponent.infinity E :=
+  parameterRangeMap p Exponent.infinity
+
+/-- The continuous extension of the algebraic map into the infinity model. -/
+def endpointExtension (p : Exponent) : Free p E →L[ℝ] Free Exponent.infinity E :=
+  parameterExtension (Exponent.le_infinity p)
+
+/-- The endpoint extension preserves binary suprema. -/
+theorem endpointExtension_map_sup (p : Exponent) (f g : Free p E) :
+    endpointExtension p (f ⊔ g) = endpointExtension p f ⊔ endpointExtension p g :=
+  (inclusion (Exponent.le_infinity p)).map_sup' f g
+
+/-- The endpoint extension preserves binary infima. -/
+theorem endpointExtension_map_inf (p : Exponent) (f g : Free p E) :
+    endpointExtension p (f ⊓ g) = endpointExtension p f ⊓ endpointExtension p g :=
+  (inclusion (Exponent.le_infinity p)).map_inf' f g
+
+/-- The canonical inclusion into the endpoint free lattice, constructed from the dense FVL. -/
+def inclusionInfinity (p : Exponent) :
+    LatticeOperator (Free p E) (Free Exponent.infinity E) :=
+  inclusion (Exponent.le_infinity p)
+
+/-- The canonical map to the infinity free lattice preserves every full-dual evaluation. -/
+theorem inclusionInfinity_apply (p : Exponent) (f : Free p E) (φ : Dual E) :
+    inclusionInfinity p f φ = f φ := inclusion_apply (Exponent.le_infinity p) f φ
+
+/-- The canonical map into the infinity free lattice has operator norm at most one. -/
+theorem inclusionInfinity_norm_le (p : Exponent) :
+    ‖(inclusionInfinity p (E := E)).toContinuousLinearMap‖ ≤ 1 :=
+  (inclusion_properties (E := E) (Exponent.le_infinity p)).1
+
+/-- The endpoint inclusion maps each canonical generator to the same generator at ∞. -/
+theorem inclusionInfinity_generators (p : Exponent) (x : E) :
+    inclusionInfinity p (delta p x) = delta Exponent.infinity x :=
+  (inclusion_properties (Exponent.le_infinity p)).2.2.2 x
+
+/-- The endpoint inclusion is injective because it leaves the underlying dual function unchanged. -/
+theorem inclusionInfinity_injective (p : Exponent) :
+    Function.Injective (inclusionInfinity p (E := E)) :=
+  (inclusion_properties (E := E) (Exponent.le_infinity p)).2.1
+
+/-- The endpoint inclusion has norm-dense range, since its range contains the algebraic
+generators. -/
+theorem inclusionInfinity_denseRange (p : Exponent) :
+    DenseRange (inclusionInfinity p (E := E)) :=
+  (inclusion_properties (E := E) (Exponent.le_infinity p)).2.2.1
 
 /-- Equation (2.4): the reverse triangle inequality for lattice absolute values and
 the identities expressing `a - a ⊓ b` as the positive part of `a - b`. The latter is
