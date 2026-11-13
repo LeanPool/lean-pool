@@ -2068,10 +2068,12 @@ theorem P4458T1LargestParentRows
       D hUcent
   have hMcenter := BoundaryFrameJoinGeometry.minusCentroid C orientation base Rminus Rplus
       hminus hplus F
-  have hvsumRe := BoundaryFrameJoinGeometry.firstVectorSumReal C orientation base Rminus Rplus
-      hminus hplus F hvsum
-  have hvsumIm := BoundaryFrameJoinGeometry.firstVectorSumImaginary C orientation base Rminus
-      Rplus hminus hplus F hvsum
+  have hvsumRe : w.re + x.re + y.re = 0 := by
+    simpa only [Zsqrtd.re_add, Zsqrtd.re_zero] using
+      congrArg (fun z : GaussianInt => z.re) hvsum
+  have hvsumIm : w.im + x.im + y.im = 0 := by
+    simpa only [Zsqrtd.im_add, Zsqrtd.im_zero] using
+      congrArg (fun z : GaussianInt => z.im) hvsum
   have hcenterVector := LargestParentGeometry.hcenterVector C orientation base Rminus Rplus
       hminus hplus F hvrec hvflip hvsumRe hvsumIm
   have hcenterRe := congrArg (fun z : GaussianInt => (z.re : ℝ)) hcenterVector
@@ -2138,10 +2140,12 @@ theorem P4458T1LargestParentRows
       hplus F
   have hFplusSlope := LargestParentGeometry.hFplusSlope C orientation base Rminus Rplus hminus
       hplus F
-  have hasumRe := BoundaryFrameJoinGeometry.secondVectorSumReal C orientation base Rminus Rplus
-      hminus hplus F hasum
-  have hasumIm := BoundaryFrameJoinGeometry.secondVectorSumImaginary C orientation base Rminus
-      Rplus hminus hplus F hasum
+  have hasumRe : wa.re + xa.re + ya.re = 0 := by
+    simpa only [Zsqrtd.re_add, Zsqrtd.re_zero] using
+      congrArg (fun z : GaussianInt => z.re) hasum
+  have hasumIm : wa.im + xa.im + ya.im = 0 := by
+    simpa only [Zsqrtd.im_add, Zsqrtd.im_zero] using
+      congrArg (fun z : GaussianInt => z.im) hasum
   have ha10Re := LargestParentGeometry.ha10Re C orientation base Rminus Rplus hminus hplus F harec
   have ha10Im := LargestParentGeometry.ha10Im C orientation base Rminus Rplus hminus hplus F harec
   have ha01Re := LargestParentGeometry.ha01Re C orientation base Rminus Rplus hminus hplus F

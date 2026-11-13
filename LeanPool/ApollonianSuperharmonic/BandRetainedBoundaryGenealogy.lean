@@ -268,80 +268,18 @@ private theorem haum'At397 :
   have he := hatMostOneUnit (index i) (index j) hi' hj'
   fin_cases i <;> fin_cases j <;> simp [index] at he ⊢
 
-private theorem hs'At413 :
-    ∀ (q : Fin 4 → CircleCoordinates), ∀ (p : Fin (4 : ℕ) → CircleCoordinates), (q = ![((2 : ℤ) *
-        (p (0 : Fin (4 : ℕ))).1 + (2 : ℤ) * (p (2 : Fin (4 : ℕ))).1 + (2 : ℤ) * (p (3 : Fin (4 :
-        ℕ))).1 - (p (1 : Fin (4 : ℕ))).1, (2 : GaussianInt) * (p (0 : Fin (4 : ℕ))).2 + (2 :
-        GaussianInt) * (p (2 : Fin (4 : ℕ))).2 + (2 : GaussianInt) * (p (3 : Fin (4 : ℕ))).2 - (p
-        (1 : Fin (4 : ℕ))).2), p (0 : Fin (4 : ℕ)), p (2 : Fin (4 : ℕ)), p (3 : Fin (4 : ℕ))]) → (
-    let pr : Fin 4 → CircleCoordinates := p
-    let u := BandPackingSymmetryQuadrupleAction .conjugate q
-    let pp := BandPackingSymmetryQuadrupleAction .conjugate pr
-    ((-1 : Fin 3).succ = 3) → (((-2 : Fin 3).succ = 2) → (u = ![(2 * (pp 0).1 + 2 * (pp 2).1 + 2
-        * (pp 3).1 - (pp 1).1,
-      2 * (pp 0).2 + 2 * (pp 2).2 + 2 * (pp 3).2 - (pp 1).2), pp 0, pp 2, pp 3]))) := by
-  classical
-  intro q p hsucc pr u pp negOneSucc negTwoSucc
-  have hss := congrArg
-    (fun z => BandPackingSymmetryQuadrupleAction .conjugate z) hsucc
-  change BandPackingSymmetryQuadrupleAction .conjugate q = _
-  convert hss using 1;
-    simp only [Nat.succ_eq_add_one, Nat.reduceAdd, BandPackingSymmetryQuadrupleAction,
-        BandPackingSymmetryCircleAction, Fin.isValue, GaussianReflection, Int.reduceNeg,
-        BandPackingSymmetryReversesOrientation, ↓reduceIte, neg_zero, Fin.succ_zero_eq_one,
-        negOneSucc, negTwoSucc, Matrix.cons_val_zero, Matrix.cons_val, Matrix.cons_val_one,
-        Zsqrtd.re_sub, Zsqrtd.re_add, Zsqrtd.re_mul, Zsqrtd.re_ofNat, Nat.cast_ofNat,
-        Zsqrtd.im_ofNat, mul_zero, zero_mul, add_zero, Zsqrtd.im_sub, Zsqrtd.im_add,
-        Zsqrtd.im_mul, neg_sub, Matrix.vecCons_inj, Prod.mk.injEq, sub_left_inj, and_true, pp,
-        pr];
-    try { constructor
-          · ring
-          · ext <;> simp [] <;> ring }
-
-private theorem hs'At528 :
-    ∀ (q : Fin 4 → CircleCoordinates), ∀ (p : Fin (4 : ℕ) → CircleCoordinates), (![q (0 : Fin (4
-        : ℕ)), q (2 : Fin (4 : ℕ)), q (3 : Fin (4 : ℕ)), q (1 : Fin (4 : ℕ))] = ![((2 : ℤ) * (p
-        (0 : Fin (4 : ℕ))).1 + (2 : ℤ) * (p (2 : Fin (4 : ℕ))).1 + (2 : ℤ) * (p (3 : Fin (4 :
-        ℕ))).1 - (p (1 : Fin (4 : ℕ))).1, (2 : GaussianInt) * (p (0 : Fin (4 : ℕ))).2 + (2 :
-        GaussianInt) * (p (2 : Fin (4 : ℕ))).2 + (2 : GaussianInt) * (p (3 : Fin (4 : ℕ))).2 - (p
-        (1 : Fin (4 : ℕ))).2), p (0 : Fin (4 : ℕ)), p (2 : Fin (4 : ℕ)), p (3 : Fin (4 : ℕ))]) → (
-    let base : Fin 4 → CircleCoordinates := ![q 0, q 2, q 3, q 1]
-    let u := BandPackingSymmetryQuadrupleAction .conjugate base
+private theorem conjugateSuccessor (base p : Fin 4 → CircleCoordinates)
+    (hsucc : base =
+      ![(2 * (p 0).1 + 2 * (p 2).1 + 2 * (p 3).1 - (p 1).1,
+         2 * (p 0).2 + 2 * (p 2).2 + 2 * (p 3).2 - (p 1).2), p 0, p 2, p 3]) :
     let pp := BandPackingSymmetryQuadrupleAction .conjugate p
-    ((-1 : Fin 3).succ = 3) → (((-2 : Fin 3).succ = 2) → (u = ![(2 * (pp 0).1 + 2 * (pp 2).1 + 2
-        * (pp 3).1 - (pp 1).1,
-      2 * (pp 0).2 + 2 * (pp 2).2 + 2 * (pp 3).2 - (pp 1).2), pp 0, pp 2, pp 3]))) := by
+    BandPackingSymmetryQuadrupleAction .conjugate base =
+      ![(2 * (pp 0).1 + 2 * (pp 2).1 + 2 * (pp 3).1 - (pp 1).1,
+         2 * (pp 0).2 + 2 * (pp 2).2 + 2 * (pp 3).2 - (pp 1).2), pp 0, pp 2, pp 3] := by
   classical
-  intro q p hsucc base u pp negOneSucc negTwoSucc
-  have hss := congrArg (fun z => BandPackingSymmetryQuadrupleAction .conjugate z) hsucc
-  change BandPackingSymmetryQuadrupleAction .conjugate base = _
-  convert hss using 1;
-    simp only [Nat.succ_eq_add_one, Nat.reduceAdd, BandPackingSymmetryQuadrupleAction,
-        BandPackingSymmetryCircleAction, Fin.isValue, GaussianReflection, Int.reduceNeg,
-        BandPackingSymmetryReversesOrientation, ↓reduceIte, neg_zero, Fin.succ_zero_eq_one,
-        negOneSucc, negTwoSucc, Matrix.cons_val_zero, Matrix.cons_val, Matrix.cons_val_one,
-        Zsqrtd.re_sub, Zsqrtd.re_add, Zsqrtd.re_mul, Zsqrtd.re_ofNat, Nat.cast_ofNat,
-        Zsqrtd.im_ofNat, mul_zero, zero_mul, add_zero, Zsqrtd.im_sub, Zsqrtd.im_add,
-        Zsqrtd.im_mul, neg_sub, Matrix.vecCons_inj, Prod.mk.injEq, sub_left_inj, and_true, pp];
-    try { constructor
-          · ring
-          · ext <;> simp [] <;> ring }
-
-private theorem hs'At631 :
-    ∀ (q : Fin 4 → CircleCoordinates), ∀ (p : Fin (4 : ℕ) → CircleCoordinates), (![q (0 : Fin (4
-        : ℕ)), q (3 : Fin (4 : ℕ)), q (1 : Fin (4 : ℕ)), q (2 : Fin (4 : ℕ))] = ![((2 : ℤ) * (p
-        (0 : Fin (4 : ℕ))).1 + (2 : ℤ) * (p (2 : Fin (4 : ℕ))).1 + (2 : ℤ) * (p (3 : Fin (4 :
-        ℕ))).1 - (p (1 : Fin (4 : ℕ))).1, (2 : GaussianInt) * (p (0 : Fin (4 : ℕ))).2 + (2 :
-        GaussianInt) * (p (2 : Fin (4 : ℕ))).2 + (2 : GaussianInt) * (p (3 : Fin (4 : ℕ))).2 - (p
-        (1 : Fin (4 : ℕ))).2), p (0 : Fin (4 : ℕ)), p (2 : Fin (4 : ℕ)), p (3 : Fin (4 : ℕ))]) → (
-    let base : Fin 4 → CircleCoordinates := ![q 0, q 3, q 1, q 2]
-    let u := BandPackingSymmetryQuadrupleAction .conjugate base
-    let pp := BandPackingSymmetryQuadrupleAction .conjugate p
-    ((-1 : Fin 3).succ = 3) → (((-2 : Fin 3).succ = 2) → (u = ![(2 * (pp 0).1 + 2 * (pp 2).1 + 2
-        * (pp 3).1 - (pp 1).1,
-      2 * (pp 0).2 + 2 * (pp 2).2 + 2 * (pp 3).2 - (pp 1).2), pp 0, pp 2, pp 3]))) := by
-  classical
-  intro q p hsucc base u pp negOneSucc negTwoSucc
+  intro pp
+  have negOneSucc : (-1 : Fin 3).succ = 3 := by decide
+  have negTwoSucc : (-2 : Fin 3).succ = 2 := by decide
   have hss := congrArg (fun z => BandPackingSymmetryQuadrupleAction .conjugate z) hsucc
   change BandPackingSymmetryQuadrupleAction .conjugate base = _
   convert hss using 1;
@@ -834,20 +772,6 @@ private theorem haum'At723 :
       one_ne_zero, zero_ne_one] at hi hj ⊢ <;>
     (exfalso; have e := hatMostOneUnit _ _ hi hj; omega)
 
-private theorem hs'At727 :
-    ∀ (q : Fin 4 → CircleCoordinates), ∀ (p : Fin (4 : ℕ) → CircleCoordinates), (![q (0 : Fin (4
-        : ℕ)), q (3 : Fin (4 : ℕ)), q (1 : Fin (4 : ℕ)), q (2 : Fin (4 : ℕ))] = ![((2 : ℤ) * (p
-        (0 : Fin (4 : ℕ))).1 + (2 : ℤ) * (p (2 : Fin (4 : ℕ))).1 + (2 : ℤ) * (p (3 : Fin (4 :
-        ℕ))).1 - (p (1 : Fin (4 : ℕ))).1, (2 : GaussianInt) * (p (0 : Fin (4 : ℕ))).2 + (2 :
-        GaussianInt) * (p (2 : Fin (4 : ℕ))).2 + (2 : GaussianInt) * (p (3 : Fin (4 : ℕ))).2 - (p
-        (1 : Fin (4 : ℕ))).2), p (0 : Fin (4 : ℕ)), p (2 : Fin (4 : ℕ)), p (3 : Fin (4 : ℕ))]) → (
-    let u : Fin 4 → CircleCoordinates := ![q 0, q 3, q 1, q 2]
-    u = ![(2 * (p 0).1 + 2 * (p 2).1 + 2 * (p 3).1 - (p 1).1,
-      2 * (p 0).2 + 2 * (p 2).2 + 2 * (p 3).2 - (p 1).2), p 0, p 2, p 3]) := by
-  classical
-  intro q p hsucc u
-  simpa [u] using hsucc
-
 private abbrev hb :=
   ApollonianSuperharmonic.RetainedBoundaryDetails.huAt713
 
@@ -1089,7 +1013,7 @@ private theorem firstParentCase :
       have haum' := RetainedBoundaryProof.haum'At397 q hatMostOneUnit
       have negOneSucc : (-1 : Fin 3).succ = 3 := by decide
       have negTwoSucc : (-2 : Fin 3).succ = 2 := by decide
-      have hs' := RetainedBoundaryProof.hs'At413 q p hsucc negOneSucc negTwoSucc
+      have hs' := RetainedBoundaryProof.conjugateSuccessor q p hsucc
       have negOne : (-1 : Fin 3) = 2 := by decide
       have negTwo : (-2 : Fin 3) = 1 := by decide
       have h0' := RetainedBoundaryDetails.h0'At562 q p h0 negOne negTwo
@@ -1185,7 +1109,7 @@ private theorem secondParentCase :
       have haum' := RetainedBoundaryDetails.haum'At660 q hatMostOneUnit p hsecond
       have negOneSucc : (-1 : Fin 3).succ = 3 := by decide
       have negTwoSucc : (-2 : Fin 3).succ = 2 := by decide
-      have hs' := RetainedBoundaryProof.hs'At528 q p hsucc negOneSucc negTwoSucc
+      have hs' := RetainedBoundaryProof.conjugateSuccessor base p hsucc
       have h0' := RetainedBoundaryDetails.h0'At670 q p h0 negOneSucc negTwoSucc
       have h2' := RetainedBoundaryDetails.h2'At673 q p h3 negOneSucc negTwoSucc
       have h3' := RetainedBoundaryDetails.h3'At676 q p h2 negOneSucc negTwoSucc
@@ -1252,7 +1176,7 @@ private theorem thirdParentCase :
       have hu := RetainedBoundaryDetails.huAt713 q hq
       have hnl' := RetainedBoundaryDetails.hnl'At720 q hnoLine
       have haum' := RetainedBoundaryDetails.haum'At723 q hatMostOneUnit p hthird
-      have hs' := RetainedBoundaryDetails.hs'At727 q p hsucc
+      have hs' := hsucc
       have h0' : p 0 = u 1 := by simpa [u] using h0
       have h2' : p 2 = u 2 := by simpa [u] using h2
       have h3' : p 3 = u 3 := by simpa [u] using h3
@@ -1278,7 +1202,7 @@ private theorem thirdParentCase :
       have haum' := RetainedBoundaryDetails.haum'At761 q hatMostOneUnit p hthird
       have negOneSucc : (-1 : Fin 3).succ = 3 := by decide
       have negTwoSucc : (-2 : Fin 3).succ = 2 := by decide
-      have hs' := RetainedBoundaryProof.hs'At631 q p hsucc negOneSucc negTwoSucc
+      have hs' := RetainedBoundaryProof.conjugateSuccessor base p hsucc
       have h0' := RetainedBoundaryDetails.h0'At771 q p h0 negOneSucc negTwoSucc
       have h2' := RetainedBoundaryDetails.h2'At774 q p h3 negOneSucc negTwoSucc
       have h3' := RetainedBoundaryDetails.h3'At777 q p h2 negOneSucc negTwoSucc

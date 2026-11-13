@@ -3177,12 +3177,12 @@ private theorem directParentCase :
       hplus F a p hqB hqD hr1 hr2 rootSlope aSlope hARe
   have hAIm' := SecondNewerRowsGeometry.hAIm'At435 C orientation base Rminus Rplus hminus
       hplus F a p hqB hqD hr1 hr2 rootSlope aSlope hAIm
-  have hasumRe := BoundaryFrameJoinGeometry.secondVectorSumReal C orientation base Rminus Rplus
-      hminus
-      hplus F hasum
-  have hasumIm := BoundaryFrameJoinGeometry.secondVectorSumImaginary C orientation base Rminus
-      Rplus hminus
-      hplus F hasum
+  have hasumRe : wa.re + xa.re + ya.re = 0 := by
+    simpa only [Zsqrtd.re_add, Zsqrtd.re_zero] using
+      congrArg (fun z : GaussianInt => z.re) hasum
+  have hasumIm : wa.im + xa.im + ya.im = 0 := by
+    simpa only [Zsqrtd.im_add, Zsqrtd.im_zero] using
+      congrArg (fun z : GaussianInt => z.im) hasum
   have hasumReR : (wa.re : ℝ) + (xa.re : ℝ) + (ya.re : ℝ) = 0 := by
     exact_mod_cast hasumRe
   have hasumImR : (wa.im : ℝ) + (xa.im : ℝ) + (ya.im : ℝ) = 0 := by
@@ -3417,10 +3417,12 @@ private theorem recursiveParentCase :
   have hFminusIm := SecondNewerRowsGeometry.hFminusImAt1002 C orientation base Rminus Rplus
       hminus hplus F rootA hFminusSlope
   have hrootNegA : rootNeg = rootA := hrootNegEq.trans hrootAEq.symm
-  have hasumRe := BoundaryFrameJoinGeometry.secondVectorSumReal C orientation base Rminus Rplus
-      hminus hplus F hasum
-  have hasumIm := BoundaryFrameJoinGeometry.secondVectorSumImaginary C orientation base Rminus Rplus
-      hminus hplus F hasum
+  have hasumRe : wa.re + xa.re + ya.re = 0 := by
+    simpa only [Zsqrtd.re_add, Zsqrtd.re_zero] using
+      congrArg (fun z : GaussianInt => z.re) hasum
+  have hasumIm : wa.im + xa.im + ya.im = 0 := by
+    simpa only [Zsqrtd.im_add, Zsqrtd.im_zero] using
+      congrArg (fun z : GaussianInt => z.im) hasum
   have hasumReR : (wa.re : ℝ) + (xa.re : ℝ) + (ya.re : ℝ) = 0 := by
     exact_mod_cast hasumRe
   have hasumImR : (wa.im : ℝ) + (xa.im : ℝ) + (ya.im : ℝ) = 0 := by
@@ -3491,12 +3493,12 @@ theorem P4458T1SecondNewerRows :
       simpa [I] using (VectorRecursionLaws r hr.1).2.2.2.2 hr 0 |>.1
     have haflip : BandVectors.2 (r 0) (r 1) = -I * BandVectors.2 (r 1) (r 0) := by
       simpa [I] using (VectorRecursionLaws r hr.1).2.2.2.2 hr 0 |>.2
-    have hvsumRe := BoundaryFrameJoinGeometry.firstVectorSumReal C orientation base Rminus Rplus
-        hminus hplus
-        F hvsum
-    have hvsumIm := BoundaryFrameJoinGeometry.firstVectorSumImaginary C orientation base Rminus
-        Rplus hminus hplus
-        F hvsum
+    have hvsumRe : w.re + x.re + y.re = 0 := by
+      simpa only [Zsqrtd.re_add, Zsqrtd.re_zero] using
+        congrArg (fun z : GaussianInt => z.re) hvsum
+    have hvsumIm : w.im + x.im + y.im = 0 := by
+      simpa only [Zsqrtd.im_add, Zsqrtd.im_zero] using
+        congrArg (fun z : GaussianInt => z.im) hvsum
     rcases hselectedOcc with ⟨hUband, hUfoot, hUcent⟩
     have hUcenter := BoundaryFrameJoinGeometry.selectedCentroid C orientation base Rminus Rplus
         hminus

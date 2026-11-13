@@ -293,46 +293,6 @@ private theorem hQ1S1 :
     exact Finset.mem_inter.mpr ⟨hxP, hxM⟩
   exact Finset.disjoint_left.mp hOQ1.symm hxQ hxO
 
-private theorem selectA_Q :
-    (by
-      classical
-      exact
-        ∀ (q : Fin 4 → CircleCoordinates), ∀ (cfg : BandOrderedGeneralConfiguration q), ∀ (C₀ :
-            BandCircle), ∀ (T : ProtoTile), ∀ (cert : BandOrderedGeneralLayoutCertificate q cfg
-            C₀ T), (LatticeTile (cert.Q 1 true)) → ((LatticeTile (cert.S 2 false)) →
-            ((LatticeTile cert.O) → ((NoCheckerboardCellVertex (↑(cert.Q (1 : Fin (3 : ℕ))
-            true).cells : Set LatticeCell)) → ((NoCheckerboardCellVertex (↑(cert.S (2 : Fin (3 :
-            ℕ)) false).cells : Set LatticeCell)) → ((NoCheckerboardCellVertex (↑cert.O.cells :
-            Set LatticeCell)) → ((∃ j : Fin 4, LatticeVertexIncidentCell
-            cert.exceptionalSegments.a j ∈ (cert.Q 1 true).cells) → ((∃ j : Fin 4,
-            LatticeVertexIncidentCell cert.exceptionalSegments.a j ∈ (cert.S 2 false).cells) →
-            ((∀ j : Fin 4, LatticeVertexIncidentCell cert.exceptionalSegments.a j ∈ (cert.Q 1
-            true).cells ∨ LatticeVertexIncidentCell cert.exceptionalSegments.a j ∈ (cert.S 2
-            false).cells ∨ LatticeVertexIncidentCell cert.exceptionalSegments.a j ∈
-            cert.O.cells) → ((∃ (j : Fin (4 : ℕ)), LatticeVertexIncidentCell
-            cert.exceptionalSegments.a j ∈ cert.O.cells) → ((Disjoint (cert.Q (1 : Fin (3 : ℕ))
-            true).cells (cert.S (2 : Fin (3 : ℕ)) false).cells) → ((Disjoint (cert.S (2 : Fin (3
-            : ℕ)) false).cells cert.O.cells) → ((Disjoint cert.O.cells (cert.Q (1 : Fin (3 : ℕ))
-            true).cells) → (∀ D, D = cert.Q 1 true ∨ D = cert.S 2 false ∨ D = cert.O → ∃ U V R :
-            ProtoTile, (D = U ∨ D = V) ∧ ((U = cert.Q 1 true ∧ V = cert.S 2 false ∧ R = cert.O) ∨
-            (U = cert.S 2 false ∧ V = cert.Q 1 true ∧ R = cert.O) ∨ (U = cert.Q 1 true ∧ V =
-            cert.O ∧ R = cert.S 2 false) ∨ (U = cert.O ∧ V = cert.Q 1 true ∧ R = cert.S 2 false)
-            ∨ (U = cert.S 2 false ∧ V = cert.O ∧ R = cert.Q 1 true) ∨ (U = cert.O ∧ V = cert.S 2
-            false ∧ R = cert.Q 1 true)) ∧ (∃ j : Fin 4, LatticeVertexIncidentCell
-            cert.exceptionalSegments.a j ∈ U.cells ∧ LatticeVertexIncidentCell
-            cert.exceptionalSegments.a (j + 2) ∈ V.cells) ∧ cert.exceptionalSegments.a ∈
-            FootprintVertices U ∧ cert.exceptionalSegments.a ∈ FootprintVertices V ∧ (∀ y, y =
-            cert.exceptionalSegments.a ∨ y = cert.exceptionalSegments.a + 1 ∨ y =
-            cert.exceptionalSegments.a - 1 ∨ y = cert.exceptionalSegments.a + ⟨0, 1⟩ ∨ y =
-            cert.exceptionalSegments.a - ⟨0, 1⟩ → y ∈ FootprintVertices U ∨ y ∈
-            FootprintVertices V)))))))))))))) ) := by
-  classical
-  intro q cfg C₀ T cert hQ2lat hS3lat hOlat hQ2check hS3check hOcheck hQ2occ hS3occ hAowners
-      hOoccA hQS hSO hOQ D hD
-  exact ThreeOwnerDesignatedOppositePair (cert.Q 1 true) (cert.S 2 false) cert.O
-    cert.exceptionalSegments.a hQ2lat hS3lat hOlat hQS hSO hOQ
-    hQ2check hS3check hOcheck hAowners hQ2occ hS3occ hOoccA D hD
-
 private theorem normalize_selected :
     (by
       classical
@@ -444,153 +404,6 @@ private theorem ne_of_disjoint :
   subst Y
   rcases hne with ⟨c, hc⟩
   exact Finset.disjoint_left.mp h hc hc
-
-private theorem selectB_S :
-    (by
-      classical
-      exact
-        ∀ (q : Fin 4 → CircleCoordinates), ∀ (cfg : BandOrderedGeneralConfiguration q), ∀ (C₀ :
-            BandCircle), ∀ (T : ProtoTile), ∀ (cert : BandOrderedGeneralLayoutCertificate q cfg
-            C₀ T), (LatticeTile (cert.Q 2 true)) → ((LatticeTile (cert.S 1 false)) →
-            ((LatticeTile cert.O) → ((NoCheckerboardCellVertex (↑(cert.Q (2 : Fin (3 : ℕ))
-            true).cells : Set LatticeCell)) → ((NoCheckerboardCellVertex (↑(cert.S (1 : Fin (3 :
-            ℕ)) false).cells : Set LatticeCell)) → ((NoCheckerboardCellVertex (↑cert.O.cells :
-            Set LatticeCell)) → ((∃ j : Fin 4, LatticeVertexIncidentCell
-            cert.exceptionalSegments.b j ∈ (cert.Q 2 true).cells) → ((∃ j : Fin 4,
-            LatticeVertexIncidentCell cert.exceptionalSegments.b j ∈ (cert.S 1 false).cells) →
-            ((∀ j : Fin 4, LatticeVertexIncidentCell cert.exceptionalSegments.b j ∈ (cert.Q 2
-            true).cells ∨ LatticeVertexIncidentCell cert.exceptionalSegments.b j ∈ (cert.S 1
-            false).cells ∨ LatticeVertexIncidentCell cert.exceptionalSegments.b j ∈
-            cert.O.cells) → ((∃ (j : Fin (4 : ℕ)), LatticeVertexIncidentCell
-            cert.exceptionalSegments.b j ∈ cert.O.cells) → ((Disjoint (cert.Q (2 : Fin (3 : ℕ))
-            true).cells (cert.S (1 : Fin (3 : ℕ)) false).cells) → ((Disjoint (cert.S (1 : Fin (3
-            : ℕ)) false).cells cert.O.cells) → ((Disjoint cert.O.cells (cert.Q (2 : Fin (3 : ℕ))
-            true).cells) → (∀ D, D = cert.S 1 false ∨ D = cert.Q 2 true ∨ D = cert.O → ∃ U V R :
-            ProtoTile, (D = U ∨ D = V) ∧ ((U = cert.S 1 false ∧ V = cert.Q 2 true ∧ R = cert.O) ∨
-            (U = cert.Q 2 true ∧ V = cert.S 1 false ∧ R = cert.O) ∨ (U = cert.S 1 false ∧ V =
-            cert.O ∧ R = cert.Q 2 true) ∨ (U = cert.O ∧ V = cert.S 1 false ∧ R = cert.Q 2 true) ∨
-            (U = cert.Q 2 true ∧ V = cert.O ∧ R = cert.S 1 false) ∨ (U = cert.O ∧ V = cert.Q 2
-            true ∧ R = cert.S 1 false)) ∧ (∃ j : Fin 4, LatticeVertexIncidentCell
-            cert.exceptionalSegments.b j ∈ U.cells ∧ LatticeVertexIncidentCell
-            cert.exceptionalSegments.b (j + 2) ∈ V.cells) ∧ cert.exceptionalSegments.b ∈
-            FootprintVertices U ∧ cert.exceptionalSegments.b ∈ FootprintVertices V ∧ (∀ y, y =
-            cert.exceptionalSegments.b ∨ y = cert.exceptionalSegments.b + 1 ∨ y =
-            cert.exceptionalSegments.b - 1 ∨ y = cert.exceptionalSegments.b + ⟨0, 1⟩ ∨ y =
-            cert.exceptionalSegments.b - ⟨0, 1⟩ → y ∈ FootprintVertices U ∨ y ∈
-            FootprintVertices V)))))))))))))) ) := by
-  classical
-  intro q cfg C₀ T cert hQ3lat hS2lat hOlat hQ3check hS2check hOcheck hQ3occ hS2occ hBowners
-      hOoccB hQ3S2 hS2O hOQ3 D hD
-  have owners : ∀ j : Fin 4,
-      LatticeVertexIncidentCell cert.exceptionalSegments.b j ∈ (cert.S 1 false).cells ∨
-      LatticeVertexIncidentCell cert.exceptionalSegments.b j ∈ (cert.Q 2 true).cells ∨
-      LatticeVertexIncidentCell cert.exceptionalSegments.b j ∈ cert.O.cells := by
-    intro j
-    rcases hBowners j with hq | hs | ho
-    · exact Or.inr (Or.inl hq)
-    · exact Or.inl hs
-    · exact Or.inr (Or.inr ho)
-  exact ThreeOwnerDesignatedOppositePair (cert.S 1 false) (cert.Q 2 true) cert.O
-    cert.exceptionalSegments.b hS2lat hQ3lat hOlat hQ3S2.symm hOQ3.symm hS2O.symm
-    hS2check hQ3check hOcheck owners hS2occ hQ3occ hOoccB D hD
-
-private theorem selectA_O :
-    (by
-      classical
-      exact
-        ∀ (q : Fin 4 → CircleCoordinates), ∀ (cfg : BandOrderedGeneralConfiguration q), ∀ (C₀ :
-            BandCircle), ∀ (T : ProtoTile), ∀ (cert : BandOrderedGeneralLayoutCertificate q cfg
-            C₀ T), (LatticeTile (cert.Q 1 true)) → ((LatticeTile (cert.S 2 false)) →
-            ((LatticeTile cert.O) → ((NoCheckerboardCellVertex (↑(cert.Q (1 : Fin (3 : ℕ))
-            true).cells : Set LatticeCell)) → ((NoCheckerboardCellVertex (↑(cert.S (2 : Fin (3 :
-            ℕ)) false).cells : Set LatticeCell)) → ((NoCheckerboardCellVertex (↑cert.O.cells :
-            Set LatticeCell)) → ((∃ j : Fin 4, LatticeVertexIncidentCell
-            cert.exceptionalSegments.a j ∈ (cert.Q 1 true).cells) → ((∃ j : Fin 4,
-            LatticeVertexIncidentCell cert.exceptionalSegments.a j ∈ (cert.S 2 false).cells) →
-            ((∀ j : Fin 4, LatticeVertexIncidentCell cert.exceptionalSegments.a j ∈ (cert.Q 1
-            true).cells ∨ LatticeVertexIncidentCell cert.exceptionalSegments.a j ∈ (cert.S 2
-            false).cells ∨ LatticeVertexIncidentCell cert.exceptionalSegments.a j ∈
-            cert.O.cells) → ((∃ (j : Fin (4 : ℕ)), LatticeVertexIncidentCell
-            cert.exceptionalSegments.a j ∈ cert.O.cells) → ((Disjoint (cert.Q (1 : Fin (3 : ℕ))
-            true).cells (cert.S (2 : Fin (3 : ℕ)) false).cells) → ((Disjoint (cert.S (2 : Fin (3
-            : ℕ)) false).cells cert.O.cells) → ((Disjoint cert.O.cells (cert.Q (1 : Fin (3 : ℕ))
-            true).cells) → (∀ D, D = cert.O ∨ D = cert.Q 1 true ∨ D = cert.S 2 false → ∃ U V R :
-            ProtoTile, (D = U ∨ D = V) ∧ ((U = cert.O ∧ V = cert.Q 1 true ∧ R = cert.S 2 false) ∨
-            (U = cert.Q 1 true ∧ V = cert.O ∧ R = cert.S 2 false) ∨ (U = cert.O ∧ V = cert.S 2
-            false ∧ R = cert.Q 1 true) ∨ (U = cert.S 2 false ∧ V = cert.O ∧ R = cert.Q 1 true) ∨
-            (U = cert.Q 1 true ∧ V = cert.S 2 false ∧ R = cert.O) ∨ (U = cert.S 2 false ∧ V =
-            cert.Q 1 true ∧ R = cert.O)) ∧ (∃ j : Fin 4, LatticeVertexIncidentCell
-            cert.exceptionalSegments.a j ∈ U.cells ∧ LatticeVertexIncidentCell
-            cert.exceptionalSegments.a (j + 2) ∈ V.cells) ∧ cert.exceptionalSegments.a ∈
-            FootprintVertices U ∧ cert.exceptionalSegments.a ∈ FootprintVertices V ∧ (∀ y, y =
-            cert.exceptionalSegments.a ∨ y = cert.exceptionalSegments.a + 1 ∨ y =
-            cert.exceptionalSegments.a - 1 ∨ y = cert.exceptionalSegments.a + ⟨0, 1⟩ ∨ y =
-            cert.exceptionalSegments.a - ⟨0, 1⟩ → y ∈ FootprintVertices U ∨ y ∈
-            FootprintVertices V)))))))))))))) ) := by
-  classical
-  intro q cfg C₀ T cert hQ2lat hS3lat hOlat hQ2check hS3check hOcheck hQ2occ hS3occ hAowners
-      hOoccA hQS hSO hOQ D hD
-  have owners : ∀ j : Fin 4,
-      LatticeVertexIncidentCell cert.exceptionalSegments.a j ∈ cert.O.cells ∨
-      LatticeVertexIncidentCell cert.exceptionalSegments.a j ∈ (cert.Q 1 true).cells ∨
-      LatticeVertexIncidentCell cert.exceptionalSegments.a j ∈ (cert.S 2 false).cells := by
-    intro j
-    rcases hAowners j with hq | hs | ho
-    · exact Or.inr (Or.inl hq)
-    · exact Or.inr (Or.inr hs)
-    · exact Or.inl ho
-  exact ThreeOwnerDesignatedOppositePair cert.O (cert.Q 1 true) (cert.S 2 false)
-    cert.exceptionalSegments.a hOlat hQ2lat hS3lat hOQ hQS hSO
-    hOcheck hQ2check hS3check owners hOoccA hQ2occ hS3occ D hD
-
-private theorem selectB_O :
-    (by
-      classical
-      exact
-        ∀ (q : Fin 4 → CircleCoordinates), ∀ (cfg : BandOrderedGeneralConfiguration q), ∀ (C₀ :
-            BandCircle), ∀ (T : ProtoTile), ∀ (cert : BandOrderedGeneralLayoutCertificate q cfg
-            C₀ T), (LatticeTile (cert.Q 2 true)) → ((LatticeTile (cert.S 1 false)) →
-            ((LatticeTile cert.O) → ((NoCheckerboardCellVertex (↑(cert.Q (2 : Fin (3 : ℕ))
-            true).cells : Set LatticeCell)) → ((NoCheckerboardCellVertex (↑(cert.S (1 : Fin (3 :
-            ℕ)) false).cells : Set LatticeCell)) → ((NoCheckerboardCellVertex (↑cert.O.cells :
-            Set LatticeCell)) → ((∃ j : Fin 4, LatticeVertexIncidentCell
-            cert.exceptionalSegments.b j ∈ (cert.Q 2 true).cells) → ((∃ j : Fin 4,
-            LatticeVertexIncidentCell cert.exceptionalSegments.b j ∈ (cert.S 1 false).cells) →
-            ((∀ j : Fin 4, LatticeVertexIncidentCell cert.exceptionalSegments.b j ∈ (cert.Q 2
-            true).cells ∨ LatticeVertexIncidentCell cert.exceptionalSegments.b j ∈ (cert.S 1
-            false).cells ∨ LatticeVertexIncidentCell cert.exceptionalSegments.b j ∈
-            cert.O.cells) → ((∃ (j : Fin (4 : ℕ)), LatticeVertexIncidentCell
-            cert.exceptionalSegments.b j ∈ cert.O.cells) → ((Disjoint (cert.Q (2 : Fin (3 : ℕ))
-            true).cells (cert.S (1 : Fin (3 : ℕ)) false).cells) → ((Disjoint (cert.S (1 : Fin (3
-            : ℕ)) false).cells cert.O.cells) → ((Disjoint cert.O.cells (cert.Q (2 : Fin (3 : ℕ))
-            true).cells) → (∀ D, D = cert.O ∨ D = cert.S 1 false ∨ D = cert.Q 2 true → ∃ U V R :
-            ProtoTile, (D = U ∨ D = V) ∧ ((U = cert.O ∧ V = cert.S 1 false ∧ R = cert.Q 2 true) ∨
-            (U = cert.S 1 false ∧ V = cert.O ∧ R = cert.Q 2 true) ∨ (U = cert.O ∧ V = cert.Q 2
-            true ∧ R = cert.S 1 false) ∨ (U = cert.Q 2 true ∧ V = cert.O ∧ R = cert.S 1 false) ∨
-            (U = cert.S 1 false ∧ V = cert.Q 2 true ∧ R = cert.O) ∨ (U = cert.Q 2 true ∧ V =
-            cert.S 1 false ∧ R = cert.O)) ∧ (∃ j : Fin 4, LatticeVertexIncidentCell
-            cert.exceptionalSegments.b j ∈ U.cells ∧ LatticeVertexIncidentCell
-            cert.exceptionalSegments.b (j + 2) ∈ V.cells) ∧ cert.exceptionalSegments.b ∈
-            FootprintVertices U ∧ cert.exceptionalSegments.b ∈ FootprintVertices V ∧ (∀ y, y =
-            cert.exceptionalSegments.b ∨ y = cert.exceptionalSegments.b + 1 ∨ y =
-            cert.exceptionalSegments.b - 1 ∨ y = cert.exceptionalSegments.b + ⟨0, 1⟩ ∨ y =
-            cert.exceptionalSegments.b - ⟨0, 1⟩ → y ∈ FootprintVertices U ∨ y ∈
-            FootprintVertices V)))))))))))))) ) := by
-  classical
-  intro q cfg C₀ T cert hQ3lat hS2lat hOlat hQ3check hS2check hOcheck hQ3occ hS2occ hBowners
-      hOoccB hQ3S2 hS2O hOQ3 D hD
-  have owners : ∀ j : Fin 4,
-      LatticeVertexIncidentCell cert.exceptionalSegments.b j ∈ cert.O.cells ∨
-      LatticeVertexIncidentCell cert.exceptionalSegments.b j ∈ (cert.S 1 false).cells ∨
-      LatticeVertexIncidentCell cert.exceptionalSegments.b j ∈ (cert.Q 2 true).cells := by
-    intro j
-    rcases hBowners j with hq | hs | ho
-    · exact Or.inr (Or.inr hq)
-    · exact Or.inr (Or.inl hs)
-    · exact Or.inl ho
-  exact ThreeOwnerDesignatedOppositePair cert.O (cert.S 1 false) (cert.Q 2 true)
-    cert.exceptionalSegments.b hOlat hS2lat hQ3lat hS2O.symm hQ3S2.symm hOQ3.symm
-    hOcheck hS2check hQ3check owners hOoccB hS2occ hQ3occ D hD
 
 private theorem hI2mul :
     (by
@@ -1730,22 +1543,41 @@ theorem BandOrderedGeneralPositiveCutGeometry
   have hneA_OS := ne_of_disjoint _ _ hSO.symm hOne
   have hneB_OS := ne_of_disjoint _ _ hS2O.symm hOne
   have hneB_OQ := ne_of_disjoint _ _ hOQ3 hOne
+  have ownersAFromO (j : Fin 4) :
+      LatticeVertexIncidentCell cert.exceptionalSegments.a j ∈ cert.O.cells ∨
+      LatticeVertexIncidentCell cert.exceptionalSegments.a j ∈ (cert.Q 1 true).cells ∨
+      LatticeVertexIncidentCell cert.exceptionalSegments.a j ∈ (cert.S 2 false).cells := by
+    simpa only [or_assoc, or_comm, or_left_comm] using hAowners j
+  have ownersBFromS (j : Fin 4) :
+      LatticeVertexIncidentCell cert.exceptionalSegments.b j ∈ (cert.S 1 false).cells ∨
+      LatticeVertexIncidentCell cert.exceptionalSegments.b j ∈ (cert.Q 2 true).cells ∨
+      LatticeVertexIncidentCell cert.exceptionalSegments.b j ∈ cert.O.cells := by
+    simpa only [or_assoc, or_comm, or_left_comm] using hBowners j
+  have ownersBFromO (j : Fin 4) :
+      LatticeVertexIncidentCell cert.exceptionalSegments.b j ∈ cert.O.cells ∨
+      LatticeVertexIncidentCell cert.exceptionalSegments.b j ∈ (cert.S 1 false).cells ∨
+      LatticeVertexIncidentCell cert.exceptionalSegments.b j ∈ (cert.Q 2 true).cells := by
+    simpa only [or_assoc, or_comm, or_left_comm] using hBowners j
   have selected_p2_a := normalize_selected (cert.Q 1 true) (cert.S 2 false) cert.O
     cert.exceptionalSegments.a hneA_QS hneA_QO
-    ((PositiveCutGeometry.selectA_Q q cfg C₀ T cert hQ2lat hS3lat hOlat hQ2check hS3check hOcheck
-        hQ2occ hS3occ hAowners hOoccA hQS hSO hOQ) (cert.Q 1 true) (Or.inl rfl))
+    (ThreeOwnerDesignatedOppositePair (cert.Q 1 true) (cert.S 2 false) cert.O
+      cert.exceptionalSegments.a hQ2lat hS3lat hOlat hQS hSO hOQ
+      hQ2check hS3check hOcheck hAowners hQ2occ hS3occ hOoccA _ (Or.inl rfl))
   have selected_p2_b := normalize_selected (cert.S 1 false) (cert.Q 2 true) cert.O
     cert.exceptionalSegments.b hneB_SQ hneB_SO'
-    ((PositiveCutGeometry.selectB_S q cfg C₀ T cert hQ3lat hS2lat hOlat hQ3check hS2check hOcheck
-        hQ3occ hS2occ hBowners hOoccB hQ3S2 hS2O hOQ3) (cert.S 1 false) (Or.inl rfl))
+    (ThreeOwnerDesignatedOppositePair (cert.S 1 false) (cert.Q 2 true) cert.O
+      cert.exceptionalSegments.b hS2lat hQ3lat hOlat hQ3S2.symm hOQ3.symm hS2O.symm
+      hS2check hQ3check hOcheck ownersBFromS hS2occ hQ3occ hOoccB _ (Or.inl rfl))
   have selected_p4_a := normalize_selected cert.O (cert.Q 1 true) (cert.S 2 false)
     cert.exceptionalSegments.a hneA_OQ hneA_OS
-    ((PositiveCutGeometry.selectA_O q cfg C₀ T cert hQ2lat hS3lat hOlat hQ2check hS3check hOcheck
-        hQ2occ hS3occ hAowners hOoccA hQS hSO hOQ) cert.O (Or.inl rfl))
+    (ThreeOwnerDesignatedOppositePair cert.O (cert.Q 1 true) (cert.S 2 false)
+      cert.exceptionalSegments.a hOlat hQ2lat hS3lat hOQ hQS hSO
+      hOcheck hQ2check hS3check ownersAFromO hOoccA hQ2occ hS3occ _ (Or.inl rfl))
   have selected_p4_b := normalize_selected cert.O (cert.S 1 false) (cert.Q 2 true)
     cert.exceptionalSegments.b hneB_OS hneB_OQ
-    ((PositiveCutGeometry.selectB_O q cfg C₀ T cert hQ3lat hS2lat hOlat hQ3check hS2check hOcheck
-        hQ3occ hS2occ hBowners hOoccB hQ3S2 hS2O hOQ3) cert.O (Or.inl rfl))
+    (ThreeOwnerDesignatedOppositePair cert.O (cert.S 1 false) (cert.Q 2 true)
+      cert.exceptionalSegments.b hOlat hS2lat hQ3lat hS2O.symm hQ3S2.symm hOQ3.symm
+      hOcheck hS2check hQ3check ownersBFromO hOoccB hS2occ hQ3occ _ (Or.inl rfl))
   let I : GaussianInt := ⟨0, 1⟩
   have hI2 : I ^ 2 = -1 := by dsimp [I]; decide
   have hI3 : I ^ 3 = -I := by dsimp [I]; decide

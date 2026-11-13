@@ -6,6 +6,7 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.GaussianRealPointProperties
 
 public import LeanPool.ApollonianSuperharmonic.P4458T1RestrictionFamily
 public import LeanPool.ApollonianSuperharmonic.P4536T1EndpointAlgebra
@@ -136,77 +137,6 @@ private theorem hcentR :
     rw [hv', vf'] at h
     simpa [y, w, I, r, GaussianRealPoint,
       Zsqrtd.re_mul, Zsqrtd.im_mul] using h
-
-private theorem hcentJK :
-    ∀ (C : BandCircle), ∀ (orientation : Bool), ∀ (base : ProtoTile), ∀ (Rminus : ProtoTile), ∀
-        (Rplus : ProtoTile), ∀ (hminus : PartialOdometer), ∀ (hplus : PartialOdometer), ∀ (F :
-        P4458T1BoundaryFrame C orientation base Rminus Rplus hminus hplus), ∀ (D :
-        P4458T1RestrictionFamily F), ∀ (a : Fin 3), ∀ (J : ProtoTile),
-    let r : Fin 4 → CircleCoordinates :=
-      ![F.q 0, F.q a.succ, F.q (a + 1).succ, F.q (a + 2).succ]
-    let I : GaussianInt := ⟨0, 1⟩
-    let w := BandVectors.1 (r 3) (r 2)
-    let x := BandVectors.1 (r 1) (r 3)
-    let y := BandVectors.1 (r 2) (r 1)
-    (-(w - I * w) - (x - I * y - I * (x - I * y)) = (2 : GaussianInt) * y ∧ x - I * y + I * (x -
-        I * y) + (w - I * w) = (2 : GaussianInt) * I * x ∧ -(x - I * x) - (w - I * w) = y - I * y
-        ∧ y - I * w + I * (y - I * w) - (w - I * w) = y + I * y ∧ w - I * x - I * (w - I * x) -
-        (w - I * w) = -I * x - x ∧ -(y - I * y) - (w - I * w) = -I * x + x ∧ y - I * w - I * (y -
-        I * w) - (y - I * y) = -I * w - w ∧ -(x - I * x) - (y - I * y) = -I * w + w ∧ -(y - I *
-        y) - (x - I * x) = w - I * w ∧ w - I * x + I * (w - I * x) - (x - I * x) = w + I * w) → (
-    let halfPoint : GaussianInt → ℝ × ℝ :=
-      fun z => (1 / 2 : ℝ) • GaussianRealPoint z
-    (∀ (u : GaussianInt), ∀ (v : GaussianInt), halfPoint u - halfPoint v = halfPoint (u - v)) →
-        ((TileCentroid J - TileCentroid F.tile = (1 / 2 : ℝ) • GaussianRealPoint (-(x - I * x)))
-        → ((TileCentroid (D.tiles a true) - TileCentroid F.tile = (1 / 2 : ℝ) • GaussianRealPoint
-        (w - I * w)) → (TileCentroid J - TileCentroid (D.tiles a true) = (1 / 2 : ℝ) •
-        GaussianRealPoint (y - I * y))))) := by
-  classical
-  intro C orientation base Rminus Rplus hminus hplus F D a J r I w x y vAlg halfPoint
-      halfPoint_sub hcentJ hcentK
-  calc
-    _ = (TileCentroid J - TileCentroid F.tile) -
-        (TileCentroid (D.tiles a true) - TileCentroid F.tile) := by abel
-    _ = _ := by
-      rw [hcentJ, hcentK]
-      change halfPoint (-(x - I * x)) - halfPoint (w - I * w) = _
-      rw [halfPoint_sub, vAlg.2.2.1]
-
-private theorem hcentRK :
-    ∀ (C : BandCircle), ∀ (orientation : Bool), ∀ (base : ProtoTile), ∀ (Rminus : ProtoTile), ∀
-        (Rplus : ProtoTile), ∀ (hminus : PartialOdometer), ∀ (hplus : PartialOdometer), ∀ (F :
-        P4458T1BoundaryFrame C orientation base Rminus Rplus hminus hplus), ∀ (D :
-        P4458T1RestrictionFamily F), ∀ (a : Fin 3),
-    let r : Fin 4 → CircleCoordinates :=
-      ![F.q 0, F.q a.succ, F.q (a + 1).succ, F.q (a + 2).succ]
-    let I : GaussianInt := ⟨0, 1⟩
-    let w := BandVectors.1 (r 3) (r 2)
-    let x := BandVectors.1 (r 1) (r 3)
-    let y := BandVectors.1 (r 2) (r 1)
-    (-(w - I * w) - (x - I * y - I * (x - I * y)) = (2 : GaussianInt) * y ∧ x - I * y + I * (x -
-        I * y) + (w - I * w) = (2 : GaussianInt) * I * x ∧ -(x - I * x) - (w - I * w) = y - I * y
-        ∧ y - I * w + I * (y - I * w) - (w - I * w) = y + I * y ∧ w - I * x - I * (w - I * x) -
-        (w - I * w) = -I * x - x ∧ -(y - I * y) - (w - I * w) = -I * x + x ∧ y - I * w - I * (y -
-        I * w) - (y - I * y) = -I * w - w ∧ -(x - I * x) - (y - I * y) = -I * w + w ∧ -(y - I *
-        y) - (x - I * x) = w - I * w ∧ w - I * x + I * (w - I * x) - (x - I * x) = w + I * w) → (
-    let halfPoint : GaussianInt → ℝ × ℝ :=
-      fun z => (1 / 2 : ℝ) • GaussianRealPoint z
-    (∀ (u : GaussianInt), ∀ (v : GaussianInt), halfPoint u - halfPoint v = halfPoint (u - v)) →
-        ((TileCentroid (D.tiles a true) - TileCentroid F.tile = (1 / 2 : ℝ) • GaussianRealPoint
-        (w - I * w)) → ((TileCentroid Rplus - TileCentroid F.tile = (1 / 2 : ℝ) •
-        GaussianRealPoint ((y - I * w) + I * (y - I * w))) → (TileCentroid Rplus - TileCentroid
-        (D.tiles a true) = (1 / 2 : ℝ) • GaussianRealPoint (y + I * y))))) := by
-  classical
-  intro C orientation base Rminus Rplus hminus hplus F D a r I w x y vAlg halfPoint halfPoint_sub
-      hcentK hcentR
-  calc
-    _ = (TileCentroid Rplus - TileCentroid F.tile) -
-        (TileCentroid (D.tiles a true) - TileCentroid F.tile) := by abel
-    _ = _ := by
-      rw [hcentR, hcentK]
-      change halfPoint ((y - I * w) + I * (y - I * w)) -
-        halfPoint (w - I * w) = _
-      rw [halfPoint_sub, vAlg.2.2.2.1]
 
 private theorem hslopeJ :
     ∀ (C : BandCircle),
@@ -598,14 +528,6 @@ private theorem hap :
   have hf := (h.2.2.2.2 hp 1).2
   simpa [I, ya, r, hA, hB] using hf
 
-private theorem halfPoint_sub :
-    let halfPoint : GaussianInt → ℝ × ℝ :=
-      fun z => (1 / 2 : ℝ) • GaussianRealPoint z
-    ∀ (u : GaussianInt), ∀ (v : GaussianInt), halfPoint u - halfPoint v = halfPoint (u - v) := by
-  classical
-  intro halfPoint u v
-  apply Prod.ext <;> simp [halfPoint, GaussianRealPoint] <;> ring
-
 private theorem hcentK :
     ∀ (C : BandCircle), ∀ (orientation : Bool), ∀ (base : ProtoTile), ∀ (Rminus : ProtoTile), ∀
         (Rplus : ProtoTile), ∀ (hminus : PartialOdometer), ∀ (hplus : PartialOdometer), ∀ (F :
@@ -898,7 +820,8 @@ theorem P4536T1AFrameB
       let halfPoint : GaussianInt → ℝ × ℝ :=
         fun z => (1 / 2 : ℝ) • GaussianRealPoint z
       have halfPoint_sub (u v : GaussianInt) :
-          halfPoint u - halfPoint v = halfPoint (u - v) := AFrameBDetails.halfPoint_sub u v
+          halfPoint u - halfPoint v = halfPoint (u - v) :=
+            GaussianRealPointProperties.scaledSub (1 / 2) u v
       have hcentJ : TileCentroid J - TileCentroid F.tile =
           (1 / 2 : ℝ) • GaussianRealPoint (-(x - I * x)) := AFrameBProof.hcentJ C orientation
               base Rminus Rplus hminus hplus F D a hslot J hcent
@@ -910,11 +833,11 @@ theorem P4536T1AFrameB
               C orientation base Rminus Rplus hminus hplus F a hslot hv
               vflip
       have hcentJK : TileCentroid J - TileCentroid (D.tiles a true) =
-          (1 / 2 : ℝ) • GaussianRealPoint (y - I * y) := AFrameBProof.hcentJK C orientation base
-              Rminus Rplus hminus hplus F D a J vAlg halfPoint_sub hcentJ hcentK
+          (1 / 2 : ℝ) • GaussianRealPoint (y - I * y) :=
+            GaussianRealPointProperties.relativeDifference (1 / 2) hcentJ hcentK vAlg.2.2.1
       have hcentRK : TileCentroid Rplus - TileCentroid (D.tiles a true) =
-          (1 / 2 : ℝ) • GaussianRealPoint (y + I * y) := AFrameBProof.hcentRK C orientation base
-              Rminus Rplus hminus hplus F D a vAlg halfPoint_sub hcentK hcentR
+          (1 / 2 : ℝ) • GaussianRealPoint (y + I * y) :=
+            GaussianRealPointProperties.relativeDifference (1 / 2) hcentR hcentK vAlg.2.2.2.1
       let houter : BandCircle :=
         ⟨⟨p 0, ⟨Or.inl hposA, ⟨p, hp.1, ⟨0, rfl⟩⟩⟩⟩, hposA⟩
       have hodoK : TileOdometer (p 0) (D.tiles a true) (D.functions a true) :=

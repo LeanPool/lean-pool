@@ -25,6 +25,24 @@ namespace ApollonianSuperharmonic
 -- [TABLET NODE: P4112T1LowerNeighbors]
 namespace LowerNeighborGeometry
 
+private theorem filterFour {α : Type*} [DecidableEq α]
+    (S : Finset α) (p : α → Prop) [DecidablePred p] (a b c d chosen : α)
+    (hchoice : chosen = a ∨ chosen = b ∨ chosen = c ∨ chosen = d)
+    (hmem : chosen ∈ S) (hp : p chosen)
+    (ha : a = chosen ∨ ¬ (a ∈ S ∧ p a)) (hb : b = chosen ∨ ¬ (b ∈ S ∧ p b))
+    (hc : c = chosen ∨ ¬ (c ∈ S ∧ p c)) (hd : d = chosen ∨ ¬ (d ∈ S ∧ p d)) :
+    ({a, b, c, d} : Finset α).filter (fun y => y ∈ S ∧ p y) = {chosen} := by
+  ext y
+  simp only [Finset.mem_filter, Finset.mem_insert, Finset.mem_singleton]
+  constructor
+  · rintro ⟨rfl | rfl | rfl | rfl, hmem, hpy⟩
+    · exact ha.resolve_right (fun hn => hn ⟨hmem, hpy⟩)
+    · exact hb.resolve_right (fun hn => hn ⟨hmem, hpy⟩)
+    · exact hc.resolve_right (fun hn => hn ⟨hmem, hpy⟩)
+    · exact hd.resolve_right (fun hn => hn ⟨hmem, hpy⟩)
+  · rintro rfl
+    exact ⟨hchoice, hmem, hp⟩
+
 private theorem hq1pos :
     (by
       classical
@@ -288,42 +306,6 @@ private theorem hnotPredAt325 :
     exact hn
   omega
 
-private theorem hsetAt338 :
-    (by
-      classical
-      exact
-        ∀ (P : FordFareyParameter),
-        let B := P4062T1RemainderPaths P
-        let rootDist (j : Fin 2) (z : GaussianInt) : Nat :=
-          (z.re-(B j).2.re).natAbs + (z.im-(B j).2.im).natAbs
-        ∀ (x : GaussianInt), (x + ⟨0, 1⟩ ∈ (P4062T1InteriorSquare P.q).filter (fun z => (z.re =
-            (P.q₁ : Int) ∧ z.im ≤ (P.q₂ : Int)) ∨ (z.im = (P.q₂ : Int) ∧ (P.q₁ : Int) ≤ z.re))) →
-            ((rootDist 0 (x + ⟨0, 1⟩) < rootDist 0 x) → ((x + 1 ∉ (P4062T1InteriorSquare
-            P.q).filter (fun z => (z.re = (P.q₁ : Int) ∧ z.im ≤ (P.q₂ : Int)) ∨ (z.im = (P.q₂ :
-            Int) ∧ (P.q₁ : Int) ≤ z.re))) → ((x - 1 ∉ (P4062T1InteriorSquare P.q).filter (fun z
-            => (z.re = (P.q₁ : Int) ∧ z.im ≤ (P.q₂ : Int)) ∨ (z.im = (P.q₂ : Int) ∧ (P.q₁ : Int)
-            ≤ z.re))) → ((¬ rootDist 0 (x - ⟨0, 1⟩) < rootDist 0 x) → ((({x + 1, x - 1, x + ⟨0,
-            1⟩, x - ⟨0, 1⟩} : Finset GaussianInt).filter (fun y => y ∈ (P4062T1InteriorSquare
-            P.q).filter (fun z => (z.re = (P.q₁ : Int) ∧ z.im ≤ (P.q₂ : Int)) ∨ (z.im = (P.q₂ :
-            Int) ∧ (P.q₁ : Int) ≤ z.re)) ∧ rootDist 0 y < rootDist 0 x)) = {x + ⟨0, 1⟩})))))
-    ) := by
-  classical
-  intro P B rootDist x hpred hpredDist hnotRight hnotLeft hnotPred
-  ext y
-  simp only [Finset.mem_filter, Finset.mem_insert, Finset.mem_singleton]
-  constructor
-  · rintro ⟨hy | hy | hy | hy, hmem, hdist⟩
-    · subst y
-      exact (hnotRight (Finset.mem_filter.mpr hmem)).elim
-    · subst y
-      exact (hnotLeft (Finset.mem_filter.mpr hmem)).elim
-    · exact hy
-    · subst y
-      exact (hnotPred hdist).elim
-  · intro hy
-    subst y
-    exact ⟨by simp, Finset.mem_filter.mp hpred, hpredDist⟩
-
 private theorem hpredAt376 :
     (by
       classical
@@ -404,42 +386,6 @@ private theorem hnotDownAt419 :
   · simp [Zsqrtd.re_sub] at hz
     omega
   · simp [Zsqrtd.im_sub, hr] at hz
-
-private theorem hsetAt429 :
-    (by
-      classical
-      exact
-        ∀ (P : FordFareyParameter),
-        let B := P4062T1RemainderPaths P
-        let rootDist (j : Fin 2) (z : GaussianInt) : Nat :=
-          (z.re-(B j).2.re).natAbs + (z.im-(B j).2.im).natAbs
-        ∀ (x : GaussianInt), (x - 1 ∈ (P4062T1InteriorSquare P.q).filter (fun z => (z.re =
-            (P.q₁ : Int) ∧ z.im ≤ (P.q₂ : Int)) ∨ (z.im = (P.q₂ : Int) ∧ (P.q₁ : Int) ≤ z.re))) →
-            ((rootDist 0 (x - 1) < rootDist 0 x) → ((¬ rootDist 0 (x + 1) < rootDist 0 x) → ((x +
-            ⟨0, 1⟩ ∉ (P4062T1InteriorSquare P.q).filter (fun z => (z.re = (P.q₁ : Int) ∧ z.im ≤
-            (P.q₂ : Int)) ∨ (z.im = (P.q₂ : Int) ∧ (P.q₁ : Int) ≤ z.re))) → ((x - ⟨0, 1⟩ ∉
-            (P4062T1InteriorSquare P.q).filter (fun z => (z.re = (P.q₁ : Int) ∧ z.im ≤ (P.q₂ :
-            Int)) ∨ (z.im = (P.q₂ : Int) ∧ (P.q₁ : Int) ≤ z.re))) → ((({x + 1, x - 1, x + ⟨0, 1⟩,
-            x - ⟨0, 1⟩} : Finset GaussianInt).filter (fun y => y ∈ (P4062T1InteriorSquare
-            P.q).filter (fun z => (z.re = (P.q₁ : Int) ∧ z.im ≤ (P.q₂ : Int)) ∨ (z.im = (P.q₂ :
-            Int) ∧ (P.q₁ : Int) ≤ z.re)) ∧ rootDist 0 y < rootDist 0 x)) = {x - 1})))))
-    ) := by
-  classical
-  intro P B rootDist x hpred hpredDist hnotRight hnotUp hnotDown
-  ext y
-  simp only [Finset.mem_filter, Finset.mem_insert, Finset.mem_singleton]
-  constructor
-  · rintro ⟨hy | hy | hy | hy, hmem, hdist⟩
-    · subst y
-      exact (hnotRight hdist).elim
-    · exact hy
-    · subst y
-      exact (hnotUp (Finset.mem_filter.mpr hmem)).elim
-    · subst y
-      exact (hnotDown (Finset.mem_filter.mpr hmem)).elim
-  · intro hy
-    subst y
-    exact ⟨by simp, Finset.mem_filter.mp hpred, hpredDist⟩
 
 private theorem hpredAt476 :
     (by
@@ -563,42 +509,6 @@ private theorem hnotPredAt521 :
     exact hn
   omega
 
-private theorem hsetAt535 :
-    (by
-      classical
-      exact
-        ∀ (P : FordFareyParameter),
-        let B := P4062T1RemainderPaths P
-        let rootDist (j : Fin 2) (z : GaussianInt) : Nat :=
-          (z.re-(B j).2.re).natAbs + (z.im-(B j).2.im).natAbs
-        ∀ (x : GaussianInt), (x + ⟨0, 1⟩ ∈ (P4062T1InteriorSquare P.q).filter (fun z => (z.re =
-            (P.q₁ : Int) ∧ z.im ≤ (P.q₁ : Int)) ∨ (z.im = (P.q₁ : Int) ∧ z.re ≤ (P.q₁ : Int)))) →
-            ((rootDist 0 (x + ⟨0, 1⟩) < rootDist 0 x) → ((x + 1 ∉ (P4062T1InteriorSquare
-            P.q).filter (fun z => (z.re = (P.q₁ : Int) ∧ z.im ≤ (P.q₁ : Int)) ∨ (z.im = (P.q₁ :
-            Int) ∧ z.re ≤ (P.q₁ : Int)))) → ((x - 1 ∉ (P4062T1InteriorSquare P.q).filter (fun z
-            => (z.re = (P.q₁ : Int) ∧ z.im ≤ (P.q₁ : Int)) ∨ (z.im = (P.q₁ : Int) ∧ z.re ≤ (P.q₁
-            : Int)))) → ((¬ rootDist 0 (x - ⟨0, 1⟩) < rootDist 0 x) → ((({x + 1, x - 1, x + ⟨0,
-            1⟩, x - ⟨0, 1⟩} : Finset GaussianInt).filter (fun y => y ∈ (P4062T1InteriorSquare
-            P.q).filter (fun z => (z.re = (P.q₁ : Int) ∧ z.im ≤ (P.q₁ : Int)) ∨ (z.im = (P.q₁ :
-            Int) ∧ z.re ≤ (P.q₁ : Int))) ∧ rootDist 0 y < rootDist 0 x)) = {x + ⟨0, 1⟩})))))
-    ) := by
-  classical
-  intro P B rootDist x hpred hpredDist hnotRight hnotLeft hnotPred
-  ext y
-  simp only [Finset.mem_filter, Finset.mem_insert, Finset.mem_singleton]
-  constructor
-  · rintro ⟨hy | hy | hy | hy, hmem, hdist⟩
-    · subst y
-      exact (hnotRight (Finset.mem_filter.mpr hmem)).elim
-    · subst y
-      exact (hnotLeft (Finset.mem_filter.mpr hmem)).elim
-    · exact hy
-    · subst y
-      exact (hnotPred hdist).elim
-  · intro hy
-    subst y
-    exact ⟨by simp, Finset.mem_filter.mp hpred, hpredDist⟩
-
 private theorem hpredAt570 :
     (by
       classical
@@ -720,42 +630,6 @@ private theorem hnotDownAt618 :
     omega
   · simp [Zsqrtd.im_sub, hr] at hz
 
-private theorem hsetAt628 :
-    (by
-      classical
-      exact
-        ∀ (P : FordFareyParameter),
-        let B := P4062T1RemainderPaths P
-        let rootDist (j : Fin 2) (z : GaussianInt) : Nat :=
-          (z.re-(B j).2.re).natAbs + (z.im-(B j).2.im).natAbs
-        ∀ (x : GaussianInt), (x + 1 ∈ (P4062T1InteriorSquare P.q).filter (fun z => (z.re =
-            (P.q₁ : Int) ∧ z.im ≤ (P.q₁ : Int)) ∨ (z.im = (P.q₁ : Int) ∧ z.re ≤ (P.q₁ : Int)))) →
-            ((rootDist 0 (x + 1) < rootDist 0 x) → ((¬ rootDist 0 (x - 1) < rootDist 0 x) → ((x +
-            ⟨0, 1⟩ ∉ (P4062T1InteriorSquare P.q).filter (fun z => (z.re = (P.q₁ : Int) ∧ z.im ≤
-            (P.q₁ : Int)) ∨ (z.im = (P.q₁ : Int) ∧ z.re ≤ (P.q₁ : Int)))) → ((x - ⟨0, 1⟩ ∉
-            (P4062T1InteriorSquare P.q).filter (fun z => (z.re = (P.q₁ : Int) ∧ z.im ≤ (P.q₁ :
-            Int)) ∨ (z.im = (P.q₁ : Int) ∧ z.re ≤ (P.q₁ : Int)))) → ((({x + 1, x - 1, x + ⟨0, 1⟩,
-            x - ⟨0, 1⟩} : Finset GaussianInt).filter (fun y => y ∈ (P4062T1InteriorSquare
-            P.q).filter (fun z => (z.re = (P.q₁ : Int) ∧ z.im ≤ (P.q₁ : Int)) ∨ (z.im = (P.q₁ :
-            Int) ∧ z.re ≤ (P.q₁ : Int))) ∧ rootDist 0 y < rootDist 0 x)) = {x + 1})))))
-    ) := by
-  classical
-  intro P B rootDist x hpred hpredDist hnotLeft hnotUp hnotDown
-  ext y
-  simp only [Finset.mem_filter, Finset.mem_insert, Finset.mem_singleton]
-  constructor
-  · rintro ⟨hy | hy | hy | hy, hmem, hdist⟩
-    · exact hy
-    · subst y
-      exact (hnotLeft hdist).elim
-    · subst y
-      exact (hnotUp (Finset.mem_filter.mpr hmem)).elim
-    · subst y
-      exact (hnotDown (Finset.mem_filter.mpr hmem)).elim
-  · intro hy
-    subst y
-    exact ⟨by simp, Finset.mem_filter.mp hpred, hpredDist⟩
-
 private theorem hpredAt680 :
     (by
       classical
@@ -863,42 +737,6 @@ private theorem hnotDownAt728 :
   · simp [Zsqrtd.re_sub] at hz
     omega
 
-private theorem hsetAt738 :
-    (by
-      classical
-      exact
-        ∀ (P : FordFareyParameter),
-        let B := P4062T1RemainderPaths P
-        let rootDist (j : Fin 2) (z : GaussianInt) : Nat :=
-          (z.re-(B j).2.re).natAbs + (z.im-(B j).2.im).natAbs
-        ∀ (x : GaussianInt), (x + 1 ∈ (P4062T1InteriorSquare P.q).filter (fun z => (z.im =
-            (P.q₁ : Int) ∧ z.re ≤ (P.q₂ : Int)) ∨ (z.re = (P.q₂ : Int) ∧ (P.q₁ : Int) ≤ z.im))) →
-            ((rootDist 1 (x + 1) < rootDist 1 x) → ((¬ rootDist 1 (x - 1) < rootDist 1 x) → ((x +
-            ⟨0, 1⟩ ∉ (P4062T1InteriorSquare P.q).filter (fun z => (z.im = (P.q₁ : Int) ∧ z.re ≤
-            (P.q₂ : Int)) ∨ (z.re = (P.q₂ : Int) ∧ (P.q₁ : Int) ≤ z.im))) → ((x - ⟨0, 1⟩ ∉
-            (P4062T1InteriorSquare P.q).filter (fun z => (z.im = (P.q₁ : Int) ∧ z.re ≤ (P.q₂ :
-            Int)) ∨ (z.re = (P.q₂ : Int) ∧ (P.q₁ : Int) ≤ z.im))) → ((({x + 1, x - 1, x + ⟨0, 1⟩,
-            x - ⟨0, 1⟩} : Finset GaussianInt).filter (fun y => y ∈ (P4062T1InteriorSquare
-            P.q).filter (fun z => (z.im = (P.q₁ : Int) ∧ z.re ≤ (P.q₂ : Int)) ∨ (z.re = (P.q₂ :
-            Int) ∧ (P.q₁ : Int) ≤ z.im)) ∧ rootDist 1 y < rootDist 1 x)) = {x + 1})))))
-    ) := by
-  classical
-  intro P B rootDist x hpred hpredDist hnotLeft hnotUp hnotDown
-  ext y
-  simp only [Finset.mem_filter, Finset.mem_insert, Finset.mem_singleton]
-  constructor
-  · rintro ⟨hy | hy | hy | hy, hmem, hdist⟩
-    · exact hy
-    · subst y
-      exact (hnotLeft hdist).elim
-    · subst y
-      exact (hnotUp (Finset.mem_filter.mpr hmem)).elim
-    · subst y
-      exact (hnotDown (Finset.mem_filter.mpr hmem)).elim
-  · intro hy
-    subst y
-    exact ⟨by simp, Finset.mem_filter.mp hpred, hpredDist⟩
-
 private theorem hpredAt775 :
     (by
       classical
@@ -981,42 +819,6 @@ private theorem hnotLeftAt817 :
     omega
   · simp [Zsqrtd.re_sub] at hz
     omega
-
-private theorem hsetAt828 :
-    (by
-      classical
-      exact
-        ∀ (P : FordFareyParameter),
-        let B := P4062T1RemainderPaths P
-        let rootDist (j : Fin 2) (z : GaussianInt) : Nat :=
-          (z.re-(B j).2.re).natAbs + (z.im-(B j).2.im).natAbs
-        ∀ (x : GaussianInt), (x - ⟨0, 1⟩ ∈ (P4062T1InteriorSquare P.q).filter (fun z => (z.im =
-            (P.q₁ : Int) ∧ z.re ≤ (P.q₂ : Int)) ∨ (z.re = (P.q₂ : Int) ∧ (P.q₁ : Int) ≤ z.im))) →
-            ((rootDist 1 (x - ⟨0, 1⟩) < rootDist 1 x) → ((¬ rootDist 1 (x + ⟨0, 1⟩) < rootDist 1
-            x) → ((x + 1 ∉ (P4062T1InteriorSquare P.q).filter (fun z => (z.im = (P.q₁ : Int) ∧
-            z.re ≤ (P.q₂ : Int)) ∨ (z.re = (P.q₂ : Int) ∧ (P.q₁ : Int) ≤ z.im))) → ((x - 1 ∉
-            (P4062T1InteriorSquare P.q).filter (fun z => (z.im = (P.q₁ : Int) ∧ z.re ≤ (P.q₂ :
-            Int)) ∨ (z.re = (P.q₂ : Int) ∧ (P.q₁ : Int) ≤ z.im))) → ((({x + 1, x - 1, x + ⟨0, 1⟩,
-            x - ⟨0, 1⟩} : Finset GaussianInt).filter (fun y => y ∈ (P4062T1InteriorSquare
-            P.q).filter (fun z => (z.im = (P.q₁ : Int) ∧ z.re ≤ (P.q₂ : Int)) ∨ (z.re = (P.q₂ :
-            Int) ∧ (P.q₁ : Int) ≤ z.im)) ∧ rootDist 1 y < rootDist 1 x)) = {x - ⟨0, 1⟩})))))
-    ) := by
-  classical
-  intro P B rootDist x hpred hpredDist hnotUp hnotRight hnotLeft
-  ext y
-  simp only [Finset.mem_filter, Finset.mem_insert, Finset.mem_singleton]
-  constructor
-  · rintro ⟨hy | hy | hy | hy, hmem, hdist⟩
-    · subst y
-      exact (hnotRight (Finset.mem_filter.mpr hmem)).elim
-    · subst y
-      exact (hnotLeft (Finset.mem_filter.mpr hmem)).elim
-    · subst y
-      exact (hnotUp hdist).elim
-    · exact hy
-  · intro hy
-    subst y
-    exact ⟨by simp, Finset.mem_filter.mp hpred, hpredDist⟩
 
 private theorem hpredAt877 :
     (by
@@ -1111,42 +913,6 @@ private theorem hnotLeftAt919 :
   · simp [Zsqrtd.im_sub] at hz
     omega
 
-private theorem hsetAt929 :
-    (by
-      classical
-      exact
-        ∀ (P : FordFareyParameter),
-        let B := P4062T1RemainderPaths P
-        let rootDist (j : Fin 2) (z : GaussianInt) : Nat :=
-          (z.re-(B j).2.re).natAbs + (z.im-(B j).2.im).natAbs
-        ∀ (x : GaussianInt), (x - ⟨0, 1⟩ ∈ (P4062T1InteriorSquare P.q).filter (fun z => (z.re =
-            (P.q₂ : Int) ∧ (P.q₂ : Int) ≤ z.im) ∨ (z.im = (P.q₂ : Int) ∧ (P.q₂ : Int) ≤ z.re))) →
-            ((rootDist 1 (x - ⟨0, 1⟩) < rootDist 1 x) → ((¬ rootDist 1 (x + ⟨0, 1⟩) < rootDist 1
-            x) → ((x + 1 ∉ (P4062T1InteriorSquare P.q).filter (fun z => (z.re = (P.q₂ : Int) ∧
-            (P.q₂ : Int) ≤ z.im) ∨ (z.im = (P.q₂ : Int) ∧ (P.q₂ : Int) ≤ z.re))) → ((x - 1 ∉
-            (P4062T1InteriorSquare P.q).filter (fun z => (z.re = (P.q₂ : Int) ∧ (P.q₂ : Int) ≤
-            z.im) ∨ (z.im = (P.q₂ : Int) ∧ (P.q₂ : Int) ≤ z.re))) → ((({x + 1, x - 1, x + ⟨0, 1⟩,
-            x - ⟨0, 1⟩} : Finset GaussianInt).filter (fun y => y ∈ (P4062T1InteriorSquare
-            P.q).filter (fun z => (z.re = (P.q₂ : Int) ∧ (P.q₂ : Int) ≤ z.im) ∨ (z.im = (P.q₂ :
-            Int) ∧ (P.q₂ : Int) ≤ z.re)) ∧ rootDist 1 y < rootDist 1 x)) = {x - ⟨0, 1⟩})))))
-    ) := by
-  classical
-  intro P B rootDist x hpred hpredDist hnotUp hnotRight hnotLeft
-  ext y
-  simp only [Finset.mem_filter, Finset.mem_insert, Finset.mem_singleton]
-  constructor
-  · rintro ⟨hy | hy | hy | hy, hmem, hdist⟩
-    · subst y
-      exact (hnotRight (Finset.mem_filter.mpr hmem)).elim
-    · subst y
-      exact (hnotLeft (Finset.mem_filter.mpr hmem)).elim
-    · subst y
-      exact (hnotUp hdist).elim
-    · exact hy
-  · intro hy
-    subst y
-    exact ⟨by simp, Finset.mem_filter.mp hpred, hpredDist⟩
-
 private theorem hpredAt966 :
     (by
       classical
@@ -1232,42 +998,6 @@ private theorem hnotDownAt1008 :
   · simp [Zsqrtd.im_sub] at hz
     omega
 
-private theorem hsetAt1018 :
-    (by
-      classical
-      exact
-        ∀ (P : FordFareyParameter),
-        let B := P4062T1RemainderPaths P
-        let rootDist (j : Fin 2) (z : GaussianInt) : Nat :=
-          (z.re-(B j).2.re).natAbs + (z.im-(B j).2.im).natAbs
-        ∀ (x : GaussianInt), (x - 1 ∈ (P4062T1InteriorSquare P.q).filter (fun z => (z.re =
-            (P.q₂ : Int) ∧ (P.q₂ : Int) ≤ z.im) ∨ (z.im = (P.q₂ : Int) ∧ (P.q₂ : Int) ≤ z.re))) →
-            ((rootDist 1 (x - 1) < rootDist 1 x) → ((¬ rootDist 1 (x + 1) < rootDist 1 x) → ((x +
-            ⟨0, 1⟩ ∉ (P4062T1InteriorSquare P.q).filter (fun z => (z.re = (P.q₂ : Int) ∧ (P.q₂
-            : Int) ≤ z.im) ∨ (z.im = (P.q₂ : Int) ∧ (P.q₂ : Int) ≤ z.re))) → ((x - ⟨0, 1⟩ ∉
-            (P4062T1InteriorSquare P.q).filter (fun z => (z.re = (P.q₂ : Int) ∧ (P.q₂ : Int) ≤
-            z.im) ∨ (z.im = (P.q₂ : Int) ∧ (P.q₂ : Int) ≤ z.re))) → ((({x + 1, x - 1, x + ⟨0, 1⟩,
-            x - ⟨0, 1⟩} : Finset GaussianInt).filter (fun y => y ∈ (P4062T1InteriorSquare
-            P.q).filter (fun z => (z.re = (P.q₂ : Int) ∧ (P.q₂ : Int) ≤ z.im) ∨ (z.im = (P.q₂ :
-            Int) ∧ (P.q₂ : Int) ≤ z.re)) ∧ rootDist 1 y < rootDist 1 x)) = {x - 1})))))
-    ) := by
-  classical
-  intro P B rootDist x hpred hpredDist hnotRight hnotUp hnotDown
-  ext y
-  simp only [Finset.mem_filter, Finset.mem_insert, Finset.mem_singleton]
-  constructor
-  · rintro ⟨hy | hy | hy | hy, hmem, hdist⟩
-    · subst y
-      exact (hnotRight hdist).elim
-    · exact hy
-    · subst y
-      exact (hnotUp (Finset.mem_filter.mpr hmem)).elim
-    · subst y
-      exact (hnotDown (Finset.mem_filter.mpr hmem)).elim
-  · intro hy
-    subst y
-    exact ⟨by simp, Finset.mem_filter.mp hpred, hpredDist⟩
-
 end LowerNeighborGeometry
 
 namespace LowerOrderCases
@@ -1351,8 +1081,18 @@ private theorem firstPathAscendingCount :
       have hnotRight := LowerNeighborGeometry.hnotRightAt305 P x hr hhi
       have hnotLeft := LowerNeighborGeometry.hnotLeftAt315 P x hr hhi
       have hnotPred := LowerNeighborGeometry.hnotPredAt325 P x hb0root hr hhi
-      have hset := LowerNeighborGeometry.hsetAt338 P x hpred hpredDist hnotRight hnotLeft
-                    hnotPred
+      have hset :
+          ({x + 1, x - 1, x + ⟨0, 1⟩, x - ⟨0, 1⟩} : Finset GaussianInt).filter
+            (fun y => y ∈ (P4062T1InteriorSquare P.q).filter (fun z => (z.re = (P.q₁ : Int) ∧ z.im
+              ≤ (P.q₂ : Int)) ∨ (z.im = (P.q₂ : Int) ∧ (P.q₁ : Int) ≤ z.re)) ∧
+              rootDist 0 y < rootDist 0 x) = {x + ⟨0, 1⟩} := by
+        exact LowerNeighborGeometry.filterFour _ (fun y => rootDist 0 y < rootDist 0 x)
+          (x + 1) (x - 1) (x + ⟨0, 1⟩) (x - ⟨0, 1⟩) (x + ⟨0, 1⟩)
+          (Or.inr (Or.inr (Or.inl rfl))) hpred hpredDist
+          (Or.inr (fun h => hnotRight h.1))
+          (Or.inr (fun h => hnotLeft h.1))
+          (Or.inl rfl)
+          (Or.inr (fun h => hnotPred h.2))
       rw [hset]
       simp [hb0root, hroot]
   · by_cases hroot : x = (⟨(P.q₁ : Int), (P.q₂ : Int)⟩ : GaussianInt)
@@ -1384,8 +1124,18 @@ private theorem firstPathAscendingCount :
       have hnotRight := LowerNeighborGeometry.hnotRightAt398 P x hb0root hr hgt
       have hnotUp := LowerNeighborGeometry.hnotUpAt409 P x hr hgt
       have hnotDown := LowerNeighborGeometry.hnotDownAt419 P x hr hgt
-      have hset := LowerNeighborGeometry.hsetAt429 P
-                    x hpred hpredDist hnotRight hnotUp hnotDown
+      have hset :
+          ({x + 1, x - 1, x + ⟨0, 1⟩, x - ⟨0, 1⟩} : Finset GaussianInt).filter
+            (fun y => y ∈ (P4062T1InteriorSquare P.q).filter (fun z => (z.re = (P.q₁ : Int) ∧ z.im
+              ≤ (P.q₂ : Int)) ∨ (z.im = (P.q₂ : Int) ∧ (P.q₁ : Int) ≤ z.re)) ∧
+              rootDist 0 y < rootDist 0 x) = {x - 1} := by
+        exact LowerNeighborGeometry.filterFour _ (fun y => rootDist 0 y < rootDist 0 x)
+          (x + 1) (x - 1) (x + ⟨0, 1⟩) (x - ⟨0, 1⟩) (x - 1)
+          (Or.inr (Or.inl rfl)) hpred hpredDist
+          (Or.inr (fun h => hnotRight h.2))
+          (Or.inl rfl)
+          (Or.inr (fun h => hnotUp h.1))
+          (Or.inr (fun h => hnotDown h.1))
       rw [hset]
       simp [hb0root, hroot]
 
@@ -1471,8 +1221,18 @@ private theorem firstPathDescendingCount :
       have hnotRight := LowerNeighborGeometry.hnotRightAt501 P x hr hhi
       have hnotLeft := LowerNeighborGeometry.hnotLeftAt511 P x hr hhi
       have hnotPred := LowerNeighborGeometry.hnotPredAt521 P x hb0root hr hhi
-      have hset := LowerNeighborGeometry.hsetAt535 P x hpred hpredDist hnotRight hnotLeft
-                    hnotPred
+      have hset :
+          ({x + 1, x - 1, x + ⟨0, 1⟩, x - ⟨0, 1⟩} : Finset GaussianInt).filter
+            (fun y => y ∈ (P4062T1InteriorSquare P.q).filter (fun z => (z.re = (P.q₁ : Int) ∧ z.im
+              ≤ (P.q₁ : Int)) ∨ (z.im = (P.q₁ : Int) ∧ z.re ≤ (P.q₁ : Int))) ∧
+              rootDist 0 y < rootDist 0 x) = {x + ⟨0, 1⟩} := by
+        exact LowerNeighborGeometry.filterFour _ (fun y => rootDist 0 y < rootDist 0 x)
+          (x + 1) (x - 1) (x + ⟨0, 1⟩) (x - ⟨0, 1⟩) (x + ⟨0, 1⟩)
+          (Or.inr (Or.inr (Or.inl rfl))) hpred hpredDist
+          (Or.inr (fun h => hnotRight h.1))
+          (Or.inr (fun h => hnotLeft h.1))
+          (Or.inl rfl)
+          (Or.inr (fun h => hnotPred h.2))
       rw [hset]
       simp [hb0root, hroot]
   · by_cases hroot : x = (⟨(P.q₁ : Int), (P.q₁ : Int)⟩ : GaussianInt)
@@ -1494,8 +1254,18 @@ private theorem firstPathDescendingCount :
       have hnotLeft := LowerNeighborGeometry.hnotLeftAt594 P x hb0root hr hhi
       have hnotUp := LowerNeighborGeometry.hnotUpAt608 P x hr hhi
       have hnotDown := LowerNeighborGeometry.hnotDownAt618 P x hr hhi
-      have hset := LowerNeighborGeometry.hsetAt628 P
-                    x hpred hpredDist hnotLeft hnotUp hnotDown
+      have hset :
+          ({x + 1, x - 1, x + ⟨0, 1⟩, x - ⟨0, 1⟩} : Finset GaussianInt).filter
+            (fun y => y ∈ (P4062T1InteriorSquare P.q).filter (fun z => (z.re = (P.q₁ : Int) ∧ z.im
+              ≤ (P.q₁ : Int)) ∨ (z.im = (P.q₁ : Int) ∧ z.re ≤ (P.q₁ : Int))) ∧
+              rootDist 0 y < rootDist 0 x) = {x + 1} := by
+        exact LowerNeighborGeometry.filterFour _ (fun y => rootDist 0 y < rootDist 0 x)
+          (x + 1) (x - 1) (x + ⟨0, 1⟩) (x - ⟨0, 1⟩) (x + 1)
+          (Or.inl rfl) hpred hpredDist
+          (Or.inl rfl)
+          (Or.inr (fun h => hnotLeft h.2))
+          (Or.inr (fun h => hnotUp h.1))
+          (Or.inr (fun h => hnotDown h.1))
       rw [hset]
       simp [hb0root, hroot]
 
@@ -1577,8 +1347,18 @@ private theorem secondPathAscendingCount :
       have hnotLeft := LowerNeighborGeometry.hnotLeftAt704 P x hb1root hr hhi
       have hnotUp := LowerNeighborGeometry.hnotUpAt718 P x hr hhi
       have hnotDown := LowerNeighborGeometry.hnotDownAt728 P x hr hhi
-      have hset := LowerNeighborGeometry.hsetAt738 P
-                    x hpred hpredDist hnotLeft hnotUp hnotDown
+      have hset :
+          ({x + 1, x - 1, x + ⟨0, 1⟩, x - ⟨0, 1⟩} : Finset GaussianInt).filter
+            (fun y => y ∈ (P4062T1InteriorSquare P.q).filter (fun z => (z.im = (P.q₁ : Int) ∧ z.re
+              ≤ (P.q₂ : Int)) ∨ (z.re = (P.q₂ : Int) ∧ (P.q₁ : Int) ≤ z.im)) ∧
+              rootDist 1 y < rootDist 1 x) = {x + 1} := by
+        exact LowerNeighborGeometry.filterFour _ (fun y => rootDist 1 y < rootDist 1 x)
+          (x + 1) (x - 1) (x + ⟨0, 1⟩) (x - ⟨0, 1⟩) (x + 1)
+          (Or.inl rfl) hpred hpredDist
+          (Or.inl rfl)
+          (Or.inr (fun h => hnotLeft h.2))
+          (Or.inr (fun h => hnotUp h.1))
+          (Or.inr (fun h => hnotDown h.1))
       rw [hset]
       simp [hb1root, hroot]
   · by_cases hroot : x = (⟨(P.q₂ : Int), (P.q₁ : Int)⟩ : GaussianInt)
@@ -1609,8 +1389,18 @@ private theorem secondPathAscendingCount :
       have hnotUp := LowerNeighborGeometry.hnotUpAt797 P x hb1root hr hlo
       have hnotRight := LowerNeighborGeometry.hnotRightAt807 P x harm hr
       have hnotLeft := LowerNeighborGeometry.hnotLeftAt817 P x harm hr hlo
-      have hset := LowerNeighborGeometry.hsetAt828 P x hpred hpredDist hnotUp hnotRight
-                    hnotLeft
+      have hset :
+          ({x + 1, x - 1, x + ⟨0, 1⟩, x - ⟨0, 1⟩} : Finset GaussianInt).filter
+            (fun y => y ∈ (P4062T1InteriorSquare P.q).filter (fun z => (z.im = (P.q₁ : Int) ∧ z.re
+              ≤ (P.q₂ : Int)) ∨ (z.re = (P.q₂ : Int) ∧ (P.q₁ : Int) ≤ z.im)) ∧
+              rootDist 1 y < rootDist 1 x) = {x - ⟨0, 1⟩} := by
+        exact LowerNeighborGeometry.filterFour _ (fun y => rootDist 1 y < rootDist 1 x)
+          (x + 1) (x - 1) (x + ⟨0, 1⟩) (x - ⟨0, 1⟩) (x - ⟨0, 1⟩)
+          (Or.inr (Or.inr (Or.inr rfl))) hpred hpredDist
+          (Or.inr (fun h => hnotRight h.1))
+          (Or.inr (fun h => hnotLeft h.1))
+          (Or.inr (fun h => hnotUp h.2))
+          (Or.inl rfl)
       rw [hset]
       simp [hb1root, hroot]
 
@@ -1706,8 +1496,18 @@ private theorem secondPathDescendingCount :
       have hnotUp := LowerNeighborGeometry.hnotUpAt899 P x hb1root hr hlo
       have hnotRight := LowerNeighborGeometry.hnotRightAt909 P x hr hlo
       have hnotLeft := LowerNeighborGeometry.hnotLeftAt919 P x hr hlo
-      have hset := LowerNeighborGeometry.hsetAt929 P x hpred hpredDist hnotUp hnotRight
-                    hnotLeft
+      have hset :
+          ({x + 1, x - 1, x + ⟨0, 1⟩, x - ⟨0, 1⟩} : Finset GaussianInt).filter
+            (fun y => y ∈ (P4062T1InteriorSquare P.q).filter (fun z => (z.re = (P.q₂ : Int) ∧
+              (P.q₂ : Int) ≤ z.im) ∨ (z.im = (P.q₂ : Int) ∧ (P.q₂ : Int) ≤ z.re)) ∧
+              rootDist 1 y < rootDist 1 x) = {x - ⟨0, 1⟩} := by
+        exact LowerNeighborGeometry.filterFour _ (fun y => rootDist 1 y < rootDist 1 x)
+          (x + 1) (x - 1) (x + ⟨0, 1⟩) (x - ⟨0, 1⟩) (x - ⟨0, 1⟩)
+          (Or.inr (Or.inr (Or.inr rfl))) hpred hpredDist
+          (Or.inr (fun h => hnotRight h.1))
+          (Or.inr (fun h => hnotLeft h.1))
+          (Or.inr (fun h => hnotUp h.2))
+          (Or.inl rfl)
       rw [hset]
       simp [hb1root, hroot]
   · by_cases hroot : x = (⟨(P.q₂ : Int), (P.q₂ : Int)⟩ : GaussianInt)
@@ -1738,8 +1538,18 @@ private theorem secondPathDescendingCount :
       have hnotRight := LowerNeighborGeometry.hnotRightAt987 P x hb1root hr hlo
       have hnotUp := LowerNeighborGeometry.hnotUpAt997 P x harm hr hlo
       have hnotDown := LowerNeighborGeometry.hnotDownAt1008 P x harm hr
-      have hset := LowerNeighborGeometry.hsetAt1018 P
-                    x hpred hpredDist hnotRight hnotUp hnotDown
+      have hset :
+          ({x + 1, x - 1, x + ⟨0, 1⟩, x - ⟨0, 1⟩} : Finset GaussianInt).filter
+            (fun y => y ∈ (P4062T1InteriorSquare P.q).filter (fun z => (z.re = (P.q₂ : Int) ∧
+              (P.q₂ : Int) ≤ z.im) ∨ (z.im = (P.q₂ : Int) ∧ (P.q₂ : Int) ≤ z.re)) ∧
+              rootDist 1 y < rootDist 1 x) = {x - 1} := by
+        exact LowerNeighborGeometry.filterFour _ (fun y => rootDist 1 y < rootDist 1 x)
+          (x + 1) (x - 1) (x + ⟨0, 1⟩) (x - ⟨0, 1⟩) (x - 1)
+          (Or.inr (Or.inl rfl)) hpred hpredDist
+          (Or.inr (fun h => hnotRight h.2))
+          (Or.inl rfl)
+          (Or.inr (fun h => hnotUp h.1))
+          (Or.inr (fun h => hnotDown h.1))
       rw [hset]
       simp [hb1root, hroot]
 

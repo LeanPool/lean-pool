@@ -1634,39 +1634,6 @@ private theorem hphaseEq :
   exact BandPackingSymmetryScopedPhaseUnique a q hq negative delta
       hphaseAffine hphase
 
-private theorem hOorig :
-    (by
-      classical
-      exact
-        ∀ (h : PartialOdometer), ∀ (U : ProtoTile), ∀ (q : Fin (4 : ℕ) → CircleCoordinates),
-            (ProperBandQuadruple q) → (∀ (S : Fin (3 : ℕ) → Bool → ProtoTile), ∀ (hs : Fin (3 :
-            ℕ) → Bool → PartialOdometer), (BandPrototile (q (0 : Fin (4 : ℕ))) U) → ((∀ (i : Fin
-            (3 : ℕ)), ∀ (s : Bool), TileOdometer (q i.succ) (S i s) (hs i s)) → ((∀ (x :
-            LatticeCell), x ∈ U.cells ↔ ∃ (i : Fin (3 : ℕ)) (s : Bool), x ∈ (S i s).cells) → ((∀
-            (i : Fin (3 : ℕ)), ∀ (s : Bool), FootprintVertices (S i s) ⊆ FootprintVertices U) →
-            ((∀ (i : Fin (3 : ℕ)), ∀ (s : Bool), TileCentroid (S i s) - TileCentroid U = (if s =
-            true then (1 : ℝ) else (-1 : ℝ)) • (1 / 2 : ℝ) • (GaussianRealPoint (BandVectors.1 (q
-            (i + (2 : Fin (3 : ℕ))).succ) (q (i + (1 : Fin (3 : ℕ))).succ)) -
-            (-(GaussianRealPoint (BandVectors.1 (q (i + (2 : Fin (3 : ℕ))).succ) (q (i + (1 : Fin
-            (3 : ℕ))).succ))).2, (GaussianRealPoint (BandVectors.1 (q (i + (2 : Fin (3 :
-            ℕ))).succ) (q (i + (1 : Fin (3 : ℕ))).succ))).1))) → ((∀ (x : GaussianInt), x ∈
-            h.domain ↔ ∃ (i : Fin (3 : ℕ)) (s : Bool), x ∈ (hs i s).domain) → ((∀ (i : Fin (3 :
-            ℕ)), ∀ (s : Bool), ∀ x ∈ (hs i s).domain, h.value x = (hs i s).value x) → ((∀ (i :
-            Fin (3 : ℕ)), ∀ (s : Bool), ∀ (j : Fin (3 : ℕ)), ∀ (t : Bool), OdometerCompatibility
-            (hs i s) (hs j t)) → ((∀ (i : Fin (3 : ℕ)), ∀ (s : Bool), (q i.succ).1 = (0 : ℤ) ∨ ∃
-            (p : ℝ × ℝ) (p_i : ℝ × ℝ), PartialOdometerSlope h = some p ∧ PartialOdometerSlope (hs
-            i s) = some p_i ∧ p_i.1 - p.1 = (if s = true then (1 : ℝ) else (-1 : ℝ)) * (1 / 2 :
-            ℝ) * ((↑(BandVectors.2 (q (i + (2 : Fin (3 : ℕ))).succ) (q (i + (1 : Fin (3 :
-            ℕ))).succ)).re : ℝ) - (↑(BandVectors.2 (q (i + (2 : Fin (3 : ℕ))).succ) (q (i + (1 :
-            Fin (3 : ℕ))).succ)).im : ℝ)) ∧ p_i.2 - p.2 = (if s = true then (1 : ℝ) else (-1 :
-            ℝ)) * (1 / 2 : ℝ) * ((↑(BandVectors.2 (q (i + (2 : Fin (3 : ℕ))).succ) (q (i + (1 :
-            Fin (3 : ℕ))).succ)).im : ℝ) + (↑(BandVectors.2 (q (i + (2 : Fin (3 : ℕ))).succ) (q
-            (i + (1 : Fin (3 : ℕ))).succ)).re : ℝ))) → (TileOdometer (q 0) U h)))))))))) ) := by
-  classical
-  intro h U q hq S hs hT hsub hcells hfoot hcentroid hdom hvalue hcompat hslope
-  exact TileOdometer.decompose hq hT hsub hcells hfoot hcentroid
-      hdom hvalue hcompat hslope
-
 end TileOdometerAssembly
 
 namespace TileOdometerConclusion
@@ -1888,7 +1855,7 @@ theorem BandPackingSymmetryTileOdometerCovariance
         have hphaseEq := TileOdometerAssembly.hphaseEq q hq a delta hphase negative hphaseAffine
         have hUne : U.cells.Nonempty :=
           positiveCells (q 0) U (ProperBandCurvatureStructure q hq).1 hT
-        have hOorig := TileOdometerAssembly.hOorig h U q hq S hs hT hsub hcells hfoot hcentroid
+        have hOorig := TileOdometer.decompose hq hT hsub hcells hfoot hcentroid
             hdom hvalue hcompat hslope
         have hUdom := PositiveCurvatureTileOdometerDomain (q 0) U h
           (ProperBandCurvatureStructure q hq).1 hOorig

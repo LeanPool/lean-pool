@@ -97,8 +97,8 @@ theorem firstVectorSumReal :
         (w + x + y = 0) → (w.re + x.re + y.re = 0) ) := by
   classical
   intro C orientation base Rminus Rplus hminus hplus F r w x y hvsum
-  have h := congrArg (fun z : GaussianInt => z.re) hvsum
-  simpa [w, x, y] using h
+  simpa only [Zsqrtd.re_add, Zsqrtd.re_zero] using
+    congrArg (fun z : GaussianInt => z.re) hvsum
 
 /-- Shared firstVectorSumImaginary identity for BoundaryFrameJoinGeometry. -/
 theorem firstVectorSumImaginary :
@@ -117,8 +117,8 @@ theorem firstVectorSumImaginary :
         (w + x + y = 0) → (w.im + x.im + y.im = 0) ) := by
   classical
   intro C orientation base Rminus Rplus hminus hplus F r w x y hvsum
-  have h := congrArg (fun z : GaussianInt => z.im) hvsum
-  simpa [w, x, y] using h
+  simpa only [Zsqrtd.im_add, Zsqrtd.im_zero] using
+    congrArg (fun z : GaussianInt => z.im) hvsum
 
 /-- Shared joinFamily identity for BoundaryFrameJoinGeometry. -/
 theorem joinFamily :
@@ -310,8 +310,8 @@ theorem secondVectorSumReal :
         (wa + xa + ya = 0) → (wa.re + xa.re + ya.re = 0) ) := by
   classical
   intro C orientation base Rminus Rplus hminus hplus F r wa xa ya hasum
-  have h := congrArg (fun z : GaussianInt => z.re) hasum
-  simpa [wa, xa, ya] using h
+  simpa only [Zsqrtd.re_add, Zsqrtd.re_zero] using
+    congrArg (fun z : GaussianInt => z.re) hasum
 
 /-- Shared secondVectorSumImaginary identity for BoundaryFrameJoinGeometry. -/
 theorem secondVectorSumImaginary :
@@ -330,8 +330,8 @@ theorem secondVectorSumImaginary :
         (wa + xa + ya = 0) → (wa.im + xa.im + ya.im = 0) ) := by
   classical
   intro C orientation base Rminus Rplus hminus hplus F r wa xa ya hasum
-  have h := congrArg (fun z : GaussianInt => z.im) hasum
-  simpa [wa, xa, ya] using h
+  simpa only [Zsqrtd.im_add, Zsqrtd.im_zero] using
+    congrArg (fun z : GaussianInt => z.im) hasum
 
 end BoundaryFrameJoinGeometry
 end ApollonianSuperharmonic

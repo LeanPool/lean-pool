@@ -6,6 +6,7 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.GaussianRealPointProperties
 
 public import LeanPool.ApollonianSuperharmonic.P4458T1RestrictionFamily
 public import LeanPool.ApollonianSuperharmonic.P4536T1EndpointAlgebra
@@ -158,25 +159,6 @@ private theorem centK :
   rw [h]
   ext <;> simp [GaussianRealPoint, I, Zsqrtd.re_mul, Zsqrtd.im_mul] <;> ring
 
-private theorem halfDiff :
-    ∀ {X : GaussianInt}, ∀ {Y : GaussianInt}, ∀ {Z : GaussianInt}, (X - Y = Z) → ((1 / 2 : ℝ) •
-        GaussianRealPoint X -
-        (1 / 2 : ℝ) • GaussianRealPoint Y =
-          (1 / 2 : ℝ) • GaussianRealPoint Z) := by
-  classical
-  intro X Y Z hxy
-  have hr := congrArg (fun z : GaussianInt => z.re) hxy
-  have hi := congrArg (fun z : GaussianInt => z.im) hxy
-  have hr' : (X.re : ℝ) - (Y.re : ℝ) = (Z.re : ℝ) := by exact_mod_cast (by simpa using hr)
-  have hi' : (X.im : ℝ) - (Y.im : ℝ) = (Z.im : ℝ) := by exact_mod_cast (by simpa using hi)
-  apply Prod.ext
-  · change (1 / 2 : ℝ) * (X.re : ℝ) - (1 / 2 : ℝ) * (Y.re : ℝ) =
-      (1 / 2 : ℝ) * (Z.re : ℝ)
-    linarith
-  · change (1 / 2 : ℝ) * (X.im : ℝ) - (1 / 2 : ℝ) * (Y.im : ℝ) =
-      (1 / 2 : ℝ) * (Z.im : ℝ)
-    linarith
-
 private theorem slopeK :
     ∀ (C : BandCircle), ∀ (orientation : Bool), ∀ (base : ProtoTile), ∀ (Rminus : ProtoTile), ∀
         (Rplus : ProtoTile), ∀ (hminus : PartialOdometer), ∀ (hplus : PartialOdometer), ∀ (F :
@@ -273,14 +255,6 @@ private theorem reverseQuarterTurn {u v : GaussianInt} (t : GaussianInt)
   rw [h, ← mul_assoc, neg_mul, ht]
   simp
 
-private theorem relativeDifference {A B C : ℝ × ℝ} {X Y Z : GaussianInt}
-    (ha : A - C = (1 / 2 : ℝ) • GaussianRealPoint X)
-    (hb : B - C = (1 / 2 : ℝ) • GaussianRealPoint Y)
-    (hxy : X - Y = Z) : A - B = (1 / 2 : ℝ) • GaussianRealPoint Z := by
-  calc
-    _ = (A - C) - (B - C) := by abel
-    _ = _ := by rw [ha, hb]; exact halfDiff hxy
-
 end FrameDiagonalProof
 
 theorem P4536T1AFrameD
@@ -343,8 +317,8 @@ theorem P4536T1AFrameD
   have centJ := FrameDiagonalProof.centJ C orientation base Rminus Rplus hminus hplus
     F D a hslot J hcent
   have centK := FrameDiagonalProof.centK C orientation base Rminus Rplus hminus hplus F D a
-  have hcentR := FrameDiagonalProof.relativeDifference centMinus centK hv.2.2.2.2.1
-  have hcentJ := FrameDiagonalProof.relativeDifference centJ centK hv.2.2.2.2.2.1
+  have hcentR := GaussianRealPointProperties.relativeDifference (1 / 2) centMinus centK hv.2.2.2.2.1
+  have hcentJ := GaussianRealPointProperties.relativeDifference (1 / 2) centJ centK hv.2.2.2.2.2.1
   let e : GaussianInt := -I
   have lawsP := VectorRecursionLaws p hp.1
   have pflip := (lawsP.2.2.2.2 hp) 2
@@ -392,8 +366,10 @@ theorem P4536T1AFrameD
     F a hvecJ sJ hJRe hJIm
   have slopeMinusRoot := FrameDiagonalProof.slopeMinusRoot C orientation base Rminus Rplus
     hminus hplus F a hparentR hzero ain aflip'
-  have slopeMinusA := FrameDiagonalProof.relativeDifference slopeMinusRoot slopeK ha.2.2.2.2.1
-  have slopeJminusA := FrameDiagonalProof.relativeDifference slopeJ slopeK ha.2.2.2.2.2.1
+  have slopeMinusA :=
+    GaussianRealPointProperties.relativeDifference (1 / 2) slopeMinusRoot slopeK ha.2.2.2.2.1
+  have slopeJminusA :=
+    GaussianRealPointProperties.relativeDifference (1 / 2) slopeJ slopeK ha.2.2.2.2.2.1
   have hodoA : TileOdometer (p 0) (D.tiles a true) (D.functions a true) := by
     simpa [houterA] using D.odometers a true
   let G : P4458T1BoundaryFrame C orientation base Rminus J hminus
