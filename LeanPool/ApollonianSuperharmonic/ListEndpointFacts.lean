@@ -138,6 +138,18 @@ theorem splitMembership {α : Type*} (r : List α) (z : α) (hz : z ∈ r) :
     · rcases ih hz with ⟨l, t, ht⟩
       exact ⟨a :: l, t, by simp [ht, List.cons_append]⟩
 
+/-- Distinct head and last entries require at least two list elements. -/
+theorem twoLeLength {α : Type*} (a b : α) (hab : a ≠ b) (k : List α)
+    (hhead : k.head? = some b) (hlast : k.getLast? = some a) : 2 ≤ k.length := by
+  cases k with
+  | nil => simp at hhead
+  | cons c l =>
+    cases l with
+    | nil =>
+      simp only [List.head?_cons, List.getLast?_singleton, Option.some.injEq] at hhead hlast
+      exact (hab (hlast.symm.trans hhead)).elim
+    | cons d ds => simp
+
 end ListEndpointFacts
 end ApollonianSuperharmonic
 

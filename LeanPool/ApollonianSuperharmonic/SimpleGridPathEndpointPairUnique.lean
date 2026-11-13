@@ -26,32 +26,62 @@ namespace ApollonianSuperharmonic
 namespace EndpointPairProof
 
 private theorem hpne :
-    ∀ (V : Set GaussianInt), ∀ (E : Set (Finset GaussianInt)), ∀ (x : GaussianInt), ∀ (y :
-        GaussianInt), ∀ (p : List GaussianInt), (p.Nodup) → (((2 : ℕ) ≤ p.length) → ((p.head? =
-        some x) → ((p.getLast? = some y) → ((V = (↑p.toFinset : Set GaussianInt)) → ((∀ (a :
-        GaussianInt), ∀ (b : GaussianInt), ∀ (l₁ : List GaussianInt), ∀ (l₂ : List GaussianInt),
-        p = l₁ ++ a :: b :: l₂ → b = a + (1 : GaussianInt) ∨ b = a - (1 : GaussianInt) ∨ b = a +
-        { re := (0 : ℤ), im := (1 : ℤ) } ∨ b = a - { re := (0 : ℤ), im := (1 : ℤ) }) → ((∀ (e :
-        Finset GaussianInt), e ∈ E ↔ ∃ (a : GaussianInt) (b : GaussianInt) (l₁ : List
-        GaussianInt) (l₂ : List GaussianInt), p = l₁ ++ a :: b :: l₂ ∧ e = {a, b}) → (p ≠
-        []))))))) := by
+    ∀ (V : Set GaussianInt),
+      ∀ (E : Set (Finset GaussianInt)),
+        ∀ (x : GaussianInt),
+          ∀ (y : GaussianInt),
+            ∀ (p : List GaussianInt),
+              (2 : ℕ) ≤ p.length →
+                p.head? = some x →
+                  p.getLast? = some y →
+                    V = (↑p.toFinset : Set GaussianInt) →
+                      (∀ (a : GaussianInt),
+                          ∀ (b : GaussianInt),
+                            ∀ (l₁ : List GaussianInt),
+                            ∀ (l₂ : List GaussianInt),
+                            p = l₁ ++ a :: b :: l₂ →
+                            b = a + (1 : GaussianInt) ∨
+                            b = a - (1 : GaussianInt) ∨
+                            b = a + { re := (0 : ℤ), im := (1 : ℤ) } ∨
+                            b = a - { re := (0 : ℤ), im := (1 : ℤ) }) →
+                        (∀ (e : Finset GaussianInt),
+                            e ∈ E ↔
+                            ∃ (a : GaussianInt) (b : GaussianInt) (l₁ : List GaussianInt)
+                            (l₂ : List GaussianInt),
+                            p = l₁ ++ a :: b :: l₂ ∧ e = { a, b }) →
+                          p ≠ [] := by
   classical
-  intro V E x y p hp hlen hx hy hV hstep hE he
+  intro V E x y p hlen hx hy hV hstep hE he
   subst p
   simp at hlen
 
 private theorem hqne :
-    ∀ (V : Set GaussianInt), ∀ (E : Set (Finset GaussianInt)), ∀ (x' : GaussianInt), ∀ (y' :
-        GaussianInt), ∀ (q : List GaussianInt), (q.Nodup) → (((2 : ℕ) ≤ q.length) → ((q.head? =
-        some x') → ((q.getLast? = some y') → ((V = (↑q.toFinset : Set GaussianInt)) → ((∀ (a :
-        GaussianInt), ∀ (b : GaussianInt), ∀ (l₁ : List GaussianInt), ∀ (l₂ : List GaussianInt),
-        q = l₁ ++ a :: b :: l₂ → b = a + (1 : GaussianInt) ∨ b = a - (1 : GaussianInt) ∨ b = a +
-        { re := (0 : ℤ), im := (1 : ℤ) } ∨ b = a - { re := (0 : ℤ), im := (1 : ℤ) }) → ((∀ (e :
-        Finset GaussianInt), e ∈ E ↔ ∃ (a : GaussianInt) (b : GaussianInt) (l₁ : List
-        GaussianInt) (l₂ : List GaussianInt), q = l₁ ++ a :: b :: l₂ ∧ e = {a, b}) → (q ≠
-        []))))))) := by
+    ∀ (V : Set GaussianInt),
+      ∀ (E : Set (Finset GaussianInt)),
+        ∀ (x' : GaussianInt),
+          ∀ (y' : GaussianInt),
+            ∀ (q : List GaussianInt),
+              (2 : ℕ) ≤ q.length →
+                q.head? = some x' →
+                  q.getLast? = some y' →
+                    V = (↑q.toFinset : Set GaussianInt) →
+                      (∀ (a : GaussianInt),
+                          ∀ (b : GaussianInt),
+                            ∀ (l₁ : List GaussianInt),
+                            ∀ (l₂ : List GaussianInt),
+                            q = l₁ ++ a :: b :: l₂ →
+                            b = a + (1 : GaussianInt) ∨
+                            b = a - (1 : GaussianInt) ∨
+                            b = a + { re := (0 : ℤ), im := (1 : ℤ) } ∨
+                            b = a - { re := (0 : ℤ), im := (1 : ℤ) }) →
+                        (∀ (e : Finset GaussianInt),
+                            e ∈ E ↔
+                            ∃ (a : GaussianInt) (b : GaussianInt) (l₁ : List GaussianInt)
+                            (l₂ : List GaussianInt),
+                            q = l₁ ++ a :: b :: l₂ ∧ e = { a, b }) →
+                          q ≠ [] := by
   classical
-  intro V E x' y' q hq hqlen hx' hy' hV' hstep' hE' he
+  intro V E x' y' q hqlen hx' hy' hV' hstep' hE' he
   subst q
   simp at hqlen
 
@@ -370,14 +400,7 @@ private theorem hxy :
   intro x y p hp hlen hx hy endpoint_ne
   exact endpoint_ne p x y hp hlen hx hy
 
-private theorem hxy' :
-    ∀ (x' : GaussianInt), ∀ (y' : GaussianInt), ∀ (q : List GaussianInt), (q.Nodup) → (((2 : ℕ) ≤
-        q.length) → ((q.head? = some x') → ((q.getLast? = some y') → ((∀ (r : List GaussianInt),
-        ∀ (u : GaussianInt), ∀ (v : GaussianInt), r.Nodup → 2 ≤ r.length → r.head? = some u →
-        r.getLast? = some v → u ≠ v) → (x' ≠ y'))))) := by
-  classical
-  intro x' y' q hq hqlen hx' hy' endpoint_ne
-  exact endpoint_ne q x' y' hq hqlen hx' hy'
+private abbrev hxy' := ApollonianSuperharmonic.EndpointPairProof.hxy
 
 end EndpointPairProof
 
@@ -390,8 +413,8 @@ theorem SimpleGridPathEndpointPairUnique
 -- BODY
   rcases h with ⟨p, hp, hlen, hx, hy, hV, hstep, hE⟩
   rcases h' with ⟨q, hq, hqlen, hx', hy', hV', hstep', hE'⟩
-  have hpne : p ≠ [] := EndpointPairProof.hpne V E x y p hp hlen hx hy hV hstep hE
-  have hqne : q ≠ [] := EndpointPairProof.hqne V E x' y' q hq hqlen hx' hy' hV' hstep' hE'
+  have hpne : p ≠ [] := EndpointPairProof.hpne V E x y p hlen hx hy hV hstep hE
+  have hqne : q ≠ [] := EndpointPairProof.hqne V E x' y' q hqlen hx' hy' hV' hstep' hE'
   have hpform : ∃ r, p = x :: r := EndpointPairProof.hpform V E x y p hp hlen hx hy hV hstep hE hpne
   have hqform : ∃ r, q = x' :: r := EndpointPairProof.hqform V E x' y' q hq hqlen hx' hy' hV'
       hstep' hE' hqne

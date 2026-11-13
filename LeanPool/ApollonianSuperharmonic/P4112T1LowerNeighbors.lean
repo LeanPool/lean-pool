@@ -6,6 +6,7 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.FordInteriorSquareCoordinates
 
 public import LeanPool.ApollonianSuperharmonic.P4112T1PathGeometry
 
@@ -63,26 +64,7 @@ private theorem hneq :
   have hsum := P.sum_q
   omega
 
-private theorem squareCoordinates :
-    (by
-      classical
-      exact
-        ∀ (q : ℕ), ∀ (z : GaussianInt), z ∈ P4062T1InteriorSquare q ↔ (1 : ℤ) ≤ z.re ∧ z.re ≤
-            (↑q : ℤ) - (1 : ℤ) ∧ (1 : ℤ) ≤ z.im ∧ z.im ≤ (↑q : ℤ) - (1 : ℤ)
-    ) := by
-  classical
-  intro q z
-  unfold P4062T1InteriorSquare
-  constructor
-  · intro hz
-    obtain ⟨⟨a, b⟩, hab, rfl⟩ := Finset.mem_image.mp hz
-    obtain ⟨ha, hb⟩ := Finset.mem_product.mp hab
-    exact ⟨(Finset.mem_Icc.mp ha).1, (Finset.mem_Icc.mp ha).2,
-      (Finset.mem_Icc.mp hb).1, (Finset.mem_Icc.mp hb).2⟩
-  · rintro ⟨ha, ha', hb, hb'⟩
-    exact Finset.mem_image.mpr ⟨(z.re, z.im),
-      Finset.mem_product.mpr ⟨Finset.mem_Icc.mpr ⟨ha, ha'⟩,
-        Finset.mem_Icc.mpr ⟨hb, hb'⟩⟩, by cases z; rfl⟩
+private abbrev squareCoordinates := ApollonianSuperharmonic.FordInteriorSquareCoordinates.membership
 
 private theorem natAbs_form :
     (by
@@ -1315,28 +1297,50 @@ private theorem firstPathAscendingCount :
     (by
       classical
       exact
-        ∀ (P : FordFareyParameter), ((0 : ℕ) < P.q₁) → ((P.q = P.q₁ + P.q₂) → (
-        let B := P4062T1RemainderPaths P
-        let d : GaussianInt → Nat := fun x =>
-          let a := @ite GaussianInt (x ∈ (B 0).1) (Classical.propDecidable _)
-              (B 0).2 (B 1).2
-          (x.re-a.re).natAbs + (x.im-a.im).natAbs
-        (∀ (q : ℕ), ∀ (z : GaussianInt), z ∈ P4062T1InteriorSquare q ↔ (1 : ℤ) ≤ z.re ∧ z.re ≤
-            (↑q : ℤ) - (1 : ℤ) ∧ (1 : ℤ) ≤ z.im ∧ z.im ≤ (↑q : ℤ) - (1 : ℤ)) → (
-        let rootDist (j : Fin 2) (z : GaussianInt) : Nat :=
-          (z.re-(B j).2.re).natAbs + (z.im-(B j).2.im).natAbs
-        (∀ (j : Fin 2), ∀ (x : GaussianInt), (x ∈ (B j).1) → (((B j).1.filter (fun y =>
-            FourNeighborAdjacent y x ∧ d y < d x)).card =
-        (({x + 1, x - 1, x + ⟨0, 1⟩, x - ⟨0, 1⟩} : Finset GaussianInt).filter
-          (fun y => y ∈ (B j).1 ∧ rootDist j y < rootDist j x)).card)) → ((∀ (S : Finset
-              GaussianInt), ∀ (ρ : GaussianInt → ℕ), ∀ (x : GaussianInt), ρ x = (0 : ℕ) → ({y ∈
-              {x + (1 : GaussianInt), x - (1 : GaussianInt), x + ⟨(0 : ℤ), (1 : ℤ)⟩,
-              x - ⟨(0 : ℤ), (1 : ℤ)⟩} | y ∈ S ∧ ρ y < ρ x} : Finset GaussianInt) = ∅) → (∀ (x :
-                  GaussianInt), (x ∈ (P4062T1RemainderPaths P (0 : Fin (2 : ℕ))).1) → ((x ∈ (B
-              0).1) → ((P.q₂ < P.q₁) → (((B (0 : Fin 2)).1.filter (fun y => FourNeighborAdjacent
-              y x ∧ d y < d x)).card = (if x = (B (0 : Fin 2)).2 then 0 else 1)))))))))) := by
+        ∀ (P : FordFareyParameter),
+          (0 : ℕ) < P.q₁ →
+            P.q = P.q₁ + P.q₂ →
+              let B := P4062T1RemainderPaths P;
+              let d : GaussianInt → Nat := fun x =>
+                let a :=
+                  @ite GaussianInt (x ∈ (B 0).1) (Classical.propDecidable _) (B 0).2
+                    (B 1).2
+                (x.re - a.re).natAbs + (x.im - a.im).natAbs;
+              (∀ (q : ℕ),
+                  ∀ (z : GaussianInt),
+                    z ∈ P4062T1InteriorSquare q ↔
+                      (1 : ℤ) ≤ z.re ∧
+                        z.re ≤ (↑q : ℤ) - (1 : ℤ) ∧
+                          (1 : ℤ) ≤ z.im ∧ z.im ≤ (↑q : ℤ) - (1 : ℤ)) →
+                let rootDist (j : Fin 2) (z : GaussianInt) : Nat :=
+                  (z.re - (B j).2.re).natAbs + (z.im - (B j).2.im).natAbs;
+                (∀ (j : Fin 2),
+                    ∀ (x : GaussianInt),
+                      x ∈ (B j).1 →
+                        ((B j).1.filter fun y =>
+                              FourNeighborAdjacent y x ∧ d y < d x).card =
+                          (({x + 1, x - 1, x + ⟨0, 1⟩, x - ⟨0, 1⟩} :
+                                Finset GaussianInt).filter
+                              fun y => y ∈ (B j).1 ∧ rootDist j y < rootDist j x).card) →
+                  (∀ (S : Finset GaussianInt),
+                      ∀ (ρ : GaussianInt → ℕ),
+                        ∀ (x : GaussianInt),
+                          ρ x = (0 : ℕ) →
+                            ({y ∈
+                                {x + (1 : GaussianInt), x - (1 : GaussianInt),
+                                x + ⟨(0 : ℤ), (1 : ℤ)⟩, x - ⟨(0 : ℤ), (1 : ℤ)⟩} |
+                                y ∈ S ∧ ρ y < ρ x} :
+                                Finset GaussianInt) =
+                              ∅) →
+                    ∀ (x : GaussianInt),
+                      x ∈ (B 0).1 →
+                        P.q₂ < P.q₁ →
+                          ((B (0 : Fin 2)).1.filter fun y =>
+                                FourNeighborAdjacent y x ∧ d y < d x).card =
+                            if x = (B (0 : Fin 2)).2 then 0 else 1
+    ) := by
   classical
-  intro P hq1pos hsum B d squareCoordinates rootDist count_eq root_candidate_empty x hx hxB horder
+  intro P hq1pos hsum B d squareCoordinates rootDist count_eq root_candidate_empty x hxB horder
   have hb0 : (B 0).1 = (P4062T1InteriorSquare P.q).filter
       (fun z => (z.re = (P.q₁ : Int) ∧ z.im ≤ (P.q₂ : Int)) ∨
         (z.im = (P.q₂ : Int) ∧ (P.q₁ : Int) ≤ z.re)) := by
@@ -1410,28 +1414,52 @@ private theorem firstPathDescendingCount :
     (by
       classical
       exact
-        ∀ (P : FordFareyParameter), ((0 : ℕ) < P.q₁) → ((P.q = P.q₁ + P.q₂) → ((P.q₁ ≠ P.q₂) → (
-        let B := P4062T1RemainderPaths P
-        let d : GaussianInt → Nat := fun x =>
-          let a := @ite GaussianInt (x ∈ (B 0).1) (Classical.propDecidable _)
-              (B 0).2 (B 1).2
-          (x.re-a.re).natAbs + (x.im-a.im).natAbs
-        (∀ (q : ℕ), ∀ (z : GaussianInt), z ∈ P4062T1InteriorSquare q ↔ (1 : ℤ) ≤ z.re ∧ z.re ≤
-            (↑q : ℤ) - (1 : ℤ) ∧ (1 : ℤ) ≤ z.im ∧ z.im ≤ (↑q : ℤ) - (1 : ℤ)) → (
-        let rootDist (j : Fin 2) (z : GaussianInt) : Nat :=
-          (z.re-(B j).2.re).natAbs + (z.im-(B j).2.im).natAbs
-        (∀ (j : Fin 2), ∀ (x : GaussianInt), (x ∈ (B j).1) → (((B j).1.filter (fun y =>
-            FourNeighborAdjacent y x ∧ d y < d x)).card =
-        (({x + 1, x - 1, x + ⟨0, 1⟩, x - ⟨0, 1⟩} : Finset GaussianInt).filter
-          (fun y => y ∈ (B j).1 ∧ rootDist j y < rootDist j x)).card)) → ((∀ (S : Finset
-              GaussianInt), ∀ (ρ : GaussianInt → ℕ), ∀ (x : GaussianInt), ρ x = (0 : ℕ) → ({y ∈
-              {x + (1 : GaussianInt), x - (1 : GaussianInt), x + ⟨(0 : ℤ), (1 : ℤ)⟩,
-              x - ⟨(0 : ℤ), (1 : ℤ)⟩} | y ∈ S ∧ ρ y < ρ x} : Finset GaussianInt) = ∅) → (∀ (x :
-                  GaussianInt), (x ∈ (P4062T1RemainderPaths P (0 : Fin (2 : ℕ))).1) → ((x ∈ (B
-              0).1) → ((¬P.q₂ < P.q₁) → (((B (0 : Fin 2)).1.filter (fun y => FourNeighborAdjacent
-              y x ∧ d y < d x)).card = (if x = (B (0 : Fin 2)).2 then 0 else 1))))))))))) := by
+        ∀ (P : FordFareyParameter),
+          (0 : ℕ) < P.q₁ →
+            P.q = P.q₁ + P.q₂ →
+              P.q₁ ≠ P.q₂ →
+                let B := P4062T1RemainderPaths P;
+                let d : GaussianInt → Nat := fun x =>
+                  let a :=
+                    @ite GaussianInt (x ∈ (B 0).1) (Classical.propDecidable _) (B 0).2
+                      (B 1).2
+                  (x.re - a.re).natAbs + (x.im - a.im).natAbs;
+                (∀ (q : ℕ),
+                    ∀ (z : GaussianInt),
+                      z ∈ P4062T1InteriorSquare q ↔
+                        (1 : ℤ) ≤ z.re ∧
+                          z.re ≤ (↑q : ℤ) - (1 : ℤ) ∧
+                            (1 : ℤ) ≤ z.im ∧ z.im ≤ (↑q : ℤ) - (1 : ℤ)) →
+                  let rootDist (j : Fin 2) (z : GaussianInt) : Nat :=
+                    (z.re - (B j).2.re).natAbs + (z.im - (B j).2.im).natAbs;
+                  (∀ (j : Fin 2),
+                      ∀ (x : GaussianInt),
+                        x ∈ (B j).1 →
+                          ((B j).1.filter fun y =>
+                                FourNeighborAdjacent y x ∧ d y < d x).card =
+                            (({x + 1, x - 1, x + ⟨0, 1⟩, x - ⟨0, 1⟩} :
+                                Finset GaussianInt).filter
+                                fun y =>
+                                y ∈ (B j).1 ∧ rootDist j y < rootDist j x).card) →
+                    (∀ (S : Finset GaussianInt),
+                        ∀ (ρ : GaussianInt → ℕ),
+                          ∀ (x : GaussianInt),
+                            ρ x = (0 : ℕ) →
+                              ({y ∈
+                                {x + (1 : GaussianInt), x - (1 : GaussianInt),
+                                x + ⟨(0 : ℤ), (1 : ℤ)⟩, x - ⟨(0 : ℤ), (1 : ℤ)⟩} |
+                                y ∈ S ∧ ρ y < ρ x} :
+                                Finset GaussianInt) =
+                                ∅) →
+                      ∀ (x : GaussianInt),
+                        x ∈ (B 0).1 →
+                          ¬P.q₂ < P.q₁ →
+                            ((B (0 : Fin 2)).1.filter fun y =>
+                                FourNeighborAdjacent y x ∧ d y < d x).card =
+                              if x = (B (0 : Fin 2)).2 then 0 else 1
+    ) := by
   classical
-  intro P hq1pos hsum hneq B d squareCoordinates rootDist count_eq root_candidate_empty x hx hxB
+  intro P hq1pos hsum hneq B d squareCoordinates rootDist count_eq root_candidate_empty x hxB
       horder
   have horder' : P.q₁ < P.q₂ := by omega
   have hb0 : (B 0).1 = (P4062T1InteriorSquare P.q).filter
@@ -1496,28 +1524,50 @@ private theorem secondPathAscendingCount :
     (by
       classical
       exact
-        ∀ (P : FordFareyParameter), ((0 : ℕ) < P.q₁) → ((P.q = P.q₁ + P.q₂) → (
-        let B := P4062T1RemainderPaths P
-        let d : GaussianInt → Nat := fun x =>
-          let a := @ite GaussianInt (x ∈ (B 0).1) (Classical.propDecidable _)
-              (B 0).2 (B 1).2
-          (x.re-a.re).natAbs + (x.im-a.im).natAbs
-        (∀ (q : ℕ), ∀ (z : GaussianInt), z ∈ P4062T1InteriorSquare q ↔ (1 : ℤ) ≤ z.re ∧ z.re ≤
-            (↑q : ℤ) - (1 : ℤ) ∧ (1 : ℤ) ≤ z.im ∧ z.im ≤ (↑q : ℤ) - (1 : ℤ)) → (
-        let rootDist (j : Fin 2) (z : GaussianInt) : Nat :=
-          (z.re-(B j).2.re).natAbs + (z.im-(B j).2.im).natAbs
-        (∀ (j : Fin 2), ∀ (x : GaussianInt), (x ∈ (B j).1) → (((B j).1.filter (fun y =>
-            FourNeighborAdjacent y x ∧ d y < d x)).card =
-        (({x + 1, x - 1, x + ⟨0, 1⟩, x - ⟨0, 1⟩} : Finset GaussianInt).filter
-          (fun y => y ∈ (B j).1 ∧ rootDist j y < rootDist j x)).card)) → ((∀ (S : Finset
-              GaussianInt), ∀ (ρ : GaussianInt → ℕ), ∀ (x : GaussianInt), ρ x = (0 : ℕ) → ({y ∈
-              {x + (1 : GaussianInt), x - (1 : GaussianInt), x + ⟨(0 : ℤ), (1 : ℤ)⟩,
-              x - ⟨(0 : ℤ), (1 : ℤ)⟩} | y ∈ S ∧ ρ y < ρ x} : Finset GaussianInt) = ∅) → (∀ (x :
-                  GaussianInt), (x ∈ (P4062T1RemainderPaths P (1 : Fin (2 : ℕ))).1) → ((x ∈ (B
-              1).1) → ((P.q₂ < P.q₁) → (((B (1 : Fin 2)).1.filter (fun y => FourNeighborAdjacent
-              y x ∧ d y < d x)).card = (if x = (B (1 : Fin 2)).2 then 0 else 1)))))))))) := by
+        ∀ (P : FordFareyParameter),
+          (0 : ℕ) < P.q₁ →
+            P.q = P.q₁ + P.q₂ →
+              let B := P4062T1RemainderPaths P;
+              let d : GaussianInt → Nat := fun x =>
+                let a :=
+                  @ite GaussianInt (x ∈ (B 0).1) (Classical.propDecidable _) (B 0).2
+                    (B 1).2
+                (x.re - a.re).natAbs + (x.im - a.im).natAbs;
+              (∀ (q : ℕ),
+                  ∀ (z : GaussianInt),
+                    z ∈ P4062T1InteriorSquare q ↔
+                      (1 : ℤ) ≤ z.re ∧
+                        z.re ≤ (↑q : ℤ) - (1 : ℤ) ∧
+                          (1 : ℤ) ≤ z.im ∧ z.im ≤ (↑q : ℤ) - (1 : ℤ)) →
+                let rootDist (j : Fin 2) (z : GaussianInt) : Nat :=
+                  (z.re - (B j).2.re).natAbs + (z.im - (B j).2.im).natAbs;
+                (∀ (j : Fin 2),
+                    ∀ (x : GaussianInt),
+                      x ∈ (B j).1 →
+                        ((B j).1.filter fun y =>
+                              FourNeighborAdjacent y x ∧ d y < d x).card =
+                          (({x + 1, x - 1, x + ⟨0, 1⟩, x - ⟨0, 1⟩} :
+                                Finset GaussianInt).filter
+                              fun y => y ∈ (B j).1 ∧ rootDist j y < rootDist j x).card) →
+                  (∀ (S : Finset GaussianInt),
+                      ∀ (ρ : GaussianInt → ℕ),
+                        ∀ (x : GaussianInt),
+                          ρ x = (0 : ℕ) →
+                            ({y ∈
+                                {x + (1 : GaussianInt), x - (1 : GaussianInt),
+                                x + ⟨(0 : ℤ), (1 : ℤ)⟩, x - ⟨(0 : ℤ), (1 : ℤ)⟩} |
+                                y ∈ S ∧ ρ y < ρ x} :
+                                Finset GaussianInt) =
+                              ∅) →
+                    ∀ (x : GaussianInt),
+                      x ∈ (B 1).1 →
+                        P.q₂ < P.q₁ →
+                          ((B (1 : Fin 2)).1.filter fun y =>
+                                FourNeighborAdjacent y x ∧ d y < d x).card =
+                            if x = (B (1 : Fin 2)).2 then 0 else 1
+    ) := by
   classical
-  intro P hq1pos hsum B d squareCoordinates rootDist count_eq root_candidate_empty x hx hxB horder
+  intro P hq1pos hsum B d squareCoordinates rootDist count_eq root_candidate_empty x hxB horder
   have hb1 : (B 1).1 = (P4062T1InteriorSquare P.q).filter
       (fun z => (z.im = (P.q₁ : Int) ∧ z.re ≤ (P.q₂ : Int)) ∨
         (z.re = (P.q₂ : Int) ∧ (P.q₁ : Int) ≤ z.im)) := by
@@ -1589,30 +1639,54 @@ private theorem secondPathDescendingCount :
     (by
       classical
       exact
-        ∀ (P : FordFareyParameter), ((2 : ℕ) < P.q) → (((0 : ℕ) < P.q₁) → ((P.q = P.q₁ + P.q₂) →
-            ((P.q₁ ≠ P.q₂) → (
-        let B := P4062T1RemainderPaths P
-        let d : GaussianInt → Nat := fun x =>
-          let a := @ite GaussianInt (x ∈ (B 0).1) (Classical.propDecidable _)
-              (B 0).2 (B 1).2
-          (x.re-a.re).natAbs + (x.im-a.im).natAbs
-        (∀ (q : ℕ), ∀ (z : GaussianInt), z ∈ P4062T1InteriorSquare q ↔ (1 : ℤ) ≤ z.re ∧ z.re ≤
-            (↑q : ℤ) - (1 : ℤ) ∧ (1 : ℤ) ≤ z.im ∧ z.im ≤ (↑q : ℤ) - (1 : ℤ)) → (
-        let rootDist (j : Fin 2) (z : GaussianInt) : Nat :=
-          (z.re-(B j).2.re).natAbs + (z.im-(B j).2.im).natAbs
-        (∀ (j : Fin 2), ∀ (x : GaussianInt), (x ∈ (B j).1) → (((B j).1.filter (fun y =>
-            FourNeighborAdjacent y x ∧ d y < d x)).card =
-        (({x + 1, x - 1, x + ⟨0, 1⟩, x - ⟨0, 1⟩} : Finset GaussianInt).filter
-          (fun y => y ∈ (B j).1 ∧ rootDist j y < rootDist j x)).card)) → ((∀ (S : Finset
-              GaussianInt), ∀ (ρ : GaussianInt → ℕ), ∀ (x : GaussianInt), ρ x = (0 : ℕ) → ({y ∈
-              {x + (1 : GaussianInt), x - (1 : GaussianInt), x + ⟨(0 : ℤ), (1 : ℤ)⟩,
-              x - ⟨(0 : ℤ), (1 : ℤ)⟩} | y ∈ S ∧ ρ y < ρ x} : Finset GaussianInt) = ∅) → (∀ (x :
-                  GaussianInt), (x ∈ (P4062T1RemainderPaths P (1 : Fin (2 : ℕ))).1) → ((x ∈ (B
-              1).1) → ((¬P.q₂ < P.q₁) → (((B (1 : Fin 2)).1.filter (fun y => FourNeighborAdjacent
-              y x ∧ d y < d x)).card = (if x = (B (1 : Fin 2)).2 then 0 else 1)))))))))))) := by
+        ∀ (P : FordFareyParameter),
+          (2 : ℕ) < P.q →
+            (0 : ℕ) < P.q₁ →
+              P.q = P.q₁ + P.q₂ →
+                P.q₁ ≠ P.q₂ →
+                  let B := P4062T1RemainderPaths P;
+                  let d : GaussianInt → Nat := fun x =>
+                    let a :=
+                      @ite GaussianInt (x ∈ (B 0).1) (Classical.propDecidable _) (B 0).2
+                        (B 1).2
+                    (x.re - a.re).natAbs + (x.im - a.im).natAbs;
+                  (∀ (q : ℕ),
+                      ∀ (z : GaussianInt),
+                        z ∈ P4062T1InteriorSquare q ↔
+                          (1 : ℤ) ≤ z.re ∧
+                            z.re ≤ (↑q : ℤ) - (1 : ℤ) ∧
+                              (1 : ℤ) ≤ z.im ∧ z.im ≤ (↑q : ℤ) - (1 : ℤ)) →
+                    let rootDist (j : Fin 2) (z : GaussianInt) : Nat :=
+                      (z.re - (B j).2.re).natAbs + (z.im - (B j).2.im).natAbs;
+                    (∀ (j : Fin 2),
+                        ∀ (x : GaussianInt),
+                          x ∈ (B j).1 →
+                            ((B j).1.filter fun y =>
+                                FourNeighborAdjacent y x ∧ d y < d x).card =
+                              (({x + 1, x - 1, x + ⟨0, 1⟩, x - ⟨0, 1⟩} :
+                                Finset GaussianInt).filter
+                                fun y =>
+                                y ∈ (B j).1 ∧ rootDist j y < rootDist j x).card) →
+                      (∀ (S : Finset GaussianInt),
+                          ∀ (ρ : GaussianInt → ℕ),
+                            ∀ (x : GaussianInt),
+                              ρ x = (0 : ℕ) →
+                                ({y ∈
+                                {x + (1 : GaussianInt), x - (1 : GaussianInt),
+                                x + ⟨(0 : ℤ), (1 : ℤ)⟩, x - ⟨(0 : ℤ), (1 : ℤ)⟩} |
+                                y ∈ S ∧ ρ y < ρ x} :
+                                Finset GaussianInt) =
+                                ∅) →
+                        ∀ (x : GaussianInt),
+                          x ∈ (B 1).1 →
+                            ¬P.q₂ < P.q₁ →
+                              ((B (1 : Fin 2)).1.filter fun y =>
+                                FourNeighborAdjacent y x ∧ d y < d x).card =
+                                if x = (B (1 : Fin 2)).2 then 0 else 1
+    ) := by
   classical
-  intro P hP hq1pos hsum hneq B d squareCoordinates rootDist count_eq root_candidate_empty x hx
-      hxB horder
+  intro P hP hq1pos hsum hneq B d squareCoordinates rootDist count_eq root_candidate_empty x hxB
+      horder
   have horder' : P.q₁ < P.q₂ := by omega
   have hb1 : (B 1).1 = (P4062T1InteriorSquare P.q).filter
       (fun z => (z.re = (P.q₂ : Int) ∧ (P.q₂ : Int) ≤ z.im) ∨
@@ -1749,13 +1823,13 @@ theorem P4112T1LowerNeighbors (P : FordFareyParameter) (hP : 2 < P.q) :
         ((B (0 : Fin 2)).1.filter
           (fun y => FourNeighborAdjacent y x ∧ d y < d x)).card =
           (if x = (B (0 : Fin 2)).2 then 0 else 1) := LowerOrderCases.firstPathAscendingCount P
-              hq1pos hsum squareCoordinates count_eq root_candidate_empty x hx hxB horder
+              hq1pos hsum squareCoordinates count_eq root_candidate_empty x hxB horder
       exact firstPathAscendingCount
     · have firstPathDescendingCount :
         ((B (0 : Fin 2)).1.filter
           (fun y => FourNeighborAdjacent y x ∧ d y < d x)).card =
           (if x = (B (0 : Fin 2)).2 then 0 else 1) := LowerOrderCases.firstPathDescendingCount P
-              hq1pos hsum hneq squareCoordinates count_eq root_candidate_empty x hx hxB horder
+              hq1pos hsum hneq squareCoordinates count_eq root_candidate_empty x hxB horder
       exact firstPathDescendingCount
   · intro x hx
     change ((B 1).1.filter (fun y => FourNeighborAdjacent y x ∧ d y < d x)).card =
@@ -1767,13 +1841,13 @@ theorem P4112T1LowerNeighbors (P : FordFareyParameter) (hP : 2 < P.q) :
         ((B (1 : Fin 2)).1.filter
           (fun y => FourNeighborAdjacent y x ∧ d y < d x)).card =
           (if x = (B (1 : Fin 2)).2 then 0 else 1) := LowerOrderCases.secondPathAscendingCount P
-              hq1pos hsum squareCoordinates count_eq root_candidate_empty x hx hxB horder
+              hq1pos hsum squareCoordinates count_eq root_candidate_empty x hxB horder
       exact secondPathAscendingCount
     · have secondPathDescendingCount :
         ((B (1 : Fin 2)).1.filter
           (fun y => FourNeighborAdjacent y x ∧ d y < d x)).card =
           (if x = (B (1 : Fin 2)).2 then 0 else 1) := LowerOrderCases.secondPathDescendingCount P
-              hP hq1pos hsum hneq squareCoordinates count_eq root_candidate_empty x hx hxB horder
+              hP hq1pos hsum hneq squareCoordinates count_eq root_candidate_empty x hxB horder
       exact secondPathDescendingCount
 end ApollonianSuperharmonic
 

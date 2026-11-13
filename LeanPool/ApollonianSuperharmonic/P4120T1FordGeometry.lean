@@ -1319,62 +1319,17 @@ private theorem noBoundaryFour :
     (by
       classical
       exact
-        ∀ (P : FordFareyParameter), ∀ (T : ProtoTile), ∀ (S : Fin 3 → Bool → ProtoTile), ∀ (u :
-            GaussianInt), ∀ (x : GaussianInt), (x ∈ FootprintVertices T) → ((x ∉
-            BoundaryFootprintVertices T) → ((∃ j : Fin 4, LatticeVertexIncidentCell x j ∈
-            T.cells) → ((∀ j : Fin 4, LatticeVertexIncidentCell x j ∈ T.cells) → (
-        let y : GaussianInt := x - u
-        (1 ≤ y.re ∧ y.re ≤ (P.q : Int) - 1 ∧ 1 ≤ y.im ∧ y.im ≤ (P.q : Int) - 1) → ((x ∈
-            FootprintVertices (S 0 true) ↔ 0 ≤ y.re ∧ y.re ≤ P.q₁ ∧ 0 ≤ y.im ∧ y.im ≤ P.q₁) → ((x
-            ∈ FootprintVertices (S 0 false) ↔ P.q₂ ≤ y.re ∧ y.re ≤ P.q ∧ P.q₂ ≤ y.im ∧ y.im ≤
-            P.q) → ((x ∈ FootprintVertices (S 1 true) ↔ P.q₁ ≤ y.re ∧ y.re ≤ P.q ∧ 0 ≤ y.im ∧
-            y.im ≤ P.q₂) → ((x ∈ FootprintVertices (S 1 false) ↔ 0 ≤ y.re ∧ y.re ≤ P.q₂ ∧ P.q₁ ≤
-            y.im ∧ y.im ≤ P.q) → ((y ∈ LatticeVertexBoundary (FordRecursiveVertexDomains P 0) ↔
-            (0 : Int) ≤ y.re ∧ y.re ≤ P.q₁ ∧ 0 ≤ y.im ∧ y.im ≤ P.q₁ ∧ (y.re = 0 ∨ y.re = P.q₁ ∨
-            y.im = 0 ∨ y.im = P.q₁)) → ((y ∈ LatticeVertexBoundary (FordRecursiveVertexDomains P
-            1) ↔ (P.q₂ : Int) ≤ y.re ∧ y.re ≤ P.q ∧ P.q₂ ≤ y.im ∧ y.im ≤ P.q ∧ (y.re = P.q₂ ∨
-            y.re = P.q ∨ y.im = P.q₂ ∨ y.im = P.q)) → ((y ∈ LatticeVertexBoundary
-            (FordRecursiveVertexDomains P 2) ↔ P.q₁ ≤ y.re ∧ y.re ≤ P.q ∧ (0 : Int) ≤ y.im ∧ y.im
-            ≤ P.q₂ ∧ (y.re = P.q₁ ∨ y.re = P.q ∨ y.im = 0 ∨ y.im = P.q₂)) → ((y ∈
-            LatticeVertexBoundary (FordRecursiveVertexDomains P 3) ↔ (0 : Int) ≤ y.re ∧ y.re ≤
-            P.q₂ ∧ P.q₁ ≤ y.im ∧ y.im ≤ P.q ∧ (y.re = 0 ∨ y.re = P.q₂ ∨ y.im = P.q₁ ∨ y.im =
-            P.q)) → ((x ∈ BoundaryFootprintVertices (S 0 true) ↔ y ∈ LatticeVertexBoundary
-            (FordRecursiveVertexDomains P 0)) → ((x ∈ BoundaryFootprintVertices (S 0 false) ↔ y ∈
-            LatticeVertexBoundary (FordRecursiveVertexDomains P 1)) → ((x ∈
-            BoundaryFootprintVertices (S 1 true) ↔ y ∈ LatticeVertexBoundary
-            (FordRecursiveVertexDomains P 2)) → ((x ∈ BoundaryFootprintVertices (S 1 false) ↔ y ∈
-            LatticeVertexBoundary (FordRecursiveVertexDomains P 3)) → ((x ∉
-            BoundaryFootprintVertices (S 2 true)) → ((x ∉ BoundaryFootprintVertices (S 2 false))
-            → ((Nat.card {a : Fin 3 × Bool // x ∈ BoundaryFootprintVertices (S a.1 a.2)} = (if x
-            ∈ BoundaryFootprintVertices (S 0 true) then 1 else 0) + (if x ∈
-            BoundaryFootprintVertices (S 0 false) then 1 else 0) + (if x ∈
-            BoundaryFootprintVertices (S 1 true) then 1 else 0) + (if x ∈
-            BoundaryFootprintVertices (S 1 false) then 1 else 0) + (if x ∈
-            BoundaryFootprintVertices (S 2 true) then 1 else 0) + (if x ∈
-            BoundaryFootprintVertices (S 2 false) then 1 else 0)) → ((FordBoundaryMultiplicity P
-            y = Nat.card
-            {i : Fin 4 // y ∈ LatticeVertexBoundary (FordRecursiveVertexDomains P i)}) →
-            ((FordBoundaryMultiplicity P y = (if y ∈ LatticeVertexBoundary
-            (FordRecursiveVertexDomains P 0) then 1 else 0) + (if y ∈ LatticeVertexBoundary
-            (FordRecursiveVertexDomains P 1) then 1 else 0) + (if y ∈ LatticeVertexBoundary
-            (FordRecursiveVertexDomains P 2) then 1 else 0) + (if y ∈ LatticeVertexBoundary
-            (FordRecursiveVertexDomains P 3) then 1 else 0)) → ((Nat.card
-            {a : Fin 3 × Bool // x ∈ BoundaryFootprintVertices (S a.1 a.2)} =
-            FordBoundaryMultiplicity P y) → (((GaussianRealPoint x = TileCentroid T) → (((y.re :
-            Int) : Real) = (P.q : Real) / 2 ∧ ((y.im : Int) : Real) = (P.q : Real) / 2)) →
-            (((GaussianRealPoint x = TileCentroid T) → (2 * y.re = (P.q : Int) ∧ 2 * y.im = (P.q
-            : Int))) → (((GaussianRealPoint x = TileCentroid T) → (FordBoundaryMultiplicity P y ≠
-            2)) → (((Nat.card {a : Fin 3 × Bool // x ∈ BoundaryFootprintVertices (S a.1 a.2)} =
-            4) → (P.q = 2 ∧ GaussianRealPoint x = TileCentroid T)) → ((∀ (R : ProtoTile), ∀ (j :
-                Fin 4), (LatticeVertexIncidentCell x j ∈ R.cells) → (x ∈ FootprintVertices R)) →
-                (∀ (R : ProtoTile), (∀ (j : Fin (4 : ℕ)), LatticeVertexIncidentCell x j ∈
-                R.cells) → x ∉
-            BoundaryFootprintVertices R))))))))))))))))))))))))))))) := by
+        ∀ (T : ProtoTile),
+          GaussianInt →
+            ∀ (x : GaussianInt),
+              x ∈ FootprintVertices T →
+                (∀ j : Fin 4, LatticeVertexIncidentCell x j ∈ T.cells) →
+                  ∀ (R : ProtoTile),
+                    (∀ (j : Fin (4 : ℕ)), LatticeVertexIncidentCell x j ∈ R.cells) →
+                      x ∉ BoundaryFootprintVertices R
+    ) := by
   classical
-  intro P T S u x hx hxb hsome cells y hbounds foot0 foot1 foot2 foot3 domain0 domain1 domain2
-      domain3 label0 label1 label2 label3 lineTrue lineFalse hcardSix hcardFour hcardFourFormula
-      hcount centerCoords centerTwice noCenteredCountTwo countFourConclusion incidentFootprint R
-      hall
+  intro T u x hx cells R hall
   have hneR : R.cells.Nonempty := ⟨_, hall 0⟩
   intro hx
   simp only [BoundaryFootprintVertices, ite_eq_left hneR,
@@ -1709,10 +1664,7 @@ theorem P4120T1FordGeometry
       (hc : LatticeVertexIncidentCell x j ∈ R.cells) := FordTileGeometry.incidentFootprint x R j hc
   have noBoundaryFour (R : ProtoTile)
       (hall : ∀ j : Fin 4, LatticeVertexIncidentCell x j ∈ R.cells) :=
-          FordTileGeometry.noBoundaryFour P T S u x hx hxb hsome cells hbounds foot0 foot1 foot2
-          foot3 domain0 domain1 domain2 domain3 label0 label1 label2 label3 lineTrue lineFalse
-          hcardSix hcardFour hcardFourFormula hcount centerCoords centerTwice noCenteredCountTwo
-          countFourConclusion incidentFootprint R hall
+          FordTileGeometry.noBoundaryFour T u x hx cells R hall
   have incidentOwner (j : Fin 4) := FordTileGeometry.incidentOwner P T S u x cells cellCanonical
       Sc hcover hparentCells j
   have twoBoundaryCount (a b : Fin 3 × Bool) (hab : a ≠ b)

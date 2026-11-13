@@ -6,6 +6,7 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.GaussianCoordinateFacts
 
 public import LeanPool.ApollonianSuperharmonic.PartialOdometerHalfTurn
 public import LeanPool.ApollonianSuperharmonic.PartialOdometerHalfTurnFormulas
@@ -29,16 +30,7 @@ namespace ApollonianSuperharmonic
 
 namespace CentralSymmetryGeometry
 
-private theorem gaussian_equal :
-    (by
-      classical
-      exact
-        ∀ (u : GaussianInt), ∀ (v : GaussianInt), (u.re = v.re) → ((u.im = v.im) → (u = v)) ) := by
-  classical
-  intro u v hre him
-  rcases u with ⟨u, u'⟩
-  rcases v with ⟨v, v'⟩
-  simp_all
+private abbrev gaussian_equal := ApollonianSuperharmonic.GaussianCoordinateFacts.equal
 
 private theorem unit_reflection :
     (by

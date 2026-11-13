@@ -71,20 +71,23 @@ private theorem rawBoundary :
     (by
       classical
       exact
-        ∀ (q : Fin (4 : ℕ) → CircleCoordinates), ∀ (cfg : BandOrderedGeneralConfiguration q), ∀
-            (C : BandCircle), ∀ (T : ProtoTile), ∀ (cert : BandOrderedGeneralLayoutCertificate q
-            cfg C T), ∀ (x : GaussianInt), (x ∈ FootprintVertices T) → ((x ∉
-            BoundaryFootprintVertices T) → ((Nat.card
-            { is : Fin (3 : ℕ) × Bool // x ∈ BoundaryFootprintVertices (cert.P is.1 is.2) } = (2
-            : ℕ)) → ((GaussianRealPoint x ≠ TileCentroid T) → ((x ∈ BoundaryFootprintVertices
-            (cert.P (0 : Fin (3 : ℕ)) true)) → ((x ∈ BoundaryFootprintVertices (cert.P (0 : Fin
-            (3 : ℕ)) false)) → (
-        let O := cert.O
-        let seg := cert.exceptionalSegments
-        (O.cells.Nonempty ∨ x ≠ seg.a) → (∀ (U : ProtoTile), (U.cells.Nonempty) → ((x ∈
-            BoundaryFootprintVertices U) → (x ∈ FootprintVertices U))))))))) ) := by
+        ∀ (q : Fin (4 : ℕ) → CircleCoordinates),
+          ∀ (cfg : BandOrderedGeneralConfiguration q),
+            ∀ (C : BandCircle),
+              ∀ (T : ProtoTile),
+                ∀ (cert : BandOrderedGeneralLayoutCertificate q cfg C T),
+                  ∀ (x : GaussianInt),
+                    Nat.card
+                          { is : Fin (3 : ℕ) × Bool //
+                            x ∈ BoundaryFootprintVertices (cert.P is.1 is.2) } =
+                        (2 : ℕ) →
+                      GaussianRealPoint x ≠ TileCentroid T →
+                        ∀ (U : ProtoTile),
+                          U.cells.Nonempty →
+                            x ∈ BoundaryFootprintVertices U → x ∈ FootprintVertices U
+    ) := by
   classical
-  intro q cfg C T cert x hx hxb hk hnoncentral hA hB O seg hnonemptyO U hUne hb
+  intro q cfg C T cert x hk hnoncentral U hUne hb
   simp only [BoundaryFootprintVertices, hUne, ite_true, Set.mem_ofPred_eq] at hb
   obtain ⟨e, he, hz⟩ := hb
   simp only [FootprintVertices, hUne, ite_true, Set.mem_ofPred_eq]
@@ -102,23 +105,28 @@ private theorem boundary_sectors :
     (by
       classical
       exact
-        ∀ (q : Fin (4 : ℕ) → CircleCoordinates), ∀ (cfg : BandOrderedGeneralConfiguration q), ∀
-            (C : BandCircle), ∀ (T : ProtoTile), ∀ (cert : BandOrderedGeneralLayoutCertificate q
-            cfg C T), ∀ (x : GaussianInt), (x ∈ FootprintVertices T) → ((x ∉
-            BoundaryFootprintVertices T) → ((Nat.card
-            { is : Fin (3 : ℕ) × Bool // x ∈ BoundaryFootprintVertices (cert.P is.1 is.2) } = (2
-            : ℕ)) → ((GaussianRealPoint x ≠ TileCentroid T) → ((x ∈ BoundaryFootprintVertices
-            (cert.P (0 : Fin (3 : ℕ)) true)) → ((x ∈ BoundaryFootprintVertices (cert.P (0 : Fin
-            (3 : ℕ)) false)) → (
-        let O := cert.O
-        let seg := cert.exceptionalSegments
-        (O.cells.Nonempty ∨ x ≠ seg.a) → ((∀ (U : ProtoTile), (U.cells.Nonempty) → ((x ∈
-            BoundaryFootprintVertices U) → (x ∈ FootprintVertices U))) → (∀ (U : ProtoTile),
-            (U.cells.Nonempty) → ((x ∈ BoundaryFootprintVertices U) → ((∃ j : Fin 4,
-            LatticeVertexIncidentCell x j ∈ U.cells) ∧ (∃ j : Fin 4, LatticeVertexIncidentCell x
-            j ∉ U.cells))))))))))) ) := by
+        ∀ (q : Fin (4 : ℕ) → CircleCoordinates),
+          ∀ (cfg : BandOrderedGeneralConfiguration q),
+            ∀ (C : BandCircle),
+              ∀ (T : ProtoTile),
+                ∀ (cert : BandOrderedGeneralLayoutCertificate q cfg C T),
+                  ∀ (x : GaussianInt),
+                    Nat.card
+                          { is : Fin (3 : ℕ) × Bool //
+                            x ∈ BoundaryFootprintVertices (cert.P is.1 is.2) } =
+                        (2 : ℕ) →
+                      GaussianRealPoint x ≠ TileCentroid T →
+                        (∀ (U : ProtoTile),
+                            U.cells.Nonempty →
+                              x ∈ BoundaryFootprintVertices U → x ∈ FootprintVertices U) →
+                          ∀ (U : ProtoTile),
+                            U.cells.Nonempty →
+                              x ∈ BoundaryFootprintVertices U →
+                                (∃ j : Fin 4, LatticeVertexIncidentCell x j ∈ U.cells) ∧
+                                ∃ j : Fin 4, LatticeVertexIncidentCell x j ∉ U.cells
+    ) := by
   classical
-  intro q cfg C T cert x hx hxb hk hnoncentral hA hB O seg hnonemptyO rawBoundary U hne hb
+  intro q cfg C T cert x hk hnoncentral rawBoundary U hne hb
   have hraw := rawBoundary U hne hb
   refine ⟨?_, ?_⟩
   · simp only [FootprintVertices, hne, ite_true, Set.mem_ofPred_eq] at hraw
@@ -405,37 +413,29 @@ private theorem incidentRaw :
     (by
       classical
       exact
-        ∀ (q : Fin (4 : ℕ) → CircleCoordinates), ∀ (cfg : BandOrderedGeneralConfiguration q), ∀
-            (C : BandCircle), ∀ (T : ProtoTile), ∀ (cert : BandOrderedGeneralLayoutCertificate q
-            cfg C T), ∀ (x : GaussianInt), (x ∈ FootprintVertices T) → ((x ∉
-            BoundaryFootprintVertices T) → ((Nat.card
-            { is : Fin (3 : ℕ) × Bool // x ∈ BoundaryFootprintVertices (cert.P is.1 is.2) } = (2
-            : ℕ)) → ((GaussianRealPoint x ≠ TileCentroid T) → ((x ∈ BoundaryFootprintVertices
-            (cert.P (0 : Fin (3 : ℕ)) true)) → ((x ∈ BoundaryFootprintVertices (cert.P (0 : Fin
-            (3 : ℕ)) false)) → (
-        let A := cert.P 0 true
-        let B := cert.P 0 false
-        let O := cert.O
-        let seg := cert.exceptionalSegments
-        (O.cells.Nonempty ∨ x ≠ seg.a) → ((∀ (U : ProtoTile), (U.cells.Nonempty) → ((x ∈
-            BoundaryFootprintVertices U) → (x ∈ FootprintVertices U))) → ((∀ (U : ProtoTile),
-            (U.cells.Nonempty) → ((x ∈ BoundaryFootprintVertices U) → ((∃ j : Fin 4,
-            LatticeVertexIncidentCell x j ∈ U.cells) ∧ (∃ j : Fin 4, LatticeVertexIncidentCell x
-            j ∉ U.cells)))) → (((∃ j : Fin 4, LatticeVertexIncidentCell x j ∈ A.cells) ∧ (∃ j :
-            Fin 4, LatticeVertexIncidentCell x j ∉ A.cells)) → (((∃ j : Fin 4,
-            LatticeVertexIncidentCell x j ∈ B.cells) ∧ (∃ j : Fin 4, LatticeVertexIncidentCell x
-            j ∉ B.cells)) → ((∀ (i : Fin 3), ∀ (s : Bool), ((i, s) ≠ ((0 : Fin 3), true)) → (((i,
-            s) ≠ ((0 : Fin 3), false)) → ((x ∈ BoundaryFootprintVertices (cert.P i s)) →
-            (False)))) → ((x ∉ FootprintVertices O ∨ O.cells.Nonempty) → ((x ∈ FootprintVertices
-            A) → ((x ∈ FootprintVertices B) → ((x ∉ FootprintVertices O → x ∈ FootprintVertices
-            (TileCellComplement A O) ∩ FootprintVertices B) → ((x ∉ FootprintVertices O → x ∈
-            seg.left ∨ x ∈ seg.middle ∨ x ∈ seg.right) → (∀ (U : ProtoTile), (U.cells.Nonempty) →
-            ((x ∈ FootprintVertices U) → (∃ j : Fin 4, LatticeVertexIncidentCell x j ∈
-            U.cells))))))))))))))))))) ) := by
+        ∀ (q : Fin (4 : ℕ) → CircleCoordinates),
+          ∀ (cfg : BandOrderedGeneralConfiguration q),
+            ∀ (C : BandCircle),
+              ∀ (T : ProtoTile),
+                ∀ (cert : BandOrderedGeneralLayoutCertificate q cfg C T),
+                  ∀ (x : GaussianInt),
+                    Nat.card
+                          { is : Fin (3 : ℕ) × Bool //
+                            x ∈ BoundaryFootprintVertices (cert.P is.1 is.2) } =
+                        (2 : ℕ) →
+                      GaussianRealPoint x ≠ TileCentroid T →
+                        (∀ (i : Fin 3),
+                            ∀ (s : Bool),
+                              (i, s) ≠ ((0 : Fin 3), true) →
+                                (i, s) ≠ ((0 : Fin 3), false) →
+                                x ∈ BoundaryFootprintVertices (cert.P i s) → False) →
+                          ∀ (U : ProtoTile),
+                            U.cells.Nonempty →
+                              x ∈ FootprintVertices U →
+                                ∃ j : Fin 4, LatticeVertexIncidentCell x j ∈ U.cells
+    ) := by
   classical
-  intro q cfg C T cert x hx hxb hk hnoncentral hA hB A B O seg hnonemptyO rawBoundary
-      boundary_sectors hIncidentA hIncidentB noThird hnotO hxA' hxB' hmodifiedCommon
-      hsegMembership U hUne hu
+  intro q cfg C T cert x hk hnoncentral noThird U hUne hu
   simp only [FootprintVertices, hUne, ite_true, Set.mem_ofPred_eq] at hu
   rcases hu with ⟨z, hz, hcorner⟩
   rcases hcorner with h | h | h | h
@@ -945,14 +945,13 @@ theorem P4590T1RestoredBoundaryGeometry :
   have hnonemptyO := RestoredBoundaryGeometry.hnonemptyO q cfg C T cert x hnoncentral hempty_anchor
   have rawBoundary (U : ProtoTile) (hUne : U.cells.Nonempty)
       (hb : x ∈ BoundaryFootprintVertices U) : x ∈ FootprintVertices U :=
-          RestoredBoundaryGeometry.rawBoundary q cfg C T cert x hx hxb hk hnoncentral hA hB
-          hnonemptyO U hUne hb
+          RestoredBoundaryGeometry.rawBoundary q cfg C T cert x hk hnoncentral U hUne hb
   have boundary_sectors (U : ProtoTile) (hne : U.cells.Nonempty)
       (hb : x ∈ BoundaryFootprintVertices U) :
       (∃ j : Fin 4, LatticeVertexIncidentCell x j ∈ U.cells) ∧
       (∃ j : Fin 4, LatticeVertexIncidentCell x j ∉ U.cells) :=
-          RestoredBoundaryGeometry.boundary_sectors q cfg C T cert x hx hxb hk hnoncentral hA hB
-          hnonemptyO rawBoundary U hne hb
+          RestoredBoundaryGeometry.boundary_sectors q cfg C T cert x hk hnoncentral rawBoundary U
+              hne hb
   have hIncidentA : (∃ j : Fin 4, LatticeVertexIncidentCell x j ∈ A.cells) ∧
       (∃ j : Fin 4, LatticeVertexIncidentCell x j ∉ A.cells) :=
     boundary_sectors A hAne (by simpa [A] using hA)
@@ -994,9 +993,7 @@ theorem P4590T1RestoredBoundaryGeometry :
       (RestoredBoundaryGeometry.hf1 q cfg C T cert f g hfaces) (RestoredBoundaryGeometry.hf2 q
       cfg C T cert f g hfaces) (RestoredBoundaryGeometry.hf12 q cfg C T cert) hrho1 hrho2)
       hconnectorWalk
-  have incidentRaw := RestoredBoundaryGeometry.incidentRaw q cfg C T cert x hx hxb hk hnoncentral
-      hA hB hnonemptyO rawBoundary boundary_sectors hIncidentA hIncidentB noThird hnotO hxA' hxB'
-      hmodifiedCommon hsegMembership
+  have incidentRaw := RestoredBoundaryGeometry.incidentRaw q cfg C T cert x hk hnoncentral noThird
   have hOpositive := RestoredBoundaryGeometry.hOpositive q cfg C T cert x hnoncentral hOcent
   have hOcuts := RestoredBoundaryGeometry.hOcuts q cfg C T cert x hpre hIncidentA hIncidentB
       translation_zero incidentRaw hOpositive

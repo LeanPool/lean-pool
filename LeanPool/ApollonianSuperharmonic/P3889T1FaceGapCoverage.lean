@@ -1515,17 +1515,7 @@ private theorem ht'At987 :
   calc t = dist z x := hdist.symm
     _ = rho := by simpa [Metric.mem_sphere, dist_eq_norm] using hzS
 
-private theorem hnormAt994 :
-    (by
-      classical
-      exact
-        ∀ (ι : Type), ∀ (P : PeriodicTileComplex ι), ∀ (a : ι), ∀ (u : ι → ℝ × ℝ), (∀ (c : ι),
-            P.plane.adjacent a c → ‖u c‖ = (1 : ℝ)) → (∀ (d : ι), (P.plane.adjacent a d) → (∀ (t
-            : ℝ), ((0 : ℝ) ≤ t) → (‖t • u d‖ = t))) ) := by
-  classical
-  intro ι P a u hunit d had t ht0
-  rw [norm_smul, hunit d had, Real.norm_eq_abs, abs_of_nonneg ht0]
-  ring
+private abbrev hnormAt994 := ApollonianSuperharmonic.FaceGapProof.hnormAt978
 
 private abbrev hdistAt997 :=
   ApollonianSuperharmonic.FaceGapProof.hdistAt981

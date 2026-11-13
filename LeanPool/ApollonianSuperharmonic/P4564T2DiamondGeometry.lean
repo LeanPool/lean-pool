@@ -6,6 +6,7 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.TileTranslationProperties
 public import LeanPool.ApollonianSuperharmonic.LatticeTileNonempty
 
 public import LeanPool.ApollonianSuperharmonic.BandPrototileTranslationNormalForm
@@ -128,22 +129,7 @@ private theorem cancel_translationAt227 :
       simp [GaussianTranslation, add_comm]
     · simp [GaussianTranslation, add_comm]
 
-private theorem translate_comp :
-    (by
-      classical
-      exact
-        ∀ (X : ProtoTile), ∀ (a : GaussianInt), ∀ (b : GaussianInt), TileTranslation
-            (TileTranslation X a) b = TileTranslation X (a + b) ) := by
-  classical
-  intro X a b
-  cases X with
-  | mk cells anchor =>
-    apply congrArg₂ ProtoTile.mk
-    · ext z
-      simp [TileTranslation, GaussianTranslation, add_comm,
-        add_left_comm]
-    · simp [TileTranslation, GaussianTranslation, add_comm,
-        add_left_comm]
+private abbrev translate_comp := ApollonianSuperharmonic.TileTranslationProperties.add
 
 private theorem touching_pair_congr :
     (by

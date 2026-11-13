@@ -6,6 +6,7 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.TileTranslationProperties
 
 public import LeanPool.ApollonianSuperharmonic.P4677T2DrawingData
 public import LeanPool.ApollonianSuperharmonic.SubtileOccurrenceInterpretation
@@ -308,16 +309,7 @@ private noncomputable abbrev point (p1 : GaussianInt) (p2 : GaussianInt) (p3 : G
     | .J1 => p5 | .J2 => p6 | .J3 => p7 | .J4 => p8
     | .J5 => p9 | .J6 => p10 | .J7 => p11 | .J8 => p12
 
-private theorem translate_zero (T : ProtoTile) : TileTranslation T 0 = T := by
-  classical
-  cases T with
-  | mk cells anchor =>
-    simp only [TileTranslation]
-    rw [ProtoTile.mk.injEq]
-    constructor
-    · ext z
-      simp [GaussianTranslation]
-    · simp [GaussianTranslation]
+private abbrev translate_zero := ApollonianSuperharmonic.TileTranslationProperties.zero
 
 private theorem zero_membership (P : Fin 3 → Bool → ProtoTile) (u : GaussianInt) (v :
     GaussianInt) (p1 : GaussianInt) (p2 : GaussianInt) (p3 : GaussianInt) (p4 : GaussianInt) (p5
@@ -446,19 +438,7 @@ private theorem zero_membership (P : Fin 3 → Bool → ProtoTile) (u : Gaussian
     · simpa [point, SixSubtileFaceVertices, SubtileOccurrenceInterpretation,
         translate_zero] using h12.2.2
 
-private theorem translate_comp (T : ProtoTile) (a b : GaussianInt) :
-      TileTranslation (TileTranslation T a) b = TileTranslation T (a + b) := by
-  classical
-  cases T with
-  | mk cells anchor =>
-    simp only [TileTranslation]
-    rw [ProtoTile.mk.injEq]
-    constructor
-    · rw [Finset.image_image]
-      congr 1
-      funext x
-      simp [GaussianTranslation, add_assoc]
-    · simp [GaussianTranslation, add_assoc]
+private abbrev translate_comp := ApollonianSuperharmonic.TileTranslationProperties.add
 
 private theorem occurrence_shift (P : Fin 3 → Bool → ProtoTile) (u : GaussianInt) (v :
     GaussianInt) (translate_comp : ∀ (T : ProtoTile) (a b : GaussianInt), TileTranslation

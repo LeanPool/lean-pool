@@ -6,6 +6,7 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.P3776T1CellCenterMembership
 public import LeanPool.ApollonianSuperharmonic.BandLayoutCentroidCoordinates
 public import LeanPool.ApollonianSuperharmonic.TileHalfTurnGeometry
 
@@ -211,37 +212,6 @@ private theorem harea :
 private abbrev ht :=
   BandLayoutCentroidCoordinates.doubledCenter
 
-private theorem hcenter :
-    (by
-      classical
-      exact
-        ∀ (U : ProtoTile),
-          ∀ (z : GaussianInt),
-            z ∈ U.cells ↔
-              ((z.re : Real) + 1 / 2, (z.im : Real) + 1 / 2) ∈ TileRealization U
-    ) := by
-  classical
-  intro U z
-  constructor
-  · intro hz
-    simp only [TileRealization, Set.mem_iUnion]
-    refine ⟨z, hz, ?_⟩
-    norm_num [ClosedSquareRealization, Set.mem_Icc]
-  · intro hp
-    simp only [TileRealization, Set.mem_iUnion] at hp
-    obtain ⟨b, hb, hbox⟩ := hp
-    simp only [ClosedSquareRealization, Set.mem_Icc] at hbox
-    have hr₁ : b.re < z.re + 1 := by
-      exact_mod_cast (show (b.re : Real) < (z.re : Real) + 1 by linarith [hbox.1.1])
-    have hr₂ : z.re < b.re + 1 := by
-      exact_mod_cast (show (z.re : Real) < (b.re : Real) + 1 by linarith [hbox.2.1])
-    have hi₁ : b.im < z.im + 1 := by
-      exact_mod_cast (show (b.im : Real) < (z.im : Real) + 1 by linarith [hbox.1.2])
-    have hi₂ : z.im < b.im + 1 := by
-      exact_mod_cast (show (z.im : Real) < (b.im : Real) + 1 by linarith [hbox.2.2])
-    have hbz : b = z := by apply Zsqrtd.ext <;> omega
-    exact hbz ▸ hb
-
 private theorem hreflectCells :
     (by
       classical
@@ -360,7 +330,9 @@ theorem TileT1DiskArea (q : Fin 4 → CircleCoordinates)
     have htau := TileHalfTurnGeometry.involutive q u
     have hHcells := TileHalfTurnGeometry.cells q u
     have hHreal := TileHalfTurnGeometry.realization q T u ht
-    have hcenter := DiskAreaGeometry.hcenter
+    have hcenter (U : ProtoTile) (z : GaussianInt) :
+        z ∈ U.cells ↔ ((z.re : Real) + 1 / 2, (z.im : Real) + 1 / 2) ∈ TileRealization U := by
+      simpa [GaussianRealPoint] using (P3776T1CellCenterMembership U z).symm
     have hreflectCells := DiskAreaGeometry.hreflectCells q T u hHreal hcenter
     have hHT : (H T).cells = T.cells :=
       hreflectCells T T (BandPrototileCentralSymmetry (q 0) T hT)

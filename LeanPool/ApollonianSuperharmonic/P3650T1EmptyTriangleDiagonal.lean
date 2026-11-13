@@ -608,32 +608,45 @@ private theorem hnotLeft :
     (by
       classical
       exact
-        ∀ (n : Nat), ∀ (p : P3381T1PolygonBoundary n), ∀ (E : P3650T1ExposedCorner p), (∀ (i
-            : Fin (n + (3 : ℕ))), p.vertex i ∈ (convexHull ℝ : Set (ℝ × ℝ) → Set (ℝ × ℝ))
-            {p.vertex (E.b - (1 : Fin (n + (3 : ℕ)))), p.vertex E.b,
-            p.vertex (E.b + (1 : Fin (n + (3 : ℕ))))} → i = E.b - (1 : Fin (n + (3 : ℕ))) ∨ i =
-            E.b ∨ i = E.b + (1 : Fin (n + (3 : ℕ)))) → (
-        let a := p.vertex (E.b - 1)
-        let b := p.vertex E.b
-        let c := p.vertex (E.b + 1)
-        let v : Fin 3 → Real × Real := ![a, b, c]
-        ∀ (hind : AffineIndependent Real v), ∀ (hspan : affineSpan Real (Set.range v) = ⊤),
-        let A : AffineBasis (Fin 3) Real (Real × Real) := ⟨v, hind, hspan⟩
-        let T := convexHull Real ({a, b, c} : Set (Real × Real))
-        (A.coord 0 a = 1 ∧ A.coord 1 a = 0 ∧ A.coord 2 a = 0) → ((A.coord 0 b = 0 ∧ A.coord 1 b =
-            1 ∧ A.coord 2 b = 0) → ((A.coord 0 c = 0 ∧ A.coord 1 c = 0 ∧ A.coord 2 c = 1) → (∀ (x
-            : ℝ × ℝ), ∀ (j : Fin (n + (3 : ℕ))), ((0 : ℝ) < (A.coord (0 : Fin (3 : ℕ)) : ℝ × ℝ →
-            ℝ) x ∧ (A.coord (1 : Fin (3 : ℕ)) : ℝ × ℝ → ℝ) x = (0 : ℝ) ∧ (0 : ℝ) < (A.coord (2 :
-            Fin (3 : ℕ)) : ℝ × ℝ → ℝ) x) → ((x ∈ T) → ((¬j = E.b - (1 : Fin (n + (3 : ℕ)))) →
-            ((¬j = E.b) → (∀ (t : ℝ), ((AffineMap.lineMap (p.vertex j) (p.vertex (j + (1 : Fin (n
-            + (3 : ℕ))))) : ℝ → ℝ × ℝ) t = x) → (
-        let q : Real → Real × Real := AffineMap.lineMap (p.vertex j) (p.vertex (j + 1))
-        (q t = x) → ((Continuous q) → ((∀ (i : Fin 3), Continuous (fun s => A.coord i (q s))) →
-            ((∀ (i : Fin 3), ∀ (s : Real), A.coord i (q s) = (1 - s) * A.coord i (p.vertex j) + s
-            * A.coord i (p.vertex (j + 1))) → (x ≠ p.vertex j))))))))))))) ) := by
+        ∀ (n : Nat),
+          ∀ (p : P3381T1PolygonBoundary n),
+            ∀ (E : P3650T1ExposedCorner p),
+              (∀ (i : Fin (n + (3 : ℕ))),
+                  p.vertex i ∈
+                      (convexHull ℝ : Set (ℝ × ℝ) → Set (ℝ × ℝ))
+                        {p.vertex (E.b - (1 : Fin (n + (3 : ℕ)))), p.vertex E.b,
+                          p.vertex (E.b + (1 : Fin (n + (3 : ℕ))))} →
+                    i = E.b - (1 : Fin (n + (3 : ℕ))) ∨
+                      i = E.b ∨ i = E.b + (1 : Fin (n + (3 : ℕ)))) →
+                let a := p.vertex (E.b - 1);
+                let b := p.vertex E.b;
+                let c := p.vertex (E.b + 1);
+                let v : Fin 3 → Real × Real := ![a, b, c];
+                ∀ (hind : AffineIndependent Real v),
+                  ∀ (hspan : affineSpan Real (Set.range v) = ⊤),
+                    let A : AffineBasis (Fin 3) Real (Real × Real) := ⟨v, hind, hspan⟩;
+                    let T := convexHull Real ({ a, b, c } : Set (Real × Real));
+                    A.coord 0 a = 1 ∧ A.coord 1 a = 0 ∧ A.coord 2 a = 0 →
+                      A.coord 0 b = 0 ∧ A.coord 1 b = 1 ∧ A.coord 2 b = 0 →
+                        A.coord 0 c = 0 ∧ A.coord 1 c = 0 ∧ A.coord 2 c = 1 →
+                          ∀ (x : ℝ × ℝ),
+                            ∀ (j : Fin (n + (3 : ℕ))),
+                              (0 : ℝ) < (A.coord (0 : Fin (3 : ℕ)) : ℝ × ℝ → ℝ) x ∧
+                                (A.coord (1 : Fin (3 : ℕ)) : ℝ × ℝ → ℝ) x = (0 : ℝ) ∧
+                                (0 : ℝ) < (A.coord (2 : Fin (3 : ℕ)) : ℝ × ℝ → ℝ) x →
+                                x ∈ T →
+                                ¬j = E.b - (1 : Fin (n + (3 : ℕ))) →
+                                ¬j = E.b →
+                                ∀ (t : ℝ),
+                                (AffineMap.lineMap (p.vertex j)
+                                (p.vertex (j + (1 : Fin (n + (3 : ℕ))))) :
+                                ℝ → ℝ × ℝ)
+                                t =
+                                x →
+                                x ≠ p.vertex j
+    ) := by
   classical
-  intro n p E hempty a b c v hind hspan A T hcoordA hcoordB hcoordC x j hxb hxT hja hjb t hqt q
-      hqtq hqcont hfc hline h
+  intro n p E hempty a b c v hind hspan A T hcoordA hcoordB hcoordC x j hxb hxT hja hjb t hqt h
   have hjT : p.vertex j ∈ T := by rw [← h]; exact hxT
   obtain hja' | hjb' | hjc' := hempty j (by simpa [T, a, b, c] using hjT)
   · subst j
@@ -1384,18 +1397,7 @@ private theorem hsideA :
     exact hqseg0
   simpa [a] using this
 
-private theorem hqseg1 :
-    (by
-      classical
-      exact
-        ∀ (n : Nat), ∀ (p : P3381T1PolygonBoundary n), ∀ (j : Fin (n + (3 : ℕ))),
-        let q : Real → Real × Real := AffineMap.lineMap (p.vertex j) (p.vertex (j + 1))
-        ∀ (s1 : ℝ), (s1 ∈ Set.Icc (0 : ℝ) (1 : ℝ)) → (q s1 ∈ segment Real (p.vertex j) (p.vertex
-            (j + 1))) ) := by
-  classical
-  intro n p j q s1 hs1
-  rw [segment_eq_image_lineMap]
-  exact ⟨s1, hs1, rfl⟩
+private abbrev hqseg1 := ApollonianSuperharmonic.TriangleDiagonalGeometry.hqseg0
 
 private theorem hqc :
     (by
@@ -1844,7 +1846,7 @@ private theorem hbaseAvoid :
             (TriangleDiagonalGeometry.hcoordLine n p E hind hspan) j i s
   have ht' := TriangleDiagonalGeometry.ht' n p x j t ht hqtq
       (TriangleDiagonalGeometry.hnotLeft n p E hempty hind hspan hcoordA hcoordB hcoordC x j
-          hxb hxT hja hjb t hqt hqtq hqcont hfc hline) (TriangleDiagonalGeometry.hnotRight n p
+          hxb hxT hja hjb t hqt) (TriangleDiagonalGeometry.hnotRight n p
           E hempty hind hspan hcoordA hcoordB hcoordC x j hxb hxT)
   have hzero := TriangleDiagonalGeometry.hzero n p E hind hspan x
           j hxb t hqtq hline

@@ -6,6 +6,8 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.TileTranslationProperties
+public import LeanPool.ApollonianSuperharmonic.LatticeTileNonempty
 
 public import LeanPool.ApollonianSuperharmonic.BandTileSimultaneousInduction
 public import LeanPool.ApollonianSuperharmonic.TouchingTriple
@@ -26,19 +28,7 @@ namespace ApollonianSuperharmonic
 
 namespace BandGraphTriangleGeometry
 
-private theorem hTne :
-    (by
-      classical
-      exact
-        ∀ (T : ProtoTile), (LatticeTile T) → (T.cells.Nonempty) ) := by
-  classical
-  intro T hT1
-  obtain ⟨e⟩ := hT1
-  let p := (e ⟨(0 : Real × Real), by simp⟩).val
-  have hp : p ∈ TileRealization T := (e ⟨(0 : Real × Real), by simp⟩).property
-  simp only [TileRealization, Set.mem_iUnion] at hp
-  rcases hp with ⟨x, hx, _⟩
-  exact ⟨x, hx⟩
+private abbrev hTne := ApollonianSuperharmonic.LatticeTileNonempty.cells
 
 private theorem hcentCells :
     (by
@@ -65,20 +55,17 @@ private theorem hturnedCells :
       exact
         ∀ (T : ProtoTile),
           ∀ (g : GaussianInt),
-            GaussianRealPoint g =
-                ((TileCentroid T).1 + (TileCentroid T).2,
-                  (TileCentroid T).2 - (TileCentroid T).1) →
-              (TileTranslation (TileQuarterTurn T) g).cells = T.cells →
-                let rot : GaussianInt → GaussianInt := fun x => GaussianQuarterTurn x - 1
-                let cent : GaussianInt → GaussianInt := fun x =>
-                  GaussianTranslation g (rot x)
-                T.cells.image cent = T.cells →
-                  ∀ (d : GaussianInt),
-                    (TileTranslation (TileQuarterTurn (TileTranslation T d)) g).cells =
-                      (TileTranslation T (GaussianQuarterTurn d)).cells
+            (TileTranslation (TileQuarterTurn T) g).cells = T.cells →
+              let rot : GaussianInt → GaussianInt := fun x => GaussianQuarterTurn x - 1
+              let cent : GaussianInt → GaussianInt := fun x =>
+                GaussianTranslation g (rot x)
+              T.cells.image cent = T.cells →
+                ∀ (d : GaussianInt),
+                  (TileTranslation (TileQuarterTurn (TileTranslation T d)) g).cells =
+                    (TileTranslation T (GaussianQuarterTurn d)).cells
     ) := by
   classical
-  intro T g hg hcenter rot cent hcentCells d
+  intro T g hcenter rot cent hcentCells d
   rw [(TileTranslationFormulas (TileQuarterTurn (TileTranslation T d)) g).1,
     (TileQuarterTurnFormulas (TileTranslation T d)).1,
     (TileTranslationFormulas T d).1,
@@ -238,23 +225,7 @@ private theorem hxy :
   apply (chart.adjacent_iff x y).mp
   simpa [hxa, hyb] using hab
 
-private theorem hyz :
-    (by
-      classical
-      exact
-        ∀ (q : Fin 4 → CircleCoordinates), ∀ (T : ProtoTile), ∀ (ι : Type), ∀ (P :
-            PeriodicTileComplex ι), ∀ (chart : AffineTriangularComplexChart P (fun mn : Int × Int
-            => TileTranslation T ((mn.1 : GaussianInt) * BandVectors.1 (q 1) (q 0) + (mn.2 :
-            GaussianInt) * BandVectors.1 (q 2) (q 0)))), ∀ (b : ι), ∀ (c : ι), (P.plane.adjacent
-            b c) → (
-        let y : Int × Int := chart.vertexEquiv.symm b
-        let z : Int × Int := chart.vertexEquiv.symm c
-        (chart.vertexEquiv y = b) → ((chart.vertexEquiv z = c) → (TriangularLatticeAdjacent y
-            z))) ) := by
-  classical
-  intro q T ι P chart b c hbc y z hyb hzc
-  apply (chart.adjacent_iff y z).mp
-  simpa [hyb, hzc] using hbc
+private abbrev hyz := ApollonianSuperharmonic.BandGraphTriangleGeometry.hxy
 
 private theorem hzx :
     (by
@@ -292,23 +263,7 @@ private theorem hpAt297 :
   simp [TriangularLatticeAdjacent, p] at hxy ⊢
   simpa [Prod.sub_def, Prod.ext_iff] using hxy
 
-private theorem hr :
-    (by
-      classical
-      exact
-        ∀ (q : Fin 4 → CircleCoordinates), ∀ (T : ProtoTile), ∀ (ι : Type), ∀ (P :
-            PeriodicTileComplex ι), ∀ (chart : AffineTriangularComplexChart P (fun mn : Int × Int
-            => TileTranslation T ((mn.1 : GaussianInt) * BandVectors.1 (q 1) (q 0) + (mn.2 :
-            GaussianInt) * BandVectors.1 (q 2) (q 0)))), ∀ (a : ι), ∀ (c : ι),
-        let x : Int × Int := chart.vertexEquiv.symm a
-        let z : Int × Int := chart.vertexEquiv.symm c
-        (TriangularLatticeAdjacent x z) → (
-        let r := z - x
-        TriangularLatticeAdjacent (0, 0) r) ) := by
-  classical
-  intro q T ι P chart a c x z hzx' r
-  simp [TriangularLatticeAdjacent, r] at hzx' ⊢
-  simpa [Prod.sub_def, Prod.ext_iff] using hzx'
+private abbrev hr := ApollonianSuperharmonic.BandGraphTriangleGeometry.hpAt297
 
 private theorem hpr :
     (by
@@ -490,26 +445,7 @@ private theorem shift_mne2 :
   rw [hc]
   abel
 
-private theorem transAssoc :
-    (by
-      classical
-      exact
-        ∀ (A : ProtoTile), ∀ (s : GaussianInt), ∀ (t : GaussianInt), TileTranslation
-            (TileTranslation A s) t = TileTranslation A (s + t) ) := by
-  classical
-  intro A s t
-  cases A with
-  | mk cells anchor =>
-    apply congrArg₂ ProtoTile.mk
-    · change (cells.image (GaussianTranslation s)).image (GaussianTranslation t) =
-        cells.image (GaussianTranslation (s + t))
-      rw [Finset.image_image]
-      apply Finset.image_congr
-      intro x hx
-      simp [GaussianTranslation, add_assoc]
-    · change GaussianTranslation t (GaussianTranslation s anchor) =
-        GaussianTranslation (s + t) anchor
-      simp [GaussianTranslation, add_assoc]
+private abbrev transAssoc := ApollonianSuperharmonic.TileTranslationProperties.add
 
 private theorem upFace :
     (by
@@ -909,7 +845,7 @@ theorem P4456T2BandGraphTriangle (q : Fin 4 → CircleCoordinates)
   have hturnedCells (d : GaussianInt) :
       (TileTranslation (TileQuarterTurn (TileTranslation T d)) g).cells =
         (TileTranslation T (GaussianQuarterTurn d)).cells :=
-            BandGraphTriangleGeometry.hturnedCells T g hg hcenter hcentCells d
+            BandGraphTriangleGeometry.hturnedCells T g hcenter hcentCells d
   have hOpp : TouchingTriple T (TileTranslation T (-u)) (TileTranslation T v) :=
       BandGraphTriangleGeometry.hOpp q T hT3 hTne g hcenter hturnedCells
   intro a b c habc hbcc hca hab hbc hca'

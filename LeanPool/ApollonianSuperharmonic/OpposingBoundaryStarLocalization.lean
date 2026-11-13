@@ -38,17 +38,7 @@ private theorem hxT0 :
   rw [← hdomain0]
   exact hx0
 
-private theorem hxT0' :
-    (by
-      classical
-      exact
-        ∀ (T0' : ProtoTile), ∀ (h0' : PartialOdometer), ∀ (x : GaussianInt), (x ∈ h0'.domain) →
-            (((↑h0'.domain : Set GaussianInt) = FootprintVertices T0') → (x ∈ FootprintVertices
-            T0')) ) := by
-  classical
-  intro T0' h0' x hx0' hdomain0'
-  rw [← hdomain0']
-  exact hx0'
+private abbrev hxT0' := ApollonianSuperharmonic.OpposingStarGeometry.hxT0
 
 private theorem hxPath :
     (by
@@ -133,16 +123,7 @@ private theorem vertexToG :
   have hs : z ∈ (g.domain : Set GaussianInt) := by rw [hdomU]; exact hz
   simpa using hs
 
-private theorem vertexToK :
-    (by
-      classical
-      exact
-        ∀ (V : ProtoTile), ∀ (k : PartialOdometer), ((↑k.domain : Set GaussianInt) =
-            FootprintVertices V) → (∀ z, z ∈ FootprintVertices V → z ∈ k.domain) ) := by
-  classical
-  intro V k hdomV z hz
-  have hs : z ∈ (k.domain : Set GaussianInt) := by rw [hdomV]; exact hz
-  simpa using hs
+private abbrev vertexToK := ApollonianSuperharmonic.OpposingStarGeometry.vertexToG
 
 private theorem hcover :
     (by
@@ -236,19 +217,7 @@ private theorem hPU :
   rw [hPtile]
   simpa [uIdx] using hUeq.symm
 
-private theorem hPV :
-    (by
-      classical
-      exact
-        ∀ (Ci : BandCircle), ∀ (base : ProtoTile), ∀ (V : ProtoTile), ∀ (v : GaussianInt), ∀ (hvL
-            : v ∈ TilingLattice Ci), (V = TileTranslation base v) → (
-        let vIdx : TilingLattice Ci := ⟨v, hvL⟩
-        ∀ (P : PeriodicTileComplex ↥(TilingLattice Ci)), (∀ (u : ↥(TilingLattice Ci)), P.tile u =
-            TileTranslation base (↑u : GaussianInt)) → (P.tile vIdx = V)) ) := by
-  classical
-  intro Ci base V v hvL hVeq vIdx P hPtile
-  rw [hPtile]
-  simpa [vIdx] using hVeq.symm
+private abbrev hPV := ApollonianSuperharmonic.OpposingStarGeometry.hPU
 
 private theorem hidxNe :
     (by
@@ -508,16 +477,7 @@ private theorem hcentU :
   intro base U u hUeq
   rw [hUeq, (TileTranslationFormulas base u).2.2.2.2.1]
 
-private theorem hcentV :
-    (by
-      classical
-      exact
-        ∀ (base : ProtoTile), ∀ (V : ProtoTile), ∀ (v : GaussianInt), (V = TileTranslation base
-            v) → (TileCentroid V = ((TileCentroid base).1 + (v.re : ℝ), (TileCentroid base).2 +
-            (v.im : ℝ))) ) := by
-  classical
-  intro base V v hVeq
-  rw [hVeq, (TileTranslationFormulas base v).2.2.2.2.1]
+private abbrev hcentV := ApollonianSuperharmonic.OpposingStarGeometry.hcentU
 
 private theorem hcentUV :
     (by

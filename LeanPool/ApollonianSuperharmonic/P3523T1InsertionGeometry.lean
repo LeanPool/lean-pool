@@ -1133,26 +1133,7 @@ private theorem hxoldAt785 :
   simp only [faceUnion, Set.mem_iUnion, Finset.mem_coe]
   exact ⟨F, hF, hxParent⟩
 
-private theorem hxoldAt793 :
-    (by
-      classical
-      exact
-        ∀ (r : Nat), ∀ (n : Nat), ∀ (q : P3381T1PolygonBoundary r), ∀ (p :
-            P3381T1PolygonBoundary n), ∀ (s : P3475T1BoundarySubdivision q p), ∀ (X : Set
-            (Real × Real)), ∀ (K : Set (Real × Real)), ∀ (t : P3475T1TriangleTree q X K),
-        let c := P3523T1InsertionConstruction s t
-        ∀ (F : Finset (Fin (n + (3 : ℕ)))),
-        let faceUnion (v : Fin (n + 3) → Real × Real)
-            (faces : Finset (Finset (Fin (n + 3)))) : Set (Real × Real) :=
-          ⋃ F ∈ (faces : Set (Finset (Fin (n + 3)))),
-            convexHull Real (v '' (F : Set (Fin (n + 3))))
-        ∀ (v : Fin (n + (3 : ℕ)) → ℝ × ℝ), ∀ (h : ℕ), ∀ (x : ℝ × ℝ), (F ∈ c.faces h) → ((x ∈
-            (convexHull ℝ : Set (ℝ × ℝ) → Set (ℝ × ℝ)) (v '' (↑F : Set (Fin (n + (3 : ℕ)))))) →
-            (x ∈ faceUnion v (c.faces h))) ) := by
-  classical
-  intro r n q p s X K t c F faceUnion v h x hF hxG
-  simp only [faceUnion, Set.mem_iUnion, Finset.mem_coe]
-  exact ⟨F, hF, hxG⟩
+private abbrev hxoldAt793 := ApollonianSuperharmonic.FacialInsertionGeometry.hxoldAt785
 
 private theorem hchildrenAt804 :
     (by
@@ -1917,53 +1898,11 @@ private theorem hdGactual :
   intro r n q p s X K t c h G hh e G₀ hGsame hdG hd
   exact hdG (hGsame ▸ hd)
 
-private theorem hnotFactual :
-    (by
-      classical
-      exact
-        ∀ (r : Nat), ∀ (n : Nat), ∀ (q : P3381T1PolygonBoundary r), ∀ (p :
-            P3381T1PolygonBoundary n), ∀ (s : P3475T1BoundarySubdivision q p), ∀ (X : Set
-            (Real × Real)), ∀ (K : Set (Real × Real)), ∀ (t : P3475T1TriangleTree q X K),
-        let c := P3523T1InsertionConstruction s t
-        ∀ (h : ℕ), ∀ (F : Finset (Fin (n + (3 : ℕ)))), ∀ (hh : h < c.steps.length),
-        let e := c.steps.get ⟨h, hh⟩
-        ∀ (F₀ : Finset (Fin (n + (3 : ℕ)))), (¬(e.1 ∈ F₀ ∧ e.2.2 ∈ F₀)) → ((F = F₀) → (¬ (e.1 ∈ F
-            ∧ e.2.2 ∈ F))) ) := by
-  classical
-  intro r n q p s X K t c h F hh e F₀ hnotF hFsame hit
-  exact hnotF ⟨hFsame ▸ hit.1, hFsame ▸ hit.2⟩
+private abbrev hnotFactual := ApollonianSuperharmonic.FacialInsertionGeometry.hnotGactual
 
-private theorem hdF :
-    (by
-      classical
-      exact
-        ∀ (r : Nat), ∀ (n : Nat), ∀ (q : P3381T1PolygonBoundary r), ∀ (p :
-            P3381T1PolygonBoundary n), ∀ (s : P3475T1BoundarySubdivision q p), ∀ (X : Set
-            (Real × Real)), ∀ (K : Set (Real × Real)), ∀ (t : P3475T1TriangleTree q X K),
-        let c := P3523T1InsertionConstruction s t
-        ∀ (h : ℕ), ∀ (hh : h < c.steps.length),
-        let e := c.steps.get ⟨h, hh⟩
-        (((P3523T1InsertionConstruction s t).steps.get ⟨h, hh⟩).2.1 ∉
-            (P3523T1InsertionConstruction s t).vertices h) → (∀ (F₀ : Finset (Fin (n + (3 :
-            ℕ)))), (F₀ ⊆ (P3523T1InsertionConstruction s t).vertices h) → (e.2.1 ∉ F₀)) ) := by
-  classical
-  intro r n q p s X K t c h hh e hdV F₀ hF₀subset hd
-  exact hdV (hF₀subset hd)
+private abbrev hdF := ApollonianSuperharmonic.FacialInsertionGeometry.hdG
 
-private theorem hdFactual :
-    (by
-      classical
-      exact
-        ∀ (r : Nat), ∀ (n : Nat), ∀ (q : P3381T1PolygonBoundary r), ∀ (p :
-            P3381T1PolygonBoundary n), ∀ (s : P3475T1BoundarySubdivision q p), ∀ (X : Set
-            (Real × Real)), ∀ (K : Set (Real × Real)), ∀ (t : P3475T1TriangleTree q X K),
-        let c := P3523T1InsertionConstruction s t
-        ∀ (h : ℕ), ∀ (F : Finset (Fin (n + (3 : ℕ)))), ∀ (hh : h < c.steps.length),
-        let e := c.steps.get ⟨h, hh⟩
-        ∀ (F₀ : Finset (Fin (n + (3 : ℕ)))), (F = F₀) → ((e.2.1 ∉ F₀) → (e.2.1 ∉ F)) ) := by
-  classical
-  intro r n q p s X K t c h F hh e F₀ hFsame hdF hd
-  exact hdF (hFsame ▸ hd)
+private abbrev hdFactual := ApollonianSuperharmonic.FacialInsertionGeometry.hdGactual
 
 private theorem enumUnion :
     (by

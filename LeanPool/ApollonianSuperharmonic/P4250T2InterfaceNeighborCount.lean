@@ -6,6 +6,7 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.TileTranslationProperties
 
 public import LeanPool.ApollonianSuperharmonic.BandOrderedGeneralInteriorStarClassification
 
@@ -920,16 +921,7 @@ private theorem hk23 :
   have hk4 := hclass.2.2.1
   omega
 
-private theorem hzeroAt680 :
-    (by
-      classical
-      exact
-        ∀ (U : ProtoTile), TileTranslation U 0 = U ) := by
-  classical
-  intro U
-  have hz : GaussianTranslation 0 = id := by funext z; simp [GaussianTranslation]
-  cases U
-  simp [TileTranslation, hz, GaussianTranslation]
+private abbrev hzeroAt680 := ApollonianSuperharmonic.TileTranslationProperties.zero
 
 private theorem hcoverAt684 :
     (by

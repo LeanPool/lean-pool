@@ -6,6 +6,7 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.LatticeFootprintIncidence
 
 public import LeanPool.ApollonianSuperharmonic.BandOrderedGeneralInteriorStarClassification
 
@@ -24,22 +25,7 @@ namespace ApollonianSuperharmonic
 
 namespace PositivePrecursorGeometry
 
-private theorem raw_incident :
-    (by
-      classical
-      exact
-        ∀ (U : ProtoTile), ∀ (x : GaussianInt), (U.cells.Nonempty) → ((x ∈ FootprintVertices U) →
-            (∃ j : Fin 4, LatticeVertexIncidentCell x j ∈ U.cells)) ) := by
-  classical
-  intro U x hn hx
-  rw [FootprintVertices, ite_eq_left hn] at hx
-  obtain ⟨z, hz, rfl | rfl | rfl | rfl⟩ := hx
-  · exact ⟨0, hz⟩
-  · exact ⟨1, by simpa [LatticeVertexIncidentCell] using hz⟩
-  · exact ⟨3, by simpa [LatticeVertexIncidentCell] using hz⟩
-  · refine ⟨2, ?_⟩
-    change z + 1 + ⟨0, 1⟩ - 1 - ⟨0, 1⟩ ∈ U.cells
-    convert hz using 1; abel
+private abbrev raw_incident := ApollonianSuperharmonic.LatticeFootprintIncidence.incidentCell
 
 private theorem boundary_incident :
     (by
@@ -70,15 +56,20 @@ private theorem full_nonboundary :
     (by
       classical
       exact
-        ∀ (C : BandCircle), ∀ (q : Fin 4 → CircleCoordinates), ∀ (cfg :
-            BandOrderedGeneralConfiguration q), ∀ (T : ProtoTile), ∀ (cert :
-            BandOrderedGeneralLayoutCertificate q cfg C T), (Finset.Nonempty cert.O.cells) →
-            ((cert.O.cells = ∅ ↔ (cfg.firstPredecessor (1 : Fin (4 : ℕ))).1 = (0 : ℤ)) →
-            ((Finset.Nonempty cert.O.cells → LatticeTile cert.O) → (∀ (U : ProtoTile), ∀ (x :
-            GaussianInt), (∀ j : Fin 4, LatticeVertexIncidentCell x j ∈ U.cells) → (x ∉
-            BoundaryFootprintVertices U)))) ) := by
+        ∀ (C : BandCircle),
+          ∀ (q : Fin 4 → CircleCoordinates),
+            ∀ (cfg : BandOrderedGeneralConfiguration q),
+              ∀ (T : ProtoTile),
+                ∀ (cert : BandOrderedGeneralLayoutCertificate q cfg C T),
+                  (cert.O.cells = ∅ ↔
+                      (cfg.firstPredecessor (1 : Fin (4 : ℕ))).1 = (0 : ℤ)) →
+                    ∀ (U : ProtoTile),
+                      ∀ (x : GaussianInt),
+                        (∀ j : Fin 4, LatticeVertexIncidentCell x j ∈ U.cells) →
+                          x ∉ BoundaryFootprintVertices U
+    ) := by
   classical
-  intro C q cfg T cert hO hzero hOlattice U x hall
+  intro C q cfg T cert hzero U x hall
   have hn : U.cells.Nonempty := ⟨x, hall 0⟩
   intro hx
   rw [BoundaryFootprintVertices, ite_eq_left hn] at hx
@@ -818,8 +809,7 @@ theorem P4339T1PositivePrecursorRoots
   have hBcomp := cert.precursor_complement_lattice.2
   have raw_incident := PositivePrecursorGeometry.raw_incident
   have boundary_incident := PositivePrecursorGeometry.boundary_incident
-  have full_nonboundary := PositivePrecursorGeometry.full_nonboundary C q cfg T cert hO hzero
-      hOlattice
+  have full_nonboundary := PositivePrecursorGeometry.full_nonboundary C q cfg T cert hzero
   have hallAB := PositivePrecursorGeometry.hallAB C q cfg T cert
       (PositivePrecursorGeometry.trans_zero (PositivePrecursorGeometry.htrans0))
   have inD := PositivePrecursorGeometry.inD C q cfg T cert D hD full_nonboundary

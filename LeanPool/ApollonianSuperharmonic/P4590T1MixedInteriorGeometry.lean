@@ -6,6 +6,7 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.LatticeFootprintIncidence
 
 public import LeanPool.ApollonianSuperharmonic.P4590T1OppositeCellsStar
 public import LeanPool.ApollonianSuperharmonic.P4339T1PrecursorSupportGeometry
@@ -25,20 +26,7 @@ namespace ApollonianSuperharmonic
 
 namespace MixedInteriorGeometry
 
-private theorem raw_incident :
-    (by
-      classical
-      exact
-        ∀ (U : ProtoTile), ∀ (z : GaussianInt), (U.cells.Nonempty) → ((z ∈ FootprintVertices U) →
-            (∃ j : Fin 4, LatticeVertexIncidentCell z j ∈ U.cells)) ) := by
-  classical
-  intro U z hne hz
-  simp only [FootprintVertices, hne, ite_true, Set.mem_ofPred_eq] at hz
-  rcases hz with ⟨a, ha, rfl | rfl | rfl | rfl⟩
-  · exact ⟨0, by simpa [LatticeVertexIncidentCell] using ha⟩
-  · exact ⟨1, by simpa [LatticeVertexIncidentCell] using ha⟩
-  · exact ⟨3, by simpa [LatticeVertexIncidentCell] using ha⟩
-  · exact ⟨2, by simpa [LatticeVertexIncidentCell, sub_sub] using ha⟩
+private abbrev raw_incident := ApollonianSuperharmonic.LatticeFootprintIncidence.incidentCell
 
 private theorem incident_foot :
     (by
@@ -359,125 +347,20 @@ private theorem pair_result :
   exact noOtherFoot a b k hab hak hbk hnot
     (hthird k (fun h => hak h.symm) (fun h => hbk h.symm)) ha hb
 
-private theorem hthirdAD :
-    (by
-      classical
-      exact
-        ∀ (q : Fin 4 → CircleCoordinates), ∀ (cfg : BandOrderedGeneralConfiguration q), ∀ (C :
-            BandCircle), ∀ (T : ProtoTile), ∀ (cert : BandOrderedGeneralLayoutCertificate q cfg C
-            T), (∀ (i : Fin 3), ∀ (j : Fin 3), ∀ (s : Bool), ∀ (t : Bool), ((i, s) ≠ (j, t)) →
-            ((¬ (i = 0 ∧ j = 0)) → (Disjoint (cert.P i s).cells (cert.P j t).cells))) → (
-        let A : Fin 3 × Bool := (0, true)
-        let D : Fin 3 × Bool := (1, false)
-        ∀ c', c' ≠ A → c' ≠ D → Disjoint (cert.P A.1 A.2).cells (cert.P c'.1 c'.2).cells ∨
-            Disjoint (cert.P D.1 D.2).cells (cert.P c'.1 c'.2).cells) ) := by
-  classical
-  intro q cfg C T cert selected_disjoint A D c' hca hcd
-  rcases c' with ⟨i, s⟩
-  fin_cases i <;> cases s
-  all_goals first
-  | exact Or.inl (selected_disjoint _ _ _ _ (by decide) (by decide))
-  | exact Or.inr (selected_disjoint _ _ _ _ (by decide) (by decide))
-
-private theorem hthirdAF :
-    (by
-      classical
-      exact
-        ∀ (q : Fin 4 → CircleCoordinates), ∀ (cfg : BandOrderedGeneralConfiguration q), ∀ (C :
-            BandCircle), ∀ (T : ProtoTile), ∀ (cert : BandOrderedGeneralLayoutCertificate q cfg C
-            T), (∀ (i : Fin 3), ∀ (j : Fin 3), ∀ (s : Bool), ∀ (t : Bool), ((i, s) ≠ (j, t)) →
-            ((¬ (i = 0 ∧ j = 0)) → (Disjoint (cert.P i s).cells (cert.P j t).cells))) → (
-        let A : Fin 3 × Bool := (0, true)
-        let F : Fin 3 × Bool := (2, false)
-        ∀ c', c' ≠ A → c' ≠ F → Disjoint (cert.P A.1 A.2).cells (cert.P c'.1 c'.2).cells ∨
-            Disjoint (cert.P F.1 F.2).cells (cert.P c'.1 c'.2).cells) ) := by
-  classical
-  intro q cfg C T cert selected_disjoint A F c' hca hcf
-  rcases c' with ⟨i, s⟩
-  fin_cases i <;> cases s
-  all_goals first
-  | exact Or.inl (selected_disjoint _ _ _ _ (by decide) (by decide))
-  | exact Or.inr (selected_disjoint _ _ _ _ (by decide) (by decide))
-
-private theorem hthirdCB :
-    (by
-      classical
-      exact
-        ∀ (q : Fin 4 → CircleCoordinates), ∀ (cfg : BandOrderedGeneralConfiguration q), ∀ (C :
-            BandCircle), ∀ (T : ProtoTile), ∀ (cert : BandOrderedGeneralLayoutCertificate q cfg C
-            T), (∀ (i : Fin 3), ∀ (j : Fin 3), ∀ (s : Bool), ∀ (t : Bool), ((i, s) ≠ (j, t)) →
-            ((¬ (i = 0 ∧ j = 0)) → (Disjoint (cert.P i s).cells (cert.P j t).cells))) → (
-        let B : Fin 3 × Bool := (0, false)
-        let C' : Fin 3 × Bool := (1, true)
-        ∀ c', c' ≠ C' → c' ≠ B → Disjoint (cert.P C'.1 C'.2).cells (cert.P c'.1 c'.2).cells ∨
-            Disjoint (cert.P B.1 B.2).cells (cert.P c'.1 c'.2).cells) ) := by
-  classical
-  intro q cfg C T cert selected_disjoint B C' c' hcc hcb
-  rcases c' with ⟨i, s⟩
-  fin_cases i <;> cases s
-  all_goals first
-  | exact Or.inl (selected_disjoint _ _ _ _ (by decide) (by decide))
-  | exact Or.inr (selected_disjoint _ _ _ _ (by decide) (by decide))
-
-private theorem hthirdEB :
-    (by
-      classical
-      exact
-        ∀ (q : Fin 4 → CircleCoordinates), ∀ (cfg : BandOrderedGeneralConfiguration q), ∀ (C :
-            BandCircle), ∀ (T : ProtoTile), ∀ (cert : BandOrderedGeneralLayoutCertificate q cfg C
-            T), (∀ (i : Fin 3), ∀ (j : Fin 3), ∀ (s : Bool), ∀ (t : Bool), ((i, s) ≠ (j, t)) →
-            ((¬ (i = 0 ∧ j = 0)) → (Disjoint (cert.P i s).cells (cert.P j t).cells))) → (
-        let B : Fin 3 × Bool := (0, false)
-        let E : Fin 3 × Bool := (2, true)
-        ∀ c', c' ≠ E → c' ≠ B → Disjoint (cert.P E.1 E.2).cells (cert.P c'.1 c'.2).cells ∨
-            Disjoint (cert.P B.1 B.2).cells (cert.P c'.1 c'.2).cells) ) := by
-  classical
-  intro q cfg C T cert selected_disjoint B E c' hce hcb
-  rcases c' with ⟨i, s⟩
-  fin_cases i <;> cases s
-  all_goals first
-  | exact Or.inl (selected_disjoint _ _ _ _ (by decide) (by decide))
-  | exact Or.inr (selected_disjoint _ _ _ _ (by decide) (by decide))
-
-private theorem hthirdCF :
-    (by
-      classical
-      exact
-        ∀ (q : Fin 4 → CircleCoordinates), ∀ (cfg : BandOrderedGeneralConfiguration q), ∀ (C :
-            BandCircle), ∀ (T : ProtoTile), ∀ (cert : BandOrderedGeneralLayoutCertificate q cfg C
-            T), (∀ (i : Fin 3), ∀ (j : Fin 3), ∀ (s : Bool), ∀ (t : Bool), ((i, s) ≠ (j, t)) →
-            ((¬ (i = 0 ∧ j = 0)) → (Disjoint (cert.P i s).cells (cert.P j t).cells))) → (
-        let C' : Fin 3 × Bool := (1, true)
-        let F : Fin 3 × Bool := (2, false)
-        ∀ c', c' ≠ C' → c' ≠ F → Disjoint (cert.P C'.1 C'.2).cells (cert.P c'.1 c'.2).cells ∨
-            Disjoint (cert.P F.1 F.2).cells (cert.P c'.1 c'.2).cells) ) := by
-  classical
-  intro q cfg C T cert selected_disjoint C' F c' hcc hcf
-  rcases c' with ⟨i, s⟩
-  fin_cases i <;> cases s
-  all_goals first
-  | exact Or.inl (selected_disjoint _ _ _ _ (by decide) (by decide))
-  | exact Or.inr (selected_disjoint _ _ _ _ (by decide) (by decide))
-
-private theorem hthirdED :
-    (by
-      classical
-      exact
-        ∀ (q : Fin 4 → CircleCoordinates), ∀ (cfg : BandOrderedGeneralConfiguration q), ∀ (C :
-            BandCircle), ∀ (T : ProtoTile), ∀ (cert : BandOrderedGeneralLayoutCertificate q cfg C
-            T), (∀ (i : Fin 3), ∀ (j : Fin 3), ∀ (s : Bool), ∀ (t : Bool), ((i, s) ≠ (j, t)) →
-            ((¬ (i = 0 ∧ j = 0)) → (Disjoint (cert.P i s).cells (cert.P j t).cells))) → (
-        let D : Fin 3 × Bool := (1, false)
-        let E : Fin 3 × Bool := (2, true)
-        ∀ c', c' ≠ E → c' ≠ D → Disjoint (cert.P E.1 E.2).cells (cert.P c'.1 c'.2).cells ∨
-            Disjoint (cert.P D.1 D.2).cells (cert.P c'.1 c'.2).cells) ) := by
-  classical
-  intro q cfg C T cert selected_disjoint D E c' hce hcd
-  rcases c' with ⟨i, s⟩
-  fin_cases i <;> cases s
-  all_goals first
-  | exact Or.inl (selected_disjoint _ _ _ _ (by decide) (by decide))
-  | exact Or.inr (selected_disjoint _ _ _ _ (by decide) (by decide))
+private theorem thirdFamilyDisjointness (P : Fin 3 → Bool → ProtoTile)
+    (hdisjoint : ∀ i j s t, (i, s) ≠ (j, t) → ¬(i = 0 ∧ j = 0) →
+      Disjoint (P i s).cells (P j t).cells)
+    (a b c : Fin 3 × Bool) (hab : a.1 ≠ b.1) :
+    Disjoint (P a.1 a.2).cells (P c.1 c.2).cells ∨
+      Disjoint (P b.1 b.2).cells (P c.1 c.2).cells := by
+  by_cases hac : a.1 = c.1
+  · right
+    have hbc : b.1 ≠ c.1 := fun hbc => hab (hac.trans hbc.symm)
+    exact hdisjoint _ _ _ _ (fun h => hbc (congrArg Prod.fst h))
+      (fun h => hbc (h.1.trans h.2.symm))
+  · left
+    exact hdisjoint _ _ _ _ (fun h => hac (congrArg Prod.fst h))
+      (fun h => hac (h.1.trans h.2.symm))
 
 end MixedInteriorGeometry
 
@@ -612,28 +495,34 @@ theorem P4590T1MixedInteriorGeometry
   let F : Fin 3 × Bool := (2, false)
   have hthirdAD : ∀ c', c' ≠ A → c' ≠ D →
       Disjoint (cert.P A.1 A.2).cells (cert.P c'.1 c'.2).cells ∨
-        Disjoint (cert.P D.1 D.2).cells (cert.P c'.1 c'.2).cells :=
-            MixedInteriorGeometry.hthirdAD q cfg C T cert selected_disjoint
+        Disjoint (cert.P D.1 D.2).cells (cert.P c'.1 c'.2).cells := by
+    intro c' hfirst hsecond
+    exact MixedInteriorGeometry.thirdFamilyDisjointness cert.P selected_disjoint A D c' (by decide)
   have hthirdAF : ∀ c', c' ≠ A → c' ≠ F →
       Disjoint (cert.P A.1 A.2).cells (cert.P c'.1 c'.2).cells ∨
-        Disjoint (cert.P F.1 F.2).cells (cert.P c'.1 c'.2).cells :=
-            MixedInteriorGeometry.hthirdAF q cfg C T cert selected_disjoint
+        Disjoint (cert.P F.1 F.2).cells (cert.P c'.1 c'.2).cells := by
+    intro c' hfirst hsecond
+    exact MixedInteriorGeometry.thirdFamilyDisjointness cert.P selected_disjoint A F c' (by decide)
   have hthirdCB : ∀ c', c' ≠ C' → c' ≠ B →
       Disjoint (cert.P C'.1 C'.2).cells (cert.P c'.1 c'.2).cells ∨
-        Disjoint (cert.P B.1 B.2).cells (cert.P c'.1 c'.2).cells :=
-            MixedInteriorGeometry.hthirdCB q cfg C T cert selected_disjoint
+        Disjoint (cert.P B.1 B.2).cells (cert.P c'.1 c'.2).cells := by
+    intro c' hfirst hsecond
+    exact MixedInteriorGeometry.thirdFamilyDisjointness cert.P selected_disjoint C' B c' (by decide)
   have hthirdEB : ∀ c', c' ≠ E → c' ≠ B →
       Disjoint (cert.P E.1 E.2).cells (cert.P c'.1 c'.2).cells ∨
-        Disjoint (cert.P B.1 B.2).cells (cert.P c'.1 c'.2).cells :=
-            MixedInteriorGeometry.hthirdEB q cfg C T cert selected_disjoint
+        Disjoint (cert.P B.1 B.2).cells (cert.P c'.1 c'.2).cells := by
+    intro c' hfirst hsecond
+    exact MixedInteriorGeometry.thirdFamilyDisjointness cert.P selected_disjoint E B c' (by decide)
   have hthirdCF : ∀ c', c' ≠ C' → c' ≠ F →
       Disjoint (cert.P C'.1 C'.2).cells (cert.P c'.1 c'.2).cells ∨
-        Disjoint (cert.P F.1 F.2).cells (cert.P c'.1 c'.2).cells :=
-            MixedInteriorGeometry.hthirdCF q cfg C T cert selected_disjoint
+        Disjoint (cert.P F.1 F.2).cells (cert.P c'.1 c'.2).cells := by
+    intro c' hfirst hsecond
+    exact MixedInteriorGeometry.thirdFamilyDisjointness cert.P selected_disjoint C' F c' (by decide)
   have hthirdED : ∀ c', c' ≠ E → c' ≠ D →
       Disjoint (cert.P E.1 E.2).cells (cert.P c'.1 c'.2).cells ∨
-        Disjoint (cert.P D.1 D.2).cells (cert.P c'.1 c'.2).cells :=
-            MixedInteriorGeometry.hthirdED q cfg C T cert selected_disjoint
+        Disjoint (cert.P D.1 D.2).cells (cert.P c'.1 c'.2).cells := by
+    intro c' hfirst hsecond
+    exact MixedInteriorGeometry.thirdFamilyDisjointness cert.P selected_disjoint E D c' (by decide)
   refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩
   · intro ha hd
     exact pair_result A D B (by decide) (by decide) (by decide) (by simp [A, D])

@@ -6,6 +6,7 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.BandVectorParentSums
 public import LeanPool.ApollonianSuperharmonic.TileTranslationProperties
 
 public import LeanPool.ApollonianSuperharmonic.AffineTriangularPlaneTriangulation
@@ -455,15 +456,7 @@ private theorem edge_reps :
     rw [← hi, map_sub, k.apply_symm_apply, k.apply_symm_apply]
     abel
 
-private theorem incoming_sum :
-    (by
-      classical
-      exact
-        ∀ (q : Fin 4 → CircleCoordinates), (ProperBandQuadruple q) → (BandVectors.1 (q 1) (q 0) +
-            BandVectors.1 (q 2) (q 0) + BandVectors.1 (q 3) (q 0) = 0) ) := by
-  classical
-  intro q hq
-  simpa [Fin.sum_univ_succ, add_assoc] using (IncomingSuperbasisRelation q hq).1
+private abbrev incoming_sum := ApollonianSuperharmonic.BandVectorIncomingSum
 
 private theorem kc :
     (by
@@ -558,17 +551,7 @@ private theorem facescard :
 private abbrev translate_add :=
   TileTranslationProperties.add
 
-private theorem hzero :
-    (by
-      classical
-      exact
-        ∀ (T : ProtoTile), TileTranslation T 0 = T ) := by
-  classical
-  intro T
-  have hz : GaussianTranslation 0 = id := funext fun z => add_zero z
-  unfold TileTranslation
-  rw [hz, Finset.image_id]
-  rfl
+private abbrev hzero := ApollonianSuperharmonic.TileTranslationProperties.zero
 
 end RegularPeriodicGeometry
 

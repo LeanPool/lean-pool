@@ -215,12 +215,14 @@ private theorem Bmono :
     nlinarith [Bnonneg k, hM]
 
 private theorem hxpos :
-    ∀ (q : IntegerLatticeFunction), ∀ (M : ℤ), (∃ z, q z = 0) → ∀ (N : ℕ),
-    let S : Set GaussianInt := {x | 0 < q x}
-    let B : ℕ → ℤ := fun n => Nat.rec 0 (fun _ b => 4 * b + M) n
-    (∀ (n : ℕ), 0 ≤ B n) → ∀ (x : GaussianInt), (B (N + 1) < q x) → x ∈ S := by
+    ∀ (q : IntegerLatticeFunction),
+      ∀ (M : ℤ),
+        ∀ (N : ℕ),
+          let S : Set GaussianInt := {x | 0 < q x}
+          let B : ℕ → ℤ := fun n => Nat.rec 0 (fun _ b => 4 * b + M) n
+          (∀ (n : ℕ), 0 ≤ B n) → ∀ (x : GaussianInt), B (N + 1) < q x → x ∈ S := by
   classical
-  intro q M hzero N S B Bnonneg x hx
+  intro q M N S B Bnonneg x hx
   change 0 < q x
   have hB := Bnonneg (N + 1)
   omega
@@ -417,7 +419,7 @@ theorem P4849T1LargePositiveComponents (q : IntegerLatticeFunction) (M : ℤ)
   have Bmono (n m : ℕ) (hnm : n ≤ m) : B n ≤ B m := PositiveComponentLemmas.Bmono M hM Bsucc
       Bnonneg n m hnm
   obtain ⟨x, hx⟩ := hunbounded (B (N + 1))
-  have hxpos : x ∈ S := PositiveComponentLemmas.hxpos q M hzero N Bnonneg x hx
+  have hxpos : x ∈ S := PositiveComponentLemmas.hxpos q M N Bnonneg x hx
   obtain ⟨z₀, hz₀⟩ := hzero
   let C : Set GaussianInt := {y | reach x y}
   have hxC : x ∈ C := PositiveComponentLemmas.hxC q x

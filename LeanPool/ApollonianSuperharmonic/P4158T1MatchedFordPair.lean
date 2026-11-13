@@ -29,13 +29,13 @@ private theorem hidx :
     (by
       classical
       exact
-        ∀ (P : FordFareyParameter), ∀ (Ci : BandCircle), ∀ (i : Fin 3), (FordRecursiveQuadruple P
-            i.succ = Ci.1.1) → (∀ (T : ProtoTile), ∀ (T' : ProtoTile), ((1 : ℤ) < Ci.1.1.1) →
-            ((TileCentroid T' - TileCentroid T = GaussianRealPoint (BandVectors.1
-            (FordRecursiveQuadruple P i.succ) (FordRecursiveQuadruple P (0 : Fin (4 : ℕ))))) → (i
-            ≠ 2))) ) := by
+        ∀ (P : FordFareyParameter),
+          ∀ (Ci : BandCircle),
+            ∀ (i : Fin 3),
+              FordRecursiveQuadruple P i.succ = Ci.1.1 → (1 : ℤ) < Ci.1.1.1 → i ≠ 2
+    ) := by
   classical
-  intro P Ci i hCi T T' hlarge hcent hi
+  intro P Ci i hCi hlarge hi
   subst i
   have hc := congrArg (fun x : CircleCoordinates => x.1) hCi
   simp [FordRecursiveQuadruple] at hc
@@ -45,13 +45,14 @@ private theorem hqgt :
     (by
       classical
       exact
-        ∀ (P : FordFareyParameter), ∀ (Ci : BandCircle), ∀ (i : Fin 3), (FordRecursiveQuadruple P
-            i.succ = Ci.1.1) → (∀ (T : ProtoTile), ∀ (T' : ProtoTile), ((1 : ℤ) < Ci.1.1.1) →
-            ((TileCentroid T' - TileCentroid T = GaussianRealPoint (BandVectors.1
-            (FordRecursiveQuadruple P i.succ) (FordRecursiveQuadruple P (0 : Fin (4 : ℕ))))) →
-            ((i ≠ 2) → (1 < P.q)))) ) := by
+        ∀ (P : FordFareyParameter),
+          ∀ (Ci : BandCircle),
+            ∀ (i : Fin 3),
+              FordRecursiveQuadruple P i.succ = Ci.1.1 →
+                (1 : ℤ) < Ci.1.1.1 → i ≠ 2 → 1 < P.q
+    ) := by
   classical
-  intro P Ci i hCi T T' hlarge hcent hidx
+  intro P Ci i hCi hlarge hidx
   have hsumq : (P.q : Int) = (P.q₁ : Int) + (P.q₂ : Int) := by
     exact_mod_cast P.sum_q
   have hc := congrArg (fun x : CircleCoordinates => x.1) hCi
@@ -95,13 +96,14 @@ private theorem hneq :
     (by
       classical
       exact
-        ∀ (P : FordFareyParameter), ∀ (Ci : BandCircle), ∀ (i : Fin 3), (FordRecursiveQuadruple P
-            i.succ = Ci.1.1) → (∀ (T : ProtoTile), ∀ (T' : ProtoTile), ((1 : ℤ) < Ci.1.1.1) →
-            ((TileCentroid T' - TileCentroid T = GaussianRealPoint (BandVectors.1
-            (FordRecursiveQuadruple P i.succ) (FordRecursiveQuadruple P (0 : Fin (4 : ℕ))))) →
-            ((i ≠ 2) → ((0 < P.q₁) → ((0 < P.q₂) → (P.q₁ ≠ P.q₂)))))) ) := by
+        ∀ (P : FordFareyParameter),
+          ∀ (Ci : BandCircle),
+            ∀ (i : Fin 3),
+              FordRecursiveQuadruple P i.succ = Ci.1.1 →
+                (1 : ℤ) < Ci.1.1.1 → i ≠ 2 → 0 < P.q₁ → 0 < P.q₂ → P.q₁ ≠ P.q₂
+    ) := by
   classical
-  intro P Ci i hCi T T' hlarge hcent hidx hrpos hspos heq
+  intro P Ci i hCi hlarge hidx hrpos hspos heq
   have hcross : P.p₁ * (P.q₂ : Int) - (P.q₁ : Int) * P.p₂ = 1 := by
     have h := P.det₁
     rw [P.sum_q, P.sum_p] at h
@@ -192,20 +194,7 @@ private theorem hTnon :
   rw [hu.1]
   simpa [TileTranslation] using hFnon.image (GaussianTranslation u)
 
-private theorem hT'non :
-    (by
-      classical
-      exact
-        ∀ (P : FordFareyParameter), ∀ (T' : ProtoTile), ∀ (h' : PartialOdometer), ∀ (H :
-            PartialOdometer), ∀ (v : GaussianInt), (T'.cells = (TileTranslation (FordTile P.q)
-            v).cells ∧ (T'.cells = ∅ → T'.anchor = (TileTranslation (FordTile P.q) v).anchor) ∧ ∃
-            (a : GaussianInt) (b : ℤ), (∀ (x : GaussianInt), x ∈ h'.domain ↔ x - v ∈ H.domain) ∧
-            ∀ x ∈ h'.domain, h'.value x = H.value (x - v) + a.re * x.re + a.im * x.im + b) →
-            (((FordTile P.q).cells.Nonempty) → (T'.cells.Nonempty)) ) := by
-  classical
-  intro P T' h' H v hv hFnon
-  rw [hv.1]
-  simpa [TileTranslation] using hFnon.image (GaussianTranslation v)
+private abbrev hT'non := ApollonianSuperharmonic.MatchedFordGeometry.hTnon
 
 private theorem hcentT :
     (by
@@ -334,18 +323,24 @@ private theorem hvec :
     (by
       classical
       exact
-        ∀ (P : FordFareyParameter), ∀ (Ci : BandCircle), ∀ (i : Fin 3), (FordRecursiveQuadruple P
-            i.succ = Ci.1.1) → (∀ (T : ProtoTile), ∀ (T' : ProtoTile), (TileCentroid T' -
-            TileCentroid T = GaussianRealPoint (BandVectors.1 (FordRecursiveQuadruple P i.succ)
-            (FordRecursiveQuadruple P (0 : Fin (4 : ℕ))))) → ((i ≠ 2) → ((BandVectors.1
-            (FordRecursiveQuadruple P (1 : Fin (4 : ℕ))) (FordRecursiveQuadruple P (0 : Fin (4 :
-            ℕ))) = (⟨(↑P.q : ℤ), (↑P.q₁ : ℤ)⟩ : GaussianInt)) → ((BandVectors.1
-            (FordRecursiveQuadruple P (2 : Fin (4 : ℕ))) (FordRecursiveQuadruple P (0 : Fin (4 :
-            ℕ))) = (⟨-(↑P.q : ℤ), (↑P.q₂ : ℤ)⟩ : GaussianInt)) → (BandVectors.1
-            (FordRecursiveQuadruple P i.succ) (FordRecursiveQuadruple P 0) = if i = 0 then ⟨(P.q
-            : Int), (P.q₁ : Int)⟩ else ⟨-(P.q : Int), (P.q₂ : Int)⟩))))) ) := by
+        ∀ (P : FordFareyParameter),
+          ∀ (Ci : BandCircle),
+            ∀ (i : Fin 3),
+              FordRecursiveQuadruple P i.succ = Ci.1.1 →
+                i ≠ 2 →
+                  BandVectors.1 (FordRecursiveQuadruple P (1 : Fin (4 : ℕ)))
+                        (FordRecursiveQuadruple P (0 : Fin (4 : ℕ))) =
+                      (⟨(↑P.q : ℤ), (↑P.q₁ : ℤ)⟩ : GaussianInt) →
+                    BandVectors.1 (FordRecursiveQuadruple P (2 : Fin (4 : ℕ)))
+                          (FordRecursiveQuadruple P (0 : Fin (4 : ℕ))) =
+                        (⟨-(↑P.q : ℤ), (↑P.q₂ : ℤ)⟩ : GaussianInt) →
+                      BandVectors.1 (FordRecursiveQuadruple P i.succ)
+                          (FordRecursiveQuadruple P 0) =
+                        if i = 0 then ⟨(P.q : Int), (P.q₁ : Int)⟩
+                        else ⟨-(P.q : Int), (P.q₂ : Int)⟩
+    ) := by
   classical
-  intro P Ci i hCi T T' hcent hidx hvec0 hvec1
+  intro P Ci i hCi hidx hvec0 hvec1
   fin_cases i
   · simpa using hvec0
   · simpa using hvec1
@@ -671,12 +666,12 @@ theorem P4158T1MatchedFordPair
         (x - u).im ≤ (P.q : Int)) := by
 -- BODY
   classical
-  have hidx : i ≠ 2 := MatchedFordGeometry.hidx P Ci i hCi T T' hlarge hcent
-  have hqgt : 1 < P.q := MatchedFordGeometry.hqgt P Ci i hCi T T' hlarge hcent hidx
+  have hidx : i ≠ 2 := MatchedFordGeometry.hidx P Ci i hCi hlarge
+  have hqgt : 1 < P.q := MatchedFordGeometry.hqgt P Ci i hCi hlarge hidx
   have hqpos : 0 < P.q := by omega
   have hrpos : 0 < P.q₁ := MatchedFordGeometry.hrpos P hqgt
   have hspos : 0 < P.q₂ := P.q₂_pos
-  have hneq : P.q₁ ≠ P.q₂ := MatchedFordGeometry.hneq P Ci i hCi T T' hlarge hcent hidx hrpos hspos
+  have hneq : P.q₁ ≠ P.q₂ := MatchedFordGeometry.hneq P Ci i hCi hlarge hidx hrpos hspos
   have hcurv : 0 < (FordCircleCoordinate P.p P.q).1 := MatchedFordGeometry.hcurv P hqpos
   obtain ⟨H, hHO, hHD, hHV⟩ := FordTileOdometerRestriction P
   have hHcircle : TileOdometer C0.1.1 (FordTile P.q) H := MatchedFordGeometry.hHcircle P C0 hC0 H
@@ -704,7 +699,7 @@ theorem P4158T1MatchedFordPair
   have hvec : BandVectors.1 (FordRecursiveQuadruple P i.succ)
       (FordRecursiveQuadruple P 0) =
       if i = 0 then ⟨(P.q : Int), (P.q₁ : Int)⟩
-      else ⟨-(P.q : Int), (P.q₂ : Int)⟩ := MatchedFordGeometry.hvec P Ci i hCi T T' hcent hidx
+      else ⟨-(P.q : Int), (P.q₂ : Int)⟩ := MatchedFordGeometry.hvec P Ci i hCi hidx
           hvec0 hvec1
   have hshift : v - u =
       if i = 0 then ⟨(P.q : Int), (P.q₁ : Int)⟩

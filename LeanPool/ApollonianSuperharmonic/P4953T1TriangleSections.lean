@@ -96,12 +96,7 @@ private theorem hden₁ (A : ℂ) (x : ℂ) (hAx : A.im < x.im) : x.im - A.im �
   have huw : u < w := huw A x hAx
   exact ne_of_gt (sub_pos.mpr huw)
 
-private theorem hden₂ (x : ℂ) (B : ℂ) (hxB : x.im < B.im) : B.im - x.im ≠ 0 := by
-  classical
-  let w := x.im
-  let v := B.im
-  have hwv : w < v := hwv x B hxB
-  exact ne_of_gt (sub_pos.mpr hwv)
+private abbrev hden₂ := ApollonianSuperharmonic.TriangleSections.hden₁
 
 private noncomputable def pts (A : ℂ) (x : ℂ) (B : ℂ) : Fin 3 → ℂ := ![x, A, B]
 

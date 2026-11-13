@@ -1810,18 +1810,7 @@ private theorem hiL :
   obtain ⟨z, hz⟩ := Set.mem_range.mp hik
   exact ⟨L.face k z, by simpa only [Function.comp_apply] using hz⟩
 
-private theorem hjL :
-    (by
-      classical
-      exact
-        ∀ (n : Nat), ∀ (p : P3381T1PolygonBoundary n), ∀ (S : P3544T1DiagonalSplit p), ∀ (XL
-            : Set (Real × Real)), ∀ (L : P3511T1SourceDissection S.left XL), ∀ (j : Fin (n + (3
-            : ℕ))), ∀ (k : Fin L.count), (j ∈ Set.range (S.il ∘ L.face k)) → (j ∈ Set.range S.il)
-            ) := by
-  classical
-  intro n p S XL L j k hjk
-  obtain ⟨z, hz⟩ := Set.mem_range.mp hjk
-  exact ⟨L.face k z, by simpa only [Function.comp_apply] using hz⟩
+private abbrev hjL := ApollonianSuperharmonic.IndexedFaceLedgerProof.hiL
 
 private abbrev hnoRAt1259 :=
   ApollonianSuperharmonic.IndexedFaceLedgerProof.hnoRAt1159
@@ -1864,18 +1853,7 @@ private theorem hiR :
   obtain ⟨z, hz⟩ := Set.mem_range.mp hik
   exact ⟨R.face k z, by simpa only [Function.comp_apply] using hz⟩
 
-private theorem hjR :
-    (by
-      classical
-      exact
-        ∀ (n : Nat), ∀ (p : P3381T1PolygonBoundary n), ∀ (S : P3544T1DiagonalSplit p), ∀ (XR
-            : Set (Real × Real)), ∀ (R : P3511T1SourceDissection S.right XR), ∀ (j : Fin (n +
-            (3 : ℕ))), ∀ (k : Fin R.count), (j ∈ Set.range (S.ir ∘ R.face k)) → (j ∈ Set.range
-            S.ir) ) := by
-  classical
-  intro n p S XR R j k hjk
-  obtain ⟨z, hz⟩ := Set.mem_range.mp hjk
-  exact ⟨R.face k z, by simpa only [Function.comp_apply] using hz⟩
+private abbrev hjR := ApollonianSuperharmonic.IndexedFaceLedgerProof.hiR
 
 private abbrev hnoLAt1285 :=
   ApollonianSuperharmonic.IndexedFaceLedgerProof.hnoLAt1180

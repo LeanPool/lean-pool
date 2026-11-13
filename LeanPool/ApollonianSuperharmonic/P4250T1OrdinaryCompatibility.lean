@@ -6,6 +6,7 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.TileTranslationProperties
 
 public import LeanPool.ApollonianSuperharmonic.RightSubtileOdometerCompatibility
 
@@ -1328,20 +1329,7 @@ private theorem hraw :
   intro q cfg C T cert a b hab
   exact (BandOriginalOccurrenceIntersectionClassification q cfg C T cert a b hab).2
 
-private theorem htransZero :
-    (by
-      classical
-      exact
-        ∀ (Z : ProtoTile), TileTranslation Z 0 = Z ) := by
-  classical
-  intro Z
-  cases Z with
-  | mk cells anchor =>
-    change ProtoTile.mk (cells.image (fun x => x + 0)) (GaussianTranslation 0 anchor) =
-      ProtoTile.mk cells anchor
-    apply congrArg₂ ProtoTile.mk
-    · simp []
-    · simp [GaussianTranslation]
+private abbrev htransZero := ApollonianSuperharmonic.TileTranslationProperties.zero
 
 private theorem noAE :
     (by

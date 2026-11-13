@@ -6,6 +6,8 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.P4210T1FordSquareCentroid
+public import LeanPool.ApollonianSuperharmonic.FordFareySum
 
 public import LeanPool.ApollonianSuperharmonic.AncestorOdometer
 public import LeanPool.ApollonianSuperharmonic.FordTileRecursiveIdentification
@@ -34,12 +36,13 @@ private theorem hcurv :
     (by
       classical
       exact
-        ∀ (P : FordFareyParameter), ∀ (Ci : BandCircle), (FordRecursiveQuadruple P (2 : Fin (4 :
-            ℕ)) = Ci.1.1) → (((1 : ℤ) < Ci.1.1.1) → ((P.q₁ < P.q₂) → (∀ (T' : ProtoTile), ∀ (u :
-            GaussianInt), (T'.cells = (TileTranslation (FordTile P.q) (u + ⟨-(↑P.q : ℤ), (↑P.q₂ :
-            ℤ)⟩)).cells) → (1 < P.q₂)))) ) := by
+        ∀ (P : FordFareyParameter),
+          ∀ (Ci : BandCircle),
+            FordRecursiveQuadruple P (2 : Fin (4 : ℕ)) = Ci.1.1 →
+              (1 : ℤ) < Ci.1.1.1 → P.q₁ < P.q₂ → 1 < P.q₂
+    ) := by
   classical
-  intro P Ci hCi hlarge horder T' u hc'
+  intro P Ci hCi hlarge horder
   have hlarge' : (1 : Int) < (P.q₂ * P.q₂ : Nat) := by
     rw [← hCi] at hlarge
     simpa [FordRecursiveQuadruple, FordCircleCoordinate] using hlarge
@@ -105,17 +108,7 @@ private theorem hVk :
   rw [← hCi]
   exact hchild₂ 1 true
 
-private theorem hcross :
-    (by
-      classical
-      exact
-        ∀ (P : FordFareyParameter), P.p₁ * (P.q₂ : Int) - (P.q₁ : Int) * P.p₂ = 1 ) := by
-  classical
-  intro P
-  have hd := P.det₁
-  rw [P.sum_q, P.sum_p] at hd
-  push_cast at hd
-  nlinarith
+private abbrev hcross := ApollonianSuperharmonic.FordFareySum.determinant
 
 private theorem hcross2 :
     (by
@@ -299,94 +292,7 @@ private theorem hoffV :
         (2⁻¹ * (P.q₁ : Real), -(2⁻¹ * (P.q₁ : Real))) := by simpa [V] using hh
     _ = ((P.q₁ : Real) / 2, -(P.q₁ : Real) / 2) := by ext <;> ring
 
-private theorem fordCentroid :
-    (by
-      classical
-      exact
-        ∀ (n : ℕ),
-          (0 : ℕ) < n →
-            TileCentroid (FordTile n) = ((↑n : ℝ) / (2 : ℝ), (↑n : ℝ) / (2 : ℝ))
-    ) := by
-  classical
-  intro n hn
-  let domain : Finset GaussianInt := FordCellDomain n
-  have hne : domain.Nonempty := by
-    refine ⟨⟨0, 0⟩, ?_⟩
-    apply Finset.mem_image.mpr
-    exact ⟨(0, 0), Finset.mem_product.mpr ⟨by simpa using hn, by simpa using hn⟩, rfl⟩
-  have hinj : Set.InjOn
-      (fun a : Nat × Nat => (⟨(a.1 : Int), (a.2 : Int)⟩ : GaussianInt))
-      ↑((Finset.range n).product (Finset.range n)) := by
-    intro a ha b hb hab
-    apply Prod.ext
-    · have he := congrArg (fun z : GaussianInt => z.re) hab
-      change (a.1 : Int) = (b.1 : Int) at he
-      exact_mod_cast he
-    · have he := congrArg (fun z : GaussianInt => z.im) hab
-      change (a.2 : Int) = (b.2 : Int) at he
-      exact_mod_cast he
-  have hcard : domain.card = n * n := by
-    calc
-      domain.card = ((Finset.range n).product (Finset.range n)).card := by
-        dsimp [domain, FordCellDomain]
-        exact Finset.card_image_iff.mpr hinj
-      _ = n * n := by simp
-  have hsumRe : domain.sum (fun z : GaussianInt => z.re) =
-      (n : Int) * ((n - 1 : Nat) : Int) / 2 * (n : Int) := by
-    have hrange : (Finset.range n).sum (fun x => (x : Int)) =
-        (n : Int) * ((n - 1 : Nat) : Int) / 2 := by
-      rw [← Nat.cast_sum]
-      simp [Finset.sum_range_id]
-    simp only [FordCellDomain, Int.reduceNeg, Finset.product_eq_sprod, Finset.coe_product,
-        Finset.coe_range, Zsqrtd.mk.injEq, Nat.cast_inj, Prod.forall, Prod.mk.injEq,
-        implies_true, Set.injOn_of_eq_iff_eq, Finset.sum_image, Finset.sum_product,
-        Finset.sum_const, Finset.card_range, Int.nsmul_eq_mul, domain]
-    conv_lhs => rw [← Finset.mul_sum (Finset.range n) (fun x => (x : Int)) (n : Int)]
-    rw [hrange]
-    ring
-  have hsumIm : domain.sum (fun z : GaussianInt => z.im) =
-      (n : Int) * ((n - 1 : Nat) : Int) / 2 * (n : Int) := by
-    have hrange : (Finset.range n).sum (fun x => (x : Int)) =
-        (n : Int) * ((n - 1 : Nat) : Int) / 2 := by
-      rw [← Nat.cast_sum]
-      simp [Finset.sum_range_id]
-    simp only [FordCellDomain, Int.reduceNeg, Finset.product_eq_sprod, Finset.coe_product,
-        Finset.coe_range, Zsqrtd.mk.injEq, Nat.cast_inj, Prod.forall, Prod.mk.injEq,
-        implies_true, Set.injOn_of_eq_iff_eq, Finset.sum_image, Finset.sum_product,
-        Finset.sum_const, Finset.card_range, Int.nsmul_eq_mul, domain]
-    rw [hrange]
-    ring
-  change (if domain.Nonempty then
-    ((↑(domain.sum (fun z : GaussianInt => z.re) : Int) / ↑domain.card + (1 / 2 : Real)),
-     (↑(domain.sum (fun z : GaussianInt => z.im) : Int) / ↑domain.card + (1 / 2 : Real))) else
-         _) = _
-  rw [ite_eq_left hne, hcard, hsumRe, hsumIm]
-  norm_num
-  field_simp
-  have arith := Finset.sum_range_id_mul_two n
-  have rangeSum : (Finset.range n).sum (fun x => (x : Int)) =
-      (n : Int) * ((n - 1 : Nat) : Int) / 2 := by
-    rw [← Nat.cast_sum]
-    simp [Finset.sum_range_id]
-  have arithCast : ((Finset.range n).sum (fun x => (x : Int))) * 2 =
-      (n : Int) * ((n - 1 : Nat) : Int) := by
-    rw [← Nat.cast_sum]
-    exact_mod_cast arith
-  rw [rangeSum] at arithCast
-  have hqcast : ((n - 1 : Nat) : Int) = (n : Int) - 1 := by omega
-  rw [hqcast] at arithCast
-  norm_num [Int.subNatNat, pow_two]
-  have natIdentity : n * (n - 1) / 2 * 2 + n = n * n := by
-    rw [← Finset.sum_range_id n]
-    rw [Finset.sum_range_id_mul_two]
-    rw [Nat.mul_sub_left_distrib]
-    simp only [Nat.mul_one]
-    have bound : n ≤ n * n := by
-      calc
-        n = n * 1 := by omega
-        _ ≤ n * n := Nat.mul_le_mul_left n (by omega)
-    rw [Nat.sub_add_cancel bound]
-  exact_mod_cast natIdentity
+private abbrev fordCentroid := ApollonianSuperharmonic.P4210T1FordSquareCentroid
 
 private theorem rootCentroidEq :
     (by
@@ -670,16 +576,7 @@ private theorem hUoffSlope :
   intro P p pU hxU hyU
   constructor <;> linarith
 
-private theorem hpRootV :
-    (by
-      classical
-      exact
-        ∀ (h' : PartialOdometer), ∀ (p' : Real × Real), (PartialOdometerSlope h' = some p') → (∀
-            (pRootV : ℝ × ℝ), (PartialOdometerSlope h' = some pRootV) → (pRootV = p')) ) := by
-  classical
-  intro h' p' hs' pRootV hrootV
-  apply Option.some.inj
-  exact hrootV.symm.trans hs'
+private abbrev hpRootV := ApollonianSuperharmonic.LargeSecondRestrictions.hpRootU
 
 private theorem hVoffSlope :
     (by
@@ -913,7 +810,7 @@ theorem P4158T1LargeSecondRestrictions
       FordRecursiveQuadruple Q 0 = Ci.1.1 ∧ 1 < Q.q := by
 -- BODY
   classical
-  have hcurv := LargeSecondRestrictions.hcurv P Ci hCi hlarge horder T' u hc'
+  have hcurv := LargeSecondRestrictions.hcurv P Ci hCi hlarge horder
   have hqgt := LargeSecondRestrictions.hqgt P hcurv
   have hq0 : 1 < (FordRecursiveQuadruple P 0).1 := LargeSecondRestrictions.hq0 P hqgt
   have hd := TileOdometerReindexedDecomposition

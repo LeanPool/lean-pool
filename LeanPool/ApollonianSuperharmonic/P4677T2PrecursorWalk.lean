@@ -131,16 +131,7 @@ private theorem edge_parent :
   rcases he with ⟨c, hc, hshape⟩
   exact ⟨c, hTc hc, hshape⟩
 
-private theorem edge_parentB :
-    (by
-      classical
-      exact
-        ∀ (B : ProtoTile), ∀ (T : ProtoTile), T.cells ⊆ B.cells → ∀ e ∈ FootprintEdges T, e ∈
-            FootprintEdges B ) := by
-  classical
-  intro B T hTc e he
-  rcases he with ⟨c, hc, hshape⟩
-  exact ⟨c, hTc hc, hshape⟩
+private abbrev edge_parentB := ApollonianSuperharmonic.PrecursorWalkGeometry.edge_parent
 
 private theorem p₁chain :
     (by
@@ -190,19 +181,7 @@ private theorem p₁mem :
   have hzv := hp₁v z hz
   exact ⟨hXf hzv.1, hYf hzv.2⟩
 
-private theorem p₃mem :
-    (by
-      classical
-      exact
-        ∀ (A : ProtoTile), ∀ (B : ProtoTile), ∀ (Z : ProtoTile), ∀ (W : ProtoTile),
-            (FootprintVertices Z ⊆ FootprintVertices A) → ((FootprintVertices W ⊆
-            FootprintVertices B) → (∀ (p₃ : List GaussianInt), (∀ z ∈ p₃, z ∈ FootprintVertices Z
-            ∩ FootprintVertices W) → (∀ z ∈ p₃, z ∈ FootprintVertices A ∩ FootprintVertices B)))
-            ) := by
-  classical
-  intro A B Z W hZf hWf p₃ hp₃v z hz
-  have hzv := hp₃v z hz
-  exact ⟨hZf hzv.1, hWf hzv.2⟩
+private abbrev p₃mem := ApollonianSuperharmonic.PrecursorWalkGeometry.p₁mem
 
 private theorem qmem :
     (by
@@ -228,18 +207,7 @@ private theorem aq :
   have : a ∈ (q.toFinset : Set GaussianInt) := by rw [← hqvertices]; exact ha.2.2
   simpa using this
 
-private theorem bq :
-    (by
-      classical
-      exact
-        ∀ (Z : ProtoTile), ∀ (W : ProtoTile), ∀ (O : ProtoTile), ∀ (b : GaussianInt), (b ∈
-            BoundaryFootprintVertices Z ∧ b ∈ BoundaryFootprintVertices W ∧ b ∈
-            BoundaryFootprintVertices O) → (∀ (q : List GaussianInt), (BoundaryFootprintVertices
-            O = (↑q.toFinset : Set GaussianInt)) → (b ∈ q)) ) := by
-  classical
-  intro Z W O b hb q hqvertices
-  have : b ∈ (q.toFinset : Set GaussianInt) := by rw [← hqvertices]; exact hb.2.2
-  simpa using this
+private abbrev bq := ApollonianSuperharmonic.PrecursorWalkGeometry.aq
 
 private theorem S_symm :
     (by

@@ -1175,16 +1175,7 @@ private theorem hdv0 :
   intro n p x d hdv det2 m v i
   simpa [det2, v] using hdv i
 
-private theorem hdv'0 :
-    ∀ (n : Nat), ∀ (p : P3381T1PolygonBoundary n), ∀ (x : Real × Real), ∀ (d' : Real × Real),
-        (∀ i, d'.1 * (p.vertex i - x).2 - d'.2 * (p.vertex i - x).1 ≠ 0) → (
-    let det2 (v w : Real × Real) : Real := v.1 * w.2 - v.2 * w.1
-    let m := n+2
-    let v : Fin (m+1) → Real × Real := p.vertex
-    ∀ i, det2 d' (v i-x) ≠ 0) := by
-  classical
-  intro n p x d' hdv' det2 m v i
-  simpa [det2, v] using hdv' i
+private abbrev hdv'0 := ApollonianSuperharmonic.DirectionParityLemmas.hdv0
 
 private theorem hdn :
     ∀ (n : Nat), ∀ (p : P3381T1PolygonBoundary n), ∀ (x : Real × Real), ∀ (d : Real × Real),
@@ -1198,17 +1189,7 @@ private theorem hdn :
   rw [hz] at h
   exact h (by simp [det2])
 
-private theorem hd'n :
-    ∀ (n : Nat), ∀ (p : P3381T1PolygonBoundary n), ∀ (x : Real × Real), ∀ (d' : Real × Real),
-    let det2 (v w : Real × Real) : Real := v.1 * w.2 - v.2 * w.1
-    let m := n+2
-    let v : Fin (m+1) → Real × Real := p.vertex
-    (∀ i, det2 d' (v i-x) ≠ 0) → (d' ≠ 0) := by
-  classical
-  intro n p x d' det2 m v hdv'0 hz
-  have h := hdv'0 0
-  rw [hz] at h
-  exact h (by simp [det2])
+private abbrev hd'n := ApollonianSuperharmonic.DirectionParityLemmas.hdn
 
 end DirectionParityLemmas
 

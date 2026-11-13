@@ -51,32 +51,33 @@ private theorem order_forces :
     (by
       classical
       exact
-        ∀ (q : Fin 4 → CircleCoordinates), ∀ (T : ProtoTile), ∀ (a : Fin 3), ∀ (g :
-            BandPackingSymmetry), (BandPackingSymmetryScopedPhase g ![q (0 : Fin (4 : ℕ)), q
-            a.succ, q (a + (1 : Fin (3 : ℕ))).succ, q (a + (2 : Fin (3 : ℕ))).succ] false) → ((∀
-            (r : Fin (4 : ℕ) → CircleCoordinates), ProperBandQuadruple r → r (0 : Fin (4 : ℕ)) =
-            ![q (0 : Fin (4 : ℕ)), q a.succ, q (a + (1 : Fin (3 : ℕ))).succ, q (a + (2 : Fin (3 :
-            ℕ))).succ] (1 : Fin (Nat.succ (3 : ℕ))) → r (2 : Fin (4 : ℕ)) = ![q (0 : Fin (4 :
-            ℕ)), q a.succ, q (a + (1 : Fin (3 : ℕ))).succ, q (a + (2 : Fin (3 : ℕ))).succ] (2 :
-            Fin (Nat.succ (3 : ℕ))) → r (3 : Fin (4 : ℕ)) = ![q (0 : Fin (4 : ℕ)), q a.succ, q (a
-            + (1 : Fin (3 : ℕ))).succ, q (a + (2 : Fin (3 : ℕ))).succ] (3 : Fin (Nat.succ (3 :
-            ℕ))) → BandPackingSymmetryScopedPhase g r false) → (∀ (cfg :
-            BandOrderedGeneralConfiguration (BandPackingSymmetryQuadrupleAction g ![q 0, q
-            a.succ, q (a + 1).succ, q (a + 2).succ])), ∀ (C : BandCircle),
-            (BandOrderedGeneralLayoutCertificate (BandPackingSymmetryQuadrupleAction g ![q 0, q
-            a.succ, q (a + 1).succ, q (a + 2).succ]) cfg C (BandPackingSymmetryTileAction g T)) →
-            (((q (2 : Fin (4 : ℕ))).1 ≤ (q (1 : Fin (4 : ℕ))).1) → (((q (3 : Fin (4 : ℕ))).1 ≤ (q
-            (2 : Fin (4 : ℕ))).1) → ((∀ (C : CircleCoordinates), (BandPackingSymmetryCircleAction
-            g C).1 = C.1) → (((BandPackingSymmetryQuadrupleAction g ![q (0 : Fin (4 : ℕ)), q
-            a.succ, q (a + (1 : Fin (3 : ℕ))).succ, q (a + (2 : Fin (3 : ℕ))).succ] (2 : Fin (4 :
-            ℕ))).1 < (BandPackingSymmetryQuadrupleAction g ![q (0 : Fin (4 : ℕ)), q a.succ, q (a
-            + (1 : Fin (3 : ℕ))).succ, q (a + (2 : Fin (3 : ℕ))).succ] (1 : Fin (4 : ℕ))).1) →
-            ((((BandPackingSymmetryQuadrupleAction g ![q 0, q a.succ, q (a + 1).succ, q (a +
-            2).succ]) 3).1 < ((BandPackingSymmetryQuadrupleAction g ![q 0, q a.succ, q (a +
-            1).succ, q (a + 2).succ]) 2).1) → (a = 0 ∧ BandPackingSymmetryReversesOrientation g =
-            false)))))))) ) := by
+        ∀ (q : Fin 4 → CircleCoordinates),
+          ∀ (a : Fin 3),
+            ∀ (g : BandPackingSymmetry),
+              (q (2 : Fin (4 : ℕ))).1 ≤ (q (1 : Fin (4 : ℕ))).1 →
+                (q (3 : Fin (4 : ℕ))).1 ≤ (q (2 : Fin (4 : ℕ))).1 →
+                  (∀ (C : CircleCoordinates),
+                      (BandPackingSymmetryCircleAction g C).1 = C.1) →
+                    (BandPackingSymmetryQuadrupleAction g
+                            ![q (0 : Fin (4 : ℕ)), q a.succ,
+                              q (a + (1 : Fin (3 : ℕ))).succ,
+                              q (a + (2 : Fin (3 : ℕ))).succ]
+                            (2 : Fin (4 : ℕ))).1 <
+                        (BandPackingSymmetryQuadrupleAction g
+                            ![q (0 : Fin (4 : ℕ)), q a.succ,
+                              q (a + (1 : Fin (3 : ℕ))).succ,
+                              q (a + (2 : Fin (3 : ℕ))).succ]
+                            (1 : Fin (4 : ℕ))).1 →
+                      ((BandPackingSymmetryQuadrupleAction g
+                                ![q 0, q a.succ, q (a + 1).succ, q (a + 2).succ])
+                              3).1 <
+                          ((BandPackingSymmetryQuadrupleAction g
+                                ![q 0, q a.succ, q (a + 1).succ, q (a + 2).succ])
+                              2).1 →
+                        a = 0 ∧ BandPackingSymmetryReversesOrientation g = false
+    ) := by
   classical
-  intro q T a g hphase hpredecessor cfg C cert h12 h23 curvature normalized12 normalized23
+  intro q a g h12 h23 curvature normalized12 normalized23
   cases hg : BandPackingSymmetryReversesOrientation g <;> fin_cases a <;>
     simp [BandPackingSymmetryQuadrupleAction, hg, curvature] at normalized12 normalized23 ⊢ <;>
     omega
@@ -471,7 +472,7 @@ theorem P4564T2GeneralT6Transport (q : Fin 4 → CircleCoordinates) (hq : Proper
         ![q 0, q a.succ, q (a + 1).succ, q (a + 2).succ]) 2).1 := GeneralT6Geometry.normalized23
             q a g cfg
   have order_forces : a = 0 ∧ BandPackingSymmetryReversesOrientation g = false :=
-      GeneralT6Geometry.order_forces q T a g hphase hpredecessor cfg C cert h12 h23 curvature
+      GeneralT6Geometry.order_forces q a g h12 h23 curvature
       normalized12 normalized23
   obtain ⟨rfl, hg⟩ := order_forces
   have hrotate :

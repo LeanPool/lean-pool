@@ -506,25 +506,24 @@ private theorem lowFormula :
         let A := P.p₁;
         let B := P.p₂;
         let cdiv (n d : Int) := -(-n / d);
-        FordFareyParameter →
-          (∀ (t : Int), 0 ≤ t → t ≤ a → g ⟨a, t⟩ = A * t ∧ g ⟨t, a⟩ = A * t) →
+        (∀ (t : Int), 0 ≤ t → t ≤ a → g ⟨a, t⟩ = A * t ∧ g ⟨t, a⟩ = A * t) →
+          (∀ (t : Int),
+              0 ≤ t →
+                t ≤ a →
+                  g ⟨a - 1, t⟩ = A * t - A * t / a ∧ g ⟨t, a - 1⟩ = A * t - A * t / a) →
             (∀ (t : Int),
                 0 ≤ t →
-                  t ≤ a →
-                    g ⟨a - 1, t⟩ = A * t - A * t / a ∧ g ⟨t, a - 1⟩ = A * t - A * t / a) →
-              (∀ (t : Int),
-                  0 ≤ t →
+                  t ≤ b →
+                    g ⟨a + 1, t⟩ = cdiv (B * t) b + A * t ∧
+                      g ⟨t, a + 1⟩ = cdiv (B * t) b + A * t) →
+              ∀ (t : ℤ),
+                (0 : ℤ) < t →
+                  t < a →
                     t ≤ b →
-                      g ⟨a + 1, t⟩ = cdiv (B * t) b + A * t ∧
-                        g ⟨t, a + 1⟩ = cdiv (B * t) b + A * t) →
-                ∀ (t : ℤ),
-                  (0 : ℤ) < t →
-                    t < a →
-                      t ≤ b →
-                        FourNeighborLaplacian g ⟨a, t⟩ = cdiv (B * t) b - A * t / a ∧
-                          FourNeighborLaplacian g ⟨t, a⟩ = cdiv (B * t) b - A * t / a := by
+                      FourNeighborLaplacian g ⟨a, t⟩ = cdiv (B * t) b - A * t / a ∧
+                        FourNeighborLaplacian g ⟨t, a⟩ = cdiv (B * t) b - A * t / a := by
   classical
-  intro P g lapCoord a b A B cdiv P₁ edge0 near0 outward t ht hta htb
+  intro P g lapCoord a b A B cdiv edge0 near0 outward t ht hta htb
   have hc := edge0 t (by omega) (by omega)
   have hm := edge0 (t - 1) (by omega) (by omega)
   have hp' := edge0 (t + 1) (by omega) (by omega)
@@ -1226,7 +1225,7 @@ private theorem interiorLaplacian :
   have lowFormula (t : Int) (ht : 0 < t) (hta : t < a) (htb : t ≤ b) :
       FourNeighborLaplacian g ⟨a, t⟩ = cdiv (B * t) b - A * t / a ∧
       FourNeighborLaplacian g ⟨t, a⟩ = cdiv (B * t) b - A * t / a :=
-          FordLaplacianProof.lowFormula P lapCoord P₁ edge0 near0 outward t ht hta htb
+          FordLaplacianProof.lowFormula P lapCoord edge0 near0 outward t ht hta htb
   have highFormula (t : Int) (ht : 0 < t) (hta : t ≤ a) (htb : t < b) :
       FourNeighborLaplacian g ⟨(P.q : Int) - t, b⟩ = cdiv (B * t) b - A * t / a ∧
       FourNeighborLaplacian g ⟨b, (P.q : Int) - t⟩ = cdiv (B * t) b - A * t / a :=

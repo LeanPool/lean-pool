@@ -6,6 +6,7 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.BoundaryFootprintInclusion
 
 public import LeanPool.ApollonianSuperharmonic.OdometerWeb
 
@@ -190,14 +191,19 @@ private theorem hcorner :
     (by
       classical
       exact
-        ∀ (C : BandCircle), ∀ (T : ProtoTile), ∀ (x : GaussianInt), ∀ (v : GaussianInt), ∀ (hv :
-            v ∈ TilingLattice C), (x ∈ BoundaryFootprintVertices (TileTranslation T v)) → (∀ (P :
-            PeriodicTileComplex ↥(TilingLattice C)),
-        let iv : TilingLattice C := ⟨v, hv⟩
-        (x ∈ BoundaryFootprintVertices (P.tile iv)) → (((P.tile iv).cells.Nonempty) → (∃ y ∈
-            (P.tile iv).cells, y = x ∨ y = x - 1 ∨ y = x - 1 - ⟨0, 1⟩ ∨ y = x - ⟨0, 1⟩))) ) := by
+        ∀ (C : BandCircle),
+          ∀ (x : GaussianInt),
+            ∀ (v : GaussianInt),
+              ∀ (hv : v ∈ TilingLattice C),
+                ∀ (P : PeriodicTileComplex ↥(TilingLattice C)),
+                  let iv : TilingLattice C := ⟨v, hv⟩
+                  x ∈ BoundaryFootprintVertices (P.tile iv) →
+                    (P.tile iv).cells.Nonempty →
+                      ∃ y ∈ (P.tile iv).cells,
+                        y = x ∨ y = x - 1 ∨ y = x - 1 - ⟨0, 1⟩ ∨ y = x - ⟨0, 1⟩
+    ) := by
   classical
-  intro C T x v hv hx P iv hxi hcells
+  intro C x v hv P iv hxi hcells
   rw [BoundaryFootprintVertices, ite_eq_left hcells] at hxi
   rcases hxi with ⟨e, he, hxe⟩
   rcases he with ⟨z, ⟨rfl, hs⟩ | ⟨rfl, hs⟩⟩
@@ -234,16 +240,23 @@ private theorem hcornerOutside :
     (by
       classical
       exact
-        ∀ (C : BandCircle), ∀ (T : ProtoTile), ∀ (x : GaussianInt), ∀ (v : GaussianInt), ∀ (hv :
-            v ∈ TilingLattice C), (x ∈ BoundaryFootprintVertices (TileTranslation T v)) → (∀ (P :
-            PeriodicTileComplex ↥(TilingLattice C)),
-        let iv : TilingLattice C := ⟨v, hv⟩
-        (x ∈ BoundaryFootprintVertices (P.tile iv)) → (((P.tile iv).cells.Nonempty) → ((∃ y ∈
-            (P.tile iv).cells, y = x ∨ y = x - 1 ∨ y = x - 1 - ⟨0, 1⟩ ∨ y = x - ⟨0, 1⟩) → (∃ y, y
-            ∉ (P.tile iv).cells ∧ (y = x ∨ y = x - 1 ∨ y = x - 1 - ⟨0, 1⟩ ∨ y = x - ⟨0, 1⟩))))) )
+        ∀ (C : BandCircle),
+          ∀ (x : GaussianInt),
+            ∀ (v : GaussianInt),
+              ∀ (hv : v ∈ TilingLattice C),
+                ∀ (P : PeriodicTileComplex ↥(TilingLattice C)),
+                  let iv : TilingLattice C := ⟨v, hv⟩
+                  x ∈ BoundaryFootprintVertices (P.tile iv) →
+                    (P.tile iv).cells.Nonempty →
+                      (∃ y ∈ (P.tile iv).cells,
+                          y = x ∨ y = x - 1 ∨ y = x - 1 - ⟨0, 1⟩ ∨ y = x - ⟨0, 1⟩) →
+                        ∃ y,
+                          y ∉ (P.tile iv).cells ∧
+                            (y = x ∨ y = x - 1 ∨ y = x - 1 - ⟨0, 1⟩ ∨ y = x - ⟨0, 1⟩)
+    )
             := by
   classical
-  intro C T x v hv hx P iv hxi hcells hcorner
+  intro C x v hv P iv hxi hcells hcorner
   rw [BoundaryFootprintVertices, ite_eq_left hcells] at hxi
   rcases hxi with ⟨e, he, hxe⟩
   rcases he with ⟨z, ⟨rfl, hs⟩ | ⟨rfl, hs⟩⟩
@@ -718,24 +731,7 @@ private theorem hedgeBoundary :
       · simpa [sector, owner, next] using ha0
       · exact hsectorNot 0 3 (by simpa [owner, next] using hij.symm)
 
-private theorem boundaryEdge :
-    (by
-      classical
-      exact
-        ∀ (U : ProtoTile), ∀ (e : Finset GaussianInt), (e ∈ BoundaryFootprintEdges U) → (e ∈
-            FootprintEdges U) ) := by
-  classical
-  intro U e he
-  let I : GaussianInt := ⟨0, 1⟩
-  rcases he with ⟨z, ⟨rfl, h⟩ | ⟨rfl, h⟩⟩
-  · rcases h with ⟨hz, _⟩ | ⟨_, hz⟩
-    · exact ⟨z, hz, Or.inl rfl⟩
-    · refine ⟨z - I, hz, Or.inr (Or.inr (Or.inr ?_))⟩
-      congr 1 <;> simp [I, Zsqrtd.ext_iff]
-  · rcases h with ⟨hz, _⟩ | ⟨_, hz⟩
-    · exact ⟨z, hz, Or.inr (Or.inl rfl)⟩
-    · refine ⟨z - 1, hz, Or.inr (Or.inr (Or.inl ?_))⟩
-      congr 1 <;> simp []
+private abbrev boundaryEdge := ApollonianSuperharmonic.BoundaryFootprintInclusion.boundaryEdge
 
 private theorem hnewe :
     (by
@@ -1146,22 +1142,7 @@ private theorem hslopeU :
   rw [(PartialOdometerAffineTranslateFormulas h u au 0).2.2.2.2.2, hp]
   rfl
 
-private theorem hslopeU' :
-    (by
-      classical
-      exact
-        ∀ (C : BandCircle), ∀ (h : PartialOdometer), ∀ (a0 : ↥(TilingLattice C)), ∀ (a1 :
-            ↥(TilingLattice C)), ∀ (a2 : ↥(TilingLattice C)), ∀ (a3 : ↥(TilingLattice C)),
-        let owner : Fin 4 → TilingLattice C := ![a0, a1, a2, a3]
-        ∀ (w : Fin (4 : ℕ)), ∀ (p : ℝ × ℝ), (PartialOdometerSlope h = some p) → (
-        let u' : GaussianInt := owner w
-        ∀ (au' : GaussianInt),
-        let hu'Odo : PartialOdometer := PartialOdometerAffineTranslate h u' au' 0
-        PartialOdometerSlope hu'Odo = some (p.1 + (au'.re : ℝ), p.2 + (au'.im : ℝ))) ) := by
-  classical
-  intro C h a0 a1 a2 a3 owner w p hp u' au' hu'Odo
-  rw [(PartialOdometerAffineTranslateFormulas h u' au' 0).2.2.2.2.2, hp]
-  rfl
+private abbrev hslopeU' := ApollonianSuperharmonic.WebLaplacianGeometry.hslopeU
 
 private theorem cellVertex :
     (by
@@ -1277,56 +1258,81 @@ private theorem hstar :
     (by
       classical
       exact
-        ∀ (C : BandCircle), ∀ (T : ProtoTile), ∀ (h : PartialOdometer), ∀ (x : GaussianInt), ∀ (v
-            : GaussianInt), ∀ (hv : v ∈ TilingLattice C), (x ∈ BoundaryFootprintVertices
-            (TileTranslation T v)) → (∀ (P : PeriodicTileComplex ↥(TilingLattice C)),
-        let iv : TilingLattice C := ⟨v, hv⟩
-        (x ∈ BoundaryFootprintVertices (P.tile iv)) → ((∃ y ∈ (P.tile iv).cells, y = x ∨ y = x -
-            1 ∨ y = x - 1 - ⟨0, 1⟩ ∨ y = x - ⟨0, 1⟩) → ((∃ y, y ∉ (P.tile iv).cells ∧ (y = x ∨ y
-            = x - 1 ∨ y = x - 1 - ⟨0, 1⟩ ∨ y = x - ⟨0, 1⟩)) → (∀ (a0 : ↥(TilingLattice C)), (x ∈
-            (P.tile a0).cells) → ((∀ (y : ↥(TilingLattice C)), (fun (a : ↥(TilingLattice C)) => x
-            ∈ (P.tile a).cells) y → y = a0) → (∀ (a1 : ↥(TilingLattice C)), (x - (1 :
-            LatticeCell) ∈ (P.tile a1).cells) → ((∀ (y : ↥(TilingLattice C)), (fun (a :
-            ↥(TilingLattice C)) => x - (1 : LatticeCell) ∈ (P.tile a).cells) y → y = a1) → (∀ (a2
-            : ↥(TilingLattice C)), (x - (1 : LatticeCell) - (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt) ∈
-            (P.tile a2).cells) → ((∀ (y : ↥(TilingLattice C)), (fun (a : ↥(TilingLattice C)) => x
-            - (1 : LatticeCell) - (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt) ∈ (P.tile a).cells) y → y =
-            a2) → (∀ (a3 : ↥(TilingLattice C)), (x - (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt) ∈ (P.tile
-            a3).cells) → ((∀ (y : ↥(TilingLattice C)), (fun (a : ↥(TilingLattice C)) => x - (⟨(0
-            : ℤ), (1 : ℤ)⟩ : GaussianInt) ∈ (P.tile a).cells) y → y = a3) → (
-        let owner : Fin 4 → TilingLattice C := ![a0, a1, a2, a3]
-        ∀ (m : Fin (4 : ℕ)), ∀ (w : Fin (4 : ℕ)),
-        let next : Fin 4 → Fin 4 := ![1, 2, 3, 0]
-        ∀ (e : Fin (4 : ℕ)),
-        let sector : Fin 4 → GaussianInt :=
-          ![x, x - 1, x - 1 - ⟨0, 1⟩, x - ⟨0, 1⟩]
-        let edge : Fin 4 → Finset GaussianInt :=
-          ![{x, x + ⟨0, 1⟩}, {x - 1, x},
-            {x - ⟨0, 1⟩, x}, {x, x + 1}]
-        (∀ i, sector i ∈ (P.tile (owner i)).cells) → ((∀ (i : Fin 4), ∀ (j : Fin 4), (owner i ≠
-            owner j) → (sector j ∉ (P.tile (owner i)).cells)) → ((∀ (i : Fin 4), (owner i ≠ owner
-            (next i)) → (edge i ∈ BoundaryFootprintEdges (P.tile (owner i)) ∧ edge i ∈
-            BoundaryFootprintEdges (P.tile (owner (next i))))) → ((edge e ∈
-            BoundaryFootprintEdges (P.tile (owner e))) → ((edge e ∈ BoundaryFootprintEdges
-            (P.tile (owner (next e)))) → (
-        let u : GaussianInt := owner m
-        let u' : GaussianInt := owner w
-        ∀ (au : GaussianInt), ∀ (au' : GaussianInt),
-        let huOdo : PartialOdometer := PartialOdometerAffineTranslate h u au 0
-        let hu'Odo : PartialOdometer := PartialOdometerAffineTranslate h u' au' 0
-        (∀ (i : Fin 4), ∀ (y : GaussianInt), (y = sector i ∨ y = sector i + 1 ∨ y = sector i +
-            ⟨0, 1⟩ ∨ y = sector i + 1 + ⟨0, 1⟩) → (y ∈ FootprintVertices (P.tile (owner i)))) →
-            ((∀ i : Fin 4, x = sector i ∨ x = sector i + 1 ∨ x = sector i + ⟨0, 1⟩ ∨ x = sector i
-            + 1 + ⟨0, 1⟩) → ((∀ (i : Fin 4), ∀ (j : Fin 4), (i ≠ j) → (owner i = owner m ∨ owner
-            i = owner w ∨ owner j = owner m ∨ owner j = owner w)) → ((∀ (y : GaussianInt), (y ∈
-            FootprintVertices (P.tile (owner m)) ∨ y ∈ FootprintVertices (P.tile (owner w))) → (y
-            ∈ huOdo.domain ∨ y ∈ hu'Odo.domain)) → ((x ∈ huOdo.domain) → ((x ∈ hu'Odo.domain) →
-            (∀ y, y = x ∨ y = x + 1 ∨ y = x - 1 ∨ y = x + ⟨0, 1⟩ ∨ y = x - ⟨0, 1⟩ → y ∈
-            huOdo.domain ∨ y ∈ hu'Odo.domain))))))))))))))))))))))) ) := by
+        ∀ (C : BandCircle),
+          ∀ (h : PartialOdometer),
+            ∀ (x : GaussianInt),
+              ∀ (v : GaussianInt),
+                v ∈ TilingLattice C →
+                  ∀ (P : PeriodicTileComplex ↥(TilingLattice C)),
+                    ∀ (a0 : ↥(TilingLattice C)),
+                      (∀ (y : ↥(TilingLattice C)),
+                          (fun (a : ↥(TilingLattice C)) => x ∈ (P.tile a).cells) y →
+                            y = a0) →
+                        ∀ (a1 : ↥(TilingLattice C)),
+                          (∀ (y : ↥(TilingLattice C)),
+                              (fun (a : ↥(TilingLattice C)) =>
+                                x - (1 : LatticeCell) ∈ (P.tile a).cells)
+                                y →
+                                y = a1) →
+                            ∀ (a2 : ↥(TilingLattice C)),
+                              (∀ (y : ↥(TilingLattice C)),
+                                (fun (a : ↥(TilingLattice C)) =>
+                                x - (1 : LatticeCell) -
+                                (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt) ∈
+                                (P.tile a).cells)
+                                y →
+                                y = a2) →
+                                ∀ (a3 : ↥(TilingLattice C)),
+                                (∀ (y : ↥(TilingLattice C)),
+                                (fun (a : ↥(TilingLattice C)) =>
+                                x - (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt) ∈ (P.tile a).cells)
+                                y →
+                                y = a3) →
+                                let owner : Fin 4 → TilingLattice C := ![a0, a1, a2, a3];
+                              ∀ (m : Fin (4 : ℕ)),
+                                ∀ (w : Fin (4 : ℕ)),
+                                let sector : Fin 4 → GaussianInt :=
+                                ![x, x - 1, x - 1 - ⟨0, 1⟩, x - ⟨0, 1⟩];
+                              (∀ (i : Fin 4),
+                                ∀ (j : Fin 4),
+                                owner i ≠ owner j → sector j ∉ (P.tile (owner i)).cells) →
+                                let u : GaussianInt := owner m;
+                              let u' : GaussianInt := owner w;
+                              ∀ (au : GaussianInt),
+                                ∀ (au' : GaussianInt),
+                                let huOdo : PartialOdometer :=
+                                PartialOdometerAffineTranslate h u au 0;
+                              let hu'Odo : PartialOdometer :=
+                                PartialOdometerAffineTranslate h u' au' 0;
+                              (∀ (i : Fin 4),
+                                ∀ (y : GaussianInt),
+                                y = sector i ∨
+                                y = sector i + 1 ∨
+                                y = sector i + ⟨0, 1⟩ ∨ y = sector i + 1 + ⟨0, 1⟩ →
+                                y ∈ FootprintVertices (P.tile (owner i))) →
+                                (∀ i : Fin 4,
+                                x = sector i ∨
+                                x = sector i + 1 ∨
+                                x = sector i + ⟨0, 1⟩ ∨ x = sector i + 1 + ⟨0, 1⟩) →
+                                (∀ (i : Fin 4),
+                                ∀ (j : Fin 4),
+                                i ≠ j →
+                                owner i = owner m ∨
+                                owner i = owner w ∨
+                                owner j = owner m ∨ owner j = owner w) →
+                                (∀ (y : GaussianInt),
+                                y ∈ FootprintVertices (P.tile (owner m)) ∨
+                                y ∈ FootprintVertices (P.tile (owner w)) →
+                                y ∈ huOdo.domain ∨ y ∈ hu'Odo.domain) →
+                                x ∈ huOdo.domain →
+                                ∀ y,
+                                y = x ∨
+                                y = x + 1 ∨ y = x - 1 ∨ y = x + ⟨0, 1⟩ ∨ y = x - ⟨0, 1⟩ →
+                                y ∈ huOdo.domain ∨ y ∈ hu'Odo.domain
+    ) := by
   classical
-  intro C T h x v hv hx P iv hxi hcorner hcornerOutside a0 ha0 hu0 a1 ha1 hu1 a2 ha2 hu2 a3 ha3
-      hu3 owner m w next e sector edge hsector hsectorNot hedgeBoundary edge_mem_e edge_mem_next
-      u u' au au' huOdo hu'Odo cellVertex sectorCornerX pairCovered toDomains hxM hxW y hy
+  intro C h x v hv P a0 hu0 a1 hu1 a2 hu2 a3 hu3 owner m w sector hsectorNot u u' au au' huOdo
+      hu'Odo cellVertex sectorCornerX pairCovered toDomains hxM y hy
   rcases hy with rfl | rfl | rfl | rfl | rfl
   · exact Or.inl hxM
   · have hpair : x + 1 ∈ FootprintVertices (P.tile (owner m)) ∨
@@ -1634,8 +1640,8 @@ theorem PeriodicBoundaryWebLaplacian (C : BandCircle)
     have hxi : x ∈ BoundaryFootprintVertices (P.tile iv) := by
       simpa [hPv] using hx
     have hcells := WebLaplacianGeometry.hcells C v hv P
-    have hcorner := WebLaplacianGeometry.hcorner C T x v hv hx P hxi hcells
-    have hcornerOutside := WebLaplacianGeometry.hcornerOutside C T x v hv hx P hxi hcells hcorner
+    have hcorner := WebLaplacianGeometry.hcorner C x v hv P hxi hcells
+    have hcornerOutside := WebLaplacianGeometry.hcornerOutside C x v hv P hxi hcells hcorner
     obtain ⟨a0, ha0, hu0⟩ := PeriodicTileIndexedMultiplicityOne P x
     obtain ⟨a1, ha1, hu1⟩ := PeriodicTileIndexedMultiplicityOne P (x - 1)
     obtain ⟨a2, ha2, hu2⟩ :=
@@ -1746,11 +1752,10 @@ theorem PeriodicBoundaryWebLaplacian (C : BandCircle)
         (TileTranslation T u') huOdo hu'Odo hadjOdo).1
     have hweb := (OdometerWeb).1 C (TileTranslation T u)
       (TileTranslation T u') huOdo hu'Odo g x hcompat hextu hextu' hxM hxW
-          (WebLaplacianGeometry.hstar C T h x v hv hx P hxi hcorner hcornerOutside a0 ha0 hu0 a1
-          ha1 hu1 a2 ha2 hu2 a3 ha3 hu3 m w e hsector hsectorNot hedgeBoundary edge_mem_e
-          edge_mem_next au au' cellVertex sectorCornerX (WebLaplacianGeometry.pairCovered C a0 a1
+          (WebLaplacianGeometry.hstar C h x v hv P a0 hu0 a1 hu1 a2 hu2 a3 hu3 m w hsectorNot au
+              au' cellVertex sectorCornerX (WebLaplacianGeometry.pairCovered C a0 a1
           a2 a3 m w hcover) (WebLaplacianGeometry.toDomains C T h P a0 a1 a2 a3 m w au au' hdomu
-          hdomu' tileM tileW) hxM hxW)
+          hdomu' tileM tileW) hxM)
     exact hweb.1 hadjOdo
 
 end ApollonianSuperharmonic

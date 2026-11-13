@@ -413,12 +413,7 @@ private theorem huOut (U : ProtoTile) (u : ApollonianSuperharmonic.LatticeCell) 
   have := huMax (u + 1) hu1
   simp at this
 
-private theorem hvOut (V : ProtoTile) (v' : ApollonianSuperharmonic.LatticeCell) (hvMax : ∀ x' ∈
-    V.cells, x'.re ≤ v'.re) : v' + 1 ∉ V.cells := by
-  classical
-  intro hv1
-  have := hvMax (v' + 1) hv1
-  simp at this
+private abbrev hvOut := ApollonianSuperharmonic.CommonBoundaryAcyclicityConstruction.huOut
 
 private theorem huNotV (U : ProtoTile) (V : ProtoTile) (hdisjoint : Disjoint U.cells V.cells) (u
     : ApollonianSuperharmonic.LatticeCell) (hu : u ∈ U.cells) : u ∉ V.cells := by
@@ -436,11 +431,7 @@ private theorem hUne (u : ApollonianSuperharmonic.LatticeCell) : u + 1 ≠ u + 1
   apply_fun Zsqrtd.im at h
   simp at h
 
-private theorem hVne (v' : ApollonianSuperharmonic.LatticeCell) : v' + 1 ≠ v' + 1 + ⟨0, 1⟩ := by
-  classical
-  intro h
-  apply_fun Zsqrtd.im at h
-  simp at h
+private abbrev hVne := ApollonianSuperharmonic.CommonBoundaryAcyclicityConstruction.hUne
 
 private theorem hUright (U : ProtoTile) (u : ApollonianSuperharmonic.LatticeCell) (hu : u ∈
     U.cells) (huMax : ∀ x' ∈ U.cells, x'.re ≤ u.re) : ({u + 1, u + 1 + ⟨0, 1⟩} : Finset
@@ -456,19 +447,7 @@ private theorem hUright (U : ProtoTile) (u : ApollonianSuperharmonic.LatticeCell
   right
   simpa [Zsqrtd.ext_iff] using And.intro huOut hu
 
-private theorem hVright (V : ProtoTile) (v' : ApollonianSuperharmonic.LatticeCell) (hv' : v' ∈
-    V.cells) (hvMax : ∀ x' ∈ V.cells, x'.re ≤ v'.re) : ({v' + 1, v' + 1 + ⟨0, 1⟩} : Finset
-    GaussianInt) ∈
-      BoundaryFootprintEdges V := by
-  classical
-  have vertical_boundary_iff (T : ProtoTile) (z : GaussianInt) :
-      ({z, z + ⟨0, 1⟩} : Finset GaussianInt) ∈ BoundaryFootprintEdges T ↔
-        ((z ∈ T.cells ∧ z - 1 ∉ T.cells) ∨
-          (z ∉ T.cells ∧ z - 1 ∈ T.cells)) := vertical_boundary_iff T z
-  have hvOut : v' + 1 ∉ V.cells := hvOut V v' hvMax
-  apply (vertical_boundary_iff V (v' + 1)).mpr
-  right
-  simpa [Zsqrtd.ext_iff] using And.intro hvOut hv'
+private abbrev hVright := ApollonianSuperharmonic.CommonBoundaryAcyclicityConstruction.hUright
 
 private theorem hUrightV (U : ProtoTile) (V : ProtoTile) (hUcycle : SimpleGridCycle
     (BoundaryFootprintVertices U)

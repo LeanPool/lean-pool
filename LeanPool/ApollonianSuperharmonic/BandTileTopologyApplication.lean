@@ -6,6 +6,7 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.BoundaryFootprintInclusion
 public import LeanPool.ApollonianSuperharmonic.TileTranslationProperties
 
 public import LeanPool.ApollonianSuperharmonic.BandRegularTileTouchingClassification
@@ -41,23 +42,7 @@ private theorem family_eq :
   · rintro ⟨u, rfl⟩
     exact ⟨u.1, u.2, htile u⟩
 
-private theorem edge_in_footprint :
-    (by
-      classical
-      exact
-        ∀ (S : ProtoTile), ∀ (e : Finset GaussianInt), (e ∈ BoundaryFootprintEdges S) → (e ∈
-            FootprintEdges S) ) := by
-  classical
-  intro S e he
-  rcases he with ⟨z, ⟨rfl, hz⟩ | ⟨rfl, hz⟩⟩
-  · rcases hz with ⟨hz, _⟩ | ⟨_, hz⟩
-    · exact ⟨z, hz, Or.inl rfl⟩
-    · exact ⟨z - ⟨0, 1⟩, hz, Or.inr (Or.inr (Or.inr (by
-        ext; simp [Zsqrtd.ext_iff])))⟩
-  · rcases hz with ⟨hz, _⟩ | ⟨_, hz⟩
-    · exact ⟨z, hz, Or.inr (Or.inl rfl)⟩
-    · exact ⟨z - 1, hz, Or.inr (Or.inr (Or.inl (by
-        ext; simp [Zsqrtd.ext_iff])))⟩
+private abbrev edge_in_footprint := ApollonianSuperharmonic.BoundaryFootprintInclusion.boundaryEdge
 
 private theorem centroid_difference :
     (by
@@ -97,21 +82,32 @@ private theorem border_touch :
     (by
       classical
       exact
-        ∀ (C : BandCircle), ∀ (q : Fin 4 → CircleCoordinates), ∀ (T : ProtoTile), (BandPrototile
-            (q (0 : Fin (4 : ℕ))) T) → (∀ (P : PeriodicTileComplex ↥(TilingLattice C)), (∀ (u :
-            ↥(TilingLattice C)), P.tile u = TileTranslation T (↑u : GaussianInt)) → (∀ [
-            Nonempty (AffineTriangularComplexChart P fun (mn : ℤ × ℤ) => TileTranslation T
-            ((↑mn.1 : GaussianInt) * BandVectors.1 (q (1 : Fin (4 : ℕ))) (q (0 : Fin (4 : ℕ))) +
-            (↑mn.2 : GaussianInt) * BandVectors.1 (q (2 : Fin (4 : ℕ))) (q (0 : Fin (4 : ℕ)))))],
-            (RegularTileFamily T (TilingLattice C) = Set.range P.tile) → ((∀ (x : GaussianInt), ∀
-            (y : GaussianInt), TileCentroid (TileTranslation T y) - TileCentroid (TileTranslation
-            T x) = GaussianRealPoint (y - x)) → ((TileTranslation T 0 = T) → ((TileArea T = (q (0
-            : Fin (4 : ℕ))).1.toNat) → ((∀ (x : GaussianInt), (TileTranslation T
-            x).cells.Nonempty) → (∀ (U : ProtoTile), (U ∈ RegularTileFamily T (TilingLattice C))
-            → ((U ≠ T) → (TileTouching T U → TileBordering T U))))))))) ) := by
+        ∀ (C : BandCircle),
+          ∀ (q : Fin 4 → CircleCoordinates),
+            ∀ (T : ProtoTile),
+              ∀ (P : PeriodicTileComplex ↥(TilingLattice C)),
+                (∀ (u : ↥(TilingLattice C)),
+                    P.tile u = TileTranslation T (↑u : GaussianInt)) →
+                  ∀
+                    [Nonempty
+                        (AffineTriangularComplexChart P fun (mn : ℤ × ℤ) =>
+                          TileTranslation T
+                            ((↑mn.1 : GaussianInt) *
+                                BandVectors.1 (q (1 : Fin (4 : ℕ)))
+                                (q (0 : Fin (4 : ℕ))) +
+                              (↑mn.2 : GaussianInt) *
+                                BandVectors.1 (q (2 : Fin (4 : ℕ)))
+                                (q (0 : Fin (4 : ℕ)))))],
+                    RegularTileFamily T (TilingLattice C) = Set.range P.tile →
+                      TileTranslation T 0 = T →
+                        TileArea T = (q (0 : Fin (4 : ℕ))).1.toNat →
+                          (∀ (x : GaussianInt), (TileTranslation T x).cells.Nonempty) →
+                            ∀ (U : ProtoTile),
+                              U ∈ RegularTileFamily T (TilingLattice C) →
+                                U ≠ T → TileTouching T U → TileBordering T U
+    ) := by
   classical
-  intro C q T hT P htile hchart family_eq centroid_difference translate_zero harea hnonempty U hU
-      hneq
+  intro C q T P htile hchart family_eq translate_zero harea hnonempty U hU hneq
   obtain ⟨a, ha, hua⟩ := RegularTileFamilyTranslationUnique T
     (TilingLattice C) U hU
   have hUform : U = TileTranslation T (a : GaussianInt) := ha
@@ -638,8 +634,8 @@ theorem BandTileTopologyApplication (C : BandCircle)
             harea x
     have border_touch (U : ProtoTile) (hU : U ∈ RegularTileFamily T (TilingLattice C))
         (hneq : U ≠ T) : TileTouching T U → TileBordering T U :=
-            @TileTopologyGeometry.border_touch C q T hT P htile hchart family_eq
-            centroid_difference translate_zero harea hnonempty U hU hneq
+            @TileTopologyGeometry.border_touch C q T P htile hchart family_eq translate_zero harea
+                hnonempty U hU hneq
     have border_iff_index (a : TilingLattice C) (ha0 : a ≠ 0) :
         TileBordering T (P.tile a) ↔
           ∃ j : Fin 3, (a : GaussianInt) = BandVectors.1 (q j.succ) (q 0) ∨

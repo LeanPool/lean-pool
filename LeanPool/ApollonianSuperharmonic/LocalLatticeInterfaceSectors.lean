@@ -6,6 +6,7 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.LatticeFootprintIncidence
 
 public import LeanPool.ApollonianSuperharmonic.FootprintEdges
 public import LeanPool.ApollonianSuperharmonic.FootprintVertices
@@ -32,29 +33,7 @@ namespace ApollonianSuperharmonic
 
 namespace InterfaceSectorGeometry
 
-private theorem raw_incident :
-    (by
-      classical
-      exact
-        ∀ (T : ProtoTile), ∀ (x : GaussianInt), Finset.Nonempty T.cells → x ∈ FootprintVertices T
-            → ∃ (j : Fin (4 : ℕ)), LatticeVertexIncidentCell x j ∈ T.cells ) := by
-  classical
-  intro T x hne hx
-  simp only [FootprintVertices, hne, ite_true, Set.mem_ofPred_eq] at hx
-  rcases hx with ⟨c, hc, h | h | h | h⟩
-  · refine ⟨0, ?_⟩
-    simpa [LatticeVertexIncidentCell] using h ▸ hc
-  · refine ⟨1, ?_⟩
-    subst x
-    convert hc using 1; simp [LatticeVertexIncidentCell]
-  · refine ⟨3, ?_⟩
-    subst x
-    convert hc using 1; simp [LatticeVertexIncidentCell]
-  · refine ⟨2, ?_⟩
-    change x - 1 - ⟨0, 1⟩ ∈ T.cells
-    rw [h]
-    convert hc using 1
-    ext <;> simp
+private abbrev raw_incident := ApollonianSuperharmonic.LatticeFootprintIncidence.incidentCell
 
 private theorem nonempty_touching :
     (by
@@ -73,19 +52,7 @@ private theorem nonempty_touching :
   · rw [ht.1] at hVne
     simp at hVne
 
-private theorem incident_boundary :
-    (by
-      classical
-      exact
-        ∀ (T : ProtoTile),
-          ∀ (x : GaussianInt),
-            (∃ (j : Fin (4 : ℕ)), LatticeVertexIncidentCell x j ∈ T.cells) →
-              (∃ (j : Fin (4 : ℕ)), LatticeVertexIncidentCell x j ∉ T.cells) →
-                x ∈ BoundaryFootprintVertices T
-    ) := by
-  classical
-  intro T x hsome hmissing
-  exact P3161T2IncidentBoundary T x hsome hmissing
+private abbrev incident_boundary := ApollonianSuperharmonic.P3161T2IncidentBoundary
 
 private theorem common_edge_transition :
     (by
@@ -253,21 +220,30 @@ private theorem hXY_YZ :
     (by
       classical
       exact
-        let I : GaussianInt := ⟨0, 1⟩
-        let edgeAt (x : GaussianInt) : Fin 4 → Finset GaussianInt :=
-          ![{x, x + I}, {x - 1, x}, {x - I, x}, {x, x + 1}]
-        ∀ (X : ProtoTile), ∀ (Y : ProtoTile), ∀ (Z : ProtoTile), ∀ (x : GaussianInt), ∀ (eYZ :
-            Finset GaussianInt), ∀ (jXY : Fin (4 : ℕ)), (LatticeVertexIncidentCell x jXY ∈
-            X.cells ∧ LatticeVertexIncidentCell x (jXY + (1 : Fin (4 : ℕ))) ∈ Y.cells ∨
-            LatticeVertexIncidentCell x jXY ∈ Y.cells ∧ LatticeVertexIncidentCell x (jXY + (1 :
-            Fin (4 : ℕ))) ∈ X.cells) → (∀ (jYZ : Fin (4 : ℕ)), (eYZ = edgeAt x jYZ) →
-            ((LatticeVertexIncidentCell x jYZ ∈ Y.cells ∧ LatticeVertexIncidentCell x (jYZ + (1 :
-            Fin (4 : ℕ))) ∈ Z.cells ∨ LatticeVertexIncidentCell x jYZ ∈ Z.cells ∧
-            LatticeVertexIncidentCell x (jYZ + (1 : Fin (4 : ℕ))) ∈ Y.cells) → ((∀ ⦃a :
-            LatticeCell⦄, a ∈ Y.cells → a ∉ Z.cells) → ((∀ ⦃a : LatticeCell⦄, a ∈ Z.cells → a ∉
-            X.cells) → (jXY ≠ jYZ))))) ) := by
+        ∀ (X : ProtoTile),
+          ∀ (Y : ProtoTile),
+            ∀ (Z : ProtoTile),
+              ∀ (x : GaussianInt),
+                Finset GaussianInt →
+                  ∀ (jXY : Fin (4 : ℕ)),
+                    LatticeVertexIncidentCell x jXY ∈ X.cells ∧
+                          LatticeVertexIncidentCell x (jXY + (1 : Fin (4 : ℕ))) ∈
+                            Y.cells ∨
+                        LatticeVertexIncidentCell x jXY ∈ Y.cells ∧
+                          LatticeVertexIncidentCell x (jXY + (1 : Fin (4 : ℕ))) ∈
+                            X.cells →
+                      ∀ (jYZ : Fin (4 : ℕ)),
+                        LatticeVertexIncidentCell x jYZ ∈ Y.cells ∧
+                              LatticeVertexIncidentCell x (jYZ + (1 : Fin (4 : ℕ))) ∈
+                                Z.cells ∨
+                            LatticeVertexIncidentCell x jYZ ∈ Z.cells ∧
+                              LatticeVertexIncidentCell x (jYZ + (1 : Fin (4 : ℕ))) ∈
+                                Y.cells →
+                          (∀ ⦃a : LatticeCell⦄, a ∈ Y.cells → a ∉ Z.cells) →
+                            (∀ ⦃a : LatticeCell⦄, a ∈ Z.cells → a ∉ X.cells) → jXY ≠ jYZ
+    ) := by
   classical
-  intro I edgeAt X Y Z x eYZ jXY htXY jYZ heYZat htYZ hYZd hZXd h
+  intro X Y Z x eYZ jXY htXY jYZ htYZ hYZd hZXd h
   subst jYZ
   rcases htXY with htXY | htXY <;> rcases htYZ with htYZ | htYZ
   · exact hYZd htXY.2 htYZ.2
@@ -279,21 +255,31 @@ private theorem hYZ_ZX :
     (by
       classical
       exact
-        let I : GaussianInt := ⟨0, 1⟩
-        let edgeAt (x : GaussianInt) : Fin 4 → Finset GaussianInt :=
-          ![{x, x + I}, {x - 1, x}, {x - I, x}, {x, x + 1}]
-        ∀ (X : ProtoTile), ∀ (Y : ProtoTile), ∀ (Z : ProtoTile), ∀ (x : GaussianInt), ∀ (eZX :
-            Finset GaussianInt), ∀ (jYZ : Fin (4 : ℕ)), (LatticeVertexIncidentCell x jYZ ∈
-            Y.cells ∧ LatticeVertexIncidentCell x (jYZ + (1 : Fin (4 : ℕ))) ∈ Z.cells ∨
-            LatticeVertexIncidentCell x jYZ ∈ Z.cells ∧ LatticeVertexIncidentCell x (jYZ + (1 :
-            Fin (4 : ℕ))) ∈ Y.cells) → (∀ (jZX : Fin (4 : ℕ)), (eZX = edgeAt x jZX) →
-            ((LatticeVertexIncidentCell x jZX ∈ Z.cells ∧ LatticeVertexIncidentCell x (jZX + (1 :
-            Fin (4 : ℕ))) ∈ X.cells ∨ LatticeVertexIncidentCell x jZX ∈ X.cells ∧
-            LatticeVertexIncidentCell x (jZX + (1 : Fin (4 : ℕ))) ∈ Z.cells) → ((∀ ⦃a :
-            LatticeCell⦄, a ∈ X.cells → a ∉ Y.cells) → ((∀ ⦃a : LatticeCell⦄, a ∈ Y.cells → a ∉
-            Z.cells) → ((∀ ⦃a : LatticeCell⦄, a ∈ Z.cells → a ∉ X.cells) → (jYZ ≠ jZX)))))) ) := by
+        ∀ (X : ProtoTile),
+          ∀ (Y : ProtoTile),
+            ∀ (Z : ProtoTile),
+              ∀ (x : GaussianInt),
+                Finset GaussianInt →
+                  ∀ (jYZ : Fin (4 : ℕ)),
+                    LatticeVertexIncidentCell x jYZ ∈ Y.cells ∧
+                          LatticeVertexIncidentCell x (jYZ + (1 : Fin (4 : ℕ))) ∈
+                            Z.cells ∨
+                        LatticeVertexIncidentCell x jYZ ∈ Z.cells ∧
+                          LatticeVertexIncidentCell x (jYZ + (1 : Fin (4 : ℕ))) ∈
+                            Y.cells →
+                      ∀ (jZX : Fin (4 : ℕ)),
+                        LatticeVertexIncidentCell x jZX ∈ Z.cells ∧
+                              LatticeVertexIncidentCell x (jZX + (1 : Fin (4 : ℕ))) ∈
+                                X.cells ∨
+                            LatticeVertexIncidentCell x jZX ∈ X.cells ∧
+                              LatticeVertexIncidentCell x (jZX + (1 : Fin (4 : ℕ))) ∈
+                                Z.cells →
+                          (∀ ⦃a : LatticeCell⦄, a ∈ X.cells → a ∉ Y.cells) →
+                            (∀ ⦃a : LatticeCell⦄, a ∈ Y.cells → a ∉ Z.cells) →
+                              (∀ ⦃a : LatticeCell⦄, a ∈ Z.cells → a ∉ X.cells) → jYZ ≠ jZX
+    ) := by
   classical
-  intro I edgeAt X Y Z x eZX jYZ htYZ jZX heZXat htZX hXYd hYZd hZXd h
+  intro X Y Z x eZX jYZ htYZ jZX htZX hXYd hYZd hZXd h
   subst jZX
   rcases htYZ with htYZ | htYZ <;> rcases htZX with htZX | htZX
   · exact hYZd htYZ.1 htZX.1
@@ -305,22 +291,33 @@ private theorem hZX_XY :
     (by
       classical
       exact
-        let I : GaussianInt := ⟨0, 1⟩
-        let edgeAt (x : GaussianInt) : Fin 4 → Finset GaussianInt :=
-          ![{x, x + I}, {x - 1, x}, {x - I, x}, {x, x + 1}]
-        ∀ (X : ProtoTile), ∀ (Y : ProtoTile), ∀ (Z : ProtoTile), ∀ (x : GaussianInt), ∀ (eXY :
-            Finset GaussianInt), ∀ (jXY : Fin (4 : ℕ)), (eXY = edgeAt x jXY) →
-            ((LatticeVertexIncidentCell x jXY ∈ X.cells ∧ LatticeVertexIncidentCell x (jXY + (1 :
-            Fin (4 : ℕ))) ∈ Y.cells ∨ LatticeVertexIncidentCell x jXY ∈ Y.cells ∧
-            LatticeVertexIncidentCell x (jXY + (1 : Fin (4 : ℕ))) ∈ X.cells) → (∀ (jYZ : Fin (4 :
-            ℕ)), ∀ (jZX : Fin (4 : ℕ)), (LatticeVertexIncidentCell x jZX ∈ Z.cells ∧
-            LatticeVertexIncidentCell x (jZX + (1 : Fin (4 : ℕ))) ∈ X.cells ∨
-            LatticeVertexIncidentCell x jZX ∈ X.cells ∧ LatticeVertexIncidentCell x (jZX + (1 :
-            Fin (4 : ℕ))) ∈ Z.cells) → ((∀ ⦃a : LatticeCell⦄, a ∈ X.cells → a ∉ Y.cells) → ((∀ ⦃a
-            : LatticeCell⦄, a ∈ Y.cells → a ∉ Z.cells) → ((∀ ⦃a : LatticeCell⦄, a ∈ Z.cells → a ∉
-            X.cells) → ((jXY ≠ jYZ) → (jZX ≠ jXY))))))) ) := by
+        ∀ (X : ProtoTile),
+          ∀ (Y : ProtoTile),
+            ∀ (Z : ProtoTile),
+              ∀ (x : GaussianInt),
+                Finset GaussianInt →
+                  ∀ (jXY : Fin (4 : ℕ)),
+                    LatticeVertexIncidentCell x jXY ∈ X.cells ∧
+                          LatticeVertexIncidentCell x (jXY + (1 : Fin (4 : ℕ))) ∈
+                            Y.cells ∨
+                        LatticeVertexIncidentCell x jXY ∈ Y.cells ∧
+                          LatticeVertexIncidentCell x (jXY + (1 : Fin (4 : ℕ))) ∈
+                            X.cells →
+                      ∀ (jYZ : Fin (4 : ℕ)),
+                        ∀ (jZX : Fin (4 : ℕ)),
+                          LatticeVertexIncidentCell x jZX ∈ Z.cells ∧
+                                LatticeVertexIncidentCell x (jZX + (1 : Fin (4 : ℕ))) ∈
+                                X.cells ∨
+                              LatticeVertexIncidentCell x jZX ∈ X.cells ∧
+                                LatticeVertexIncidentCell x (jZX + (1 : Fin (4 : ℕ))) ∈
+                                Z.cells →
+                            (∀ ⦃a : LatticeCell⦄, a ∈ X.cells → a ∉ Y.cells) →
+                              (∀ ⦃a : LatticeCell⦄, a ∈ Y.cells → a ∉ Z.cells) →
+                                (∀ ⦃a : LatticeCell⦄, a ∈ Z.cells → a ∉ X.cells) →
+                                jXY ≠ jYZ → jZX ≠ jXY
+    ) := by
   classical
-  intro I edgeAt X Y Z x eXY jXY heXYat htXY jYZ jZX htZX hXYd hYZd hZXd hXY_YZ h
+  intro X Y Z x eXY jXY htXY jYZ jZX htZX hXYd hYZd hZXd hXY_YZ h
   subst jXY
   rcases htZX with htZX | htZX <;> rcases htXY with htXY | htXY
   · exact hZXd htZX.1 htXY.1
@@ -332,27 +329,28 @@ private theorem hexhaust :
     (by
       classical
       exact
-        let I : GaussianInt := ⟨0, 1⟩
-        let edgeAt (x : GaussianInt) : Fin 4 → Finset GaussianInt :=
-          ![{x, x + I}, {x - 1, x}, {x - I, x}, {x, x + 1}]
-        ∀ (X : ProtoTile), ∀ (Y : ProtoTile), ∀ (Z : ProtoTile), ∀ (x : GaussianInt), ∀ (eXY :
-            Finset GaussianInt), ∀ (eYZ : Finset GaussianInt), ∀ (eZX : Finset GaussianInt), ∀
-            (jXY : Fin (4 : ℕ)), (eXY = edgeAt x jXY) → ((LatticeVertexIncidentCell x jXY ∈
+        ∀ (X : ProtoTile), ∀ (Y : ProtoTile), ∀ (Z : ProtoTile), ∀ (x : GaussianInt), (Finset
+            GaussianInt) →
+                                 (Finset GaussianInt) →
+                                                               (Finset GaussianInt) →
+                                                                                             ∀
+            (jXY : Fin (4 : ℕ)),
+                                                        ((LatticeVertexIncidentCell x jXY ∈
             X.cells ∧ LatticeVertexIncidentCell x (jXY + (1 : Fin (4 : ℕ))) ∈ Y.cells ∨
             LatticeVertexIncidentCell x jXY ∈ Y.cells ∧ LatticeVertexIncidentCell x (jXY + (1 :
-            Fin (4 : ℕ))) ∈ X.cells) → (∀ (jYZ : Fin (4 : ℕ)), (eYZ = edgeAt x jYZ) →
+            Fin (4 : ℕ))) ∈ X.cells) → (∀ (jYZ : Fin (4 : ℕ)),
             ((LatticeVertexIncidentCell x jYZ ∈ Y.cells ∧ LatticeVertexIncidentCell x (jYZ + (1 :
             Fin (4 : ℕ))) ∈ Z.cells ∨ LatticeVertexIncidentCell x jYZ ∈ Z.cells ∧
             LatticeVertexIncidentCell x (jYZ + (1 : Fin (4 : ℕ))) ∈ Y.cells) → (∀ (jZX : Fin (4 :
-            ℕ)), (eZX = edgeAt x jZX) → ((LatticeVertexIncidentCell x jZX ∈ Z.cells ∧
+            ℕ)),
+                                        ((LatticeVertexIncidentCell x jZX ∈ Z.cells ∧
             LatticeVertexIncidentCell x (jZX + (1 : Fin (4 : ℕ))) ∈ X.cells ∨
             LatticeVertexIncidentCell x jZX ∈ X.cells ∧ LatticeVertexIncidentCell x (jZX + (1 :
             Fin (4 : ℕ))) ∈ Z.cells) → ((jXY ≠ jYZ) → ((jYZ ≠ jZX) → ((jZX ≠ jXY) → (forall j :
             Fin 4, LatticeVertexIncidentCell x j ∈ X.cells ∨ LatticeVertexIncidentCell x j ∈
             Y.cells ∨ LatticeVertexIncidentCell x j ∈ Z.cells))))))))) ) := by
   classical
-  intro I edgeAt X Y Z x eXY eYZ eZX jXY heXYat htXY jYZ heYZat htYZ jZX heZXat htZX hXY_YZ
-      hYZ_ZX hZX_XY j
+  intro X Y Z x eXY eYZ eZX jXY htXY jYZ htYZ jZX htZX hXY_YZ hYZ_ZX hZX_XY j
   have hendpoint :
       (j = jXY ∨ j = jXY + 1) ∨
       (j = jYZ ∨ j = jYZ + 1) ∨
@@ -439,34 +437,24 @@ private theorem he' :
   rw [← hboundary]
   exact he
 
-private theorem hf' :
-    (by
-      classical
-      exact
-        ∀ (X : ProtoTile), ∀ (Y : ProtoTile), (FootprintEdges X ∩ FootprintEdges Y =
-            BoundaryFootprintEdges X ∩ BoundaryFootprintEdges Y) → (∀ (f : Finset GaussianInt),
-            (f ∈ FootprintEdges X ∩ FootprintEdges Y) → (f ∈ BoundaryFootprintEdges X ∩
-            BoundaryFootprintEdges Y)) ) := by
-  classical
-  intro X Y hboundary f hf
-  rw [← hboundary]
-  exact hf
+private abbrev hf' := ApollonianSuperharmonic.InterfaceSectorGeometry.he'
 
 private theorem hjne :
     (by
       classical
       exact
-        let I : GaussianInt := ⟨0, 1⟩
+        let I : GaussianInt := ⟨0, 1⟩;
         let edgeAt (x : GaussianInt) : Fin 4 → Finset GaussianInt :=
-          ![{x, x + I}, {x - 1, x}, {x - I, x}, {x, x + 1}]
-        ∀ (X : ProtoTile), ∀ (Y : ProtoTile), ∀ (x : GaussianInt), ∀ (e : Finset GaussianInt), ∀
-            (f : Finset GaussianInt), (e ≠ f) → (∀ (je : Fin (4 : ℕ)), (e = edgeAt x je) → (∀ (jf
-            : Fin (4 : ℕ)), (f = edgeAt x jf) → ((LatticeVertexIncidentCell x jf ∈ X.cells ∧
-            LatticeVertexIncidentCell x (jf + (1 : Fin (4 : ℕ))) ∈ Y.cells ∨
-            LatticeVertexIncidentCell x jf ∈ Y.cells ∧ LatticeVertexIncidentCell x (jf + (1 : Fin
-            (4 : ℕ))) ∈ X.cells) → (je ≠ jf)))) ) := by
+          ![{x, x + I}, {x - 1, x}, {x - I, x}, {x, x + 1}];
+        ∀ (x : GaussianInt),
+          ∀ (e : Finset GaussianInt),
+            ∀ (f : Finset GaussianInt),
+              e ≠ f →
+                ∀ (je : Fin (4 : ℕ)),
+                  e = edgeAt x je → ∀ (jf : Fin (4 : ℕ)), f = edgeAt x jf → je ≠ jf
+    ) := by
   classical
-  intro I edgeAt X Y x e f hef je heAt jf hfAt htf h
+  intro I edgeAt x e f hef je heAt jf hfAt h
   subst jf
   exact hef (heAt.trans hfAt.symm)
 
@@ -499,21 +487,7 @@ private theorem hcheckP :
   intro X x hcheckX P
   simpa [P, LatticeVertexIncidentCell] using hcheckX
 
-private theorem hcheckQ :
-    (by
-      classical
-      exact
-        ∀ (Y : ProtoTile), ∀ (x : GaussianInt), (¬(x ∈ (↑Y.cells : Set LatticeCell) ∧ x - (1 :
-            GaussianInt) - ⟨(0 : ℤ), (1 : ℤ)⟩ ∈ (↑Y.cells : Set LatticeCell) ∧ x - (1 :
-            GaussianInt) ∉ (↑Y.cells : Set LatticeCell) ∧ x - ⟨(0 : ℤ), (1 : ℤ)⟩ ∉ (↑Y.cells :
-            Set LatticeCell) ∨ x - (1 : GaussianInt) ∈ (↑Y.cells : Set LatticeCell) ∧ x - ⟨(0 :
-            ℤ), (1 : ℤ)⟩ ∈ (↑Y.cells : Set LatticeCell) ∧ x ∉ (↑Y.cells : Set LatticeCell) ∧ x -
-            (1 : GaussianInt) - ⟨(0 : ℤ), (1 : ℤ)⟩ ∉ (↑Y.cells : Set LatticeCell))) → (
-        let Q : Fin 4 → Prop := fun j => LatticeVertexIncidentCell x j ∈ Y.cells
-        ¬ ((Q 0 ∧ Q 2 ∧ ¬ Q 1 ∧ ¬ Q 3) ∨ (Q 1 ∧ Q 3 ∧ ¬ Q 0 ∧ ¬ Q 2))) ) := by
-  classical
-  intro Y x hcheckY Q
-  simpa [Q, LatticeVertexIncidentCell] using hcheckY
+private abbrev hcheckQ := ApollonianSuperharmonic.InterfaceSectorGeometry.hcheckP
 
 end InterfaceSectorGeometry
 
@@ -613,13 +587,13 @@ theorem LocalLatticeInterfaceSectors :
     have hXYd := Finset.disjoint_left.mp hXYdisjoint
     have hYZd := Finset.disjoint_left.mp hYZdisjoint
     have hZXd := Finset.disjoint_left.mp hZXdisjoint
-    have hXY_YZ := InterfaceSectorGeometry.hXY_YZ X Y Z x eYZ jXY htXY jYZ heYZat htYZ hYZd hZXd
-    have hYZ_ZX := InterfaceSectorGeometry.hYZ_ZX X Y Z x eZX jYZ htYZ jZX heZXat htZX hXYd hYZd
+    have hXY_YZ := InterfaceSectorGeometry.hXY_YZ X Y Z x eYZ jXY htXY jYZ htYZ hYZd hZXd
+    have hYZ_ZX := InterfaceSectorGeometry.hYZ_ZX X Y Z x eZX jYZ htYZ jZX htZX hXYd hYZd
         hZXd
-    have hZX_XY := InterfaceSectorGeometry.hZX_XY X Y Z x eXY jXY heXYat htXY jYZ jZX htZX hXYd
+    have hZX_XY := InterfaceSectorGeometry.hZX_XY X Y Z x eXY jXY htXY jYZ jZX htZX hXYd
         hYZd hZXd hXY_YZ
-    have hexhaust := InterfaceSectorGeometry.hexhaust X Y Z x eXY eYZ eZX jXY heXYat htXY jYZ
-        heYZat htYZ jZX heZXat htZX hXY_YZ hYZ_ZX hZX_XY
+    have hexhaust := InterfaceSectorGeometry.hexhaust X Y Z x eXY eYZ eZX jXY htXY jYZ htYZ jZX
+        htZX hXY_YZ hYZ_ZX hZX_XY
     have hopposite := InterfaceSectorGeometry.hopposite X Y Z x jX hjX jY hjY jZ hjZ hXYd hYZd hZXd
     exact ⟨hexhaust, ⟨jX, hjX⟩, ⟨jY, hjY⟩, ⟨jZ, hjZ⟩, hopposite⟩
   · intro X Y x hX hY hdisjoint hedges
@@ -631,7 +605,7 @@ theorem LocalLatticeInterfaceSectors :
       common_edge_transition X Y x e hdisjoint hxe he'
     obtain ⟨jf, hfAt, htf⟩ :=
       common_edge_transition X Y x f hdisjoint hxf hf'
-    have hjne : je ≠ jf := InterfaceSectorGeometry.hjne X Y x e f hef je heAt jf hfAt htf
+    have hjne : je ≠ jf := InterfaceSectorGeometry.hjne x e f hef je heAt jf hfAt
     have hd := Finset.disjoint_left.mp hdisjoint
     have hcheckX := (LatticeTileGridStructure X hX).2.1 x
     have hcheckY := (LatticeTileGridStructure Y hY).2.1 x

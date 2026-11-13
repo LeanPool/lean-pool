@@ -6,6 +6,7 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryCurvature
 
 public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryAffineVectorAction
 public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryProjectiveVectorCovariance
@@ -25,22 +26,7 @@ namespace ApollonianSuperharmonic
 
 namespace AffineSymmetryCoordinates
 
-private theorem circleCurvature :
-    (by
-      classical
-      exact
-        ∀ h : BandPackingSymmetry, ∀ C : CircleCoordinates, (BandPackingSymmetryCircleAction h
-            C).1 = C.1 ) := by
-  classical
-  intro h
-  induction h with
-  | identity => intro C; rfl
-  | negate => intro C; rfl
-  | conjugate => intro C; rfl
-  | shift w => intro C; rfl
-  | comp h k ih ih' =>
-      intro C
-      simp [BandPackingSymmetryCircleAction, ih, ih']
+private abbrev circleCurvature := ApollonianSuperharmonic.BandPackingSymmetryCurvature.preserved
 
 private theorem affineFacts :
     (by
@@ -433,88 +419,183 @@ private theorem hprodAt446 :
     (by
       classical
       exact
-        ∀ (g : BandPackingSymmetry), ∀ (q : Fin 4 → CircleCoordinates), ∀ (negative : Bool),
-            (BandPackingSymmetryScopedPhase g q negative) → (∀ (i : Fin (3 : ℕ)),
-        let epsilon : GaussianInt := if negative then -1 else 1
-        (epsilon * epsilon = 1) → ((∀ (V : GaussianInt), ∀ (A : GaussianInt), ∀ (b :
-            GaussianInt), V ≠ 0 → 2 * V * A = 2 * (epsilon * V) * b → b = epsilon * A) →
-            ((BandVectors.1 (BandPackingSymmetryQuadrupleAction g q (if
-            BandPackingSymmetryReversesOrientation g = true then -i else i).succ)
-            (BandPackingSymmetryQuadrupleAction g q (0 : Fin (4 : ℕ))) ^ (2 : ℕ) =
-            (BandPackingSymmetryQuadrupleAction g q (0 : Fin (4 : ℕ))).1 •
-            (BandPackingSymmetryQuadrupleAction g q (if BandPackingSymmetryReversesOrientation g
-            = true then -i else i).succ).2 - (BandPackingSymmetryQuadrupleAction g q (if
-            BandPackingSymmetryReversesOrientation g = true then -i else i).succ).1 •
-            (BandPackingSymmetryQuadrupleAction g q (0 : Fin (4 : ℕ))).2 ∧ (2 : GaussianInt) *
-            BandVectors.1 (BandPackingSymmetryQuadrupleAction g q (if
-            BandPackingSymmetryReversesOrientation g = true then -i else i).succ)
-            (BandPackingSymmetryQuadrupleAction g q (0 : Fin (4 : ℕ))) * BandVectors.2
-            (BandPackingSymmetryQuadrupleAction g q (if BandPackingSymmetryReversesOrientation g
-            = true then -i else i).succ) (BandPackingSymmetryQuadrupleAction g q (0 : Fin (4 :
-            ℕ))) = (BandPackingSymmetryQuadrupleAction g q (if
-            BandPackingSymmetryReversesOrientation g = true then -i else i).succ).2 +
-            (BandPackingSymmetryQuadrupleAction g q (0 : Fin (4 : ℕ))).2) →
-            (((BandPackingSymmetryAffineVectorAction g (BandVectors.1 (q i.succ) (q (0 : Fin (4 :
-            ℕ))), BandVectors.2 (q i.succ) (q (0 : Fin (4 : ℕ))))).1 =
-            BandPackingSymmetryVectorAction g (BandVectors.1 (q i.succ) (q (0 : Fin (4 : ℕ)))) ∧
-            Zsqrtd.norm (BandPackingSymmetryAffineVectorAction g (BandVectors.1 (q i.succ) (q (0
-            : Fin (4 : ℕ))), BandVectors.2 (q i.succ) (q (0 : Fin (4 : ℕ))))).1 = (q i.succ).1 +
-            (q (0 : Fin (4 : ℕ))).1 ∧ (2 : GaussianInt) * (BandPackingSymmetryAffineVectorAction
-            g (BandVectors.1 (q i.succ) (q (0 : Fin (4 : ℕ))), BandVectors.2 (q i.succ) (q (0 :
-            Fin (4 : ℕ))))).1 * (BandPackingSymmetryAffineVectorAction g (BandVectors.1 (q
-            i.succ) (q (0 : Fin (4 : ℕ))), BandVectors.2 (q i.succ) (q (0 : Fin (4 : ℕ))))).2 =
-            (BandPackingSymmetryCircleAction g (q i.succ)).2 + (BandPackingSymmetryCircleAction g
-            (q (0 : Fin (4 : ℕ)))).2) → ((BandVectors.2 (BandPackingSymmetryQuadrupleAction g q
-            (if BandPackingSymmetryReversesOrientation g = true then -i else i).succ)
-            (BandPackingSymmetryQuadrupleAction g q (0 : Fin (4 : ℕ))) = epsilon *
-            (BandPackingSymmetryAffineVectorAction g (BandVectors.1 (q i.succ) (q (0 : Fin (4 :
-            ℕ))), BandVectors.2 (q i.succ) (q (0 : Fin (4 : ℕ))))).2) →
-            ((BandPackingSymmetryReversesOrientation g = true) → (((BandVectors.1
-            (BandPackingSymmetryQuadrupleAction g q (-i).succ)
-            (BandPackingSymmetryQuadrupleAction g q (0 : Fin (4 : ℕ))) = if negative = true then
-            -BandPackingSymmetryVectorAction g (BandVectors.1 (q i.succ) (q (0 : Fin (4 : ℕ))))
-            else BandPackingSymmetryVectorAction g (BandVectors.1 (q i.succ) (q (0 : Fin (4 :
-            ℕ))))) ∧ (BandVectors.1 (BandPackingSymmetryQuadrupleAction g q (0 : Fin (4 : ℕ)))
-            (BandPackingSymmetryQuadrupleAction g q (-i).succ) = -if negative = true then
-            -BandPackingSymmetryVectorAction g (BandVectors.1 (q (0 : Fin (4 : ℕ))) (q i.succ))
-            else BandPackingSymmetryVectorAction g (BandVectors.1 (q (0 : Fin (4 : ℕ))) (q
-            i.succ))) ∧ BandVectors.1 (BandPackingSymmetryQuadrupleAction g q (-i + (2 : Fin (3 :
-            ℕ))).succ) (BandPackingSymmetryQuadrupleAction g q (-i + (1 : Fin (3 : ℕ))).succ) =
-            if negative = true then -GaussianQuarterTurn (BandPackingSymmetryVectorAction g
-            (BandVectors.1 (q (i + (2 : Fin (3 : ℕ))).succ) (q (i + (1 : Fin (3 : ℕ))).succ)))
-            else GaussianQuarterTurn (BandPackingSymmetryVectorAction g (BandVectors.1 (q (i + (2
-            : Fin (3 : ℕ))).succ) (q (i + (1 : Fin (3 : ℕ))).succ)))) → (
-        let j : Fin 4 := (i + 2).succ
-        let k : Fin 4 := (i + 1).succ
-        let V := (BandPackingSymmetryAffineVectorAction g
-          (BandVectors.1 (q j) (q k), BandVectors.2 (q j) (q k))).1
-        let A := (BandPackingSymmetryAffineVectorAction g
-          (BandVectors.1 (q j) (q k), BandVectors.2 (q j) (q k))).2
-        (j ≠ k) → (((BandPackingSymmetryAffineVectorAction g (BandVectors.1 (q j) (q k),
-            BandVectors.2 (q j) (q k))).1 = BandPackingSymmetryVectorAction g (BandVectors.1 (q
-            j) (q k)) ∧ Zsqrtd.norm (BandPackingSymmetryAffineVectorAction g (BandVectors.1 (q j)
-            (q k), BandVectors.2 (q j) (q k))).1 = (q j).1 + (q k).1 ∧ (2 : GaussianInt) *
-            (BandPackingSymmetryAffineVectorAction g (BandVectors.1 (q j) (q k), BandVectors.2 (q
-            j) (q k))).1 * (BandPackingSymmetryAffineVectorAction g (BandVectors.1 (q j) (q k),
-            BandVectors.2 (q j) (q k))).2 = (BandPackingSymmetryCircleAction g (q j)).2 +
-            (BandPackingSymmetryCircleAction g (q k)).2) → ((BandVectors.1
-            (BandPackingSymmetryQuadrupleAction g q (-i + (2 : Fin (3 : ℕ))).succ)
-            (BandPackingSymmetryQuadrupleAction g q (-i + (1 : Fin (3 : ℕ))).succ) ^ (2 : ℕ) =
-            (BandPackingSymmetryQuadrupleAction g q (-i + (1 : Fin (3 : ℕ))).succ).1 •
-            (BandPackingSymmetryQuadrupleAction g q (-i + (2 : Fin (3 : ℕ))).succ).2 -
-            (BandPackingSymmetryQuadrupleAction g q (-i + (2 : Fin (3 : ℕ))).succ).1 •
-            (BandPackingSymmetryQuadrupleAction g q (-i + (1 : Fin (3 : ℕ))).succ).2 ∧ (2 :
-            GaussianInt) * BandVectors.1 (BandPackingSymmetryQuadrupleAction g q (-i + (2 : Fin
-            (3 : ℕ))).succ) (BandPackingSymmetryQuadrupleAction g q (-i + (1 : Fin (3 :
-            ℕ))).succ) * BandVectors.2 (BandPackingSymmetryQuadrupleAction g q (-i + (2 : Fin (3
-            : ℕ))).succ) (BandPackingSymmetryQuadrupleAction g q (-i + (1 : Fin (3 : ℕ))).succ) =
-            (BandPackingSymmetryQuadrupleAction g q (-i + (2 : Fin (3 : ℕ))).succ).2 +
-            (BandPackingSymmetryQuadrupleAction g q (-i + (1 : Fin (3 : ℕ))).succ).2) → (2 * V *
-            A = 2 * (epsilon * GaussianQuarterTurn V) * (BandVectors.2
-            (BandPackingSymmetryQuadrupleAction g q (-i + 2).succ)
-            (BandPackingSymmetryQuadrupleAction g q (-i + 1).succ))))))))))))) ) := by
+        ∀ (g : BandPackingSymmetry),
+          ∀ (q : Fin 4 → CircleCoordinates),
+            ∀ (negative : Bool),
+              ∀ (i : Fin (3 : ℕ)),
+                let epsilon : GaussianInt := if negative then -1 else 1
+                epsilon * epsilon = 1 →
+                  (∀ (V : GaussianInt),
+                      ∀ (A : GaussianInt),
+                        ∀ (b : GaussianInt),
+                          V ≠ 0 → 2 * V * A = 2 * (epsilon * V) * b → b = epsilon * A) →
+                    BandVectors.1
+                              (BandPackingSymmetryQuadrupleAction g q
+                                (if BandPackingSymmetryReversesOrientation g = true then
+                                -i
+                              else i).succ)
+                              (BandPackingSymmetryQuadrupleAction g q (0 : Fin (4 : ℕ))) ^
+                            (2 : ℕ) =
+                          (BandPackingSymmetryQuadrupleAction g q (0 : Fin (4 : ℕ))).1 •
+                              (BandPackingSymmetryQuadrupleAction g q
+                                (if BandPackingSymmetryReversesOrientation g = true then
+                                -i
+                              else i).succ).2 -
+                            (BandPackingSymmetryQuadrupleAction g q
+                                (if BandPackingSymmetryReversesOrientation g = true then
+                                -i
+                              else i).succ).1 •
+                              (BandPackingSymmetryQuadrupleAction g q
+                                (0 : Fin (4 : ℕ))).2 ∧
+                        (2 : GaussianInt) *
+                              BandVectors.1
+                                (BandPackingSymmetryQuadrupleAction g q
+                                (if BandPackingSymmetryReversesOrientation g = true then
+                                -i
+                              else i).succ)
+                                (BandPackingSymmetryQuadrupleAction g q
+                                (0 : Fin (4 : ℕ))) *
+                            BandVectors.2
+                              (BandPackingSymmetryQuadrupleAction g q
+                                (if BandPackingSymmetryReversesOrientation g = true then
+                                -i
+                              else i).succ)
+                              (BandPackingSymmetryQuadrupleAction g q (0 : Fin (4 : ℕ))) =
+                          (BandPackingSymmetryQuadrupleAction g q
+                                (if BandPackingSymmetryReversesOrientation g = true then
+                                -i
+                              else i).succ).2 +
+                            (BandPackingSymmetryQuadrupleAction g q (0 : Fin (4 : ℕ))).2 →
+                      (BandPackingSymmetryAffineVectorAction g
+                                (BandVectors.1 (q i.succ) (q (0 : Fin (4 : ℕ))),
+                                BandVectors.2 (q i.succ) (q (0 : Fin (4 : ℕ))))).1 =
+                            BandPackingSymmetryVectorAction g
+                              (BandVectors.1 (q i.succ) (q (0 : Fin (4 : ℕ)))) ∧
+                          Zsqrtd.norm
+                                (BandPackingSymmetryAffineVectorAction g
+                                (BandVectors.1 (q i.succ) (q (0 : Fin (4 : ℕ))),
+                                BandVectors.2 (q i.succ) (q (0 : Fin (4 : ℕ))))).1 =
+                              (q i.succ).1 + (q (0 : Fin (4 : ℕ))).1 ∧
+                            (2 : GaussianInt) *
+                                (BandPackingSymmetryAffineVectorAction g
+                                (BandVectors.1 (q i.succ) (q (0 : Fin (4 : ℕ))),
+                                BandVectors.2 (q i.succ) (q (0 : Fin (4 : ℕ))))).1 *
+                                (BandPackingSymmetryAffineVectorAction g
+                                (BandVectors.1 (q i.succ) (q (0 : Fin (4 : ℕ))),
+                                BandVectors.2 (q i.succ) (q (0 : Fin (4 : ℕ))))).2 =
+                              (BandPackingSymmetryCircleAction g (q i.succ)).2 +
+                                (BandPackingSymmetryCircleAction g
+                                (q (0 : Fin (4 : ℕ)))).2 →
+                        BandVectors.2
+                              (BandPackingSymmetryQuadrupleAction g q
+                                (if BandPackingSymmetryReversesOrientation g = true then
+                                -i
+                              else i).succ)
+                              (BandPackingSymmetryQuadrupleAction g q (0 : Fin (4 : ℕ))) =
+                            epsilon *
+                              (BandPackingSymmetryAffineVectorAction g
+                                (BandVectors.1 (q i.succ) (q (0 : Fin (4 : ℕ))),
+                                BandVectors.2 (q i.succ) (q (0 : Fin (4 : ℕ))))).2 →
+                          BandPackingSymmetryReversesOrientation g = true →
+                            ((BandVectors.1
+                                (BandPackingSymmetryQuadrupleAction g q (-i).succ)
+                                (BandPackingSymmetryQuadrupleAction g q
+                                (0 : Fin (4 : ℕ))) =
+                                if negative = true then
+                                -BandPackingSymmetryVectorAction g
+                                (BandVectors.1 (q i.succ) (q (0 : Fin (4 : ℕ))))
+                              else
+                                BandPackingSymmetryVectorAction g
+                                (BandVectors.1 (q i.succ) (q (0 : Fin (4 : ℕ))))) ∧
+                                (BandVectors.1
+                                (BandPackingSymmetryQuadrupleAction g q (0 : Fin (4 : ℕ)))
+                                (BandPackingSymmetryQuadrupleAction g q (-i).succ) =
+                                -if negative = true then
+                                -BandPackingSymmetryVectorAction g
+                                (BandVectors.1 (q (0 : Fin (4 : ℕ))) (q i.succ))
+                              else
+                                BandPackingSymmetryVectorAction g
+                                (BandVectors.1 (q (0 : Fin (4 : ℕ))) (q i.succ))) ∧
+                                BandVectors.1
+                                (BandPackingSymmetryQuadrupleAction g q
+                                (-i + (2 : Fin (3 : ℕ))).succ)
+                                (BandPackingSymmetryQuadrupleAction g q
+                                (-i + (1 : Fin (3 : ℕ))).succ) =
+                                if negative = true then
+                                -GaussianQuarterTurn
+                                (BandPackingSymmetryVectorAction g
+                                (BandVectors.1 (q (i + (2 : Fin (3 : ℕ))).succ)
+                                (q (i + (1 : Fin (3 : ℕ))).succ)))
+                              else
+                                GaussianQuarterTurn
+                                (BandPackingSymmetryVectorAction g
+                                (BandVectors.1 (q (i + (2 : Fin (3 : ℕ))).succ)
+                                (q (i + (1 : Fin (3 : ℕ))).succ)))) →
+                              let j : Fin 4 := (i + 2).succ
+                              let k : Fin 4 := (i + 1).succ
+                              let V :=
+                                (BandPackingSymmetryAffineVectorAction g
+                                (BandVectors.1 (q j) (q k), BandVectors.2 (q j) (q k))).1
+                              let A :=
+                                (BandPackingSymmetryAffineVectorAction g
+                                (BandVectors.1 (q j) (q k), BandVectors.2 (q j) (q k))).2
+                              j ≠ k →
+                                (BandPackingSymmetryAffineVectorAction g
+                                (BandVectors.1 (q j) (q k),
+                                BandVectors.2 (q j) (q k))).1 =
+                                BandPackingSymmetryVectorAction g
+                                (BandVectors.1 (q j) (q k)) ∧
+                                Zsqrtd.norm
+                                (BandPackingSymmetryAffineVectorAction g
+                                (BandVectors.1 (q j) (q k),
+                                BandVectors.2 (q j) (q k))).1 =
+                                (q j).1 + (q k).1 ∧
+                                (2 : GaussianInt) *
+                                (BandPackingSymmetryAffineVectorAction g
+                                (BandVectors.1 (q j) (q k),
+                                BandVectors.2 (q j) (q k))).1 *
+                                (BandPackingSymmetryAffineVectorAction g
+                                (BandVectors.1 (q j) (q k),
+                                BandVectors.2 (q j) (q k))).2 =
+                                (BandPackingSymmetryCircleAction g (q j)).2 +
+                                (BandPackingSymmetryCircleAction g (q k)).2 →
+                                BandVectors.1
+                                (BandPackingSymmetryQuadrupleAction g q
+                                (-i + (2 : Fin (3 : ℕ))).succ)
+                                (BandPackingSymmetryQuadrupleAction g q
+                                (-i + (1 : Fin (3 : ℕ))).succ) ^
+                                (2 : ℕ) =
+                                (BandPackingSymmetryQuadrupleAction g q
+                                (-i + (1 : Fin (3 : ℕ))).succ).1 •
+                                (BandPackingSymmetryQuadrupleAction g q
+                                (-i + (2 : Fin (3 : ℕ))).succ).2 -
+                                (BandPackingSymmetryQuadrupleAction g q
+                                (-i + (2 : Fin (3 : ℕ))).succ).1 •
+                                (BandPackingSymmetryQuadrupleAction g q
+                                (-i + (1 : Fin (3 : ℕ))).succ).2 ∧
+                                (2 : GaussianInt) *
+                                BandVectors.1
+                                (BandPackingSymmetryQuadrupleAction g q
+                                (-i + (2 : Fin (3 : ℕ))).succ)
+                                (BandPackingSymmetryQuadrupleAction g q
+                                (-i + (1 : Fin (3 : ℕ))).succ) *
+                                BandVectors.2
+                                (BandPackingSymmetryQuadrupleAction g q
+                                (-i + (2 : Fin (3 : ℕ))).succ)
+                                (BandPackingSymmetryQuadrupleAction g q
+                                (-i + (1 : Fin (3 : ℕ))).succ) =
+                                (BandPackingSymmetryQuadrupleAction g q
+                                (-i + (2 : Fin (3 : ℕ))).succ).2 +
+                                (BandPackingSymmetryQuadrupleAction g q
+                                (-i + (1 : Fin (3 : ℕ))).succ).2 →
+                                2 * V * A =
+                                2 * (epsilon * GaussianQuarterTurn V) *
+                                BandVectors.2
+                                (BandPackingSymmetryQuadrupleAction g q (-i + 2).succ)
+                                (BandPackingSymmetryQuadrupleAction g q (-i + 1).succ)
+    ) := by
   classical
-  intro g q negative hphase i epsilon epsilonSquare slopeCancel incomingProduct incomingAffine
+  intro g q negative i epsilon epsilonSquare slopeCancel incomingProduct incomingAffine
       incomingSlope hrev hspatial j k V A hjk aff prod
   calc
     2 * V * A = (BandPackingSymmetryCircleAction g (q j)).2 +
@@ -826,7 +907,7 @@ theorem BandPackingSymmetryAffineVectorCovariance
           2 * (epsilon * GaussianQuarterTurn V) *
             (BandVectors.2 (BandPackingSymmetryQuadrupleAction g q
               (-i + 2).succ) (BandPackingSymmetryQuadrupleAction g q
-              (-i + 1).succ)) := AffineSymmetryCoordinates.hprodAt446 g q negative hphase i
+              (-i + 1).succ)) := AffineSymmetryCoordinates.hprodAt446 g q negative i
                   epsilonSquare slopeCancel incomingProduct incomingAffine incomingSlope hrev
                   hspatial hjk aff prod
       have hv : V ≠ 0 := by

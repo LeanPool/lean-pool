@@ -348,32 +348,44 @@ private theorem keep :
     (by
       classical
       exact
-        ∀ (L : Real), ∀ (q : Fin 4 → CircleCoordinates), (ProperBandQuadruple q) → (∀ (j : Fin
-            3), ((0 : ℤ) < (q j.succ).1) → ((dist (((q j.succ).2 : Complex) / ((q j.succ).1 :
-            Real)) (((q 0).2 : Complex) / ((q 0).1 : Real)) = 1 / ((q j.succ).1 : Real) + 1 / ((q
-            0).1 : Real)) → (
-        let p (i : Fin 4) : Complex := (q i).2 / ((q i).1 : Real)
-        let rad (i : Fin 4) : Real := 1 / ((q i).1 : Real)
-        let a := p j.succ
-        let x := p 0
-        let R := rad j.succ
-        let S := rad 0
-        (0 < R) → ((dist a x = R + S) → (
-        let α := R / (R + S)
-        (0 < α) → ((α < 1) → ((α * (R + S) = R) → (((1 - α) * (R + S) = S) → (
-        let t := a + α • (x - a)
-        (‖x - a‖ = R + S) → ((dist t a = R) → ((dist t x = S) → ((a ∈ P4909T1ParentPolygon L q)
-            → ((t ∈ segment Real a x) → ((t ∈ P4909T1ParentPolygon L q) → ((∀ (k : Fin 3), (0 <
-            (q k.succ).1) → (rad k.succ ≤ dist t (p k.succ))) → ((t ∈ P4984T1ClosedGap L q) →
-            ((t ∈ P4984T1ClosedGap L q ∩ Metric.sphere a R) → (∀ [ IsClosed
-            (P4984T1ClosedGap L q ∩ Metric.sphere a R)], ((P4984T1ClosedGap L q ∩
-            Metric.sphere a R).Nonempty) → ((∀ (b : Fin 3), ∀ (k : Fin 3), P4828T1Step
-            (P4828T1Rotate q b) k.succ = if k = 0 then q 0 else q ((k + b).succ)) → (∀ (b : Fin
-            (3 : ℕ)), b ≠ j ↔ ∃ (k : Fin (3 : ℕ)), P4828T1Step (P4828T1Rotate q b) k.succ = q
-            j.succ)))))))))))))))))))) ) := by
+        ∀ (L : Real),
+          ∀ (q : Fin 4 → CircleCoordinates),
+            ProperBandQuadruple q →
+              ∀ (j : Fin 3),
+                (0 : ℤ) < (q j.succ).1 →
+                  dist (((q j.succ).2 : Complex) / ((q j.succ).1 : Real))
+                        (((q 0).2 : Complex) / ((q 0).1 : Real)) =
+                      1 / ((q j.succ).1 : Real) + 1 / ((q 0).1 : Real) →
+                    let p (i : Fin 4) : Complex := (q i).2 / ((q i).1 : Real);
+                    let rad (i : Fin 4) : Real := 1 / ((q i).1 : Real);
+                    let a := p j.succ;
+                    let x := p 0;
+                    let R := rad j.succ;
+                    let S := rad 0;
+                    0 < R →
+                      dist a x = R + S →
+                        let α := R / (R + S);
+                        0 < α →
+                          α < 1 →
+                            α * (R + S) = R →
+                              (1 - α) * (R + S) = S →
+                                let t := a + α • (x - a);
+                              ‖x - a‖ = R + S →
+                                dist t a = R →
+                                dist t x = S →
+                                ∀ [IsClosed (P4984T1ClosedGap L q ∩ Metric.sphere a R)],
+                                (∀ (b : Fin 3),
+                                ∀ (k : Fin 3),
+                                P4828T1Step (P4828T1Rotate q b) k.succ =
+                                if k = 0 then q 0 else q (k + b).succ) →
+                                ∀ (b : Fin (3 : ℕ)),
+                                b ≠ j ↔
+                                ∃ (k : Fin (3 : ℕ)),
+                                P4828T1Step (P4828T1Rotate q b) k.succ = q j.succ
+    ) := by
   classical
   intro L q hq j hj hparentContactDistance p rad a x R S hR hax α hα hαlt hαmul hcompmul t
-      hnormax hta htx haPoly htseg htPoly hfar htGap htA hAclosed hANonempty slot b
+      hnormax hta htx hAclosed slot b
   constructor
   · intro hb
     fin_cases b <;> fin_cases j
@@ -761,7 +773,7 @@ theorem P4984T1IncidentArcs (L : Real)
     ⟨t, htA⟩
   have slot (b k : Fin 3) := IncidentArcGeometry.slot q b k
   have keep (b : Fin 3) := @IncidentArcGeometry.keep L q hq j hj hparentContactDistance hR hax hα
-      hαlt hαmul hcompmul hnormax hta htx haPoly htseg htPoly hfar htGap htA hAclosed hANonempty
+      hαlt hαmul hcompmul hnormax hta htx hAclosed
           slot b
   have closedGapOfParent (u : Fin 4 → CircleCoordinates) (m : Fin 3)
       (hm : 0 < (u m.succ).1) := IncidentArcGeometry.closedGapOfParent L u m hm

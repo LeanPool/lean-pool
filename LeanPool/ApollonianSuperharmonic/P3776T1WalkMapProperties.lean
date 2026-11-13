@@ -96,9 +96,9 @@ private theorem hseg :
       rw [hmin, hsEq]; norm_num [Nat.cast_add]
 
 private theorem hlastD :
-    ∀ (p : List GaussianInt), (p ≠ []) → p.getLast?.getD 0 = p.getD (p.length - 1) 0 := by
+    ∀ (p : List GaussianInt), p.getLast?.getD 0 = p.getD (p.length - 1) 0 := by
   classical
-  intro p hp
+  intro p
   induction p using List.reverseRecOn with
   | nil => simp
   | append_singleton q a ih => simp [List.getLast?_append]
@@ -192,17 +192,23 @@ private theorem hcombo :
     nlinarith [h1, h2]
 
 private theorem walk_continuous :
-    ∀ (p : List GaussianInt), (p ≠ []) → (∀ (a : GaussianInt), Continuous (P3776T1WalkMap [a]))
-        → (∀ (q : List GaussianInt), ∀ (k : Nat), (k < q.length - 1) → ∀ (t : Set.Icc (0 : Real)
-        1), ((k : Real) / (q.length - 1) ≤ (t : Real)) → ((t : Real) ≤ ((k + 1 : Nat) : Real) /
-        (q.length - 1)) → P3776T1WalkMap q t = (1 - ((q.length - 1 : Nat) * (t : Real) - k)) •
-        GaussianRealPoint (q.getD k 0) + ((q.length - 1 : Nat) * (t : Real) - k) •
-        GaussianRealPoint (q.getD (k + 1) 0)) → (p.getLast?.getD 0 = p.getD (p.length - 1) 0) →
-        ((0 < p.length - 1) → ∀ (t : Set.Icc (0 : Real) 1), ∃ k, k < p.length - 1 ∧ (k : Real) /
-        (p.length - 1) ≤ (t : Real) ∧ (t : Real) ≤ ((k + 1 : Nat) : Real) / (p.length - 1)) →
-        Continuous (P3776T1WalkMap p) := by
+    ∀ (p : List GaussianInt),
+      p ≠ [] →
+        (∀ (a : GaussianInt), Continuous (P3776T1WalkMap [a])) →
+          (∀ (q : List GaussianInt),
+              ∀ (k : Nat),
+                k < q.length - 1 →
+                  ∀ (t : Set.Icc (0 : Real) 1),
+                    (k : Real) / (q.length - 1) ≤ (t : Real) →
+                      (t : Real) ≤ ((k + 1 : Nat) : Real) / (q.length - 1) →
+                        P3776T1WalkMap q t =
+                          (1 - ((q.length - 1 : Nat) * (t : Real) - k)) •
+                            GaussianRealPoint (q.getD k 0) +
+                            ((q.length - 1 : Nat) * (t : Real) - k) •
+                            GaussianRealPoint (q.getD (k + 1) 0)) →
+            p.getLast?.getD 0 = p.getD (p.length - 1) 0 → Continuous (P3776T1WalkMap p) := by
   classical
-  intro p hp hsingle hseg hlastD hinterval
+  intro p hp hsingle hseg hlastD
   by_cases hp1 : p.length = 1
   · obtain ⟨a, rfl⟩ : ∃ a : GaussianInt, p = [a] := by
       cases p with
@@ -312,17 +318,23 @@ private theorem walk_continuous :
     exact hall
 
 private theorem walk_start :
-    ∀ (p : List GaussianInt), (p ≠ []) → (∀ (q : List GaussianInt), ∀ (k : Nat), (k < q.length -
-        1) → ∀ (t : Set.Icc (0 : Real) 1), ((k : Real) / (q.length - 1) ≤ (t : Real)) → ((t :
-        Real) ≤ ((k + 1 : Nat) : Real) / (q.length - 1)) → P3776T1WalkMap q t = (1 - ((q.length
-        - 1 : Nat) * (t : Real) - k)) • GaussianRealPoint (q.getD k 0) + ((q.length - 1 : Nat) *
-        (t : Real) - k) • GaussianRealPoint (q.getD (k + 1) 0)) → (p.getLast?.getD 0 = p.getD
-        (p.length - 1) 0) → ((0 < p.length - 1) → ∀ (t : Set.Icc (0 : Real) 1), ∃ k, k < p.length
-        - 1 ∧ (k : Real) / (p.length - 1) ≤ (t : Real) ∧ (t : Real) ≤ ((k + 1 : Nat) : Real) /
-        (p.length - 1)) → (Continuous (P3776T1WalkMap p)) → P3776T1WalkMap p ⟨0, by norm_num⟩
-        = GaussianRealPoint (p.getD 0 0) := by
+    ∀ (p : List GaussianInt),
+      p ≠ [] →
+        (∀ (q : List GaussianInt),
+            ∀ (k : Nat),
+              k < q.length - 1 →
+                ∀ (t : Set.Icc (0 : Real) 1),
+                  (k : Real) / (q.length - 1) ≤ (t : Real) →
+                    (t : Real) ≤ ((k + 1 : Nat) : Real) / (q.length - 1) →
+                      P3776T1WalkMap q t =
+                        (1 - ((q.length - 1 : Nat) * (t : Real) - k)) •
+                            GaussianRealPoint (q.getD k 0) +
+                          ((q.length - 1 : Nat) * (t : Real) - k) •
+                            GaussianRealPoint (q.getD (k + 1) 0)) →
+          p.getLast?.getD 0 = p.getD (p.length - 1) 0 →
+            P3776T1WalkMap p ⟨0, by norm_num⟩ = GaussianRealPoint (p.getD 0 0) := by
   classical
-  intro p hp hseg hlastD hinterval walk_continuous
+  intro p hp hseg hlastD
   by_cases hp1 : p.length = 1
   · obtain ⟨a, rfl⟩ : ∃ a : GaussianInt, p = [a] := by
       cases p with
@@ -346,18 +358,24 @@ private theorem walk_start :
     simpa [t0] using hval
 
 private theorem walk_end :
-    ∀ (p : List GaussianInt), (p ≠ []) → (∀ (q : List GaussianInt), ∀ (k : Nat), (k < q.length -
-        1) → ∀ (t : Set.Icc (0 : Real) 1), ((k : Real) / (q.length - 1) ≤ (t : Real)) → ((t :
-        Real) ≤ ((k + 1 : Nat) : Real) / (q.length - 1)) → P3776T1WalkMap q t = (1 - ((q.length
-        - 1 : Nat) * (t : Real) - k)) • GaussianRealPoint (q.getD k 0) + ((q.length - 1 : Nat) *
-        (t : Real) - k) • GaussianRealPoint (q.getD (k + 1) 0)) → (p.getLast?.getD 0 = p.getD
-        (p.length - 1) 0) → ((0 < p.length - 1) → ∀ (t : Set.Icc (0 : Real) 1), ∃ k, k < p.length
-        - 1 ∧ (k : Real) / (p.length - 1) ≤ (t : Real) ∧ (t : Real) ≤ ((k + 1 : Nat) : Real) /
-        (p.length - 1)) → (Continuous (P3776T1WalkMap p)) → (P3776T1WalkMap p ⟨0, by
-        norm_num⟩ = GaussianRealPoint (p.getD 0 0)) → P3776T1WalkMap p ⟨1, by norm_num⟩ =
-      GaussianRealPoint (p.getLast?.getD 0) := by
+    ∀ (p : List GaussianInt),
+      p ≠ [] →
+        (∀ (q : List GaussianInt),
+            ∀ (k : Nat),
+              k < q.length - 1 →
+                ∀ (t : Set.Icc (0 : Real) 1),
+                  (k : Real) / (q.length - 1) ≤ (t : Real) →
+                    (t : Real) ≤ ((k + 1 : Nat) : Real) / (q.length - 1) →
+                      P3776T1WalkMap q t =
+                        (1 - ((q.length - 1 : Nat) * (t : Real) - k)) •
+                            GaussianRealPoint (q.getD k 0) +
+                          ((q.length - 1 : Nat) * (t : Real) - k) •
+                            GaussianRealPoint (q.getD (k + 1) 0)) →
+          p.getLast?.getD 0 = p.getD (p.length - 1) 0 →
+            P3776T1WalkMap p ⟨0, by norm_num⟩ = GaussianRealPoint (p.getD 0 0) →
+              P3776T1WalkMap p ⟨1, by norm_num⟩ = GaussianRealPoint (p.getLast?.getD 0) := by
   classical
-  intro p hp hseg hlastD hinterval walk_continuous walk_start
+  intro p hp hseg hlastD walk_start
   by_cases hp1 : p.length = 1
   · obtain ⟨a, rfl⟩ : ∃ a : GaussianInt, p = [a] := by
       cases p with
@@ -392,20 +410,34 @@ private theorem walk_end :
       Nat.sub_add_cancel (by omega : 1 ≤ n)] using hval
 
 private theorem walk_reverse :
-    ∀ (p : List GaussianInt), (p ≠ []) → (∀ (q : List GaussianInt), ∀ (k : Nat), (k < q.length -
-        1) → ∀ (t : Set.Icc (0 : Real) 1), ((k : Real) / (q.length - 1) ≤ (t : Real)) → ((t :
-        Real) ≤ ((k + 1 : Nat) : Real) / (q.length - 1)) → P3776T1WalkMap q t = (1 - ((q.length
-        - 1 : Nat) * (t : Real) - k)) • GaussianRealPoint (q.getD k 0) + ((q.length - 1 : Nat) *
-        (t : Real) - k) • GaussianRealPoint (q.getD (k + 1) 0)) → (p.getLast?.getD 0 = p.getD
-        (p.length - 1) 0) → ((0 < p.length - 1) → ∀ (t : Set.Icc (0 : Real) 1), ∃ k, k < p.length
-        - 1 ∧ (k : Real) / (p.length - 1) ≤ (t : Real) ∧ (t : Real) ≤ ((k + 1 : Nat) : Real) /
-        (p.length - 1)) → (Continuous (P3776T1WalkMap p)) → (P3776T1WalkMap p ⟨0, by
-        norm_num⟩ = GaussianRealPoint (p.getD 0 0)) → (P3776T1WalkMap p ⟨1, by norm_num⟩ =
-        GaussianRealPoint (p.getLast?.getD 0)) → (∀ t : Set.Icc (0 : Real) 1,
-      P3776T1WalkMap p.reverse t =
-        P3776T1WalkMap p ⟨1 - (t : Real), by constructor <;> linarith [t.2.1, t.2.2]⟩) := by
+    ∀ (p : List GaussianInt),
+      p ≠ [] →
+        (∀ (q : List GaussianInt),
+            ∀ (k : Nat),
+              k < q.length - 1 →
+                ∀ (t : Set.Icc (0 : Real) 1),
+                  (k : Real) / (q.length - 1) ≤ (t : Real) →
+                    (t : Real) ≤ ((k + 1 : Nat) : Real) / (q.length - 1) →
+                      P3776T1WalkMap q t =
+                        (1 - ((q.length - 1 : Nat) * (t : Real) - k)) •
+                            GaussianRealPoint (q.getD k 0) +
+                          ((q.length - 1 : Nat) * (t : Real) - k) •
+                            GaussianRealPoint (q.getD (k + 1) 0)) →
+          p.getLast?.getD 0 = p.getD (p.length - 1) 0 →
+            (0 < p.length - 1 →
+                ∀ (t : Set.Icc (0 : Real) 1),
+                  ∃ k,
+                    k < p.length - 1 ∧
+                      (k : Real) / (p.length - 1) ≤ (t : Real) ∧
+                        (t : Real) ≤ ((k + 1 : Nat) : Real) / (p.length - 1)) →
+              P3776T1WalkMap p ⟨0, by norm_num⟩ = GaussianRealPoint (p.getD 0 0) →
+                P3776T1WalkMap p ⟨1, by norm_num⟩ = GaussianRealPoint (p.getLast?.getD 0) →
+                  ∀ t : Set.Icc (0 : Real) 1,
+                    P3776T1WalkMap p.reverse t =
+                      P3776T1WalkMap p
+                        ⟨1 - (t : Real), by constructor <;> linarith [t.2.1, t.2.2]⟩ := by
   classical
-  intro p hp hseg hlastD hinterval walk_continuous walk_start walk_end t
+  intro p hp hseg hlastD hinterval walk_start walk_end t
   by_cases hp1 : p.length = 1
   · obtain ⟨a, rfl⟩ : ∃ a : GaussianInt, p = [a] := by
       cases p with
@@ -492,22 +524,38 @@ private theorem walk_reverse :
     module
 
 private theorem walk_translate :
-    ∀ (p : List GaussianInt), (p ≠ []) → (∀ (q : List GaussianInt), ∀ (k : Nat), (k < q.length -
-        1) → ∀ (t : Set.Icc (0 : Real) 1), ((k : Real) / (q.length - 1) ≤ (t : Real)) → ((t :
-        Real) ≤ ((k + 1 : Nat) : Real) / (q.length - 1)) → P3776T1WalkMap q t = (1 - ((q.length
-        - 1 : Nat) * (t : Real) - k)) • GaussianRealPoint (q.getD k 0) + ((q.length - 1 : Nat) *
-        (t : Real) - k) • GaussianRealPoint (q.getD (k + 1) 0)) → (p.getLast?.getD 0 = p.getD
-        (p.length - 1) 0) → ((0 < p.length - 1) → ∀ (t : Set.Icc (0 : Real) 1), ∃ k, k < p.length
-        - 1 ∧ (k : Real) / (p.length - 1) ≤ (t : Real) ∧ (t : Real) ≤ ((k + 1 : Nat) : Real) /
-        (p.length - 1)) → (Continuous (P3776T1WalkMap p)) → (P3776T1WalkMap p ⟨0, by
-        norm_num⟩ = GaussianRealPoint (p.getD 0 0)) → (P3776T1WalkMap p ⟨1, by norm_num⟩ =
-        GaussianRealPoint (p.getLast?.getD 0)) → ((∀ t : Set.Icc (0 : Real) 1, P3776T1WalkMap
-        p.reverse t = P3776T1WalkMap p ⟨1 - (t : Real), by constructor <;> linarith [t.2.1,
-        t.2.2]⟩)) → (∀ u : GaussianInt, ∀ t : Set.Icc (0 : Real) 1,
-      P3776T1WalkMap (p.map (fun z => z + u)) t =
-        P3776T1WalkMap p t + GaussianRealPoint u) := by
+    ∀ (p : List GaussianInt),
+      p ≠ [] →
+        (∀ (q : List GaussianInt),
+            ∀ (k : Nat),
+              k < q.length - 1 →
+                ∀ (t : Set.Icc (0 : Real) 1),
+                  (k : Real) / (q.length - 1) ≤ (t : Real) →
+                    (t : Real) ≤ ((k + 1 : Nat) : Real) / (q.length - 1) →
+                      P3776T1WalkMap q t =
+                        (1 - ((q.length - 1 : Nat) * (t : Real) - k)) •
+                            GaussianRealPoint (q.getD k 0) +
+                          ((q.length - 1 : Nat) * (t : Real) - k) •
+                            GaussianRealPoint (q.getD (k + 1) 0)) →
+          p.getLast?.getD 0 = p.getD (p.length - 1) 0 →
+            (0 < p.length - 1 →
+                ∀ (t : Set.Icc (0 : Real) 1),
+                  ∃ k,
+                    k < p.length - 1 ∧
+                      (k : Real) / (p.length - 1) ≤ (t : Real) ∧
+                        (t : Real) ≤ ((k + 1 : Nat) : Real) / (p.length - 1)) →
+              P3776T1WalkMap p ⟨0, by norm_num⟩ = GaussianRealPoint (p.getD 0 0) →
+                P3776T1WalkMap p ⟨1, by norm_num⟩ = GaussianRealPoint (p.getLast?.getD 0) →
+                  (∀ t : Set.Icc (0 : Real) 1,
+                      P3776T1WalkMap p.reverse t =
+                        P3776T1WalkMap p
+                          ⟨1 - (t : Real), by constructor <;> linarith [t.2.1, t.2.2]⟩) →
+                    ∀ u : GaussianInt,
+                      ∀ t : Set.Icc (0 : Real) 1,
+                        P3776T1WalkMap (p.map fun z => z + u) t =
+                          P3776T1WalkMap p t + GaussianRealPoint u := by
   classical
-  intro p hp hseg hlastD hinterval walk_continuous walk_start walk_end walk_reverse u t
+  intro p hp hseg hlastD hinterval walk_start walk_end walk_reverse u t
   have hpoint (z : GaussianInt) :
       GaussianRealPoint (z + u) = GaussianRealPoint z + GaussianRealPoint u := by
     ext <;> simp [GaussianRealPoint]
@@ -540,29 +588,50 @@ private theorem walk_translate :
     module
 
 private theorem walk_contained :
-    ∀ (p : List GaussianInt), (p ≠ []) → (∀ (q : List GaussianInt), ∀ (k : Nat), (k < q.length -
-        1) → ∀ (t : Set.Icc (0 : Real) 1), ((k : Real) / (q.length - 1) ≤ (t : Real)) → ((t :
-        Real) ≤ ((k + 1 : Nat) : Real) / (q.length - 1)) → P3776T1WalkMap q t = (1 - ((q.length
-        - 1 : Nat) * (t : Real) - k)) • GaussianRealPoint (q.getD k 0) + ((q.length - 1 : Nat) *
-        (t : Real) - k) • GaussianRealPoint (q.getD (k + 1) 0)) → (p.getLast?.getD 0 = p.getD
-        (p.length - 1) 0) → ((0 < p.length - 1) → ∀ (t : Set.Icc (0 : Real) 1), ∃ k, k < p.length
-        - 1 ∧ (k : Real) / (p.length - 1) ≤ (t : Real) ∧ (t : Real) ≤ ((k + 1 : Nat) : Real) /
-        (p.length - 1)) → (∀ (lo : Real × Real), ∀ (hi : Real × Real), ∀ (a : Real × Real), ∀ (b
-        : Real × Real), (a ∈ Set.Icc lo hi) → (b ∈ Set.Icc lo hi) → ∀ (r : Real), (0 ≤ r) → (r ≤
-        1) → (1 - r) • a + r • b ∈ Set.Icc lo hi) → (Continuous (P3776T1WalkMap p)) →
-        (P3776T1WalkMap p ⟨0, by norm_num⟩ = GaussianRealPoint (p.getD 0 0)) →
-        (P3776T1WalkMap p ⟨1, by norm_num⟩ = GaussianRealPoint (p.getLast?.getD 0)) → ((∀ t :
-        Set.Icc (0 : Real) 1, P3776T1WalkMap p.reverse t = P3776T1WalkMap p ⟨1 - (t : Real),
-        by constructor <;> linarith [t.2.1, t.2.2]⟩)) → ((∀ u : GaussianInt, ∀ t : Set.Icc (0 :
-        Real) 1, P3776T1WalkMap (p.map (fun z => z + u)) t = P3776T1WalkMap p t +
-        GaussianRealPoint u)) → (∀ T : ProtoTile, LatticeTile T →
-      (∀ z ∈ p, z ∈ FootprintVertices T) →
-      (∀ a b : GaussianInt, ∀ l₁ l₂ : List GaussianInt,
-        p = l₁ ++ a :: b :: l₂ → {a, b} ∈ FootprintEdges T) →
-      ∀ t, P3776T1WalkMap p t ∈ TileRealization T) := by
+    ∀ (p : List GaussianInt),
+      p ≠ [] →
+        (∀ (q : List GaussianInt),
+            ∀ (k : Nat),
+              k < q.length - 1 →
+                ∀ (t : Set.Icc (0 : Real) 1),
+                  (k : Real) / (q.length - 1) ≤ (t : Real) →
+                    (t : Real) ≤ ((k + 1 : Nat) : Real) / (q.length - 1) →
+                      P3776T1WalkMap q t =
+                        (1 - ((q.length - 1 : Nat) * (t : Real) - k)) •
+                            GaussianRealPoint (q.getD k 0) +
+                          ((q.length - 1 : Nat) * (t : Real) - k) •
+                            GaussianRealPoint (q.getD (k + 1) 0)) →
+          p.getLast?.getD 0 = p.getD (p.length - 1) 0 →
+            (0 < p.length - 1 →
+                ∀ (t : Set.Icc (0 : Real) 1),
+                  ∃ k,
+                    k < p.length - 1 ∧
+                      (k : Real) / (p.length - 1) ≤ (t : Real) ∧
+                        (t : Real) ≤ ((k + 1 : Nat) : Real) / (p.length - 1)) →
+              (∀ (lo : Real × Real),
+                  ∀ (hi : Real × Real),
+                    ∀ (a : Real × Real),
+                      ∀ (b : Real × Real),
+                        a ∈ Set.Icc lo hi →
+                          b ∈ Set.Icc lo hi →
+                            ∀ (r : Real),
+                            0 ≤ r → r ≤ 1 → (1 - r) • a + r • b ∈ Set.Icc lo hi) →
+                P3776T1WalkMap p ⟨0, by norm_num⟩ = GaussianRealPoint (p.getD 0 0) →
+                  P3776T1WalkMap p ⟨1, by norm_num⟩ =
+                      GaussianRealPoint (p.getLast?.getD 0) →
+                    (∀ t : Set.Icc (0 : Real) 1,
+                        P3776T1WalkMap p.reverse t =
+                          P3776T1WalkMap p
+                            ⟨1 - (t : Real), by constructor <;> linarith [t.2.1, t.2.2]⟩) →
+                      ∀ T : ProtoTile,
+                        LatticeTile T →
+                          (∀ z ∈ p, z ∈ FootprintVertices T) →
+                            (∀ a b : GaussianInt,
+                            ∀ l₁ l₂ : List GaussianInt,
+                            p = l₁ ++ a :: b :: l₂ → { a, b } ∈ FootprintEdges T) →
+                            ∀ t, P3776T1WalkMap p t ∈ TileRealization T := by
   classical
-  intro p hp hseg hlastD hinterval hcombo walk_continuous walk_start walk_end walk_reverse
-      walk_translate T hT hv hed t
+  intro p hp hseg hlastD hinterval hcombo walk_start walk_end walk_reverse T hT hv hed t
   have hdisc : Nonempty
       ((Metric.closedBall (0 : Real × Real) 1 : Set (Real × Real)) ≃ₜ
         TileRealization T) := by
@@ -739,7 +808,7 @@ theorem P3776T1WalkMapProperties (p : List GaussianInt) (hp : p ≠ []) :
             GaussianRealPoint (q.getD k 0) +
           ((q.length - 1 : Nat) * (t : Real) - k) •
             GaussianRealPoint (q.getD (k + 1) 0) := WalkMapLemmas.hseg q k hk t ht1 ht2
-  have hlastD : p.getLast?.getD 0 = p.getD (p.length - 1) 0 := WalkMapLemmas.hlastD p hp
+  have hlastD : p.getLast?.getD 0 = p.getD (p.length - 1) 0 := WalkMapLemmas.hlastD p
   have hinterval (hn : 0 < p.length - 1) (t : Set.Icc (0 : Real) 1) :
       ∃ k, k < p.length - 1 ∧
         (k : Real) / (p.length - 1) ≤ (t : Real) ∧
@@ -748,27 +817,26 @@ theorem P3776T1WalkMapProperties (p : List GaussianInt) (hp : p ≠ []) :
       (hb : b ∈ Set.Icc lo hi) (r : Real) (hr0 : 0 ≤ r) (hr1 : r ≤ 1) :
       (1 - r) • a + r • b ∈ Set.Icc lo hi := WalkMapLemmas.hcombo lo hi a b ha hb r hr0 hr1
   have walk_continuous : Continuous (P3776T1WalkMap p) := WalkMapLemmas.walk_continuous p hp
-      hsingle hseg hlastD hinterval
+      hsingle hseg hlastD
   have walk_start : P3776T1WalkMap p ⟨0, by norm_num⟩ = GaussianRealPoint (p.getD 0 0) :=
-      WalkMapLemmas.walk_start p hp hseg hlastD hinterval walk_continuous
+      WalkMapLemmas.walk_start p hp hseg hlastD
   have walk_end : P3776T1WalkMap p ⟨1, by norm_num⟩ =
-      GaussianRealPoint (p.getLast?.getD 0) := WalkMapLemmas.walk_end p hp hseg hlastD hinterval
-          walk_continuous walk_start
+      GaussianRealPoint (p.getLast?.getD 0) := WalkMapLemmas.walk_end p hp hseg hlastD walk_start
   have walk_reverse : (∀ t : Set.Icc (0 : Real) 1,
       P3776T1WalkMap p.reverse t =
         P3776T1WalkMap p ⟨1 - (t : Real), by constructor <;> linarith [t.2.1, t.2.2]⟩) :=
-            WalkMapLemmas.walk_reverse p hp hseg hlastD hinterval walk_continuous walk_start
+            WalkMapLemmas.walk_reverse p hp hseg hlastD hinterval walk_start
             walk_end
   have walk_translate : (∀ u : GaussianInt, ∀ t : Set.Icc (0 : Real) 1,
       P3776T1WalkMap (p.map (fun z => z + u)) t =
         P3776T1WalkMap p t + GaussianRealPoint u) := WalkMapLemmas.walk_translate p hp hseg
-            hlastD hinterval walk_continuous walk_start walk_end walk_reverse
+            hlastD hinterval walk_start walk_end walk_reverse
   have walk_contained : (∀ T : ProtoTile, LatticeTile T →
       (∀ z ∈ p, z ∈ FootprintVertices T) →
       (∀ a b : GaussianInt, ∀ l₁ l₂ : List GaussianInt,
         p = l₁ ++ a :: b :: l₂ → {a, b} ∈ FootprintEdges T) →
       ∀ t, P3776T1WalkMap p t ∈ TileRealization T) := WalkMapLemmas.walk_contained p hp hseg
-          hlastD hinterval hcombo walk_continuous walk_start walk_end walk_reverse walk_translate
+          hlastD hinterval hcombo walk_start walk_end walk_reverse
   exact ⟨walk_continuous, walk_start, walk_end, walk_reverse, walk_translate, walk_contained⟩
 
 end ApollonianSuperharmonic

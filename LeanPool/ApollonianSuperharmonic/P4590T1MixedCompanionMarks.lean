@@ -6,6 +6,7 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.TileTouchingDisjoint
 
 public import LeanPool.ApollonianSuperharmonic.BandOrderedGeneralLayoutCertificate
 public import LeanPool.ApollonianSuperharmonic.BandOrientedChildParentEndpoints
@@ -325,18 +326,7 @@ private theorem incident :
     convert ha using 1
     ext <;> simp
 
-private theorem touchDisjoint :
-    (by
-      classical
-      exact
-        ∀ (M : ProtoTile), ∀ (N : ProtoTile), (M.cells.Nonempty) → ((N.cells.Nonempty) →
-            ((TileTouching M N) → (Disjoint M.cells N.cells))) ) := by
-  classical
-  intro M N hm hn ht
-  rcases ht with ht | ht | ht
-  · exact ht.2.2.1
-  · rw [ht.1] at hm; simp at hm
-  · rw [ht.1] at hn; simp at hn
+private abbrev touchDisjoint := ApollonianSuperharmonic.TileTouchingDisjoint.cells
 
 private theorem nested :
     (by

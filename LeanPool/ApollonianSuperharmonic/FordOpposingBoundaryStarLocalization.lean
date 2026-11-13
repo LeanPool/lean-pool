@@ -308,27 +308,43 @@ private theorem diagonalCover :
     (by
       classical
       exact
-        ∀ (P : FordFareyParameter), ∀ (i : Fin 3), ∀ (T0 : ProtoTile), ∀ (T0' : ProtoTile), ∀ (h0
-            : PartialOdometer), ∀ (h0' : PartialOdometer), ∀ (x : GaussianInt), (x ∈ h0.domain) →
-            ((x ∈ h0'.domain) → ((∀ (y : GaussianInt), y = x ∨ y = x + (1 : GaussianInt) ∨ y = x
-            - (1 : GaussianInt) ∨ y = x + (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt) ∨ y = x - (⟨(0 : ℤ),
-            (1 : ℤ)⟩ : GaussianInt) → y ∈ h0.domain ∨ y ∈ h0'.domain) → (∀ (u : GaussianInt), (x
-            ∈ FootprintVertices T0 ∩ FootprintVertices T0') → (((x - u).re = if i = (0 : Fin (3 :
-            ℕ)) then (↑P.q : ℤ) else (0 : ℤ)) → (((if i = (0 : Fin (3 : ℕ)) then (↑P.q₁ : ℤ) else
-            (↑P.q₂ : ℤ)) ≤ (x - u).im) → (((x - u).im ≤ (↑P.q : ℤ)) → (∀ (U : ProtoTile), ∀ (V :
-            ProtoTile), (x ∈ U.cells ∧ x - (1 : GaussianInt) - (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt)
-            ∈ V.cells ∨ x - (1 : GaussianInt) ∈ U.cells ∧ x - (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt)
-            ∈ V.cells ∨ x - (1 : GaussianInt) - (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt) ∈ U.cells ∧ x
-            ∈ V.cells ∨ x - (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt) ∈ U.cells ∧ x - (1 : GaussianInt)
-            ∈ V.cells) → ((∀ (T : ProtoTile), ∀ (z : GaussianInt), (z ∈ T.cells) → (∀ (y :
-            GaussianInt), (y = z ∨ y = z + 1 ∨ y = z + ⟨0, 1⟩ ∨ y = z + 1 + ⟨0, 1⟩) → (y ∈
-            FootprintVertices T))) → (∀ (A : ProtoTile), ∀ (B : ProtoTile), ((x ∈ A.cells ∧ x - 1
-            - ⟨0, 1⟩ ∈ B.cells) ∨ (x - 1 ∈ A.cells ∧ x - ⟨0, 1⟩ ∈ B.cells)) → x ∈
-            FootprintVertices A ∧ x ∈ FootprintVertices B ∧ ∀ y, y = x ∨ y = x + 1 ∨ y = x - 1 ∨
-            y = x + ⟨0, 1⟩ ∨ y = x - ⟨0, 1⟩ → y ∈ FootprintVertices A ∨ y ∈ FootprintVertices
-            B))))))))) ) := by
+        ∀ (P : FordFareyParameter),
+          ∀ (i : Fin 3),
+            ∀ (h0 : PartialOdometer),
+              ∀ (h0' : PartialOdometer),
+                ∀ (x : GaussianInt),
+                  (∀ (y : GaussianInt),
+                      y = x ∨
+                          y = x + (1 : GaussianInt) ∨
+                            y = x - (1 : GaussianInt) ∨
+                              y = x + (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt) ∨
+                                y = x - (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt) →
+                        y ∈ h0.domain ∨ y ∈ h0'.domain) →
+                    ∀ (u : GaussianInt),
+                      ((x - u).re =
+                          if i = (0 : Fin (3 : ℕ)) then (↑P.q : ℤ) else (0 : ℤ)) →
+                        (if i = (0 : Fin (3 : ℕ)) then (↑P.q₁ : ℤ) else (↑P.q₂ : ℤ)) ≤
+                            (x - u).im →
+                          (x - u).im ≤ (↑P.q : ℤ) →
+                            (∀ (T : ProtoTile),
+                                ∀ (z : GaussianInt),
+                                z ∈ T.cells →
+                                ∀ (y : GaussianInt),
+                                y = z ∨ y = z + 1 ∨ y = z + ⟨0, 1⟩ ∨ y = z + 1 + ⟨0, 1⟩ →
+                                y ∈ FootprintVertices T) →
+                              ∀ (A : ProtoTile),
+                                ∀ (B : ProtoTile),
+                                x ∈ A.cells ∧ x - 1 - ⟨0, 1⟩ ∈ B.cells ∨
+                                x - 1 ∈ A.cells ∧ x - ⟨0, 1⟩ ∈ B.cells →
+                                x ∈ FootprintVertices A ∧
+                                x ∈ FootprintVertices B ∧
+                                ∀ y,
+                                y = x ∨
+                                y = x + 1 ∨ y = x - 1 ∨ y = x + ⟨0, 1⟩ ∨ y = x - ⟨0, 1⟩ →
+                                y ∈ FootprintVertices A ∨ y ∈ FootprintVertices B
+    ) := by
   classical
-  intro P i T0 T0' h0 h0' x hx0 hx0' hstar u hxfoot hxr hxl hxu U V hdiag corner A B
+  intro P i h0 h0' x hstar u hxr hxl hxu corner A B
   rintro (⟨hA, hB⟩ | ⟨hA, hB⟩)
   · refine ⟨corner A x hA x (Or.inl rfl),
       corner B _ hB x (Or.inr (Or.inr (Or.inr (by abel)))), ?_⟩
@@ -480,8 +496,8 @@ theorem FordOpposingBoundaryStarLocalization
   have hfootcover : x ∈ FootprintVertices U ∧ x ∈ FootprintVertices V ∧
       ∀ y, y = x ∨ y = x + 1 ∨ y = x - 1 ∨ y = x + ⟨0, 1⟩ ∨
         y = x - ⟨0, 1⟩ → y ∈ FootprintVertices U ∨ y ∈ FootprintVertices V :=
-            FordStarGeometry.hfootcover x U V hdiag (FordStarGeometry.diagonalCover P i T0 T0' h0
-            h0' x hx0 hx0' hstar u hxfoot hxr hxl hxu U V hdiag (FordStarGeometry.corner))
+            FordStarGeometry.hfootcover x U V hdiag (FordStarGeometry.diagonalCover P i h0
+            h0' x hstar u hxr hxl hxu (FordStarGeometry.corner))
   refine ⟨U, V, g, k, hAg, hAk, hleft, ?_, ?_, ?_⟩
   · change x ∈ (g.domain : Set GaussianInt)
     rw [hdomU]

@@ -392,30 +392,7 @@ private theorem hzPAt435 :
   rw [← hpverts]
   exact hzV
 
-private theorem hrootAt463 :
-    (by
-      classical
-      exact
-        ∀ (C₀ : BandCircle),
-          ∀ (q : Fin (4 : ℕ) → CircleCoordinates),
-            ProperBandQuadruple q → q (0 : Fin (4 : ℕ)) = C₀.1.1 → 1 < (q 0).1
-    ) := by
-  classical
-  intro C₀ q hq hqC
-  have hnon := (ProperBandCurvatureStructure q hq).2.1
-  have hunique := (ProperBandCurvatureStructure q hq).2.2
-  have hnon0 := hnon 0
-  have hnon1 := hnon 1
-  have hpq0 := hq.2 (0 : Fin 3)
-  have hpq1 := hq.2 (1 : Fin 3)
-  have huniq01 := hunique 0 1
-  have hpos : 0 < (q 0).1 := by simpa [hqC] using C₀.property
-  by_contra hn0
-  have hle : (q 0).1 ≤ 1 := by omega
-  have hz0 : (q (0 : Fin 3).succ).1 = 0 := by omega
-  have hz1 : (q (1 : Fin 3).succ).1 = 0 := by omega
-  have bad := huniq01 hz0 hz1
-  omega
+private abbrev hrootAt463 := ApollonianSuperharmonic.RightCompatibilityGeometry.hrootAt310
 
 private theorem edgeStepAt482 :
     (by

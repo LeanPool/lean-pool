@@ -6,6 +6,7 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.TileTranslationProperties
 public import LeanPool.ApollonianSuperharmonic.InteriorFootprintIncidence
 
 public import LeanPool.ApollonianSuperharmonic.AllowedSubtileIncidenceZeroOppositeChord
@@ -64,18 +65,7 @@ private theorem hOsub :
   rw [cert.precursor_cells] at hz
   exact (cert.minus_union z).mpr ⟨0, true, hz⟩
 
-private theorem tile_zero :
-    (by
-      classical
-      exact
-        ∀ (U : ProtoTile), TileTranslation U 0 = U ) := by
-  classical
-  intro U
-  cases U
-  have hz : GaussianTranslation 0 = id := by
-    funext z
-    simp [GaussianTranslation]
-  simp [TileTranslation, hz, Finset.image_id]
+private abbrev tile_zero := ApollonianSuperharmonic.TileTranslationProperties.zero
 
 private theorem modified_cell_owner :
     (by

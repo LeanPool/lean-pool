@@ -456,49 +456,94 @@ private theorem cornerRescue :
     (by
       classical
       exact
-        ∀ (Dplus : ProtoTile), ∀ (Dminus : ProtoTile), ∀ (O : ProtoTile), ∀ (O' : ProtoTile), ∀
-            (X : ProtoTile), ∀ (Y : ProtoTile), ∀ (U : ProtoTile), ∀ (V : ProtoTile),
-            (Finset.Nonempty O.cells) → ((Finset.Nonempty X.cells) → ((Finset.Nonempty Y.cells) →
-            ((Finset.Nonempty U.cells) → ((Finset.Nonempty V.cells) → ((PrecursorBoundaryArcData
-            Dplus Dminus O O' X Y U V) → ((NoCheckerboardCellVertex (Dplus.cells : Set
-            LatticeCell)) → ((NoCheckerboardCellVertex (Dminus.cells : Set LatticeCell)) →
-            ((Disjoint Dplus.cells O.cells) → ((Disjoint Dminus.cells O.cells) → ((∀ (T :
-            ProtoTile), ∀ (y : GaussianInt), ∀ (j : Fin 4), ((LatticeVertexIncidentCell y j ∈
-            T.cells ∧ LatticeVertexIncidentCell y (j + 1) ∉ T.cells) ∨ (LatticeVertexIncidentCell
-            y j ∉ T.cells ∧ LatticeVertexIncidentCell y (j + 1) ∈ T.cells)) → (y ∈
-            BoundaryFootprintVertices T)) → ((∀ (y : GaussianInt), ∀ (j : Fin 4),
-            ((LatticeVertexIncidentCell y j ∈ O.cells ∧ LatticeVertexIncidentCell y (j + 1) ∉
-            O.cells) ∨ (LatticeVertexIncidentCell y j ∉ O.cells ∧ LatticeVertexIncidentCell y (j
-            + 1) ∈ O.cells)) → ((LatticeVertexIncidentCell y j ∉ O.cells) →
-            (LatticeVertexIncidentCell y j ∈ Dplus.cells ∨ LatticeVertexIncidentCell y j ∈
-            Dminus.cells))) → ((∀ (y : GaussianInt), ∀ (j : Fin 4), ((LatticeVertexIncidentCell y
-            j ∈ O.cells ∧ LatticeVertexIncidentCell y (j + 1) ∉ O.cells) ∨
-            (LatticeVertexIncidentCell y j ∉ O.cells ∧ LatticeVertexIncidentCell y (j + 1) ∈
-            O.cells)) → ((LatticeVertexIncidentCell y (j + 1) ∉ O.cells) →
-            (LatticeVertexIncidentCell y (j + 1) ∈ Dplus.cells ∨ LatticeVertexIncidentCell y (j +
-            1) ∈ Dminus.cells))) → ((∀ (T : ProtoTile), (NoCheckerboardCellVertex (T.cells : Set
-            LatticeCell)) → (∀ (y : GaussianInt), ∀ (j : Fin 4), (LatticeVertexIncidentCell y (j
-            + 1) ∈ T.cells) → ((LatticeVertexIncidentCell y (j + 3) ∈ T.cells) →
-            ((LatticeVertexIncidentCell y j ∉ T.cells) → (LatticeVertexIncidentCell y (j + 2) ∈
-            T.cells))))) → ((∀ (J : ProtoTile), ∀ (K : ProtoTile), (J.cells.Nonempty) →
-            ((K.cells.Nonempty) → ((J.cells ⊆ Dplus.cells) → ((K.cells ⊆ Dminus.cells) →
-            ((TileTouching J K) → (∀ (y : GaussianInt), ∀ (j : Fin 4), (LatticeVertexIncidentCell
-            y j ∈ O.cells) → (((LatticeVertexIncidentCell y (j + 1) ∈ Dplus.cells ∧
-            LatticeVertexIncidentCell y (j + 3) ∈ Dminus.cells) ∨ (LatticeVertexIncidentCell y (j
-            + 1) ∈ Dminus.cells ∧ LatticeVertexIncidentCell y (j + 3) ∈ Dplus.cells)) →
-            ((LatticeVertexIncidentCell y (j + 2) ∉ Dplus.cells) → ((LatticeVertexIncidentCell y
-            (j + 2) ∉ Dminus.cells) → ((y ∈ BoundaryFootprintVertices J) → ((y ∈
-            BoundaryFootprintVertices K) → (False)))))))))))) → (∀ (y : GaussianInt), ∀ (j : Fin
-            (4 : ℕ)), LatticeVertexIncidentCell y j ∈ O.cells → LatticeVertexIncidentCell y (j +
-            (2 : Fin (4 : ℕ))) ∉ O.cells → LatticeVertexIncidentCell y (j + (1 : Fin (4 : ℕ))) ∉
-            O.cells → LatticeVertexIncidentCell y (j + (3 : Fin (4 : ℕ))) ∉ O.cells →
-            LatticeVertexIncidentCell y (j + (2 : Fin (4 : ℕ))) ∈ Dplus.cells ∨
-            LatticeVertexIncidentCell y (j + (2 : Fin (4 : ℕ))) ∈ Dminus.cells))))))))))))))) )
+        ∀ (Dplus : ProtoTile),
+          ∀ (Dminus : ProtoTile),
+            ∀ (O : ProtoTile),
+              ∀ (O' : ProtoTile),
+                ∀ (X : ProtoTile),
+                  ∀ (Y : ProtoTile),
+                    ∀ (U : ProtoTile),
+                      ∀ (V : ProtoTile),
+                        Finset.Nonempty O.cells →
+                          Finset.Nonempty X.cells →
+                            Finset.Nonempty Y.cells →
+                              Finset.Nonempty U.cells →
+                                Finset.Nonempty V.cells →
+                                PrecursorBoundaryArcData Dplus Dminus O O' X Y U V →
+                                NoCheckerboardCellVertex (Dplus.cells : Set LatticeCell) →
+                                NoCheckerboardCellVertex
+                                (Dminus.cells : Set LatticeCell) →
+                                Disjoint Dplus.cells O.cells →
+                                Disjoint Dminus.cells O.cells →
+                                (∀ (T : ProtoTile),
+                                ∀ (y : GaussianInt),
+                                ∀ (j : Fin 4),
+                                LatticeVertexIncidentCell y j ∈ T.cells ∧
+                                LatticeVertexIncidentCell y (j + 1) ∉ T.cells ∨
+                                LatticeVertexIncidentCell y j ∉ T.cells ∧
+                                LatticeVertexIncidentCell y (j + 1) ∈ T.cells →
+                                y ∈ BoundaryFootprintVertices T) →
+                                (∀ (y : GaussianInt),
+                                ∀ (j : Fin 4),
+                                LatticeVertexIncidentCell y j ∈ O.cells ∧
+                                LatticeVertexIncidentCell y (j + 1) ∉ O.cells ∨
+                                LatticeVertexIncidentCell y j ∉ O.cells ∧
+                                LatticeVertexIncidentCell y (j + 1) ∈ O.cells →
+                                LatticeVertexIncidentCell y j ∉ O.cells →
+                                LatticeVertexIncidentCell y j ∈ Dplus.cells ∨
+                                LatticeVertexIncidentCell y j ∈ Dminus.cells) →
+                                (∀ (y : GaussianInt),
+                                ∀ (j : Fin 4),
+                                LatticeVertexIncidentCell y j ∈ O.cells ∧
+                                LatticeVertexIncidentCell y (j + 1) ∉ O.cells ∨
+                                LatticeVertexIncidentCell y j ∉ O.cells ∧
+                                LatticeVertexIncidentCell y (j + 1) ∈ O.cells →
+                                LatticeVertexIncidentCell y (j + 1) ∉ O.cells →
+                                LatticeVertexIncidentCell y (j + 1) ∈ Dplus.cells ∨
+                                LatticeVertexIncidentCell y (j + 1) ∈ Dminus.cells) →
+                                (∀ (T : ProtoTile),
+                                NoCheckerboardCellVertex (T.cells : Set LatticeCell) →
+                                ∀ (y : GaussianInt),
+                                ∀ (j : Fin 4),
+                                LatticeVertexIncidentCell y (j + 1) ∈ T.cells →
+                                LatticeVertexIncidentCell y (j + 3) ∈ T.cells →
+                                LatticeVertexIncidentCell y j ∉ T.cells →
+                                LatticeVertexIncidentCell y (j + 2) ∈ T.cells) →
+                                (∀ (J : ProtoTile),
+                                ∀ (K : ProtoTile),
+                                J.cells.Nonempty →
+                                K.cells.Nonempty →
+                                J.cells ⊆ Dplus.cells →
+                                K.cells ⊆ Dminus.cells →
+                                TileTouching J K →
+                                ∀ (y : GaussianInt),
+                                ∀ (j : Fin 4),
+                                LatticeVertexIncidentCell y j ∈ O.cells →
+                                LatticeVertexIncidentCell y (j + 1) ∈ Dplus.cells ∧
+                                LatticeVertexIncidentCell y (j + 3) ∈ Dminus.cells ∨
+                                LatticeVertexIncidentCell y (j + 1) ∈ Dminus.cells ∧
+                                LatticeVertexIncidentCell y (j + 3) ∈ Dplus.cells →
+                                LatticeVertexIncidentCell y (j + 2) ∉ Dplus.cells →
+                                LatticeVertexIncidentCell y (j + 2) ∉ Dminus.cells →
+                                y ∈ BoundaryFootprintVertices J →
+                                y ∈ BoundaryFootprintVertices K → False) →
+                                ∀ (y : GaussianInt),
+                                ∀ (j : Fin (4 : ℕ)),
+                                LatticeVertexIncidentCell y j ∈ O.cells →
+                                LatticeVertexIncidentCell y (j + (1 : Fin (4 : ℕ))) ∉
+                                O.cells →
+                                LatticeVertexIncidentCell y (j + (3 : Fin (4 : ℕ))) ∉
+                                O.cells →
+                                LatticeVertexIncidentCell y (j + (2 : Fin (4 : ℕ))) ∈
+                                Dplus.cells ∨
+                                LatticeVertexIncidentCell y (j + (2 : Fin (4 : ℕ))) ∈
+                                Dminus.cells
+    )
             := by
   classical
   intro Dplus Dminus O O' X Y U V hO hX hY hU hV data hcheckPlus hcheckMinus hdisjPlusO
       hdisjMinusO boundaryVertexOfCross coverLeft coverRight noCheckerboardDiagonal
-      mixedCornerContradiction y j hcenter hdiagO hside1O hside3O
+      mixedCornerContradiction y j hcenter hside1O hside3O
   by_cases hdiagPlus : LatticeVertexIncidentCell y (j + 2) ∈ Dplus.cells
   · exact Or.inl hdiagPlus
   by_cases hdiagMinus : LatticeVertexIncidentCell y (j + 2) ∈ Dminus.cells
@@ -922,7 +967,7 @@ theorem P4638T1ContactStarCoverage (Dplus Dminus O O' X Y U V : ProtoTile)
       (hside3O : LatticeVertexIncidentCell y (j + 3) ∉ O.cells) := ContactStarCases.cornerRescue
           Dplus Dminus O O' X Y U V hO hX hY hU hV data hcheckPlus hcheckMinus hdisjPlusO
           hdisjMinusO boundaryVertexOfCross coverLeft coverRight noCheckerboardDiagonal
-          mixedCornerContradiction y j hcenter hdiagO hside1O hside3O
+          mixedCornerContradiction y j hcenter hside1O hside3O
   have singletonCorner (y : GaussianInt) (j : Fin 4) := ContactStarCases.singletonCorner y j
   intro y hy a hya
   obtain ⟨jo, hjo⟩ := incident O y hO hy

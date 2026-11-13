@@ -35,13 +35,7 @@ private theorem huOrig :
   intro u hu uOrig
   exact hu
 
-private theorem hvOrig :
-    ∀ (v : Real × Real), (‖v‖ = 1) → (
-    let vOrig := v
-    ‖vOrig‖ = 1) := by
-  classical
-  intro v hv vOrig
-  exact hv
+private abbrev hvOrig := ApollonianSuperharmonic.TwoRaySectorsProof.huOrig
 
 end TwoRaySectorsProof
 

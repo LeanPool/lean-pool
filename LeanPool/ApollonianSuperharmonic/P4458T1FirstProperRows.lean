@@ -6,6 +6,7 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.GaussianRealPointProperties
 public import LeanPool.ApollonianSuperharmonic.BoundaryFrameJoinGeometry
 
 public import LeanPool.ApollonianSuperharmonic.BandPrototileCentroidUnique
@@ -1020,20 +1021,7 @@ private theorem hrightAdjacent :
   · rw [← hxIm]
     exact congrArg Prod.snd hplusSlope
 
-private theorem pointInjective :
-    (by
-      classical
-      exact
-        Function.Injective GaussianRealPoint ) := by
-  classical
-  intro a b hab
-  apply Zsqrtd.ext
-  · have h := congrArg Prod.fst hab
-    change (a.re : ℝ) = (b.re : ℝ) at h
-    exact_mod_cast h
-  · have h := congrArg Prod.snd hab
-    change (a.im : ℝ) = (b.im : ℝ) at h
-    exact_mod_cast h
+private abbrev pointInjective := ApollonianSuperharmonic.GaussianRealPointProperties.injective
 
 end FirstProperRowDetails
 

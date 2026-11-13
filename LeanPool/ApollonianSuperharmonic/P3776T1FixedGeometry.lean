@@ -98,10 +98,9 @@ private theorem harc :
   exact isCompact_range (continuous_subtype_val.comp h.continuous)
 
 private theorem hexterior :
-    ∀ (ι : Type), ∀ (P : PeriodicTileCore ι), (∃ u : P.lattice, u ≠ 0) → (∀ (B : Real),
-        IsPreconnected {x : Real × Real | B < ‖x‖}) := by
+    ∀ (B : Real), IsPreconnected {x : Real × Real | B < ‖x‖} := by
   classical
-  intro ι P hnonzero B
+  intro B
   let R : Set (Real × Real) := Set.Ioi B ×ˢ Set.univ
   let T : Set (Real × Real) := Set.univ ×ˢ Set.Ioi B
   let L : Set (Real × Real) := Set.Iio (-B) ×ˢ Set.univ
@@ -692,7 +691,7 @@ theorem P3776T1FixedGeometry {ι : Type} (P : PeriodicTileCore ι) :
       (harc _ _ (P.plane.face_edges f 1 2 (by decide)))).union
       (harc _ _ (P.plane.face_edges f 2 0 (by decide)))
   have hexterior (B : Real) : IsPreconnected {x : Real × Real | B < ‖x‖} :=
-      FixedPeriodicGeometryProof.hexterior ι P hnonzero B
+      FixedPeriodicGeometryProof.hexterior B
   have hcompact (f : P.plane.Face) : IsCompact (closure (P.plane.faceRegion f)) :=
       FixedPeriodicGeometryProof.hcompact ι P hnonzero hfacefree hfront hexterior f
   have hfiniteTrans (K A : Set (Real × Real)) (hK : IsCompact K) (hA : IsCompact A) :

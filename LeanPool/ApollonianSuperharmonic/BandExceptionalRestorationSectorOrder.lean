@@ -6,6 +6,8 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.TileTranslationProperties
+public import LeanPool.ApollonianSuperharmonic.LatticeTileNonempty
 public import LeanPool.ApollonianSuperharmonic.BoundaryFootprintInclusion
 public import LeanPool.ApollonianSuperharmonic.TileTouchingDisjoint
 
@@ -157,34 +159,10 @@ private theorem hO :
   rw [← cert.precursor_eq] at hocc
   exact tile_from_band (cfg.firstPredecessor (0 : Fin 3).succ) O hocc.1 (Or.inr hOne)
 
-private theorem nonempty_cells :
-    (by
-      classical
-      exact
-        ∀ (U : ProtoTile), (LatticeTile U) → (U.cells.Nonempty) ) := by
-  classical
-  intro U hU
-  rcases hU with ⟨hhome⟩
-  let z : (Metric.closedBall (0 : Real × Real) 1 : Set (Real × Real)) :=
-    ⟨0, by simp [Metric.mem_closedBall]⟩
-  have hreal : (TileRealization U).Nonempty := ⟨(hhome z).val, (hhome z).property⟩
-  by_contra hn
-  have he : U.cells = ∅ := Finset.not_nonempty_iff_eq_empty.mp hn
-  simp [TileRealization, he] at hreal
+private abbrev nonempty_cells := ApollonianSuperharmonic.LatticeTileNonempty.cells
 
 
-private theorem trzero :
-    (by
-      classical
-      exact
-        ∀ (Y : ProtoTile), TileTranslation Y 0 = Y ) := by
-  classical
-  intro Y
-  have hfun : GaussianTranslation 0 = id := by
-    funext z
-    simp [GaussianTranslation]
-  cases Y
-  simp [TileTranslation, hfun]
+private abbrev trzero := ApollonianSuperharmonic.TileTranslationProperties.zero
 
 private theorem htileComp :
     (by

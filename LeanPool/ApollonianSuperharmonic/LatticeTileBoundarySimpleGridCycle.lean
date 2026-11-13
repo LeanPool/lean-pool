@@ -162,68 +162,62 @@ private theorem unoccupied_index_zero :
     (by
       classical
       exact
-        ∀ (T : ProtoTile), (∀ (q : LatticeCell), ∀ (p : List GaussianInt), ∀ (x : GaussianInt), ∀
-            (y : GaussianInt), ((((q.re : Int) : Real) + (1 / 2 : Real)), (((q.im : Int) : Real)
-            + (1 / 2 : Real))) ∉ TileRealization T → p.head? = some x → p.getLast? = some y → (∀
-            a b : GaussianInt, ∀ l₁ l₂ : List GaussianInt, p = l₁ ++ a :: b :: l₂ →
-            FourNeighborAdjacent a b) → FourNeighborAdjacent y x → (∀ a b : GaussianInt, ((∃ l₁
-            l₂ : List GaussianInt, p = l₁ ++ a :: b :: l₂) ∨ (a = y ∧ b = x)) → ∀ t : Set.Icc (0
-            : Real) 1, ((1 - (t : Real)) * ((a.re : Int) : Real) + (t : Real) * ((b.re : Int) :
-            Real), (1 - (t : Real)) * ((a.im : Int) : Real) + (t : Real) * ((b.im : Int) : Real))
-            ∈ TileRealization T) → GridRayCrossingIndex q p = 0) → (∀ (gridPath : List
-            GaussianInt), ∀ (x : GaussianInt), ∀ (y : GaussianInt), ∀ (z : GaussianInt),
-            (gridPath.head? = some x) → ((gridPath.getLast? = some y) → ((List.IsChain (fun (a b
-            : GaussianInt) => {a, b} ∈ BoundaryFootprintEdges T) gridPath) → (({y, x} ∈
-            BoundaryFootprintEdges T) → ((List.IsChain FourNeighborAdjacent gridPath) →
-            ((FourNeighborAdjacent y x) → ((∀ (a : GaussianInt), ∀ (b : GaussianInt), (a, b) ∈
-            gridPath.zip gridPath.tail ++ [(y, x)] → {a, b} ∈ BoundaryFootprintEdges T) → ((∀ (a
-            : GaussianInt), ∀ (b : GaussianInt), (a, b) ∈ gridPath.zip gridPath.tail ++ [(y, x)]
-            → FourNeighborAdjacent a b) → ((∀ (a : GaussianInt), ∀ (b : GaussianInt), a ∈
-            gridPath → {a, b} ∈ BoundaryFootprintEdges T → (a, b) ∈ gridPath.zip gridPath.tail ++
-            [(y, x)] ∨ (b, a) ∈ gridPath.zip gridPath.tail ++ [(y, x)]) → (((z + (1 :
-            GaussianInt), z + (1 : GaussianInt) + ⟨(0 : ℤ), (1 : ℤ)⟩) ∈ gridPath.zip
-            gridPath.tail ++ [(y, x)] ∨ (z + (1 : GaussianInt) + ⟨(0 : ℤ), (1 : ℤ)⟩, z + (1 :
-            GaussianInt)) ∈ gridPath.zip gridPath.tail ++ [(y, x)]) → (
-        let cyclicEdges := (gridPath.zip gridPath.tail) ++ [(y, x)]
-        (
-        let cyclicEdges := gridPath.zip gridPath.tail ++ [(y, x)];
-    ∀ (q : LatticeCell), ((q + (1 : LatticeCell), q + (1 : LatticeCell) + ⟨(0 : ℤ), (1 : ℤ)⟩) ∉
-        cyclicEdges ∧
-            (q + (1 : LatticeCell) + ⟨(0 : ℤ), (1 : ℤ)⟩, q + (1 : LatticeCell)) ∉ cyclicEdges →
-          GridRayCrossingIndex (q + (1 : LatticeCell)) gridPath = GridRayCrossingIndex q gridPath) ∧
-        ((q + (1 : LatticeCell), q + (1 : LatticeCell) + ⟨(0 : ℤ), (1 : ℤ)⟩) ∈ cyclicEdges ∨
-              (q + (1 : LatticeCell) + ⟨(0 : ℤ), (1 : ℤ)⟩, q + (1 : LatticeCell)) ∈ cyclicEdges →
-            (GridRayCrossingIndex (q + (1 : LatticeCell)) gridPath - GridRayCrossingIndex q
-                gridPath).natAbs = (1 : ℕ)) ∧
-          ((q + (1 : LatticeCell) + ⟨(0 : ℤ), (1 : ℤ)⟩, q + ⟨(0 : ℤ), (1 : ℤ)⟩) ∉ cyclicEdges ∧
-                (q + ⟨(0 : ℤ), (1 : ℤ)⟩, q + (1 : LatticeCell) + ⟨(0 : ℤ), (1 : ℤ)⟩) ∉
-                  cyclicEdges →
-              GridRayCrossingIndex (q + ⟨(0 : ℤ), (1 : ℤ)⟩) gridPath = GridRayCrossingIndex q
-                  gridPath) ∧
-            ((q + (1 : LatticeCell) + ⟨(0 : ℤ), (1 : ℤ)⟩, q + ⟨(0 : ℤ), (1 : ℤ)⟩) ∈
-                  cyclicEdges ∨
-                (q + ⟨(0 : ℤ), (1 : ℤ)⟩, q + (1 : LatticeCell) + ⟨(0 : ℤ), (1 : ℤ)⟩) ∈
-                  cyclicEdges →
-              (GridRayCrossingIndex (q + ⟨(0 : ℤ), (1 : ℤ)⟩) gridPath -
-                    GridRayCrossingIndex q gridPath).natAbs =
-                (1 : ℕ))) → ((∀ (a : GaussianInt), ∀ (b : GaussianInt), (({a, b} : Finset
-                    GaussianInt) ∈ BoundaryFootprintEdges T) → (∀ t : Set.Icc (0 : Real) 1, ((1 -
-                    (t : Real)) * ((a.re : Int) : Real) + (t : Real) * ((b.re : Int) : Real), (1
-                    - (t : Real)) * ((a.im : Int) : Real) + (t : Real) * ((b.im : Int) : Real)) ∈
-                    TileRealization T)) → ((∀ a b : GaussianInt, (a, b) ∈ cyclicEdges → ∀ t :
-                    Set.Icc (0 : Real) 1, ((1 - (t : Real)) * ((a.re : Int) : Real) + (t : Real)
-                    * ((b.re : Int) : Real), (1 - (t : Real)) * ((a.im : Int) : Real) + (t :
-                    Real) * ((b.im : Int) : Real)) ∈ TileRealization T) → ((∀ (q : LatticeCell),
-                    (q ∉ T.cells) → (((((q.re : Int) : Real) + (1 / 2 : Real)), (((q.im : Int) :
-                    Real) + (1 / 2 : Real))) ∉ TileRealization T)) → (∀ q ∉ T.cells,
-                    GridRayCrossingIndex q gridPath = (0 : ℤ))))))))))))))))
+        ∀ (T : ProtoTile),
+          (∀ (q : LatticeCell),
+              ∀ (p : List GaussianInt),
+                ∀ (x : GaussianInt),
+                  ∀ (y : GaussianInt),
+                    (((q.re : Int) : Real) + (1 / 2 : Real),
+                          ((q.im : Int) : Real) + (1 / 2 : Real)) ∉
+                        TileRealization T →
+                      p.head? = some x →
+                        p.getLast? = some y →
+                          (∀ a b : GaussianInt,
+                              ∀ l₁ l₂ : List GaussianInt,
+                                p = l₁ ++ a :: b :: l₂ → FourNeighborAdjacent a b) →
+                            FourNeighborAdjacent y x →
+                              (∀ a b : GaussianInt,
+                                (∃ l₁ l₂ : List GaussianInt, p = l₁ ++ a :: b :: l₂) ∨
+                                a = y ∧ b = x →
+                                ∀ t : Set.Icc (0 : Real) 1,
+                                ((1 - (t : Real)) * ((a.re : Int) : Real) +
+                                (t : Real) * ((b.re : Int) : Real),
+                                (1 - (t : Real)) * ((a.im : Int) : Real) +
+                                (t : Real) * ((b.im : Int) : Real)) ∈
+                                TileRealization T) →
+                                GridRayCrossingIndex q p = 0) →
+            ∀ (gridPath : List GaussianInt),
+              ∀ (x : GaussianInt),
+                ∀ (y : GaussianInt),
+                  gridPath.head? = some x →
+                    gridPath.getLast? = some y →
+                      List.IsChain
+                          (fun (a b : GaussianInt) => { a, b } ∈ BoundaryFootprintEdges T)
+                          gridPath →
+                        { y, x } ∈ BoundaryFootprintEdges T →
+                          List.IsChain FourNeighborAdjacent gridPath →
+                            FourNeighborAdjacent y x →
+                              (∀ (a : GaussianInt),
+                                ∀ (b : GaussianInt),
+                                ({ a, b } : Finset GaussianInt) ∈
+                                BoundaryFootprintEdges T →
+                                ∀ t : Set.Icc (0 : Real) 1,
+                                ((1 - (t : Real)) * ((a.re : Int) : Real) +
+                                (t : Real) * ((b.re : Int) : Real),
+                                (1 - (t : Real)) * ((a.im : Int) : Real) +
+                                (t : Real) * ((b.im : Int) : Real)) ∈
+                                TileRealization T) →
+                                (∀ (q : LatticeCell),
+                                q ∉ T.cells →
+                                (((q.re : Int) : Real) + (1 / 2 : Real),
+                                ((q.im : Int) : Real) + (1 / 2 : Real)) ∉
+                                TileRealization T) →
+                                ∀ q ∉ T.cells, GridRayCrossingIndex q gridPath = (0 : ℤ)
     ) := by
   classical
-  intro T closed_grid_index_zero gridPath x y z gridPath_head gridPath_last gridPath_chain
-      gridPath_close gridPath_fourNeighbor gridPath_close_fourNeighbor cyclic_edge_boundary
-      cyclic_edge_fourNeighbor component_edge_cyclic hrightCyclic cyclicEdges
-      component_index_control boundary_edge_segment cyclic_edge_segment unoccupied_center_outside
-      q hq
+  intro T closed_grid_index_zero gridPath x y gridPath_head gridPath_last gridPath_chain
+      gridPath_close gridPath_fourNeighbor gridPath_close_fourNeighbor boundary_edge_segment
+      unoccupied_center_outside q hq
   apply closed_grid_index_zero q gridPath x y
     (unoccupied_center_outside q hq) gridPath_head gridPath_last
   · intro a b l₁ l₂ hab
@@ -747,10 +741,9 @@ theorem LatticeTileBoundarySimpleGridCycle (T : ProtoTile) (hT : LatticeTile T) 
               BoundaryCycleProof.unoccupied_center_outside T q hq
   have unoccupied_index_zero (q : LatticeCell) (hq : q ∉ T.cells) :
       GridRayCrossingIndex q gridPath = 0 := BoundaryCycleProof.unoccupied_index_zero T
-          closed_grid_index_zero gridPath x y z gridPath_head gridPath_last gridPath_chain
-          gridPath_close gridPath_fourNeighbor gridPath_close_fourNeighbor cyclic_edge_boundary
-          cyclic_edge_fourNeighbor component_edge_cyclic hrightCyclic component_index_control
-          boundary_edge_segment cyclic_edge_segment unoccupied_center_outside q hq
+          closed_grid_index_zero gridPath x y gridPath_head gridPath_last gridPath_chain
+          gridPath_close gridPath_fourNeighbor gridPath_close_fourNeighbor
+          boundary_edge_segment unoccupied_center_outside q hq
   have hrightJump :
       Int.natAbs (GridRayCrossingIndex (z + 1) gridPath -
         GridRayCrossingIndex z gridPath) = 1 := by

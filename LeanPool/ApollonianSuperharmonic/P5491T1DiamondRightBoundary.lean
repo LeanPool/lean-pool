@@ -6,6 +6,7 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.EvenSquareQuotient
 public import LeanPool.ApollonianSuperharmonic.DiamondQuadraticArithmetic
 
 public import LeanPool.ApollonianSuperharmonic.P5352T2PlacementData
@@ -27,13 +28,7 @@ namespace ApollonianSuperharmonic
 
 namespace DiamondRightBoundaryProof
 
-private theorem tri :
-    (by
-      classical
-      exact
-        ∀ (a : ℤ), (2 : ℤ) * (a * (a - (1 : ℤ)) / (2 : ℤ)) = a * (a - (1 : ℤ))
-    ) := by
-  exact DiamondQuadraticArithmetic.triangularScale
+private abbrev tri := ApollonianSuperharmonic.DiamondQuadraticArithmetic.triangularScale
 
 private theorem hposResult :
     (by
@@ -73,15 +68,7 @@ private theorem hF :
   simp only [P5352T2Sources]
   exact (P5352T2DomainRows K z).2 hz
 
-private theorem hfloorEven :
-    (by
-      classical
-      exact
-        ∀ (m : ℤ), ((2 : ℤ) * m) ^ (2 : ℕ) / (4 : ℤ) = m ^ (2 : ℕ) ) := by
-  classical
-  intro m
-  have hh := P4207T1FloorArithmetic.1 (0:Int) m
-  simpa using hh
+private abbrev hfloorEven := ApollonianSuperharmonic.EvenSquareQuotient.square
 
 private theorem hfloorOdd :
     (by

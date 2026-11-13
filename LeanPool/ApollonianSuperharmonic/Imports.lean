@@ -299,6 +299,7 @@ public import LeanPool.ApollonianSuperharmonic.FordRegimeConverse
 public import LeanPool.ApollonianSuperharmonic.FordTerminalWebStencilLedger
 public import LeanPool.ApollonianSuperharmonic.FordTile
 public import LeanPool.ApollonianSuperharmonic.FordTileAcyclicIndegree
+public import LeanPool.ApollonianSuperharmonic.FordTileCellMembership
 public import LeanPool.ApollonianSuperharmonic.FordTileGeometry
 public import LeanPool.ApollonianSuperharmonic.FordTileOdometerRestriction
 public import LeanPool.ApollonianSuperharmonic.FordTileRecursiveIdentification

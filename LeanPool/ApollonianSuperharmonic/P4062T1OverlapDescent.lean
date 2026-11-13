@@ -249,33 +249,9 @@ private theorem hparAt293 :
   intro P hP hsum hcrossdet hpos₁ hpos₂ horder hdlt hdetdiff H hHq hredParent Q
   exact ⟨rfl, rfl, rfl, rfl⟩
 
-private theorem hch₀' :
-    (by
-      classical
-      exact
-        ∀ (P₁ : FordFareyParameter), ∀ (H : FordFareyParameter), (∀ x ∈
-            FordRecursiveVertexDomains P₁ (0 : Fin (4 : ℕ)), Classical.choose
-            FordOdometerFamilyExistsUnique P₁ x = Classical.choose FordOdometerFamilyExistsUnique
-            H x) → (∀ y, y ∈ FordRecursiveVertexDomains P₁ 0 → FordOdometer P₁ y = FordOdometer H
-            y) ) := by
-  classical
-  intro P₁ H hch₀ y hy
-  simpa [FordOdometer] using hch₀ y hy
+private abbrev hch₀' := ApollonianSuperharmonic.OverlapDescentDetails.hrec₀'
 
-private theorem hch₁' :
-    (by
-      classical
-      exact
-        ∀ (P₁ : FordFareyParameter), ∀ (H : FordFareyParameter), (∀ x ∈
-            FordRecursiveVertexDomains P₁ (1 : Fin (4 : ℕ)), Classical.choose
-            FordOdometerFamilyExistsUnique P₁ x = Classical.choose FordOdometerFamilyExistsUnique
-            H (x - ⟨(↑P₁.q₂ : ℤ), (↑P₁.q₂ : ℤ)⟩) + P₁.p₂ * x.re + P₁.p₂ * x.im - P₁.p₂ * (↑P₁.q₂
-            : ℤ) + (1 : ℤ)) → (∀ z, z ∈ FordRecursiveVertexDomains P₁ 1 → FordOdometer P₁ z =
-            FordOdometer H (z-⟨(P₁.q₂ : Int), (P₁.q₂ : Int)⟩) + P₁.p₂*z.re + P₁.p₂*z.im -
-            P₁.p₂*(P₁.q₂ : Int)+1) ) := by
-  classical
-  intro P₁ H hch₁ z hz
-  simpa [FordOdometer] using hch₁ z hz
+private abbrev hch₁' := ApollonianSuperharmonic.OverlapDescentDetails.hrec₁'
 
 private theorem hcoordsAt312 :
     (by
@@ -291,14 +267,13 @@ private theorem hcoordsAt312 :
                 (hr 1 =
                     (P4062T1InteriorSquare P.q₁).image fun y =>
                       y + ⟨(P.q₂ : Int), (P.q₂ : Int)⟩) →
-                  FordFareyParameter →
-                    ∀ x ∈ hr (0 : Fin (4 : ℕ)) ∩ hr (1 : Fin (4 : ℕ)),
-                      (↑P.q₂ : ℤ) + (1 : ℤ) ≤ x.re ∧
-                        x.re ≤ (↑P.q₁ : ℤ) - (1 : ℤ) ∧
-                          (↑P.q₂ : ℤ) + (1 : ℤ) ≤ x.im ∧ x.im ≤ (↑P.q₁ : ℤ) - (1 : ℤ)
+                  ∀ x ∈ hr (0 : Fin (4 : ℕ)) ∩ hr (1 : Fin (4 : ℕ)),
+                    (↑P.q₂ : ℤ) + (1 : ℤ) ≤ x.re ∧
+                      x.re ≤ (↑P.q₁ : ℤ) - (1 : ℤ) ∧
+                        (↑P.q₂ : ℤ) + (1 : ℤ) ≤ x.im ∧ x.im ≤ (↑P.q₁ : ℤ) - (1 : ℤ)
     ) := by
   classical
-  intro P squareCoordinates hr hA0 hA1 H x hx
+  intro P squareCoordinates hr hA0 hA1 x hx
   rcases Finset.mem_inter.mp hx with ⟨h0,h1⟩
   rw [hA0] at h0
   have b0 := (squareCoordinates P.q₁ x).mp h0
@@ -525,43 +500,28 @@ private theorem hparAt498 :
   simpa [hQeq] using (show Q.p₁ = P.p₁ ∧ Q.q₁ = P.q₁ ∧
     Q.p₂ = P.p₂-P.p₁ ∧ Q.q₂ = P.q₂-P.q₁ from ⟨rfl,rfl,rfl,rfl⟩)
 
-private theorem hch₃' :
-    (by
-      classical
-      exact
-        ∀ (P₂ : FordFareyParameter), ∀ (H : FordFareyParameter), (∀ x ∈
-            FordRecursiveVertexDomains P₂ (3 : Fin (4 : ℕ)), Classical.choose
-            FordOdometerFamilyExistsUnique P₂ x = Classical.choose FordOdometerFamilyExistsUnique
-            H (x - ⟨(0 : ℤ), (↑P₂.q₁ : ℤ)⟩) + P₂.p₁ * x.re) → (∀ z, z ∈
-            FordRecursiveVertexDomains P₂ 3 → FordOdometer P₂ z = FordOdometer H (z-⟨0,(P₂.q₁ :
-            Int)⟩) + P₂.p₁*z.re) ) := by
-  classical
-  intro P₂ H hch₃ z hz
-  simpa [FordOdometer] using hch₃ z hz
+private abbrev hch₃' := ApollonianSuperharmonic.OverlapDescentDetails.hrec₃'
 
 private theorem hcoordsAt511 :
     (by
       classical
       exact
         ∀ (P : FordFareyParameter),
-          FordFareyParameter →
-            (∀ (q : Nat),
-                ∀ (x : GaussianInt),
-                  x ∈ P4062T1InteriorSquare q ↔
-                    1 ≤ x.re ∧ x.re ≤ (q : Int) - 1 ∧ 1 ≤ x.im ∧ x.im ≤ (q : Int) - 1) →
-              ∀ (hr : Fin (4 : ℕ) → Finset GaussianInt),
-                (hr 2 =
-                    (P4062T1InteriorSquare P.q₂).image fun y => y + ⟨(P.q₁ : Int), 0⟩) →
-                  (hr 3 =
-                      (P4062T1InteriorSquare P.q₂).image fun y => y + ⟨0, (P.q₁ : Int)⟩) →
-                    FordFareyParameter →
-                      ∀ x ∈ hr (2 : Fin (4 : ℕ)) ∩ hr (3 : Fin (4 : ℕ)),
-                        (↑P.q₁ : ℤ) + (1 : ℤ) ≤ x.re ∧
-                          x.re ≤ (↑P.q₂ : ℤ) - (1 : ℤ) ∧
-                            (↑P.q₁ : ℤ) + (1 : ℤ) ≤ x.im ∧ x.im ≤ (↑P.q₂ : ℤ) - (1 : ℤ)
+          (∀ (q : Nat),
+              ∀ (x : GaussianInt),
+                x ∈ P4062T1InteriorSquare q ↔
+                  1 ≤ x.re ∧ x.re ≤ (q : Int) - 1 ∧ 1 ≤ x.im ∧ x.im ≤ (q : Int) - 1) →
+            ∀ (hr : Fin (4 : ℕ) → Finset GaussianInt),
+              (hr 2 = (P4062T1InteriorSquare P.q₂).image fun y => y + ⟨(P.q₁ : Int), 0⟩) →
+                (hr 3 =
+                    (P4062T1InteriorSquare P.q₂).image fun y => y + ⟨0, (P.q₁ : Int)⟩) →
+                  ∀ x ∈ hr (2 : Fin (4 : ℕ)) ∩ hr (3 : Fin (4 : ℕ)),
+                    (↑P.q₁ : ℤ) + (1 : ℤ) ≤ x.re ∧
+                      x.re ≤ (↑P.q₂ : ℤ) - (1 : ℤ) ∧
+                        (↑P.q₁ : ℤ) + (1 : ℤ) ≤ x.im ∧ x.im ≤ (↑P.q₂ : ℤ) - (1 : ℤ)
     ) := by
   classical
-  intro P P₂ squareCoordinates hr hA2 hA3 R x hx
+  intro P squareCoordinates hr hA2 hA3 x hx
   rcases Finset.mem_inter.mp hx with ⟨h2,h3⟩
   rw [hA2] at h2
   rw [hA3] at h3
@@ -980,7 +940,7 @@ theorem P4062T1OverlapDescent (P P₁ P₂ : FordFareyParameter)
     have hch₀' := OverlapDescentDetails.hch₀' P₁ H hch₀
     have hch₁' := OverlapDescentDetails.hch₁' P₁ H hch₁
     have hcoords (x : GaussianInt) (hx : x ∈ hr 0 ∩ hr 1) := OverlapDescentDetails.hcoordsAt312
-        P squareCoordinates hr hA0 hA1 H x hx
+        P squareCoordinates hr hA0 hA1 x hx
     have htarget := OverlapDescentDetails.htargetAt327 P P₁ hq₁
                 hsum hcrossdet hpos₁ hpos₂ hrec₀' hrec₁' hlapAffine hrec0Member hrec1Member hr
                 horder hdlt hdetdiff H hHq hredParent R hR hpar hparP hch₀' hch₁' hcoords
@@ -1053,7 +1013,7 @@ theorem P4062T1OverlapDescent (P P₁ P₂ : FordFareyParameter)
     rcases hchildRec with ⟨_, _, hch₂, hch₃⟩
     have hch₃' := OverlapDescentDetails.hch₃' P₂ H hch₃
     have hcoords (x : GaussianInt) (hx : x ∈ hr 2 ∩ hr 3) := OverlapDescentDetails.hcoordsAt511 P
-            P₂ squareCoordinates hr hA2 hA3 R x hx
+        squareCoordinates hr hA2 hA3 x hx
     have htarget := OverlapDescentDetails.htargetAt542 P P₂ hq₂
                 hsum hlt₂ hrec₂' hlapAffine hrec2Member hr horder H R hR hpar hch₃' hcoords
     refine ⟨H, hHp, hHq, by simpa [hHq] using hdlt,

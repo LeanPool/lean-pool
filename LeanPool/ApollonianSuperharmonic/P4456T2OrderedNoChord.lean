@@ -6,6 +6,8 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.TileTranslationProperties
+public import LeanPool.ApollonianSuperharmonic.P3776T1CellCenterMembership
 public import LeanPool.ApollonianSuperharmonic.BandLayoutCentroidCoordinates
 public import LeanPool.ApollonianSuperharmonic.TileHalfTurnGeometry
 
@@ -70,34 +72,6 @@ private theorem hsub :
 
 private abbrev ht :=
   BandLayoutCentroidCoordinates.doubledCenter
-
-private theorem hcenter :
-    (by
-      classical
-      exact
-        ∀ (U : ProtoTile), ∀ (z : GaussianInt), z ∈ U.cells ↔ ((z.re : Real) + 1 / 2, (z.im :
-            Real) + 1 / 2) ∈ TileRealization U ) := by
-  classical
-  intro U z
-  constructor
-  · intro hz
-    simp only [TileRealization, Set.mem_iUnion]
-    refine ⟨z, hz, ?_⟩
-    norm_num [ClosedSquareRealization, Set.mem_Icc]
-  · intro hp
-    simp only [TileRealization, Set.mem_iUnion] at hp
-    obtain ⟨b, hb, hbox⟩ := hp
-    simp only [ClosedSquareRealization, Set.mem_Icc] at hbox
-    have hr₁ : b.re < z.re + 1 := by
-      exact_mod_cast (show (b.re : Real) < (z.re : Real) + 1 by linarith [hbox.1.1])
-    have hr₂ : z.re < b.re + 1 := by
-      exact_mod_cast (show (z.re : Real) < (b.re : Real) + 1 by linarith [hbox.2.1])
-    have hi₁ : b.im < z.im + 1 := by
-      exact_mod_cast (show (b.im : Real) < (z.im : Real) + 1 by linarith [hbox.1.2])
-    have hi₂ : z.im < b.im + 1 := by
-      exact_mod_cast (show (z.im : Real) < (b.im : Real) + 1 by linarith [hbox.2.2])
-    have hbz : b = z := by apply Zsqrtd.ext <;> omega
-    exact hbz ▸ hb
 
 private theorem hHsigned :
     (by
@@ -266,18 +240,7 @@ private theorem chord_vertex :
   have hU := P4397T1UnitEdgeCells.2 x y z z' hform U
   exact (hU.2.2.1 (hU.1.mp heU)).1
 
-private theorem trans0 :
-    (by
-      classical
-      exact
-        ∀ U : ProtoTile, TileTranslation U 0 = U ) := by
-  classical
-  intro U
-  have hz : GaussianTranslation (0 : GaussianInt) = id := by
-    funext z
-    exact add_zero z
-  cases U
-  simp [TileTranslation, hz]
+private abbrev trans0 := ApollonianSuperharmonic.TileTranslationProperties.zero
 
 private theorem hOparents :
     (by
@@ -541,7 +504,9 @@ theorem P4456T2OrderedNoChord
     have htau := TileHalfTurnGeometry.involutive q u
     have hHcells := TileHalfTurnGeometry.cells q u
     have hHreal := TileHalfTurnGeometry.realization q T u ht
-    have hcenter := OrderedNoChordGeometry.hcenter
+    have hcenter (U : ProtoTile) (z : GaussianInt) :
+        z ∈ U.cells ↔ ((z.re : Real) + 1 / 2, (z.im : Real) + 1 / 2) ∈ TileRealization U := by
+      simpa [GaussianRealPoint] using (P3776T1CellCenterMembership U z).symm
     have hHsigned := OrderedNoChordGeometry.hHsigned q cfg C T layout u htau hHcells hHreal hcenter
     have touch_flip := OrderedNoChordGeometry.touch_flip q cfg C T layout hne u hHsigned
     have touch_sym := OrderedNoChordGeometry.touch_sym

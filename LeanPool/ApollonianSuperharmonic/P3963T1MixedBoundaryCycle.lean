@@ -339,11 +339,7 @@ private theorem hp₁ne :
   intro p₁ hlen₁ h
   simp [h] at hlen₁
 
-private theorem hp₂ne :
-    ∀ (p₂ : List GaussianInt), ((4 : ℕ) ≤ p₂.length) → (p₂ ≠ []) := by
-  classical
-  intro p₂ hlen₂ h
-  simp [h] at hlen₂
+private abbrev hp₂ne := ApollonianSuperharmonic.MixedCycleDetails.hp₁ne
 
 private theorem hx₁ :
     ∀ (V₁ : Set GaussianInt), ∀ (V₂ : Set GaussianInt), ∀ (p₁ : List GaussianInt), (V₁ =
@@ -361,21 +357,9 @@ private theorem hx₂ :
   rw [hV₂] at hx
   exact List.mem_toFinset.mp hx.2
 
-private theorem hy₁ :
-    ∀ (V₁ : Set GaussianInt), ∀ (V₂ : Set GaussianInt), ∀ (p₁ : List GaussianInt), (V₁ =
-        (↑p₁.toFinset : Set GaussianInt)) → (∀ (y : GaussianInt), (y ∈ V₁ ∩ V₂) → (y ∈ p₁)) := by
-  classical
-  intro V₁ V₂ p₁ hV₁ y hy
-  rw [hV₁] at hy
-  exact List.mem_toFinset.mp hy.1
+private abbrev hy₁ := ApollonianSuperharmonic.MixedCycleDetails.hx₁
 
-private theorem hy₂ :
-    ∀ (V₁ : Set GaussianInt), ∀ (V₂ : Set GaussianInt), ∀ (p₂ : List GaussianInt), (V₂ =
-        (↑p₂.toFinset : Set GaussianInt)) → (∀ (y : GaussianInt), (y ∈ V₁ ∩ V₂) → (y ∈ p₂)) := by
-  classical
-  intro V₁ V₂ p₂ hV₂ y hy
-  rw [hV₂] at hy
-  exact List.mem_toFinset.mp hy.2
+private abbrev hy₂ := ApollonianSuperharmonic.MixedCycleDetails.hx₂
 
 private theorem hrot₁x :
     ∀ (p₁ : List GaussianInt), ∀ (x : GaussianInt), (x ∈ p₁) → ((p₁.idxOf x < p₁.length) →
@@ -385,13 +369,7 @@ private theorem hrot₁x :
   rw [List.head?_rotate hidx₁x]
   exact List.getElem?_idxOf hx₁
 
-private theorem hrot₂x :
-    ∀ (p₂ : List GaussianInt), ∀ (x : GaussianInt), (x ∈ p₂) → ((p₂.idxOf x < p₂.length) →
-        ((p₂.rotate (p₂.idxOf x)).head? = some x)) := by
-  classical
-  intro p₂ x hx₂ hidx₂x
-  rw [List.head?_rotate hidx₂x]
-  exact List.getElem?_idxOf hx₂
+private abbrev hrot₂x := ApollonianSuperharmonic.MixedCycleDetails.hrot₁x
 
 private theorem cycle_chain :
     ∀ (p : List GaussianInt),
@@ -489,14 +467,13 @@ private theorem hxNotTail :
   exact (List.nodup_cons.mp this).1
 
 private theorem hzx :
-    ∀ (V₁ : Set GaussianInt), ∀ (p₂ : List GaussianInt), ∀ (x : GaussianInt),
-    let c₂ := p₂.rotate (p₂.idxOf x)
-    let good (z : GaussianInt) : Bool := @decide (z ∉ V₁) (Classical.propDecidable _)
-    let rest₂ := c₂.tail.dropWhile good
-    ∀ (z : GaussianInt), ∀ (zs : List GaussianInt), (rest₂ = z :: zs) → ((z ∈ V₁) → ((z ∈
-        c₂.tail) → ((x ∉ c₂.tail) → (z ≠ x)))) := by
+    Set GaussianInt →
+      ∀ (p₂ : List GaussianInt),
+        ∀ (x : GaussianInt),
+          let c₂ := p₂.rotate (p₂.idxOf x);
+          ∀ (z : GaussianInt), List GaussianInt → z ∈ c₂.tail → x ∉ c₂.tail → z ≠ x := by
   classical
-  intro V₁ p₂ x c₂ good rest₂ z zs hrest₂ hzV₁ hzTail hxNotTail h
+  intro V₁ p₂ x c₂ z zs hzTail hxNotTail h
   subst z
   exact hxNotTail hzTail
 
@@ -655,29 +632,9 @@ private theorem hp₁cycleeq :
   apply Cycle.coe_eq_coe.mpr
   exact (List.isRotated_iff_mod).2 ⟨p₁.idxOf z, Nat.le_of_lt hidx₁z, rfl⟩
 
-private theorem hc₁edgeCycle :
-    ∀ (E₁ : Set (Finset GaussianInt)), ∀ (p₁ : List GaussianInt), ∀ (z : GaussianInt),
-    let c₁ := p₁.rotate (p₁.idxOf z)
-    (Cycle.Chain (fun u v => ({u, v} : Finset GaussianInt) ∈ E₁) (p₁ : Cycle GaussianInt)) →
-        (((p₁ : Cycle GaussianInt) = (c₁ : Cycle GaussianInt)) → (Cycle.Chain (fun u v => ({u, v}
-        : Finset GaussianInt) ∈ E₁)
-      (c₁ : Cycle GaussianInt))) := by
-  classical
-  intro E₁ p₁ z c₁ sourceE₁ hp₁cycleeq
-  rw [← hp₁cycleeq]
-  exact sourceE₁
+private abbrev hc₁edgeCycle := ApollonianSuperharmonic.MixedCycleDetails.hc₂edgeCycle
 
-private theorem hc₁edgeChain :
-    ∀ (E₁ : Set (Finset GaussianInt)), ∀ (p₁ : List GaussianInt), ∀ (z : GaussianInt),
-    let c₁ := p₁.rotate (p₁.idxOf z)
-    (c₁ = z :: c₁.tail) → ((Cycle.Chain (fun u v => ({u, v} : Finset GaussianInt) ∈ E₁) (c₁ :
-        Cycle GaussianInt)) → ((z :: (c₁.tail ++ [z])).IsChain
-      (fun u v => ({u, v} : Finset GaussianInt) ∈ E₁))) := by
-  classical
-  intro E₁ p₁ z c₁ hc₁shape hc₁edgeCycle
-  rw [hc₁shape] at hc₁edgeCycle
-  exact (Cycle.chain_coe_cons (fun u v => ({u, v} : Finset GaussianInt) ∈ E₁)
-    z c₁.tail).mp hc₁edgeCycle
+private abbrev hc₁edgeChain := ApollonianSuperharmonic.MixedCycleDetails.hc₂edgeChain
 
 private theorem hQlast :
     ∀ (V₁ : Set GaussianInt), ∀ (p₂ : List GaussianInt), ∀ (x : GaussianInt),
@@ -1316,7 +1273,7 @@ theorem P3963T1MixedBoundaryCycle
     List.takeWhile_append_dropWhile
   have hzTail := MixedCycleDetails.hzTail V₁ p₂ x z zs hrest₂
   have hxNotTail := MixedCycleDetails.hxNotTail p₂ x hrot₂x hc₂nodup
-  have hzx := MixedCycleDetails.hzx V₁ p₂ x z zs hrest₂ hzV₁ hzTail hxNotTail
+  have hzx := MixedCycleDetails.hzx V₁ p₂ x z zs hzTail hxNotTail
   have hq2head : (x :: (c₂.tail.takeWhile good ++ [z])).head? = some x := by simp
   let c₁ := p₁.rotate (p₁.idxOf z)
   have hidx₁z : p₁.idxOf z < p₁.length :=

@@ -6,6 +6,7 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.GaussianRealPointProperties
 public import LeanPool.ApollonianSuperharmonic.BandPrototileNonempty
 public import LeanPool.ApollonianSuperharmonic.SimpleGridPathBetween
 
@@ -586,17 +587,7 @@ private theorem hEroot'Eq :
   intro T0 T0' centerShift hFroot'Cells
   simp [FootprintEdges, hFroot'Cells]
 
-private theorem hEplusEq :
-    (by
-      classical
-      exact
-        ∀ (Rminus : ProtoTile), ∀ (Rplus : ProtoTile), ∀ (centerShift : GaussianInt),
-            ((TileTranslation (TileHalfTurn Rplus) centerShift).cells = Rminus.cells) →
-            (FootprintEdges Rminus = FootprintEdges (TileTranslation (TileHalfTurn Rplus)
-            centerShift)) ) := by
-  classical
-  intro Rminus Rplus centerShift hpc
-  simp [FootprintEdges, hpc]
+private abbrev hEplusEq := ApollonianSuperharmonic.OuterGeometry.hEroot'Eq
 
 private theorem heT0 :
     (by
@@ -626,19 +617,7 @@ private theorem heT0' :
   intro T0 T0' centerShift f hEdgeCov hEroot'Eq
   rw [hEroot'Eq, hEdgeCov]
 
-private theorem hePlus :
-    (by
-      classical
-      exact
-        ∀ (Rminus : ProtoTile), ∀ (Rplus : ProtoTile), ∀ (centerShift : GaussianInt),
-        let f : GaussianInt → GaussianInt := fun x => -x + centerShift
-        (∀ (X : ProtoTile), FootprintEdges (TileTranslation (TileHalfTurn X) centerShift) = (fun
-            e : Finset GaussianInt => e.image f) '' FootprintEdges X) → ((FootprintEdges Rminus =
-            FootprintEdges (TileTranslation (TileHalfTurn Rplus) centerShift)) → (FootprintEdges
-            Rminus = (fun e : Finset GaussianInt => e.image f) '' FootprintEdges Rplus)) ) := by
-  classical
-  intro Rminus Rplus centerShift f hEdgeCov hEplusEq
-  rw [hEplusEq, hEdgeCov]
+private abbrev hePlus := ApollonianSuperharmonic.OuterGeometry.heT0'
 
 private theorem vAB :
     (by
@@ -1291,20 +1270,7 @@ private theorem hvecZero :
   rw [hcentEq]
   ext <;> simp
 
-private theorem hinjAt979 :
-    (by
-      classical
-      exact
-        Function.Injective GaussianRealPoint ) := by
-  classical
-  intro x y hxy
-  apply Zsqrtd.ext
-  · have hx := congrArg Prod.fst hxy
-    dsimp [GaussianRealPoint] at hx
-    exact_mod_cast hx
-  · have hy := congrArg Prod.snd hxy
-    dsimp [GaussianRealPoint] at hy
-    exact_mod_cast hy
+private abbrev hinjAt979 := ApollonianSuperharmonic.GaussianRealPointProperties.injective
 
 private theorem hvZero :
     (by

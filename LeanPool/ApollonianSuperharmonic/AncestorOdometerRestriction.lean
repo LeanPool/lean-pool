@@ -105,38 +105,57 @@ private theorem hrestrict :
     (by
       classical
       exact
-        ∀ (domain_from_odo : ∀ (c : CircleCoordinates), ∀ (U : ProtoTile), ∀ (k :
-            PartialOdometer), TileOdometer c U k → (k.domain : Set GaussianInt) =
-            FootprintVertices U),
-        let vertices : ProtoTile → Finset GaussianInt := fun U =>
-        if U.cells.Nonempty then
-        U.cells.biUnion (fun x => {x, x + 1, x + ⟨0, 1⟩, x + 1 + ⟨0, 1⟩})
-        else {U.anchor}
-        let restrict : ProtoTile → PartialOdometer → PartialOdometer :=
-        fun U g =>
-          { domain := vertices U
-            value := fun x => if x ∈ vertices U then g.value x else 0
-            value_outside := by
-              intro x hx
-              simp [hx] }
-        (∀ U, ∀ g, ((restrict U g).domain : Set GaussianInt) = FootprintVertices U) → ((∀ a b :
-        PartialOdometer, (a.domain : Set GaussianInt) = b.domain → (∀ x, x ∈ a.domain → a.value x
-        = b.value x) → a = b) → ((∀ (c : CircleCoordinates), ∀ (U : ProtoTile), ∀ (k :
-            PartialOdometer), TileOdometer c U k → BandPrototile c U) → (∀ (X : CircleCoordinates ×
-        ProtoTile), ∀ (Y : CircleCoordinates × ProtoTile), ∀ (g : PartialOdometer), ((↑g.domain :
-        Set GaussianInt) = FootprintVertices Y.2) → ((TileOdometer Y.1 Y.2 g) → (∀ (q : Fin (4 :
-        ℕ) → CircleCoordinates), ∀ (i : Fin (3 : ℕ)), ∀ (s : Bool), (ProperBandQuadruple q) → ((q
-        (0 : Fin (4 : ℕ)) = Y.1) → ((q i.succ = X.1) → ((BandPrototile Y.1 Y.2) → ((BandPrototile
-        X.1 X.2) → ((FootprintVertices X.2 ⊆ FootprintVertices Y.2) → ((TileCentroid X.2 -
-        TileCentroid Y.2 = (if s = true then (1 : ℝ) else (-1 : ℝ)) • (1 / 2 : ℝ) •
-        (GaussianRealPoint (BandVectors.1 (q (i + (2 : Fin (3 : ℕ))).succ) (q (i + (1 : Fin (3 :
-        ℕ))).succ)) - (-(GaussianRealPoint (BandVectors.1 (q (i + (2 : Fin (3 : ℕ))).succ) (q (i
-        + (1 : Fin (3 : ℕ))).succ))).2, (GaussianRealPoint (BandVectors.1 (q (i + (2 : Fin (3 :
-        ℕ))).succ) (q (i + (1 : Fin (3 : ℕ))).succ))).1))) → ((1 < (q 0).1) → (TileOdometer X.1
-        X.2 (restrict X.2 g)))))))))))))) ) := by
+        (∀ (c : CircleCoordinates),
+            ∀ (U : ProtoTile),
+              ∀ (k : PartialOdometer),
+                TileOdometer c U k → (k.domain : Set GaussianInt) = FootprintVertices U) →
+          let vertices : ProtoTile → Finset GaussianInt := fun U =>
+            if U.cells.Nonempty then
+              U.cells.biUnion fun x => {x, x + 1, x + ⟨0, 1⟩, x + 1 + ⟨0, 1⟩}
+            else { U.anchor };
+          let restrict : ProtoTile → PartialOdometer → PartialOdometer := fun U g =>
+            { domain := vertices U
+              value := fun x => if x ∈ vertices U then g.value x else 0
+              value_outside := by
+                intro x hx
+                simp [hx] };
+          (∀ U, ∀ g, ((restrict U g).domain : Set GaussianInt) = FootprintVertices U) →
+            (∀ a b : PartialOdometer,
+                (a.domain : Set GaussianInt) = b.domain →
+                  (∀ x, x ∈ a.domain → a.value x = b.value x) → a = b) →
+              (∀ (c : CircleCoordinates),
+                  ∀ (U : ProtoTile),
+                    ∀ (k : PartialOdometer), TileOdometer c U k → BandPrototile c U) →
+                ∀ (X : CircleCoordinates × ProtoTile),
+                  ∀ (Y : CircleCoordinates × ProtoTile),
+                    ∀ (g : PartialOdometer),
+                      (↑g.domain : Set GaussianInt) = FootprintVertices Y.2 →
+                        TileOdometer Y.1 Y.2 g →
+                          ∀ (q : Fin (4 : ℕ) → CircleCoordinates),
+                            ∀ (i : Fin (3 : ℕ)),
+                              ∀ (s : Bool),
+                                ProperBandQuadruple q →
+                                q (0 : Fin (4 : ℕ)) = Y.1 →
+                                q i.succ = X.1 →
+                                BandPrototile X.1 X.2 →
+                                FootprintVertices X.2 ⊆ FootprintVertices Y.2 →
+                                TileCentroid X.2 - TileCentroid Y.2 =
+                                (if s = true then (1 : ℝ) else (-1 : ℝ)) •
+                                (1 / 2 : ℝ) •
+                                (GaussianRealPoint
+                                (BandVectors.1 (q (i + (2 : Fin (3 : ℕ))).succ)
+                                (q (i + (1 : Fin (3 : ℕ))).succ)) -
+                                (-(GaussianRealPoint
+                                (BandVectors.1 (q (i + (2 : Fin (3 : ℕ))).succ)
+                                (q (i + (1 : Fin (3 : ℕ))).succ))).2,
+                                (GaussianRealPoint
+                                (BandVectors.1 (q (i + (2 : Fin (3 : ℕ))).succ)
+                                (q (i + (1 : Fin (3 : ℕ))).succ))).1)) →
+                                1 < (q 0).1 → TileOdometer X.1 X.2 (restrict X.2 g)
+    ) := by
   classical
   intro domain_from_odo vertices restrict restrict_domain odo_eq band_from_odo X Y g hgd hgo q i
-      s hq hq0 hqi hY hX hfoot hcent parent_gt_one
+      s hq hq0 hqi hX hfoot hcent parent_gt_one
   cases Y with
   | mk yc yt =>
     cases hgo with
@@ -480,7 +499,7 @@ theorem AncestorOdometerRestriction
     have facts := ProperBandCurvatureStructure q hq
     have parent_gt_one : 1 < (q 0).1 := AncestorRestrictionProof.parent_gt_one q hq facts
     have hrestrict : TileOdometer X.1 X.2 (restrict X.2 g) := AncestorRestrictionProof.hrestrict
-        domain_from_odo restrict_domain odo_eq band_from_odo X Y g hgd hgo q i s hq hq0 hqi hY hX
+        domain_from_odo restrict_domain odo_eq band_from_odo X Y g hgd hgo q i s hq hq0 hqi hX
         hfoot hcent parent_gt_one
     exact hrestrict
   have chain_foot : ∀ (p q : CircleCoordinates × ProtoTile),

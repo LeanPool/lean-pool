@@ -6,6 +6,7 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import Mathlib.Tactic.TypeStar
 
 public import LeanPool.ApollonianSuperharmonic.P3523T1OrderedInsertion
 public import LeanPool.ApollonianSuperharmonic.P3523T1FaceEnumeration
@@ -1565,26 +1566,9 @@ private theorem hvertex0_start :
   rcases Finset.mem_image.mp hx with ⟨i, -, hi⟩
   exact ⟨i, hi⟩
 
-private theorem pair_filter_card_symmetry :
-    (by
-      classical
-      exact
-        ∀ (r : Nat), ∀ (n : Nat), ∀ (q : P3381T1PolygonBoundary r), ∀ (p :
-            P3381T1PolygonBoundary n), ∀ (s : P3475T1BoundarySubdivision q p), ∀ (X : Set
-            (Real × Real)), ∀ (K : Set (Real × Real)), ∀ (t : P3475T1TriangleTree q X K),
-        let c := P3523T1InsertionConstruction s t
-        let fs := c.faces c.steps.length
-        let f := P3523T1FaceEnumeration fs
-        ((∀ h : Nat, h ≤ c.steps.length → ∀ a b : Fin (n + 3), a ≠ b → ((c.faces h).filter (fun F
-            => a ∈ F ∧ b ∈ F)).card = if {a, b} ∈ c.boundary h then 1 else if ∃ F ∈ c.faces h, a
-            ∈ F ∧ b ∈ F then 2 else 0) → (∀ (i : Fin (n + 3)), ∀ (j : Fin (n + 3)), (i ≠ j) →
-            (Set.ncard {k : Fin fs.card | i ∈ Set.range (f k) ∧ j ∈ Set.range (f k)} = if j = i +
-            1 ∨ i = j + 1 then 1 else if ∃ k, i ∈ Set.range (f k) ∧ j ∈ Set.range (f k) then 2
-            else 0))) → (∀ (A : Finset (Finset (Fin (n + (3 : ℕ))))), ∀ (x : Fin (n + (3 : ℕ))),
-            ∀ (y : Fin (n + (3 : ℕ))), {F ∈ A | x ∈ F ∧ y ∈ F}.card = {F ∈ A | y ∈ F ∧ x ∈
-            F}.card) ) := by
-  classical
-  intro r n q p s X K t c fs f hindexed_ledger A x y
+private theorem pair_filter_card_symmetry {α : Type*} [DecidableEq α]
+    (A : Finset (Finset α)) (x y : α) :
+    {F ∈ A | x ∈ F ∧ y ∈ F}.card = {F ∈ A | y ∈ F ∧ x ∈ F}.card := by
   congr 1
   ext F
   simp only [Finset.mem_filter]
@@ -1741,8 +1725,7 @@ theorem P3523T1InsertionIncidence {r n : Nat}
       (hxd : x ≠ d) (hyd : y ≠ d) := InsertionIncidenceProof.old_boundary_membership n B a b d x
           y hxd hyd
   have pair_filter_card_symmetry (A : Finset (Finset (Fin (n + 3)))) (x y : Fin (n + 3)) :=
-      InsertionDetails.pair_filter_card_symmetry r
-            n q p s X K t hindexed_ledger A x y
+      InsertionDetails.pair_filter_card_symmetry A x y
   have old_pair_ledger_transfer (old new : Nat)
       (onBoundary removed : Prop) [Decidable onBoundary] [Decidable removed]
       (hold : old = if onBoundary then 1 else if 0 < old then 2 else 0)

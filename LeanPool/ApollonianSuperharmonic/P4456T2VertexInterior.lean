@@ -39,19 +39,24 @@ namespace ApollonianSuperharmonic
 namespace VertexInteriorLemmas
 
 private theorem hsector :
-    ∀ (T : ProtoTile), ∀ (x : GaussianInt), ∀ (j : Fin (4 : ℕ)), (LatticeVertexIncidentCell x j ∉
-        T.cells) → ∀ (ε : ℝ),
-    let δ : ℝ := min ε 1 / 4
-    (0 < δ) → (δ < 1) →
-    let X : ℝ := (x.re : Int)
-    let Y : ℝ := (x.im : Int)
-    let Q : Fin 4 → ℝ × ℝ := fun k =>
-      if k = 0 then (X + δ, Y + δ) else
-      if k = 1 then (X - δ, Y + δ) else
-      if k = 2 then (X - δ, Y - δ) else (X + δ, Y - δ)
-    (∀ (k : Fin 4), Q k ∈ TileRealization T) → LatticeVertexIncidentCell x j ∈ T.cells := by
+    ∀ (T : ProtoTile),
+      ∀ (x : GaussianInt),
+        ∀ (j : Fin (4 : ℕ)),
+          ∀ (ε : ℝ),
+            let δ : ℝ := min ε 1 / 4
+            0 < δ →
+              δ < 1 →
+                let X : ℝ := (x.re : Int)
+                let Y : ℝ := (x.im : Int)
+                let Q : Fin 4 → ℝ × ℝ := fun k =>
+                  if k = 0 then (X + δ, Y + δ)
+                  else
+                    if k = 1 then (X - δ, Y + δ)
+                    else if k = 2 then (X - δ, Y - δ) else (X + δ, Y - δ)
+                (∀ (k : Fin 4), Q k ∈ TileRealization T) →
+                  LatticeVertexIncidentCell x j ∈ T.cells := by
   classical
-  intro T x j hnot ε δ hδpos hδone X Y Q hQreal
+  intro T x j ε δ hδpos hδone X Y Q hQreal
   -- Square membership in the corresponding open quadrant forces its base.
   fin_cases j
   · have hq := hQreal 0
@@ -260,7 +265,7 @@ theorem P4456T2VertexInterior (T : ProtoTile) (hne : T.cells.Nonempty)
               Fin.zero_eta] <;> exact hδeps
       have hQreal (k : Fin 4) : Q k ∈ TileRealization T := hsub (hQball k)
       have hsector : LatticeVertexIncidentCell x j ∈ T.cells := VertexInteriorLemmas.hsector T x
-          j hnot ε hδpos hδone hQreal
+          j ε hδpos hδone hQreal
       exact hnot hsector
     · intro hall
       have h0 : x ∈ T.cells := by

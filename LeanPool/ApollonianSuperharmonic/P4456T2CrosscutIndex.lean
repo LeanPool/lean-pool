@@ -60,17 +60,7 @@ private theorem hxmem :
   rw [hpVerts] at hx
   simpa using hx
 
-private theorem hymem :
-    (by
-      classical
-      exact
-        ∀ (T : ProtoTile), ∀ (y : GaussianInt), (y ∈ BoundaryFootprintVertices T) → (∀ (p : List
-            GaussianInt), (BoundaryFootprintVertices T = (↑p.toFinset : Set GaussianInt)) → (y ∈
-            p)) ) := by
-  classical
-  intro T y hy p hpVerts
-  rw [hpVerts] at hy
-  simpa using hy
+private abbrev hymem := ApollonianSuperharmonic.CrosscutIndexProof.hxmem
 
 private theorem hchordBoundary :
     (by

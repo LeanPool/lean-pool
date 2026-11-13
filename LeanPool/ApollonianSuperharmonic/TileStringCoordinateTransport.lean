@@ -214,37 +214,71 @@ private theorem adj :
     (by
       classical
       exact
-        ∀ (C : BandCircle), ∀ (orientation : Bool), ∀ (base : ProtoTile), (BandPrototile C.1.1
-            base) → (∀ (a : GaussianInt), ∀ (b : GaussianInt), ((0 : ℤ) < a.re * b.im - a.im *
-            b.re) → ((a ∈ TilingLattice C) → ((b ∈ TilingLattice C) → ((∀ (w : ↥(TilingLattice
-            C)), ∃! z : ℤ × ℤ, (↑z.1 : GaussianInt) * a + (↑z.2 : GaussianInt) * b = (↑w :
-            GaussianInt)) → ((C.1.1.1 = (1 : ℤ) ∧ (orientation = true ∧ a = (1 : GaussianInt) ∧ b
-            = (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt) ∨ orientation = false ∧ a = (⟨(0 : ℤ), (1 : ℤ)⟩
-            : GaussianInt) ∧ b = (-1 : GaussianInt)) ∨ (1 : ℤ) < C.1.1.1 ∧ ∃ (q : Fin (4 : ℕ) →
-            CircleCoordinates), ProperBandQuadruple q ∧ q (0 : Fin (4 : ℕ)) = C.1.1 ∧ (a =
-            BandVectors.1 (q (1 : Fin (4 : ℕ))) (q (0 : Fin (4 : ℕ))) ∧ b = BandVectors.1 (q (2 :
-            Fin (4 : ℕ))) (q (0 : Fin (4 : ℕ))) ∨ a = BandVectors.1 (q (2 : Fin (4 : ℕ))) (q (0 :
-            Fin (4 : ℕ))) ∧ b = BandVectors.1 (q (1 : Fin (4 : ℕ))) (q (0 : Fin (4 : ℕ))))) → (
-        let index := fun z : Int × Int => (z.1 : GaussianInt) * a + (z.2 : GaussianInt) * b
-        let tileAt := fun z : Int × Int => TileTranslation base (index z)
-        let adjacent := fun T U : ProtoTile =>
-          if C.1.1.1 = 1 then
-            ∃ v : GaussianInt, UnitTriangularStep orientation v ∧
-              TileCentroid U - TileCentroid T = GaussianRealPoint v
-          else TileTouching T U
-        (∀ (z : Int × Int), index z ∈ TilingLattice C) → ((Function.Injective index) →
-            ((Function.Injective tileAt) → ((∀ (U : ProtoTile), U ∈ RegularTileFamily base
-            (TilingLattice C) ↔ ∃! z : Int × Int, U = tileAt z) → ((∀ (z : Int × Int), tileAt z ∈
-            RegularTileFamily base (TilingLattice C)) → ((Function.Injective GaussianRealPoint) →
-            ((∀ (z : Int × Int), TileCentroid (tileAt z) = ((TileCentroid base).1 + ((index z).re
-            : Int), (TileCentroid base).2 + ((index z).im : Int))) → ((∀ (x : Int × Int), ∀ (y :
-            Int × Int), index (y - x) = index y - index x) → ((∀ (x : Int × Int), ∀ (y : Int ×
-            Int), TileCentroid (tileAt y) - TileCentroid (tileAt x) = GaussianRealPoint (index (y
-            - x))) → (∀ (x : Int × Int), ∀ (y : Int × Int), adjacent (tileAt x) (tileAt y) ↔
-            TriangularLatticeAdjacent x y))))))))))))))) ) := by
+        ∀ (C : BandCircle),
+          ∀ (orientation : Bool),
+            ∀ (base : ProtoTile),
+              BandPrototile C.1.1 base →
+                ∀ (a : GaussianInt),
+                  ∀ (b : GaussianInt),
+                    (0 : ℤ) < a.re * b.im - a.im * b.re →
+                      (∀ (w : ↥(TilingLattice C)),
+                          ∃! z : ℤ × ℤ,
+                            (↑z.1 : GaussianInt) * a + (↑z.2 : GaussianInt) * b =
+                              (↑w : GaussianInt)) →
+                        (C.1.1.1 = (1 : ℤ) ∧
+                              (orientation = true ∧
+                                a = (1 : GaussianInt) ∧
+                                b = (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt) ∨
+                                orientation = false ∧
+                                a = (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt) ∧
+                                b = (-1 : GaussianInt)) ∨
+                            (1 : ℤ) < C.1.1.1 ∧
+                              ∃ (q : Fin (4 : ℕ) → CircleCoordinates),
+                                ProperBandQuadruple q ∧
+                                q (0 : Fin (4 : ℕ)) = C.1.1 ∧
+                                (a =
+                                BandVectors.1 (q (1 : Fin (4 : ℕ)))
+                                (q (0 : Fin (4 : ℕ))) ∧
+                                b =
+                                BandVectors.1 (q (2 : Fin (4 : ℕ)))
+                                (q (0 : Fin (4 : ℕ))) ∨
+                                a =
+                                BandVectors.1 (q (2 : Fin (4 : ℕ)))
+                                (q (0 : Fin (4 : ℕ))) ∧
+                                b =
+                                BandVectors.1 (q (1 : Fin (4 : ℕ)))
+                                (q (0 : Fin (4 : ℕ))))) →
+                          let index := fun z : Int × Int =>
+                            (z.1 : GaussianInt) * a + (z.2 : GaussianInt) * b;
+                          let tileAt := fun z : Int × Int =>
+                            TileTranslation base (index z);
+                          let adjacent := fun T U : ProtoTile =>
+                            if C.1.1.1 = 1 then
+                              ∃ v : GaussianInt,
+                                UnitTriangularStep orientation v ∧
+                                TileCentroid U - TileCentroid T = GaussianRealPoint v
+                            else TileTouching T U;
+                          Function.Injective index →
+                            (∀ (U : ProtoTile),
+                                U ∈ RegularTileFamily base (TilingLattice C) ↔
+                                ∃! z : Int × Int, U = tileAt z) →
+                              (∀ (z : Int × Int),
+                                tileAt z ∈ RegularTileFamily base (TilingLattice C)) →
+                                Function.Injective GaussianRealPoint →
+                                (∀ (x : Int × Int),
+                                ∀ (y : Int × Int), index (y - x) = index y - index x) →
+                                (∀ (x : Int × Int),
+                                ∀ (y : Int × Int),
+                                TileCentroid (tileAt y) - TileCentroid (tileAt x) =
+                                GaussianRealPoint (index (y - x))) →
+                                ∀ (x : Int × Int),
+                                ∀ (y : Int × Int),
+                                adjacent (tileAt x) (tileAt y) ↔
+                                TriangularLatticeAdjacent x y
+    ) := by
   classical
-  intro C orientation base hbase a b hdet ha hb hcoord hsource index tileAt adjacent index_mem
-      index_inj tile_inj family tile_mem point_inj centroid index_sub difference x y
+  intro C orientation base hbase a b hdet hcoord hsource index tileAt adjacent index_inj family
+      tile_mem point_inj index_sub difference x y
   rw [show adjacent (tileAt x) (tileAt y) =
     (if C.1.1.1 = 1 then ∃ v : GaussianInt, UnitTriangularStep orientation v ∧
       TileCentroid (tileAt y) - TileCentroid (tileAt x) = GaussianRealPoint v
@@ -794,8 +828,7 @@ theorem TileStringCoordinateTransport (C : BandCircle) (orientation : Bool)
           StringCoordinateGeometry.difference base a b centroid index_sub x y
   have adj (x y : Int × Int) : adjacent (tileAt x) (tileAt y) ↔
       TriangularLatticeAdjacent x y := StringCoordinateGeometry.adj C orientation base hbase a b
-          hdet ha hb hcoord hsource index_mem index_inj tile_inj family tile_mem point_inj
-          centroid index_sub difference x y
+          hdet hcoord hsource index_inj family tile_mem point_inj index_sub difference x y
   have height (x y z : Int × Int) :
       ((TileCentroid (tileAt z)).2 - (TileCentroid (tileAt x)).2) *
             ((TileCentroid (tileAt y)).1 - (TileCentroid (tileAt x)).1) -

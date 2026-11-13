@@ -6,6 +6,9 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.TileQuarterTurnTranslation
+public import LeanPool.ApollonianSuperharmonic.GaussianQuarterTurnProperties
+public import LeanPool.ApollonianSuperharmonic.LatticeAdjacentPackingSymmetryFacts
 public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryLinearIdentities
 public import LeanPool.ApollonianSuperharmonic.TileTranslationProperties
 public import LeanPool.ApollonianSuperharmonic.GaussianRealPointProperties
@@ -104,35 +107,11 @@ private theorem triple_obs :
 private abbrev translate_add :=
   TileTranslationProperties.add
 
-private theorem translate_zero :
-    (by
-      classical
-      exact
-        ∀ (A : ProtoTile), TileTranslation A 0 = A ) := by
-  classical
-  intro A
-  cases A
-  have hz : GaussianTranslation 0 = id := by funext z; simp [GaussianTranslation]
-  simp [TileTranslation, hz, GaussianTranslation]
+private abbrev translate_zero := ApollonianSuperharmonic.TileTranslationProperties.zero
 
-private theorem quarter_translate :
-    (by
-      classical
-      exact
-        ∀ (A : ProtoTile), ∀ (x : GaussianInt), TileQuarterTurn (TileTranslation A x) =
-            TileTranslation (TileQuarterTurn A) (GaussianQuarterTurn x) ) := by
-  classical
-  intro A x
-  exact (BandPackingSymmetryTilingTransport .negate).2.2.2.2.2.2.1 A x
+private abbrev quarter_translate := ApollonianSuperharmonic.TileQuarterTurnTranslation.commute
 
-private theorem qtwo :
-    (by
-      classical
-      exact
-        ∀ (x : GaussianInt), GaussianQuarterTurn (GaussianQuarterTurn x) = -x ) := by
-  classical
-  intro x
-  ext <;> simp [GaussianQuarterTurn]
+private abbrev qtwo := ApollonianSuperharmonic.GaussianQuarterTurnProperties.twice
 
 private theorem half_translate :
     (by
@@ -587,20 +566,7 @@ private theorem rminus :
   cases hh : BandPackingSymmetryReversesOrientation h <;>
     simp [GaussianRealPoint, GaussianQuarterTurn, sub_eq_add_neg]
 
-private theorem lneg :
-    (by
-      classical
-      exact
-        ∀ (h : BandPackingSymmetry), ∀ (x : GaussianInt), BandPackingSymmetryVectorAction h (-x)
-            = -BandPackingSymmetryVectorAction h x ) := by
-  classical
-  intro h x
-  induction h generalizing x with
-  | identity => rfl
-  | negate => ext <;> simp [BandPackingSymmetryVectorAction, GaussianQuarterTurn]
-  | conjugate => ext <;> simp [BandPackingSymmetryVectorAction, GaussianReflection]
-  | shift w => rfl
-  | comp h k ih ik => simp only [BandPackingSymmetryVectorAction, ih, ik]
+private abbrev lneg := ApollonianSuperharmonic.LatticeAdjacentPackingSymmetryFacts.vectorNegation
 
 private theorem tile_surj :
     (by

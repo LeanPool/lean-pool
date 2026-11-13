@@ -524,35 +524,20 @@ private theorem hnadj :
       exact
         ∀ (q : Fin (4 : ℕ) → CircleCoordinates),
           ∀ (i : Fin (3 : ℕ)),
-            ∀ (hq : ProperBandQuadruple q),
+            ProperBandQuadruple q →
               (q i.succ).1 = (1 : ℤ) →
-                ∀ (hpos : 0 < (q i.succ).1),
-                  let Ci : BandCircle :=
-                    ⟨⟨q i.succ, Or.inl hpos, q, hq.1, i.succ, rfl⟩, hpos⟩;
+                0 < (q i.succ).1 →
                   ∀ (U : ProtoTile),
                     ∀ (orientation : Bool),
-                      ∀ (base : ProtoTile),
-                        ∀ (Rminus : ProtoTile),
-                          ∀ (Rplus : ProtoTile),
-                            ∀ (tiles : List ProtoTile),
-                              ∀ (reverseTiles : List ProtoTile),
-                                ∀ (hs : List PartialOdometer),
-                                ∀ (reverseHs : List PartialOdometer),
-                                TileString Ci orientation base Rplus Rminus reverseTiles →
-                                OdometerStringRespect Ci orientation base Rminus Rplus
-                                tiles hs →
-                                OdometerStringRespect Ci orientation base Rplus Rminus
-                                reverseTiles reverseHs →
-                                ∀ (r : Fin (4 : ℕ) → CircleCoordinates),
-                                (Ci.1.1.1 = (1 : ℤ) →
-                                UnitOccurrenceOrientation r i orientation) →
-                                TileString Ci orientation base Rminus Rplus tiles →
-                                TileCentroid Rminus - TileCentroid U =
+                      ∀ (Rminus : ProtoTile),
+                        ∀ (Rplus : ProtoTile),
+                          (Fin (4 : ℕ) → CircleCoordinates) →
+                            TileCentroid Rminus - TileCentroid U =
                                 (1 / 2 : ℝ) •
                                 GaussianRealPoint
                                 (BandVectors.1 (q i.succ) (q (0 : Fin (4 : ℕ))) -
                                 BandVectors.1 (q (0 : Fin (4 : ℕ))) (q i.succ)) →
-                                TileCentroid Rplus - TileCentroid U =
+                              TileCentroid Rplus - TileCentroid U =
                                 (1 / 2 : ℝ) •
                                 GaussianRealPoint
                                 (BandVectors.1 (q i.succ) (q (0 : Fin (4 : ℕ))) +
@@ -565,8 +550,7 @@ private theorem hnadj :
                                 GaussianRealPoint v
     ) := by
   classical
-  intro q i hq hunit hpos Ci U orientation base Rminus Rplus tiles reverseTiles hs reverseHs
-      hreverse hrespect hreverseRespect r horientation hstring hcminus hcplus hnorm
+  intro q i hq hunit hpos U orientation Rminus Rplus r hcminus hcplus hnorm
   rintro ⟨v,hv,hcv⟩
   have hveq : v = BandVectors.1 (q 0) (q i.succ) := by
     apply Zsqrtd.ext
@@ -888,16 +872,15 @@ private theorem positiveStep :
         ∀ (C : BandCircle),
           ∀ (g : IntegerLatticeFunction),
             ∀ (x : GaussianInt),
-              ℕ →
-                ∀ (q : Fin (4 : ℕ) → CircleCoordinates),
-                  ∀ (i : Fin (3 : ℕ)),
-                    ProperBandQuadruple q →
-                      q (0 : Fin (4 : ℕ)) = C.1.1 →
-                        (q i.succ).1 = (1 : ℤ) →
-                          0 < (q i.succ).1 →
-                            ∀ (U : ProtoTile),
-                              ∀ (V : ProtoTile),
-                                ∀ (f : PartialOdometer),
+              ∀ (q : Fin (4 : ℕ) → CircleCoordinates),
+                ∀ (i : Fin (3 : ℕ)),
+                  ProperBandQuadruple q →
+                    q (0 : Fin (4 : ℕ)) = C.1.1 →
+                      (q i.succ).1 = (1 : ℤ) →
+                        0 < (q i.succ).1 →
+                          ∀ (U : ProtoTile),
+                            ∀ (V : ProtoTile),
+                              ∀ (f : PartialOdometer),
                                 ∀ (k : PartialOdometer),
                                 ∀ (p : Real × Real),
                                 ∀ (p' : Real × Real),
@@ -920,7 +903,7 @@ private theorem positiveStep :
                                 FourNeighborLaplacian g x = 1
     ) := by
   classical
-  intro C g x n q i hq hqC hunit hpos U V f k p p' hOf hOk hpf hpk hcUV hpUV hgf hgk hxf hxk
+  intro C g x q i hq hqC hunit hpos U V f k p p' hOf hOk hpf hpk hcUV hpUV hgf hgk hxf hxk
       hcover
   let Ci : BandCircle :=
     ⟨⟨q i.succ, Or.inl hpos, q, hq.1, i.succ, rfl⟩, hpos⟩
@@ -1021,9 +1004,8 @@ private theorem positiveStep :
       (q 0).1+1 := LeftWebGeometry.hnorm q i hq hunit
   have hnadj : ¬ ∃ v : GaussianInt, UnitTriangularStep orientation v ∧
       TileCentroid Rplus - TileCentroid Rminus = GaussianRealPoint v :=
-          LeftWebGeometry.hnadj q i hq hunit hpos U orientation base Rminus
-          Rplus tiles reverseTiles hs reverseHs hreverse hrespect hreverseRespect r
-          horientation hstring hcminus hcplus hnorm
+          LeftWebGeometry.hnadj q i hq hunit hpos U orientation Rminus
+          Rplus r hcminus hcplus hnorm
   have hUn : U.cells.Nonempty := LeftWebGeometry.hUn q hq U V hgeomU hgeomV
   have hVn : V.cells.Nonempty := Finset.nonempty_iff_ne_empty.mpr hnV
   have hselection := P5589T1UnitInterfaceSelection C Ci hunit orientation
@@ -1159,7 +1141,7 @@ theorem P5596T1LeftWeb
                 (hcover : ∀ y, y = x ∨ y = x + 1 ∨ y = x - 1 ∨
                     y = x + ⟨0, 1⟩ ∨ y = x - ⟨0, 1⟩ →
                     y ∈ f.domain ∨ y ∈ k.domain) :
-                FourNeighborLaplacian g x = 1 := LeftWebStep.positiveStep C g x n q i hq hqC
+                FourNeighborLaplacian g x = 1 := LeftWebStep.positiveStep C g x q i hq hqC
                     hunit hpos U V f k p p' hOf hOk hpf hpk hcUV hpUV hgf hgk hxf hxk hcover
             cases e
             · apply positiveStep T₂ T₁ h₂ h₁ p₂ p₁ hO₂ hO₁ hp₂ hp₁

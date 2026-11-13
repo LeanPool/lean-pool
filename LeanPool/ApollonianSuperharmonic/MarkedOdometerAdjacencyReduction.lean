@@ -6,6 +6,7 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.LatticeAdjacentPackingSymmetryFacts
 
 public import LeanPool.ApollonianSuperharmonic.P5630T1MarkedRightOdometerAdjacencyReduction
 public import LeanPool.ApollonianSuperharmonic.BandOrderedGeneralSubtileSelectedRowGeometry
@@ -769,64 +770,8 @@ private theorem hpSelectedEq :
   apply Option.some.inj
   rw [← hslopeSelected, ← hslope']
 
-private theorem centroidCov :
-    (by
-      classical
-      exact
-        ∀ (a : BandPackingSymmetry), ∀ (U : ProtoTile), ∀ (V : ProtoTile), ∀ (w : GaussianInt),
-            TileCentroid V - TileCentroid U = GaussianRealPoint w → TileCentroid
-            (BandPackingSymmetryTileAction a V) - TileCentroid (BandPackingSymmetryTileAction a
-            U) = GaussianRealPoint (BandPackingSymmetryVectorAction a w) ) := by
-  classical
-  intro a
-  induction a with
-  | identity => intro U V w hc; exact hc
-  | shift z => intro U V w hc; exact hc
-  | negate =>
-      intro U V w hc
-      change TileCentroid (TileQuarterTurn V) -
-        TileCentroid (TileQuarterTurn U) = _
-      rw [(TileQuarterTurnFormulas V).2.2.2.2.1,
-        (TileQuarterTurnFormulas U).2.2.2.2.1]
-      rcases w with ⟨wr, wi⟩
-      have hc1 : (TileCentroid V).1 - (TileCentroid U).1 = wr := by
-        simpa [GaussianRealPoint] using congrArg Prod.fst hc
-      have hc2 : (TileCentroid V).2 - (TileCentroid U).2 = wi := by
-        simpa [GaussianRealPoint] using congrArg Prod.snd hc
-      apply Prod.ext
-      · simp [GaussianRealPoint, BandPackingSymmetryVectorAction,
-          GaussianQuarterTurn] at hc2 ⊢
-        linarith
-      · simp [GaussianRealPoint, BandPackingSymmetryVectorAction,
-          GaussianQuarterTurn] at hc1 ⊢
-        linarith
-  | conjugate =>
-      intro U V w hc
-      change TileCentroid
-          (TileQuarterTurn (TileQuarterTurn (TileReflection V))) -
-        TileCentroid
-          (TileQuarterTurn (TileQuarterTurn (TileReflection U))) = _
-      rw [(TileQuarterTurnFormulas (TileQuarterTurn (TileReflection V))).2.2.2.2.1,
-        (TileQuarterTurnFormulas (TileQuarterTurn (TileReflection U))).2.2.2.2.1,
-        (TileQuarterTurnFormulas (TileReflection V)).2.2.2.2.1,
-        (TileQuarterTurnFormulas (TileReflection U)).2.2.2.2.1,
-        (TileReflectionFormulas V).2.2.2.2.1,
-        (TileReflectionFormulas U).2.2.2.2.1]
-      rcases w with ⟨wr, wi⟩
-      have hc1 : (TileCentroid V).1 - (TileCentroid U).1 = wr := by
-        simpa [GaussianRealPoint] using congrArg Prod.fst hc
-      have hc2 : (TileCentroid V).2 - (TileCentroid U).2 = wi := by
-        simpa [GaussianRealPoint] using congrArg Prod.snd hc
-      apply Prod.ext
-      · simp [GaussianRealPoint, BandPackingSymmetryVectorAction,
-          GaussianReflection] at hc2 ⊢
-        linarith
-      · simp [GaussianRealPoint, BandPackingSymmetryVectorAction,
-          GaussianReflection] at hc1 ⊢
-        linarith
-  | comp a b iha ihb =>
-      intro U V w hc
-      exact iha _ _ _ (ihb U V w hc)
+private abbrev centroidCov :=
+    ApollonianSuperharmonic.LatticeAdjacentPackingSymmetryFacts.centroidTransport
 
 private theorem hinverseUnitCurv :
     (by
@@ -1747,16 +1692,8 @@ private theorem hleftInvAt1283 :
       (by simpa [T', bundle.normalized_fixed_eq, htileL] using hcentLeftInv),
       hslopeLeftReInv, hslopeLeftImInv⟩
 
-private theorem hparentPositiveAt1298 :
-    (by
-      classical
-      exact
-        ∀ (C' : BandCircle), ∀ (r : Fin (4 : ℕ) → CircleCoordinates), ∀ (j : Fin (3 : ℕ)), (r
-            j.succ = C'.1.1) → (0 < (r j.succ).1) ) := by
-  classical
-  intro C' r j hrj
-  rw [hrj]
-  exact C'.property
+private abbrev hparentPositiveAt1298 :=
+    ApollonianSuperharmonic.MarkedAdjacencyGeometry.hparentPositiveAt344
 
 private theorem hOfixedAt1301 :
     (by
@@ -1914,30 +1851,7 @@ private theorem hcentOriginalAt1348 :
   intro C₀ Cᵢ T₀ Tᵢ h₀ hᵢ x bundle ginv htileL selectedSupport T' r j t' hcentInv
   simpa [T', bundle.normalized_fixed_eq, htileL] using hcentInv
 
-private theorem hrootCoord :
-    (by
-      classical
-      exact
-        ∀ (C₀ : BandCircle), ∀ (Cᵢ : BandCircle), ∀ (T₀ : ProtoTile), ∀ (Tᵢ : ProtoTile), ∀ (h₀ :
-            PartialOdometer), ∀ (hᵢ : PartialOdometer), ∀ (x : GaussianInt), ∀ (bundle :
-            BandOrderedGeneralNormalizedOccurrenceBundle C₀ Cᵢ T₀ Tᵢ h₀ hᵢ x), ∀ (ginv :
-            BandPackingSymmetry), (∀ (C : CircleCoordinates), BandPackingSymmetryCircleAction
-            ginv (BandPackingSymmetryCircleAction bundle.symmetry C) = C) → (∀ (r : Fin (4 : ℕ) →
-            CircleCoordinates), (r (0 : Fin (4 : ℕ)) = bundle.normalizedFixedCircle.1.1) →
-                ((BandPackingSymmetryQuadrupleAction ginv
-            r) 0 = Cᵢ.1.1)) ) := by
-  classical
-  intro C₀ Cᵢ T₀ Tᵢ h₀ hᵢ x bundle ginv hcircleL r hr0
-  calc
-    (BandPackingSymmetryQuadrupleAction ginv r) 0 =
-        BandPackingSymmetryCircleAction ginv (r 0) := by
-          simp [BandPackingSymmetryQuadrupleAction]
-    _ = BandPackingSymmetryCircleAction ginv
-        bundle.normalizedFixedCircle.1.1 :=
-          congrArg (BandPackingSymmetryCircleAction ginv) hr0
-    _ = Cᵢ.1.1 := by
-        rw [bundle.normalized_fixed_circle_eq]
-        exact hcircleL Cᵢ.1.1
+private abbrev hrootCoord := ApollonianSuperharmonic.MarkedAdjacencyGeometry.hleftRootCoord
 
 private theorem hnewAdjAt1371 :
     (by

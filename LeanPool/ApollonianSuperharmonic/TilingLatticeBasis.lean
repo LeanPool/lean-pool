@@ -6,6 +6,7 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.BandVectorParentSums
 
 public import LeanPool.ApollonianSuperharmonic.TilingLatticeIndex
 
@@ -24,34 +25,7 @@ namespace ApollonianSuperharmonic
 
 namespace TilingBasisProof
 
-private theorem relation :
-    (by
-      classical
-      exact
-        ∀ (q : Fin 4 → CircleCoordinates), (ProperBandQuadruple q) → (BandVectors.1 (q 1) (q 0) +
-            BandVectors.1 (q 2) (q 0) + BandVectors.1 (q 3) (q 0) = 0) ) := by
-  classical
-  intro q hq
-  let r : Fin 4 → CircleCoordinates := ![q 0, q 2, q 3, q 1]
-  have hr : SemiProperQuadruple r := by
-    simpa [r] using SemiProperQuadruple.rotate hq.1
-  let s : Fin 4 → CircleCoordinates := ![r 0, r 2, r 3, r 1]
-  have hs : SemiProperQuadruple s := by
-    simpa [s] using SemiProperQuadruple.rotate hr
-  have first := VectorRecursionLaws q hq.1
-  have second := VectorRecursionLaws r hr
-  have third := VectorRecursionLaws s hs
-  have e0 := first.2.2.1
-  have e1 := second.2.2.1
-  have e2 := third.2.2.1
-  simp only [Fin.isValue, Matrix.cons_val_one, Matrix.cons_val_zero, Int.reduceNeg,
-      Matrix.cons_val, r, s] at e1 e2
-  rw [e0, e1, e2]
-  calc
-    _ = (1 - (⟨0, 1⟩ : GaussianInt)) *
-        (BandVectors.1 (q 3) (q 2) + BandVectors.1 (q 1) (q 3) +
-          BandVectors.1 (q 2) (q 1)) := by ring
-    _ = 0 := by rw [first.1]; simp
+private abbrev relation := ApollonianSuperharmonic.BandVectorIncomingSum
 
 private theorem flipA :
     (by

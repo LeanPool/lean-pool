@@ -122,26 +122,25 @@ private theorem tau_cell :
       classical
       exact
         ∀ (T : ProtoTile),
-        let c := TileCentroid T
-        let reCells : Finset Int := T.cells.image (fun x => x.re)
-        let imCells : Finset Int := T.cells.image (fun x => x.im)
-        ∀ (reNe : reCells.Nonempty), ∀ (imNe : imCells.Nonempty), (∀ p ∈ TileRealization T, (2 *
-            c.1 - p.1, 2 * c.2 - p.2) ∈ TileRealization T) → (
-        let mRe := reCells.min' reNe
-        let MRe := reCells.max' reNe
-        (∃ x ∈ T.cells, x.re = mRe) → ((∃ x ∈ T.cells, x.re = MRe) → ((2 * c.1 = (mRe : Real) +
-            MRe + 1) → (
-        let mIm := imCells.min' imNe
-        let MIm := imCells.max' imNe
-        (∃ x ∈ T.cells, x.im = mIm) → ((∃ x ∈ T.cells, x.im = MIm) → ((2 * c.2 = (mIm : Real) +
-            MIm + 1) → (
-        let t : GaussianInt := ⟨mRe + MRe + 1, mIm + MIm + 1⟩
-        let tau : GaussianInt → GaussianInt := fun x => t - x - 1 - ⟨0, 1⟩
-        ∀ x ∈ T.cells, tau x ∈ T.cells)))))))
+          let c := TileCentroid T;
+          let reCells : Finset Int := T.cells.image fun x => x.re;
+          let imCells : Finset Int := T.cells.image fun x => x.im;
+          ∀ (reNe : reCells.Nonempty),
+            ∀ (imNe : imCells.Nonempty),
+              (∀ p ∈ TileRealization T,
+                  (2 * c.1 - p.1, 2 * c.2 - p.2) ∈ TileRealization T) →
+                let mRe := reCells.min' reNe;
+                let MRe := reCells.max' reNe;
+                2 * c.1 = (mRe : Real) + MRe + 1 →
+                  let mIm := imCells.min' imNe;
+                  let MIm := imCells.max' imNe;
+                  2 * c.2 = (mIm : Real) + MIm + 1 →
+                    let t : GaussianInt := ⟨mRe + MRe + 1, mIm + MIm + 1⟩
+                    let tau : GaussianInt → GaussianInt := fun x => t - x - 1 - ⟨0, 1⟩
+                    ∀ x ∈ T.cells, tau x ∈ T.cells
     ) := by
   classical
-  intro T c reCells imCells reNe imNe reflect_mem mRe MRe minReCell maxReCell centerRe mIm MIm
-      minImCell maxImCell centerIm t tau x hx
+  intro T c reCells imCells reNe imNe reflect_mem mRe MRe centerRe mIm MIm centerIm t tau x hx
   have hp : ((x.re : Real) + 1 / 2, (x.im : Real) + 1 / 2) ∈
       TileRealization T := by
     simp only [TileRealization, Set.mem_iUnion]
@@ -672,7 +671,7 @@ theorem BandPrototileCompleteSquareCentroid
     dsimp [tau]
     apply Zsqrtd.ext <;> dsimp [t] <;> ring
   have tau_cell : ∀ x ∈ T.cells, tau x ∈ T.cells := CompleteSquareProof.tau_cell T reNe imNe
-      reflect_mem minReCell maxReCell centerRe minImCell maxImCell centerIm
+      reflect_mem centerRe centerIm
   let rho : GaussianInt → GaussianInt := fun v => t - v
   have footprint_forward : ∀ v, v ∈ FootprintVertices T →
       rho v ∈ FootprintVertices T := CompleteSquareProof.footprint_forward T hne reNe imNe tau_cell

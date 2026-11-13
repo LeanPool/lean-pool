@@ -349,31 +349,7 @@ private theorem hfpoint :
   · exact Or.inl (by simpa [p1] using rhoFace f _ h)
   · exact Or.inr (by simpa [pJ] using rhoFace f _ h)
 
-private theorem hgpoint :
-    (by
-      classical
-      exact
-        ∀ (q : Fin 4 → CircleCoordinates), ∀ (cfg : BandOrderedGeneralConfiguration q), ∀ (C :
-            BandCircle), ∀ (T : ProtoTile), ∀ (cert : BandOrderedGeneralLayoutCertificate q cfg C
-            T), ∀ (g : cert.modified.plane.Face), ((cert.modifiedFaceEquivalence :
-            cert.modified.plane.Face → PeriodicSubtileFaceIndex) g = (⟨SixSubtileFaceLabel.I1, (0
-            : ℤ), (0 : ℤ)⟩ : PeriodicSubtileFaceIndex) ∨ (cert.modifiedFaceEquivalence :
-            cert.modified.plane.Face → PeriodicSubtileFaceIndex) g = (⟨SixSubtileFaceLabel.J3,
-            (-1 : ℤ), (-1 : ℤ)⟩ : PeriodicSubtileFaceIndex)) → (
-        let p1 := cert.unmodified.core.rho
-          (cert.unmodified.faceEquiv.symm ⟨.I1, 0, 0⟩)
-        let pJ := cert.unmodified.core.rho
-          (cert.unmodified.faceEquiv.symm ⟨.J3, -1, -1⟩)
-        (∀ (F : cert.modified.plane.Face), ∀ (face : PeriodicSubtileFaceIndex),
-            (cert.modifiedFaceEquivalence F = face) → (cert.modified.rho F =
-                cert.unmodified.core.rho
-            (cert.unmodified.faceEquiv.symm face))) → (cert.modified.rho g = p1 ∨
-            cert.modified.rho g = pJ)) ) := by
-  classical
-  intro q cfg C T cert g hgclass p1 pJ rhoFace
-  rcases hgclass with h | h
-  · exact Or.inl (by simpa [p1] using rhoFace g _ h)
-  · exact Or.inr (by simpa [pJ] using rhoFace g _ h)
+private abbrev hgpoint := ApollonianSuperharmonic.JunctionRefinementGeometry.hfpoint
 
 private theorem hx_p1_or_pJ :
     (by
@@ -711,31 +687,7 @@ private theorem hf2point :
   · exact Or.inl (by simpa [p2] using rhoFace2 f2 _ h)
   · exact Or.inr (by simpa [pJ4] using rhoFace2 f2 _ h)
 
-private theorem hg2point :
-    (by
-      classical
-      exact
-        ∀ (q : Fin 4 → CircleCoordinates), ∀ (cfg : BandOrderedGeneralConfiguration q), ∀ (C :
-            BandCircle), ∀ (T : ProtoTile), ∀ (cert : BandOrderedGeneralLayoutCertificate q cfg C
-            T), ∀ (g2 : cert.modified.plane.Face), ((cert.modifiedFaceEquivalence :
-            cert.modified.plane.Face → PeriodicSubtileFaceIndex) g2 = (⟨SixSubtileFaceLabel.I2,
-            (0 : ℤ), (0 : ℤ)⟩ : PeriodicSubtileFaceIndex) ∨ (cert.modifiedFaceEquivalence :
-            cert.modified.plane.Face → PeriodicSubtileFaceIndex) g2 = (⟨SixSubtileFaceLabel.J4,
-            (0 : ℤ), (0 : ℤ)⟩ : PeriodicSubtileFaceIndex)) → (
-        let p2 := cert.unmodified.core.rho
-          (cert.unmodified.faceEquiv.symm ⟨.I2, 0, 0⟩)
-        let pJ4 := cert.unmodified.core.rho
-          (cert.unmodified.faceEquiv.symm ⟨.J4, 0, 0⟩)
-        (∀ (F : cert.modified.plane.Face), ∀ (face : PeriodicSubtileFaceIndex),
-            (cert.modifiedFaceEquivalence F = face) → (cert.modified.rho F =
-                cert.unmodified.core.rho
-            (cert.unmodified.faceEquiv.symm face))) → (cert.modified.rho g2 = p2 ∨
-            cert.modified.rho g2 = pJ4)) ) := by
-  classical
-  intro q cfg C T cert g2 hg2class p2 pJ4 rhoFace2
-  rcases hg2class with h | h
-  · exact Or.inl (by simpa [p2] using rhoFace2 g2 _ h)
-  · exact Or.inr (by simpa [pJ4] using rhoFace2 g2 _ h)
+private abbrev hg2point := ApollonianSuperharmonic.JunctionRefinementGeometry.hf2point
 
 private theorem hx_p2_or_pJ4 :
     (by
@@ -819,20 +771,7 @@ private theorem hp2D :
   simpa [p2, faceI2, dI2, ModifiedSubtileOccurrenceInterpretation,
     TileTranslation, GaussianTranslation, htransZero, Finset.image_id] using hh
 
-private theorem hCtile0 :
-    (by
-      classical
-      exact
-        ∀ (q : Fin 4 → CircleCoordinates), ∀ (cfg : BandOrderedGeneralConfiguration q), ∀ (C :
-            BandCircle), ∀ (T : ProtoTile), ∀ (cert : BandOrderedGeneralLayoutCertificate q cfg C
-            T), (GaussianTranslation (0 : GaussianInt) = id) → (
-        let c0 : PeriodicSubtileIndex := ⟨.C, 0, 0⟩
-        cert.modified.tile c0 = cert.P 1 true) ) := by
-  classical
-  intro q cfg C T cert htransZero c0
-  rw [cert.modified_tile]
-  simp [c0, ModifiedSubtileOccurrenceInterpretation,
-    TileTranslation, htransZero]
+private abbrev hCtile0 := ApollonianSuperharmonic.JunctionRefinementGeometry.hCtile
 
 private theorem hFtile0 :
     (by
@@ -999,31 +938,7 @@ private theorem hf3point :
   · exact Or.inl (by simpa [p3] using rhoFace3 f3 _ h)
   · exact Or.inr (by simpa [pJ8] using rhoFace3 f3 _ h)
 
-private theorem hg3point :
-    (by
-      classical
-      exact
-        ∀ (q : Fin 4 → CircleCoordinates), ∀ (cfg : BandOrderedGeneralConfiguration q), ∀ (C :
-            BandCircle), ∀ (T : ProtoTile), ∀ (cert : BandOrderedGeneralLayoutCertificate q cfg C
-            T), ∀ (g3 : cert.modified.plane.Face), ((cert.modifiedFaceEquivalence :
-            cert.modified.plane.Face → PeriodicSubtileFaceIndex) g3 = (⟨SixSubtileFaceLabel.I3,
-            (0 : ℤ), (0 : ℤ)⟩ : PeriodicSubtileFaceIndex) ∨ (cert.modifiedFaceEquivalence :
-            cert.modified.plane.Face → PeriodicSubtileFaceIndex) g3 = (⟨SixSubtileFaceLabel.J8,
-            (0 : ℤ), (0 : ℤ)⟩ : PeriodicSubtileFaceIndex)) → (
-        let p3 := cert.unmodified.core.rho
-          (cert.unmodified.faceEquiv.symm ⟨.I3, 0, 0⟩)
-        let pJ8 := cert.unmodified.core.rho
-          (cert.unmodified.faceEquiv.symm ⟨.J8, 0, 0⟩)
-        (∀ (F : cert.modified.plane.Face), ∀ (face : PeriodicSubtileFaceIndex),
-            (cert.modifiedFaceEquivalence F = face) → (cert.modified.rho F =
-                cert.unmodified.core.rho
-            (cert.unmodified.faceEquiv.symm face))) → (cert.modified.rho g3 = p3 ∨
-            cert.modified.rho g3 = pJ8)) ) := by
-  classical
-  intro q cfg C T cert g3 hg3class p3 pJ8 rhoFace3
-  rcases hg3class with h | h
-  · exact Or.inl (by simpa [p3] using rhoFace3 g3 _ h)
-  · exact Or.inr (by simpa [pJ8] using rhoFace3 g3 _ h)
+private abbrev hg3point := ApollonianSuperharmonic.JunctionRefinementGeometry.hf3point
 
 private theorem hx_p3_or_pJ8 :
     (by
@@ -1250,31 +1165,7 @@ private theorem hf4point :
   · exact Or.inl (by simpa [p4] using rhoFace4 f4 _ h)
   · exact Or.inr (by simpa [pJ7] using rhoFace4 f4 _ h)
 
-private theorem hg4point :
-    (by
-      classical
-      exact
-        ∀ (q : Fin 4 → CircleCoordinates), ∀ (cfg : BandOrderedGeneralConfiguration q), ∀ (C :
-            BandCircle), ∀ (T : ProtoTile), ∀ (cert : BandOrderedGeneralLayoutCertificate q cfg C
-            T), ∀ (g4 : cert.modified.plane.Face), ((cert.modifiedFaceEquivalence :
-            cert.modified.plane.Face → PeriodicSubtileFaceIndex) g4 = (⟨SixSubtileFaceLabel.I4,
-            (0 : ℤ), (0 : ℤ)⟩ : PeriodicSubtileFaceIndex) ∨ (cert.modifiedFaceEquivalence :
-            cert.modified.plane.Face → PeriodicSubtileFaceIndex) g4 = (⟨SixSubtileFaceLabel.J7,
-            (1 : ℤ), (0 : ℤ)⟩ : PeriodicSubtileFaceIndex)) → (
-        let p4 := cert.unmodified.core.rho
-          (cert.unmodified.faceEquiv.symm ⟨.I4, 0, 0⟩)
-        let pJ7 := cert.unmodified.core.rho
-          (cert.unmodified.faceEquiv.symm ⟨.J7, 1, 0⟩)
-        (∀ (F : cert.modified.plane.Face), ∀ (face : PeriodicSubtileFaceIndex),
-            (cert.modifiedFaceEquivalence F = face) → (cert.modified.rho F =
-                cert.unmodified.core.rho
-            (cert.unmodified.faceEquiv.symm face))) → (cert.modified.rho g4 = p4 ∨
-            cert.modified.rho g4 = pJ7)) ) := by
-  classical
-  intro q cfg C T cert g4 hg4class p4 pJ7 rhoFace4
-  rcases hg4class with h | h
-  · exact Or.inl (by simpa [p4] using rhoFace4 g4 _ h)
-  · exact Or.inr (by simpa [pJ7] using rhoFace4 g4 _ h)
+private abbrev hg4point := ApollonianSuperharmonic.JunctionRefinementGeometry.hf4point
 
 private theorem endpointAlternative :
     (by
@@ -1515,40 +1406,41 @@ private theorem hxJ7neq :
     (by
       classical
       exact
-        ∀ (q : Fin 4 → CircleCoordinates), ∀ (cfg : BandOrderedGeneralConfiguration q), ∀ (C :
-            BandCircle), ∀ (T : ProtoTile), ∀ (cert : BandOrderedGeneralLayoutCertificate q cfg C
-            T), ∀ (x : GaussianInt), (x ∈ FootprintVertices T) → ((x ∉ BoundaryFootprintVertices
-            T) → ((∀ (W : ProtoTile), ∀ (y : GaussianInt), (W.cells.Nonempty) → ((y ∈
-            FootprintVertices W) → (∃ j : Fin 4, LatticeVertexIncidentCell y j ∈ W.cells))) → ((∀
-            j : Fin 4, LatticeVertexIncidentCell x j ∈ T.cells) → ((x ∈ T.cells ∧ x - 1 ∈ T.cells
-            ∧ x - 1 - ⟨0, 1⟩ ∈ T.cells ∧ x - ⟨0, 1⟩ ∈ T.cells) → (((x ∈ FootprintVertices (cert.P
-            0 true) ∧ x ∈ FootprintVertices (cert.P 0 false) ∧ x ∈ FootprintVertices (cert.P 1
-            true)) → (∃ j : Fin 4, LatticeVertexIncidentCell x j ∈ (cert.P 0 true).cells ∧
-            LatticeVertexIncidentCell x j ∉ (cert.P 0 false).cells ∧ LatticeVertexIncidentCell x
-            j ∉ (cert.P 1 true).cells)) → ((x ∈ FootprintVertices (cert.P (0 : Fin (3 : ℕ))
-            false) ∧ x ∈ FootprintVertices (cert.P (1 : Fin (3 : ℕ)) false) ∧ x ∈
-            FootprintVertices (cert.P (2 : Fin (3 : ℕ)) true)) → (
-        let d0 : PeriodicSubtileIndex := ⟨.D, 0, 0⟩
-        let e0 : PeriodicSubtileIndex := ⟨.E, 0, 0⟩
-        ∀ (f4 : cert.modified.plane.Face), ∀ (g4 : cert.modified.plane.Face), ((x ∈
-            FootprintVertices (cert.P 0 false) ∧ x ∈ FootprintVertices (cert.P 1 false) ∧ x ∈
-            FootprintVertices (cert.P 2 true)) → (∃ j : Fin 4, LatticeVertexIncidentCell x j ∈
-            (cert.P 0 false).cells ∧ LatticeVertexIncidentCell x j ∉ (cert.modified.tile
-            d0).cells ∧ LatticeVertexIncidentCell x j ∉ (cert.modified.tile e0).cells)) → ((x ∈
-            FootprintVertices (cert.modified.tile d0) ∩ FootprintVertices (cert.modified.tile
-            e0)) → ((x ∈ CommonFootprintEdgeVertices (cert.modified.tile d0) (cert.modified.tile
-            e0)) → ((x = cert.modified.rho f4 ∨ x = cert.modified.rho g4) → (
-        let pJ7 := cert.unmodified.core.rho
-          (cert.unmodified.faceEquiv.symm ⟨.J7, 1, 0⟩)
-        let cJ7 : PeriodicSubtileIndex := ⟨.C, 1, 0⟩
-        (pJ7 ∈ FootprintVertices (cert.modified.tile cJ7)) → ((Disjoint T.cells (TileTranslation
-            T ((↑(1 : ℤ) : GaussianInt) * cert.u + (↑(0 : ℤ) : GaussianInt) * cert.v)).cells) →
-            ((∀ (z : GaussianInt), (z ∈ (cert.modified.tile cJ7).cells) → (z ∈ (TileTranslation T
-            ((1 : GaussianInt) * cert.u + (0 : GaussianInt) * cert.v)).cells)) → ((x = pJ7) → (x
-            ≠ pJ7))))))))))))))) ) := by
+        ∀ (q : Fin 4 → CircleCoordinates),
+          ∀ (cfg : BandOrderedGeneralConfiguration q),
+            ∀ (C : BandCircle),
+              ∀ (T : ProtoTile),
+                ∀ (cert : BandOrderedGeneralLayoutCertificate q cfg C T),
+                  ∀ (x : GaussianInt),
+                    (∀ (W : ProtoTile),
+                        ∀ (y : GaussianInt),
+                          W.cells.Nonempty →
+                            y ∈ FootprintVertices W →
+                              ∃ j : Fin 4, LatticeVertexIncidentCell y j ∈ W.cells) →
+                      (∀ j : Fin 4, LatticeVertexIncidentCell x j ∈ T.cells) →
+                        ∀ (f4 : cert.modified.plane.Face),
+                          ∀ (g4 : cert.modified.plane.Face),
+                            x = cert.modified.rho f4 ∨ x = cert.modified.rho g4 →
+                              let pJ7 :=
+                                cert.unmodified.core.rho
+                                (cert.unmodified.faceEquiv.symm ⟨.J7, 1, 0⟩);
+                              let cJ7 : PeriodicSubtileIndex := ⟨.C, 1, 0⟩;
+                              pJ7 ∈ FootprintVertices (cert.modified.tile cJ7) →
+                                Disjoint T.cells
+                                (TileTranslation T
+                                ((↑(1 : ℤ) : GaussianInt) * cert.u +
+                                (↑(0 : ℤ) : GaussianInt) * cert.v)).cells →
+                                (∀ (z : GaussianInt),
+                                z ∈ (cert.modified.tile cJ7).cells →
+                                z ∈
+                                (TileTranslation T
+                                ((1 : GaussianInt) * cert.u +
+                                (0 : GaussianInt) * cert.v)).cells) →
+                                x ≠ pJ7
+    ) := by
   classical
-  intro q cfg C T cert x hx hxb incident hmissingT hfourCells hthirdABC hBDE d0 e0 f4 g4 hthirdB
-      hxDE hxvDE hxendpointDE pJ7 cJ7 hpJ7c hblockSepDE hblockCellDE hxJ7 hEq
+  intro q cfg C T cert x incident hmissingT f4 g4 hxendpointDE pJ7 cJ7 hpJ7c hblockSepDE
+      hblockCellDE hEq
   subst x
   obtain ⟨j, hj⟩ := incident (cert.modified.tile cJ7) pJ7
     (LatticeTileGridStructure _ (cert.modified.tiles_are_disks cJ7)).1.1 hpJ7c
@@ -1563,49 +1455,96 @@ private theorem firstJunction :
     (by
       classical
       exact
-        ∀ (q : Fin 4 → CircleCoordinates), ∀ (cfg : BandOrderedGeneralConfiguration q), ∀ (C :
-            BandCircle), ∀ (T : ProtoTile), ∀ (cert : BandOrderedGeneralLayoutCertificate q cfg C
-            T), ∀ (x : GaussianInt), (x ∈ FootprintVertices T) → ((x ∉ BoundaryFootprintVertices
-            T) → ((GaussianTranslation (0 : GaussianInt) = id) → ((∀ (W : ProtoTile), ∀ (y :
-            GaussianInt), Finset.Nonempty W.cells → y ∈ FootprintVertices W → ∃ (j : Fin (4 :
-            ℕ)), LatticeVertexIncidentCell y j ∈ W.cells) → ((∀ j : Fin 4,
-            LatticeVertexIncidentCell x j ∈ T.cells) → ((x ∈ T.cells ∧ x - (1 : GaussianInt) ∈
-            T.cells ∧ x - (1 : GaussianInt) - (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt) ∈ T.cells ∧ x -
-            (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt) ∈ T.cells) → ((∀ (U : ProtoTile), ∀ (V :
-            ProtoTile), ∀ (W : ProtoTile), ∀ (p : GaussianInt), ∀ (q : GaussianInt), ∀ (vertex :
-            GaussianInt), ∀ (vertices : Set GaussianInt), LatticeTile U → LatticeTile V →
-            Disjoint U.cells V.cells → SimpleGridPathBetween vertices (FootprintEdges U ∩
-            FootprintEdges V) p q → vertex ∈ vertices → (∃ (j : Fin (4 : ℕ)),
-            LatticeVertexIncidentCell vertex j ∈ W.cells ∧ LatticeVertexIncidentCell vertex j ∉
-            U.cells ∧ LatticeVertexIncidentCell vertex j ∉ V.cells) → vertex = p ∨ vertex = q) → (
-        let b : PeriodicSubtileIndex := ⟨.B, 0, 0⟩
-        let c : PeriodicSubtileIndex := ⟨.C, 0, 0⟩
-        (cert.modified.plane.adjacent b c) → ((PeriodicTileAdjacentContactRegularity
-            cert.modified) → (∀ (f : cert.modified.plane.Face), ∀ (g : cert.modified.plane.Face),
-            ((∃ (i : Fin (3 : ℕ)), cert.modified.plane.faceVertex f i = b) ∧ ∃ (i : Fin (3 : ℕ)),
-            cert.modified.plane.faceVertex f i = c) → (((∃ (i : Fin (3 : ℕ)),
-            cert.modified.plane.faceVertex g i = b) ∧ ∃ (i : Fin (3 : ℕ)),
-            cert.modified.plane.faceVertex g i = c) → ((SimpleGridPathBetween
-            (CommonFootprintEdgeVertices (cert.modified.tile b) (cert.modified.tile c))
-            (FootprintEdges (cert.modified.tile b) ∩ FootprintEdges (cert.modified.tile c))
-            (cert.modified.rho f) (cert.modified.rho g)) → ((∀ (m : ℤ), ∀ (n : ℤ), (m, n) ≠ ((0 :
-            ℤ), (0 : ℤ)) → Disjoint T.cells (TileTranslation T ((↑m : GaussianInt) * cert.u + (↑n
-            : GaussianInt) * cert.v)).cells) → ((∀ (label : SixSubtileLabel), ∀ (m : Int), ∀ (n :
-            Int), ∀ (a : GaussianInt), (a ∈ (cert.modified.tile ⟨label, m, n⟩).cells) → (a ∈
-            (TileTranslation T ((m : GaussianInt) * cert.u + (n : GaussianInt) * cert.v)).cells))
-            → ((cert.modified.tile b = cert.P 0 false) → ((cert.modified.tile c = cert.P 1 true)
-            → ((Disjoint (cert.modified.tile b).cells (cert.modified.tile c).cells) → (((x ∈
-            FootprintVertices (cert.P 0 true) ∧ x ∈ FootprintVertices (cert.P 0 false) ∧ x ∈
-            FootprintVertices (cert.P 1 true)) → (∃ j : Fin 4, LatticeVertexIncidentCell x j ∈
-            (cert.P 0 true).cells ∧ LatticeVertexIncidentCell x j ∉ (cert.P 0 false).cells ∧
-            LatticeVertexIncidentCell x j ∉ (cert.P 1 true).cells)) → (((x ∈ FootprintVertices
-            (cert.P 0 true) ∧ x ∈ FootprintVertices (cert.P 0 false) ∧ x ∈ FootprintVertices
-            (cert.P 1 true)) → x ∈ FootprintVertices (cert.Q 1 true) ∩ FootprintVertices (cert.S
-            2 false) ∩ FootprintVertices (cert.P 1 true)))))))))))))))))))) ) := by
+        ∀ (q : Fin 4 → CircleCoordinates),
+          ∀ (cfg : BandOrderedGeneralConfiguration q),
+            ∀ (C : BandCircle),
+              ∀ (T : ProtoTile),
+                ∀ (cert : BandOrderedGeneralLayoutCertificate q cfg C T),
+                  ∀ (x : GaussianInt),
+                    GaussianTranslation (0 : GaussianInt) = id →
+                      (∀ (W : ProtoTile),
+                          ∀ (y : GaussianInt),
+                            Finset.Nonempty W.cells →
+                              y ∈ FootprintVertices W →
+                                ∃ (j : Fin (4 : ℕ)),
+                                LatticeVertexIncidentCell y j ∈ W.cells) →
+                        (∀ j : Fin 4, LatticeVertexIncidentCell x j ∈ T.cells) →
+                          (∀ (U : ProtoTile),
+                              ∀ (V : ProtoTile),
+                                ∀ (W : ProtoTile),
+                                ∀ (p : GaussianInt),
+                                ∀ (q : GaussianInt),
+                                ∀ (vertex : GaussianInt),
+                                ∀ (vertices : Set GaussianInt),
+                                LatticeTile U →
+                                LatticeTile V →
+                                Disjoint U.cells V.cells →
+                                SimpleGridPathBetween vertices
+                                (FootprintEdges U ∩ FootprintEdges V) p q →
+                                vertex ∈ vertices →
+                                (∃ (j : Fin (4 : ℕ)),
+                                LatticeVertexIncidentCell vertex j ∈ W.cells ∧
+                                LatticeVertexIncidentCell vertex j ∉ U.cells ∧
+                                LatticeVertexIncidentCell vertex j ∉ V.cells) →
+                                vertex = p ∨ vertex = q) →
+                            let b : PeriodicSubtileIndex := ⟨.B, 0, 0⟩
+                            let c : PeriodicSubtileIndex := ⟨.C, 0, 0⟩
+                            cert.modified.plane.adjacent b c →
+                              PeriodicTileAdjacentContactRegularity cert.modified →
+                                ∀ (f : cert.modified.plane.Face),
+                                ∀ (g : cert.modified.plane.Face),
+                                ((∃ (i : Fin (3 : ℕ)),
+                                cert.modified.plane.faceVertex f i = b) ∧
+                                ∃ (i : Fin (3 : ℕ)),
+                                cert.modified.plane.faceVertex f i = c) →
+                                ((∃ (i : Fin (3 : ℕ)),
+                                cert.modified.plane.faceVertex g i = b) ∧
+                                ∃ (i : Fin (3 : ℕ)),
+                                cert.modified.plane.faceVertex g i = c) →
+                                SimpleGridPathBetween
+                                (CommonFootprintEdgeVertices (cert.modified.tile b)
+                                (cert.modified.tile c))
+                                (FootprintEdges (cert.modified.tile b) ∩
+                                FootprintEdges (cert.modified.tile c))
+                                (cert.modified.rho f) (cert.modified.rho g) →
+                                (∀ (m : ℤ),
+                                ∀ (n : ℤ),
+                                (m, n) ≠ ((0 : ℤ), (0 : ℤ)) →
+                                Disjoint T.cells
+                                (TileTranslation T
+                                ((↑m : GaussianInt) * cert.u +
+                                (↑n : GaussianInt) * cert.v)).cells) →
+                                (∀ (label : SixSubtileLabel),
+                                ∀ (m : Int),
+                                ∀ (n : Int),
+                                ∀ (a : GaussianInt),
+                                a ∈ (cert.modified.tile ⟨label, m, n⟩).cells →
+                                a ∈
+                                (TileTranslation T
+                                ((m : GaussianInt) * cert.u +
+                                (n : GaussianInt) * cert.v)).cells) →
+                                cert.modified.tile b = cert.P 0 false →
+                                cert.modified.tile c = cert.P 1 true →
+                                Disjoint (cert.modified.tile b).cells
+                                (cert.modified.tile c).cells →
+                                (x ∈ FootprintVertices (cert.P 0 true) ∧
+                                x ∈ FootprintVertices (cert.P 0 false) ∧
+                                x ∈ FootprintVertices (cert.P 1 true) →
+                                ∃ j : Fin 4,
+                                LatticeVertexIncidentCell x j ∈ (cert.P 0 true).cells ∧
+                                LatticeVertexIncidentCell x j ∉ (cert.P 0 false).cells ∧
+                                LatticeVertexIncidentCell x j ∉ (cert.P 1 true).cells) →
+                                x ∈ FootprintVertices (cert.P 0 true) ∧
+                                x ∈ FootprintVertices (cert.P 0 false) ∧
+                                x ∈ FootprintVertices (cert.P 1 true) →
+                                x ∈
+                                FootprintVertices (cert.Q 1 true) ∩
+                                FootprintVertices (cert.S 2 false) ∩
+                                FootprintVertices (cert.P 1 true)
+    ) := by
   classical
-  intro q cfg C T cert x hx hxb htransZero incident hmissingT hfourCells path_endpoint_of_third b
-      c hbc hregular f g hf hg hBCpath blockSeparation tileCellInBlock hBtile hCtile hBCdis
-      hthirdABC hABC
+  intro q cfg C T cert x htransZero incident hmissingT path_endpoint_of_third b c hbc hregular f
+      g hf hg hBCpath blockSeparation tileCellInBlock hBtile hCtile hBCdis hthirdABC hABC
   have hxv : x ∈ CommonFootprintEdgeVertices
       (cert.modified.tile b) (cert.modified.tile c) := JunctionRefinementGeometry.hxv q cfg C T
           cert x hbc hregular (JunctionRefinementGeometry.hxBC q cfg C T cert x hBtile hCtile
@@ -1652,47 +1591,81 @@ private theorem secondJunction :
     (by
       classical
       exact
-        ∀ (q : Fin 4 → CircleCoordinates), ∀ (cfg : BandOrderedGeneralConfiguration q), ∀ (C :
-            BandCircle), ∀ (T : ProtoTile), ∀ (cert : BandOrderedGeneralLayoutCertificate q cfg C
-            T), ∀ (x : GaussianInt), (x ∈ FootprintVertices T) → ((x ∉ BoundaryFootprintVertices
-            T) → ((GaussianTranslation (0 : GaussianInt) = id) → ((∀ (W : ProtoTile), ∀ (y :
-            GaussianInt), Finset.Nonempty W.cells → y ∈ FootprintVertices W → ∃ (j : Fin (4 :
-            ℕ)), LatticeVertexIncidentCell y j ∈ W.cells) → ((∀ j : Fin 4,
-            LatticeVertexIncidentCell x j ∈ T.cells) → ((x ∈ T.cells ∧ x - (1 : GaussianInt) ∈
-            T.cells ∧ x - (1 : GaussianInt) - (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt) ∈ T.cells ∧ x -
-            (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt) ∈ T.cells) → ((∀ y ∈
-            CellSupportedFootprintVertices cert.O, ∀ (a : GaussianInt), y ∈ FootprintVertices
-            (⟨{a}, a⟩ : ProtoTile) → a ∈ (cert.P (0 : Fin (3 : ℕ)) true).cells ∨ a ∈ (cert.P (0 :
-            Fin (3 : ℕ)) false).cells) → ((∀ (U : ProtoTile), ∀ (V : ProtoTile), ∀ (W :
-            ProtoTile), ∀ (p : GaussianInt), ∀ (q : GaussianInt), ∀ (vertex : GaussianInt), ∀
-            (vertices : Set GaussianInt), LatticeTile U → LatticeTile V → Disjoint U.cells
-            V.cells → SimpleGridPathBetween vertices (FootprintEdges U ∩ FootprintEdges V) p q →
-            vertex ∈ vertices → (∃ (j : Fin (4 : ℕ)), LatticeVertexIncidentCell vertex j ∈
-            W.cells ∧ LatticeVertexIncidentCell vertex j ∉ U.cells ∧ LatticeVertexIncidentCell
-            vertex j ∉ V.cells) → vertex = p ∨ vertex = q) → (((cert.P (0 : Fin (3 : ℕ))
-            true).cells ∩ (cert.P (0 : Fin (3 : ℕ)) false).cells = cert.O.cells) → ((∀ (i : Fin
-            (3 : ℕ)), ∀ (s : Bool), ∀ (j : Fin (3 : ℕ)), ∀ (t : Bool), (i, s) ≠ (j, t) → ¬(i = (0
-            : Fin (3 : ℕ)) ∧ j = (0 : Fin (3 : ℕ))) → Disjoint (cert.P i s).cells (cert.P j
-            t).cells) → ((PeriodicTileAdjacentContactRegularity cert.modified) → ((∀ (m : ℤ), ∀
-            (n : ℤ), (m, n) ≠ ((0 : ℤ), (0 : ℤ)) → Disjoint T.cells (TileTranslation T ((↑m :
-            GaussianInt) * cert.u + (↑n : GaussianInt) * cert.v)).cells) → ((∀ (label :
-            SixSubtileLabel), ∀ (m : Int), ∀ (n : Int), ∀ (a : GaussianInt), (a ∈
-            (cert.modified.tile ⟨label, m, n⟩).cells) → (a ∈ (TileTranslation T ((m :
-            GaussianInt) * cert.u + (n : GaussianInt) * cert.v)).cells)) → (((x ∈
-            FootprintVertices (cert.P 0 true) ∧ x ∈ FootprintVertices (cert.P 0 false) ∧ x ∈
-            FootprintVertices (cert.P 1 true)) → (∃ j : Fin 4, LatticeVertexIncidentCell x j ∈
-            (cert.P 0 true).cells ∧ LatticeVertexIncidentCell x j ∉ (cert.P 0 false).cells ∧
-            LatticeVertexIncidentCell x j ∉ (cert.P 1 true).cells)) → ((((x ∈ FootprintVertices
-            (cert.P 0 true) ∧ x ∈ FootprintVertices (cert.P 0 false) ∧ x ∈ FootprintVertices
-            (cert.P 1 true)) → x ∈ FootprintVertices (cert.Q 1 true) ∩ FootprintVertices (cert.S
-            2 false) ∩ FootprintVertices (cert.P 1 true))) → (((x ∈ FootprintVertices (cert.P 0
-            true) ∧ x ∈ FootprintVertices (cert.P 0 false) ∧ x ∈ FootprintVertices (cert.P 1
-            false)) → x ∈ FootprintVertices (cert.Q 2 true) ∩ FootprintVertices (cert.S 1 false)
-            ∩ FootprintVertices (cert.P 1 false))))))))))))))))) ) := by
+        ∀ (q : Fin 4 → CircleCoordinates),
+          ∀ (cfg : BandOrderedGeneralConfiguration q),
+            ∀ (C : BandCircle),
+              ∀ (T : ProtoTile),
+                ∀ (cert : BandOrderedGeneralLayoutCertificate q cfg C T),
+                  ∀ (x : GaussianInt),
+                    GaussianTranslation (0 : GaussianInt) = id →
+                      (∀ (W : ProtoTile),
+                          ∀ (y : GaussianInt),
+                            Finset.Nonempty W.cells →
+                              y ∈ FootprintVertices W →
+                                ∃ (j : Fin (4 : ℕ)),
+                                LatticeVertexIncidentCell y j ∈ W.cells) →
+                        (∀ j : Fin 4, LatticeVertexIncidentCell x j ∈ T.cells) →
+                          (∀ y ∈ CellSupportedFootprintVertices cert.O,
+                              ∀ (a : GaussianInt),
+                                y ∈ FootprintVertices (⟨{ a }, a⟩ : ProtoTile) →
+                                a ∈ (cert.P (0 : Fin (3 : ℕ)) true).cells ∨
+                                a ∈ (cert.P (0 : Fin (3 : ℕ)) false).cells) →
+                            (∀ (U : ProtoTile),
+                                ∀ (V : ProtoTile),
+                                ∀ (W : ProtoTile),
+                                ∀ (p : GaussianInt),
+                                ∀ (q : GaussianInt),
+                                ∀ (vertex : GaussianInt),
+                                ∀ (vertices : Set GaussianInt),
+                                LatticeTile U →
+                                LatticeTile V →
+                                Disjoint U.cells V.cells →
+                                SimpleGridPathBetween vertices
+                                (FootprintEdges U ∩ FootprintEdges V) p q →
+                                vertex ∈ vertices →
+                                (∃ (j : Fin (4 : ℕ)),
+                                LatticeVertexIncidentCell vertex j ∈ W.cells ∧
+                                LatticeVertexIncidentCell vertex j ∉ U.cells ∧
+                                LatticeVertexIncidentCell vertex j ∉ V.cells) →
+                                vertex = p ∨ vertex = q) →
+                              (cert.P (0 : Fin (3 : ℕ)) true).cells ∩
+                                (cert.P (0 : Fin (3 : ℕ)) false).cells =
+                                cert.O.cells →
+                                (∀ (i : Fin (3 : ℕ)),
+                                ∀ (s : Bool),
+                                ∀ (j : Fin (3 : ℕ)),
+                                ∀ (t : Bool),
+                                (i, s) ≠ (j, t) →
+                                ¬(i = (0 : Fin (3 : ℕ)) ∧ j = (0 : Fin (3 : ℕ))) →
+                                Disjoint (cert.P i s).cells (cert.P j t).cells) →
+                                PeriodicTileAdjacentContactRegularity cert.modified →
+                                (∀ (m : ℤ),
+                                ∀ (n : ℤ),
+                                (m, n) ≠ ((0 : ℤ), (0 : ℤ)) →
+                                Disjoint T.cells
+                                (TileTranslation T
+                                ((↑m : GaussianInt) * cert.u +
+                                (↑n : GaussianInt) * cert.v)).cells) →
+                                (∀ (label : SixSubtileLabel),
+                                ∀ (m : Int),
+                                ∀ (n : Int),
+                                ∀ (a : GaussianInt),
+                                a ∈ (cert.modified.tile ⟨label, m, n⟩).cells →
+                                a ∈
+                                (TileTranslation T
+                                ((m : GaussianInt) * cert.u +
+                                (n : GaussianInt) * cert.v)).cells) →
+                                x ∈ FootprintVertices (cert.P 0 true) ∧
+                                x ∈ FootprintVertices (cert.P 0 false) ∧
+                                x ∈ FootprintVertices (cert.P 1 false) →
+                                x ∈
+                                FootprintVertices (cert.Q 2 true) ∩
+                                FootprintVertices (cert.S 1 false) ∩
+                                FootprintVertices (cert.P 1 false)
+    ) := by
   classical
-  intro q cfg C T cert x hx hxb htransZero incident hmissingT hfourCells
-      precursorIsolationSupported path_endpoint_of_third hABO hseparate hregular blockSeparation
-      tileCellInBlock hthirdABC firstJunction hABD
+  intro q cfg C T cert x htransZero incident hmissingT precursorIsolationSupported
+      path_endpoint_of_third hABO hseparate hregular blockSeparation tileCellInBlock hABD
   let a0 : PeriodicSubtileIndex := ⟨.A, 0, 0⟩
   let d0 : PeriodicSubtileIndex := ⟨.D, 0, 0⟩
   have hAtile : cert.modified.tile a0 =
@@ -1779,47 +1752,74 @@ private theorem thirdJunction :
     (by
       classical
       exact
-        ∀ (q : Fin 4 → CircleCoordinates), ∀ (cfg : BandOrderedGeneralConfiguration q), ∀ (C :
-            BandCircle), ∀ (T : ProtoTile), ∀ (cert : BandOrderedGeneralLayoutCertificate q cfg C
-            T), ∀ (x : GaussianInt), (x ∈ FootprintVertices T) → ((x ∉ BoundaryFootprintVertices
-            T) → ((GaussianTranslation (0 : GaussianInt) = id) → ((∀ (W : ProtoTile), ∀ (y :
-            GaussianInt), Finset.Nonempty W.cells → y ∈ FootprintVertices W → ∃ (j : Fin (4 :
-            ℕ)), LatticeVertexIncidentCell y j ∈ W.cells) → ((∀ j : Fin 4,
-            LatticeVertexIncidentCell x j ∈ T.cells) → ((x ∈ T.cells ∧ x - (1 : GaussianInt) ∈
-            T.cells ∧ x - (1 : GaussianInt) - (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt) ∈ T.cells ∧ x -
-            (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt) ∈ T.cells) → ((∀ (U : ProtoTile), ∀ (V :
-            ProtoTile), ∀ (W : ProtoTile), ∀ (p : GaussianInt), ∀ (q : GaussianInt), ∀ (vertex :
-            GaussianInt), ∀ (vertices : Set GaussianInt), LatticeTile U → LatticeTile V →
-            Disjoint U.cells V.cells → SimpleGridPathBetween vertices (FootprintEdges U ∩
-            FootprintEdges V) p q → vertex ∈ vertices → (∃ (j : Fin (4 : ℕ)),
-            LatticeVertexIncidentCell vertex j ∈ W.cells ∧ LatticeVertexIncidentCell vertex j ∉
-            U.cells ∧ LatticeVertexIncidentCell vertex j ∉ V.cells) → vertex = p ∨ vertex = q) →
-            ((∀ (i : Fin (3 : ℕ)), ∀ (s : Bool), ∀ (j : Fin (3 : ℕ)), ∀ (t : Bool), (i, s) ≠ (j,
-            t) → ¬(i = (0 : Fin (3 : ℕ)) ∧ j = (0 : Fin (3 : ℕ))) → Disjoint (cert.P i s).cells
-            (cert.P j t).cells) → ((Disjoint (cert.P 0 true).cells (cert.P 1 true).cells) →
-            ((PeriodicTileAdjacentContactRegularity cert.modified) → ((∀ (m : ℤ), ∀ (n : ℤ), (m,
-            n) ≠ ((0 : ℤ), (0 : ℤ)) → Disjoint T.cells (TileTranslation T ((↑m : GaussianInt) *
-            cert.u + (↑n : GaussianInt) * cert.v)).cells) → ((∀ (label : SixSubtileLabel), ∀ (m :
-            Int), ∀ (n : Int), ∀ (a : GaussianInt), (a ∈ (cert.modified.tile ⟨label, m,
-            n⟩).cells) → (a ∈ (TileTranslation T ((m : GaussianInt) * cert.u + (n : GaussianInt)
-            * cert.v)).cells)) → (((x ∈ FootprintVertices (cert.P 0 true) ∧ x ∈ FootprintVertices
-            (cert.P 0 false) ∧ x ∈ FootprintVertices (cert.P 1 true)) → (∃ j : Fin 4,
-            LatticeVertexIncidentCell x j ∈ (cert.P 0 true).cells ∧ LatticeVertexIncidentCell x j
-            ∉ (cert.P 0 false).cells ∧ LatticeVertexIncidentCell x j ∉ (cert.P 1 true).cells)) →
-            ((((x ∈ FootprintVertices (cert.P 0 true) ∧ x ∈ FootprintVertices (cert.P 0 false) ∧
-            x ∈ FootprintVertices (cert.P 1 true)) → x ∈ FootprintVertices (cert.Q 1 true) ∩
-            FootprintVertices (cert.S 2 false) ∩ FootprintVertices (cert.P 1 true))) → ((((x ∈
-            FootprintVertices (cert.P 0 true) ∧ x ∈ FootprintVertices (cert.P 0 false) ∧ x ∈
-            FootprintVertices (cert.P 1 false)) → x ∈ FootprintVertices (cert.Q 2 true) ∩
-            FootprintVertices (cert.S 1 false) ∩ FootprintVertices (cert.P 1 false))) → (((x ∈
-            FootprintVertices (cert.P 0 true) ∧ x ∈ FootprintVertices (cert.P 1 true) ∧ x ∈
-            FootprintVertices (cert.P 2 false)) → x ∈ FootprintVertices (cert.Q 1 true) ∩
-            FootprintVertices (cert.P 1 true) ∩ FootprintVertices (cert.P 2
-            false))))))))))))))))) ) := by
+        ∀ (q : Fin 4 → CircleCoordinates),
+          ∀ (cfg : BandOrderedGeneralConfiguration q),
+            ∀ (C : BandCircle),
+              ∀ (T : ProtoTile),
+                ∀ (cert : BandOrderedGeneralLayoutCertificate q cfg C T),
+                  ∀ (x : GaussianInt),
+                    GaussianTranslation (0 : GaussianInt) = id →
+                      (∀ (W : ProtoTile),
+                          ∀ (y : GaussianInt),
+                            Finset.Nonempty W.cells →
+                              y ∈ FootprintVertices W →
+                                ∃ (j : Fin (4 : ℕ)),
+                                LatticeVertexIncidentCell y j ∈ W.cells) →
+                        (∀ j : Fin 4, LatticeVertexIncidentCell x j ∈ T.cells) →
+                          (∀ (U : ProtoTile),
+                              ∀ (V : ProtoTile),
+                                ∀ (W : ProtoTile),
+                                ∀ (p : GaussianInt),
+                                ∀ (q : GaussianInt),
+                                ∀ (vertex : GaussianInt),
+                                ∀ (vertices : Set GaussianInt),
+                                LatticeTile U →
+                                LatticeTile V →
+                                Disjoint U.cells V.cells →
+                                SimpleGridPathBetween vertices
+                                (FootprintEdges U ∩ FootprintEdges V) p q →
+                                vertex ∈ vertices →
+                                (∃ (j : Fin (4 : ℕ)),
+                                LatticeVertexIncidentCell vertex j ∈ W.cells ∧
+                                LatticeVertexIncidentCell vertex j ∉ U.cells ∧
+                                LatticeVertexIncidentCell vertex j ∉ V.cells) →
+                                vertex = p ∨ vertex = q) →
+                            (∀ (i : Fin (3 : ℕ)),
+                                ∀ (s : Bool),
+                                ∀ (j : Fin (3 : ℕ)),
+                                ∀ (t : Bool),
+                                (i, s) ≠ (j, t) →
+                                ¬(i = (0 : Fin (3 : ℕ)) ∧ j = (0 : Fin (3 : ℕ))) →
+                                Disjoint (cert.P i s).cells (cert.P j t).cells) →
+                              Disjoint (cert.P 0 true).cells (cert.P 1 true).cells →
+                                PeriodicTileAdjacentContactRegularity cert.modified →
+                                (∀ (m : ℤ),
+                                ∀ (n : ℤ),
+                                (m, n) ≠ ((0 : ℤ), (0 : ℤ)) →
+                                Disjoint T.cells
+                                (TileTranslation T
+                                ((↑m : GaussianInt) * cert.u +
+                                (↑n : GaussianInt) * cert.v)).cells) →
+                                (∀ (label : SixSubtileLabel),
+                                ∀ (m : Int),
+                                ∀ (n : Int),
+                                ∀ (a : GaussianInt),
+                                a ∈ (cert.modified.tile ⟨label, m, n⟩).cells →
+                                a ∈
+                                (TileTranslation T
+                                ((m : GaussianInt) * cert.u +
+                                (n : GaussianInt) * cert.v)).cells) →
+                                x ∈ FootprintVertices (cert.P 0 true) ∧
+                                x ∈ FootprintVertices (cert.P 1 true) ∧
+                                x ∈ FootprintVertices (cert.P 2 false) →
+                                x ∈
+                                FootprintVertices (cert.Q 1 true) ∩
+                                FootprintVertices (cert.P 1 true) ∩
+                                FootprintVertices (cert.P 2 false)
+    ) := by
   classical
-  intro q cfg C T cert x hx hxb htransZero incident hmissingT hfourCells path_endpoint_of_third
-      hseparate hACseparate hregular blockSeparation tileCellInBlock hthirdABC firstJunction
-      secondJunction hACF
+  intro q cfg C T cert x htransZero incident hmissingT path_endpoint_of_third hseparate
+      hACseparate hregular blockSeparation tileCellInBlock hACF
   let c0 : PeriodicSubtileIndex := ⟨.C, 0, 0⟩
   let f0 : PeriodicSubtileIndex := ⟨.F, 0, 0⟩
   have hCtile0 : cert.modified.tile c0 = cert.P 1 true :=
@@ -1888,49 +1888,88 @@ private theorem fourthJunction :
     (by
       classical
       exact
-        ∀ (q : Fin 4 → CircleCoordinates), ∀ (cfg : BandOrderedGeneralConfiguration q), ∀ (C :
-            BandCircle), ∀ (T : ProtoTile), ∀ (cert : BandOrderedGeneralLayoutCertificate q cfg C
-            T), ∀ (x : GaussianInt), (x ∈ FootprintVertices T) → ((x ∉ BoundaryFootprintVertices
-            T) → ((GaussianTranslation (0 : GaussianInt) = id) → ((∀ (W : ProtoTile), ∀ (y :
-            GaussianInt), Finset.Nonempty W.cells → y ∈ FootprintVertices W → ∃ (j : Fin (4 :
-            ℕ)), LatticeVertexIncidentCell y j ∈ W.cells) → ((∀ j : Fin 4,
-            LatticeVertexIncidentCell x j ∈ T.cells) → ((x ∈ T.cells ∧ x - (1 : GaussianInt) ∈
-            T.cells ∧ x - (1 : GaussianInt) - (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt) ∈ T.cells ∧ x -
-            (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt) ∈ T.cells) → ((∀ (U : ProtoTile), ∀ (V :
-            ProtoTile), ∀ (W : ProtoTile), ∀ (p : GaussianInt), ∀ (q : GaussianInt), ∀ (vertex :
-            GaussianInt), ∀ (vertices : Set GaussianInt), LatticeTile U → LatticeTile V →
-            Disjoint U.cells V.cells → SimpleGridPathBetween vertices (FootprintEdges U ∩
-            FootprintEdges V) p q → vertex ∈ vertices → (∃ (j : Fin (4 : ℕ)),
-            LatticeVertexIncidentCell vertex j ∈ W.cells ∧ LatticeVertexIncidentCell vertex j ∉
-            U.cells ∧ LatticeVertexIncidentCell vertex j ∉ V.cells) → vertex = p ∨ vertex = q) →
-            ((∀ (i : Fin (3 : ℕ)), ∀ (s : Bool), ∀ (j : Fin (3 : ℕ)), ∀ (t : Bool), (i, s) ≠ (j,
-            t) → ¬(i = (0 : Fin (3 : ℕ)) ∧ j = (0 : Fin (3 : ℕ))) → Disjoint (cert.P i s).cells
-            (cert.P j t).cells) → ((PeriodicTileAdjacentContactRegularity cert.modified) → ((∀ (m
-            : ℤ), ∀ (n : ℤ), (m, n) ≠ ((0 : ℤ), (0 : ℤ)) → Disjoint T.cells (TileTranslation T
-            ((↑m : GaussianInt) * cert.u + (↑n : GaussianInt) * cert.v)).cells) → ((∀ (label :
-            SixSubtileLabel), ∀ (m : Int), ∀ (n : Int), ∀ (a : GaussianInt), (a ∈
-            (cert.modified.tile ⟨label, m, n⟩).cells) → (a ∈ (TileTranslation T ((m :
-            GaussianInt) * cert.u + (n : GaussianInt) * cert.v)).cells)) → (((x ∈
-            FootprintVertices (cert.P 0 true) ∧ x ∈ FootprintVertices (cert.P 0 false) ∧ x ∈
-            FootprintVertices (cert.P 1 true)) → (∃ j : Fin 4, LatticeVertexIncidentCell x j ∈
-            (cert.P 0 true).cells ∧ LatticeVertexIncidentCell x j ∉ (cert.P 0 false).cells ∧
-            LatticeVertexIncidentCell x j ∉ (cert.P 1 true).cells)) → ((((x ∈ FootprintVertices
-            (cert.P 0 true) ∧ x ∈ FootprintVertices (cert.P 0 false) ∧ x ∈ FootprintVertices
-            (cert.P 1 true)) → x ∈ FootprintVertices (cert.Q 1 true) ∩ FootprintVertices (cert.S
-            2 false) ∩ FootprintVertices (cert.P 1 true))) → ((((x ∈ FootprintVertices (cert.P 0
-            true) ∧ x ∈ FootprintVertices (cert.P 0 false) ∧ x ∈ FootprintVertices (cert.P 1
-            false)) → x ∈ FootprintVertices (cert.Q 2 true) ∩ FootprintVertices (cert.S 1 false)
-            ∩ FootprintVertices (cert.P 1 false))) → ((((x ∈ FootprintVertices (cert.P 0 true) ∧
-            x ∈ FootprintVertices (cert.P 1 true) ∧ x ∈ FootprintVertices (cert.P 2 false)) → x ∈
-            FootprintVertices (cert.Q 1 true) ∩ FootprintVertices (cert.P 1 true) ∩
-            FootprintVertices (cert.P 2 false))) → (((x ∈ FootprintVertices (cert.P 0 false) ∧ x
-            ∈ FootprintVertices (cert.P 1 false) ∧ x ∈ FootprintVertices (cert.P 2 true)) → x ∈
-            FootprintVertices (cert.S 1 false) ∩ FootprintVertices (cert.P 1 false) ∩
-            FootprintVertices (cert.P 2 true))))))))))))))))) ) := by
+        ∀ (q : Fin 4 → CircleCoordinates),
+          ∀ (cfg : BandOrderedGeneralConfiguration q),
+            ∀ (C : BandCircle),
+              ∀ (T : ProtoTile),
+                ∀ (cert : BandOrderedGeneralLayoutCertificate q cfg C T),
+                  ∀ (x : GaussianInt),
+                    x ∈ FootprintVertices T →
+                      x ∉ BoundaryFootprintVertices T →
+                        GaussianTranslation (0 : GaussianInt) = id →
+                          (∀ (W : ProtoTile),
+                              ∀ (y : GaussianInt),
+                                Finset.Nonempty W.cells →
+                                y ∈ FootprintVertices W →
+                                ∃ (j : Fin (4 : ℕ)),
+                                LatticeVertexIncidentCell y j ∈ W.cells) →
+                            (∀ j : Fin 4, LatticeVertexIncidentCell x j ∈ T.cells) →
+                              x ∈ T.cells ∧
+                                x - (1 : GaussianInt) ∈ T.cells ∧
+                                x - (1 : GaussianInt) -
+                                (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt) ∈
+                                T.cells ∧
+                                x - (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt) ∈ T.cells →
+                                (∀ (U : ProtoTile),
+                                ∀ (V : ProtoTile),
+                                ∀ (W : ProtoTile),
+                                ∀ (p : GaussianInt),
+                                ∀ (q : GaussianInt),
+                                ∀ (vertex : GaussianInt),
+                                ∀ (vertices : Set GaussianInt),
+                                LatticeTile U →
+                                LatticeTile V →
+                                Disjoint U.cells V.cells →
+                                SimpleGridPathBetween vertices
+                                (FootprintEdges U ∩ FootprintEdges V) p q →
+                                vertex ∈ vertices →
+                                (∃ (j : Fin (4 : ℕ)),
+                                LatticeVertexIncidentCell vertex j ∈ W.cells ∧
+                                LatticeVertexIncidentCell vertex j ∉ U.cells ∧
+                                LatticeVertexIncidentCell vertex j ∉ V.cells) →
+                                vertex = p ∨ vertex = q) →
+                                (∀ (i : Fin (3 : ℕ)),
+                                ∀ (s : Bool),
+                                ∀ (j : Fin (3 : ℕ)),
+                                ∀ (t : Bool),
+                                (i, s) ≠ (j, t) →
+                                ¬(i = (0 : Fin (3 : ℕ)) ∧ j = (0 : Fin (3 : ℕ))) →
+                                Disjoint (cert.P i s).cells (cert.P j t).cells) →
+                                PeriodicTileAdjacentContactRegularity cert.modified →
+                                (∀ (m : ℤ),
+                                ∀ (n : ℤ),
+                                (m, n) ≠ ((0 : ℤ), (0 : ℤ)) →
+                                Disjoint T.cells
+                                (TileTranslation T
+                                ((↑m : GaussianInt) * cert.u +
+                                (↑n : GaussianInt) * cert.v)).cells) →
+                                (∀ (label : SixSubtileLabel),
+                                ∀ (m : Int),
+                                ∀ (n : Int),
+                                ∀ (a : GaussianInt),
+                                a ∈ (cert.modified.tile ⟨label, m, n⟩).cells →
+                                a ∈
+                                (TileTranslation T
+                                ((m : GaussianInt) * cert.u +
+                                (n : GaussianInt) * cert.v)).cells) →
+                                (x ∈ FootprintVertices (cert.P 0 true) ∧
+                                x ∈ FootprintVertices (cert.P 0 false) ∧
+                                x ∈ FootprintVertices (cert.P 1 true) →
+                                ∃ j : Fin 4,
+                                LatticeVertexIncidentCell x j ∈ (cert.P 0 true).cells ∧
+                                LatticeVertexIncidentCell x j ∉ (cert.P 0 false).cells ∧
+                                LatticeVertexIncidentCell x j ∉ (cert.P 1 true).cells) →
+                                x ∈ FootprintVertices (cert.P 0 false) ∧
+                                x ∈ FootprintVertices (cert.P 1 false) ∧
+                                x ∈ FootprintVertices (cert.P 2 true) →
+                                x ∈
+                                FootprintVertices (cert.S 1 false) ∩
+                                FootprintVertices (cert.P 1 false) ∩
+                                FootprintVertices (cert.P 2 true)
+    ) := by
   classical
   intro q cfg C T cert x hx hxb htransZero incident hmissingT hfourCells path_endpoint_of_third
-      hseparate hregular blockSeparation tileCellInBlock hthirdABC firstJunction secondJunction
-      thirdJunction hBDE
+      hseparate hregular blockSeparation tileCellInBlock hthirdABC hBDE
   let d0 : PeriodicSubtileIndex := ⟨.D, 0, 0⟩
   let e0 : PeriodicSubtileIndex := ⟨.E, 0, 0⟩
   have hDtile0 : cert.modified.tile d0 = cert.P 1 false :=
@@ -2041,9 +2080,9 @@ private theorem fourthJunction :
         FootprintVertices (cert.P 1 false) ∩
         FootprintVertices (cert.P 2 true) := ⟨⟨hpNS, hpND⟩, hpNE⟩
     simpa [hpNisP4] using htarget
-  · have hxJ7neq := JunctionRefinementGeometry.hxJ7neq q cfg C T cert x hx hxb
-      incident hmissingT hfourCells hthirdABC hBDE f4 g4 hthirdB hxDE hxvDE hxendpointDE
-      hpJ7c hblockSepDE hblockCellDE hxJ7
+  · have hxJ7neq := JunctionRefinementGeometry.hxJ7neq q cfg C T cert x
+      incident hmissingT f4 g4 hxendpointDE
+      hpJ7c hblockSepDE hblockCellDE
     exact (hxJ7neq hxJ7).elim
 
 end JunctionCases
@@ -2133,8 +2172,8 @@ theorem P4590T1JunctionRefinement
             x ∈ FootprintVertices (cert.P 1 true)) →
           x ∈ FootprintVertices (cert.Q 1 true) ∩
             FootprintVertices (cert.S 2 false) ∩ FootprintVertices (cert.P 1 true)) :=
-                JunctionCases.firstJunction q cfg C T cert x hx hxb htransZero incident hmissingT
-                hfourCells path_endpoint_of_third hbc hregular f g hf hg hBCpath blockSeparation
+                JunctionCases.firstJunction q cfg C T cert x htransZero incident hmissingT
+                    path_endpoint_of_third hbc hregular f g hf hg hBCpath blockSeparation
                 tileCellInBlock hBtile hCtile hBCdis hthirdABC
   have secondJunction :
     ((x ∈ FootprintVertices (cert.P 0 true) ∧
@@ -2142,18 +2181,18 @@ theorem P4590T1JunctionRefinement
             x ∈ FootprintVertices (cert.P 1 false)) →
           x ∈ FootprintVertices (cert.Q 2 true) ∩
             FootprintVertices (cert.S 1 false) ∩ FootprintVertices (cert.P 1 false)) :=
-                JunctionCases.secondJunction q cfg C T cert x hx hxb htransZero incident
-                hmissingT hfourCells precursorIsolationSupported path_endpoint_of_third hABO
-                hseparate hregular blockSeparation tileCellInBlock hthirdABC firstJunction
+                JunctionCases.secondJunction q cfg C T cert x htransZero incident
+                hmissingT precursorIsolationSupported path_endpoint_of_third hABO
+                hseparate hregular blockSeparation tileCellInBlock
   have thirdJunction :
     ((x ∈ FootprintVertices (cert.P 0 true) ∧
             x ∈ FootprintVertices (cert.P 1 true) ∧
             x ∈ FootprintVertices (cert.P 2 false)) →
           x ∈ FootprintVertices (cert.Q 1 true) ∩
             FootprintVertices (cert.P 1 true) ∩ FootprintVertices (cert.P 2 false)) :=
-                JunctionCases.thirdJunction q cfg C T cert x hx hxb htransZero incident hmissingT
-                hfourCells path_endpoint_of_third hseparate hACseparate hregular blockSeparation
-                tileCellInBlock hthirdABC firstJunction secondJunction
+                JunctionCases.thirdJunction q cfg C T cert x htransZero incident hmissingT
+                    path_endpoint_of_third hseparate hACseparate hregular blockSeparation
+                tileCellInBlock
   have fourthJunction :
     ((x ∈ FootprintVertices (cert.P 0 false) ∧
             x ∈ FootprintVertices (cert.P 1 false) ∧
@@ -2162,7 +2201,7 @@ theorem P4590T1JunctionRefinement
             FootprintVertices (cert.P 1 false) ∩ FootprintVertices (cert.P 2 true)) :=
                 JunctionCases.fourthJunction q cfg C T cert x hx hxb htransZero incident
                 hmissingT hfourCells path_endpoint_of_third hseparate hregular blockSeparation
-                tileCellInBlock hthirdABC firstJunction secondJunction thirdJunction
+                tileCellInBlock hthirdABC
   exact ⟨firstJunction, secondJunction, thirdJunction, fourthJunction⟩
 
 

@@ -6,6 +6,7 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.LatticeTileNonempty
 
 public import LeanPool.ApollonianSuperharmonic.BandOriginalPairSeparation
 public import LeanPool.ApollonianSuperharmonic.BandUnmodifiedCoreCertificate
@@ -153,15 +154,7 @@ private theorem modified_a :
   intro P O u v T S t m n
   exact (TileCellComplementCovariance (P 0 true) O (t m n)).1
 
-private theorem cells_nonempty :
-    ∀ (A : ProtoTile), (LatticeTile A) → (A.cells.Nonempty) := by
-  classical
-  intro A hA
-  rcases hA with ⟨e⟩
-  have hp := (e ⟨0, by simp⟩).property
-  simp only [TileRealization, Set.mem_iUnion] at hp
-  obtain ⟨x, hx, _⟩ := hp
-  exact ⟨x, hx⟩
+private abbrev cells_nonempty := ApollonianSuperharmonic.LatticeTileNonempty.cells
 
 private theorem original_nonempty :
     ∀ (P : Fin 3 -> Bool -> ProtoTile), ∀ (u : GaussianInt), ∀ (v : GaussianInt), ∀ (L :

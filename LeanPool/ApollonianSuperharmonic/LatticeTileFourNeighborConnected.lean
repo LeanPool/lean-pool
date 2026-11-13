@@ -219,17 +219,23 @@ private theorem reachXY :
 
 private theorem walk :
     ∀ (T : ProtoTile),
-    let step : LatticeCell → LatticeCell → Prop := fun a b =>
-      FourNeighborAdjacent a b ∧ a ∈ (T.cells : Set LatticeCell) ∧
-        b ∈ (T.cells : Set LatticeCell)
-    let reachable : LatticeCell → LatticeCell → Prop :=
-      Relation.ReflTransGen step
-    ∀ {a : LatticeCell}, ∀ {b : LatticeCell}, a ∈ (T.cells : Set LatticeCell) → b ∈ (T.cells :
-        Set LatticeCell) → reachable a b → ∃ p : List LatticeCell, p.head? = some a ∧ p.getLast?
-        = some b ∧ (∀ z ∈ p, z ∈ (T.cells : Set LatticeCell)) ∧ ∀ u v : LatticeCell, ∀ l₁ l₂ :
-        List LatticeCell, p = l₁ ++ u :: v :: l₂ → FourNeighborAdjacent u v := by
+      let step : LatticeCell → LatticeCell → Prop := fun a b =>
+        FourNeighborAdjacent a b ∧
+          a ∈ (T.cells : Set LatticeCell) ∧ b ∈ (T.cells : Set LatticeCell);
+      let reachable : LatticeCell → LatticeCell → Prop := Relation.ReflTransGen step;
+      ∀ {a : LatticeCell},
+        ∀ {b : LatticeCell},
+          b ∈ (T.cells : Set LatticeCell) →
+            reachable a b →
+              ∃ p : List LatticeCell,
+                p.head? = some a ∧
+                  p.getLast? = some b ∧
+                    (∀ z ∈ p, z ∈ (T.cells : Set LatticeCell)) ∧
+                      ∀ u v : LatticeCell,
+                        ∀ l₁ l₂ : List LatticeCell,
+                          p = l₁ ++ u :: v :: l₂ → FourNeighborAdjacent u v := by
   classical
-  intro T step reachable a b ha hb hab
+  intro T step reachable a b hb hab
   induction hab using Relation.ReflTransGen.head_induction_on with
   | refl =>
       exact ⟨[b], by simp, by simp, by
@@ -240,7 +246,7 @@ private theorem walk :
             (List.isChain_singleton b)⟩
   | @head a₀ c hstep hrest ih =>
       rcases hstep with ⟨huv, ha', hc⟩
-      rcases ih hc with ⟨p, hphead, hplast, hpinside, hpedge⟩
+      rcases ih with ⟨p, hphead, hplast, hpinside, hpedge⟩
       have pne : p ≠ [] := by
         intro hnil
         simp [hnil] at hphead
@@ -386,14 +392,7 @@ theorem LatticeTileFourNeighborConnected (T : ProtoTile) (hT : LatticeTile T) :
             by simpa [sub_eq_add_neg, add_assoc, add_left_comm, add_comm] using hv⟩)
     have reachXY : reachable x y := FourNeighborProof.reachXY T realizationConnected overlap x hx
         y hy squareNonempty diagonalBridge
-    have walk : ∀ {a b : LatticeCell}, a ∈ (T.cells : Set LatticeCell) →
-        b ∈ (T.cells : Set LatticeCell) → reachable a b →
-        ∃ p : List LatticeCell,
-          p.head? = some a ∧ p.getLast? = some b ∧
-          (∀ z ∈ p, z ∈ (T.cells : Set LatticeCell)) ∧
-          ∀ u v : LatticeCell, ∀ l₁ l₂ : List LatticeCell,
-            p = l₁ ++ u :: v :: l₂ → FourNeighborAdjacent u v := FourNeighborProof.walk T
-    rcases walk hx hy reachXY with ⟨p, hphead, hplast, hpinside, hpedge⟩
+    rcases FourNeighborProof.walk T hy reachXY with ⟨p, hphead, hplast, hpinside, hpedge⟩
     exact ⟨p, hphead, hplast, hpinside, hpedge⟩
 
 end ApollonianSuperharmonic

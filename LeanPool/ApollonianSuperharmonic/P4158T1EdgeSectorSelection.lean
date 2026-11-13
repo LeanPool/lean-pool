@@ -444,22 +444,7 @@ private theorem U_edge :
   rw [hUa]
   exact hEdgeU
 
-private theorem V_edge :
-    (by
-      classical
-      exact
-        ∀ (P : FordFareyParameter), ∀ (Ci : BandCircle), ∀ (i : Fin (3 : ℕ)), ∀ (u :
-            GaussianInt), ∀ (PP : PeriodicTileComplex ↥(TilingLattice Ci)), ∀ (x : GaussianInt),
-        let z : GaussianInt :=
-          if (x - u).im = (if i = 0 then (P.q₁ : Int) else P.q₂)
-          then x else x - ⟨0, 1⟩
-        ∀ (V : ProtoTile), ({z, z + (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt)} ∈ FootprintEdges V) → (∀
-            (b : ↥(TilingLattice Ci)), (PP.tile b = V) → ({z, z + ⟨0, 1⟩} ∈ FootprintEdges
-            (PP.tile b))) ) := by
-  classical
-  intro P Ci i u PP x z V hEdgeV b hVb
-  rw [hVb]
-  exact hEdgeV
+private abbrev V_edge := ApollonianSuperharmonic.EdgeSectorGeometry.U_edge
 
 private theorem T_bounds :
     (by
@@ -1328,22 +1313,7 @@ private theorem hdisET'At847 :
   apply ford_disjoint_im
   simp [Zsqrtd.im_add]
 
-private theorem he_ne_aAt851 :
-    (by
-      classical
-      exact
-        ∀ (Ci : BandCircle), ∀ (T : ProtoTile), ∀ (Rplus : ProtoTile), ∀ (PP :
-            PeriodicTileComplex ↥(TilingLattice Ci)), ∀ (U : ProtoTile), ∀ (a : ↥(TilingLattice
-            Ci)), (PP.tile a = U) → ((U.cells ⊆ T.cells) → (∀ (cf : LatticeCell), (cf ∈ U.cells)
-            → (∀ (e : ↥(TilingLattice Ci)), (PP.tile e = Rplus) → ((Disjoint Rplus.cells T.cells)
-            → (e ≠ a))))) ) := by
-  classical
-  intro Ci T Rplus PP U a hUa U_in_T cf hcf e he hdisET heq
-  have hcfA : cf ∈ (PP.tile a).cells := by simpa [hUa] using hcf
-  have hcfE : cf ∈ Rplus.cells := by
-    rw [← he]
-    simpa [heq] using hcfA
-  exact (Finset.disjoint_left.mp hdisET) hcfE (U_in_T hcf)
+private abbrev he_ne_aAt851 := ApollonianSuperharmonic.EdgeSectorGeometry.he_ne_bAt755
 
 private abbrev he_ne_bAt858 :=
   ApollonianSuperharmonic.EdgeSectorGeometry.he_ne_bAt755
@@ -1743,14 +1713,12 @@ private theorem hq1castAt1045 :
       exact
         ∀ (P : FordFareyParameter),
           (0 : ℕ) < P.q₁ →
-            GaussianInt →
-              GaussianInt →
-                (P.q₁ : Int) + P.q₂ = P.q →
-                  ((P.q - 1 : Nat) : Int) = (P.q : Int) - 1 →
-                    ((P.q₁ - 1 : Nat) : Int) = (P.q₁ : Int) - 1
+            (P.q₁ : Int) + P.q₂ = P.q →
+              ((P.q - 1 : Nat) : Int) = (P.q : Int) - 1 →
+                ((P.q₁ - 1 : Nat) : Int) = (P.q₁ : Int) - 1
     ) := by
   classical
-  intro P hrpos u x hqsum hqcast
+  intro P hrpos hqsum hqcast
   exact_mod_cast Nat.cast_sub (by omega : 1 ≤ P.q₁)
 
 private theorem hmcAt1049 :
@@ -2462,7 +2430,7 @@ theorem P4158T1EdgeSectorSelection :
             exact_mod_cast P.sum_q.symm
           have hqcast : ((P.q - 1 : Nat) : Int) = (P.q : Int) - 1 := by
             exact_mod_cast Nat.cast_sub (by omega : 1 ≤ P.q)
-          have hq1cast := EdgeSectorGeometry.hq1castAt1045 P hrpos u x hqsum hqcast
+          have hq1cast := EdgeSectorGeometry.hq1castAt1045 P hrpos hqsum hqcast
           let m : GaussianInt := x - 1
           have hmc := EdgeSectorGeometry.hmcAt1049 P u x hxre'' hxim'' hqsum hqcast
           have hRmem : Rminus ∈ tiles := List.mem_of_head? hf.2.1

@@ -278,14 +278,17 @@ private theorem hUtail :
   simpa using hUstart
 
 private theorem hUneR :
-    ∀ (R : ProtoTile), ∀ (S : ProtoTile), ∀ (left : List ProtoTile), ∀ (right : List ProtoTile),
-        (List.Pairwise (fun (T U : ProtoTile) => T ≠ U) (left.dropLast ++ right)) → (∀ (U :
-        ProtoTile), (U ∈ (List.drop (1 : ℕ) (left.dropLast ++ right)).dropLast) → ((U ∈
-        (left.dropLast ++ right).drop 1) → ((U ∈ left.dropLast ++ right) → ((U ∈ (left.dropLast
-        ++ right).dropLast) → ((U ≠ S) → ((left.dropLast ++ right = R :: (left.dropLast ++
-        right).tail) → ((U ∈ (left.dropLast ++ right).tail) → (U ≠ R)))))))) := by
+    ∀ (R : ProtoTile),
+      ∀ (S : ProtoTile),
+        ∀ (left : List ProtoTile),
+          ∀ (right : List ProtoTile),
+            List.Pairwise (fun (T U : ProtoTile) => T ≠ U) (left.dropLast ++ right) →
+              ∀ (U : ProtoTile),
+                U ≠ S →
+                  left.dropLast ++ right = R :: (left.dropLast ++ right).tail →
+                    U ∈ (left.dropLast ++ right).tail → U ≠ R := by
   classical
-  intro R S left right hcatPairwise U hU hUstart hUall hUdropLast hUneS hshape hUtail he
+  intro R S left right hcatPairwise U hUneS hshape hUtail he
   subst U
   have hnot : R ∉ (left.dropLast ++ right).tail := by
     rw [hshape] at hcatPairwise
@@ -480,8 +483,7 @@ theorem P4458T1RespectAppend
       RespectAppendDetails.hshape R left right hcatHead
   have hUtail : U ∈ (left.dropLast ++ right).tail := RespectAppendDetails.hUtail R left right U
       hUstart hshape
-  have hUneR : U ≠ R := RespectAppendDetails.hUneR R S left right hcatPairwise U hU hUstart hUall
-      hUdropLast hUneS hshape hUtail
+  have hUneR : U ≠ R := RespectAppendDetails.hUneR R S left right hcatPairwise U hUneS hshape hUtail
   rcases List.mem_append.mp hUall with hUL | hUR
   · have hUneJ : U ≠ J := RespectAppendDetails.hUneJ J left right hdisj hJmem U hUL
     cases left with

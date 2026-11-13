@@ -835,37 +835,38 @@ private theorem hsignsOpp :
     (by
       classical
       exact
-        ∀ (n : Nat), ∀ (p : P3381T1PolygonBoundary n), ∀ (a : Fin (n + 3)), ∀ (b : Fin (n +
-            3)), ∀ (C : P3650T1CyclicChildren p a b), (∀ x ∉ P3544T1BoundaryCarrier C.left, x
-            ∉ P3544T1BoundaryCarrier C.right → (x ∈ P3544T1RayParity p ↔ x ∈
-            P3544T1RayParity C.left ∧ x ∉ P3544T1RayParity C.right ∨ x ∉ P3544T1RayParity
-            C.left ∧ x ∈ P3544T1RayParity C.right)) → (
-        let Op := P3544T1RayParity p
-        let OL := P3544T1RayParity C.left
-        let OR := P3544T1RayParity C.right
-        ∀ (x : ℝ × ℝ),
-        let ilast : Fin (C.leftParameter + 3) := Fin.last (C.leftParameter + 2)
-        let irlast : Fin (C.rightParameter + 3) := Fin.last (C.rightParameter + 2)
-        ∀ (rL : ℝ), ∀ (sL : Bool), (∀ y ∈ Metric.ball x rL, y ∈ P3544T1RayParity C.left ↔ if sL
-            = true then (0 : ℝ) < P3381T1TriangleDeterminant ![C.left.vertex ilast,
-            C.left.vertex (ilast + (1 : Fin (C.leftParameter + (3 : ℕ)))), y] else
-            P3381T1TriangleDeterminant ![C.left.vertex ilast, C.left.vertex (ilast + (1 : Fin
-            (C.leftParameter + (3 : ℕ)))), y] < (0 : ℝ)) → (∀ (rR : ℝ), ∀ (sR : Bool), (∀ y ∈
-            Metric.ball x rR, y ∈ P3544T1RayParity C.right ↔ if sR = true then (0 : ℝ) <
-            P3381T1TriangleDeterminant ![C.right.vertex irlast, C.right.vertex (irlast + (1 :
-            Fin (C.rightParameter + (3 : ℕ)))), y] else P3381T1TriangleDeterminant ![C.right.vertex
-            irlast, C.right.vertex (irlast + (1 : Fin (C.rightParameter + (3 : ℕ)))), y] < (0 :
-                ℝ)) → (
-        let H : Real × Real → Real := fun y =>
-          P3381T1TriangleDeterminant ![p.vertex a, p.vertex b, y]
-        (∀ y ∈ Metric.ball x rL, (y ∈ OL ↔ if !sL then 0 < H y else H y < 0)) → ((∀ y ∈
-            Metric.ball x rR, (y ∈ OR ↔ if sR then 0 < H y else H y < 0)) → (∀ (rp : ℝ),
-            (Metric.ball x rp ⊆ Op) → (
-        let rho := min (min rL rR) rp
-        (∃ y ∈ Metric.ball x rho, if sL then H y < 0 else 0 < H y) → (sR = sL))))))) ) := by
+        ∀ (n : Nat),
+          ∀ (p : P3381T1PolygonBoundary n),
+            ∀ (a : Fin (n + 3)),
+              ∀ (b : Fin (n + 3)),
+                ∀ (C : P3650T1CyclicChildren p a b),
+                  (∀ x ∉ P3544T1BoundaryCarrier C.left,
+                      x ∉ P3544T1BoundaryCarrier C.right →
+                        (x ∈ P3544T1RayParity p ↔
+                          x ∈ P3544T1RayParity C.left ∧ x ∉ P3544T1RayParity C.right ∨
+                            x ∉ P3544T1RayParity C.left ∧ x ∈ P3544T1RayParity C.right)) →
+                    let Op := P3544T1RayParity p;
+                    let OL := P3544T1RayParity C.left;
+                    let OR := P3544T1RayParity C.right;
+                    ∀ (x : ℝ × ℝ),
+                      ∀ (rL : ℝ),
+                        ∀ (sL : Bool),
+                          ∀ (rR : ℝ),
+                            ∀ (sR : Bool),
+                              let H : Real × Real → Real := fun y =>
+                                P3381T1TriangleDeterminant ![p.vertex a, p.vertex b, y]
+                              (∀ y ∈ Metric.ball x rL,
+                                y ∈ OL ↔ if !sL then 0 < H y else H y < 0) →
+                                (∀ y ∈ Metric.ball x rR,
+                                y ∈ OR ↔ if sR then 0 < H y else H y < 0) →
+                                ∀ (rp : ℝ),
+                                Metric.ball x rp ⊆ Op →
+                                let rho := min (min rL rR) rp
+                              (∃ y ∈ Metric.ball x rho, if sL then H y < 0 else 0 < H y) →
+                                sR = sL
+    ) := by
   classical
-  intro n p a b C hsum Op OL OR x ilast irlast rL sL hsideL rR sR hsideR H hcanonL hcanonR rp
-      hparentball rho htransverse
+  intro n p a b C hsum Op OL OR x rL sL rR sR H hcanonL hcanonR rp hparentball rho htransverse
   cases sL <;> cases sR
   · rfl
   · exfalso
@@ -1094,8 +1095,8 @@ theorem P3650T1LocalCoherence {n : Nat} (p : P3381T1PolygonBoundary n)
     have htransverse : ∃ y ∈ Metric.ball x rho, if sL then H y < 0 else 0 < H y :=
         LocalCoherenceProof.htransverse n p a b x rL sL rR rp hcoord hxdet hshiftV hshiftH hdelta
         hballV hballH hballDelta hballNegDelta
-    have hsignsOpp : sR = sL := LocalCoherenceProof.hsignsOpp n p a b C hsum x rL sL hsideL rR sR
-        hsideR hcanonL hcanonR rp hparentball htransverse
+    have hsignsOpp : sR = sL := LocalCoherenceProof.hsignsOpp n p a b C hsum x rL sL rR sR hcanonL
+        hcanonR rp hparentball htransverse
     let s := !sL
     let r := min (min rL rR) rp
     refine ⟨r, lt_min (lt_min hrL hrR) hrp, s, ?_⟩

@@ -6,6 +6,7 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.TileTranslationProperties
 public import LeanPool.ApollonianSuperharmonic.BandPrototileNonempty
 
 public import LeanPool.ApollonianSuperharmonic.AncestorOdometerCentralCovariance
@@ -56,20 +57,7 @@ private theorem hpouter_eq :
   have heq := hpouter.symm.trans hs₀
   exact Option.some.inj heq
 
-private theorem htranslateZero :
-    (by
-      classical
-      exact
-        ∀ (Rminus : ProtoTile),
-          TileTranslation Rminus (0 : GaussianInt) = Rminus) := by
-  classical
-  intro Rminus
-  cases Rminus with
-  | mk cs anchor =>
-    have hfun : GaussianTranslation (0 : GaussianInt) = id := by
-      funext z
-      simp [GaussianTranslation]
-    simp [TileTranslation, hfun]
+private abbrev htranslateZero := ApollonianSuperharmonic.TileTranslationProperties.zero
 
 private theorem hOminus :
     (by
@@ -299,29 +287,44 @@ private theorem houterAffineEq :
     (by
       classical
       exact
-        ∀ (C₀ : BandCircle), ∀ (T₀' : ProtoTile), ∀ (h₀ : PartialOdometer), ∀ (h₀' :
-            PartialOdometer), (TileOdometer C₀.1.1 T₀' h₀') → (∀ (p₀' : Real × Real),
-            (PartialOdometerSlope h₀' = some p₀') → (∀ (centerShift : GaussianInt),
-        let hbar := PartialOdometerAffineTranslate
-          (PartialOdometerHalfTurn h₀) centerShift 0 0
-        (∃! u : GaussianInt, T₀'.cells = (TileTranslation T₀' u).cells ∧ (T₀'.cells = ∅ →
-            T₀'.anchor = (TileTranslation T₀' u).anchor) ∧ ∃ (a : GaussianInt) (b : ℤ), (∀ (x :
-            GaussianInt), x ∈ hbar.domain ↔ x - u ∈ h₀'.domain) ∧ ∀ x ∈ hbar.domain, hbar.value x
-            = h₀'.value (x - u) + a.re * x.re + a.im * x.im + b) → (∀ (touter : GaussianInt), ∀
-            (couter : GaussianInt), ∀ (eouter : ℤ), (∀ (x : GaussianInt), x ∈ hbar.domain ↔ x -
-            touter ∈ h₀'.domain) → ((∀ x ∈ hbar.domain, hbar.value x = h₀'.value (x - touter) +
-            couter.re * x.re + couter.im * x.im + eouter) → ((touter = 0) → ((∀ x, x ∈
-            hbar.domain ↔ x ∈ h₀'.domain) → (
-        let a : GaussianInt := -couter
-        let b : Int := -eouter
-        let houterAffine := PartialOdometerAffineTranslate
-          (PartialOdometerHalfTurn h₀) centerShift a b
-        (hbar.domain = houterAffine.domain) → ((h₀'.domain = houterAffine.domain) → (h₀' =
-            houterAffine))))))))) ) := by
+        ∀ (T₀' : ProtoTile),
+          ∀ (h₀ : PartialOdometer),
+            ∀ (h₀' : PartialOdometer),
+              ∀ (p₀' : Real × Real),
+                PartialOdometerSlope h₀' = some p₀' →
+                  ∀ (centerShift : GaussianInt),
+                    let hbar :=
+                      PartialOdometerAffineTranslate (PartialOdometerHalfTurn h₀)
+                        centerShift 0 0;
+                    (∃! u : GaussianInt,
+                        T₀'.cells = (TileTranslation T₀' u).cells ∧
+                          (T₀'.cells = ∅ → T₀'.anchor = (TileTranslation T₀' u).anchor) ∧
+                            ∃ (a : GaussianInt) (b : ℤ),
+                              (∀ (x : GaussianInt),
+                                x ∈ hbar.domain ↔ x - u ∈ h₀'.domain) ∧
+                                ∀ x ∈ hbar.domain,
+                                hbar.value x =
+                                h₀'.value (x - u) + a.re * x.re + a.im * x.im + b) →
+                      ∀ (touter : GaussianInt),
+                        ∀ (couter : GaussianInt),
+                          ∀ (eouter : ℤ),
+                            (∀ x ∈ hbar.domain,
+                                hbar.value x =
+                                h₀'.value (x - touter) + couter.re * x.re +
+                                couter.im * x.im +
+                                eouter) →
+                              touter = 0 →
+                                let a : GaussianInt := -couter
+                              let b : Int := -eouter
+                              let houterAffine :=
+                                PartialOdometerAffineTranslate
+                                (PartialOdometerHalfTurn h₀) centerShift a b
+                              hbar.domain = houterAffine.domain →
+                                h₀'.domain = houterAffine.domain → h₀' = houterAffine
+    ) := by
   classical
-  intro C₀ T₀' h₀ h₀' hO₀' p₀' hs₀' centerShift hbar houterUnique touter couter eouter
-      hdomainShift hvalueShift htouterZero hbarDomains a b houterAffine hbarOuterDomain
-      houterAffineDomain
+  intro T₀' h₀ h₀' p₀' hs₀' centerShift hbar houterUnique touter couter eouter hvalueShift
+      htouterZero a b houterAffine hbarOuterDomain houterAffineDomain
   cases h₀' with
   | mk dom val hout =>
     have hdom : dom = houterAffine.domain := houterAffineDomain
@@ -550,25 +553,7 @@ private theorem finiteTranslationFix :
   have huIm : u.im = 0 := (mul_eq_zero.mp hmulIm).resolve_left hcardNe
   apply Zsqrtd.ext <;> assumption
 
-private theorem hRminusBand :
-    (by
-      classical
-      exact
-        ∀ (Cᵢ : BandCircle)
-          (base Rminus : ProtoTile),
-          BandPrototile
-              Cᵢ.1.1
-              base →
-            Rminus ∈
-                RegularTileFamily base
-                  (TilingLattice Cᵢ) →
-              BandPrototile
-                Cᵢ.1.1
-                Rminus) := by
-  classical
-  intro Cᵢ base Rminus hbase hRminus
-  rcases hRminus with ⟨w, hw, rfl⟩
-  exact BandPrototileTranslation Cᵢ.1.1 base w hbase
+private abbrev hRminusBand := ApollonianSuperharmonic.OpposingBoundaryGeometry.hRplusBand
 
 private theorem hbackRawO :
     (by
@@ -1040,20 +1025,19 @@ private theorem htilesLength :
     (by
       classical
       exact
-        ∀ (q : Fin 4 -> CircleCoordinates), ∀ (C₀ : BandCircle), ∀ (Cᵢ : BandCircle), ∀ (i : Fin
-            3), ∀ (T₀ : ProtoTile), ∀ (horientationExists : ∃ o : Bool, Cᵢ.1.1.1 = 1 →
-            UnitOccurrenceOrientation q i o),
-        let orientation := Classical.choose horientationExists
-        ∀ (base : ProtoTile), ∀ (Rminus : ProtoTile), ∀ (Rplus : ProtoTile), ∀ (tiles : List
-            ProtoTile), (BoundaryString C₀ Cᵢ i orientation T₀ base Rminus Rplus tiles) →
-            ((TileString Cᵢ orientation base Rminus Rplus tiles) → (∀ (centerShift :
-            GaussianInt), ∀ (reverseTiles : List ProtoTile), (List.Forall₂ (fun (T U : ProtoTile)
-            => (TileTranslation (TileHalfTurn T) centerShift).cells = U.cells) tiles
-            reverseTiles) → ((Rminus ≠ Rplus) → ((tiles.head? = some Rminus) → ((tiles.getLast? =
+        ∀ (q : Fin 4 -> CircleCoordinates),
+                                                                 ∀ (Cᵢ : BandCircle), ∀ (i : Fin
+            3),
+                                    (∃ o : Bool, Cᵢ.1.1.1 = 1 →
+            UnitOccurrenceOrientation q i o) →
+                              ∀ (Rminus : ProtoTile), ∀ (Rplus : ProtoTile), ∀ (tiles : List
+            ProtoTile),
+            (
+                                                                   (
+                            ((Rminus ≠ Rplus) → ((tiles.head? = some Rminus) → ((tiles.getLast? =
             some Rplus) → (2 ≤ tiles.length)))))) ) := by
   classical
-  intro q C₀ Cᵢ i T₀ horientationExists orientation base Rminus Rplus tiles hboundaryOriginal
-      hstring centerShift reverseTiles hcellPairs hRminusNeRplus htilesHead htilesLast
+  intro q Cᵢ i horientationExists Rminus Rplus tiles hRminusNeRplus htilesHead htilesLast
   cases tiles with
   | nil => simp at htilesHead
   | cons first rest =>
@@ -1830,7 +1814,8 @@ private theorem opposingBoundaryConclusion :
         let orientation := Classical.choose horientationExists;
         ∀ (base : ProtoTile), ∀ (Rminus : ProtoTile), ∀ (Rplus : ProtoTile), ∀ (tiles : List
             ProtoTile), ∀ (hseed : PartialOdometer), (BoundaryString C₀ Cᵢ i orientation T₀ base
-            Rminus Rplus tiles) → ((Fin (4 : ℕ) → CircleCoordinates) → ((TileString Cᵢ
+            Rminus Rplus tiles) → (
+                                                                       ((TileString Cᵢ
             orientation base Rminus Rplus tiles) → (∀ (centerShift : GaussianInt), ∀
             (reverseTiles : List ProtoTile), (TileString Cᵢ orientation base Rplus Rminus
             reverseTiles) → (((TileTranslation (TileHalfTurn Rminus) centerShift).cells =
@@ -1846,7 +1831,8 @@ private theorem opposingBoundaryConclusion :
         (TileOdometer Cᵢ.1.1 Rminus hminus) → ((PartialOdometerSlope hminus = some pminus) → ((0
             < C₀.1.1.1) → (
         let Tbar := TileTranslation (TileHalfTurn T₀) centerShift;
-        (BandPrototile C₀.1.1 T₀') → ((Tbar.cells = T₀'.cells) → ((GaussianInt) → (∀ (couter :
+        (BandPrototile C₀.1.1 T₀') → ((Tbar.cells = T₀'.cells) → (
+                                                                                  (∀ (couter :
             GaussianInt), ∀ (eouter : ℤ),
         let a : GaussianInt := -couter;
         let b : Int := -eouter;
@@ -1900,11 +1886,11 @@ private theorem opposingBoundaryConclusion :
             AncestorOdometer Cᵢ.1.1 C₀.1.1 T T₀' h h₀')))))))))))))))))))))))))))))))) ) := by
   classical
   intro q hq C₀ Cᵢ i hC₀ hCᵢ T₀ T₀' h₀ h₀' hpositive p₀ horientationExists orientation base
-      Rminus Rplus tiles hseed hboundaryOriginal q' hstring centerShift reverseTiles hreverse
+      Rminus Rplus tiles hseed hboundaryOriginal hstring centerShift reverseTiles hreverse
       hminusCells hplusCells hcellPairs pminus pplus d hminus hOminus hsminus hC₀positive Tbar
-      hT₀'band houterCells touter couter eouter a b houterAffine houterAffineEq hplus hOplus
-      hsplus eback bplus hminusBack hminusBackEq htilesHead htilesLength hs hhsHead hhsLast
-      hrespect hancestorForward hlengthEq constAt transformAt gs htransform
+      hT₀'band houterCells couter eouter a b houterAffine houterAffineEq hplus hOplus hsplus
+      eback bplus hminusBack hminusBackEq htilesHead htilesLength hs hhsHead hhsLast hrespect
+      hancestorForward hlengthEq constAt transformAt gs htransform
   have hgsHead := OpposingBoundaryGeometry.hgsHead q i hseed centerShift couter eouter eback hs
       hhsHead
   have hgsLast := (show
@@ -2183,9 +2169,9 @@ theorem OpposingBoundaryOdometerStrings
   let houterAffine := PartialOdometerAffineTranslate
     (PartialOdometerHalfTurn h₀) centerShift a b
   have hbarOuterDomain := OpposingBoundaryGeometry.hbarOuterDomain h₀ centerShift couter eouter
-  have houterAffineEq : h₀' = houterAffine := OpposingBoundaryGeometry.houterAffineEq C₀ T₀' h₀
-      h₀' hO₀' p₀' hs₀' centerShift houterUnique touter couter eouter hdomainShift hvalueShift
-      htouterZero hbarDomains hbarOuterDomain (OpposingBoundaryGeometry.houterAffineDomain h₀ h₀'
+  have houterAffineEq : h₀' = houterAffine := OpposingBoundaryGeometry.houterAffineEq T₀' h₀
+      h₀' p₀' hs₀' centerShift houterUnique touter couter eouter hvalueShift
+      htouterZero hbarOuterDomain (OpposingBoundaryGeometry.houterAffineDomain h₀ h₀'
       centerShift couter eouter hbarDomains hbarOuterDomain)
   have haSlope : p₀ + p₀' = GaussianRealPoint a := OpposingBoundaryGeometry.haSlope p₀ p₀' couter
       (Option.some.inj ((OpposingBoundaryGeometry.houterSlope h₀ p₀ centerShift couter eouter
@@ -2258,8 +2244,8 @@ theorem OpposingBoundaryOdometerStrings
       Rplus tiles hstring
   have htilesLast := OpposingBoundaryGeometry.htilesLast q Cᵢ i horientationExists base Rminus
       Rplus tiles hstring
-  have htilesLength := OpposingBoundaryGeometry.htilesLength q C₀ Cᵢ i T₀ horientationExists base
-      Rminus Rplus tiles hboundaryOriginal hstring centerShift reverseTiles hcellPairs
+  have htilesLength := OpposingBoundaryGeometry.htilesLength q Cᵢ i horientationExists
+      Rminus Rplus tiles
       (OpposingBoundaryGeometry.hRminusNeRplus i Rminus Rplus q'
       (OpposingBoundaryGeometry.hcentroidEndpoints i T₀ Rminus Rplus q' hcentroidMinus
       hcentroidPlus) hvectorNe (OpposingBoundaryGeometry.hgaussianPointZero)) htilesHead htilesLast
@@ -2278,9 +2264,9 @@ theorem OpposingBoundaryOdometerStrings
   have transformForall := OpposingBoundaryGeometry.transformForall centerShift couter eouter
       eback hs
   exact (OpposingBoundaryConclusion.opposingBoundaryConclusion q hq C₀ Cᵢ i hC₀ hCᵢ T₀ T₀' h₀ h₀'
-      hpositive p₀ horientationExists base Rminus Rplus tiles hseed hboundaryOriginal q' hstring
+      hpositive p₀ horientationExists base Rminus Rplus tiles hseed hboundaryOriginal hstring
       centerShift reverseTiles hreverse hminusCells hplusCells hcellPairs hOminus hsminus
-      hC₀positive hT₀'band houterCells touter couter eouter houterAffineEq hOplus hsplus eback
+      hC₀positive hT₀'band houterCells couter eouter houterAffineEq hOplus hsplus eback
       hminusBackEq htilesHead htilesLength hs hhsHead hhsLast hrespect
       hancestorForward hlengthEq (OpposingBoundaryGeometry.htransform
       centerShift couter eouter eback hs transformForall))

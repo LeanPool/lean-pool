@@ -410,18 +410,28 @@ private theorem localMem :
       classical
       exact
         ∀ (K : DiamondParameter),
-        let g := DiamondOdometer K
-        ∀ (X : Set GaussianInt), ∀ (z : GaussianInt),
-        let R := fun u t => u ∉ X ∧ t ∉ X ∧ FourNeighborAdjacent u t
-        let Y : Set GaussianInt := {y | Relation.ReflTransGen R z y}
-        (∀ y ∈ Y, y ∉ X) → (∀ (v : GaussianInt), ∀ (Yfin : Y.Finite),
-        let Z := Yfin.toFinset.image (fun y => y-v)
-        ∀ (p : GaussianInt), (p ∈ Z) → (((2 : ℤ) ≤ FourNeighborLaplacian (fun (z : GaussianInt)
-            => g z - if z ∈ Z then (1 : ℤ) else (0 : ℤ)) p) → ((∀ (t : GaussianInt), t ∈ Z ↔ t+v
-            ∈ Y) → ((p+v ∈ Y) → (∀ t, (t=p ∨ FourNeighborAdjacent p t) → (t ∈ Z ↔ t+v ∉ X)))))) )
+          let g := DiamondOdometer K;
+          ∀ (X : Set GaussianInt),
+            ∀ (z : GaussianInt),
+              let R := fun u t => u ∉ X ∧ t ∉ X ∧ FourNeighborAdjacent u t;
+              let Y : Set GaussianInt := {y | Relation.ReflTransGen R z y};
+              (∀ y ∈ Y, y ∉ X) →
+                ∀ (v : GaussianInt),
+                  ∀ (Yfin : Y.Finite),
+                    let Z := Yfin.toFinset.image fun y => y - v;
+                    ∀ (p : GaussianInt),
+                      (2 : ℤ) ≤
+                          FourNeighborLaplacian
+                            (fun (z : GaussianInt) =>
+                              g z - if z ∈ Z then (1 : ℤ) else (0 : ℤ))
+                            p →
+                        (∀ (t : GaussianInt), t ∈ Z ↔ t + v ∈ Y) →
+                          p + v ∈ Y →
+                            ∀ t, t = p ∨ FourNeighborAdjacent p t → (t ∈ Z ↔ t + v ∉ X)
+    )
             := by
   classical
-  intro K g X z R Y Yout v Yfin Z p hp hobs memZ py t ht
+  intro K g X z R Y Yout v Yfin Z p hobs memZ py t ht
   constructor
   · intro htZ
     exact Yout (t+v) ((memZ t).mp htZ)
@@ -556,7 +566,7 @@ theorem DiamondExceptionalMaximality (K : DiamondParameter) :
   obtain ⟨p, hp, hobs⟩ := FiniteAcyclicOrientationObstruction Df g o Z Zne Zsub
   have memZ (t : GaussianInt) := ExceptionalMaximalityProof.memZ X z v Yfin t
   have py : p+v ∈ Y := (memZ p).mp hp
-  have localMem := ExceptionalMaximalityProof.localMem K X z Yout v Yfin p hp hobs memZ py
+  have localMem := ExceptionalMaximalityProof.localMem K X z Yout v Yfin p hobs memZ py
   have value (t : GaussianInt) (ht : t=p ∨ FourNeighborAdjacent p t) :=
       ExceptionalMaximalityProof.value X z v Yfin p
       localMem t ht

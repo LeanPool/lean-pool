@@ -6,6 +6,7 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.LatticeFootprintIncidence
 
 public import LeanPool.ApollonianSuperharmonic.AllowedSubtileIncidenceZeroOppositeChord
 public import LeanPool.ApollonianSuperharmonic.ExactPatchBoundaryInterface
@@ -44,28 +45,7 @@ private theorem hdisjoint :
   intro x hxa hxb
   exact hab ((hindexed x).unique hxa hxb)
 
-private theorem raw_incident :
-    (by
-      classical
-      exact
-        ∀ (U : ProtoTile), ∀ (x : GaussianInt), (U.cells.Nonempty) → ((x ∈ FootprintVertices U) →
-            (∃ j : Fin 4, LatticeVertexIncidentCell x j ∈ U.cells)) ) := by
-  classical
-  intro U x hne hx
-  simp only [FootprintVertices, hne, ite_true, Set.mem_ofPred_eq] at hx
-  rcases hx with ⟨c, hc, h | h | h | h⟩
-  · exact ⟨0, by simpa [LatticeVertexIncidentCell] using h ▸ hc⟩
-  · refine ⟨1, ?_⟩
-    subst x
-    convert hc using 1; simp [LatticeVertexIncidentCell]
-  · refine ⟨3, ?_⟩
-    subst x
-    convert hc using 1; simp [LatticeVertexIncidentCell]
-  · refine ⟨2, ?_⟩
-    change x - 1 - ⟨0, 1⟩ ∈ U.cells
-    rw [h]
-    convert hc using 1
-    ext <;> simp
+private abbrev raw_incident := ApollonianSuperharmonic.LatticeFootprintIncidence.incidentCell
 
 private theorem radial :
     (by
@@ -403,26 +383,42 @@ private theorem hlm :
     (by
       classical
       exact
-        ∀ (q : Fin 4 → CircleCoordinates), ∀ (cfg : BandOrderedGeneralConfiguration q), ∀ (C₀ :
-            BandCircle), ∀ (T : ProtoTile), ∀ (cert : BandOrderedGeneralLayoutCertificate q cfg
-            C₀ T),
-        let P := cert.modified
-        ∀ (hindexed : ∀ (x : LatticeCell), ∃! a : PeriodicSubtileIndex, x ∈ (P.tile a).cells), (∀
-            (a : PeriodicSubtileIndex), LatticeTile (P.tile a)) → (∀ (a : PeriodicSubtileIndex),
-            ∀ (b : PeriodicSubtileIndex), ∀ (x : GaussianInt), ∀ (j : Fin (4 : ℕ)),
-            (LatticeVertexIncidentCell x j ∈ (P.tile a).cells) → (∀ (k : Fin (4 : ℕ)),
-        let owner : Fin 4 → PeriodicSubtileIndex := fun r =>
-          (hindexed (LatticeVertexIncidentCell x r)).choose
-        (∀ (r : Fin 4), LatticeVertexIncidentCell x r ∈ (P.tile (owner r)).cells) → ((owner j =
-            a) → ((owner k = b) → ((j ≠ k) → ((¬ (k = j + 1 ∨ j = k + 1)) → ((k = j + 2) → (
-        let l := j + 1
-        let m := j + 3
-        (j ≠ l ∧ j ≠ k ∧ j ≠ m ∧ l ≠ k ∧ l ≠ m ∧ k ≠ m) → ((l + 1 = k) → ((k + 1 = m) → ((m + 1 =
-            j) → ((owner l ≠ a) → ((owner l ≠ b) → ((owner m ≠ a) → ((owner m ≠ b) → (owner l ≠
-            owner m)))))))))))))))) ) := by
+        ∀ (q : Fin 4 → CircleCoordinates),
+          ∀ (cfg : BandOrderedGeneralConfiguration q),
+            ∀ (C₀ : BandCircle),
+              ∀ (T : ProtoTile),
+                ∀ (cert : BandOrderedGeneralLayoutCertificate q cfg C₀ T),
+                  let P := cert.modified;
+                  ∀
+                    (hindexed :
+                      ∀ (x : LatticeCell),
+                        ∃! a : PeriodicSubtileIndex, x ∈ (P.tile a).cells),
+                    (∀ (a : PeriodicSubtileIndex), LatticeTile (P.tile a)) →
+                      ∀ (a : PeriodicSubtileIndex),
+                        ∀ (b : PeriodicSubtileIndex),
+                          ∀ (x : GaussianInt),
+                            ∀ (j : Fin (4 : ℕ)),
+                              ∀ (k : Fin (4 : ℕ)),
+                                let owner : Fin 4 → PeriodicSubtileIndex := fun r =>
+                                (hindexed (LatticeVertexIncidentCell x r)).choose;
+                              (∀ (r : Fin 4),
+                                LatticeVertexIncidentCell x r ∈
+                                (P.tile (owner r)).cells) →
+                                owner j = a →
+                                owner k = b →
+                                j ≠ k →
+                                ¬(k = j + 1 ∨ j = k + 1) →
+                                k = j + 2 →
+                                let l := j + 1;
+                              let m := j + 3;
+                              j ≠ l ∧ j ≠ k ∧ j ≠ m ∧ l ≠ k ∧ l ≠ m ∧ k ≠ m →
+                                l + 1 = k →
+                                k + 1 = m →
+                                m + 1 = j → owner l ≠ a → owner l ≠ b → owner l ≠ owner m
+    ) := by
   classical
-  intro q cfg C₀ T cert P hindexed htiles a b x j hja k owner ho hja' hkb' hjk hnotconsecutive
-      hop l m hpos hlk hkm hmj hlA hlB hmA hmB heq
+  intro q cfg C₀ T cert P hindexed htiles a b x j k owner ho hja' hkb' hjk hnotconsecutive hop l
+      m hpos hlk hkm hmj hlA hlB heq
   have hcheck := (LatticeTileGridStructure _ (htiles (owner l))).2.1 x
   have hnJ : LatticeVertexIncidentCell x j ∉ (P.tile (owner l)).cells := by
     intro hmem
@@ -560,26 +556,47 @@ private theorem hinj :
     (by
       classical
       exact
-        ∀ (q : Fin 4 → CircleCoordinates), ∀ (cfg : BandOrderedGeneralConfiguration q), ∀ (C₀ :
-            BandCircle), ∀ (T : ProtoTile), ∀ (cert : BandOrderedGeneralLayoutCertificate q cfg
-            C₀ T),
-        let P := cert.modified
-        ∀ (hindexed : ∀ (x : LatticeCell), ∃! a : PeriodicSubtileIndex, x ∈ (P.tile a).cells), ∀
-            (a : PeriodicSubtileIndex), ∀ (b : PeriodicSubtileIndex), ∀ (x : GaussianInt), ∀ (j :
-            Fin (4 : ℕ)), (LatticeVertexIncidentCell x j ∈ (P.tile a).cells) → (∀ (k : Fin (4 : ℕ)),
-        let owner : Fin 4 → PeriodicSubtileIndex := fun r =>
-          (hindexed (LatticeVertexIncidentCell x r)).choose
-        (owner j = a) → ((j ≠ k) → ((¬ (k = j + 1 ∨ j = k + 1)) → ((k = j + 2) → (
-        let l := j + 1
-        let m := j + 3
-        (j ≠ l ∧ j ≠ k ∧ j ≠ m ∧ l ≠ k ∧ l ≠ m ∧ k ≠ m) → ((l + 1 = k) → ((k + 1 = m) → ((m + 1 =
-            j) → ((owner l ≠ a) → ((owner l ≠ b) → ((owner m ≠ a) → ((owner m ≠ b) → ((owner l ≠
-            owner m) → ((owner j ≠ owner l) → ((owner j ≠ owner k) → ((owner j ≠ owner m) →
-            ((owner l ≠ owner k) → ((owner k ≠ owner m) → (Function.Injective
-            owner))))))))))))))))))) ) := by
+        ∀ (q : Fin 4 → CircleCoordinates),
+          ∀ (cfg : BandOrderedGeneralConfiguration q),
+            ∀ (C₀ : BandCircle),
+              ∀ (T : ProtoTile),
+                ∀ (cert : BandOrderedGeneralLayoutCertificate q cfg C₀ T),
+                  let P := cert.modified;
+                  ∀
+                    (hindexed :
+                      ∀ (x : LatticeCell),
+                        ∃! a : PeriodicSubtileIndex, x ∈ (P.tile a).cells),
+                    ∀ (a : PeriodicSubtileIndex),
+                      ∀ (b : PeriodicSubtileIndex),
+                        ∀ (x : GaussianInt),
+                          ∀ (j : Fin (4 : ℕ)),
+                            ∀ (k : Fin (4 : ℕ)),
+                              let owner : Fin 4 → PeriodicSubtileIndex := fun r =>
+                                (hindexed (LatticeVertexIncidentCell x r)).choose
+                              owner j = a →
+                                j ≠ k →
+                                ¬(k = j + 1 ∨ j = k + 1) →
+                                k = j + 2 →
+                                let l := j + 1
+                              let m := j + 3
+                              j ≠ l ∧ j ≠ k ∧ j ≠ m ∧ l ≠ k ∧ l ≠ m ∧ k ≠ m →
+                                l + 1 = k →
+                                k + 1 = m →
+                                m + 1 = j →
+                                owner l ≠ a →
+                                owner l ≠ b →
+                                owner m ≠ a →
+                                owner m ≠ b →
+                                owner l ≠ owner m →
+                                owner j ≠ owner l →
+                                owner j ≠ owner k →
+                                owner j ≠ owner m →
+                                owner l ≠ owner k →
+                                owner k ≠ owner m → Function.Injective owner
+    ) := by
   classical
-  intro q cfg C₀ T cert P hindexed a b x j hja k owner hja' hjk hnotconsecutive hop l m hpos hlk
-      hkm hmj hlA hlB hmA hmB hlm hjlO hjkO hjmO hlkO hkmO r s hrs
+  intro q cfg C₀ T cert P hindexed a b x j k owner hja' hjk hnotconsecutive hop l m hpos hlk hkm
+      hmj hlA hlB hmA hmB hlm hjlO hjkO hjmO hlkO hkmO r s hrs
   have positions (t : Fin 4) : t = j ∨ t = l ∨ t = k ∨ t = m := by
     rw [hop]
     fin_cases j <;> fin_cases t <;> simp [l, m]
@@ -745,36 +762,58 @@ private theorem hdn :
     (by
       classical
       exact
-        ∀ (q : Fin 4 → CircleCoordinates), ∀ (cfg : BandOrderedGeneralConfiguration q), ∀ (C₀ :
-            BandCircle), ∀ (T : ProtoTile), ∀ (cert : BandOrderedGeneralLayoutCertificate q cfg
-            C₀ T),
-        let P := cert.modified
-        (∀ (whole : FiniteInducedTilePatch P.plane P.tile), (whole.indices = ({⟨.A, 0, 0⟩, ⟨.B,
-            0, 0⟩, ⟨.C, 0, 0⟩, ⟨.D, 0, 0⟩, ⟨.E, 0, 0⟩, ⟨.F, 0, 0⟩} : Finset
-            PeriodicSubtileIndex)) → (∀ (a : PeriodicSubtileIndex), (a ∈ whole.indices) →
-            (a.first = 0 ∧ a.second = 0))) → (∀ (whole : FiniteInducedTilePatch
-            cert.modified.plane cert.modified.tile), (whole.indices = {(⟨SixSubtileLabel.A,
-            (0 : ℤ), (0 : ℤ)⟩ : PeriodicSubtileIndex), (⟨SixSubtileLabel.B, (0 : ℤ), (0 : ℤ)⟩ :
-            PeriodicSubtileIndex), (⟨SixSubtileLabel.C, (0 : ℤ), (0 : ℤ)⟩ :
-            PeriodicSubtileIndex), (⟨SixSubtileLabel.D, (0 : ℤ), (0 : ℤ)⟩ :
-            PeriodicSubtileIndex), (⟨SixSubtileLabel.E, (0 : ℤ), (0 : ℤ)⟩ :
-            PeriodicSubtileIndex), (⟨SixSubtileLabel.F, (0 : ℤ), (0 : ℤ)⟩ :
-            PeriodicSubtileIndex)}) → (∀ (d : PeriodicSubtileIndex), (d ∈ whole.indices) → (∀
-            (rest : FiniteInducedTilePatch cert.modified.plane cert.modified.tile), (rest.indices
-            = whole.indices.erase d) → ((rest.unionTile = TileCellComplement T
-            (cert.modified.tile d)) → ((d ∉ rest.indices) → ((Disjoint (rest.unionTile).cells
-            (P.tile d).cells) → ((∀ z : LatticeCell, z ∈ whole.unionTile.cells ↔ z ∈ (P.tile
-            d).cells ∨ z ∈ rest.unionTile.cells) → (
-        let n : PeriodicSubtileIndex := match d.label with
-          | .A => ⟨.B, 0, 0⟩
-          | .B => ⟨.A, 0, 0⟩
-          | .C => ⟨.A, 0, 0⟩
-          | .D => ⟨.A, 0, 0⟩
-          | .E => ⟨.B, 0, 0⟩
-          | .F => ⟨.A, 0, 0⟩
-        AllowedSubtileIncidence d n)))))))) ) := by
+        ∀ (q : Fin 4 → CircleCoordinates),
+          ∀ (cfg : BandOrderedGeneralConfiguration q),
+            ∀ (C₀ : BandCircle),
+              ∀ (T : ProtoTile),
+                ∀ (cert : BandOrderedGeneralLayoutCertificate q cfg C₀ T),
+                  let P := cert.modified;
+                  (∀ (whole : FiniteInducedTilePatch P.plane P.tile),
+                      whole.indices =
+                          ({⟨.A, 0, 0⟩, ⟨.B, 0, 0⟩, ⟨.C, 0, 0⟩, ⟨.D, 0, 0⟩, ⟨.E, 0, 0⟩,
+                              ⟨.F, 0, 0⟩} :
+                            Finset PeriodicSubtileIndex) →
+                        ∀ (a : PeriodicSubtileIndex),
+                          a ∈ whole.indices → a.first = 0 ∧ a.second = 0) →
+                    ∀
+                      (whole :
+                        FiniteInducedTilePatch cert.modified.plane cert.modified.tile),
+                      whole.indices =
+                          {(⟨SixSubtileLabel.A, (0 : ℤ), (0 : ℤ)⟩ : PeriodicSubtileIndex),
+                            (⟨SixSubtileLabel.B, (0 : ℤ), (0 : ℤ)⟩ :
+                              PeriodicSubtileIndex),
+                            (⟨SixSubtileLabel.C, (0 : ℤ), (0 : ℤ)⟩ :
+                              PeriodicSubtileIndex),
+                            (⟨SixSubtileLabel.D, (0 : ℤ), (0 : ℤ)⟩ :
+                              PeriodicSubtileIndex),
+                            (⟨SixSubtileLabel.E, (0 : ℤ), (0 : ℤ)⟩ :
+                              PeriodicSubtileIndex),
+                            (⟨SixSubtileLabel.F, (0 : ℤ), (0 : ℤ)⟩ :
+                              PeriodicSubtileIndex)} →
+                        ∀ (d : PeriodicSubtileIndex),
+                          d ∈ whole.indices →
+                            ∀
+                              (rest :
+                                FiniteInducedTilePatch cert.modified.plane
+                                cert.modified.tile),
+                              rest.indices = whole.indices.erase d →
+                                rest.unionTile =
+                                TileCellComplement T (cert.modified.tile d) →
+                                (∀ z : LatticeCell,
+                                z ∈ whole.unionTile.cells ↔
+                                z ∈ (P.tile d).cells ∨ z ∈ rest.unionTile.cells) →
+                                let n : PeriodicSubtileIndex :=
+                                match d.label with
+                              | .A => ⟨.B, 0, 0⟩
+                              | .B => ⟨.A, 0, 0⟩
+                              | .C => ⟨.A, 0, 0⟩
+                              | .D => ⟨.A, 0, 0⟩
+                              | .E => ⟨.B, 0, 0⟩
+                              | .F => ⟨.A, 0, 0⟩
+                              AllowedSubtileIncidence d n
+    ) := by
   classical
-  intro q cfg C₀ T cert P hzero whole hidx d hd rest hrestIdx hrestUnion hdnot hdisj hunion n
+  intro q cfg C₀ T cert P hzero whole hidx d hd rest hrestIdx hrestUnion hunion n
   cases d with
   | mk lab i j =>
     have hz := hzero whole hidx ⟨lab, i, j⟩ hd
@@ -795,36 +834,58 @@ private theorem hnd :
     (by
       classical
       exact
-        ∀ (q : Fin 4 → CircleCoordinates), ∀ (cfg : BandOrderedGeneralConfiguration q), ∀ (C₀ :
-            BandCircle), ∀ (T : ProtoTile), ∀ (cert : BandOrderedGeneralLayoutCertificate q cfg
-            C₀ T),
-        let P := cert.modified
-        (∀ (whole : FiniteInducedTilePatch P.plane P.tile), (whole.indices = ({⟨.A, 0, 0⟩, ⟨.B,
-            0, 0⟩, ⟨.C, 0, 0⟩, ⟨.D, 0, 0⟩, ⟨.E, 0, 0⟩, ⟨.F, 0, 0⟩} : Finset
-            PeriodicSubtileIndex)) → (∀ (a : PeriodicSubtileIndex), (a ∈ whole.indices) →
-            (a.first = 0 ∧ a.second = 0))) → (∀ (whole : FiniteInducedTilePatch
-            cert.modified.plane cert.modified.tile), (whole.indices = {(⟨SixSubtileLabel.A,
-            (0 : ℤ), (0 : ℤ)⟩ : PeriodicSubtileIndex), (⟨SixSubtileLabel.B, (0 : ℤ), (0 : ℤ)⟩ :
-            PeriodicSubtileIndex), (⟨SixSubtileLabel.C, (0 : ℤ), (0 : ℤ)⟩ :
-            PeriodicSubtileIndex), (⟨SixSubtileLabel.D, (0 : ℤ), (0 : ℤ)⟩ :
-            PeriodicSubtileIndex), (⟨SixSubtileLabel.E, (0 : ℤ), (0 : ℤ)⟩ :
-            PeriodicSubtileIndex), (⟨SixSubtileLabel.F, (0 : ℤ), (0 : ℤ)⟩ :
-            PeriodicSubtileIndex)}) → (∀ (d : PeriodicSubtileIndex), (d ∈ whole.indices) → (∀
-            (rest : FiniteInducedTilePatch cert.modified.plane cert.modified.tile), (rest.indices
-            = whole.indices.erase d) → ((rest.unionTile = TileCellComplement T
-            (cert.modified.tile d)) → ((d ∉ rest.indices) → ((Disjoint (rest.unionTile).cells
-            (P.tile d).cells) → ((∀ z : LatticeCell, z ∈ whole.unionTile.cells ↔ z ∈ (P.tile
-            d).cells ∨ z ∈ rest.unionTile.cells) → (
-        let n : PeriodicSubtileIndex := match d.label with
-          | .A => ⟨.B, 0, 0⟩
-          | .B => ⟨.A, 0, 0⟩
-          | .C => ⟨.A, 0, 0⟩
-          | .D => ⟨.A, 0, 0⟩
-          | .E => ⟨.B, 0, 0⟩
-          | .F => ⟨.A, 0, 0⟩
-        (AllowedSubtileIncidence d n) → (n ≠ d))))))))) ) := by
+        ∀ (q : Fin 4 → CircleCoordinates),
+          ∀ (cfg : BandOrderedGeneralConfiguration q),
+            ∀ (C₀ : BandCircle),
+              ∀ (T : ProtoTile),
+                ∀ (cert : BandOrderedGeneralLayoutCertificate q cfg C₀ T),
+                  let P := cert.modified;
+                  (∀ (whole : FiniteInducedTilePatch P.plane P.tile),
+                      whole.indices =
+                          ({⟨.A, 0, 0⟩, ⟨.B, 0, 0⟩, ⟨.C, 0, 0⟩, ⟨.D, 0, 0⟩, ⟨.E, 0, 0⟩,
+                              ⟨.F, 0, 0⟩} :
+                            Finset PeriodicSubtileIndex) →
+                        ∀ (a : PeriodicSubtileIndex),
+                          a ∈ whole.indices → a.first = 0 ∧ a.second = 0) →
+                    ∀
+                      (whole :
+                        FiniteInducedTilePatch cert.modified.plane cert.modified.tile),
+                      whole.indices =
+                          {(⟨SixSubtileLabel.A, (0 : ℤ), (0 : ℤ)⟩ : PeriodicSubtileIndex),
+                            (⟨SixSubtileLabel.B, (0 : ℤ), (0 : ℤ)⟩ :
+                              PeriodicSubtileIndex),
+                            (⟨SixSubtileLabel.C, (0 : ℤ), (0 : ℤ)⟩ :
+                              PeriodicSubtileIndex),
+                            (⟨SixSubtileLabel.D, (0 : ℤ), (0 : ℤ)⟩ :
+                              PeriodicSubtileIndex),
+                            (⟨SixSubtileLabel.E, (0 : ℤ), (0 : ℤ)⟩ :
+                              PeriodicSubtileIndex),
+                            (⟨SixSubtileLabel.F, (0 : ℤ), (0 : ℤ)⟩ :
+                              PeriodicSubtileIndex)} →
+                        ∀ (d : PeriodicSubtileIndex),
+                          d ∈ whole.indices →
+                            ∀
+                              (rest :
+                                FiniteInducedTilePatch cert.modified.plane
+                                cert.modified.tile),
+                              rest.indices = whole.indices.erase d →
+                                rest.unionTile =
+                                TileCellComplement T (cert.modified.tile d) →
+                                (∀ z : LatticeCell,
+                                z ∈ whole.unionTile.cells ↔
+                                z ∈ (P.tile d).cells ∨ z ∈ rest.unionTile.cells) →
+                                let n : PeriodicSubtileIndex :=
+                                match d.label with
+                              | .A => ⟨.B, 0, 0⟩
+                              | .B => ⟨.A, 0, 0⟩
+                              | .C => ⟨.A, 0, 0⟩
+                              | .D => ⟨.A, 0, 0⟩
+                              | .E => ⟨.B, 0, 0⟩
+                              | .F => ⟨.A, 0, 0⟩;
+                              n ≠ d
+    ) := by
   classical
-  intro q cfg C₀ T cert P hzero whole hidx d hd rest hrestIdx hrestUnion hdnot hdisj hunion n hdn
+  intro q cfg C₀ T cert P hzero whole hidx d hd rest hrestIdx hrestUnion hunion n
   cases d with
   | mk lab i j =>
     have hz := hzero whole hidx ⟨lab, i, j⟩ hd
@@ -1046,8 +1107,7 @@ private theorem hnoPinch :
         have hmB : owner m ≠ b := GeometricSectorGeometry.hmB q cfg C₀ T cert hindexed
             radialMembers a b hnoedge x j ho hja' hmj
         have hlm : owner l ≠ owner m := GeometricSectorGeometry.hlm q cfg C₀ T cert hindexed
-            htiles a b x j hja k ho hja' hkb' hjk hnotconsecutive hop hpos hlk hkm hmj hlA hlB
-            hmA hmB
+            htiles a b x j k ho hja' hkb' hjk hnotconsecutive hop hpos hlk hkm hmj hlA hlB
         have hjlO : owner j ≠ owner l := GeometricSectorGeometry.hjlO q cfg C₀ T cert hindexed
             a x j hja' hlA
         have hjkO : owner j ≠ owner k := GeometricSectorGeometry.hjkO q cfg C₀ T cert hindexed
@@ -1059,7 +1119,7 @@ private theorem hnoPinch :
         have hkmO : owner k ≠ owner m := GeometricSectorGeometry.hkmO q cfg C₀ T cert hindexed
             b x j k hkb' hmB
         have hinj : Function.Injective owner := GeometricSectorGeometry.hinj q cfg C₀ T cert
-            hindexed a b x j hja k hja' hjk hnotconsecutive hop hpos hlk hkm hmj hlA hlB hmA
+            hindexed a b x j k hja' hjk hnotconsecutive hop hpos hlk hkm hmj hlA hlB hmA
             hmB hlm hjlO hjkO hjmO hlkO hkmO
         have edgeAdjacent (u v : PeriodicSubtileIndex) (huv : u ≠ v)
             (hedge : (FootprintEdges (P.tile u) ∩
@@ -1222,9 +1282,9 @@ theorem BandOrderedGeneralGeometricSectors
       | .E => ⟨.B, 0, 0⟩
       | .F => ⟨.A, 0, 0⟩
     have hdn : AllowedSubtileIncidence d n := GeometricSectorGeometry.hdn q cfg C₀ T cert hzero
-        whole hidx d hd rest hrestIdx hrestUnion hdnot hdisj hunion
+        whole hidx d hd rest hrestIdx hrestUnion hunion
     have hnd : n ≠ d := GeometricSectorGeometry.hnd q cfg C₀ T cert hzero whole hidx d hd rest
-        hrestIdx hrestUnion hdnot hdisj hunion hdn
+        hrestIdx hrestUnion hunion
     have hnWhole : n ∈ whole.indices := GeometricSectorGeometry.hnWhole q cfg C₀ T cert hzero
         whole hidx d hd
     have hnrest : n ∈ rest.indices := GeometricSectorGeometry.hnrest q cfg C₀ T cert whole d rest

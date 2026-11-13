@@ -6,6 +6,7 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.GaussianRealPointProperties
 
 public import LeanPool.ApollonianSuperharmonic.BoundaryString
 public import LeanPool.ApollonianSuperharmonic.BoundaryJoinChamberCertificate
@@ -288,20 +289,7 @@ private theorem translationDiff :
   ext <;> simp [GaussianRealPoint, Zsqrtd.re_sub, Zsqrtd.im_sub];
 
 
-private theorem hGRinj :
-    (by
-      classical
-      exact
-        Function.Injective GaussianRealPoint ) := by
-  classical
-  intro u v huv
-  ext
-  · have h := congrArg Prod.fst huv
-    dsimp [GaussianRealPoint] at h
-    exact_mod_cast h
-  · have h := congrArg Prod.snd huv
-    dsimp [GaussianRealPoint] at h
-    exact_mod_cast h
+private abbrev hGRinj := ApollonianSuperharmonic.GaussianRealPointProperties.injective
 
 private theorem hphysMinus :
     (by

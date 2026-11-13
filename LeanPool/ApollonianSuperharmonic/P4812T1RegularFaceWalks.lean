@@ -6,6 +6,8 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.BoundaryFootprintInclusion
+public import LeanPool.ApollonianSuperharmonic.TileTranslationProperties
 
 public import LeanPool.ApollonianSuperharmonic.P4812T1AffineDrawing
 public import LeanPool.ApollonianSuperharmonic.P4677T2TouchingWalk
@@ -69,25 +71,7 @@ private theorem boundaryFoot :
     · exact ⟨c, hc, Or.inr (Or.inr (Or.inr rfl))⟩
   · simpa [BoundaryFootprintVertices, FootprintVertices, hW] using hz
 
-private theorem translateComp :
-    (by
-      classical
-      exact
-        ∀ (W : ProtoTile), ∀ (v : GaussianInt), ∀ (w : GaussianInt), TileTranslation
-            (TileTranslation W v) w = TileTranslation W (v + w)
-    ) := by
-  classical
-  intro W v w
-  cases W with
-  | mk cells anchor =>
-    simp only [TileTranslation]
-    rw [ProtoTile.mk.injEq]
-    constructor
-    · rw [Finset.image_image]
-      congr 1
-      funext z
-      simp [GaussianTranslation, add_assoc]
-    · simp [GaussianTranslation, add_assoc]
+private abbrev translateComp := ApollonianSuperharmonic.TileTranslationProperties.add
 
 private theorem edgeDiff :
     (by
@@ -280,25 +264,7 @@ private theorem rho_mem :
       exact boundaryFoot _ _ (translateBoundary (TileTranslation T (b : GaussianInt))
         rd (x : GaussianInt) rdb)
 
-private theorem transZero :
-    (by
-      classical
-      exact
-        ∀ (W : ProtoTile), TileTranslation W (0 : GaussianInt) = W
-    ) := by
-  classical
-  intro W
-  cases W with
-  | mk cells anchor =>
-    simp only [TileTranslation]
-    rw [ProtoTile.mk.injEq]
-    constructor
-    · change cells.image (GaussianTranslation 0) = cells
-      have h : GaussianTranslation 0 = id := by
-        funext z
-        simp [GaussianTranslation]
-      rw [h, Finset.image_id]
-    · simp [GaussianTranslation]
+private abbrev transZero := ApollonianSuperharmonic.TileTranslationProperties.zero
 
 private theorem mapTranslateRev :
     (by
@@ -340,29 +306,7 @@ private theorem ifMap3 :
   by_cases hq0 : Q0 <;> by_cases hq1 : Q1 <;> by_cases hq2 : Q2 <;>
     simp [h0, h1, h2, hq0, hq1, hq2, m0, m1, m2]
 
-private theorem boundaryEdgeFoot :
-    (by
-      classical
-      exact
-        ∀ (W : ProtoTile), ∀ e ∈ BoundaryFootprintEdges W, e ∈ FootprintEdges W
-    ) := by
-  classical
-  intro W e he
-  simp only [BoundaryFootprintEdges, Set.mem_ofPred_eq] at he
-  simp only [FootprintEdges, Set.mem_ofPred_eq]
-  change ∃ c ∈ W.cells,
-    e = {c, c + 1} ∨ e = {c, c + ⟨0, 1⟩} ∨
-      e = {c + 1, c + 1 + ⟨0, 1⟩} ∨
-        e = {c + ⟨0, 1⟩, c + 1 + ⟨0, 1⟩}
-  rcases he with ⟨z, ⟨rfl, h⟩ | ⟨rfl, h⟩⟩
-  · rcases h with ⟨hz, _⟩ | ⟨_, hz⟩
-    · exact ⟨z, hz, Or.inl rfl⟩
-    · refine ⟨z - ⟨0, 1⟩, hz, Or.inr (Or.inr (Or.inr ?_))⟩
-      congr 1 <;> simp [Zsqrtd.ext_iff]
-  · rcases h with ⟨hz, _⟩ | ⟨_, hz⟩
-    · exact ⟨z, hz, Or.inr (Or.inl rfl)⟩
-    · refine ⟨z - 1, hz, Or.inr (Or.inr (Or.inl ?_))⟩
-      congr 1 <;> simp []
+private abbrev boundaryEdgeFoot := ApollonianSuperharmonic.BoundaryFootprintInclusion.boundaryEdge
 
 private theorem commonEdgeTouch :
     (by

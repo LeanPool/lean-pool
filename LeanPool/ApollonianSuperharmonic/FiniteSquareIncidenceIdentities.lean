@@ -127,43 +127,7 @@ private theorem hcountle :
           omega
         _ ≤ 4 := by simp
 
-private theorem hcornerCount :
-    ∀ (T : ProtoTile),
-    let I : GaussianInt := ⟨0, 1⟩
-    let cornerBag : Multiset GaussianInt := T.cells.1.bind fun c =>
-      ([c, c + 1, c + I, c + 1 + I] : List GaussianInt)
-    ∀ (z : GaussianInt), cornerBag.count z =
-      (if z ∈ T.cells then 1 else 0) +
-      (if z - 1 ∈ T.cells then 1 else 0) +
-      (if z - I ∈ T.cells then 1 else 0) +
-      (if z - 1 - I ∈ T.cells then 1 else 0) := by
-  classical
-  intro T I cornerBag z
-  dsimp only [cornerBag]
-  rw [Multiset.count_bind]
-  rw [← Finset.sum_eq_multiset_sum]
-  simp only [Multiset.coe_count, List.count_cons, beq_iff_eq,
-    List.count_nil]
-  have h11 : ∀ c : GaussianInt, (c + 1 + I = z) ↔ (c = z - 1 - I) := by
-    intro c
-    constructor <;> intro h
-    · rw [← h]; ring
-    · rw [h]; ring
-  have hI : ∀ c : GaussianInt, (c + I = z) ↔ (c = z - I) := by
-    intro c
-    constructor <;> intro h
-    · rw [← h]; ring
-    · rw [h]; ring
-  have h1 : ∀ c : GaussianInt, (c + 1 = z) ↔ (c = z - 1) := by
-    intro c
-    constructor <;> intro h
-    · rw [← h]; ring
-    · rw [h]; ring
-  simp_rw [h11, hI, h1]
-  simp only [Finset.sum_add_distrib, zero_add]
-  rw [Finset.sum_ite_eq', Finset.sum_ite_eq', Finset.sum_ite_eq',
-    Finset.sum_ite_eq']
-  omega
+private abbrev hcornerCount := ApollonianSuperharmonic.TileCornerMultiplicity.cornerCount
 
 private theorem hweighted :
     ∀ (T : ProtoTile),

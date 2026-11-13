@@ -583,20 +583,7 @@ private theorem hpform :
     canonicalSlope]
   rfl
 
-private theorem hrform :
-    (by
-      classical
-      exact
-        ∀ (k : PartialOdometer), ∀ (z : GaussianInt), ∀ (v : LatticeCell), ∀ (a' : GaussianInt),
-            ∀ (b' : ℤ), (k = PartialOdometerAffineTranslate (CurvatureOneOdometer z) v a' b') →
-            ((∀ (w : GaussianInt), PartialOdometerSlope (CurvatureOneOdometer w) = some (((w.im :
-            ℝ) / 2), ((w.im : ℝ) / 2))) → (PartialOdometerSlope k = some ((z.im : ℝ) / 2 + a'.re,
-            (z.im : ℝ) / 2 + a'.im))) ) := by
-  classical
-  intro k z v a' b' hkeq canonicalSlope
-  rw [hkeq, (PartialOdometerAffineTranslateFormulas _ v a' b').2.2.2.2.2,
-    canonicalSlope]
-  rfl
+private abbrev hrform := ApollonianSuperharmonic.UnitBoundaryDetails.hpform
 
 private theorem hmatrix :
     (by
@@ -747,17 +734,7 @@ private theorem hdomSq :
   ext y
   simp [hdu, FootprintVertices, hTu]
 
-private theorem kdomSq :
-    (by
-      classical
-      exact
-        ∀ (U : ProtoTile), ∀ (k : PartialOdometer), ∀ (v : LatticeCell), (U.cells = {v}) →
-            (((↑k.domain : Set GaussianInt) = FootprintVertices U) → ((k.domain : Set
-            GaussianInt) = {v, v + 1, v + ⟨0, 1⟩, v + 1 + ⟨0, 1⟩})) ) := by
-  classical
-  intro U k v hUv hdu'
-  ext y
-  simp [hdu', FootprintVertices, hUv]
+private abbrev kdomSq := ApollonianSuperharmonic.UnitBoundaryDetails.hdomSq
 
 private theorem hval :
     (by
@@ -772,18 +749,7 @@ private theorem hval :
   rw [hheq] at hy ⊢
   exact (PartialOdometerAffineTranslateFormulas _ u a b).2.2.1 y hy
 
-private theorem kval :
-    (by
-      classical
-      exact
-        ∀ (k : PartialOdometer), ∀ (z : GaussianInt), ∀ (v : LatticeCell), ∀ (a' : GaussianInt),
-            ∀ (b' : ℤ), (k = PartialOdometerAffineTranslate (CurvatureOneOdometer z) v a' b') →
-            (∀ y ∈ k.domain, k.value y = (CurvatureOneOdometer z).value (y - v) + a'.re * y.re +
-            a'.im * y.im + b') ) := by
-  classical
-  intro k z v a' b' hkeq y hy
-  rw [hkeq] at hy ⊢
-  exact (PartialOdometerAffineTranslateFormulas _ v a' b').2.2.1 y hy
+private abbrev kval := ApollonianSuperharmonic.UnitBoundaryDetails.hval
 
 private theorem hcoefAt798 :
     (by

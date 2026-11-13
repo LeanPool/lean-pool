@@ -6,6 +6,7 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.FordTileCellMembership
 
 public import LeanPool.ApollonianSuperharmonic.FordTile
 public import LeanPool.ApollonianSuperharmonic.FordVertexDomain
@@ -155,17 +156,7 @@ private theorem hFcells (q : Nat) (hqpos : 0 < q) : (FordTile q).cells.Nonempty 
       Int.natCast_eq_zero, Prod.exists, exists_eq_right_right, exists_eq_right, and_self]
   exact hqpos
 
-private theorem hcellTiles (q : Nat) (z : GaussianInt) :
-      z ∈ (FordTile q).cells ↔
-        0 ≤ z.re ∧ z.re < (q : Int) ∧
-          0 ≤ z.im ∧ z.im < (q : Int) := by
-  classical
-  have hcellCoord (z : GaussianInt) :
-      z ∈ FordCellDomain q ↔
-        0 ≤ z.re ∧ z.re < (q : Int) ∧
-          0 ≤ z.im ∧ z.im < (q : Int) := hcellCoord q z
-  change z ∈ FordCellDomain q ↔ _
-  exact hcellCoord z
+private abbrev hcellTiles := ApollonianSuperharmonic.FordTileCellMembership
 
 private theorem hhoriz (q : Nat) (z : GaussianInt) :
       ((z ∈ (FordTile q).cells ∧ z - ⟨0, 1⟩ ∉ (FordTile q).cells) ∨

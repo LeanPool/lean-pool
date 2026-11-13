@@ -126,17 +126,7 @@ private theorem hcheckP :
   simpa [P, LatticeVertexIncidentCell] using
     (LatticeTileGridStructure A hAlat).2.1 c
 
-private theorem hcheckQ :
-    (by
-      classical
-      exact
-        ∀ (B : ProtoTile), (LatticeTile B) → (∀ (c : GaussianInt),
-        let Q : Fin 4 → Prop := fun j => LatticeVertexIncidentCell c j ∈ B.cells
-        ¬ ((Q 0 ∧ Q 2 ∧ ¬ Q 1 ∧ ¬ Q 3) ∨ (Q 1 ∧ Q 3 ∧ ¬ Q 0 ∧ ¬ Q 2))) ) := by
-  classical
-  intro B hBlat c Q
-  simpa [Q, LatticeVertexIncidentCell] using
-    (LatticeTileGridStructure B hBlat).2.1 c
+private abbrev hcheckQ := ApollonianSuperharmonic.OppositeIncidentGeometry.hcheckP
 
 private theorem hnoR :
     (by

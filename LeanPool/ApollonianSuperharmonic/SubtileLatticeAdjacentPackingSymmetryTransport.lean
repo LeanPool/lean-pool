@@ -6,6 +6,7 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.LatticeAdjacentPackingSymmetryFacts
 public import LeanPool.ApollonianSuperharmonic.TileOdometerSlopeNonempty
 
 public import LeanPool.ApollonianSuperharmonic.P5625T1CentroidSlopeDifferenceCovariance
@@ -127,50 +128,11 @@ private theorem rotation_transport :
     Fin.val_neg', Fin.sub_def, Fin.add_def]
   all_goals ext <;> simp [R, I] <;> ring
 
-private theorem support_nonempty :
-    (by
-      classical
-      exact
-        ∀ (C : CircleCoordinates),
-          ∀ (U : ProtoTile),
-            ∀ (h : PartialOdometer),
-              ∀ (p : ℝ × ℝ),
-                TileOdometer C U h → PartialOdometerSlope h = some p → U.cells.Nonempty
-    ) := by
-  intro C U k p hO hp
-  exact TileOdometerSlopeNonempty.cells C U k p hO hp
+private abbrev support_nonempty := ApollonianSuperharmonic.TileOdometerSlopeNonempty.cells
 
-private theorem hsr₀ :
-    (by
-      classical
-      exact
-        ∀ (g : BandPackingSymmetry), ∀ (T₀ : ProtoTile), ∀ (h₀ : PartialOdometer), ∀ (p₀ : ℝ ×
-            ℝ), (PartialOdometerSlope h₀ = some p₀) → ((Finset.Nonempty T₀.cells) →
-            ((Finset.Nonempty T₀.cells → PartialOdometerSlope
-            (BandPackingSymmetryPartialOdometerAction g h₀) = Option.map
-            (BandPackingSymmetrySlopeAction g T₀) (PartialOdometerSlope h₀)) →
-            (PartialOdometerSlope (BandPackingSymmetryPartialOdometerAction g h₀) = some
-            (BandPackingSymmetrySlopeAction g T₀ p₀)))) ) := by
-  classical
-  intro g T₀ h₀ p₀ hp₀ hT₀ne hST₀
-  simpa [Option.map] using (hST₀ hT₀ne).trans
-    (congrArg (Option.map (BandPackingSymmetrySlopeAction g T₀)) hp₀)
+private abbrev hsr₀ := ApollonianSuperharmonic.LatticeAdjacentPackingSymmetryFacts.slopeAction
 
-private theorem hsrᵢ :
-    (by
-      classical
-      exact
-        ∀ (g : BandPackingSymmetry), ∀ (Tᵢ : ProtoTile), ∀ (hᵢ : PartialOdometer), ∀ (pᵢ : ℝ ×
-            ℝ), (PartialOdometerSlope hᵢ = some pᵢ) → ((Finset.Nonempty Tᵢ.cells) →
-            ((Finset.Nonempty Tᵢ.cells → PartialOdometerSlope
-            (BandPackingSymmetryPartialOdometerAction g hᵢ) = Option.map
-            (BandPackingSymmetrySlopeAction g Tᵢ) (PartialOdometerSlope hᵢ)) →
-            (PartialOdometerSlope (BandPackingSymmetryPartialOdometerAction g hᵢ) = some
-            (BandPackingSymmetrySlopeAction g Tᵢ pᵢ)))) ) := by
-  classical
-  intro g Tᵢ hᵢ pᵢ hpᵢ hTᵢne hSTᵢ
-  simpa [Option.map] using (hSTᵢ hTᵢne).trans
-    (congrArg (Option.map (BandPackingSymmetrySlopeAction g Tᵢ)) hpᵢ)
+private abbrev hsrᵢ := ApollonianSuperharmonic.LatticeAdjacentPackingSymmetryFacts.slopeAction
 
 private theorem incoming :
     (by

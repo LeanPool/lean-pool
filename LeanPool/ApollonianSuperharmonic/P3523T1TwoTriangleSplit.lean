@@ -699,10 +699,7 @@ private theorem hACinterAC (A : Real × Real) (C : Real × Real) : ({A,C} : Set 
   classical
   exact Set.inter_self _
 
-private theorem hBCinterBC (B : Real × Real) (C : Real × Real) : ({B,C} : Set (Real × Real)) ∩
-    {B,C} = {B,C} := by
-  classical
-  exact Set.inter_self _
+private abbrev hBCinterBC := ApollonianSuperharmonic.TwoTriangleSplit.hACinterAC
 
 private theorem hACinterBC (A : Real × Real) (B : Real × Real) (C : Real × Real) (hn :
     P3381T1TriangleDeterminant ![A, B, C] ≠ 0) : ({A,C} : Set (Real × Real)) ∩ {B,C} = {C} := by
@@ -783,11 +780,7 @@ private theorem hCinterAC (A : Real × Real) (C : Real × Real) : ({C} : Set (Re
   ext z
   simp []
 
-private theorem hCinterBC (B : Real × Real) (C : Real × Real) : ({C} : Set (Real × Real)) ∩ {B,C}
-    = {C} := by
-  classical
-  ext z
-  simp []
+private abbrev hCinterBC := ApollonianSuperharmonic.TwoTriangleSplit.hCinterAC
 
 private theorem hfaces (A : Real × Real) (B : Real × Real) (C : Real × Real) (u : Real) (hu : 0 <
     u ∧ u < 1) (hn : P3381T1TriangleDeterminant ![A, B, C] ≠ 0) : ∀ J : Set (Real × Real), J ⊆

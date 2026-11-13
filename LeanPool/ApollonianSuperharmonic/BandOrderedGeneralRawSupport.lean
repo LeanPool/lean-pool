@@ -6,6 +6,7 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.LatticeFootprintIncidence
 public import LeanPool.ApollonianSuperharmonic.PairAssignmentFacts
 public import LeanPool.ApollonianSuperharmonic.BandLayoutFaceSupport
 public import LeanPool.ApollonianSuperharmonic.BoundaryFootprintInclusion
@@ -229,28 +230,7 @@ private theorem hQC :
   · rw [h.1] at hCne
     simp at hCne
 
-private theorem raw_incident :
-    (by
-      classical
-      exact
-        ∀ (U : ProtoTile), ∀ (z : GaussianInt), (U.cells.Nonempty) → ((z ∈ FootprintVertices U) →
-            (∃ j : Fin 4, LatticeVertexIncidentCell z j ∈ U.cells)) ) := by
-  classical
-  intro U z hne hz
-  simp only [FootprintVertices, ite_eq_left hne, Set.mem_ofPred_eq] at hz
-  rcases hz with ⟨cell, hc, h | h | h | h⟩
-  · refine ⟨0, ?_⟩
-    simpa [LatticeVertexIncidentCell] using h ▸ hc
-  · refine ⟨1, ?_⟩
-    subst z
-    simpa [LatticeVertexIncidentCell] using hc
-  · refine ⟨3, ?_⟩
-    subst z
-    simpa [LatticeVertexIncidentCell] using hc
-  · refine ⟨2, ?_⟩
-    change z - 1 - ⟨0, 1⟩ ∈ U.cells
-    rw [h]
-    convert hc using 1; ext <;> simp
+private abbrev raw_incident := ApollonianSuperharmonic.LatticeFootprintIncidence.incidentCell
 
 private theorem raw_boundary :
     (by

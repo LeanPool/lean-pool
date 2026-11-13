@@ -6,6 +6,7 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.GaussianRealPointProperties
 
 public import LeanPool.ApollonianSuperharmonic.BandOrderedGeneralLayoutCertificate
 public import LeanPool.ApollonianSuperharmonic.BandPrototileCentroidUnique
@@ -2468,20 +2469,7 @@ private theorem centered_back_displacement :
   apply Prod.ext <;> norm_num [GaussianRealPoint] <;>
     linarith only [hc.1,hc.2,hd.1,hd.2,hvp.1,hvp.2]
 
-private theorem point_injective :
-    (by
-      classical
-      exact
-        Function.Injective GaussianRealPoint ) := by
-  classical
-  intro x y h
-  apply Zsqrtd.ext
-  · have hr := congrArg Prod.fst h
-    change (x.re : Real) = (y.re : Real) at hr
-    exact_mod_cast hr
-  · have hi := congrArg Prod.snd h
-    change (x.im : Real) = (y.im : Real) at hi
-    exact_mod_cast hi
+private abbrev point_injective := ApollonianSuperharmonic.GaussianRealPointProperties.injective
 
 private theorem first_requested :
     (by

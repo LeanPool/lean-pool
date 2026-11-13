@@ -31,18 +31,20 @@ private theorem hridx :
     (by
       classical
       exact
-        ∀ (q : Fin 4 → CircleCoordinates), ∀ (cfg : BandOrderedGeneralConfiguration q),
-            ((cfg.firstPredecessor (1 : Fin (4 : ℕ))).1 = (0 : ℤ)) → (
-        let t := cfg.firstPredecessor
-        ((0 : ℤ) < (t (0 : Fin (4 : ℕ))).1 ∧ (∀ (i : Fin (3 : ℕ)), (0 : ℤ) ≤ (t i.succ).1) ∧ ∀ (i
-            : Fin (3 : ℕ)), ∀ (j : Fin (3 : ℕ)), (t i.succ).1 = (0 : ℤ) → (t j.succ).1 = (0 : ℤ)
-            → i = j) → (∀ (ridx : Fin (3 : ℕ)), ∀ (s : BandPackingSymmetry), ∀ (F :
-            FordFareyParameter), ((t (ridx + (2 : Fin (3 : ℕ))).succ).1 = (0 : ℤ)) →
-            ((BandPackingSymmetryQuadrupleAction s ![t (0 : Fin (4 : ℕ)), t ridx.succ, t (ridx +
-            (1 : Fin (3 : ℕ))).succ, t (ridx + (2 : Fin (3 : ℕ))).succ] = FordRecursiveQuadruple
-            F) → (ridx = 1)))) ) := by
+        ∀ (q : Fin 4 → CircleCoordinates),
+          ∀ (cfg : BandOrderedGeneralConfiguration q),
+            (cfg.firstPredecessor (1 : Fin (4 : ℕ))).1 = (0 : ℤ) →
+              let t := cfg.firstPredecessor;
+              ((0 : ℤ) < (t (0 : Fin (4 : ℕ))).1 ∧
+                  (∀ (i : Fin (3 : ℕ)), (0 : ℤ) ≤ (t i.succ).1) ∧
+                    ∀ (i : Fin (3 : ℕ)),
+                      ∀ (j : Fin (3 : ℕ)),
+                        (t i.succ).1 = (0 : ℤ) → (t j.succ).1 = (0 : ℤ) → i = j) →
+                ∀ (ridx : Fin (3 : ℕ)),
+                  (t (ridx + (2 : Fin (3 : ℕ))).succ).1 = (0 : ℤ) → ridx = 1
+    ) := by
   classical
-  intro q cfg hzero t hcurv ridx s F hline hford
+  intro q cfg hzero t hcurv ridx hline
   fin_cases ridx
   · have hzero3 : (t 3).1 = 0 := by simpa using hline
     have eq := hcurv.2.2 2 0 hzero3 hzero
@@ -406,7 +408,7 @@ theorem P5472T1FordNormalization
   have hcurv := ProperBandCurvatureStructure t htproper
   obtain ⟨ridx, s, F, hFq, hrev, hword, hline, hford⟩ :=
     FordRegimeConverse t htproper ⟨1, hzero⟩
-  have hridx := FordNormalizationProof.hridx q cfg hzero hcurv ridx s F hline hford
+  have hridx := FordNormalizationProof.hridx q cfg hzero hcurv ridx hline
   subst ridx
   have hford' := FordNormalizationProof.hford' q cfg s F hford
   let succ (a : Fin 4 → CircleCoordinates) : Fin 4 → CircleCoordinates :=

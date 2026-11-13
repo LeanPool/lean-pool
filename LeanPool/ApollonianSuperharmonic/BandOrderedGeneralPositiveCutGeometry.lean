@@ -6,6 +6,9 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.P4590T1PositivePrototileDisk
+public import LeanPool.ApollonianSuperharmonic.LatticeFootprintIncidence
+public import LeanPool.ApollonianSuperharmonic.LatticeTileNonempty
 
 public import LeanPool.ApollonianSuperharmonic.BandExceptionalRestorationSectorOrder
 public import LeanPool.ApollonianSuperharmonic.BandPositiveCutBranchCompanionExclusion
@@ -88,54 +91,9 @@ private theorem birthData :
       exact hlt
     omega
 
-private theorem prototile_lattice :
-    (by
-      classical
-      exact
-        ∀ (c : CircleCoordinates), ∀ (X : ProtoTile), BandPrototile c X → 0 < c.1 → LatticeTile X
-            ) := by
-  classical
-  intro c X hX
-  induction hX with
-  | line w x hw => intro hc; simp at hc
-  | unit z x anchor =>
-    intro _
-    have hford := (FordTileGeometry 1 (by norm_num)).1
-    have hcells : ({x} : Finset GaussianInt) =
-        (TileTranslation (FordTile 1) x).cells := by
-      ext y
-      simp [TileTranslation, FordTile, FordCellDomain, GaussianTranslation,
-        ]
-      cases x; cases y; simp [Zsqrtd.ext_iff]
-    have hreal : TileRealization ⟨{x}, anchor⟩ =
-        TileRealization (TileTranslation (FordTile 1) x) := by
-      simp [TileRealization, hcells]
-    change TopologicalDisk (TileRealization (⟨{x}, anchor⟩ : ProtoTile))
-    have htrans : LatticeTile (TileTranslation (FordTile 1) x) :=
-      (TileDiskAreaCovariance (FordTile 1) x).1.mp hford
-    change TopologicalDisk (TileRealization (TileTranslation (FordTile 1) x))
-      at htrans
-    simpa [hreal] using htrans
-  | @decompose r hr S X hS hcells hfoot hcentroid ih =>
-    intro _
-    exact (BandTileSimultaneousInduction r hr X
-      (BandPrototile.decompose hr hS hcells hfoot hcentroid)).1
+private abbrev prototile_lattice := ApollonianSuperharmonic.P4590T1PositivePrototileDisk
 
-private theorem tile_nonempty :
-    (by
-      classical
-      exact
-        ∀ (X : ProtoTile), (LatticeTile X) → (X.cells.Nonempty) ) := by
-  classical
-  intro X hX
-  by_contra hne
-  have hempty : X.cells = ∅ := Finset.not_nonempty_iff_eq_empty.mp hne
-  have hreal : TileRealization X = ∅ := by simp [TileRealization, hempty]
-  rcases hX with ⟨homeo⟩
-  let p : (Metric.closedBall (0 : Real × Real) 1 : Set (Real × Real)) :=
-    ⟨0, by simp⟩
-  have hp : ((homeo p).val) ∈ TileRealization X := (homeo p).property
-  simp [hreal] at hp
+private abbrev tile_nonempty := ApollonianSuperharmonic.LatticeTileNonempty.cells
 
 private theorem positive_of_nonempty :
     (by
@@ -195,29 +153,7 @@ private theorem boundary_incident :
     have : x - 1 - ⟨0, 1⟩ = z := by rw [h]; abel
     simpa [LatticeVertexIncidentCell, this] using hz
 
-private theorem raw_incident :
-    (by
-      classical
-      exact
-        ∀ (X : ProtoTile), ∀ (x : GaussianInt), (X.cells.Nonempty) → ((x ∈ FootprintVertices X) →
-            (∃ j : Fin 4, LatticeVertexIncidentCell x j ∈ X.cells)) ) := by
-  classical
-  intro X x hne hx
-  unfold FootprintVertices at hx
-  rw [ite_eq_left hne] at hx
-  rcases hx with ⟨z, hz, hcorner⟩
-  rcases hcorner with h | h | h | h
-  · refine ⟨0, ?_⟩
-    simpa [LatticeVertexIncidentCell, h] using hz
-  · refine ⟨1, ?_⟩
-    have : x - 1 = z := by rw [h]; simp
-    simpa [LatticeVertexIncidentCell, this] using hz
-  · refine ⟨3, ?_⟩
-    have : x - ⟨0, 1⟩ = z := by rw [h]; abel
-    simpa [LatticeVertexIncidentCell, this] using hz
-  · refine ⟨2, ?_⟩
-    have : x - 1 - ⟨0, 1⟩ = z := by rw [h]; abel
-    simpa [LatticeVertexIncidentCell, this] using hz
+private abbrev raw_incident := ApollonianSuperharmonic.LatticeFootprintIncidence.incidentCell
 
 private theorem getLast_mem_of_eq_some :
     (by

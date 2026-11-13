@@ -177,23 +177,23 @@ private theorem hcentralIndex :
     (by
       classical
       exact
-        ∀ (C : BandCircle), ∀ (T : ProtoTile), ∀ (N : ProtoTile), ∀ (h : PartialOdometer), ∀ (k :
-            PartialOdometer), ∀ (x : GaussianInt), ∀ (normalization :
-            BandOrderedGeneralRightNormalizationCertificate C T N h k x), ∀ (j : Fin (4 : ℕ)), ∀
-            (centralSlot : Fin (3 : ℕ)), ∀ (centralSign : Bool), (LatticeVertexIncidentCell
-            normalization.normalizedPoint (j + (2 : Fin (4 : ℕ))) ∈ (normalization.layout.P
-            centralSlot centralSign).cells) → (
-        let labelOf : Fin 3 → Bool → SixSubtileLabel := fun i s =>
-          if i = 0 then (if s = true then .A else .B)
-          else if i = 1 then (if s = true then .C else .D)
-          else (if s = true then .E else .F)
-        let centralIndex : PeriodicSubtileIndex :=
-          ⟨labelOf centralSlot centralSign, 0, 0⟩
-        centralIndex = ⟨.A, 0, 0⟩ ∨ centralIndex = ⟨.B, 0, 0⟩ ∨ centralIndex = ⟨.C, 0, 0⟩ ∨
-            centralIndex = ⟨.D, 0, 0⟩ ∨ centralIndex = ⟨.E, 0, 0⟩ ∨ centralIndex = ⟨.F, 0, 0⟩) )
+        ∀ (centralSlot : Fin (3 : ℕ)),
+          ∀ (centralSign : Bool),
+            let labelOf : Fin 3 → Bool → SixSubtileLabel := fun i s =>
+              if i = 0 then if s = true then .A else .B
+              else
+                if i = 1 then if s = true then .C else .D else if s = true then .E else .F
+            let centralIndex : PeriodicSubtileIndex :=
+              ⟨labelOf centralSlot centralSign, 0, 0⟩
+            centralIndex = ⟨.A, 0, 0⟩ ∨
+              centralIndex = ⟨.B, 0, 0⟩ ∨
+                centralIndex = ⟨.C, 0, 0⟩ ∨
+                  centralIndex = ⟨.D, 0, 0⟩ ∨
+                    centralIndex = ⟨.E, 0, 0⟩ ∨ centralIndex = ⟨.F, 0, 0⟩
+    )
             := by
   classical
-  intro C T N h k x normalization j centralSlot centralSign hcentral labelOf centralIndex
+  intro centralSlot centralSign labelOf centralIndex
   fin_cases centralSlot <;> cases centralSign <;>
     simp [centralIndex, labelOf]
 
@@ -230,43 +230,67 @@ private theorem hexteriorOccurrence :
     (by
       classical
       exact
-        ∀ (C : BandCircle), ∀ (T : ProtoTile), ∀ (N : ProtoTile), ∀ (h : PartialOdometer), ∀ (k :
-            PartialOdometer), ∀ (x : GaussianInt), ∀ (normalization :
-            BandOrderedGeneralRightNormalizationCertificate C T N h k x), ∀ (j : Fin (4 : ℕ)), ∀
-            (selectedSlot : Fin (3 : ℕ)), ∀ (selectedSign : Bool), (LatticeVertexIncidentCell
-            normalization.normalizedPoint j ∈ (normalization.pieces selectedSlot
-            selectedSign).cells) → (
-        let m : Int := if normalization.rightDirectionSlot = 0 then
-            (if normalization.rightNeighborPositive = true then 1 else -1)
-          else if normalization.rightDirectionSlot = 1 then 0
-          else if normalization.rightNeighborPositive = true then -1 else 1
-        let n : Int := if normalization.rightDirectionSlot = 0 then 0
-          else if normalization.rightDirectionSlot = 1 then
-            (if normalization.rightNeighborPositive = true then 1 else -1)
-          else if normalization.rightNeighborPositive = true then -1 else 1
-        (normalization.rightNeighborDisplacement = (m : GaussianInt) * normalization.layout.u +
-            (n : GaussianInt) * normalization.layout.v) → (
-        let labelOf : Fin 3 → Bool → SixSubtileLabel := fun i s =>
-          if i = 0 then (if s = true then .A else .B)
-          else if i = 1 then (if s = true then .C else .D)
-          else (if s = true then .E else .F)
-        let exteriorIndex : PeriodicSubtileIndex :=
-          ⟨labelOf selectedSlot selectedSign, m, n⟩
-        ((normalization.rightNeighborPositive = true ∧ ((normalization.rightDirectionSlot = 0 ∧
-            exteriorIndex.first = 1 ∧ exteriorIndex.second = 0) ∨
-            (normalization.rightDirectionSlot = 1 ∧ exteriorIndex.first = 0 ∧
-            exteriorIndex.second = 1) ∨ (normalization.rightDirectionSlot = 2 ∧
-            exteriorIndex.first = -1 ∧ exteriorIndex.second = -1))) ∨
-            (normalization.rightNeighborPositive = false ∧ ((normalization.rightDirectionSlot = 0
-            ∧ exteriorIndex.first = -1 ∧ exteriorIndex.second = 0) ∨
-            (normalization.rightDirectionSlot = 1 ∧ exteriorIndex.first = 0 ∧
-            exteriorIndex.second = -1) ∨ (normalization.rightDirectionSlot = 2 ∧
-            exteriorIndex.first = 1 ∧ exteriorIndex.second = 1)))) →
-            (SubtileOccurrenceInterpretation normalization.layout.P normalization.layout.u
-            normalization.layout.v exteriorIndex = TileTranslation (normalization.layout.P
-            selectedSlot selectedSign) normalization.rightNeighborDisplacement))) ) := by
+        ∀ (C : BandCircle),
+          ∀ (T : ProtoTile),
+            ∀ (N : ProtoTile),
+              ∀ (h : PartialOdometer),
+                ∀ (k : PartialOdometer),
+                  ∀ (x : GaussianInt),
+                    ∀
+                      (normalization :
+                        BandOrderedGeneralRightNormalizationCertificate C T N h k x),
+                      ∀ (selectedSlot : Fin (3 : ℕ)),
+                        ∀ (selectedSign : Bool),
+                          let m : Int :=
+                            if normalization.rightDirectionSlot = 0 then
+                              if normalization.rightNeighborPositive = true then 1 else -1
+                            else
+                              if normalization.rightDirectionSlot = 1 then 0
+                              else
+                                if normalization.rightNeighborPositive = true then -1
+                              else 1
+                          let n : Int :=
+                            if normalization.rightDirectionSlot = 0 then 0
+                            else
+                              if normalization.rightDirectionSlot = 1 then
+                                if normalization.rightNeighborPositive = true then 1
+                              else -1
+                              else
+                                if normalization.rightNeighborPositive = true then -1
+                              else 1
+                          normalization.rightNeighborDisplacement =
+                              (m : GaussianInt) * normalization.layout.u +
+                                (n : GaussianInt) * normalization.layout.v →
+                            let labelOf : Fin 3 → Bool → SixSubtileLabel := fun i s =>
+                              if i = 0 then if s = true then .A else .B
+                              else
+                                if i = 1 then if s = true then .C else .D
+                              else if s = true then .E else .F
+                            let exteriorIndex : PeriodicSubtileIndex :=
+                              ⟨labelOf selectedSlot selectedSign, m, n⟩
+                            normalization.rightNeighborPositive = true ∧
+                                (normalization.rightDirectionSlot = 0 ∧
+                                exteriorIndex.first = 1 ∧ exteriorIndex.second = 0 ∨
+                                normalization.rightDirectionSlot = 1 ∧
+                                exteriorIndex.first = 0 ∧ exteriorIndex.second = 1 ∨
+                                normalization.rightDirectionSlot = 2 ∧
+                                exteriorIndex.first = -1 ∧ exteriorIndex.second = -1) ∨
+                                normalization.rightNeighborPositive = false ∧
+                                (normalization.rightDirectionSlot = 0 ∧
+                                exteriorIndex.first = -1 ∧ exteriorIndex.second = 0 ∨
+                                normalization.rightDirectionSlot = 1 ∧
+                                exteriorIndex.first = 0 ∧ exteriorIndex.second = -1 ∨
+                                normalization.rightDirectionSlot = 2 ∧
+                                exteriorIndex.first = 1 ∧ exteriorIndex.second = 1) →
+                              SubtileOccurrenceInterpretation normalization.layout.P
+                                normalization.layout.u normalization.layout.v
+                                exteriorIndex =
+                                TileTranslation
+                                (normalization.layout.P selectedSlot selectedSign)
+                                normalization.rightNeighborDisplacement
+    ) := by
   classical
-  intro C T N h k x normalization j selectedSlot selectedSign hselected m n hdisplacement labelOf
+  intro C T N h k x normalization selectedSlot selectedSign m n hdisplacement labelOf
       exteriorIndex hshift
   rw [hdisplacement]
   fin_cases selectedSlot <;> cases selectedSign <;>
@@ -551,14 +575,12 @@ private theorem hstar :
         ∀ (C : BandCircle), ∀ (T : ProtoTile), ∀ (N : ProtoTile), ∀ (h : PartialOdometer), ∀ (k :
             PartialOdometer), ∀ (x : GaussianInt), ∀ (normalization :
             BandOrderedGeneralRightNormalizationCertificate C T N h k x), ∀ (j : Fin (4 : ℕ)),
-            (LatticeVertexIncidentCell normalization.normalizedPoint j ∈
-            normalization.normalizedRoot.cells) → ((LatticeVertexIncidentCell
-            normalization.normalizedPoint (j + (2 : Fin (4 : ℕ))) ∈
-            normalization.normalizedFixed.cells) → (∀ (selectedSlot : Fin (3 : ℕ)), ∀
-            (selectedSign : Bool), (LatticeVertexIncidentCell normalization.normalizedPoint j ∈
-            (normalization.pieces selectedSlot selectedSign).cells) → (∀ (centralSlot : Fin (3 :
-            ℕ)), ∀ (centralSign : Bool), (LatticeVertexIncidentCell normalization.normalizedPoint
-            (j + (2 : Fin (4 : ℕ))) ∈ (normalization.layout.P centralSlot centralSign).cells) → (
+                                                  (
+                                                   (∀ (selectedSlot : Fin (3 : ℕ)), ∀
+            (selectedSign : Bool),
+                                                                      (∀ (centralSlot : Fin (3 :
+            ℕ)), ∀ (centralSign : Bool),
+                                                                                                (
         let m : Int := if normalization.rightDirectionSlot = 0 then
             (if normalization.rightNeighborPositive = true then 1 else -1)
           else if normalization.rightDirectionSlot = 1 then 0
@@ -613,9 +635,9 @@ private theorem hstar :
             (SubtileOccurrenceInterpretation normalization.layout.P normalization.layout.u
             normalization.layout.v centralIndex))))))))) ) := by
   classical
-  intro C T N h k x normalization j hjroot hjfixed selectedSlot selectedSign hselected
-      centralSlot centralSign hcentral m n labelOf exteriorIndex centralIndex hexteriorCell
-      hcentralCell exteriorCorners centralCorners y hy
+  intro C T N h k x normalization j selectedSlot selectedSign centralSlot centralSign m n
+      labelOf exteriorIndex centralIndex hexteriorCell hcentralCell exteriorCorners
+      centralCorners y hy
   fin_cases j <;>
     simp only [LatticeVertexIncidentCell, sub_eq_add_neg, Int.reduceNeg, add_assoc,
         Fin.mk_one, Fin.isValue, Matrix.cons_val_one, Matrix.cons_val_zero, add_comm,
@@ -725,142 +747,122 @@ private theorem hselectedBoundary :
     (by
       classical
       exact
-        ∀ (C : BandCircle), ∀ (T : ProtoTile), ∀ (N : ProtoTile), ∀ (h : PartialOdometer), ∀ (k :
-            PartialOdometer), ∀ (x : GaussianInt), ∀ (normalization :
-            BandOrderedGeneralRightNormalizationCertificate C T N h k x),
-        let q := normalization.normalizedPresentation
-        ∀ (j : Fin (4 : ℕ)), ∀ (selectedSlot : Fin (3 : ℕ)), ∀ (selectedSign : Bool),
-            (LatticeVertexIncidentCell normalization.normalizedPoint j ∈ (normalization.pieces
-            selectedSlot selectedSign).cells) → (∀ (centralSlot : Fin (3 : ℕ)), ∀ (centralSign :
-            Bool),
-        let m : Int := if normalization.rightDirectionSlot = 0 then
-            (if normalization.rightNeighborPositive = true then 1 else -1)
-          else if normalization.rightDirectionSlot = 1 then 0
-          else if normalization.rightNeighborPositive = true then -1 else 1
-        let n : Int := if normalization.rightDirectionSlot = 0 then 0
-          else if normalization.rightDirectionSlot = 1 then
-            (if normalization.rightNeighborPositive = true then 1 else -1)
-          else if normalization.rightNeighborPositive = true then -1 else 1
-        let labelOf : Fin 3 → Bool → SixSubtileLabel := fun i s =>
-          if i = 0 then (if s = true then .A else .B)
-          else if i = 1 then (if s = true then .C else .D)
-          else (if s = true then .E else .F)
-        let exteriorIndex : PeriodicSubtileIndex :=
-          ⟨labelOf selectedSlot selectedSign, m, n⟩
-        let centralIndex : PeriodicSubtileIndex :=
-          ⟨labelOf centralSlot centralSign, 0, 0⟩
-        ((normalization.rightNeighborPositive = true ∧ ((normalization.rightDirectionSlot = 0 ∧
-            exteriorIndex.first = 1 ∧ exteriorIndex.second = 0) ∨
-            (normalization.rightDirectionSlot = 1 ∧ exteriorIndex.first = 0 ∧
-            exteriorIndex.second = 1) ∨ (normalization.rightDirectionSlot = 2 ∧
-            exteriorIndex.first = -1 ∧ exteriorIndex.second = -1))) ∨
-            (normalization.rightNeighborPositive = false ∧ ((normalization.rightDirectionSlot = 0
-            ∧ exteriorIndex.first = -1 ∧ exteriorIndex.second = 0) ∨
-            (normalization.rightDirectionSlot = 1 ∧ exteriorIndex.first = 0 ∧
-            exteriorIndex.second = -1) ∨ (normalization.rightDirectionSlot = 2 ∧
-            exteriorIndex.first = 1 ∧ exteriorIndex.second = 1)))) →
-            ((SubtileOccurrenceInterpretation normalization.layout.P normalization.layout.u
-            normalization.layout.v exteriorIndex = TileTranslation (normalization.layout.P
-            selectedSlot selectedSign) normalization.rightNeighborDisplacement) → ((BandPrototile
-            (q selectedSlot.succ) (normalization.pieces selectedSlot selectedSign)) →
-            ((BandPrototile (q selectedSlot.succ) (normalization.layout.P selectedSlot
-            selectedSign)) → ((BandPrototile (q selectedSlot.succ) (TileTranslation
-            (normalization.layout.P selectedSlot selectedSign)
-            normalization.rightNeighborDisplacement)) → ((TileCentroid (normalization.pieces
-            selectedSlot selectedSign) = TileCentroid (TileTranslation (normalization.layout.P
-            selectedSlot selectedSign) normalization.rightNeighborDisplacement)) →
-            (((normalization.pieces selectedSlot selectedSign).cells = (TileTranslation
-            (normalization.layout.P selectedSlot selectedSign)
-            normalization.rightNeighborDisplacement).cells ∧ ((normalization.pieces selectedSlot
-            selectedSign).cells = ∅ → (normalization.pieces selectedSlot selectedSign).anchor =
-            (TileTranslation (normalization.layout.P selectedSlot selectedSign)
-            normalization.rightNeighborDisplacement).anchor)) → ((FootprintVertices
-            (normalization.pieces selectedSlot selectedSign) = FootprintVertices (TileTranslation
-            (normalization.layout.P selectedSlot selectedSign)
-            normalization.rightNeighborDisplacement) ∧ BoundaryFootprintVertices
-            (normalization.pieces selectedSlot selectedSign) = BoundaryFootprintVertices
-            (TileTranslation (normalization.layout.P selectedSlot selectedSign)
-            normalization.rightNeighborDisplacement) ∧ BoundaryFootprintEdges
-            (normalization.pieces selectedSlot selectedSign) = BoundaryFootprintEdges
-            (TileTranslation (normalization.layout.P selectedSlot selectedSign)
-            normalization.rightNeighborDisplacement) ∧ TileRealization (normalization.pieces
-            selectedSlot selectedSign) = TileRealization (TileTranslation (normalization.layout.P
-            selectedSlot selectedSign) normalization.rightNeighborDisplacement) ∧ TileCentroid
-            (normalization.pieces selectedSlot selectedSign) = TileCentroid (TileTranslation
-            (normalization.layout.P selectedSlot selectedSign)
-            normalization.rightNeighborDisplacement)) → (((normalization.pieces selectedSlot
-            selectedSign).cells = (SubtileOccurrenceInterpretation normalization.layout.P
-            normalization.layout.u normalization.layout.v exteriorIndex).cells) →
-            (((normalization.pieces selectedSlot selectedSign).cells = ∅ → (normalization.pieces
-            selectedSlot selectedSign).anchor = (SubtileOccurrenceInterpretation
-            normalization.layout.P normalization.layout.u normalization.layout.v
-            exteriorIndex).anchor) → ((FootprintVertices (normalization.pieces selectedSlot
-            selectedSign) = FootprintVertices (SubtileOccurrenceInterpretation
-            normalization.layout.P normalization.layout.u normalization.layout.v exteriorIndex))
-            → ((0 ≤ (q selectedSlot.succ).1) → ((0 < (q selectedSlot.succ).1) →
-            ((((normalization.functions selectedSlot selectedSign).domain : Set GaussianInt) =
-            FootprintVertices (SubtileOccurrenceInterpretation normalization.layout.P
-            normalization.layout.u normalization.layout.v exteriorIndex)) →
-            ((LatticeVertexIncidentCell normalization.normalizedPoint j ∈
-            (SubtileOccurrenceInterpretation normalization.layout.P normalization.layout.u
-            normalization.layout.v exteriorIndex).cells) → ((LatticeVertexIncidentCell
-            normalization.normalizedPoint j ∈ FootprintVertices (SubtileOccurrenceInterpretation
-            normalization.layout.P normalization.layout.u normalization.layout.v exteriorIndex) ∧
-            LatticeVertexIncidentCell normalization.normalizedPoint j + (1 : GaussianInt) ∈
-            FootprintVertices (SubtileOccurrenceInterpretation normalization.layout.P
-            normalization.layout.u normalization.layout.v exteriorIndex) ∧
-            LatticeVertexIncidentCell normalization.normalizedPoint j + (⟨(0 : ℤ), (1 : ℤ)⟩ :
-            GaussianInt) ∈ FootprintVertices (SubtileOccurrenceInterpretation
-            normalization.layout.P normalization.layout.u normalization.layout.v exteriorIndex) ∧
-            LatticeVertexIncidentCell normalization.normalizedPoint j + (1 : GaussianInt) + (⟨(0
-            : ℤ), (1 : ℤ)⟩ : GaussianInt) ∈ FootprintVertices (SubtileOccurrenceInterpretation
-            normalization.layout.P normalization.layout.u normalization.layout.v exteriorIndex))
-            → ((forall y, y = normalization.normalizedPoint ∨ y = normalization.normalizedPoint +
-            1 ∨ y = normalization.normalizedPoint - 1 ∨ y = normalization.normalizedPoint + ⟨0,
-            1⟩ ∨ y = normalization.normalizedPoint - ⟨0, 1⟩ -> y ∈ FootprintVertices
-            (SubtileOccurrenceInterpretation normalization.layout.P normalization.layout.u
-            normalization.layout.v exteriorIndex) ∨ y ∈ FootprintVertices
-            (SubtileOccurrenceInterpretation normalization.layout.P normalization.layout.u
-            normalization.layout.v centralIndex)) → (∀ (localizedEdge : Finset GaussianInt),
-            (localizedEdge ∈ FootprintEdges (SubtileOccurrenceInterpretation
-            normalization.layout.P normalization.layout.u normalization.layout.v exteriorIndex) ∩
-            FootprintEdges (SubtileOccurrenceInterpretation normalization.layout.P
-            normalization.layout.u normalization.layout.v centralIndex)) →
-            ((normalization.rightNeighborPositive = true ∧ (normalization.rightDirectionSlot = (0
-            : Fin (3 : ℕ)) ∧ (exteriorIndex = (⟨SixSubtileLabel.C, (1 : ℤ), (0 : ℤ)⟩ :
-            PeriodicSubtileIndex) ∨ exteriorIndex = (⟨SixSubtileLabel.F, (1 : ℤ), (0 : ℤ)⟩ :
-            PeriodicSubtileIndex)) ∨ normalization.rightDirectionSlot = (1 : Fin (3 : ℕ)) ∧
-            (exteriorIndex = (⟨SixSubtileLabel.E, (0 : ℤ), (1 : ℤ)⟩ : PeriodicSubtileIndex) ∨
-            exteriorIndex = (⟨SixSubtileLabel.B, (0 : ℤ), (1 : ℤ)⟩ : PeriodicSubtileIndex)) ∨
-            normalization.rightDirectionSlot = (2 : Fin (3 : ℕ)) ∧ (exteriorIndex =
-            (⟨SixSubtileLabel.A, (-1 : ℤ), (-1 : ℤ)⟩ : PeriodicSubtileIndex) ∨ exteriorIndex =
-            (⟨SixSubtileLabel.D, (-1 : ℤ), (-1 : ℤ)⟩ : PeriodicSubtileIndex))) ∨
-            normalization.rightNeighborPositive = false ∧ (normalization.rightDirectionSlot = (0
-            : Fin (3 : ℕ)) ∧ (exteriorIndex = (⟨SixSubtileLabel.D, (-1 : ℤ), (0 : ℤ)⟩ :
-            PeriodicSubtileIndex) ∨ exteriorIndex = (⟨SixSubtileLabel.E, (-1 : ℤ), (0 : ℤ)⟩ :
-            PeriodicSubtileIndex)) ∨ normalization.rightDirectionSlot = (1 : Fin (3 : ℕ)) ∧
-            (exteriorIndex = (⟨SixSubtileLabel.F, (0 : ℤ), (-1 : ℤ)⟩ : PeriodicSubtileIndex) ∨
-            exteriorIndex = (⟨SixSubtileLabel.A, (0 : ℤ), (-1 : ℤ)⟩ : PeriodicSubtileIndex)) ∨
-            normalization.rightDirectionSlot = (2 : Fin (3 : ℕ)) ∧ (exteriorIndex =
-            (⟨SixSubtileLabel.B, (1 : ℤ), (1 : ℤ)⟩ : PeriodicSubtileIndex) ∨ exteriorIndex =
-            (⟨SixSubtileLabel.C, (1 : ℤ), (1 : ℤ)⟩ : PeriodicSubtileIndex)))) → (∀ [
-            Nonempty (BandOrderedGeneralSelectedContactRow q normalization.configuration
-            normalization.normalizedCircle normalization.normalizedFixed normalization.layout
-            exteriorIndex centralIndex)], (exteriorIndex = ⟨.A, -1, -1⟩ ∨ exteriorIndex = ⟨.A, 0,
-            -1⟩ ∨ exteriorIndex = ⟨.C, 1, 0⟩ ∨ exteriorIndex = ⟨.C, 1, 1⟩ ∨ exteriorIndex = ⟨.E,
-            0, 1⟩ ∨ exteriorIndex = ⟨.E, -1, 0⟩ ∨ exteriorIndex = ⟨.B, 1, 1⟩ ∨ exteriorIndex =
-            ⟨.B, 0, 1⟩ ∨ exteriorIndex = ⟨.D, -1, 0⟩ ∨ exteriorIndex = ⟨.D, -1, -1⟩ ∨
-            exteriorIndex = ⟨.F, 0, -1⟩ ∨ exteriorIndex = ⟨.F, 1, 0⟩) → ((selectedSlot =
-            normalization.rightFirstSlot ∧ selectedSign = normalization.firstBoundarySign) ∨
-            (selectedSlot = normalization.rightSecondSlot ∧ selectedSign =
-            normalization.secondBoundarySign)))))))))))))))))))))) ) := by
+        ∀ (C : BandCircle),
+          ∀ (T : ProtoTile),
+            ∀ (N : ProtoTile),
+              ∀ (h : PartialOdometer),
+                ∀ (k : PartialOdometer),
+                  ∀ (x : GaussianInt),
+                    ∀
+                      (normalization :
+                        BandOrderedGeneralRightNormalizationCertificate C T N h k x),
+                      let q := normalization.normalizedPresentation;
+                      ∀ (selectedSlot : Fin (3 : ℕ)),
+                        ∀ (selectedSign : Bool),
+                          ∀ (centralSlot : Fin (3 : ℕ)),
+                            ∀ (centralSign : Bool),
+                              let m : Int :=
+                                if normalization.rightDirectionSlot = 0 then
+                                if normalization.rightNeighborPositive = true then 1
+                              else -1
+                              else
+                                if normalization.rightDirectionSlot = 1 then 0
+                              else
+                                if normalization.rightNeighborPositive = true then -1
+                              else 1;
+                              let n : Int :=
+                                if normalization.rightDirectionSlot = 0 then 0
+                              else
+                                if normalization.rightDirectionSlot = 1 then
+                                if normalization.rightNeighborPositive = true then 1
+                              else -1
+                              else
+                                if normalization.rightNeighborPositive = true then -1
+                              else 1;
+                              let labelOf : Fin 3 → Bool → SixSubtileLabel := fun i s =>
+                                if i = 0 then if s = true then .A else .B
+                              else
+                                if i = 1 then if s = true then .C else .D
+                              else if s = true then .E else .F;
+                              let exteriorIndex : PeriodicSubtileIndex :=
+                                ⟨labelOf selectedSlot selectedSign, m, n⟩;
+                              let centralIndex : PeriodicSubtileIndex :=
+                                ⟨labelOf centralSlot centralSign, 0, 0⟩;
+                              normalization.rightNeighborPositive = true ∧
+                                (normalization.rightDirectionSlot = 0 ∧
+                                exteriorIndex.first = 1 ∧ exteriorIndex.second = 0 ∨
+                                normalization.rightDirectionSlot = 1 ∧
+                                exteriorIndex.first = 0 ∧ exteriorIndex.second = 1 ∨
+                                normalization.rightDirectionSlot = 2 ∧
+                                exteriorIndex.first = -1 ∧ exteriorIndex.second = -1) ∨
+                                normalization.rightNeighborPositive = false ∧
+                                (normalization.rightDirectionSlot = 0 ∧
+                                exteriorIndex.first = -1 ∧ exteriorIndex.second = 0 ∨
+                                normalization.rightDirectionSlot = 1 ∧
+                                exteriorIndex.first = 0 ∧ exteriorIndex.second = -1 ∨
+                                normalization.rightDirectionSlot = 2 ∧
+                                exteriorIndex.first = 1 ∧ exteriorIndex.second = 1) →
+                                0 ≤ (q selectedSlot.succ).1 →
+                                0 < (q selectedSlot.succ).1 →
+                                normalization.rightNeighborPositive = true ∧
+                                (normalization.rightDirectionSlot = (0 : Fin (3 : ℕ)) ∧
+                                (exteriorIndex =
+                                (⟨SixSubtileLabel.C, (1 : ℤ), (0 : ℤ)⟩ :
+                                PeriodicSubtileIndex) ∨
+                                exteriorIndex =
+                                (⟨SixSubtileLabel.F, (1 : ℤ), (0 : ℤ)⟩ :
+                                PeriodicSubtileIndex)) ∨
+                                normalization.rightDirectionSlot = (1 : Fin (3 : ℕ)) ∧
+                                (exteriorIndex =
+                                (⟨SixSubtileLabel.E, (0 : ℤ), (1 : ℤ)⟩ :
+                                PeriodicSubtileIndex) ∨
+                                exteriorIndex =
+                                (⟨SixSubtileLabel.B, (0 : ℤ), (1 : ℤ)⟩ :
+                                PeriodicSubtileIndex)) ∨
+                                normalization.rightDirectionSlot = (2 : Fin (3 : ℕ)) ∧
+                                (exteriorIndex =
+                                (⟨SixSubtileLabel.A, (-1 : ℤ), (-1 : ℤ)⟩ :
+                                PeriodicSubtileIndex) ∨
+                                exteriorIndex =
+                                (⟨SixSubtileLabel.D, (-1 : ℤ), (-1 : ℤ)⟩ :
+                                PeriodicSubtileIndex))) ∨
+                                normalization.rightNeighborPositive = false ∧
+                                (normalization.rightDirectionSlot = (0 : Fin (3 : ℕ)) ∧
+                                (exteriorIndex =
+                                (⟨SixSubtileLabel.D, (-1 : ℤ), (0 : ℤ)⟩ :
+                                PeriodicSubtileIndex) ∨
+                                exteriorIndex =
+                                (⟨SixSubtileLabel.E, (-1 : ℤ), (0 : ℤ)⟩ :
+                                PeriodicSubtileIndex)) ∨
+                                normalization.rightDirectionSlot = (1 : Fin (3 : ℕ)) ∧
+                                (exteriorIndex =
+                                (⟨SixSubtileLabel.F, (0 : ℤ), (-1 : ℤ)⟩ :
+                                PeriodicSubtileIndex) ∨
+                                exteriorIndex =
+                                (⟨SixSubtileLabel.A, (0 : ℤ), (-1 : ℤ)⟩ :
+                                PeriodicSubtileIndex)) ∨
+                                normalization.rightDirectionSlot = (2 : Fin (3 : ℕ)) ∧
+                                (exteriorIndex =
+                                (⟨SixSubtileLabel.B, (1 : ℤ), (1 : ℤ)⟩ :
+                                PeriodicSubtileIndex) ∨
+                                exteriorIndex =
+                                (⟨SixSubtileLabel.C, (1 : ℤ), (1 : ℤ)⟩ :
+                                PeriodicSubtileIndex))) →
+                                ∀
+                                [Nonempty
+                                (BandOrderedGeneralSelectedContactRow q
+                                normalization.configuration normalization.normalizedCircle
+                                normalization.normalizedFixed normalization.layout
+                                exteriorIndex centralIndex)],
+                                selectedSlot = normalization.rightFirstSlot ∧
+                                selectedSign = normalization.firstBoundarySign ∨
+                                selectedSlot = normalization.rightSecondSlot ∧
+                                selectedSign = normalization.secondBoundarySign
+    ) := by
   classical
-  intro C T N h k x normalization q j selectedSlot selectedSign hselected centralSlot centralSign
-      m n labelOf exteriorIndex centralIndex hshift hexteriorOccurrence hpieceBand hlayoutBand
-      htranslatedLayout hcentroidAlign hselectedUnique hselectedObservables hselectedCells
-      hselectedAnchor hselectedFootprint hparentNonnegative hparentPositive hselectedDomain
-      hexteriorCell exteriorCorners hstar localizedEdge hlocalizedCommon hclassification hcontact
-      hexteriorIndex
+  intro C T N h k x normalization q selectedSlot selectedSign centralSlot centralSign m n
+      labelOf exteriorIndex centralIndex hshift hparentNonnegative hparentPositive
+      hclassification hcontact
   rcases normalization.right_slots_cyclic with hslots | hslots | hslots <;>
     rcases hslots with ⟨hfirst, hsecond, hdirection⟩ <;>
     rcases normalization.boundary_signs with hsigns | hsigns <;>
@@ -943,10 +945,10 @@ theorem BandOrderedGeneralRightRoutingCertificateExists
   let centralIndex : PeriodicSubtileIndex :=
     ⟨labelOf centralSlot centralSign, 0, 0⟩
   have hshift := RightRoutingGeometry.hshift C T N h k x normalization selectedSlot selectedSign
-  have hcentralIndex := RightRoutingGeometry.hcentralIndex C T N h k x normalization j
-      centralSlot centralSign hcentral
+  have hcentralIndex := RightRoutingGeometry.hcentralIndex
+      centralSlot centralSign
   have hexteriorOccurrence := RightRoutingGeometry.hexteriorOccurrence C T N h k x normalization
-      j selectedSlot selectedSign hselected (RightRoutingGeometry.hdisplacement C T N h k x
+      selectedSlot selectedSign (RightRoutingGeometry.hdisplacement C T N h k x
       normalization period0 period1 (RightRoutingGeometry.period2 C T N h k x normalization
       (BandVectorOutgoingSum q normalization.configuration.proper) period0 period1))
       hshift
@@ -1003,8 +1005,8 @@ theorem BandOrderedGeneralRightRoutingCertificateExists
   have footprint_of_cell := RightRoutingGeometry.footprint_of_cell
   have exteriorCorners := footprint_of_cell _ _ hexteriorCell
   have centralCorners := footprint_of_cell _ _ hcentralCell
-  have hstar := RightRoutingGeometry.hstar C T N h k x normalization j hjroot hjfixed
-      selectedSlot selectedSign hselected centralSlot centralSign hcentral hexteriorCell
+  have hstar := RightRoutingGeometry.hstar C T N h k x normalization j
+      selectedSlot selectedSign centralSlot centralSign hexteriorCell
       hcentralCell exteriorCorners centralCorners
   obtain ⟨localizedEdge, hlocalizedPoint, hlocalizedCommon,
       hclassification, hcontact⟩ :=
@@ -1027,11 +1029,8 @@ theorem BandOrderedGeneralRightRoutingCertificateExists
       selectedSign := selectedSign
       selected_piece_cell := hselected
       selected_boundary_piece := (@RightRoutingGeometry.hselectedBoundary C T N h k x
-          normalization j selectedSlot selectedSign hselected centralSlot centralSign hshift
-          hexteriorOccurrence hpieceBand hlayoutBand htranslatedLayout hcentroidAlign
-          hselectedUnique hselectedObservables hselectedCells hselectedAnchor hselectedFootprint
-          hparentNonnegative hparentPositive hselectedDomain hexteriorCell exteriorCorners hstar
-          localizedEdge hlocalizedCommon hclassification hcontact hexteriorIndex)
+          normalization selectedSlot selectedSign centralSlot centralSign hshift
+          hparentNonnegative hparentPositive hclassification hcontact)
       exteriorIndex := exteriorIndex
       centralIndex := centralIndex
       exterior_index := hexteriorIndex

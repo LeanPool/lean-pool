@@ -6,6 +6,7 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.TileTranslationProperties
 
 public import LeanPool.ApollonianSuperharmonic.P4339T1PrecursorSupportGeometry
 public import LeanPool.ApollonianSuperharmonic.P4366T1PrecursorRemainderFamily
@@ -25,18 +26,7 @@ namespace ApollonianSuperharmonic
 
 namespace RemainderAttachmentGeometry
 
-private theorem zero_translation :
-    (by
-      classical
-      exact
-        ∀ (U : ProtoTile), TileTranslation U 0 = U ) := by
-  classical
-  intro U
-  have htranslation : GaussianTranslation 0 = id := by
-    funext a
-    exact add_zero a
-  cases U
-  simp [TileTranslation, htranslation]
+private abbrev zero_translation := ApollonianSuperharmonic.TileTranslationProperties.zero
 
 private theorem isolated :
     (by

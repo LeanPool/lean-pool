@@ -64,53 +64,13 @@ private theorem haUim :
   have h := congrArg Prod.snd haU
   simpa [GaussianRealPoint] using h
 
-private theorem haWre :
-    (by
-      classical
-      exact
-        ∀ (W : ProtoTile), ∀ (aW : GaussianInt), (GaussianRealPoint aW = ((TileCentroid W).1 +
-            (TileCentroid W).2, (TileCentroid W).2 - (TileCentroid W).1)) → ((aW.re : Real) =
-            (TileCentroid W).1 + (TileCentroid W).2) ) := by
-  classical
-  intro W aW haW
-  have h := congrArg Prod.fst haW
-  simpa [GaussianRealPoint] using h
+private abbrev haWre := ApollonianSuperharmonic.OppositeEndpointGeometry.haUre
 
-private theorem haWim :
-    (by
-      classical
-      exact
-        ∀ (W : ProtoTile), ∀ (aW : GaussianInt), (GaussianRealPoint aW = ((TileCentroid W).1 +
-            (TileCentroid W).2, (TileCentroid W).2 - (TileCentroid W).1)) → ((aW.im : Real) =
-            (TileCentroid W).2 - (TileCentroid W).1) ) := by
-  classical
-  intro W aW haW
-  have h := congrArg Prod.snd haW
-  simpa [GaussianRealPoint] using h
+private abbrev haWim := ApollonianSuperharmonic.OppositeEndpointGeometry.haUim
 
-private theorem haZre :
-    (by
-      classical
-      exact
-        ∀ (Z : ProtoTile), ∀ (aZ : GaussianInt), (GaussianRealPoint aZ = ((TileCentroid Z).1 +
-            (TileCentroid Z).2, (TileCentroid Z).2 - (TileCentroid Z).1)) → ((aZ.re : Real) =
-            (TileCentroid Z).1 + (TileCentroid Z).2) ) := by
-  classical
-  intro Z aZ haZ
-  have h := congrArg Prod.fst haZ
-  simpa [GaussianRealPoint] using h
+private abbrev haZre := ApollonianSuperharmonic.OppositeEndpointGeometry.haUre
 
-private theorem haZim :
-    (by
-      classical
-      exact
-        ∀ (Z : ProtoTile), ∀ (aZ : GaussianInt), (GaussianRealPoint aZ = ((TileCentroid Z).1 +
-            (TileCentroid Z).2, (TileCentroid Z).2 - (TileCentroid Z).1)) → ((aZ.im : Real) =
-            (TileCentroid Z).2 - (TileCentroid Z).1) ) := by
-  classical
-  intro Z aZ haZ
-  have h := congrArg Prod.snd haZ
-  simpa [GaussianRealPoint] using h
+private abbrev haZim := ApollonianSuperharmonic.OppositeEndpointGeometry.haUim
 
 private theorem hWpCent :
     (by
@@ -397,29 +357,9 @@ private theorem hUedges :
   ext e
   simp only [FootprintEdges, Set.mem_ofPred_eq, hUc]
 
-private theorem hWedges :
-    (by
-      classical
-      exact
-        ∀ (W : ProtoTile), ∀ (aW : GaussianInt), ((TileTranslation (TileQuarterTurn W) aW).cells
-            = W.cells) → (FootprintEdges (TileTranslation (TileQuarterTurn W) aW) =
-            FootprintEdges W) ) := by
-  classical
-  intro W aW hWc
-  ext e
-  simp only [FootprintEdges, Set.mem_ofPred_eq, hWc]
+private abbrev hWedges := ApollonianSuperharmonic.OppositeEndpointGeometry.hUedges
 
-private theorem hZedges :
-    (by
-      classical
-      exact
-        ∀ (Z : ProtoTile), ∀ (aZ : GaussianInt), ((TileTranslation (TileQuarterTurn Z) aZ).cells
-            = Z.cells) → (FootprintEdges (TileTranslation (TileQuarterTurn Z) aZ) =
-            FootprintEdges Z) ) := by
-  classical
-  intro Z aZ hZc
-  ext e
-  simp only [FootprintEdges, Set.mem_ofPred_eq, hZc]
+private abbrev hZedges := ApollonianSuperharmonic.OppositeEndpointGeometry.hUedges
 
 private theorem hFvU :
     (by
@@ -935,76 +875,24 @@ private theorem hstep :
     (by
       classical
       exact
-        ∀ (r : Fin (4 : ℕ) → CircleCoordinates), ∀ (i : Fin (3 : ℕ)), ∀ (s : Fin (4 : ℕ)), ∀ (U :
-            ProtoTile), ∀ (W : ProtoTile), ∀ (Z : ProtoTile),
-        let q : GaussianInt := ⟨0, 1⟩
-        ∀ (aU : GaussianInt), (GaussianRealPoint aU = ((TileCentroid U).1 + (TileCentroid U).2,
-            (TileCentroid U).2 - (TileCentroid U).1)) → (((TileTranslation (TileQuarterTurn U)
-            aU).cells = U.cells) → ((U.cells = ∅ → (TileTranslation (TileQuarterTurn U)
-            aU).anchor = U.anchor) → ((FootprintVertices (TileTranslation (TileQuarterTurn U) aU)
-            = FootprintVertices U) → (∀ (aW : GaussianInt), ∀ (aZ : GaussianInt),
-        let Wp := TileTranslation W (aU - aW)
-        let Zp := TileTranslation Z (aU - aZ)
-        (BandPrototile (r i.succ) Wp) → ((BandPrototile (r ((if Even s.val then i - 1 else i +
-            1).succ)) Zp) → (((aU.re : Real) = (TileCentroid U).1 + (TileCentroid U).2) →
-            (((aU.im : Real) = (TileCentroid U).2 - (TileCentroid U).1) → ((TileCentroid Wp -
-            TileCentroid U = (-(TileCentroid W - TileCentroid U).2, (TileCentroid W -
-            TileCentroid U).1)) → ((TileCentroid Zp - TileCentroid U = (-(TileCentroid Z -
-            TileCentroid U).2, (TileCentroid Z - TileCentroid U).1)) → (
-        let t : Fin 4 := s + 1
-        (TileCentroid Wp - TileCentroid U = (1 / 2 : Real) • GaussianRealPoint (q ^ t.val *
-            (BandVectors.1 (r i.succ) (r 0) + BandVectors.1 (r 0) (r i.succ)))) → ((TileCentroid
-            Zp - TileCentroid U = (1 / 2 : Real) • GaussianRealPoint (q ^ t.val * (if Even t.val
-            then BandVectors.1 (r ((i + 1).succ)) (r 0) - BandVectors.1 (r 0) (r ((i + 1).succ))
-            else BandVectors.1 (r 0) (r ((i - 1).succ)) - BandVectors.1 (r ((i - 1).succ)) (r
-            0)))) → (
-        ((pairedEndpointPackage r U) i t Wp
-            Zp) → (
-        let F : GaussianInt → GaussianInt := fun x => GaussianQuarterTurn x + aU
-        let f : GaussianInt → GaussianInt := fun x =>
-          GaussianQuarterTurn (GaussianQuarterTurn (GaussianQuarterTurn (x - aU)))
-        (∀ (x : GaussianInt), f (F x) = x) → ((∀ (x : GaussianInt), F (f x) = x) →
-            ((Function.Injective f) → ((FootprintEdges (TileTranslation (TileQuarterTurn U) aU) =
-            FootprintEdges U) → ((FootprintVertices U = F '' FootprintVertices U) →
-            ((FootprintEdges U = (fun e : Finset GaussianInt => e.image F) '' FootprintEdges U) →
-            ((FootprintVertices Wp = F '' FootprintVertices W) → ((FootprintVertices Zp = F ''
-            FootprintVertices Z) → ((FootprintEdges Wp = (fun e : Finset GaussianInt => e.image
-            F) '' FootprintEdges W) → ((FootprintEdges Zp = (fun e : Finset GaussianInt =>
-            e.image F) '' FootprintEdges Z) → ((∀ (S : Set GaussianInt), f '' (F '' S) = S) → ((∀
-            (E : Set (Finset GaussianInt)), (fun e : Finset GaussianInt => e.image f) '' ((fun e
-            : Finset GaussianInt => e.image F) '' E) = E) → ((∀ (v : GaussianInt), F ∘
-            GaussianTranslation v = GaussianTranslation (GaussianQuarterTurn v) ∘ F) → ((∀ (v :
-            GaussianInt), (fun e : Finset GaussianInt => e.image F) ∘ (fun e : Finset GaussianInt
-            => e.image (GaussianTranslation v)) = (fun e : Finset GaussianInt => e.image
-            (GaussianTranslation (GaussianQuarterTurn v))) ∘ (fun e : Finset GaussianInt =>
-            e.image F)) → ((∀ (v : GaussianInt), FootprintVertices (TileTranslation U
-            (GaussianQuarterTurn v)) = F '' FootprintVertices (TileTranslation U v)) → ((∀ (v :
-            GaussianInt), FootprintEdges (TileTranslation U (GaussianQuarterTurn v)) = (fun e :
-            Finset GaussianInt => e.image F) '' FootprintEdges (TileTranslation U v)) → (
-        let q3 : GaussianInt → GaussianInt := fun x =>
-          GaussianQuarterTurn (GaussianQuarterTurn (GaussianQuarterTurn x))
-        (FootprintVertices U = f '' FootprintVertices U) → ((FootprintEdges U = (fun e : Finset
-            GaussianInt => e.image f) '' FootprintEdges U) → ((FootprintVertices W = f ''
-            FootprintVertices Wp) → ((FootprintVertices Z = f '' FootprintVertices Zp) →
-            ((FootprintEdges W = (fun e : Finset GaussianInt => e.image f) '' FootprintEdges Wp)
-            → ((FootprintEdges Z = (fun e : Finset GaussianInt => e.image f) '' FootprintEdges
-            Zp) → ((∀ (v : GaussianInt), FootprintVertices (TileTranslation U (q3 v)) = f ''
-            FootprintVertices (TileTranslation U v)) → ((∀ (v : GaussianInt), FootprintEdges
-            (TileTranslation U (q3 v)) = (fun e : Finset GaussianInt => e.image f) ''
-            FootprintEdges (TileTranslation U v)) → (∀ a b : GaussianInt, (b = a + 1 ∨ b = a - 1
-            ∨ b = a + ⟨0, 1⟩ ∨ b = a - ⟨0, 1⟩) → (f b = f a + 1 ∨ f b = f a - 1 ∨ f b = f a + ⟨0,
-            1⟩ ∨ f b = f a - ⟨0, 1⟩)))))))))))))))))))))))))))))))))))))) ) := by
+        (Fin (4 : ℕ) → CircleCoordinates) →
+          Fin (3 : ℕ) →
+            Fin (4 : ℕ) →
+              ProtoTile →
+                ProtoTile →
+                  ∀ (aU : GaussianInt),
+                    GaussianInt →
+                      GaussianInt →
+                        let f : GaussianInt → GaussianInt := fun x =>
+                          GaussianQuarterTurn
+                            (GaussianQuarterTurn (GaussianQuarterTurn (x - aU)));
+                        ∀ a b : GaussianInt,
+                          b = a + 1 ∨ b = a - 1 ∨ b = a + ⟨0, 1⟩ ∨ b = a - ⟨0, 1⟩ →
+                            f b = f a + 1 ∨
+                              f b = f a - 1 ∨ f b = f a + ⟨0, 1⟩ ∨ f b = f a - ⟨0, 1⟩
+    ) := by
   classical
-  intro r i s U W Z q aU haU hUc hUa hUv aW aZ Wp Zp hWp hZp haUre haUim hWpCent hZpCent t hWsrc
-      hZsrc sourceData F f hFf hfF hf hUedges hFvU hFeU hFvW hFvZ hFeW hFeZ hinvV hinvE
-      hFtranslate hFtranslateE hFchildV hFchildE q3 hbaseV hbaseE hparentWV hparentZV hparentWE
-      hparentZE hchildV hchildE a b hab
-  let uR : GaussianInt := q ^ s.val *
-    (if Even s.val then BandVectors.1 (r 0) (r i.succ)
-      else BandVectors.1 (r i.succ) (r 0))
-  let uL : GaussianInt := q ^ s.val *
-    (if Even s.val then BandVectors.1 (r i.succ) (r 0)
-      else BandVectors.1 (r 0) (r i.succ))
+  intro r i s W Z aU aW aZ f a b hab
   rcases hab with h | h | h | h
   · subst b
     right
@@ -1300,10 +1188,7 @@ theorem P4055T1OrderedGeneralOppositeEndpoints :
       even2 notEven1 notEven3 hq3mul
   have hdispL := OppositeEndpointGeometry.hdispL r i s hq2 hq3 hq2act even0
       even2 notEven1 notEven3 hq3mul
-  have hstep := OppositeEndpointGeometry.hstep r i s U W Z aU
-            haU hUc hUa hUv aW aZ hWp hZp haUre haUim hWpCent hZpCent hWsrc hZsrc sourceData hFf
-            hfF hf hUedges hFvU hFeU hFvW hFvZ hFeW hFeZ hinvV hinvE hFtranslate hFtranslateE
-            hFchildV hFchildE hbaseV hbaseE hparentWV hparentZV hparentWE hparentZE hchildV hchildE
+  have hstep := OppositeEndpointGeometry.hstep r i s W Z aU aW aZ
   rcases sourceData with ⟨Rsrc, Isrc, Asrc, hRsrc, hIneq, hICA, hRCA, hAAB⟩
   have hchildVR := OppositeEndpointGeometry.hchildVR r i s U
           aU hchildV hdispR

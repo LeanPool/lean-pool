@@ -233,23 +233,32 @@ private theorem hiAt337 :
     (by
       classical
       exact
-        ∀ (P : FordFareyParameter), ∀ (i : Fin (3 : ℕ)), ∀ (s : Fin (4 : ℕ)), ∀ (T : ProtoTile),
-            ∀ (U : ProtoTile), ∀ (k : PartialOdometer), ∀ (p : ℝ × ℝ), ∀ (p' : ℝ × ℝ), ((0 : ℤ) <
-            (FordRecursiveQuadruple P i.succ).1) → ((TileOdometer (FordRecursiveQuadruple P
-            i.succ) U k) → ((TileCentroid U - TileCentroid T = (1 / 2 : ℝ) • GaussianRealPoint
-            ((⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt) ^ (↑s : ℕ) * (BandVectors.1
-            (FordRecursiveQuadruple P i.succ) (FordRecursiveQuadruple P (0 : Fin (4 : ℕ))) +
-            BandVectors.1 (FordRecursiveQuadruple P (0 : Fin (4 : ℕ))) (FordRecursiveQuadruple P
-            i.succ)))) → ((p'.1 - p.1 = ((1 / 2 : ℝ) • GaussianRealPoint ((-(⟨(0 : ℤ), (1 : ℤ)⟩ :
-            GaussianInt)) ^ (↑s : ℕ) * (BandVectors.2 (FordRecursiveQuadruple P i.succ)
-            (FordRecursiveQuadruple P (0 : Fin (4 : ℕ))) + BandVectors.2 (FordRecursiveQuadruple
-            P (0 : Fin (4 : ℕ))) (FordRecursiveQuadruple P i.succ)))).1) → ((p'.2 - p.2 = ((1 / 2
-            : ℝ) • GaussianRealPoint ((-(⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt)) ^ (↑s : ℕ) *
-            (BandVectors.2 (FordRecursiveQuadruple P i.succ) (FordRecursiveQuadruple P (0 : Fin
-            (4 : ℕ))) + BandVectors.2 (FordRecursiveQuadruple P (0 : Fin (4 : ℕ)))
-            (FordRecursiveQuadruple P i.succ)))).2) → (i.val < 2))))) ) := by
+        ∀ (P : FordFareyParameter),
+          ∀ (i : Fin (3 : ℕ)),
+            ∀ (s : Fin (4 : ℕ)),
+              ∀ (p : ℝ × ℝ),
+                ∀ (p' : ℝ × ℝ),
+                  (0 : ℤ) < (FordRecursiveQuadruple P i.succ).1 →
+                    p'.1 - p.1 =
+                        ((1 / 2 : ℝ) •
+                            GaussianRealPoint
+                              ((-(⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt)) ^ (↑s : ℕ) *
+                                (BandVectors.2 (FordRecursiveQuadruple P i.succ)
+                                (FordRecursiveQuadruple P (0 : Fin (4 : ℕ))) +
+                                BandVectors.2 (FordRecursiveQuadruple P (0 : Fin (4 : ℕ)))
+                                (FordRecursiveQuadruple P i.succ)))).1 →
+                      p'.2 - p.2 =
+                          ((1 / 2 : ℝ) •
+                              GaussianRealPoint
+                                ((-(⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt)) ^ (↑s : ℕ) *
+                                (BandVectors.2 (FordRecursiveQuadruple P i.succ)
+                                (FordRecursiveQuadruple P (0 : Fin (4 : ℕ))) +
+                                BandVectors.2 (FordRecursiveQuadruple P (0 : Fin (4 : ℕ)))
+                                (FordRecursiveQuadruple P i.succ)))).2 →
+                        i.val < 2
+    ) := by
   classical
-  intro P i s T U k p p' hpos hU hc ha hb
+  intro P i s p p' hpos ha hb
   by_contra hn
   have hi : i = 2 := Fin.ext (by omega)
   subst i
@@ -370,64 +379,90 @@ private theorem sourceAt395 :
     (by
       classical
       exact
-        ∀ (P : FordFareyParameter), ((1 : ℕ) < P.q) → (∀ (i : Fin (3 : ℕ)), ∀ (s : Fin (4 : ℕ)),
-            ∀ (T : ProtoTile), ∀ (U : ProtoTile), ∀ (h : PartialOdometer), ∀ (k :
-            PartialOdometer), ∀ (p : ℝ × ℝ), ∀ (p' : ℝ × ℝ), ∀ (x : GaussianInt), (TileCentroid U
-            - TileCentroid T = (1 / 2 : ℝ) • GaussianRealPoint ((⟨(0 : ℤ), (1 : ℤ)⟩ :
-            GaussianInt) ^ (↑s : ℕ) * (BandVectors.1 (FordRecursiveQuadruple P i.succ)
-            (FordRecursiveQuadruple P (0 : Fin (4 : ℕ))) + BandVectors.1 (FordRecursiveQuadruple
-            P (0 : Fin (4 : ℕ))) (FordRecursiveQuadruple P i.succ)))) → ((p'.1 - p.1 = ((1 / 2 :
-            ℝ) • GaussianRealPoint ((-(⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt)) ^ (↑s : ℕ) *
-            (BandVectors.2 (FordRecursiveQuadruple P i.succ) (FordRecursiveQuadruple P (0 : Fin
-            (4 : ℕ))) + BandVectors.2 (FordRecursiveQuadruple P (0 : Fin (4 : ℕ)))
-            (FordRecursiveQuadruple P i.succ)))).1) → ((p'.2 - p.2 = ((1 / 2 : ℝ) •
-            GaussianRealPoint ((-(⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt)) ^ (↑s : ℕ) * (BandVectors.2
-            (FordRecursiveQuadruple P i.succ) (FordRecursiveQuadruple P (0 : Fin (4 : ℕ))) +
-            BandVectors.2 (FordRecursiveQuadruple P (0 : Fin (4 : ℕ))) (FordRecursiveQuadruple P
-            i.succ)))).2) → ((x ∈ h.domain) → ((x ∈ k.domain) → (∀ (j : Fin (2 : ℕ)), ∀ (A :
-            FordFareyParameter), (A.p = ![P.p₁, P.p₂] j) → ((A.q = ![P.q₁, P.q₂] j) → (∀ (u :
-            GaussianInt), ∀ (B : ℤ), ∀ (f : IntegerLatticeFunction), (∀ (x : GaussianInt), x ∈
-            h.domain ↔ x - u ∈ FordVertexDomain P.q) → ((∀ y ∈ FordVertexDomain P.q, f y =
-            FordOdometer P y) → (((1 / 2 : ℝ) • GaussianRealPoint ((⟨(0 : ℤ), (1 : ℤ)⟩ :
-            GaussianInt) ^ (↑s : ℕ) * (BandVectors.1 (FordRecursiveQuadruple P i.succ)
-            (FordRecursiveQuadruple P (0 : Fin (4 : ℕ))) + BandVectors.1 (FordRecursiveQuadruple
-            P (0 : Fin (4 : ℕ))) (FordRecursiveQuadruple P i.succ))) = (((↑(![P.q₁, P.q₂] j) : ℝ)
-            - (↑P.q : ℝ)) / (2 : ℝ) + (↑(P5332T1ParentRows P j s (0 : ℤ)).displacement.re : ℝ),
-            ((↑(![P.q₁, P.q₂] j) : ℝ) - (↑P.q : ℝ)) / (2 : ℝ) + (↑(P5332T1ParentRows P j s (0 :
-            ℤ)).displacement.im : ℝ)) ∧ (1 / 2 : ℝ) • GaussianRealPoint ((-(⟨(0 : ℤ), (1 : ℤ)⟩ :
-            GaussianInt)) ^ (↑s : ℕ) * (BandVectors.2 (FordRecursiveQuadruple P i.succ)
-            (FordRecursiveQuadruple P (0 : Fin (4 : ℕ))) + BandVectors.2 (FordRecursiveQuadruple
-            P (0 : Fin (4 : ℕ))) (FordRecursiveQuadruple P i.succ))) = (((↑(![P.p₁, P.p₂] j) : ℝ)
-            - (↑P.p : ℝ)) / (2 : ℝ) + (↑(P5332T1ParentRows P j s (0 : ℤ)).linear.re : ℝ),
-            ((↑(![P.p₁, P.p₂] j) : ℝ) - (↑P.p : ℝ)) / (2 : ℝ) + (↑(P5332T1ParentRows P j s (0 :
-            ℤ)).linear.im : ℝ)) ∧ ((⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt) ^ (↑s : ℕ) * if Even (↑s :
-            ℕ) then BandVectors.1 (FordRecursiveQuadruple P (0 : Fin (4 : ℕ)))
-            (FordRecursiveQuadruple P i.succ) else BandVectors.1 (FordRecursiveQuadruple P
-            i.succ) (FordRecursiveQuadruple P (0 : Fin (4 : ℕ)))) = (P5332T1ParentRows P j s (0
-            : ℤ)).companion) → ((∀ (x : GaussianInt), x ∈ k.domain ↔ x - u - (P5332T1ParentRows
-            P j s (0 : ℤ)).displacement ∈ FordVertexDomain A.q) → ((∀ (x : LatticeCell), x ∈
-            U.cells ↔ x - u - (P5332T1ParentRows P j s (0 : ℤ)).displacement ∈ (FordTile
-            A.q).cells) → ((TileCentroid U - TileCentroid T = (((↑A.q : ℝ) - (↑P.q : ℝ)) / (2 :
-            ℝ) + (↑(P5332T1ParentRows P j s (0 : ℤ)).displacement.re : ℝ), ((↑A.q : ℝ) - (↑P.q
-            : ℝ)) / (2 : ℝ) + (↑(P5332T1ParentRows P j s (0 : ℤ)).displacement.im : ℝ))) →
-            ((p'.1 - p.1 = ((↑A.p : ℝ) - (↑P.p : ℝ)) / (2 : ℝ) + (↑(P5332T1ParentRows P j s (0
-            : ℤ)).linear.re : ℝ)) → ((p'.2 - p.2 = ((↑A.p : ℝ) - (↑P.p : ℝ)) / (2 : ℝ) +
-            (↑(P5332T1ParentRows P j s (0 : ℤ)).linear.im : ℝ)) → ((∀ (y : GaussianInt), y -
-            (P5332T1ParentRows P j s (0 : ℤ)).displacement ∈ FordVertexDomain A.q → f y =
-            FordOdometer A (y - (P5332T1ParentRows P j s (0 : ℤ)).displacement) +
-            (P5332T1ParentRows P j s (0 : ℤ)).linear.re * y.re + (P5332T1ParentRows P j s (0
-            : ℤ)).linear.im * y.im + B) → ((∀ (l : Fin (5 : ℕ)), x - u + ![(0 : ℤ√(-1 : ℤ)), (1 :
-            ℤ√(-1 : ℤ)), (-1 : ℤ√(-1 : ℤ)), (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt), -(⟨(0 : ℤ), (1 :
-            ℤ)⟩ : GaussianInt)] l ∈ FordVertexDomain P.q ∨ x - u + ![(0 : ℤ√(-1 : ℤ)), (1 : ℤ√(-1
-            : ℤ)), (-1 : ℤ√(-1 : ℤ)), (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt), -(⟨(0 : ℤ), (1 : ℤ)⟩ :
-            GaussianInt)] l - (P5332T1ParentRows P j s (0 : ℤ)).displacement ∈ FordVertexDomain
-            A.q) → (∃ t : Int, 0 ≤ t ∧ t < ((![P.q₁,P.q₂] j : Nat) : Int) ∧ (∀ l : Fin 5, f (x-u
-            + (![0,1,-1,(⟨0,1⟩ : GaussianInt),-⟨0,1⟩] l)) = (P5332T1ParentRows P j s t).values
-            l) ∧ (x-u - (P5332T1ParentRows P j s 0).companion ∈ FordVertexDomain P.q ↔ t = 0 ∧
-            Even (s.val+j.val)))))))))))))))))))) ) := by
+        ∀ (P : FordFareyParameter),
+          (1 : ℕ) < P.q →
+            ∀ (i : Fin (3 : ℕ)),
+              ∀ (s : Fin (4 : ℕ)),
+                ∀ (h : PartialOdometer),
+                  ∀ (k : PartialOdometer),
+                    ∀ (p : ℝ × ℝ),
+                      ∀ (p' : ℝ × ℝ),
+                        ∀ (x : GaussianInt),
+                          p'.1 - p.1 =
+                              ((1 / 2 : ℝ) •
+                                GaussianRealPoint
+                                ((-(⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt)) ^ (↑s : ℕ) *
+                                (BandVectors.2 (FordRecursiveQuadruple P i.succ)
+                                (FordRecursiveQuadruple P (0 : Fin (4 : ℕ))) +
+                                BandVectors.2 (FordRecursiveQuadruple P (0 : Fin (4 : ℕ)))
+                                (FordRecursiveQuadruple P i.succ)))).1 →
+                            p'.2 - p.2 =
+                                ((1 / 2 : ℝ) •
+                                GaussianRealPoint
+                                ((-(⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt)) ^ (↑s : ℕ) *
+                                (BandVectors.2 (FordRecursiveQuadruple P i.succ)
+                                (FordRecursiveQuadruple P (0 : Fin (4 : ℕ))) +
+                                BandVectors.2 (FordRecursiveQuadruple P (0 : Fin (4 : ℕ)))
+                                (FordRecursiveQuadruple P i.succ)))).2 →
+                              x ∈ h.domain →
+                                x ∈ k.domain →
+                                ∀ (j : Fin (2 : ℕ)),
+                                ∀ (A : FordFareyParameter),
+                                A.p = ![P.p₁, P.p₂] j →
+                                A.q = ![P.q₁, P.q₂] j →
+                                ∀ (u : GaussianInt),
+                                ∀ (B : ℤ),
+                                ∀ (f : IntegerLatticeFunction),
+                                (∀ (x : GaussianInt),
+                                x ∈ h.domain ↔ x - u ∈ FordVertexDomain P.q) →
+                                (∀ y ∈ FordVertexDomain P.q, f y = FordOdometer P y) →
+                                (∀ (x : GaussianInt),
+                                x ∈ k.domain ↔
+                                x - u - (P5332T1ParentRows P j s (0 : ℤ)).displacement ∈
+                                FordVertexDomain A.q) →
+                                p'.1 - p.1 =
+                                ((↑A.p : ℝ) - (↑P.p : ℝ)) / (2 : ℝ) +
+                                (↑(P5332T1ParentRows P j s (0 : ℤ)).linear.re : ℝ) →
+                                p'.2 - p.2 =
+                                ((↑A.p : ℝ) - (↑P.p : ℝ)) / (2 : ℝ) +
+                                (↑(P5332T1ParentRows P j s (0 : ℤ)).linear.im : ℝ) →
+                                (∀ (y : GaussianInt),
+                                y - (P5332T1ParentRows P j s (0 : ℤ)).displacement ∈
+                                FordVertexDomain A.q →
+                                f y =
+                                FordOdometer A
+                                (y - (P5332T1ParentRows P j s (0 : ℤ)).displacement) +
+                                (P5332T1ParentRows P j s (0 : ℤ)).linear.re * y.re +
+                                (P5332T1ParentRows P j s (0 : ℤ)).linear.im * y.im +
+                                B) →
+                                (∀ (l : Fin (5 : ℕ)),
+                                x - u +
+                                ![(0 : ℤ√(-1 : ℤ)), (1 : ℤ√(-1 : ℤ)), (-1 : ℤ√(-1 : ℤ)),
+                                (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt),
+                                -(⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt)]
+                                l ∈
+                                FordVertexDomain P.q ∨
+                                x - u +
+                                ![(0 : ℤ√(-1 : ℤ)), (1 : ℤ√(-1 : ℤ)), (-1 : ℤ√(-1 : ℤ)),
+                                (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt),
+                                -(⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt)]
+                                l -
+                                (P5332T1ParentRows P j s (0 : ℤ)).displacement ∈
+                                FordVertexDomain A.q) →
+                                ∃ t : Int,
+                                0 ≤ t ∧
+                                t < ((![P.q₁, P.q₂] j : Nat) : Int) ∧
+                                (∀ l : Fin 5,
+                                f
+                                (x - u + ![0, 1, -1, (⟨0, 1⟩ : GaussianInt), -⟨0, 1⟩] l) =
+                                (P5332T1ParentRows P j s t).values l) ∧
+                                (x - u - (P5332T1ParentRows P j s 0).companion ∈
+                                FordVertexDomain P.q ↔
+                                t = 0 ∧ Even (s.val + j.val))
+    ) := by
   classical
-  intro P hq i s T U h k p p' x hc ha hb hx hx' j A hAp hAq u B f hdom hbase vv hdom' hcell'
-      hcent hslope hslope' hother hstar'
+  intro P hq i s h k p p' x ha hb hx hx' j A hAp hAq u B f hdom hbase hdom' hslope hslope'
+      hother hstar'
   fin_cases j <;> fin_cases s
   · obtain ⟨t, ht, ht', _, _, hv, hh⟩ := P5332T1Parent1Rotation0Values P A hq hAp hAq
       f B (x-u) hbase hother ((hdom x).mp hx) ((hdom' x).mp hx') hstar'
@@ -640,7 +675,7 @@ theorem FordTerminalWebStencilLedger (P : FordFareyParameter) (hq : 1 < P.q) :
     · exact positive i T U h k p p' g x hT hU hp hp'
         (by simpa using hc) (by simpa using ha) (by simpa using hb) he he' hx hx' hstar
   · intro i s T U h k p p' g x hpos hT hU hp hp' hc ha hb _ he he' hx hx' hstar
-    have hi : i.val < 2 := FordTerminalStencilGeometry.hiAt337 P i s T U k p p' hpos hU hc ha hb
+    have hi : i.val < 2 := FordTerminalStencilGeometry.hiAt337 P i s p p' hpos ha hb
     let j : Fin 2 := ⟨i.val, hi⟩
     have hij : (⟨j.val, by omega⟩ : Fin 3) = i := rfl
     obtain ⟨hqr, _, hqs, _, hredr, hreds, _⟩ := P5130T5ParentArithmetic P hq
@@ -678,8 +713,8 @@ theorem FordTerminalWebStencilLedger (P : FordFareyParameter) (hq : 1 < P.q) :
         (∀ l : Fin 5, f (x-u + (![0,1,-1,(⟨0,1⟩ : GaussianInt),-⟨0,1⟩] l)) =
           (P5332T1ParentRows P j s t).values l) ∧
         (x-u - (P5332T1ParentRows P j s 0).companion ∈ FordVertexDomain P.q ↔
-          t = 0 ∧ Even (s.val+j.val)) := FordTerminalStencilGeometry.sourceAt395 P hq i s T U h k
-              p p' x hc ha hb hx hx' j A hAp hAq u B f hdom hbase vv hdom' hcell' hcent hslope
+          t = 0 ∧ Even (s.val+j.val)) := FordTerminalStencilGeometry.sourceAt395 P hq i s h k
+              p p' x ha hb hx hx' j A hAp hAq u B f hdom hbase hdom' hslope
               hslope' hother hstar'
     obtain ⟨t, ht, ht', hv, hh⟩ := source
     have hg : FourNeighborLaplacian g x =

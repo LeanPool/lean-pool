@@ -221,36 +221,11 @@ private theorem fseg₂ :
   simp [f, mid, q₂, not_le.mpr (by linarith : 1 < x),
     not_le.mpr h₂x, hc]
 
-private theorem hint₀₁ :
-    ∀ (ι : Type), ∀ (P : PlaneTriangulation ι), ∀ (a : ι), ∀ (b : ι), ∀ (c : ι), (a ≠ b) → (b ≠
-        c) → (c ≠ a) → (P.adjacent a b) → (P.adjacent b c) → ∀ (h₀ : (↑(Set.Icc (0 : ℝ) 1) :
-        Type) ≃ₜ (↑(P.edgeArc a b) : Type)), ((↑((h₀ : (↑(Set.Icc (0 : ℝ) 1) : Type) →
-        (↑(P.edgeArc a b) : Type)) ⟨0, (by norm_num)⟩) : ℝ × ℝ) = P.position a) → ((↑((h₀ :
-        (↑(Set.Icc (0 : ℝ) 1) : Type) → (↑(P.edgeArc a b) : Type)) ⟨1, (by norm_num)⟩) : ℝ × ℝ) =
-        P.position b) → ∀ (h₁ : (↑(Set.Icc (0 : ℝ) 1) : Type) ≃ₜ (↑(P.edgeArc b c) : Type)),
-            ((↑((h₁ : (↑(Set.Icc (0 : ℝ) 1) : Type) → (↑(P.edgeArc b c) : Type)) ⟨0, (by norm_num)⟩)
-        : ℝ × ℝ) = P.position b) → ((↑((h₁ : (↑(Set.Icc (0 : ℝ) 1) : Type) → (↑(P.edgeArc b c) :
-        Type)) ⟨1, (by norm_num)⟩) : ℝ × ℝ) = P.position c) → ∀ (h₂ : (↑(Set.Icc (0 : ℝ) 1) :
-        Type) ≃ₜ (↑(P.edgeArc c a) : Type)),
-    let clamp (x : ℝ) : Set.Icc (0 : ℝ) 1 :=
-      ⟨max 0 (min x 1), ⟨le_max_left _ _, max_le_iff.mpr ⟨by norm_num, min_le_right _ _⟩⟩⟩
-    let q₀ : ℝ → Real × Real := fun x => (h₀ (clamp x) : Real × Real)
-    let q₁ : ℝ → Real × Real := fun x => (h₁ (clamp (x - 1)) : Real × Real)
-    let q₂ : ℝ → Real × Real := fun x => (h₂ (clamp (x - 2)) : Real × Real)
-    (Continuous q₀) → (Continuous q₁) →
-    let mid : ℝ → Real × Real := fun x => if x ≤ 2 then q₁ x else q₂ x
-    (Continuous mid) →
-    let f : ℝ → Real × Real := fun x => if x ≤ 1 then q₀ x else mid x
-    (Continuous f) → (f 0 = f 3) → ∀ [this : Fact (0 < (3 : ℝ))],
-    let ℓ : AddCircle (3 : ℝ) → Real × Real := AddCircle.liftIco 3 0 f
-    (Continuous ℓ) → (∀ (x : ℝ), ∀ (hx : 0 ≤ x), ∀ (h₁x : x ≤ 1), f x = (h₀ ⟨x, ⟨hx, h₁x⟩⟩ :
-        P.edgeArc a b)) → (∀ (x : ℝ), ∀ (h₁x : 1 < x), ∀ (h₂x : x ≤ 2), f x = (h₁ ⟨x - 1, ⟨by
-        linarith [h₁x], by linarith [h₂x]⟩⟩ : P.edgeArc b c)) → (∀ (x : ℝ), ∀ (h₂x : 2 < x), ∀
-            (h₃x : x < 3), f x = (h₂ ⟨x - 2, ⟨by linarith [h₂x], by linarith [h₃x]⟩⟩ : P.edgeArc c
-        a)) → P.edgeArc a b ∩ P.edgeArc b c = {P.position b} := by
+private theorem adjacentArcIntersection (ι : Type) (P : PlaneTriangulation ι)
+    (a b c : ι) (hab : a ≠ b) (hca : c ≠ a)
+    (eab : P.adjacent a b) (ebc : P.adjacent b c) :
+    P.edgeArc a b ∩ P.edgeArc b c = {P.position b} := by
   classical
-  intro ι P a b c hab hbc hca eab ebc h₀ h₀a h₀b h₁ h₁b h₁c h₂ clamp q₀ q₁ q₂ hq₀ hq₁ mid hmid f
-      hf hf0 this ℓ hℓc fseg₀ fseg₁ fseg₂
   have hne : ({a, b} : Set ι) ≠ {b, c} := by
     intro hh
     have ha : a ∈ ({b, c} : Set ι) := by rw [← hh]; simp
@@ -270,113 +245,6 @@ private theorem hint₀₁ :
     · rintro rfl
       simp
   rw [P.arc_intersections a b b c eab ebc hne]
-  rw [hcommon]
-  simp
-
-private theorem hint₁₂ :
-    ∀ (ι : Type), ∀ (P : PlaneTriangulation ι), ∀ (a : ι), ∀ (b : ι), ∀ (c : ι), (a ≠ b) → (b ≠
-        c) → (c ≠ a) → (P.adjacent b c) → (P.adjacent c a) → ∀ (h₀ : (↑(Set.Icc (0 : ℝ) 1) :
-        Type) ≃ₜ (↑(P.edgeArc a b) : Type)), ∀ (h₁ : (↑(Set.Icc (0 : ℝ) 1) : Type) ≃ₜ
-        (↑(P.edgeArc b c) : Type)), ((↑((h₁ : (↑(Set.Icc (0 : ℝ) 1) : Type) → (↑(P.edgeArc b c) :
-        Type)) ⟨0, (by norm_num)⟩) : ℝ × ℝ) = P.position b) → ((↑((h₁ : (↑(Set.Icc (0 : ℝ) 1) :
-        Type) → (↑(P.edgeArc b c) : Type)) ⟨1, (by norm_num)⟩) : ℝ × ℝ) = P.position c) → ∀ (h₂ :
-            (↑(Set.Icc (0 : ℝ) 1) : Type) ≃ₜ (↑(P.edgeArc c a) : Type)), ((↑((h₂ : (↑(Set.Icc (0
-            : ℝ)
-        1) : Type) → (↑(P.edgeArc c a) : Type)) ⟨0, (by norm_num)⟩) : ℝ × ℝ) = P.position c) →
-        ((↑((h₂ : (↑(Set.Icc (0 : ℝ) 1) : Type) → (↑(P.edgeArc c a) : Type)) ⟨1, (by norm_num)⟩)
-        : ℝ × ℝ) = P.position a) →
-    let clamp (x : ℝ) : Set.Icc (0 : ℝ) 1 :=
-      ⟨max 0 (min x 1), ⟨le_max_left _ _, max_le_iff.mpr ⟨by norm_num, min_le_right _ _⟩⟩⟩
-    let q₀ : ℝ → Real × Real := fun x => (h₀ (clamp x) : Real × Real)
-    let q₁ : ℝ → Real × Real := fun x => (h₁ (clamp (x - 1)) : Real × Real)
-    let q₂ : ℝ → Real × Real := fun x => (h₂ (clamp (x - 2)) : Real × Real)
-    (Continuous q₁) → (Continuous q₂) →
-    let mid : ℝ → Real × Real := fun x => if x ≤ 2 then q₁ x else q₂ x
-    (Continuous mid) →
-    let f : ℝ → Real × Real := fun x => if x ≤ 1 then q₀ x else mid x
-    (Continuous f) → (f 0 = f 3) → ∀ [this : Fact (0 < (3 : ℝ))],
-    let ℓ : AddCircle (3 : ℝ) → Real × Real := AddCircle.liftIco 3 0 f
-    (Continuous ℓ) → (∀ (x : ℝ), ∀ (hx : 0 ≤ x), ∀ (h₁x : x ≤ 1), f x = (h₀ ⟨x, ⟨hx, h₁x⟩⟩ :
-        P.edgeArc a b)) → (∀ (x : ℝ), ∀ (h₁x : 1 < x), ∀ (h₂x : x ≤ 2), f x = (h₁ ⟨x - 1, ⟨by
-        linarith [h₁x], by linarith [h₂x]⟩⟩ : P.edgeArc b c)) → (∀ (x : ℝ), ∀ (h₂x : 2 < x), ∀
-            (h₃x : x < 3), f x = (h₂ ⟨x - 2, ⟨by linarith [h₂x], by linarith [h₃x]⟩⟩ : P.edgeArc c
-        a)) → (P.edgeArc a b ∩ P.edgeArc b c = {P.position b}) → P.edgeArc b c ∩ P.edgeArc c a =
-        {P.position c} := by
-  classical
-  intro ι P a b c hab hbc hca ebc eca h₀ h₁ h₁b h₁c h₂ h₂c h₂a clamp q₀ q₁ q₂ hq₁ hq₂ mid hmid f
-      hf hf0 this ℓ hℓc fseg₀ fseg₁ fseg₂ hint₀₁
-  have hne : ({b, c} : Set ι) ≠ {c, a} := by
-    intro hh
-    have hb : b ∈ ({c, a} : Set ι) := by rw [← hh]; simp
-    simp [hbc, hab.symm] at hb
-  have hcommon : ({b, c} : Set ι) ∩ {c, a} = {c} := by
-    ext x
-    simp only [Set.mem_inter_iff, Set.mem_insert_iff, Set.mem_singleton_iff]
-    constructor
-    · rintro ⟨h, k⟩
-      rcases h with h | h
-      · subst x
-        rcases k with k | k
-        · exact (hbc k).elim
-        · exact (hab k.symm).elim
-      · subst x
-        rfl
-    · rintro rfl
-      simp
-  rw [P.arc_intersections b c c a ebc eca hne]
-  rw [hcommon]
-  simp
-
-private theorem hint₂₀ :
-    ∀ (ι : Type), ∀ (P : PlaneTriangulation ι), ∀ (a : ι), ∀ (b : ι), ∀ (c : ι), (a ≠ b) → (b ≠
-        c) → (c ≠ a) → (P.adjacent a b) → (P.adjacent c a) → ∀ (h₀ : (↑(Set.Icc (0 : ℝ) 1) :
-        Type) ≃ₜ (↑(P.edgeArc a b) : Type)), ((↑((h₀ : (↑(Set.Icc (0 : ℝ) 1) : Type) →
-        (↑(P.edgeArc a b) : Type)) ⟨0, (by norm_num)⟩) : ℝ × ℝ) = P.position a) → ((↑((h₀ :
-        (↑(Set.Icc (0 : ℝ) 1) : Type) → (↑(P.edgeArc a b) : Type)) ⟨1, (by norm_num)⟩) : ℝ × ℝ) =
-        P.position b) → ∀ (h₁ : (↑(Set.Icc (0 : ℝ) 1) : Type) ≃ₜ (↑(P.edgeArc b c) : Type)), ∀
-            (h₂ : (↑(Set.Icc (0 : ℝ) 1) : Type) ≃ₜ (↑(P.edgeArc c a) : Type)), ((↑((h₂ : (↑(Set.Icc
-        (0 : ℝ) 1) : Type) → (↑(P.edgeArc c a) : Type)) ⟨0, (by norm_num)⟩) : ℝ × ℝ) = P.position
-        c) → ((↑((h₂ : (↑(Set.Icc (0 : ℝ) 1) : Type) → (↑(P.edgeArc c a) : Type)) ⟨1, (by
-        norm_num)⟩) : ℝ × ℝ) = P.position a) →
-    let clamp (x : ℝ) : Set.Icc (0 : ℝ) 1 :=
-      ⟨max 0 (min x 1), ⟨le_max_left _ _, max_le_iff.mpr ⟨by norm_num, min_le_right _ _⟩⟩⟩
-    let q₀ : ℝ → Real × Real := fun x => (h₀ (clamp x) : Real × Real)
-    let q₁ : ℝ → Real × Real := fun x => (h₁ (clamp (x - 1)) : Real × Real)
-    let q₂ : ℝ → Real × Real := fun x => (h₂ (clamp (x - 2)) : Real × Real)
-    (Continuous q₀) → (Continuous q₂) →
-    let mid : ℝ → Real × Real := fun x => if x ≤ 2 then q₁ x else q₂ x
-    (Continuous mid) →
-    let f : ℝ → Real × Real := fun x => if x ≤ 1 then q₀ x else mid x
-    (Continuous f) → (f 0 = f 3) → ∀ [this : Fact (0 < (3 : ℝ))],
-    let ℓ : AddCircle (3 : ℝ) → Real × Real := AddCircle.liftIco 3 0 f
-    (Continuous ℓ) → (∀ (x : ℝ), ∀ (hx : 0 ≤ x), ∀ (h₁x : x ≤ 1), f x = (h₀ ⟨x, ⟨hx, h₁x⟩⟩ :
-        P.edgeArc a b)) → (∀ (x : ℝ), ∀ (h₁x : 1 < x), ∀ (h₂x : x ≤ 2), f x = (h₁ ⟨x - 1, ⟨by
-        linarith [h₁x], by linarith [h₂x]⟩⟩ : P.edgeArc b c)) → (∀ (x : ℝ), ∀ (h₂x : 2 < x), ∀
-            (h₃x : x < 3), f x = (h₂ ⟨x - 2, ⟨by linarith [h₂x], by linarith [h₃x]⟩⟩ : P.edgeArc c
-        a)) → (P.edgeArc a b ∩ P.edgeArc b c = {P.position b}) → (P.edgeArc b c ∩ P.edgeArc c a =
-        {P.position c}) → P.edgeArc c a ∩ P.edgeArc a b = {P.position a} := by
-  classical
-  intro ι P a b c hab hbc hca eab eca h₀ h₀a h₀b h₁ h₂ h₂c h₂a clamp q₀ q₁ q₂ hq₀ hq₂ mid hmid f
-      hf hf0 this ℓ hℓc fseg₀ fseg₁ fseg₂ hint₀₁ hint₁₂
-  have hne : ({c, a} : Set ι) ≠ {a, b} := by
-    intro hh
-    have hc : c ∈ ({a, b} : Set ι) := by rw [← hh]; simp
-    simp [hca, hbc.symm] at hc
-  have hcommon : ({c, a} : Set ι) ∩ {a, b} = {a} := by
-    ext x
-    simp only [Set.mem_inter_iff, Set.mem_insert_iff, Set.mem_singleton_iff]
-    constructor
-    · rintro ⟨h, k⟩
-      rcases h with h | h
-      · subst x
-        rcases k with k | k
-        · exact (hca k).elim
-        · exact (hbc k.symm).elim
-      · subst x
-        rfl
-    · rintro rfl
-      simp
-  rw [P.arc_intersections c a a b eca eab hne]
   rw [hcommon]
   simp
 
@@ -760,15 +628,12 @@ theorem P3821T1ThreeArcCircle {ι : Type} (P : PlaneTriangulation ι)
   have fseg₂ (x : ℝ) (h₂x : 2 < x) (h₃x : x < 3) :
       f x = (h₂ ⟨x - 2, ⟨by linarith [h₂x], by linarith [h₃x]⟩⟩ : P.edgeArc c a) :=
           ThreeArcCircleLemmas.fseg₂ ι P a b c h₀ h₁ h₂ clamp_eq_self x h₂x h₃x
-  have hint₀₁ : P.edgeArc a b ∩ P.edgeArc b c = {P.position b} := ThreeArcCircleLemmas.hint₀₁ ι P
-      a b c hab hbc hca eab ebc h₀ h₀a h₀b h₁ h₁b h₁c h₂ hq₀ hq₁ hmid hf hf0 (this := this) hℓc
-      fseg₀ fseg₁ fseg₂
-  have hint₁₂ : P.edgeArc b c ∩ P.edgeArc c a = {P.position c} := ThreeArcCircleLemmas.hint₁₂ ι P
-      a b c hab hbc hca ebc eca h₀ h₁ h₁b h₁c h₂ h₂c h₂a hq₁ hq₂ hmid hf hf0 (this := this) hℓc
-      fseg₀ fseg₁ fseg₂ hint₀₁
-  have hint₂₀ : P.edgeArc c a ∩ P.edgeArc a b = {P.position a} := ThreeArcCircleLemmas.hint₂₀ ι P
-      a b c hab hbc hca eab eca h₀ h₀a h₀b h₁ h₂ h₂c h₂a hq₀ hq₂ hmid hf hf0 (this := this) hℓc
-      fseg₀ fseg₁ fseg₂ hint₀₁ hint₁₂
+  have hint₀₁ : P.edgeArc a b ∩ P.edgeArc b c = {P.position b} :=
+    ThreeArcCircleLemmas.adjacentArcIntersection ι P a b c hab hca eab ebc
+  have hint₁₂ : P.edgeArc b c ∩ P.edgeArc c a = {P.position c} :=
+    ThreeArcCircleLemmas.adjacentArcIntersection ι P b c a hbc hab ebc eca
+  have hint₂₀ : P.edgeArc c a ∩ P.edgeArc a b = {P.position a} :=
+    ThreeArcCircleLemmas.adjacentArcIntersection ι P c a b hca hbc eca eab
   have cross₀₁ {x y : ℝ} (hx₀ : 0 ≤ x) (hx₁ : x ≤ 1)
       (hy₁ : 1 < y) (hy₂ : y ≤ 2) (hxy : f x = f y) : x = y := ThreeArcCircleLemmas.cross₀₁ ι P a
           b c h₀ h₀b h₁ h₁b h₂ fseg₀ fseg₁ hint₀₁ (x := x) (y := y) hx₀ hx₁ hy₁ hy₂ hxy

@@ -278,12 +278,7 @@ private theorem rank_one_bound :
   intro D₁ σ o₁ x hx
   exact Finset.le_sup hx
 
-private theorem rank_two_bound :
-    ∀ (D₂ : Finset GaussianInt), ∀ (σ : GaussianInt → ℤ), ∀ (o₂ : AcyclicIndegreeOrientation D₂
-        σ), ∀ x ∈ D₂, o₂.rank x ≤ D₂.sup o₂.rank := by
-  classical
-  intro D₂ σ o₂ x hx
-  exact Finset.le_sup hx
+private abbrev rank_two_bound := ApollonianSuperharmonic.ParentalOrientationLemmas.rank_one_bound
 
 private theorem rank_increasing :
     ∀ (D₁ : Finset GaussianInt), ∀ (D₂ : Finset GaussianInt), ∀ (σ : GaussianInt → ℤ), ∀ (o₁ :

@@ -132,19 +132,7 @@ private theorem hpathAB :
   rw [hVrawAB]
   exact hpathAB0
 
-private theorem hpathBC :
-    (by
-      classical
-      exact
-        ∀ (B : ProtoTile), ∀ (C : ProtoTile), (FootprintVertices B ∩ FootprintVertices C =
-            CommonFootprintEdgeVertices B C) → (∀ (xBC : GaussianInt), ∀ (yBC : GaussianInt),
-            (SimpleGridPathBetween (CommonFootprintEdgeVertices B C) (FootprintEdges B ∩
-            FootprintEdges C) xBC yBC) → (SimpleGridPathBetween (FootprintVertices B ∩
-            FootprintVertices C) (FootprintEdges B ∩ FootprintEdges C) xBC yBC)) ) := by
-  classical
-  intro B C hVrawBC xBC yBC hpathBC0
-  rw [hVrawBC]
-  exact hpathBC0
+private abbrev hpathBC := ApollonianSuperharmonic.ThreeDiskJunctionGeometry.hpathAB
 
 private theorem hpathCA :
     (by
@@ -172,17 +160,7 @@ private theorem hcellsAB :
   have h : AB.cells = A.cells ∪ B.cells := by ext z; simpa using hunionAB z
   rw [h, Finset.card_union_of_disjoint hdisjointAB]
 
-private theorem hcellsBC :
-    (by
-      classical
-      exact
-        ∀ (B : ProtoTile), ∀ (C : ProtoTile), ∀ (BC : ProtoTile), (Disjoint B.cells C.cells) →
-            ((∀ (z : LatticeCell), z ∈ BC.cells ↔ z ∈ B.cells ∨ z ∈ C.cells) → (BC.cells.card =
-            B.cells.card + C.cells.card)) ) := by
-  classical
-  intro B C BC hdisjointBC hunionBC
-  have h : BC.cells = B.cells ∪ C.cells := by ext z; simpa using hunionBC z
-  rw [h, Finset.card_union_of_disjoint hdisjointBC]
+private abbrev hcellsBC := ApollonianSuperharmonic.ThreeDiskJunctionGeometry.hcellsAB
 
 private theorem hcellsCA :
     (by

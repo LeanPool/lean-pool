@@ -6,6 +6,8 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.TileQuarterTurnTranslation
+public import LeanPool.ApollonianSuperharmonic.BandPrototileQuarterTurn
 public import LeanPool.ApollonianSuperharmonic.TileOdometerBandPrototile
 public import LeanPool.ApollonianSuperharmonic.BandPrototileNonempty
 
@@ -233,25 +235,7 @@ private theorem touching_cells_congr :
     · have h' : B.cells = ∅ := by simpa [hb] using h.1
       exact (Finset.not_nonempty_iff_eq_empty.mpr h' hB).elim
 
-private theorem quarter_translate :
-    (by
-      classical
-      exact
-        ∀ (T : ProtoTile), ∀ (x : GaussianInt), TileQuarterTurn (TileTranslation T x) =
-            TileTranslation (TileQuarterTurn T) (GaussianQuarterTurn x) ) := by
-  classical
-  intro T x
-  cases T with
-  | mk cells anchor =>
-    apply congrArg₂ (fun c : Finset GaussianInt => fun a : GaussianInt =>
-      (⟨c, a⟩ : ProtoTile))
-    · simp only [TileTranslation, GaussianTranslation, Finset.image_image, Function.comp_def,
-        TileQuarterTurn]
-      congr 1
-      funext z
-      ext <;> simp [GaussianQuarterTurn]; ring
-    · simp [TileQuarterTurn, TileTranslation, GaussianTranslation,
-        GaussianQuarterTurn, add_comm]
+private abbrev quarter_translate := ApollonianSuperharmonic.TileQuarterTurnTranslation.commute
 
 private theorem translation_comm :
     (by
@@ -620,45 +604,7 @@ private theorem hUn :
   rw [(TileTranslationFormulas T v).1]
   exact Finset.image_nonempty.mpr hnonempty
 
-private theorem hT2 :
-    (by
-      classical
-      exact
-        ∀ (D : CircleCoordinates), ∀ (X : ProtoTile), BandPrototile D X → QuarterTurnSymmetric X
-            ) := by
-  classical
-  intro D X cert
-  induction cert with
-  | line w x hw =>
-      intro p
-      simp [TileRealization, TileCentroid]
-  | unit z x anchor =>
-      intro p
-      rcases p with ⟨r, t⟩
-      have hcent : TileCentroid ⟨{x}, anchor⟩ =
-          (((x.re : Int) : Real) + 1 / 2,
-            ((x.im : Int) : Real) + 1 / 2) := by
-        simp [TileCentroid]
-      rw [hcent]
-      simp only [TileRealization, Finset.mem_singleton, Set.iUnion_iUnion_eq_left,
-          Int.reduceNeg, GaussianInt.intCast_re, one_div, GaussianInt.intCast_im]
-      rw [← GaussianInt.intCast_re x, ← GaussianInt.intCast_im x]
-      change (r, t) ∈ ClosedSquareRealization x ↔
-        ((((x.re : Int) : Real) + (2 : Real)⁻¹) -
-            (t - (((x.im : Int) : Real) + (2 : Real)⁻¹)),
-          (((x.im : Int) : Real) + (2 : Real)⁻¹) +
-            (r - (((x.re : Int) : Real) + (2 : Real)⁻¹))) ∈
-          ClosedSquareRealization x
-      simp only [ClosedSquareRealization, Set.mem_Icc, Prod.le_def]
-      constructor
-      · rintro ⟨⟨hrl, htl⟩, ⟨hru, htu⟩⟩
-        constructor <;> constructor <;> linarith
-      · rintro ⟨⟨hrl, htl⟩, ⟨hru, htu⟩⟩
-        constructor <;> constructor <;> linarith
-  | @decompose r hr S X hS hcells hfoot hcent ih =>
-      have hcert : BandPrototile (r 0) X :=
-        BandPrototile.decompose hr hS hcells hfoot hcent
-      exact (BandTileSimultaneousInduction r hr X hcert).2.2.2.1
+private abbrev hT2 := ApollonianSuperharmonic.BandPrototileQuarterTurn.symmetry
 
 private theorem hT4 :
     (by

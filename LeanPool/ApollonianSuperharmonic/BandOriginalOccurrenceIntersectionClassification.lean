@@ -743,12 +743,16 @@ private theorem hneAt625 :
     (by
       classical
       exact
-        ∀ (m : ℤ), ∀ (n : ℤ), ∀ (p : ℤ), ∀ (r : ℤ), (¬(⟨SixSubtileLabel.A, m, n⟩ :
-            PeriodicSubtileIndex) = (⟨SixSubtileLabel.A, p, r⟩ : PeriodicSubtileIndex)) →
-            ((¬AllowedSubtileIncidence (⟨SixSubtileLabel.A, m, n⟩ : PeriodicSubtileIndex)
-            (⟨SixSubtileLabel.A, p, r⟩ : PeriodicSubtileIndex)) → ((m, n) ≠ (p, r))) ) := by
+        ∀ (m : ℤ),
+          ∀ (n : ℤ),
+            ∀ (p : ℤ),
+              ∀ (r : ℤ),
+                ¬(⟨SixSubtileLabel.A, m, n⟩ : PeriodicSubtileIndex) =
+                      (⟨SixSubtileLabel.A, p, r⟩ : PeriodicSubtileIndex) →
+                  (m, n) ≠ (p, r)
+    ) := by
   classical
-  intro m n p r hab hna heq
+  intro m n p r hab heq
   apply hab
   cases heq
   rfl
@@ -930,7 +934,7 @@ private theorem vertexAlternative :
   | A =>
     cases lb with
     | A =>
-      have hne : (m, n) ≠ (p, r) := OriginalIntersectionGeometry.hneAt625 m n p r hab hna
+      have hne : (m, n) ≠ (p, r) := OriginalIntersectionGeometry.hneAt625 m n p r hab
       have hv := hmod_vertex_alt ⟨.A, m, n⟩ ⟨.A, p, r⟩ (by
         intro heq
         apply hab

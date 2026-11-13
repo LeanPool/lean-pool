@@ -6,6 +6,9 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.P4055T1GridPathImage
+public import LeanPool.ApollonianSuperharmonic.TileTranslationProperties
+public import LeanPool.ApollonianSuperharmonic.GaussianRealPointProperties
 
 public import LeanPool.ApollonianSuperharmonic.BandOrderedGeneralLayoutCertificate
 public import LeanPool.ApollonianSuperharmonic.ExactTileInterfaceTriple
@@ -844,41 +847,7 @@ private theorem halfTurnComparison :
   have obs := BandPrototileCentroidUnique C Ysharp U hband hU hcentEq
   exact ⟨hc.trans obs.1, fun he => (ha he).trans (obs.2 (hc ▸ he))⟩
 
-private theorem pathMap :
-    (by
-      classical
-      exact
-        ∀ (f : GaussianInt → GaussianInt), (Function.Injective f) → ((∀ a b : GaussianInt,
-            (b = a + 1 ∨ b = a - 1 ∨ b = a + ⟨0, 1⟩ ∨ b = a - ⟨0, 1⟩) →
-            (f b = f a + 1 ∨ f b = f a - 1 ∨
-              f b = f a + ⟨0, 1⟩ ∨ f b = f a - ⟨0, 1⟩)) → (∀ (V : Set GaussianInt), ∀ (E : Set
-                  (Finset GaussianInt)), ∀ (x : GaussianInt), ∀ (y : GaussianInt),
-                  (SimpleGridPathBetween V E x y) → (SimpleGridPathBetween (f '' V) ((fun e :
-                  Finset GaussianInt => e.image f) '' E) (f x) (f y)))) ) := by
-  classical
-  intro f hf hstep V E x y h
-  rcases h with ⟨p, hn, hl, hh, ht, hv, hs, he⟩
-  refine ⟨p.map f, hn.map hf, by simpa using hl, ?_, ?_, ?_, ?_, ?_⟩
-  · rw [List.head?_map, hh]; rfl
-  · rw [List.getLast?_map, ht]; rfl
-  · rw [hv]; ext z; simp
-  · exact List.isChain_iff_forall_rel_of_append_cons_cons.mp
-      (List.isChain_map_of_isChain f hstep
-        (List.isChain_iff_forall_rel_of_append_cons_cons.mpr hs))
-  · intro e
-    constructor
-    · rintro ⟨d, hd, rfl⟩
-      rcases (he d).mp hd with ⟨a, b, l₁, l₂, hp, rfl⟩
-      refine ⟨f a, f b, l₁.map f, l₂.map f, ?_, ?_⟩
-      · simpa using congrArg (List.map f) hp
-      · simp
-    · rintro ⟨a, b, l₁, l₂, hp, rfl⟩
-      obtain ⟨k, r, hkr, hk, hr⟩ := List.map_eq_append_iff.mp hp
-      obtain ⟨a₀, r₁, hr₁, ha, hm₁⟩ := List.map_eq_cons_iff.mp hr
-      obtain ⟨b₀, r₂, hr₂, hb, hm₂⟩ := List.map_eq_cons_iff.mp hm₁
-      refine ⟨{a₀, b₀}, (he _).mpr ⟨a₀, b₀, k, r₂, ?_, rfl⟩, ?_⟩
-      · rw [hkr, hr₁, hr₂]
-      · simp [ha, hb]
+private abbrev pathMap := ApollonianSuperharmonic.P4055T1GridPathImage
 
 private theorem tripleMap :
     (by
@@ -991,16 +960,7 @@ private theorem tripleTurn :
     rw [Finset.image_image]
     rfl
 
-private theorem translateZero :
-    (by
-      classical
-      exact
-        ∀ (Y : ProtoTile), TileTranslation Y 0 = Y ) := by
-  classical
-  intro Y
-  have h : GaussianTranslation 0 = id := by funext z; simp [GaussianTranslation]
-  cases Y
-  simp [TileTranslation, h]
+private abbrev translateZero := ApollonianSuperharmonic.TileTranslationProperties.zero
 
 private theorem turnTranslate :
     (by
@@ -1728,15 +1688,7 @@ private theorem halfPackage :
     exact add_right_cancel (hl.symm.trans (h.trans he))
   exact ⟨D', L', E', hp', hn', endpointRelations _ _ _ _ D' L' E' hp' hn'⟩
 
-private theorem realAdd :
-    (by
-      classical
-      exact
-        ∀ (a : GaussianInt), ∀ (b : GaussianInt), GaussianRealPoint (a + b) = GaussianRealPoint a
-            + GaussianRealPoint b ) := by
-  classical
-  intro a b
-  ext <;> simp [GaussianRealPoint]
+private abbrev realAdd := ApollonianSuperharmonic.GaussianRealPointProperties.add
 
 private theorem realSub :
     (by

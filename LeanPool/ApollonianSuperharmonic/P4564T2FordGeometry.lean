@@ -6,6 +6,7 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.LatticeTileNonempty
 
 public import LeanPool.ApollonianSuperharmonic.BandPrototileTranslationNormalForm
 public import LeanPool.ApollonianSuperharmonic.BandSubtileOccurrenceTranslation
@@ -272,25 +273,7 @@ private theorem translated_root_cells :
     (TileTranslationFormulas (TileTranslation F w) v).1,
     (TileTranslationFormulas T v).1, hcellsT]
 
-private theorem lattice_cells_nonempty :
-    (by
-      classical
-      exact
-        ∀ (A : ProtoTile), (LatticeTile A) → (A.cells.Nonempty) ) := by
-  classical
-  intro A hA
-  by_contra hn
-  have hc : A.cells = ∅ := Finset.not_nonempty_iff_eq_empty.mp hn
-  have hr : (TileRealization A).Nonempty := by
-    change Nonempty
-      ((Metric.closedBall (0 : Real × Real) 1 : Set (Real × Real)) ≃ₜ
-        TileRealization A) at hA
-    rcases hA with ⟨e⟩
-    exact ⟨(e ⟨0, by simp⟩).1, (e ⟨0, by simp⟩).2⟩
-  have : TileRealization A = ∅ := by simp [TileRealization, hc]
-  rw [this] at hr
-  rcases hr with ⟨x, hx⟩
-  simp at hx
+private abbrev lattice_cells_nonempty := ApollonianSuperharmonic.LatticeTileNonempty.cells
 
 private theorem hoccStar :
     (by

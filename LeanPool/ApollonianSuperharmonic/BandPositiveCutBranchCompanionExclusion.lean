@@ -6,6 +6,7 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.GaussianRealPointProperties
 
 public import LeanPool.ApollonianSuperharmonic.BandOrientedChildParentEndpoints
 
@@ -252,14 +253,7 @@ private theorem hsum :
     (VectorRecursionLaws cfg.firstPredecessor cfg.firstProper.1).1
 
 
-private theorem gaussianPoint_neg :
-    (by
-      classical
-      exact
-        ∀ (x : GaussianInt), GaussianRealPoint (-x) = -GaussianRealPoint x ) := by
-  classical
-  intro x
-  ext <;> simp [GaussianRealPoint]
+private abbrev gaussianPoint_neg := ApollonianSuperharmonic.GaussianRealPointProperties.negation
 
 private theorem gaussianPoint_Iminus_one :
     (by

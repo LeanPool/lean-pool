@@ -754,32 +754,63 @@ private theorem noExtra :
   exact noThreeDir i j k hij hik hjk ha hb hc
 
 private theorem cyclicToEdge :
-    ∀ (F : Set (Finset GaussianInt)), ∀ (p : List GaussianInt), ∀ (u : GaussianInt), ∀ (v :
-        GaussianInt), ((4 : ℕ) ≤ p.length) → ((p.head? = some u) → ((p.getLast? = some v) →
-        ((FourNeighborAdjacent v u) → ((∀ (e : Finset GaussianInt), e ∈ F ↔ e = {v, u} ∨ ∃ (a :
-        GaussianInt) (b : GaussianInt) (l₁ : List GaussianInt) (l₂ : List GaussianInt), p = l₁ ++
-        a :: b :: l₂ ∧ e = {a, b}) → ((
-    let cyclicEdges := p.zip p.tail ++ [(v, u)];
-    ∀ (q : LatticeCell), ((q + (1 : LatticeCell), q
-        + (1 : LatticeCell) + ⟨(0 : ℤ), (1 : ℤ)⟩) ∉
-        cyclicEdges ∧ (q + (1 : LatticeCell) + ⟨(0 : ℤ), (1 : ℤ)⟩, q + (1 : LatticeCell)) ∉
-        cyclicEdges → GridRayCrossingIndex (q + (1 : LatticeCell)) p = GridRayCrossingIndex q p)
-        ∧ ((q + (1 : LatticeCell), q + (1 : LatticeCell) + ⟨(0 : ℤ), (1 : ℤ)⟩) ∈ cyclicEdges ∨ (q
-        + (1 : LatticeCell) + ⟨(0 : ℤ), (1 : ℤ)⟩, q + (1 : LatticeCell)) ∈ cyclicEdges →
-        (GridRayCrossingIndex (q + (1 : LatticeCell)) p - GridRayCrossingIndex q p).natAbs = (1 :
-        ℕ)) ∧ ((q + (1 : LatticeCell) + ⟨(0 : ℤ), (1 : ℤ)⟩, q + ⟨(0 : ℤ), (1 : ℤ)⟩) ∉ cyclicEdges
-        ∧ (q + ⟨(0 : ℤ), (1 : ℤ)⟩, q + (1 : LatticeCell) + ⟨(0 : ℤ), (1 : ℤ)⟩) ∉ cyclicEdges →
-        GridRayCrossingIndex (q + ⟨(0 : ℤ), (1 : ℤ)⟩) p = GridRayCrossingIndex q p) ∧ ((q + (1 :
-        LatticeCell) + ⟨(0 : ℤ), (1 : ℤ)⟩, q + ⟨(0 : ℤ), (1 : ℤ)⟩) ∈ cyclicEdges ∨ (q + ⟨(0 : ℤ),
-        (1 : ℤ)⟩, q + (1 : LatticeCell) + ⟨(0 : ℤ), (1 : ℤ)⟩) ∈ cyclicEdges →
-        (GridRayCrossingIndex (q + ⟨(0 : ℤ), (1 : ℤ)⟩) p - GridRayCrossingIndex q p).natAbs = (1
-        : ℕ))) → ((∀ (g : Finset GaussianInt), (g ∈ F) → (g = {v, u} ∨ ∃ a b l₁ l₂, p = l₁ ++ a
-        :: b :: l₂ ∧ g = {a, b})) → ((∀ (a : GaussianInt), ∀ (b : GaussianInt), (({a, b} : Finset
-        GaussianInt) ∈ F) → ((a, b) ∈ (p.zip p.tail) ++ [(v, u)] ∨ (b, a) ∈ (p.zip p.tail) ++
-        [(v, u)])) → ((u ∈ p) → ((v ∈ p) → (∀ (a : GaussianInt), ∀ (b : GaussianInt), (a, b) ∈
-        p.zip p.tail ++ [(v, u)] → {a, b} ∈ F)))))))))) := by
+    ∀ (F : Set (Finset GaussianInt)),
+      ∀ (p : List GaussianInt),
+        ∀ (u : GaussianInt),
+          ∀ (v : GaussianInt),
+            (4 : ℕ) ≤ p.length →
+              p.head? = some u →
+                p.getLast? = some v →
+                  (∀ (e : Finset GaussianInt),
+                      e ∈ F ↔
+                        e = { v, u } ∨
+                          ∃ (a : GaussianInt) (b : GaussianInt) (l₁ : List GaussianInt) (l₂
+                            : List GaussianInt), p = l₁ ++ a :: b :: l₂ ∧ e = { a, b }) →
+                    (let cyclicEdges := p.zip p.tail ++ [(v, u)];
+                      ∀ (q : LatticeCell),
+                        ((q + (1 : LatticeCell),
+                            q + (1 : LatticeCell) + ⟨(0 : ℤ), (1 : ℤ)⟩) ∉
+                            cyclicEdges ∧
+                            (q + (1 : LatticeCell) + ⟨(0 : ℤ), (1 : ℤ)⟩,
+                            q + (1 : LatticeCell)) ∉
+                            cyclicEdges →
+                            GridRayCrossingIndex (q + (1 : LatticeCell)) p =
+                            GridRayCrossingIndex q p) ∧
+                          ((q + (1 : LatticeCell),
+                            q + (1 : LatticeCell) + ⟨(0 : ℤ), (1 : ℤ)⟩) ∈
+                            cyclicEdges ∨
+                            (q + (1 : LatticeCell) + ⟨(0 : ℤ), (1 : ℤ)⟩,
+                            q + (1 : LatticeCell)) ∈
+                            cyclicEdges →
+                            (GridRayCrossingIndex (q + (1 : LatticeCell)) p -
+                            GridRayCrossingIndex q p).natAbs =
+                            (1 : ℕ)) ∧
+                            ((q + (1 : LatticeCell) + ⟨(0 : ℤ), (1 : ℤ)⟩,
+                            q + ⟨(0 : ℤ), (1 : ℤ)⟩) ∉
+                            cyclicEdges ∧
+                            (q + ⟨(0 : ℤ), (1 : ℤ)⟩,
+                            q + (1 : LatticeCell) + ⟨(0 : ℤ), (1 : ℤ)⟩) ∉
+                            cyclicEdges →
+                            GridRayCrossingIndex (q + ⟨(0 : ℤ), (1 : ℤ)⟩) p =
+                            GridRayCrossingIndex q p) ∧
+                            ((q + (1 : LatticeCell) + ⟨(0 : ℤ), (1 : ℤ)⟩,
+                            q + ⟨(0 : ℤ), (1 : ℤ)⟩) ∈
+                            cyclicEdges ∨
+                            (q + ⟨(0 : ℤ), (1 : ℤ)⟩,
+                            q + (1 : LatticeCell) + ⟨(0 : ℤ), (1 : ℤ)⟩) ∈
+                            cyclicEdges →
+                            (GridRayCrossingIndex (q + ⟨(0 : ℤ), (1 : ℤ)⟩) p -
+                            GridRayCrossingIndex q p).natAbs =
+                            (1 : ℕ))) →
+                      (∀ (g : Finset GaussianInt),
+                          g ∈ F →
+                            g = { v, u } ∨
+                            ∃ a b l₁ l₂, p = l₁ ++ a :: b :: l₂ ∧ g = { a, b }) →
+                        ∀ (a : GaussianInt),
+                          ∀ (b : GaussianInt),
+                            (a, b) ∈ p.zip p.tail ++ [(v, u)] → { a, b } ∈ F := by
   classical
-  intro F p u v hlen hhead hlast hclose hedges hcross hcycleEdge cyclicPair huMem hvMem a b hab
+  intro F p u v hlen hhead hlast hedges hcross hcycleEdge a b hab
   rcases List.mem_append.mp hab with h | h
   · rw [List.mem_iff_getElem] at h
     rcases h with ⟨i, hi, hpair⟩
@@ -998,32 +1029,7 @@ private theorem hWeqAt1029 :
   have h := crossNorthEq c2 hnc
   simpa [I, c1, c2, c2i] using h
 
-private theorem hNeqAt1093 :
-    ∀ (F : Set (Finset GaussianInt)), ∀ (x : GaussianInt), ∀ (p : List GaussianInt), ∀ (u :
-        GaussianInt), ∀ (v : GaussianInt),
-    let c0 : GaussianInt := x
-    let c1 : GaussianInt := x - 1
-    (∀ (a : GaussianInt), ∀ (b : GaussianInt), ((a, b) ∈ p.zip p.tail ++ [(v, u)]) → (({a, b} :
-        Finset GaussianInt) ∈ F)) → (
-    let I : GaussianInt → Int := fun q => GridRayCrossingIndex q p
-    (∀ (q : GaussianInt), ((q + 1, q + 1 + ⟨0, 1⟩) ∉ p.zip p.tail ++ [(v, u)] ∧ (q + 1 + ⟨0, 1⟩,
-        q + 1) ∉ p.zip p.tail ++ [(v, u)]) → (GridRayCrossingIndex (q + 1) p =
-        GridRayCrossingIndex q p)) → ((c1 + 1 = x) → ((({x, x + ⟨0, 1⟩} : Finset GaussianInt) ∉
-        F) → (I c0 = I c1)))) := by
-  classical
-  intro F x p u v c0 c1 cyclicToEdge I crossEastEq c1add hNabsent
-  have hnc :
-      (c1 + 1, c1 + 1 + ⟨0, 1⟩) ∉ p.zip p.tail ++ [(v, u)] ∧
-      (c1 + 1 + ⟨0, 1⟩, c1 + 1) ∉ p.zip p.tail ++ [(v, u)] := by
-    constructor
-    · intro h
-      apply hNabsent
-      convert cyclicToEdge _ _ h using 1; simp [c1]
-    · intro h
-      apply hNabsent
-      convert cyclicToEdge _ _ h using 1; simp [c1, Finset.pair_comm]
-  have h := crossEastEq c1 hnc
-  simpa [I, c0, c1, c1add] using h
+private abbrev hNeqAt1093 := ApollonianSuperharmonic.ExteriorMixedCycleProof.hNeqAt966
 
 private theorem verticalSupport :
     (∀ (a : GaussianInt),
@@ -2035,7 +2041,7 @@ theorem P3963T1ExteriorMixedCycleObstruction
   have cyclicToEdge (a b : GaussianInt)
       (hab : (a, b) ∈ p.zip p.tail ++ [(v, u)]) :
       ({a, b} : Finset GaussianInt) ∈ F := ExteriorMixedCycleProof.cyclicToEdge F p u v hlen
-          hhead hlast hclose hedges hcross hcycleEdge cyclicPair huMem hvMem a b hab
+          hhead hlast hedges hcross hcycleEdge a b hab
   let I : GaussianInt → Int := fun q => GridRayCrossingIndex q p
   have crossEastEq (q : GaussianInt)
       (hnc : (q + 1, q + 1 + ⟨0, 1⟩) ∉ p.zip p.tail ++ [(v, u)] ∧

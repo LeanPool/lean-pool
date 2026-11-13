@@ -281,24 +281,46 @@ private theorem avoid :
     (by
       classical
       exact
-        ∀ (ι : Type), ∀ (P : PeriodicTileComplex ι), ∀ (D : P3723T1AllContactRouting P), (∀
-            {a : ι}, ∀ {b : ι}, (P.plane.adjacent a b) → (P3723T1EdgeContact P a b)) → (∀
-                [Nontrivial ι], ∀ (a : ι), ∀ (b : ι), (a ≠ b) → (((FootprintEdges (P.tile a) ∩
-            FootprintEdges (P.tile b)).Nonempty) → ((P3723T1EdgeContact P a b) → (∀ (h :
-            (↑(Set.Icc (0 : ℝ) (1 : ℝ)) : Type) ≃ₜ (↑(D.edgeArc a b) : Type)), ((↑((h :
-            (↑(Set.Icc (0 : ℝ) (1 : ℝ)) : Type) → (↑(D.edgeArc a b) : Type)) ⟨(0 : ℝ),
-            (by norm_num)⟩) : ℝ × ℝ) = D.position a) → (((↑((h : (↑(Set.Icc
-            (0 : ℝ) (1 : ℝ)) : Type) → (↑(D.edgeArc a b) : Type)) ⟨(1 : ℝ),
-            (by norm_num)⟩) : ℝ × ℝ) = D.position b) → ((¬P.plane.adjacent
-            a b) → (
-        let g : Set.Icc (0 : Real) 1 → Real × Real := fun t => h t
-        (Continuous g) → ((Function.Injective g) → ((∀ {c : ι}, ∀ {d : ι}, (P.plane.adjacent c d)
-            → (({a, b} : Set ι) ≠ {c, d})) → (∀ t : Set.Icc (0 : Real) 1, 0 < (t : Real) → (t :
-            Real) < 1 → g t ∉ Set.range D.position ∪ {p | ∃ c d, P.plane.adjacent c d ∧ p ∈
-            D.edgeArc c d})))))))))) ) := by
+        ∀ (ι : Type),
+          ∀ (P : PeriodicTileComplex ι),
+            ∀ (D : P3723T1AllContactRouting P),
+              (∀ {a : ι}, ∀ {b : ι}, P.plane.adjacent a b → P3723T1EdgeContact P a b) →
+                ∀ [Nontrivial ι],
+                  ∀ (a : ι),
+                    ∀ (b : ι),
+                      a ≠ b →
+                        P3723T1EdgeContact P a b →
+                          ∀
+                            (h :
+                              (↑(Set.Icc (0 : ℝ) (1 : ℝ)) : Type) ≃ₜ
+                                (↑(D.edgeArc a b) : Type)),
+                            (↑((h :
+                                (↑(Set.Icc (0 : ℝ) (1 : ℝ)) : Type) →
+                                (↑(D.edgeArc a b) : Type))
+                                ⟨(0 : ℝ), by norm_num⟩) :
+                                ℝ × ℝ) =
+                                D.position a →
+                              (↑((h :
+                                (↑(Set.Icc (0 : ℝ) (1 : ℝ)) : Type) →
+                                (↑(D.edgeArc a b) : Type))
+                                ⟨(1 : ℝ), by norm_num⟩) :
+                                ℝ × ℝ) =
+                                D.position b →
+                                let g : Set.Icc (0 : Real) 1 → Real × Real := fun t =>
+                                h t;
+                              Function.Injective g →
+                                (∀ {c : ι},
+                                ∀ {d : ι},
+                                P.plane.adjacent c d → ({ a, b } : Set ι) ≠ { c, d }) →
+                                ∀ t : Set.Icc (0 : Real) 1,
+                                0 < (t : Real) →
+                                (t : Real) < 1 →
+                                g t ∉
+                                Set.range D.position ∪
+                                {p | ∃ c d, P.plane.adjacent c d ∧ p ∈ D.edgeArc c d}
+    ) := by
   classical
-  intro ι P D contact this a b hab hcontact saved_contact h hstart hend hn g gc gi different t
-      ht0 ht1
+  intro ι P D contact this a b hab saved_contact h hstart hend g gi different t ht0 ht1
   have hga : g t ≠ D.position a := by
     intro heq
     have ht := gi (heq.trans hstart.symm)
@@ -532,8 +554,8 @@ theorem PeriodicTileContactRoutingRigidity {ι : Type}
         h.injective (Subtype.ext hst)
       have different {c d : ι} (hcd : P.plane.adjacent c d) := ContactRoutingGeometry.different ι
           P symmetric a b hab hn (c := c) (d := d) hcd
-      have avoid := ContactRoutingGeometry.avoid ι P D contact a b hab hcontact
-          saved_contact h hstart hend hn gc gi different
+      have avoid := ContactRoutingGeometry.avoid ι P D contact a b hab
+          saved_contact h hstart hend gi different
       obtain ⟨f, ⟨i, hi⟩, ⟨j, hj⟩, _⟩ :=
         P3861T1ExtraArcLocalization P D F disjoint_faces a b g gc gi hstart hend avoid
       apply hn

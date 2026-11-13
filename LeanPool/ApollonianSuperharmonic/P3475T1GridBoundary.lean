@@ -6,6 +6,7 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.GaussianRealPointProperties
 
 public import LeanPool.ApollonianSuperharmonic.BoundaryFootprintVertexDegreeTwo
 public import LeanPool.ApollonianSuperharmonic.P5620T1BoundaryComponentCycle
@@ -744,16 +745,7 @@ private theorem vertex_rational (gridPath : List GaussianInt) (gridPath_length_f
   refine ⟨((v i).re : Rat), ((v i).im : Rat), ?_⟩
   simp only [GaussianRealPoint, Rat.cast_intCast]
 
-private theorem point_injective : Function.Injective GaussianRealPoint := by
-  classical
-  intro a b hab
-  apply Zsqrtd.ext
-  · have h := congrArg Prod.fst hab
-    change (a.re : Real) = (b.re : Real) at h
-    exact_mod_cast h
-  · have h := congrArg Prod.snd hab
-    change (a.im : Real) = (b.im : Real) at h
-    exact_mod_cast h
+private abbrev point_injective := ApollonianSuperharmonic.GaussianRealPointProperties.injective
 
 private theorem v_adj (gridPath : List GaussianInt) (y : GaussianInt) (x : GaussianInt)
     (gridPath_head : gridPath.head? = some x) (gridPath_last : gridPath.getLast? = some y)

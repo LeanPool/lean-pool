@@ -261,19 +261,13 @@ private theorem haAt253 :
     (by
       classical
       exact
-        ∀ (K : DiamondParameter), ((1 : ℕ) < K.1) → (
-        (
-        (
-        let k : Int := K.1;
-        let C (p q : Int) : Prop :=
-          0 ≤ q ∧ q ≤ 2*k ∧ -k ≤ p ∧ p ≤ k ∧
-            -q-1 ≤ p ∧ p ≤ q+1 ∧ -(2*k-q+1) ≤ p ∧ p ≤ 2*k-q+1;
-        let U (p q : Int) : Prop := 0 ≤ p ∧ p ≤ 1 ∧ 0 ≤ q ∧ q ≤ 1;
-        (C (⟨-k, k⟩ : GaussianInt).re (⟨-k, k⟩ : GaussianInt).im) → ((U ((⟨-k, k⟩ :
-            GaussianInt).re - (-k - (1 : ℤ))) ((⟨-k, k⟩ : GaussianInt).im - k)) →
-            ((Int.natAbs (1-k) : Int) = k-1))))) ) := by
+        ∀ (K : DiamondParameter),
+          (1 : ℕ) < K.1 →
+            let k : Int := K.1;
+            (Int.natAbs (1 - k) : Int) = k - 1
+    ) := by
   classical
-  intro K hk k C U center unitCenter
+  intro K hk k
   rw [Int.natCast_natAbs, abs_of_nonpos (by omega : 1-k ≤ 0)]
   omega
 
@@ -281,19 +275,13 @@ private theorem hbAt256 :
     (by
       classical
       exact
-        ∀ (K : DiamondParameter), ((1 : ℕ) < K.1) → (
-        (
-        (
-        let k : Int := K.1;
-        let C (p q : Int) : Prop :=
-          0 ≤ q ∧ q ≤ 2*k ∧ -k ≤ p ∧ p ≤ k ∧
-            -q-1 ≤ p ∧ p ≤ q+1 ∧ -(2*k-q+1) ≤ p ∧ p ≤ 2*k-q+1;
-        let U (p q : Int) : Prop := 0 ≤ p ∧ p ≤ 1 ∧ 0 ≤ q ∧ q ≤ 1;
-        (C (⟨-k, k⟩ : GaussianInt).re (⟨-k, k⟩ : GaussianInt).im) → ((U ((⟨-k, k⟩ :
-            GaussianInt).re - (-k - (1 : ℤ))) ((⟨-k, k⟩ : GaussianInt).im - k)) →
-            (((Int.natAbs (1-k) : Int) = k-1) → ((Int.natAbs (-k) : Int) = k)))))) ) := by
+        ∀ (K : DiamondParameter),
+          (1 : ℕ) < K.1 →
+            let k : Int := K.1;
+            (Int.natAbs (1 - k) : Int) = k - 1 → (Int.natAbs (-k) : Int) = k
+    ) := by
   classical
-  intro K hk k C U center unitCenter ha
+  intro K hk k ha
   rw [Int.natCast_natAbs, abs_of_nonpos (by omega : -k ≤ 0)]
   omega
 
@@ -488,8 +476,8 @@ theorem P5352T2FirstUnit (K : DiamondParameter) (hk : 1 < K.1)
     have hn := child (-k) (k+1) (by dsimp [C]; omega)
     have hs := child (-k) (k-1) (by dsimp [C]; omega)
     have hc := child (-k) k (by dsimp [C]; omega)
-    have ha : (Int.natAbs (1-k) : Int) = k-1 := FirstUnitProof.haAt253 K hk center unitCenter
-    have hb : (Int.natAbs (-k) : Int) = k := FirstUnitProof.hbAt256 K hk center unitCenter ha
+    have ha : (Int.natAbs (1-k) : Int) = k-1 := FirstUnitProof.haAt253 K hk
+    have hb : (Int.natAbs (-k) : Int) = k := FirstUnitProof.hbAt256 K hk ha
     simp only [P4207T1DiamondFormula, ha, hb] at he hn hs hc
     rw [show 1-k-k = 1-2*k by ring, show k-1-1 = k-2 by ring, sqp] at he
     rw [show -k-(k+1) = -1-2*k by ring, sqm] at hn

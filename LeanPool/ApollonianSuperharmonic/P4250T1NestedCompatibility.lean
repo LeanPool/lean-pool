@@ -1909,16 +1909,7 @@ private theorem haaIm :
   dsimp at h
   linarith
 
-private theorem haa :
-    (by
-      classical
-      exact
-        ∀ (aa : GaussianInt), ((aa.re : Real) = 0) → (((aa.im : Real) = 0) → (aa = 0)) ) := by
-  classical
-  intro aa haaRe haaIm
-  apply Zsqrtd.ext
-  · exact_mod_cast haaRe
-  · exact_mod_cast haaIm
+private abbrev haa := ApollonianSuperharmonic.NestedCompatibilityGeometry.hshift
 
 private theorem boundaryRaw :
     (by
@@ -2385,52 +2376,6 @@ private theorem hxLS3 :
   rw [hdomS3]
   exact boundaryRaw _ _ hxLS
 
-private theorem hxLK0 :
-    (by
-      classical
-      exact
-        ∀ (q : Fin 4 → CircleCoordinates), ∀ (cfg : BandOrderedGeneralConfiguration q), ∀ (C :
-            BandCircle), ∀ (T : ProtoTile), ∀ (cert : BandOrderedGeneralLayoutCertificate q cfg C
-            T), ∀ (U : Fin (3 : ℕ) → Bool → ProtoTile), ∀ (k : Fin (3 : ℕ) → Bool →
-            PartialOdometer), ∀ (V : Fin (3 : ℕ) → Bool → ProtoTile), ∀ (l : Fin (3 : ℕ) → Bool →
-            PartialOdometer), (((k 0 false).domain : Set GaussianInt) = FootprintVertices (U 0
-            false) ∧ ((l 0 true).domain : Set GaussianInt) = FootprintVertices (V 0 true) ∧ ((k 0
-            false).domain : Set GaussianInt) = ((l 0 true).domain : Set GaussianInt) ∧ ∃ c : Int,
-            ∀ x, x ∈ (k 0 false).domain → x ∈ (l 0 true).domain → (l 0 true).value x - (k 0
-            false).value x = c) → ((∀ (X : ProtoTile), ∀ (x : GaussianInt), (x ∈
-            BoundaryFootprintVertices X) → (x ∈ FootprintVertices X)) → ((FootprintVertices
-            cert.O = FootprintVertices (U 0 false)) → (∀ (xL : GaussianInt), (xL ∈
-            BoundaryFootprintVertices cert.O) → (xL ∈ ((k 0 false).domain : Set GaussianInt)))))
-            ) := by
-  classical
-  intro q cfg C T cert U k V l precursorConstant boundaryRaw oFootU xL hxLO
-  rw [precursorConstant.1]
-  rw [← oFootU]
-  exact boundaryRaw _ _ hxLO
-
-private theorem hxLL0 :
-    (by
-      classical
-      exact
-        ∀ (q : Fin 4 → CircleCoordinates), ∀ (cfg : BandOrderedGeneralConfiguration q), ∀ (C :
-            BandCircle), ∀ (T : ProtoTile), ∀ (cert : BandOrderedGeneralLayoutCertificate q cfg C
-            T), ∀ (U : Fin (3 : ℕ) → Bool → ProtoTile), ∀ (k : Fin (3 : ℕ) → Bool →
-            PartialOdometer), ∀ (V : Fin (3 : ℕ) → Bool → ProtoTile), ∀ (l : Fin (3 : ℕ) → Bool →
-            PartialOdometer), (((k 0 false).domain : Set GaussianInt) = FootprintVertices (U 0
-            false) ∧ ((l 0 true).domain : Set GaussianInt) = FootprintVertices (V 0 true) ∧ ((k 0
-            false).domain : Set GaussianInt) = ((l 0 true).domain : Set GaussianInt) ∧ ∃ c : Int,
-            ∀ x, x ∈ (k 0 false).domain → x ∈ (l 0 true).domain → (l 0 true).value x - (k 0
-            false).value x = c) → ((∀ (X : ProtoTile), ∀ (x : GaussianInt), (x ∈
-            BoundaryFootprintVertices X) → (x ∈ FootprintVertices X)) → ((FootprintVertices
-            cert.O = FootprintVertices (V 0 true)) → (∀ (xL : GaussianInt), (xL ∈
-            BoundaryFootprintVertices cert.O) → (xL ∈ ((l 0 true).domain : Set GaussianInt))))) )
-            := by
-  classical
-  intro q cfg C T cert U k V l precursorConstant boundaryRaw oFootV xL hxLO
-  rw [precursorConstant.2.1]
-  rw [← oFootV]
-  exact boundaryRaw _ _ hxLO
-
 private theorem hxRK3 :
     (by
       classical
@@ -2462,52 +2407,6 @@ private theorem hxRS2 :
   intro q cfg C T cert l boundaryRaw hdomS2 xR hxRS
   rw [hdomS2]
   exact boundaryRaw _ _ hxRS
-
-private theorem hxRK0 :
-    (by
-      classical
-      exact
-        ∀ (q : Fin 4 → CircleCoordinates), ∀ (cfg : BandOrderedGeneralConfiguration q), ∀ (C :
-            BandCircle), ∀ (T : ProtoTile), ∀ (cert : BandOrderedGeneralLayoutCertificate q cfg C
-            T), ∀ (U : Fin (3 : ℕ) → Bool → ProtoTile), ∀ (k : Fin (3 : ℕ) → Bool →
-            PartialOdometer), ∀ (V : Fin (3 : ℕ) → Bool → ProtoTile), ∀ (l : Fin (3 : ℕ) → Bool →
-            PartialOdometer), (((k 0 false).domain : Set GaussianInt) = FootprintVertices (U 0
-            false) ∧ ((l 0 true).domain : Set GaussianInt) = FootprintVertices (V 0 true) ∧ ((k 0
-            false).domain : Set GaussianInt) = ((l 0 true).domain : Set GaussianInt) ∧ ∃ c : Int,
-            ∀ x, x ∈ (k 0 false).domain → x ∈ (l 0 true).domain → (l 0 true).value x - (k 0
-            false).value x = c) → ((∀ (X : ProtoTile), ∀ (x : GaussianInt), (x ∈
-            BoundaryFootprintVertices X) → (x ∈ FootprintVertices X)) → ((FootprintVertices
-            cert.O = FootprintVertices (U 0 false)) → (∀ (xR : GaussianInt), (xR ∈
-            BoundaryFootprintVertices cert.O) → (xR ∈ ((k 0 false).domain : Set GaussianInt)))))
-            ) := by
-  classical
-  intro q cfg C T cert U k V l precursorConstant boundaryRaw oFootU xR hxRO
-  rw [precursorConstant.1]
-  rw [← oFootU]
-  exact boundaryRaw _ _ hxRO
-
-private theorem hxRL0 :
-    (by
-      classical
-      exact
-        ∀ (q : Fin 4 → CircleCoordinates), ∀ (cfg : BandOrderedGeneralConfiguration q), ∀ (C :
-            BandCircle), ∀ (T : ProtoTile), ∀ (cert : BandOrderedGeneralLayoutCertificate q cfg C
-            T), ∀ (U : Fin (3 : ℕ) → Bool → ProtoTile), ∀ (k : Fin (3 : ℕ) → Bool →
-            PartialOdometer), ∀ (V : Fin (3 : ℕ) → Bool → ProtoTile), ∀ (l : Fin (3 : ℕ) → Bool →
-            PartialOdometer), (((k 0 false).domain : Set GaussianInt) = FootprintVertices (U 0
-            false) ∧ ((l 0 true).domain : Set GaussianInt) = FootprintVertices (V 0 true) ∧ ((k 0
-            false).domain : Set GaussianInt) = ((l 0 true).domain : Set GaussianInt) ∧ ∃ c : Int,
-            ∀ x, x ∈ (k 0 false).domain → x ∈ (l 0 true).domain → (l 0 true).value x - (k 0
-            false).value x = c) → ((∀ (X : ProtoTile), ∀ (x : GaussianInt), (x ∈
-            BoundaryFootprintVertices X) → (x ∈ FootprintVertices X)) → ((FootprintVertices
-            cert.O = FootprintVertices (V 0 true)) → (∀ (xR : GaussianInt), (xR ∈
-            BoundaryFootprintVertices cert.O) → (xR ∈ ((l 0 true).domain : Set GaussianInt))))) )
-            := by
-  classical
-  intro q cfg C T cert U k V l precursorConstant boundaryRaw oFootV xR hxRO
-  rw [precursorConstant.2.1]
-  rw [← oFootV]
-  exact boundaryRaw _ _ hxRO
 
 private theorem crossOneConstant :
     (by
@@ -2994,16 +2893,20 @@ private theorem nestedCompatibilityConclusion :
   rcases hxR with ⟨hxRQ, hxRS, hxRO⟩
   have hxLK := NestedCompatibilityGeometry.hxLK q cfg C T cert k hdomQ boundaryRaw xL hxLQ
   have hxLS3 := NestedCompatibilityGeometry.hxLS3 q cfg C T cert l boundaryRaw hdomS3 xL hxLS
-  have hxLK0 := NestedCompatibilityGeometry.hxLK0 q cfg C T cert U k V l precursorConstant
-      boundaryRaw oFootU xL hxLO
-  have hxLL0 := NestedCompatibilityGeometry.hxLL0 q cfg C T cert U k V l precursorConstant
-      boundaryRaw oFootV xL hxLO
+  have precursorKMembership (x : GaussianInt) (hx : x ∈ BoundaryFootprintVertices cert.O) :
+      x ∈ ((k 0 false).domain : Set GaussianInt) := by
+    rw [precursorConstant.1, ← oFootU]
+    exact boundaryRaw _ _ hx
+  have precursorLMembership (x : GaussianInt) (hx : x ∈ BoundaryFootprintVertices cert.O) :
+      x ∈ ((l 0 true).domain : Set GaussianInt) := by
+    rw [precursorConstant.2.1, ← oFootV]
+    exact boundaryRaw _ _ hx
+  have hxLK0 := precursorKMembership xL hxLO
+  have hxLL0 := precursorLMembership xL hxLO
   have hxRK3 := NestedCompatibilityGeometry.hxRK3 q cfg C T cert k boundaryRaw hdomQ3 xR hxRQ
   have hxRS2 := NestedCompatibilityGeometry.hxRS2 q cfg C T cert l boundaryRaw hdomS2 xR hxRS
-  have hxRK0 := NestedCompatibilityGeometry.hxRK0 q cfg C T cert U k V l precursorConstant
-      boundaryRaw oFootU xR hxRO
-  have hxRL0 := NestedCompatibilityGeometry.hxRL0 q cfg C T cert U k V l precursorConstant
-      boundaryRaw oFootV xR hxRO
+  have hxRK0 := precursorKMembership xR hxRO
+  have hxRL0 := precursorLMembership xR hxRO
   have crossOneConstant := NestedCompatibilityGeometry.crossOneConstant k l compatCross1 xL hxLK
       hxLS3
   have crossTwoConstant := NestedCompatibilityGeometry.crossTwoConstant k l compatCross2 xR hxRK3

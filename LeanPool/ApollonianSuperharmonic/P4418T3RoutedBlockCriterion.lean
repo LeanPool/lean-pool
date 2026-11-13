@@ -61,34 +61,32 @@ private theorem hshift :
     (by
       classical
       exact
-        ∀ (q : Fin 4 → CircleCoordinates), ∀ (cfg : BandOrderedGeneralConfiguration q), ∀ (C :
-            BandCircle), ∀ (T : ProtoTile), ∀ (cert : BandOrderedGeneralLayoutCertificate q cfg C
-            T), ∀ (a : PeriodicSubtileIndex), ∀ (b : PeriodicSubtileIndex), ∀ (row :
-            BandOrderedGeneralSelectedContactRow q cfg C T cert a b),
-            (P4418T3SelectedInterfaceData (SubtileOccurrenceInterpretation cert.P cert.u cert.v
-            a) (SubtileOccurrenceInterpretation cert.P cert.u cert.v b)
-            (SubtileOccurrenceInterpretation cert.P cert.u cert.v (P4418T3EndpointOwnerIndices
-            q cfg C T cert a b row).1) (SubtileOccurrenceInterpretation cert.P cert.u cert.v
-            (P4418T3EndpointOwnerIndices q cfg C T cert a b row).2)) → (∀ (x : GaussianInt), ∀
-            (j : Fin 4), ∀ (edge : Finset GaussianInt), (edge ∈ FootprintEdges
-            (SubtileOccurrenceInterpretation cert.P cert.u cert.v a) ∩ FootprintEdges
-            (SubtileOccurrenceInterpretation cert.P cert.u cert.v b)) →
-            ((LatticeVertexIncidentCell x j ∈ (SubtileOccurrenceInterpretation cert.P cert.u
-            cert.v a).cells) → ((LatticeVertexIncidentCell x (j + (2 : Fin (4 : ℕ))) ∈
-            (SubtileOccurrenceInterpretation cert.P cert.u cert.v b).cells) → (
-        let shift : GaussianInt := match P3996T1SRowTable q cfg C T cert row with
-          | some z => z.oldShift
-          | none => match a.label with
-            | .A => if a.first = -1 then -cert.u else cert.u
-            | .B => if a.first = 1 then cert.u else -cert.u
-            | .C => -cert.v
-            | .D => cert.v
-            | .E | .F => 0
-        let oldCoord : Int × Int := routedOldCoordinates row
-        shift = (oldCoord.1 : GaussianInt) * cert.u + (oldCoord.2 : GaussianInt) * cert.v)))) )
+        ∀ (q : Fin 4 → CircleCoordinates),
+          ∀ (cfg : BandOrderedGeneralConfiguration q),
+            ∀ (C : BandCircle),
+              ∀ (T : ProtoTile),
+                ∀ (cert : BandOrderedGeneralLayoutCertificate q cfg C T),
+                  ∀ (a : PeriodicSubtileIndex),
+                    ∀ (b : PeriodicSubtileIndex),
+                      ∀ (row : BandOrderedGeneralSelectedContactRow q cfg C T cert a b),
+                        let shift : GaussianInt :=
+                          match P3996T1SRowTable q cfg C T cert row with
+                          | some z => z.oldShift
+                          | none =>
+                            match a.label with
+                            | .A => if a.first = -1 then -cert.u else cert.u
+                            | .B => if a.first = 1 then cert.u else -cert.u
+                            | .C => -cert.v
+                            | .D => cert.v
+                            | .E | .F => 0
+                        let oldCoord : Int × Int := routedOldCoordinates row
+                        shift =
+                          (oldCoord.1 : GaussianInt) * cert.u +
+                            (oldCoord.2 : GaussianInt) * cert.v
+    )
             := by
   classical
-  intro q cfg C T cert a b row data x j edge hedge ha hb shift oldCoord
+  intro q cfg C T cert a b row shift oldCoord
   cases row <;> simp [shift, oldCoord, routedOldCoordinates, P3996T1SRowTable] <;> ring
 
 private theorem root_disjoint :
@@ -226,22 +224,7 @@ private theorem hVroot :
   intro q cfg C T cert a V root_cells c hc
   exact root_cells a c (by simpa [V] using hc)
 
-private theorem hWroot :
-    (by
-      classical
-      exact
-        ∀ (q : Fin 4 → CircleCoordinates), ∀ (cfg : BandOrderedGeneralConfiguration q), ∀ (C :
-            BandCircle), ∀ (T : ProtoTile), ∀ (cert : BandOrderedGeneralLayoutCertificate q cfg C
-            T), ∀ (b : PeriodicSubtileIndex),
-        let W := SubtileOccurrenceInterpretation cert.P cert.u cert.v b
-        (∀ (o : PeriodicSubtileIndex), ∀ (c : LatticeCell), (c ∈ (SubtileOccurrenceInterpretation
-            cert.P cert.u cert.v o).cells) → (c ∈ (TileTranslation T ((o.first : GaussianInt) *
-            cert.u + (o.second : GaussianInt) * cert.v)).cells)) → (∀ c : LatticeCell, c ∈
-            W.cells → c ∈ (TileTranslation T ((b.first : GaussianInt) * cert.u + (b.second :
-            GaussianInt) * cert.v)).cells) ) := by
-  classical
-  intro q cfg C T cert b W root_cells c hc
-  exact root_cells b c (by simpa [W] using hc)
+private abbrev hWroot := ApollonianSuperharmonic.RoutedBlockGeometry.hVroot
 
 private theorem hG₀root :
     (by
@@ -525,12 +508,12 @@ private theorem hfirst_criterion :
                                 LatticeVertexIncidentCell z k ∈ U.cells →
                                 z ∈ FootprintVertices U) →
                                 let V :=
-                                SubtileOccurrenceInterpretation cert.P cert.u cert.v a
+                                SubtileOccurrenceInterpretation cert.P cert.u cert.v a;
                               let W :=
-                                SubtileOccurrenceInterpretation cert.P cert.u cert.v b
+                                SubtileOccurrenceInterpretation cert.P cert.u cert.v b;
                               let G₀ :=
                                 SubtileOccurrenceInterpretation cert.P cert.u cert.v
-                                (P4418T3EndpointOwnerIndices q cfg C T cert a b row).1
+                                (P4418T3EndpointOwnerIndices q cfg C T cert a b row).1;
                               (∀ c : LatticeCell,
                                 c ∈ G₀.cells →
                                 c ∈
@@ -545,8 +528,6 @@ private theorem hfirst_criterion :
                                 cert.v)).cells) →
                                 Disjoint V.cells (TileTranslation T shift).cells →
                                 Disjoint W.cells (TileTranslation T shift).cells →
-                                (∃ e : Finset GaussianInt,
-                                x ∈ e ∧ e ∈ FootprintEdges V ∩ FootprintEdges W) →
                                 (x = data.first ∨
                                 x = data.last ∨
                                 ∃ (e : Finset GaussianInt) (f : Finset GaussianInt),
@@ -572,8 +553,8 @@ private theorem hfirst_criterion :
     ) := by
   classical
   intro q cfg C T cert a b row data x j edge hx hedge ha hb shift oldCoord hshift root_disjoint
-      old_nonempty footprint_incident incident_footprint V W G₀ hG₀root hVold hWold hxedge htri
-      o₀ hfirst
+      old_nonempty footprint_incident incident_footprint V W G₀ hG₀root hVold hWold htri o₀
+      hfirst
   subst x
   obtain ⟨k, hk⟩ :=
     ((LocalLatticeInterfaceSectors.1 V W G₀ data.first data.latticeV
@@ -699,12 +680,12 @@ private theorem hlast_criterion :
                                 LatticeVertexIncidentCell z k ∈ U.cells →
                                 z ∈ FootprintVertices U) →
                                 let V :=
-                                SubtileOccurrenceInterpretation cert.P cert.u cert.v a
+                                SubtileOccurrenceInterpretation cert.P cert.u cert.v a;
                               let W :=
-                                SubtileOccurrenceInterpretation cert.P cert.u cert.v b
+                                SubtileOccurrenceInterpretation cert.P cert.u cert.v b;
                               let G₁ :=
                                 SubtileOccurrenceInterpretation cert.P cert.u cert.v
-                                (P4418T3EndpointOwnerIndices q cfg C T cert a b row).2
+                                (P4418T3EndpointOwnerIndices q cfg C T cert a b row).2;
                               (∀ c : LatticeCell,
                                 c ∈ G₁.cells →
                                 c ∈
@@ -719,8 +700,6 @@ private theorem hlast_criterion :
                                 cert.v)).cells) →
                                 Disjoint V.cells (TileTranslation T shift).cells →
                                 Disjoint W.cells (TileTranslation T shift).cells →
-                                (∃ e : Finset GaussianInt,
-                                x ∈ e ∧ e ∈ FootprintEdges V ∩ FootprintEdges W) →
                                 (x = data.first ∨
                                 x = data.last ∨
                                 ∃ (e : Finset GaussianInt) (f : Finset GaussianInt),
@@ -751,8 +730,8 @@ private theorem hlast_criterion :
     ) := by
   classical
   intro q cfg C T cert a b row data x j edge hx hedge ha hb shift oldCoord hshift root_disjoint
-      old_nonempty footprint_incident incident_footprint V W G₁ hG₁root hVold hWold hxedge htri
-      o₀ o₁ hfirst_criterion hlast
+      old_nonempty footprint_incident incident_footprint V W G₁ hG₁root hVold hWold htri o₀ o₁
+      hfirst_criterion hlast
   subst x
   obtain ⟨k, hk⟩ :=
     ((LocalLatticeInterfaceSectors.1 V W G₁ data.last data.latticeV
@@ -969,7 +948,7 @@ theorem P4418T3RoutedBlockCriterion
       | .D => cert.v
       | .E | .F => 0
   let oldCoord : Int × Int := routedOldCoordinates row
-  have hshift := RoutedBlockGeometry.hshift q cfg C T cert a b row data x j edge hedge ha hb
+  have hshift := RoutedBlockGeometry.hshift q cfg C T cert a b row
   have a_coord_ne : (a.first, a.second) ≠ oldCoord := by
     cases row <;> simp [oldCoord, routedOldCoordinates]
   have b_coord_ne : (b.first, b.second) ≠ oldCoord := by
@@ -1010,10 +989,10 @@ theorem P4418T3RoutedBlockCriterion
   let o₁ := (P4418T3EndpointOwnerIndices q cfg C T cert a b row).2
   have hfirst_criterion := RoutedBlockGeometry.hfirst_criterion q cfg C T cert a b row data x j
       edge hx hedge ha hb hshift root_disjoint old_nonempty
-      footprint_incident incident_footprint hG₀root hVold hWold hxedge htri
+      footprint_incident incident_footprint hG₀root hVold hWold htri
   have hlast_criterion := RoutedBlockGeometry.hlast_criterion q cfg C T cert a b row data x j
       edge hx hedge ha hb hshift root_disjoint old_nonempty
-      footprint_incident incident_footprint hG₁root hVold hWold hxedge htri hfirst_criterion
+      footprint_incident incident_footprint hG₁root hVold hWold htri hfirst_criterion
   have hcriterion : x ∈ FootprintVertices (TileTranslation T shift) ↔
       (x = data.first ∧ oldCoord = (o₀.first, o₀.second)) ∨
       (x = data.last ∧ oldCoord = (o₁.first, o₁.second)) := RoutedBlockGeometry.hcriterion q cfg

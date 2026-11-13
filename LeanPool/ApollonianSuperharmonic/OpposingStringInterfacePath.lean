@@ -140,23 +140,7 @@ private theorem forwardInterior :
   intro base forward a b tileAt F forall₂_interior forall₂_mem z hz
   exact forall₂_mem forall₂_interior z hz
 
-private theorem reverseInterior :
-    (by
-      classical
-      exact
-        ∀ (base : ProtoTile), ∀ (reverse : List ProtoTile), ∀ (a : GaussianInt), ∀ (b :
-            GaussianInt),
-        let tileAt : Int × Int → ProtoTile := fun z =>
-          TileTranslation base ((z.1 : GaussianInt) * a + (z.2 : GaussianInt) * b)
-        ∀ (G : List (ℤ × ℤ)), (List.Forall₂ (fun (T : ProtoTile) (z : ℤ × ℤ) => T = (fun (z : ℤ ×
-            ℤ) => TileTranslation base ((↑z.1 : GaussianInt) * a + (↑z.2 : GaussianInt) * b)) z)
-            (List.drop (1 : ℕ) reverse).dropLast (List.drop (1 : ℕ) G).dropLast) → ((∀
-            {α : Type}, ∀ {β : Type}, ∀ {Rel : α → β → Prop}, ∀ {xs : List α}, ∀ {ys : List β},
-            (List.Forall₂ Rel xs ys) → (∀ z ∈ ys, ∃ x ∈ xs, Rel x z)) → (∀ (z : Int × Int), (z ∈
-            (G.drop 1).dropLast) → (∃ T ∈ (reverse.drop 1).dropLast, T = tileAt z))) ) := by
-  classical
-  intro base reverse a b tileAt G rfor₂_interior forall₂_mem z hz
-  exact forall₂_mem rfor₂_interior z hz
+private abbrev reverseInterior := ApollonianSuperharmonic.OpposingInterfaceGeometry.forwardInterior
 
 private theorem hshift :
     (by
@@ -796,22 +780,7 @@ private theorem hRrho :
   rw [← htileXi r, ← hir]
   exact PP.rho_common (faceAt f0) ir
 
-private theorem hSrho :
-    (by
-      classical
-      exact
-        ∀ (base : ProtoTile), ∀ (a : GaussianInt), ∀ (b : GaussianInt),
-        let tileAt : Int × Int → ProtoTile := fun z =>
-          TileTranslation base ((z.1 : GaussianInt) * a + (z.2 : GaussianInt) * b)
-        ∀ (s : ℤ × ℤ), ∀ (ι : Type), ∀ (PP : PeriodicTileComplex ι), ∀ (xi : ℤ × ℤ → ι), ∀
-            (faceAt : AffineTriangularFace → PP.plane.Face), (∀ (z : ℤ × ℤ), PP.tile (xi z) =
-            tileAt z) → (∀ (g0 : AffineTriangularFace), ∀ (is : Fin (3 : ℕ)),
-            (PP.plane.faceVertex (faceAt g0) is = xi s) → (PP.rho (faceAt g0) ∈ FootprintVertices
-            (tileAt s))) ) := by
-  classical
-  intro base a b tileAt s ι PP xi faceAt htileXi g0 is his
-  rw [← htileXi s, ← his]
-  exact PP.rho_common (faceAt g0) is
+private abbrev hSrho := ApollonianSuperharmonic.OpposingInterfaceGeometry.hRrho
 
 private theorem htileAlign :
     (by
@@ -1208,8 +1177,9 @@ private theorem unrotatedInterface :
       exact
         ∀ (C : BandCircle), ∀ (orientation : Bool), ∀ (base : ProtoTile), ∀ (R : ProtoTile), ∀ (S
             : ProtoTile), ∀ (forward : List ProtoTile), ∀ (reverse : List ProtoTile), ∀ (a :
-            GaussianInt), ∀ (b : GaussianInt), ((0 : ℤ) < a.re * b.im - a.im * b.re) → ((a ∈
-            TilingLattice C) → ((b ∈ TilingLattice C) → ((∀ (w : ↥(TilingLattice C)), ∃! z : ℤ ×
+            GaussianInt), ∀ (b : GaussianInt), ((0 : ℤ) < a.re * b.im - a.im * b.re) → (
+                               (
+                                                        ((∀ (w : ↥(TilingLattice C)), ∃! z : ℤ ×
             ℤ, (↑z.1 : GaussianInt) * a + (↑z.2 : GaussianInt) * b = (↑w : GaussianInt)) → ((∀ (U
             : ProtoTile), U ∈ RegularTileFamily base (TilingLattice C) ↔ ∃! z : ℤ × ℤ, U = (fun
             (z : ℤ × ℤ) => TileTranslation base ((↑z.1 : GaussianInt) * a + (↑z.2 : GaussianInt)
@@ -1218,20 +1188,8 @@ private theorem unrotatedInterface :
             TileCentroid T = GaussianRealPoint v else TileTouching T U) ((fun (z : ℤ × ℤ) =>
             TileTranslation base ((↑z.1 : GaussianInt) * a + (↑z.2 : GaussianInt) * b)) x) ((fun
             (z : ℤ × ℤ) => TileTranslation base ((↑z.1 : GaussianInt) * a + (↑z.2 : GaussianInt)
-            * b)) y) ↔ TriangularLatticeAdjacent x y) → ((∀ (x : ℤ × ℤ), ∀ (y : ℤ × ℤ), ∀ (z : ℤ
-            × ℤ), ((TileCentroid ((fun (z : ℤ × ℤ) => TileTranslation base ((↑z.1 : GaussianInt)
-            * a + (↑z.2 : GaussianInt) * b)) z)).2 - (TileCentroid ((fun (z : ℤ × ℤ) =>
-            TileTranslation base ((↑z.1 : GaussianInt) * a + (↑z.2 : GaussianInt) * b)) x)).2) *
-            ((TileCentroid ((fun (z : ℤ × ℤ) => TileTranslation base ((↑z.1 : GaussianInt) * a +
-            (↑z.2 : GaussianInt) * b)) y)).1 - (TileCentroid ((fun (z : ℤ × ℤ) => TileTranslation
-            base ((↑z.1 : GaussianInt) * a + (↑z.2 : GaussianInt) * b)) x)).1) - ((TileCentroid
-            ((fun (z : ℤ × ℤ) => TileTranslation base ((↑z.1 : GaussianInt) * a + (↑z.2 :
-            GaussianInt) * b)) z)).1 - (TileCentroid ((fun (z : ℤ × ℤ) => TileTranslation base
-            ((↑z.1 : GaussianInt) * a + (↑z.2 : GaussianInt) * b)) x)).1) * ((TileCentroid ((fun
-            (z : ℤ × ℤ) => TileTranslation base ((↑z.1 : GaussianInt) * a + (↑z.2 : GaussianInt)
-            * b)) y)).2 - (TileCentroid ((fun (z : ℤ × ℤ) => TileTranslation base ((↑z.1 :
-            GaussianInt) * a + (↑z.2 : GaussianInt) * b)) x)).2) = (↑(a.re * b.im - a.im * b.re)
-            : ℝ) * (↑(TriangularSignedHeight x y z) : ℝ)) → ((∀ (R : ProtoTile), ∀ (S :
+            * b)) y) ↔ TriangularLatticeAdjacent x y) → (
+                                                            ((∀ (R : ProtoTile), ∀ (S :
             ProtoTile), ∀ (tiles : List ProtoTile), ∀ (r : ℤ × ℤ), ∀ (s : ℤ × ℤ), R = (fun (z : ℤ
             × ℤ) => TileTranslation base ((↑z.1 : GaussianInt) * a + (↑z.2 : GaussianInt) * b)) r
             → S = (fun (z : ℤ × ℤ) => TileTranslation base ((↑z.1 : GaussianInt) * a + (↑z.2 :
@@ -1274,10 +1232,9 @@ private theorem unrotatedInterface :
             (forward.drop 1).dropLast, {x, y} ∈ FootprintEdges a) ∧ (∃ b ∈ (reverse.drop
             1).dropLast, {x, y} ∈ FootprintEdges b)))))))))))))))))))))))))))) ) := by
   classical
-  intro C orientation base R S forward reverse a b hdet ha hb hcoords hfamily hadj hheight
-      htransport tileAt r hrcoord hruniq s hscoord hsuniq hR hS F G hFtiles hFstrip hGtiles
-      hGstrip hrs hnadjCoord forall₂_interior rfor₂_interior forwardInterior reverseInterior x
-      hcells ha1 hb1
+  intro C orientation base R S forward reverse a b hdet hcoords hfamily hadj htransport tileAt r
+      hrcoord hruniq s hscoord hsuniq hR hS F G hFtiles hFstrip hGtiles hGstrip hrs hnadjCoord
+      forall₂_interior rfor₂_interior forwardInterior reverseInterior x hcells ha1 hb1
   subst a
   subst b
   obtain ⟨p, hphead, hplast, hpchain, hpvertices, hpedges⟩ :=
@@ -1421,8 +1378,8 @@ theorem OpposingStringInterfacePath
                     {x, y} ∈ FootprintEdges a) ∧
                   (∃ b ∈ (reverse.drop 1).dropLast,
                     {x, y} ∈ FootprintEdges b) := OpposingUnitInterface.unrotatedInterface C
-                        orientation base R S forward reverse a b hdet ha hb hcoords hfamily hadj
-                        hheight htransport r hrcoord hruniq s hscoord hsuniq hR hS F G hFtiles
+                        orientation base R S forward reverse a b hdet hcoords hfamily hadj
+                            htransport r hrcoord hruniq s hscoord hsuniq hR hS F G hFtiles
                         hFstrip hGtiles hGstrip hrs hnadjCoord forall₂_interior rfor₂_interior
                         forwardInterior reverseInterior x hcells ha1 hb1
       exact unrotatedInterface

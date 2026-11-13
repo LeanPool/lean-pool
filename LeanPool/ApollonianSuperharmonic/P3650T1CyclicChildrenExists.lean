@@ -1277,47 +1277,6 @@ private theorem hright_wrap (n : Nat) (a : Fin (n + 3)) (b : Fin (n + 3)) (hab :
   simp [lastR, Fin.val_add_eq_ite, hrightLen,
     Nat.mod_eq_of_lt (by omega : 1 < N - k + 1)]
 
-private theorem hleft_ord_edge (n : Nat) (a : Fin (n + 3)) (b : Fin (n + 3)) (hab : a ≠ b) (hnext
-    : b ≠ a + 1) (hprev : a ≠ b + 1) (i : Fin ((leftN n a b) + 3)) (hi : i.val < (k n a b)) :
-      (il n a b hab hnext hprev) (i + 1) = (il n a b hab hnext hprev) i + 1 := by
-  classical
-  let N := n + 3
-  let rot : Fin N → Fin N := fun i => a + i
-  let k : Nat := (b.val + N - a.val) % N
-  have hklt : k < N := hklt n a b
-  have hkv : k = if a.val ≤ b.val then b.val - a.val else b.val + N - a.val := hkv n a b
-  have hkle : k + 2 ≤ N := hkle n a b hprev
-  let root : List (Fin N) := List.ofFn (fun i : Fin N => i)
-  have hrootlen : root.length = N := hrootlen n
-  let leftN := k - 2
-  have hleftLen : leftN + 3 = k + 1 := hleftLen n a b hab hnext hprev
-  let il : Fin (leftN + 3) → Fin N := fun i => rot ⟨i.val, by rw [hleftLen] at i; omega⟩
-  have hleft_succ (i : Fin (leftN + 3)) (hi : i.val < k) :
-      il (i + 1) = il i + 1 := hleft_succ n a b hab hnext hprev i hi
-  dsimp only [CyclicChildrenConstruction.k, CyclicChildrenConstruction.leftN] at *
-  change (il (i + 1) = il i + 1)
-  exact hleft_succ i hi
-
-private theorem hright_ord_edge (n : Nat) (a : Fin (n + 3)) (b : Fin (n + 3)) (hab : a ≠ b)
-    (hnext : b ≠ a + 1) (hprev : a ≠ b + 1) (i : Fin ((rightN n a b) + 3)) (hi : i.val < (N n) -
-    (k n a b)) :
-      (ir n a b hab hnext hprev) (i + 1) = (ir n a b hab hnext hprev) i + 1 := by
-  classical
-  let N := n + 3
-  let rot : Fin N → Fin N := fun i => a + i
-  let k : Nat := (b.val + N - a.val) % N
-  let rightN := N - k - 2
-  let posR : Fin (rightN + 3) → Nat := fun i =>
-    if i.val = N - k then 0 else k + i.val
-  have hposRlt (i : Fin (rightN + 3)) : posR i < N := hposRlt n a b hab hnext hprev i
-  let ir : Fin (rightN + 3) → Fin N := fun i => rot ⟨posR i, hposRlt i⟩
-  have hright_succ (i : Fin (rightN + 3)) (hi : i.val < N - k) :
-      ir (i + 1) = ir i + 1 := hright_succ n a b hab hnext hprev i hi
-  dsimp only [CyclicChildrenConstruction.N, CyclicChildrenConstruction.k,
-      CyclicChildrenConstruction.rightN] at *
-  change (ir (i + 1) = ir i + 1)
-  exact hright_succ i hi
-
 private theorem hleft_last_edge (n : Nat) (p : P3381T1PolygonBoundary n) (a : Fin (n + 3)) (b :
     Fin (n + 3)) (hab : a ≠ b) (hnext : b ≠ a + 1) (hprev : a ≠ b + 1) :
       segment Real (p.vertex ((il n a b hab hnext hprev) (ik n a b hab hnext hprev))) (p.vertex

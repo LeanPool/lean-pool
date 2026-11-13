@@ -1087,235 +1087,92 @@ private theorem leftString :
     (by
       classical
       exact
-        ∀ (C : BandCircle), ∀ (orientation : Bool), ∀ (base : ProtoTile), ∀ (Rminus : ProtoTile),
-            ∀ (Rplus : ProtoTile), ∀ (hminus : PartialOdometer), ∀ (hplus : PartialOdometer), ∀
-            (F : P4458T1BoundaryFrame C orientation base Rminus Rplus hminus hplus), ∀ (D :
-            P4458T1RestrictionFamily F), ∀ (a : Fin (3 : ℕ)), ∀ (p : Fin (4 : ℕ) →
-            CircleCoordinates), ∀ (hp : ProperBandQuadruple p), (![F.q (0 : Fin (4 :
-            ℕ)), F.q a.succ, F.q (a + (1 : Fin (3 : ℕ))).succ, F.q (a + (2 : Fin (3 : ℕ))).succ]
-            = ![((2 : ℤ) * (p (0 : Fin (4 : ℕ))).1 + (2 : ℤ) * (p (2 : Fin (4 : ℕ))).1 + (2 : ℤ)
-            * (p (3 : Fin (4 : ℕ))).1 - (p (1 : Fin (4 : ℕ))).1, (2 : GaussianInt) * (p (0 : Fin
-            (4 : ℕ))).2 + (2 : GaussianInt) * (p (2 : Fin (4 : ℕ))).2 + (2 : GaussianInt) * (p (3
-            : Fin (4 : ℕ))).2 - (p (1 : Fin (4 : ℕ))).2), p (0 : Fin (4 : ℕ)), p (2 : Fin (4 :
-            ℕ)), p (3 : Fin (4 : ℕ))]) → (∀ (hB : F.slot = a + (1 : Fin (3 : ℕ)) → C.1.1.1 = (1 :
-            ℤ) → UnitOccurrenceOrientation p (1 : Fin (3 : ℕ)) orientation), (F.slot = a +
-            (2 : Fin (3 : ℕ)) → C.1.1.1 = (1 : ℤ) → UnitOccurrenceOrientation p (2 : Fin (3 : ℕ))
-            orientation) → ((F.slot ≠ a) → (∀ (t : Fin (4 : ℕ) → CircleCoordinates), (F.slot = a
-                + (2 : Fin (3 : ℕ)) → C.1.1.1 = (1 : ℤ) →
-            UnitOccurrenceOrientation t (0 : Fin (3 : ℕ)) orientation) → ((0 < (F.q
-            F.slot.succ).1) → (((F.q F.slot.succ).1 < (F.q 0).1) → ((AncestorOdometer (F.q
-                F.slot.succ) F.outer.1.1 (D.tiles F.slot false) F.tile
-                (D.functions F.slot false)
-            F.odometer) → ((TileOdometer (F.q F.slot.succ) (D.tiles F.slot false)
-            (D.functions F.slot false)) → ((∃ s, PartialOdometerSlope
-            (D.functions F.slot false) = some s) → (
-        let r : Fin 4 → CircleCoordinates :=
-          ![F.q 0, F.q F.slot.succ, F.q ((F.slot + 1).succ),
-            F.q ((F.slot + 2).succ)]
-        (ProperBandQuadruple r) → ((r 1 = C.1.1) → (
-        let I : GaussianInt := ⟨0, 1⟩
-        let w : GaussianInt := BandVectors.1 (r 3) (r 2)
-        let x : GaussianInt := BandVectors.1 (r 1) (r 3)
-        let y : GaussianInt := BandVectors.1 (r 2) (r 1)
-        let wa : GaussianInt := BandVectors.2 (r 3) (r 2)
-        let xa : GaussianInt := BandVectors.2 (r 1) (r 3)
-        let ya : GaussianInt := BandVectors.2 (r 2) (r 1)
-        (w + x + y = 0) → ((wa + xa + ya = 0) → (∀ (hvrec : BandVectors.1 (r 1)
-            (r 0) = x - I * y), (BandVectors.2 (r 1) (r 0) = xa + I * ya) → (∀ (hvflip :
-                BandVectors.1 (r 0) (r 1) = I * BandVectors.1 (r 1) (r 0)), (BandVectors.2
-            (r 0) (r 1) = -I * BandVectors.2 (r 1) (r 0)) → ((w.re + x.re + y.re = 0) → ((w.im +
-                x.im + y.im = 0) → ((BandPrototile (F.q F.slot.succ)
-            (D.tiles F.slot false)) → ((FootprintVertices (D.tiles F.slot false) ⊆
-            FootprintVertices F.tile) → ((TileCentroid (D.tiles F.slot false) -
-            TileCentroid F.tile = (if false = true then (1 : ℝ) else (-1 : ℝ)) • (1 / 2 : ℝ) •
-            (GaussianRealPoint (BandVectors.1 (F.q (F.slot + (2 : Fin (3 : ℕ))).succ) (F.q
-            (F.slot + (1 : Fin (3 : ℕ))).succ)) - (-(GaussianRealPoint (BandVectors.1 (F.q
-            (F.slot + (2 : Fin (3 : ℕ))).succ) (F.q (F.slot + (1 : Fin (3 : ℕ))).succ))).2,
-            (GaussianRealPoint (BandVectors.1 (F.q (F.slot + (2 : Fin (3 : ℕ))).succ) (F.q
-            (F.slot + (1 : Fin (3 : ℕ))).succ))).1))) → ((TileCentroid (D.tiles F.slot
-            false) - TileCentroid F.tile = -(1 / 2 : ℝ) • (GaussianRealPoint w -
-            (-(GaussianRealPoint w).2, (GaussianRealPoint w).1))) → (∀ (hMcenter : TileCentroid
-            Rminus - TileCentroid F.tile = (1 / 2 : ℝ) • GaussianRealPoint (BandVectors.1 (r 1)
-            (r 0) - BandVectors.1 (r 0) (r 1))), (-w + I * w - BandVectors.1 (r
-            1) (r 0) + BandVectors.1 (r 0) (r 1) = 2 * y) → (((↑(-w + I * w -
-            BandVectors.1 (r (1 : Fin (4 : ℕ))) (r (0 : Fin (4 : ℕ))) + BandVectors.1 (r (0 : Fin
-            (4 : ℕ))) (r (1 : Fin (4 : ℕ)))).re : ℝ) = (↑((2 : GaussianInt) * y).re : ℝ)) →
-                (((↑(-w + I * w - BandVectors.1 (r (1 : Fin (4 : ℕ))) (r (0 : Fin (4 :
-            ℕ))) + BandVectors.1 (r (0 : Fin (4 : ℕ))) (r (1 : Fin (4 : ℕ)))).im : ℝ) = (↑((2 :
-            GaussianInt) * y).im : ℝ)) → (∀ (hcenter : TileCentroid (D.tiles F.slot false) -
-            TileCentroid Rminus = GaussianRealPoint y), (y ∈ TilingLattice C) → (∀ (u :
-                ↥(TilingLattice C)), (Rminus = TileTranslation base (↑u : GaussianInt)) → (
-        let join : ProtoTile := TileTranslation base (u + y)
-        (join = TileTranslation Rminus y) → ((BandPrototile C.1.1 join) → (∀ (hjoinFamily : join
-            ∈ RegularTileFamily base (TilingLattice C)), (TileCentroid join = TileCentroid Rminus
-            + GaussianRealPoint y) → (∀ (hjoinCenterEq : TileCentroid (D.tiles F.slot false) =
-            TileCentroid join), (BandPrototile
-            C.1.1 (D.tiles F.slot false)) → (((D.tiles F.slot false).cells =
-            join.cells ∧ ((D.tiles F.slot false).cells = ∅ → (D.tiles F.slot false).anchor =
-            join.anchor)) → (∀ (hjoinOdo : TileOdometer C.1.1 join (D.functions F.slot false)),
-                (AncestorOdometer C.1.1 F.outer.1.1 join F.tile (D.functions F.slot
-            false) F.odometer) → (((D.tiles F.slot false).cells.Nonempty) →
-                ((join.cells.Nonempty) → ((FootprintVertices join =
-            FootprintVertices (D.tiles F.slot false)) → ((FootprintVertices join ⊆
-            FootprintVertices F.tile) → ((BandSubtileOccurrence F.q F.tile
-            F.slot false join) → ((F.q 0 = (2 * (p 0).1 + 2 * (p 2).1 + 2 * (p 3).1 - (p
-            1).1, 2 * (p 0).2 + 2 * (p 2).2 + 2 * (p 3).2 - (p 1).2)) → ((F.q a.succ = p
-            0) → ((F.q (a + 1).succ = p 2) → ((F.q (a + 2).succ = p 3) → (∀ (rootNeg : ℝ × ℝ), ∀
-                (joinSlope : ℝ × ℝ), (PartialOdometerSlope F.odometer = some
-            rootNeg) → (∀ (hjoinSlope : PartialOdometerSlope (D.functions F.slot false) = some
-            joinSlope), (rootNeg = F.outerSlope) → (∀ (hSB : F.slot = a + (1 : Fin
-            (3 : ℕ))), (r 1 = p 2) → ((r 2 = p 3) → ((r 3 = p 0) → ((F.q a.succ = p 0) → ((0 <
-                (F.q a.succ).1) → (∀ (rootSlope : ℝ × ℝ), (joinSlope.2 - rootSlope.2 = -(1 / 2 :
-                ℝ) * ((↑wa.im : ℝ) + (↑wa.re :
-            ℝ))) → ((joinSlope.1 - rootSlope.1 = -(1 / 2 : ℝ) * ((↑wa.re : ℝ) -
-            (↑wa.im : ℝ))) → (∀ (aSlope : ℝ × ℝ), (PartialOdometerSlope F.odometer =
-            some rootSlope) → (∀ (haSlope : PartialOdometerSlope (D.functions a true) = some
-            aSlope), (aSlope.1 - rootSlope.1 = (if true = true then (1 : ℝ) else (-1 :
-            ℝ)) * (1 / 2 : ℝ) * ((↑(BandVectors.2 (F.q (a + (2 : Fin (3 : ℕ))).succ) (F.q (a + (1
-            : Fin (3 : ℕ))).succ)).re : ℝ) - (↑(BandVectors.2 (F.q (a + (2 : Fin (3 : ℕ))).succ)
-            (F.q (a + (1 : Fin (3 : ℕ))).succ)).im : ℝ))) → ((aSlope.2 - rootSlope.2 = (if
-            true = true then (1 : ℝ) else (-1 : ℝ)) * (1 / 2 : ℝ) * ((↑(BandVectors.2 (F.q (a +
-            (2 : Fin (3 : ℕ))).succ) (F.q (a + (1 : Fin (3 : ℕ))).succ)).im : ℝ) +
-            (↑(BandVectors.2 (F.q (a + (2 : Fin (3 : ℕ))).succ) (F.q (a + (1 : Fin (3 :
-            ℕ))).succ)).re : ℝ))) → ((rootSlope = F.outerSlope) → (
-        let outerA : BandCircle :=
-          ⟨⟨p 0, ⟨Or.inl (ProperBandCurvatureStructure p hp).1,
-            ⟨p, hp.1, 0, rfl⟩⟩⟩, (ProperBandCurvatureStructure p hp).1⟩
-        (outerA.1.1 = F.q a.succ) → (∀ (hparentB : p (2 : Fin (4 :
-            ℕ)) = C.1.1), ∀ (houterOdo : TileOdometer (p (0 : Fin (4 : ℕ))) (D.tiles a true)
-            (D.functions a true)), ∀ (houterBand : BandPrototile (p (0 : Fin (4 : ℕ))) (D.tiles a
-            true)), (AncestorOdometer (p (0 : Fin (4 : ℕ))) F.outer.1.1 (D.tiles a
-                true) F.tile (D.functions a true)
-            F.odometer) → (∀ (hBA : BandVectors.1 (p (2 : Fin (4 : ℕ))) (p (0 : Fin (4 : ℕ))) =
-                x), (BandVectors.2 (p (2 : Fin (4 : ℕ))) (p (0 : Fin (4 : ℕ))) = xa) → (∀ (hvAB :
-                BandVectors.1 (p (0 : Fin (4 : ℕ))) (p (2 : Fin (4 : ℕ))) = I * x),
-                (BandVectors.2 (p (0 : Fin (4 : ℕ))) (p (2 : Fin (4 : ℕ))) = -I * xa) → (∀ (hidx2
-                : Fin.succ (1 : Fin (3 : ℕ)) = (2 : Fin ((3 : ℕ) + (1 : ℕ)))), ∀ (hAocc :
-                TileCentroid
-            (D.tiles a true) - TileCentroid F.tile = (1 / 2 : ℝ) • (GaussianRealPoint y -
-            (-(GaussianRealPoint y).2, (GaussianRealPoint y).1))), (aSlope.1 -
-            rootSlope.1 = (1 / 2 : ℝ) * ((↑ya.re : ℝ) - (↑ya.im : ℝ))) → ((aSlope.2 -
-            rootSlope.2 = (1 / 2 : ℝ) * ((↑ya.im : ℝ) + (↑ya.re : ℝ))) → ((wa.re +
-            xa.re + ya.re = (0 : ℤ)) → ((wa.im + xa.im + ya.im = (0 : ℤ)) → (((↑wa.re : ℝ) +
-                (↑xa.re : ℝ) + (↑ya.re : ℝ) = (0 : ℝ)) → (((↑wa.im : ℝ) +
-            (↑xa.im : ℝ) + (↑ya.im : ℝ) = (0 : ℝ)) → (∀ (hminusSlopeOffset : joinSlope - aSlope =
-            (1 / 2 : ℝ) • GaussianRealPoint (BandVectors.2 (p (2 : Fin (4 : ℕ))) (p (0 : Fin (4 :
-            ℕ))) - BandVectors.2 (p (0 : Fin (4 : ℕ))) (p (2 : Fin (4 : ℕ))))), (F.plusSlope -
-                rootSlope = (1 / 2 : ℝ) • GaussianRealPoint (BandVectors.2 (r (1 : Fin
-            (4 : ℕ))) (r (0 : Fin (4 : ℕ))) + BandVectors.2 (r (0 : Fin (4 : ℕ))) (r (1 : Fin (4
-            : ℕ))))) → ((F.plusSlope.1 - rootSlope.1 = (1 / 2 : ℝ) *
-            (((GaussianInt.toComplex : GaussianInt → ℂ) (BandVectors.2 (r (1 : Fin (4 : ℕ))) (r
-            (0 : Fin (4 : ℕ))))).re + ((GaussianInt.toComplex : GaussianInt → ℂ) (BandVectors.2
-            (r (0 : Fin (4 : ℕ))) (r (1 : Fin (4 : ℕ))))).re)) → ((F.plusSlope.2 -
-            rootSlope.2 = (1 / 2 : ℝ) * (((GaussianInt.toComplex : GaussianInt → ℂ)
-            (BandVectors.2 (r (1 : Fin (4 : ℕ))) (r (0 : Fin (4 : ℕ))))).im +
-            ((GaussianInt.toComplex : GaussianInt → ℂ) (BandVectors.2 (r (0 : Fin (4 : ℕ))) (r (1
-            : Fin (4 : ℕ))))).im)) → (((BandVectors.2 (r (1 : Fin (4 : ℕ))) (r (0 : Fin
-            (4 : ℕ)))).re = xa.re - ya.im) → (((BandVectors.2 (r (1 : Fin (4 : ℕ))) (r
-            (0 : Fin (4 : ℕ)))).im = xa.im + ya.re) → (((BandVectors.2 (r (0 : Fin (4 :
-            ℕ))) (r (1 : Fin (4 : ℕ)))).re = xa.im + ya.re) → (((BandVectors.2 (r (0 :
-            Fin (4 : ℕ))) (r (1 : Fin (4 : ℕ)))).im = -xa.re + ya.im) → (((BandVectors.2 (p (2 :
-                Fin (4 : ℕ))) (p (0 : Fin (4 : ℕ))) + BandVectors.2 (p (0 :
-            Fin (4 : ℕ))) (p (2 : Fin (4 : ℕ)))).re = xa.re + xa.im) → (((BandVectors.2 (p (2 :
-                Fin (4 : ℕ))) (p (0 : Fin (4 : ℕ))) + BandVectors.2 (p (0 :
-            Fin (4 : ℕ))) (p (2 : Fin (4 : ℕ)))).im = xa.im - xa.re) → ((F.plusSlope.1 -
-                rootSlope.1 = (1 / 2 : ℝ) * ((↑(BandVectors.2 (r (1 : Fin (4 : ℕ)))
-            (r (0 : Fin (4 : ℕ)))).re : ℝ) + (↑(BandVectors.2 (r (0 : Fin (4 : ℕ))) (r (1 : Fin
-            (4 : ℕ)))).re : ℝ))) → ((F.plusSlope.2 - rootSlope.2 = (1 / 2 : ℝ) *
-            ((↑(BandVectors.2 (r (1 : Fin (4 : ℕ))) (r (0 : Fin (4 : ℕ)))).im : ℝ) +
-            (↑(BandVectors.2 (r (0 : Fin (4 : ℕ))) (r (1 : Fin (4 : ℕ)))).im : ℝ))) → (∀
-                (hplusSlopeOffset : F.plusSlope - aSlope = (1 / 2 : ℝ) • GaussianRealPoint
-            (BandVectors.2 (p (2 : Fin (4 : ℕ))) (p (0 : Fin (4 : ℕ))) + BandVectors.2 (p (0 :
-            Fin (4 : ℕ))) (p (2 : Fin (4 : ℕ))))),
-        let G : P4458T1BoundaryFrame C orientation base join Rplus
-            (D.functions F.slot false) hplus := {
-          outer := outerA
-          q := p
-          proper := hp
-          slot := 1
-          child := rfl
-          parent := hparentB
-          tile := D.tiles a true
-          odometer := D.functions a true
-          outer_odo := houterOdo
-          minus_odo := hjoinOdo
-          plus_odo := F.plus_odo
-          outer_band := houterBand
-          base_band := F.base_band
-          minus_family := hjoinFamily
-          plus_family := F.plus_family
-          chart := by
-            intro hunit
-            exact hB hSB (by simpa only [hparentB] using hunit)
-          minus_centroid := by
-            rw [hidx2]
-            rw [show TileCentroid join - TileCentroid (D.tiles a true) =
-              (TileCentroid join - TileCentroid Rminus) +
-                (TileCentroid Rminus - TileCentroid F.tile) -
-                (TileCentroid (D.tiles a true) - TileCentroid F.tile) by
-                  ext <;> dsimp <;> ring]
-            rw [← hjoinCenterEq, hcenter, hMcenter, hAocc,
-              hvflip, hvrec, hBA, hvAB]
-            apply Prod.ext <;>
-              simp [GaussianRealPoint, I, Prod.smul_mk,
-                Zsqrtd.re_mul, Zsqrtd.im_mul] <;> ring
-          plus_centroid := by
-            rw [hidx2]
-            rw [show TileCentroid Rplus - TileCentroid (D.tiles a true) =
-              (TileCentroid Rplus - TileCentroid F.tile) -
-                (TileCentroid (D.tiles a true) - TileCentroid F.tile) by
-                  ext <;> dsimp <;> ring]
-            have hPcenter : TileCentroid Rplus - TileCentroid F.tile =
-                (1 / 2 : ℝ) • GaussianRealPoint
-                  (BandVectors.1 (r 1) (r 0) + BandVectors.1 (r 0) (r 1)) := by
-              simpa [r] using F.plus_centroid
-            rw [hPcenter, hAocc, hvflip, hvrec, hBA, hvAB]
-            apply Prod.ext <;>
-              simp [GaussianRealPoint, I, Prod.smul_mk,
-                Zsqrtd.re_mul, Zsqrtd.im_mul] <;> ring
-          outerSlope := aSlope
-          minusSlope := joinSlope
-          plusSlope := F.plusSlope
-          slope_outer := haSlope
-          slope_minus := hjoinSlope
-          slope_plus := F.slope_plus
-          minus_difference := hminusSlopeOffset
-          plus_difference := hplusSlopeOffset
-        }
-        (G.outer.1.1 = F.q a.succ) →
-            ((P4458T1BoundarySide F join Rplus (D.functions F.slot false) hplus) →
-            ((F.minusSlope - rootSlope = (1 / 2 : ℝ) • GaussianRealPoint (BandVectors.2 (r (1 :
-            Fin (4 : ℕ))) (r (0 : Fin (4 : ℕ))) - BandVectors.2 (r (0 : Fin (4 : ℕ))) (r (1 : Fin
-            (4 : ℕ))))) → ((F.minusSlope.1 - rootSlope.1 = (1 / 2 : ℝ) * ((↑(BandVectors.2 (r (1
-            : Fin (4 : ℕ))) (r (0 : Fin (4 : ℕ)))).re : ℝ) - (↑(BandVectors.2 (r (0 : Fin (4 :
-            ℕ))) (r (1 : Fin (4 : ℕ)))).re : ℝ))) → ((F.minusSlope.2 - rootSlope.2 = (1 / 2 : ℝ)
-            * ((↑(BandVectors.2 (r (1 : Fin (4 : ℕ))) (r (0 : Fin (4 : ℕ)))).im : ℝ) -
-            (↑(BandVectors.2 (r (0 : Fin (4 : ℕ))) (r (1 : Fin (4 : ℕ)))).im : ℝ))) →
-            ((((BandVectors.2 (r 1) (r 0)).re : ℝ) = (xa.re : ℝ) - (ya.im : ℝ)) →
-            ((((BandVectors.2 (r 1) (r 0)).im : ℝ) = (xa.im : ℝ) + (ya.re : ℝ)) →
-            ((((BandVectors.2 (r 0) (r 1)).re : ℝ) = (xa.im : ℝ) + (ya.re : ℝ)) →
-            ((((BandVectors.2 (r 0) (r 1)).im : ℝ) = -(xa.re : ℝ) + (ya.im : ℝ)) → ((joinSlope -
-            F.minusSlope = GaussianRealPoint ya) → ((TileCentroid join - TileCentroid Rminus =
-            GaussianRealPoint y) → ((TileTouching Rminus join) → ((LeftLatticeAdjacent C Rminus
-            join hminus (D.functions F.slot false)) → ((Rminus.cells.Nonempty) →
-            ((join.cells.Nonempty) → ((Rminus ≠ join) → ((C.1.1.1 ≠ 1) → (TileString C
-            orientation base Rminus join [Rminus,
-                join])))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))
-                )))))))))))))))))))))))) := by
+        ∀ (C : BandCircle),
+          ∀ (orientation : Bool),
+            ∀ (base : ProtoTile),
+              ∀ (Rminus : ProtoTile),
+                ∀ (Rplus : ProtoTile),
+                  ∀ (hminus : PartialOdometer),
+                    ∀ (hplus : PartialOdometer),
+                      ∀
+                        (F :
+                          P4458T1BoundaryFrame C orientation base Rminus Rplus hminus
+                            hplus),
+                        ∀ (D : P4458T1RestrictionFamily F),
+                          ∀ (a : Fin (3 : ℕ)),
+                            ∀ (p : Fin (4 : ℕ) → CircleCoordinates),
+                              ProperBandQuadruple p →
+                                (F.slot = a + (1 : Fin (3 : ℕ)) →
+                                C.1.1.1 = (1 : ℤ) →
+                                UnitOccurrenceOrientation p (1 : Fin (3 : ℕ))
+                                orientation) →
+                                let r : Fin 4 → CircleCoordinates :=
+                                ![F.q 0, F.q F.slot.succ, F.q (F.slot + 1).succ,
+                                F.q (F.slot + 2).succ];
+                              let I : GaussianInt := ⟨0, 1⟩;
+                              let x : GaussianInt := BandVectors.1 (r 1) (r 3);
+                              let y : GaussianInt := BandVectors.1 (r 2) (r 1);
+                              BandVectors.1 (r 1) (r 0) = x - I * y →
+                                BandVectors.1 (r 0) (r 1) =
+                                I * BandVectors.1 (r 1) (r 0) →
+                                TileCentroid Rminus - TileCentroid F.tile =
+                                (1 / 2 : ℝ) •
+                                GaussianRealPoint
+                                (BandVectors.1 (r 1) (r 0) - BandVectors.1 (r 0) (r 1)) →
+                                TileCentroid (D.tiles F.slot false) -
+                                TileCentroid Rminus =
+                                GaussianRealPoint y →
+                                ∀ (u : ↥(TilingLattice C)),
+                                let join : ProtoTile := TileTranslation base (u + y);
+                              join ∈ RegularTileFamily base (TilingLattice C) →
+                                TileCentroid (D.tiles F.slot false) = TileCentroid join →
+                                TileOdometer C.1.1 join (D.functions F.slot false) →
+                                ∀ (joinSlope : ℝ × ℝ),
+                                PartialOdometerSlope (D.functions F.slot false) =
+                                some joinSlope →
+                                F.slot = a + (1 : Fin (3 : ℕ)) →
+                                ∀ (aSlope : ℝ × ℝ),
+                                PartialOdometerSlope (D.functions a true) = some aSlope →
+                                p (2 : Fin (4 : ℕ)) = C.1.1 →
+                                TileOdometer (p (0 : Fin (4 : ℕ))) (D.tiles a true)
+                                (D.functions a true) →
+                                BandPrototile (p (0 : Fin (4 : ℕ))) (D.tiles a true) →
+                                BandVectors.1 (p (2 : Fin (4 : ℕ)))
+                                (p (0 : Fin (4 : ℕ))) =
+                                x →
+                                BandVectors.1 (p (0 : Fin (4 : ℕ)))
+                                (p (2 : Fin (4 : ℕ))) =
+                                I * x →
+                                Fin.succ (1 : Fin (3 : ℕ)) =
+                                (2 : Fin ((3 : ℕ) + (1 : ℕ))) →
+                                TileCentroid (D.tiles a true) - TileCentroid F.tile =
+                                (1 / 2 : ℝ) •
+                                (GaussianRealPoint y -
+                                (-(GaussianRealPoint y).2, (GaussianRealPoint y).1)) →
+                                joinSlope - aSlope =
+                                (1 / 2 : ℝ) •
+                                GaussianRealPoint
+                                (BandVectors.2 (p (2 : Fin (4 : ℕ)))
+                                (p (0 : Fin (4 : ℕ))) -
+                                BandVectors.2 (p (0 : Fin (4 : ℕ)))
+                                (p (2 : Fin (4 : ℕ)))) →
+                                F.plusSlope - aSlope =
+                                (1 / 2 : ℝ) •
+                                GaussianRealPoint
+                                (BandVectors.2 (p (2 : Fin (4 : ℕ)))
+                                (p (0 : Fin (4 : ℕ))) +
+                                BandVectors.2 (p (0 : Fin (4 : ℕ)))
+                                (p (2 : Fin (4 : ℕ)))) →
+                                TileTouching Rminus join →
+                                Rminus ≠ join →
+                                C.1.1.1 ≠ 1 →
+                                TileString C orientation base Rminus join [Rminus, join]
+    ) := by
   classical
-  intro C orientation base Rminus Rplus hminus hplus F D a p hp hstep hB hD selected t olderChart
-      hCpositive hstrict hselectedAnc hselectedOdo hnegativeSlope r hr hRparent I w x y wa xa ya
-      hvsum hasum hvrec harec hvflip haflip hvsumRe hvsumIm hUband hUfoot hUcent hUcenter
-      hMcenter hcenterVector hcenterRe hcenterIm hcenter hyLattice u huRminus join hjoin_eq
-      hjoinBand hjoinFamily hjoinCenter hjoinCenterEq hUbandC hjoinCells hjoinOdo hjoinAncestor
-      hUnonempty hJoinNonemptyBase hjoinFootEq hjoinFoot hjoinOccurrence hq0 hqA hqB hqD rootNeg
-      joinSlope hrootNeg hjoinSlope hrootNegEq hSB hr1 hr2 hr3 hAcoord hApos' rootSlope
-      hjoinSlopeIm hjoinSlopeRe aSlope hrootSlope haSlope hARe hAIm hrootSlopeEq outerA hparentA
-      hparentB houterOdo houterBand houterAnc hBA haBA hvAB haAB hidx2 hAocc hARe' hAIm' hasumRe
-      hasumIm hasumReR hasumImR hminusSlopeOffset hFplusSlope hFplusRe hFplusIm ha10Re ha10Im
-      ha01Re ha01Im hplusReVec hplusImVec hFplusRe' hFplusIm' hplusSlopeOffset G houterEq hright
-      hFminusSlope hFminusRe hFminusIm ha10ReR ha10ImR ha01ReR ha01ImR hdirectSlope hleftCent
-      hleftTouch hleftAdjacent hMnonempty hJnonempty hleftNe hnonunit
+  intro C orientation base Rminus Rplus hminus hplus F D a p hp hB r I x y hvrec hvflip hMcenter
+      hcenter u join hjoinFamily hjoinCenterEq hjoinOdo joinSlope hjoinSlope hSB aSlope haSlope
+      hparentB houterOdo houterBand hBA hvAB hidx2 hAocc hminusSlopeOffset hplusSlopeOffset
+      hleftTouch hleftNe hnonunit
   unfold TileString
   refine ⟨F.base_band, ?_, ?_, ?_, ?_, ?_, ?_⟩
   · rfl
@@ -1803,72 +1660,11 @@ private theorem hAIm'At948 :
   intro C orientation base Rminus Rplus hminus hplus F a p r xa hqB hqD hr1 hr3 rootA slopeA hAIm
   simpa [hqD, hqB, hr1, hr3, xa] using hAIm
 
-private theorem ha10ImAt955 :
-    (by
-      classical
-      exact
-        ∀ (C : BandCircle), ∀ (orientation : Bool), ∀ (base : ProtoTile), ∀ (Rminus : ProtoTile),
-            ∀ (Rplus : ProtoTile), ∀ (hminus : PartialOdometer), ∀ (hplus : PartialOdometer), ∀
-            (F : P4458T1BoundaryFrame C orientation base Rminus Rplus hminus hplus),
-        let r : Fin 4 → CircleCoordinates :=
-          ![F.q 0, F.q F.slot.succ, F.q ((F.slot + 1).succ),
-            F.q ((F.slot + 2).succ)]
-        let I : GaussianInt := ⟨0, 1⟩
-        let xa : GaussianInt := BandVectors.2 (r 1) (r 3)
-        let ya : GaussianInt := BandVectors.2 (r 2) (r 1)
-        (BandVectors.2 (r 1) (r 0) = xa + I * ya) → ((BandVectors.2 (r 1) (r 0)).im = xa.im +
-            ya.re) ) := by
-  classical
-  intro C orientation base Rminus Rplus hminus hplus F r I xa ya harec
-  have h := congrArg (fun z : GaussianInt => z.im) harec
-  norm_num [I, Zsqrtd.re_mul, Zsqrtd.im_mul] at h ⊢
-  omega
+private abbrev ha10ImAt955 := ApollonianSuperharmonic.SecondNewerRowsGeometry.ha10ImAt513
 
-private theorem ha01ReAt959 :
-    (by
-      classical
-      exact
-        ∀ (C : BandCircle), ∀ (orientation : Bool), ∀ (base : ProtoTile), ∀ (Rminus : ProtoTile),
-            ∀ (Rplus : ProtoTile), ∀ (hminus : PartialOdometer), ∀ (hplus : PartialOdometer), ∀
-            (F : P4458T1BoundaryFrame C orientation base Rminus Rplus hminus hplus),
-        (
-        (
-        let r : Fin 4 → CircleCoordinates :=
-          ![F.q 0, F.q F.slot.succ, F.q ((F.slot + 1).succ),
-            F.q ((F.slot + 2).succ)];
-        let I : GaussianInt := ⟨0, 1⟩;
-        let xa : GaussianInt := BandVectors.2 (r 1) (r 3);
-        let ya : GaussianInt := BandVectors.2 (r 2) (r 1);
-        (BandVectors.2 (r 0) (r 1) = -I * BandVectors.2 (r 1) (r 0)) → (((BandVectors.2 (r 1) (r
-            0)).im = xa.im + ya.re) → ((BandVectors.2 (r 0) (r 1)).re = xa.im + ya.re)))) ) := by
-  classical
-  intro C orientation base Rminus Rplus hminus hplus F r I xa ya haflip ha10Im
-  have h := congrArg (fun z : GaussianInt => z.re) haflip
-  norm_num [I, Zsqrtd.re_mul, Zsqrtd.im_mul] at h ⊢
-  omega
+private abbrev ha01ReAt959 := ApollonianSuperharmonic.SecondNewerRowsGeometry.ha01ReAt517
 
-private theorem ha01ImAt963 :
-    (by
-      classical
-      exact
-        ∀ (C : BandCircle), ∀ (orientation : Bool), ∀ (base : ProtoTile), ∀ (Rminus : ProtoTile),
-            ∀ (Rplus : ProtoTile), ∀ (hminus : PartialOdometer), ∀ (hplus : PartialOdometer), ∀
-            (F : P4458T1BoundaryFrame C orientation base Rminus Rplus hminus hplus),
-        (
-        (
-        let r : Fin 4 → CircleCoordinates :=
-          ![F.q 0, F.q F.slot.succ, F.q ((F.slot + 1).succ),
-            F.q ((F.slot + 2).succ)];
-        let I : GaussianInt := ⟨0, 1⟩;
-        let xa : GaussianInt := BandVectors.2 (r 1) (r 3);
-        let ya : GaussianInt := BandVectors.2 (r 2) (r 1);
-        (BandVectors.2 (r 0) (r 1) = -I * BandVectors.2 (r 1) (r 0)) → (((BandVectors.2 (r 1) (r
-            0)).re = xa.re - ya.im) → ((BandVectors.2 (r 0) (r 1)).im = -xa.re + ya.im)))) ) := by
-  classical
-  intro C orientation base Rminus Rplus hminus hplus F r I xa ya haflip ha10Re
-  have h := congrArg (fun z : GaussianInt => z.im) haflip
-  norm_num [I, Zsqrtd.re_mul, Zsqrtd.im_mul] at h ⊢
-  omega
+private abbrev ha01ImAt963 := ApollonianSuperharmonic.SecondNewerRowsGeometry.ha01ImAt522
 
 private theorem hRotARe :
     (by
@@ -1898,60 +1694,12 @@ private theorem hRotAIm :
   norm_num [I, Zsqrtd.re_mul, Zsqrtd.im_mul] at h ⊢
   omega
 
-private theorem hFminusSlopeAt991 :
-    (by
-      classical
-      exact
-        ∀ (C : BandCircle), ∀ (orientation : Bool), ∀ (base : ProtoTile), ∀ (Rminus : ProtoTile),
-            ∀ (Rplus : ProtoTile), ∀ (hminus : PartialOdometer), ∀ (hplus : PartialOdometer), ∀
-            (F : P4458T1BoundaryFrame C orientation base Rminus Rplus hminus hplus),
-        let r : Fin 4 → CircleCoordinates :=
-          ![F.q 0, F.q F.slot.succ, F.q ((F.slot + 1).succ),
-            F.q ((F.slot + 2).succ)]
-        ∀ (rootA : ℝ × ℝ), (rootA = F.outerSlope) → (F.minusSlope - rootA = (1 / 2 : ℝ) •
-            GaussianRealPoint (BandVectors.2 (r 1) (r 0) - BandVectors.2 (r 0) (r 1))) ) := by
-  classical
-  intro C orientation base Rminus Rplus hminus hplus F r rootA hrootAEq
-  rw [hrootAEq]
-  exact F.minus_difference
+private abbrev hFminusSlopeAt991 :=
+    ApollonianSuperharmonic.SecondNewerRowsGeometry.hFminusSlopeAt641
 
-private theorem hFminusReAt996 :
-    (by
-      classical
-      exact
-        ∀ (C : BandCircle), ∀ (orientation : Bool), ∀ (base : ProtoTile), ∀ (Rminus : ProtoTile),
-            ∀ (Rplus : ProtoTile), ∀ (hminus : PartialOdometer), ∀ (hplus : PartialOdometer), ∀
-            (F : P4458T1BoundaryFrame C orientation base Rminus Rplus hminus hplus),
-        let r : Fin 4 → CircleCoordinates :=
-          ![F.q 0, F.q F.slot.succ, F.q ((F.slot + 1).succ),
-            F.q ((F.slot + 2).succ)]
-        ∀ (rootA : ℝ × ℝ), (F.minusSlope - rootA = (1 / 2 : ℝ) • GaussianRealPoint
-            (BandVectors.2 (r 1) (r 0) - BandVectors.2 (r 0) (r 1))) → (F.minusSlope.1 - rootA.1
-            = (1 / 2 : ℝ) * (((BandVectors.2 (r 1) (r 0)).re : ℝ) - ((BandVectors.2 (r 0) (r
-            1)).re : ℝ))) ) := by
-  classical
-  intro C orientation base Rminus Rplus hminus hplus F r rootA hFminusSlope
-  have h := congrArg Prod.fst hFminusSlope
-  simpa [GaussianRealPoint, Prod.smul_mk] using h
+private abbrev hFminusReAt996 := ApollonianSuperharmonic.SecondNewerRowsGeometry.hFminusReAt646
 
-private theorem hFminusImAt1002 :
-    (by
-      classical
-      exact
-        ∀ (C : BandCircle), ∀ (orientation : Bool), ∀ (base : ProtoTile), ∀ (Rminus : ProtoTile),
-            ∀ (Rplus : ProtoTile), ∀ (hminus : PartialOdometer), ∀ (hplus : PartialOdometer), ∀
-            (F : P4458T1BoundaryFrame C orientation base Rminus Rplus hminus hplus),
-        let r : Fin 4 → CircleCoordinates :=
-          ![F.q 0, F.q F.slot.succ, F.q ((F.slot + 1).succ),
-            F.q ((F.slot + 2).succ)]
-        ∀ (rootA : ℝ × ℝ), (F.minusSlope - rootA = (1 / 2 : ℝ) • GaussianRealPoint
-            (BandVectors.2 (r 1) (r 0) - BandVectors.2 (r 0) (r 1))) → (F.minusSlope.2 - rootA.2
-            = (1 / 2 : ℝ) * (((BandVectors.2 (r 1) (r 0)).im : ℝ) - ((BandVectors.2 (r 0) (r
-            1)).im : ℝ))) ) := by
-  classical
-  intro C orientation base Rminus Rplus hminus hplus F r rootA hFminusSlope
-  have h := congrArg Prod.snd hFminusSlope
-  simpa [GaussianRealPoint, Prod.smul_mk] using h
+private abbrev hFminusImAt1002 := ApollonianSuperharmonic.SecondNewerRowsGeometry.hFminusImAt652
 
 private theorem hleftAslopeMinus :
     (by
@@ -2374,62 +2122,11 @@ private theorem hBIm' :
   rw [← hyaImR, ← hyaReR] at hBIm
   exact hBIm
 
-private theorem hjoinSlopeReB :
-    (by
-      classical
-      exact
-        ∀ (C : BandCircle), ∀ (orientation : Bool), ∀ (base : ProtoTile), ∀ (Rminus : ProtoTile),
-            ∀ (Rplus : ProtoTile), ∀ (hminus : PartialOdometer), ∀ (hplus : PartialOdometer), ∀
-            (F : P4458T1BoundaryFrame C orientation base Rminus Rplus hminus hplus),
-        let r : Fin 4 → CircleCoordinates :=
-          ![F.q 0, F.q F.slot.succ, F.q ((F.slot + 1).succ),
-            F.q ((F.slot + 2).succ)]
-        let wa : GaussianInt := BandVectors.2 (r 3) (r 2)
-        ∀ (rootNeg : ℝ × ℝ), ∀ (joinSlope : ℝ × ℝ), (joinSlope.1 - rootNeg.1 = -(1 / 2 : ℝ) *
-            ((↑wa.re : ℝ) - (↑wa.im : ℝ))) → (∀ (rootB : ℝ × ℝ), (rootNeg = rootB) → (joinSlope.1
-            - rootB.1 = -(1 / 2 : ℝ) * ((wa.re : ℝ) - (wa.im : ℝ)))) ) := by
-  classical
-  intro C orientation base Rminus Rplus hminus hplus F r wa rootNeg joinSlope hjoinSlopeRe rootB
-      hrootNegB
-  rw [← hrootNegB]
-  exact hjoinSlopeRe
+private abbrev hjoinSlopeReB := ApollonianSuperharmonic.SecondNewerRowsGeometry.hjoinSlopeReA
 
-private theorem hjoinSlopeImB :
-    (by
-      classical
-      exact
-        ∀ (C : BandCircle), ∀ (orientation : Bool), ∀ (base : ProtoTile), ∀ (Rminus : ProtoTile),
-            ∀ (Rplus : ProtoTile), ∀ (hminus : PartialOdometer), ∀ (hplus : PartialOdometer), ∀
-            (F : P4458T1BoundaryFrame C orientation base Rminus Rplus hminus hplus),
-        let r : Fin 4 → CircleCoordinates :=
-          ![F.q 0, F.q F.slot.succ, F.q ((F.slot + 1).succ),
-            F.q ((F.slot + 2).succ)]
-        let wa : GaussianInt := BandVectors.2 (r 3) (r 2)
-        ∀ (rootNeg : ℝ × ℝ), ∀ (joinSlope : ℝ × ℝ), (joinSlope.2 - rootNeg.2 = -(1 / 2 : ℝ) *
-            ((↑wa.im : ℝ) + (↑wa.re : ℝ))) → (∀ (rootB : ℝ × ℝ), (rootNeg = rootB) → (joinSlope.2
-            - rootB.2 = -(1 / 2 : ℝ) * ((wa.im : ℝ) + (wa.re : ℝ)))) ) := by
-  classical
-  intro C orientation base Rminus Rplus hminus hplus F r wa rootNeg joinSlope hjoinSlopeIm rootB
-      hrootNegB
-  rw [← hrootNegB]
-  exact hjoinSlopeIm
+private abbrev hjoinSlopeImB := ApollonianSuperharmonic.SecondNewerRowsGeometry.hjoinSlopeImA
 
-private theorem hFplusSlopeB :
-    (by
-      classical
-      exact
-        ∀ (C : BandCircle), ∀ (orientation : Bool), ∀ (base : ProtoTile), ∀ (Rminus : ProtoTile),
-            ∀ (Rplus : ProtoTile), ∀ (hminus : PartialOdometer), ∀ (hplus : PartialOdometer), ∀
-            (F : P4458T1BoundaryFrame C orientation base Rminus Rplus hminus hplus),
-        let r : Fin 4 → CircleCoordinates :=
-          ![F.q 0, F.q F.slot.succ, F.q ((F.slot + 1).succ),
-            F.q ((F.slot + 2).succ)]
-        ∀ (rootB : ℝ × ℝ), (rootB = F.outerSlope) → (F.plusSlope - rootB = (1 / 2 : ℝ) •
-            GaussianRealPoint (BandVectors.2 (r 1) (r 0) + BandVectors.2 (r 0) (r 1))) ) := by
-  classical
-  intro C orientation base Rminus Rplus hminus hplus F r rootB hrootBEq
-  rw [hrootBEq]
-  exact F.plus_difference
+private abbrev hFplusSlopeB := ApollonianSuperharmonic.SecondNewerRowsGeometry.hFplusSlope
 
 private theorem hFplusReB :
     (by
@@ -3110,21 +2807,11 @@ private theorem firstParentPlacement :
       hminus hplus F positiveCells
   refine ⟨⟨join, hjoinCells.1.symm, hjoinOdo, hjoinAncestor,
     hjoinOccurrence, .direct (SecondNewerRowsGeometry.leftString C orientation base Rminus
-        Rplus hminus hplus F D a p hp hstep hB hD selected t olderChart hCpositive hstrict
-        hselectedAnc hselectedOdo hnegativeSlope hr hRparent hvsum hasum hvrec harec hvflip
-        haflip hvsumRe hvsumIm hUband hUfoot hUcent hUcenter hMcenter hcenterVector hcenterRe
-        hcenterIm hcenter hyLattice u huRminus hjoin_eq hjoinBand hjoinFamily hjoinCenter
-        hjoinCenterEq hUbandC hjoinCells hjoinOdo hjoinAncestor hUnonempty hJoinNonemptyBase
-        hjoinFootEq hjoinFoot hjoinOccurrence hq0 hqA hqB hqD rootNeg joinSlope hrootNeg
-        hjoinSlope hrootNegEq hSB hr1 hr2 hr3 hAcoord hApos' rootSlope hjoinSlopeIm
-        hjoinSlopeRe aSlope hrootSlope haSlope hARe hAIm hrootSlopeEq hparentA
-        hparentB houterOdo houterBand houterAnc hBA haBA hvAB haAB hidx2 hAocc hARe' hAIm'
-        hasumRe hasumIm hasumReR hasumImR hminusSlopeOffset hFplusSlope hFplusRe hFplusIm
-        ha10Re ha10Im ha01Re ha01Im hplusReVec hplusImVec hFplusRe' hFplusIm'
-        hplusSlopeOffset houterEq hright hFminusSlope hFminusRe hFminusIm ha10ReR ha10ImR
-        ha01ReR ha01ImR hdirectSlope hleftCent hleftTouch hleftAdjacent hMnonempty
-        (SecondNewerRowsGeometry.hJnonempty C orientation base Rminus Rplus hminus hplus F D
-        u hjoinCells hUnonempty) (SecondNewerRowsGeometry.hleftNe C orientation base Rminus
+        Rplus hminus hplus F D a p hp hB hvrec hvflip hMcenter hcenter u hjoinFamily
+        hjoinCenterEq hjoinOdo joinSlope
+        hjoinSlope hSB aSlope haSlope
+        hparentB houterOdo houterBand hBA hvAB hidx2 hAocc hminusSlopeOffset
+        hplusSlopeOffset hleftTouch (SecondNewerRowsGeometry.hleftNe C orientation base Rminus
         Rplus hminus hplus F u hleftTouch hMnonempty) (SecondNewerRowsGeometry.hnonunit C t ht
             htC)) hleftAdjacent, hright⟩⟩
 

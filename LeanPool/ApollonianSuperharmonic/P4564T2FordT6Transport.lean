@@ -88,17 +88,19 @@ private theorem hb :
       classical
       exact
         ∀ (q : Fin 4 → CircleCoordinates),
-        (((q (2 : Fin (4 : ℕ))).1 ≤ (q
-            (1 : Fin (4 : ℕ))).1) → (((1 : ℤ) < (q (2 : Fin (4 : ℕ))).1) → (((0 : ℤ) < (q (0 :
-            Fin (4 : ℕ))).1 ∧ (∀ (i : Fin (3 : ℕ)), (0 : ℤ) ≤ (q i.succ).1) ∧ ∀ (i : Fin (3 :
-            ℕ)), ∀ (j : Fin (3 : ℕ)), (q i.succ).1 = (0 : ℤ) → (q j.succ).1 = (0 : ℤ) → i = j) →
-            ((∃ i : Fin 4, (q i).1 = 0) → (∀ (b : Fin (3 : ℕ)), ∀ (h : BandPackingSymmetry), ∀
-            (F' : FordFareyParameter), ((q (b + (2 : Fin (3 : ℕ))).succ).1 = (0 : ℤ)) →
-            ((BandPackingSymmetryQuadrupleAction h ![q (0 : Fin (4 : ℕ)), q b.succ, q (b + (1 :
-            Fin (3 : ℕ))).succ, q (b + (2 : Fin (3 : ℕ))).succ] = FordRecursiveQuadruple F') → (b
-            = 0))))))) ) := by
+          (q (2 : Fin (4 : ℕ))).1 ≤ (q (1 : Fin (4 : ℕ))).1 →
+            (1 : ℤ) < (q (2 : Fin (4 : ℕ))).1 →
+              ((0 : ℤ) < (q (0 : Fin (4 : ℕ))).1 ∧
+                  (∀ (i : Fin (3 : ℕ)), (0 : ℤ) ≤ (q i.succ).1) ∧
+                    ∀ (i : Fin (3 : ℕ)),
+                      ∀ (j : Fin (3 : ℕ)),
+                        (q i.succ).1 = (0 : ℤ) → (q j.succ).1 = (0 : ℤ) → i = j) →
+                (∃ i : Fin 4, (q i).1 = 0) →
+                  ∀ (b : Fin (3 : ℕ)),
+                    (q (b + (2 : Fin (3 : ℕ))).succ).1 = (0 : ℤ) → b = 0
+    ) := by
   classical
-  intro q h12 hlarge qcur hlineq b h F' hzero hnorm
+  intro q h12 hlarge qcur hlineq b hzero
   fin_cases b
   · rfl
   · have := qcur.2.1 0
@@ -281,65 +283,13 @@ private theorem hPp :
   intro P gN ep Pp hpmem hep i s
   simpa [hep i s] using hpmem i s
 
-private theorem heq :
-    (by
-      classical
-      exact
-        ∀ (h : BandPackingSymmetry), (BandPackingSymmetryReversesOrientation h = false) → (∀ (gN
-            : BandPackingSymmetry), (BandPackingSymmetryReversesOrientation gN =
-            BandPackingSymmetryReversesOrientation h) → (∀ (dq : Bool), ∀ (eq : Fin (3 : ℕ) ×
-            Bool ≃ Fin (3 : ℕ) × Bool), (∀ (i : Fin (3 : ℕ)), ∀ (s : Bool), (eq : Fin (3 : ℕ) ×
-            Bool → Fin (3 : ℕ) × Bool) (i, s) = ((fun (i : Fin (3 : ℕ)) => if
-            BandPackingSymmetryReversesOrientation gN = true then -i else i) i, s ^^ dq)) → ((dq
-            = false) → (∀ (i : Fin 3), ∀ (s : Bool), eq (i, s) = (i, s))))) ) := by
-  classical
-  intro h hrev gN horientationAdapt dq eq hqe hdq i s
-  rw [hqe]
-  simp [horientationAdapt, hrev, hdq]
+private abbrev heq := ApollonianSuperharmonic.FordT6Geometry.hep
 
-private theorem hes :
-    (by
-      classical
-      exact
-        ∀ (h : BandPackingSymmetry), (BandPackingSymmetryReversesOrientation h = false) → (∀ (gN
-            : BandPackingSymmetry), (BandPackingSymmetryReversesOrientation gN =
-            BandPackingSymmetryReversesOrientation h) → (∀ (ds : Bool), ∀ (es : Fin (3 : ℕ) ×
-            Bool ≃ Fin (3 : ℕ) × Bool), (∀ (i : Fin (3 : ℕ)), ∀ (s : Bool), (es : Fin (3 : ℕ) ×
-            Bool → Fin (3 : ℕ) × Bool) (i, s) = ((fun (i : Fin (3 : ℕ)) => if
-            BandPackingSymmetryReversesOrientation gN = true then -i else i) i, s ^^ ds)) → ((ds
-            = false) → (∀ (i : Fin 3), ∀ (s : Bool), es (i, s) = (i, s))))) ) := by
-  classical
-  intro h hrev gN horientationAdapt ds es hse hds i s
-  rw [hse]
-  simp [horientationAdapt, hrev, hds]
+private abbrev hes := ApollonianSuperharmonic.FordT6Geometry.hep
 
-private theorem hQp :
-    (by
-      classical
-      exact
-        ∀ (Q : Fin (3 : ℕ) → Bool → ProtoTile), ∀ (gN : BandPackingSymmetry), ∀ (eq : Fin (3 : ℕ)
-            × Bool ≃ Fin (3 : ℕ) × Bool), ∀ (Qp : Fin (3 : ℕ) → Bool → ProtoTile), (∀ (i : Fin (3
-            : ℕ)), ∀ (s : Bool), Qp ((eq : Fin (3 : ℕ) × Bool → Fin (3 : ℕ) × Bool) (i, s)).1
-            ((eq : Fin (3 : ℕ) × Bool → Fin (3 : ℕ) × Bool) (i, s)).2 =
-            BandPackingSymmetryTileAction gN (Q i s)) → ((∀ (i : Fin 3), ∀ (s : Bool), eq (i, s)
-            = (i, s)) → (∀ i, ∀ s, Qp i s = BandPackingSymmetryTileAction gN (Q i s))) ) := by
-  classical
-  intro Q gN eq Qp hqmem heq i s
-  simpa [heq i s] using hqmem i s
+private abbrev hQp := ApollonianSuperharmonic.FordT6Geometry.hPp
 
-private theorem hSp :
-    (by
-      classical
-      exact
-        ∀ (S : Fin (3 : ℕ) → Bool → ProtoTile), ∀ (gN : BandPackingSymmetry), ∀ (es : Fin (3 : ℕ)
-            × Bool ≃ Fin (3 : ℕ) × Bool), ∀ (Sp : Fin (3 : ℕ) → Bool → ProtoTile), (∀ (i : Fin (3
-            : ℕ)), ∀ (s : Bool), Sp ((es : Fin (3 : ℕ) × Bool → Fin (3 : ℕ) × Bool) (i, s)).1
-            ((es : Fin (3 : ℕ) × Bool → Fin (3 : ℕ) × Bool) (i, s)).2 =
-            BandPackingSymmetryTileAction gN (S i s)) → ((∀ (i : Fin 3), ∀ (s : Bool), es (i, s)
-            = (i, s)) → (∀ i, ∀ s, Sp i s = BandPackingSymmetryTileAction gN (S i s))) ) := by
-  classical
-  intro S gN es Sp hsmem hes i s
-  simpa [hes i s] using hsmem i s
+private abbrev hSp := ApollonianSuperharmonic.FordT6Geometry.hPp
 
 private theorem hFord :
     (by
@@ -687,41 +637,9 @@ private theorem hPfoot :
   intro P gN Pp hPp Pn w Pbar f hfv i s
   simpa [Pbar, Pn, hPp i s] using hfv (P i s)
 
-private theorem hQfoot :
-    (by
-      classical
-      exact
-        ∀ (Q : Fin (3 : ℕ) → Bool → ProtoTile), ∀ (gN : BandPackingSymmetry), ∀ (Qp : Fin (3 : ℕ)
-            → Bool → ProtoTile), (∀ i, ∀ s, Qp i s = BandPackingSymmetryTileAction gN (Q i s)) → (
-        let Qn : Fin 3 → Bool → ProtoTile := Qp
-        ∀ (w : GaussianInt),
-        let Qbar : Fin 3 → Bool → ProtoTile := fun i s => TileTranslation (Qn i s) (-w)
-        let f : GaussianInt → GaussianInt := fun z =>
-          GaussianTranslation (-w) (BandPackingSymmetryVectorAction gN z)
-        (∀ (X : ProtoTile), FootprintVertices (TileTranslation (BandPackingSymmetryTileAction gN
-            X) (-w)) = f '' FootprintVertices X) → (∀ (i : Fin 3), ∀ (s : Bool),
-            FootprintVertices (Qbar i s) = f '' FootprintVertices (Q i s))) ) := by
-  classical
-  intro Q gN Qp hQp Qn w Qbar f hfv i s
-  simpa [Qbar, Qn, hQp i s] using hfv (Q i s)
+private abbrev hQfoot := ApollonianSuperharmonic.FordT6Geometry.hPfoot
 
-private theorem hSfoot :
-    (by
-      classical
-      exact
-        ∀ (S : Fin (3 : ℕ) → Bool → ProtoTile), ∀ (gN : BandPackingSymmetry), ∀ (Sp : Fin (3 : ℕ)
-            → Bool → ProtoTile), (∀ i, ∀ s, Sp i s = BandPackingSymmetryTileAction gN (S i s)) → (
-        let Sn : Fin 3 → Bool → ProtoTile := Sp
-        ∀ (w : GaussianInt),
-        let Sbar : Fin 3 → Bool → ProtoTile := fun i s => TileTranslation (Sn i s) (-w)
-        let f : GaussianInt → GaussianInt := fun z =>
-          GaussianTranslation (-w) (BandPackingSymmetryVectorAction gN z)
-        (∀ (X : ProtoTile), FootprintVertices (TileTranslation (BandPackingSymmetryTileAction gN
-            X) (-w)) = f '' FootprintVertices X) → (∀ (i : Fin 3), ∀ (s : Bool),
-            FootprintVertices (Sbar i s) = f '' FootprintVertices (S i s))) ) := by
-  classical
-  intro S gN Sp hSp Sn w Sbar f hfv i s
-  simpa [Sbar, Sn, hSp i s] using hfv (S i s)
+private abbrev hSfoot := ApollonianSuperharmonic.FordT6Geometry.hPfoot
 
 private theorem hOccNorm :
     (by
@@ -1075,7 +993,7 @@ theorem P4564T2FordT6Transport :
   have hlineq := FordT6Geometry.hlineq q hq a g F hnormal h12 hlarge qcur
   obtain ⟨b, h, F', hF', hrev, hword, hzero, hnorm⟩ :=
     FordRegimeConverse q hq hlineq
-  have hb := FordT6Geometry.hb q h12 hlarge qcur hlineq b h F' hzero hnorm
+  have hb := FordT6Geometry.hb q h12 hlarge qcur hlineq b hzero
   subst b
   have hnormq := FordT6Geometry.hnormq q h F' hnorm
   obtain ⟨negative, hphase, hphaseR, hphaseT, hcircle, horientation,

@@ -624,26 +624,49 @@ private theorem hshared :
     linarith
 
 private theorem hnotboth :
-    ∀ (n : Nat), ∀ (q : Fin (n + 3) → Real × Real), (∀ (i : Fin (n + 3)), i + 1 + 1 ≠ i) → ∀ (i :
-        Fin (n + (3 : ℕ))), ∀ (j : Fin (n + (3 : ℕ))), (i ≠ j) → ∀ (x : ℝ × ℝ), (x ∈ segment ℝ (q
-        j) (q (j + (1 : Fin (n + (3 : ℕ)))))) → ∀ (t : ℝ), (x = ((1 : ℝ) - t) • q j + t • q (j +
-        (1 : Fin (n + (3 : ℕ))))) → (((1 : ℝ) - t) * P3381T1TriangleDeterminant ![q i, q (i +
-        (1 : Fin (n + (3 : ℕ)))), q j] + t * P3381T1TriangleDeterminant ![q i, q (i + (1 : Fin
-        (n + (3 : ℕ)))), q (j + (1 : Fin (n + (3 : ℕ))))] = (0 : ℝ)) →
-        (P3381T1TriangleDeterminant ![q i, q (i + (1 : Fin (n + (3 : ℕ)))), ((1 : ℝ) - t) • q j
-        + t • q (j + (1 : Fin (n + (3 : ℕ))))] = ((1 : ℝ) - t) * P3381T1TriangleDeterminant ![q
-        i, q (i + (1 : Fin (n + (3 : ℕ)))), q j] + t * P3381T1TriangleDeterminant ![q i, q (i +
-        (1 : Fin (n + (3 : ℕ)))), q (j + (1 : Fin (n + (3 : ℕ))))]) → (0 ≤ (1-t) *
-        P3381T1TriangleDeterminant ![q i, q (i+1), q j]) → (0 ≤ t *
-        P3381T1TriangleDeterminant ![q i, q (i+1), q (j+1)]) → ((1-t) *
-        P3381T1TriangleDeterminant ![q i, q (i+1), q j] = 0) → (t *
-        P3381T1TriangleDeterminant ![q i, q (i+1), q (j+1)] = 0) → (j ≠ i ∧ j ≠ i+1 → 0 <
-        P3381T1TriangleDeterminant ![q i, q (i+1), q j]) → (j+1 ≠ i ∧ j+1 ≠ i+1 → 0 <
-        P3381T1TriangleDeterminant ![q i, q (i+1), q (j+1)]) → ((j = i ∨ j = i+1) ∨ (j+1 = i ∨
-        j+1 = i+1)) → ¬ ((j = i ∨ j = i+1) ∧ (j+1 = i ∨ j+1 = i+1)) := by
+    ∀ (n : Nat),
+      ∀ (q : Fin (n + 3) → Real × Real),
+        (∀ (i : Fin (n + 3)), i + 1 + 1 ≠ i) →
+          ∀ (i : Fin (n + (3 : ℕ))),
+            ∀ (j : Fin (n + (3 : ℕ))),
+              i ≠ j →
+                ∀ (x : ℝ × ℝ),
+                  ∀ (t : ℝ),
+                    x = ((1 : ℝ) - t) • q j + t • q (j + (1 : Fin (n + (3 : ℕ)))) →
+                      ((1 : ℝ) - t) *
+                            P3381T1TriangleDeterminant
+                            ![q i, q (i + (1 : Fin (n + (3 : ℕ)))), q j] +
+                            t *
+                            P3381T1TriangleDeterminant
+                            ![q i, q (i + (1 : Fin (n + (3 : ℕ)))),
+                            q (j + (1 : Fin (n + (3 : ℕ))))] =
+                          (0 : ℝ) →
+                        P3381T1TriangleDeterminant
+                            ![q i, q (i + (1 : Fin (n + (3 : ℕ)))),
+                            ((1 : ℝ) - t) • q j + t • q (j + (1 : Fin (n + (3 : ℕ))))] =
+                            ((1 : ℝ) - t) *
+                            P3381T1TriangleDeterminant
+                            ![q i, q (i + (1 : Fin (n + (3 : ℕ)))), q j] +
+                            t *
+                            P3381T1TriangleDeterminant
+                            ![q i, q (i + (1 : Fin (n + (3 : ℕ)))),
+                            q (j + (1 : Fin (n + (3 : ℕ))))] →
+                          0 ≤ (1 - t) * P3381T1TriangleDeterminant ![q i, q (i + 1), q j] →
+                            0 ≤
+                            t * P3381T1TriangleDeterminant ![q i, q (i + 1), q (j + 1)] →
+                            (1 - t) * P3381T1TriangleDeterminant ![q i, q (i + 1), q j] =
+                            0 →
+                            t * P3381T1TriangleDeterminant ![q i, q (i + 1), q (j + 1)] =
+                            0 →
+                            (j ≠ i ∧ j ≠ i + 1 →
+                            0 < P3381T1TriangleDeterminant ![q i, q (i + 1), q j]) →
+                            (j + 1 ≠ i ∧ j + 1 ≠ i + 1 →
+                            0 < P3381T1TriangleDeterminant ![q i, q (i + 1), q (j + 1)]) →
+                            (j = i ∨ j = i + 1) ∨ j + 1 = i ∨ j + 1 = i + 1 →
+                            ¬((j = i ∨ j = i + 1) ∧ (j + 1 = i ∨ j + 1 = i + 1)) := by
   classical
-  intro n q no_two_cycle i j hij x hxj t hxt hz hcomb hleft hright hleftzero hrightzero
-      hleftstrict hrightstrict hshared
+  intro n q no_two_cycle i j hij x t hxt hz hcomb hleft hright hleftzero hrightzero hleftstrict
+      hrightstrict hshared
   rintro ⟨hj, hj'⟩
   rcases hj with hj | hj <;> rcases hj' with hj' | hj'
   · subst j
@@ -1083,7 +1106,7 @@ private theorem edge_intersections :
     have hshared : (j = i ∨ j = i+1) ∨ (j+1 = i ∨ j+1 = i+1) := ParabolaHullInterior.hshared n
         q i j t hleftzero hrightzero hleftstrict hrightstrict
     have hnotboth : ¬ ((j = i ∨ j = i+1) ∧ (j+1 = i ∨ j+1 = i+1)) :=
-        ParabolaHullInterior.hnotboth n q no_two_cycle i j hij x hxj t hxt hz hcomb hleft
+        ParabolaHullInterior.hnotboth n q no_two_cycle i j hij x t hxt hz hcomb hleft
         hright hleftzero hrightzero hleftstrict hrightstrict hshared
     have hxend : x = q j ∧ (j = i ∨ j = i+1) ∨
     x = q (j+1) ∧ (j+1 = i ∨ j+1 = i+1) := ParabolaHullInterior.hxend n q i j x t hxt hleftzero

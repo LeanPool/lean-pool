@@ -6,6 +6,7 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.TileTranslationProperties
 public import Mathlib.Data.Finset.Card
 public import Mathlib.Tactic.FinCases
 public import Mathlib.Tactic.NormNum
@@ -381,13 +382,7 @@ private theorem singletonSquareEdges (c : GaussianInt) :
   rw [(P5253T1SingletonBoundary c c).2]
   simp [Finset.pair_comm]
 
-private theorem tileTranslationZero (T : ProtoTile) : TileTranslation T 0 = T := by
-  cases T with
-  | mk cells anchor =>
-    have hf : GaussianTranslation 0 = id := by
-      funext z
-      simp [GaussianTranslation]
-    simp [TileTranslation, hf, Finset.image_id]
+private abbrev tileTranslationZero := ApollonianSuperharmonic.TileTranslationProperties.zero
 
 private theorem oneUnitContacts (k : Nat) (hk : 0 < k) :
     unitContactConclusion k 1 := by

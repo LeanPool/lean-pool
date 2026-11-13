@@ -6,6 +6,7 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.LatticeFootprintIncidence
 public import LeanPool.ApollonianSuperharmonic.BoundaryFootprintInclusion
 
 public import LeanPool.ApollonianSuperharmonic.CentrallyReflectedAt
@@ -34,22 +35,7 @@ private abbrev boundary_edge := BoundaryFootprintInclusion.boundaryEdge
 
 private abbrev edge_vertex := BoundaryFootprintInclusion.edgeVertex
 
-private theorem incident :
-    ∀ (U : ProtoTile), ∀ (x : GaussianInt), Finset.Nonempty U.cells → x ∈ FootprintVertices U → ∃
-        (j : Fin (4 : ℕ)), LatticeVertexIncidentCell x j ∈ U.cells := by
-  classical
-  intro U x hne hx
-  simp only [FootprintVertices, ite_eq_left hne, Set.mem_ofPred_eq] at hx
-  rcases hx with ⟨c, hc, h | h | h | h⟩
-  · exact ⟨0, by simpa [LatticeVertexIncidentCell] using h ▸ hc⟩
-  · subst x
-    exact ⟨1, by simpa [LatticeVertexIncidentCell] using hc⟩
-  · subst x
-    exact ⟨3, by simpa [LatticeVertexIncidentCell] using hc⟩
-  · refine ⟨2, ?_⟩
-    change x - 1 - ⟨0, 1⟩ ∈ U.cells
-    rw [h]
-    convert hc using 1; ext <;> simp
+private abbrev incident := ApollonianSuperharmonic.LatticeFootprintIncidence.incidentCell
 
 private theorem nonempty_touching :
     ∀ (U : ProtoTile), ∀ (V : ProtoTile), Finset.Nonempty U.cells → Finset.Nonempty V.cells →

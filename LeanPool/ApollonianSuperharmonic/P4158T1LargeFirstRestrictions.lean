@@ -6,6 +6,7 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.FordFareySum
 
 public import LeanPool.ApollonianSuperharmonic.AncestorOdometer
 public import LeanPool.ApollonianSuperharmonic.FordTileRecursiveIdentification
@@ -173,17 +174,7 @@ private theorem hAncV :
   · intro y hy
     exact (hvalue' 0 true y hy).symm
 
-private theorem hcross :
-    (by
-      classical
-      exact
-        ∀ (P : FordFareyParameter), P.p₁ * (P.q₂ : Int) - (P.q₁ : Int) * P.p₂ = 1 ) := by
-  classical
-  intro P
-  have h := P.det₁
-  rw [P.sum_q, P.sum_p] at h
-  push_cast at h
-  nlinarith
+private abbrev hcross := ApollonianSuperharmonic.FordFareySum.determinant
 
 private theorem hcop :
     (by
@@ -376,13 +367,12 @@ private theorem fordCentroid :
     (by
       classical
       exact
-        FordFareyParameter →
-          ∀ (n : ℕ),
-            (0 : ℕ) < n →
-              TileCentroid (FordTile n) = ((↑n : ℝ) / (2 : ℝ), (↑n : ℝ) / (2 : ℝ))
+        ∀ (n : ℕ),
+          (0 : ℕ) < n →
+            TileCentroid (FordTile n) = ((↑n : ℝ) / (2 : ℝ), (↑n : ℝ) / (2 : ℝ))
     ) := by
   classical
-  intro P n hn
+  intro n hn
   let D : Finset GaussianInt :=
     (Finset.range n).product (Finset.range n) |>.image
       (fun a => (⟨(a.1 : Int), (a.2 : Int)⟩ : GaussianInt))
@@ -996,7 +986,7 @@ theorem P4158T1LargeFirstRestrictions
   have hvsecond := LargeFirstRestrictions.hvsecond P hq hv20
   have hvsol := LargeFirstRestrictions.hvsol P hvsum hvfirst hvsecond
   have haslope32 := LargeFirstRestrictions.haslope32 P ha32
-  have fordCentroid (n : Nat) (hn : 0 < n) := LargeFirstRestrictions.fordCentroid P n hn
+  have fordCentroid (n : Nat) (hn : 0 < n) := LargeFirstRestrictions.fordCentroid n hn
   let Uc := TileTranslation (FordTile P.q₁) (u + ⟨P.q₂, P.q₂⟩)
   let Vc := TileTranslation (FordTile P.q₁) (u + ⟨P.q, P.q₁⟩)
   have hUcBand : BandPrototile Ci.1.1 Uc :=

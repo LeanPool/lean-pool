@@ -43,21 +43,33 @@ private theorem hlat :
     (by
       classical
       exact
-        ∀ (C : BandCircle), ∀ (q : Fin (4 : ℕ) → CircleCoordinates), ∀ (T : ProtoTile), ∀ (h :
-            PartialOdometer), ∀ (H : ℤ × ℤ → PartialOdometer), (BandPrototile C.1.1 T) →
-            ((TileOdometer C.1.1 T h) → ((∀ (kl : ℤ × ℤ),
-        let w := (↑kl.1 : GaussianInt) * BandVectors.1 (q (1 : Fin (4 : ℕ))) (q (0 : Fin (4 :
-            ℕ))) + (↑kl.2 : GaussianInt) * BandVectors.1 (q (2 : Fin (4 : ℕ))) (q (0 : Fin (4 :
-            ℕ)));
-        let a := (↑kl.1 : GaussianInt) * BandVectors.2 (q (1 : Fin (4 : ℕ))) (q (0 : Fin (4 :
-            ℕ))) + (↑kl.2 : GaussianInt) * BandVectors.2 (q (2 : Fin (4 : ℕ))) (q (0 : Fin (4 :
-            ℕ))); TileOdometer C.1.1 (TileTranslation T w) (H kl) ∧ (∀ (x : GaussianInt), x ∈ (H
-            kl).domain ↔ x - w ∈ h.domain) ∧ ∀ x ∈ (H kl).domain, (H kl).value x = h.value (x -
-            w) + a.re * x.re + a.im * x.im) → (((h.domain : Set GaussianInt) = FootprintVertices
-            T) → ((ExactTileTiling (RegularTileFamily T (TilingLattice C))) → (LatticeTile T)))))
-            ) := by
+        ∀ (C : BandCircle),
+          ∀ (q : Fin (4 : ℕ) → CircleCoordinates),
+            ∀ (T : ProtoTile),
+              ∀ (h : PartialOdometer),
+                ∀ (H : ℤ × ℤ → PartialOdometer),
+                  (∀ (kl : ℤ × ℤ),
+                      let w :=
+                        (↑kl.1 : GaussianInt) *
+                            BandVectors.1 (q (1 : Fin (4 : ℕ))) (q (0 : Fin (4 : ℕ))) +
+                          (↑kl.2 : GaussianInt) *
+                            BandVectors.1 (q (2 : Fin (4 : ℕ))) (q (0 : Fin (4 : ℕ)));
+                      let a :=
+                        (↑kl.1 : GaussianInt) *
+                            BandVectors.2 (q (1 : Fin (4 : ℕ))) (q (0 : Fin (4 : ℕ))) +
+                          (↑kl.2 : GaussianInt) *
+                            BandVectors.2 (q (2 : Fin (4 : ℕ))) (q (0 : Fin (4 : ℕ)));
+                      TileOdometer C.1.1 (TileTranslation T w) (H kl) ∧
+                        (∀ (x : GaussianInt), x ∈ (H kl).domain ↔ x - w ∈ h.domain) ∧
+                          ∀ x ∈ (H kl).domain,
+                            (H kl).value x =
+                              h.value (x - w) + a.re * x.re + a.im * x.im) →
+                    (h.domain : Set GaussianInt) = FootprintVertices T →
+                      ExactTileTiling (RegularTileFamily T (TilingLattice C)) →
+                        LatticeTile T
+    ) := by
   classical
-  intro C q T h H hT hodo htrans hdom tiling
+  intro C q T h H htrans hdom tiling
   apply tiling.1 T
   refine ⟨0, (TilingLattice C).zero_mem, ?_⟩
   cases T
@@ -353,7 +365,7 @@ theorem PositiveCurvatureGeneratorCocycles (C : BandCircle)
     domain_from_odo _ _ _ hodo
   have tiling : ExactTileTiling (RegularTileFamily T (TilingLattice C)) :=
     (BandTileTopologyApplication C q hq hqC T (by simpa [hqC] using hT)).1
-  have hlat := GeneratorCocycleGeometry.hlat C q T h H hT hodo htrans hdom tiling
+  have hlat := GeneratorCocycleGeometry.hlat C q T h H htrans hdom tiling
   have hglobal := GeneratorCocycleGeometry.hglobal C q T h H htrans hcompat domain_from_odo hdom
       (GeneratorCocycleGeometry.hcoords C q hq hqC) tiling (GeneratorCocycleGeometry.hfamily C q
       T hq hqC tiling)

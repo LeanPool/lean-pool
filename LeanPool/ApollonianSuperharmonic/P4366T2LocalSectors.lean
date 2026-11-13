@@ -1220,33 +1220,9 @@ private theorem hchange'At1020 :
   intro T0 T0' outerLabel x sectorSide i hchange heq
   exact hchange (by simp only [sectorSide, heq])
 
-private theorem hUVAt1027 :
-    (by
-      classical
-      exact
-        ∀ (Ci : BandCircle), ∀ (P : PeriodicTileComplex ↥(TilingLattice Ci)), (∀ (a :
-            TilingLattice Ci), ∀ (b : TilingLattice Ci), (P.tile a = P.tile b) → (a = b)) → (∀
-            (UL : ProtoTile), ∀ (VL : ProtoTile), ∀ (iaL : ↥(TilingLattice Ci)), ∀ (ibL :
-            ↥(TilingLattice Ci)), (P.tile iaL = UL) → ((P.tile ibL = VL) → ((iaL ≠ ibL) → (UL ≠
-            VL)))) ) := by
-  classical
-  intro Ci P index_eq_of_tile_eq UL VL iaL ibL hULidx hVLidx hidxLne heq
-  exact hidxLne (index_eq_of_tile_eq iaL ibL
-    (hULidx.trans (heq.trans hVLidx.symm)))
+private abbrev hUVAt1027 := ApollonianSuperharmonic.LocalSectorGeometry.hUVAt563
 
-private theorem hUVAt1038 :
-    (by
-      classical
-      exact
-        ∀ (Ci : BandCircle), ∀ (P : PeriodicTileComplex ↥(TilingLattice Ci)), (∀ (a :
-            TilingLattice Ci), ∀ (b : TilingLattice Ci), (P.tile a = P.tile b) → (a = b)) → (∀
-            (UR : ProtoTile), ∀ (VR : ProtoTile), ∀ (iaR : ↥(TilingLattice Ci)), ∀ (ibR :
-            ↥(TilingLattice Ci)), (P.tile iaR = UR) → ((P.tile ibR = VR) → ((iaR ≠ ibR) → (UR ≠
-            VR)))) ) := by
-  classical
-  intro Ci P index_eq_of_tile_eq UR VR iaR ibR hURidx hVRidx hidxRne heq
-  exact hidxRne (index_eq_of_tile_eq iaR ibR
-    (hURidx.trans (heq.trans hVRidx.symm)))
+private abbrev hUVAt1038 := ApollonianSuperharmonic.LocalSectorGeometry.hUVAt563
 
 end LocalSectorGeometry
 
@@ -1440,10 +1416,10 @@ private theorem interiorSector :
             T0'.cells) → (∀ (path : List GaussianInt), ∀ (P : PeriodicTileComplex ↥(TilingLattice
             Ci)),
         let neighbor (x : GaussianInt) : Fin 4 → GaussianInt :=
-          ![x + ⟨0, 1⟩, x - 1, x - ⟨0, 1⟩, x + 1]
+          ![x + ⟨0, 1⟩, x - 1, x - ⟨0, 1⟩, x + 1];
         let edgeAt (x : GaussianInt) : Fin 4 → Finset GaussianInt :=
           ![{x, x + ⟨0, 1⟩}, {x - 1, x},
-            {x - ⟨0, 1⟩, x}, {x, x + 1}]
+            {x - ⟨0, 1⟩, x}, {x, x + 1}];
         (∀ (x : GaussianInt), ∀ (j : Fin 4), x ∈ edgeAt x j ∧ neighbor x j ∈ edgeAt x j) → ((∀ (x
             : GaussianInt), ∀ {j : Fin 4}, ∀ {k : Fin 4}, (edgeAt x j = edgeAt x k) → (j = k)) →
             ((∀ (R : ProtoTile), ∀ (x : GaussianInt), ∀ (j : Fin 4), (LatticeVertexIncidentCell x
@@ -1451,14 +1427,14 @@ private theorem interiorSector :
             FootprintEdges R)) → (
         let outerLabel : GaussianInt → Fin 4 → Fin 3 := fun x j =>
           if LatticeVertexIncidentCell x j ∈ T0.cells then 0
-          else if LatticeVertexIncidentCell x j ∈ T0'.cells then 1 else 2
+          else if LatticeVertexIncidentCell x j ∈ T0'.cells then 1 else 2;
         (∀ (x : GaussianInt), ∀ (j : Fin 4), (LatticeVertexIncidentCell x j ∈ T0.cells) →
             (outerLabel x j = 0)) → ((∀ (x : GaussianInt), ∀ (j : Fin 4),
             (LatticeVertexIncidentCell x j ∈ T0'.cells) → (outerLabel x j = 1)) → ((∀ (U :
             ProtoTile), ∀ (T : ProtoTile), ∀ (g : PartialOdometer), ∀ (h : PartialOdometer),
             (AncestorOdometer Ci.1.1 C0.1.1 U T g h) → (U.cells ⊆ T.cells)) → (
         let owner : GaussianInt → TilingLattice Ci := fun c =>
-          Classical.choose (PeriodicTileIndexedMultiplicityOne P c)
+          Classical.choose (PeriodicTileIndexedMultiplicityOne P c);
         (∀ (c : GaussianInt), ∀ (a : TilingLattice Ci), (c ∈ (P.tile a).cells) → (owner c = a)) →
             ((∀ (a : TilingLattice Ci), ∀ (b : TilingLattice Ci), (P.tile a = P.tile b) → (a =
             b)) → ((∀ (c : GaussianInt), ∀ (a : TilingLattice Ci), c ∈ (P.tile a).cells ↔ owner c
@@ -1484,7 +1460,8 @@ private theorem interiorSector :
             P.tile ib = V ∧ ia ≠ ib ∧ (LatticeVertexIncidentCell x j ∈ (P.tile ia).cells ∧
             LatticeVertexIncidentCell x (j + 1) ∈ (P.tile ib).cells ∨ LatticeVertexIncidentCell x
             j ∈ (P.tile ib).cells ∧ LatticeVertexIncidentCell x (j + 1) ∈ (P.tile ia).cells)))) →
-            (∀ (x : GaussianInt), (x ∈ path) → ((∀ (y : GaussianInt), y = x ∨ y = x + (1 :
+            (∀ (x : GaussianInt),
+                                               ((∀ (y : GaussianInt), y = x ∨ y = x + (1 :
             GaussianInt) ∨ y = x - (1 : GaussianInt) ∨ y = x + (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt)
             ∨ y = x - (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt) → y ∈ FootprintVertices T0 ∨ y ∈
             FootprintVertices T0') → ((path.Nodup) → ((∀ (e : Finset GaussianInt), e ∈
@@ -1504,7 +1481,7 @@ private theorem interiorSector :
   intro C0 Ci T0 T0' h0 h0' tiles reverseTiles hs reverseHs hT hT' hdis path P neighbor edgeAt
       edgeAt_mem edgeAt_injective edge_of_sector_cell outerLabel label_T0 label_T0'
       ancestor_cells owner owner_unique index_eq_of_tile_eq owner_mem_iff owner_no_fourfold
-      owner_no_checkerboard indexed_transition x hx hstar hnodup hedgesPath pre hpre y rest hsplit
+      owner_no_checkerboard indexed_transition x hstar hnodup hedgesPath pre hpre y rest hsplit
   have hpre' : pre ≠ [] := hpre
   let z := pre.getLast hpre'
   let pre' := pre.dropLast
@@ -1764,7 +1741,7 @@ theorem P4366T2LocalSectors
         exact (LocalSectorConclusions.interiorSector C0 Ci T0 T0' h0 h0' tiles reverseTiles hs
             reverseHs hT hT' hdis path P edgeAt_mem edgeAt_injective edge_of_sector_cell label_T0
             label_T0' ancestor_cells owner_unique index_eq_of_tile_eq owner_mem_iff
-            owner_no_fourfold owner_no_checkerboard indexed_transition x hx hstar hnodup
+            owner_no_fourfold owner_no_checkerboard indexed_transition x hstar hnodup
             hedgesPath pre hpre y rest hsplit)
 
 end ApollonianSuperharmonic

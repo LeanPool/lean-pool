@@ -355,13 +355,22 @@ private theorem edge_vertices :
     (by
       classical
       exact
-        ∀ (E : Set (Finset GaussianInt)), ∀ (p : List GaussianInt), ∀ (x : GaussianInt), ∀ (y :
-            GaussianInt), (p.head? = some x) → ((p.getLast? = some y) → ((FourNeighborAdjacent y
-            x) → ((∀ (e : Finset GaussianInt), e ∈ E ↔ e = {y, x} ∨ ∃ (a : GaussianInt) (b :
-            GaussianInt) (l₁ : List GaussianInt) (l₂ : List GaussianInt), p = l₁ ++ a :: b :: l₂
-            ∧ e = {a, b}) → (∀ e ∈ E, ∀ z ∈ e, z ∈ p)))) ) := by
+        ∀ (E : Set (Finset GaussianInt)),
+          ∀ (p : List GaussianInt),
+            ∀ (x : GaussianInt),
+              ∀ (y : GaussianInt),
+                p.head? = some x →
+                  p.getLast? = some y →
+                    (∀ (e : Finset GaussianInt),
+                        e ∈ E ↔
+                          e = { y, x } ∨
+                            ∃ (a : GaussianInt) (b : GaussianInt) (l₁ : List GaussianInt)
+                              (l₂ : List GaussianInt),
+                              p = l₁ ++ a :: b :: l₂ ∧ e = { a, b }) →
+                      ∀ e ∈ E, ∀ z ∈ e, z ∈ p
+    ) := by
   classical
-  intro E p x y hpHead hpLast hclose hpEdges e he z hz
+  intro E p x y hpHead hpLast hpEdges e he z hz
   rcases (hpEdges e).mp he with rfl | ⟨a, b, l₁, l₂, hd, rfl⟩
   · simp only [Finset.mem_insert, Finset.mem_singleton] at hz
     rcases hz with rfl | rfl
@@ -498,16 +507,27 @@ private theorem es_edge :
     (by
       classical
       exact
-        ∀ (E : Set (Finset GaussianInt)), ∀ (p : List GaussianInt), ∀ (x : GaussianInt), ∀ (y :
-            GaussianInt), (p.head? = some x) → ((p.getLast? = some y) → ((FourNeighborAdjacent y
-            x) → ((∀ (e : Finset GaussianInt), e ∈ E ↔ e = {y, x} ∨ ∃ (a : GaussianInt) (b :
-            GaussianInt) (l₁ : List GaussianInt) (l₂ : List GaussianInt), p = l₁ ++ a :: b :: l₂
-            ∧ e = {a, b}) → ((∀ (r : List GaussianInt), ∀ a, ∀ b, (a, b) ∈ r.zip r.tail → ∃ l₁
-            l₂, r = l₁ ++ a :: b :: l₂) → (
-        let es := (p.zip p.tail) ++ [(y, x)]
-        ∀ a, ∀ b, (a, b) ∈ es → ({a, b} : Finset GaussianInt) ∈ E))))) ) := by
+        ∀ (E : Set (Finset GaussianInt)),
+          ∀ (p : List GaussianInt),
+            ∀ (x : GaussianInt),
+              ∀ (y : GaussianInt),
+                p.head? = some x →
+                  p.getLast? = some y →
+                    (∀ (e : Finset GaussianInt),
+                        e ∈ E ↔
+                          e = { y, x } ∨
+                            ∃ (a : GaussianInt) (b : GaussianInt) (l₁ : List GaussianInt)
+                              (l₂ : List GaussianInt),
+                              p = l₁ ++ a :: b :: l₂ ∧ e = { a, b }) →
+                      (∀ (r : List GaussianInt),
+                          ∀ a,
+                            ∀ b,
+                              (a, b) ∈ r.zip r.tail → ∃ l₁ l₂, r = l₁ ++ a :: b :: l₂) →
+                        let es := p.zip p.tail ++ [(y, x)]
+                        ∀ a, ∀ b, (a, b) ∈ es → ({ a, b } : Finset GaussianInt) ∈ E
+    ) := by
   classical
-  intro E p x y hpHead hpLast hclose hpEdges zip_decomp es a b hab
+  intro E p x y hpHead hpLast hpEdges zip_decomp es a b hab
   simp only [es, List.mem_append, List.mem_singleton, Prod.mk.injEq] at hab
   apply (hpEdges _).mpr
   rcases hab with hab | ⟨rfl, rfl⟩
@@ -729,43 +749,100 @@ private theorem cycle_segments :
     (by
       classical
       exact
-        ∀ (T : ProtoTile), ∀ (E : Set (Finset GaussianInt)), ∀ (p : List GaussianInt), ∀ (x :
-            GaussianInt), ∀ (y : GaussianInt), (p.head? = some x) → ((p.getLast? = some y) →
-            ((FourNeighborAdjacent y x) → ((∀ (a : GaussianInt), ∀ (b : GaussianInt), ∀ (l₁ :
-            List GaussianInt), ∀ (l₂ : List GaussianInt), p = l₁ ++ a :: b :: l₂ →
-            FourNeighborAdjacent a b) → ((∀ (e : Finset GaussianInt), e ∈ E ↔ e = {y, x} ∨ ∃ (a :
-            GaussianInt) (b : GaussianInt) (l₁ : List GaussianInt) (l₂ : List GaussianInt), p =
-            l₁ ++ a :: b :: l₂ ∧ e = {a, b}) → ((∀ z ∈ p, z ∈ T.cells ∧ z - 1 ∈ T.cells ∧ z - ⟨0,
-            1⟩ ∈ T.cells ∧ z - 1 - ⟨0, 1⟩ ∈ T.cells) → (
-        let es := (p.zip p.tail) ++ [(y, x)]
-        (∀ a, ∀ b, (a, b) ∈ es → ({a, b} : Finset GaussianInt) ∈ E) → ((
-        let cyclicEdges := p.zip p.tail ++ [(y, x)]; ∀ (q : LatticeCell), ((q + (1 :
-            LatticeCell), q + (1 : LatticeCell) + (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt)) ∉
-            cyclicEdges ∧ (q + (1 : LatticeCell) + (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt), q + (1 :
-            LatticeCell)) ∉ cyclicEdges → GridRayCrossingIndex (q + (1 : LatticeCell)) p =
-            GridRayCrossingIndex q p) ∧ ((q + (1 : LatticeCell), q + (1 : LatticeCell) + (⟨(0 :
-            ℤ), (1 : ℤ)⟩ : GaussianInt)) ∈ cyclicEdges ∨ (q + (1 : LatticeCell) + (⟨(0 : ℤ), (1 :
-            ℤ)⟩ : GaussianInt), q + (1 : LatticeCell)) ∈ cyclicEdges → (GridRayCrossingIndex (q +
-            (1 : LatticeCell)) p - GridRayCrossingIndex q p).natAbs = (1 : ℕ)) ∧ ((q + (1 :
-            LatticeCell) + (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt), q + (⟨(0 : ℤ), (1 : ℤ)⟩ :
-            GaussianInt)) ∉ cyclicEdges ∧ (q + (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt), q + (1 :
-            LatticeCell) + (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt)) ∉ cyclicEdges →
-            GridRayCrossingIndex (q + (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt)) p =
-            GridRayCrossingIndex q p) ∧ ((q + (1 : LatticeCell) + (⟨(0 : ℤ), (1 : ℤ)⟩ :
-            GaussianInt), q + (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt)) ∈ cyclicEdges ∨ (q + (⟨(0 : ℤ),
-            (1 : ℤ)⟩ : GaussianInt), q + (1 : LatticeCell) + (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt))
-            ∈ cyclicEdges → (GridRayCrossingIndex (q + (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt)) p -
-            GridRayCrossingIndex q p).natAbs = (1 : ℕ))) → ((∀ (U : ProtoTile), ∀ (a :
-            GaussianInt), ∀ (b : GaussianInt), (a ∈ U.cells) → ((b ∈ U.cells) →
-            ((FourNeighborAdjacent a b) → (∀ t : Set.Icc (0 : Real) 1, ((1 - (t : Real)) * (a.re
-            : Real) + (t : Real) * (b.re : Real), (1 - (t : Real)) * (a.im : Real) + (t : Real) *
-            (b.im : Real)) ∈ TileRealization U)))) → (∀ a b : GaussianInt, ((∃ l₁ l₂ : List
-            GaussianInt, p = l₁ ++ a :: b :: l₂) ∨ (a = y ∧ b = x)) → ∀ t : Set.Icc (0 : Real) 1,
-            ((1 - (t : Real)) * (a.re : Real) + (t : Real) * (b.re : Real), (1 - (t : Real)) *
-            (a.im : Real) + (t : Real) * (b.im : Real)) ∈ TileRealization T))))))))) ) := by
+        ∀ (T : ProtoTile),
+          ∀ (E : Set (Finset GaussianInt)),
+            ∀ (p : List GaussianInt),
+              ∀ (x : GaussianInt),
+                ∀ (y : GaussianInt),
+                  p.head? = some x →
+                    p.getLast? = some y →
+                      FourNeighborAdjacent y x →
+                        (∀ (a : GaussianInt),
+                            ∀ (b : GaussianInt),
+                              ∀ (l₁ : List GaussianInt),
+                                ∀ (l₂ : List GaussianInt),
+                                p = l₁ ++ a :: b :: l₂ → FourNeighborAdjacent a b) →
+                          (∀ (e : Finset GaussianInt),
+                              e ∈ E ↔
+                                e = { y, x } ∨
+                                ∃ (a : GaussianInt) (b : GaussianInt) (l₁ :
+                                List GaussianInt) (l₂ : List GaussianInt),
+                                p = l₁ ++ a :: b :: l₂ ∧ e = { a, b }) →
+                            (∀ z ∈ p,
+                                z ∈ T.cells ∧
+                                z - 1 ∈ T.cells ∧
+                                z - ⟨0, 1⟩ ∈ T.cells ∧ z - 1 - ⟨0, 1⟩ ∈ T.cells) →
+                              (let cyclicEdges := p.zip p.tail ++ [(y, x)];
+                              ∀ (q : LatticeCell),
+                                ((q + (1 : LatticeCell),
+                                q + (1 : LatticeCell) +
+                                (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt)) ∉
+                                cyclicEdges ∧
+                                (q + (1 : LatticeCell) +
+                                (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt),
+                                q + (1 : LatticeCell)) ∉
+                                cyclicEdges →
+                                GridRayCrossingIndex (q + (1 : LatticeCell)) p =
+                                GridRayCrossingIndex q p) ∧
+                                ((q + (1 : LatticeCell),
+                                q + (1 : LatticeCell) +
+                                (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt)) ∈
+                                cyclicEdges ∨
+                                (q + (1 : LatticeCell) +
+                                (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt),
+                                q + (1 : LatticeCell)) ∈
+                                cyclicEdges →
+                                (GridRayCrossingIndex (q + (1 : LatticeCell)) p -
+                                GridRayCrossingIndex q p).natAbs =
+                                (1 : ℕ)) ∧
+                                ((q + (1 : LatticeCell) +
+                                (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt),
+                                q + (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt)) ∉
+                                cyclicEdges ∧
+                                (q + (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt),
+                                q + (1 : LatticeCell) +
+                                (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt)) ∉
+                                cyclicEdges →
+                                GridRayCrossingIndex
+                                (q + (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt)) p =
+                                GridRayCrossingIndex q p) ∧
+                                ((q + (1 : LatticeCell) +
+                                (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt),
+                                q + (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt)) ∈
+                                cyclicEdges ∨
+                                (q + (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt),
+                                q + (1 : LatticeCell) +
+                                (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt)) ∈
+                                cyclicEdges →
+                                (GridRayCrossingIndex
+                                (q + (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt)) p -
+                                GridRayCrossingIndex q p).natAbs =
+                                (1 : ℕ))) →
+                                (∀ (U : ProtoTile),
+                                ∀ (a : GaussianInt),
+                                ∀ (b : GaussianInt),
+                                a ∈ U.cells →
+                                b ∈ U.cells →
+                                FourNeighborAdjacent a b →
+                                ∀ t : Set.Icc (0 : Real) 1,
+                                ((1 - (t : Real)) * (a.re : Real) +
+                                (t : Real) * (b.re : Real),
+                                (1 - (t : Real)) * (a.im : Real) +
+                                (t : Real) * (b.im : Real)) ∈
+                                TileRealization U) →
+                                ∀ a b : GaussianInt,
+                                (∃ l₁ l₂ : List GaussianInt, p = l₁ ++ a :: b :: l₂) ∨
+                                a = y ∧ b = x →
+                                ∀ t : Set.Icc (0 : Real) 1,
+                                ((1 - (t : Real)) * (a.re : Real) +
+                                (t : Real) * (b.re : Real),
+                                (1 - (t : Real)) * (a.im : Real) +
+                                (t : Real) * (b.im : Real)) ∈
+                                TileRealization T
+    ) := by
   classical
-  intro T E p x y hpHead hpLast hclose hpAdjacent hpEdges hpCells es es_edge index_control
-      unit_segment a b hab
+  intro T E p x y hpHead hpLast hclose hpAdjacent hpEdges hpCells index_control unit_segment a b
+      hab
   rcases hab with ⟨l₁, l₂, hd⟩ | ⟨rfl, rfl⟩
   · have ha : a ∈ p := by rw [hd]; simp
     have hb : b ∈ p := by rw [hd]; simp
@@ -1245,12 +1322,12 @@ theorem P4250T2InterfaceCycleExclusion
       (InterfaceCycleGeometry.hpNotP D P p hpInDifference)
   have hTne : T.cells.Nonempty := (LatticeTileGridStructure T hlat).1.1
   -- Absence of a boundary edge forces all four incident cells to be present.
-  have edge_vertices := InterfaceCycleGeometry.edge_vertices E p x y hpHead hpLast hclose hpEdges
+  have edge_vertices := InterfaceCycleGeometry.edge_vertices E p x y hpHead hpLast hpEdges
   have parent_regular := InterfaceCycleGeometry.parent_regular C q cfg T cert
   -- A cycle side cannot lie between two cells of one parent.
   have zip_decomp := InterfaceCycleGeometry.zip_decomp
   let es := (p.zip p.tail) ++ [(y, x)]
-  have es_edge := InterfaceCycleGeometry.es_edge E p x y hpHead hpLast hclose hpEdges zip_decomp
+  have es_edge := InterfaceCycleGeometry.es_edge E p x y hpHead hpLast hpEdges zip_decomp
   have index_control := GridRayCrossingIndexAdjacentCell p x y hpHead hpLast
     hpNodup (by omega) (InterfaceCycleGeometry.hzipAdjacent p hpAdjacent zip_decomp) hclose
   have index_horizontal := InterfaceCycleGeometry.index_horizontal E p x y es_edge index_control
@@ -1258,7 +1335,7 @@ theorem P4250T2InterfaceCycleExclusion
   have outside_zero := InterfaceCycleGeometry.outside_zero T hlat p x y hpHead hpLast hclose
       hpAdjacent (InterfaceCycleGeometry.cycle_segments T E p x y hpHead hpLast hclose hpAdjacent
       hpEdges (InterfaceCycleGeometry.hpCells T p hpInteriorT hTne
-      (InterfaceCycleGeometry.vertex_cells)) es_edge index_control
+      (InterfaceCycleGeometry.vertex_cells)) index_control
       (InterfaceCycleGeometry.unit_segment)) (InterfaceCycleGeometry.unoccupied_center_outside T)
   have horizontal_vertical_ne := InterfaceCycleGeometry.horizontal_vertical_ne
   -- The common outer side anchors the index throughout each parent.

@@ -6,6 +6,7 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryDomainTransport
 
 public import LeanPool.ApollonianSuperharmonic.BandTileSimultaneousInduction
 public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryMarkedDataCovariance
@@ -237,22 +238,7 @@ private theorem hedgeg :
   · rw [edges]; exact ⟨edge, hleft, rfl⟩
   · rw [edges]; exact ⟨edge, hright, rfl⟩
 
-private theorem hgsubAt347 :
-    (by
-      classical
-      exact
-        ∀ (C : BandCircle), ∀ (T₀ : ProtoTile), ∀ (h₀ : PartialOdometer), ∀ (C' : BandCircle), ∀
-            (T' : ProtoTile), ∀ (h' : PartialOdometer), (TileSubodometer C.1.1 C'.1.1 T₀ T' h₀
-                h') → (∀ (g : BandPackingSymmetry),
-            ∀ (Cg : BandCircle), (Cg.1.1 = BandPackingSymmetryCircleAction g C.1.1) → (∀ (Dg :
-            BandCircle), (Dg.1.1 = BandPackingSymmetryCircleAction g C'.1.1) → (TileSubodometer
-                Cg.1.1 Dg.1.1 (BandPackingSymmetryTileAction
-            g T₀) (BandPackingSymmetryTileAction g T') (BandPackingSymmetryPartialOdometerAction
-            g h₀) (BandPackingSymmetryPartialOdometerAction g h')))) ) := by
-  classical
-  intro C T₀ h₀ C' T' h' hsub g Cg hCg Dg hDg
-  rw [hCg, hDg]
-  exact (BandPackingSymmetryMarkedDataCovariance.1 g _ _ _ _ _ _).mp hsub
+private abbrev hgsubAt347 := ApollonianSuperharmonic.OdometerAdjacencyGeometry.hgsubAt296
 
 private theorem heqOrig :
     (by
@@ -276,18 +262,12 @@ private theorem hab :
     (by
       classical
       exact
-        ∀ (T : ProtoTile), ∀ (T₀ : ProtoTile), ∀ (h : PartialOdometer), ∀ (h₀ : PartialOdometer),
-            ∀ (g : BandPackingSymmetry), ∀ (qbar : Fin (4 : ℕ) → CircleCoordinates), ∀ (cfg :
-            BandOrderedGeneralConfiguration qbar), ∀ (Cg : BandCircle), ∀ (Ig : BandCircle), ∀
-            (cert : BandOrderedGeneralLayoutCertificate qbar cfg Cg
-            (BandPackingSymmetryTileAction g T₀)), ∀ (a : PeriodicSubtileIndex), (a ∈
-            P4261T1ExteriorIndices) → ((P4261T1PlacedOdometer cert
-            (BandPackingSymmetryPartialOdometerAction g h₀) Ig (BandPackingSymmetryTileAction g
-            T) (BandPackingSymmetryPartialOdometerAction g h) a) → (∀ (b : PeriodicSubtileIndex),
-            (b.first = (0 : ℤ)) → ((b.second = (0 : ℤ)) → ((¬AllowedSubtileIncidence a b) → (a ≠
-            b))))) ) := by
+        ∀ (a : PeriodicSubtileIndex),
+          a ∈ P4261T1ExteriorIndices →
+            ∀ (b : PeriodicSubtileIndex), b.first = (0 : ℤ) → b.second = (0 : ℤ) → a ≠ b
+    ) := by
   classical
-  intro T T₀ h h₀ g qbar cfg Cg Ig cert a ha pa b hb₁ hb₂ hinc heq
+  intro a ha b hb₁ hb₂ heq
   have hzero : a.first = 0 ∧ a.second = 0 := by simpa [heq] using And.intro hb₁ hb₂
   have ha' := ha
   simp only [P4261T1ExteriorIndices, Finset.mem_insert, Finset.mem_singleton] at ha'
@@ -315,18 +295,7 @@ private theorem hsmall :
   · rw [hempty]; exact Set.subsingleton_empty
   · exact hsmall
 
-private theorem forward :
-    (by
-      classical
-      exact
-        ∀ (g : BandPackingSymmetry), ∀ (f : PartialOdometer), ∀ (z : GaussianInt), (z ∈ f.domain)
-            → (BandPackingSymmetryVectorAction g z ∈ (BandPackingSymmetryPartialOdometerAction g
-            f).domain) ) := by
-  classical
-  intro g f z hz
-  change _ ∈ ((BandPackingSymmetryPartialOdometerAction g f).domain : Set GaussianInt)
-  rw [(BandPackingSymmetryPartialOdometerActionFormulas g f f).1]
-  exact ⟨z, hz, rfl⟩
+private abbrev forward := ApollonianSuperharmonic.BandPackingSymmetryDomainTransport.forward
 
 end OdometerAdjacencyGeometry
 
@@ -487,8 +456,8 @@ theorem OrderedGeneralOdometerAdjacencyClassification :
         have back := transportS ginv Dg Ig C' Cᵢ hbackD hbackI _ _ _ _ hreverse
         simpa only [htile, hfun] using back
     · -- A nonledger contact stays a raw subsingleton, not a reversed adjacency.
-      have hab : a ≠ b := OdometerAdjacencyGeometry.hab T T₀ h h₀ g qbar cfg Cg Ig cert a ha pa b
-          hb₁ hb₂ hinc
+      have hab : a ≠ b := OdometerAdjacencyGeometry.hab a ha b
+          hb₁ hb₂
       have hraw := (BandOriginalOccurrenceIntersectionClassification qbar cfg Cg
         (BandPackingSymmetryTileAction g T₀) cert a b hab).2 hinc
       have hsmall : ((FootprintVertices

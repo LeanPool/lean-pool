@@ -379,9 +379,7 @@ private theorem sqOdd :
   norm_num at h ⊢
   omega
 
-private theorem tri :
-    ∀ (a : Int), 2 * (a * (a - 1) / 2) = a * (a - 1) := by
-  exact DiamondQuadraticArithmetic.triangularScale
+private abbrev tri := ApollonianSuperharmonic.DiamondQuadraticArithmetic.triangularScale
 
 private theorem tdiff :
     (∀ (a : Int), 2 * (a * (a - 1) / 2) = a * (a - 1)) →

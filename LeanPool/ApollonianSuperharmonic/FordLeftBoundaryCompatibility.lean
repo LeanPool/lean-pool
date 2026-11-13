@@ -75,16 +75,16 @@ private theorem hbar :
     (by
       classical
       exact
-        ∀ (w : Fin (4 : ℕ) → CircleCoordinates), (ProperBandQuadruple w) → (∀ (r2 : Fin (3 : ℕ)),
-            ∀ (g2 : BandPackingSymmetry), ∀ (P2 : FordFareyParameter), ((w (r2 + (2 : Fin (3 :
-            ℕ))).succ).1 = (0 : ℤ)) → ((BandPackingSymmetryQuadrupleAction g2 ![w (0 : Fin (4 :
-            ℕ)), w r2.succ, w (r2 + (1 : Fin (3 : ℕ))).succ, w (r2 + (2 : Fin (3 : ℕ))).succ] =
-            FordRecursiveQuadruple P2) → (
-        let barq : Fin 4 → CircleCoordinates :=
-          ![w 0, w r2.succ, w (r2 + 1).succ, w (r2 + 2).succ]
-        ProperBandQuadruple barq))) ) := by
+        ∀ (w : Fin (4 : ℕ) → CircleCoordinates),
+          ProperBandQuadruple w →
+            ∀ (r2 : Fin (3 : ℕ)),
+              (w (r2 + (2 : Fin (3 : ℕ))).succ).1 = (0 : ℤ) →
+                let barq : Fin 4 → CircleCoordinates :=
+                  ![w 0, w r2.succ, w (r2 + 1).succ, w (r2 + 2).succ]
+                ProperBandQuadruple barq
+    ) := by
   classical
-  intro w hwproper r2 g2 P2 hz2 heq2 barq
+  intro w hwproper r2 hz2 barq
   fin_cases r2
   · exact ⟨by
       convert hwproper.1 using 1; funext j; fin_cases j <;> rfl, by
@@ -489,69 +489,45 @@ private theorem hcoc :
     (by
       classical
       exact
-        ∀ (T : ProtoTile), ∀ (T' : ProtoTile), ∀ (p : ℝ × ℝ), ∀ (p' : ℝ × ℝ), ∀ (w : Fin (4 : ℕ)
-            → CircleCoordinates), ∀ (iw : Fin (3 : ℕ)), ∀ (ew : Bool), ∀ (r2 : Fin (3 : ℕ)), ∀
-            (g2 : BandPackingSymmetry), ∀ (P2 : FordFareyParameter),
-        let barq : Fin 4 → CircleCoordinates :=
-          ![w 0, w r2.succ, w (r2 + 1).succ, w (r2 + 2).succ]
-        ∀ (t : Fin (3 : ℕ)), (t + r2 = iw) → ((barq t.succ = w iw.succ) → ((TileCentroid T' -
-            TileCentroid T = (if ew = true then (1 : ℝ) else -1) • GaussianRealPoint
-            (BandVectors.1 (barq t.succ) (barq 0))) → ((p'.1 - p.1 = (if ew = true then (1 : ℝ)
-            else -1) * (BandVectors.2 (barq t.succ) (barq 0)).re) → ((p'.2 - p.2 = (if ew = true
-            then (1 : ℝ) else -1) * (BandVectors.2 (barq t.succ) (barq 0)).im) → (∀ (negative :
-            Bool), ∀ (r : ℝ × ℝ), ∀ (r' : ℝ × ℝ), (TileCentroid (BandPackingSymmetryTileAction g2
-            T') - TileCentroid (BandPackingSymmetryTileAction g2 T) = (if (ew ^^ negative) = true
-            then (1 : ℝ) else (-1 : ℝ)) • GaussianRealPoint (BandVectors.1
-            (BandPackingSymmetryQuadrupleAction g2 barq ((fun (j : Fin (3 : ℕ)) => if
-            BandPackingSymmetryReversesOrientation g2 = true then -j else j) t).succ)
-            (BandPackingSymmetryQuadrupleAction g2 barq (0 : Fin (4 : ℕ))))) → ((r'.1 - r.1 = (if
-            (ew ^^ negative) = true then (1 : ℝ) else (-1 : ℝ)) * (↑(BandVectors.2
-            (BandPackingSymmetryQuadrupleAction g2 barq ((fun (j : Fin (3 : ℕ)) => if
-            BandPackingSymmetryReversesOrientation g2 = true then -j else j) t).succ)
-            (BandPackingSymmetryQuadrupleAction g2 barq (0 : Fin (4 : ℕ)))).re : ℝ)) → ((r'.2 -
-            r.2 = (if (ew ^^ negative) = true then (1 : ℝ) else (-1 : ℝ)) * (↑(BandVectors.2
-            (BandPackingSymmetryQuadrupleAction g2 barq ((fun (j : Fin (3 : ℕ)) => if
-            BandPackingSymmetryReversesOrientation g2 = true then -j else j) t).succ)
-            (BandPackingSymmetryQuadrupleAction g2 barq (0 : Fin (4 : ℕ)))).im : ℝ)) → (∀ (u :
-            GaussianInt), ∀ (a : GaussianInt), ∀ (u' : GaussianInt), ∀ (a' : GaussianInt), (u' -
-            u = (if ew ^^ negative then 1 else -1) • BandVectors.1
-            (BandPackingSymmetryQuadrupleAction g2 barq t.succ)
-            (BandPackingSymmetryQuadrupleAction g2 barq 0)) → ((u' - u = (if (ew ^^ negative) =
-            true then 1 else -1) • BandVectors.1 (FordRecursiveQuadruple P2 t.succ)
-            (FordRecursiveQuadruple P2 0)) → ((BandVectors.1 (FordRecursiveQuadruple P2 (1 : Fin
-            (4 : ℕ))) (FordRecursiveQuadruple P2 (0 : Fin (4 : ℕ))) = (⟨(↑P2.q : ℤ), (↑P2.q₁ :
-            ℤ)⟩ : GaussianInt)) → ((BandVectors.1 (FordRecursiveQuadruple P2 (2 : Fin (4 : ℕ)))
-            (FordRecursiveQuadruple P2 (0 : Fin (4 : ℕ))) = (⟨-(↑P2.q : ℤ), (↑P2.q₂ : ℤ)⟩ :
-            GaussianInt)) → ((BandVectors.1 (FordRecursiveQuadruple P2 (3 : Fin (4 : ℕ)))
-            (FordRecursiveQuadruple P2 (0 : Fin (4 : ℕ))) = (⟨(0 : ℤ), -(↑P2.q : ℤ)⟩ :
-            GaussianInt)) → ((BandVectors.2 (FordRecursiveQuadruple P2 (1 : Fin (4 : ℕ)))
-            (FordRecursiveQuadruple P2 (0 : Fin (4 : ℕ))) = (⟨P2.p₁, P2.p⟩ : GaussianInt)) →
-            ((BandVectors.2 (FordRecursiveQuadruple P2 (2 : Fin (4 : ℕ))) (FordRecursiveQuadruple
-            P2 (0 : Fin (4 : ℕ))) = (⟨P2.p₂, -P2.p⟩ : GaussianInt)) → ((BandVectors.2
-            (FordRecursiveQuadruple P2 (3 : Fin (4 : ℕ))) (FordRecursiveQuadruple P2 (0 : Fin (4
-            : ℕ))) = (⟨-P2.p, (0 : ℤ)⟩ : GaussianInt)) → ((r'.1 - r.1 = if ew = negative then
-            -((↑(BandVectors.2 (FordRecursiveQuadruple P2 t.succ) (FordRecursiveQuadruple P2 (0 :
-            Fin (4 : ℕ)))).re : ℝ) + ((↑(BandVectors.2 (FordRecursiveQuadruple P2 t.succ)
-            (FordRecursiveQuadruple P2 (0 : Fin (4 : ℕ)))).im : ℝ) * (0 : ℝ) - (0 : ℝ))) else
-            (↑(BandVectors.2 (FordRecursiveQuadruple P2 t.succ) (FordRecursiveQuadruple P2 (0 :
-            Fin (4 : ℕ)))).re : ℝ) + ((↑(BandVectors.2 (FordRecursiveQuadruple P2 t.succ)
-            (FordRecursiveQuadruple P2 (0 : Fin (4 : ℕ)))).im : ℝ) * (0 : ℝ) - (0 : ℝ))) → ((r'.2
-            - r.2 = if ew = negative then -(↑(BandVectors.2 (FordRecursiveQuadruple P2 t.succ)
-            (FordRecursiveQuadruple P2 (0 : Fin (4 : ℕ)))).im : ℝ) else (↑(BandVectors.2
-            (FordRecursiveQuadruple P2 t.succ) (FordRecursiveQuadruple P2 (0 : Fin (4 : ℕ)))).im
-            : ℝ)) → ((a'.re - a.re = (if (ew ^^ negative) = true then 1 else -1) * (BandVectors.2
-            (FordRecursiveQuadruple P2 t.succ) (FordRecursiveQuadruple P2 0)).re) → ((a'.im -
-            a.im = (if (ew ^^ negative) = true then 1 else -1) * (BandVectors.2
-            (FordRecursiveQuadruple P2 t.succ) (FordRecursiveQuadruple P2 0)).im) → (∀ y :
-            GaussianInt, FordOdometer P2 (y + BandVectors.1 (FordRecursiveQuadruple P2 t.succ)
-            (FordRecursiveQuadruple P2 0)) - FordOdometer P2 y = (BandVectors.2
-            (FordRecursiveQuadruple P2 t.succ) (FordRecursiveQuadruple P2 0)).re * y.re +
-            (BandVectors.2 (FordRecursiveQuadruple P2 t.succ) (FordRecursiveQuadruple P2 0)).im *
-            y.im + (if t = 0 then P2.q₁ * P2.p else if t = 1 then -(P2.q * P2.p₂) else
-            0))))))))))))))))))))) ) := by
+        (Fin (4 : ℕ) → CircleCoordinates) →
+          Fin (3 : ℕ) →
+            ∀ (P2 : FordFareyParameter),
+              ∀ (t : Fin (3 : ℕ)),
+                BandVectors.1 (FordRecursiveQuadruple P2 (1 : Fin (4 : ℕ)))
+                      (FordRecursiveQuadruple P2 (0 : Fin (4 : ℕ))) =
+                    (⟨(↑P2.q : ℤ), (↑P2.q₁ : ℤ)⟩ : GaussianInt) →
+                  BandVectors.1 (FordRecursiveQuadruple P2 (2 : Fin (4 : ℕ)))
+                        (FordRecursiveQuadruple P2 (0 : Fin (4 : ℕ))) =
+                      (⟨-(↑P2.q : ℤ), (↑P2.q₂ : ℤ)⟩ : GaussianInt) →
+                    BandVectors.1 (FordRecursiveQuadruple P2 (3 : Fin (4 : ℕ)))
+                          (FordRecursiveQuadruple P2 (0 : Fin (4 : ℕ))) =
+                        (⟨(0 : ℤ), -(↑P2.q : ℤ)⟩ : GaussianInt) →
+                      BandVectors.2 (FordRecursiveQuadruple P2 (1 : Fin (4 : ℕ)))
+                            (FordRecursiveQuadruple P2 (0 : Fin (4 : ℕ))) =
+                          (⟨P2.p₁, P2.p⟩ : GaussianInt) →
+                        BandVectors.2 (FordRecursiveQuadruple P2 (2 : Fin (4 : ℕ)))
+                              (FordRecursiveQuadruple P2 (0 : Fin (4 : ℕ))) =
+                            (⟨P2.p₂, -P2.p⟩ : GaussianInt) →
+                          BandVectors.2 (FordRecursiveQuadruple P2 (3 : Fin (4 : ℕ)))
+                                (FordRecursiveQuadruple P2 (0 : Fin (4 : ℕ))) =
+                              (⟨-P2.p, (0 : ℤ)⟩ : GaussianInt) →
+                            ∀ y : GaussianInt,
+                              FordOdometer P2
+                                (y +
+                                BandVectors.1 (FordRecursiveQuadruple P2 t.succ)
+                                (FordRecursiveQuadruple P2 0)) -
+                                FordOdometer P2 y =
+                                (BandVectors.2 (FordRecursiveQuadruple P2 t.succ)
+                                (FordRecursiveQuadruple P2 0)).re *
+                                y.re +
+                                (BandVectors.2 (FordRecursiveQuadruple P2 t.succ)
+                                (FordRecursiveQuadruple P2 0)).im *
+                                y.im +
+                                if t = 0 then P2.q₁ * P2.p
+                              else if t = 1 then -(P2.q * P2.p₂) else 0
+    ) := by
   classical
-  intro T T' p p' w iw ew r2 g2 P2 barq t ht hpoint hcentbar hslopebar hslopebar' negative r r'
-      hcent' hsre' hsim' u a u' a' hshift hvec hv2 hv3 ha1 ha2 ha3 ha4 hsreFord hsimFord haRe haIm y
+  intro w r2 P2 t hv2 hv3 ha1 ha2 ha3 ha4 y
   fin_cases t
   · change FordOdometer P2 (y + BandVectors.1 (FordRecursiveQuadruple P2 1)
       (FordRecursiveQuadruple P2 0)) - FordOdometer P2 y = _
@@ -617,20 +593,7 @@ private theorem hvxAt524 :
     x - u = x - u' + (u' - u) := by ring
     _ = _ := by rw [hvec]; ring
 
-private theorem hvx0At530 :
-    (by
-      classical
-      exact
-        ∀ (P2 : FordFareyParameter), ∀ (t : Fin (3 : ℕ)), ∀ (u : GaussianInt), ∀ (u' :
-            GaussianInt), (u' - u = (1 : ℤ) • BandVectors.1 (FordRecursiveQuadruple P2 t.succ)
-            (FordRecursiveQuadruple P2 (0 : Fin (4 : ℕ)))) → (∀ (x0 : GaussianInt), x0 - u = (x0
-            - u') + BandVectors.1 (FordRecursiveQuadruple P2 t.succ) (FordRecursiveQuadruple P2
-            0)) ) := by
-  classical
-  intro P2 t u u' hvec x0
-  calc
-    x0 - u = x0 - u' + (u' - u) := by ring
-    _ = _ := by rw [hvec]; ring
+private abbrev hvx0At530 := ApollonianSuperharmonic.FordBoundaryCompatibilityGeometry.hvxAt524
 
 private theorem hvxAt546 :
     (by
@@ -647,20 +610,7 @@ private theorem hvxAt546 :
     x - u' = x - u - (u' - u) := by ring
     _ = _ := by rw [hvec]; ring
 
-private theorem hvx0At552 :
-    (by
-      classical
-      exact
-        ∀ (P2 : FordFareyParameter), ∀ (t : Fin (3 : ℕ)), ∀ (u : GaussianInt), ∀ (u' :
-            GaussianInt), (u' - u = (-1 : ℤ) • BandVectors.1 (FordRecursiveQuadruple P2 t.succ)
-            (FordRecursiveQuadruple P2 (0 : Fin (4 : ℕ)))) → (∀ (x0 : GaussianInt), x0 - u' = (x0
-            - u) + BandVectors.1 (FordRecursiveQuadruple P2 t.succ) (FordRecursiveQuadruple P2
-            0)) ) := by
-  classical
-  intro P2 t u u' hvec x0
-  calc
-    x0 - u' = x0 - u - (u' - u) := by ring
-    _ = _ := by rw [hvec]; ring
+private abbrev hvx0At552 := ApollonianSuperharmonic.FordBoundaryCompatibilityGeometry.hvxAt546
 
 end FordBoundaryCompatibilityGeometry
 
@@ -692,8 +642,7 @@ theorem FordLeftBoundaryCompatibility
       FordRegimeConverse w hwproper wline
     let barq : Fin 4 → CircleCoordinates :=
       ![w 0, w r2.succ, w (r2 + 1).succ, w (r2 + 2).succ]
-    have hbar := FordBoundaryCompatibilityGeometry.hbar w hwproper r2
-        g2 P2 hz2 heq2
+    have hbar := FordBoundaryCompatibilityGeometry.hbar w hwproper r2 hz2
     have hbar0 : barq 0 = q 0 := by
       simp [barq, hwchild, hC]
     have hidx : ∃ t : Fin 3, (t + r2 : Fin 3) = iw := by
@@ -799,10 +748,8 @@ theorem FordLeftBoundaryCompatibility
               (BandVectors.2 (FordRecursiveQuadruple P2 t.succ)
                 (FordRecursiveQuadruple P2 0)).im * y.im +
               (if t = 0 then P2.q₁ * P2.p else
-               if t = 1 then -(P2.q * P2.p₂) else 0) := FordBoundaryCompatibilityGeometry.hcoc T
-                   T' p p' w iw ew r2 g2 P2 t ht hpoint hcentbar hslopebar hslopebar' negative r
-                   r' hcent' hsre' hsim' u a u' a' hshift hvec hv2 hv3 ha1 ha2 ha3 ha4 hsreFord
-                   hsimFord haRe haIm
+               if t = 1 then -(P2.q * P2.p₂) else 0) := FordBoundaryCompatibilityGeometry.hcoc w
+                   r2 P2 t hv2 hv3 ha1 ha2 ha3 ha4
       by_cases hdj : Disjoint
           ((BandPackingSymmetryPartialOdometerAction g2 h).domain : Set GaussianInt)
           ((BandPackingSymmetryPartialOdometerAction g2 h').domain : Set GaussianInt)

@@ -6,6 +6,7 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.P4638T1EmptyCurvature
 public import LeanPool.ApollonianSuperharmonic.BandPrototileCentroidBounds
 public import LeanPool.ApollonianSuperharmonic.GaussianRealPointProperties
 
@@ -34,32 +35,7 @@ namespace ApollonianSuperharmonic
 
 namespace PrototileConstruction
 
-private theorem emptyCurv :
-    (by
-      classical
-      exact
-        ∀ (C : CircleCoordinates), ∀ (T : ProtoTile), BandPrototile C T → T.cells = ∅ → C.1 = 0 )
-            := by
-  classical
-  intro C T hT
-  induction hT with
-  | line w x hw => intro _; rfl
-  | unit z x anchor => simp
-  | @decompose q hq S T hS hcells hfoot hcentroid ih =>
-      intro hEmpty
-      have childEmpty (i : Fin 3) (s : Bool) : (S i s).cells = ∅ := by
-        ext x
-        constructor
-        · intro hx
-          have hxT : x ∈ T.cells := (hcells x).2 ⟨i, s, hx⟩
-          simp [hEmpty] at hxT
-        · intro hx
-          simp at hx
-      have z1 := ih 0 false (childEmpty 0 false)
-      have z2 := ih 1 false (childEmpty 1 false)
-      have hp := ProperBandCurvatureStructure q hq
-      have distinct := hp.2.2 0 1 z1 z2
-      norm_num at distinct
+private abbrev emptyCurv := ApollonianSuperharmonic.P4638T1EmptyCurvature
 
 private theorem positiveNonempty :
     (by

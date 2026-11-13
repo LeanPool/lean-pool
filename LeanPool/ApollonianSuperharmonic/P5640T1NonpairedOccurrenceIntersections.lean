@@ -6,6 +6,7 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.BandOriginalParentContainment
 public import LeanPool.ApollonianSuperharmonic.ModifiedSubtileFacts
 public import LeanPool.ApollonianSuperharmonic.TileTranslationProperties
 
@@ -30,37 +31,11 @@ namespace ApollonianSuperharmonic
 
 namespace NonpairedOccurrenceGeometry
 
-private theorem precursorInPlus :
-    (by
-      classical
-      exact
-        ∀ (q : Fin 4 → CircleCoordinates), ∀ (cfg : BandOrderedGeneralConfiguration q), ∀ (C₀ :
-            BandCircle), ∀ (T : ProtoTile), ∀ (layout : BandOrderedGeneralLayoutCertificate q cfg
-            C₀ T),
-        let P := layout.P
-        let O := layout.O
-        O.cells ⊆ (P 0 true).cells ) := by
-  classical
-  intro q cfg C₀ T layout P O z hz
-  change z ∈ layout.O.cells at hz
-  rw [layout.precursor_eq] at hz
-  exact (layout.plus_union z).2 ⟨0, false, hz⟩
+private abbrev precursorInPlus :=
+    ApollonianSuperharmonic.BandOriginalParentContainment.positiveParent
 
-private theorem precursorInMinus :
-    (by
-      classical
-      exact
-        ∀ (q : Fin 4 → CircleCoordinates), ∀ (cfg : BandOrderedGeneralConfiguration q), ∀ (C₀ :
-            BandCircle), ∀ (T : ProtoTile), ∀ (layout : BandOrderedGeneralLayoutCertificate q cfg
-            C₀ T),
-        let P := layout.P
-        let O := layout.O
-        O.cells ⊆ (P 0 false).cells ) := by
-  classical
-  intro q cfg C₀ T layout P O z hz
-  change z ∈ layout.O.cells at hz
-  rw [layout.precursor_cells] at hz
-  exact (layout.minus_union z).2 ⟨0, true, hz⟩
+private abbrev precursorInMinus :=
+    ApollonianSuperharmonic.BandOriginalParentContainment.negativeParent
 
 private theorem pairCells :
     (by

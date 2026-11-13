@@ -6,6 +6,7 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.FordTileCellMembership
 public import LeanPool.ApollonianSuperharmonic.SimpleGridPathBetween
 public import LeanPool.ApollonianSuperharmonic.FordParentVectors
 
@@ -278,30 +279,6 @@ private theorem vertical :
   simpa [hV, f, hn] using hp
 
 private abbrev reverse_path := @SimpleGridPathBetween.reverse
-
-private theorem fordcell :
-    (by
-      classical
-      exact
-        ∀ (n : Nat),
-          ∀ (z : GaussianInt),
-            z ∈ (FordTile n).cells ↔ 0 ≤ z.re ∧ z.re < n ∧ 0 ≤ z.im ∧ z.im < n
-    ) := by
-  classical
-  intro n z
-  change z ∈ ((Finset.range n).product (Finset.range n)).image
-    (fun a => (⟨(a.1:Int),(a.2:Int)⟩ : GaussianInt)) ↔ _
-  rw [Finset.mem_image]
-  constructor
-  · rintro ⟨⟨j,k⟩,hjk,rfl⟩
-    have hjk := Finset.mem_product.mp hjk
-    simp only [Finset.mem_range] at hjk
-    dsimp; omega
-  · rintro ⟨h0,h1,h2,h3⟩
-    exact ⟨(z.re.toNat,z.im.toNat),
-      Finset.mem_product.mpr ⟨Finset.mem_range.mpr (by omega),
-        Finset.mem_range.mpr (by omega)⟩,
-      by ext <;> dsimp <;> omega⟩
 
 private theorem sqcell :
     (by
@@ -1193,26 +1170,18 @@ private theorem indices :
     (by
       classical
       exact
-        ∀ (P : FordFareyParameter), ∀ (i : Fin (3 : ℕ)), ∀ (s : Fin (4 : ℕ)), ∀ (U : ProtoTile),
-            ∀ (W : ProtoTile), ∀ (Z : ProtoTile), (BandPrototile (FordRecursiveQuadruple P
-            i.succ) W) → ((BandPrototile (FordRecursiveQuadruple P (if Even (↑s : ℕ) then i - (1
-            : Fin (3 : ℕ)) else i + (1 : Fin (3 : ℕ))).succ) Z) → (((0 : ℤ) <
-            (FordRecursiveQuadruple P i.succ).1) → (((0 : ℤ) < (FordRecursiveQuadruple P (if Even
-            (↑s : ℕ) then i - (1 : Fin (3 : ℕ)) else i + (1 : Fin (3 : ℕ))).succ).1) →
-            ((TileCentroid W - TileCentroid U = (1 / 2 : ℝ) • GaussianRealPoint ((⟨(0 : ℤ), (1 :
-            ℤ)⟩ : GaussianInt) ^ (↑s : ℕ) * (BandVectors.1 (FordRecursiveQuadruple P i.succ)
-            (FordRecursiveQuadruple P (0 : Fin (4 : ℕ))) + BandVectors.1 (FordRecursiveQuadruple
-            P (0 : Fin (4 : ℕ))) (FordRecursiveQuadruple P i.succ)))) → ((TileCentroid Z -
-            TileCentroid U = (1 / 2 : ℝ) • GaussianRealPoint ((⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt)
-            ^ (↑s : ℕ) * if Even (↑s : ℕ) then BandVectors.1 (FordRecursiveQuadruple P (0 : Fin
-            (4 : ℕ))) (FordRecursiveQuadruple P (i - (1 : Fin (3 : ℕ))).succ) - BandVectors.1
-            (FordRecursiveQuadruple P (i - (1 : Fin (3 : ℕ))).succ) (FordRecursiveQuadruple P (0
-            : Fin (4 : ℕ))) else BandVectors.1 (FordRecursiveQuadruple P (i + (1 : Fin (3 :
-            ℕ))).succ) (FordRecursiveQuadruple P (0 : Fin (4 : ℕ))) - BandVectors.1
-            (FordRecursiveQuadruple P (0 : Fin (4 : ℕ))) (FordRecursiveQuadruple P (i + (1 : Fin
-            (3 : ℕ))).succ))) → ((Even s.val ∧ i = 1) ∨ (¬Even s.val ∧ i = 0))))))) ) := by
+        ∀ (P : FordFareyParameter),
+          ∀ (i : Fin (3 : ℕ)),
+            ∀ (s : Fin (4 : ℕ)),
+              (0 : ℤ) < (FordRecursiveQuadruple P i.succ).1 →
+                (0 : ℤ) <
+                    (FordRecursiveQuadruple P
+                        (if Even (↑s : ℕ) then i - (1 : Fin (3 : ℕ))
+                          else i + (1 : Fin (3 : ℕ))).succ).1 →
+                  Even s.val ∧ i = 1 ∨ ¬Even s.val ∧ i = 0
+    ) := by
   classical
-  intro P i s U W Z hW hZ hWpos hZpos hcw hcz
+  intro P i s hWpos hZpos
   by_cases hE : Even s.val
   · left
     refine ⟨hE,?_⟩
@@ -1553,7 +1522,7 @@ theorem FordOrientedChildParentEndpoints
   have reverse_path {V : Set GaussianInt} {E : Set (Finset GaussianInt)} {x y : GaussianInt}
       (hp : SimpleGridPathBetween V E x y) := FordEndpointProof.reverse_path (V := V) (E :=
           E) (x := x) (y := y) hp
-  have fordcell := FordEndpointProof.fordcell
+  have fordcell := FordTileCellMembership
   let sq := fun n : Nat => fun a b : Int =>
     TileTranslation (FordTile n) ⟨a,b⟩
   have sqcell (n : Nat) (a b : Int) (z : GaussianInt) :
@@ -1632,7 +1601,7 @@ theorem FordOrientedChildParentEndpoints
   obtain ⟨a,b,hUc⟩ : ∃ a b : Int, U.cells = (sq P.q a b).cells :=
     ⟨u.re, u.im, hu⟩
   have hcu := (sameobs U P.q a b P.q_pos hUc).2.2
-  have indices := FordEndpointProof.indices P i s U W Z hW hZ hWpos hZpos hcw hcz
+  have indices := FordEndpointProof.indices P i s hWpos hZpos
   rcases indices with ⟨heven,rfl⟩ | ⟨hodd,rfl⟩
   · obtain ⟨wa,wb,hWc⟩ := norm2 W hW
     obtain ⟨za,zb,hZc⟩ := norm1 Z (by simpa [heven] using hZ)

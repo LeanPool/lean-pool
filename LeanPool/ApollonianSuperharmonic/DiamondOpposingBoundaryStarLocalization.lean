@@ -45,15 +45,14 @@ private theorem index_two :
     (by
       classical
       exact
-        ∀ (K : DiamondParameter), ∀ (Ci : BandCircle), ∀ (i : Fin 3), (DiamondRecursiveQuadruple
-            K i.succ = Ci.1.1) → (∀ (T0 : ProtoTile), ∀ (T0' : ProtoTile), ∀ (p0 : Real × Real),
-            ∀ (p0' : Real × Real), (TileCentroid T0' - TileCentroid T0 = GaussianRealPoint
-            (BandVectors.1 (DiamondRecursiveQuadruple K i.succ) (DiamondRecursiveQuadruple K (0 :
-            Fin (4 : ℕ))))) → ((p0' - p0 = GaussianRealPoint (BandVectors.2
-            (DiamondRecursiveQuadruple K i.succ) (DiamondRecursiveQuadruple K (0 : Fin (4 :
-            ℕ))))) → ((1 < (DiamondRecursiveQuadruple K (i.succ)).1) → (i = 2)))) ) := by
+        ∀ (K : DiamondParameter),
+          ∀ (Ci : BandCircle),
+            ∀ (i : Fin 3),
+              DiamondRecursiveQuadruple K i.succ = Ci.1.1 →
+                1 < (DiamondRecursiveQuadruple K i.succ).1 → i = 2
+    ) := by
   classical
-  intro K Ci i hCi T0 T0' p0 p0' hcentroid hslope hcurv
+  intro K Ci i hCi hcurv
   fin_cases i
   · simp [DiamondRecursiveQuadruple] at hcurv
   · simp [DiamondRecursiveQuadruple] at hcurv
@@ -117,17 +116,7 @@ private theorem hT0ne :
   rw [huCell]
   exact Finset.image_nonempty.mpr hrootNonempty
 
-private theorem hT0'ne :
-    (by
-      classical
-      exact
-        ∀ (K : DiamondParameter), ∀ (T0' : ProtoTile), ∀ (u' : GaussianInt), (T0'.cells =
-            (TileTranslation (DiamondTile K.1) u').cells) → (((DiamondTile K.1).cells.Nonempty) →
-            (T0'.cells.Nonempty)) ) := by
-  classical
-  intro K T0' u' hu'Cell hrootNonempty
-  rw [hu'Cell]
-  exact Finset.image_nonempty.mpr hrootNonempty
+private abbrev hT0'ne := ApollonianSuperharmonic.DiamondBoundaryStarGeometry.hT0ne
 
 private theorem hT0cent :
     (by
@@ -1005,37 +994,61 @@ private theorem hcoverage :
     (by
       classical
       exact
-        ∀ (K : DiamondParameter), ∀ (h0 : PartialOdometer), ∀ (h0' : PartialOdometer), ∀ (x :
-            GaussianInt), (x ∈ h0.domain) → ((x ∈ h0'.domain) → ((∀ (y : GaussianInt), y = x ∨ y
-            = x + (1 : GaussianInt) ∨ y = x - (1 : GaussianInt) ∨ y = x + (⟨(0 : ℤ), (1 : ℤ)⟩ :
-            GaussianInt) ∨ y = x - (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt) → y ∈ h0.domain ∨ y ∈
-            h0'.domain) → (∀ (u : GaussianInt), ∀ (u' : GaussianInt),
-        let z := x - u
-        (z ∈ DiamondVertexDomains K false) → ((z + ⟨0, 2 * (K.1 : Int)⟩ ∈ DiamondVertexDomains K
-            false) → ((z.im = 0 ∧ Int.natAbs z.re ≤ 1) → ((z - 1 ∈ DiamondVertexDomains K false ∨
-            z - 1 + ⟨0, 2 * (K.1 : Int)⟩ ∈ DiamondVertexDomains K false) → ((z + 1 ∈
-            DiamondVertexDomains K false ∨ z + 1 + ⟨0, 2 * (K.1 : Int)⟩ ∈ DiamondVertexDomains K
-            false) → ((z = 0) → ((x = u) → (∀ (S : Fin (3 : ℕ) → Bool → ProtoTile), ∀ (gS : Fin
-            (3 : ℕ) → Bool → PartialOdometer), ∀ (S' : Fin (3 : ℕ) → Bool → ProtoTile), ∀ (gS' :
-            Fin (3 : ℕ) → Bool → PartialOdometer),
-        let U := S 2 false
-        let V := S' 2 true
-        let g := gS 2 false
-        let k := gS' 2 true
-        let m := K.1 - 1
-        (FootprintVertices U = FootprintVertices (TileTranslation (DiamondTile m) u)) →
-            ((FootprintVertices V = FootprintVertices (TileTranslation (TileTranslation
-            (DiamondTile m) ⟨0, 2⟩) u')) → ((u + 1 ∈ FootprintVertices (TileTranslation
-            (DiamondTile m) u)) → ((u + ⟨0, 1⟩ ∈ FootprintVertices (TileTranslation (DiamondTile
-            m) u)) → ((u - 1 ∈ FootprintVertices (TileTranslation (TileTranslation (DiamondTile
-            m) ⟨0, 2⟩) u')) → ((u - ⟨0, 1⟩ ∈ FootprintVertices (TileTranslation (TileTranslation
-            (DiamondTile m) ⟨0, 2⟩) u')) → (((g.domain : Set GaussianInt) = FootprintVertices U)
-            → (((k.domain : Set GaussianInt) = FootprintVertices V) → ((x ∈ g.domain) → ((x ∈
-            k.domain) → (∀ y, y = x ∨ y = x + 1 ∨ y = x - 1 ∨ y = x + ⟨0, 1⟩ ∨ y = x - ⟨0, 1⟩ → y
-            ∈ g.domain ∨ y ∈ k.domain)))))))))))))))))))) ) := by
+        ∀ (K : DiamondParameter),
+          ∀ (h0 : PartialOdometer),
+            ∀ (h0' : PartialOdometer),
+              ∀ (x : GaussianInt),
+                (∀ (y : GaussianInt),
+                    y = x ∨
+                        y = x + (1 : GaussianInt) ∨
+                          y = x - (1 : GaussianInt) ∨
+                            y = x + (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt) ∨
+                              y = x - (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt) →
+                      y ∈ h0.domain ∨ y ∈ h0'.domain) →
+                  ∀ (u : GaussianInt),
+                    ∀ (u' : GaussianInt),
+                      let z := x - u;
+                      z.im = 0 ∧ Int.natAbs z.re ≤ 1 →
+                        z = 0 →
+                          x = u →
+                            ∀ (S : Fin (3 : ℕ) → Bool → ProtoTile),
+                              ∀ (gS : Fin (3 : ℕ) → Bool → PartialOdometer),
+                                ∀ (S' : Fin (3 : ℕ) → Bool → ProtoTile),
+                                ∀ (gS' : Fin (3 : ℕ) → Bool → PartialOdometer),
+                                let U := S 2 false;
+                              let V := S' 2 true;
+                              let g := gS 2 false;
+                              let k := gS' 2 true;
+                              let m := K.1 - 1;
+                              FootprintVertices U =
+                                FootprintVertices (TileTranslation (DiamondTile m) u) →
+                                FootprintVertices V =
+                                FootprintVertices
+                                (TileTranslation (TileTranslation (DiamondTile m) ⟨0, 2⟩)
+                                u') →
+                                u + 1 ∈
+                                FootprintVertices (TileTranslation (DiamondTile m) u) →
+                                u + ⟨0, 1⟩ ∈
+                                FootprintVertices (TileTranslation (DiamondTile m) u) →
+                                u - 1 ∈
+                                FootprintVertices
+                                (TileTranslation (TileTranslation (DiamondTile m) ⟨0, 2⟩)
+                                u') →
+                                u - ⟨0, 1⟩ ∈
+                                FootprintVertices
+                                (TileTranslation (TileTranslation (DiamondTile m) ⟨0, 2⟩)
+                                u') →
+                                (g.domain : Set GaussianInt) = FootprintVertices U →
+                                (k.domain : Set GaussianInt) = FootprintVertices V →
+                                x ∈ g.domain →
+                                ∀ y,
+                                y = x ∨
+                                y = x + 1 ∨ y = x - 1 ∨ y = x + ⟨0, 1⟩ ∨ y = x - ⟨0, 1⟩ →
+                                y ∈ g.domain ∨ y ∈ k.domain
+    ) := by
   classical
-  intro K h0 h0' x hx0 hx0' hstar u u' z hzUpper hzLower overlap hwest heast hzzero hx_eq_u S gS
-      S' gS' U V g k m hUFoot hVFoot hUpperE hUpperN hLowerW hLowerS hgFoot hkFoot hxu hxk y hy
+  intro K h0 h0' x hstar u u' z overlap hzzero hx_eq_u S gS S' gS' U V g k m hUFoot hVFoot
+      hUpperE hUpperN hLowerW hLowerS hgFoot hkFoot hxu y hy
   rcases hy with rfl | rfl | rfl | rfl | rfl
   · exact Or.inl hxu
   · left
@@ -1501,8 +1514,7 @@ theorem DiamondOpposingBoundaryStarLocalization
       rcases coords with ⟨_, _, _, _, hv30, _, _, hA30, _, _, hA21⟩
       have hcurv : 1 < (DiamondRecursiveQuadruple K (i.succ)).1 :=
           DiamondBoundaryStarGeometry.hcurv K Ci i hCi hlarge
-      have index_two := DiamondBoundaryStarGeometry.index_two K Ci i hCi T0 T0' p0 p0'
-          hcentroid hslope hcurv
+      have index_two := DiamondBoundaryStarGeometry.index_two K Ci i hCi hcurv
       subst i
       have hKpos : 0 < K.1 := K.2
       have hk2 := DiamondBoundaryStarGeometry.hk2 K hcurv hKpos
@@ -1593,13 +1605,13 @@ theorem DiamondOpposingBoundaryStarLocalization
           (DiamondBoundaryStarGeometry.hUpperC K u hbase0) hgFoot
       have hxk := DiamondBoundaryStarGeometry.hxk K x u u' hx_eq_u S' gS' hVFoot
           (DiamondBoundaryStarGeometry.hLowerC K u u' hmcast hbaseTop hu') hkFoot
-      have hcoverage := DiamondBoundaryStarGeometry.hcoverage K h0 h0' x hx0 hx0' hstar u u' hzUpper
-              hzLower overlap hwest heast hzzero hx_eq_u S gS S' gS' hUFoot hVFoot
+      have hcoverage := DiamondBoundaryStarGeometry.hcoverage K h0 h0' x hstar u u' overlap hzzero
+          hx_eq_u S gS S' gS' hUFoot hVFoot
                   (DiamondBoundaryStarGeometry.hUpperE K u hbase0)
               (DiamondBoundaryStarGeometry.hUpperN K u hbase0)
                   (DiamondBoundaryStarGeometry.hLowerW K u u' hmcast hbaseTop hu')
                   (DiamondBoundaryStarGeometry.hLowerS K u u' hmcast hbaseTop hu') hgFoot hkFoot
-                  hxu hxk
+                  hxu
       have h21 := DiamondBoundaryStarGeometry.h21 K hqD hA21
       let Kprev : DiamondParameter := ⟨m, hmpos⟩
       let qprev := DiamondRecursiveQuadruple Kprev

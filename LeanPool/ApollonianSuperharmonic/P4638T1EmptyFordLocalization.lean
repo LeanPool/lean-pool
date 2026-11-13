@@ -31,15 +31,17 @@ private theorem hρ :
     (by
       classical
       exact
-        ∀ (r : Fin 4 → CircleCoordinates), ((r (1 : Fin (4 : ℕ))).1 = (0 : ℤ)) → (((0 : ℤ) < (r
-            (0 : Fin (4 : ℕ))).1 ∧ (∀ (i : Fin (3 : ℕ)), (0 : ℤ) ≤ (r i.succ).1) ∧ ∀ (i : Fin (3
-            : ℕ)), ∀ (j : Fin (3 : ℕ)), (r i.succ).1 = (0 : ℤ) → (r j.succ).1 = (0 : ℤ) → i = j)
-            → (∀ (ρ : Fin (3 : ℕ)), ∀ (g₀ : BandPackingSymmetry), ∀ (P : FordFareyParameter), ((r
-            (ρ + (2 : Fin (3 : ℕ))).succ).1 = (0 : ℤ)) → ((BandPackingSymmetryQuadrupleAction g₀
-            ![r (0 : Fin (4 : ℕ)), r ρ.succ, r (ρ + (1 : Fin (3 : ℕ))).succ, r (ρ + (2 : Fin (3 :
-            ℕ))).succ] = FordRecursiveQuadruple P) → (ρ = 1)))) ) := by
+        ∀ (r : Fin 4 → CircleCoordinates),
+          (r (1 : Fin (4 : ℕ))).1 = (0 : ℤ) →
+            ((0 : ℤ) < (r (0 : Fin (4 : ℕ))).1 ∧
+                (∀ (i : Fin (3 : ℕ)), (0 : ℤ) ≤ (r i.succ).1) ∧
+                  ∀ (i : Fin (3 : ℕ)),
+                    ∀ (j : Fin (3 : ℕ)),
+                      (r i.succ).1 = (0 : ℤ) → (r j.succ).1 = (0 : ℤ) → i = j) →
+              ∀ (ρ : Fin (3 : ℕ)), (r (ρ + (2 : Fin (3 : ℕ))).succ).1 = (0 : ℤ) → ρ = 1
+    ) := by
   classical
-  intro r hline hcurve ρ g₀ P hz hrec
+  intro r hline hcurve ρ hz
   have huni := hcurve.2.2
   fin_cases ρ
   · have hbad := huni 0 2 hline (by simpa using hz)
@@ -249,39 +251,41 @@ private theorem hword :
     (by
       classical
       exact
-        ∀ (r : Fin 4 → CircleCoordinates), ∀ (g₀ : BandPackingSymmetry), ∀ (P :
-            FordFareyParameter), (∃ (w : GaussianInt), g₀ = BandPackingSymmetry.shift w ∨ g₀ =
-            (BandPackingSymmetry.shift w).comp BandPackingSymmetry.negate) → (
-        let p : Fin 4 → CircleCoordinates := ![r 0, r 2, r 3, r 1]
-        ∀ (g : BandPackingSymmetry), (g = g₀ ∨ g = (BandPackingSymmetry.negate.comp
-            BandPackingSymmetry.negate).comp g₀) → ((∀ (C : CircleCoordinates),
-            BandPackingSymmetryCircleAction g C = BandPackingSymmetryCircleAction g₀ C) →
-            ((BandPackingSymmetryReversesOrientation g = BandPackingSymmetryReversesOrientation
-            g₀) → ((∀ (p : Fin (4 : ℕ) → CircleCoordinates), BandPackingSymmetryQuadrupleAction g
-            p = BandPackingSymmetryQuadrupleAction g₀ p) → ((BandPackingSymmetryScopedPhase g p
-            false) → ((∀ (r : Fin (4 : ℕ) → CircleCoordinates), ProperBandQuadruple r → r (0 :
-            Fin (4 : ℕ)) = p (1 : Fin (4 : ℕ)) → r (2 : Fin (4 : ℕ)) = p (2 : Fin (4 : ℕ)) → r (3
-            : Fin (4 : ℕ)) = p (3 : Fin (4 : ℕ)) → BandPackingSymmetryScopedPhase g r false) →
-            ((BandPackingSymmetryQuadrupleAction g p = FordRecursiveQuadruple P) →
-            ((BandPackingSymmetryReversesOrientation g = false) →
-            ((BandPackingSymmetryScopedPhase g p false) → ((BandVectors.1
-            ((FordRecursiveQuadruple P) 2) ((FordRecursiveQuadruple P) 1) =
-            BandPackingSymmetryVectorAction g (BandVectors.1 (p 2) (p 1))) →
-            ((BandPackingSymmetryVectorAction g (BandVectors.1 (r 3) (r 2)) = -((P.q₁ : Int) :
-            GaussianInt) + ⟨0, (P.q₂ : Int)⟩) → (
-        let TP (k : Fin 4) (T : ProtoTile) : ProtoTile :=
-          if k = 0 then T else if k = 1 then TileQuarterTurn T else
-            if k = 2 then TileQuarterTurn (TileQuarterTurn T) else
-              TileQuarterTurn (TileQuarterTurn (TileQuarterTurn T))
-        let VP (k : Fin 4) (z : GaussianInt) : GaussianInt :=
-          if k = 0 then z else if k = 1 then GaussianQuarterTurn z else
-            if k = 2 then GaussianQuarterTurn (GaussianQuarterTurn z) else
-              GaussianQuarterTurn (GaussianQuarterTurn (GaussianQuarterTurn z))
-        ∃ k : Fin 4, (∀ T, BandPackingSymmetryTileAction g T = TP k T) ∧ (∀ z,
-            BandPackingSymmetryVectorAction g z = VP k z))))))))))))) ) := by
+        (Fin 4 → CircleCoordinates) →
+          ∀ (g₀ : BandPackingSymmetry),
+            (∃ (w : GaussianInt),
+                g₀ = BandPackingSymmetry.shift w ∨
+                  g₀ = (BandPackingSymmetry.shift w).comp BandPackingSymmetry.negate) →
+              ∀ (g : BandPackingSymmetry),
+                g = g₀ ∨
+                    g =
+                      (BandPackingSymmetry.negate.comp BandPackingSymmetry.negate).comp
+                        g₀ →
+                  BandPackingSymmetryReversesOrientation g =
+                      BandPackingSymmetryReversesOrientation g₀ →
+                    BandPackingSymmetryReversesOrientation g = false →
+                      let TP (k : Fin 4) (T : ProtoTile) : ProtoTile :=
+                        if k = 0 then T
+                        else
+                          if k = 1 then TileQuarterTurn T
+                          else
+                            if k = 2 then TileQuarterTurn (TileQuarterTurn T)
+                            else TileQuarterTurn (TileQuarterTurn (TileQuarterTurn T))
+                      let VP (k : Fin 4) (z : GaussianInt) : GaussianInt :=
+                        if k = 0 then z
+                        else
+                          if k = 1 then GaussianQuarterTurn z
+                          else
+                            if k = 2 then GaussianQuarterTurn (GaussianQuarterTurn z)
+                            else
+                              GaussianQuarterTurn
+                                (GaussianQuarterTurn (GaussianQuarterTurn z))
+                      ∃ k : Fin 4,
+                        (∀ T, BandPackingSymmetryTileAction g T = TP k T) ∧
+                          ∀ z, BandPackingSymmetryVectorAction g z = VP k z
+    ) := by
   classical
-  intro r g₀ P hw₀ p g hg hcirg horientg hquadg hfalse hfalsecyc hrecg hgfalse hphase2 hcanonical
-      htargetvec TP VP
+  intro r g₀ hw₀ g hg horientg hgfalse TP VP
   rcases hw₀ with ⟨w, hw₀⟩
   rcases hg with hsame | hadapt
   · subst g
@@ -302,25 +306,25 @@ private theorem hcellpow :
       classical
       exact
         ∀ (g : BandPackingSymmetry),
-        let cellTurn : GaussianInt → GaussianInt := fun z => GaussianQuarterTurn z - 1
-        ∀ (cellTurn_bij : Function.Bijective cellTurn),
-        let E1 : GaussianInt ≃ GaussianInt := Equiv.ofBijective cellTurn cellTurn_bij
-        let E2 : GaussianInt ≃ GaussianInt := E1.trans E1
-        let E3 : GaussianInt ≃ GaussianInt := E2.trans E1
-        let E : Fin 4 → GaussianInt ≃ GaussianInt := ![Equiv.refl _, E1, E2, E3]
-        let TP (k : Fin 4) (T : ProtoTile) : ProtoTile :=
-          if k = 0 then T else if k = 1 then TileQuarterTurn T else
-            if k = 2 then TileQuarterTurn (TileQuarterTurn T) else
-              TileQuarterTurn (TileQuarterTurn (TileQuarterTurn T))
-        let VP (k : Fin 4) (z : GaussianInt) : GaussianInt :=
-          if k = 0 then z else if k = 1 then GaussianQuarterTurn z else
-            if k = 2 then GaussianQuarterTurn (GaussianQuarterTurn z) else
-              GaussianQuarterTurn (GaussianQuarterTurn (GaussianQuarterTurn z))
-        ∀ (k : Fin (4 : ℕ)), (∀ (T : ProtoTile), BandPackingSymmetryTileAction g T = TP k T) →
-            ((∀ (z : GaussianInt), BandPackingSymmetryVectorAction g z = VP k z) → (∀ T,
-            (BandPackingSymmetryTileAction g T).cells = T.cells.image (E k))) ) := by
+          let cellTurn : GaussianInt → GaussianInt := fun z => GaussianQuarterTurn z - 1;
+          ∀ (cellTurn_bij : Function.Bijective cellTurn),
+            let E1 : GaussianInt ≃ GaussianInt := Equiv.ofBijective cellTurn cellTurn_bij;
+            let E2 : GaussianInt ≃ GaussianInt := E1.trans E1;
+            let E3 : GaussianInt ≃ GaussianInt := E2.trans E1;
+            let E : Fin 4 → GaussianInt ≃ GaussianInt := ![Equiv.refl _, E1, E2, E3];
+            let TP (k : Fin 4) (T : ProtoTile) : ProtoTile :=
+              if k = 0 then T
+              else
+                if k = 1 then TileQuarterTurn T
+                else
+                  if k = 2 then TileQuarterTurn (TileQuarterTurn T)
+                  else TileQuarterTurn (TileQuarterTurn (TileQuarterTurn T));
+            ∀ (k : Fin (4 : ℕ)),
+              (∀ (T : ProtoTile), BandPackingSymmetryTileAction g T = TP k T) →
+                ∀ T, (BandPackingSymmetryTileAction g T).cells = T.cells.image (E k)
+    ) := by
   classical
-  intro g cellTurn cellTurn_bij E1 E2 E3 E TP VP k htilepow hvecpow T
+  intro g cellTurn cellTurn_bij E1 E2 E3 E TP k htilepow T
   rw [htilepow]
   fin_cases k <;>
     simp [TP, E, E1, E2, E3, cellTurn, TileQuarterTurnFormulas,
@@ -331,26 +335,21 @@ private theorem hanchorpow :
       classical
       exact
         ∀ (g : BandPackingSymmetry),
-        let cellTurn : GaussianInt → GaussianInt := fun z => GaussianQuarterTurn z - 1
-        ∀ (cellTurn_bij : Function.Bijective cellTurn),
-        let E1 : GaussianInt ≃ GaussianInt := Equiv.ofBijective cellTurn cellTurn_bij
-        let E2 : GaussianInt ≃ GaussianInt := E1.trans E1
-        let E3 : GaussianInt ≃ GaussianInt := E2.trans E1
-        let E : Fin 4 → GaussianInt ≃ GaussianInt := ![Equiv.refl _, E1, E2, E3]
         let TP (k : Fin 4) (T : ProtoTile) : ProtoTile :=
           if k = 0 then T else if k = 1 then TileQuarterTurn T else
             if k = 2 then TileQuarterTurn (TileQuarterTurn T) else
-              TileQuarterTurn (TileQuarterTurn (TileQuarterTurn T))
+              TileQuarterTurn (TileQuarterTurn (TileQuarterTurn T));
         let VP (k : Fin 4) (z : GaussianInt) : GaussianInt :=
           if k = 0 then z else if k = 1 then GaussianQuarterTurn z else
             if k = 2 then GaussianQuarterTurn (GaussianQuarterTurn z) else
-              GaussianQuarterTurn (GaussianQuarterTurn (GaussianQuarterTurn z))
+              GaussianQuarterTurn (GaussianQuarterTurn (GaussianQuarterTurn z));
         ∀ (k : Fin (4 : ℕ)), (∀ (T : ProtoTile), BandPackingSymmetryTileAction g T = TP k T) →
-            ((∀ (z : GaussianInt), BandPackingSymmetryVectorAction g z = VP k z) → ((∀ T,
-            (BandPackingSymmetryTileAction g T).cells = T.cells.image (E k)) → (∀ T,
+            (
+                                                                                   (
+                                                                               (∀ T,
             (BandPackingSymmetryTileAction g T).anchor = VP k T.anchor))) ) := by
   classical
-  intro g cellTurn cellTurn_bij E1 E2 E3 E TP VP k htilepow hvecpow hcellpow T
+  intro g TP VP k htilepow T
   rw [htilepow]
   fin_cases k <;> simp [TP, VP, TileQuarterTurnFormulas, GaussianQuarterTurn]
 
@@ -359,30 +358,21 @@ private theorem hcentpow :
       classical
       exact
         ∀ (g : BandPackingSymmetry),
-        let cellTurn : GaussianInt → GaussianInt := fun z => GaussianQuarterTurn z - 1
-        ∀ (cellTurn_bij : Function.Bijective cellTurn),
-        let E1 : GaussianInt ≃ GaussianInt := Equiv.ofBijective cellTurn cellTurn_bij
-        let E2 : GaussianInt ≃ GaussianInt := E1.trans E1
-        let E3 : GaussianInt ≃ GaussianInt := E2.trans E1
-        let E : Fin 4 → GaussianInt ≃ GaussianInt := ![Equiv.refl _, E1, E2, E3]
         let TP (k : Fin 4) (T : ProtoTile) : ProtoTile :=
           if k = 0 then T else if k = 1 then TileQuarterTurn T else
             if k = 2 then TileQuarterTurn (TileQuarterTurn T) else
-              TileQuarterTurn (TileQuarterTurn (TileQuarterTurn T))
+              TileQuarterTurn (TileQuarterTurn (TileQuarterTurn T));
         let RP (k : Fin 4) (x : Real × Real) : Real × Real :=
           if k = 0 then x else if k = 1 then (-x.2, x.1) else
-            if k = 2 then (-x.1, -x.2) else (x.2, -x.1)
-        let VP (k : Fin 4) (z : GaussianInt) : GaussianInt :=
-          if k = 0 then z else if k = 1 then GaussianQuarterTurn z else
-            if k = 2 then GaussianQuarterTurn (GaussianQuarterTurn z) else
-              GaussianQuarterTurn (GaussianQuarterTurn (GaussianQuarterTurn z))
+            if k = 2 then (-x.1, -x.2) else (x.2, -x.1);
         ∀ (k : Fin (4 : ℕ)), (∀ (T : ProtoTile), BandPackingSymmetryTileAction g T = TP k T) →
-            ((∀ (z : GaussianInt), BandPackingSymmetryVectorAction g z = VP k z) → ((∀ T,
-            (BandPackingSymmetryTileAction g T).cells = T.cells.image (E k)) → ((∀ T,
-            (BandPackingSymmetryTileAction g T).anchor = VP k T.anchor) → (∀ T, TileCentroid
+            (
+                                                                                   (
+                                                                               (
+                                                                          (∀ T, TileCentroid
             (BandPackingSymmetryTileAction g T) = RP k (TileCentroid T))))) ) := by
   classical
-  intro g cellTurn cellTurn_bij E1 E2 E3 E TP RP VP k htilepow hvecpow hcellpow hanchorpow T
+  intro g TP RP k htilepow T
   rw [htilepow]
   fin_cases k <;> simp [TP, RP, TileQuarterTurnFormulas]
 
@@ -666,20 +656,7 @@ private theorem hAproto :
   rw [hchild] at h
   exact h.mp hA
 
-private theorem hBproto :
-    (by
-      classical
-      exact
-        ∀ (r : Fin 4 → CircleCoordinates), ∀ (B : ProtoTile), (BandPrototile (r (0 : Fin (4 :
-            ℕ))) B) → (∀ (P : FordFareyParameter), ∀ (g : BandPackingSymmetry),
-            (BandPackingSymmetryCircleAction g (r 0) = (FordRecursiveQuadruple P) 0) →
-            (BandPrototile ((FordRecursiveQuadruple P) 0) (BandPackingSymmetryTileAction g B))) )
-            := by
-  classical
-  intro r B hB P g hchild
-  have h := (BandPackingSymmetryCovariance g).2.1 (r 0) B
-  rw [hchild] at h
-  exact h.mp hB
+private abbrev hBproto := ApollonianSuperharmonic.EmptyFordGeometry.hAproto
 
 private theorem hmodel :
     (by
@@ -854,7 +831,7 @@ theorem P4638T1EmptyFordLocalization (r : Fin 4 → CircleCoordinates)
   have hcurve := ProperBandCurvatureStructure r hr
   obtain ⟨ρ, g₀, P, hP, hg₀, hw₀, hz, hrec⟩ :=
     FordRegimeConverse r hr ⟨1, hline⟩
-  have hρ := EmptyFordGeometry.hρ r hline hcurve ρ g₀ P hz hrec
+  have hρ := EmptyFordGeometry.hρ r hline hcurve ρ hz
   subst ρ
   let p : Fin 4 → CircleCoordinates := ![r 0, r 2, r 3, r 1]
   have hp := EmptyFordGeometry.hp r hr
@@ -891,12 +868,11 @@ theorem P4638T1EmptyFordLocalization (r : Fin 4 → CircleCoordinates)
     if k = 0 then z else if k = 1 then GaussianQuarterTurn z else
       if k = 2 then GaussianQuarterTurn (GaussianQuarterTurn z) else
         GaussianQuarterTurn (GaussianQuarterTurn (GaussianQuarterTurn z))
-  have hword := EmptyFordGeometry.hword r g₀ P hw₀ g hg hcirg horientg hquadg hfalse hfalsecyc
-      hrecg hgfalse hphase2 hcanonical htargetvec
+  have hword := EmptyFordGeometry.hword r g₀ hw₀ g hg horientg hgfalse
   obtain ⟨k, htilepow, hvecpow⟩ := hword
-  have hcellpow := EmptyFordGeometry.hcellpow g cellTurn_bij k htilepow hvecpow
-  have hanchorpow := EmptyFordGeometry.hanchorpow g cellTurn_bij k htilepow hvecpow hcellpow
-  have hcentpow := EmptyFordGeometry.hcentpow g cellTurn_bij k htilepow hvecpow hcellpow hanchorpow
+  have hcellpow := EmptyFordGeometry.hcellpow g cellTurn_bij k htilepow
+  have hanchorpow := EmptyFordGeometry.hanchorpow g k htilepow
+  have hcentpow := EmptyFordGeometry.hcentpow g k htilepow
   have hchild := EmptyFordGeometry.hchild r P g hrecg hgfalse
   let D : GaussianInt → Real × Real := fun z =>
     (1 / 2 : Real) • (GaussianRealPoint z - (-(GaussianRealPoint z).2, (GaussianRealPoint z).1))

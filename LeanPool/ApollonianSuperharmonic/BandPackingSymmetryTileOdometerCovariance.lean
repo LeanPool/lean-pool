@@ -6,6 +6,7 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryCurvature
 public import LeanPool.ApollonianSuperharmonic.BandPrototileNonempty
 public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryDomainTransport
 
@@ -250,20 +251,7 @@ private theorem lineCov :
       rw [hC, htile]
       exact iha w' x' hw' _ hk'
 
-private theorem circleCurvature :
-    (by
-      classical
-      exact
-        ∀ (a : BandPackingSymmetry), ∀ (D : CircleCoordinates), (BandPackingSymmetryCircleAction
-            a D).1 = D.1 ) := by
-  classical
-  intro a D
-  induction a generalizing D with
-  | identity => rfl
-  | negate => rfl
-  | conjugate => rfl
-  | shift w => rfl
-  | comp a b iha ihb => simp [BandPackingSymmetryCircleAction, iha, ihb]
+private abbrev circleCurvature := ApollonianSuperharmonic.BandPackingSymmetryCurvature.preserved
 
 private theorem extractUnit :
     (by
@@ -1692,45 +1680,7 @@ end TileOdometerAssembly
 
 namespace TileOdometerConclusion
 
-private theorem hpsi :
-    (by
-      classical
-      exact
-        ∀ (z : GaussianInt), ∀ (wr : ℤ), ∀ (wi : ℤ), ∀ (v : GaussianInt),
-        (
-        let d1 := BandPackingShiftPotential (⟨wr, wi⟩ : GaussianInt) (v + (1 : GaussianInt)) -
-            BandPackingShiftPotential (⟨wr, wi⟩ : GaussianInt) v;
-        let d2 := BandPackingShiftPotential (⟨wr, wi⟩ : GaussianInt) (v + (⟨(0 : ℤ), (1 : ℤ)⟩ :
-            GaussianInt)) - BandPackingShiftPotential (⟨wr, wi⟩ : GaussianInt) v;
-            BandPackingShiftPotential (⟨wr, wi⟩ : GaussianInt) (v + (1 : GaussianInt) + (⟨(0 :
-            ℤ), (1 : ℤ)⟩ : GaussianInt)) = BandPackingShiftPotential (⟨wr, wi⟩ : GaussianInt) v +
-            d1 + d2 + wi) → (∀ r ∈ (CurvatureOneOdometer z).domain, BandPackingShiftPotential
-            (⟨wr, wi⟩ : GaussianInt) (v + r) = wi * r.re * r.im + (⟨BandPackingShiftPotential
-                (⟨wr, wi⟩ : GaussianInt) (v + (1 : GaussianInt)) -
-            BandPackingShiftPotential (⟨wr, wi⟩ : GaussianInt) v, BandPackingShiftPotential
-            (⟨wr, wi⟩ : GaussianInt) (v + (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt)) -
-            BandPackingShiftPotential (⟨wr, wi⟩ : GaussianInt) v⟩ : GaussianInt).re * (v + r).re
-                + (⟨BandPackingShiftPotential (⟨wr, wi⟩ : GaussianInt) (v + (1 : GaussianInt)) -
-            BandPackingShiftPotential (⟨wr, wi⟩ : GaussianInt) v, BandPackingShiftPotential
-            (⟨wr, wi⟩ : GaussianInt) (v + (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt)) -
-            BandPackingShiftPotential (⟨wr, wi⟩ : GaussianInt) v⟩ : GaussianInt).im * (v + r).im +
-            BandPackingShiftPotential (⟨wr, wi⟩ : GaussianInt) v - (⟨BandPackingShiftPotential
-                (⟨wr, wi⟩ : GaussianInt) (v + (1 : GaussianInt)) -
-            BandPackingShiftPotential (⟨wr, wi⟩ : GaussianInt) v, BandPackingShiftPotential
-            (⟨wr, wi⟩ : GaussianInt) (v + (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt)) -
-            BandPackingShiftPotential (⟨wr, wi⟩ : GaussianInt) v⟩ : GaussianInt).re * v.re -
-                (⟨BandPackingShiftPotential (⟨wr, wi⟩ : GaussianInt) (v + (1 : GaussianInt)) -
-            BandPackingShiftPotential (⟨wr, wi⟩ : GaussianInt) v, BandPackingShiftPotential
-            (⟨wr, wi⟩ : GaussianInt) (v + (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt)) -
-            BandPackingShiftPotential (⟨wr, wi⟩ : GaussianInt) v⟩ : GaussianInt).im * v.im) ) := by
-  classical
-  intro z wr wi v hcorner r hr
-  let d1 := BandPackingShiftPotential ⟨wr, wi⟩ (v + 1) -
-    BandPackingShiftPotential ⟨wr, wi⟩ v
-  let d2 := BandPackingShiftPotential ⟨wr, wi⟩ (v + ⟨0, 1⟩) -
-    BandPackingShiftPotential ⟨wr, wi⟩ v
-  exact TileOdometerAssembly.hpsi z wr wi v
-          hcorner r hr
+private abbrev hpsi := ApollonianSuperharmonic.TileOdometerAssembly.hpsi
 
 end TileOdometerConclusion
 

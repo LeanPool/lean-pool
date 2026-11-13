@@ -355,36 +355,6 @@ private theorem hw :
   rw [← htrace_eq]
   exact Or.inl ⟨w, rfl⟩
 
-private theorem hcd :
-    (by
-      classical
-      exact
-        ∀ (ι : Type), ∀ (P : PeriodicTileComplex ι), ∀ (a : ι), ∀ (b : ι), (a ≠ b) → ((∀ (f :
-            P.plane.Face), (∃ i, P.plane.faceVertex f i = a) → ((∃ i, P.plane.faceVertex f i = b)
-            → (∃ c : ι, c ≠ a ∧ c ≠ b ∧ ∃ i, P.plane.faceVertex f i = c))) → ((((FootprintEdges
-            (P.tile a) ∩ FootprintEdges (P.tile b)).Nonempty ↔ P.plane.adjacent a b) ∧
-            ((FootprintEdges (P.tile a) ∩ FootprintEdges (P.tile b)).Nonempty → SimpleGridPath
-            (CommonFootprintEdgeVertices (P.tile a) (P.tile b)) (FootprintEdges (P.tile a) ∩
-            FootprintEdges (P.tile b)) ∧ FootprintVertices (P.tile a) ∩ FootprintVertices (P.tile
-            b) = CommonFootprintEdgeVertices (P.tile a) (P.tile b)) ∧ (¬(FootprintEdges (P.tile
-            a) ∩ FootprintEdges (P.tile b)).Nonempty → FootprintVertices (P.tile a) ∩
-            FootprintVertices (P.tile b) = ∅ ∨ (FootprintVertices (P.tile a) ∩ FootprintVertices
-            (P.tile b)).Subsingleton)) → (((FootprintEdges (P.tile a) ∩ FootprintEdges (P.tile
-            b)).Nonempty ↔ P.plane.adjacent a b) → ((P.plane.adjacent a b) → (∀ (f :
-            P.plane.Face), ∀ (g : P.plane.Face), ((∃ (i : Fin (3 : ℕ)), P.plane.faceVertex f i =
-            a) ∧ ∃ (i : Fin (3 : ℕ)), P.plane.faceVertex f i = b) → (((∃ (i : Fin (3 : ℕ)),
-            P.plane.faceVertex g i = a) ∧ ∃ (i : Fin (3 : ℕ)), P.plane.faceVertex g i = b) → ((∀
-            (h : P.plane.Face), ((∃ (i : Fin (3 : ℕ)), P.plane.faceVertex h i = a) ∧ ∃ (i : Fin
-            (3 : ℕ)), P.plane.faceVertex h i = b) → h = f ∨ h = g) → (∀ (c : ι), (c ≠ a) → ((c ≠
-            b) → ((∃ (i : Fin (3 : ℕ)), P.plane.faceVertex f i = c) → (∀ (d : ι), (d ≠ a) → ((d ≠
-            b) → ((c = d → ∀ w : ι, w = a ∨ w = b ∨ w = c) → (c ≠ d)))))))))))))) ) := by
-  classical
-  intro ι P a b hab third_vertex hclassification hcriterion hadj f g hf hg hfaces c hca hcb hfc d
-      hda hdb hcellular h
-  let : Infinite ι := P3192T1PeriodicIndicesInfinite P
-  obtain ⟨w, hw⟩ := ({a, b, c} : Finset ι).exists_notMem
-  rcases hcellular h w with rfl | rfl | rfl <;> exact hw (by simp)
-
 private theorem hxAt393 :
     (by
       classical
@@ -597,8 +567,11 @@ theorem PeriodicTileIntersectionPaths {ι : Type} (P : PeriodicTileComplex ι)
           (face_adjacent f c a hca hfc hf.1) hw with hc | ha
         · exact Or.inr (Or.inr hc)
         · exact Or.inl ha
-    have hcd := IntersectionPathGeometry.hcd ι P a b hab third_vertex hclassification hcriterion
-        hadj f g hf hg hfaces c hca hcb hfc d hda hdb hcellular
+    have hcd : c ≠ d := by
+      intro h
+      let : Infinite ι := P3192T1PeriodicIndicesInfinite P
+      obtain ⟨w, hw⟩ := ({a, b, c} : Finset ι).exists_notMem
+      rcases hcellular h w with rfl | rfl | rfl <;> exact hw (by simp)
     have hfac := face_adjacent f a c hca.symm hf.1 hfc
     have hfbc := face_adjacent f b c hcb.symm hf.2 hfc
     have hx (h : P.plane.Face)

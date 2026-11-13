@@ -6,6 +6,7 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.LatticeTileNonempty
 public import LeanPool.ApollonianSuperharmonic.BoundaryFootprintInclusion
 
 public import LeanPool.ApollonianSuperharmonic.BandDoubleDecomposition
@@ -468,18 +469,7 @@ private theorem periodicIsolation :
     exact Finset.mem_image.mpr ⟨a - w, ha, sub_add_cancel a w⟩
   exact (isolated z hz (a - w) hb).imp (ht _) (ht _)
 
-private theorem diskNonempty :
-    (by
-      classical
-      exact
-        ∀ (U : ProtoTile), (LatticeTile U) → (U.cells.Nonempty) ) := by
-  classical
-  intro U hU
-  obtain ⟨e⟩ := hU
-  have hp := (e ⟨0, by simp⟩).property
-  simp only [TileRealization, Set.mem_iUnion] at hp
-  obtain ⟨x, hx, _⟩ := hp
-  exact ⟨x, hx⟩
+private abbrev diskNonempty := ApollonianSuperharmonic.LatticeTileNonempty.cells
 
 private abbrev boundaryEdge :=
   BoundaryFootprintInclusion.boundaryEdge
@@ -637,31 +627,7 @@ private theorem abEdge :
       (Finset.nonempty_iff_ne_empty.mpr he) compQ.2
     exact ⟨e, heA, edgeMono _ _ hOB heO⟩
 
-private theorem edgeVertex :
-    (by
-      classical
-      exact
-        ∀ (U : ProtoTile), ∀ (e : Finset GaussianInt), (e ∈ FootprintEdges U) → (∀ (x :
-            GaussianInt), (x ∈ e) → (x ∈ FootprintVertices U)) ) := by
-  classical
-  intro U e he x hx
-  obtain ⟨z, hz, he⟩ := he
-  simp only [FootprintVertices, ite_eq_left (show U.cells.Nonempty from ⟨z, hz⟩),
-      Set.mem_ofPred_eq]
-  rcases he with h | h | h | h <;> subst e
-  all_goals simp only [Finset.mem_insert, Finset.mem_singleton] at hx
-  · rcases hx with rfl | rfl
-    · exact ⟨_, hz, Or.inl rfl⟩
-    · exact ⟨z, hz, Or.inr (Or.inl rfl)⟩
-  · rcases hx with rfl | rfl
-    · exact ⟨_, hz, Or.inl rfl⟩
-    · exact ⟨z, hz, Or.inr (Or.inr (Or.inl rfl))⟩
-  · rcases hx with rfl | rfl
-    · exact ⟨z, hz, Or.inr (Or.inl rfl)⟩
-    · exact ⟨z, hz, Or.inr (Or.inr (Or.inr rfl))⟩
-  · rcases hx with rfl | rfl
-    · exact ⟨z, hz, Or.inr (Or.inr (Or.inl rfl))⟩
-    · exact ⟨z, hz, Or.inr (Or.inr (Or.inr rfl))⟩
+private abbrev edgeVertex := ApollonianSuperharmonic.BoundaryFootprintInclusion.edgeVertex
 
 private theorem commonVertices :
     (by

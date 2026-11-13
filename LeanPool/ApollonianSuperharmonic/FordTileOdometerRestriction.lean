@@ -6,6 +6,7 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.FordFareySum
 
 public import LeanPool.ApollonianSuperharmonic.FordOdometer
 public import LeanPool.ApollonianSuperharmonic.FordCircleCoordinate
@@ -203,16 +204,7 @@ private theorem q1pos :
   have := Int.eq_one_of_dvd_one (by omega : 0 ≤ (R.q : Int)) hdv
   omega
 
-private theorem cross :
-    (by
-      classical
-      exact
-        ∀ (R : FordFareyParameter), R.p₁ * (R.q₂ : Int) - (R.q₁ : Int) * R.p₂ = 1 ) := by
-  classical
-  intro R
-  have hd := R.det₁
-  rw [R.sum_q, R.sum_p, Nat.cast_add] at hd
-  nlinarith [hd]
+private abbrev cross := ApollonianSuperharmonic.FordFareySum.determinant
 
 private theorem red :
     (by

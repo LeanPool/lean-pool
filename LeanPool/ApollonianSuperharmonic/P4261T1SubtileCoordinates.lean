@@ -6,6 +6,7 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.BandLayoutParentNonempty
 
 public import LeanPool.ApollonianSuperharmonic.P4261T1PlacedOdometer
 public import LeanPool.ApollonianSuperharmonic.P4261T1ExteriorIndices
@@ -31,61 +32,6 @@ Changes: pool module paths, public exports, project namespace and current Mathli
 namespace ApollonianSuperharmonic
 
 namespace SubtileCoordinateGeometry
-
-private theorem hsuper :
-    (by
-      classical
-      exact
-        ∀ (q : Fin 4 → CircleCoordinates),
-        let edge : Fin 3 → GaussianInt := fun k =>
-          BandVectors.1 (q ((k + 2).succ)) (q ((k + 1).succ))
-        (BandVectors.1 (q (3 : Fin (4 : ℕ))) (q (2 : Fin (4 : ℕ))) + BandVectors.1 (q (1 : Fin (4
-            : ℕ))) (q (3 : Fin (4 : ℕ))) + BandVectors.1 (q (2 : Fin (4 : ℕ))) (q (1 : Fin (4 :
-            ℕ))) = (0 : GaussianInt) ∧ BandVectors.2 (q (3 : Fin (4 : ℕ))) (q (2 : Fin (4 : ℕ)))
-            + BandVectors.2 (q (1 : Fin (4 : ℕ))) (q (3 : Fin (4 : ℕ))) + BandVectors.2 (q (2 :
-            Fin (4 : ℕ))) (q (1 : Fin (4 : ℕ))) = (0 : GaussianInt) ∧ BandVectors.1 (q (1 : Fin
-            (4 : ℕ))) (q (0 : Fin (4 : ℕ))) = BandVectors.1 (q (1 : Fin (4 : ℕ))) (q (3 : Fin (4
-            : ℕ))) - (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt) * BandVectors.1 (q (2 : Fin (4 : ℕ))) (q
-            (1 : Fin (4 : ℕ))) ∧ BandVectors.2 (q (1 : Fin (4 : ℕ))) (q (0 : Fin (4 : ℕ))) =
-            BandVectors.2 (q (1 : Fin (4 : ℕ))) (q (3 : Fin (4 : ℕ))) + (⟨(0 : ℤ), (1 : ℤ)⟩ :
-            GaussianInt) * BandVectors.2 (q (2 : Fin (4 : ℕ))) (q (1 : Fin (4 : ℕ))) ∧
-            (ProperBandQuadruple q → ∀ (j : Fin (3 : ℕ)), BandVectors.1 (q (0 : Fin (4 : ℕ))) (q
-            j.succ) = (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt) * BandVectors.1 (q j.succ) (q (0 : Fin
-            (4 : ℕ))) ∧ BandVectors.2 (q (0 : Fin (4 : ℕ))) (q j.succ) = -(⟨(0 : ℤ), (1 : ℤ)⟩ :
-            GaussianInt) * BandVectors.2 (q j.succ) (q (0 : Fin (4 : ℕ))))) → (edge 0 + edge 1 +
-            edge 2 = 0) ) := by
-  classical
-  intro q edge hvlaws
-  dsimp [edge]
-  linear_combination hvlaws.1
-
-private theorem hflip :
-    (by
-      classical
-      exact
-        ∀ (q : Fin 4 → CircleCoordinates), (BandOrderedGeneralConfiguration q) → (
-        let incoming : Fin 3 → GaussianInt := fun k =>
-          BandVectors.1 (q k.succ) (q 0)
-        let outgoing : Fin 3 → GaussianInt := fun k =>
-          BandVectors.1 (q 0) (q k.succ)
-        (BandVectors.1 (q (3 : Fin (4 : ℕ))) (q (2 : Fin (4 : ℕ))) + BandVectors.1 (q (1 : Fin (4
-            : ℕ))) (q (3 : Fin (4 : ℕ))) + BandVectors.1 (q (2 : Fin (4 : ℕ))) (q (1 : Fin (4 :
-            ℕ))) = (0 : GaussianInt) ∧ BandVectors.2 (q (3 : Fin (4 : ℕ))) (q (2 : Fin (4 : ℕ)))
-            + BandVectors.2 (q (1 : Fin (4 : ℕ))) (q (3 : Fin (4 : ℕ))) + BandVectors.2 (q (2 :
-            Fin (4 : ℕ))) (q (1 : Fin (4 : ℕ))) = (0 : GaussianInt) ∧ BandVectors.1 (q (1 : Fin
-            (4 : ℕ))) (q (0 : Fin (4 : ℕ))) = BandVectors.1 (q (1 : Fin (4 : ℕ))) (q (3 : Fin (4
-            : ℕ))) - (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt) * BandVectors.1 (q (2 : Fin (4 : ℕ))) (q
-            (1 : Fin (4 : ℕ))) ∧ BandVectors.2 (q (1 : Fin (4 : ℕ))) (q (0 : Fin (4 : ℕ))) =
-            BandVectors.2 (q (1 : Fin (4 : ℕ))) (q (3 : Fin (4 : ℕ))) + (⟨(0 : ℤ), (1 : ℤ)⟩ :
-            GaussianInt) * BandVectors.2 (q (2 : Fin (4 : ℕ))) (q (1 : Fin (4 : ℕ))) ∧
-            (ProperBandQuadruple q → ∀ (j : Fin (3 : ℕ)), BandVectors.1 (q (0 : Fin (4 : ℕ))) (q
-            j.succ) = (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt) * BandVectors.1 (q j.succ) (q (0 : Fin
-            (4 : ℕ))) ∧ BandVectors.2 (q (0 : Fin (4 : ℕ))) (q j.succ) = -(⟨(0 : ℤ), (1 : ℤ)⟩ :
-            GaussianInt) * BandVectors.2 (q j.succ) (q (0 : Fin (4 : ℕ))))) → (∀ k, outgoing k =
-            (⟨0, 1⟩ : GaussianInt) * incoming k)) ) := by
-  classical
-  intro q cfg incoming outgoing hvlaws k
-  simpa [outgoing, incoming] using (hvlaws.2.2.2.2 cfg.proper k).1
 
 private theorem hu :
     (by
@@ -375,22 +321,7 @@ private theorem hsuppliedCentroid :
           TileCentroid T₀) + TileCentroid T₀ := by rw [hcent', hrowCentroid]
     _ = TileCentroid (SubtileOccurrenceInterpretation cert.P cert.u cert.v a) := by abel
 
-private theorem hparentNonempty :
-    (by
-      classical
-      exact
-        ∀ (q : Fin 4 → CircleCoordinates), ∀ (cfg : BandOrderedGeneralConfiguration q), ∀ (C₀ :
-            BandCircle), ∀ (T₀ : ProtoTile), ∀ (cert : BandOrderedGeneralLayoutCertificate q cfg
-            C₀ T₀), ∀ k, ∀ e, (cert.P k e).cells.Nonempty ) := by
-  classical
-  intro q cfg C₀ T₀ cert k e
-  rcases cert.parent_lattice k e with ⟨realization⟩
-  have hball : (0 : ℝ × ℝ) ∈ Metric.closedBall (0 : ℝ × ℝ) 1 := by simp
-  have hreal : (realization ⟨0, hball⟩ : ℝ × ℝ) ∈ TileRealization (cert.P k e) :=
-    (realization ⟨0, hball⟩).property
-  simp only [TileRealization, Set.mem_iUnion] at hreal
-  rcases hreal with ⟨x, hx, _⟩
-  exact ⟨x, hx⟩
+private abbrev hparentNonempty := ApollonianSuperharmonic.BandLayoutParentNonempty.cells
 
 private theorem hbandOcc :
     (by
@@ -634,365 +565,6 @@ private theorem hcircle :
   rw [hslot.1]
   exact hqi.symm.trans hparent
 
-private theorem hA13 :
-    (by
-      classical
-      exact
-        ∀ (q : Fin 4 → CircleCoordinates), (BandVectors.1 (q (3 : Fin (4 : ℕ))) (q (2 : Fin (4 :
-            ℕ))) + BandVectors.1 (q (1 : Fin (4 : ℕ))) (q (3 : Fin (4 : ℕ))) + BandVectors.1 (q
-            (2 : Fin (4 : ℕ))) (q (1 : Fin (4 : ℕ))) = (0 : GaussianInt) ∧ BandVectors.2 (q (3 :
-            Fin (4 : ℕ))) (q (2 : Fin (4 : ℕ))) + BandVectors.2 (q (1 : Fin (4 : ℕ))) (q (3 : Fin
-            (4 : ℕ))) + BandVectors.2 (q (2 : Fin (4 : ℕ))) (q (1 : Fin (4 : ℕ))) = (0 :
-            GaussianInt) ∧ BandVectors.1 (q (1 : Fin (4 : ℕ))) (q (0 : Fin (4 : ℕ))) =
-            BandVectors.1 (q (1 : Fin (4 : ℕ))) (q (3 : Fin (4 : ℕ))) - (⟨(0 : ℤ), (1 : ℤ)⟩ :
-            GaussianInt) * BandVectors.1 (q (2 : Fin (4 : ℕ))) (q (1 : Fin (4 : ℕ))) ∧
-            BandVectors.2 (q (1 : Fin (4 : ℕ))) (q (0 : Fin (4 : ℕ))) = BandVectors.2 (q (1 : Fin
-            (4 : ℕ))) (q (3 : Fin (4 : ℕ))) + (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt) * BandVectors.2
-            (q (2 : Fin (4 : ℕ))) (q (1 : Fin (4 : ℕ))) ∧ (ProperBandQuadruple q → ∀ (j : Fin (3
-            : ℕ)), BandVectors.1 (q (0 : Fin (4 : ℕ))) (q j.succ) = (⟨(0 : ℤ), (1 : ℤ)⟩ :
-            GaussianInt) * BandVectors.1 (q j.succ) (q (0 : Fin (4 : ℕ))) ∧ BandVectors.2 (q (0 :
-            Fin (4 : ℕ))) (q j.succ) = -(⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt) * BandVectors.2 (q
-            j.succ) (q (0 : Fin (4 : ℕ))))) → (
-        let A : GaussianInt := BandVectors.2 (q 2) (q 1)
-        let B : GaussianInt := BandVectors.2 (q 3) (q 2)
-        BandVectors.2 (q 1) (q 3) = -A - B) ) := by
-  classical
-  intro q hvlaws A B
-  dsimp [A, B]
-  linear_combination hvlaws.2.1
-
-private theorem hA01 :
-    (by
-      classical
-      exact
-        ∀ (q : Fin 4 → CircleCoordinates), (BandOrderedGeneralConfiguration q) → ((BandVectors.1
-            (q (3 : Fin (4 : ℕ))) (q (2 : Fin (4 : ℕ))) + BandVectors.1 (q (1 : Fin (4 : ℕ))) (q
-            (3 : Fin (4 : ℕ))) + BandVectors.1 (q (2 : Fin (4 : ℕ))) (q (1 : Fin (4 : ℕ))) = (0 :
-            GaussianInt) ∧ BandVectors.2 (q (3 : Fin (4 : ℕ))) (q (2 : Fin (4 : ℕ))) +
-            BandVectors.2 (q (1 : Fin (4 : ℕ))) (q (3 : Fin (4 : ℕ))) + BandVectors.2 (q (2 : Fin
-            (4 : ℕ))) (q (1 : Fin (4 : ℕ))) = (0 : GaussianInt) ∧ BandVectors.1 (q (1 : Fin (4 :
-            ℕ))) (q (0 : Fin (4 : ℕ))) = BandVectors.1 (q (1 : Fin (4 : ℕ))) (q (3 : Fin (4 :
-            ℕ))) - (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt) * BandVectors.1 (q (2 : Fin (4 : ℕ))) (q (1
-            : Fin (4 : ℕ))) ∧ BandVectors.2 (q (1 : Fin (4 : ℕ))) (q (0 : Fin (4 : ℕ))) =
-            BandVectors.2 (q (1 : Fin (4 : ℕ))) (q (3 : Fin (4 : ℕ))) + (⟨(0 : ℤ), (1 : ℤ)⟩ :
-            GaussianInt) * BandVectors.2 (q (2 : Fin (4 : ℕ))) (q (1 : Fin (4 : ℕ))) ∧
-            (ProperBandQuadruple q → ∀ (j : Fin (3 : ℕ)), BandVectors.1 (q (0 : Fin (4 : ℕ))) (q
-            j.succ) = (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt) * BandVectors.1 (q j.succ) (q (0 : Fin
-            (4 : ℕ))) ∧ BandVectors.2 (q (0 : Fin (4 : ℕ))) (q j.succ) = -(⟨(0 : ℤ), (1 : ℤ)⟩ :
-            GaussianInt) * BandVectors.2 (q j.succ) (q (0 : Fin (4 : ℕ))))) → (
-        let I : GaussianInt := ⟨0, 1⟩
-        let A : GaussianInt := BandVectors.2 (q 2) (q 1)
-        let B : GaussianInt := BandVectors.2 (q 3) (q 2)
-        (BandVectors.2 (q 1) (q 3) = -A - B) → (BandVectors.2 (q 0) (q 1) = A + I * (A + B)))) )
-            := by
-  classical
-  intro q cfg hvlaws I A B hA13
-  have hin := hvlaws.2.2.2.1
-  have hf := (hvlaws.2.2.2.2 cfg.proper 0).2
-  calc
-    BandVectors.2 (q 0) (q 1) =
-        -(⟨0, 1⟩ : GaussianInt) * BandVectors.2 (q 1) (q 0) := hf
-    _ = -(⟨0, 1⟩ : GaussianInt) *
-        (BandVectors.2 (q 1) (q 3) + (⟨0, 1⟩ : GaussianInt) * BandVectors.2 (q 2) (q 1)) :=
-            by rw [hin]
-    _ = A + I * (A + B) := by rw [hA13]; dsimp [I, A, B]; ext <;> simp <;> ring
-
-private theorem hA02 :
-    (by
-      classical
-      exact
-        ∀ (q : Fin 4 → CircleCoordinates), (BandOrderedGeneralConfiguration q) → ((BandVectors.1
-            (q (3 : Fin (4 : ℕ))) (q (2 : Fin (4 : ℕ))) + BandVectors.1 (q (1 : Fin (4 : ℕ))) (q
-            (3 : Fin (4 : ℕ))) + BandVectors.1 (q (2 : Fin (4 : ℕ))) (q (1 : Fin (4 : ℕ))) = (0 :
-            GaussianInt) ∧ BandVectors.2 (q (3 : Fin (4 : ℕ))) (q (2 : Fin (4 : ℕ))) +
-            BandVectors.2 (q (1 : Fin (4 : ℕ))) (q (3 : Fin (4 : ℕ))) + BandVectors.2 (q (2 : Fin
-            (4 : ℕ))) (q (1 : Fin (4 : ℕ))) = (0 : GaussianInt) ∧ BandVectors.1 (q (1 : Fin (4 :
-            ℕ))) (q (0 : Fin (4 : ℕ))) = BandVectors.1 (q (1 : Fin (4 : ℕ))) (q (3 : Fin (4 :
-            ℕ))) - (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt) * BandVectors.1 (q (2 : Fin (4 : ℕ))) (q (1
-            : Fin (4 : ℕ))) ∧ BandVectors.2 (q (1 : Fin (4 : ℕ))) (q (0 : Fin (4 : ℕ))) =
-            BandVectors.2 (q (1 : Fin (4 : ℕ))) (q (3 : Fin (4 : ℕ))) + (⟨(0 : ℤ), (1 : ℤ)⟩ :
-            GaussianInt) * BandVectors.2 (q (2 : Fin (4 : ℕ))) (q (1 : Fin (4 : ℕ))) ∧
-            (ProperBandQuadruple q → ∀ (j : Fin (3 : ℕ)), BandVectors.1 (q (0 : Fin (4 : ℕ))) (q
-            j.succ) = (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt) * BandVectors.1 (q j.succ) (q (0 : Fin
-            (4 : ℕ))) ∧ BandVectors.2 (q (0 : Fin (4 : ℕ))) (q j.succ) = -(⟨(0 : ℤ), (1 : ℤ)⟩ :
-            GaussianInt) * BandVectors.2 (q j.succ) (q (0 : Fin (4 : ℕ))))) → ((BandVectors.1
-            (![q (0 : Fin (4 : ℕ)), q (2 : Fin (4 : ℕ)), q (3 : Fin (4 : ℕ)), q (1 : Fin (4 :
-            ℕ))] (3 : Fin (4 : ℕ))) (![q (0 : Fin (4 : ℕ)), q (2 : Fin (4 : ℕ)), q (3 : Fin (4 :
-            ℕ)), q (1 : Fin (4 : ℕ))] (2 : Fin (4 : ℕ))) + BandVectors.1 (![q (0 : Fin (4 : ℕ)),
-            q (2 : Fin (4 : ℕ)), q (3 : Fin (4 : ℕ)), q (1 : Fin (4 : ℕ))] (1 : Fin (4 : ℕ)))
-            (![q (0 : Fin (4 : ℕ)), q (2 : Fin (4 : ℕ)), q (3 : Fin (4 : ℕ)), q (1 : Fin (4 :
-            ℕ))] (3 : Fin (4 : ℕ))) + BandVectors.1 (![q (0 : Fin (4 : ℕ)), q (2 : Fin (4 : ℕ)),
-            q (3 : Fin (4 : ℕ)), q (1 : Fin (4 : ℕ))] (2 : Fin (4 : ℕ))) (![q (0 : Fin (4 : ℕ)),
-            q (2 : Fin (4 : ℕ)), q (3 : Fin (4 : ℕ)), q (1 : Fin (4 : ℕ))] (1 : Fin (4 : ℕ))) =
-            (0 : GaussianInt) ∧ BandVectors.2 (![q (0 : Fin (4 : ℕ)), q (2 : Fin (4 : ℕ)), q (3 :
-            Fin (4 : ℕ)), q (1 : Fin (4 : ℕ))] (3 : Fin (4 : ℕ))) (![q (0 : Fin (4 : ℕ)), q (2 :
-            Fin (4 : ℕ)), q (3 : Fin (4 : ℕ)), q (1 : Fin (4 : ℕ))] (2 : Fin (4 : ℕ))) +
-            BandVectors.2 (![q (0 : Fin (4 : ℕ)), q (2 : Fin (4 : ℕ)), q (3 : Fin (4 : ℕ)), q (1
-            : Fin (4 : ℕ))] (1 : Fin (4 : ℕ))) (![q (0 : Fin (4 : ℕ)), q (2 : Fin (4 : ℕ)), q (3
-            : Fin (4 : ℕ)), q (1 : Fin (4 : ℕ))] (3 : Fin (4 : ℕ))) + BandVectors.2 (![q (0 : Fin
-            (4 : ℕ)), q (2 : Fin (4 : ℕ)), q (3 : Fin (4 : ℕ)), q (1 : Fin (4 : ℕ))] (2 : Fin (4
-            : ℕ))) (![q (0 : Fin (4 : ℕ)), q (2 : Fin (4 : ℕ)), q (3 : Fin (4 : ℕ)), q (1 : Fin
-            (4 : ℕ))] (1 : Fin (4 : ℕ))) = (0 : GaussianInt) ∧ BandVectors.1 (![q (0 : Fin (4 :
-            ℕ)), q (2 : Fin (4 : ℕ)), q (3 : Fin (4 : ℕ)), q (1 : Fin (4 : ℕ))] (1 : Fin (4 :
-            ℕ))) (![q (0 : Fin (4 : ℕ)), q (2 : Fin (4 : ℕ)), q (3 : Fin (4 : ℕ)), q (1 : Fin (4
-            : ℕ))] (0 : Fin (4 : ℕ))) = BandVectors.1 (![q (0 : Fin (4 : ℕ)), q (2 : Fin (4 :
-            ℕ)), q (3 : Fin (4 : ℕ)), q (1 : Fin (4 : ℕ))] (1 : Fin (4 : ℕ))) (![q (0 : Fin (4 :
-            ℕ)), q (2 : Fin (4 : ℕ)), q (3 : Fin (4 : ℕ)), q (1 : Fin (4 : ℕ))] (3 : Fin (4 :
-            ℕ))) - (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt) * BandVectors.1 (![q (0 : Fin (4 : ℕ)), q
-            (2 : Fin (4 : ℕ)), q (3 : Fin (4 : ℕ)), q (1 : Fin (4 : ℕ))] (2 : Fin (4 : ℕ))) (![q
-            (0 : Fin (4 : ℕ)), q (2 : Fin (4 : ℕ)), q (3 : Fin (4 : ℕ)), q (1 : Fin (4 : ℕ))] (1
-            : Fin (4 : ℕ))) ∧ BandVectors.2 (![q (0 : Fin (4 : ℕ)), q (2 : Fin (4 : ℕ)), q (3 :
-            Fin (4 : ℕ)), q (1 : Fin (4 : ℕ))] (1 : Fin (4 : ℕ))) (![q (0 : Fin (4 : ℕ)), q (2 :
-            Fin (4 : ℕ)), q (3 : Fin (4 : ℕ)), q (1 : Fin (4 : ℕ))] (0 : Fin (4 : ℕ))) =
-            BandVectors.2 (![q (0 : Fin (4 : ℕ)), q (2 : Fin (4 : ℕ)), q (3 : Fin (4 : ℕ)), q (1
-            : Fin (4 : ℕ))] (1 : Fin (4 : ℕ))) (![q (0 : Fin (4 : ℕ)), q (2 : Fin (4 : ℕ)), q (3
-            : Fin (4 : ℕ)), q (1 : Fin (4 : ℕ))] (3 : Fin (4 : ℕ))) + (⟨(0 : ℤ), (1 : ℤ)⟩ :
-            GaussianInt) * BandVectors.2 (![q (0 : Fin (4 : ℕ)), q (2 : Fin (4 : ℕ)), q (3 : Fin
-            (4 : ℕ)), q (1 : Fin (4 : ℕ))] (2 : Fin (4 : ℕ))) (![q (0 : Fin (4 : ℕ)), q (2 : Fin
-            (4 : ℕ)), q (3 : Fin (4 : ℕ)), q (1 : Fin (4 : ℕ))] (1 : Fin (4 : ℕ))) ∧
-            (ProperBandQuadruple ![q (0 : Fin (4 : ℕ)), q (2 : Fin (4 : ℕ)), q (3 : Fin (4 : ℕ)),
-            q (1 : Fin (4 : ℕ))] → ∀ (j : Fin (3 : ℕ)), BandVectors.1 (![q (0 : Fin (4 : ℕ)), q
-            (2 : Fin (4 : ℕ)), q (3 : Fin (4 : ℕ)), q (1 : Fin (4 : ℕ))] (0 : Fin (4 : ℕ))) (![q
-            (0 : Fin (4 : ℕ)), q (2 : Fin (4 : ℕ)), q (3 : Fin (4 : ℕ)), q (1 : Fin (4 : ℕ))]
-            j.succ) = (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt) * BandVectors.1 (![q (0 : Fin (4 : ℕ)),
-            q (2 : Fin (4 : ℕ)), q (3 : Fin (4 : ℕ)), q (1 : Fin (4 : ℕ))] j.succ) (![q (0 : Fin
-            (4 : ℕ)), q (2 : Fin (4 : ℕ)), q (3 : Fin (4 : ℕ)), q (1 : Fin (4 : ℕ))] (0 : Fin (4
-            : ℕ))) ∧ BandVectors.2 (![q (0 : Fin (4 : ℕ)), q (2 : Fin (4 : ℕ)), q (3 : Fin (4 :
-            ℕ)), q (1 : Fin (4 : ℕ))] (0 : Fin (4 : ℕ))) (![q (0 : Fin (4 : ℕ)), q (2 : Fin (4 :
-            ℕ)), q (3 : Fin (4 : ℕ)), q (1 : Fin (4 : ℕ))] j.succ) = -(⟨(0 : ℤ), (1 : ℤ)⟩ :
-            GaussianInt) * BandVectors.2 (![q (0 : Fin (4 : ℕ)), q (2 : Fin (4 : ℕ)), q (3 : Fin
-            (4 : ℕ)), q (1 : Fin (4 : ℕ))] j.succ) (![q (0 : Fin (4 : ℕ)), q (2 : Fin (4 : ℕ)), q
-            (3 : Fin (4 : ℕ)), q (1 : Fin (4 : ℕ))] (0 : Fin (4 : ℕ))))) → (
-        let I : GaussianInt := ⟨0, 1⟩
-        let A : GaussianInt := BandVectors.2 (q 2) (q 1)
-        let B : GaussianInt := BandVectors.2 (q 3) (q 2)
-        BandVectors.2 (q 0) (q 2) = B - I * A))) ) := by
-  classical
-  intro q cfg hvlaws hvlaws₂ I A B
-  have hin := hvlaws₂.2.2.2.1
-  have hf := (hvlaws.2.2.2.2 cfg.proper 1).2
-  have hin' : BandVectors.2 (q 2) (q 0) = A + I * B := by
-    simpa [A, B] using hin
-  calc
-    BandVectors.2 (q 0) (q 2) =
-        -(⟨0, 1⟩ : GaussianInt) * BandVectors.2 (q 2) (q 0) := hf
-    _ = -(⟨0, 1⟩ : GaussianInt) * (A + I * B) := by rw [hin']
-    _ = B - I * A := by dsimp [I]; ext <;> simp <;> ring
-
-private theorem hA03 :
-    (by
-      classical
-      exact
-        ∀ (q : Fin 4 → CircleCoordinates), (BandOrderedGeneralConfiguration q) → ((BandVectors.1
-            (q (3 : Fin (4 : ℕ))) (q (2 : Fin (4 : ℕ))) + BandVectors.1 (q (1 : Fin (4 : ℕ))) (q
-            (3 : Fin (4 : ℕ))) + BandVectors.1 (q (2 : Fin (4 : ℕ))) (q (1 : Fin (4 : ℕ))) = (0 :
-            GaussianInt) ∧ BandVectors.2 (q (3 : Fin (4 : ℕ))) (q (2 : Fin (4 : ℕ))) +
-            BandVectors.2 (q (1 : Fin (4 : ℕ))) (q (3 : Fin (4 : ℕ))) + BandVectors.2 (q (2 : Fin
-            (4 : ℕ))) (q (1 : Fin (4 : ℕ))) = (0 : GaussianInt) ∧ BandVectors.1 (q (1 : Fin (4 :
-            ℕ))) (q (0 : Fin (4 : ℕ))) = BandVectors.1 (q (1 : Fin (4 : ℕ))) (q (3 : Fin (4 :
-            ℕ))) - (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt) * BandVectors.1 (q (2 : Fin (4 : ℕ))) (q (1
-            : Fin (4 : ℕ))) ∧ BandVectors.2 (q (1 : Fin (4 : ℕ))) (q (0 : Fin (4 : ℕ))) =
-            BandVectors.2 (q (1 : Fin (4 : ℕ))) (q (3 : Fin (4 : ℕ))) + (⟨(0 : ℤ), (1 : ℤ)⟩ :
-            GaussianInt) * BandVectors.2 (q (2 : Fin (4 : ℕ))) (q (1 : Fin (4 : ℕ))) ∧
-            (ProperBandQuadruple q → ∀ (j : Fin (3 : ℕ)), BandVectors.1 (q (0 : Fin (4 : ℕ))) (q
-            j.succ) = (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt) * BandVectors.1 (q j.succ) (q (0 : Fin
-            (4 : ℕ))) ∧ BandVectors.2 (q (0 : Fin (4 : ℕ))) (q j.succ) = -(⟨(0 : ℤ), (1 : ℤ)⟩ :
-            GaussianInt) * BandVectors.2 (q j.succ) (q (0 : Fin (4 : ℕ))))) → ((BandVectors.1
-            (![![q (0 : Fin (4 : ℕ)), q (2 : Fin (4 : ℕ)), q (3 : Fin (4 : ℕ)), q (1 : Fin (4 :
-            ℕ))] (0 : Fin (4 : ℕ)), ![q (0 : Fin (4 : ℕ)), q (2 : Fin (4 : ℕ)), q (3 : Fin (4 :
-            ℕ)), q (1 : Fin (4 : ℕ))] (2 : Fin (4 : ℕ)), ![q (0 : Fin (4 : ℕ)), q (2 : Fin (4 :
-            ℕ)), q (3 : Fin (4 : ℕ)), q (1 : Fin (4 : ℕ))] (3 : Fin (4 : ℕ)), ![q (0 : Fin (4 :
-            ℕ)), q (2 : Fin (4 : ℕ)), q (3 : Fin (4 : ℕ)), q (1 : Fin (4 : ℕ))] (1 : Fin (4 :
-            ℕ))] (3 : Fin (4 : ℕ))) (![![q (0 : Fin (4 : ℕ)), q (2 : Fin (4 : ℕ)), q (3 : Fin (4
-            : ℕ)), q (1 : Fin (4 : ℕ))] (0 : Fin (4 : ℕ)), ![q (0 : Fin (4 : ℕ)), q (2 : Fin (4 :
-            ℕ)), q (3 : Fin (4 : ℕ)), q (1 : Fin (4 : ℕ))] (2 : Fin (4 : ℕ)), ![q (0 : Fin (4 :
-            ℕ)), q (2 : Fin (4 : ℕ)), q (3 : Fin (4 : ℕ)), q (1 : Fin (4 : ℕ))] (3 : Fin (4 :
-            ℕ)), ![q (0 : Fin (4 : ℕ)), q (2 : Fin (4 : ℕ)), q (3 : Fin (4 : ℕ)), q (1 : Fin (4 :
-            ℕ))] (1 : Fin (4 : ℕ))] (2 : Fin (4 : ℕ))) + BandVectors.1 (![![q (0 : Fin (4 : ℕ)),
-            q (2 : Fin (4 : ℕ)), q (3 : Fin (4 : ℕ)), q (1 : Fin (4 : ℕ))] (0 : Fin (4 : ℕ)), ![q
-            (0 : Fin (4 : ℕ)), q (2 : Fin (4 : ℕ)), q (3 : Fin (4 : ℕ)), q (1 : Fin (4 : ℕ))] (2
-            : Fin (4 : ℕ)), ![q (0 : Fin (4 : ℕ)), q (2 : Fin (4 : ℕ)), q (3 : Fin (4 : ℕ)), q (1
-            : Fin (4 : ℕ))] (3 : Fin (4 : ℕ)), ![q (0 : Fin (4 : ℕ)), q (2 : Fin (4 : ℕ)), q (3 :
-            Fin (4 : ℕ)), q (1 : Fin (4 : ℕ))] (1 : Fin (4 : ℕ))] (1 : Fin (4 : ℕ))) (![![q (0 :
-            Fin (4 : ℕ)), q (2 : Fin (4 : ℕ)), q (3 : Fin (4 : ℕ)), q (1 : Fin (4 : ℕ))] (0 : Fin
-            (4 : ℕ)), ![q (0 : Fin (4 : ℕ)), q (2 : Fin (4 : ℕ)), q (3 : Fin (4 : ℕ)), q (1 : Fin
-            (4 : ℕ))] (2 : Fin (4 : ℕ)), ![q (0 : Fin (4 : ℕ)), q (2 : Fin (4 : ℕ)), q (3 : Fin
-            (4 : ℕ)), q (1 : Fin (4 : ℕ))] (3 : Fin (4 : ℕ)), ![q (0 : Fin (4 : ℕ)), q (2 : Fin
-            (4 : ℕ)), q (3 : Fin (4 : ℕ)), q (1 : Fin (4 : ℕ))] (1 : Fin (4 : ℕ))] (3 : Fin (4 :
-            ℕ))) + BandVectors.1 (![![q (0 : Fin (4 : ℕ)), q (2 : Fin (4 : ℕ)), q (3 : Fin (4 :
-            ℕ)), q (1 : Fin (4 : ℕ))] (0 : Fin (4 : ℕ)), ![q (0 : Fin (4 : ℕ)), q (2 : Fin (4 :
-            ℕ)), q (3 : Fin (4 : ℕ)), q (1 : Fin (4 : ℕ))] (2 : Fin (4 : ℕ)), ![q (0 : Fin (4 :
-            ℕ)), q (2 : Fin (4 : ℕ)), q (3 : Fin (4 : ℕ)), q (1 : Fin (4 : ℕ))] (3 : Fin (4 :
-            ℕ)), ![q (0 : Fin (4 : ℕ)), q (2 : Fin (4 : ℕ)), q (3 : Fin (4 : ℕ)), q (1 : Fin (4 :
-            ℕ))] (1 : Fin (4 : ℕ))] (2 : Fin (4 : ℕ))) (![![q (0 : Fin (4 : ℕ)), q (2 : Fin (4 :
-            ℕ)), q (3 : Fin (4 : ℕ)), q (1 : Fin (4 : ℕ))] (0 : Fin (4 : ℕ)), ![q (0 : Fin (4 :
-            ℕ)), q (2 : Fin (4 : ℕ)), q (3 : Fin (4 : ℕ)), q (1 : Fin (4 : ℕ))] (2 : Fin (4 :
-            ℕ)), ![q (0 : Fin (4 : ℕ)), q (2 : Fin (4 : ℕ)), q (3 : Fin (4 : ℕ)), q (1 : Fin (4 :
-            ℕ))] (3 : Fin (4 : ℕ)), ![q (0 : Fin (4 : ℕ)), q (2 : Fin (4 : ℕ)), q (3 : Fin (4 :
-            ℕ)), q (1 : Fin (4 : ℕ))] (1 : Fin (4 : ℕ))] (1 : Fin (4 : ℕ))) = (0 : GaussianInt) ∧
-            BandVectors.2 (![![q (0 : Fin (4 : ℕ)), q (2 : Fin (4 : ℕ)), q (3 : Fin (4 : ℕ)), q
-            (1 : Fin (4 : ℕ))] (0 : Fin (4 : ℕ)), ![q (0 : Fin (4 : ℕ)), q (2 : Fin (4 : ℕ)), q
-            (3 : Fin (4 : ℕ)), q (1 : Fin (4 : ℕ))] (2 : Fin (4 : ℕ)), ![q (0 : Fin (4 : ℕ)), q
-            (2 : Fin (4 : ℕ)), q (3 : Fin (4 : ℕ)), q (1 : Fin (4 : ℕ))] (3 : Fin (4 : ℕ)), ![q
-            (0 : Fin (4 : ℕ)), q (2 : Fin (4 : ℕ)), q (3 : Fin (4 : ℕ)), q (1 : Fin (4 : ℕ))] (1
-            : Fin (4 : ℕ))] (3 : Fin (4 : ℕ))) (![![q (0 : Fin (4 : ℕ)), q (2 : Fin (4 : ℕ)), q
-            (3 : Fin (4 : ℕ)), q (1 : Fin (4 : ℕ))] (0 : Fin (4 : ℕ)), ![q (0 : Fin (4 : ℕ)), q
-            (2 : Fin (4 : ℕ)), q (3 : Fin (4 : ℕ)), q (1 : Fin (4 : ℕ))] (2 : Fin (4 : ℕ)), ![q
-            (0 : Fin (4 : ℕ)), q (2 : Fin (4 : ℕ)), q (3 : Fin (4 : ℕ)), q (1 : Fin (4 : ℕ))] (3
-            : Fin (4 : ℕ)), ![q (0 : Fin (4 : ℕ)), q (2 : Fin (4 : ℕ)), q (3 : Fin (4 : ℕ)), q (1
-            : Fin (4 : ℕ))] (1 : Fin (4 : ℕ))] (2 : Fin (4 : ℕ))) + BandVectors.2 (![![q (0 : Fin
-            (4 : ℕ)), q (2 : Fin (4 : ℕ)), q (3 : Fin (4 : ℕ)), q (1 : Fin (4 : ℕ))] (0 : Fin (4
-            : ℕ)), ![q (0 : Fin (4 : ℕ)), q (2 : Fin (4 : ℕ)), q (3 : Fin (4 : ℕ)), q (1 : Fin (4
-            : ℕ))] (2 : Fin (4 : ℕ)), ![q (0 : Fin (4 : ℕ)), q (2 : Fin (4 : ℕ)), q (3 : Fin (4 :
-            ℕ)), q (1 : Fin (4 : ℕ))] (3 : Fin (4 : ℕ)), ![q (0 : Fin (4 : ℕ)), q (2 : Fin (4 :
-            ℕ)), q (3 : Fin (4 : ℕ)), q (1 : Fin (4 : ℕ))] (1 : Fin (4 : ℕ))] (1 : Fin (4 : ℕ)))
-            (![![q (0 : Fin (4 : ℕ)), q (2 : Fin (4 : ℕ)), q (3 : Fin (4 : ℕ)), q (1 : Fin (4 :
-            ℕ))] (0 : Fin (4 : ℕ)), ![q (0 : Fin (4 : ℕ)), q (2 : Fin (4 : ℕ)), q (3 : Fin (4 :
-            ℕ)), q (1 : Fin (4 : ℕ))] (2 : Fin (4 : ℕ)), ![q (0 : Fin (4 : ℕ)), q (2 : Fin (4 :
-            ℕ)), q (3 : Fin (4 : ℕ)), q (1 : Fin (4 : ℕ))] (3 : Fin (4 : ℕ)), ![q (0 : Fin (4 :
-            ℕ)), q (2 : Fin (4 : ℕ)), q (3 : Fin (4 : ℕ)), q (1 : Fin (4 : ℕ))] (1 : Fin (4 :
-            ℕ))] (3 : Fin (4 : ℕ))) + BandVectors.2 (![![q (0 : Fin (4 : ℕ)), q (2 : Fin (4 :
-            ℕ)), q (3 : Fin (4 : ℕ)), q (1 : Fin (4 : ℕ))] (0 : Fin (4 : ℕ)), ![q (0 : Fin (4 :
-            ℕ)), q (2 : Fin (4 : ℕ)), q (3 : Fin (4 : ℕ)), q (1 : Fin (4 : ℕ))] (2 : Fin (4 :
-            ℕ)), ![q (0 : Fin (4 : ℕ)), q (2 : Fin (4 : ℕ)), q (3 : Fin (4 : ℕ)), q (1 : Fin (4 :
-            ℕ))] (3 : Fin (4 : ℕ)), ![q (0 : Fin (4 : ℕ)), q (2 : Fin (4 : ℕ)), q (3 : Fin (4 :
-            ℕ)), q (1 : Fin (4 : ℕ))] (1 : Fin (4 : ℕ))] (2 : Fin (4 : ℕ))) (![![q (0 : Fin (4 :
-            ℕ)), q (2 : Fin (4 : ℕ)), q (3 : Fin (4 : ℕ)), q (1 : Fin (4 : ℕ))] (0 : Fin (4 :
-            ℕ)), ![q (0 : Fin (4 : ℕ)), q (2 : Fin (4 : ℕ)), q (3 : Fin (4 : ℕ)), q (1 : Fin (4 :
-            ℕ))] (2 : Fin (4 : ℕ)), ![q (0 : Fin (4 : ℕ)), q (2 : Fin (4 : ℕ)), q (3 : Fin (4 :
-            ℕ)), q (1 : Fin (4 : ℕ))] (3 : Fin (4 : ℕ)), ![q (0 : Fin (4 : ℕ)), q (2 : Fin (4 :
-            ℕ)), q (3 : Fin (4 : ℕ)), q (1 : Fin (4 : ℕ))] (1 : Fin (4 : ℕ))] (1 : Fin (4 : ℕ)))
-            = (0 : GaussianInt) ∧ BandVectors.1 (![![q (0 : Fin (4 : ℕ)), q (2 : Fin (4 : ℕ)), q
-            (3 : Fin (4 : ℕ)), q (1 : Fin (4 : ℕ))] (0 : Fin (4 : ℕ)), ![q (0 : Fin (4 : ℕ)), q
-            (2 : Fin (4 : ℕ)), q (3 : Fin (4 : ℕ)), q (1 : Fin (4 : ℕ))] (2 : Fin (4 : ℕ)), ![q
-            (0 : Fin (4 : ℕ)), q (2 : Fin (4 : ℕ)), q (3 : Fin (4 : ℕ)), q (1 : Fin (4 : ℕ))] (3
-            : Fin (4 : ℕ)), ![q (0 : Fin (4 : ℕ)), q (2 : Fin (4 : ℕ)), q (3 : Fin (4 : ℕ)), q (1
-            : Fin (4 : ℕ))] (1 : Fin (4 : ℕ))] (1 : Fin (4 : ℕ))) (![![q (0 : Fin (4 : ℕ)), q (2
-            : Fin (4 : ℕ)), q (3 : Fin (4 : ℕ)), q (1 : Fin (4 : ℕ))] (0 : Fin (4 : ℕ)), ![q (0 :
-            Fin (4 : ℕ)), q (2 : Fin (4 : ℕ)), q (3 : Fin (4 : ℕ)), q (1 : Fin (4 : ℕ))] (2 : Fin
-            (4 : ℕ)), ![q (0 : Fin (4 : ℕ)), q (2 : Fin (4 : ℕ)), q (3 : Fin (4 : ℕ)), q (1 : Fin
-            (4 : ℕ))] (3 : Fin (4 : ℕ)), ![q (0 : Fin (4 : ℕ)), q (2 : Fin (4 : ℕ)), q (3 : Fin
-            (4 : ℕ)), q (1 : Fin (4 : ℕ))] (1 : Fin (4 : ℕ))] (0 : Fin (4 : ℕ))) = BandVectors.1
-            (![![q (0 : Fin (4 : ℕ)), q (2 : Fin (4 : ℕ)), q (3 : Fin (4 : ℕ)), q (1 : Fin (4 :
-            ℕ))] (0 : Fin (4 : ℕ)), ![q (0 : Fin (4 : ℕ)), q (2 : Fin (4 : ℕ)), q (3 : Fin (4 :
-            ℕ)), q (1 : Fin (4 : ℕ))] (2 : Fin (4 : ℕ)), ![q (0 : Fin (4 : ℕ)), q (2 : Fin (4 :
-            ℕ)), q (3 : Fin (4 : ℕ)), q (1 : Fin (4 : ℕ))] (3 : Fin (4 : ℕ)), ![q (0 : Fin (4 :
-            ℕ)), q (2 : Fin (4 : ℕ)), q (3 : Fin (4 : ℕ)), q (1 : Fin (4 : ℕ))] (1 : Fin (4 :
-            ℕ))] (1 : Fin (4 : ℕ))) (![![q (0 : Fin (4 : ℕ)), q (2 : Fin (4 : ℕ)), q (3 : Fin (4
-            : ℕ)), q (1 : Fin (4 : ℕ))] (0 : Fin (4 : ℕ)), ![q (0 : Fin (4 : ℕ)), q (2 : Fin (4 :
-            ℕ)), q (3 : Fin (4 : ℕ)), q (1 : Fin (4 : ℕ))] (2 : Fin (4 : ℕ)), ![q (0 : Fin (4 :
-            ℕ)), q (2 : Fin (4 : ℕ)), q (3 : Fin (4 : ℕ)), q (1 : Fin (4 : ℕ))] (3 : Fin (4 :
-            ℕ)), ![q (0 : Fin (4 : ℕ)), q (2 : Fin (4 : ℕ)), q (3 : Fin (4 : ℕ)), q (1 : Fin (4 :
-            ℕ))] (1 : Fin (4 : ℕ))] (3 : Fin (4 : ℕ))) - (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt) *
-            BandVectors.1 (![![q (0 : Fin (4 : ℕ)), q (2 : Fin (4 : ℕ)), q (3 : Fin (4 : ℕ)), q
-            (1 : Fin (4 : ℕ))] (0 : Fin (4 : ℕ)), ![q (0 : Fin (4 : ℕ)), q (2 : Fin (4 : ℕ)), q
-            (3 : Fin (4 : ℕ)), q (1 : Fin (4 : ℕ))] (2 : Fin (4 : ℕ)), ![q (0 : Fin (4 : ℕ)), q
-            (2 : Fin (4 : ℕ)), q (3 : Fin (4 : ℕ)), q (1 : Fin (4 : ℕ))] (3 : Fin (4 : ℕ)), ![q
-            (0 : Fin (4 : ℕ)), q (2 : Fin (4 : ℕ)), q (3 : Fin (4 : ℕ)), q (1 : Fin (4 : ℕ))] (1
-            : Fin (4 : ℕ))] (2 : Fin (4 : ℕ))) (![![q (0 : Fin (4 : ℕ)), q (2 : Fin (4 : ℕ)), q
-            (3 : Fin (4 : ℕ)), q (1 : Fin (4 : ℕ))] (0 : Fin (4 : ℕ)), ![q (0 : Fin (4 : ℕ)), q
-            (2 : Fin (4 : ℕ)), q (3 : Fin (4 : ℕ)), q (1 : Fin (4 : ℕ))] (2 : Fin (4 : ℕ)), ![q
-            (0 : Fin (4 : ℕ)), q (2 : Fin (4 : ℕ)), q (3 : Fin (4 : ℕ)), q (1 : Fin (4 : ℕ))] (3
-            : Fin (4 : ℕ)), ![q (0 : Fin (4 : ℕ)), q (2 : Fin (4 : ℕ)), q (3 : Fin (4 : ℕ)), q (1
-            : Fin (4 : ℕ))] (1 : Fin (4 : ℕ))] (1 : Fin (4 : ℕ))) ∧ BandVectors.2 (![![q (0 : Fin
-            (4 : ℕ)), q (2 : Fin (4 : ℕ)), q (3 : Fin (4 : ℕ)), q (1 : Fin (4 : ℕ))] (0 : Fin (4
-            : ℕ)), ![q (0 : Fin (4 : ℕ)), q (2 : Fin (4 : ℕ)), q (3 : Fin (4 : ℕ)), q (1 : Fin (4
-            : ℕ))] (2 : Fin (4 : ℕ)), ![q (0 : Fin (4 : ℕ)), q (2 : Fin (4 : ℕ)), q (3 : Fin (4 :
-            ℕ)), q (1 : Fin (4 : ℕ))] (3 : Fin (4 : ℕ)), ![q (0 : Fin (4 : ℕ)), q (2 : Fin (4 :
-            ℕ)), q (3 : Fin (4 : ℕ)), q (1 : Fin (4 : ℕ))] (1 : Fin (4 : ℕ))] (1 : Fin (4 : ℕ)))
-            (![![q (0 : Fin (4 : ℕ)), q (2 : Fin (4 : ℕ)), q (3 : Fin (4 : ℕ)), q (1 : Fin (4 :
-            ℕ))] (0 : Fin (4 : ℕ)), ![q (0 : Fin (4 : ℕ)), q (2 : Fin (4 : ℕ)), q (3 : Fin (4 :
-            ℕ)), q (1 : Fin (4 : ℕ))] (2 : Fin (4 : ℕ)), ![q (0 : Fin (4 : ℕ)), q (2 : Fin (4 :
-            ℕ)), q (3 : Fin (4 : ℕ)), q (1 : Fin (4 : ℕ))] (3 : Fin (4 : ℕ)), ![q (0 : Fin (4 :
-            ℕ)), q (2 : Fin (4 : ℕ)), q (3 : Fin (4 : ℕ)), q (1 : Fin (4 : ℕ))] (1 : Fin (4 :
-            ℕ))] (0 : Fin (4 : ℕ))) = BandVectors.2 (![![q (0 : Fin (4 : ℕ)), q (2 : Fin (4 :
-            ℕ)), q (3 : Fin (4 : ℕ)), q (1 : Fin (4 : ℕ))] (0 : Fin (4 : ℕ)), ![q (0 : Fin (4 :
-            ℕ)), q (2 : Fin (4 : ℕ)), q (3 : Fin (4 : ℕ)), q (1 : Fin (4 : ℕ))] (2 : Fin (4 :
-            ℕ)), ![q (0 : Fin (4 : ℕ)), q (2 : Fin (4 : ℕ)), q (3 : Fin (4 : ℕ)), q (1 : Fin (4 :
-            ℕ))] (3 : Fin (4 : ℕ)), ![q (0 : Fin (4 : ℕ)), q (2 : Fin (4 : ℕ)), q (3 : Fin (4 :
-            ℕ)), q (1 : Fin (4 : ℕ))] (1 : Fin (4 : ℕ))] (1 : Fin (4 : ℕ))) (![![q (0 : Fin (4 :
-            ℕ)), q (2 : Fin (4 : ℕ)), q (3 : Fin (4 : ℕ)), q (1 : Fin (4 : ℕ))] (0 : Fin (4 :
-            ℕ)), ![q (0 : Fin (4 : ℕ)), q (2 : Fin (4 : ℕ)), q (3 : Fin (4 : ℕ)), q (1 : Fin (4 :
-            ℕ))] (2 : Fin (4 : ℕ)), ![q (0 : Fin (4 : ℕ)), q (2 : Fin (4 : ℕ)), q (3 : Fin (4 :
-            ℕ)), q (1 : Fin (4 : ℕ))] (3 : Fin (4 : ℕ)), ![q (0 : Fin (4 : ℕ)), q (2 : Fin (4 :
-            ℕ)), q (3 : Fin (4 : ℕ)), q (1 : Fin (4 : ℕ))] (1 : Fin (4 : ℕ))] (3 : Fin (4 : ℕ)))
-            + (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt) * BandVectors.2 (![![q (0 : Fin (4 : ℕ)), q (2 :
-            Fin (4 : ℕ)), q (3 : Fin (4 : ℕ)), q (1 : Fin (4 : ℕ))] (0 : Fin (4 : ℕ)), ![q (0 :
-            Fin (4 : ℕ)), q (2 : Fin (4 : ℕ)), q (3 : Fin (4 : ℕ)), q (1 : Fin (4 : ℕ))] (2 : Fin
-            (4 : ℕ)), ![q (0 : Fin (4 : ℕ)), q (2 : Fin (4 : ℕ)), q (3 : Fin (4 : ℕ)), q (1 : Fin
-            (4 : ℕ))] (3 : Fin (4 : ℕ)), ![q (0 : Fin (4 : ℕ)), q (2 : Fin (4 : ℕ)), q (3 : Fin
-            (4 : ℕ)), q (1 : Fin (4 : ℕ))] (1 : Fin (4 : ℕ))] (2 : Fin (4 : ℕ))) (![![q (0 : Fin
-            (4 : ℕ)), q (2 : Fin (4 : ℕ)), q (3 : Fin (4 : ℕ)), q (1 : Fin (4 : ℕ))] (0 : Fin (4
-            : ℕ)), ![q (0 : Fin (4 : ℕ)), q (2 : Fin (4 : ℕ)), q (3 : Fin (4 : ℕ)), q (1 : Fin (4
-            : ℕ))] (2 : Fin (4 : ℕ)), ![q (0 : Fin (4 : ℕ)), q (2 : Fin (4 : ℕ)), q (3 : Fin (4 :
-            ℕ)), q (1 : Fin (4 : ℕ))] (3 : Fin (4 : ℕ)), ![q (0 : Fin (4 : ℕ)), q (2 : Fin (4 :
-            ℕ)), q (3 : Fin (4 : ℕ)), q (1 : Fin (4 : ℕ))] (1 : Fin (4 : ℕ))] (1 : Fin (4 : ℕ)))
-            ∧ (ProperBandQuadruple ![![q (0 : Fin (4 : ℕ)), q (2 : Fin (4 : ℕ)), q (3 : Fin (4 :
-            ℕ)), q (1 : Fin (4 : ℕ))] (0 : Fin (4 : ℕ)), ![q (0 : Fin (4 : ℕ)), q (2 : Fin (4 :
-            ℕ)), q (3 : Fin (4 : ℕ)), q (1 : Fin (4 : ℕ))] (2 : Fin (4 : ℕ)), ![q (0 : Fin (4 :
-            ℕ)), q (2 : Fin (4 : ℕ)), q (3 : Fin (4 : ℕ)), q (1 : Fin (4 : ℕ))] (3 : Fin (4 :
-            ℕ)), ![q (0 : Fin (4 : ℕ)), q (2 : Fin (4 : ℕ)), q (3 : Fin (4 : ℕ)), q (1 : Fin (4 :
-            ℕ))] (1 : Fin (4 : ℕ))] → ∀ (j : Fin (3 : ℕ)), BandVectors.1 (![![q (0 : Fin (4 :
-            ℕ)), q (2 : Fin (4 : ℕ)), q (3 : Fin (4 : ℕ)), q (1 : Fin (4 : ℕ))] (0 : Fin (4 :
-            ℕ)), ![q (0 : Fin (4 : ℕ)), q (2 : Fin (4 : ℕ)), q (3 : Fin (4 : ℕ)), q (1 : Fin (4 :
-            ℕ))] (2 : Fin (4 : ℕ)), ![q (0 : Fin (4 : ℕ)), q (2 : Fin (4 : ℕ)), q (3 : Fin (4 :
-            ℕ)), q (1 : Fin (4 : ℕ))] (3 : Fin (4 : ℕ)), ![q (0 : Fin (4 : ℕ)), q (2 : Fin (4 :
-            ℕ)), q (3 : Fin (4 : ℕ)), q (1 : Fin (4 : ℕ))] (1 : Fin (4 : ℕ))] (0 : Fin (4 : ℕ)))
-            (![![q (0 : Fin (4 : ℕ)), q (2 : Fin (4 : ℕ)), q (3 : Fin (4 : ℕ)), q (1 : Fin (4 :
-            ℕ))] (0 : Fin (4 : ℕ)), ![q (0 : Fin (4 : ℕ)), q (2 : Fin (4 : ℕ)), q (3 : Fin (4 :
-            ℕ)), q (1 : Fin (4 : ℕ))] (2 : Fin (4 : ℕ)), ![q (0 : Fin (4 : ℕ)), q (2 : Fin (4 :
-            ℕ)), q (3 : Fin (4 : ℕ)), q (1 : Fin (4 : ℕ))] (3 : Fin (4 : ℕ)), ![q (0 : Fin (4 :
-            ℕ)), q (2 : Fin (4 : ℕ)), q (3 : Fin (4 : ℕ)), q (1 : Fin (4 : ℕ))] (1 : Fin (4 :
-            ℕ))] j.succ) = (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt) * BandVectors.1 (![![q (0 : Fin (4
-            : ℕ)), q (2 : Fin (4 : ℕ)), q (3 : Fin (4 : ℕ)), q (1 : Fin (4 : ℕ))] (0 : Fin (4 :
-            ℕ)), ![q (0 : Fin (4 : ℕ)), q (2 : Fin (4 : ℕ)), q (3 : Fin (4 : ℕ)), q (1 : Fin (4 :
-            ℕ))] (2 : Fin (4 : ℕ)), ![q (0 : Fin (4 : ℕ)), q (2 : Fin (4 : ℕ)), q (3 : Fin (4 :
-            ℕ)), q (1 : Fin (4 : ℕ))] (3 : Fin (4 : ℕ)), ![q (0 : Fin (4 : ℕ)), q (2 : Fin (4 :
-            ℕ)), q (3 : Fin (4 : ℕ)), q (1 : Fin (4 : ℕ))] (1 : Fin (4 : ℕ))] j.succ) (![![q (0 :
-            Fin (4 : ℕ)), q (2 : Fin (4 : ℕ)), q (3 : Fin (4 : ℕ)), q (1 : Fin (4 : ℕ))] (0 : Fin
-            (4 : ℕ)), ![q (0 : Fin (4 : ℕ)), q (2 : Fin (4 : ℕ)), q (3 : Fin (4 : ℕ)), q (1 : Fin
-            (4 : ℕ))] (2 : Fin (4 : ℕ)), ![q (0 : Fin (4 : ℕ)), q (2 : Fin (4 : ℕ)), q (3 : Fin
-            (4 : ℕ)), q (1 : Fin (4 : ℕ))] (3 : Fin (4 : ℕ)), ![q (0 : Fin (4 : ℕ)), q (2 : Fin
-            (4 : ℕ)), q (3 : Fin (4 : ℕ)), q (1 : Fin (4 : ℕ))] (1 : Fin (4 : ℕ))] (0 : Fin (4 :
-            ℕ))) ∧ BandVectors.2 (![![q (0 : Fin (4 : ℕ)), q (2 : Fin (4 : ℕ)), q (3 : Fin (4 :
-            ℕ)), q (1 : Fin (4 : ℕ))] (0 : Fin (4 : ℕ)), ![q (0 : Fin (4 : ℕ)), q (2 : Fin (4 :
-            ℕ)), q (3 : Fin (4 : ℕ)), q (1 : Fin (4 : ℕ))] (2 : Fin (4 : ℕ)), ![q (0 : Fin (4 :
-            ℕ)), q (2 : Fin (4 : ℕ)), q (3 : Fin (4 : ℕ)), q (1 : Fin (4 : ℕ))] (3 : Fin (4 :
-            ℕ)), ![q (0 : Fin (4 : ℕ)), q (2 : Fin (4 : ℕ)), q (3 : Fin (4 : ℕ)), q (1 : Fin (4 :
-            ℕ))] (1 : Fin (4 : ℕ))] (0 : Fin (4 : ℕ))) (![![q (0 : Fin (4 : ℕ)), q (2 : Fin (4 :
-            ℕ)), q (3 : Fin (4 : ℕ)), q (1 : Fin (4 : ℕ))] (0 : Fin (4 : ℕ)), ![q (0 : Fin (4 :
-            ℕ)), q (2 : Fin (4 : ℕ)), q (3 : Fin (4 : ℕ)), q (1 : Fin (4 : ℕ))] (2 : Fin (4 :
-            ℕ)), ![q (0 : Fin (4 : ℕ)), q (2 : Fin (4 : ℕ)), q (3 : Fin (4 : ℕ)), q (1 : Fin (4 :
-            ℕ))] (3 : Fin (4 : ℕ)), ![q (0 : Fin (4 : ℕ)), q (2 : Fin (4 : ℕ)), q (3 : Fin (4 :
-            ℕ)), q (1 : Fin (4 : ℕ))] (1 : Fin (4 : ℕ))] j.succ) = -(⟨(0 : ℤ), (1 : ℤ)⟩ :
-            GaussianInt) * BandVectors.2 (![![q (0 : Fin (4 : ℕ)), q (2 : Fin (4 : ℕ)), q (3 :
-            Fin (4 : ℕ)), q (1 : Fin (4 : ℕ))] (0 : Fin (4 : ℕ)), ![q (0 : Fin (4 : ℕ)), q (2 :
-            Fin (4 : ℕ)), q (3 : Fin (4 : ℕ)), q (1 : Fin (4 : ℕ))] (2 : Fin (4 : ℕ)), ![q (0 :
-            Fin (4 : ℕ)), q (2 : Fin (4 : ℕ)), q (3 : Fin (4 : ℕ)), q (1 : Fin (4 : ℕ))] (3 : Fin
-            (4 : ℕ)), ![q (0 : Fin (4 : ℕ)), q (2 : Fin (4 : ℕ)), q (3 : Fin (4 : ℕ)), q (1 : Fin
-            (4 : ℕ))] (1 : Fin (4 : ℕ))] j.succ) (![![q (0 : Fin (4 : ℕ)), q (2 : Fin (4 : ℕ)), q
-            (3 : Fin (4 : ℕ)), q (1 : Fin (4 : ℕ))] (0 : Fin (4 : ℕ)), ![q (0 : Fin (4 : ℕ)), q
-            (2 : Fin (4 : ℕ)), q (3 : Fin (4 : ℕ)), q (1 : Fin (4 : ℕ))] (2 : Fin (4 : ℕ)), ![q
-            (0 : Fin (4 : ℕ)), q (2 : Fin (4 : ℕ)), q (3 : Fin (4 : ℕ)), q (1 : Fin (4 : ℕ))] (3
-            : Fin (4 : ℕ)), ![q (0 : Fin (4 : ℕ)), q (2 : Fin (4 : ℕ)), q (3 : Fin (4 : ℕ)), q (1
-            : Fin (4 : ℕ))] (1 : Fin (4 : ℕ))] (0 : Fin (4 : ℕ))))) → (
-        let I : GaussianInt := ⟨0, 1⟩
-        let A : GaussianInt := BandVectors.2 (q 2) (q 1)
-        let B : GaussianInt := BandVectors.2 (q 3) (q 2)
-        (BandVectors.2 (q 1) (q 3) = -A - B) → (BandVectors.2 (q 0) (q 3) = -A - B - I * B)))) )
-            := by
-  classical
-  intro q cfg hvlaws hvlaws₃ I A B hA13
-  have hin := hvlaws₃.2.2.2.1
-  have hf := (hvlaws.2.2.2.2 cfg.proper 2).2
-  have hin' : BandVectors.2 (q 3) (q 0) = B + I * (-A - B) := by
-    simpa [A, B, hA13, add_comm, add_left_comm, add_assoc] using hin
-  calc
-    BandVectors.2 (q 0) (q 3) =
-        -(⟨0, 1⟩ : GaussianInt) * BandVectors.2 (q 3) (q 0) := hf
-    _ = -(⟨0, 1⟩ : GaussianInt) * (B + I * (-A - B)) := by rw [hin']
-    _ = -A - B - I * B := by dsimp [I]; ext <;> simp <;> ring
-
 private theorem hAedgeAux :
     (by
       classical
@@ -1064,34 +636,6 @@ private theorem hrowPointAux :
     simp [makeIndex, slot, A, B, I, GaussianRealPoint, pow_succ,
       P4250T1SlopeOffset, -GaussianInt.intCast_re,
       -GaussianInt.intCast_im] <;> ring_nf <;> trivial
-
-private theorem hflipAffine :
-    (by
-      classical
-      exact
-        ∀ (q : Fin 4 → CircleCoordinates), (BandOrderedGeneralConfiguration q) → ((BandVectors.1
-            (q (3 : Fin (4 : ℕ))) (q (2 : Fin (4 : ℕ))) + BandVectors.1 (q (1 : Fin (4 : ℕ))) (q
-            (3 : Fin (4 : ℕ))) + BandVectors.1 (q (2 : Fin (4 : ℕ))) (q (1 : Fin (4 : ℕ))) = (0 :
-            GaussianInt) ∧ BandVectors.2 (q (3 : Fin (4 : ℕ))) (q (2 : Fin (4 : ℕ))) +
-            BandVectors.2 (q (1 : Fin (4 : ℕ))) (q (3 : Fin (4 : ℕ))) + BandVectors.2 (q (2 : Fin
-            (4 : ℕ))) (q (1 : Fin (4 : ℕ))) = (0 : GaussianInt) ∧ BandVectors.1 (q (1 : Fin (4 :
-            ℕ))) (q (0 : Fin (4 : ℕ))) = BandVectors.1 (q (1 : Fin (4 : ℕ))) (q (3 : Fin (4 :
-            ℕ))) - (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt) * BandVectors.1 (q (2 : Fin (4 : ℕ))) (q (1
-            : Fin (4 : ℕ))) ∧ BandVectors.2 (q (1 : Fin (4 : ℕ))) (q (0 : Fin (4 : ℕ))) =
-            BandVectors.2 (q (1 : Fin (4 : ℕ))) (q (3 : Fin (4 : ℕ))) + (⟨(0 : ℤ), (1 : ℤ)⟩ :
-            GaussianInt) * BandVectors.2 (q (2 : Fin (4 : ℕ))) (q (1 : Fin (4 : ℕ))) ∧
-            (ProperBandQuadruple q → ∀ (j : Fin (3 : ℕ)), BandVectors.1 (q (0 : Fin (4 : ℕ))) (q
-            j.succ) = (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt) * BandVectors.1 (q j.succ) (q (0 : Fin
-            (4 : ℕ))) ∧ BandVectors.2 (q (0 : Fin (4 : ℕ))) (q j.succ) = -(⟨(0 : ℤ), (1 : ℤ)⟩ :
-            GaussianInt) * BandVectors.2 (q j.succ) (q (0 : Fin (4 : ℕ))))) → (
-        let I : GaussianInt := ⟨0, 1⟩
-        ∀ k : Fin 3, BandVectors.2 (q k.succ) (q 0) = I * BandVectors.2 (q 0) (q k.succ))) ) := by
-  classical
-  intro q cfg hvlaws I k
-  have hf := (hvlaws.2.2.2.2 cfg.proper k).2
-  rw [hf]
-  dsimp [I]
-  ext <;> simp
 
 private theorem hslopePair :
     (by
@@ -1188,14 +732,17 @@ theorem P4261T1SubtileCoordinates
     have hvlaws₂ := VectorRecursionLaws _ (SemiProperQuadruple.rotate cfg.proper.1)
     have hvlaws₃ := VectorRecursionLaws _
       (SemiProperQuadruple.rotate (SemiProperQuadruple.rotate cfg.proper.1))
-    have hsuper := SubtileCoordinateGeometry.hsuper q hvlaws
+    have hsuper : edge 0 + edge 1 + edge 2 = 0 := by
+      dsimp [edge]
+      linear_combination hvlaws.1
     have hin0 : incoming 0 = edge 1 - (⟨0, 1⟩ : GaussianInt) * edge 2 := by
       simpa [incoming, edge] using hvlaws.2.2.1
     have hin1 : incoming 1 = edge 2 - (⟨0, 1⟩ : GaussianInt) * edge 0 := by
       simpa [incoming, edge] using hvlaws₂.2.2.1
     have hin2 : incoming 2 = edge 0 - (⟨0, 1⟩ : GaussianInt) * edge 1 := by
       simpa [incoming, edge] using hvlaws₃.2.2.1
-    have hflip := SubtileCoordinateGeometry.hflip q cfg hvlaws
+    have hflip (k : Fin 3) : outgoing k = (⟨0, 1⟩ : GaussianInt) * incoming k := by
+      simpa [outgoing, incoming] using (hvlaws.2.2.2.2 cfg.proper k).1
     have hu := SubtileCoordinateGeometry.hu q cfg C₀ T₀ cert
     have hv := SubtileCoordinateGeometry.hv q cfg C₀ T₀ cert
     have hcentroidRows := SubtileCoordinateGeometry.hcentroidRows q cfg C₀ T₀ cert
@@ -1247,10 +794,39 @@ theorem P4261T1SubtileCoordinates
     let I : GaussianInt := ⟨0, 1⟩
     let A : GaussianInt := BandVectors.2 (q 2) (q 1)
     let B : GaussianInt := BandVectors.2 (q 3) (q 2)
-    have hA13 := SubtileCoordinateGeometry.hA13 q hvlaws
-    have hA01 := SubtileCoordinateGeometry.hA01 q cfg hvlaws hA13
-    have hA02 := SubtileCoordinateGeometry.hA02 q cfg hvlaws hvlaws₂
-    have hA03 := SubtileCoordinateGeometry.hA03 q cfg hvlaws hvlaws₃ hA13
+    have hA13 : BandVectors.2 (q 1) (q 3) = -A - B := by
+      dsimp [A, B]
+      linear_combination hvlaws.2.1
+    have hA01 : BandVectors.2 (q 0) (q 1) = A + I * (A + B) := by
+      have hin := hvlaws.2.2.2.1
+      have hf := (hvlaws.2.2.2.2 cfg.proper 0).2
+      calc
+        BandVectors.2 (q 0) (q 1) =
+            -(⟨0, 1⟩ : GaussianInt) * BandVectors.2 (q 1) (q 0) := hf
+        _ = -(⟨0, 1⟩ : GaussianInt) *
+            (BandVectors.2 (q 1) (q 3) + (⟨0, 1⟩ : GaussianInt) * BandVectors.2 (q 2) (q 1)) :=
+                by rw [hin]
+        _ = A + I * (A + B) := by rw [hA13]; dsimp [I, A, B]; ext <;> simp <;> ring
+    have hA02 : BandVectors.2 (q 0) (q 2) = B - I * A := by
+      have hin := hvlaws₂.2.2.2.1
+      have hf := (hvlaws.2.2.2.2 cfg.proper 1).2
+      have hin' : BandVectors.2 (q 2) (q 0) = A + I * B := by
+        simpa [A, B] using hin
+      calc
+        BandVectors.2 (q 0) (q 2) =
+            -(⟨0, 1⟩ : GaussianInt) * BandVectors.2 (q 2) (q 0) := hf
+        _ = -(⟨0, 1⟩ : GaussianInt) * (A + I * B) := by rw [hin']
+        _ = B - I * A := by dsimp [I]; ext <;> simp <;> ring
+    have hA03 : BandVectors.2 (q 0) (q 3) = -A - B - I * B := by
+      have hin := hvlaws₃.2.2.2.1
+      have hf := (hvlaws.2.2.2.2 cfg.proper 2).2
+      have hin' : BandVectors.2 (q 3) (q 0) = B + I * (-A - B) := by
+        simpa [A, B, hA13, add_comm, add_left_comm, add_assoc] using hin
+      calc
+        BandVectors.2 (q 0) (q 3) =
+            -(⟨0, 1⟩ : GaussianInt) * BandVectors.2 (q 3) (q 0) := hf
+        _ = -(⟨0, 1⟩ : GaussianInt) * (B + I * (-A - B)) := by rw [hin']
+        _ = -A - B - I * B := by dsimp [I]; ext <;> simp <;> ring
     have hAedgeAux := SubtileCoordinateGeometry.hAedgeAux q hA13
     have hAroot := SubtileCoordinateGeometry.hAroot q hA01 hA02 hA03
     have hrowPointAux := SubtileCoordinateGeometry.hrowPointAux q hA01 hA02 hAedgeAux hAroot
@@ -1259,7 +835,11 @@ theorem P4261T1SubtileCoordinates
       hrootSlope, hfunctionSlope, ?_⟩
     have hflipAffine : ∀ k : Fin 3,
         BandVectors.2 (q k.succ) (q 0) =
-          I * BandVectors.2 (q 0) (q k.succ) := SubtileCoordinateGeometry.hflipAffine q cfg hvlaws
+          I * BandVectors.2 (q 0) (q k.succ) := by
+      intro k
+      rw [(hvlaws.2.2.2.2 cfg.proper k).2]
+      dsimp [I]
+      ext <;> simp
     have hs1 := by
       simpa [hparent, hq₀, cert.child_eq.symm, hflipAffine j] using hslope₁
     have hs2 := by

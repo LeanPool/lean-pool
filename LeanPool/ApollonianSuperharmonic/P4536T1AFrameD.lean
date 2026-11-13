@@ -28,17 +28,21 @@ namespace ApollonianSuperharmonic
 namespace FrameDiagonalProof
 
 private theorem hrAt128 :
-    ∀ (C : BandCircle), ∀ (orientation : Bool), ∀ (base : ProtoTile), ∀ (Rminus : ProtoTile), ∀
-        (Rplus : ProtoTile), ∀ (hminus : PartialOdometer), ∀ (hplus : PartialOdometer), ∀ (F :
-        P4458T1BoundaryFrame C orientation base Rminus Rplus hminus hplus), ∀ (a : Fin 3), ∀ (p
-        : Fin 4 → CircleCoordinates), (![F.q 0, F.q a.succ, F.q (a + 1).succ, F.q (a + 2).succ] =
-        ![(2 * (p 0).1 + 2 * (p 2).1 + 2 * (p 3).1 - (p 1).1, 2 * (p 0).2 + 2 * (p 2).2 + 2 * (p
-        3).2 - (p 1).2), p 0, p 2, p 3]) → ((F.slot = a + 2) → (
-    let r : Fin 4 → CircleCoordinates :=
-      ![F.q 0, F.q a.succ, F.q (a + 1).succ, F.q (a + 2).succ]
-    ProperBandQuadruple r)) := by
+    ∀ (C : BandCircle),
+      ∀ (orientation : Bool),
+        ∀ (base : ProtoTile),
+          ∀ (Rminus : ProtoTile),
+            ∀ (Rplus : ProtoTile),
+              ∀ (hminus : PartialOdometer),
+                ∀ (hplus : PartialOdometer),
+                  ∀ (F : P4458T1BoundaryFrame C orientation base Rminus Rplus hminus hplus),
+                    ∀ (a : Fin 3),
+                      F.slot = a + 2 →
+                        let r : Fin 4 → CircleCoordinates :=
+                          ![F.q 0, F.q a.succ, F.q (a + 1).succ, F.q (a + 2).succ]
+                        ProperBandQuadruple r := by
   classical
-  intro C orientation base Rminus Rplus hminus hplus F a p hstep hslot r
+  intro C orientation base Rminus Rplus hminus hplus F a hslot r
   fin_cases a
   · have heq : r = F.q := by
       funext j
@@ -980,14 +984,7 @@ private theorem hrootAEq :
   intro C orientation base Rminus Rplus hminus hplus F rootA hrootA
   exact Option.some.inj (hrootA.symm.trans F.slope_outer)
 
-private theorem hrootJEq :
-    ∀ (C : BandCircle), ∀ (orientation : Bool), ∀ (base : ProtoTile), ∀ (Rminus : ProtoTile), ∀
-        (Rplus : ProtoTile), ∀ (hminus : PartialOdometer), ∀ (hplus : PartialOdometer), ∀ (F :
-        P4458T1BoundaryFrame C orientation base Rminus Rplus hminus hplus), ∀ (rootJ : ℝ × ℝ),
-        (PartialOdometerSlope F.odometer = some rootJ) → (rootJ = F.outerSlope) := by
-  classical
-  intro C orientation base Rminus Rplus hminus hplus F rootJ hrootJ
-  exact Option.some.inj (hrootJ.symm.trans F.slope_outer)
+private abbrev hrootJEq := ApollonianSuperharmonic.FrameDiagonalProof.hrootAEq
 
 private theorem slopeK :
     ∀ (C : BandCircle), ∀ (orientation : Bool), ∀ (base : ProtoTile), ∀ (Rminus : ProtoTile), ∀
@@ -1219,7 +1216,7 @@ theorem P4536T1AFrameD
   let r : Fin 4 → CircleCoordinates :=
     ![F.q 0, F.q a.succ, F.q (a + 1).succ, F.q (a + 2).succ]
   have hr := FrameDiagonalProof.hrAt128 C orientation base Rminus Rplus
-      hminus hplus F a p hstep hslot
+      hminus hplus F a hslot
   have hrstep := FrameDiagonalProof.hrstep C orientation base Rminus Rplus hminus hplus F a p hstep
   have r1 := FrameDiagonalProof.r1 C orientation base Rminus Rplus hminus hplus F a p
       hrstep

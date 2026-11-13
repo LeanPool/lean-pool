@@ -479,28 +479,61 @@ private theorem hnotAt427 :
   linarith
 
 private theorem hNX :
-    ∀ (n : Nat), ∀ (p : P3381T1PolygonBoundary n), ∀ (X : Set (Real × Real)), ∀ (K : Set (Real
-        × Real)), ∀ (t : P3381T1PairedTriangulation p X K), ∀ (k : Fin t.count), ∀ (b : Fin
-        t.count → ℝ × ℝ → Fin (3 : ℕ) → ℝ), (∀ (k : Fin t.count), ∀ (z : ℝ × ℝ), z ∈ (convexHull
-        ℝ : Set (ℝ × ℝ) → Set (ℝ × ℝ)) (Set.range (p.vertex ∘ t.face k)) ↔ ∀ (j : Fin (3 : ℕ)),
-            (0 : ℝ) ≤ b k z j) → ((∀ (a : Fin 3), ∀ (b : Fin 3), ∀ (c : Fin 3), (a ≠ b) → ((a ≠
-            c) → ((b ≠ c) → (∀ j, j =
-        a ∨ j = b ∨ j = c)))) → (∀ (i : Fin (n + (3 : ℕ))), ∀ (j : Fin (n + (3 : ℕ))), ∀ (u : ℝ),
-    let z : Real × Real := (1 - u) • p.vertex i + u • p.vertex j
-    ∀ (l : Fin t.count), ∀ (a : Fin (3 : ℕ)), ∀ (d : Fin (3 : ℕ)), ∀ (c : Fin (3 : ℕ)), (t.face k
-        a = i) → ((t.face k d = j) → ((a ≠ d) → ((a ≠ c) → ((d ≠ c) → ((b k z a = (1 : ℝ) - u) →
-        ((b k z d = u) → ((b k z c = (0 : ℝ)) → (∀ (e : Fin (3 : ℕ)), ∀ (f : Fin (3 : ℕ)), ∀ (g :
-            Fin (3 : ℕ)), (t.face l e = i) → ((t.face l f = j) → ((e ≠ f) → ((e ≠ g) → ((f ≠ g) →
-            ((b
-        l z e = (1 : ℝ) - u) → ((b l z f = u) → ((b l z g = (0 : ℝ)) → ((b l (p.vertex (t.face k
-        c)) g < (0 : ℝ)) → ((b l (p.vertex (t.face k a)) g = 0) → ((b l (p.vertex (t.face k d)) g
-        = 0) → ((∀ y, b l y g = b k y c * b l (p.vertex (t.face k c)) g) → (
-    let N : Set (Real × Real) :=
-      {y | 0 < b k y a ∧ 0 < b k y d} ∩ {y | 0 < b l y e ∧ 0 < b l y f}
-    (IsOpen N) → ((z ∈ N) → (N ⊆ X)))))))))))))))))))))))) := by
+    ∀ (n : Nat),
+      ∀ (p : P3381T1PolygonBoundary n),
+        ∀ (X : Set (Real × Real)),
+          ∀ (K : Set (Real × Real)),
+            ∀ (t : P3381T1PairedTriangulation p X K),
+              ∀ (k : Fin t.count),
+                ∀ (b : Fin t.count → ℝ × ℝ → Fin (3 : ℕ) → ℝ),
+                  (∀ (k : Fin t.count),
+                      ∀ (z : ℝ × ℝ),
+                        z ∈
+                            (convexHull ℝ : Set (ℝ × ℝ) → Set (ℝ × ℝ))
+                            (Set.range (p.vertex ∘ t.face k)) ↔
+                          ∀ (j : Fin (3 : ℕ)), (0 : ℝ) ≤ b k z j) →
+                    (∀ (a : Fin 3),
+                        ∀ (b : Fin 3),
+                          ∀ (c : Fin 3),
+                            a ≠ b → a ≠ c → b ≠ c → ∀ j, j = a ∨ j = b ∨ j = c) →
+                      ∀ (i : Fin (n + (3 : ℕ))),
+                        ∀ (j : Fin (n + (3 : ℕ))),
+                          ∀ (u : ℝ),
+                            let z : Real × Real := (1 - u) • p.vertex i + u • p.vertex j;
+                          ∀ (l : Fin t.count),
+                            ∀ (a : Fin (3 : ℕ)),
+                            ∀ (d : Fin (3 : ℕ)),
+                            ∀ (c : Fin (3 : ℕ)),
+                            t.face k a = i →
+                            t.face k d = j →
+                            a ≠ d →
+                            a ≠ c →
+                            d ≠ c →
+                            b k z a = (1 : ℝ) - u →
+                            b k z d = u →
+                            b k z c = (0 : ℝ) →
+                            ∀ (e : Fin (3 : ℕ)),
+                            ∀ (f : Fin (3 : ℕ)),
+                            ∀ (g : Fin (3 : ℕ)),
+                            t.face l e = i →
+                            t.face l f = j →
+                            e ≠ f →
+                            e ≠ g →
+                            f ≠ g →
+                            b l z e = (1 : ℝ) - u →
+                            b l z f = u →
+                            b l z g = (0 : ℝ) →
+                            b l (p.vertex (t.face k c)) g < (0 : ℝ) →
+                            b l (p.vertex (t.face k a)) g = 0 →
+                            b l (p.vertex (t.face k d)) g = 0 →
+                            (∀ y, b l y g = b k y c * b l (p.vertex (t.face k c)) g) →
+                            let N : Set (Real × Real) :=
+                            {y | 0 < b k y a ∧ 0 < b k y d} ∩
+                            {y | 0 < b l y e ∧ 0 < b l y f};
+                          N ⊆ X := by
   classical
-  intro n p X K t k b bhull indices i j u z l a d c hka hkd had hac hdc hza hzd hzc e f g hle hlf
-      hef heg hfg hze hzf hzg hnegative hlga hlgd relation N hN hzN y hy
+  intro n p X K t k b bhull indices i j u z l a d c hka hkd had hac hdc hza hzd hzc e f g hle
+      hlf hef heg hfg hze hzf hzg hnegative hlga hlgd relation N y hy
   rw [t.source_cover]
   by_cases hc : 0 ≤ b k y c
   · refine Set.mem_iUnion.mpr ⟨k, (bhull k y).mpr ?_⟩
@@ -1453,7 +1486,7 @@ theorem P3381T1TriangulationBoundary {n : Nat}
         exact ⟨⟨sub_pos.mpr hu.2, hu.1⟩, ⟨sub_pos.mpr hu.2, hu.1⟩⟩
       have hNX := TriangulationBoundaryProof.hNX n p X K t k b bhull indices i j u l a d
           c hka hkd had hac hdc hza hzd hzc e f g hle hlf hef heg hfg hze hzf hzg hnegative hlga
-          hlgd relation hN hzN
+          hlgd relation
       have hzint : z ∈ interior X := (hN.subset_interior_iff.mpr hNX) hzN
       simp only [hneighbor, not_false_eq_true, iff_true]
       exact hzint

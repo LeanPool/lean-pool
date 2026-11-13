@@ -6,6 +6,8 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.TileTranslationProperties
+public import LeanPool.ApollonianSuperharmonic.ListEndpointFacts
 
 public import LeanPool.ApollonianSuperharmonic.P4366T1PrecursorRemainderFamily
 public import LeanPool.ApollonianSuperharmonic.P4339T1PrecursorSupportGeometry
@@ -286,23 +288,32 @@ private theorem hreflectab :
     (by
       classical
       exact
-        ∀ (C : BandCircle), ∀ (q : Fin 4 → CircleCoordinates), ∀ (cfg :
-            BandOrderedGeneralConfiguration q), ∀ (T : ProtoTile), ∀ (cert :
-            BandOrderedGeneralLayoutCertificate q cfg C T), ∀ (a : GaussianInt), ∀ (b :
-            GaussianInt), (a ∈ ({cert.precursorBoundary.a, cert.precursorBoundary.b} : Finset
-                GaussianInt)) → ((b ∈
-            ({cert.precursorBoundary.a, cert.precursorBoundary.b} : Finset GaussianInt)) → ((a
-                ≠ b) → (∀ (g : List
-            GaussianInt), (g.head? = some a) → ((g.getLast? = some b) → (((a =
-            cert.precursorBoundary.a ∧ b = cert.precursorBoundary.b) ∨ (a =
-            cert.precursorBoundary.b ∧ b = cert.precursorBoundary.a)) → ((GaussianRealPoint
-            cert.precursorBoundary.b = ((2 : ℝ) * (TileCentroid cert.O).1 - (GaussianRealPoint
-            cert.precursorBoundary.a).1, (2 : ℝ) * (TileCentroid cert.O).2 - (GaussianRealPoint
-            cert.precursorBoundary.a).2)) → (GaussianRealPoint b = (2 * (TileCentroid cert.O).1
-            - (GaussianRealPoint a).1, 2 * (TileCentroid cert.O).2 - (GaussianRealPoint
-            a).2)))))))) ) := by
+        ∀ (C : BandCircle),
+          ∀ (q : Fin 4 → CircleCoordinates),
+            ∀ (cfg : BandOrderedGeneralConfiguration q),
+              ∀ (T : ProtoTile),
+                ∀ (cert : BandOrderedGeneralLayoutCertificate q cfg C T),
+                  ∀ (a : GaussianInt),
+                    ∀ (b : GaussianInt),
+                      a ≠ b →
+                        ∀ (g : List GaussianInt),
+                          g.head? = some a →
+                            g.getLast? = some b →
+                              a = cert.precursorBoundary.a ∧
+                                b = cert.precursorBoundary.b ∨
+                                a = cert.precursorBoundary.b ∧
+                                b = cert.precursorBoundary.a →
+                                GaussianRealPoint cert.precursorBoundary.b =
+                                ((2 : ℝ) * (TileCentroid cert.O).1 -
+                                (GaussianRealPoint cert.precursorBoundary.a).1,
+                                (2 : ℝ) * (TileCentroid cert.O).2 -
+                                (GaussianRealPoint cert.precursorBoundary.a).2) →
+                                GaussianRealPoint b =
+                                (2 * (TileCentroid cert.O).1 - (GaussianRealPoint a).1,
+                                2 * (TileCentroid cert.O).2 - (GaussianRealPoint a).2)
+    ) := by
   classical
-  intro C q cfg T cert a b ha hb hab g hga hgb ordered hreflect
+  intro C q cfg T cert a b hab g hga hgb ordered hreflect
   rcases ordered with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩
   · exact hreflect
   · apply Prod.ext
@@ -312,30 +323,6 @@ private theorem hreflectab :
     · have h := congrArg Prod.snd hreflect
       dsimp at h ⊢
       linarith
-
-private theorem roots_ab :
-    (by
-      classical
-      exact
-        ∀ (C : BandCircle), ∀ (q : Fin 4 → CircleCoordinates), ∀ (cfg :
-            BandOrderedGeneralConfiguration q), ∀ (T : ProtoTile), ∀ (cert :
-            BandOrderedGeneralLayoutCertificate q cfg C T), ∀ (a : GaussianInt), ∀ (b :
-            GaussianInt), (a ∈ ({cert.precursorBoundary.a, cert.precursorBoundary.b} : Finset
-                GaussianInt)) → ((b ∈
-            ({cert.precursorBoundary.a, cert.precursorBoundary.b} : Finset GaussianInt)) → ((a
-                ≠ b) → (∀ (g : List
-            GaussianInt), (g.head? = some a) → ((g.getLast? = some b) → (((a =
-            cert.precursorBoundary.a ∧ b = cert.precursorBoundary.b) ∨ (a =
-            cert.precursorBoundary.b ∧ b = cert.precursorBoundary.a)) → ((GaussianRealPoint b =
-            (2 * (TileCentroid cert.O).1 - (GaussianRealPoint a).1, 2 * (TileCentroid cert.O).2 -
-            (GaussianRealPoint a).2)) → (∀ (z : GaussianInt), (z ∈ ({cert.precursorBoundary.a,
-            cert.precursorBoundary.b} :
-            Finset GaussianInt)) → (z = a ∨ z = b)))))))) ) := by
-  classical
-  intro C q cfg T cert a b ha hb hab g hga hgb ordered hreflectab z hz
-  rcases ordered with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩
-  · simpa only [Finset.mem_insert, Finset.mem_singleton] using hz
-  · simpa only [Finset.mem_insert, Finset.mem_singleton, or_comm] using hz
 
 private theorem arc_props :
     (by
@@ -363,28 +350,6 @@ private theorem arc_props :
   · intro z hz
     exact boundary_raw cert.O hO (hfoot (by simpa using hz))
 
-private theorem hkl :
-    (by
-      classical
-      exact
-        ∀ (C : BandCircle), ∀ (q : Fin 4 → CircleCoordinates), ∀ (cfg :
-            BandOrderedGeneralConfiguration q), ∀ (T : ProtoTile), ∀ (cert :
-            BandOrderedGeneralLayoutCertificate q cfg C T), ∀ (a : GaussianInt), ∀ (b :
-            GaussianInt), (a ≠ b) → (∀ (k : List GaussianInt), (k.Nodup) → ((k.head? = some b) →
-            ((k.getLast? = some a) → ((∀ (u : GaussianInt), ∀ (v : GaussianInt), (u, v) ∈ k.zip
-            k.tail → {u, v} ∈ BoundaryFootprintEdges cert.O) → ((∀ z ∈ k, z ∈ FootprintVertices
-            cert.O) → (2 ≤ k.length)))))) ) := by
-  classical
-  intro C q cfg T cert a b hab k hkn hkb hka hkboundary hkraw
-  cases k with
-  | nil => simp at hkb
-  | cons c l =>
-    cases l with
-    | nil => simp only [List.head?_cons, List.getLast?_singleton,
-        Option.some.injEq] at hkb hka
-             exact (hab (hka.symm.trans hkb)).elim
-    | cons d ds => simp
-
 private theorem kedge_raw :
     (by
       classical
@@ -406,16 +371,7 @@ private theorem kedge_raw :
   · exact Or.inl h.1
   · exact Or.inr h.2
 
-private theorem trans_zero :
-    (by
-      classical
-      exact
-        ∀ (U : ProtoTile), TileTranslation U 0 = U ) := by
-  classical
-  intro U
-  cases U
-  simp [TileTranslation, GaussianTranslation, show GaussianTranslation 0 = id from
-    funext (fun z => add_zero z)]
+private abbrev trans_zero := ApollonianSuperharmonic.TileTranslationProperties.zero
 
 private theorem kstar :
     (by
@@ -672,10 +628,14 @@ theorem P4366T1PrecursorPathLoop
       rcases cert.precursorBoundary.branch with hp | hn
       · exact hp.2
       · exact ((Finset.nonempty_iff_ne_empty.mp hO) hn.1).elim)
-  have hreflectab := PrecursorLoopGeometry.hreflectab C q cfg T cert a b ha hb hab g hga hgb
+  have hreflectab := PrecursorLoopGeometry.hreflectab C q cfg T cert a b hab g hga hgb
       ordered hreflect
-  have roots_ab := PrecursorLoopGeometry.roots_ab C q cfg T cert a b ha hb hab g hga hgb ordered
-      hreflectab
+  have roots_ab (z : GaussianInt)
+      (hz : z ∈ ({cert.precursorBoundary.a, cert.precursorBoundary.b} : Finset GaussianInt)) :
+      z = a ∨ z = b := by
+    rcases ordered with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩
+    · simpa only [Finset.mem_insert, Finset.mem_singleton] using hz
+    · simpa only [Finset.mem_insert, Finset.mem_singleton, or_comm] using hz
   have gnoO := P4397T1PathAvoidsPrecursorEdges cert.O (TileCentroid cert.O)
     (BandPrototileCentralSymmetry _ _ hOband) a b hab hreflectab
     g hgn hga hgb gsteps
@@ -698,7 +658,7 @@ theorem P4366T1PrecursorPathLoop
         (fun z hz => (hmf ▸ hz).2) (fun u v l1 l2 hl => (hme u v l1 l2 hl).2)
     · exact arc_props plusArc hpn hph hpl
         (fun z hz => (hpf ▸ hz).2) (fun u v l1 l2 hl => (hpe u v l1 l2 hl).2)
-  have hkl := PrecursorLoopGeometry.hkl C q cfg T cert a b hab k hkn hkb hka hkboundary hkraw
+  have hkl := ListEndpointFacts.twoLeLength a b hab k hkb hka
   have ksteps (u v : GaussianInt) (he : (u, v) ∈ k.zip k.tail) :
       FourNeighborAdjacent u v := boundary_step cert.O u v (hkboundary u v he)
   have kedge_raw (u v : GaussianInt) (he : (u, v) ∈ k.zip k.tail) :

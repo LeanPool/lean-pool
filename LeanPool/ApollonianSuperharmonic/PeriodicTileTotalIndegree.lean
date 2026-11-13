@@ -534,39 +534,47 @@ private theorem hshared :
     (by
       classical
       exact
-        ∀ (T : ProtoTile), (FourNeighborConnected (↑T.cells : Set LatticeCell) ∧
-            NoCheckerboardCellVertex (↑T.cells : Set LatticeCell) ∧ SimpleGridCycle
-            (BoundaryFootprintVertices T) (BoundaryFootprintEdges T)) → (((∀ (x : LatticeCell), ∀
-            (y : LatticeCell), FourNeighborAdjacent x y → x ∈ BoundaryFootprintVertices T → y ∈
-            BoundaryFootprintVertices T → ¬OpenLatticeEdge x y ⊆ interior (TileRealization T)) ∧
-            (∀ x ∈ FootprintVertices T, ∀ y ∈ FootprintVertices T, FourNeighborAdjacent x y → {x,
-            y} ∈ FootprintEdges T) ∧ ∀ x ∈ FootprintVertices T, GaussianRealPoint x ∈ interior
-            (TileRealization T) ↔ x ∉ BoundaryFootprintVertices T) → (
-        let I : GaussianInt := ⟨0, 1⟩
-        let cornerBag : Multiset GaussianInt := T.cells.1.bind fun c =>
-          ([c, c + 1, c + I, c + 1 + I] : List GaussianInt)
-        let N : Nat → Nat := fun k =>
-          (cornerBag.toFinset.filter fun z => cornerBag.count z = k).card
-        ((4 : ℕ) * Finset.card T.cells = N (1 : ℕ) + (2 : ℕ) * N (2 : ℕ) + (3 : ℕ) * N (3 : ℕ) +
-            (4 : ℕ) * N (4 : ℕ) ∧ (FootprintVertices T).ncard = N (1 : ℕ) + N (2 : ℕ) + N (3 : ℕ)
-            + N (4 : ℕ) ∧ (2 : ℕ) * (FootprintEdges T).ncard = (4 : ℕ) * Finset.card T.cells +
-            (BoundaryFootprintEdges T).ncard ∧ (BoundaryFootprintEdges T).ncard = N (1 : ℕ) + N
-            (2 : ℕ) + N (3 : ℕ)) → (
-        let edgeOf : GaussianInt × Bool → Finset GaussianInt := fun p =>
-          if p.2 then {p.1, p.1 + I} else {p.1, p.1 + 1}
-        let V := cornerBag.toFinset
-        let E := (V.product (Finset.univ : Finset Bool)).filter
-          fun e => edgeOf e ∈ FootprintEdges T
-        let A := E.filter fun e => edgeOf e ∉ BoundaryFootprintEdges T
-        (∀ (q : GaussianInt × Bool), q ∈ E ↔ if q.2 then (q.1 ∈ T.cells ∨ q.1 - 1 ∈ T.cells) else
-            (q.1 ∈ T.cells ∨ q.1 - I ∈ T.cells)) → ((∀ (q : GaussianInt × Bool), edgeOf q ∈
-            BoundaryFootprintEdges T ↔ if q.2 then ((q.1 ∈ T.cells ∧ q.1 - 1 ∉ T.cells) ∨ (q.1 ∉
-            T.cells ∧ q.1 - 1 ∈ T.cells)) else ((q.1 ∈ T.cells ∧ q.1 - I ∉ T.cells) ∨ (q.1 ∉
-            T.cells ∧ q.1 - I ∈ T.cells))) → (∀ (q : GaussianInt × Bool), (q ∈ A) → (if q.2 then
-            (q.1 ∈ T.cells ∧ q.1 - 1 ∈ T.cells) else (q.1 ∈ T.cells ∧ q.1 - I ∈ T.cells))))))) )
+        ∀ (T : ProtoTile),
+          let I : GaussianInt := ⟨0, 1⟩
+          let cornerBag : Multiset GaussianInt :=
+            T.cells.1.bind fun c => ([c, c + 1, c + I, c + 1 + I] : List GaussianInt)
+          let N : Nat → Nat := fun k =>
+            (cornerBag.toFinset.filter fun z => cornerBag.count z = k).card
+          (4 : ℕ) * Finset.card T.cells =
+                N (1 : ℕ) + (2 : ℕ) * N (2 : ℕ) + (3 : ℕ) * N (3 : ℕ) +
+                  (4 : ℕ) * N (4 : ℕ) ∧
+              (FootprintVertices T).ncard =
+                  N (1 : ℕ) + N (2 : ℕ) + N (3 : ℕ) + N (4 : ℕ) ∧
+                (2 : ℕ) * (FootprintEdges T).ncard =
+                    (4 : ℕ) * Finset.card T.cells + (BoundaryFootprintEdges T).ncard ∧
+                  (BoundaryFootprintEdges T).ncard = N (1 : ℕ) + N (2 : ℕ) + N (3 : ℕ) →
+            let edgeOf : GaussianInt × Bool → Finset GaussianInt := fun p =>
+              if p.2 then {p.1, p.1 + I} else {p.1, p.1 + 1}
+            let V := cornerBag.toFinset
+            let E :=
+              (V.product (Finset.univ : Finset Bool)).filter fun e =>
+                edgeOf e ∈ FootprintEdges T
+            let A := E.filter fun e => edgeOf e ∉ BoundaryFootprintEdges T
+            (∀ (q : GaussianInt × Bool),
+                q ∈ E ↔
+                  if q.2 then q.1 ∈ T.cells ∨ q.1 - 1 ∈ T.cells
+                  else q.1 ∈ T.cells ∨ q.1 - I ∈ T.cells) →
+              (∀ (q : GaussianInt × Bool),
+                  edgeOf q ∈ BoundaryFootprintEdges T ↔
+                    if q.2 then
+                      q.1 ∈ T.cells ∧ q.1 - 1 ∉ T.cells ∨
+                        q.1 ∉ T.cells ∧ q.1 - 1 ∈ T.cells
+                    else
+                      q.1 ∈ T.cells ∧ q.1 - I ∉ T.cells ∨
+                        q.1 ∉ T.cells ∧ q.1 - I ∈ T.cells) →
+                ∀ (q : GaussianInt × Bool),
+                  q ∈ A →
+                    if q.2 then q.1 ∈ T.cells ∧ q.1 - 1 ∈ T.cells
+                    else q.1 ∈ T.cells ∧ q.1 - I ∈ T.cells
+    )
             := by
   classical
-  intro T htiles hreg I cornerBag N hinc edgeOf V E A hEocc hBEocc q hq
+  intro T I cornerBag N hinc edgeOf V E A hEocc hBEocc q hq
   rcases Finset.mem_filter.mp hq with ⟨hqe, hqb⟩
   rw [hEocc] at hqe
   rw [hBEocc] at hqb
@@ -1109,41 +1117,40 @@ private theorem hcell_residue_unique :
     (by
       classical
       exact
-        ∀ (C : BandCircle), ∀ (T : ProtoTile), ∀ (h : PartialOdometer), ∀ (g :
-            IntegerLatticeFunction), ((↑h.domain : Set GaussianInt) = FootprintVertices T) →
-            ((BandPrototile C.1.1 T) → ((LatticeTile T) → ((ExactTileTiling (RegularTileFamily T
-            (TilingLattice C))) → ((∀ x ∈ BoundaryFootprintVertices T, FourNeighborLaplacian g x
-            = (1 : ℤ)) → ((∀ (D : Finset GaussianInt), (∀ z, z ∈ D ↔ z ∈ FootprintVertices T ∧ z
-            ∉ BoundaryFootprintVertices T) → ((∀ z, z ∈ FootprintVertices T → z ∉
-            BoundaryFootprintVertices T → z ∈ T.cells ∧ z - 1 ∈ T.cells ∧ z - (⟨0, 1⟩ :
-            GaussianInt) ∈ T.cells ∧ z - 1 - (⟨0, 1⟩ : GaussianInt) ∈ T.cells) → ((3 * (D.card :
-            Int) - T.cells.card + 1) = (D.filter fun z => z + 1 ∈ D).card + (D.filter fun z => z
-            + (⟨0, 1⟩ : GaussianInt) ∈ D).card))) → ((FourNeighborConnected (↑T.cells : Set
-            LatticeCell) ∧ NoCheckerboardCellVertex (↑T.cells : Set LatticeCell) ∧
-            SimpleGridCycle (BoundaryFootprintVertices T) (BoundaryFootprintEdges T)) →
-            (((FootprintVertices T).ncard + Finset.card T.cells = (FootprintEdges T).ncard + (1 :
-            ℕ)) → (((∀ (x : LatticeCell), ∀ (y : LatticeCell), FourNeighborAdjacent x y → x ∈
-            BoundaryFootprintVertices T → y ∈ BoundaryFootprintVertices T → ¬OpenLatticeEdge x y
-            ⊆ interior (TileRealization T)) ∧ (∀ x ∈ FootprintVertices T, ∀ y ∈ FootprintVertices
-            T, FourNeighborAdjacent x y → {x, y} ∈ FootprintEdges T) ∧ ∀ x ∈ FootprintVertices T,
-            GaussianRealPoint x ∈ interior (TileRealization T) ↔ x ∉ BoundaryFootprintVertices T)
-            → (
-        let D : Finset GaussianInt := h.domain.filter
-          (fun x => @decide (x ∉ BoundaryFootprintVertices T)
-            (Classical.propDecidable _))
-        (T.cells.Nonempty) → (∀ (p : List GaussianInt), ∀ (x₀ : GaussianInt), ∀ (x₁ :
-            GaussianInt), (BoundaryFootprintVertices T = (↑p.toFinset : Set GaussianInt)) → ((∀
-            (e : Finset GaussianInt), e ∈ BoundaryFootprintEdges T ↔ e = {x₁, x₀} ∨ ∃ (a :
-            GaussianInt) (b : GaussianInt) (l₁ : List GaussianInt) (l₂ : List GaussianInt), p =
-            l₁ ++ a :: b :: l₂ ∧ e = {a, b}) → (((BoundaryFootprintVertices T).ncard = p.length)
-            → ((∀ (z : GaussianInt), z ∈ D ↔ z ∈ FootprintVertices T ∧ z ∉
-            BoundaryFootprintVertices T) → ((∀ (v : GaussianInt), (T.cells.image (fun z => z + v)
-            = T.cells) → (v = 0)) → ((∀ (z : GaussianInt), ∃ a ∈ T.cells, ∃ v ∈ TilingLattice C,
-            z = a + v) → (∀ (a : GaussianInt), ∀ (a' : GaussianInt), (a ∈ T.cells) → ((a' ∈
-            T.cells) → ((a - a' ∈ TilingLattice C) → (a = a'))))))))))))))))))) ) := by
+        ∀ (C : BandCircle),
+          ∀ (T : ProtoTile),
+            ∀ (h : PartialOdometer),
+              ∀ (g : IntegerLatticeFunction),
+                (↑h.domain : Set GaussianInt) = FootprintVertices T →
+                  ExactTileTiling (RegularTileFamily T (TilingLattice C)) →
+                    (∀ x ∈ BoundaryFootprintVertices T,
+                        FourNeighborLaplacian g x = (1 : ℤ)) →
+                      (FootprintVertices T).ncard + Finset.card T.cells =
+                          (FootprintEdges T).ncard + (1 : ℕ) →
+                        ∀ (p : List GaussianInt),
+                          ∀ (x₀ : GaussianInt),
+                            ∀ (x₁ : GaussianInt),
+                              BoundaryFootprintVertices T =
+                                (↑p.toFinset : Set GaussianInt) →
+                                (∀ (e : Finset GaussianInt),
+                                e ∈ BoundaryFootprintEdges T ↔
+                                e = { x₁, x₀ } ∨
+                                ∃ (a : GaussianInt) (b : GaussianInt) (l₁ :
+                                List GaussianInt) (l₂ : List GaussianInt),
+                                p = l₁ ++ a :: b :: l₂ ∧ e = { a, b }) →
+                                (BoundaryFootprintVertices T).ncard = p.length →
+                                (∀ (v : GaussianInt),
+                                (T.cells.image fun z => z + v) = T.cells → v = 0) →
+                                (∀ (z : GaussianInt),
+                                ∃ a ∈ T.cells, ∃ v ∈ TilingLattice C, z = a + v) →
+                                ∀ (a : GaussianInt),
+                                ∀ (a' : GaussianInt),
+                                a ∈ T.cells →
+                                a' ∈ T.cells → a - a' ∈ TilingLattice C → a = a'
+    ) := by
   classical
-  intro C T h g hdom hT hlat htile hweb hcountBridge htiles heuler hreg D hcells p x₀ x₁ hverts
-      hedges hboundary_card hDmem htranslation_rigid hcell_cover a a' ha ha' hres
+  intro C T h g hdom htile hweb heuler p x₀ x₁ hverts hedges hboundary_card htranslation_rigid
+      hcell_cover a a' ha ha' hres
   let v := a - a'
   have htransmem : a ∈ (TileTranslation T v).cells := by
     change a ∈ T.cells.image (fun z => z + v)
@@ -1929,7 +1936,7 @@ private theorem hcountBridge :
   let J := A.filter fun q => q.1 ∈ D ∧ q.1 + step q.2 ∈ D
   have hdegree_count : A.card + J.card = 4 * D.card  := PeriodicIndegreeGeometry.hdegree_count T D
       (PeriodicIndegreeGeometry.hAendpoint T D hDmem hreg hEV hEmem
-      (PeriodicIndegreeGeometry.hshared T htiles hreg hinc hEocc
+      (PeriodicIndegreeGeometry.hshared T hinc hEocc
       (PeriodicIndegreeGeometry.hBEocc T edgeOf_injective))
       (PeriodicIndegreeGeometry.hhorizontal T) (PeriodicIndegreeGeometry.hvertical T) hedgeOf)
       (PeriodicIndegreeGeometry.hdegree_sum T D (PeriodicIndegreeGeometry.hdegree T D hDmem
@@ -1998,9 +2005,9 @@ theorem PeriodicTileTotalIndegree (C : BandCircle)
   have hDmem := PeriodicIndegreeGeometry.hDmem T h hdom
   -- Exact tiling makes the cell bases a finite set of residue representatives.
   have hcell_cover := PeriodicIndegreeGeometry.hcell_cover C T htile
-  have hcell_residue_unique := PeriodicIndegreeGeometry.hcell_residue_unique C T h g hdom hT hlat
-      htile hweb hcountBridge htiles heuler hreg hcells p x₀ x₁ hverts hedges
-      (PeriodicIndegreeGeometry.hboundary_card T p hpnd hverts) hDmem
+  have hcell_residue_unique := PeriodicIndegreeGeometry.hcell_residue_unique C T h g hdom
+      htile hweb heuler p x₀ x₁ hverts hedges
+      (PeriodicIndegreeGeometry.hboundary_card T p hpnd hverts)
       (PeriodicIndegreeGeometry.htranslation_rigid T hcells) hcell_cover
   have hfund := PeriodicIndegreeGeometry.hfund C T hcell_cover hcell_residue_unique
   obtain ⟨R, hR, hRcard⟩ := TilingLatticeIndex C

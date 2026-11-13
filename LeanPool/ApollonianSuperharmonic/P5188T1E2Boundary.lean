@@ -151,10 +151,7 @@ private theorem ceilPerturb : ∀ (N M d q E : ℤ) (hd : 0 < d) (hdq : d < q), 
   classical
   exact P5188T1CeilingStability
 
-private theorem ceilShift : ∀ (M C q : ℤ) (hq : q ≠ 0), IntegerCeilDiv (M + C * q) q hq =
-    IntegerCeilDiv M q hq + C := by
-  classical
-  exact P5188T1CeilingShift
+private abbrev ceilShift := ApollonianSuperharmonic.P5188T1CeilingShift
 
 private theorem ceilZero (d : Int) (hd : d ≠ 0) : IntegerCeilDiv 0 d hd = 0 := by
   classical

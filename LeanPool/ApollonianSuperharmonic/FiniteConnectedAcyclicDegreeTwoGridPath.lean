@@ -313,29 +313,25 @@ private theorem hLchain :
   exact hab.2.elim id (by simp [Finset.pair_comm])
 
 private theorem hgridstep :
-    ∀ (X : Set GaussianInt), ∀ (E : Set (Finset GaussianInt)), (X = {x | ∃ e ∈ E, x ∈ e}) → ((∀ e
-        ∈ E, ∃ a b : GaussianInt, e = {a, b} ∧ FourNeighborAdjacent a b) → (((SimpleGraph.fromRel
-        fun a b : X => ({a.1, b.1} : Finset GaussianInt) ∈ E).Connected) → (((SimpleGraph.fromRel
-        fun a b : X => ({a.1, b.1} : Finset GaussianInt) ∈ E).IsAcyclic) → ((∀ v : X, Set.ncard
-        ((SimpleGraph.fromRel fun a b : X => ({a.1, b.1} : Finset GaussianInt) ∈ E).neighborSet
-        v) ≤ 2) → (
-    let G : SimpleGraph X := SimpleGraph.fromRel fun a b : X =>
-      ({a.1, b.1} : Finset GaussianInt) ∈ E
-    (X.Finite) → ((X.Nonempty) → ((G.Connected) → ((G.IsAcyclic) → (
-    let lengths : Set Nat := {n | ∃ (u v : X) (p : G.Walk u v),
-      p.IsPath ∧ p.length = n}
-    (lengths.Finite) → (∀ (n : ℕ), (∀ ⦃y : ℕ⦄, (fun (x : ℕ) => x ∈ lengths) y → n ≤ y → y ≤ n) →
-        (∀ (u : (↑X : Type)), ∀ (v : (↑X : Type)), ∀ (p : G.Walk u v), (p.IsPath) → ((p.length =
-        n) → ((∀ (u' : X), ∀ (v' : X), ∀ (p' : G.Walk u' v'), (p'.IsPath) → (p'.length ≤
-        p.length)) → ((0 < p.length) → ((∀ z : X, z ∈ p.support → ∀ w : X, G.Adj z w → w ∈
-        p.support) → ((∀ (x : X), x ∈ p.support) → (({x : X | x ∈ p.support} = Set.univ) → (
-    let L : List GaussianInt := p.support.map Subtype.val
-    (L.Nodup) → ((L.length = p.length + 1) → ((List.IsChain (fun a b : GaussianInt => ({a, b} :
-        Finset GaussianInt) ∈ E) L) → (∀ a b : GaussianInt,
-      ({a, b} : Finset GaussianInt) ∈ E → FourNeighborAdjacent a b))))))))))))))))))))) := by
+    ∀ (X : Set GaussianInt),
+      ∀ (E : Set (Finset GaussianInt)),
+        X = {x | ∃ e ∈ E, x ∈ e} →
+          (∀ e ∈ E, ∃ a b : GaussianInt, e = { a, b } ∧ FourNeighborAdjacent a b) →
+            let G : SimpleGraph X :=
+              SimpleGraph.fromRel fun a b : X => ({ a.1, b.1 } : Finset GaussianInt) ∈ E;
+            ∀ (n : ℕ),
+              ∀ (u : (↑X : Type)),
+                ∀ (v : (↑X : Type)),
+                  ∀ (p : G.Walk u v),
+                    p.length = n →
+                      0 < p.length →
+                        {x : X | x ∈ p.support} = Set.univ →
+                          let L : List GaussianInt := p.support.map Subtype.val;
+                          L.length = p.length + 1 →
+                            ∀ a b : GaussianInt,
+                            ({ a, b } : Finset GaussianInt) ∈ E → FourNeighborAdjacent a b := by
   classical
-  intro X E hendpoints hgrid hconnected hacyclic hdegree G hXfinite hXne hGconn hGacyc lengths
-      hlengths n hnl u v p hp hp_len hmax hlong hboundary hall hsupport L hLnodup hLlen hLchain
+  intro X E hendpoints hgrid G n u v p hp_len hlong hsupport L hLlen
   have hsymm : ∀ a b : GaussianInt, FourNeighborAdjacent a b →
       FourNeighborAdjacent b a := by
     intro a b h
@@ -511,8 +507,8 @@ theorem FiniteConnectedAcyclicDegreeTwoGridPath
       ({a, b} : Finset GaussianInt) ∈ E) L := GridPathProof.hLchain X E u v p
   have hgridstep : ∀ a b : GaussianInt,
       ({a, b} : Finset GaussianInt) ∈ E → FourNeighborAdjacent a b := GridPathProof.hgridstep X E
-          hendpoints hgrid hconnected hacyclic hdegree hXfinite hXne hGconn hGacyc hlengths n hnl
-          u v p hp hp_len hmax hlong hboundary hall hsupport hLnodup hLlen hLchain
+          hendpoints hgrid n
+          u v p hp_len hlong hsupport hLlen
   have hstep : ∀ a b : GaussianInt, ∀ l₁ l₂ : List GaussianInt,
       L = l₁ ++ a :: b :: l₂ → FourNeighborAdjacent a b := GridPathProof.hstep X E u v p hLchain
           hgridstep

@@ -6,6 +6,7 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.GaussianRealPointProperties
 
 public import LeanPool.ApollonianSuperharmonic.P3996T1SRowTable
 public import LeanPool.ApollonianSuperharmonic.P3045T1RightBoundaryDisplacementAlgebra
@@ -365,20 +366,7 @@ private theorem flip_incoming :
   exact (VectorRecursionLaws bundle.normalizedPresentation
     bundle.configuration.proper.1).2.2.2.2 bundle.configuration.proper i |>.1
 
-private theorem realPoint_injective :
-    (by
-      classical
-      exact
-        Function.Injective GaussianRealPoint ) := by
-  classical
-  intro v w h
-  apply Zsqrtd.ext
-  · have h' := congrArg Prod.fst h
-    dsimp [GaussianRealPoint] at h'
-    exact_mod_cast h'
-  · have h' := congrArg Prod.snd h
-    dsimp [GaussianRealPoint] at h'
-    exact_mod_cast h'
+private abbrev realPoint_injective := ApollonianSuperharmonic.GaussianRealPointProperties.injective
 
 private theorem branchDisplacement_nonzero :
     (by
@@ -527,14 +515,7 @@ private theorem centerAlgSecond :
   have hreal := congrArg GaussianRealPoint hvec
   exact cancel2 _ _ (hleft.trans (hreal.trans hright))
 
-private theorem gp_neg_any :
-    (by
-      classical
-      exact
-        ∀ (g : GaussianInt), GaussianRealPoint (-g) = -GaussianRealPoint g ) := by
-  classical
-  intro g
-  ext <;> simp [GaussianRealPoint]
+private abbrev gp_neg_any := ApollonianSuperharmonic.GaussianRealPointProperties.negation
 
 private theorem first_center :
     (by
@@ -726,15 +707,7 @@ private theorem third_period :
   rw [h1, h2, h3]
   ring
 
-private theorem gp_add :
-    (by
-      classical
-      exact
-        ∀ (v : GaussianInt), ∀ (w : GaussianInt), GaussianRealPoint (v + w) = GaussianRealPoint v
-            + GaussianRealPoint w ) := by
-  classical
-  intro v w
-  ext <;> simp [GaussianRealPoint]
+private abbrev gp_add := ApollonianSuperharmonic.GaussianRealPointProperties.add
 
 private theorem parent_center :
     (by
@@ -865,7 +838,8 @@ private theorem row_data :
             bundle.routedDirection), ∀ (a : PeriodicSubtileIndex), ∀ (b : PeriodicSubtileIndex),
             ∀ (row : BandOrderedGeneralSelectedContactRow bundle.normalizedPresentation
             bundle.configuration bundle.normalizedCircle bundle.normalizedFixed placement.layout
-            a b), (placement.exteriorIndex = a) → ((placement.centralIndex = b) → (∀ (z :
+            a b), (placement.exteriorIndex = a) → (
+                                                                                  (∀ (z :
             P3996T1SRowParameters), (P3996T1SRowTable bundle.normalizedPresentation
             bundle.configuration bundle.normalizedCircle bundle.normalizedFixed placement.layout
             row = some z) → (
@@ -917,7 +891,7 @@ private theorem row_data :
             (branchDisplacement bundle.selectedSlot) n ∧ z.oldShift = if n.val < 2 then -o
             bundle.selectedSlot else o bundle.selectedSlot))))))))))) ) := by
   classical
-  intro C D T N h k x bundle placement a b row ha hb z hz occurrence exteriorSlot selected_slot I
+  intro C D T N h k x bundle placement a b row ha z hz occurrence exteriorSlot selected_slot I
       branchDisplacement quarterTurn branchCenter cOff gp_neg_any q o e d exteriorCenter period0
       period1 third_period gp_add occurrence_center raw_centers
   -- Evaluate the twelve literal exterior occurrences using the shared centers.
@@ -1094,6 +1068,7 @@ theorem P3996T1PlacementCompanionBlocks
       BandVectors.1 (q 0) (q placement.rightSecondSlot.succ) = z.oldShift) := by
 -- BODY
   classical
+  subst hb
   -- Distinct parent areas identify the selected slot without assuming its sign.
   have area_of_band := PlacementCompanionGeometry.area_of_band
   let occurrence := SubtileOccurrenceInterpretation placement.layout.P
@@ -1191,8 +1166,9 @@ theorem P3996T1PlacementCompanionBlocks
   have translate_center (V : ProtoTile) (w : GaussianInt) :
       TileCentroid (TileTranslation V w) = TileCentroid V + GaussianRealPoint w :=
     (TileTranslationFormulas V w).2.2.2.2.1
-  have row_data := PlacementCompanionGeometry.row_data C D T N h k x bundle placement a b row ha
-      hb z hz
+  have row_data := PlacementCompanionGeometry.row_data C D T N h k x bundle placement a
+      placement.centralIndex row ha z
+      hz
           selected_slot gp_neg_any period0 period1 (PlacementCompanionGeometry.third_period C D T
               N h k x bundle) (PlacementCompanionGeometry.gp_add)
               (PlacementCompanionGeometry.occurrence_center C D T N h k x bundle placement

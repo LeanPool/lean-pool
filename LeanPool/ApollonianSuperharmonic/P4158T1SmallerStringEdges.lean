@@ -6,6 +6,8 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.GaussianRealPointProperties
+public import LeanPool.ApollonianSuperharmonic.FordTileCellMembership
 public import LeanPool.ApollonianSuperharmonic.ListEndpointFacts
 
 public import LeanPool.ApollonianSuperharmonic.AncestorOdometer
@@ -33,25 +35,34 @@ private theorem hqone :
     (by
       classical
       exact
-        ∀ (P : FordFareyParameter), ∀ (Ci : BandCircle), ∀ (i : Fin 3), (FordRecursiveQuadruple P
-            i.succ = Ci.1.1) → (((1 : ℤ) < Ci.1.1.1) → ((i = (0 : Fin (3 : ℕ)) ∧ P.q₁ < P.q₂ ∨ i
-            = (1 : Fin (3 : ℕ)) ∧ P.q₂ < P.q₁) → (∀ (T : ProtoTile), ∀ (T' : ProtoTile), ∀ (u :
-            GaussianInt), (T'.cells = (TileTranslation (FordTile P.q) (u + if i = (0 : Fin (3 :
-            ℕ)) then (⟨(↑P.q : ℤ), (↑P.q₁ : ℤ)⟩ : GaussianInt) else (⟨-(↑P.q : ℤ), (↑P.q₂ : ℤ)⟩ :
-            GaussianInt))).cells) → ((∀ (x : GaussianInt), x ∈ FootprintVertices T ∩
-            FootprintVertices T' ↔ ((x - u).re = if i = (0 : Fin (3 : ℕ)) then (↑P.q : ℤ) else (0
-            : ℤ)) ∧ (if i = (0 : Fin (3 : ℕ)) then (↑P.q₁ : ℤ) else (↑P.q₂ : ℤ)) ≤ (x - u).im ∧
-            (x - u).im ≤ (↑P.q : ℤ)) → (∀ (Rminus : ProtoTile), ∀ (Rplus : ProtoTile),
-            (TileCentroid Rminus - TileCentroid T = (1 / 2 : ℝ) • GaussianRealPoint
-            (BandVectors.1 (FordRecursiveQuadruple P i.succ) (FordRecursiveQuadruple P (0 : Fin
-            (4 : ℕ))) - BandVectors.1 (FordRecursiveQuadruple P (0 : Fin (4 : ℕ)))
-            (FordRecursiveQuadruple P i.succ))) → ((TileCentroid Rplus - TileCentroid T = (1 / 2
-            : ℝ) • GaussianRealPoint (BandVectors.1 (FordRecursiveQuadruple P i.succ)
-            (FordRecursiveQuadruple P (0 : Fin (4 : ℕ))) + BandVectors.1 (FordRecursiveQuadruple
-            P (0 : Fin (4 : ℕ))) (FordRecursiveQuadruple P i.succ))) → (((P.q : Int) = P.q₁ +
-            P.q₂) → (1 < P.q)))))))) ) := by
+        ∀ (P : FordFareyParameter),
+          ∀ (Ci : BandCircle),
+            ∀ (i : Fin 3),
+              FordRecursiveQuadruple P i.succ = Ci.1.1 →
+                (1 : ℤ) < Ci.1.1.1 →
+                  i = (0 : Fin (3 : ℕ)) ∧ P.q₁ < P.q₂ ∨
+                      i = (1 : Fin (3 : ℕ)) ∧ P.q₂ < P.q₁ →
+                    ∀ (T : ProtoTile),
+                      ∀ (T' : ProtoTile),
+                        ∀ (u : GaussianInt),
+                          T'.cells =
+                              (TileTranslation (FordTile P.q)
+                                (u +
+                                if i = (0 : Fin (3 : ℕ)) then
+                                (⟨(↑P.q : ℤ), (↑P.q₁ : ℤ)⟩ : GaussianInt)
+                              else (⟨-(↑P.q : ℤ), (↑P.q₂ : ℤ)⟩ : GaussianInt))).cells →
+                            (∀ (x : GaussianInt),
+                                x ∈ FootprintVertices T ∩ FootprintVertices T' ↔
+                                ((x - u).re =
+                                if i = (0 : Fin (3 : ℕ)) then (↑P.q : ℤ) else (0 : ℤ)) ∧
+                                (if i = (0 : Fin (3 : ℕ)) then (↑P.q₁ : ℤ)
+                              else (↑P.q₂ : ℤ)) ≤
+                                (x - u).im ∧
+                                (x - u).im ≤ (↑P.q : ℤ)) →
+                              (P.q : Int) = P.q₁ + P.q₂ → 1 < P.q
+    ) := by
   classical
-  intro P Ci i hCi hlarge hsmall T T' u hc' hsegment Rminus Rplus hcm hcp hsum
+  intro P Ci i hCi hlarge hsmall T T' u hc' hsegment hsum
   by_contra hn
   have he : P.q = 1 := by have := P.q_pos; omega
   have hunit := P.unit_case he
@@ -193,30 +204,6 @@ private theorem hFord :
     have hF := (FordTileRecursiveIdentification Q).1
     rw [hpQ, hqQ] at hF
     simpa [n, ← hCi, FordRecursiveQuadruple] using hF
-
-private theorem fordcell :
-    (by
-      classical
-      exact
-        ∀ (m : Nat),
-          ∀ (z : GaussianInt),
-            z ∈ (FordTile m).cells ↔ 0 ≤ z.re ∧ z.re < m ∧ 0 ≤ z.im ∧ z.im < m
-    ) := by
-  classical
-  intro m z
-  change z ∈ ((Finset.range m).product (Finset.range m)).image
-    (fun a => (⟨(a.1 : Int), (a.2 : Int)⟩ : GaussianInt)) ↔ _
-  rw [Finset.mem_image]
-  constructor
-  · rintro ⟨⟨j, k⟩, hjk, rfl⟩
-    have hjk := Finset.mem_product.mp hjk
-    simp only [Finset.mem_range] at hjk
-    dsimp; omega
-  · rintro ⟨h0, h1, h2, h3⟩
-    exact ⟨(z.re.toNat, z.im.toNat),
-      Finset.mem_product.mpr ⟨Finset.mem_range.mpr (by omega),
-        Finset.mem_range.mpr (by omega)⟩,
-      by ext <;> dsimp <;> omega⟩
 
 private theorem fordcent :
     (by
@@ -556,20 +543,7 @@ private theorem hnormdelta :
   · simp [vm, vp, n, Zsqrtd.norm_def]
     ring
 
-private theorem pointinj :
-    (by
-      classical
-      exact
-        Function.Injective GaussianRealPoint ) := by
-  classical
-  intro x y he
-  apply Zsqrtd.ext
-  · have hh := congrArg Prod.fst he
-    dsimp [GaussianRealPoint] at hh
-    exact_mod_cast hh
-  · have hh := congrArg Prod.snd he
-    dsimp [GaussianRealPoint] at hh
-    exact_mod_cast hh
+private abbrev pointinj := ApollonianSuperharmonic.GaussianRealPointProperties.injective
 
 private theorem hRS :
     (by
@@ -791,49 +765,80 @@ private theorem hminusheight :
       classical
       exact
         ∀ (P : FordFareyParameter),
-        (∀ (Ci : BandCircle), ∀ (i : Fin 3),
-            (FordRecursiveQuadruple P i.succ = Ci.1.1) → ((i = (0 : Fin (3 : ℕ)) ∧ P.q₁ < P.q₂ ∨
-            i = (1 : Fin (3 : ℕ)) ∧ P.q₂ < P.q₁) → (∀ (T : ProtoTile), ∀ (T' : ProtoTile), ∀ (u :
-            GaussianInt), (T'.cells = (TileTranslation (FordTile P.q) (u + if i = (0 : Fin (3 :
-            ℕ)) then (⟨(↑P.q : ℤ), (↑P.q₁ : ℤ)⟩ : GaussianInt) else (⟨-(↑P.q : ℤ), (↑P.q₂ : ℤ)⟩ :
-            GaussianInt))).cells) → ((∀ (x : GaussianInt), x ∈ FootprintVertices T ∩
-            FootprintVertices T' ↔ ((x - u).re = if i = (0 : Fin (3 : ℕ)) then (↑P.q : ℤ) else (0
-            : ℤ)) ∧ (if i = (0 : Fin (3 : ℕ)) then (↑P.q₁ : ℤ) else (↑P.q₂ : ℤ)) ≤ (x - u).im ∧
-            (x - u).im ≤ (↑P.q : ℤ)) → (∀ (Rminus : ProtoTile), ∀ (Rplus : ProtoTile),
-            (TileCentroid Rminus - TileCentroid T = (1 / 2 : ℝ) • GaussianRealPoint
-            (BandVectors.1 (FordRecursiveQuadruple P i.succ) (FordRecursiveQuadruple P (0 : Fin
-            (4 : ℕ))) - BandVectors.1 (FordRecursiveQuadruple P (0 : Fin (4 : ℕ)))
-            (FordRecursiveQuadruple P i.succ))) → ((TileCentroid Rplus - TileCentroid T = (1 / 2
-            : ℝ) • GaussianRealPoint (BandVectors.1 (FordRecursiveQuadruple P i.succ)
-            (FordRecursiveQuadruple P (0 : Fin (4 : ℕ))) + BandVectors.1 (FordRecursiveQuadruple
-            P (0 : Fin (4 : ℕ))) (FordRecursiveQuadruple P i.succ))) → (((P.q : Int) = P.q₁ +
-            P.q₂) → (
-        let n := if i = 0 then P.q₁ else P.q₂;
-        (0 < n) → ((n < P.q) → ((Ci.1.1.1 = (n : Int) ^ 2) → ((1 < n) → ((BandPrototile Ci.1.1
-            (FordTile n)) → ((∀ (A : ProtoTile), ∀ (m : Nat), (0 < m) → (∀ (v : GaussianInt),
-            (A.cells = (TileTranslation (FordTile m) v).cells) → (FootprintVertices A =
-            FootprintVertices (TileTranslation (FordTile m) v) ∧ TileCentroid A = TileCentroid
-            (TileTranslation (FordTile m) v)))) → (
-        let vm : GaussianInt := u + if i = 0 then ⟨P.q, 0⟩ else ⟨0, P.q⟩;
-        let vp : GaussianInt := u + if i = 0 then ⟨P.q₂, P.q⟩ else ⟨-(P.q₂ : Int), 0⟩;
-        (BandVectors.1 (FordRecursiveQuadruple P (0 : Fin (4 : ℕ))) (FordRecursiveQuadruple P
-            i.succ) = (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt) * BandVectors.1 (FordRecursiveQuadruple
-            P i.succ) (FordRecursiveQuadruple P (0 : Fin (4 : ℕ)))) → ((TileCentroid Rminus =
-            TileCentroid (TileTranslation (FordTile n) vm)) → ((TileCentroid Rplus = TileCentroid
-            (TileTranslation (FordTile n) vp)) → ((Rminus.cells = (TileTranslation (FordTile n)
-            vm).cells) → ((Rplus.cells = (TileTranslation (FordTile n) vp).cells) →
-            ((TileCentroid Rplus - TileCentroid Rminus = GaussianRealPoint (vp - vm)) →
-            ((Zsqrtd.norm (vp - vm) = (P.q : Int) ^ 2 + (n : Int) ^ 2) → (∀ (walk : List
-            GaussianInt), (∀ (x : GaussianInt), (x ∈ walk) → ((x - u).re = (if i = 0 then (P.q :
-            Int) else 0) ∧ (n : Int) ≤ (x - u).im ∧ (x - u).im ≤ P.q)) → ((∀ (m : Nat), (0 < m) →
-            (∀ (v : GaussianInt), ∀ (x : GaussianInt), x ∈ FootprintVertices (TileTranslation
-            (FordTile m) v) ↔ 0 ≤ (x - v).re ∧ (x - v).re ≤ m ∧ 0 ≤ (x - v).im ∧ (x - v).im ≤ m))
-            → (∀ (x : GaussianInt), (x ∈ walk) → ((x ∈ FootprintVertices Rminus) → ((x - u).im =
-            if i = 0 then (n : Int) else P.q))))))))))))))))))))))))) ) := by
+          ∀ (Ci : BandCircle),
+            ∀ (i : Fin 3),
+              FordRecursiveQuadruple P i.succ = Ci.1.1 →
+                i = (0 : Fin (3 : ℕ)) ∧ P.q₁ < P.q₂ ∨
+                    i = (1 : Fin (3 : ℕ)) ∧ P.q₂ < P.q₁ →
+                  ∀ (T : ProtoTile),
+                    ∀ (T' : ProtoTile),
+                      ∀ (u : GaussianInt),
+                        T'.cells =
+                            (TileTranslation (FordTile P.q)
+                                (u +
+                                if i = (0 : Fin (3 : ℕ)) then
+                                (⟨(↑P.q : ℤ), (↑P.q₁ : ℤ)⟩ : GaussianInt)
+                              else (⟨-(↑P.q : ℤ), (↑P.q₂ : ℤ)⟩ : GaussianInt))).cells →
+                          (∀ (x : GaussianInt),
+                              x ∈ FootprintVertices T ∩ FootprintVertices T' ↔
+                                ((x - u).re =
+                                if i = (0 : Fin (3 : ℕ)) then (↑P.q : ℤ) else (0 : ℤ)) ∧
+                                (if i = (0 : Fin (3 : ℕ)) then (↑P.q₁ : ℤ)
+                              else (↑P.q₂ : ℤ)) ≤
+                                (x - u).im ∧
+                                (x - u).im ≤ (↑P.q : ℤ)) →
+                            ∀ (Rminus : ProtoTile),
+                              ∀ (Rplus : ProtoTile),
+                                (P.q : Int) = P.q₁ + P.q₂ →
+                                let n := if i = 0 then P.q₁ else P.q₂;
+                              0 < n →
+                                n < P.q →
+                                Ci.1.1.1 = (n : Int) ^ 2 →
+                                1 < n →
+                                BandPrototile Ci.1.1 (FordTile n) →
+                                (∀ (A : ProtoTile),
+                                ∀ (m : Nat),
+                                0 < m →
+                                ∀ (v : GaussianInt),
+                                A.cells = (TileTranslation (FordTile m) v).cells →
+                                FootprintVertices A =
+                                FootprintVertices (TileTranslation (FordTile m) v) ∧
+                                TileCentroid A =
+                                TileCentroid (TileTranslation (FordTile m) v)) →
+                                let vm : GaussianInt :=
+                                u + if i = 0 then ⟨P.q, 0⟩ else ⟨0, P.q⟩;
+                              let vp : GaussianInt :=
+                                u + if i = 0 then ⟨P.q₂, P.q⟩ else ⟨-(P.q₂ : Int), 0⟩;
+                              TileCentroid Rminus =
+                                TileCentroid (TileTranslation (FordTile n) vm) →
+                                TileCentroid Rplus =
+                                TileCentroid (TileTranslation (FordTile n) vp) →
+                                Rminus.cells = (TileTranslation (FordTile n) vm).cells →
+                                Rplus.cells = (TileTranslation (FordTile n) vp).cells →
+                                TileCentroid Rplus - TileCentroid Rminus =
+                                GaussianRealPoint (vp - vm) →
+                                Zsqrtd.norm (vp - vm) = (P.q : Int) ^ 2 + (n : Int) ^ 2 →
+                                ∀ (walk : List GaussianInt),
+                                (∀ (x : GaussianInt),
+                                x ∈ walk →
+                                ((x - u).re = if i = 0 then (P.q : Int) else 0) ∧
+                                (n : Int) ≤ (x - u).im ∧ (x - u).im ≤ P.q) →
+                                (∀ (m : Nat),
+                                0 < m →
+                                ∀ (v : GaussianInt),
+                                ∀ (x : GaussianInt),
+                                x ∈ FootprintVertices (TileTranslation (FordTile m) v) ↔
+                                0 ≤ (x - v).re ∧
+                                (x - v).re ≤ m ∧ 0 ≤ (x - v).im ∧ (x - v).im ≤ m) →
+                                ∀ (x : GaussianInt),
+                                x ∈ walk →
+                                x ∈ FootprintVertices Rminus →
+                                (x - u).im = if i = 0 then (n : Int) else P.q
+    ) := by
   classical
-  intro P Ci i hCi hsmall T T' u hc' hsegment Rminus Rplus hcm hcp hsum n hnpos hnq hCicurv
-      hnlarge hFord cellobs vm vp hflip hcmcand hcpcand heqm heqp hdelta hnormdelta walk
-      hwsegment squarefoot x hx hxm
+  intro P Ci i hCi hsmall T T' u hc' hsegment Rminus Rplus hsum n hnpos hnq hCicurv hnlarge
+      hFord cellobs vm vp hcmcand hcpcand heqm heqp hdelta hnormdelta walk hwsegment squarefoot
+      x hx hxm
   rw [(cellobs Rminus n hnpos vm heqm).1] at hxm
   have hxbox := (squarefoot n hnpos vm x).mp hxm
   have hxseg := hwsegment x hx
@@ -845,51 +850,84 @@ private theorem hplusheight :
       classical
       exact
         ∀ (P : FordFareyParameter),
-        (∀ (Ci : BandCircle), ∀ (i : Fin 3),
-            (FordRecursiveQuadruple P i.succ = Ci.1.1) → ((i = (0 : Fin (3 : ℕ)) ∧ P.q₁ < P.q₂ ∨
-            i = (1 : Fin (3 : ℕ)) ∧ P.q₂ < P.q₁) → (∀ (T : ProtoTile), ∀ (T' : ProtoTile), ∀ (u :
-            GaussianInt), (T'.cells = (TileTranslation (FordTile P.q) (u + if i = (0 : Fin (3 :
-            ℕ)) then (⟨(↑P.q : ℤ), (↑P.q₁ : ℤ)⟩ : GaussianInt) else (⟨-(↑P.q : ℤ), (↑P.q₂ : ℤ)⟩ :
-            GaussianInt))).cells) → ((∀ (x : GaussianInt), x ∈ FootprintVertices T ∩
-            FootprintVertices T' ↔ ((x - u).re = if i = (0 : Fin (3 : ℕ)) then (↑P.q : ℤ) else (0
-            : ℤ)) ∧ (if i = (0 : Fin (3 : ℕ)) then (↑P.q₁ : ℤ) else (↑P.q₂ : ℤ)) ≤ (x - u).im ∧
-            (x - u).im ≤ (↑P.q : ℤ)) → (∀ (Rminus : ProtoTile), ∀ (Rplus : ProtoTile),
-            (TileCentroid Rminus - TileCentroid T = (1 / 2 : ℝ) • GaussianRealPoint
-            (BandVectors.1 (FordRecursiveQuadruple P i.succ) (FordRecursiveQuadruple P (0 : Fin
-            (4 : ℕ))) - BandVectors.1 (FordRecursiveQuadruple P (0 : Fin (4 : ℕ)))
-            (FordRecursiveQuadruple P i.succ))) → ((TileCentroid Rplus - TileCentroid T = (1 / 2
-            : ℝ) • GaussianRealPoint (BandVectors.1 (FordRecursiveQuadruple P i.succ)
-            (FordRecursiveQuadruple P (0 : Fin (4 : ℕ))) + BandVectors.1 (FordRecursiveQuadruple
-            P (0 : Fin (4 : ℕ))) (FordRecursiveQuadruple P i.succ))) → (((P.q : Int) = P.q₁ +
-            P.q₂) → (
-        let n := if i = 0 then P.q₁ else P.q₂;
-        (0 < n) → ((n < P.q) → ((Ci.1.1.1 = (n : Int) ^ 2) → ((1 < n) → ((BandPrototile Ci.1.1
-            (FordTile n)) → ((∀ (A : ProtoTile), ∀ (m : Nat), (0 < m) → (∀ (v : GaussianInt),
-            (A.cells = (TileTranslation (FordTile m) v).cells) → (FootprintVertices A =
-            FootprintVertices (TileTranslation (FordTile m) v) ∧ TileCentroid A = TileCentroid
-            (TileTranslation (FordTile m) v)))) → (
-        let vm : GaussianInt := u + if i = 0 then ⟨P.q, 0⟩ else ⟨0, P.q⟩;
-        let vp : GaussianInt := u + if i = 0 then ⟨P.q₂, P.q⟩ else ⟨-(P.q₂ : Int), 0⟩;
-        (BandVectors.1 (FordRecursiveQuadruple P (0 : Fin (4 : ℕ))) (FordRecursiveQuadruple P
-            i.succ) = (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt) * BandVectors.1 (FordRecursiveQuadruple
-            P i.succ) (FordRecursiveQuadruple P (0 : Fin (4 : ℕ)))) → ((TileCentroid Rminus =
-            TileCentroid (TileTranslation (FordTile n) vm)) → ((TileCentroid Rplus = TileCentroid
-            (TileTranslation (FordTile n) vp)) → ((Rminus.cells = (TileTranslation (FordTile n)
-            vm).cells) → ((Rplus.cells = (TileTranslation (FordTile n) vp).cells) →
-            ((TileCentroid Rplus - TileCentroid Rminus = GaussianRealPoint (vp - vm)) →
-            ((Zsqrtd.norm (vp - vm) = (P.q : Int) ^ 2 + (n : Int) ^ 2) → (∀ (walk : List
-            GaussianInt), (∀ (x : GaussianInt), (x ∈ walk) → ((x - u).re = (if i = 0 then (P.q :
-            Int) else 0) ∧ (n : Int) ≤ (x - u).im ∧ (x - u).im ≤ P.q)) → ((∀ (m : Nat), (0 < m) →
-            (∀ (v : GaussianInt), ∀ (x : GaussianInt), x ∈ FootprintVertices (TileTranslation
-            (FordTile m) v) ↔ 0 ≤ (x - v).re ∧ (x - v).re ≤ m ∧ 0 ≤ (x - v).im ∧ (x - v).im ≤ m))
-            → ((∀ (x : GaussianInt), (x ∈ walk) → ((x ∈ FootprintVertices Rminus) → ((x - u).im =
-            if i = 0 then (n : Int) else P.q))) → (∀ (x : GaussianInt), (x ∈ walk) → ((x ∈
-            FootprintVertices Rplus) → ((x - u).im = if i = 0 then (P.q : Int) else
-            n)))))))))))))))))))))))))) ) := by
+          ∀ (Ci : BandCircle),
+            ∀ (i : Fin 3),
+              FordRecursiveQuadruple P i.succ = Ci.1.1 →
+                i = (0 : Fin (3 : ℕ)) ∧ P.q₁ < P.q₂ ∨
+                    i = (1 : Fin (3 : ℕ)) ∧ P.q₂ < P.q₁ →
+                  ∀ (T : ProtoTile),
+                    ∀ (T' : ProtoTile),
+                      ∀ (u : GaussianInt),
+                        T'.cells =
+                            (TileTranslation (FordTile P.q)
+                                (u +
+                                if i = (0 : Fin (3 : ℕ)) then
+                                (⟨(↑P.q : ℤ), (↑P.q₁ : ℤ)⟩ : GaussianInt)
+                              else (⟨-(↑P.q : ℤ), (↑P.q₂ : ℤ)⟩ : GaussianInt))).cells →
+                          (∀ (x : GaussianInt),
+                              x ∈ FootprintVertices T ∩ FootprintVertices T' ↔
+                                ((x - u).re =
+                                if i = (0 : Fin (3 : ℕ)) then (↑P.q : ℤ) else (0 : ℤ)) ∧
+                                (if i = (0 : Fin (3 : ℕ)) then (↑P.q₁ : ℤ)
+                              else (↑P.q₂ : ℤ)) ≤
+                                (x - u).im ∧
+                                (x - u).im ≤ (↑P.q : ℤ)) →
+                            ∀ (Rminus : ProtoTile),
+                              ∀ (Rplus : ProtoTile),
+                                (P.q : Int) = P.q₁ + P.q₂ →
+                                let n := if i = 0 then P.q₁ else P.q₂;
+                              0 < n →
+                                n < P.q →
+                                Ci.1.1.1 = (n : Int) ^ 2 →
+                                1 < n →
+                                BandPrototile Ci.1.1 (FordTile n) →
+                                (∀ (A : ProtoTile),
+                                ∀ (m : Nat),
+                                0 < m →
+                                ∀ (v : GaussianInt),
+                                A.cells = (TileTranslation (FordTile m) v).cells →
+                                FootprintVertices A =
+                                FootprintVertices (TileTranslation (FordTile m) v) ∧
+                                TileCentroid A =
+                                TileCentroid (TileTranslation (FordTile m) v)) →
+                                let vm : GaussianInt :=
+                                u + if i = 0 then ⟨P.q, 0⟩ else ⟨0, P.q⟩;
+                              let vp : GaussianInt :=
+                                u + if i = 0 then ⟨P.q₂, P.q⟩ else ⟨-(P.q₂ : Int), 0⟩;
+                              TileCentroid Rminus =
+                                TileCentroid (TileTranslation (FordTile n) vm) →
+                                TileCentroid Rplus =
+                                TileCentroid (TileTranslation (FordTile n) vp) →
+                                Rminus.cells = (TileTranslation (FordTile n) vm).cells →
+                                Rplus.cells = (TileTranslation (FordTile n) vp).cells →
+                                TileCentroid Rplus - TileCentroid Rminus =
+                                GaussianRealPoint (vp - vm) →
+                                Zsqrtd.norm (vp - vm) = (P.q : Int) ^ 2 + (n : Int) ^ 2 →
+                                ∀ (walk : List GaussianInt),
+                                (∀ (x : GaussianInt),
+                                x ∈ walk →
+                                ((x - u).re = if i = 0 then (P.q : Int) else 0) ∧
+                                (n : Int) ≤ (x - u).im ∧ (x - u).im ≤ P.q) →
+                                (∀ (m : Nat),
+                                0 < m →
+                                ∀ (v : GaussianInt),
+                                ∀ (x : GaussianInt),
+                                x ∈ FootprintVertices (TileTranslation (FordTile m) v) ↔
+                                0 ≤ (x - v).re ∧
+                                (x - v).re ≤ m ∧ 0 ≤ (x - v).im ∧ (x - v).im ≤ m) →
+                                (∀ (x : GaussianInt),
+                                x ∈ walk →
+                                x ∈ FootprintVertices Rminus →
+                                (x - u).im = if i = 0 then (n : Int) else P.q) →
+                                ∀ (x : GaussianInt),
+                                x ∈ walk →
+                                x ∈ FootprintVertices Rplus →
+                                (x - u).im = if i = 0 then (P.q : Int) else n
+    ) := by
   classical
-  intro P Ci i hCi hsmall T T' u hc' hsegment Rminus Rplus hcm hcp hsum n hnpos hnq hCicurv
-      hnlarge hFord cellobs vm vp hflip hcmcand hcpcand heqm heqp hdelta hnormdelta walk
-      hwsegment squarefoot hminusheight x hx hxp
+  intro P Ci i hCi hsmall T T' u hc' hsegment Rminus Rplus hsum n hnpos hnq hCicurv hnlarge
+      hFord cellobs vm vp hcmcand hcpcand heqm heqp hdelta hnormdelta walk hwsegment squarefoot
+      hminusheight x hx hxp
   rw [(cellobs Rplus n hnpos vp heqp).1] at hxp
   have hxbox := (squarefoot n hnpos vp x).mp hxp
   have hxseg := hwsegment x hx
@@ -1088,8 +1126,7 @@ theorem P4158T1SmallerStringEdges
 -- BODY
   classical
   have hsum : (P.q : Int) = P.q₁ + P.q₂ := by exact_mod_cast P.sum_q
-  have hqone := SmallerStringGeometry.hqone P Ci i hCi hlarge hsmall T T' u hc' hsegment Rminus
-      Rplus hcm hcp hsum
+  have hqone := SmallerStringGeometry.hqone P Ci i hCi hlarge hsmall T T' u hc' hsegment hsum
   have hrpos := SmallerStringGeometry.hrpos P hsum hqone
   have hspos := P.q₂_pos
   let n := if i = 0 then P.q₁ else P.q₂
@@ -1103,7 +1140,7 @@ theorem P4158T1SmallerStringEdges
       (SmallerStringGeometry.determinantCoprime)
   have fordcell (m : Nat) (z : GaussianInt) :
       z ∈ (FordTile m).cells ↔
-        0 ≤ z.re ∧ z.re < m ∧ 0 ≤ z.im ∧ z.im < m := SmallerStringGeometry.fordcell m z
+        0 ≤ z.re ∧ z.re < m ∧ 0 ≤ z.im ∧ z.im < m := FordTileCellMembership m z
   have fordne (m : Nat) (hm : 0 < m) : (FordTile m).cells.Nonempty :=
     ⟨0, (fordcell m 0).mpr (by simp; omega)⟩
   have fordcent := SmallerStringGeometry.fordcent fordcell fordne
@@ -1155,10 +1192,10 @@ theorem P4158T1SmallerStringEdges
       walk hwvertices (SmallerStringGeometry.ancestorFoot C0 Ci hC0pos))
   have squarefoot := SmallerStringGeometry.squarefoot
   have hminusheight := SmallerStringGeometry.hminusheight P Ci i hCi hsmall T T' u hc'
-      hsegment Rminus Rplus hcm hcp hsum hnpos hnq hCicurv hnlarge hFord cellobs hflip hcmcand
+      hsegment Rminus Rplus hsum hnpos hnq hCicurv hnlarge hFord cellobs hcmcand
       hcpcand heqm heqp hdelta hnormdelta walk hwsegment squarefoot
   have hplusheight := SmallerStringGeometry.hplusheight P Ci i hCi hsmall T T' u hc' hsegment
-      Rminus Rplus hcm hcp hsum hnpos hnq hCicurv hnlarge hFord cellobs hflip hcmcand hcpcand
+      Rminus Rplus hsum hnpos hnq hCicurv hnlarge hFord cellobs hcmcand hcpcand
       heqm heqp hdelta hnormdelta walk hwsegment squarefoot hminusheight
   have crossing := SmallerStringGeometry.crossing
   have stepPair := SmallerStringGeometry.stepPair u

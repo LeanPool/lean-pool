@@ -6,6 +6,7 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.GaussianRealPointProperties
 public import LeanPool.ApollonianSuperharmonic.PeriodicEdgeContactSymmetry
 
 public import LeanPool.ApollonianSuperharmonic.P3723T1ContactPorts
@@ -524,15 +525,7 @@ private theorem period_shift :
       rw [← rep_shift u a, ← period_spec]
     _ = P.shift (u + period a) (rep a) := by rw [P.shift_add, ← period_spec]
 
-private theorem real_add :
-    (by
-      classical
-      exact
-        ∀ (z : GaussianInt), ∀ (w : GaussianInt), GaussianRealPoint (z + w) = GaussianRealPoint z
-            + GaussianRealPoint w ) := by
-  classical
-  intro z w
-  ext <;> simp [GaussianRealPoint]
+private abbrev real_add := ApollonianSuperharmonic.GaussianRealPointProperties.add
 
 private theorem position_cell :
     (by

@@ -6,6 +6,8 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryCurvature
+public import LeanPool.ApollonianSuperharmonic.LatticeAdjacentPackingSymmetryFacts
 public import LeanPool.ApollonianSuperharmonic.TileOdometerSlopeNonempty
 
 public import LeanPool.ApollonianSuperharmonic.P5625T1CentroidSlopeDifferenceCovariance
@@ -394,33 +396,9 @@ private theorem affineFirst :
           (BandPackingSymmetryVectorAction b z.1)
       rw [iha, ihb]
 
-private theorem circleCurvature :
-    (by
-      classical
-      exact
-        ∀ (k : BandPackingSymmetry), ∀ (C : CircleCoordinates), (BandPackingSymmetryCircleAction
-            k C).1 = C.1 ) := by
-  classical
-  intro k
-  induction k with
-  | identity => intro C; rfl
-  | negate => intro C; rfl
-  | conjugate => intro C; rfl
-  | shift w => intro C; rfl
-  | comp a b iha ihb => intro C; simp [BandPackingSymmetryCircleAction, iha, ihb]
+private abbrev circleCurvature := ApollonianSuperharmonic.BandPackingSymmetryCurvature.preserved
 
-private theorem positiveSupport :
-    (by
-      classical
-      exact
-        ∀ (C : CircleCoordinates),
-          ∀ (U : ProtoTile),
-            ∀ (k : PartialOdometer),
-              ∀ (p : ℝ × ℝ),
-                TileOdometer C U k → PartialOdometerSlope k = some p → U.cells.Nonempty
-    ) := by
-  intro C U k p hO hp
-  exact TileOdometerSlopeNonempty.cells C U k p hO hp
+private abbrev positiveSupport := ApollonianSuperharmonic.TileOdometerSlopeNonempty.cells
 
 private theorem hq0 :
     (by
@@ -683,78 +661,147 @@ private theorem hcentGoal :
     (by
       classical
       exact
-        (∀ (k : BandPackingSymmetry), ∀ (z : GaussianInt × GaussianInt),
-            (BandPackingSymmetryAffineVectorAction k z).1 = BandPackingSymmetryVectorAction k
-            z.1) → (∀ (g : BandPackingSymmetry), ∀ (C' : CircleCoordinates), ∀ (T : ProtoTile), ∀
-            (T' : ProtoTile), ∀ (h : PartialOdometer), ∀ (h' : PartialOdometer), ∀ (q : Fin (4 :
-            ℕ) → CircleCoordinates), ∀ (i : Fin (3 : ℕ)), ∀ (e : Bool), (TileCentroid T' -
-            TileCentroid T = (if e = true then (1 : ℝ) else (-1 : ℝ)) • (1 / 2 : ℝ) •
-            (GaussianRealPoint (BandVectors.1 (q (i + (2 : Fin (3 : ℕ))).succ) (q (i + (1 : Fin
-            (3 : ℕ))).succ)) - (-(GaussianRealPoint (BandVectors.1 (q (i + (2 : Fin (3 :
-            ℕ))).succ) (q (i + (1 : Fin (3 : ℕ))).succ))).2, (GaussianRealPoint (BandVectors.1 (q
-            (i + (2 : Fin (3 : ℕ))).succ) (q (i + (1 : Fin (3 : ℕ))).succ))).1))) → ((C'.1 = (0 :
-            ℤ) ∨ ∃ (p : ℝ × ℝ) (p' : ℝ × ℝ), PartialOdometerSlope h = some p ∧
-            PartialOdometerSlope h' = some p' ∧ p'.1 - p.1 = (if e = true then (1 : ℝ) else (-1 :
-            ℝ)) * (1 / 2 : ℝ) * ((↑(BandVectors.2 (q (i + (2 : Fin (3 : ℕ))).succ) (q (i + (1 :
-            Fin (3 : ℕ))).succ)).re : ℝ) - (↑(BandVectors.2 (q (i + (2 : Fin (3 : ℕ))).succ) (q
-            (i + (1 : Fin (3 : ℕ))).succ)).im : ℝ)) ∧ p'.2 - p.2 = (if e = true then (1 : ℝ) else
-            (-1 : ℝ)) * (1 / 2 : ℝ) * ((↑(BandVectors.2 (q (i + (2 : Fin (3 : ℕ))).succ) (q (i +
-            (1 : Fin (3 : ℕ))).succ)).im : ℝ) + (↑(BandVectors.2 (q (i + (2 : Fin (3 : ℕ))).succ)
-            (q (i + (1 : Fin (3 : ℕ))).succ)).re : ℝ))) → (∀ (delta : Bool),
-            (BandPackingSymmetryScopedPhase g q delta) → ((∀ (i : Fin (3 : ℕ)),
-        let e := if delta = true then (-1 : GaussianInt) else (1 : GaussianInt);
-        let incoming := BandPackingSymmetryAffineVectorAction g (BandVectors.1 (q i.succ) (q (0 :
-            Fin (4 : ℕ))), BandVectors.2 (q i.succ) (q (0 : Fin (4 : ℕ))));
-        let cyclic := BandPackingSymmetryAffineVectorAction g (BandVectors.1 (q (i + (2 : Fin (3
-            : ℕ))).succ) (q (i + (1 : Fin (3 : ℕ))).succ), BandVectors.2 (q (i + (2 : Fin (3 :
-            ℕ))).succ) (q (i + (1 : Fin (3 : ℕ))).succ)); BandVectors.2
-            (BandPackingSymmetryQuadrupleAction g q ((fun (i : Fin (3 : ℕ)) => if
-            BandPackingSymmetryReversesOrientation g = true then -i else i) i).succ)
-            (BandPackingSymmetryQuadrupleAction g q (0 : Fin (4 : ℕ))) = e * incoming.2 ∧
-            BandVectors.2 (BandPackingSymmetryQuadrupleAction g q ((fun (i : Fin (3 : ℕ)) => if
-            BandPackingSymmetryReversesOrientation g = true then -i else i) i + (2 : Fin (3 :
-            ℕ))).succ) (BandPackingSymmetryQuadrupleAction g q ((fun (i : Fin (3 : ℕ)) => if
-            BandPackingSymmetryReversesOrientation g = true then -i else i) i + (1 : Fin (3 :
-            ℕ))).succ) = e * if BandPackingSymmetryReversesOrientation g = true then
-            -GaussianQuarterTurn cyclic.2 else cyclic.2) → (
-        let q' := BandPackingSymmetryQuadrupleAction g q
-        let sigma : Fin 3 → Fin 3 := fun j =>
-          if BandPackingSymmetryReversesOrientation g then -j else j
-        let e' := xor e delta
-        let W := BandVectors.1 (q ((i + 2).succ)) (q ((i + 1).succ))
-        let A := BandVectors.2 (q ((i + 2).succ)) (q ((i + 1).succ))
-        let Z : GaussianInt × GaussianInt := (W, A)
-        let M : GaussianInt × GaussianInt :=
-          (W - GaussianQuarterTurn W, A + GaussianQuarterTurn A)
-        let W' := BandVectors.1 (q' ((sigma i + 2).succ))
-          (q' ((sigma i + 1).succ))
-        let A' := BandVectors.2 (q' ((sigma i + 2).succ))
-          (q' ((sigma i + 1).succ))
-        let eReal : ℝ := if e then 1 else -1
-        let k : ℝ := eReal / 2
-        (TileCentroid T' - TileCentroid T = k • GaussianRealPoint M.1) → ((TileCentroid
-            (BandPackingSymmetryTileAction g T') - TileCentroid (BandPackingSymmetryTileAction g
-            T) = k • GaussianRealPoint (BandPackingSymmetryAffineVectorAction g (M.1, (0 :
-            GaussianInt))).1 ∧ BandPackingSymmetrySlopeAction g T' ((0 : ℝ), (0 : ℝ)) -
-            BandPackingSymmetrySlopeAction g T ((0 : ℝ), (0 : ℝ)) = k • GaussianRealPoint
-            (BandPackingSymmetryAffineVectorAction g (M.1, (0 : GaussianInt))).2) → ((W' = (if
-            delta then (-1 : GaussianInt) else 1) * (if BandPackingSymmetryReversesOrientation g
-            then GaussianQuarterTurn (BandPackingSymmetryVectorAction g W) else
-            BandPackingSymmetryVectorAction g W)) → ((A' = (if delta then (-1 : GaussianInt) else
-            1) * (if BandPackingSymmetryReversesOrientation g then -GaussianQuarterTurn
-            (BandPackingSymmetryAffineVectorAction g Z).2 else
-            (BandPackingSymmetryAffineVectorAction g Z).2)) → (((W' - GaussianQuarterTurn W', A'
-            + GaussianQuarterTurn A') = if delta then -(BandPackingSymmetryAffineVectorAction g
-            M) else BandPackingSymmetryAffineVectorAction g M) → (((W' - GaussianQuarterTurn W',
-            A' + GaussianQuarterTurn A').1 = (if delta = true then
-            -BandPackingSymmetryAffineVectorAction g M else BandPackingSymmetryAffineVectorAction
-            g M).1) → (TileCentroid (BandPackingSymmetryTileAction g T') - TileCentroid
-            (BandPackingSymmetryTileAction g T) = (if e' then (1 : ℝ) else -1) • ((1 / 2 : ℝ) •
-            (GaussianRealPoint W' - (-(GaussianRealPoint W').2, (GaussianRealPoint
-            W').1)))))))))))))) ) := by
+        (∀ (k : BandPackingSymmetry),
+            ∀ (z : GaussianInt × GaussianInt),
+              (BandPackingSymmetryAffineVectorAction k z).1 =
+                BandPackingSymmetryVectorAction k z.1) →
+          ∀ (g : BandPackingSymmetry),
+            ∀ (C' : CircleCoordinates),
+              ∀ (T : ProtoTile),
+                ∀ (T' : ProtoTile),
+                  ∀ (h : PartialOdometer),
+                    ∀ (h' : PartialOdometer),
+                      ∀ (q : Fin (4 : ℕ) → CircleCoordinates),
+                        ∀ (i : Fin (3 : ℕ)),
+                          ∀ (e : Bool),
+                            TileCentroid T' - TileCentroid T =
+                                (if e = true then (1 : ℝ) else (-1 : ℝ)) •
+                                (1 / 2 : ℝ) •
+                                (GaussianRealPoint
+                                (BandVectors.1 (q (i + (2 : Fin (3 : ℕ))).succ)
+                                (q (i + (1 : Fin (3 : ℕ))).succ)) -
+                                (-(GaussianRealPoint
+                                (BandVectors.1 (q (i + (2 : Fin (3 : ℕ))).succ)
+                                (q (i + (1 : Fin (3 : ℕ))).succ))).2,
+                                (GaussianRealPoint
+                                (BandVectors.1 (q (i + (2 : Fin (3 : ℕ))).succ)
+                                (q (i + (1 : Fin (3 : ℕ))).succ))).1)) →
+                              (C'.1 = (0 : ℤ) ∨
+                                ∃ (p : ℝ × ℝ) (p' : ℝ × ℝ),
+                                PartialOdometerSlope h = some p ∧
+                                PartialOdometerSlope h' = some p' ∧
+                                p'.1 - p.1 =
+                                (if e = true then (1 : ℝ) else (-1 : ℝ)) * (1 / 2 : ℝ) *
+                                ((↑(BandVectors.2 (q (i + (2 : Fin (3 : ℕ))).succ)
+                                (q (i + (1 : Fin (3 : ℕ))).succ)).re :
+                                ℝ) -
+                                (↑(BandVectors.2 (q (i + (2 : Fin (3 : ℕ))).succ)
+                                (q (i + (1 : Fin (3 : ℕ))).succ)).im :
+                                ℝ)) ∧
+                                p'.2 - p.2 =
+                                (if e = true then (1 : ℝ) else (-1 : ℝ)) * (1 / 2 : ℝ) *
+                                ((↑(BandVectors.2 (q (i + (2 : Fin (3 : ℕ))).succ)
+                                (q (i + (1 : Fin (3 : ℕ))).succ)).im :
+                                ℝ) +
+                                (↑(BandVectors.2 (q (i + (2 : Fin (3 : ℕ))).succ)
+                                (q (i + (1 : Fin (3 : ℕ))).succ)).re :
+                                ℝ))) →
+                                ∀ (delta : Bool),
+                                (∀ (i : Fin (3 : ℕ)),
+                                let e :=
+                                if delta = true then (-1 : GaussianInt)
+                              else (1 : GaussianInt);
+                              let incoming :=
+                                BandPackingSymmetryAffineVectorAction g
+                                (BandVectors.1 (q i.succ) (q (0 : Fin (4 : ℕ))),
+                                BandVectors.2 (q i.succ) (q (0 : Fin (4 : ℕ))));
+                              let cyclic :=
+                                BandPackingSymmetryAffineVectorAction g
+                                (BandVectors.1 (q (i + (2 : Fin (3 : ℕ))).succ)
+                                (q (i + (1 : Fin (3 : ℕ))).succ),
+                                BandVectors.2 (q (i + (2 : Fin (3 : ℕ))).succ)
+                                (q (i + (1 : Fin (3 : ℕ))).succ));
+                              BandVectors.2
+                                (BandPackingSymmetryQuadrupleAction g q
+                                ((fun (i : Fin (3 : ℕ)) =>
+                                if BandPackingSymmetryReversesOrientation g = true then -i
+                              else i)
+                                i).succ)
+                                (BandPackingSymmetryQuadrupleAction g q
+                                (0 : Fin (4 : ℕ))) =
+                                e * incoming.2 ∧
+                                BandVectors.2
+                                (BandPackingSymmetryQuadrupleAction g q
+                                ((fun (i : Fin (3 : ℕ)) =>
+                                if BandPackingSymmetryReversesOrientation g = true then -i
+                              else i)
+                                i +
+                                (2 : Fin (3 : ℕ))).succ)
+                                (BandPackingSymmetryQuadrupleAction g q
+                                ((fun (i : Fin (3 : ℕ)) =>
+                                if BandPackingSymmetryReversesOrientation g = true then -i
+                              else i)
+                                i +
+                                (1 : Fin (3 : ℕ))).succ) =
+                                e *
+                                if BandPackingSymmetryReversesOrientation g = true then
+                                -GaussianQuarterTurn cyclic.2
+                              else cyclic.2) →
+                                let q' := BandPackingSymmetryQuadrupleAction g q;
+                              let sigma : Fin 3 → Fin 3 := fun j =>
+                                if BandPackingSymmetryReversesOrientation g then -j
+                              else j;
+                              let e' := xor e delta;
+                              let W := BandVectors.1 (q (i + 2).succ) (q (i + 1).succ);
+                              let A := BandVectors.2 (q (i + 2).succ) (q (i + 1).succ);
+                              let M : GaussianInt × GaussianInt :=
+                                (W - GaussianQuarterTurn W, A + GaussianQuarterTurn A);
+                              let W' :=
+                                BandVectors.1 (q' (sigma i + 2).succ)
+                                (q' (sigma i + 1).succ);
+                              let A' :=
+                                BandVectors.2 (q' (sigma i + 2).succ)
+                                (q' (sigma i + 1).succ);
+                              let eReal : ℝ := if e then 1 else -1;
+                              let k : ℝ := eReal / 2;
+                              TileCentroid T' - TileCentroid T =
+                                k • GaussianRealPoint M.1 →
+                                TileCentroid (BandPackingSymmetryTileAction g T') -
+                                TileCentroid (BandPackingSymmetryTileAction g T) =
+                                k •
+                                GaussianRealPoint
+                                (BandPackingSymmetryAffineVectorAction g
+                                (M.1, (0 : GaussianInt))).1 ∧
+                                BandPackingSymmetrySlopeAction g T' ((0 : ℝ), (0 : ℝ)) -
+                                BandPackingSymmetrySlopeAction g T ((0 : ℝ), (0 : ℝ)) =
+                                k •
+                                GaussianRealPoint
+                                (BandPackingSymmetryAffineVectorAction g
+                                (M.1, (0 : GaussianInt))).2 →
+                                (W' =
+                                (if delta then (-1 : GaussianInt) else 1) *
+                                if BandPackingSymmetryReversesOrientation g then
+                                GaussianQuarterTurn (BandPackingSymmetryVectorAction g W)
+                              else BandPackingSymmetryVectorAction g W) →
+                                ((W' - GaussianQuarterTurn W',
+                                A' + GaussianQuarterTurn A') =
+                                if delta then -BandPackingSymmetryAffineVectorAction g M
+                              else BandPackingSymmetryAffineVectorAction g M) →
+                                (W' - GaussianQuarterTurn W',
+                                A' + GaussianQuarterTurn A').1 =
+                                (if delta = true then
+                                -BandPackingSymmetryAffineVectorAction g M
+                              else BandPackingSymmetryAffineVectorAction g M).1 →
+                                TileCentroid (BandPackingSymmetryTileAction g T') -
+                                TileCentroid (BandPackingSymmetryTileAction g T) =
+                                (if e' then (1 : ℝ) else -1) •
+                                (1 / 2 : ℝ) •
+                                (GaussianRealPoint W' -
+                                (-(GaussianRealPoint W').2, (GaussianRealPoint W').1))
+    ) := by
   classical
-  intro affineFirst g C' T T' h h' q i e hcent hslope delta hphase hcyc q' sigma e' W A Z M W' A'
-      eReal k hcentM htr hWphase hAphase hMphase hmFst
+  intro affineFirst g C' T T' h h' q i e hcent hslope delta hcyc q' sigma e' W A M W' A' eReal k
+      hcentM htr hWphase hMphase hmFst
   have hreal : GaussianRealPoint (W' - GaussianQuarterTurn W') =
       GaussianRealPoint W' -
         (-(GaussianRealPoint W').2, (GaussianRealPoint W').1) := by
@@ -811,73 +858,44 @@ private theorem hsr :
   rw [hST hTne, hsp]
   rfl
 
-private theorem hsr' :
-    (by
-      classical
-      exact
-        ∀ (g : BandPackingSymmetry), ∀ (T' : ProtoTile), ∀ (h' : PartialOdometer),
-            (Finset.Nonempty T'.cells → PartialOdometerSlope
-            (BandPackingSymmetryPartialOdometerAction g h') = Option.map
-            (BandPackingSymmetrySlopeAction g T') (PartialOdometerSlope h')) → (∀ (p' : ℝ × ℝ),
-            (PartialOdometerSlope h' = some p') → ((Finset.Nonempty T'.cells) →
-            (PartialOdometerSlope (BandPackingSymmetryPartialOdometerAction g h') = some
-            (BandPackingSymmetrySlopeAction g T' p')))) ) := by
-  classical
-  intro g T' h' hST' p' hsp' hT'ne
-  rw [hST' hT'ne, hsp']
-  rfl
+private abbrev hsr' := ApollonianSuperharmonic.MarkedCovarianceGeometry.hsr
 
 private theorem hsourceSlope :
     (by
       classical
       exact
-        ∀ (T : ProtoTile),
-          ∀ (T' : ProtoTile),
-            ∀ (q : Fin (4 : ℕ) → CircleCoordinates),
-              ∀ (i : Fin (3 : ℕ)),
-                ∀ (e : Bool),
-                  TileCentroid T' - TileCentroid T =
-                      (if e = true then (1 : ℝ) else (-1 : ℝ)) •
-                        (1 / 2 : ℝ) •
-                          (GaussianRealPoint
-                              (BandVectors.1 (q (i + (2 : Fin (3 : ℕ))).succ)
-                                (q (i + (1 : Fin (3 : ℕ))).succ)) -
-                            (-(GaussianRealPoint
-                                (BandVectors.1 (q (i + (2 : Fin (3 : ℕ))).succ)
-                                (q (i + (1 : Fin (3 : ℕ))).succ))).2,
-                              (GaussianRealPoint
-                                (BandVectors.1 (q (i + (2 : Fin (3 : ℕ))).succ)
-                                (q (i + (1 : Fin (3 : ℕ))).succ))).1)) →
-                    let W := BandVectors.1 (q (i + 2).succ) (q (i + 1).succ)
-                    let A := BandVectors.2 (q (i + 2).succ) (q (i + 1).succ)
-                    let M : GaussianInt × GaussianInt :=
-                      (W - GaussianQuarterTurn W, A + GaussianQuarterTurn A)
-                    let eReal : ℝ := if e then 1 else -1
-                    let k : ℝ := eReal / 2
-                    TileCentroid T' - TileCentroid T = k • GaussianRealPoint M.1 →
-                      ∀ (p : ℝ × ℝ),
-                        ∀ (p' : ℝ × ℝ),
-                          p'.1 - p.1 =
-                              (if e = true then (1 : ℝ) else (-1 : ℝ)) * (1 / 2 : ℝ) *
-                                ((↑(BandVectors.2 (q (i + (2 : Fin (3 : ℕ))).succ)
+        ∀ (q : Fin (4 : ℕ) → CircleCoordinates),
+          ∀ (i : Fin (3 : ℕ)),
+            ∀ (e : Bool),
+              let W := BandVectors.1 (q (i + 2).succ) (q (i + 1).succ);
+              let A := BandVectors.2 (q (i + 2).succ) (q (i + 1).succ);
+              let M : GaussianInt × GaussianInt :=
+                (W - GaussianQuarterTurn W, A + GaussianQuarterTurn A);
+              let eReal : ℝ := if e then 1 else -1;
+              let k : ℝ := eReal / 2;
+              ∀ (p : ℝ × ℝ),
+                ∀ (p' : ℝ × ℝ),
+                  p'.1 - p.1 =
+                      (if e = true then (1 : ℝ) else (-1 : ℝ)) * (1 / 2 : ℝ) *
+                        ((↑(BandVectors.2 (q (i + (2 : Fin (3 : ℕ))).succ)
                                 (q (i + (1 : Fin (3 : ℕ))).succ)).re :
-                                ℝ) -
-                                (↑(BandVectors.2 (q (i + (2 : Fin (3 : ℕ))).succ)
+                            ℝ) -
+                          (↑(BandVectors.2 (q (i + (2 : Fin (3 : ℕ))).succ)
                                 (q (i + (1 : Fin (3 : ℕ))).succ)).im :
-                                ℝ)) →
-                            p'.2 - p.2 =
-                                (if e = true then (1 : ℝ) else (-1 : ℝ)) * (1 / 2 : ℝ) *
-                                ((↑(BandVectors.2 (q (i + (2 : Fin (3 : ℕ))).succ)
+                            ℝ)) →
+                    p'.2 - p.2 =
+                        (if e = true then (1 : ℝ) else (-1 : ℝ)) * (1 / 2 : ℝ) *
+                          ((↑(BandVectors.2 (q (i + (2 : Fin (3 : ℕ))).succ)
                                 (q (i + (1 : Fin (3 : ℕ))).succ)).im :
-                                ℝ) +
-                                (↑(BandVectors.2 (q (i + (2 : Fin (3 : ℕ))).succ)
+                              ℝ) +
+                            (↑(BandVectors.2 (q (i + (2 : Fin (3 : ℕ))).succ)
                                 (q (i + (1 : Fin (3 : ℕ))).succ)).re :
-                                ℝ)) →
-                              p' - p = k • GaussianRealPoint M.2
+                              ℝ)) →
+                      p' - p = k • GaussianRealPoint M.2
     )
             := by
   classical
-  intro T T' q i e hcent W A M eReal k hcentM p p' hRe hIm
+  intro q i e W A M eReal k p p' hRe hIm
   have hRe' : p'.1 - p.1 = (if e then (1 : ℝ) else -1) * (1 / 2) *
       (((GaussianInt.toComplex A).re) - (GaussianInt.toComplex A).im) := by
     simpa [A] using hRe
@@ -1144,21 +1162,7 @@ private theorem finiteCompanion :
     simp [ev0, ev2, odd3, p2, p3,
       hphase, hquarter, hneg, hrev, hdel, qneg, ← qm]
 
-private theorem allNeg :
-    (by
-      classical
-      exact
-        ∀ (k : BandPackingSymmetry), ∀ (z : GaussianInt), BandPackingSymmetryVectorAction k (-z)
-            = -BandPackingSymmetryVectorAction k z ) := by
-  classical
-  intro k z
-  induction k generalizing z with
-  | identity => rfl
-  | negate => ext <;> simp [BandPackingSymmetryVectorAction, GaussianQuarterTurn]
-  | conjugate => ext <;> simp [BandPackingSymmetryVectorAction, GaussianReflection]
-  | shift w => rfl
-  | comp a b iha ihb =>
-      simp only [BandPackingSymmetryVectorAction, ihb, iha]
+private abbrev allNeg := ApollonianSuperharmonic.LatticeAdjacentPackingSymmetryFacts.vectorNegation
 
 private theorem allQuarter :
     (by
@@ -1564,7 +1568,7 @@ private theorem forwardSub :
           haffFst hactM hAphase
       have hmFst := congrArg Prod.fst hMphase
       have hcentGoal := MarkedCovarianceGeometry.hcentGoal affineFirst g C' T T' h h' q i e
-          hcent hslope delta hphase hcyc hcentM htr hWphase hAphase hMphase hmFst
+          hcent hslope delta hcyc hcentM htr hWphase hMphase hmFst
       exact hcentGoal
     · by_cases hzero : (q i.succ).1 = 0
       · left
@@ -1582,8 +1586,7 @@ private theorem forwardSub :
         have hT'ne := positiveSupport C' T' h' p' hO' hsp'
         have hsr := MarkedCovarianceGeometry.hsr g T h hST p hsp hTne
         have hsr' := MarkedCovarianceGeometry.hsr' g T' h' hST' p' hsp' hT'ne
-        have hsourceSlope := MarkedCovarianceGeometry.hsourceSlope T T' q i e hcent
-            hcentM p p' hRe hIm
+        have hsourceSlope := MarkedCovarianceGeometry.hsourceSlope q i e p p' hRe hIm
         have htrSlope := differenceTransport g T T' p' p M.1 M.2 k
           hcentM hsourceSlope
         let r := BandPackingSymmetrySlopeAction g T p

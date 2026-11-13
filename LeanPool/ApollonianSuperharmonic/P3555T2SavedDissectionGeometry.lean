@@ -28,16 +28,17 @@ namespace ApollonianSuperharmonic
 namespace SavedDissectionProof
 
 private theorem hsetAt164 :
-    ∀ (n : Nat), ∀ (q : Fin (n + 3) → Real × Real), ∀ (a : Fin (n + (3 : ℕ))), ∀ (b : Fin (n + (3
-        : ℕ))), ∀ (c : Fin (n + (3 : ℕ))), ([a, b, c].Nodup) → ((∃ (k : ℕ), [a, b, c].Sublist
-        ((List.ofFn fun (i : Fin (n + (3 : ℕ))) => i).rotate k)) → (([a, b, c].Nodup) → ((∃ (k :
-        ℕ), [a, b, c].Sublist ((List.ofFn fun (i : Fin (n + (3 : ℕ))) => i).rotate k)) → (((a ≠ b
-        ∧ a ≠ c) ∧ b ≠ c) → (
-    let f : Fin 3 → Fin (n + 3) := ![a, b, c]
-    (Function.Injective f) → ((P3381T1TriangleDeterminant (q ∘ f) ≠ 0) → (q '' {i | i ∈ [a, b,
-        c]} = Set.range (q ∘ f)))))))) := by
+    ∀ (n : Nat),
+      ∀ (q : Fin (n + 3) → Real × Real),
+        ∀ (a : Fin (n + (3 : ℕ))),
+          ∀ (b : Fin (n + (3 : ℕ))),
+            ∀ (c : Fin (n + (3 : ℕ))),
+              (a ≠ b ∧ a ≠ c) ∧ b ≠ c →
+                let f : Fin 3 → Fin (n + 3) := ![a, b, c];
+                P3381T1TriangleDeterminant (q ∘ f) ≠ 0 →
+                  q '' {i | i ∈ [a, b, c]} = Set.range (q ∘ f) := by
   classical
-  intro n q a b c hboundary hcyclic hnd hcyc hnd' f hfi hdet
+  intro n q a b c hnd' f hdet
   ext x
   change (∃ i, i ∈ [a, b, c] ∧ q i = x) ↔ ∃ j : Fin 3, q (f j) = x
   constructor
@@ -888,7 +889,7 @@ private theorem triangleCase :
   have hdet : P3381T1TriangleDeterminant (q ∘ f) ≠ 0 :=
     hsupport.2.1 f hfi
   have hset := SavedDissectionProof.hsetAt164
-      n q a b c hboundary hcyclic hnd hcyc hnd' hfi hdet
+      n q a b c hnd' hdet
   refine ⟨?_, by simp, ?_, ?_, ?_⟩
   · intro g hg
     simp only [List.mem_singleton] at hg

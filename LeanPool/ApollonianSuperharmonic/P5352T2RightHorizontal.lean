@@ -315,12 +315,11 @@ private theorem hsq1 :
       classical
       exact
         ∀ (K : DiamondParameter),
-          GaussianInt →
-            let n : Int := K.1;
-            (1 - 2 * n) ^ 2 / 4 = n ^ 2 - n
+          let n : Int := K.1;
+          (1 - 2 * n) ^ 2 / 4 = n ^ 2 - n
     ) := by
   classical
-  intro K z n
+  intro K n
   have h := P4207T1FloorArithmetic.1 1 (-n)
   norm_num at h ⊢
   rw [show 1 + -(2*n) = 1-2*n by ring] at h
@@ -559,7 +558,7 @@ theorem P5352T2RightHorizontal (K : DiamondParameter) (hk : 1 < K.1)
     simp [Q, abs_of_nonneg (show 0 ≤ n by omega)]
   have hsq0 : (-2*n)^2/4 = n^2 := by
     simpa using (P4207T1FloorArithmetic.1 0 (-n))
-  have hsq1 := DiamondRightHorizontal.hsq1 K z
+  have hsq1 := DiamondRightHorizontal.hsq1 K
   have hsq0' := DiamondRightHorizontal.hsq0' K hsq0
   have hsq1' := DiamondRightHorizontal.hsq1' K hsq1
   have qChildCenter := DiamondRightHorizontal.qChildCenter K hk z hzr hsq1 hsq0' hsq1'

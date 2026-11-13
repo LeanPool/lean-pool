@@ -6,6 +6,7 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.FordInteriorSquareCoordinates
 public import LeanPool.ApollonianSuperharmonic.FordFareySum
 public import Mathlib.Topology.MetricSpace.Pseudo.Constructions
 public import Mathlib.Topology.MetricSpace.Pseudo.Real
@@ -116,23 +117,7 @@ private theorem hsumInt :
   intro P r s hsum
   exact_mod_cast hsum
 
-private theorem squareCoordinates :
-    ∀ (n : Nat), ∀ (x : GaussianInt), x ∈ P4062T1InteriorSquare n ↔
-        1 ≤ x.re ∧ x.re ≤ (n : Int)-1 ∧
-        1 ≤ x.im ∧ x.im ≤ (n : Int)-1 := by
-  classical
-  intro n x
-  unfold P4062T1InteriorSquare
-  constructor
-  · intro hx
-    obtain ⟨⟨a,b⟩, hab, rfl⟩ := Finset.mem_image.mp hx
-    obtain ⟨ha,hb⟩ := Finset.mem_product.mp hab
-    exact ⟨(Finset.mem_Icc.mp ha).1, (Finset.mem_Icc.mp ha).2,
-      (Finset.mem_Icc.mp hb).1, (Finset.mem_Icc.mp hb).2⟩
-  · intro h
-    exact Finset.mem_image.mpr ⟨(x.re,x.im),
-      Finset.mem_product.mpr ⟨Finset.mem_Icc.mpr ⟨h.1,h.2.1⟩,
-        Finset.mem_Icc.mpr h.2.2⟩, by cases x; rfl⟩
+private abbrev squareCoordinates := ApollonianSuperharmonic.FordInteriorSquareCoordinates.membership
 
 private theorem mem0 :
     ∀ (P : FordFareyParameter),
@@ -1092,37 +1077,83 @@ private theorem smallZeroNeighbors :
 
 private theorem smallOneNeighbors :
     ∀ (P : FordFareyParameter),
-    let B := P4062T1RemainderPaths P
-    let d : GaussianInt → Nat := fun x =>
-      let a := if x ∈ (B 0).1 then (B 0).2 else (B 1).2
-      (x.re-a.re).natAbs + (x.im-a.im).natAbs
-    let r := P.q₁
-    let s := P.q₂
-    (P.q = P.q₁ + P.q₂) → ((have s := P.q₂; (0 : ℕ) < s) → ((∀ (x : GaussianInt), r < s → (x ∈
-        (P4062T1RemainderPaths P (1 : Fin (2 : ℕ))).1 ↔ x.re = (↑P.q₂ : ℤ) ∧ (↑P.q₂ : ℤ) ≤ x.im
-        ∧ x.im ≤ (↑P.q : ℤ) - (1 : ℤ) ∨ x.im = (↑P.q₂ : ℤ) ∧ (↑P.q₂ : ℤ) ≤ x.re ∧ x.re ≤ (↑P.q :
-        ℤ) - (1 : ℤ))) → ((∀ (a : ℕ), ∀ (b : ℕ), ∀ (c : ℕ), c ≤ a → c ≤ b → (a.dist c).dist
-        (b.dist c) = a.dist b) → ((∀ (x : GaussianInt), ∀ (y : GaussianInt), (x.re = y.re) → ((0
-        ≤ x.im) → ((0 ≤ y.im) → ((Nat.dist (d x) (d y) = Nat.dist x.im.toNat y.im.toNat) →
-        (FourNeighborAdjacent x y ↔ (x.re = y.re ∨ x.im = y.im) ∧ Nat.dist (d x) (d y) = 1))))) →
-        ((∀ (x : GaussianInt), ∀ (y : GaussianInt), (x.im = y.im) → ((0 ≤ x.re) → ((0 ≤ y.re) →
-        ((Nat.dist (d x) (d y) = Nat.dist x.re.toNat y.re.toNat) → (FourNeighborAdjacent x y ↔
-        (x.re = y.re ∨ x.im = y.im) ∧ Nat.dist (d x) (d y) = 1))))) → (((r < s) → (∀ (x :
-        GaussianInt), (x ∈ (B 1).1) → ((x.re = (s:Int)) → ((0 ≤ x.im) → (((s:Int) ≤ x.im) → (d x
-        = Nat.dist x.im.toNat s)))))) → (((r < s) → (∀ (x : GaussianInt), (x ∈ (B 1).1) → ((x.im
-        = (s:Int)) → ((0 ≤ x.re) → (((s:Int) ≤ x.re) → (d x = Nat.dist x.re.toNat s)))))) → ((∀
-        (a : Nat), ∀ (b : Nat), ∀ (x : GaussianInt), ∀ (y : GaussianInt), (x.re = (a:Int)) →
-        ((y.im = (b:Int)) → ((d x = Nat.dist x.im.toNat b) → ((d y = Nat.dist y.re.toNat a) → ((0
-        ≤ x.re) → ((0 ≤ x.im) → ((0 ≤ y.re) → ((0 ≤ y.im) → (FourNeighborAdjacent x y ↔ (x.re =
-        y.re ∨ x.im = y.im) ∧ Nat.dist (d x) (d y) = 1))))))))) → ((∀ (a : Nat), ∀ (b : Nat), ∀
-        (x : GaussianInt), ∀ (y : GaussianInt), (x.im = (b:Int)) → ((y.re = (a:Int)) → ((d x =
-        Nat.dist x.re.toNat a) → ((d y = Nat.dist y.im.toNat b) → ((0 ≤ x.re) → ((0 ≤ x.im) → ((0
-        ≤ y.re) → ((0 ≤ y.im) → (FourNeighborAdjacent x y ↔ (x.re = y.re ∨ x.im = y.im) ∧
-        Nat.dist (d x) (d y) = 1))))))))) → ((r < s) → (∀ (x : GaussianInt), (x ∈ (B 1).1) → (∀
-        (y : GaussianInt), (y ∈ (B 1).1) → (FourNeighborAdjacent x y ↔
-        (x.re = y.re ∨ x.im = y.im) ∧ Nat.dist (d x) (d y) = 1))))))))))))) := by
+      let B := P4062T1RemainderPaths P;
+      let d : GaussianInt → Nat := fun x =>
+        let a := if x ∈ (B 0).1 then (B 0).2 else (B 1).2
+        (x.re - a.re).natAbs + (x.im - a.im).natAbs;
+      let r := P.q₁;
+      let s := P.q₂;
+      P.q = P.q₁ + P.q₂ →
+        (∀ (x : GaussianInt),
+            r < s →
+              (x ∈ (P4062T1RemainderPaths P (1 : Fin (2 : ℕ))).1 ↔
+                x.re = (↑P.q₂ : ℤ) ∧ (↑P.q₂ : ℤ) ≤ x.im ∧ x.im ≤ (↑P.q : ℤ) - (1 : ℤ) ∨
+                  x.im = (↑P.q₂ : ℤ) ∧ (↑P.q₂ : ℤ) ≤ x.re ∧ x.re ≤ (↑P.q : ℤ) - (1 : ℤ))) →
+          (∀ (a : ℕ),
+              ∀ (b : ℕ), ∀ (c : ℕ), c ≤ a → c ≤ b → (a.dist c).dist (b.dist c) = a.dist b) →
+            (∀ (x : GaussianInt),
+                ∀ (y : GaussianInt),
+                  x.re = y.re →
+                    0 ≤ x.im →
+                      0 ≤ y.im →
+                        Nat.dist (d x) (d y) = Nat.dist x.im.toNat y.im.toNat →
+                          (FourNeighborAdjacent x y ↔
+                            (x.re = y.re ∨ x.im = y.im) ∧ Nat.dist (d x) (d y) = 1)) →
+              (∀ (x : GaussianInt),
+                  ∀ (y : GaussianInt),
+                    x.im = y.im →
+                      0 ≤ x.re →
+                        0 ≤ y.re →
+                          Nat.dist (d x) (d y) = Nat.dist x.re.toNat y.re.toNat →
+                            (FourNeighborAdjacent x y ↔
+                            (x.re = y.re ∨ x.im = y.im) ∧ Nat.dist (d x) (d y) = 1)) →
+                (r < s →
+                    ∀ (x : GaussianInt),
+                      x ∈ (B 1).1 →
+                        x.re = (s : Int) →
+                          0 ≤ x.im → (s : Int) ≤ x.im → d x = Nat.dist x.im.toNat s) →
+                  (r < s →
+                      ∀ (x : GaussianInt),
+                        x ∈ (B 1).1 →
+                          x.im = (s : Int) →
+                            0 ≤ x.re → (s : Int) ≤ x.re → d x = Nat.dist x.re.toNat s) →
+                    (∀ (a : Nat),
+                        ∀ (b : Nat),
+                          ∀ (x : GaussianInt),
+                            ∀ (y : GaussianInt),
+                            x.re = (a : Int) →
+                            y.im = (b : Int) →
+                            d x = Nat.dist x.im.toNat b →
+                            d y = Nat.dist y.re.toNat a →
+                            0 ≤ x.re →
+                            0 ≤ x.im →
+                            0 ≤ y.re →
+                            0 ≤ y.im →
+                            (FourNeighborAdjacent x y ↔
+                            (x.re = y.re ∨ x.im = y.im) ∧ Nat.dist (d x) (d y) = 1)) →
+                      (∀ (a : Nat),
+                          ∀ (b : Nat),
+                            ∀ (x : GaussianInt),
+                            ∀ (y : GaussianInt),
+                            x.im = (b : Int) →
+                            y.re = (a : Int) →
+                            d x = Nat.dist x.re.toNat a →
+                            d y = Nat.dist y.im.toNat b →
+                            0 ≤ x.re →
+                            0 ≤ x.im →
+                            0 ≤ y.re →
+                            0 ≤ y.im →
+                            (FourNeighborAdjacent x y ↔
+                            (x.re = y.re ∨ x.im = y.im) ∧ Nat.dist (d x) (d y) = 1)) →
+                        r < s →
+                          ∀ (x : GaussianInt),
+                            x ∈ (B 1).1 →
+                            ∀ (y : GaussianInt),
+                            y ∈ (B 1).1 →
+                            (FourNeighborAdjacent x y ↔
+                            (x.re = y.re ∨ x.im = y.im) ∧ Nat.dist (d x) (d y) = 1) := by
   classical
-  intro P B d r s hsum hs memB1Small distDistUp lineVertical lineHorizontal dSmall1V dSmall1H
+  intro P B d r s hsum memB1Small distDistUp lineVertical lineHorizontal dSmall1V dSmall1H
       cornerVH cornerHV hsmall x hx y hy
   have hxB : x ∈ (B 1).1 := by simpa using hx
   have hyB : y ∈ (B 1).1 := by simpa using hy
@@ -1171,40 +1202,91 @@ private theorem smallOneNeighbors :
       exact lineHorizontal x y (by omega) (by omega) (by omega) hlevel
 
 private theorem largeZeroNeighbors :
-    ∀ (P : FordFareyParameter), (2 < P.q) → (
-    let B := P4062T1RemainderPaths P
-    let d : GaussianInt → Nat := fun x =>
-      let a := if x ∈ (B 0).1 then (B 0).2 else (B 1).2
-      (x.re-a.re).natAbs + (x.im-a.im).natAbs
-    let r := P.q₁
-    let s := P.q₂
-    (P.q = P.q₁ + P.q₂) → ((have s := P.q₂; (0 : ℕ) < s) → (((0 : ℕ) < P.q₁) → ((∀ (x :
-        GaussianInt), s < r → (x ∈ (P4062T1RemainderPaths P (0 : Fin (2 : ℕ))).1 ↔ x.re =
-        (↑P.q₁ : ℤ) ∧ (1 : ℤ) ≤ x.im ∧ x.im ≤ (↑P.q₂ : ℤ) ∨ x.im = (↑P.q₂ : ℤ) ∧ (↑P.q₁ : ℤ) ≤
-        x.re ∧ x.re ≤ (↑P.q : ℤ) - (1 : ℤ))) → ((∀ (a : ℕ), ∀ (b : ℕ), ∀ (c : ℕ), a ≤ c → b ≤ c →
-        (a.dist c).dist (b.dist c) = a.dist b) → ((∀ (a : ℕ), ∀ (b : ℕ), ∀ (c : ℕ), c ≤ a → c ≤ b
-        → (a.dist c).dist (b.dist c) = a.dist b) → ((∀ (x : GaussianInt), ∀ (y : GaussianInt),
-        (x.re = y.re) → ((0 ≤ x.im) → ((0 ≤ y.im) → ((Nat.dist (d x) (d y) = Nat.dist x.im.toNat
-        y.im.toNat) → (FourNeighborAdjacent x y ↔ (x.re = y.re ∨ x.im = y.im) ∧ Nat.dist (d x) (d
-        y) = 1))))) → ((∀ (x : GaussianInt), ∀ (y : GaussianInt), (x.im = y.im) → ((0 ≤ x.re) →
-        ((0 ≤ y.re) → ((Nat.dist (d x) (d y) = Nat.dist x.re.toNat y.re.toNat) →
-        (FourNeighborAdjacent x y ↔ (x.re = y.re ∨ x.im = y.im) ∧ Nat.dist (d x) (d y) = 1))))) →
-        (((s < r) → (∀ (x : GaussianInt), (x ∈ (B 0).1) → ((x.re = (r:Int)) → ((0 ≤ x.im) →
-        ((x.im ≤ (s:Int)) → (d x = Nat.dist x.im.toNat s)))))) → (((s < r) → (∀ (x :
-        GaussianInt), (x ∈ (B 0).1) → ((x.im = (s:Int)) → ((0 ≤ x.re) → (((r:Int) ≤ x.re) → (d x
-        = Nat.dist x.re.toNat r)))))) → ((∀ (a : Nat), ∀ (b : Nat), ∀ (x : GaussianInt), ∀ (y :
-        GaussianInt), (x.re = (a:Int)) → ((y.im = (b:Int)) → ((d x = Nat.dist x.im.toNat b) → ((d
-        y = Nat.dist y.re.toNat a) → ((0 ≤ x.re) → ((0 ≤ x.im) → ((0 ≤ y.re) → ((0 ≤ y.im) →
-        (FourNeighborAdjacent x y ↔ (x.re = y.re ∨ x.im = y.im) ∧ Nat.dist (d x) (d y) =
-        1))))))))) → ((∀ (a : Nat), ∀ (b : Nat), ∀ (x : GaussianInt), ∀ (y : GaussianInt), (x.im
-        = (b:Int)) → ((y.re = (a:Int)) → ((d x = Nat.dist x.re.toNat a) → ((d y = Nat.dist
-        y.im.toNat b) → ((0 ≤ x.re) → ((0 ≤ x.im) → ((0 ≤ y.re) → ((0 ≤ y.im) →
-        (FourNeighborAdjacent x y ↔ (x.re = y.re ∨ x.im = y.im) ∧ Nat.dist (d x) (d y) =
-        1))))))))) → ((s < r) → (∀ (x : GaussianInt), (x ∈ (B 0).1) → (∀ (y : GaussianInt), (y ∈
-        (B 0).1) → (FourNeighborAdjacent x y ↔
-        (x.re = y.re ∨ x.im = y.im) ∧ Nat.dist (d x) (d y) = 1)))))))))))))))) := by
+    ∀ (P : FordFareyParameter),
+      2 < P.q →
+        let B := P4062T1RemainderPaths P;
+        let d : GaussianInt → Nat := fun x =>
+          let a := if x ∈ (B 0).1 then (B 0).2 else (B 1).2
+          (x.re - a.re).natAbs + (x.im - a.im).natAbs;
+        let r := P.q₁;
+        let s := P.q₂;
+        P.q = P.q₁ + P.q₂ →
+          (0 : ℕ) < P.q₁ →
+            (∀ (x : GaussianInt),
+                s < r →
+                  (x ∈ (P4062T1RemainderPaths P (0 : Fin (2 : ℕ))).1 ↔
+                    x.re = (↑P.q₁ : ℤ) ∧ (1 : ℤ) ≤ x.im ∧ x.im ≤ (↑P.q₂ : ℤ) ∨
+                      x.im = (↑P.q₂ : ℤ) ∧
+                        (↑P.q₁ : ℤ) ≤ x.re ∧ x.re ≤ (↑P.q : ℤ) - (1 : ℤ))) →
+              (∀ (a : ℕ),
+                  ∀ (b : ℕ),
+                    ∀ (c : ℕ), a ≤ c → b ≤ c → (a.dist c).dist (b.dist c) = a.dist b) →
+                (∀ (a : ℕ),
+                    ∀ (b : ℕ),
+                      ∀ (c : ℕ), c ≤ a → c ≤ b → (a.dist c).dist (b.dist c) = a.dist b) →
+                  (∀ (x : GaussianInt),
+                      ∀ (y : GaussianInt),
+                        x.re = y.re →
+                          0 ≤ x.im →
+                            0 ≤ y.im →
+                            Nat.dist (d x) (d y) = Nat.dist x.im.toNat y.im.toNat →
+                            (FourNeighborAdjacent x y ↔
+                            (x.re = y.re ∨ x.im = y.im) ∧ Nat.dist (d x) (d y) = 1)) →
+                    (∀ (x : GaussianInt),
+                        ∀ (y : GaussianInt),
+                          x.im = y.im →
+                            0 ≤ x.re →
+                            0 ≤ y.re →
+                            Nat.dist (d x) (d y) = Nat.dist x.re.toNat y.re.toNat →
+                            (FourNeighborAdjacent x y ↔
+                            (x.re = y.re ∨ x.im = y.im) ∧ Nat.dist (d x) (d y) = 1)) →
+                      (s < r →
+                          ∀ (x : GaussianInt),
+                            x ∈ (B 0).1 →
+                            x.re = (r : Int) →
+                            0 ≤ x.im → x.im ≤ (s : Int) → d x = Nat.dist x.im.toNat s) →
+                        (s < r →
+                            ∀ (x : GaussianInt),
+                            x ∈ (B 0).1 →
+                            x.im = (s : Int) →
+                            0 ≤ x.re → (r : Int) ≤ x.re → d x = Nat.dist x.re.toNat r) →
+                          (∀ (a : Nat),
+                            ∀ (b : Nat),
+                            ∀ (x : GaussianInt),
+                            ∀ (y : GaussianInt),
+                            x.re = (a : Int) →
+                            y.im = (b : Int) →
+                            d x = Nat.dist x.im.toNat b →
+                            d y = Nat.dist y.re.toNat a →
+                            0 ≤ x.re →
+                            0 ≤ x.im →
+                            0 ≤ y.re →
+                            0 ≤ y.im →
+                            (FourNeighborAdjacent x y ↔
+                            (x.re = y.re ∨ x.im = y.im) ∧ Nat.dist (d x) (d y) = 1)) →
+                            (∀ (a : Nat),
+                            ∀ (b : Nat),
+                            ∀ (x : GaussianInt),
+                            ∀ (y : GaussianInt),
+                            x.im = (b : Int) →
+                            y.re = (a : Int) →
+                            d x = Nat.dist x.re.toNat a →
+                            d y = Nat.dist y.im.toNat b →
+                            0 ≤ x.re →
+                            0 ≤ x.im →
+                            0 ≤ y.re →
+                            0 ≤ y.im →
+                            (FourNeighborAdjacent x y ↔
+                            (x.re = y.re ∨ x.im = y.im) ∧ Nat.dist (d x) (d y) = 1)) →
+                            s < r →
+                            ∀ (x : GaussianInt),
+                            x ∈ (B 0).1 →
+                            ∀ (y : GaussianInt),
+                            y ∈ (B 0).1 →
+                            (FourNeighborAdjacent x y ↔
+                            (x.re = y.re ∨ x.im = y.im) ∧ Nat.dist (d x) (d y) = 1) := by
   classical
-  intro P hP B d r s hsum hs hr memB0Large distDistDown distDistUp lineVertical lineHorizontal
+  intro P hP B d r s hsum hr memB0Large distDistDown distDistUp lineVertical lineHorizontal
       dLarge0V dLarge0H cornerVH cornerHV hlarge x hx y hy
   have hxB : x ∈ (B 0).1 := by simpa using hx
   have hyB : y ∈ (B 0).1 := by simpa using hy
@@ -1253,40 +1335,91 @@ private theorem largeZeroNeighbors :
       exact lineHorizontal x y (by omega) (by omega) (by omega) hlevel
 
 private theorem largeOneNeighbors :
-    ∀ (P : FordFareyParameter), (2 < P.q) → (
-    let B := P4062T1RemainderPaths P
-    let d : GaussianInt → Nat := fun x =>
-      let a := if x ∈ (B 0).1 then (B 0).2 else (B 1).2
-      (x.re-a.re).natAbs + (x.im-a.im).natAbs
-    let r := P.q₁
-    let s := P.q₂
-    (P.q = P.q₁ + P.q₂) → ((have s := P.q₂; (0 : ℕ) < s) → (((0 : ℕ) < P.q₁) → ((∀ (x :
-        GaussianInt), s < r → (x ∈ (P4062T1RemainderPaths P (1 : Fin (2 : ℕ))).1 ↔ x.im =
-        (↑P.q₁ : ℤ) ∧ (1 : ℤ) ≤ x.re ∧ x.re ≤ (↑P.q₂ : ℤ) ∨ x.re = (↑P.q₂ : ℤ) ∧ (↑P.q₁ : ℤ) ≤
-        x.im ∧ x.im ≤ (↑P.q : ℤ) - (1 : ℤ))) → ((∀ (a : ℕ), ∀ (b : ℕ), ∀ (c : ℕ), a ≤ c → b ≤ c →
-        (a.dist c).dist (b.dist c) = a.dist b) → ((∀ (a : ℕ), ∀ (b : ℕ), ∀ (c : ℕ), c ≤ a → c ≤ b
-        → (a.dist c).dist (b.dist c) = a.dist b) → ((∀ (x : GaussianInt), ∀ (y : GaussianInt),
-        (x.re = y.re) → ((0 ≤ x.im) → ((0 ≤ y.im) → ((Nat.dist (d x) (d y) = Nat.dist x.im.toNat
-        y.im.toNat) → (FourNeighborAdjacent x y ↔ (x.re = y.re ∨ x.im = y.im) ∧ Nat.dist (d x) (d
-        y) = 1))))) → ((∀ (x : GaussianInt), ∀ (y : GaussianInt), (x.im = y.im) → ((0 ≤ x.re) →
-        ((0 ≤ y.re) → ((Nat.dist (d x) (d y) = Nat.dist x.re.toNat y.re.toNat) →
-        (FourNeighborAdjacent x y ↔ (x.re = y.re ∨ x.im = y.im) ∧ Nat.dist (d x) (d y) = 1))))) →
-        (((s < r) → (∀ (x : GaussianInt), (x ∈ (B 1).1) → ((x.im = (r:Int)) → ((0 ≤ x.re) →
-        ((x.re ≤ (s:Int)) → (d x = Nat.dist x.re.toNat s)))))) → (((s < r) → (∀ (x :
-        GaussianInt), (x ∈ (B 1).1) → ((x.re = (s:Int)) → ((0 ≤ x.im) → (((r:Int) ≤ x.im) → (d x
-        = Nat.dist x.im.toNat r)))))) → ((∀ (a : Nat), ∀ (b : Nat), ∀ (x : GaussianInt), ∀ (y :
-        GaussianInt), (x.re = (a:Int)) → ((y.im = (b:Int)) → ((d x = Nat.dist x.im.toNat b) → ((d
-        y = Nat.dist y.re.toNat a) → ((0 ≤ x.re) → ((0 ≤ x.im) → ((0 ≤ y.re) → ((0 ≤ y.im) →
-        (FourNeighborAdjacent x y ↔ (x.re = y.re ∨ x.im = y.im) ∧ Nat.dist (d x) (d y) =
-        1))))))))) → ((∀ (a : Nat), ∀ (b : Nat), ∀ (x : GaussianInt), ∀ (y : GaussianInt), (x.im
-        = (b:Int)) → ((y.re = (a:Int)) → ((d x = Nat.dist x.re.toNat a) → ((d y = Nat.dist
-        y.im.toNat b) → ((0 ≤ x.re) → ((0 ≤ x.im) → ((0 ≤ y.re) → ((0 ≤ y.im) →
-        (FourNeighborAdjacent x y ↔ (x.re = y.re ∨ x.im = y.im) ∧ Nat.dist (d x) (d y) =
-        1))))))))) → ((s < r) → (∀ (x : GaussianInt), (x ∈ (B 1).1) → (∀ (y : GaussianInt), (y ∈
-        (B 1).1) → (FourNeighborAdjacent x y ↔
-        (x.re = y.re ∨ x.im = y.im) ∧ Nat.dist (d x) (d y) = 1)))))))))))))))) := by
+    ∀ (P : FordFareyParameter),
+      2 < P.q →
+        let B := P4062T1RemainderPaths P;
+        let d : GaussianInt → Nat := fun x =>
+          let a := if x ∈ (B 0).1 then (B 0).2 else (B 1).2
+          (x.re - a.re).natAbs + (x.im - a.im).natAbs;
+        let r := P.q₁;
+        let s := P.q₂;
+        P.q = P.q₁ + P.q₂ →
+          (0 : ℕ) < P.q₁ →
+            (∀ (x : GaussianInt),
+                s < r →
+                  (x ∈ (P4062T1RemainderPaths P (1 : Fin (2 : ℕ))).1 ↔
+                    x.im = (↑P.q₁ : ℤ) ∧ (1 : ℤ) ≤ x.re ∧ x.re ≤ (↑P.q₂ : ℤ) ∨
+                      x.re = (↑P.q₂ : ℤ) ∧
+                        (↑P.q₁ : ℤ) ≤ x.im ∧ x.im ≤ (↑P.q : ℤ) - (1 : ℤ))) →
+              (∀ (a : ℕ),
+                  ∀ (b : ℕ),
+                    ∀ (c : ℕ), a ≤ c → b ≤ c → (a.dist c).dist (b.dist c) = a.dist b) →
+                (∀ (a : ℕ),
+                    ∀ (b : ℕ),
+                      ∀ (c : ℕ), c ≤ a → c ≤ b → (a.dist c).dist (b.dist c) = a.dist b) →
+                  (∀ (x : GaussianInt),
+                      ∀ (y : GaussianInt),
+                        x.re = y.re →
+                          0 ≤ x.im →
+                            0 ≤ y.im →
+                            Nat.dist (d x) (d y) = Nat.dist x.im.toNat y.im.toNat →
+                            (FourNeighborAdjacent x y ↔
+                            (x.re = y.re ∨ x.im = y.im) ∧ Nat.dist (d x) (d y) = 1)) →
+                    (∀ (x : GaussianInt),
+                        ∀ (y : GaussianInt),
+                          x.im = y.im →
+                            0 ≤ x.re →
+                            0 ≤ y.re →
+                            Nat.dist (d x) (d y) = Nat.dist x.re.toNat y.re.toNat →
+                            (FourNeighborAdjacent x y ↔
+                            (x.re = y.re ∨ x.im = y.im) ∧ Nat.dist (d x) (d y) = 1)) →
+                      (s < r →
+                          ∀ (x : GaussianInt),
+                            x ∈ (B 1).1 →
+                            x.im = (r : Int) →
+                            0 ≤ x.re → x.re ≤ (s : Int) → d x = Nat.dist x.re.toNat s) →
+                        (s < r →
+                            ∀ (x : GaussianInt),
+                            x ∈ (B 1).1 →
+                            x.re = (s : Int) →
+                            0 ≤ x.im → (r : Int) ≤ x.im → d x = Nat.dist x.im.toNat r) →
+                          (∀ (a : Nat),
+                            ∀ (b : Nat),
+                            ∀ (x : GaussianInt),
+                            ∀ (y : GaussianInt),
+                            x.re = (a : Int) →
+                            y.im = (b : Int) →
+                            d x = Nat.dist x.im.toNat b →
+                            d y = Nat.dist y.re.toNat a →
+                            0 ≤ x.re →
+                            0 ≤ x.im →
+                            0 ≤ y.re →
+                            0 ≤ y.im →
+                            (FourNeighborAdjacent x y ↔
+                            (x.re = y.re ∨ x.im = y.im) ∧ Nat.dist (d x) (d y) = 1)) →
+                            (∀ (a : Nat),
+                            ∀ (b : Nat),
+                            ∀ (x : GaussianInt),
+                            ∀ (y : GaussianInt),
+                            x.im = (b : Int) →
+                            y.re = (a : Int) →
+                            d x = Nat.dist x.re.toNat a →
+                            d y = Nat.dist y.im.toNat b →
+                            0 ≤ x.re →
+                            0 ≤ x.im →
+                            0 ≤ y.re →
+                            0 ≤ y.im →
+                            (FourNeighborAdjacent x y ↔
+                            (x.re = y.re ∨ x.im = y.im) ∧ Nat.dist (d x) (d y) = 1)) →
+                            s < r →
+                            ∀ (x : GaussianInt),
+                            x ∈ (B 1).1 →
+                            ∀ (y : GaussianInt),
+                            y ∈ (B 1).1 →
+                            (FourNeighborAdjacent x y ↔
+                            (x.re = y.re ∨ x.im = y.im) ∧ Nat.dist (d x) (d y) = 1) := by
   classical
-  intro P hP B d r s hsum hs hr memB1Large distDistDown distDistUp lineVertical lineHorizontal
+  intro P hP B d r s hsum hr memB1Large distDistDown distDistUp lineVertical lineHorizontal
       dLarge1V dLarge1H cornerVH cornerHV hlarge x hx y hy
   have hxB : x ∈ (B 1).1 := by simpa using hx
   have hyB : y ∈ (B 1).1 := by simpa using hy
@@ -1510,20 +1643,20 @@ theorem P4112T1PathGeometry (P : FordFareyParameter) (hP : 2 < P.q) :
       (y : GaussianInt) (hy : y ∈ (B 1).1) :
       FourNeighborAdjacent x y ↔
         (x.re = y.re ∨ x.im = y.im) ∧ Nat.dist (d x) (d y) = 1 :=
-            PathAdjacencyProof.smallOneNeighbors P hsum hs memB1Small distDistUp lineVertical
+            PathAdjacencyProof.smallOneNeighbors P hsum memB1Small distDistUp lineVertical
             lineHorizontal dSmall1V dSmall1H cornerVH cornerHV hsmall x hx y hy
   have largeZeroNeighbors (hlarge : s < r) (x : GaussianInt) (hx : x ∈ (B 0).1)
       (y : GaussianInt) (hy : y ∈ (B 0).1) :
       FourNeighborAdjacent x y ↔
         (x.re = y.re ∨ x.im = y.im) ∧ Nat.dist (d x) (d y) = 1 :=
-            PathAdjacencyProof.largeZeroNeighbors P hP hsum hs hr memB0Large distDistDown
+            PathAdjacencyProof.largeZeroNeighbors P hP hsum hr memB0Large distDistDown
             distDistUp lineVertical lineHorizontal dLarge0V dLarge0H cornerVH cornerHV hlarge x
             hx y hy
   have largeOneNeighbors (hlarge : s < r) (x : GaussianInt) (hx : x ∈ (B 1).1)
       (y : GaussianInt) (hy : y ∈ (B 1).1) :
       FourNeighborAdjacent x y ↔
         (x.re = y.re ∨ x.im = y.im) ∧ Nat.dist (d x) (d y) = 1 :=
-            PathAdjacencyProof.largeOneNeighbors P hP hsum hs hr memB1Large distDistDown
+            PathAdjacencyProof.largeOneNeighbors P hP hsum hr memB1Large distDistDown
             distDistUp lineVertical lineHorizontal dLarge1V dLarge1H cornerVH cornerHV hlarge x
             hx y hy
   refine ⟨partition, hdisj, hcross, ?_⟩

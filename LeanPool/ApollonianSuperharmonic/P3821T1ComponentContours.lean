@@ -797,33 +797,7 @@ private theorem hpclose :
       (close_in_cell up rp hup) hh.le
     _ = h := mul_one h
 
-private theorem hqclose :
-    ∀ (q : ℂ),
-    let openbox (u : GaussianInt) (z : ℂ) : Prop :=
-      (u.re : ℝ) < z.re ∧ z.re < (u.re : ℝ) + 1 ∧
-        (u.im : ℝ) < z.im ∧ z.im < (u.im : ℝ) + 1
-    ∀ (η : ℝ), ∀ (εp : ℝ), ∀ (εq : ℝ),
-    let h : ℝ := min η (min εp εq) / 10
-    (0 < h) → (∀ (s : ℝ), ∀ (t : ℝ),
-    let o : ℂ := (h * s : ℝ) + (h * t : ℝ) * Complex.I
-    let rq : ℂ := (q - o) / (h : ℂ)
-    ∀ (uq : GaussianInt), (openbox uq rq) → ((∀ (u : GaussianInt), ∀ (z : ℂ), (openbox u z) → (‖z
-        - GridCellCenter u‖ ≤ 1)) → (‖q - ((h : ℂ) * GridCellCenter uq + o)‖ ≤ h))) := by
-  classical
-  intro q openbox η εp εq h hh s t o rq uq huq close_in_cell
-  have hq_eq : q = (h : ℂ) * rq + o := by
-    dsimp [rq]
-    rw [mul_div_cancel₀ (q - o) (by exact_mod_cast hh.ne')]
-    ring
-  have heq : q - ((h : ℂ) * GridCellCenter uq + o) =
-      (h : ℂ) * (rq - GridCellCenter uq) := by rw [hq_eq]; ring
-  rw [heq, norm_mul]
-  have hnorm : ‖(h : ℂ)‖ = h := by rw [Complex.norm_real, Real.norm_eq_abs, abs_of_pos hh]
-  rw [hnorm]
-  calc
-    h * ‖rq - GridCellCenter uq‖ ≤ h * 1 := mul_le_mul_of_nonneg_left
-      (close_in_cell uq rq huq) hh.le
-    _ = h := mul_one h
+private abbrev hqclose := ApollonianSuperharmonic.ComponentContoursProof.hpclose
 
 private theorem hpcenter_comp :
     ∀ (K : Set ℂ), (∀ (p : ℂ), ∀ (η : ℝ), ∀ (εp : ℝ), (Metric.ball p εp ⊆ Kᶜ) → (∀ (εq : ℝ),
@@ -1361,13 +1335,18 @@ private theorem hKne :
     isPreconnected_univ.connectedComponentIn (Set.mem_univ q)]
 
 private theorem hKV :
-    ∀ (K : Set ℂ), ∀ (N : Set ℂ), (K ⊆ N) → (∀ (p : ℂ), ∀ (q : ℂ), (p ∈ Kᶜ) → ((q ∈ Kᶜ) →
-        ((connectedComponentIn Kᶜ p ≠ connectedComponentIn Kᶜ q) → ((Bornology.IsBounded
-        (connectedComponentIn Kᶜ p)) → (
-    let V := N ∩ ({p, q} : Set ℂ)ᶜ
-    (IsOpen V) → (K ⊆ V)))))) := by
+    ∀ (K : Set ℂ),
+      ∀ (N : Set ℂ),
+        K ⊆ N →
+          ∀ (p : ℂ),
+            ∀ (q : ℂ),
+              p ∈ Kᶜ →
+                q ∈ Kᶜ →
+                  connectedComponentIn Kᶜ p ≠ connectedComponentIn Kᶜ q →
+                    let V := N ∩ ({ p, q } : Set ℂ)ᶜ;
+                    K ⊆ V := by
   classical
-  intro K N hKN p q hp hq hne hb V hV z hz
+  intro K N hKN p q hp hq hne V z hz
   refine ⟨hKN hz, ?_⟩
   simp only [Set.mem_compl_iff, Set.mem_insert_iff, Set.mem_singleton_iff]
   rintro (rfl | rfl)
@@ -1646,7 +1625,7 @@ theorem P3821T1ComponentContours (K N : Set ℂ) (hK : IsCompact K)
   let V := N ∩ ({p, q} : Set ℂ)ᶜ
   have hV : IsOpen V := hN.inter
     (isClosed_singleton.union isClosed_singleton).isOpen_compl
-  have hKV : K ⊆ V := ComponentContourDetails.hKV K N hKN p q hp hq hne hb hV
+  have hKV : K ⊆ V := ComponentContourDetails.hKV K N hKN p q hp hq hne
   obtain ⟨η, hη, hcollar⟩ := hK.exists_thickening_subset_open hV hKV
   obtain ⟨εp, hεp, hballp⟩ := Metric.isOpen_iff.mp hK.isClosed.isOpen_compl p hp
   obtain ⟨εq, hεq, hballq⟩ := Metric.isOpen_iff.mp hK.isClosed.isOpen_compl q hq

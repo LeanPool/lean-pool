@@ -176,14 +176,7 @@ private theorem turn_up_left (a : GaussianInt) :
   rw [add_comm]
   exact turn_up a
 
-private theorem turn_one_up (a : GaussianInt) :
-      GaussianQuarterTurn (a + 1 + ⟨0, 1⟩) =
-        GaussianQuarterTurn a - 1 + ⟨0, 1⟩ := by
-  classical
-  have turn_up_right (a : GaussianInt) :
-      GaussianQuarterTurn (a + 1 + ⟨0, 1⟩) =
-        GaussianQuarterTurn a - 1 + ⟨0, 1⟩ := turn_up_right a
-  exact turn_up_right a
+private abbrev turn_one_up := ApollonianSuperharmonic.QuarterTurnFormulas.turn_up_right
 
 private theorem turn_one_up_left (a : GaussianInt) :
       GaussianQuarterTurn (1 + (⟨0, 1⟩ + a)) =

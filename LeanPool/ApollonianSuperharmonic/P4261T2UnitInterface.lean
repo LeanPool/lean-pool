@@ -6,6 +6,7 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.GaussianRealPointProperties
 
 public import LeanPool.ApollonianSuperharmonic.P4261T2LiteralInterface
 public import LeanPool.ApollonianSuperharmonic.OpposingBoundaryOdometerStrings
@@ -158,20 +159,7 @@ private theorem hnormBig :
   have hn := GaussianInt.norm_nonneg w
   nlinarith [hnormSq, sq_nonneg (Zsqrtd.norm w - 5)]
 
-private theorem hrealPointInj :
-    (by
-      classical
-      exact
-        Function.Injective GaussianRealPoint ) := by
-  classical
-  intro x y hxy
-  apply Zsqrtd.ext
-  · have hr := congrArg Prod.fst hxy
-    change ((x.re : Int) : Real) = ((y.re : Int) : Real) at hr
-    exact_mod_cast hr
-  · have hi := congrArg Prod.snd hxy
-    change ((x.im : Int) : Real) = ((y.im : Int) : Real) at hi
-    exact_mod_cast hi
+private abbrev hrealPointInj := ApollonianSuperharmonic.GaussianRealPointProperties.injective
 
 private theorem hRminusNeRplus :
     (by
@@ -854,9 +842,8 @@ private theorem hwalkStart :
       classical
       exact
         ∀ (T : ProtoTile), ∀ (U : ProtoTile), ∀ (centerShift : GaussianInt), ∀ (Rminus :
-            ProtoTile), ∀ (Rplus : ProtoTile), ∀ (tiles : List ProtoTile), ∀ (reverseTiles : List
-            ProtoTile),
-        let F : ProtoTile → ProtoTile := fun X => TileTranslation (TileHalfTurn X) centerShift
+            ProtoTile), ∀ (Rplus : ProtoTile),
+        let F : ProtoTile → ProtoTile := fun X => TileTranslation (TileHalfTurn X) centerShift;
         ∀ (Eimage : ExactTileInterfaceTriple (F T) (F U) (F Rplus)), ∀ (hvFT : FootprintVertices
             (F T) = FootprintVertices U), ∀ (hvFU : FootprintVertices (F U) = FootprintVertices
             T), ∀ (hvFR : FootprintVertices (F Rplus) = FootprintVertices Rminus), ∀ (heFT :
@@ -872,24 +859,18 @@ private theorem hwalkStart :
           pathCA := by simpa [hvFR, hvFT, heFR, heFT] using Eimage.pathCA
           unique_common := by
             intro z
-            simpa [hvFT, hvFU, hvFR] using Eimage.unique_common z }
+            simpa [hvFT, hvFU, hvFR] using Eimage.unique_common z };
         ∀ (walk : List GaussianInt), (∃ (x : GaussianInt), walk.head? = some x ∧ x ∈
-            FootprintVertices Rminus) → ((∃ (y : GaussianInt), walk.getLast? = some y ∧ y ∈
-            FootprintVertices Rplus) → ((List.IsChain (fun (x y : GaussianInt) => y = x + (1 :
-            GaussianInt) ∨ y = x - (1 : GaussianInt) ∨ y = x + (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt)
-            ∨ y = x - (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt)) walk) → ((∀ x ∈ walk, (∃ a ∈ (List.drop
-            (1 : ℕ) tiles).dropLast, x ∈ FootprintVertices a) ∧ ∃ b ∈ (List.drop (1 : ℕ)
-            reverseTiles).dropLast, x ∈ FootprintVertices b) → ((∀ (x : GaussianInt), ∀ (y :
-            GaussianInt), ∀ (l₁ : List GaussianInt), ∀ (l₂ : List GaussianInt), walk = l₁ ++ x ::
-            y :: l₂ → (∃ a ∈ (List.drop (1 : ℕ) tiles).dropLast, {x, y} ∈ FootprintEdges a) ∧ ∃ b
-            ∈ (List.drop (1 : ℕ) reverseTiles).dropLast, {x, y} ∈ FootprintEdges b) → ((∀ x, x ∈
-            walk → x ∈ FootprintVertices T ∩ FootprintVertices U) → ((∀ x y : GaussianInt, ∀ pre
-            post : List GaussianInt, walk = pre ++ x :: y :: post → {x, y} ∈ FootprintEdges T ∩
-            FootprintEdges U) → (∃ z, walk.head? = some z ∧ z = Enegative.point))))))) ) := by
+            FootprintVertices Rminus) → (
+                                       (
+                                                                  (
+                                                               (
+                                                                                      ((∀ x, x ∈
+            walk → x ∈ FootprintVertices T ∩ FootprintVertices U) → (
+                                (∃ z, walk.head? = some z ∧ z = Enegative.point))))))) ) := by
   classical
-  intro T U centerShift Rminus Rplus tiles reverseTiles F Eimage hvFT hvFU hvFR heFT heFU heFR
-      Enegative walk hwalkHead hwalkLast hwalkChain hwalkVertices hwalkEdges hwalkInOuter
-      hwalkOuterEdges
+  intro T U centerShift Rminus Rplus F Eimage hvFT hvFU hvFR heFT heFU heFR Enegative walk
+      hwalkHead hwalkInOuter
   obtain ⟨z, hzhead, hzR⟩ := hwalkHead
   have hmem : z ∈ walk := by
     cases walk with
@@ -1342,9 +1323,8 @@ theorem P4261T2UnitInterface
   have hwalkOuterEdges := UnitInterfaceGeometry.hwalkOuterEdges C D T U h k tiles reverseTiles
       functions reverseFunctions hrestrictionsForward hrestrictionsBackward walk hwalkEdges
       (UnitInterfaceGeometry.edgeAncestor C D)
-  have hwalkStart := UnitInterfaceGeometry.hwalkStart T U centerShift Rminus Rplus tiles
-      reverseTiles Eimage hvFT hvFU hvFR heFT heFU heFR walk hwalkHead hwalkLast hwalkChain
-      hwalkVertices hwalkEdges hwalkInOuter hwalkOuterEdges
+  have hwalkStart := UnitInterfaceGeometry.hwalkStart T U centerShift Rminus Rplus Eimage hvFT
+      hvFU hvFR heFT heFU heFR walk hwalkHead hwalkInOuter
   have hwalkFinish := UnitInterfaceGeometry.hwalkFinish T U Rplus Epositive walk hwalkLast
       hwalkInOuter
   obtain ⟨path, hpathNodup, hpathLength, hpathHead, hpathLast,

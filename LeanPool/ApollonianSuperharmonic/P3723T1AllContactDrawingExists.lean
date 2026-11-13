@@ -2298,36 +2298,60 @@ private theorem hpoly :
     (by
       classical
       exact
-        ∀ (ι : Type), ∀ (P : PeriodicTileComplex ι), ∀ (D : P3723T1ContactPorts P), ∀ (a : ι),
-            ∀ (b : ι), ∀ (localStar : (a : ι) → { b : ι // P3723T1EdgeContact P a b } → (↑(Icc
-            (0 : ℝ) (1 : ℝ)) : Type) → ℝ × ℝ),
-        let rep (a : ι) : ι := Classical.choose (P.vertex_orbit_representatives a).exists
-        ∀ (rep_spec : ∀ (a : ι), rep a ∈ P.vertexOrbitReps ∧ ∃ u : P.lattice, a = P.shift u (rep
-            a)),
-        let period (a : ι) : P.lattice := Classical.choose (rep_spec a).2
-        ∀ (pulled_contact : ∀ (a : ι), ∀ (b : ι), (P3723T1EdgeContact P a b) →
-            (P3723T1EdgeContact P (rep a) (P.shift (-period a) b))), ∀ (hab :
-                P3723T1EdgeContact P a b),
-        let g (a b : ι) (s : Icc (0 : Real) 1) : Real × Real :=
-          if hab : P3723T1EdgeContact P a b then
-            localStar (rep a) ⟨P.shift (-period a) b, pulled_contact a b hab⟩ s +
-              GaussianRealPoint (period a)
-          else D.position a
-        ∀ (polyab : P3723T1PolygonalParameterization (g a b)), ∀ (polyba :
-            P3723T1PolygonalParameterization (g b a)),
-        let clip (x : Real) : Icc (0 : Real) 1 :=
-          ⟨max 0 (min 1 x), le_max_left _ _, max_le (by norm_num) (min_le_left _ _)⟩
-        let left : Icc (0 : Real) 1 → Real × Real := fun s => g a b (clip (2 * s))
-        let right : Icc (0 : Real) 1 → Real × Real := fun s => g b a (clip (2 - 2 * s))
-        let A : Set (Icc (0 : Real) 1) := {s | (s : Real) ≤ 1 / 2}
-        let f : Icc (0 : Real) 1 → Real × Real := A.piecewise left right
-        (∀ (s : Icc (0 : Real) 1), (s ∈ A) → ((clip (2 * s) : Real) = 2 * s)) → ((∀ (s : Icc (0 :
-            Real) 1), (s ∉ A) → ((clip (2 - 2 * s) : Real) = 2 -
-            2 * s)) → (∀ (p : ℝ × ℝ), (g a b ⟨1, by norm_num⟩ = p) → ((g b a ⟨1,
-            by norm_num⟩ = p) → (Nonempty (P3723T1PolygonalParameterization f)))))) := by
+        ∀ (ι : Type),
+          ∀ (P : PeriodicTileComplex ι),
+            ∀ (D : P3723T1ContactPorts P),
+              ∀ (a : ι),
+                ∀ (b : ι),
+                  ∀
+                    (localStar :
+                      (a : ι) →
+                        { b : ι // P3723T1EdgeContact P a b } →
+                          (↑(Icc (0 : ℝ) (1 : ℝ)) : Type) → ℝ × ℝ),
+                    let rep (a : ι) : ι :=
+                      Classical.choose (P.vertex_orbit_representatives a).exists;
+                    ∀
+                      (rep_spec :
+                        ∀ (a : ι),
+                          rep a ∈ P.vertexOrbitReps ∧
+                            ∃ u : P.lattice, a = P.shift u (rep a)),
+                      let period (a : ι) : P.lattice := Classical.choose (rep_spec a).2;
+                      ∀
+                        (pulled_contact :
+                          ∀ (a : ι),
+                            ∀ (b : ι),
+                              P3723T1EdgeContact P a b →
+                                P3723T1EdgeContact P (rep a) (P.shift (-period a) b)),
+                        let g (a b : ι) (s : Icc (0 : Real) 1) : Real × Real :=
+                          if hab : P3723T1EdgeContact P a b then
+                            localStar (rep a)
+                                ⟨P.shift (-period a) b, pulled_contact a b hab⟩ s +
+                              GaussianRealPoint (period a)
+                          else D.position a
+                        ∀ (polyab : P3723T1PolygonalParameterization (g a b)),
+                          ∀ (polyba : P3723T1PolygonalParameterization (g b a)),
+                            let clip (x : Real) : Icc (0 : Real) 1 :=
+                              ⟨max 0 (min 1 x), le_max_left _ _,
+                                max_le (by norm_num) (min_le_left _ _)⟩
+                            let left : Icc (0 : Real) 1 → Real × Real := fun s =>
+                              g a b (clip (2 * s))
+                            let right : Icc (0 : Real) 1 → Real × Real := fun s =>
+                              g b a (clip (2 - 2 * s))
+                            let A : Set (Icc (0 : Real) 1) := {s | (s : Real) ≤ 1 / 2}
+                            let f : Icc (0 : Real) 1 → Real × Real :=
+                              A.piecewise left right
+                            (∀ (s : Icc (0 : Real) 1),
+                                s ∈ A → (clip (2 * s) : Real) = 2 * s) →
+                              (∀ (s : Icc (0 : Real) 1),
+                                s ∉ A → (clip (2 - 2 * s) : Real) = 2 - 2 * s) →
+                                ∀ (p : ℝ × ℝ),
+                                g a b ⟨1, by norm_num⟩ = p →
+                                g b a ⟨1, by norm_num⟩ = p →
+                                Nonempty (P3723T1PolygonalParameterization f)
+    ) := by
   classical
-  intro ι P D a b localStar rep rep_spec period pulled_contact hab g polyab polyba clip left
-      right A f hscale_left hscale_right p hendab hendba
+  intro ι P D a b localStar rep rep_spec period pulled_contact g polyab polyba clip left right A
+      f hscale_left hscale_right p hendab hendba
   let m := polyab.count
   let n := polyba.count
   have hmpos : 0 < m := polyab.positive
@@ -2602,7 +2626,7 @@ private theorem full_parameters :
   have hrange := ContactDrawingGeometry.hrange ι P D a b localStar rep_spec pulled_contact hab
       hba p hendab hendba
   have hpoly : Nonempty (P3723T1PolygonalParameterization f) :=
-      ContactDrawingConcatenation.hpoly ι P D a b localStar rep_spec pulled_contact hab polyab
+      ContactDrawingConcatenation.hpoly ι P D a b localStar rep_spec pulled_contact polyab
       polyba hscale_left hscale_right p hendab hendba
   exact ⟨f, hfcont, hfinj, hrange, hf0, hf1, hpoly⟩
 

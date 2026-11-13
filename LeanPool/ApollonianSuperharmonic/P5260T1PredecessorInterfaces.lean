@@ -6,6 +6,7 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.TileTranslationProperties
 public import LeanPool.ApollonianSuperharmonic.SimpleGridPathBetween
 
 public import LeanPool.ApollonianSuperharmonic.P5260T1PlacementLedger
@@ -621,24 +622,7 @@ private theorem translatePathTiles :
     (TileTranslationFormulas X u).2.2.2.2.2.2.1,
     (TileTranslationFormulas Y u).2.2.2.2.2.2.1] using hi
 
-private theorem translateComp :
-    (by
-      classical
-      exact
-        ∀ (T : ProtoTile), ∀ (u : GaussianInt), ∀ (v : GaussianInt), TileTranslation
-            (TileTranslation T u) v = TileTranslation T (u + v) ) := by
-  classical
-  intro T u v
-  cases T with
-  | mk cells anchor =>
-    apply congrArg₂ ProtoTile.mk
-    · simp only [TileTranslation]
-      rw [Finset.image_image]
-      congr 1
-      funext z
-      simp [GaussianTranslation, add_comm, add_left_comm]
-    · simp [TileTranslation, GaussianTranslation, add_comm,
-        add_left_comm]
+private abbrev translateComp := ApollonianSuperharmonic.TileTranslationProperties.add
 
 private theorem hEmShift :
     (by
@@ -794,19 +778,7 @@ private theorem pathWDrev :
   intro k reversePath N D W pathDW
   simpa only [Set.inter_comm] using reversePath pathDW
 
-private theorem translateZero :
-    (by
-      classical
-      exact
-        ∀ (T : ProtoTile), TileTranslation T 0 = T ) := by
-  classical
-  intro T
-  cases T with
-  | mk cells anchor =>
-    apply congrArg₂ ProtoTile.mk
-    · change Finset.image (fun z => z + (0 : GaussianInt)) cells = cells
-      simp
-    · simp [GaussianTranslation]
+private abbrev translateZero := ApollonianSuperharmonic.TileTranslationProperties.zero
 
 private theorem hlowTile :
     (by

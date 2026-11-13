@@ -6,6 +6,7 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.FordInteriorSquareCoordinates
 public import LeanPool.ApollonianSuperharmonic.FordFareySum
 
 public import LeanPool.ApollonianSuperharmonic.P4062T1RemainderPaths
@@ -112,23 +113,7 @@ private theorem hsum :
   intro P
   exact_mod_cast P.sum_q
 
-private theorem squareCoordinates :
-    ∀ (n : Nat), ∀ (z : GaussianInt), z ∈ P4062T1InteriorSquare n ↔
-        1 ≤ z.re ∧ z.re ≤ (n : Int) - 1 ∧
-        1 ≤ z.im ∧ z.im ≤ (n : Int) - 1 := by
-  classical
-  intro n z
-  unfold P4062T1InteriorSquare
-  constructor
-  · intro hz
-    obtain ⟨⟨a, b⟩, hab, rfl⟩ := Finset.mem_image.mp hz
-    obtain ⟨ha, hb⟩ := Finset.mem_product.mp hab
-    exact ⟨(Finset.mem_Icc.mp ha).1, (Finset.mem_Icc.mp ha).2,
-      (Finset.mem_Icc.mp hb).1, (Finset.mem_Icc.mp hb).2⟩
-  · intro hz
-    exact Finset.mem_image.mpr ⟨(z.re, z.im),
-      Finset.mem_product.mpr ⟨Finset.mem_Icc.mpr ⟨hz.1, hz.2.1⟩,
-        Finset.mem_Icc.mpr hz.2.2⟩, by cases z; rfl⟩
+private abbrev squareCoordinates := ApollonianSuperharmonic.FordInteriorSquareCoordinates.membership
 
 private theorem mem0 :
     ∀ (P : FordFareyParameter),

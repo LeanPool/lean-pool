@@ -663,26 +663,6 @@ private theorem ha :
   intro A A' hAn he
   exact False.elim ((Finset.not_nonempty_iff_eq_empty.mpr he) hAn)
 
-private theorem hb :
-    (by
-      classical
-      exact
-        ∀ (B : ProtoTile), ∀ (B' : ProtoTile), (Finset.Nonempty B.cells) → (B.cells = ∅ →
-            B.anchor = B'.anchor) ) := by
-  classical
-  intro B B' hBn he
-  exact False.elim ((Finset.not_nonempty_iff_eq_empty.mpr he) hBn)
-
-private theorem hc :
-    (by
-      classical
-      exact
-        ∀ (C : ProtoTile), ∀ (C' : ProtoTile), (Finset.Nonempty C.cells) → (C.cells = ∅ →
-            C.anchor = C'.anchor) ) := by
-  classical
-  intro C C' hCn he
-  exact False.elim ((Finset.not_nonempty_iff_eq_empty.mpr he) hCn)
-
 private theorem hzero :
     (by
       classical

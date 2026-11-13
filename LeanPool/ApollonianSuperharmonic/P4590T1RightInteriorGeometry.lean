@@ -6,6 +6,8 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.BoundaryFootprintInclusion
+public import LeanPool.ApollonianSuperharmonic.LatticeFootprintIncidence
 public import LeanPool.ApollonianSuperharmonic.PairAssignmentFacts
 public import LeanPool.ApollonianSuperharmonic.BandLayoutCentroidCoordinates
 public import LeanPool.ApollonianSuperharmonic.BandLayoutFaceSupport
@@ -299,45 +301,9 @@ private theorem touching_disjoint :
   · rw [ht.1] at hVne
     simp at hVne
 
-private theorem rawIncident :
-    (by
-      classical
-      exact
-        ∀ (U : ProtoTile), ∀ (z : GaussianInt), (U.cells.Nonempty) → ((z ∈ FootprintVertices U) →
-            (∃ j : Fin 4, LatticeVertexIncidentCell z j ∈ U.cells)) ) := by
-  classical
-  intro U z hne hz
-  simp only [FootprintVertices, hne, ite_true, Set.mem_ofPred_eq] at hz
-  rcases hz with ⟨cell, hc, h | h | h | h⟩
-  · refine ⟨0, ?_⟩
-    simpa [LatticeVertexIncidentCell] using h ▸ hc
-  · refine ⟨1, ?_⟩
-    subst z
-    simpa [LatticeVertexIncidentCell] using hc
-  · refine ⟨3, ?_⟩
-    subst z
-    simpa [LatticeVertexIncidentCell] using hc
-  · refine ⟨2, ?_⟩
-    change z - 1 - ⟨0, 1⟩ ∈ U.cells
-    rw [h]
-    convert hc using 1; ext <;> simp
+private abbrev rawIncident := ApollonianSuperharmonic.LatticeFootprintIncidence.incidentCell
 
-private theorem edgeEndpoint :
-    (by
-      classical
-      exact
-        ∀ (U : ProtoTile),
-          ∀ (e : Finset GaussianInt),
-            e ∈ FootprintEdges U → ∀ (z : GaussianInt), z ∈ e → z ∈ FootprintVertices U
-    ) := by
-  classical
-  intro U e he z hz
-  rcases he with ⟨cell, hc, hshape | hshape | hshape | hshape⟩
-  all_goals rw [hshape] at hz
-  all_goals simp only [Finset.mem_insert, Finset.mem_singleton] at hz
-  all_goals rw [FootprintVertices, ite_eq_left (show U.cells.Nonempty from ⟨cell, hc⟩)]
-  all_goals refine ⟨cell, hc, ?_⟩
-  all_goals rcases hz with hz | hz <;> simp [hz]
+private abbrev edgeEndpoint := ApollonianSuperharmonic.BoundaryFootprintInclusion.edgeVertex
 
 private theorem threeBoundaries :
     (by
@@ -1158,10 +1124,9 @@ private theorem hEdgesQC :
                             FootprintVertices (cert.P 1 true) ⊆
                           FootprintVertices (cert.Q 1 true) ∩
                             FootprintVertices (cert.P 1 true) →
-                        (cert.P 1 true).cells.Nonempty →
-                          (∃ y z : GaussianInt,
-                              ∃ e f : Finset GaussianInt,
-                                e ≠ f ∧
+                        (∃ y z : GaussianInt,
+                            ∃ e f : Finset GaussianInt,
+                              e ≠ f ∧
                                 x ∈ e ∧
                                 x ∈ f ∧
                                 e ∈
@@ -1173,17 +1138,17 @@ private theorem hEdgesQC :
                                 e = { y, x } ∧
                                 f = { x, z } ∧
                                 FourNeighborAdjacent y x ∧ FourNeighborAdjacent x z) →
-                            (∀ x ∈ FootprintVertices (cert.Q (1 : Fin (3 : ℕ)) true),
-                                ∀ y ∈ FootprintVertices (cert.Q (1 : Fin (3 : ℕ)) true),
+                          (∀ x ∈ FootprintVertices (cert.Q (1 : Fin (3 : ℕ)) true),
+                              ∀ y ∈ FootprintVertices (cert.Q (1 : Fin (3 : ℕ)) true),
                                 FourNeighborAdjacent x y →
                                 { x, y } ∈
                                 FootprintEdges (cert.Q (1 : Fin (3 : ℕ)) true)) →
-                              (∀ x ∈ FootprintVertices (cert.P (1 : Fin (3 : ℕ)) true),
+                            (∀ x ∈ FootprintVertices (cert.P (1 : Fin (3 : ℕ)) true),
                                 ∀ y ∈ FootprintVertices (cert.P (1 : Fin (3 : ℕ)) true),
                                 FourNeighborAdjacent x y →
                                 { x, y } ∈
                                 FootprintEdges (cert.P (1 : Fin (3 : ℕ)) true)) →
-                                ∃ e f : Finset GaussianInt,
+                              ∃ e f : Finset GaussianInt,
                                 e ≠ f ∧
                                 x ∈ e ∧
                                 x ∈ f ∧
@@ -1195,7 +1160,7 @@ private theorem hEdgesQC :
                                 FootprintEdges (cert.P 1 true)
     ) := by
   classical
-  intro q cfg C T cert x edgeEndpoint raw_support hCne hpathEndpoints regQ regC
+  intro q cfg C T cert x edgeEndpoint raw_support hpathEndpoints regQ regC
   obtain ⟨y, z, e, f, hef, hxe, hxf, he, hf, rfl, rfl, hyx, hxz⟩ :=
     hpathEndpoints
   have hyA := edgeEndpoint (cert.P 0 true)
@@ -1709,41 +1674,62 @@ private theorem hstar :
     (by
       classical
       exact
-        ∀ (q : Fin (4 : ℕ) → CircleCoordinates), ∀ (cfg : BandOrderedGeneralConfiguration q), ∀
-            (C : BandCircle), ∀ (T : ProtoTile), ∀ (cert : BandOrderedGeneralLayoutCertificate q
-            cfg C T), ∀ (x : GaussianInt), (x ∈ FootprintVertices T) → ((x ∉
-            BoundaryFootprintVertices T) → ((Nat.card
-            { is : Fin (3 : ℕ) × Bool // x ∈ BoundaryFootprintVertices (cert.P is.1 is.2) } = (2
-            : ℕ)) → (∀ (u : GaussianInt),
-        let w := BandVectors.1 (q 3) (q 2)
-        let t : GaussianInt :=
-          ⟨u.re - u.im + w.re + w.im, u.re + u.im + w.im - w.re⟩
-        (x ∈ FootprintVertices (cert.P (0 : Fin (3 : ℕ)) false)) → ((x ∈ FootprintVertices
-            (cert.P (1 : Fin (3 : ℕ)) false)) → (
-        let F : GaussianInt → GaussianInt := fun z => t - z
-        let v : GaussianInt := F x
-        (∀ (i : Fin 3), F '' FootprintVertices (cert.P i true) = FootprintVertices (cert.P i
-            false)) → ((∀ (i : Fin 3), ∀ (s : Bool), v ∈ BoundaryFootprintVertices (cert.P i s) ↔
-            x ∈ BoundaryFootprintVertices (cert.P i (!s))) → ((v ∈ FootprintVertices (cert.P 0
-            true)) → ((v ∈ FootprintVertices (cert.P 1 true)) → (
-        let A := {is : Fin 3 × Bool //
-          v ∈ BoundaryFootprintVertices (cert.P is.1 is.2)}
-        (Nat.card A = 2) → ((v ∈ FootprintVertices (cert.Q (1 : Fin (3 : ℕ)) true) ∧ (∀ (y :
-            GaussianInt), y = v ∨ y = v + (1 : GaussianInt) ∨ y = v - (1 : GaussianInt) ∨ y = v +
-            (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt) ∨ y = v - (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt) → y ∈
-            FootprintVertices (cert.Q (1 : Fin (3 : ℕ)) true) ∨ y ∈ FootprintVertices (cert.P (1
-            : Fin (3 : ℕ)) true)) ∧ ∀ (z : GaussianInt), z = v ∨ z = v - (1 : GaussianInt) ∨ z =
-            v - (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt) ∨ z = v - (1 : GaussianInt) - (⟨(0 : ℤ), (1 :
-            ℤ)⟩ : GaussianInt) → z ∈ (cert.Q (1 : Fin (3 : ℕ)) true).cells ∨ z ∈ (cert.P (1 : Fin
-            (3 : ℕ)) true).cells) → ((F '' FootprintVertices (cert.Q 1 true) = FootprintVertices
-            (cert.S 1 false)) → ((∀ (U : ProtoTile), ∀ (V : ProtoTile), (F '' FootprintVertices U
-            = FootprintVertices V) → (∀ (z : GaussianInt), (F z ∈ FootprintVertices U) → (z ∈
-            FootprintVertices V))) → (∀ (y : GaussianInt), (y = x ∨ y = x + 1 ∨ y = x - 1 ∨
-            y = x + ⟨0, 1⟩ ∨ y = x - ⟨0, 1⟩) → (y ∈ FootprintVertices (cert.S 1 false) ∨ y ∈
-                FootprintVertices (cert.P 1 false))))))))))))))) ) := by
+        ∀ (q : Fin (4 : ℕ) → CircleCoordinates),
+          ∀ (cfg : BandOrderedGeneralConfiguration q),
+            ∀ (C : BandCircle),
+              ∀ (T : ProtoTile),
+                ∀ (cert : BandOrderedGeneralLayoutCertificate q cfg C T),
+                  ∀ (x : GaussianInt),
+                    Nat.card
+                          { is : Fin (3 : ℕ) × Bool //
+                            x ∈ BoundaryFootprintVertices (cert.P is.1 is.2) } =
+                        (2 : ℕ) →
+                      ∀ (u : GaussianInt),
+                        let w := BandVectors.1 (q 3) (q 2);
+                        let t : GaussianInt :=
+                          ⟨u.re - u.im + w.re + w.im, u.re + u.im + w.im - w.re⟩;
+                        let F : GaussianInt → GaussianInt := fun z => t - z;
+                        let v : GaussianInt := F x;
+                        (∀ (i : Fin 3),
+                            F '' FootprintVertices (cert.P i true) =
+                              FootprintVertices (cert.P i false)) →
+                          let A :=
+                            { is : Fin 3 × Bool //
+                              v ∈ BoundaryFootprintVertices (cert.P is.1 is.2) }
+                          Nat.card A = 2 →
+                            (v ∈ FootprintVertices (cert.Q (1 : Fin (3 : ℕ)) true) ∧
+                                (∀ (y : GaussianInt),
+                                y = v ∨
+                                y = v + (1 : GaussianInt) ∨
+                                y = v - (1 : GaussianInt) ∨
+                                y = v + (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt) ∨
+                                y = v - (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt) →
+                                y ∈ FootprintVertices (cert.Q (1 : Fin (3 : ℕ)) true) ∨
+                                y ∈ FootprintVertices (cert.P (1 : Fin (3 : ℕ)) true)) ∧
+                                ∀ (z : GaussianInt),
+                                z = v ∨
+                                z = v - (1 : GaussianInt) ∨
+                                z = v - (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt) ∨
+                                z =
+                                v - (1 : GaussianInt) -
+                                (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt) →
+                                z ∈ (cert.Q (1 : Fin (3 : ℕ)) true).cells ∨
+                                z ∈ (cert.P (1 : Fin (3 : ℕ)) true).cells) →
+                              F '' FootprintVertices (cert.Q 1 true) =
+                                FootprintVertices (cert.S 1 false) →
+                                (∀ (U : ProtoTile),
+                                ∀ (V : ProtoTile),
+                                F '' FootprintVertices U = FootprintVertices V →
+                                ∀ (z : GaussianInt),
+                                F z ∈ FootprintVertices U → z ∈ FootprintVertices V) →
+                                ∀ (y : GaussianInt),
+                                y = x ∨
+                                y = x + 1 ∨ y = x - 1 ∨ y = x + ⟨0, 1⟩ ∨ y = x - ⟨0, 1⟩ →
+                                y ∈ FootprintVertices (cert.S 1 false) ∨
+                                y ∈ FootprintVertices (cert.P 1 false)
+    ) := by
   classical
-  intro q cfg C T cert x hx hxb hk u w t hB hD F v parentFootprint hboundaryFlip hvA hvC A hvk
-      hpositive childFoot moveFoot y hy
+  intro q cfg C T cert x hk u w t F v parentFootprint A hvk hpositive childFoot moveFoot y hy
   have hFinvol (z : GaussianInt) : F (F z) = z := by
     dsimp [F]
     abel
@@ -2093,7 +2079,7 @@ private theorem positiveCase :
     touching_disjoint _ _ _ hQne hCne cert.double_third
   have hresult := interfaceConclusion point (cert.Q 1 true) (cert.P 1 true) hQ hCtile hdis
       (RightInteriorGeometry.hEdgesQC q cfg C T cert point
-        edgeEndpoint raw_support hCne (RightInteriorGeometry.hpathEndpoints q cfg C T cert point
+        edgeEndpoint raw_support (RightInteriorGeometry.hpathEndpoints q cfg C T cert point
         twoPathEdges hA hC (RightInteriorGeometry.hcompleteOriginal q cfg C T cert hretainEdges
         hretainVertices (RightInteriorGeometry.hcomplete q cfg C T cert htileA htileC hraw f g
         hpath hpair hrho1 hrho3)) (RightInteriorGeometry.hz1ne q cfg C T cert point hk
@@ -2267,8 +2253,8 @@ theorem P4590T1RightInteriorGeometry :
         z ∈ FootprintVertices V := RightInteriorGeometry.moveFoot q u hFinvol image_mem U V hUV z hz
     exact ⟨by
       exact moveFoot _ _ childFoot x (by simpa [hFinvol] using hpositive.1),
-      (RightInteriorGeometry.hstar q cfg C T cert x hx hxb hk u hB hD parentFootprint
-          hboundaryFlip hvA hvC hvk hpositive childFoot moveFoot),
+      (RightInteriorGeometry.hstar q cfg C T cert x hk u parentFootprint hvk hpositive childFoot
+          moveFoot),
           (RightInteriorGeometry.hcellsAt1062 q cfg C T cert x u outerCells hpositive hHQcells
           (RightInteriorGeometry.moveCell q u hHcells) (RightInteriorGeometry.hcellLift q x u))⟩
 
