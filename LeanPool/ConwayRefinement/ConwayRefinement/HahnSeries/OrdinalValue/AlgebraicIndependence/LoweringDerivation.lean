@@ -17,8 +17,6 @@ public import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.OrdinalValue
 
 import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.OrdinalValue.AlgebraicIndependence.DerivAtInjective
 import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.OrdinalValue.PrincipalSubringFraction
-import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.Degree.Statements.Degree
-import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.OrdinalValue.Statements.ProductValue
 
 /-!
 # `(P̂, ∂)` is a graded domain over `K` with a lowering derivation

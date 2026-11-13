@@ -7,7 +7,7 @@ module
 
 public import Mathlib.Init
 public meta import Lean.LabelAttribute -- TODO: `registerLabelAttr` should be marked `meta`
-import Lean.Meta.Tactic.Simp.Attr
+meta import Lean.Meta.Tactic.Simp.Attr
 
 /-!
 We register a `simp` attribute for the `game_cmp` tactic. This needs to be done in a separate file

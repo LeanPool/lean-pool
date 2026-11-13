@@ -9,10 +9,8 @@ public import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.Factorizatio
 public import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.DegreeTermCount
 
 import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.Factorization.InfiniteSupport
-import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.OrdinalValue.Statements.ProductValue
 import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.FiniteSupportUnit
 import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.FiniteSupportGCDProof
-import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.Degree.Statements.Degree
 
 /-!
 # LM24 factorisation statement

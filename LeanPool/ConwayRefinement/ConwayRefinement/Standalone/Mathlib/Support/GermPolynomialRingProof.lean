@@ -12,8 +12,6 @@ public import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.OrdinalValue
 
 import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.Primality.OrdinalValueQuotient
 import Mathlib.Algebra.Ring.Hom.InjSurj
-import Mathlib.RingTheory.Ideal.Quotient.Operations
-import Mathlib.RingTheory.UniqueFactorizationDomain.Basic
 
 /-!
 # Proof that the ring of germs is a polynomial ring

@@ -8,7 +8,6 @@ module
 public import Mathlib.Algebra.DirectSum.Ring
 
 import Mathlib.Algebra.BigOperators.Ring.Finset
-import Mathlib.Algebra.GroupWithZero.Divisibility
 
 /-!
 # Divisibility by homogeneous elements in graded direct sums

@@ -15,11 +15,9 @@ public import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.Factorizatio
 
 import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.Factorization.Random.PrincipalIrreducible
 import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.Degree.SupportSupremumMultiplicativity
-import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.OrdinalValue.PrincipalComponentDegree
 import LeanPool.ConwayRefinement.ConwayRefinement.Algebra.Valuation.AssociatedGradedDivisibility
 import LeanPool.ConwayRefinement.ConwayRefinement.Algebra.Valuation.DegreeSum
 import Mathlib.LinearAlgebra.Basis.VectorSpace
-import Mathlib.RingTheory.TensorProduct.Basic
 
 /-!
 # Block forms in the degree-graded ring
@@ -430,7 +428,7 @@ theorem exists_isMonomial_factor_of_mul_eq [CharZero K] {n : NatOrdinal}
   have hBeq : B = A' * C' := by
     apply mul_left_cancel₀ hγne
     rw [← hAC, hA', hC', ← hp₁, ← hp₂, hsplit, map_mul]
-    ring
+    ac_rfl
   rcases hBirr.isUnit_or_isUnit hBeq with hA'u | hC'u
   · obtain ⟨k, hk, hk'⟩ := exists_algebraMap_eq_of_isUnit hA'u
     refine ⟨p₁ * algebraMap K _ k, ?_, Or.inl ?_⟩

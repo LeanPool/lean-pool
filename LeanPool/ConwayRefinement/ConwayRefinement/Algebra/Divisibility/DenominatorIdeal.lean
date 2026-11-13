@@ -10,7 +10,7 @@ public import Mathlib.Algebra.Ring.Subring.Basic
 public import Mathlib.RingTheory.Ideal.Defs
 
 import Mathlib.Tactic.FieldSimp
-import Mathlib.Tactic.Ring
+import Mathlib.Tactic.Ring.RingNF
 
 /-!
 # Denominator ideals and four-factor refinement
@@ -80,12 +80,12 @@ theorem exists_common_divisor_denominatorIdeal_iff_exists_fourFactorRefinement
       change ξ * (y : R) = (g : K) * (h : K)
       rw [hyg]
       change ξ * ((s : K) * g) = (g : K) * (ξ * s)
-      ring
+      ac_rfl
     · apply Subtype.ext
       change ξ * (x : R) = (f : K) * (h : K)
       rw [hxf]
       change ξ * ((s : K) * f) = (f : K) * (ξ * s)
-      ring
+      ac_rfl
   · rintro ⟨e, f, g, h, hxf, _, hyg, hxh⟩
     have hf0 : (f : K) ≠ 0 := by
       intro hf
@@ -98,10 +98,10 @@ theorem exists_common_divisor_denominatorIdeal_iff_exists_fourFactorRefinement
     have hξe : ξ * (e : K) = (h : K) := by
       apply mul_right_cancel₀ hf0
       calc
-        (ξ * (e : K)) * f = ξ * ((e : K) * f) := by ring
+        (ξ * (e : K)) * f = ξ * ((e : K) * f) := by ac_rfl
         _ = ξ * (x : K) := by rw [hxfK]
         _ = (f : K) * h := hxhK
-        _ = (h : K) * f := by ring
+        _ = (h : K) * f := by ac_rfl
     let s : denominatorIdeal R ξ :=
       ⟨e, (mem_denominatorIdeal_iff R ξ e).2 (by rw [hξe]; exact h.2)⟩
     exact ⟨s, ⟨f, hxf⟩, ⟨g, hyg⟩⟩
@@ -122,7 +122,7 @@ theorem hasFourFactorRefinement_iff_forall_denominatorIdeal_exists_common_diviso
       apply hR.refine
       apply Subtype.ext
       change (x : K) * (ξ * (y : R)) = (y : K) * (ξ * (x : R))
-      ring
+      ac_rfl
   · intro h
     apply hasFourFactorRefinement_def.mpr
     intro a b c d habcd

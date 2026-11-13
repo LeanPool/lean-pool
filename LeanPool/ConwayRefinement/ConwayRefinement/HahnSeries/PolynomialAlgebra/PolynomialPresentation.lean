@@ -11,11 +11,8 @@ public import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.Factorizatio
 public import Mathlib.RingTheory.Localization.FractionRing
 public import Mathlib.Algebra.Prime.Defs
 
-import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.DegreeValuation
-import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.OrdinalValue.Statements.ProductValue
 import Mathlib.RingTheory.MvPolynomial.Localization
 import Mathlib.RingTheory.Polynomial.UniqueFactorization
-import Mathlib.RingTheory.Ideal.Quotient.Operations
 
 /-!
 # Polynomial presentations of the series ring and primality
@@ -236,7 +233,7 @@ theorem irreducible_coordinatePolynomialMap_of_irreducible_aeval
         coordinatePolynomialMap K ι (G' * H') := by
       rw [map_mul (coordinatePolynomialMap K ι), map_mul (coordinatePolynomialMap K ι), ← huG,
         ← hvH, hGH, coordinatePolynomialMap, MvPolynomial.map_C, map_mul, MvPolynomial.C_mul]
-      ring
+      ac_rfl
     have heq := hinj hmap
     have heval : ((u * v : Berarducci.FiniteSupportRing (K := K)) : Nonpositive ℝ K) *
         MvPolynomial.aeval b F = MvPolynomial.aeval b G' * MvPolynomial.aeval b H' := by
@@ -253,7 +250,7 @@ theorem irreducible_coordinatePolynomialMap_of_irreducible_aeval
     have hprod : MvPolynomial.aeval b F = g₁ * h₁ := by
       refine mul_left_cancel₀ huv' ?_
       rw [heval, hg₁, hh₁, huv₁₂]
-      ring
+      ac_rfl
     have hu₁dvd : u₁ ∣ ((u * v : Berarducci.FiniteSupportRing (K := K)) :
         Nonpositive ℝ K) := ⟨u₂, huv₁₂⟩
     have hu₂dvd : u₂ ∣ ((u * v : Berarducci.FiniteSupportRing (K := K)) :
@@ -284,7 +281,7 @@ theorem mem_span_of_coordinatePolynomialMap_mem_span
   have hmap : coordinatePolynomialMap K ι (MvPolynomial.C u * g) =
       coordinatePolynomialMap K ι (F * h) := by
     rw [map_mul, map_mul, coordinatePolynomialMap, MvPolynomial.map_C, ← huh, hq]
-    ring
+    ac_rfl
   have heq := hinj hmap
   have heval : (u : Nonpositive ℝ K) * MvPolynomial.aeval b g =
       MvPolynomial.aeval b F * MvPolynomial.aeval b h := by
@@ -306,7 +303,7 @@ theorem mem_span_of_coordinatePolynomialMap_mem_span
     rw [ht, ht', hu₁₂]
     calc u₂ * t' = (u₁ * (hu₁unit.unit⁻¹ : Units (Nonpositive ℝ K))) * (u₂ * t') := by
           rw [hinv, one_mul]
-      _ = u₁ * u₂ * ((hu₁unit.unit⁻¹ : Units (Nonpositive ℝ K)) * t') := by ring
+      _ = u₁ * u₂ * ((hu₁unit.unit⁻¹ : Units (Nonpositive ℝ K)) * t') := by ac_rfl
   obtain ⟨t'', ht''⟩ := (AlgHom.mem_range _).mp
     (hb.mem_range_of_mul_mem_range u t hu (hht ▸ (MvPolynomial.aeval b).mem_range_self h))
   have hh' : h = MvPolynomial.C u * t'' := by
@@ -314,7 +311,7 @@ theorem mem_span_of_coordinatePolynomialMap_mem_span
     rw [map_mul, aeval_C_finiteSupport, ht'', hht]
   refine ⟨t'', mul_left_cancel₀ (MvPolynomial.C_ne_zero.mpr hu) ?_⟩
   rw [heq, hh']
-  ring
+  ac_rfl
 
 /-- The ideal `(F) ⊆ K_fin[X_i]` is the contraction of the ideal `(F) ⊆ L[X_i]`. -/
 theorem span_singleton_eq_comap

@@ -9,7 +9,6 @@ public import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.Germ.Algebra
 public import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.TruncationIntegerPartPrimal
 public import LeanPool.ConwayRefinement.ConwayRefinement.Algebra.Valuation.DegreeRepresentatives
 public import Mathlib.RingTheory.MvPolynomial.WeightedHomogeneous
-import Mathlib.Algebra.MvPolynomial.CommRing
 
 /-!
 # Representatives in the associated graded ring of the Cantor–Bendixson degree

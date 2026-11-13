@@ -10,7 +10,7 @@ public import Mathlib.RingTheory.GradedAlgebra.Basic
 public import Mathlib.RingTheory.GradedAlgebra.Homogeneous.Ideal
 public import Mathlib.RingTheory.Ideal.Quotient.Operations
 
-import Mathlib.LinearAlgebra.DFinsupp
+
 
 /-!
 # Graded algebras over countable ordinals: the ideals `I_{≥j}` and the quotient `A/I`

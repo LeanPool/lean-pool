@@ -5,7 +5,7 @@ Authors: Violeta Hernández Palacios
 -/
 module
 
-public import Mathlib.SetTheory.Ordinal.Family
+public import Mathlib.SetTheory.Ordinal.Family -- shake: keep
 
 /-!
 # Declare type aliases of `Ordinal`

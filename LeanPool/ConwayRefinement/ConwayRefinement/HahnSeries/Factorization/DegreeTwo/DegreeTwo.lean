@@ -5,11 +5,11 @@ Authors: Dan Abramov
 -/
 module
 
+
 public import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.Factorization.DegreeTwo.Factorization
 
 import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.OrdinalValue.OrdinalValueFinalSegment
-import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.OrdinalValue.GermDegree
-import LeanPool.ConwayRefinement.ConwayRefinement.SetTheory.Ordinal.SetOrderType
+import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.OrdinalValue.OrdinalValueDegree
 
 /-!
 # Support and ordinal value in PS06 degree two

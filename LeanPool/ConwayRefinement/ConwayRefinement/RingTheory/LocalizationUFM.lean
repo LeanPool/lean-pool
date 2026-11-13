@@ -43,9 +43,9 @@ theorem exists_dvd_mul_of_dvd_algebraMap {p a : A}
     rw [map_mul, map_mul, hc, mul_assoc, hv]
   obtain ⟨w, hw⟩ := IsLocalization.exists_of_eq (M := S) hmap
   refine ⟨(v : A) * (w : A), mul_mem v.2 w.2, ⟨c₁ * (w : A), ?_⟩⟩
-  calc a * ((v : A) * (w : A)) = (w : A) * (a * (v : A)) := by ring
+  calc a * ((v : A) * (w : A)) = (w : A) * (a * (v : A)) := by ac_rfl
     _ = (w : A) * (p * c₁) := hw
-    _ = p * (c₁ * (w : A)) := by ring
+    _ = p * (c₁ * (w : A)) := by ac_rfl
 
 omit [IsDomain A] [IsDomain B] in
 /-- A prime of the base ring stays prime after localization unless it becomes a unit. -/
@@ -59,7 +59,7 @@ theorem prime_algebraMap_of_prime (hS : S ≤ nonZeroDivisors A) {p : A} (hp : P
     have hrw : algebraMap A B (y₁ * z₁)
         = (y * z) * (algebraMap A B (t : A) * algebraMap A B (u : A)) := by
       rw [map_mul, ← ht, ← hu]
-      ring
+      ac_rfl
     rw [hrw]
     exact hyz.mul_right _
   obtain ⟨s, hs, hps⟩ := exists_dvd_mul_of_dvd_algebraMap S hdvd
@@ -90,7 +90,7 @@ private theorem exists_prime_factors_algebraMap
     by_cases hu : IsUnit (algebraMap A B p)
     · refine ⟨g, hgp, hga.trans ⟨hu.unit, ?_⟩⟩
       rw [Multiset.prod_cons, map_mul, IsUnit.unit_spec]
-      ring
+      ac_rfl
     · refine ⟨algebraMap A B p ::ₘ g, ?_, ?_⟩
       · intro q hq
         rcases Multiset.mem_cons.mp hq with rfl | hq

@@ -8,7 +8,6 @@ module
 public import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.OrdinalValue.ResidualPointTail
 
 import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.OrdinalValue.OrdinalValueFinalSegment
-import Mathlib.Tactic.Linarith
 
 /-!
 # Support families along Berarducci residual points

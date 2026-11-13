@@ -9,7 +9,7 @@ public import LeanPool.ConwayRefinement.ConwayRefinement.Standalone.Mathlib.Hahn
 public import LeanPool.ConwayRefinement.ConwayRefinement.Standalone.Mathlib.Support.SeriesConsequences
 public import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.Nonpositive
 
-import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.Primality.Primality
+import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.Primality.GCDMonoid
 
 /-!
 # Proofs of the Mathlib-only gcd and primality statements

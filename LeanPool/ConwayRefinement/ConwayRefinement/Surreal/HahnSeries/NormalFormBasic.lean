@@ -99,7 +99,10 @@ open Classical in
 private theorem toSurrealHahnSeries_aux (o : Ordinal.{u}) (f : Iio o → Surreal.{u} × ℝ) :
     Function.support (fun i ↦ if h : ∃ o, (f o).1 = i then (f <| Classical.choose h).2 else 0) ⊆
       range (Prod.fst ∘ f) := by
-  aesop
+  intro i hi
+  by_cases h : ∃ o, (f o).1 = i
+  · exact h
+  · exact (hi (dite_eq_right h)).elim
 
 /-- Cast a sequence of terms into a `SurrealHahnSeries`. -/
 @[coe]

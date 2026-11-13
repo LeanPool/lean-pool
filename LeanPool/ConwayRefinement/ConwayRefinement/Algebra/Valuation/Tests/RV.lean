@@ -9,7 +9,7 @@ public import LeanPool.ConwayRefinement.ConwayRefinement.Algebra.Valuation.RV
 public import LeanPool.ConwayRefinement.ConwayRefinement.Algebra.Valuation.OfValuation
 public import Mathlib.Algebra.Order.Ring.Rat
 
-import Mathlib.Algebra.Ring.Prod
+
 
 /-!
 # API checks for RV classes, initial forms, and the residue ring

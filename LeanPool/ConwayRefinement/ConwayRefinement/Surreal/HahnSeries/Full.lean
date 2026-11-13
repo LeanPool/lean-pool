@@ -212,7 +212,7 @@ theorem toFullHahnSeries_mul_monomials (r s : ℝ) (i j : Surreal.{u}) :
       ((r : Surreal) * ω^ i) * ((s : Surreal) * ω^ j) =
         ((r * s : ℝ) : Surreal) * ω^ (i + j) := by
     rw [wpow_add, Real.toSurreal_mul]
-    ring
+    ac_rfl
   rw [hprod, toFullHahnSeries_realCast_mul_wpow,
     toFullHahnSeries_realCast_mul_wpow,
     toFullHahnSeries_realCast_mul_wpow, HahnSeries.single_mul_single]

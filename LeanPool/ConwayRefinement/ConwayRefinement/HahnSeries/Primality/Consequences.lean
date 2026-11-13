@@ -11,7 +11,6 @@ public import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.OrdinalValue
 public import LeanPool.ConwayRefinement.ConwayRefinement.Algebra.GradedRing.Extension
 public import Mathlib.RingTheory.Polynomial.UniqueFactorization
 
-import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.OrdinalValue.AlgebraicIndependence.PrincipalGraded
 import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.OrdinalValue.PrincipalSubringFraction
 
 /-!

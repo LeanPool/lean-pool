@@ -13,8 +13,6 @@ public import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.OrdinalValue
 public import LeanPool.ConwayRefinement.ConwayRefinement.SetTheory.Ordinal.IncreasingSequenceUnion
 public import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.Translation
 public import Mathlib.RingTheory.HahnSeries.Summable
-import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.OrdinalValue.Germ
-import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.OrdinalValue.OrdinalValueDegree
 import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.PrincipalAddition
 import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.OrdinalValue.AlgebraicIndependence.TruncationPolynomial
 

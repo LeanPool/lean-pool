@@ -8,7 +8,6 @@ module
 public import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.SeparatedPieceSum
 public import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.Germ.AlgebraicIndependence.Derivative
 public import LeanPool.ConwayRefinement.ConwayRefinement.Topology.Order.SeparatedPieceFamily
-import Mathlib.Topology.DerivedSet
 
 /-!
 # Cantor–Bendixson ranks of sums on separated pieces

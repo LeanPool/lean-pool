@@ -10,7 +10,6 @@ public import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.Factorizatio
 
 import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.Tests.Fixtures.ApproachZero
 import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.Factorization.PrincipalMaximalFinite
-import Mathlib.Tactic.NormNum
 
 /-!
 # API checks for principal-factor invariance

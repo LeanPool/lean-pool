@@ -8,7 +8,6 @@ module
 public import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.Factorization.Random.RandomBlocks
 
 import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.PrincipalAddition
-import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.OrdinalValue.PrincipalComponentDegree
 
 /-!
 # Irreducibility of random series of finite degree

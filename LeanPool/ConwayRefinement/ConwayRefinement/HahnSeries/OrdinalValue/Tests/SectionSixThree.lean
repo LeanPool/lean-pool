@@ -12,7 +12,6 @@ import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.Factorization.Maxim
 import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.Factorization.PrincipalSubringPrimality
 import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.Factorization.SeriesMaximalMultiplicativity
 import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.Factorization.SeriesPrimality
-import Mathlib.Tactic.NormNum
 
 /-!
 # API checks for LM24, Corollaries 6.3.6--6.3.9

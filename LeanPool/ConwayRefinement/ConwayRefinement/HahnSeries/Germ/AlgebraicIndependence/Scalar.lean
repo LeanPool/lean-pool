@@ -8,7 +8,6 @@ public import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.Germ.Algebra
 public import LeanPool.ConwayRefinement.ConwayRefinement.Algebra.Valuation.Residue
 public import LeanPool.ConwayRefinement.ConwayRefinement.Algebra.DirectSum.InternalGrading
 public import LeanPool.ConwayRefinement.ConwayRefinement.Algebra.DirectSum.GermChainRule
-import Mathlib.Tactic.Abel
 
 /-!
 # Coefficients in the associated graded ring of the Cantor–Bendixson degree

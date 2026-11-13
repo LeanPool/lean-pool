@@ -9,7 +9,7 @@ public import LeanPool.ConwayRefinement.ConwayRefinement.Algebra.Valuation.Degre
 public import LeanPool.ConwayRefinement.ConwayRefinement.Algebra.Valuation.OfValuation
 public import Mathlib.Algebra.Order.Ring.Rat
 
-import Mathlib.Algebra.Ring.Prod
+
 
 /-!
 # API checks for max-additive degrees and associated graded rings

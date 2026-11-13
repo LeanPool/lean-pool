@@ -12,8 +12,6 @@ public import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.OrdinalValue
 public import LeanPool.ConwayRefinement.ConwayRefinement.Algebra.MvPolynomial.Components
 import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.OrdinalValue.OrdinalValueFinalSegment
 import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.PrincipalAddition
-import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.SupportSupremum
-import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.OrdinalValue.Germ
 
 /-!
 # Ordinal-value bounds at translated-truncation cutoffs

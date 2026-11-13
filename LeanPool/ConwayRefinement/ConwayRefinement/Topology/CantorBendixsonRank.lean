@@ -8,7 +8,6 @@ module
 public import LeanPool.ConwayRefinement.ConwayRefinement.Topology.CantorBendixson
 public import LeanPool.ConwayRefinement.ConwayRefinement.Topology.Order.PWOAddition
 public import Mathlib.SetTheory.Ordinal.Basic
-import Mathlib.Topology.DiscreteSubset
 
 /-!
 # Cantor–Bendixson point ranks of well-ordered supports

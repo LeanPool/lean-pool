@@ -8,7 +8,6 @@ module
 public import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.NormalForm
 
 import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.Multiplicativity
-import Mathlib.Tactic.Abel
 
 /-!
 # Addition of principal series

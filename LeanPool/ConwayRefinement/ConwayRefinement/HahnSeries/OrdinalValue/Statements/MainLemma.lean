@@ -12,10 +12,11 @@ import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.OrdinalValue.Convol
 import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.OrdinalValue.MainLemma
 import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.OrdinalValue.Statements.ResidualPoint
 import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.OrdinalValue.GermValueCut
-import Mathlib.Topology.Instances.Real.Lemmas
 import LeanPool.ConwayRefinement.ConwayRefinement.Topology.Order.LeftNeighborhood
 import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.OrdinalValue.OrdinalValueSubmultiplicative
 import LeanPool.ConwayRefinement.ConwayRefinement.SetTheory.Ordinal.NaturalPrincipal
+import Mathlib.Data.EReal.Operations
+import Mathlib.Topology.MetricSpace.Bounded
 
 /-!
 # Berarducci's main lemma
@@ -60,7 +61,7 @@ private theorem germ_mul_powerRemainder
   have h2 : toGerm c.1 * toGerm (b.1 ^ (m + 1)) = toGerm (b.1 ^ (m + 1) * c.1) := by
     rw [← map_mul]
     congr 1
-    ring
+    ac_rfl
   rw [mul_add, mul_add, mul_smul_comm, ← mul_assoc, mul_comm (toGerm c.1) (germAt _ γ),
     mul_assoc, h1, ← mul_assoc, h2]
 

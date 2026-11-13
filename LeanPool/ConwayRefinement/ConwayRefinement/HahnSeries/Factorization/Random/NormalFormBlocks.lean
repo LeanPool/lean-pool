@@ -8,10 +8,7 @@ module
 public import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.Factorization.Random.NonPrincipalIrreducible
 public import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.NormalForm
 
-import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.SeparatedSupport
-import LeanPool.ConwayRefinement.ConwayRefinement.SetTheory.Ordinal.AdditivelyPrincipal
-import Mathlib.SetTheory.Ordinal.Principal
-import Mathlib.Topology.Order.Monotone
+
 
 /-!
 # The block decomposition of a series of order type `ω^n · m + β`

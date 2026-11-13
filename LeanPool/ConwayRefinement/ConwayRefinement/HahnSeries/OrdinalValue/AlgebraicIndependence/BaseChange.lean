@@ -11,12 +11,7 @@ public import Mathlib.LinearAlgebra.FiniteDimensional.Defs
 public import Mathlib.RingTheory.TensorProduct.Basic
 public import Mathlib.LinearAlgebra.Basis.Defs
 
-import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.OrdinalValue.StableInterval
-import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.OrdinalValue.OrdinalValueSupport
-import LeanPool.ConwayRefinement.ConwayRefinement.Algebra.Valuation.DegreeAssociatedGradedMap
-import Mathlib.LinearAlgebra.DirectSum.TensorProduct
 import Mathlib.LinearAlgebra.TensorProduct.Basis
-import Mathlib.LinearAlgebra.FreeModule.Basic
 import Mathlib.Algebra.Ring.Hom.InjSurj
 import Mathlib.Algebra.CharP.Algebra
 import Mathlib.RingTheory.TensorProduct.Maps

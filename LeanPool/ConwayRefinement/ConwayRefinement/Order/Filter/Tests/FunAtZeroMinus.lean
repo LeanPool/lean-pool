@@ -8,8 +8,6 @@ module
 public import LeanPool.ConwayRefinement.ConwayRefinement.Order.Filter.FunAtZeroMinus
 
 import Mathlib.Topology.MetricSpace.Pseudo.Lemmas
-import Mathlib.Tactic.Linarith
-import Mathlib.Tactic.NormNum
 
 /-!
 # API checks for functions at `0⁻`

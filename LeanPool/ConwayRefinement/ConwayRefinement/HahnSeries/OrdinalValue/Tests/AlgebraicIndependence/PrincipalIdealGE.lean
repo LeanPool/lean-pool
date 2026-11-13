@@ -8,7 +8,8 @@ module
 public import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.OrdinalValue.AlgebraicIndependence.PrincipalIdealGE
 
 import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.Tests.Fixtures.ApproachZero
-import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.OrdinalValue.AlgebraicIndependence.LoweringDerivation
+import Mathlib.Data.EReal.Operations
+import Mathlib.Topology.MetricSpace.Bounded
 
 /-!
 # API checks for the filtration `I_{≥•}`

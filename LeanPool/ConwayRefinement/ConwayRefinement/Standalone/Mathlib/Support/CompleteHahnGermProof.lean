@@ -8,7 +8,6 @@ module
 public import LeanPool.ConwayRefinement.ConwayRefinement.Standalone.Mathlib.CompleteHahnGerm
 public import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.IntegerPart.Refinement.CompleteGermRefinement
 
-import LeanPool.ConwayRefinement.ConwayRefinement.Algebra.Divisibility.Refinement
 import Mathlib.Algebra.Ring.Hom.InjSurj
 
 /-! # Complete Hahn Germ Proof -/

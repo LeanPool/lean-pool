@@ -8,7 +8,6 @@ module
 public import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.FiniteSupportConstantTermOne
 public import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.RealSupportSupremum
 
-import Mathlib.Algebra.GroupWithZero.Divisibility
 import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.Monomial
 
 /-!

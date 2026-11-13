@@ -8,9 +8,7 @@ module
 public import LeanPool.ConwayRefinement.ConwayRefinement.Standalone.CombinatorialGames.Support.FinitePowerFamily
 public import Mathlib.Order.Sigma
 
-import Mathlib.SetTheory.Ordinal.Family
-import Mathlib.Tactic.Linarith
-import Mathlib.Tactic.NormNum
+
 
 /-!
 # An omnific integer at the `ω ^ ω` boundary

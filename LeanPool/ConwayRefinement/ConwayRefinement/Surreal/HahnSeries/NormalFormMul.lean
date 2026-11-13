@@ -250,7 +250,7 @@ theorem term_zero_mul (x y : SurrealHahnSeries) :
     ofLex_coe_leadingCoeff_eq_coeffIdx_zero hy] at hcoeff
   rw [term_of_lt hxyLength, term_of_lt hxLength, term_of_lt hyLength,
     hcoeff, hexp', Real.toSurreal_mul, Surreal.wpow_add]
-  ring
+  ac_rfl
 
 /-- The leading term of the surreal represented by a series is its zeroth indexed term. -/
 theorem leadingTerm_toSurreal (x : SurrealHahnSeries) :
@@ -844,7 +844,7 @@ private theorem toSurreal_single_mul_of_one (p : Surreal.{u}) (r : ℝ)
     rw [single_mul_single]
     simp
   rw [hfactor, mul_assoc, toSurreal_single_zero_mul, hone]
-  ring
+  ac_rfl
 
 private theorem toSurreal_single_one_mul_succ (g : IGame.{u}) [Numeric g]
     {y : SurrealHahnSeries.{u}} {i : Surreal} {s : ℝ}

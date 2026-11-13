@@ -13,7 +13,6 @@ public import Mathlib.RingTheory.Algebraic.Defs
 public import Mathlib.FieldTheory.Minpoly.Basic
 
 import Mathlib.FieldTheory.IsAlgClosed.AlgebraicClosure
-import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.OrdinalValue.Statements.ProductValue
 
 /-!
 # Degrees in a homogenized algebraic relation
@@ -599,7 +598,7 @@ theorem eval_scaleRoots_map {R : Type*} [CommRing R] [Nontrivial R] (g : K →+*
     exact Nat.lt_succ_self _)]
   refine Finset.sum_congr rfl fun i _ ↦ ?_
   rw [Polynomial.coeff_scaleRoots, Polynomial.coeff_map, hdeg]
-  ring
+  ac_rfl
 
 omit [CharZero K] in
 /-- Coefficient extension carries the homogenized relation sum of a polynomial to that of the
@@ -808,7 +807,7 @@ theorem exists_relation_of_aeval_eq_zero (Q : Polynomial K)
   rw [eval_scaleRoots_map] at heval
   rw [← heval]
   refine Finset.sum_congr rfl fun i _ ↦ ?_
-  ring
+  ac_rfl
 
 /-! ### The minimal-polynomial bound -/
 

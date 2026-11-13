@@ -8,7 +8,6 @@ module
 public import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.OrdinalValue.PrincipalSubring
 public import Mathlib.RingTheory.Localization.FractionRing
 
-import LeanPool.ConwayRefinement.ConwayRefinement.Algebra.Valuation.AssociatedGradedDivisibility
 import LeanPool.ConwayRefinement.ConwayRefinement.Algebra.Valuation.DegreeAssociatedGradedDomain
 import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.OrdinalValue.Statements.OrdinalValueDegree
 

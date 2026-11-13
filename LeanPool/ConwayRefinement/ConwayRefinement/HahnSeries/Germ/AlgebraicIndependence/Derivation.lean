@@ -6,7 +6,6 @@ Authors: Dan Abramov
 module
 public import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.Germ.AlgebraicIndependence.SuccessorLeibniz
 import LeanPool.ConwayRefinement.ConwayRefinement.Order.Filter.Germ.LinearMap
-import Mathlib.Tactic.Abel
 import LeanPool.ConwayRefinement.ConwayRefinement.Blueprint
 
 /-!

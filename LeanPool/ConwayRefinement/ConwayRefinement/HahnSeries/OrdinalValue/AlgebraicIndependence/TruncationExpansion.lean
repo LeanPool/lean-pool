@@ -185,7 +185,7 @@ theorem sum_mul_pderiv_monomial_add_single (d : ι →₀ ℕ) (i : ι) (T : ι 
   simp only [monomial_add_single_one, pderiv_mul, mul_add, Finset.sum_add_distrib]
   congr 1
   · rw [Finset.sum_mul, ← Finset.sum_subset hsub]
-    · exact Finset.sum_congr rfl fun j _ ↦ by ring
+    · exact Finset.sum_congr rfl fun j _ ↦ by ac_rfl
     · intro j _ hj
       rw [pderiv_monomial, Finsupp.notMem_support_iff.mp hj, Nat.cast_zero, mul_zero, monomial_zero,
         zero_mul, mul_zero]

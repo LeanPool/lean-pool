@@ -10,7 +10,6 @@ public import Mathlib.RingTheory.GradedAlgebra.TensorProduct
 public import Mathlib.RingTheory.TensorProduct.Quotient
 
 import Mathlib.RingTheory.Flat.Basic
-import Mathlib.Algebra.Module.Torsion.Field
 import Mathlib.LinearAlgebra.Basis.VectorSpace
 import Mathlib.Algebra.CharP.Algebra
 

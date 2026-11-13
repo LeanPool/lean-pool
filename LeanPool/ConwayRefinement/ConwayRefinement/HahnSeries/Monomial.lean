@@ -7,7 +7,7 @@ module
 
 public import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.Nonpositive
 
-import Mathlib.Algebra.GroupWithZero.Divisibility
+
 
 /-!
 # Monomials in a nonpositive Hahn-series ring

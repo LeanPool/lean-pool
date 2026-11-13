@@ -159,14 +159,8 @@ theorem mem_range_finiteSupportMap_iff (f : K →+* L)
     have hcoeff : ∀ g,
         AddMonoidAlgebra.coeff (finiteSupportAddMonoidAlgebraEquiv b) g ∈
           Set.range f.toAddMonoidHom := by
-      intro g
-      rw [show AddMonoidAlgebra.coeff
-          (finiteSupportAddMonoidAlgebraEquiv b) g =
-            finiteSupportCoefficients b g from
-        congrArg (fun q : exponentMonoid G →₀ L ↦ q g)
-          (coeff_finiteSupportAddMonoidAlgebraEquiv
-            (G := G) (K := L) b)]
-      exact hb g
+      rw [coeff_finiteSupportAddMonoidAlgebraEquiv]
+      exact hb
     have hrange : finiteSupportAddMonoidAlgebraEquiv b ∈
         Set.range (AddMonoidAlgebra.map
           (M := exponentMonoid G) f.toAddMonoidHom) := by
@@ -206,7 +200,7 @@ theorem coefficient_mem_range_of_map_mul_scalar_mem_range
   rw [map_mul, hcoeff]
   change f a * (B * f (finiteSupportCoefficients p g)) = B
   calc
-    _ = B * f (finiteSupportCoefficients p g * a) := by rw [map_mul]; ring
+    _ = B * f (finiteSupportCoefficients p g * a) := by rw [map_mul]; ac_rfl
     _ = B := by rw [ha, map_one, mul_one]
 
 section ScalarExtension

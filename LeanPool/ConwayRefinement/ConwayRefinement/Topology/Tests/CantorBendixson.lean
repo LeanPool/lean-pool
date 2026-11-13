@@ -8,7 +8,6 @@ module
 public import LeanPool.ConwayRefinement.ConwayRefinement.Topology.CantorBendixsonProduct
 public import LeanPool.ConwayRefinement.ConwayRefinement.Topology.CantorBendixsonReconstruction
 public import Mathlib.Topology.Instances.ENat
-import Mathlib.Topology.DiscreteSubset
 public import Mathlib.Topology.Maps.Proper.Basic
 
 /-!

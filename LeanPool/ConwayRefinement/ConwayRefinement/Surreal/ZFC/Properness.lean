@@ -9,7 +9,6 @@ public import LeanPool.ConwayRefinement.ConwayRefinement.Surreal.ZFC.OmnificCode
 public import Mathlib.SetTheory.ZFC.Class
 public import Mathlib.Logic.Small.Defs
 
-import Mathlib.Logic.Small.Basic
 import LeanPool.ConwayRefinement.ConwayRefinement.Surreal.Cardinal
 import LeanPool.ConwayRefinement.ConwayRefinement.Surreal.OmnificInteger.Ordinal
 

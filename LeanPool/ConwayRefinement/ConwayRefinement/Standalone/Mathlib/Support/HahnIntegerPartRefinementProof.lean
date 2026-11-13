@@ -8,15 +8,9 @@ module
 public import LeanPool.ConwayRefinement.ConwayRefinement.Standalone.Mathlib.HahnIntegerPartRefinement
 public import LeanPool.ConwayRefinement.ConwayRefinement.Standalone.Mathlib.Examples.HahnIntegerPartRefinementCriterion
 
-import LeanPool.ConwayRefinement.ConwayRefinement.Algebra.Divisibility.Refinement
-import LeanPool.ConwayRefinement.ConwayRefinement.Algebra.Divisibility.PrimalPreimage
-import LeanPool.ConwayRefinement.ConwayRefinement.Algebra.Order.Module.ArchimedeanBallSplitting
 import LeanPool.ConwayRefinement.ConwayRefinement.Topology.Order.CoinitialComplete
 import LeanPool.ConwayRefinement.ConwayRefinement.Blueprint
 public import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.IntegerPart.LimitTailPrimality
-import LeanPool.ConwayRefinement.ConwayRefinement.Algebra.Order.ArchimedeanBall
-import Mathlib.Algebra.Module.Rat
-import Mathlib.Algebra.GCDMonoid.Nat
 import Mathlib.Basic.Real.Embedding
 import Mathlib.SetTheory.Cardinal.Rat
 

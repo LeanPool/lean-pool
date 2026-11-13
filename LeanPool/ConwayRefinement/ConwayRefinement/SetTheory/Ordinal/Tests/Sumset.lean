@@ -12,7 +12,6 @@ public import Mathlib.Algebra.Order.Monoid.Prod
 public import Mathlib.Data.Finset.MulAntidiagonal
 
 import LeanPool.ConwayRefinement.CombinatorialGames.NatOrdinal.Pow
-import Mathlib.Order.Sum.Order
 
 /-!
 # API check for order type of a sumset

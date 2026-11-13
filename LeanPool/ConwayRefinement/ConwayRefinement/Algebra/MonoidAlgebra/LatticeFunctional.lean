@@ -9,8 +9,12 @@ public import Mathlib.Algebra.BigOperators.Fin
 public import Mathlib.Algebra.Order.Ring.Abs
 public import Mathlib.Data.Finsupp.Basic
 
-import Mathlib.Tactic.Ring
-import Mathlib.Tactic.Linarith
+import Mathlib.Data.Rat.Cast.Order
+import Mathlib.Tactic.Linarith.Frontend
+import Mathlib.Tactic.NormNum.Abs
+import Mathlib.Tactic.NormNum.DivMod
+import Mathlib.Tactic.NormNum.OfScientific
+import Mathlib.Tactic.Ring.RingNF
 
 /-!
 # A linear functional separating finitely many lattice points
@@ -41,7 +45,7 @@ private theorem eq_zero_of_sum_mul_pow_eq_zero {k : ℕ} {N : ℤ} (hN : 0 < N) 
       rw [Finset.mul_sum]
       refine Finset.sum_congr rfl fun i _ ↦ ?_
       rw [pow_succ]
-      ring
+      ac_rfl
     simp only [Fin.val_zero, pow_zero, mul_one, Fin.val_succ] at hsum
     rw [hshift] at hsum
     have hd0 : d 0 = 0 := by

@@ -11,9 +11,6 @@ public import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.Factorizatio
 public import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.Factorization.Random.SupportRandom
 public import LeanPool.ConwayRefinement.ConwayRefinement.LinearAlgebra.IndicatorFinsupp
 
-import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.OrdinalValue.PrincipalComponentDegree
-import Mathlib.Topology.Algebra.Group.Basic
-import Mathlib.Topology.Order.Monotone
 
 /-!
 # Randomness of a series passes to its blocks
@@ -236,7 +233,7 @@ theorem isMutuallySupportRandom_block (hb : IsSupportRandom b) :
       apply hinjL
       rw [map_add, map_add, L.linearCombination_indicatorFinsupp_of_mem ℚ hxL,
         L.linearCombination_indicatorFinsupp_of_mem ℚ hx'L, hγcomb, hγcomb]
-      ring
+      ac_rfl
     have hpos : 0 < (L.indicatorFinsupp ℚ (d.exponent i + z) +
         L.indicatorFinsupp ℚ (d.exponent j)) ⟨_, hxL⟩ := by
       rw [Finsupp.add_apply, L.indicatorFinsupp_apply_self hxL]

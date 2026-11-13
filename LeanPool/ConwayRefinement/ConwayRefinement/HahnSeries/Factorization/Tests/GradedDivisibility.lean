@@ -11,7 +11,7 @@ public import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.OrdinalValue
 public import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.Factorization.GradedDivisibility
 public import Mathlib.Data.Rat.Defs
 
-import Mathlib.Tactic.NormNum
+
 
 /-!
 # API checks for graded divisibility

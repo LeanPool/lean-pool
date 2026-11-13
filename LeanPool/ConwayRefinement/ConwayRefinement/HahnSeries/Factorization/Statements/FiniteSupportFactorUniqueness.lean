@@ -7,10 +7,8 @@ module
 
 public import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.Factorization.FiniteSupportFactorUniqueness
 
-import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.OrdinalValue.Statements.ProductValue
 import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.FiniteSupportUnit
 import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.FiniteSupportGCDProof
-import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.Degree.Statements.Degree
 import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.Factorization.Statements.MaximalFiniteMultiplicativity
 
 /-!
