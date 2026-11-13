@@ -475,24 +475,6 @@ private theorem hDcanonical :
   intro r P g htargetvec RP VP k hvecpow D hDrot
   rw [hDrot, ← hvecpow, htargetvec]
 
-private theorem hOempty :
-    (by
-      classical
-      exact
-        ∀ (O : ProtoTile), (O.cells = ∅) → (∀ (g : BandPackingSymmetry),
-        let cellTurn : GaussianInt → GaussianInt := fun z => GaussianQuarterTurn z - 1
-        ∀ (cellTurn_bij : Function.Bijective cellTurn),
-        let E1 : GaussianInt ≃ GaussianInt := Equiv.ofBijective cellTurn cellTurn_bij
-        let E2 : GaussianInt ≃ GaussianInt := E1.trans E1
-        let E3 : GaussianInt ≃ GaussianInt := E2.trans E1
-        let E : Fin 4 → GaussianInt ≃ GaussianInt := ![Equiv.refl _, E1, E2, E3]
-        ∀ (k : Fin (4 : ℕ)), (∀ T, (BandPackingSymmetryTileAction g T).cells = T.cells.image (E
-            k)) → ((BandPackingSymmetryTileAction g O).cells = ∅)) ) := by
-  classical
-  intro O hempty g cellTurn cellTurn_bij E1 E2 E3 E k hcellpow
-  rw [hcellpow, hempty]
-  simp
-
 private theorem hw₀ :
     (by
       classical
@@ -509,29 +491,6 @@ private theorem hw₀ :
   intro O g VP k hanchorpow w₀
   dsimp [w₀]
   exact hanchorpow O
-
-private theorem hOcent :
-    (by
-      classical
-      exact
-        ∀ (O : ProtoTile),
-        let VP (k : Fin 4) (z : GaussianInt) : GaussianInt :=
-          if k = 0 then z else if k = 1 then GaussianQuarterTurn z else
-            if k = 2 then GaussianQuarterTurn (GaussianQuarterTurn z) else
-              GaussianQuarterTurn (GaussianQuarterTurn (GaussianQuarterTurn z))
-        ∀ (k : Fin (4 : ℕ)), ∀ (g : BandPackingSymmetry),
-        let w₀ := (BandPackingSymmetryTileAction g O).anchor
-        (w₀ = VP k O.anchor) → (
-        let RP (k : Fin 4) (x : Real × Real) : Real × Real :=
-          if k = 0 then x else if k = 1 then (-x.2, x.1) else
-            if k = 2 then (-x.1, -x.2) else (x.2, -x.1)
-        (∀ T, TileCentroid (BandPackingSymmetryTileAction g T) = RP k (TileCentroid T)) → ((∀ (z
-            : GaussianInt), RP k (GaussianRealPoint z) = GaussianRealPoint (VP k z)) →
-            ((TileCentroid O = GaussianRealPoint O.anchor) → (TileCentroid
-            (BandPackingSymmetryTileAction g O) = GaussianRealPoint w₀)))) ) := by
-  classical
-  intro O VP k g w₀ hw₀ RP hcentpow hpointrot hObase
-  rw [hcentpow, hObase, hpointrot O.anchor, ← hw₀]
 
 private theorem hAcent' :
     (by

@@ -61,22 +61,6 @@ private theorem hvector :
   intro q q'' i'' r hrotate j
   rw [hrotate (i'' + 2), hrotate (i'' + 1)]; dsimp [j]; fin_cases r <;> fin_cases i'' <;> rfl
 
-private theorem hslopeVector :
-    (by
-      classical
-      exact
-        ∀ (q q'' : Fin (4 : ℕ) → CircleCoordinates)
-          (i'' r : Fin (3 : ℕ)),
-          (∀ (j : Fin (3 : ℕ)), q'' j.succ = q (j + r).succ) →
-            let j := i'' + r;
-            BandVectors.2 (q'' (i'' + (2 : Fin (3 : ℕ))).succ)
-                (q'' (i'' + (1 : Fin (3 : ℕ))).succ) =
-              BandVectors.2 (q (j + (2 : Fin (3 : ℕ))).succ)
-                (q (j + (1 : Fin (3 : ℕ))).succ)) := by
-  classical
-  intro q q'' i'' r hrotate j
-  rw [hrotate (i'' + 2), hrotate (i'' + 1)]; dsimp [j]; fin_cases r <;> fin_cases i'' <;> rfl
-
 private abbrev hsCent :=
   BandParentCentroidComparison.centroidEquality
 

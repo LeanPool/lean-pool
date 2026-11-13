@@ -416,26 +416,6 @@ private theorem iVenum :
     simp only [iV, Set.mem_ofPred_eq, iP]
     omega
 
-private theorem iEeq :
-    (by
-      classical
-      exact
-        ∀ (k : Nat),
-        let N : Nat := 2 * k - 1
-        let iP : Nat → GaussianInt := fun j =>
-          ⟨1 + (j / 2 : Nat), ((j + 1) / 2 : Nat)⟩
-        let iE : Set (Finset GaussianInt) := {e | ∃ j < N, e = {iP j, iP (j + 1)}}
-        let iq : Nat → GaussianInt := P5157T1StaircasePoint 1 false 1
-        (∀ (j : Nat), iq j = iP j) → (iE = {e | ∃ j < N, e = {iq j, iq (j + 1)}}) ) := by
-  classical
-  intro k N iP iE iq iqenum
-  ext e
-  constructor
-  · rintro ⟨j, hj, rfl⟩
-    exact ⟨j, hj, by simp [iqenum]⟩
-  · rintro ⟨j, hj, rfl⟩
-    exact ⟨j, hj, by simp [iqenum]⟩
-
 private theorem incEnumPath :
     (by
       classical
@@ -1446,35 +1426,6 @@ private theorem shiftVertices :
     (TileTranslationFormulas (TileTranslation D ia) shift).2.2.2.2.2.2.2.1,
     ← Set.image_inter (translateInj shift), incVertices]
 
-private theorem shiftEdges :
-    (by
-      classical
-      exact
-        ∀ (k : Nat),
-        let N : Nat := 2 * k - 1
-        let iP : Nat → GaussianInt := fun j =>
-          ⟨1 + (j / 2 : Nat), ((j + 1) / 2 : Nat)⟩
-        let iE : Set (Finset GaussianInt) := {e | ∃ j < N, e = {iP j, iP (j + 1)}}
-        (BoundaryFootprintEdges (DiamondTile k) ∩ BoundaryFootprintEdges (TileTranslation
-            (DiamondTile k) ⟨(k : Int) + 1, -(k : Int)⟩) = iE) → (
-        let D := DiamondTile k
-        let ia : GaussianInt := ⟨(k : Int) + 1, -(k : Int)⟩
-        let shift : GaussianInt := ⟨-(k : Int) - 1, (k : Int)⟩
-        (∀ (u : GaussianInt), Function.Injective (GaussianTranslation u)) →
-            ((BoundaryFootprintEdges (TileTranslation (TileTranslation D ia) shift) =
-            BoundaryFootprintEdges D) → (BoundaryFootprintEdges (TileTranslation D shift) ∩
-            BoundaryFootprintEdges D = (fun e : Finset GaussianInt => e.image
-            (GaussianTranslation shift)) '' iE))) ) := by
-  classical
-  intro k N iP iE incEdges D ia shift translateInj hnestedE
-  let et : Finset GaussianInt → Finset GaussianInt :=
-    fun e => e.image (GaussianTranslation shift)
-  have eti : Function.Injective et := Finset.image_injective (translateInj shift)
-  rw [← hnestedE,
-    (TileTranslationFormulas D shift).2.2.2.2.2.2.2.2,
-    (TileTranslationFormulas (TileTranslation D ia) shift).2.2.2.2.2.2.2.2,
-    ← Set.image_inter eti, incEdges]
-
 private theorem fourthPath :
     (by
       classical
@@ -1508,23 +1459,6 @@ private theorem zeroFvertices :
   intro k D Q dzeroD c F quarterVerticesAt zeroQ
   simpa [D, Q, GaussianQuarterTurn, dzeroD, dzeroD', zeroQ] using quarterVerticesAt 0
 
-private theorem zeroFedges :
-    (by
-      classical
-      exact
-        ∀ (k : Nat),
-        let D := DiamondTile k
-        let Q := GaussianQuarterTurn
-        (TileTranslation D 0 = D) → (∀ (c : GaussianInt),
-        let F : GaussianInt → GaussianInt := fun z => Q z + c
-        (∀ (d : GaussianInt), BoundaryFootprintEdges (TileTranslation D (Q d)) = (fun e : Finset
-            GaussianInt => e.image F) '' BoundaryFootprintEdges (TileTranslation D d)) → ((Q 0 =
-            0) → (BoundaryFootprintEdges D = (fun e : Finset GaussianInt => e.image F) ''
-            BoundaryFootprintEdges D))) ) := by
-  classical
-  intro k D Q dzeroD c F quarterEdgesAt zeroQ
-  simpa [D, Q, GaussianQuarterTurn, dzeroD, dzeroD', zeroQ] using quarterEdgesAt 0
-
 private theorem rightFvertices :
     (by
       classical
@@ -1544,26 +1478,6 @@ private theorem rightFvertices :
   intro k D Q c F quarterVerticesAt dShift da
   rw [← dShift]
   exact quarterVerticesAt da
-
-private theorem rightFedges :
-    (by
-      classical
-      exact
-        ∀ (k : Nat),
-        let D := DiamondTile k
-        let Q := GaussianQuarterTurn
-        ∀ (c : GaussianInt),
-        let F : GaussianInt → GaussianInt := fun z => Q z + c
-        (∀ (d : GaussianInt), BoundaryFootprintEdges (TileTranslation D (Q d)) = (fun e : Finset
-            GaussianInt => e.image F) '' BoundaryFootprintEdges (TileTranslation D d)) → ((Q ⟨(k
-            : Int) + 1, (k : Int)⟩ = ⟨-(k : Int), (k : Int) + 1⟩) → (
-        let da : GaussianInt := ⟨(k : Int) + 1, (k : Int)⟩
-        BoundaryFootprintEdges (TileTranslation D ⟨-(k : Int), (k : Int) + 1⟩) = (fun e : Finset
-            GaussianInt => e.image F) '' BoundaryFootprintEdges (TileTranslation D da))) ) := by
-  classical
-  intro k D Q c F quarterEdgesAt dShift da
-  rw [← dShift]
-  exact quarterEdgesAt da
 
 private theorem firstVertices :
     (by
@@ -1729,79 +1643,6 @@ private theorem fourthSet :
       omega
     refine ⟨w, hw, ?_⟩
     apply Zsqrtd.ext <;> simp [w, GaussianTranslation, shift]
-
-private theorem firstEdges :
-    (by
-      classical
-      exact
-        ∀ (k : Nat),
-        let N : Nat := 2 * k - 1
-        let dP : Nat → GaussianInt := fun j =>
-          ⟨(k : Int) - (j / 2 : Nat), (k : Int) + ((j + 1) / 2 : Nat)⟩
-        let dE : Set (Finset GaussianInt) := {e | ∃ j < N, e = {dP j, dP (j + 1)}}
-        (BoundaryFootprintEdges (DiamondTile k) ∩ BoundaryFootprintEdges (TileTranslation
-            (DiamondTile k) ⟨(k : Int) + 1, (k : Int)⟩) = dE) → (
-        let D := DiamondTile k
-        let Q := GaussianQuarterTurn
-        ∀ (c : GaussianInt),
-        let F : GaussianInt → GaussianInt := fun z => Q z + c
-        (Function.Injective F) → (
-        let da : GaussianInt := ⟨(k : Int) + 1, (k : Int)⟩
-        (BoundaryFootprintEdges D = (fun e : Finset GaussianInt => e.image F) ''
-            BoundaryFootprintEdges D) → ((BoundaryFootprintEdges (TileTranslation D ⟨-(k : Int),
-            (k : Int) + 1⟩) = (fun e : Finset GaussianInt => e.image F) '' BoundaryFootprintEdges
-            (TileTranslation D da)) → (BoundaryFootprintEdges D ∩ BoundaryFootprintEdges
-            (TileTranslation D ⟨-(k : Int), (k : Int) + 1⟩) = (fun e : Finset GaussianInt =>
-            e.image F) '' dE)))) ) := by
-  classical
-  intro k N dP dE decEdges D Q c F F_inj da zeroFedges rightFedges
-  rw [zeroFedges, rightFedges, ← Set.image_inter (Finset.image_injective F_inj), decEdges]
-
-private theorem thirdEdges :
-    (by
-      classical
-      exact
-        ∀ (k : Nat),
-        let N : Nat := 2 * k - 1
-        let iP : Nat → GaussianInt := fun j =>
-          ⟨1 + (j / 2 : Nat), ((j + 1) / 2 : Nat)⟩
-        let iE : Set (Finset GaussianInt) := {e | ∃ j < N, e = {iP j, iP (j + 1)}}
-        (BoundaryFootprintEdges (DiamondTile k) ∩ BoundaryFootprintEdges (TileTranslation
-            (DiamondTile k) ⟨(k : Int) + 1, -(k : Int)⟩) = iE) → (
-        let D := DiamondTile k
-        let Qinv : GaussianInt → GaussianInt := fun z => ⟨z.im, -z.re⟩
-        let G : GaussianInt → GaussianInt := fun z =>
-          ⟨z.im - (k : Int), (k : Int) - z.re⟩
-        (Function.Injective G) → ((∀ (d : GaussianInt), (fun e : Finset GaussianInt => e.image G)
-            '' BoundaryFootprintEdges (TileTranslation D d) = BoundaryFootprintEdges
-            (TileTranslation D (Qinv d))) → (((fun e : Finset GaussianInt => e.image G) ''
-            BoundaryFootprintEdges D = BoundaryFootprintEdges D) → (
-        let ia : GaussianInt := ⟨(k : Int) + 1, -(k : Int)⟩
-        BoundaryFootprintEdges D ∩ BoundaryFootprintEdges (TileTranslation D (Qinv ia)) = (fun e
-            : Finset GaussianInt => e.image G) '' iE)))) ) := by
-  classical
-  intro k N iP iE incEdges D Qinv G G_inj inverseEdgesAt inverseEdgesZero ia
-  rw [← inverseEdgesZero, ← inverseEdgesAt ia,
-    ← Set.image_inter (Finset.image_injective G_inj), incEdges]
-
-private theorem fourthEdges :
-    (by
-      classical
-      exact
-        ∀ (k : Nat),
-        let N : Nat := 2 * k - 1
-        let iP : Nat → GaussianInt := fun j =>
-          ⟨1 + (j / 2 : Nat), ((j + 1) / 2 : Nat)⟩
-        let iE : Set (Finset GaussianInt) := {e | ∃ j < N, e = {iP j, iP (j + 1)}}
-        let D := DiamondTile k
-        let shift : GaussianInt := ⟨-(k : Int) - 1, (k : Int)⟩
-        (BoundaryFootprintEdges (TileTranslation D shift) ∩ BoundaryFootprintEdges D = (fun e :
-            Finset GaussianInt => e.image (GaussianTranslation shift)) '' iE) →
-            (BoundaryFootprintEdges D ∩ BoundaryFootprintEdges (TileTranslation D shift) = (fun e
-            : Finset GaussianInt => e.image (GaussianTranslation shift)) '' iE) ) := by
-  classical
-  intro k N iP iE D shift shiftEdges
-  rw [Set.inter_comm, shiftEdges]
 
 private theorem rows0 :
     (by

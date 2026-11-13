@@ -509,40 +509,6 @@ private theorem hgAt426 :
   rw [hlap x, lapValues f (x-u) _ hv]
   exact P5332T1ParentRounding P hq j s t ht ht'
 
-private theorem mark :
-    (by
-      classical
-      exact
-        ∀ (P : FordFareyParameter), ∀ (i : Fin (3 : ℕ)), ∀ (s : Fin (4 : ℕ)), ∀ (T : ProtoTile),
-            ∀ (x : GaussianInt), ∀ (j : Fin (2 : ℕ)), ∀ (u : GaussianInt), (∀ (x : GaussianInt),
-            ∀ (w : GaussianInt), x ∈ FootprintVertices (TileTranslation T w) ↔ x - u - w ∈
-            FordVertexDomain P.q) → (((1 / 2 : ℝ) • GaussianRealPoint ((⟨(0 : ℤ), (1 : ℤ)⟩ :
-            GaussianInt) ^ (↑s : ℕ) * (BandVectors.1 (FordRecursiveQuadruple P i.succ)
-            (FordRecursiveQuadruple P (0 : Fin (4 : ℕ))) + BandVectors.1 (FordRecursiveQuadruple
-            P (0 : Fin (4 : ℕ))) (FordRecursiveQuadruple P i.succ))) = (((↑(![P.q₁, P.q₂] j) : ℝ)
-            - (↑P.q : ℝ)) / (2 : ℝ) + (↑(P5332T1ParentRows P j s (0 : ℤ)).displacement.re : ℝ),
-            ((↑(![P.q₁, P.q₂] j) : ℝ) - (↑P.q : ℝ)) / (2 : ℝ) + (↑(P5332T1ParentRows P j s (0 :
-            ℤ)).displacement.im : ℝ)) ∧ (1 / 2 : ℝ) • GaussianRealPoint ((-(⟨(0 : ℤ), (1 : ℤ)⟩ :
-            GaussianInt)) ^ (↑s : ℕ) * (BandVectors.2 (FordRecursiveQuadruple P i.succ)
-            (FordRecursiveQuadruple P (0 : Fin (4 : ℕ))) + BandVectors.2 (FordRecursiveQuadruple
-            P (0 : Fin (4 : ℕ))) (FordRecursiveQuadruple P i.succ))) = (((↑(![P.p₁, P.p₂] j) : ℝ)
-            - (↑P.p : ℝ)) / (2 : ℝ) + (↑(P5332T1ParentRows P j s (0 : ℤ)).linear.re : ℝ),
-            ((↑(![P.p₁, P.p₂] j) : ℝ) - (↑P.p : ℝ)) / (2 : ℝ) + (↑(P5332T1ParentRows P j s (0 :
-            ℤ)).linear.im : ℝ)) ∧ ((⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt) ^ (↑s : ℕ) * if Even (↑s :
-            ℕ) then BandVectors.1 (FordRecursiveQuadruple P (0 : Fin (4 : ℕ)))
-            (FordRecursiveQuadruple P i.succ) else BandVectors.1 (FordRecursiveQuadruple P
-            i.succ) (FordRecursiveQuadruple P (0 : Fin (4 : ℕ)))) = (P5332T1ParentRows P j s (0
-            : ℤ)).companion) → (∀ (t : ℤ), (x - u - (P5332T1ParentRows P j s (0 : ℤ)).companion
-            ∈ FordVertexDomain P.q ↔ t = (0 : ℤ) ∧ Even ((↑s : ℕ) + (↑j : ℕ))) → (x ∈
-            FootprintVertices (TileTranslation T ((⟨0,1⟩ : GaussianInt)^s.val * (if Even s.val
-            then BandVectors.1 (FordRecursiveQuadruple P 0) (FordRecursiveQuadruple P i.succ)
-            else BandVectors.1 (FordRecursiveQuadruple P i.succ) (FordRecursiveQuadruple P 0))))
-            ↔ t = 0 ∧ Even (s.val+j.val)))) ) := by
-  classical
-  intro P i s T x j u hfoot vv t hh
-  rw [hfoot, vv.2.2]
-  exact hh
-
 end FordTerminalStencilGeometry
 
 theorem FordTerminalWebStencilLedger (P : FordFareyParameter) (hq : 1 < P.q) :
@@ -726,7 +692,9 @@ theorem FordTerminalWebStencilLedger (P : FordFareyParameter) (hq : 1 < P.q) :
               (FordRecursiveQuadruple P i.succ)
             else BandVectors.1 (FordRecursiveQuadruple P i.succ)
               (FordRecursiveQuadruple P 0)))) ↔ t = 0 ∧ Even (s.val+j.val) :=
-                  FordTerminalStencilGeometry.mark P i s T x j u hfoot vv t hh
+by
+      rw [hfoot, vv.2.2]
+      exact hh
     constructor
     · intro hm
       rw [hg, ite_eq_left (mark.mp hm)]

@@ -1878,46 +1878,6 @@ private theorem half_subset :
   · exfalso
     exact (Set.disjoint_left.mp (half_disjoint x y u v hxy huv hxyuv hxu) hz.1 hz.2)
 
-private theorem hstartAt1216 :
-    (by
-      classical
-      exact
-        ∀ (ι : Type), ∀ (P : PeriodicTileComplex ι), ∀ (D : P3723T1ContactPorts P), (∀ (a : ι),
-            ∀ (b : ι), P3723T1EdgeContact P a b ↔ P3723T1EdgeContact
-            P b a) → (
-        ∀ (localStar : (a : ι) →
-            { b : ι // P3723T1EdgeContact P a b } → (↑(Icc (0 : ℝ) (1 : ℝ)) : Type) → ℝ × ℝ),
-        let rep (a : ι) : ι := Classical.choose (P.vertex_orbit_representatives a).exists;
-        ∀ (rep_spec : ∀ (a : ι), rep a ∈ P.vertexOrbitReps ∧ ∃ u : P.lattice, a = P.shift u (rep
-            a)),
-        let period (a : ι) : P.lattice := Classical.choose (rep_spec a).2;
-        ∀ (pulled_contact : ∀ (a : ι), ∀ (b : ι), (P3723T1EdgeContact P a b) →
-            (P3723T1EdgeContact P (rep a) (P.shift (-period a) b))),
-        (
-        let g (a b : ι) (s : Icc (0 : Real) 1) : Real × Real :=
-          if hab : P3723T1EdgeContact P a b then
-            localStar (rep a) ⟨P.shift (-period a) b, pulled_contact a b hab⟩ s +
-              GaussianRealPoint (period a)
-          else D.position a;
-        (∀ a, ∀ b, P3723T1EdgeContact P a b →
-          Continuous (g a b) ∧ Function.Injective (g a b) ∧
-          g a b ⟨0, by norm_num⟩ = D.position a ∧
-          D.port a b = some (g a b ⟨1, by norm_num⟩) ∧
-          Nonempty (P3723T1PolygonalParameterization (g a b)) ∧
-          Set.range (g a b) ⊆ interior (TileRealization (P.tile a)) ∪
-            {g a b ⟨1, by norm_num⟩}) → (
-        let halfArc (a b : ι) : Set (Real × Real) :=
-          if P3723T1EdgeContact P a b then Set.range (g a b) else ∅;
-        let edgeArc (a b : ι) : Set (Real × Real) := halfArc a b ∪ halfArc b a;
-        ∀ (x : ι), ∀ (y : ι), (P3723T1EdgeContact P x y) → (D.position x ∈ edgeArc x y))))) := by
-  classical
-  intro ι P D symmetric localStar rep rep_spec period pulled_contact g gproperties halfArc
-      edgeArc x y hxy
-  have hrev := (symmetric x y).mp hxy
-  simp only [edgeArc, halfArc, ite_eq_left hxy, ite_eq_left hrev]
-  left
-  exact ⟨⟨0, by norm_num⟩, (gproperties x y hxy).2.2.1⟩
-
 private theorem hendAt1222 :
     (by
       classical
@@ -1957,64 +1917,6 @@ private theorem hendAt1222 :
   simp only [edgeArc, halfArc, ite_eq_left hxy, ite_eq_left hrev]
   right
   exact ⟨⟨0, by norm_num⟩, (gproperties y x hrev).2.2.1⟩
-
-private theorem vertex_mem :
-    (by
-      classical
-        exact
-        ∀ (ι : Type),
-          ∀ (P : PeriodicTileComplex ι),
-            ∀ (D : P3723T1ContactPorts P),
-              ∀
-                (localStar :
-                  (a : ι) →
-                    { b : ι // P3723T1EdgeContact P a b } →
-                      (↑(Icc (0 : ℝ) (1 : ℝ)) : Type) → ℝ × ℝ),
-                let rep (a : ι) : ι :=
-                  Classical.choose (P.vertex_orbit_representatives a).exists;
-                ∀
-                  (rep_spec :
-                    ∀ (a : ι),
-                      rep a ∈ P.vertexOrbitReps ∧
-                        ∃ u : P.lattice, a = P.shift u (rep a)),
-                  let period (a : ι) : P.lattice := Classical.choose (rep_spec a).2;
-                  ∀
-                    (pulled_contact :
-                      ∀ (a : ι),
-                        ∀ (b : ι),
-                          (P3723T1EdgeContact P a b) →
-                            (P3723T1EdgeContact P (rep a) (P.shift (-period a) b))),
-                    (let g (a b : ι) (s : Icc (0 : Real) 1) : Real × Real :=
-                      if hab : P3723T1EdgeContact P a b then
-                        localStar (rep a)
-                            ⟨P.shift (-period a) b, pulled_contact a b hab⟩ s +
-                          GaussianRealPoint (period a)
-                      else D.position a;
-                    let halfArc (a b : ι) : Set (Real × Real) :=
-                      if P3723T1EdgeContact P a b then Set.range (g a b) else ∅;
-                    let edgeArc (a b : ι) : Set (Real × Real) :=
-                      halfArc a b ∪ halfArc b a;
-                    (∀ (x : ι),
-                        ∀ (y : ι),
-                          (P3723T1EdgeContact P x y) →
-                            (D.position x ∈ edgeArc x y)) →
-                      ((∀ (x : ι),
-                          ∀ (y : ι),
-                            (P3723T1EdgeContact P x y) →
-                              (D.position y ∈ edgeArc x y)) →
-                        (∀ (x : ι),
-                          ∀ (y : ι),
-                            ∀ (i : ι),
-                              (P3723T1EdgeContact P x y) →
-                                ((i = x ∨ i = y) → (D.position i ∈ edgeArc x y)))))) := by
-  classical
-  intro ι P D localStar rep rep_spec period pulled_contact g halfArc edgeArc hstart hend x y i
-      hxy hi
-  rcases hi with hi | hi
-  · rw [hi]
-    exact hstart x y hxy
-  · rw [hi]
-    exact hend x y hxy
 
 private theorem hab_mem :
     (by

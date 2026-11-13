@@ -96,20 +96,6 @@ private theorem hkpos :
   · exact Or.inl hp
   · exact Or.inr hz.symm
 
-private theorem hnotbothzero :
-    (by
-      classical
-      exact
-        ∀ (q : Fin (4 : ℕ) → CircleCoordinates), ∀ (i : Fin (3 : ℕ)),
-        let j : Fin 3 := i + 1
-        let k : Fin 3 := i + 2
-        (∀ a b : Fin 3, (q a.succ).1 = 0 → (q b.succ).1 = 0 → a = b) → ((j ≠ k) → (¬ ((q j.succ).1 =
-        0 ∧ (q k.succ).1 = 0))) ) := by
-  classical
-  intro q i j k other_unique hjk hz
-  have heq := other_unique j k hz.1 hz.2
-  exact hjk heq
-
 private theorem centerDistance :
     (by
       classical

@@ -30,20 +30,6 @@ namespace ApollonianSuperharmonic
 
 namespace QuarterTurnFormulas
 
-private theorem quarter_re (x : GaussianInt) :
-      (GaussianInt.toComplex (GaussianQuarterTurn x - 1)).re =
-        -(x.im : Real) - 1 := by
-  classical
-  rcases x with ⟨a, b⟩
-  simp [GaussianQuarterTurn, GaussianInt.toComplex_def]
-
-private theorem quarter_im (x : GaussianInt) :
-      (GaussianInt.toComplex (GaussianQuarterTurn x - 1)).im =
-        (x.re : Real) := by
-  classical
-  rcases x with ⟨a, b⟩
-  simp [GaussianQuarterTurn, GaussianInt.toComplex_def]
-
 private theorem quarter_re_int (x : GaussianInt) :
       (GaussianQuarterTurn x - 1).re = -x.im - 1 := by
   classical
@@ -178,34 +164,11 @@ private theorem turn_up_left (a : GaussianInt) :
 
 private abbrev turn_one_up := ApollonianSuperharmonic.QuarterTurnFormulas.turn_up_right
 
-private theorem turn_one_up_left (a : GaussianInt) :
-      GaussianQuarterTurn (1 + (⟨0, 1⟩ + a)) =
-        GaussianQuarterTurn a - 1 + ⟨0, 1⟩ := by
-  classical
-  have turn_one_up (a : GaussianInt) :
-      GaussianQuarterTurn (a + 1 + ⟨0, 1⟩) =
-        GaussianQuarterTurn a - 1 + ⟨0, 1⟩ := turn_one_up a
-  rw [show 1 + (⟨0, 1⟩ + a) = a + 1 + ⟨0, 1⟩ by
-    simp [add_assoc, add_comm, add_left_comm]]
-  exact turn_one_up a
-
-private theorem one_up_comm : (1 : GaussianInt) + ⟨0, 1⟩ = ⟨0, 1⟩ + 1 := by
-  classical
-  have gaussian_equal (u v : GaussianInt) (hre : u.re = v.re)
-      (him : u.im = v.im) : u = v := gaussian_equal u v hre him
-  apply gaussian_equal <;> simp
-
 private theorem one_sub_one (u : GaussianInt) : u + 1 - 1 = u := by
   classical
   have gaussian_equal (u v : GaussianInt) (hre : u.re = v.re)
       (him : u.im = v.im) : u = v := gaussian_equal u v hre him
   apply gaussian_equal <;> simp
-
-private theorem add_one_up (u : GaussianInt) :
-      u + (1 + ⟨0, 1⟩) = u + (⟨0, 1⟩ + 1) := by
-  classical
-  have one_up_comm : (1 : GaussianInt) + ⟨0, 1⟩ = ⟨0, 1⟩ + 1 := one_up_comm
-  rw [one_up_comm]
 
 private theorem inverse_horizontal (z : GaussianInt) :
         cellInverse (z - ⟨0, 1⟩) = cellInverse z - 1 := by

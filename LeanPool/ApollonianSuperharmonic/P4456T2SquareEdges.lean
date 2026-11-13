@@ -116,29 +116,6 @@ private theorem hvertex_coords :
     rw [hcw]
     apply Zsqrtd.ext <;> simp <;> ring
 
-private theorem hvertex_box :
-    (by
-      classical
-      exact
-        ∀ (n : Nat), ∀ (w : GaussianInt), ∀ (T : ProtoTile), (∀ (c : GaussianInt), c ∈ T.cells ↔ ∃ a
-            b : Nat, a < n ∧ b < n ∧ c = w + (⟨(a : Int), (b : Int)⟩ : GaussianInt)) →
-            ((T.cells.Nonempty) → (∀ v ∈ FootprintVertices T, w.re ≤ v.re ∧ v.re ≤ w.re + (↑n : ℤ) ∧
-            w.im ≤ v.im ∧ v.im ≤ w.im + (↑n : ℤ))) ) := by
-  classical
-  intro n w T hcell hnonempty v hv
-  unfold FootprintVertices at hv
-  rw [ite_eq_left hnonempty] at hv
-  rcases hv with ⟨c, hc, hcorner⟩
-  rcases hcell c |>.mp hc with ⟨a,b,ha,hb,hcw⟩
-  rcases hcorner with h | h | h | h
-  all_goals
-    subst v
-    rw [hcw] at *
-    simp only [Zsqrtd.re_add, Zsqrtd.im_add,
-      ]
-    norm_num
-    omega
-
 private theorem hstarCoords :
     (by
       classical

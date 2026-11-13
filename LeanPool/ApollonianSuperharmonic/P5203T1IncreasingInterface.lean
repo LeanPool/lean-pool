@@ -5,6 +5,10 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.ApollonianSuperharmonic.DiamondFootprintCoordinates
+
+public import LeanPool.ApollonianSuperharmonic.TileTranslationProperties
+
 public import Mathlib.Init
 
 public import LeanPool.ApollonianSuperharmonic.P4194T1DiamondVertexIncidence
@@ -43,22 +47,7 @@ theorem P5203T1IncreasingInterface (k : Nat) (hk : 0 < k) (u : GaussianInt) :
         -(k : Int) ≤ z.re ∧ z.re ≤ k ∧
         -(z.im + 1) ≤ z.re ∧ z.re ≤ z.im + 1 ∧
         -(2 * (k : Int) - z.im + 1) ≤ z.re ∧
-          z.re ≤ 2 * (k : Int) - z.im + 1 := by
-    rw [(P4194T1DiamondVertexIncidence k hk z).1]
-    simp only [Fin.exists_fin_succ, Fin.exists_fin_succ, Fin.exists_fin_succ,
-      Fin.exists_fin_succ]
-    rw [show LatticeVertexIncidentCell z 0 = z by rfl,
-      show LatticeVertexIncidentCell z (Fin.succ 0) = z - 1 by rfl,
-      show LatticeVertexIncidentCell z (Fin.succ 0).succ = z - 1 - ⟨0, 1⟩ by rfl,
-      show LatticeVertexIncidentCell z (Fin.succ 0).succ.succ = z - ⟨0, 1⟩ by rfl]
-    rw [(P4194T1DiamondCellRows k z).1,
-      (P4194T1DiamondCellRows k (z - 1)).1,
-      (P4194T1DiamondCellRows k (z - 1 - ⟨0, 1⟩)).1,
-      (P4194T1DiamondCellRows k (z - ⟨0, 1⟩)).1]
-    simp only [Zsqrtd.re_sub, Zsqrtd.im_sub, Zsqrtd.re_one, Zsqrtd.im_one,
-      ]
-    simp []
-    omega
+          z.re ≤ 2 * (k : Int) - z.im + 1 := DiamondFootprintCoordinates.coordinates k hk z
   let D := DiamondTile k
   let b : GaussianInt := ⟨(k : Int) + 1, -(k : Int)⟩
   let T := TileTranslation D u
@@ -79,14 +68,8 @@ theorem P5203T1IncreasingInterface (k : Nat) (hk : 0 < k) (u : GaussianInt) :
     BoundaryFootprintVertices T ∩ BoundaryFootprintVertices U = V ∧
     BoundaryFootprintEdges T ∩ BoundaryFootprintEdges U = E ∧ SimpleGridPath V E
   have cell (w z : GaussianInt) :
-      z ∈ (TileTranslation D w).cells ↔ z - w ∈ DiamondCellDomain k := by
-    change z ∈ (DiamondCellDomain k).image (GaussianTranslation w) ↔ _
-    constructor
-    · intro hz
-      obtain ⟨x, hx, rfl⟩ := Finset.mem_image.mp hz
-      simpa [GaussianTranslation] using hx
-    · intro hz
-      exact Finset.mem_image.mpr ⟨z - w, hz, by simp [GaussianTranslation]⟩
+      z ∈ (TileTranslation D w).cells ↔ z - w ∈ DiamondCellDomain k :=
+    TileTranslationProperties.mem_cells (DiamondTile k) w z
   have ne (w : GaussianInt) : (TileTranslation D w).cells.Nonempty := by
     refine ⟨w, (cell w w).mpr ?_⟩
     rw [sub_self]

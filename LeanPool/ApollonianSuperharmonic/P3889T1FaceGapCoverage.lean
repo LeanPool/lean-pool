@@ -143,53 +143,6 @@ private theorem hfaceFrontier :
         · exact ⟨Or.inr h20, hqB⟩
         · exact ⟨Or.inl (Or.inr h12), hqB⟩
 
-private theorem hpNotRays :
-    (by
-      classical
-      exact
-        ∀ (ι : Type), ∀ (P : PeriodicTileComplex ι), ∀ (D : P3723T1AllContactRouting P), ∀ (a :
-            ι), ∀ (r : ℝ), ∀ (u : ι → ℝ × ℝ), ((Set.range D.position ∪ {p : ℝ × ℝ | ∃ (c : ι) (d
-            : ι), P.plane.adjacent c d ∧ p ∈ D.edgeArc c d}) ∩ Metric.ball (D.position a) r =
-            Metric.ball (D.position a) r ∩ {p : ℝ × ℝ | ∃ (c : ι), P.plane.adjacent a c ∧ ∃ (t :
-            ℝ), (0 : ℝ) ≤ t ∧ p = D.position a + t • u c}) → (∀ (p : ℝ × ℝ),
-        let x := D.position a
-        let B := Metric.ball x r
-        let T := Set.range D.position ∪
-          {q | ∃ c d, P.plane.adjacent c d ∧ q ∈ D.edgeArc c d}
-        (p ∉ T) → (p ∉ B ∩ {q | ∃ c, P.plane.adjacent a c ∧ ∃ t : Real, 0 ≤ t ∧ q = x + t • u
-            c})) ) := by
-  classical
-  intro ι P D a r u htrace p x B T hpNotT h
-  have hpTrace : p ∈ (Set.range D.position ∪
-      {q | ∃ c d, P.plane.adjacent c d ∧ q ∈ D.edgeArc c d}) ∩
-        Metric.ball (D.position a) r := by
-    change p ∈ Metric.ball (D.position a) r ∩
-      {q | ∃ c, P.plane.adjacent a c ∧
-        ∃ t : Real, 0 ≤ t ∧ q = D.position a + t • u c} at h
-    rw [htrace]
-    exact h
-  apply hpNotT
-  change p ∈ Set.range D.position ∪
-    {q | ∃ c d, P.plane.adjacent c d ∧ q ∈ D.edgeArc c d}
-  exact hpTrace.1
-
-private theorem hpNotRay :
-    (by
-      classical
-      exact
-        ∀ (ι : Type), ∀ (P : PeriodicTileComplex ι), ∀ (D : P3723T1AllContactRouting P), ∀ (a :
-            ι), ∀ (r : ℝ), ∀ (u : ι → ℝ × ℝ), ∀ (p : ℝ × ℝ),
-        let x := D.position a
-        let B := Metric.ball x r
-        (p ∈ B) → ((p ∉ B ∩ {q | ∃ c, P.plane.adjacent a c ∧ ∃ t : Real, 0 ≤ t ∧ q = x + t • u
-            c}) → (∀ (c : ι), P.plane.adjacent a c → p ∉ {q : ℝ × ℝ | ∃ (t : ℝ), (0 : ℝ) ≤ t ∧ q
-            = x + t • u c})) ) := by
-  classical
-  intro ι P D a r u p x B hpB hpNotRays c hac h
-  apply hpNotRays
-  refine ⟨hpB, c, hac, ?_⟩
-  simpa [x] using h
-
 private theorem hincidentSectorData :
     (by
       classical
@@ -1129,21 +1082,6 @@ private theorem hball₁' :
   classical
   intro ι P D a r x B z t δ₁ hball₁ δ₂ eps heps₁ q hq
   exact hball₁ (Metric.ball_subset_ball (le_of_lt heps₁) hq)
-
-private theorem hball₂' :
-    (by
-      classical
-      exact
-        ∀ (ι : Type), ∀ (P : PeriodicTileComplex ι), ∀ (D : P3723T1AllContactRouting P), ∀ (a :
-            ι), ∀ (r : ℝ),
-        let x := D.position a
-        let B := Metric.ball x r
-        ∀ (z : ℝ × ℝ), ∀ (t : ℝ), ∀ (δ₁ : ℝ), ∀ (δ₂ : ℝ), (Metric.ball z δ₂ ⊆ B) → (
-        let eps := min δ₁ (min δ₂ t) / 2
-        (eps < δ₂) → (Metric.ball z eps ⊆ B)) ) := by
-  classical
-  intro ι P D a r x B z t δ₁ δ₂ hball₂ eps heps₂ q hq
-  exact hball₂ (Metric.ball_subset_ball (le_of_lt heps₂) hq)
 
 private theorem hzeroK :
     (by

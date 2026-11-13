@@ -23,48 +23,6 @@ Changes: pool module paths, public exports, project namespace and current Mathli
 
 namespace ApollonianSuperharmonic
 
-namespace CenteredTransportLemmas
-
-private theorem center_mem :
-    ∀ (S : ProtoTile), ∀ (x : GaussianInt), x ∈ S.cells ↔
-        (((x.re : Int) : Real) + (1 / 2 : Real),
-          ((x.im : Int) : Real) + (1 / 2 : Real)) ∈ TileRealization S := by
-  classical
-  intro S x
-  constructor
-  · intro hx
-    change (((x.re : Int) : Real) + (1 / 2 : Real),
-      ((x.im : Int) : Real) + (1 / 2 : Real)) ∈
-        ⋃ y ∈ S.cells, ClosedSquareRealization y
-    simp only [Set.mem_iUnion]
-    refine ⟨x, hx, ?_⟩
-    simp [ClosedSquareRealization]
-    norm_num
-  · intro hp
-    change (((x.re : Int) : Real) + (1 / 2 : Real),
-      ((x.im : Int) : Real) + (1 / 2 : Real)) ∈
-        ⋃ y ∈ S.cells, ClosedSquareRealization y at hp
-    simp only [Set.mem_iUnion] at hp
-    rcases hp with ⟨y, hy, hbox⟩
-    simp only [ClosedSquareRealization, Set.mem_Icc] at hbox
-    have re_one : (y.re : Int) < x.re + 1 := by
-      exact_mod_cast (show (y.re : Real) < (x.re : Real) + 1 by linarith [hbox.1.1])
-    have re_two : x.re < (y.re : Int) + 1 := by
-      exact_mod_cast (show (x.re : Real) < (y.re : Real) + 1 by linarith [hbox.2.1])
-    have im_one : (y.im : Int) < x.im + 1 := by
-      exact_mod_cast (show (y.im : Real) < (x.im : Real) + 1 by linarith [hbox.1.2])
-    have im_two : x.im < (y.im : Int) + 1 := by
-      exact_mod_cast (show (x.im : Real) < (y.im : Real) + 1 by linarith [hbox.2.2])
-    have re_eq : y.re = x.re := by omega
-    have im_eq : y.im = x.im := by omega
-    have xy : y = x := by
-      cases y
-      cases x
-      rw [Zsqrtd.ext_iff]
-      exact ⟨re_eq, im_eq⟩
-    simpa [xy] using hy
-
-end CenteredTransportLemmas
 
 theorem QuarterTurnSymmetricCenteredTransport : ∀ (T : ProtoTile),
     QuarterTurnSymmetric T →

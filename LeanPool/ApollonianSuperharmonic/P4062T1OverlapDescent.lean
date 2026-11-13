@@ -172,19 +172,6 @@ private theorem hrec2Member :
     0 ≤ z.im ∧ z.im ≤ (P.q₂ : Int)
   exact ⟨a, b, c, d⟩
 
-private theorem hrec3Member :
-    (by
-      classical
-      exact
-        ∀ (P : FordFareyParameter), ∀ (z : GaussianInt), (0 : ℤ) ≤ z.re → z.re ≤ (↑P.q₂ : ℤ) →
-            (↑P.q₁ : ℤ) ≤ z.im → z.im ≤ (↑P.q : ℤ) → z ∈ FordRecursiveVertexDomains P (3 : Fin (4
-            : ℕ)) ) := by
-  classical
-  intro P z a b c d
-  change 0 ≤ z.re ∧ z.re ≤ (P.q₂ : Int) ∧
-    (P.q₁ : Int) ≤ z.im ∧ z.im ≤ (P.q : Int)
-  exact ⟨a, b, c, d⟩
-
 private theorem hdetdiffAt260 :
     (by
       classical

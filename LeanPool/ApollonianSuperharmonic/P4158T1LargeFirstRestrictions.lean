@@ -423,19 +423,6 @@ private theorem hrootCent' :
   simpa [z] using (ProtoTileObservableExtensionality T'
     (TileTranslation (FordTile P.q) z) hc' hanch).2.2.2.2
 
-private theorem hw' :
-    (by
-      classical
-      exact
-        ∀ (P : FordFareyParameter),
-        let w := BandVectors.1 (FordRecursiveQuadruple P 3)
-          (FordRecursiveQuadruple P 2)
-        (w = ⟨0, -(P.q₂ : Int)⟩) → (BandVectors.1 (FordRecursiveQuadruple P 3)
-            (FordRecursiveQuadruple P 2) = ⟨0, -(P.q₂ : Int)⟩) ) := by
-  classical
-  intro P w hvsol
-  simpa [w] using hvsol
-
 private theorem hUoffset :
     (by
       classical

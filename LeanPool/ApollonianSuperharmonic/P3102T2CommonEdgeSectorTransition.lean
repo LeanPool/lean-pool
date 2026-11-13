@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.ApollonianSuperharmonic.LatticeCellEdges
+
 public import Mathlib.Init
 
 public import LeanPool.ApollonianSuperharmonic.CellDisjointCommonEdgesBoundary
@@ -39,60 +41,11 @@ theorem P3102T2CommonEdgeSectorTransition
   let I : GaussianInt := ⟨0, 1⟩
   let edgeAt (x : GaussianInt) : Fin 4 → Finset GaussianInt :=
     ![{x, x + I}, {x - 1, x}, {x - I, x}, {x, x + 1}]
-  have horiz_unique (u v : GaussianInt)
-      (h : ({u, u + 1} : Finset GaussianInt) = {v, v + 1}) : u = v := by
-    have hu : u = v ∨ u = v + 1 := by
-      have : u ∈ ({v, v + 1} : Finset GaussianInt) := by rw [← h]; simp
-      simpa using this
-    have hv : v = u ∨ v = u + 1 := by
-      have : v ∈ ({u, u + 1} : Finset GaussianInt) := by rw [h]; simp
-      simpa using this
-    rcases hu with huv | huv
-    · exact huv
-    rcases hv with hvu | hvu
-    · exact hvu.symm
-    · have hre := congrArg Zsqrtd.re huv
-      have hre' := congrArg Zsqrtd.re hvu
-      norm_num at hre hre'
-      omega
-  have vert_unique (u v : GaussianInt)
-      (h : ({u, u + I} : Finset GaussianInt) = {v, v + I}) : u = v := by
-    have hu : u = v ∨ u = v + I := by
-      have : u ∈ ({v, v + I} : Finset GaussianInt) := by rw [← h]; simp
-      simpa using this
-    have hv : v = u ∨ v = u + I := by
-      have : v ∈ ({u, u + I} : Finset GaussianInt) := by rw [h]; simp
-      simpa using this
-    rcases hu with huv | huv
-    · exact huv
-    rcases hv with hvu | hvu
-    · exact hvu.symm
-    · have him := congrArg Zsqrtd.im huv
-      have him' := congrArg Zsqrtd.im hvu
-      simp [I] at him him'
-      omega
-  have horiz_ne_vert (u v : GaussianInt) :
-      ({u, u + 1} : Finset GaussianInt) ≠ {v, v + I} := by
-    intro h
-    have hu : u = v ∨ u = v + I := by
-      have : u ∈ ({v, v + I} : Finset GaussianInt) := by rw [← h]; simp
-      simpa using this
-    have hu1 : u + 1 = v ∨ u + 1 = v + I := by
-      have : u + 1 ∈ ({v, v + I} : Finset GaussianInt) := by rw [← h]; simp
-      simpa using this
-    rcases hu with hu | hu <;> rcases hu1 with hu1 | hu1
-    all_goals
-      have hre := congrArg Zsqrtd.re hu
-      have him := congrArg Zsqrtd.im hu
-      have hre1 := congrArg Zsqrtd.re hu1
-      have him1 := congrArg Zsqrtd.im hu1
-      simp [I] at hre him hre1 him1
-      omega
   have hd := Finset.disjoint_left.mp hdisjoint
   rw [CellDisjointCommonEdgesBoundary U V hdisjoint] at he
   rcases he.1 with ⟨u, ⟨heu, hu⟩ | ⟨heu, hu⟩⟩
   · rcases he.2 with ⟨v, ⟨hev, hv⟩ | ⟨hev, hv⟩⟩
-    · have huv : u = v := horiz_unique u v (heu.symm.trans hev)
+    · have huv : u = v := LatticeCellEdges.horizontal_unique u v (heu.symm.trans hev)
       subst v
       have hxuv : x = u ∨ x = u + 1 := by
         rw [heu] at hxe
@@ -116,10 +69,10 @@ theorem P3102T2CommonEdgeSectorTransition
           · simpa [LatticeVertexIncidentCell, I] using hv.1
           · simpa [LatticeVertexIncidentCell, I] using hu.2
         · exact (hd hu.2 hv.2).elim
-    · exact (horiz_ne_vert u v (heu.symm.trans hev)).elim
+    · exact (LatticeCellEdges.horizontal_ne_vertical u v (heu.symm.trans hev)).elim
   · rcases he.2 with ⟨v, ⟨hev, hv⟩ | ⟨hev, hv⟩⟩
-    · exact (horiz_ne_vert v u (hev.symm.trans heu)).elim
-    · have huv : u = v := vert_unique u v (heu.symm.trans hev)
+    · exact (LatticeCellEdges.horizontal_ne_vertical v u (hev.symm.trans heu)).elim
+    · have huv : u = v := LatticeCellEdges.vertical_unique u v (heu.symm.trans hev)
       subst v
       have hxuv : x = u ∨ x = u + I := by
         rw [heu] at hxe

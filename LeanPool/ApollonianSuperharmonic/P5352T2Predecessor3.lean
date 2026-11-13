@@ -755,19 +755,6 @@ private theorem hLap :
   unfold FourNeighborLaplacian
   rw [he, hw, hn, hs, h1, h2, h3, h4, h0]
 
-private theorem huK :
-    (by
-      classical
-      exact
-        ∀ (K : DiamondParameter),
-          let k : Int := K.1;
-          ∀ (u : ℤ), u < k → u ≤ (K.1 : Int)
-    ) := by
-  classical
-  intro K k u huk
-  have huK' : u ≤ k := by omega
-  exact_mod_cast huK'
-
 private theorem habsA :
     (by
       classical

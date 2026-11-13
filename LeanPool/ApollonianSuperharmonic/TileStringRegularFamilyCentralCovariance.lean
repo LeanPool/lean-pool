@@ -26,19 +26,6 @@ namespace ApollonianSuperharmonic
 
 namespace RegularStringCentralGeometry
 
-private theorem coordinate_value :
-    (by
-      classical
-      exact
-        ∀ (base : ProtoTile), ∀ (a : GaussianInt), ∀ (b : GaussianInt),
-        let tileAt := fun z : Int × Int =>
-          TileTranslation base ((z.1 : GaussianInt) * a + (z.2 : GaussianInt) * b)
-        ∀ T, ∀ z, T = tileAt z → T = TileTranslation base ((z.1 : GaussianInt) * a + (z.2 :
-            GaussianInt) * b) ) := by
-  classical
-  intro base a b tileAt T z hz
-  exact hz
-
 private theorem reflect_height :
     (by
       classical
@@ -180,21 +167,6 @@ private theorem reflected_segment :
         List.IsChain TriangularLatticeAdjacent (coordinates.map reflect)) by
           simp [TriangularStripSegment, hrs']]
     exact htarget
-
-private theorem reflected_corr :
-    (by
-      classical
-      exact
-        ∀ (base : ProtoTile), ∀ (tiles : List ProtoTile), ∀ (a : GaussianInt), ∀ (b :
-            GaussianInt), ∀ (coordinates : List (ℤ × ℤ)), (List.Forall₂ (fun (T : ProtoTile) (z :
-            ℤ × ℤ) => T = TileTranslation base ((↑z.1 : GaussianInt) * a + (↑z.2 : GaussianInt) *
-            b)) tiles coordinates) → (
-        let tileAt := fun z : Int × Int =>
-          TileTranslation base ((z.1 : GaussianInt) * a + (z.2 : GaussianInt) * b)
-        List.Forall₂ (fun T z => T = tileAt z) tiles (coordinates)) ) := by
-  classical
-  intro base tiles a b coordinates hcorr tileAt
-  simpa [tileAt] using hcorr
 
 private theorem reverse_corr :
     (by

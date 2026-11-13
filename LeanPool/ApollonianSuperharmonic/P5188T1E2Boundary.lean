@@ -44,10 +44,6 @@ private theorem hcross (P : FordFareyParameter) (hq : 1 < P.q) : P.p₁ * (↑P.
   classical
   exact (P5130T5ParentArithmetic P hq).2.2.2.2.2.2
 
-private theorem hdet₁ (P : FordFareyParameter) : P.p₁ * (↑P.q : ℤ) - (↑P.q₁ : ℤ) * P.p = 1 := by
-  classical
-  exact P.det₁
-
 private theorem hdet₂ (P : FordFareyParameter) : P.p₂ * (↑P.q : ℤ) - (↑P.q₂ : ℤ) * P.p = -1 := by
   classical
   exact P.det₂
@@ -67,11 +63,6 @@ private theorem hb (P : FordFareyParameter) : 0 < (P.q₂ : Int) := by
 private theorem hab (P : FordFareyParameter) : (P.q₁ : Int) < P.q := by
   classical
   have := P.q₁_lt; exact_mod_cast this
-
-private theorem hbb (P : FordFareyParameter) (hsum :
-    (↑P.q : ℤ) = (↑P.q₁ : ℤ) + (↑P.q₂ : ℤ)) (ha : 0 < (↑P.q₁ : ℤ)) : (P.q₂ : Int) < P.q := by
-  classical
-  rw [hsum]; omega
 
 private noncomputable abbrev a (P : FordFareyParameter) : Int := by
   classical
@@ -107,26 +98,6 @@ private theorem hpq (P : FordFareyParameter) (hps : P.p = P.p₁ + P.p₂) : (A 
   let D : Int := P.p₂
   change (A + D = P.p)
   dsimp [A, D]; exact hps.symm
-
-private theorem hAq (P : FordFareyParameter) (hdet₁ : P.p₁ * (↑P.q : ℤ) - (↑P.q₁ : ℤ) * P.p = 1)
-    : (A P) * P.q - (a P) * P.p = 1 := by
-  classical
-  let a : Int := P.q₁
-  let A : Int := P.p₁
-  change (A * P.q - a * P.p = 1)
-  simpa [a, A] using hdet₁
-
-private theorem hpqa (P : FordFareyParameter) (hAq :
-    (A P) * (↑P.q : ℤ) - (a P) * P.p = 1) : P.p * (a P) = (A P) * P.q - 1 := by
-  classical
-  let a : Int := P.q₁
-  let A : Int := P.p₁
-  change (A * (↑P.q : ℤ) - a * P.p = 1) at hAq
-  change (P.p * a = A * P.q - 1)
-  have haux : A * P.q - P.p * a = 1 := by
-    rw [mul_comm P.p a]
-    exact hAq
-  omega
 
 private theorem hDq (P : FordFareyParameter) (hdet₂ : P.p₂ * (↑P.q : ℤ) - (↑P.q₂ : ℤ) * P.p = -1)
     : (D P) * P.q - (b P) * P.p = -1 := by

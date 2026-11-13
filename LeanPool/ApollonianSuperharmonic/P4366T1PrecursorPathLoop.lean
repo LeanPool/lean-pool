@@ -44,19 +44,6 @@ private theorem hOA :
   intro C q cfg T cert hpair z hz
   exact (Finset.mem_inter.mp (hpair.symm ▸ hz)).1
 
-private theorem hOB :
-    (by
-      classical
-      exact
-        ∀ (C : BandCircle), ∀ (q : Fin 4 → CircleCoordinates), ∀ (cfg :
-            BandOrderedGeneralConfiguration q), ∀ (T : ProtoTile), ∀ (cert :
-            BandOrderedGeneralLayoutCertificate q cfg C T), ((cert.P (0 : Fin (3 : ℕ))
-            true).cells ∩ (cert.P (0 : Fin (3 : ℕ)) false).cells = cert.O.cells) → (cert.O.cells
-            ⊆ (cert.P 0 false).cells) ) := by
-  classical
-  intro C q cfg T cert hpair z hz
-  exact (Finset.mem_inter.mp (hpair.symm ▸ hz)).2
-
 private theorem footprint_mono :
     (by
       classical

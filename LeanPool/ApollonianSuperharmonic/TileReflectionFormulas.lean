@@ -82,14 +82,6 @@ private theorem f_one (z : GaussianInt) : f (z + 1) = f z + 1 := by
   change (f (z + 1) = f z + 1)
   apply gaussian_ext <;> simp [f, GaussianReflection]
 
-private theorem f_up (z : GaussianInt) : f (z + ⟨0, 1⟩) = f z - ⟨0, 1⟩ := by
-  classical
-  let f : GaussianInt → GaussianInt := fun z => GaussianReflection z - ⟨0, 1⟩
-  have gaussian_ext (u v : GaussianInt) (hre : u.re = v.re)
-      (him : u.im = v.im) : u = v := gaussian_ext u v hre him
-  change (f (z + ⟨0, 1⟩) = f z - ⟨0, 1⟩)
-  apply gaussian_ext <;> simp [f, GaussianReflection]; omega
-
 private theorem reflection_f (z : GaussianInt) : GaussianReflection (f z) = z + ⟨0, 1⟩ := by
   classical
   let f : GaussianInt → GaussianInt := fun z => GaussianReflection z - ⟨0, 1⟩
@@ -163,27 +155,6 @@ private theorem f_im (z : GaussianInt) :
         -(GaussianInt.toComplex z).im - 1)
   rcases z with ⟨a, b⟩
   simp [f, GaussianReflection]
-
-private theorem reflectedCellRe (z : GaussianInt) :
-      (GaussianInt.toComplex (GaussianReflection z - ⟨0, 1⟩)).re =
-        (GaussianInt.toComplex z).re := by
-  classical
-  let f : GaussianInt → GaussianInt := fun z => GaussianReflection z - ⟨0, 1⟩
-  have f_re (z : GaussianInt) :
-      (GaussianInt.toComplex (f z)).re = (GaussianInt.toComplex z).re := f_re z
-  change (GaussianInt.toComplex (f z)).re = _
-  exact f_re z
-
-private theorem reflectedCellIm (z : GaussianInt) :
-      (GaussianInt.toComplex (GaussianReflection z - ⟨0, 1⟩)).im =
-        -(GaussianInt.toComplex z).im - 1 := by
-  classical
-  let f : GaussianInt → GaussianInt := fun z => GaussianReflection z - ⟨0, 1⟩
-  have f_im (z : GaussianInt) :
-      (GaussianInt.toComplex (f z)).im =
-        -(GaussianInt.toComplex z).im - 1 := f_im z
-  change (GaussianInt.toComplex (f z)).im = _
-  exact f_im z
 
 private theorem f_im_cast (z : GaussianInt) :
       ((f z).im : Real) = -(z.im : Real) - 1 := by

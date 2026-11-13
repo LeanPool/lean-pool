@@ -72,6 +72,18 @@ theorem cellsSubset (X Y : ProtoTile) (hXY : X.cells ⊆ Y.cells) (d : GaussianI
   obtain ⟨w, hw, rfl⟩ := Finset.mem_image.mp hz
   exact Finset.mem_image.mpr ⟨w, hXY hw, rfl⟩
 
+/-- A cell belongs to a translated tile exactly when its inverse translate belongs to the tile. -/
+theorem mem_cells (T : ProtoTile) (w z : GaussianInt) :
+    z ∈ (TileTranslation T w).cells ↔ z - w ∈ T.cells := by
+  classical
+  rw [cells]
+  constructor
+  · intro hz
+    obtain ⟨x, hx, rfl⟩ := Finset.mem_image.mp hz
+    simpa [GaussianTranslation] using hx
+  · intro hz
+    exact Finset.mem_image.mpr ⟨z - w, hz, by simp [GaussianTranslation]⟩
+
 end TileTranslationProperties
 end ApollonianSuperharmonic
 

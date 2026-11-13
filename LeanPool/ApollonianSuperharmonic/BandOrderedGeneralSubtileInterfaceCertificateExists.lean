@@ -233,28 +233,6 @@ private theorem occurrenceBand :
     | exact BandPrototileTranslation _ _ _
         (normalization.layout.outer_occurrence 2 true).1
 
-private theorem occurrenceSymmetric :
-    (by
-      classical
-      exact
-        ∀ (C₀ : BandCircle), ∀ (Cᵢ : BandCircle), ∀ (q : Fin 4 → CircleCoordinates), ∀ (i : Fin
-            3), ∀ (T₀ : ProtoTile), ∀ (Tᵢ : ProtoTile), ∀ (h₀ : PartialOdometer), ∀ (hᵢ :
-            PartialOdometer), ∀ (x : GaussianInt), ∀ (normalization :
-            BandOrderedGeneralSubtileNormalizationCertificate C₀ Cᵢ q i T₀ Tᵢ h₀ hᵢ x), (∀ (A :
-            ProtoTile), ∀ (d : GaussianInt), (QuarterTurnSymmetric A) → (QuarterTurnSymmetric
-            (TileTranslation A d))) → (∀ (j : Fin 3), ∀ (e : Bool), ∀ (m : Int), ∀ (n : Int),
-            QuarterTurnSymmetric (SubtileOccurrenceInterpretation normalization.layout.P
-            normalization.layout.u normalization.layout.v ⟨subtileOccurrenceLabel j e, m, n⟩)) )
-                := by
-  classical
-  intro C₀ Cᵢ q i T₀ Tᵢ h₀ hᵢ x normalization quarterSymmetricTranslation j e m n
-  fin_cases j <;> fin_cases e <;>
-    simpa [subtileOccurrenceLabel, SubtileOccurrenceInterpretation] using
-      quarterSymmetricTranslation _
-        ((m : GaussianInt) * normalization.layout.u +
-          (n : GaussianInt) * normalization.layout.v)
-        (normalization.layout.parent_quarter_turn _ _)
-
 private theorem rotatedCentroid :
     (by
       classical

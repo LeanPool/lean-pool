@@ -558,60 +558,6 @@ private theorem hxSelectedOriginal :
   have hback := inverseDomain selectedFunction x (by simpa [hpoint] using hmem)
   simpa [h'] using hback
 
-private theorem mapStar :
-    (by
-      classical
-      exact
-        ∀ (g : BandPackingSymmetry), ∀ (a : GaussianInt), ∀ (b : GaussianInt), (b = a ∨ b = a + 1
-            ∨ b = a - 1 ∨ b = a + ⟨0, 1⟩ ∨ b = a - ⟨0, 1⟩) → (BandPackingSymmetryVectorAction g b
-            = BandPackingSymmetryVectorAction g a ∨ BandPackingSymmetryVectorAction g b =
-            BandPackingSymmetryVectorAction g a + 1 ∨ BandPackingSymmetryVectorAction g b =
-            BandPackingSymmetryVectorAction g a - 1 ∨ BandPackingSymmetryVectorAction g b =
-            BandPackingSymmetryVectorAction g a + ⟨0, 1⟩ ∨ BandPackingSymmetryVectorAction g b =
-            BandPackingSymmetryVectorAction g a - ⟨0, 1⟩) ) := by
-  classical
-  intro g
-  induction g with
-  | identity => intro a b hb; simpa [BandPackingSymmetryVectorAction] using hb
-  | shift w => intro a b hb; simpa [BandPackingSymmetryVectorAction] using hb
-  | negate =>
-      intro a b hb
-      rcases hb with hb | hb | hb | hb | hb
-      · subst b
-        simp [BandPackingSymmetryVectorAction]
-      · subst b
-        right; right; right; left
-        ext <;> simp [BandPackingSymmetryVectorAction, GaussianQuarterTurn]
-      · subst b
-        right; right; right; right
-        ext <;> simp [BandPackingSymmetryVectorAction, GaussianQuarterTurn]
-      · subst b
-        right; right; left
-        ext <;> simp [BandPackingSymmetryVectorAction, GaussianQuarterTurn]; try ring
-      · subst b
-        right; left
-        ext <;> simp [BandPackingSymmetryVectorAction, GaussianQuarterTurn]; try ring
-  | conjugate =>
-      intro a b hb
-      rcases hb with hb | hb | hb | hb | hb
-      · subst b
-        simp [BandPackingSymmetryVectorAction]
-      · subst b
-        right; right; left
-        ext <;> simp [BandPackingSymmetryVectorAction, GaussianReflection]; try ring
-      · subst b
-        right; left
-        ext <;> simp [BandPackingSymmetryVectorAction, GaussianReflection]; try ring
-      · subst b
-        right; right; right; left
-        ext <;> simp [BandPackingSymmetryVectorAction, GaussianReflection]
-      · subst b
-        right; right; right; right
-        ext <;> simp [BandPackingSymmetryVectorAction, GaussianReflection]
-  | comp g₁ g₂ ih₁ ih₂ =>
-      intro a b hb
-      exact ih₁ _ _ (ih₂ _ _ hb)
-
 private theorem hstarOriginal :
     (by
       classical
@@ -736,36 +682,6 @@ private theorem hinverseCircleFixed :
         (BandPackingSymmetryCircleAction bundle.symmetry Cᵢ.1.1) := by
           rw [bundle.normalized_fixed_circle_eq]
     _ = Cᵢ.1.1 := hcircleL Cᵢ.1.1
-
-private theorem hpFixedEq :
-    (by
-      classical
-      exact
-        ∀ (C₀ : BandCircle), ∀ (Cᵢ : BandCircle), ∀ (T₀ : ProtoTile), ∀ (Tᵢ : ProtoTile), ∀ (h₀ :
-            PartialOdometer), ∀ (hᵢ : PartialOdometer), ∀ (x : GaussianInt), ∀ (bundle :
-            BandOrderedGeneralNormalizedOccurrenceBundle C₀ Cᵢ T₀ Tᵢ h₀ hᵢ x), ∀ (pFixed : ℝ ×
-            ℝ), (PartialOdometerSlope bundle.normalizedFixedFunction = some pFixed) → (pFixed =
-            bundle.normalizedFixedSlope) ) := by
-  classical
-  intro C₀ Cᵢ T₀ Tᵢ h₀ hᵢ x bundle pFixed hslopeFixed
-  apply Option.some.inj
-  rw [← hslopeFixed, ← bundle.normalized_fixed_slope]
-
-private theorem hpSelectedEq :
-    (by
-      classical
-      exact
-        ∀ (C₀ : BandCircle), ∀ (Cᵢ : BandCircle), ∀ (T₀ : ProtoTile), ∀ (Tᵢ : ProtoTile), ∀ (h₀ :
-            PartialOdometer), ∀ (hᵢ : PartialOdometer), ∀ (x : GaussianInt), ∀ (bundle :
-            BandOrderedGeneralNormalizedOccurrenceBundle C₀ Cᵢ T₀ Tᵢ h₀ hᵢ x), ∀ (selectedSlope :
-            ℝ × ℝ), (PartialOdometerSlope (bundle.functions bundle.selectedSlot
-            bundle.selectedSign) = some selectedSlope) → (∀ (pSelected : ℝ × ℝ),
-            (PartialOdometerSlope (bundle.functions bundle.selectedSlot bundle.selectedSign) =
-            some pSelected) → (pSelected = selectedSlope)) ) := by
-  classical
-  intro C₀ Cᵢ T₀ Tᵢ h₀ hᵢ x bundle selectedSlope hslope' pSelected hslopeSelected
-  apply Option.some.inj
-  rw [← hslopeSelected, ← hslope']
 
 private abbrev centroidCov :=
     ApollonianSuperharmonic.LatticeAdjacentPackingSymmetryFacts.centroidTransport
@@ -3263,7 +3179,8 @@ theorem MarkedOdometerAdjacencyReduction :
         ginv hfunL inverseDomain hpoint),
       (MarkedAdjacencyGeometry.hxSelectedOriginal C₀ Cᵢ T₀ Tᵢ h₀ hᵢ x bundle hxSelected' ginv
           inverseDomain hpoint), (MarkedAdjacencyGeometry.hstarOriginal C₀ Cᵢ T₀ Tᵢ h₀ hᵢ x
-          bundle hstar' ginv hfunL inverseDomain hpoint (MarkedAdjacencyGeometry.mapStar)),
+          bundle hstar' ginv hfunL inverseDomain hpoint
+          (BandPackingSymmetryVectorAction.neighborStar)),
           (MarkedAdjacencyGeometry.hsizeOriginal C₀ Cᵢ T₀ Tᵢ h₀ hᵢ x bundle hnorm C' hsize' ginv
           actionCurvature hinverseProper hinversePositive hinverseCircle), ?_⟩
     rcases hrowOutput with hleft | hforward | hreverse

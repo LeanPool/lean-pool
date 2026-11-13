@@ -1014,28 +1014,6 @@ private theorem hMnonempty :
   apply positiveCells C.1.1 Rminus C.2
   exact TileOdometerBandPrototile C.1.1 Rminus hminus F.minus_odo
 
-private theorem hJnonempty :
-    (by
-      classical
-      exact
-        ∀ (C : BandCircle), ∀ (orientation : Bool), ∀ (base : ProtoTile), ∀ (Rminus : ProtoTile),
-            ∀ (Rplus : ProtoTile), ∀ (hminus : PartialOdometer), ∀ (hplus : PartialOdometer), ∀
-            (F : P4458T1BoundaryFrame C orientation base Rminus Rplus hminus hplus), ∀ (D :
-            P4458T1RestrictionFamily F),
-        let r : Fin 4 → CircleCoordinates :=
-          ![F.q 0, F.q F.slot.succ, F.q ((F.slot + 1).succ),
-            F.q ((F.slot + 2).succ)]
-        let y : GaussianInt := BandVectors.1 (r 2) (r 1)
-        ∀ (u : ↥(TilingLattice C)),
-        let join : ProtoTile := TileTranslation base (u + y)
-        ((D.tiles F.slot false).cells = join.cells ∧ ((D.tiles F.slot false).cells = ∅ → (D.tiles
-            F.slot false).anchor = join.anchor)) → (((D.tiles F.slot false).cells.Nonempty) →
-            (join.cells.Nonempty)) ) := by
-  classical
-  intro C orientation base Rminus Rplus hminus hplus F D r y u join hjoinCells hUnonempty
-  rw [← hjoinCells.1]
-  exact hUnonempty
-
 private theorem hleftNe :
     (by
       classical
@@ -1352,60 +1330,6 @@ private theorem hflipVIm :
   have h := congrArg (fun z : GaussianInt => z.im) hvflip
   norm_num [I, Zsqrtd.re_mul, Zsqrtd.im_mul] at h ⊢
   omega
-
-private theorem hrecVC :
-    (by
-      classical
-      exact
-        ∀ (C : BandCircle), ∀ (orientation : Bool), ∀ (base : ProtoTile), ∀ (Rminus : ProtoTile),
-            ∀ (Rplus : ProtoTile), ∀ (hminus : PartialOdometer), ∀ (hplus : PartialOdometer), ∀
-            (F : P4458T1BoundaryFrame C orientation base Rminus Rplus hminus hplus),
-        let r : Fin 4 → CircleCoordinates :=
-          ![F.q 0, F.q F.slot.succ, F.q ((F.slot + 1).succ),
-            F.q ((F.slot + 2).succ)]
-        let I : GaussianInt := ⟨0, 1⟩
-        let x : GaussianInt := BandVectors.1 (r 1) (r 3)
-        let y : GaussianInt := BandVectors.1 (r 2) (r 1)
-        (BandVectors.1 (r 1) (r 0) = x - I * y) → (GaussianInt.toComplex (BandVectors.1 (r 1) (r
-            0)) = GaussianInt.toComplex x - GaussianInt.toComplex I * GaussianInt.toComplex y) )
-            := by
-  classical
-  intro C orientation base Rminus Rplus hminus hplus F r I x y hvrec
-  have h := congrArg GaussianInt.toComplex hvrec
-  simpa only [GaussianInt.toComplex_sub, GaussianInt.toComplex_mul] using h
-
-private theorem hflipVC :
-    (by
-      classical
-      exact
-        ∀ (C : BandCircle), ∀ (orientation : Bool), ∀ (base : ProtoTile), ∀ (Rminus : ProtoTile),
-            ∀ (Rplus : ProtoTile), ∀ (hminus : PartialOdometer), ∀ (hplus : PartialOdometer), ∀
-            (F : P4458T1BoundaryFrame C orientation base Rminus Rplus hminus hplus),
-        let r : Fin 4 → CircleCoordinates :=
-          ![F.q 0, F.q F.slot.succ, F.q ((F.slot + 1).succ),
-            F.q ((F.slot + 2).succ)]
-        let I : GaussianInt := ⟨0, 1⟩
-        (BandVectors.1 (r 0) (r 1) = I * BandVectors.1 (r 1) (r 0)) → (GaussianInt.toComplex
-            (BandVectors.1 (r 0) (r 1)) = GaussianInt.toComplex I * GaussianInt.toComplex
-            (BandVectors.1 (r 1) (r 0))) ) := by
-  classical
-  intro C orientation base Rminus Rplus hminus hplus F r I hvflip
-  have h := congrArg GaussianInt.toComplex hvflip
-  simpa only [GaussianInt.toComplex_mul] using h
-
-private theorem hRotVC :
-    (by
-      classical
-      exact
-        ∀ (p : Fin (4 : ℕ) → CircleCoordinates),
-        let I : GaussianInt := ⟨0, 1⟩
-        (BandVectors.1 (p 0) (p 3) = I * BandVectors.1 (p 3) (p 0)) → (GaussianInt.toComplex
-            (BandVectors.1 (p 0) (p 3)) = GaussianInt.toComplex I * GaussianInt.toComplex
-            (BandVectors.1 (p 3) (p 0))) ) := by
-  classical
-  intro p I hRotV
-  have h := congrArg GaussianInt.toComplex hRotV
-  simpa only [GaussianInt.toComplex_mul] using h
 
 private theorem hleftAminus :
     (by

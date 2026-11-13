@@ -333,12 +333,6 @@ private theorem hcommon :
   by_contra hxy
   exact hn ⟨x, y, hx, hy, hxy⟩
 
-private theorem hp₁ne :
-    ∀ (p₁ : List GaussianInt), ((4 : ℕ) ≤ p₁.length) → (p₁ ≠ []) := by
-  classical
-  intro p₁ hlen₁ h
-  simp [h] at hlen₁
-
 private theorem hx₁ :
     ∀ (V₁ : Set GaussianInt), ∀ (V₂ : Set GaussianInt), ∀ (p₁ : List GaussianInt), (V₁ =
         (↑p₁.toFinset : Set GaussianInt)) → (∀ (x : GaussianInt), (x ∈ V₁ ∩ V₂) → (x ∈ p₁)) := by

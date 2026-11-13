@@ -26,9 +26,6 @@ namespace ApollonianSuperharmonic
 
 namespace BoundaryComponentCycle
 
-private noncomputable def boundaryUniverse (T : ProtoTile) : Finset GaussianInt :=
-    T.cells.biUnion fun z => {z, z + 1, z + ⟨0, 1⟩, z + 1 + ⟨0, 1⟩}
-
 private theorem boundary_vertices_finite (T : ProtoTile) (cells_nonempty : T.cells.Nonempty) :
     (BoundaryFootprintVertices T).Finite := by
   classical

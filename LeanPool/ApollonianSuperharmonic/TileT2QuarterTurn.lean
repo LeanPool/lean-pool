@@ -83,36 +83,6 @@ private theorem hRingImage :
   rw [Finset.image_image, hf] at h
   exact congrArg (fun s : Finset GaussianInt => (s : Set GaussianInt)) h
 
-private theorem turn_add :
-    (by
-      classical
-      exact
-        ∀ (u : GaussianInt),
-        let turn (x : GaussianInt) : GaussianInt :=
-          ⟨-x.im - 1 + u.re, x.re + u.im⟩
-        ∀ (x : GaussianInt), ∀ (d : GaussianInt), turn (x + d) = turn x + ⟨-d.im, d.re⟩ ) := by
-  classical
-  intro u turn x d
-  rcases x with ⟨a, b⟩
-  rcases d with ⟨c, e⟩
-  apply Zsqrtd.ext_iff.mpr
-  constructor <;> simp [turn] <;> abel
-
-private theorem back_add :
-    (by
-      classical
-      exact
-        ∀ (u : GaussianInt),
-        let back (x : GaussianInt) : GaussianInt :=
-          ⟨x.im - u.im, -x.re - 1 + u.re⟩
-        ∀ (x : GaussianInt), ∀ (d : GaussianInt), back (x + d) = back x + ⟨d.im, -d.re⟩ ) := by
-  classical
-  intro u back x d
-  rcases x with ⟨a, b⟩
-  rcases d with ⟨c, e⟩
-  apply Zsqrtd.ext_iff.mpr
-  constructor <;> simp [back] <;> abel
-
 private theorem turn_neighbor :
     (by
       classical
@@ -496,22 +466,6 @@ private theorem hleft :
         let unrotate (p : Real × Real) : Real × Real :=
           (p.2 - (u.im : Real), -p.1 + (u.re : Real))
         ∀ (p : Real × Real), unrotate (rotate p) = p ) := by
-  classical
-  intro u rotate unrotate p
-  apply Prod.ext <;> dsimp [rotate, unrotate]
-  · linarith [hu_re, hu_im]
-  · linarith [hu_re, hu_im]
-
-private theorem hright :
-    (by
-      classical
-      exact
-        ∀ (u : GaussianInt),
-        let rotate (p : Real × Real) : Real × Real :=
-          (-(p.2) + (u.re : Real), p.1 + (u.im : Real))
-        let unrotate (p : Real × Real) : Real × Real :=
-          (p.2 - (u.im : Real), -p.1 + (u.re : Real))
-        ∀ (p : Real × Real), rotate (unrotate p) = p ) := by
   classical
   intro u rotate unrotate p
   apply Prod.ext <;> dsimp [rotate, unrotate]

@@ -184,41 +184,6 @@ private theorem mem3 :
     · ext <;> simp [
         ]
 
-private theorem bounds :
-    ∀ (P : FordFareyParameter),
-    let A := P4062T1RecursiveInteriors P
-    (∀ (x : GaussianInt), (x ∈ A 0) → (1 ≤ x.re ∧ x.re ≤ (P.q₁ : Int)-1 ∧ 1 ≤ x.im ∧ x.im ≤ (P.q₁
-        : Int)-1)) → ((∀ (x : GaussianInt), (x ∈ A 1) → ((P.q₂ : Int)+1 ≤ x.re ∧ x.re ≤ (P.q :
-        Int)-1 ∧ (P.q₂ : Int)+1 ≤ x.im ∧ x.im ≤ (P.q : Int)-1)) → ((∀ (x : GaussianInt), (x ∈ A
-        2) → ((P.q₁ : Int)+1 ≤ x.re ∧ x.re ≤ (P.q : Int)-1 ∧ 1 ≤ x.im ∧ x.im ≤ (P.q₂ : Int)-1)) →
-        ((∀ (x : GaussianInt), (x ∈ A 3) → (1 ≤ x.re ∧ x.re ≤ (P.q₂ : Int)-1 ∧ (P.q₁ : Int)+1 ≤
-        x.im ∧ x.im ≤ (P.q : Int)-1)) → (∀ (i : Fin 4), ∀ (x : GaussianInt), (x ∈ A i) → ((i = 0
-        → 1 ≤ x.re ∧ x.re ≤ (P.q₁ : Int)-1 ∧
-        1 ≤ x.im ∧ x.im ≤ (P.q₁ : Int)-1) ∧
-      (i = 1 → (P.q₂ : Int)+1 ≤ x.re ∧ x.re ≤ (P.q : Int)-1 ∧
-        (P.q₂ : Int)+1 ≤ x.im ∧ x.im ≤ (P.q : Int)-1) ∧
-      (i = 2 → (P.q₁ : Int)+1 ≤ x.re ∧ x.re ≤ (P.q : Int)-1 ∧
-        1 ≤ x.im ∧ x.im ≤ (P.q₂ : Int)-1) ∧
-      (i = 3 → 1 ≤ x.re ∧ x.re ≤ (P.q₂ : Int)-1 ∧
-        (P.q₁ : Int)+1 ≤ x.im ∧ x.im ≤ (P.q : Int)-1)))))) := by
-  classical
-  intro P A coord0 coord1 coord2 coord3 i x hx
-  constructor
-  · intro hi
-    subst i
-    exact coord0 x hx
-  constructor
-  · intro hi
-    subst i
-    exact coord1 x hx
-  constructor
-  · intro hi
-    subst i
-    exact coord2 x hx
-  · intro hi
-    subst i
-    exact coord3 x hx
-
 private theorem adjacentCoordinates :
     ∀ (x : GaussianInt), ∀ (y : GaussianInt), (FourNeighborAdjacent x y) → ((x.re = y.re ∧ (y.im
         = x.im+1 ∨ x.im = y.im+1)) ∨

@@ -107,15 +107,6 @@ private theorem horder :
   intro P r s hrs
   exact lt_or_gt_of_ne hrs
 
-private theorem hsumInt :
-    ∀ (P : FordFareyParameter),
-    let r := P.q₁
-    let s := P.q₂
-    (P.q = P.q₁ + P.q₂) → ((P.q : Int) = (r : Int) + (s : Int)) := by
-  classical
-  intro P r s hsum
-  exact_mod_cast hsum
-
 private abbrev squareCoordinates := ApollonianSuperharmonic.FordInteriorSquareCoordinates.membership
 
 private theorem mem0 :
@@ -767,103 +758,6 @@ private theorem dSmall1H :
   rw [dSmall1Root hsmall x hx, hcoord]
   simp only [sub_self, Int.natAbs_zero, add_zero]
   simpa using (natAbsDist x.re (s:Int) hpos (by exact_mod_cast (Nat.zero_le s)))
-
-private theorem dLarge0Nat :
-    ∀ (P : FordFareyParameter),
-    let B := P4062T1RemainderPaths P
-    let d : GaussianInt → Nat := fun x =>
-      let a := if x ∈ (B 0).1 then (B 0).2 else (B 1).2
-      (x.re-a.re).natAbs + (x.im-a.im).natAbs
-    let r := P.q₁
-    let s := P.q₂
-    (P.q = P.q₁ + P.q₂) → ((0 < s) → ((0 < r) → ((∀ (x : GaussianInt), (s < r) → (x ∈ (B 0).1 ↔
-        (x.re = (r:Int) ∧ 1 ≤ x.im ∧ x.im ≤ (s:Int)) ∨ (x.im = (s:Int) ∧ (r:Int) ≤ x.re ∧ x.re ≤
-        (P.q:Int)-1))) → ((∀ (a : Int), ∀ (b : Int), (0 ≤ a) → ((0 ≤ b) → ((a-b).natAbs =
-        Nat.dist a.toNat b.toNat))) → (((s < r) → (∀ (x : GaussianInt), (x ∈ (B 0).1) → (d x =
-        (x.re-(r:Int)).natAbs + (x.im-(s:Int)).natAbs))) → ((s < r) → (∀ (x : GaussianInt), (x ∈
-        (B 0).1) → (d x = Nat.dist x.re.toNat r + Nat.dist x.im.toNat s)))))))) := by
-  classical
-  intro P B d r s hsum hs hr memB0Large natAbsDist dLarge0Root hlarge x hx
-  rw [dLarge0Root hlarge x hx]
-  have hxchar := (memB0Large x hlarge).mp hx
-  have hre := natAbsDist x.re (r:Int) (by rcases hxchar with h | h <;> omega)
-    (by exact_mod_cast (Nat.zero_le r))
-  have him := natAbsDist x.im (s:Int) (by rcases hxchar with h | h <;> omega)
-    (by exact_mod_cast (Nat.zero_le s))
-  simpa using congrArg₂ (· + ·) hre him
-
-private theorem dLarge1Nat :
-    ∀ (P : FordFareyParameter),
-    let B := P4062T1RemainderPaths P
-    let d : GaussianInt → Nat := fun x =>
-      let a := if x ∈ (B 0).1 then (B 0).2 else (B 1).2
-      (x.re-a.re).natAbs + (x.im-a.im).natAbs
-    let r := P.q₁
-    let s := P.q₂
-    (0 < s) → ((0 < r) → ((∀ (x : GaussianInt), (s < r) → (x ∈ (B 1).1 ↔ (x.im = (r:Int) ∧ 1 ≤
-        x.re ∧ x.re ≤ (s:Int)) ∨ (x.re = (s:Int) ∧ (r:Int) ≤ x.im ∧ x.im ≤ (P.q:Int)-1))) → ((∀
-            (a : Int), ∀ (b : Int), (0 ≤ a) → ((0 ≤ b) → ((a-b).natAbs = Nat.dist a.toNat b.toNat)))
-        → (((s < r) → (∀ (x : GaussianInt), (x ∈ (B 1).1) → (d x = (x.re-(s:Int)).natAbs +
-        (x.im-(r:Int)).natAbs))) → ((s < r) → (∀ (x : GaussianInt), (x ∈ (B 1).1) → (d x =
-        Nat.dist x.re.toNat s + Nat.dist x.im.toNat r))))))) := by
-  classical
-  intro P B d r s hs hr memB1Large natAbsDist dLarge1Root hlarge x hx
-  rw [dLarge1Root hlarge x hx]
-  have hxchar := (memB1Large x hlarge).mp hx
-  have hre := natAbsDist x.re (s:Int) (by rcases hxchar with h | h <;> omega)
-    (by exact_mod_cast (Nat.zero_le s))
-  have him := natAbsDist x.im (r:Int) (by rcases hxchar with h | h <;> omega)
-    (by exact_mod_cast (Nat.zero_le r))
-  simpa using congrArg₂ (· + ·) hre him
-
-private theorem dSmall0Nat :
-    ∀ (P : FordFareyParameter),
-    let B := P4062T1RemainderPaths P
-    let d : GaussianInt → Nat := fun x =>
-      let a := if x ∈ (B 0).1 then (B 0).2 else (B 1).2
-      (x.re-a.re).natAbs + (x.im-a.im).natAbs
-    let r := P.q₁
-    let s := P.q₂
-    (0 < r) → ((∀ (x : GaussianInt), (r < s) → (x ∈ (B 0).1 ↔ (x.re = (r:Int) ∧ 1 ≤ x.im ∧ x.im ≤
-        (r:Int)) ∨ (x.im = (r:Int) ∧ 1 ≤ x.re ∧ x.re ≤ (r:Int)))) → ((∀ (a : Int), ∀ (b : Int),
-            (0 ≤ a) → ((0 ≤ b) → ((a-b).natAbs = Nat.dist a.toNat b.toNat))) → (((r < s) → (∀ (x
-            : GaussianInt), (x ∈ (B 0).1) → (d x = (x.re-(r:Int)).natAbs +
-            (x.im-(r:Int)).natAbs))) →
-        ((r < s) → (∀ (x : GaussianInt), (x ∈ (B 0).1) → (d x = Nat.dist x.re.toNat r + Nat.dist
-        x.im.toNat r)))))) := by
-  classical
-  intro P B d r s hr memB0Small natAbsDist dSmall0Root hsmall x hx
-  rw [dSmall0Root hsmall x hx]
-  have hxchar := (memB0Small x hsmall).mp hx
-  have hre := natAbsDist x.re (r:Int) (by rcases hxchar with h | h <;> omega)
-    (by exact_mod_cast (Nat.zero_le r))
-  have him := natAbsDist x.im (r:Int) (by rcases hxchar with h | h <;> omega)
-    (by exact_mod_cast (Nat.zero_le r))
-  simpa using congrArg₂ (· + ·) hre him
-
-private theorem dSmall1Nat :
-    ∀ (P : FordFareyParameter),
-    let B := P4062T1RemainderPaths P
-    let d : GaussianInt → Nat := fun x =>
-      let a := if x ∈ (B 0).1 then (B 0).2 else (B 1).2
-      (x.re-a.re).natAbs + (x.im-a.im).natAbs
-    let r := P.q₁
-    let s := P.q₂
-    (P.q = P.q₁ + P.q₂) → ((0 < s) → ((∀ (x : GaussianInt), (r < s) → (x ∈ (B 1).1 ↔ (x.re =
-        (s:Int) ∧ (s:Int) ≤ x.im ∧ x.im ≤ (P.q:Int)-1) ∨ (x.im = (s:Int) ∧ (s:Int) ≤ x.re ∧ x.re
-        ≤ (P.q:Int)-1))) → ((∀ (a : Int), ∀ (b : Int), (0 ≤ a) → ((0 ≤ b) → ((a-b).natAbs =
-        Nat.dist a.toNat b.toNat))) → (((r < s) → (∀ (x : GaussianInt), (x ∈ (B 1).1) → (d x =
-        (x.re-(s:Int)).natAbs + (x.im-(s:Int)).natAbs))) → ((r < s) → (∀ (x : GaussianInt), (x ∈
-        (B 1).1) → (d x = Nat.dist x.re.toNat s + Nat.dist x.im.toNat s))))))) := by
-  classical
-  intro P B d r s hsum hs memB1Small natAbsDist dSmall1Root hsmall x hx
-  rw [dSmall1Root hsmall x hx]
-  have hxchar := (memB1Small x hsmall).mp hx
-  have hre := natAbsDist x.re (s:Int) (by rcases hxchar with h | h <;> omega)
-    (by exact_mod_cast (Nat.zero_le s))
-  have him := natAbsDist x.im (s:Int) (by rcases hxchar with h | h <;> omega)
-    (by exact_mod_cast (Nat.zero_le s))
-  simpa using congrArg₂ (· + ·) hre him
 
 private theorem adjacentCoordinates :
     ∀ (x : GaussianInt), ∀ (y : GaussianInt), (FourNeighborAdjacent x y) → (x.re = y.re ∨ x.im =

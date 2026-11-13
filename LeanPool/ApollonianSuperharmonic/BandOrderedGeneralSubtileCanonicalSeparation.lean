@@ -172,19 +172,6 @@ private theorem root_occurrence_disjoint :
   rw [← hzero]
   simpa using h.mono_right (occurrence_subset_block o)
 
-private theorem turn_map_injective :
-    ∀ (g : GaussianInt), Function.Injective (fun z : LatticeCell => GaussianTranslation g
-        (GaussianQuarterTurn z - 1)) := by
-  classical
-  intro g a b hab
-  apply Zsqrtd.ext
-  · have him := congrArg (fun z : GaussianInt => z.im) hab
-    simp [GaussianTranslation, GaussianQuarterTurn] at him
-    omega
-  · have hre := congrArg (fun z : GaussianInt => z.re) hab
-    simp [GaussianTranslation, GaussianQuarterTurn] at hre
-    omega
-
 end GeneralSeparationProof
 
 theorem BandOrderedGeneralSubtileCanonicalSeparation

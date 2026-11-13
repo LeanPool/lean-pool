@@ -1144,19 +1144,6 @@ private theorem hqprev0 :
           all_goals rw [hKcast]
     _ = Ci.1.1 := hCi
 
-private theorem hv30'At635 :
-    (by
-      classical
-      exact
-        ∀ (K : DiamondParameter),
-        let q := DiamondRecursiveQuadruple K
-        (BandVectors.1 (DiamondRecursiveQuadruple K (3 : Fin (4 : ℕ))) (DiamondRecursiveQuadruple
-            K (0 : Fin (4 : ℕ))) = (⟨(0 : ℤ), -((2 : ℤ) * (↑K.1 : ℤ))⟩ : GaussianInt)) →
-            (BandVectors.1 (q 3) (q 0) = (⟨0, -(2 * (K.1 : Int))⟩ : GaussianInt)) ) := by
-  classical
-  intro K q hv30
-  simpa [q] using hv30
-
 private theorem hrootcent :
     (by
       classical

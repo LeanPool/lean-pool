@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.ApollonianSuperharmonic.TileTranslationProperties
+
 public import Mathlib.Init
 public import LeanPool.ApollonianSuperharmonic.DiamondFootprintCoordinates
 
@@ -322,14 +324,8 @@ theorem P5203T1DecreasingInterface (k : Nat) (hk : 0 < k) (u : GaussianInt) :
     BoundaryFootprintVertices T ∩ BoundaryFootprintVertices U = V ∧
     BoundaryFootprintEdges T ∩ BoundaryFootprintEdges U = E ∧ SimpleGridPath V E
   have cell (w z : GaussianInt) :
-      z ∈ (TileTranslation D w).cells ↔ z - w ∈ DiamondCellDomain k := by
-    change z ∈ (DiamondCellDomain k).image (GaussianTranslation w) ↔ _
-    constructor
-    · intro hz
-      obtain ⟨x, hx, rfl⟩ := Finset.mem_image.mp hz
-      simpa [GaussianTranslation] using hx
-    · intro hz
-      exact Finset.mem_image.mpr ⟨z - w, hz, by simp [GaussianTranslation]⟩
+      z ∈ (TileTranslation D w).cells ↔ z - w ∈ DiamondCellDomain k :=
+    TileTranslationProperties.mem_cells (DiamondTile k) w z
   have ne (w : GaussianInt) : (TileTranslation D w).cells.Nonempty := by
     refine ⟨w, (cell w w).mpr ?_⟩
     rw [sub_self]

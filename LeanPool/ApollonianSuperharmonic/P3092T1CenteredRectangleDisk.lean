@@ -140,40 +140,6 @@ private theorem hR_eq (J : Finset Nat) (hJ : J.Nonempty) (a : Nat → ℝ) (b : 
     rw [heq]
     exact Finset.le_sup' (fun j => (q j x)⁻¹) hj
 
-private theorem hR_attained (J : Finset Nat) (hJ : J.Nonempty) (a : Nat → ℝ) (b : Nat → ℝ) (x : ℝ
-    × ℝ) : ∃ j ∈ J, (R J hJ a b) x = ((q a b) j x)⁻¹ := by
-  classical
-  let q : Nat → (ℝ × ℝ) → ℝ := fun j x => max (|x.1| / a j) (|x.2| / b j)
-  let R : (ℝ × ℝ) → ℝ := fun x => J.sup' hJ (fun j => (q j x)⁻¹)
-  change (∃ j ∈ J, R x = (q j x)⁻¹)
-  exact Finset.exists_mem_eq_sup' hJ _
-
-private theorem hR_pos (J : Finset Nat) (hJ : J.Nonempty) (a : Nat → ℝ) (b : Nat → ℝ) (ha : ∀ j ∈
-    J, 0 < a j) (hb : ∀ j ∈ J, 0 < b j) (x : ℝ × ℝ) (hx : x ≠ 0) : 0 < (R J hJ a b) x := by
-  classical
-  let q : Nat → (ℝ × ℝ) → ℝ := fun j x => max (|x.1| / a j) (|x.2| / b j)
-  let g : (ℝ × ℝ) → ℝ := fun x => J.inf' hJ (fun j => q j x)
-  let R : (ℝ × ℝ) → ℝ := fun x => J.sup' hJ (fun j => (q j x)⁻¹)
-  have hg_pos (x : ℝ × ℝ) (hx : x ≠ 0) : 0 < g x := hg_pos J hJ a b ha hb x hx
-  have hR_eq (x : ℝ × ℝ) (hx : x ≠ 0) : R x = (g x)⁻¹ := hR_eq J hJ a b ha hb x hx
-  change (0 < R x)
-  rw [hR_eq x hx]
-  exact inv_pos.mpr (hg_pos x hx)
-
-private theorem hR_cont (J : Finset Nat) (hJ : J.Nonempty) (a : Nat → ℝ) (b : Nat → ℝ) (ha : ∀ j
-    ∈ J, 0 < a j) (hb : ∀ j ∈ J, 0 < b j) (x : ℝ × ℝ) (hx : x ≠ 0) : ContinuousAt (R J hJ a b) x
-    := by
-  classical
-  let q : Nat → (ℝ × ℝ) → ℝ := fun j x => max (|x.1| / a j) (|x.2| / b j)
-  let R : (ℝ × ℝ) → ℝ := fun x => J.sup' hJ (fun j => (q j x)⁻¹)
-  have hq_pos (j : Nat) (hj : j ∈ J) (x : ℝ × ℝ) (hx : x ≠ 0) : 0 < q j x := hq_pos J a b ha hb j
-      hj x hx
-  change (ContinuousAt R x)
-  apply ContinuousAt.finset_sup'_apply hJ
-  intro j hj
-  exact ((continuous_fst.abs.div_const _).max
-    (continuous_snd.abs.div_const _)).continuousAt.inv₀ (hq_pos j hj x hx).ne'
-
 private theorem hmem (J : Finset Nat) (hJ : J.Nonempty) (c : ℝ × ℝ) (a : Nat → ℝ) (b : Nat → ℝ)
     (ha : ∀ j ∈ J, 0 < a j) (hb : ∀ j ∈ J, 0 < b j) (x : ℝ × ℝ) :
       c + x ∈ (⋃ j ∈ J, Set.Icc (c.1 - a j, c.2 - b j)
@@ -201,27 +167,6 @@ private theorem hmem (J : Finset Nat) (hJ : J.Nonempty) (c : ℝ × ℝ) (a : Na
     exact ⟨⟨by linarith, by linarith⟩, by linarith, by linarith⟩
   · rintro ⟨⟨h1, h2⟩, h3, h4⟩
     exact ⟨⟨by linarith, by linarith⟩, by linarith, by linarith⟩
-
-private theorem hray (J : Finset Nat) (hJ : J.Nonempty) (c : ℝ × ℝ) (a : Nat → ℝ) (b : Nat → ℝ)
-    (ha : ∀ j ∈ J, 0 < a j) (hb : ∀ j ∈ J, 0 < b j) (u : ℝ × ℝ) (hu : ‖u‖ = 1) (t : ℝ) (ht : 0 ≤
-    t) :
-      c + t • u ∈ (⋃ j ∈ J, Set.Icc (c.1 - a j, c.2 - b j)
-          (c.1 + a j, c.2 + b j)) ↔ t ≤ (R J hJ a b) u := by
-  classical
-  let q : Nat → (ℝ × ℝ) → ℝ := fun j x => max (|x.1| / a j) (|x.2| / b j)
-  let g : (ℝ × ℝ) → ℝ := fun x => J.inf' hJ (fun j => q j x)
-  let R : (ℝ × ℝ) → ℝ := fun x => J.sup' hJ (fun j => (q j x)⁻¹)
-  have hg_pos (x : ℝ × ℝ) (hx : x ≠ 0) : 0 < g x := hg_pos J hJ a b ha hb x hx
-  have hg_smul (t : ℝ) (ht : 0 ≤ t) (x : ℝ × ℝ) : g (t • x) = t * g x := hg_smul J hJ a b t ht x
-  have hR_eq (x : ℝ × ℝ) (hx : x ≠ 0) : R x = (g x)⁻¹ := hR_eq J hJ a b ha hb x hx
-  have hmem (x : ℝ × ℝ) :
-      c + x ∈ (⋃ j ∈ J, Set.Icc (c.1 - a j, c.2 - b j)
-          (c.1 + a j, c.2 + b j)) ↔ g x ≤ 1 := hmem J hJ c a b ha hb x
-  change (c + t • u ∈ (⋃ j ∈ J, Set.Icc (c.1 - a j, c.2 - b j)
-          (c.1 + a j, c.2 + b j)) ↔ t ≤ R u)
-  have hu0 : u ≠ 0 := by intro h; simp [h] at hu
-  rw [hmem, hg_smul t ht, hR_eq u hu0, ← one_div,
-    le_div_iff₀ (hg_pos u hu0)]
 
 private noncomputable abbrev j₀ (J : Finset Nat) (hJ : J.Nonempty) := hJ.choose
 
@@ -612,28 +557,6 @@ private theorem hG_cont (J : Finset Nat) (hJ : J.Nonempty) (a : Nat → ℝ) (b 
   rw [he]
   exact (hg_cont.continuousAt.div continuous_norm.continuousAt
     (norm_ne_zero_iff.mpr hx)).smul continuousAt_id
-
-private noncomputable abbrev H (J : Finset Nat) (hJ : J.Nonempty) (c : ℝ × ℝ) (a : Nat → ℝ) (b :
-    Nat → ℝ) (ha : ∀ j ∈ J, 0 < a j) (hb : ∀ j ∈ J, 0 < b j) : (ℝ × ℝ) ≃ₜ (ℝ × ℝ) := by
-  classical
-  let q : Nat → (ℝ × ℝ) → ℝ := fun j x => max (|x.1| / a j) (|x.2| / b j)
-  let R : (ℝ × ℝ) → ℝ := fun x => J.sup' hJ (fun j => (q j x)⁻¹)
-  let F : (ℝ × ℝ) → (ℝ × ℝ) := fun x => R (‖x‖⁻¹ • x) • x
-  let G : (ℝ × ℝ) → (ℝ × ℝ) := fun x => (R (‖x‖⁻¹ • x))⁻¹ • x
-  have hGF (x : ℝ × ℝ) : G (F x) = x := hGF J hJ a b ha hb x
-  have hFG (x : ℝ × ℝ) : F (G x) = x := hFG J hJ a b ha hb x
-  have hF_cont : Continuous F := hF_cont J hJ a b ha hb
-  have hG_cont : Continuous G := hG_cont J hJ a b ha hb
-  exact {
-      toFun := fun x => c + F x
-      invFun := fun x => G (x - c)
-      left_inv := fun x => by simpa using hGF x
-      right_inv := fun x => by
-        change c + F (G (x - c)) = x
-        rw [hFG]
-        simp
-      continuous_toFun := continuous_const.add hF_cont
-      continuous_invFun := hG_cont.comp (continuous_id.sub continuous_const) }
 
 end CenteredRectangleDiskConstruction
 

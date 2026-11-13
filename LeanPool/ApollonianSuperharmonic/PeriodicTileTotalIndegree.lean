@@ -1425,23 +1425,6 @@ private theorem hDcells :
     apply hDmem z |>.mpr
     exact ⟨hcellBaseFV z hzc, hzb⟩
 
-private theorem hDfilter :
-    (by
-      classical
-      exact
-        ∀ (T : ProtoTile), ∀ (h : PartialOdometer),
-        let D : Finset GaussianInt := h.domain.filter
-          (fun x => @decide (x ∉ BoundaryFootprintVertices T)
-            (Classical.propDecidable _))
-        (∀ (z : GaussianInt), z ∈ D ↔ z ∈ T.cells ∧ z ∉ BoundaryFootprintVertices T) → (D =
-            T.cells.filter (fun z => @decide (z ∉ BoundaryFootprintVertices T)
-            (Classical.propDecidable _))) ) := by
-  classical
-  intro T h D hDcells
-  ext z
-  rw [hDcells, Finset.mem_filter]
-  simp []
-
 private theorem hsumFund :
     (by
       classical

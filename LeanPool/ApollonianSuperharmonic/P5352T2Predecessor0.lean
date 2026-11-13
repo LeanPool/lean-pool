@@ -30,16 +30,6 @@ namespace ApollonianSuperharmonic
 namespace FirstPredecessorCases
 
 
-private theorem endAlgebra :
-    (by
-      classical
-      exact
-        ∀ (b : ℤ), -((b - (1 : ℤ)) ^ (2 : ℕ) - (b - (1 : ℤ))) + (b - (1 : ℤ)) * (b - (1 : ℤ)) -
-            (-(b - (1 : ℤ)) ^ (2 : ℕ) + (b - (1 : ℤ)) * (b - (1 : ℤ))) = b - (1 : ℤ) ) := by
-  classical
-  intro b
-  ring
-
 private theorem endAlgebraB :
     (by
       classical

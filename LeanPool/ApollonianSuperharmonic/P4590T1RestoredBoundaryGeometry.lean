@@ -177,27 +177,6 @@ private theorem noThird :
       _ = Fintype.card Sub := by simp
   omega
 
-private theorem hnotO :
-    (by
-      classical
-      exact
-        ∀ (q : Fin (4 : ℕ) → CircleCoordinates), ∀ (cfg : BandOrderedGeneralConfiguration q), ∀
-            (C : BandCircle), ∀ (T : ProtoTile), ∀ (cert : BandOrderedGeneralLayoutCertificate q
-            cfg C T), ∀ (x : GaussianInt), (GaussianRealPoint x ≠ TileCentroid T) → (
-        let O := cert.O
-        (TileCentroid O = TileCentroid T) → (x ∉ FootprintVertices O ∨ O.cells.Nonempty)) ) := by
-  classical
-  intro q cfg C T cert x hnoncentral O hOcent
-  by_cases hO : O.cells.Nonempty
-  · exact Or.inr hO
-  · left
-    intro hxO
-    have ha : x = O.anchor := by simpa [FootprintVertices, hO] using hxO
-    have hcen : GaussianRealPoint O.anchor = TileCentroid T := by
-      rw [← hOcent]
-      simp [GaussianRealPoint, TileCentroid, Finset.not_nonempty_iff_eq_empty.mp hO]
-    exact hnoncentral (by simpa [ha] using hcen)
-
 private theorem hmodifiedCommon :
     (by
       classical
@@ -579,35 +558,6 @@ private theorem hOcuts :
   · rcases hempty with ⟨he, _, _, _, _, _⟩
     rw [he] at hOne
     simp at hOne
-
-private theorem hsupport :
-    (by
-      classical
-      exact
-        ∀ (q : Fin (4 : ℕ) → CircleCoordinates), ∀ (cfg : BandOrderedGeneralConfiguration q), ∀
-            (C : BandCircle), ∀ (T : ProtoTile), ∀ (cert : BandOrderedGeneralLayoutCertificate q
-            cfg C T), ∀ (x : GaussianInt),
-        let A := cert.P 0 true
-        let B := cert.P 0 false
-        let O := cert.O
-        let Q := cert.Q 1 true
-        let S := cert.S 2 false
-        let R := cert.Q 2 true
-        let V := cert.S 1 false
-        (FootprintVertices (cert.P (0 : Fin (3 : ℕ)) true) ∩ FootprintVertices (cert.P (1 : Fin
-            (3 : ℕ)) true) ⊆ FootprintVertices (cert.Q (1 : Fin (3 : ℕ)) true) ∩
-            FootprintVertices (cert.P (1 : Fin (3 : ℕ)) true) ∧ FootprintVertices (cert.P (0 :
-            Fin (3 : ℕ)) true) ∩ FootprintVertices (cert.P (0 : Fin (3 : ℕ)) false) ⊆
-            FootprintVertices (cert.Q (1 : Fin (3 : ℕ)) true) ∩ FootprintVertices (cert.S (2 :
-            Fin (3 : ℕ)) false) ∪ FootprintVertices (cert.Q (0 : Fin (3 : ℕ)) false) ∪
-            FootprintVertices (cert.Q (2 : Fin (3 : ℕ)) true) ∩ FootprintVertices (cert.S (1 :
-            Fin (3 : ℕ)) false)) → ((x ∈ FootprintVertices A) → ((x ∈ FootprintVertices B) → (x ∈
-            (FootprintVertices Q ∩ FootprintVertices S) ∪ FootprintVertices O ∪
-            (FootprintVertices R ∩ FootprintVertices V)))) ) := by
-  classical
-  intro q cfg C T cert x A B O Q S R V hrawAB hxA' hxB'
-  have hs := hrawAB.2 ⟨hxA', hxB'⟩
-  simpa [Q, S, O, R, V, ← cert.precursor_eq] using hs
 
 private theorem hVnonzero :
     (by

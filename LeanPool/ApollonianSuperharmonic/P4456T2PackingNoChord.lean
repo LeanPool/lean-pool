@@ -36,14 +36,6 @@ private noncomputable abbrev NoChord (T : ProtoTile) : Prop := by
       x ∈ BoundaryFootprintVertices T → y ∈ BoundaryFootprintVertices T →
       ¬ OpenLatticeEdge x y ⊆ interior (TileRealization T)
 
-private noncomputable abbrev q : Real × Real → Real × Real := by
-  classical
-  exact fun p => (-p.2, p.1)
-
-private noncomputable abbrev r : Real × Real → Real × Real := by
-  classical
-  exact fun p => (p.1, -p.2)
-
 private noncomputable abbrev qh : (Real × Real) ≃ₜ (Real × Real) := by
   classical
   let q : Real × Real → Real × Real := fun p => (-p.2, p.1)

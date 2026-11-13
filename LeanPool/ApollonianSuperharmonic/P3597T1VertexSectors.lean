@@ -500,32 +500,6 @@ private theorem hnoPosMultiple :
     have heq := (right_mem_openSegment_iff.mp hqOpen)
     exact hnextVertex (by simpa [v] using heq.symm)
 
-private theorem hstraight :
-    (by
-      classical
-      exact
-        ∀ (n : Nat), ∀ (p : P3381T1PolygonBoundary n), ∀ (i : Fin (n + 3)),
-        let v := p.vertex i
-        let prev : Fin (n + 3) :=
-          if i.val = 0 then ⟨n + 2, by omega⟩ else ⟨i.val - 1, by omega⟩
-        let a := p.vertex (i + 1) - v
-        let b := p.vertex prev - v
-        (a ≠ 0) → ((b ≠ 0) → (
-        let cross (u z : Real × Real) : Real := u.1 * z.2 - u.2 * z.1
-        (∀ x z : Real × Real, x ≠ 0 → cross x z = 0 → ∃ c : Real, z = c • x) → ((¬ ∃ c : Real, 0 < c
-            ∧ b = c • a) → (cross a b = 0 → ∃ c : Real, c < 0 ∧ b = c • a)))) ) := by
-  classical
-  intro n p i v prev a b ha hb cross hcrosszero hnoPosMultiple hD
-  obtain ⟨c, hba⟩ := hcrosszero a b ha hD
-  have hcne : c ≠ 0 := by
-    intro hc
-    rw [hc, zero_smul] at hba
-    exact hb hba
-  have hcnpos : ¬ 0 < c := by
-    intro hc
-    exact hnoPosMultiple ⟨c, hc, hba⟩
-  exact ⟨c, lt_of_le_of_ne (le_of_not_gt hcnpos) hcne, hba⟩
-
 private theorem happroach :
     (by
       classical

@@ -106,20 +106,6 @@ private theorem hOsubA :
   exact (cert.plus_union z).mpr ⟨0, false,
     by simpa only [← cert.precursor_eq] using hz⟩
 
-private theorem hOsubB :
-    (by
-      classical
-      exact
-        ∀ (C : BandCircle), ∀ (q : Fin (4 : ℕ) → CircleCoordinates), ∀ (cfg :
-            BandOrderedGeneralConfiguration q), ∀ (T : ProtoTile), ∀ (cert :
-            BandOrderedGeneralLayoutCertificate q cfg C T), cert.O.cells ⊆ (cert.P 0 false).cells
-            ) := by
-  classical
-  intro C q cfg T cert z hz
-  exact (cert.minus_union z).mpr ⟨0, true, by
-    rw [← cert.precursor_cells]
-    exact hz⟩
-
 private theorem hcover :
     (by
       classical

@@ -49,12 +49,6 @@ private theorem hrow :
   intro m z hz
   exact (P4194T1DiamondCellRows m z).2.mp hz
 
-private theorem hm2 :
-    ∀ (m : Nat), 1 < m → 2 ≤ m := by
-  classical
-  intro m hm
-  omega
-
 private theorem hdesclow :
     ∀ (m : Nat), (1 < m) → (∀ (z : GaussianInt),
     let b := z.im

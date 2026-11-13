@@ -142,16 +142,6 @@ private theorem forwardInterior :
 
 private abbrev reverseInterior := ApollonianSuperharmonic.OpposingInterfaceGeometry.forwardInterior
 
-private theorem hshift :
-    (by
-      classical
-      exact
-        ∀ (z : Int × Int), (z.1 : GaussianInt) * 1 + (z.2 : GaussianInt) * ⟨0, 1⟩ = (⟨z.1, z.2⟩ :
-            GaussianInt) ) := by
-  classical
-  intro z
-  ext <;> simp
-
 private theorem hshift' :
     (by
       classical

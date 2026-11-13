@@ -1321,17 +1321,6 @@ private theorem cell_exists :
   refine ⟨lt_of_le_of_ne (Int.floor_le _) (Ne.symm (hr _)), Int.lt_floor_add_one _,
     lt_of_le_of_ne (Int.floor_le _) (Ne.symm (hi _)), Int.lt_floor_add_one _⟩
 
-private theorem hKne :
-    ∀ (K : Set ℂ), ∀ (p : ℂ), ∀ (q : ℂ), (connectedComponentIn Kᶜ p ≠ connectedComponentIn Kᶜ q)
-        → (K.Nonempty) := by
-  classical
-  intro K p q hne
-  by_contra h
-  apply hne
-  simp only [(Set.not_nonempty_iff_eq_empty.mp h), Set.compl_empty]
-  rw [isPreconnected_univ.connectedComponentIn (Set.mem_univ p),
-    isPreconnected_univ.connectedComponentIn (Set.mem_univ q)]
-
 private theorem hKV :
     ∀ (K : Set ℂ),
       ∀ (N : Set ℂ),

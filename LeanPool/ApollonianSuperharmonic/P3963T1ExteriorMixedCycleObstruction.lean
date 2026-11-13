@@ -157,57 +157,6 @@ private theorem hpattern :
     | exact Or.inr (Or.inr (Or.inl ⟨haU, hbV⟩))
     | exact Or.inr (Or.inr (Or.inr ⟨haU, hbV⟩))
 
-private theorem hExteriorPair :
-    ∀ (U : ProtoTile), ∀ (V : ProtoTile), ∀ (x : GaussianInt),
-    let c0 : GaussianInt := x
-    let c1 : GaussianInt := x - 1
-    let c2 : GaussianInt := x - 1 - ⟨0, 1⟩
-    let c3 : GaussianInt := x - ⟨0, 1⟩
-    (¬ (c0 ∈ U.cells ∧ c1 ∈ V.cells)) → ((¬ (c1 ∈ U.cells ∧ c0 ∈ V.cells)) → ((¬ (c1 ∈ U.cells ∧
-        c2 ∈ V.cells)) → ((¬ (c2 ∈ U.cells ∧ c1 ∈ V.cells)) → ((¬ (c2 ∈ U.cells ∧ c3 ∈ V.cells))
-        → ((¬ (c3 ∈ U.cells ∧ c2 ∈ V.cells)) → ((¬ (c3 ∈ U.cells ∧ c0 ∈ V.cells)) → ((¬ (c0 ∈
-        U.cells ∧ c3 ∈ V.cells)) → (((c0 ∈ U.cells ∧ c2 ∈ V.cells) ∨ (c2 ∈ U.cells ∧ c0 ∈
-        V.cells) ∨ (c1 ∈ U.cells ∧ c3 ∈ V.cells) ∨ (c3 ∈ U.cells ∧ c1 ∈ V.cells)) → ((∀ (q :
-            GaussianInt), (q ∉ U.cells) → ((q ∉ V.cells) → (q ∈ (↑(U.cells ∪ V.cells) : Set
-        GaussianInt)ᶜ))) → ((c1 ∈ (↑(U.cells ∪ V.cells) : Set GaussianInt)ᶜ ∧ c3 ∈ (↑(U.cells ∪
-        V.cells) : Set GaussianInt)ᶜ) ∨ (c0 ∈ (↑(U.cells ∪ V.cells) : Set GaussianInt)ᶜ ∧ c2 ∈
-        (↑(U.cells ∪ V.cells) : Set GaussianInt)ᶜ))))))))))) := by
-  classical
-  intro U V x c0 c1 c2 c3 no01 no10 no12 no21 no23 no32 no30 no03 hpattern inExterior
-  rcases hpattern with ⟨hu0, hv2⟩ | ⟨hu2, hv0⟩ | ⟨hu1, hv3⟩ | ⟨hu3, hv1⟩
-  · left
-    constructor
-    · apply inExterior
-      · intro h; exact no12 ⟨h, hv2⟩
-      · intro h; exact no01 ⟨hu0, h⟩
-    · apply inExterior
-      · intro h; exact no32 ⟨h, hv2⟩
-      · intro h; exact no03 ⟨hu0, h⟩
-  · left
-    constructor
-    · apply inExterior
-      · intro h; exact no10 ⟨h, hv0⟩
-      · intro h; exact no21 ⟨hu2, h⟩
-    · apply inExterior
-      · intro h; exact no30 ⟨h, hv0⟩
-      · intro h; exact no23 ⟨hu2, h⟩
-  · right
-    constructor
-    · apply inExterior
-      · intro h; exact no03 ⟨h, hv3⟩
-      · intro h; exact no10 ⟨hu1, h⟩
-    · apply inExterior
-      · intro h; exact no23 ⟨h, hv3⟩
-      · intro h; exact no12 ⟨hu1, h⟩
-  · right
-    constructor
-    · apply inExterior
-      · intro h; exact no01 ⟨h, hv1⟩
-      · intro h; exact no30 ⟨hu3, h⟩
-    · apply inExterior
-      · intro h; exact no21 ⟨h, hv1⟩
-      · intro h; exact no32 ⟨hu3, h⟩
-
 private theorem adjNe :
     ∀ {a : GaussianInt}, ∀ {b : GaussianInt}, FourNeighborAdjacent a b → a ≠ b := by
   classical
@@ -1307,15 +1256,6 @@ end ExteriorCycleDetails
 
 namespace ExteriorIndexCases
 
-private theorem hmixed :
-    ∀ (U : ProtoTile), ∀ (V : ProtoTile), (¬(FootprintEdges U ∩ FootprintEdges V).Nonempty) → (∀
-        (F : Set (Finset GaussianInt)), ∀ (e : Finset GaussianInt), ∀ (f : Finset GaussianInt),
-        (e ∈ F ∩ FootprintEdges U) → ((f ∈ F ∩ FootprintEdges V) → (e ≠ f))) := by
-  classical
-  intro U V hedge F e f he hf hef
-  apply hedge
-  exact ⟨e, ⟨he.2, by simpa [hef] using hf.2⟩⟩
-
 private theorem pairEq :
     ∀ (a : GaussianInt), ∀ (b : GaussianInt), ∀ (c : GaussianInt), ∀ (d : GaussianInt), a = c → b
         = d → ({a, b} : Finset GaussianInt) = {c, d} := by
@@ -1533,12 +1473,6 @@ private theorem inExterior :
   rcases Finset.mem_union.mp h with h | h
   · exact hu h
   · exact hv h
-
-private theorem hpne :
-    ∀ (p : List GaussianInt), ((4 : ℕ) ≤ p.length) → (p ≠ []) := by
-  classical
-  intro p hlen h
-  simp [h] at hlen
 
 private theorem huMem :
     (by

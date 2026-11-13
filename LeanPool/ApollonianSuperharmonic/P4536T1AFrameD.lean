@@ -177,13 +177,6 @@ private theorem positiveA :
   intro p hp
   exact (ProperBandCurvatureStructure p hp).1
 
-private theorem positiveE :
-    ∀ (C : BandCircle), ∀ (p : Fin 4 → CircleCoordinates), (C.1.1 = p 3) → (0 < (p 3).1) := by
-  classical
-  intro C p hC
-  rw [← hC]
-  exact C.2
-
 private theorem laws :
     ∀ (C : BandCircle), ∀ (orientation : Bool), ∀ (base : ProtoTile), ∀ (Rminus : ProtoTile), ∀
         (Rplus : ProtoTile), ∀ (hminus : PartialOdometer), ∀ (hplus : PartialOdometer), ∀ (F :

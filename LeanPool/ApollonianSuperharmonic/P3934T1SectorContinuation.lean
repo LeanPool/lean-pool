@@ -95,109 +95,6 @@ private theorem hrep :
     _ = (B p / d') • a + (A p / d') • b := by
       simp [smul_add, smul_smul, div_eq_mul_inv, mul_comm]
 
-private theorem hC₁conv :
-    ∀ (x : Real × Real), ∀ (r : Real), ∀ (u : Real × Real), ∀ (v : Real × Real),
-    let det : (Real
-        × Real) → (Real × Real) → Real :=
-      fun a b => a.1 * b.2 - a.2 * b.1
-    let d := det u v
-    let a : Real × Real := if 0 < d then u else v
-    let b : Real × Real := if 0 < d then v else u
-    let A : (Real × Real) → Real := fun p => det a (p - x)
-    let B : (Real × Real) → Real := fun p => det (p - x) b
-    let C₁ : Set (Real × Real) :=
-      Metric.ball x r ∩ {p | 0 < A p} ∩ {p | 0 < B p}
-    Convex ℝ C₁ := by
-  classical
-  intro x r u v det d a b A B C₁ p hp q hq α β hα hβ hsum
-  rcases hp with ⟨⟨hpball, hpA⟩, hpB⟩
-  rcases hq with ⟨⟨hqball, hqA⟩, hqB⟩
-  have hβ' : β = 1 - α := by linarith
-  subst β
-  refine ⟨⟨(convex_ball x r) hpball hqball hα (by positivity) (by linarith), ?_⟩, ?_⟩
-  · have hcomb : A (α • p + (1 - α) • q) = α * A p + (1 - α) * A q := by
-      dsimp [A, det]
-      ring
-    change 0 < A (α • p + (1 - α) • q)
-    rw [hcomb]
-    by_cases hα0 : α = 0
-    · subst α
-      simpa using hqA
-    · have hαpos : 0 < α := lt_of_le_of_ne hα (Ne.symm hα0)
-      exact add_pos_of_pos_of_nonneg (mul_pos hαpos hpA)
-        (mul_nonneg (by positivity) (le_of_lt hqA))
-  · have hcomb : B (α • p + (1 - α) • q) = α * B p + (1 - α) * B q := by
-      dsimp [B, det]
-      ring
-    change 0 < B (α • p + (1 - α) • q)
-    rw [hcomb]
-    by_cases hα0 : α = 0
-    · subst α
-      simpa using hqB
-    · have hαpos : 0 < α := lt_of_le_of_ne hα (Ne.symm hα0)
-      exact add_pos_of_pos_of_nonneg (mul_pos hαpos hpB)
-        (mul_nonneg (by positivity) (le_of_lt hqB))
-
-private theorem hCconv :
-    ∀ (x : Real × Real), ∀ (r : Real), ∀ (u : Real × Real), ∀ (v : Real × Real),
-    let det : (Real
-        × Real) → (Real × Real) → Real :=
-      fun a b => a.1 * b.2 - a.2 * b.1
-    let d := det u v
-    let a : Real × Real := if 0 < d then u else v
-    let A : (Real × Real) → Real := fun p => det a (p - x)
-    let C : Set (Real × Real) := Metric.ball x r ∩ {p | A p < 0}
-    Convex ℝ C := by
-  classical
-  intro x r u v det d a A C p hp q hq α β hα hβ hsum
-  rcases hp with ⟨hpball, hpA⟩
-  rcases hq with ⟨hqball, hqA⟩
-  have hβ' : β = 1 - α := by linarith
-  subst β
-  refine ⟨(convex_ball x r) hpball hqball hα (by positivity) (by linarith), ?_⟩
-  have hcomb : A (α • p + (1 - α) • q) = α * A p + (1 - α) * A q := by
-    dsimp [A, det]
-    ring
-  change A (α • p + (1 - α) • q) < 0
-  rw [hcomb]
-  by_cases hβ0 : 1 - α = 0
-  · have hαone : α = 1 := by linarith
-    simpa [hαone, hβ0] using hpA
-  · have hβpos : 0 < 1 - α := lt_of_le_of_ne (by linarith) (Ne.symm hβ0)
-    exact add_neg_of_nonpos_of_neg
-      (mul_nonpos_of_nonneg_of_nonpos hα (le_of_lt hpA))
-      (mul_neg_of_pos_of_neg hβpos hqA)
-
-private theorem hDconv :
-    ∀ (x : Real × Real), ∀ (r : Real), ∀ (u : Real × Real), ∀ (v : Real × Real),
-    let det : (Real
-        × Real) → (Real × Real) → Real :=
-      fun a b => a.1 * b.2 - a.2 * b.1
-    let d := det u v
-    let b : Real × Real := if 0 < d then v else u
-    let B : (Real × Real) → Real := fun p => det (p - x) b
-    let D : Set (Real × Real) := Metric.ball x r ∩ {p | B p < 0}
-    Convex ℝ D := by
-  classical
-  intro x r u v det d b B D p hp q hq α β hα hβ hsum
-  rcases hp with ⟨hpball, hpB⟩
-  rcases hq with ⟨hqball, hqB⟩
-  have hβ' : β = 1 - α := by linarith
-  subst β
-  refine ⟨(convex_ball x r) hpball hqball hα (by positivity) (by linarith), ?_⟩
-  have hcomb : B (α • p + (1 - α) • q) = α * B p + (1 - α) * B q := by
-    dsimp [B, det]
-    ring
-  change B (α • p + (1 - α) • q) < 0
-  rw [hcomb]
-  by_cases hβ0 : 1 - α = 0
-  · have hαone : α = 1 := by linarith
-    simpa [hαone, hβ0] using hpB
-  · have hβpos : 0 < 1 - α := lt_of_le_of_ne (by linarith) (Ne.symm hβ0)
-    exact add_neg_of_nonpos_of_neg
-      (mul_nonpos_of_nonneg_of_nonpos hα (le_of_lt hpB))
-      (mul_neg_of_pos_of_neg hβpos hqB)
-
 private theorem hRayShape :
     ∀ (x : Real × Real), ∀ (u : Real × Real), ∀ (v : Real × Real),
     let det : (Real × Real) →
@@ -1420,22 +1317,6 @@ private theorem hAqnegAt1373 :
   dsimp [A, qneg, det, d']
   ring
 
-private theorem hBqneg :
-    ∀ (x : Real × Real), ∀ (r : Real), ∀ (u : Real × Real), ∀ (v : Real × Real),
-    let det : (Real × Real) → (Real × Real) → Real :=
-      fun a b => a.1 * b.2 - a.2 * b.1
-    let d := det u v
-    let a : Real × Real := if 0 < d then u else v
-    let b : Real × Real := if 0 < d then v else u
-    let d' := det a b
-    let B : (Real × Real) → Real := fun p => det (p - x) b
-    let qneg : Real × Real := x - (r / 4) • (a + b)
-    B qneg = -(r / 4) * d' := by
-  classical
-  intro x r u v det d a b d' B qneg
-  dsimp [B, qneg, det, d']
-  ring
-
 private theorem hqnegAAt1379 :
     ∀ (x : Real × Real), ∀ (r : Real), ∀ (u : Real × Real), ∀ (v : Real × Real),
     let det : (Real × Real) → (Real × Real) → Real :=
@@ -1453,43 +1334,6 @@ private theorem hqnegAAt1379 :
   intro x r u v det d a b d' A qpos hAqpos hqposA qneg hAqneg
   rw [hAqneg]
   nlinarith [hqposA]
-
-private theorem hqnegB :
-    ∀ (x : Real × Real), ∀ (r : Real), ∀ (u : Real × Real), ∀ (v : Real × Real),
-    let det : (Real × Real) → (Real × Real) → Real :=
-      fun a b => a.1 * b.2 - a.2 * b.1
-    let d := det u v
-    let a : Real × Real := if 0 < d then u else v
-    let b : Real × Real := if 0 < d then v else u
-    let d' := det a b
-    let A : (Real × Real) → Real := fun p => det a (p - x)
-    let B : (Real × Real) → Real := fun p => det (p - x) b
-    let qpos : Real × Real := x + (r / 4) • (a + b)
-    (A qpos = (r / 4) * d') → ((0 < A qpos) → (
-    let qneg : Real × Real := x - (r / 4) • (a + b)
-    (B qneg = -(r / 4) * d') → (B qneg < 0))) := by
-  classical
-  intro x r u v det d a b d' A B qpos hAqpos hqposA qneg hBqneg
-  rw [hBqneg]
-  nlinarith [hqposA]
-
-private theorem hC₂conn :
-    ∀ (x : Real × Real), ∀ (r : Real), ∀ (u : Real × Real), ∀ (v : Real × Real),
-    let det : (Real × Real) → (Real × Real) → Real :=
-      fun a b => a.1 * b.2 - a.2 * b.1
-    let d := det u v
-    let a : Real × Real := if 0 < d then u else v
-    let b : Real × Real := if 0 < d then v else u
-    let A : (Real × Real) → Real := fun p => det a (p - x)
-    let B : (Real × Real) → Real := fun p => det (p - x) b
-    let C : Set (Real × Real) := Metric.ball x r ∩ {p | A p < 0}
-    let D : Set (Real × Real) := Metric.ball x r ∩ {p | B p < 0}
-    let C₂ : Set (Real × Real) := C ∪ D
-    ((C ∩ D).Nonempty) → ((IsConnected C) → ((IsConnected D) → (IsConnected C₂))) := by
-  classical
-  intro x r u v det d a b A B C D C₂ hCDne hCconn hDconn
-  dsimp [C₂]
-  exact IsConnected.union hCDne hCconn hDconn
 
 private theorem horder :
     ∀ (u : Real × Real), ∀ (v : Real × Real),
@@ -1792,66 +1636,6 @@ private theorem hNopen :
   intro x r u det A N hAcont
   dsimp [N]
   exact Metric.isOpen_ball.inter (isOpen_Iio.preimage hAcont)
-
-private theorem hPconv :
-    ∀ (x : Real × Real), ∀ (r : Real), ∀ (u : Real × Real),
-    let det : (Real × Real) → (Real × Real) → Real :=
-      fun a b => a.1 * b.2 - a.2 * b.1
-    let A : (Real × Real) → Real := fun p => det u (p - x)
-    let P : Set (Real × Real) := Metric.ball x r ∩ {p | 0 < A p}
-    Convex ℝ P := by
-  classical
-  intro x r u det A P
-  let f : (Real × Real) →ᵃ[Real] Real := {
-    toFun := A
-    linear := {
-      toFun := fun y => det u y
-      map_add' := by
-        intro y z
-        dsimp [det]
-        ring
-      map_smul' := by
-        intro c y
-        dsimp [det]
-        ring
-    }
-    map_vadd' := by
-      intro p y
-      dsimp [A, det]
-      ring
-  }
-  change Convex ℝ (Metric.ball x r ∩ f ⁻¹' Set.Ioi 0)
-  exact (convex_ball x r).inter ((convex_Ioi 0).affine_preimage f)
-
-private theorem hNconv :
-    ∀ (x : Real × Real), ∀ (r : Real), ∀ (u : Real × Real),
-    let det : (Real × Real) → (Real × Real) → Real :=
-      fun a b => a.1 * b.2 - a.2 * b.1
-    let A : (Real × Real) → Real := fun p => det u (p - x)
-    let N : Set (Real × Real) := Metric.ball x r ∩ {p | A p < 0}
-    Convex ℝ N := by
-  classical
-  intro x r u det A N
-  let f : (Real × Real) →ᵃ[Real] Real := {
-    toFun := A
-    linear := {
-      toFun := fun y => det u y
-      map_add' := by
-        intro y z
-        dsimp [det]
-        ring
-      map_smul' := by
-        intro c y
-        dsimp [det]
-        ring
-    }
-    map_vadd' := by
-      intro p y
-      dsimp [A, det]
-      ring
-  }
-  change Convex ℝ (Metric.ball x r ∩ f ⁻¹' Set.Iio 0)
-  exact (convex_ball x r).inter ((convex_Iio 0).affine_preimage f)
 
 private theorem hsqpos :
     ∀ (u : Real × Real), (u ≠ (0, 0)) → (0 < u.1 ^ 2 + u.2 ^ 2) := by

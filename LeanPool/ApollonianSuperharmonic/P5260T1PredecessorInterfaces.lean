@@ -740,23 +740,6 @@ private theorem htEnd :
   apply Zsqrtd.ext <;> simp [GaussianTranslation, P5157T1StaircasePoint,
     shiftR, N] <;> omega
 
-private theorem pathWD :
-    (by
-      classical
-      exact
-        ∀ (k : Nat),
-        let N : Nat := 2 * (k - 1)
-        let D := DiamondTile k
-        let W := TileTranslation (DiamondTile (k - 1)) ⟨(k : Int), 1 - (k : Int)⟩
-        (SimpleGridPathBetween (FootprintVertices D ∩ FootprintVertices W) (FootprintEdges D ∩
-            FootprintEdges W) (P5157T1StaircasePoint 1 false 1 0) (P5157T1StaircasePoint 1
-            false 1 N)) → (SimpleGridPathBetween (FootprintVertices W ∩ FootprintVertices D)
-            (FootprintEdges W ∩ FootprintEdges D) (P5157T1StaircasePoint 1 false 1 0)
-            (P5157T1StaircasePoint 1 false 1 N)) ) := by
-  classical
-  intro k N D W pathDW
-  simpa only [Set.inter_comm] using pathDW
-
 private theorem pathWDrev :
     (by
       classical
@@ -1535,24 +1518,6 @@ private theorem hyDL :
   rw [hDLboundary]
   simp [hcapRight]
 
-private theorem hyDW :
-    (by
-      classical
-      exact
-        ∀ (k : Nat),
-        let D := DiamondTile k
-        let W := TileTranslation (DiamondTile (k - 1)) ⟨(k : Int), 1 - (k : Int)⟩
-        (BoundaryFootprintVertices (DiamondTile k) ∩ BoundaryFootprintVertices (TileTranslation
-            (DiamondTile (k - (1 : ℕ))) (⟨(↑k : ℤ), (1 : ℤ) - (↑k : ℤ)⟩ : GaussianInt)) = {v :
-            GaussianInt | ∃ j ≤ (2 : ℕ) * (k - (1 : ℕ)), v = P5157T1StaircasePoint (1 :
-            GaussianInt) false (1 : ℤ) j}) → ((1 : GaussianInt) ∈ BoundaryFootprintVertices D ∩
-            BoundaryFootprintVertices W) ) := by
-  classical
-  intro k D W hDWv
-  rw [hDWv]
-  exact ⟨0, Nat.zero_le _,
-    by simp [P5157T1StaircasePoint, Zsqrtd.ext_iff]⟩
-
 private theorem hyLW :
     (by
       classical
@@ -1632,40 +1597,6 @@ private theorem Jcoordinate :
   intro k J z
   apply Zsqrtd.ext <;> simp [J, GaussianTranslation, GaussianReflection]; omega
 
-private theorem reflectedPath :
-    (by
-      classical
-      exact
-        ∀ (k : Nat),
-        let J : GaussianInt → GaussianInt := fun z =>
-          GaussianTranslation ⟨0, 2 * (k : Int)⟩ (GaussianReflection z)
-        ∀ {V : Set GaussianInt}, ∀ {E : Set (Finset GaussianInt)}, ∀ {x : GaussianInt}, ∀
-            {y : GaussianInt}, (SimpleGridPathBetween V E x y) → (SimpleGridPathBetween (J '' V)
-            ((fun e : Finset GaussianInt => e.image J) '' E) (J x) (J y)) ) := by
-  classical
-  intro k J V E x y hp
-  apply P4055T1GridPathImage J
-  · intro a b hab
-    have hR (z : GaussianInt) : GaussianReflection (GaussianReflection z) = z := by
-      apply Zsqrtd.ext <;> simp [GaussianReflection]
-    have hinjR : Function.Injective GaussianReflection := by
-      intro u v huv
-      calc
-        u = GaussianReflection (GaussianReflection u) := (hR u).symm
-        _ = GaussianReflection (GaussianReflection v) := congrArg GaussianReflection huv
-        _ = v := hR v
-    exact hinjR (add_right_cancel hab)
-  · intro a b h
-    rcases h with h | h | h | h
-    · subst b; left; apply Zsqrtd.ext <;> simp [J, GaussianTranslation, GaussianReflection]
-    · subst b; right; left; apply Zsqrtd.ext <;> simp [J, GaussianTranslation,
-        GaussianReflection]
-    · subst b; right; right; right; apply Zsqrtd.ext <;> simp [J, GaussianTranslation,
-        GaussianReflection]; abel
-    · subst b; right; right; left; apply Zsqrtd.ext <;> simp [J, GaussianTranslation,
-        GaussianReflection]; abel
-  · exact hp
-
 private theorem Jx :
     (by
       classical
@@ -1722,34 +1653,6 @@ private theorem hDWraw :
   intro k rawBoundaryVertices diamondCellsNonempty hkpos N D W hDWd hDWv hWne
   rw [rawBoundaryVertices D W (diamondCellsNonempty k hkpos) hWne hDWd,
     hDWv]
-
-private theorem hLWraw :
-    (by
-      classical
-      exact
-        ∀ (k : Nat), (∀ (X : ProtoTile), ∀ (Y : ProtoTile), (X.cells.Nonempty) →
-            ((Y.cells.Nonempty) → ((Disjoint X.cells Y.cells) → (FootprintVertices X ∩
-            FootprintVertices Y = BoundaryFootprintVertices X ∩ BoundaryFootprintVertices Y)))) →
-            ((∀ (m : Nat), (0 < m) → (∀ (u : GaussianInt), (TileTranslation (DiamondTile m)
-            u).cells.Nonempty)) → ((0 < k) → (
-        let N : Nat := 2 * (k - 1)
-        let D := DiamondTile k
-        let W := TileTranslation (DiamondTile (k - 1)) ⟨(k : Int), 1 - (k : Int)⟩
-        let L := TileTranslation D ⟨0, -(2 * (k : Int))⟩
-        (Disjoint (TileTranslation (DiamondTile k) (⟨(0 : ℤ), -((2 : ℤ) * (↑k : ℤ))⟩ :
-            GaussianInt)).cells (TileTranslation (DiamondTile (k - (1 : ℕ))) (⟨(↑k : ℤ), (1 : ℤ)
-            - (↑k : ℤ)⟩ : GaussianInt)).cells) → ((BoundaryFootprintVertices (TileTranslation
-            (DiamondTile k) (⟨(0 : ℤ), -((2 : ℤ) * (↑k : ℤ))⟩ : GaussianInt)) ∩
-            BoundaryFootprintVertices (TileTranslation (DiamondTile (k - (1 : ℕ))) (⟨(↑k : ℤ), (1
-            : ℤ) - (↑k : ℤ)⟩ : GaussianInt)) = {v : GaussianInt | ∃ j ≤ (2 : ℕ) * (k - (1 : ℕ)),
-            v = P5157T1StaircasePoint (1 : GaussianInt) false (-1 : ℤ) j}) → ((Finset.Nonempty
-            (TileTranslation (DiamondTile (k - (1 : ℕ))) (⟨(↑k : ℤ), (1 : ℤ) - (↑k : ℤ)⟩ :
-            GaussianInt)).cells) → (FootprintVertices L ∩ FootprintVertices W = {v | ∃ j ≤ N, v =
-            P5157T1StaircasePoint 1 false (-1) j})))))) ) := by
-  classical
-  intro k rawBoundaryVertices translatedDiamondCellsNonempty hkpos N D W L hLWd hLWv hWne
-  rw [rawBoundaryVertices L W (translatedDiamondCellsNonempty k hkpos _)
-    hWne hLWd, hLWv]
 
 private theorem hWURaw :
     (by
@@ -1959,21 +1862,6 @@ private theorem hRBC :
     exact htEnd
   rw [hstart, hend] at pathRBC
   exact pathRBC
-
-private theorem hIABoundary :
-    (by
-      classical
-      exact
-        ∀ (k : Nat),
-        let D := DiamondTile k
-        let W := TileTranslation (DiamondTile (k - 1)) ⟨(k : Int), 1 - (k : Int)⟩
-        let L := TileTranslation D ⟨0, -(2 * (k : Int))⟩
-        (∀ z, (z ∈ BoundaryFootprintVertices D ∧ z ∈ BoundaryFootprintVertices L ∧ z ∈
-            BoundaryFootprintVertices W) ↔ z = 1) → (∀ z, (z ∈ BoundaryFootprintVertices D ∧ z ∈
-            BoundaryFootprintVertices L ∧ z ∈ BoundaryFootprintVertices W) ↔ z = 1) ) := by
-  classical
-  intro k D W L hIboundaryUnique
-  exact hIboundaryUnique
 
 private theorem hIuniqueRaw :
     (by

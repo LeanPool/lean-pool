@@ -1141,60 +1141,6 @@ private theorem v21 :
   rw [neg_add, neg_neg] at hh
   simpa [add_comm] using hh
 
-private theorem hv20' :
-    ∀ (P : FordFareyParameter), (BandVectors.1 (![FordRecursiveQuadruple P (0 : Fin (4 : ℕ)),
-        FordRecursiveQuadruple P (2 : Fin (4 : ℕ)), FordRecursiveQuadruple P (3 : Fin (4 : ℕ)),
-        FordRecursiveQuadruple P (1 : Fin (4 : ℕ))] (1 : Fin (4 : ℕ))) (![FordRecursiveQuadruple
-        P (0 : Fin (4 : ℕ)), FordRecursiveQuadruple P (2 : Fin (4 : ℕ)), FordRecursiveQuadruple P
-        (3 : Fin (4 : ℕ)), FordRecursiveQuadruple P (1 : Fin (4 : ℕ))] (0 : Fin (4 : ℕ))) =
-        BandVectors.1 (![FordRecursiveQuadruple P (0 : Fin (4 : ℕ)), FordRecursiveQuadruple P (2
-        : Fin (4 : ℕ)), FordRecursiveQuadruple P (3 : Fin (4 : ℕ)), FordRecursiveQuadruple P (1 :
-        Fin (4 : ℕ))] (1 : Fin (4 : ℕ))) (![FordRecursiveQuadruple P (0 : Fin (4 : ℕ)),
-        FordRecursiveQuadruple P (2 : Fin (4 : ℕ)), FordRecursiveQuadruple P (3 : Fin (4 : ℕ)),
-        FordRecursiveQuadruple P (1 : Fin (4 : ℕ))] (3 : Fin (4 : ℕ))) - ⟨(0 : ℤ), (1 : ℤ)⟩ *
-        BandVectors.1 (![FordRecursiveQuadruple P (0 : Fin (4 : ℕ)), FordRecursiveQuadruple P (2
-        : Fin (4 : ℕ)), FordRecursiveQuadruple P (3 : Fin (4 : ℕ)), FordRecursiveQuadruple P (1 :
-        Fin (4 : ℕ))] (2 : Fin (4 : ℕ))) (![FordRecursiveQuadruple P (0 : Fin (4 : ℕ)),
-        FordRecursiveQuadruple P (2 : Fin (4 : ℕ)), FordRecursiveQuadruple P (3 : Fin (4 : ℕ)),
-        FordRecursiveQuadruple P (1 : Fin (4 : ℕ))] (1 : Fin (4 : ℕ)))) → (BandVectors.1
-        ((FordRecursiveQuadruple P) 2)
-        ((FordRecursiveQuadruple P) 0) =
-        BandVectors.1 ((FordRecursiveQuadruple P) 2)
-          ((FordRecursiveQuadruple P) 1) -
-          (⟨0, 1⟩ : GaussianInt) *
-            BandVectors.1 ((FordRecursiveQuadruple P) 3)
-              ((FordRecursiveQuadruple P) 2)) := by
-  classical
-  intro P hv20
-  simpa using hv20
-
-private theorem hv30' :
-    ∀ (P : FordFareyParameter), (BandVectors.1 (![FordRecursiveQuadruple P (0 : Fin (4 : ℕ)),
-        FordRecursiveQuadruple P (3 : Fin (4 : ℕ)), FordRecursiveQuadruple P (1 : Fin (4 : ℕ)),
-        FordRecursiveQuadruple P (2 : Fin (4 : ℕ))] (1 : Fin (4 : ℕ))) (![FordRecursiveQuadruple
-        P (0 : Fin (4 : ℕ)), FordRecursiveQuadruple P (3 : Fin (4 : ℕ)), FordRecursiveQuadruple P
-        (1 : Fin (4 : ℕ)), FordRecursiveQuadruple P (2 : Fin (4 : ℕ))] (0 : Fin (4 : ℕ))) =
-        BandVectors.1 (![FordRecursiveQuadruple P (0 : Fin (4 : ℕ)), FordRecursiveQuadruple P (3
-        : Fin (4 : ℕ)), FordRecursiveQuadruple P (1 : Fin (4 : ℕ)), FordRecursiveQuadruple P (2 :
-        Fin (4 : ℕ))] (1 : Fin (4 : ℕ))) (![FordRecursiveQuadruple P (0 : Fin (4 : ℕ)),
-        FordRecursiveQuadruple P (3 : Fin (4 : ℕ)), FordRecursiveQuadruple P (1 : Fin (4 : ℕ)),
-        FordRecursiveQuadruple P (2 : Fin (4 : ℕ))] (3 : Fin (4 : ℕ))) - ⟨(0 : ℤ), (1 : ℤ)⟩ *
-        BandVectors.1 (![FordRecursiveQuadruple P (0 : Fin (4 : ℕ)), FordRecursiveQuadruple P (3
-        : Fin (4 : ℕ)), FordRecursiveQuadruple P (1 : Fin (4 : ℕ)), FordRecursiveQuadruple P (2 :
-        Fin (4 : ℕ))] (2 : Fin (4 : ℕ))) (![FordRecursiveQuadruple P (0 : Fin (4 : ℕ)),
-        FordRecursiveQuadruple P (3 : Fin (4 : ℕ)), FordRecursiveQuadruple P (1 : Fin (4 : ℕ)),
-        FordRecursiveQuadruple P (2 : Fin (4 : ℕ))] (1 : Fin (4 : ℕ)))) → (BandVectors.1
-        ((FordRecursiveQuadruple P) 3)
-        ((FordRecursiveQuadruple P) 0) =
-        BandVectors.1 ((FordRecursiveQuadruple P) 3)
-          ((FordRecursiveQuadruple P) 2) -
-          (⟨0, 1⟩ : GaussianInt) *
-            BandVectors.1 ((FordRecursiveQuadruple P) 1)
-              ((FordRecursiveQuadruple P) 3)) := by
-  classical
-  intro P hv30
-  simpa using hv30
-
 private theorem a21 :
     ∀ (P : FordFareyParameter), (SemiProperQuadruple (FordRecursiveQuadruple P) ∧ BandVectors.1
         (FordRecursiveQuadruple P (3 : Fin (4 : ℕ))) (FordRecursiveQuadruple P (2 : Fin (4 : ℕ)))
@@ -1236,60 +1182,6 @@ private theorem a21 :
   rw [hs.2.2.2.1, hs.2.2.2.2] at hh
   rw [hh]
   abel
-
-private theorem ha20' :
-    ∀ (P : FordFareyParameter), (BandVectors.2 (![FordRecursiveQuadruple P (0 : Fin (4 : ℕ)),
-        FordRecursiveQuadruple P (2 : Fin (4 : ℕ)), FordRecursiveQuadruple P (3 : Fin (4 : ℕ)),
-        FordRecursiveQuadruple P (1 : Fin (4 : ℕ))] (1 : Fin (4 : ℕ))) (![FordRecursiveQuadruple
-        P (0 : Fin (4 : ℕ)), FordRecursiveQuadruple P (2 : Fin (4 : ℕ)), FordRecursiveQuadruple P
-        (3 : Fin (4 : ℕ)), FordRecursiveQuadruple P (1 : Fin (4 : ℕ))] (0 : Fin (4 : ℕ))) =
-        BandVectors.2 (![FordRecursiveQuadruple P (0 : Fin (4 : ℕ)), FordRecursiveQuadruple P (2
-        : Fin (4 : ℕ)), FordRecursiveQuadruple P (3 : Fin (4 : ℕ)), FordRecursiveQuadruple P (1 :
-        Fin (4 : ℕ))] (1 : Fin (4 : ℕ))) (![FordRecursiveQuadruple P (0 : Fin (4 : ℕ)),
-        FordRecursiveQuadruple P (2 : Fin (4 : ℕ)), FordRecursiveQuadruple P (3 : Fin (4 : ℕ)),
-        FordRecursiveQuadruple P (1 : Fin (4 : ℕ))] (3 : Fin (4 : ℕ))) + ⟨(0 : ℤ), (1 : ℤ)⟩ *
-        BandVectors.2 (![FordRecursiveQuadruple P (0 : Fin (4 : ℕ)), FordRecursiveQuadruple P (2
-        : Fin (4 : ℕ)), FordRecursiveQuadruple P (3 : Fin (4 : ℕ)), FordRecursiveQuadruple P (1 :
-        Fin (4 : ℕ))] (2 : Fin (4 : ℕ))) (![FordRecursiveQuadruple P (0 : Fin (4 : ℕ)),
-        FordRecursiveQuadruple P (2 : Fin (4 : ℕ)), FordRecursiveQuadruple P (3 : Fin (4 : ℕ)),
-        FordRecursiveQuadruple P (1 : Fin (4 : ℕ))] (1 : Fin (4 : ℕ)))) → (BandVectors.2
-        ((FordRecursiveQuadruple P) 2)
-        ((FordRecursiveQuadruple P) 0) =
-        BandVectors.2 ((FordRecursiveQuadruple P) 2)
-          ((FordRecursiveQuadruple P) 1) +
-          (⟨0, 1⟩ : GaussianInt) *
-            BandVectors.2 ((FordRecursiveQuadruple P) 3)
-              ((FordRecursiveQuadruple P) 2)) := by
-  classical
-  intro P ha20
-  simpa using ha20
-
-private theorem ha30' :
-    ∀ (P : FordFareyParameter), (BandVectors.2 (![FordRecursiveQuadruple P (0 : Fin (4 : ℕ)),
-        FordRecursiveQuadruple P (3 : Fin (4 : ℕ)), FordRecursiveQuadruple P (1 : Fin (4 : ℕ)),
-        FordRecursiveQuadruple P (2 : Fin (4 : ℕ))] (1 : Fin (4 : ℕ))) (![FordRecursiveQuadruple
-        P (0 : Fin (4 : ℕ)), FordRecursiveQuadruple P (3 : Fin (4 : ℕ)), FordRecursiveQuadruple P
-        (1 : Fin (4 : ℕ)), FordRecursiveQuadruple P (2 : Fin (4 : ℕ))] (0 : Fin (4 : ℕ))) =
-        BandVectors.2 (![FordRecursiveQuadruple P (0 : Fin (4 : ℕ)), FordRecursiveQuadruple P (3
-        : Fin (4 : ℕ)), FordRecursiveQuadruple P (1 : Fin (4 : ℕ)), FordRecursiveQuadruple P (2 :
-        Fin (4 : ℕ))] (1 : Fin (4 : ℕ))) (![FordRecursiveQuadruple P (0 : Fin (4 : ℕ)),
-        FordRecursiveQuadruple P (3 : Fin (4 : ℕ)), FordRecursiveQuadruple P (1 : Fin (4 : ℕ)),
-        FordRecursiveQuadruple P (2 : Fin (4 : ℕ))] (3 : Fin (4 : ℕ))) + ⟨(0 : ℤ), (1 : ℤ)⟩ *
-        BandVectors.2 (![FordRecursiveQuadruple P (0 : Fin (4 : ℕ)), FordRecursiveQuadruple P (3
-        : Fin (4 : ℕ)), FordRecursiveQuadruple P (1 : Fin (4 : ℕ)), FordRecursiveQuadruple P (2 :
-        Fin (4 : ℕ))] (2 : Fin (4 : ℕ))) (![FordRecursiveQuadruple P (0 : Fin (4 : ℕ)),
-        FordRecursiveQuadruple P (3 : Fin (4 : ℕ)), FordRecursiveQuadruple P (1 : Fin (4 : ℕ)),
-        FordRecursiveQuadruple P (2 : Fin (4 : ℕ))] (1 : Fin (4 : ℕ)))) → (BandVectors.2
-        ((FordRecursiveQuadruple P) 3)
-        ((FordRecursiveQuadruple P) 0) =
-        BandVectors.2 ((FordRecursiveQuadruple P) 3)
-          ((FordRecursiveQuadruple P) 2) +
-          (⟨0, 1⟩ : GaussianInt) *
-            BandVectors.2 ((FordRecursiveQuadruple P) 1)
-              ((FordRecursiveQuadruple P) 3)) := by
-  classical
-  intro P ha30
-  simpa using ha30
 
 end FordConfigurationDetails
 
@@ -1467,30 +1359,29 @@ theorem FordCoordinateConfiguration (P : FordFareyParameter) :
   have laws := VectorRecursionLaws (FordRecursiveQuadruple P) hs.1
   have v21 := FordConfigurationDetails.v21 P hs laws
   have hv10 := laws.2.2.1
-  have hv20 := (VectorRecursionLaws
-      ![(FordRecursiveQuadruple P) 0, (FordRecursiveQuadruple P) 2,
-        (FordRecursiveQuadruple P) 3, (FordRecursiveQuadruple P) 1] (by
-          simpa using SemiProperQuadruple.rotate hs.1)).2.2.1
-  have hv30 := (VectorRecursionLaws
-      ![(FordRecursiveQuadruple P) 0, (FordRecursiveQuadruple P) 3,
-        (FordRecursiveQuadruple P) 1, (FordRecursiveQuadruple P) 2] (by
-          simpa using SemiProperQuadruple.rotate
-            (SemiProperQuadruple.rotate hs.1))).2.2.1
-  have hv20' := FordConfigurationDetails.hv20' P hv20
-  have hv30' := FordConfigurationDetails.hv30' P hv30
+  let q := FordRecursiveQuadruple P
+  have rotatedLaws := VectorRecursionLaws ![q 0, q 2, q 3, q 1]
+    (by simpa [q] using SemiProperQuadruple.rotate hs.1)
+  have twiceRotatedLaws := VectorRecursionLaws ![q 0, q 3, q 1, q 2]
+    (by simpa [q] using SemiProperQuadruple.rotate (SemiProperQuadruple.rotate hs.1))
+  have hv20' : BandVectors.1 (q 2) (q 0) =
+      BandVectors.1 (q 2) (q 1) -
+        (⟨0, 1⟩ : GaussianInt) * BandVectors.1 (q 3) (q 2) := by
+    simpa [q] using rotatedLaws.2.2.1
+  have hv30' : BandVectors.1 (q 3) (q 0) =
+      BandVectors.1 (q 3) (q 2) -
+        (⟨0, 1⟩ : GaussianInt) * BandVectors.1 (q 1) (q 3) := by
+    simpa [q] using twiceRotatedLaws.2.2.1
   have a21 := FordConfigurationDetails.a21 P hs laws
   have ha10 := laws.2.2.2.1
-  have ha20 := (VectorRecursionLaws
-      ![(FordRecursiveQuadruple P) 0, (FordRecursiveQuadruple P) 2,
-        (FordRecursiveQuadruple P) 3, (FordRecursiveQuadruple P) 1] (by
-          simpa using SemiProperQuadruple.rotate hs.1)).2.2.2.1
-  have ha30 := (VectorRecursionLaws
-      ![(FordRecursiveQuadruple P) 0, (FordRecursiveQuadruple P) 3,
-        (FordRecursiveQuadruple P) 1, (FordRecursiveQuadruple P) 2] (by
-          simpa using SemiProperQuadruple.rotate
-            (SemiProperQuadruple.rotate hs.1))).2.2.2.1
-  have ha20' := FordConfigurationDetails.ha20' P ha20
-  have ha30' := FordConfigurationDetails.ha30' P ha30
+  have ha20' : BandVectors.2 (q 2) (q 0) =
+      BandVectors.2 (q 2) (q 1) +
+        (⟨0, 1⟩ : GaussianInt) * BandVectors.2 (q 3) (q 2) := by
+    simpa [q] using rotatedLaws.2.2.2.1
+  have ha30' : BandVectors.2 (q 3) (q 0) =
+      BandVectors.2 (q 3) (q 2) +
+        (⟨0, 1⟩ : GaussianInt) * BandVectors.2 (q 1) (q 3) := by
+    simpa [q] using twiceRotatedLaws.2.2.2.1
   refine ⟨hproper, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
   · rw [hv10, hs.2.2.1, v21]
     have hi : (⟨0, 1⟩ : GaussianInt) * ⟨0, 1⟩ = -1 := by

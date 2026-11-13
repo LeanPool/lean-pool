@@ -152,24 +152,6 @@ private theorem hWsub :
     exact List.getLast_mem hne
   exact hall w hwmem
 
-private theorem Ynonempty :
-    (by
-      classical
-      exact
-        ∀ (X : Set GaussianInt), ∀ (x : GaussianInt), (x ∉ X) → (
-        let reachable (a b : GaussianInt) : Prop := ∃ p : List GaussianInt,
-          p.head? = some a ∧ p.getLast? = some b ∧
-            (∀ z ∈ p, z ∉ X) ∧ p.IsChain FourNeighborAdjacent
-        let Y : Set GaussianInt := {y | reachable x y}
-        Y.Nonempty) ) := by
-  classical
-  intro X x hxX reachable Y
-  refine ⟨x, ?_⟩
-  refine ⟨[x], rfl, rfl, ?_, List.isChain_singleton _⟩
-  intro z hz
-  simp only [List.mem_singleton] at hz
-  simpa [hz] using hxX
-
 private theorem xY :
     (by
       classical

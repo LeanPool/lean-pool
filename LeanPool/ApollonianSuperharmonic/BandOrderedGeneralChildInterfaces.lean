@@ -653,16 +653,6 @@ private theorem blockJunction :
     hLA' hLB' hLC' hLAB hLBC hLCA hLABC
     hdisjAB hdisjBC hdisjCA hUAB hUBC hUCA hUABC hcommonAB hcommonBC hcommonCA
 
-private theorem ha :
-    (by
-      classical
-      exact
-        ∀ (A : ProtoTile), ∀ (A' : ProtoTile), (Finset.Nonempty A.cells) → (A.cells = ∅ →
-            A.anchor = A'.anchor) ) := by
-  classical
-  intro A A' hAn he
-  exact False.elim ((Finset.not_nonempty_iff_eq_empty.mpr he) hAn)
-
 private theorem hzero :
     (by
       classical

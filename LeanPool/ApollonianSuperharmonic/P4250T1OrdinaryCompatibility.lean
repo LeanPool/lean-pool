@@ -145,32 +145,6 @@ private theorem slope :
   intro q h s0 hp sOff i e
   simpa [sOff] using hp i e
 
-private theorem cadd :
-    (by
-      classical
-      exact
-        let cOff (z : GaussianInt) : Real × Real :=
-          (1 / 2 : Real) • (GaussianRealPoint z -
-            (-(GaussianRealPoint z).2, (GaussianRealPoint z).1))
-        ∀ (a : GaussianInt), ∀ (b : GaussianInt), cOff (a + b) = cOff a + cOff b ) := by
-  classical
-  intro cOff a b
-  dsimp [cOff, GaussianRealPoint]
-  ext <;> simp [] <;> ring
-
-private theorem cneg :
-    (by
-      classical
-      exact
-        let cOff (z : GaussianInt) : Real × Real :=
-          (1 / 2 : Real) • (GaussianRealPoint z -
-            (-(GaussianRealPoint z).2, (GaussianRealPoint z).1))
-        ∀ (a : GaussianInt), cOff (-a) = -cOff a ) := by
-  classical
-  intro cOff a
-  dsimp [cOff, GaussianRealPoint]
-  ext <;> simp [] <;> ring
-
 private theorem sY :
     (by
       classical

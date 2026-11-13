@@ -120,30 +120,6 @@ private theorem hcomp_pull :
     simpa [hSymmImageT, h.symm_apply_apply] using him
   exact connectedComponentIn_eq hmem'
 
-private theorem hcomp_push :
-    ∀ (e : C(Circle, Real × Real)),
-    let h₀ : ℂ ≃ₜ (Real × Real) :=
-      Complex.equivRealProd.toHomeomorphOfIsInducing
-        Complex.isUniformEmbedding_equivRealProd.isInducing
-    let h : (Real × Real) ≃ₜ ℂ := h₀.symm
-    let ec : C(Circle, ℂ) := ⟨fun t => h (e t), h.continuous.comp e.continuous⟩
-    let K : Set ℂ := Set.range ec
-    let T : Set ℂ := Kᶜ
-    let S : Set (Real × Real) := (Set.range e)ᶜ
-    (h '' S = T) → (∀ (u : ℝ × ℝ), ∀ (v : ℝ × ℝ), u ∈ S → v ∈ S → connectedComponentIn S u =
-        connectedComponentIn S v → connectedComponentIn T ((h : ℝ × ℝ → ℂ) u) =
-        connectedComponentIn T ((h : ℝ × ℝ → ℂ) v)) := by
-  classical
-  intro e h₀ h ec K T S hImageS u v hu hv hcmp
-  have hmem : v ∈ connectedComponentIn S u := by rw [hcmp]; exact mem_connectedComponentIn hv
-  have himage := h.continuous.continuousOn.image_connectedComponentIn_subset
-    (s := S) (a := u) hu
-  have hmem' : h v ∈ connectedComponentIn T (h u) := by
-    have : h v ∈ h '' connectedComponentIn S u := ⟨v, hmem, rfl⟩
-    have him := himage this
-    simpa [hImageS] using him
-  exact connectedComponentIn_eq hmem'
-
 private theorem impossible_pair :
     ∀ (e : C(Circle, Real × Real)), (Function.Injective (⇑e : Circle → ℝ × ℝ)) → (
     let h₀ : ℂ ≃ₜ (Real × Real) :=

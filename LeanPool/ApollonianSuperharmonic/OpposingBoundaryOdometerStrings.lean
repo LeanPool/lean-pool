@@ -1529,17 +1529,6 @@ private theorem zip_pair_unique :
             exact False.elim ((hhead x hx) hxeq.symm)
           · exact ih htail hy hz
 
-private theorem hreverseTilesNonempty :
-    (by
-      classical
-      exact
-        ∀ (Rplus : ProtoTile), ∀ (reverseTiles : List ProtoTile), (reverseTiles.head? = some
-            Rplus) → (reverseTiles ≠ []) ) := by
-  classical
-  intro Rplus reverseTiles hreverseHead h
-  rw [h] at hreverseHead
-  simp at hreverseHead
-
 private theorem forall2_length :
     (by
       classical

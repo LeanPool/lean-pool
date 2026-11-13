@@ -730,28 +730,6 @@ private theorem hUopen :
     (isOpen_lt continuous_const continuous_snd)).inter
       (isOpen_lt (continuous_fst.add continuous_snd) continuous_const)
 
-private theorem hUsub :
-    let p : Fin 3 → Real × Real := ![(0,0),(1,0),(0,1)]
-    let w (z : Real × Real) : Fin 3 → Real := ![1-z.1-z.2,z.1,z.2]
-    (∀ (z : Real × Real), (∑ i, w z i) = 1) → (∀ (z : Real × Real), (∑ i, w z i • p i) = z) →
-    let U : Set (Real × Real) := {z | 0 < z.1 ∧ 0 < z.2 ∧ z.1+z.2 < 1}
-    U ⊆ convexHull Real (Set.range p) := by
-  classical
-  intro p w hw_sum hp_sum U z hz
-  apply mem_convexHull_of_exists_fintype (w z) p
-  · intro i
-    fin_cases i
-    · dsimp [w]
-      linarith [hz.2.2]
-    · dsimp [w]
-      exact hz.1.le
-    · dsimp [w]
-      exact hz.2.1.le
-  · exact hw_sum z
-  · intro i
-    exact Set.mem_range_self i
-  · exact hp_sum z
-
 private theorem hImageSub :
     ∀ (n : Nat), ∀ (q : Fin (n + 3) → Real × Real),
     let f : Fin 3 → Fin (n+3) := fun i => ⟨i.val, by omega⟩
@@ -806,54 +784,6 @@ private theorem hOopen :
     ((isOpen_lt continuous_fst continuous_const).inter
       ((isOpen_lt continuous_snd (by fun_prop)).inter hlow))
 
-private theorem noLeftInterior :
-    ∀ (n : Nat),
-    let M : Real := (n+2 : Nat)
-    let L (j : Fin (n+2)) (x : Real) : Real :=
-      (2 * (j.val : Real) + 1) * x - (j.val : Real) * ((j.val : Real) + 1)
-    let D : Set (Real × Real) := {z | 0 ≤ z.1 ∧ z.1 ≤ M ∧ z.2 ≤ M*z.1 ∧
-      ∀ j : Fin (n+2), L j z.1 ≤ z.2}
-    (∀ (z : Real × Real), (z ∈ interior D) → ∃ e : Real, 0 < e ∧ Metric.ball z e ⊆ D) → ∀ (z :
-        Real × Real), (z ∈ interior D) → z.1 ≠ 0 := by
-  classical
-  intro n M L D ballAt z hz heq
-  obtain ⟨e,he,hball⟩ := ballAt z hz
-  let w : Real × Real := (z.1-e/2,z.2)
-  have hwball : w ∈ Metric.ball z e := by
-    change dist w z < e
-    simp [w, Prod.dist_eq, Real.dist_eq,
-      abs_of_pos (show 0 < e/2 by linarith)]
-    linarith
-  have hwD := hball hwball
-  rcases hwD with ⟨hw0,_,_,_⟩
-  dsimp [w] at hw0
-  rw [heq] at hw0
-  linarith
-
-private theorem noRightInterior :
-    ∀ (n : Nat),
-    let M : Real := (n+2 : Nat)
-    let L (j : Fin (n+2)) (x : Real) : Real :=
-      (2 * (j.val : Real) + 1) * x - (j.val : Real) * ((j.val : Real) + 1)
-    let D : Set (Real × Real) := {z | 0 ≤ z.1 ∧ z.1 ≤ M ∧ z.2 ≤ M*z.1 ∧
-      ∀ j : Fin (n+2), L j z.1 ≤ z.2}
-    (∀ (z : Real × Real), (z ∈ interior D) → ∃ e : Real, 0 < e ∧ Metric.ball z e ⊆ D) → ∀ (z :
-        Real × Real), (z ∈ interior D) → z.1 ≠ M := by
-  classical
-  intro n M L D ballAt z hz heq
-  obtain ⟨e,he,hball⟩ := ballAt z hz
-  let w : Real × Real := (z.1+e/2,z.2)
-  have hwball : w ∈ Metric.ball z e := by
-    change dist w z < e
-    simp [w, Prod.dist_eq, Real.dist_eq,
-      abs_of_pos (show 0 < e/2 by linarith)]
-    linarith
-  have hwD := hball hwball
-  rcases hwD with ⟨_,hwM,_,_⟩
-  dsimp [w] at hwM
-  rw [heq] at hwM
-  linarith
-
 private theorem noUpperInterior :
     ∀ (n : Nat),
     let M : Real := (n+2 : Nat)
@@ -901,41 +831,6 @@ private theorem noLowerInterior :
   dsimp [w] at hwL
   rw [heq] at hwL
   linarith
-
-private theorem interiorStrict :
-    ∀ (n : Nat),
-    let M : Real := (n+2 : Nat)
-    let L (j : Fin (n+2)) (x : Real) : Real :=
-      (2 * (j.val : Real) + 1) * x - (j.val : Real) * ((j.val : Real) + 1)
-    let D : Set (Real × Real) := {z | 0 ≤ z.1 ∧ z.1 ≤ M ∧ z.2 ≤ M*z.1 ∧
-      ∀ j : Fin (n+2), L j z.1 ≤ z.2}
-    let O : Set (Real × Real) :=
-      {z | 0 < z.1 ∧ z.1 < M ∧ z.2 < M*z.1 ∧ ∀ j : Fin (n+2), L j z.1 < z.2}
-    (∀ (z : Real × Real), (z ∈ interior D) → z.1 ≠ 0) → (∀ (z : Real × Real), (z ∈ interior D) →
-        z.1 ≠ M) → (∀ (z : Real × Real), (z ∈ interior D) → (z.2 = M*z.1) → False) → (∀ (z : Real
-        × Real), (z ∈ interior D) → ∀ (j : Fin (n+2)), (L j z.1 = z.2) → False) → ∀ (z : Real ×
-        Real), (z ∈ interior D) → z ∈ O := by
-  classical
-  intro n M L D O noLeftInterior noRightInterior noUpperInterior noLowerInterior z hz
-  have hzD : z ∈ D := interior_subset hz
-  rcases hzD with ⟨hz0,hzM,hzU,hzL⟩
-  have h0 : 0 < z.1 := by
-    apply lt_of_le_of_ne hz0
-    intro h
-    exact noLeftInterior z hz h.symm
-  have hM : z.1 < M := by
-    apply lt_of_le_of_ne hzM
-    exact noRightInterior z hz
-  have hU : z.2 < M*z.1 := by
-    apply lt_of_le_of_ne hzU
-    intro h
-    exact noUpperInterior z hz h
-  have hL : ∀ j : Fin (n+2), L j z.1 < z.2 := by
-    intro j
-    apply lt_of_le_of_ne (hzL j)
-    intro h
-    exact noLowerInterior z hz j h
-  exact ⟨h0,hM,hU,hL⟩
 
 private theorem heqcases :
     ∀ (n : Nat),

@@ -1403,33 +1403,6 @@ private theorem w_arc :
   rw [← hr k]
   exact ⟨τ k i, rfl⟩
 
-private theorem w_before_end :
-    (by
-      classical
-      exact
-        ∀ (g : Fin (3 : ℕ) → (↑(Set.Icc (0 : ℝ) (1 : ℝ)) : Type) → ℝ × ℝ),
-          ∀ (s : (k : Fin (3 : ℕ)) → P3723T1PolygonalParameterization (g k)),
-            let τ (k : Fin 3) (i : Fin ((s k).count + 1)) : Set.Icc (0 : Real) 1 :=
-              ⟨(s k).time i, by
-                constructor
-                · have hi := (s k).strict.monotone (Fin.zero_le i)
-                  rw [(s k).start] at hi
-                  exact hi
-                · have hi := (s k).strict.monotone (Fin.le_last i)
-                  rw [(s k).finish] at hi
-                  exact hi⟩
-            ∀ (k : Fin (3 : ℕ)),
-              ∀ (i : Fin (s k).count), (↑(τ k i.castSucc) : ℝ) < (1 : ℝ)
-    ) := by
-  classical
-  intro g s τ k i
-  have hidx : i.castSucc < Fin.last (s k).count := by
-    apply Fin.mk_lt_mk.mpr
-    simp
-  have ht := (s k).strict hidx
-  rw [(s k).finish] at ht
-  exact ht
-
 private theorem w_finish :
     (by
       classical
@@ -1459,34 +1432,6 @@ private theorem w_finish :
     apply Subtype.ext
     simp [τ, (s k).finish]
   simpa [w, he] using h1 k
-
-private theorem w_start :
-    (by
-      classical
-      exact
-        ∀ (ι : Type), ∀ (P : PeriodicTileComplex ι), ∀ (D : P3723T1AllContactRouting P), ∀ (f :
-            P.plane.Face), ∀ (g : Fin (3 : ℕ) → (↑(Set.Icc (0 : ℝ) (1 : ℝ)) : Type) → ℝ × ℝ),
-        ((∀ (k : Fin (3 : ℕ)), g
-            k ⟨(0 : ℝ), (by norm_num)⟩ = D.position (P.plane.faceVertex
-            f k)) → (∀ (s : (k : Fin (3 : ℕ)) → P3723T1PolygonalParameterization (g k)),
-        let τ (k : Fin 3) (i : Fin ((s k).count + 1)) : Set.Icc (0 : Real) 1 :=
-          ⟨(s k).time i, by
-            constructor
-            · have hi := (s k).strict.monotone (Fin.zero_le i)
-              rw [(s k).start] at hi
-              exact hi
-            · have hi := (s k).strict.monotone (Fin.le_last i)
-              rw [(s k).finish] at hi
-              exact hi⟩;
-        let w (k : Fin 3) (i : Fin ((s k).count + 1)) := g k (τ k i);
-        let v : Fin 3 → ι := P.plane.faceVertex f;
-        ∀ (k : Fin (3 : ℕ)), w k (0 : Fin ((s k).count + (1 : ℕ))) = D.position (v k)))) := by
-  classical
-  intro ι P D f g h0 s τ w v k
-  have he : τ k 0 = ⟨0, by norm_num⟩ := by
-    apply Subtype.ext
-    simp [τ, (s k).start]
-  simpa [w, he] using h0 k
 
 private theorem arc01 :
     (by

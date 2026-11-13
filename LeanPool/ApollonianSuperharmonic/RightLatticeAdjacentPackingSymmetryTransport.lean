@@ -274,16 +274,6 @@ private theorem turn_mul :
   rcases z with ⟨a, b⟩
   ext <;> simp [GaussianQuarterTurn]
 
-private theorem neg_turn_mul :
-    (by
-      classical
-      exact
-        (∀ (z : GaussianInt), (⟨0, 1⟩ : GaussianInt) * z = GaussianQuarterTurn z) → (∀ (z :
-            GaussianInt), -((⟨0, 1⟩ : GaussianInt) * z) = -GaussianQuarterTurn z) ) := by
-  classical
-  intro turn_mul z
-  rw [turn_mul]
-
 private theorem neg_turn_mul' :
     (by
       classical

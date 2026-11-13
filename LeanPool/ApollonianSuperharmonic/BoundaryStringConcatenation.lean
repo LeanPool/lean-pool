@@ -604,24 +604,6 @@ private theorem mapSegment :
     · apply (List.isChain_map ρ).mpr
       exact hseg.2.2.2.2.imp (fun u v huv => (hadjρ u v).mpr huv)
 
-private theorem hσrNe :
-    (by
-      classical
-      exact
-        ∀ (r : ℤ × ℤ), ∀ (m : ℤ × ℤ), ∀ (σ : ℤ × ℤ ≃+ ℤ × ℤ), ∀ (a : ℤ), ∀ (b : ℤ), ∀ (c : ℤ), ∀
-            (d : ℤ), (a * d - b * c = (-1 : ℤ)) → ((σ (m - r) = (a, b)) → (σ r ≠ σ m)) ) := by
-  classical
-  intro r m σ a b c d hdetσ hσmr heq
-  have hzero : (a, b) = 0 := by
-    calc
-      (a, b) = σ (m - r) := hσmr.symm
-      _ = σ m - σ r := by rw [map_sub]
-      _ = 0 := by rw [heq]; simp
-  have ha : a = 0 := by simpa using congrArg Prod.fst hzero
-  have hb : b = 0 := by simpa using congrArg Prod.snd hzero
-  rw [ha, hb] at hdetσ
-  norm_num at hdetσ
-
 private theorem hinvAdj :
     (by
       classical

@@ -669,50 +669,6 @@ private theorem hUV :
   · have hnp : ¬ 0 < cross u w := not_lt_of_gt hn
     simpa [U, V, hnp, hswap] using neg_pos.mpr hn
 
-private theorem hUne :
-    (by
-      classical
-      exact
-        ∀ (n : Nat), ∀ (p : P3381T1PolygonBoundary n),
-        let v := p.vertex
-        ∀ (b : Fin (n + (3 : ℕ))),
-        let B := v b
-        let a := v (b - 1)
-        let c := v (b + 1)
-        let u : Real × Real := a - B
-        let w : Real × Real := c - B
-        (u ≠ 0) → ((w ≠ 0) → (
-        let cross (x y : Real × Real) : Real := x.1 * y.2 - x.2 * y.1
-        let U := if 0 < cross u w then u else w
-        U ≠ 0)) ) := by
-  classical
-  intro n p v b B a c u w hu hw cross U
-  by_cases hp : 0 < cross u w
-  · simpa [U, hp] using hu
-  · simpa [U, hp] using hw
-
-private theorem hVne :
-    (by
-      classical
-      exact
-        ∀ (n : Nat), ∀ (p : P3381T1PolygonBoundary n),
-        let v := p.vertex
-        ∀ (b : Fin (n + (3 : ℕ))),
-        let B := v b
-        let a := v (b - 1)
-        let c := v (b + 1)
-        let u : Real × Real := a - B
-        let w : Real × Real := c - B
-        (u ≠ 0) → ((w ≠ 0) → (
-        let cross (x y : Real × Real) : Real := x.1 * y.2 - x.2 * y.1
-        let V := if 0 < cross u w then w else u
-        V ≠ 0)) ) := by
-  classical
-  intro n p v b B a c u w hu hw cross V
-  by_cases hp : 0 < cross u w
-  · simpa [V, hp] using hw
-  · simpa [V, hp] using hu
-
 private theorem hdecomp :
     (by
       classical
@@ -1632,66 +1588,6 @@ private theorem hcover :
         · exact False.elim (hxC (haxisV x hx hv0 hu'))
         · have hvNeg : cross V (x-B) < 0 := lt_of_le_of_ne hv' hv0
           exact Or.inl ⟨hx, huPos, hvNeg⟩
-
-private theorem hellU :
-    (by
-      classical
-      exact
-        ∀ (n : Nat), ∀ (p : P3381T1PolygonBoundary n),
-        let v := p.vertex
-        let f : Fin (n + 3) × Fin (n + 3) → Real := fun ij =>
-          ((v ij.2).1 - (v ij.1).1) / ((v ij.1).2 - (v ij.2).2)
-        ∀ (hqexists : ∃ q : Real, q ∉ Set.range f),
-        let q := Classical.choose hqexists
-        ∀ (b : Fin (n + (3 : ℕ))),
-        let c := v (b + 1)
-        let ell : (Real × Real) →ₗ[Real] Real :=
-          { toFun := fun x => x.1 + q * x.2
-            map_add' := by intro x y; simp; ring
-            map_smul' := by intro c x; simp; ring }
-        let B := v b
-        let a := v (b - 1)
-        let u : Real × Real := a - B
-        let w : Real × Real := c - B
-        (ell u < 0) → ((ell w < 0) → (
-        let cross (x y : Real × Real) : Real := x.1 * y.2 - x.2 * y.1
-        let U := if 0 < cross u w then u else w
-        ell U < 0)) ) := by
-  classical
-  intro n p v f hqexists q b c ell B a u w hellu hellw cross U
-  by_cases hp : 0 < cross u w
-  · simpa [U, hp] using hellu
-  · simpa [U, hp] using hellw
-
-private theorem hellV :
-    (by
-      classical
-      exact
-        ∀ (n : Nat), ∀ (p : P3381T1PolygonBoundary n),
-        let v := p.vertex
-        let f : Fin (n + 3) × Fin (n + 3) → Real := fun ij =>
-          ((v ij.2).1 - (v ij.1).1) / ((v ij.1).2 - (v ij.2).2)
-        ∀ (hqexists : ∃ q : Real, q ∉ Set.range f),
-        let q := Classical.choose hqexists
-        ∀ (b : Fin (n + (3 : ℕ))),
-        let c := v (b + 1)
-        let ell : (Real × Real) →ₗ[Real] Real :=
-          { toFun := fun x => x.1 + q * x.2
-            map_add' := by intro x y; simp; ring
-            map_smul' := by intro c x; simp; ring }
-        let B := v b
-        let a := v (b - 1)
-        let u : Real × Real := a - B
-        let w : Real × Real := c - B
-        (ell u < 0) → ((ell w < 0) → (
-        let cross (x y : Real × Real) : Real := x.1 * y.2 - x.2 * y.1
-        let V := if 0 < cross u w then w else u
-        ell V < 0)) ) := by
-  classical
-  intro n p v f hqexists q b c ell B a u w hellu hellw cross V
-  by_cases hp : 0 < cross u w
-  · simpa [V, hp] using hellw
-  · simpa [V, hp] using hellu
 
 private theorem hconeHeight :
     (by

@@ -52,21 +52,6 @@ private theorem hFcells :
       Int.natCast_eq_zero, Prod.exists, exists_eq_right_right, exists_eq_right, and_self]
   exact P.q_pos
 
-private theorem hTcells :
-    (by
-      classical
-      exact
-        ∀ (P : FordFareyParameter), ∀ (T : ProtoTile), ∀ (h : PartialOdometer), ∀ (k :
-            PartialOdometer), ∀ (u : GaussianInt), (T.cells = (TileTranslation (FordTile P.q)
-            u).cells ∧ (T.cells = ∅ → T.anchor = (TileTranslation (FordTile P.q) u).anchor) ∧ ∃
-            (a : GaussianInt) (b : ℤ), (∀ (x : GaussianInt), x ∈ h.domain ↔ x - u ∈ k.domain) ∧ ∀
-            x ∈ h.domain, h.value x = k.value (x - u) + a.re * x.re + a.im * x.im + b) →
-            (((FordTile P.q).cells.Nonempty) → (T.cells.Nonempty)) ) := by
-  classical
-  intro P T h k u htrans hFcells
-  rw [htrans.1]
-  simpa [TileTranslation] using hFcells.image (GaussianTranslation u)
-
 private theorem hboundaryTransport :
     (by
       classical

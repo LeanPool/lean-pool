@@ -39,45 +39,6 @@ private theorem hcoords :
   intro C q hq hqC w
   exact (TilingLatticeBasis C q hq hqC).2.2.1 w |>.exists
 
-private theorem hlat :
-    (by
-      classical
-      exact
-        ∀ (C : BandCircle),
-          ∀ (q : Fin (4 : ℕ) → CircleCoordinates),
-            ∀ (T : ProtoTile),
-              ∀ (h : PartialOdometer),
-                ∀ (H : ℤ × ℤ → PartialOdometer),
-                  (∀ (kl : ℤ × ℤ),
-                      let w :=
-                        (↑kl.1 : GaussianInt) *
-                            BandVectors.1 (q (1 : Fin (4 : ℕ))) (q (0 : Fin (4 : ℕ))) +
-                          (↑kl.2 : GaussianInt) *
-                            BandVectors.1 (q (2 : Fin (4 : ℕ))) (q (0 : Fin (4 : ℕ)));
-                      let a :=
-                        (↑kl.1 : GaussianInt) *
-                            BandVectors.2 (q (1 : Fin (4 : ℕ))) (q (0 : Fin (4 : ℕ))) +
-                          (↑kl.2 : GaussianInt) *
-                            BandVectors.2 (q (2 : Fin (4 : ℕ))) (q (0 : Fin (4 : ℕ)));
-                      TileOdometer C.1.1 (TileTranslation T w) (H kl) ∧
-                        (∀ (x : GaussianInt), x ∈ (H kl).domain ↔ x - w ∈ h.domain) ∧
-                          ∀ x ∈ (H kl).domain,
-                            (H kl).value x =
-                              h.value (x - w) + a.re * x.re + a.im * x.im) →
-                    (h.domain : Set GaussianInt) = FootprintVertices T →
-                      ExactTileTiling (RegularTileFamily T (TilingLattice C)) →
-                        LatticeTile T
-    ) := by
-  classical
-  intro C q T h H htrans hdom tiling
-  apply tiling.1 T
-  refine ⟨0, (TilingLattice C).zero_mem, ?_⟩
-  cases T
-  congr 1
-  · rw [show GaussianTranslation 0 = id by funext z; simp [GaussianTranslation]]
-    simp only [Finset.image_id]
-  · simp [GaussianTranslation]
-
 private theorem hfamily :
     (by
       classical

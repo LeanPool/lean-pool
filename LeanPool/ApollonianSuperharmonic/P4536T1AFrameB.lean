@@ -448,25 +448,6 @@ end AFrameBProof
 
 namespace AFrameBDetails
 
-private theorem hcoord :
-    ∀ (C : BandCircle), ∀ (orientation : Bool), ∀ (base : ProtoTile), ∀ (Rminus : ProtoTile), ∀
-        (Rplus : ProtoTile), ∀ (hminus : PartialOdometer), ∀ (hplus : PartialOdometer), ∀ (F :
-        P4458T1BoundaryFrame C orientation base Rminus Rplus hminus hplus), ∀ (a : Fin 3), ∀ (p
-        : Fin 4 → CircleCoordinates), (![F.q (0 : Fin (4 : ℕ)), F.q a.succ, F.q (a + (1 : Fin (3
-        : ℕ))).succ, F.q (a + (2 : Fin (3 : ℕ))).succ] = ![((2 : ℤ) * (p (0 : Fin (4 : ℕ))).1 +
-        (2 : ℤ) * (p (2 : Fin (4 : ℕ))).1 + (2 : ℤ) * (p (3 : Fin (4 : ℕ))).1 - (p (1 : Fin (4 :
-        ℕ))).1, (2 : GaussianInt) * (p (0 : Fin (4 : ℕ))).2 + (2 : GaussianInt) * (p (2 : Fin (4
-        : ℕ))).2 + (2 : GaussianInt) * (p (3 : Fin (4 : ℕ))).2 - (p (1 : Fin (4 : ℕ))).2), p (0 :
-        Fin (4 : ℕ)), p (2 : Fin (4 : ℕ)), p (3 : Fin (4 : ℕ))]) → (
-    let r : Fin 4 → CircleCoordinates :=
-      ![F.q 0, F.q a.succ, F.q (a + 1).succ, F.q (a + 2).succ]
-    r 0 = (2 * (p 0).1 + 2 * (p 2).1 + 2 * (p 3).1 - (p 1).1, 2 * (p 0).2 + 2 * (p 2).2 + 2 * (p
-        3).2 - (p 1).2)) := by
-  classical
-  intro C orientation base Rminus Rplus hminus hplus F a p hstep r
-  have := congrFun hstep 0
-  simpa [r] using this
-
 private theorem hA :
     ∀ (C : BandCircle), ∀ (orientation : Bool), ∀ (base : ProtoTile), ∀ (Rminus : ProtoTile), ∀
         (Rplus : ProtoTile), ∀ (hminus : PartialOdometer), ∀ (hplus : PartialOdometer), ∀ (F :
@@ -501,24 +482,6 @@ private theorem hB :
   classical
   intro C orientation base Rminus Rplus hminus hplus F a p hstep r
   have := congrFun hstep 2
-  simpa [r] using this
-
-private theorem hE :
-    ∀ (C : BandCircle), ∀ (orientation : Bool), ∀ (base : ProtoTile), ∀ (Rminus : ProtoTile), ∀
-        (Rplus : ProtoTile), ∀ (hminus : PartialOdometer), ∀ (hplus : PartialOdometer), ∀ (F :
-        P4458T1BoundaryFrame C orientation base Rminus Rplus hminus hplus), ∀ (a : Fin 3), ∀ (p
-        : Fin 4 → CircleCoordinates), (![F.q (0 : Fin (4 : ℕ)), F.q a.succ, F.q (a + (1 : Fin (3
-        : ℕ))).succ, F.q (a + (2 : Fin (3 : ℕ))).succ] = ![((2 : ℤ) * (p (0 : Fin (4 : ℕ))).1 +
-        (2 : ℤ) * (p (2 : Fin (4 : ℕ))).1 + (2 : ℤ) * (p (3 : Fin (4 : ℕ))).1 - (p (1 : Fin (4 :
-        ℕ))).1, (2 : GaussianInt) * (p (0 : Fin (4 : ℕ))).2 + (2 : GaussianInt) * (p (2 : Fin (4
-        : ℕ))).2 + (2 : GaussianInt) * (p (3 : Fin (4 : ℕ))).2 - (p (1 : Fin (4 : ℕ))).2), p (0 :
-        Fin (4 : ℕ)), p (2 : Fin (4 : ℕ)), p (3 : Fin (4 : ℕ))]) → (
-    let r : Fin 4 → CircleCoordinates :=
-      ![F.q 0, F.q a.succ, F.q (a + 1).succ, F.q (a + 2).succ]
-    r 3 = p 3) := by
-  classical
-  intro C orientation base Rminus Rplus hminus hplus F a p hstep r
-  have := congrFun hstep 3
   simpa [r] using this
 
 private theorem hparent :

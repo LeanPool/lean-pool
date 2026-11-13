@@ -217,59 +217,6 @@ private theorem cyclicSucc_eq_add :
   apply Fin.ext
   simp [cyclicSucc, Fin.val_add]
 
-private theorem transition_sum_even :
-    let cyclicSucc (m : Nat) : Fin (m+1) ≃ Fin (m+1) := {
-      toFun := fun i => ⟨(i.val + 1) % (m+1), Nat.mod_lt _ (by omega)⟩
-      invFun := fun i => ⟨(i.val + m) % (m+1), Nat.mod_lt _ (by omega)⟩
-      left_inv := by
-        intro i
-        apply Fin.ext
-        change (((i.val + 1) % (m+1) + m) % (m+1)) = i.val
-        by_cases hi : i.val = m
-        · simp [hi]
-        · have him : i.val < m := by omega
-          have hinner : (i.val + 1) % (m+1) = i.val + 1 := Nat.mod_eq_of_lt (by omega)
-          rw [hinner]
-          have heq : i.val + 1 + m = (m+1) + i.val := by omega
-          rw [heq, Nat.add_mod, Nat.mod_self, zero_add]
-          simp [Nat.mod_eq_of_lt i.isLt]
-      right_inv := by
-        intro i
-        apply Fin.ext
-        change (((i.val + m) % (m+1) + 1) % (m+1)) = i.val
-        by_cases hi : i.val = 0
-        · simp [hi]
-        · have heq : i.val + m = (m+1) + (i.val-1) := by omega
-          have hmod : (i.val + m) % (m+1) = i.val - 1 := by
-            have hmodi : (i.val-1) % (m+1) = i.val-1 := Nat.mod_eq_of_lt (by omega)
-            rw [heq, Nat.add_mod, Nat.mod_self, zero_add]
-            simp [hmodi]
-          rw [hmod]
-          have hlt : i.val - 1 + 1 < m+1 := by omega
-          rw [Nat.mod_eq_of_lt hlt]
-          omega
-    }
-    ∀ {m : Nat}, ∀ (b : Fin (m+1) → Bool), (∑ i : Fin (m+1), (if b i = b (cyclicSucc m i) then (0
-        : Int) else 1)) % 2 = 0 := by
-  classical
-  intro cyclicSucc m b
-  classical
-  let w : Fin (m+1) → Int := fun i => if b i then 1 else 0
-  let u : Fin (m+1) → Int := fun i => if b i = false ∧ b (cyclicSucc m i) = true then 1 else 0
-  have hlocal (i : Fin (m+1)) :
-      (if b i = b (cyclicSucc m i) then (0 : Int) else 1) =
-        w i - w (cyclicSucc m i) + 2 * u i := by
-    simp only [w, u]
-    cases b i <;> cases b (cyclicSucc m i) <;> norm_num
-  have hsum : (∑ i, w (cyclicSucc m i)) = ∑ i, w i := (cyclicSucc m).sum_comp w
-  have heven : ∃ k : Int, (∑ i, if b i = b (cyclicSucc m i) then (0 : Int) else 1) = 2*k := by
-    refine ⟨∑ i, u i, ?_⟩
-    simp_rw [hlocal]
-    rw [Finset.sum_add_distrib, Finset.sum_sub_distrib, hsum, sub_self,
-      zero_add, Finset.mul_sum]
-  obtain ⟨k, hk⟩ := heven
-  omega
-
 private theorem cyclic_xor_count :
     let cyclicSucc (m : Nat) : Fin (m+1) ≃ Fin (m+1) := {
       toFun := fun i => ⟨(i.val + 1) % (m+1), Nat.mod_lt _ (by omega)⟩
@@ -382,17 +329,6 @@ private theorem cyclic_xor_count :
     omega
   obtain ⟨k, hk⟩ := htrans
   omega
-
-private theorem ncard_filter :
-    ∀ {m : Nat}, ∀ (P : Fin (m+1) → Prop), ∀ [DecidablePred P], Set.ncard {i : Fin (m+1) | P i} =
-        (Finset.univ.filter P).card := by
-  classical
-  intro m P typeclassInstance0
-  classical
-  rw [Set.ncard_eq_toFinset_card]
-  congr 1
-  ext i
-  simp
 
 private theorem affine_root_between :
     ∀ (a : Real), ∀ (c : Real), (a*c < 0) → (∃ u, 0 < u ∧ u < 1 ∧ (1-u)*a+u*c=0) := by

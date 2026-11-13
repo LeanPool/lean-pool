@@ -293,50 +293,6 @@ private theorem hxSelectedOriginal :
   have hback := inverseDomain selectedFunction x (by simpa [hpoint] using hxSelected)
   simpa [h'] using hback
 
-private theorem mapStar :
-    (by
-      classical
-      exact
-        ∀ (g : BandPackingSymmetry), ∀ (a : GaussianInt), ∀ (b : GaussianInt), (b = a ∨ b = a + 1
-            ∨ b = a - 1 ∨ b = a + ⟨0, 1⟩ ∨ b = a - ⟨0, 1⟩) → (BandPackingSymmetryVectorAction g b
-            = BandPackingSymmetryVectorAction g a ∨ BandPackingSymmetryVectorAction g b =
-            BandPackingSymmetryVectorAction g a + 1 ∨ BandPackingSymmetryVectorAction g b =
-            BandPackingSymmetryVectorAction g a - 1 ∨ BandPackingSymmetryVectorAction g b =
-            BandPackingSymmetryVectorAction g a + ⟨0, 1⟩ ∨ BandPackingSymmetryVectorAction g b =
-            BandPackingSymmetryVectorAction g a - ⟨0, 1⟩) ) := by
-  classical
-  intro g
-  induction g with
-  | identity => intro a b hb; simpa [BandPackingSymmetryVectorAction] using hb
-  | shift w => intro a b hb; simpa [BandPackingSymmetryVectorAction] using hb
-  | negate =>
-      intro a b hb
-      rcases hb with hb | hb | hb | hb | hb
-      · subst b; simp [BandPackingSymmetryVectorAction]
-      · subst b; right; right; right; left
-        ext <;> simp [BandPackingSymmetryVectorAction, GaussianQuarterTurn]
-      · subst b; right; right; right; right
-        ext <;> simp [BandPackingSymmetryVectorAction, GaussianQuarterTurn]
-      · subst b; right; right; left
-        ext <;> simp [BandPackingSymmetryVectorAction, GaussianQuarterTurn]; try ring
-      · subst b; right; left
-        ext <;> simp [BandPackingSymmetryVectorAction, GaussianQuarterTurn]; try ring
-  | conjugate =>
-      intro a b hb
-      rcases hb with hb | hb | hb | hb | hb
-      · subst b; simp [BandPackingSymmetryVectorAction]
-      · subst b; right; right; left
-        ext <;> simp [BandPackingSymmetryVectorAction, GaussianReflection]; try ring
-      · subst b; right; left
-        ext <;> simp [BandPackingSymmetryVectorAction, GaussianReflection]; try ring
-      · subst b; right; right; right; left
-        ext <;> simp [BandPackingSymmetryVectorAction, GaussianReflection]
-      · subst b; right; right; right; right
-        ext <;> simp [BandPackingSymmetryVectorAction, GaussianReflection]
-  | comp g₁ g₂ ih₁ ih₂ =>
-      intro a b hb
-      exact ih₁ _ _ (ih₂ _ _ hb)
-
 private theorem hstarOriginal :
     (by
       classical
@@ -997,7 +953,7 @@ theorem P5630T1MarkedRightOdometerAdjacencyReduction :
   have hxSelectedOriginal := MarkedRightAdjacencyGeometry.hxSelectedOriginal C T T₀ h h₀ x bundle
       hxSelected ginv inverseDomain hpoint
   have hstarOriginal := MarkedRightAdjacencyGeometry.hstarOriginal C T T₀ h h₀ x bundle hstar'
-      ginv hfunL inverseDomain hpoint (MarkedRightAdjacencyGeometry.mapStar)
+      ginv hfunL inverseDomain hpoint (BandPackingSymmetryVectorAction.neighborStar)
   have hselectedCoord :
       (BandPackingSymmetryQuadrupleAction ginv bundle.normalizedPresentation)
           (if BandPackingSymmetryReversesOrientation ginv then

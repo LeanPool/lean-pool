@@ -212,19 +212,6 @@ private theorem quarter_injective :
   · simpa [GaussianQuarterTurn] using
       congrArg (fun z : GaussianInt => z.re) hab
 
-private theorem reflection_injective :
-    (by
-      classical
-      exact
-        Function.Injective (fun z : GaussianInt => -GaussianReflection z) ) := by
-  classical
-  intro a b hab
-  apply Zsqrtd.ext
-  · simpa [GaussianReflection] using
-      congrArg (fun z : GaussianInt => z.re) hab
-  · simpa [GaussianReflection] using
-      congrArg (fun z : GaussianInt => z.im) hab
-
 private theorem composite_injective :
     (by
       classical

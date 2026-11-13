@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.ApollonianSuperharmonic.TileTranslationProperties
+
 public import Mathlib.Init
 
 public import LeanPool.ApollonianSuperharmonic.P5253T1SingletonBoundary
@@ -39,15 +41,9 @@ theorem P5253T1BottomSquareContact (k : Nat) (hk : 0 < k) (u : GaussianInt) :
       0 ≤ (z - u).im ∧ (z - u).im < 2 * (k : Int) ∧
       -((z - u).im + 1) ≤ (z - u).re ∧ (z - u).re < (z - u).im + 1 ∧
       -(2 * (k : Int) - (z - u).im) ≤ (z - u).re ∧
-        (z - u).re < 2 * (k : Int) - (z - u).im := by
-    rw [← (P4194T1DiamondCellRows k (z - u)).1]
-    change z ∈ (DiamondCellDomain k).image (GaussianTranslation u) ↔ _
-    constructor
-    · rintro hz
-      obtain ⟨w, hw, rfl⟩ := Finset.mem_image.mp hz
-      simpa [GaussianTranslation] using hw
-    · intro hz
-      exact Finset.mem_image.mpr ⟨z - u, hz, by simp [GaussianTranslation]⟩
+        (z - u).re < 2 * (k : Int) - (z - u).im  := by
+    exact (TileTranslationProperties.mem_cells (DiamondTile k) u z).trans
+      (P4194T1DiamondCellRows k (z - u)).1
   have inside : u ∈ D.cells := by
     rw [cell]
     simp only [sub_self]

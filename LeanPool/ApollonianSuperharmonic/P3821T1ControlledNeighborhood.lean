@@ -157,12 +157,6 @@ private theorem hFS (e : C(Circle, ℂ)) (S : Set ↑(Set.range ⇑e)) (hSf : S.
   let F : Finset (Set.range e) := hSf.toFinset
   change ((F : Set (Set.range e)) = S)
   ext c; simp [F]
-private theorem hFsub (e : C(Circle, ℂ)) (S : Set ↑(Set.range ⇑e)) (hSf : S.Finite) : ((F e S
-    hSf) : Set (Set.range e)) ⊆ Set.univ := by
-  classical
-  let F : Finset (Set.range e) := hSf.toFinset
-  change ((F : Set (Set.range e)) ⊆ Set.univ)
-  simp
 private theorem hcover' (e : C(Circle, ℂ)) (eps : ℝ) (S : Set ↑(Set.range ⇑e)) (η : ℝ) (hSf :
     S.Finite) (hcover : Set.univ ⊆ ⋃ x ∈ S, Metric.ball x (r eps η)) : (Set.univ : Set (Set.range
     e)) ⊆

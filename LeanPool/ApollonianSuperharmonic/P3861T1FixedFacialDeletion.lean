@@ -26,37 +26,6 @@ namespace ApollonianSuperharmonic
 
 namespace FacialDeletionProof
 
-private theorem hCcompact :
-    (by
-      classical
-      exact
-        ∀ (ι : Type), ∀ (P : PeriodicTileCore ι),
-        let U (f : P.plane.Face) := P.plane.faceRegion f
-        let C (f : P.plane.Face) := frontier (U f)
-        (∀ (f : P.plane.Face), C f = P.plane.edgeArc (P.plane.faceVertex f 0) (P.plane.faceVertex
-            f 1) ∪ P.plane.edgeArc (P.plane.faceVertex f 1) (P.plane.faceVertex f 2) ∪
-            P.plane.edgeArc (P.plane.faceVertex f 2) (P.plane.faceVertex f 0)) → (∀ (f :
-            P.plane.Face), IsCompact (C f)) ) := by
-  classical
-  intro ι P U C hfront f
-  rw [hfront f]
-  have hacomp (a b : ι) (hab : P.plane.adjacent a b) :
-      IsCompact (P.plane.edgeArc a b) := by
-    obtain ⟨e, _, _⟩ := P.plane.arc_homeomorph a b hab
-    have himage : Set.range (fun x : Set.Icc (0 : Real) 1 =>
-        ((e x : P.plane.edgeArc a b) : Real × Real)) = P.plane.edgeArc a b := by
-      ext x
-      constructor
-      · rintro ⟨t, rfl⟩
-        exact (e t).property
-      · intro hx
-        exact ⟨e.symm ⟨x, hx⟩, by simp⟩
-    rw [← himage]
-    exact isCompact_range (continuous_subtype_val.comp e.continuous)
-  exact ((hacomp _ _ (P.plane.face_edges f 0 1 (by decide))).union
-    (hacomp _ _ (P.plane.face_edges f 1 2 (by decide)))).union
-    (hacomp _ _ (P.plane.face_edges f 2 0 (by decide)))
-
 private theorem hWnonempty :
     (by
       classical

@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.ApollonianSuperharmonic.LatticeCellEdges
+
 public import Mathlib.Init
 
 public import LeanPool.ApollonianSuperharmonic.BoundaryFootprintEdges
@@ -30,57 +32,6 @@ theorem CellDisjointCommonEdgesBoundary (U V : ProtoTile)
 -- BODY
   classical
   let I : GaussianInt := ⟨0, 1⟩
-  have horiz_unique (x y : GaussianInt)
-      (h : ({x, x + 1} : Finset GaussianInt) = {y, y + 1}) : x = y := by
-    have hx : x = y ∨ x = y + 1 := by
-      have : x ∈ ({y, y + 1} : Finset GaussianInt) := by rw [← h]; simp
-      simpa using this
-    have hy : y = x ∨ y = x + 1 := by
-      have : y ∈ ({x, x + 1} : Finset GaussianInt) := by rw [h]; simp
-      simpa using this
-    rcases hx with hxy | hxy
-    · exact hxy
-    rcases hy with hyx | hyx
-    · exact hyx.symm
-    · exfalso
-      have hre := congrArg Zsqrtd.re hxy
-      have hre' := congrArg Zsqrtd.re hyx
-      norm_num at hre hre'
-      omega
-  have vert_unique (x y : GaussianInt)
-      (h : ({x, x + I} : Finset GaussianInt) = {y, y + I}) : x = y := by
-    have hx : x = y ∨ x = y + I := by
-      have : x ∈ ({y, y + I} : Finset GaussianInt) := by rw [← h]; simp
-      simpa using this
-    have hy : y = x ∨ y = x + I := by
-      have : y ∈ ({x, x + I} : Finset GaussianInt) := by rw [h]; simp
-      simpa using this
-    rcases hx with hxy | hxy
-    · exact hxy
-    rcases hy with hyx | hyx
-    · exact hyx.symm
-    · exfalso
-      have him := congrArg Zsqrtd.im hxy
-      have him' := congrArg Zsqrtd.im hyx
-      simp [I] at him him'
-      omega
-  have horiz_ne_vert (x y : GaussianInt) :
-      ({x, x + 1} : Finset GaussianInt) ≠ {y, y + I} := by
-    intro h
-    have hx : x = y ∨ x = y + I := by
-      have : x ∈ ({y, y + I} : Finset GaussianInt) := by rw [← h]; simp
-      simpa using this
-    have hx1 : x + 1 = y ∨ x + 1 = y + I := by
-      have : x + 1 ∈ ({y, y + I} : Finset GaussianInt) := by rw [← h]; simp
-      simpa using this
-    rcases hx with hx | hx <;> rcases hx1 with hx1 | hx1
-    all_goals
-      have hre := congrArg Zsqrtd.re hx
-      have him := congrArg Zsqrtd.im hx
-      have hre1 := congrArg Zsqrtd.re hx1
-      have him1 := congrArg Zsqrtd.im hx1
-      simp [I] at hre him hre1 him1
-      omega
   have footprint_normalize (T : ProtoTile) (e : Finset GaussianInt)
       (he : e ∈ FootprintEdges T) :
       (∃ z, e = {z, z + 1} ∧ (z ∈ T.cells ∨ z - I ∈ T.cells)) ∨
@@ -110,7 +61,7 @@ theorem CellDisjointCommonEdgesBoundary (U V : ProtoTile)
     have hd := Finset.disjoint_left.mp hdisjoint
     rcases footprint_normalize U e heU with ⟨z, hz, hzU⟩ | ⟨z, hz, hzU⟩ <;>
       rcases footprint_normalize V e heV with ⟨w, hw, hwV⟩ | ⟨w, hw, hwV⟩
-    · have bzw : z = w := horiz_unique z w (hz.symm.trans hw)
+    · have bzw : z = w := LatticeCellEdges.horizontal_unique z w (hz.symm.trans hw)
       subst w
       constructor <;> refine ⟨z, Or.inl ⟨?_, ?_⟩⟩
       · exact hz
@@ -125,9 +76,9 @@ theorem CellDisjointCommonEdgesBoundary (U V : ProtoTile)
         · exact Or.inr ⟨fun hbad => hd hzU hbad, hzV⟩
         · exact Or.inl ⟨hzV, fun hbad => hd hzU hbad⟩
         · exact (hd hzU hzV).elim
-    · exact (horiz_ne_vert z w (hz.symm.trans hw)).elim
-    · exact (horiz_ne_vert w z (hw.symm.trans hz)).elim
-    · have bzw : z = w := vert_unique z w (hz.symm.trans hw)
+    · exact (LatticeCellEdges.horizontal_ne_vertical z w (hz.symm.trans hw)).elim
+    · exact (LatticeCellEdges.horizontal_ne_vertical w z (hw.symm.trans hz)).elim
+    · have bzw : z = w := LatticeCellEdges.vertical_unique z w (hz.symm.trans hw)
       subst w
       constructor <;> refine ⟨z, Or.inr ⟨?_, ?_⟩⟩
       · exact hz

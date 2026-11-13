@@ -151,32 +151,6 @@ private theorem centroid_cells_eq :
   intro A B hB hc
   simp [TileCentroid, hB, hc]
 
-private theorem hFminusne :
-    (by
-      classical
-      exact
-        ∀ (Rminus : ProtoTile), ∀ (Rplus : ProtoTile), ∀ (centerShift : GaussianInt),
-            ((TileTranslation (TileHalfTurn Rminus) centerShift).cells = Rplus.cells) →
-            ((Rplus.cells.Nonempty) → ((TileTranslation (TileHalfTurn Rminus)
-            centerShift).cells.Nonempty)) ) := by
-  classical
-  intro Rminus Rplus centerShift hmc hRpne
-  rw [hmc]
-  exact hRpne
-
-private theorem hFplusne :
-    (by
-      classical
-      exact
-        ∀ (Rminus : ProtoTile), ∀ (Rplus : ProtoTile), ∀ (centerShift : GaussianInt),
-            ((TileTranslation (TileHalfTurn Rplus) centerShift).cells = Rminus.cells) →
-            ((Rminus.cells.Nonempty) → ((TileTranslation (TileHalfTurn Rplus)
-            centerShift).cells.Nonempty)) ) := by
-  classical
-  intro Rminus Rplus centerShift hpc hRmne
-  rw [hpc]
-  exact hRmne
-
 private theorem huCent :
     (by
       classical
@@ -498,30 +472,6 @@ private theorem pathMap :
       rw [heq]
       ext z
       simp [fg]
-
-private theorem hVrootNe :
-    (by
-      classical
-      exact
-        ∀ (T0 : ProtoTile), ∀ (T0' : ProtoTile), ∀ (centerShift : GaussianInt),
-            (T0'.cells.Nonempty) → (((TileTranslation (TileHalfTurn T0) centerShift).cells =
-            T0'.cells) → ((TileTranslation (TileHalfTurn T0) centerShift).cells.Nonempty)) ) := by
-  classical
-  intro T0 T0' centerShift hT0'ne hFrootCells
-  rw [hFrootCells]
-  exact hT0'ne
-
-private theorem hVroot'Ne :
-    (by
-      classical
-      exact
-        ∀ (T0 : ProtoTile), ∀ (T0' : ProtoTile), ∀ (centerShift : GaussianInt),
-            (T0.cells.Nonempty) → (((TileTranslation (TileHalfTurn T0') centerShift).cells =
-            T0.cells) → ((TileTranslation (TileHalfTurn T0') centerShift).cells.Nonempty)) ) := by
-  classical
-  intro T0 T0' centerShift hT0ne hFroot'Cells
-  rw [hFroot'Cells]
-  exact hT0ne
 
 private theorem hVrootEq :
     (by

@@ -763,37 +763,6 @@ private theorem v_adj (gridPath : List GaussianInt) (y : GaussianInt) (x : Gauss
   change (FourNeighborAdjacent (v i) (v (i + 1)))
   exact cyclic_edge_fourNeighbor _ _ (cyclic_index i)
 
-private noncomputable abbrev polygon (gridPath : List GaussianInt) (y : GaussianInt) (x :
-    GaussianInt) (gridPath_head : gridPath.head? = some x) (gridPath_last : gridPath.getLast? =
-    some y) (gridPath_nodup : gridPath.Nodup) (gridPath_length_four : 4 ≤ gridPath.length)
-    (cyclic_edge_fourNeighbor : ∀ (a b : GaussianInt), (a, b) ∈ gridPath.zip gridPath.tail ++
-    [(y, x)] → ApollonianSuperharmonic.FourNeighborAdjacent a b) : P3381T1PolygonBoundary (n
-    gridPath) := by
-  classical
-  let n := gridPath.length - 3
-  have hn : n + 3 = gridPath.length := hn gridPath gridPath_length_four
-  let v : Fin (n + 3) → GaussianInt :=
-    fun i => gridPath[i.val]'(by rw [← hn]; exact i.isLt)
-  have v_injective : Function.Injective v := v_injective gridPath gridPath_nodup
-      gridPath_length_four
-  have edge_distinct (i j : Fin (n + 3)) (hij : i ≠ j) :
-      ({v i, v (i + 1)} : Finset GaussianInt) ≠ {v j, v (j + 1)} := edge_distinct v v_injective i
-          j hij
-  have vertex_rational (i : Fin (n + 3)) :
-      ∃ r s : Rat, GaussianRealPoint (v i) = ((r : Real), (s : Real)) := vertex_rational gridPath
-          gridPath_length_four i
-  have point_injective : Function.Injective GaussianRealPoint := point_injective
-  have v_adj (i : Fin (n + 3)) : FourNeighborAdjacent (v i) (v (i + 1)) := v_adj gridPath y x
-      gridPath_head gridPath_last gridPath_length_four cyclic_edge_fourNeighbor i
-  change (P3381T1PolygonBoundary n)
-  exact {
-      vertex := GaussianRealPoint ∘ v
-      rational := vertex_rational
-      injective := point_injective.comp v_injective
-      edge_intersection := fun i j hij =>
-        P3475T1UnitSegmentIntersection _ _ _ _ (v_adj i) (v_adj j)
-          (edge_distinct i j hij) }
-
 end GridBoundaryConstruction
 
 theorem P3475T1GridBoundary (T : ProtoTile)

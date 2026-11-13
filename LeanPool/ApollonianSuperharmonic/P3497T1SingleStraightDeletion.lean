@@ -68,14 +68,6 @@ private theorem hM2 (n : Nat) : 2 < (M n) := by
   change (2 < M)
   omega
 
-private theorem hM3 (n : Nat) : 3 < (M n) := by
-  classical
-  let M := n + 4
-  have hM : 4 ≤ M := hM n
-  dsimp only [StraightDeletionConstruction.M] at *
-  change (3 < M)
-  omega
-
 private theorem hL1 (n : Nat) : 1 < (L n) := by
   classical
   let M := n + 4
@@ -369,14 +361,6 @@ private theorem hmod2M (n : Nat) : 2 % (M n) = 2 := by
   change (2 % M = 2)
   exact Nat.mod_eq_of_lt hM2
 
-private theorem hmod3M (n : Nat) : 3 % (M n) = 3 := by
-  classical
-  let M := n + 4
-  have hM3 : 3 < M := hM3 n
-  dsimp only [StraightDeletionConstruction.M] at *
-  change (3 % M = 3)
-  exact Nat.mod_eq_of_lt hM3
-
 private theorem new01 (n : Nat) : (0 : Fin (L n)) + 1 = 1 := by
   classical
   let L := n + 3
@@ -420,19 +404,6 @@ private theorem old12 (n : Nat) : (1 : Fin (M n)) + 1 = 2 := by
   change ((1 : Fin M) + 1 = 2)
   apply Fin.ext
   simp [Fin.val_add_eq_ite, hmod1M, hmod2M]
-  omega
-
-private theorem old23 (n : Nat) : (2 : Fin (M n)) + 1 = 3 := by
-  classical
-  let M := n + 4
-  have hM : 4 ≤ M := hM n
-  have hmod1M : 1 % M = 1 := hmod1M n
-  have hmod2M : 2 % M = 2 := hmod2M n
-  have hmod3M : 3 % M = 3 := hmod3M n
-  dsimp only [StraightDeletionConstruction.M] at *
-  change ((2 : Fin M) + 1 = 3)
-  apply Fin.ext
-  simp [Fin.val_add_eq_ite, hmod1M, hmod2M, hmod3M]
   omega
 
 private theorem qedge0 (n : Nat) (p : P3381T1PolygonBoundary (n + 1)) (i : Fin ((n + 1) + 3)) :

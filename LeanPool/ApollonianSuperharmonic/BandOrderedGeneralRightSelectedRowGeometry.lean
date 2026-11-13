@@ -108,26 +108,6 @@ private theorem centeredExactTurn :
       (TileT2QuarterTurn q cfg bundle.normalizedCircle F placement.layout)
   exact ⟨E'⟩
 
-private theorem twiceExactTurn :
-    (by
-      classical
-      exact
-        ∀ (C : BandCircle), ∀ (D : BandCircle), ∀ (T : ProtoTile), ∀ (N : ProtoTile), ∀ (h :
-            PartialOdometer), ∀ (k : PartialOdometer), ∀ (x : GaussianInt), ∀ (bundle :
-            BandOrderedGeneralNormalizedOccurrenceBundle C D T N h k x),
-        let F := bundle.normalizedFixed
-        (∀ (a : GaussianInt), ∀ (b : GaussianInt), (ExactTileInterfaceTriple F (TileTranslation F
-            a) (TileTranslation F b)) → (Nonempty (ExactTileInterfaceTriple F (TileTranslation F
-            (GaussianQuarterTurn a)) (TileTranslation F (GaussianQuarterTurn b))))) → (∀ (a :
-            GaussianInt), ∀ (b : GaussianInt), (ExactTileInterfaceTriple F (TileTranslation F a)
-            (TileTranslation F b)) → (Nonempty (ExactTileInterfaceTriple F (TileTranslation F
-                (GaussianQuarterTurn (GaussianQuarterTurn a))) (TileTranslation F
-                (GaussianQuarterTurn (GaussianQuarterTurn b)))))) ) := by
-  classical
-  intro C D T N h k x bundle F centeredExactTurn a b E
-  obtain ⟨E1⟩ := centeredExactTurn a b E
-  exact centeredExactTurn (GaussianQuarterTurn a) (GaussianQuarterTurn b) E1
-
 private theorem thriceExactTurn :
     (by
       classical
@@ -195,17 +175,6 @@ private theorem tripleTurnNegativeNext :
       rw [turnNeg]
       simp
     _ = _ := by rw [turnOutgoing]
-
-private theorem hedge :
-    (by
-      classical
-      exact
-        ∀ (A : ProtoTile), ∀ (A' : ProtoTile), (A.cells = A'.cells) → (FootprintEdges A =
-            FootprintEdges A') ) := by
-  classical
-  intro A A' hcell
-  simp only [FootprintEdges]
-  rw [hcell]
 
 private theorem translateObs :
     (by
@@ -1273,18 +1242,6 @@ private theorem castTriplePointThird :
             ExactTileInterfaceTriple A B Y) h) d).point = d.point ) := by
   classical
   intro A B C C' h d
-  cases h
-  rfl
-
-private theorem castTripleOtherABSecond :
-    (by
-      classical
-      exact
-        ∀ (A : ProtoTile), ∀ (B : ProtoTile), ∀ (B' : ProtoTile), ∀ (C : ProtoTile), ∀ (h : B =
-            B'), ∀ (d : ExactTileInterfaceTriple A B C), (Eq.mp (congrArg (fun Y =>
-            ExactTileInterfaceTriple A Y C) h) d).otherAB = d.otherAB ) := by
-  classical
-  intro A B B' C h d
   cases h
   rfl
 
@@ -4007,53 +3964,6 @@ private theorem thirdCyclicCase :
 
 end SelectedRowConclusions
 
-namespace SelectedRowExactInterfaces
-
-private noncomputable def swapExact (A B D : ProtoTile) (E : ExactTileInterfaceTriple A B D) :
-    ExactTileInterfaceTriple B A D :=
-  { point := E.point
-    otherAB := E.otherAB
-    otherBC := E.otherCA
-    otherCA := E.otherBC
-    pathAB := by simpa [Set.inter_comm] using E.pathAB
-    pathBC := by simpa [Set.inter_comm] using E.pathCA
-    pathCA := by simpa [Set.inter_comm] using E.pathBC
-    unique_common := by
-      intro y
-      simpa [Set.inter_comm, Set.inter_left_comm, Set.inter_assoc] using
-        E.unique_common y }
-
-private noncomputable def cycleExact (A B D : ProtoTile) (E : ExactTileInterfaceTriple A B D) :
-    ExactTileInterfaceTriple D A B :=
-  { point := E.point
-    otherAB := E.otherCA
-    otherBC := E.otherAB
-    otherCA := E.otherBC
-    pathAB := E.pathCA
-    pathBC := E.pathAB
-    pathCA := E.pathBC
-    unique_common := by
-      intro y
-      simpa [Set.inter_comm, Set.inter_left_comm, Set.inter_assoc] using
-        E.unique_common y }
-
-private noncomputable def retargetExactFirst (A A' B D : ProtoTile)
-    (hcell : A.cells = A'.cells)
-    (hanchor : A.cells = ∅ → A.anchor = A'.anchor)
-    (E : ExactTileInterfaceTriple A B D) : ExactTileInterfaceTriple A' B D := by
-  have hobs := ProtoTileObservableExtensionality A A' hcell hanchor
-  have hedge : FootprintEdges A = FootprintEdges A' := SelectedRowGeometry.hedge A A' hcell
-  exact
-    { point := E.point
-      otherAB := E.otherAB
-      otherBC := E.otherBC
-      otherCA := E.otherCA
-      pathAB := by simpa [hobs.1, hedge] using E.pathAB
-      pathBC := E.pathBC
-      pathCA := by simpa [hobs.1, hedge] using E.pathCA
-      unique_common := by intro y; simpa [hobs.1] using E.unique_common y }
-
-end SelectedRowExactInterfaces
 
 theorem BandOrderedGeneralRightSelectedRowGeometry
     (C D : BandCircle) (T N : ProtoTile) (h k : PartialOdometer)

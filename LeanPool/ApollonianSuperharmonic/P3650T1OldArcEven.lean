@@ -76,48 +76,6 @@ private theorem hRoff :
   rw [C.carrier_intersection] at hi
   exact hxR.2 hi
 
-private theorem hLparent :
-    (by
-      classical
-      exact
-        ∀ (n : Nat), ∀ (p : P3381T1PolygonBoundary n), ∀ (E : P3650T1ExposedCorner p), ∀ (D :
-            P3650T1VisibleDiagonal p E), ∀ (C : P3650T1CyclicChildren p D.a D.b),
-        let e := segment Real (p.vertex D.a) (p.vertex D.b)
-        let CL := P3544T1BoundaryCarrier C.left
-        let CP := P3544T1BoundaryCarrier p
-        CL \ e ⊆ CP ) := by
-  classical
-  intro n p E D C e CL CP x hx
-  let CR := P3544T1BoundaryCarrier C.right
-  have hmem : x ∈ CL ∪ CR := Or.inl hx.1
-  change x ∈ P3544T1BoundaryCarrier C.left ∪
-    P3544T1BoundaryCarrier C.right at hmem
-  rw [C.carrier_union] at hmem
-  rcases hmem with hparent | hdiag
-  · exact hparent
-  · exact (hx.2 hdiag).elim
-
-private theorem hRparent :
-    (by
-      classical
-      exact
-        ∀ (n : Nat), ∀ (p : P3381T1PolygonBoundary n), ∀ (E : P3650T1ExposedCorner p), ∀ (D :
-            P3650T1VisibleDiagonal p E), ∀ (C : P3650T1CyclicChildren p D.a D.b),
-        let e := segment Real (p.vertex D.a) (p.vertex D.b)
-        let CR := P3544T1BoundaryCarrier C.right
-        let CP := P3544T1BoundaryCarrier p
-        CR \ e ⊆ CP ) := by
-  classical
-  intro n p E D C e CR CP x hx
-  let CL := P3544T1BoundaryCarrier C.left
-  have hmem : x ∈ CL ∪ CR := Or.inr hx.1
-  change x ∈ P3544T1BoundaryCarrier C.left ∪
-    P3544T1BoundaryCarrier C.right at hmem
-  rw [C.carrier_union] at hmem
-  rcases hmem with hparent | hdiag
-  · exact hparent
-  · exact (hx.2 hdiag).elim
-
 private theorem oldArcEvenOnPreconnected :
     (by
       classical
@@ -144,34 +102,6 @@ private theorem oldArcEvenOnPreconnected :
   rcases IsPreconnected.subset_or_subset hO hE hOE hcover hS with hSO | hSE
   · exact False.elim (hxO (hSO hx))
   · exact Set.disjoint_left.mpr (fun y hy hyO => hSE hy (Or.inl hyO))
-
-private theorem oldArcOddOnPreconnected :
-    (by
-      classical
-      exact
-        (∀ {X : Type}, ∀ [TopologicalSpace X], ∀ (O : Set X), ∀ (K : Set X), ∀ (S : Set X),
-            (IsOpen O) → ((closure O = O ∪ K) → ((IsPreconnected S) → ((Disjoint S K) → (∀ (x :
-            X), (x ∈ S) → ((x ∉ O) → (Disjoint S O))))))) → (∀ {X : Type}, ∀ [TopologicalSpace
-            X], ∀ (O : Set X), ∀ (K : Set X), ∀ (S : Set X), (IsOpen O) → ((closure O = O ∪ K) →
-            ((IsPreconnected S) → ((Disjoint S K) → (∀ (x : X), (x ∈ S) → ((x ∈ O) → (S ⊆
-            O))))))) ) := by
-  classical
-  intro oldArcEvenOnPreconnected X typeclassInstance0 O K S hO hclosure hS hSK x hx hxO y hy
-  by_contra hyO
-  have hEven := oldArcEvenOnPreconnected O K S hO hclosure hS hSK y hy hyO
-  exact Set.disjoint_left.mp hEven hx hxO
-
-private theorem oldArcEvenClosure :
-    (by
-      classical
-      exact
-        ∀ {X : Type}, ∀ [TopologicalSpace X], ∀ (O : Set X), ∀ (S : Set X), (IsOpen O) →
-            ((Disjoint S O) → (Disjoint (closure S) O)) ) := by
-  classical
-  intro X typeclassInstance0 O S hO hSO
-  have hsub : S ⊆ Oᶜ := fun y hy hyO => Set.disjoint_left.mp hSO hy hyO
-  have hclosed : closure S ⊆ Oᶜ := closure_minimal hsub hO.isClosed_compl
-  exact Set.disjoint_left.mpr (fun y hy hyO => hclosed hy hyO)
 
 private theorem leftFirstIndex :
     (by
@@ -1041,23 +971,6 @@ private theorem hcoord_nonneg :
   intro n p E D va vb vc vv hind hspan A htriangle
   have hmem := (Set.ext_iff.mp A.convexHull_eq_nonneg_coord) (p.vertex D.b)
   exact (hmem.mp htriangle)
-
-private theorem hcoord_sum :
-    (by
-      classical
-      exact
-        ∀ (n : Nat), ∀ (p : P3381T1PolygonBoundary n), ∀ (E : P3650T1ExposedCorner p), ∀ (D :
-            P3650T1VisibleDiagonal p E),
-        let va := p.vertex (E.b - 1)
-        let vb := p.vertex E.b
-        let vc := p.vertex (E.b + 1)
-        let vv : Fin 3 → Real × Real := ![va, vb, vc]
-        ∀ (hind : AffineIndependent Real vv), ∀ (hspan : affineSpan Real (Set.range vv) = ⊤),
-        let A : AffineBasis (Fin 3) Real (Real × Real) := ⟨vv, hind, hspan⟩
-        A.coord 0 (p.vertex D.b) + A.coord 1 (p.vertex D.b) + A.coord 2 (p.vertex D.b) = 1 ) := by
-  classical
-  intro n p E D va vb vc vv hind hspan A
-  simpa only [Fin.sum_univ_three] using A.sum_coord_apply_eq_one (p.vertex D.b)
 
 private theorem hside0 :
     (by
@@ -2558,19 +2471,6 @@ private theorem hXnotDiagAt1529 :
 end OldArcParityProof
 
 namespace OldArcAssembly
-
-private theorem strictUpperHalfplaneEven :
-    (by
-      classical
-      exact
-        (∀ {m : Nat}, ∀ (q : P3381T1PolygonBoundary m), ∀ (ell : (Real × Real) →ₗ[Real] Real),
-            ∀ (H : Real), (∀ i, ell (q.vertex i) ≤ H) → (∀ (x : Real × Real), (H < ell x) → (x ∉
-            P3544T1RayParity q))) → (∀ {m : Nat}, ∀ (q : P3381T1PolygonBoundary m), ∀ (ell :
-            (Real × Real) →ₗ[Real] Real), ∀ (H : Real), (∀ i, ell (q.vertex i) < H) → (∀ (x :
-            Real × Real), (H < ell x) → (x ∉ P3544T1RayParity q))) ) := by
-  classical
-  intro upperHalfplaneEven m q ell H hbound x hx
-  exact upperHalfplaneEven q ell H (fun i => le_of_lt (hbound i)) x hx
 
 private theorem hseedRAt3047 :
     (by

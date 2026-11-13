@@ -134,16 +134,6 @@ private theorem hneq :
     · exact False.elim (hidx rfl)
   omega
 
-private theorem hcurv :
-    (by
-      classical
-      exact
-        ∀ (P : FordFareyParameter), (0 < P.q) → (0 < (FordCircleCoordinate P.p P.q).1) ) := by
-  classical
-  intro P hqpos
-  change (0 : ℤ) < ((P.q * P.q : Nat) : ℤ)
-  exact_mod_cast Nat.mul_pos hqpos hqpos
-
 private theorem hHcircle :
     (by
       classical
@@ -217,94 +207,6 @@ private theorem hcentT :
 
 private abbrev hcentT' :=
   ApollonianSuperharmonic.MatchedFordGeometry.hcentT
-
-private theorem hfordcent :
-    (by
-      classical
-      exact
-        ∀ (P : FordFareyParameter),
-          1 < P.q → 0 < P.q → TileCentroid (FordTile P.q) = ((P.q : ℝ) / 2, (P.q : ℝ) / 2)
-    ) := by
-  classical
-  intro P hqgt hqpos
-  let domain : Finset GaussianInt :=
-    ((Finset.range P.q).product (Finset.range P.q)).image
-      (fun a => (⟨(a.1 : Int), (a.2 : Int)⟩ : GaussianInt))
-  have hneDomain : domain.Nonempty := by
-    refine ⟨⟨0, 0⟩, ?_⟩
-    apply Finset.mem_image.mpr
-    exact ⟨(0, 0), by simp [hqpos], rfl⟩
-  have hinj : Set.InjOn
-      (fun a : ℕ × ℕ => (⟨(a.1 : Int), (a.2 : Int)⟩ : GaussianInt))
-      ↑((Finset.range P.q).product (Finset.range P.q)) := by
-    intro a ha b hb hab
-    apply Prod.ext
-    · have h := congrArg Zsqrtd.re hab
-      change (a.1 : Int) = (b.1 : Int) at h
-      exact_mod_cast h
-    · have h := congrArg Zsqrtd.im hab
-      change (a.2 : Int) = (b.2 : Int) at h
-      exact_mod_cast h
-  have hcard : domain.card = P.q * P.q := by
-    calc
-      domain.card = ((Finset.range P.q).product (Finset.range P.q)).card := by
-        dsimp [domain]
-        exact Finset.card_image_iff.mpr hinj
-      _ = P.q * P.q := by simp
-  have hsum : domain.sum (fun z : GaussianInt => z.re) =
-      (P.q : Int) * ((P.q - 1 : Nat) : Int) / 2 * (P.q : Int) := by
-    have hrange : (Finset.range P.q).sum (fun n => (n : Int)) =
-        (P.q : Int) * ((P.q - 1 : Nat) : Int) / 2 := by
-      rw [← Nat.cast_sum]
-      simp [Finset.sum_range_id]
-    simp only [Int.reduceNeg, Finset.product_eq_sprod, Finset.coe_product, Finset.coe_range,
-        Zsqrtd.mk.injEq, Nat.cast_inj, Prod.forall, Prod.mk.injEq, implies_true,
-        Set.injOn_of_eq_iff_eq, Finset.sum_image, Finset.sum_product, Finset.sum_const,
-        Finset.card_range, Int.nsmul_eq_mul, domain]
-    conv_lhs => rw [← Finset.mul_sum (Finset.range P.q)
-      (fun n => (n : Int)) (P.q : Int)]
-    rw [hrange]
-    ring
-  have hsumIm : domain.sum (fun z : GaussianInt => z.im) =
-      (P.q : Int) * ((P.q - 1 : Nat) : Int) / 2 * (P.q : Int) := by
-    have hrange : (Finset.range P.q).sum (fun n => (n : Int)) =
-        (P.q : Int) * ((P.q - 1 : Nat) : Int) / 2 := by
-      rw [← Nat.cast_sum]
-      simp [Finset.sum_range_id]
-    simp only [Int.reduceNeg, Finset.product_eq_sprod, Finset.coe_product, Finset.coe_range,
-        Zsqrtd.mk.injEq, Nat.cast_inj, Prod.forall, Prod.mk.injEq, implies_true,
-        Set.injOn_of_eq_iff_eq, Finset.sum_image, Finset.sum_product, Finset.sum_const,
-        Finset.card_range, Int.nsmul_eq_mul, domain]
-    rw [hrange]
-    ring
-  change (if domain.Nonempty then
-    ((↑(domain.sum (fun z : GaussianInt => z.re) : Int) /
-        ↑domain.card + (1 / 2 : Real)),
-     (↑(domain.sum (fun z : GaussianInt => z.im) : Int) /
-        ↑domain.card + (1 / 2 : Real))) else _) = _
-  rw [ite_eq_left hneDomain, hcard, hsum, hsumIm]
-  have hqcast : ((P.q - 1 : Nat) : Int) = (P.q : Int) - 1 := by omega
-  rw [hqcast]
-  norm_num
-  field_simp
-  have arithmetic := Finset.sum_range_id_mul_two P.q
-  have rangeSum : (Finset.range P.q).sum (fun n => (n : Int)) =
-      (P.q : Int) * ((P.q - 1 : Nat) : Int) / 2 := by
-    rw [← Nat.cast_sum]
-    simp [Finset.sum_range_id]
-  have arithmeticCast :
-      ((Finset.range P.q).sum (fun n => (n : Int))) * 2 =
-        (P.q : Int) * ((P.q - 1 : Nat) : Int) := by
-    rw [← Nat.cast_sum]
-    exact_mod_cast arithmetic
-  rw [rangeSum] at arithmeticCast
-  rw [hqcast] at arithmeticCast
-  have arithmeticReal :
-      ((((P.q : Int) * ((P.q : Int) - 1) / 2 : Int) : ℝ) * 2) =
-        (P.q : ℝ) * ((P.q : ℝ) - 1) := by
-    exact_mod_cast arithmeticCast
-  norm_num [Int.subNatNat, pow_two] at ⊢
-  nlinarith [arithmeticReal]
 
 private theorem hcentdiff :
     (by

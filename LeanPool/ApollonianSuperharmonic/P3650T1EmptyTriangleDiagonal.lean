@@ -171,21 +171,6 @@ private theorem hint :
   intro n p E a b c v hind hspan A T hrange x
   exact Set.ext_iff.mp (by simpa [T, hrange] using A.interior_convexHull) x
 
-private theorem hbase :
-    (by
-      classical
-      exact
-        ∀ (n : Nat), ∀ (p : P3381T1PolygonBoundary n), ∀ (E : P3650T1ExposedCorner p),
-        let a := p.vertex (E.b - 1)
-        let b := p.vertex E.b
-        let c := p.vertex (E.b + 1)
-        let T := convexHull Real ({a, b, c} : Set (Real × Real))
-        (convexHull Real ({p.vertex (E.b - 1), p.vertex E.b, p.vertex (E.b + 1)} : Set (Real ×
-            Real))) = T ) := by
-  classical
-  intro n p E a b c T
-  rfl
-
 private theorem hvertexSide :
     (by
       classical
@@ -314,18 +299,6 @@ private theorem habdist :
   intro n p E a c hacOuter heq
   have hv : p.vertex (E.b - 1) = p.vertex (E.b + 1) := congrArg p.vertex heq
   exact hacOuter hv
-
-private theorem hbcOuter :
-    (by
-      classical
-      exact
-        ∀ (n : Nat), ∀ (p : P3381T1PolygonBoundary n), ∀ (E : P3650T1ExposedCorner p),
-            p.vertex E.b ≠ p.vertex (E.b + 1) ) := by
-  classical
-  intro n p E heq
-  have hh := congrArg E.height heq
-  rw [E.height_top, E.height_next] at hh
-  norm_num at hh
 
 private theorem habNext :
     (by

@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.ApollonianSuperharmonic.LatticeCellEdges
+
 public import Mathlib.Init
 public import LeanPool.ApollonianSuperharmonic.P3102T2CommonEdgeSectorTransition
 
@@ -145,55 +147,6 @@ private theorem hnoR :
   classical
   intro A B hAinduced hBinduced D c hAD hBD hc hstarc R
   let I : GaussianInt := ⟨0, 1⟩
-  have horiz_unique (u v : GaussianInt)
-      (h : ({u, u + 1} : Finset GaussianInt) = {v, v + 1}) : u = v := by
-    have hu : u = v ∨ u = v + 1 := by
-      have : u ∈ ({v, v + 1} : Finset GaussianInt) := by rw [← h]; simp
-      simpa using this
-    have hv : v = u ∨ v = u + 1 := by
-      have : v ∈ ({u, u + 1} : Finset GaussianInt) := by rw [h]; simp
-      simpa using this
-    rcases hu with huv | huv
-    · exact huv
-    rcases hv with hvu | hvu
-    · exact hvu.symm
-    · have hre := congrArg Zsqrtd.re huv
-      have hre' := congrArg Zsqrtd.re hvu
-      norm_num at hre hre'
-      omega
-  have vert_unique (u v : GaussianInt)
-      (h : ({u, u + I} : Finset GaussianInt) = {v, v + I}) : u = v := by
-    have hu : u = v ∨ u = v + I := by
-      have : u ∈ ({v, v + I} : Finset GaussianInt) := by rw [← h]; simp
-      simpa using this
-    have hv : v = u ∨ v = u + I := by
-      have : v ∈ ({u, u + I} : Finset GaussianInt) := by rw [h]; simp
-      simpa using this
-    rcases hu with huv | huv
-    · exact huv
-    rcases hv with hvu | hvu
-    · exact hvu.symm
-    · have him := congrArg Zsqrtd.im huv
-      have him' := congrArg Zsqrtd.im hvu
-      simp [I] at him him'
-      omega
-  have horiz_ne_vert (u v : GaussianInt) :
-      ({u, u + 1} : Finset GaussianInt) ≠ {v, v + I} := by
-    intro h
-    have hu : u = v ∨ u = v + I := by
-      have : u ∈ ({v, v + I} : Finset GaussianInt) := by rw [← h]; simp
-      simpa using this
-    have hu1 : u + 1 = v ∨ u + 1 = v + I := by
-      have : u + 1 ∈ ({v, v + I} : Finset GaussianInt) := by rw [← h]; simp
-      simpa using this
-    rcases hu with hu | hu <;> rcases hu1 with hu1 | hu1
-    all_goals
-      have hre := congrArg Zsqrtd.re hu
-      have him := congrArg Zsqrtd.im hu
-      have hre1 := congrArg Zsqrtd.re hu1
-      have him1 := congrArg Zsqrtd.im hu1
-      simp [I] at hre him hre1 him1
-      omega
   have no_horizontal (U : ProtoTile) (z : GaussianInt)
       (hUD : Disjoint U.cells D.cells)
       (hU : ({z, z + 1} : Finset GaussianInt) ∈ FootprintEdges U)
@@ -204,12 +157,12 @@ private theorem hnoR :
         FootprintEdges U ∩ FootprintEdges D := ⟨hU, hD⟩
     rw [CellDisjointCommonEdgesBoundary U D hUD] at hcommon
     rcases hcommon.2 with ⟨w, ⟨hew, hw⟩ | ⟨hew, hw⟩⟩
-    · have hwz : w = z := horiz_unique w z hew.symm
+    · have hwz : w = z := LatticeCellEdges.horizontal_unique w z hew.symm
       subst w
       rcases hw with hw | hw
       · exact hw.2 hzI
       · exact hw.1 hz
-    · exact (horiz_ne_vert z w hew).elim
+    · exact (LatticeCellEdges.horizontal_ne_vertical z w hew).elim
   have no_vertical (U : ProtoTile) (z : GaussianInt)
       (hUD : Disjoint U.cells D.cells)
       (hU : ({z, z + I} : Finset GaussianInt) ∈ FootprintEdges U)
@@ -220,8 +173,8 @@ private theorem hnoR :
         FootprintEdges U ∩ FootprintEdges D := ⟨hU, hD⟩
     rw [CellDisjointCommonEdgesBoundary U D hUD] at hcommon
     rcases hcommon.2 with ⟨w, ⟨hew, hw⟩ | ⟨hew, hw⟩⟩
-    · exact (horiz_ne_vert w z hew.symm).elim
-    · have hwz : w = z := vert_unique w z hew.symm
+    · exact (LatticeCellEdges.horizontal_ne_vertical w z hew.symm).elim
+    · have hwz : w = z := LatticeCellEdges.vertical_unique w z hew.symm
       subst w
       rcases hw with hw | hw
       · exact hw.2 hz1

@@ -1244,54 +1244,6 @@ private theorem hrightCountImage :
   rw [hset]
   exact R.edge_count x y hxy
 
-private theorem hleftZero :
-    (by
-      classical
-      exact
-        ∀ (n : Nat), ∀ (p : P3381T1PolygonBoundary n), ∀ (S : P3544T1DiagonalSplit p), ∀ (XL
-            : Set (Real × Real)), ∀ (L : P3511T1SourceDissection S.left XL), ∀ (i : Fin (n + (3
-            : ℕ))), ∀ (j : Fin (n + (3 : ℕ))), i ∉ Set.range S.il → {k : Fin L.count | i ∈
-            Set.range (S.il ∘ L.face k) ∧ j ∈ Set.range (S.il ∘ L.face k)}.ncard = (0 : ℕ) ) := by
-  classical
-  intro n p S XL L i j hi
-  have hempty : {k : Fin L.count |
-      i ∈ Set.range (S.il ∘ L.face k) ∧ j ∈ Set.range (S.il ∘ L.face k)} = ∅ := by
-    ext k
-    simp only [Set.mem_ofPred_eq, Set.mem_empty_iff_false]
-    constructor
-    · rintro ⟨hik, _⟩
-      apply hi
-      obtain ⟨z, hz⟩ := Set.mem_range.mp hik
-      exact ⟨L.face k z, hz⟩
-    · intro h
-      exact False.elim h
-  rw [hempty]
-  simp
-
-private theorem hrightZero :
-    (by
-      classical
-      exact
-        ∀ (n : Nat), ∀ (p : P3381T1PolygonBoundary n), ∀ (S : P3544T1DiagonalSplit p), ∀ (XR
-            : Set (Real × Real)), ∀ (R : P3511T1SourceDissection S.right XR), ∀ (i : Fin (n +
-            (3 : ℕ))), ∀ (j : Fin (n + (3 : ℕ))), i ∉ Set.range S.ir → {k : Fin R.count | i ∈
-            Set.range (S.ir ∘ R.face k) ∧ j ∈ Set.range (S.ir ∘ R.face k)}.ncard = (0 : ℕ) ) := by
-  classical
-  intro n p S XR R i j hi
-  have hempty : {k : Fin R.count |
-      i ∈ Set.range (S.ir ∘ R.face k) ∧ j ∈ Set.range (S.ir ∘ R.face k)} = ∅ := by
-    ext k
-    simp only [Set.mem_ofPred_eq, Set.mem_empty_iff_false]
-    constructor
-    · rintro ⟨hik, _⟩
-      apply hi
-      obtain ⟨z, hz⟩ := Set.mem_range.mp hik
-      exact ⟨R.face k z, hz⟩
-    · intro h
-      exact False.elim h
-  rw [hempty]
-  simp
-
 private theorem husedSplit :
     (by
       classical

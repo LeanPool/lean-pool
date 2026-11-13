@@ -1720,57 +1720,6 @@ private theorem splitFacts :
   exact ⟨z, haz, hbz, hPeq, by rw [hPeq]; exact hfin.1,
     by rw [hPeq]; exact hfin.2, u, hu0, hu1, hvalue, hgeo⟩
 
-private theorem hda :
-    (by
-      classical
-      exact
-        ∀ (r : Nat), ∀ (n : Nat), ∀ (q : P3381T1PolygonBoundary r), ∀ (p :
-            P3381T1PolygonBoundary n), ∀ (s : P3475T1BoundarySubdivision q p), ∀ (X : Set
-            (Real × Real)), ∀ (K : Set (Real × Real)), ∀ (t : P3475T1TriangleTree q X K),
-        let c := P3523T1InsertionConstruction s t
-        ∀ (h : ℕ), ∀ (hh : h < c.steps.length),
-        let e := c.steps.get ⟨h, hh⟩
-        (((P3523T1InsertionConstruction s t).steps.get ⟨h, hh⟩).2.1 ∉
-            (P3523T1InsertionConstruction s t).vertices h) → ((e.1 ∈ c.vertices h) → (e.2.1 ≠
-            e.1)) ) := by
-  classical
-  intro r n q p s X K t c h hh e hdV haV0 heq
-  exact hdV (heq ▸ haV0)
-
-private theorem hdb :
-    (by
-      classical
-      exact
-        ∀ (r : Nat), ∀ (n : Nat), ∀ (q : P3381T1PolygonBoundary r), ∀ (p :
-            P3381T1PolygonBoundary n), ∀ (s : P3475T1BoundarySubdivision q p), ∀ (X : Set
-            (Real × Real)), ∀ (K : Set (Real × Real)), ∀ (t : P3475T1TriangleTree q X K),
-        let c := P3523T1InsertionConstruction s t
-        ∀ (h : ℕ), ∀ (hh : h < c.steps.length),
-        let e := c.steps.get ⟨h, hh⟩
-        (((P3523T1InsertionConstruction s t).steps.get ⟨h, hh⟩).2.1 ∉
-            (P3523T1InsertionConstruction s t).vertices h) → ((e.2.2 ∈ c.vertices h) → (e.2.1 ≠
-            e.2.2)) ) := by
-  classical
-  intro r n q p s X K t c h hh e hdV hbV0 heq
-  exact hdV (heq ▸ hbV0)
-
-private theorem hdz :
-    (by
-      classical
-      exact
-        ∀ (r : Nat), ∀ (n : Nat), ∀ (q : P3381T1PolygonBoundary r), ∀ (p :
-            P3381T1PolygonBoundary n), ∀ (s : P3475T1BoundarySubdivision q p), ∀ (X : Set
-            (Real × Real)), ∀ (K : Set (Real × Real)), ∀ (t : P3475T1TriangleTree q X K),
-        let c := P3523T1InsertionConstruction s t
-        ∀ (h : ℕ), ∀ (hh : h < c.steps.length),
-        let e := c.steps.get ⟨h, hh⟩
-        (((P3523T1InsertionConstruction s t).steps.get ⟨h, hh⟩).2.1 ∉
-            (P3523T1InsertionConstruction s t).vertices h) → (∀ (z : Fin (n + (3 : ℕ))), (z ∈
-            c.vertices h) → (e.2.1 ≠ z)) ) := by
-  classical
-  intro r n q p s X K t c h hh e hdV z hzV0 heq
-  exact hdV (heq ▸ hzV0)
-
 private theorem siblingsPair :
     (by
       classical

@@ -33,38 +33,6 @@ private abbrev edge_vertex := BoundaryFootprintInclusion.edgeVertex
 
 private abbrev boundary_vertex_footprint := BoundaryFootprintInclusion.boundaryVertex
 
-private theorem R_symm :
-    (by
-      classical
-      exact
-        ∀ (A : ProtoTile), ∀ (B : ProtoTile),
-        let R : GaussianInt → GaussianInt → Prop := fun u v =>
-          u ∈ FootprintVertices A ∩ FootprintVertices B ∧
-          v ∈ FootprintVertices A ∩ FootprintVertices B ∧
-          {u, v} ∈ FootprintEdges A ∩ FootprintEdges B
-        ∀ (u : GaussianInt), ∀ (v : GaussianInt), R u v → R v u ) := by
-  classical
-  intro A B R u v huv
-  refine ⟨huv.2.1, huv.1, ?_⟩
-  simpa [Finset.pair_comm] using huv.2.2
-
-private theorem reverse_reach :
-    (by
-      classical
-      exact
-        ∀ (A : ProtoTile), ∀ (B : ProtoTile),
-        let R : GaussianInt → GaussianInt → Prop := fun u v =>
-          u ∈ FootprintVertices A ∩ FootprintVertices B ∧
-          v ∈ FootprintVertices A ∩ FootprintVertices B ∧
-          {u, v} ∈ FootprintEdges A ∩ FootprintEdges B
-        (∀ (u : GaussianInt), ∀ (v : GaussianInt), (R u v) → (R v u)) → (∀ {u : GaussianInt}, ∀
-            {v : GaussianInt}, Relation.ReflTransGen R u v → Relation.ReflTransGen R v u) ) := by
-  classical
-  intro A B R R_symm u v h
-  induction h with
-  | refl => exact .refl
-  | @tail b c hab hbc ih => exact ih.head (R_symm b c hbc)
-
 private theorem head_reach :
     (by
       classical
@@ -166,20 +134,6 @@ private theorem p₁chain :
 
 private abbrev p₃chain :=
   ApollonianSuperharmonic.PrecursorWalkGeometry.p₁chain
-
-private theorem p₁mem :
-    (by
-      classical
-      exact
-        ∀ (A : ProtoTile), ∀ (B : ProtoTile), ∀ (X : ProtoTile), ∀ (Y : ProtoTile),
-            (FootprintVertices X ⊆ FootprintVertices A) → ((FootprintVertices Y ⊆
-            FootprintVertices B) → (∀ (p₁ : List GaussianInt), (∀ z ∈ p₁, z ∈ FootprintVertices X
-            ∩ FootprintVertices Y) → (∀ z ∈ p₁, z ∈ FootprintVertices A ∩ FootprintVertices B)))
-            ) := by
-  classical
-  intro A B X Y hXf hYf p₁ hp₁v z hz
-  have hzv := hp₁v z hz
-  exact ⟨hXf hzv.1, hYf hzv.2⟩
 
 private theorem qmem :
     (by

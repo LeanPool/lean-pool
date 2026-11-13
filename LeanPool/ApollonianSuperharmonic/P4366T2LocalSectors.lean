@@ -198,21 +198,6 @@ private theorem owner_mem_iff :
   · intro h
     simpa [h] using owner_cell c
 
-private theorem owner_eq_tile :
-    (by
-      classical
-      exact
-        ∀ (Ci : BandCircle), ∀ (P : PeriodicTileComplex ↥(TilingLattice Ci)),
-        let owner : GaussianInt → TilingLattice Ci := fun c =>
-          Classical.choose (PeriodicTileIndexedMultiplicityOne P c)
-        (∀ (c : GaussianInt), ∀ (a : TilingLattice Ci), (c ∈ (P.tile a).cells) → (owner c = a)) →
-            (∀ (c : GaussianInt), ∀ (a : TilingLattice Ci), ∀ (T : ProtoTile), (P.tile a = T) →
-            ((c ∈ T.cells) → (owner c = a))) ) := by
-  classical
-  intro Ci P owner owner_unique c a T hPT hc
-  apply owner_unique
-  simpa [hPT] using hc
-
 private theorem no_fourfold :
     (by
       classical
@@ -284,21 +269,6 @@ private theorem owner_no_checkerboard :
   intro Ci P htiles_lattice owner owner_mem_iff x a
   have hcheck := (LatticeTileGridStructure (P.tile a) (htiles_lattice a)).2.1 x
   simpa [LatticeVertexIncidentCell, owner_mem_iff] using hcheck
-
-private theorem cross_ne :
-    (by
-      classical
-      exact
-        ∀ (Ci : BandCircle), ∀ (T0 : ProtoTile), ∀ (T0' : ProtoTile), (Disjoint T0.cells
-            T0'.cells) → (∀ (P : PeriodicTileComplex ↥(TilingLattice Ci)), (∀ (a : TilingLattice
-            Ci), LatticeTile (P.tile a)) → (∀ (a : TilingLattice Ci), ∀ (b : TilingLattice Ci),
-            ((P.tile a).cells ⊆ T0.cells) → (((P.tile b).cells ⊆ T0'.cells) → (a ≠ b)))) ) := by
-  classical
-  intro Ci T0 T0' hdis P htiles_lattice a b ha hb hab
-  subst b
-  obtain ⟨c, hc⟩ := (LatticeTileGridStructure (P.tile a)
-    (htiles_lattice a)).1.1
-  exact (Finset.disjoint_left.mp hdis) (ha hc) (hb hc)
 
 private theorem indexed_edge_witnesses :
     (by
@@ -561,38 +531,6 @@ private theorem hEdgeNe :
   rcases hzmem with hz | hz
   · exact hzx hz
   · exact hzy hz
-
-private theorem hjne :
-    (by
-      classical
-      exact
-        ∀ (x : GaussianInt), ∀ (pre : List GaussianInt), ∀ (y : GaussianInt), ∀ (hpre' : pre ≠ []),
-        let z := pre.getLast hpre'
-        ∀ (jL : Fin (4 : ℕ)), (({z, x} : Finset GaussianInt) = ![{x, x + (⟨(0 : ℤ),
-            (1 : ℤ)⟩ : GaussianInt)},
-            {x - (1 : GaussianInt), x}, {x - (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt), x}, {x,
-            x + (1 : GaussianInt)}] jL) → (∀ (jR : Fin (4 : ℕ)), (({x, y} : Finset GaussianInt) =
-                ![{x, x + (⟨(0 : ℤ),
-            (1 : ℤ)⟩ : GaussianInt)}, {x - (1 : GaussianInt), x}, {x - (⟨(0 : ℤ),
-            (1 : ℤ)⟩ : GaussianInt), x}, {x, x + (1 : GaussianInt)}] jR) → ((z ≠ x) → ((z ≠ y) →
-            (jL ≠ jR)))) ) := by
-  classical
-  intro x pre y hpre' z jL eL jR eR hzx hzy heq
-  have hedgeEq : ({z, x} : Finset GaussianInt) = {x, y} := by
-    calc
-      _ = ![{x, x + ⟨0, 1⟩}, {x - 1, x},
-          {x - ⟨0, 1⟩, x}, {x, x + 1}] jL := eL
-      _ = ![{x, x + ⟨0, 1⟩}, {x - 1, x},
-          {x - ⟨0, 1⟩, x}, {x, x + 1}] jR := by rw [heq]
-      _ = {x, y} := eR.symm
-  have hzm : z = x ∨ z = y := by
-    have : z ∈ ({x, y} : Finset GaussianInt) := by
-      rw [← hedgeEq]
-      exact Finset.mem_insert.mpr (Or.inl rfl)
-    simpa only [Finset.mem_insert, Finset.mem_singleton] using this
-  rcases hzm with h | h
-  · exact (hzx h).elim
-  · exact hzy h
 
 private theorem hidxX :
     (by

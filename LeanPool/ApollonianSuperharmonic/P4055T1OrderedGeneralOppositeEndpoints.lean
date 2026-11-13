@@ -23,21 +23,6 @@ Changes: pool module paths, public exports, project namespace and current Mathli
 
 namespace ApollonianSuperharmonic
 
-private def pairedEndpointPackage (r : Fin 4 → CircleCoordinates) (T : ProtoTile)
-    (i : Fin 3) (s : Fin 4) (W Z : ProtoTile) : Prop :=
-  let uR := (⟨0, 1⟩ : GaussianInt) ^ s.val *
-    (if Even s.val then BandVectors.1 (r 0) (r i.succ)
-      else BandVectors.1 (r i.succ) (r 0))
-  let uL := (⟨0, 1⟩ : GaussianInt) ^ s.val *
-    (if Even s.val then BandVectors.1 (r i.succ) (r 0)
-      else BandVectors.1 (r 0) (r i.succ))
-  ∃ (rightData : ExactTileInterfaceTriple T (TileTranslation T uR) W)
-      (incomingData : ExactTileInterfaceTriple T (TileTranslation T uL) W)
-      (t5Data : ExactTileInterfaceTriple T W Z),
-    rightData.point = t5Data.point ∧ incomingData.point ≠ t5Data.point ∧
-      incomingData.otherCA = t5Data.point ∧ rightData.otherCA = incomingData.point ∧
-      t5Data.otherAB = incomingData.point
-
 namespace OppositeEndpointGeometry
 
 private theorem haUre :
@@ -148,19 +133,6 @@ private theorem hq3 :
     _ = (-1 : GaussianInt) * q := by rw [hq2]
     _ = -q := by ring
 
-private theorem hq6 :
-    (by
-      classical
-      exact
-        let q : GaussianInt := ⟨0, 1⟩
-        (q ^ 2 = -1) → (q ^ 6 = -1) ) := by
-  classical
-  intro q hq2
-  calc
-    q ^ 6 = (q ^ 2) ^ 3 := by ring
-    _ = (-1 : GaussianInt) ^ 3 := by rw [hq2]
-    _ = -1 := by norm_num
-
 private theorem hq2act :
     (by
       classical
@@ -173,28 +145,6 @@ private theorem hq2act :
     q * (q * x) = (q * q) * x := by ring
     _ = q ^ 2 * x := by rw [pow_two]
     _ = -x := by rw [hq2]; ring
-
-private theorem hq4act :
-    (by
-      classical
-      exact
-        let q : GaussianInt := ⟨0, 1⟩
-        (q ^ 4 = 1) → (∀ (x : GaussianInt), q ^ 4 * x = x) ) := by
-  classical
-  intro q hq4 x
-  rw [hq4]
-  simp
-
-private theorem hq6act :
-    (by
-      classical
-      exact
-        let q : GaussianInt := ⟨0, 1⟩
-        (q ^ 6 = -1) → (∀ (x : GaussianInt), q ^ 6 * x = -x) ) := by
-  classical
-  intro q hq6 x
-  rw [hq6]
-  simp
 
 private theorem hpower :
     (by

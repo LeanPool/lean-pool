@@ -693,23 +693,6 @@ private theorem incidentCellsOwned :
   exact ⟨hxcell, hleftCell, hbelowCell,
     (horizontalStatus U (x - 1) hbottom).mp hleftCell⟩
 
-private theorem tileCellsNonempty :
-    (by
-      classical
-      exact
-        ∀ (C : BandCircle), ∀ (P : PeriodicTileComplex ↥(TilingLattice C)), ∀ (a : TilingLattice
-            C), (P.tile a).cells.Nonempty ) := by
-  classical
-  intro C P a
-  have hreal : (TileRealization (P.tile a)).Nonempty := by
-    rcases P.tiles_are_disks a with ⟨e⟩
-    let z : Metric.closedBall (0 : Real × Real) 1 := ⟨0, by simp⟩
-    exact ⟨e z, (e z).property⟩
-  rcases hreal with ⟨z, hz⟩
-  simp only [TileRealization, Set.mem_iUnion] at hz
-  rcases hz with ⟨x, hx, _⟩
-  exact ⟨x, hx⟩
-
 private theorem ownerExists :
     (by
       classical

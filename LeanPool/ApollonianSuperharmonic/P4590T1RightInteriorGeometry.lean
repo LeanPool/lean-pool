@@ -592,57 +592,6 @@ private theorem hf13 :
   have hh := congrArg cert.modifiedFaceEquivalence h
   simp [f1, f3] at hh
 
-private theorem hend :
-    (by
-      classical
-      exact
-        ∀ (q : Fin (4 : ℕ) → CircleCoordinates), ∀ (cfg : BandOrderedGeneralConfiguration q), ∀
-            (C : BandCircle), ∀ (T : ProtoTile), ∀ (cert : BandOrderedGeneralLayoutCertificate q
-            cfg C T),
-        let a : PeriodicSubtileIndex := ⟨.A, 0, 0⟩
-        let c : PeriodicSubtileIndex := ⟨.C, 0, 0⟩
-        ∀ (f : cert.modified.plane.Face), ∀ (g : cert.modified.plane.Face),
-            (SimpleGridPathBetween (CommonFootprintEdgeVertices (cert.modified.tile a)
-            (cert.modified.tile c)) (FootprintEdges (cert.modified.tile a) ∩ FootprintEdges
-            (cert.modified.tile c)) (cert.modified.rho f) (cert.modified.rho g)) →
-            (cert.modified.rho f ≠ cert.modified.rho g) ) := by
-  classical
-  intro q cfg C T cert a c f g hpath heq
-  rcases hpath with ⟨p, hnd, hlen, hh, ht, _, _, _⟩
-  have hpne : p ≠ [] := by
-    intro hp
-    simp [hp] at hlen
-  have hh' : p.head hpne = cert.modified.rho f := by
-    simpa [List.head?_eq_some_head hpne] using hh
-  have ht' : p.getLast hpne = cert.modified.rho g := by
-    simpa [List.getLast?_eq_some_getLast hpne] using ht
-  obtain ⟨z, hz⟩ := (List.Nodup.head_eq_getLast_iff hpne hnd).mp
-    (hh'.trans (heq.trans ht'.symm))
-  simp [hz] at hlen
-
-private theorem hz13 :
-    (by
-      classical
-      exact
-        ∀ (q : Fin (4 : ℕ) → CircleCoordinates), ∀ (cfg : BandOrderedGeneralConfiguration q), ∀
-            (C : BandCircle), ∀ (T : ProtoTile), ∀ (cert : BandOrderedGeneralLayoutCertificate q
-            cfg C T),
-        let f1 := cert.modifiedFaceEquivalence.symm ⟨.I1, 0, 0⟩
-        let f3 := cert.modifiedFaceEquivalence.symm ⟨.I3, 0, 0⟩
-        ∀ (f : cert.modified.plane.Face), ∀ (g : cert.modified.plane.Face), ((f1 = f ∧ f3 = g) ∨
-            (f1 = g ∧ f3 = f)) → ((cert.modified.rho f1 = cert.unmodified.core.rho
-            (cert.unmodified.faceEquiv.symm ⟨.I1, 0, 0⟩)) → ((cert.modified.rho f3 =
-            cert.unmodified.core.rho (cert.unmodified.faceEquiv.symm ⟨.I3, 0, 0⟩)) →
-            ((cert.modified.rho f ≠ cert.modified.rho g) → (cert.unmodified.core.rho
-            (cert.unmodified.faceEquiv.symm ⟨.I1, 0, 0⟩) ≠ cert.unmodified.core.rho
-            (cert.unmodified.faceEquiv.symm ⟨.I3, 0, 0⟩))))) ) := by
-  classical
-  intro q cfg C T cert f1 f3 f g hpair hrho1 hrho3 hend
-  rw [← hrho1, ← hrho3]
-  rcases hpair with ⟨h1, h3⟩ | ⟨h1, h3⟩
-  · simpa [h1, h3] using hend
-  · simpa [h1, h3] using hend.symm
-
 private theorem hcomplete :
     (by
       classical

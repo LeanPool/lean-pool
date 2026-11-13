@@ -292,18 +292,6 @@ private theorem partialValueCov :
           (BandPackingSymmetryVectorAction a (BandPackingSymmetryVectorAction b x))
       exact iha _ _ _ hxb hkb hb
 
-private theorem affineQuarterNeg :
-    (by
-      classical
-      exact
-        let affineQuarter : GaussianInt × GaussianInt → GaussianInt × GaussianInt :=
-          fun z => (GaussianQuarterTurn z.1, -GaussianQuarterTurn z.2)
-        ∀ (z : GaussianInt × GaussianInt), affineQuarter (-z) = -affineQuarter z ) := by
-  classical
-  intro affineQuarter z
-  rcases z with ⟨v, a⟩
-  ext <;> simp [affineQuarter, GaussianQuarterTurn]
-
 private theorem affineFacts :
     (by
       classical
@@ -831,17 +819,6 @@ private theorem hcentGoal :
             Prod.mk.injEq, k, eReal, e', bne_self_eq_false, Bool.bne_false, neg_neg] <;> ring <;>
                 trivial
     _ = _ := by rfl
-
-private theorem hposC :
-    (by
-      classical
-      exact
-        ∀ (C : CircleCoordinates), ∀ (q : Fin (4 : ℕ) → CircleCoordinates), (ProperBandQuadruple
-            q) → ((q (0 : Fin (4 : ℕ)) = C) → (0 < C.1)) ) := by
-  classical
-  intro C q hq hqC
-  rw [← hqC]
-  exact (ProperBandCurvatureStructure q hq).1
 
 private theorem hsr :
     (by

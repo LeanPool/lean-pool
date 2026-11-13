@@ -166,10 +166,6 @@ private noncomputable abbrev crossC : Complex → Complex → Real := by
   classical
   exact fun z w => z.re * w.im - z.im * w.re
 
-private noncomputable abbrev dotC : Complex → Complex → Real := by
-  classical
-  exact fun z w => z.re * w.re + z.im * w.im
-
 private theorem soddySameSide (A B C D : Complex) (a b c d : Real)
         (ha : 0 < a) (hb : 0 < b) (hc : 0 < c) (hd : 0 < d)
         (hdA : d < a) (hdB : d < b)

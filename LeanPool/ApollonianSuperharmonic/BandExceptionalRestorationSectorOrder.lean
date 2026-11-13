@@ -270,72 +270,6 @@ private theorem hAD :
   have h := indexed_disjoint iA iD (by decide) (by simp [iA, iD])
   simpa [iA, iD, SubtileOccurrenceInterpretation, trzero] using h
 
-private theorem hBC :
-    (by
-      classical
-      exact
-        ∀ (q : Fin 4 → CircleCoordinates), ∀ (cfg : BandOrderedGeneralConfiguration q), ∀ (C₀ :
-            BandCircle), ∀ (T : ProtoTile), ∀ (cert : BandOrderedGeneralLayoutCertificate q cfg
-            C₀ T),
-        let B := cert.P 0 false
-        let C := cert.P 1 true
-        (∀ (Y : ProtoTile), TileTranslation Y 0 = Y) → (
-        (∀ (i : PeriodicSubtileIndex), ∀ (j : PeriodicSubtileIndex), (i ≠ j) → ((¬ ((i.label = .A
-            ∧ j.label = .B ∨ i.label = .B ∧ j.label = .A) ∧ i.first = j.first ∧ i.second =
-            j.second)) → (Disjoint (SubtileOccurrenceInterpretation cert.P cert.u cert.v i).cells
-            (SubtileOccurrenceInterpretation cert.P cert.u cert.v j).cells))) → (Disjoint B.cells
-            C.cells)) ) := by
-  classical
-  intro q cfg C₀ T cert B C trzero indexed_disjoint
-  let iB : PeriodicSubtileIndex := ⟨.B, 0, 0⟩
-  let iC : PeriodicSubtileIndex := ⟨.C, 0, 0⟩
-  have h := indexed_disjoint iB iC (by decide) (by simp [iB, iC])
-  simpa [iB, iC, SubtileOccurrenceInterpretation, trzero] using h
-
-private theorem hBD :
-    (by
-      classical
-      exact
-        ∀ (q : Fin 4 → CircleCoordinates), ∀ (cfg : BandOrderedGeneralConfiguration q), ∀ (C₀ :
-            BandCircle), ∀ (T : ProtoTile), ∀ (cert : BandOrderedGeneralLayoutCertificate q cfg
-            C₀ T),
-        let B := cert.P 0 false
-        let D := cert.P 1 false
-        (∀ (Y : ProtoTile), TileTranslation Y 0 = Y) → (
-        (∀ (i : PeriodicSubtileIndex), ∀ (j : PeriodicSubtileIndex), (i ≠ j) → ((¬ ((i.label = .A
-            ∧ j.label = .B ∨ i.label = .B ∧ j.label = .A) ∧ i.first = j.first ∧ i.second =
-            j.second)) → (Disjoint (SubtileOccurrenceInterpretation cert.P cert.u cert.v i).cells
-            (SubtileOccurrenceInterpretation cert.P cert.u cert.v j).cells))) → (Disjoint B.cells
-            D.cells)) ) := by
-  classical
-  intro q cfg C₀ T cert B D trzero indexed_disjoint
-  let iB : PeriodicSubtileIndex := ⟨.B, 0, 0⟩
-  let iD : PeriodicSubtileIndex := ⟨.D, 0, 0⟩
-  have h := indexed_disjoint iB iD (by decide) (by simp [iB, iD])
-  simpa [iB, iD, SubtileOccurrenceInterpretation, trzero] using h
-
-private theorem hCD :
-    (by
-      classical
-      exact
-        ∀ (q : Fin 4 → CircleCoordinates), ∀ (cfg : BandOrderedGeneralConfiguration q), ∀ (C₀ :
-            BandCircle), ∀ (T : ProtoTile), ∀ (cert : BandOrderedGeneralLayoutCertificate q cfg
-            C₀ T),
-        let C := cert.P 1 true
-        let D := cert.P 1 false
-        (∀ (Y : ProtoTile), TileTranslation Y 0 = Y) → (
-        (∀ (i : PeriodicSubtileIndex), ∀ (j : PeriodicSubtileIndex), (i ≠ j) → ((¬ ((i.label = .A
-            ∧ j.label = .B ∨ i.label = .B ∧ j.label = .A) ∧ i.first = j.first ∧ i.second =
-            j.second)) → (Disjoint (SubtileOccurrenceInterpretation cert.P cert.u cert.v i).cells
-            (SubtileOccurrenceInterpretation cert.P cert.u cert.v j).cells))) → (Disjoint C.cells
-            D.cells)) ) := by
-  classical
-  intro q cfg C₀ T cert C D trzero indexed_disjoint
-  let iC : PeriodicSubtileIndex := ⟨.C, 0, 0⟩
-  let iD : PeriodicSubtileIndex := ⟨.D, 0, 0⟩
-  have h := indexed_disjoint iC iD (by decide) (by simp [iC, iD])
-  simpa [iC, iD, SubtileOccurrenceInterpretation, trzero] using h
-
 private theorem hOC :
     (by
       classical
@@ -471,22 +405,6 @@ private theorem hQO :
   intro q cfg C₀ T cert O Q touching_disjoint hQne hOne
   exact (touching_disjoint O Q hOne hQne cert.precursor_first.2.2.1).symm
 
-private theorem hSO :
-    (by
-      classical
-      exact
-        ∀ (q : Fin 4 → CircleCoordinates), ∀ (cfg : BandOrderedGeneralConfiguration q), ∀ (C₀ :
-            BandCircle), ∀ (T : ProtoTile), ∀ (cert : BandOrderedGeneralLayoutCertificate q cfg
-            C₀ T),
-        let O := cert.O
-        let S := cert.S 2 false
-        (∀ (X : ProtoTile), ∀ (Y : ProtoTile), (X.cells.Nonempty) → ((Y.cells.Nonempty) →
-            ((TileTouching X Y) → (Disjoint X.cells Y.cells)))) → ((Finset.Nonempty S.cells) →
-            (O.cells.Nonempty → Disjoint S.cells O.cells)) ) := by
-  classical
-  intro q cfg C₀ T cert O S touching_disjoint hSne hOne
-  exact touching_disjoint S O hSne hOne cert.precursor_first.2.1
-
 private theorem hRO :
     (by
       classical
@@ -502,22 +420,6 @@ private theorem hRO :
   classical
   intro q cfg C₀ T cert O R touching_disjoint hRne hOne
   exact (touching_disjoint O R hOne hRne cert.precursor_second.2.2.1).symm
-
-private theorem hVO :
-    (by
-      classical
-      exact
-        ∀ (q : Fin 4 → CircleCoordinates), ∀ (cfg : BandOrderedGeneralConfiguration q), ∀ (C₀ :
-            BandCircle), ∀ (T : ProtoTile), ∀ (cert : BandOrderedGeneralLayoutCertificate q cfg
-            C₀ T),
-        let O := cert.O
-        let V := cert.S 1 false
-        (∀ (X : ProtoTile), ∀ (Y : ProtoTile), (X.cells.Nonempty) → ((Y.cells.Nonempty) →
-            ((TileTouching X Y) → (Disjoint X.cells Y.cells)))) → ((Finset.Nonempty V.cells) →
-            (O.cells.Nonempty → Disjoint V.cells O.cells)) ) := by
-  classical
-  intro q cfg C₀ T cert O V touching_disjoint hVne hOne
-  exact touching_disjoint V O hVne hOne cert.precursor_second.2.1
 
 private theorem rho_mem :
     (by

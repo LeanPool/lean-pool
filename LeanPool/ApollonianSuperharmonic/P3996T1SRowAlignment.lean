@@ -140,16 +140,6 @@ private theorem occF :
   exact BandPrototileTranslation _ _ _ (cert.outer_occurrence 2 false).1
 
 
-private theorem anchorTranslate :
-    (by
-      classical
-      exact
-        ∀ (X : ProtoTile), ∀ (d : GaussianInt), (TileTranslation X d).anchor =
-            GaussianTranslation d X.anchor ) := by
-  classical
-  intro X d
-  exact (TileTranslationFormulas X d).2.1
-
 private theorem centroidTranslate :
     (by
       classical
@@ -173,22 +163,6 @@ private theorem translationCentroidGP :
   intro centroidTranslate X d
   rw [centroidTranslate]
   ext <;> simp [GaussianRealPoint]
-
-private theorem composeCells :
-    (by
-      classical
-      exact
-        (∀ (X : ProtoTile), ∀ (d : GaussianInt), (TileTranslation X d).cells = X.cells.image
-            (GaussianTranslation d)) → (∀ (X : ProtoTile), ∀ (s : GaussianInt), ∀ (d :
-            GaussianInt), (TileTranslation (TileTranslation X s) d).cells = (TileTranslation X (s
-            + d)).cells) ) := by
-  classical
-  intro cellsTranslate X s d
-  rw [cellsTranslate, cellsTranslate, cellsTranslate, Finset.image_image]
-  congr 1
-  funext x
-  simp [GaussianTranslation]
-  abel
 
 private theorem composeCellsEq :
     (by
@@ -476,73 +450,6 @@ private theorem certV :
         rw [show I * (a - I * w) = I * a - (I * I) * w by ring, hI2]
         ring
       exact hprod
-
-private theorem rvec2 :
-    (by
-      classical
-      exact
-        ∀ (q : Fin 4 → CircleCoordinates), ∀ (cfg : BandOrderedGeneralConfiguration q),
-        let a : GaussianInt := BandVectors.1 (q 2) (q 1)
-        let I : GaussianInt := ⟨0, 1⟩
-        (BandVectors.1 (cfg.firstPredecessor (0 : Fin (4 : ℕ))) (cfg.firstPredecessor (Fin.succ
-            (1 : Fin (3 : ℕ)))) = (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt) * BandVectors.1
-            (cfg.firstPredecessor (Fin.succ (1 : Fin (3 : ℕ)))) (cfg.firstPredecessor (0 : Fin (4
-            : ℕ)))) → (BandVectors.1 (cfg.firstPredecessor 0) (cfg.firstPredecessor 2) = I * a) )
-            := by
-  classical
-  intro q cfg a I rflip1
-  calc
-    _ = I * BandVectors.1 (cfg.firstPredecessor 2) (cfg.firstPredecessor 0) := rflip1
-    _ = I * a := by rw [cfg.firstVectorTwo]
-
-private theorem rvec3 :
-    (by
-      classical
-      exact
-        ∀ (q : Fin 4 → CircleCoordinates), ∀ (cfg : BandOrderedGeneralConfiguration q),
-        let a : GaussianInt := BandVectors.1 (q 2) (q 1)
-        let I : GaussianInt := ⟨0, 1⟩
-        (-I * I = 1) → (
-        let w : GaussianInt := BandVectors.1 (q 3) (q 2)
-        (BandVectors.1 (q 1) (q 3) = -a - w) → ((BandVectors.1 (cfg.firstPredecessor (0 : Fin (4
-            : ℕ))) (cfg.firstPredecessor (Fin.succ (2 : Fin (3 : ℕ)))) = (⟨(0 : ℤ), (1 : ℤ)⟩ :
-            GaussianInt) * BandVectors.1 (cfg.firstPredecessor (Fin.succ (2 : Fin (3 : ℕ))))
-            (cfg.firstPredecessor (0 : Fin (4 : ℕ)))) → (BandVectors.1 (cfg.firstPredecessor 3)
-            (cfg.firstPredecessor 0) = I * (a + w)))) ) := by
-  classical
-  intro q cfg a I hIinv w q13 rflip2
-  have hflip : BandVectors.1 (q 1) (q 3) =
-      I * BandVectors.1 (cfg.firstPredecessor 3) (cfg.firstPredecessor 0) := by
-    rw [← cfg.firstChild, ← cfg.firstParentThree]
-    exact rflip2
-  have h : BandVectors.1 (cfg.firstPredecessor 3) (cfg.firstPredecessor 0) =
-      -I * BandVectors.1 (q 1) (q 3) := by
-    calc
-      _ = (-I * I) * BandVectors.1 (cfg.firstPredecessor 3) (cfg.firstPredecessor 0) := by
-        rw [hIinv, one_mul]
-      _ = -I * (I * BandVectors.1 (cfg.firstPredecessor 3) (cfg.firstPredecessor 0)) := by ring
-      _ = -I * BandVectors.1 (q 1) (q 3) := by rw [← hflip]
-  rw [h, q13]
-  have hprod : -I * (-a - w) = I * (a + w) := by
-    rw [show -I * (-a - w) = I * a + I * w by ring]
-    ring
-  exact hprod
-
-private theorem tvec1 :
-    (by
-      classical
-      exact
-        ∀ (q : Fin 4 → CircleCoordinates), ∀ (cfg : BandOrderedGeneralConfiguration q),
-        let I : GaussianInt := ⟨0, 1⟩
-        let w : GaussianInt := BandVectors.1 (q 3) (q 2)
-        BandVectors.1 (cfg.secondPredecessor 0) (cfg.secondPredecessor 1) = I * w ) := by
-  classical
-  intro q cfg I w
-  have tf := (VectorRecursionLaws cfg.secondPredecessor cfg.secondProper.1).2.2.2.2
-    cfg.secondProper 0 |>.1
-  calc
-    _ = I * BandVectors.1 (cfg.secondPredecessor 1) (cfg.secondPredecessor 0) := tf
-    _ = I * w := by rw [cfg.secondVectorOne]
 
 private theorem qnormal :
     (by

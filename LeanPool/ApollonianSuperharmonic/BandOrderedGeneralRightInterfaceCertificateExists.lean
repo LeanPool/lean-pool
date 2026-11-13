@@ -34,17 +34,6 @@ namespace ApollonianSuperharmonic
 
 namespace RightInterfaceCertificateGeometry
 
-private theorem hAeAt211 :
-    (by
-      classical
-      exact
-        ∀ (A : ProtoTile), ∀ (A' : ProtoTile), (A.cells = A'.cells) → (FootprintEdges A =
-            FootprintEdges A') ) := by
-  classical
-  intro A A' hAc
-  simp only [FootprintEdges]
-  rw [hAc]
-
 private theorem translateObs :
     (by
       classical

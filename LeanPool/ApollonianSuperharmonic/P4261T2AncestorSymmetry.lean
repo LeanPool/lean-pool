@@ -156,19 +156,6 @@ private theorem rneg :
   intro R rsmul a p
   simpa using rsmul a (-1) p
 
-private theorem rminusq :
-    (by
-      classical
-      exact
-        let R : BandPackingSymmetry → (Real × Real) → (Real × Real) :=
-          BandPackingSymmetry.rec (fun p => p) (fun p => (-p.2, p.1))
-            (fun p => (-p.1, p.2)) (fun _ p => p) (fun _ _ f k p => f (k p))
-        (∀ (a : BandPackingSymmetry), ∀ (p : Real × Real), R a (-p) = -R a p) → (∀ (a :
-            BandPackingSymmetry), ∀ (p : Real × Real), R a (p.2, -p.1) = -R a (-p.2, p.1)) ) := by
-  classical
-  intro R rneg a p
-  rw [show (p.2, -p.1) = -(-p.2, p.1) by simp, rneg]
-
 private theorem rpoint :
     (by
       classical

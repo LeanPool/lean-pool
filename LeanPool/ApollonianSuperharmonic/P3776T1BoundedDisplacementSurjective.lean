@@ -130,12 +130,6 @@ private theorem hcin (M : ℝ) (y : ℝ × ℝ) (hR : 0 ≤ (R M)) : ∀ t, (c M
   · rw [abs_mul, abs_of_nonneg hR]
     exact mul_le_of_le_one_right hR (Real.abs_sin_le_one _)
 
-private noncomputable abbrev θ : (T) → Real := by
-  classical
-  let T := Set.Icc (0 : Real) 1
-  change (T → Real)
-  exact fun t => 2 * Real.pi * (t : Real)
-
 private noncomputable abbrev E : (T) → ℂ := by
   classical
   let T := Set.Icc (0 : Real) 1

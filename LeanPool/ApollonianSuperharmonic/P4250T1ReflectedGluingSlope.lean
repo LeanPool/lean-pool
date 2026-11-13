@@ -82,27 +82,6 @@ private theorem htwo_s0 :
         <;>
     linarith
 
-private theorem hreflect :
-    (by
-      classical
-      exact
-        ∀ (q : Fin 4 → CircleCoordinates), ∀ (cfg : BandOrderedGeneralConfiguration q), ∀ (C :
-            BandCircle), ∀ (T : ProtoTile), ∀ (cert : BandOrderedGeneralLayoutCertificate q cfg C
-            T), (∀ (i : Fin (3 : ℕ)),
-        let w := BandVectors.1 (q (i + (2 : Fin (3 : ℕ))).succ) (q (i + (1 : Fin (3 : ℕ))).succ);
-        let u := GaussianQuarterTurn w - w; (TileTranslation (cert.P i true) u).cells = (cert.P i
-            false).cells ∧ ((cert.P i true).cells = ∅ → (TileTranslation (cert.P i true)
-            u).anchor = (cert.P i false).anchor) ∧ FootprintVertices (TileTranslation (cert.P i
-            true) u) = FootprintVertices (cert.P i false) ∧ TileCentroid (TileTranslation (cert.P
-            i true) u) = TileCentroid (cert.P i false) ∧ TileArea (cert.P i true) = TileArea
-            (cert.P i false) ∧ CentrallyReflectedAt (TileCentroid T) (cert.P i true) (cert.P i
-            false)) → (CentrallyReflectedAt (TileCentroid T) (cert.P 0 true) (cert.P 0 false)) )
-            := by
-  classical
-  intro q cfg C T cert hturn
-  rcases hturn 0 with ⟨_, _, _, _, _, hr⟩
-  exact hr
-
 private theorem hcenterIntegral :
     (by
       classical
@@ -381,17 +360,6 @@ private theorem rootFoot :
     simp only [ite_eq_left (childNonempty j s), Set.mem_ofPred_eq] at hz
     rcases hz with ⟨x, hxchild, hcorner⟩
     exact ⟨x, (cert.outer_union x).2 ⟨j, s, hxchild⟩, hcorner⟩
-
-private theorem halfSet :
-    (by
-      classical
-      exact
-        ∀ (f : PartialOdometer), ((PartialOdometerHalfTurn f).domain : Set GaussianInt) = (fun x
-            : GaussianInt => -x) '' (f.domain : Set GaussianInt) ) := by
-  classical
-  intro f
-  ext z
-  simp [PartialOdometerHalfTurn]
 
 private theorem affineHalfMem :
     (by

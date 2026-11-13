@@ -52,31 +52,6 @@ private theorem odo_eq :
       subst bv
       rfl
 
-private theorem band_one :
-    (by
-      classical
-      exact
-        ∀ c : CircleCoordinates, ∀ U : ProtoTile, BandPrototile c U → c.1 = 1 → ∃ x : GaussianInt,
-        U.cells = {x} ) := by
-  classical
-  intro c U hu
-  induction hu with
-  | line w x hw =>
-      intro hc
-      norm_num at hc
-  | unit z x anchor =>
-      intro hc
-      exact ⟨x, rfl⟩
-  | @decompose q hq S U hS hcells hfoot hcent ih =>
-      intro hc
-      have facts := ProperBandCurvatureStructure q hq
-      have hz : ∀ j : Fin 3, (q j.succ).1 = 0 := by
-        intro j
-        have hlt := hq.2 j
-        have hn := facts.2.1 j
-        omega
-      exact ((by decide : (0 : Fin 3) ≠ 1) (facts.2.2 0 1 (hz 0) (hz 1))).elim
-
 private theorem parent_gt_one :
     (by
       classical

@@ -126,26 +126,6 @@ private theorem chainReach :
         have hr := ih h₂ hn y (by simpa using hy)
         simpa using (Relation.ReflTransGen.single h₁).trans hr
 
-private theorem walkReach :
-    ∀ (q : IntegerLatticeFunction),
-    let S : Set GaussianInt := {x | 0 < q x}
-    let edge (x y : GaussianInt) : Prop :=
-      FourNeighborAdjacent x y ∧ x ∈ S ∧ y ∈ S
-    let reach (x y : GaussianInt) : Prop := Relation.ReflTransGen edge x y
-    ∀ (p : List GaussianInt), ∀ (a : GaussianInt), ∀ (b : GaussianInt), p.head? = some a →
-        p.getLast? = some b →
-      (∀ x ∈ p, x ∈ S) → p.IsChain FourNeighborAdjacent → reach a b := by
-  classical
-  intro q S edge reach p a b hp hlast hmem hchain
-  have hne : p ≠ [] := by intro he; subst p; simp at hp
-  have hc : p.IsChain edge := hchain.imp_of_mem_imp
-    (fun x y hx hy hadj => ⟨hadj, hmem x hx, hmem y hy⟩)
-  have hr := List.relationReflTransGen_of_exists_isChain p hc hne
-  have ha : p.head hne = a := by simpa [List.head?_eq_some_head hne] using hp
-  have hb : p.getLast hne = b := by
-    simpa [List.getLast?_eq_some_getLast hne] using hlast
-  simpa [ha, hb] using hr
-
 private theorem reachPos :
     ∀ (q : IntegerLatticeFunction),
     let S : Set GaussianInt := {x | 0 < q x}

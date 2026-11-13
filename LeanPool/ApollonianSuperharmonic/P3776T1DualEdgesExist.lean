@@ -372,13 +372,6 @@ private theorem faceShift_cancel :
   intro ι P u f
   rw [← P.faceShift_add, add_neg_cancel, P.faceShift_zero]
 
-private theorem faceShift_cancel' :
-    ∀ (ι : Type), ∀ (P : PeriodicTileCore ι), ∀ (u : ↥P.lattice), ∀ (f : P.plane.Face),
-        P.faceShift (-u) (P.faceShift u f) = f := by
-  classical
-  intro ι P u f
-  rw [← P.faceShift_add, neg_add_cancel, P.faceShift_zero]
-
 private theorem walk_translate :
     ∀ (ι : Type), ∀ (P : PeriodicTileCore ι), ∀ (p : List GaussianInt), p ≠ [] → ∀ (u :
         ↥P.lattice), ∀ (t : (↑(Set.Icc (0 : ℝ) (1 : ℝ)) : Type)), P3776T1WalkMap (List.map (fun

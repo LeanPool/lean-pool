@@ -64,25 +64,6 @@ private theorem hneq :
 
 private abbrev squareCoordinates := ApollonianSuperharmonic.FordInteriorSquareCoordinates.membership
 
-private theorem natAbs_form :
-    (by
-      classical
-      exact
-        ∀ (z : ℤ), z.natAbs = if z ≤ (0 : ℤ) then (-z).toNat else z.toNat
-    ) := by
-  classical
-  intro z
-  by_cases hz : z ≤ 0
-  · rw [ite_eq_left hz]
-    have hc : (z.natAbs : Int) = -z := Int.ofNat_natAbs_of_nonpos hz
-    have ht : ((-z).toNat : Int) = -z := Int.toNat_of_nonneg (by omega)
-    exact_mod_cast hc.trans ht.symm
-  · rw [ite_eq_right hz]
-    have hz' : 0 ≤ z := by omega
-    have hc : (z.natAbs : Int) = z := Int.natAbs_of_nonneg hz'
-    have ht : (z.toNat : Int) = z := Int.toNat_of_nonneg hz'
-    exact_mod_cast hc.trans ht.symm
-
 private theorem d_on_path :
     (by
       classical

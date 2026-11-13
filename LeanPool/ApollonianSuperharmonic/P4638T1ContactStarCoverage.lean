@@ -101,21 +101,6 @@ private theorem hdisjPlusO :
 private abbrev hdisjMinusO :=
   ApollonianSuperharmonic.ContactStarCases.hdisjPlusO
 
-private theorem hpathPlusO :
-    (by
-      classical
-      exact
-        ∀ (Dplus : ProtoTile), ∀ (O : ProtoTile), (Finset.Nonempty O.cells) → ((TileTouching
-            Dplus O) → ((Dplus.cells.Nonempty) → (SimpleGridPath (BoundaryFootprintVertices Dplus
-            ∩ BoundaryFootprintVertices O) (BoundaryFootprintEdges Dplus ∩ BoundaryFootprintEdges
-            O)))) ) := by
-  classical
-  intro Dplus O hO htplus hDplus
-  rcases htplus with ⟨_, _, _, hp⟩ | ⟨hE, _⟩ | ⟨hE, _⟩
-  · exact hp
-  · exact (Finset.not_nonempty_iff_eq_empty.mpr hE hDplus).elim
-  · exact (Finset.not_nonempty_iff_eq_empty.mpr hE hO).elim
-
 private abbrev boundaryEdgeFootprint :=
   BoundaryFootprintInclusion.boundaryEdge
 
@@ -655,20 +640,6 @@ private theorem cornerRescue :
     · exact (Finset.not_nonempty_iff_eq_empty.mpr hzero.1 hO).elim
   · exact Or.inr (noCheckerboardDiagonal Dminus hcheckMinus y j hs1m hs3m
       (fun h => (Finset.disjoint_left.mp hdisjMinusO h hcenter).elim))
-
-private theorem singletonCorner :
-    (by
-      classical
-      exact
-        ∀ (y : GaussianInt), ∀ (j : Fin (4 : ℕ)), y ∈ FootprintVertices
-            (⟨{LatticeVertexIncidentCell y j}, LatticeVertexIncidentCell y j⟩ : ProtoTile) ) := by
-  classical
-  intro y j
-  simp only [FootprintVertices, Finset.singleton_nonempty, ite_true,
-    Set.mem_ofPred_eq]
-  refine ⟨LatticeVertexIncidentCell y j, Finset.mem_singleton_self _, ?_⟩
-  fin_cases j <;> simp [LatticeVertexIncidentCell, sub_eq_add_neg,
-    add_comm, add_left_comm, add_assoc]
 
 private theorem ha :
     (by

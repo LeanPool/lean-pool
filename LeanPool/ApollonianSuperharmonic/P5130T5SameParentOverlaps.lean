@@ -54,20 +54,6 @@ private theorem hp2 :
   intro P P₂ hp₂
   exact hp₂
 
-private theorem hq1pos' :
-    ∀ (P : FordFareyParameter),
-      ∀ (P₁ : FordFareyParameter), P₁.q = P.q₁ → 0 < P.q₁ → 0 < P₁.q := by
-  classical
-  intro P P₁ hq₁ hq1pos
-  omega
-
-private theorem hq2pos' :
-    ∀ (P : FordFareyParameter),
-      ∀ (P₂ : FordFareyParameter), P₂.q = P.q₂ → 0 < P.q₂ → 0 < P₂.q := by
-  classical
-  intro P P₂ hq₂ hq2pos
-  omega
-
 private theorem hq1lt' :
     ∀ (P : FordFareyParameter),
       ∀ (P₁ : FordFareyParameter), P₁.q = P.q₁ → P.q₁ < P.q → P₁.q < P.q := by
