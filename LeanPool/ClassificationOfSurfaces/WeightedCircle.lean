@@ -57,7 +57,8 @@ theorem sum_take_lt_sum {weights : List ℕ} (h : Positive weights)
       · simp only [List.length_cons, Fin.coe_ofNat_eq_mod, Nat.zero_mod, List.take_zero,
           List.sum_nil, List.sum_cons, add_pos_iff]
         exact Or.inl h.head
-      · simpa [List.take_succ_cons] using Nat.add_lt_add_left (ih h.tail j) w
+      · simpa only [List.length_cons, Fin.val_succ, List.take_succ_cons, List.sum_cons,
+        add_lt_add_iff_left] using Nat.add_lt_add_left (ih h.tail j) w
 
 @[simp]
 theorem stretch_nil (x : ℝ) : stretch [] x = 0 :=
@@ -72,7 +73,7 @@ theorem stretch_zero (weights : List ℕ) : stretch weights 0 = 0 := by
   induction weights with
   | nil => rfl
   | cons w weights _ =>
-      simp [stretch]
+      simp only [stretch, zero_le_one, ↓reduceIte, mul_zero]
 
 @[simp]
 theorem unstretch_zero (weights : List ℕ) : unstretch weights 0 = 0 := by
@@ -438,12 +439,13 @@ theorem intervalHomeomorph_endpointIdent_iff
       intervalHomeomorph weights h y = yimage at hxy
     cases hxy
     have hx :
-        x = (⟨0, by simp⟩ :
+        x = (⟨0, by simp only [zero_add, Set.mem_Icc, Std.le_refl, Nat.cast_nonneg, and_self]⟩ :
           Set.Icc (0 : ℝ) (0 + weights.length)) := by
       apply (intervalHomeomorph weights h).injective
       rw [hximage, intervalHomeomorph_zero]
     have hy :
-        y = (⟨0 + weights.length, by simp⟩ :
+        y = (⟨0 + weights.length, by simp only [zero_add, Set.mem_Icc, Nat.cast_nonneg,
+          Std.le_refl, and_self]⟩ :
           Set.Icc (0 : ℝ) (0 + weights.length)) := by
       apply (intervalHomeomorph weights h).injective
       rw [hyimage, intervalHomeomorph_length]
@@ -595,7 +597,8 @@ theorem stretch_index_add
             omega
           have ht0 : (t : ℝ) = 0 := by
             apply le_antisymm
-            · simpa [Fin.succ, hjval] using hboundary
+            · simpa only [Fin.succ, hjval, zero_add, Nat.cast_one,
+              add_le_iff_nonpos_right] using hboundary
             · exact t.property.1
           rw [stretch, ite_eq_left hboundary]
           simp [List.take_succ_cons, hjval, ht0]
@@ -608,7 +611,10 @@ theorem stretch_index_add
             push_cast
             ring
           rw [harg, ih]
-          simp [List.take_succ_cons]
+          simp only [Nat.cast_list_sum, List.map_take, List.get_eq_getElem, List.length_cons,
+            Fin.val_succ,
+    List.take_succ_cons, List.sum_cons, Nat.cast_add,
+            List.getElem_cons_succ]
           ring
 
 /-- The weighted circle homeomorphism sends a point of side `i` to the boundary coordinate

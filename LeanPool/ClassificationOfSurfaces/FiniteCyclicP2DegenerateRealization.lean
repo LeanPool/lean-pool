@@ -130,7 +130,7 @@ theorem right_get_rightDegenerateCutSideIndex
       (Nat.mod_lt _ hr),
     List.getElem?_eq_getElem i.isLt] at hpoint
   exact Option.some.inj (by
-    simpa [rightDegenerateCutSideIndex] using hpoint)
+    simpa only [rightDegenerateCutSideIndex, Option.some.injEq] using hpoint)
 
 /-- Phantom transport from the literal monogon to a selected child whose old-side count is
 propositionally zero. -/
@@ -150,7 +150,7 @@ theorem zeroLeftCellHomeomorph_side
     (by omega) hpos 0 (0 : Fin 1) t]
   congr 2
   apply Fin.ext
-  simp [hl]
+  simp only [Fin.isValue, Fin.val_eq_zero, add_zero, hl, zero_add, Nat.mod_succ, Fin.val_last]
 
 /-- The `zeroLeftChildPairHomeomorph` declaration. -/
 noncomputable def zeroLeftChildPairHomeomorph
@@ -678,7 +678,9 @@ theorem rightDegenerateMapOccurrence_injective
             rightDegenerateCutSideIndex
               P cut horientation hleft hr j := by
         apply Fin.ext
-        simpa [positiveRightChildSideIndex] using hval
+        simpa only [rightDegenerateCutSideIndex_val, Fin.addNat_one, positiveRightChildSideIndex,
+          Fin.val_succ,
+    Nat.add_right_cancel_iff] using hval
       have hij :=
         rightDegenerateCutSideIndex_injective
           P cut horientation hleft hr hindex
@@ -709,7 +711,7 @@ theorem rightDegenerateMapOccurrence_injective
           o.2.val) hmap
       have hij : i = j := by
         apply Fin.ext
-        simpa [retainedSideIndex] using hval
+        simpa only [retainedSideIndex] using hval
       subst j
       rfl
 

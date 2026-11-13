@@ -128,7 +128,7 @@ noncomputable def faceBoundaryMap (t : K.Face) (p : Plane) : Plane := by
 @[simp] theorem faceBoundaryMap_apply (t : K.Face) (p : StandardFaceBoundary) :
     K.faceBoundaryMap (hcont := hcont) (hinj := hinj) (D := D) (C := C) t p.1 =
       K.graphReplacementMap hcont hinj D C (K.faceBoundaryLift t p).1 := by
-  simp [faceBoundaryMap, p.2]
+  simp only [faceBoundaryMap, p.2, ↓reduceDIte, Subtype.coe_eta]
 
 /-- The canonical face boundary map is continuous on the standard frontier. -/
 theorem continuousOn_faceBoundaryMap (t : K.Face) :
@@ -405,10 +405,10 @@ theorem standardFaceEdge_endpoint_order (t : K.Face) (i : ZMod 3) :
   let j := standardFaceEdgeIndex i
   have hfirst : S.edgeFirst j ∈ (S.edgeAt j).1 := by
     rw [S.edgeAt_eq]
-    simp
+    simp only [Finset.mem_insert, Finset.mem_singleton, true_or]
   have hsecond : S.edgeSecond j ∈ (S.edgeAt j).1 := by
     rw [S.edgeAt_eq]
-    simp
+    simp only [Finset.mem_insert, Finset.mem_singleton, or_true]
   have hedge : (S.edgeAt j).1 = (standardFaceEdgeFace i).1 :=
     congrArg Subtype.val (standardFaceEdgeAt_eq i)
   rw [hedge, K.standardFaceEdgeFace_val_eq_boundaryEndpoints t i] at hfirst hsecond

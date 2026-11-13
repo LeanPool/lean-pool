@@ -169,7 +169,7 @@ theorem faceChart_mem_frontier_of_mem_distinct_faces
     by_contra h
     have hge : 3 ≤ (t.1 ∩ u.1).card := by omega
     have hle : (t.1 ∩ u.1).card ≤ 3 := by
-      simpa [K.faces_card t.1 t.2] using
+      simpa only [K.faces_card t.1 t.2] using
         Finset.card_le_card (Finset.inter_subset_left : t.1 ∩ u.1 ⊆ t.1)
     have hcard : (t.1 ∩ u.1).card = 3 := by omega
     have hinterT : t.1 ∩ u.1 = t.1 :=
@@ -580,8 +580,8 @@ theorem faceFillingsGraphAvoidInteriors_of_verticesAvoid
     exact Set.disjoint_left.mp hinteriorCarrier hxInterior
       (K.graphReplacement_mem_facePolygonalCircle t hxt ⟨e, hxe⟩)
   let I := Set.Icc (0 : ℝ) 1
-  let z0 : I := ⟨0, by simp [I]⟩
-  let z1 : I := ⟨1, by simp [I]⟩
+  let z0 : I := ⟨0, by simp only [Set.mem_Icc, Std.le_refl, zero_le_one, and_self, I]⟩
+  let z1 : I := ⟨1, by simp only [Set.mem_Icc, zero_le_one, Std.le_refl, and_self, I]⟩
   let gpath : I → Plane := fun s ↦
     K.graphReplacementMap hcont hinj D C (K.edgePath e s)
   have hpathCarrier (s : I) : K.edgePath e s ∈ K.faceCarrier e.1 := by
@@ -636,7 +636,8 @@ theorem faceFillingsGraphAvoidInteriors_of_verticesAvoid
         simpa only [gpath, z1, K.edgePath_one, K.vertexPoint_edgeSecondUsed] using hvertex
       have hAExterior : Set.MapsTo gpath A J.exteriorRegion :=
         J.mapsTo_exteriorRegion_of_isPreconnected hApreconnected hgpath.continuousOn
-          (hoffCarrier hAoutside) ⟨z1, by simp [A, z0, z1], hz1Exterior⟩
+          (hoffCarrier hAoutside) ⟨z1, by simp only [Set.Icc.mk_zero, Set.Icc.mk_one, Set.mem_Ioc,
+            zero_lt_one, Std.le_refl, and_self, A, z0, z1], hz1Exterior⟩
       have hrA : r ∈ A := by
         constructor
         · change (0 : ℝ) < r.1
@@ -673,7 +674,8 @@ theorem faceFillingsGraphAvoidInteriors_of_verticesAvoid
           simpa only [gpath, z0, K.edgePath_zero, K.vertexPoint_edgeFirstUsed] using hvertex
         have hAExterior : Set.MapsTo gpath A J.exteriorRegion :=
           J.mapsTo_exteriorRegion_of_isPreconnected hApreconnected hgpath.continuousOn
-            (hoffCarrier hAoutside) ⟨z0, by simp [A, z0, z1], hz0Exterior⟩
+            (hoffCarrier hAoutside) ⟨z0, by simp only [Set.Icc.mk_zero, Set.Icc.mk_one,
+              Set.mem_Ico, Std.le_refl, zero_lt_one, and_self, A, z0, z1], hz0Exterior⟩
         have hrA : r ∈ A := by
           constructor
           · change (0 : ℝ) ≤ r.1

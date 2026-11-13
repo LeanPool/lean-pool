@@ -140,7 +140,7 @@ theorem faceEdgeMultiplicity_eq (e : UnorientedPresentationIso P Q)
           (e.edgeEquiv a) =
         Q.faceEdgeMultiplicity (e.faceEquiv f) (e.edgeEquiv a) := by
     rw [← horiented]
-    simpa [List.map_map, Function.comp_def] using hcount
+    simpa only [List.map_map, Function.comp_def, EdgeRelabeling.edgeOfDart_mapDart] using hcount
   calc
     P.faceEdgeMultiplicity f a =
         (((P.boundary f).map edgeOfDart).map e.edgeEquiv).count
@@ -194,7 +194,9 @@ theorem inverseWord_get_rev {α : Type*}
     (inverseWord word).get
         ⟨i.val, by simpa only [inverseWord_length] using i.isLt⟩ =
       (word.get i.rev).flip := by
-  simp [inverseWord]
+  simp only [inverseWord, List.get_eq_getElem, List.map_reverse, List.getElem_reverse,
+    List.length_map,
+    List.getElem_map, Fin.val_rev]
   congr 2
   omega
 
@@ -280,10 +282,13 @@ theorem orientedBoundary_get_orientedSideIndex
   have hmapped :
       mapped[i.val]? =
         some (e.edgeRelabeling.mapDart ((P.boundary f).get i)) := by
-    simp [mapped, i.isLt]
+    simp only [List.length_map, i.isLt, getElem?_pos, List.getElem_map, List.get_eq_getElem,
+      mapped]
   rw [hmapped] at hpoint
   rw [← Option.some_inj, ← hpoint]
-  simp [orientedSideIndex, target]
+  simp only [orientedSideIndex, orientedBoundary_length, List.get_eq_getElem,
+    some_getElem_eq_getElem?_iff,
+    target]
 
 /-- The stored target occurrence carries the relabeled dart, flipped exactly when its face was
 read backwards. -/
@@ -297,7 +302,9 @@ theorem boundary_get_sideIndex
         e.edgeRelabeling.mapDart ((P.boundary f).get i) := by
   have horiented := e.orientedBoundary_get_orientedSideIndex validQ f i
   cases hreverse : e.reverseFace f
-  · simpa [sideIndex, hreverse, orientedBoundary] using horiented
+  · simpa only [sideIndex, hreverse, Bool.false_eq_true, ↓reduceIte, orientedBoundary,
+    Fin.cast_mk,
+    List.get_eq_getElem] using horiented
   · let target := inverseWord (Q.boundary (e.faceEquiv f))
     let mapped := (P.boundary f).map e.edgeRelabeling.mapDart
     have hrot : target.rotate (e.faceRotation f) = mapped := by
@@ -320,11 +327,12 @@ theorem boundary_get_sideIndex
           e.edgeRelabeling.mapDart ((P.boundary f).get i) := by
       have htargetSome :
           target[jTarget.val]? = some (target.get jTarget) := by
-        simp [jTarget.isLt]
+        simp only [jTarget.isLt, getElem?_pos, List.get_eq_getElem]
       have hmappedSome :
           mapped[i.val]? =
             some (e.edgeRelabeling.mapDart ((P.boundary f).get i)) := by
-        simp [mapped, i.isLt]
+        simp only [List.length_map, i.isLt, getElem?_pos, List.getElem_map, List.get_eq_getElem,
+          mapped]
       rw [hmappedSome] at hpoint
       exact Option.some.inj (htargetSome.symm.trans hpoint)
     let j : Fin (Q.boundary (e.faceEquiv f)).length :=
@@ -342,9 +350,11 @@ theorem boundary_get_sideIndex
       congrArg SignedDart.flip (hinverse.symm.trans horiented')
     have hside : e.sideIndex validQ f i = j.rev := by
       apply Fin.ext
-      simp [sideIndex, orientedSideIndex, hreverse, j, jTarget, target]
+      simp only [sideIndex, hreverse, ↓reduceIte, orientedSideIndex, orientedBoundary_length,
+        Fin.cast_mk,
+    Fin.val_rev, inverseWord_length, j, target, jTarget]
     rw [hside]
-    simpa using hflipped
+    simpa only [List.get_eq_getElem, Fin.val_rev, ↓reduceIte, SignedDart.flip_flip] using hflipped
 
 /-- The facewise disk homeomorphism: rotate to the selected cyclic spelling, then reflect if the
 target face is read backwards. -/
@@ -382,7 +392,8 @@ theorem faceHomeomorph_side
                 (validQ.2.1 (e.faceEquiv f)))⟩ :
             Fin (Q.boundary (e.faceEquiv f)).length) := by
       apply Fin.ext
-      simp [orientedSideIndex, hreverse, orientedBoundary]
+      simp only [orientedBoundary, hreverse, Bool.false_eq_true, orientedSideIndex, ↓reduceIte,
+        Fin.cast_mk]
     rw [hindex]
     exact PolygonCell.rotateHomeomorph_side_of_eq
       (e.boundary_length_eq f)
@@ -401,7 +412,8 @@ theorem faceHomeomorph_side
                 (validQ.2.1 (e.faceEquiv f)))⟩ :
             Fin (Q.boundary (e.faceEquiv f)).length) := by
       apply Fin.ext
-      simp [orientedSideIndex, hreverse, orientedBoundary]
+      simp only [orientedBoundary, hreverse, orientedSideIndex, ↓reduceIte, inverseWord_length,
+        Fin.cast_mk]
     rw [hindex]
     rw [PolygonCell.rotateHomeomorph_side_of_eq
       (e.boundary_length_eq f)

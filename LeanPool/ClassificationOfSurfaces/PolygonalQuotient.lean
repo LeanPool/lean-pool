@@ -193,12 +193,12 @@ theorem iUnion_range_side {n : ℕ} (hn : 0 < n) :
 
 /-- The unique side of a monogon is a loop. -/
 theorem side_zero_eq_side_one_monogon (i : Fin 1) : side i 0 = side i 1 := by
-  simpa using (side_one_eq_rotate_zero i).symm
+  simpa only [finRotate_one, Equiv.refl_apply] using (side_one_eq_rotate_zero i).symm
 
 /-- The two sides of a digon meet at their middle vertex. -/
 theorem side_zero_one_eq_side_one_zero_digon :
     side (0 : Fin 2) 1 = side (1 : Fin 2) 0 := by
-  simpa using side_one_eq_rotate_zero (0 : Fin 2)
+  simpa only [Fin.isValue, finRotate_apply, zero_add] using side_one_eq_rotate_zero (0 : Fin 2)
 
 end PolygonCell
 

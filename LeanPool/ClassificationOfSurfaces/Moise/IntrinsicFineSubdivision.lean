@@ -58,17 +58,18 @@ theorem face_affineCombination_eq (t : K.Face) (x : K.realization)
   by_cases hw : w ∈ t.1
   · let v : t.1 := ⟨w, hw⟩
     rw [Finset.sum_eq_single v]
-    · simp [v]
+    · simp only [Pi.single_eq_same, mul_one, v]
     · intro u _ huv
       have huw : u.1 ≠ w := fun h => huv (Subtype.ext h)
-      simp [huw]
-    · simp
+      simp only [ne_eq, huw, not_false_eq_true, Pi.single_eq_of_ne', mul_zero]
+    · simp only [Finset.univ_eq_attach, Finset.mem_attach, not_true_eq_false, mul_eq_zero,
+      IsEmpty.forall_iff]
   · have hxw : x.1 w = 0 := hx w hw
     rw [hxw]
     apply Finset.sum_eq_zero
     intro v _
     have hvw : v.1 ≠ w := fun h => hw (h ▸ v.2)
-    simp [hvw]
+    simp only [ne_eq, hvw, not_false_eq_true, Pi.single_eq_of_ne', mul_zero]
 
 /-- An affine image of a face lies in the convex hull of the images of its three vertices. -/
 theorem affine_mem_convexHull_facePoints
@@ -168,10 +169,11 @@ theorem midpointEval_facePoint
     (Pi.single q 1 : K.MidpointVertex → ℝ) u • K.midpointPosition u) =
       K.midpointPosition q
   rw [Finset.sum_eq_single q]
-  · simp []
+  · simp only [Pi.single_eq_same, one_smul]
   · intro u _ huw
-    simp [huw]
-  · simp
+    simp only [ne_eq, huw, not_false_eq_true, Pi.single_eq_of_ne, zero_smul]
+  · simp only [Finset.mem_univ, not_true_eq_false, Pi.single_eq_same, one_smul,
+    IsEmpty.forall_iff]
 
 theorem midpointEvalAffine_facePoint
     (s : K.midpointComplex.Face) (w : s.1) :

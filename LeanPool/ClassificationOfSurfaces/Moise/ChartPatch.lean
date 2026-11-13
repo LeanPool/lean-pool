@@ -108,7 +108,7 @@ private theorem abs_add_abs_lt_three_four_of_mem_closedBall_half {x : Plane}
     simpa only [Metric.mem_closedBall, dist_zero_right] using hx
   have hnormsq : ‖x‖ ^ 2 = x 0 ^ 2 + x 1 ^ 2 := by
     rw [PiLp.norm_sq_eq_of_L2]
-    simp [Fin.sum_univ_two]
+    simp only [Real.norm_eq_abs, sq_abs, Fin.sum_univ_two, Fin.isValue]
   have hsquares : (|x 0| + |x 1|) ^ 2 ≤ 2 * (x 0 ^ 2 + x 1 ^ 2) := by
     nlinarith [sq_nonneg (|x 0| - |x 1|), sq_abs (x 0), sq_abs (x 1)]
   have hnormnonneg : 0 ≤ ‖x‖ := norm_nonneg x
@@ -178,13 +178,21 @@ private theorem restrictedRightDiamond_support :
     rcases Finset.mem_filter.mp ht with ⟨ht, h1t⟩
     simp only [diamondFanTriangles, Finset.mem_insert, Finset.mem_singleton] at ht
     rcases ht with rfl | rfl | rfl | rfl
-    · simp at h1t
+    · simp only [Fin.isValue, Finset.mem_insert, one_ne_zero, Fin.reduceEq, Finset.mem_singleton,
+      or_self] at h1t
     · exact Or.inl hxt
-    · simp at h1t
+    · simp only [Fin.isValue, Finset.mem_insert, one_ne_zero, Fin.reduceEq, Finset.mem_singleton,
+      or_self] at h1t
     · exact Or.inr hxt
   · rintro (hxt | hxt)
-    · exact ⟨{1, 2, 4}, by simp [diamondFanTriangles], hxt⟩
-    · exact ⟨{1, 4, 3}, by simp [diamondFanTriangles], hxt⟩
+    · exact ⟨{1, 2, 4}, by simp only [Fin.isValue, diamondFanTriangles, Finset.mem_filter,
+      Finset.mem_insert, Finset.mem_singleton,
+    true_or, or_true, Fin.reduceEq, or_self,
+      or_false, and_self], hxt⟩
+    · exact ⟨{1, 4, 3}, by simp only [Fin.isValue, diamondFanTriangles, Finset.mem_filter,
+      Finset.mem_insert, Finset.mem_singleton,
+    or_true, Fin.reduceEq, or_self, or_false,
+      and_self], hxt⟩
 
 theorem chartHalfDiamondComplex_support :
     chartHalfDiamondComplex.support = chartDiamondAffineEquiv '' diamondRightRegion := by
@@ -230,7 +238,7 @@ theorem diamondRightRegion_eq_patch_inter_nonneg :
     apply mem_convexHull_range_fin3_of_weights _ p w
     · intro i
       fin_cases i <;> simp [w] <;> linarith
-    · simp [w]
+    · simp only [Fin.isValue, Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val, w]
       ring
     · ext i
       fin_cases i <;> simp [w, planePoint]
@@ -295,9 +303,11 @@ theorem chartHalfDiamond_baryEval_coordZero
       obtain ⟨htFan, h1⟩ := Finset.mem_filter.mp ht
       simp only [diamondFanTriangles, Finset.mem_insert, Finset.mem_singleton] at htFan
       rcases htFan with rfl | rfl | rfl | rfl
-      · simp at h1
+      · simp only [Fin.isValue, Finset.mem_insert, one_ne_zero, Fin.reduceEq, Finset.mem_singleton,
+        or_self] at h1
       · exact Or.inl rfl
-      · simp at h1
+      · simp only [Fin.isValue, Finset.mem_insert, one_ne_zero, Fin.reduceEq, Finset.mem_singleton,
+        or_self] at h1
       · exact Or.inr rfl
     rcases ht' with rfl | rfl
     · exact (by decide : (0 : Fin 5) ∉ ({1, 2, 4} : Finset (Fin 5))) h0
@@ -349,9 +359,11 @@ theorem chartHalfDiamond_coordZero_iff_boundaryEdgeCarrier
     obtain ⟨htFan, h1⟩ := Finset.mem_filter.mp ht
     simp only [diamondFanTriangles, Finset.mem_insert, Finset.mem_singleton] at htFan
     rcases htFan with rfl | rfl | rfl | rfl
-    · simp at h1
+    · simp only [Fin.isValue, Finset.mem_insert, one_ne_zero, Fin.reduceEq, Finset.mem_singleton,
+      or_self] at h1
     · exact Or.inl rfl
-    · simp at h1
+    · simp only [Fin.isValue, Finset.mem_insert, one_ne_zero, Fin.reduceEq, Finset.mem_singleton,
+      or_self] at h1
     · exact Or.inr rfl
   constructor
   · intro hright
@@ -522,14 +534,17 @@ theorem diamondFanTriangles_isDualConnected :
     TriangleFamily.isDualConnected_singleton {1, 4, 3}
   have h₂₃ : TriangleFamily.IsDualConnected
       (insert {0, 3, 4} ({{1, 4, 3}} : Finset (Finset (Fin 5)))) := by
-    apply TriangleFamily.isDualConnected_insert h₃ {0, 3, 4} ⟨{1, 4, 3}, by simp⟩
+    apply TriangleFamily.isDualConnected_insert h₃ {0, 3, 4} ⟨{1, 4, 3}, by simp only [Fin.isValue,
+      Finset.mem_singleton]⟩
     exact ⟨{3, 4}, by decide, by decide, by decide⟩
   have h₁₂₃ : TriangleFamily.IsDualConnected
       (insert {1, 2, 4}
         (insert {0, 3, 4} ({{1, 4, 3}} : Finset (Finset (Fin 5))))) := by
-    apply TriangleFamily.isDualConnected_insert h₂₃ {1, 2, 4} ⟨{1, 4, 3}, by simp⟩
+    apply TriangleFamily.isDualConnected_insert h₂₃ {1, 2, 4} ⟨{1, 4, 3}, by simp only [Fin.isValue,
+      Finset.mem_insert, Finset.mem_singleton, or_true]⟩
     exact ⟨{1, 4}, by decide, by decide, by decide⟩
-  apply TriangleFamily.isDualConnected_insert h₁₂₃ {0, 4, 2} ⟨{1, 2, 4}, by simp⟩
+  apply TriangleFamily.isDualConnected_insert h₁₂₃ {0, 4, 2} ⟨{1, 2, 4}, by simp only [Fin.isValue,
+    Finset.mem_insert, Finset.mem_singleton, true_or]⟩
   exact ⟨{2, 4}, by decide, by decide, by decide⟩
 
 /-- The two triangles in the fixed half-disk-chart patch have a connected dual graph. -/

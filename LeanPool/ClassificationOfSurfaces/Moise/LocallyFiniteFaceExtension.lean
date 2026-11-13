@@ -115,7 +115,7 @@ noncomputable def faceBoundaryMap (f : K.Face) (p : Plane) : Plane := by
 @[simp] theorem faceBoundaryMap_apply (f : K.Face) (p : StandardFaceBoundary) :
     K.faceBoundaryMap (G := G) f p.1 =
       G.graphReplacementMap (K.faceBoundaryLift f p) := by
-  simp [faceBoundaryMap, p.2]
+  simp only [faceBoundaryMap, p.2, ↓reduceDIte, Subtype.coe_eta]
 
 theorem continuousOn_faceBoundaryMap (f : K.Face) :
     ContinuousOn (K.faceBoundaryMap (G := G) f)
@@ -382,10 +382,10 @@ theorem standardFaceEdge_endpoint_order (f : K.Face) (i : ZMod 3) :
   let j := IntrinsicTwoComplex.standardFaceEdgeIndex i
   have hfirst : T.edgeFirst j ∈ (T.edgeAt j).1 := by
     rw [T.edgeAt_eq]
-    simp
+    simp only [Finset.mem_insert, Finset.mem_singleton, true_or]
   have hsecond : T.edgeSecond j ∈ (T.edgeAt j).1 := by
     rw [T.edgeAt_eq]
-    simp
+    simp only [Finset.mem_insert, Finset.mem_singleton, or_true]
   have hedge : (T.edgeAt j).1 =
       (IntrinsicTwoComplex.standardFaceEdgeFace i).1 :=
     congrArg Subtype.val (IntrinsicTwoComplex.standardFaceEdgeAt_eq i)
@@ -659,7 +659,9 @@ theorem faceBoundaryMap_affineOn_left
   rw [show K.faceBoundaryMap (G := G) f (K.faceEdgeSourcePoint f i r) =
       A.completePath q from K.faceBoundaryMap_sourcePoint (G := G) f i q,
     LocallyFiniteTriangleComplex.CentralPolygonalArc.completePath_eq_left A q hq]
-  simp [g, scalar, q, AffineMap.comp_apply]
+  simp only [AffineMap.comp_apply, AffineMap.coe_smul, Pi.smul_apply,
+    faceEdgeParameterAffine_sourcePoint,
+    smul_eq_mul, g, scalar, q]
 
 /-- The boundary map is affine on every subset of a standard side contained in the final
 spoke range. -/
@@ -687,7 +689,10 @@ theorem faceBoundaryMap_affineOn_right
   rw [show K.faceBoundaryMap (G := G) f (K.faceEdgeSourcePoint f i r) =
       A.completePath q from K.faceBoundaryMap_sourcePoint (G := G) f i q,
     LocallyFiniteTriangleComplex.CentralPolygonalArc.completePath_eq_right A q hq]
-  simp [g, scalar, q, AffineMap.comp_apply]
+  simp only [AffineMap.comp_apply, AffineMap.coe_sub, AffineMap.coe_smul, AffineMap.coe_const,
+    Pi.sub_apply,
+    Pi.smul_apply, faceEdgeParameterAffine_sourcePoint, smul_eq_mul,
+    Function.const_apply, g, scalar, q]
 
 /-- A middle side piece is affine once its affine source image lies in one simplex of the
 finite polygonal segment model. -/

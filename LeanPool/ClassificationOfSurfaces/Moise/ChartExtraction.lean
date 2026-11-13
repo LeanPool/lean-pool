@@ -87,7 +87,8 @@ theorem recenter_mem_closedBall_iff (hε : 0 < ε) {v : Plane} :
 theorem recenter_coordZero (hε : ε ≠ 0) (v : Plane) :
     recenter p ε hε v 0 = ε⁻¹ * (v 0 - p 0) := by
   rw [recenter_apply, sub_eq_add_neg]
-  simp
+  simp only [Fin.isValue, smul_add, smul_neg, PiLp.add_apply, PiLp.smul_apply, smul_eq_mul,
+    PiLp.neg_apply]
   ring
 
 /-- When the center sits on the edge line, recentering preserves the half-plane condition. -/
@@ -391,7 +392,8 @@ theorem mem_core_iff {s : S} :
     s ∈ c.core ↔ ∃ hs : s ∈ c.domain, ((c.chart ⟨s, hs⟩ : Plane) ∈ c.kind.modelCore) := by
   constructor
   · rintro ⟨y, hy, rfl⟩
-    exact ⟨y.2, by simpa using hy⟩
+    exact ⟨y.2, by simpa only [Subtype.coe_eta, Set.preimage_ofPred_eq,
+      Set.mem_ofPred_eq] using hy⟩
   · rintro ⟨hs, h⟩
     exact ⟨⟨s, hs⟩, h, rfl⟩
 

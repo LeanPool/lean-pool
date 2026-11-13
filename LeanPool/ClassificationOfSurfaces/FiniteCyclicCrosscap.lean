@@ -128,10 +128,10 @@ theorem commonEdgeRelabeling_retainWord {n : ℕ} (a : Fin n)
       have hda : edgeOfDart d ≠ a := by
         intro h
         apply ha
-        simp [h]
+        simp only [List.map_cons, h, List.mem_cons, List.mem_map, true_or]
       have htail : a ∉ word.map edgeOfDart := by
         intro h
-        exact ha (by simp [h])
+        exact ha (by simp only [List.map_cons, List.mem_cons, h, or_true])
       change
         (commonEdgeRelabeling a).mapDart (P1.castSuccDart d) ::
             (P2.retainWord word).map (commonEdgeRelabeling a).mapDart =
@@ -142,13 +142,17 @@ theorem commonEdgeRelabeling_retainWord {n : ℕ} (a : Fin n)
       | pos e =>
           have hcast : e.castSucc ≠ a.castSucc :=
             fun heq ↦ hda (Fin.castSucc_injective _ heq)
-          simp [commonEdgeRelabeling, EdgeRelabeling.mapDart,
-            Equiv.swap_apply_of_ne_of_ne hcast (Fin.castSucc_ne_last e)]
+          simp only [EdgeRelabeling.mapDart, P1.castSuccDart_pos, commonEdgeRelabeling,
+            Bool.false_eq_true,
+            ↓reduceIte,
+    Equiv.swap_apply_of_ne_of_ne hcast (Fin.castSucc_ne_last e)]
       | neg e =>
           have hcast : e.castSucc ≠ a.castSucc :=
             fun heq ↦ hda (Fin.castSucc_injective _ heq)
-          simp [commonEdgeRelabeling, EdgeRelabeling.mapDart,
-            Equiv.swap_apply_of_ne_of_ne hcast (Fin.castSucc_ne_last e)]
+          simp only [EdgeRelabeling.mapDart, P1.castSuccDart_neg, commonEdgeRelabeling,
+            Bool.false_eq_true,
+            ↓reduceIte,
+    Equiv.swap_apply_of_ne_of_ne hcast (Fin.castSucc_ne_last e)]
 
 /-- Match the explicit face indices of the two canonical splits. -/
 def commonFaceEquiv {n : ℕ} (a : Fin n)
@@ -269,14 +273,18 @@ theorem map_rightBoundary_isRotated_inverse {n : ℕ} (a : Fin n)
     commonEdgeRelabeling_neg_fresh,
     commonEdgeRelabeling_pos_old,
     commonEdgeRelabeling_retainWord a (inverseWord Y) (by
-      simpa [map_edgeOfDart_inverseWord] using haY)]
+      simpa only [map_edgeOfDart_inverseWord, List.mem_reverse, List.mem_map, not_exists,
+        not_and] using haY)]
   rw [show
     inverseWord
         (SignedDart.neg (Fin.last n) ::
           ([SignedDart.pos a.castSucc] ++ P2.retainWord Y)) =
       inverseWord (P2.retainWord Y) ++
         [SignedDart.neg a.castSucc, SignedDart.pos (Fin.last n)] by
-    simp [inverseWord, SignedDart.flip]]
+    simp only [inverseWord, List.cons_append, List.nil_append, List.reverse_cons,
+      List.append_assoc,
+    List.map_append, List.map_reverse, List.map_cons, SignedDart.flip,
+      List.map_nil]]
   rw [P2.retainWord_inverseWord]
   simpa only [List.cons_append, List.singleton_append, List.nil_append,
     List.append_assoc] using

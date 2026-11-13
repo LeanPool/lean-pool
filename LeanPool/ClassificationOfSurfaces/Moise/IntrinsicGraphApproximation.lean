@@ -164,16 +164,16 @@ theorem edgeCurve_eq_of_mem {h : K.realization → Plane} (e : K.Edge) {t : ℝ}
   apply congrArg (K.mappedEdgePath h e)
   apply Subtype.ext
   rw [Set.coe_projIcc]
-  simp [ht.1, ht.2]
+  simp only [ht.2, inf_of_le_right, ht.1, sup_of_le_right]
 
 @[simp] theorem edgeCurve_zero (h : K.realization → Plane) (e : K.Edge) :
     K.edgeCurve h e 0 = h (K.edgeFirstPoint e) := by
-  rw [K.edgeCurve_eq_of_mem e (by simp)]
+  rw [K.edgeCurve_eq_of_mem e (by simp only [Set.mem_Icc, Std.le_refl, zero_le_one, and_self])]
   exact K.mappedEdgePath_zero h e
 
 @[simp] theorem edgeCurve_one (h : K.realization → Plane) (e : K.Edge) :
     K.edgeCurve h e 1 = h (K.edgeSecondPoint e) := by
-  rw [K.edgeCurve_eq_of_mem e (by simp)]
+  rw [K.edgeCurve_eq_of_mem e (by simp only [Set.mem_Icc, zero_le_one, Std.le_refl, and_self])]
   exact K.mappedEdgePath_one h e
 
 /-- The two ordered circle crossings delimiting the central part of an intrinsic mapped edge. -/
@@ -1083,7 +1083,7 @@ theorem disjoint_leftOpenSpoke_leftOpenSpoke {d : K.Edge}
   by_cases hv : K.edgeFirstUsed e = K.edgeFirstUsed d
   · have hp : K.edgeFirstPoint e = K.edgeFirstPoint d := by
       rw [← K.vertexPoint_edgeFirstUsed e, ← K.vertexPoint_edgeFirstUsed d, hv]
-    simpa [leftOpenSpoke, leftSpoke, hp] using
+    simpa only [leftOpenSpoke, leftSpoke, hp] using
       disjoint_radial_segments_away_center D.radius_pos A.leftEndpoint_on_sphere
         (by simpa only [hp] using A'.leftEndpoint_on_sphere)
         (A.leftEndpoint_ne_leftEndpoint (A' := A') hed)
@@ -1101,7 +1101,7 @@ theorem disjoint_leftOpenSpoke_rightOpenSpoke {d : K.Edge}
   by_cases hv : K.edgeFirstUsed e = K.edgeSecondUsed d
   · have hp : K.edgeFirstPoint e = K.edgeSecondPoint d := by
       rw [← K.vertexPoint_edgeFirstUsed e, ← K.vertexPoint_edgeSecondUsed d, hv]
-    simpa [leftOpenSpoke, leftSpoke, rightOpenSpoke, rightSpoke, hp, segment_symm] using
+    simpa only [leftOpenSpoke, leftSpoke, hp, rightOpenSpoke, rightSpoke, segment_symm] using
       disjoint_radial_segments_away_center D.radius_pos A.leftEndpoint_on_sphere
         (by simpa only [hp] using A'.rightEndpoint_on_sphere)
         (A.leftEndpoint_ne_rightEndpoint (A' := A') hed)
@@ -1119,7 +1119,7 @@ theorem disjoint_rightOpenSpoke_leftOpenSpoke {d : K.Edge}
   by_cases hv : K.edgeSecondUsed e = K.edgeFirstUsed d
   · have hp : K.edgeSecondPoint e = K.edgeFirstPoint d := by
       rw [← K.vertexPoint_edgeSecondUsed e, ← K.vertexPoint_edgeFirstUsed d, hv]
-    simpa [rightOpenSpoke, rightSpoke, leftOpenSpoke, leftSpoke, hp, segment_symm] using
+    simpa only [rightOpenSpoke, rightSpoke, hp, segment_symm, leftOpenSpoke, leftSpoke] using
       disjoint_radial_segments_away_center D.radius_pos A.rightEndpoint_on_sphere
         (by simpa only [hp] using A'.leftEndpoint_on_sphere)
         (A.rightEndpoint_ne_leftEndpoint (A' := A') hed)
@@ -1137,7 +1137,7 @@ theorem disjoint_rightOpenSpoke_rightOpenSpoke {d : K.Edge}
   by_cases hv : K.edgeSecondUsed e = K.edgeSecondUsed d
   · have hp : K.edgeSecondPoint e = K.edgeSecondPoint d := by
       rw [← K.vertexPoint_edgeSecondUsed e, ← K.vertexPoint_edgeSecondUsed d, hv]
-    simpa [rightOpenSpoke, rightSpoke, hp, segment_symm] using
+    simpa only [rightOpenSpoke, rightSpoke, hp, segment_symm] using
       disjoint_radial_segments_away_center D.radius_pos A.rightEndpoint_on_sphere
         (by simpa only [hp] using A'.rightEndpoint_on_sphere)
         (A.rightEndpoint_ne_rightEndpoint (A' := A') hed)
@@ -1219,12 +1219,12 @@ theorem vertex_mem_completeCarrier
   rcases hv with hv | hv
   · have hp : K.vertexPoint v = K.edgeFirstPoint e := by
       apply Subtype.ext
-      simp [vertexPoint, edgeFirstPoint, edgeVertexPoint, hv]
+      simp only [vertexPoint, hv, edgeFirstPoint, edgeVertexPoint]
     rw [hp]
     exact Or.inl (Or.inl (left_mem_segment ℝ _ _))
   · have hp : K.vertexPoint v = K.edgeSecondPoint e := by
       apply Subtype.ext
-      simp [vertexPoint, edgeSecondPoint, edgeVertexPoint, hv]
+      simp only [vertexPoint, hv, edgeSecondPoint, edgeVertexPoint]
     rw [hp]
     exact Or.inr (right_mem_segment ℝ _ _)
 
@@ -1244,10 +1244,12 @@ theorem exists_shared_vertex_of_mem_completeCarriers {d : K.Edge}
     push Not at hn
     have hxInt : x ∈ A.interiorCarrier := by
       rw [← A.completeCarrier_sdiff_endpoints]
-      exact ⟨hx, by simp [hn.1, hn.2.1]⟩
+      exact ⟨hx, by simp only [Set.mem_insert_iff, hn.1, Set.mem_singleton_iff, hn.2.1, or_self,
+        not_false_eq_true]⟩
     have hxInt' : x ∈ A'.interiorCarrier := by
       rw [← A'.completeCarrier_sdiff_endpoints]
-      exact ⟨hx', by simp [hn.2.2.1, hn.2.2.2]⟩
+      exact ⟨hx', by simp only [Set.mem_insert_iff, hn.2.2.1, Set.mem_singleton_iff, hn.2.2.2,
+        or_self, not_false_eq_true]⟩
     exact Set.disjoint_left.mp (A.disjoint_interiorCarrier (A' := A') hed)
       hxInt hxInt'
   rcases hend with hfirst | hsecond | hfirst' | hsecond'
@@ -1255,7 +1257,8 @@ theorem exists_shared_vertex_of_mem_completeCarriers {d : K.Edge}
     have hvd : v.1 ∈ d.1 := by
       by_contra hvd
       exact Set.disjoint_left.mp (A'.completeCarrier_avoids_nonincident v hvd)
-        (by simpa [v, K.vertexPoint_edgeFirstUsed e, hfirst] using
+        (by simpa only [K.vertexPoint_edgeFirstUsed e, hfirst, Metric.mem_closedBall, dist_self,
+          v] using
           (Metric.mem_closedBall_self D.radius_pos.le :
             h (K.edgeFirstPoint e) ∈ Metric.closedBall (h (K.edgeFirstPoint e)) D.radius))
         hx'
@@ -1265,7 +1268,8 @@ theorem exists_shared_vertex_of_mem_completeCarriers {d : K.Edge}
     have hvd : v.1 ∈ d.1 := by
       by_contra hvd
       exact Set.disjoint_left.mp (A'.completeCarrier_avoids_nonincident v hvd)
-        (by simpa [v, K.vertexPoint_edgeSecondUsed e, hsecond] using
+        (by simpa only [K.vertexPoint_edgeSecondUsed e, hsecond, Metric.mem_closedBall, dist_self,
+          v] using
           (Metric.mem_closedBall_self D.radius_pos.le :
             h (K.edgeSecondPoint e) ∈ Metric.closedBall (h (K.edgeSecondPoint e)) D.radius))
         hx'
@@ -1275,7 +1279,8 @@ theorem exists_shared_vertex_of_mem_completeCarriers {d : K.Edge}
     have hve : v.1 ∈ e.1 := by
       by_contra hve
       exact Set.disjoint_left.mp (A.completeCarrier_avoids_nonincident v hve)
-        (by simpa [v, K.vertexPoint_edgeFirstUsed d, hfirst'] using
+        (by simpa only [K.vertexPoint_edgeFirstUsed d, hfirst', Metric.mem_closedBall, dist_self,
+          v] using
           (Metric.mem_closedBall_self D.radius_pos.le :
             h (K.edgeFirstPoint d) ∈ Metric.closedBall (h (K.edgeFirstPoint d)) D.radius))
         hx
@@ -1285,7 +1290,8 @@ theorem exists_shared_vertex_of_mem_completeCarriers {d : K.Edge}
     have hve : v.1 ∈ e.1 := by
       by_contra hve
       exact Set.disjoint_left.mp (A.completeCarrier_avoids_nonincident v hve)
-        (by simpa [v, K.vertexPoint_edgeSecondUsed d, hsecond'] using
+        (by simpa only [K.vertexPoint_edgeSecondUsed d, hsecond', Metric.mem_closedBall, dist_self,
+          v] using
           (Metric.mem_closedBall_self D.radius_pos.le :
             h (K.edgeSecondPoint d) ∈ Metric.closedBall (h (K.edgeSecondPoint d)) D.radius))
         hx
@@ -1364,16 +1370,20 @@ theorem edgeParameter_mem_open_of_not_vertex (e : K.Edge) (x : K.realization)
   constructor
   · apply lt_of_le_of_ne hr.1
     intro heq
-    have hr0 : r = ⟨0, by simp⟩ := Subtype.ext heq.symm
-    change K.edgeParameter e x hx = ⟨0, by simp⟩ at hr0
+    have hr0 : r = ⟨0, by simp only [Set.mem_Icc, Std.le_refl, zero_le_one,
+      and_self]⟩ := Subtype.ext heq.symm
+    change K.edgeParameter e x hx = ⟨0, by simp only [Set.mem_Icc, Std.le_refl, zero_le_one,
+      and_self]⟩ at hr0
     apply hnv
     refine ⟨K.edgeFirstUsed e, ?_⟩
     rw [← K.edgePath_edgeParameter e x hx, hr0, K.edgePath_zero,
       K.vertexPoint_edgeFirstUsed e]
   · apply lt_of_le_of_ne hr.2
     intro heq
-    have hr1 : r = ⟨1, by simp⟩ := Subtype.ext heq
-    change K.edgeParameter e x hx = ⟨1, by simp⟩ at hr1
+    have hr1 : r = ⟨1, by simp only [Set.mem_Icc, zero_le_one, Std.le_refl,
+      and_self]⟩ := Subtype.ext heq
+    change K.edgeParameter e x hx = ⟨1, by simp only [Set.mem_Icc, zero_le_one, Std.le_refl,
+      and_self]⟩ at hr1
     apply hnv
     refine ⟨K.edgeSecondUsed e, ?_⟩
     rw [← K.edgePath_edgeParameter e x hx, hr1, K.edgePath_one,
@@ -1442,7 +1452,8 @@ private theorem edgeReplacementMap_eq_vertex {h : K.realization → Plane}
       rw [← K.vertexPoint_edgeFirstUsed e]
       congr 1
       exact Subtype.ext hfirst
-    have hparam : K.edgeParameter e (K.vertexPoint v) hx = ⟨0, by simp⟩ := by
+    have hparam : K.edgeParameter e (K.vertexPoint v) hx = ⟨0, by simp only [Set.mem_Icc,
+      Std.le_refl, zero_le_one, and_self]⟩ := by
       apply K.injective_edgePath e
       rw [K.edgePath_edgeParameter, K.edgePath_zero, ← hp]
     rw [edgeReplacementMap, ← K.edgeParameter_eq_secondCoordinate e (K.vertexPoint v) hx,
@@ -1453,7 +1464,8 @@ private theorem edgeReplacementMap_eq_vertex {h : K.realization → Plane}
       rw [← K.vertexPoint_edgeSecondUsed e]
       congr 1
       exact Subtype.ext hsecond
-    have hparam : K.edgeParameter e (K.vertexPoint v) hx = ⟨1, by simp⟩ := by
+    have hparam : K.edgeParameter e (K.vertexPoint v) hx = ⟨1, by simp only [Set.mem_Icc,
+      zero_le_one, Std.le_refl, and_self]⟩ := by
       apply K.injective_edgePath e
       rw [K.edgePath_edgeParameter, K.edgePath_one, ← hp]
     rw [edgeReplacementMap, ← K.edgeParameter_eq_secondCoordinate e (K.vertexPoint v) hx,
@@ -1676,10 +1688,10 @@ theorem graphReplacementMap_dist_lt_two_mul
   rw [K.graphReplacementMap_eq_edge hcont hinj D C e x hxe]
   have hfirst : K.edgeFirstPoint e ∈ K.faceCarrier e.1 := by
     rw [← K.range_edgePath e]
-    exact ⟨⟨0, by simp⟩, K.edgePath_zero e⟩
+    exact ⟨⟨0, by simp only [Set.mem_Icc, Std.le_refl, zero_le_one, and_self]⟩, K.edgePath_zero e⟩
   have hsecond : K.edgeSecondPoint e ∈ K.faceCarrier e.1 := by
     rw [← K.range_edgePath e]
-    exact ⟨⟨1, by simp⟩, K.edgePath_one e⟩
+    exact ⟨⟨1, by simp only [Set.mem_Icc, zero_le_one, Std.le_refl, and_self]⟩, K.edgePath_one e⟩
   rcases hyCarrier with (hyLeft | hyMiddle) | hyRight
   · have hyBall := A.leftSpoke_subset_disk hyLeft
     calc
@@ -1688,7 +1700,7 @@ theorem graphReplacementMap_dist_lt_two_mul
             dist (h (K.edgeFirstPoint e)) (h x) := dist_triangle _ _ _
       _ < η + η := add_lt_add
         ((Metric.mem_closedBall.mp hyBall).trans_lt hD)
-        (by simpa [dist_comm] using hsmall e x hxe _ hfirst)
+        (by simpa only [dist_comm] using hsmall e x hxe _ hfirst)
       _ = 2 * η := by ring
   · have hyTube := A.resolvedCarrier_subset_tube
         (A.trimmedCarrier_subset_resolvedCarrier hyMiddle)
@@ -1705,7 +1717,7 @@ theorem graphReplacementMap_dist_lt_two_mul
         dist_triangle _ _ _
       _ < η + η := add_lt_add
         (hdist.trans (C.radius_lt_vertex.trans hD))
-        (by rw [hz]; simpa [dist_comm] using hsmall e x hxe _ hrCarrier)
+        (by rw [hz]; simpa only [dist_comm] using hsmall e x hxe _ hrCarrier)
       _ = 2 * η := by ring
   · have hyBall := A.rightSpoke_subset_disk hyRight
     calc
@@ -1714,7 +1726,7 @@ theorem graphReplacementMap_dist_lt_two_mul
             dist (h (K.edgeSecondPoint e)) (h x) := dist_triangle _ _ _
       _ < η + η := add_lt_add
         ((Metric.mem_closedBall.mp hyBall).trans_lt hD)
-        (by simpa [dist_comm] using hsmall e x hxe _ hsecond)
+        (by simpa only [dist_comm] using hsmall e x hxe _ hsecond)
       _ = 2 * η := by ring
 
 end IntrinsicTwoComplex

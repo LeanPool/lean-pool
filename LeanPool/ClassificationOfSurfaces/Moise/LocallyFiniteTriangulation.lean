@@ -65,7 +65,7 @@ theorem stdSimplex_map_subtypeVal_eq_extendFaceCoordinates
       · exact fun h ↦ Subtype.ext h
       · exact fun h ↦ congrArg Subtype.val h
     rw [hfilter]
-    simp [w]
+    simp only [Finset.sum_singleton, w]
   · rw [extendFaceCoordinates_of_notMem t x hv]
     simp only [stdSimplex.map_coe, FunOnFinite.linearMap_apply_apply]
     have hempty : Finset.univ.filter (fun w : {w // w ∈ t} ↦ w.1 = v) = ∅ := by
@@ -74,7 +74,7 @@ theorem stdSimplex_map_subtypeVal_eq_extendFaceCoordinates
         iff_false]
       exact fun hw ↦ hv (hw ▸ w.2)
     rw [hempty]
-    simp
+    simp only [Finset.sum_empty]
 
 theorem extendFaceCoordinates_map_subset
     {V : Type*} [DecidableEq V] {e t : Finset V}
@@ -103,7 +103,7 @@ theorem extendFaceCoordinates_map_subset
         subst q
         rfl
     rw [hfilter]
-    simp [w]
+    simp only [Finset.sum_singleton, w]
   · rw [extendFaceCoordinates_of_notMem e x hve]
     by_cases hvt : v ∈ t
     · rw [extendFaceCoordinates_of_mem t _ hvt]
@@ -117,9 +117,9 @@ theorem extendFaceCoordinates_map_subset
         intro h
         apply hve
         have hval : q.1 = v := congrArg (fun z : {z // z ∈ t} ↦ z.1) h
-        simpa [hval] using q.2
+        simpa only [hval] using q.2
       rw [hempty]
-      simp
+      simp only [Finset.sum_empty]
     · rw [extendFaceCoordinates_of_notMem t _ hvt]
 
 /-! ## Relabeling a finite face along an embedding -/
@@ -217,7 +217,7 @@ theorem relabelFaceSimplex_extended_apply
           rfl,
           (finsetMapSubtypeEquiv e t).symm_apply_apply]
     rw [hfilter]
-    simp [q]
+    simp only [Finset.sum_singleton, q]
   · have hea : e a ∉ t.map e := by
       intro hea
       obtain ⟨b, hb, hba⟩ := Finset.mem_map.mp hea
@@ -373,7 +373,7 @@ theorem relabelUnivSimplex_apply
       subst z
       exact hea
   rw [hfilter]
-  simp [ea]
+  simp only [Finset.sum_singleton, ea]
 
 /-- An injective vertex map preserves the coordinate at each source vertex. -/
 theorem stdSimplex_map_embedding_apply
@@ -389,7 +389,7 @@ theorem stdSimplex_map_embedding_apply
       Finset.mem_singleton]
     exact e.injective.eq_iff
   rw [hfilter]
-  simp
+  simp only [Finset.sum_singleton]
 
 /-- An injective vertex map has zero coordinate away from its image. -/
 theorem stdSimplex_map_embedding_apply_of_notMem_range
@@ -406,7 +406,7 @@ theorem stdSimplex_map_embedding_apply_of_notMem_range
       Finset.notMem_empty, iff_false]
     exact fun hq ↦ hb ⟨q, hq⟩
   rw [hfilter]
-  simp
+  simp only [Finset.sum_empty]
 
 /-- Relabel a finite face family along an embedding of its vertex type. -/
 def relabelFaceFamily
@@ -1252,7 +1252,8 @@ theorem range_edgeSimplexPath (e : K.Edge) :
               change x a + x b =
                 (Finset.univ : Finset {v // v ∈ e.1}).sum (fun w => x w)
               rw [huniv]
-              simp [hab]
+              simp only [Finset.mem_singleton, hab, not_false_eq_true, Finset.sum_insert,
+                Finset.sum_singleton]
         _ = 1 := x.2.2
     change 1 - x ⟨K.edgeSecond e, K.edgeSecond_mem e⟩ =
       x ⟨K.edgeFirst e, K.edgeFirst_mem e⟩
@@ -1309,7 +1310,8 @@ theorem edgeCarrier_inter_subset_sharedVertices {e d : K.Edge} (hed : e ≠ d) :
     have hxzero : ∀ v : {v // v ∈ e.1}, x v = 0 := by
       intro v
       exact le_antisymm (h v) (x.2.1 v)
-    have hsum : ∑ v, x v = 0 := by simp [hxzero]
+    have hsum : ∑ v, x v = 0 := by simp only [Finset.univ_eq_attach, hxzero,
+      Finset.sum_const_zero]
     have hone : (1 : ℝ) = 0 := x.2.2.symm.trans hsum
     norm_num at hone
   obtain ⟨v, hvpos⟩ := hex
@@ -1333,7 +1335,9 @@ theorem edgeCarrier_inter_subset_sharedVertices {e d : K.Edge} (hed : e ≠ d) :
       intro h
       exact hwv (Subtype.ext h.symm)
     let q : Finset K.Vertex := {v.1, w.1}
-    have hqcard : q.card = 2 := by simp [q, hvw]
+    have hqcard : q.card = 2 := by simp only [Finset.mem_singleton, hvw, not_false_eq_true,
+      Finset.card_insert_of_notMem, Finset.card_singleton,
+    Nat.reduceAdd, q]
     have hqe : q ⊆ e.1 := by
       intro z hz
       simp only [q, Finset.mem_insert, Finset.mem_singleton] at hz
@@ -1359,16 +1363,17 @@ theorem edgeCarrier_inter_subset_sharedVertices {e d : K.Edge} (hed : e ≠ d) :
         rw [Finset.sum_eq_single v]
         · intro w _ hw
           exact hxzero w hw
-        · simp
+        · simp only [Finset.univ_eq_attach, Finset.mem_attach, not_true_eq_false,
+          IsEmpty.forall_iff]
       _ = 1 := x.2.2
   have hxvertex : x = stdSimplex.vertex v := by
     apply stdSimplex.ext
     funext w
     by_cases hwv : w = v
     · subst w
-      simp [hxv]
+      simp only [hxv, stdSimplex.vertex_coe, Pi.single_eq_same]
     · rw [hxzero w hwv]
-      simp [hwv]
+      simp only [stdSimplex.vertex_coe, ne_eq, hwv, not_false_eq_true, Pi.single_eq_of_ne]
   refine ⟨v.1, v.2, hvd, ?_⟩
   rw [← hxp, hxvertex]
   exact K.edgeMap_vertex_eq_vertexPoint e v
@@ -1423,7 +1428,8 @@ theorem edgeSimplexPath_zero (e : K.Edge) :
   let b : {v // v ∈ e.1} := ⟨K.edgeSecond e, K.edgeSecond_mem e⟩
   change AffineMap.lineMap (stdSimplex.vertex a : {v // v ∈ e.1} → ℝ)
     (stdSimplex.vertex b : {v // v ∈ e.1} → ℝ) 0 = stdSimplex.vertex a
-  simp [AffineMap.lineMap_apply_module]
+  simp only [stdSimplex.vertex_coe, AffineMap.lineMap_apply_module, sub_zero, one_smul, zero_smul,
+    add_zero]
 
 theorem edgeSimplexPath_one (e : K.Edge) :
     K.edgeSimplexPath e ⟨1, by simp⟩ =
@@ -1433,7 +1439,8 @@ theorem edgeSimplexPath_one (e : K.Edge) :
   let b : {v // v ∈ e.1} := ⟨K.edgeSecond e, K.edgeSecond_mem e⟩
   change AffineMap.lineMap (stdSimplex.vertex a : {v // v ∈ e.1} → ℝ)
     (stdSimplex.vertex b : {v // v ∈ e.1} → ℝ) 1 = stdSimplex.vertex b
-  simp [AffineMap.lineMap_apply_module]
+  simp only [stdSimplex.vertex_coe, AffineMap.lineMap_apply_module, sub_self, zero_smul, one_smul,
+    zero_add]
 
 theorem edgePath_zero (e : K.Edge) :
     K.edgePath e ⟨0, by simp⟩ = K.vertexPoint (K.edgeFirst e) := by
@@ -1751,7 +1758,7 @@ theorem range_compactEval [CompactSpace S] : Set.range K.compactEval = K.support
           iff_false]
         exact fun hw ↦ hv (hw ▸ w.2)
       rw [hempty]
-      simp
+      simp only [Finset.sum_empty]
     let x : K.compactIntrinsic.realization :=
       ⟨x0, x0.2, ⟨K.faceVertices f, K.compactIntrinsic_face_mem f, hxSupport⟩⟩
     refine ⟨x, ?_⟩
@@ -1767,7 +1774,7 @@ theorem range_compactEval [CompactSpace S] : Set.range K.compactEval = K.support
       simp only [Finset.mem_filter, Finset.mem_univ, true_and, Finset.mem_singleton]
       exact Subtype.ext_iff.symm
     rw [hfilter]
-    simp
+    simp only [Finset.sum_singleton]
 
 /-- A locally finite triangle complex covering a compact Hausdorff space is an honest finite
 geometric triangulation. -/

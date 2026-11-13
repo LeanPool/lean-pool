@@ -246,7 +246,7 @@ theorem convexHull_inter_of_affine_separation (s t u : Finset Plane)
     rw [← htzero]
     apply Finset.filter_congr
     intro x hx
-    simp [g]
+    simp only [AffineMap.coe_neg, Pi.neg_apply, neg_eq_zero, g]
   have hsface := convexHull_inter_affine_zero_of_nonneg s f hs
   rw [hszero] at hsface
   have htface := convexHull_inter_affine_zero_of_nonneg t g hg
@@ -628,10 +628,16 @@ theorem mem_convexHull_range_fin3_of_weights (p : Fin 3 → Plane) (x : Plane)
     x ∈ convexHull ℝ (Set.range p) := by
   rw [convexHull_range_eq_exists_affineCombination]
   refine ⟨Finset.univ, w, fun i _ => hw i, ?_, ?_⟩
-  · simpa [Fin.sum_univ_succ, add_assoc] using hsum
+  · simpa only [Fin.sum_univ_succ, Fin.isValue, Fin.succ_zero_eq_one, Finset.univ_unique,
+    Fin.default_eq_zero,
+    Finset.sum_singleton, Fin.succ_one_eq_two, add_assoc] using hsum
   · rw [Finset.affineCombination_eq_linear_combination]
-    · simpa [Fin.sum_univ_succ, add_assoc] using hx
-    · simpa [Fin.sum_univ_succ, add_assoc] using hsum
+    · simpa only [Fin.sum_univ_succ, Fin.isValue, Fin.succ_zero_eq_one, Finset.univ_unique,
+      Fin.default_eq_zero,
+    Finset.sum_singleton, Fin.succ_one_eq_two, add_assoc] using hx
+    · simpa only [Fin.sum_univ_succ, Fin.isValue, Fin.succ_zero_eq_one, Finset.univ_unique,
+      Fin.default_eq_zero,
+    Finset.sum_singleton, Fin.succ_one_eq_two, add_assoc] using hsum
 
 /-- Cartesian membership criterion for the standard closed triangle. -/
 theorem mem_standardTriangle_iff (x : Plane) :
@@ -724,7 +730,7 @@ theorem referenceSplit_union (a b : ℝ) (ha0 : 0 < a) (ha1 : a < 1)
           exact div_nonneg hx0 ha0.le
         · simp only [Fin.isValue, Fin.reduceFinMk, Matrix.cons_val]
           exact div_nonneg hx1 hb0.le
-      · simp
+      · simp only [Fin.isValue, Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val]
         ring
       · ext i
         fin_cases i <;> simp [planePoint] <;> field_simp
@@ -740,7 +746,8 @@ theorem referenceSplit_union (a b : ℝ) (ha0 : 0 < a) (ha1 : a < 1)
           fin_cases i
           · simp only [Fin.isValue, Fin.zero_eta, Matrix.cons_val_zero]
             exact div_nonneg hdiag (by linarith)
-          · simpa using hx1
+          · simpa only [Fin.isValue, Fin.mk_one, Matrix.cons_val_one,
+            Matrix.cons_val_zero] using hx1
           · simp only [Fin.isValue, Fin.reduceFinMk, Matrix.cons_val]
             exact div_nonneg (by linarith) (by linarith)
         · simp only [Fin.isValue, Matrix.cons_val_zero, Matrix.cons_val_one,
@@ -957,10 +964,11 @@ theorem referenceEdgeSplit_union (c : ℝ) (hc0 : 0 < c) (hc1 : c < 1) :
             (div_le_iff₀ hc0).mpr (by nlinarith [hd])
           have : x 0 / c + x 1 ≤ 1 := by linarith
           linarith
-        · simpa using hx1
+        · simpa only [Fin.isValue, Fin.mk_one, Matrix.cons_val_one,
+          Matrix.cons_val_zero] using hx1
         · simp only [Fin.isValue, Fin.reduceFinMk, Matrix.cons_val]
           exact div_nonneg hx0 hc0.le
-      · simp
+      · simp only [Fin.isValue, Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val]
         ring
       · ext i
         fin_cases i <;> simp [planePoint] ; field_simp [hc0.ne']
@@ -975,10 +983,11 @@ theorem referenceEdgeSplit_union (c : ℝ) (hc0 : 0 < c) (hc1 : c < 1) :
         fin_cases i
         · simp only [Fin.isValue, Fin.zero_eta, Matrix.cons_val_zero]
           exact div_nonneg hd' (by linarith)
-        · simpa using hx1
+        · simpa only [Fin.isValue, Fin.mk_one, Matrix.cons_val_one,
+          Matrix.cons_val_zero] using hx1
         · simp only [Fin.isValue, Fin.reduceFinMk, Matrix.cons_val]
           exact div_nonneg (by linarith) (by linarith)
-      · simp
+      · simp only [Fin.isValue, Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val]
         field_simp [h1c]
         ring
       · ext i
@@ -1071,7 +1080,7 @@ theorem neg (f : Plane →ᵃ[ℝ] ℝ) (p q : Plane) :
   by_cases h : f p - f q = 0
   · have hpq : f p = f q := sub_eq_zero.mp h
     rw [hpq]
-    simp
+    simp only [sub_self, div_zero]
   · have hneg : -f p + f q ≠ 0 := by
       intro hneg
       apply h
@@ -1449,14 +1458,23 @@ theorem strictNegativeLocalMesh_support (t : M.Triangle)
     (M.strictNegativeLocalMesh f t h0 h1 h2).toPlaneComplex.support =
       convexHull ℝ (M.position '' (t.1 : Set M.Vertex)) := by
   rw [show M.strictNegativeLocalMesh f t h0 h1 h2 =
-      (M.strictLocalMesh (-f) t (by simpa) (by simpa) (by simpa)).reindex
+      (M.strictLocalMesh (-f) t (by simpa only [Fin.isValue, AffineMap.coe_neg, Pi.neg_apply,
+        Left.neg_pos_iff]) (by simpa only [Fin.isValue, AffineMap.coe_neg,
+        Pi.neg_apply, Left.neg_neg_iff]) (by simpa only [Fin.isValue,
+        AffineMap.coe_neg, Pi.neg_apply, Left.neg_neg_iff])).reindex
         ((↑) : M.RefinedVertex f → Plane) Subtype.val_injective
         (M.refinedVertexNegEquiv f).toEmbedding (fun _ => rfl) by rfl]
   calc
-    _ = (M.strictLocalMesh (-f) t (by simpa) (by simpa) (by simpa)).toPlaneComplex.support := by
+    _ = (M.strictLocalMesh (-f) t (by simpa only [Fin.isValue, AffineMap.coe_neg, Pi.neg_apply,
+      Left.neg_pos_iff]) (by simpa only [Fin.isValue, AffineMap.coe_neg,
+      Pi.neg_apply, Left.neg_neg_iff]) (by simpa only [Fin.isValue,
+      AffineMap.coe_neg, Pi.neg_apply, Left.neg_neg_iff])).toPlaneComplex.support := by
       apply TriangleMesh.reindex_support
     _ = convexHull ℝ (M.position '' (t.1 : Set M.Vertex)) :=
-      M.strictLocalMesh_support (-f) t (by simpa) (by simpa) (by simpa)
+      M.strictLocalMesh_support (-f) t (by simpa only [Fin.isValue, AffineMap.coe_neg,
+        Pi.neg_apply, Left.neg_pos_iff]) (by simpa only [Fin.isValue, AffineMap.coe_neg,
+        Pi.neg_apply, Left.neg_neg_iff]) (by simpa only [Fin.isValue,
+        AffineMap.coe_neg, Pi.neg_apply, Left.neg_neg_iff])
 
 /-! The same strict model for an arbitrary ordering of three vertices. -/
 
@@ -1571,14 +1589,23 @@ theorem strictNegativeMeshFor_support (v : Fin 3 → M.Vertex)
     (M.strictNegativeMeshFor f v hv h0 h1 h2).toPlaneComplex.support =
       convexHull ℝ (Set.range (M.position ∘ v)) := by
   rw [show M.strictNegativeMeshFor f v hv h0 h1 h2 =
-      (M.strictMeshFor (-f) v hv (by simpa) (by simpa) (by simpa)).reindex
+      (M.strictMeshFor (-f) v hv (by simpa only [Fin.isValue, AffineMap.coe_neg, Pi.neg_apply,
+        Left.neg_pos_iff]) (by simpa only [Fin.isValue, AffineMap.coe_neg,
+        Pi.neg_apply, Left.neg_neg_iff]) (by simpa only [Fin.isValue,
+        AffineMap.coe_neg, Pi.neg_apply, Left.neg_neg_iff])).reindex
         ((↑) : M.RefinedVertex f → Plane) Subtype.val_injective
         (M.refinedVertexNegEquiv f).toEmbedding (fun _ => rfl) by rfl]
   calc
-    _ = (M.strictMeshFor (-f) v hv (by simpa) (by simpa) (by simpa)).toPlaneComplex.support := by
+    _ = (M.strictMeshFor (-f) v hv (by simpa only [Fin.isValue, AffineMap.coe_neg, Pi.neg_apply,
+      Left.neg_pos_iff]) (by simpa only [Fin.isValue, AffineMap.coe_neg,
+      Pi.neg_apply, Left.neg_neg_iff]) (by simpa only [Fin.isValue,
+      AffineMap.coe_neg, Pi.neg_apply, Left.neg_neg_iff])).toPlaneComplex.support := by
       apply TriangleMesh.reindex_support
     _ = convexHull ℝ (Set.range (M.position ∘ v)) :=
-      M.strictMeshFor_support (-f) v hv (by simpa) (by simpa) (by simpa)
+      M.strictMeshFor_support (-f) v hv (by simpa only [Fin.isValue, AffineMap.coe_neg,
+        Pi.neg_apply, Left.neg_pos_iff]) (by simpa only [Fin.isValue, AffineMap.coe_neg,
+        Pi.neg_apply, Left.neg_neg_iff]) (by simpa only [Fin.isValue,
+        AffineMap.coe_neg, Pi.neg_apply, Left.neg_neg_iff])
 
 /-! The two-triangle model when vertex `2` lies on the cutting line. -/
 
@@ -1712,14 +1739,20 @@ theorem edgeNegativeMeshFor_support (v : Fin 3 → M.Vertex)
     (M.edgeNegativeMeshFor f v hv h0 h1).toPlaneComplex.support =
       convexHull ℝ (Set.range (M.position ∘ v)) := by
   rw [show M.edgeNegativeMeshFor f v hv h0 h1 =
-      (M.edgeMeshFor (-f) v hv (by simpa) (by simpa)).reindex
+      (M.edgeMeshFor (-f) v hv (by simpa only [Fin.isValue, AffineMap.coe_neg, Pi.neg_apply,
+        Left.neg_pos_iff]) (by simpa only [Fin.isValue, AffineMap.coe_neg,
+        Pi.neg_apply, Left.neg_neg_iff])).reindex
         ((↑) : M.RefinedVertex f → Plane) Subtype.val_injective
         (M.refinedVertexNegEquiv f).toEmbedding (fun _ => rfl) by rfl]
   calc
-    _ = (M.edgeMeshFor (-f) v hv (by simpa) (by simpa)).toPlaneComplex.support := by
+    _ = (M.edgeMeshFor (-f) v hv (by simpa only [Fin.isValue, AffineMap.coe_neg, Pi.neg_apply,
+      Left.neg_pos_iff]) (by simpa only [Fin.isValue, AffineMap.coe_neg,
+      Pi.neg_apply, Left.neg_neg_iff])).toPlaneComplex.support := by
       apply TriangleMesh.reindex_support
     _ = convexHull ℝ (Set.range (M.position ∘ v)) :=
-      M.edgeMeshFor_support (-f) v hv (by simpa) (by simpa)
+      M.edgeMeshFor_support (-f) v hv (by simpa only [Fin.isValue, AffineMap.coe_neg, Pi.neg_apply,
+        Left.neg_pos_iff]) (by simpa only [Fin.isValue, AffineMap.coe_neg,
+        Pi.neg_apply, Left.neg_neg_iff])
 
 /-! ## Choosing the local model from the signs -/
 
@@ -1863,10 +1896,10 @@ theorem IsMonochromatic.of_neg {N : TriangleMesh}
   rcases hN s hs with h | h
   · right
     intro v hv
-    simpa using h v hv
+    simpa only [AffineMap.coe_neg, Pi.neg_apply, Left.nonneg_neg_iff] using h v hv
   · left
     intro v hv
-    simpa using h v hv
+    simpa only [AffineMap.coe_neg, Pi.neg_apply, Left.neg_nonpos_iff] using h v hv
 
 theorem IsMonochromatic.reindex {N : TriangleMesh} {V' : Type} [Fintype V']
     [DecidableEq V'] (position' : V' → Plane) (hposition_injective : Function.Injective position')
@@ -2064,18 +2097,24 @@ theorem strictMeshFor_triangles (v : Fin 3 → M.Vertex)
     (M.strictMeshFor f v hv h0 h1 h2).triangles =
       strictPatternTriangles (M.strictVertices f v h0 h1 h2) := by
   ext s
-  simp [strictMeshFor, strictPatternTriangles, referenceSplitMesh,
-    referenceSplitTriangles, TriangleMesh.reindex, TriangleMesh.mapAffineEquiv,
-    strictVerticesEmbedding]
+  simp only [strictMeshFor, reindex, Fin.isValue, referenceSplitMesh, referenceSplitTriangles,
+    mapAffineEquiv,
+    strictVerticesEmbedding, Finset.image_insert, Finset.map_insert,
+    Function.Embedding.coeFn_mk, Finset.map_singleton,
+    Finset.image_singleton,
+    strictPatternTriangles]
 
 theorem edgeMeshFor_triangles (v : Fin 3 → M.Vertex)
     (hv : AffineIndependent ℝ (M.position ∘ v))
     (h0 : 0 < f (M.position (v 0))) (h1 : f (M.position (v 1)) < 0) :
     (M.edgeMeshFor f v hv h0 h1).triangles =
       edgePatternTriangles (M.edgeVertices f v h0 h1) := by
-  simp [edgeMeshFor, edgePatternTriangles, referenceEdgeSplitMesh,
-    referenceEdgeSplitTriangles, TriangleMesh.reindex, TriangleMesh.mapAffineEquiv,
-    edgeVerticesEmbedding]
+  simp only [edgeMeshFor, reindex, Fin.isValue, referenceEdgeSplitMesh,
+    referenceEdgeSplitTriangles,
+    mapAffineEquiv, edgeVerticesEmbedding, Finset.image_insert,
+    Finset.map_insert, Function.Embedding.coeFn_mk,
+    Finset.map_singleton,
+    Finset.image_singleton, edgePatternTriangles]
 
 theorem strictNegativeMeshFor_monochromatic (v : Fin 3 → M.Vertex)
     (hv : AffineIndependent ℝ (M.position ∘ v))
@@ -2427,7 +2466,8 @@ theorem localRefinementTriangles_monochromatic (t : M.Triangle) :
       · exact M.localCutVertex_apply_eq_zero f t 0 1 h01
       · exact M.localCutVertex_apply_eq_zero f t 0 2 h02
   · have h10 : f (M.position (M.orderedVertex t 1)) *
-        f (M.position (M.orderedVertex t 0)) < 0 := by simpa [mul_comm] using h01
+        f (M.position (M.orderedVertex t 0)) < 0 := by simpa only [Fin.isValue, mul_comm,
+          Function.comp_apply] using h01
     rcases signs_of_two_crossings h10 h12 with h | h
     · apply M.strictPattern_monochromatic_positive
       · exact h.1.le
@@ -2454,9 +2494,11 @@ theorem localRefinementTriangles_monochromatic (t : M.Triangle) :
       · exact hz
       · exact M.localCutVertex_apply_eq_zero f t 0 1 h01
   · have h20 : f (M.position (M.orderedVertex t 2)) *
-        f (M.position (M.orderedVertex t 0)) < 0 := by simpa [mul_comm] using h02'
+        f (M.position (M.orderedVertex t 0)) < 0 := by simpa only [Fin.isValue, mul_comm,
+          Function.comp_apply] using h02'
     have h21 : f (M.position (M.orderedVertex t 2)) *
-        f (M.position (M.orderedVertex t 1)) < 0 := by simpa [mul_comm] using h12'
+        f (M.position (M.orderedVertex t 1)) < 0 := by simpa only [Fin.isValue, mul_comm,
+          Function.comp_apply] using h12'
     rcases signs_of_two_crossings h20 h21 with h | h
     · apply M.strictPattern_monochromatic_positive
       · exact h.1.le
@@ -2471,7 +2513,8 @@ theorem localRefinementTriangles_monochromatic (t : M.Triangle) :
       · exact M.localCutVertex_apply_eq_zero f t 0 2 h02'
       · exact M.localCutVertex_apply_eq_zero f t 1 2 h12'
   · have h21 : ¬ f (M.position (M.orderedVertex t 2)) *
-        f (M.position (M.orderedVertex t 1)) < 0 := by simpa [mul_comm] using h12'
+        f (M.position (M.orderedVertex t 1)) < 0 := by simpa only [Fin.isValue, mul_comm, not_lt,
+          Function.comp_apply] using h12'
     have hz := third_eq_zero_of_one_crossing h02' h01 h21
     rcases mul_neg_iff.mp h02' with h | h
     · apply M.edgePattern_monochromatic_positive
@@ -2485,11 +2528,14 @@ theorem localRefinementTriangles_monochromatic (t : M.Triangle) :
       · exact hz
       · exact M.localCutVertex_apply_eq_zero f t 0 2 h02'
   · have h21 : f (M.position (M.orderedVertex t 2)) *
-        f (M.position (M.orderedVertex t 1)) < 0 := by simpa [mul_comm] using h12''
+        f (M.position (M.orderedVertex t 1)) < 0 := by simpa only [Fin.isValue, mul_comm,
+          Function.comp_apply] using h12''
     have h10 : ¬ f (M.position (M.orderedVertex t 1)) *
-        f (M.position (M.orderedVertex t 0)) < 0 := by simpa [mul_comm] using h01
+        f (M.position (M.orderedVertex t 0)) < 0 := by simpa only [Fin.isValue, mul_comm, not_lt,
+          Function.comp_apply] using h01
     have h20 : ¬ f (M.position (M.orderedVertex t 2)) *
-        f (M.position (M.orderedVertex t 0)) < 0 := by simpa [mul_comm] using h02'
+        f (M.position (M.orderedVertex t 0)) < 0 := by simpa only [Fin.isValue, mul_comm, not_lt,
+          Function.comp_apply] using h02'
     have hz := third_eq_zero_of_one_crossing h12'' h10 h20
     rcases mul_neg_iff.mp h12'' with h | h
     · apply M.edgePattern_monochromatic_positive
@@ -2627,21 +2673,31 @@ theorem localMeshTriangles_monochromatic (t : M.Triangle) :
   · intro o
     rw [M.strictMeshFor_triangles]
     apply M.strictPattern_monochromatic_positive
-    · simpa [strictVertices, Function.comp_apply] using o.positive.le
-    · simpa [strictVertices, Function.comp_apply] using o.negative_one.le
-    · simpa [strictVertices, Function.comp_apply] using o.negative_two.le
+    · simpa only [strictVertices, Fin.isValue, Function.comp_apply,
+      Matrix.cons_val_zero,
+    oldRefinedVertex_val] using o.positive.le
+    · simpa only [strictVertices, Fin.isValue, Function.comp_apply, Matrix.cons_val_one,
+      Matrix.cons_val_zero,
+    oldRefinedVertex_val] using o.negative_one.le
+    · simpa only [strictVertices, Fin.isValue, Function.comp_apply, Matrix.cons_val,
+      oldRefinedVertex_val] using o.negative_two.le
     · rw [M.strictVertices_f]
-      simp
+      simp only [Nat.succ_eq_add_one, Nat.reduceAdd, Fin.isValue, Function.comp_apply,
+        Matrix.cons_val]
     · rw [M.strictVertices_f]
-      simp
+      simp only [Nat.succ_eq_add_one, Nat.reduceAdd, Fin.isValue, Function.comp_apply,
+        Matrix.cons_val]
   · intro o
     exact M.strictNegativeMeshFor_monochromatic f _ _
       o.negative o.positive_one o.positive_two
   · intro o
     rw [M.edgeMeshFor_triangles]
     apply M.edgePattern_monochromatic_positive
-    · simpa [edgeVertices, Function.comp_apply] using o.positive.le
-    · simpa [edgeVertices, Function.comp_apply] using o.negative.le
+    · simpa only [edgeVertices, Fin.isValue, Function.comp_apply, Matrix.cons_val_zero,
+      oldRefinedVertex_val] using o.positive.le
+    · simpa only [edgeVertices, Fin.isValue, Function.comp_apply, Matrix.cons_val_one,
+      Matrix.cons_val_zero,
+    oldRefinedVertex_val] using o.negative.le
     · rw [M.edgeVertices_f f _ o.positive o.negative o.zero]
       rfl
     · rw [M.edgeVertices_f f _ o.positive o.negative o.zero]
@@ -2902,7 +2958,7 @@ theorem parent_inter_oppositeCoord_zero (t : M.Triangle) (k : Fin 3) :
       rw [← hix]
       change M.oppositeCoord t k (M.position (M.orderedVertex t i)) = 0
       rw [M.oppositeCoord_vertex]
-      simp [Ne.symm hik]
+      simp only [Ne.symm hik, ↓reduceIte]
   · intro x hx
     obtain ⟨i, -, rfl⟩ := Finset.mem_image.mp hx
     change 0 ≤ M.oppositeCoord t k (M.position (M.orderedVertex t i))
@@ -2996,7 +3052,7 @@ theorem exists_oppositeEdgePoints_eq (t : M.Triangle) {e : Finset M.Vertex}
     intro hik
     subst i
     apply hwe
-    simpa [hwk] using hve
+    simpa only [hwk] using hve
 
 /-- An affine functional taking different values at the endpoints of a segment is injective on
 that segment. -/
@@ -3172,8 +3228,8 @@ theorem trace_vertex_eq_endpoint_of_edge_in_line (t : M.Triangle) (k : Fin 3)
   have hzero (j : Fin 3) (hjk : j ≠ k) :
       f (M.position (M.orderedVertex t j)) = 0 := by
     rcases M.orderedVertex_eq_endpoint_of_ne_opposite t k j hedge hjk with hj | hj
-    · simpa [hj] using ha
-    · simpa [hj] using hb
+    · simpa only [hj] using ha
+    · simpa only [hj] using hb
   have hp : ¬ Nonempty (M.PositiveStrictOrdering f t) := by
     rintro ⟨o⟩
     have hne : o.perm 0 ≠ o.perm 1 := o.perm.injective.ne (by decide)
@@ -3252,15 +3308,15 @@ private theorem convexHull_inter_of_opposite_three_point_subsets
   have hCsub : C ⊆ {a, z} := by
     intro x hx
     rcases hCclass x hx with rfl | rfl | rfl
-    · simp
+    · simp only [Finset.mem_insert, Finset.mem_singleton, true_or]
     · exfalso; linarith [hC _ hx]
-    · simp
+    · simp only [Finset.mem_insert, Finset.mem_singleton, or_true]
   have hDsub : D ⊆ {b, z} := by
     intro x hx
     rcases hDclass x hx with rfl | rfl | rfl
     · exfalso; linarith [hD _ hx]
-    · simp
-    · simp
+    · simp only [Finset.mem_insert, Finset.mem_singleton, true_or]
+    · simp only [Finset.mem_insert, Finset.mem_singleton, or_true]
   by_cases hzC : z ∈ C
   · by_cases hzD : z ∈ D
     · have hCzero : (C.image val).filter (fun p ↦ f p = 0) = {(z : Plane)} := by
@@ -3317,13 +3373,14 @@ private theorem convexHull_inter_of_opposite_three_point_subsets
         have hxpair := hDsub hx
         simp only [Finset.mem_insert, Finset.mem_singleton] at hxpair
         rcases hxpair with hxb | hxz
-        · simp [hxb]
+        · simp only [hxb, Finset.mem_singleton]
         · exact False.elim (hzD (hxz ▸ hx))
       have hDgeom : convexHull ℝ ((D.image val : Finset Plane) : Set Plane) ⊆ {(b : Plane)} :=
         convexHull_min (by
           intro p hp
           obtain ⟨x, hx, rfl⟩ := Finset.mem_image.mp hp
-          simpa [val] using hDsingle hx) (convex_singleton _)
+          simpa only [Set.mem_singleton_iff, SetLike.coe_eq_coe, Finset.mem_singleton,
+            val] using hDsingle hx) (convex_singleton _)
       have hCnonneg : convexHull ℝ ((C.image val : Finset Plane) : Set Plane) ⊆
           {p | 0 ≤ f p} := convexHull_min (by
         intro p hp
@@ -3351,21 +3408,22 @@ private theorem convexHull_inter_of_opposite_three_point_subsets
           exfalso
           linarith [hC b hx'.1]
         · intro hx
-          simp at hx
+          simp only [Finset.notMem_empty] at hx
       rw [hleft, hCD]
-      simp
+      simp only [Finset.image_empty, Finset.coe_empty, convexHull_empty]
   · have hCsingle : C ⊆ {a} := by
       intro x hx
       have hxpair := hCsub hx
       simp only [Finset.mem_insert, Finset.mem_singleton] at hxpair
       rcases hxpair with hxa | hxz
-      · simp [hxa]
+      · simp only [hxa, Finset.mem_singleton]
       · exact False.elim (hzC (hxz ▸ hx))
     have hCgeom : convexHull ℝ ((C.image val : Finset Plane) : Set Plane) ⊆ {(a : Plane)} :=
       convexHull_min (by
         intro p hp
         obtain ⟨x, hx, rfl⟩ := Finset.mem_image.mp hp
-        simpa [val] using hCsingle hx) (convex_singleton _)
+        simpa only [Set.mem_singleton_iff, SetLike.coe_eq_coe, Finset.mem_singleton,
+          val] using hCsingle hx) (convex_singleton _)
     have hDnonpos : convexHull ℝ ((D.image val : Finset Plane) : Set Plane) ⊆
         {p | f p ≤ 0} := convexHull_min (by
       intro p hp
@@ -3393,9 +3451,9 @@ private theorem convexHull_inter_of_opposite_three_point_subsets
         exfalso
         linarith [hD a hx'.2]
       · intro hx
-        simp at hx
+        simp only [Finset.notMem_empty] at hx
     rw [hleft, hCD]
-    simp
+    simp only [Finset.image_empty, Finset.coe_empty, convexHull_empty]
 
 /-- The finite one-dimensional calculation behind compatibility on a cut edge. -/
 theorem convexHull_inter_of_signed_three_point_subsets
@@ -3430,15 +3488,15 @@ theorem convexHull_inter_of_signed_three_point_subsets
     have hAsub : A ⊆ {a, z} := by
       intro x hx
       rcases hAclass x hx with rfl | rfl | rfl
-      · simp
+      · simp only [Finset.mem_insert, Finset.mem_singleton, true_or]
       · exfalso; linarith [hA _ hx]
-      · simp
+      · simp only [Finset.mem_insert, Finset.mem_singleton, or_true]
     have hBsub : B ⊆ {a, z} := by
       intro x hx
       rcases hBclass x hx with rfl | rfl | rfl
-      · simp
+      · simp only [Finset.mem_insert, Finset.mem_singleton, true_or]
       · exfalso; linarith [hB _ hx]
-      · simp
+      · simp only [Finset.mem_insert, Finset.mem_singleton, or_true]
     have hPsub : (AP ∪ BP : Finset Plane) ⊆ {(a : Plane), (z : Plane)} := by
       intro x hx
       rcases Finset.mem_union.mp hx with hx | hx
@@ -3462,14 +3520,14 @@ theorem convexHull_inter_of_signed_three_point_subsets
       intro x hx
       rcases hAclass x hx with rfl | rfl | rfl
       · exfalso; linarith [hA _ hx]
-      · simp
-      · simp
+      · simp only [Finset.mem_insert, Finset.mem_singleton, true_or]
+      · simp only [Finset.mem_insert, Finset.mem_singleton, or_true]
     have hBsub : B ⊆ {b, z} := by
       intro x hx
       rcases hBclass x hx with rfl | rfl | rfl
       · exfalso; linarith [hB _ hx]
-      · simp
-      · simp
+      · simp only [Finset.mem_insert, Finset.mem_singleton, true_or]
+      · simp only [Finset.mem_insert, Finset.mem_singleton, or_true]
     have hPsub : (AP ∪ BP : Finset Plane) ⊆ {(b : Plane), (z : Plane)} := by
       intro x hx
       rcases Finset.mem_union.mp hx with hx | hx
@@ -3736,9 +3794,9 @@ theorem parent_inter_vertexSupportCoord_zero (t : M.Triangle) (i : Fin 3) :
       · rintro rfl
         refine ⟨⟨i, rfl⟩, ?_⟩
         change M.vertexSupportCoord t i (M.position (M.orderedVertex t i)) = 0
-        simp
+        simp only [vertexSupportCoord_vertex, ↓reduceIte]
     rw [hfilter, Finset.coe_singleton, convexHull_singleton]
-    simp [p]
+    simp only [Function.comp_apply, p]
   · intro x hx
     obtain ⟨j, -, rfl⟩ := Finset.mem_image.mp hx
     change 0 ≤ M.vertexSupportCoord t i (M.position (M.orderedVertex t j))

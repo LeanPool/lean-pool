@@ -36,7 +36,8 @@ theorem exists_cellCarrier_eq_segment (L : PlaneComplex)
   rcases hcases with hone | htwo
   · obtain ⟨v, rfl⟩ := Finset.card_eq_one.mp hone
     refine ⟨L.position v, L.position v, ?_⟩
-    simp [PlaneComplex.cellCarrier]
+    simp only [cellCarrier, Finset.coe_singleton, Set.image_singleton, convexHull_singleton,
+      segment_same]
   · obtain ⟨v, w, hvw, rfl⟩ := Finset.card_eq_two.mp htwo
     refine ⟨L.position v, L.position w, ?_⟩
     rw [PlaneComplex.cellCarrier]
@@ -44,7 +45,9 @@ theorem exists_cellCarrier_eq_segment (L : PlaneComplex)
         L.position '' (↑({v, w} : Finset L.Vertex) : Set L.Vertex) =
           {L.position v, L.position w} := by
       ext x
-      simp
+      simp only [Finset.coe_insert, Finset.coe_singleton, Set.image_insert_eq,
+        Set.image_singleton,
+    Set.mem_insert_iff, Set.mem_singleton_iff]
     rw [himage, convexHull_pair]
 
 end PlaneComplex

@@ -34,7 +34,7 @@ namespace P2DegenerateDisk
 /-- Every polygon cell has the closed-unit-disk norm bound. -/
 theorem norm_le_one {n : ℕ} (z : PolygonCell n) :
     ‖z.val‖ ≤ 1 := by
-  simpa [Metric.mem_closedBall, dist_zero_right] using z.property
+  simpa only [Metric.mem_closedBall, dist_zero_right] using z.property
 
 /-- The polynomial disk used as the target of the degenerate two-child gluing. -/
 def teardropMap {n : ℕ} (z : PolygonCell n) : ℂ :=
@@ -163,7 +163,7 @@ theorem smul_teardropMap_mem_range
     simpa [r] using hs1
   let w : PolygonCell 1 :=
     ⟨(1 : ℂ) - r * (1 - z.val), by
-      simpa [Metric.mem_closedBall, dist_zero_right] using
+      simpa only [Metric.mem_closedBall, dist_zero_right] using
         one_sub_smul_mem_closedBall z hr0 hr1⟩
   refine ⟨w, ?_⟩
   unfold teardropMap
@@ -398,8 +398,10 @@ theorem collarMap_mem_teardrop (z : PolygonCell 2) :
     collarMap z ∈ Set.range
       (teardropMap : PolygonCell 1 → ℂ) := by
   by_cases hs : chordHeight z = 0
-  · refine ⟨⟨1, by simp [Metric.mem_closedBall]⟩, ?_⟩
-    simp [collarMap, hs, teardropMap]
+  · refine ⟨⟨1, by simp only [Metric.mem_closedBall, dist_zero_right, norm_one, Std.le_refl]⟩, ?_⟩
+    simp only [teardropMap, sub_self, ne_eq, OfNat.ofNat_ne_zero, not_false_eq_true, zero_pow,
+      collarMap, hs,
+    zero_mul, mul_zero, Complex.ofReal_zero]
   · rw [collarMap_eq_smul_teardropMap z hs]
     exact smul_teardropMap_mem_range
       (collarCirclePoint z)
@@ -746,14 +748,20 @@ theorem eq_side_zero_or_side_one_of_chordHeight_eq_zero
     apply PolygonCell.ext
     rw [side_zero_digon_val]
     apply Complex.ext
-    · simpa using hre
-    · simpa using him
+    · simpa only [Set.Icc.coe_zero, mul_zero, Circle.exp_zero, Circle.coe_one,
+      Complex.one_re] using hre
+    · simpa only [Set.Icc.coe_zero, mul_zero, Circle.exp_zero, Circle.coe_one,
+      Complex.one_im] using him
   · right
     apply PolygonCell.ext
     rw [side_zero_digon_val]
     apply Complex.ext
-    · simpa [Circle.coe_exp] using hre
-    · simpa [Circle.coe_exp] using him
+    · simpa only [Set.Icc.coe_one, mul_one, Circle.coe_exp, Complex.exp_pi_mul_I,
+      Complex.neg_re,
+    Complex.one_re] using hre
+    · simpa only [Set.Icc.coe_one, mul_one, Circle.coe_exp, Complex.exp_pi_mul_I, Complex.neg_im,
+      Complex.one_im,
+    neg_zero] using him
 
 /-- Either collar tip is identified with the monogon basepoint by the generated seam relation. -/
 theorem inr_tip_eqv_inl_monogon_basepoint
@@ -769,13 +777,16 @@ theorem inr_tip_eqv_inl_monogon_basepoint
         (DiskSquare.ParamChildSeamGenerator.glue
           (l := 0) (r := 1) (1 : unitInterval))
     exact Relation.EqvGen.symm _ _ (by
-      simpa [PolygonCell.side_zero_eq_side_one_monogon] using hgen)
+      simpa only [Nat.reduceAdd, Fin.isValue, PolygonCell.side_zero_eq_side_one_monogon,
+        Fin.last_zero,
+    unitInterval.symm_one] using hgen)
   · subst z
     have hgen :=
       Relation.EqvGen.rel _ _
         (DiskSquare.ParamChildSeamGenerator.glue
           (l := 0) (r := 1) (0 : unitInterval))
-    exact Relation.EqvGen.symm _ _ (by simpa using hgen)
+    exact Relation.EqvGen.symm _ _ (by simpa only [Nat.reduceAdd, Fin.isValue, Fin.last_zero,
+      unitInterval.symm_zero] using hgen)
 
 /-- Equality inside the collar is exactly equality modulo the two endpoint seam identifications. -/
 theorem baseChildPair_eqvGen_inr_inr_of_map_eq
@@ -811,7 +822,7 @@ theorem exists_side_zero_digon_eq_of_im_eq_chordHeight
     have hnormSq : ‖z.val‖ ^ 2 = 1 := by
       rw [← Complex.normSq_eq_norm_sq,
         Complex.normSq_apply]
-      simpa [pow_two] using hcircleSq
+      simpa only [pow_two] using hcircleSq
     nlinarith [norm_nonneg z.val]
   let q : Circle :=
     ⟨z.val, mem_sphere_zero_iff_norm.mpr hnorm⟩
@@ -1177,7 +1188,7 @@ theorem exists_collarMap_eq_smul_teardropMap
   let y : ℝ := s * (3 - 4 * a)
   have hs0 : 0 ≤ s := chordHeight_nonneg upper
   have hspos : 0 < s := hs0.lt_of_ne' (by
-    simpa [s] using hheight)
+    simpa only [ne_eq, s] using hheight)
   have hfactorLower : -1 ≤ 3 - 4 * a := by
     linarith only [haOne]
   have hfactorUpper : 3 - 4 * a ≤ 1 := by
@@ -1329,7 +1340,10 @@ theorem baseChildGluingMap_surjective :
       change
         (Circle.exp
           (PolygonCell.sideAngle (0 : Fin 1) 0) : ℂ) = 1
-      simp [PolygonCell.sideAngle]
+      simp only [PolygonCell.sideAngle, Fin.isValue, Fin.val_eq_zero, CharP.cast_eq_zero,
+        Set.Icc.coe_zero,
+    add_zero, mul_zero, Nat.cast_one, div_one, Circle.exp_zero,
+        Circle.coe_one]
     unfold monogonMap teardropMap
     rw [hz, hp]
     ring
@@ -1524,7 +1538,7 @@ theorem rightDegenerateWeights_length (r : ℕ) :
 @[simp]
 theorem rightDegenerateWeights_sum (r : ℕ) :
     (rightDegenerateWeights r).sum = 2 * r := by
-  simp [rightDegenerateWeights]
+  simp only [rightDegenerateWeights, List.sum_cons, List.sum_replicate, smul_eq_mul, mul_one]
   omega
 
 theorem rightDegenerateWeights_positive
@@ -1544,7 +1558,9 @@ theorem rightDegenerateWeights_ne_nil (r : ℕ) :
 theorem rightDegenerateWeights_get_zero (r : ℕ) :
     (rightDegenerateWeights r).get
         ⟨0, by simp⟩ = r := by
-  simp [rightDegenerateWeights]
+  simp only [rightDegenerateWeights, List.length_cons, Fin.zero_eta, List.get_eq_getElem,
+    Fin.coe_ofNat_eq_mod,
+    List.length_replicate, Nat.zero_mod, List.getElem_cons_zero]
 
 theorem rightDegenerateWeights_take_succ
     (r : ℕ) (i : Fin r) :
@@ -1558,7 +1574,9 @@ theorem rightDegenerateWeights_get_succ
         ⟨i.val + 1, by
           simp only [rightDegenerateWeights_length]
           omega⟩ = 1 := by
-  simp [rightDegenerateWeights]
+  simp only [rightDegenerateWeights, List.length_cons, List.get_eq_getElem,
+    List.getElem_cons_succ,
+    List.getElem_replicate]
 
 /-- The common parameter occupied by old side `i` inside the surviving digon semicircle. -/
 noncomputable def oldSideParameter

@@ -339,11 +339,12 @@ theorem sequenceNames_length {n : ℕ}
       rfl
   | cons block blocks ih =>
       cases block <;>
-        simp [CompletedBlock.sequenceNames,
-          CompletedBlock.names,
-          CompletedBlock.crosscapCount,
-          CompletedBlock.handleCount,
-          CompletedBlock.boundaryCount] at ih ⊢ <;>
+        simp only [CompletedBlock.sequenceNames, List.length_flatten, List.map_map,
+          List.map_cons,
+    CompletedBlock.names, List.flatten_cons, List.cons_append,
+          List.nil_append, List.length_cons,
+    CompletedBlock.crosscapCount,
+          CompletedBlock.handleCount, CompletedBlock.boundaryCount] at ih ⊢ <;>
         omega
 
 /-- Block permutation preserves all three normal-form block counts. -/
@@ -429,20 +430,23 @@ theorem map_edgeEquivOfNameLists
           length_eq) =
       targetNames := by
   apply List.ext_get
-  · simpa using length_eq
+  · simpa only [List.length_map] using length_eq
   · intro index hsource htarget
     have hsource' :
         index < sourceNames.length := by
-      simpa using hsource
+      simpa only [List.length_map] using hsource
     have hindex :
         sourceNames.idxOf sourceNames[index] = index := by
-      simpa using
+      simpa only [List.get_eq_getElem] using
         List.get_idxOf sourceNodup
           (⟨index, hsource'⟩ :
             Fin sourceNames.length)
     simp only [List.get_eq_getElem,
       List.getElem_map]
-    simp [edgeEquivOfNameLists, hindex]
+    simp only [edgeEquivOfNameLists, Equiv.trans_apply, finCongr_apply,
+      List.Nodup.getEquivOfForallMemList_apply,
+    List.get_eq_getElem, Fin.val_cast,
+      List.Nodup.getEquivOfForallMemList_symm_apply_val, hindex]
 
 /-- Shape of one completed normal-form block. -/
 inductive BlockKind
@@ -551,11 +555,13 @@ theorem blockKinds_boundaryBlocks {n : ℕ}
   | cons block blocks ih =>
       cases block with
       | crosscap anchor negative =>
-          simpa [boundaryBlocks, blockKinds, isBoundary,
-            CompletedBlock.boundaryCount] using ih
+          simpa only [blockKinds, boundaryBlocks, isBoundary, Bool.false_eq_true,
+            not_false_eq_true,
+    List.filter_cons_of_neg, CompletedBlock.boundaryCount] using ih
       | handle first second =>
-          simpa [boundaryBlocks, blockKinds, isBoundary,
-            CompletedBlock.boundaryCount] using ih
+          simpa only [blockKinds, boundaryBlocks, isBoundary, Bool.false_eq_true,
+            not_false_eq_true,
+    List.filter_cons_of_neg, CompletedBlock.boundaryCount] using ih
       | boundary carrier hole carrierNegative holeNegative =>
           change
             BlockKind.boundary ::
@@ -631,10 +637,13 @@ theorem blockKinds_closedBlocks_of_handleCount_eq_zero {n : ℕ}
             congrArg (List.cons BlockKind.crosscap)
               (ih hzero)
       | handle first second =>
-          simp [CompletedBlock.handleCount] at hzero
+          simp only [CompletedBlock.handleCount, Nat.add_eq_zero_iff, one_ne_zero,
+            false_and] at hzero
       | boundary carrier hole carrierNegative holeNegative =>
           simp only [CompletedBlock.handleCount] at hzero
-          simpa [closedBlocks, blockKinds, isBoundary,
+          simpa only [blockKinds, closedBlocks, isBoundary, Bool.not_true, Bool.false_eq_true,
+            not_false_eq_true,
+    List.filter_cons_of_neg,
             CompletedBlock.crosscapCount] using ih hzero
 
 /-- After stable boundary partitioning, an orientable block list has exactly the canonical
@@ -779,8 +788,9 @@ theorem wordFromKinds_orientableTarget
             (nIndices.map fun i =>
               [NormalForm.OrientableEdge.c i,
                 NormalForm.OrientableEdge.h i]).flatten := by
-      simpa [orientableTargetNames, pIndices, nIndices,
-        List.map_ofFn, Function.comp_def] using
+      simpa only [orientableTargetNames, List.map_ofFn, Function.comp_def, List.length_ofFn,
+        pIndices,
+    nIndices] using
         wordFromKinds_handles_append
           pIndices
           (fun i => NormalForm.OrientableEdge.a i)
@@ -799,7 +809,7 @@ theorem wordFromKinds_orientableTarget
             [.pos (NormalForm.OrientableEdge.c i),
               .pos (NormalForm.OrientableEdge.h i),
               .neg (NormalForm.OrientableEdge.c i)]).flatten := by
-      simpa [nIndices] using
+      simpa only [List.map_ofFn, List.append_cancel_left_eq, List.length_ofFn, nIndices] using
         congrArg
           (fun tail =>
             (pIndices.map fun i =>
@@ -813,11 +823,10 @@ theorem wordFromKinds_orientableTarget
             (fun i => NormalForm.OrientableEdge.c i)
             (fun i => NormalForm.OrientableEdge.h i))
     _ = NormalForm.orientableBoundaryWord p n := by
-      simp [NormalForm.orientableBoundaryWord,
-        NormalForm.orientableHandleBlock,
-        NormalForm.orientableBoundaryBlock,
-        pIndices, nIndices, List.map_ofFn,
-        Function.comp_def]
+      simp only [List.map_ofFn, Function.comp_def,
+        NormalForm.orientableBoundaryWord,
+    NormalForm.orientableHandleBlock,
+        NormalForm.orientableBoundaryBlock, pIndices, nIndices]
 
 /-- The canonical nonorientable name spine and shape list reconstruct the existing canonical word
 exactly. -/
@@ -840,8 +849,9 @@ theorem wordFromKinds_nonOrientableTarget
             (nIndices.map fun i =>
               [NormalForm.NonOrientableEdge.c i,
                 NormalForm.NonOrientableEdge.h i]).flatten := by
-      simpa [nonOrientableTargetNames, pIndices, nIndices,
-        List.map_ofFn, Function.comp_def] using
+      simpa only [nonOrientableTargetNames, List.map_ofFn, Function.comp_def, List.length_ofFn,
+        pIndices,
+    nIndices] using
         wordFromKinds_crosscaps_append
           pIndices
           (fun i => NormalForm.NonOrientableEdge.a i)
@@ -857,7 +867,7 @@ theorem wordFromKinds_nonOrientableTarget
             [.pos (NormalForm.NonOrientableEdge.c i),
               .pos (NormalForm.NonOrientableEdge.h i),
               .neg (NormalForm.NonOrientableEdge.c i)]).flatten := by
-      simpa [nIndices] using
+      simpa only [List.map_ofFn, List.append_cancel_left_eq, List.length_ofFn, nIndices] using
         congrArg
           (fun tail =>
             (pIndices.map fun i =>
@@ -869,11 +879,10 @@ theorem wordFromKinds_nonOrientableTarget
             (fun i => NormalForm.NonOrientableEdge.c i)
             (fun i => NormalForm.NonOrientableEdge.h i))
     _ = NormalForm.nonOrientableBoundaryWord p n := by
-      simp [NormalForm.nonOrientableBoundaryWord,
-        NormalForm.nonOrientableCrosscapBlock,
-        NormalForm.nonOrientableBoundaryBlock,
-        pIndices, nIndices, List.map_ofFn,
-        Function.comp_def]
+      simp only [List.map_ofFn, Function.comp_def,
+        NormalForm.nonOrientableBoundaryWord,
+    NormalForm.nonOrientableCrosscapBlock,
+        NormalForm.nonOrientableBoundaryBlock, pIndices, nIndices]
 
 /-- A name belonging to the tail is not captured by the head block's orientation lookup. -/
 theorem reverseForBlocks_cons_of_mem_tail {n : ℕ}
@@ -973,16 +982,14 @@ theorem map_sequenceWord_signedRelabeling_normalized
                 reverseForBlocks (block :: blocks) edge =
                   reverseForBlocks blocks edge := by
               simpa only [edgeOfDart] using hreverse
-            simp [signedRelabeling,
-              EdgeRelabeling.mapDart, hreverse']
+            simp only [EdgeRelabeling.mapDart, signedRelabeling, hreverse']
             rfl
         | neg edge =>
             have hreverse' :
                 reverseForBlocks (block :: blocks) edge =
                   reverseForBlocks blocks edge := by
               simpa only [edgeOfDart] using hreverse
-            simp [signedRelabeling,
-              EdgeRelabeling.mapDart, hreverse']
+            simp only [EdgeRelabeling.mapDart, signedRelabeling, hreverse']
             rfl
       have hheadMap :
           block.word.map
@@ -998,7 +1005,7 @@ theorem map_sequenceWord_signedRelabeling_normalized
                     (CompletedBlock.crosscap anchor negative ::
                       blocks))
                   anchor negative
-            simp [reverseForBlocks]
+            simp only [reverseForBlocks, ↓reduceIte]
         | handle first second =>
             apply
               ExtractedBlock.map_word_handle_normalized
@@ -1007,12 +1014,15 @@ theorem map_sequenceWord_signedRelabeling_normalized
                     (CompletedBlock.handle first second ::
                       blocks))
                   first second
-            · simp [reverseForBlocks]
-            · simp [reverseForBlocks]
+            · simp only [reverseForBlocks, ↓reduceIte]
+            · simp only [reverseForBlocks, ↓reduceIte, ite_self]
         | boundary carrier hole
             carrierNegative holeNegative =>
             have hcarrierHole : carrier ≠ hole := by
-              simpa [CompletedBlock.names] using hblockNodup
+              simpa only [ne_eq, CompletedBlock.names, List.nodup_cons, List.mem_cons,
+                List.not_mem_nil, or_false,
+    not_false_eq_true, List.nodup_nil, and_self,
+                and_true] using hblockNodup
             apply map_boundaryLoopWord_normalized
               edgeEquiv
                 (reverseForBlocks
@@ -1020,9 +1030,8 @@ theorem map_sequenceWord_signedRelabeling_normalized
                     carrierNegative holeNegative ::
                     blocks))
                 carrier hole carrierNegative holeNegative
-            · simp [reverseForBlocks]
-            · simp [reverseForBlocks,
-                hcarrierHole.symm]
+            · simp only [reverseForBlocks, ↓reduceIte]
+            · simp only [reverseForBlocks, hcarrierHole.symm, ↓reduceIte]
       rw [CompletedBlock.sequenceWord_cons,
         List.map_append, hheadMap, htailMap,
         ih htailNodup]
@@ -2336,7 +2345,7 @@ theorem exists_commuteBoundaryAdjacent {n : ℕ}
           validTarget⟩ := by
   cases carrierNegative with
   | false =>
-      simpa using
+      simpa only [CompletedBlock.sequenceWord_append, CompletedBlock.sequenceWord_cons] using
         exists_commutePositiveBoundaryAdjacent
           before after carrier hole holeNegative block
           hcarrierHole hcarrierBefore hcarrierBlock
@@ -2349,7 +2358,8 @@ theorem exists_commuteBoundaryAdjacent {n : ℕ}
             CompletedBlock.sequenceWord after)
           carrier hole holeNegative hcarrierHole
           hcarrierBefore (by
-            simp [hcarrierBlock, hcarrierAfter])
+            simp only [List.map_append, List.mem_append, hcarrierBlock, hcarrierAfter, or_self,
+              not_false_eq_true])
       let validPositiveSource :
           (Dyck.oneFace
             (CompletedBlock.sequenceWord
@@ -2359,10 +2369,12 @@ theorem exists_commuteBoundaryAdjacent {n : ℕ}
                 block :: after))).IsSurfaceValid := by
         have hvalid :=
           sourceIso.isSurfaceValid (by
-            simpa [boundaryContextWord,
-              List.append_assoc] using validSource)
-        simpa [boundaryContextWord,
-          List.append_assoc] using hvalid
+            simpa only [boundaryContextWord, List.append_assoc,
+              CompletedBlock.sequenceWord_append,
+    CompletedBlock.sequenceWord_cons] using validSource)
+        simpa only [CompletedBlock.sequenceWord_append, CompletedBlock.sequenceWord_cons,
+          boundaryContextWord,
+    List.append_assoc] using hvalid
       let positiveWitness :=
         exists_commutePositiveBoundaryAdjacent
           before after carrier hole holeNegative block
@@ -2377,7 +2389,8 @@ theorem exists_commuteBoundaryAdjacent {n : ℕ}
           (CompletedBlock.sequenceWord before ++ block.word)
           (CompletedBlock.sequenceWord after)
           carrier hole holeNegative hcarrierHole
-          (by simp [hcarrierBefore, hcarrierBlock])
+          (by simp only [List.map_append, List.mem_append, hcarrierBefore, hcarrierBlock, or_self,
+            not_false_eq_true])
           hcarrierAfter
       let validTarget :
           (Dyck.oneFace
@@ -2388,10 +2401,12 @@ theorem exists_commuteBoundaryAdjacent {n : ℕ}
                 after))).IsSurfaceValid := by
         have hvalid :=
           targetIso.symm.isSurfaceValid (by
-            simpa [boundaryContextWord,
-              List.append_assoc] using validPositiveTarget)
-        simpa [boundaryContextWord,
-          List.append_assoc] using hvalid
+            simpa only [boundaryContextWord, List.append_assoc,
+              CompletedBlock.sequenceWord_append,
+    CompletedBlock.sequenceWord_cons] using validPositiveTarget)
+        simpa only [CompletedBlock.sequenceWord_append, CompletedBlock.sequenceWord_cons,
+          boundaryContextWord,
+    List.append_assoc] using hvalid
       refine ⟨validTarget, ?_⟩
       have hsource :
           NormalizationEquivalent
@@ -2416,8 +2431,9 @@ theorem exists_commuteBoundaryAdjacent {n : ℕ}
                 (block.word ++
                   CompletedBlock.sequenceWord after)
                 carrier hole true holeNegative)).IsSurfaceValid := by
-          simpa [boundaryContextWord,
-            List.append_assoc] using validSource
+          simpa only [boundaryContextWord, List.append_assoc,
+            CompletedBlock.sequenceWord_append,
+    CompletedBlock.sequenceWord_cons] using validSource
         let validRawTarget :
             (Dyck.oneFace
               (boundaryContextWord
@@ -2425,8 +2441,9 @@ theorem exists_commuteBoundaryAdjacent {n : ℕ}
                 (block.word ++
                   CompletedBlock.sequenceWord after)
                 carrier hole false holeNegative)).IsSurfaceValid := by
-          simpa [boundaryContextWord,
-            List.append_assoc] using validPositiveSource
+          simpa only [boundaryContextWord, List.append_assoc,
+            CompletedBlock.sequenceWord_append,
+    CompletedBlock.sequenceWord_cons] using validPositiveSource
         have hraw :
             NormalizationEquivalent
               ⟨Dyck.oneFace
@@ -2444,8 +2461,9 @@ theorem exists_commuteBoundaryAdjacent {n : ℕ}
                   carrier hole false holeNegative),
                 validRawTarget⟩ :=
           NormalizationEquivalent.ofSignedIso sourceIso
-        simpa [boundaryContextWord,
-          List.append_assoc] using
+        simpa only [CompletedBlock.sequenceWord_append, CompletedBlock.sequenceWord_cons,
+          boundaryContextWord,
+    List.append_assoc] using
           hraw
       have htarget :
           NormalizationEquivalent
@@ -2469,16 +2487,18 @@ theorem exists_commuteBoundaryAdjacent {n : ℕ}
                 (CompletedBlock.sequenceWord before ++ block.word)
                 (CompletedBlock.sequenceWord after)
                 carrier hole true holeNegative)).IsSurfaceValid := by
-          simpa [boundaryContextWord,
-            List.append_assoc] using validTarget
+          simpa only [boundaryContextWord, List.append_assoc,
+            CompletedBlock.sequenceWord_append,
+    CompletedBlock.sequenceWord_cons] using validTarget
         let validRawPositive :
             (Dyck.oneFace
               (boundaryContextWord
                 (CompletedBlock.sequenceWord before ++ block.word)
                 (CompletedBlock.sequenceWord after)
                 carrier hole false holeNegative)).IsSurfaceValid := by
-          simpa [boundaryContextWord,
-            List.append_assoc] using validPositiveTarget
+          simpa only [boundaryContextWord, List.append_assoc,
+            CompletedBlock.sequenceWord_append,
+    CompletedBlock.sequenceWord_cons] using validPositiveTarget
         have hraw :
             NormalizationEquivalent
               ⟨Dyck.oneFace
@@ -2497,8 +2517,9 @@ theorem exists_commuteBoundaryAdjacent {n : ℕ}
             (P := ⟨_, validRawNegative⟩)
             (Q := ⟨_, validRawPositive⟩)
             targetIso).symm
-        simpa [boundaryContextWord,
-          List.append_assoc] using
+        simpa only [CompletedBlock.sequenceWord_append, CompletedBlock.sequenceWord_cons,
+          boundaryContextWord,
+    List.append_assoc] using
           hraw
       exact hsource.trans (hpositive.trans htarget)
 

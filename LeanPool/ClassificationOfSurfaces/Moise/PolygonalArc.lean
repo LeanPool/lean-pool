@@ -143,17 +143,27 @@ noncomputable def segmentLine (a b : Plane) : Plane →ᵃ[ℝ] ℝ :=
     AffineMap.const ℝ Plane ((b 1 - a 1) * a 0 - (b 0 - a 0) * a 1)
 
 @[simp] theorem segmentLine_apply_left (a b : Plane) : segmentLine a b a = 0 := by
-  simp [segmentLine]
+  simp only [segmentLine, Fin.isValue, AffineMap.coe_sub, AffineMap.coe_smul, AffineMap.coe_const,
+    Pi.sub_apply,
+    Pi.smul_apply, cartesianX_apply, smul_eq_mul, cartesianY_apply,
+    Function.const_apply, sub_self]
 
 @[simp] theorem segmentLine_apply_right (a b : Plane) : segmentLine a b b = 0 := by
-  simp [segmentLine]
+  simp only [segmentLine, Fin.isValue, AffineMap.coe_sub, AffineMap.coe_smul, AffineMap.coe_const,
+    Pi.sub_apply,
+    Pi.smul_apply, cartesianX_apply, smul_eq_mul, cartesianY_apply,
+    Function.const_apply]
   ring
 
 theorem segmentLine_eq_zero_of_mem_segment (a b : Plane) {x : Plane}
     (hx : x ∈ segment ℝ a b) : segmentLine a b x = 0 := by
   rw [segment_eq_image] at hx
   obtain ⟨t, -, rfl⟩ := hx
-  simp [segmentLine]
+  simp only [segmentLine, Fin.isValue, AffineMap.coe_sub, AffineMap.coe_smul, AffineMap.coe_const,
+    Pi.sub_apply,
+    Pi.smul_apply, cartesianX_apply, PiLp.add_apply, PiLp.smul_apply,
+    smul_eq_mul, cartesianY_apply,
+    Function.const_apply]
   ring
 
 /-- A point on the supporting line of a nondegenerate segment belongs to the segment exactly when
@@ -195,7 +205,10 @@ theorem mem_segment_of_segmentLine_eq_zero {a b x : Plane} (hab : a ≠ b)
       field_simp [sub_ne_zero.mpr h0.symm]
       ring
     · dsimp [t]
-      simp [segmentLine] at hline
+      simp only [segmentLine, Fin.isValue, AffineMap.coe_sub, AffineMap.coe_smul,
+        AffineMap.coe_const, Pi.sub_apply,
+    Pi.smul_apply, cartesianX_apply, smul_eq_mul,
+        cartesianY_apply, Function.const_apply] at hline
       field_simp [sub_ne_zero.mpr h0.symm]
       nlinarith
   · let t : ℝ := (x 1 - a 1) / (b 1 - a 1)
@@ -217,7 +230,10 @@ theorem mem_segment_of_segmentLine_eq_zero {a b x : Plane} (hab : a ≠ b)
     ext i
     fin_cases i
     · dsimp [t]
-      simp [segmentLine] at hline
+      simp only [segmentLine, Fin.isValue, AffineMap.coe_sub, AffineMap.coe_smul,
+        AffineMap.coe_const, Pi.sub_apply,
+    Pi.smul_apply, cartesianX_apply, smul_eq_mul,
+        cartesianY_apply, Function.const_apply] at hline
       field_simp [sub_ne_zero.mpr h1.symm]
       nlinarith
     · dsimp [t]
@@ -301,7 +317,9 @@ theorem segment_subset_arrangementMesh_support (i : Fin B.n) :
 
 theorem segmentLine_mem_arrangementLines (i : Fin B.n) :
     segmentLine (B.vertex i.castSucc) (B.vertex i.succ) ∈ B.arrangementLines := by
-  simp [arrangementLines, segmentLines]
+  simp only [arrangementLines, segmentLines, List.mem_append, List.mem_map, Finset.mem_toList,
+    Finset.mem_univ,
+    true_and, exists_apply_eq_apply, true_or]
 
 theorem verticalLine_mem_arrangementLines (i : Fin (B.n + 1)) :
     verticalLine (B.vertex i) ∈ B.arrangementLines := by
@@ -774,7 +792,8 @@ theorem vertexGraph_reachable_of_isPreconnected
     have hst : (s ∩ t).Nonempty := by
       by_contra h
       rw [Finset.not_nonempty_iff_eq_empty.mp h, PlaneComplex.cellCarrier] at hxinter
-      simp at hxinter
+      simp only [Finset.coe_empty, Set.image_empty, convexHull_empty,
+        Set.mem_empty_iff_false] at hxinter
     obtain ⟨q, hq⟩ := hst
     have hRq : R q := hRw.trans
       (K.vertexGraph_reachable_of_mem_simplex hs hws (Finset.mem_of_mem_inter_left hq))
@@ -785,17 +804,21 @@ theorem vertexGraph_reachable_of_isPreconnected
   have hleftNonempty : (K.support ∩ A).Nonempty := by
     refine ⟨K.position u, ?_, ?_⟩
     · exact K.cellCarrier_subset_support hu
-        (subset_convexHull ℝ _ ⟨u, by simp, rfl⟩)
+        (subset_convexHull ℝ _ ⟨u, by simp only [Finset.coe_singleton,
+          Set.mem_singleton_iff], rfl⟩)
     · exact Set.mem_iUnion₂.mpr ⟨{u}, Finset.mem_filter.mpr
-        ⟨hu, u, by simp, SimpleGraph.Reachable.refl u⟩,
-          subset_convexHull ℝ _ ⟨u, by simp, rfl⟩⟩
+        ⟨hu, u, by simp only [Finset.mem_singleton], SimpleGraph.Reachable.refl u⟩,
+          subset_convexHull ℝ _ ⟨u, by simp only [Finset.coe_singleton,
+            Set.mem_singleton_iff], rfl⟩⟩
   have hrightNonempty : (K.support ∩ B).Nonempty := by
     refine ⟨K.position v, ?_, ?_⟩
     · exact K.cellCarrier_subset_support hv
-        (subset_convexHull ℝ _ ⟨v, by simp, rfl⟩)
+        (subset_convexHull ℝ _ ⟨v, by simp only [Finset.coe_singleton,
+          Set.mem_singleton_iff], rfl⟩)
     · exact Set.mem_iUnion₂.mpr ⟨{v}, Finset.mem_filter.mpr
-        ⟨hv, v, by simp, huv⟩,
-          subset_convexHull ℝ _ ⟨v, by simp, rfl⟩⟩
+        ⟨hv, v, by simp only [Finset.mem_singleton], huv⟩,
+          subset_convexHull ℝ _ ⟨v, by simp only [Finset.coe_singleton,
+            Set.mem_singleton_iff], rfl⟩⟩
   have hinter := (isPreconnected_closed_iff.mp hconn) A B hclosedA hclosedB hcover
     hleftNonempty hrightNonempty
   obtain ⟨x, -, hxA, hxB⟩ := hinter
@@ -1287,7 +1310,9 @@ theorem resolvedSegment_subset (i : Fin B.resolvedWalk.length) :
       {B.arrangementMesh.toPlaneComplex.position (p.getVert i.val),
         B.arrangementMesh.toPlaneComplex.position (p.getVert (i.val + 1))} := by
     ext x
-    simp
+    simp only [Finset.coe_insert, Finset.coe_singleton, Set.image_insert_eq,
+      Set.image_singleton,
+    Set.mem_insert_iff, Set.mem_singleton_iff]
   rw [PlaneComplex.cellCarrier, himage, convexHull_pair] at hcarrier
   exact hcarrier
 
@@ -1305,7 +1330,9 @@ theorem resolvedSegment_eq_cellCarrier (i : Fin B.resolvedWalk.length) :
       {B.arrangementMesh.toPlaneComplex.position (B.resolvedWalk.getVert i.val),
         B.arrangementMesh.toPlaneComplex.position (B.resolvedWalk.getVert (i.val + 1))} := by
     ext x
-    simp
+    simp only [Finset.coe_insert, Finset.coe_singleton, Set.image_insert_eq,
+      Set.image_singleton,
+    Set.mem_insert_iff, Set.mem_singleton_iff]
   rw [himage, convexHull_pair]
 
 theorem resolvedEdge_mem_simplexes (i : Fin B.resolvedWalk.length) :
@@ -1673,7 +1700,7 @@ theorem resolvedSegment_inter_of_succ_eq (i j : Fin B.resolvedWalk.length)
       {B.arrangementMesh.toPlaneComplex.position
         (B.resolvedWalk.getVert (i.val + 1))} := by
     ext x
-    simp []
+    simp only [Finset.coe_singleton, Set.image_singleton, Set.mem_singleton_iff]
   rw [himage, convexHull_singleton]
   change {(B.arrangementMesh.toPlaneComplex.position
       (B.resolvedWalk.getVert (i.val + 1)))} = {B.resolvedVertex i.succ}
@@ -1778,7 +1805,8 @@ theorem resolvedGlobalParameter_injectiveOn :
         have hvertex : B.resolvedVertex i.succ = B.resolvedVertex j.castSucc := by
           apply congrArg B.resolvedVertex
           exact Fin.ext hsucc
-        simpa [ht1, hu0] using hvertex
+        simpa only [ht1, AffineMap.lineMap_apply_one, hu0,
+          AffineMap.lineMap_apply_zero] using hvertex
       · have hsucc : j.val + 1 = i.val := by
           have hle : j.val + 1 ≤ i.val := by omega
           have hle' : (i.val : ℝ) ≤ j.val + 1 := by
@@ -1796,7 +1824,8 @@ theorem resolvedGlobalParameter_injectiveOn :
         have hvertex : B.resolvedVertex j.succ = B.resolvedVertex i.castSucc := by
           apply congrArg B.resolvedVertex
           exact Fin.ext hsucc
-        simpa [ht0, hu1] using hvertex.symm
+        simpa only [ht0, AffineMap.lineMap_apply_zero, hu1,
+          AffineMap.lineMap_apply_one] using hvertex.symm
 
 theorem resolvedGlobalParameter_image :
     B.resolvedGlobalParameter '' B.resolvedCarrier =
@@ -1896,19 +1925,20 @@ theorem resolvedGlobalParameter_start :
           segment ℝ (B.resolvedVertex i.castSucc) (B.resolvedVertex i.succ) := by
       rintro ⟨i, -⟩
       exact isEmptyElim (hzero ▸ i)
-    simp [resolvedGlobalParameter, hno]
+    simp only [resolvedGlobalParameter, hno, ↓reduceDIte]
   · let i : Fin B.resolvedWalk.length := ⟨0, Nat.pos_of_ne_zero hzero⟩
     have hleft : B.resolvedVertex 0 = B.resolvedVertex i.castSucc := by
       congr 1
     rw [hleft, B.resolvedGlobalParameter_eq_on_edge i (left_mem_segment ℝ _ _),
       B.resolvedEdgeGlobalParameter_apply_left]
-    simp [i]
+    simp only [CharP.cast_eq_zero, i]
 
 theorem resolvedGlobalParameter_finish :
     B.resolvedGlobalParameter (B.resolvedVertex (Fin.last B.resolvedWalk.length)) =
       B.resolvedWalk.length := by
   by_cases hzero : B.resolvedWalk.length = 0
-  · have hlast : (Fin.last B.resolvedWalk.length) = 0 := Fin.ext (by simp [hzero])
+  · have hlast : (Fin.last B.resolvedWalk.length) = 0 := Fin.ext (by simp only [Fin.val_last,
+    hzero, Fin.coe_ofNat_eq_mod, zero_add, Nat.mod_succ])
     rw [hlast, B.resolvedGlobalParameter_start, hzero]
     norm_num
   · have hpos : 0 < B.resolvedWalk.length := Nat.pos_of_ne_zero hzero
@@ -1945,7 +1975,7 @@ theorem resolvedStraighten_start :
 theorem resolvedStraighten_finish :
     B.resolvedStraighten (B.resolvedVertex (Fin.last B.resolvedWalk.length)) =
       planePoint B.resolvedWalk.length 0 := by
-  simp [resolvedStraighten, B.resolvedGlobalParameter_finish]
+  simp only [resolvedStraighten, B.resolvedGlobalParameter_finish, realAxisAffine_apply]
 
 theorem resolvedStraighten_injectiveOn :
     Set.InjOn B.resolvedStraighten B.resolvedCarrier := by
@@ -1995,7 +2025,10 @@ theorem resolvedStraighten_affineOn_faces :
           segment ℝ (B.resolvedVertex i.castSucc) (B.resolvedVertex i.succ) := by
       rintro ⟨i, -⟩
       exact isEmptyElim (hzero ▸ i)
-    simp [resolvedStraighten, resolvedGlobalParameter, hno, g]
+    simp only [resolvedStraighten, resolvedGlobalParameter, hno, ↓reduceDIte,
+      realAxisAffine_apply,
+    AffineMap.coe_comp, AffineMap.coe_const, Function.const_zero,
+      Function.comp_apply, Pi.zero_apply, g]
   · let g : Plane →ᵃ[ℝ] Plane :=
       realAxisAffine.comp (B.resolvedEdgeGlobalParameter i)
     refine ⟨g, ?_⟩

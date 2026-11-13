@@ -119,7 +119,10 @@ theorem nonOrientableBoundaryWord_edgeOccurrences_a {p n : ℕ} (i : Fin p) :
     · rw [mem_wordEdgeOccurrences, nonOrientableBoundaryWord_get_crosscap_a_second]
       rfl
   · rw [nonOrientableBoundaryWord_edge_occurrences]
-    simp [nonOrientableCrosscapPosition_zero_ne_one (n := n) i]
+    simp only [Fin.isValue, Finset.mem_singleton,
+      nonOrientableCrosscapPosition_zero_ne_one (n := n) i,
+    not_false_eq_true,
+      Finset.card_insert_of_notMem, Finset.card_singleton, Nat.reduceAdd, Std.le_refl]
 
 theorem nonOrientableBoundaryWord_edgeOccurrences_c {p n : ℕ} (j : Fin n) :
     wordEdgeOccurrences (nonOrientableBoundaryWord p n) (.c j) =
@@ -135,7 +138,10 @@ theorem nonOrientableBoundaryWord_edgeOccurrences_c {p n : ℕ} (j : Fin n) :
     · rw [mem_wordEdgeOccurrences, nonOrientableBoundaryWord_get_boundary_c_neg]
       rfl
   · rw [nonOrientableBoundaryWord_edge_occurrences]
-    simp [nonOrientableBoundaryPosition_zero_ne_two (p := p) j]
+    simp only [Fin.isValue, Finset.mem_singleton,
+      nonOrientableBoundaryPosition_zero_ne_two (p := p) j,
+    not_false_eq_true,
+      Finset.card_insert_of_notMem, Finset.card_singleton, Nat.reduceAdd, Std.le_refl]
 
 theorem nonOrientableBoundaryWord_edgeOccurrences_h {p n : ℕ} (j : Fin n) :
     wordEdgeOccurrences (nonOrientableBoundaryWord p n) (.h j) =
@@ -148,7 +154,7 @@ theorem nonOrientableBoundaryWord_edgeOccurrences_h {p n : ℕ} (j : Fin n) :
     rw [mem_wordEdgeOccurrences, nonOrientableBoundaryWord_get_boundary_h_pos]
     rfl
   · rw [nonOrientableBoundaryWord_edge_occurrences]
-    simp
+    simp only [Fin.isValue, Finset.card_singleton, Std.le_refl]
 
 theorem nonOrientableCrosscapIdentification_mem
     {p n : ℕ} (hp : 1 ≤ p) (i : Fin p) :
@@ -328,12 +334,14 @@ theorem mem_nonOrientable_polygonalIdentifications_iff
                   nonOrientableBoundaryWord_get_crosscap_a_first] at hcompatible
                 cases hcompatible
           apply identification_eq_of_source_target_direction
-          · simpa [nonOrientableCrosscapIdentification,
-              nonOrientableCellComplex,
-              PolygonGluing.Identification.sameDirection] using hsource
-          · simpa [nonOrientableCrosscapIdentification,
-              nonOrientableCellComplex,
-              PolygonGluing.Identification.sameDirection] using htarget
+          · simpa only [nonOrientableCrosscapIdentification,
+            PolygonGluing.Identification.sameDirection,
+    nonOrientableCellComplex,
+            Fin.isValue] using hsource
+          · simpa only [nonOrientableCrosscapIdentification,
+            PolygonGluing.Identification.sameDirection,
+    nonOrientableCellComplex,
+            Fin.isValue] using htarget
           · change identification.direction = .same
             exact hdirection
         · subst i
@@ -349,12 +357,14 @@ theorem mem_nonOrientable_polygonalIdentifications_iff
                   nonOrientableBoundaryWord_get_crosscap_a_second] at hcompatible
                 cases hcompatible
           apply identification_eq_of_source_target_direction
-          · simpa [nonOrientableCrosscapIdentificationReverse,
-              nonOrientableCellComplex,
-              PolygonGluing.Identification.sameDirection] using hsource
-          · simpa [nonOrientableCrosscapIdentificationReverse,
-              nonOrientableCellComplex,
-              PolygonGluing.Identification.sameDirection] using htarget
+          · simpa only [nonOrientableCrosscapIdentificationReverse,
+            PolygonGluing.Identification.sameDirection,
+    nonOrientableCellComplex,
+            Fin.isValue] using hsource
+          · simpa only [nonOrientableCrosscapIdentificationReverse,
+            PolygonGluing.Identification.sameDirection,
+    nonOrientableCellComplex,
+            Fin.isValue] using htarget
           · change identification.direction = .same
             exact hdirection
         · exact (hij (hi.trans hj.symm)).elim
@@ -376,12 +386,14 @@ theorem mem_nonOrientable_polygonalIdentifications_iff
                 cases hcompatible
             | opposite => rfl
           apply identification_eq_of_source_target_direction
-          · simpa [nonOrientableBoundaryIdentification,
-              nonOrientableCellComplex,
-              PolygonGluing.Identification.oppositeDirection] using hsource
-          · simpa [nonOrientableBoundaryIdentification,
-              nonOrientableCellComplex,
-              PolygonGluing.Identification.oppositeDirection] using htarget
+          · simpa only [nonOrientableBoundaryIdentification,
+            PolygonGluing.Identification.oppositeDirection,
+    nonOrientableCellComplex,
+            Fin.isValue] using hsource
+          · simpa only [nonOrientableBoundaryIdentification,
+            PolygonGluing.Identification.oppositeDirection,
+    nonOrientableCellComplex,
+            Fin.isValue] using htarget
           · change identification.direction = .opposite
             exact hdirection
         · subst i
@@ -397,12 +409,14 @@ theorem mem_nonOrientable_polygonalIdentifications_iff
                 cases hcompatible
             | opposite => rfl
           apply identification_eq_of_source_target_direction
-          · simpa [nonOrientableBoundaryIdentificationReverse,
-              nonOrientableCellComplex,
-              PolygonGluing.Identification.oppositeDirection] using hsource
-          · simpa [nonOrientableBoundaryIdentificationReverse,
-              nonOrientableCellComplex,
-              PolygonGluing.Identification.oppositeDirection] using htarget
+          · simpa only [nonOrientableBoundaryIdentificationReverse,
+            PolygonGluing.Identification.oppositeDirection,
+    nonOrientableCellComplex,
+            Fin.isValue] using hsource
+          · simpa only [nonOrientableBoundaryIdentificationReverse,
+            PolygonGluing.Identification.oppositeDirection,
+    nonOrientableCellComplex,
+            Fin.isValue] using htarget
           · change identification.direction = .opposite
             exact hdirection
         · exact (hij (hi.trans hj.symm)).elim
@@ -459,7 +473,10 @@ theorem orientableBoundaryWord_edgeOccurrences_a {p n : ℕ} (i : Fin p) :
     · rw [mem_wordEdgeOccurrences, orientableBoundaryWord_get_handle_a_neg]
       rfl
   · rw [orientableBoundaryWord_edge_occurrences]
-    simp [orientableHandlePosition_zero_ne_two (n := n) i]
+    simp only [Fin.isValue, Finset.mem_singleton,
+      orientableHandlePosition_zero_ne_two (n := n) i,
+    not_false_eq_true,
+      Finset.card_insert_of_notMem, Finset.card_singleton, Nat.reduceAdd, Std.le_refl]
 
 theorem orientableBoundaryWord_edgeOccurrences_b {p n : ℕ} (i : Fin p) :
     wordEdgeOccurrences (orientableBoundaryWord p n) (.b i) =
@@ -475,7 +492,10 @@ theorem orientableBoundaryWord_edgeOccurrences_b {p n : ℕ} (i : Fin p) :
     · rw [mem_wordEdgeOccurrences, orientableBoundaryWord_get_handle_b_neg]
       rfl
   · rw [orientableBoundaryWord_edge_occurrences]
-    simp [orientableHandlePosition_one_ne_three (n := n) i]
+    simp only [Fin.isValue, Finset.mem_singleton,
+      orientableHandlePosition_one_ne_three (n := n) i,
+    not_false_eq_true,
+      Finset.card_insert_of_notMem, Finset.card_singleton, Nat.reduceAdd, Std.le_refl]
 
 theorem orientableBoundaryWord_edgeOccurrences_c {p n : ℕ} (j : Fin n) :
     wordEdgeOccurrences (orientableBoundaryWord p n) (.c j) =
@@ -491,7 +511,10 @@ theorem orientableBoundaryWord_edgeOccurrences_c {p n : ℕ} (j : Fin n) :
     · rw [mem_wordEdgeOccurrences, orientableBoundaryWord_get_boundary_c_neg]
       rfl
   · rw [orientableBoundaryWord_edge_occurrences]
-    simp [orientableBoundaryPosition_zero_ne_two (p := p) j]
+    simp only [Fin.isValue, Finset.mem_singleton,
+      orientableBoundaryPosition_zero_ne_two (p := p) j,
+    not_false_eq_true,
+      Finset.card_insert_of_notMem, Finset.card_singleton, Nat.reduceAdd, Std.le_refl]
 
 theorem orientableBoundaryWord_edgeOccurrences_h {p n : ℕ} (j : Fin n) :
     wordEdgeOccurrences (orientableBoundaryWord p n) (.h j) =
@@ -504,7 +527,7 @@ theorem orientableBoundaryWord_edgeOccurrences_h {p n : ℕ} (j : Fin n) :
     rw [mem_wordEdgeOccurrences, orientableBoundaryWord_get_boundary_h_pos]
     rfl
   · rw [orientableBoundaryWord_edge_occurrences]
-    simp
+    simp only [Fin.isValue, Finset.card_singleton, Std.le_refl]
 
 /-- The opposite-direction identification contributed by `aᵢ ... aᵢ⁻¹`. -/
 def orientableHandleAIdentification {p n : ℕ} (i : Fin p) :
@@ -714,10 +737,14 @@ theorem mem_orientable_polygonalIdentifications_iff
                 cases hcompatible
             | opposite => rfl
           apply identification_eq_of_source_target_direction
-          · simpa [orientableHandleAIdentification, orientableCellComplex,
-              PolygonGluing.Identification.oppositeDirection] using hsource
-          · simpa [orientableHandleAIdentification, orientableCellComplex,
-              PolygonGluing.Identification.oppositeDirection] using htarget
+          · simpa only [orientableHandleAIdentification,
+            PolygonGluing.Identification.oppositeDirection,
+    orientableCellComplex,
+            Fin.isValue] using hsource
+          · simpa only [orientableHandleAIdentification,
+            PolygonGluing.Identification.oppositeDirection,
+    orientableCellComplex,
+            Fin.isValue] using htarget
           · change identification.direction = .opposite
             exact hdirection
         · subst i
@@ -733,10 +760,14 @@ theorem mem_orientable_polygonalIdentifications_iff
                 cases hcompatible
             | opposite => rfl
           apply identification_eq_of_source_target_direction
-          · simpa [orientableHandleAIdentificationReverse, orientableCellComplex,
-              PolygonGluing.Identification.oppositeDirection] using hsource
-          · simpa [orientableHandleAIdentificationReverse, orientableCellComplex,
-              PolygonGluing.Identification.oppositeDirection] using htarget
+          · simpa only [orientableHandleAIdentificationReverse,
+            PolygonGluing.Identification.oppositeDirection,
+    orientableCellComplex,
+            Fin.isValue] using hsource
+          · simpa only [orientableHandleAIdentificationReverse,
+            PolygonGluing.Identification.oppositeDirection,
+    orientableCellComplex,
+            Fin.isValue] using htarget
           · change identification.direction = .opposite
             exact hdirection
         · exact (hij (hi.trans hj.symm)).elim
@@ -759,10 +790,14 @@ theorem mem_orientable_polygonalIdentifications_iff
                 cases hcompatible
             | opposite => rfl
           apply identification_eq_of_source_target_direction
-          · simpa [orientableHandleBIdentification, orientableCellComplex,
-              PolygonGluing.Identification.oppositeDirection] using hsource
-          · simpa [orientableHandleBIdentification, orientableCellComplex,
-              PolygonGluing.Identification.oppositeDirection] using htarget
+          · simpa only [orientableHandleBIdentification,
+            PolygonGluing.Identification.oppositeDirection,
+    orientableCellComplex,
+            Fin.isValue] using hsource
+          · simpa only [orientableHandleBIdentification,
+            PolygonGluing.Identification.oppositeDirection,
+    orientableCellComplex,
+            Fin.isValue] using htarget
           · change identification.direction = .opposite
             exact hdirection
         · subst i
@@ -779,10 +814,14 @@ theorem mem_orientable_polygonalIdentifications_iff
                 cases hcompatible
             | opposite => rfl
           apply identification_eq_of_source_target_direction
-          · simpa [orientableHandleBIdentificationReverse, orientableCellComplex,
-              PolygonGluing.Identification.oppositeDirection] using hsource
-          · simpa [orientableHandleBIdentificationReverse, orientableCellComplex,
-              PolygonGluing.Identification.oppositeDirection] using htarget
+          · simpa only [orientableHandleBIdentificationReverse,
+            PolygonGluing.Identification.oppositeDirection,
+    orientableCellComplex,
+            Fin.isValue] using hsource
+          · simpa only [orientableHandleBIdentificationReverse,
+            PolygonGluing.Identification.oppositeDirection,
+    orientableCellComplex,
+            Fin.isValue] using htarget
           · change identification.direction = .opposite
             exact hdirection
         · exact (hij (hi.trans hj.symm)).elim
@@ -805,10 +844,14 @@ theorem mem_orientable_polygonalIdentifications_iff
                 cases hcompatible
             | opposite => rfl
           apply identification_eq_of_source_target_direction
-          · simpa [orientableBoundaryIdentification, orientableCellComplex,
-              PolygonGluing.Identification.oppositeDirection] using hsource
-          · simpa [orientableBoundaryIdentification, orientableCellComplex,
-              PolygonGluing.Identification.oppositeDirection] using htarget
+          · simpa only [orientableBoundaryIdentification,
+            PolygonGluing.Identification.oppositeDirection,
+    orientableCellComplex,
+            Fin.isValue] using hsource
+          · simpa only [orientableBoundaryIdentification,
+            PolygonGluing.Identification.oppositeDirection,
+    orientableCellComplex,
+            Fin.isValue] using htarget
           · change identification.direction = .opposite
             exact hdirection
         · subst i
@@ -825,10 +868,14 @@ theorem mem_orientable_polygonalIdentifications_iff
                 cases hcompatible
             | opposite => rfl
           apply identification_eq_of_source_target_direction
-          · simpa [orientableBoundaryIdentificationReverse, orientableCellComplex,
-              PolygonGluing.Identification.oppositeDirection] using hsource
-          · simpa [orientableBoundaryIdentificationReverse, orientableCellComplex,
-              PolygonGluing.Identification.oppositeDirection] using htarget
+          · simpa only [orientableBoundaryIdentificationReverse,
+            PolygonGluing.Identification.oppositeDirection,
+    orientableCellComplex,
+            Fin.isValue] using hsource
+          · simpa only [orientableBoundaryIdentificationReverse,
+            PolygonGluing.Identification.oppositeDirection,
+    orientableCellComplex,
+            Fin.isValue] using htarget
           · change identification.direction = .opposite
             exact hdirection
         · exact (hij (hi.trans hj.symm)).elim

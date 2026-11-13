@@ -74,7 +74,10 @@ theorem transportedThinKiteHomeomorph_image_baseSegment (e : Plane ≃ᵃ[ℝ] P
   rw [hsegment, hsegment, hsegment, ← Set.image_union,
     ← thinKiteAmbientHomeomorph_image_baseSegment δ hδ]
   ext p
-  simp [transportedThinKiteHomeomorph, Set.mem_image]
+  simp only [transportedThinKiteHomeomorph, Homeomorph.trans_apply,
+    affineEquivHomeomorph_symm_apply,
+    affineEquivHomeomorph_apply, Set.mem_image,
+    exists_exists_and_eq_and, AffineEquiv.symm_apply_apply]
 
 /-- A sufficiently thin transported kite lies in every open neighborhood of its limiting
 triangle. -/
@@ -180,8 +183,10 @@ theorem triangleEdges_eq_orderedEdges (T : M.Triangle) :
   constructor
   · rintro ⟨hesub, hecard⟩
     obtain ⟨a, b, hab, rfl⟩ := Finset.card_eq_two.mp hecard
-    have ha := hesub (by simp : a ∈ ({a, b} : Finset M.Vertex))
-    have hb := hesub (by simp : b ∈ ({a, b} : Finset M.Vertex))
+    have ha := hesub (by simp only [Finset.mem_insert, Finset.mem_singleton,
+      true_or] : a ∈ ({a, b} : Finset M.Vertex))
+    have hb := hesub (by simp only [Finset.mem_insert, Finset.mem_singleton,
+      or_true] : b ∈ ({a, b} : Finset M.Vertex))
     simp only [Finset.mem_insert, Finset.mem_singleton] at ha hb
     rcases ha with ha | ha | ha <;> rcases hb with hb | hb | hb <;>
       subst a <;> subst b <;> simp_all [Finset.pair_comm]
@@ -319,7 +324,9 @@ theorem image_freeTriangleBaseEdge (T : M.Triangle) (k : Fin 3) :
   rw [freeTriangleBaseEdge, hindices]
   rw [Finset.image_insert, Finset.image_singleton]
   ext p
-  simp [freeTriangleOrder]
+  simp only [Fin.isValue, Finset.coe_insert, Finset.coe_singleton, Set.image_insert_eq,
+    Set.image_singleton,
+    Set.mem_insert_iff, Set.mem_singleton_iff, freeTriangleOrder]
 
 theorem freeTriangleBaseEdge_eq_orderedPair (T : M.Triangle) (k : Fin 3) :
     M.freeTriangleBaseEdge T k =
@@ -342,7 +349,10 @@ theorem freeTriangleApexEdge0_carrier (T : M.Triangle) (k : Fin 3) :
   rw [show M.position '' (M.freeTriangleApexEdge0 T k : Set M.Vertex) =
     {M.freeTriangleOrder T k 0, M.freeTriangleOrder T k 2} by
       ext p
-      simp [freeTriangleApexEdge0, freeTriangleOrder]]
+      simp only [freeTriangleApexEdge0, Fin.isValue, Equiv.swap_apply_left, Finset.coe_insert,
+        Finset.coe_singleton,
+    Set.image_insert_eq, Set.image_singleton, Set.mem_insert_iff,
+        Set.mem_singleton_iff, freeTriangleOrder]]
   exact convexHull_pair _ _
 
 theorem freeTriangleApexEdge1_carrier (T : M.Triangle) (k : Fin 3) :
@@ -351,7 +361,10 @@ theorem freeTriangleApexEdge1_carrier (T : M.Triangle) (k : Fin 3) :
   rw [show M.position '' (M.freeTriangleApexEdge1 T k : Set M.Vertex) =
     {M.freeTriangleOrder T k 1, M.freeTriangleOrder T k 2} by
       ext p
-      simp [freeTriangleApexEdge1, freeTriangleOrder]]
+      simp only [freeTriangleApexEdge1, Fin.isValue, Equiv.swap_apply_left, Finset.coe_insert,
+        Finset.coe_singleton,
+    Set.image_insert_eq, Set.image_singleton, Set.mem_insert_iff,
+        Set.mem_singleton_iff, freeTriangleOrder]]
   exact convexHull_pair _ _
 
 theorem triangleEdges_eq_freeTriangleEdges (T : M.Triangle) (k : Fin 3) :
@@ -486,21 +499,27 @@ theorem freeTriangleBaseSegment_eq_oppositeEdgeCarrier (T : M.Triangle) (k : Fin
       convexHull ℝ (((Finset.univ.erase (0 : Fin 3)).image
         (M.position ∘ M.orderedVertex T) : Finset Plane) : Set Plane)
     rw [show (Finset.univ.erase (0 : Fin 3)) = {1, 2} by decide]
-    simp [convexHull_pair, segment_symm]
+    simp only [Fin.isValue, segment_symm, Finset.image_insert, Function.comp_apply,
+      Finset.image_singleton,
+    Finset.coe_insert, Finset.coe_singleton, convexHull_pair]
   · unfold freeTriangleOrder oppositeEdgePoints
     change segment ℝ (M.position (M.orderedVertex T 0))
         (M.position (M.orderedVertex T 2)) =
       convexHull ℝ (((Finset.univ.erase (1 : Fin 3)).image
         (M.position ∘ M.orderedVertex T) : Finset Plane) : Set Plane)
     rw [show (Finset.univ.erase (1 : Fin 3)) = {0, 2} by decide]
-    simp [convexHull_pair]
+    simp only [Fin.isValue, Finset.image_insert, Function.comp_apply, Finset.image_singleton,
+      Finset.coe_insert,
+    Finset.coe_singleton, convexHull_pair]
   · unfold freeTriangleOrder oppositeEdgePoints
     change segment ℝ (M.position (M.orderedVertex T 0))
         (M.position (M.orderedVertex T 1)) =
       convexHull ℝ (((Finset.univ.erase (2 : Fin 3)).image
         (M.position ∘ M.orderedVertex T) : Finset Plane) : Set Plane)
     rw [show (Finset.univ.erase (2 : Fin 3)) = {0, 1} by decide]
-    simp [convexHull_pair]
+    simp only [Fin.isValue, Finset.image_insert, Function.comp_apply, Finset.image_singleton,
+      Finset.coe_insert,
+    Finset.coe_singleton, convexHull_pair]
 
 theorem isGeometricallyFreeTriangle_of_boundaryEdges_card_one (T : M.Triangle)
     (hvertices : M.HasNoIsolatedFrontierVertex T.1)
@@ -736,8 +755,10 @@ theorem exists_cutting_diagonal_configuration
     · exact hcard
     · exfalso
       obtain ⟨e, f, hef, hboundary⟩ := Finset.card_eq_two.mp hcard
-      have heMem : e ∈ M.boundaryEdges T.1 := by rw [hboundary]; simp
-      have hfMem : f ∈ M.boundaryEdges T.1 := by rw [hboundary]; simp
+      have heMem : e ∈ M.boundaryEdges T.1 := by rw [hboundary]; simp only [Finset.mem_insert,
+        Finset.mem_singleton, true_or]
+      have hfMem : f ∈ M.boundaryEdges T.1 := by rw [hboundary]; simp only [Finset.mem_insert,
+        Finset.mem_singleton, or_true]
       have heData := M.mem_boundaryEdges_iff.mp heMem
       have hfData := M.mem_boundaryEdges_iff.mp hfMem
       have hvNotE : v ∉ e := by
@@ -758,26 +779,31 @@ theorem exists_cutting_diagonal_configuration
           (by rw [hfData.2.1, heraseCard])
       exact hef (heErase.trans hfErase.symm)
   obtain ⟨e, hboundary⟩ := Finset.card_eq_one.mp hcard
-  have heMem : e ∈ M.boundaryEdges T.1 := by rw [hboundary]; simp
+  have heMem : e ∈ M.boundaryEdges T.1 := by rw [hboundary]; simp only [Finset.mem_singleton]
   have heData := M.mem_boundaryEdges_iff.mp heMem
   have hvNotE : v ∉ e := by
     intro hve
     exact hvBoundary e heMem (subset_convexHull ℝ _ ⟨v, hve, rfl⟩)
   obtain ⟨a, b, hab, rfl⟩ := Finset.card_eq_two.mp heData.2.1
-  have hva : v ≠ a := fun h => hvNotE (h ▸ by simp)
-  have hvb : v ≠ b := fun h => hvNotE (h ▸ by simp)
+  have hva : v ≠ a := fun h => hvNotE (h ▸ by simp only [Finset.mem_insert, Finset.mem_singleton,
+    true_or])
+  have hvb : v ≠ b := fun h => hvNotE (h ▸ by simp only [Finset.mem_insert, Finset.mem_singleton,
+    or_true])
   have htriangle : T.1 = {a, b, v} := by
     symm
     apply Finset.eq_of_subset_of_card_le
     · intro w hw
       simp only [Finset.mem_insert, Finset.mem_singleton] at hw
       rcases hw with rfl | rfl | rfl
-      · exact heData.1 (by simp)
-      · exact heData.1 (by simp)
+      · exact heData.1 (by simp only [Finset.mem_insert, Finset.mem_singleton, true_or])
+      · exact heData.1 (by simp only [Finset.mem_insert, Finset.mem_singleton, or_true])
       · exact hvT
     · rw [M.card_triangle T.1 T.2]
       have hcardTriple : ({a, b, v} : Finset M.Vertex).card = 3 := by
-        simp [hab, Ne.symm hva, Ne.symm hvb]
+        simp only [Finset.mem_insert, hab, Finset.mem_singleton, Ne.symm hva, or_self,
+          not_false_eq_true,
+    Finset.card_insert_of_notMem, Ne.symm hvb, Finset.card_singleton,
+          Nat.reduceAdd]
       omega
   exact ⟨a, b, v, hab, hva, hvb, htriangle, hboundary, hvFrontier⟩
 
@@ -1012,7 +1038,7 @@ private theorem exists_pos_uniform_finset {α : Type*}
   classical
   induction s using Finset.induction_on with
   | empty =>
-      exact ⟨1, by norm_num, by simp⟩
+      exact ⟨1, by norm_num, by simp only [Finset.notMem_empty, IsEmpty.forall_iff, implies_true]⟩
   | @insert x s hxs ih =>
       obtain ⟨εx, hεx, hx⟩ := hP x (Finset.mem_insert_self x s)
       obtain ⟨εs, hεs, hs⟩ := ih fun y hy => hP y (Finset.mem_insert_of_mem hy)

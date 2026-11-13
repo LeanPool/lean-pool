@@ -301,7 +301,8 @@ theorem chartEdgePath_mem_edgeImage (e : K.Edge) (t : Set.Icc (0 : ℝ) 1) :
 
 theorem chartEdgePath_zero (e : K.Edge) :
     G.chartEdgePath e ⟨0, by simp⟩ = G.vertexImage (K.edgeFirst e) := by
-  change G.map (edgePathInSupport (K := K) e ⟨0, by simp⟩) =
+  change G.map (edgePathInSupport (K := K) e ⟨0, by simp only [Set.mem_Icc, Std.le_refl,
+    zero_le_one, and_self]⟩) =
     G.map ⟨K.vertexPoint (K.edgeFirst e), K.vertexPoint_mem_support _⟩
   congr 1
   apply Subtype.ext
@@ -309,7 +310,8 @@ theorem chartEdgePath_zero (e : K.Edge) :
 
 theorem chartEdgePath_one (e : K.Edge) :
     G.chartEdgePath e ⟨1, by simp⟩ = G.vertexImage (K.edgeSecond e) := by
-  change G.map (edgePathInSupport (K := K) e ⟨1, by simp⟩) =
+  change G.map (edgePathInSupport (K := K) e ⟨1, by simp only [Set.mem_Icc, zero_le_one,
+    Std.le_refl, and_self]⟩) =
     G.map ⟨K.vertexPoint (K.edgeSecond e), K.vertexPoint_mem_support _⟩
   congr 1
   apply Subtype.ext
@@ -742,7 +744,8 @@ theorem locallyFinite_vertexDisks : LocallyFinite G.vertexDiskInRange := by
           exact hrComp.trans (div_le_div_of_nonneg_right hinf (by norm_num))
       linarith
     refine ⟨c, ?_, ?_⟩
-    · simp [vertexImageCarrierInRange, vertexImageCarrier, c]
+    · simp only [vertexImageCarrierInRange, vertexImageCarrier, Set.mem_singleton_iff,
+      Set.mem_ofPred_eq, c]
     · exact hpCenter
   · have hV : G.region = Set.univ := by
       apply Set.eq_univ_of_forall
@@ -774,7 +777,8 @@ theorem locallyFinite_vertexDisks : LocallyFinite G.vertexDiskInRange := by
         _ < G.vertexIsolationRadius v + 1 := add_lt_add_of_le_of_lt hpc hpx
       linarith [G.vertexIsolationRadius_le_one v]
     refine ⟨c, ?_, hpCenter⟩
-    simp [vertexImageCarrierInRange, vertexImageCarrier, c]
+    simp only [vertexImageCarrierInRange, vertexImageCarrier, Set.mem_singleton_iff,
+      Set.mem_ofPred_eq, c]
 
 /-! ## Pairwise-separated central edge carriers -/
 
@@ -964,7 +968,7 @@ theorem centralSeparationNN_lt_dist (e : K.Edge)
   have h := (Classical.choose_spec (Metric.exists_pos_forall_lt_edist
     (G.isCompact_edgeCentralCarrier e) (G.isClosed_edgeCentralObstacle e)
     (G.disjoint_edgeCentralCarrier_obstacle e))).2 x hx y hy
-  simpa [centralSeparationNN, edist_dist] using h
+  simpa only [centralSeparationNN, edist_dist, ENNReal.coe_lt_ofReal, gt_iff_lt] using h
 
 /-- A bounded quarter-separation tube radius for one central edge carrier.  The additional
 endpoint-distance cap is the quantitative ingredient used in Chapter 6: once the charted edge
@@ -1133,7 +1137,7 @@ theorem locallyFinite_edgeCentralTubes : LocallyFinite G.edgeCentralTubeInRange 
     have hrComp := G.centralTubeRadius_le_quarter_infDist_compl e hcomp hpCentral
     have hpCenter : dist p x.1 ≤ d / 2 := by
       have hpz : dist p z.1 < G.centralTubeRadius e := by
-        simpa [dist_comm] using hzp
+        simpa only [dist_comm] using hzp
       have hzx : dist z.1 x.1 < d / 8 := Metric.mem_ball.mp hzU
       have hinf : Metric.infDist p G.regionᶜ ≤
           d + dist p x.1 := Metric.infDist_le_infDist_add_dist
@@ -1169,7 +1173,7 @@ theorem locallyFinite_edgeCentralTubes : LocallyFinite G.edgeCentralTubeInRange 
       exact G.map_mem_region q⟩
     have hpCenter : dist p x.1 ≤ 2 := by
       have hpz : dist p z.1 < G.centralTubeRadius e := by
-        simpa [dist_comm] using hzp
+        simpa only [dist_comm] using hzp
       have hzx : dist z.1 x.1 < 1 := Metric.mem_ball.mp hzU
       have hmain : dist p x.1 < G.centralTubeRadius e + 1 :=
         (dist_triangle p z.1 x.1).trans_lt (add_lt_add hpz hzx)
@@ -1191,16 +1195,18 @@ theorem chartEdgeCurve_eq_of_mem (e : K.Edge) {t : ℝ}
   apply congrArg (G.chartEdgePath e)
   apply Subtype.ext
   rw [Set.coe_projIcc]
-  simp [ht.1, ht.2]
+  simp only [ht.2, inf_of_le_right, ht.1, sup_of_le_right]
 
 @[simp] theorem chartEdgeCurve_zero (e : K.Edge) :
     G.chartEdgeCurve e 0 = G.vertexImage (K.edgeFirst e) := by
-  rw [G.chartEdgeCurve_eq_of_mem e (by simp)]
+  rw [G.chartEdgeCurve_eq_of_mem e (by simp only [Set.mem_Icc, Std.le_refl, zero_le_one,
+    and_self])]
   exact G.chartEdgePath_zero e
 
 @[simp] theorem chartEdgeCurve_one (e : K.Edge) :
     G.chartEdgeCurve e 1 = G.vertexImage (K.edgeSecond e) := by
-  rw [G.chartEdgeCurve_eq_of_mem e (by simp)]
+  rw [G.chartEdgeCurve_eq_of_mem e (by simp only [Set.mem_Icc, zero_le_one, Std.le_refl,
+    and_self])]
   exact G.chartEdgePath_one e
 
 /-- Ordered exits from the two (possibly differently sized) endpoint disks. -/
@@ -1605,10 +1611,19 @@ theorem unitSegment_mem_bounds {p : Plane}
   rw [unitSegmentComplex_support, segment_eq_image_lineMap] at hp
   obtain ⟨t, ht, rfl⟩ := hp
   constructor
-  · simp [AffineMap.lineMap_apply_module, planePoint]
+  · simp only [Fin.isValue, planePoint, AffineMap.lineMap_apply_module, PiLp.add_apply,
+    PiLp.smul_apply,
+    Matrix.cons_val_one, Matrix.cons_val_fin_one, smul_eq_mul, mul_zero,
+    add_zero]
   · constructor
-    · simpa [AffineMap.lineMap_apply_module, planePoint] using ht.1
-    · simpa [AffineMap.lineMap_apply_module, planePoint] using ht.2
+    · simpa only [Fin.isValue, planePoint, AffineMap.lineMap_apply_module, PiLp.add_apply,
+      PiLp.smul_apply,
+    Matrix.cons_val_zero, smul_eq_mul, mul_zero, mul_one,
+      zero_add] using ht.1
+    · simpa only [Fin.isValue, planePoint, AffineMap.lineMap_apply_module, PiLp.add_apply,
+      PiLp.smul_apply,
+    Matrix.cons_val_zero, smul_eq_mul, mul_zero, mul_one,
+      zero_add] using ht.2
 
 theorem planePoint_mem_unitSegment {t : ℝ} (ht : t ∈ Set.Icc (0 : ℝ) 1) :
     planePoint t 0 ∈ unitSegmentComplex.support := by
@@ -1775,7 +1790,7 @@ theorem exists_centralPolygonalArc (e : K.Edge) : Nonempty (G.CentralPolygonalAr
     have hslope : 0 ≤ T.right - T.left := sub_nonneg.mpr T.left_lt_right.le
     have hprod0 : 0 ≤ (T.right - T.left) * p 0 := mul_nonneg hslope hp0
     have hprod1 : (T.right - T.left) * p 0 ≤ T.right - T.left := by
-      simpa using mul_le_mul_of_nonneg_left hp1 hslope
+      simpa only [Fin.isValue, mul_one] using mul_le_mul_of_nonneg_left hp1 hslope
     constructor <;> dsimp only [q] <;> linarith [T.left_pos, T.right_lt_one]
   have hq_mem_trim (p : Plane) (hp : p ∈ unitSegmentComplex.support) :
       q p ∈ Set.Icc T.left T.right := by
@@ -1783,7 +1798,7 @@ theorem exists_centralPolygonalArc (e : K.Edge) : Nonempty (G.CentralPolygonalAr
     have hslope : 0 ≤ T.right - T.left := sub_nonneg.mpr T.left_lt_right.le
     have hprod0 : 0 ≤ (T.right - T.left) * p 0 := mul_nonneg hslope hp0
     have hprod1 : (T.right - T.left) * p 0 ≤ T.right - T.left := by
-      simpa using mul_le_mul_of_nonneg_left hp1 hslope
+      simpa only [Fin.isValue, mul_one] using mul_le_mul_of_nonneg_left hp1 hslope
     constructor <;> dsimp only [q] <;> linarith
   have hmem_carrier (p : Plane) (hp : p ∈ unitSegmentComplex.support) :
       h p ∈ T.carrier := by
@@ -1805,7 +1820,7 @@ theorem exists_centralPolygonalArc (e : K.Edge) : Nonempty (G.CentralPolygonalAr
     ext i
     fin_cases i
     · exact hxy0
-    · simp [hx1, hy1]
+    · simp only [Fin.mk_one, Fin.isValue, hx1, hy1]
   obtain ⟨f, hpl, hfinj, hvertex, hclose, hconvex, -⟩ :=
     unitSegmentComplex.exists_graph_PL_approximation_facewise
       unitSegmentComplex_graph hcont hinj (G.centralTubeRadius_pos e)
@@ -1832,19 +1847,22 @@ theorem exists_centralPolygonalArc (e : K.Edge) : Nonempty (G.CentralPolygonalAr
         f (planePoint 0 0) = h (planePoint 0 0) := by
           rw [← unitSegmentFirstVertex_position]
           exact hvertex unitSegmentFirstVertex
-        _ = G.chartEdgeCurve e T.left := by simp [h, q, planePoint]
+        _ = G.chartEdgeCurve e T.left := by simp only [Fin.isValue, planePoint,
+          Matrix.cons_val_zero, mul_zero, add_zero, h, q]
     finish_eq := by
       calc
         f (planePoint 1 0) = h (planePoint 1 0) := by
           rw [← unitSegmentSecondVertex_position]
           exact hvertex unitSegmentSecondVertex
-        _ = G.chartEdgeCurve e T.right := by simp [h, q, planePoint]
+        _ = G.chartEdgeCurve e T.right := by simp only [Fin.isValue, planePoint,
+          Matrix.cons_val_zero, mul_one, add_sub_cancel, h, q]
     curve_close := by
       intro t ht
       rw [P.curve_eq, hPlength, hPmap]
       have htSupport : planePoint t 0 ∈ unitSegmentComplex.support :=
         planePoint_mem_unitSegment ht
-      simpa [h, q, planePoint] using hclose (planePoint t 0) htSupport }⟩
+      simpa only [planePoint, Nat.cast_one, one_mul, gt_iff_lt, Fin.isValue, Matrix.cons_val_zero,
+        h, q] using hclose (planePoint t 0) htSupport }⟩
 
 /-- The `centralPolygonalArc` declaration. -/
 noncomputable def centralPolygonalArc (e : K.Edge) : G.CentralPolygonalArc e :=
@@ -2412,7 +2430,7 @@ theorem disjoint_leftOpenSpoke_leftOpenSpoke {d : K.Edge}
     {B : G.CentralPolygonalArc d} (A : G.CentralPolygonalArc e) (hed : e ≠ d) :
     Disjoint A.leftOpenSpoke B.leftOpenSpoke := by
   by_cases hv : K.edgeFirst e = K.edgeFirst d
-  · simpa [leftOpenSpoke, leftSpoke, hv] using
+  · simpa only [leftOpenSpoke, leftSpoke, hv] using
       disjoint_radial_segments_away_center
         (G.vertexIsolationRadius_pos (K.edgeFirst e))
         A.leftEndpoint_on_sphere
@@ -2426,7 +2444,7 @@ theorem disjoint_leftOpenSpoke_rightOpenSpoke {d : K.Edge}
     {B : G.CentralPolygonalArc d} (A : G.CentralPolygonalArc e) (hed : e ≠ d) :
     Disjoint A.leftOpenSpoke B.rightOpenSpoke := by
   by_cases hv : K.edgeFirst e = K.edgeSecond d
-  · simpa [leftOpenSpoke, leftSpoke, rightOpenSpoke, rightSpoke, hv, segment_symm] using
+  · simpa only [leftOpenSpoke, leftSpoke, hv, rightOpenSpoke, rightSpoke, segment_symm] using
       disjoint_radial_segments_away_center
         (G.vertexIsolationRadius_pos (K.edgeFirst e))
         A.leftEndpoint_on_sphere
@@ -2440,7 +2458,7 @@ theorem disjoint_rightOpenSpoke_leftOpenSpoke {d : K.Edge}
     {B : G.CentralPolygonalArc d} (A : G.CentralPolygonalArc e) (hed : e ≠ d) :
     Disjoint A.rightOpenSpoke B.leftOpenSpoke := by
   by_cases hv : K.edgeSecond e = K.edgeFirst d
-  · simpa [rightOpenSpoke, rightSpoke, leftOpenSpoke, leftSpoke, hv, segment_symm] using
+  · simpa only [rightOpenSpoke, rightSpoke, hv, segment_symm, leftOpenSpoke, leftSpoke] using
       disjoint_radial_segments_away_center
         (G.vertexIsolationRadius_pos (K.edgeSecond e))
         A.rightEndpoint_on_sphere
@@ -2454,7 +2472,7 @@ theorem disjoint_rightOpenSpoke_rightOpenSpoke {d : K.Edge}
     {B : G.CentralPolygonalArc d} (A : G.CentralPolygonalArc e) (hed : e ≠ d) :
     Disjoint A.rightOpenSpoke B.rightOpenSpoke := by
   by_cases hv : K.edgeSecond e = K.edgeSecond d
-  · simpa [rightOpenSpoke, rightSpoke, hv, segment_symm] using
+  · simpa only [rightOpenSpoke, rightSpoke, hv, segment_symm] using
       disjoint_radial_segments_away_center
         (G.vertexIsolationRadius_pos (K.edgeSecond e))
         A.rightEndpoint_on_sphere
@@ -2824,7 +2842,7 @@ theorem replacementEdgeMap_vertex (e : K.Edge) (v : K.Vertex) (hve : v ∈ e.1) 
         ⟨⟨K.vertexPoint (K.edgeFirst e), K.vertexPoint_mem_support _⟩,
           by rw [edgeInSupport_eq_preimage (K := K)]; exact
             (K.vertexPoint_mem_edgeCarrier_iff _ e).mpr (K.edgeFirst_mem e)⟩ =
-        ⟨0, by simp⟩ := by
+        ⟨0, by simp only [Set.mem_Icc, Std.le_refl, zero_le_one, and_self]⟩ := by
       apply (G.edgePathInSupportHomeomorph e).injective
       rw [(G.edgePathInSupportHomeomorph e).apply_symm_apply]
       apply Subtype.ext
@@ -2836,7 +2854,7 @@ theorem replacementEdgeMap_vertex (e : K.Edge) (v : K.Vertex) (hve : v ∈ e.1) 
         ⟨⟨K.vertexPoint (K.edgeSecond e), K.vertexPoint_mem_support _⟩,
           by rw [edgeInSupport_eq_preimage (K := K)]; exact
             (K.vertexPoint_mem_edgeCarrier_iff _ e).mpr (K.edgeSecond_mem e)⟩ =
-        ⟨1, by simp⟩ := by
+        ⟨1, by simp only [Set.mem_Icc, zero_le_one, Std.le_refl, and_self]⟩ := by
       apply (G.edgePathInSupportHomeomorph e).injective
       rw [(G.edgePathInSupportHomeomorph e).apply_symm_apply]
       apply Subtype.ext

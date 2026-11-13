@@ -39,7 +39,7 @@ namespace Moise
 theorem TriangleMesh.isTriangle_support_of_card_triangles_eq_one (M : TriangleMesh)
     (hcard : M.triangles.card = 1) : IsTriangle M.toPlaneComplex.support := by
   obtain ⟨t, ht⟩ := Finset.card_eq_one.mp hcard
-  have htmem : t ∈ M.triangles := by rw [ht]; simp
+  have htmem : t ∈ M.triangles := by rw [ht]; simp only [Finset.mem_singleton]
   let T : M.Triangle := ⟨t, htmem⟩
   refine ⟨M.position ∘ M.orderedVertex T, M.orderedVertex_affineIndependent T, ?_⟩
   rw [M.toPlaneComplex_support, ht]
@@ -80,7 +80,7 @@ theorem TriangleMesh.AmbientShellingIn.straightens {M : TriangleMesh} {U : Set P
   | single M hcard =>
       refine ⟨Homeomorph.refl Plane, M.toPlaneComplex.support,
         M.isTriangle_support_of_card_triangles_eq_one hcard, ?_, ?_⟩
-      · simp
+      · simp only [Homeomorph.refl_apply, id_eq, Set.image_id']
       · intro p hp
         rfl
   | remove M t ht g hfix hmove tail ih =>
@@ -92,7 +92,7 @@ theorem TriangleMesh.AmbientShellingIn.straightens {M : TriangleMesh} {U : Set P
       · intro p hp
         change h (g p) = p
         rw [hfix hp]
-        simpa using hfixTail hp
+        simpa only [id_eq] using hfixTail hp
 
 /-- A PL-aware shelling composes to a finite PL ambient straightening of its original disk. -/
 theorem TriangleMesh.PLAmbientShellingIn.straightens {M : TriangleMesh} {U : Set Plane}
@@ -106,8 +106,8 @@ theorem TriangleMesh.PLAmbientShellingIn.straightens {M : TriangleMesh} {U : Set
       refine ⟨Homeomorph.refl Plane, M.toPlaneComplex.support,
         FinitePLHomeomorphOn.refl M.toPlaneComplex M.toPlaneComplex_isPure2,
         M.isTriangle_support_of_card_triangles_eq_one hcard, ?_, ?_, ?_⟩
-      · simp
-      · simp
+      · simp only [Homeomorph.refl_apply, id_eq, Set.image_id']
+      · simp only [Homeomorph.refl_apply, id_eq, Set.image_id']
       · intro p hp
         rfl
   | remove M t ht g hpl hfix hsupport hmove tail ih =>
@@ -120,7 +120,7 @@ theorem TriangleMesh.PLAmbientShellingIn.straightens {M : TriangleMesh} {U : Set
       · intro p hp
         change h (g p) = p
         rw [hfix hp]
-        simpa using hfixTail hp
+        simpa only [id_eq] using hfixTail hp
 
 /-- An affine equivalence of the Euclidean plane is an ambient homeomorphism. -/
 noncomputable def triangleAffineHomeomorph (p q : Fin 3 → Plane)
@@ -200,7 +200,7 @@ theorem PolygonalCircle.edgeSegment_inter_eq_shared_vertices
   · subst j
     have hfin :
         ({i, i + 1} : Finset (ZMod J.n)) ∩ {i + 1, i + 1 + 1} = {i + 1} := by
-      convert hadjacent i using 1; ring
+      convert hadjacent i using 1; ring_nf
     change J.edgeSegment i ∩ J.edgeSegment (i + 1) = _
     rw [hfin, show convexHull ℝ (J.vertex '' (({i + 1} :
       Finset (ZMod J.n)) : Set (ZMod J.n))) = {J.vertex (i + 1)} by simp]
@@ -212,7 +212,7 @@ theorem PolygonalCircle.edgeSegment_inter_eq_shared_vertices
     have hfin :
         ({j + 1, j + 1 + 1} : Finset (ZMod J.n)) ∩ {j, j + 1} = {j + 1} := by
       rw [Finset.inter_comm]
-      convert hadjacent j using 1; ring
+      convert hadjacent j using 1; ring_nf
     rw [hprev]
     change J.edgeSegment (j + 1) ∩ J.edgeSegment j = _
     rw [hfin, show convexHull ℝ (J.vertex '' (({j + 1} :
@@ -828,8 +828,10 @@ theorem PolygonalCircle.exists_thinKite_fixing_outside_triangle
   have hbaseTriangle : segment ℝ (planePoint (-1) 0) (planePoint 1 0) ⊆
       convexHull ℝ (Set.range kiteTrianglePosition) := by
     apply (convex_convexHull ℝ _).segment_subset
-    · exact subset_convexHull ℝ _ ⟨0, by simp [kiteTrianglePosition]⟩
-    · exact subset_convexHull ℝ _ ⟨1, by simp [kiteTrianglePosition]⟩
+    · exact subset_convexHull ℝ _ ⟨0, by simp only [kiteTrianglePosition, Fin.isValue,
+      Matrix.cons_val_zero]⟩
+    · exact subset_convexHull ℝ _ ⟨1, by simp only [kiteTrianglePosition, Fin.isValue,
+      Matrix.cons_val_one, Matrix.cons_val_zero]⟩
   let P : ZMod K.n → ℝ → Prop := fun i δ =>
     Disjoint (K.edgeSegment i) openBase →
       thinKitePatch δ ∩ K.edgeSegment i ⊆ endpoints
@@ -926,10 +928,12 @@ theorem PolygonalCircle.exists_thinKite_fixing_outside_triangle
   rcases hpEndpoint with hpLeft | hpRight
   · apply hp.2
     rw [hpLeft]
-    exact subset_convexHull ℝ _ ⟨0, by simp [kiteTrianglePosition]⟩
+    exact subset_convexHull ℝ _ ⟨0, by simp only [kiteTrianglePosition, Fin.isValue,
+      Matrix.cons_val_zero]⟩
   · apply hp.2
     rw [hpRight]
-    exact subset_convexHull ℝ _ ⟨1, by simp [kiteTrianglePosition]⟩
+    exact subset_convexHull ℝ _ ⟨1, by simp only [kiteTrianglePosition, Fin.isValue,
+      Matrix.cons_val_one, Matrix.cons_val_zero]⟩
 
 /-- In a triangulated polygonal disk with more than one maximal triangle, every maximal
 triangle has an edge-neighbor.  A triangle attached only at vertices would make its open
@@ -1081,7 +1085,7 @@ theorem TriangleMesh.exists_carrier_not_mem_triangleCarrier_of_polygonalDisk
       push Not at h
       apply hfne
       ext y
-      simpa using h y
+      simpa only [zero_apply] using h y
     let d : Plane := if 0 < f y then y else -y
     have hfd : 0 < f d := by
       dsimp [d]
@@ -1092,7 +1096,7 @@ theorem TriangleMesh.exists_carrier_not_mem_triangleCarrier_of_polygonalDisk
     have hdne : d ≠ 0 := by
       intro hd
       rw [hd] at hfd
-      simp at hfd
+      simp only [map_zero, lt_self_iff_false] at hfd
     obtain ⟨ε, hε, hball⟩ := Metric.mem_nhds_iff.mp
       (mem_interior_iff_mem_nhds.mp hqInterior)
     let δ : ℝ := ε / (2 * ‖d‖)
@@ -1185,7 +1189,9 @@ theorem TriangleMesh.boundaryEdges_card_two_of_card_triangles_eq_two
     M.exists_edgeNeighbor_of_polygonalDisk J hsupport T hmore
   obtain ⟨e, hecard, heT, heU⟩ := hneighbors
   have hpairCard : ({T.1, U.1} : Finset (Finset M.Vertex)).card = 2 := by
-    simp [hTU]
+    simp only [Finset.mem_singleton, hTU, not_false_eq_true, Finset.card_insert_of_notMem,
+      Finset.card_singleton,
+    Nat.reduceAdd]
   have htriangles : M.triangles = {T.1, U.1} := by
     apply Finset.eq_of_subset_of_card_le
     · intro t ht
@@ -1242,7 +1248,7 @@ theorem TriangleMesh.boundaryEdges_card_two_of_card_triangles_eq_two
         · rintro rfl
           exact ⟨T.2, hdData.1⟩
       rw [hincident]
-      simp
+      simp only [Finset.card_singleton]
   rw [hboundary, Finset.card_erase_of_mem]
   · rw [M.card_triangleEdges T.2]
   · exact Finset.mem_powersetCard.mpr ⟨heT, hecard⟩
@@ -1392,10 +1398,12 @@ theorem TriangleMesh.exists_meshCrosscut_of_badFreeTriangle
     apply Cav.ne
     rw [hCavP, hCavQ, hav]
   have hedgeCard : ({a, v} : Finset M.Vertex).card = 2 := by
-    simp [hav]
+    simp only [Finset.mem_singleton, hav, not_false_eq_true, Finset.card_insert_of_notMem,
+      Finset.card_singleton,
+    Nat.reduceAdd]
   have hedgeSubset : ({a, v} : Finset M.Vertex) ⊆ T.1 := by
     rw [htriangle]
-    simp
+    simp only [Finset.subset_insert, Finset.insert_subset_insert]
   have hedgeMem : ({a, v} : Finset M.Vertex) ∈ M.edges := by
     apply Finset.mem_biUnion.mpr
     exact ⟨T.1, T.2, Finset.mem_powersetCard.mpr ⟨hedgeSubset, hedgeCard⟩⟩
@@ -1406,7 +1414,9 @@ theorem TriangleMesh.exists_meshCrosscut_of_badFreeTriangle
   have hchord : convexHull ℝ
       (M.position '' (({a, v} : Finset M.Vertex) : Set M.Vertex)) = G.B3 := by
     rw [show M.position '' (({a, v} : Finset M.Vertex) : Set M.Vertex) =
-      {M.position a, M.position v} by ext p; simp]
+      {M.position a, M.position v} by ext p; simp only [Finset.coe_insert, Finset.coe_singleton,
+        Set.image_insert_eq, Set.image_singleton,
+    Set.mem_insert_iff, Set.mem_singleton_iff]]
     rw [convexHull_pair, hGB3, hCavP, hCavQ]
   refine ⟨G, ⟨{
     support_eq := hsupport.trans hclosed.symm
@@ -1414,7 +1424,10 @@ theorem TriangleMesh.exists_meshCrosscut_of_badFreeTriangle
     chordEdge_mem := hedgeMem
     chordVertices := by
       rw [show M.position '' (({a, v} : Finset M.Vertex) : Set M.Vertex) =
-        {M.position a, M.position v} by ext p; simp]
+        {M.position a, M.position v} by ext p; simp only [Finset.coe_insert, Finset.coe_singleton,
+          Set.image_insert_eq, Set.image_singleton,
+    Set.mem_insert_iff,
+          Set.mem_singleton_iff]]
       rw [hGP, hGQ, hCavP, hCavQ]
     chordCarrier := hchord }⟩⟩
 
@@ -2044,7 +2057,7 @@ theorem frontier_inter_triangleCarrier_side23 {t : Finset M.Vertex}
     exact ht
   have h := C.swap12.frontier_inter_triangleCarrier_side13
     (G := G.swap12) (M := M) (t := t) ht' hchord
-  simpa using h
+  simpa only [swap12_side13Mesh] using h
 
 /-- A geometrically free triangle not incident to the cut edge remains geometrically free after
 the first cut subdisk is glued back into the original polygonal disk. -/
@@ -2362,7 +2375,7 @@ theorem TriangleMesh.exists_two_geometricallyFreeTriangles_of_polygonalDisk
             omega
           obtain ⟨A, B, hAB, hAgeom, hBgeom⟩ := ih
             C.side13Mesh.triangles.card
-            (by simpa [hcardM] using C.card_side13_triangles_lt)
+            (by simpa only [hcardM] using C.card_side13_triangles_lt)
             C.side13Mesh G.J13 C.side13Mesh_support hmore13 rfl
           by_cases hAchord : C.chordEdge ⊆ A.1
           · have hBchord : ¬C.chordEdge ⊆ B.1 := by
@@ -2380,7 +2393,7 @@ theorem TriangleMesh.exists_two_geometricallyFreeTriangles_of_polygonalDisk
             omega
           obtain ⟨A, B, hAB, hAgeom, hBgeom⟩ := ih
             C.side23Mesh.triangles.card
-            (by simpa [hcardM] using C.card_side23_triangles_lt)
+            (by simpa only [hcardM] using C.card_side23_triangles_lt)
             C.side23Mesh G.J23 C.side23Mesh_support hmore23 rfl
           by_cases hAchord : C.chordEdge ⊆ A.1
           · have hBchord : ¬C.chordEdge ⊆ B.1 := by

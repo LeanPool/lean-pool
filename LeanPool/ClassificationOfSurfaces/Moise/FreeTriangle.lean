@@ -92,7 +92,8 @@ theorem frontier_biUnion_subset (F : Finset (Finset M.Vertex)) :
       ⋃ t ∈ F, frontier (M.triangleCarrier t) := by
   classical
   induction F using Finset.induction_on with
-  | empty => simp
+  | empty => simp only [Finset.notMem_empty, Set.iUnion_of_empty, Set.iUnion_empty, frontier_empty,
+    Std.le_refl]
   | @insert t F ht ih =>
       simpa [ht] using (frontier_union_subset (M.triangleCarrier t)
         (⋃ u ∈ F, M.triangleCarrier u)).trans
@@ -270,8 +271,8 @@ theorem oppositeCoord_pos_of_mem_oppositeEdge_of_not_vertex (T : M.Triangle) (k 
     rw [M.oppositeCoord_vertex]
     by_cases hl : l = r
     · subst l
-      simpa using hcoordr
-    · simpa [hl] using hz l hl
+      simpa only [↓reduceIte] using hcoordr
+    · simpa only [hl, ↓reduceIte] using hz l hl
   have hpv' : ∃ r : Fin 3, p = M.position (M.orderedVertex T r) := by
     fin_cases k <;> fin_cases j
     · exact (hjk rfl).elim
@@ -701,7 +702,9 @@ theorem isOpen_nonOppositeCoordNeighborhood (T : M.Triangle) (k : Fin 3) :
   have heq : M.nonOppositeCoordNeighborhood T k =
       ⋂ j : Fin 3, ⋂ (_ : j ≠ k), M.oppositeCoord T j ⁻¹' Set.Ioi 0 := by
     ext p
-    simp [nonOppositeCoordNeighborhood]
+    simp only [nonOppositeCoordNeighborhood, ne_eq, Set.mem_ofPred_eq, Set.mem_iInter,
+      Set.mem_preimage,
+    Set.mem_Ioi]
   rw [heq]
   apply isOpen_iInter_of_finite
   intro j
@@ -738,7 +741,7 @@ theorem triangle_inter_eq_edge {T U : M.Triangle} (hTU : T.1 ≠ U.1)
         rw [hcard3, M.card_triangle U.1 U.2])
     exact hTU (hEqT.symm.trans hEqU)
   symm
-  exact Finset.eq_of_subset_of_card_le heInter (by simpa [hecard] using hcard)
+  exact Finset.eq_of_subset_of_card_le heInter (by simpa only [hecard] using hcard)
 
 theorem oppositeCoord_negative_across_shared_edge {T U : M.Triangle} (hTU : T.1 ≠ U.1)
     {e : Finset M.Vertex} (hecard : e.card = 2) (heT : e ⊆ T.1) (heU : e ⊆ U.1)
@@ -789,10 +792,12 @@ theorem oppositeCoord_negative_across_shared_edge {T U : M.Triangle} (hTU : T.1 
     · subst i
       rw [M.oppositeCoord_eq_zero_of_mem_oppositeEdge U kU hpEdgeU,
         M.oppositeCoord_vertex]
-      simp [AffineMap.lineMap_apply_module, hθ.1]
+      simp only [↓reduceIte, AffineMap.lineMap_apply_module, smul_eq_mul, mul_zero, mul_one,
+        zero_add, hθ.1]
     · have hpi := hpOU i hi
       rw [M.oppositeCoord_vertex]
-      simp [hi, AffineMap.lineMap_apply_module]
+      simp only [hi, ↓reduceIte, AffineMap.lineMap_apply_module, smul_eq_mul, mul_zero, add_zero,
+        gt_iff_lt]
       nlinarith [hpi, hθ.2]
   have hzT : z ∈ interior (M.triangleCarrier T.1) := by
     rw [M.interior_triangleCarrier T]
@@ -804,7 +809,7 @@ theorem oppositeCoord_negative_across_shared_edge {T U : M.Triangle} (hTU : T.1 
       rw [AffineMap.apply_lineMap,
         M.oppositeCoord_eq_zero_of_mem_oppositeEdge T kT hpEdgeT]
       change 0 < AffineMap.lineMap 0 c θ
-      simp [AffineMap.lineMap_apply_module]
+      simp only [AffineMap.lineMap_apply_module, smul_eq_mul, mul_zero, zero_add]
       nlinarith [hcpos, hθ.1]
     · exact hzOT i hi
   have hinter := M.triangle_inter T.1 T.2 U.1 U.2
@@ -836,8 +841,10 @@ theorem edgeCarrier_infinite {e : Finset M.Vertex} (hecard : e.card = 2) :
     · intro hp
       simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at hp
       rcases hp with rfl | rfl
-      · exact ⟨v, by simp, rfl⟩
-      · exact ⟨w, by simp, rfl⟩]
+      · exact ⟨v, by simp only [Finset.coe_insert, Finset.coe_singleton, Set.mem_insert_iff,
+        Set.mem_singleton_iff, true_or], rfl⟩
+      · exact ⟨w, by simp only [Finset.coe_insert, Finset.coe_singleton, Set.mem_insert_iff,
+        Set.mem_singleton_iff, or_true], rfl⟩]
   rw [convexHull_pair, segment_eq_image_lineMap]
   exact (Set.Icc_infinite (by norm_num : (0 : ℝ) < 1)).image
     (AffineMap.lineMap_injective ℝ hpne).injOn
@@ -1170,8 +1177,10 @@ theorem boundaryEdgeCarrier_subset_frontier {e : Finset M.Vertex} (he : M.IsBoun
     · intro hp
       simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at hp
       rcases hp with rfl | rfl
-      · exact ⟨v, by simp, rfl⟩
-      · exact ⟨w, by simp, rfl⟩
+      · exact ⟨v, by simp only [Finset.coe_insert, Finset.coe_singleton, Set.mem_insert_iff,
+        Set.mem_singleton_iff, true_or], rfl⟩
+      · exact ⟨w, by simp only [Finset.coe_insert, Finset.coe_singleton, Set.mem_insert_iff,
+        Set.mem_singleton_iff, or_true], rfl⟩
   rw [himage, convexHull_pair]
   let line : ℝ → Plane := AffineMap.lineMap a b
   let bad : Set ℝ := line ⁻¹' Set.range M.position
@@ -1198,7 +1207,7 @@ theorem boundaryEdgeCarrier_subset_frontier {e : Finset M.Vertex} (he : M.IsBoun
     exact hc
   have hcClosureGood : c ∈ closure good := by
     have : c ∈ closure (closure good) := closure_mono hIooGood hcClosureIoo
-    simpa using this
+    simpa only [isClosed_closure, IsClosed.closure_eq] using this
   have hlineContinuous : Continuous line := by
     exact AffineMap.lineMap_continuous
   have hmemClosureImage : line c ∈ closure (line '' good) :=
@@ -1328,7 +1337,7 @@ theorem mem_interior_union_triangleCarrier_of_shared_edge {T U : M.Triangle}
       rw [M.triangleCarrier_eq_nonnegCoords T]
       intro i
       by_cases hi : i = kT
-      · simpa [hi] using hfx
+      · simpa only [hi] using hfx
       · exact (hx.1 i hi).le
     · right
       rw [M.triangleCarrier_eq_nonnegCoords U]
@@ -1458,7 +1467,7 @@ theorem exists_boundaryEdge_through_frontier_point {p : Plane}
           exact htIncident
       apply hne
       rw [hsingleton]
-      simp
+      simp only [Finset.card_singleton]
     obtain ⟨u, huIncident, hut⟩ := hother
     have huData := M.mem_incidentTriangles_iff.mp huIncident
     let T : M.Triangle := ⟨t, ht⟩
