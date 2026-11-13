@@ -132,21 +132,32 @@ private theorem hSupport :
       exact Set.mem_union_right _ hx
 
 private theorem noThree :
-    ∀ (Kplus : Set GaussianInt), ∀ (Kminus : Set GaussianInt), ∀ (Fplus : Set (Finset
-        GaussianInt)), ∀ (Fminus : Set (Finset GaussianInt)), (List GaussianInt) → ((List
-        GaussianInt) → ((List GaussianInt) → (
-    let X : Set GaussianInt := Kplus ∪ Kminus
-    let GEdges : Set (Finset GaussianInt) := Fplus ∪ Fminus
-    ∀ [Finite (↑X : Type)],
-    let G : SimpleGraph X := SimpleGraph.fromRel fun u v =>
-      ({u.1, v.1} : Finset GaussianInt) ∈ GEdges
-    (∀ v : X, Set.ncard (G.neighborSet v) ≤ 2) → (∀ (u : GaussianInt), ∀ (v : GaussianInt), ∀ (w
-        : GaussianInt), ∀ (z : GaussianInt), ∀ (hu : u ∈ X), ∀ (hv : v ∈ X), ∀ (hw : w ∈ X), ∀
-        (hz : z ∈ X), u ≠ v → u ≠ w → u ≠ z → v ≠ w → v ≠ z → w ≠ z → G.Adj ⟨u, hu⟩ ⟨v, hv⟩ →
-        G.Adj ⟨u, hu⟩ ⟨w, hw⟩ → G.Adj ⟨u, hu⟩ ⟨z, hz⟩ → False)))) := by
+    ∀ (Kplus : Set GaussianInt),
+      ∀ (Kminus : Set GaussianInt),
+        ∀ (Fplus : Set (Finset GaussianInt)),
+          ∀ (Fminus : Set (Finset GaussianInt)),
+            let X : Set GaussianInt := Kplus ∪ Kminus;
+            let GEdges : Set (Finset GaussianInt) := Fplus ∪ Fminus;
+            ∀ [Finite (↑X : Type)],
+              let G : SimpleGraph X :=
+                SimpleGraph.fromRel fun u v => ({ u.1, v.1 } : Finset GaussianInt) ∈ GEdges;
+              (∀ v : X, Set.ncard (G.neighborSet v) ≤ 2) →
+                ∀ (u : GaussianInt),
+                  ∀ (v : GaussianInt),
+                    ∀ (w : GaussianInt),
+                      ∀ (z : GaussianInt),
+                        ∀ (hu : u ∈ X),
+                          ∀ (hv : v ∈ X),
+                            ∀ (hw : w ∈ X),
+                            ∀ (hz : z ∈ X),
+                            v ≠ w →
+                            v ≠ z →
+                            w ≠ z →
+                            G.Adj ⟨u, hu⟩ ⟨v, hv⟩ →
+                            G.Adj ⟨u, hu⟩ ⟨w, hw⟩ → G.Adj ⟨u, hu⟩ ⟨z, hz⟩ → False := by
   classical
-  intro Kplus Kminus Fplus Fminus c p q X GEdges this G hdeg' u v w z hu hv hw hz huv huw huz hvw
-      hvz hwz hUv hUw hUz
+  intro Kplus Kminus Fplus Fminus X GEdges this G hdeg' u v w z hu hv hw hz hvw hvz hwz hUv hUw
+      hUz
   let A : Set X := {⟨v, hv⟩, ⟨w, hw⟩, ⟨z, hz⟩}
   have hsub : A ⊆ G.neighborSet ⟨u, hu⟩ := by
     intro t ht
@@ -575,16 +586,25 @@ private theorem hEend :
       simp
 
 private theorem hEne :
-    ∀ (E : Set (Finset GaussianInt)), ∀ (c : List GaussianInt), ∀ (cx : GaussianInt), ∀ (cy :
-        GaussianInt), (FourNeighborAdjacent cy cx) → ((∀ (a : GaussianInt), ∀ (b : GaussianInt),
-        ∀ (l₁ : List GaussianInt), ∀ (l₂ : List GaussianInt), c = l₁ ++ a :: b :: l₂ →
-        FourNeighborAdjacent a b) → ((∀ (e : Finset GaussianInt), e ∈ E ↔ e = {cy, cx} ∨ ∃ (a :
-        GaussianInt) (b : GaussianInt) (l₁ : List GaussianInt) (l₂ : List GaussianInt), c = l₁ ++
-        a :: b :: l₂ ∧ e = {a, b}) → ((List GaussianInt) → ((List GaussianInt) → ((∀ u, ∀ v,
-            FourNeighborAdjacent u v → u ≠ v) → (∀ x, ∀ y, ({x, y} : Finset GaussianInt) ∈ E → x ≠
-        y)))))) := by
+    ∀ (E : Set (Finset GaussianInt)),
+      ∀ (c : List GaussianInt),
+        ∀ (cx : GaussianInt),
+          ∀ (cy : GaussianInt),
+            FourNeighborAdjacent cy cx →
+              (∀ (a : GaussianInt),
+                  ∀ (b : GaussianInt),
+                    ∀ (l₁ : List GaussianInt),
+                      ∀ (l₂ : List GaussianInt),
+                        c = l₁ ++ a :: b :: l₂ → FourNeighborAdjacent a b) →
+                (∀ (e : Finset GaussianInt),
+                    e ∈ E ↔
+                      e = { cy, cx } ∨
+                        ∃ (a : GaussianInt) (b : GaussianInt) (l₁ : List GaussianInt) (l₂ :
+                          List GaussianInt), c = l₁ ++ a :: b :: l₂ ∧ e = { a, b }) →
+                  (∀ u, ∀ v, FourNeighborAdjacent u v → u ≠ v) →
+                    ∀ x, ∀ y, ({ x, y } : Finset GaussianInt) ∈ E → x ≠ y := by
   classical
-  intro E c cx cy hclose hcStep hcEdges p q fourNe x y he hxy
+  intro E c cx cy hclose hcStep hcEdges fourNe x y he hxy
   have hcard : ({x, y} : Finset GaussianInt).card = 1 := by simp [hxy]
   rcases (hcEdges {x, y}).mp he with hcloseE | ⟨u, v, l₁, l₂, hdec, hpair⟩
   · have hne := fourNe cy cx hclose
@@ -629,18 +649,27 @@ private theorem cycleOther :
       simpa [Finset.pair_comm] using hpair
 
 private theorem noThreeE :
-    ∀ (E : Set (Finset GaussianInt)), (List GaussianInt) → ((List GaussianInt) → ((List
-        GaussianInt) → (
-    let U : Set GaussianInt := {x | ∃ e ∈ E, x ∈ e}
-    ∀ [Finite (↑U : Type)],
-    let C : SimpleGraph U := SimpleGraph.fromRel fun u v =>
-      ({u.1, v.1} : Finset GaussianInt) ∈ E
-    (∀ v : U, Set.ncard (C.neighborSet v) ≤ 2) → (∀ (u : GaussianInt), ∀ (v : GaussianInt), ∀ (w
-        : GaussianInt), ∀ (z : GaussianInt), ∀ (hu : u ∈ U), ∀ (hv : v ∈ U), ∀ (hw : w ∈ U), ∀
-        (hz : z ∈ U), u ≠ v → u ≠ w → u ≠ z → v ≠ w → v ≠ z → w ≠ z → C.Adj ⟨u, hu⟩ ⟨v, hv⟩ →
-        C.Adj ⟨u, hu⟩ ⟨w, hw⟩ → C.Adj ⟨u, hu⟩ ⟨z, hz⟩ → False)))) := by
+    ∀ (E : Set (Finset GaussianInt)),
+      let U : Set GaussianInt := {x | ∃ e ∈ E, x ∈ e};
+      ∀ [Finite (↑U : Type)],
+        let C : SimpleGraph U :=
+          SimpleGraph.fromRel fun u v => ({ u.1, v.1 } : Finset GaussianInt) ∈ E;
+        (∀ v : U, Set.ncard (C.neighborSet v) ≤ 2) →
+          ∀ (u : GaussianInt),
+            ∀ (v : GaussianInt),
+              ∀ (w : GaussianInt),
+                ∀ (z : GaussianInt),
+                  ∀ (hu : u ∈ U),
+                    ∀ (hv : v ∈ U),
+                      ∀ (hw : w ∈ U),
+                        ∀ (hz : z ∈ U),
+                          v ≠ w →
+                            v ≠ z →
+                            w ≠ z →
+                            C.Adj ⟨u, hu⟩ ⟨v, hv⟩ →
+                            C.Adj ⟨u, hu⟩ ⟨w, hw⟩ → C.Adj ⟨u, hu⟩ ⟨z, hz⟩ → False := by
   classical
-  intro E c p q U this C hdegE' u v w z hu hv hw hz huv huw huz hvw hvz hwz hUv hUw hUz
+  intro E U this C hdegE' u v w z hu hv hw hz hvw hvz hwz hUv hUw hUz
   let A : Set U := {⟨v, hv⟩, ⟨w, hw⟩, ⟨z, hz⟩}
   have hsub : A ⊆ C.neighborSet ⟨u, hu⟩ := by
     intro t ht
@@ -1057,10 +1086,9 @@ private theorem qEndpoint :
         pair_ne) x hx₁ hx₂ hh hl)
 
 private theorem fourNe :
-    (List GaussianInt) → ((List GaussianInt) → ((List GaussianInt) → (∀ u, ∀ v,
-        FourNeighborAdjacent u v → u ≠ v))) := by
+    ∀ u, ∀ v, FourNeighborAdjacent u v → u ≠ v := by
   classical
-  intro c p q u v huv huvEq
+  intro u v huv huvEq
   subst v
   simp [FourNeighborAdjacent, Zsqrtd.ext_iff] at huv
   omega
@@ -1350,8 +1378,15 @@ theorem P4651T1CycleComplementaryArcs :
       (hu : u ∈ X) (hv : v ∈ X) (hw : w ∈ X) (hz : z ∈ X),
       u ≠ v → u ≠ w → u ≠ z → v ≠ w → v ≠ z → w ≠ z →
       G.Adj ⟨u, hu⟩ ⟨v, hv⟩ → G.Adj ⟨u, hu⟩ ⟨w, hw⟩ →
-      G.Adj ⟨u, hu⟩ ⟨z, hz⟩ → False := CycleArcProof.noThree Kplus Kminus Fplus Fminus c p q
-           hdeg'
+      G.Adj ⟨u, hu⟩ ⟨z, hz⟩ → False := (show
+          ∀ (u : GaussianInt), ∀ (v : GaussianInt), ∀ (w : GaussianInt), ∀ (z :
+          GaussianInt), ∀ (hu : u ∈ X), ∀ (hv : v ∈ X), ∀ (hw : w ∈ X), ∀ (hz : z ∈
+          X), u ≠ v → u ≠ w → u ≠ z → v ≠ w → v ≠ z → w ≠ z → G.Adj ⟨u, hu⟩ ⟨v, hv⟩ →
+          G.Adj ⟨u, hu⟩ ⟨w, hw⟩ → G.Adj ⟨u, hu⟩ ⟨z, hz⟩ → False
+        from by
+          intro u v w z hu hv hw hz huv huw huz hvw hvz hwz hUv hUw hUz
+          exact CycleArcProof.noThree Kplus Kminus Fplus Fminus hdeg' u v w z hu hv hw hz hvw
+              hvz hwz hUv hUw hUz)
   have pair_ne : ∀ (s : List GaussianInt), s.Nodup →
       ∀ x y l₁ l₂, s = l₁ ++ x :: y :: l₂ → x ≠ y := CycleArcDetails.pair_ne
   have pEndpoint : ∀ x, x ∈ Kplus → x ∈ Kminus →
@@ -1370,7 +1405,7 @@ theorem P4651T1CycleComplementaryArcs :
       (q.head? = some (r a) ∧ q.getLast? = some a) ∨
       (q.head? = some a ∧ q.getLast? = some (r a)) := CycleArcProof.qOrientation Kplus Kminus r a
           ha q hara harp hdistinct qEndpoint
-  have fourNe : ∀ u v, FourNeighborAdjacent u v → u ≠ v := CycleArcDetails.fourNe c p q
+  have fourNe : ∀ u v, FourNeighborAdjacent u v → u ≠ v := CycleArcDetails.fourNe
   have hcne : c ≠ [] := CycleArcDetails.hcne c hcLen
   have hcxList : cx ∈ c := CycleArcDetails.hcxList c cx hcHead hcne
   have hcyList : cy ∈ c := CycleArcDetails.hcyList c cy hcLast hcne
@@ -1400,8 +1435,17 @@ theorem P4651T1CycleComplementaryArcs :
             Fminus hGE hSupport (CycleArcProof.twoNeighbors Kplus Kminus Fplus Fminus r a
                 hdisjoint ha p hpN hpLen hKp hpStep hpEdges q hqN hqLen hKm hqStep hqEdges hara
                 harp splitInterior pair_ne (CycleArcProof.path_other pair_ne) pOrientation
-                qOrientation) (CycleArcProof.hEne E c cx cy hclose hcStep hcEdges p q fourNe)
-                edgeAdjE (CycleArcProof.noThreeE E c p q hdegE') hXU
+                qOrientation) (CycleArcProof.hEne E c cx cy hclose hcStep hcEdges fourNe)
+                edgeAdjE ((show
+                    ∀ (u : GaussianInt), ∀ (v : GaussianInt), ∀ (w :
+                    GaussianInt), ∀ (z : GaussianInt), ∀ (hu : u ∈ U), ∀ (hv
+                    : v ∈ U), ∀ (hw : w ∈ U), ∀ (hz : z ∈ U), u ≠ v → u ≠ w
+                    → u ≠ z → v ≠ w → v ≠ z → w ≠ z → C.Adj ⟨u, hu⟩ ⟨v, hv⟩
+                    → C.Adj ⟨u, hu⟩ ⟨w, hw⟩ → C.Adj ⟨u, hu⟩ ⟨z, hz⟩ → False
+                  from by
+                    intro u v w z hu hv hw hz huv huw huz hvw hvz hwz hUv hUw hUz
+                    exact CycleArcProof.noThreeE E hdegE' u v w z hu hv hw hz hvw hvz hwz hUv
+                        hUw hUz)) hXU
   have edgeClosure : ∀ x, x ∈ X → ∀ y,
       ({x, y} : Finset GaussianInt) ∈ E → y ∈ X := CycleArcDetails.edgeClosure Kplus Kminus E
           Fplus Fminus hSupport edgeCovered

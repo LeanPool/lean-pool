@@ -102,16 +102,21 @@ private theorem det_range_transport :
     (by
       classical
       exact
-        let triangleMatrix (v : Fin 3 → Real × Real) :
-            Matrix (Fin 3) (Fin 3) Real :=
-          fun i j => if j = 0 then (v i).1 else if j = 1 then (v i).2 else 1
-        (∀ (v : Fin 3 → Real × Real), P3381T1TriangleDeterminant v = (triangleMatrix v).det) →
-            (∀ {I : Type}, ∀ (f : Fin (3 : ℕ) → I), ∀ (g : Fin (3 : ℕ) → I), Function.Injective f
-            → Function.Injective g → Set.range f = Set.range g → ∀ (v : I → ℝ × ℝ),
-            P3381T1TriangleDeterminant (v ∘ f) ≠ (0 : ℝ) ↔ P3381T1TriangleDeterminant (v ∘ g)
-            ≠ (0 : ℝ)) ) := by
+        let triangleMatrix (v : Fin 3 → Real × Real) : Matrix (Fin 3) (Fin 3) Real :=
+          fun i j => if j = 0 then (v i).1 else if j = 1 then (v i).2 else 1;
+        (∀ (v : Fin 3 → Real × Real),
+            P3381T1TriangleDeterminant v = (triangleMatrix v).det) →
+          ∀ {I : Type},
+            ∀ (f : Fin (3 : ℕ) → I),
+              ∀ (g : Fin (3 : ℕ) → I),
+                Function.Injective f →
+                  Set.range f = Set.range g →
+                    ∀ (v : I → ℝ × ℝ),
+                      P3381T1TriangleDeterminant (v ∘ f) ≠ (0 : ℝ) ↔
+                        P3381T1TriangleDeterminant (v ∘ g) ≠ (0 : ℝ)
+    ) := by
   classical
-  intro triangleMatrix triangleMatrix_det I f g hf hg hr v
+  intro triangleMatrix triangleMatrix_det I f g hf hr v
   have hmem (i : Fin 3) : f i ∈ Set.range g := by
     rw [← hr]
     exact Set.mem_range_self i
@@ -695,21 +700,34 @@ private theorem splitHull :
     (by
       classical
       exact
-        ∀ (n : Nat), (∀ (v : Fin (n + 3) → Real × Real), ∀ (a : Fin (n + 3)), ∀ (b : Fin (n +
-            3)), ∀ (z : Fin (n + 3)), v '' (({a, b, z} : Finset (Fin (n + 3))) : Set (Fin (n +
-            3))) = {v a, v b, v z}) → (∀ (v : Fin (n + (3 : ℕ)) → ℝ × ℝ), ∀ (a : Fin (n + (3 :
-            ℕ))), ∀ (d : Fin (n + (3 : ℕ))), ∀ (b : Fin (n + (3 : ℕ))), ∀ (z : Fin (n + (3 :
-            ℕ))), a ≠ b → a ≠ z → b ≠ z → ∀ (u : ℝ), (0 : ℝ) < u ∧ u < (1 : ℝ) → v d = ((1 : ℝ) -
-            u) • v a + u • v b → P3381T1TriangleDeterminant ![v a, v b, v z] ≠ (0 : ℝ) →
-            (convexHull ℝ : Set (ℝ × ℝ) → Set (ℝ × ℝ)) (v '' (↑({a, b, z} : Finset _) : Set (Fin
-                (n + (3 :
-            ℕ))))) = (convexHull ℝ : Set (ℝ × ℝ) → Set (ℝ × ℝ)) (v '' (↑({a, d, z} : Finset _) :
-                Set (Fin (n +
-            (3 : ℕ))))) ∪ (convexHull ℝ : Set (ℝ × ℝ) → Set (ℝ × ℝ)) (v '' (↑({d, b, z} : Finset
-                _) : Set (Fin
-            (n + (3 : ℕ)))))) ) := by
+        ∀ (n : Nat),
+          (∀ (v : Fin (n + 3) → Real × Real),
+              ∀ (a : Fin (n + 3)),
+                ∀ (b : Fin (n + 3)),
+                  ∀ (z : Fin (n + 3)),
+                    v '' (({ a, b, z } : Finset (Fin (n + 3))) : Set (Fin (n + 3))) =
+                      {v a, v b, v z}) →
+            ∀ (v : Fin (n + (3 : ℕ)) → ℝ × ℝ),
+              ∀ (a : Fin (n + (3 : ℕ))),
+                ∀ (d : Fin (n + (3 : ℕ))),
+                  ∀ (b : Fin (n + (3 : ℕ))),
+                    ∀ (z : Fin (n + (3 : ℕ))),
+                      ∀ (u : ℝ),
+                        (0 : ℝ) < u ∧ u < (1 : ℝ) →
+                          v d = ((1 : ℝ) - u) • v a + u • v b →
+                            P3381T1TriangleDeterminant ![v a, v b, v z] ≠ (0 : ℝ) →
+                              (convexHull ℝ : Set (ℝ × ℝ) → Set (ℝ × ℝ))
+                                (v ''
+                                (↑({ a, b, z } : Finset _) : Set (Fin (n + (3 : ℕ))))) =
+                                (convexHull ℝ : Set (ℝ × ℝ) → Set (ℝ × ℝ))
+                                (v ''
+                                (↑({ a, d, z } : Finset _) : Set (Fin (n + (3 : ℕ))))) ∪
+                                (convexHull ℝ : Set (ℝ × ℝ) → Set (ℝ × ℝ))
+                                (v ''
+                                (↑({ d, b, z } : Finset _) : Set (Fin (n + (3 : ℕ)))))
+    ) := by
   classical
-  intro n imageTriple v a d b z hab haz hbz u hu hvalue hdet
+  intro n imageTriple v a d b z u hu hvalue hdet
   have hgeo := P3523T1TwoTriangleSplit (v a) (v b) (v z) u hu hdet
   have hleft := imageTriple v a d z
   have hright := imageTriple v d b z
@@ -721,32 +739,55 @@ private theorem splitGeometry :
     (by
       classical
       exact
-        ∀ (n : Nat), (∀ (v : Fin (n + 3) → Real × Real), ∀ (a : Fin (n + 3)), ∀ (b : Fin (n +
-            3)), ∀ (z : Fin (n + 3)), v '' (({a, b, z} : Finset (Fin (n + 3))) : Set (Fin (n +
-            3))) = {v a, v b, v z}) → (∀ (v : Fin (n + (3 : ℕ)) → ℝ × ℝ), ∀ (a : Fin (n + (3 :
-            ℕ))), ∀ (d : Fin (n + (3 : ℕ))), ∀ (b : Fin (n + (3 : ℕ))), ∀ (z : Fin (n + (3 :
-            ℕ))), a ≠ b → a ≠ z → b ≠ z → ∀ (u : ℝ), (0 : ℝ) < u ∧ u < (1 : ℝ) → v d = ((1 : ℝ) -
-            u) • v a + u • v b → P3381T1TriangleDeterminant ![v a, v b, v z] ≠ (0 : ℝ) →
-            (convexHull ℝ : Set (ℝ × ℝ) → Set (ℝ × ℝ)) (v '' (↑({a, b, z} : Finset _) : Set (Fin
-                (n + (3 :
-            ℕ))))) = (convexHull ℝ : Set (ℝ × ℝ) → Set (ℝ × ℝ)) (v '' (↑({a, d, z} : Finset _) :
-                Set (Fin (n +
-            (3 : ℕ))))) ∪ (convexHull ℝ : Set (ℝ × ℝ) → Set (ℝ × ℝ)) (v '' (↑({d, b, z} : Finset
-                _) : Set (Fin
-            (n + (3 : ℕ))))) ∧ (convexHull ℝ : Set (ℝ × ℝ) → Set (ℝ × ℝ)) (v '' (↑({a, d, z} :
-                Finset _) : Set
-            (Fin (n + (3 : ℕ))))) ∩ (convexHull ℝ : Set (ℝ × ℝ) → Set (ℝ × ℝ)) (v '' (↑({d, b, z}
-                : Finset _)
-            : Set (Fin (n + (3 : ℕ))))) = segment ℝ (v d) (v z) ∧ ∀ J ⊆ {v a, v b, v z}, ¬(v a ∈
-            J ∧ v b ∈ J) → (convexHull ℝ : Set (ℝ × ℝ) → Set (ℝ × ℝ)) (v '' (↑({a, d, z} : Finset
-                _) : Set
-            (Fin (n + (3 : ℕ))))) ∩ (convexHull ℝ : Set (ℝ × ℝ) → Set (ℝ × ℝ)) J = (convexHull ℝ
-            : Set (ℝ × ℝ) → Set (ℝ × ℝ)) (J ∩ {v a, v z}) ∧ (convexHull ℝ : Set (ℝ × ℝ) → Set (ℝ
-            × ℝ)) (v '' (↑({d, b, z} : Finset _) : Set (Fin (n + (3 : ℕ))))) ∩ (convexHull ℝ :
-                Set (ℝ × ℝ) →
-            Set (ℝ × ℝ)) J = (convexHull ℝ : Set (ℝ × ℝ) → Set (ℝ × ℝ)) (J ∩ {v b, v z})) ) := by
+        ∀ (n : Nat),
+          (∀ (v : Fin (n + 3) → Real × Real),
+              ∀ (a : Fin (n + 3)),
+                ∀ (b : Fin (n + 3)),
+                  ∀ (z : Fin (n + 3)),
+                    v '' (({ a, b, z } : Finset (Fin (n + 3))) : Set (Fin (n + 3))) =
+                      {v a, v b, v z}) →
+            ∀ (v : Fin (n + (3 : ℕ)) → ℝ × ℝ),
+              ∀ (a : Fin (n + (3 : ℕ))),
+                ∀ (d : Fin (n + (3 : ℕ))),
+                  ∀ (b : Fin (n + (3 : ℕ))),
+                    ∀ (z : Fin (n + (3 : ℕ))),
+                      ∀ (u : ℝ),
+                        (0 : ℝ) < u ∧ u < (1 : ℝ) →
+                          v d = ((1 : ℝ) - u) • v a + u • v b →
+                            P3381T1TriangleDeterminant ![v a, v b, v z] ≠ (0 : ℝ) →
+                              (convexHull ℝ : Set (ℝ × ℝ) → Set (ℝ × ℝ))
+                                (v ''
+                                (↑({ a, b, z } : Finset _) : Set (Fin (n + (3 : ℕ))))) =
+                                (convexHull ℝ : Set (ℝ × ℝ) → Set (ℝ × ℝ))
+                                (v ''
+                                (↑({ a, d, z } : Finset _) : Set (Fin (n + (3 : ℕ))))) ∪
+                                (convexHull ℝ : Set (ℝ × ℝ) → Set (ℝ × ℝ))
+                                (v ''
+                                (↑({ d, b, z } : Finset _) : Set (Fin (n + (3 : ℕ))))) ∧
+                                (convexHull ℝ : Set (ℝ × ℝ) → Set (ℝ × ℝ))
+                                (v ''
+                                (↑({ a, d, z } : Finset _) : Set (Fin (n + (3 : ℕ))))) ∩
+                                (convexHull ℝ : Set (ℝ × ℝ) → Set (ℝ × ℝ))
+                                (v ''
+                                (↑({ d, b, z } : Finset _) : Set (Fin (n + (3 : ℕ))))) =
+                                segment ℝ (v d) (v z) ∧
+                                ∀ J ⊆ {v a, v b, v z},
+                                ¬(v a ∈ J ∧ v b ∈ J) →
+                                (convexHull ℝ : Set (ℝ × ℝ) → Set (ℝ × ℝ))
+                                (v ''
+                                (↑({ a, d, z } : Finset _) : Set (Fin (n + (3 : ℕ))))) ∩
+                                (convexHull ℝ : Set (ℝ × ℝ) → Set (ℝ × ℝ)) J =
+                                (convexHull ℝ : Set (ℝ × ℝ) → Set (ℝ × ℝ))
+                                (J ∩ {v a, v z}) ∧
+                                (convexHull ℝ : Set (ℝ × ℝ) → Set (ℝ × ℝ))
+                                (v ''
+                                (↑({ d, b, z } : Finset _) : Set (Fin (n + (3 : ℕ))))) ∩
+                                (convexHull ℝ : Set (ℝ × ℝ) → Set (ℝ × ℝ)) J =
+                                (convexHull ℝ : Set (ℝ × ℝ) → Set (ℝ × ℝ))
+                                (J ∩ {v b, v z})
+    ) := by
   classical
-  intro n imageTriple v a d b z hab haz hbz u hu hvalue hdet
+  intro n imageTriple v a d b z u hu hvalue hdet
   have hgeo := P3523T1TwoTriangleSplit (v a) (v b) (v z) u hu hdet
   have hleft := imageTriple v a d z
   have hright := imageTriple v d b z
@@ -1219,40 +1260,74 @@ private theorem retainedLeft :
     (by
       classical
       exact
-        ∀ (n : Nat), (∀ (v : Fin (n + 3) → Real × Real), ∀ (a : Fin (n + 3)), ∀ (z : Fin (n +
-            3)), v '' (({a, z} : Finset (Fin (n + 3))) : Set (Fin (n + 3))) = {v a, v z}) → (∀ (v
-            : Fin (n + (3 : ℕ)) → ℝ × ℝ), Function.Injective v → ∀ (a : Fin (n + (3 : ℕ))), ∀ (d
-            : Fin (n + (3 : ℕ))), ∀ (b : Fin (n + (3 : ℕ))), ∀ (z : Fin (n + (3 : ℕ))), a ≠ b → a
-            ≠ z → b ≠ z → ∀ (F : Finset (Fin (n + (3 : ℕ)))), ∀ (H : Finset (Fin (n + (3 : ℕ)))),
-            F = {a, b, z} → insert d (F.erase b) = {a, d, z} → d ∉ H → ¬(a ∈ H ∧ b ∈ H) →
-            (convexHull ℝ : Set (ℝ × ℝ) → Set (ℝ × ℝ)) (v '' (↑F : Set (Fin (n + (3 : ℕ))))) ∩
-            (convexHull ℝ : Set (ℝ × ℝ) → Set (ℝ × ℝ)) (v '' (↑H : Set (Fin (n + (3 : ℕ))))) =
-            (convexHull ℝ : Set (ℝ × ℝ) → Set (ℝ × ℝ)) (v '' ((↑F : Set (Fin (n + (3 : ℕ)))) ∩
-            (↑H : Set (Fin (n + (3 : ℕ)))))) → ((convexHull ℝ : Set (ℝ × ℝ) → Set (ℝ × ℝ)) (v ''
-            (↑({a, b, z} : Finset _) : Set (Fin (n + (3 : ℕ))))) = (convexHull ℝ : Set (ℝ × ℝ) →
-                Set (ℝ × ℝ))
-            (v '' (↑({a, d, z} : Finset _) : Set (Fin (n + (3 : ℕ))))) ∪ (convexHull ℝ : Set (ℝ ×
-                ℝ) → Set (ℝ
-            × ℝ)) (v '' (↑({d, b, z} : Finset _) : Set (Fin (n + (3 : ℕ))))) ∧ (convexHull ℝ :
-                Set (ℝ × ℝ) →
-            Set (ℝ × ℝ)) (v '' (↑({a, d, z} : Finset _) : Set (Fin (n + (3 : ℕ))))) ∩ (convexHull
-                ℝ : Set (ℝ ×
-            ℝ) → Set (ℝ × ℝ)) (v '' (↑({d, b, z} : Finset _) : Set (Fin (n + (3 : ℕ))))) =
-                segment ℝ (v d) (v
-            z) ∧ ∀ J ⊆ {v a, v b, v z}, ¬(v a ∈ J ∧ v b ∈ J) → (convexHull ℝ : Set (ℝ × ℝ) → Set
-            (ℝ × ℝ)) (v '' (↑({a, d, z} : Finset _) : Set (Fin (n + (3 : ℕ))))) ∩ (convexHull ℝ :
-                Set (ℝ × ℝ)
-            → Set (ℝ × ℝ)) J = (convexHull ℝ : Set (ℝ × ℝ) → Set (ℝ × ℝ)) (J ∩ {v a, v z}) ∧
-            (convexHull ℝ : Set (ℝ × ℝ) → Set (ℝ × ℝ)) (v '' (↑({d, b, z} : Finset _) : Set (Fin
-                (n + (3 :
-            ℕ))))) ∩ (convexHull ℝ : Set (ℝ × ℝ) → Set (ℝ × ℝ)) J = (convexHull ℝ : Set (ℝ × ℝ) →
-            Set (ℝ × ℝ)) (J ∩ {v b, v z})) → (convexHull ℝ : Set (ℝ × ℝ) → Set (ℝ × ℝ)) (v ''
-            (↑(insert d (F.erase b)) : Set (Fin (n + (3 : ℕ))))) ∩ (convexHull ℝ : Set (ℝ × ℝ) →
-            Set (ℝ × ℝ)) (v '' (↑H : Set (Fin (n + (3 : ℕ))))) = (convexHull ℝ : Set (ℝ × ℝ) →
-            Set (ℝ × ℝ)) (v '' ((↑(insert d (F.erase b)) : Set (Fin (n + (3 : ℕ)))) ∩ (↑H : Set
-            (Fin (n + (3 : ℕ))))))) ) := by
+        ∀ (n : Nat),
+          (∀ (v : Fin (n + 3) → Real × Real),
+              ∀ (a : Fin (n + 3)),
+                ∀ (z : Fin (n + 3)),
+                  v '' (({ a, z } : Finset (Fin (n + 3))) : Set (Fin (n + 3))) =
+                    {v a, v z}) →
+            ∀ (v : Fin (n + (3 : ℕ)) → ℝ × ℝ),
+              Function.Injective v →
+                ∀ (a : Fin (n + (3 : ℕ))),
+                  ∀ (d : Fin (n + (3 : ℕ))),
+                    ∀ (b : Fin (n + (3 : ℕ))),
+                      ∀ (z : Fin (n + (3 : ℕ))),
+                        ∀ (F : Finset (Fin (n + (3 : ℕ)))),
+                          ∀ (H : Finset (Fin (n + (3 : ℕ)))),
+                            F = { a, b, z } →
+                              insert d (F.erase b) = { a, d, z } →
+                                d ∉ H →
+                                ¬(a ∈ H ∧ b ∈ H) →
+                                (convexHull ℝ : Set (ℝ × ℝ) → Set (ℝ × ℝ))
+                                (v '' (↑F : Set (Fin (n + (3 : ℕ))))) ∩
+                                (convexHull ℝ : Set (ℝ × ℝ) → Set (ℝ × ℝ))
+                                (v '' (↑H : Set (Fin (n + (3 : ℕ))))) =
+                                (convexHull ℝ : Set (ℝ × ℝ) → Set (ℝ × ℝ))
+                                (v ''
+                                ((↑F : Set (Fin (n + (3 : ℕ)))) ∩
+                                (↑H : Set (Fin (n + (3 : ℕ)))))) →
+                                ((convexHull ℝ : Set (ℝ × ℝ) → Set (ℝ × ℝ))
+                                (v ''
+                                (↑({ a, b, z } : Finset _) : Set (Fin (n + (3 : ℕ))))) =
+                                (convexHull ℝ : Set (ℝ × ℝ) → Set (ℝ × ℝ))
+                                (v ''
+                                (↑({ a, d, z } : Finset _) : Set (Fin (n + (3 : ℕ))))) ∪
+                                (convexHull ℝ : Set (ℝ × ℝ) → Set (ℝ × ℝ))
+                                (v ''
+                                (↑({ d, b, z } : Finset _) : Set (Fin (n + (3 : ℕ))))) ∧
+                                (convexHull ℝ : Set (ℝ × ℝ) → Set (ℝ × ℝ))
+                                (v ''
+                                (↑({ a, d, z } : Finset _) : Set (Fin (n + (3 : ℕ))))) ∩
+                                (convexHull ℝ : Set (ℝ × ℝ) → Set (ℝ × ℝ))
+                                (v ''
+                                (↑({ d, b, z } : Finset _) : Set (Fin (n + (3 : ℕ))))) =
+                                segment ℝ (v d) (v z) ∧
+                                ∀ J ⊆ {v a, v b, v z},
+                                ¬(v a ∈ J ∧ v b ∈ J) →
+                                (convexHull ℝ : Set (ℝ × ℝ) → Set (ℝ × ℝ))
+                                (v ''
+                                (↑({ a, d, z } : Finset _) : Set (Fin (n + (3 : ℕ))))) ∩
+                                (convexHull ℝ : Set (ℝ × ℝ) → Set (ℝ × ℝ)) J =
+                                (convexHull ℝ : Set (ℝ × ℝ) → Set (ℝ × ℝ))
+                                (J ∩ {v a, v z}) ∧
+                                (convexHull ℝ : Set (ℝ × ℝ) → Set (ℝ × ℝ))
+                                (v ''
+                                (↑({ d, b, z } : Finset _) : Set (Fin (n + (3 : ℕ))))) ∩
+                                (convexHull ℝ : Set (ℝ × ℝ) → Set (ℝ × ℝ)) J =
+                                (convexHull ℝ : Set (ℝ × ℝ) → Set (ℝ × ℝ))
+                                (J ∩ {v b, v z})) →
+                                (convexHull ℝ : Set (ℝ × ℝ) → Set (ℝ × ℝ))
+                                (v ''
+                                (↑(insert d (F.erase b)) : Set (Fin (n + (3 : ℕ))))) ∩
+                                (convexHull ℝ : Set (ℝ × ℝ) → Set (ℝ × ℝ))
+                                (v '' (↑H : Set (Fin (n + (3 : ℕ))))) =
+                                (convexHull ℝ : Set (ℝ × ℝ) → Set (ℝ × ℝ))
+                                (v ''
+                                ((↑(insert d (F.erase b)) : Set (Fin (n + (3 : ℕ)))) ∩
+                                (↑H : Set (Fin (n + (3 : ℕ))))))
+    ) := by
   classical
-  intro n imagePair v vinj a d b z hab haz hbz F H hF hleftFace hdH hnot hpair hgeo
+  intro n imagePair v vinj a d b z F H hF hleftFace hdH hnot hpair hgeo
   let J := v '' ((F : Set _) ∩ (H : Set _))
   have hJsub : J ⊆ {v a, v b, v z} := by
     intro y hy
@@ -1335,40 +1410,74 @@ private theorem retainedRight :
     (by
       classical
       exact
-        ∀ (n : Nat), (∀ (v : Fin (n + 3) → Real × Real), ∀ (a : Fin (n + 3)), ∀ (z : Fin (n +
-            3)), v '' (({a, z} : Finset (Fin (n + 3))) : Set (Fin (n + 3))) = {v a, v z}) → (∀ (v
-            : Fin (n + (3 : ℕ)) → ℝ × ℝ), Function.Injective v → ∀ (a : Fin (n + (3 : ℕ))), ∀ (d
-            : Fin (n + (3 : ℕ))), ∀ (b : Fin (n + (3 : ℕ))), ∀ (z : Fin (n + (3 : ℕ))), a ≠ b → a
-            ≠ z → b ≠ z → ∀ (F : Finset (Fin (n + (3 : ℕ)))), ∀ (H : Finset (Fin (n + (3 : ℕ)))),
-            F = {a, b, z} → insert d (F.erase a) = {d, b, z} → d ∉ H → ¬(a ∈ H ∧ b ∈ H) →
-            (convexHull ℝ : Set (ℝ × ℝ) → Set (ℝ × ℝ)) (v '' (↑F : Set (Fin (n + (3 : ℕ))))) ∩
-            (convexHull ℝ : Set (ℝ × ℝ) → Set (ℝ × ℝ)) (v '' (↑H : Set (Fin (n + (3 : ℕ))))) =
-            (convexHull ℝ : Set (ℝ × ℝ) → Set (ℝ × ℝ)) (v '' ((↑F : Set (Fin (n + (3 : ℕ)))) ∩
-            (↑H : Set (Fin (n + (3 : ℕ)))))) → ((convexHull ℝ : Set (ℝ × ℝ) → Set (ℝ × ℝ)) (v ''
-            (↑({a, b, z} : Finset _) : Set (Fin (n + (3 : ℕ))))) = (convexHull ℝ : Set (ℝ × ℝ) →
-                Set (ℝ × ℝ))
-            (v '' (↑({a, d, z} : Finset _) : Set (Fin (n + (3 : ℕ))))) ∪ (convexHull ℝ : Set (ℝ ×
-                ℝ) → Set (ℝ
-            × ℝ)) (v '' (↑({d, b, z} : Finset _) : Set (Fin (n + (3 : ℕ))))) ∧ (convexHull ℝ :
-                Set (ℝ × ℝ) →
-            Set (ℝ × ℝ)) (v '' (↑({a, d, z} : Finset _) : Set (Fin (n + (3 : ℕ))))) ∩ (convexHull
-                ℝ : Set (ℝ ×
-            ℝ) → Set (ℝ × ℝ)) (v '' (↑({d, b, z} : Finset _) : Set (Fin (n + (3 : ℕ))))) =
-                segment ℝ (v d) (v
-            z) ∧ ∀ J ⊆ {v a, v b, v z}, ¬(v a ∈ J ∧ v b ∈ J) → (convexHull ℝ : Set (ℝ × ℝ) → Set
-            (ℝ × ℝ)) (v '' (↑({a, d, z} : Finset _) : Set (Fin (n + (3 : ℕ))))) ∩ (convexHull ℝ :
-                Set (ℝ × ℝ)
-            → Set (ℝ × ℝ)) J = (convexHull ℝ : Set (ℝ × ℝ) → Set (ℝ × ℝ)) (J ∩ {v a, v z}) ∧
-            (convexHull ℝ : Set (ℝ × ℝ) → Set (ℝ × ℝ)) (v '' (↑({d, b, z} : Finset _) : Set (Fin
-                (n + (3 :
-            ℕ))))) ∩ (convexHull ℝ : Set (ℝ × ℝ) → Set (ℝ × ℝ)) J = (convexHull ℝ : Set (ℝ × ℝ) →
-            Set (ℝ × ℝ)) (J ∩ {v b, v z})) → (convexHull ℝ : Set (ℝ × ℝ) → Set (ℝ × ℝ)) (v ''
-            (↑(insert d (F.erase a)) : Set (Fin (n + (3 : ℕ))))) ∩ (convexHull ℝ : Set (ℝ × ℝ) →
-            Set (ℝ × ℝ)) (v '' (↑H : Set (Fin (n + (3 : ℕ))))) = (convexHull ℝ : Set (ℝ × ℝ) →
-            Set (ℝ × ℝ)) (v '' ((↑(insert d (F.erase a)) : Set (Fin (n + (3 : ℕ)))) ∩ (↑H : Set
-            (Fin (n + (3 : ℕ))))))) ) := by
+        ∀ (n : Nat),
+          (∀ (v : Fin (n + 3) → Real × Real),
+              ∀ (a : Fin (n + 3)),
+                ∀ (z : Fin (n + 3)),
+                  v '' (({ a, z } : Finset (Fin (n + 3))) : Set (Fin (n + 3))) =
+                    {v a, v z}) →
+            ∀ (v : Fin (n + (3 : ℕ)) → ℝ × ℝ),
+              Function.Injective v →
+                ∀ (a : Fin (n + (3 : ℕ))),
+                  ∀ (d : Fin (n + (3 : ℕ))),
+                    ∀ (b : Fin (n + (3 : ℕ))),
+                      ∀ (z : Fin (n + (3 : ℕ))),
+                        ∀ (F : Finset (Fin (n + (3 : ℕ)))),
+                          ∀ (H : Finset (Fin (n + (3 : ℕ)))),
+                            F = { a, b, z } →
+                              insert d (F.erase a) = { d, b, z } →
+                                d ∉ H →
+                                ¬(a ∈ H ∧ b ∈ H) →
+                                (convexHull ℝ : Set (ℝ × ℝ) → Set (ℝ × ℝ))
+                                (v '' (↑F : Set (Fin (n + (3 : ℕ))))) ∩
+                                (convexHull ℝ : Set (ℝ × ℝ) → Set (ℝ × ℝ))
+                                (v '' (↑H : Set (Fin (n + (3 : ℕ))))) =
+                                (convexHull ℝ : Set (ℝ × ℝ) → Set (ℝ × ℝ))
+                                (v ''
+                                ((↑F : Set (Fin (n + (3 : ℕ)))) ∩
+                                (↑H : Set (Fin (n + (3 : ℕ)))))) →
+                                ((convexHull ℝ : Set (ℝ × ℝ) → Set (ℝ × ℝ))
+                                (v ''
+                                (↑({ a, b, z } : Finset _) : Set (Fin (n + (3 : ℕ))))) =
+                                (convexHull ℝ : Set (ℝ × ℝ) → Set (ℝ × ℝ))
+                                (v ''
+                                (↑({ a, d, z } : Finset _) : Set (Fin (n + (3 : ℕ))))) ∪
+                                (convexHull ℝ : Set (ℝ × ℝ) → Set (ℝ × ℝ))
+                                (v ''
+                                (↑({ d, b, z } : Finset _) : Set (Fin (n + (3 : ℕ))))) ∧
+                                (convexHull ℝ : Set (ℝ × ℝ) → Set (ℝ × ℝ))
+                                (v ''
+                                (↑({ a, d, z } : Finset _) : Set (Fin (n + (3 : ℕ))))) ∩
+                                (convexHull ℝ : Set (ℝ × ℝ) → Set (ℝ × ℝ))
+                                (v ''
+                                (↑({ d, b, z } : Finset _) : Set (Fin (n + (3 : ℕ))))) =
+                                segment ℝ (v d) (v z) ∧
+                                ∀ J ⊆ {v a, v b, v z},
+                                ¬(v a ∈ J ∧ v b ∈ J) →
+                                (convexHull ℝ : Set (ℝ × ℝ) → Set (ℝ × ℝ))
+                                (v ''
+                                (↑({ a, d, z } : Finset _) : Set (Fin (n + (3 : ℕ))))) ∩
+                                (convexHull ℝ : Set (ℝ × ℝ) → Set (ℝ × ℝ)) J =
+                                (convexHull ℝ : Set (ℝ × ℝ) → Set (ℝ × ℝ))
+                                (J ∩ {v a, v z}) ∧
+                                (convexHull ℝ : Set (ℝ × ℝ) → Set (ℝ × ℝ))
+                                (v ''
+                                (↑({ d, b, z } : Finset _) : Set (Fin (n + (3 : ℕ))))) ∩
+                                (convexHull ℝ : Set (ℝ × ℝ) → Set (ℝ × ℝ)) J =
+                                (convexHull ℝ : Set (ℝ × ℝ) → Set (ℝ × ℝ))
+                                (J ∩ {v b, v z})) →
+                                (convexHull ℝ : Set (ℝ × ℝ) → Set (ℝ × ℝ))
+                                (v ''
+                                (↑(insert d (F.erase a)) : Set (Fin (n + (3 : ℕ))))) ∩
+                                (convexHull ℝ : Set (ℝ × ℝ) → Set (ℝ × ℝ))
+                                (v '' (↑H : Set (Fin (n + (3 : ℕ))))) =
+                                (convexHull ℝ : Set (ℝ × ℝ) → Set (ℝ × ℝ))
+                                (v ''
+                                ((↑(insert d (F.erase a)) : Set (Fin (n + (3 : ℕ)))) ∩
+                                (↑H : Set (Fin (n + (3 : ℕ))))))
+    ) := by
   classical
-  intro n imagePair v vinj a d b z hab haz hbz F H hF hrightFace hdH hnot hpair hgeo
+  intro n imagePair v vinj a d b z F H hF hrightFace hdH hnot hpair hgeo
   let J := v '' ((F : Set _) ∩ (H : Set _))
   have hJsub : J ⊆ {v a, v b, v z} := by
     intro y hy
@@ -2384,7 +2493,10 @@ private theorem pairState :
           (hhit : e.1 ∈ P ∧ e.2.2 ∈ P) := FacialInsertionGeometry.splitFacts r n q p s X K t
               hfaceShape existsThird tripleInj tripleRange
                   (FacialInsertionGeometry.splitFinsets n) mapTriple
-                  (FacialInsertionGeometry.splitGeometry n imageTriple)
+                  (by
+                    intro v a d b z hab haz hbz u hu hvalue hdet
+                    exact FacialInsertionGeometry.splitGeometry n imageTriple v a d b z
+                      u hu hvalue hdet)
               v h hh hinterp hnondeg hab hleFace P hP hhit
       rcases hbranchF with ⟨haF, hbF, hchildrenF⟩ | ⟨hnotF, hFsame⟩
       · have hhitF : e.1 ∈ F₀ ∧ e.2.2 ∈ F₀ := ⟨haF, hbF⟩
@@ -2507,8 +2619,16 @@ theorem P3523T1InsertionGeometry {r n : Nat}
   have det_range_transport {I : Type} (f g : Fin 3 → I)
       (hf : Function.Injective f) (hg : Function.Injective g)
       (hr : Set.range f = Set.range g) (v : I → Real × Real) :=
-          FacialInsertionGeometry.det_range_transport
-              (FacialInsertionGeometry.triangleMatrix_det) (I := I) f g hf hg hr v
+          (show
+              ∀ {I : Type}, ∀ (f : Fin (3 : ℕ) → I), ∀ (g : Fin (3 : ℕ) → I),
+              Function.Injective f → Function.Injective g → Set.range f =
+              Set.range g → ∀ (v : I → ℝ × ℝ), P3381T1TriangleDeterminant (v ∘ f)
+              ≠ (0 : ℝ) ↔ P3381T1TriangleDeterminant (v ∘ g) ≠ (0 : ℝ)
+            from by
+              intro I f g hf hg hr v
+              exact FacialInsertionGeometry.det_range_transport
+                  ((FacialInsertionGeometry.triangleMatrix_det)) f g hf hr v) f g hf hg
+                  hr v
   have hInc := P3523T1InsertionIncidence q p s X K t
   have hOrd := P3523T1OrderedInsertion q p s X K t
   have hHull := P3523T1TargetHull s t
@@ -2578,7 +2698,7 @@ theorem P3523T1InsertionGeometry {r n : Nat}
       (hbz : b ≠ z) (u : Real) (hu : 0 < u ∧ u < 1)
       (hvalue : v d = (1-u) • v a + u • v b)
       (hdet : P3381T1TriangleDeterminant ![v a, v b, v z] ≠ 0) :=
-          FacialInsertionGeometry.splitHull n imageTriple v a d b z hab haz hbz u hu hvalue hdet
+          FacialInsertionGeometry.splitHull n imageTriple v a d b z u hu hvalue hdet
   have sourceStartImage (k : Fin t.count) := FacialInsertionGeometry.sourceStartImage r n q p s X
       K t hstartSource k
   have targetStartImage (k : Fin t.count) := FacialInsertionGeometry.targetStartImage r n q p s X
@@ -2618,8 +2738,13 @@ theorem P3523T1InsertionGeometry {r n : Nat}
               convexHull Real J = convexHull Real (J ∩ {v a, v z}) ∧
             convexHull Real (v '' (({d, b, z} : Finset (Fin (n + 3))) : Set _)) ∩
               convexHull Real J = convexHull Real (J ∩ {v b, v z}))) :=
-                  FacialInsertionGeometry.mixedPair n (FacialInsertionGeometry.retainedLeft n
-                      imagePair) (FacialInsertionGeometry.retainedRight n imagePair) v vinj a d b z
+                  FacialInsertionGeometry.mixedPair n (by
+                      intro v vinj a d b z hab haz hbz F H hF hface hdH hnot hpair hgeo
+                      exact FacialInsertionGeometry.retainedLeft n imagePair v vinj a d b z
+                        F H hF hface hdH hnot hpair hgeo) (by
+                      intro v vinj a d b z hab haz hbz F H hF hface hdH hnot hpair hgeo
+                      exact FacialInsertionGeometry.retainedRight n imagePair v vinj a d b z
+                        F H hF hface hdH hnot hpair hgeo) v vinj a d b z
                   hab haz hbz F H hF hleftFace hrightFace hdH hnot hpair hgeo
   have pairState (v : Fin (n + 3) → Real × Real)
       (vinj : Function.Injective v)

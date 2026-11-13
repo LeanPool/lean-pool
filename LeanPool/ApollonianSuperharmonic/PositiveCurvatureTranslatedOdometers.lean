@@ -30,10 +30,13 @@ private theorem slope_for :
     (by
       classical
       exact
-        (BandCircle) → (∀ (c : CircleCoordinates), ∀ (U : ProtoTile), ∀ (k : PartialOdometer),
-            TileOdometer c U k → 1 < c.1 → ∃ p : ℝ × ℝ, PartialOdometerSlope k = some p) ) := by
+        ∀ (c : CircleCoordinates),
+          ∀ (U : ProtoTile),
+            ∀ (k : PartialOdometer),
+              TileOdometer c U k → 1 < c.1 → ∃ p : ℝ × ℝ, PartialOdometerSlope k = some p
+    ) := by
   classical
-  intro C c U k ho hc
+  intro c U k ho hc
   induction ho with
   | line w x hw hdom => omega
   | unit z x U hU hdom htrans => omega
@@ -627,7 +630,7 @@ theorem PositiveCurvatureTranslatedOdometers (C : BandCircle)
       PartialOdometerAffineTranslate h (shift kl) (slopeShift kl) 0
     have slope_for : ∀ (c : CircleCoordinates) (U : ProtoTile)
         (k : PartialOdometer), TileOdometer c U k → 1 < c.1 →
-        ∃ p : ℝ × ℝ, PartialOdometerSlope k = some p := PositiveTranslationGeometry.slope_for C
+        ∃ p : ℝ × ℝ, PartialOdometerSlope k = some p := PositiveTranslationGeometry.slope_for
     have slope_exists : ∃ p : ℝ × ℝ, PartialOdometerSlope h = some p :=
       slope_for C.1.1 T h hO (by omega)
     obtain ⟨P, hPl, htile, hadj, hposition, hvcard, hecard, hfcard, hchart⟩ :=

@@ -34,12 +34,17 @@ private theorem hpos :
     (by
       classical
       exact
-        ∀ (q : Fin 4 → CircleCoordinates), (BandOrderedGeneralConfiguration q) → (((0 : ℤ) < (q
-            (0 : Fin (4 : ℕ))).1 ∧ (∀ (i : Fin (3 : ℕ)), (0 : ℤ) ≤ (q i.succ).1) ∧ ∀ (i : Fin (3
-            : ℕ)), ∀ (j : Fin (3 : ℕ)), (q i.succ).1 = (0 : ℤ) → (q j.succ).1 = (0 : ℤ) → i = j)
-            → (∀ i : Fin 3, Bool → 0 < (q i.succ).1)) ) := by
+        ∀ (q : Fin 4 → CircleCoordinates),
+          BandOrderedGeneralConfiguration q →
+            ((0 : ℤ) < (q (0 : Fin (4 : ℕ))).1 ∧
+                (∀ (i : Fin (3 : ℕ)), (0 : ℤ) ≤ (q i.succ).1) ∧
+                  ∀ (i : Fin (3 : ℕ)),
+                    ∀ (j : Fin (3 : ℕ)),
+                      (q i.succ).1 = (0 : ℤ) → (q j.succ).1 = (0 : ℤ) → i = j) →
+              ∀ i : Fin 3, 0 < (q i.succ).1
+    ) := by
   classical
-  intro q cfg hcurv i s
+  intro q cfg hcurv i
   have hn := hcurv.2.1 i
   have hne0 := cfg.noLine i.succ
   by_contra h
@@ -1523,8 +1528,12 @@ theorem P4120T1GeneralDescent
     have parentOwner_boundary (j : Fin 4) :
         x ∈ BoundaryFootprintVertices
           (cert.P (parentOwner j).1 (parentOwner j).2) :=
-      (GeneralDescentGeometry.hnoInterior q cfg C T cert x (GeneralDescentGeometry.hpos q cfg
-          hcurv) hnoWitness) _ _ (incident_footprint j _ (parentOwner_spec j))
+      (GeneralDescentGeometry.hnoInterior q cfg C T cert x ((show
+          ∀ i : Fin 3, Bool → 0 < (q i.succ).1
+        from by
+          intro i s
+          exact GeneralDescentGeometry.hpos q cfg hcurv i)) hnoWitness) _ _ (incident_footprint
+              j _ (parentOwner_spec j))
     have another_parent := GeneralDescentGeometry.another_parent q cfg C T cert x
         (GeneralDescentGeometry.all_incident_not_boundary x) sourceParent parentOwner_spec
             parentOwner_boundary

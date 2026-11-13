@@ -378,12 +378,14 @@ private theorem hexteriorOut :
       classical
       exact
         ∀ (T : ProtoTile),
-        let S : Set LatticeCell := T.cells
-        (List GaussianInt) → (∀ (z : LatticeCell), (∀ x' ∈ T.cells, x'.re ≤ z.re) → (
-        let exterior : LatticeCell := z + 1
-        exterior ∉ S)) ) := by
+          let S : Set LatticeCell := T.cells;
+          ∀ (z : LatticeCell),
+            (∀ x' ∈ T.cells, x'.re ≤ z.re) →
+              let exterior : LatticeCell := z + 1
+              exterior ∉ S
+    ) := by
   classical
-  intro T S p z hzmax exterior he
+  intro T S z hzmax exterior he
   have hle := hzmax exterior he
   dsimp [exterior] at hle
   omega
@@ -437,17 +439,19 @@ private theorem right_halfplane :
       classical
       exact
         ∀ (T : ProtoTile),
-        let S : Set LatticeCell := T.cells
-        let step : LatticeCell → LatticeCell → Prop := fun a b =>
-          FourNeighborAdjacent a b ∧ a ∉ S ∧ b ∉ S
-        let reach : LatticeCell → LatticeCell → Prop := Relation.ReflTransGen step
-        (∀ {a : LatticeCell}, ∀ {b : LatticeCell}, (a ∉ S) → ((b ∉ S) → ((FourNeighborAdjacent a
-            b) → (reach a b)))) → ((List GaussianInt) → (∀ (z : LatticeCell), (∀ x' ∈ T.cells,
-            x'.re ≤ z.re) → (
-        let exterior : LatticeCell := z + 1
-        ∀ (q : LatticeCell), z.re < q.re → reach q exterior))) ) := by
+          let S : Set LatticeCell := T.cells;
+          let step : LatticeCell → LatticeCell → Prop := fun a b =>
+            FourNeighborAdjacent a b ∧ a ∉ S ∧ b ∉ S;
+          let reach : LatticeCell → LatticeCell → Prop := Relation.ReflTransGen step;
+          (∀ {a : LatticeCell},
+              ∀ {b : LatticeCell}, a ∉ S → b ∉ S → FourNeighborAdjacent a b → reach a b) →
+            ∀ (z : LatticeCell),
+              (∀ x' ∈ T.cells, x'.re ≤ z.re) →
+                let exterior : LatticeCell := z + 1
+                ∀ (q : LatticeCell), z.re < q.re → reach q exterior
+    ) := by
   classical
-  intro T S step reach one_step p z hzmax exterior q hq
+  intro T S step reach one_step z hzmax exterior q hq
   let column (k : Int) : LatticeCell := ⟨q.re, k⟩
   have column_out (k : Int) : column k ∉ S := by
     intro hkS
@@ -499,21 +503,27 @@ private theorem every_outside_reaches :
       classical
       exact
         ∀ (T : ProtoTile),
-        let S : Set LatticeCell := T.cells
-        let step : LatticeCell → LatticeCell → Prop := fun a b =>
-          FourNeighborAdjacent a b ∧ a ∉ S ∧ b ∉ S
-        let reach : LatticeCell → LatticeCell → Prop := Relation.ReflTransGen step
-        (∀ {a : LatticeCell}, ∀ {b : LatticeCell}, (a ∉ S) → ((reach a b) → (b ∉ S))) → (
-        let around (v q : LatticeCell) : Prop :=
-          q = v ∨ q = v - 1 ∨ q = v - ⟨0, 1⟩ ∨ q = v - 1 - ⟨0, 1⟩
-        (List GaussianInt) → (∀ (base : LatticeCell), (∀ {e : Finset GaussianInt}, ∀
-            {v : LatticeCell}, ∀ {q : LatticeCell}, (e ∈ BoundaryFootprintEdges T) → ((v ∈ e) →
-            ((q ∉ S) → ((around v q) → (reach q base))))) → (∀ (z : LatticeCell),
-        let exterior : LatticeCell := z + 1
-        (reach exterior base) → ((∀ (q : LatticeCell), (z.re < q.re) → (reach q exterior)) → (∀ q
-            ∉ S, reach q base))))) ) := by
+          let S : Set LatticeCell := T.cells;
+          let step : LatticeCell → LatticeCell → Prop := fun a b =>
+            FourNeighborAdjacent a b ∧ a ∉ S ∧ b ∉ S;
+          let reach : LatticeCell → LatticeCell → Prop := Relation.ReflTransGen step;
+          (∀ {a : LatticeCell}, ∀ {b : LatticeCell}, a ∉ S → reach a b → b ∉ S) →
+            let around (v q : LatticeCell) : Prop :=
+              q = v ∨ q = v - 1 ∨ q = v - ⟨0, 1⟩ ∨ q = v - 1 - ⟨0, 1⟩;
+            ∀ (base : LatticeCell),
+              (∀ {e : Finset GaussianInt},
+                  ∀ {v : LatticeCell},
+                    ∀ {q : LatticeCell},
+                      e ∈ BoundaryFootprintEdges T →
+                        v ∈ e → q ∉ S → around v q → reach q base) →
+                ∀ (z : LatticeCell),
+                  let exterior : LatticeCell := z + 1
+                  reach exterior base →
+                    (∀ (q : LatticeCell), z.re < q.re → reach q exterior) →
+                      ∀ q ∉ S, reach q base
+    ) := by
   classical
-  intro T S step reach reach_target_out around p base boundary_outside_reaches z exterior
+  intro T S step reach reach_target_out around base boundary_outside_reaches z exterior
       hexteriorBase right_halfplane q hqOut
   by_contra hqbase
   have hqle : q.re ≤ z.re := by
@@ -684,15 +694,15 @@ theorem LatticeTileComplementGridConnected (T : ProtoTile)
       ⟨z₀, hz₀⟩ with ⟨z, hz, hzmax⟩
   have hzS : z ∈ S := hz
   let exterior : LatticeCell := z + 1
-  have hexteriorOut : exterior ∉ S := ComplementGridPaths.hexteriorOut T p z hzmax
+  have hexteriorOut : exterior ∉ S := ComplementGridPaths.hexteriorOut T z hzmax
   let rightEdge : Finset GaussianInt := {z + 1, z + 1 + ⟨0, 1⟩}
   have hrightEdge := ComplementGridPaths.hrightEdge T z hzS hexteriorOut
   have hexteriorBase := ComplementGridPaths.hexteriorBase T base boundary_outside_reaches z
       hexteriorOut hrightEdge
   have right_halfplane (q : LatticeCell) (hq : z.re < q.re) :=
-      ComplementGridPaths.right_halfplane T one_step p z hzmax q hq
+      ComplementGridPaths.right_halfplane T one_step z hzmax q hq
   have every_outside_reaches (q : LatticeCell) (hqOut : q ∉ S) :=
-      ComplementGridPaths.every_outside_reaches T reach_target_out p base
+      ComplementGridPaths.every_outside_reaches T reach_target_out base
       boundary_outside_reaches z hexteriorBase right_halfplane q hqOut
   constructor
   · exact ⟨exterior, by simpa [S] using hexteriorOut⟩

@@ -157,12 +157,15 @@ private theorem hchildPositive :
     (by
       classical
       exact
-        ∀ (q : Fin 4 → CircleCoordinates), (BandOrderedGeneralConfiguration q) → ((BandCircle) →
-            (∀ (i' : Fin (3 : ℕ)), ∀ (r : Fin (3 : ℕ)),
-        let j : Fin 3 := i' + r
-        0 < (q j.succ).1)) ) := by
+        ∀ (q : Fin 4 → CircleCoordinates),
+          BandOrderedGeneralConfiguration q →
+            ∀ (i' : Fin (3 : ℕ)),
+              ∀ (r : Fin (3 : ℕ)),
+                let j : Fin 3 := i' + r
+                0 < (q j.succ).1
+    ) := by
   classical
-  intro q cfg C₀ i' r j
+  intro q cfg i' r j
   have hnonneg := (ProperBandCurvatureStructure q cfg.proper).2.1 j
   have hne := cfg.noLine j.succ
   omega
@@ -473,7 +476,7 @@ theorem P4261T1CentralCoordinates
   have hfootT : FootprintVertices T = FootprintVertices (cert.P j hs) :=
       CentralCoordinateGeometry.hfootT q cfg C₀ T₀ cert T i' hs r hparentNonempty
       hselectedNonempty hcellsT
-  have hchildPositive := CentralCoordinateGeometry.hchildPositive q cfg C₀ i' r
+  have hchildPositive := CentralCoordinateGeometry.hchildPositive q cfg i' r
   have hdomainT : (h.domain : Set GaussianInt) = FootprintVertices T :=
       CentralCoordinateGeometry.hdomainT C₀ T₀ h₀ C T h hsub
   have hdomainFresh := CentralCoordinateGeometry.hdomainFresh q i' hs R rH hrootChildren r

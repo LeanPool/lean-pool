@@ -151,39 +151,39 @@ private theorem retained :
     (by
       classical
       exact
-        ∀ (g : Fin (3 : ℕ) → (↑(Set.Icc (0 : ℝ) (1 : ℝ)) : Type) → ℝ × ℝ), (∀ (k : Fin (3 : ℕ)),
-            Function.Injective (g k)) → (∀ (s : (k : Fin (3 : ℕ)) →
-            P3723T1PolygonalParameterization (g k)),
-        let m0 := (s 0).count
-        let m1 := (s 1).count
-        let m2 := (s 2).count
-        let M := m0 + (m1 + m2)
-        let n := M - 3
-        ∀ (hM : n + 3 = M),
-        let τ (k : Fin 3) (i : Fin ((s k).count + 1)) : Set.Icc (0 : Real) 1 :=
-          ⟨(s k).time i, by
-            constructor
-            · let hi := (s k).strict.monotone (Fin.zero_le i)
-              rw [(s k).start] at hi
-              exact hi
-            · let hi := (s k).strict.monotone (Fin.le_last i)
-              rw [(s k).finish] at hi
-              exact hi⟩
-        let w (k : Fin 3) (i : Fin ((s k).count + 1)) := g k (τ k i)
-        let q : Fin M → Real × Real :=
-          Fin.addCases
-            (fun i : Fin m0 => w 0 i.castSucc)
-            (Fin.addCases
-              (fun i : Fin m1 => w 1 i.castSucc)
-              (fun i : Fin m2 => w 2 i.castSucc))
-        let p : Fin (n + 3) → Real × Real := fun i => q (Fin.cast hM i)
-        (∀ (i : Fin m0), q (Fin.castAdd (m1 + m2) i) = w 0 i.castSucc) → ((∀ (i : Fin m1), q
-            (Fin.natAdd m0 (Fin.castAdd m2 i)) = w 1 i.castSucc) → ((∀ (i : Fin m2), q
-            (Fin.natAdd m0 (Fin.natAdd m1 i)) = w 2 i.castSucc) → ((∀ (i : Fin M), p (Fin.cast
-            hM.symm i) = q i) → ((∀ (k : Fin 3), w k (Fin.last (s k).count) = w (k + 1) 0) → (∀
-            (k : Fin (3 : ℕ)), ∀ (i : Fin ((s k).count + (1 : ℕ))), w k i ∈ Set.range p))))))) := by
+        ∀ (g : Fin (3 : ℕ) → (↑(Set.Icc (0 : ℝ) (1 : ℝ)) : Type) → ℝ × ℝ),
+          ∀ (s : (k : Fin (3 : ℕ)) → P3723T1PolygonalParameterization (g k)),
+            let m0 := (s 0).count
+            let m1 := (s 1).count
+            let m2 := (s 2).count
+            let M := m0 + (m1 + m2)
+            let n := M - 3
+            ∀ (hM : n + 3 = M),
+              let τ (k : Fin 3) (i : Fin ((s k).count + 1)) : Set.Icc (0 : Real) 1 :=
+                ⟨(s k).time i, by
+                  constructor
+                  · let hi := (s k).strict.monotone (Fin.zero_le i)
+                    rw [(s k).start] at hi
+                    exact hi
+                  · let hi := (s k).strict.monotone (Fin.le_last i)
+                    rw [(s k).finish] at hi
+                    exact hi⟩
+              let w (k : Fin 3) (i : Fin ((s k).count + 1)) := g k (τ k i)
+              let q : Fin M → Real × Real :=
+                Fin.addCases (fun i : Fin m0 => w 0 i.castSucc)
+                  (Fin.addCases (fun i : Fin m1 => w 1 i.castSucc) fun i : Fin m2 =>
+                    w 2 i.castSucc)
+              let p : Fin (n + 3) → Real × Real := fun i => q (Fin.cast hM i)
+              (∀ (i : Fin m0), q (Fin.castAdd (m1 + m2) i) = w 0 i.castSucc) →
+                (∀ (i : Fin m1), q (Fin.natAdd m0 (Fin.castAdd m2 i)) = w 1 i.castSucc) →
+                  (∀ (i : Fin m2), q (Fin.natAdd m0 (Fin.natAdd m1 i)) = w 2 i.castSucc) →
+                    (∀ (i : Fin M), p (Fin.cast hM.symm i) = q i) →
+                      (∀ (k : Fin 3), w k (Fin.last (s k).count) = w (k + 1) 0) →
+                        ∀ (k : Fin (3 : ℕ)),
+                          ∀ (i : Fin ((s k).count + (1 : ℕ))), w k i ∈ Set.range p
+    ) := by
   classical
-  intro g hi s m0 m1 m2 M n hM τ w q p q0 q1 q2 p_at join k i
+  intro g s m0 m1 m2 M n hM τ w q p q0 q1 q2 p_at join k i
   fin_cases k
   · refine Fin.lastCases ?_ ?_ i
     · let j : Fin m1 := ⟨0, (s 1).positive⟩
@@ -229,15 +229,18 @@ private theorem pair_ne :
     (by
       classical
       exact
-        ∀ (ι : Type), ∀ (P : PeriodicTileComplex ι), ∀ (f : P.plane.Face), ∀ (g : Fin (3 : ℕ) →
-            (↑(Set.Icc (0 : ℝ) (1 : ℝ)) : Type) → ℝ × ℝ), ((k : Fin (3 : ℕ)) →
-            P3723T1PolygonalParameterization (g k)) → (
-        let v : Fin 3 → ι := P.plane.faceVertex f
-        ∀ (i : Fin (3 : ℕ)), ∀ (j : Fin (3 : ℕ)), i ≠ j → ({v i, v (i + (1 : Fin (3 : ℕ)))} : Set
-            ι) ≠ {v j, v (j + (1 : Fin (3 : ℕ)))})
+        ∀ (ι : Type),
+          ∀ (P : PeriodicTileComplex ι),
+            ∀ (f : P.plane.Face),
+              let v : Fin 3 → ι := P.plane.faceVertex f
+              ∀ (i : Fin (3 : ℕ)),
+                ∀ (j : Fin (3 : ℕ)),
+                  i ≠ j →
+                    ({v i, v (i + (1 : Fin (3 : ℕ)))} : Set ι) ≠
+                      {v j, v (j + (1 : Fin (3 : ℕ)))}
     ) := by
   classical
-  intro ι P f g s v i j hij he
+  intro ι P f v i j hij he
   rw [Set.pair_eq_pair_iff] at he
   rcases he with ⟨h₁, h₂⟩ | ⟨h₁, h₂⟩
   · exact hij (P.plane.face_vertices_distinct f h₁)
@@ -283,38 +286,42 @@ private theorem q_injective :
     (by
       classical
       exact
-        ∀ (g : Fin (3 : ℕ) → (↑(Set.Icc (0 : ℝ) (1 : ℝ)) : Type) → ℝ × ℝ), (∀ (k : Fin (3 : ℕ)),
-            Function.Injective (g k)) → (∀ (s : (k : Fin (3 : ℕ)) →
-            P3723T1PolygonalParameterization (g k)),
-        let m0 := (s 0).count
-        let m1 := (s 1).count
-        let m2 := (s 2).count
-        let M := m0 + (m1 + m2)
-        let τ (k : Fin 3) (i : Fin ((s k).count + 1)) : Set.Icc (0 : Real) 1 :=
-          ⟨(s k).time i, by
-            constructor
-            · let hi := (s k).strict.monotone (Fin.zero_le i)
-              rw [(s k).start] at hi
-              exact hi
-            · let hi := (s k).strict.monotone (Fin.le_last i)
-              rw [(s k).finish] at hi
-              exact hi⟩
-        let w (k : Fin 3) (i : Fin ((s k).count + 1)) := g k (τ k i)
-        let q : Fin M → Real × Real :=
-          Fin.addCases
-            (fun i : Fin m0 => w 0 i.castSucc)
-            (Fin.addCases
-              (fun i : Fin m1 => w 1 i.castSucc)
-              (fun i : Fin m2 => w 2 i.castSucc))
-        (∀ (i : Fin m0), q (Fin.castAdd (m1 + m2) i) = w 0 i.castSucc) → ((∀ (i : Fin m1), q
-            (Fin.natAdd m0 (Fin.castAdd m2 i)) = w 1 i.castSucc) → ((∀ (i : Fin m2), q
-            (Fin.natAdd m0 (Fin.natAdd m1 i)) = w 2 i.castSucc) → ((∀ (i : Fin m0), ∀ (j : Fin
-            m1), (w 0 i.castSucc = w 1 j.castSucc) → (False)) → ((∀ (i : Fin m1), ∀ (j : Fin m2),
-            (w 1 i.castSucc = w 2 j.castSucc) → (False)) → ((∀ (i : Fin m0), ∀ (j : Fin m2), (w 0
-            i.castSucc = w 2 j.castSucc) → (False)) → ((∀ (k : Fin 3), Function.Injective (fun i
-            : Fin (s k).count => w k i.castSucc)) → (Function.Injective q))))))))) := by
+        ∀ (g : Fin (3 : ℕ) → (↑(Set.Icc (0 : ℝ) (1 : ℝ)) : Type) → ℝ × ℝ),
+          ∀ (s : (k : Fin (3 : ℕ)) → P3723T1PolygonalParameterization (g k)),
+            let m0 := (s 0).count
+            let m1 := (s 1).count
+            let m2 := (s 2).count
+            let M := m0 + (m1 + m2)
+            let τ (k : Fin 3) (i : Fin ((s k).count + 1)) : Set.Icc (0 : Real) 1 :=
+              ⟨(s k).time i, by
+                constructor
+                · let hi := (s k).strict.monotone (Fin.zero_le i)
+                  rw [(s k).start] at hi
+                  exact hi
+                · let hi := (s k).strict.monotone (Fin.le_last i)
+                  rw [(s k).finish] at hi
+                  exact hi⟩
+            let w (k : Fin 3) (i : Fin ((s k).count + 1)) := g k (τ k i)
+            let q : Fin M → Real × Real :=
+              Fin.addCases (fun i : Fin m0 => w 0 i.castSucc)
+                (Fin.addCases (fun i : Fin m1 => w 1 i.castSucc) fun i : Fin m2 =>
+                  w 2 i.castSucc)
+            (∀ (i : Fin m0), q (Fin.castAdd (m1 + m2) i) = w 0 i.castSucc) →
+              (∀ (i : Fin m1), q (Fin.natAdd m0 (Fin.castAdd m2 i)) = w 1 i.castSucc) →
+                (∀ (i : Fin m2), q (Fin.natAdd m0 (Fin.natAdd m1 i)) = w 2 i.castSucc) →
+                  (∀ (i : Fin m0),
+                      ∀ (j : Fin m1), w 0 i.castSucc = w 1 j.castSucc → False) →
+                    (∀ (i : Fin m1),
+                        ∀ (j : Fin m2), w 1 i.castSucc = w 2 j.castSucc → False) →
+                      (∀ (i : Fin m0),
+                          ∀ (j : Fin m2), w 0 i.castSucc = w 2 j.castSucc → False) →
+                        (∀ (k : Fin 3),
+                            Function.Injective fun i : Fin (s k).count =>
+                              w k i.castSucc) →
+                          Function.Injective q
+    ) := by
   classical
-  intro g hi s m0 m1 m2 M τ w q q0 q1 q2 no_cross01 no_cross12 no_cross02 w_block_injective a b hab
+  intro g s m0 m1 m2 M τ w q q0 q1 q2 no_cross01 no_cross12 no_cross02 w_block_injective a b hab
   revert b
   refine Fin.addCases ?_ ?_ a
   · intro i b
@@ -375,13 +382,16 @@ private theorem finite_interval_cover :
     (by
       classical
       exact
-        ∀ (g : Fin (3 : ℕ) → (↑(Set.Icc (0 : ℝ) (1 : ℝ)) : Type) → ℝ × ℝ), ((k : Fin (3 : ℕ)) →
-            P3723T1PolygonalParameterization (g k)) → (∀ N, ∀ (a : Fin (N + 1) → Real),
-            StrictMono a → ∀ x, a 0 ≤ x → x ≤ a (Fin.last N) → 0 < N → ∃ r : Fin N, a r.castSucc
-            ≤ x ∧ x ≤ a r.succ)
+        ∀ N,
+          ∀ (a : Fin (N + 1) → Real),
+            StrictMono a →
+              ∀ x,
+                a 0 ≤ x →
+                  x ≤ a (Fin.last N) →
+                    0 < N → ∃ r : Fin N, a r.castSucc ≤ x ∧ x ≤ a r.succ
     ) := by
   classical
-  intro g s N
+  intro N
   induction N with
   | zero =>
       intro a ha x hlo hhi hpos
@@ -416,35 +426,53 @@ private theorem arc_covered :
     (by
       classical
       exact
-        ∀ (ι : Type), ∀ (P : PeriodicTileComplex ι), ∀ (D : P3723T1AllContactRouting P), ∀ (f :
-            P.plane.Face), ∀ (g : Fin (3 : ℕ) → (↑(Set.Icc (0 : ℝ) (1 : ℝ)) : Type) → ℝ × ℝ), (∀
-            (k : Fin (3 : ℕ)), Function.Injective (g k)) → ((∀ (k : Fin (3 : ℕ)), Set.range (g k)
-            = D.edgeArc (P.plane.faceVertex f k) (P.plane.faceVertex f (k + (1 : Fin (3 : ℕ)))))
-            → (∀ (s : (k : Fin (3 : ℕ)) → P3723T1PolygonalParameterization (g k)),
-        let τ (k : Fin 3) (i : Fin ((s k).count + 1)) : Set.Icc (0 : Real) 1 :=
-          ⟨(s k).time i, by
-            constructor
-            · let hi := (s k).strict.monotone (Fin.zero_le i)
-              rw [(s k).start] at hi
-              exact hi
-            · let hi := (s k).strict.monotone (Fin.le_last i)
-              rw [(s k).finish] at hi
-              exact hi⟩
-        let w (k : Fin 3) (i : Fin ((s k).count + 1)) := g k (τ k i)
-        (∀ (k : Fin 3), ∀ (r : Fin ((s k).count)), Set.range (fun t : Set.Icc ((s k).time
-            r.castSucc) ((s k).time r.succ) =>
-            g k ⟨t.1, by
-              constructor
-              · exact (τ k r.castSucc).property.1.trans t.property.1
-              · exact t.property.2.trans (τ k r.succ).property.2⟩) =
-            segment Real (w k r.castSucc) (w k r.succ)) → (
-        let v : Fin 3 → ι := P.plane.faceVertex f
-        (∀ N, ∀ (a : Fin (N + 1) → Real), StrictMono a → ∀ x, a 0 ≤ x → x ≤ a (Fin.last N) → 0 <
-            N → ∃ r : Fin N, a r.castSucc ≤ x ∧ x ≤ a r.succ) → (∀ (k : Fin (3 : ℕ)), D.edgeArc
-            (v k) (v (k + (1 : Fin (3 : ℕ)))) = ⋃ (r : Fin (s k).count), segment ℝ (w k
-            r.castSucc) (w k r.succ)))))) := by
+        ∀ (ι : Type),
+          ∀ (P : PeriodicTileComplex ι),
+            ∀ (D : P3723T1AllContactRouting P),
+              ∀ (f : P.plane.Face),
+                ∀ (g : Fin (3 : ℕ) → (↑(Set.Icc (0 : ℝ) (1 : ℝ)) : Type) → ℝ × ℝ),
+                  (∀ (k : Fin (3 : ℕ)),
+                      Set.range (g k) =
+                        D.edgeArc (P.plane.faceVertex f k)
+                          (P.plane.faceVertex f (k + (1 : Fin (3 : ℕ))))) →
+                    ∀ (s : (k : Fin (3 : ℕ)) → P3723T1PolygonalParameterization (g k)),
+                      let τ (k : Fin 3) (i : Fin ((s k).count + 1)) :
+                        Set.Icc (0 : Real) 1 :=
+                        ⟨(s k).time i, by
+                          constructor
+                          · let hi := (s k).strict.monotone (Fin.zero_le i)
+                            rw [(s k).start] at hi
+                            exact hi
+                          · let hi := (s k).strict.monotone (Fin.le_last i)
+                            rw [(s k).finish] at hi
+                            exact hi⟩
+                      let w (k : Fin 3) (i : Fin ((s k).count + 1)) := g k (τ k i)
+                      (∀ (k : Fin 3),
+                          ∀ (r : Fin (s k).count),
+                            (Set.range
+                                fun t :
+                                Set.Icc ((s k).time r.castSucc) ((s k).time r.succ) =>
+                                g k
+                                ⟨t.1, by
+                                constructor
+                                · exact (τ k r.castSucc).property.1.trans t.property.1
+                                · exact t.property.2.trans (τ k r.succ).property.2⟩) =
+                              segment Real (w k r.castSucc) (w k r.succ)) →
+                        let v : Fin 3 → ι := P.plane.faceVertex f
+                        (∀ N,
+                            ∀ (a : Fin (N + 1) → Real),
+                              StrictMono a →
+                                ∀ x,
+                                a 0 ≤ x →
+                                x ≤ a (Fin.last N) →
+                                0 < N → ∃ r : Fin N, a r.castSucc ≤ x ∧ x ≤ a r.succ) →
+                          ∀ (k : Fin (3 : ℕ)),
+                            D.edgeArc (v k) (v (k + (1 : Fin (3 : ℕ)))) =
+                              ⋃ (r : Fin (s k).count),
+                                segment ℝ (w k r.castSucc) (w k r.succ)
+    ) := by
   classical
-  intro ι P D f g hi hr s τ w piece_range v finite_interval_cover k
+  intro ι P D f g hr s τ w piece_range v finite_interval_cover k
   rw [← hr k]
   ext x
   constructor
@@ -474,39 +502,37 @@ private theorem q_step :
     (by
       classical
       exact
-        ∀ (g : Fin (3 : ℕ) → (↑(Set.Icc (0 : ℝ) (1 : ℝ)) : Type) → ℝ × ℝ), (∀ (k : Fin (3 : ℕ)),
-            Function.Injective (g k)) → (∀ (s : (k : Fin (3 : ℕ)) →
-            P3723T1PolygonalParameterization (g k)),
-        let m0 := (s 0).count
-        let m1 := (s 1).count
-        let m2 := (s 2).count
-        let M := m0 + (m1 + m2)
-        let n := M - 3
-        (n + 3 = M) → (
-        let τ (k : Fin 3) (i : Fin ((s k).count + 1)) : Set.Icc (0 : Real) 1 :=
-          ⟨(s k).time i, by
-            constructor
-            · let hi := (s k).strict.monotone (Fin.zero_le i)
-              rw [(s k).start] at hi
-              exact hi
-            · let hi := (s k).strict.monotone (Fin.le_last i)
-              rw [(s k).finish] at hi
-              exact hi⟩
-        let w (k : Fin 3) (i : Fin ((s k).count + 1)) := g k (τ k i)
-        let q : Fin M → Real × Real :=
-          Fin.addCases
-            (fun i : Fin m0 => w 0 i.castSucc)
-            (Fin.addCases
-              (fun i : Fin m1 => w 1 i.castSucc)
-              (fun i : Fin m2 => w 2 i.castSucc))
-        (∀ (i : Fin m0), q (Fin.castAdd (m1 + m2) i) = w 0 i.castSucc) → ((∀ (i : Fin m1), q
-            (Fin.natAdd m0 (Fin.castAdd m2 i)) = w 1 i.castSucc) → ((∀ (i : Fin m2), q
-            (Fin.natAdd m0 (Fin.natAdd m1 i)) = w 2 i.castSucc) → ((∀ (k : Fin 3), w k (Fin.last
-            (s k).count) = w (k + 1) 0) → (
-        ∀ (a : Fin M), ∀ (ha : (↑a : ℕ) + (1 : ℕ) < M), ∃ (k : Fin (3 : ℕ)) (r : Fin (s
-            k).count), q a = w k r.castSucc ∧ q ⟨(↑a : ℕ) + (1 : ℕ), ha⟩ = w k r.succ))))))) := by
+        ∀ (g : Fin (3 : ℕ) → (↑(Set.Icc (0 : ℝ) (1 : ℝ)) : Type) → ℝ × ℝ),
+          ∀ (s : (k : Fin (3 : ℕ)) → P3723T1PolygonalParameterization (g k)),
+            let m0 := (s 0).count;
+            let m1 := (s 1).count;
+            let m2 := (s 2).count;
+            let M := m0 + (m1 + m2);
+            let τ (k : Fin 3) (i : Fin ((s k).count + 1)) : Set.Icc (0 : Real) 1 :=
+              ⟨(s k).time i, by
+                constructor
+                · let hi := (s k).strict.monotone (Fin.zero_le i)
+                  rw [(s k).start] at hi
+                  exact hi
+                · let hi := (s k).strict.monotone (Fin.le_last i)
+                  rw [(s k).finish] at hi
+                  exact hi⟩
+            let w (k : Fin 3) (i : Fin ((s k).count + 1)) := g k (τ k i)
+            let q : Fin M → Real × Real :=
+              Fin.addCases (fun i : Fin m0 => w 0 i.castSucc)
+                (Fin.addCases (fun i : Fin m1 => w 1 i.castSucc) fun i : Fin m2 =>
+                  w 2 i.castSucc)
+            (∀ (i : Fin m0), q (Fin.castAdd (m1 + m2) i) = w 0 i.castSucc) →
+              (∀ (i : Fin m1), q (Fin.natAdd m0 (Fin.castAdd m2 i)) = w 1 i.castSucc) →
+                (∀ (i : Fin m2), q (Fin.natAdd m0 (Fin.natAdd m1 i)) = w 2 i.castSucc) →
+                  (∀ (k : Fin 3), w k (Fin.last (s k).count) = w (k + 1) 0) →
+                    ∀ (a : Fin M),
+                      ∀ (ha : (↑a : ℕ) + (1 : ℕ) < M),
+                        ∃ (k : Fin (3 : ℕ)) (r : Fin (s k).count),
+                          q a = w k r.castSucc ∧ q ⟨(↑a : ℕ) + (1 : ℕ), ha⟩ = w k r.succ
+    ) := by
   classical
-  intro g hi s m0 m1 m2 M n hM τ w q q0 q1 q2 join a ha
+  intro g s m0 m1 m2 M τ w q q0 q1 q2 join a ha
   let b0 (i : Fin m0) : Fin M := Fin.castAdd (m1 + m2) i
   let b1 (i : Fin m1) : Fin M := Fin.natAdd m0 (Fin.castAdd m2 i)
   let b2 (i : Fin m2) : Fin M := Fin.natAdd m0 (Fin.natAdd m1 i)
@@ -595,41 +621,44 @@ private theorem p_edge_piece :
     (by
       classical
       exact
-        ∀ (g : Fin (3 : ℕ) → (↑(Set.Icc (0 : ℝ) (1 : ℝ)) : Type) → ℝ × ℝ), (∀ (k : Fin (3 : ℕ)),
-            Function.Injective (g k)) → (∀ (s : (k : Fin (3 : ℕ)) →
-            P3723T1PolygonalParameterization (g k)),
-        let m0 := (s 0).count
-        let m1 := (s 1).count
-        let m2 := (s 2).count
-        let M := m0 + (m1 + m2)
-        let n := M - 3
-        ∀ (hM : n + 3 = M),
-        let τ (k : Fin 3) (i : Fin ((s k).count + 1)) : Set.Icc (0 : Real) 1 :=
-          ⟨(s k).time i, by
-            constructor
-            · let hi := (s k).strict.monotone (Fin.zero_le i)
-              rw [(s k).start] at hi
-              exact hi
-            · let hi := (s k).strict.monotone (Fin.le_last i)
-              rw [(s k).finish] at hi
-              exact hi⟩
-        let w (k : Fin 3) (i : Fin ((s k).count + 1)) := g k (τ k i)
-        let q : Fin M → Real × Real :=
-          Fin.addCases
-            (fun i : Fin m0 => w 0 i.castSucc)
-            (Fin.addCases
-              (fun i : Fin m1 => w 1 i.castSucc)
-              (fun i : Fin m2 => w 2 i.castSucc))
-        let p : Fin (n + 3) → Real × Real := fun i => q (Fin.cast hM i)
-        (∀ (i : Fin m0), q (Fin.castAdd (m1 + m2) i) = w 0 i.castSucc) → ((∀ (i : Fin m2), q
-            (Fin.natAdd m0 (Fin.natAdd m1 i)) = w 2 i.castSucc) → ((∀ (k : Fin 3), w k (Fin.last
-            (s k).count) = w (k + 1) 0) → (
-        (∀ (a : Fin M), ∀ (ha : a.val + 1 < M), ∃ k : Fin 3, ∃ r : Fin (s k).count, q a = w k
-            r.castSucc ∧ q ⟨a.val + 1, ha⟩ = w k r.succ) → (∀ (i : Fin (n + (3 : ℕ))), ∃ (k : Fin
-            (3 : ℕ)) (r : Fin (s k).count), p i = w k r.castSucc ∧ p (i + (1 : Fin (n + (3 :
-            ℕ)))) = w k r.succ)))))) := by
+        ∀ (g : Fin (3 : ℕ) → (↑(Set.Icc (0 : ℝ) (1 : ℝ)) : Type) → ℝ × ℝ),
+          ∀ (s : (k : Fin (3 : ℕ)) → P3723T1PolygonalParameterization (g k)),
+            let m0 := (s 0).count
+            let m1 := (s 1).count
+            let m2 := (s 2).count
+            let M := m0 + (m1 + m2)
+            let n := M - 3
+            ∀ (hM : n + 3 = M),
+              let τ (k : Fin 3) (i : Fin ((s k).count + 1)) : Set.Icc (0 : Real) 1 :=
+                ⟨(s k).time i, by
+                  constructor
+                  · let hi := (s k).strict.monotone (Fin.zero_le i)
+                    rw [(s k).start] at hi
+                    exact hi
+                  · let hi := (s k).strict.monotone (Fin.le_last i)
+                    rw [(s k).finish] at hi
+                    exact hi⟩
+              let w (k : Fin 3) (i : Fin ((s k).count + 1)) := g k (τ k i)
+              let q : Fin M → Real × Real :=
+                Fin.addCases (fun i : Fin m0 => w 0 i.castSucc)
+                  (Fin.addCases (fun i : Fin m1 => w 1 i.castSucc) fun i : Fin m2 =>
+                    w 2 i.castSucc)
+              let p : Fin (n + 3) → Real × Real := fun i => q (Fin.cast hM i)
+              (∀ (i : Fin m0), q (Fin.castAdd (m1 + m2) i) = w 0 i.castSucc) →
+                (∀ (i : Fin m2), q (Fin.natAdd m0 (Fin.natAdd m1 i)) = w 2 i.castSucc) →
+                  (∀ (k : Fin 3), w k (Fin.last (s k).count) = w (k + 1) 0) →
+                    (∀ (a : Fin M),
+                        ∀ (ha : a.val + 1 < M),
+                          ∃ k : Fin 3,
+                            ∃ r : Fin (s k).count,
+                              q a = w k r.castSucc ∧ q ⟨a.val + 1, ha⟩ = w k r.succ) →
+                      ∀ (i : Fin (n + (3 : ℕ))),
+                        ∃ (k : Fin (3 : ℕ)) (r : Fin (s k).count),
+                          p i = w k r.castSucc ∧
+                            p (i + (1 : Fin (n + (3 : ℕ)))) = w k r.succ
+    ) := by
   classical
-  intro g hi s m0 m1 m2 M n hM τ w q p q0 q2 join q_step i
+  intro g s m0 m1 m2 M n hM τ w q p q0 q2 join q_step i
   let b0 (i : Fin m0) : Fin M := Fin.castAdd (m1 + m2) i
   let b2 (i : Fin m2) : Fin M := Fin.natAdd m0 (Fin.natAdd m1 i)
   refine Fin.lastCases ?_ ?_ i
@@ -689,41 +718,42 @@ private theorem block_edge :
     (by
       classical
       exact
-        ∀ (g : Fin (3 : ℕ) → (↑(Set.Icc (0 : ℝ) (1 : ℝ)) : Type) → ℝ × ℝ), (∀ (k : Fin (3 : ℕ)),
-            Function.Injective (g k)) → (∀ (s : (k : Fin (3 : ℕ)) →
-            P3723T1PolygonalParameterization (g k)),
-        let m0 := (s 0).count
-        let m1 := (s 1).count
-        let m2 := (s 2).count
-        let M := m0 + (m1 + m2)
-        let n := M - 3
-        ∀ (hM : n + 3 = M),
-        let τ (k : Fin 3) (i : Fin ((s k).count + 1)) : Set.Icc (0 : Real) 1 :=
-          ⟨(s k).time i, by
-            constructor
-            · let hi := (s k).strict.monotone (Fin.zero_le i)
-              rw [(s k).start] at hi
-              exact hi
-            · let hi := (s k).strict.monotone (Fin.le_last i)
-              rw [(s k).finish] at hi
-              exact hi⟩
-        let w (k : Fin 3) (i : Fin ((s k).count + 1)) := g k (τ k i)
-        let q : Fin M → Real × Real :=
-          Fin.addCases
-            (fun i : Fin m0 => w 0 i.castSucc)
-            (Fin.addCases
-              (fun i : Fin m1 => w 1 i.castSucc)
-              (fun i : Fin m2 => w 2 i.castSucc))
-        let p : Fin (n + 3) → Real × Real := fun i => q (Fin.cast hM i)
-        (∀ (i : Fin m0), q (Fin.castAdd (m1 + m2) i) = w 0 i.castSucc) → ((∀ (i : Fin m1), q
-            (Fin.natAdd m0 (Fin.castAdd m2 i)) = w 1 i.castSucc) → ((∀ (i : Fin m2), q
-            (Fin.natAdd m0 (Fin.natAdd m1 i)) = w 2 i.castSucc) → ((∀ (k : Fin 3), w k (Fin.last
-            (s k).count) = w (k + 1) 0) → (
-        (∀ (i : Fin (n + 3)), (i.val + 1 < n + 3) → ((i + 1).val = i.val + 1)) → (∀ (k : Fin (3 :
-            ℕ)), ∀ (r : Fin (s k).count), ∃ (i : Fin (n + (3 : ℕ))), p i = w k r.castSucc ∧ p (i
-            + (1 : Fin (n + (3 : ℕ)))) = w k r.succ))))))) := by
+        ∀ (g : Fin (3 : ℕ) → (↑(Set.Icc (0 : ℝ) (1 : ℝ)) : Type) → ℝ × ℝ),
+          ∀ (s : (k : Fin (3 : ℕ)) → P3723T1PolygonalParameterization (g k)),
+            let m0 := (s 0).count
+            let m1 := (s 1).count
+            let m2 := (s 2).count
+            let M := m0 + (m1 + m2)
+            let n := M - 3
+            ∀ (hM : n + 3 = M),
+              let τ (k : Fin 3) (i : Fin ((s k).count + 1)) : Set.Icc (0 : Real) 1 :=
+                ⟨(s k).time i, by
+                  constructor
+                  · let hi := (s k).strict.monotone (Fin.zero_le i)
+                    rw [(s k).start] at hi
+                    exact hi
+                  · let hi := (s k).strict.monotone (Fin.le_last i)
+                    rw [(s k).finish] at hi
+                    exact hi⟩
+              let w (k : Fin 3) (i : Fin ((s k).count + 1)) := g k (τ k i)
+              let q : Fin M → Real × Real :=
+                Fin.addCases (fun i : Fin m0 => w 0 i.castSucc)
+                  (Fin.addCases (fun i : Fin m1 => w 1 i.castSucc) fun i : Fin m2 =>
+                    w 2 i.castSucc)
+              let p : Fin (n + 3) → Real × Real := fun i => q (Fin.cast hM i)
+              (∀ (i : Fin m0), q (Fin.castAdd (m1 + m2) i) = w 0 i.castSucc) →
+                (∀ (i : Fin m1), q (Fin.natAdd m0 (Fin.castAdd m2 i)) = w 1 i.castSucc) →
+                  (∀ (i : Fin m2), q (Fin.natAdd m0 (Fin.natAdd m1 i)) = w 2 i.castSucc) →
+                    (∀ (k : Fin 3), w k (Fin.last (s k).count) = w (k + 1) 0) →
+                      (∀ (i : Fin (n + 3)), i.val + 1 < n + 3 → (i + 1).val = i.val + 1) →
+                        ∀ (k : Fin (3 : ℕ)),
+                          ∀ (r : Fin (s k).count),
+                            ∃ (i : Fin (n + (3 : ℕ))),
+                              p i = w k r.castSucc ∧
+                                p (i + (1 : Fin (n + (3 : ℕ)))) = w k r.succ
+    ) := by
   classical
-  intro g hi s m0 m1 m2 M n hM τ w q p q0 q1 q2 join fin_succ_val k r
+  intro g s m0 m1 m2 M n hM τ w q p q0 q1 q2 join fin_succ_val k r
   let b0 (i : Fin m0) : Fin M := Fin.castAdd (m1 + m2) i
   let b1 (i : Fin m1) : Fin M := Fin.natAdd m0 (Fin.castAdd m2 i)
   let b2 (i : Fin m2) : Fin M := Fin.natAdd m0 (Fin.natAdd m1 i)
@@ -878,39 +908,42 @@ private theorem edge_union :
     (by
       classical
       exact
-        ∀ (g : Fin (3 : ℕ) → (↑(Set.Icc (0 : ℝ) (1 : ℝ)) : Type) → ℝ × ℝ), (∀ (k : Fin (3 : ℕ)),
-            Function.Injective (g k)) → (∀ (s : (k : Fin (3 : ℕ)) →
-            P3723T1PolygonalParameterization (g k)),
-        let m0 := (s 0).count
-        let m1 := (s 1).count
-        let m2 := (s 2).count
-        let M := m0 + (m1 + m2)
-        let n := M - 3
-        ∀ (hM : n + 3 = M),
-        let τ (k : Fin 3) (i : Fin ((s k).count + 1)) : Set.Icc (0 : Real) 1 :=
-          ⟨(s k).time i, by
-            constructor
-            · let hi := (s k).strict.monotone (Fin.zero_le i)
-              rw [(s k).start] at hi
-              exact hi
-            · let hi := (s k).strict.monotone (Fin.le_last i)
-              rw [(s k).finish] at hi
-              exact hi⟩
-        let w (k : Fin 3) (i : Fin ((s k).count + 1)) := g k (τ k i)
-        let q : Fin M → Real × Real :=
-          Fin.addCases
-            (fun i : Fin m0 => w 0 i.castSucc)
-            (Fin.addCases
-              (fun i : Fin m1 => w 1 i.castSucc)
-              (fun i : Fin m2 => w 2 i.castSucc))
-        let p : Fin (n + 3) → Real × Real := fun i => q (Fin.cast hM i)
-        (∀ (i : Fin (n + 3)), ∃ k : Fin 3, ∃ r : Fin (s k).count, p i = w k r.castSucc ∧ p (i +
-            1) = w k r.succ) → ((∀ (k : Fin 3), ∀ (r : Fin (s k).count), ∃ i : Fin (n + 3), p i =
-            w k r.castSucc ∧ p (i + 1) = w k r.succ) → ((⋃ i : Fin (n + 3), segment Real (p i) (p
-            (i + 1))) = ⋃ k : Fin 3, ⋃ r : Fin (s k).count, segment Real (w k r.castSucc) (w k
-            r.succ))))) := by
+        ∀ (g : Fin (3 : ℕ) → (↑(Set.Icc (0 : ℝ) (1 : ℝ)) : Type) → ℝ × ℝ),
+          ∀ (s : (k : Fin (3 : ℕ)) → P3723T1PolygonalParameterization (g k)),
+            let m0 := (s 0).count
+            let m1 := (s 1).count
+            let m2 := (s 2).count
+            let M := m0 + (m1 + m2)
+            let n := M - 3
+            ∀ (hM : n + 3 = M),
+              let τ (k : Fin 3) (i : Fin ((s k).count + 1)) : Set.Icc (0 : Real) 1 :=
+                ⟨(s k).time i, by
+                  constructor
+                  · let hi := (s k).strict.monotone (Fin.zero_le i)
+                    rw [(s k).start] at hi
+                    exact hi
+                  · let hi := (s k).strict.monotone (Fin.le_last i)
+                    rw [(s k).finish] at hi
+                    exact hi⟩
+              let w (k : Fin 3) (i : Fin ((s k).count + 1)) := g k (τ k i)
+              let q : Fin M → Real × Real :=
+                Fin.addCases (fun i : Fin m0 => w 0 i.castSucc)
+                  (Fin.addCases (fun i : Fin m1 => w 1 i.castSucc) fun i : Fin m2 =>
+                    w 2 i.castSucc)
+              let p : Fin (n + 3) → Real × Real := fun i => q (Fin.cast hM i)
+              (∀ (i : Fin (n + 3)),
+                  ∃ k : Fin 3,
+                    ∃ r : Fin (s k).count,
+                      p i = w k r.castSucc ∧ p (i + 1) = w k r.succ) →
+                (∀ (k : Fin 3),
+                    ∀ (r : Fin (s k).count),
+                      ∃ i : Fin (n + 3), p i = w k r.castSucc ∧ p (i + 1) = w k r.succ) →
+                  ⋃ i : Fin (n + 3), segment Real (p i) (p (i + 1)) =
+                    ⋃ k : Fin 3,
+                      ⋃ r : Fin (s k).count, segment Real (w k r.castSucc) (w k r.succ)
+    ) := by
   classical
-  intro g hi s m0 m1 m2 M n hM τ w q p p_edge_piece block_edge
+  intro g s m0 m1 m2 M n hM τ w q p p_edge_piece block_edge
   ext x
   simp only [Set.mem_iUnion]
   constructor
@@ -925,26 +958,35 @@ private theorem piece_arc_union :
     (by
       classical
       exact
-        ∀ (ι : Type), ∀ (P : PeriodicTileComplex ι), ∀ (D : P3723T1AllContactRouting P), ∀ (f :
-            P.plane.Face), ∀ (g : Fin (3 : ℕ) → (↑(Set.Icc (0 : ℝ) (1 : ℝ)) : Type) → ℝ × ℝ), (∀
-            (k : Fin (3 : ℕ)), Function.Injective (g k)) → (∀ (s : (k : Fin (3 : ℕ)) →
-            P3723T1PolygonalParameterization (g k)),
-        let τ (k : Fin 3) (i : Fin ((s k).count + 1)) : Set.Icc (0 : Real) 1 :=
-          ⟨(s k).time i, by
-            constructor
-            · let hi := (s k).strict.monotone (Fin.zero_le i)
-              rw [(s k).start] at hi
-              exact hi
-            · let hi := (s k).strict.monotone (Fin.le_last i)
-              rw [(s k).finish] at hi
-              exact hi⟩
-        let w (k : Fin 3) (i : Fin ((s k).count + 1)) := g k (τ k i)
-        let v : Fin 3 → ι := P.plane.faceVertex f
-        (∀ (k : Fin 3), D.edgeArc (v k) (v (k + 1)) = ⋃ r : Fin (s k).count, segment Real (w k
-            r.castSucc) (w k r.succ)) → ((⋃ k : Fin 3, ⋃ r : Fin (s k).count, segment Real (w k
-            r.castSucc) (w k r.succ)) = ⋃ k : Fin 3, D.edgeArc (v k) (v (k + 1))))) := by
+        ∀ (ι : Type),
+          ∀ (P : PeriodicTileComplex ι),
+            ∀ (D : P3723T1AllContactRouting P),
+              ∀ (f : P.plane.Face),
+                ∀ (g : Fin (3 : ℕ) → (↑(Set.Icc (0 : ℝ) (1 : ℝ)) : Type) → ℝ × ℝ),
+                  ∀ (s : (k : Fin (3 : ℕ)) → P3723T1PolygonalParameterization (g k)),
+                    let τ (k : Fin 3) (i : Fin ((s k).count + 1)) :
+                      Set.Icc (0 : Real) 1 :=
+                      ⟨(s k).time i, by
+                        constructor
+                        · let hi := (s k).strict.monotone (Fin.zero_le i)
+                          rw [(s k).start] at hi
+                          exact hi
+                        · let hi := (s k).strict.monotone (Fin.le_last i)
+                          rw [(s k).finish] at hi
+                          exact hi⟩
+                    let w (k : Fin 3) (i : Fin ((s k).count + 1)) := g k (τ k i)
+                    let v : Fin 3 → ι := P.plane.faceVertex f
+                    (∀ (k : Fin 3),
+                        D.edgeArc (v k) (v (k + 1)) =
+                          ⋃ r : Fin (s k).count,
+                            segment Real (w k r.castSucc) (w k r.succ)) →
+                      ⋃ k : Fin 3,
+                          ⋃ r : Fin (s k).count,
+                            segment Real (w k r.castSucc) (w k r.succ) =
+                        ⋃ k : Fin 3, D.edgeArc (v k) (v (k + 1))
+    ) := by
   classical
-  intro ι P D f g hi s τ w v arc_covered
+  intro ι P D f g s τ w v arc_covered
   ext x
   simp only [Set.mem_iUnion]
   constructor
@@ -1178,28 +1220,38 @@ private theorem piece_overlap :
     (by
       classical
       exact
-        ∀ (g : Fin (3 : ℕ) → (↑(Set.Icc (0 : ℝ) (1 : ℝ)) : Type) → ℝ × ℝ), (∀ (k : Fin (3 : ℕ)),
-            Function.Injective (g k)) → (∀ (s : (k : Fin (3 : ℕ)) →
-            P3723T1PolygonalParameterization (g k)),
-        let τ (k : Fin 3) (i : Fin ((s k).count + 1)) : Set.Icc (0 : Real) 1 :=
-          ⟨(s k).time i, by
-            constructor
-            · let hi := (s k).strict.monotone (Fin.zero_le i)
-              rw [(s k).start] at hi
-              exact hi
-            · let hi := (s k).strict.monotone (Fin.le_last i)
-              rw [(s k).finish] at hi
-              exact hi⟩
-        let w (k : Fin 3) (i : Fin ((s k).count + 1)) := g k (τ k i)
-        (∀ (k : Fin 3), ∀ (r : Fin (s k).count), ∀ (r' : Fin (s k).count), (r.val < r'.val) → (∀
-            (x : Real × Real), (x ∈ segment Real (w k r.castSucc) (w k r.succ)) → ((x ∈ segment
-            Real (w k r'.castSucc) (w k r'.succ)) → ((x = w k r.castSucc ∨ x = w k r.succ) ∧ (x =
-            w k r'.castSucc ∨ x = w k r'.succ))))) → (∀ (k : Fin (3 : ℕ)), ∀ (r : Fin (s
-            k).count), ∀ (r' : Fin (s k).count), r ≠ r' → ∀ x ∈ segment ℝ (w k r.castSucc) (w k
-            r.succ), x ∈ segment ℝ (w k r'.castSucc) (w k r'.succ) → (x = w k r.castSucc ∨ x = w
-            k r.succ) ∧ (x = w k r'.castSucc ∨ x = w k r'.succ)))) := by
+        ∀ (g : Fin (3 : ℕ) → (↑(Set.Icc (0 : ℝ) (1 : ℝ)) : Type) → ℝ × ℝ),
+          ∀ (s : (k : Fin (3 : ℕ)) → P3723T1PolygonalParameterization (g k)),
+            let τ (k : Fin 3) (i : Fin ((s k).count + 1)) : Set.Icc (0 : Real) 1 :=
+              ⟨(s k).time i, by
+                constructor
+                · let hi := (s k).strict.monotone (Fin.zero_le i)
+                  rw [(s k).start] at hi
+                  exact hi
+                · let hi := (s k).strict.monotone (Fin.le_last i)
+                  rw [(s k).finish] at hi
+                  exact hi⟩
+            let w (k : Fin 3) (i : Fin ((s k).count + 1)) := g k (τ k i)
+            (∀ (k : Fin 3),
+                ∀ (r : Fin (s k).count),
+                  ∀ (r' : Fin (s k).count),
+                    r.val < r'.val →
+                      ∀ (x : Real × Real),
+                        x ∈ segment Real (w k r.castSucc) (w k r.succ) →
+                          x ∈ segment Real (w k r'.castSucc) (w k r'.succ) →
+                            (x = w k r.castSucc ∨ x = w k r.succ) ∧
+                              (x = w k r'.castSucc ∨ x = w k r'.succ)) →
+              ∀ (k : Fin (3 : ℕ)),
+                ∀ (r : Fin (s k).count),
+                  ∀ (r' : Fin (s k).count),
+                    r ≠ r' →
+                      ∀ x ∈ segment ℝ (w k r.castSucc) (w k r.succ),
+                        x ∈ segment ℝ (w k r'.castSucc) (w k r'.succ) →
+                          (x = w k r.castSucc ∨ x = w k r.succ) ∧
+                            (x = w k r'.castSucc ∨ x = w k r'.succ)
+    ) := by
   classical
-  intro g hi s τ w piece_overlap_forward k r r' hne x hx hx'
+  intro g s τ w piece_overlap_forward k r r' hne x hx hx'
   have hvne : r.val ≠ r'.val := by
     intro hv
     apply hne
@@ -1356,21 +1408,22 @@ private theorem w_before_end :
     (by
       classical
       exact
-        ∀ (g : Fin (3 : ℕ) → (↑(Set.Icc (0 : ℝ) (1 : ℝ)) : Type) → ℝ × ℝ), (∀ (k : Fin (3
-            : ℕ)), Function.Injective (g k)) → (∀ (s : (k : Fin (3 : ℕ)) →
-            P3723T1PolygonalParameterization (g k)),
-        let τ (k : Fin 3) (i : Fin ((s k).count + 1)) : Set.Icc (0 : Real) 1 :=
-          ⟨(s k).time i, by
-            constructor
-            · have hi := (s k).strict.monotone (Fin.zero_le i)
-              rw [(s k).start] at hi
-              exact hi
-            · have hi := (s k).strict.monotone (Fin.le_last i)
-              rw [(s k).finish] at hi
-              exact hi⟩
-        ∀ (k : Fin (3 : ℕ)), ∀ (i : Fin (s k).count), (↑(τ k i.castSucc) : ℝ) < (1 : ℝ))) := by
+        ∀ (g : Fin (3 : ℕ) → (↑(Set.Icc (0 : ℝ) (1 : ℝ)) : Type) → ℝ × ℝ),
+          ∀ (s : (k : Fin (3 : ℕ)) → P3723T1PolygonalParameterization (g k)),
+            let τ (k : Fin 3) (i : Fin ((s k).count + 1)) : Set.Icc (0 : Real) 1 :=
+              ⟨(s k).time i, by
+                constructor
+                · have hi := (s k).strict.monotone (Fin.zero_le i)
+                  rw [(s k).start] at hi
+                  exact hi
+                · have hi := (s k).strict.monotone (Fin.le_last i)
+                  rw [(s k).finish] at hi
+                  exact hi⟩
+            ∀ (k : Fin (3 : ℕ)),
+              ∀ (i : Fin (s k).count), (↑(τ k i.castSucc) : ℝ) < (1 : ℝ)
+    ) := by
   classical
-  intro g hi s τ k i
+  intro g s τ k i
   have hidx : i.castSucc < Fin.last (s k).count := by
     apply Fin.mk_lt_mk.mpr
     simp
@@ -1808,7 +1861,7 @@ theorem P3913T1RoutedFaceSubdivision :
       w k (Fin.last (s k).count) = w (k + 1) 0 := RoutedSubdivisionProof.join ι P D f g h0 h1 s k
   let v : Fin 3 → ι := P.plane.faceVertex f
   have arc_inter (i j : Fin 3) (hij : i ≠ j) := RoutedFaceDetails.arc_inter ι P D f
-      (RoutedSubdivisionProof.pair_ne ι P f g s)
+      (RoutedSubdivisionProof.pair_ne ι P f)
       (RoutedFaceDetails.faceContact ι P f (RoutedFaceDetails.cyc_ne)) i j hij
   have v_distinct (i j : Fin 3) (hij : i ≠ j) := RoutedFaceDetails.v_distinct ι P f i
       j hij
@@ -1819,13 +1872,13 @@ theorem P3913T1RoutedFaceSubdivision :
             P D f arc_inter (RoutedFaceDetails.pair_inter ι P f v_distinct) i j hij
   have w_arc (k : Fin 3) (i : Fin ((s k).count + 1)) := RoutedFaceDetails.w_arc ι P D f g hr s
       k i
-  have w_before_end (k : Fin 3) (i : Fin (s k).count) := RoutedFaceDetails.w_before_end g hi s k i
+  have w_before_end (k : Fin 3) (i : Fin (s k).count) := RoutedFaceDetails.w_before_end g s k i
   have w_start (k : Fin 3) := RoutedFaceDetails.w_start ι P D f g
       h0 s k
   have w_ne_finish (k : Fin 3) (i : Fin (s k).count) :
       w k i.castSucc ≠ D.position (v (k + 1)) := RoutedSubdivisionProof.w_ne_finish ι P D f g hi
           s (RoutedFaceDetails.w_finish ι P D f g h1 s) k i
-  have q_injective : Function.Injective q := RoutedSubdivisionProof.q_injective g hi s q0 q1 q2
+  have q_injective : Function.Injective q := RoutedSubdivisionProof.q_injective g s q0 q1 q2
       (RoutedFaceDetails.no_cross01 ι P D f g s w_arc w_ne_finish (RoutedFaceDetails.arc01 ι P
           D f arc_inter_singleton)) (RoutedFaceDetails.no_cross12 ι P D f g s w_arc
           w_ne_finish (RoutedFaceDetails.arc12 ι P D f arc_inter_singleton))
@@ -1837,8 +1890,8 @@ theorem P3913T1RoutedFaceSubdivision :
   have hM' : n + 3 = m0 + (m1 + m2) := by simpa [M] using hM
   have p_edge_piece (i : Fin (n + 3)) :
       ∃ k : Fin 3, ∃ r : Fin (s k).count,
-        p i = w k r.castSucc ∧ p (i + 1) = w k r.succ := RoutedSubdivisionProof.p_edge_piece g hi
-            s hM q0 q2 join (RoutedSubdivisionProof.q_step g hi s hM q0 q1 q2 join) i
+        p i = w k r.castSucc ∧ p (i + 1) = w k r.succ := RoutedSubdivisionProof.p_edge_piece g
+            s hM q0 q2 join (RoutedSubdivisionProof.q_step g s q0 q1 q2 join) i
   have piece_subset_arc (k : Fin 3) (r : Fin (s k).count) := (show
       segment ℝ (w k r.castSucc) (w k r.succ) ⊆ D.edgeArc (v k) (v (k + (1 : Fin (3 :
       ℕ))))
@@ -1891,7 +1944,7 @@ theorem P3913T1RoutedFaceSubdivision :
               apply Fin.cast_injective hM
               apply q_injective
               simpa [p] using hij)) hpi)).elim
-        · have hend := (RoutedSubdivisionProof.piece_overlap g hi s
+        · have hend := (RoutedSubdivisionProof.piece_overlap g s
             (RoutedSubdivisionProof.piece_overlap_forward g hi s piece_range)) k r r' hrr x hx1 hx2
           simpa [hli, hri, hlj, hrj] using hend
       · have hxarc :
@@ -1912,17 +1965,17 @@ theorem P3913T1RoutedFaceSubdivision :
   · calc
       (⋃ i : Fin (n + 3), segment Real (p i) (p (i + 1))) =
           ⋃ k : Fin 3, ⋃ r : Fin (s k).count,
-            segment Real (w k r.castSucc) (w k r.succ) := (RoutedSubdivisionProof.edge_union g hi
-                s hM p_edge_piece (RoutedSubdivisionProof.block_edge g hi s hM q0 q1 q2 join
+            segment Real (w k r.castSucc) (w k r.succ) := (RoutedSubdivisionProof.edge_union g
+                s hM p_edge_piece (RoutedSubdivisionProof.block_edge g s hM q0 q1 q2 join
                 (RoutedFaceDetails.fin_succ_val g s)))
       _ = ⋃ k : Fin 3, D.edgeArc (v k) (v (k + 1)) := (RoutedSubdivisionProof.piece_arc_union ι P
-          D f g hi s (RoutedSubdivisionProof.arc_covered ι P D f g hi hr s piece_range
-          (RoutedSubdivisionProof.finite_interval_cover g s)))
+          D f g s (RoutedSubdivisionProof.arc_covered ι P D f g hr s piece_range
+          (RoutedSubdivisionProof.finite_interval_cover)))
       _ = D.edgeArc (v 0) (v 1) ∪ D.edgeArc (v 1) (v 2) ∪
           D.edgeArc (v 2) (v 0) := (RoutedSubdivisionProof.arc_union ι P D f)
   · intro k i
     refine ⟨τ k i, rfl, ?_⟩
-    exact (RoutedSubdivisionProof.retained g hi s hM q0 q1 q2 p_at join) k i
+    exact (RoutedSubdivisionProof.retained g s hM q0 q1 q2 p_at join) k i
 
 end ApollonianSuperharmonic
 

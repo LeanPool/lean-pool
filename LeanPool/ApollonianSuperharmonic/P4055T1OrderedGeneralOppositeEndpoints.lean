@@ -810,10 +810,9 @@ private theorem notEven1 :
     (by
       classical
       exact
-        (Fin (4 : ℕ) → CircleCoordinates) → ((Fin (3 : ℕ)) → ((Fin (4 : ℕ)) → (¬ Even (1 :
-            Nat)))) ) := by
+        ¬Even (1 : Nat)
+    ) := by
   classical
-  intro r i s
   rintro ⟨n, hn⟩
   omega
 
@@ -821,10 +820,9 @@ private theorem notEven3 :
     (by
       classical
       exact
-        (Fin (4 : ℕ) → CircleCoordinates) → ((Fin (3 : ℕ)) → ((Fin (4 : ℕ)) → (¬ Even (3 :
-            Nat)))) ) := by
+        ¬Even (3 : Nat)
+    ) := by
   classical
-  intro r i s
   rintro ⟨n, hn⟩
   omega
 
@@ -1295,8 +1293,8 @@ theorem P4055T1OrderedGeneralOppositeEndpoints :
       else BandVectors.1 (r 0) (r i.succ))
   have even0 : Even (0 : Nat) := ⟨0, rfl⟩
   have even2 : Even (2 : Nat) := ⟨1, by omega⟩
-  have notEven1 := OppositeEndpointGeometry.notEven1 r i s
-  have notEven3 := OppositeEndpointGeometry.notEven3 r i s
+  have notEven1 := OppositeEndpointGeometry.notEven1
+  have notEven3 := OppositeEndpointGeometry.notEven3
   have hq3mul := OppositeEndpointGeometry.hq3mul hq3
   have hdispR := OppositeEndpointGeometry.hdispR r i s hq2 hq3 hq2act even0
       even2 notEven1 notEven3 hq3mul

@@ -131,9 +131,10 @@ private theorem haddne :
     (by
       classical
       exact
-        ∀ (n : Nat), (Fin (n + 3)) → (∀ j : Fin (n + 3), j + 1 ≠ j) ) := by
+        ∀ (n : Nat), ∀ j : Fin (n + 3), j + 1 ≠ j
+    ) := by
   classical
-  intro n i j hj
+  intro n j hj
   have hv' := congrArg Fin.val hj
   simp only [Fin.val_add] at hv'
   have hv'' : (j.val + 1) % (n + 3) = j.val := by simpa using hv'
@@ -148,9 +149,10 @@ private theorem haddinj :
     (by
       classical
       exact
-        ∀ (n : Nat), (Fin (n + 3)) → (∀ x y : Fin (n + 3), x + 1 = y + 1 → x = y) ) := by
+        ∀ (n : Nat), ∀ x y : Fin (n + 3), x + 1 = y + 1 → x = y
+    ) := by
   classical
-  intro n i x y hxy
+  intro n x y hxy
   apply Fin.ext
   have hv := congrArg Fin.val hxy
   simp only [Fin.val_add] at hv
@@ -3158,7 +3160,7 @@ theorem P3597T1VertexSectors {n : Nat} (p : P3381T1PolygonBoundary n)
   let prev : Fin (n + 3) :=
     if i.val = 0 then ⟨n + 2, by omega⟩ else ⟨i.val - 1, by omega⟩
   have hprev := VertexSectorDetails.hprev n i
-  have haddne : ∀ j : Fin (n + 3), j + 1 ≠ j := VertexSectorProof.haddne n i
+  have haddne : ∀ j : Fin (n + 3), j + 1 ≠ j := VertexSectorProof.haddne n
   have hprevne := VertexSectorDetails.hprevne n i hprev haddne
   have hnextne : i + 1 ≠ i := haddne i
   have hnextVertex := VertexSectorDetails.hnextVertex n p i hnextne
@@ -3194,7 +3196,7 @@ theorem P3597T1VertexSectors {n : Nat} (p : P3381T1PolygonBoundary n)
   have hdetuw := VertexSectorProof.hdetuw n p i
   have hcarrierUW := VertexSectorProof.hcarrierUW n p i rK
             (VertexSectorProof.hcarrierRays n p i rK (VertexSectorProof.hcarrierLocal n p i rK
-            hballK hprev (VertexSectorProof.haddinj n i) hrKle) hsegA (VertexSectorProof.hsegB n
+            hballK hprev (VertexSectorProof.haddinj n) hrKle) hsegA (VertexSectorProof.hsegB n
             p i hlineMap) (VertexSectorProof.hRayA n p i rK hdistA hrAle hlineMap hdistRadial)
             (VertexSectorProof.hRayB n p i rK hdistB hrBle hlineMap hdistRadial))
   have hconstOn := VertexSectorProof.hconstOn n p

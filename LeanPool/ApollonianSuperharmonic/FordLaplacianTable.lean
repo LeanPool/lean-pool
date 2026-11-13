@@ -267,12 +267,13 @@ private theorem rightLap :
     exact leftLap (t - P.q₁ + P.q) (by omega) (by omega)
 
 private theorem ha0 :
-    ∀ (P : FordFareyParameter), ((1 : ℕ) < P.q) → ((GaussianInt) → (
-    let a : Int := P.q₁
-    let b : Int := P.q₂
-    ((P.q : Int) = a + b) → (0 < a))) := by
+    ∀ (P : FordFareyParameter),
+      (1 : ℕ) < P.q →
+        let a : Int := P.q₁
+        let b : Int := P.q₂
+        (P.q : Int) = a + b → 0 < a := by
   classical
-  intro P hbig x a b hsum
+  intro P hbig a b hsum
   let A := P.p₁
   by_contra h
   have hanon : 0 ≤ a := by dsimp [a]; omega
@@ -307,25 +308,42 @@ private theorem parentValue :
 
 private theorem v1 :
     ∀ (P : FordFareyParameter),
-    let g := FordOdometer P
-    (GaussianInt) → (
-    let a : Int := P.q₁
-    let b : Int := P.q₂
-    let A := P.p₁
-    let B := P.p₂
-    let cdiv (n d : Int) := -((-n) / d)
-    ((P.q : Int) = a + b) → (∀ (P₁ : FordFareyParameter), (P₁.p = A) → ((P₁.q = P.q₁) → (∀ (P₂ :
-        FordFareyParameter), (P₂.q = P.q₂) → ((∀ x ∈ FordRecursiveVertexDomains P (1 : Fin (4 :
-        ℕ)), Classical.choose FordOdometerFamilyExistsUnique P x = Classical.choose
-        FordOdometerFamilyExistsUnique P₁ (x - ⟨(↑P.q₂ : ℤ), (↑P.q₂ : ℤ)⟩) + P.p₂ * x.re + P.p₂ *
-        x.im - P.p₂ * (↑P.q₂ : ℤ) + (1 : ℤ)) → ((∀ (R : FordFareyParameter), ∀ (r : Int), ∀ (s :
-            Int), (0 ≤ r ∧ r ≤ R.q ∧ 0 ≤ s ∧ s ≤ R.q) → ((r ≤ 1 ∨ (R.q : Int) - 1 ≤ r ∨ s ≤ 1 ∨ (R.q
-        : Int) - 1 ≤ s) → (Classical.choose FordOdometerFamilyExistsUnique R ⟨r, s⟩ = cdiv (R.p *
-        r * s) R.q))) → (∀ (r : ℤ), ∀ (s : ℤ), b ≤ r ∧ r ≤ (↑P.q : ℤ) ∧ b ≤ s ∧ s ≤ (↑P.q : ℤ) →
-        r - b ≤ (1 : ℤ) ∨ a - (1 : ℤ) ≤ r - b ∨ s - b ≤ (1 : ℤ) ∨ a - (1 : ℤ) ≤ s - b → g ⟨r, s⟩
-        = cdiv (A * (r - b) * (s - b)) a + B * r + B * s - B * b + (1 : ℤ)))))))) := by
+      let g := FordOdometer P;
+      let a : Int := P.q₁
+      let b : Int := P.q₂
+      let A := P.p₁
+      let B := P.p₂
+      let cdiv (n d : Int) := -(-n / d)
+      (P.q : Int) = a + b →
+        ∀ (P₁ : FordFareyParameter),
+          P₁.p = A →
+            P₁.q = P.q₁ →
+              ∀ (P₂ : FordFareyParameter),
+                P₂.q = P.q₂ →
+                  (∀ x ∈ FordRecursiveVertexDomains P (1 : Fin (4 : ℕ)),
+                      Classical.choose FordOdometerFamilyExistsUnique P x =
+                        Classical.choose FordOdometerFamilyExistsUnique P₁
+                            (x - ⟨(↑P.q₂ : ℤ), (↑P.q₂ : ℤ)⟩) +
+                            P.p₂ * x.re +
+                            P.p₂ * x.im -
+                            P.p₂ * (↑P.q₂ : ℤ) +
+                          (1 : ℤ)) →
+                    (∀ (R : FordFareyParameter),
+                        ∀ (r : Int),
+                          ∀ (s : Int),
+                            0 ≤ r ∧ r ≤ R.q ∧ 0 ≤ s ∧ s ≤ R.q →
+                            r ≤ 1 ∨ (R.q : Int) - 1 ≤ r ∨ s ≤ 1 ∨ (R.q : Int) - 1 ≤ s →
+                            Classical.choose FordOdometerFamilyExistsUnique R ⟨r, s⟩ =
+                            cdiv (R.p * r * s) R.q) →
+                      ∀ (r : ℤ),
+                        ∀ (s : ℤ),
+                          b ≤ r ∧ r ≤ (↑P.q : ℤ) ∧ b ≤ s ∧ s ≤ (↑P.q : ℤ) →
+                            r - b ≤ (1 : ℤ) ∨
+                            a - (1 : ℤ) ≤ r - b ∨ s - b ≤ (1 : ℤ) ∨ a - (1 : ℤ) ≤ s - b →
+                            g ⟨r, s⟩ =
+                            cdiv (A * (r - b) * (s - b)) a + B * r + B * s - B * b + (1 : ℤ) := by
   classical
-  intro P g x a b A B cdiv hsum P₁ hp₁ hq₁ P₂ hq₂ rec1 parentValue r s hrect hedge
+  intro P g a b A B cdiv hsum P₁ hp₁ hq₁ P₂ hq₂ rec1 parentValue r s hrect hedge
   have hd := rec1 ⟨r, s⟩ (by change b ≤ r ∧ r ≤ P.q ∧ b ≤ s ∧ s ≤ P.q; exact hrect)
   have he : (⟨r, s⟩ : GaussianInt) - ⟨(P.q₂ : Int), (P.q₂ : Int)⟩ = ⟨r - b, s - b⟩ := rfl
   rw [he] at hd
@@ -338,24 +356,38 @@ private theorem v1 :
 
 private theorem v2 :
     ∀ (P : FordFareyParameter),
-    let g := FordOdometer P
-    (GaussianInt) → (
-    let a : Int := P.q₁
-    let b : Int := P.q₂
-    let A := P.p₁
-    let B := P.p₂
-    let cdiv (n d : Int) := -((-n) / d)
-    ((P.q : Int) = a + b) → (∀ (P₁ : FordFareyParameter), (P₁.q = P.q₁) → (∀ (P₂ :
-        FordFareyParameter), (P₂.p = B) → ((P₂.q = P.q₂) → ((∀ x ∈ FordRecursiveVertexDomains P
-        (2 : Fin (4 : ℕ)), Classical.choose FordOdometerFamilyExistsUnique P x = Classical.choose
-        FordOdometerFamilyExistsUnique P₂ (x - ⟨(↑P.q₁ : ℤ), (0 : ℤ)⟩) + P.p₁ * x.im) → ((∀ (R :
-            FordFareyParameter), ∀ (r : Int), ∀ (s : Int), (0 ≤ r ∧ r ≤ R.q ∧ 0 ≤ s ∧ s ≤ R.q) → ((r
-        ≤ 1 ∨ (R.q : Int) - 1 ≤ r ∨ s ≤ 1 ∨ (R.q : Int) - 1 ≤ s) → (Classical.choose
-        FordOdometerFamilyExistsUnique R ⟨r, s⟩ = cdiv (R.p * r * s) R.q))) → (∀ (r : ℤ), ∀ (s :
-            ℤ), a ≤ r ∧ r ≤ (↑P.q : ℤ) ∧ (0 : ℤ) ≤ s ∧ s ≤ b → r - a ≤ (1 : ℤ) ∨ b - (1 : ℤ) ≤ r - a
-        ∨ s ≤ (1 : ℤ) ∨ b - (1 : ℤ) ≤ s → g ⟨r, s⟩ = cdiv (B * (r - a) * s) b + A * s))))))) := by
+      let g := FordOdometer P;
+      let a : Int := P.q₁
+      let b : Int := P.q₂
+      let A := P.p₁
+      let B := P.p₂
+      let cdiv (n d : Int) := -(-n / d)
+      (P.q : Int) = a + b →
+        ∀ (P₁ : FordFareyParameter),
+          P₁.q = P.q₁ →
+            ∀ (P₂ : FordFareyParameter),
+              P₂.p = B →
+                P₂.q = P.q₂ →
+                  (∀ x ∈ FordRecursiveVertexDomains P (2 : Fin (4 : ℕ)),
+                      Classical.choose FordOdometerFamilyExistsUnique P x =
+                        Classical.choose FordOdometerFamilyExistsUnique P₂
+                            (x - ⟨(↑P.q₁ : ℤ), (0 : ℤ)⟩) +
+                          P.p₁ * x.im) →
+                    (∀ (R : FordFareyParameter),
+                        ∀ (r : Int),
+                          ∀ (s : Int),
+                            0 ≤ r ∧ r ≤ R.q ∧ 0 ≤ s ∧ s ≤ R.q →
+                            r ≤ 1 ∨ (R.q : Int) - 1 ≤ r ∨ s ≤ 1 ∨ (R.q : Int) - 1 ≤ s →
+                            Classical.choose FordOdometerFamilyExistsUnique R ⟨r, s⟩ =
+                            cdiv (R.p * r * s) R.q) →
+                      ∀ (r : ℤ),
+                        ∀ (s : ℤ),
+                          a ≤ r ∧ r ≤ (↑P.q : ℤ) ∧ (0 : ℤ) ≤ s ∧ s ≤ b →
+                            r - a ≤ (1 : ℤ) ∨
+                            b - (1 : ℤ) ≤ r - a ∨ s ≤ (1 : ℤ) ∨ b - (1 : ℤ) ≤ s →
+                            g ⟨r, s⟩ = cdiv (B * (r - a) * s) b + A * s := by
   classical
-  intro P g x a b A B cdiv hsum P₁ hq₁ P₂ hp₂ hq₂ rec2 parentValue r s hrect hedge
+  intro P g a b A B cdiv hsum P₁ hq₁ P₂ hp₂ hq₂ rec2 parentValue r s hrect hedge
   have hd := rec2 ⟨r, s⟩ (by change a ≤ r ∧ r ≤ P.q ∧ 0 ≤ s ∧ s ≤ b; exact hrect)
   have he : (⟨r, s⟩ : GaussianInt) - ⟨(P.q₁ : Int), 0⟩ = ⟨r - a, s⟩ := by ext <;> simp [a]
   rw [he] at hd
@@ -368,24 +400,38 @@ private theorem v2 :
 
 private theorem v3 :
     ∀ (P : FordFareyParameter),
-    let g := FordOdometer P
-    (GaussianInt) → (
-    let a : Int := P.q₁
-    let b : Int := P.q₂
-    let A := P.p₁
-    let B := P.p₂
-    let cdiv (n d : Int) := -((-n) / d)
-    ((P.q : Int) = a + b) → (∀ (P₁ : FordFareyParameter), (P₁.q = P.q₁) → (∀ (P₂ :
-        FordFareyParameter), (P₂.p = B) → ((P₂.q = P.q₂) → ((∀ x ∈ FordRecursiveVertexDomains P
-        (3 : Fin (4 : ℕ)), Classical.choose FordOdometerFamilyExistsUnique P x = Classical.choose
-        FordOdometerFamilyExistsUnique P₂ (x - ⟨(0 : ℤ), (↑P.q₁ : ℤ)⟩) + P.p₁ * x.re) → ((∀ (R :
-            FordFareyParameter), ∀ (r : Int), ∀ (s : Int), (0 ≤ r ∧ r ≤ R.q ∧ 0 ≤ s ∧ s ≤ R.q) → ((r
-        ≤ 1 ∨ (R.q : Int) - 1 ≤ r ∨ s ≤ 1 ∨ (R.q : Int) - 1 ≤ s) → (Classical.choose
-        FordOdometerFamilyExistsUnique R ⟨r, s⟩ = cdiv (R.p * r * s) R.q))) → (∀ (r : ℤ), ∀ (s :
-            ℤ), (0 : ℤ) ≤ r ∧ r ≤ b ∧ a ≤ s ∧ s ≤ (↑P.q : ℤ) → r ≤ (1 : ℤ) ∨ b - (1 : ℤ) ≤ r ∨ s - a
-        ≤ (1 : ℤ) ∨ b - (1 : ℤ) ≤ s - a → g ⟨r, s⟩ = cdiv (B * r * (s - a)) b + A * r))))))) := by
+      let g := FordOdometer P;
+      let a : Int := P.q₁
+      let b : Int := P.q₂
+      let A := P.p₁
+      let B := P.p₂
+      let cdiv (n d : Int) := -(-n / d)
+      (P.q : Int) = a + b →
+        ∀ (P₁ : FordFareyParameter),
+          P₁.q = P.q₁ →
+            ∀ (P₂ : FordFareyParameter),
+              P₂.p = B →
+                P₂.q = P.q₂ →
+                  (∀ x ∈ FordRecursiveVertexDomains P (3 : Fin (4 : ℕ)),
+                      Classical.choose FordOdometerFamilyExistsUnique P x =
+                        Classical.choose FordOdometerFamilyExistsUnique P₂
+                            (x - ⟨(0 : ℤ), (↑P.q₁ : ℤ)⟩) +
+                          P.p₁ * x.re) →
+                    (∀ (R : FordFareyParameter),
+                        ∀ (r : Int),
+                          ∀ (s : Int),
+                            0 ≤ r ∧ r ≤ R.q ∧ 0 ≤ s ∧ s ≤ R.q →
+                            r ≤ 1 ∨ (R.q : Int) - 1 ≤ r ∨ s ≤ 1 ∨ (R.q : Int) - 1 ≤ s →
+                            Classical.choose FordOdometerFamilyExistsUnique R ⟨r, s⟩ =
+                            cdiv (R.p * r * s) R.q) →
+                      ∀ (r : ℤ),
+                        ∀ (s : ℤ),
+                          (0 : ℤ) ≤ r ∧ r ≤ b ∧ a ≤ s ∧ s ≤ (↑P.q : ℤ) →
+                            r ≤ (1 : ℤ) ∨
+                            b - (1 : ℤ) ≤ r ∨ s - a ≤ (1 : ℤ) ∨ b - (1 : ℤ) ≤ s - a →
+                            g ⟨r, s⟩ = cdiv (B * r * (s - a)) b + A * r := by
   classical
-  intro P g x a b A B cdiv hsum P₁ hq₁ P₂ hp₂ hq₂ rec3 parentValue r s hrect hedge
+  intro P g a b A B cdiv hsum P₁ hq₁ P₂ hp₂ hq₂ rec3 parentValue r s hrect hedge
   have hd := rec3 ⟨r, s⟩ (by change 0 ≤ r ∧ r ≤ b ∧ a ≤ s ∧ s ≤ P.q; exact hrect)
   have he : (⟨r, s⟩ : GaussianInt) - ⟨0, (P.q₁ : Int)⟩ = ⟨r, s - a⟩ := by ext <;> simp [a]
   rw [he] at hd
@@ -450,24 +496,35 @@ private theorem edge2 :
 
 private theorem lowFormula :
     ∀ (P : FordFareyParameter),
-    let g := FordOdometer P
-    (∀ (r : Int), ∀ (s : Int), FourNeighborLaplacian g ⟨r, s⟩ = g ⟨r + 1, s⟩ + g ⟨r - 1, s⟩ + g
-        ⟨r, s + 1⟩ + g ⟨r, s - 1⟩ - 4 * g ⟨r, s⟩) → ((GaussianInt) → (
-    let a : Int := P.q₁
-    let b : Int := P.q₂
-    let A := P.p₁
-    let B := P.p₂
-    let cdiv (n d : Int) := -((-n) / d)
-    ∀ (P₁ : FordFareyParameter), (P₁.q = P.q₁) → ((FordFareyParameter) → ((∀ (t : Int), (0 ≤ t) →
-        ((t ≤ a) → (g ⟨a, t⟩ = A * t ∧ g ⟨t, a⟩ = A * t))) → ((∀ (t : Int), (0 ≤ t) → ((t ≤ a) →
-        (g ⟨a - 1, t⟩ = A * t - A * t / a ∧ g ⟨t, a - 1⟩ = A * t - A * t / a))) → ((∀ (t : Int),
-            (0 ≤ t) → ((t ≤ b) → (g ⟨a + 1, t⟩ = cdiv (B * t) b + A * t ∧ g ⟨t, a + 1⟩ = cdiv (B
-            * t)
-        b + A * t))) → (∀ (t : ℤ), (0 : ℤ) < t → t < a → t ≤ b → FourNeighborLaplacian g ⟨a, t⟩ =
-        cdiv (B * t) b - A * t / a ∧ FourNeighborLaplacian g ⟨t, a⟩ = cdiv (B * t) b - A * t /
-        a))))))) := by
+      let g := FordOdometer P;
+      (∀ (r : Int),
+          ∀ (s : Int),
+            FourNeighborLaplacian g ⟨r, s⟩ =
+              g ⟨r + 1, s⟩ + g ⟨r - 1, s⟩ + g ⟨r, s + 1⟩ + g ⟨r, s - 1⟩ - 4 * g ⟨r, s⟩) →
+        let a : Int := P.q₁;
+        let b : Int := P.q₂;
+        let A := P.p₁;
+        let B := P.p₂;
+        let cdiv (n d : Int) := -(-n / d);
+        FordFareyParameter →
+          (∀ (t : Int), 0 ≤ t → t ≤ a → g ⟨a, t⟩ = A * t ∧ g ⟨t, a⟩ = A * t) →
+            (∀ (t : Int),
+                0 ≤ t →
+                  t ≤ a →
+                    g ⟨a - 1, t⟩ = A * t - A * t / a ∧ g ⟨t, a - 1⟩ = A * t - A * t / a) →
+              (∀ (t : Int),
+                  0 ≤ t →
+                    t ≤ b →
+                      g ⟨a + 1, t⟩ = cdiv (B * t) b + A * t ∧
+                        g ⟨t, a + 1⟩ = cdiv (B * t) b + A * t) →
+                ∀ (t : ℤ),
+                  (0 : ℤ) < t →
+                    t < a →
+                      t ≤ b →
+                        FourNeighborLaplacian g ⟨a, t⟩ = cdiv (B * t) b - A * t / a ∧
+                          FourNeighborLaplacian g ⟨t, a⟩ = cdiv (B * t) b - A * t / a := by
   classical
-  intro P g lapCoord x a b A B cdiv P₁ hq₁ P₂ edge0 near0 outward t ht hta htb
+  intro P g lapCoord a b A B cdiv P₁ edge0 near0 outward t ht hta htb
   have hc := edge0 t (by omega) (by omega)
   have hm := edge0 (t - 1) (by omega) (by omega)
   have hp' := edge0 (t + 1) (by omega) (by omega)
@@ -633,21 +690,25 @@ private theorem rectBoundary :
         simp only [Set.mem_ofPred_eq] <;> omega
 
 private theorem count :
-    ∀ (P : FordFareyParameter), ∀ (x : GaussianInt),
-    let a : Int := P.q₁
-    let b : Int := P.q₂
-    (FordFareyParameter) → ((FordFareyParameter) → ((x ∈ LatticeVertexBoundary
-        (FordRecursiveVertexDomains P 0) ↔ x.re ≤ a ∧ x.im ≤ a ∧ (x.re = a ∨ x.im = a)) → ((x ∈
-        LatticeVertexBoundary (FordRecursiveVertexDomains P 1) ↔ b ≤ x.re ∧ b ≤ x.im ∧ (x.re = b
-        ∨ x.im = b)) → ((x ∈ LatticeVertexBoundary (FordRecursiveVertexDomains P 2) ↔ a ≤ x.re ∧
-        x.im ≤ b ∧ (x.re = a ∨ x.im = b)) → ((x ∈ LatticeVertexBoundary
-        (FordRecursiveVertexDomains P 3) ↔ x.re ≤ b ∧ a ≤ x.im ∧ (x.re = b ∨ x.im = a)) →
-        (FordBoundaryMultiplicity P x = (if x.re ≤ a ∧ x.im ≤ a ∧ (x.re = a ∨ x.im = a) then 1
-        else 0) + (if b ≤ x.re ∧ b ≤ x.im ∧ (x.re = b ∨ x.im = b) then 1 else 0) + (if a ≤ x.re ∧
-        x.im ≤ b ∧ (x.re = a ∨ x.im = b) then 1 else 0) + (if x.re ≤ b ∧ a ≤ x.im ∧ (x.re = b ∨
-        x.im = a) then 1 else 0))))))) := by
+    ∀ (P : FordFareyParameter),
+      ∀ (x : GaussianInt),
+        let a : Int := P.q₁;
+        let b : Int := P.q₂;
+        (x ∈ LatticeVertexBoundary (FordRecursiveVertexDomains P 0) ↔
+            x.re ≤ a ∧ x.im ≤ a ∧ (x.re = a ∨ x.im = a)) →
+          (x ∈ LatticeVertexBoundary (FordRecursiveVertexDomains P 1) ↔
+              b ≤ x.re ∧ b ≤ x.im ∧ (x.re = b ∨ x.im = b)) →
+            (x ∈ LatticeVertexBoundary (FordRecursiveVertexDomains P 2) ↔
+                a ≤ x.re ∧ x.im ≤ b ∧ (x.re = a ∨ x.im = b)) →
+              (x ∈ LatticeVertexBoundary (FordRecursiveVertexDomains P 3) ↔
+                  x.re ≤ b ∧ a ≤ x.im ∧ (x.re = b ∨ x.im = a)) →
+                FordBoundaryMultiplicity P x =
+                  (((if x.re ≤ a ∧ x.im ≤ a ∧ (x.re = a ∨ x.im = a) then 1 else 0) +
+                        if b ≤ x.re ∧ b ≤ x.im ∧ (x.re = b ∨ x.im = b) then 1 else 0) +
+                      if a ≤ x.re ∧ x.im ≤ b ∧ (x.re = a ∨ x.im = b) then 1 else 0) +
+                    if x.re ≤ b ∧ a ≤ x.im ∧ (x.re = b ∨ x.im = a) then 1 else 0 := by
   classical
-  intro P x a b P₁ P₂ b0 b1 b2 b3
+  intro P x a b b0 b1 b2 b3
   simp only [FordBoundaryMultiplicity, Finset.card_filter,
     Fin.sum_univ_succ, Fin.sum_univ_zero, add_zero]
   change (if x ∈ LatticeVertexBoundary (FordRecursiveVertexDomains P 0) then 1 else 0) +
@@ -1122,7 +1183,7 @@ private theorem interiorLaplacian :
   have hp : P.p = A + B := P.sum_p
   have hdet : A * b - B * a = 1 := FordLaplacianDetails.hdetAt828 P hsum hp
   have hb : 0 < b := by dsimp [b]; exact_mod_cast P.q₂_pos
-  have ha0 : 0 < a := FordLaplacianProof.ha0 P hbig x hsum
+  have ha0 : 0 < a := FordLaplacianProof.ha0 P hbig hsum
   have hcop : Nat.Coprime P.q₁ A.natAbs ∧ Nat.Coprime P.q₂ B.natAbs :=
       FordLaplacianDetails.hcop P hdet
   obtain ⟨P₁, ⟨hp₁, hq₁⟩, _⟩ := FordFareyParentsExist A P.q₁ (by omega) hcop.1
@@ -1141,11 +1202,11 @@ private theorem interiorLaplacian :
           s hrect hedge
   have v2 (r s : Int) (hrect : a ≤ r ∧ r ≤ P.q ∧ 0 ≤ s ∧ s ≤ b)
       (hedge : r - a ≤ 1 ∨ b - 1 ≤ r - a ∨ s ≤ 1 ∨ b - 1 ≤ s) :
-      g ⟨r, s⟩ = cdiv (B * (r - a) * s) b + A * s := FordLaplacianProof.v2 P x hsum P₁ hq₁ P₂
+      g ⟨r, s⟩ = cdiv (B * (r - a) * s) b + A * s := FordLaplacianProof.v2 P hsum P₁ hq₁ P₂
           hp₂ hq₂ rec2 parentValue r s hrect hedge
   have v3 (r s : Int) (hrect : 0 ≤ r ∧ r ≤ b ∧ a ≤ s ∧ s ≤ P.q)
       (hedge : r ≤ 1 ∨ b - 1 ≤ r ∨ s - a ≤ 1 ∨ b - 1 ≤ s - a) :
-      g ⟨r, s⟩ = cdiv (B * r * (s - a)) b + A * r := FordLaplacianProof.v3 P x hsum P₁ hq₁ P₂
+      g ⟨r, s⟩ = cdiv (B * r * (s - a)) b + A * r := FordLaplacianProof.v3 P hsum P₁ hq₁ P₂
           hp₂ hq₂ rec3 parentValue r s hrect hedge
   have cminus (d n k : Int) (hd : d ≠ 0) : cdiv (k * d - n) d = k - n / d :=
       FordLaplacianDetails.cminus d n k hd
@@ -1165,7 +1226,7 @@ private theorem interiorLaplacian :
   have lowFormula (t : Int) (ht : 0 < t) (hta : t < a) (htb : t ≤ b) :
       FourNeighborLaplacian g ⟨a, t⟩ = cdiv (B * t) b - A * t / a ∧
       FourNeighborLaplacian g ⟨t, a⟩ = cdiv (B * t) b - A * t / a :=
-          FordLaplacianProof.lowFormula P lapCoord x P₁ hq₁ P₂ edge0 near0 outward t ht hta htb
+          FordLaplacianProof.lowFormula P lapCoord P₁ edge0 near0 outward t ht hta htb
   have highFormula (t : Int) (ht : 0 < t) (hta : t ≤ a) (htb : t < b) :
       FourNeighborLaplacian g ⟨(P.q : Int) - t, b⟩ = cdiv (B * t) b - A * t / a ∧
       FourNeighborLaplacian g ⟨b, (P.q : Int) - t⟩ = cdiv (B * t) b - A * t / a :=
@@ -1178,9 +1239,9 @@ private theorem interiorLaplacian :
                 from by
                   classical
                   intro r ht ht'
-                  have hl := ((FordLaplacianProof.v1 P x hsum P₁ hp₁ hq₁ P₂ hq₂ rec1
+                  have hl := ((FordLaplacianProof.v1 P hsum P₁ hp₁ hq₁ P₂ hq₂ rec1
                       parentValue)) r (b + 1) (by omega) (by omega)
-                  have hv := ((FordLaplacianProof.v1 P x hsum P₁ hp₁ hq₁ P₂ hq₂ rec1
+                  have hv := ((FordLaplacianProof.v1 P hsum P₁ hp₁ hq₁ P₂ hq₂ rec1
                       parentValue)) (b + 1) r (by omega) (by omega)
                   change g ⟨r, b + 1⟩ = cdiv (A * (r - b) * (b + 1 - b)) a +
                     B * r + B * (b + 1) - B * b + 1 at hl
@@ -1203,7 +1264,7 @@ private theorem interiorLaplacian :
       (if b ≤ x.re ∧ b ≤ x.im ∧ (x.re = b ∨ x.im = b) then 1 else 0) +
       (if a ≤ x.re ∧ x.im ≤ b ∧ (x.re = a ∨ x.im = b) then 1 else 0) +
       (if x.re ≤ b ∧ a ≤ x.im ∧ (x.re = b ∨ x.im = a) then 1 else 0) :=
-          FordLaplacianProof.count P x P₁ P₂ (FordLaplacianDetails.b0 P x hr hs ha0 P₁ hq₁
+          FordLaplacianProof.count P x (FordLaplacianDetails.b0 P x hr hs ha0 P₁ hq₁
               rectBoundary) (FordLaplacianDetails.b1 P x hr' hs' hsum P₁ hq₁ P₂ hq₂ rectBoundary)
               (FordLaplacianDetails.b2 P x hr' hs hsum P₁ hq₁ P₂ hq₂ rectBoundary)
               (FordLaplacianDetails.b3 P ha x hr hs' hsum P₁ hq₁ P₂ hq₂ rectBoundary)

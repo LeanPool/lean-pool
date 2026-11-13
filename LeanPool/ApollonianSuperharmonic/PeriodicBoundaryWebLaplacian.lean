@@ -814,13 +814,15 @@ private theorem slope_for :
     (by
       classical
       exact
-        ∀ (C : BandCircle), (PeriodicTileComplex ↥(TilingLattice C)) → ((↥(TilingLattice C)) →
-            ((↥(TilingLattice C)) → ((↥(TilingLattice C)) → ((↥(TilingLattice C)) → ((Fin (4 :
-            ℕ)) → ((Fin (4 : ℕ)) → (∀ (c : CircleCoordinates), ∀ (U : ProtoTile), ∀ (k :
-            PartialOdometer), TileOdometer c U k → 1 < c.1 → ∃ p : ℝ × ℝ, PartialOdometerSlope k
-            = some p))))))) ) := by
+        Fin (4 : ℕ) →
+          ∀ (c : CircleCoordinates),
+            ∀ (U : ProtoTile),
+              ∀ (k : PartialOdometer),
+                TileOdometer c U k →
+                  1 < c.1 → ∃ p : ℝ × ℝ, PartialOdometerSlope k = some p
+    ) := by
   classical
-  intro C P a0 a1 a2 a3 m w c U k ho hcpos
+  intro w c U k ho hcpos
   induction ho with
   | line w y hw hdom => omega
   | unit z y U hU hdom htrans => omega
@@ -1681,7 +1683,7 @@ theorem PeriodicBoundaryWebLaplacian (C : BandCircle)
         a3 m w hneq (WebLaplacianGeometry.hcommon C x P a0 a1 a2 a3 m w e hepair boundaryEdge
         edge_mem_e edge_mem_next))
     obtain ⟨j, hsign⟩ := hdisplacement
-    have slope_for := WebLaplacianGeometry.slope_for C P a0 a1 a2 a3 m w
+    have slope_for := WebLaplacianGeometry.slope_for w
     have hcurvature := WebLaplacianGeometry.hcurvature C hc a0 a1 a2 a3 m w e hecolor
     obtain ⟨p, hp⟩ := slope_for C.1.1 T h hodo hcurvature
     let u : GaussianInt := owner m

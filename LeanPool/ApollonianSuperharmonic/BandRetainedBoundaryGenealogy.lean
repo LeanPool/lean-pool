@@ -86,21 +86,29 @@ private theorem curvatureBound :
       · simpa using ih 3
 
 private theorem buildConfiguration :
-    (∀ r : Fin 4 → CircleCoordinates, SemiProperQuadruple r → ∀ i : Fin 4, (r i).1 ≠ 0 → (r i).1
-        = 1 ∨ 4 ≤ (r i).1) → (∀ (u : Fin 4 → CircleCoordinates), ∀ (p : Fin 4 →
-        CircleCoordinates), ∀ (t : Fin 4 → CircleCoordinates), ProperBandQuadruple u →
-      (∀ i : Fin 4, (u i).1 ≠ 0) →
-      (∀ i j : Fin 4, (u i).1 = 1 → (u j).1 = 1 → i = j) →
-      ProperBandQuadruple p →
-      u = ![(2 * (p 0).1 + 2 * (p 2).1 + 2 * (p 3).1 - (p 1).1,
-          2 * (p 0).2 + 2 * (p 2).2 + 2 * (p 3).2 - (p 1).2), p 0, p 2, p 3] →
-      p 0 = u 1 → p 2 = u 2 → p 3 = u 3 →
-      (u 2).1 < (u 1).1 → (u 3).1 < (u 1).1 →
-      ProperBandQuadruple t → t 0 = u 2 → t 1 = u 3 →
-      (u 3).1 < (u 2).1 →
-      Nonempty (BandOrderedGeneralConfiguration u)) := by
+    (∀ r : Fin 4 → CircleCoordinates,
+        SemiProperQuadruple r → ∀ i : Fin 4, (r i).1 ≠ 0 → (r i).1 = 1 ∨ 4 ≤ (r i).1) →
+      ∀ (u : Fin 4 → CircleCoordinates),
+        ∀ (p : Fin 4 → CircleCoordinates),
+          ∀ (t : Fin 4 → CircleCoordinates),
+            ProperBandQuadruple u →
+              (∀ i : Fin 4, (u i).1 ≠ 0) →
+                (∀ i j : Fin 4, (u i).1 = 1 → (u j).1 = 1 → i = j) →
+                  ProperBandQuadruple p →
+                    u =
+                        ![(2 * (p 0).1 + 2 * (p 2).1 + 2 * (p 3).1 - (p 1).1,
+                            2 * (p 0).2 + 2 * (p 2).2 + 2 * (p 3).2 - (p 1).2),
+                          p 0, p 2, p 3] →
+                      p 0 = u 1 →
+                        p 2 = u 2 →
+                          p 3 = u 3 →
+                            (u 2).1 < (u 1).1 →
+                            ProperBandQuadruple t →
+                            t 0 = u 2 →
+                            t 1 = u 3 →
+                            (u 3).1 < (u 2).1 → Nonempty (BandOrderedGeneralConfiguration u) := by
   classical
-  intro positiveLarge u p t hu hnl haum hp hs h0 h2 h3 hlt2 hlt3 ht ht0 ht1 horder
+  intro positiveLarge u p t hu hnl haum hp hs h0 h2 h3 hlt2 ht ht0 ht1 horder
   have cu := ProperBandCurvatureStructure u hu
   have cp := ProperBandCurvatureStructure p hp
   have hp1nonneg : 0 ≤ (p 1).1 := by simpa using cp.2.1 0
@@ -448,12 +456,14 @@ private theorem horder23 :
   simpa [h2, h3] using hle
 
 private theorem hsoddy :
-    ∀ (q : Fin 4 → CircleCoordinates), ∀ (p : Fin (4 : ℕ) → CircleCoordinates), (Fin (4 : ℕ) →
-        CircleCoordinates) → ((p 1 = (2 * (q 1).1 + 2 * (q 2).1 + 2 * (q 3).1 - (q 0).1, 2 * (q
-        1).2 + 2 * (q 2).2 + 2 * (q 3).2 - (q 0).2)) → (2 * (q 1).1 + 2 * (q 2).1 + 2 * (q 3).1 =
-        (q 0).1 + (p 1).1)) := by
+    ∀ (q : Fin 4 → CircleCoordinates),
+      ∀ (p : Fin (4 : ℕ) → CircleCoordinates),
+        p 1 =
+            (2 * (q 1).1 + 2 * (q 2).1 + 2 * (q 3).1 - (q 0).1,
+              2 * (q 1).2 + 2 * (q 2).2 + 2 * (q 3).2 - (q 0).2) →
+          2 * (q 1).1 + 2 * (q 2).1 + 2 * (q 3).1 = (q 0).1 + (p 1).1 := by
   classical
-  intro q p t htwin
+  intro q p htwin
   have hf := congrArg Prod.fst htwin
   omega
 
@@ -599,13 +609,6 @@ private theorem hord'At586 :
   simpa [u, BandPackingSymmetryQuadrupleAction,
      BandPackingSymmetryReversesOrientation, BandPackingSymmetryCircleAction, negOneSucc,
          negTwoSucc, h2, h3] using hlt
-
-private theorem tupleEq :
-    ∀ (q : Fin 4 → CircleCoordinates), ![q 0, q 1, q 2, q 3] = q := by
-  classical
-  intro q
-  funext i
-  fin_cases i <;> rfl
 
 private theorem huAt613 :
     ∀ (q : Fin 4 → CircleCoordinates), (ProperBandQuadruple q) → (
@@ -1072,7 +1075,7 @@ private theorem firstParentCase :
       have hsecondsmall := RetainedBoundaryDetails.hsecondsmall q hq p h2 t
           hb0
       have horder23 := RetainedBoundaryDetails.horder23 q p h2 h3 hlt
-      have hsoddy := RetainedBoundaryDetails.hsoddy q p t htwin
+      have hsoddy := RetainedBoundaryDetails.hsoddy q p htwin
       have config := RetainedBoundaryProof.config q hq hnoLine hatMostOneUnit p hfirst hp h0 h2
           h3 t ht
           hb0 hb1 cq cp hq0large hq2large htwin hfirstsmall hsecondsmall horder23 hsoddy
@@ -1119,7 +1122,7 @@ private theorem firstParentCase :
           negOneSucc negTwoSucc
       have hord' := RetainedBoundaryDetails.hord'At586 q p h2 h3 hlt
           negOneSucc negTwoSucc
-      have tupleEq := RetainedBoundaryDetails.tupleEq q
+      have tupleEq := RetainedBoundaryDetails.htuple q
       refine ⟨.conjugate, ?_⟩
       simpa [u, tupleEq] using buildConfiguration u pp tt hu hnl' haum' hp' hs' h0' h2' h3'
         hlt2' hlt3' ht' ht0' ht1' hord'
@@ -1328,8 +1331,18 @@ theorem BandRetainedBoundaryGenealogy
 -- BODY
   have curvatureBound := RetainedBoundaryProof.curvatureBound
   have positiveLarge := RetainedBoundaryDetails.positiveLarge curvatureBound
-  have buildConfiguration := RetainedBoundaryProof.buildConfiguration
-          positiveLarge
+  have buildConfiguration := (show
+      ∀ (u : Fin 4 → CircleCoordinates), ∀ (p : Fin 4 → CircleCoordinates), ∀ (t : Fin 4 →
+      CircleCoordinates), ProperBandQuadruple u → (∀ i : Fin 4, (u i).1 ≠ 0) → (∀ i j :
+      Fin 4, (u i).1 = 1 → (u j).1 = 1 → i = j) → ProperBandQuadruple p → u = ![(2 * (p
+      0).1 + 2 * (p 2).1 + 2 * (p 3).1 - (p 1).1, 2 * (p 0).2 + 2 * (p 2).2 + 2 * (p 3).2
+      - (p 1).2), p 0, p 2, p 3] → p 0 = u 1 → p 2 = u 2 → p 3 = u 3 → (u 2).1 < (u 1).1 →
+      (u 3).1 < (u 1).1 → ProperBandQuadruple t → t 0 = u 2 → t 1 = u 3 → (u 3).1 < (u
+      2).1 → Nonempty (BandOrderedGeneralConfiguration u)
+    from by
+      intro u p t hu hnl haum hp hs h0 h2 h3 hlt2 hlt3 ht ht0 ht1 horder
+      exact RetainedBoundaryProof.buildConfiguration positiveLarge u p t hu hnl haum hp hs h0 h2
+          h3 hlt2 ht ht0 ht1 horder)
   rcases BandParentBoundaryGenealogy q hq with roots | first | second | third
   · rcases roots with roots | roots | roots
     · exact (hnoLine 2 roots.2.1).elim

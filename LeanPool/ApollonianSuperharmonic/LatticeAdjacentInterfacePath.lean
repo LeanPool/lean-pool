@@ -546,17 +546,24 @@ private theorem hcentU :
     (by
       classical
       exact
-        ∀ (T : ProtoTile), ∀ (T' : ProtoTile), (ℝ × ℝ) → ((ℝ × ℝ) → (∀ (q : Fin (4 : ℕ) →
-            CircleCoordinates), ∀ (i : Fin (3 : ℕ)), ∀ (e : Bool), (TileCentroid T' -
-            TileCentroid T = (if e = true then (1 : ℝ) else (-1 : ℝ)) • GaussianRealPoint
-            (BandVectors.1 (q (0 : Fin (4 : ℕ))) (q i.succ))) → (
-        let v := (if e = true then (BandVectors.1 (q 0) (q i.succ))
-          else -BandVectors.1 (q 0) (q i.succ))
-        (TileTouching T (TileTranslation T v)) → (
-        let U := TileTranslation T v
-        (BandPrototile (q 0) U) → (TileCentroid U = TileCentroid T'))))) ) := by
+        ∀ (T : ProtoTile),
+          ∀ (T' : ProtoTile),
+            ∀ (q : Fin (4 : ℕ) → CircleCoordinates),
+              ∀ (i : Fin (3 : ℕ)),
+                ∀ (e : Bool),
+                  TileCentroid T' - TileCentroid T =
+                      (if e = true then (1 : ℝ) else (-1 : ℝ)) •
+                        GaussianRealPoint
+                          (BandVectors.1 (q (0 : Fin (4 : ℕ))) (q i.succ)) →
+                    let v :=
+                      if e = true then BandVectors.1 (q 0) (q i.succ)
+                      else -BandVectors.1 (q 0) (q i.succ)
+                    TileTouching T (TileTranslation T v) →
+                      let U := TileTranslation T v
+                      BandPrototile (q 0) U → TileCentroid U = TileCentroid T'
+    ) := by
   classical
-  intro T T' p p' q i e hcent v htouch U hU
+  intro T T' q i e hcent v htouch U hU
   have hc1 := congrArg Prod.fst hcent
   have hc2 := congrArg Prod.snd hcent
   change (TileCentroid T').1 - (TileCentroid T).1 =
@@ -657,16 +664,27 @@ private theorem hT4 :
     (by
       classical
       exact
-        ∀ (q : Fin (4 : ℕ) → CircleCoordinates), (Fin (3 : ℕ)) → ((ProperBandQuadruple q) →
-            (((0 : ℤ) < (q (0 : Fin (4 : ℕ))).1 ∧ (∀ (i : Fin (3 : ℕ)), (0 : ℤ) ≤ (q i.succ).1) ∧
-            ∀ (i : Fin (3 : ℕ)), ∀ (j : Fin (3 : ℕ)), (q i.succ).1 = (0 : ℤ) → (q j.succ).1 = (0
-            : ℤ) → i = j) → (∀ (A : ProtoTile), ∀ (B : ProtoTile), ∀ (j : Fin 3), BandPrototile
-            (q 0) A → BandPrototile (q j.succ) B → TileCentroid B - TileCentroid A = (1 / 2 :
-            Real) • (GaussianRealPoint (BandVectors.1 (q j.succ) (q 0)) + GaussianRealPoint
-            (BandVectors.1 (q 0) (q j.succ))) → TouchingTriple A (TileTranslation A
-            (BandVectors.1 (q j.succ) (q 0))) B)))) := by
+        ∀ (q : Fin (4 : ℕ) → CircleCoordinates),
+          ProperBandQuadruple q →
+            ((0 : ℤ) < (q (0 : Fin (4 : ℕ))).1 ∧
+                (∀ (i : Fin (3 : ℕ)), (0 : ℤ) ≤ (q i.succ).1) ∧
+                  ∀ (i : Fin (3 : ℕ)),
+                    ∀ (j : Fin (3 : ℕ)),
+                      (q i.succ).1 = (0 : ℤ) → (q j.succ).1 = (0 : ℤ) → i = j) →
+              ∀ (A : ProtoTile),
+                ∀ (B : ProtoTile),
+                  ∀ (j : Fin 3),
+                    BandPrototile (q 0) A →
+                      BandPrototile (q j.succ) B →
+                        TileCentroid B - TileCentroid A =
+                            (1 / 2 : Real) •
+                              (GaussianRealPoint (BandVectors.1 (q j.succ) (q 0)) +
+                                GaussianRealPoint (BandVectors.1 (q 0) (q j.succ))) →
+                          TouchingTriple A
+                            (TileTranslation A (BandVectors.1 (q j.succ) (q 0))) B
+    ) := by
   classical
-  intro q i hq hrootPos A B j hA hB hcentAB
+  intro q hq hrootPos A B j hA hB hcentAB
   have hgt : 1 < (q 0).1 := by
     by_contra hn
     have hzero : ∀ k : Fin 3, (q k.succ).1 = 0 := by
@@ -683,18 +701,29 @@ private theorem hT5 :
     (by
       classical
       exact
-        ∀ (q : Fin (4 : ℕ) → CircleCoordinates),  (ProperBandQuadruple q) →
-            (((0 : ℤ) < (q (0 : Fin (4 : ℕ))).1 ∧ (∀ (i : Fin (3 : ℕ)), (0 : ℤ) ≤ (q i.succ).1) ∧
-            ∀ (i : Fin (3 : ℕ)), ∀ (j : Fin (3 : ℕ)), (q i.succ).1 = (0 : ℤ) → (q j.succ).1 = (0
-            : ℤ) → i = j) → (∀ (A : ProtoTile), ∀ (B : ProtoTile), ∀ (D : ProtoTile), ∀ (j : Fin
-            3), BandPrototile (q 0) A → BandPrototile (q j.succ) B → BandPrototile (q ((j +
-            1).succ)) D → TileCentroid B - TileCentroid A = (1 / 2 : Real) • (GaussianRealPoint
-            (BandVectors.1 (q j.succ) (q 0)) + GaussianRealPoint (BandVectors.1 (q 0) (q
-            j.succ))) → TileCentroid D - TileCentroid A = (1 / 2 : Real) • (GaussianRealPoint
-            (BandVectors.1 (q ((j + 1).succ)) (q 0)) - GaussianRealPoint (BandVectors.1 (q 0) (q
-            ((j + 1).succ)))) → TouchingTriple A B D)) ) := by
+        ∀ (q : Fin (4 : ℕ) → CircleCoordinates),
+          ProperBandQuadruple q →
+            ∀ (A : ProtoTile),
+              ∀ (B : ProtoTile),
+                ∀ (D : ProtoTile),
+                  ∀ (j : Fin 3),
+                    BandPrototile (q 0) A →
+                      BandPrototile (q j.succ) B →
+                        BandPrototile (q (j + 1).succ) D →
+                          TileCentroid B - TileCentroid A =
+                              (1 / 2 : Real) •
+                                (GaussianRealPoint (BandVectors.1 (q j.succ) (q 0)) +
+                                GaussianRealPoint (BandVectors.1 (q 0) (q j.succ))) →
+                            TileCentroid D - TileCentroid A =
+                                (1 / 2 : Real) •
+                                (GaussianRealPoint
+                                (BandVectors.1 (q (j + 1).succ) (q 0)) -
+                                GaussianRealPoint
+                                (BandVectors.1 (q 0) (q (j + 1).succ))) →
+                              TouchingTriple A B D
+    ) := by
   classical
-  intro q hq hrootPos A B D j hA hB hD hcentB hcentD
+  intro q hq A B D j hA hB hD hcentB hcentD
   have hgt : 1 < (q 0).1 := by
     by_contra hn
     have hzero : ∀ k : Fin 3, (q k.succ).1 = 0 := by
@@ -877,8 +906,8 @@ theorem LatticeAdjacentInterfacePath :
         i e hrotplus hrotminus
     let U := TileTranslation T v
     have hU : BandPrototile (q 0) U := BandPrototileTranslation _ T v hTq
-    have hcentU : TileCentroid U = TileCentroid T' := LatticeInterfacePathGeometry.hcentU T T' p
-        p' q i e hcent htouch hU
+    have hcentU : TileCentroid U = TileCentroid T' := LatticeInterfacePathGeometry.hcentU T T' q
+        i e hcent htouch hU
     have hcells := (BandPrototileCentroidUnique (q 0) U T' hU hT'q hcentU).1
     have hUn : U.cells.Nonempty := LatticeInterfacePathGeometry.hUn T q i e hnonempty
     have hT'nonempty : T'.cells.Nonempty := by rw [← hcells]; exact hUn
@@ -905,7 +934,7 @@ theorem LatticeAdjacentInterfacePath :
             (GaussianRealPoint (BandVectors.1 (q j.succ) (q 0)) +
               GaussianRealPoint (BandVectors.1 (q 0) (q j.succ))) →
         TouchingTriple A (TileTranslation A (BandVectors.1 (q j.succ) (q 0))) B :=
-            LatticeInterfacePathGeometry.hT4 q i hq hrootPos
+            LatticeInterfacePathGeometry.hT4 q hq hrootPos
     have hT5 : ∀ (A B D : ProtoTile) (j : Fin 3),
         BandPrototile (q 0) A → BandPrototile (q j.succ) B →
         BandPrototile (q ((j + 1).succ)) D →
@@ -917,7 +946,7 @@ theorem LatticeAdjacentInterfacePath :
           (1 / 2 : Real) •
             (GaussianRealPoint (BandVectors.1 (q ((j + 1).succ)) (q 0)) -
               GaussianRealPoint (BandVectors.1 (q 0) (q ((j + 1).succ)))) →
-        TouchingTriple A B D := LatticeInterfacePathGeometry.hT5 q hq hrootPos
+        TouchingTriple A B D := LatticeInterfacePathGeometry.hT5 q hq
     let unitI : GaussianInt := ⟨0, 1⟩
     have qturn_mul (z : GaussianInt) : GaussianQuarterTurn z = unitI * z := by
       ext <;> simp [GaussianQuarterTurn, unitI]

@@ -43,11 +43,13 @@ private theorem reflect_height :
     (by
       classical
       exact
-        (GaussianInt) → ((GaussianInt) → (∀ (r : ℤ × ℤ), ∀ (s : ℤ × ℤ),
-        let reflect := fun z : Int × Int => (r.1 + s.1 - z.1, r.2 + s.2 - z.2)
-        ∀ z, TriangularBoundaryStrip r s z → TriangularBoundaryStrip s r (reflect z))) ) := by
+        ∀ (r : ℤ × ℤ),
+          ∀ (s : ℤ × ℤ),
+            let reflect := fun z : Int × Int => (r.1 + s.1 - z.1, r.2 + s.2 - z.2)
+            ∀ z, TriangularBoundaryStrip r s z → TriangularBoundaryStrip s r (reflect z)
+    ) := by
   classical
-  intro a b r s reflect z hz
+  intro r s reflect z hz
   have hh : TriangularSignedHeight s r (reflect z) =
       TriangularSignedHeight r s z := by
     dsimp [TriangularSignedHeight, reflect]
@@ -72,11 +74,13 @@ private theorem reflect_sub :
     (by
       classical
       exact
-        (GaussianInt) → ((GaussianInt) → (∀ (r : ℤ × ℤ), ∀ (s : ℤ × ℤ),
-        let reflect := fun z : Int × Int => (r.1 + s.1 - z.1, r.2 + s.2 - z.2)
-        ∀ x, ∀ y, reflect y - reflect x = -(y - x))) ) := by
+        ∀ (r : ℤ × ℤ),
+          ∀ (s : ℤ × ℤ),
+            let reflect := fun z : Int × Int => (r.1 + s.1 - z.1, r.2 + s.2 - z.2)
+            ∀ x, ∀ y, reflect y - reflect x = -(y - x)
+    ) := by
   classical
-  intro a b r s reflect x y
+  intro r s reflect x y
   apply Prod.ext <;> dsimp [reflect] <;> omega
 
 private theorem reflect_adjacent :
@@ -114,14 +118,22 @@ private theorem reflected_segment :
     (by
       classical
       exact
-        (GaussianInt) → ((GaussianInt) → (∀ (r : ℤ × ℤ), ∀ (s : ℤ × ℤ), ∀ (coordinates : List (ℤ
-            × ℤ)), (TriangularStripSegment r s coordinates) → (
-        let reflect := fun z : Int × Int => (r.1 + s.1 - z.1, r.2 + s.2 - z.2)
-        (∀ z, TriangularBoundaryStrip r s z → TriangularBoundaryStrip s r (reflect z)) → ((∀ x, ∀
-            y, TriangularLatticeAdjacent x y → TriangularLatticeAdjacent (reflect x) (reflect y))
-            → (TriangularStripSegment s r (coordinates.map reflect)))))) ) := by
+        ∀ (r : ℤ × ℤ),
+          ∀ (s : ℤ × ℤ),
+            ∀ (coordinates : List (ℤ × ℤ)),
+              TriangularStripSegment r s coordinates →
+                let reflect := fun z : Int × Int => (r.1 + s.1 - z.1, r.2 + s.2 - z.2)
+                (∀ z,
+                    TriangularBoundaryStrip r s z →
+                      TriangularBoundaryStrip s r (reflect z)) →
+                  (∀ x,
+                      ∀ y,
+                        TriangularLatticeAdjacent x y →
+                          TriangularLatticeAdjacent (reflect x) (reflect y)) →
+                    TriangularStripSegment s r (coordinates.map reflect)
+    ) := by
   classical
-  intro a b r s coordinates hsegment reflect reflect_height reflect_adjacent
+  intro r s coordinates hsegment reflect reflect_height reflect_adjacent
   by_cases hrs : r = s
   · have heq : coordinates = [r] := by simpa [TriangularStripSegment, hrs] using hsegment
     simp [TriangularStripSegment, hrs, reflect, heq]
@@ -353,10 +365,13 @@ private theorem translated_band :
     (by
       classical
       exact
-        ∀ (C : BandCircle), ∀ (base : ProtoTile), (BandPrototile C.1.1 base) → (∀ v :
-            GaussianInt, v ∈ TilingLattice C → BandPrototile C.1.1 (TileTranslation base v)) ) := by
+        ∀ (C : BandCircle),
+          ∀ (base : ProtoTile),
+            BandPrototile C.1.1 base →
+              ∀ v : GaussianInt, BandPrototile C.1.1 (TileTranslation base v)
+    ) := by
   classical
-  intro C base hbase v hv
+  intro C base hbase v
   exact BandPrototileTranslation C.1.1 base v hbase
 
 private theorem centroid_transform :
@@ -609,10 +624,10 @@ theorem TileStringRegularFamilyCentralCovariance
       hcorr
   let reverseTiles := coordinates.map (fun z => tileAt (reflect z))
   have reverse_string := RegularStringCentralGeometry.reverse_string C orientation base R S a b
-      htransport r hr s hs coordinates (RegularStringCentralGeometry.reflected_segment a b r s
-      coordinates hsegment (RegularStringCentralGeometry.reflect_height a b r s)
+      htransport r hr s hs coordinates (RegularStringCentralGeometry.reflected_segment r s
+      coordinates hsegment (RegularStringCentralGeometry.reflect_height r s)
       (RegularStringCentralGeometry.reflect_adjacent r s
-      (RegularStringCentralGeometry.reflect_sub a b r s)))
+      (RegularStringCentralGeometry.reflect_sub r s)))
       (RegularStringCentralGeometry.reverse_corr base a b r s coordinates)
   obtain ⟨cbase, hcbase⟩ : ∃ cbase : GaussianInt,
       GaussianRealPoint cbase = TileCentroid base + TileCentroid base := by
@@ -626,7 +641,12 @@ theorem TileStringRegularFamilyCentralCovariance
       (TileTranslation (TileHalfTurn base) u) := rawString.1
   have cell_transport := RegularStringCentralGeometry.cell_transport C base tiles a b ha hb r s
       cbase hcbase (RegularStringCentralGeometry.transformed_band C orientation base R S tiles a
-      b r s cbase rawString rawBase) (RegularStringCentralGeometry.translated_band C base hbase)
+      b r s cbase rawString rawBase) ((show
+          ∀ v : GaussianInt, v ∈ TilingLattice C → BandPrototile C.1.1
+          (TileTranslation base v)
+        from by
+          intro v hv
+          exact RegularStringCentralGeometry.translated_band C base hbase v))
       (RegularStringCentralGeometry.centroid_transform a b r s cbase)
   exact ⟨u, reverseTiles, (RegularStringCentralGeometry.hu base R S a b r hr s hs cbase hcbase),
       reverse_string, (RegularStringCentralGeometry.endpoint_R base R S tiles hhead a b r hr s hs

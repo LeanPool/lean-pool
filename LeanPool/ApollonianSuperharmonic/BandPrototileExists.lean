@@ -1767,47 +1767,61 @@ private theorem hrootCent :
     (by
       classical
       exact
-        (ℕ) → ((BandCircle) → (∀ (q : Fin (4 : ℕ) → CircleCoordinates), ∀ (r : Fin (3 : ℕ)), ∀ (g
-            : BandPackingSymmetry),
-        let q' : Fin 4 → CircleCoordinates :=
-          BandPackingSymmetryQuadrupleAction g
-            ![q 0, q r.succ, q (r + 1).succ, q (r + 2).succ]
-        ∀ (T1 : ProtoTile), (T1.cells.Nonempty) → (∀ (S : Fin (3 : ℕ) → Bool → ProtoTile),
-        let a : GaussianInt := BandVectors.1 (q' 3) (q' 2)
-        let U : Fin 3 → Bool → ProtoTile := fun i s =>
-          if i = 0 then
-            if s then TileTranslation T1 (a - ⟨0, 1⟩ * a) else T1
-          else if i = 1 then
-            if s then TileTranslation (S 1 s) a
-            else TileTranslation (S 1 s) (-⟨0, 1⟩ * a)
-          else if s then TileTranslation (S 2 s) (-⟨0, 1⟩ * a)
-            else TileTranslation (S 2 s) a
-        (∀ i, ∀ s, BandPrototile (q' i.succ) (U i s)) → (
-        let T0 : ProtoTile :=
-          ⟨Finset.univ.biUnion (fun i : Fin 3 =>
-            Finset.univ.biUnion (fun s : Bool => (U i s).cells)), T1.anchor⟩
-        (∀ (x : GaussianInt), x ∈ T0.cells ↔ ∃ i s, x ∈ (U i s).cells) → (
-        let d : GaussianInt → Real × Real := fun z =>
-          (1 / 2 : Real) • (GaussianRealPoint z -
-            (-(GaussianRealPoint z).2, (GaussianRealPoint z).1))
-        let p0 : Real × Real := TileCentroid T1 + d a
-        (∀ i, ∀ s, TileCentroid (U i s) - p0 = (if s = true then (1 : Real) else -1) • d
-            (BandVectors.1 (q' ((i + 2).succ)) (q' ((i + 1).succ)))) → (
-        let c1 := TileCentroid T1
-        let reCells : Finset Int := T1.cells.image (fun x => x.re)
-        let imCells : Finset Int := T1.cells.image (fun x => x.im)
-        ∀ (reNe : reCells.Nonempty), ∀ (imNe : imCells.Nonempty),
-        let mRe := reCells.min' reNe
-        let MRe := reCells.max' reNe
-        (∃ x ∈ T1.cells, x.re = mRe) → ((∃ x ∈ T1.cells, x.re = MRe) → (
-        let mIm := imCells.min' imNe
-        let MIm := imCells.max' imNe
-        (∃ x ∈ T1.cells, x.im = mIm) → ((∃ x ∈ T1.cells, x.im = MIm) → (
-        let t1 : GaussianInt := ⟨mRe + MRe + 1, mIm + MIm + 1⟩
-        (GaussianRealPoint t1 = (2 * c1.1, 2 * c1.2)) → (TileCentroid T0 = p0))))))))))) ) := by
+        ∀ (q : Fin (4 : ℕ) → CircleCoordinates),
+          ∀ (r : Fin (3 : ℕ)),
+            ∀ (g : BandPackingSymmetry),
+              let q' : Fin 4 → CircleCoordinates :=
+                BandPackingSymmetryQuadrupleAction g
+                  ![q 0, q r.succ, q (r + 1).succ, q (r + 2).succ]
+              ∀ (T1 : ProtoTile),
+                T1.cells.Nonempty →
+                  ∀ (S : Fin (3 : ℕ) → Bool → ProtoTile),
+                    let a : GaussianInt := BandVectors.1 (q' 3) (q' 2)
+                    let U : Fin 3 → Bool → ProtoTile := fun i s =>
+                      if i = 0 then if s then TileTranslation T1 (a - ⟨0, 1⟩ * a) else T1
+                      else
+                        if i = 1 then
+                          if s then TileTranslation (S 1 s) a
+                          else TileTranslation (S 1 s) (-⟨0, 1⟩ * a)
+                        else
+                          if s then TileTranslation (S 2 s) (-⟨0, 1⟩ * a)
+                          else TileTranslation (S 2 s) a
+                    (∀ i, ∀ s, BandPrototile (q' i.succ) (U i s)) →
+                      let T0 : ProtoTile :=
+                        ⟨Finset.univ.biUnion fun i : Fin 3 =>
+                            Finset.univ.biUnion fun s : Bool => (U i s).cells,
+                          T1.anchor⟩
+                      (∀ (x : GaussianInt), x ∈ T0.cells ↔ ∃ i s, x ∈ (U i s).cells) →
+                        let d : GaussianInt → Real × Real := fun z =>
+                          (1 / 2 : Real) •
+                            (GaussianRealPoint z -
+                              (-(GaussianRealPoint z).2, (GaussianRealPoint z).1))
+                        let p0 : Real × Real := TileCentroid T1 + d a
+                        (∀ i,
+                            ∀ s,
+                              TileCentroid (U i s) - p0 =
+                                (if s = true then (1 : Real) else -1) •
+                                d (BandVectors.1 (q' (i + 2).succ) (q' (i + 1).succ))) →
+                          let c1 := TileCentroid T1
+                          let reCells : Finset Int := T1.cells.image fun x => x.re
+                          let imCells : Finset Int := T1.cells.image fun x => x.im
+                          ∀ (reNe : reCells.Nonempty),
+                            ∀ (imNe : imCells.Nonempty),
+                              let mRe := reCells.min' reNe
+                              let MRe := reCells.max' reNe
+                              (∃ x ∈ T1.cells, x.re = mRe) →
+                                (∃ x ∈ T1.cells, x.re = MRe) →
+                                let mIm := imCells.min' imNe
+                              let MIm := imCells.max' imNe
+                              (∃ x ∈ T1.cells, x.im = mIm) →
+                                (∃ x ∈ T1.cells, x.im = MIm) →
+                                let t1 : GaussianInt := ⟨mRe + MRe + 1, mIm + MIm + 1⟩
+                              GaussianRealPoint t1 = (2 * c1.1, 2 * c1.2) →
+                                TileCentroid T0 = p0
+    ) := by
   classical
-  intro n C q r g q' T1 hT1ne S a U hparents T0 hcells0 d p0 hcent' c1 reCells imCells reNe imNe
-      mRe MRe minReCell maxReCell mIm MIm minImCell maxImCell t1 ht1
+  intro q r g q' T1 hT1ne S a U hparents T0 hcells0 d p0 hcent' c1 reCells imCells reNe imNe mRe
+      MRe minReCell maxReCell mIm MIm minImCell maxImCell t1 ht1
   let I : GaussianInt := ⟨0, 1⟩
   let t0 : GaussianInt := t1 + a - I * a
   have ht0 : GaussianRealPoint t0 = (2 : Real) • p0 := PrototileConstruction.ht0
@@ -2088,7 +2102,7 @@ private theorem existence :
               let t1 : GaussianInt := ⟨mRe + MRe + 1, mIm + MIm + 1⟩
               have ht1 : GaussianRealPoint t1 = (2 * c1.1, 2 * c1.2) :=
                   PrototileConstruction.ht1 T1 reNe imNe centerRe centerIm
-              have hrootCent : TileCentroid T0 = p0 := PrototileAssembly.hrootCent n C q r g T1
+              have hrootCent : TileCentroid T0 = p0 := PrototileAssembly.hrootCent q r g T1
                   hT1ne S hparents hcells0 hcent' reNe imNe minReCell maxReCell minImCell
                   maxImCell ht1
               have hcent : ∀ i s,

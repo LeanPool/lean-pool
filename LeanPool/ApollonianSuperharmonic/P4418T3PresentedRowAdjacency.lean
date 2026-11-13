@@ -186,29 +186,48 @@ private theorem selected_slot :
     (by
       classical
       exact
-        ∀ (C : BandCircle), ∀ (D : BandCircle), ∀ (T : ProtoTile), ∀ (N : ProtoTile), ∀ (h :
-            PartialOdometer), ∀ (k : PartialOdometer), ∀ (x : GaussianInt), ∀ (bundle :
-            BandOrderedGeneralNormalizedOccurrenceBundle C D T N h k x), ∀ (placement :
-            BandOrderedGeneralSubtilePlacement bundle.normalizedPresentation bundle.configuration
-            bundle.normalizedCircle bundle.normalizedFixedCircle bundle.normalizedRoot
-            bundle.normalizedFixed bundle.normalizedRootFunction bundle.normalizedFixedFunction
-            bundle.normalizedPoint bundle.pieces bundle.functions bundle.selectedSlot
-            bundle.selectedSign bundle.routedDirection), (Fin 4) → (
-        let q := bundle.normalizedPresentation
-        let cert := placement.layout
-        let occurrence := SubtileOccurrenceInterpretation cert.P cert.u cert.v
-        let slot : SixSubtileLabel → Fin 3 := fun l => match l with
-          | .A | .B => 0
-          | .C | .D => 1
-          | .E | .F => 2
-        ((bundle.pieces bundle.selectedSlot bundle.selectedSign).cells = (occurrence
-            placement.centralIndex).cells) → ((∀ (j : Fin 3), 0 < (q j.succ).1) → ((∀ (a :
-            PeriodicSubtileIndex), TileArea (occurrence a) = Int.toNat (q (slot a.label).succ).1)
-            → ((TileArea (bundle.pieces bundle.selectedSlot bundle.selectedSign) = Int.toNat (q
-            bundle.selectedSlot.succ).1) → (bundle.selectedSlot = slot
-            placement.centralIndex.label))))) ) := by
+        ∀ (C : BandCircle),
+          ∀ (D : BandCircle),
+            ∀ (T : ProtoTile),
+              ∀ (N : ProtoTile),
+                ∀ (h : PartialOdometer),
+                  ∀ (k : PartialOdometer),
+                    ∀ (x : GaussianInt),
+                      ∀
+                        (bundle :
+                          BandOrderedGeneralNormalizedOccurrenceBundle C D T N h k x),
+                        ∀
+                          (placement :
+                            BandOrderedGeneralSubtilePlacement
+                              bundle.normalizedPresentation bundle.configuration
+                              bundle.normalizedCircle bundle.normalizedFixedCircle
+                              bundle.normalizedRoot bundle.normalizedFixed
+                              bundle.normalizedRootFunction bundle.normalizedFixedFunction
+                              bundle.normalizedPoint bundle.pieces bundle.functions
+                              bundle.selectedSlot bundle.selectedSign
+                              bundle.routedDirection),
+                          let q := bundle.normalizedPresentation
+                          let cert := placement.layout
+                          let occurrence :=
+                            SubtileOccurrenceInterpretation cert.P cert.u cert.v
+                          let slot : SixSubtileLabel → Fin 3 := fun l =>
+                            match l with
+                            | .A | .B => 0
+                            | .C | .D => 1
+                            | .E | .F => 2
+                          (bundle.pieces bundle.selectedSlot bundle.selectedSign).cells =
+                              (occurrence placement.centralIndex).cells →
+                            (∀ (j : Fin 3), 0 < (q j.succ).1) →
+                              (∀ (a : PeriodicSubtileIndex),
+                                TileArea (occurrence a) =
+                                Int.toNat (q (slot a.label).succ).1) →
+                                TileArea
+                                (bundle.pieces bundle.selectedSlot bundle.selectedSign) =
+                                Int.toNat (q bundle.selectedSlot.succ).1 →
+                                bundle.selectedSlot = slot placement.centralIndex.label
+    ) := by
   classical
-  intro C D T N h k x bundle placement s q cert occurrence slot selected_cells positive_parent
+  intro C D T N h k x bundle placement q cert occurrence slot selected_cells positive_parent
       occurrence_area selected_area
   let cfg := bundle.configuration
   have heq : Int.toNat (q bundle.selectedSlot.succ).1 =
@@ -1178,7 +1197,7 @@ theorem P4418T3PresentedRowAdjacency :
     area_of_band _ _ (positive_parent _)
       (TileOdometerBandPrototile _ _ _ (bundle.piece_odometer _ _))
   have selected_slot := PresentedRowAdjacencyGeometry.selected_slot C D T N h k x bundle
-      placement s selected_cells
+      placement selected_cells
       positive_parent (PresentedRowAdjacencyGeometry.occurrence_area C D T N h k x bundle
           placement positive_parent area_of_band) selected_area
   have selected_circle : C'.1.1 = q (slot placement.centralIndex.label).succ := by

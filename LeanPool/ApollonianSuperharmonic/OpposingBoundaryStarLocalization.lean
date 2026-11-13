@@ -290,12 +290,13 @@ private theorem slope_defined :
     (by
       classical
       exact
-        (BandCircle) → (∀ (Ci : BandCircle), (GaussianInt) → ((GaussianInt) → ((List GaussianInt)
-            → ((PeriodicTileComplex ↥(TilingLattice Ci)) → (∀ (c : CircleCoordinates), ∀ (T :
-            ProtoTile), ∀ (f : PartialOdometer), TileOdometer c T f → 1 < c.1 → ∃ p : ℝ × ℝ,
-            PartialOdometerSlope f = some p))))) ) := by
+        ∀ (c : CircleCoordinates),
+          ∀ (T : ProtoTile),
+            ∀ (f : PartialOdometer),
+              TileOdometer c T f → 1 < c.1 → ∃ p : ℝ × ℝ, PartialOdometerSlope f = some p
+    ) := by
   classical
-  intro C0 Ci a b rest P c T f ho hc
+  intro c T f ho hc
   induction ho with
   | line w z hw hdom => omega
   | unit z w T f hT hdom htrans => omega
@@ -323,20 +324,22 @@ private theorem invStep :
     (by
       classical
       exact
-        (BandCircle) → (∀ (Ci : BandCircle), ((1 : ℤ) < Ci.1.1.1) → ((GaussianInt) →
-            ((GaussianInt) → ((List GaussianInt) → ((PeriodicTileComplex ↥(TilingLattice Ci)) → (
-        let slopeVec := fun f : PartialOdometer =>
-          let p := (PartialOdometerSlope f).getD (0, 0)
-          ![p.1, p.2]
-        let centroidVec := fun T : ProtoTile =>
-          ![(TileCentroid T).1, (TileCentroid T).2]
-        let invariant := fun X : ProtoTile × PartialOdometer =>
-          slopeVec X.2 - Matrix.mulVec (CircleMatrix Ci) (centroidVec X.1)
-        let invRel := fun X Y : ProtoTile × PartialOdometer => invariant X = invariant Y
-        ∀ A B : ProtoTile × PartialOdometer, LeftLatticeAdjacent Ci A.1 B.1 A.2 B.2 → invRel A
-            B)))))) ) := by
+        ∀ (Ci : BandCircle),
+          (1 : ℤ) < Ci.1.1.1 →
+            let slopeVec := fun f : PartialOdometer =>
+              let p := (PartialOdometerSlope f).getD (0, 0)
+              ![p.1, p.2]
+            let centroidVec := fun T : ProtoTile =>
+              ![(TileCentroid T).1, (TileCentroid T).2]
+            let invariant := fun X : ProtoTile × PartialOdometer =>
+              slopeVec X.2 - Matrix.mulVec (CircleMatrix Ci) (centroidVec X.1)
+            let invRel := fun X Y : ProtoTile × PartialOdometer =>
+              invariant X = invariant Y
+            ∀ A B : ProtoTile × PartialOdometer,
+              LeftLatticeAdjacent Ci A.1 B.1 A.2 B.2 → invRel A B
+    ) := by
   classical
-  intro C0 Ci hlarge a b rest P slopeVec centroidVec invariant invRel A B hadj
+  intro Ci hlarge slopeVec centroidVec invariant invRel A B hadj
   rcases hadj with ⟨_, _, p, p', hp, hp', hcase⟩
   rcases hcase with hunit | ⟨q, j, e, hq, hq0, hcent, hpRe, hpIm⟩
   · omega
@@ -858,7 +861,7 @@ theorem OpposingBoundaryStarLocalization
       have hadjIndex : P.plane.adjacent uIdx vIdx := hadjP.1.mp (OpposingStarGeometry.hedgeP Ci x
           y U V hedge u huL v hvL P hPU hPV)
       obtain ⟨j, hdisp⟩ := (hPadj uIdx vIdx).mp hadjIndex
-      have slope_defined := OpposingStarGeometry.slope_defined C0 Ci a b rest P
+      have slope_defined := OpposingStarGeometry.slope_defined
       obtain ⟨pU, hpU⟩ := slope_defined Ci.1.1 U g hUchildOdo (by omega)
       obtain ⟨pV, hpV⟩ := slope_defined Ci.1.1 V k hVchildOdo (by omega)
       let slopeVec := fun f : PartialOdometer =>
@@ -869,7 +872,7 @@ theorem OpposingBoundaryStarLocalization
       let invariant := fun X : ProtoTile × PartialOdometer =>
         slopeVec X.2 - Matrix.mulVec (CircleMatrix Ci) (centroidVec X.1)
       let invRel := fun X Y : ProtoTile × PartialOdometer => invariant X = invariant Y
-      have invStep := OpposingStarGeometry.invStep C0 Ci hlarge a b rest P
+      have invStep := OpposingStarGeometry.invStep Ci hlarge
       have hfirstInvChain : List.IsChain invRel (tiles.zip hs) :=
         hRespect.2.2.imp (fun A B hadj => invStep A B hadj)
       have hreverseInvChain : List.IsChain invRel (reverseTiles.zip reverseHs) :=

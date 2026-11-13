@@ -256,8 +256,8 @@ private theorem reflectedAt278 :
       exact
         ∀ (T : ProtoTile), ∀ (h : PartialOdometer), ∀ (q : Fin (4 : ℕ) → CircleCoordinates),
             (ProperBandQuadruple q) → (∀ (S : Fin (3 : ℕ) → Bool → ProtoTile), ∀ (hs : Fin (3 :
-            ℕ) → Bool → PartialOdometer), (∀ (i : Fin (3 : ℕ)), ∀ (s : Bool), TileOdometer (q
-            i.succ) (S i s) (hs i s)) → ((∀ (x : GaussianInt), x ∈ h.domain ↔ ∃ (i : Fin (3 : ℕ))
+            ℕ) → Bool → PartialOdometer),
+                                        ((∀ (x : GaussianInt), x ∈ h.domain ↔ ∃ (i : Fin (3 : ℕ))
             (s : Bool), x ∈ (hs i s).domain) → ((∀ (i : Fin (3 : ℕ)), ∀ (s : Bool), ∀ x ∈ (hs i
             s).domain, h.value x = (hs i s).value x) → ((∀ (i : Fin (3 : ℕ)), ∀ (s : Bool), ∀ (j
             : Fin (3 : ℕ)), ∀ (t : Bool), OdometerCompatibility (hs i s) (hs j t)) → ((∀ (i : Fin
@@ -282,7 +282,7 @@ private theorem reflectedAt278 :
             = true then (1 : Real) else -1) • d i) → (TileOdometer (q 0) (TileHalfTurn T)
             (PartialOdometerHalfTurn h))))))))))) ) := by
   classical
-  intro T h q hq S hs hsub hdom hvalue hcompat hslope ih reflected_cells reflected_foot d
+  intro T h q hq S hs hdom hvalue hcompat hslope ih reflected_cells reflected_foot d
       reflected_centroid
   apply TileOdometer.decompose (S := fun i s => TileHalfTurn (S i (!s)))
     (hs := fun i s => PartialOdometerHalfTurn (hs i (!s))) hq
@@ -423,7 +423,7 @@ theorem TileOdometerCentralSymmetry
                 CentralSymmetryGeometry.reflected_centroid T q S hcentroid
       have reflected : TileOdometer (q 0)
           (TileHalfTurn T) (PartialOdometerHalfTurn h) := CentralSymmetryGeometry.reflectedAt278
-              T h q hq S hs hsub hdom hvalue hcompat hslope ih reflected_cells reflected_foot
+              T h q hq S hs hdom hvalue hcompat hslope ih reflected_cells reflected_foot
               reflected_centroid
       refine ⟨reflected, ?_⟩
       obtain ⟨v, hv, _⟩ := TileOdometerTranslationUniqueness

@@ -210,13 +210,21 @@ private theorem hslot :
     (by
       classical
       exact
-        ∀ (C : BandCircle), ∀ (orientation : Bool), ∀ (base : ProtoTile), ∀ (Rminus : ProtoTile),
-            ∀ (Rplus : ProtoTile), ∀ (hminus : PartialOdometer), ∀ (hplus : PartialOdometer), ∀
-            (F : P4458T1BoundaryFrame C orientation base Rminus Rplus hminus hplus), ∀ (a : Fin
-            (3 : ℕ)), (Fin (4 : ℕ) → CircleCoordinates) → ((F.slot ≠ a) → (F.slot = a + 1 ∨
-            F.slot = a + 2)) ) := by
+        ∀ (C : BandCircle),
+          ∀ (orientation : Bool),
+            ∀ (base : ProtoTile),
+              ∀ (Rminus : ProtoTile),
+                ∀ (Rplus : ProtoTile),
+                  ∀ (hminus : PartialOdometer),
+                    ∀ (hplus : PartialOdometer),
+                      ∀
+                        (F :
+                          P4458T1BoundaryFrame C orientation base Rminus Rplus hminus
+                            hplus),
+                        ∀ (a : Fin (3 : ℕ)), F.slot ≠ a → F.slot = a + 1 ∨ F.slot = a + 2
+    ) := by
   classical
-  intro C orientation base Rminus Rplus hminus hplus F a p selected
+  intro C orientation base Rminus Rplus hminus hplus F a selected
   have hne : F.slot.val ≠ a.val := by
     intro heq
     exact selected (Fin.ext heq)
@@ -1054,13 +1062,12 @@ private theorem hnonunit :
     (by
       classical
       exact
-        ∀ (C : BandCircle), ∀ (orientation : Bool), ∀ (base : ProtoTile), ∀ (Rminus : ProtoTile),
-            ∀ (Rplus : ProtoTile), ∀ (hminus : PartialOdometer), ∀ (hplus : PartialOdometer),
-            (P4458T1BoundaryFrame C orientation base Rminus Rplus hminus hplus) → ((Fin (3 :
-            ℕ)) → ((Fin (4 : ℕ) → CircleCoordinates) → (∀ (t : Fin (4 : ℕ) → CircleCoordinates),
-            (ProperBandQuadruple t) → ((t 0 = C.1.1) → (C.1.1.1 ≠ 1))))) ) := by
+        ∀ (C : BandCircle),
+          ∀ (t : Fin (4 : ℕ) → CircleCoordinates),
+            ProperBandQuadruple t → t 0 = C.1.1 → C.1.1.1 ≠ 1
+    ) := by
   classical
-  intro C orientation base Rminus Rplus hminus hplus F a p t ht htC
+  intro C t ht htC
   have hcurv := ProperBandCurvatureStructure t ht
   have hrootlarge : 1 < (t 0).1 := by
     by_contra hn
@@ -3118,8 +3125,8 @@ private theorem firstParentPlacement :
         ha01ReR ha01ImR hdirectSlope hleftCent hleftTouch hleftAdjacent hMnonempty
         (SecondNewerRowsGeometry.hJnonempty C orientation base Rminus Rplus hminus hplus F D
         u hjoinCells hUnonempty) (SecondNewerRowsGeometry.hleftNe C orientation base Rminus
-        Rplus hminus hplus F u hleftTouch hMnonempty) (SecondNewerRowsGeometry.hnonunit C
-        orientation base Rminus Rplus hminus hplus F a p t ht htC)) hleftAdjacent, hright⟩⟩
+        Rplus hminus hplus F u hleftTouch hMnonempty) (SecondNewerRowsGeometry.hnonunit C t ht
+            htC)) hleftAdjacent, hright⟩⟩
 
 private theorem secondParentPlacement :
     (by
@@ -4079,7 +4086,7 @@ theorem P4458T1SecondNewerRows :
     have hqD : F.q (a + 2).succ = p 3 := SecondNewerRowsGeometry.hqD C orientation base Rminus
         Rplus hminus hplus F a p hstep
     have hslot := SecondNewerRowsGeometry.hslot C orientation base Rminus Rplus hminus hplus F a
-        p selected
+        selected
     have hSlopeInfo := SecondNewerRowsGeometry.hSlopeInfo C orientation base Rminus Rplus hminus
         hplus F D hCpositive
     obtain ⟨rootNeg, joinSlope, hrootNeg, hjoinSlope,

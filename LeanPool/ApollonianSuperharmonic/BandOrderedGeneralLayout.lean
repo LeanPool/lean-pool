@@ -83,12 +83,14 @@ private theorem pne :
     (by
       classical
       exact
-        ∀ (q : Fin 4 → CircleCoordinates), (BandOrderedGeneralConfiguration q) → ((∀ (i : Fin 3),
-            0 < (q i.succ).1) → (∀ (P : Fin (3 : ℕ) → Bool → ProtoTile), (∀ (i : Fin 3), ∀ (s :
-            Bool), TileArea (P i s) = (q i.succ).1.toNat) → (∀ (i : Fin 3), ∀ (s : Bool), (P i
-            s).cells.Nonempty))) ) := by
+        ∀ (q : Fin 4 → CircleCoordinates),
+          (∀ (i : Fin 3), 0 < (q i.succ).1) →
+            ∀ (P : Fin (3 : ℕ) → Bool → ProtoTile),
+              (∀ (i : Fin 3), ∀ (s : Bool), TileArea (P i s) = (q i.succ).1.toNat) →
+                ∀ (i : Fin 3), ∀ (s : Bool), (P i s).cells.Nonempty
+    ) := by
   classical
-  intro q cfg parentPos P parea i s
+  intro q parentPos P parea i s
   have ha := parea i s
   have hp := parentPos i
   change (P i s).cells.card = _ at ha
@@ -275,12 +277,15 @@ private theorem hindex :
     (by
       classical
       exact
-        ∀ (q : Fin 4 → CircleCoordinates), (BandOrderedGeneralConfiguration q) → (∀ (C₀ :
-            BandCircle), (q (0 : Fin (4 : ℕ)) = C₀.1.1) → ((∀ (k : Fin (4 : ℕ)), (0 : ℤ) ≤ (q
-            k).1) → (∀ (R : Finset GaussianInt), (R.card = C₀.1.1.1.natAbs) → (R.card = (q
-            0).1.toNat)))) ) := by
+        ∀ (q : Fin 4 → CircleCoordinates),
+          ∀ (C₀ : BandCircle),
+            q (0 : Fin (4 : ℕ)) = C₀.1.1 →
+              (∀ (k : Fin (4 : ℕ)), (0 : ℤ) ≤ (q k).1) →
+                ∀ (R : Finset GaussianInt),
+                  R.card = C₀.1.1.1.natAbs → R.card = (q 0).1.toNat
+    ) := by
   classical
-  intro q cfg C₀ hC₀ hn R hcount
+  intro q C₀ hC₀ hn R hcount
   rw [hC₀]
   apply hcount.trans
   have ha := Int.natAbs_of_nonneg (by simpa [hC₀] using hn 0)
@@ -517,32 +522,56 @@ private theorem abEdge :
     (by
       classical
       exact
-        ∀ (q : Fin 4 → CircleCoordinates), ∀ (cfg : BandOrderedGeneralConfiguration q),
-            (BandCircle) → (∀ (P : Fin (3 : ℕ) → Bool → ProtoTile), (∀ (s : Bool), BandPrototile
-            (cfg.firstPredecessor 0) (P 0 s)) → (∀ (Q : Fin (3 : ℕ) → Bool → ProtoTile), (∀ (i :
-            Fin (3 : ℕ)), ∀ (s : Bool), BandSubtileOccurrence cfg.firstPredecessor (P (0 : Fin (3
-            : ℕ)) true) i s (Q i s)) → (∀ (S : Fin (3 : ℕ) → Bool → ProtoTile), (∀ (i : Fin (3 :
-            ℕ)), ∀ (s : Bool), BandSubtileOccurrence cfg.firstPredecessor (P (0 : Fin (3 : ℕ))
-            false) i s (S i s)) → ((LatticeTile (TileCellComplement (P (0 : Fin (3 : ℕ)) true) (Q
-            (0 : Fin (3 : ℕ)) false)) ∧ TileTouching (TileCellComplement (P (0 : Fin (3 : ℕ))
-            true) (Q (0 : Fin (3 : ℕ)) false)) (Q (0 : Fin (3 : ℕ)) false)) → (
-        let O := Q 0 false
-        (O.cells ⊆ (P 0 false).cells) → ((Finset GaussianInt) → ((FootprintVertices (Q (0 : Fin
-            (3 : ℕ)) false) = FootprintVertices (S (0 : Fin (3 : ℕ)) true) ∧
-            BoundaryFootprintVertices (Q (0 : Fin (3 : ℕ)) false) = BoundaryFootprintVertices (S
-            (0 : Fin (3 : ℕ)) true) ∧ BoundaryFootprintEdges (Q (0 : Fin (3 : ℕ)) false) =
-            BoundaryFootprintEdges (S (0 : Fin (3 : ℕ)) true) ∧ TileRealization (Q (0 : Fin (3 :
-            ℕ)) false) = TileRealization (S (0 : Fin (3 : ℕ)) true) ∧ TileCentroid (Q (0 : Fin (3
-            : ℕ)) false) = TileCentroid (S (0 : Fin (3 : ℕ)) true)) → (((Q (0 : Fin (3 : ℕ))
-            false).cells = ∅ → (cfg.firstPredecessor (1 : Fin (4 : ℕ))).1 = (0 : ℤ)) → ((∀ (U :
-            ProtoTile), (LatticeTile U) → (U.cells.Nonempty)) → ((∀ (U : ProtoTile), ∀ (V :
-            ProtoTile), (U.cells.Nonempty) → ((V.cells.Nonempty) → ((TileTouching U V) →
-            ((FootprintEdges U ∩ FootprintEdges V).Nonempty)))) → ((∀ (U : ProtoTile), ∀ (V :
-            ProtoTile), (U.cells ⊆ V.cells) → (FootprintEdges U ⊆ FootprintEdges V)) →
-            ((FootprintEdges (TileCellComplement (P 0 true) O) ∩ FootprintEdges (P 0
-            false)).Nonempty)))))))))))) ) := by
+        ∀ (q : Fin 4 → CircleCoordinates),
+          ∀ (cfg : BandOrderedGeneralConfiguration q),
+            ∀ (P : Fin (3 : ℕ) → Bool → ProtoTile),
+              (∀ (s : Bool), BandPrototile (cfg.firstPredecessor 0) (P 0 s)) →
+                ∀ (Q : Fin (3 : ℕ) → Bool → ProtoTile),
+                  (∀ (i : Fin (3 : ℕ)),
+                      ∀ (s : Bool),
+                        BandSubtileOccurrence cfg.firstPredecessor
+                          (P (0 : Fin (3 : ℕ)) true) i s (Q i s)) →
+                    ∀ (S : Fin (3 : ℕ) → Bool → ProtoTile),
+                      (∀ (i : Fin (3 : ℕ)),
+                          ∀ (s : Bool),
+                            BandSubtileOccurrence cfg.firstPredecessor
+                              (P (0 : Fin (3 : ℕ)) false) i s (S i s)) →
+                        LatticeTile
+                              (TileCellComplement (P (0 : Fin (3 : ℕ)) true)
+                                (Q (0 : Fin (3 : ℕ)) false)) ∧
+                            TileTouching
+                              (TileCellComplement (P (0 : Fin (3 : ℕ)) true)
+                                (Q (0 : Fin (3 : ℕ)) false))
+                              (Q (0 : Fin (3 : ℕ)) false) →
+                          let O := Q 0 false;
+                          O.cells ⊆ (P 0 false).cells →
+                            FootprintVertices (Q (0 : Fin (3 : ℕ)) false) =
+                                FootprintVertices (S (0 : Fin (3 : ℕ)) true) ∧
+                                BoundaryFootprintVertices (Q (0 : Fin (3 : ℕ)) false) =
+                                BoundaryFootprintVertices (S (0 : Fin (3 : ℕ)) true) ∧
+                                BoundaryFootprintEdges (Q (0 : Fin (3 : ℕ)) false) =
+                                BoundaryFootprintEdges (S (0 : Fin (3 : ℕ)) true) ∧
+                                TileRealization (Q (0 : Fin (3 : ℕ)) false) =
+                                TileRealization (S (0 : Fin (3 : ℕ)) true) ∧
+                                TileCentroid (Q (0 : Fin (3 : ℕ)) false) =
+                                TileCentroid (S (0 : Fin (3 : ℕ)) true) →
+                              ((Q (0 : Fin (3 : ℕ)) false).cells = ∅ →
+                                (cfg.firstPredecessor (1 : Fin (4 : ℕ))).1 = (0 : ℤ)) →
+                                (∀ (U : ProtoTile), LatticeTile U → U.cells.Nonempty) →
+                                (∀ (U : ProtoTile),
+                                ∀ (V : ProtoTile),
+                                U.cells.Nonempty →
+                                V.cells.Nonempty →
+                                TileTouching U V →
+                                (FootprintEdges U ∩ FootprintEdges V).Nonempty) →
+                                (∀ (U : ProtoTile),
+                                ∀ (V : ProtoTile),
+                                U.cells ⊆ V.cells → FootprintEdges U ⊆ FootprintEdges V) →
+                                (FootprintEdges (TileCellComplement (P 0 true) O) ∩
+                                FootprintEdges (P 0 false)).Nonempty
+    ) := by
   classical
-  intro q cfg C₀ P hPr Q hQ S hS compQ O hOB R sameObs zero diskNonempty touchEdge edgeMono
+  intro q cfg P hPr Q hQ S hS compQ O hOB sameObs zero diskNonempty touchEdge edgeMono
   by_cases he : O.cells = ∅
   · have hac := (hQ 0 false).2.2
     have hbc := (hS 0 true).2.2
@@ -997,7 +1026,7 @@ theorem BandOrderedGeneralLayout
     (pg i s).2.2 (parentPos i)
   have parea (i : Fin 3) (s : Bool) : TileArea (P i s) = (q i.succ).1.toNat :=
     (pg i s).2.1
-  have pne (i : Fin 3) (s : Bool) := OrderedLayoutGeometry.pne q cfg parentPos P parea i s
+  have pne (i : Fin 3) (s : Bool) := OrderedLayoutGeometry.pne q parentPos P parea i s
   have compQ := (hsmallT1 cfg.firstPredecessor (P 0 true) Q cfg.firstProper
     (hPr true) hQ hQunion rsmall).2.2 0 false
   have compS := (hsmallT1 cfg.firstPredecessor (P 0 false) S cfg.firstProper
@@ -1061,7 +1090,7 @@ theorem BandOrderedGeneralLayout
     (q 2).1.toNat (q 3).1.toNat (cfg.firstPredecessor 1).1.toNat hOA
     (parea 0 true) (parea 0 false) (parea 1 true) (parea 1 false)
     (parea 2 true) (parea 2 false) (qg 0 false).2.1 cfg.soddyNat (OrderedLayoutGeometry.hindex q
-        cfg C₀ hC₀ hn R hcount)
+        C₀ hC₀ hn R hcount)
   have hpartition := BandModifiedCellPartition P O u v L R hu hv hfund hcoords hcover harea
   have hsep := BandOriginalPairSeparation P O u v hOA hOB hpartition
   have compEq : TileCellComplement (P 0 false) (S 0 true) =
@@ -1091,7 +1120,7 @@ theorem BandOrderedGeneralLayout
   have ordinary := P4670T1OrdinaryEdges P u v pne (Q 1 true) (S 1 false)
     (qne 1 true (Or.inl rfl)) (sne 1 false (Or.inl rfl))
     (hQcells 1 true) (hScells 1 false) cross3.1 cross4.1 houter
-  have abEdge := OrderedLayoutGeometry.abEdge q cfg C₀ P hPr Q hQ S hS compQ hOB R sameObs zero
+  have abEdge := OrderedLayoutGeometry.abEdge q cfg P hPr Q hQ S hS compQ hOB sameObs zero
       (OrderedLayoutGeometry.diskNonempty) (OrderedLayoutGeometry.touchEdge
           (OrderedLayoutGeometry.boundaryEdge)) (OrderedLayoutGeometry.edgeMono)
   obtain ⟨segments⟩ := ExceptionalModifiedABPath (P 0 true) (P 0 false) O (S 0 true)

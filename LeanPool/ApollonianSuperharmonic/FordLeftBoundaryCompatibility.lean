@@ -63,12 +63,11 @@ private theorem wline :
       classical
       exact
         ∀ (q : Fin 4 -> CircleCoordinates), ∀ (w : Fin (4 : ℕ) → CircleCoordinates), ∀ (r1 : Fin
-            (3 : ℕ)), (∀ (j : Fin (3 : ℕ)), w j.succ = q (j + r1).succ) → ((∀ (y : Fin (3 : ℕ)),
-            (fun (r : Fin (3 : ℕ)) => ∀ (j : Fin (3 : ℕ)), w j.succ = q (j + r).succ) y → y = r1)
-            → (∀ (iline : Fin (4 : ℕ)), ((q iline).1 = (0 : ℤ)) → ((iline ≠ 0) → (∃ j : Fin 4, (w
+            (3 : ℕ)), (∀ (j : Fin (3 : ℕ)), w j.succ = q (j + r1).succ) → (
+              (∀ (iline : Fin (4 : ℕ)), ((q iline).1 = (0 : ℤ)) → ((iline ≠ 0) → (∃ j : Fin 4, (w
             j).1 = 0)))) ) := by
   classical
-  intro q w r1 hr1 hruniq iline hiline iline0
+  intro q w r1 hr1 iline hiline iline0
   refine ⟨(iline.pred iline0 - r1).succ, ?_⟩
   simpa only [hr1, sub_add_cancel, Fin.succ_pred] using hiline
 
@@ -687,8 +686,8 @@ theorem FordLeftBoundaryCompatibility
     obtain ⟨r1, hr1, hruniq⟩ :=
       BandPredecessorNoCollision q w hq hwproper (hC.trans hwchild.symm)
     obtain ⟨iline, hiline⟩ := hline
-    have wline := FordBoundaryCompatibilityGeometry.wline q w r1 hr1
-        hruniq iline hiline (FordBoundaryCompatibilityGeometry.iline0 q hcurv iline hiline)
+    have wline := FordBoundaryCompatibilityGeometry.wline q w r1 hr1 iline hiline
+        (FordBoundaryCompatibilityGeometry.iline0 q hcurv iline hiline)
     obtain ⟨r2, g2, P2, hP2, hg2, hw2, hz2, heq2⟩ :=
       FordRegimeConverse w hwproper wline
     let barq : Fin 4 → CircleCoordinates :=

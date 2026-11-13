@@ -66,13 +66,13 @@ private theorem neighbor_injective :
     (by
       classical
       exact
-        ∀ (Ci : BandCircle), (List GaussianInt) → ((PeriodicTileComplex ↥(TilingLattice Ci)) → (
         let neighbor (x : GaussianInt) : Fin 4 → GaussianInt :=
           ![x + ⟨0, 1⟩, x - 1, x - ⟨0, 1⟩, x + 1]
-        ∀ (x : GaussianInt), ∀ {j : Fin 4}, ∀ {k : Fin 4}, (neighbor x j = neighbor x k) → (j =
-            k))) ) := by
+        ∀ (x : GaussianInt),
+          ∀ {j : Fin 4}, ∀ {k : Fin 4}, neighbor x j = neighbor x k → j = k
+    ) := by
   classical
-  intro Ci path P neighbor x j k h
+  intro neighbor x j k h
   fin_cases j <;> fin_cases k <;>
     simp [neighbor, Zsqrtd.ext_iff] at h ⊢ <;> omega
 
@@ -680,16 +680,23 @@ private theorem internal_edge_unique :
     (by
       classical
       exact
-        ∀ (Ci : BandCircle), ∀ (path : List GaussianInt), (PeriodicTileComplex ↥(TilingLattice
-            Ci)) → (∀ (x : GaussianInt), (path.Nodup) → (∀ (pre : List GaussianInt), ∀ (y :
-            GaussianInt), ∀ (hpre' : pre ≠ []),
-        let z := pre.getLast hpre'
-        let pre' := pre.dropLast
-        (path.idxOf x = pre'.length + 1) → ((path.idxOf y = pre'.length + 2) → ((path.idxOf z =
-            pre'.length) → (∀ (e : Finset GaussianInt), (∃ a b l r, path = l ++ a :: b :: r ∧ e =
-            {a, b}) → ((x ∈ e) → (e = {z, x} ∨ e = {x, y}))))))) ) := by
+        ∀ (path : List GaussianInt),
+          ∀ (x : GaussianInt),
+            path.Nodup →
+              ∀ (pre : List GaussianInt),
+                ∀ (y : GaussianInt),
+                  ∀ (hpre' : pre ≠ []),
+                    let z := pre.getLast hpre'
+                    let pre' := pre.dropLast
+                    path.idxOf x = pre'.length + 1 →
+                      path.idxOf y = pre'.length + 2 →
+                        path.idxOf z = pre'.length →
+                          ∀ (e : Finset GaussianInt),
+                            (∃ a b l r, path = l ++ a :: b :: r ∧ e = { a, b }) →
+                              x ∈ e → e = { z, x } ∨ e = { x, y }
+    ) := by
   classical
-  intro Ci path P x hnodup pre y hpre' z pre' hidxX hidxY hidxZ e he hxe
+  intro path x hnodup pre y hpre' z pre' hidxX hidxY hidxZ e he hxe
   rcases he with ⟨a, b, l, r, hdecomp, heq⟩
   have hcases : x = a ∨ x = b := by
     have : x ∈ ({a, b} : Finset GaussianInt) := by
@@ -1551,7 +1558,7 @@ private theorem interiorSector :
       owner_unique x UR VR iaR ibR jR hURidx hVRidx hsectorR hURsub hVRsub
   have transition_is_path_edge := LocalSectorGeometry.transition_is_path_edge T0 T0' path
       edgeAt_mem edgeAt_injective edge_of_sector_cell x hedgesPath pre y hpre' jL eL jR eR
-      (LocalSectorGeometry.internal_edge_unique Ci path P x hnodup pre y hpre'
+      (LocalSectorGeometry.internal_edge_unique path x hnodup pre y hpre'
       (LocalSectorGeometry.hidxX path x pre y rest hpre' hleft hnodupPath)
       (LocalSectorGeometry.hidxY path x pre y rest hpre' hleft hnodupPath)
       (LocalSectorGeometry.hidxZ path x pre y rest hpre' hleft hnodupPath))
@@ -1690,8 +1697,8 @@ theorem P4366T2LocalSectors
     have edgeAt_eq_pair := LatticeVertexSectorFacts.edgePair
     have edgeAt_injective (x : GaussianInt) {j k : Fin 4}
         (h : edgeAt x j = edgeAt x k) := LatticeVertexSectorFacts.edgeInjective
-            (LatticeVertexSectorFacts.neighborDistinct) (LocalSectorGeometry.neighbor_injective Ci
-            path P) edgeAt_mem x (j := j) (k := k) h
+            (LatticeVertexSectorFacts.neighborDistinct) (LocalSectorGeometry.neighbor_injective)
+                edgeAt_mem x (j := j) (k := k) h
     have edge_of_sector_cell := LocalSectorGeometry.edge_of_sector_cell
     let outerLabel : GaussianInt → Fin 4 → Fin 3 := fun x j =>
       if LatticeVertexIncidentCell x j ∈ T0.cells then 0

@@ -109,12 +109,11 @@ private theorem coordA_scale :
 
 
 private theorem coordB_scale :
-    let det2 (v w : Real × Real) : Real := v.1 * w.2 - v.2 * w.1
-    let coordB (d e : Real × Real) (v : Real × Real) : Real := det2 d v / det2 d e
-    ∀ (d : Real × Real), ∀ (e : Real × Real), (det2 d e ≠ 0) → (∀ (t : Real), coordB d e (t • d)
-        = 0) := by
+    let det2 (v w : Real × Real) : Real := v.1 * w.2 - v.2 * w.1;
+    let coordB (d e : Real × Real) (v : Real × Real) : Real := det2 d v / det2 d e;
+    ∀ (d : Real × Real), ∀ (e : Real × Real), ∀ (t : Real), coordB d e (t • d) = 0 := by
   classical
-  intro det2 coordB d e hD t
+  intro det2 coordB d e t
   dsimp [coordB, det2, smul_eq_mul]
   rw [show d.1 * (t * d.2) - d.2 * (t * d.1) = 0 by ring]
   simp
@@ -1242,7 +1241,7 @@ theorem P3597T1DirectionParity {n : Nat} (p : P3381T1PolygonBoundary n)
   let coordA_scale (d e : Real × Real) (hD : det2 d e ≠ 0) (t : Real) :
       coordA d e (t • d) = t := DirectionParityLemmas.coordA_scale d e hD t
   let coordB_scale (d e : Real × Real) (hD : det2 d e ≠ 0) (t : Real) :
-      coordB d e (t • d) = 0 := DirectionParityLemmas.coordB_scale d e hD t
+      coordB d e (t • d) = 0 := DirectionParityLemmas.coordB_scale d e t
   let ray_segment_axes (x d e v w : Real × Real) (hD : det2 d e ≠ 0) :
       (∃ t : Real, 0 < t ∧ x + t • d ∈ segment Real v w) ↔
       (∃ u : Real, 0 ≤ u ∧ u ≤ 1 ∧

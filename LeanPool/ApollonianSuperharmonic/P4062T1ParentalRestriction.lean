@@ -97,15 +97,23 @@ private theorem hrecursive :
     simpa [FordOdometer] using rec₃ x hx
 
 private theorem hchild0Lap :
-    ∀ (P : FordFareyParameter), ∀ (P₁ : FordFareyParameter), (FordFareyParameter) → ((P₁.q =
-        P.q₁) → ((∀ x ∈ FordRecursiveVertexDomains P (0 : Fin (4 : ℕ)), FordOdometer P x =
-        FordOdometer P₁ x) → ((∀ (z : GaussianInt), (0 ≤ z.re) → ((z.re ≤ (P.q₁ : Int)) → ((0 ≤
-        z.im) → ((z.im ≤ (P.q₁ : Int)) → (z ∈ FordRecursiveVertexDomains P 0))))) → (∀ (x :
-            GaussianInt), (1 : ℤ) ≤ x.re → x.re ≤ (↑P.q₁ : ℤ) - (1 : ℤ) → (1 : ℤ) ≤ x.im → x.im ≤
-        (↑P.q₁ : ℤ) - (1 : ℤ) → FourNeighborLaplacian (FordOdometer P) x = FourNeighborLaplacian
-        (FordOdometer P₁) x)))) := by
+    ∀ (P : FordFareyParameter),
+      ∀ (P₁ : FordFareyParameter),
+        (∀ x ∈ FordRecursiveVertexDomains P (0 : Fin (4 : ℕ)),
+            FordOdometer P x = FordOdometer P₁ x) →
+          (∀ (z : GaussianInt),
+              0 ≤ z.re →
+                z.re ≤ (P.q₁ : Int) →
+                  0 ≤ z.im → z.im ≤ (P.q₁ : Int) → z ∈ FordRecursiveVertexDomains P 0) →
+            ∀ (x : GaussianInt),
+              (1 : ℤ) ≤ x.re →
+                x.re ≤ (↑P.q₁ : ℤ) - (1 : ℤ) →
+                  (1 : ℤ) ≤ x.im →
+                    x.im ≤ (↑P.q₁ : ℤ) - (1 : ℤ) →
+                      FourNeighborLaplacian (FordOdometer P) x =
+                        FourNeighborLaplacian (FordOdometer P₁) x := by
   classical
-  intro P P₁ P₂ hq₁ hrec₀ hrec0Member x hxr hxr' hxi hxi'
+  intro P P₁ hrec₀ hrec0Member x hxr hxr' hxi hxi'
   have hmem :
       x ∈ FordRecursiveVertexDomains P 0 ∧
       x - 1 ∈ FordRecursiveVertexDomains P 0 ∧
@@ -367,8 +375,8 @@ theorem P4062T1ParentalRestriction (P : FordFareyParameter)
       (hxr : 1 ≤ x.re) (hxr' : x.re ≤ (P.q₁ : Int) - 1)
       (hxi : 1 ≤ x.im) (hxi' : x.im ≤ (P.q₁ : Int) - 1) :
       FourNeighborLaplacian (FordOdometer P) x =
-        FourNeighborLaplacian (FordOdometer P₁) x := ParentalRestrictionProof.hchild0Lap P P₁ P₂
-            hq₁ hrec₀ hrec0Member x hxr hxr' hxi hxi'
+        FourNeighborLaplacian (FordOdometer P₁) x := ParentalRestrictionProof.hchild0Lap P P₁
+            hrec₀ hrec0Member x hxr hxr' hxi hxi'
   have hrec1Member (z : GaussianInt)
       (hzr : (P.q₂ : Int) ≤ z.re) (hzr' : z.re ≤ (P.q : Int))
       (hzi : (P.q₂ : Int) ≤ z.im) (hzi' : z.im ≤ (P.q : Int)) :

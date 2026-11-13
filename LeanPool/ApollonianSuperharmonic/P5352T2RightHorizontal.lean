@@ -239,16 +239,18 @@ private theorem hparent :
     (by
       classical
       exact
-        ∀ (K : DiamondParameter), ∀ (hk : (1 : ℕ) < K.1), ∀ (f : IntegerLatticeFunction), (∀ y ∈
-            FootprintVertices (P5352T2Sources K hk (0 : Fin (4 : ℕ))).1, f y =
-            (P5352T2Sources K hk (0 : Fin (4 : ℕ))).2.1 y) → (
-        let Q (x : GaussianInt) : Int :=
-          (Int.natAbs x.re : Int) * ((Int.natAbs x.re : Int)-1)/2 -
-            (x.re-x.im)^2/4
-        ((P5352T2Sources K hk 0).1 = DiamondTile K.1) → (∀ w ∈ FootprintVertices (DiamondTile
-            K.1), f w = Q w)) ) := by
+        ∀ (K : DiamondParameter),
+          ∀ (hk : (1 : ℕ) < K.1),
+            ∀ (f : IntegerLatticeFunction),
+              (∀ y ∈ FootprintVertices (P5352T2Sources K hk (0 : Fin (4 : ℕ))).1,
+                  f y = (P5352T2Sources K hk (0 : Fin (4 : ℕ))).2.1 y) →
+                let Q (x : GaussianInt) : Int :=
+                  (Int.natAbs x.re : Int) * ((Int.natAbs x.re : Int) - 1) / 2 -
+                    (x.re - x.im) ^ 2 / 4;
+                ∀ w ∈ FootprintVertices (DiamondTile K.1), f w = Q w
+    ) := by
   classical
-  intro K hk f hC Q hA w hw
+  intro K hk f hC Q w hw
   have hv := hC w hw
   have hval := (P5352T2DomainRows K w).2 hw
   simpa [P5352T2Sources, Q] using hv.trans hval
@@ -312,11 +314,13 @@ private theorem hsq1 :
     (by
       classical
       exact
-        ∀ (K : DiamondParameter), (IntegerLatticeFunction) → ((Int) → (∀ (z : GaussianInt),
-        let n : Int := K.1
-        (z.re = n) → ((1-2*n)^2/4 = n^2-n))) ) := by
+        ∀ (K : DiamondParameter),
+          GaussianInt →
+            let n : Int := K.1;
+            (1 - 2 * n) ^ 2 / 4 = n ^ 2 - n
+    ) := by
   classical
-  intro K f B z n hzr
+  intro K z n
   have h := P4207T1FloorArithmetic.1 1 (-n)
   norm_num at h ⊢
   rw [show 1 + -(2*n) = 1-2*n by ring] at h
@@ -394,23 +398,43 @@ private theorem hLap :
     (by
       classical
       exact
-        ∀ (K : DiamondParameter), ∀ (f : IntegerLatticeFunction), ∀ (B : Int), ∀ (z : GaussianInt),
-        let n : Int := K.1
-        let M : GaussianInt := ⟨2*n, 0⟩
-        let Q (x : GaussianInt) : Int :=
-          (Int.natAbs x.re : Int) * ((Int.natAbs x.re : Int)-1)/2 -
-            (x.re-x.im)^2/4
-        (z.re = n) → ((z = ⟨n,n⟩) → ((z-1 = ⟨n-1,n⟩) → ((z+⟨0,1⟩ = ⟨n,n+1⟩) → ((z-⟨0,1⟩ =
-            ⟨n,n-1⟩) → ((z+1 = ⟨n+1,n⟩) → ((f z = Q z) → ((f (z-1) = Q (z-1)) → ((f (z+⟨0,1⟩) = Q
-            (z+⟨0,1⟩)) → ((f (z-⟨0,1⟩) = Q (z-⟨0,1⟩)) → ((f z = Q (z-M) + (n-1)*z.re + n*z.im +
-            B) → ((f (z+1) = Q ((z+1)-M) + (n-1)*(z+1).re + n*(z+1).im + B) → ((Q ⟨n,n⟩ =
-            n*(n-1)/2) → ((Q ⟨n-1,n⟩ = (n-1)*(n-2)/2) → ((Q ⟨n,n+1⟩ = n*(n-1)/2) → ((Q ⟨n,n-1⟩ =
-            n*(n-1)/2) → (((1-2*n)^2/4 = n^2-n) → (((-n-n)^2/4 = n^2) → (((1-n-n)^2/4 = n^2-n) →
-            ((Q ⟨-n,n⟩ = n*(n-1)/2-n^2) → ((Q ⟨1-n,n⟩ = (n-1)*(n-2)/2-(n^2-n)) → ((z-M = ⟨-n,n⟩)
-            → (((z+1)-M = ⟨1-n,n⟩) → (FourNeighborLaplacian f z = 1))))))))))))))))))))))) ) := by
+        ∀ (K : DiamondParameter),
+          ∀ (f : IntegerLatticeFunction),
+            ∀ (B : Int),
+              ∀ (z : GaussianInt),
+                let n : Int := K.1;
+                let M : GaussianInt := ⟨2 * n, 0⟩;
+                let Q (x : GaussianInt) : Int :=
+                  (Int.natAbs x.re : Int) * ((Int.natAbs x.re : Int) - 1) / 2 -
+                    (x.re - x.im) ^ 2 / 4;
+                z = ⟨n, n⟩ →
+                  z - 1 = ⟨n - 1, n⟩ →
+                    z + ⟨0, 1⟩ = ⟨n, n + 1⟩ →
+                      z - ⟨0, 1⟩ = ⟨n, n - 1⟩ →
+                        z + 1 = ⟨n + 1, n⟩ →
+                          f z = Q z →
+                            f (z - 1) = Q (z - 1) →
+                              f (z + ⟨0, 1⟩) = Q (z + ⟨0, 1⟩) →
+                                f (z - ⟨0, 1⟩) = Q (z - ⟨0, 1⟩) →
+                                f z = Q (z - M) + (n - 1) * z.re + n * z.im + B →
+                                f (z + 1) =
+                                Q (z + 1 - M) + (n - 1) * (z + 1).re + n * (z + 1).im +
+                                B →
+                                Q ⟨n, n⟩ = n * (n - 1) / 2 →
+                                Q ⟨n - 1, n⟩ = (n - 1) * (n - 2) / 2 →
+                                Q ⟨n, n + 1⟩ = n * (n - 1) / 2 →
+                                Q ⟨n, n - 1⟩ = n * (n - 1) / 2 →
+                                (1 - 2 * n) ^ 2 / 4 = n ^ 2 - n →
+                                (-n - n) ^ 2 / 4 = n ^ 2 →
+                                (1 - n - n) ^ 2 / 4 = n ^ 2 - n →
+                                Q ⟨-n, n⟩ = n * (n - 1) / 2 - n ^ 2 →
+                                Q ⟨1 - n, n⟩ = (n - 1) * (n - 2) / 2 - (n ^ 2 - n) →
+                                z - M = ⟨-n, n⟩ →
+                                z + 1 - M = ⟨1 - n, n⟩ → FourNeighborLaplacian f z = 1
+    ) := by
   classical
-  intro K f B z n M Q hzr hzc hWc hNc hSc hEc hfCenter hfWest hfNorth hfSouth hfChildCenter
-      hfEast qCenter qWest qNorth qSouth hsq1 hsq0' hsq1' qChildCenter qChildEast hChildCenter
+  intro K f B z n M Q hzc hWc hNc hSc hEc hfCenter hfWest hfNorth hfSouth hfChildCenter hfEast
+      qCenter qWest qNorth qSouth hsq1 hsq0' hsq1' qChildCenter qChildEast hChildCenter
       hChildEast
   have hB : B = n-n^2 := by
     rw [hfCenter] at hfChildCenter
@@ -518,7 +542,7 @@ theorem P5352T2RightHorizontal (K : DiamondParameter) (hk : 1 < K.1)
     simpa [hA, hM] using hzM
   have hchildEast := DiamondRightHorizontal.hchildEast K hk z hzr foot hEc
   have hparent (w : GaussianInt) (hw : w ∈ FootprintVertices (DiamondTile K.1)) :
-      f w = Q w := DiamondRightHorizontal.hparent K hk f hC hA w hw
+      f w = Q w := DiamondRightHorizontal.hparent K hk f hC w hw
   have hfCenter : f z = Q z := hparent z (by simpa [hA] using hz)
   have hfWest : f (z-1) = Q (z-1) := hparent (z-1) hw
   have hfNorth : f (z+⟨0,1⟩) = Q (z+⟨0,1⟩) := hparent _ hnorth
@@ -535,14 +559,14 @@ theorem P5352T2RightHorizontal (K : DiamondParameter) (hk : 1 < K.1)
     simp [Q, abs_of_nonneg (show 0 ≤ n by omega)]
   have hsq0 : (-2*n)^2/4 = n^2 := by
     simpa using (P4207T1FloorArithmetic.1 0 (-n))
-  have hsq1 := DiamondRightHorizontal.hsq1 K f B z hzr
+  have hsq1 := DiamondRightHorizontal.hsq1 K z
   have hsq0' := DiamondRightHorizontal.hsq0' K hsq0
   have hsq1' := DiamondRightHorizontal.hsq1' K hsq1
   have qChildCenter := DiamondRightHorizontal.qChildCenter K hk z hzr hsq1 hsq0' hsq1'
   have qChildEast := DiamondRightHorizontal.qChildEast K hk z hzr hsq1 hsq0' hsq1'
   have hChildCenter : z-M = ⟨-n,n⟩ := by rw [hzc]; ext <;> simp [M]; ring
   have hChildEast : (z+1)-M = ⟨1-n,n⟩ := by rw [hzc]; ext <;> simp [M]; ring
-  have hLap := DiamondRightHorizontal.hLap K f B z hzr hzc hWc hNc hSc hEc hfCenter hfWest
+  have hLap := DiamondRightHorizontal.hLap K f B z hzc hWc hNc hSc hEc hfCenter hfWest
       hfNorth hfSouth hfChildCenter hfEast qCenter qWest qNorth qSouth hsq1 hsq0' hsq1'
       qChildCenter qChildEast hChildCenter hChildEast
   refine ⟨?_, ?_⟩

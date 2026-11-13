@@ -155,18 +155,27 @@ private theorem hlong :
   simpa [Nat.lt_iff_add_one_le] using hm
 
 private theorem hboundary :
-    ∀ (X : Set GaussianInt), ∀ (E : Set (Finset GaussianInt)), (∀ v : X, Set.ncard
-        ((SimpleGraph.fromRel fun a b : X => ({a.1, b.1} : Finset GaussianInt) ∈ E).neighborSet
-        v) ≤ 2) → (
-    let G : SimpleGraph X := SimpleGraph.fromRel fun a b : X =>
-      ({a.1, b.1} : Finset GaussianInt) ∈ E
-    (X.Finite) → (
-    (ℕ) → (∀ (u : (↑X : Type)), ∀ (v : (↑X : Type)), ∀ (p : G.Walk u v), (p.IsPath) → ((∀ (u' :
-        X), ∀ (v' : X), ∀ (p' : G.Walk u' v'), (p'.IsPath) → (p'.length ≤ p.length)) → (∀ z : X,
-        z ∈ p.support →
-      ∀ w : X, G.Adj z w → w ∈ p.support))))) := by
+    ∀ (X : Set GaussianInt),
+      ∀ (E : Set (Finset GaussianInt)),
+        (∀ v : X,
+            Set.ncard
+                ((SimpleGraph.fromRel fun a b : X =>
+                      ({ a.1, b.1 } : Finset GaussianInt) ∈ E).neighborSet
+                  v) ≤
+              2) →
+          let G : SimpleGraph X :=
+            SimpleGraph.fromRel fun a b : X => ({ a.1, b.1 } : Finset GaussianInt) ∈ E;
+          X.Finite →
+            ∀ (u : (↑X : Type)),
+              ∀ (v : (↑X : Type)),
+                ∀ (p : G.Walk u v),
+                  p.IsPath →
+                    (∀ (u' : X),
+                        ∀ (v' : X),
+                          ∀ (p' : G.Walk u' v'), p'.IsPath → p'.length ≤ p.length) →
+                      ∀ z : X, z ∈ p.support → ∀ w : X, G.Adj z w → w ∈ p.support := by
   classical
-  intro X E hdegree G hXfinite n u v p hp hmax
+  intro X E hdegree G hXfinite u v p hp hmax
   let vertexFiniteness : Fintype X := hXfinite.fintype
   intro z hz w hzw
   by_contra hwo
@@ -491,7 +500,7 @@ theorem FiniteConnectedAcyclicDegreeTwoGridPath
       p'.length ≤ p.length := GridPathProof.hmax X E n hnl u v p hp_len
   have hlong : 0 < p.length := GridPathProof.hlong X E hEne hendpoints hgrid u v p hmax
   have hboundary : ∀ z : X, z ∈ p.support →
-      ∀ w : X, G.Adj z w → w ∈ p.support := GridPathProof.hboundary X E hdegree hXfinite n u v p
+      ∀ w : X, G.Adj z w → w ∈ p.support := GridPathProof.hboundary X E hdegree hXfinite u v p
           hp hmax
   have hall : ∀ (x : X), x ∈ p.support := GridPathProof.hall X E hGconn u v p hboundary
   have hsupport : {x : X | x ∈ p.support} = Set.univ := GridPathProof.hsupport X E u v p hall

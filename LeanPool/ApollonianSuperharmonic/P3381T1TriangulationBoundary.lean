@@ -297,47 +297,74 @@ private theorem containing :
     linarith [hu.1]
 
 private theorem opposite :
-    ∀ (n : Nat), ∀ (p : P3381T1PolygonBoundary n), ∀ (X : Set (Real × Real)), ∀ (K : Set (Real
-        × Real)), ∀ (t : P3381T1PairedTriangulation p X K), ∀ (b : Fin t.count → ℝ × ℝ → Fin (3
-        : ℕ) → ℝ), (∀ (k : Fin t.count), ∀ (j : Fin (3 : ℕ)), Continuous fun (z : ℝ × ℝ) => b k z
-        j) → ((∀ (k : Fin t.count), ∀ (z : ℝ × ℝ), z ∈ (convexHull ℝ : Set (ℝ × ℝ) → Set (ℝ × ℝ))
-        (Set.range (p.vertex ∘ t.face k)) ↔ ∀ (j : Fin (3 : ℕ)), (0 : ℝ) ≤ b k z j) → ((∀ (k :
-            Fin t.count), ∀ (i : Fin (3 : ℕ)), b k (p.vertex (t.face k i)) = Pi.single i (1 : ℝ))
-            → (
-    let D k := convexHull Real (Set.range (p.vertex ∘ t.face k))
-    (∀ (a : Fin 3), ∀ (b : Fin 3), ∀ (c : Fin 3), (a ≠ b) → ((a ≠ c) → ((b ≠ c) → (∀ j, j = a ∨ j
-        = b ∨ j = c)))) → ((∀ k, ∀ (x : Real × Real), ∀ (y : Real × Real), ∀ (a : Real), ∀ (c :
-            Real), (a + c = 1) → (∀ j, b k (a • x + c • y) j = a * b k x
-        j + c * b k y j)) → ((∀ k, ∀ l, (k ≠ l) → (∀ z, (∀ j, 0 < b k z j) → ((z ∈ D l) →
-            (False)))) → ((∀ (O : Set (Real × Real)), (IsOpen O) → (∀ z, (z ∈ O) → (∀ v, ∃ u :
-            Real, 0 < u
-        ∧ u < 1 ∧ (1 - u) • z + u • v ∈ O))) → (∀ (i : Fin (n + (3 : ℕ))), ∀ (j : Fin (n + (3 :
-        ℕ))), ∀ (u : ℝ), (u ∈ Set.Ioo (0 : ℝ) (1 : ℝ)) → (
-    let z : Real × Real := (1 - u) • p.vertex i + u • p.vertex j
-    let I : Set (Fin t.count) := {k | i ∈ Set.range (t.face k) ∧ j ∈ Set.range (t.face k)}
-    ∀ (k : Fin t.count), ∀ (l : Fin t.count), k ≠ l →
-    k ∈ I →
-      l ∈ I →
-        ∀ (a : Fin (3 : ℕ)), ∀ (d : Fin (3 : ℕ)), ∀ (c : Fin (3 : ℕ)), ∀ (e : Fin (3 : ℕ)), ∀ (f
-            : Fin (3 : ℕ)), ∀ (g : Fin (3 : ℕ)), t.face k a = i →
-            t.face k d = j →
-              a ≠ d →
-                a ≠ c →
-                  d ≠ c →
-                    t.face l e = i →
-                      t.face l f = j →
-                        e ≠ f →
-                          e ≠ g →
+    ∀ (n : Nat),
+      ∀ (p : P3381T1PolygonBoundary n),
+        ∀ (X : Set (Real × Real)),
+          ∀ (K : Set (Real × Real)),
+            ∀ (t : P3381T1PairedTriangulation p X K),
+              ∀ (b : Fin t.count → ℝ × ℝ → Fin (3 : ℕ) → ℝ),
+                (∀ (k : Fin t.count),
+                    ∀ (j : Fin (3 : ℕ)), Continuous fun (z : ℝ × ℝ) => b k z j) →
+                  (∀ (k : Fin t.count),
+                      ∀ (z : ℝ × ℝ),
+                        z ∈
+                            (convexHull ℝ : Set (ℝ × ℝ) → Set (ℝ × ℝ))
+                            (Set.range (p.vertex ∘ t.face k)) ↔
+                          ∀ (j : Fin (3 : ℕ)), (0 : ℝ) ≤ b k z j) →
+                    (∀ (k : Fin t.count),
+                        ∀ (i : Fin (3 : ℕ)),
+                          b k (p.vertex (t.face k i)) = Pi.single i (1 : ℝ)) →
+                      let D k := convexHull Real (Set.range (p.vertex ∘ t.face k));
+                      (∀ (a : Fin 3),
+                          ∀ (b : Fin 3),
+                            ∀ (c : Fin 3),
+                            a ≠ b → a ≠ c → b ≠ c → ∀ j, j = a ∨ j = b ∨ j = c) →
+                        (∀ k,
+                            ∀ (x : Real × Real),
+                            ∀ (y : Real × Real),
+                            ∀ (a : Real),
+                            ∀ (c : Real),
+                            a + c = 1 →
+                            ∀ j, b k (a • x + c • y) j = a * b k x j + c * b k y j) →
+                          (∀ k, ∀ l, k ≠ l → ∀ z, (∀ j, 0 < b k z j) → z ∈ D l → False) →
+                            (∀ (O : Set (Real × Real)),
+                            IsOpen O →
+                            ∀ z,
+                            z ∈ O →
+                            ∀ v, ∃ u : Real, 0 < u ∧ u < 1 ∧ (1 - u) • z + u • v ∈ O) →
+                            ∀ (i : Fin (n + (3 : ℕ))),
+                            ∀ (j : Fin (n + (3 : ℕ))),
+                            ∀ (u : ℝ),
+                            u ∈ Set.Ioo (0 : ℝ) (1 : ℝ) →
+                            let z : Real × Real := (1 - u) • p.vertex i + u • p.vertex j;
+                          ∀ (k : Fin t.count),
+                            ∀ (l : Fin t.count),
+                            k ≠ l →
+                            ∀ (a : Fin (3 : ℕ)),
+                            ∀ (d : Fin (3 : ℕ)),
+                            ∀ (c : Fin (3 : ℕ)),
+                            ∀ (e : Fin (3 : ℕ)),
+                            ∀ (f : Fin (3 : ℕ)),
+                            ∀ (g : Fin (3 : ℕ)),
+                            t.face k a = i →
+                            t.face k d = j →
+                            a ≠ d →
+                            a ≠ c →
+                            d ≠ c →
+                            t.face l e = i →
+                            t.face l f = j →
+                            e ≠ f →
+                            e ≠ g →
                             f ≠ g →
-                              b k z a = (1 : ℝ) - u →
-                                b k z d = u →
-                                  b k z c = (0 : ℝ) →
-                                    b l z e = (1 : ℝ) - u →
-                                      b l z f = u → b l z g = (0 : ℝ) → b k (p.vertex (t.face l
-                                          g)) c < (0 : ℝ))))))))) := by
+                            b k z a = (1 : ℝ) - u →
+                            b k z d = u →
+                            b k z c = (0 : ℝ) →
+                            b l z e = (1 : ℝ) - u →
+                            b l z f = u →
+                            b l z g = (0 : ℝ) → b k (p.vertex (t.face l g)) c < (0 : ℝ) := by
   classical
-  intro n p X K t b bcontinuous bhull bvertex D indices blinear hdisjoint perturb i j u hu z I k
-      l hkl hk hl a d c e f g hka hkd had hac hdc hle hlf hef heg hfg hza hzd hzc hze hzf hzg
+  intro n p X K t b bcontinuous bhull bvertex D indices blinear hdisjoint perturb i j u hu z k
+      l hkl a d c e f g hka hkd had hac hdc hle hlf hef heg hfg hza hzd hzc hze hzf hzg
   by_contra hnot
   have hnonneg := le_of_not_gt hnot
   let O : Set (Real × Real) := {y | 0 < b k y a ∧ 0 < b k y d}
@@ -372,25 +399,48 @@ private theorem opposite :
     exact hs0
 
 private theorem hnotAt427 :
-    ∀ (n : Nat), ∀ (p : P3381T1PolygonBoundary n), ∀ (X : Set (Real × Real)), ∀ (K : Set (Real
-        × Real)), ∀ (t : P3381T1PairedTriangulation p X K), ∀ (k : Fin t.count), ∀ (b : Fin
-        t.count → ℝ × ℝ → Fin (3 : ℕ) → ℝ), (∀ (k : Fin t.count), ∀ (z : ℝ × ℝ), z ∈ (convexHull
-        ℝ : Set (ℝ × ℝ) → Set (ℝ × ℝ)) (Set.range (p.vertex ∘ t.face k)) ↔ ∀ (j : Fin (3 : ℕ)),
-            (0 : ℝ) ≤ b k z j) → ((∀ (k : Fin t.count), ∀ (i : Fin (3 : ℕ)), b k (p.vertex (t.face k
-        i)) = Pi.single i (1 : ℝ)) → (
-    let D k := convexHull Real (Set.range (p.vertex ∘ t.face k))
-    (∀ k, IsClosed (D k)) → (∀ k, ∀ (x : Real × Real), ∀ (y : Real × Real), ∀ (a : Real), ∀ (c :
-        Real), (a + c = 1) → (∀ j, b k (a • x + c • y) j = a * b k x j + c * b k y
-        j)) → ((∀ (O : Set (Real × Real)), (IsOpen O) → (∀ z, (z ∈ O) → (∀ v, ∃ u : Real, 0 < u ∧
-        u < 1 ∧ (1 - u) • z + u • v ∈ O))) → (∀ (i : Fin (n + (3 : ℕ))), ∀ (j : Fin (n + (3 :
-        ℕ))), ∀ (u : ℝ),
-    let z : Real × Real := (1 - u) • p.vertex i + u • p.vertex j
-    let I : Set (Fin t.count) := {k | i ∈ Set.range (t.face k) ∧ j ∈ Set.range (t.face k)}
-    (∀ k, (z ∈ D k) → (k ∈ I)) → ((I = {k}) → ((k ∈ I) → (∀ (a : Fin (3 : ℕ)), ∀ (c : Fin (3 :
-        ℕ)), (a ≠ c) → ((b k z c = (0 : ℝ)) → (z ∉ interior X))))))))) := by
+    ∀ (n : Nat),
+      ∀ (p : P3381T1PolygonBoundary n),
+        ∀ (X : Set (Real × Real)),
+          ∀ (K : Set (Real × Real)),
+            ∀ (t : P3381T1PairedTriangulation p X K),
+              ∀ (k : Fin t.count),
+                ∀ (b : Fin t.count → ℝ × ℝ → Fin (3 : ℕ) → ℝ),
+                  (∀ (k : Fin t.count),
+                      ∀ (z : ℝ × ℝ),
+                        z ∈
+                            (convexHull ℝ : Set (ℝ × ℝ) → Set (ℝ × ℝ))
+                            (Set.range (p.vertex ∘ t.face k)) ↔
+                          ∀ (j : Fin (3 : ℕ)), (0 : ℝ) ≤ b k z j) →
+                    (∀ (k : Fin t.count),
+                        ∀ (i : Fin (3 : ℕ)),
+                          b k (p.vertex (t.face k i)) = Pi.single i (1 : ℝ)) →
+                      let D k := convexHull Real (Set.range (p.vertex ∘ t.face k));
+                      (∀ k, IsClosed (D k)) →
+                        (∀ k,
+                            ∀ (x : Real × Real),
+                            ∀ (y : Real × Real),
+                            ∀ (a : Real),
+                            ∀ (c : Real),
+                            a + c = 1 →
+                            ∀ j, b k (a • x + c • y) j = a * b k x j + c * b k y j) →
+                          (∀ (O : Set (Real × Real)),
+                            IsOpen O →
+                            ∀ z,
+                            z ∈ O →
+                            ∀ v, ∃ u : Real, 0 < u ∧ u < 1 ∧ (1 - u) • z + u • v ∈ O) →
+                            ∀ (i : Fin (n + (3 : ℕ))),
+                            ∀ (j : Fin (n + (3 : ℕ))),
+                            ∀ (u : ℝ),
+                            let z : Real × Real := (1 - u) • p.vertex i + u • p.vertex j;
+                          let I : Set (Fin t.count) :=
+                            {k | i ∈ Set.range (t.face k) ∧ j ∈ Set.range (t.face k)};
+                          (∀ k, z ∈ D k → k ∈ I) →
+                            I = { k } →
+                            ∀ (c : Fin (3 : ℕ)), b k z c = (0 : ℝ) → z ∉ interior X := by
   classical
-  intro n p X K t k b bhull bvertex D closed_D blinear perturb i j u z I containing hI hk a c hac
-      hzc hzint
+  intro n p X K t k b bhull bvertex D closed_D blinear perturb i j u z I containing hI c hzc
+      hzint
   let N : Set (Real × Real) := ⋂ l, if l = k then Set.univ else (D l)ᶜ
   have hN : IsOpen N := by
     apply isOpen_iInter_of_finite
@@ -1354,7 +1404,7 @@ theorem P3381T1TriangulationBoundary {n : Nat}
         (hza : b k z a = 1 - u) (hzd : b k z d = u) (hzc : b k z c = 0)
         (hze : b l z e = 1 - u) (hzf : b l z f = u) (hzg : b l z g = 0) :=
             TriangulationBoundaryProof.opposite n p X K t b
-            bcontinuous bhull bvertex indices blinear hdisjoint perturb i j u hu k l hkl hk hl a
+            bcontinuous bhull bvertex indices blinear hdisjoint perturb i j u hu k l hkl a
             d c e f g hka hkd had hac hdc hle hlf hef heg hfg hza hzd hzc hze hzf hzg
     have hcard := t.edge_count i j hij
     change I.ncard = _ at hcard
@@ -1364,7 +1414,7 @@ theorem P3381T1TriangulationBoundary {n : Nat}
       have hk : k ∈ I := by rw [hI]; simp
       obtain ⟨a, d, c, hka, hkd, had, hac, hdc, hza, hzd, hzc⟩ := edge_coords k hk
       have hnot := TriangulationBoundaryProof.hnotAt427 n p X K t k b bhull
-          bvertex closed_D blinear perturb i j u containing hI hk a c hac hzc
+          bvertex closed_D blinear perturb i j u containing hI c hzc
       simp only [hneighbor, not_true_eq_false, iff_false]
       exact hnot
     · simp only [hneighbor, ite_false, hused, ite_true] at hcard

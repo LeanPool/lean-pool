@@ -50,12 +50,15 @@ private theorem squareCell :
     (by
       classical
       exact
-        (FordFareyParameter) → ((BandCircle) → ((Fin 3) → ((GaussianInt) → ((GaussianInt) → (∀ (n
-            : Nat), ∀ (v : GaussianInt), ∀ (z : GaussianInt), z ∈ (TileTranslation (FordTile n)
-            v).cells ↔ 0 ≤ (z - v).re ∧ (z - v).re < (n : Int) ∧ 0 ≤ (z - v).im ∧ (z - v).im < (n
-            : Int)))))) ) := by
+        ∀ (n : Nat),
+          ∀ (v : GaussianInt),
+            ∀ (z : GaussianInt),
+              z ∈ (TileTranslation (FordTile n) v).cells ↔
+                0 ≤ (z - v).re ∧
+                  (z - v).re < (n : Int) ∧ 0 ≤ (z - v).im ∧ (z - v).im < (n : Int)
+    ) := by
   classical
-  intro P Ci i x u n v z
+  intro n v z
   change z ∈ (FordCellDomain n).image (GaussianTranslation v) ↔ _
   constructor
   · rintro hz
@@ -418,7 +421,7 @@ theorem FordOpposingBoundaryStarLocalization
   have squareCell (n : Nat) (v z : GaussianInt) :
       z ∈ (TileTranslation (FordTile n) v).cells ↔
         0 ≤ (z - v).re ∧ (z - v).re < (n : Int) ∧
-        0 ≤ (z - v).im ∧ (z - v).im < (n : Int) := FordStarGeometry.squareCell P Ci i x u n v z
+        0 ≤ (z - v).im ∧ (z - v).im < (n : Int) := FordStarGeometry.squareCell n v z
   have hsum : (P.q : Int) = (P.q₁ : Int) + P.q₂ := by exact_mod_cast P.sum_q
   have hchosen : ∃ (U V : ProtoTile) (g k : PartialOdometer),
       AncestorOdometer Ci.1.1 C0.1.1 U T0 g h0 ∧

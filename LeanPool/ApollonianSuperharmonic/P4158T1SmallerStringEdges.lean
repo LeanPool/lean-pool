@@ -69,10 +69,10 @@ private theorem hrpos :
     (by
       classical
       exact
-        ∀ (P : FordFareyParameter), (BandCircle) → (((P.q : Int) = P.q₁ + P.q₂) → ((1 < P.q) → (0
-            < P.q₁))) ) := by
+        ∀ (P : FordFareyParameter), (P.q : Int) = P.q₁ + P.q₂ → 1 < P.q → 0 < P.q₁
+    ) := by
   classical
-  intro P Ci hsum hqone
+  intro P hsum hqone
   by_contra hn
   have hz : P.q₁ = 0 := by omega
   have hd := P.det₁
@@ -118,12 +118,15 @@ private theorem hnlarge :
     (by
       classical
       exact
-        ∀ (P : FordFareyParameter), (BandCircle) → (∀ (Ci : BandCircle), ∀ (i : Fin 3), ((1 : ℤ)
-            < Ci.1.1.1) → (
-        let n := if i = 0 then P.q₁ else P.q₂
-        (0 < n) → ((Ci.1.1.1 = (n : Int) ^ 2) → (1 < n)))) ) := by
+        ∀ (P : FordFareyParameter),
+          ∀ (Ci : BandCircle),
+            ∀ (i : Fin 3),
+              (1 : ℤ) < Ci.1.1.1 →
+                let n := if i = 0 then P.q₁ else P.q₂
+                0 < n → Ci.1.1.1 = (n : Int) ^ 2 → 1 < n
+    ) := by
   classical
-  intro P C0 Ci i hlarge n hnpos hCicurv
+  intro P Ci i hlarge n hnpos hCicurv
   rw [hCicurv] at hlarge
   by_contra hn
   have : n = 1 := by omega
@@ -133,11 +136,13 @@ private theorem determinantCoprime :
     (by
       classical
       exact
-        (FordFareyParameter) → ((BandCircle) → ((BandCircle) → ((Fin 3) → (∀ (a : Int), ∀ (b :
-            Nat), ∀ (d : Nat), ∀ (c : Int), (a * (d : Int) - (b : Int) * c = 1) → (Nat.Coprime b
-            a.natAbs))))) ) := by
+        ∀ (a : Int),
+          ∀ (b : Nat),
+            ∀ (d : Nat),
+              ∀ (c : Int), a * (d : Int) - (b : Int) * c = 1 → Nat.Coprime b a.natAbs
+    ) := by
   classical
-  intro P C0 Ci i a b d c hd
+  intro a b d c hd
   rw [Nat.coprime_iff_gcd_eq_one]
   apply Nat.dvd_one.mp
   let g := Nat.gcd b a.natAbs
@@ -193,11 +198,12 @@ private theorem fordcell :
     (by
       classical
       exact
-        (FordFareyParameter) → ((BandCircle) → ((BandCircle) → ((Fin 3) → (∀ (m : Nat), ∀ (z :
-            GaussianInt), z ∈ (FordTile m).cells ↔ 0 ≤ z.re ∧ z.re < m ∧ 0 ≤ z.im ∧ z.im < m))))
-            ) := by
+        ∀ (m : Nat),
+          ∀ (z : GaussianInt),
+            z ∈ (FordTile m).cells ↔ 0 ≤ z.re ∧ z.re < m ∧ 0 ≤ z.im ∧ z.im < m
+    ) := by
   classical
-  intro P C0 Ci i m z
+  intro m z
   change z ∈ ((Finset.range m).product (Finset.range m)).image
     (fun a => (⟨(a.1 : Int), (a.2 : Int)⟩ : GaussianInt)) ↔ _
   rw [Finset.mem_image]
@@ -216,12 +222,15 @@ private theorem fordcent :
     (by
       classical
       exact
-        (FordFareyParameter) → ((BandCircle) → ((BandCircle) → ((Fin 3) → ((∀ (m : Nat), ∀ (z :
-            GaussianInt), z ∈ (FordTile m).cells ↔ 0 ≤ z.re ∧ z.re < m ∧ 0 ≤ z.im ∧ z.im < m) →
-            ((∀ (m : Nat), (0 < m) → ((FordTile m).cells.Nonempty)) → (∀ (m : Nat), (0 < m) →
-            (TileCentroid (FordTile m) = ((m : Real) / 2, (m : Real) / 2)))))))) ) := by
+        (∀ (m : Nat),
+            ∀ (z : GaussianInt),
+              z ∈ (FordTile m).cells ↔ 0 ≤ z.re ∧ z.re < m ∧ 0 ≤ z.im ∧ z.im < m) →
+          (∀ (m : Nat), 0 < m → (FordTile m).cells.Nonempty) →
+            ∀ (m : Nat),
+              0 < m → TileCentroid (FordTile m) = ((m : Real) / 2, (m : Real) / 2)
+    ) := by
   classical
-  intro P C0 Ci i fordcell fordne m hm
+  intro fordcell fordne m hm
   let R := TileTranslation (TileQuarterTurn (FordTile m)) ⟨m, 0⟩
   have hcR : R.cells = (FordTile m).cells := by
     ext z
@@ -635,24 +644,42 @@ private theorem hnotouch :
     (by
       classical
       exact
-        ∀ (P : FordFareyParameter), (BandCircle) → (∀ (Ci : BandCircle), ∀ (i : Fin 3), ∀ (u :
-            GaussianInt), ∀ (base : ProtoTile), ∀ (Rminus : ProtoTile), ∀ (Rplus : ProtoTile), ∀
-            (tiles : List ProtoTile),
-        let n := if i = 0 then P.q₁ else P.q₂
-        (n < P.q) → ((Ci.1.1.1 = (n : Int) ^ 2) → ((1 < n) → (
-        let vm : GaussianInt := u + if i = 0 then ⟨P.q, 0⟩ else ⟨0, P.q⟩
-        let vp : GaussianInt := u + if i = 0 then ⟨P.q₂, P.q⟩ else ⟨-(P.q₂ : Int), 0⟩
-        (TileCentroid Rplus - TileCentroid Rminus = GaussianRealPoint (vp - vm)) → ((Zsqrtd.norm
-            (vp - vm) = (P.q : Int) ^ 2 + (n : Int) ^ 2) → ((Function.Injective
-            GaussianRealPoint) → (∀ (Q : Fin (4 : ℕ) → CircleCoordinates), (Q (0 : Fin (4 : ℕ)) =
-            Ci.1.1) → ((∀ (j : Fin (3 : ℕ)), (Q j.succ).1 < Ci.1.1.1) → ((ProperBandQuadruple Q)
-            → ((∀ (j : Fin 3), Zsqrtd.norm (BandVectors.1 (Q j.succ) (Q 0)) = (Q j.succ).1 +
-            Ci.1.1.1) → ((BandPrototile Ci.1.1 base) → ((∀ T ∈ tiles, T ∈ RegularTileFamily base
-            (TilingLattice Ci)) → ((Rminus ∈ tiles) → ((Rplus ∈ tiles) → (¬ TileTouching Rminus
-            Rplus))))))))))))))) ) := by
+        ∀ (P : FordFareyParameter),
+          ∀ (Ci : BandCircle),
+            ∀ (i : Fin 3),
+              ∀ (u : GaussianInt),
+                ∀ (base : ProtoTile),
+                  ∀ (Rminus : ProtoTile),
+                    ∀ (Rplus : ProtoTile),
+                      ∀ (tiles : List ProtoTile),
+                        let n := if i = 0 then P.q₁ else P.q₂
+                        n < P.q →
+                          Ci.1.1.1 = (n : Int) ^ 2 →
+                            1 < n →
+                              let vm : GaussianInt :=
+                                u + if i = 0 then ⟨P.q, 0⟩ else ⟨0, P.q⟩
+                              let vp : GaussianInt :=
+                                u + if i = 0 then ⟨P.q₂, P.q⟩ else ⟨-(P.q₂ : Int), 0⟩
+                              TileCentroid Rplus - TileCentroid Rminus =
+                                GaussianRealPoint (vp - vm) →
+                                Zsqrtd.norm (vp - vm) = (P.q : Int) ^ 2 + (n : Int) ^ 2 →
+                                Function.Injective GaussianRealPoint →
+                                ∀ (Q : Fin (4 : ℕ) → CircleCoordinates),
+                                Q (0 : Fin (4 : ℕ)) = Ci.1.1 →
+                                (∀ (j : Fin (3 : ℕ)), (Q j.succ).1 < Ci.1.1.1) →
+                                ProperBandQuadruple Q →
+                                (∀ (j : Fin 3),
+                                Zsqrtd.norm (BandVectors.1 (Q j.succ) (Q 0)) =
+                                (Q j.succ).1 + Ci.1.1.1) →
+                                BandPrototile Ci.1.1 base →
+                                (∀ T ∈ tiles,
+                                T ∈ RegularTileFamily base (TilingLattice Ci)) →
+                                Rminus ∈ tiles →
+                                Rplus ∈ tiles → ¬TileTouching Rminus Rplus
+    ) := by
   classical
-  intro P C0 Ci i u base Rminus Rplus tiles n hnq hCicurv hnlarge vm vp hdelta hnormdelta
-      pointinj Q hQ0 hQless hQproper hincoming hbase hfamily hRmem hSmem htouch
+  intro P Ci i u base Rminus Rplus tiles n hnq hCicurv hnlarge vm vp hdelta hnormdelta pointinj
+      Q hQ0 hQless hQproper hincoming hbase hfamily hRmem hSmem htouch
   have hbaseQ : BandPrototile (Q 0) base := by simpa [hQ0] using hbase
   obtain ⟨j, hj⟩ := (BandRegularTileTouchingClassification Ci Q hQproper hQ0
     base hbaseQ Rminus Rplus (hfamily _ hRmem) (hfamily _ hSmem)).mp htouch
@@ -901,15 +928,19 @@ private theorem stepPair :
     (by
       classical
       exact
-        (FordFareyParameter) → ((BandCircle) → ((BandCircle) → ((Fin 3) → (∀ (u : GaussianInt), ∀
-            (x : GaussianInt), ∀ (y : GaussianInt), ∀ (z : GaussianInt), ((x - u).re = (z -
-            u).re) → (((y - u).re = (z - u).re) → ((y = x + 1 ∨ y = x - 1 ∨
-            y = x + ⟨0, 1⟩ ∨ y = x - ⟨0, 1⟩) → ((((x - u).im ≤ (z - u).im ∧ (z - u).im < (y -
-                u).im) ∨
-            ((y - u).im ≤ (z - u).im ∧ (z - u).im < (x - u).im)) → (({x, y} : Finset GaussianInt)
-                = {z, z + ⟨0, 1⟩})))))))) ) := by
+        ∀ (u : GaussianInt),
+          ∀ (x : GaussianInt),
+            ∀ (y : GaussianInt),
+              ∀ (z : GaussianInt),
+                (x - u).re = (z - u).re →
+                  (y - u).re = (z - u).re →
+                    y = x + 1 ∨ y = x - 1 ∨ y = x + ⟨0, 1⟩ ∨ y = x - ⟨0, 1⟩ →
+                      (x - u).im ≤ (z - u).im ∧ (z - u).im < (y - u).im ∨
+                          (y - u).im ≤ (z - u).im ∧ (z - u).im < (x - u).im →
+                        ({ x, y } : Finset GaussianInt) = {z, z + ⟨0, 1⟩}
+    ) := by
   classical
-  intro P C0 Ci i u x y z hx hy hstep hcross
+  intro u x y z hx hy hstep hcross
   simp only [Zsqrtd.re_sub] at hx hy
   have hunit : y.im = x.im + 1 ∨ y.im = x.im - 1 := by
     rcases hstep with he | he | he | he
@@ -1059,7 +1090,7 @@ theorem P4158T1SmallerStringEdges
   have hsum : (P.q : Int) = P.q₁ + P.q₂ := by exact_mod_cast P.sum_q
   have hqone := SmallerStringGeometry.hqone P Ci i hCi hlarge hsmall T T' u hc' hsegment Rminus
       Rplus hcm hcp hsum
-  have hrpos := SmallerStringGeometry.hrpos P Ci hsum hqone
+  have hrpos := SmallerStringGeometry.hrpos P hsum hqone
   have hspos := P.q₂_pos
   let n := if i = 0 then P.q₁ else P.q₂
   have hnpos : 0 < n := by dsimp [n]; split_ifs <;> assumption
@@ -1067,15 +1098,15 @@ theorem P4158T1SmallerStringEdges
   have hCipos : 0 < Ci.1.1.1 := by omega
   have hC0pos := SmallerStringGeometry.hC0pos P C0 hC0 hqone
   have hCicurv := SmallerStringGeometry.hCicurv P Ci i hCi hsmall hrpos
-  have hnlarge := SmallerStringGeometry.hnlarge P C0 Ci i hlarge hnpos hCicurv
+  have hnlarge := SmallerStringGeometry.hnlarge P Ci i hlarge hnpos hCicurv
   have hFord := SmallerStringGeometry.hFord P Ci i hCi hsmall hrpos (P.q₂_pos)
-      (SmallerStringGeometry.determinantCoprime P C0 Ci i)
+      (SmallerStringGeometry.determinantCoprime)
   have fordcell (m : Nat) (z : GaussianInt) :
       z ∈ (FordTile m).cells ↔
-        0 ≤ z.re ∧ z.re < m ∧ 0 ≤ z.im ∧ z.im < m := SmallerStringGeometry.fordcell P C0 Ci i m z
+        0 ≤ z.re ∧ z.re < m ∧ 0 ≤ z.im ∧ z.im < m := SmallerStringGeometry.fordcell m z
   have fordne (m : Nat) (hm : 0 < m) : (FordTile m).cells.Nonempty :=
     ⟨0, (fordcell m 0).mpr (by simp; omega)⟩
-  have fordcent := SmallerStringGeometry.fordcent P C0 Ci i fordcell fordne
+  have fordcent := SmallerStringGeometry.fordcent fordcell fordne
   have cellobs := SmallerStringGeometry.cellobs (SmallerStringGeometry.transne fordne)
   have hcentT := SmallerStringGeometry.hcentT P T u hc fordcent cellobs
   let vm : GaussianInt := u + if i = 0 then ⟨P.q, 0⟩ else ⟨0, P.q⟩
@@ -1112,7 +1143,7 @@ theorem P4158T1SmallerStringEdges
   have hft : TileString Ci orientation base Rminus Rplus tiles := hf.1
   obtain ⟨hbase, hhead, hlast, _, hfamily, _, _⟩ := hft
   have hnadj := SmallerStringGeometry.hnadj Ci hlarge orientation Rminus Rplus
-      (SmallerStringGeometry.hnotouch P C0 Ci i u base Rminus Rplus tiles hnq hCicurv hnlarge
+      (SmallerStringGeometry.hnotouch P Ci i u base Rminus Rplus tiles hnq hCicurv hnlarge
       hdelta hnormdelta pointinj Q hQ0 hQless hQproper hincoming hbase hfamily
       (SmallerStringGeometry.hRmem Rminus tiles hhead) (SmallerStringGeometry.hSmem Rplus tiles
       hlast))
@@ -1130,7 +1161,7 @@ theorem P4158T1SmallerStringEdges
       Rminus Rplus hcm hcp hsum hnpos hnq hCicurv hnlarge hFord cellobs hflip hcmcand hcpcand
       heqm heqp hdelta hnormdelta walk hwsegment squarefoot hminusheight
   have crossing := SmallerStringGeometry.crossing
-  have stepPair := SmallerStringGeometry.stepPair P C0 Ci i u
+  have stepPair := SmallerStringGeometry.stepPair u
   refine ⟨heqm, heqp, ?_⟩
   intro z hzre hzlo hzhi
   have hzlo' : (n : Int) ≤ (z - u).im := by

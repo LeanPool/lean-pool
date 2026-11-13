@@ -70,10 +70,10 @@ private theorem hq1 :
     (by
       classical
       exact
-        (Fin 4 → CircleCoordinates) → (∀ (P : FordFareyParameter), ((1 : ℕ) < P.q) → (0 < P.q₁))
-            ) := by
+        ∀ (P : FordFareyParameter), (1 : ℕ) < P.q → 0 < P.q₁
+    ) := by
   classical
-  intro r P hP
+  intro P hP
   by_contra hn
   have hzq : P.q₁ = 0 := by omega
   have hd := P.det₁
@@ -149,12 +149,16 @@ private theorem hvector :
     (by
       classical
       exact
-        (Fin 4 → CircleCoordinates) → (∀ (P : FordFareyParameter), ((1 : ℕ) < P.q) → ((P.q = P.q₁
-            + P.q₂) → ((ProperBandQuadruple (FordRecursiveQuadruple P)) → (BandVectors.1
-            ((FordRecursiveQuadruple P) 2) ((FordRecursiveQuadruple P) 1) = -((P.q₁ : Int) :
-            GaussianInt) + ⟨0, (P.q₂ : Int)⟩)))) ) := by
+        ∀ (P : FordFareyParameter),
+          (1 : ℕ) < P.q →
+            P.q = P.q₁ + P.q₂ →
+              ProperBandQuadruple (FordRecursiveQuadruple P) →
+                BandVectors.1 ((FordRecursiveQuadruple P) 2)
+                    ((FordRecursiveQuadruple P) 1) =
+                  -((P.q₁ : Int) : GaussianInt) + ⟨0, (P.q₂ : Int)⟩
+    ) := by
   classical
-  intro r P hP hsum hproperFord
+  intro P hP hsum hproperFord
   let F := FordRecursiveQuadruple P
   have hrot : SemiProperQuadruple ![F 0, F 2, F 3, F 1] :=
     SemiProperQuadruple.rotate hproperFord.1
@@ -856,7 +860,7 @@ theorem P4638T1EmptyFordLocalization (r : Fin 4 → CircleCoordinates)
   have hp := EmptyFordGeometry.hp r hr
   have hrec' : BandPackingSymmetryQuadrupleAction g₀ p = FordRecursiveQuadruple P := by
     simpa [p] using hrec
-  have hq1 := EmptyFordGeometry.hq1 r P hP
+  have hq1 := EmptyFordGeometry.hq1 P hP
   have hq2 : 0 < P.q₂ := P.q₂_pos
   have hsum : P.q = P.q₁ + P.q₂ := P.sum_q
   obtain ⟨neg, hphase, _, hcyclic, hcirc, horient, hquad, hvec, g, hg, hcirg,
@@ -868,7 +872,7 @@ theorem P4638T1EmptyFordLocalization (r : Fin 4 → CircleCoordinates)
   have hphase2 : BandPackingSymmetryScopedPhase g p false := hfalse
   have hcanonical := EmptyFordGeometry.hcanonical r P g hrecg hgfalse hphase2
   have hproperFord := EmptyFordGeometry.hproperFord P hP
-  have hvector := EmptyFordGeometry.hvector r P hP hsum hproperFord
+  have hvector := EmptyFordGeometry.hvector P hP hsum hproperFord
   have htargetvec := EmptyFordGeometry.htargetvec r P g hcanonical hvector
   let cellTurn : GaussianInt → GaussianInt := fun z => GaussianQuarterTurn z - 1
   have cellTurn_bij := EmptyFordGeometry.cellTurn_bij

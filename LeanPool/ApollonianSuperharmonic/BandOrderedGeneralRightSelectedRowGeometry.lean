@@ -1698,13 +1698,14 @@ private theorem geomAt1214 :
             bundle.normalizedRootFunction bundle.normalizedFixedFunction bundle.normalizedPoint
             bundle.pieces bundle.functions bundle.selectedSlot bundle.selectedSign
             bundle.routedDirection), ∀ (selectedEdge : Finset GaussianInt),
-        let q := bundle.normalizedPresentation
-        let cfg := bundle.configuration
-        let F := bundle.normalizedFixed
-        let root := bundle.normalizedRoot
+        let q := bundle.normalizedPresentation;
+        let cfg := bundle.configuration;
+        let F := bundle.normalizedFixed;
+        let root := bundle.normalizedRoot;
         ∀ (edgeVertex : ∀ (tile : ProtoTile), (tile.cells.Nonempty) → (∀ (edge : Finset
             GaussianInt), (edge ∈ FootprintEdges tile) → (∀ (point : GaussianInt), (point ∈ edge)
-            → (point ∈ FootprintVertices tile)))), (placement.rightNeighborPositive = false) → (
+            → (point ∈ FootprintVertices tile)))),
+                                                                                               (
         let norm : BandOrderedGeneralRightNormalizationCertificate C T N h k x := {
           presentation := bundle.presentation
           presentation_proper := bundle.presentation_proper
@@ -1900,7 +1901,7 @@ private theorem geomAt1214 :
             ((placement.secondBoundarySign = true) → (rightGeometry 0 1 1 false
                 true)))))))))))))) := by
   classical
-  intro C D T N h k x bundle placement selectedEdge q cfg F root edgeVertex hp norm P u v
+  intro C D T N h k x bundle placement selectedEdge q cfg F root edgeVertex norm P u v
       selectedPath rightGeometry packageGeometry firstBoundarySubset secondBoundarySubset hi hj
       R1 R2 g hgs hge hneq hfirst hsecond
   have R1g : ExactTileInterfaceTriple F g.startCompanion
@@ -1999,13 +2000,13 @@ private theorem geomAt1286 :
             bundle.normalizedRootFunction bundle.normalizedFixedFunction bundle.normalizedPoint
             bundle.pieces bundle.functions bundle.selectedSlot bundle.selectedSign
             bundle.routedDirection), ∀ (selectedEdge : Finset GaussianInt),
-        let q := bundle.normalizedPresentation
-        let cfg := bundle.configuration
-        let F := bundle.normalizedFixed
-        let root := bundle.normalizedRoot
+        let q := bundle.normalizedPresentation;
+        let cfg := bundle.configuration;
+        let F := bundle.normalizedFixed;
+        let root := bundle.normalizedRoot;
         ∀ (edgeVertex : ∀ (tile : ProtoTile), (tile.cells.Nonempty) → (∀ (edge : Finset
             GaussianInt), (edge ∈ FootprintEdges tile) → (∀ (point : GaussianInt), (point ∈ edge)
-            → (point ∈ FootprintVertices tile)))), ∀ (hp : placement.rightNeighborPositive = true),
+            → (point ∈ FootprintVertices tile)))),
         let norm : BandOrderedGeneralRightNormalizationCertificate C T N h k x := {
           presentation := bundle.presentation
           presentation_proper := bundle.presentation_proper
@@ -2201,7 +2202,7 @@ private theorem geomAt1286 :
             ((placement.secondBoundarySign = false) → (rightGeometry 0 1 (-1) true
             false)))))))))))) ) := by
   classical
-  intro C D T N h k x bundle placement selectedEdge q cfg F root edgeVertex hp norm P u v
+  intro C D T N h k x bundle placement selectedEdge q cfg F root edgeVertex norm P u v
       selectedPath rightGeometry packageGeometry firstBoundarySubset secondBoundarySubset hi hj
       R1 R2 g hgs hge hneq hfirst hsecond
   have R1g : ExactTileInterfaceTriple F g.startCompanion
@@ -3135,7 +3136,7 @@ private theorem firstCyclicCase :
     · rw [hpos] at hp
       cases hp
     · have geom := SelectedRowGeometry.geomAt1214 C D T N h k x bundle placement selectedEdge
-        edgeVertex hp packageGeometry firstBoundarySubset secondBoundarySubset hi hj R1 R2 g
+        edgeVertex packageGeometry firstBoundarySubset secondBoundarySubset hi hj R1 R2 g
         hgs hge hneq hfirst hsecond
       have hgeom := (show
           rightGeometry placement.rightFirstSlot placement.rightSecondSlot 1 false
@@ -3189,7 +3190,7 @@ private theorem firstCyclicCase :
     have hsigns := placement.boundary_signs
     rcases hsigns with ⟨hp, hfirst, hsecond⟩ | ⟨hp, hfirst, hsecond⟩
     · have geom := SelectedRowGeometry.geomAt1286 C D T N h k x bundle placement selectedEdge
-        edgeVertex hp packageGeometry firstBoundarySubset secondBoundarySubset hi hj R1 R2 g
+        edgeVertex packageGeometry firstBoundarySubset secondBoundarySubset hi hj R1 R2 g
         hgs hge hneq hfirst hsecond
       have hgeom := (show
           rightGeometry placement.rightFirstSlot placement.rightSecondSlot (-1) true
@@ -3220,16 +3221,13 @@ private theorem secondCyclicCase :
             bundle.normalizedCircle bundle.normalizedRoot bundle.normalizedFixed
             bundle.normalizedRootFunction bundle.normalizedFixedFunction bundle.normalizedPoint
             bundle.pieces bundle.functions bundle.selectedSlot bundle.selectedSign
-            bundle.routedDirection), ∀ (selectedEdge : Finset GaussianInt), ∀ (chosenBoundary :
-            bundle.selectedSlot = placement.rightFirstSlot ∧ bundle.selectedSign =
+            bundle.routedDirection), ∀ (selectedEdge : Finset GaussianInt), (bundle.selectedSlot
+                = placement.rightFirstSlot ∧ bundle.selectedSign =
             placement.firstBoundarySign ∨ bundle.selectedSlot = placement.rightSecondSlot ∧
-            bundle.selectedSign = placement.secondBoundarySign),
-        let q := bundle.normalizedPresentation
-        let F := bundle.normalizedFixed
-        let root := bundle.normalizedRoot
-        ∀ (edgeVertex : ∀ (tile : ProtoTile), (tile.cells.Nonempty) → (∀ (edge : Finset
-            GaussianInt), (edge ∈ FootprintEdges tile) → (∀ (point : GaussianInt), (point ∈ edge)
-            → (point ∈ FootprintVertices tile)))),
+            bundle.selectedSign = placement.secondBoundarySign) →
+        let q := bundle.normalizedPresentation;
+        let F := bundle.normalizedFixed;
+        let root := bundle.normalizedRoot;
         let norm := SelectedRowNormalization.certificate C D T N h k x bundle placement
         ∀ (childInterfaces : (∀ (i : Fin (3 : ℕ)), Nonempty (ExactTileInterfaceTriple F
             (TileTranslation F (BandVectors.1 (q i.succ) (q (0 : Fin (4 : ℕ))))) (TileTranslation
@@ -3468,8 +3466,8 @@ private theorem secondCyclicCase :
                   rightGeometry placement.rightFirstSlot placement.rightSecondSlot
                     1 false true))))))))))))) ) := by
   classical
-  intro C D T N h k x bundle placement selectedEdge chosenBoundary q F root edgeVertex norm
-      childInterfaces turnOutgoing turnNeg boundaryRecords centeredExactTurn tripleTurnOutgoing
+  intro C D T N h k x bundle placement selectedEdge chosenBoundary q F root norm childInterfaces
+      turnOutgoing turnNeg boundaryRecords centeredExactTurn tripleTurnOutgoing
       tripleTurnNegativeNext touchingPlus touchingMinus P u v selectedPath rightGeometry
       canonicalFinish coordinateFactsBpos coordinateFactsBneg period0 period1 period2
       packageGeometry firstBoundarySubset secondBoundarySubset hcycle
@@ -3622,16 +3620,13 @@ private theorem thirdCyclicCase :
             bundle.normalizedCircle bundle.normalizedRoot bundle.normalizedFixed
             bundle.normalizedRootFunction bundle.normalizedFixedFunction bundle.normalizedPoint
             bundle.pieces bundle.functions bundle.selectedSlot bundle.selectedSign
-            bundle.routedDirection), ∀ (selectedEdge : Finset GaussianInt), ∀ (chosenBoundary :
-            bundle.selectedSlot = placement.rightFirstSlot ∧ bundle.selectedSign =
+            bundle.routedDirection), ∀ (selectedEdge : Finset GaussianInt), (bundle.selectedSlot
+                = placement.rightFirstSlot ∧ bundle.selectedSign =
             placement.firstBoundarySign ∨ bundle.selectedSlot = placement.rightSecondSlot ∧
-            bundle.selectedSign = placement.secondBoundarySign),
-        let q := bundle.normalizedPresentation
-        let F := bundle.normalizedFixed
-        let root := bundle.normalizedRoot
-        ∀ (edgeVertex : ∀ (tile : ProtoTile), (tile.cells.Nonempty) → (∀ (edge : Finset
-            GaussianInt), (edge ∈ FootprintEdges tile) → (∀ (point : GaussianInt), (point ∈ edge)
-            → (point ∈ FootprintVertices tile)))),
+            bundle.selectedSign = placement.secondBoundarySign) →
+        let q := bundle.normalizedPresentation;
+        let F := bundle.normalizedFixed;
+        let root := bundle.normalizedRoot;
         let norm := SelectedRowNormalization.certificate C D T N h k x bundle placement
         ∀ (childInterfaces : (∀ (i : Fin (3 : ℕ)), Nonempty (ExactTileInterfaceTriple F
             (TileTranslation F (BandVectors.1 (q i.succ) (q (0 : Fin (4 : ℕ))))) (TileTranslation
@@ -3870,8 +3865,8 @@ private theorem thirdCyclicCase :
                   rightGeometry placement.rightFirstSlot placement.rightSecondSlot
                     1 false true))))))))))))) ) := by
   classical
-  intro C D T N h k x bundle placement selectedEdge chosenBoundary q F root edgeVertex norm
-      childInterfaces turnOutgoing turnNeg boundaryRecords centeredExactTurn tripleTurnOutgoing
+  intro C D T N h k x bundle placement selectedEdge chosenBoundary q F root norm childInterfaces
+      turnOutgoing turnNeg boundaryRecords centeredExactTurn tripleTurnOutgoing
       tripleTurnNegativeNext touchingPlus touchingMinus P u v selectedPath rightGeometry
       canonicalFinish coordinateFactsCpos coordinateFactsCneg period0 period1 period2
       packageGeometry firstBoundarySubset secondBoundarySubset hcycle
@@ -4331,13 +4326,13 @@ theorem BandOrderedGeneralRightSelectedRowGeometry
       packageGeometry firstBoundarySubset secondBoundarySubset hcycle
     exact firstCyclicCase
   · have secondCyclicCase := SelectedRowConclusions.secondCyclicCase C D T N h k x bundle
-      placement selectedEdge chosenBoundary edgeVertex childInterfaces turnOutgoing turnNeg
+      placement selectedEdge chosenBoundary childInterfaces turnOutgoing turnNeg
       boundaryRecords centeredExactTurn tripleTurnOutgoing tripleTurnNegativeNext touchingPlus
       touchingMinus canonicalFinish coordinateFactsBpos coordinateFactsBneg period0 period1
       period2 packageGeometry firstBoundarySubset secondBoundarySubset hcycle
     exact secondCyclicCase
   · have thirdCyclicCase := SelectedRowConclusions.thirdCyclicCase C D T N h k x bundle placement
-      selectedEdge chosenBoundary edgeVertex childInterfaces turnOutgoing turnNeg boundaryRecords
+      selectedEdge chosenBoundary childInterfaces turnOutgoing turnNeg boundaryRecords
       centeredExactTurn tripleTurnOutgoing tripleTurnNegativeNext touchingPlus touchingMinus
       canonicalFinish coordinateFactsCpos coordinateFactsCneg period0 period1 period2
       packageGeometry firstBoundarySubset secondBoundarySubset hcycle

@@ -473,22 +473,21 @@ private theorem cycle_edge_oriented :
 
 private theorem crossing_step_zero :
     ∀ (S : Finset GaussianInt),
-    let I : GaussianInt := ⟨0, 1⟩
-    let VF : Finset GaussianInt := S.filter fun z => z + I ∈ S
-    let JF : Finset GaussianInt := VF.filter fun z =>
-      ¬ (z - 1 ∈ S ∧ z - 1 + I ∈ S)
-    let X := {z : GaussianInt // z ∈ S}
-    let rel : X → X → Prop := fun a b =>
-      b.1 = a.1 + 1 ∨ (b.1 = a.1 + I ∧ a.1 ∈ JF)
-    let G : SimpleGraph X := SimpleGraph.fromRel rel
-    ∀ (u : X), (G.Walk u u) → (∀ (v : X),
-    let q : GaussianInt := v.1 - 1 - I
-    ∀ (a : GaussianInt), ∀ (b : GaussianInt), (a.im ≤ v.1.im) → ((b.im ≤ v.1.im) → ((if b = a +
-        ⟨0, 1⟩ ∧ a.im = (q + I).im ∧ a.re ≤ (q + I).re then 1
-        else if b = a - ⟨0, 1⟩ ∧ b.im = (q + I).im ∧
-          a.re ≤ (q + I).re then -1 else 0) = 0))) := by
+      let I : GaussianInt := ⟨0, 1⟩;
+      let X := { z : GaussianInt // z ∈ S };
+      ∀ (v : X),
+        let q : GaussianInt := v.1 - 1 - I
+        ∀ (a : GaussianInt),
+          ∀ (b : GaussianInt),
+            a.im ≤ v.1.im →
+              b.im ≤ v.1.im →
+                (if b = a + ⟨0, 1⟩ ∧ a.im = (q + I).im ∧ a.re ≤ (q + I).re then 1
+                  else
+                    if b = a - ⟨0, 1⟩ ∧ b.im = (q + I).im ∧ a.re ≤ (q + I).re then -1
+                    else 0) =
+                  0 := by
   classical
-  intro S I VF JF X rel G u c v q a b ha hb
+  intro S I X v q a b ha hb
   split_ifs with hup hdown
   · have habim := congrArg Zsqrtd.im hup.1
     have haeq := hup.2.1
@@ -592,22 +591,21 @@ private theorem htarget :
 
 private theorem cyclic_edge_occupied :
     ∀ (S : Finset GaussianInt),
-    let I : GaussianInt := ⟨0, 1⟩
-    let VF : Finset GaussianInt := S.filter fun z => z + I ∈ S
-    let JF : Finset GaussianInt := VF.filter fun z =>
-      ¬ (z - 1 ∈ S ∧ z - 1 + I ∈ S)
-    let X := {z : GaussianInt // z ∈ S}
-    let rel : X → X → Prop := fun a b =>
-      b.1 = a.1 + 1 ∨ (b.1 = a.1 + I ∧ a.1 ∈ JF)
-    let G : SimpleGraph X := SimpleGraph.fromRel rel
-    ∀ (u : X), ∀ (c : G.Walk u u), (X) → (
-    let path : List GaussianInt := c.support.tail.map Subtype.val
-    (3 ≤ path.length) → (
-    let cyclicEdges := path.zip path.tail ++ [(u.1, c.snd.1)]
-    (∀ {z : GaussianInt}, (z ∈ path) → (z ∈ S)) → (∀ {r : GaussianInt}, ∀ {s : GaussianInt}, ((r,
-        s) ∈ cyclicEdges) → (r ∈ S ∧ s ∈ S)))) := by
+      let I : GaussianInt := ⟨0, 1⟩;
+      let VF : Finset GaussianInt := S.filter fun z => z + I ∈ S;
+      let JF : Finset GaussianInt := VF.filter fun z => ¬(z - 1 ∈ S ∧ z - 1 + I ∈ S);
+      let X := { z : GaussianInt // z ∈ S };
+      let rel : X → X → Prop := fun a b => b.1 = a.1 + 1 ∨ b.1 = a.1 + I ∧ a.1 ∈ JF;
+      let G : SimpleGraph X := SimpleGraph.fromRel rel;
+      ∀ (u : X),
+        ∀ (c : G.Walk u u),
+          let path : List GaussianInt := c.support.tail.map Subtype.val
+          3 ≤ path.length →
+            let cyclicEdges := path.zip path.tail ++ [(u.1, c.snd.1)]
+            (∀ {z : GaussianInt}, z ∈ path → z ∈ S) →
+              ∀ {r : GaussianInt}, ∀ {s : GaussianInt}, (r, s) ∈ cyclicEdges → r ∈ S ∧ s ∈ S := by
   classical
-  intro S I VF JF X rel G u c v path path_length cyclicEdges path_vertex_mem r s hrs
+  intro S I VF JF X rel G u c path path_length cyclicEdges path_vertex_mem r s hrs
   rcases List.mem_append.mp hrs with hrs | hrs
   · rw [List.mem_iff_getElem] at hrs
     rcases hrs with ⟨i, hi, hrs⟩
@@ -1438,7 +1436,7 @@ theorem FiniteBiconnectedHorizontalRunTree (S : Finset GaussianInt)
         (if b = a + ⟨0, 1⟩ ∧ a.im = (q + I).im ∧ a.re ≤ (q + I).re then 1
           else if b = a - ⟨0, 1⟩ ∧ b.im = (q + I).im ∧
             a.re ≤ (q + I).re then -1 else 0) = 0 := HorizontalRunTreeProof.crossing_step_zero S
-                u c v a b ha hb
+                v a b ha hb
     have htopzero : GridRayCrossingIndex (q + I) path = 0 := HorizontalRunTreeProof.htopzero S u
         c hc v hv_im_max path_head path_last path_vertex_im_le crossing_step_zero
     have htarget :
@@ -1452,7 +1450,7 @@ theorem FiniteBiconnectedHorizontalRunTree (S : Finset GaussianInt)
         HorizontalRunDetails.path_vertex_mem S u c (z := z) hz
     have cyclic_edge_occupied {r s : GaussianInt}
         (hrs : (r, s) ∈ cyclicEdges) : r ∈ S ∧ s ∈ S :=
-            HorizontalRunTreeProof.cyclic_edge_occupied S u c v path_length path_vertex_mem (r :=
+            HorizontalRunTreeProof.cyclic_edge_occupied S u c path_length path_vertex_mem (r :=
             r) (s := s) hrs
     have index_eq_of_outside_adj {r s : GaussianInt}
         (hr : r ∉ S) (hs : s ∉ S) (hrs : FourNeighborAdjacent r s) :

@@ -50,9 +50,9 @@ private theorem hrow :
   exact (P4194T1DiamondCellRows m z).2.mp hz
 
 private theorem hm2 :
-    ∀ (m : Nat), (1 < m) → ((GaussianInt) → (2 ≤ m)) := by
+    ∀ (m : Nat), 1 < m → 2 ≤ m := by
   classical
-  intro m hm z
+  intro m hm
   omega
 
 private theorem hdesclow :
@@ -299,11 +299,12 @@ private theorem hpredTrueMid :
   rw [boundaryIffMissing (m - 1) (by omega) w hsomeW, hmissCore]
 
 private theorem unitBoundary :
-    (Nat) → ((GaussianInt) → (∀ (c : GaussianInt), ∀ (x : GaussianInt), x ∈
-        BoundaryFootprintVertices (⟨{c}, c⟩ : ProtoTile) ↔
-        x = c ∨ x = c + 1 ∨ x = c + ⟨0, 1⟩ ∨ x = c + 1 + ⟨0, 1⟩)) := by
+    ∀ (c : GaussianInt),
+      ∀ (x : GaussianInt),
+        x ∈ BoundaryFootprintVertices (⟨{ c }, c⟩ : ProtoTile) ↔
+          x = c ∨ x = c + 1 ∨ x = c + ⟨0, 1⟩ ∨ x = c + 1 + ⟨0, 1⟩ := by
   classical
-  intro m z c x
+  intro c x
   classical
   have ht : ({c} : Finset GaussianInt).Nonempty := ⟨c, by simp⟩
   have hmissI : c - ⟨0, 1⟩ ∉ ({c} : Finset GaussianInt) := by
@@ -927,7 +928,7 @@ theorem P4194T1DiamondBoundaryLedger
   let a := z.re
   let b := z.im
   have hrow := DiamondBoundaryProof.hrow m z hz
-  have hm2 : 2 ≤ m := DiamondBoundaryProof.hm2 m hm z
+  have hm2 : 2 ≤ m := DiamondBoundaryProof.hm2 m hm
   have hdesclow (hb : b < m) :
       ∀ j : Fin 4, LatticeVertexIncidentCell z j ∈ DiamondCellDomain (m - 1) :=
           DiamondBoundaryProof.hdesclow m hm z hrow hb
@@ -975,7 +976,7 @@ theorem P4194T1DiamondBoundaryLedger
   have unitBoundary (c x : GaussianInt) :
       x ∈ BoundaryFootprintVertices (⟨{c}, c⟩ : ProtoTile) ↔
         x = c ∨ x = c + 1 ∨ x = c + ⟨0, 1⟩ ∨ x = c + 1 + ⟨0, 1⟩ :=
-            DiamondBoundaryProof.unitBoundary m z c x
+            DiamondBoundaryProof.unitBoundary c x
   have hunit00 : z ∈ BoundaryFootprintVertices (C 0 true) ↔
       (a = -(m : Int) ∧ b = (m : Int) - 1) ∨
       (a = -(m : Int) + 1 ∧ b = (m : Int) - 1) ∨

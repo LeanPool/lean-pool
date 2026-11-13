@@ -439,11 +439,13 @@ private theorem hmodShift :
     (by
       classical
       exact
-        ∀ (n : Nat), ∀ (p : P3381T1PolygonBoundary n), (P3544T1DiagonalSplit p) → (∀ {m : ℕ},
-            ∀ {r : ℕ}, ∀ {x : ℕ}, ∀ {y : ℕ}, (0 : ℕ) < m → x < m → y < m → (r + x) % m = (r + y)
-            % m → x = y) ) := by
+        ∀ {m : ℕ},
+          ∀ {r : ℕ},
+            ∀ {x : ℕ},
+              ∀ {y : ℕ}, (0 : ℕ) < m → x < m → y < m → (r + x) % m = (r + y) % m → x = y
+    ) := by
   classical
-  intro n p S m r x y hm hx hy he
+  intro m r x y hm hx hy he
   have hrx : (r + x) % m = (r % m + x) % m := by
     rw [Nat.add_mod, Nat.mod_eq_of_lt hx]
   have hry : (r + y) % m = (r % m + y) % m := by
@@ -488,13 +490,17 @@ private theorem hfinAdj :
     (by
       classical
       exact
-        ∀ (n : Nat), ∀ (p : P3381T1PolygonBoundary n), (P3544T1DiagonalSplit p) → (∀ {m : ℕ},
-            ∀ (x : Fin (m + (3 : ℕ))), ∀ (y : Fin (m + (3 : ℕ))), y = x + (1 : Fin (m + (3 : ℕ)))
-            ∨ x = y + (1 : Fin (m + (3 : ℕ))) ↔ (↑y : ℕ) = (↑x : ℕ) + (1 : ℕ) ∨ (↑x : ℕ) = (↑y :
-            ℕ) + (1 : ℕ) ∨ (↑x : ℕ) + (1 : ℕ) = m + (3 : ℕ) ∧ (↑y : ℕ) = (0 : ℕ) ∨ (↑y : ℕ) + (1
-            : ℕ) = m + (3 : ℕ) ∧ (↑x : ℕ) = (0 : ℕ)) ) := by
+        ∀ {m : ℕ},
+          ∀ (x : Fin (m + (3 : ℕ))),
+            ∀ (y : Fin (m + (3 : ℕ))),
+              y = x + (1 : Fin (m + (3 : ℕ))) ∨ x = y + (1 : Fin (m + (3 : ℕ))) ↔
+                (↑y : ℕ) = (↑x : ℕ) + (1 : ℕ) ∨
+                  (↑x : ℕ) = (↑y : ℕ) + (1 : ℕ) ∨
+                    (↑x : ℕ) + (1 : ℕ) = m + (3 : ℕ) ∧ (↑y : ℕ) = (0 : ℕ) ∨
+                      (↑y : ℕ) + (1 : ℕ) = m + (3 : ℕ) ∧ (↑x : ℕ) = (0 : ℕ)
+    ) := by
   classical
-  intro n p S m x y
+  intro m x y
   have hv (z : Fin (m + 3)) : (z + 1).val = (z.val + 1) % (m + 3) := by
     rw [Fin.val_add, Fin.val_one]
   constructor
@@ -2272,11 +2278,11 @@ theorem P3652T1IndexedFaceLedger {n : Nat} {p : P3381T1PolygonBoundary n}
         hlenP
         hlenL hlenR haCoord y
     have hmodShift {m r x y : Nat} (hm : 0 < m) (hx : x < m) (hy : y < m)
-        (he : (r + x) % m = (r + y) % m) := IndexedFaceLedgerProof.hmodShift n p S (m := m) (r :=
+        (he : (r + x) % m = (r + y) % m) := IndexedFaceLedgerProof.hmodShift (m := m) (r :=
             r) (x := x) (y := y) hm hx hy he
     have hmodSucc {m r x : Nat} (hm : 1 < m) := IndexedFaceLedgerProof.hmodSucc (m := m) (r := r)
         (x := x) hm
-    have hfinAdj {m : Nat} (x y : Fin (m + 3)) := IndexedFaceLedgerProof.hfinAdj n p S (m := m) x y
+    have hfinAdj {m : Nat} (x y : Fin (m + 3)) := IndexedFaceLedgerProof.hfinAdj (m := m) x y
     have hleftA := IndexedFaceLedgerProof.hleftA n p S hleftcoord haCoord
     have hleftB := IndexedFaceLedgerProof.hleftB n p S
     have hrightB := IndexedFaceLedgerProof.hrightB n p S

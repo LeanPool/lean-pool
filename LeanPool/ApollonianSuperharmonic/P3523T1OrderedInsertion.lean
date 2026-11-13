@@ -29,16 +29,23 @@ open Fin.NatCast
 namespace OrderedInsertionGeometry
 
 private theorem hsameAt138 :
-    ∀ (r : Nat), ∀ (n : Nat), ∀ (q : P3381T1PolygonBoundary r), ∀ (p : P3381T1PolygonBoundary
-        n), ∀ (s : P3475T1BoundarySubdivision q p), (∀ (j : Fin (n + (3 : ℕ))), ∃ k < n + (3 :
-        ℕ), s.edge (j + (↑(k + (1 : ℕ)) : Fin (n + (3 : ℕ)))) ≠ s.edge j) → (∀ (i : Fin (r + (3 :
-        ℕ))), ∀ (ex : ∃ k < n + (3 : ℕ), s.edge (s.start i + (↑(k + (1 : ℕ)) : Fin (n + (3 :
-        ℕ)))) ≠ s.edge (s.start i)),
-    let k₀ := Nat.find ex
-    let m := k₀ + 1
-    (k₀ < n + 3) → (∀ (k : Nat), (k < m) → (s.edge (s.start i + (k : Fin (n + 3))) = i))) := by
+    ∀ (r : Nat),
+      ∀ (n : Nat),
+        ∀ (q : P3381T1PolygonBoundary r),
+          ∀ (p : P3381T1PolygonBoundary n),
+            ∀ (s : P3475T1BoundarySubdivision q p),
+              ∀ (i : Fin (r + (3 : ℕ))),
+                ∀
+                  (ex :
+                    ∃ k < n + (3 : ℕ),
+                      s.edge (s.start i + (↑(k + (1 : ℕ)) : Fin (n + (3 : ℕ)))) ≠
+                        s.edge (s.start i)),
+                  let k₀ := Nat.find ex
+                  let m := k₀ + 1
+                  k₀ < n + 3 →
+                    ∀ (k : Nat), k < m → s.edge (s.start i + (k : Fin (n + 3))) = i := by
   classical
-  intro r n q p s hexit i ex k₀ m hk₀ k hk
+  intro r n q p s i ex k₀ m hk₀ k hk
   cases k with
   | zero => simpa using s.edge_start i
   | succ k =>
@@ -51,18 +58,26 @@ private theorem hsameAt138 :
     simpa only [s.edge_start] using heq
 
 private theorem hstartAt150 :
-    ∀ (r : Nat), ∀ (n : Nat), ∀ (q : P3381T1PolygonBoundary r), ∀ (p : P3381T1PolygonBoundary
-        n), ∀ (s : P3475T1BoundarySubdivision q p), (∀ (j : Fin (n + (3 : ℕ))), s.parameter j =
-        (0 : ℝ) → j = s.start (s.edge j)) → ((∀ (j : Fin (n + (3 : ℕ))), ∃ k < n + (3 : ℕ),
-        s.edge (j + (↑(k + (1 : ℕ)) : Fin (n + (3 : ℕ)))) ≠ s.edge j) → (∀ (i : Fin (r + (3 :
-        ℕ))), ∀ (ex : ∃ k < n + (3 : ℕ), s.edge (s.start i + (↑(k + (1 : ℕ)) : Fin (n + (3 :
-        ℕ)))) ≠ s.edge (s.start i)),
-    let k₀ := Nat.find ex
-    let m := k₀ + 1
-    (s.edge (s.start i + (m : Fin (n + 3))) ≠ i) → ((∀ (k : Nat), (k < m) → (s.edge (s.start i +
-        (k : Fin (n + 3))) = i)) → (s.start i + (m : Fin (n + 3)) = s.start (i + 1))))) := by
+    ∀ (r : Nat),
+      ∀ (n : Nat),
+        ∀ (q : P3381T1PolygonBoundary r),
+          ∀ (p : P3381T1PolygonBoundary n),
+            ∀ (s : P3475T1BoundarySubdivision q p),
+              (∀ (j : Fin (n + (3 : ℕ))),
+                  s.parameter j = (0 : ℝ) → j = s.start (s.edge j)) →
+                ∀ (i : Fin (r + (3 : ℕ))),
+                  ∀
+                    (ex :
+                      ∃ k < n + (3 : ℕ),
+                        s.edge (s.start i + (↑(k + (1 : ℕ)) : Fin (n + (3 : ℕ)))) ≠
+                          s.edge (s.start i)),
+                    let k₀ := Nat.find ex
+                    let m := k₀ + 1
+                    s.edge (s.start i + (m : Fin (n + 3))) ≠ i →
+                      (∀ (k : Nat), k < m → s.edge (s.start i + (k : Fin (n + 3))) = i) →
+                        s.start i + (m : Fin (n + 3)) = s.start (i + 1) := by
   classical
-  intro r n q p s hzero hexit i ex k₀ m hlast hsame
+  intro r n q p s hzero i ex k₀ m hlast hsame
   rcases s.successor (s.start i + (k₀ : Fin (n + 3))) with hs | hs
   · have heq : s.edge (s.start i + (m : Fin (n + 3))) = i := by
       simpa [m, Nat.cast_add, add_assoc, hsame k₀ (by dsimp [m]; omega)]
@@ -76,18 +91,26 @@ private theorem hstartAt150 :
     simpa only [heq] using hzero _ hz
 
 private theorem hstepAt162 :
-    ∀ (r : Nat), ∀ (n : Nat), ∀ (q : P3381T1PolygonBoundary r), ∀ (p : P3381T1PolygonBoundary
-        n), ∀ (s : P3475T1BoundarySubdivision q p), (∀ (j : Fin (n + (3 : ℕ))), ∃ k < n + (3 :
-        ℕ), s.edge (j + (↑(k + (1 : ℕ)) : Fin (n + (3 : ℕ)))) ≠ s.edge j) → (∀ (i : Fin (r + (3 :
-        ℕ))), ∀ (ex : ∃ k < n + (3 : ℕ), s.edge (s.start i + (↑(k + (1 : ℕ)) : Fin (n + (3 :
-        ℕ)))) ≠ s.edge (s.start i)),
-    let k₀ := Nat.find ex
-    let m := k₀ + 1
-    (∀ (k : Nat), (k < m) → (s.edge (s.start i + (k : Fin (n + 3))) = i)) → (∀ (k : Nat), (k + 1
-        < m) → (s.parameter (s.start i + (k : Fin (n + 3))) <
-        s.parameter (s.start i + ((k + 1 : Nat) : Fin (n + 3)))))) := by
+    ∀ (r : Nat),
+      ∀ (n : Nat),
+        ∀ (q : P3381T1PolygonBoundary r),
+          ∀ (p : P3381T1PolygonBoundary n),
+            ∀ (s : P3475T1BoundarySubdivision q p),
+              ∀ (i : Fin (r + (3 : ℕ))),
+                ∀
+                  (ex :
+                    ∃ k < n + (3 : ℕ),
+                      s.edge (s.start i + (↑(k + (1 : ℕ)) : Fin (n + (3 : ℕ)))) ≠
+                        s.edge (s.start i)),
+                  let k₀ := Nat.find ex
+                  let m := k₀ + 1
+                  (∀ (k : Nat), k < m → s.edge (s.start i + (k : Fin (n + 3))) = i) →
+                    ∀ (k : Nat),
+                      k + 1 < m →
+                        s.parameter (s.start i + (k : Fin (n + 3))) <
+                          s.parameter (s.start i + ((k + 1 : Nat) : Fin (n + 3))) := by
   classical
-  intro r n q p s hexit i ex k₀ m hsame k hk
+  intro r n q p s i ex k₀ m hsame k hk
   rcases s.successor (s.start i + (k : Fin (n + 3))) with hs | hs
   · simpa [Nat.cast_add, add_assoc] using hs.2
   · have heq : i = i + 1 := by
@@ -149,14 +172,20 @@ private theorem affine :
         simp [add_assoc]
 
 private theorem filterPrev :
-    ∀ (r : Nat), ∀ (n : Nat), ∀ (q : P3381T1PolygonBoundary r), (P3475T1BoundarySubdivision q
-        p) → (∀ (X : Set (Real × Real)), ∀ (K : Set (Real × Real)), (P3475T1TriangleTree q X K)
-        → ((Fin (n + (3 : ℕ))) → (∀ {α : Type}, ∀ (l : List α), ∀ (p : α → Bool), ∀ (k : Nat), ∀
-            (h : Nat), (l.Nodup) → (∀ (hk : k < l.length), (0 < k) → (∀ (hlen : h < (l.filter
-        p).length), (p (l.get ⟨k - 1, by omega⟩) = true) → (((l.filter p).get ⟨h, hlen⟩ = l.get
-        ⟨k, hk⟩) → (l.get ⟨k - 1, by omega⟩ ∈ (l.filter p).take h))))))) := by
+    ∀ {α : Type},
+      ∀ (l : List α),
+        ∀ (p : α → Bool),
+          ∀ (k : Nat),
+            ∀ (h : Nat),
+              l.Nodup →
+                ∀ (hk : k < l.length),
+                  0 < k →
+                    ∀ (hlen : h < (l.filter p).length),
+                      p (l.get ⟨k - 1, by omega⟩) = true →
+                        (l.filter p).get ⟨h, hlen⟩ = l.get ⟨k, hk⟩ →
+                          l.get ⟨k - 1, by omega⟩ ∈ (l.filter p).take h := by
   classical
-  intro r n q s X K t j α l p k h hn hk hpos hlen hp hcur
+  intro α l p k h hn hk hpos hlen hp hcur
   induction l generalizing k h with
   | nil => simp at hk
   | cons a l ih =>
@@ -399,17 +428,25 @@ private theorem pairCasesAt487 :
     · exact False.elim (hab (had.trans hbd.symm))
 
 private theorem hrawPrevAt546 :
-    ∀ (r : Nat), ∀ (n : Nat), ∀ (q : P3381T1PolygonBoundary r), ∀ (p : P3381T1PolygonBoundary
-        n), ∀ (s : P3475T1BoundarySubdivision q p), ∀ (X : Set (Real × Real)), ∀ (K : Set (Real
-        × Real)), (P3475T1TriangleTree q X K) → ((ℕ) → (∀ [NeZero (n + (3 : ℕ))],
-    ∀ (j : Fin (n + (3 : ℕ))), ∀ (k : Fin (n + (3 : ℕ))), ((j - 1) + 1 = j) → (
-    let raw := List.ofFn (fun k : Fin (n + 3) => s.start 0 + k)
-    let kp : Fin (n + 3) := ⟨k.val - 1, by omega⟩
-    ∀ (hrawLen : raw.length = n + 3), (s.start 0 + kp = j - 1) → (raw.get ⟨k.val - 1, by
-      rw [hrawLen]
-      exact lt_of_le_of_lt (Nat.sub_le _ _) k.isLt⟩ = j - 1)))) := by
+    ∀ (r : Nat),
+      ∀ (n : Nat),
+        ∀ (q : P3381T1PolygonBoundary r),
+          ∀ (p : P3381T1PolygonBoundary n),
+            ∀ (s : P3475T1BoundarySubdivision q p),
+              ∀ [NeZero (n + (3 : ℕ))],
+                ∀ (j : Fin (n + (3 : ℕ))),
+                  ∀ (k : Fin (n + (3 : ℕ))),
+                    let raw := List.ofFn fun k : Fin (n + 3) => s.start 0 + k
+                    let kp : Fin (n + 3) := ⟨k.val - 1, by omega⟩
+                    ∀ (hrawLen : raw.length = n + 3),
+                      s.start 0 + kp = j - 1 →
+                        raw.get
+                            ⟨k.val - 1, by
+                            rw [hrawLen]
+                            exact lt_of_le_of_lt (Nat.sub_le _ _) k.isLt⟩ =
+                          j - 1 := by
   classical
-  intro r n q p s X K t h this j k hp raw kp hrawLen hprevLabel
+  intro r n q p s this j k raw kp hrawLen hprevLabel
   have hcast : Fin.cast hrawLen ⟨k.val - 1, by
       rw [hrawLen]
       exact lt_of_le_of_lt (Nat.sub_le _ _) k.isLt⟩ = kp := by
@@ -441,17 +478,26 @@ private theorem hrawCurAt556 :
   exact hk
 
 private theorem hprefix :
-    ∀ (r : Nat), ∀ (n : Nat), ∀ (q : P3381T1PolygonBoundary r), ∀ (p : P3381T1PolygonBoundary
-        n), ∀ (s : P3475T1BoundarySubdivision q p), ∀ (X : Set (Real × Real)), ∀ (K : Set (Real
-        × Real)), ∀ (t : P3475T1TriangleTree q X K), ∀ (h : ℕ), ∀ (hh : h <
-        (P3523T1InsertionConstruction s t).steps.length), ∀ [NeZero (n + (3 : ℕ))],
-    let c := P3523T1InsertionConstruction s t
-    let e := c.steps.get ⟨h, hh⟩
-    ∀ (j : Fin (n + (3 : ℕ))), ((j - (1 : Fin (n + (3 : ℕ))), j, s.start (s.edge j + (1 : Fin (r
-        + (3 : ℕ))))) = e) → ((Fin (n + (3 : ℕ))) → ((c.steps.Nodup) → (∀ a ∈ c.steps.take h,
-        a.2.1 ≠ j))) := by
+    ∀ (r : Nat),
+      ∀ (n : Nat),
+        ∀ (q : P3381T1PolygonBoundary r),
+          ∀ (p : P3381T1PolygonBoundary n),
+            ∀ (s : P3475T1BoundarySubdivision q p),
+              ∀ (X : Set (Real × Real)),
+                ∀ (K : Set (Real × Real)),
+                  ∀ (t : P3475T1TriangleTree q X K),
+                    ∀ (h : ℕ),
+                      ∀ (hh : h < (P3523T1InsertionConstruction s t).steps.length),
+                        ∀ [NeZero (n + (3 : ℕ))],
+                          let c := P3523T1InsertionConstruction s t;
+                          let e := c.steps.get ⟨h, hh⟩;
+                          ∀ (j : Fin (n + (3 : ℕ))),
+                            (j - (1 : Fin (n + (3 : ℕ))), j,
+                            s.start (s.edge j + (1 : Fin (r + (3 : ℕ))))) =
+                            e →
+                            c.steps.Nodup → ∀ a ∈ c.steps.take h, a.2.1 ≠ j := by
   classical
-  intro r n q p s X K t h hh this c e j heq k hstepsNodup a ha haj
+  intro r n q p s X K t h hh this c e j heq hstepsNodup a ha haj
   rcases List.mem_take_iff_getElem.mp ha with ⟨i, hi, haeq⟩
   have hi' : i < h := by omega
   have hiSteps : i < c.steps.length := lt_trans hi' hh
@@ -476,10 +522,11 @@ private theorem hno :
         n), ∀ (s : P3475T1BoundarySubdivision q p), ∀ (X : Set (Real × Real)), ∀ (K : Set (Real
         × Real)), ∀ (t : P3475T1TriangleTree q X K), ∀ (h : ℕ), ∀ (hh : h <
         (P3523T1InsertionConstruction s t).steps.length), ∀ [NeZero (n + (3 : ℕ))],
-    let c := P3523T1InsertionConstruction s t
-    let e := c.steps.get ⟨h, hh⟩
+    let c := P3523T1InsertionConstruction s t;
+    let e := c.steps.get ⟨h, hh⟩;
     ∀ (j : Fin (n + (3 : ℕ))), ((j - (1 : Fin (n + (3 : ℕ))), j, s.start (s.edge j + (1 : Fin (r
-        + (3 : ℕ))))) = e) → ((Fin (n + (3 : ℕ))) → (((j - 1) + 1 = j) → ((s.edge (j - 1) =
+        + (3 : ℕ))))) = e) → (
+                                                    (((j - 1) + 1 = j) → ((s.edge (j - 1) =
         s.edge j) → ((j - 1 ≠ s.start (s.edge j + 1)) → ((c.steps.Nodup) → ((∀ {α : Type}, ∀ (l :
             List α), (l.Nodup) → (∀ (m : Nat), ∀ (hm : m < l.length), l.get ⟨m, hm⟩ ∉ l.take m)) →
         ((∀ {a : Fin (n + 3)}, ∀ {b : Fin (n + 3)}, ∀ {c : Fin (n + 3)}, ∀ {d : Fin (n + 3)}, (a
@@ -488,8 +535,8 @@ private theorem hno :
     let P : Finset (Fin (n + 3)) := {j - 1, s.start (s.edge j + 1)}
     ∀ z ∈ c.steps.take h, P ≠ {z.1, z.2.2})))))))) := by
   classical
-  intro r n q p s X K t h hh this c e j heq k hp hsame hne hstepsNodup getNotTake pairCases P z
-      hz hpair
+  intro r n q p s X K t h hh this c e j heq hp hsame hne hstepsNodup getNotTake pairCases P z hz
+      hpair
   have hzsteps : z ∈ c.steps := List.mem_of_mem_take hz
   rcases List.mem_map.mp hzsteps with ⟨w, hw, hztuple⟩
   have hwfilter := List.mem_filter.mp hw
@@ -695,13 +742,22 @@ private theorem boundaryEdgeInj :
     omega
 
 private theorem boundaryCardUpdate :
-    ∀ (r : Nat), ∀ (n : Nat), ∀ (q : P3381T1PolygonBoundary r), ∀ (p : P3381T1PolygonBoundary
-        n), (P3475T1BoundarySubdivision q p) → (∀ (B : Finset (Finset (Fin (n + 3)))), ∀ (V :
-            Finset (Fin (n + 3))), ∀ (a : Fin (n + 3)), ∀ (d : Fin (n + 3)), ∀ (b : Fin (n + 3)), (a
-        ≠ b) → ((a ∈ V) → ((b ∈ V) → ((d ∉ V) → ((∀ P ∈ B, ∀ x ∈ P, x ∈ V) → (({a, b} ∈ B) →
-        ((insert {a, d} (insert {d, b} (B.erase {a, b}))).card = B.card + 1))))))) := by
+    ∀ (n : Nat),
+      ∀ (B : Finset (Finset (Fin (n + 3)))),
+        ∀ (V : Finset (Fin (n + 3))),
+          ∀ (a : Fin (n + 3)),
+            ∀ (d : Fin (n + 3)),
+              ∀ (b : Fin (n + 3)),
+                a ≠ b →
+                  a ∈ V →
+                    b ∈ V →
+                      d ∉ V →
+                        (∀ P ∈ B, ∀ x ∈ P, x ∈ V) →
+                          { a, b } ∈ B →
+                            (insert { a, d } (insert { d, b } (B.erase { a, b }))).card =
+                            B.card + 1 := by
   classical
-  intro r n q p s B V a d b hab ha hb hd hend herase
+  intro n B V a d b hab ha hb hd hend herase
   have had : a ≠ d := by
     intro h
     exact hd (h ▸ ha)
@@ -840,16 +896,16 @@ private theorem hstate :
       · rw [hupdateCard, hupdateVertices, hprev.2]
 
 private theorem targetPairInj :
-    ∀ (r : Nat), ∀ (n : Nat), ∀ (q : P3381T1PolygonBoundary r), ∀ (p : P3381T1PolygonBoundary
-        n), (P3475T1BoundarySubdivision q p) → (∀ (X : Set (Real × Real)), ∀ (K : Set (Real ×
-        Real)), (P3475T1TriangleTree q X K) → ((∀ {a : Fin (n + 3)}, ∀ {b : Fin (n + 3)}, ∀
+                 ∀ (n : Nat),
+                                               (
+                                              ((∀ {a : Fin (n + 3)}, ∀ {b : Fin (n + 3)}, ∀
             {c : Fin (n + 3)}, ∀ {d : Fin (n + 3)}, (a ≠ b) → ((({a, b} : Finset (Fin (n + 3))) =
             {c,
         d}) → ((a = c ∧ b = d) ∨ (a = d ∧ b = c)))) → ((∀ (i : Fin (n + 3)), i ≠ i + 1) →
         (Function.Injective
       (fun i : Fin (n + 3) => ({i, i + 1} : Finset (Fin (n + 3)))))))) := by
   classical
-  intro r n q p s X K t pairCases targetAdjNe i j hij
+  intro n pairCases targetAdjNe i j hij
   have hcases := pairCases (targetAdjNe i) hij
   rcases hcases with ⟨hij, _⟩ | ⟨hij, hji⟩
   · exact hij
@@ -1394,7 +1450,7 @@ private theorem hboundary :
       (hend : ∀ P ∈ B, ∀ x ∈ P, x ∈ V)
       (herase : {a, b} ∈ B) :
       (insert {a, d} (insert {d, b} (B.erase {a, b}))).card = B.card + 1 :=
-          OrderedInsertionGeometry.boundaryCardUpdate r n q p s B V a d b hab ha hb hd hend
+          OrderedInsertionGeometry.boundaryCardUpdate n B V a d b hab ha hb hd hend
           herase
   have hstate : ∀ h : Nat, h ≤ c.steps.length →
       (∀ P ∈ c.boundary h, ∀ x ∈ P, x ∈ c.vertices h) ∧
@@ -1412,7 +1468,7 @@ private theorem hboundary :
     norm_num at hv
   have targetPairInj : Function.Injective
       (fun i : Fin (n + 3) => ({i, i + 1} : Finset (Fin (n + 3)))) :=
-          OrderedInsertionGeometry.targetPairInj r n q p s X K t pairCases targetAdjNe
+          OrderedInsertionGeometry.targetPairInj n pairCases targetAdjNe
   have htargetCard : targetBoundary.card = n + 3 := by
     dsimp [targetBoundary]
     rw [Finset.card_image_of_injective _ targetPairInj]
@@ -1498,9 +1554,9 @@ theorem P3523T1OrderedInsertion {r n : Nat}
     have hlast : s.edge (s.start i + (m : Fin (n + 3))) ≠ i := by
       simpa only [m, k₀, s.edge_start] using (Nat.find_spec ex).2
     have hsame (k : Nat) (hk : k < m) := OrderedInsertionGeometry.hsameAt138 r n q p
-            s hexit i ex hk₀ k hk
-    have hstart := OrderedInsertionGeometry.hstartAt150 r n q p s hzero hexit i ex hlast hsame
-    have hstep (k : Nat) (hk : k + 1 < m) := OrderedInsertionGeometry.hstepAt162 r n q p s hexit
+            s i ex hk₀ k hk
+    have hstart := OrderedInsertionGeometry.hstartAt150 r n q p s hzero i ex hlast hsame
+    have hstep (k : Nat) (hk : k + 1 < m) := OrderedInsertionGeometry.hstepAt162 r n q p s
         i ex hsame k hk
     exact ⟨m, by dsimp [m]; omega, hm, hstart, hsame,
       fun k l hkl hl => OrderedInsertionGeometry.hstrict r n q p s i ex hstep l hl k hkl⟩
@@ -1562,8 +1618,7 @@ theorem P3523T1OrderedInsertion {r n : Nat}
           (hlen : h < (l.filter p).length)
           (hp : p (l.get ⟨k - 1, by omega⟩) = true)
           (hcur : (l.filter p).get ⟨h, hlen⟩ = l.get ⟨k, hk⟩) :=
-              OrderedInsertionGeometry.filterPrev r
-              n q s X K t j (α := α) l p k h hn hk hpos hlen hp hcur
+              OrderedInsertionGeometry.filterPrev (α := α) l p k h hn hk hpos hlen hp hcur
       have getNotTake {α : Type} (l : List α) (hn : l.Nodup) (m : Nat)
           (hm : m < l.length) := ListEndpointFacts.getNotTake l hn m hm
       have fold_not_mem (l : List (Fin (n + 3) × Fin (n + 3) × Fin (n + 3)))
@@ -1612,7 +1667,7 @@ theorem P3523T1OrderedInsertion {r n : Nat}
           have hkpos := OrderedInsertionDetails.hkpos r n q p s j k hk hparam
           have hkprev := OrderedInsertionDetails.hkprev n k hkpos
           have hprevLabel := OrderedInsertionDetails.hprevLabel (s.start 0) kp k j hkprev hk
-          have hrawPrev := OrderedInsertionGeometry.hrawPrevAt546 r n q p s X K t h j k hp
+          have hrawPrev := OrderedInsertionGeometry.hrawPrevAt546 r n q p s j k
               hrawLen hprevLabel
           have hrawCur := OrderedInsertionGeometry.hrawCurAt556 r n q p s j k hk hrawLen
           have hfilterLen : h < (List.filter pred raw).length := by
@@ -1641,7 +1696,7 @@ theorem P3523T1OrderedInsertion {r n : Nat}
       · have hxinit := OrderedInsertionDetails.hxinit r n q p s j
           hparam
         have hprefix := OrderedInsertionGeometry.hprefix r n q
-            p s X K t h hh j heq k hstepsNodup
+            p s X K t h hh j heq hstepsNodup
         change e.2.1 ∉ (c.steps.take h).foldl
           (fun vs e => insert e.2.1 vs) (Finset.univ.image s.start)
         rw [← heq]
@@ -1652,7 +1707,7 @@ theorem P3523T1OrderedInsertion {r n : Nat}
         rw [← heq]
         let P : Finset (Fin (n + 3)) := {j - 1, s.start (s.edge j + 1)}
         have hno := OrderedInsertionGeometry.hno r n q p
-            s X K t h hh j heq k hp hsame hne hstepsNodup getNotTake pairCases
+            s X K t h hh j heq hp hsame hne hstepsNodup getNotTake pairCases
         have hseed := OrderedInsertionGeometry.hseed r n q p s X
                   K t hzero h j hsame prevTupleMem
         have hmem := keepBoundary (c.steps.take h)

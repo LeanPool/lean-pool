@@ -635,17 +635,17 @@ private theorem hcAt488 :
     hp.1 hp'.1 hrepr
 
 private theorem hm' :
-    (DiamondParameter) → ((GaussianInt) → (∀ (p : GaussianInt × ℤ × ℤ), ∀ (p' : GaussianInt × ℤ ×
-        ℤ), (p.2.1 - p'.2.1 = (0 : ℤ)) → (p.2.1 = p'.2.1))) := by
+    ∀ (p : GaussianInt × ℤ × ℤ),
+      ∀ (p' : GaussianInt × ℤ × ℤ), p.2.1 - p'.2.1 = (0 : ℤ) → p.2.1 = p'.2.1 := by
   classical
-  intro K x p p' hm
+  intro p p' hm
   omega
 
 private theorem hn' :
-    (DiamondParameter) → ((GaussianInt) → (∀ (p : GaussianInt × ℤ × ℤ), ∀ (p' : GaussianInt × ℤ ×
-        ℤ), (p.2.2 - p'.2.2 = (0 : ℤ)) → (p.2.2 = p'.2.2))) := by
+    ∀ (p : GaussianInt × ℤ × ℤ),
+      ∀ (p' : GaussianInt × ℤ × ℤ), p.2.2 - p'.2.2 = (0 : ℤ) → p.2.2 = p'.2.2 := by
   classical
-  intro K x p p' hn
+  intro p p' hn
   omega
 
 private theorem hpoint :
@@ -738,8 +738,8 @@ theorem P4818T1Representatives (K : DiamondParameter) :
       RepresentativesProof.hrepr K p p' hrel
   have hc := RepresentativesProof.hcAt488 K hinj x p hp p' hp' hrepr
   rcases hc with ⟨hm, hn⟩
-  have hm' : p.2.1 = p'.2.1 := RepresentativesProof.hm' K x p p' hm
-  have hn' : p.2.2 = p'.2.2 := RepresentativesProof.hn' K x p p' hn
+  have hm' : p.2.1 = p'.2.1 := RepresentativesProof.hm' p p' hm
+  have hn' : p.2.2 = p'.2.2 := RepresentativesProof.hn' p p' hn
   have hpoint : p.1 = p'.1 := RepresentativesProof.hpoint K p p' hrel hm' hn'
   apply Prod.ext
   · exact hpoint.symm

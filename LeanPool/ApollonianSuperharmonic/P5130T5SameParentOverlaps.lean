@@ -55,31 +55,31 @@ private theorem hp2 :
   exact hp₂
 
 private theorem hq1pos' :
-    ∀ (P : FordFareyParameter), ∀ (P₁ : FordFareyParameter), (FordFareyParameter) → (P₁.q = P.q₁)
-        → (0 < P.q₁) → 0 < P₁.q := by
+    ∀ (P : FordFareyParameter),
+      ∀ (P₁ : FordFareyParameter), P₁.q = P.q₁ → 0 < P.q₁ → 0 < P₁.q := by
   classical
-  intro P P₁ P₂ hq₁ hq1pos
+  intro P P₁ hq₁ hq1pos
   omega
 
 private theorem hq2pos' :
-    ∀ (P : FordFareyParameter), (FordFareyParameter) → ∀ (P₂ : FordFareyParameter), (P₂.q = P.q₂)
-        → (0 < P.q₂) → 0 < P₂.q := by
+    ∀ (P : FordFareyParameter),
+      ∀ (P₂ : FordFareyParameter), P₂.q = P.q₂ → 0 < P.q₂ → 0 < P₂.q := by
   classical
-  intro P P₁ P₂ hq₂ hq2pos
+  intro P P₂ hq₂ hq2pos
   omega
 
 private theorem hq1lt' :
-    ∀ (P : FordFareyParameter), ∀ (P₁ : FordFareyParameter), (FordFareyParameter) → (P₁.q = P.q₁)
-        → (P.q₁ < P.q) → P₁.q < P.q := by
+    ∀ (P : FordFareyParameter),
+      ∀ (P₁ : FordFareyParameter), P₁.q = P.q₁ → P.q₁ < P.q → P₁.q < P.q := by
   classical
-  intro P P₁ P₂ hq₁ hq1lt
+  intro P P₁ hq₁ hq1lt
   omega
 
 private theorem hq2lt' :
-    ∀ (P : FordFareyParameter), (FordFareyParameter) → ∀ (P₂ : FordFareyParameter), (P₂.q = P.q₂)
-        → (P.q₂ < P.q) → P₂.q < P.q := by
+    ∀ (P : FordFareyParameter),
+      ∀ (P₂ : FordFareyParameter), P₂.q = P.q₂ → P.q₂ < P.q → P₂.q < P.q := by
   classical
-  intro P P₁ P₂ hq₂ hq2lt
+  intro P P₂ hq₂ hq2lt
   omega
 
 end SameParentOverlapLemmas
@@ -280,10 +280,10 @@ theorem P5130T5SameParentOverlaps (P P₁ P₂ : FordFareyParameter)
   have hq2 : P₂.q = P.q₂ := SameParentOverlapLemmas.hq2 P P₂ hq₂
   have hp1 : P₁.p = P.p₁ := SameParentOverlapLemmas.hp1 P P₁ hp₁
   have hp2 : P₂.p = P.p₂ := SameParentOverlapLemmas.hp2 P P₂ hp₂
-  have hq1pos' : 0 < P₁.q := SameParentOverlapLemmas.hq1pos' P P₁ P₂ hq₁ hq1pos
-  have hq2pos' : 0 < P₂.q := SameParentOverlapLemmas.hq2pos' P P₁ P₂ hq₂ hq2pos
-  have hq1lt' : P₁.q < P.q := SameParentOverlapLemmas.hq1lt' P P₁ P₂ hq₁ hq1lt
-  have hq2lt' : P₂.q < P.q := SameParentOverlapLemmas.hq2lt' P P₁ P₂ hq₂ hq2lt
+  have hq1pos' : 0 < P₁.q := SameParentOverlapLemmas.hq1pos' P P₁ hq₁ hq1pos
+  have hq2pos' : 0 < P₂.q := SameParentOverlapLemmas.hq2pos' P P₂ hq₂ hq2pos
+  have hq1lt' : P₁.q < P.q := SameParentOverlapLemmas.hq1lt' P P₁ hq₁ hq1lt
+  have hq2lt' : P₂.q < P.q := SameParentOverlapLemmas.hq2lt' P P₂ hq₂ hq2lt
   have first_parent_overlap : ∀ x,
       x ∈ FordRecursiveVertexDomains P 0 → x ∈ FordRecursiveVertexDomains P 1 →
       P5130T5Prescription P (G P₁) (G P₂) 0 x =

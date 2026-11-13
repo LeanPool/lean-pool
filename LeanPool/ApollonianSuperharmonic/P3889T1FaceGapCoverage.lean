@@ -1149,43 +1149,82 @@ private theorem hzeroK :
     (by
       classical
       exact
-        ∀ (ι : Type), ∀ (P : PeriodicTileComplex ι), ∀ (D : P3723T1AllContactRouting P), ∀ (F :
-            P3861T1FacialDomains P D), ∀ (a : ι), ∀ (r : ℝ), ∀ (u : ι → ℝ × ℝ), (∀ (c : ι),
-            P.plane.adjacent a c → ‖u c‖ = (1 : ℝ)) → (
-        let x := D.position a
-        let B := Metric.ball x r
-        (∀ (f : P.plane.Face), ∀ (i : Fin 3), (P.plane.faceVertex f i = a) → (∃ c d, c ≠ a ∧ d ≠
-            a ∧ c ≠ d ∧ P.plane.adjacent a c ∧ P.plane.adjacent a d ∧ (∃ j, P.plane.faceVertex f
-            j = c) ∧ (∃ j, P.plane.faceVertex f j = d) ∧ frontier (F.region f) ∩ B = (B ∩ {q | ∃
-            t : Real, 0 ≤ t ∧ q = x + t • u c}) ∪ (B ∩ {q | ∃ t : Real, 0 ≤ t ∧ q = x + t • u d})
-            ∧ Nonempty (P3889T1TwoRaySectorDecomposition x r (u c) (u d)))) → (
-        let I : Set P.plane.Face := {f | ∃ i, P.plane.faceVertex f i = a}
-        ∀ (c : ι),
-        let Nsub := {c : ι // P.plane.adjacent a c}
-        let first (c : Nsub) : P.plane.Face :=
-          Classical.choose (P.plane.every_edge_two_faces a c.1 c.2)
-        let second (c : Nsub) : P.plane.Face :=
-          Classical.choose (Classical.choose_spec
-            (P.plane.every_edge_two_faces a c.1 c.2))
-        (∀ (g : P.plane.Face), ∀ (j : Fin 3), (P.plane.faceVertex g j = a) → (∀ (e : ι), (∃ k,
-            P.plane.faceVertex g k = e) → ((e ≠ a) → (∀ (c : ι), ∀ (d : ι), (c ≠ a) → ((d ≠ a) →
-            ((c ≠ d) → ((∃ k, P.plane.faceVertex g k = c) → ((∃ k, P.plane.faceVertex g k = d) →
-            (e = c ∨ e = d))))))))) → (∀ (f : P.plane.Face),
-        let K : Set (Real × Real) := ⋃ f ∈ I, closure (F.region f)
-        ∀ (z : ℝ × ℝ), ∀ (i : Fin (3 : ℕ)), (P.plane.faceVertex f i = a) → (∀ (e : ι), (∃ (k :
-            Fin (3 : ℕ)), P.plane.faceVertex f k = e) → ((e ≠ a) → (∀ (hae : P.plane.adjacent a
-            e), ∀ (t : ℝ), (z = x + t • u e) → (
-        let en : Nsub := ⟨e, hae⟩
-        let f0 := first en
-        let f1 := second en
-        let g := if f = f0 then f1 else f0
-        (∃ j, P.plane.faceVertex g j = e) → (∀ (j : Fin (3 : ℕ)), (P.plane.faceVertex g j = a) →
-            (∀ (δ₁ : ℝ), ∀ (δ₂ : ℝ),
-        let eps := min δ₁ (min δ₂ t) / 2
-        (eps < t) → ((Metric.ball z eps ⊆ B) → (∀ q ∈ Metric.ball z eps, (u e).1 * (q.2 - z.2) -
-            (u e).2 * (q.1 - z.1) = 0 → q ∈ K))))))))))) ) := by
+        ∀ (ι : Type),
+          ∀ (P : PeriodicTileComplex ι),
+            ∀ (D : P3723T1AllContactRouting P),
+              ∀ (F : P3861T1FacialDomains P D),
+                ∀ (a : ι),
+                  ∀ (r : ℝ),
+                    ∀ (u : ι → ℝ × ℝ),
+                      (∀ (c : ι), P.plane.adjacent a c → ‖u c‖ = (1 : ℝ)) →
+                        let x := D.position a;
+                        let B := Metric.ball x r;
+                        (∀ (f : P.plane.Face),
+                            ∀ (i : Fin 3),
+                              P.plane.faceVertex f i = a →
+                                ∃ c d,
+                                c ≠ a ∧
+                                d ≠ a ∧
+                                c ≠ d ∧
+                                P.plane.adjacent a c ∧
+                                P.plane.adjacent a d ∧
+                                (∃ j, P.plane.faceVertex f j = c) ∧
+                                (∃ j, P.plane.faceVertex f j = d) ∧
+                                frontier (F.region f) ∩ B =
+                                B ∩ {q | ∃ t : Real, 0 ≤ t ∧ q = x + t • u c} ∪
+                                B ∩ {q | ∃ t : Real, 0 ≤ t ∧ q = x + t • u d} ∧
+                                Nonempty
+                                (P3889T1TwoRaySectorDecomposition x r (u c) (u d))) →
+                          let I : Set P.plane.Face :=
+                            {f | ∃ i, P.plane.faceVertex f i = a};
+                          let Nsub := { c : ι // P.plane.adjacent a c }
+                          let first (c : Nsub) : P.plane.Face :=
+                            Classical.choose (P.plane.every_edge_two_faces a c.1 c.2)
+                          let second (c : Nsub) : P.plane.Face :=
+                            Classical.choose
+                              (Classical.choose_spec
+                                (P.plane.every_edge_two_faces a c.1 c.2))
+                          (∀ (g : P.plane.Face),
+                              ∀ (j : Fin 3),
+                                P.plane.faceVertex g j = a →
+                                ∀ (e : ι),
+                                (∃ k, P.plane.faceVertex g k = e) →
+                                e ≠ a →
+                                ∀ (c : ι),
+                                ∀ (d : ι),
+                                c ≠ a →
+                                d ≠ a →
+                                c ≠ d →
+                                (∃ k, P.plane.faceVertex g k = c) →
+                                (∃ k, P.plane.faceVertex g k = d) → e = c ∨ e = d) →
+                            ∀ (f : P.plane.Face),
+                              let K : Set (Real × Real) := ⋃ f ∈ I, closure (F.region f)
+                              ∀ (z : ℝ × ℝ),
+                                ∀ (i : Fin (3 : ℕ)),
+                                P.plane.faceVertex f i = a →
+                                ∀ (e : ι),
+                                (∃ (k : Fin (3 : ℕ)), P.plane.faceVertex f k = e) →
+                                e ≠ a →
+                                ∀ (hae : P.plane.adjacent a e),
+                                ∀ (t : ℝ),
+                                z = x + t • u e →
+                                let en : Nsub := ⟨e, hae⟩
+                              let f0 := first en
+                              let f1 := second en
+                              let g := if f = f0 then f1 else f0
+                              (∃ j, P.plane.faceVertex g j = e) →
+                                ∀ (j : Fin (3 : ℕ)),
+                                P.plane.faceVertex g j = a →
+                                ∀ (δ₁ : ℝ),
+                                ∀ (δ₂ : ℝ),
+                                let eps := min δ₁ (min δ₂ t) / 2
+                              eps < t →
+                                Metric.ball z eps ⊆ B →
+                                ∀ q ∈ Metric.ball z eps,
+                                (u e).1 * (q.2 - z.2) - (u e).2 * (q.1 - z.1) = 0 → q ∈ K
+    ) := by
   classical
-  intro ι P D F a r u hunit x B hincidentSectorData I c Nsub first second faceOtherMatch f K z i
+  intro ι P D F a r u hunit x B hincidentSectorData I Nsub first second faceOtherMatch f K z i
       hi e he hea hae t hzeq en f0 f1 g hgE j hj δ₁ δ₂ eps hepst hball₁' q hq hdet
   have hu : u e ≠ 0 := by
     intro heq
@@ -1820,7 +1859,7 @@ private theorem hKlocal :
       have hball₂' := FaceGapProof.hball₂' ι P D a r z t δ₁ δ₂ hball₂
           heps₂
       have hzeroK := FaceGapProof.hzeroK ι P
-              D F a r u hunit hincidentSectorData c faceOtherMatch f z i hi e he hea hae t hzeq
+              D F a r u hunit hincidentSectorData faceOtherMatch f z i hi e he hea hae t hzeq
               hgE j hj δ₁ δ₂ (FaceGapProof.hepst t ht δ₁ δ₂) (FaceGapProof.hball₁' ι P D a r z
                   t δ₁ hball₁ δ₂ heps₁)
       have memK (g : P.plane.Face) (j : Fin 3)

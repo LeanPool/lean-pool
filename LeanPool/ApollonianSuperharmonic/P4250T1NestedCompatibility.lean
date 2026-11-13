@@ -195,190 +195,6 @@ private theorem pos3 :
   have hnon : 0 ≤ (q 3).1 := by simpa using hn
   omega
 
-private theorem hv21 :
-    (by
-      classical
-      exact
-        ∀ (q : Fin 4 → CircleCoordinates), ∀ (cfg : BandOrderedGeneralConfiguration q),
-        let I : GaussianInt := ⟨0, 1⟩
-        let w : GaussianInt := BandVectors.1 (q 3) (q 2)
-        let v21 : GaussianInt := BandVectors.1 (q 2) (q 1)
-        (BandVectors.1 (![cfg.firstPredecessor (0 : Fin (4 : ℕ)), cfg.firstPredecessor (2 : Fin
-            (4 : ℕ)), cfg.firstPredecessor (3 : Fin (4 : ℕ)), cfg.firstPredecessor (1 : Fin (4 :
-            ℕ))] (3 : Fin (4 : ℕ))) (![cfg.firstPredecessor (0 : Fin (4 : ℕ)),
-            cfg.firstPredecessor (2 : Fin (4 : ℕ)), cfg.firstPredecessor (3 : Fin (4 : ℕ)),
-            cfg.firstPredecessor (1 : Fin (4 : ℕ))] (2 : Fin (4 : ℕ))) + BandVectors.1
-            (![cfg.firstPredecessor (0 : Fin (4 : ℕ)), cfg.firstPredecessor (2 : Fin (4 : ℕ)),
-            cfg.firstPredecessor (3 : Fin (4 : ℕ)), cfg.firstPredecessor (1 : Fin (4 : ℕ))] (1 :
-            Fin (4 : ℕ))) (![cfg.firstPredecessor (0 : Fin (4 : ℕ)), cfg.firstPredecessor (2 :
-            Fin (4 : ℕ)), cfg.firstPredecessor (3 : Fin (4 : ℕ)), cfg.firstPredecessor (1 : Fin
-            (4 : ℕ))] (3 : Fin (4 : ℕ))) + BandVectors.1 (![cfg.firstPredecessor (0 : Fin (4 :
-            ℕ)), cfg.firstPredecessor (2 : Fin (4 : ℕ)), cfg.firstPredecessor (3 : Fin (4 : ℕ)),
-            cfg.firstPredecessor (1 : Fin (4 : ℕ))] (2 : Fin (4 : ℕ))) (![cfg.firstPredecessor (0
-            : Fin (4 : ℕ)), cfg.firstPredecessor (2 : Fin (4 : ℕ)), cfg.firstPredecessor (3 : Fin
-            (4 : ℕ)), cfg.firstPredecessor (1 : Fin (4 : ℕ))] (1 : Fin (4 : ℕ))) = (0 :
-            GaussianInt) ∧ BandVectors.2 (![cfg.firstPredecessor (0 : Fin (4 : ℕ)),
-            cfg.firstPredecessor (2 : Fin (4 : ℕ)), cfg.firstPredecessor (3 : Fin (4 : ℕ)),
-            cfg.firstPredecessor (1 : Fin (4 : ℕ))] (3 : Fin (4 : ℕ))) (![cfg.firstPredecessor (0
-            : Fin (4 : ℕ)), cfg.firstPredecessor (2 : Fin (4 : ℕ)), cfg.firstPredecessor (3 : Fin
-            (4 : ℕ)), cfg.firstPredecessor (1 : Fin (4 : ℕ))] (2 : Fin (4 : ℕ))) + BandVectors.2
-            (![cfg.firstPredecessor (0 : Fin (4 : ℕ)), cfg.firstPredecessor (2 : Fin (4 : ℕ)),
-            cfg.firstPredecessor (3 : Fin (4 : ℕ)), cfg.firstPredecessor (1 : Fin (4 : ℕ))] (1 :
-            Fin (4 : ℕ))) (![cfg.firstPredecessor (0 : Fin (4 : ℕ)), cfg.firstPredecessor (2 :
-            Fin (4 : ℕ)), cfg.firstPredecessor (3 : Fin (4 : ℕ)), cfg.firstPredecessor (1 : Fin
-            (4 : ℕ))] (3 : Fin (4 : ℕ))) + BandVectors.2 (![cfg.firstPredecessor (0 : Fin (4 :
-            ℕ)), cfg.firstPredecessor (2 : Fin (4 : ℕ)), cfg.firstPredecessor (3 : Fin (4 : ℕ)),
-            cfg.firstPredecessor (1 : Fin (4 : ℕ))] (2 : Fin (4 : ℕ))) (![cfg.firstPredecessor (0
-            : Fin (4 : ℕ)), cfg.firstPredecessor (2 : Fin (4 : ℕ)), cfg.firstPredecessor (3 : Fin
-            (4 : ℕ)), cfg.firstPredecessor (1 : Fin (4 : ℕ))] (1 : Fin (4 : ℕ))) = (0 :
-            GaussianInt) ∧ BandVectors.1 (![cfg.firstPredecessor (0 : Fin (4 : ℕ)),
-            cfg.firstPredecessor (2 : Fin (4 : ℕ)), cfg.firstPredecessor (3 : Fin (4 : ℕ)),
-            cfg.firstPredecessor (1 : Fin (4 : ℕ))] (1 : Fin (4 : ℕ))) (![cfg.firstPredecessor (0
-            : Fin (4 : ℕ)), cfg.firstPredecessor (2 : Fin (4 : ℕ)), cfg.firstPredecessor (3 : Fin
-            (4 : ℕ)), cfg.firstPredecessor (1 : Fin (4 : ℕ))] (0 : Fin (4 : ℕ))) = BandVectors.1
-            (![cfg.firstPredecessor (0 : Fin (4 : ℕ)), cfg.firstPredecessor (2 : Fin (4 : ℕ)),
-            cfg.firstPredecessor (3 : Fin (4 : ℕ)), cfg.firstPredecessor (1 : Fin (4 : ℕ))] (1 :
-            Fin (4 : ℕ))) (![cfg.firstPredecessor (0 : Fin (4 : ℕ)), cfg.firstPredecessor (2 :
-            Fin (4 : ℕ)), cfg.firstPredecessor (3 : Fin (4 : ℕ)), cfg.firstPredecessor (1 : Fin
-            (4 : ℕ))] (3 : Fin (4 : ℕ))) - (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt) * BandVectors.1
-            (![cfg.firstPredecessor (0 : Fin (4 : ℕ)), cfg.firstPredecessor (2 : Fin (4 : ℕ)),
-            cfg.firstPredecessor (3 : Fin (4 : ℕ)), cfg.firstPredecessor (1 : Fin (4 : ℕ))] (2 :
-            Fin (4 : ℕ))) (![cfg.firstPredecessor (0 : Fin (4 : ℕ)), cfg.firstPredecessor (2 :
-            Fin (4 : ℕ)), cfg.firstPredecessor (3 : Fin (4 : ℕ)), cfg.firstPredecessor (1 : Fin
-            (4 : ℕ))] (1 : Fin (4 : ℕ))) ∧ BandVectors.2 (![cfg.firstPredecessor (0 : Fin (4 :
-            ℕ)), cfg.firstPredecessor (2 : Fin (4 : ℕ)), cfg.firstPredecessor (3 : Fin (4 : ℕ)),
-            cfg.firstPredecessor (1 : Fin (4 : ℕ))] (1 : Fin (4 : ℕ))) (![cfg.firstPredecessor (0
-            : Fin (4 : ℕ)), cfg.firstPredecessor (2 : Fin (4 : ℕ)), cfg.firstPredecessor (3 : Fin
-            (4 : ℕ)), cfg.firstPredecessor (1 : Fin (4 : ℕ))] (0 : Fin (4 : ℕ))) = BandVectors.2
-            (![cfg.firstPredecessor (0 : Fin (4 : ℕ)), cfg.firstPredecessor (2 : Fin (4 : ℕ)),
-            cfg.firstPredecessor (3 : Fin (4 : ℕ)), cfg.firstPredecessor (1 : Fin (4 : ℕ))] (1 :
-            Fin (4 : ℕ))) (![cfg.firstPredecessor (0 : Fin (4 : ℕ)), cfg.firstPredecessor (2 :
-            Fin (4 : ℕ)), cfg.firstPredecessor (3 : Fin (4 : ℕ)), cfg.firstPredecessor (1 : Fin
-            (4 : ℕ))] (3 : Fin (4 : ℕ))) + (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt) * BandVectors.2
-            (![cfg.firstPredecessor (0 : Fin (4 : ℕ)), cfg.firstPredecessor (2 : Fin (4 : ℕ)),
-            cfg.firstPredecessor (3 : Fin (4 : ℕ)), cfg.firstPredecessor (1 : Fin (4 : ℕ))] (2 :
-            Fin (4 : ℕ))) (![cfg.firstPredecessor (0 : Fin (4 : ℕ)), cfg.firstPredecessor (2 :
-            Fin (4 : ℕ)), cfg.firstPredecessor (3 : Fin (4 : ℕ)), cfg.firstPredecessor (1 : Fin
-            (4 : ℕ))] (1 : Fin (4 : ℕ))) ∧ (ProperBandQuadruple ![cfg.firstPredecessor (0 : Fin
-            (4 : ℕ)), cfg.firstPredecessor (2 : Fin (4 : ℕ)), cfg.firstPredecessor (3 : Fin (4 :
-            ℕ)), cfg.firstPredecessor (1 : Fin (4 : ℕ))] → ∀ (j : Fin (3 : ℕ)), BandVectors.1
-            (![cfg.firstPredecessor (0 : Fin (4 : ℕ)), cfg.firstPredecessor (2 : Fin (4 : ℕ)),
-            cfg.firstPredecessor (3 : Fin (4 : ℕ)), cfg.firstPredecessor (1 : Fin (4 : ℕ))] (0 :
-            Fin (4 : ℕ))) (![cfg.firstPredecessor (0 : Fin (4 : ℕ)), cfg.firstPredecessor (2 :
-            Fin (4 : ℕ)), cfg.firstPredecessor (3 : Fin (4 : ℕ)), cfg.firstPredecessor (1 : Fin
-            (4 : ℕ))] j.succ) = (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt) * BandVectors.1
-            (![cfg.firstPredecessor (0 : Fin (4 : ℕ)), cfg.firstPredecessor (2 : Fin (4 : ℕ)),
-            cfg.firstPredecessor (3 : Fin (4 : ℕ)), cfg.firstPredecessor (1 : Fin (4 : ℕ))]
-            j.succ) (![cfg.firstPredecessor (0 : Fin (4 : ℕ)), cfg.firstPredecessor (2 : Fin (4 :
-            ℕ)), cfg.firstPredecessor (3 : Fin (4 : ℕ)), cfg.firstPredecessor (1 : Fin (4 : ℕ))]
-            (0 : Fin (4 : ℕ))) ∧ BandVectors.2 (![cfg.firstPredecessor (0 : Fin (4 : ℕ)),
-            cfg.firstPredecessor (2 : Fin (4 : ℕ)), cfg.firstPredecessor (3 : Fin (4 : ℕ)),
-            cfg.firstPredecessor (1 : Fin (4 : ℕ))] (0 : Fin (4 : ℕ))) (![cfg.firstPredecessor (0
-            : Fin (4 : ℕ)), cfg.firstPredecessor (2 : Fin (4 : ℕ)), cfg.firstPredecessor (3 : Fin
-            (4 : ℕ)), cfg.firstPredecessor (1 : Fin (4 : ℕ))] j.succ) = -(⟨(0 : ℤ), (1 : ℤ)⟩ :
-            GaussianInt) * BandVectors.2 (![cfg.firstPredecessor (0 : Fin (4 : ℕ)),
-            cfg.firstPredecessor (2 : Fin (4 : ℕ)), cfg.firstPredecessor (3 : Fin (4 : ℕ)),
-            cfg.firstPredecessor (1 : Fin (4 : ℕ))] j.succ) (![cfg.firstPredecessor (0 : Fin (4 :
-            ℕ)), cfg.firstPredecessor (2 : Fin (4 : ℕ)), cfg.firstPredecessor (3 : Fin (4 : ℕ)),
-            cfg.firstPredecessor (1 : Fin (4 : ℕ))] (0 : Fin (4 : ℕ))))) → (v21 = BandVectors.1
-            (q 2) (cfg.firstPredecessor 1) - I * w) ) := by
-  classical
-  intro q cfg I w v21 hrot
-  simpa [v21, w, I, cfg.firstChild, cfg.firstParentTwo,
-    cfg.firstParentThree] using hrot.2.2.1
-
-private theorem ha21 :
-    (by
-      classical
-      exact
-        ∀ (q : Fin 4 → CircleCoordinates), ∀ (cfg : BandOrderedGeneralConfiguration q),
-        let I : GaussianInt := ⟨0, 1⟩
-        let alpha : GaussianInt := BandVectors.2 (q 3) (q 2)
-        let a21 : GaussianInt := BandVectors.2 (q 2) (q 1)
-        (BandVectors.1 (![cfg.firstPredecessor (0 : Fin (4 : ℕ)), cfg.firstPredecessor (2 : Fin
-            (4 : ℕ)), cfg.firstPredecessor (3 : Fin (4 : ℕ)), cfg.firstPredecessor (1 : Fin (4 :
-            ℕ))] (3 : Fin (4 : ℕ))) (![cfg.firstPredecessor (0 : Fin (4 : ℕ)),
-            cfg.firstPredecessor (2 : Fin (4 : ℕ)), cfg.firstPredecessor (3 : Fin (4 : ℕ)),
-            cfg.firstPredecessor (1 : Fin (4 : ℕ))] (2 : Fin (4 : ℕ))) + BandVectors.1
-            (![cfg.firstPredecessor (0 : Fin (4 : ℕ)), cfg.firstPredecessor (2 : Fin (4 : ℕ)),
-            cfg.firstPredecessor (3 : Fin (4 : ℕ)), cfg.firstPredecessor (1 : Fin (4 : ℕ))] (1 :
-            Fin (4 : ℕ))) (![cfg.firstPredecessor (0 : Fin (4 : ℕ)), cfg.firstPredecessor (2 :
-            Fin (4 : ℕ)), cfg.firstPredecessor (3 : Fin (4 : ℕ)), cfg.firstPredecessor (1 : Fin
-            (4 : ℕ))] (3 : Fin (4 : ℕ))) + BandVectors.1 (![cfg.firstPredecessor (0 : Fin (4 :
-            ℕ)), cfg.firstPredecessor (2 : Fin (4 : ℕ)), cfg.firstPredecessor (3 : Fin (4 : ℕ)),
-            cfg.firstPredecessor (1 : Fin (4 : ℕ))] (2 : Fin (4 : ℕ))) (![cfg.firstPredecessor (0
-            : Fin (4 : ℕ)), cfg.firstPredecessor (2 : Fin (4 : ℕ)), cfg.firstPredecessor (3 : Fin
-            (4 : ℕ)), cfg.firstPredecessor (1 : Fin (4 : ℕ))] (1 : Fin (4 : ℕ))) = (0 :
-            GaussianInt) ∧ BandVectors.2 (![cfg.firstPredecessor (0 : Fin (4 : ℕ)),
-            cfg.firstPredecessor (2 : Fin (4 : ℕ)), cfg.firstPredecessor (3 : Fin (4 : ℕ)),
-            cfg.firstPredecessor (1 : Fin (4 : ℕ))] (3 : Fin (4 : ℕ))) (![cfg.firstPredecessor (0
-            : Fin (4 : ℕ)), cfg.firstPredecessor (2 : Fin (4 : ℕ)), cfg.firstPredecessor (3 : Fin
-            (4 : ℕ)), cfg.firstPredecessor (1 : Fin (4 : ℕ))] (2 : Fin (4 : ℕ))) + BandVectors.2
-            (![cfg.firstPredecessor (0 : Fin (4 : ℕ)), cfg.firstPredecessor (2 : Fin (4 : ℕ)),
-            cfg.firstPredecessor (3 : Fin (4 : ℕ)), cfg.firstPredecessor (1 : Fin (4 : ℕ))] (1 :
-            Fin (4 : ℕ))) (![cfg.firstPredecessor (0 : Fin (4 : ℕ)), cfg.firstPredecessor (2 :
-            Fin (4 : ℕ)), cfg.firstPredecessor (3 : Fin (4 : ℕ)), cfg.firstPredecessor (1 : Fin
-            (4 : ℕ))] (3 : Fin (4 : ℕ))) + BandVectors.2 (![cfg.firstPredecessor (0 : Fin (4 :
-            ℕ)), cfg.firstPredecessor (2 : Fin (4 : ℕ)), cfg.firstPredecessor (3 : Fin (4 : ℕ)),
-            cfg.firstPredecessor (1 : Fin (4 : ℕ))] (2 : Fin (4 : ℕ))) (![cfg.firstPredecessor (0
-            : Fin (4 : ℕ)), cfg.firstPredecessor (2 : Fin (4 : ℕ)), cfg.firstPredecessor (3 : Fin
-            (4 : ℕ)), cfg.firstPredecessor (1 : Fin (4 : ℕ))] (1 : Fin (4 : ℕ))) = (0 :
-            GaussianInt) ∧ BandVectors.1 (![cfg.firstPredecessor (0 : Fin (4 : ℕ)),
-            cfg.firstPredecessor (2 : Fin (4 : ℕ)), cfg.firstPredecessor (3 : Fin (4 : ℕ)),
-            cfg.firstPredecessor (1 : Fin (4 : ℕ))] (1 : Fin (4 : ℕ))) (![cfg.firstPredecessor (0
-            : Fin (4 : ℕ)), cfg.firstPredecessor (2 : Fin (4 : ℕ)), cfg.firstPredecessor (3 : Fin
-            (4 : ℕ)), cfg.firstPredecessor (1 : Fin (4 : ℕ))] (0 : Fin (4 : ℕ))) = BandVectors.1
-            (![cfg.firstPredecessor (0 : Fin (4 : ℕ)), cfg.firstPredecessor (2 : Fin (4 : ℕ)),
-            cfg.firstPredecessor (3 : Fin (4 : ℕ)), cfg.firstPredecessor (1 : Fin (4 : ℕ))] (1 :
-            Fin (4 : ℕ))) (![cfg.firstPredecessor (0 : Fin (4 : ℕ)), cfg.firstPredecessor (2 :
-            Fin (4 : ℕ)), cfg.firstPredecessor (3 : Fin (4 : ℕ)), cfg.firstPredecessor (1 : Fin
-            (4 : ℕ))] (3 : Fin (4 : ℕ))) - (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt) * BandVectors.1
-            (![cfg.firstPredecessor (0 : Fin (4 : ℕ)), cfg.firstPredecessor (2 : Fin (4 : ℕ)),
-            cfg.firstPredecessor (3 : Fin (4 : ℕ)), cfg.firstPredecessor (1 : Fin (4 : ℕ))] (2 :
-            Fin (4 : ℕ))) (![cfg.firstPredecessor (0 : Fin (4 : ℕ)), cfg.firstPredecessor (2 :
-            Fin (4 : ℕ)), cfg.firstPredecessor (3 : Fin (4 : ℕ)), cfg.firstPredecessor (1 : Fin
-            (4 : ℕ))] (1 : Fin (4 : ℕ))) ∧ BandVectors.2 (![cfg.firstPredecessor (0 : Fin (4 :
-            ℕ)), cfg.firstPredecessor (2 : Fin (4 : ℕ)), cfg.firstPredecessor (3 : Fin (4 : ℕ)),
-            cfg.firstPredecessor (1 : Fin (4 : ℕ))] (1 : Fin (4 : ℕ))) (![cfg.firstPredecessor (0
-            : Fin (4 : ℕ)), cfg.firstPredecessor (2 : Fin (4 : ℕ)), cfg.firstPredecessor (3 : Fin
-            (4 : ℕ)), cfg.firstPredecessor (1 : Fin (4 : ℕ))] (0 : Fin (4 : ℕ))) = BandVectors.2
-            (![cfg.firstPredecessor (0 : Fin (4 : ℕ)), cfg.firstPredecessor (2 : Fin (4 : ℕ)),
-            cfg.firstPredecessor (3 : Fin (4 : ℕ)), cfg.firstPredecessor (1 : Fin (4 : ℕ))] (1 :
-            Fin (4 : ℕ))) (![cfg.firstPredecessor (0 : Fin (4 : ℕ)), cfg.firstPredecessor (2 :
-            Fin (4 : ℕ)), cfg.firstPredecessor (3 : Fin (4 : ℕ)), cfg.firstPredecessor (1 : Fin
-            (4 : ℕ))] (3 : Fin (4 : ℕ))) + (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt) * BandVectors.2
-            (![cfg.firstPredecessor (0 : Fin (4 : ℕ)), cfg.firstPredecessor (2 : Fin (4 : ℕ)),
-            cfg.firstPredecessor (3 : Fin (4 : ℕ)), cfg.firstPredecessor (1 : Fin (4 : ℕ))] (2 :
-            Fin (4 : ℕ))) (![cfg.firstPredecessor (0 : Fin (4 : ℕ)), cfg.firstPredecessor (2 :
-            Fin (4 : ℕ)), cfg.firstPredecessor (3 : Fin (4 : ℕ)), cfg.firstPredecessor (1 : Fin
-            (4 : ℕ))] (1 : Fin (4 : ℕ))) ∧ (ProperBandQuadruple ![cfg.firstPredecessor (0 : Fin
-            (4 : ℕ)), cfg.firstPredecessor (2 : Fin (4 : ℕ)), cfg.firstPredecessor (3 : Fin (4 :
-            ℕ)), cfg.firstPredecessor (1 : Fin (4 : ℕ))] → ∀ (j : Fin (3 : ℕ)), BandVectors.1
-            (![cfg.firstPredecessor (0 : Fin (4 : ℕ)), cfg.firstPredecessor (2 : Fin (4 : ℕ)),
-            cfg.firstPredecessor (3 : Fin (4 : ℕ)), cfg.firstPredecessor (1 : Fin (4 : ℕ))] (0 :
-            Fin (4 : ℕ))) (![cfg.firstPredecessor (0 : Fin (4 : ℕ)), cfg.firstPredecessor (2 :
-            Fin (4 : ℕ)), cfg.firstPredecessor (3 : Fin (4 : ℕ)), cfg.firstPredecessor (1 : Fin
-            (4 : ℕ))] j.succ) = (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt) * BandVectors.1
-            (![cfg.firstPredecessor (0 : Fin (4 : ℕ)), cfg.firstPredecessor (2 : Fin (4 : ℕ)),
-            cfg.firstPredecessor (3 : Fin (4 : ℕ)), cfg.firstPredecessor (1 : Fin (4 : ℕ))]
-            j.succ) (![cfg.firstPredecessor (0 : Fin (4 : ℕ)), cfg.firstPredecessor (2 : Fin (4 :
-            ℕ)), cfg.firstPredecessor (3 : Fin (4 : ℕ)), cfg.firstPredecessor (1 : Fin (4 : ℕ))]
-            (0 : Fin (4 : ℕ))) ∧ BandVectors.2 (![cfg.firstPredecessor (0 : Fin (4 : ℕ)),
-            cfg.firstPredecessor (2 : Fin (4 : ℕ)), cfg.firstPredecessor (3 : Fin (4 : ℕ)),
-            cfg.firstPredecessor (1 : Fin (4 : ℕ))] (0 : Fin (4 : ℕ))) (![cfg.firstPredecessor (0
-            : Fin (4 : ℕ)), cfg.firstPredecessor (2 : Fin (4 : ℕ)), cfg.firstPredecessor (3 : Fin
-            (4 : ℕ)), cfg.firstPredecessor (1 : Fin (4 : ℕ))] j.succ) = -(⟨(0 : ℤ), (1 : ℤ)⟩ :
-            GaussianInt) * BandVectors.2 (![cfg.firstPredecessor (0 : Fin (4 : ℕ)),
-            cfg.firstPredecessor (2 : Fin (4 : ℕ)), cfg.firstPredecessor (3 : Fin (4 : ℕ)),
-            cfg.firstPredecessor (1 : Fin (4 : ℕ))] j.succ) (![cfg.firstPredecessor (0 : Fin (4 :
-            ℕ)), cfg.firstPredecessor (2 : Fin (4 : ℕ)), cfg.firstPredecessor (3 : Fin (4 : ℕ)),
-            cfg.firstPredecessor (1 : Fin (4 : ℕ))] (0 : Fin (4 : ℕ))))) → (a21 = BandVectors.2
-            (q 2) (cfg.firstPredecessor 1) + I * alpha) ) := by
-  classical
-  intro q cfg I alpha a21 hrot
-  simpa [a21, alpha, I, cfg.firstChild, cfg.firstParentTwo,
-    cfg.firstParentThree] using hrot.2.2.2.1
-
 private theorem hX :
     (by
       classical
@@ -1605,13 +1421,26 @@ private theorem propagateConstant :
     (by
       classical
       exact
-        ∀ (q : Fin 4 → CircleCoordinates), (BandOrderedGeneralConfiguration q) → (∀ {V : Type}, ∀
-            (f : V → Int), ∀ (g : V → Int), ∀ (L : Set V), ∀ (O : Set V), ∀ (R : Set V), ∀ (Iset
-            : Set V), ∀ (c : Int), ∀ (d : Int), ∀ (e : Int), ∀ (xL : V), ∀ (xR : V), (Iset ⊆ L ∪
-            O ∪ R) → ((∀ x ∈ L, g x - f x = d) → ((∀ x ∈ O, g x - f x = c) → ((∀ x ∈ R, f x - g x
-            = e) → ((xL ∈ L ∩ O) → ((xR ∈ R ∩ O) → (∀ x ∈ Iset, g x - f x = c))))))) ) := by
+        ∀ {V : Type},
+          ∀ (f : V → Int),
+            ∀ (g : V → Int),
+              ∀ (L : Set V),
+                ∀ (O : Set V),
+                  ∀ (R : Set V),
+                    ∀ (Iset : Set V),
+                      ∀ (c : Int),
+                        ∀ (d : Int),
+                          ∀ (e : Int),
+                            ∀ (xL : V),
+                              ∀ (xR : V),
+                                Iset ⊆ L ∪ O ∪ R →
+                                (∀ x ∈ L, g x - f x = d) →
+                                (∀ x ∈ O, g x - f x = c) →
+                                (∀ x ∈ R, f x - g x = e) →
+                                xL ∈ L ∩ O → xR ∈ R ∩ O → ∀ x ∈ Iset, g x - f x = c
+    ) := by
   classical
-  intro q cfg V f g L O R Iset c d e xL xR hcover hL hO hR hxL hxR
+  intro V f g L O R Iset c d e xL xR hcover hL hO hR hxL hxR
   have hd : d = c := (hL xL hxL.1).symm.trans (hO xL hxL.2)
   have he : -e = c := by
     have h1 := hR xR hxR.1
@@ -1628,10 +1457,10 @@ private theorem properLarge :
     (by
       classical
       exact
-        ∀ (q : Fin 4 → CircleCoordinates), (BandOrderedGeneralConfiguration q) → (∀ (r : Fin 4 →
-            CircleCoordinates), (ProperBandQuadruple r) → (1 < (r 0).1)) ) := by
+        ∀ (r : Fin 4 → CircleCoordinates), ProperBandQuadruple r → 1 < (r 0).1
+    ) := by
   classical
-  intro q cfg r hr
+  intro r hr
   have facts := ProperBandCurvatureStructure r hr
   have hsome : ∃ i : Fin 3, 0 < (r i.succ).1 := by
     by_cases h0 : 0 < (r (0 : Fin 3).succ).1
@@ -1734,12 +1563,14 @@ private theorem zeroOdometerLine :
     (by
       classical
       exact
-        ∀ (q : Fin 4 → CircleCoordinates), (BandOrderedGeneralConfiguration q) → ((∀ (r : Fin 4 →
-            CircleCoordinates), (ProperBandQuadruple r) → (1 < (r 0).1)) → (∀
-            {D : CircleCoordinates}, ∀ {X : ProtoTile}, ∀ {g : PartialOdometer}, (D.1 = 0) →
-            ((TileOdometer D X g) → (∃ x, X = ⟨∅, x⟩ ∧ g.domain = {x})))) ) := by
+        (∀ (r : Fin 4 → CircleCoordinates), ProperBandQuadruple r → 1 < (r 0).1) →
+          ∀ {D : CircleCoordinates},
+            ∀ {X : ProtoTile},
+              ∀ {g : PartialOdometer},
+                D.1 = 0 → TileOdometer D X g → ∃ x, X = ⟨∅, x⟩ ∧ g.domain = { x }
+    ) := by
   classical
-  intro q cfg properLarge D X g hD hg
+  intro properLarge D X g hD hg
   cases hg with
   | line w x hw g hdom => exact ⟨x, rfl, hdom⟩
   | unit z x Z g hZ hdom htrans => norm_num at hD
@@ -3252,10 +3083,14 @@ theorem P4250T1NestedCompatibility
     (SemiProperQuadruple.rotate cfg.firstProper.1)
   have spatialIdentity := NestedCompatibilityGeometry.spatialIdentity q cfg
       (NestedCompatibilityGeometry.hV13 q cfg hcycV (NestedCompatibilityGeometry.hX q cfg hcycV
-      hpredV (NestedCompatibilityGeometry.hv21 q cfg hrot)))
+      hpredV (by
+        simpa [v21, w, I, cfg.firstChild, cfg.firstParentTwo,
+          cfg.firstParentThree] using hrot.2.2.1)))
   have slopeIdentity := NestedCompatibilityGeometry.slopeIdentity q cfg
       (NestedCompatibilityGeometry.hA13 q cfg hcycA (NestedCompatibilityGeometry.hXalpha q cfg
-      hcycA hpredA (NestedCompatibilityGeometry.ha21 q cfg hrot)))
+      hcycA hpredA (by
+        simpa [a21, alpha, I, cfg.firstChild, cfg.firstParentTwo,
+          cfg.firstParentThree] using hrot.2.2.2.1)))
   have secondFlip := (VectorRecursionLaws cfg.secondPredecessor
     cfg.secondProper.1).2.2.2.2 cfg.secondProper 0
   simp only [show (0 : Fin 3).succ = (1 : Fin 4) from rfl,
@@ -3356,11 +3191,11 @@ theorem P4250T1NestedCompatibility
       k hbandA hdomA hvalueA V l hvalueB alignA alignB pos2 pos3 odoQ2 odoS2 odoS3 odoQ3 hcenterA
       hcenterP hcenterQT rawCompatLift hq1pos hdomBParent hdomQ hrawAC hrawAB compatAC hcenterB
       hcenterS hcenterPminus compatBDNested compatCross1 compatCross2
-      (NestedCompatibilityGeometry.propagateConstant q cfg) bandPositiveNonempty qSCells qSAnchor
+      (NestedCompatibilityGeometry.propagateConstant) bandPositiveNonempty qSCells qSAnchor
       (NestedPrecursorConstant.precursorConstant q cfg h s0 hp U k hchildA hslopeA V l hchildB
       hslopeB bandPositiveNonempty uvCells uvAnchor uvObservable
-      (NestedCompatibilityGeometry.zeroOdometerLine q cfg
-      (NestedCompatibilityGeometry.properLarge q cfg))))
+      (NestedCompatibilityGeometry.zeroOdometerLine
+      (NestedCompatibilityGeometry.properLarge))))
 
 
 end ApollonianSuperharmonic

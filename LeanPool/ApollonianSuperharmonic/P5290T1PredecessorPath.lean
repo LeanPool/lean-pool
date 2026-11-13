@@ -299,10 +299,12 @@ end PredecessorPathProof
 namespace PredecessorPathDetails
 
 private theorem domain_sym :
-    (Nat) → (∀ (m : ℕ), ∀ (z : GaussianInt), z ∈ DiamondCellDomain m ↔ { re := z.re, im := (2 :
-        ℤ) * (↑m : ℤ) - (1 : ℤ) - z.im } ∈ DiamondCellDomain m) := by
+    ∀ (m : ℕ),
+      ∀ (z : GaussianInt),
+        z ∈ DiamondCellDomain m ↔
+          { re := z.re, im := (2 : ℤ) * (↑m : ℤ) - (1 : ℤ) - z.im } ∈ DiamondCellDomain m := by
   classical
-  intro k m z
+  intro m z
   rw [(P4194T1DiamondCellRows m z).1,
     (P4194T1DiamondCellRows m ⟨z.re, 2 * (m : Int) - 1 - z.im⟩).1]
   simp only
@@ -641,12 +643,11 @@ private theorem qinj :
   exact hJinj hab
 
 private theorem pstep :
-    (Nat) → (
     let p : Nat → GaussianInt := P5157T1StaircasePoint 1 false 1
-    ∀ (j : ℕ), p (j + (1 : ℕ)) = p j + (1 : GaussianInt) ∨ p (j + (1 : ℕ)) = p j + ⟨(0 :
-        ℤ), (1 : ℤ)⟩) := by
+    ∀ (j : ℕ),
+      p (j + (1 : ℕ)) = p j + (1 : GaussianInt) ∨ p (j + (1 : ℕ)) = p j + ⟨(0 : ℤ), (1 : ℤ)⟩ := by
   classical
-  intro k p j
+  intro p j
   simp [p, P5157T1StaircasePoint, Zsqrtd.ext_iff]; omega
 
 private theorem qstep :
@@ -767,7 +768,7 @@ theorem P5290T1PredecessorPath (k : Nat) (hk : 1 < k) :
   have domain_sym (m : Nat) (z : GaussianInt) :
       z ∈ DiamondCellDomain m ↔
         ⟨z.re, 2 * (m : Int) - 1 - z.im⟩ ∈ DiamondCellDomain m :=
-            PredecessorPathDetails.domain_sym k m z
+            PredecessorPathDetails.domain_sym m z
   have dom_sym (z : GaussianInt) :
       z ∈ DiamondCellDomain (k - 1) ↔ Jc z ∈ DiamondCellDomain (k - 1) :=
           PredecessorPathDetails.dom_sym k hk domain_sym z
@@ -848,7 +849,7 @@ theorem P5290T1PredecessorPath (k : Nat) (hk : 1 < k) :
   let q : Nat → GaussianInt := fun j => J (p j)
   have qinj : Function.Injective q := PredecessorPathDetails.qinj k hJinj pinj
   have pstep (j : Nat) : p (j + 1) = p j + 1 ∨
-      p (j + 1) = p j + ⟨0, 1⟩ := PredecessorPathDetails.pstep k j
+      p (j + 1) = p j + ⟨0, 1⟩ := PredecessorPathDetails.pstep j
   have Jright (z : GaussianInt) : J (z + 1) = J z + 1 := by
     apply Zsqrtd.ext <;> simp [J]
   have Jup (z : GaussianInt) : J (z + ⟨0, 1⟩) = J z - ⟨0, 1⟩ := by

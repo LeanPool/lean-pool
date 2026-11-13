@@ -288,12 +288,18 @@ private theorem cut_chain :
     (by
       classical
       exact
-        let Chain := List.IsChain AllowedSubtileIncidence
-        ∀ {p : List PeriodicSubtileIndex}, ∀ {k : PeriodicSubtileIndex}, Chain p → ∀ (hne : p ≠
-            []), AllowedSubtileIncidence (p.getLast hne) (p.head hne) → k ∈ p → Chain (List.drop
-        (List.idxOf k p + (1 : ℕ)) p ++ List.take (List.idxOf k p) p) ) := by
+        let Chain := List.IsChain AllowedSubtileIncidence;
+        ∀ {p : List PeriodicSubtileIndex},
+          ∀ {k : PeriodicSubtileIndex},
+            Chain p →
+              ∀ (hne : p ≠ []),
+                AllowedSubtileIncidence (p.getLast hne) (p.head hne) →
+                  Chain
+                    (List.drop (List.idxOf k p + (1 : ℕ)) p ++
+                      List.take (List.idxOf k p) p)
+    ) := by
   classical
-  intro Chain p k hp hne hw hk
+  intro Chain p k hp hne hw
   let i := p.idxOf k
   change Chain (p.drop (i + 1) ++ p.take i)
   have hdchain := hp.drop (i + 1)
@@ -346,11 +352,16 @@ private theorem mem_cut :
     (by
       classical
       exact
-        (Finset PeriodicSubtileIndex) → (∀ {p : List PeriodicSubtileIndex}, ∀
-            {k : PeriodicSubtileIndex}, ∀ {u : PeriodicSubtileIndex}, k ∈ p → u ∈ p → u ≠ k → u ∈
-        List.drop (List.idxOf k p + (1 : ℕ)) p ++ List.take (List.idxOf k p) p) ) := by
+        ∀ {p : List PeriodicSubtileIndex},
+          ∀ {k : PeriodicSubtileIndex},
+            ∀ {u : PeriodicSubtileIndex},
+              u ∈ p →
+                u ≠ k →
+                  u ∈
+                    List.drop (List.idxOf k p + (1 : ℕ)) p ++ List.take (List.idxOf k p) p
+    ) := by
   classical
-  intro D p k u hk hu huk
+  intro p k u hu huk
   let i := p.idxOf k
   have hidxne : p.idxOf u ≠ i := by
     intro he
@@ -370,11 +381,14 @@ private theorem k_not_mem_cut :
     (by
       classical
       exact
-        (Finset PeriodicSubtileIndex) → (∀ {p : List PeriodicSubtileIndex}, ∀
-            {k : PeriodicSubtileIndex}, p.Nodup → k ∈ p → k ∉ List.drop (List.idxOf k p + (1 : ℕ)) p
-        ++ List.take (List.idxOf k p) p) ) := by
+        ∀ {p : List PeriodicSubtileIndex},
+          ∀ {k : PeriodicSubtileIndex},
+            p.Nodup →
+              k ∈ p →
+                k ∉ List.drop (List.idxOf k p + (1 : ℕ)) p ++ List.take (List.idxOf k p) p
+    ) := by
   classical
-  intro D p k hn hk
+  intro p k hn hk
   let i := p.idxOf k
   intro h
   rcases List.mem_append.mp h with hdrop | htake
@@ -598,10 +612,11 @@ private theorem global_reach :
     (by
       classical
       exact
-        (Finset PeriodicSubtileIndex) → (∀ (x : PeriodicSubtileIndex), ∀ (y :
-            PeriodicSubtileIndex), Relation.ReflTransGen AllowedSubtileIncidence x y) ) := by
+        ∀ (x : PeriodicSubtileIndex),
+          ∀ (y : PeriodicSubtileIndex), Relation.ReflTransGen AllowedSubtileIncidence x y
+    ) := by
   classical
-  intro D x y
+  intro x y
   let R := fun s t : PeriodicSubtileIndex => AllowedSubtileIncidence s t
   let A := fun (z : Int × Int) => (⟨.A, z.1, z.2⟩ : PeriodicSubtileIndex)
   let g := fun (z : Int × Int) => (z.1, z.2 + z.1)
@@ -877,14 +892,19 @@ theorem P4677T2ThreeConnected
       (hp : Chain p) (hne : p ≠ [])
       (hw : AllowedSubtileIncidence (p.getLast hne) (p.head hne)) (hk : k ∈ p) :
       Chain (p.drop (p.idxOf k + 1) ++ p.take (p.idxOf k)) := ThreeConnectivityProof.cut_chain (p
-          := p) (k := k) hp hne hw hk
+          := p) (k := k) hp hne hw
   have mem_cut {p : List PeriodicSubtileIndex} {k u : PeriodicSubtileIndex}
       (hk : k ∈ p) (hu : u ∈ p) (huk : u ≠ k) :
-      u ∈ p.drop (p.idxOf k + 1) ++ p.take (p.idxOf k) := ThreeConnectivityProof.mem_cut D (p :=
-          p) (k := k) (u := u) hk hu huk
+      u ∈ p.drop (p.idxOf k + 1) ++ p.take (p.idxOf k) := (show
+          ∀ {p : List PeriodicSubtileIndex}, ∀ {k : PeriodicSubtileIndex}, ∀ {u :
+          PeriodicSubtileIndex}, k ∈ p → u ∈ p → u ≠ k → u ∈ List.drop (List.idxOf k p
+          + (1 : ℕ)) p ++ List.take (List.idxOf k p) p
+        from by
+          intro p k u hk hu huk
+          exact ThreeConnectivityProof.mem_cut hu huk) hk hu huk
   have k_not_mem_cut {p : List PeriodicSubtileIndex} {k : PeriodicSubtileIndex}
       (hn : p.Nodup) (hk : k ∈ p) :
-      k ∉ p.drop (p.idxOf k + 1) ++ p.take (p.idxOf k) := ThreeConnectivityProof.k_not_mem_cut D
+      k ∉ p.drop (p.idxOf k + 1) ++ p.take (p.idxOf k) := ThreeConnectivityProof.k_not_mem_cut
           (p := p) (k := k) hn hk
   have chain_reach {R : PeriodicSubtileIndex → PeriodicSubtileIndex → Prop}
       (hsym : ∀ {x y}, R x y → R y x) :
@@ -904,7 +924,7 @@ theorem P4677T2ThreeConnected
       ∃ w, AllowedSubtileIncidence y w ∧ AllowedSubtileIncidence z w ∧
         w ≠ y ∧ w ≠ z := ThreeConnectivityProof.common_neighbor (y := y) (z := z) h
   have global_reach (x y : PeriodicSubtileIndex) :
-      Relation.ReflTransGen AllowedSubtileIncidence x y := ThreeConnectivityProof.global_reach D x y
+      Relation.ReflTransGen AllowedSubtileIncidence x y := ThreeConnectivityProof.global_reach x y
   have reach_avoiding_from_local
       (x : PeriodicSubtileIndex) (hx : x ∉ D) :
       ∀ {y}, Relation.ReflTransGen AllowedSubtileIncidence x y → y ∉ D →

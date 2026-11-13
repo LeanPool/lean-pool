@@ -280,11 +280,10 @@ private theorem cyclicStep :
     (by
       classical
       exact
-        ∀ (n : Nat), ∀ (p : P3381T1PolygonBoundary n), ∀ (E : P3650T1ExposedCorner p), ∀ (D :
-            P3650T1VisibleDiagonal p E), (P3650T1CyclicChildren p D.a D.b) → (∀ {m : Nat}, ∀
-            (i : Fin (m + 3)), (i - 1) + 2 = i + 1) ) := by
+        ∀ {m : Nat}, ∀ (i : Fin (m + 3)), i - 1 + 2 = i + 1
+    ) := by
   classical
-  intro n p E D C m i
+  intro m i
   have hsub : (i - 1).val = if i.val = 0 then m + 2 else i.val - 1 := by
     by_cases hz : i.val = 0
     · have hi : i = 0 := Fin.ext hz
@@ -451,11 +450,10 @@ private theorem prevIndexNe :
     (by
       classical
       exact
-        ∀ (n : Nat), ∀ (p : P3381T1PolygonBoundary n), ∀ (E : P3650T1ExposedCorner p), ∀ (D :
-            P3650T1VisibleDiagonal p E), (P3650T1CyclicChildren p D.a D.b) → (∀ {m : Nat}, ∀
-            (i : Fin (m + 3)), i - 1 ≠ i) ) := by
+        ∀ {m : Nat}, ∀ (i : Fin (m + 3)), i - 1 ≠ i
+    ) := by
   classical
-  intro n p E D C m i h
+  intro m i h
   have hv := congrArg Fin.val h
   by_cases hi : i = 0
   · subst i
@@ -472,11 +470,10 @@ private theorem nextIndexNe :
     (by
       classical
       exact
-        ∀ (n : Nat), ∀ (p : P3381T1PolygonBoundary n), ∀ (E : P3650T1ExposedCorner p), ∀ (D :
-            P3650T1VisibleDiagonal p E), (P3650T1CyclicChildren p D.a D.b) → (∀ {m : Nat}, ∀
-            (i : Fin (m + 3)), i + 1 ≠ i) ) := by
+        ∀ {m : Nat}, ∀ (i : Fin (m + 3)), i + 1 ≠ i
+    ) := by
   classical
-  intro n p E D C m i h
+  intro m i h
   have hv := congrArg Fin.val h
   have hval : (i + 1).val = if i = Fin.last (m + 2) then 0 else i.val + 1 :=
     Fin.val_add_one i
@@ -540,13 +537,17 @@ private theorem rightPreviousParent :
     (by
       classical
       exact
-        ∀ (n : Nat), ∀ (p : P3381T1PolygonBoundary n), ∀ (E : P3650T1ExposedCorner p), ∀ (D :
-            P3650T1VisibleDiagonal p E), (P3650T1CyclicChildren p D.a D.b) → (∀ {m : Nat}, ∀
-            (q : P3381T1PolygonBoundary m), ∀ (a : Fin (m + 3)), ∀ (b : Fin (m +
-            3)), ∀ (K : P3650T1CyclicChildren q a b), (K.rotation % (m + 3) = a.val) → (K.ir
-                ⟨K.rightParameter + 1, by omega⟩ = a - 1))) := by
+        Nat →
+          ∀ {m : Nat},
+            ∀ (q : P3381T1PolygonBoundary m),
+              ∀ (a : Fin (m + 3)),
+                ∀ (b : Fin (m + 3)),
+                  ∀ (K : P3650T1CyclicChildren q a b),
+                    K.rotation % (m + 3) = a.val →
+                      K.ir ⟨K.rightParameter + 1, by omega⟩ = a - 1
+    ) := by
   classical
-  intro n p E D C m q a b K hrot
+  intro n m q a b K hrot
   have hidx : (m + 2 + K.rotation) % (m + 3) = (a - 1).val := by
     by_cases ha0 : a.val = 0
     · have ha : a = 0 := Fin.ext ha0
@@ -2305,33 +2306,6 @@ private theorem hX2At1391 :
   rw [hcoordLine 2 vb va δ, hcoordB2, hcoordA2]
   ring
 
-private theorem hleftCenter :
-    (by
-      classical
-      exact
-        ∀ (n : Nat), ∀ (p : P3381T1PolygonBoundary n), ∀ (E : P3650T1ExposedCorner p), ∀ (D :
-            P3650T1VisibleDiagonal p E), ∀ (C : P3650T1CyclicChildren p D.a D.b), (D.a = E.b)
-            → (
-        let vb := p.vertex E.b
-        (C.il 0 = D.a) → (C.left.vertex 0 = vb)) ) := by
-  classical
-  intro n p E D C ha vb hleftFirst
-  rw [C.left_vertex]
-  simp [hleftFirst, ha, vb]
-
-private theorem hleftOne :
-    (by
-      classical
-      exact
-        ∀ (n : Nat), ∀ (p : P3381T1PolygonBoundary n), ∀ (E : P3650T1ExposedCorner p), ∀ (D :
-            P3650T1VisibleDiagonal p E), ∀ (C : P3650T1CyclicChildren p D.a D.b),
-        let vc := p.vertex (E.b + 1)
-        (C.il 1 = E.b + 1) → (C.left.vertex 1 = vc) ) := by
-  classical
-  intro n p E D C vc hleftNext
-  rw [C.left_vertex]
-  simp [hleftNext, vc]
-
 private theorem hleftWrap :
     (by
       classical
@@ -2860,8 +2834,8 @@ private theorem hseedLAt3101 :
       classical
       rw [hcoordLine 2 U X t, hU2, hX2]
       ring)
-  have hleftCenter := OldArcParityProof.hleftCenter n p E D C ha hleftFirst
-  have hleftOne := OldArcParityProof.hleftOne n p E D C hleftNext
+  have hleftCenter := OldArcParityProof.hleftStart n p E D C ha hleftFirst
+  have hleftOne := OldArcParityProof.hleftStartNext n p E D C hleftNext
   have hleftWrap := OldArcParityProof.hleftWrap n p E D C
   have hleftEnd := OldArcParityProof.hleftEnd n p E D C hleftLast
   have hballPath (t : Real) (ht : t ∈ Set.Icc (0 : Real) 1) :=
@@ -2928,7 +2902,7 @@ theorem P3650T1OldArcEven {n : Nat} (p : P3381T1PolygonBoundary n)
       oldArcEvenOnPreconnected leftArcPreconnected hRopen hRclosure
   have propagateLeft := OldArcParityProof.propagateLeft n p E D C hRoff oldArcEvenOnPreconnected
       rightArcPreconnected hLopen hLclosure
-  have cyclicStep {m : Nat} (i : Fin (m + 3)) := OldArcParityProof.cyclicStep n p E D C (m := m) i
+  have cyclicStep {m : Nat} (i : Fin (m + 3)) := OldArcParityProof.cyclicStep (m := m) i
   have parityEvenAlongPath {m : Nat} (q : P3381T1PolygonBoundary m)
       (γ : Real → Real × Real) (hcont : ContinuousOn γ (Set.Icc (0 : Real) 1))
       (havoid : ∀ t ∈ Set.Icc (0 : Real) 1,
@@ -2945,8 +2919,8 @@ theorem P3650T1OldArcEven {n : Nat} (p : P3381T1PolygonBoundary n)
   have middleNotSegment {a b c : Real × Real}
       (hdet : P3381T1TriangleDeterminant ![a, b, c] ≠ 0) := OldArcParityProof.middleNotSegment (a
           := a) (b := b) (c := c) hdet
-  have prevIndexNe {m : Nat} (i : Fin (m + 3)) := OldArcParityProof.prevIndexNe n p E D C (m := m) i
-  have nextIndexNe {m : Nat} (i : Fin (m + 3)) := OldArcParityProof.nextIndexNe n p E D C (m := m) i
+  have prevIndexNe {m : Nat} (i : Fin (m + 3)) := OldArcParityProof.prevIndexNe (m := m) i
+  have nextIndexNe {m : Nat} (i : Fin (m + 3)) := OldArcParityProof.nextIndexNe (m := m) i
   have strictUpperHalfplaneEven {m : Nat} (q : P3381T1PolygonBoundary m)
       (ell : (Real × Real) →ₗ[Real] Real) (H : Real)
       (hbound : ∀ i, ell (q.vertex i) < H)
@@ -2957,8 +2931,7 @@ theorem P3650T1OldArcEven {n : Nat} (p : P3381T1PolygonBoundary n)
   have rightPreviousParent {m : Nat} (q : P3381T1PolygonBoundary m)
       (a b : Fin (m + 3)) (K : P3650T1CyclicChildren q a b)
       (hrot : K.rotation % (m + 3) = a.val) :
-      K.ir ⟨K.rightParameter + 1, by omega⟩ = a - 1 := OldArcParityProof.rightPreviousParent n p E D
-          C (m
+      K.ir ⟨K.rightParameter + 1, by omega⟩ = a - 1 := OldArcParityProof.rightPreviousParent n (m
           := m) q a b K hrot
   rcases D.route with hbase | htop
   · rcases hbase with ⟨ha, hb, hempty⟩

@@ -78,9 +78,10 @@ private theorem hrpos :
     (by
       classical
       exact
-        ∀ (P : FordFareyParameter), (BandCircle) → ((1 < P.q) → (0 < P.q₁)) ) := by
+        ∀ (P : FordFareyParameter), 1 < P.q → 0 < P.q₁
+    ) := by
   classical
-  intro P Ci hqgt
+  intro P hqgt
   by_contra hn
   have hz : P.q₁ = 0 := by omega
   have hd := P.det₁
@@ -231,10 +232,11 @@ private theorem hfordcent :
     (by
       classical
       exact
-        ∀ (P : FordFareyParameter), (BandCircle) → ((BandCircle) → ((1 < P.q) → ((0 < P.q) →
-            (TileCentroid (FordTile P.q) = ((P.q : ℝ) / 2, (P.q : ℝ) / 2))))) ) := by
+        ∀ (P : FordFareyParameter),
+          1 < P.q → 0 < P.q → TileCentroid (FordTile P.q) = ((P.q : ℝ) / 2, (P.q : ℝ) / 2)
+    ) := by
   classical
-  intro P C0 Ci hqgt hqpos
+  intro P hqgt hqpos
   let domain : Finset GaussianInt :=
     ((Finset.range P.q).product (Finset.range P.q)).image
       (fun a => (⟨(a.1 : Int), (a.2 : Int)⟩ : GaussianInt))
@@ -394,11 +396,13 @@ private theorem squareCell :
     (by
       classical
       exact
-        ∀ (P : FordFareyParameter), (BandCircle) → ((BandCircle) → (∀ (z : GaussianInt), z ∈
-            (FordTile P.q).cells ↔ 0 ≤ z.re ∧ z.re < (P.q : Int) ∧ 0 ≤ z.im ∧ z.im < (P.q :
-            Int))) ) := by
+        ∀ (P : FordFareyParameter),
+          ∀ (z : GaussianInt),
+            z ∈ (FordTile P.q).cells ↔
+              0 ≤ z.re ∧ z.re < (P.q : Int) ∧ 0 ≤ z.im ∧ z.im < (P.q : Int)
+    ) := by
   classical
-  intro P C0 Ci z
+  intro P z
   change z ∈ FordCellDomain P.q ↔ _
   change z ∈ ((Finset.range P.q).product (Finset.range P.q)).image
     (fun a => (⟨(a.1 : Int), (a.2 : Int)⟩ : GaussianInt)) ↔ _
@@ -455,24 +459,45 @@ private theorem hdisj :
     (by
       classical
       exact
-        ∀ (P : FordFareyParameter), (BandCircle) → ((BandCircle) → (∀ (i : Fin 3), ∀ (T :
-            ProtoTile), ∀ (T' : ProtoTile), ∀ (h : PartialOdometer), ∀ (h' : PartialOdometer), ∀
-            (H : PartialOdometer), ∀ (u : GaussianInt), (T.cells = (TileTranslation (FordTile
-            P.q) u).cells ∧ (T.cells = ∅ → T.anchor = (TileTranslation (FordTile P.q) u).anchor)
-            ∧ ∃ (a : GaussianInt) (b : ℤ), (∀ (x : GaussianInt), x ∈ h.domain ↔ x - u ∈ H.domain)
-            ∧ ∀ x ∈ h.domain, h.value x = H.value (x - u) + a.re * x.re + a.im * x.im + b) → (∀
-            (v : GaussianInt), (T'.cells = (TileTranslation (FordTile P.q) v).cells ∧ (T'.cells =
-            ∅ → T'.anchor = (TileTranslation (FordTile P.q) v).anchor) ∧ ∃ (a : GaussianInt) (b :
-            ℤ), (∀ (x : GaussianInt), x ∈ h'.domain ↔ x - v ∈ H.domain) ∧ ∀ x ∈ h'.domain,
-            h'.value x = H.value (x - v) + a.re * x.re + a.im * x.im + b) → (
-        let d : GaussianInt :=
-          if i = 0 then ⟨(P.q : Int), (P.q₁ : Int)⟩
-          else ⟨-(P.q : Int), (P.q₂ : Int)⟩
-        (v = u + d) → ((∀ (w : GaussianInt), ∀ (z : GaussianInt), z ∈ (TileTranslation (FordTile
-            P.q) w).cells ↔ 0 ≤ (z-w).re ∧ (z-w).re < (P.q : Int) ∧ 0 ≤ (z-w).im ∧ (z-w).im <
-            (P.q : Int)) → (Disjoint T.cells T'.cells)))))) ) := by
+        ∀ (P : FordFareyParameter),
+          ∀ (i : Fin 3),
+            ∀ (T : ProtoTile),
+              ∀ (T' : ProtoTile),
+                ∀ (h : PartialOdometer),
+                  ∀ (h' : PartialOdometer),
+                    ∀ (H : PartialOdometer),
+                      ∀ (u : GaussianInt),
+                        (T.cells = (TileTranslation (FordTile P.q) u).cells ∧
+                            (T.cells = ∅ →
+                                T.anchor = (TileTranslation (FordTile P.q) u).anchor) ∧
+                              ∃ (a : GaussianInt) (b : ℤ),
+                                (∀ (x : GaussianInt), x ∈ h.domain ↔ x - u ∈ H.domain) ∧
+                                ∀ x ∈ h.domain,
+                                h.value x =
+                                H.value (x - u) + a.re * x.re + a.im * x.im + b) →
+                          ∀ (v : GaussianInt),
+                            (T'.cells = (TileTranslation (FordTile P.q) v).cells ∧
+                                (T'.cells = ∅ →
+                                T'.anchor = (TileTranslation (FordTile P.q) v).anchor) ∧
+                                ∃ (a : GaussianInt) (b : ℤ),
+                                (∀ (x : GaussianInt), x ∈ h'.domain ↔ x - v ∈ H.domain) ∧
+                                ∀ x ∈ h'.domain,
+                                h'.value x =
+                                H.value (x - v) + a.re * x.re + a.im * x.im + b) →
+                              let d : GaussianInt :=
+                                if i = 0 then ⟨(P.q : Int), (P.q₁ : Int)⟩
+                              else ⟨-(P.q : Int), (P.q₂ : Int)⟩
+                              v = u + d →
+                                (∀ (w : GaussianInt),
+                                ∀ (z : GaussianInt),
+                                z ∈ (TileTranslation (FordTile P.q) w).cells ↔
+                                0 ≤ (z - w).re ∧
+                                (z - w).re < (P.q : Int) ∧
+                                0 ≤ (z - w).im ∧ (z - w).im < (P.q : Int)) →
+                                Disjoint T.cells T'.cells
+    ) := by
   classical
-  intro P C0 Ci i T T' h h' H u hu v hv d hshift' translatedCell
+  intro P i T T' h h' H u hu v hv d hshift' translatedCell
   rw [hu.1, hv.1]
   apply Finset.disjoint_left.mpr
   intro x hx hx'
@@ -579,21 +604,38 @@ private theorem hinter :
     (by
       classical
       exact
-        ∀ (P : FordFareyParameter), (BandCircle) → ((BandCircle) → (∀ (i : Fin 3), ∀ (T :
-            ProtoTile), ∀ (T' : ProtoTile), (1 < P.q) → ((0 < P.q₁) → ((0 < P.q₂) → (∀ (u :
-            GaussianInt), ∀ (v : GaussianInt),
-        let d : GaussianInt :=
-          if i = 0 then ⟨(P.q : Int), (P.q₁ : Int)⟩
-          else ⟨-(P.q : Int), (P.q₂ : Int)⟩
-        (v = u + d) → ((∀ (w : GaussianInt), ∀ (z : GaussianInt), z ∈ FootprintVertices
-            (TileTranslation (FordTile P.q) w) ↔ 0 ≤ (z-w).re ∧ (z-w).re ≤ (P.q : Int) ∧ 0 ≤
-            (z-w).im ∧ (z-w).im ≤ (P.q : Int)) → ((FootprintVertices T = FootprintVertices
-            (TileTranslation (FordTile P.q) u)) → ((FootprintVertices T' = FootprintVertices
-            (TileTranslation (FordTile P.q) v)) → (∀ x, x ∈ FootprintVertices T ∩
-            FootprintVertices T' ↔ (x-u).re = (if i = 0 then (P.q : Int) else 0) ∧ (if i = 0 then
-            (P.q₁ : Int) else (P.q₂ : Int)) ≤ (x-u).im ∧ (x-u).im ≤ (P.q : Int)))))))))) ) := by
+        ∀ (P : FordFareyParameter),
+          ∀ (i : Fin 3),
+            ∀ (T : ProtoTile),
+              ∀ (T' : ProtoTile),
+                1 < P.q →
+                  0 < P.q₁ →
+                    0 < P.q₂ →
+                      ∀ (u : GaussianInt),
+                        ∀ (v : GaussianInt),
+                          let d : GaussianInt :=
+                            if i = 0 then ⟨(P.q : Int), (P.q₁ : Int)⟩
+                            else ⟨-(P.q : Int), (P.q₂ : Int)⟩
+                          v = u + d →
+                            (∀ (w : GaussianInt),
+                                ∀ (z : GaussianInt),
+                                z ∈ FootprintVertices (TileTranslation (FordTile P.q) w) ↔
+                                0 ≤ (z - w).re ∧
+                                (z - w).re ≤ (P.q : Int) ∧
+                                0 ≤ (z - w).im ∧ (z - w).im ≤ (P.q : Int)) →
+                              FootprintVertices T =
+                                FootprintVertices (TileTranslation (FordTile P.q) u) →
+                                FootprintVertices T' =
+                                FootprintVertices (TileTranslation (FordTile P.q) v) →
+                                ∀ x,
+                                x ∈ FootprintVertices T ∩ FootprintVertices T' ↔
+                                ((x - u).re = if i = 0 then (P.q : Int) else 0) ∧
+                                (if i = 0 then (P.q₁ : Int) else (P.q₂ : Int)) ≤
+                                (x - u).im ∧
+                                (x - u).im ≤ (P.q : Int)
+    ) := by
   classical
-  intro P C0 Ci i T T' hqgt hrpos hspos u v d hshift' footprintCoord footprintT footprintT' x
+  intro P i T T' hqgt hrpos hspos u v d hshift' footprintCoord footprintT footprintT' x
   rw [Set.mem_inter_iff, footprintT, footprintT']
   rw [(footprintCoord u x), (footprintCoord v x)]
   have hrelRe : (x-v).re = (x-u).re-d.re := by rw [hshift']; simp; ring
@@ -632,7 +674,7 @@ theorem P4158T1MatchedFordPair
   have hidx : i ≠ 2 := MatchedFordGeometry.hidx P Ci i hCi T T' hlarge hcent
   have hqgt : 1 < P.q := MatchedFordGeometry.hqgt P Ci i hCi T T' hlarge hcent hidx
   have hqpos : 0 < P.q := by omega
-  have hrpos : 0 < P.q₁ := MatchedFordGeometry.hrpos P Ci hqgt
+  have hrpos : 0 < P.q₁ := MatchedFordGeometry.hrpos P hqgt
   have hspos : 0 < P.q₂ := P.q₂_pos
   have hneq : P.q₁ ≠ P.q₂ := MatchedFordGeometry.hneq P Ci i hCi T T' hlarge hcent hidx hrpos hspos
   have hcurv : 0 < (FordCircleCoordinate P.p P.q).1 := MatchedFordGeometry.hcurv P hqpos
@@ -654,7 +696,7 @@ theorem P4158T1MatchedFordPair
   have hcentT' : TileCentroid T' = TileCentroid (TileTranslation (FordTile P.q) v) :=
       MatchedFordGeometry.hcentT' P T' h' H v hv hFnon hT'non
   have hfordcent : TileCentroid (FordTile P.q) =
-      ((P.q : ℝ) / 2, (P.q : ℝ) / 2) := MatchedFordGeometry.hfordcent P C0 Ci hqgt hqpos
+      ((P.q : ℝ) / 2, (P.q : ℝ) / 2) := MatchedFordGeometry.hfordcent P hqgt hqpos
   have hcentdiff : TileCentroid T' - TileCentroid T =
       GaussianRealPoint (v - u) := MatchedFordGeometry.hcentdiff P T T' u v hcentT hcentT'
   obtain ⟨_, hconfig⟩ := FordCoordinateConfiguration P
@@ -675,13 +717,13 @@ theorem P4158T1MatchedFordPair
   have squareCell (z : GaussianInt) :
       z ∈ (FordTile P.q).cells ↔
         0 ≤ z.re ∧ z.re < (P.q : Int) ∧
-          0 ≤ z.im ∧ z.im < (P.q : Int) := MatchedFordGeometry.squareCell P C0 Ci z
+          0 ≤ z.im ∧ z.im < (P.q : Int) := MatchedFordGeometry.squareCell P z
   have translatedCell (w z : GaussianInt) :
       z ∈ (TileTranslation (FordTile P.q) w).cells ↔
         0 ≤ (z-w).re ∧ (z-w).re < (P.q : Int) ∧
           0 ≤ (z-w).im ∧ (z-w).im < (P.q : Int) := MatchedFordGeometry.translatedCell P
               squareCell w z
-  have hdisj : Disjoint T.cells T'.cells := MatchedFordGeometry.hdisj P C0 Ci i T T' h h' H u hu
+  have hdisj : Disjoint T.cells T'.cells := MatchedFordGeometry.hdisj P i T T' h h' H u hu
       v hv hshift' translatedCell
   have hsecond : T'.cells = (TileTranslation (FordTile P.q) (u+d)).cells :=
       MatchedFordGeometry.hsecond P i T' h' H u v hv hshift'
@@ -705,7 +747,7 @@ theorem P4158T1MatchedFordPair
   have hinter : ∀ x, x ∈ FootprintVertices T ∩ FootprintVertices T' ↔
       (x-u).re = (if i = 0 then (P.q : Int) else 0) ∧
         (if i = 0 then (P.q₁ : Int) else (P.q₂ : Int)) ≤ (x-u).im ∧
-        (x-u).im ≤ (P.q : Int) := MatchedFordGeometry.hinter P C0 Ci i T T' hqgt hrpos hspos u v
+        (x-u).im ≤ (P.q : Int) := MatchedFordGeometry.hinter P i T T' hqgt hrpos hspos u v
             hshift' footprintCoord footprintT footprintT'
   refine ⟨hidx, hqgt, hrpos, hneq, u, hu.1, ?_, hdisj, ?_⟩
   · simpa [d] using hsecond

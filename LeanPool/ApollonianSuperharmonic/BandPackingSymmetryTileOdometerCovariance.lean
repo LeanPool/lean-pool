@@ -1010,31 +1010,46 @@ private theorem hsub' :
     (by
       classical
       exact
-        ∀ (q : Fin (4 : ℕ) → CircleCoordinates), ∀ (S : Fin (3 : ℕ) → Bool → ProtoTile), ∀ (hs :
-            Fin (3 : ℕ) → Bool → PartialOdometer), (∀ (i : Fin (3 : ℕ)), ∀ (s : Bool),
-            TileOdometer (q i.succ) (S i s) (hs i s)) → ((∀ (i : Fin (3 : ℕ)), ∀ (s : Bool), ∀ (a
-            : BandPackingSymmetry), TileOdometer (BandPackingSymmetryCircleAction a (q i.succ))
-            (BandPackingSymmetryTileAction a (S i s)) (BandPackingSymmetryPartialOdometerAction a
-            (hs i s))) → (∀ (a : BandPackingSymmetry),
-        let Q := BandPackingSymmetryQuadrupleAction
-        let A := BandPackingSymmetryCircleAction
-        let P := BandPackingSymmetryPartialOdometerAction
-        let q' := Q a q
-        let sigma : Fin 3 → Fin 3 := fun i =>
-          if BandPackingSymmetryReversesOrientation a then -i else i
-        ∀ (delta : Bool), ∀ (e : Fin (3 : ℕ) × Bool ≃ Fin (3 : ℕ) × Bool), ∀ (S' : Fin (3 : ℕ) →
-            Bool → ProtoTile), (∀ (i : Fin (3 : ℕ)), ∀ (s : Bool), (e : Fin (3 : ℕ) × Bool → Fin
-            (3 : ℕ) × Bool) (i, s) = ((fun (i : Fin (3 : ℕ)) => if
-            BandPackingSymmetryReversesOrientation a = true then -i else i) i, s ^^ delta)) → ((∀
-            (i : Fin (3 : ℕ)), ∀ (s : Bool), S' ((e : Fin (3 : ℕ) × Bool → Fin (3 : ℕ) × Bool)
-            (i, s)).1 ((e : Fin (3 : ℕ) × Bool → Fin (3 : ℕ) × Bool) (i, s)).2 =
-            BandPackingSymmetryTileAction a (S i s)) → ((∀ (i : Fin 3), q' (sigma i).succ = A a
-            (q i.succ)) → (
-        let hs' : Fin 3 → Bool → PartialOdometer := fun j s =>
-          P a (hs (e.symm (j, s)).1 (e.symm (j, s)).2)
-        ∀ j, ∀ s, TileOdometer (q' j.succ) (S' j s) (hs' j s)))))) ) := by
+        ∀ (q : Fin (4 : ℕ) → CircleCoordinates),
+          ∀ (S : Fin (3 : ℕ) → Bool → ProtoTile),
+            ∀ (hs : Fin (3 : ℕ) → Bool → PartialOdometer),
+              (∀ (i : Fin (3 : ℕ)),
+                  ∀ (s : Bool),
+                    ∀ (a : BandPackingSymmetry),
+                      TileOdometer (BandPackingSymmetryCircleAction a (q i.succ))
+                        (BandPackingSymmetryTileAction a (S i s))
+                        (BandPackingSymmetryPartialOdometerAction a (hs i s))) →
+                ∀ (a : BandPackingSymmetry),
+                  let Q := BandPackingSymmetryQuadrupleAction
+                  let A := BandPackingSymmetryCircleAction
+                  let P := BandPackingSymmetryPartialOdometerAction
+                  let q' := Q a q
+                  let sigma : Fin 3 → Fin 3 := fun i =>
+                    if BandPackingSymmetryReversesOrientation a then -i else i
+                  ∀ (delta : Bool),
+                    ∀ (e : Fin (3 : ℕ) × Bool ≃ Fin (3 : ℕ) × Bool),
+                      ∀ (S' : Fin (3 : ℕ) → Bool → ProtoTile),
+                        (∀ (i : Fin (3 : ℕ)),
+                            ∀ (s : Bool),
+                              (e : Fin (3 : ℕ) × Bool → Fin (3 : ℕ) × Bool) (i, s) =
+                                ((fun (i : Fin (3 : ℕ)) =>
+                                if BandPackingSymmetryReversesOrientation a = true then -i
+                              else i)
+                                i,
+                                s ^^ delta)) →
+                          (∀ (i : Fin (3 : ℕ)),
+                              ∀ (s : Bool),
+                                S'
+                                ((e : Fin (3 : ℕ) × Bool → Fin (3 : ℕ) × Bool) (i, s)).1
+                                ((e : Fin (3 : ℕ) × Bool → Fin (3 : ℕ) × Bool) (i, s)).2 =
+                                BandPackingSymmetryTileAction a (S i s)) →
+                            (∀ (i : Fin 3), q' (sigma i).succ = A a (q i.succ)) →
+                              let hs' : Fin 3 → Bool → PartialOdometer := fun j s =>
+                                P a (hs (e.symm (j, s)).1 (e.symm (j, s)).2)
+                              ∀ j, ∀ s, TileOdometer (q' j.succ) (S' j s) (hs' j s)
+    ) := by
   classical
-  intro q S hs hsub ih a Q A P q' sigma delta e S' he hS hparent hs' j s
+  intro q S hs ih a Q A P q' sigma delta e S' he hS hparent hs' j s
   let B := BandPackingSymmetryTileAction
   let p := e.symm (j, s)
   have hep : e p = (j, s) := e.apply_symm_apply (j, s)
@@ -1201,12 +1216,16 @@ private theorem hchildCurvPos :
     (by
       classical
       exact
-        ∀ (q : Fin (4 : ℕ) → CircleCoordinates), (ProperBandQuadruple q) → ((BandPackingSymmetry)
-            → (∀ (e : Fin (3 : ℕ) × Bool ≃ Fin (3 : ℕ) × Bool), ∀ (i : Fin (3 : ℕ)), ∀ (s : Bool),
-        let p := e.symm (i, s)
-        (¬(q p.1.succ).1 = (0 : ℤ)) → (0 < (q p.1.succ).1))) ) := by
+        ∀ (q : Fin (4 : ℕ) → CircleCoordinates),
+          ProperBandQuadruple q →
+            ∀ (e : Fin (3 : ℕ) × Bool ≃ Fin (3 : ℕ) × Bool),
+              ∀ (i : Fin (3 : ℕ)),
+                ∀ (s : Bool),
+                  let p := e.symm (i, s)
+                  ¬(q p.1.succ).1 = (0 : ℤ) → 0 < (q p.1.succ).1
+    ) := by
   classical
-  intro q hq a e i s p hz
+  intro q hq e i s p hz
   have hn := (ProperBandCurvatureStructure q hq).2.1 p.1
   omega
 
@@ -1927,7 +1946,7 @@ theorem BandPackingSymmetryTileOdometerCovariance
         have hT' := TileOdometerSymmetryProof.hT' U q hT a cov
         let hs' : Fin 3 → Bool → PartialOdometer := fun j s =>
           P a (hs (e.symm (j, s)).1 (e.symm (j, s)).2)
-        have hsub' := TileOdometerSymmetryProof.hsub' q S hs hsub ih a delta e S' he hS hparent
+        have hsub' := TileOdometerSymmetryProof.hsub' q S hs ih a delta e S' he hS hparent
         have hdom' := TileOdometerSymmetryProof.hdom' h hs hdom a e
         have hvalue' := TileOdometerSymmetryProof.hvalue' h actionDiff hs hdom hvalue a e
         have hcompat' := TileOdometerSymmetryProof.hcompat' hs hcompat a e
@@ -1960,7 +1979,7 @@ theorem BandPackingSymmetryTileOdometerCovariance
         by_cases hz : (q p.1.succ).1 = 0
         · left
           rw [hcurv, hz]
-        · have hchildCurvPos := TileOdometerSymmetryProof.hchildCurvPos q hq a e i s hz
+        · have hchildCurvPos := TileOdometerSymmetryProof.hchildCurvPos q hq e i s hz
           have hchildNe : (S p.1 p.2).cells.Nonempty :=
             positiveCells (q p.1.succ) (S p.1 p.2) hchildCurvPos hprotoChild
           have hchildDom := PositiveCurvatureTileOdometerDomain (q p.1.succ)

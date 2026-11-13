@@ -77,11 +77,14 @@ private theorem incident_boundary :
     (by
       classical
       exact
-        ∀ (T : ProtoTile), ∀ (x : GaussianInt), Finset.Nonempty T.cells → (∃ (j : Fin (4 : ℕ)),
-            LatticeVertexIncidentCell x j ∈ T.cells) → (∃ (j : Fin (4 : ℕ)),
-            LatticeVertexIncidentCell x j ∉ T.cells) → x ∈ BoundaryFootprintVertices T ) := by
+        ∀ (T : ProtoTile),
+          ∀ (x : GaussianInt),
+            (∃ (j : Fin (4 : ℕ)), LatticeVertexIncidentCell x j ∈ T.cells) →
+              (∃ (j : Fin (4 : ℕ)), LatticeVertexIncidentCell x j ∉ T.cells) →
+                x ∈ BoundaryFootprintVertices T
+    ) := by
   classical
-  intro T x hne hsome hmissing
+  intro T x hsome hmissing
   exact P3161T2IncidentBoundary T x hsome hmissing
 
 private theorem common_edge_transition :
@@ -555,7 +558,7 @@ theorem LocalLatticeInterfaceSectors :
       (hne : T.cells.Nonempty)
       (hsome : ∃ j : Fin 4, LatticeVertexIncidentCell x j ∈ T.cells)
       (hmissing : ∃ j : Fin 4, LatticeVertexIncidentCell x j ∉ T.cells) :=
-          InterfaceSectorGeometry.incident_boundary T x hne hsome hmissing
+          InterfaceSectorGeometry.incident_boundary T x hsome hmissing
   let I : GaussianInt := ⟨0, 1⟩
   let edgeAt (x : GaussianInt) : Fin 4 → Finset GaussianInt :=
     ![{x, x + I}, {x - 1, x}, {x - I, x}, {x, x + 1}]

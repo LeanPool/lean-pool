@@ -424,35 +424,6 @@ private theorem vflip :
   intro C orientation base Rminus Rplus hminus hplus F a r hr laws
   exact (laws.2.2.2.2 hr) 2
 
-private theorem aflip :
-    ∀ (C : BandCircle), ∀ (orientation : Bool), ∀ (base : ProtoTile), ∀ (Rminus : ProtoTile), ∀
-        (Rplus : ProtoTile), ∀ (hminus : PartialOdometer), ∀ (hplus : PartialOdometer), ∀ (F :
-        P4458T1BoundaryFrame C orientation base Rminus Rplus hminus hplus), ∀ (a : Fin 3),
-    let r : Fin 4 → CircleCoordinates :=
-      ![F.q 0, F.q a.succ, F.q (a + 1).succ, F.q (a + 2).succ]
-    (ProperBandQuadruple r) → ((BandVectors.1 (r (3 : Fin (4 : ℕ))) (r (2 : Fin (4 : ℕ))) +
-        BandVectors.1 (r (1 : Fin (4 : ℕ))) (r (3 : Fin (4 : ℕ))) + BandVectors.1 (r (2 : Fin (4
-        : ℕ))) (r (1 : Fin (4 : ℕ))) = (0 : GaussianInt) ∧ BandVectors.2 (r (3 : Fin (4 : ℕ))) (r
-        (2 : Fin (4 : ℕ))) + BandVectors.2 (r (1 : Fin (4 : ℕ))) (r (3 : Fin (4 : ℕ))) +
-        BandVectors.2 (r (2 : Fin (4 : ℕ))) (r (1 : Fin (4 : ℕ))) = (0 : GaussianInt) ∧
-        BandVectors.1 (r (1 : Fin (4 : ℕ))) (r (0 : Fin (4 : ℕ))) = BandVectors.1 (r (1 : Fin (4
-        : ℕ))) (r (3 : Fin (4 : ℕ))) - ⟨(0 : ℤ), (1 : ℤ)⟩ * BandVectors.1 (r (2 : Fin (4 : ℕ)))
-        (r (1 : Fin (4 : ℕ))) ∧ BandVectors.2 (r (1 : Fin (4 : ℕ))) (r (0 : Fin (4 : ℕ))) =
-        BandVectors.2 (r (1 : Fin (4 : ℕ))) (r (3 : Fin (4 : ℕ))) + ⟨(0 : ℤ), (1 : ℤ)⟩ *
-        BandVectors.2 (r (2 : Fin (4 : ℕ))) (r (1 : Fin (4 : ℕ))) ∧ (ProperBandQuadruple r → ∀ (j
-        : Fin (3 : ℕ)), BandVectors.1 (r (0 : Fin (4 : ℕ))) (r j.succ) = ⟨(0 : ℤ), (1 : ℤ)⟩ *
-        BandVectors.1 (r j.succ) (r (0 : Fin (4 : ℕ))) ∧ BandVectors.2 (r (0 : Fin (4 : ℕ))) (r
-        j.succ) = -⟨(0 : ℤ), (1 : ℤ)⟩ * BandVectors.2 (r j.succ) (r (0 : Fin (4 : ℕ))))) →
-        (BandVectors.1 (r (0 : Fin (4 : ℕ))) (r (Fin.succ (2 : Fin (3 : ℕ)))) =
-    { re := (0 : ℤ), im := (1 : ℤ) } * BandVectors.1 (r (Fin.succ (2 : Fin (3 : ℕ)))) (r (0 : Fin
-        (4 : ℕ))) ∧
-  BandVectors.2 (r (0 : Fin (4 : ℕ))) (r (Fin.succ (2 : Fin (3 : ℕ)))) =
-    -{ re := (0 : ℤ), im := (1 : ℤ) } * BandVectors.2 (r (Fin.succ (2 : Fin (3 : ℕ)))) (r (0 :
-        Fin (4 : ℕ))))) := by
-  classical
-  intro C orientation base Rminus Rplus hminus hplus F a r hr laws
-  exact (laws.2.2.2.2 hr) 2
-
 private theorem vflip' :
     ∀ (C : BandCircle), ∀ (orientation : Bool), ∀ (base : ProtoTile), ∀ (Rminus : ProtoTile), ∀
         (Rplus : ProtoTile), ∀ (hminus : PartialOdometer), ∀ (hplus : PartialOdometer), ∀ (F :
@@ -1285,9 +1256,8 @@ theorem P4536T1AFrameD
   have hv := FrameDiagonalProof.hv C orientation base Rminus Rplus hminus hplus F a laws
   have ha := FrameDiagonalProof.ha C orientation base Rminus Rplus hminus hplus F a laws
   have vflip := FrameDiagonalProof.vflip C orientation base Rminus Rplus hminus hplus F a hr laws
-  have aflip := FrameDiagonalProof.aflip C orientation base Rminus Rplus hminus hplus F a hr laws
   have vflip' := FrameDiagonalProof.vflip' C orientation base Rminus Rplus hminus hplus F a vflip
-  have aflip' := FrameDiagonalProof.aflip' C orientation base Rminus Rplus hminus hplus F a aflip
+  have aflip' := FrameDiagonalProof.aflip' C orientation base Rminus Rplus hminus hplus F a vflip
   have centMinus := FrameDiagonalProof.centMinus C orientation base Rminus Rplus hminus hplus F a
       p r3
           hparent hzero win vflip'

@@ -5,6 +5,7 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.ApollonianSuperharmonic.DiamondQuadraticArithmetic
 public import Mathlib.Init
 public import LeanPool.ApollonianSuperharmonic.FourNeighborLaplacianProperties
 
@@ -68,31 +69,70 @@ private theorem boundaryCase :
     (by
       classical
       exact
-        ∀ (K : DiamondParameter), ∀ (hk : (1 : ℕ) < K.1), ∀ (f : IntegerLatticeFunction),
-        let k : Int := K.1
-        let d : GaussianInt := ⟨k, 1-k⟩
-        let r : GaussianInt := ⟨2*k, 0⟩
-        let child := P5352T2Sources K hk 0
-        let pred := P5352T2Sources K hk 3
-        (∀ y ∈ FootprintVertices child.1, f y = child.2.1 y) → (((2 : ℤ) ≤ k) → (∀ (p : ℤ), ∀ (q
-            : ℤ), (⟨p, q⟩ ∈ FootprintVertices child.1) → ((⟨p, q⟩ - d ∈ FootprintVertices pred.1)
-            → ((∀ (y : GaussianInt), y = ⟨p, q⟩ ∨ y = ⟨p, q⟩ + (1 : GaussianInt) ∨ y = ⟨p, q⟩ -
-            (1 : GaussianInt) ∨ y = ⟨p, q⟩ + ⟨(0 : ℤ), (1 : ℤ)⟩ ∨ y = ⟨p, q⟩ - ⟨(0 : ℤ), (1 : ℤ)⟩
-            → y ∈ FootprintVertices child.1 ∨ y - d ∈ FootprintVertices pred.1) → (((1 : ℤ) ≤ q +
-            k ∧ q ≤ (2 : ℤ) * (k - (1 : ℤ)) + ((1 : ℤ) - k) ∧ k ≤ p + (k - (1 : ℤ)) ∧ p ≤ k - (1
-            : ℤ) + k ∧ (1 : ℤ) ≤ p - k + (1 : ℤ) + q + k ∧ p ≤ q - ((1 : ℤ) - k) + (1 : ℤ) + k ∧
-            q ≤ (1 : ℤ) + (p - k) + (2 : ℤ) * (k - (1 : ℤ)) + ((1 : ℤ) - k) ∧ p ≤ (2 : ℤ) * (k -
-            (1 : ℤ)) - (q - ((1 : ℤ) - k)) + (1 : ℤ) + k) → (((↑(K.1 - (1 : ℕ)) : ℤ) = k - (1 :
-            ℤ)) → (((0 : ℤ) ≤ q ∧ q ≤ (2 : ℤ) * k ∧ -k ≤ p ∧ p ≤ k ∧ -q - (1 : ℤ) ≤ p ∧ p ≤ q +
-            (1 : ℤ) ∧ -((2 : ℤ) * k - q + (1 : ℤ)) ≤ p ∧ p ≤ (2 : ℤ) * k - q + (1 : ℤ)) → (((1 :
-            ℤ) ≤ p) → ((q = p - (1 : ℤ) ∨ q = p) → ((∀ (a : Int), ∀ (b : Int), (0 ≤ b) → ((b ≤
-            2*k) → ((-k ≤ a) → ((a ≤ k) → ((-b-1 ≤ a) → ((a ≤ b+1) → ((-(2*k-b+1) ≤ a) → ((a ≤
-            2*k-b+1) → ((⟨a,b⟩ : GaussianInt) ∈ FootprintVertices (DiamondTile K.1)))))))))) → (q
-            = p → (⟨p, p⟩ - r ∈ FootprintVertices child.1 → FourNeighborLaplacian f ⟨p, p⟩ = (0 :
-            ℤ)) ∧ (⟨p, p⟩ - r ∉ FootprintVertices child.1 → FourNeighborLaplacian f ⟨p, p⟩ = (1 :
-            ℤ))))))))))))) ) := by
+        ∀ (K : DiamondParameter),
+          ∀ (hk : (1 : ℕ) < K.1),
+            ∀ (f : IntegerLatticeFunction),
+              let k : Int := K.1;
+              let d : GaussianInt := ⟨k, 1 - k⟩;
+              let r : GaussianInt := ⟨2 * k, 0⟩;
+              let child := P5352T2Sources K hk 0;
+              let pred := P5352T2Sources K hk 3;
+              (∀ y ∈ FootprintVertices child.1, f y = child.2.1 y) →
+                ∀ (p : ℤ),
+                  ∀ (q : ℤ),
+                    ⟨p, q⟩ ∈ FootprintVertices child.1 →
+                      ⟨p, q⟩ - d ∈ FootprintVertices pred.1 →
+                        (∀ (y : GaussianInt),
+                            y = ⟨p, q⟩ ∨
+                                y = ⟨p, q⟩ + (1 : GaussianInt) ∨
+                                y = ⟨p, q⟩ - (1 : GaussianInt) ∨
+                                y = ⟨p, q⟩ + ⟨(0 : ℤ), (1 : ℤ)⟩ ∨
+                                y = ⟨p, q⟩ - ⟨(0 : ℤ), (1 : ℤ)⟩ →
+                              y ∈ FootprintVertices child.1 ∨
+                                y - d ∈ FootprintVertices pred.1) →
+                          (1 : ℤ) ≤ q + k ∧
+                              q ≤ (2 : ℤ) * (k - (1 : ℤ)) + ((1 : ℤ) - k) ∧
+                                k ≤ p + (k - (1 : ℤ)) ∧
+                                p ≤ k - (1 : ℤ) + k ∧
+                                (1 : ℤ) ≤ p - k + (1 : ℤ) + q + k ∧
+                                p ≤ q - ((1 : ℤ) - k) + (1 : ℤ) + k ∧
+                                q ≤
+                                (1 : ℤ) + (p - k) + (2 : ℤ) * (k - (1 : ℤ)) +
+                                ((1 : ℤ) - k) ∧
+                                p ≤
+                                (2 : ℤ) * (k - (1 : ℤ)) - (q - ((1 : ℤ) - k)) + (1 : ℤ) +
+                                k →
+                            (↑(K.1 - (1 : ℕ)) : ℤ) = k - (1 : ℤ) →
+                              (0 : ℤ) ≤ q ∧
+                                q ≤ (2 : ℤ) * k ∧
+                                -k ≤ p ∧
+                                p ≤ k ∧
+                                -q - (1 : ℤ) ≤ p ∧
+                                p ≤ q + (1 : ℤ) ∧
+                                -((2 : ℤ) * k - q + (1 : ℤ)) ≤ p ∧
+                                p ≤ (2 : ℤ) * k - q + (1 : ℤ) →
+                                (1 : ℤ) ≤ p →
+                                q = p - (1 : ℤ) ∨ q = p →
+                                (∀ (a : Int),
+                                ∀ (b : Int),
+                                0 ≤ b →
+                                b ≤ 2 * k →
+                                -k ≤ a →
+                                a ≤ k →
+                                -b - 1 ≤ a →
+                                a ≤ b + 1 →
+                                -(2 * k - b + 1) ≤ a →
+                                a ≤ 2 * k - b + 1 →
+                                (⟨a, b⟩ : GaussianInt) ∈
+                                FootprintVertices (DiamondTile K.1)) →
+                                q = p →
+                                (⟨p, p⟩ - r ∈ FootprintVertices child.1 →
+                                FourNeighborLaplacian f ⟨p, p⟩ = (0 : ℤ)) ∧
+                                (⟨p, p⟩ - r ∉ FootprintVertices child.1 →
+                                FourNeighborLaplacian f ⟨p, p⟩ = (1 : ℤ))
+    ) := by
   classical
-  intro K hk f k d r child pred hchild hkI p q hz hpz hcover hdpred hcast hdchild hp1 hq childMem
+  intro K hk f k d r child pred hchild p q hz hpz hcover hdpred hcast hdchild hp1 hq childMem
       hqp
   subst q
   have hplt : p < k := by omega
@@ -193,15 +233,23 @@ private theorem predFoot :
     (by
       classical
       exact
-        ∀ (K : DiamondParameter), ((1 : ℕ) < K.1) → (
-        let k : Int := K.1
-        (ℤ) → ((ℤ) → (((↑(K.1 - (1 : ℕ)) : ℤ) = k - (1 : ℤ)) → (∀ (w : GaussianInt), (0 :
-            ℤ) ≤ w.im ∧ w.im ≤ (2 : ℤ) * (k - (1 : ℤ)) ∧ -(k - (1 : ℤ)) ≤
-            w.re ∧ w.re ≤ k - (1 : ℤ) ∧ -w.im - (1 : ℤ) ≤ w.re ∧ w.re ≤ w.im + (1 : ℤ) ∧ -((2 :
-            ℤ) * (k - (1 : ℤ)) - w.im + (1 : ℤ)) ≤ w.re ∧ w.re ≤ (2 : ℤ) * (k - (1 : ℤ)) - w.im +
-            (1 : ℤ) → w ∈ FootprintVertices (DiamondTile (K.1 - (1 : ℕ)))))))) := by
+        ∀ (K : DiamondParameter),
+          (1 : ℕ) < K.1 →
+            let k : Int := K.1;
+            (↑(K.1 - (1 : ℕ)) : ℤ) = k - (1 : ℤ) →
+              ∀ (w : GaussianInt),
+                (0 : ℤ) ≤ w.im ∧
+                    w.im ≤ (2 : ℤ) * (k - (1 : ℤ)) ∧
+                      -(k - (1 : ℤ)) ≤ w.re ∧
+                        w.re ≤ k - (1 : ℤ) ∧
+                          -w.im - (1 : ℤ) ≤ w.re ∧
+                            w.re ≤ w.im + (1 : ℤ) ∧
+                              -((2 : ℤ) * (k - (1 : ℤ)) - w.im + (1 : ℤ)) ≤ w.re ∧
+                                w.re ≤ (2 : ℤ) * (k - (1 : ℤ)) - w.im + (1 : ℤ) →
+                  w ∈ FootprintVertices (DiamondTile (K.1 - (1 : ℕ)))
+    ) := by
   classical
-  intro K hk k p q hcast w hw
+  intro K hk k hcast w hw
   let Kp : DiamondParameter := ⟨K.1-1, by omega⟩
   apply (P5352T2DomainRows Kp w).1.mpr
   simpa [Kp, hcast] using hw
@@ -210,15 +258,18 @@ private theorem predValue :
     (by
       classical
       exact
-        ∀ (K : DiamondParameter), ∀ (hk : (1 : ℕ) < K.1),
-        let k : Int := K.1
-        let pred := P5352T2Sources K hk 3
-        ∀ (p : ℤ), ∀ (q : ℤ), ∀ (hcast : (↑(K.1 - (1 : ℕ)) : ℤ) = k - (1 : ℤ)),
-        let Q : Int → Int → Int := fun a b =>
-          (Int.natAbs a : Int) * ((Int.natAbs a : Int)-1) / 2 - (a-b)^2/4
-        ∀ w ∈ FootprintVertices (DiamondTile (K.1 - (1 : ℕ))), pred.2.1 w = Q w.re w.im ) := by
+        ∀ (K : DiamondParameter),
+          ∀ (hk : (1 : ℕ) < K.1),
+            let k : Int := K.1;
+            let pred := P5352T2Sources K hk 3;
+            ∀ (hcast : (↑(K.1 - (1 : ℕ)) : ℤ) = k - (1 : ℤ)),
+              let Q : Int → Int → Int := fun a b =>
+                (Int.natAbs a : Int) * ((Int.natAbs a : Int) - 1) / 2 - (a - b) ^ 2 / 4
+              ∀ w ∈ FootprintVertices (DiamondTile (K.1 - (1 : ℕ))),
+                pred.2.1 w = Q w.re w.im
+    ) := by
   classical
-  intro K hk k pred p q hcast Q w hw
+  intro K hk k pred hcast Q w hw
   let Kp : DiamondParameter := ⟨K.1-1, by omega⟩
   simpa [Q, pred, Kp, P5352T2Sources] using (P5352T2DomainRows Kp w).2 hw
 
@@ -449,10 +500,10 @@ private theorem floorOdd :
     (by
       classical
       exact
-        (DiamondParameter) → ((IntegerLatticeFunction) → ((Int) → ((ℤ) → ((ℤ) → (∀ (m : ℤ), ((1 :
-            ℤ) - (2 : ℤ) * m) ^ (2 : ℕ) / (4 : ℤ) = m ^ (2 : ℕ) - m))))) ) := by
+        ∀ (m : ℤ), ((1 : ℤ) - (2 : ℤ) * m) ^ (2 : ℕ) / (4 : ℤ) = m ^ (2 : ℕ) - m
+    ) := by
   classical
-  intro K f B p q m
+  intro m
   have h := P4207T1FloorArithmetic.1 1 (-m)
   have h' : 1 + 2*(-m) = 1-2*m := by ring
   rw [h'] at h
@@ -485,17 +536,18 @@ private theorem qPeLt :
       classical
       exact
         ∀ (K : DiamondParameter),
-        (
-        (
-        let k : Int := K.1;
-        ∀ (p : ℤ), (ℤ) →
-        let Q : Int → Int → Int := fun a b =>
-          (Int.natAbs a : Int) * ((Int.natAbs a : Int)-1) / 2 - (a-b)^2/4;
-        ((∀ (m : Int), (1-2*m)^2/4 = m^2-m) → (p < k → Q (p + (1 : ℤ) - k) (p
-            - (1 : ℤ) - ((1 : ℤ) - k)) = (k - p - (1 : ℤ)) * (k - p - (2 : ℤ)) / (2 : ℤ) - ((k -
-            (1 : ℤ)) ^ (2 : ℕ) - (k - (1 : ℤ))))))) ) := by
+          let k : Int := K.1;
+          ∀ (p : ℤ),
+            let Q : Int → Int → Int := fun a b =>
+              (Int.natAbs a : Int) * ((Int.natAbs a : Int) - 1) / 2 - (a - b) ^ 2 / 4;
+            (∀ (m : Int), (1 - 2 * m) ^ 2 / 4 = m ^ 2 - m) →
+              p < k →
+                Q (p + (1 : ℤ) - k) (p - (1 : ℤ) - ((1 : ℤ) - k)) =
+                  (k - p - (1 : ℤ)) * (k - p - (2 : ℤ)) / (2 : ℤ) -
+                    ((k - (1 : ℤ)) ^ (2 : ℕ) - (k - (1 : ℤ)))
+    ) := by
   classical
-  intro K k p q Q floorOdd hpk'
+  intro K k p Q floorOdd hpk'
   simp only [Q, Int.natCast_natAbs]
   rw [abs_of_nonpos (show p+1-k ≤ 0 by omega)]
   rw [show (p+1-k)-(p-1-(1-k)) = 1-2*(k-1) by ring, floorOdd]
@@ -550,30 +602,21 @@ private theorem tri :
     (by
       classical
       exact
-        (DiamondParameter) → ((IntegerLatticeFunction) → ((Int) → ((ℤ) → ((ℤ) → (∀ (a : ℤ), (2 :
-            ℤ) * (a * (a - (1 : ℤ)) / (2 : ℤ)) = a * (a - (1 : ℤ))))))) ) := by
-  classical
-  intro K f B p q a
-  rcases Int.emod_two_eq_zero_or_one a with h | h
-  · have ha : a = 2*(a/2) := by omega
-    rw [ha]
-    have he : 2*(a/2)*(2*(a/2)-1) = 2*((a/2)*(2*(a/2)-1)) := by ring
-    rw [he, Int.mul_ediv_cancel_left _ (by norm_num : (2:Int) ≠ 0)]
-  · have ha : a = 2*(a/2)+1 := by omega
-    rw [ha]
-    have he : (2*(a/2)+1)*(2*(a/2)+1-1) =
-        2*((2*(a/2)+1)*(a/2)) := by ring
-    rw [he, Int.mul_ediv_cancel_left _ (by norm_num : (2:Int) ≠ 0)]
+        ∀ (a : ℤ), (2 : ℤ) * (a * (a - (1 : ℤ)) / (2 : ℤ)) = a * (a - (1 : ℤ))
+    ) := by
+  exact DiamondQuadraticArithmetic.triangularScale
 
 private theorem tdiff :
     (by
       classical
       exact
-        (DiamondParameter) → ((IntegerLatticeFunction) → ((Int) → ((ℤ) → ((ℤ) → ((∀ (a : Int),
-            2*(a*(a-1)/2) = a*(a-1)) → (∀ (a : ℤ), a * (a - (1 : ℤ)) / (2 : ℤ) - (a - (1 : ℤ)) *
-            (a - (2 : ℤ)) / (2 : ℤ) = a - (1 : ℤ))))))) ) := by
+        (∀ (a : Int), 2 * (a * (a - 1) / 2) = a * (a - 1)) →
+          ∀ (a : ℤ),
+            a * (a - (1 : ℤ)) / (2 : ℤ) - (a - (1 : ℤ)) * (a - (2 : ℤ)) / (2 : ℤ) =
+              a - (1 : ℤ)
+    ) := by
   classical
-  intro K f B p q tri a
+  intro tri a
   have h := tri a
   have h' : 2*((a-1)*(a-2)/2) = (a-1)*(a-2) := by
     simpa [show a-1-1 = a-2 by ring] using tri (a-1)
@@ -586,11 +629,13 @@ private theorem tdiffRev :
     (by
       classical
       exact
-        (DiamondParameter) → ((IntegerLatticeFunction) → ((Int) → ((ℤ) → ((ℤ) → ((∀ (a : Int),
-            a*(a-1)/2-(a-1)*(a-2)/2 = a-1) → (∀ (a : ℤ), (a - (1 : ℤ)) * (a - (2 : ℤ)) / (2 : ℤ)
-            - a * (a - (1 : ℤ)) / (2 : ℤ) = (1 : ℤ) - a)))))) ) := by
+        (∀ (a : Int), a * (a - 1) / 2 - (a - 1) * (a - 2) / 2 = a - 1) →
+          ∀ (a : ℤ),
+            (a - (1 : ℤ)) * (a - (2 : ℤ)) / (2 : ℤ) - a * (a - (1 : ℤ)) / (2 : ℤ) =
+              (1 : ℤ) - a
+    ) := by
   classical
-  intro K f B p q tdiff a
+  intro tdiff a
   have ht := tdiff a
   omega
 
@@ -884,7 +929,7 @@ theorem P5352T2Predecessor0 (K : DiamondParameter) (hk : 1 < K.1)
           FourNeighborLaplacian f ⟨p,p⟩ = 0) ∧
         ((⟨p,p⟩ : GaussianInt)-r ∉ FootprintVertices child.1 →
           FourNeighborLaplacian f ⟨p,p⟩ = 1) := FirstPredecessorCases.boundaryCase K hk f hchild
-              hkI p q hz hpz hcover hdpred hcast hdchild hp1 hq childMem hqp
+              p q hz hpz hcover hdpred hcast hdchild hp1 hq childMem hqp
     let Q : Int → Int → Int := fun a b =>
       (Int.natAbs a : Int) * ((Int.natAbs a : Int)-1) / 2 - (a-b)^2/4
     have childValue (w : GaussianInt)
@@ -895,10 +940,10 @@ theorem P5352T2Predecessor0 (K : DiamondParameter) (hk : 1 < K.1)
         (hw : 0 ≤ w.im ∧ w.im ≤ 2*(k-1) ∧ -(k-1) ≤ w.re ∧ w.re ≤ k-1 ∧
           -w.im-1 ≤ w.re ∧ w.re ≤ w.im+1 ∧
           -(2*(k-1)-w.im+1) ≤ w.re ∧ w.re ≤ 2*(k-1)-w.im+1) := FirstPredecessorCases.predFoot K
-              hk p q hcast w hw
+              hk hcast w hw
     have predValue (w : GaussianInt)
         (hw : w ∈ FootprintVertices (DiamondTile (K.1-1))) := FirstPredecessorCases.predValue K
-            hk p q hcast w hw
+            hk hcast w hw
     have predTranslatedValue (y : GaussianInt)
         (hy : y-d ∈ FootprintVertices (DiamondTile (K.1-1))) :=
             FirstPredecessorCases.predTranslatedValue K hk f B hpred predValue y hy
@@ -946,16 +991,16 @@ theorem P5352T2Predecessor0 (K : DiamondParameter) (hk : 1 < K.1)
       have qCS : Q p (p-2) = p*(p-1)/2-1 := by
         simp [Q, abs_of_nonneg (show 0 ≤ p by omega)]
       have floorEven (m : Int) := FirstPredecessorCases.floorEven m
-      have floorOdd (m : Int) := FirstPredecessorCases.floorOdd K f B p q m
+      have floorOdd (m : Int) := FirstPredecessorCases.floorOdd m
       have qP0 := FirstPredecessorCases.qP0 K p q hpk hq floorEven
-      have qPeLt (hpk' : p < k) := FirstPredecessorCases.qPeLt K p q floorOdd hpk'
+      have qPeLt (hpk' : p < k) := FirstPredecessorCases.qPeLt K p floorOdd hpk'
       have qPeEq (hpk' : p = k) := FirstPredecessorCases.qPeEq K p floorOdd hpk'
       have qPs := FirstPredecessorCases.qPs K p q hpk hq floorOdd
       have hQdelta : valS - valC = k-1 := by
         linear_combination qPs-qP0
-      have tri (a : Int) := FirstPredecessorCases.tri K f B p q a
-      have tdiff (a : Int) := FirstPredecessorCases.tdiff K f B p q tri a
-      have tdiffRev (a : Int) := FirstPredecessorCases.tdiffRev K f B p q tdiff a
+      have tri (a : Int) := FirstPredecessorCases.tri a
+      have tdiff (a : Int) := FirstPredecessorCases.tdiff tri a
+      have tdiffRev (a : Int) := FirstPredecessorCases.tdiffRev tdiff a
       have hEastDiff := FirstPredecessorCases.hEastDiff K f B eastAlgebra endAlgebraB p hpk
           hPcenter hPeast qP0 qPeLt qPeEq tdiffRev
       have hWestDiff := FirstPredecessorCases.hWestDiff f subDiff p hC0 hCW qC0 qCW tdiffRev

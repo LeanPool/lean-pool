@@ -374,14 +374,23 @@ private theorem parent_regular :
     (by
       classical
       exact
-        ∀ (C : BandCircle), ∀ (q : Fin 4 → CircleCoordinates), ∀ (cfg :
-            BandOrderedGeneralConfiguration q), ∀ (T : ProtoTile), ∀ (cert :
-            BandOrderedGeneralLayoutCertificate q cfg C T), (List GaussianInt) → (∀ i, ∀ s, (∀ a,
-            ∀ b, FourNeighborAdjacent a b → a ∈ BoundaryFootprintVertices (cert.P i s) → b ∈
-            BoundaryFootprintVertices (cert.P i s) → ¬ OpenLatticeEdge a b ⊆ interior
-            (TileRealization (cert.P i s)))) ) := by
+        ∀ (C : BandCircle),
+          ∀ (q : Fin 4 → CircleCoordinates),
+            ∀ (cfg : BandOrderedGeneralConfiguration q),
+              ∀ (T : ProtoTile),
+                ∀ (cert : BandOrderedGeneralLayoutCertificate q cfg C T),
+                  ∀ i,
+                    ∀ s,
+                      ∀ a,
+                        ∀ b,
+                          FourNeighborAdjacent a b →
+                            a ∈ BoundaryFootprintVertices (cert.P i s) →
+                              b ∈ BoundaryFootprintVertices (cert.P i s) →
+                                ¬OpenLatticeEdge a b ⊆
+                                interior (TileRealization (cert.P i s))
+    ) := by
   classical
-  intro C q cfg T cert p
+  intro C q cfg T cert
   as_aux_lemma =>
   intro i s
   have hnonneg := (ProperBandCurvatureStructure q cfg.proper).2.1 i
@@ -1237,7 +1246,7 @@ theorem P4250T2InterfaceCycleExclusion
   have hTne : T.cells.Nonempty := (LatticeTileGridStructure T hlat).1.1
   -- Absence of a boundary edge forces all four incident cells to be present.
   have edge_vertices := InterfaceCycleGeometry.edge_vertices E p x y hpHead hpLast hclose hpEdges
-  have parent_regular := InterfaceCycleGeometry.parent_regular C q cfg T cert p
+  have parent_regular := InterfaceCycleGeometry.parent_regular C q cfg T cert
   -- A cycle side cannot lie between two cells of one parent.
   have zip_decomp := InterfaceCycleGeometry.zip_decomp
   let es := (p.zip p.tail) ++ [(y, x)]

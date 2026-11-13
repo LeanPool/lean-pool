@@ -227,15 +227,19 @@ private theorem unitPair :
     (by
       classical
       exact
-        (ℕ) → (∀ (C : BandCircle), ∀ (ε : Bool), ∀ (B : ProtoTile), ∀ (R : ProtoTile), ∀ (S :
-            ProtoTile), ∀ (g : PartialOdometer), ∀ (h : PartialOdometer), (P4458T1BoundaryFrame
-            C ε B R S g h) → (∀ (u : Fin 4 → CircleCoordinates), (ProperBandQuadruple u) → (((u
-            2).1 = 1) → (((u 3).1 = 1) → ((PrimitiveVectorOrientation (u 2) (u 3) ∧
-            UnitOccurrenceOrientation u 1 false ∧ UnitOccurrenceOrientation u 2 true) ∨
-            (PrimitiveVectorOrientation (u 3) (u 2) ∧ UnitOccurrenceOrientation u 1 true ∧
-            UnitOccurrenceOrientation u 2 false)))))) ) := by
+        ∀ (u : Fin 4 → CircleCoordinates),
+          ProperBandQuadruple u →
+            (u 2).1 = 1 →
+              (u 3).1 = 1 →
+                PrimitiveVectorOrientation (u 2) (u 3) ∧
+                    UnitOccurrenceOrientation u 1 false ∧
+                      UnitOccurrenceOrientation u 2 true ∨
+                  PrimitiveVectorOrientation (u 3) (u 2) ∧
+                    UnitOccurrenceOrientation u 1 true ∧
+                      UnitOccurrenceOrientation u 2 false
+    ) := by
   classical
-  intro n C ε B R S g h F u hu hu2 hu3
+  intro u hu hu2 hu3
   obtain ⟨_, _, _, _, inv, cases⟩ := BandOrientedBoundaryOccurrenceGenealogy u hu
   rcases cases with small | second | third
   · rcases small.2 with forward | backward
@@ -582,8 +586,7 @@ theorem BoundaryStringOdometerRespect :
       have placement := BoundaryOdometerGeometry.placement C ε B R S g h F T H hsub hfoot hcent
           hdom hvalue hslope ancestors (BoundaryOdometerGeometry.successorCase C ε B R S g h F T
           H hsub hfoot hcent hdom hvalue hslope ancestors (BoundaryOdometerGeometry.rotateProper)
-          (BoundaryOdometerGeometry.asymmetric) (BoundaryOdometerGeometry.unitPair n C ε B R S g
-          h F))
+          (BoundaryOdometerGeometry.asymmetric) (BoundaryOdometerGeometry.unitPair))
       obtain ⟨P⟩ := placement
       have realize {U V : ProtoTile} {k l : PartialOdometer}
           (side : P4458T1BoundarySide F U V k l) := BoundaryOdometerGeometry.realize n ih C ε B

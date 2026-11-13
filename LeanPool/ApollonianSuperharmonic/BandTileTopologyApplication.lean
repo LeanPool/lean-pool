@@ -76,12 +76,14 @@ private theorem hnonempty :
     (by
       classical
       exact
-        ∀ (C : BandCircle), ∀ (q : Fin 4 → CircleCoordinates), ∀ (T : ProtoTile),
-            (PeriodicTileComplex ↥(TilingLattice C)) → ((0 < (q 0).1) → ((TileArea T = (q (0 :
-            Fin (4 : ℕ))).1.toNat) → (∀ (x : GaussianInt), (TileTranslation T
-            x).cells.Nonempty))) ) := by
+        ∀ (q : Fin 4 → CircleCoordinates),
+          ∀ (T : ProtoTile),
+            0 < (q 0).1 →
+              TileArea T = (q (0 : Fin (4 : ℕ))).1.toNat →
+                ∀ (x : GaussianInt), (TileTranslation T x).cells.Nonempty
+    ) := by
   classical
-  intro C q T P hpositive harea x
+  intro q T hpositive harea x
   rw [Finset.nonempty_iff_ne_empty]
   intro he
   have hz : TileArea T = 0 := by
@@ -632,7 +634,7 @@ theorem BandTileTopologyApplication (C : BandCircle)
     have hpositive : 0 < (q 0).1 := (ProperBandCurvatureStructure q hq).1
     have harea := (BandTileSimultaneousInduction q hq T hT).2.1
     have hnonempty (x : GaussianInt) :
-        (TileTranslation T x).cells.Nonempty := TileTopologyGeometry.hnonempty C q T P hpositive
+        (TileTranslation T x).cells.Nonempty := TileTopologyGeometry.hnonempty q T hpositive
             harea x
     have border_touch (U : ProtoTile) (hU : U ∈ RegularTileFamily T (TilingLattice C))
         (hneq : U ≠ T) : TileTouching T U → TileBordering T U :=

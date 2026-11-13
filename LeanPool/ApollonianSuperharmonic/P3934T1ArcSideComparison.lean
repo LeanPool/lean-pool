@@ -145,56 +145,81 @@ private theorem hscale :
       _ = (((xR : Real) - (xL : Real)) / ((r2 : Real) - (r1 : Real))) * Bg.2 := by ring
 
 private theorem localResult :
-    ∀ (S : Set (Real × Real)), ∀ (e : Bool), ∀ (d : Bool), ∀ (U₁ : Set (ℝ × ℝ)), ∀ (U₂ : Set (ℝ ×
-        ℝ)), ∀ (g : (↑(Set.Icc (0 : ℝ) (1 : ℝ)) : Type) → ℝ × ℝ), ∀ (h : (↑(Set.Icc (0 : ℝ) (1 :
-        ℝ)) : Type) → ℝ × ℝ), ∀ (p : P3723T1PolygonalParameterization g), ∀ (q :
-            P3723T1PolygonalParameterization h), ∀ (hgrange : Set.range g = S),
-            (P3934T1PolygonalSide U₁ g p e) → (∀ (hhrange : Set.range h = S),
-            (P3934T1PolygonalSide U₂ h q d) → (
-    let gfun : Set.Icc (0 : Real) 1 → S := fun x =>
-      ⟨g x, by rw [← hgrange]; exact ⟨x, rfl⟩⟩
-    let hfun : Set.Icc (0 : Real) 1 → S := fun x =>
-      ⟨h x, by rw [← hhrange]; exact ⟨x, rfl⟩⟩
-    ∀ (hgfun_inj : Function.Injective gfun), ∀ (hhfun_inj : Function.Injective hfun), ∀
-        (hgfun_surj : Function.Surjective gfun), ∀ (hhfun_surj : Function.Surjective hfun),
-    let ge : Set.Icc (0 : Real) 1 ≃ S := Equiv.ofBijective gfun ⟨hgfun_inj, hgfun_surj⟩
-    let he : Set.Icc (0 : Real) 1 ≃ S := Equiv.ofBijective hfun ⟨hhfun_inj, hhfun_surj⟩
-    ∀ (hgfun_cont : Continuous gfun), ∀ (hhfun_cont : Continuous hfun),
-    let GH :=
-        Continuous.homeoOfEquivCompactToT2 (f := ge) hgfun_cont
-    let HH := Continuous.homeoOfEquivCompactToT2 (f := he) hhfun_cont
-    let phi : Set.Icc (0 : Real) 1 ≃ₜ Set.Icc (0 : Real) 1 := GH.trans HH.symm
-    let i0 : Fin p.count := ⟨0, p.positive⟩
-    let j0 : Fin q.count := ⟨0, q.positive⟩
-    let i1 : Fin (p.count + 1) := ⟨1, by have hp := p.positive; omega⟩
-    let j1 : Fin (q.count + 1) := ⟨1, by have hq := q.positive; omega⟩
-    ∀ (hpi : 0 < p.time i1), ∀ (hqj : 0 < q.time j1), ∀ (hpi1 : p.time i1 ≤ 1), ∀ (hqj1 : q.time
-        j1 ≤ 1),
-    let α : Set.Icc (0 : Real) 1 := ⟨p.time i1, hpi.le, hpi1⟩
-    let β : Set.Icc (0 : Real) 1 := ⟨q.time j1, hqj.le, hqj1⟩
-    let c : Real := min (phi α : Real) (β : Real)
-    ∀ (hcpos : 0 < c), ((c ≤ (β : Real)) → (∀ (hc_le_one : c ≤ 1),
-    let r1 : Set.Icc (0 : Real) 1
-        := ⟨c / 3,
-      ⟨by linarith [hcpos], by have := hc_le_one; linarith⟩⟩
-    let r2 : Set.Icc (0 : Real) 1 := ⟨2 * c / 3,
-      ⟨by linarith [hcpos], by have := hc_le_one; linarith⟩⟩
-    let xL : Set.Icc (0 : Real) 1 := phi.symm r1
-    let xR : Set.Icc (0 : Real) 1 := phi.symm r2
-    ∀ (Bg : ℝ × ℝ), (Bg ≠ (0 : ℝ × ℝ)) → ((∀ (t : (↑(Set.Icc (0 : ℝ) (1 : ℝ)) : Type)), p.time
-        i0.castSucc < (↑t : ℝ) → (↑t : ℝ) < p.time i0.succ → P3934T1LocalSide U₁ (g t) Bg e) →
-        (∀ (Bh : ℝ × ℝ), (∀ (t : (↑(Set.Icc (0 : ℝ) (1 : ℝ)) : Type)), q.time j0.castSucc < (↑t :
-        ℝ) → (↑t : ℝ) < q.time j0.succ → P3934T1LocalSide U₂ (h t) Bh d) → (
-    let scale : Real :=
-        ((xR : Real) - (xL : Real)) / ((r2 : Real) - (r1 : Real))
-    (0 < scale) → ((Bh = scale • Bg) → (
-    let z : Real × Real := g xL
-    (P3934T1LocalSide U₁ z Bg e) → ((P3934T1LocalSide U₂ z Bh d) → ((U₁ = U₂ → e = d) ∧
-        (Disjoint U₁ U₂ → e ≠ d)))))))))))) := by
+    ∀ (S : Set (Real × Real)),
+      ∀ (e : Bool),
+        ∀ (d : Bool),
+          ∀ (U₁ : Set (ℝ × ℝ)),
+            ∀ (U₂ : Set (ℝ × ℝ)),
+              ∀ (g : (↑(Set.Icc (0 : ℝ) (1 : ℝ)) : Type) → ℝ × ℝ),
+                ∀ (h : (↑(Set.Icc (0 : ℝ) (1 : ℝ)) : Type) → ℝ × ℝ),
+                  ∀ (p : P3723T1PolygonalParameterization g),
+                    ∀ (q : P3723T1PolygonalParameterization h),
+                      ∀ (hgrange : Set.range g = S),
+                        P3934T1PolygonalSide U₁ g p e →
+                          ∀ (hhrange : Set.range h = S),
+                            P3934T1PolygonalSide U₂ h q d →
+                            let gfun : Set.Icc (0 : Real) 1 → S := fun x =>
+                            ⟨g x, by rw [← hgrange]; exact ⟨x, rfl⟩⟩;
+                          let hfun : Set.Icc (0 : Real) 1 → S := fun x =>
+                            ⟨h x, by rw [← hhrange]; exact ⟨x, rfl⟩⟩;
+                          ∀ (hgfun_inj : Function.Injective gfun),
+                            ∀ (hhfun_inj : Function.Injective hfun),
+                            ∀ (hgfun_surj : Function.Surjective gfun),
+                            ∀ (hhfun_surj : Function.Surjective hfun),
+                            let ge : Set.Icc (0 : Real) 1 ≃ S :=
+                            Equiv.ofBijective gfun ⟨hgfun_inj, hgfun_surj⟩;
+                          let he : Set.Icc (0 : Real) 1 ≃ S :=
+                            Equiv.ofBijective hfun ⟨hhfun_inj, hhfun_surj⟩;
+                          ∀ (hgfun_cont : Continuous gfun),
+                            ∀ (hhfun_cont : Continuous hfun),
+                            let GH :=
+                            Continuous.homeoOfEquivCompactToT2 (f := ge) hgfun_cont;
+                          let HH := Continuous.homeoOfEquivCompactToT2 (f := he) hhfun_cont;
+                          let phi : Set.Icc (0 : Real) 1 ≃ₜ Set.Icc (0 : Real) 1 :=
+                            GH.trans HH.symm;
+                          let i0 : Fin p.count := ⟨0, p.positive⟩;
+                          let j0 : Fin q.count := ⟨0, q.positive⟩;
+                          let i1 : Fin (p.count + 1) :=
+                            ⟨1, by have hp := p.positive; omega⟩;
+                          let j1 : Fin (q.count + 1) :=
+                            ⟨1, by have hq := q.positive; omega⟩;
+                          ∀ (hpi : 0 < p.time i1),
+                            ∀ (hqj : 0 < q.time j1),
+                            ∀ (hpi1 : p.time i1 ≤ 1),
+                            ∀ (hqj1 : q.time j1 ≤ 1),
+                            let α : Set.Icc (0 : Real) 1 := ⟨p.time i1, hpi.le, hpi1⟩;
+                          let β : Set.Icc (0 : Real) 1 := ⟨q.time j1, hqj.le, hqj1⟩;
+                          let c : Real := min (phi α : Real) (β : Real);
+                          ∀ (hcpos : 0 < c),
+                            ∀ (hc_le_one : c ≤ 1),
+                            let r1 : Set.Icc (0 : Real) 1 :=
+                            ⟨c / 3, ⟨by linarith [hcpos], by have := hc_le_one; linarith⟩⟩
+                          let r2 : Set.Icc (0 : Real) 1 :=
+                            ⟨2 * c / 3,
+                            ⟨by linarith [hcpos], by have := hc_le_one; linarith⟩⟩
+                          let xL : Set.Icc (0 : Real) 1 := phi.symm r1
+                          let xR : Set.Icc (0 : Real) 1 := phi.symm r2
+                          ∀ (Bg : ℝ × ℝ),
+                            Bg ≠ (0 : ℝ × ℝ) →
+                            (∀ (t : (↑(Set.Icc (0 : ℝ) (1 : ℝ)) : Type)),
+                            p.time i0.castSucc < (↑t : ℝ) →
+                            (↑t : ℝ) < p.time i0.succ → P3934T1LocalSide U₁ (g t) Bg e) →
+                            ∀ (Bh : ℝ × ℝ),
+                            (∀ (t : (↑(Set.Icc (0 : ℝ) (1 : ℝ)) : Type)),
+                            q.time j0.castSucc < (↑t : ℝ) →
+                            (↑t : ℝ) < q.time j0.succ → P3934T1LocalSide U₂ (h t) Bh d) →
+                            let scale : Real :=
+                            ((xR : Real) - (xL : Real)) / ((r2 : Real) - (r1 : Real))
+                          0 < scale →
+                            Bh = scale • Bg →
+                            let z : Real × Real := g xL
+                          P3934T1LocalSide U₁ z Bg e →
+                            P3934T1LocalSide U₂ z Bh d →
+                            (U₁ = U₂ → e = d) ∧ (Disjoint U₁ U₂ → e ≠ d) := by
   classical
   intro S e d U₁ U₂ g h p q hgrange hps hhrange hqs gfun hfun hgfun_inj hhfun_inj hgfun_surj
       hhfun_surj ge he hgfun_cont hhfun_cont GH HH phi i0 j0 i1 j1 hpi hqj hpi1 hqj1 α β c hcpos
-      hc_le_b hc_le_one r1 r2 xL xR Bg hBg hgside Bh hhside scale hscale_pos hscale z hlocG hlocH
+      hc_le_one r1 r2 xL xR Bg hBg hgside Bh hhside scale hscale_pos hscale z hlocG hlocH
   rcases hlocG with ⟨r, hr, hEqU⟩
   rcases hlocH with ⟨s, hs, hEqV⟩
   let v : Real × Real := (-Bg.2, Bg.1)
@@ -1301,7 +1326,7 @@ private theorem compareCore :
     exact hh
   have localResult := ArcComparisonGeometry.localResult S e d U₁ U₂ g h p q hgrange hps hhrange
       hqs hgfun_inj
-      hhfun_inj hgfun_surj hhfun_surj hgfun_cont hhfun_cont hpi hqj hpi1 hqj1 hcpos hc_le_b
+      hhfun_inj hgfun_surj hhfun_surj hgfun_cont hhfun_cont hpi hqj hpi1 hqj1 hcpos
       hc_le_one Bg hBg hgside Bh hhside hscale_pos hscale hlocG hlocH
   exact localResult
 

@@ -35,9 +35,10 @@ private theorem positive_parent :
     (by
       classical
       exact
-        (CircleCoordinates) → (∀ q, ProperBandQuadruple q → ∃ i : Fin 3, 0 < (q i.succ).1) ) := by
+        ∀ q, ProperBandQuadruple q → ∃ i : Fin 3, 0 < (q i.succ).1
+    ) := by
   classical
-  intro C q hq
+  intro q hq
   have f := ProperBandCurvatureStructure q hq
   by_cases h0 : 0 < (q (0 : Fin 3).succ).1
   · exact ⟨0, h0⟩
@@ -53,10 +54,11 @@ private theorem proper_large :
     (by
       classical
       exact
-        (CircleCoordinates) → ((∀ q, ProperBandQuadruple q → ∃ i : Fin 3, 0 < (q i.succ).1) → (∀
-            q, ProperBandQuadruple q → 1 < (q 0).1)) ) := by
+        (∀ q, ProperBandQuadruple q → ∃ i : Fin 3, 0 < (q i.succ).1) →
+          ∀ q, ProperBandQuadruple q → 1 < (q 0).1
+    ) := by
   classical
-  intro C positive_parent q hq
+  intro positive_parent q hq
   obtain ⟨i, hi⟩ := positive_parent q hq
   have hb := hq.2 i
   omega
@@ -156,11 +158,18 @@ private theorem unit_shift :
     (by
       classical
       exact
-        (CircleCoordinates) → (∀ (z : GaussianInt), ∀ (x : GaussianInt), ∀ (V : ProtoTile), ∀ (k
-            : PartialOdometer), V.cells = {x} → (k.domain : Set GaussianInt) = FootprintVertices
-            V → ∀ v, (∀ y, y ∈ k.domain ↔ y-v ∈ (CurvatureOneOdometer z).domain) → v=x) ) := by
+        ∀ (z : GaussianInt),
+          ∀ (x : GaussianInt),
+            ∀ (V : ProtoTile),
+              ∀ (k : PartialOdometer),
+                V.cells = { x } →
+                  (k.domain : Set GaussianInt) = FootprintVertices V →
+                    ∀ v,
+                      (∀ y, y ∈ k.domain ↔ y - v ∈ (CurvatureOneOdometer z).domain) →
+                        v = x
+    ) := by
   classical
-  intro C z x V k hc hd v hv
+  intro z x V k hc hd v hv
   have hn : V.cells.Nonempty := by rw [hc]; simp
   have h0 : v ∈ FootprintVertices V := by
     rw [← hd]
@@ -245,11 +254,14 @@ private theorem hzAt354 :
     (by
       classical
       exact
-        (CircleCoordinates) → (∀ (z : GaussianInt), ∀ (z' : GaussianInt), (((1 : ℤ), (1 :
-            GaussianInt) + (2 : GaussianInt) * z') = ((1 : ℤ), (1 : GaussianInt) + (2 :
-            GaussianInt) * z)) → (z = z')) ) := by
+        ∀ (z : GaussianInt),
+          ∀ (z' : GaussianInt),
+            ((1 : ℤ), (1 : GaussianInt) + (2 : GaussianInt) * z') =
+                ((1 : ℤ), (1 : GaussianInt) + (2 : GaussianInt) * z) →
+              z = z'
+    ) := by
   classical
-  intro C z z' he
+  intro z z' he
   have hh := congrArg (fun D : CircleCoordinates => D.2) he
   apply Zsqrtd.ext
   · have hr := congrArg (fun w : GaussianInt => w.re) hh
@@ -336,37 +348,85 @@ private theorem coefficients :
     (by
       classical
       exact
-        (CircleCoordinates) → ((∀ (k : PartialOdometer), ∀ (l : PartialOdometer), ∀ (u :
-            GaussianInt), ∀ (a : GaussianInt), ∀ (b : ℤ), (∀ x, x ∈ k.domain ↔ x-u ∈ l.domain) →
-            (∀ x, x ∈ k.domain → k.value x = l.value (x-u) + a.re*x.re + a.im*x.im+b) → k =
-            PartialOdometerAffineTranslate l u a b) → (∀ (k : PartialOdometer), ∀ (q : Fin (4 :
-            ℕ) → CircleCoordinates), ∀ (hs : Fin (3 : ℕ) → Bool → PartialOdometer), (∀ (i : Fin
-            (3 : ℕ)), ∀ (s : Bool), (q i.succ).1 = (0 : ℤ) ∨ ∃ (p : ℝ × ℝ) (p_i : ℝ × ℝ),
-            PartialOdometerSlope k = some p ∧ PartialOdometerSlope (hs i s) = some p_i ∧ p_i.1 -
-            p.1 = (if s = true then (1 : ℝ) else (-1 : ℝ)) * (1 / 2 : ℝ) * ((↑(BandVectors.2 (q
-            (i + (2 : Fin (3 : ℕ))).succ) (q (i + (1 : Fin (3 : ℕ))).succ)).re : ℝ) -
-            (↑(BandVectors.2 (q (i + (2 : Fin (3 : ℕ))).succ) (q (i + (1 : Fin (3 :
-            ℕ))).succ)).im : ℝ)) ∧ p_i.2 - p.2 = (if s = true then (1 : ℝ) else (-1 : ℝ)) * (1 /
-            2 : ℝ) * ((↑(BandVectors.2 (q (i + (2 : Fin (3 : ℕ))).succ) (q (i + (1 : Fin (3 :
-            ℕ))).succ)).im : ℝ) + (↑(BandVectors.2 (q (i + (2 : Fin (3 : ℕ))).succ) (q (i + (1 :
-            Fin (3 : ℕ))).succ)).re : ℝ))) → (∀ (l : PartialOdometer), ∀ (u : GaussianInt), ∀ (rs
-            : Fin (3 : ℕ) → Bool → PartialOdometer), (∀ (i : Fin (3 : ℕ)), ∀ (s : Bool), (q
-            i.succ).1 = (0 : ℤ) ∨ ∃ (p : ℝ × ℝ) (p_i : ℝ × ℝ), PartialOdometerSlope l = some p ∧
-            PartialOdometerSlope (rs i s) = some p_i ∧ p_i.1 - p.1 = (if s = true then (1 : ℝ)
-            else (-1 : ℝ)) * (1 / 2 : ℝ) * ((↑(BandVectors.2 (q (i + (2 : Fin (3 : ℕ))).succ) (q
-            (i + (1 : Fin (3 : ℕ))).succ)).re : ℝ) - (↑(BandVectors.2 (q (i + (2 : Fin (3 :
-            ℕ))).succ) (q (i + (1 : Fin (3 : ℕ))).succ)).im : ℝ)) ∧ p_i.2 - p.2 = (if s = true
-            then (1 : ℝ) else (-1 : ℝ)) * (1 / 2 : ℝ) * ((↑(BandVectors.2 (q (i + (2 : Fin (3 :
-            ℕ))).succ) (q (i + (1 : Fin (3 : ℕ))).succ)).im : ℝ) + (↑(BandVectors.2 (q (i + (2 :
-            Fin (3 : ℕ))).succ) (q (i + (1 : Fin (3 : ℕ))).succ)).re : ℝ))) → ((Fin (3 : ℕ)) → (∀
-            (p : ℝ × ℝ), (PartialOdometerSlope k = some p) → (∀ (p' : ℝ × ℝ),
-            (PartialOdometerSlope l = some p') → (∀ i, ∀ s, 0 < (q i.succ).1 → ∀ (ai :
-            GaussianInt), ∀ (bi : ℤ), (∀ x, x ∈ (hs i s).domain ↔ x-u ∈ (rs i s).domain) → (∀ x,
-            x ∈ (hs i s).domain → (hs i s).value x = (rs i s).value
-            (x-u)+ai.re*x.re+ai.im*x.im+bi) → (ai.re : ℝ) = p.1-p'.1 ∧ (ai.im : ℝ) =
-            p.2-p'.2))))))) ) := by
+        (∀ (k : PartialOdometer),
+            ∀ (l : PartialOdometer),
+              ∀ (u : GaussianInt),
+                ∀ (a : GaussianInt),
+                  ∀ (b : ℤ),
+                    (∀ x, x ∈ k.domain ↔ x - u ∈ l.domain) →
+                      (∀ x,
+                          x ∈ k.domain →
+                            k.value x = l.value (x - u) + a.re * x.re + a.im * x.im + b) →
+                        k = PartialOdometerAffineTranslate l u a b) →
+          ∀ (k : PartialOdometer),
+            ∀ (q : Fin (4 : ℕ) → CircleCoordinates),
+              ∀ (hs : Fin (3 : ℕ) → Bool → PartialOdometer),
+                (∀ (i : Fin (3 : ℕ)),
+                    ∀ (s : Bool),
+                      (q i.succ).1 = (0 : ℤ) ∨
+                        ∃ (p : ℝ × ℝ) (p_i : ℝ × ℝ),
+                          PartialOdometerSlope k = some p ∧
+                            PartialOdometerSlope (hs i s) = some p_i ∧
+                              p_i.1 - p.1 =
+                                (if s = true then (1 : ℝ) else (-1 : ℝ)) * (1 / 2 : ℝ) *
+                                ((↑(BandVectors.2 (q (i + (2 : Fin (3 : ℕ))).succ)
+                                (q (i + (1 : Fin (3 : ℕ))).succ)).re :
+                                ℝ) -
+                                (↑(BandVectors.2 (q (i + (2 : Fin (3 : ℕ))).succ)
+                                (q (i + (1 : Fin (3 : ℕ))).succ)).im :
+                                ℝ)) ∧
+                                p_i.2 - p.2 =
+                                (if s = true then (1 : ℝ) else (-1 : ℝ)) * (1 / 2 : ℝ) *
+                                ((↑(BandVectors.2 (q (i + (2 : Fin (3 : ℕ))).succ)
+                                (q (i + (1 : Fin (3 : ℕ))).succ)).im :
+                                ℝ) +
+                                (↑(BandVectors.2 (q (i + (2 : Fin (3 : ℕ))).succ)
+                                (q (i + (1 : Fin (3 : ℕ))).succ)).re :
+                                ℝ))) →
+                  ∀ (l : PartialOdometer),
+                    ∀ (u : GaussianInt),
+                      ∀ (rs : Fin (3 : ℕ) → Bool → PartialOdometer),
+                        (∀ (i : Fin (3 : ℕ)),
+                            ∀ (s : Bool),
+                              (q i.succ).1 = (0 : ℤ) ∨
+                                ∃ (p : ℝ × ℝ) (p_i : ℝ × ℝ),
+                                PartialOdometerSlope l = some p ∧
+                                PartialOdometerSlope (rs i s) = some p_i ∧
+                                p_i.1 - p.1 =
+                                (if s = true then (1 : ℝ) else (-1 : ℝ)) * (1 / 2 : ℝ) *
+                                ((↑(BandVectors.2 (q (i + (2 : Fin (3 : ℕ))).succ)
+                                (q (i + (1 : Fin (3 : ℕ))).succ)).re :
+                                ℝ) -
+                                (↑(BandVectors.2 (q (i + (2 : Fin (3 : ℕ))).succ)
+                                (q (i + (1 : Fin (3 : ℕ))).succ)).im :
+                                ℝ)) ∧
+                                p_i.2 - p.2 =
+                                (if s = true then (1 : ℝ) else (-1 : ℝ)) * (1 / 2 : ℝ) *
+                                ((↑(BandVectors.2 (q (i + (2 : Fin (3 : ℕ))).succ)
+                                (q (i + (1 : Fin (3 : ℕ))).succ)).im :
+                                ℝ) +
+                                (↑(BandVectors.2 (q (i + (2 : Fin (3 : ℕ))).succ)
+                                (q (i + (1 : Fin (3 : ℕ))).succ)).re :
+                                ℝ))) →
+                          ∀ (p : ℝ × ℝ),
+                            PartialOdometerSlope k = some p →
+                              ∀ (p' : ℝ × ℝ),
+                                PartialOdometerSlope l = some p' →
+                                ∀ i,
+                                ∀ s,
+                                0 < (q i.succ).1 →
+                                ∀ (ai : GaussianInt),
+                                ∀ (bi : ℤ),
+                                (∀ x, x ∈ (hs i s).domain ↔ x - u ∈ (rs i s).domain) →
+                                (∀ x,
+                                x ∈ (hs i s).domain →
+                                (hs i s).value x =
+                                (rs i s).value (x - u) + ai.re * x.re + ai.im * x.im +
+                                bi) →
+                                (ai.re : ℝ) = p.1 - p'.1 ∧ (ai.im : ℝ) = p.2 - p'.2
+    ) := by
   classical
-  intro C affine_eq k q hs hslope l u rs rslope j p hp0 p' hp1 i s hi ai bi hd hv
+  intro affine_eq k q hs hslope l u rs rslope p hp0 p' hp1 i s hi ai bi hd hv
   obtain ⟨pp,ii,hpp,hii,dx,dy⟩ := (hslope i s).resolve_left (by omega)
   obtain ⟨qq,jj,hqq,hjj,ex,ey⟩ := (rslope i s).resolve_left (by omega)
   have heq := affine_eq (hs i s) (rs i s) u ai bi hd hv
@@ -429,15 +489,21 @@ private theorem parent_positive :
     (by
       classical
       exact
-        (CircleCoordinates) → ((∀ D, ∀ V, ∀ k, TileOdometer D V k → BandPrototile D V) → ((∀ D, ∀
-            V, BandPrototile D V → D.1 = 0 → V.cells = ∅) → (∀ (q : Fin (4 : ℕ) →
-            CircleCoordinates), (ProperBandQuadruple q) → (∀ (S : Fin (3 : ℕ) → Bool →
-            ProtoTile), ∀ (hs : Fin (3 : ℕ) → Bool → PartialOdometer), (∀ (i : Fin (3 : ℕ)), ∀ (s
-            : Bool), TileOdometer (q i.succ) (S i s) (hs i s)) → ((Fin (3 : ℕ)) → (∀ (i : Fin 3),
-            ∀ (s : Bool), ∀ (x : GaussianInt), (x ∈ (S i s).cells) → (0 < (q i.succ).1))))))) )
+        (∀ D, ∀ V, ∀ k, TileOdometer D V k → BandPrototile D V) →
+          (∀ D, ∀ V, BandPrototile D V → D.1 = 0 → V.cells = ∅) →
+            ∀ (q : Fin (4 : ℕ) → CircleCoordinates),
+              ProperBandQuadruple q →
+                ∀ (S : Fin (3 : ℕ) → Bool → ProtoTile),
+                  ∀ (hs : Fin (3 : ℕ) → Bool → PartialOdometer),
+                    (∀ (i : Fin (3 : ℕ)),
+                        ∀ (s : Bool), TileOdometer (q i.succ) (S i s) (hs i s)) →
+                      ∀ (i : Fin 3),
+                        ∀ (s : Bool),
+                          ∀ (x : GaussianInt), x ∈ (S i s).cells → 0 < (q i.succ).1
+    )
             := by
   classical
-  intro C proto zero_cells q hq S hs hsub j i s x hx
+  intro proto zero_cells q hq S hs hsub i s x hx
   have hn := (ProperBandCurvatureStructure q hq).2.1 i
   by_contra hn'
   have hz : (q i.succ).1 = 0 := by omega
@@ -628,9 +694,9 @@ theorem TileOdometerTranslationUniqueness
   have hUproto : BandPrototile C U := TileOdometerBandPrototile C U g hU
   have proto : ∀ D V k, TileOdometer D V k → BandPrototile D V := TileOdometerBandPrototile
   have positive_parent : ∀ q, ProperBandQuadruple q →
-      ∃ i : Fin 3, 0 < (q i.succ).1 := OdometerTranslationGeometry.positive_parent C
+      ∃ i : Fin 3, 0 < (q i.succ).1 := OdometerTranslationGeometry.positive_parent
   have proper_large : ∀ q, ProperBandQuadruple q → 1 < (q 0).1 :=
-      OdometerTranslationGeometry.proper_large C positive_parent
+      OdometerTranslationGeometry.proper_large positive_parent
   have positive_cells : ∀ D V, BandPrototile D V → 0 < D.1 →
       V.cells.Nonempty := (fun D V hV hD => BandPrototileNonempty.positive D V hD hV)
   have zero_cells : ∀ D V, BandPrototile D V → D.1 = 0 → V.cells = ∅ :=
@@ -654,7 +720,7 @@ theorem TileOdometerTranslationUniqueness
   have unit_shift : ∀ (z x : GaussianInt) (V : ProtoTile) (k : PartialOdometer),
       V.cells = {x} → (k.domain : Set GaussianInt) = FootprintVertices V →
       ∀ v, (∀ y, y ∈ k.domain ↔ y-v ∈ (CurvatureOneOdometer z).domain) → v=x :=
-          OdometerTranslationGeometry.unit_shift C
+          OdometerTranslationGeometry.unit_shift
   have square_disk : ∀ (V : ProtoTile) (x : GaussianInt), V.cells = {x} →
       LatticeTile V := OdometerTranslationGeometry.square_disk
   have disk : ∀ D V k, TileOdometer D V k → 0 < D.1 → LatticeTile V :=
@@ -681,7 +747,7 @@ theorem TileOdometerTranslationUniqueness
           have hh := congrArg (fun D : CircleCoordinates => D.1) he
           norm_num at hh
         · intro z' y W l hcy hdy hty he hcells hempty
-          have hz : z = z' := OdometerTranslationGeometry.hzAt354 C z z' he
+          have hz : z = z' := OdometerTranslationGeometry.hzAt354 z z' he
           subst z'
           obtain ⟨v,a,b,hv,hval⟩ := ht
           obtain ⟨w,c,d,hw,hval'⟩ := hty
@@ -734,8 +800,8 @@ theorem TileOdometerTranslationUniqueness
               (∀ x, x ∈ (hs i s).domain → (hs i s).value x =
                 (rs i s).value (x-u)+ai.re*x.re+ai.im*x.im+bi) →
               (ai.re : ℝ) = p.1-p'.1 ∧ (ai.im : ℝ) = p.2-p'.2 :=
-                  OdometerTranslationGeometry.coefficients C affine_eq k q hs hslope l u rs
-                  rslope j p hp0 p' hp1
+                  OdometerTranslationGeometry.coefficients affine_eq k q hs hslope l u rs
+                  rslope p hp0 p' hp1
         have ca := coefficients j false hj a b0 hd0 hv0
         have common : ∀ i s, 0 < (q i.succ).1 → ∃ b : ℤ,
             (∀ x, x ∈ (hs i s).domain ↔ x-u ∈ (rs i s).domain) ∧
@@ -756,7 +822,7 @@ theorem TileOdometerTranslationUniqueness
         have tilene : V.cells.Nonempty := positive_cells _ V hV hp
         have parent_positive (i : Fin 3) (s : Bool) (x : GaussianInt)
             (hx : x ∈ (S i s).cells) : 0 < (q i.succ).1 :=
-                OdometerTranslationGeometry.parent_positive C proto zero_cells q hq S hs hsub j i
+                OdometerTranslationGeometry.parent_positive proto zero_cells q hq S hs hsub i
                 s x hx
         have cellcover : ∀ x, x ∈ V.cells ↔ ∃ t, x ∈ (tiles t).cells :=
             OdometerTranslationGeometry.cellcover V q S hcells j selected parent_positive

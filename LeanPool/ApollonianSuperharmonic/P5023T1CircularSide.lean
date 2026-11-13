@@ -393,10 +393,10 @@ private theorem hne4 :
     (by
       classical
       exact
-        (Fin (4 : ℕ) → CircleCoordinates) → (∀ (i : Fin (3 : ℕ)), ∀ (a : Fin (3 : ℕ)), (a ≠ i) →
-        (a.succ ≠ i.succ)) ) := by
+        ∀ (i : Fin (3 : ℕ)), ∀ (a : Fin (3 : ℕ)), a ≠ i → a.succ ≠ i.succ
+    ) := by
   classical
-  intro q i a hne h
+  intro i a hne h
   have hv := congrArg Fin.val h
   simp only [Fin.val_succ] at hv
   have heq : a.val = i.val := by omega
@@ -547,16 +547,17 @@ private theorem hX :
     (by
       classical
       exact
-        ∀ (q : Fin (4 : ℕ) → CircleCoordinates), ∀ (i : Fin (3 : ℕ)), (Fin (3 : ℕ)) → (
-        let p (a : Fin
-        4) : ℂ := (q a).2 / ((q a).1 : ℝ)
-        let rad (a : Fin 4) : ℝ := 1 / ((q a).1 : ℝ)
-        (dist (p 0) (p i.succ) = rad 0 + rad i.succ) → (
-        let A : ℂ := p i.succ
-        let X : ℂ := p 0
-        Complex.normSq (X - A) = (rad i.succ + rad 0) ^ 2)) ) := by
+        ∀ (q : Fin (4 : ℕ) → CircleCoordinates),
+          ∀ (i : Fin (3 : ℕ)),
+            let p (a : Fin 4) : ℂ := (q a).2 / ((q a).1 : ℝ)
+            let rad (a : Fin 4) : ℝ := 1 / ((q a).1 : ℝ)
+            dist (p 0) (p i.succ) = rad 0 + rad i.succ →
+              let A : ℂ := p i.succ
+              let X : ℂ := p 0
+              Complex.normSq (X - A) = (rad i.succ + rad 0) ^ 2
+    ) := by
   classical
-  intro q i a p rad hchild_parent A X
+  intro q i p rad hchild_parent A X
   rw [Complex.normSq_eq_norm_sq, ← dist_eq_norm]
   have hh := congrArg (fun x : ℝ => x ^ 2) hchild_parent
   simpa [X, A, add_comm] using hh
@@ -1144,7 +1145,7 @@ theorem P5023T1CircularSide :
         V A X e t dot hparent hchild hr hden hparne hchild_parent
       rcases ha with hapos | hazero
       · have haposZ : 0 < (q a.succ).1 := hapos
-        have hne4 : a.succ ≠ i.succ := CircularSideProof.hne4 q i a hne
+        have hne4 : a.succ ≠ i.succ := CircularSideProof.hne4 i a hne
         have hcenter : dist (p a.succ) (p i.succ) = rad a.succ + rad i.succ := by
           exact centerDistance a.succ i.succ hne4 haposZ hparent
         have hchild : dist (p a.succ) (p 0) = rad a.succ + rad 0 := by
@@ -1168,7 +1169,7 @@ theorem P5023T1CircularSide :
             CircularSideProof.hunitSqAt360 L q i a hunitNorm
         have hA : Complex.normSq (p a.succ - A) = (rad i.succ + rad a.succ) ^ 2 := by
           rw [Complex.normSq_eq_norm_sq, hdistParent]
-        have hX : Complex.normSq (X - A) = (rad i.succ + rad 0) ^ 2 := CircularSideProof.hX q i a
+        have hX : Complex.normSq (X - A) = (rad i.succ + rad 0) ^ 2 := CircularSideProof.hX q i
             hchild_parent
         have hBX : Complex.normSq (p a.succ - X) = (rad a.succ + rad 0) ^ 2 :=
             CircularSideProof.hBX q a hchild

@@ -464,34 +464,39 @@ private theorem hgcompat :
       exact
         ∀ (adjacent_symm : ∀ (a : GaussianInt), ∀ (b : GaussianInt), (FourNeighborAdjacent a b) →
             (FourNeighborAdjacent b a)), ∀ (adjacent_irrefl : ∀ (a : GaussianInt), ¬
-            FourNeighborAdjacent a a),  ∀ (edge_vertices : ∀ (T : ProtoTile), ∀ (a :
+            FourNeighborAdjacent a a),  (∀ (T : ProtoTile), ∀ (a :
             GaussianInt), ∀ (b : GaussianInt), (({a, b} : Finset GaussianInt) ∈ FootprintEdges T)
-            → (a ∈ FootprintVertices T ∧ b ∈ FootprintVertices T)), ∀ (footprint_constant : ∀ (W
+            → (a ∈ FootprintVertices T ∧ b ∈ FootprintVertices T)) →
+                                                                    (∀ (W
             : ProtoTile), (LatticeTile W) → (∀ (F : GaussianInt → ℤ), (∀ a, ∀ b,
             FourNeighborAdjacent a b → ({a, b} : Finset GaussianInt) ∈ FootprintEdges W → F a = F
-            b) → (∃ c : ℤ, ∀ x, x ∈ FootprintVertices W → F x = c))), ∀ (n : ℕ), ∀ (T :
-            ProtoTile), ∀ (U : Fin n → ProtoTile), ∀ (h : Fin n → PartialOdometer), ∀ (hU : ∀ (i
-            : Fin n), LatticeTile (U i)), ∀ (hdom : ∀ (i : Fin n), (↑(h i).domain : Set
-            GaussianInt) = FootprintVertices (U i)), ∀ (hcells : ∀ (x : LatticeCell), x ∈ T.cells
-            ↔ ∃ (i : Fin n), x ∈ (U i).cells), ∀ (hverts : ∀ (x : GaussianInt), x ∈
-            FootprintVertices T ↔ ∃ (i : Fin n), x ∈ (h i).domain),
+            b) → (∃ c : ℤ, ∀ x, x ∈ FootprintVertices W → F x = c))) →
+                                                                      ∀ (n : ℕ), ∀ (T :
+            ProtoTile), ∀ (U : Fin n → ProtoTile), ∀ (h : Fin n → PartialOdometer), (∀ (i
+            : Fin n), LatticeTile (U i)) →
+                                          (∀ (i : Fin n), (↑(h i).domain : Set
+            GaussianInt) = FootprintVertices (U i)) →
+                                                     (∀ (x : LatticeCell), x ∈ T.cells
+            ↔ ∃ (i : Fin n), x ∈ (U i).cells) →
+                                               (∀ (x : GaussianInt), x ∈
+            FootprintVertices T ↔ ∃ (i : Fin n), x ∈ (h i).domain) →
         let E (a b : GaussianInt) : Prop := FourNeighborAdjacent a b ∧
-          ({a, b} : Finset GaussianInt) ∈ FootprintEdges T
+          ({a, b} : Finset GaussianInt) ∈ FootprintEdges T;
         let covered (a b : GaussianInt) : Prop :=
-          ∃ i, a ∈ (h i).domain ∧ b ∈ (h i).domain
+          ∃ i, a ∈ (h i).domain ∧ b ∈ (h i).domain;
         let D (a b : GaussianInt) : ℤ :=
           if hc : covered a b then
             (h (Classical.choose hc)).value b - (h (Classical.choose hc)).value a
-          else 0
-        ∀ (dmember : ∀ (i : Fin n), ∀ (a : GaussianInt), ∀ (b : GaussianInt), (a ∈ (h i).domain)
-            → ((b ∈ (h i).domain) → (D a b = (h i).value b - (h i).value a))),
+          else 0;
+        (∀ (i : Fin n), ∀ (a : GaussianInt), ∀ (b : GaussianInt), (a ∈ (h i).domain)
+            → ((b ∈ (h i).domain) → (D a b = (h i).value b - (h i).value a))) →
         let G : SimpleGraph {x // x ∈ FootprintVertices T} := {
           Adj := fun a b => E a.val b.val
           symm := ⟨by
             intro a b hab
             exact ⟨adjacent_symm a b hab.1, by simpa [Finset.pair_comm] using hab.2⟩⟩
-          loopless := ⟨by intro a ha; exact adjacent_irrefl a ha.1⟩ }
-        ∀ (z : LatticeCell), ∀ (hz : z ∈ (↑T.cells : Set LatticeCell)), ∀ (f :
+          loopless := ⟨by intro a ha; exact adjacent_irrefl a ha.1⟩ };
+                                                                        ∀ (f :
             { x : GaussianInt // x ∈ FootprintVertices T } → ℤ), ∀ (hfedge : ∀ (a :
             { x : GaussianInt // x ∈ FootprintVertices T }), ∀ (b :
             { x : GaussianInt // x ∈ FootprintVertices T }), G.Adj a b → f b - f a = D (↑a :
@@ -511,8 +516,8 @@ private theorem hgcompat :
         (∀ (x : {x // x ∈ FootprintVertices T}), g.value x = f x) → (∀ i, OdometerCompatibility g
             (h i)) ) := by
   classical
-  intro adjacent_symm adjacent_irrefl edge_vertices footprint_constant n T U h hU hdom
-    hcells hverts E covered D dmember G z hz f hfedge dom hdomain g hgvalue i
+  intro adjacent_symm adjacent_irrefl edge_vertices footprint_constant n T U h hU hdom hcells
+      hverts E covered D dmember G f hfedge dom hdomain g hgvalue i
   obtain ⟨c, hc⟩ := footprint_constant (U i) (hU i)
     (fun x => g.value x - (h i).value x) (by
       intro a b hadj he
@@ -550,37 +555,47 @@ private theorem hg'edge :
     (by
       classical
       exact
-        ∀ (adjacent_symm : ∀ (a : GaussianInt), ∀ (b : GaussianInt), (FourNeighborAdjacent a b) →
-            (FourNeighborAdjacent b a)), ∀ (adjacent_irrefl : ∀ (a : GaussianInt), ¬
-            FourNeighborAdjacent a a), (∀ (T : ProtoTile), ∀ (x : GaussianInt), (x ∈
-            T.cells) → (∀ (a : GaussianInt), (a = x ∨ a = x + 1 ∨ a = x + ⟨0, 1⟩ ∨ a = x + 1 +
-            ⟨0, 1⟩) → (a ∈ FootprintVertices T))) → (∀ (n : ℕ), ∀ (T : ProtoTile), ∀ (h : Fin n →
-            PartialOdometer),
-        let E (a b : GaussianInt) : Prop := FourNeighborAdjacent a b ∧
-          ({a, b} : Finset GaussianInt) ∈ FootprintEdges T
-        let covered (a b : GaussianInt) : Prop :=
-          ∃ i, a ∈ (h i).domain ∧ b ∈ (h i).domain
-        let D (a b : GaussianInt) : ℤ :=
-          if hc : covered a b then
-            (h (Classical.choose hc)).value b - (h (Classical.choose hc)).value a
-          else 0
-        (∀ (i : Fin n), ∀ (a : GaussianInt), ∀ (b : GaussianInt), (a ∈ (h i).domain)
-            → ((b ∈ (h i).domain) → (D a b = (h i).value b - (h i).value a))) → ((∀ (a :
-                GaussianInt), ∀ (b : GaussianInt), (E a b) → (covered a b)) → (
-        let G : SimpleGraph {x // x ∈ FootprintVertices T} := {
-          Adj := fun a b => E a.val b.val
-          symm := ⟨by
-            intro a b hab
-            exact ⟨adjacent_symm a b hab.1, by simpa [Finset.pair_comm] using hab.2⟩⟩
-          loopless := ⟨by intro a ha; exact adjacent_irrefl a ha.1⟩ }
-        ∀ (z : LatticeCell), (z ∈ (↑T.cells : Set LatticeCell)) →
-            (({ x : GaussianInt // x ∈ FootprintVertices T } → ℤ) → (∀ (g' : PartialOdometer),
-                ((↑g'.domain : Set GaussianInt) = FootprintVertices T) → ((∀ (i : Fin n),
-                OdometerCompatibility g' (h i)) → (∀ a, ∀ b, G.Adj a b → g'.value b - g'.value a = D
-            a b)))))))) := by
+        ∀
+          (adjacent_symm :
+            ∀ (a : GaussianInt),
+              ∀ (b : GaussianInt), FourNeighborAdjacent a b → FourNeighborAdjacent b a),
+          ∀ (adjacent_irrefl : ∀ (a : GaussianInt), ¬FourNeighborAdjacent a a),
+            ∀ (n : ℕ),
+              ∀ (T : ProtoTile),
+                ∀ (h : Fin n → PartialOdometer),
+                  let E (a b : GaussianInt) : Prop :=
+                    FourNeighborAdjacent a b ∧
+                      ({ a, b } : Finset GaussianInt) ∈ FootprintEdges T;
+                  let covered (a b : GaussianInt) : Prop :=
+                    ∃ i, a ∈ (h i).domain ∧ b ∈ (h i).domain;
+                  let D (a b : GaussianInt) : ℤ :=
+                    if hc : covered a b then
+                      (h (Classical.choose hc)).value b -
+                        (h (Classical.choose hc)).value a
+                    else 0;
+                  (∀ (i : Fin n),
+                      ∀ (a : GaussianInt),
+                        ∀ (b : GaussianInt),
+                          a ∈ (h i).domain →
+                            b ∈ (h i).domain → D a b = (h i).value b - (h i).value a) →
+                    (∀ (a : GaussianInt), ∀ (b : GaussianInt), E a b → covered a b) →
+                      let G : SimpleGraph { x // x ∈ FootprintVertices T } :=
+                        { Adj := fun a b => E a.val b.val
+                          symm :=
+                            ⟨by
+                              intro a b hab
+                              exact
+                                ⟨adjacent_symm a b hab.1, by
+                                simpa [Finset.pair_comm] using hab.2⟩⟩
+                          loopless := ⟨by intro a ha; exact adjacent_irrefl a ha.1⟩ };
+                      ∀ (g' : PartialOdometer),
+                        (↑g'.domain : Set GaussianInt) = FootprintVertices T →
+                          (∀ (i : Fin n), OdometerCompatibility g' (h i)) →
+                            ∀ a, ∀ b, G.Adj a b → g'.value b - g'.value a = D a b
+    ) := by
   classical
-  intro adjacent_symm adjacent_irrefl corner n T h E covered D dmember edge_cover G z hz f g'
-      hg'dom hg'compat a b hab
+  intro adjacent_symm adjacent_irrefl n T h E covered D dmember edge_cover G g' hg'dom hg'compat
+      a b hab
   obtain ⟨i, hai, hbi⟩ := edge_cover a b hab
   have hga : a.val ∈ g'.domain := by
     change a.val ∈ (g'.domain : Set GaussianInt)
@@ -927,12 +942,12 @@ theorem OdometerGluing :
     have hgvalue (x : {x // x ∈ FootprintVertices T}) : g.value x = f x := by
       simp [g, x.property]
     have hgcompat := OdometerGluingProof.hgcompat adjacent_symm adjacent_irrefl
-        edge_vertices footprint_constant n T U h hU hdom hcells hverts dmember z hz f hfedge
+        edge_vertices footprint_constant n T U h hU hdom hcells hverts dmember f hfedge
         hdomain hgvalue
     refine ⟨g, hdomain, hgcompat, ?_⟩
     intro g' hg'dom hg'compat
-    have hg'edge := OdometerGluingProof.hg'edge adjacent_symm adjacent_irrefl corner n T h
-        dmember edge_cover z hz f g' hg'dom hg'compat
+    have hg'edge := OdometerGluingProof.hg'edge adjacent_symm adjacent_irrefl n T h
+        dmember edge_cover g' hg'dom hg'compat
     obtain ⟨c, hc⟩ := hfunique (fun x => g'.value x) hg'edge
     refine ⟨c, ?_⟩
     intro x hx

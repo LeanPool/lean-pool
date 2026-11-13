@@ -31,19 +31,9 @@ private theorem tri :
     (by
       classical
       exact
-        (DiamondParameter) → (∀ (a : ℤ), (2 : ℤ) * (a * (a - (1 : ℤ)) / (2 : ℤ)) = a * (a - (1 :
-            ℤ))) ) := by
-  classical
-  intro K a
-  rcases Int.emod_two_eq_zero_or_one a with h | h
-  · have ha : a = 2*(a/2) := by omega
-    rw [ha, show 2*(a/2)*(2*(a/2)-1) =
-      2*((a/2)*(2*(a/2)-1)) by ring,
-      Int.mul_ediv_cancel_left _ (by norm_num : (2:Int) ≠ 0)]
-  · have ha : a = 2*(a/2)+1 := by omega
-    rw [ha, show (2*(a/2)+1)*(2*(a/2)+1-1) =
-      2*((2*(a/2)+1)*(a/2)) by ring,
-      Int.mul_ediv_cancel_left _ (by norm_num : (2:Int) ≠ 0)]
+        ∀ (a : ℤ), (2 : ℤ) * (a * (a - (1 : ℤ)) / (2 : ℤ)) = a * (a - (1 : ℤ))
+    ) := by
+  exact DiamondQuadraticArithmetic.triangularScale
 
 private theorem hposResult :
     (by
@@ -660,7 +650,7 @@ theorem P5491T1DiamondRightBoundary (K : DiamondParameter) (hk : 1 < K.1)
   let Q (a b : Int) : Int :=
     (Int.natAbs a : Int)*((Int.natAbs a : Int)-1)/2-(a-b)^2/4
   let S (a b : Int) : Int := 2*a^2-2*|a|-(a-b)^2+(a-b)%2
-  have tri (a : Int) : 2*(a*(a-1)/2) = a*(a-1) := DiamondRightBoundaryProof.tri K a
+  have tri (a : Int) : 2*(a*(a-1)/2) = a*(a-1) := DiamondRightBoundaryProof.tri a
   have square (a : Int) : 4*(a^2/4) = a^2-a%2 := DiamondQuadraticArithmetic.squareScale a
   have scale (a b : Int) := DiamondQuadraticArithmetic.quadraticScale tri square a b
   have foot (z : GaussianInt) := DiamondBoundaryDetails.foot K z

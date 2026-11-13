@@ -121,10 +121,12 @@ private theorem fordCentroid :
     (by
       classical
       exact
-        ∀ (P : FordFareyParameter), ((1 : ℕ) < P.q) → ((GaussianInt) → ((GaussianInt) →
-            (TileCentroid (FordTile P.q) = ((P.q : Real) / 2, (P.q : Real) / 2)))) ) := by
+        ∀ (P : FordFareyParameter),
+          (1 : ℕ) < P.q →
+            TileCentroid (FordTile P.q) = ((P.q : Real) / 2, (P.q : Real) / 2)
+    ) := by
   classical
-  intro P hP u x
+  intro P hP
   let domain : Finset GaussianInt :=
     (Finset.range P.q).product (Finset.range P.q) |>.image
       (fun a => (⟨(a.1 : Int), (a.2 : Int)⟩ : GaussianInt))
@@ -289,10 +291,10 @@ private theorem hrpos :
     (by
       classical
       exact
-        ∀ (P : FordFareyParameter), ((1 : ℕ) < P.q) → ((GaussianInt) → ((GaussianInt) → (0 <
-            P.q₁))) ) := by
+        ∀ (P : FordFareyParameter), (1 : ℕ) < P.q → 0 < P.q₁
+    ) := by
   classical
-  intro P hP u x
+  intro P hP
   by_contra hn
   have hz : P.q₁ = 0 := by omega
   have hqint : 1 < (P.q : Int) := by exact_mod_cast hP
@@ -309,12 +311,19 @@ private theorem rectBoundary :
     (by
       classical
       exact
-        (FordFareyParameter) → ((GaussianInt) → ((GaussianInt) → (∀ (l : ℤ), ∀ (r : ℤ), ∀ (b :
-            ℤ), ∀ (t : ℤ), ∀ (z : GaussianInt), z ∈ LatticeVertexBoundary {w : GaussianInt | l ≤
-            w.re ∧ w.re ≤ r ∧ b ≤ w.im ∧ w.im ≤ t} ↔ (l ≤ z.re ∧ z.re ≤ r ∧ b ≤ z.im ∧ z.im ≤ t)
-            ∧ (z.re = l ∨ z.re = r ∨ z.im = b ∨ z.im = t)))) ) := by
+        ∀ (l : ℤ),
+          ∀ (r : ℤ),
+            ∀ (b : ℤ),
+              ∀ (t : ℤ),
+                ∀ (z : GaussianInt),
+                  z ∈
+                      LatticeVertexBoundary
+                        {w : GaussianInt | l ≤ w.re ∧ w.re ≤ r ∧ b ≤ w.im ∧ w.im ≤ t} ↔
+                    (l ≤ z.re ∧ z.re ≤ r ∧ b ≤ z.im ∧ z.im ≤ t) ∧
+                      (z.re = l ∨ z.re = r ∨ z.im = b ∨ z.im = t)
+    ) := by
   classical
-  intro P u x l r b t z
+  intro l r b t z
   constructor
   · rintro ⟨hz, w, hw, hre, him⟩
     refine ⟨hz, ?_⟩
@@ -956,16 +965,22 @@ private theorem hcardFourFormula :
     (by
       classical
       exact
-        ∀ (P : FordFareyParameter), (Fin 3 → Bool → ProtoTile) → (∀ (u : GaussianInt), ∀ (x :
-            GaussianInt),
-        let y : GaussianInt := x - u
-        FordBoundaryMultiplicity P y = (if y ∈ LatticeVertexBoundary (FordRecursiveVertexDomains
-            P 0) then 1 else 0) + (if y ∈ LatticeVertexBoundary (FordRecursiveVertexDomains P 1)
-            then 1 else 0) + (if y ∈ LatticeVertexBoundary (FordRecursiveVertexDomains P 2) then
-            1 else 0) + (if y ∈ LatticeVertexBoundary (FordRecursiveVertexDomains P 3) then 1
-            else 0)) ) := by
+        ∀ (P : FordFareyParameter),
+          ∀ (u : GaussianInt),
+            ∀ (x : GaussianInt),
+              let y : GaussianInt := x - u
+              FordBoundaryMultiplicity P y =
+                (((if y ∈ LatticeVertexBoundary (FordRecursiveVertexDomains P 0) then 1
+                      else 0) +
+                      if y ∈ LatticeVertexBoundary (FordRecursiveVertexDomains P 1) then 1
+                      else 0) +
+                    if y ∈ LatticeVertexBoundary (FordRecursiveVertexDomains P 2) then 1
+                    else 0) +
+                  if y ∈ LatticeVertexBoundary (FordRecursiveVertexDomains P 3) then 1
+                  else 0
+    ) := by
   classical
-  intro P S u x y
+  intro P u x y
   classical
   unfold FordBoundaryMultiplicity
   simp only [Finset.card_filter, Fin.sum_univ_succ, Fin.sum_univ_zero, add_zero]
@@ -1076,29 +1091,70 @@ private theorem noCenteredCountTwo :
     (by
       classical
       exact
-        ∀ (P : FordFareyParameter), ((1 : ℕ) < P.q) → (∀ (T : ProtoTile), (Fin 3 → Bool →
-            ProtoTile) → (∀ (u : GaussianInt), ∀ (x : GaussianInt),
-        let y : GaussianInt := x - u
-        (1 ≤ y.re ∧ y.re ≤ (P.q : Int) - 1 ∧ 1 ≤ y.im ∧ y.im ≤ (P.q : Int) - 1) → ((0 < P.q₁) →
-            (((P.q : Int) = P.q₁ + P.q₂) → ((y ∈ LatticeVertexBoundary
-            (FordRecursiveVertexDomains P 0) ↔ (0 : Int) ≤ y.re ∧ y.re ≤ P.q₁ ∧ 0 ≤ y.im ∧ y.im ≤
-            P.q₁ ∧ (y.re = 0 ∨ y.re = P.q₁ ∨ y.im = 0 ∨ y.im = P.q₁)) → ((y ∈
-            LatticeVertexBoundary (FordRecursiveVertexDomains P 1) ↔ (P.q₂ : Int) ≤ y.re ∧ y.re ≤
-            P.q ∧ P.q₂ ≤ y.im ∧ y.im ≤ P.q ∧ (y.re = P.q₂ ∨ y.re = P.q ∨ y.im = P.q₂ ∨ y.im =
-            P.q)) → ((y ∈ LatticeVertexBoundary (FordRecursiveVertexDomains P 2) ↔ P.q₁ ≤ y.re ∧
-            y.re ≤ P.q ∧ (0 : Int) ≤ y.im ∧ y.im ≤ P.q₂ ∧ (y.re = P.q₁ ∨ y.re = P.q ∨ y.im = 0 ∨
-            y.im = P.q₂)) → ((y ∈ LatticeVertexBoundary (FordRecursiveVertexDomains P 3) ↔ (0 :
-            Int) ≤ y.re ∧ y.re ≤ P.q₂ ∧ P.q₁ ≤ y.im ∧ y.im ≤ P.q ∧ (y.re = 0 ∨ y.re = P.q₂ ∨ y.im
-            = P.q₁ ∨ y.im = P.q)) → ((FordBoundaryMultiplicity P y = (if y ∈
-            LatticeVertexBoundary (FordRecursiveVertexDomains P 0) then 1 else 0) + (if y ∈
-            LatticeVertexBoundary (FordRecursiveVertexDomains P 1) then 1 else 0) + (if y ∈
-            LatticeVertexBoundary (FordRecursiveVertexDomains P 2) then 1 else 0) + (if y ∈
-            LatticeVertexBoundary (FordRecursiveVertexDomains P 3) then 1 else 0)) →
-            (((GaussianRealPoint x = TileCentroid T) → (2 * y.re = (P.q : Int) ∧ 2 * y.im = (P.q
-            : Int))) → (GaussianRealPoint x = TileCentroid T → FordBoundaryMultiplicity P y ≠ (2
-            : ℕ)))))))))))) ) := by
+        ∀ (P : FordFareyParameter),
+          ∀ (T : ProtoTile),
+            ∀ (u : GaussianInt),
+              ∀ (x : GaussianInt),
+                let y : GaussianInt := x - u
+                1 ≤ y.re ∧ y.re ≤ (P.q : Int) - 1 ∧ 1 ≤ y.im ∧ y.im ≤ (P.q : Int) - 1 →
+                  0 < P.q₁ →
+                    (P.q : Int) = P.q₁ + P.q₂ →
+                      (y ∈ LatticeVertexBoundary (FordRecursiveVertexDomains P 0) ↔
+                          (0 : Int) ≤ y.re ∧
+                            y.re ≤ P.q₁ ∧
+                              0 ≤ y.im ∧
+                                y.im ≤ P.q₁ ∧
+                                (y.re = 0 ∨ y.re = P.q₁ ∨ y.im = 0 ∨ y.im = P.q₁)) →
+                        (y ∈ LatticeVertexBoundary (FordRecursiveVertexDomains P 1) ↔
+                            (P.q₂ : Int) ≤ y.re ∧
+                              y.re ≤ P.q ∧
+                                P.q₂ ≤ y.im ∧
+                                y.im ≤ P.q ∧
+                                (y.re = P.q₂ ∨ y.re = P.q ∨ y.im = P.q₂ ∨ y.im = P.q)) →
+                          (y ∈ LatticeVertexBoundary (FordRecursiveVertexDomains P 2) ↔
+                              P.q₁ ≤ y.re ∧
+                                y.re ≤ P.q ∧
+                                (0 : Int) ≤ y.im ∧
+                                y.im ≤ P.q₂ ∧
+                                (y.re = P.q₁ ∨ y.re = P.q ∨ y.im = 0 ∨ y.im = P.q₂)) →
+                            (y ∈ LatticeVertexBoundary (FordRecursiveVertexDomains P 3) ↔
+                                (0 : Int) ≤ y.re ∧
+                                y.re ≤ P.q₂ ∧
+                                P.q₁ ≤ y.im ∧
+                                y.im ≤ P.q ∧
+                                (y.re = 0 ∨ y.re = P.q₂ ∨ y.im = P.q₁ ∨ y.im = P.q)) →
+                              (FordBoundaryMultiplicity P y =
+                                (((if
+                                y ∈
+                                LatticeVertexBoundary
+                                (FordRecursiveVertexDomains P 0) then
+                                1
+                              else 0) +
+                                if
+                                y ∈
+                                LatticeVertexBoundary
+                                (FordRecursiveVertexDomains P 1) then
+                                1
+                              else 0) +
+                                if
+                                y ∈
+                                LatticeVertexBoundary
+                                (FordRecursiveVertexDomains P 2) then
+                                1
+                              else 0) +
+                                if
+                                y ∈
+                                LatticeVertexBoundary
+                                (FordRecursiveVertexDomains P 3) then
+                                1
+                              else 0) →
+                                (GaussianRealPoint x = TileCentroid T →
+                                2 * y.re = (P.q : Int) ∧ 2 * y.im = (P.q : Int)) →
+                                GaussianRealPoint x = TileCentroid T →
+                                FordBoundaryMultiplicity P y ≠ (2 : ℕ)
+    ) := by
   classical
-  intro P hP T S u x y hbounds hrpos hqsum domain0 domain1 domain2 domain3 hcardFourFormula
+  intro P T u x y hbounds hrpos hqsum domain0 domain1 domain2 domain3 hcardFourFormula
       centerTwice hc
   obtain ⟨h2re, h2im⟩ := centerTwice hc
   by_cases heq : P.q₁ = P.q₂
@@ -1431,16 +1487,24 @@ private theorem multiplicityBound :
     (by
       classical
       exact
-        ∀ (P : FordFareyParameter), (Fin 3 → Bool → ProtoTile) → (∀ (u : GaussianInt), ∀ (x :
-            GaussianInt),
-        let y : GaussianInt := x - u
-        (FordBoundaryMultiplicity P y = (if y ∈ LatticeVertexBoundary (FordRecursiveVertexDomains
-            P 0) then 1 else 0) + (if y ∈ LatticeVertexBoundary (FordRecursiveVertexDomains P 1)
-            then 1 else 0) + (if y ∈ LatticeVertexBoundary (FordRecursiveVertexDomains P 2) then
-            1 else 0) + (if y ∈ LatticeVertexBoundary (FordRecursiveVertexDomains P 3) then 1
-            else 0)) → (FordBoundaryMultiplicity P y ≤ 4)) ) := by
+        ∀ (P : FordFareyParameter),
+          ∀ (u : GaussianInt),
+            ∀ (x : GaussianInt),
+              let y : GaussianInt := x - u
+              (FordBoundaryMultiplicity P y =
+                  (((if y ∈ LatticeVertexBoundary (FordRecursiveVertexDomains P 0) then 1
+                        else 0) +
+                        if y ∈ LatticeVertexBoundary (FordRecursiveVertexDomains P 1) then
+                          1
+                        else 0) +
+                      if y ∈ LatticeVertexBoundary (FordRecursiveVertexDomains P 2) then 1
+                      else 0) +
+                    if y ∈ LatticeVertexBoundary (FordRecursiveVertexDomains P 3) then 1
+                    else 0) →
+                FordBoundaryMultiplicity P y ≤ 4
+    ) := by
   classical
-  intro P S u x y hcardFourFormula
+  intro P u x y hcardFourFormula
   rw [hcardFourFormula]
   split_ifs <;> omega
 
@@ -1566,7 +1630,7 @@ theorem P4120T1FordGeometry
   have cellCanonical (z : GaussianInt) := FordTileGeometry.cellCanonical P T u hcells z
   have squareCell (z : GaussianInt) := FordTileGeometry.squareCell P z
   have hbounds := FordTileGeometry.hbounds P T u x cells cellCanonical squareCell
-  have fordCentroid := FordTileGeometry.fordCentroid P hP u x
+  have fordCentroid := FordTileGeometry.fordCentroid P hP
   obtain ⟨_, _, hrec⟩ := FordTileRecursiveIdentification P
   obtain ⟨_, ⟨Sc, hSc, hcover, h00, h01, h10, h11, h20, h20a, h21, h21a⟩⟩ :=
     hrec hP
@@ -1584,11 +1648,11 @@ theorem P4120T1FordGeometry
       hScTranslated hparentCentroid i s
   have hparentCells (i : Fin 3) (s : Bool) := FordTileGeometry.hparentCells P T S u hS Sc
       hScTranslated hparentCentroid i s
-  have hrpos := FordTileGeometry.hrpos P hP u x
+  have hrpos := FordTileGeometry.hrpos P hP
   have hr : (P.q₁ : Int) > 0 := by exact_mod_cast hrpos
   have ht : (P.q₂ : Int) > 0 := by exact_mod_cast P.q₂_pos
   have hqsum : (P.q : Int) = P.q₁ + P.q₂ := by exact_mod_cast P.sum_q
-  have rectBoundary (l r b t : Int) (z : GaussianInt) := FordTileGeometry.rectBoundary P u x l r
+  have rectBoundary (l r b t : Int) (z : GaussianInt) := FordTileGeometry.rectBoundary l r
       b t z
   have boundaryTranslation (A : ProtoTile) (v z : GaussianInt) :=
       FordTileGeometry.boundaryTranslation A v z
@@ -1627,7 +1691,7 @@ theorem P4120T1FordGeometry
       boundaryTranslation
   have hcardSix := FordTileGeometry.hcardSix S x
   have hcardFour := FordTileGeometry.hcardFour P u x
-  have hcardFourFormula := FordTileGeometry.hcardFourFormula P S u x
+  have hcardFourFormula := FordTileGeometry.hcardFourFormula P u x
   have hcount := FordTileGeometry.hcount P S u x label0 label1 label2 label3 lineTrue lineFalse
       hcardSix hcardFourFormula
   have rootCentroid := FordTileGeometry.rootCentroid P T u fordCentroid hrootObs
@@ -1636,7 +1700,7 @@ theorem P4120T1FordGeometry
   have centerTwice (hc : GaussianRealPoint x = TileCentroid T) := FordTileGeometry.centerTwice P
       T u x centerCoords hc
   have noCenteredCountTwo (hc : GaussianRealPoint x = TileCentroid T) :=
-      FordTileGeometry.noCenteredCountTwo P hP T S u x hbounds hrpos hqsum domain0 domain1
+      FordTileGeometry.noCenteredCountTwo P T u x hbounds hrpos hqsum domain0 domain1
       domain2 domain3 hcardFourFormula centerTwice hc
   have countFourConclusion (hk : Nat.card {a : Fin 3 × Bool //
         x ∈ BoundaryFootprintVertices (S a.1 a.2)} = 4) := FordTileGeometry.countFourConclusion P
@@ -1655,7 +1719,7 @@ theorem P4120T1FordGeometry
       (ha : x ∈ BoundaryFootprintVertices (S a.1 a.2))
       (hb : x ∈ BoundaryFootprintVertices (S b.1 b.2)) := FordTileGeometry.twoBoundaryCount S x a
           b hab ha hb
-  have multiplicityBound := FordTileGeometry.multiplicityBound P S u x hcardFourFormula
+  have multiplicityBound := FordTileGeometry.multiplicityBound P u x hcardFourFormula
   have descent (hno : ¬ (Nat.card {a : Fin 3 × Bool //
         x ∈ BoundaryFootprintVertices (S a.1 a.2)} = 2 ∨
         Nat.card {a : Fin 3 × Bool //

@@ -26,10 +26,9 @@ namespace ApollonianSuperharmonic
 namespace Parent2Rotation0Proof
 
 private theorem rpos :
-    ∀ (P : FordFareyParameter), (FordFareyParameter) → (((1 : ℕ) < P.q) → ((1 < (P.q : Int)) → (0
-        < (P.q₁ : Int)))) := by
+    ∀ (P : FordFareyParameter), (1 : ℕ) < P.q → 1 < (P.q : Int) → 0 < (P.q₁ : Int) := by
   classical
-  intro P A hq hq'
+  intro P hq hq'
   by_contra hn
   have hz : (P.q₁ : Int) = 0 := by omega
   have : P.p₁ * (P.q : Int) = 1 := by rw [← P.det₁]; simp [hz]
@@ -183,14 +182,17 @@ private theorem values :
     simp [P5332T1ParentRows]
 
 private theorem companion :
-    ∀ (P : FordFareyParameter), (FordFareyParameter) → (((P.q : Int) = (P.q₁ : Int) + (P.q₂ :
-        Int)) → (∀ (Y : ℤ), ((0 : ℤ) ≤ (0 : ℤ) ∧ (0 : ℤ) ≤ (↑P.q : ℤ) ∧ (0 : ℤ) ≤ Y ∧ Y ≤ (↑P.q :
-        ℤ)) → ((1 ≤ Y) → (
-    let t : Int := (P.q₂ : Int) - Y
-    (⟨0,Y⟩ : GaussianInt) - (P5332T1ParentRows P 1 0 0).companion ∈ FordVertexDomain P.q ↔ t =
-        0 ∧ Even (0+1 : Nat))))) := by
+    ∀ (P : FordFareyParameter),
+      (P.q : Int) = (P.q₁ : Int) + (P.q₂ : Int) →
+        ∀ (Y : ℤ),
+          (0 : ℤ) ≤ (0 : ℤ) ∧ (0 : ℤ) ≤ (↑P.q : ℤ) ∧ (0 : ℤ) ≤ Y ∧ Y ≤ (↑P.q : ℤ) →
+            1 ≤ Y →
+              let t : Int := (P.q₂ : Int) - Y
+              (⟨0, Y⟩ : GaussianInt) - (P5332T1ParentRows P 1 0 0).companion ∈
+                  FordVertexDomain P.q ↔
+                t = 0 ∧ Even (0 + 1 : Nat) := by
   classical
-  intro P A qsum Y hx0 hlow t
+  intro P qsum Y hx0 hlow t
   have hn : ¬ Even (0+1 : Nat) := by norm_num
   have hcomp : (P5332T1ParentRows P 1 0 0).companion =
       ⟨-(P.q₂ : Int),-(P.q : Int)⟩ := by rfl
@@ -232,7 +234,7 @@ theorem P5332T1Parent2Rotation0Values (P A : FordFareyParameter) (hq : 1 < P.q)
   classical
   have hq' : 1 < (P.q : Int) := by exact_mod_cast hq
   have qsum : (P.q : Int) = (P.q₁ : Int) + (P.q₂ : Int) := by exact_mod_cast P.sum_q
-  have rpos : 0 < (P.q₁ : Int) := Parent2Rotation0Proof.rpos P A hq hq'
+  have rpos : 0 < (P.q₁ : Int) := Parent2Rotation0Proof.rpos P hq hq'
   have spos : 0 < (P.q₂ : Int) := by exact_mod_cast P.q₂_pos
   have rlt : (P.q₁ : Int) < P.q := by exact_mod_cast P.q₁_lt
   have slt : (P.q₂ : Int) < P.q := by omega
@@ -316,7 +318,7 @@ theorem P5332T1Parent2Rotation0Values (P A : FordFareyParameter) (hq : 1 < P.q)
             qsum rpos spos hsn Y hAqInt hdisp hx0 hx'0 hY hlow valLeft valChildEast valA hother
   have companion : (⟨0,Y⟩ : GaussianInt) -
       (P5332T1ParentRows P 1 0 0).companion ∈ FordVertexDomain P.q ↔
-        t = 0 ∧ Even (0+1 : Nat) := Parent2Rotation0Proof.companion P A qsum Y hx0 hlow
+        t = 0 ∧ Even (0+1 : Nat) := Parent2Rotation0Proof.companion P qsum Y hx0 hlow
   refine ⟨t, ht0, hts, hxcenter, rfl, ?_, companion⟩
   intro l
   exact values l

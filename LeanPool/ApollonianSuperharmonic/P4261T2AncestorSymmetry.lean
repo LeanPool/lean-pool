@@ -27,62 +27,6 @@ namespace ApollonianSuperharmonic
 
 namespace AncestorSymmetryGeometry
 
-private theorem hDomain :
-    (by
-      classical
-      exact
-        ∀ (g : BandPackingSymmetry), ∀ (U : ProtoTile), ∀ (k : PartialOdometer), ∀ (h :
-            PartialOdometer), ((↑k.domain : Set GaussianInt) = FootprintVertices U) → (((∀ (T :
-            ProtoTile), LatticeTile T ↔ LatticeTile (BandPackingSymmetryTileAction g T)) ∧ (∀ (T
-            : ProtoTile), TileArea (BandPackingSymmetryTileAction g T) = TileArea T) ∧ (∀ (T :
-            ProtoTile), ∀ (U : ProtoTile), BandPackingSymmetryTileAction g (TileCellComplement T
-            U) = TileCellComplement (BandPackingSymmetryTileAction g T)
-            (BandPackingSymmetryTileAction g U)) ∧ (∀ (T : ProtoTile), ∀ (U : ProtoTile),
-            TileTouching T U ↔ TileTouching (BandPackingSymmetryTileAction g T)
-            (BandPackingSymmetryTileAction g U)) ∧ (∀ (T : ProtoTile), QuarterTurnSymmetric T ↔
-            QuarterTurnSymmetric (BandPackingSymmetryTileAction g T)) ∧ (∀ (T : ProtoTile), ∀ (U
-            : ProtoTile), ∀ (V : ProtoTile), TouchingTriple T U V ↔ TouchingTriple
-            (BandPackingSymmetryTileAction g T) (BandPackingSymmetryTileAction g U)
-            (BandPackingSymmetryTileAction g V)) ∧ (∀ (T : ProtoTile), ∀ (v : GaussianInt),
-            BandPackingSymmetryTileAction g (TileTranslation T v) = TileTranslation
-            (BandPackingSymmetryTileAction g T) (BandPackingSymmetryVectorAction g v)) ∧ (∀ (T :
-            ProtoTile), FootprintVertices (BandPackingSymmetryTileAction g T) =
-            BandPackingSymmetryVectorAction g '' FootprintVertices T) ∧ (∀ (T : ProtoTile),
-            FootprintEdges (BandPackingSymmetryTileAction g T) = (fun (e : Finset GaussianInt) =>
-            Finset.image (BandPackingSymmetryVectorAction g) e) '' FootprintEdges T) ∧ (∀ (T :
-            ProtoTile), ∀ (U : ProtoTile), (FootprintVertices T ∩ FootprintVertices
-            U).Subsingleton ↔ (FootprintVertices (BandPackingSymmetryTileAction g T) ∩
-            FootprintVertices (BandPackingSymmetryTileAction g U)).Subsingleton) ∧ ∀ (S : Fin (3
-            : ℕ) → Bool → ProtoTile), ∀ (u : GaussianInt), ∀ (v : GaussianInt), ∀ (o :
-            PeriodicSubtileIndex), BandPackingSymmetryTileAction g
-            (SubtileOccurrenceInterpretation S u v o) = SubtileOccurrenceInterpretation (fun (i :
-            Fin (3 : ℕ)) (s : Bool) => BandPackingSymmetryTileAction g (S i s))
-            (BandPackingSymmetryVectorAction g u) (BandPackingSymmetryVectorAction g v) o) →
-            (((↑(BandPackingSymmetryPartialOdometerAction g k).domain : Set GaussianInt) =
-            BandPackingSymmetryVectorAction g '' (↑k.domain : Set GaussianInt) ∧
-            BandPackingSymmetryPartialOdometerAction BandPackingSymmetry.identity k = k ∧ (∀ (w :
-            GaussianInt), ∀ (x : GaussianInt), x ∈ k.domain →
-            (BandPackingSymmetryPartialOdometerAction (BandPackingSymmetry.shift w) k).value x =
-            k.value x + BandPackingShiftPotential w x) ∧ (∀ x ∈
-            (BandPackingSymmetryPartialOdometerAction BandPackingSymmetry.negate k).domain,
-            (BandPackingSymmetryPartialOdometerAction BandPackingSymmetry.negate k).value x =
-            k.value (-GaussianQuarterTurn x)) ∧ (∀ x ∈ (BandPackingSymmetryPartialOdometerAction
-            BandPackingSymmetry.conjugate k).domain, (BandPackingSymmetryPartialOdometerAction
-            BandPackingSymmetry.conjugate k).value x = k.value (-GaussianReflection x)) ∧ (∀ (a :
-            BandPackingSymmetry), ∀ (b : BandPackingSymmetry),
-            BandPackingSymmetryPartialOdometerAction (a.comp b) k =
-            BandPackingSymmetryPartialOdometerAction a (BandPackingSymmetryPartialOdometerAction
-            b k)) ∧ (OdometerCompatibility (BandPackingSymmetryPartialOdometerAction g k)
-            (BandPackingSymmetryPartialOdometerAction g h) ↔ OdometerCompatibility k h) ∧ ∀ (T :
-            ProtoTile), Finset.Nonempty T.cells → PartialOdometerSquares k = T.cells →
-            PartialOdometerSlope (BandPackingSymmetryPartialOdometerAction g k) = Option.map
-            (BandPackingSymmetrySlopeAction g T) (PartialOdometerSlope k)) →
-            (((BandPackingSymmetryPartialOdometerAction g k).domain : Set GaussianInt) =
-            FootprintVertices (BandPackingSymmetryTileAction g U)))) ) := by
-  classical
-  intro g U k h hDom hFoot hOdo
-  rw [hOdo.1, hDom, hFoot.2.2.2.2.2.2.2.1]
-
 private theorem hInclusion :
     (by
       classical
@@ -529,7 +473,10 @@ theorem P4261T2AncestorSymmetry
   have hTile' := BandPackingSymmetryTileOdometerCovariance g D T h hTile
   have hFoot := BandPackingSymmetryTilingTransport g
   have hOdo := BandPackingSymmetryPartialOdometerActionFormulas g k h
-  have hDomain := AncestorSymmetryGeometry.hDomain g U k h hDom hFoot hOdo
+  have hDomain :
+      ((BandPackingSymmetryPartialOdometerAction g k).domain : Set GaussianInt) =
+        FootprintVertices (BandPackingSymmetryTileAction g U) := by
+    rw [hOdo.1, hDom, hFoot.2.2.2.2.2.2.2.1]
   have hInclusion := AncestorSymmetryGeometry.hInclusion g k h hIncl
   have actionForward (a : BandPackingSymmetry) (p : PartialOdometer)
       (x : GaussianInt) (hx : x ∈ p.domain) := AncestorSymmetryGeometry.actionForward a p x hx

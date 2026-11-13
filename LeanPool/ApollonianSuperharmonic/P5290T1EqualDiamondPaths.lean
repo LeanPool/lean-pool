@@ -35,13 +35,18 @@ private theorem staircaseBetween :
     (by
       classical
       exact
-        (Nat) → (∀ (z : GaussianInt), ∀ (h : Bool), ∀ (s : Int), (s = 1 ∨ s = -1) → (∀ (N : Nat),
-            (0 < N) → (
-        let p := P5157T1StaircasePoint z h s;
-          SimpleGridPathBetween {v | ∃ j ≤ N, v = p j}
-            {e | ∃ j < N, e = {p j, p (j + 1)}} (p 0) (p N)))) ) := by
+        ∀ (z : GaussianInt),
+          ∀ (h : Bool),
+            ∀ (s : Int),
+              s = 1 ∨ s = -1 →
+                ∀ (N : Nat),
+                  0 < N →
+                    let p := P5157T1StaircasePoint z h s;
+                    SimpleGridPathBetween {v | ∃ j ≤ N, v = p j}
+                      {e | ∃ j < N, e = {p j, p (j + 1)}} (p 0) (p N)
+    ) := by
   classical
-  intro k z h s hs N hN
+  intro z h s hs N hN
   dsimp only
   let p := P5157T1StaircasePoint z h s;
   have inj := (P5157T1AlternatingStaircase z h s hs N hN).1
@@ -103,12 +108,15 @@ private theorem qstep :
     (by
       classical
       exact
-        (Nat) → (∀ a b : GaussianInt, (b = a + 1 ∨ b = a - 1 ∨ b = a + ⟨0, 1⟩ ∨ b = a - ⟨0, 1⟩) →
-            GaussianQuarterTurn b = GaussianQuarterTurn a + 1 ∨ GaussianQuarterTurn b =
-            GaussianQuarterTurn a - 1 ∨ GaussianQuarterTurn b = GaussianQuarterTurn a + ⟨0, 1⟩ ∨
-            GaussianQuarterTurn b = GaussianQuarterTurn a - ⟨0, 1⟩) ) := by
+        ∀ a b : GaussianInt,
+          b = a + 1 ∨ b = a - 1 ∨ b = a + ⟨0, 1⟩ ∨ b = a - ⟨0, 1⟩ →
+            GaussianQuarterTurn b = GaussianQuarterTurn a + 1 ∨
+              GaussianQuarterTurn b = GaussianQuarterTurn a - 1 ∨
+                GaussianQuarterTurn b = GaussianQuarterTurn a + ⟨0, 1⟩ ∨
+                  GaussianQuarterTurn b = GaussianQuarterTurn a - ⟨0, 1⟩
+    ) := by
   classical
-  intro k a b hh
+  intro a b hh
   rcases hh with h | h | h | h
   · subst b; right; right; left; apply Zsqrtd.ext <;>
       simp [GaussianQuarterTurn]
@@ -123,9 +131,10 @@ private theorem qinj :
     (by
       classical
       exact
-        (Nat) → (Function.Injective GaussianQuarterTurn) ) := by
+        Function.Injective GaussianQuarterTurn
+    ) := by
   classical
-  intro k a b hab
+  intro a b hab
   apply Zsqrtd.ext
   · have h := congrArg (fun z : GaussianInt => z.im) hab
     simpa [GaussianQuarterTurn] using h
@@ -602,14 +611,15 @@ private theorem F_step :
     (by
       classical
       exact
-        (Nat) → (
         let Q := GaussianQuarterTurn
         ∀ (c : GaussianInt),
-        let F : GaussianInt → GaussianInt := fun z => Q z + c
-        ∀ a b : GaussianInt, (b = a + 1 ∨ b = a - 1 ∨ b = a + ⟨0, 1⟩ ∨ b = a - ⟨0, 1⟩) → F b = F
-            a + 1 ∨ F b = F a - 1 ∨ F b = F a + ⟨0, 1⟩ ∨ F b = F a - ⟨0, 1⟩) ) := by
+          let F : GaussianInt → GaussianInt := fun z => Q z + c
+          ∀ a b : GaussianInt,
+            b = a + 1 ∨ b = a - 1 ∨ b = a + ⟨0, 1⟩ ∨ b = a - ⟨0, 1⟩ →
+              F b = F a + 1 ∨ F b = F a - 1 ∨ F b = F a + ⟨0, 1⟩ ∨ F b = F a - ⟨0, 1⟩
+    ) := by
   classical
-  intro k Q c F a b hh
+  intro Q c F a b hh
   rcases hh with h | h | h | h
   · subst b; right; right; left; apply Zsqrtd.ext <;>
       simp [F, Q, GaussianQuarterTurn]; omega
@@ -2016,7 +2026,7 @@ private theorem rowFirst0 :
   exact ⟨hDne, (DiamondPathComparison.firstCells₁ k c cellMapRight dneDright),
         (DiamondPathComparison.firstCellsDisj k c (DiamondPathComparison.F_cell_inj qinj c)
         cellMapZero cellMapRight ddisjD disjointImage), (DiamondPathComparison.firstTurn k
-        imagePath decBetween dzeroD c hcEq F_inj (DiamondPathComparison.F_step k c)
+        imagePath decBetween dzeroD c hcEq F_inj (DiamondPathComparison.F_step c)
         quarterVerticesAt quarterEdgesAt dShift)⟩
 
 private theorem rowFirst1 :
@@ -2316,7 +2326,7 @@ theorem P5290T1EqualDiamondPaths (k : Nat) (hk : 0 < k)
 -- BODY
   classical
   have staircaseBetween (z : GaussianInt) (h : Bool) (s : Int)
-      (hs : s = 1 ∨ s = -1) (N : Nat) (hN : 0 < N) := DiamondPathComparison.staircaseBetween k z
+      (hs : s = 1 ∨ s = -1) (N : Nat) (hN : 0 < N) := DiamondPathComparison.staircaseBetween z
           h s hs N hN
   have imagePath {V : Set GaussianInt} {E : Set (Finset GaussianInt)}
       {x y : GaussianInt} (f : GaussianInt → GaussianInt)
@@ -2333,8 +2343,8 @@ theorem P5290T1EqualDiamondPaths (k : Nat) (hk : 0 < k)
   have hN : 0 < N := by dsimp [N]; omega
   have qbase := staircaseBetween ⟨(k : Int), -(k : Int)⟩ true 1
     (Or.inl rfl) N hN
-  have qinj := DiamondPathComparison.qinj k
-  have qImagePath := imagePath GaussianQuarterTurn qinj (DiamondPathComparison.qstep k) qbase
+  have qinj := DiamondPathComparison.qinj
+  have qImagePath := imagePath GaussianQuarterTurn qinj (DiamondPathComparison.qstep) qbase
   have qenum (j : Nat) := DiamondPathComparison.qenum k j
   let dV : Set GaussianInt := {z | 1 ≤ z.re ∧ z.re ≤ k ∧
     2 * (k : Int) ≤ z.re + z.im ∧ z.re + z.im ≤ 2 * (k : Int) + 1}

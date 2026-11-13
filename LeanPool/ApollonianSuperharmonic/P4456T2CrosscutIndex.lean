@@ -109,10 +109,10 @@ private theorem hxne :
     (by
       classical
       exact
-        ∀ (x : GaussianInt), ∀ (y : GaussianInt), (FourNeighborAdjacent x y) → ((List
-            GaussianInt) → (x ≠ y)) ) := by
+        ∀ (x : GaussianInt), ∀ (y : GaussianInt), FourNeighborAdjacent x y → x ≠ y
+    ) := by
   classical
-  intro x y hxy p h
+  intro x y hxy h
   rw [h] at hxy
   simp [FourNeighborAdjacent, Zsqrtd.ext_iff] at hxy
   omega
@@ -142,18 +142,31 @@ private theorem hqBoundaryChain :
     (by
       classical
       exact
-        ∀ (T : ProtoTile), ∀ (x : GaussianInt), (GaussianInt) → (∀ (p : List GaussianInt), ∀ (u :
-            GaussianInt), ∀ (v : GaussianInt), (p.head? = some u) → ((p.getLast? = some v) → ((∀
-            (e : Finset GaussianInt), e ∈ BoundaryFootprintEdges T ↔ e = {v, u} ∨ ∃ (a :
-            GaussianInt) (b : GaussianInt) (l₁ : List GaussianInt) (l₂ : List GaussianInt), p =
-            l₁ ++ a :: b :: l₂ ∧ e = {a, b}) → (
-        let k := p.idxOf x
-        (k < p.length) → (
-        let q := p.rotate k
-        (q.length = p.length) → (List.IsChain (fun s t => ({s, t} : Finset GaussianInt) ∈
-            BoundaryFootprintEdges T) q)))))) ) := by
+        ∀ (T : ProtoTile),
+          ∀ (x : GaussianInt),
+            ∀ (p : List GaussianInt),
+              ∀ (u : GaussianInt),
+                ∀ (v : GaussianInt),
+                  p.head? = some u →
+                    p.getLast? = some v →
+                      (∀ (e : Finset GaussianInt),
+                          e ∈ BoundaryFootprintEdges T ↔
+                            e = { v, u } ∨
+                              ∃ (a : GaussianInt) (b : GaussianInt) (l₁ :
+                                List GaussianInt) (l₂ : List GaussianInt),
+                                p = l₁ ++ a :: b :: l₂ ∧ e = { a, b }) →
+                        let k := p.idxOf x
+                        k < p.length →
+                          let q := p.rotate k
+                          q.length = p.length →
+                            List.IsChain
+                              (fun s t =>
+                                ({ s, t } : Finset GaussianInt) ∈
+                                BoundaryFootprintEdges T)
+                              q
+    ) := by
   classical
-  intro T x y p u v hpHead hpLast hpEdges k hk q hqLen
+  intro T x p u v hpHead hpLast hpEdges k hk q hqLen
   have hchain : List.IsChain (fun s t => ({s, t} : Finset GaussianInt) ∈
       BoundaryFootprintEdges T) p := by
     apply (List.isChain_iff_getElem).2
@@ -389,12 +402,15 @@ private theorem hcdAdj :
     (by
       classical
       exact
-        (GaussianInt) → ((GaussianInt) → ((List GaussianInt) → (∀ (c : LatticeCell), ∀ (d :
-            LatticeCell), (c ≠ d) → (∀ (f : Finset GaussianInt), (f ∈ FootprintEdges (⟨{c}, c⟩ :
-                ProtoTile)) → ((f ∈ FootprintEdges (⟨{d}, d⟩ : ProtoTile)) →
-            (FourNeighborAdjacent c d)))))) ) := by
+        ∀ (c : LatticeCell),
+          ∀ (d : LatticeCell),
+            c ≠ d →
+              ∀ (f : Finset GaussianInt),
+                f ∈ FootprintEdges (⟨{ c }, c⟩ : ProtoTile) →
+                  f ∈ FootprintEdges (⟨{ d }, d⟩ : ProtoTile) → FourNeighborAdjacent c d
+    ) := by
   classical
-  intro x y p c d hcd f hfc hfd
+  intro c d hcd f hfc hfd
   have pairMatch (u v w z : GaussianInt)
       (heq : ({u, v} : Finset GaussianInt) = {w, z}) (huv : u ≠ v) :
       (u = w ∧ v = z) ∨ (u = z ∧ v = w) := by
@@ -750,8 +766,8 @@ theorem P4456T2CrosscutIndex (T : ProtoTile) (hT : LatticeTile T)
   have hj : j < q.length := List.idxOf_lt_length_of_mem hyq
   have hyidx : q[j] = y := by simp [j]
   have hjpos : 0 < j := CrosscutIndexProof.hjpos x y p hpLen hqHead hqLen hyq hj hyidx
-      (CrosscutIndexProof.hxne x y hxy p)
-  have hqBoundaryChain := CrosscutIndexProof.hqBoundaryChain T x y p u v hpHead hpLast hpEdges hk
+      (CrosscutIndexProof.hxne x y hxy)
+  have hqBoundaryChain := CrosscutIndexProof.hqBoundaryChain T x p u v hpHead hpLast hpEdges hk
       hqLen
   let r := q.take (j + 1)
   have hrHead : r.head? = some x := by
@@ -793,7 +809,7 @@ theorem P4456T2CrosscutIndex (T : ProtoTile) (hT : LatticeTile T)
     rcases hf with ⟨hfc, hfd⟩
     have hfcOrig := hfc
     have hfdOrig := hfd
-    have hcdAdj := CrosscutIndexProof.hcdAdj x y p c d hcd f hfc hfd
+    have hcdAdj := CrosscutIndexProof.hcdAdj c d hcd f hfc hfd
     change (∃ z ∈ ({c} : Finset GaussianInt),
       f = {z, z + 1} ∨ f = {z, z + ⟨0, 1⟩} ∨
         f = {z + 1, z + 1 + ⟨0, 1⟩} ∨

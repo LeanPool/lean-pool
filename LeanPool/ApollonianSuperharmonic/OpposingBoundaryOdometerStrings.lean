@@ -1196,24 +1196,33 @@ private theorem interiorTransforms :
     (by
       classical
       exact
-        (BandCircle) → ((BandCircle) → ((Fin 3) → ((ProtoTile) → ((List ProtoTile) → ((Fin (4 :
-            ℕ) → CircleCoordinates) → (∀ (centerShift : GaussianInt), (GaussianInt) → (∀ (couter
-            : GaussianInt), ∀ (eouter : ℤ),
-        let a : GaussianInt := -couter
-        let b : Int := -eouter
-        ∀ (eback : ℤ),
-        let bplus : Int := -eback
-        ∀ (hs : List PartialOdometer),
-        let constAt : Nat → Int := fun n =>
-          if n = 0 then 0 else if n + 1 = hs.length then bplus else b
-        let transformAt : Nat → PartialOdometer → PartialOdometer := fun n h =>
-          PartialOdometerAffineTranslate (PartialOdometerHalfTurn h) centerShift a (constAt n)
-        ∀ n, ∀ (l : List PartialOdometer), 0 < n → hs.length = n + l.length → List.Forall₂ (fun h
-            g => g = PartialOdometerAffineTranslate (PartialOdometerHalfTurn h) centerShift a b)
-            l.dropLast ((l.mapIdx (fun j h => transformAt (n + j) h)).dropLast)))))))) ) := by
+        ∀ (centerShift : GaussianInt),
+          ∀ (couter : GaussianInt),
+            ∀ (eouter : ℤ),
+              let a : GaussianInt := -couter
+              let b : Int := -eouter
+              ∀ (eback : ℤ),
+                let bplus : Int := -eback
+                ∀ (hs : List PartialOdometer),
+                  let constAt : Nat → Int := fun n =>
+                    if n = 0 then 0 else if n + 1 = hs.length then bplus else b
+                  let transformAt : Nat → PartialOdometer → PartialOdometer := fun n h =>
+                    PartialOdometerAffineTranslate (PartialOdometerHalfTurn h) centerShift
+                      a (constAt n)
+                  ∀ n,
+                    ∀ (l : List PartialOdometer),
+                      0 < n →
+                        hs.length = n + l.length →
+                          List.Forall₂
+                            (fun h g =>
+                              g =
+                                PartialOdometerAffineTranslate (PartialOdometerHalfTurn h)
+                                centerShift a b)
+                            l.dropLast
+                            (l.mapIdx fun j h => transformAt (n + j) h).dropLast
+    ) := by
   classical
-  intro C₀ Cᵢ i T₀' tiles q' centerShift touter couter eouter a b eback bplus hs constAt
-      transformAt n l
+  intro centerShift couter eouter a b eback bplus hs constAt transformAt n l
   induction l generalizing n with
   | nil => intro hn hlen; simp
   | cons x xs ih =>
@@ -1356,12 +1365,14 @@ private theorem zip_dropLast_eq :
     (by
       classical
       exact
-        (BandCircle) → ((BandCircle) → ((Fin 3) → ((ProtoTile) → ((List ProtoTile) → ((Fin (4 :
-            ℕ) → CircleCoordinates) → ((GaussianInt) → ((List PartialOdometer) → (∀ {α : Type}, ∀
-            {β : Type}, ∀ (xs : List α), ∀ (ys : List β), xs.length = ys.length → xs.dropLast.zip
-            ys.dropLast = (xs.zip ys).dropLast)))))))) ) := by
+        ∀ {α : Type},
+          ∀ {β : Type},
+            ∀ (xs : List α),
+              ∀ (ys : List β),
+                xs.length = ys.length → xs.dropLast.zip ys.dropLast = (xs.zip ys).dropLast
+    ) := by
   classical
-  intro C₀ Cᵢ i T₀' tiles q' touter hs α β xs
+  intro α β xs
   induction xs with
   | nil => intro ys h; cases ys <;> simp at h ⊢
   | cons x xs ih =>
@@ -1454,12 +1465,14 @@ private theorem zip_mem_left :
     (by
       classical
       exact
-        (BandCircle) → ((BandCircle) → ((Fin 3) → ((ProtoTile) → ((List ProtoTile) → ((Fin (4 :
-            ℕ) → CircleCoordinates) → ((GaussianInt) → ((List PartialOdometer) → (∀ {α : Type}, ∀
-            {β : Type}, ∀ (xs : List α), ∀ (ys : List β), xs.length = ys.length → ∀ x, x ∈ xs → ∃
-            y, (x, y) ∈ xs.zip ys)))))))) ) := by
+        ∀ {α : Type},
+          ∀ {β : Type},
+            ∀ (xs : List α),
+              ∀ (ys : List β),
+                xs.length = ys.length → ∀ x, x ∈ xs → ∃ y, (x, y) ∈ xs.zip ys
+    ) := by
   classical
-  intro C₀ Cᵢ i T₀' tiles q' touter hs α β xs
+  intro α β xs
   induction xs with
   | nil => intro ys h x hx; simp at hx
   | cons a xs ih =>
@@ -1814,7 +1827,7 @@ private theorem opposingBoundaryConclusion :
             (∀ (T₀ : ProtoTile), ∀ (T₀' : ProtoTile), ∀ (h₀ : PartialOdometer), ∀ (h₀' :
             PartialOdometer), ((0 : ℤ) < Cᵢ.1.1.1) → (∀ (p₀ : Real × Real), ∀ (horientationExists
             : ∃ o : Bool, Cᵢ.1.1.1 = 1 → UnitOccurrenceOrientation q i o),
-        let orientation := Classical.choose horientationExists
+        let orientation := Classical.choose horientationExists;
         ∀ (base : ProtoTile), ∀ (Rminus : ProtoTile), ∀ (Rplus : ProtoTile), ∀ (tiles : List
             ProtoTile), ∀ (hseed : PartialOdometer), (BoundaryString C₀ Cᵢ i orientation T₀ base
             Rminus Rplus tiles) → ((Fin (4 : ℕ) → CircleCoordinates) → ((TileString Cᵢ
@@ -1825,42 +1838,41 @@ private theorem opposingBoundaryConclusion :
             Rminus.cells) → ((List.Forall₂ (fun (T U : ProtoTile) => (TileTranslation
             (TileHalfTurn T) centerShift).cells = U.cells) tiles reverseTiles) → (
         let pminus := p₀ + (1 / 2 : Real) • GaussianRealPoint
-          (BandVectors.2 (q i.succ) (q 0) - BandVectors.2 (q 0) (q i.succ))
+          (BandVectors.2 (q i.succ) (q 0) - BandVectors.2 (q 0) (q i.succ));
         let pplus := p₀ + (1 / 2 : Real) • GaussianRealPoint
-          (BandVectors.2 (q i.succ) (q 0) + BandVectors.2 (q 0) (q i.succ))
-        let d : GaussianInt := -BandVectors.2 (q ((i + 1).succ)) (q i.succ)
-        let hminus := PartialOdometerAffineTranslate hseed 0 d 0
+          (BandVectors.2 (q i.succ) (q 0) + BandVectors.2 (q 0) (q i.succ));
+        let d : GaussianInt := -BandVectors.2 (q ((i + 1).succ)) (q i.succ);
+        let hminus := PartialOdometerAffineTranslate hseed 0 d 0;
         (TileOdometer Cᵢ.1.1 Rminus hminus) → ((PartialOdometerSlope hminus = some pminus) → ((0
             < C₀.1.1.1) → (
-        let Tbar := TileTranslation (TileHalfTurn T₀) centerShift
+        let Tbar := TileTranslation (TileHalfTurn T₀) centerShift;
         (BandPrototile C₀.1.1 T₀') → ((Tbar.cells = T₀'.cells) → ((GaussianInt) → (∀ (couter :
             GaussianInt), ∀ (eouter : ℤ),
-        let a : GaussianInt := -couter
-        let b : Int := -eouter
+        let a : GaussianInt := -couter;
+        let b : Int := -eouter;
         let houterAffine := PartialOdometerAffineTranslate
-          (PartialOdometerHalfTurn h₀) centerShift a b
+          (PartialOdometerHalfTurn h₀) centerShift a b;
         (h₀' = houterAffine) → (
         let hplus := PartialOdometerAffineTranslate
-          (PartialOdometerHalfTurn hminus) centerShift a 0
+          (PartialOdometerHalfTurn hminus) centerShift a 0;
         (TileOdometer Cᵢ.1.1 Rplus hplus) → ((PartialOdometerSlope hplus = some pplus) → (∀
             (eback : ℤ),
-        let bplus : Int := -eback
+        let bplus : Int := -eback;
         let hminusBack := PartialOdometerAffineTranslate
-          (PartialOdometerHalfTurn hplus) centerShift a bplus
-        (hminus = hminusBack) → ((tiles.head? = some Rminus) → ((tiles.getLast? = some Rplus) →
+          (PartialOdometerHalfTurn hplus) centerShift a bplus;
+        (hminus = hminusBack) → ((tiles.head? = some Rminus) → (
             ((2 ≤ tiles.length) → (∀ (hs : List PartialOdometer), (hs.head? = some hminus) →
             ((hs.getLast? = some hplus) → ((OdometerStringRespect Cᵢ orientation base Rminus
             Rplus tiles hs) → ((∀ T ∈ (List.drop (1 : ℕ) tiles).dropLast, ∃ (h :
             PartialOdometer), (T, h) ∈ tiles.zip hs ∧ AncestorOdometer Cᵢ.1.1 C₀.1.1 T T₀ h h₀) →
-            ((hs.length = tiles.length) → ((2 ≤ hs.length) → (
+            ((hs.length = tiles.length) → (
+                                                             (
         let constAt : Nat → Int := fun n =>
-          if n = 0 then 0 else if n + 1 = hs.length then bplus else b
+          if n = 0 then 0 else if n + 1 = hs.length then bplus else b;
         let transformAt : Nat → PartialOdometer → PartialOdometer := fun n h =>
-          PartialOdometerAffineTranslate (PartialOdometerHalfTurn h) centerShift a (constAt n)
-        let gs := hs.mapIdx transformAt
-        (∀ n, ∀ l, List.Forall₂ (fun h g => ∃ c : Int, g = PartialOdometerAffineTranslate
-            (PartialOdometerHalfTurn h) centerShift a c) l (l.mapIdx (fun j h => transformAt (n +
-            j) h))) → ((List.Forall₂ (fun h g => ∃ c : Int, g = PartialOdometerAffineTranslate
+          PartialOdometerAffineTranslate (PartialOdometerHalfTurn h) centerShift a (constAt n);
+        let gs := hs.mapIdx transformAt;
+                      ((List.Forall₂ (fun h g => ∃ c : Int, g = PartialOdometerAffineTranslate
             (PartialOdometerHalfTurn h) centerShift a c) hs gs) → (exists orientation : Bool,
             exists centerShift : GaussianInt, exists base Rminus Rplus : ProtoTile, exists tiles
             reverseTiles : List ProtoTile, exists hs reverseHs : List PartialOdometer, exists
@@ -1891,9 +1903,8 @@ private theorem opposingBoundaryConclusion :
       Rminus Rplus tiles hseed hboundaryOriginal q' hstring centerShift reverseTiles hreverse
       hminusCells hplusCells hcellPairs pminus pplus d hminus hOminus hsminus hC₀positive Tbar
       hT₀'band houterCells touter couter eouter a b houterAffine houterAffineEq hplus hOplus
-      hsplus eback bplus hminusBack hminusBackEq htilesHead htilesLast htilesLength hs hhsHead
-      hhsLast hrespect hancestorForward hlengthEq hlengthHs constAt transformAt gs
-      transformForall htransform
+      hsplus eback bplus hminusBack hminusBackEq htilesHead htilesLength hs hhsHead hhsLast
+      hrespect hancestorForward hlengthEq constAt transformAt gs htransform
   have hgsHead := OpposingBoundaryGeometry.hgsHead q i hseed centerShift couter eouter eback hs
       hhsHead
   have hgsLast := (show
@@ -1912,8 +1923,8 @@ private theorem opposingBoundaryConclusion :
     (TileTranslation (TileHalfTurn T) centerShift).cells = U.cells
   have hinteriorCells := OpposingBoundaryGeometry.hinteriorCells tiles centerShift
       reverseTiles hcellPairs htilesLength (OpposingBoundaryGeometry.forall2_dropLast)
-  have interiorTransforms := OpposingBoundaryGeometry.interiorTransforms C₀ Cᵢ i T₀' tiles q'
-      centerShift touter couter eouter eback hs
+  have interiorTransforms := OpposingBoundaryGeometry.interiorTransforms
+      centerShift couter eouter eback hs
   have hgsTail := OpposingBoundaryGeometry.hgsTail q i hseed centerShift couter eouter eback hs
       hhsHead
   have htailLength := OpposingBoundaryGeometry.htailLength q i hseed hs hhsHead
@@ -1930,7 +1941,7 @@ private theorem opposingBoundaryConclusion :
     ∀ {α β : Type} (xs : List α) (ys : List β),
           xs.length = ys.length →
           xs.dropLast.zip ys.dropLast = (xs.zip ys).dropLast :=
-              @OpposingBoundaryGeometry.zip_dropLast_eq C₀ Cᵢ i T₀' tiles q' touter hs
+              @OpposingBoundaryGeometry.zip_dropLast_eq
   have hzipDropOne := OpposingBoundaryGeometry.hzipDropOne q i Rminus tiles hseed htilesHead hs
       hhsHead
   have hzipInteriorEq := OpposingBoundaryGeometry.hzipInteriorEq tiles hs zip_dropLast_eq
@@ -1939,7 +1950,7 @@ private theorem opposingBoundaryConclusion :
   have zip_mem_left :
     ∀ {α β : Type} (xs : List α) (ys : List β),
           xs.length = ys.length → ∀ x, x ∈ xs → ∃ y, (x, y) ∈ xs.zip ys :=
-              @OpposingBoundaryGeometry.zip_mem_left C₀ Cᵢ i T₀' tiles q' touter hs
+              @OpposingBoundaryGeometry.zip_mem_left
   have zip_fst_mem :
     ∀ {α β : Type} {xs : List α} {ys : List β}
           {x : α} {y : β}, (x, y) ∈ xs.zip ys → x ∈ xs := @OpposingBoundaryGeometry.zip_fst_mem
@@ -2270,8 +2281,8 @@ theorem OpposingBoundaryOdometerStrings
       hpositive p₀ horientationExists base Rminus Rplus tiles hseed hboundaryOriginal q' hstring
       centerShift reverseTiles hreverse hminusCells hplusCells hcellPairs hOminus hsminus
       hC₀positive hT₀'band houterCells touter couter eouter houterAffineEq hOplus hsplus eback
-      hminusBackEq htilesHead htilesLast htilesLength hs hhsHead hhsLast hrespect
-      hancestorForward hlengthEq hlengthHs transformForall (OpposingBoundaryGeometry.htransform
+      hminusBackEq htilesHead htilesLength hs hhsHead hhsLast hrespect
+      hancestorForward hlengthEq (OpposingBoundaryGeometry.htransform
       centerShift couter eouter eback hs transformForall))
 
 

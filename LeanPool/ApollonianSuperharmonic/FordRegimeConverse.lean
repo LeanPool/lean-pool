@@ -158,43 +158,60 @@ private theorem determinantCoprime :
   exact (Int.natCast_dvd_natCast).mp relationDivides
 
 private theorem desiredAt325 :
-    ∀ (predecessor : Fin (4 : ℕ) → CircleCoordinates), (Fin (4 : ℕ)) → (∀ (predecessorLine : ∃ i
-        : Fin 4, (predecessor i).1 = 0), ∀ (g : BandPackingSymmetry), ∀ (P : FordFareyParameter),
-        ∀ (hP : (1 : ℕ) < P.q), (∀ (x : Fin 4 →
-        CircleCoordinates), BandPackingSymmetryQuadrupleAction g ![(2 * (x 0).1 + 2 * (x 2).1 + 2
-        * (x 3).1 - (x 1).1, 2 * (x 0).2 + 2 * (x 2).2 + 2 * (x 3).2 - (x 1).2), x 0, x 2, x 3] =
-        ![(2 * ((BandPackingSymmetryQuadrupleAction g x) 0).1 + 2 *
-        ((BandPackingSymmetryQuadrupleAction g x) 2).1 + 2 * ((BandPackingSymmetryQuadrupleAction
-        g x) 3).1 - ((BandPackingSymmetryQuadrupleAction g x) 1).1, 2 *
-        ((BandPackingSymmetryQuadrupleAction g x) 0).2 + 2 * ((BandPackingSymmetryQuadrupleAction
-        g x) 2).2 + 2 * ((BandPackingSymmetryQuadrupleAction g x) 3).2 -
-        ((BandPackingSymmetryQuadrupleAction g x) 1).2), (BandPackingSymmetryQuadrupleAction g x)
-        0, (BandPackingSymmetryQuadrupleAction g x) 2, (BandPackingSymmetryQuadrupleAction g x)
-        3]) → (∀ (determinantCoprime : ∀ (a : Int), ∀ (b : Nat), ∀ (d : Nat), ∀ (c : Int), a * (d :
-        Int) - (b : Int) * c = 1 → Nat.Coprime b a.natAbs), let next0 : FordFareyParameter :=
-      { p := P.p + P.p₂, q := P.q + P.q₂,
-        q_pos := by omega,
-        reduced := by
-          apply determinantCoprime (P.p + P.p₂) (P.q + P.q₂) P.q₂ P.p₂
-          norm_num [Nat.cast_add]
-          nlinarith [P.det₂],
-        p₁ := P.p, q₁ := P.q, p₂ := P.p₂, q₂ := P.q₂,
-        sum_p := by ring,
-        sum_q := by ring,
-        det₁ := by norm_num [Nat.cast_add]; nlinarith [P.det₂],
-        det₂ := by norm_num [Nat.cast_add]; nlinarith [P.det₂],
-        q₁_lt := by have := P.q₂_pos; omega, q₂_pos := P.q₂_pos,
-        unit_case := by intro h; omega }
-    (BandPackingSymmetryQuadrupleAction g predecessor = FordRecursiveQuadruple P) →
-        (BandPackingSymmetryQuadrupleAction g
-      ![(2 * (predecessor 0).1 + 2 * (predecessor 2).1 +
-          2 * (predecessor 3).1 - (predecessor 1).1,
-          2 * (predecessor 0).2 + 2 * (predecessor 2).2 +
-          2 * (predecessor 3).2 - (predecessor 1).2),
-        predecessor 0, predecessor 2, predecessor 3] =
-    FordRecursiveQuadruple next0))) := by
+    ∀ (predecessor : Fin (4 : ℕ) → CircleCoordinates),
+      ∀ (predecessorLine : ∃ i : Fin 4, (predecessor i).1 = 0),
+        ∀ (g : BandPackingSymmetry),
+          ∀ (P : FordFareyParameter),
+            ∀ (hP : (1 : ℕ) < P.q),
+              (∀ (x : Fin 4 → CircleCoordinates),
+                  BandPackingSymmetryQuadrupleAction g
+                      ![(2 * (x 0).1 + 2 * (x 2).1 + 2 * (x 3).1 - (x 1).1,
+                          2 * (x 0).2 + 2 * (x 2).2 + 2 * (x 3).2 - (x 1).2),
+                        x 0, x 2, x 3] =
+                    ![(2 * ((BandPackingSymmetryQuadrupleAction g x) 0).1 +
+                            2 * ((BandPackingSymmetryQuadrupleAction g x) 2).1 +
+                            2 * ((BandPackingSymmetryQuadrupleAction g x) 3).1 -
+                          ((BandPackingSymmetryQuadrupleAction g x) 1).1,
+                        2 * ((BandPackingSymmetryQuadrupleAction g x) 0).2 +
+                            2 * ((BandPackingSymmetryQuadrupleAction g x) 2).2 +
+                            2 * ((BandPackingSymmetryQuadrupleAction g x) 3).2 -
+                          ((BandPackingSymmetryQuadrupleAction g x) 1).2),
+                      (BandPackingSymmetryQuadrupleAction g x) 0,
+                      (BandPackingSymmetryQuadrupleAction g x) 2,
+                      (BandPackingSymmetryQuadrupleAction g x) 3]) →
+                ∀
+                  (determinantCoprime :
+                    ∀ (a : Int),
+                      ∀ (b : Nat),
+                        ∀ (d : Nat),
+                          ∀ (c : Int),
+                            a * (d : Int) - (b : Int) * c = 1 → Nat.Coprime b a.natAbs),
+                  let next0 : FordFareyParameter :=
+                    { p := P.p + P.p₂, q := P.q + P.q₂, q_pos := by omega,
+                      reduced :=
+                        by
+                        apply determinantCoprime (P.p + P.p₂) (P.q + P.q₂) P.q₂ P.p₂
+                        norm_num [Nat.cast_add]
+                        nlinarith [P.det₂],
+                      p₁ := P.p, q₁ := P.q, p₂ := P.p₂, q₂ := P.q₂, sum_p := by ring,
+                      sum_q := by ring,
+                      det₁ := by norm_num [Nat.cast_add]; nlinarith [P.det₂],
+                      det₂ := by norm_num [Nat.cast_add]; nlinarith [P.det₂],
+                      q₁_lt := by have := P.q₂_pos; omega, q₂_pos := P.q₂_pos,
+                      unit_case := by intro h; omega }
+                  BandPackingSymmetryQuadrupleAction g predecessor =
+                      FordRecursiveQuadruple P →
+                    BandPackingSymmetryQuadrupleAction g
+                        ![(2 * (predecessor 0).1 + 2 * (predecessor 2).1 +
+                            2 * (predecessor 3).1 -
+                            (predecessor 1).1,
+                            2 * (predecessor 0).2 + 2 * (predecessor 2).2 +
+                            2 * (predecessor 3).2 -
+                            (predecessor 1).2),
+                          predecessor 0, predecessor 2, predecessor 3] =
+                      FordRecursiveQuadruple next0 := by
   classical
-  intro predecessor i predecessorLine g P hP successorAction determinantCoprime next0
+  intro predecessor predecessorLine g P hP successorAction determinantCoprime next0
       actionPredecessor
   rw [successorAction predecessor, actionPredecessor]
   simp only [Nat.succ_eq_add_one, Nat.reduceAdd, FordRecursiveQuadruple, FordCircleCoordinate,
@@ -249,45 +266,62 @@ private theorem actionPredecessorAt357 :
       (congrFun ordered (1 : Fin 4)).symm
 
 private theorem desiredAt381 :
-    ∀ (predecessor : Fin (4 : ℕ) → CircleCoordinates), (Fin (4 : ℕ)) → (∀ (predecessorLine : ∃ i
-        : Fin 4, (predecessor i).1 = 0), ∀ (g : BandPackingSymmetry), ∀ (P : FordFareyParameter),
-        ∀ (hP : (1 : ℕ) < P.q), (BandPackingSymmetryReversesOrientation g = false) → ((∀ (x : Fin
-        4 →
-        CircleCoordinates), BandPackingSymmetryQuadrupleAction g ![(2 * (x 0).1 + 2 * (x 2).1 + 2
-        * (x 3).1 - (x 1).1, 2 * (x 0).2 + 2 * (x 2).2 + 2 * (x 3).2 - (x 1).2), x 0, x 2, x 3] =
-        ![(2 * ((BandPackingSymmetryQuadrupleAction g x) 0).1 + 2 *
-        ((BandPackingSymmetryQuadrupleAction g x) 2).1 + 2 * ((BandPackingSymmetryQuadrupleAction
-        g x) 3).1 - ((BandPackingSymmetryQuadrupleAction g x) 1).1, 2 *
-        ((BandPackingSymmetryQuadrupleAction g x) 0).2 + 2 * ((BandPackingSymmetryQuadrupleAction
-        g x) 2).2 + 2 * ((BandPackingSymmetryQuadrupleAction g x) 3).2 -
-        ((BandPackingSymmetryQuadrupleAction g x) 1).2), (BandPackingSymmetryQuadrupleAction g x)
-        0, (BandPackingSymmetryQuadrupleAction g x) 2, (BandPackingSymmetryQuadrupleAction g x)
-        3]) → (∀ (determinantCoprime : ∀ (a : Int), ∀ (b : Nat), ∀ (d : Nat), ∀ (c : Int), a * (d :
-        Int) - (b : Int) * c = 1 → Nat.Coprime b a.natAbs), let next2 : FordFareyParameter :=
-      { p := P.p + P.p₁, q := P.q + P.q₁,
-        q_pos := by omega,
-        reduced := by
-          apply determinantCoprime (P.p + P.p₁) (P.q + P.q₁) P.q P.p
-          norm_num [Nat.cast_add]
-          nlinarith [P.det₁],
-        p₁ := P.p₁, q₁ := P.q₁, p₂ := P.p, q₂ := P.q,
-        sum_p := by ring,
-        sum_q := by ring,
-        det₁ := by norm_num [Nat.cast_add]; nlinarith [P.det₁],
-        det₂ := by norm_num [Nat.cast_add]; nlinarith [P.det₁],
-        q₁_lt := by have := P.q_pos; omega, q₂_pos := P.q_pos,
-        unit_case := by intro h; omega }
-    (BandPackingSymmetryQuadrupleAction g predecessor = ![(FordRecursiveQuadruple P) 0,
-        (FordRecursiveQuadruple P) 2, (FordRecursiveQuadruple P) 3, (FordRecursiveQuadruple P)
-        1]) → (BandPackingSymmetryQuadrupleAction g
-      ![(2 * (predecessor 0).1 + 2 * (predecessor 2).1 +
-          2 * (predecessor 3).1 - (predecessor 1).1,
-          2 * (predecessor 0).2 + 2 * (predecessor 2).2 +
-          2 * (predecessor 3).2 - (predecessor 1).2),
-        predecessor 3, predecessor 0, predecessor 2] =
-    FordRecursiveQuadruple next2)))) := by
+    ∀ (predecessor : Fin (4 : ℕ) → CircleCoordinates),
+      ∀ (predecessorLine : ∃ i : Fin 4, (predecessor i).1 = 0),
+        ∀ (g : BandPackingSymmetry),
+          ∀ (P : FordFareyParameter),
+            ∀ (hP : (1 : ℕ) < P.q),
+              BandPackingSymmetryReversesOrientation g = false →
+                (∀ (x : Fin 4 → CircleCoordinates),
+                    BandPackingSymmetryQuadrupleAction g
+                        ![(2 * (x 0).1 + 2 * (x 2).1 + 2 * (x 3).1 - (x 1).1,
+                            2 * (x 0).2 + 2 * (x 2).2 + 2 * (x 3).2 - (x 1).2),
+                          x 0, x 2, x 3] =
+                      ![(2 * ((BandPackingSymmetryQuadrupleAction g x) 0).1 +
+                            2 * ((BandPackingSymmetryQuadrupleAction g x) 2).1 +
+                            2 * ((BandPackingSymmetryQuadrupleAction g x) 3).1 -
+                            ((BandPackingSymmetryQuadrupleAction g x) 1).1,
+                          2 * ((BandPackingSymmetryQuadrupleAction g x) 0).2 +
+                            2 * ((BandPackingSymmetryQuadrupleAction g x) 2).2 +
+                            2 * ((BandPackingSymmetryQuadrupleAction g x) 3).2 -
+                            ((BandPackingSymmetryQuadrupleAction g x) 1).2),
+                        (BandPackingSymmetryQuadrupleAction g x) 0,
+                        (BandPackingSymmetryQuadrupleAction g x) 2,
+                        (BandPackingSymmetryQuadrupleAction g x) 3]) →
+                  ∀
+                    (determinantCoprime :
+                      ∀ (a : Int),
+                        ∀ (b : Nat),
+                          ∀ (d : Nat),
+                            ∀ (c : Int),
+                            a * (d : Int) - (b : Int) * c = 1 → Nat.Coprime b a.natAbs),
+                    let next2 : FordFareyParameter :=
+                      { p := P.p + P.p₁, q := P.q + P.q₁, q_pos := by omega,
+                        reduced :=
+                          by
+                          apply determinantCoprime (P.p + P.p₁) (P.q + P.q₁) P.q P.p
+                          norm_num [Nat.cast_add]
+                          nlinarith [P.det₁],
+                        p₁ := P.p₁, q₁ := P.q₁, p₂ := P.p, q₂ := P.q, sum_p := by ring,
+                        sum_q := by ring,
+                        det₁ := by norm_num [Nat.cast_add]; nlinarith [P.det₁],
+                        det₂ := by norm_num [Nat.cast_add]; nlinarith [P.det₁],
+                        q₁_lt := by have := P.q_pos; omega, q₂_pos := P.q_pos,
+                        unit_case := by intro h; omega }
+                    BandPackingSymmetryQuadrupleAction g predecessor =
+                        ![(FordRecursiveQuadruple P) 0, (FordRecursiveQuadruple P) 2,
+                          (FordRecursiveQuadruple P) 3, (FordRecursiveQuadruple P) 1] →
+                      BandPackingSymmetryQuadrupleAction g
+                          ![(2 * (predecessor 0).1 + 2 * (predecessor 2).1 +
+                            2 * (predecessor 3).1 -
+                            (predecessor 1).1,
+                            2 * (predecessor 0).2 + 2 * (predecessor 2).2 +
+                            2 * (predecessor 3).2 -
+                            (predecessor 1).2),
+                            predecessor 3, predecessor 0, predecessor 2] =
+                        FordRecursiveQuadruple next2 := by
   classical
-  intro predecessor i predecessorLine g P hP hg successorAction determinantCoprime next2
+  intro predecessor predecessorLine g P hP hg successorAction determinantCoprime next2
       actionPredecessor
   let y : Fin 4 → CircleCoordinates :=
     ![predecessor 3, predecessor 1, predecessor 0, predecessor 2]
@@ -499,7 +533,7 @@ theorem FordRegimeConverse (q : Fin 4 → CircleCoordinates)
                   2 * (predecessor 0).2 + 2 * (predecessor 2).2 +
                   2 * (predecessor 3).2 - (predecessor 1).2),
                 predecessor 0, predecessor 2, predecessor 3] =
-            FordRecursiveQuadruple next0 := FordRegimeProof.desiredAt325 predecessor i
+            FordRecursiveQuadruple next0 := FordRegimeProof.desiredAt325 predecessor
                 predecessorLine g P hP successorAction determinantCoprime actionPredecessor
           simpa using desired
       · exfalso
@@ -533,7 +567,7 @@ theorem FordRegimeConverse (q : Fin 4 → CircleCoordinates)
                   2 * (predecessor 0).2 + 2 * (predecessor 2).2 +
                   2 * (predecessor 3).2 - (predecessor 1).2),
                 predecessor 3, predecessor 0, predecessor 2] =
-            FordRecursiveQuadruple next2 := FordRegimeProof.desiredAt381 predecessor i
+            FordRecursiveQuadruple next2 := FordRegimeProof.desiredAt381 predecessor
                 predecessorLine g P hP hg successorAction determinantCoprime actionPredecessor
           simpa using desired
 

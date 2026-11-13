@@ -211,10 +211,12 @@ private theorem hRval :
   simp only [Fin.val_cast, hrootlen]
 
 private theorem hrankDiff :
-    ∀ (n : Nat), (List (Fin (n + 3))) → (∀ (m : Nat), ∀ (k : Nat), ∀ (p : Nat), ∀ (s : Nat), (0 <
-        m) → ((p < m) → ((s < m) → ((p ≤ s) → ((((s+k)%m+m-((p+k)%m))%m) = s-p))))) := by
+    ∀ (m : Nat),
+      ∀ (k : Nat),
+        ∀ (p : Nat),
+          ∀ (s : Nat), 0 < m → s < m → p ≤ s → ((s + k) % m + m - (p + k) % m) % m = s - p := by
   classical
-  intro n v m k p s hm hp hs hps
+  intro m k p s hm hs hps
   let x := (p + k) % m
   let d := s-p
   have hx : x < m := Nat.mod_lt _ hm
@@ -557,26 +559,45 @@ private theorem hrankB' :
   simpa [rank] using hrankB
 
 private theorem hrankAt :
-    ∀ (n : Nat), ∀ (a : Fin (n + 3)), ∀ (b : Fin (n + 3)), ∀ (u : List (Fin (n + 3))), ∀ (v :
-        List (Fin (n + 3))),
-    let L := a :: (u ++ b :: v)
-    ∀ (k : ℕ),
-    let root := List.ofFn (fun i : Fin (n + 3) => i)
-    let R := root.rotate k
-    ∀ (emb : Fin (a :: (u ++ b :: v)).length ↪o Fin ((List.ofFn fun (i : Fin (n + (3 : ℕ))) =>
-        i).rotate k).length), (∀ (ix : Fin (a :: (u ++ b :: v)).length), (a :: (u ++ b :: v)).get
-        ix = ((List.ofFn fun (i : Fin (n + (3 : ℕ))) => i).rotate k).get ((emb : Fin (a :: (u ++
-        b :: v)).length → Fin ((List.ofFn fun (i : Fin (n + (3 : ℕ))) => i).rotate k).length)
-        ix)) → ((∀ (j : Fin R.length), (R.get j).val = (j.val + k) % (n + 3)) → ((∀ (m : Nat), ∀
-            (k : Nat), ∀ (p : Nat), ∀ (s : Nat), (0 < m) → ((p < m) → ((s < m) → ((p ≤ s) →
-        ((((s+k)%m+m-((p+k)%m))%m) = s-p))))) → ((u.length+1 < L.length) → (
-    let ia : Fin L.length := ⟨0, by simp [L]⟩
-    (a.val = ((emb ia).val + k) % (n + 3)) → (
-    let rank := fun i : Fin (n+3) => (i.val + (n+3) - a.val) % (n+3)
-    ∀ (p : Fin L.length), (ia ≤ p) → (∀ (i : Fin (n+3)), (L.get p = i) → (rank i = (emb p).val -
-        (emb ia).val))))))) := by
+    ∀ (n : Nat),
+      ∀ (a : Fin (n + 3)),
+        ∀ (b : Fin (n + 3)),
+          ∀ (u : List (Fin (n + 3))),
+            ∀ (v : List (Fin (n + 3))),
+              let L := a :: (u ++ b :: v);
+              ∀ (k : ℕ),
+                let root := List.ofFn fun i : Fin (n + 3) => i;
+                let R := root.rotate k;
+                ∀
+                  (emb :
+                    Fin (a :: (u ++ b :: v)).length ↪o
+                      Fin ((List.ofFn fun (i : Fin (n + (3 : ℕ))) => i).rotate k).length),
+                  (∀ (ix : Fin (a :: (u ++ b :: v)).length),
+                      (a :: (u ++ b :: v)).get ix =
+                        ((List.ofFn fun (i : Fin (n + (3 : ℕ))) => i).rotate k).get
+                          ((emb :
+                            Fin (a :: (u ++ b :: v)).length →
+                            Fin
+                            ((List.ofFn fun (i : Fin (n + (3 : ℕ))) => i).rotate k).length)
+                            ix)) →
+                    (∀ (j : Fin R.length), (R.get j).val = (j.val + k) % (n + 3)) →
+                      (∀ (m : Nat),
+                          ∀ (k : Nat),
+                            ∀ (p : Nat),
+                            ∀ (s : Nat),
+                            0 < m →
+                            p < m →
+                            s < m → p ≤ s → ((s + k) % m + m - (p + k) % m) % m = s - p) →
+                        let ia : Fin L.length := ⟨0, by simp [L]⟩
+                        a.val = ((emb ia).val + k) % (n + 3) →
+                          let rank := fun i : Fin (n + 3) =>
+                            (i.val + (n + 3) - a.val) % (n + 3)
+                          ∀ (p : Fin L.length),
+                            ia ≤ p →
+                            ∀ (i : Fin (n + 3)),
+                            L.get p = i → rank i = (emb p).val - (emb ia).val := by
   classical
-  intro n a b u v L k root R emb hemb hRval hrankDiff hsourceB ia hvalA rank p hp i hpi
+  intro n a b u v L k root R emb hemb hRval hrankDiff ia hvalA rank p hp i hpi
   have hvalI : i.val = ((emb p).val + k) % (n+3) := by
     calc
       i.val = (R.get (emb p)).val := (congrArg Fin.val ((hemb p).symm.trans hpi)).symm
@@ -1098,17 +1119,24 @@ private theorem hDgeConv :
     (mul_nonneg (div_nonneg hs hrs.le) hy)
 
 private theorem hUneg :
-    ∀ (n : Nat), ∀ (q : Fin (n + 3) → Real × Real), ∀ (a : Fin (n + 3)), ∀ (b : Fin (n + 3)), ∀
-        (u : List (Fin (n + 3))), (List (Fin (n + 3))) → ((a ≠ b) → (
-    let rank := fun i : Fin (n+3) => (i.val + (n+3) - a.val) % (n+3)
-    (∀ (i : Fin (n+3)), (i ∈ u) → (0 < rank i ∧ rank i < rank b)) → ((∀ (i : Fin (n+3)), (a.val ≤
-        i.val) → (rank i = i.val-a.val)) → ((∀ (i : Fin (n+3)), (¬ a.val ≤ i.val) → (rank i =
-        n+3-a.val+i.val)) → (
-    let D := fun z => P3381T1TriangleDeterminant ![q a, q b, z]
-    (∀ (c : Fin (n + 3)), D (q c) = ((b.val : Real) - a.val) * ((c.val : Real) - a.val) * ((c.val
-        : Real) - b.val)) → (∀ i ∈ u, D (q i) < 0)))))) := by
+    ∀ (n : Nat),
+      ∀ (q : Fin (n + 3) → Real × Real),
+        ∀ (a : Fin (n + 3)),
+          ∀ (b : Fin (n + 3)),
+            ∀ (u : List (Fin (n + 3))),
+              a ≠ b →
+                let rank := fun i : Fin (n + 3) => (i.val + (n + 3) - a.val) % (n + 3)
+                (∀ (i : Fin (n + 3)), i ∈ u → 0 < rank i ∧ rank i < rank b) →
+                  (∀ (i : Fin (n + 3)), a.val ≤ i.val → rank i = i.val - a.val) →
+                    (∀ (i : Fin (n + 3)), ¬a.val ≤ i.val → rank i = n + 3 - a.val + i.val) →
+                      let D := fun z => P3381T1TriangleDeterminant ![q a, q b, z]
+                      (∀ (c : Fin (n + 3)),
+                          D (q c) =
+                            ((b.val : Real) - a.val) * ((c.val : Real) - a.val) *
+                            ((c.val : Real) - b.val)) →
+                        ∀ i ∈ u, D (q i) < 0 := by
   classical
-  intro n q a b u v hne rank hrankU hrankHi hrankLo D hdet i hi
+  intro n q a b u hne rank hrankU hrankHi hrankLo D hdet i hi
   have hru := hrankU i hi
   by_cases hab : a.val < b.val
   · have hrb := hrankHi b hab.le
@@ -1737,8 +1765,8 @@ theorem P3555T2ParabolaChordCuts {n : Nat}
   have hRval (j : Fin R.length) : (R.get j).val = (j.val + k) % (n + 3) :=
       ParabolaChordLemmas.hRval n k hrootlen j
   have hrankDiff (m k p s : Nat) (hm : 0 < m) (hp : p < m) (hs : s < m)
-      (hps : p ≤ s) : (((s+k)%m+m-((p+k)%m))%m) = s-p := ParabolaChordLemmas.hrankDiff n v m k p
-          s hm hp hs hps
+      (hps : p ≤ s) : (((s+k)%m+m-((p+k)%m))%m) = s-p := ParabolaChordLemmas.hrankDiff m k p
+          s hm hs hps
   have hsourceA : (⟨0, by simp [L]⟩ : Fin L.length).val <
       (⟨u.length+1, by simp [L]⟩ : Fin L.length).val := ParabolaChordLemmas.hsourceA n a b u v
   have hsourceB : u.length+1 < L.length := ParabolaChordLemmas.hsourceB n a b u v hv
@@ -1772,7 +1800,7 @@ theorem P3555T2ParabolaChordCuts {n : Nat}
       emb hsourceB hrankB
   have hrankAt (p : Fin L.length) (hp : ia ≤ p) (i : Fin (n+3))
       (hpi : L.get p = i) : rank i = (emb p).val - (emb ia).val := ParabolaChordLemmas.hrankAt n
-          a b u v k emb hemb hRval hrankDiff hsourceB hvalA p hp i hpi
+          a b u v k emb hemb hRval hrankDiff hvalA p hp i hpi
   have hrankU (i : Fin (n+3)) (hi : i ∈ u) : 0 < rank i ∧ rank i < rank b :=
       ParabolaChordLemmas.hrankU n a b u v hv k emb hsourceB hrootOrder hrankB' hrankAt i hi
   have hrankV (i : Fin (n+3)) (hi : i ∈ v) : rank b < rank i := ParabolaChordLemmas.hrankV n a b
@@ -1848,7 +1876,7 @@ theorem P3555T2ParabolaChordCuts {n : Nat}
   clear hrankB'
   clear hBsubRoot k hLrot root R hrootlen emb hemb hRval hrankDiff hsourceA hsourceB
     ia ib haAtRoot hbAtRoot hvalA hvalB hrankB hrankAt
-  have hUneg : ∀ i ∈ u, D (q i) < 0 := ParabolaChordLemmas.hUneg n q a b u v hne hrankU hrankHi
+  have hUneg : ∀ i ∈ u, D (q i) < 0 := ParabolaChordLemmas.hUneg n q a b u hne hrankU hrankHi
       hrankLo hdet
   have hVpos : ∀ i ∈ v, 0 < D (q i) := ParabolaChordLemmas.hVpos n q a b v hne hrankV hrankHi
       hrankLo hdet

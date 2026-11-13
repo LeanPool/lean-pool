@@ -132,11 +132,12 @@ private theorem unoccupied_center_outside :
     (by
       classical
       exact
-        ∀ (T : ProtoTile), (List GaussianInt) → (∀ q ∉ T.cells, ((↑q.re : ℝ) + (1 / 2 : ℝ),
-            (↑q.im : ℝ) + (1 / 2 : ℝ)) ∉ TileRealization T)
+        ∀ (T : ProtoTile),
+          ∀ q ∉ T.cells,
+            ((↑q.re : ℝ) + (1 / 2 : ℝ), (↑q.im : ℝ) + (1 / 2 : ℝ)) ∉ TileRealization T
     ) := by
   classical
-  intro T gridPath q hq hcenter
+  intro T q hq hcenter
   rw [TileRealization] at hcenter
   simp only [Set.mem_iUnion] at hcenter
   rcases hcenter with ⟨w, hw, hqw⟩
@@ -240,11 +241,13 @@ private theorem occupied_vertical_not_boundary :
     (by
       classical
       exact
-        ∀ (T : ProtoTile), (List GaussianInt) → ((GaussianInt) → (∀ q ∈ T.cells, q - (1 :
-            LatticeCell) ∈ T.cells → {q, q + ⟨(0 : ℤ), (1 : ℤ)⟩} ∉ BoundaryFootprintEdges T))
+        ∀ (T : ProtoTile),
+          ∀ q ∈ T.cells,
+            q - (1 : LatticeCell) ∈ T.cells →
+              {q, q + ⟨(0 : ℤ), (1 : ℤ)⟩} ∉ BoundaryFootprintEdges T
     ) := by
   classical
-  intro T gridPath z q hq hleft
+  intro T q hq hleft
   rintro ⟨w, (⟨heq, hxor⟩ | ⟨heq, hxor⟩)⟩
   · have hw : w = q ∨ w = q + ⟨0, 1⟩ := by
       have : w ∈ ({q, q + ⟨0, 1⟩} : Finset GaussianInt) := by rw [heq]; simp
@@ -271,11 +274,13 @@ private theorem occupied_horizontal_not_boundary :
     (by
       classical
       exact
-        ∀ (T : ProtoTile), (List GaussianInt) → ((GaussianInt) → (∀ q ∈ T.cells, q - ⟨(0 : ℤ), (1
-            : ℤ)⟩ ∈ T.cells → {q, q + (1 : LatticeCell)} ∉ BoundaryFootprintEdges T))
+        ∀ (T : ProtoTile),
+          ∀ q ∈ T.cells,
+            q - ⟨(0 : ℤ), (1 : ℤ)⟩ ∈ T.cells →
+              {q, q + (1 : LatticeCell)} ∉ BoundaryFootprintEdges T
     ) := by
   classical
-  intro T gridPath z q hq hbelow
+  intro T q hq hbelow
   rintro ⟨w, (⟨heq, hxor⟩ | ⟨heq, hxor⟩)⟩
   · have hw : w = q ∨ w = q + 1 := by
       have : w ∈ ({q, q + 1} : Finset GaussianInt) := by rw [heq]; simp
@@ -502,12 +507,16 @@ private theorem zip_mem_decompose :
     (by
       classical
       exact
-        ∀ (gridPath : List GaussianInt), (GaussianInt) → (((4 : ℕ) ≤ gridPath.length) → (∀ (a :
-            GaussianInt), ∀ (b : GaussianInt), (a, b) ∈ gridPath.zip gridPath.tail → ∃ (l₁ : List
-            GaussianInt) (l₂ : List GaussianInt), gridPath = l₁ ++ a :: b :: l₂))
+        ∀ (gridPath : List GaussianInt),
+          (4 : ℕ) ≤ gridPath.length →
+            ∀ (a : GaussianInt),
+              ∀ (b : GaussianInt),
+                (a, b) ∈ gridPath.zip gridPath.tail →
+                  ∃ (l₁ : List GaussianInt) (l₂ : List GaussianInt),
+                    gridPath = l₁ ++ a :: b :: l₂
     ) := by
   classical
-  intro gridPath z gridPath_length_four a b hab
+  intro gridPath gridPath_length_four a b hab
   rw [List.mem_iff_getElem] at hab
   rcases hab with ⟨i, hi, hab⟩
   have hi' : i < gridPath.tail.length := by
@@ -735,7 +744,7 @@ theorem LatticeTileBoundarySimpleGridCycle (T : ProtoTile) (hT : LatticeTile T) 
   have unoccupied_center_outside (q : LatticeCell) (hq : q ∉ T.cells) :
       ((((q.re : Int) : Real) + (1 / 2 : Real)),
           (((q.im : Int) : Real) + (1 / 2 : Real))) ∉ TileRealization T :=
-              BoundaryCycleProof.unoccupied_center_outside T gridPath q hq
+              BoundaryCycleProof.unoccupied_center_outside T q hq
   have unoccupied_index_zero (q : LatticeCell) (hq : q ∉ T.cells) :
       GridRayCrossingIndex q gridPath = 0 := BoundaryCycleProof.unoccupied_index_zero T
           closed_grid_index_zero gridPath x y z gridPath_head gridPath_last gridPath_chain
@@ -753,11 +762,11 @@ theorem LatticeTileBoundarySimpleGridCycle (T : ProtoTile) (hT : LatticeTile T) 
   have occupied_vertical_not_boundary (q : LatticeCell)
       (hq : q ∈ T.cells) (hleft : q - 1 ∈ T.cells) :
       ({q, q + ⟨0, 1⟩} : Finset GaussianInt) ∉ BoundaryFootprintEdges T :=
-          BoundaryCycleProof.occupied_vertical_not_boundary T gridPath z q hq hleft
+          BoundaryCycleProof.occupied_vertical_not_boundary T q hq hleft
   have occupied_horizontal_not_boundary (q : LatticeCell)
       (hq : q ∈ T.cells) (hbelow : q - ⟨0, 1⟩ ∈ T.cells) :
       ({q, q + 1} : Finset GaussianInt) ∉ BoundaryFootprintEdges T :=
-          BoundaryCycleProof.occupied_horizontal_not_boundary T gridPath z q hq hbelow
+          BoundaryCycleProof.occupied_horizontal_not_boundary T q hq hbelow
   have occupied_adjacent_index_eq (a b : LatticeCell)
       (ha : a ∈ T.cells) (hb : b ∈ T.cells)
       (hab : FourNeighborAdjacent a b) :
@@ -780,7 +789,7 @@ theorem LatticeTileBoundarySimpleGridCycle (T : ProtoTile) (hT : LatticeTile T) 
   have zip_mem_decompose (a b : GaussianInt)
       (hab : (a, b) ∈ gridPath.zip gridPath.tail) :
       ∃ l₁ l₂ : List GaussianInt, gridPath = l₁ ++ a :: b :: l₂ :=
-          BoundaryCycleProof.zip_mem_decompose gridPath z gridPath_length_four a b hab
+          BoundaryCycleProof.zip_mem_decompose gridPath gridPath_length_four a b hab
   have cyclic_endpoints_mem (a b : GaussianInt) (hab : (a, b) ∈ cyclicEdges) :
       a ∈ gridPath ∧ b ∈ gridPath := BoundaryCycleProof.cyclic_endpoints_mem gridPath x y
           gridPath_head gridPath_last zip_mem_decompose a b hab

@@ -375,13 +375,28 @@ private theorem internal_strip :
     (by
       classical
       exact
-        (GaussianInt) → ((GaussianInt) → (∀ (r : ℤ × ℤ), ∀ (s : ℤ × ℤ), ∀ (xs : List (Int ×
-            Int)), TriangularStripSegment r s xs ↔ xs.head? = some r ∧ xs.getLast? = some s ∧
-            xs.Nodup ∧ xs.IsChain TriangularLatticeAdjacent ∧ (∀ pre, ∀ z, ∀ post, xs = pre ++ z
-            :: post → pre ≠ [] → post ≠ [] → 0 ≤ TriangularSignedHeight r s z ∧ ∃ u,
-            TriangularLatticeAdjacent z u ∧ TriangularSignedHeight r s u < 0))) ) := by
+        GaussianInt →
+          ∀ (r : ℤ × ℤ),
+            ∀ (s : ℤ × ℤ),
+              ∀ (xs : List (Int × Int)),
+                TriangularStripSegment r s xs ↔
+                  xs.head? = some r ∧
+                    xs.getLast? = some s ∧
+                      xs.Nodup ∧
+                        xs.IsChain TriangularLatticeAdjacent ∧
+                          ∀ pre,
+                            ∀ z,
+                              ∀ post,
+                                xs = pre ++ z :: post →
+                                pre ≠ [] →
+                                post ≠ [] →
+                                0 ≤ TriangularSignedHeight r s z ∧
+                                ∃ u,
+                                TriangularLatticeAdjacent z u ∧
+                                TriangularSignedHeight r s u < 0
+    ) := by
   classical
-  intro a b r s xs
+  intro a r s xs
   by_cases hrs : r = s
   · subst s
     constructor
@@ -811,7 +826,7 @@ theorem TileStringCoordinateTransport (C : BandCircle) (orientation : Bool)
         (∀ pre z post, xs = pre ++ z :: post → pre ≠ [] → post ≠ [] →
           0 ≤ TriangularSignedHeight r s z ∧
             ∃ u, TriangularLatticeAdjacent z u ∧ TriangularSignedHeight r s u < 0) :=
-                StringCoordinateGeometry.internal_strip a b r s xs
+                StringCoordinateGeometry.internal_strip a r s xs
   let physical := fun T : ProtoTile =>
     ((TileCentroid T).2 - (TileCentroid (tileAt r)).2) *
         ((TileCentroid (tileAt s)).1 - (TileCentroid (tileAt r)).1) -

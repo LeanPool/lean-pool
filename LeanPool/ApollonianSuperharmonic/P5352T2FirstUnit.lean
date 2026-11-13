@@ -72,10 +72,12 @@ private theorem triDiff :
     (by
       classical
       exact
-        (DiamondParameter) → (∀ (t : ℤ), t * (t - (1 : ℤ)) / (2 : ℤ) - (t - (1 : ℤ)) * (t - (2 :
-            ℤ)) / (2 : ℤ) = t - (1 : ℤ)) ) := by
+        ∀ (t : ℤ),
+          t * (t - (1 : ℤ)) / (2 : ℤ) - (t - (1 : ℤ)) * (t - (2 : ℤ)) / (2 : ℤ) =
+            t - (1 : ℤ)
+    ) := by
   classical
-  intro K t
+  intro t
   have he : t*(t-1) = (t-1)*(t-2)+(t-1)*2 := by ring
   omega
 
@@ -417,7 +419,7 @@ theorem P5352T2FirstUnit (K : DiamondParameter) (hk : 1 < K.1)
   have sqm (t : Int) : (-1-2*t)^2/4 = t^2+t := FirstUnitProof.sqm t
   have sqp (t : Int) : (1-2*t)^2/4 = t^2-t := FirstUnitProof.sqp t
   have triDiff (t : Int) :
-      t*(t-1)/2 - (t-1)*(t-2)/2 = t-1 := FirstUnitProof.triDiff K t
+      t*(t-1)/2 - (t-1)*(t-2)/2 = t-1 := FirstUnitProof.triDiff t
   dsimp only
   intro hA hP hzA hzP hcov
   change ∀ y, y ∈ FootprintVertices (DiamondTile K.1) →

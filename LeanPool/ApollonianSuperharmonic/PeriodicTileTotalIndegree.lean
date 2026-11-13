@@ -195,15 +195,19 @@ private theorem edgeOf_injective :
     (by
       classical
       exact
-        (ProtoTile) → ((Finset GaussianInt) → (
         let I : GaussianInt := ⟨0, 1⟩
         let edgeOf : GaussianInt × Bool → Finset GaussianInt := fun p =>
           if p.2 then {p.1, p.1 + I} else {p.1, p.1 + 1}
-        (∀ {a : GaussianInt}, ∀ {b : GaussianInt}, ∀ {c : GaussianInt}, ∀ {d : GaussianInt},
-            (({a, b} : Finset GaussianInt) = {c, d}) → ((a = c ∧ b = d) ∨ (a = d ∧ b = c))) →
-            (Function.Injective edgeOf))) ) := by
+        (∀ {a : GaussianInt},
+            ∀ {b : GaussianInt},
+              ∀ {c : GaussianInt},
+                ∀ {d : GaussianInt},
+                  ({ a, b } : Finset GaussianInt) = { c, d } →
+                    a = c ∧ b = d ∨ a = d ∧ b = c) →
+          Function.Injective edgeOf
+    ) := by
   classical
-  intro T D I edgeOf pair_eq
+  intro I edgeOf pair_eq
   rintro ⟨z, b⟩ ⟨w, d⟩ h
   cases b <;> cases d
   · change ({z, z + 1} : Finset GaussianInt) = {w, w + 1} at h
@@ -1036,10 +1040,12 @@ private theorem htranslation_rigid :
     (by
       classical
       exact
-        ∀ (T : ProtoTile), (T.cells.Nonempty) → ((List GaussianInt) → (∀ (v : GaussianInt),
-            (T.cells.image (fun z => z + v) = T.cells) → (v = 0))) ) := by
+        ∀ (T : ProtoTile),
+          T.cells.Nonempty →
+            ∀ (v : GaussianInt), (T.cells.image fun z => z + v) = T.cells → v = 0
+    ) := by
   classical
-  intro T hcells p v hs
+  intro T hcells v hs
   have hinj : Function.Injective (fun z : GaussianInt => z + v) := by
     intro a b hab
     exact add_right_cancel hab
@@ -1838,15 +1844,20 @@ private theorem hhalf :
     (by
       classical
       exact
-        (BandCircle) → (∀ (T : ProtoTile), ∀ (h : PartialOdometer), (IntegerLatticeFunction) → (
-        let D : Finset GaussianInt := h.domain.filter
-          (fun x => @decide (x ∉ BoundaryFootprintVertices T)
-            (Classical.propDecidable _))
-        (List GaussianInt) → ((Finset GaussianInt) → ((2 * ((D.filter fun z => z + 1 ∈ D).card +
-            (D.filter fun z => z + (⟨0, 1⟩ : GaussianInt) ∈ D).card)) / 2 = (D.filter fun z => z
-            + 1 ∈ D).card + (D.filter fun z => z + (⟨0, 1⟩ : GaussianInt) ∈ D).card)))) ) := by
+        ∀ (T : ProtoTile),
+          ∀ (h : PartialOdometer),
+            let D : Finset GaussianInt :=
+              h.domain.filter fun x =>
+                @decide (x ∉ BoundaryFootprintVertices T) (Classical.propDecidable _);
+            2 *
+                  ((D.filter fun z => z + 1 ∈ D).card +
+                    (D.filter fun z => z + (⟨0, 1⟩ : GaussianInt) ∈ D).card) /
+                2 =
+              (D.filter fun z => z + 1 ∈ D).card +
+                (D.filter fun z => z + (⟨0, 1⟩ : GaussianInt) ∈ D).card
+    ) := by
   classical
-  intro C T h g D p R
+  intro T h D
   omega
 
 end PeriodicIndegreeGeometry
@@ -1891,7 +1902,7 @@ private theorem hcountBridge :
   -- A base point and direction give a unique tag for each footprint edge.
   let edgeOf : GaussianInt × Bool → Finset GaussianInt := fun p =>
     if p.2 then {p.1, p.1 + I} else {p.1, p.1 + 1}
-  have edgeOf_injective := PeriodicIndegreeGeometry.edgeOf_injective T D
+  have edgeOf_injective := PeriodicIndegreeGeometry.edgeOf_injective
       (PeriodicIndegreeGeometry.pair_eq)
   let V := cornerBag.toFinset
   have hEV := PeriodicIndegreeGeometry.hEV T hcells
@@ -1990,7 +2001,7 @@ theorem PeriodicTileTotalIndegree (C : BandCircle)
   have hcell_residue_unique := PeriodicIndegreeGeometry.hcell_residue_unique C T h g hdom hT hlat
       htile hweb hcountBridge htiles heuler hreg hcells p x₀ x₁ hverts hedges
       (PeriodicIndegreeGeometry.hboundary_card T p hpnd hverts) hDmem
-      (PeriodicIndegreeGeometry.htranslation_rigid T hcells p) hcell_cover
+      (PeriodicIndegreeGeometry.htranslation_rigid T hcells) hcell_cover
   have hfund := PeriodicIndegreeGeometry.hfund C T hcell_cover hcell_residue_unique
   obtain ⟨R, hR, hRcard⟩ := TilingLatticeIndex C
   have hcell_curv : T.cells.card = C.1.1.1.natAbs  := PeriodicIndegreeGeometry.hcell_curv C T R
@@ -2043,8 +2054,8 @@ theorem PeriodicTileTotalIndegree (C : BandCircle)
       (2 * ((D.filter fun z => z + 1 ∈ D).card +
         (D.filter fun z => z + (⟨0, 1⟩ : GaussianInt) ∈ D).card)) / 2 =
       (D.filter fun z => z + 1 ∈ D).card +
-        (D.filter fun z => z + (⟨0, 1⟩ : GaussianInt) ∈ D).card := PeriodicIndegreeGeometry.hhalf
-            C T h g p R
+        (D.filter fun z => z + (⟨0, 1⟩ : GaussianInt) ∈ D).card :=
+            PeriodicIndegreeGeometry.hhalf T h
   rw [hhalf]
   omega
 

@@ -131,9 +131,13 @@ private theorem support_nonempty :
     (by
       classical
       exact
-        ∀ (C : CircleCoordinates), ∀ (U : ProtoTile), ∀ (h : PartialOdometer), ∀ (p : ℝ × ℝ), 0 <
-            C.1 → TileOdometer C U h → PartialOdometerSlope h = some p → U.cells.Nonempty ) := by
-  intro C U k p _ hO hp
+        ∀ (C : CircleCoordinates),
+          ∀ (U : ProtoTile),
+            ∀ (h : PartialOdometer),
+              ∀ (p : ℝ × ℝ),
+                TileOdometer C U h → PartialOdometerSlope h = some p → U.cells.Nonempty
+    ) := by
+  intro C U k p hO hp
   exact TileOdometerSlopeNonempty.cells C U k p hO hp
 
 private theorem hsr₀ :
@@ -370,9 +374,8 @@ theorem SubtileLatticeAdjacentPackingSymmetryTransport
   obtain ⟨negative, hphase, hvec⟩ :=
     BandPackingSymmetryAffineVectorCovariance g q hq
   have support_nonempty := SubtileTransportGeometry.support_nonempty
-  have hT₀ne := support_nonempty (q 0) T₀ h₀ p₀
-    (ProperBandCurvatureStructure q hq).1 hO₀ hp₀
-  have hTᵢne := support_nonempty (q i.succ) Tᵢ hᵢ pᵢ hparent hOᵢ hpᵢ
+  have hT₀ne := support_nonempty (q 0) T₀ h₀ p₀ hO₀ hp₀
+  have hTᵢne := support_nonempty (q i.succ) Tᵢ hᵢ pᵢ hOᵢ hpᵢ
   obtain ⟨hOT₀, _, hST₀⟩ :=
     BandPackingSymmetryTileOdometerCovariance g (q 0) T₀ h₀ hO₀
   obtain ⟨hOTᵢ, _, hSTᵢ⟩ :=

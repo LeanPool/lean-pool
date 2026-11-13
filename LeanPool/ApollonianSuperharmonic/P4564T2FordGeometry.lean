@@ -512,19 +512,6 @@ private theorem hreal :
   simpa [Tstar, sub_eq_add_neg] using
     (TileTranslationFormulas T (-w)).2.2.2.1
 
-private theorem hcent :
-    (by
-      classical
-      exact
-        ∀ (T : ProtoTile), ∀ (w : GaussianInt),
-        let Tstar := TileTranslation T (-w)
-        TileCentroid Tstar = ((TileCentroid T).1 - (w.re : Real), (TileCentroid T).2 - (w.im :
-            Real)) ) := by
-  classical
-  intro T w Tstar
-  simpa [Tstar, sub_eq_add_neg] using
-    (TileTranslationFormulas T (-w)).2.2.2.2.1
-
 private theorem hf_inj :
     (by
       classical
@@ -854,7 +841,7 @@ theorem P4564T2FordGeometry (P : FordFareyParameter) (hP : 1 < P.q)
         (fun p : Real × Real =>
           (p.1 - (w.re : Real), p.2 - (w.im : Real))) '' TileRealization T :=
               FordInterfaceGeometry.hreal T w
-    have hcent := FordInterfaceGeometry.hcent T w
+    have hcent := FordInterfaceGeometry.hTstarCent T w
     let f : Real × Real → Real × Real := fun p =>
       (p.1 - (w.re : Real), p.2 - (w.im : Real))
     have hf_inj := FordInterfaceGeometry.hf_inj w

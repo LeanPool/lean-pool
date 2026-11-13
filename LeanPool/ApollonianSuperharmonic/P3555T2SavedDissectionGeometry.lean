@@ -563,13 +563,19 @@ private theorem hBget :
   simpa [jB] using hresult
 
 private theorem hNoAEndpoints :
-    ∀ (n : Nat), ∀ (a : Fin (n + (3 : ℕ))), ∀ (b : Fin (n + (3 : ℕ))), ∀ (u : List (Fin (n + (3 :
-        ℕ)))), (List (Fin (n + (3 : ℕ)))) → (((0 : ℕ) < u.length) → (((a :: (u ++ [b])).Nodup) →
-        (∀ (i : Fin (a :: (u ++ [b])).length), ∀ (j : Fin (a :: (u ++ [b])).length), (i.val + 1 =
-        j.val) → (((a :: (u ++ [b])).get i ∈ ({a, b} : Set (Fin (n + 3)))) → (((a :: (u ++
-        [b])).get j ∈ ({a, b} : Set (Fin (n + 3)))) → (False)))))) := by
+    ∀ (n : Nat),
+      ∀ (a : Fin (n + (3 : ℕ))),
+        ∀ (b : Fin (n + (3 : ℕ))),
+          ∀ (u : List (Fin (n + (3 : ℕ)))),
+            (0 : ℕ) < u.length →
+              (a :: (u ++ [b])).Nodup →
+                ∀ (i : Fin (a :: (u ++ [b])).length),
+                  ∀ (j : Fin (a :: (u ++ [b])).length),
+                    i.val + 1 = j.val →
+                      (a :: (u ++ [b])).get i ∈ ({ a, b } : Set (Fin (n + 3))) →
+                        (a :: (u ++ [b])).get j ∈ ({ a, b } : Set (Fin (n + 3))) → False := by
   classical
-  intro n a b u v hu hndA i j hij hia hja
+  intro n a b u hu hndA i j hij hia hja
   have hzero : (a :: (u ++ [b])).get ⟨0, by simp⟩ = a := by simp
   have hend : (a :: (u ++ [b])).get ⟨u.length + 1, by simp⟩ = b := by
     simp [List.get_eq_getElem]
@@ -605,13 +611,19 @@ private theorem hNoAEndpoints :
       exact hne (by rw [hiend, hjend])
 
 private theorem hNoBEndpoints :
-    ∀ (n : Nat), ∀ (a : Fin (n + (3 : ℕ))), ∀ (b : Fin (n + (3 : ℕ))), (List (Fin (n + (3 : ℕ))))
-        → (∀ (v : List (Fin (n + (3 : ℕ)))), ((0 : ℕ) < v.length) → (((b :: (v ++ [a])).Nodup) →
-        (∀ (i : Fin (b :: (v ++ [a])).length), ∀ (j : Fin (b :: (v ++ [a])).length), (i.val + 1 =
-        j.val) → (((b :: (v ++ [a])).get i ∈ ({a, b} : Set (Fin (n + 3)))) → (((b :: (v ++
-        [a])).get j ∈ ({a, b} : Set (Fin (n + 3)))) → (False)))))) := by
+    ∀ (n : Nat),
+      ∀ (a : Fin (n + (3 : ℕ))),
+        ∀ (b : Fin (n + (3 : ℕ))),
+          ∀ (v : List (Fin (n + (3 : ℕ)))),
+            (0 : ℕ) < v.length →
+              (b :: (v ++ [a])).Nodup →
+                ∀ (i : Fin (b :: (v ++ [a])).length),
+                  ∀ (j : Fin (b :: (v ++ [a])).length),
+                    i.val + 1 = j.val →
+                      (b :: (v ++ [a])).get i ∈ ({ a, b } : Set (Fin (n + 3))) →
+                        (b :: (v ++ [a])).get j ∈ ({ a, b } : Set (Fin (n + 3))) → False := by
   classical
-  intro n a b u v hv hndB i j hij hia hja
+  intro n a b v hv hndB i j hij hia hja
   have hzero : (b :: (v ++ [a])).get ⟨0, by simp⟩ = b := by simp
   have hend : (b :: (v ++ [a])).get ⟨v.length + 1, by simp⟩ = a := by
     simp [List.get_eq_getElem]
@@ -1195,33 +1207,42 @@ private theorem rightBoundaryCase :
           exact hgSecond
 
 private theorem rotationCase :
-    ∀ (n : Nat), ∀ (q : Fin (n + 3) → Real × Real),
-    let Good : List (Fin (n + 3)) → List (Fin 3 → Fin (n + 3)) → Prop := fun L F =>
-      L.Nodup →
-      (∃ k : Nat, L.Sublist
-        ((List.ofFn (fun i : Fin (n + 3) => i)).rotate k)) →
-      (∀ f ∈ F, Function.Injective f ∧
-        Set.range f ⊆ {i | i ∈ L} ∧
-        P3381T1TriangleDeterminant (q ∘ f) ≠ 0) ∧
-      F.Pairwise (fun f g => Set.range f ≠ Set.range g) ∧
-      convexHull Real (q '' {i | i ∈ L}) =
-        ⋃ (f : Fin 3 → Fin (n + 3)) (_ : f ∈ F),
-          convexHull Real (Set.range (q ∘ f)) ∧
-      (∀ f ∈ F, ∀ g ∈ F,
-        convexHull Real (Set.range (q ∘ f)) ∩
-          convexHull Real (Set.range (q ∘ g)) =
-          convexHull Real (q '' (Set.range f ∩ Set.range g))) ∧
-      (∀ k : Fin L.length,
-        ∃! f : Fin 3 → Fin (n + 3), f ∈ F ∧
-          L.get k ∈ Set.range f ∧
-          L.get ⟨(k.val + 1) % L.length,
-            Nat.mod_lt _ (Nat.zero_lt_of_lt k.isLt)⟩ ∈ Set.range f)
-    ∀ (L : List (Fin (n + (3 : ℕ)))), ∀ (F : List (Fin (3 : ℕ) → Fin (n + (3 : ℕ)))), ∀ (k : ℕ),
-        (P3511T1CyclicDissection (Fin (n + (3 : ℕ))) (L.rotate k) F) → (((L.rotate k).Nodup →
-        (∃ (k_1 : ℕ), (L.rotate k).Sublist ((List.ofFn fun (i : Fin (n + (3 : ℕ))) => i).rotate
-        k_1)) → Good (L.rotate k) F) → (Good L F)) := by
+    ∀ (n : Nat),
+      ∀ (q : Fin (n + 3) → Real × Real),
+        let Good : List (Fin (n + 3)) → List (Fin 3 → Fin (n + 3)) → Prop := fun L F =>
+          L.Nodup →
+            (∃ k : Nat, L.Sublist ((List.ofFn fun i : Fin (n + 3) => i).rotate k)) →
+              (∀ f ∈ F,
+                  Function.Injective f ∧
+                    Set.range f ⊆ {i | i ∈ L} ∧ P3381T1TriangleDeterminant (q ∘ f) ≠ 0) ∧
+                (F.Pairwise fun f g => Set.range f ≠ Set.range g) ∧
+                  convexHull Real (q '' {i | i ∈ L}) =
+                      ⋃ (f : Fin 3 → Fin (n + 3)) (_ : f ∈ F),
+                        convexHull Real (Set.range (q ∘ f)) ∧
+                    (∀ f ∈ F,
+                        ∀ g ∈ F,
+                          convexHull Real (Set.range (q ∘ f)) ∩
+                            convexHull Real (Set.range (q ∘ g)) =
+                            convexHull Real (q '' (Set.range f ∩ Set.range g))) ∧
+                      ∀ k : Fin L.length,
+                        ∃! f : Fin 3 → Fin (n + 3),
+                          f ∈ F ∧
+                            L.get k ∈ Set.range f ∧
+                            L.get
+                            ⟨(k.val + 1) % L.length,
+                            Nat.mod_lt _ (Nat.zero_lt_of_lt k.isLt)⟩ ∈
+                            Set.range f;
+        ∀ (L : List (Fin (n + (3 : ℕ)))),
+          ∀ (F : List (Fin (3 : ℕ) → Fin (n + (3 : ℕ)))),
+            ∀ (k : ℕ),
+              ((L.rotate k).Nodup →
+                  (∃ (k_1 : ℕ),
+                      (L.rotate k).Sublist
+                        ((List.ofFn fun (i : Fin (n + (3 : ℕ))) => i).rotate k_1)) →
+                    Good (L.rotate k) F) →
+                Good L F := by
   classical
-  intro n q Good L F k d ih hnd hcyc
+  intro n q Good L F k ih hnd hcyc
   have hndR : (L.rotate k).Nodup := by simpa using hnd
   have hcycR := SavedDissectionProof.hcycR n L k hcyc
   have hR : Good (L.rotate k) F := ih hndR hcycR
@@ -1429,12 +1450,12 @@ theorem P3555T2SavedDissectionGeometry {n : Nat}
           (hij : i.val + 1 = j.val)
           (hia : (a :: (u ++ [b])).get i ∈ ({a, b} : Set (Fin (n + 3))))
           (hja : (a :: (u ++ [b])).get j ∈ ({a, b} : Set (Fin (n + 3)))) : False :=
-              SavedDissectionProof.hNoAEndpoints n a b u v hu hndA i j hij hia hja
+              SavedDissectionProof.hNoAEndpoints n a b u hu hndA i j hij hia hja
       have hNoBEndpoints (i j : Fin (b :: (v ++ [a])).length)
           (hij : i.val + 1 = j.val)
           (hia : (b :: (v ++ [a])).get i ∈ ({a, b} : Set (Fin (n + 3))))
           (hja : (b :: (v ++ [a])).get j ∈ ({a, b} : Set (Fin (n + 3)))) : False :=
-              SavedDissectionProof.hNoBEndpoints n a b u v hv hndB i j hij hia hja
+              SavedDissectionProof.hNoBEndpoints n a b v hv hndB i j hij hia hja
       refine ⟨?_, ?_, ?_, ?_, ?_⟩
       · intro f hf
         rcases List.mem_append.mp hf with hf | hf
@@ -1498,7 +1519,7 @@ theorem P3555T2SavedDissectionGeometry {n : Nat}
                     hgoodB hfaceA hlenL hBget hNoBEndpoints k hABpoint hkA
           exact rightBoundaryCase
     | rotate L F k d ih =>
-      have rotationCase : Good L F := SavedDissectionCases.rotationCase n q L F k d ih
+      have rotationCase : Good L F := SavedDissectionCases.rotationCase n q L F k ih
       exact rotationCase
   exact hgood hboundary hcyclic
 

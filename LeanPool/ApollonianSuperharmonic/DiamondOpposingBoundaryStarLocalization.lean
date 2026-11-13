@@ -63,10 +63,12 @@ private theorem hk2 :
     (by
       classical
       exact
-        ∀ (K : DiamondParameter), (BandCircle) → (((1 : ℤ) < (DiamondRecursiveQuadruple K
-            (Fin.succ (2 : Fin (3 : ℕ)))).1) → ((0 < K.1) → (2 ≤ K.1))) ) := by
+        ∀ (K : DiamondParameter),
+          (1 : ℤ) < (DiamondRecursiveQuadruple K (Fin.succ (2 : Fin (3 : ℕ)))).1 →
+            0 < K.1 → 2 ≤ K.1
+    ) := by
   classical
-  intro K Ci hcurv hKpos
+  intro K hcurv hKpos
   by_contra hnot
   have hone : K.1 = 1 := by omega
   simp [DiamondRecursiveQuadruple, hone] at hcurv
@@ -88,10 +90,11 @@ private theorem hrootCell :
     (by
       classical
       exact
-        ∀ (K : DiamondParameter), (BandCircle) → ((BandCircle) → ((0 < K.1) → ((2 ≤ K.1) → ((⟨0,
-            0⟩ : GaussianInt) ∈ DiamondCellDomain K.1)))) ) := by
+        ∀ (K : DiamondParameter),
+          0 < K.1 → 2 ≤ K.1 → (⟨0, 0⟩ : GaussianInt) ∈ DiamondCellDomain K.1
+    ) := by
   classical
-  intro K C0 Ci hKpos hk2
+  intro K hKpos hk2
   simp only [DiamondCellDomain, Finset.mem_biUnion]
   refine ⟨0, by simp [hKpos], ?_⟩
   have hr : Nat.min (0 + 1) (2 * K.1 - 0) = 1 := by
@@ -257,13 +260,17 @@ private theorem overlap :
     (by
       classical
       exact
-        ∀ (K : DiamondParameter), (BandCircle) → ((BandCircle) → (∀ (x : GaussianInt), (2 ≤ K.1)
-            → (∀ (u : GaussianInt),
-        let z := x - u
-        (z ∈ DiamondVertexDomains K false) → ((z + ⟨0, 2 * (K.1 : Int)⟩ ∈ DiamondVertexDomains K
-            false) → (z.im = 0 ∧ Int.natAbs z.re ≤ 1))))) ) := by
+        ∀ (K : DiamondParameter),
+          ∀ (x : GaussianInt),
+            2 ≤ K.1 →
+              ∀ (u : GaussianInt),
+                let z := x - u
+                z ∈ DiamondVertexDomains K false →
+                  z + ⟨0, 2 * (K.1 : Int)⟩ ∈ DiamondVertexDomains K false →
+                    z.im = 0 ∧ Int.natAbs z.re ≤ 1
+    ) := by
   classical
-  intro K C0 Ci x hk2 u z hzUpper hzLower
+  intro K x hk2 u z hzUpper hzLower
   change max (Int.natAbs z.re)
     (max (Int.natAbs (z.im - (K.1 : Int)))
       (Int.natAbs z.re + Int.natAbs (z.im - (K.1 : Int)) - 1)) ≤ K.1 at hzUpper
@@ -342,15 +349,21 @@ private theorem hzzero :
     (by
       classical
       exact
-        ∀ (K : DiamondParameter), (BandCircle) → ((BandCircle) → (∀ (x : GaussianInt), (2 ≤ K.1)
-            → (∀ (u : GaussianInt),
-        let z := x - u
-        (z.im = 0 ∧ Int.natAbs z.re ≤ 1) → ((z - 1 ∈ DiamondVertexDomains K false ∨ z - 1 + ⟨0, 2
-            * (K.1 : Int)⟩ ∈ DiamondVertexDomains K false) → ((z + 1 ∈ DiamondVertexDomains K
-            false ∨ z + 1 + ⟨0, 2 * (K.1 : Int)⟩ ∈ DiamondVertexDomains K false) → (z = 0)))))) )
+        ∀ (K : DiamondParameter),
+          ∀ (x : GaussianInt),
+            2 ≤ K.1 →
+              ∀ (u : GaussianInt),
+                let z := x - u
+                z.im = 0 ∧ Int.natAbs z.re ≤ 1 →
+                  z - 1 ∈ DiamondVertexDomains K false ∨
+                      z - 1 + ⟨0, 2 * (K.1 : Int)⟩ ∈ DiamondVertexDomains K false →
+                    z + 1 ∈ DiamondVertexDomains K false ∨
+                        z + 1 + ⟨0, 2 * (K.1 : Int)⟩ ∈ DiamondVertexDomains K false →
+                      z = 0
+    )
             := by
   classical
-  intro K C0 Ci x hk2 u z overlap hwest heast
+  intro K x hk2 u z overlap hwest heast
   obtain ⟨hy, hx⟩ := overlap
   let bound (w : GaussianInt) : Prop := max (Int.natAbs w.re)
     (max (Int.natAbs (w.im - (K.1 : Int)))
@@ -625,12 +638,13 @@ private theorem hmcast :
     (by
       classical
       exact
-        ∀ (K : DiamondParameter), (BandCircle) → ((BandCircle) → ((GaussianInt) → ((2 ≤ K.1) →
-            ((GaussianInt) → (
-        let m := K.1 - 1
-        (m : Int) = (K.1 : Int) - 1))))) ) := by
+        ∀ (K : DiamondParameter),
+          2 ≤ K.1 →
+            let m := K.1 - 1
+            (m : Int) = (K.1 : Int) - 1
+    ) := by
   classical
-  intro K C0 Ci x hk2 u m
+  intro K hk2 m
   dsimp [m]
   have hk : 1 ≤ K.1 := by omega
   simp [hk]
@@ -639,11 +653,12 @@ private theorem hcell0 :
     (by
       classical
       exact
-        ∀ (K : DiamondParameter), (BandCircle) → ((BandCircle) → ((GaussianInt) → ((GaussianInt) → (
-        let m := K.1 - 1
-        (0 < m) → ((0 : GaussianInt) ∈ DiamondCellDomain m))))) ) := by
+        ∀ (K : DiamondParameter),
+          let m := K.1 - 1
+          0 < m → (0 : GaussianInt) ∈ DiamondCellDomain m
+    ) := by
   classical
-  intro K C0 Ci x u m hmpos
+  intro K m hmpos
   simp only [DiamondCellDomain, Finset.mem_biUnion]
   refine ⟨0, by simp [hmpos], ?_⟩
   have hr : Nat.min (0 + 1) (2 * m - 0) = 1 := by
@@ -657,11 +672,12 @@ private theorem hrow :
     (by
       classical
       exact
-        ∀ (K : DiamondParameter), (BandCircle) → ((BandCircle) → ((GaussianInt) → ((GaussianInt) → (
-        let m := K.1 - 1
-        (0 < m) → (((2 * m - 1 : Nat) : Int) = 2 * (m : Int) - 1))))) ) := by
+        ∀ (K : DiamondParameter),
+          let m := K.1 - 1
+          0 < m → ((2 * m - 1 : Nat) : Int) = 2 * (m : Int) - 1
+    ) := by
   classical
-  intro K C0 Ci x u m hmpos
+  intro K m hmpos
   rw [Nat.cast_sub (by omega : 1 ≤ 2 * m)]
   push_cast
   ring
@@ -670,12 +686,14 @@ private theorem htop :
     (by
       classical
       exact
-        ∀ (K : DiamondParameter), (BandCircle) → ((BandCircle) → ((GaussianInt) → ((GaussianInt) → (
-        let m := K.1 - 1
-        (0 < m) → ((((2 * m - 1 : Nat) : Int) = 2 * (m : Int) - 1) → ((⟨-1, 2 * (m : Int) - 1⟩ :
-            GaussianInt) ∈ DiamondCellDomain m)))))) ) := by
+        ∀ (K : DiamondParameter),
+          let m := K.1 - 1
+          0 < m →
+            ((2 * m - 1 : Nat) : Int) = 2 * (m : Int) - 1 →
+              (⟨-1, 2 * (m : Int) - 1⟩ : GaussianInt) ∈ DiamondCellDomain m
+    ) := by
   classical
-  intro K C0 Ci x u m hmpos hrow
+  intro K m hmpos hrow
   simp only [DiamondCellDomain, Finset.mem_biUnion]
   refine ⟨2 * m - 1, ?_, ?_⟩
   · simpa only [Finset.mem_range] using
@@ -1487,7 +1505,7 @@ theorem DiamondOpposingBoundaryStarLocalization
           hcentroid hslope hcurv
       subst i
       have hKpos : 0 < K.1 := K.2
-      have hk2 := DiamondBoundaryStarGeometry.hk2 K Ci hcurv hKpos
+      have hk2 := DiamondBoundaryStarGeometry.hk2 K hcurv hKpos
       obtain ⟨H, hH, hHdom, hHfoot, hHsquares, hHvalue, hHslope⟩ :=
         DiamondTileOdometerRestriction K
       have hC0pos : 0 < C0.1.1.1 := DiamondBoundaryStarGeometry.hC0pos K hq C0 hC0
@@ -1498,7 +1516,7 @@ theorem DiamondOpposingBoundaryStarLocalization
         (TileOdometerTranslationUniqueness C0.1.1 T0' (DiamondTile K.1) h0' H
           hC0pos hO0' (by simpa [hC0] using hH)).exists
       have hrootNonempty : (DiamondTile K.1).cells.Nonempty :=
-        ⟨⟨0, 0⟩, (DiamondBoundaryStarGeometry.hrootCell K C0 Ci hKpos hk2)⟩
+        ⟨⟨0, 0⟩, (DiamondBoundaryStarGeometry.hrootCell K hKpos hk2)⟩
       have hT0cent := DiamondBoundaryStarGeometry.hT0cent K T0 u huCell
           (DiamondBoundaryStarGeometry.hT0ne K T0 u huCell hrootNonempty)
       have hT0'cent := DiamondBoundaryStarGeometry.hT0'cent K T0' u' hu'Cell
@@ -1511,13 +1529,12 @@ theorem DiamondOpposingBoundaryStarLocalization
       have hzUpper := DiamondBoundaryStarGeometry.hzUpper K h0
           x hx0 H u huDom Hmem
       have hzLower := DiamondBoundaryStarGeometry.hzLower K h0' x hx0' H u u' hu'Dom hshift' Hmem
-      have overlap := DiamondBoundaryStarGeometry.overlap K C0
-          Ci x hk2 u hzUpper hzLower
+      have overlap := DiamondBoundaryStarGeometry.overlap K x hk2 u hzUpper hzLower
       have hwest := DiamondBoundaryStarGeometry.hwest K h0 h0' x hstar H u huDom u' hu'Dom
           hshift' Hmem
       have heast := DiamondBoundaryStarGeometry.heast K h0 h0' x hstar H u huDom u' hu'Dom
           hshift' Hmem
-      have hzzero := DiamondBoundaryStarGeometry.hzzero K C0 Ci x hk2 u overlap hwest heast
+      have hzzero := DiamondBoundaryStarGeometry.hzzero K x hk2 u overlap hwest heast
       have hx_eq_u := DiamondBoundaryStarGeometry.hx_eq_u x u hzzero
       have hroot := DiamondBoundaryStarGeometry.hroot K hk2
       obtain ⟨S, gS, hband0, hsub0, hcells0, hfoot0, hcent0,
@@ -1548,12 +1565,12 @@ theorem DiamondOpposingBoundaryStarLocalization
               (DiamondBoundaryStarGeometry.hUcent K T0 u hT0cent S hcent0 Sc hOcc)
       let m := K.1 - 1
       have hmpos : 0 < m := by dsimp [m]; omega
-      have hmcast := DiamondBoundaryStarGeometry.hmcast K C0 Ci x
-          hk2 u
+      have hmcast := DiamondBoundaryStarGeometry.hmcast K
+          hk2
       have hcell0 := DiamondBoundaryStarGeometry.hcell0
-          K C0 Ci x u hmpos
-      have htop := DiamondBoundaryStarGeometry.htop K C0 Ci x u hmpos
-          (DiamondBoundaryStarGeometry.hrow K C0 Ci x u hmpos)
+          K hmpos
+      have htop := DiamondBoundaryStarGeometry.htop K hmpos
+          (DiamondBoundaryStarGeometry.hrow K hmpos)
       have hbaseFoot := DiamondBoundaryStarGeometry.hbaseFoot K
       have hbase0 := hbaseFoot 0 hcell0
       have hbaseTop := hbaseFoot ⟨-1, 2 * (m : Int) - 1⟩ htop

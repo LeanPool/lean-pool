@@ -88,39 +88,87 @@ private theorem rotatedT5 :
     (by
       classical
       exact
-        ∀ (q : Fin (4 : ℕ) → CircleCoordinates), (Fin (4 : ℕ) → CircleCoordinates) → ((∀ (D :
-            CircleCoordinates), ∀ (U : ProtoTile), BandPrototile D U → D.1.toNat < (q (0 : Fin (4
-            : ℕ))).1.toNat → QuarterTurnSymmetric U) → ((∀ (q' : Fin (4 : ℕ) →
-            CircleCoordinates), ∀ (T' : ProtoTile), ∀ (U : ProtoTile), ∀ (V : ProtoTile),
-            ProperBandQuadruple q' → BandPrototile (q' (0 : Fin (4 : ℕ))) T' → (q' (0 : Fin (4 :
-            ℕ))).1.toNat < (q (0 : Fin (4 : ℕ))).1.toNat → ∀ (i : Fin (3 : ℕ)), BandPrototile (q'
-            i.succ) U → BandPrototile (q' (i + (1 : Fin (3 : ℕ))).succ) V → TileCentroid U -
-            TileCentroid T' = (1 / 2 : ℝ) • (GaussianRealPoint (BandVectors.1 (q' i.succ) (q' (0
-            : Fin (4 : ℕ)))) + GaussianRealPoint (BandVectors.1 (q' (0 : Fin (4 : ℕ))) (q'
-            i.succ))) → TileCentroid V - TileCentroid T' = (1 / 2 : ℝ) • (GaussianRealPoint
-            (BandVectors.1 (q' (i + (1 : Fin (3 : ℕ))).succ) (q' (0 : Fin (4 : ℕ)))) -
-            GaussianRealPoint (BandVectors.1 (q' (0 : Fin (4 : ℕ))) (q' (i + (1 : Fin (3 :
-            ℕ))).succ))) → TouchingTriple T' U V) → ((∀ (T : ProtoTile), ∀ (U : ProtoTile), ∀ (X
-            : ProtoTile), ∀ (Y : ProtoTile), (T.cells = U.cells) → ((T.cells = ∅ → T.anchor =
-            U.anchor) → (TouchingTriple X T Y ↔ TouchingTriple X U Y))) → ((∀ (C :
-            CircleCoordinates), ∀ (W : ProtoTile), (BandPrototile C W) → ((QuarterTurnSymmetric
-            W) → (∃ W' : ProtoTile, BandPrototile C W' ∧ (TileQuarterTurn W').cells = W.cells ∧
-            ((TileQuarterTurn W').cells = ∅ → (TileQuarterTurn W').anchor = W.anchor) ∧
-            TileCentroid (TileQuarterTurn W') = TileCentroid W))) → (∀ (p : Fin (4 : ℕ) →
-            CircleCoordinates), ProperBandQuadruple p → (p (0 : Fin (4 : ℕ))).1.toNat < (q (0 :
-            Fin (4 : ℕ))).1.toNat → ∀ (n : ℕ), ∀ (T : ProtoTile), ∀ (U : ProtoTile), ∀ (V :
-            ProtoTile), BandPrototile (p (0 : Fin (4 : ℕ))) T → BandPrototile (p (2 : Fin (4 :
-            ℕ))) U → BandPrototile (p (3 : Fin (4 : ℕ))) V → TileCentroid U - TileCentroid T = (1
-            / 2 : ℝ) • (GaussianRealPoint (GaussianQuarterTurn^[n] (BandVectors.1 (p (2 : Fin (4
-            : ℕ))) (p (0 : Fin (4 : ℕ))))) + GaussianRealPoint (GaussianQuarterTurn^[n]
-            (BandVectors.1 (p (0 : Fin (4 : ℕ))) (p (2 : Fin (4 : ℕ)))))) → TileCentroid V -
-            TileCentroid T = (1 / 2 : ℝ) • (GaussianRealPoint (GaussianQuarterTurn^[n]
-            (BandVectors.1 (p (3 : Fin (4 : ℕ))) (p (0 : Fin (4 : ℕ))))) - GaussianRealPoint
-            (GaussianQuarterTurn^[n] (BandVectors.1 (p (0 : Fin (4 : ℕ))) (p (3 : Fin (4 :
-            ℕ)))))) → TouchingTriple T U V)))))
+        ∀ (q : Fin (4 : ℕ) → CircleCoordinates),
+          (∀ (D : CircleCoordinates),
+              ∀ (U : ProtoTile),
+                BandPrototile D U →
+                  D.1.toNat < (q (0 : Fin (4 : ℕ))).1.toNat → QuarterTurnSymmetric U) →
+            (∀ (q' : Fin (4 : ℕ) → CircleCoordinates),
+                ∀ (T' : ProtoTile),
+                  ∀ (U : ProtoTile),
+                    ∀ (V : ProtoTile),
+                      ProperBandQuadruple q' →
+                        BandPrototile (q' (0 : Fin (4 : ℕ))) T' →
+                          (q' (0 : Fin (4 : ℕ))).1.toNat < (q (0 : Fin (4 : ℕ))).1.toNat →
+                            ∀ (i : Fin (3 : ℕ)),
+                              BandPrototile (q' i.succ) U →
+                                BandPrototile (q' (i + (1 : Fin (3 : ℕ))).succ) V →
+                                TileCentroid U - TileCentroid T' =
+                                (1 / 2 : ℝ) •
+                                (GaussianRealPoint
+                                (BandVectors.1 (q' i.succ) (q' (0 : Fin (4 : ℕ)))) +
+                                GaussianRealPoint
+                                (BandVectors.1 (q' (0 : Fin (4 : ℕ))) (q' i.succ))) →
+                                TileCentroid V - TileCentroid T' =
+                                (1 / 2 : ℝ) •
+                                (GaussianRealPoint
+                                (BandVectors.1 (q' (i + (1 : Fin (3 : ℕ))).succ)
+                                (q' (0 : Fin (4 : ℕ)))) -
+                                GaussianRealPoint
+                                (BandVectors.1 (q' (0 : Fin (4 : ℕ)))
+                                (q' (i + (1 : Fin (3 : ℕ))).succ))) →
+                                TouchingTriple T' U V) →
+              (∀ (T : ProtoTile),
+                  ∀ (U : ProtoTile),
+                    ∀ (X : ProtoTile),
+                      ∀ (Y : ProtoTile),
+                        T.cells = U.cells →
+                          (T.cells = ∅ → T.anchor = U.anchor) →
+                            (TouchingTriple X T Y ↔ TouchingTriple X U Y)) →
+                (∀ (C : CircleCoordinates),
+                    ∀ (W : ProtoTile),
+                      BandPrototile C W →
+                        QuarterTurnSymmetric W →
+                          ∃ W' : ProtoTile,
+                            BandPrototile C W' ∧
+                              (TileQuarterTurn W').cells = W.cells ∧
+                                ((TileQuarterTurn W').cells = ∅ →
+                                (TileQuarterTurn W').anchor = W.anchor) ∧
+                                TileCentroid (TileQuarterTurn W') = TileCentroid W) →
+                  ∀ (p : Fin (4 : ℕ) → CircleCoordinates),
+                    ProperBandQuadruple p →
+                      (p (0 : Fin (4 : ℕ))).1.toNat < (q (0 : Fin (4 : ℕ))).1.toNat →
+                        ∀ (n : ℕ),
+                          ∀ (T : ProtoTile),
+                            ∀ (U : ProtoTile),
+                              ∀ (V : ProtoTile),
+                                BandPrototile (p (0 : Fin (4 : ℕ))) T →
+                                BandPrototile (p (2 : Fin (4 : ℕ))) U →
+                                BandPrototile (p (3 : Fin (4 : ℕ))) V →
+                                TileCentroid U - TileCentroid T =
+                                (1 / 2 : ℝ) •
+                                (GaussianRealPoint
+                                (GaussianQuarterTurn^[n]
+                                (BandVectors.1 (p (2 : Fin (4 : ℕ)))
+                                (p (0 : Fin (4 : ℕ))))) +
+                                GaussianRealPoint
+                                (GaussianQuarterTurn^[n]
+                                (BandVectors.1 (p (0 : Fin (4 : ℕ)))
+                                (p (2 : Fin (4 : ℕ)))))) →
+                                TileCentroid V - TileCentroid T =
+                                (1 / 2 : ℝ) •
+                                (GaussianRealPoint
+                                (GaussianQuarterTurn^[n]
+                                (BandVectors.1 (p (3 : Fin (4 : ℕ)))
+                                (p (0 : Fin (4 : ℕ))))) -
+                                GaussianRealPoint
+                                (GaussianQuarterTurn^[n]
+                                (BandVectors.1 (p (0 : Fin (4 : ℕ)))
+                                (p (3 : Fin (4 : ℕ)))))) →
+                                TouchingTriple T U V
     ) := by
   classical
-  intro q t hT2 hT5 observable preimage p hp hsmall
+  intro q hT2 hT5 observable preimage p hp hsmall
   have hsmall2 : Int.toNat (p 2).1 < Int.toNat (q 0).1 := by
     have hn := (SemiProperForestClassification p hp.1).1 2
     have hl := hp.2 1
@@ -506,86 +554,152 @@ private theorem precursors :
     (by
       classical
       exact
-        ∀ (q : Fin (4 : ℕ) → CircleCoordinates), ∀ (r : Fin (4 : ℕ) → CircleCoordinates), (Fin (4
-            : ℕ) → CircleCoordinates) → ((ProperBandQuadruple q) → ((ProperBandQuadruple r) → ((r
-            (0 : Fin (4 : ℕ)) = q (1 : Fin (4 : ℕ))) → ((r (2 : Fin (4 : ℕ)) = q (2 : Fin (4 :
-            ℕ))) → (((q (2 : Fin (4 : ℕ))).1 < (q (1 : Fin (4 : ℕ))).1) → (((4 : ℤ) ≤ (q (2 : Fin
-            (4 : ℕ))).1) → (∀ (x : ℝ × ℝ), ∀ (P : Fin (3 : ℕ) → Bool → ProtoTile), ∀ (Q : Fin (3
-            : ℕ) → Bool → ProtoTile), ∀ (S : Fin (3 : ℕ) → Bool → ProtoTile), (∀ (i : Fin (3 :
-            ℕ)), ∀ (s : Bool), BandPrototile (r i.succ) (Q i s)) → ((∀ (i : Fin (3 : ℕ)), ∀ (s :
-            Bool), BandPrototile (r i.succ) (S i s)) → ((∀ (p : Fin 4 → CircleCoordinates),
-            (ProperBandQuadruple p) → ((Int.toNat (p 0).1 < Int.toNat (q 0).1) → (∀ (n : Nat), ∀
-            (T : ProtoTile), ∀ (U : ProtoTile), ∀ (V : ProtoTile), BandPrototile (p 0) T →
-            BandPrototile (p 2) U → BandPrototile (p 3) V → TileCentroid U - TileCentroid T = (1
-            / 2 : Real) • (GaussianRealPoint ((GaussianQuarterTurn^[n]) (BandVectors.1 (p 2) (p
-            0))) + GaussianRealPoint ((GaussianQuarterTurn^[n]) (BandVectors.1 (p 0) (p 2)))) →
-            TileCentroid V - TileCentroid T = (1 / 2 : Real) • (GaussianRealPoint
-            ((GaussianQuarterTurn^[n]) (BandVectors.1 (p 3) (p 0))) - GaussianRealPoint
-            ((GaussianQuarterTurn^[n]) (BandVectors.1 (p 0) (p 3)))) → TouchingTriple T U V))) → (
-        let I : GaussianInt := ⟨0, 1⟩
-        let a := BandVectors.1 (q 3) (q 2)
-        let b := BandVectors.1 (q 1) (q 3)
-        let c := BandVectors.1 (q 2) (q 1)
-        let d := BandVectors.1 (r 1) (r 3)
-        let e := BandVectors.1 (r 2) (r 1)
-        (c = -a - b) → ((BandVectors.1 (r 3) (r 2) = a) → ((e = c + I * a) → ((d = b - I * a) →
-            ((∀ (z : GaussianInt), ∀ (w : GaussianInt), (z = I * w) → (w = -I * z)) →
-            (((TileCentroid (P (0 : Fin (3 : ℕ)) true)).1 - x.1 = (2 : ℝ)⁻¹ *
-            (((GaussianInt.toComplex : GaussianInt → ℂ) a).re + ((GaussianInt.toComplex :
-            GaussianInt → ℂ) a).im)) → (((TileCentroid (P (0 : Fin (3 : ℕ)) true)).2 - x.2 = (2 :
-            ℝ)⁻¹ * (((GaussianInt.toComplex : GaussianInt → ℂ) a).im - ((GaussianInt.toComplex :
-            GaussianInt → ℂ) a).re)) → (((TileCentroid (P (0 : Fin (3 : ℕ)) false)).1 - x.1 =
-            -((2 : ℝ)⁻¹ * (((GaussianInt.toComplex : GaussianInt → ℂ) a).re +
-            ((GaussianInt.toComplex : GaussianInt → ℂ) a).im))) → (((TileCentroid (P (0 : Fin (3
-            : ℕ)) false)).2 - x.2 = -((2 : ℝ)⁻¹ * (((GaussianInt.toComplex : GaussianInt → ℂ)
-            a).im - ((GaussianInt.toComplex : GaussianInt → ℂ) a).re))) → (((TileCentroid (Q (0 :
-            Fin (3 : ℕ)) false)).1 - (TileCentroid (P (0 : Fin (3 : ℕ)) true)).1 = -((2 : ℝ)⁻¹ *
-            (((GaussianInt.toComplex : GaussianInt → ℂ) a).re + ((GaussianInt.toComplex :
-            GaussianInt → ℂ) a).im))) → (((TileCentroid (Q (0 : Fin (3 : ℕ)) false)).2 -
-            (TileCentroid (P (0 : Fin (3 : ℕ)) true)).2 = -((2 : ℝ)⁻¹ * (((GaussianInt.toComplex
-            : GaussianInt → ℂ) a).im - ((GaussianInt.toComplex : GaussianInt → ℂ) a).re))) →
-            (((TileCentroid (Q (1 : Fin (3 : ℕ)) true)).1 - (TileCentroid (P (0 : Fin (3 : ℕ))
-            true)).1 = (2 : ℝ)⁻¹ * (((GaussianInt.toComplex : GaussianInt → ℂ) b).re +
-            ((GaussianInt.toComplex : GaussianInt → ℂ) a).im - (((GaussianInt.toComplex :
-            GaussianInt → ℂ) a).re - ((GaussianInt.toComplex : GaussianInt → ℂ) b).im))) →
-            (((TileCentroid (Q (1 : Fin (3 : ℕ)) true)).2 - (TileCentroid (P (0 : Fin (3 : ℕ))
-            true)).2 = (2 : ℝ)⁻¹ * (((GaussianInt.toComplex : GaussianInt → ℂ) b).im -
-            ((GaussianInt.toComplex : GaussianInt → ℂ) a).re - (((GaussianInt.toComplex :
-            GaussianInt → ℂ) b).re + ((GaussianInt.toComplex : GaussianInt → ℂ) a).im))) →
-            (((TileCentroid (Q (2 : Fin (3 : ℕ)) true)).1 - (TileCentroid (P (0 : Fin (3 : ℕ))
-            true)).1 = (2 : ℝ)⁻¹ * (-((GaussianInt.toComplex : GaussianInt → ℂ) a).re -
-            ((GaussianInt.toComplex : GaussianInt → ℂ) b).re + -((GaussianInt.toComplex :
-            GaussianInt → ℂ) a).im - (-((GaussianInt.toComplex : GaussianInt → ℂ) a).re +
-            (((GaussianInt.toComplex : GaussianInt → ℂ) b).im + ((GaussianInt.toComplex :
-            GaussianInt → ℂ) a).im)))) → (((TileCentroid (Q (2 : Fin (3 : ℕ)) true)).2 -
-            (TileCentroid (P (0 : Fin (3 : ℕ)) true)).2 = (2 : ℝ)⁻¹ * (-((GaussianInt.toComplex :
-            GaussianInt → ℂ) a).im - ((GaussianInt.toComplex : GaussianInt → ℂ) b).im +
-            ((GaussianInt.toComplex : GaussianInt → ℂ) a).re - (-((GaussianInt.toComplex :
-            GaussianInt → ℂ) a).re - ((GaussianInt.toComplex : GaussianInt → ℂ) b).re +
-            -((GaussianInt.toComplex : GaussianInt → ℂ) a).im))) → (((TileCentroid (S (1 : Fin (3
-            : ℕ)) false)).1 - (TileCentroid (P (0 : Fin (3 : ℕ)) false)).1 = -((2 : ℝ)⁻¹ *
-            (((GaussianInt.toComplex : GaussianInt → ℂ) b).re + ((GaussianInt.toComplex :
-            GaussianInt → ℂ) a).im - (((GaussianInt.toComplex : GaussianInt → ℂ) a).re -
-            ((GaussianInt.toComplex : GaussianInt → ℂ) b).im)))) → (((TileCentroid (S (1 : Fin (3
-            : ℕ)) false)).2 - (TileCentroid (P (0 : Fin (3 : ℕ)) false)).2 = -((2 : ℝ)⁻¹ *
-            (((GaussianInt.toComplex : GaussianInt → ℂ) b).im - ((GaussianInt.toComplex :
-            GaussianInt → ℂ) a).re - (((GaussianInt.toComplex : GaussianInt → ℂ) b).re +
-            ((GaussianInt.toComplex : GaussianInt → ℂ) a).im)))) → (((TileCentroid (S (2 : Fin (3
-            : ℕ)) false)).1 - (TileCentroid (P (0 : Fin (3 : ℕ)) false)).1 = -((2 : ℝ)⁻¹ *
-            (-((GaussianInt.toComplex : GaussianInt → ℂ) a).re - ((GaussianInt.toComplex :
-            GaussianInt → ℂ) b).re + -((GaussianInt.toComplex : GaussianInt → ℂ) a).im -
-            (-((GaussianInt.toComplex : GaussianInt → ℂ) a).re + (((GaussianInt.toComplex :
-            GaussianInt → ℂ) b).im + ((GaussianInt.toComplex : GaussianInt → ℂ) a).im))))) →
-            (((TileCentroid (S (2 : Fin (3 : ℕ)) false)).2 - (TileCentroid (P (0 : Fin (3 : ℕ))
-            false)).2 = -((2 : ℝ)⁻¹ * (-((GaussianInt.toComplex : GaussianInt → ℂ) a).im -
-            ((GaussianInt.toComplex : GaussianInt → ℂ) b).im + ((GaussianInt.toComplex :
-            GaussianInt → ℂ) a).re - (-((GaussianInt.toComplex : GaussianInt → ℂ) a).re -
-            ((GaussianInt.toComplex : GaussianInt → ℂ) b).re + -((GaussianInt.toComplex :
-            GaussianInt → ℂ) a).im)))) → (TouchingTriple (Q 1 true) (S 2 false) (Q 0 false) ∧
-            TouchingTriple (Q 2 true) (S 1 false) (Q 0 false))))))))))))))))))))))))))))))
+        ∀ (q : Fin (4 : ℕ) → CircleCoordinates),
+          ∀ (r : Fin (4 : ℕ) → CircleCoordinates),
+            ProperBandQuadruple q →
+              ProperBandQuadruple r →
+                r (0 : Fin (4 : ℕ)) = q (1 : Fin (4 : ℕ)) →
+                  r (2 : Fin (4 : ℕ)) = q (2 : Fin (4 : ℕ)) →
+                    (q (2 : Fin (4 : ℕ))).1 < (q (1 : Fin (4 : ℕ))).1 →
+                      (4 : ℤ) ≤ (q (2 : Fin (4 : ℕ))).1 →
+                        ∀ (x : ℝ × ℝ),
+                          ∀ (P : Fin (3 : ℕ) → Bool → ProtoTile),
+                            ∀ (Q : Fin (3 : ℕ) → Bool → ProtoTile),
+                              ∀ (S : Fin (3 : ℕ) → Bool → ProtoTile),
+                                (∀ (i : Fin (3 : ℕ)),
+                                ∀ (s : Bool), BandPrototile (r i.succ) (Q i s)) →
+                                (∀ (i : Fin (3 : ℕ)),
+                                ∀ (s : Bool), BandPrototile (r i.succ) (S i s)) →
+                                (∀ (p : Fin 4 → CircleCoordinates),
+                                ProperBandQuadruple p →
+                                Int.toNat (p 0).1 < Int.toNat (q 0).1 →
+                                ∀ (n : Nat),
+                                ∀ (T : ProtoTile),
+                                ∀ (U : ProtoTile),
+                                ∀ (V : ProtoTile),
+                                BandPrototile (p 0) T →
+                                BandPrototile (p 2) U →
+                                BandPrototile (p 3) V →
+                                TileCentroid U - TileCentroid T =
+                                (1 / 2 : Real) •
+                                (GaussianRealPoint
+                                (GaussianQuarterTurn^[n] (BandVectors.1 (p 2) (p 0))) +
+                                GaussianRealPoint
+                                (GaussianQuarterTurn^[n] (BandVectors.1 (p 0) (p 2)))) →
+                                TileCentroid V - TileCentroid T =
+                                (1 / 2 : Real) •
+                                (GaussianRealPoint
+                                (GaussianQuarterTurn^[n] (BandVectors.1 (p 3) (p 0))) -
+                                GaussianRealPoint
+                                (GaussianQuarterTurn^[n] (BandVectors.1 (p 0) (p 3)))) →
+                                TouchingTriple T U V) →
+                                let I : GaussianInt := ⟨0, 1⟩
+                              let a := BandVectors.1 (q 3) (q 2)
+                              let b := BandVectors.1 (q 1) (q 3)
+                              let c := BandVectors.1 (q 2) (q 1)
+                              let d := BandVectors.1 (r 1) (r 3)
+                              let e := BandVectors.1 (r 2) (r 1)
+                              c = -a - b →
+                                BandVectors.1 (r 3) (r 2) = a →
+                                e = c + I * a →
+                                d = b - I * a →
+                                (∀ (z : GaussianInt),
+                                ∀ (w : GaussianInt), z = I * w → w = -I * z) →
+                                (TileCentroid (P (0 : Fin (3 : ℕ)) true)).1 - x.1 =
+                                (2 : ℝ)⁻¹ *
+                                (((GaussianInt.toComplex : GaussianInt → ℂ) a).re +
+                                ((GaussianInt.toComplex : GaussianInt → ℂ) a).im) →
+                                (TileCentroid (P (0 : Fin (3 : ℕ)) true)).2 - x.2 =
+                                (2 : ℝ)⁻¹ *
+                                (((GaussianInt.toComplex : GaussianInt → ℂ) a).im -
+                                ((GaussianInt.toComplex : GaussianInt → ℂ) a).re) →
+                                (TileCentroid (P (0 : Fin (3 : ℕ)) false)).1 - x.1 =
+                                -((2 : ℝ)⁻¹ *
+                                (((GaussianInt.toComplex : GaussianInt → ℂ) a).re +
+                                ((GaussianInt.toComplex : GaussianInt → ℂ) a).im)) →
+                                (TileCentroid (P (0 : Fin (3 : ℕ)) false)).2 - x.2 =
+                                -((2 : ℝ)⁻¹ *
+                                (((GaussianInt.toComplex : GaussianInt → ℂ) a).im -
+                                ((GaussianInt.toComplex : GaussianInt → ℂ) a).re)) →
+                                (TileCentroid (Q (0 : Fin (3 : ℕ)) false)).1 -
+                                (TileCentroid (P (0 : Fin (3 : ℕ)) true)).1 =
+                                -((2 : ℝ)⁻¹ *
+                                (((GaussianInt.toComplex : GaussianInt → ℂ) a).re +
+                                ((GaussianInt.toComplex : GaussianInt → ℂ) a).im)) →
+                                (TileCentroid (Q (0 : Fin (3 : ℕ)) false)).2 -
+                                (TileCentroid (P (0 : Fin (3 : ℕ)) true)).2 =
+                                -((2 : ℝ)⁻¹ *
+                                (((GaussianInt.toComplex : GaussianInt → ℂ) a).im -
+                                ((GaussianInt.toComplex : GaussianInt → ℂ) a).re)) →
+                                (TileCentroid (Q (1 : Fin (3 : ℕ)) true)).1 -
+                                (TileCentroid (P (0 : Fin (3 : ℕ)) true)).1 =
+                                (2 : ℝ)⁻¹ *
+                                (((GaussianInt.toComplex : GaussianInt → ℂ) b).re +
+                                ((GaussianInt.toComplex : GaussianInt → ℂ) a).im -
+                                (((GaussianInt.toComplex : GaussianInt → ℂ) a).re -
+                                ((GaussianInt.toComplex : GaussianInt → ℂ) b).im)) →
+                                (TileCentroid (Q (1 : Fin (3 : ℕ)) true)).2 -
+                                (TileCentroid (P (0 : Fin (3 : ℕ)) true)).2 =
+                                (2 : ℝ)⁻¹ *
+                                (((GaussianInt.toComplex : GaussianInt → ℂ) b).im -
+                                ((GaussianInt.toComplex : GaussianInt → ℂ) a).re -
+                                (((GaussianInt.toComplex : GaussianInt → ℂ) b).re +
+                                ((GaussianInt.toComplex : GaussianInt → ℂ) a).im)) →
+                                (TileCentroid (Q (2 : Fin (3 : ℕ)) true)).1 -
+                                (TileCentroid (P (0 : Fin (3 : ℕ)) true)).1 =
+                                (2 : ℝ)⁻¹ *
+                                (-((GaussianInt.toComplex : GaussianInt → ℂ) a).re -
+                                ((GaussianInt.toComplex : GaussianInt → ℂ) b).re +
+                                -((GaussianInt.toComplex : GaussianInt → ℂ) a).im -
+                                (-((GaussianInt.toComplex : GaussianInt → ℂ) a).re +
+                                (((GaussianInt.toComplex : GaussianInt → ℂ) b).im +
+                                ((GaussianInt.toComplex : GaussianInt → ℂ) a).im))) →
+                                (TileCentroid (Q (2 : Fin (3 : ℕ)) true)).2 -
+                                (TileCentroid (P (0 : Fin (3 : ℕ)) true)).2 =
+                                (2 : ℝ)⁻¹ *
+                                (-((GaussianInt.toComplex : GaussianInt → ℂ) a).im -
+                                ((GaussianInt.toComplex : GaussianInt → ℂ) b).im +
+                                ((GaussianInt.toComplex : GaussianInt → ℂ) a).re -
+                                (-((GaussianInt.toComplex : GaussianInt → ℂ) a).re -
+                                ((GaussianInt.toComplex : GaussianInt → ℂ) b).re +
+                                -((GaussianInt.toComplex : GaussianInt → ℂ) a).im)) →
+                                (TileCentroid (S (1 : Fin (3 : ℕ)) false)).1 -
+                                (TileCentroid (P (0 : Fin (3 : ℕ)) false)).1 =
+                                -((2 : ℝ)⁻¹ *
+                                (((GaussianInt.toComplex : GaussianInt → ℂ) b).re +
+                                ((GaussianInt.toComplex : GaussianInt → ℂ) a).im -
+                                (((GaussianInt.toComplex : GaussianInt → ℂ) a).re -
+                                ((GaussianInt.toComplex : GaussianInt → ℂ) b).im))) →
+                                (TileCentroid (S (1 : Fin (3 : ℕ)) false)).2 -
+                                (TileCentroid (P (0 : Fin (3 : ℕ)) false)).2 =
+                                -((2 : ℝ)⁻¹ *
+                                (((GaussianInt.toComplex : GaussianInt → ℂ) b).im -
+                                ((GaussianInt.toComplex : GaussianInt → ℂ) a).re -
+                                (((GaussianInt.toComplex : GaussianInt → ℂ) b).re +
+                                ((GaussianInt.toComplex : GaussianInt → ℂ) a).im))) →
+                                (TileCentroid (S (2 : Fin (3 : ℕ)) false)).1 -
+                                (TileCentroid (P (0 : Fin (3 : ℕ)) false)).1 =
+                                -((2 : ℝ)⁻¹ *
+                                (-((GaussianInt.toComplex : GaussianInt → ℂ) a).re -
+                                ((GaussianInt.toComplex : GaussianInt → ℂ) b).re +
+                                -((GaussianInt.toComplex : GaussianInt → ℂ) a).im -
+                                (-((GaussianInt.toComplex : GaussianInt → ℂ) a).re +
+                                (((GaussianInt.toComplex : GaussianInt → ℂ) b).im +
+                                ((GaussianInt.toComplex : GaussianInt → ℂ) a).im)))) →
+                                (TileCentroid (S (2 : Fin (3 : ℕ)) false)).2 -
+                                (TileCentroid (P (0 : Fin (3 : ℕ)) false)).2 =
+                                -((2 : ℝ)⁻¹ *
+                                (-((GaussianInt.toComplex : GaussianInt → ℂ) a).im -
+                                ((GaussianInt.toComplex : GaussianInt → ℂ) b).im +
+                                ((GaussianInt.toComplex : GaussianInt → ℂ) a).re -
+                                (-((GaussianInt.toComplex : GaussianInt → ℂ) a).re -
+                                ((GaussianInt.toComplex : GaussianInt → ℂ) b).re +
+                                -((GaussianInt.toComplex : GaussianInt → ℂ) a).im))) →
+                                TouchingTriple (Q 1 true) (S 2 false) (Q 0 false) ∧
+                                TouchingTriple (Q 2 true) (S 1 false) (Q 0 false)
     ) := by
   classical
-  intro q r t hq hr hr0 hr2 h12 h2four x P Q S hQ hS rotatedT5 I a b c d e hc hr32 he hd inverse
+  intro q r hq hr hr0 hr2 h12 h2four x P Q S hQ hS rotatedT5 I a b c d e hc hr32 he hd inverse
       p0x p0y m0x m0y q0x q0y q1x q1y q2x q2y s1x s1y s2x s2y
   have rsmall (j : Fin 3) : Int.toNat (r j.succ).1 < Int.toNat (q 0).1 := by
     have hn := (SemiProperForestClassification r hr.1).1 j.succ
@@ -852,7 +966,7 @@ theorem BandDoubleDecomposition :
               (BandVectors.1 (p 3) (p 0))) -
             GaussianRealPoint ((GaussianQuarterTurn^[n])
               (BandVectors.1 (p 0) (p 3)))) → TouchingTriple T U V :=
-                  DoubleDecompositionProof.rotatedT5 q t hT2 hT5 observable preimage p hp hsmall
+                  DoubleDecompositionProof.rotatedT5 q hT2 hT5 observable preimage p hp hsmall
   let I : GaussianInt := ⟨0, 1⟩
   let a := BandVectors.1 (q 3) (q 2)
   let b := BandVectors.1 (q 1) (q 3)
@@ -1012,7 +1126,7 @@ theorem BandDoubleDecomposition :
       hSt hPmt hP2pt literal
   have precursors : TouchingTriple (Q 1 true) (S 2 false) (Q 0 false) ∧
       TouchingTriple (Q 2 true) (S 1 false) (Q 0 false) := DoubleDecompositionProof.precursors q
-          r t hq hr hr0 hr2 h12 h2four x P Q S hQ hS rotatedT5 hc hr32 he hd inverse p0x p0y m0x
+          r hq hr hr0 hr2 h12 h2four x P Q S hQ hS rotatedT5 hc hr32 he hd inverse p0x p0y m0x
           m0y q0x q0y q1x q1y q2x q2y s1x s1y s2x s2y
   exact ⟨common.1, common.2, precursors.1, precursors.2, cross1, cross2, cross3, cross4⟩
 

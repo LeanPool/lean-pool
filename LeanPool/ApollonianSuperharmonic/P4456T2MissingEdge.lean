@@ -127,11 +127,14 @@ private theorem hTne :
     (by
       classical
       exact
-        ∀ (C : BandCircle), ∀ (q : Fin 4 → CircleCoordinates), (ProperBandQuadruple q) → (∀ (T :
-            ProtoTile), (BandPrototile (q (0 : Fin (4 : ℕ))) T) → (((1 : ℤ) < (q (0 : Fin (4 :
-            ℕ))).1) → ((PeriodicTileComplex ↥(TilingLattice C)) → (T.cells.Nonempty)))) ) := by
+        ∀ (q : Fin 4 → CircleCoordinates),
+          ProperBandQuadruple q →
+            ∀ (T : ProtoTile),
+              BandPrototile (q (0 : Fin (4 : ℕ))) T →
+                (1 : ℤ) < (q (0 : Fin (4 : ℕ))).1 → T.cells.Nonempty
+    ) := by
   classical
-  intro C q hq T hT hlarge P
+  intro q hq T hT hlarge
   have harea := (BandTileSimultaneousInduction q hq T hT).2.1
   rw [Finset.nonempty_iff_ne_empty]
   intro he
@@ -242,31 +245,67 @@ private theorem hneqxy :
     (by
       classical
       exact
-        ∀ (C : BandCircle), (Fin 4 → CircleCoordinates) → (∀ (T : ProtoTile), ∀ (P :
-            PeriodicTileComplex ↥(TilingLattice C)), ∀ (x : GaussianInt), ∀ (y : GaussianInt), (y
-            ∈ FootprintVertices T) → ((FourNeighborAdjacent x y) → (({x, y} ∉ FootprintEdges T) →
-            (∀ (z : GaussianInt), ∀ (w : GaussianInt), ((x = z + (1 : GaussianInt) ∧ y = z + (1 :
-            GaussianInt) + (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt) ∨ y = z + (1 : GaussianInt) ∧ x = z
-            + (1 : GaussianInt) + (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt)) ∧ w = z + (1 : GaussianInt)
-            ∨ (x = z + (1 : GaussianInt) + (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt) ∧ y = z + (⟨(0 :
-            ℤ), (1 : ℤ)⟩ : GaussianInt) ∨ y = z + (1 : GaussianInt) + (⟨(0 : ℤ), (1 : ℤ)⟩ :
-            GaussianInt) ∧ x = z + (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt)) ∧ w = z + (⟨(0 : ℤ), (1 :
-            ℤ)⟩ : GaussianInt)) → ((∀ (U : ProtoTile), ({x, y} ∈ FootprintEdges U ↔ z ∈ U.cells ∨
-            w ∈ U.cells) ∧ ({x, y} ∈ BoundaryFootprintEdges U ↔ z ∈ U.cells ∧ w ∉ U.cells ∨ z ∉
-            U.cells ∧ w ∈ U.cells) ∧ (z ∈ U.cells ∨ w ∈ U.cells → x ∈ FootprintVertices U ∧ y ∈
-            FootprintVertices U ∧ ∀ (t : (↑(Set.Icc (0 : ℝ) (1 : ℝ)) : Type)), (((1 : ℝ) - (↑t :
-            ℝ)) * (↑x.re : ℝ) + (↑t : ℝ) * (↑y.re : ℝ), ((1 : ℝ) - (↑t : ℝ)) * (↑x.im : ℝ) + (↑t
-            : ℝ) * (↑y.im : ℝ)) ∈ TileRealization U) ∧ (z ∈ U.cells ∧ w ∈ U.cells →
-            OpenLatticeEdge x y ⊆ interior (TileRealization U)) ∧ ((∀ (j : Fin (4 : ℕ)),
-            LatticeVertexIncidentCell x j ∈ U.cells) → z ∈ U.cells ∧ w ∈ U.cells)) → ((({x, y} :
-            Finset GaussianInt) ∉ FootprintEdges T) → (∀ (a : ↥(TilingLattice C)), ∀ (b :
-            ↥(TilingLattice C)), (y ∈ FootprintVertices (P.tile a)) → ((y ∈ FootprintVertices
-            (P.tile b)) → ((∀ (v : GaussianInt), (v = x ∨ v = y) → (∃ j : Fin 4,
-            LatticeVertexIncidentCell v j ∉ T.cells)) → ((y ∈ BoundaryFootprintVertices (P.tile
-            a)) → ((y ∈ BoundaryFootprintVertices (P.tile b)) → (x ≠ y)))))))))))) ) := by
+        ∀ (C : BandCircle),
+          ∀ (T : ProtoTile),
+            ∀ (P : PeriodicTileComplex ↥(TilingLattice C)),
+              ∀ (x : GaussianInt),
+                ∀ (y : GaussianInt),
+                  y ∈ FootprintVertices T →
+                    FourNeighborAdjacent x y →
+                      { x, y } ∉ FootprintEdges T →
+                        ∀ (z : GaussianInt),
+                          ∀ (w : GaussianInt),
+                            (x = z + (1 : GaussianInt) ∧
+                                y =
+                                z + (1 : GaussianInt) +
+                                (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt) ∨
+                                y = z + (1 : GaussianInt) ∧
+                                x =
+                                z + (1 : GaussianInt) +
+                                (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt)) ∧
+                                w = z + (1 : GaussianInt) ∨
+                                (x =
+                                z + (1 : GaussianInt) +
+                                (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt) ∧
+                                y = z + (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt) ∨
+                                y =
+                                z + (1 : GaussianInt) +
+                                (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt) ∧
+                                x = z + (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt)) ∧
+                                w = z + (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt) →
+                              (∀ (U : ProtoTile),
+                                ({ x, y } ∈ FootprintEdges U ↔
+                                z ∈ U.cells ∨ w ∈ U.cells) ∧
+                                ({ x, y } ∈ BoundaryFootprintEdges U ↔
+                                z ∈ U.cells ∧ w ∉ U.cells ∨ z ∉ U.cells ∧ w ∈ U.cells) ∧
+                                (z ∈ U.cells ∨ w ∈ U.cells →
+                                x ∈ FootprintVertices U ∧
+                                y ∈ FootprintVertices U ∧
+                                ∀ (t : (↑(Set.Icc (0 : ℝ) (1 : ℝ)) : Type)),
+                                (((1 : ℝ) - (↑t : ℝ)) * (↑x.re : ℝ) +
+                                (↑t : ℝ) * (↑y.re : ℝ),
+                                ((1 : ℝ) - (↑t : ℝ)) * (↑x.im : ℝ) +
+                                (↑t : ℝ) * (↑y.im : ℝ)) ∈
+                                TileRealization U) ∧
+                                (z ∈ U.cells ∧ w ∈ U.cells →
+                                OpenLatticeEdge x y ⊆ interior (TileRealization U)) ∧
+                                ((∀ (j : Fin (4 : ℕ)),
+                                LatticeVertexIncidentCell x j ∈ U.cells) →
+                                z ∈ U.cells ∧ w ∈ U.cells)) →
+                                ({ x, y } : Finset GaussianInt) ∉ FootprintEdges T →
+                                ∀ (a : ↥(TilingLattice C)),
+                                ∀ (b : ↥(TilingLattice C)),
+                                y ∈ FootprintVertices (P.tile a) →
+                                y ∈ FootprintVertices (P.tile b) →
+                                (∀ (v : GaussianInt),
+                                v = x ∨ v = y →
+                                ∃ j : Fin 4, LatticeVertexIncidentCell v j ∉ T.cells) →
+                                y ∈ BoundaryFootprintVertices (P.tile a) →
+                                y ∈ BoundaryFootprintVertices (P.tile b) → x ≠ y
+    ) := by
   classical
-  intro C q T P x y hy hxy hnot z w hform hedgeFacts hedgeT a b hya hyb hmissT hboundA_y
-      hboundB_y hxy'
+  intro C T P x y hy hxy hnot z w hform hedgeFacts hedgeT a b hya hyb hmissT hboundA_y hboundB_y
+      hxy'
   subst y
   simp only [FourNeighborAdjacent] at hxy
   rcases hxy with h | h | h | h
@@ -501,7 +540,7 @@ theorem P4456T2MissingEdge (C : BandCircle)
           MissingEdgeGeometry.incident_of_footprint U v hne hv
   have hnonemptyA : (P.tile a).cells.Nonempty := ⟨z, ha⟩
   have hnonemptyB : (P.tile b).cells.Nonempty := ⟨w, hb⟩
-  have hTne : T.cells.Nonempty := MissingEdgeGeometry.hTne C q hq T hT hlarge P
+  have hTne : T.cells.Nonempty := MissingEdgeGeometry.hTne q hq T hT hlarge
   have hmissT (v : GaussianInt) (hv : v = x ∨ v = y) :
       ∃ j : Fin 4, LatticeVertexIncidentCell v j ∉ T.cells := MissingEdgeGeometry.hmissT C T P x
           hx y hy hxy hnot z w hform hedgeFacts hedgeT hzwT a b hxa hya hxb hyb v hv
@@ -523,7 +562,7 @@ theorem P4456T2MissingEdge (C : BandCircle)
   have hboundB_y : y ∈ BoundaryFootprintVertices (P.tile b) :=
     P3161T2IncidentBoundary (P.tile b) y
       (incident_of_footprint (P.tile b) y hnonemptyB hyb) (hmissingB y hy)
-  have hneqxy : x ≠ y := MissingEdgeGeometry.hneqxy C q T P x y hy hxy hnot z w hform hedgeFacts
+  have hneqxy : x ≠ y := MissingEdgeGeometry.hneqxy C T P x y hy hxy hnot z w hform hedgeFacts
       hedgeT a b hya hyb hmissT hboundA_y hboundB_y
   have hclass := (PeriodicTileIntersectionClassification P).1
   have habEdge : (FootprintEdges (P.tile a) ∩ FootprintEdges (P.tile b)).Nonempty :=

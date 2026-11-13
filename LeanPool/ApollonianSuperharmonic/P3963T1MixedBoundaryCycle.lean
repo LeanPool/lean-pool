@@ -187,25 +187,30 @@ private theorem parityStep :
     rw [hneg]
 
 private theorem hpNotTwo :
-    ∀ (V₁ : Set GaussianInt), ∀ (E₁ : Set (Finset GaussianInt)), ∀ (E₂ : Set (Finset
-        GaussianInt)), (Disjoint E₁ E₂) → (∀ (p₁ : List GaussianInt), ∀ (p₂ : List GaussianInt),
-            ∀ (x : GaussianInt), (GaussianInt) → (
-    let c₂ := p₂.rotate (p₂.idxOf x)
-    let good (z : GaussianInt) : Bool := @decide (z ∉ V₁) (Classical.propDecidable _)
-    ∀ (z : GaussianInt),
-    let c₁ := p₁.rotate (p₁.idxOf z)
-    let good₁ (w : GaussianInt) : Bool := decide (w ≠ x)
-    (GaussianInt) → (
-    let R := z :: (c₁.tail.takeWhile good₁ ++ [x])
-    let prefix₂ := c₂.tail.takeWhile good
-    let prefix₁ := c₁.tail.takeWhile good₁
-    let Q := x :: (prefix₂ ++ [z])
-    (Q.IsChain (fun u v => ({u, v} : Finset GaussianInt) ∈ E₂)) → ((R.IsChain (fun u v => ({u, v}
-        : Finset GaussianInt) ∈ E₁)) → (
-    let p := Q ++ prefix₁
-    p.length ≠ 2))))) := by
+    ∀ (V₁ : Set GaussianInt),
+      ∀ (E₁ : Set (Finset GaussianInt)),
+        ∀ (E₂ : Set (Finset GaussianInt)),
+          Disjoint E₁ E₂ →
+            ∀ (p₁ : List GaussianInt),
+              ∀ (p₂ : List GaussianInt),
+                ∀ (x : GaussianInt),
+                  let c₂ := p₂.rotate (p₂.idxOf x)
+                  let good (z : GaussianInt) : Bool :=
+                    @decide (z ∉ V₁) (Classical.propDecidable _)
+                  ∀ (z : GaussianInt),
+                    let c₁ := p₁.rotate (p₁.idxOf z)
+                    let good₁ (w : GaussianInt) : Bool := decide (w ≠ x)
+                    GaussianInt →
+                      let R := z :: (c₁.tail.takeWhile good₁ ++ [x])
+                      let prefix₂ := c₂.tail.takeWhile good
+                      let prefix₁ := c₁.tail.takeWhile good₁
+                      let Q := x :: (prefix₂ ++ [z])
+                      (Q.IsChain fun u v => ({ u, v } : Finset GaussianInt) ∈ E₂) →
+                        (R.IsChain fun u v => ({ u, v } : Finset GaussianInt) ∈ E₁) →
+                          let p := Q ++ prefix₁
+                          p.length ≠ 2 := by
   classical
-  intro V₁ E₁ E₂ hdisjoint p₁ p₂ x y c₂ good z c₁ good₁ w R prefix₂ prefix₁ Q hQedge hRedge p hlen
+  intro V₁ E₁ E₂ hdisjoint p₁ p₂ x c₂ good z c₁ good₁ w R prefix₂ prefix₁ Q hQedge hRedge p hlen
   have hlenparts : Q.length + prefix₁.length = 2 := by simpa [p, List.length_append] using hlen
   have hQlen : Q.length = prefix₂.length + 2 := by simp [Q]
   have hpref₂ : prefix₂ = [] := by
@@ -389,12 +394,11 @@ private theorem hrot₂x :
   exact List.getElem?_idxOf hx₂
 
 private theorem cycle_chain :
-    ∀ (p : List GaussianInt), ∀ (a : GaussianInt), ∀ (b : GaussianInt), (p.head? = some a) →
-        ((p.getLast? = some b) → ((FourNeighborAdjacent b a) → ((∀ u, ∀ v, ∀ l₁, ∀ l₂, p = l₁ ++
-            u :: v ::
-        l₂ → FourNeighborAdjacent u v) → (p.IsChain FourNeighborAdjacent)))) := by
+    ∀ (p : List GaussianInt),
+      (∀ u, ∀ v, ∀ l₁, ∀ l₂, p = l₁ ++ u :: v :: l₂ → FourNeighborAdjacent u v) →
+        p.IsChain FourNeighborAdjacent := by
   classical
-  intro p a b hh ht hc hadj
+  intro p hadj
   rw [List.isChain_iff_forall_rel_of_append_cons_cons]
   intro u v l₁ l₂ heq
   exact hadj u v l₁ l₂ heq
@@ -550,14 +554,15 @@ private theorem hwx :
   simpa [good₁] using hwgood
 
 private theorem hRlast :
-    ∀ (p₁ : List GaussianInt), ∀ (x : GaussianInt), ∀ (z : GaussianInt),
-    let c₁ := p₁.rotate (p₁.idxOf z)
-    let good₁ (w : GaussianInt) : Bool := decide (w ≠ x)
-    (GaussianInt) → (
-    let R := z :: (c₁.tail.takeWhile good₁ ++ [x])
-    R.getLast? = some x) := by
+    ∀ (p₁ : List GaussianInt),
+      ∀ (x : GaussianInt),
+        ∀ (z : GaussianInt),
+          let c₁ := p₁.rotate (p₁.idxOf z);
+          let good₁ (w : GaussianInt) : Bool := decide (w ≠ x);
+          let R := z :: (c₁.tail.takeWhile good₁ ++ [x])
+          R.getLast? = some x := by
   classical
-  intro p₁ x z c₁ good₁ w R
+  intro p₁ x z c₁ good₁ R
   apply List.getLast?_eq_some_iff.mpr
   refine ⟨z :: c₁.tail.takeWhile good₁, ?_⟩
   simp [R]
@@ -741,18 +746,24 @@ private theorem hdecomp₁' :
     _ = prefix₁ ++ x :: ws := by simp [prefix₁, hrest₁, hwx]
 
 private theorem hRedgePrefix :
-    ∀ (p₁ : List GaussianInt), ∀ (x : GaussianInt), (∀ {α : Type}, ∀ (a : α), ∀ (b : α), ∀ (u :
-        List α), ∀ (v : List α), a :: (u ++ [b]) = List.take (u.length + 2) (a :: (u ++ b :: v)))
-        → (∀ (z : GaussianInt),
-    let c₁ := p₁.rotate (p₁.idxOf z)
-    let good₁ (w : GaussianInt) : Bool := decide (w ≠ x)
-    (GaussianInt) → (∀ (ws : List GaussianInt),
-    let R := z :: (c₁.tail.takeWhile good₁ ++ [x])
-    let prefix₁ := c₁.tail.takeWhile good₁
-    (c₁.tail = prefix₁ ++ x :: ws) → (R = List.take (prefix₁.length + 2) (z :: (c₁.tail ++
-        [z]))))) := by
+    ∀ (p₁ : List GaussianInt),
+      ∀ (x : GaussianInt),
+        (∀ {α : Type},
+            ∀ (a : α),
+              ∀ (b : α),
+                ∀ (u : List α),
+                  ∀ (v : List α),
+                    a :: (u ++ [b]) = List.take (u.length + 2) (a :: (u ++ b :: v))) →
+          ∀ (z : GaussianInt),
+            let c₁ := p₁.rotate (p₁.idxOf z);
+            let good₁ (w : GaussianInt) : Bool := decide (w ≠ x);
+            ∀ (ws : List GaussianInt),
+              let R := z :: (c₁.tail.takeWhile good₁ ++ [x])
+              let prefix₁ := c₁.tail.takeWhile good₁
+              c₁.tail = prefix₁ ++ x :: ws →
+                R = List.take (prefix₁.length + 2) (z :: (c₁.tail ++ [z])) := by
   classical
-  intro p₁ x takeArc z c₁ good₁ w ws R prefix₁ hdecomp₁'
+  intro p₁ x takeArc z c₁ good₁ ws R prefix₁ hdecomp₁'
   calc
     R = z :: (prefix₁ ++ [x]) := rfl
     _ = List.take (prefix₁.length + 2)
@@ -840,18 +851,24 @@ private theorem hQchain :
   exact hc₂chain.take _
 
 private theorem hRprefix :
-    ∀ (p₁ : List GaussianInt), ∀ (x : GaussianInt), (∀ {α : Type}, ∀ (a : α), ∀ (b : α), ∀ (u :
-        List α), ∀ (v : List α), a :: (u ++ [b]) = List.take (u.length + 2) (a :: (u ++ b :: v)))
-        → (∀ (z : GaussianInt),
-    let c₁ := p₁.rotate (p₁.idxOf z)
-    (c₁ = z :: c₁.tail) → (
-    let good₁ (w : GaussianInt) : Bool := decide (w ≠ x)
-    (GaussianInt) → (∀ (ws : List GaussianInt),
-    let R := z :: (c₁.tail.takeWhile good₁ ++ [x])
-    let prefix₁ := c₁.tail.takeWhile good₁
-    (c₁.tail = prefix₁ ++ x :: ws) → (R = c₁.take (prefix₁.length + 2))))) := by
+    ∀ (p₁ : List GaussianInt),
+      ∀ (x : GaussianInt),
+        (∀ {α : Type},
+            ∀ (a : α),
+              ∀ (b : α),
+                ∀ (u : List α),
+                  ∀ (v : List α),
+                    a :: (u ++ [b]) = List.take (u.length + 2) (a :: (u ++ b :: v))) →
+          ∀ (z : GaussianInt),
+            let c₁ := p₁.rotate (p₁.idxOf z);
+            c₁ = z :: c₁.tail →
+              let good₁ (w : GaussianInt) : Bool := decide (w ≠ x);
+              ∀ (ws : List GaussianInt),
+                let R := z :: (c₁.tail.takeWhile good₁ ++ [x])
+                let prefix₁ := c₁.tail.takeWhile good₁
+                c₁.tail = prefix₁ ++ x :: ws → R = c₁.take (prefix₁.length + 2) := by
   classical
-  intro p₁ x takeArc z c₁ hc₁shape good₁ w ws R prefix₁ hdecomp₁'
+  intro p₁ x takeArc z c₁ hc₁shape good₁ ws R prefix₁ hdecomp₁'
   rw [show R = z :: (prefix₁ ++ [x]) by rfl, hc₁shape, hdecomp₁']
   exact takeArc z x prefix₁ ws
 
@@ -884,15 +901,17 @@ private theorem hQnodup :
   exact (List.take_sublist _ c₂).nodup hc₂nodup
 
 private theorem hznotprefix₁ :
-    ∀ (p₁ : List GaussianInt), ∀ (x : GaussianInt), ∀ (z : GaussianInt),
-    let c₁ := p₁.rotate (p₁.idxOf z)
-    (c₁.head? = some z) → ((c₁.Nodup) → (
-    let good₁ (w : GaussianInt) : Bool := decide (w ≠ x)
-    (GaussianInt) → (
-    let prefix₁ := c₁.tail.takeWhile good₁
-    z ∉ prefix₁))) := by
+    ∀ (p₁ : List GaussianInt),
+      ∀ (x : GaussianInt),
+        ∀ (z : GaussianInt),
+          let c₁ := p₁.rotate (p₁.idxOf z);
+          c₁.head? = some z →
+            c₁.Nodup →
+              let good₁ (w : GaussianInt) : Bool := decide (w ≠ x);
+              let prefix₁ := c₁.tail.takeWhile good₁
+              z ∉ prefix₁ := by
   classical
-  intro p₁ x z c₁ hrot₁z hc₁nodup good₁ w prefix₁ hzpre
+  intro p₁ x z c₁ hrot₁z hc₁nodup good₁ prefix₁ hzpre
   have hztail : z ∈ c₁.tail := List.takeWhile_subset good₁ hzpre
   have hhead : c₁.head? = some z := by simpa [c₁] using hrot₁z
   obtain ⟨tl, hshape⟩ := (List.head?_eq_some_iff).mp hhead
@@ -1196,25 +1215,27 @@ private theorem hE₂ :
         MixedCycleDetails.hE₂At785 V₁ E₂ p₂ x z hQedge c cs hpref₂
 
 private theorem hFf :
-    ∀ (V₁ : Set GaussianInt), ∀ (p₁ : List GaussianInt), ∀ (p₂ : List GaussianInt), ∀ (x :
-        GaussianInt),
-    let c₂ := p₂.rotate (p₂.idxOf x)
-    let good (z : GaussianInt) : Bool := @decide (z ∉ V₁) (Classical.propDecidable _)
-    ∀ (z : GaussianInt),
-    let c₁ := p₁.rotate (p₁.idxOf z)
-    let good₁ (w : GaussianInt) : Bool := decide (w ≠ x)
-    (GaussianInt) → (
-    let prefix₂ := c₂.tail.takeWhile good
-    let prefix₁ := c₁.tail.takeWhile good₁
-    let Q := x :: (prefix₂ ++ [z])
-    let p := Q ++ prefix₁
-    ∀ (hpne : p ≠ []),
-    let v := p.getLast hpne
-    let F : Set (Finset GaussianInt) := {e | e = {v, x} ∨
-      ∃ a b l₁ l₂, p = l₁ ++ a :: b :: l₂ ∧ e = {a, b}}
-    ({x, prefix₂.headD z} : Finset GaussianInt) ∈ F) := by
+    ∀ (V₁ : Set GaussianInt),
+      ∀ (p₁ : List GaussianInt),
+        ∀ (p₂ : List GaussianInt),
+          ∀ (x : GaussianInt),
+            let c₂ := p₂.rotate (p₂.idxOf x);
+            let good (z : GaussianInt) : Bool :=
+              @decide (z ∉ V₁) (Classical.propDecidable _);
+            ∀ (z : GaussianInt),
+              let c₁ := p₁.rotate (p₁.idxOf z);
+              let good₁ (w : GaussianInt) : Bool := decide (w ≠ x);
+              let prefix₂ := c₂.tail.takeWhile good
+              let prefix₁ := c₁.tail.takeWhile good₁
+              let Q := x :: (prefix₂ ++ [z])
+              let p := Q ++ prefix₁
+              ∀ (hpne : p ≠ []),
+                let v := p.getLast hpne
+                let F : Set (Finset GaussianInt) :=
+                  {e | e = { v, x } ∨ ∃ a b l₁ l₂, p = l₁ ++ a :: b :: l₂ ∧ e = { a, b }}
+                ({x, prefix₂.headD z} : Finset GaussianInt) ∈ F := by
   classical
-  intro V₁ p₁ p₂ x c₂ good z c₁ good₁ w prefix₂ prefix₁ Q p hpne v F
+  intro V₁ p₁ p₂ x c₂ good z c₁ good₁ prefix₂ prefix₁ Q p hpne v F
   cases hpref₂ : prefix₂ with
   | nil =>
       simpa only [List.headD] using
@@ -1258,7 +1279,7 @@ theorem P3963T1MixedBoundaryCycle
       (hh : p.head? = some a) (ht : p.getLast? = some b)
       (hc : FourNeighborAdjacent b a)
       (hadj : ∀ u v l₁ l₂, p = l₁ ++ u :: v :: l₂ → FourNeighborAdjacent u v) :=
-          MixedCycleDetails.cycle_chain p a b hh ht hc hadj
+          MixedCycleDetails.cycle_chain p hadj
   have rotate_chain (p : List GaussianInt) (k : Nat) (a b : GaussianInt)
       (hh : p.head? = some a) (ht : p.getLast? = some b)
       (hc : FourNeighborAdjacent b a)
@@ -1317,7 +1338,7 @@ theorem P3963T1MixedBoundaryCycle
   have hxR : x ∈ (z :: (c₁.tail.takeWhile good₁ ++ [x])).toFinset := by simp
   let R := z :: (c₁.tail.takeWhile good₁ ++ [x])
   have hRhead : R.head? = some z := by simp [R]
-  have hRlast := MixedCycleDetails.hRlast p₁ x z w
+  have hRlast := MixedCycleDetails.hRlast p₁ x z
   let prefix₂ := c₂.tail.takeWhile good
   have hc₂shape := MixedCycleDetails.hc₂shape p₂ x hrot₂x
   have hdecomp₂' := MixedCycleDetails.hdecomp₂' V₁ p₂ x z zs
@@ -1343,7 +1364,7 @@ theorem P3963T1MixedBoundaryCycle
   have hQedge := MixedCycleDetails.hQedge V₁ E₂ p₂ x z hc₂edgeChain hQedgePrefix
   have hdecomp₁' := MixedCycleDetails.hdecomp₁' p₁ x z w ws hrest₁
       hwx hdecomp₁
-  have hRedgePrefix := MixedCycleDetails.hRedgePrefix p₁ x takeArc z w ws hdecomp₁'
+  have hRedgePrefix := MixedCycleDetails.hRedgePrefix p₁ x takeArc z ws hdecomp₁'
   have hRedge : R.IsChain (fun u v => ({u, v} : Finset GaussianInt) ∈ E₁) :=
       MixedCycleDetails.hRedge E₁ p₁ x z hc₁edgeChain hRedgePrefix
   have hRtailE₁ : R.tail.IsChain (fun u v => ({u, v} : Finset GaussianInt) ∈ E₁) := by
@@ -1361,7 +1382,7 @@ theorem P3963T1MixedBoundaryCycle
   have hQchain := MixedCycleDetails.hQchain V₁ p₂ x hc₂chain z
       hQprefix
   have hRprefix := MixedCycleDetails.hRprefix p₁ x takeArc z
-      hc₁shape w ws hdecomp₁'
+      hc₁shape ws hdecomp₁'
   have hRchain := MixedCycleDetails.hRchain p₁ x z hc₁chain
       hRprefix
   have hQnodup := MixedCycleDetails.hQnodup V₁ p₂ x hc₂nodup z hQprefix
@@ -1370,7 +1391,7 @@ theorem P3963T1MixedBoundaryCycle
   have hxnotprefix₁ : x ∉ prefix₁ := by
     intro hxpre
     simpa [good₁] using List.mem_takeWhile_imp hxpre
-  have hznotprefix₁ := MixedCycleDetails.hznotprefix₁ p₁ x z hrot₁z hc₁nodup w
+  have hznotprefix₁ := MixedCycleDetails.hznotprefix₁ p₁ x z hrot₁z hc₁nodup
   have hcross : ∀ v ∈ Q, ∀ w ∈ prefix₁, v ≠ w := MixedBoundaryCycleProof.hcross V₁ V₂ E₁ E₂ p₁
       hV₁ p₂ x y hx hxy hx₁ hx₂ hidx₁x hidx₂x hrot₁x hrot₂x hc₂chain hc₂y hc₂nodup hc₂tail
       hrest₂ne z zs hrest₂ hzV₁ hdecomp₂ hzTail hxNotTail hzx hq2head hidx₁z hrot₁z hc₁shape hc₁x
@@ -1408,7 +1429,7 @@ theorem P3963T1MixedBoundaryCycle
       parity w = parity u + 1 := MixedBoundaryCycleProof.parityStep (u := u) (w := w) h
   have hadjP := MixedCycleDetails.hadjP V₁ p₁ p₂ x z hpChain
   have hpLenTwo : 2 ≤ p.length := MixedCycleDetails.hpLenTwo V₁ p₁ p₂ x z
-  have hpNotTwo : p.length ≠ 2 := MixedBoundaryCycleProof.hpNotTwo V₁ E₁ E₂ hdisjoint p₁ p₂ x y z
+  have hpNotTwo : p.length ≠ 2 := MixedBoundaryCycleProof.hpNotTwo V₁ E₁ E₂ hdisjoint p₁ p₂ x z
       w hQedge hRedge
   have hpNotThree : p.length ≠ 3 := MixedBoundaryCycleProof.hpNotThree V₁ p₁ p₂ x z w hpne
       hcloseP hphead parityStep hadjP
@@ -1428,7 +1449,7 @@ theorem P3963T1MixedBoundaryCycle
   have hE₂ : ({x, prefix₂.headD z} : Finset GaussianInt) ∈ E₂ := MixedClosingEdges.hE₂ V₁ E₂ p₂ x
       z hQedge
   have hFf : ({x, prefix₂.headD z} : Finset GaussianInt) ∈ F := MixedClosingEdges.hFf V₁ p₁ p₂ x
-      z w hpne
+      z hpne
   exact ⟨W, F, x, {v, x}, {x, prefix₂.headD z}, hsimple, hFsubset,
     by simp, by simp, ⟨hwrapF, hlastE₁⟩, ⟨hFf, hE₂⟩⟩
 

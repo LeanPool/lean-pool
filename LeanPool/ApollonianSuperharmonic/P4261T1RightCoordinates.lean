@@ -394,12 +394,15 @@ private theorem hchildPositive :
     (by
       classical
       exact
-        ∀ (q : Fin 4 → CircleCoordinates), (BandOrderedGeneralConfiguration q) → ((BandCircle) →
-            (∀ (i'' : Fin (3 : ℕ)), ∀ (r : Fin (3 : ℕ)),
-        let j : Fin 3 := i'' + r
-        0 < (q j.succ).1)) ) := by
+        ∀ (q : Fin 4 → CircleCoordinates),
+          BandOrderedGeneralConfiguration q →
+            ∀ (i'' : Fin (3 : ℕ)),
+              ∀ (r : Fin (3 : ℕ)),
+                let j : Fin 3 := i'' + r
+                0 < (q j.succ).1
+    ) := by
   classical
-  intro q cfg C₀ i'' r j
+  intro q cfg i'' r j
   have hn := (ProperBandCurvatureStructure q cfg.proper).2.1 j
   have hne := cfg.noLine j.succ
   omega
@@ -927,7 +930,7 @@ theorem P4261T1RightCoordinates
       e' i'' s S' hselectedCells R r hselectedCellsFresh ra hlayoutCells
   have hfootT : FootprintVertices T = FootprintVertices Pshift := RightCoordinateGeometry.hfootT
       q cfg C₀ T₀ cert T i' e' i'' s r ra hparentNonempty hselectedNonempty hcellsT
-  have hchildPositive := RightCoordinateGeometry.hchildPositive q cfg C₀ i'' r
+  have hchildPositive := RightCoordinateGeometry.hchildPositive q cfg i'' r
   have hdomainT : (h.domain : Set GaussianInt) = FootprintVertices T :=
     PositiveCurvatureTileOdometerDomain C.1.1 T h C.property hsub.2.1
   have hdomainFresh := RightCoordinateGeometry.hdomainFresh q i'' s R rH hrootChildren r

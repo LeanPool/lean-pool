@@ -300,11 +300,13 @@ private theorem hFCellsInvolutive :
     (by
       classical
       exact
-        (Fin 4 → CircleCoordinates) → ((BandCircle) → ((Fin 3) → (∀ (centerShift : GaussianInt),
-        let F : ProtoTile → ProtoTile := fun X => TileTranslation (TileHalfTurn X) centerShift
-        ∀ (X : ProtoTile), (F (F X)).cells = X.cells))) ) := by
+        ∀ (centerShift : GaussianInt),
+          let F : ProtoTile → ProtoTile := fun X =>
+            TileTranslation (TileHalfTurn X) centerShift
+          ∀ (X : ProtoTile), (F (F X)).cells = X.cells
+    ) := by
   classical
-  intro q D i centerShift F X
+  intro centerShift F X
   have hfun : (GaussianTranslation centerShift ∘
       (fun x : GaussianInt => -x - 1 - (⟨0, 1⟩ : GaussianInt)) ∘
         GaussianTranslation centerShift ∘
@@ -334,26 +336,49 @@ private theorem hFTCells :
     (by
       classical
       exact
-        ∀ (q : Fin 4 → CircleCoordinates), ∀ (C : BandCircle), ∀ (D : BandCircle), ∀ (i : Fin 3),
-            (q (0 : Fin (4 : ℕ)) = C.1.1) → ((q i.succ = D.1.1) → (∀ (T : ProtoTile), ∀ (U :
-            ProtoTile), ∀ (h : PartialOdometer), ∀ (k : PartialOdometer), (TileOdometer C.1.1 T
-            h) → ((TileCentroid U - TileCentroid T = GaussianRealPoint (BandVectors.1 (q i.succ)
-            (q (0 : Fin (4 : ℕ))))) → (∀ (centerShift : GaussianInt), ∀ (Rminus : ProtoTile), ∀
-            (Rplus : ProtoTile), ∀ (a : GaussianInt), ∀ (b : ℤ), ((TileTranslation (TileHalfTurn
-            Rminus) centerShift).cells = Rplus.cells) → ((k = PartialOdometerAffineTranslate
-            (PartialOdometerHalfTurn h) centerShift a b) → (∀ (q' : Fin (4 : ℕ) →
-            CircleCoordinates), (q' (0 : Fin (4 : ℕ)) = C.1.1) → ((q' i.succ = D.1.1) →
-            ((TileCentroid Rminus - TileCentroid T = (1 / 2 : ℝ) • GaussianRealPoint
-            (BandVectors.1 (q' i.succ) (q' (0 : Fin (4 : ℕ))) - BandVectors.1 (q' (0 : Fin (4 :
-            ℕ))) (q' i.succ))) → ((TileCentroid Rplus - TileCentroid T = (1 / 2 : ℝ) •
-            GaussianRealPoint (BandVectors.1 (q' i.succ) (q' (0 : Fin (4 : ℕ))) + BandVectors.1
-            (q' (0 : Fin (4 : ℕ))) (q' i.succ))) → ((BandPrototile C.1.1 U) → ((Finset.Nonempty
-            Rplus.cells) → (
-        let F : ProtoTile → ProtoTile := fun X => TileTranslation (TileHalfTurn X) centerShift
-        (F T).cells = U.cells)))))))))))) ) := by
+        ∀ (q : Fin 4 → CircleCoordinates),
+          ∀ (C : BandCircle),
+            ∀ (D : BandCircle),
+              ∀ (i : Fin 3),
+                q (0 : Fin (4 : ℕ)) = C.1.1 →
+                  q i.succ = D.1.1 →
+                    ∀ (T : ProtoTile),
+                      ∀ (U : ProtoTile),
+                        ∀ (h : PartialOdometer),
+                          TileOdometer C.1.1 T h →
+                            TileCentroid U - TileCentroid T =
+                                GaussianRealPoint
+                                (BandVectors.1 (q i.succ) (q (0 : Fin (4 : ℕ)))) →
+                              ∀ (centerShift : GaussianInt),
+                                ∀ (Rminus : ProtoTile),
+                                ∀ (Rplus : ProtoTile),
+                                GaussianInt →
+                                ℤ →
+                                (TileTranslation (TileHalfTurn Rminus)
+                                centerShift).cells =
+                                Rplus.cells →
+                                ∀ (q' : Fin (4 : ℕ) → CircleCoordinates),
+                                q' (0 : Fin (4 : ℕ)) = C.1.1 →
+                                q' i.succ = D.1.1 →
+                                TileCentroid Rminus - TileCentroid T =
+                                (1 / 2 : ℝ) •
+                                GaussianRealPoint
+                                (BandVectors.1 (q' i.succ) (q' (0 : Fin (4 : ℕ))) -
+                                BandVectors.1 (q' (0 : Fin (4 : ℕ))) (q' i.succ)) →
+                                TileCentroid Rplus - TileCentroid T =
+                                (1 / 2 : ℝ) •
+                                GaussianRealPoint
+                                (BandVectors.1 (q' i.succ) (q' (0 : Fin (4 : ℕ))) +
+                                BandVectors.1 (q' (0 : Fin (4 : ℕ))) (q' i.succ)) →
+                                BandPrototile C.1.1 U →
+                                Finset.Nonempty Rplus.cells →
+                                let F : ProtoTile → ProtoTile := fun X =>
+                                TileTranslation (TileHalfTurn X) centerShift
+                              (F T).cells = U.cells
+    ) := by
   classical
-  intro q C D i hC hD T U h k hh hc centerShift Rminus Rplus a b hminusCells houterAffine q' hq0
-      hqi hcentMinus hcentPlus hUband hRplusNe F
+  intro q C D i hC hD T U h hh hc centerShift Rminus Rplus a b hminusCells q' hq0 hqi hcentMinus
+      hcentPlus hUband hRplusNe F
   let hbar := PartialOdometerAffineTranslate
     (PartialOdometerHalfTurn h) centerShift a b
   have hbarO : TileOdometer C.1.1 (F T) hbar :=
@@ -471,13 +496,15 @@ private theorem hstep :
     (by
       classical
       exact
-        (Fin 4 → CircleCoordinates) → ((BandCircle) → ((Fin 3) → (∀ (centerShift : GaussianInt),
-        let f : GaussianInt → GaussianInt := fun z =>
-          GaussianTranslation centerShift (GaussianQuarterTurn (GaussianQuarterTurn z))
-        ∀ x y : GaussianInt, (y = x + 1 ∨ y = x - 1 ∨ y = x + ⟨0, 1⟩ ∨ y = x - ⟨0, 1⟩) → (f y = f
-            x + 1 ∨ f y = f x - 1 ∨ f y = f x + ⟨0, 1⟩ ∨ f y = f x - ⟨0, 1⟩)))) ) := by
+        ∀ (centerShift : GaussianInt),
+          let f : GaussianInt → GaussianInt := fun z =>
+            GaussianTranslation centerShift (GaussianQuarterTurn (GaussianQuarterTurn z))
+          ∀ x y : GaussianInt,
+            y = x + 1 ∨ y = x - 1 ∨ y = x + ⟨0, 1⟩ ∨ y = x - ⟨0, 1⟩ →
+              f y = f x + 1 ∨ f y = f x - 1 ∨ f y = f x + ⟨0, 1⟩ ∨ f y = f x - ⟨0, 1⟩
+    ) := by
   classical
-  intro q D i centerShift f x y hy
+  intro centerShift f x y hy
   rcases hy with hy | hy | hy | hy
   all_goals subst y; first
     | left; apply Zsqrtd.ext <;> simp [f, GaussianTranslation, GaussianQuarterTurn] <;> omega
@@ -619,12 +646,13 @@ private theorem hfixedUnique :
     (by
       classical
       exact
-        (Fin 4 → CircleCoordinates) → ((BandCircle) → ((Fin 3) → (∀ (centerShift : GaussianInt),
-        let f : GaussianInt → GaussianInt := fun z =>
-          GaussianTranslation centerShift (GaussianQuarterTurn (GaussianQuarterTurn z))
-        ∀ (x : GaussianInt), ∀ (y : GaussianInt), (f x = x) → ((f y = y) → (x = y))))) ) := by
+        ∀ (centerShift : GaussianInt),
+          let f : GaussianInt → GaussianInt := fun z =>
+            GaussianTranslation centerShift (GaussianQuarterTurn (GaussianQuarterTurn z))
+          ∀ (x : GaussianInt), ∀ (y : GaussianInt), f x = x → f y = y → x = y
+    ) := by
   classical
-  intro q D i centerShift f x y hx hy
+  intro centerShift f x y hx hy
   have hx' := by simpa [f, GaussianTranslation, GaussianQuarterTurn] using hx
   have hy' := by simpa [f, GaussianTranslation, GaussianQuarterTurn] using hy
   apply Zsqrtd.ext
@@ -732,11 +760,12 @@ private theorem hCpositive :
     (by
       classical
       exact
-        ∀ (q : Fin 4 → CircleCoordinates), (BandOrderedGeneralConfiguration q) → (∀ (C :
-            BandCircle), (BandCircle) → ((Fin 3) → ((q (0 : Fin (4 : ℕ)) = C.1.1) → (0 <
-            C.1.1.1)))) ) := by
+        ∀ (q : Fin 4 → CircleCoordinates),
+          BandOrderedGeneralConfiguration q →
+            ∀ (C : BandCircle), q (0 : Fin (4 : ℕ)) = C.1.1 → 0 < C.1.1.1
+    ) := by
   classical
-  intro q cfg C D i hC
+  intro q cfg C hC
   have hc := cfg.childLarge
   rw [hC] at hc
   omega
@@ -895,15 +924,20 @@ private theorem hpathIndex :
     (by
       classical
       exact
-        (Fin 4 → CircleCoordinates) → ((BandCircle) → ((BandCircle) → ((Fin 3) → (∀ (T :
-            ProtoTile), ∀ (U : ProtoTile), ∀ (path : List GaussianInt), (path.Nodup) → ((∀ (e :
-            Finset GaussianInt), e ∈ FootprintEdges T ∩ FootprintEdges U ↔ ∃ (a : GaussianInt) (b
-            : GaussianInt) (l₁ : List GaussianInt) (l₂ : List GaussianInt), path = l₁ ++ a :: b
-            :: l₂ ∧ e = {a, b}) → (∀ a b : GaussianInt, {a, b} ∈ FootprintEdges T ∩
-            FootprintEdges U → path.idxOf a + 1 = path.idxOf b ∨ path.idxOf b + 1 = path.idxOf
-            a)))))) ) := by
+        ∀ (T : ProtoTile),
+          ∀ (U : ProtoTile),
+            ∀ (path : List GaussianInt),
+              path.Nodup →
+                (∀ (e : Finset GaussianInt),
+                    e ∈ FootprintEdges T ∩ FootprintEdges U ↔
+                      ∃ (a : GaussianInt) (b : GaussianInt) (l₁ : List GaussianInt) (l₂ :
+                        List GaussianInt), path = l₁ ++ a :: b :: l₂ ∧ e = { a, b }) →
+                  ∀ a b : GaussianInt,
+                    { a, b } ∈ FootprintEdges T ∩ FootprintEdges U →
+                      path.idxOf a + 1 = path.idxOf b ∨ path.idxOf b + 1 = path.idxOf a
+    ) := by
   classical
-  intro q C D i T U path hpathNodup hpathEdges a b hab
+  intro T U path hpathNodup hpathEdges a b hab
   rcases (hpathEdges {a, b}).mp hab with ⟨c, d, l, r, heq, hedge⟩
   have hnd := hpathNodup
   rw [heq, List.nodup_append] at hnd
@@ -1035,7 +1069,10 @@ private theorem hcovered :
     (by
       classical
       exact
-        (Fin 4 → CircleCoordinates) → ((BandCircle) → ((BandCircle) → ((Fin 3) → (∀ (T :
+                                      (
+                                                      (
+                                                                      (
+                                                                                 (∀ (T :
             ProtoTile), ∀ (U : ProtoTile), ∀ (Rplus : ProtoTile), ∀ (Epositive :
             ExactTileInterfaceTriple T U Rplus), ∀ (walk : List GaussianInt), (∀ x y :
             GaussianInt, ∀ pre post : List GaussianInt, walk = pre ++ x :: y :: post → {x, y} ∈
@@ -1052,9 +1089,9 @@ private theorem hcovered :
             post → ∃ l r : List GaussianInt, ∃ a b : GaussianInt, walk = l ++ a :: b :: r ∧ ({a,
             b} : Finset GaussianInt) = {x, y})))))))))))))) ) := by
   classical
-  intro q C D i T U Rplus Epositive walk hwalkOuterEdges path hpathLength hpathIndex
-      hpathIndexInjective hstartIndex hfinishIndex hpathIndexEdge hwalkHeadPos hwalkLastPos
-      hwalkVertexPath u v pre post hsplit
+  intro T U Rplus Epositive walk hwalkOuterEdges path hpathLength hpathIndex hpathIndexInjective
+      hstartIndex hfinishIndex hpathIndexEdge hwalkHeadPos hwalkLastPos hwalkVertexPath u v pre
+      post hsplit
   have hindices := hpathIndexEdge u v pre post hsplit
   have humem : u ∈ path := by rw [hsplit]; simp
   have hvmem : v ∈ path := by rw [hsplit]; simp
@@ -1235,11 +1272,11 @@ theorem P4261T2UnitInterface
   have htriplePositive := UnitInterfaceGeometry.htriplePositive q cfg C D i hC hD T U cert hsym
       hc Rplus q' hq0 hqi hcentPlus hTband hUband hRplusBand hUNe
   let F : ProtoTile → ProtoTile := fun X => TileTranslation (TileHalfTurn X) centerShift
-  have hFTCells : (F T).cells = U.cells := UnitInterfaceGeometry.hFTCells q C D i hC hD T U h k
-      hh hc centerShift Rminus Rplus a b hminusCells houterAffine q' hq0 hqi hcentMinus hcentPlus
+  have hFTCells : (F T).cells = U.cells := UnitInterfaceGeometry.hFTCells q C D i hC hD T U h
+      hh hc centerShift Rminus Rplus a b hminusCells q' hq0 hqi hcentMinus hcentPlus
       hUband hRplusNe
   have hFUCells : (F U).cells = T.cells := UnitInterfaceGeometry.hFUCells T U centerShift
-      (UnitInterfaceGeometry.hFCellsInvolutive q D i centerShift)
+      (UnitInterfaceGeometry.hFCellsInvolutive centerShift)
       (UnitInterfaceGeometry.hFCellCongr centerShift) hFTCells
   have hFRplusCells : (F Rplus).cells = Rminus.cells := hplusCells
   let f : GaussianInt → GaussianInt := fun z =>
@@ -1248,7 +1285,7 @@ theorem P4261T2UnitInterface
       ∃ E' : ExactTileInterfaceTriple (F T) (F U) (F Rplus),
         E'.point = f E.point ∧ E'.otherAB = f E.otherAB  := UnitInterfaceGeometry.hpositiveImage
             T U centerShift Rplus
-      (UnitInterfaceGeometry.hf centerShift) (UnitInterfaceGeometry.hstep q D i centerShift)
+      (UnitInterfaceGeometry.hf centerShift) (UnitInterfaceGeometry.hstep centerShift)
       (UnitInterfaceGeometry.hvertices centerShift) (UnitInterfaceGeometry.hedges centerShift)
   obtain ⟨Epositive⟩ := htriplePositive
   obtain ⟨Eimage, himagePoint, himageAB⟩ := hpositiveImage Epositive
@@ -1290,11 +1327,11 @@ theorem P4261T2UnitInterface
       Epositive Eimage himagePoint hvFT hvFU hvFR heFT heFU heFR hendpointPair
       (UnitInterfaceGeometry.hpointNotFixed T U centerShift Rminus Rplus Epositive Eimage
       himageAB hvFT hvFU hvFR heFT heFU heFR hendpointPair (UnitInterfaceGeometry.hposNe T U
-      Rplus Epositive hposPath) hinvolutive (UnitInterfaceGeometry.hfixedUnique q D i centerShift))
+      Rplus Epositive hposPath) hinvolutive (UnitInterfaceGeometry.hfixedUnique centerShift))
   obtain ⟨walk, hwalkHead, hwalkLast, hwalkChain, hwalkVertices,
     hwalkEdges⟩ := OpposingStringInterfacePath D orientation base Rminus Rplus
       hRminusNeRplus hnonadj tiles reverseTiles hstring hreverse
-  have hCpositive := UnitInterfaceGeometry.hCpositive q cfg C D i hC
+  have hCpositive := UnitInterfaceGeometry.hCpositive q cfg C hC
   have hdomOuterT : (h.domain : Set GaussianInt) = FootprintVertices T :=
     PositiveCurvatureTileOdometerDomain C.1.1 T h hCpositive hh
   have hdomOuterU : (k.domain : Set GaussianInt) = FootprintVertices U :=
@@ -1312,7 +1349,7 @@ theorem P4261T2UnitInterface
       hwalkInOuter
   obtain ⟨path, hpathNodup, hpathLength, hpathHead, hpathLast,
     hpathVertices, hpathStep, hpathEdges⟩ := Epositive.pathAB
-  have hpathIndex := UnitInterfaceGeometry.hpathIndex q C D i T U path hpathNodup hpathEdges
+  have hpathIndex := UnitInterfaceGeometry.hpathIndex T U path hpathNodup hpathEdges
   have hpathIndexInjective {a b : GaussianInt} (ha : a ∈ path)
       (hidx : path.idxOf a = path.idxOf b) : a = b :=
     (List.idxOf_inj ha).mp hidx
@@ -1342,7 +1379,7 @@ theorem P4261T2UnitInterface
     edges := hpathEdges
     restrictions := (UnitInterfaceGeometry.hrestrictions C D T U h k tiles reverseTiles functions
         reverseFunctions hrestrictionsForward hrestrictionsBackward walk hwalkEdges path
-        (UnitInterfaceGeometry.hcovered q C D i T U Rplus Epositive walk hwalkOuterEdges path
+        (UnitInterfaceGeometry.hcovered T U Rplus Epositive walk hwalkOuterEdges path
         hpathLength hpathIndex hpathIndexInjective hstartIndex
         (UnitInterfaceGeometry.hfinishIndex T U Rplus Epositive path hpathLength
         hpathHead) (UnitInterfaceGeometry.hpathIndexEdge path hpathNodup)

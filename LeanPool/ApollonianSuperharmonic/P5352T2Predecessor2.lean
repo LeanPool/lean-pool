@@ -5,6 +5,7 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.ApollonianSuperharmonic.DiamondQuadraticArithmetic
 public import Mathlib.Init
 public import LeanPool.ApollonianSuperharmonic.EvenSquareQuotient
 public import LeanPool.ApollonianSuperharmonic.FourNeighborLaplacianProperties
@@ -62,15 +63,23 @@ private theorem predFoot :
     (by
       classical
       exact
-        ∀ (K : DiamondParameter), ((1 : ℕ) < K.1) → (
-        let k : Int := K.1
-        (ℤ) → ((ℤ) → (((↑(K.1 - (1 : ℕ)) : ℤ) = k - (1 : ℤ)) → (∀ (w : GaussianInt), (0 : ℤ) ≤
-            w.im ∧ w.im ≤ (2 : ℤ) * (k - (1 : ℤ)) ∧ -(k - (1 : ℤ)) ≤ w.re ∧ w.re ≤ k - (1 : ℤ) ∧
-            -w.im - (1 : ℤ) ≤ w.re ∧ w.re ≤ w.im + (1 : ℤ) ∧ -((2 : ℤ) * (k - (1 : ℤ)) - w.im +
-            (1 : ℤ)) ≤ w.re ∧ w.re ≤ (2 : ℤ) * (k - (1 : ℤ)) - w.im + (1 : ℤ) → w ∈
-            FootprintVertices (DiamondTile (K.1 - (1 : ℕ))))))) ) := by
+        ∀ (K : DiamondParameter),
+          (1 : ℕ) < K.1 →
+            let k : Int := K.1;
+            (↑(K.1 - (1 : ℕ)) : ℤ) = k - (1 : ℤ) →
+              ∀ (w : GaussianInt),
+                (0 : ℤ) ≤ w.im ∧
+                    w.im ≤ (2 : ℤ) * (k - (1 : ℤ)) ∧
+                      -(k - (1 : ℤ)) ≤ w.re ∧
+                        w.re ≤ k - (1 : ℤ) ∧
+                          -w.im - (1 : ℤ) ≤ w.re ∧
+                            w.re ≤ w.im + (1 : ℤ) ∧
+                              -((2 : ℤ) * (k - (1 : ℤ)) - w.im + (1 : ℤ)) ≤ w.re ∧
+                                w.re ≤ (2 : ℤ) * (k - (1 : ℤ)) - w.im + (1 : ℤ) →
+                  w ∈ FootprintVertices (DiamondTile (K.1 - (1 : ℕ)))
+    ) := by
   classical
-  intro K hk k a b hcast w hw
+  intro K hk k hcast w hw
   apply (P5352T2DomainRows ⟨K.1-1,by omega⟩ w).1.mpr
   simpa [hcast] using hw
 
@@ -78,37 +87,51 @@ private theorem predValue :
     (by
       classical
       exact
-        ∀ (K : DiamondParameter), ∀ (hk : (1 : ℕ) < K.1),
-        let k : Int := K.1
-        ∀ (a : ℤ), ∀ (b : ℤ), ∀ (hcast : (↑(K.1 - (1 : ℕ)) : ℤ) = k - (1 : ℤ)),
-        let Q : Int → Int → Int := fun x y =>
-          (Int.natAbs x : Int) * ((Int.natAbs x : Int)-1)/2 - (x-y)^2/4
-        ∀ (w : GaussianInt), (w∈FootprintVertices (DiamondTile (K.1-1))) → (DiamondOdometer
-            ⟨K.1-1,by omega⟩ w=Q w.re w.im)) := by
+        ∀ (K : DiamondParameter),
+          ∀ (hk : (1 : ℕ) < K.1),
+            let k : Int := K.1;
+            ∀ (hcast : (↑(K.1 - (1 : ℕ)) : ℤ) = k - (1 : ℤ)),
+              let Q : Int → Int → Int := fun x y =>
+                (Int.natAbs x : Int) * ((Int.natAbs x : Int) - 1) / 2 - (x - y) ^ 2 / 4
+              ∀ (w : GaussianInt),
+                w ∈ FootprintVertices (DiamondTile (K.1 - 1)) →
+                  DiamondOdometer ⟨K.1 - 1, by omega⟩ w = Q w.re w.im
+    ) := by
   classical
-  intro K hk k a b hcast Q w hw
+  intro K hk k hcast Q w hw
   simpa [Q] using (P5352T2DomainRows ⟨K.1-1,by omega⟩ w).2 hw
 
 private theorem predTranslatedValue :
     (by
       classical
       exact
-        ∀ (K : DiamondParameter), ∀ (hk : (1 : ℕ) < K.1), ∀ (f : IntegerLatticeFunction), ∀ (B :
-            Int),
-        let k : Int := K.1
-        let d : GaussianInt := ⟨-k,k+1⟩
-        let pred := P5352T2Sources K hk 3
-        ∀ (hpred : ∀ (y : GaussianInt), y - d ∈ FootprintVertices pred.1 → f y = pred.2.1 (y - d)
-            + (⟨(1 : ℤ), -k⟩ : GaussianInt).re * y.re + (⟨(1 : ℤ), -k⟩ : GaussianInt).im * y.im +
-                B), ∀ (a : ℤ), ∀ (b : ℤ), ∀ (hcast : (↑(K.1 - (1 : ℕ)) : ℤ) = k - (1 : ℤ)),
-        let Q : Int → Int → Int := fun x y =>
-          (Int.natAbs x : Int) * ((Int.natAbs x : Int)-1)/2 - (x-y)^2/4
-        (∀ (w : GaussianInt), (w∈FootprintVertices (DiamondTile (K.1-1))) → (DiamondOdometer
-            ⟨K.1-1,by omega⟩ w=Q w.re w.im)) → (∀ (y : GaussianInt), y - d ∈ FootprintVertices
-            (DiamondTile (K.1 - (1 : ℕ))) → f y = Q (y - d).re (y - d).im + y.re - k * y.im + B))
+        ∀ (K : DiamondParameter),
+          ∀ (hk : (1 : ℕ) < K.1),
+            ∀ (f : IntegerLatticeFunction),
+              ∀ (B : Int),
+                let k : Int := K.1;
+                let d : GaussianInt := ⟨-k, k + 1⟩;
+                let pred := P5352T2Sources K hk 3;
+                (∀ (y : GaussianInt),
+                    y - d ∈ FootprintVertices pred.1 →
+                      f y =
+                        pred.2.1 (y - d) + (⟨(1 : ℤ), -k⟩ : GaussianInt).re * y.re +
+                            (⟨(1 : ℤ), -k⟩ : GaussianInt).im * y.im +
+                          B) →
+                  ∀ (hcast : (↑(K.1 - (1 : ℕ)) : ℤ) = k - (1 : ℤ)),
+                    let Q : Int → Int → Int := fun x y =>
+                      (Int.natAbs x : Int) * ((Int.natAbs x : Int) - 1) / 2 -
+                        (x - y) ^ 2 / 4
+                    (∀ (w : GaussianInt),
+                        w ∈ FootprintVertices (DiamondTile (K.1 - 1)) →
+                          DiamondOdometer ⟨K.1 - 1, by omega⟩ w = Q w.re w.im) →
+                      ∀ (y : GaussianInt),
+                        y - d ∈ FootprintVertices (DiamondTile (K.1 - (1 : ℕ))) →
+                          f y = Q (y - d).re (y - d).im + y.re - k * y.im + B
+    )
                 := by
   classical
-  intro K hk f B k d pred hpred a b hcast Q predValue y hy
+  intro K hk f B k d pred hpred hcast Q predValue y hy
   have hp : y-d∈FootprintVertices pred.1 := by
     simpa [pred,P5352T2Sources] using hy
   have heq := hpred y hp
@@ -122,32 +145,21 @@ private theorem tri :
     (by
       classical
       exact
-        (DiamondParameter) → ((ℤ) → ((ℤ) → (
-        let T : Int → Int := fun n => n*(n-1)/2
-        ∀ (n : ℤ), (2 : ℤ) * T n = n * (n - (1 : ℤ))))) ) := by
-  classical
-  intro K a b T n
-  dsimp [T]
-  rcases Int.emod_two_eq_zero_or_one n with h|h
-  · have hn : n=2*(n/2) := by omega
-    rw [hn]
-    have he : 2*(n/2)*(2*(n/2)-1)=2*((n/2)*(2*(n/2)-1)) := by ring
-    rw [he,Int.mul_ediv_cancel_left _ (by norm_num : (2:Int)≠0)]
-  · have hn : n=2*(n/2)+1 := by omega
-    rw [hn]
-    have he : (2*(n/2)+1)*(2*(n/2)+1-1)=
-        2*((2*(n/2)+1)*(n/2)) := by ring
-    rw [he,Int.mul_ediv_cancel_left _ (by norm_num : (2:Int)≠0)]
+        let T : Int → Int := fun n => n * (n - 1) / 2
+        ∀ (n : ℤ), (2 : ℤ) * T n = n * (n - (1 : ℤ))
+    ) := by
+  exact DiamondQuadraticArithmetic.triangularScale
 
 private theorem tdiff :
     (by
       classical
       exact
-        (DiamondParameter) → ((ℤ) → ((ℤ) → (
-        let T : Int → Int := fun n => n*(n-1)/2
-        (∀ (n : Int), 2*T n=n*(n-1)) → (∀ (n : ℤ), T n - T (n - (1 : ℤ)) = n - (1 : ℤ))))) ) := by
+        let T : Int → Int := fun n => n * (n - 1) / 2
+        (∀ (n : Int), 2 * T n = n * (n - 1)) →
+          ∀ (n : ℤ), T n - T (n - (1 : ℤ)) = n - (1 : ℤ)
+    ) := by
   classical
-  intro K a b T tri n
+  intro T tri n
   have h1 := tri n
   have h2 := tri (n-1)
   have h : 2 * (T n - T (n - 1)) = 2 * (n - 1) := by
@@ -159,12 +171,12 @@ private theorem tdiffRev :
     (by
       classical
       exact
-        (DiamondParameter) → ((ℤ) → ((ℤ) → (
-        let T : Int → Int := fun n => n*(n-1)/2
-        (∀ (n : Int), T n - T (n - 1) = n - 1) → (∀ (n : ℤ), T (n - (1 : ℤ)) - T n = (1 : ℤ) -
-            n)))) ) := by
+        let T : Int → Int := fun n => n * (n - 1) / 2
+        (∀ (n : Int), T n - T (n - 1) = n - 1) →
+          ∀ (n : ℤ), T (n - (1 : ℤ)) - T n = (1 : ℤ) - n
+    ) := by
   classical
-  intro K a b T tdiff n
+  intro T tdiff n
   have h := tdiff n
   omega
 
@@ -173,10 +185,10 @@ private theorem floorOdd :
     (by
       classical
       exact
-        (DiamondParameter) → ((ℤ) → ((ℤ) → (∀ (m : ℤ), ((2 : ℤ) * m + (1 : ℤ)) ^ (2 : ℕ) / (4 :
-            ℤ) = m ^ (2 : ℕ) + m))) ) := by
+        ∀ (m : ℤ), ((2 : ℤ) * m + (1 : ℤ)) ^ (2 : ℕ) / (4 : ℤ) = m ^ (2 : ℕ) + m
+    ) := by
   classical
-  intro K a b m
+  intro m
   have h := P4207T1FloorArithmetic.1 1 m
   have he : 1+2*m=2*m+1 := by ring
   rw [he] at h
@@ -915,21 +927,21 @@ theorem P5352T2Predecessor2 (K : DiamondParameter) (hk : 1 < K.1)
     have predFoot (w : GaussianInt)
         (hw : 0≤w.im ∧ w.im≤2*(k-1) ∧ -(k-1)≤w.re ∧ w.re≤k-1 ∧
           -w.im-1≤w.re ∧ w.re≤w.im+1 ∧
-          -(2*(k-1)-w.im+1)≤w.re ∧ w.re≤2*(k-1)-w.im+1) := SecondPredecessorProof.predFoot K hk a b
+          -(2*(k-1)-w.im+1)≤w.re ∧ w.re≤2*(k-1)-w.im+1) := SecondPredecessorProof.predFoot K hk
             hcast w hw
     have predValue (w : GaussianInt)
-        (hw : w∈FootprintVertices (DiamondTile (K.1-1))) := SecondPredecessorProof.predValue K hk a
-            b hcast w hw
+        (hw : w∈FootprintVertices (DiamondTile (K.1-1))) := SecondPredecessorProof.predValue K
+            hk hcast w hw
     have predTranslatedValue (y : GaussianInt)
         (hy : y-d∈FootprintVertices (DiamondTile (K.1-1))) :=
             SecondPredecessorProof.predTranslatedValue K hk
-            f B hpred a b hcast predValue y hy
+            f B hpred hcast predValue y hy
     let T : Int → Int := fun n => n*(n-1)/2
-    have tri (n : Int) := SecondPredecessorProof.tri K a b n
-    have tdiff (n : Int) := SecondPredecessorProof.tdiff K a b tri n
-    have tdiffRev (n : Int) := SecondPredecessorProof.tdiffRev K a b tdiff n
+    have tri (n : Int) := SecondPredecessorProof.tri n
+    have tdiff (n : Int) := SecondPredecessorProof.tdiff tri n
+    have tdiffRev (n : Int) := SecondPredecessorProof.tdiffRev tdiff n
     have floorEven (m : Int) := EvenSquareQuotient.square m
-    have floorOdd (m : Int) := SecondPredecessorProof.floorOdd K a b m
+    have floorOdd (m : Int) := SecondPredecessorProof.floorOdd m
     have ht := SecondPredecessorProof.ht K a b hdpred hcast
         hdchild
     rcases ht with ⟨ht1,htk,hb⟩

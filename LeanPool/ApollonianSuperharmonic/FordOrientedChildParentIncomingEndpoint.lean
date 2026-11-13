@@ -31,12 +31,15 @@ private theorem cell :
     (by
       classical
       exact
-        (FordFareyParameter) → (
         let sq := fun (n : Nat) (a : GaussianInt) => TileTranslation (FordTile n) a
-        ∀ (n : Nat), ∀ (a : GaussianInt), ∀ (z : GaussianInt), z ∈ (sq n a).cells ↔ a.re ≤ z.re ∧
-            z.re < a.re+n ∧ a.im ≤ z.im ∧ z.im < a.im+n) ) := by
+        ∀ (n : Nat),
+          ∀ (a : GaussianInt),
+            ∀ (z : GaussianInt),
+              z ∈ (sq n a).cells ↔
+                a.re ≤ z.re ∧ z.re < a.re + n ∧ a.im ≤ z.im ∧ z.im < a.im + n
+    ) := by
   classical
-  intro P sq n a z
+  intro sq n a z
   change z ∈ (FordTile n).cells.image (GaussianTranslation a) ↔ _
   constructor
   · rintro hz
@@ -53,14 +56,22 @@ private theorem cent :
     (by
       classical
       exact
-        (FordFareyParameter) → (
         let sq := fun (n : Nat) (a : GaussianInt) => TileTranslation (FordTile n) a
-        (∀ (n : Nat), ∀ (a : GaussianInt), ∀ (z : GaussianInt), z ∈ (sq n a).cells ↔ a.re ≤ z.re
-            ∧ z.re < a.re+n ∧ a.im ≤ z.im ∧ z.im < a.im+n) → (∀ (T : ProtoTile), ∀ (n : Nat), (0
-            < n) → (∀ (a : GaussianInt), (T.cells = (sq n a).cells) → (TileCentroid T =
-            ((a.re:Real)+(n:Real)/2,(a.im:Real)+(n:Real)/2))))) ) := by
+        (∀ (n : Nat),
+            ∀ (a : GaussianInt),
+              ∀ (z : GaussianInt),
+                z ∈ (sq n a).cells ↔
+                  a.re ≤ z.re ∧ z.re < a.re + n ∧ a.im ≤ z.im ∧ z.im < a.im + n) →
+          ∀ (T : ProtoTile),
+            ∀ (n : Nat),
+              0 < n →
+                ∀ (a : GaussianInt),
+                  T.cells = (sq n a).cells →
+                    TileCentroid T =
+                      ((a.re : Real) + (n : Real) / 2, (a.im : Real) + (n : Real) / 2)
+    ) := by
   classical
-  intro P sq cell T n hn a hc
+  intro sq cell T n hn a hc
   have hne : (sq n a).cells.Nonempty := ⟨a,(cell n a a).mpr (by omega)⟩
   have ho := ProtoTileObservableExtensionality T (sq n a) hc
     (by intro h; rw [h] at hc; exact (hne.ne_empty hc.symm).elim)
@@ -101,27 +112,59 @@ private theorem finish :
     (by
       classical
       exact
-        (FordFareyParameter) → (
         let sq := fun (n : Nat) (a : GaussianInt) => TileTranslation (FordTile n) a
-        (∀ (n : Nat), ∀ (a : GaussianInt), ∀ (z : GaussianInt), z ∈ (sq n a).cells ↔ a.re ≤ z.re
-            ∧ z.re < a.re+n ∧ a.im ≤ z.im ∧ z.im < a.im+n) → ((∀ (T : ProtoTile), ∀ (n : Nat), ∀
-            (a : GaussianInt), ∀ (u : GaussianInt), (T.cells = (sq n a).cells) →
-            ((TileTranslation T u).cells = (sq n (a+u)).cells)) → ((∀ (T : ProtoTile), ∀ (n :
-            Nat), (0 < n) → (∀ (a : GaussianInt), (T.cells = (sq n a).cells) → (LatticeTile T)))
-            → (∀ (r : Nat), ∀ (s : Nat), (0 < r) → ((0 < s) → (∀ (j : Fin 4), ∀ (flip : Bool), ∀
-            (t : GaussianInt), ∀ (U : ProtoTile), ∀ (W : ProtoTile), (U.cells = (sq (r+s)
-            t).cells) → ((W.cells = (sq (![r,s,r,s] j)
-            ((if flip then (⟨r+s,r+s⟩ : GaussianInt) -
-              (![⟨s,r+s⟩,⟨-(s:Int),0⟩,⟨-(r:Int),s⟩,⟨r,-(s:Int)⟩] j) -
-              ⟨![r,s,r,s] j,![r,s,r,s] j⟩
-              else (![⟨s,r+s⟩,⟨-(s:Int),0⟩,⟨-(r:Int),s⟩,⟨r,-(s:Int)⟩] j))+t)).cells) → (∀ (D :
-                  GaussianInt), (D = if flip then
-            -(![⟨r+s,r⟩,⟨-(r+s:Int),s⟩,⟨-(r+s:Int),-(r:Int)⟩,⟨r+s,-(s:Int)⟩] j)
-            else (![⟨r+s,r⟩,⟨-(r+s:Int),s⟩,⟨-(r+s:Int),-(r:Int)⟩,⟨r+s,-(s:Int)⟩] j)) → (∃ _ :
-                ExactTileInterfaceTriple U (TileTranslation U D) W, TouchingTriple U
-                (TileTranslation U D) W))))))))) ) := by
+        (∀ (n : Nat),
+            ∀ (a : GaussianInt),
+              ∀ (z : GaussianInt),
+                z ∈ (sq n a).cells ↔
+                  a.re ≤ z.re ∧ z.re < a.re + n ∧ a.im ≤ z.im ∧ z.im < a.im + n) →
+          (∀ (T : ProtoTile),
+              ∀ (n : Nat),
+                ∀ (a : GaussianInt),
+                  ∀ (u : GaussianInt),
+                    T.cells = (sq n a).cells →
+                      (TileTranslation T u).cells = (sq n (a + u)).cells) →
+            (∀ (T : ProtoTile),
+                ∀ (n : Nat),
+                  0 < n → ∀ (a : GaussianInt), T.cells = (sq n a).cells → LatticeTile T) →
+              ∀ (r : Nat),
+                ∀ (s : Nat),
+                  0 < r →
+                    0 < s →
+                      ∀ (j : Fin 4),
+                        ∀ (flip : Bool),
+                          ∀ (t : GaussianInt),
+                            ∀ (U : ProtoTile),
+                              ∀ (W : ProtoTile),
+                                U.cells = (sq (r + s) t).cells →
+                                W.cells =
+                                (sq (![r, s, r, s] j)
+                                ((if flip then
+                                (⟨r + s, r + s⟩ : GaussianInt) -
+                                ![⟨s, r + s⟩, ⟨-(s : Int), 0⟩, ⟨-(r : Int), s⟩,
+                                ⟨r, -(s : Int)⟩]
+                                j -
+                                ⟨![r, s, r, s] j, ![r, s, r, s] j⟩
+                              else
+                                ![⟨s, r + s⟩, ⟨-(s : Int), 0⟩, ⟨-(r : Int), s⟩,
+                                ⟨r, -(s : Int)⟩]
+                                j) +
+                                t)).cells →
+                                ∀ (D : GaussianInt),
+                                (D =
+                                if flip then
+                                -![⟨r + s, r⟩, ⟨-(r + s : Int), s⟩,
+                                ⟨-(r + s : Int), -(r : Int)⟩, ⟨r + s, -(s : Int)⟩]
+                                j
+                              else
+                                ![⟨r + s, r⟩, ⟨-(r + s : Int), s⟩,
+                                ⟨-(r + s : Int), -(r : Int)⟩, ⟨r + s, -(s : Int)⟩]
+                                j) →
+                                ∃ _ : ExactTileInterfaceTriple U (TileTranslation U D) W,
+                                TouchingTriple U (TileTranslation U D) W
+    ) := by
   classical
-  intro P sq cell translate disk r s hr hs j flip t U W hU hW D hD
+  intro sq cell translate disk r s hr hs j flip t U W hU hW D hD
   let b : GaussianInt := ![⟨r+s,r⟩,⟨-(r+s:Int),s⟩,⟨-(r+s:Int),-(r:Int)⟩,⟨r+s,-(s:Int)⟩] j
   let c : GaussianInt := ![⟨s,r+s⟩,⟨-(s:Int),0⟩,⟨-(r:Int),s⟩,⟨r,-(s:Int)⟩] j
   let n : Nat := ![r,s,r,s] j
@@ -172,9 +215,10 @@ private theorem hr :
     (by
       classical
       exact
-        ∀ (P : FordFareyParameter), ((1 : ℕ) < P.q) → ((Fin (3 : ℕ)) → (0 < P.q₁)) ) := by
+        ∀ (P : FordFareyParameter), (1 : ℕ) < P.q → 0 < P.q₁
+    ) := by
   classical
-  intro P hq i
+  intro P hq
   by_contra h
   have hz : P.q₁ = 0 := by omega
   have hd := P.det₁
@@ -205,9 +249,9 @@ theorem FordOrientedChildParentIncomingEndpoint
 -- BODY
   classical
   let sq := fun (n : Nat) (a : GaussianInt) => TileTranslation (FordTile n) a
-  have cell (n : Nat) (a z : GaussianInt) := IncomingEndpointGeometry.cell P n a z
+  have cell (n : Nat) (a z : GaussianInt) := IncomingEndpointGeometry.cell n a z
   have cent (T : ProtoTile) (n : Nat) (hn : 0 < n) (a : GaussianInt)
-      (hc : T.cells = (sq n a).cells) := IncomingEndpointGeometry.cent P cell T n hn a hc
+      (hc : T.cells = (sq n a).cells) := IncomingEndpointGeometry.cent cell T n hn a hc
   have translate (T : ProtoTile) (n : Nat) (a u : GaussianInt)
       (hc : T.cells = (sq n a).cells) := IncomingEndpointGeometry.translate T n a u hc
   have disk (T : ProtoTile) (n : Nat) (hn : 0 < n) (a : GaussianInt)
@@ -224,10 +268,10 @@ theorem FordOrientedChildParentIncomingEndpoint
       (hD : D = if flip then
         -(![⟨r+s,r⟩,⟨-(r+s:Int),s⟩,⟨-(r+s:Int),-(r:Int)⟩,⟨r+s,-(s:Int)⟩] j)
         else (![⟨r+s,r⟩,⟨-(r+s:Int),s⟩,⟨-(r+s:Int),-(r:Int)⟩,⟨r+s,-(s:Int)⟩] j)) :=
-            IncomingEndpointGeometry.finish P cell translate disk r s hr hs j flip t U W hU hW D hD
+            IncomingEndpointGeometry.finish cell translate disk r s hr hs j flip t U W hU hW D hD
   dsimp only
   intro i s U W hU hW hUpos hWpos hcw
-  have hr := IncomingEndpointGeometry.hr P hq i
+  have hr := IncomingEndpointGeometry.hr P hq
   have hs := P.q₂_pos
   have hqs := P.sum_q
   obtain ⟨hp,h10,h20,_,_⟩ := (FordCoordinateConfiguration P).2 hq

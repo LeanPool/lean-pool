@@ -63,16 +63,22 @@ private theorem hturnedCells :
     (by
       classical
       exact
-        (Fin 4 → CircleCoordinates) → (∀ (T : ProtoTile), ∀ (g : GaussianInt), (GaussianRealPoint
-            g = ((TileCentroid T).1 + (TileCentroid T).2, (TileCentroid T).2 - (TileCentroid
-            T).1)) → (((TileTranslation (TileQuarterTurn T) g).cells = T.cells) → (
-        let rot : GaussianInt → GaussianInt := fun x => GaussianQuarterTurn x - 1
-        let cent : GaussianInt → GaussianInt := fun x => GaussianTranslation g (rot x)
-        (T.cells.image cent = T.cells) → (∀ (d : GaussianInt), (TileTranslation (TileQuarterTurn
-            (TileTranslation T d)) g).cells = (TileTranslation T (GaussianQuarterTurn
-            d)).cells)))) ) := by
+        ∀ (T : ProtoTile),
+          ∀ (g : GaussianInt),
+            GaussianRealPoint g =
+                ((TileCentroid T).1 + (TileCentroid T).2,
+                  (TileCentroid T).2 - (TileCentroid T).1) →
+              (TileTranslation (TileQuarterTurn T) g).cells = T.cells →
+                let rot : GaussianInt → GaussianInt := fun x => GaussianQuarterTurn x - 1
+                let cent : GaussianInt → GaussianInt := fun x =>
+                  GaussianTranslation g (rot x)
+                T.cells.image cent = T.cells →
+                  ∀ (d : GaussianInt),
+                    (TileTranslation (TileQuarterTurn (TileTranslation T d)) g).cells =
+                      (TileTranslation T (GaussianQuarterTurn d)).cells
+    ) := by
   classical
-  intro q T g hg hcenter rot cent hcentCells d
+  intro T g hg hcenter rot cent hcentCells d
   rw [(TileTranslationFormulas (TileQuarterTurn (TileTranslation T d)) g).1,
     (TileQuarterTurnFormulas (TileTranslation T d)).1,
     (TileTranslationFormulas T d).1,
@@ -205,10 +211,11 @@ private theorem adjSymm :
     (by
       classical
       exact
-        (Fin 4 → CircleCoordinates) → ((ProtoTile) → (∀ (x : Int × Int), ∀ (y : Int × Int),
-            (TriangularLatticeAdjacent x y) → (TriangularLatticeAdjacent y x))) ) := by
+        ∀ (x : Int × Int),
+          ∀ (y : Int × Int), TriangularLatticeAdjacent x y → TriangularLatticeAdjacent y x
+    ) := by
   classical
-  intro q T x y h
+  intro x y h
   simp only [TriangularLatticeAdjacent, Prod.ext_iff] at h ⊢
   rcases h with h | h | h | h | h | h <;>
     simp only [Prod.fst_sub, Prod.snd_sub] at h ⊢ <;> omega
@@ -563,10 +570,10 @@ private theorem coord_m01_m10 :
     (by
       classical
       exact
-        (Fin 4 → CircleCoordinates) → ((ProtoTile) → (∀ (w : Int × Int), (w + (0, -1)) - (1, 0) =
-            w + (-1, -1))) ) := by
+        ∀ (w : Int × Int), w + (0, -1) - (1, 0) = w + (-1, -1)
+    ) := by
   classical
-  intro q T w
+  intro w
   ext <;> simp [Prod.add_def, Prod.sub_def]; omega
 
 private theorem hdown01 :
@@ -728,10 +735,10 @@ private theorem offsetEq :
     (by
       classical
       exact
-        (Fin 4 → CircleCoordinates) → ((ProtoTile) → (∀ (w : Int × Int), ∀ (w' : Int × Int), ∀ (d
-            : Int × Int), (w - w' = d) → (w = w' + d))) ) := by
+        ∀ (w : Int × Int), ∀ (w' : Int × Int), ∀ (d : Int × Int), w - w' = d → w = w' + d
+    ) := by
   classical
-  intro q T w w' d h
+  intro w w' d h
   rcases w with ⟨a₁, a₂⟩
   rcases w' with ⟨b₁, b₂⟩
   rcases d with ⟨c₁, c₂⟩
@@ -902,12 +909,12 @@ theorem P4456T2BandGraphTriangle (q : Fin 4 → CircleCoordinates)
   have hturnedCells (d : GaussianInt) :
       (TileTranslation (TileQuarterTurn (TileTranslation T d)) g).cells =
         (TileTranslation T (GaussianQuarterTurn d)).cells :=
-            BandGraphTriangleGeometry.hturnedCells q T g hg hcenter hcentCells d
+            BandGraphTriangleGeometry.hturnedCells T g hg hcenter hcentCells d
   have hOpp : TouchingTriple T (TileTranslation T (-u)) (TileTranslation T v) :=
       BandGraphTriangleGeometry.hOpp q T hT3 hTne g hcenter hturnedCells
   intro a b c habc hbcc hca hab hbc hca'
   have adjSymm (x y : Int × Int) (h : TriangularLatticeAdjacent x y) :
-      TriangularLatticeAdjacent y x := BandGraphTriangleGeometry.adjSymm q T x y h
+      TriangularLatticeAdjacent y x := BandGraphTriangleGeometry.adjSymm x y h
   let x : Int × Int := chart.vertexEquiv.symm a
   let y : Int × Int := chart.vertexEquiv.symm b
   let z : Int × Int := chart.vertexEquiv.symm c
@@ -977,7 +984,7 @@ theorem P4456T2BandGraphTriangle (q : Fin 4 → CircleCoordinates)
   have coord_m10_m01 (w : Int × Int) :
       (w + (-1, 0)) + (0, -1) = w + (-1, -1) := BandGraphTriangleGeometry.coord_m10_m01 w
   have coord_m01_m10 (w : Int × Int) :
-      (w + (0, -1)) - (1, 0) = w + (-1, -1) := BandGraphTriangleGeometry.coord_m01_m10 q T w
+      (w + (0, -1)) - (1, 0) = w + (-1, -1) := BandGraphTriangleGeometry.coord_m01_m10 w
   have coord_m01_p01 (w : Int × Int) :
       (w + (0, -1)) + (0, 1) = w := by ext <;> simp [Prod.add_def]
   have coord_sub10 (w : Int × Int) : w - (1, 0) = w + (-1, 0) := by
@@ -1005,7 +1012,7 @@ theorem P4456T2BandGraphTriangle (q : Fin 4 → CircleCoordinates)
       (tileAt (x + (0, -1))) := BandGraphTriangleGeometry.hup50 q T ι P chart a upFace
           coord_sub01 tileCongr
   have offsetEq (w w' d : Int × Int) (h : w - w' = d) : w = w' + d :=
-      BandGraphTriangleGeometry.offsetEq q T w w' d h
+      BandGraphTriangleGeometry.offsetEq w w' d h
   have hlocal : TouchingTriple (tileAt x) (tileAt y) (tileAt z) :=
       BandGraphTriangleGeometry.hlocal q T ι P chart a b c hdir tileCongr hdown01 hup12 hdown23
       hup34 hdown45 hup50 offsetEq

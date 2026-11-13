@@ -27,22 +27,21 @@ namespace ApollonianSuperharmonic
 
 namespace PathEquivariance
 
-private theorem transport : ∀ (p : List GaussianInt) (f : GaussianInt → GaussianInt),
-      Function.Injective f →
+private theorem transport :
+    ∀ (p : List GaussianInt) (f : GaussianInt → GaussianInt),
       (∀ a b : GaussianInt,
-        (b = a + 1 ∨ b = a - 1 ∨ b = a + ⟨0, 1⟩ ∨ b = a - ⟨0, 1⟩) →
-        (f b = f a + 1 ∨ f b = f a - 1 ∨
-          f b = f a + ⟨0, 1⟩ ∨ f b = f a - ⟨0, 1⟩)) →
-      (∀ a b : GaussianInt, ∀ l₁ l₂ : List GaussianInt,
-        p = l₁ ++ a :: b :: l₂ →
-          b = a + 1 ∨ b = a - 1 ∨
-            b = a + ⟨0, 1⟩ ∨ b = a - ⟨0, 1⟩) →
-      (∀ a b : GaussianInt, ∀ l₁ l₂ : List GaussianInt,
-        p.map f = l₁ ++ a :: b :: l₂ →
-          b = a + 1 ∨ b = a - 1 ∨
-            b = a + ⟨0, 1⟩ ∨ b = a - ⟨0, 1⟩) := by
+          b = a + 1 ∨ b = a - 1 ∨ b = a + ⟨0, 1⟩ ∨ b = a - ⟨0, 1⟩ →
+            f b = f a + 1 ∨ f b = f a - 1 ∨ f b = f a + ⟨0, 1⟩ ∨ f b = f a - ⟨0, 1⟩) →
+        (∀ a b : GaussianInt,
+            ∀ l₁ l₂ : List GaussianInt,
+              p = l₁ ++ a :: b :: l₂ →
+                b = a + 1 ∨ b = a - 1 ∨ b = a + ⟨0, 1⟩ ∨ b = a - ⟨0, 1⟩) →
+          ∀ a b : GaussianInt,
+            ∀ l₁ l₂ : List GaussianInt,
+              p.map f = l₁ ++ a :: b :: l₂ →
+                b = a + 1 ∨ b = a - 1 ∨ b = a + ⟨0, 1⟩ ∨ b = a - ⟨0, 1⟩ := by
   classical
-  intro p f hf hstep hp
+  intro p f hstep hp
   induction p with
   | nil =>
     intro a b l₁ l₂ h
@@ -71,28 +70,17 @@ private theorem transport : ∀ (p : List GaussianInt) (f : GaussianInt → Gaus
           simp [hm]
         · exact htail
 
-private theorem forward : ∀ (f : GaussianInt → GaussianInt), Function.Injective f →
-      (∀ a b : GaussianInt,
-        (b = a + 1 ∨ b = a - 1 ∨ b = a + ⟨0, 1⟩ ∨ b = a - ⟨0, 1⟩) →
-        (f b = f a + 1 ∨ f b = f a - 1 ∨
-          f b = f a + ⟨0, 1⟩ ∨ f b = f a - ⟨0, 1⟩)) →
-      ∀ V E, SimpleGridPath V E →
-        SimpleGridPath (f '' V) ((fun e : Finset GaussianInt => e.image f) '' E) := by
-  classical
-  have transport : ∀ (p : List GaussianInt) (f : GaussianInt → GaussianInt),
+private theorem forward :
+    ∀ (f : GaussianInt → GaussianInt),
       Function.Injective f →
-      (∀ a b : GaussianInt,
-        (b = a + 1 ∨ b = a - 1 ∨ b = a + ⟨0, 1⟩ ∨ b = a - ⟨0, 1⟩) →
-        (f b = f a + 1 ∨ f b = f a - 1 ∨
-          f b = f a + ⟨0, 1⟩ ∨ f b = f a - ⟨0, 1⟩)) →
-      (∀ a b : GaussianInt, ∀ l₁ l₂ : List GaussianInt,
-        p = l₁ ++ a :: b :: l₂ →
-          b = a + 1 ∨ b = a - 1 ∨
-            b = a + ⟨0, 1⟩ ∨ b = a - ⟨0, 1⟩) →
-      (∀ a b : GaussianInt, ∀ l₁ l₂ : List GaussianInt,
-        p.map f = l₁ ++ a :: b :: l₂ →
-          b = a + 1 ∨ b = a - 1 ∨
-            b = a + ⟨0, 1⟩ ∨ b = a - ⟨0, 1⟩) := transport
+        (∀ a b : GaussianInt,
+            b = a + 1 ∨ b = a - 1 ∨ b = a + ⟨0, 1⟩ ∨ b = a - ⟨0, 1⟩ →
+              f b = f a + 1 ∨ f b = f a - 1 ∨ f b = f a + ⟨0, 1⟩ ∨ f b = f a - ⟨0, 1⟩) →
+          ∀ V E,
+            SimpleGridPath V E →
+              SimpleGridPath (f '' V) ((fun e : Finset GaussianInt => e.image f) '' E) := by
+  classical
+  have transport := transport
   intro f hf hstep V E path
   rcases path with ⟨p, hnd, hlen, hV, hp, hE⟩
   refine ⟨p.map f, hnd.map hf, ?_, ?_, ?_, ?_⟩
@@ -100,7 +88,7 @@ private theorem forward : ∀ (f : GaussianInt → GaussianInt), Function.Inject
   · rw [hV]
     ext z
     simp []
-  · exact transport p f hf hstep hp
+  · exact transport p f hstep hp
   · intro e
     constructor
     · rintro ⟨d, hd, rfl⟩
@@ -147,23 +135,19 @@ private theorem forward : ∀ (f : GaussianInt → GaussianInt), Function.Inject
       refine ⟨{a₀, b₀}, (hE {a₀, b₀}).mpr ⟨a₀, b₀, k, m, hm, rfl⟩, ?_⟩
       simp [he]
 
-private theorem backward : ∀ (f g : GaussianInt → GaussianInt), Function.Injective f →
-      (∀ x, g (f x) = x) → (∀ x, f (g x) = x) →
-      (∀ a b : GaussianInt,
-        (b = a + 1 ∨ b = a - 1 ∨ b = a + ⟨0, 1⟩ ∨ b = a - ⟨0, 1⟩) →
-        (g b = g a + 1 ∨ g b = g a - 1 ∨
-          g b = g a + ⟨0, 1⟩ ∨ g b = g a - ⟨0, 1⟩)) →
-      ∀ V E, SimpleGridPath (f '' V)
-        ((fun e : Finset GaussianInt => e.image f) '' E) → SimpleGridPath V E := by
+private theorem backward :
+    ∀ (f g : GaussianInt → GaussianInt),
+      (∀ x, g (f x) = x) →
+        (∀ x, f (g x) = x) →
+          (∀ a b : GaussianInt,
+              b = a + 1 ∨ b = a - 1 ∨ b = a + ⟨0, 1⟩ ∨ b = a - ⟨0, 1⟩ →
+                g b = g a + 1 ∨ g b = g a - 1 ∨ g b = g a + ⟨0, 1⟩ ∨ g b = g a - ⟨0, 1⟩) →
+            ∀ V E,
+              SimpleGridPath (f '' V) ((fun e : Finset GaussianInt => e.image f) '' E) →
+                SimpleGridPath V E := by
   classical
-  have forward : ∀ (f : GaussianInt → GaussianInt), Function.Injective f →
-      (∀ a b : GaussianInt,
-        (b = a + 1 ∨ b = a - 1 ∨ b = a + ⟨0, 1⟩ ∨ b = a - ⟨0, 1⟩) →
-        (f b = f a + 1 ∨ f b = f a - 1 ∨
-          f b = f a + ⟨0, 1⟩ ∨ f b = f a - ⟨0, 1⟩)) →
-      ∀ V E, SimpleGridPath V E →
-        SimpleGridPath (f '' V) ((fun e : Finset GaussianInt => e.image f) '' E) := forward
-  intro f g hf hgf hfg hstep V E h
+  have forward := forward
+  intro f g hgf hfg hstep V E h
   have result := forward g (by
     intro a b hab
     simpa [hfg] using congrArg f hab) hstep (f '' V)
@@ -203,38 +187,10 @@ theorem SimpleGridPathEquivariance :
     apply Zsqrtd.ext
     · simpa [GaussianReflection] using congrArg (fun z : GaussianInt => z.re) h
     · simpa [GaussianReflection] using congrArg (fun z : GaussianInt => -z.im) h
-  have transport : ∀ (p : List GaussianInt) (f : GaussianInt → GaussianInt),
-      Function.Injective f →
-      (∀ a b : GaussianInt,
-        (b = a + 1 ∨ b = a - 1 ∨ b = a + ⟨0, 1⟩ ∨ b = a - ⟨0, 1⟩) →
-        (f b = f a + 1 ∨ f b = f a - 1 ∨
-          f b = f a + ⟨0, 1⟩ ∨ f b = f a - ⟨0, 1⟩)) →
-      (∀ a b : GaussianInt, ∀ l₁ l₂ : List GaussianInt,
-        p = l₁ ++ a :: b :: l₂ →
-          b = a + 1 ∨ b = a - 1 ∨
-            b = a + ⟨0, 1⟩ ∨ b = a - ⟨0, 1⟩) →
-      (∀ a b : GaussianInt, ∀ l₁ l₂ : List GaussianInt,
-        p.map f = l₁ ++ a :: b :: l₂ →
-          b = a + 1 ∨ b = a - 1 ∨
-            b = a + ⟨0, 1⟩ ∨ b = a - ⟨0, 1⟩) := PathEquivariance.transport
-  have forward : ∀ (f : GaussianInt → GaussianInt), Function.Injective f →
-      (∀ a b : GaussianInt,
-        (b = a + 1 ∨ b = a - 1 ∨ b = a + ⟨0, 1⟩ ∨ b = a - ⟨0, 1⟩) →
-        (f b = f a + 1 ∨ f b = f a - 1 ∨
-          f b = f a + ⟨0, 1⟩ ∨ f b = f a - ⟨0, 1⟩)) →
-      ∀ V E, SimpleGridPath V E →
-        SimpleGridPath (f '' V) ((fun e : Finset GaussianInt => e.image f) '' E) :=
-            PathEquivariance.forward
-  have backward : ∀ (f g : GaussianInt → GaussianInt), Function.Injective f →
-      (∀ x, g (f x) = x) → (∀ x, f (g x) = x) →
-      (∀ a b : GaussianInt,
-        (b = a + 1 ∨ b = a - 1 ∨ b = a + ⟨0, 1⟩ ∨ b = a - ⟨0, 1⟩) →
-        (g b = g a + 1 ∨ g b = g a - 1 ∨
-          g b = g a + ⟨0, 1⟩ ∨ g b = g a - ⟨0, 1⟩)) →
-      ∀ V E, SimpleGridPath (f '' V)
-        ((fun e : Finset GaussianInt => e.image f) '' E) → SimpleGridPath V E :=
-            PathEquivariance.backward
-  let qb : GaussianInt → GaussianInt := fun z => ⟨z.im, -z.re⟩
+  have forward := PathEquivariance.forward
+  have backward := PathEquivariance.backward
+  let qb : GaussianInt → GaussianInt := fun z =>
+      ⟨z.im, -z.re⟩
   have hqb : Function.Injective qb := by
     intro a b h
     apply Zsqrtd.ext
@@ -307,12 +263,12 @@ theorem SimpleGridPathEquivariance :
     · subst b; left; apply Zsqrtd.ext <;> simp [qb]
     · subst b; right; left; apply Zsqrtd.ext <;> simp [qb]
   exact ⟨⟨fun h => forward (GaussianTranslation u) ht transStep V E h,
-    fun h => backward (GaussianTranslation u) (GaussianTranslation (-u)) ht transInv₁ transInv₂
+    fun h => backward (GaussianTranslation u) (GaussianTranslation (-u)) transInv₁ transInv₂
         transBack V E h⟩,
     ⟨fun h => forward GaussianQuarterTurn hq quarterStep V E h,
-      fun h => backward GaussianQuarterTurn qb hq quarterInv₁ quarterInv₂ quarterBackStep V E h⟩,
+      fun h => backward GaussianQuarterTurn qb quarterInv₁ quarterInv₂ quarterBackStep V E h⟩,
     ⟨fun h => forward GaussianReflection hr reflStep V E h,
-      fun h => backward GaussianReflection GaussianReflection hr reflInv reflInv reflStep V E h⟩⟩
+      fun h => backward GaussianReflection GaussianReflection reflInv reflInv reflStep V E h⟩⟩
 
 end ApollonianSuperharmonic
 

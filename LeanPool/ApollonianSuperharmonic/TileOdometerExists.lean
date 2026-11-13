@@ -67,32 +67,33 @@ private theorem hpositive :
     (by
       classical
       exact
-        (BandCircle) → ((ℕ) → (∀ (q : Fin (4 : ℕ) → CircleCoordinates), ∀ (r : Fin (3 : ℕ)), ∀ (g
-            : BandPackingSymmetry),
-        let q' := BandPackingSymmetryQuadrupleAction g
-          ![q 0, q r.succ, q (r + 1).succ, q (r + 2).succ]
-        (BandOrderedGeneralConfiguration q') → (∀ (i : Fin 3), 0 < (q' i.succ).1))) ) := by
+        ∀ (q : Fin (4 : ℕ) → CircleCoordinates),
+          ∀ (r : Fin (3 : ℕ)),
+            ∀ (g : BandPackingSymmetry),
+              let q' :=
+                BandPackingSymmetryQuadrupleAction g
+                  ![q 0, q r.succ, q (r + 1).succ, q (r + 2).succ]
+              BandOrderedGeneralConfiguration q' → ∀ (i : Fin 3), 0 < (q' i.succ).1
+    ) := by
   classical
-  intro C n q r g q' cfg i
+  intro q r g q' cfg i
   have hnonneg := (ProperBandCurvatureStructure q' cfg.proper).2.1 i
   have hnonzero := cfg.noLine i.succ
   omega
 
 private theorem smallT1 :
-    (by
-      classical
-      exact
-        ∀ (q : Fin (4 : ℕ) → CircleCoordinates), ∀ (r : Fin (3 : ℕ)), ∀ (g : BandPackingSymmetry),
-        let q' := BandPackingSymmetryQuadrupleAction g
-          ![q 0, q r.succ, q (r + 1).succ, q (r + 2).succ]
-        ∀ (p : Fin 4 → CircleCoordinates), ∀ (V : ProtoTile), ∀ (S : Fin 3 → Bool → ProtoTile),
-            ProperBandQuadruple p → BandPrototile (p 0) V → (∀ i, ∀ s, BandSubtileOccurrence p V
-            i s (S i s)) → (∀ x, x ∈ V.cells ↔ ∃ i s, x ∈ (S i s).cells) → Int.toNat (p 0).1 <
-            Int.toNat (q' 0).1 → LatticeTile V ∧ TileArea V = Int.toNat (p 0).1 ∧ ∀ i, ∀ s,
-            LatticeTile (TileCellComplement V (S i s)) ∧ TileTouching (TileCellComplement V (S i
-            s)) (S i s) ) := by
+    ∀ (p : Fin 4 → CircleCoordinates) (V : ProtoTile) (S : Fin 3 → Bool → ProtoTile),
+      ProperBandQuadruple p →
+        BandPrototile (p 0) V →
+          (∀ i s, BandSubtileOccurrence p V i s (S i s)) →
+            (∀ x, x ∈ V.cells ↔ ∃ i s, x ∈ (S i s).cells) →
+              LatticeTile V ∧
+                TileArea V = Int.toNat (p 0).1 ∧
+                  ∀ i s,
+                    LatticeTile (TileCellComplement V (S i s)) ∧
+                      TileTouching (TileCellComplement V (S i s)) (S i s) := by
   classical
-  intro q r g q' p V S hp hV hS hcover _
+  intro p V S hp hV hS hcover
   have facts := BandTileSimultaneousInduction p hp V hV
   exact ⟨facts.1, facts.2.1, facts.2.2.1 S hS hcover⟩
 
@@ -490,14 +491,20 @@ theorem TileOdometerExists (C : BandCircle) :
           · rcases hother with ⟨⟨K, _, hK⟩, _⟩ | ⟨⟨cfg⟩, _⟩
             · obtain ⟨h, ho, _⟩ := DiamondTileOdometerRestriction K
               exact ⟨DiamondTile K.1, h, by simpa [hK] using ho⟩
-            · have hpositive (i : Fin 3) := TileOdometerExistenceGeometry.hpositive C n q r g cfg i
+            · have hpositive (i : Fin 3) := TileOdometerExistenceGeometry.hpositive q r g cfg i
               let C' : BandCircle :=
                 ⟨⟨q' 0, Or.inl (by simpa [hcurv] using C.2),
                   q', cfg.proper.1, 0, rfl⟩, by simpa [hcurv] using C.2⟩
               obtain ⟨T, hT⟩ := BandPrototileExists C'.1
               change BandPrototile (q' 0) T at hT
               -- Discharge the smaller layout premises, including line and unit T2.
-              have smallT1 := TileOdometerExistenceGeometry.smallT1 q r g
+              have smallT1 (p : Fin 4 → CircleCoordinates) (V : ProtoTile)
+                  (S : Fin 3 → Bool → ProtoTile) (hp : ProperBandQuadruple p)
+                  (hV : BandPrototile (p 0) V)
+                  (hS : ∀ i s, BandSubtileOccurrence p V i s (S i s))
+                  (hcover : ∀ x, x ∈ V.cells ↔ ∃ i s, x ∈ (S i s).cells)
+                  (_ : Int.toNat (p 0).1 < Int.toNat (q' 0).1) :=
+                TileOdometerExistenceGeometry.smallT1 p V S hp hV hS hcover
               have smallT2 := TileOdometerExistenceGeometry.smallT2 q r g
               obtain ⟨cert⟩ := BandOrderedGeneralLayout q' cfg C' rfl T hT
                 smallT1 smallT2

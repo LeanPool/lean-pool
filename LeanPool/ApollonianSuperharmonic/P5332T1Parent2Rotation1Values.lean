@@ -26,9 +26,9 @@ namespace ApollonianSuperharmonic
 namespace ParentTwoRotationOneProof
 
 private theorem hrpos :
-    ∀ (P : FordFareyParameter), (FordFareyParameter) → (((1 : ℕ) < P.q) → (0 < P.q₁)) := by
+    ∀ (P : FordFareyParameter), (1 : ℕ) < P.q → 0 < P.q₁ := by
   classical
-  intro P A hq
+  intro P hq
   by_contra h; have hr0 : P.q₁ = 0 := by omega
   have := P.det₁
   rw [hr0] at this
@@ -41,17 +41,27 @@ private theorem hrpos :
   omega
 
 private theorem hcenterA :
-    ∀ (P : FordFareyParameter), ∀ (A : FordFareyParameter), (A.p = P.p₂) → ((A.q =
-        P.q₂) → ((IntegerLatticeFunction) → ((Int) → ((0 < P.q₂) → ((∀ (r : Int), ∀ (z : Int), (0
-            ≤ r) → ((r ≤ A.q) → ((0 ≤ z) → ((z ≤ A.q) → ((r ≤ 1 ∨ (A.q : Int)-1 ≤ r ∨ z ≤ 1 ∨
-            (A.q : Int)-1 ≤ z) → (FordOdometer A ⟨r,z⟩ =
-        IntegerCeilDiv (A.p*r*z) A.q (by exact_mod_cast A.q_pos.ne'))))))) → (∀ (X : ℤ), (ℤ) →
-            (((A.q
-        : Int) = P.q₂) → (
-    let t : Int := X-(P.q₁ : Int)
-    (0 ≤ t) → ((t < P.q₂) → (FordOdometer A ⟨t,P.q₂⟩ = P.p₂*t)))))))))) := by
+    ∀ (P : FordFareyParameter),
+      ∀ (A : FordFareyParameter),
+        A.p = P.p₂ →
+          A.q = P.q₂ →
+            0 < P.q₂ →
+              (∀ (r : Int),
+                  ∀ (z : Int),
+                    0 ≤ r →
+                      r ≤ A.q →
+                        0 ≤ z →
+                          z ≤ A.q →
+                            r ≤ 1 ∨ (A.q : Int) - 1 ≤ r ∨ z ≤ 1 ∨ (A.q : Int) - 1 ≤ z →
+                            FordOdometer A ⟨r, z⟩ =
+                            IntegerCeilDiv (A.p * r * z) A.q
+                            (by exact_mod_cast A.q_pos.ne')) →
+                ∀ (X : ℤ),
+                  (A.q : Int) = P.q₂ →
+                    let t : Int := X - (P.q₁ : Int)
+                    0 ≤ t → t < P.q₂ → FordOdometer A ⟨t, P.q₂⟩ = P.p₂ * t := by
   classical
-  intro P A hAp hAq f B hspos boundaryA X Y hAqInt t ht0 hstrict
+  intro P A hAp hAq hspos boundaryA X hAqInt t ht0 hstrict
   have hbA := boundaryA t P.q₂ ht0 (by omega) (by omega) (by omega) (by omega)
   have hbA' : FordOdometer A ⟨t,P.q₂⟩ =
       IntegerCeilDiv (P.p₂*t*P.q₂) P.q₂ (by omega) := by
@@ -63,27 +73,58 @@ private theorem hcenterA :
   ring
 
 private theorem southVal :
-    ∀ (P : FordFareyParameter), ∀ (A : FordFareyParameter), (A.p = P.p₂) → ((A.q =
-        P.q₂) → (∀ (f : IntegerLatticeFunction), ((P.q : Int) ≠ 0) → ((0 < P.q₂) → ((∀ (r : Int),
-            ∀ (z : Int), (0 ≤ r) → ((r ≤ A.q) → ((0 ≤ z) → ((z
-        ≤ A.q) → ((r ≤ 1 ∨ (A.q : Int)-1 ≤ r ∨ z ≤ 1 ∨ (A.q : Int)-1 ≤ z) → (FordOdometer A
-        ⟨r,z⟩ = IntegerCeilDiv (A.p*r*z) A.q (by exact_mod_cast A.q_pos.ne'))))))) → (∀ (X : ℤ),
-            ∀ (Y : ℤ), ((0 : ℤ) ≤ X - (↑P.q₁ : ℤ) ∧ X - (↑P.q₁ : ℤ) ≤ (↑A.q : ℤ) ∧ (0 : ℤ) ≤ Y -
-            -(↑P.q₂ :
-        ℤ) ∧ Y - -(↑P.q₂ : ℤ) ≤ (↑A.q : ℤ)) → (((P5332T1ParentRows P (1 : Fin (2 : ℕ)) (1 : Fin
-        (4 : ℕ)) (0 : ℤ)).displacement = ⟨(↑P.q₁ : ℤ), -(↑P.q₂ : ℤ)⟩) → (((A.q : Int) = P.q₂) →
-        ((Y = 0) → (
-    let t : Int := X-(P.q₁ : Int)
-    (0 ≤ t) → ((X = P.q₁ + t) → ((t < P.q₂) → (((P5332T1ParentRows P 1 1 0).linear =
-        ⟨-P.p₂,P.p₁⟩) → ((∀ (y : GaussianInt), y - (P5332T1ParentRows P (1 : Fin (2 : ℕ)) (1 :
-        Fin (4 : ℕ)) (0 : ℤ)).displacement ∈ FordVertexDomain A.q → f y = FordOdometer A (y -
-        (P5332T1ParentRows P (1 : Fin (2 : ℕ)) (1 : Fin (4 : ℕ)) (0 : ℤ)).displacement) +
-        (P5332T1ParentRows P (1 : Fin (2 : ℕ)) (1 : Fin (4 : ℕ)) (0 : ℤ)).linear.re * y.re +
-        (P5332T1ParentRows P (1 : Fin (2 : ℕ)) (1 : Fin (4 : ℕ)) (0 : ℤ)).linear.im * y.im +
-        P.p₂ * (↑P.q₁ : ℤ)) → (((⟨X,Y⟩ : GaussianInt)-⟨0,1⟩ = ⟨X,Y-1⟩) → (f (⟨X,Y⟩-⟨0,1⟩) = -P.p₁
-        - (P.p₂*t / P.q₂)))))))))))))))) := by
+    ∀ (P : FordFareyParameter),
+      ∀ (A : FordFareyParameter),
+        A.p = P.p₂ →
+          A.q = P.q₂ →
+            ∀ (f : IntegerLatticeFunction),
+              0 < P.q₂ →
+                (∀ (r : Int),
+                    ∀ (z : Int),
+                      0 ≤ r →
+                        r ≤ A.q →
+                          0 ≤ z →
+                            z ≤ A.q →
+                            r ≤ 1 ∨ (A.q : Int) - 1 ≤ r ∨ z ≤ 1 ∨ (A.q : Int) - 1 ≤ z →
+                            FordOdometer A ⟨r, z⟩ =
+                            IntegerCeilDiv (A.p * r * z) A.q
+                            (by exact_mod_cast A.q_pos.ne')) →
+                  ∀ (X : ℤ),
+                    ∀ (Y : ℤ),
+                      (0 : ℤ) ≤ X - (↑P.q₁ : ℤ) ∧
+                          X - (↑P.q₁ : ℤ) ≤ (↑A.q : ℤ) ∧
+                            (0 : ℤ) ≤ Y - -(↑P.q₂ : ℤ) ∧ Y - -(↑P.q₂ : ℤ) ≤ (↑A.q : ℤ) →
+                        (P5332T1ParentRows P (1 : Fin (2 : ℕ)) (1 : Fin (4 : ℕ))
+                            (0 : ℤ)).displacement =
+                            ⟨(↑P.q₁ : ℤ), -(↑P.q₂ : ℤ)⟩ →
+                          (A.q : Int) = P.q₂ →
+                            Y = 0 →
+                            let t : Int := X - (P.q₁ : Int)
+                          0 ≤ t →
+                            X = P.q₁ + t →
+                            t < P.q₂ →
+                            (P5332T1ParentRows P 1 1 0).linear = ⟨-P.p₂, P.p₁⟩ →
+                            (∀ (y : GaussianInt),
+                            y -
+                            (P5332T1ParentRows P (1 : Fin (2 : ℕ)) (1 : Fin (4 : ℕ))
+                            (0 : ℤ)).displacement ∈
+                            FordVertexDomain A.q →
+                            f y =
+                            FordOdometer A
+                            (y -
+                            (P5332T1ParentRows P (1 : Fin (2 : ℕ)) (1 : Fin (4 : ℕ))
+                            (0 : ℤ)).displacement) +
+                            (P5332T1ParentRows P (1 : Fin (2 : ℕ)) (1 : Fin (4 : ℕ))
+                            (0 : ℤ)).linear.re *
+                            y.re +
+                            (P5332T1ParentRows P (1 : Fin (2 : ℕ)) (1 : Fin (4 : ℕ))
+                            (0 : ℤ)).linear.im *
+                            y.im +
+                            P.p₂ * (↑P.q₁ : ℤ)) →
+                            (⟨X, Y⟩ : GaussianInt) - ⟨0, 1⟩ = ⟨X, Y - 1⟩ →
+                            f (⟨X, Y⟩ - ⟨0, 1⟩) = -P.p₁ - P.p₂ * t / P.q₂ := by
   classical
-  intro P A hAp hAq f hqn hspos boundaryA X Y hx' hdis hAqInt hy t ht0 hX hstrict hrow0 hother
+  intro P A hAp hAq f hspos boundaryA X Y hx' hdis hAqInt hy t ht0 hX hstrict hrow0 hother
       southArg
   have hsource : (⟨X,Y⟩-⟨0,1⟩ : GaussianInt) = ⟨P.q₁+t,-1⟩ := by
     rw [southArg, hX, hy]
@@ -167,7 +208,7 @@ theorem P5332T1Parent2Rotation1Values (P A : FordFareyParameter) (hq : 1 < P.q)
   classical
   have hq' : 1 < (P.q : Int) := by exact_mod_cast hq
   have hqn : (P.q : Int) ≠ 0 := by omega
-  have hrpos : 0 < P.q₁ := ParentTwoRotationOneProof.hrpos P A hq
+  have hrpos : 0 < P.q₁ := ParentTwoRotationOneProof.hrpos P hq
   have hspos : 0 < P.q₂ := P.q₂_pos
   have hsumq : (P.q : Int) = (P.q₁ : Int) + (P.q₂ : Int) := by exact_mod_cast P.sum_q
   have hpairs : P.p = P.p₁ + P.p₂ := P.sum_p
@@ -237,7 +278,7 @@ theorem P5332T1Parent2Rotation1Values (P A : FordFareyParameter) (hq : 1 < P.q)
     rw [hX, hy, boundaryP (P.q₁+t) 0 (by omega) (by omega) (by omega) (by omega) (by omega)]
     simp [IntegerCeilDiv]
   have hcenterA : FordOdometer A ⟨t,P.q₂⟩ = P.p₂*t := ParentTwoRotationOneProof.hcenterA P A hAp
-      hAq f B hspos boundaryA X Y hAqInt ht0 hstrict
+      hAq hspos boundaryA X hAqInt ht0 hstrict
   have hB : B = P.p₂ * (P.q₁ : Int) := by
     rw [hcenterP] at hxcenter
     rw [hcenterA] at hxother
@@ -277,7 +318,7 @@ theorem P5332T1Parent2Rotation1Values (P A : FordFareyParameter) (hq : 1 < P.q)
     rw [boundaryP X 1 (by omega) (by omega) (by norm_num) (by omega) (by omega)]
     simp
   have southVal : f (⟨X,Y⟩-⟨0,1⟩) =
-      -P.p₁ - (P.p₂*t / P.q₂) := ParentTwoRotationOneProof.southVal P A hAp hAq f hqn hspos
+      -P.p₁ - (P.p₂*t / P.q₂) := ParentTwoRotationOneProof.southVal P A hAp hAq f hspos
           boundaryA X Y hx' hdis hAqInt hy ht0 hX hstrict hrow0 hother southArg
   have hnorth : f (⟨X,Y⟩+⟨0,1⟩) = P.p₁ + IntegerCeilDiv (P.p*t-1) P.q hqn :=
       ParentTwoRotationOneProof.hnorth P f hqn hdet1 X Y hy hX northArg northVal

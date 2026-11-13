@@ -320,16 +320,24 @@ private theorem hqleft :
     (by
       classical
       exact
-        ∀ (n : Nat), ∀ (p : P3381T1PolygonBoundary n), ∀ (E : P3650T1ExposedCorner p), ∀ (d :
-            Fin (n + (3 : ℕ))), ∀ (A : AffineBasis (Fin (3 : ℕ)) ℝ (ℝ × ℝ)), (A 0 = p.vertex (E.b
-            - 1)) → ((0 < A.coord 2 (p.vertex d)) → (
-        let B := p.vertex E.b
-        let P := p.vertex d
-        let q : Real → Real × Real := AffineMap.lineMap B P
-        (A.coord 2 B = 0) → ((∀ t, ∀ i, A.coord i (q t) = (1 - t) * A.coord i B + t * A.coord i
-            P) → (∀ t, 0 < t → t < 1 → q t ∉ segment Real (p.vertex (E.b - 1)) B)))) ) := by
+        ∀ (n : Nat),
+          ∀ (p : P3381T1PolygonBoundary n),
+            ∀ (E : P3650T1ExposedCorner p),
+              ∀ (d : Fin (n + (3 : ℕ))),
+                ∀ (A : AffineBasis (Fin (3 : ℕ)) ℝ (ℝ × ℝ)),
+                  A 0 = p.vertex (E.b - 1) →
+                    0 < A.coord 2 (p.vertex d) →
+                      let B := p.vertex E.b;
+                      let P := p.vertex d;
+                      let q : Real → Real × Real := AffineMap.lineMap B P;
+                      A.coord 2 B = 0 →
+                        (∀ t,
+                            ∀ i,
+                              A.coord i (q t) = (1 - t) * A.coord i B + t * A.coord i P) →
+                          ∀ t, 0 < t → q t ∉ segment Real (p.vertex (E.b - 1)) B
+    ) := by
   classical
-  intro n p E d A hA0 hcoord2 B P q hcoordB2 hqcoord t ht0 ht1 hs
+  intro n p E d A hA0 hcoord2 B P q hcoordB2 hqcoord t ht0 hs
   have hcoordprev : A.coord 2 (p.vertex (E.b - 1)) = 0 := by
     rw [← hA0]
     simp []
@@ -348,16 +356,24 @@ private theorem hqright :
     (by
       classical
       exact
-        ∀ (n : Nat), ∀ (p : P3381T1PolygonBoundary n), ∀ (E : P3650T1ExposedCorner p), ∀ (d :
-            Fin (n + (3 : ℕ))), ∀ (A : AffineBasis (Fin (3 : ℕ)) ℝ (ℝ × ℝ)), (A 2 = p.vertex (E.b
-            + 1)) → ((0 < A.coord 0 (p.vertex d)) → (
-        let B := p.vertex E.b
-        let P := p.vertex d
-        let q : Real → Real × Real := AffineMap.lineMap B P
-        (A.coord 0 B = 0) → ((∀ t, ∀ i, A.coord i (q t) = (1 - t) * A.coord i B + t * A.coord i
-            P) → (∀ t, 0 < t → t < 1 → q t ∉ segment Real B (p.vertex (E.b + 1)))))) ) := by
+        ∀ (n : Nat),
+          ∀ (p : P3381T1PolygonBoundary n),
+            ∀ (E : P3650T1ExposedCorner p),
+              ∀ (d : Fin (n + (3 : ℕ))),
+                ∀ (A : AffineBasis (Fin (3 : ℕ)) ℝ (ℝ × ℝ)),
+                  A 2 = p.vertex (E.b + 1) →
+                    0 < A.coord 0 (p.vertex d) →
+                      let B := p.vertex E.b;
+                      let P := p.vertex d;
+                      let q : Real → Real × Real := AffineMap.lineMap B P;
+                      A.coord 0 B = 0 →
+                        (∀ t,
+                            ∀ i,
+                              A.coord i (q t) = (1 - t) * A.coord i B + t * A.coord i P) →
+                          ∀ t, 0 < t → q t ∉ segment Real B (p.vertex (E.b + 1))
+    ) := by
   classical
-  intro n p E d A hA2 hcoord0 B P q hcoordB0 hqcoord t ht0 ht1 hs
+  intro n p E d A hA2 hcoord0 B P q hcoordB0 hqcoord t ht0 hs
   have hcoordnext : A.coord 0 (p.vertex (E.b + 1)) = 0 := by
     rw [← hA2]
     simp []
@@ -451,16 +467,22 @@ private theorem hPdecomp :
     (by
       classical
       exact
-        ∀ (n : Nat), ∀ (p : P3381T1PolygonBoundary n), ∀ (E : P3650T1ExposedCorner p), ∀ (d :
-            Fin (n + (3 : ℕ))), ∀ (A : AffineBasis (Fin (3 : ℕ)) ℝ (ℝ × ℝ)), (A 0 = p.vertex (E.b
-            - 1)) → ((A 1 = p.vertex E.b) → ((A 2 = p.vertex (E.b + 1)) → ((A.coord 0 (p.vertex
-            d) + A.coord 1 (p.vertex d) + A.coord 2 (p.vertex d) = 1) → (
-        let B := p.vertex E.b
-        let P := p.vertex d
-        P = B + A.coord 0 P • (p.vertex (E.b - 1) - B) + A.coord 2 P • (p.vertex (E.b + 1) -
-            B))))) ) := by
+        ∀ (n : Nat),
+          ∀ (p : P3381T1PolygonBoundary n),
+            ∀ (E : P3650T1ExposedCorner p),
+              ∀ (d : Fin (n + (3 : ℕ))),
+                ∀ (A : AffineBasis (Fin (3 : ℕ)) ℝ (ℝ × ℝ)),
+                  A 0 = p.vertex (E.b - 1) →
+                    A 1 = p.vertex E.b →
+                      A 2 = p.vertex (E.b + 1) →
+                        let B := p.vertex E.b
+                        let P := p.vertex d
+                        P =
+                          B + A.coord 0 P • (p.vertex (E.b - 1) - B) +
+                            A.coord 2 P • (p.vertex (E.b + 1) - B)
+    ) := by
   classical
-  intro n p E d A hA0 hA1 hA2 hsum B P
+  intro n p E d A hA0 hA1 hA2 B P
   have hcomb := A.linear_combination_coord_eq_self P
   rw [Fin.sum_univ_three, hA0, hA1, hA2] at hcomb
   have hsumP : A.coord 0 P + A.coord 1 P + A.coord 2 P = 1 := by
@@ -802,11 +824,19 @@ theorem P3650T1MaximalHeightDiagonal {n : Nat} (p : P3381T1PolygonBoundary n)
       have hprod : 0 < (1 - t) * (1 - E.height P) :=
         mul_pos (by linarith) (by linarith [hheightlt])
       nlinarith)
-  have hqleft := MaximalHeightGeometry.hqleft n p E d A hA0 hcoord2 hcoordB2 hqcoord
-  have hqright := MaximalHeightGeometry.hqright n p E d A hA2 hcoord0 hcoordB0 hqcoord
+  have hqleft := (show
+      ∀ t, 0 < t → t < 1 → q t ∉ segment Real (p.vertex (E.b - 1)) B
+    from by
+      intro t ht0 ht1 hs
+      exact MaximalHeightGeometry.hqleft n p E d A hA0 hcoord2 hcoordB2 hqcoord t ht0 hs)
+  have hqright := (show
+      ∀ t, 0 < t → t < 1 → q t ∉ segment Real B (p.vertex (E.b + 1))
+    from by
+      intro t ht0 ht1 hs
+      exact MaximalHeightGeometry.hqright n p E d A hA2 hcoord0 hcoordB0 hqcoord t ht0 hs)
   have hqclear := MaximalHeightGeometry.hqclear n p E hentry d hdmax A hcoord_nonneg hheightd
       hqinterior hqmargin hqleft hqright
-  have hPdecomp := MaximalHeightGeometry.hPdecomp n p E d A hA0 hA1 hA2 hsum
+  have hPdecomp := MaximalHeightGeometry.hPdecomp n p E d A hA0 hA1 hA2
   obtain ⟨r, hr, hcone⟩ := E.cone_odd
   have hqcont : Continuous q :=
     (AffineMap.lineMap (k := Real) B P).continuous_of_finiteDimensional

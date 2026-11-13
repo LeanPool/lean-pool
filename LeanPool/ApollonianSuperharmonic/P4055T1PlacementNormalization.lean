@@ -351,10 +351,9 @@ private theorem notEvenOne :
     (by
       classical
       exact
-        (Fin 4 → CircleCoordinates) → ((Fin 3) → ((Fin 4) → ((Fin 3) → ((BandPackingSymmetry) →
-            (¬ Even 1))))) ) := by
+        ¬Even 1
+    ) := by
   classical
-  intro r i s a g'
   rintro ⟨n, hn⟩
   omega
 
@@ -362,10 +361,9 @@ private theorem notEvenThree :
     (by
       classical
       exact
-        (Fin 4 → CircleCoordinates) → ((Fin 3) → ((Fin 4) → ((Fin 3) → ((BandPackingSymmetry) →
-            (¬ Even 3))))) ) := by
+        ¬Even 3
+    ) := by
   classical
-  intro r i s a g'
   rintro ⟨n, hn⟩
   omega
 
@@ -2026,8 +2024,8 @@ theorem P4055T1PlacementNormalization
       hphaseBackward hk
   have evenZero : Even 0 := ⟨0, by decide⟩
   have evenTwo : Even 2 := ⟨1, by decide⟩
-  have notEvenOne := PlacementNormalizationProof.notEvenOne r i s a g'
-  have notEvenThree := PlacementNormalizationProof.notEvenThree r i s a g'
+  have notEvenOne := PlacementNormalizationProof.notEvenOne
+  have notEvenThree := PlacementNormalizationProof.notEvenThree
   have hnegVal (s₀ : Fin 4) := PlacementNormalizationProof.hnegVal s₀
   let ii : GaussianInt := ⟨0, 1⟩
   have iiSq : ii ^ 2 = -1 := by decide +kernel

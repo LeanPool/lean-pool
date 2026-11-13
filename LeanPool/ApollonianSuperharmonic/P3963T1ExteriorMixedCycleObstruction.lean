@@ -209,10 +209,9 @@ private theorem hExteriorPair :
       · intro h; exact no32 ⟨hu3, h⟩
 
 private theorem adjNe :
-    (List GaussianInt) → (∀ {a : GaussianInt}, ∀ {b : GaussianInt}, FourNeighborAdjacent a b → a
-        ≠ b) := by
+    ∀ {a : GaussianInt}, ∀ {b : GaussianInt}, FourNeighborAdjacent a b → a ≠ b := by
   classical
-  intro p a b hab heq
+  intro a b hab heq
   subst b
   rcases hab with h | h | h | h
   · have hr := congrArg Zsqrtd.re h
@@ -1027,12 +1026,18 @@ private theorem hNeqAt1093 :
   simpa [I, c0, c1, c1add] using h
 
 private theorem verticalSupport :
-    (List GaussianInt) → ((∀ (a : GaussianInt), ∀ (b : GaussianInt), ∀ (c : GaussianInt), ∀ (d :
-        GaussianInt), (({a, b} : Finset GaussianInt) = {c, d}) → ((c ≠ d) → ((a = c ∧ b = d) ∨ (a
-        = d ∧ b = c)))) → (∀ (T : ProtoTile), ∀ (q : GaussianInt), {q, q + ⟨(0 : ℤ), (1 : ℤ)⟩} ∈
-        FootprintEdges T → q ∈ T.cells ∨ q - (1 : GaussianInt) ∈ T.cells)) := by
+    (∀ (a : GaussianInt),
+        ∀ (b : GaussianInt),
+          ∀ (c : GaussianInt),
+            ∀ (d : GaussianInt),
+              ({ a, b } : Finset GaussianInt) = { c, d } →
+                c ≠ d → a = c ∧ b = d ∨ a = d ∧ b = c) →
+      ∀ (T : ProtoTile),
+        ∀ (q : GaussianInt),
+          {q, q + ⟨(0 : ℤ), (1 : ℤ)⟩} ∈ FootprintEdges T →
+            q ∈ T.cells ∨ q - (1 : GaussianInt) ∈ T.cells := by
   classical
-  intro p pairCases T q h
+  intro pairCases T q h
   rw [FootprintEdges] at h
   simp only [Set.mem_ofPred_eq] at h
   rcases h with ⟨z, hz, hshape⟩
@@ -1076,12 +1081,18 @@ private theorem verticalSupport :
       simp at hr₁ hr₂; omega
 
 private theorem horizontalSupport :
-    (List GaussianInt) → ((∀ (a : GaussianInt), ∀ (b : GaussianInt), ∀ (c : GaussianInt), ∀ (d :
-        GaussianInt), (({a, b} : Finset GaussianInt) = {c, d}) → ((c ≠ d) → ((a = c ∧ b = d) ∨ (a
-        = d ∧ b = c)))) → (∀ (T : ProtoTile), ∀ (q : GaussianInt), {q, q + (1 : GaussianInt)} ∈
-        FootprintEdges T → q ∈ T.cells ∨ q - ⟨(0 : ℤ), (1 : ℤ)⟩ ∈ T.cells)) := by
+    (∀ (a : GaussianInt),
+        ∀ (b : GaussianInt),
+          ∀ (c : GaussianInt),
+            ∀ (d : GaussianInt),
+              ({ a, b } : Finset GaussianInt) = { c, d } →
+                c ≠ d → a = c ∧ b = d ∨ a = d ∧ b = c) →
+      ∀ (T : ProtoTile),
+        ∀ (q : GaussianInt),
+          {q, q + (1 : GaussianInt)} ∈ FootprintEdges T →
+            q ∈ T.cells ∨ q - ⟨(0 : ℤ), (1 : ℤ)⟩ ∈ T.cells := by
   classical
-  intro p pairCases T q h
+  intro pairCases T q h
   rw [FootprintEdges] at h
   simp only [Set.mem_ofPred_eq] at h
   rcases h with ⟨z, hz, hshape⟩
@@ -1565,16 +1576,16 @@ private def directionOffset : Fin 4 → GaussianInt :=
   ![⟨0, 1⟩, 1, -⟨0, 1⟩, -1]
 
 private theorem dirInj :
-    ∀ (x : GaussianInt), (List GaussianInt) → (
-    let dir : Fin 4 → GaussianInt := fun i =>
-      match i.val with
-      | 0 => x + ⟨0, 1⟩
-      | 1 => x + 1
-      | 2 => x - ⟨0, 1⟩
-      | _ => x - 1
-    Function.Injective dir) := by
+    ∀ (x : GaussianInt),
+      let dir : Fin 4 → GaussianInt := fun i =>
+        match i.val with
+        | 0 => x + ⟨0, 1⟩
+        | 1 => x + 1
+        | 2 => x - ⟨0, 1⟩
+        | _ => x - 1
+      Function.Injective dir := by
   classical
-  intro x p dir
+  intro x dir
   have hdir : dir = fun j => x + directionOffset j := by
     funext j
     fin_cases j
@@ -1593,16 +1604,16 @@ private theorem dirInj :
   exact hinjective (add_left_cancel hij)
 
 private theorem dirNeX :
-    ∀ (x : GaussianInt), (List GaussianInt) → (
-    let dir : Fin 4 → GaussianInt := fun i =>
-      match i.val with
-      | 0 => x + ⟨0, 1⟩
-      | 1 => x + 1
-      | 2 => x - ⟨0, 1⟩
-      | _ => x - 1
-    ∀ (i : Fin (4 : ℕ)), x ≠ dir i) := by
+    ∀ (x : GaussianInt),
+      let dir : Fin 4 → GaussianInt := fun i =>
+        match i.val with
+        | 0 => x + ⟨0, 1⟩
+        | 1 => x + 1
+        | 2 => x - ⟨0, 1⟩
+        | _ => x - 1
+      ∀ (i : Fin (4 : ℕ)), x ≠ dir i := by
   classical
-  intro x p dir
+  intro x dir
   have hdir : dir = fun j => x + directionOffset j := by
     funext j
     fin_cases j
@@ -1985,7 +1996,7 @@ theorem P3963T1ExteriorMixedCycleObstruction
   have cyclicPair (a b : GaussianInt) (hab : ({a, b} : Finset GaussianInt) ∈ F) :
       (a, b) ∈ (p.zip p.tail) ++ [(v, u)] ∨
       (b, a) ∈ (p.zip p.tail) ++ [(v, u)] := ExteriorMixedCycleProof.cyclicPair F p u v hhead
-          hlast hclose hsteps hedges hcross hcycleEdge (ExteriorMixedCycleProof.adjNe p)
+          hlast hclose hsteps hedges hcross hcycleEdge (ExteriorMixedCycleProof.adjNe)
               pairCases (ExteriorMixedCycleProof.adjacentMemZip) a b hab
   have hpne : p ≠ [] := ExteriorIndexCases.hpne p hlen
   have huMem : u ∈ p := ExteriorIndexCases.huMem p u hhead
@@ -2006,8 +2017,8 @@ theorem P3963T1ExteriorMixedCycleObstruction
   let eDir : Fin 4 := 1
   let sDir : Fin 4 := 2
   let wDir : Fin 4 := 3
-  have dirInj : Function.Injective dir := ExteriorIndexCases.dirInj x p
-  have dirNeX (i : Fin 4) : x ≠ dir i := ExteriorIndexCases.dirNeX x p i
+  have dirInj : Function.Injective dir := ExteriorIndexCases.dirInj x
+  have dirNeX (i : Fin 4) : x ≠ dir i := ExteriorIndexCases.dirNeX x i
   have noThreeDir (i j k : Fin 4)
       (hij : i ≠ j) (hik : i ≠ k) (hjk : j ≠ k)
       (ha : ({x, dir i} : Finset GaussianInt) ∈ F)
@@ -2067,9 +2078,9 @@ theorem P3963T1ExteriorMixedCycleObstruction
   have walkConstExterior := (ExteriorCycleDetails.walkConst)
     ((↑(U.cells ∪ V.cells) : Set GaussianInt)ᶜ) I (ExteriorCycleDetails.indexAdjacentExterior U V
         F p u v cyclicToEdge crossEastEq crossNorthEq (ExteriorMixedCycleProof.verticalNoF U V F
-        hsubset exteriorNoTile (ExteriorMixedCycleProof.verticalSupport p pairCases))
+        hsubset exteriorNoTile (ExteriorMixedCycleProof.verticalSupport pairCases))
         (ExteriorMixedCycleProof.horizontalNoF U V F hsubset exteriorNoTile
-        (ExteriorMixedCycleProof.horizontalSupport p pairCases)))
+        (ExteriorMixedCycleProof.horizontalSupport pairCases)))
   rcases hindexDiff with ⟨⟨ha, hb⟩, hd⟩ | ⟨⟨ha, hb⟩, hd⟩
   · rcases houtside.2 c1 ha c3 hb with ⟨walk, hh, hl, hv, hs⟩
     have hsame := walkConstExterior walk c1 c3 hh hl hv hs

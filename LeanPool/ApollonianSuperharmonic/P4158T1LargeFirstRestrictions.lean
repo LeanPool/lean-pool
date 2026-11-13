@@ -34,9 +34,10 @@ private theorem hq1 :
     (by
       classical
       exact
-        ∀ (P : FordFareyParameter), (BandCircle) → ((P.q₂ < P.q₁) → (1 < P.q₁)) ) := by
+        ∀ (P : FordFareyParameter), P.q₂ < P.q₁ → 1 < P.q₁
+    ) := by
   classical
-  intro P Ci horder
+  intro P horder
   have hq2 := P.q₂_pos
   omega
 
@@ -44,9 +45,10 @@ private theorem hqgt :
     (by
       classical
       exact
-        ∀ (P : FordFareyParameter), (BandCircle) → ((1 < P.q₁) → (1 < P.q)) ) := by
+        ∀ (P : FordFareyParameter), 1 < P.q₁ → 1 < P.q
+    ) := by
   classical
-  intro P Ci hq1
+  intro P hq1
   have hsum := P.sum_q
   have hq2 := P.q₂_pos
   omega
@@ -329,18 +331,17 @@ private theorem hvsol :
     (by
       classical
       exact
-        ∀ (P : FordFareyParameter), (BandCircle) → ((P.q₂ < P.q₁) → ((1 < P.q₁) → ((P.p₁ * (P.q₂
-            : Int) - (P.q₁ : Int) * P.p₂ = 1) → ((Nat.Coprime P.q₁ P.p₁.natAbs) → (
-        let w := BandVectors.1 (FordRecursiveQuadruple P 3)
-          (FordRecursiveQuadruple P 2)
-        let x := BandVectors.1 (FordRecursiveQuadruple P 1)
-          (FordRecursiveQuadruple P 3)
-        let y := BandVectors.1 (FordRecursiveQuadruple P 2)
-          (FordRecursiveQuadruple P 1)
-        (w + x + y = 0) → ((x - (⟨0, 1⟩ : GaussianInt) * y = ⟨P.q, P.q₁⟩) → ((y - (⟨0, 1⟩ :
-            GaussianInt) * w = ⟨-(P.q : Int), P.q₂⟩) → (w = ⟨0, -(P.q₂ : Int)⟩)))))))) ) := by
+        ∀ (P : FordFareyParameter),
+          let w := BandVectors.1 (FordRecursiveQuadruple P 3) (FordRecursiveQuadruple P 2)
+          let x := BandVectors.1 (FordRecursiveQuadruple P 1) (FordRecursiveQuadruple P 3)
+          let y := BandVectors.1 (FordRecursiveQuadruple P 2) (FordRecursiveQuadruple P 1)
+          w + x + y = 0 →
+            x - (⟨0, 1⟩ : GaussianInt) * y = ⟨P.q, P.q₁⟩ →
+              y - (⟨0, 1⟩ : GaussianInt) * w = ⟨-(P.q : Int), P.q₂⟩ →
+                w = ⟨0, -(P.q₂ : Int)⟩
+    ) := by
   classical
-  intro P Ci horder hq1 hcross hcop w x y hvsum hvfirst hvsecond
+  intro P w x y hvsum hvfirst hvsecond
   have solve : ∀ (r s : Int) (w a b : GaussianInt),
       w + a + b = 0 →
       a - (⟨0, 1⟩ : GaussianInt) * b = ⟨r + s, r⟩ →
@@ -375,12 +376,13 @@ private theorem fordCentroid :
     (by
       classical
       exact
-        ∀ (P : FordFareyParameter), (BandCircle) → ((P.q₂ < P.q₁) → ((1 < P.q₁) → ((P.p₁ * (P.q₂
-            : Int) - (P.q₁ : Int) * P.p₂ = 1) → ((Nat.Coprime P.q₁ P.p₁.natAbs) → (∀ (n : ℕ), (0
-            : ℕ) < n → TileCentroid (FordTile n) = ((↑n : ℝ) / (2 : ℝ), (↑n : ℝ) / (2 : ℝ)))))))
-            ) := by
+        FordFareyParameter →
+          ∀ (n : ℕ),
+            (0 : ℕ) < n →
+              TileCentroid (FordTile n) = ((↑n : ℝ) / (2 : ℝ), (↑n : ℝ) / (2 : ℝ))
+    ) := by
   classical
-  intro P Ci horder hq1 hcross hcop n hn
+  intro P n hn
   let D : Finset GaussianInt :=
     (Finset.range n).product (Finset.range n) |>.image
       (fun a => (⟨(a.1 : Int), (a.2 : Int)⟩ : GaussianInt))
@@ -601,17 +603,23 @@ private theorem hUCcent :
     (by
       classical
       exact
-        ∀ (P : FordFareyParameter), (BandCircle) → ((P.q₂ < P.q₁) → (∀ (T : ProtoTile), ∀ (u :
-            GaussianInt), (1 < P.q₁) → (∀ (S : Fin (3 : ℕ) → Bool → ProtoTile),
-        let U := S 0 false
-        (P.p₁ * (P.q₂ : Int) - (P.q₁ : Int) * P.p₂ = 1) → ((Nat.Coprime P.q₁ P.p₁.natAbs) → ((∀
-            (n : Nat), (0 < n) → (TileCentroid (FordTile n) = ((n : Real) / 2, (n : Real) / 2))) → (
-        let Uc := TileTranslation (FordTile P.q₁) (u + ⟨P.q₂, P.q₂⟩)
-        (TileCentroid T = TileCentroid (TileTranslation (FordTile P.q) u)) → ((TileCentroid U -
-            TileCentroid T = ((P.q₂ : Real) / 2, (P.q₂ : Real) / 2)) → (TileCentroid U =
-            TileCentroid Uc)))))))) ) := by
+        ∀ (P : FordFareyParameter),
+          ∀ (T : ProtoTile),
+            ∀ (u : GaussianInt),
+              1 < P.q₁ →
+                ∀ (S : Fin (3 : ℕ) → Bool → ProtoTile),
+                  let U := S 0 false;
+                  (∀ (n : Nat),
+                      0 < n →
+                        TileCentroid (FordTile n) = ((n : Real) / 2, (n : Real) / 2)) →
+                    let Uc := TileTranslation (FordTile P.q₁) (u + ⟨P.q₂, P.q₂⟩)
+                    TileCentroid T = TileCentroid (TileTranslation (FordTile P.q) u) →
+                      TileCentroid U - TileCentroid T =
+                          ((P.q₂ : Real) / 2, (P.q₂ : Real) / 2) →
+                        TileCentroid U = TileCentroid Uc
+    ) := by
   classical
-  intro P Ci horder T u hq1 S U hcross hcop fordCentroid Uc hrootCent hUoffset
+  intro P T u hq1 S U fordCentroid Uc hrootCent hUoffset
   calc
     TileCentroid U = (TileCentroid U - TileCentroid T) + TileCentroid T := by abel
     _ = ((P.q₂ : Real) / 2, (P.q₂ : Real) / 2) +
@@ -626,17 +634,24 @@ private theorem hVCcent :
     (by
       classical
       exact
-        ∀ (P : FordFareyParameter), (BandCircle) → ((P.q₂ < P.q₁) → (∀ (T' : ProtoTile), ∀ (u :
-            GaussianInt), (1 < P.q₁) → (∀ (S' : Fin (3 : ℕ) → Bool → ProtoTile),
-        let V := S' 0 true
-        (P.p₁ * (P.q₂ : Int) - (P.q₁ : Int) * P.p₂ = 1) → ((Nat.Coprime P.q₁ P.p₁.natAbs) → ((∀
-            (n : Nat), (0 < n) → (TileCentroid (FordTile n) = ((n : Real) / 2, (n : Real) / 2))) → (
-        let Vc := TileTranslation (FordTile P.q₁) (u + ⟨P.q, P.q₁⟩)
-        (TileCentroid T' = TileCentroid (TileTranslation (FordTile P.q) (u + ⟨P.q, P.q₁⟩))) →
-            ((TileCentroid V - TileCentroid T' = (-((P.q₂ : Real) / 2), -((P.q₂ : Real) / 2))) →
-            (TileCentroid V = TileCentroid Vc)))))))) ) := by
+        ∀ (P : FordFareyParameter),
+          ∀ (T' : ProtoTile),
+            ∀ (u : GaussianInt),
+              1 < P.q₁ →
+                ∀ (S' : Fin (3 : ℕ) → Bool → ProtoTile),
+                  let V := S' 0 true;
+                  (∀ (n : Nat),
+                      0 < n →
+                        TileCentroid (FordTile n) = ((n : Real) / 2, (n : Real) / 2)) →
+                    let Vc := TileTranslation (FordTile P.q₁) (u + ⟨P.q, P.q₁⟩)
+                    TileCentroid T' =
+                        TileCentroid (TileTranslation (FordTile P.q) (u + ⟨P.q, P.q₁⟩)) →
+                      TileCentroid V - TileCentroid T' =
+                          (-((P.q₂ : Real) / 2), -((P.q₂ : Real) / 2)) →
+                        TileCentroid V = TileCentroid Vc
+    ) := by
   classical
-  intro P Ci horder T' u hq1 S' V hcross hcop fordCentroid Vc hrootCent' hVoffset
+  intro P T' u hq1 S' V fordCentroid Vc hrootCent' hVoffset
   calc
     TileCentroid V = (TileCentroid V - TileCentroid T') + TileCentroid T' := by abel
     _ = (-((P.q₂ : Real) / 2), -((P.q₂ : Real) / 2)) +
@@ -678,11 +693,10 @@ private theorem hnonzero :
     (by
       classical
       exact
-        ∀ (P : FordFareyParameter), (BandCircle) → ((P.q₂ < P.q₁) → ((1 < P.q₁) → ((P.p₁ * (P.q₂
-            : Int) - (P.q₁ : Int) * P.p₂ = 1) → ((Nat.Coprime P.q₁ P.p₁.natAbs) →
-            ((FordRecursiveQuadruple P 1).1 ≠ 0))))) ) := by
+        ∀ (P : FordFareyParameter), 1 < P.q₁ → (FordRecursiveQuadruple P 1).1 ≠ 0
+    ) := by
   classical
-  intro P Ci horder hq1 hcross hcop
+  intro P hq1
   change (if P.q₁ = 0 then (0, 1) else
     FordCircleCoordinate P.p₁ P.q₁).1 ≠ 0
   rw [ite_eq_right (by omega)]
@@ -912,8 +926,8 @@ theorem P4158T1LargeFirstRestrictions
       FordRecursiveQuadruple Q 0 = Ci.1.1 ∧ 1 < Q.q := by
 -- BODY
   classical
-  have hq1 : 1 < P.q₁ := LargeFirstRestrictions.hq1 P Ci horder
-  have hqgt := LargeFirstRestrictions.hqgt P Ci hq1
+  have hq1 : 1 < P.q₁ := LargeFirstRestrictions.hq1 P horder
+  have hqgt := LargeFirstRestrictions.hqgt P hq1
   have hroot : 1 < (FordRecursiveQuadruple P 0).1 := LargeFirstRestrictions.hroot P hqgt
   have dec := TileOdometerReindexedDecomposition
     (FordRecursiveQuadruple P) hq T h hroot (by simpa [hC0] using hO)
@@ -980,10 +994,9 @@ theorem P4158T1LargeFirstRestrictions
     (FordRecursiveQuadruple P) hq.1).1
   have hvfirst := LargeFirstRestrictions.hvfirst P hq hv10
   have hvsecond := LargeFirstRestrictions.hvsecond P hq hv20
-  have hvsol := LargeFirstRestrictions.hvsol P Ci horder hq1 hcross hcop hvsum hvfirst hvsecond
+  have hvsol := LargeFirstRestrictions.hvsol P hvsum hvfirst hvsecond
   have haslope32 := LargeFirstRestrictions.haslope32 P ha32
-  have fordCentroid (n : Nat) (hn : 0 < n) := LargeFirstRestrictions.fordCentroid P Ci horder hq1
-      hcross hcop n hn
+  have fordCentroid (n : Nat) (hn : 0 < n) := LargeFirstRestrictions.fordCentroid P n hn
   let Uc := TileTranslation (FordTile P.q₁) (u + ⟨P.q₂, P.q₂⟩)
   let Vc := TileTranslation (FordTile P.q₁) (u + ⟨P.q, P.q₁⟩)
   have hUcBand : BandPrototile Ci.1.1 Uc :=
@@ -999,9 +1012,9 @@ theorem P4158T1LargeFirstRestrictions
   have hw' := LargeFirstRestrictions.hw' P hvsol
   have hUoffset := LargeFirstRestrictions.hUoffset P T S hcent hvsol
   have hVoffset := LargeFirstRestrictions.hVoffset P T' S' hcent' hvsol
-  have hUCcent := LargeFirstRestrictions.hUCcent P Ci horder T u hq1 S hcross hcop fordCentroid
+  have hUCcent := LargeFirstRestrictions.hUCcent P T u hq1 S fordCentroid
       hrootCent hUoffset
-  have hVCcent := LargeFirstRestrictions.hVCcent P Ci horder T' u hq1 S' hcross hcop fordCentroid
+  have hVCcent := LargeFirstRestrictions.hVCcent P T' u hq1 S' fordCentroid
       hrootCent' hVoffset
   have hUcells : U.cells = Uc.cells :=
     (BandPrototileCentroidUnique Ci.1.1 U Uc
@@ -1011,7 +1024,7 @@ theorem P4158T1LargeFirstRestrictions
       (TileOdometerBandPrototile Ci.1.1 V k hVk) hVcBand hVCcent).1
   have hcentUV := LargeFirstRestrictions.hcentUV P u hq1 S S' fordCentroid
       hUCcent hVCcent
-  have hnonzero := LargeFirstRestrictions.hnonzero P Ci horder hq1 hcross hcop
+  have hnonzero := LargeFirstRestrictions.hnonzero P hq1
   have hslopeUdata := LargeFirstRestrictions.hslopeUdata P h gS hslope hnonzero
   obtain ⟨p₀, pU, hsp, hspU, hdu1, hdu2⟩ := hslopeUdata
   have hp₀ : p₀ = p := Option.some.inj (hsp.symm.trans hs)

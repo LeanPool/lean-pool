@@ -60,22 +60,23 @@ private theorem hRadialImage :
 
 private theorem boundedComponent :
     ∀ (e : C(Circle, Real × Real)),
-    let h₀ : ℂ ≃ₜ (Real × Real) :=
-      Complex.equivRealProd.toHomeomorphOfIsInducing
-        Complex.isUniformEmbedding_equivRealProd.isInducing
-    let h : (Real × Real) ≃ₜ ℂ := h₀.symm
-    let ec : C(Circle, ℂ) := ⟨fun t => h (e t), h.continuous.comp e.continuous⟩
-    let K : Set ℂ := Set.range ec
-    let T : Set ℂ := Kᶜ
-    ∀ (r : ℝ),
-    let R : ℝ := max r 0 + 1
-    let U : Set ℂ := {w | R < ‖w‖}
-    let aInf : ℂ := (R + 1 : ℝ)
-    let CInf : Set ℂ := connectedComponentIn T aInf
-    (U ⊆ CInf) → (∀ w ∈ T, connectedComponentIn T w ≠ CInf → Bornology.IsBounded
-        (connectedComponentIn T w)) := by
+      let h₀ : ℂ ≃ₜ Real × Real :=
+        Complex.equivRealProd.toHomeomorphOfIsInducing
+          Complex.isUniformEmbedding_equivRealProd.isInducing
+      let h : Real × Real ≃ₜ ℂ := h₀.symm
+      let ec : C(Circle, ℂ) := ⟨fun t => h (e t), h.continuous.comp e.continuous⟩
+      let K : Set ℂ := Set.range ec
+      let T : Set ℂ := Kᶜ
+      ∀ (r : ℝ),
+        let R : ℝ := max r 0 + 1
+        let U : Set ℂ := {w | R < ‖w‖}
+        let aInf : ℂ := (R + 1 : ℝ)
+        let CInf : Set ℂ := connectedComponentIn T aInf
+        U ⊆ CInf →
+          ∀ w,
+            connectedComponentIn T w ≠ CInf → Bornology.IsBounded (connectedComponentIn T w) := by
   classical
-  intro e h₀ h ec K T r R U aInf CInf hUcomponent w hw hneq
+  intro e h₀ h ec K T r R U aInf CInf hUcomponent w hneq
   rw [Metric.isBounded_iff_subset_closedBall (0 : ℂ)]
   refine ⟨R, ?_⟩
   intro v hv
@@ -398,7 +399,7 @@ theorem P3821T1CircleComponentBound (e : C(Circle, Real × Real))
   have boundedComponent (w : ℂ) (hw : w ∈ T)
       (hneq : connectedComponentIn T w ≠ CInf) :
       Bornology.IsBounded (connectedComponentIn T w) := CircleComponentProof.boundedComponent e r
-          hUcomponent w hw hneq
+          hUcomponent w hneq
   have hKimage : K = h '' Set.range e := by
     ext w
     constructor

@@ -142,10 +142,12 @@ private theorem centroid_cells_eq :
     (by
       classical
       exact
-        ∀ (A : ProtoTile), ∀ (B : ProtoTile), (A.cells.Nonempty) → ((B.cells.Nonempty) →
-            ((A.cells = B.cells) → (TileCentroid A = TileCentroid B))) ) := by
+        ∀ (A : ProtoTile),
+          ∀ (B : ProtoTile),
+            B.cells.Nonempty → A.cells = B.cells → TileCentroid A = TileCentroid B
+    ) := by
   classical
-  intro A B hA hB hc
+  intro A B hB hc
   simp [TileCentroid, hB, hc]
 
 private theorem hFminusne :
@@ -879,32 +881,55 @@ private theorem houterEnds :
     (by
       classical
       exact
-        (Fin 4 -> CircleCoordinates) → ((BandCircle) → ((Fin 3) → (∀ (T0 : ProtoTile), ∀ (T0' :
-            ProtoTile), ∀ (Rminus : ProtoTile), ∀ (Rplus : ProtoTile), ∀ (centerShift :
-            GaussianInt), ∀ (Eplus : ExactTileInterfaceTriple T0 T0' Rplus),
-        let f : GaussianInt → GaussianInt := fun x => -x + centerShift
-        ∀ (pAB : SimpleGridPathBetween (FootprintVertices T0 ∩ FootprintVertices T0')
-            (FootprintEdges T0 ∩ FootprintEdges T0') (f Eplus.point) (f Eplus.otherAB)), ∀ (pBC :
-            SimpleGridPathBetween (FootprintVertices T0' ∩ FootprintVertices Rminus)
-            (FootprintEdges T0' ∩ FootprintEdges Rminus) (f Eplus.point) (f Eplus.otherCA)), ∀
-            (pCA : SimpleGridPathBetween (FootprintVertices Rminus ∩ FootprintVertices T0)
-            (FootprintEdges Rminus ∩ FootprintEdges T0) (f Eplus.point) (f Eplus.otherBC)), ∀
-            (hunique : ∀ x, x ∈ FootprintVertices T0 ∩ FootprintVertices T0' ∩ FootprintVertices
-            Rminus ↔ x = f Eplus.point),
-        let EM : ExactTileInterfaceTriple T0 T0' Rminus :=
-          { point := f Eplus.point
-            otherAB := f Eplus.otherAB
-            otherBC := f Eplus.otherCA
-            otherCA := f Eplus.otherBC
-            pathAB := pAB
-            pathBC := pBC
-            pathCA := pCA
-            unique_common := hunique }
-        (Eplus.point ≠ Eplus.otherAB) → ((Eplus.point = EM.point ∧ Eplus.otherAB = EM.otherAB ∨
-            Eplus.point = EM.otherAB ∧ Eplus.otherAB = EM.point) → (f Eplus.point = Eplus.otherAB
-            ∧ f Eplus.otherAB = Eplus.point))))) ) := by
+        ∀ (T0 : ProtoTile),
+          ∀ (T0' : ProtoTile),
+            ∀ (Rminus : ProtoTile),
+              ∀ (Rplus : ProtoTile),
+                ∀ (centerShift : GaussianInt),
+                  ∀ (Eplus : ExactTileInterfaceTriple T0 T0' Rplus),
+                    let f : GaussianInt → GaussianInt := fun x => -x + centerShift
+                    ∀
+                      (pAB :
+                        SimpleGridPathBetween
+                          (FootprintVertices T0 ∩ FootprintVertices T0')
+                          (FootprintEdges T0 ∩ FootprintEdges T0') (f Eplus.point)
+                          (f Eplus.otherAB)),
+                      ∀
+                        (pBC :
+                          SimpleGridPathBetween
+                            (FootprintVertices T0' ∩ FootprintVertices Rminus)
+                            (FootprintEdges T0' ∩ FootprintEdges Rminus) (f Eplus.point)
+                            (f Eplus.otherCA)),
+                        ∀
+                          (pCA :
+                            SimpleGridPathBetween
+                              (FootprintVertices Rminus ∩ FootprintVertices T0)
+                              (FootprintEdges Rminus ∩ FootprintEdges T0) (f Eplus.point)
+                              (f Eplus.otherBC)),
+                          ∀
+                            (hunique :
+                              ∀ x,
+                                x ∈
+                                FootprintVertices T0 ∩ FootprintVertices T0' ∩
+                                FootprintVertices Rminus ↔
+                                x = f Eplus.point),
+                            let EM : ExactTileInterfaceTriple T0 T0' Rminus :=
+                              { point := f Eplus.point
+                                otherAB := f Eplus.otherAB
+                                otherBC := f Eplus.otherCA
+                                otherCA := f Eplus.otherBC
+                                pathAB := pAB
+                                pathBC := pBC
+                                pathCA := pCA
+                                unique_common := hunique }
+                            Eplus.point ≠ Eplus.otherAB →
+                              Eplus.point = EM.point ∧ Eplus.otherAB = EM.otherAB ∨
+                                Eplus.point = EM.otherAB ∧ Eplus.otherAB = EM.point →
+                                f Eplus.point = Eplus.otherAB ∧
+                                f Eplus.otherAB = Eplus.point
+    ) := by
   classical
-  intro q Ci i T0 T0' Rminus Rplus centerShift Eplus f pAB pBC pCA hunique EM hpt hpairCases
+  intro T0 T0' Rminus Rplus centerShift Eplus f pAB pBC pCA hunique EM hpt hpairCases
   rcases hpairCases with hfix | hswap
   · rcases hfix with ⟨hfp, hft⟩
     have hu1 : centerShift = Eplus.point + Eplus.point := by
@@ -1391,10 +1416,9 @@ theorem P4366T2OuterGeometry
   have centroid_cells_eq := OuterGeometry.centroid_cells_eq
   have hFplusne := OuterGeometry.hFplusne Rminus Rplus centerShift hpc hRmne
   have hcentFminus : TileCentroid (TileTranslation (TileHalfTurn Rminus) centerShift) =
-      TileCentroid Rplus := centroid_cells_eq _ _ (OuterGeometry.hFminusne Rminus Rplus
-          centerShift hmc hRpne) hRpne hmc
+      TileCentroid Rplus := centroid_cells_eq _ _ hRpne hmc
   have hcentFplus : TileCentroid (TileTranslation (TileHalfTurn Rplus) centerShift) =
-      TileCentroid Rminus := centroid_cells_eq _ _ hFplusne hRmne hpc
+      TileCentroid Rminus := centroid_cells_eq _ _ hRmne hpc
   have hcentHalfMinus : TileCentroid (TileHalfTurn Rminus) =
       (-(TileCentroid Rminus).1, -(TileCentroid Rminus).2) :=
     (TileHalfTurnFormulas Rminus).2.2.2.2.2.2.2.1
@@ -1483,7 +1507,7 @@ theorem P4366T2OuterGeometry
       {EM.point, EM.otherAB} :=
     SimpleGridPathEndpointPairUnique Eplus.pathAB EM.pathAB
   have hOuterPath := OuterGeometry.hOuterPath T0 T0' Rminus Rplus centerShift Eplus pAB pBC pCA
-      hunique (OuterGeometry.houterEnds q Ci i T0 T0' Rminus Rplus centerShift Eplus pAB pBC pCA
+      hunique (OuterGeometry.houterEnds T0 T0' Rminus Rplus centerShift Eplus pAB pBC pCA
       hunique hpt (OuterGeometry.hpairCases T0 T0' Rminus Rplus centerShift Eplus pAB pBC pCA
       hunique hpt hpair)) (OuterGeometry.reversePath)
   have hlatMinus := OuterGeometry.hlatMinus Rminus Rplus centerShift hpc hlatPlus

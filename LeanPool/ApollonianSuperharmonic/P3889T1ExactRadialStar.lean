@@ -238,25 +238,44 @@ private theorem finiteLower :
         linarith
 
 private theorem localRay :
-    ∀ (ι : Type), ∀ (P : PeriodicTileComplex ι), ∀ (D : P3723T1AllContactRouting P), ∀ (a : ι),
-        ∀ (hlocal : ∀ (c : ι), (P.plane.adjacent a c) → (∃ u : Real × Real, ‖u‖ = 1 ∧ ∃ ε > 0,
-        D.edgeArc a c ∩ Metric.ball (D.position a) ε = Metric.ball (D.position a) ε ∩ {p | ∃ t :
-        Real, 0 ≤ t ∧ p = D.position a + t • u})),
-    let localU (c : ι) (hc : P.plane.adjacent a c) : Real × Real :=
-      Classical.choose (hlocal c hc)
-    let localEps (c : ι) (hc : P.plane.adjacent a c) : Real :=
-      Classical.choose (Classical.choose_spec (hlocal c hc)).2
-    (∀ (c : ι), ∀ (hc : P.plane.adjacent a c), ‖localU c hc‖ = 1 ∧ 0 < localEps c hc ∧ D.edgeArc
-        a c ∩ Metric.ball (D.position a) (localEps c hc) = Metric.ball (D.position a) (localEps c
-        hc) ∩ {p | ∃ t : Real, 0 ≤ t ∧ p = D.position a + t • localU c hc}) → (
-    let u : ι → Real × Real := fun c =>
-      @dite (Real × Real) (P.plane.adjacent a c) (Classical.propDecidable _)
-        (fun hc => localU c hc) (fun _ => 0)
-    ∀ (c : ι), ∀ (hc : P.plane.adjacent a c), ∀ (q : ℝ), (0 : ℝ) < q → q < localEps c hc →
-        D.edgeArc a c ∩ Metric.ball (D.position a) q = Metric.ball (D.position a) q ∩ {p : ℝ × ℝ
-        | ∃ (t : ℝ), (0 : ℝ) ≤ t ∧ p = D.position a + t • u c}) := by
+    ∀ (ι : Type),
+      ∀ (P : PeriodicTileComplex ι),
+        ∀ (D : P3723T1AllContactRouting P),
+          ∀ (a : ι),
+            ∀
+              (hlocal :
+                ∀ (c : ι),
+                  P.plane.adjacent a c →
+                    ∃ u : Real × Real,
+                      ‖u‖ = 1 ∧
+                        ∃ ε > 0,
+                          D.edgeArc a c ∩ Metric.ball (D.position a) ε =
+                            Metric.ball (D.position a) ε ∩
+                            {p | ∃ t : Real, 0 ≤ t ∧ p = D.position a + t • u}),
+              let localU (c : ι) (hc : P.plane.adjacent a c) : Real × Real :=
+                Classical.choose (hlocal c hc);
+              let localEps (c : ι) (hc : P.plane.adjacent a c) : Real :=
+                Classical.choose (Classical.choose_spec (hlocal c hc)).2;
+              (∀ (c : ι),
+                  ∀ (hc : P.plane.adjacent a c),
+                    ‖localU c hc‖ = 1 ∧
+                      0 < localEps c hc ∧
+                        D.edgeArc a c ∩ Metric.ball (D.position a) (localEps c hc) =
+                          Metric.ball (D.position a) (localEps c hc) ∩
+                            {p | ∃ t : Real, 0 ≤ t ∧ p = D.position a + t • localU c hc}) →
+                let u : ι → Real × Real := fun c =>
+                  @dite (Real × Real) (P.plane.adjacent a c) (Classical.propDecidable _)
+                    (fun hc => localU c hc) fun _ => 0;
+                ∀ (c : ι),
+                  ∀ (hc : P.plane.adjacent a c),
+                    ∀ (q : ℝ),
+                      q < localEps c hc →
+                        D.edgeArc a c ∩ Metric.ball (D.position a) q =
+                          Metric.ball (D.position a) q ∩
+                            {p : ℝ × ℝ |
+                            ∃ (t : ℝ), (0 : ℝ) ≤ t ∧ p = D.position a + t • u c} := by
   classical
-  intro ι P D a hlocal localU localEps localSpec u c hc q hq0 hq
+  intro ι P D a hlocal localU localEps localSpec u c hc q hq
   have heq := (localSpec c hc).2.2
   have hball : Metric.ball (D.position a) q ⊆
       Metric.ball (D.position a) (localEps c hc) :=
@@ -523,7 +542,7 @@ theorem P3889T1ExactRadialStar {ι : Type} (P : PeriodicTileComplex ι)
       D.edgeArc a c ∩ Metric.ball (D.position a) q =
         Metric.ball (D.position a) q ∩
           {p | ∃ t : Real, 0 ≤ t ∧ p = D.position a + t • u c} := RadialStarProof.localRay ι P D
-              a hlocal localSpec c hc q hq0 hq
+              a hlocal localSpec c hc q hq
   have edgeCompact (c d : ι) (hcd : P3723T1EdgeContact P c d) :
       IsCompact (D.edgeArc c d) := by
     obtain ⟨g, hg, _, hrange, _, _, _⟩ := D.edgeArc_parameterization c d hcd

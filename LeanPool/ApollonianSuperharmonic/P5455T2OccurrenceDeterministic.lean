@@ -103,11 +103,11 @@ private theorem Normalize :
       · funext k; fin_cases k <;> rfl
 
 private theorem noMix :
-    (Fin 4 → CircleCoordinates) → ((Fin 3) → (∀ z s r p, ProperBandQuadruple p → ∀ r',
-      P4828T1Rotate (P4828T1Root z s) r =
-        P4828T1Rotate (P4828T1Step p) r' → False)) := by
+    ∀ z s r p,
+      ProperBandQuadruple p →
+        ∀ r', P4828T1Rotate (P4828T1Root z s) r = P4828T1Rotate (P4828T1Step p) r' → False := by
   classical
-  intro q i z s r p hp r' heq
+  intro z s r p hp r' heq
   have hc := congrArg (fun x : Fin 4 → CircleCoordinates => (x 0).1) heq
   simp only [P4828T1Rotate, Fin.cases_zero] at hc
   have hg := P5455T2CurvatureGrowth p hp
@@ -336,7 +336,7 @@ theorem P5455T2OccurrenceDeterministic
                        OccurrenceDeterministicProof.Normalize
   have noMix : ∀ z s r p, ProperBandQuadruple p → ∀ r',
       P4828T1Rotate (P4828T1Root z s) r =
-        P4828T1Rotate (P4828T1Step p) r' → False := OccurrenceDeterministicProof.noMix q i
+        P4828T1Rotate (P4828T1Step p) r' → False := OccurrenceDeterministicProof.noMix
   have rotUnique : ∀ t, ProperBandQuadruple t → ∀ r r',
       P4828T1Rotate t r = P4828T1Rotate t r' → r = r' := OccurrenceDeterministicProof.rotUnique
   have main : ∀ n : Nat, ∀ q : Fin 4 → CircleCoordinates,

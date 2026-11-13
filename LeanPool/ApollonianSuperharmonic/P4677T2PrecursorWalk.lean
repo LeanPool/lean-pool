@@ -122,10 +122,12 @@ private theorem edge_parent :
     (by
       classical
       exact
-        ∀ (A : ProtoTile), ∀ (T : ProtoTile), T.cells ⊆ A.cells → FootprintVertices T ⊆
-            FootprintVertices A → ∀ e ∈ FootprintEdges T, e ∈ FootprintEdges A ) := by
+        ∀ (A : ProtoTile),
+          ∀ (T : ProtoTile),
+            T.cells ⊆ A.cells → ∀ e ∈ FootprintEdges T, e ∈ FootprintEdges A
+    ) := by
   classical
-  intro A T hTc hTf e he
+  intro A T hTc e he
   rcases he with ⟨c, hc, hshape⟩
   exact ⟨c, hTc hc, hshape⟩
 
@@ -451,7 +453,7 @@ theorem P4677T2PrecursorWalk :
   have edge_parent (T : ProtoTile) (hTc : T.cells ⊆ A.cells)
       (hTf : FootprintVertices T ⊆ FootprintVertices A)
       (e : Finset GaussianInt) (he : e ∈ FootprintEdges T) :
-      e ∈ FootprintEdges A := PrecursorWalkGeometry.edge_parent A T hTc hTf e he
+      e ∈ FootprintEdges A := PrecursorWalkGeometry.edge_parent A T hTc e he
   have edge_parentB (T : ProtoTile) (hTc : T.cells ⊆ B.cells)
       (e : Finset GaussianInt) (he : e ∈ FootprintEdges T) :
       e ∈ FootprintEdges B := PrecursorWalkGeometry.edge_parentB B T hTc e he

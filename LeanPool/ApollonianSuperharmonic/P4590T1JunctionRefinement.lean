@@ -1107,21 +1107,6 @@ private theorem hp3F :
   simpa [p3, faceI3, fI3, ModifiedSubtileOccurrenceInterpretation,
     TileTranslation, GaussianTranslation, htransZero, Finset.image_id] using hh
 
-private theorem hDtile0 :
-    (by
-      classical
-      exact
-        ∀ (q : Fin 4 → CircleCoordinates), ∀ (cfg : BandOrderedGeneralConfiguration q), ∀ (C :
-            BandCircle), ∀ (T : ProtoTile), ∀ (cert : BandOrderedGeneralLayoutCertificate q cfg C
-            T), (GaussianTranslation (0 : GaussianInt) = id) → (
-        let d0 : PeriodicSubtileIndex := ⟨.D, 0, 0⟩
-        cert.modified.tile d0 = cert.P 1 false) ) := by
-  classical
-  intro q cfg C T cert htransZero d0
-  rw [cert.modified_tile]
-  simp [d0, ModifiedSubtileOccurrenceInterpretation,
-    TileTranslation, htransZero]
-
 private theorem hEtile0 :
     (by
       classical
@@ -1949,7 +1934,7 @@ private theorem fourthJunction :
   let d0 : PeriodicSubtileIndex := ⟨.D, 0, 0⟩
   let e0 : PeriodicSubtileIndex := ⟨.E, 0, 0⟩
   have hDtile0 : cert.modified.tile d0 = cert.P 1 false :=
-      JunctionRefinementGeometry.hDtile0 q cfg C T cert htransZero
+      JunctionRefinementGeometry.hDtile q cfg C T cert htransZero
   have hEtile0 : cert.modified.tile e0 = cert.P 2 true :=
       JunctionRefinementGeometry.hEtile0 q cfg C T cert htransZero
   have hDEseparate : Disjoint (cert.P 1 false).cells

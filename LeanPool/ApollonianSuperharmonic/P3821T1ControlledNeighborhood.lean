@@ -233,10 +233,6 @@ private theorem hψclose (e : C(Circle, ℂ)) (he : Function.Injective e) (eps :
   have hle : r ≤ η / 8 := by dsimp [r]; exact min_le_left _ _
   linarith
 
-private theorem hKcompact' (e : C(Circle, ℂ)) : IsCompact (Set.range e) := by
-  classical
-  exact isCompact_range e.continuous
-
 private noncomputable abbrev F (e : C(Circle, ℂ)) (S : Set ↑(Set.range ⇑e)) (hSf : S.Finite) :
     Finset (Set.range e) := by
   classical
@@ -1146,7 +1142,7 @@ theorem P3821T1ControlledNeighborhood (e : C(Circle, ℂ))
   have hψclose : ∀ k l : Set.range e, dist k l < 4 * r →
       dist ((ψ k : Circle) : ℂ) ((ψ l : Circle) : ℂ) < δ :=
           ControlledNeighborhoodConstruction.hψclose e he eps heps δ₀ η hη hηψ
-  have hKcompact' : IsCompact (Set.range e) := ControlledNeighborhoodConstruction.hKcompact' e
+  have hKcompact' : IsCompact (Set.range e) := ControlledNeighborhoodConstruction.hKcompact e
   let : CompactSpace (Set.range e) := isCompact_iff_compactSpace.mp hKcompact'
   obtain ⟨S, hSsub, hSf, hcover⟩ :=
     (isCompact_univ : IsCompact (Set.univ : Set (Set.range e))).finite_cover_balls

@@ -401,45 +401,79 @@ private theorem centralData :
     (by
       classical
       exact
-        (BandCircle) → (∀ (q : Fin 4 → CircleCoordinates), (Fin 3) → ((Fin 4) → (∀ (T₀ :
-            ProtoTile), ∀ (r : Fin (3 : ℕ)), ∀ (g : BandPackingSymmetry),
-        let qrot : Fin 4 → CircleCoordinates :=
-          ![q 0, q r.succ, q (r + 1).succ, q (r + 2).succ]
-        let qbar := BandPackingSymmetryQuadrupleAction g qrot
-        ∀ (hqbar : ProperBandQuadruple qbar), ∀ (cfg : BandOrderedGeneralConfiguration qbar),
-            (Bool) → ((Fin (4 : ℕ)) → (
-        let T₀bar := BandPackingSymmetryTileAction g T₀
-        ∀ (hqbar₀Pos : 0 < (qbar 0).1),
-        let C₀bar : BandCircle :=
-          ⟨⟨qbar 0, ⟨Or.inl hqbar₀Pos, ⟨qbar, hqbar.1, ⟨0, rfl⟩⟩⟩⟩, hqbar₀Pos⟩
-        ∀ (layout : BandOrderedGeneralLayoutCertificate qbar cfg C₀bar T₀bar), ∀ (pieces : Fin (3
-            : ℕ) → Bool → ProtoTile), ∀ (functions : Fin (3 : ℕ) → Bool → PartialOdometer), (∀ (i
-                : Fin (3 : ℕ)), ∀ (s : Bool), TileOdometer (qbar i.succ) (pieces i s) (functions i
-            s)) → ((∀ (i : Fin (3 : ℕ)), ∀ (s : Bool), TileCentroid (pieces i s) - TileCentroid
-            T₀bar = (if s = true then (1 : ℝ) else (-1 : ℝ)) • (1 / 2 : ℝ) • (GaussianRealPoint
-            (BandVectors.1 (qbar (i + (2 : Fin (3 : ℕ))).succ) (qbar (i + (1 : Fin (3 :
-            ℕ))).succ)) - (-(GaussianRealPoint (BandVectors.1 (qbar (i + (2 : Fin (3 : ℕ))).succ)
-            (qbar (i + (1 : Fin (3 : ℕ))).succ))).2, (GaussianRealPoint (BandVectors.1 (qbar (i +
-            (2 : Fin (3 : ℕ))).succ) (qbar (i + (1 : Fin (3 : ℕ))).succ))).1))) → (
-        let labelOf : Fin 3 → Bool → SixSubtileLabel := fun j e =>
-          match j, e with
-          | 0, true => .A | 0, false => .B
-          | 1, true => .C | 1, false => .D
-          | 2, true => .E | 2, false => .F
-        let pieceIndex : Fin 3 → Bool → PeriodicSubtileIndex := fun j e =>
-          ⟨labelOf j e, 0, 0⟩
-        (∀ (j : Fin 3), ∀ (e : Bool), SubtileOccurrenceInterpretation layout.P layout.u layout.v
-            (pieceIndex j e) = layout.P j e) → (∀ (j : Fin 3), ∀ (e : Bool), (pieces j e).cells =
-            (SubtileOccurrenceInterpretation layout.P layout.u layout.v (pieceIndex j e)).cells ∧
-            ((pieces j e).cells = ∅ → (pieces j e).anchor = (SubtileOccurrenceInterpretation
-            layout.P layout.u layout.v (pieceIndex j e)).anchor) ∧ FootprintVertices (pieces j e)
-            = FootprintVertices (SubtileOccurrenceInterpretation layout.P layout.u layout.v
-            (pieceIndex j e)) ∧ ((functions j e).domain : Set GaussianInt) = FootprintVertices
-            (SubtileOccurrenceInterpretation layout.P layout.u layout.v (pieceIndex j e)))))))))) )
+        ∀ (q : Fin 4 → CircleCoordinates),
+          ∀ (T₀ : ProtoTile),
+            ∀ (r : Fin (3 : ℕ)),
+              ∀ (g : BandPackingSymmetry),
+                let qrot : Fin 4 → CircleCoordinates :=
+                  ![q 0, q r.succ, q (r + 1).succ, q (r + 2).succ];
+                let qbar := BandPackingSymmetryQuadrupleAction g qrot;
+                ∀ (hqbar : ProperBandQuadruple qbar),
+                  ∀ (cfg : BandOrderedGeneralConfiguration qbar),
+                    let T₀bar := BandPackingSymmetryTileAction g T₀
+                    ∀ (hqbar₀Pos : 0 < (qbar 0).1),
+                      let C₀bar : BandCircle :=
+                        ⟨⟨qbar 0, ⟨Or.inl hqbar₀Pos, ⟨qbar, hqbar.1, ⟨0, rfl⟩⟩⟩⟩,
+                          hqbar₀Pos⟩
+                      ∀
+                        (layout :
+                          BandOrderedGeneralLayoutCertificate qbar cfg C₀bar T₀bar),
+                        ∀ (pieces : Fin (3 : ℕ) → Bool → ProtoTile),
+                          ∀ (functions : Fin (3 : ℕ) → Bool → PartialOdometer),
+                            (∀ (i : Fin (3 : ℕ)),
+                                ∀ (s : Bool),
+                                TileOdometer (qbar i.succ) (pieces i s) (functions i s)) →
+                              (∀ (i : Fin (3 : ℕ)),
+                                ∀ (s : Bool),
+                                TileCentroid (pieces i s) - TileCentroid T₀bar =
+                                (if s = true then (1 : ℝ) else (-1 : ℝ)) •
+                                (1 / 2 : ℝ) •
+                                (GaussianRealPoint
+                                (BandVectors.1 (qbar (i + (2 : Fin (3 : ℕ))).succ)
+                                (qbar (i + (1 : Fin (3 : ℕ))).succ)) -
+                                (-(GaussianRealPoint
+                                (BandVectors.1 (qbar (i + (2 : Fin (3 : ℕ))).succ)
+                                (qbar (i + (1 : Fin (3 : ℕ))).succ))).2,
+                                (GaussianRealPoint
+                                (BandVectors.1 (qbar (i + (2 : Fin (3 : ℕ))).succ)
+                                (qbar (i + (1 : Fin (3 : ℕ))).succ))).1))) →
+                                let labelOf : Fin 3 → Bool → SixSubtileLabel := fun j e =>
+                                match j, e with
+                              | 0, true => .A
+                              | 0, false => .B
+                              | 1, true => .C
+                              | 1, false => .D
+                              | 2, true => .E
+                              | 2, false => .F
+                              let pieceIndex : Fin 3 → Bool → PeriodicSubtileIndex :=
+                                fun j e => ⟨labelOf j e, 0, 0⟩
+                              (∀ (j : Fin 3),
+                                ∀ (e : Bool),
+                                SubtileOccurrenceInterpretation layout.P layout.u layout.v
+                                (pieceIndex j e) =
+                                layout.P j e) →
+                                ∀ (j : Fin 3),
+                                ∀ (e : Bool),
+                                (pieces j e).cells =
+                                (SubtileOccurrenceInterpretation layout.P layout.u
+                                layout.v (pieceIndex j e)).cells ∧
+                                ((pieces j e).cells = ∅ →
+                                (pieces j e).anchor =
+                                (SubtileOccurrenceInterpretation layout.P layout.u
+                                layout.v (pieceIndex j e)).anchor) ∧
+                                FootprintVertices (pieces j e) =
+                                FootprintVertices
+                                (SubtileOccurrenceInterpretation layout.P layout.u
+                                layout.v (pieceIndex j e)) ∧
+                                ((functions j e).domain : Set GaussianInt) =
+                                FootprintVertices
+                                (SubtileOccurrenceInterpretation layout.P layout.u
+                                layout.v (pieceIndex j e))
+    )
             := by
   classical
-  intro Cᵢ q i s T₀ r g qrot qbar hqbar cfg negative sbar T₀bar hqbar₀Pos C₀bar layout pieces
-      functions hpieceOdometer hpieceCentroid labelOf pieceIndex centralOccurrence j e
+  intro q T₀ r g qrot qbar hqbar cfg T₀bar hqbar₀Pos C₀bar layout pieces functions
+      hpieceOdometer hpieceCentroid labelOf pieceIndex centralOccurrence j e
   have hpieceBand : BandPrototile (qbar j.succ) (pieces j e) :=
     TileOdometerBandPrototile _ _ _ (hpieceOdometer j e)
   have hlayoutBand : BandPrototile (qbar j.succ)
@@ -1150,8 +1184,8 @@ theorem BandOrderedGeneralSubtileNormalizationCertificateExists
             (pieceIndex j e)) ∧
       ((functions j e).domain : Set GaussianInt) = FootprintVertices
           (SubtileOccurrenceInterpretation layout.P layout.u layout.v
-            (pieceIndex j e)) := SubtileNormalizationGeometry.centralData Cᵢ q i s T₀ r g hqbar
-                cfg negative sbar hqbar₀Pos layout pieces functions hpieceOdometer hpieceCentroid
+            (pieceIndex j e)) := SubtileNormalizationGeometry.centralData q T₀ r g hqbar
+                cfg hqbar₀Pos layout pieces functions hpieceOdometer hpieceCentroid
                 centralOccurrence j e
   have hrootSym : QuarterTurnSymmetric T₀bar := hT₀ind.2.2.2.1
   have subtileNormalizationCertificate :

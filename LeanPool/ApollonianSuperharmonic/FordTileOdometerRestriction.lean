@@ -218,10 +218,13 @@ private theorem red :
     (by
       classical
       exact
-        (FordFareyParameter) → (∀ (a : ℤ), ∀ (b : ℕ), ∀ (d : ℕ), ∀ (c : ℤ), a * (↑d : ℤ) - (↑b :
-            ℤ) * c = (1 : ℤ) → b.Coprime a.natAbs) ) := by
+        ∀ (a : ℤ),
+          ∀ (b : ℕ),
+            ∀ (d : ℕ),
+              ∀ (c : ℤ), a * (↑d : ℤ) - (↑b : ℤ) * c = (1 : ℤ) → b.Coprime a.natAbs
+    ) := by
   classical
-  intro R a b d c hd
+  intro a b d c hd
   rw [Nat.coprime_iff_gcd_eq_one]
   apply Nat.dvd_one.mp
   let g := Nat.gcd b a.natAbs
@@ -630,7 +633,7 @@ theorem FordTileOdometerRestriction (P : FordFareyParameter) :
       have cross : R.p₁ * (R.q₂ : Int) - (R.q₁ : Int) * R.p₂ = 1 := FordOdometerRestriction.cross R
       have red (a : Int) (b d : Nat) (c : Int)
           (hd : a * (d : Int) - (b : Int) * c = 1) : Nat.Coprime b a.natAbs :=
-              FordOdometerRestriction.red R a b d c hd
+              FordOdometerRestriction.red a b d c hd
       obtain ⟨R1, ⟨hp1, hq1⟩, _⟩ := FordFareyParentsExist R.p₁ R.q₁ q1pos
         (red R.p₁ R.q₁ R.q₂ R.p₂ cross)
       obtain ⟨R2, ⟨hp2, hq2⟩, _⟩ := FordFareyParentsExist R.p₂ R.q₂ R.q₂_pos

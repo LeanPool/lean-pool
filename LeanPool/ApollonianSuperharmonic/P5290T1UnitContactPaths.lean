@@ -34,16 +34,27 @@ namespace ApollonianSuperharmonic
 namespace UnitContactProof
 
 private theorem makePath :
-    (Nat) → (∀ (T : ProtoTile), ∀ (U : ProtoTile), ∀ (a : GaussianInt), ∀ (b : GaussianInt),
-        Finset.Nonempty T.cells → Finset.Nonempty U.cells → Disjoint T.cells U.cells →
-        BoundaryFootprintVertices T ∩ BoundaryFootprintVertices U = {a, b} → {a, b} ∈
-        BoundaryFootprintEdges T → {a, b} ∈ BoundaryFootprintEdges U → b = a + (1 : GaussianInt)
-        ∨ b = a - (1 : GaussianInt) ∨ b = a + ⟨(0 : ℤ), (1 : ℤ)⟩ ∨ b = a - ⟨(0 : ℤ), (1 : ℤ)⟩ →
-        Finset.Nonempty T.cells ∧ Finset.Nonempty U.cells ∧ Disjoint T.cells U.cells ∧
-        SimpleGridPathBetween (BoundaryFootprintVertices T ∩ BoundaryFootprintVertices U)
-        (BoundaryFootprintEdges T ∩ BoundaryFootprintEdges U) a b) := by
+    ∀ (T : ProtoTile),
+      ∀ (U : ProtoTile),
+        ∀ (a : GaussianInt),
+          ∀ (b : GaussianInt),
+            Finset.Nonempty T.cells →
+              Finset.Nonempty U.cells →
+                Disjoint T.cells U.cells →
+                  BoundaryFootprintVertices T ∩ BoundaryFootprintVertices U = { a, b } →
+                    { a, b } ∈ BoundaryFootprintEdges T →
+                      { a, b } ∈ BoundaryFootprintEdges U →
+                        b = a + (1 : GaussianInt) ∨
+                            b = a - (1 : GaussianInt) ∨
+                            b = a + ⟨(0 : ℤ), (1 : ℤ)⟩ ∨ b = a - ⟨(0 : ℤ), (1 : ℤ)⟩ →
+                          Finset.Nonempty T.cells ∧
+                            Finset.Nonempty U.cells ∧
+                            Disjoint T.cells U.cells ∧
+                            SimpleGridPathBetween
+                            (BoundaryFootprintVertices T ∩ BoundaryFootprintVertices U)
+                            (BoundaryFootprintEdges T ∩ BoundaryFootprintEdges U) a b := by
   classical
-  intro k T U a b hT hU hd hv heT heU ha
+  intro T U a b hT hU hd hv heT heU ha
   have interface := P5253T1OneEdgeInterface T U a b hT hU hd hv heT heU ha
   have hab : a ≠ b := by
     rcases ha with h | h | h | h <;>
@@ -244,7 +255,7 @@ private def unitContactConclusion (k : Nat) (i : Fin 3) : Prop :=
 private theorem zeroUnitContacts (k : Nat) (hk : 0 < k) (hk1 : 1 < k) :
     unitContactConclusion k 0 := by
   classical
-  have makePath := UnitContactProof.makePath k
+  have makePath := UnitContactProof.makePath
   have rightContact := UnitContactProof.rightContact k hk
   have singletonPath := UnitContactProof.singletonPath makePath
   let M := P5260T1PlacementLedger k 0 false
@@ -381,7 +392,7 @@ private theorem tileTranslationZero (T : ProtoTile) : TileTranslation T 0 = T :=
 private theorem oneUnitContacts (k : Nat) (hk : 0 < k) :
     unitContactConclusion k 1 := by
   classical
-  have makePath := UnitContactProof.makePath k
+  have makePath := UnitContactProof.makePath
   have rightContact := UnitContactProof.rightContact k hk
   have singletonPath := UnitContactProof.singletonPath makePath
   let M := P5260T1PlacementLedger k 1 false

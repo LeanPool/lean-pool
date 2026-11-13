@@ -30,13 +30,19 @@ private theorem unitForm :
     (by
       classical
       exact
-        (BandCircle) → (∀ (c : CircleCoordinates), (c.1 = 1) → (∀ (T : ProtoTile), ∀ (h :
-            PartialOdometer), TileOdometer c T h → ∃ z x, c = (1, 1 + 2 * z) ∧ T.cells = {x} ∧
-            (h.domain : Set GaussianInt) = FootprintVertices T ∧ OdometerTranslation h
-            (CurvatureOneOdometer z)))
+        ∀ (c : CircleCoordinates),
+          c.1 = 1 →
+            ∀ (T : ProtoTile),
+              ∀ (h : PartialOdometer),
+                TileOdometer c T h →
+                  ∃ z x,
+                    c = (1, 1 + 2 * z) ∧
+                      T.cells = { x } ∧
+                        (h.domain : Set GaussianInt) = FootprintVertices T ∧
+                          OdometerTranslation h (CurvatureOneOdometer z)
     ) := by
   classical
-  intro C c hc T h ho
+  intro c hc T h ho
   induction ho with
   | line w x hw h hdom => simp at hc
   | @unit z x T h hT hdom htrans => exact ⟨z, x, rfl, hT, hdom, htrans⟩
@@ -54,13 +60,20 @@ private theorem unitData :
     (by
       classical
       exact
-        (BandCircle) → (∀ (z : GaussianInt), ∀ (x : GaussianInt), ∀ (T : ProtoTile), ∀ (h :
-            PartialOdometer), T.cells = {x} → (h.domain : Set GaussianInt) = FootprintVertices T
-            → OdometerTranslation h (CurvatureOneOdometer z) → ∃ a : GaussianInt, ∃ b : ℤ, h =
-            PartialOdometerAffineTranslate (CurvatureOneOdometer z) x a b)
+        ∀ (z : GaussianInt),
+          ∀ (x : GaussianInt),
+            ∀ (T : ProtoTile),
+              ∀ (h : PartialOdometer),
+                T.cells = { x } →
+                  (h.domain : Set GaussianInt) = FootprintVertices T →
+                    OdometerTranslation h (CurvatureOneOdometer z) →
+                      ∃ a : GaussianInt,
+                        ∃ b : ℤ,
+                          h =
+                            PartialOdometerAffineTranslate (CurvatureOneOdometer z) x a b
     ) := by
   classical
-  intro C z x T h hT hdom htrans
+  intro z x T h hT hdom htrans
   obtain ⟨v, a, b, hd, hv⟩ := htrans
   have hdomSq : (h.domain : Set GaussianInt) =
       {x, x + 1, x + ⟨0, 1⟩, x + 1 + ⟨0, 1⟩} := by
@@ -183,20 +196,36 @@ private theorem horizontalPositive :
     (by
       classical
       exact
-        (BandCircle) → (∀ (z : GaussianInt), (LatticeCell) → ((LatticeCell) → ((GaussianInt) →
-            ((GaussianInt) → (∀ (f : PartialOdometer), ∀ (g : PartialOdometer), ∀ (x :
-            GaussianInt), ∀ (y : GaussianInt), ∀ (α : GaussianInt), ∀ (β : GaussianInt), ∀ (B :
-            ℤ), ∀ (D : ℤ), (↑f.domain : Set GaussianInt) = {x, x + (1 : GaussianInt),
-            x + ⟨(0 : ℤ), (1 : ℤ)⟩, x + (1 : GaussianInt) + ⟨(0 : ℤ), (1 : ℤ)⟩} → (↑g.domain :
-            Set GaussianInt) = {y, y + (1 : GaussianInt), y + ⟨(0 : ℤ), (1 : ℤ)⟩,
-            y + (1 : GaussianInt) + ⟨(0 : ℤ), (1 : ℤ)⟩} → (∀ t ∈ f.domain, f.value t =
-            (CurvatureOneOdometer z).value (t - x) + α.re * t.re + α.im * t.im + B) → (∀ t ∈
-            g.domain, g.value t = (CurvatureOneOdometer z).value (t - y) + β.re * t.re + β.im *
-            t.im + D) → y = x + (1 : GaussianInt) → β.im - α.im = z.im → OdometerCompatibility f
-            g)))))
+        ∀ (z : GaussianInt),
+          ∀ (f : PartialOdometer),
+            ∀ (g : PartialOdometer),
+              ∀ (x : GaussianInt),
+                ∀ (y : GaussianInt),
+                  ∀ (α : GaussianInt),
+                    ∀ (β : GaussianInt),
+                      ∀ (B : ℤ),
+                        ∀ (D : ℤ),
+                          (↑f.domain : Set GaussianInt) =
+                              {x, x + (1 : GaussianInt), x + ⟨(0 : ℤ), (1 : ℤ)⟩,
+                                x + (1 : GaussianInt) + ⟨(0 : ℤ), (1 : ℤ)⟩} →
+                            (↑g.domain : Set GaussianInt) =
+                                {y, y + (1 : GaussianInt), y + ⟨(0 : ℤ), (1 : ℤ)⟩,
+                                y + (1 : GaussianInt) + ⟨(0 : ℤ), (1 : ℤ)⟩} →
+                              (∀ t ∈ f.domain,
+                                f.value t =
+                                (CurvatureOneOdometer z).value (t - x) + α.re * t.re +
+                                α.im * t.im +
+                                B) →
+                                (∀ t ∈ g.domain,
+                                g.value t =
+                                (CurvatureOneOdometer z).value (t - y) + β.re * t.re +
+                                β.im * t.im +
+                                D) →
+                                y = x + (1 : GaussianInt) →
+                                β.im - α.im = z.im → OdometerCompatibility f g
     ) := by
   classical
-  intro C z u v a a' f g x y α β B D df dg vf vg hstep hcoef
+  intro z f g x y α β B D df dg vf vg hstep hcoef
   subst y
   have fRe (t : GaussianInt) (ht : t ∈ f.domain) :
       t.re = x.re ∨ t.re = x.re + 1 := by
@@ -303,20 +332,36 @@ private theorem verticalPositive :
     (by
       classical
       exact
-        (BandCircle) → (∀ (z : GaussianInt), (LatticeCell) → ((LatticeCell) → ((GaussianInt) →
-            ((GaussianInt) → (∀ (f : PartialOdometer), ∀ (g : PartialOdometer), ∀ (x :
-            GaussianInt), ∀ (y : GaussianInt), ∀ (α : GaussianInt), ∀ (β : GaussianInt), ∀ (B :
-            ℤ), ∀ (D : ℤ), (↑f.domain : Set GaussianInt) = {x, x + (1 : GaussianInt),
-            x + ⟨(0 : ℤ), (1 : ℤ)⟩, x + (1 : GaussianInt) + ⟨(0 : ℤ), (1 : ℤ)⟩} → (↑g.domain :
-            Set GaussianInt) = {y, y + (1 : GaussianInt), y + ⟨(0 : ℤ), (1 : ℤ)⟩,
-            y + (1 : GaussianInt) + ⟨(0 : ℤ), (1 : ℤ)⟩} → (∀ t ∈ f.domain, f.value t =
-            (CurvatureOneOdometer z).value (t - x) + α.re * t.re + α.im * t.im + B) → (∀ t ∈
-            g.domain, g.value t = (CurvatureOneOdometer z).value (t - y) + β.re * t.re + β.im *
-            t.im + D) → y = x + ⟨(0 : ℤ), (1 : ℤ)⟩ → β.re - α.re = z.im → OdometerCompatibility f
-            g)))))
+        ∀ (z : GaussianInt),
+          ∀ (f : PartialOdometer),
+            ∀ (g : PartialOdometer),
+              ∀ (x : GaussianInt),
+                ∀ (y : GaussianInt),
+                  ∀ (α : GaussianInt),
+                    ∀ (β : GaussianInt),
+                      ∀ (B : ℤ),
+                        ∀ (D : ℤ),
+                          (↑f.domain : Set GaussianInt) =
+                              {x, x + (1 : GaussianInt), x + ⟨(0 : ℤ), (1 : ℤ)⟩,
+                                x + (1 : GaussianInt) + ⟨(0 : ℤ), (1 : ℤ)⟩} →
+                            (↑g.domain : Set GaussianInt) =
+                                {y, y + (1 : GaussianInt), y + ⟨(0 : ℤ), (1 : ℤ)⟩,
+                                y + (1 : GaussianInt) + ⟨(0 : ℤ), (1 : ℤ)⟩} →
+                              (∀ t ∈ f.domain,
+                                f.value t =
+                                (CurvatureOneOdometer z).value (t - x) + α.re * t.re +
+                                α.im * t.im +
+                                B) →
+                                (∀ t ∈ g.domain,
+                                g.value t =
+                                (CurvatureOneOdometer z).value (t - y) + β.re * t.re +
+                                β.im * t.im +
+                                D) →
+                                y = x + ⟨(0 : ℤ), (1 : ℤ)⟩ →
+                                β.re - α.re = z.im → OdometerCompatibility f g
     ) := by
   classical
-  intro C z u v a a' f g x y α β B D df dg vf vg hstep hcoef
+  intro z f g x y α β B D df dg vf vg hstep hcoef
   subst y
   have fRe (t : GaussianInt) (ht : t ∈ f.domain) :
       t.re = x.re ∨ t.re = x.re + 1 := by
@@ -428,18 +473,24 @@ private theorem diagonalUnique :
     (by
       classical
       exact
-        (BandCircle) → (∀ (h : PartialOdometer), ∀ (k : PartialOdometer), (GaussianInt) → (∀ (u :
-            LatticeCell), ∀ (v : LatticeCell), (GaussianInt) → ((GaussianInt) → ((∀ (y :
-            GaussianInt), (y ∈ h.domain) → (y.re = u.re ∨ y.re = u.re + 1)) → ((∀ (y :
-            GaussianInt), (y ∈ h.domain) → (y.im = u.im ∨ y.im = u.im + 1)) → ((∀ (y :
-            GaussianInt), (y ∈ k.domain) → (y.re = v.re ∨ y.re = v.re + 1)) → ((∀ (y :
-            GaussianInt), (y ∈ k.domain) → (y.im = v.im ∨ y.im = v.im + 1)) → (v.re - u.re = (-1
-            : ℤ) ∨ v.re - u.re = (1 : ℤ) → v.im - u.im = (-1 : ℤ) ∨ v.im - u.im = (1 : ℤ) → ∀ (s
-            : GaussianInt), ∀ (t : GaussianInt), s ∈ h.domain → s ∈ k.domain → t ∈ h.domain → t ∈
-            k.domain → s = t))))))))
+        ∀ (h : PartialOdometer),
+          ∀ (k : PartialOdometer),
+            ∀ (u : LatticeCell),
+              ∀ (v : LatticeCell),
+                (∀ (y : GaussianInt), y ∈ h.domain → y.re = u.re ∨ y.re = u.re + 1) →
+                  (∀ (y : GaussianInt), y ∈ h.domain → y.im = u.im ∨ y.im = u.im + 1) →
+                    (∀ (y : GaussianInt), y ∈ k.domain → y.re = v.re ∨ y.re = v.re + 1) →
+                      (∀ (y : GaussianInt),
+                          y ∈ k.domain → y.im = v.im ∨ y.im = v.im + 1) →
+                        v.re - u.re = (-1 : ℤ) ∨ v.re - u.re = (1 : ℤ) →
+                          v.im - u.im = (-1 : ℤ) ∨ v.im - u.im = (1 : ℤ) →
+                            ∀ (s : GaussianInt),
+                              ∀ (t : GaussianInt),
+                                s ∈ h.domain →
+                                s ∈ k.domain → t ∈ h.domain → t ∈ k.domain → s = t
     ) := by
   classical
-  intro C h k z u v a a' hReMem hImMem kReMem kImMem hx hy s t hs ks ht kt
+  intro h k u v hReMem hImMem kReMem kImMem hx hy s t hs ks ht kt
   have hre : s.re = t.re := by
     rcases hx with hx | hx
     · rcases hReMem s hs with hs0 | hs1 <;>
@@ -466,12 +517,11 @@ private theorem compatibilitySymm :
     (by
       classical
       exact
-        (BandCircle) → ((GaussianInt) → ((LatticeCell) → ((LatticeCell) → ((GaussianInt) →
-            ((GaussianInt) → (∀ (f : PartialOdometer), ∀ (g : PartialOdometer),
-            OdometerCompatibility f g → OdometerCompatibility g f))))))
+        ∀ (f : PartialOdometer),
+          ∀ (g : PartialOdometer), OdometerCompatibility f g → OdometerCompatibility g f
     ) := by
   classical
-  intro C z u v a a' f g hfg
+  intro f g hfg
   rcases hfg with hdisj | ⟨c, hc⟩
   · apply Or.inl
     apply Set.disjoint_left.mpr
@@ -832,7 +882,7 @@ theorem P4261T2UnitBoundary
       (T : ProtoTile) (h : PartialOdometer), TileOdometer c T h →
       ∃ z x, c = (1, 1 + 2 * z) ∧ T.cells = {x} ∧
         (h.domain : Set GaussianInt) = FootprintVertices T ∧
-        OdometerTranslation h (CurvatureOneOdometer z) := UnitBoundaryProof.unitForm C
+        OdometerTranslation h (CurvatureOneOdometer z) := UnitBoundaryProof.unitForm
   obtain ⟨z, u, hCz, hTu, hdu, hth⟩ :=
     unitForm C.1.1 hc T h hh
   obtain ⟨z', v, hCz', hUv, hdu', hku⟩ :=
@@ -850,7 +900,7 @@ theorem P4261T2UnitBoundary
         OdometerTranslation h (CurvatureOneOdometer z) →
         ∃ a : GaussianInt, ∃ b : ℤ,
           h = PartialOdometerAffineTranslate (CurvatureOneOdometer z) x a b :=
-              UnitBoundaryProof.unitData C z
+              UnitBoundaryProof.unitData z
     exact ⟨unitData u T h hTu hdu hth,
       unitData v U k hUv hdu' hku⟩
   have canonicalSlope (w : GaussianInt) :
@@ -934,7 +984,7 @@ theorem P4261T2UnitBoundary
         (CurvatureOneOdometer z).value (t - y) +
           β.re * t.re + β.im * t.im + D)
       (hstep : y = x + 1) (hcoef : β.im - α.im = z.im) :
-      OdometerCompatibility f g := UnitBoundaryProof.horizontalPositive C z u v a a' f g x y α β
+      OdometerCompatibility f g := UnitBoundaryProof.horizontalPositive z f g x y α β
           B D df dg vf vg hstep hcoef
   have verticalPositive (f g : PartialOdometer) (x y α β : GaussianInt)
       (B D : ℤ)
@@ -949,17 +999,17 @@ theorem P4261T2UnitBoundary
         (CurvatureOneOdometer z).value (t - y) +
           β.re * t.re + β.im * t.im + D)
       (hstep : y = x + ⟨0, 1⟩) (hcoef : β.re - α.re = z.im) :
-      OdometerCompatibility f g := UnitBoundaryProof.verticalPositive C z u v a a' f g x y α β B
+      OdometerCompatibility f g := UnitBoundaryProof.verticalPositive z f g x y α β B
           D df dg vf vg hstep hcoef
   have diagonalUnique
       (hx : v.re - u.re = -1 ∨ v.re - u.re = 1)
       (hy : v.im - u.im = -1 ∨ v.im - u.im = 1)
       (s t : GaussianInt) (hs : s ∈ h.domain) (ks : s ∈ k.domain)
-      (ht : t ∈ h.domain) (kt : t ∈ k.domain) : s = t := UnitBoundaryProof.diagonalUnique C h k z
-          u v a a' hReMem hImMem kReMem kImMem hx hy s t hs ks ht kt
+      (ht : t ∈ h.domain) (kt : t ∈ k.domain) : s = t := UnitBoundaryProof.diagonalUnique h k
+          u v hReMem hImMem kReMem kImMem hx hy s t hs ks ht kt
   have compatibilitySymm (f g : PartialOdometer) :
       OdometerCompatibility f g → OdometerCompatibility g f :=
-          UnitBoundaryProof.compatibilitySymm C z u v a a' f g
+          UnitBoundaryProof.compatibilitySymm f g
   by_cases hoverlap : ∃ y, y ∈ h.domain ∧ y ∈ k.domain
   · obtain ⟨w, wh, wk⟩ := hoverlap
     have bounds := overlapBounds w wh wk

@@ -5,6 +5,7 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.ApollonianSuperharmonic.DiamondQuadraticArithmetic
 public import Mathlib.Init
 
 public import LeanPool.ApollonianSuperharmonic.P5352T2PlacementData
@@ -157,10 +158,10 @@ private theorem floorOdd :
     (by
       classical
       exact
-        (DiamondParameter) → (∀ (m : ℤ), ((1 : ℤ) - (2 : ℤ) * m) ^ (2 : ℕ) / (4 : ℤ) = m ^ (2 :
-            ℕ) - m) ) := by
+        ∀ (m : ℤ), ((1 : ℤ) - (2 : ℤ) * m) ^ (2 : ℕ) / (4 : ℤ) = m ^ (2 : ℕ) - m
+    ) := by
   classical
-  intro K m
+  intro m
   have h := P4207T1FloorArithmetic.1 1 (-m)
   have he : 1+2*(-m) = 1-2*m := by ring
   rw [he] at h
@@ -172,18 +173,32 @@ private theorem cases :
       classical
       exact
         ∀ (K : DiamondParameter),
-        let k : Int := K.1
-        (((K.1-1 : Nat) : Int) = k-1) → (∀ (a : ℤ), ∀ (b : ℤ), ((0 : ℤ) ≤ b ∧ b ≤ (2 : ℤ) * (↑K.1
-            : ℤ) ∧ -(↑K.1 : ℤ) ≤ a ∧ a ≤ (↑K.1 : ℤ) ∧ -b - (1 : ℤ) ≤ a ∧ a ≤ b + (1 : ℤ) ∧ -((2 :
-            ℤ) * (↑K.1 : ℤ) - b + (1 : ℤ)) ≤ a ∧ a ≤ (2 : ℤ) * (↑K.1 : ℤ) - b + (1 : ℤ)) → (((0 :
-            ℤ) ≤ b - ((1 : ℤ) - k) ∧ b - ((1 : ℤ) - k) ≤ (2 : ℤ) * (k - (1 : ℤ)) ∧ -(k - (1 : ℤ))
-            ≤ a - -k ∧ a - -k ≤ k - (1 : ℤ) ∧ -(b - ((1 : ℤ) - k)) - (1 : ℤ) ≤ a - -k ∧ a - -k ≤
-            b - ((1 : ℤ) - k) + (1 : ℤ) ∧ -((2 : ℤ) * (k - (1 : ℤ)) - (b - ((1 : ℤ) - k)) + (1 :
-            ℤ)) ≤ a - -k ∧ a - -k ≤ (2 : ℤ) * (k - (1 : ℤ)) - (b - ((1 : ℤ) - k)) + (1 : ℤ)) →
-            ((∃ t : Int, 1 ≤ t ∧ t ≤ k ∧ a = -t ∧ b = t-1) ∨ (∃ t : Int, 1 ≤ t ∧ t < k ∧ a = -t ∧
-            b = t)))) ) := by
+          let k : Int := K.1;
+          ∀ (a : ℤ),
+            ∀ (b : ℤ),
+              (0 : ℤ) ≤ b ∧
+                  b ≤ (2 : ℤ) * (↑K.1 : ℤ) ∧
+                    -(↑K.1 : ℤ) ≤ a ∧
+                      a ≤ (↑K.1 : ℤ) ∧
+                        -b - (1 : ℤ) ≤ a ∧
+                          a ≤ b + (1 : ℤ) ∧
+                            -((2 : ℤ) * (↑K.1 : ℤ) - b + (1 : ℤ)) ≤ a ∧
+                              a ≤ (2 : ℤ) * (↑K.1 : ℤ) - b + (1 : ℤ) →
+                (0 : ℤ) ≤ b - ((1 : ℤ) - k) ∧
+                    b - ((1 : ℤ) - k) ≤ (2 : ℤ) * (k - (1 : ℤ)) ∧
+                      -(k - (1 : ℤ)) ≤ a - -k ∧
+                        a - -k ≤ k - (1 : ℤ) ∧
+                          -(b - ((1 : ℤ) - k)) - (1 : ℤ) ≤ a - -k ∧
+                            a - -k ≤ b - ((1 : ℤ) - k) + (1 : ℤ) ∧
+                              -((2 : ℤ) * (k - (1 : ℤ)) - (b - ((1 : ℤ) - k)) + (1 : ℤ)) ≤
+                                a - -k ∧
+                                a - -k ≤
+                                (2 : ℤ) * (k - (1 : ℤ)) - (b - ((1 : ℤ) - k)) + (1 : ℤ) →
+                  (∃ t : Int, 1 ≤ t ∧ t ≤ k ∧ a = -t ∧ b = t - 1) ∨
+                    ∃ t : Int, 1 ≤ t ∧ t < k ∧ a = -t ∧ b = t
+    ) := by
   classical
-  intro K k hkm a b hc hp
+  intro K k a b hc hp
   have hs : a+b=-1 ∨ a+b=0 := by omega
   rcases hs with hs | hs
   · left
@@ -352,20 +367,9 @@ private theorem tri :
     (by
       classical
       exact
-        (DiamondParameter) → ((IntegerLatticeFunction) → ((Int) → ((ℤ) → (∀ (n : ℤ), (2 : ℤ) * (n
-            * (n - (1 : ℤ)) / (2 : ℤ)) = n * (n - (1 : ℤ)))))) ) := by
-  classical
-  intro K f B t n
-  rcases Int.emod_two_eq_zero_or_one n with h | h
-  · have hn : n=2*(n/2) := by omega
-    rw [hn]
-    have he : 2*(n/2)*(2*(n/2)-1)=2*((n/2)*(2*(n/2)-1)) := by ring
-    rw [he, Int.mul_ediv_cancel_left _ (by norm_num : (2:Int) ≠ 0)]
-  · have hn : n=2*(n/2)+1 := by omega
-    rw [hn]
-    have he : (2*(n/2)+1)*(2*(n/2)+1-1)=
-        2*((2*(n/2)+1)*(n/2)) := by ring
-    rw [he, Int.mul_ediv_cancel_left _ (by norm_num : (2:Int) ≠ 0)]
+        ∀ (n : ℤ), (2 : ℤ) * (n * (n - (1 : ℤ)) / (2 : ℤ)) = n * (n - (1 : ℤ))
+    ) := by
+  exact DiamondQuadraticArithmetic.triangularScale
 
 private theorem tdiff :
     (by
@@ -496,18 +500,20 @@ private theorem qPredWlt :
     (by
       classical
       exact
-        ∀ (K : DiamondParameter), ∀ (f : IntegerLatticeFunction), ∀ (B : Int),
-        let k : Int := K.1;
-        let Q : Int → Int → Int := fun a b =>
-          (Int.natAbs a : Int) * ((Int.natAbs a : Int)-1)/2 - (a-b)^2/4;
-        ((∀ (m : Int), (1-2*m)^2/4 = m^2-m) → (∀ (t : ℤ),
-        (
-        ((f (⟨-t-1,t-1⟩
-            : GaussianInt) = Q (k-t-1) (k+t-2) + (1-k)*(-t-1) - (t-1)+B) → (t < k → Q (k - t - (1
-            : ℤ)) (k + t - (2 : ℤ)) = (k - t - (1 : ℤ)) * (k - t - (2 : ℤ)) / (2 : ℤ) - (t * t -
-            t)))))) ) := by
+        ∀ (K : DiamondParameter),
+          IntegerLatticeFunction →
+            Int →
+              let k : Int := K.1;
+              let Q : Int → Int → Int := fun a b =>
+                (Int.natAbs a : Int) * ((Int.natAbs a : Int) - 1) / 2 - (a - b) ^ 2 / 4;
+              (∀ (m : Int), (1 - 2 * m) ^ 2 / 4 = m ^ 2 - m) →
+                ∀ (t : ℤ),
+                  t < k →
+                    Q (k - t - (1 : ℤ)) (k + t - (2 : ℤ)) =
+                      (k - t - (1 : ℤ)) * (k - t - (2 : ℤ)) / (2 : ℤ) - (t * t - t)
+    ) := by
   classical
-  intro K f B k Q floorOdd t hPredW ht
+  intro K f B k Q floorOdd t ht
   simp only [Q, Int.natCast_natAbs]
   rw [abs_of_nonneg (by omega : 0 ≤ k-t-1)]
   rw [show (k-t-1)-(k+t-2)=1-2*t by ring, floorOdd]
@@ -754,11 +760,12 @@ private theorem huK :
     (by
       classical
       exact
-        ∀ (K : DiamondParameter), (IntegerLatticeFunction) → (
-        let k : Int := K.1
-        (((K.1-1 : Nat) : Int) = k-1) → (∀ (u : ℤ), (u < k) → (u ≤ (K.1 : Int)))) ) := by
+        ∀ (K : DiamondParameter),
+          let k : Int := K.1;
+          ∀ (u : ℤ), u < k → u ≤ (K.1 : Int)
+    ) := by
   classical
-  intro K f k hkm u huk
+  intro K k u huk
   have huK' : u ≤ k := by omega
   exact_mod_cast huK'
 
@@ -766,10 +773,10 @@ private theorem habsA :
     (by
       classical
       exact
-        (DiamondParameter) → ((IntegerLatticeFunction) → (∀ (u : ℤ), ((1 : ℤ) ≤ u) → ((Int.natAbs
-            (-u) : Int) = u))) ) := by
+        ∀ (u : ℤ), (1 : ℤ) ≤ u → (Int.natAbs (-u) : Int) = u
+    ) := by
   classical
-  intro K f u hu1
+  intro u hu1
   rw [Int.natCast_natAbs, abs_of_nonpos (by omega : -u ≤ 0)]
   ring
 
@@ -882,7 +889,7 @@ theorem P5352T2Predecessor3 (K : DiamondParameter) (hk : 1 < K.1)
         (hy : y-d ∈ FootprintVertices (DiamondTile (K.1-1))) :=
             FourthPredecessorCases.predTranslatedValue K hk f B hpred hpredTile predValue y hy
     have floorEven (m : Int) := FourthPredecessorCases.floorEven m
-    have floorOdd (m : Int) := FourthPredecessorCases.floorOdd K m
+    have floorOdd (m : Int) := FourthPredecessorCases.floorOdd m
     rcases z with ⟨a,b⟩
     have hc := (P5352T2DomainRows K ⟨a,b⟩).1.mp (by simpa [hchildTile] using hz)
     have hp := (P5352T2DomainRows ⟨K.1-1, by omega⟩ (⟨a,b⟩-d)).1.mp (by
@@ -890,7 +897,7 @@ theorem P5352T2Predecessor3 (K : DiamondParameter) (hk : 1 < K.1)
     rw [hkm] at hp
     simp only [Zsqrtd.re_sub, Zsqrtd.im_sub, d] at hp
     simp only [] at hc
-    have cases := FourthPredecessorCases.cases K hkm a b hc hp
+    have cases := FourthPredecessorCases.cases K a b hc hp
     rcases cases with ⟨t, ht1, htk, ha0, hb0⟩ | ⟨u, hu1, huk, ha0, hb0⟩
     · -- A_t = (-t,t-1)
       subst a
@@ -916,7 +923,7 @@ theorem P5352T2Predecessor3 (K : DiamondParameter) (hk : 1 < K.1)
           K f B predTranslatedValue t hPC
       have hPredW := FourthPredecessorCases.hPredW K f B predTranslatedValue t hPW
       have hPredS := FourthPredecessorCases.hPredS K f B predTranslatedValue t hPS
-      have tri (n : Int) := FourthPredecessorCases.tri K f B t n
+      have tri (n : Int) := FourthPredecessorCases.tri n
       have tdiff (n : Int) := FourthPredecessorCases.tdiff tri n
       have qChildC := FourthPredecessorCases.qChildC K f B floorOdd t ht1 hChildC hPredC hPredW tri
       have qChildE := FourthPredecessorCases.qChildE K f B floorEven t ht1 hChildC hPredC hPredW
@@ -924,7 +931,7 @@ theorem P5352T2Predecessor3 (K : DiamondParameter) (hk : 1 < K.1)
       have qChildN := FourthPredecessorCases.qChildN K f B floorEven t ht1 hChildC hPredC hPredW
           tri tdiff
       have qPredC := FourthPredecessorCases.qPredC K f B floorEven t htk hChildC hPredC hPredW
-      have qPredWlt (ht : t<k) := FourthPredecessorCases.qPredWlt K f B floorOdd t hPredW ht
+      have qPredWlt (ht : t<k) := FourthPredecessorCases.qPredWlt K f B floorOdd t ht
       have qPredWeq (ht : t=k) := FourthPredecessorCases.qPredWeq K floorOdd t ht
       have qPredS := FourthPredecessorCases.qPredS K f B floorOdd t htk hChildC hPredC hPredW
       have hAgree : Q (-t) (t-1) = Q (k-t) (k+t-2) +
@@ -973,10 +980,10 @@ theorem P5352T2Predecessor3 (K : DiamondParameter) (hk : 1 < K.1)
       have hn : x+⟨0,1⟩ = (⟨-u,u+1⟩ : GaussianInt) := by ext <;> simp [x]
       have hs : x-⟨0,1⟩ = (⟨-u,u-1⟩ : GaussianInt) := by ext <;> simp [x]
       have hLap := FourthPredecessorCases.hLap K f u h0 h1 h2 h3 h4 he hw hn hs
-      have huK := FourthPredecessorCases.huK K f hkm u huk
+      have huK := FourthPredecessorCases.huK K u huk
       have hFalse : x ∈ DiamondVertexDomains K false := by
         exact hFoot ▸ hX
-      have habsA := FourthPredecessorCases.habsA K f u hu1
+      have habsA := FourthPredecessorCases.habsA u hu1
       have hle : u-(K.1:Int) ≤ 0 := by rw [hkc]; omega
       have habsB := FourthPredecessorCases.habsB K hkc u hle
       have hNotTrue := FourthPredecessorCases.hNotTrue K hkm u habsA habsB

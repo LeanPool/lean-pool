@@ -237,18 +237,21 @@ private theorem hcellCalc :
     (by
       classical
       exact
-        (BandCircle) → (∀ (base : ProtoTile), ∀ (x : GaussianInt), (base.cells = {x}) → (
-        let tileAt : Int × Int → ProtoTile := fun z =>
-          TileTranslation base ((z.1 : GaussianInt) * (⟨0, 1⟩ : GaussianInt) + (z.2 :
-              GaussianInt) * (-1))
-        let x0 : GaussianInt := ⟨x.im, -x.re - 1⟩
-        let unitAt : Int × Int → ProtoTile := fun z =>
-          TileTranslation (⟨{x0}, x0⟩ : ProtoTile)
-            (⟨z.1, z.2⟩ : GaussianInt)
-        let turnedAt : Int × Int → ProtoTile := fun z => TileQuarterTurn (unitAt z)
-        ∀ (z : Int × Int), (tileAt z).cells = (turnedAt z).cells)) ) := by
+        ∀ (base : ProtoTile),
+          ∀ (x : GaussianInt),
+            base.cells = { x } →
+              let tileAt : Int × Int → ProtoTile := fun z =>
+                TileTranslation base
+                  ((z.1 : GaussianInt) * (⟨0, 1⟩ : GaussianInt) +
+                    (z.2 : GaussianInt) * -1)
+              let x0 : GaussianInt := ⟨x.im, -x.re - 1⟩
+              let unitAt : Int × Int → ProtoTile := fun z =>
+                TileTranslation (⟨{ x0 }, x0⟩ : ProtoTile) (⟨z.1, z.2⟩ : GaussianInt)
+              let turnedAt : Int × Int → ProtoTile := fun z => TileQuarterTurn (unitAt z)
+              ∀ (z : Int × Int), (tileAt z).cells = (turnedAt z).cells
+    ) := by
   classical
-  intro C base x hcells tileAt x0 unitAt turnedAt z
+  intro base x hcells tileAt x0 unitAt turnedAt z
   simp only [TileTranslation, Int.reduceNeg, Zsqrtd.smul_val, mul_zero, mul_one, mul_neg,
       hcells, Finset.image_singleton, GaussianTranslation, TileQuarterTurn,
       GaussianQuarterTurn, Zsqrtd.add_def, neg_add_rev, neg_sub, sub_neg_eq_add,
@@ -302,13 +305,14 @@ private theorem qstep :
     (by
       classical
       exact
-        (BandCircle) → (
         let q := GaussianQuarterTurn
-        ∀ (u : GaussianInt), ∀ (v : GaussianInt), (v = u + 1 ∨ v = u - 1 ∨
-            v = u + ⟨0, 1⟩ ∨ v = u - ⟨0, 1⟩) → (q v = q u + 1 ∨ q v = q u - 1 ∨ q v = q u + ⟨0,
-                1⟩ ∨ q v = q u - ⟨0, 1⟩)) ) := by
+        ∀ (u : GaussianInt),
+          ∀ (v : GaussianInt),
+            v = u + 1 ∨ v = u - 1 ∨ v = u + ⟨0, 1⟩ ∨ v = u - ⟨0, 1⟩ →
+              q v = q u + 1 ∨ q v = q u - 1 ∨ q v = q u + ⟨0, 1⟩ ∨ q v = q u - ⟨0, 1⟩
+    ) := by
   classical
-  intro C q u v huv
+  intro q u v huv
   rcases huv with h | h | h | h
   · subst v
     right; right; left
@@ -880,31 +884,56 @@ private theorem hadjXiAt795 :
     (by
       classical
       exact
-        ∀ (C : BandCircle), ∀ (base : ProtoTile), (List (ℤ × ℤ)) → (∀ (q : Fin (4 : ℕ) →
-            CircleCoordinates), ∀ (P : PeriodicTileComplex ↥(TilingLattice C)), ∀ (chart :
-                AffineTriangularComplexChart P fun (mn : ℤ × ℤ) => TileTranslation base ((↑mn.1 :
-            GaussianInt) * BandVectors.1 (q (1 : Fin (4 : ℕ))) (q (0 : Fin (4 : ℕ))) + (↑mn.2 :
-            GaussianInt) * BandVectors.1 (q (2 : Fin (4 : ℕ))) (q (0 : Fin (4 : ℕ))))), ((∀ (x :
-                ℤ × ℤ), ∀ (y : ℤ × ℤ), TriangularLatticeAdjacent x.swap y.swap ↔
-            TriangularLatticeAdjacent x y) ∧ (∀ (f : AffineTriangularFace), Finset.image
-            Prod.swap (AffineTriangularFaceVertices f) = AffineTriangularFaceVertices
-            (AffineTriangularFaceCoordinateSwap f)) ∧ (∀ (z : ℤ × ℤ), TileTranslation base ((↑z.1
-            : GaussianInt) * BandVectors.1 (q (2 : Fin (4 : ℕ))) (q (0 : Fin (4 : ℕ))) + (↑z.2 :
-            GaussianInt) * BandVectors.1 (q (1 : Fin (4 : ℕ))) (q (0 : Fin (4 : ℕ)))) = P.tile
-            ((chart.vertexEquiv : ℤ × ℤ → ↥(TilingLattice C)) z.swap)) ∧ ∀ (f :
-                AffineTriangularFace),
-        let F := (match AffineTriangularFaceCoordinateSwap f with
-          | AffineTriangularFace.up z => chart.up z
-          | AffineTriangularFace.down z => chart.down z); Finset.image (fun (z : ℤ ×
-            ℤ) => (chart.vertexEquiv : ℤ × ℤ → ↥(TilingLattice C)) z.swap)
-            (AffineTriangularFaceVertices f) = {P.plane.faceVertex F (0 : Fin (3 : ℕ)),
-            P.plane.faceVertex F (1 : Fin (3 : ℕ)), P.plane.faceVertex F (2 : Fin (3 : ℕ))}) → (
-        let xi := fun z : Int × Int =>
-          chart.vertexEquiv (Prod.swap z)
-        ∀ (u : Int × Int), ∀ (v : Int × Int), TriangularLatticeAdjacent u v ↔ P.plane.adjacent
-            (xi u) (xi v)))) := by
+        ∀ (C : BandCircle),
+          ∀ (base : ProtoTile),
+            ∀ (q : Fin (4 : ℕ) → CircleCoordinates),
+              ∀ (P : PeriodicTileComplex ↥(TilingLattice C)),
+                ∀
+                  (chart :
+                    AffineTriangularComplexChart P fun (mn : ℤ × ℤ) =>
+                      TileTranslation base
+                        ((↑mn.1 : GaussianInt) *
+                            BandVectors.1 (q (1 : Fin (4 : ℕ))) (q (0 : Fin (4 : ℕ))) +
+                          (↑mn.2 : GaussianInt) *
+                            BandVectors.1 (q (2 : Fin (4 : ℕ))) (q (0 : Fin (4 : ℕ))))),
+                  ((∀ (x : ℤ × ℤ),
+                        ∀ (y : ℤ × ℤ),
+                          TriangularLatticeAdjacent x.swap y.swap ↔
+                            TriangularLatticeAdjacent x y) ∧
+                      (∀ (f : AffineTriangularFace),
+                          Finset.image Prod.swap (AffineTriangularFaceVertices f) =
+                            AffineTriangularFaceVertices
+                              (AffineTriangularFaceCoordinateSwap f)) ∧
+                        (∀ (z : ℤ × ℤ),
+                            TileTranslation base
+                                ((↑z.1 : GaussianInt) *
+                                BandVectors.1 (q (2 : Fin (4 : ℕ)))
+                                (q (0 : Fin (4 : ℕ))) +
+                                (↑z.2 : GaussianInt) *
+                                BandVectors.1 (q (1 : Fin (4 : ℕ)))
+                                (q (0 : Fin (4 : ℕ)))) =
+                              P.tile
+                                ((chart.vertexEquiv : ℤ × ℤ → ↥(TilingLattice C))
+                                z.swap)) ∧
+                          ∀ (f : AffineTriangularFace),
+                            let F :=
+                              match AffineTriangularFaceCoordinateSwap f with
+                              | AffineTriangularFace.up z => chart.up z
+                              | AffineTriangularFace.down z => chart.down z;
+                            Finset.image
+                                (fun (z : ℤ × ℤ) =>
+                                (chart.vertexEquiv : ℤ × ℤ → ↥(TilingLattice C)) z.swap)
+                                (AffineTriangularFaceVertices f) =
+                              {P.plane.faceVertex F (0 : Fin (3 : ℕ)),
+                                P.plane.faceVertex F (1 : Fin (3 : ℕ)),
+                                P.plane.faceVertex F (2 : Fin (3 : ℕ))}) →
+                    let xi := fun z : Int × Int => chart.vertexEquiv (Prod.swap z)
+                    ∀ (u : Int × Int),
+                      ∀ (v : Int × Int),
+                        TriangularLatticeAdjacent u v ↔ P.plane.adjacent (xi u) (xi v)
+    ) := by
   classical
-  intro C base F q P chart halign xi u v
+  intro C base q P chart halign xi u v
   change TriangularLatticeAdjacent u v ↔
     P.plane.adjacent (chart.vertexEquiv (Prod.swap u))
       (chart.vertexEquiv (Prod.swap v))
@@ -1029,48 +1058,86 @@ private theorem finish :
     (by
       classical
       exact
-        ∀ (base : ProtoTile), ∀ (R : ProtoTile), ∀ (S : ProtoTile), ∀ (forward : List ProtoTile),
-            ∀ (reverse : List ProtoTile), ∀ (a : GaussianInt), ∀ (b : GaussianInt),
-        let tileAt : Int × Int → ProtoTile := fun z =>
-          TileTranslation base ((z.1 : GaussianInt) * a + (z.2 : GaussianInt) * b)
-        ∀ (r : ℤ × ℤ), (R = (fun (z : ℤ × ℤ) => TileTranslation base ((↑z.1 : GaussianInt) * a +
-            (↑z.2 : GaussianInt) * b)) r) → ((∀ (y : ℤ × ℤ), (fun (z : ℤ × ℤ) => R = (fun (z : ℤ
-            × ℤ) => TileTranslation base ((↑z.1 : GaussianInt) * a + (↑z.2 : GaussianInt) * b))
-            z) y → y = r) → (∀ (s : ℤ × ℤ), (S = (fun (z : ℤ × ℤ) => TileTranslation base ((↑z.1
-            : GaussianInt) * a + (↑z.2 : GaussianInt) * b)) s) → ((∀ (y : ℤ × ℤ), (fun (z : ℤ ×
-            ℤ) => S = (fun (z : ℤ × ℤ) => TileTranslation base ((↑z.1 : GaussianInt) * a + (↑z.2
-            : GaussianInt) * b)) z) y → y = s) → ((R = tileAt r) → ((S = tileAt s) → (∀ (F : List
-            (ℤ × ℤ)), ∀ (G : List (ℤ × ℤ)), (TriangularStripSegment r s F) →
-            ((TriangularStripSegment s r G) → ((r ≠ s) → ((¬TriangularLatticeAdjacent r s) → ((∀
-            z ∈ (List.drop (1 : ℕ) F).dropLast, ∃ T ∈ (List.drop (1 : ℕ) forward).dropLast, T =
-            (fun (z : ℤ × ℤ) => TileTranslation base ((↑z.1 : GaussianInt) * a + (↑z.2 :
-            GaussianInt) * b)) z) → ((∀ z ∈ (List.drop (1 : ℕ) G).dropLast, ∃ T ∈ (List.drop (1 :
-            ℕ) reverse).dropLast, T = (fun (z : ℤ × ℤ) => TileTranslation base ((↑z.1 :
-            GaussianInt) * a + (↑z.2 : GaussianInt) * b)) z) → (∀ (faces : List
-            AffineTriangularFace), (faces ≠ []) → ((∃ (f : AffineTriangularFace), faces.head? =
-            some f ∧ r ∈ AffineTriangularFaceVertices f) → ((∃ (f : AffineTriangularFace),
-            faces.getLast? = some f ∧ s ∈ AffineTriangularFaceVertices f) → ((∀ f ∈ faces, (∃ a ∈
-            (List.drop (1 : ℕ) F).dropLast, a ∈ AffineTriangularFaceVertices f) ∧ ∃ b ∈
-            (List.drop (1 : ℕ) G).dropLast, b ∈ AffineTriangularFaceVertices f) → ((List.IsChain
-            (AffineTriangularCorridorStep F G) faces) → (∀ {ι : Type}, ∀ [DecidableEq ι], ∀ (PP :
-            PeriodicTileComplex ι), ∀ (xi : Int × Int → ι), ∀ (faceAt : AffineTriangularFace →
-            PP.plane.Face), (∀ u, ∀ v, TriangularLatticeAdjacent u v ↔
-            PP.plane.adjacent (xi u) (xi v)) → ((∀ z, PP.tile (xi z) = tileAt z) →
-                ((Function.Injective faceAt) → ((∀ f, (AffineTriangularFaceVertices f).image xi =
-            {PP.plane.faceVertex (faceAt f) 0,
-              PP.plane.faceVertex (faceAt f) 1,
-              PP.plane.faceVertex (faceAt f) 2}) → (∃ p : List GaussianInt, (∃ x, p.head? = some
-                  x ∧ x ∈ FootprintVertices R) ∧ (∃ y, p.getLast? = some y ∧ y ∈
-                  FootprintVertices S) ∧ p.IsChain (fun x y => y = x + 1 ∨ y = x - 1 ∨ y = x +
-                  ⟨0, 1⟩ ∨ y = x - ⟨0, 1⟩) ∧ (∀ x, x ∈ p → (∃ a ∈ (forward.drop 1).dropLast, x ∈
-                  FootprintVertices a) ∧ (∃ b ∈ (reverse.drop 1).dropLast, x ∈ FootprintVertices
-                  b)) ∧ ∀ x y : GaussianInt, ∀ l₁ l₂ : List GaussianInt, p = l₁ ++ x :: y :: l₂ →
-                  (∃ a ∈ (forward.drop 1).dropLast, {x, y} ∈ FootprintEdges a) ∧ (∃ b ∈
-                  (reverse.drop 1).dropLast, {x, y} ∈ FootprintEdges b)))))))))))))))))))))) ) := by
+        ∀ (base : ProtoTile),
+          ∀ (R : ProtoTile),
+            ∀ (S : ProtoTile),
+              ∀ (forward : List ProtoTile),
+                ∀ (reverse : List ProtoTile),
+                  ∀ (a : GaussianInt),
+                    ∀ (b : GaussianInt),
+                      let tileAt : Int × Int → ProtoTile := fun z =>
+                        TileTranslation base
+                          ((z.1 : GaussianInt) * a + (z.2 : GaussianInt) * b);
+                      ∀ (r : ℤ × ℤ),
+                        ∀ (s : ℤ × ℤ),
+                          R = tileAt r →
+                            S = tileAt s →
+                              ∀ (F : List (ℤ × ℤ)),
+                                ∀ (G : List (ℤ × ℤ)),
+                                r ≠ s →
+                                ¬TriangularLatticeAdjacent r s →
+                                (∀ z ∈ (List.drop (1 : ℕ) F).dropLast,
+                                ∃ T ∈ (List.drop (1 : ℕ) forward).dropLast,
+                                T =
+                                (fun (z : ℤ × ℤ) =>
+                                TileTranslation base
+                                ((↑z.1 : GaussianInt) * a + (↑z.2 : GaussianInt) * b))
+                                z) →
+                                (∀ z ∈ (List.drop (1 : ℕ) G).dropLast,
+                                ∃ T ∈ (List.drop (1 : ℕ) reverse).dropLast,
+                                T =
+                                (fun (z : ℤ × ℤ) =>
+                                TileTranslation base
+                                ((↑z.1 : GaussianInt) * a + (↑z.2 : GaussianInt) * b))
+                                z) →
+                                ∀ (faces : List AffineTriangularFace),
+                                faces ≠ [] →
+                                (∃ (f : AffineTriangularFace),
+                                faces.head? = some f ∧
+                                r ∈ AffineTriangularFaceVertices f) →
+                                (∃ (f : AffineTriangularFace),
+                                faces.getLast? = some f ∧
+                                s ∈ AffineTriangularFaceVertices f) →
+                                List.IsChain (AffineTriangularCorridorStep F G) faces →
+                                ∀ {ι : Type},
+                                ∀ [DecidableEq ι],
+                                ∀ (PP : PeriodicTileComplex ι),
+                                ∀ (xi : Int × Int → ι),
+                                ∀ (faceAt : AffineTriangularFace → PP.plane.Face),
+                                (∀ u,
+                                ∀ v,
+                                TriangularLatticeAdjacent u v ↔
+                                PP.plane.adjacent (xi u) (xi v)) →
+                                (∀ z, PP.tile (xi z) = tileAt z) →
+                                Function.Injective faceAt →
+                                (∀ f,
+                                (AffineTriangularFaceVertices f).image xi =
+                                {PP.plane.faceVertex (faceAt f) 0,
+                                PP.plane.faceVertex (faceAt f) 1,
+                                PP.plane.faceVertex (faceAt f) 2}) →
+                                ∃ p : List GaussianInt,
+                                (∃ x, p.head? = some x ∧ x ∈ FootprintVertices R) ∧
+                                (∃ y, p.getLast? = some y ∧ y ∈ FootprintVertices S) ∧
+                                (p.IsChain fun x y =>
+                                y = x + 1 ∨ y = x - 1 ∨ y = x + ⟨0, 1⟩ ∨ y = x - ⟨0, 1⟩) ∧
+                                (∀ x,
+                                x ∈ p →
+                                (∃ a ∈ (forward.drop 1).dropLast,
+                                x ∈ FootprintVertices a) ∧
+                                ∃ b ∈ (reverse.drop 1).dropLast,
+                                x ∈ FootprintVertices b) ∧
+                                ∀ x y : GaussianInt,
+                                ∀ l₁ l₂ : List GaussianInt,
+                                p = l₁ ++ x :: y :: l₂ →
+                                (∃ a ∈ (forward.drop 1).dropLast,
+                                { x, y } ∈ FootprintEdges a) ∧
+                                ∃ b ∈ (reverse.drop 1).dropLast,
+                                { x, y } ∈ FootprintEdges b
+    ) := by
   classical
-  intro base R S forward reverse a b tileAt r hrcoord hruniq s hscoord hsuniq hR hS F G hFstrip
-      hGstrip hrs hnadjCoord forwardInterior reverseInterior faces hfacesNe hfirst hlast
-      hfaceVertices hfaceChain ι typeclassInstance0 PP xi faceAt hadjXi htileXi hinjFace hinc
+  intro base R S forward reverse a b tileAt r s hR hS F G hrs hnadjCoord forwardInterior
+      reverseInterior faces hfacesNe hfirst hlast hfaceChain ι typeclassInstance0 PP xi faceAt
+      hadjXi htileXi hinjFace hinc
   let goodV : GaussianInt → Prop := fun x =>
     (∃ a ∈ (F.drop 1).dropLast, x ∈ FootprintVertices (tileAt a)) ∧
     (∃ b ∈ (G.drop 1).dropLast, x ∈ FootprintVertices (tileAt b))
@@ -1368,7 +1435,7 @@ theorem OpposingStringInterfacePath
         TileTranslation (⟨{x0}, x0⟩ : ProtoTile)
           (⟨z.1, z.2⟩ : GaussianInt)
       let turnedAt : Int × Int → ProtoTile := fun z => TileQuarterTurn (unitAt z)
-      have hcellCalc := OpposingInterfaceGeometry.hcellCalc C base x hcells
+      have hcellCalc := OpposingInterfaceGeometry.hcellCalc base x hcells
       have hvertsEq (z : Int × Int) :
           FootprintVertices (tileAt z) = FootprintVertices (turnedAt z) :=
               OpposingInterfaceGeometry.hvertsEqAt314 base x hcellCalc z
@@ -1389,7 +1456,7 @@ theorem OpposingStringInterfacePath
               OpposingInterfaceGeometry.hqverts x z
       have hqedges := OpposingInterfaceGeometry.hqedges x
       refine ⟨p.map q, ?_, ?_, (OpposingInterfaceGeometry.hqchain p hpchain
-          (OpposingInterfaceGeometry.qstep C)), ?_, ?_⟩
+          (OpposingInterfaceGeometry.qstep)), ?_, ?_⟩
       · rcases hphead with ⟨v, hv, hvU⟩
         have hvU' : v ∈ FootprintVertices (unitAt r) := by
           simpa [unitAt] using hvU
@@ -1455,9 +1522,9 @@ theorem OpposingStringInterfacePath
           {PP.plane.faceVertex (faceAt f) 0,
             PP.plane.faceVertex (faceAt f) 1,
             PP.plane.faceVertex (faceAt f) 2}) := OpposingInterfaceConclusion.finish base R S
-                forward reverse a b r hrcoord hruniq s hscoord hsuniq hR hS F G hFstrip hGstrip
+                forward reverse a b r s hR hS F G
                 hrs hnadjCoord forwardInterior reverseInterior faces hfacesNe hfirst hlast
-                hfaceVertices hfaceChain (ι := ι) PP xi faceAt hadjXi htileXi hinjFace hinc
+                    hfaceChain (ι := ι) PP xi faceAt hadjXi htileXi hinjFace hinc
     rcases hbasis with hordered | hswapped
     · rcases hordered with ⟨haV, hbV⟩
       let faceAt : AffineTriangularFace → P.plane.Face := fun f =>
@@ -1480,7 +1547,7 @@ theorem OpposingStringInterfacePath
         match AffineTriangularFaceCoordinateSwap f with
         | .up z => chart.up z
         | .down z => chart.down z
-      have hadjXi := OpposingInterfaceGeometry.hadjXiAt795 C base F q P chart halign
+      have hadjXi := OpposingInterfaceGeometry.hadjXiAt795 C base q P chart halign
       have htileXi := OpposingInterfaceGeometry.htileXi C base a b q P chart haV hbV halign
       have hinjFace := OpposingInterfaceGeometry.hinjFaceAt805 C base q P chart
       have hinc := OpposingInterfaceGeometry.hincAt826 C base q P chart halign

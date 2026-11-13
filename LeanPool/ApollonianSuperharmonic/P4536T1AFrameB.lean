@@ -724,64 +724,6 @@ private theorem hap :
   have hf := (h.2.2.2.2 hp 1).2
   simpa [I, ya, r, hA, hB] using hf
 
-private theorem vflip :
-    ∀ (C : BandCircle), ∀ (orientation : Bool), ∀ (base : ProtoTile), ∀ (Rminus : ProtoTile), ∀
-        (Rplus : ProtoTile), ∀ (hminus : PartialOdometer), ∀ (hplus : PartialOdometer), ∀ (F :
-        P4458T1BoundaryFrame C orientation base Rminus Rplus hminus hplus), ∀ (a : Fin 3),
-    let r : Fin 4 → CircleCoordinates :=
-      ![F.q 0, F.q a.succ, F.q (a + 1).succ, F.q (a + 2).succ]
-    (ProperBandQuadruple r) → (
-    let I : GaussianInt := ⟨0, 1⟩
-    let w := BandVectors.1 (r 3) (r 2)
-    let y := BandVectors.1 (r 2) (r 1)
-    (BandVectors.1 (r (3 : Fin (4 : ℕ))) (r (2 : Fin (4 : ℕ))) + BandVectors.1 (r (1 : Fin (4 :
-        ℕ))) (r (3 : Fin (4 : ℕ))) + BandVectors.1 (r (2 : Fin (4 : ℕ))) (r (1 : Fin (4 : ℕ))) =
-        (0 : GaussianInt) ∧ BandVectors.2 (r (3 : Fin (4 : ℕ))) (r (2 : Fin (4 : ℕ))) +
-        BandVectors.2 (r (1 : Fin (4 : ℕ))) (r (3 : Fin (4 : ℕ))) + BandVectors.2 (r (2 : Fin (4
-        : ℕ))) (r (1 : Fin (4 : ℕ))) = (0 : GaussianInt) ∧ BandVectors.1 (r (1 : Fin (4 : ℕ))) (r
-        (0 : Fin (4 : ℕ))) = BandVectors.1 (r (1 : Fin (4 : ℕ))) (r (3 : Fin (4 : ℕ))) - ⟨(0 :
-        ℤ), (1 : ℤ)⟩ * BandVectors.1 (r (2 : Fin (4 : ℕ))) (r (1 : Fin (4 : ℕ))) ∧ BandVectors.2
-        (r (1 : Fin (4 : ℕ))) (r (0 : Fin (4 : ℕ))) = BandVectors.2 (r (1 : Fin (4 : ℕ))) (r (3 :
-        Fin (4 : ℕ))) + ⟨(0 : ℤ), (1 : ℤ)⟩ * BandVectors.2 (r (2 : Fin (4 : ℕ))) (r (1 : Fin (4 :
-        ℕ))) ∧ (ProperBandQuadruple r → ∀ (j : Fin (3 : ℕ)), BandVectors.1 (r (0 : Fin (4 : ℕ)))
-        (r j.succ) = ⟨(0 : ℤ), (1 : ℤ)⟩ * BandVectors.1 (r j.succ) (r (0 : Fin (4 : ℕ))) ∧
-        BandVectors.2 (r (0 : Fin (4 : ℕ))) (r j.succ) = -⟨(0 : ℤ), (1 : ℤ)⟩ * BandVectors.2 (r
-        j.succ) (r (0 : Fin (4 : ℕ))))) → ((BandVectors.1 (r 2) (r 0) = y - I * w) →
-        (BandVectors.1 (r 0) (r 2) = I * (y - I * w)))) := by
-  classical
-  intro C orientation base Rminus Rplus hminus hplus F a r hr I w y laws hv
-  have h := (laws.2.2.2.2 hr 1).1
-  simpa [I, hv] using h
-
-private theorem aflip :
-    ∀ (C : BandCircle), ∀ (orientation : Bool), ∀ (base : ProtoTile), ∀ (Rminus : ProtoTile), ∀
-        (Rplus : ProtoTile), ∀ (hminus : PartialOdometer), ∀ (hplus : PartialOdometer), ∀ (F :
-        P4458T1BoundaryFrame C orientation base Rminus Rplus hminus hplus), ∀ (a : Fin 3),
-    let r : Fin 4 → CircleCoordinates :=
-      ![F.q 0, F.q a.succ, F.q (a + 1).succ, F.q (a + 2).succ]
-    (ProperBandQuadruple r) → (
-    let I : GaussianInt := ⟨0, 1⟩
-    let wa := BandVectors.2 (r 3) (r 2)
-    let ya := BandVectors.2 (r 2) (r 1)
-    (BandVectors.1 (r (3 : Fin (4 : ℕ))) (r (2 : Fin (4 : ℕ))) + BandVectors.1 (r (1 : Fin (4 :
-        ℕ))) (r (3 : Fin (4 : ℕ))) + BandVectors.1 (r (2 : Fin (4 : ℕ))) (r (1 : Fin (4 : ℕ))) =
-        (0 : GaussianInt) ∧ BandVectors.2 (r (3 : Fin (4 : ℕ))) (r (2 : Fin (4 : ℕ))) +
-        BandVectors.2 (r (1 : Fin (4 : ℕ))) (r (3 : Fin (4 : ℕ))) + BandVectors.2 (r (2 : Fin (4
-        : ℕ))) (r (1 : Fin (4 : ℕ))) = (0 : GaussianInt) ∧ BandVectors.1 (r (1 : Fin (4 : ℕ))) (r
-        (0 : Fin (4 : ℕ))) = BandVectors.1 (r (1 : Fin (4 : ℕ))) (r (3 : Fin (4 : ℕ))) - ⟨(0 :
-        ℤ), (1 : ℤ)⟩ * BandVectors.1 (r (2 : Fin (4 : ℕ))) (r (1 : Fin (4 : ℕ))) ∧ BandVectors.2
-        (r (1 : Fin (4 : ℕ))) (r (0 : Fin (4 : ℕ))) = BandVectors.2 (r (1 : Fin (4 : ℕ))) (r (3 :
-        Fin (4 : ℕ))) + ⟨(0 : ℤ), (1 : ℤ)⟩ * BandVectors.2 (r (2 : Fin (4 : ℕ))) (r (1 : Fin (4 :
-        ℕ))) ∧ (ProperBandQuadruple r → ∀ (j : Fin (3 : ℕ)), BandVectors.1 (r (0 : Fin (4 : ℕ)))
-        (r j.succ) = ⟨(0 : ℤ), (1 : ℤ)⟩ * BandVectors.1 (r j.succ) (r (0 : Fin (4 : ℕ))) ∧
-        BandVectors.2 (r (0 : Fin (4 : ℕ))) (r j.succ) = -⟨(0 : ℤ), (1 : ℤ)⟩ * BandVectors.2 (r
-        j.succ) (r (0 : Fin (4 : ℕ))))) → ((BandVectors.2 (r 2) (r 0) = ya + I * wa) →
-        (BandVectors.2 (r 0) (r 2) = -I * (ya + I * wa)))) := by
-  classical
-  intro C orientation base Rminus Rplus hminus hplus F a r hr I wa ya laws ha
-  have h := (laws.2.2.2.2 hr 1).2
-  simpa [I, ha] using h
-
 private theorem halfPoint_sub :
     let halfPoint : GaussianInt → ℝ × ℝ :=
       fun z => (1 / 2 : ℝ) • GaussianRealPoint z
@@ -1084,10 +1026,8 @@ theorem P4536T1AFrameB
       have aAlg := P4536T1EndpointAlgebra (-I) wa xa ya (by decide +kernel) laws.2.1
       have aThird := aAlg.2.2.1
       have aFourth := aAlg.2.2.2.1
-      have vflip : BandVectors.1 (r 0) (r 2) = I * (y - I * w) := AFrameBDetails.vflip C
-          orientation base Rminus Rplus hminus hplus F a hr laws hv
-      have aflip : BandVectors.2 (r 0) (r 2) = -I * (ya + I * wa) := AFrameBDetails.aflip C
-          orientation base Rminus Rplus hminus hplus F a hr laws ha
+      have vflip := hflipv
+      have aflip := hflipa
       let halfPoint : GaussianInt → ℝ × ℝ :=
         fun z => (1 / 2 : ℝ) • GaussianRealPoint z
       have halfPoint_sub (u v : GaussianInt) :

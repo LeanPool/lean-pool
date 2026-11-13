@@ -5,6 +5,7 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.ApollonianSuperharmonic.DiamondQuadraticArithmetic
 public import Mathlib.Init
 public import LeanPool.ApollonianSuperharmonic.EvenSquareQuotient
 public import LeanPool.ApollonianSuperharmonic.FourNeighborLaplacianProperties
@@ -34,15 +35,24 @@ private theorem predMem :
     (by
       classical
       exact
-        ∀ (K : DiamondParameter), ((1 : ℕ) < K.1) → (
-        let k : Int := K.1
-        (ℤ) → ((ℤ) → (((↑(K.1 - (1 : ℕ)) : ℤ) = k - (1 : ℤ)) → (∀ (a : ℤ), ∀ (b : ℤ), (0 : ℤ) ≤ b
-            → b ≤ (2 : ℤ) * (k - (1 : ℤ)) → -(k - (1 : ℤ)) ≤ a → a ≤ k - (1 : ℤ) → -b - (1 : ℤ) ≤
-            a → a ≤ b + (1 : ℤ) → -((2 : ℤ) * (k - (1 : ℤ)) - b + (1 : ℤ)) ≤ a → a ≤ (2 : ℤ) * (k
-            - (1 : ℤ)) - b + (1 : ℤ) → ⟨a, b⟩ ∈ FootprintVertices (DiamondTile (K.1 - (1 :
-            ℕ))))))) ) := by
+        ∀ (K : DiamondParameter),
+          (1 : ℕ) < K.1 →
+            let k : Int := K.1;
+            (↑(K.1 - (1 : ℕ)) : ℤ) = k - (1 : ℤ) →
+              ∀ (a : ℤ),
+                ∀ (b : ℤ),
+                  (0 : ℤ) ≤ b →
+                    b ≤ (2 : ℤ) * (k - (1 : ℤ)) →
+                      -(k - (1 : ℤ)) ≤ a →
+                        a ≤ k - (1 : ℤ) →
+                          -b - (1 : ℤ) ≤ a →
+                            a ≤ b + (1 : ℤ) →
+                              -((2 : ℤ) * (k - (1 : ℤ)) - b + (1 : ℤ)) ≤ a →
+                                a ≤ (2 : ℤ) * (k - (1 : ℤ)) - b + (1 : ℤ) →
+                                ⟨a, b⟩ ∈ FootprintVertices (DiamondTile (K.1 - (1 : ℕ)))
+    ) := by
   classical
-  intro K hk k p q hcast a b hb0 hb1 ha0 ha1 hs0 hs1 ht0 ht1
+  intro K hk k hcast a b hb0 hb1 ha0 ha1 hs0 hs1 ht0 ht1
   apply (P5352T2DomainRows ⟨K.1-1,by omega⟩ ⟨a,b⟩).1.mpr
   simpa [hcast] using And.intro hb0 (And.intro hb1 (And.intro ha0
     (And.intro ha1 (And.intro hs0 (And.intro hs1 (And.intro ht0 ht1))))))
@@ -92,17 +102,30 @@ private theorem hnot :
     (by
       classical
       exact
-        ∀ (K : DiamondParameter), (IntegerLatticeFunction) → (
-        let k : Int := K.1
-        ∀ (p : ℤ), ((↑(K.1 - (1 : ℕ)) : ℤ) = k - (1 : ℤ)) → (((1 : ℤ) ≤ p) → ((k < (2 : ℤ) * k -
-            p ∧ (2 : ℤ) * k - p ≤ (2 : ℤ) * (k - (1 : ℤ)) + (k + (1 : ℤ)) ∧ k ≤ p + (k - (1 : ℤ))
-            ∧ p ≤ k - (1 : ℤ) + k ∧ k < p - k + (1 : ℤ) + ((2 : ℤ) * k - p) ∧ p ≤ (2 : ℤ) * k - p
-            - (k + (1 : ℤ)) + (1 : ℤ) + k ∧ (2 : ℤ) * k - p ≤ (1 : ℤ) + (p - k) + (2 : ℤ) * (k -
-            (1 : ℤ)) + (k + (1 : ℤ)) ∧ p ≤ (2 : ℤ) * (k - (1 : ℤ)) - ((2 : ℤ) * k - p - (k + (1 :
-            ℤ))) + (1 : ℤ) + k) → ((⟨p,2*k-p⟩ : GaussianInt) ∉ DiamondVertexDomains K true)))) )
+        ∀ (K : DiamondParameter),
+          let k : Int := K.1
+          ∀ (p : ℤ),
+            (↑(K.1 - (1 : ℕ)) : ℤ) = k - (1 : ℤ) →
+              (1 : ℤ) ≤ p →
+                k < (2 : ℤ) * k - p ∧
+                    (2 : ℤ) * k - p ≤ (2 : ℤ) * (k - (1 : ℤ)) + (k + (1 : ℤ)) ∧
+                      k ≤ p + (k - (1 : ℤ)) ∧
+                        p ≤ k - (1 : ℤ) + k ∧
+                          k < p - k + (1 : ℤ) + ((2 : ℤ) * k - p) ∧
+                            p ≤ (2 : ℤ) * k - p - (k + (1 : ℤ)) + (1 : ℤ) + k ∧
+                              (2 : ℤ) * k - p ≤
+                                (1 : ℤ) + (p - k) + (2 : ℤ) * (k - (1 : ℤ)) +
+                                (k + (1 : ℤ)) ∧
+                                p ≤
+                                (2 : ℤ) * (k - (1 : ℤ)) -
+                                ((2 : ℤ) * k - p - (k + (1 : ℤ))) +
+                                (1 : ℤ) +
+                                k →
+                  (⟨p, 2 * k - p⟩ : GaussianInt) ∉ DiamondVertexDomains K true
+    )
             := by
   classical
-  intro K f k p hcast hp1 hdpred
+  intro K k p hcast hp1 hdpred
   change ¬ (Int.natAbs p + Int.natAbs (2*k-p-(K.1:Int)) ≤ K.1-1)
   intro hh
   have hpabs : (Int.natAbs p : Int)=p := by rw [Int.natCast_natAbs,abs_of_nonneg (by omega)]
@@ -180,19 +203,32 @@ private theorem hcompAt229 :
     (by
       classical
       exact
-        ∀ (K : DiamondParameter), ∀ (hk : (1 : ℕ) < K.1), (IntegerLatticeFunction) → (
-        let k : Int := K.1
-        let r : GaussianInt := ⟨2*k,0⟩
-        let child := P5352T2Sources K hk 0
-        (child.1 = DiamondTile K.1) → (∀ (p : ℤ), ((↑(K.1 - (1 : ℕ)) : ℤ) = k - (1 : ℤ)) → ((k <
-            (2 : ℤ) * k - p ∧ (2 : ℤ) * k - p ≤ (2 : ℤ) * (k - (1 : ℤ)) + (k + (1 : ℤ)) ∧ k ≤ p +
-            (k - (1 : ℤ)) ∧ p ≤ k - (1 : ℤ) + k ∧ k < p - k + (1 : ℤ) + ((2 : ℤ) * k - p) ∧ p ≤
-            (2 : ℤ) * k - p - (k + (1 : ℤ)) + (1 : ℤ) + k ∧ (2 : ℤ) * k - p ≤ (1 : ℤ) + (p - k) +
-            (2 : ℤ) * (k - (1 : ℤ)) + (k + (1 : ℤ)) ∧ p ≤ (2 : ℤ) * (k - (1 : ℤ)) - ((2 : ℤ) * k
-            - p - (k + (1 : ℤ))) + (1 : ℤ) + k) → ((⟨p,2*k-p⟩:GaussianInt)-r ∉ FootprintVertices
-            child.1)))) ) := by
+        ∀ (K : DiamondParameter),
+          ∀ (hk : (1 : ℕ) < K.1),
+            let k : Int := K.1
+            let r : GaussianInt := ⟨2 * k, 0⟩
+            let child := P5352T2Sources K hk 0
+            child.1 = DiamondTile K.1 →
+              ∀ (p : ℤ),
+                (↑(K.1 - (1 : ℕ)) : ℤ) = k - (1 : ℤ) →
+                  k < (2 : ℤ) * k - p ∧
+                      (2 : ℤ) * k - p ≤ (2 : ℤ) * (k - (1 : ℤ)) + (k + (1 : ℤ)) ∧
+                        k ≤ p + (k - (1 : ℤ)) ∧
+                          p ≤ k - (1 : ℤ) + k ∧
+                            k < p - k + (1 : ℤ) + ((2 : ℤ) * k - p) ∧
+                              p ≤ (2 : ℤ) * k - p - (k + (1 : ℤ)) + (1 : ℤ) + k ∧
+                                (2 : ℤ) * k - p ≤
+                                (1 : ℤ) + (p - k) + (2 : ℤ) * (k - (1 : ℤ)) +
+                                (k + (1 : ℤ)) ∧
+                                p ≤
+                                (2 : ℤ) * (k - (1 : ℤ)) -
+                                ((2 : ℤ) * k - p - (k + (1 : ℤ))) +
+                                (1 : ℤ) +
+                                k →
+                    (⟨p, 2 * k - p⟩ : GaussianInt) - r ∉ FootprintVertices child.1
+    ) := by
   classical
-  intro K hk f k r child hchildTile p hcast hdpred hc
+  intro K hk k r child hchildTile p hcast hdpred hc
   have hb := (P5352T2DomainRows K (⟨p,2*k-p⟩-r)).1.mp (hchildTile ▸ hc)
   simp [r] at hb
   omega
@@ -333,15 +369,10 @@ private theorem sqOdd :
     (by
       classical
       exact
-        (DiamondParameter) →
-        (
-        (
-        (
-        (
-        (∀ (m : ℤ), ((2 : ℤ) * m + (1 : ℤ)) ^ (2
-            : ℕ) / (4 : ℤ) = m ^ (2 : ℕ) + m))))) ) := by
+        ∀ (m : ℤ), ((2 : ℤ) * m + (1 : ℤ)) ^ (2 : ℕ) / (4 : ℤ) = m ^ (2 : ℕ) + m
+    ) := by
   classical
-  intro K m
+  intro m
   have h := P4207T1FloorArithmetic.1 1 m
   have he : 1+2*m=2*m+1 := by ring
   rw [he] at h
@@ -349,36 +380,14 @@ private theorem sqOdd :
   omega
 
 private theorem tri :
-    (by
-      classical
-      exact
-        ∀ (K : DiamondParameter), ((1 : ℕ) < K.1) → ((IntegerLatticeFunction) → ((Int) → (
-        let k : Int := K.1
-        (ℤ) → (((↑(K.1 - (1 : ℕ)) : ℤ) = k - (1 : ℤ)) → (∀ (a : ℤ), (2 : ℤ) * (a * (a - (1 : ℤ))
-            / (2 : ℤ)) = a * (a - (1 : ℤ))))))) ) := by
-  classical
-  intro K hk f B k p hcast a
-  rcases Int.emod_two_eq_zero_or_one a with h | h
-  · have ha : a=2*(a/2) := by omega
-    rw [ha]
-    have he : 2*(a/2)*(2*(a/2)-1)=2*((a/2)*(2*(a/2)-1)) := by ring
-    rw [he,Int.mul_ediv_cancel_left _ (by norm_num : (2:Int)≠0)]
-  · have ha : a=2*(a/2)+1 := by omega
-    rw [ha]
-    have he : (2*(a/2)+1)*(2*(a/2)+1-1)=2*((2*(a/2)+1)*(a/2)) := by ring
-    rw [he,Int.mul_ediv_cancel_left _ (by norm_num : (2:Int)≠0)]
+    ∀ (a : Int), 2 * (a * (a - 1) / 2) = a * (a - 1) := by
+  exact DiamondQuadraticArithmetic.triangularScale
 
 private theorem tdiff :
-    (by
-      classical
-      exact
-        ∀ (K : DiamondParameter), ((1 : ℕ) < K.1) → ((IntegerLatticeFunction) → ((Int) → (
-        let k : Int := K.1
-        (ℤ) → (((↑(K.1 - (1 : ℕ)) : ℤ) = k - (1 : ℤ)) → ((∀ (a : Int), 2*(a*(a-1)/2)=a*(a-1)) →
-            (∀ (a : ℤ), a * (a - (1 : ℤ)) / (2 : ℤ) - (a - (1 : ℤ)) * (a - (2 : ℤ)) / (2 : ℤ) = a
-            - (1 : ℤ))))))) ) := by
+    (∀ (a : Int), 2 * (a * (a - 1) / 2) = a * (a - 1)) →
+      ∀ (a : Int), a * (a - 1) / 2 - (a - 1) * (a - 2) / 2 = a - 1 := by
   classical
-  intro K hk f B k p hcast tri a
+  intro tri a
   have h1 := tri a
   have h2 := tri (a-1)
   have he : 2*(a*(a-1)/2-(a-1)*(a-2)/2)=2*(a-1) := by
@@ -394,16 +403,13 @@ private theorem tdiffRev :
     (by
       classical
       exact
-        (DiamondParameter) →
-        (
-        (
-        (
-        (
-        ((∀ (a : Int),
-            a*(a-1)/2-(a-1)*(a-2)/2=a-1) → (∀ (a : ℤ), (a - (1 : ℤ)) * (a - (2 : ℤ)) / (2 : ℤ) -
-            a * (a - (1 : ℤ)) / (2 : ℤ) = (1 : ℤ) - a)))))) ) := by
+        (∀ (a : Int), a * (a - 1) / 2 - (a - 1) * (a - 2) / 2 = a - 1) →
+          ∀ (a : ℤ),
+            (a - (1 : ℤ)) * (a - (2 : ℤ)) / (2 : ℤ) - a * (a - (1 : ℤ)) / (2 : ℤ) =
+              (1 : ℤ) - a
+    ) := by
   classical
-  intro K tdiff a
+  intro tdiff a
   have hh := tdiff a
   omega
 
@@ -426,18 +432,24 @@ private theorem hPcenterQ :
     (by
       classical
       exact
-        ∀ (K : DiamondParameter), ∀ (hk : (1 : ℕ) < K.1),
-        let k : Int := K.1
-        let d : GaussianInt := ⟨k,k+1⟩
-        let pred := P5352T2Sources K hk 3
-        ∀ (p : ℤ), ∀ (hcast : (↑(K.1 - (1 : ℕ)) : ℤ) = k - (1 : ℤ)), ∀ (hpz : ⟨p, (2 : ℤ) * k +
-            (1 : ℤ) - p⟩ - d ∈ FootprintVertices pred.1),
-        let Q (a b : Int) : Int := (Int.natAbs a : Int)*((Int.natAbs a : Int)-1)/2-(a-b)^2/4
-        ((Int.natAbs p : Int)=p) → (((Int.natAbs (p-1) : Int)=p-1) → (∀ (absKm : (Int.natAbs
-            (p-k) : Int)=k-p), DiamondOdometer (⟨K.1-1,by omega⟩) ⟨p-k,k-p⟩=Q (p-k)
-            (k-p)))) := by
+        ∀ (K : DiamondParameter),
+          ∀ (hk : (1 : ℕ) < K.1),
+            let k : Int := K.1;
+            let d : GaussianInt := ⟨k, k + 1⟩;
+            let pred := P5352T2Sources K hk 3;
+            ∀ (p : ℤ),
+              ∀ (hcast : (↑(K.1 - (1 : ℕ)) : ℤ) = k - (1 : ℤ)),
+                ⟨p, (2 : ℤ) * k + (1 : ℤ) - p⟩ - d ∈ FootprintVertices pred.1 →
+                  let Q (a b : Int) : Int :=
+                    (Int.natAbs a : Int) * ((Int.natAbs a : Int) - 1) / 2 -
+                      (a - b) ^ 2 / 4;
+                  (Int.natAbs (p - 1) : Int) = p - 1 →
+                    ∀ (absKm : (Int.natAbs (p - k) : Int) = k - p),
+                      DiamondOdometer ⟨K.1 - 1, by omega⟩ ⟨p - k, k - p⟩ =
+                        Q (p - k) (k - p)
+    ) := by
   classical
-  intro K hk k d pred p hcast hpz Q absP absPm absKm
+  intro K hk k d pred p hcast hpz Q absPm absKm
   have he : (⟨p,2*k+1-p⟩:GaussianInt)-d=⟨p-k,k-p⟩ := by ext <;> simp [d]; ring
   have hm : (⟨p-k,k-p⟩:GaussianInt) ∈ FootprintVertices (DiamondTile (K.1-1)) := by
     have hh := hpz
@@ -736,7 +748,7 @@ theorem P5352T2Predecessor1 (K : DiamondParameter) (hk : 1 < K.1)
     have predMem (a b : Int)
         (hb0 : 0≤b) (hb1 : b≤2*(k-1)) (ha0 : -(k-1)≤a) (ha1 : a≤k-1)
         (hs0 : -b-1≤a) (hs1 : a≤b+1)
-        (ht0 : -(2*(k-1)-b+1)≤a) (ht1 : a≤2*(k-1)-b+1) := FirstPredecessorProof.predMem K hk p q
+        (ht0 : -(2*(k-1)-b+1)≤a) (ht1 : a≤2*(k-1)-b+1) := FirstPredecessorProof.predMem K hk
             hcast a b hb0 hb1 ha0 ha1 hs0 hs1 ht0 ht1
     rcases hq with hqB | hqA
     · subst q
@@ -755,7 +767,7 @@ theorem P5352T2Predecessor1 (K : DiamondParameter) (hk : 1 < K.1)
       have hEval (w : GaussianInt) (hw : w ∈ FootprintVertices (DiamondTile K.1)) :=
           FirstPredecessorProof.hEval K hk f hchildTile hchild w hw
       have hdom := FirstPredecessorProof.hdom K hk hchildTile p hz
-      have hnot := FirstPredecessorProof.hnot K f p hcast hp1 hdpred
+      have hnot := FirstPredecessorProof.hnot K p hcast hp1 hdpred
       have htable := (DiamondLaplacianTable K).2.1 ⟨p,2*k-p⟩ hdom hnot
       have hvE : f (⟨p,2*k-p⟩+1)=DiamondOdometer K (⟨p,2*k-p⟩+1) := FirstPredecessorProof.hvE K f
           p hE hEval
@@ -765,7 +777,7 @@ theorem P5352T2Predecessor1 (K : DiamondParameter) (hk : 1 < K.1)
           FirstPredecessorProof.hvN K f p hN hEval
       have hvS : f (⟨p,2*k-p⟩-⟨0,1⟩)=DiamondOdometer K (⟨p,2*k-p⟩-⟨0,1⟩) :=
           FirstPredecessorProof.hvS K f p hS hEval
-      have hcomp := FirstPredecessorProof.hcompAt229 K hk f hchildTile p hcast hdpred
+      have hcomp := FirstPredecessorProof.hcompAt229 K hk hchildTile p hcast hdpred
       refine ⟨fun hc => (hcomp hc).elim, ?_⟩
       intro _
       rw [FourNeighborLaplacian,hvE,hvW,hvN,hvS,hcenter]
@@ -812,11 +824,10 @@ theorem P5352T2Predecessor1 (K : DiamondParameter) (hk : 1 < K.1)
         simpa [Q] using (P5352T2DomainRows ⟨K.1-1,by omega⟩ ⟨p-k,k+1-p⟩).2 hPn
       -- The exact four increments follow by reducing the even and odd squares.
       have sqEven (m : Int) := EvenSquareQuotient.square m
-      have sqOdd (m : Int) := FirstPredecessorProof.sqOdd K m
-      have tri (a : Int) := FirstPredecessorProof.tri K hk f B p hcast a
-      have tdiff (a : Int) := FirstPredecessorProof.tdiff K hk f B
-          p hcast tri a
-      have tdiffRev (a : Int) := FirstPredecessorProof.tdiffRev K tdiff a
+      have sqOdd (m : Int) := FirstPredecessorProof.sqOdd m
+      have tri (a : Int) := FirstPredecessorProof.tri a
+      have tdiff (a : Int) := FirstPredecessorProof.tdiff tri a
+      have tdiffRev (a : Int) := FirstPredecessorProof.tdiffRev tdiff a
       have absP : (Int.natAbs p : Int)=p := by rw [Int.natCast_natAbs,abs_of_nonneg (by omega)]
       have absPm : (Int.natAbs (p-1) : Int)=p-1 := by rw [Int.natCast_natAbs,abs_of_nonneg (by
           omega)]
@@ -824,7 +835,7 @@ theorem P5352T2Predecessor1 (K : DiamondParameter) (hk : 1 < K.1)
         rw [Int.natCast_natAbs,abs_of_nonpos (by omega)]; omega
       have qpc := FirstPredecessorProof.qpc K p sqEven absKm
       have hPcenterQ : DiamondOdometer (⟨K.1-1,by omega⟩) ⟨p-k,k-p⟩=Q (p-k) (k-p) :=
-          FirstPredecessorProof.hPcenterQ K hk p hcast hpz absP absPm absKm
+          FirstPredecessorProof.hPcenterQ K hk p hcast hpz absPm absKm
       have hPcval : f ⟨p,2*k+1-p⟩=Q (p-k) (k-p)+k*p+B := by
         rw [hPcenter,hPcenterQ]
       have absKme := FirstPredecessorProof.absKme p k hpk

@@ -32,10 +32,13 @@ namespace ApollonianSuperharmonic
 namespace OmittedHullLemmas
 
 private theorem projectionAffine :
-    ∀ (a : Complex), ∀ (x : Complex), ∀ (d : Real), (d ≠ 0) → ∃ D : Complex →ᵃ[Real] Real,
-        ∀ z, D z = ((x - a) * (starRingEnd Complex) (z - a)).re / d := by
+    ∀ (a : Complex),
+      ∀ (x : Complex),
+        ∀ (d : Real),
+          ∃ D : Complex →ᵃ[Real] Real,
+            ∀ z, D z = ((x - a) * (starRingEnd Complex) (z - a)).re / d := by
   classical
-  intro a x d hd
+  intro a x d
   let L : Complex →ₗ[Real] Real :=
     { toFun := fun z => ((x - a) * (starRingEnd Complex) z).re / d
       map_add' := by
@@ -60,11 +63,16 @@ private theorem projectionAffine :
   rfl
 
 private theorem projectionSphereBound :
-    ∀ (a : Complex), ∀ (x : Complex), ∀ (z : Complex), ∀ (ρ : Real), ∀ (R : Real), (0 < ρ) → (0 <
-        ρ + R) → (dist a x = ρ + R) → (dist z a = ρ) → ((x - a) * (starRingEnd Complex) (z -
-        a)).re / (ρ + R) ≤ ρ := by
+    ∀ (a : Complex),
+      ∀ (x : Complex),
+        ∀ (z : Complex),
+          ∀ (ρ : Real),
+            ∀ (R : Real),
+              0 < ρ + R →
+                dist a x = ρ + R →
+                  dist z a = ρ → ((x - a) * (starRingEnd Complex) (z - a)).re / (ρ + R) ≤ ρ := by
   classical
-  intro a x z ρ R hρ hden hax hz
+  intro a x z ρ R hden hax hz
   have hnormx : ‖x - a‖ = ρ + R := by
     simpa [dist_eq_norm, norm_sub_rev] using hax
   have hnormz : ‖z - a‖ = ρ := by
@@ -489,12 +497,12 @@ theorem P5050T1OmittedHullSeparation (L : ℝ)
   have projectionAffine (a x : Complex) (d : Real) (hd : d ≠ 0) :
       ∃ D : Complex →ᵃ[Real] Real,
         ∀ z, D z = ((x - a) * (starRingEnd Complex) (z - a)).re / d :=
-            OmittedHullLemmas.projectionAffine a x d hd
+            OmittedHullLemmas.projectionAffine a x d
   have projectionSphereBound (a x z : Complex) (ρ R : Real)
       (hρ : 0 < ρ) (hden : 0 < ρ + R) (hax : dist a x = ρ + R)
       (hz : dist z a = ρ) :
       ((x - a) * (starRingEnd Complex) (z - a)).re / (ρ + R) ≤ ρ :=
-          OmittedHullLemmas.projectionSphereBound a x z ρ R hρ hden hax hz
+          OmittedHullLemmas.projectionSphereBound a x z ρ R hden hax hz
   have externalProjection (a x z : Complex) (ρ R s : Real)
       (hpos : 0 < ρ + R)
       (hax : dist a x = ρ + R) (haz : dist a z = ρ + s)

@@ -189,12 +189,14 @@ private theorem translated_ford_bounds :
     (by
       classical
       exact
-        (FordFareyParameter) → ((BandCircle) → ((Fin (3 : ℕ)) → ((GaussianInt) → ((GaussianInt) →
-            (∀ (n : Nat), ∀ (w : GaussianInt), ∀ (c : GaussianInt), (c ∈ (TileTranslation
-            (FordTile n) w).cells) → (0 ≤ (c-w).re ∧ (c-w).re < n ∧ 0 ≤ (c-w).im ∧ (c-w).im <
-            n)))))) ) := by
+        ∀ (n : Nat),
+          ∀ (w : GaussianInt),
+            ∀ (c : GaussianInt),
+              c ∈ (TileTranslation (FordTile n) w).cells →
+                0 ≤ (c - w).re ∧ (c - w).re < n ∧ 0 ≤ (c - w).im ∧ (c - w).im < n
+    ) := by
   classical
-  intro P Ci i u x n w c hc
+  intro n w c hc
   change c ∈ (FordCellDomain n).image (GaussianTranslation w) at hc
   obtain ⟨t, ht, htc⟩ := Finset.mem_image.mp hc
   change t ∈ FordCellDomain n at ht
@@ -369,17 +371,22 @@ private theorem hz_low :
     (by
       classical
       exact
-        ∀ (P : FordFareyParameter), (BandCircle) → (∀ (i : Fin (3 : ℕ)), ∀ (u : GaussianInt), ∀
-            (x : GaussianInt), ((if i = (0 : Fin (3 : ℕ)) then (↑P.q₁ : ℤ) else (↑P.q₂ : ℤ)) ≤ (x
-            - u).im) → (
-        let z : GaussianInt :=
-          if (x - u).im = (if i = 0 then (P.q₁ : Int) else P.q₂)
-          then x else x - ⟨0, 1⟩
-        (((x - u).im = (if i = 0 then (P.q₁ : Int) else P.q₂)) → (z = x)) → (((¬(x - u).im = (if
-            i = 0 then (P.q₁ : Int) else P.q₂)) → (z = x - ⟨0, 1⟩)) → ((if i = 0 then (P.q₁ :
-            Int) else P.q₂) ≤ (z-u).im)))) ) := by
+        ∀ (P : FordFareyParameter),
+          ∀ (i : Fin (3 : ℕ)),
+            ∀ (u : GaussianInt),
+              ∀ (x : GaussianInt),
+                (if i = (0 : Fin (3 : ℕ)) then (↑P.q₁ : ℤ) else (↑P.q₂ : ℤ)) ≤
+                    (x - u).im →
+                  let z : GaussianInt :=
+                    if (x - u).im = if i = 0 then (P.q₁ : Int) else P.q₂ then x
+                    else x - ⟨0, 1⟩
+                  (((x - u).im = if i = 0 then (P.q₁ : Int) else P.q₂) → z = x) →
+                    ((¬(x - u).im = if i = 0 then (P.q₁ : Int) else P.q₂) →
+                        z = x - ⟨0, 1⟩) →
+                      (if i = 0 then (P.q₁ : Int) else P.q₂) ≤ (z - u).im
+    ) := by
   classical
-  intro P Ci i u x hxl z z_low z_other
+  intro P i u x hxl z z_low z_other
   by_cases hlow : (x - u).im = (if i = 0 then (P.q₁ : Int) else P.q₂)
   · rw [z_low hlow]
     exact hxl
@@ -395,16 +402,22 @@ private theorem hz_high :
     (by
       classical
       exact
-        ∀ (P : FordFareyParameter), (BandCircle) → (∀ (i : Fin (3 : ℕ)), ∀ (u : GaussianInt), ∀
-            (x : GaussianInt), ((x - u).im ≤ (↑P.q : ℤ)) → (((if i = 0 then (P.q₁ : Int) else
-            P.q₂) < P.q) → (
-        let z : GaussianInt :=
-          if (x - u).im = (if i = 0 then (P.q₁ : Int) else P.q₂)
-          then x else x - ⟨0, 1⟩
-        (((x - u).im = (if i = 0 then (P.q₁ : Int) else P.q₂)) → (z = x)) → (((¬(x - u).im = (if
-            i = 0 then (P.q₁ : Int) else P.q₂)) → (z = x - ⟨0, 1⟩)) → ((z-u).im < P.q))))) ) := by
+        ∀ (P : FordFareyParameter),
+          ∀ (i : Fin (3 : ℕ)),
+            ∀ (u : GaussianInt),
+              ∀ (x : GaussianInt),
+                (x - u).im ≤ (↑P.q : ℤ) →
+                  (if i = 0 then (P.q₁ : Int) else P.q₂) < P.q →
+                    let z : GaussianInt :=
+                      if (x - u).im = if i = 0 then (P.q₁ : Int) else P.q₂ then x
+                      else x - ⟨0, 1⟩
+                    (((x - u).im = if i = 0 then (P.q₁ : Int) else P.q₂) → z = x) →
+                      ((¬(x - u).im = if i = 0 then (P.q₁ : Int) else P.q₂) →
+                          z = x - ⟨0, 1⟩) →
+                        (z - u).im < P.q
+    ) := by
   classical
-  intro P Ci i u x hxu lower_lt_q z z_low z_other
+  intro P i u x hxu lower_lt_q z z_low z_other
   by_cases hlow : (x - u).im = (if i = 0 then (P.q₁ : Int) else P.q₂)
   · rw [z_low hlow]
     simpa [hlow] using lower_lt_q
@@ -978,10 +991,13 @@ private theorem hxAt721 :
     (by
       classical
       exact
-        ∀ (P : FordFareyParameter), (BandCircle) → (∀ (u : GaussianInt), ∀ (x : GaussianInt),
-            ((x-u).re = P.q) → (((x-u).im = P.q₁) → (x = u + ⟨(P.q : Int), (P.q₁ : Int)⟩))) ) := by
+        ∀ (P : FordFareyParameter),
+          ∀ (u : GaussianInt),
+            ∀ (x : GaussianInt),
+              (x - u).re = P.q → (x - u).im = P.q₁ → x = u + ⟨(P.q : Int), (P.q₁ : Int)⟩
+    ) := by
   classical
-  intro P Ci u x hxre hxim
+  intro P u x hxre hxim
   ext <;> simp [Zsqrtd.re_sub, Zsqrtd.im_sub, Zsqrtd.re_add,
     Zsqrtd.im_add] at * <;> omega
 
@@ -989,11 +1005,15 @@ private theorem hce :
     (by
       classical
       exact
-        ∀ (P : FordFareyParameter), (BandCircle) → (∀ (u : GaussianInt), ∀ (x : GaussianInt), (x
-            = u + ⟨(P.q : Int), (P.q₁ : Int)⟩) → ((((P.q₁ - 1 : Nat) : Int) = (P.q₁ : Int) - 1) →
-            (x - ⟨0,1⟩ = (u + ⟨(P.q : Int),0⟩) + ⟨0, ((P.q₁ - 1 : Nat) : Int)⟩))) ) := by
+        ∀ (P : FordFareyParameter),
+          ∀ (u : GaussianInt),
+            ∀ (x : GaussianInt),
+              x = u + ⟨(P.q : Int), (P.q₁ : Int)⟩ →
+                ((P.q₁ - 1 : Nat) : Int) = (P.q₁ : Int) - 1 →
+                  x - ⟨0, 1⟩ = u + ⟨(P.q : Int), 0⟩ + ⟨0, ((P.q₁ - 1 : Nat) : Int)⟩
+    ) := by
   classical
-  intro P Ci u x hx hnatcast
+  intro P u x hx hnatcast
   rw [hx]
   ext <;> simp [hnatcast, Zsqrtd.re_add, Zsqrtd.im_add,
     Zsqrtd.re_sub, Zsqrtd.im_sub]; omega
@@ -1091,13 +1111,17 @@ private theorem hmcAt766 :
     (by
       classical
       exact
-        ∀ (P : FordFareyParameter), (BandCircle) → (∀ (u : GaussianInt), ∀ (x : GaussianInt), (x
-            = u + ⟨(P.q : Int), (P.q₁ : Int)⟩) → ((((P.q₁ - 1 : Nat) : Int) = (P.q₁ : Int) - 1) → (
-        let m : GaussianInt := x - 1 - ⟨0,1⟩
-        (((P.q - 1 : Nat) : Int) = (P.q : Int) - 1) → (m = u + ⟨((P.q - 1 : Nat) : Int), ((P.q₁ -
-            1 : Nat) : Int)⟩)))) ) := by
+        ∀ (P : FordFareyParameter),
+          ∀ (u : GaussianInt),
+            ∀ (x : GaussianInt),
+              x = u + ⟨(P.q : Int), (P.q₁ : Int)⟩ →
+                ((P.q₁ - 1 : Nat) : Int) = (P.q₁ : Int) - 1 →
+                  let m : GaussianInt := x - 1 - ⟨0, 1⟩
+                  ((P.q - 1 : Nat) : Int) = (P.q : Int) - 1 →
+                    m = u + ⟨((P.q - 1 : Nat) : Int), ((P.q₁ - 1 : Nat) : Int)⟩
+    ) := by
   classical
-  intro P Ci u x hx hnatcast m hqcast
+  intro P u x hx hnatcast m hqcast
   ext <;> simp [m, hx, hqcast, hnatcast, Zsqrtd.re_sub,
     Zsqrtd.im_sub, Zsqrtd.re_add, Zsqrtd.im_add] <;> omega
 
@@ -1219,10 +1243,13 @@ private theorem hxAt816 :
     (by
       classical
       exact
-        ∀ (P : FordFareyParameter), (BandCircle) → (∀ (u : GaussianInt), ∀ (x : GaussianInt),
-            ((x-u).re = 0) → (((x-u).im = P.q₂) → (x = u + ⟨0, (P.q₂ : Int)⟩))) ) := by
+        ∀ (P : FordFareyParameter),
+          ∀ (u : GaussianInt),
+            ∀ (x : GaussianInt),
+              (x - u).re = 0 → (x - u).im = P.q₂ → x = u + ⟨0, (P.q₂ : Int)⟩
+    ) := by
   classical
-  intro P Ci u x hxre hxim
+  intro P u x hxre hxim
   ext <;> simp [Zsqrtd.re_sub, Zsqrtd.im_sub, Zsqrtd.re_add,
     Zsqrtd.im_add] at * <;> omega
 
@@ -1230,12 +1257,16 @@ private theorem hmcAt823 :
     (by
       classical
       exact
-        ∀ (P : FordFareyParameter), (BandCircle) → (∀ (u : GaussianInt), ∀ (x : GaussianInt), (x
-            = u + ⟨0, (P.q₂ : Int)⟩) → ((((P.q₂ - 1 : Nat) : Int) = (P.q₂ : Int) - 1) → (
-        let m : GaussianInt := x - ⟨0,1⟩
-        m = u + ⟨0, ((P.q₂ - 1 : Nat) : Int)⟩))) ) := by
+        ∀ (P : FordFareyParameter),
+          ∀ (u : GaussianInt),
+            ∀ (x : GaussianInt),
+              x = u + ⟨0, (P.q₂ : Int)⟩ →
+                ((P.q₂ - 1 : Nat) : Int) = (P.q₂ : Int) - 1 →
+                  let m : GaussianInt := x - ⟨0, 1⟩
+                  m = u + ⟨0, ((P.q₂ - 1 : Nat) : Int)⟩
+    ) := by
   classical
-  intro P Ci u x hx hncast m
+  intro P u x hx hncast m
   ext <;> simp [m, hx, hncast, Zsqrtd.re_sub, Zsqrtd.im_sub,
     Zsqrtd.re_add, Zsqrtd.im_add]; omega
 
@@ -1243,13 +1274,19 @@ private theorem hncAt832 :
     (by
       classical
       exact
-        ∀ (P : FordFareyParameter), (BandCircle) → (∀ (u : GaussianInt), ∀ (x : GaussianInt), (x
-            = u + ⟨0, (P.q₂ : Int)⟩) → ((((P.q₂ - 1 : Nat) : Int) = (P.q₂ : Int) - 1) → (
-        let n : GaussianInt := x - 1 - ⟨0,1⟩
-        n = (u + ⟨-(P.q₂ : Int),0⟩) + ⟨((P.q₂ - 1 : Nat) : Int), ((P.q₂ - 1 : Nat) : Int)⟩))) )
+        ∀ (P : FordFareyParameter),
+          ∀ (u : GaussianInt),
+            ∀ (x : GaussianInt),
+              x = u + ⟨0, (P.q₂ : Int)⟩ →
+                ((P.q₂ - 1 : Nat) : Int) = (P.q₂ : Int) - 1 →
+                  let n : GaussianInt := x - 1 - ⟨0, 1⟩
+                  n =
+                    u + ⟨-(P.q₂ : Int), 0⟩ +
+                      ⟨((P.q₂ - 1 : Nat) : Int), ((P.q₂ - 1 : Nat) : Int)⟩
+    )
             := by
   classical
-  intro P Ci u x hx hncast' n
+  intro P u x hx hncast' n
   ext <;> simp [n, hx, hncast', Zsqrtd.re_sub, Zsqrtd.im_sub,
     Zsqrtd.re_add, Zsqrtd.im_add] <;> omega
 
@@ -1458,19 +1495,36 @@ private theorem hdisET'At944 :
     (by
       classical
       exact
-        ∀ (P : FordFareyParameter), (BandCircle) → (∀ (T' : ProtoTile), ∀ (u : GaussianInt), ∀
-            (Rplus : ProtoTile), (GaussianInt) → ((∀ (n : Nat), ∀ (m : Nat), ∀ (w : GaussianInt),
-            ∀ (v : GaussianInt), (w.re + n ≤ v.re) → (Disjoint (TileTranslation (FordTile n)
-            w).cells (TileTranslation (FordTile m) v).cells)) → ((T'.cells = (TileTranslation
-            (FordTile P.q) (u + if (0 : Fin (3 : ℕ)) = (0 : Fin (3 : ℕ)) then (⟨(↑P.q : ℤ),
-            (↑P.q₁ : ℤ)⟩ : GaussianInt) else (⟨-(↑P.q : ℤ), (↑P.q₂ : ℤ)⟩ : GaussianInt))).cells)
-            → ((Rplus.cells = (TileTranslation (FordTile (if (0 : Fin (3 : ℕ)) = (0 : Fin (3 :
-            ℕ)) then P.q₁ else P.q₂)) (u + if (0 : Fin (3 : ℕ)) = (0 : Fin (3 : ℕ)) then (⟨(↑P.q₂
-            : ℤ), (↑P.q : ℤ)⟩ : GaussianInt) else (⟨-(↑P.q₂ : ℤ), (0 : ℤ)⟩ :
-            GaussianInt))).cells) → (((P.q₁ : Int) + P.q₂ = P.q) → (Disjoint Rplus.cells
-            T'.cells)))))) ) := by
+        ∀ (P : FordFareyParameter),
+          ∀ (T' : ProtoTile),
+            ∀ (u : GaussianInt),
+              ∀ (Rplus : ProtoTile),
+                (∀ (n : Nat),
+                    ∀ (m : Nat),
+                      ∀ (w : GaussianInt),
+                        ∀ (v : GaussianInt),
+                          w.re + n ≤ v.re →
+                            Disjoint (TileTranslation (FordTile n) w).cells
+                              (TileTranslation (FordTile m) v).cells) →
+                  T'.cells =
+                      (TileTranslation (FordTile P.q)
+                          (u +
+                            if (0 : Fin (3 : ℕ)) = (0 : Fin (3 : ℕ)) then
+                              (⟨(↑P.q : ℤ), (↑P.q₁ : ℤ)⟩ : GaussianInt)
+                            else (⟨-(↑P.q : ℤ), (↑P.q₂ : ℤ)⟩ : GaussianInt))).cells →
+                    Rplus.cells =
+                        (TileTranslation
+                            (FordTile
+                              (if (0 : Fin (3 : ℕ)) = (0 : Fin (3 : ℕ)) then P.q₁
+                              else P.q₂))
+                            (u +
+                              if (0 : Fin (3 : ℕ)) = (0 : Fin (3 : ℕ)) then
+                                (⟨(↑P.q₂ : ℤ), (↑P.q : ℤ)⟩ : GaussianInt)
+                              else (⟨-(↑P.q₂ : ℤ), (0 : ℤ)⟩ : GaussianInt))).cells →
+                      (P.q₁ : Int) + P.q₂ = P.q → Disjoint Rplus.cells T'.cells
+    ) := by
   classical
-  intro P Ci T' u Rplus x ford_disjoint_re hc' hRp hqsum
+  intro P T' u Rplus ford_disjoint_re hc' hRp hqsum
   have hgap :
       (u + ⟨(P.q₂ : Int), (P.q : Int)⟩).re + P.q₁ ≤
         (u + ⟨(P.q : Int), (P.q₁ : Int)⟩).re := by
@@ -1486,11 +1540,12 @@ private theorem hq2lt :
     (by
       classical
       exact
-        ∀ (P : FordFareyParameter), (BandCircle) → (((0 : ℕ) < P.q₁) → ((GaussianInt) →
-            ((GaussianInt) → ((((P.q₁ - 1 : Nat) : Int) = (P.q₁ : Int) - 1) → (P.q₂ < P.q))))) )
+        ∀ (P : FordFareyParameter),
+          (0 : ℕ) < P.q₁ → ((P.q₁ - 1 : Nat) : Int) = (P.q₁ : Int) - 1 → P.q₂ < P.q
+    )
             := by
   classical
-  intro P Ci hrpos u x hq1cast
+  intro P hrpos hq1cast
   rw [P.sum_q]
   omega
 
@@ -1669,10 +1724,13 @@ private theorem hxAt1035 :
     (by
       classical
       exact
-        ∀ (P : FordFareyParameter), (BandCircle) → (∀ (u : GaussianInt), ∀ (x : GaussianInt),
-            (x.re - u.re = 0) → ((x.im = u.im + P.q) → (x = u + ⟨0, (P.q : Int)⟩))) ) := by
+        ∀ (P : FordFareyParameter),
+          ∀ (u : GaussianInt),
+            ∀ (x : GaussianInt),
+              x.re - u.re = 0 → x.im = u.im + P.q → x = u + ⟨0, (P.q : Int)⟩
+    ) := by
   classical
-  intro P Ci u x hxre' hxim''
+  intro P u x hxre' hxim''
   ext
   · simp only [Zsqrtd.re_add]
     omega
@@ -1684,27 +1742,36 @@ private theorem hq1castAt1045 :
       classical
       exact
         ∀ (P : FordFareyParameter),
-        (((0 : ℕ) < P.q₁) → (∀ (u : GaussianInt), ∀ (x
-            : GaussianInt),
-        ((x.im - u.im = P.q) → (((P.q₁ : Int) +
-            P.q₂ = P.q) → ((((P.q - 1 : Nat) : Int) = (P.q : Int) - 1) → (((P.q₁ - 1 : Nat) :
-            Int) = (P.q₁ : Int) - 1)))))) ) := by
+          (0 : ℕ) < P.q₁ →
+            GaussianInt →
+              GaussianInt →
+                (P.q₁ : Int) + P.q₂ = P.q →
+                  ((P.q - 1 : Nat) : Int) = (P.q : Int) - 1 →
+                    ((P.q₁ - 1 : Nat) : Int) = (P.q₁ : Int) - 1
+    ) := by
   classical
-  intro P hrpos u x hxim' hqsum hqcast
+  intro P hrpos u x hqsum hqcast
   exact_mod_cast Nat.cast_sub (by omega : 1 ≤ P.q₁)
 
 private theorem hmcAt1049 :
     (by
       classical
       exact
-        ∀ (P : FordFareyParameter), (BandCircle) → (∀ (u : GaussianInt), ∀ (x : GaussianInt),
-            (x.re = u.re) → ((x.im = u.im + P.q) → (((P.q₁ : Int) + P.q₂ = P.q) → ((((P.q - 1 :
-            Nat) : Int) = (P.q : Int) - 1) → (
-        let m : GaussianInt := x - 1
-        m = (u + ⟨-(P.q : Int), (P.q₂ : Int)⟩) + ⟨((P.q - 1 : Nat) : Int), (P.q₁ : Int)⟩))))) )
+        ∀ (P : FordFareyParameter),
+          ∀ (u : GaussianInt),
+            ∀ (x : GaussianInt),
+              x.re = u.re →
+                x.im = u.im + P.q →
+                  (P.q₁ : Int) + P.q₂ = P.q →
+                    ((P.q - 1 : Nat) : Int) = (P.q : Int) - 1 →
+                      let m : GaussianInt := x - 1
+                      m =
+                        u + ⟨-(P.q : Int), (P.q₂ : Int)⟩ +
+                          ⟨((P.q - 1 : Nat) : Int), (P.q₁ : Int)⟩
+    )
             := by
   classical
-  intro P Ci u x hxre'' hxim'' hqsum hqcast m
+  intro P u x hxre'' hxim'' hqsum hqcast m
   ext
   · simp only [m, Zsqrtd.re_sub, Zsqrtd.re_one,
       Zsqrtd.re_add]
@@ -1780,15 +1847,26 @@ private theorem hdisET'At1085 :
     (by
       classical
       exact
-        ∀ (P : FordFareyParameter), (BandCircle) → (∀ (T' : ProtoTile), ∀ (u : GaussianInt), ∀
-            (Rminus : ProtoTile), (GaussianInt) → ((∀ (n : Nat), ∀ (m : Nat), ∀ (w :
-            GaussianInt), ∀ (v : GaussianInt), (w.re + n ≤ v.re) → (Disjoint (TileTranslation
-            (FordTile n) w).cells (TileTranslation (FordTile m) v).cells)) → ((Rminus.cells =
-            (TileTranslation (FordTile P.q₂) (u + ⟨0, (P.q : Int)⟩)).cells) → ((T'.cells =
-            (TileTranslation (FordTile P.q) (u + ⟨-(P.q : Int), (P.q₂ : Int)⟩)).cells) →
-            (Disjoint Rminus.cells T'.cells))))) ) := by
+        ∀ (P : FordFareyParameter),
+          ∀ (T' : ProtoTile),
+            ∀ (u : GaussianInt),
+              ∀ (Rminus : ProtoTile),
+                (∀ (n : Nat),
+                    ∀ (m : Nat),
+                      ∀ (w : GaussianInt),
+                        ∀ (v : GaussianInt),
+                          w.re + n ≤ v.re →
+                            Disjoint (TileTranslation (FordTile n) w).cells
+                              (TileTranslation (FordTile m) v).cells) →
+                  Rminus.cells =
+                      (TileTranslation (FordTile P.q₂) (u + ⟨0, (P.q : Int)⟩)).cells →
+                    T'.cells =
+                        (TileTranslation (FordTile P.q)
+                            (u + ⟨-(P.q : Int), (P.q₂ : Int)⟩)).cells →
+                      Disjoint Rminus.cells T'.cells
+    ) := by
   classical
-  intro P Ci T' u Rminus x ford_disjoint_re hRm1 hc'1
+  intro P T' u Rminus ford_disjoint_re hRm1 hc'1
   have hgap :
       (u + ⟨-(P.q : Int), (P.q₂ : Int)⟩).re + P.q ≤
         (u + ⟨0, (P.q : Int)⟩).re := by
@@ -2099,7 +2177,7 @@ private theorem lowerBoundary :
   · subst i
     have hxre : (x-u).re = P.q := by simpa using hxr
     have hxim : (x-u).im = P.q₁ := hlow
-    have hx := EdgeSectorGeometry.hxAt721 P Ci u x hxre hxim
+    have hx := EdgeSectorGeometry.hxAt721 P u x hxre hxim
     have hnatcast : ((P.q₁ - 1 : Nat) : Int) = (P.q₁ : Int) - 1 := by
       exact_mod_cast Nat.cast_sub (by omega : 1 ≤ P.q₁)
     have hRmem : Rminus ∈ tiles := List.mem_of_head? hf.2.1
@@ -2107,7 +2185,7 @@ private theorem lowerBoundary :
     have hEtrans := translated_ford_cell P.q₁ 0 (P.q₁-1)
       (u + ⟨(P.q : Int),0⟩) (by omega) (by omega)
     have hEcell : x - ⟨0,1⟩ ∈ Rminus.cells := EdgeSectorGeometry.hEcellAt735 P u Rminus x hRm
-        (EdgeSectorGeometry.hce P Ci u x hx hnatcast) hEtrans
+        (EdgeSectorGeometry.hce P u x hx hnatcast) hEtrans
     have hEidx : x - ⟨0,1⟩ ∈ (PP.tile e).cells := by
       simpa [he] using hEcell
     have hdisET := EdgeSectorGeometry.hdisETAt740 P T u hc Rminus ford_disjoint_re hRm
@@ -2120,7 +2198,7 @@ private theorem lowerBoundary :
     have hqcast : ((P.q - 1 : Nat) : Int) = (P.q : Int) - 1 := by
       exact_mod_cast Nat.cast_sub (by omega : 1 ≤ P.q)
     have hq1leq : P.q₁ ≤ P.q := by omega
-    have hmc := EdgeSectorGeometry.hmcAt766 P Ci u x hx hnatcast hqcast
+    have hmc := EdgeSectorGeometry.hmcAt766 P u x hx hnatcast hqcast
     have hmTtrans := translated_ford_cell P.q (P.q - 1) (P.q₁ - 1) u
       (by omega) (by omega)
     have hmT : m ∈ T.cells := EdgeSectorGeometry.hmTAt772 P T u hc x hmc hmTtrans
@@ -2144,12 +2222,12 @@ private theorem lowerBoundary :
   · subst i
     have hxre : (x-u).re = 0 := by simpa using hxr
     have hxim : (x-u).im = P.q₂ := hlow
-    have hx := EdgeSectorGeometry.hxAt816 P Ci u x hxre hxim
+    have hx := EdgeSectorGeometry.hxAt816 P u x hxre hxim
     have hq2pos : 0 < P.q₂ := P.q₂_pos
     have hncast : ((P.q₂ - 1 : Nat) : Int) = (P.q₂ : Int) - 1 := by
       exact_mod_cast Nat.cast_sub (by omega : 1 ≤ P.q₂)
     let m : GaussianInt := x - ⟨0,1⟩
-    have hmc := EdgeSectorGeometry.hmcAt823 P Ci u x hx hncast
+    have hmc := EdgeSectorGeometry.hmcAt823 P u x hx hncast
     have htc : m = u + ⟨0, ((P.q₂ - 1 : Nat) : Int)⟩ := hmc
     have hmTtrans := translated_ford_cell P.q 0 (P.q₂ - 1) u
       (by omega) (by omega)
@@ -2157,8 +2235,8 @@ private theorem lowerBoundary :
     have hncast' : ((P.q₂ - 1 : Nat) : Int) = (P.q₂ : Int) - 1 := hncast
     let n : GaussianInt := x - 1 - ⟨0,1⟩
     have hnc : n = (u + ⟨-(P.q₂ : Int),0⟩) +
-        ⟨((P.q₂ - 1 : Nat) : Int), ((P.q₂ - 1 : Nat) : Int)⟩ := EdgeSectorGeometry.hncAt832 P
-            Ci u x hx hncast'
+        ⟨((P.q₂ - 1 : Nat) : Int), ((P.q₂ - 1 : Nat) : Int)⟩ := EdgeSectorGeometry.hncAt832 P u
+            x hx hncast'
     have hRmem : Rplus ∈ reverseTiles := List.mem_of_head? hr.2.1
     obtain ⟨e, he⟩ := regular_index Rplus
       (hr.2.2.2.2.1 Rplus hRmem)
@@ -2249,7 +2327,7 @@ theorem P4158T1EdgeSectorSelection :
       (PeriodicTileIndexedMultiplicityOne PP c).unique ha hb
     have vertical_edge_cells := EdgeSectorGeometry.vertical_edge_cells
         (EdgeSectorGeometry.pair_eq_iff)
-    have translated_ford_bounds := EdgeSectorGeometry.translated_ford_bounds P Ci i u x
+    have translated_ford_bounds := EdgeSectorGeometry.translated_ford_bounds
     have translated_ford_cell := EdgeSectorGeometry.translated_ford_cell
     have ford_disjoint_re := EdgeSectorGeometry.ford_disjoint_re translated_ford_bounds
     have ford_disjoint_im := EdgeSectorGeometry.ford_disjoint_im translated_ford_bounds
@@ -2263,8 +2341,8 @@ theorem P4158T1EdgeSectorSelection :
     have z_other := EdgeSectorGeometry.z_other P i u x
     have z_incident := EdgeSectorGeometry.z_incident P i u x z_low z_other
     have hz_re := EdgeSectorGeometry.hz_re P i u x hxr z_low z_other
-    have hz_low := EdgeSectorGeometry.hz_low P Ci i u x hxl z_low z_other
-    have hz_high := EdgeSectorGeometry.hz_high P Ci i u x hxu lower_lt_q z_low z_other
+    have hz_low := EdgeSectorGeometry.hz_low P i u x hxl z_low z_other
+    have hz_high := EdgeSectorGeometry.hz_high P i u x hxu lower_lt_q z_low z_other
     obtain ⟨U, V, g, k, hUint, hVint, hUz, hVk, hAg, hAk, hEdgeU, hEdgeV⟩ :=
       hedges z hz_re hz_low hz_high
     have hUmem : U ∈ tiles := (List.of_mem_zip hUz).1
@@ -2346,10 +2424,10 @@ theorem P4158T1EdgeSectorSelection :
           have hEcell : n ∈ Rplus.cells := by rw [hRp, hnc]; exact hEtrans
           have hEidx : n ∈ (PP.tile e).cells := by simpa [he] using hEcell
           have hdisET := EdgeSectorGeometry.hdisETAt940 P T u hc Rplus ford_disjoint_im hRp
-          have hdisET' := EdgeSectorGeometry.hdisET'At944 P Ci T' u Rplus x ford_disjoint_re hc'
+          have hdisET' := EdgeSectorGeometry.hdisET'At944 P T' u Rplus ford_disjoint_re hc'
               hRp hqsum
           have hrootCell := translated_ford_cell P.q 0 P.q₂
-            (u + ⟨(P.q : Int), (P.q₁ : Int)⟩) (by omega) (EdgeSectorGeometry.hq2lt P Ci hrpos u x
+            (u + ⟨(P.q : Int), (P.q₁ : Int)⟩) (by omega) (EdgeSectorGeometry.hq2lt P hrpos
                 hq1cast)
           have hxT' := EdgeSectorGeometry.hxT' P T' u x hc' (EdgeSectorGeometry.hxroot P u x hx
               hqsum) hrootCell
@@ -2379,14 +2457,14 @@ theorem P4158T1EdgeSectorSelection :
             simpa [Zsqrtd.im_sub] using htop
           have hxre'' : x.re = u.re := by omega
           have hxim'' : x.im = u.im + P.q := by omega
-          have hx := EdgeSectorGeometry.hxAt1035 P Ci u x hxre' hxim''
+          have hx := EdgeSectorGeometry.hxAt1035 P u x hxre' hxim''
           have hqsum : (P.q₁ : Int) + P.q₂ = P.q := by
             exact_mod_cast P.sum_q.symm
           have hqcast : ((P.q - 1 : Nat) : Int) = (P.q : Int) - 1 := by
             exact_mod_cast Nat.cast_sub (by omega : 1 ≤ P.q)
-          have hq1cast := EdgeSectorGeometry.hq1castAt1045 P hrpos u x hxim' hqsum hqcast
+          have hq1cast := EdgeSectorGeometry.hq1castAt1045 P hrpos u x hqsum hqcast
           let m : GaussianInt := x - 1
-          have hmc := EdgeSectorGeometry.hmcAt1049 P Ci u x hxre'' hxim'' hqsum hqcast
+          have hmc := EdgeSectorGeometry.hmcAt1049 P u x hxre'' hxim'' hqsum hqcast
           have hRmem : Rminus ∈ tiles := List.mem_of_head? hf.2.1
           obtain ⟨e, he⟩ := regular_index Rminus
             (hf.2.2.2.2.1 Rminus hRmem)
@@ -2398,7 +2476,7 @@ theorem P4158T1EdgeSectorSelection :
               hEtrans
           have hEidx : x ∈ (PP.tile e).cells := by simpa [he] using hEcell
           have hdisET := EdgeSectorGeometry.hdisETAt1079 P T u hc Rminus ford_disjoint_im hRm1
-          have hdisET' := EdgeSectorGeometry.hdisET'At1085 P Ci T' u Rminus x ford_disjoint_re
+          have hdisET' := EdgeSectorGeometry.hdisET'At1085 P T' u Rminus ford_disjoint_re
               hRm1 hc'1
           have httrans := translated_ford_cell P.q (P.q - 1) P.q₁
             (u + ⟨-(P.q : Int), (P.q₂ : Int)⟩) (by omega) (P.q₁_lt)

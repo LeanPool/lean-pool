@@ -26,15 +26,21 @@ namespace ApollonianSuperharmonic
 namespace DiamondLaplacianProof
 
 private theorem habAt289 :
-    ∀ (F : ℤ → ℤ → ℤ), ∀ (p : ℤ), ∀ (q : ℤ), ((4 : ℤ) * F (p - (1 : ℤ)) q = (2 : ℤ) * (p - (1 :
-        ℤ)) ^ (2 : ℕ) - (2 : ℤ) * |p - (1 : ℤ)| - (p - (1 : ℤ) - q) ^ (2 : ℕ) + (p - (1 : ℤ) - q)
-        % (2 : ℤ)) → (((4 : ℤ) * F p (q + (1 : ℤ)) = (2 : ℤ) * p ^ (2 : ℕ) - (2 : ℤ) * |p| - (p -
-        (q + (1 : ℤ))) ^ (2 : ℕ) + (p - (q + (1 : ℤ))) % (2 : ℤ)) → (((4 : ℤ) * F p (q - (1 : ℤ))
-        = (2 : ℤ) * p ^ (2 : ℕ) - (2 : ℤ) * |p| - (p - (q - (1 : ℤ))) ^ (2 : ℕ) + (p - (q - (1 :
-        ℤ))) % (2 : ℤ)) → (((4 : ℤ) * F p q = (2 : ℤ) * p ^ (2 : ℕ) - (2 : ℤ) * |p| - (p - q) ^
-        (2 : ℕ) + (p - q) % (2 : ℤ)) → (|p+1| + |p-1| - 2*|p| = (if p=0 then 2 else 0))))) := by
+    ∀ (F : ℤ → ℤ → ℤ),
+      ∀ (p : ℤ),
+        ∀ (q : ℤ),
+          (4 : ℤ) * F p (q + (1 : ℤ)) =
+              (2 : ℤ) * p ^ (2 : ℕ) - (2 : ℤ) * |p| - (p - (q + (1 : ℤ))) ^ (2 : ℕ) +
+                (p - (q + (1 : ℤ))) % (2 : ℤ) →
+            (4 : ℤ) * F p (q - (1 : ℤ)) =
+                (2 : ℤ) * p ^ (2 : ℕ) - (2 : ℤ) * |p| - (p - (q - (1 : ℤ))) ^ (2 : ℕ) +
+                  (p - (q - (1 : ℤ))) % (2 : ℤ) →
+              (4 : ℤ) * F p q =
+                  (2 : ℤ) * p ^ (2 : ℕ) - (2 : ℤ) * |p| - (p - q) ^ (2 : ℕ) +
+                    (p - q) % (2 : ℤ) →
+                |p + 1| + |p - 1| - 2 * |p| = if p = 0 then 2 else 0 := by
   classical
-  intro F p q h2 h3 h4 h0
+  intro F p q h3 h4 h0
   split_ifs with hp
   · simp [hp]
   · rcases lt_or_gt_of_ne hp with hp | hp
@@ -351,7 +357,7 @@ where
     have hm : (p+1-q)%2 + (p-1-q)%2 + (p-(q+1))%2 + (p-(q-1))%2 =
         4 - 4*((p-q)%2) := by omega
     have hab : |p+1| + |p-1| - 2*|p| = (if p=0 then 2 else 0) := DiamondLaplacianProof.habAt289 F
-        p q h2 h3 h4 h0
+        p q h3 h4 h0
     split_ifs at hab ⊢
     all_goals
       apply mul_left_cancel₀ (by norm_num : (4 : Int) ≠ 0)

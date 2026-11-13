@@ -215,10 +215,13 @@ private theorem hcenter :
     (by
       classical
       exact
-        (Fin 4 → CircleCoordinates) → ((ProtoTile) → (∀ (U : ProtoTile), ∀ (z : GaussianInt), z ∈
-            U.cells ↔ ((z.re : Real) + 1 / 2, (z.im : Real) + 1 / 2) ∈ TileRealization U)) ) := by
+        ∀ (U : ProtoTile),
+          ∀ (z : GaussianInt),
+            z ∈ U.cells ↔
+              ((z.re : Real) + 1 / 2, (z.im : Real) + 1 / 2) ∈ TileRealization U
+    ) := by
   classical
-  intro q T U z
+  intro U z
   constructor
   · intro hz
     simp only [TileRealization, Set.mem_iUnion]
@@ -357,7 +360,7 @@ theorem TileT1DiskArea (q : Fin 4 → CircleCoordinates)
     have htau := TileHalfTurnGeometry.involutive q u
     have hHcells := TileHalfTurnGeometry.cells q u
     have hHreal := TileHalfTurnGeometry.realization q T u ht
-    have hcenter := DiskAreaGeometry.hcenter q T
+    have hcenter := DiskAreaGeometry.hcenter
     have hreflectCells := DiskAreaGeometry.hreflectCells q T u hHreal hcenter
     have hHT : (H T).cells = T.cells :=
       hreflectCells T T (BandPrototileCentralSymmetry (q 0) T hT)

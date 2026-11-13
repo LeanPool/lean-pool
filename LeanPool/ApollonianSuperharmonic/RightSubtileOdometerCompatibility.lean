@@ -200,10 +200,12 @@ private theorem hrootAt310 :
     (by
       classical
       exact
-        (ℕ) → (∀ (C : BandCircle), (List GaussianInt) → (∀ (q : Fin (4 : ℕ) → CircleCoordinates),
-            (ProperBandQuadruple q) → ((q (0 : Fin (4 : ℕ)) = C.1.1) → (1 < (q 0).1)))) ) := by
+        ∀ (C : BandCircle),
+          ∀ (q : Fin (4 : ℕ) → CircleCoordinates),
+            ProperBandQuadruple q → q (0 : Fin (4 : ℕ)) = C.1.1 → 1 < (q 0).1
+    ) := by
   classical
-  intro n C p q hq hqC
+  intro C q hq hqC
   have hpq := hq.2 (0 : Fin 3)
   have hpos : 0 < (q 0).1 := by simpa only [hqC] using C.property
   have hnon := (ProperBandCurvatureStructure q hq).2.1
@@ -394,11 +396,12 @@ private theorem hrootAt463 :
     (by
       classical
       exact
-        (ℕ) → (∀ (C₀ : BandCircle), (BandCircle) → ((List GaussianInt) → (∀ (q : Fin (4 : ℕ) →
-            CircleCoordinates), (ProperBandQuadruple q) → ((q (0 : Fin (4 : ℕ)) = C₀.1.1) → (1 <
-            (q 0).1))))) ) := by
+        ∀ (C₀ : BandCircle),
+          ∀ (q : Fin (4 : ℕ) → CircleCoordinates),
+            ProperBandQuadruple q → q (0 : Fin (4 : ℕ)) = C₀.1.1 → 1 < (q 0).1
+    ) := by
   classical
-  intro n C₀ Cᵢ p q hq hqC
+  intro C₀ q hq hqC
   have hnon := (ProperBandCurvatureStructure q hq).2.1
   have hunique := (ProperBandCurvatureStructure q hq).2.2
   have hnon0 := hnon 0
@@ -674,7 +677,7 @@ theorem RightSubtileOdometerCompatibility :
             rcases path with ⟨p, hpnd, hplen, hhead, hlast, hpverts, hstep, hpedges⟩
             have qdata := RightCompatibilityGeometry.qdata C T T' h h' hdata
             rcases qdata with ⟨q, i, e, hq, hqC⟩
-            have hroot : 1 < (q 0).1 := RightCompatibilityGeometry.hrootAt310 n C p q hq hqC
+            have hroot : 1 < (q 0).1 := RightCompatibilityGeometry.hrootAt310 C q hq hqC
             obtain ⟨S, hsx, hband, hchildren, hcells, hfoot, hcent,
               hdoms, hvalues, hcomps, hslopes⟩ :=
               TileOdometerReindexedDecomposition q hq T h hroot (by simpa [hqC] using hOT)
@@ -720,7 +723,7 @@ theorem RightSubtileOdometerCompatibility :
                 ⟨hOT0, hOTi, hdata⟩)
             rcases path with ⟨p, hpnd, hplen, hhead, hlast, hpverts, hstep, hpedges⟩
             rcases hdata with ⟨p₀, pᵢ, hp₀, hpᵢ, q, i, s, hq, hqC, hqI, rest⟩
-            have hroot : 1 < (q 0).1 := RightCompatibilityGeometry.hrootAt463 n C₀ Cᵢ p q hq hqC
+            have hroot : 1 < (q 0).1 := RightCompatibilityGeometry.hrootAt463 C₀ q hq hqC
             obtain ⟨S, hsx, hband, hchildren, hcells, hfoot, hcent,
               hdoms, hvalues, hcomps, hslopes⟩ :=
               TileOdometerReindexedDecomposition q hq T₀ h₀ hroot

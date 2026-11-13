@@ -415,10 +415,10 @@ private theorem natAbsToNat :
   exact_mod_cast hn
 
 private theorem natAbsDist :
-    (FordFareyParameter) → ((∀ (z : Int), (0 ≤ z) → (z.natAbs = z.toNat)) → (∀ (a : Int), ∀ (b :
-        Int), (0 ≤ a) → ((0 ≤ b) → ((a-b).natAbs = Nat.dist a.toNat b.toNat)))) := by
+    (∀ (z : Int), 0 ≤ z → z.natAbs = z.toNat) →
+      ∀ (a : Int), ∀ (b : Int), 0 ≤ a → 0 ≤ b → (a - b).natAbs = Nat.dist a.toNat b.toNat := by
   classical
-  intro P natAbsToNat a b ha hb
+  intro natAbsToNat a b ha hb
   by_cases hab : a ≤ b
   · have habs : (a-b).natAbs = (b-a).toNat := by
       have h₁ := Int.natAbs_of_nonneg (a := b-a) (by omega)
@@ -441,43 +441,47 @@ private theorem natAbsDist :
     omega
 
 private theorem distDistDown :
-    (FordFareyParameter) → (∀ (a : Nat), ∀ (b : Nat), ∀ (c : Nat), (a ≤ c) → ((b ≤ c) → (Nat.dist
-        (Nat.dist a c) (Nat.dist b c) = Nat.dist a b))) := by
+    ∀ (a : Nat),
+      ∀ (b : Nat),
+        ∀ (c : Nat), a ≤ c → b ≤ c → Nat.dist (Nat.dist a c) (Nat.dist b c) = Nat.dist a b := by
   classical
-  intro P a b c ha hb
+  intro a b c ha hb
   simp [Nat.dist]
   omega
 
 private theorem distDistUp :
-    (FordFareyParameter) → (∀ (a : Nat), ∀ (b : Nat), ∀ (c : Nat), (c ≤ a) → ((c ≤ b) → (Nat.dist
-        (Nat.dist a c) (Nat.dist b c) = Nat.dist a b))) := by
+    ∀ (a : Nat),
+      ∀ (b : Nat),
+        ∀ (c : Nat), c ≤ a → c ≤ b → Nat.dist (Nat.dist a c) (Nat.dist b c) = Nat.dist a b := by
   classical
-  intro P a b c ha hb
+  intro a b c ha hb
   simp [Nat.dist]
   omega
 
 private theorem natDistOneInt :
-    (FordFareyParameter) → (∀ (a : Int), ∀ (b : Int), (0 ≤ a) → ((0 ≤ b) → (Nat.dist a.toNat
-        b.toNat = 1 ↔ a = b+1 ∨ b = a+1))) := by
+    ∀ (a : Int),
+      ∀ (b : Int), 0 ≤ a → 0 ≤ b → (Nat.dist a.toNat b.toNat = 1 ↔ a = b + 1 ∨ b = a + 1) := by
   classical
-  intro P a b ha hb
+  intro a b ha hb
   have hac : (a.toNat : Int) = a := Int.toNat_of_nonneg ha
   have hbc : (b.toNat : Int) = b := Int.toNat_of_nonneg hb
   simp [Nat.dist]
   omega
 
 private theorem adjacentVertical :
-    (FordFareyParameter) → (∀ (x : GaussianInt), ∀ (y : GaussianInt), (x.re = y.re) →
-        (FourNeighborAdjacent x y ↔ x.im = y.im+1 ∨ y.im = x.im+1)) := by
+    ∀ (x : GaussianInt),
+      ∀ (y : GaussianInt),
+        x.re = y.re → (FourNeighborAdjacent x y ↔ x.im = y.im + 1 ∨ y.im = x.im + 1) := by
   classical
-  intro P x y hfix
+  intro x y hfix
   simp [FourNeighborAdjacent, Zsqrtd.ext_iff, hfix]; omega
 
 private theorem adjacentHorizontal :
-    (FordFareyParameter) → (∀ (x : GaussianInt), ∀ (y : GaussianInt), (x.im = y.im) →
-        (FourNeighborAdjacent x y ↔ x.re = y.re+1 ∨ y.re = x.re+1)) := by
+    ∀ (x : GaussianInt),
+      ∀ (y : GaussianInt),
+        x.im = y.im → (FourNeighborAdjacent x y ↔ x.re = y.re + 1 ∨ y.re = x.re + 1) := by
   classical
-  intro P x y hfix
+  intro x y hfix
   simp [FourNeighborAdjacent, Zsqrtd.ext_iff, hfix]; omega
 
 private theorem lineVertical :
@@ -606,144 +610,176 @@ private theorem dSmall1Root :
 
 private theorem dLarge0V :
     ∀ (P : FordFareyParameter),
-    let B := P4062T1RemainderPaths P
-    let d : GaussianInt → Nat := fun x =>
-      let a := if x ∈ (B 0).1 then (B 0).2 else (B 1).2
-      (x.re-a.re).natAbs + (x.im-a.im).natAbs
-    let r := P.q₁
-    let s := P.q₂
-    (∀ (a : Int), ∀ (b : Int), (0 ≤ a) → ((0 ≤ b) → ((a-b).natAbs = Nat.dist a.toNat b.toNat))) →
-        (((s < r) → (∀ (x : GaussianInt), (x ∈ (B 0).1) → (d x = (x.re-(r:Int)).natAbs +
-        (x.im-(s:Int)).natAbs))) → ((s < r) → (∀ (x : GaussianInt), (x ∈ (B 0).1) → ((x.re =
-        (r:Int)) → ((0 ≤ x.im) → ((x.im ≤ (s:Int)) → (d x = Nat.dist x.im.toNat s))))))) := by
+      let B := P4062T1RemainderPaths P;
+      let d : GaussianInt → Nat := fun x =>
+        let a := if x ∈ (B 0).1 then (B 0).2 else (B 1).2
+        (x.re - a.re).natAbs + (x.im - a.im).natAbs;
+      let r := P.q₁;
+      let s := P.q₂;
+      (∀ (a : Int),
+          ∀ (b : Int), 0 ≤ a → 0 ≤ b → (a - b).natAbs = Nat.dist a.toNat b.toNat) →
+        (s < r →
+            ∀ (x : GaussianInt),
+              x ∈ (B 0).1 → d x = (x.re - (r : Int)).natAbs + (x.im - (s : Int)).natAbs) →
+          s < r →
+            ∀ (x : GaussianInt),
+              x ∈ (B 0).1 → x.re = (r : Int) → 0 ≤ x.im → d x = Nat.dist x.im.toNat s := by
   classical
-  intro P B d r s natAbsDist dLarge0Root hlarge x hx hcoord hpos hbound
+  intro P B d r s natAbsDist dLarge0Root hlarge x hx hcoord hpos
   rw [dLarge0Root hlarge x hx, hcoord]
   simp only [sub_self, Int.natAbs_zero, zero_add]
   simpa using (natAbsDist x.im (s:Int) hpos (by exact_mod_cast (Nat.zero_le s)))
 
 private theorem dLarge0H :
     ∀ (P : FordFareyParameter),
-    let B := P4062T1RemainderPaths P
-    let d : GaussianInt → Nat := fun x =>
-      let a := if x ∈ (B 0).1 then (B 0).2 else (B 1).2
-      (x.re-a.re).natAbs + (x.im-a.im).natAbs
-    let r := P.q₁
-    let s := P.q₂
-    (∀ (a : Int), ∀ (b : Int), (0 ≤ a) → ((0 ≤ b) → ((a-b).natAbs = Nat.dist a.toNat b.toNat))) →
-        (((s < r) → (∀ (x : GaussianInt), (x ∈ (B 0).1) → (d x = (x.re-(r:Int)).natAbs +
-        (x.im-(s:Int)).natAbs))) → ((s < r) → (∀ (x : GaussianInt), (x ∈ (B 0).1) → ((x.im =
-        (s:Int)) → ((0 ≤ x.re) → (((r:Int) ≤ x.re) → (d x = Nat.dist x.re.toNat r))))))) := by
+      let B := P4062T1RemainderPaths P;
+      let d : GaussianInt → Nat := fun x =>
+        let a := if x ∈ (B 0).1 then (B 0).2 else (B 1).2
+        (x.re - a.re).natAbs + (x.im - a.im).natAbs;
+      let r := P.q₁;
+      let s := P.q₂;
+      (∀ (a : Int),
+          ∀ (b : Int), 0 ≤ a → 0 ≤ b → (a - b).natAbs = Nat.dist a.toNat b.toNat) →
+        (s < r →
+            ∀ (x : GaussianInt),
+              x ∈ (B 0).1 → d x = (x.re - (r : Int)).natAbs + (x.im - (s : Int)).natAbs) →
+          s < r →
+            ∀ (x : GaussianInt),
+              x ∈ (B 0).1 → x.im = (s : Int) → 0 ≤ x.re → d x = Nat.dist x.re.toNat r := by
   classical
-  intro P B d r s natAbsDist dLarge0Root hlarge x hx hcoord hpos hbound
+  intro P B d r s natAbsDist dLarge0Root hlarge x hx hcoord hpos
   rw [dLarge0Root hlarge x hx, hcoord]
   simp only [sub_self, Int.natAbs_zero, add_zero]
   simpa using (natAbsDist x.re (r:Int) hpos (by exact_mod_cast (Nat.zero_le r)))
 
 private theorem dLarge1V :
     ∀ (P : FordFareyParameter),
-    let B := P4062T1RemainderPaths P
-    let d : GaussianInt → Nat := fun x =>
-      let a := if x ∈ (B 0).1 then (B 0).2 else (B 1).2
-      (x.re-a.re).natAbs + (x.im-a.im).natAbs
-    let r := P.q₁
-    let s := P.q₂
-    (∀ (a : Int), ∀ (b : Int), (0 ≤ a) → ((0 ≤ b) → ((a-b).natAbs = Nat.dist a.toNat b.toNat))) →
-        (((s < r) → (∀ (x : GaussianInt), (x ∈ (B 1).1) → (d x = (x.re-(s:Int)).natAbs +
-        (x.im-(r:Int)).natAbs))) → ((s < r) → (∀ (x : GaussianInt), (x ∈ (B 1).1) → ((x.im =
-        (r:Int)) → ((0 ≤ x.re) → ((x.re ≤ (s:Int)) → (d x = Nat.dist x.re.toNat s))))))) := by
+      let B := P4062T1RemainderPaths P;
+      let d : GaussianInt → Nat := fun x =>
+        let a := if x ∈ (B 0).1 then (B 0).2 else (B 1).2
+        (x.re - a.re).natAbs + (x.im - a.im).natAbs;
+      let r := P.q₁;
+      let s := P.q₂;
+      (∀ (a : Int),
+          ∀ (b : Int), 0 ≤ a → 0 ≤ b → (a - b).natAbs = Nat.dist a.toNat b.toNat) →
+        (s < r →
+            ∀ (x : GaussianInt),
+              x ∈ (B 1).1 → d x = (x.re - (s : Int)).natAbs + (x.im - (r : Int)).natAbs) →
+          s < r →
+            ∀ (x : GaussianInt),
+              x ∈ (B 1).1 → x.im = (r : Int) → 0 ≤ x.re → d x = Nat.dist x.re.toNat s := by
   classical
-  intro P B d r s natAbsDist dLarge1Root hlarge x hx hcoord hpos hbound
+  intro P B d r s natAbsDist dLarge1Root hlarge x hx hcoord hpos
   rw [dLarge1Root hlarge x hx, hcoord]
   simp only [sub_self, Int.natAbs_zero]
   simpa using (natAbsDist x.re (s:Int) hpos (by exact_mod_cast (Nat.zero_le s)))
 
 private theorem dLarge1H :
     ∀ (P : FordFareyParameter),
-    let B := P4062T1RemainderPaths P
-    let d : GaussianInt → Nat := fun x =>
-      let a := if x ∈ (B 0).1 then (B 0).2 else (B 1).2
-      (x.re-a.re).natAbs + (x.im-a.im).natAbs
-    let r := P.q₁
-    let s := P.q₂
-    (∀ (a : Int), ∀ (b : Int), (0 ≤ a) → ((0 ≤ b) → ((a-b).natAbs = Nat.dist a.toNat b.toNat))) →
-        (((s < r) → (∀ (x : GaussianInt), (x ∈ (B 1).1) → (d x = (x.re-(s:Int)).natAbs +
-        (x.im-(r:Int)).natAbs))) → ((s < r) → (∀ (x : GaussianInt), (x ∈ (B 1).1) → ((x.re =
-        (s:Int)) → ((0 ≤ x.im) → (((r:Int) ≤ x.im) → (d x = Nat.dist x.im.toNat r))))))) := by
+      let B := P4062T1RemainderPaths P;
+      let d : GaussianInt → Nat := fun x =>
+        let a := if x ∈ (B 0).1 then (B 0).2 else (B 1).2
+        (x.re - a.re).natAbs + (x.im - a.im).natAbs;
+      let r := P.q₁;
+      let s := P.q₂;
+      (∀ (a : Int),
+          ∀ (b : Int), 0 ≤ a → 0 ≤ b → (a - b).natAbs = Nat.dist a.toNat b.toNat) →
+        (s < r →
+            ∀ (x : GaussianInt),
+              x ∈ (B 1).1 → d x = (x.re - (s : Int)).natAbs + (x.im - (r : Int)).natAbs) →
+          s < r →
+            ∀ (x : GaussianInt),
+              x ∈ (B 1).1 → x.re = (s : Int) → 0 ≤ x.im → d x = Nat.dist x.im.toNat r := by
   classical
-  intro P B d r s natAbsDist dLarge1Root hlarge x hx hcoord hpos hbound
+  intro P B d r s natAbsDist dLarge1Root hlarge x hx hcoord hpos
   rw [dLarge1Root hlarge x hx, hcoord]
   simp only [sub_self, Int.natAbs_zero]
   simpa using (natAbsDist x.im (r:Int) hpos (by exact_mod_cast (Nat.zero_le r)))
 
 private theorem dSmall0V :
     ∀ (P : FordFareyParameter),
-    let B := P4062T1RemainderPaths P
-    let d : GaussianInt → Nat := fun x =>
-      let a := if x ∈ (B 0).1 then (B 0).2 else (B 1).2
-      (x.re-a.re).natAbs + (x.im-a.im).natAbs
-    let r := P.q₁
-    let s := P.q₂
-    (∀ (a : Int), ∀ (b : Int), (0 ≤ a) → ((0 ≤ b) → ((a-b).natAbs = Nat.dist a.toNat b.toNat))) →
-        (((r < s) → (∀ (x : GaussianInt), (x ∈ (B 0).1) → (d x = (x.re-(r:Int)).natAbs +
-        (x.im-(r:Int)).natAbs))) → ((r < s) → (∀ (x : GaussianInt), (x ∈ (B 0).1) → ((x.re =
-        (r:Int)) → ((0 ≤ x.im) → ((x.im ≤ (r:Int)) → (d x = Nat.dist x.im.toNat r))))))) := by
+      let B := P4062T1RemainderPaths P;
+      let d : GaussianInt → Nat := fun x =>
+        let a := if x ∈ (B 0).1 then (B 0).2 else (B 1).2
+        (x.re - a.re).natAbs + (x.im - a.im).natAbs;
+      let r := P.q₁;
+      let s := P.q₂;
+      (∀ (a : Int),
+          ∀ (b : Int), 0 ≤ a → 0 ≤ b → (a - b).natAbs = Nat.dist a.toNat b.toNat) →
+        (r < s →
+            ∀ (x : GaussianInt),
+              x ∈ (B 0).1 → d x = (x.re - (r : Int)).natAbs + (x.im - (r : Int)).natAbs) →
+          r < s →
+            ∀ (x : GaussianInt),
+              x ∈ (B 0).1 → x.re = (r : Int) → 0 ≤ x.im → d x = Nat.dist x.im.toNat r := by
   classical
-  intro P B d r s natAbsDist dSmall0Root hsmall x hx hcoord hpos hbound
+  intro P B d r s natAbsDist dSmall0Root hsmall x hx hcoord hpos
   rw [dSmall0Root hsmall x hx, hcoord]
   simp only [sub_self, Int.natAbs_zero, zero_add]
   simpa using (natAbsDist x.im (r:Int) hpos (by exact_mod_cast (Nat.zero_le r)))
 
 private theorem dSmall0H :
     ∀ (P : FordFareyParameter),
-    let B := P4062T1RemainderPaths P
-    let d : GaussianInt → Nat := fun x =>
-      let a := if x ∈ (B 0).1 then (B 0).2 else (B 1).2
-      (x.re-a.re).natAbs + (x.im-a.im).natAbs
-    let r := P.q₁
-    let s := P.q₂
-    (∀ (a : Int), ∀ (b : Int), (0 ≤ a) → ((0 ≤ b) → ((a-b).natAbs = Nat.dist a.toNat b.toNat))) →
-        (((r < s) → (∀ (x : GaussianInt), (x ∈ (B 0).1) → (d x = (x.re-(r:Int)).natAbs +
-        (x.im-(r:Int)).natAbs))) → ((r < s) → (∀ (x : GaussianInt), (x ∈ (B 0).1) → ((x.im =
-        (r:Int)) → ((0 ≤ x.re) → ((x.re ≤ (r:Int)) → (d x = Nat.dist x.re.toNat r))))))) := by
+      let B := P4062T1RemainderPaths P;
+      let d : GaussianInt → Nat := fun x =>
+        let a := if x ∈ (B 0).1 then (B 0).2 else (B 1).2
+        (x.re - a.re).natAbs + (x.im - a.im).natAbs;
+      let r := P.q₁;
+      let s := P.q₂;
+      (∀ (a : Int),
+          ∀ (b : Int), 0 ≤ a → 0 ≤ b → (a - b).natAbs = Nat.dist a.toNat b.toNat) →
+        (r < s →
+            ∀ (x : GaussianInt),
+              x ∈ (B 0).1 → d x = (x.re - (r : Int)).natAbs + (x.im - (r : Int)).natAbs) →
+          r < s →
+            ∀ (x : GaussianInt),
+              x ∈ (B 0).1 → x.im = (r : Int) → 0 ≤ x.re → d x = Nat.dist x.re.toNat r := by
   classical
-  intro P B d r s natAbsDist dSmall0Root hsmall x hx hcoord hpos hbound
+  intro P B d r s natAbsDist dSmall0Root hsmall x hx hcoord hpos
   rw [dSmall0Root hsmall x hx, hcoord]
   simp only [sub_self, Int.natAbs_zero, add_zero]
   simpa using (natAbsDist x.re (r:Int) hpos (by exact_mod_cast (Nat.zero_le r)))
 
 private theorem dSmall1V :
     ∀ (P : FordFareyParameter),
-    let B := P4062T1RemainderPaths P
-    let d : GaussianInt → Nat := fun x =>
-      let a := if x ∈ (B 0).1 then (B 0).2 else (B 1).2
-      (x.re-a.re).natAbs + (x.im-a.im).natAbs
-    let r := P.q₁
-    let s := P.q₂
-    (∀ (a : Int), ∀ (b : Int), (0 ≤ a) → ((0 ≤ b) → ((a-b).natAbs = Nat.dist a.toNat b.toNat))) →
-        (((r < s) → (∀ (x : GaussianInt), (x ∈ (B 1).1) → (d x = (x.re-(s:Int)).natAbs +
-        (x.im-(s:Int)).natAbs))) → ((r < s) → (∀ (x : GaussianInt), (x ∈ (B 1).1) → ((x.re =
-        (s:Int)) → ((0 ≤ x.im) → (((s:Int) ≤ x.im) → (d x = Nat.dist x.im.toNat s))))))) := by
+      let B := P4062T1RemainderPaths P;
+      let d : GaussianInt → Nat := fun x =>
+        let a := if x ∈ (B 0).1 then (B 0).2 else (B 1).2
+        (x.re - a.re).natAbs + (x.im - a.im).natAbs;
+      let r := P.q₁;
+      let s := P.q₂;
+      (∀ (a : Int),
+          ∀ (b : Int), 0 ≤ a → 0 ≤ b → (a - b).natAbs = Nat.dist a.toNat b.toNat) →
+        (r < s →
+            ∀ (x : GaussianInt),
+              x ∈ (B 1).1 → d x = (x.re - (s : Int)).natAbs + (x.im - (s : Int)).natAbs) →
+          r < s →
+            ∀ (x : GaussianInt),
+              x ∈ (B 1).1 → x.re = (s : Int) → 0 ≤ x.im → d x = Nat.dist x.im.toNat s := by
   classical
-  intro P B d r s natAbsDist dSmall1Root hsmall x hx hcoord hpos hbound
+  intro P B d r s natAbsDist dSmall1Root hsmall x hx hcoord hpos
   rw [dSmall1Root hsmall x hx, hcoord]
   simp only [sub_self, Int.natAbs_zero, zero_add]
   simpa using (natAbsDist x.im (s:Int) hpos (by exact_mod_cast (Nat.zero_le s)))
 
 private theorem dSmall1H :
     ∀ (P : FordFareyParameter),
-    let B := P4062T1RemainderPaths P
-    let d : GaussianInt → Nat := fun x =>
-      let a := if x ∈ (B 0).1 then (B 0).2 else (B 1).2
-      (x.re-a.re).natAbs + (x.im-a.im).natAbs
-    let r := P.q₁
-    let s := P.q₂
-    (∀ (a : Int), ∀ (b : Int), (0 ≤ a) → ((0 ≤ b) → ((a-b).natAbs = Nat.dist a.toNat b.toNat))) →
-        (((r < s) → (∀ (x : GaussianInt), (x ∈ (B 1).1) → (d x = (x.re-(s:Int)).natAbs +
-        (x.im-(s:Int)).natAbs))) → ((r < s) → (∀ (x : GaussianInt), (x ∈ (B 1).1) → ((x.im =
-        (s:Int)) → ((0 ≤ x.re) → (((s:Int) ≤ x.re) → (d x = Nat.dist x.re.toNat s))))))) := by
+      let B := P4062T1RemainderPaths P;
+      let d : GaussianInt → Nat := fun x =>
+        let a := if x ∈ (B 0).1 then (B 0).2 else (B 1).2
+        (x.re - a.re).natAbs + (x.im - a.im).natAbs;
+      let r := P.q₁;
+      let s := P.q₂;
+      (∀ (a : Int),
+          ∀ (b : Int), 0 ≤ a → 0 ≤ b → (a - b).natAbs = Nat.dist a.toNat b.toNat) →
+        (r < s →
+            ∀ (x : GaussianInt),
+              x ∈ (B 1).1 → d x = (x.re - (s : Int)).natAbs + (x.im - (s : Int)).natAbs) →
+          r < s →
+            ∀ (x : GaussianInt),
+              x ∈ (B 1).1 → x.im = (s : Int) → 0 ≤ x.re → d x = Nat.dist x.re.toNat s := by
   classical
-  intro P B d r s natAbsDist dSmall1Root hsmall x hx hcoord hpos hbound
+  intro P B d r s natAbsDist dSmall1Root hsmall x hx hcoord hpos
   rw [dSmall1Root hsmall x hx, hcoord]
   simp only [sub_self, Int.natAbs_zero, add_zero]
   simpa using (natAbsDist x.re (s:Int) hpos (by exact_mod_cast (Nat.zero_le s)))
@@ -1355,19 +1391,19 @@ theorem P4112T1PathGeometry (P : FordFareyParameter) (hP : 2 < P.q) :
       memB0Small memB1Small
   have hcross := PathGeometryProof.hcross P horder memB0Large memB1Large memB0Small memB1Small
   have natAbsToNat (z : Int) (hz : 0 ≤ z) := PathGeometryProof.natAbsToNat z hz
-  have natAbsDist (a b : Int) (ha : 0 ≤ a) (hb : 0 ≤ b) := PathGeometryProof.natAbsDist P
+  have natAbsDist (a b : Int) (ha : 0 ≤ a) (hb : 0 ≤ b) := PathGeometryProof.natAbsDist
       natAbsToNat a b
           ha hb
-  have distDistDown (a b c : Nat) (ha : a ≤ c) (hb : b ≤ c) := PathGeometryProof.distDistDown P a
+  have distDistDown (a b c : Nat) (ha : a ≤ c) (hb : b ≤ c) := PathGeometryProof.distDistDown a
           b c ha hb
-  have distDistUp (a b c : Nat) (ha : c ≤ a) (hb : c ≤ b) := PathGeometryProof.distDistUp P a b
+  have distDistUp (a b c : Nat) (ha : c ≤ a) (hb : c ≤ b) := PathGeometryProof.distDistUp a b
           c ha hb
-  have natDistOneInt (a b : Int) (ha : 0 ≤ a) (hb : 0 ≤ b) := PathGeometryProof.natDistOneInt P a b
+  have natDistOneInt (a b : Int) (ha : 0 ≤ a) (hb : 0 ≤ b) := PathGeometryProof.natDistOneInt a b
           ha hb
   have adjacentVertical (x y : GaussianInt) (hfix : x.re = y.re) :=
-      PathGeometryProof.adjacentVertical P x y hfix
+      PathGeometryProof.adjacentVertical x y hfix
   have adjacentHorizontal (x y : GaussianInt) (hfix : x.im = y.im) :=
-      PathGeometryProof.adjacentHorizontal P x y hfix
+      PathGeometryProof.adjacentHorizontal x y hfix
   have lineVertical (x y : GaussianInt) (hfix : x.re = y.re)
       (hnx : 0 ≤ x.im) (hny : 0 ≤ y.im)
       (hlevel : Nat.dist (d x) (d y) = Nat.dist x.im.toNat y.im.toNat) :
@@ -1400,35 +1436,35 @@ theorem P4112T1PathGeometry (P : FordFareyParameter) (hP : 2 < P.q) :
   have dLarge0V (hlarge : s < r) (x : GaussianInt) (hx : x ∈ (B 0).1)
       (hcoord : x.re = (r:Int)) (hpos : 0 ≤ x.im) (hbound : x.im ≤ (s:Int)) :
       d x = Nat.dist x.im.toNat s := PathGeometryProof.dLarge0V P natAbsDist dLarge0Root hlarge x
-          hx hcoord hpos hbound
+          hx hcoord hpos
   have dLarge0H (hlarge : s < r) (x : GaussianInt) (hx : x ∈ (B 0).1)
       (hcoord : x.im = (s:Int)) (hpos : 0 ≤ x.re) (hbound : (r:Int) ≤ x.re) :
       d x = Nat.dist x.re.toNat r := PathGeometryProof.dLarge0H P natAbsDist dLarge0Root hlarge x
-          hx hcoord hpos hbound
+          hx hcoord hpos
   have dLarge1V (hlarge : s < r) (x : GaussianInt) (hx : x ∈ (B 1).1)
       (hcoord : x.im = (r:Int)) (hpos : 0 ≤ x.re) (hbound : x.re ≤ (s:Int)) :
       d x = Nat.dist x.re.toNat s := PathGeometryProof.dLarge1V P natAbsDist dLarge1Root hlarge x
-          hx hcoord hpos hbound
+          hx hcoord hpos
   have dLarge1H (hlarge : s < r) (x : GaussianInt) (hx : x ∈ (B 1).1)
       (hcoord : x.re = (s:Int)) (hpos : 0 ≤ x.im) (hbound : (r:Int) ≤ x.im) :
       d x = Nat.dist x.im.toNat r := PathGeometryProof.dLarge1H P natAbsDist dLarge1Root hlarge x
-          hx hcoord hpos hbound
+          hx hcoord hpos
   have dSmall0V (hsmall : r < s) (x : GaussianInt) (hx : x ∈ (B 0).1)
       (hcoord : x.re = (r:Int)) (hpos : 0 ≤ x.im) (hbound : x.im ≤ (r:Int)) :
       d x = Nat.dist x.im.toNat r := PathGeometryProof.dSmall0V P natAbsDist dSmall0Root hsmall x
-          hx hcoord hpos hbound
+          hx hcoord hpos
   have dSmall0H (hsmall : r < s) (x : GaussianInt) (hx : x ∈ (B 0).1)
       (hcoord : x.im = (r:Int)) (hpos : 0 ≤ x.re) (hbound : x.re ≤ (r:Int)) :
       d x = Nat.dist x.re.toNat r := PathGeometryProof.dSmall0H P natAbsDist dSmall0Root hsmall x
-          hx hcoord hpos hbound
+          hx hcoord hpos
   have dSmall1V (hsmall : r < s) (x : GaussianInt) (hx : x ∈ (B 1).1)
       (hcoord : x.re = (s:Int)) (hpos : 0 ≤ x.im) (hbound : (s:Int) ≤ x.im) :
       d x = Nat.dist x.im.toNat s := PathGeometryProof.dSmall1V P natAbsDist dSmall1Root hsmall x
-          hx hcoord hpos hbound
+          hx hcoord hpos
   have dSmall1H (hsmall : r < s) (x : GaussianInt) (hx : x ∈ (B 1).1)
       (hcoord : x.im = (s:Int)) (hpos : 0 ≤ x.re) (hbound : (s:Int) ≤ x.re) :
       d x = Nat.dist x.re.toNat s := PathGeometryProof.dSmall1H P natAbsDist dSmall1Root hsmall x
-          hx hcoord hpos hbound
+          hx hcoord hpos
   have dLarge0Nat (hlarge : s < r) (x : GaussianInt) (hx : x ∈ (B 0).1) :
       d x = Nat.dist x.re.toNat r + Nat.dist x.im.toNat s := PathGeometryProof.dLarge0Nat P hsum
           hs hr memB0Large natAbsDist dLarge0Root hlarge x hx

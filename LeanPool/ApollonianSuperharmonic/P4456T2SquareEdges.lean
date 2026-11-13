@@ -276,12 +276,19 @@ private theorem hcoordsAt320 :
     (by
       classical
       exact
-        (Nat) → (∀ (w : GaussianInt), ∀ (z : GaussianInt), ∀ (v : GaussianInt), ∀ (a : ℕ), ∀ (b :
-            ℕ), (z = w + ⟨(↑a : ℤ), (↑b : ℤ)⟩) → (∀ (c : ℕ), ∀ (d : ℕ), (v = w + ⟨(↑c : ℤ), (↑d :
-            ℤ)⟩) →
-            ((v = z + (1 : GaussianInt)) → (c = a + 1 ∧ d = b)))) ) := by
+        ∀ (w : GaussianInt),
+          ∀ (z : GaussianInt),
+            ∀ (v : GaussianInt),
+              ∀ (a : ℕ),
+                ∀ (b : ℕ),
+                  z = w + ⟨(↑a : ℤ), (↑b : ℤ)⟩ →
+                    ∀ (c : ℕ),
+                      ∀ (d : ℕ),
+                        v = w + ⟨(↑c : ℤ), (↑d : ℤ)⟩ →
+                          v = z + (1 : GaussianInt) → c = a + 1 ∧ d = b
+    ) := by
   classical
-  intro n w z v a b hza c d hvc hvform
+  intro w z v a b hza c d hvc hvform
   have heq' : w + (⟨(c : Int), (d : Int)⟩ : GaussianInt) = z + 1 := by
     rw [← hvc, hvform]
   rw [hza] at heq'
@@ -296,12 +303,19 @@ private theorem hcoordsAt367 :
     (by
       classical
       exact
-        (Nat) → (∀ (w : GaussianInt), ∀ (z : GaussianInt), ∀ (v : GaussianInt), ∀ (a : ℕ), ∀ (b :
-            ℕ), (z = w + ⟨(↑a : ℤ), (↑b : ℤ)⟩) → (∀ (c : ℕ), ∀ (d : ℕ), (v = w + ⟨(↑c : ℤ), (↑d :
-            ℤ)⟩) →
-            ((v = z + ⟨(0 : ℤ), (1 : ℤ)⟩) → (c = a ∧ d = b + 1)))) ) := by
+        ∀ (w : GaussianInt),
+          ∀ (z : GaussianInt),
+            ∀ (v : GaussianInt),
+              ∀ (a : ℕ),
+                ∀ (b : ℕ),
+                  z = w + ⟨(↑a : ℤ), (↑b : ℤ)⟩ →
+                    ∀ (c : ℕ),
+                      ∀ (d : ℕ),
+                        v = w + ⟨(↑c : ℤ), (↑d : ℤ)⟩ →
+                          v = z + ⟨(0 : ℤ), (1 : ℤ)⟩ → c = a ∧ d = b + 1
+    ) := by
   classical
-  intro n w z v a b hza c d hvc hvform
+  intro w z v a b hza c d hvc hvform
   have heq' : w + (⟨(c : Int), (d : Int)⟩ : GaussianInt) = z + ⟨0,1⟩ := by
     rw [← hvc, hvform]
   rw [hza] at heq'
@@ -594,11 +608,17 @@ private theorem hcdAt513 :
     (by
       classical
       exact
-        (Nat) → (∀ (w : GaussianInt), ∀ (a : ℕ), ∀ (b : ℕ), ∀ (c : ℕ), ∀ (d : ℕ), (w + (⟨(c :
-            Int), (d : Int)⟩ : GaussianInt) = (w + (⟨(a : Int), (b : Int)⟩ : GaussianInt)) + 1) →
-            (c = a + 1 ∧ d = b)) ) := by
+        ∀ (w : GaussianInt),
+          ∀ (a : ℕ),
+            ∀ (b : ℕ),
+              ∀ (c : ℕ),
+                ∀ (d : ℕ),
+                  w + (⟨(c : Int), (d : Int)⟩ : GaussianInt) =
+                      w + (⟨(a : Int), (b : Int)⟩ : GaussianInt) + 1 →
+                    c = a + 1 ∧ d = b
+    ) := by
   classical
-  intro n w a b c d heq
+  intro w a b c d heq
   have hr := congrArg Zsqrtd.re heq
   have hi := congrArg Zsqrtd.im heq
   simp only [Zsqrtd.re_add, Zsqrtd.im_add,
@@ -638,11 +658,17 @@ private theorem hcdAt532 :
     (by
       classical
       exact
-        (Nat) → (∀ (w : GaussianInt), ∀ (a : ℕ), ∀ (b : ℕ), ∀ (c : ℕ), ∀ (d : ℕ), (w + (⟨(a :
-            Int), (b : Int)⟩ : GaussianInt) = (w + (⟨(c : Int), (d : Int)⟩ : GaussianInt)) + 1) →
-            (a = c + 1 ∧ b = d)) ) := by
+        ∀ (w : GaussianInt),
+          ∀ (a : ℕ),
+            ∀ (b : ℕ),
+              ∀ (c : ℕ),
+                ∀ (d : ℕ),
+                  w + (⟨(a : Int), (b : Int)⟩ : GaussianInt) =
+                      w + (⟨(c : Int), (d : Int)⟩ : GaussianInt) + 1 →
+                    a = c + 1 ∧ b = d
+    ) := by
   classical
-  intro n w a b c d heq
+  intro w a b c d heq
   have hr := congrArg Zsqrtd.re heq
   have hi := congrArg Zsqrtd.im heq
   simp only [Zsqrtd.re_add, Zsqrtd.im_add,
@@ -685,11 +711,17 @@ private theorem hcdAt554 :
     (by
       classical
       exact
-        (Nat) → (∀ (w : GaussianInt), ∀ (a : ℕ), ∀ (b : ℕ), ∀ (c : ℕ), ∀ (d : ℕ), (w + (⟨(c :
-            Int), (d : Int)⟩ : GaussianInt) = (w + (⟨(a : Int), (b : Int)⟩ : GaussianInt)) +
-            ⟨0,1⟩) → (c = a ∧ d = b + 1)) ) := by
+        ∀ (w : GaussianInt),
+          ∀ (a : ℕ),
+            ∀ (b : ℕ),
+              ∀ (c : ℕ),
+                ∀ (d : ℕ),
+                  w + (⟨(c : Int), (d : Int)⟩ : GaussianInt) =
+                      w + (⟨(a : Int), (b : Int)⟩ : GaussianInt) + ⟨0, 1⟩ →
+                    c = a ∧ d = b + 1
+    ) := by
   classical
-  intro n w a b c d heq
+  intro w a b c d heq
   have hr := congrArg Zsqrtd.re heq
   have hi := congrArg Zsqrtd.im heq
   simp only [Zsqrtd.re_add, Zsqrtd.im_add,
@@ -729,11 +761,17 @@ private theorem hcdAt573 :
     (by
       classical
       exact
-        (Nat) → (∀ (w : GaussianInt), ∀ (a : ℕ), ∀ (b : ℕ), ∀ (c : ℕ), ∀ (d : ℕ), (w + (⟨(a :
-            Int), (b : Int)⟩ : GaussianInt) = (w + (⟨(c : Int), (d : Int)⟩ : GaussianInt)) +
-            ⟨0,1⟩) → (a = c ∧ b = d + 1)) ) := by
+        ∀ (w : GaussianInt),
+          ∀ (a : ℕ),
+            ∀ (b : ℕ),
+              ∀ (c : ℕ),
+                ∀ (d : ℕ),
+                  w + (⟨(a : Int), (b : Int)⟩ : GaussianInt) =
+                      w + (⟨(c : Int), (d : Int)⟩ : GaussianInt) + ⟨0, 1⟩ →
+                    a = c ∧ b = d + 1
+    ) := by
   classical
-  intro n w a b c d heq
+  intro w a b c d heq
   have hr := congrArg Zsqrtd.re heq
   have hi := congrArg Zsqrtd.im heq
   simp only [Zsqrtd.re_add, Zsqrtd.im_add,
@@ -816,7 +854,7 @@ theorem P4456T2SquareEdges (n : Nat) (hn : 0 < n)
     rcases hcell z |>.mp hz with ⟨a,b,ha,hb,hza⟩
     rcases hcell v |>.mp hv with ⟨c,d,hc,hd,hvc⟩
     rcases hform with ⟨hor, hvform⟩ | ⟨hor, hvform⟩
-    · have hcoords : c = a + 1 ∧ d = b := SquareEdgeProof.hcoordsAt320 n w z v a b hza c d hvc
+    · have hcoords : c = a + 1 ∧ d = b := SquareEdgeProof.hcoordsAt320 w z v a b hza c d hvc
         hvform
       let pa : Nat := a + 1
       let p : GaussianInt := if 0 < b then z + 1 else z + 1 + ⟨0,1⟩
@@ -838,7 +876,7 @@ theorem P4456T2SquareEdges (n : Nat) (hn : 0 < n)
         exact hpnot hxB
       · rw [← h] at hyB
         exact hpnot hyB
-    · have hcoords : c = a ∧ d = b + 1 := SquareEdgeProof.hcoordsAt367 n w z v a b hza c d hvc
+    · have hcoords : c = a ∧ d = b + 1 := SquareEdgeProof.hcoordsAt367 w z v a b hza c d hvc
         hvform
       let pa : Nat := if 0 < a then a else a + 1
       let pb : Nat := b + 1
@@ -868,7 +906,7 @@ theorem P4456T2SquareEdges (n : Nat) (hn : 0 < n)
     · have heq : w + (⟨(c : Int), (d : Int)⟩ : GaussianInt) =
           (w + (⟨(a : Int), (b : Int)⟩ : GaussianInt)) + 1 := SquareEdgeDetails.heqAt507 w x y a
               b hxcoord c d hycoord h
-      have hcd : c = a + 1 ∧ d = b := SquareEdgeDetails.hcdAt513 n w a b c d heq
+      have hcd : c = a + 1 ∧ d = b := SquareEdgeDetails.hcdAt513 w a b c d heq
       have hset : ({x,y} : Finset GaussianInt) =
           {w + (⟨(a : Int), (b : Int)⟩ : GaussianInt),
             w + (⟨((a+1 : Nat) : Int), (b : Int)⟩ : GaussianInt)} := SquareEdgeDetails.hsetAt520
@@ -878,7 +916,7 @@ theorem P4456T2SquareEdges (n : Nat) (hn : 0 < n)
     · have heq : w + (⟨(a : Int), (b : Int)⟩ : GaussianInt) =
           (w + (⟨(c : Int), (d : Int)⟩ : GaussianInt)) + 1 := SquareEdgeDetails.heqAt526 w x y a
               b hxcoord c d hycoord h
-      have hcd : a = c + 1 ∧ b = d := SquareEdgeDetails.hcdAt532 n w a b c d heq
+      have hcd : a = c + 1 ∧ b = d := SquareEdgeDetails.hcdAt532 w a b c d heq
       have hset : ({x,y} : Finset GaussianInt) =
           {w + (⟨(c : Int), (d : Int)⟩ : GaussianInt),
             w + (⟨((c+1 : Nat) : Int), (d : Int)⟩ : GaussianInt)} :=
@@ -888,7 +926,7 @@ theorem P4456T2SquareEdges (n : Nat) (hn : 0 < n)
     · have heq : w + (⟨(c : Int), (d : Int)⟩ : GaussianInt) =
           (w + (⟨(a : Int), (b : Int)⟩ : GaussianInt)) + ⟨0,1⟩ := SquareEdgeDetails.heqAt548 w x
               y a b hxcoord c d hycoord h
-      have hcd : c = a ∧ d = b + 1 := SquareEdgeDetails.hcdAt554 n w a b c d heq
+      have hcd : c = a ∧ d = b + 1 := SquareEdgeDetails.hcdAt554 w a b c d heq
       have hset : ({x,y} : Finset GaussianInt) =
           {w + (⟨(a : Int), (b : Int)⟩ : GaussianInt),
             w + (⟨(a : Int), ((b+1 : Nat) : Int)⟩ : GaussianInt)} := SquareEdgeDetails.hsetAt561
@@ -898,7 +936,7 @@ theorem P4456T2SquareEdges (n : Nat) (hn : 0 < n)
     · have heq : w + (⟨(a : Int), (b : Int)⟩ : GaussianInt) =
           (w + (⟨(c : Int), (d : Int)⟩ : GaussianInt)) + ⟨0,1⟩ := SquareEdgeDetails.heqAt567 w x
               y a b hxcoord c d hycoord h
-      have hcd : a = c ∧ b = d + 1 := SquareEdgeDetails.hcdAt573 n w a b c d heq
+      have hcd : a = c ∧ b = d + 1 := SquareEdgeDetails.hcdAt573 w a b c d heq
       have hset : ({x,y} : Finset GaussianInt) =
           {w + (⟨(c : Int), (d : Int)⟩ : GaussianInt),
             w + (⟨(c : Int), ((d+1 : Nat) : Int)⟩ : GaussianInt)} :=

@@ -326,10 +326,12 @@ private theorem edgeEndpoint :
     (by
       classical
       exact
-        ∀ (U : ProtoTile), (U.cells.Nonempty) → (∀ (e : Finset GaussianInt), (e ∈ FootprintEdges
-            U) → (∀ (z : GaussianInt), (z ∈ e) → (z ∈ FootprintVertices U))) ) := by
+        ∀ (U : ProtoTile),
+          ∀ (e : Finset GaussianInt),
+            e ∈ FootprintEdges U → ∀ (z : GaussianInt), z ∈ e → z ∈ FootprintVertices U
+    ) := by
   classical
-  intro U hne e he z hz
+  intro U e he z hz
   rcases he with ⟨cell, hc, hshape | hshape | hshape | hshape⟩
   all_goals rw [hshape] at hz
   all_goals simp only [Finset.mem_insert, Finset.mem_singleton] at hz
@@ -368,16 +370,24 @@ private theorem threeOwnersContradict :
     (by
       classical
       exact
-        ∀ (q : Fin (4 : ℕ) → CircleCoordinates), ∀ (cfg : BandOrderedGeneralConfiguration q), ∀
-            (C : BandCircle), ∀ (T : ProtoTile), ∀ (cert : BandOrderedGeneralLayoutCertificate q
-            cfg C T), (GaussianInt) → (∀ (v : GaussianInt), ∀ (z : GaussianInt), (Nat.card {is :
-            Fin 3 × Bool //
-          v ∈ BoundaryFootprintVertices (cert.P is.1 is.2)} = 2) → ((z = v) → ((z ∈
-              BoundaryFootprintVertices (cert.P 0 true)) → ((z ∈ BoundaryFootprintVertices
-              (cert.P 0 false)) → ((z ∈ BoundaryFootprintVertices (cert.P 1 true)) → (False))))))
-              ) := by
+        ∀ (q : Fin (4 : ℕ) → CircleCoordinates),
+          ∀ (cfg : BandOrderedGeneralConfiguration q),
+            ∀ (C : BandCircle),
+              ∀ (T : ProtoTile),
+                ∀ (cert : BandOrderedGeneralLayoutCertificate q cfg C T),
+                  ∀ (v : GaussianInt),
+                    ∀ (z : GaussianInt),
+                      Nat.card
+                            { is : Fin 3 × Bool //
+                              v ∈ BoundaryFootprintVertices (cert.P is.1 is.2) } =
+                          2 →
+                        z = v →
+                          z ∈ BoundaryFootprintVertices (cert.P 0 true) →
+                            z ∈ BoundaryFootprintVertices (cert.P 0 false) →
+                              z ∈ BoundaryFootprintVertices (cert.P 1 true) → False
+    ) := by
   classical
-  intro q cfg C T cert x v z hcount hzx hA hB hC
+  intro q cfg C T cert v z hcount hzx hA hB hC
   subst z
   let S := {is : Fin 3 × Bool //
     v ∈ BoundaryFootprintVertices (cert.P is.1 is.2)}
@@ -399,16 +409,24 @@ private theorem threeOwnersAFContradict :
     (by
       classical
       exact
-        ∀ (q : Fin (4 : ℕ) → CircleCoordinates), ∀ (cfg : BandOrderedGeneralConfiguration q), ∀
-            (C : BandCircle), ∀ (T : ProtoTile), ∀ (cert : BandOrderedGeneralLayoutCertificate q
-            cfg C T), (GaussianInt) → (∀ (v : GaussianInt), ∀ (z : GaussianInt), (Nat.card {is :
-            Fin 3 × Bool //
-          v ∈ BoundaryFootprintVertices (cert.P is.1 is.2)} = 2) → ((z = v) → ((z ∈
-              BoundaryFootprintVertices (cert.P 0 true)) → ((z ∈ BoundaryFootprintVertices
-              (cert.P 1 true)) → ((z ∈ BoundaryFootprintVertices (cert.P 2 false)) → (False))))))
-              ) := by
+        ∀ (q : Fin (4 : ℕ) → CircleCoordinates),
+          ∀ (cfg : BandOrderedGeneralConfiguration q),
+            ∀ (C : BandCircle),
+              ∀ (T : ProtoTile),
+                ∀ (cert : BandOrderedGeneralLayoutCertificate q cfg C T),
+                  ∀ (v : GaussianInt),
+                    ∀ (z : GaussianInt),
+                      Nat.card
+                            { is : Fin 3 × Bool //
+                              v ∈ BoundaryFootprintVertices (cert.P is.1 is.2) } =
+                          2 →
+                        z = v →
+                          z ∈ BoundaryFootprintVertices (cert.P 0 true) →
+                            z ∈ BoundaryFootprintVertices (cert.P 1 true) →
+                              z ∈ BoundaryFootprintVertices (cert.P 2 false) → False
+    ) := by
   classical
-  intro q cfg C T cert x v z hcount hzx hA hC hF
+  intro q cfg C T cert v z hcount hzx hA hC hF
   subst z
   let S := {is : Fin 3 × Bool //
     v ∈ BoundaryFootprintVertices (cert.P is.1 is.2)}
@@ -430,16 +448,28 @@ private theorem interfaceConclusion :
     (by
       classical
       exact
-        ∀ (v : GaussianInt), ∀ (U : ProtoTile), ∀ (V : ProtoTile), (ProtoTile) → ((LatticeTile U)
-            → ((LatticeTile V) → ((Disjoint U.cells V.cells) → ((∃ e f : Finset GaussianInt,
-            e ≠ f ∧ v ∈ e ∧ v ∈ f ∧
-              e ∈ FootprintEdges U ∩ FootprintEdges V ∧
-              f ∈ FootprintEdges U ∩ FootprintEdges V) → ((∀ y, y = v ∨ y = v + 1 ∨ y = v - 1 ∨ y
-                  = v + ⟨0, 1⟩ ∨ y = v - ⟨0, 1⟩ → y ∈ FootprintVertices U ∨ y ∈ FootprintVertices
-                  V) ∧ (∀ z, z = v ∨ z = v - 1 ∨ z = v - ⟨0, 1⟩ ∨ z = v - 1 - ⟨0, 1⟩ → z ∈
-                  U.cells ∨ z ∈ V.cells)))))) ) := by
+        ∀ (v : GaussianInt),
+          ∀ (U : ProtoTile),
+            ∀ (V : ProtoTile),
+              LatticeTile U →
+                LatticeTile V →
+                  Disjoint U.cells V.cells →
+                    (∃ e f : Finset GaussianInt,
+                        e ≠ f ∧
+                          v ∈ e ∧
+                            v ∈ f ∧
+                              e ∈ FootprintEdges U ∩ FootprintEdges V ∧
+                                f ∈ FootprintEdges U ∩ FootprintEdges V) →
+                      (∀ y,
+                          y = v ∨
+                              y = v + 1 ∨ y = v - 1 ∨ y = v + ⟨0, 1⟩ ∨ y = v - ⟨0, 1⟩ →
+                            y ∈ FootprintVertices U ∨ y ∈ FootprintVertices V) ∧
+                        ∀ z,
+                          z = v ∨ z = v - 1 ∨ z = v - ⟨0, 1⟩ ∨ z = v - 1 - ⟨0, 1⟩ →
+                            z ∈ U.cells ∨ z ∈ V.cells
+    ) := by
   classical
-  intro v U V W hU hV hdis hedges
+  intro v U V hU hV hdis hedges
   have sec := (LocalLatticeInterfaceSectors.2 U V v hU hV hdis hedges)
   refine ⟨P4590T1OppositeCellsStar U V v sec.2, ?_⟩
   intro z hz
@@ -1114,44 +1144,72 @@ private theorem hEdgesQC :
     (by
       classical
       exact
-        ∀ (q : Fin (4 : ℕ) → CircleCoordinates), ∀ (cfg : BandOrderedGeneralConfiguration q), ∀
-            (C : BandCircle), ∀ (T : ProtoTile), ∀ (cert : BandOrderedGeneralLayoutCertificate q
-            cfg C T), ∀ (x : GaussianInt), (∀ (U : ProtoTile), (U.cells.Nonempty) → (∀ (e :
-            Finset GaussianInt), (e ∈ FootprintEdges U) → (∀ (z : GaussianInt), (z ∈ e) → (z ∈
-            FootprintVertices U)))) → ((FootprintVertices (cert.P 0 true) ∩ FootprintVertices
-            (cert.P 1 true) ⊆ FootprintVertices (cert.Q 1 true) ∩ FootprintVertices (cert.P 1
-            true)) → (((cert.P 1 true).cells.Nonempty) → ((∃ y z : GaussianInt, ∃ e f : Finset
-            GaussianInt, e ≠ f ∧ x ∈ e ∧ x ∈ f ∧ e ∈ FootprintEdges (cert.P 0 true) ∩
-            FootprintEdges (cert.P 1 true) ∧ f ∈ FootprintEdges (cert.P 0 true) ∩ FootprintEdges
-            (cert.P 1 true) ∧ e = {y, x} ∧ f = {x, z} ∧ FourNeighborAdjacent y x ∧
-            FourNeighborAdjacent x z) → ((∀ x ∈ FootprintVertices (cert.Q (1 : Fin (3 : ℕ))
-            true), ∀ y ∈ FootprintVertices (cert.Q (1 : Fin (3 : ℕ)) true), FourNeighborAdjacent
-            x y → {x, y} ∈ FootprintEdges (cert.Q (1 : Fin (3 : ℕ)) true)) → ((∀ x ∈
-            FootprintVertices (cert.P (1 : Fin (3 : ℕ)) true), ∀ y ∈ FootprintVertices (cert.P (1
-            : Fin (3 : ℕ)) true), FourNeighborAdjacent x y → {x, y} ∈ FootprintEdges (cert.P (1 :
-            Fin (3 : ℕ)) true)) → (∃ e f : Finset GaussianInt, e ≠ f ∧ x ∈ e ∧ x ∈ f ∧ e ∈
-            FootprintEdges (cert.Q 1 true) ∩ FootprintEdges (cert.P 1 true) ∧ f ∈ FootprintEdges
-            (cert.Q 1 true) ∩ FootprintEdges (cert.P 1 true))))))) ) := by
+        ∀ (q : Fin (4 : ℕ) → CircleCoordinates),
+          ∀ (cfg : BandOrderedGeneralConfiguration q),
+            ∀ (C : BandCircle),
+              ∀ (T : ProtoTile),
+                ∀ (cert : BandOrderedGeneralLayoutCertificate q cfg C T),
+                  ∀ (x : GaussianInt),
+                    (∀ (U : ProtoTile),
+                        ∀ (e : Finset GaussianInt),
+                          e ∈ FootprintEdges U →
+                            ∀ (z : GaussianInt), z ∈ e → z ∈ FootprintVertices U) →
+                      FootprintVertices (cert.P 0 true) ∩
+                            FootprintVertices (cert.P 1 true) ⊆
+                          FootprintVertices (cert.Q 1 true) ∩
+                            FootprintVertices (cert.P 1 true) →
+                        (cert.P 1 true).cells.Nonempty →
+                          (∃ y z : GaussianInt,
+                              ∃ e f : Finset GaussianInt,
+                                e ≠ f ∧
+                                x ∈ e ∧
+                                x ∈ f ∧
+                                e ∈
+                                FootprintEdges (cert.P 0 true) ∩
+                                FootprintEdges (cert.P 1 true) ∧
+                                f ∈
+                                FootprintEdges (cert.P 0 true) ∩
+                                FootprintEdges (cert.P 1 true) ∧
+                                e = { y, x } ∧
+                                f = { x, z } ∧
+                                FourNeighborAdjacent y x ∧ FourNeighborAdjacent x z) →
+                            (∀ x ∈ FootprintVertices (cert.Q (1 : Fin (3 : ℕ)) true),
+                                ∀ y ∈ FootprintVertices (cert.Q (1 : Fin (3 : ℕ)) true),
+                                FourNeighborAdjacent x y →
+                                { x, y } ∈
+                                FootprintEdges (cert.Q (1 : Fin (3 : ℕ)) true)) →
+                              (∀ x ∈ FootprintVertices (cert.P (1 : Fin (3 : ℕ)) true),
+                                ∀ y ∈ FootprintVertices (cert.P (1 : Fin (3 : ℕ)) true),
+                                FourNeighborAdjacent x y →
+                                { x, y } ∈
+                                FootprintEdges (cert.P (1 : Fin (3 : ℕ)) true)) →
+                                ∃ e f : Finset GaussianInt,
+                                e ≠ f ∧
+                                x ∈ e ∧
+                                x ∈ f ∧
+                                e ∈
+                                FootprintEdges (cert.Q 1 true) ∩
+                                FootprintEdges (cert.P 1 true) ∧
+                                f ∈
+                                FootprintEdges (cert.Q 1 true) ∩
+                                FootprintEdges (cert.P 1 true)
+    ) := by
   classical
   intro q cfg C T cert x edgeEndpoint raw_support hCne hpathEndpoints regQ regC
   obtain ⟨y, z, e, f, hef, hxe, hxf, he, hf, rfl, rfl, hyx, hxz⟩ :=
     hpathEndpoints
   have hyA := edgeEndpoint (cert.P 0 true)
-    (LatticeTileGridStructure _ (cert.parent_lattice 0 true)).1.1
     {y, x} he.1 y (by simp)
   have hxA := edgeEndpoint (cert.P 0 true)
-    (LatticeTileGridStructure _ (cert.parent_lattice 0 true)).1.1
     {y, x} he.1 x (by simp)
-  have hyC := edgeEndpoint (cert.P 1 true) hCne {y, x} he.2 y (by simp)
-  have hxC := edgeEndpoint (cert.P 1 true) hCne {y, x} he.2 x (by simp)
+  have hyC := edgeEndpoint (cert.P 1 true) {y, x} he.2 y (by simp)
+  have hxC := edgeEndpoint (cert.P 1 true) {y, x} he.2 x (by simp)
   have hxA' := edgeEndpoint (cert.P 0 true)
-    (LatticeTileGridStructure _ (cert.parent_lattice 0 true)).1.1
     {x, z} hf.1 x (by simp)
   have hzA := edgeEndpoint (cert.P 0 true)
-    (LatticeTileGridStructure _ (cert.parent_lattice 0 true)).1.1
     {x, z} hf.1 z (by simp)
-  have hxC' := edgeEndpoint (cert.P 1 true) hCne {x, z} hf.2 x (by simp)
-  have hzC := edgeEndpoint (cert.P 1 true) hCne {x, z} hf.2 z (by simp)
+  have hxC' := edgeEndpoint (cert.P 1 true) {x, z} hf.2 x (by simp)
+  have hzC := edgeEndpoint (cert.P 1 true) {x, z} hf.2 z (by simp)
   have hyQ := (raw_support ⟨hyA, hyC⟩).1
   have hxQ := (raw_support ⟨hxA, hxC⟩).1
   have hzQ := (raw_support ⟨hzA, hzC⟩).1
@@ -1791,53 +1849,142 @@ private theorem positiveCase :
     (by
       classical
       exact
-        ∀ (q : Fin (4 : ℕ) → CircleCoordinates), ∀ (cfg : BandOrderedGeneralConfiguration q), ∀
-            (C : BandCircle), ∀ (T : ProtoTile), ∀ (cert : BandOrderedGeneralLayoutCertificate q
-            cfg C T), (GaussianInt) → ((∀ (v : GaussianInt), ∀ (V : Set GaussianInt), ∀ (E : Set
-            (Finset GaussianInt)), ∀ (a : GaussianInt), ∀ (b : GaussianInt),
-            SimpleGridPathBetween V E a b → v ∈ V → v ≠ a → v ≠ b → ∃ (y : GaussianInt) (z :
-            GaussianInt) (e : Finset GaussianInt) (f : Finset GaussianInt), e ≠ f ∧ v ∈ e ∧ v ∈ f
-            ∧ e ∈ E ∧ f ∈ E ∧ e = {y, v} ∧ f = {v, z} ∧ FourNeighborAdjacent y v ∧
-            FourNeighborAdjacent v z) → ((∀ (U : ProtoTile), ∀ (V : ProtoTile), ∀ (W :
-            ProtoTile), Finset.Nonempty U.cells → Finset.Nonempty V.cells → TouchingTriple U V W
-            → Disjoint U.cells V.cells) → ((∀ (U : ProtoTile), Finset.Nonempty U.cells → ∀ e ∈
-            FootprintEdges U, ∀ z ∈ e, z ∈ FootprintVertices U) → ((∀ (z : GaussianInt), ∀ (U :
-            ProtoTile), ∀ (V : ProtoTile), ∀ (W : ProtoTile), LatticeTile U → LatticeTile V →
-            LatticeTile W → Disjoint U.cells W.cells → Disjoint V.cells W.cells → z ∈
-            FootprintVertices U → z ∈ FootprintVertices V → z ∈ FootprintVertices W → z ∈
-            BoundaryFootprintVertices U ∧ z ∈ BoundaryFootprintVertices V ∧ z ∈
-            BoundaryFootprintVertices W) → ((∀ (v : GaussianInt), ∀ (z : GaussianInt), Nat.card
-            { is : Fin (3 : ℕ) × Bool // v ∈ BoundaryFootprintVertices (cert.P is.1 is.2) } = (2
-            : ℕ) → z = v → z ∈ BoundaryFootprintVertices (cert.P (0 : Fin (3 : ℕ)) true) → z ∈
-            BoundaryFootprintVertices (cert.P (0 : Fin (3 : ℕ)) false) → z ∈
-            BoundaryFootprintVertices (cert.P (1 : Fin (3 : ℕ)) true) → False) → ((∀ (v :
-            GaussianInt), ∀ (z : GaussianInt), Nat.card
-            { is : Fin (3 : ℕ) × Bool // v ∈ BoundaryFootprintVertices (cert.P is.1 is.2) } = (2
-            : ℕ) → z = v → z ∈ BoundaryFootprintVertices (cert.P (0 : Fin (3 : ℕ)) true) → z ∈
-            BoundaryFootprintVertices (cert.P (1 : Fin (3 : ℕ)) true) → z ∈
-            BoundaryFootprintVertices (cert.P (2 : Fin (3 : ℕ)) false) → False) → ((∀ (v :
-            GaussianInt), ∀ (U : ProtoTile), ∀ (V : ProtoTile), (ProtoTile) → (LatticeTile U →
-            LatticeTile V → Disjoint U.cells V.cells → (∃ (e : Finset GaussianInt) (f : Finset
-            GaussianInt), e ≠ f ∧ v ∈ e ∧ v ∈ f ∧ e ∈ FootprintEdges U ∩ FootprintEdges V ∧ f ∈
-            FootprintEdges U ∩ FootprintEdges V) → (∀ (y : GaussianInt), y = v ∨ y = v + (1 :
-            GaussianInt) ∨ y = v - (1 : GaussianInt) ∨ y = v + (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt)
-            ∨ y = v - (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt) → y ∈ FootprintVertices U ∨ y ∈
-            FootprintVertices V) ∧ ∀ (z : GaussianInt), z = v ∨ z = v - (1 : GaussianInt) ∨ z = v
-            - (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt) ∨ z = v - (1 : GaussianInt) - (⟨(0 : ℤ), (1 :
-            ℤ)⟩ : GaussianInt) → z ∈ U.cells ∨ z ∈ V.cells)) → ((FootprintVertices (cert.P 0
-            true) ∩ FootprintVertices (cert.P 1 true) ⊆ FootprintVertices (cert.Q 1 true) ∩
-            FootprintVertices (cert.P 1 true)) → (∀ (point : GaussianInt), (Nat.card {is : Fin 3
-            × Bool //
-            point ∈ BoundaryFootprintVertices (cert.P is.1 is.2)} = 2) → ((point ∈
-                FootprintVertices (cert.P 0 true)) → ((point ∈ FootprintVertices (cert.P 1 true))
-                → (point ∈ FootprintVertices (cert.Q 1 true) ∧ (∀ y, y = point ∨ y = point + 1 ∨
-                y = point - 1 ∨ y = point + ⟨0, 1⟩ ∨ y = point - ⟨0, 1⟩ → y ∈ FootprintVertices
-                (cert.Q 1 true) ∨ y ∈ FootprintVertices (cert.P 1 true)) ∧ (∀ z, z = point ∨ z =
-                point - 1 ∨ z = point - ⟨0, 1⟩ ∨ z = point - 1 - ⟨0, 1⟩ → z ∈ (cert.Q 1
-                true).cells ∨ z ∈ (cert.P 1 true).cells))))))))))))) ) := by
+        ∀ (q : Fin (4 : ℕ) → CircleCoordinates),
+          ∀ (cfg : BandOrderedGeneralConfiguration q),
+            ∀ (C : BandCircle),
+              ∀ (T : ProtoTile),
+                ∀ (cert : BandOrderedGeneralLayoutCertificate q cfg C T),
+                  (∀ (v : GaussianInt),
+                      ∀ (V : Set GaussianInt),
+                        ∀ (E : Set (Finset GaussianInt)),
+                          ∀ (a : GaussianInt),
+                            ∀ (b : GaussianInt),
+                              SimpleGridPathBetween V E a b →
+                                v ∈ V →
+                                v ≠ a →
+                                v ≠ b →
+                                ∃ (y : GaussianInt) (z : GaussianInt) (e :
+                                Finset GaussianInt) (f : Finset GaussianInt),
+                                e ≠ f ∧
+                                v ∈ e ∧
+                                v ∈ f ∧
+                                e ∈ E ∧
+                                f ∈ E ∧
+                                e = { y, v } ∧
+                                f = { v, z } ∧
+                                FourNeighborAdjacent y v ∧ FourNeighborAdjacent v z) →
+                    (∀ (U : ProtoTile),
+                        ∀ (V : ProtoTile),
+                          ∀ (W : ProtoTile),
+                            Finset.Nonempty U.cells →
+                              Finset.Nonempty V.cells →
+                                TouchingTriple U V W → Disjoint U.cells V.cells) →
+                      (∀ (U : ProtoTile),
+                          ∀ e ∈ FootprintEdges U, ∀ z ∈ e, z ∈ FootprintVertices U) →
+                        (∀ (z : GaussianInt),
+                            ∀ (U : ProtoTile),
+                              ∀ (V : ProtoTile),
+                                ∀ (W : ProtoTile),
+                                LatticeTile U →
+                                LatticeTile V →
+                                LatticeTile W →
+                                Disjoint U.cells W.cells →
+                                Disjoint V.cells W.cells →
+                                z ∈ FootprintVertices U →
+                                z ∈ FootprintVertices V →
+                                z ∈ FootprintVertices W →
+                                z ∈ BoundaryFootprintVertices U ∧
+                                z ∈ BoundaryFootprintVertices V ∧
+                                z ∈ BoundaryFootprintVertices W) →
+                          (∀ (v : GaussianInt),
+                              ∀ (z : GaussianInt),
+                                Nat.card
+                                { is : Fin (3 : ℕ) × Bool //
+                                v ∈ BoundaryFootprintVertices (cert.P is.1 is.2) } =
+                                (2 : ℕ) →
+                                z = v →
+                                z ∈
+                                BoundaryFootprintVertices
+                                (cert.P (0 : Fin (3 : ℕ)) true) →
+                                z ∈
+                                BoundaryFootprintVertices
+                                (cert.P (0 : Fin (3 : ℕ)) false) →
+                                z ∈
+                                BoundaryFootprintVertices
+                                (cert.P (1 : Fin (3 : ℕ)) true) →
+                                False) →
+                            (∀ (v : GaussianInt),
+                                ∀ (z : GaussianInt),
+                                Nat.card
+                                { is : Fin (3 : ℕ) × Bool //
+                                v ∈ BoundaryFootprintVertices (cert.P is.1 is.2) } =
+                                (2 : ℕ) →
+                                z = v →
+                                z ∈
+                                BoundaryFootprintVertices
+                                (cert.P (0 : Fin (3 : ℕ)) true) →
+                                z ∈
+                                BoundaryFootprintVertices
+                                (cert.P (1 : Fin (3 : ℕ)) true) →
+                                z ∈
+                                BoundaryFootprintVertices
+                                (cert.P (2 : Fin (3 : ℕ)) false) →
+                                False) →
+                              (∀ (v : GaussianInt),
+                                ∀ (U : ProtoTile),
+                                ∀ (V : ProtoTile),
+                                LatticeTile U →
+                                LatticeTile V →
+                                Disjoint U.cells V.cells →
+                                (∃ (e : Finset GaussianInt) (f : Finset GaussianInt),
+                                e ≠ f ∧
+                                v ∈ e ∧
+                                v ∈ f ∧
+                                e ∈ FootprintEdges U ∩ FootprintEdges V ∧
+                                f ∈ FootprintEdges U ∩ FootprintEdges V) →
+                                (∀ (y : GaussianInt),
+                                y = v ∨
+                                y = v + (1 : GaussianInt) ∨
+                                y = v - (1 : GaussianInt) ∨
+                                y = v + (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt) ∨
+                                y = v - (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt) →
+                                y ∈ FootprintVertices U ∨ y ∈ FootprintVertices V) ∧
+                                ∀ (z : GaussianInt),
+                                z = v ∨
+                                z = v - (1 : GaussianInt) ∨
+                                z = v - (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt) ∨
+                                z =
+                                v - (1 : GaussianInt) -
+                                (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt) →
+                                z ∈ U.cells ∨ z ∈ V.cells) →
+                                FootprintVertices (cert.P 0 true) ∩
+                                FootprintVertices (cert.P 1 true) ⊆
+                                FootprintVertices (cert.Q 1 true) ∩
+                                FootprintVertices (cert.P 1 true) →
+                                ∀ (point : GaussianInt),
+                                Nat.card
+                                { is : Fin 3 × Bool //
+                                point ∈ BoundaryFootprintVertices (cert.P is.1 is.2) } =
+                                2 →
+                                point ∈ FootprintVertices (cert.P 0 true) →
+                                point ∈ FootprintVertices (cert.P 1 true) →
+                                point ∈ FootprintVertices (cert.Q 1 true) ∧
+                                (∀ y,
+                                y = point ∨
+                                y = point + 1 ∨
+                                y = point - 1 ∨ y = point + ⟨0, 1⟩ ∨ y = point - ⟨0, 1⟩ →
+                                y ∈ FootprintVertices (cert.Q 1 true) ∨
+                                y ∈ FootprintVertices (cert.P 1 true)) ∧
+                                ∀ z,
+                                z = point ∨
+                                z = point - 1 ∨
+                                z = point - ⟨0, 1⟩ ∨ z = point - 1 - ⟨0, 1⟩ →
+                                z ∈ (cert.Q 1 true).cells ∨ z ∈ (cert.P 1 true).cells
+    ) := by
   classical
-  intro q cfg C T cert x twoPathEdges touching_disjoint edgeEndpoint threeBoundaries
-      threeOwnersContradict threeOwnersAFContradict interfaceConclusion raw_support point hk hA hC
+  intro q cfg C T cert twoPathEdges touching_disjoint edgeEndpoint threeBoundaries
+      threeOwnersContradict threeOwnersAFContradict interfaceConclusion raw_support point hk hA
+      hC
   have hQC := raw_support ⟨hA, hC⟩
   have hQ : LatticeTile (cert.Q 1 true) :=
     P4590T1PositivePrototileDisk _ _ (cert.plus_occurrence 1 true).1 (by
@@ -1944,8 +2091,8 @@ private theorem positiveCase :
       T cert hprepos) hCtile).2.1
   have hdis : Disjoint (cert.Q 1 true).cells (cert.P 1 true).cells :=
     touching_disjoint _ _ _ hQne hCne cert.double_third
-  have hresult := interfaceConclusion point (cert.Q 1 true) (cert.P 1 true)
-    (cert.P 2 false) hQ hCtile hdis (RightInteriorGeometry.hEdgesQC q cfg C T cert point
+  have hresult := interfaceConclusion point (cert.Q 1 true) (cert.P 1 true) hQ hCtile hdis
+      (RightInteriorGeometry.hEdgesQC q cfg C T cert point
         edgeEndpoint raw_support hCne (RightInteriorGeometry.hpathEndpoints q cfg C T cert point
         twoPathEdges hA hC (RightInteriorGeometry.hcompleteOriginal q cfg C T cert hretainEdges
         hretainVertices (RightInteriorGeometry.hcomplete q cfg C T cert htileA htileC hraw f g
@@ -2015,8 +2162,8 @@ theorem P4590T1RightInteriorGeometry :
   have touching_disjoint := RightInteriorGeometry.touching_disjoint
   have edgeEndpoint := RightInteriorGeometry.edgeEndpoint
   have threeBoundaries := RightInteriorGeometry.threeBoundaries (RightInteriorGeometry.rawIncident)
-  have threeOwnersContradict := RightInteriorGeometry.threeOwnersContradict q cfg C T cert x
-  have threeOwnersAFContradict := RightInteriorGeometry.threeOwnersAFContradict q cfg C T cert x
+  have threeOwnersContradict := RightInteriorGeometry.threeOwnersContradict q cfg C T cert
+  have threeOwnersAFContradict := RightInteriorGeometry.threeOwnersAFContradict q cfg C T cert
   have interfaceConclusion := RightInteriorGeometry.interfaceConclusion
   have raw_support :
       FootprintVertices (cert.P 0 true) ∩ FootprintVertices (cert.P 1 true) ⊆
@@ -2034,7 +2181,7 @@ theorem P4590T1RightInteriorGeometry :
       (∀ z, z = point ∨ z = point - 1 ∨ z = point - ⟨0, 1⟩ ∨
           z = point - 1 - ⟨0, 1⟩ →
         z ∈ (cert.Q 1 true).cells ∨ z ∈ (cert.P 1 true).cells) :=
-            RightInteriorConclusion.positiveCase q cfg C T cert x twoPathEdges touching_disjoint
+            RightInteriorConclusion.positiveCase q cfg C T cert twoPathEdges touching_disjoint
             edgeEndpoint threeBoundaries threeOwnersContradict threeOwnersAFContradict
             interfaceConclusion raw_support point hk hA hC
   constructor

@@ -46,10 +46,12 @@ private theorem hpos₁ :
     (by
       classical
       exact
-        ∀ (P : FordFareyParameter), ∀ (P₁ : FordFareyParameter), (FordFareyParameter) → (((2 : ℕ)
-            < P.q) → ((P₁.q = P.q₁) → ((P.q = P.q₁ + P.q₂) → (0 < P.q₁)))) ) := by
+        ∀ (P : FordFareyParameter),
+          ∀ (P₁ : FordFareyParameter),
+            (2 : ℕ) < P.q → P₁.q = P.q₁ → P.q = P.q₁ + P.q₂ → 0 < P.q₁
+    ) := by
   classical
-  intro P P₁ P₂ hP hq₁ hsum
+  intro P P₁ hP hq₁ hsum
   by_contra hn
   have hz : P.q₁ = 0 := by omega
   have hd : (P.q : Int) ∣ (1 : Int) := by
@@ -188,11 +190,13 @@ private theorem hdetdiffAt260 :
     (by
       classical
       exact
-        ∀ (P : FordFareyParameter), (FordFareyParameter) → ((FordFareyParameter) → ((P.p₁ * (P.q₂
-            : Int) - P.p₂ * (P.q₁ : Int) = 1) → ((P.q₂ < P.q₁) → ((P.p₁-P.p₂) * (P.q₁ : Int) -
-            ((P.q₁-P.q₂ : Nat) : Int) * P.p₁ = 1)))) ) := by
+        ∀ (P : FordFareyParameter),
+          P.p₁ * (P.q₂ : Int) - P.p₂ * (P.q₁ : Int) = 1 →
+            P.q₂ < P.q₁ →
+              (P.p₁ - P.p₂) * (P.q₁ : Int) - ((P.q₁ - P.q₂ : Nat) : Int) * P.p₁ = 1
+    ) := by
   classical
-  intro P P₁ P₂ hcrossdet horder
+  intro P hcrossdet horder
   rw [Nat.cast_sub (by omega : P.q₂ ≤ P.q₁)]
   nlinarith only [hcrossdet]
 
@@ -200,11 +204,12 @@ private theorem hcopAt264 :
     (by
       classical
       exact
-        ∀ (P : FordFareyParameter), (FordFareyParameter) → ((FordFareyParameter) → ((P.p₁ * (P.q₂
-            : Int) - P.p₂ * (P.q₁ : Int) = 1) → ((P.q₂ < P.q₁) → (Nat.Coprime (P.q₁-P.q₂)
-            (P.p₁-P.p₂).natAbs)))) ) := by
+        ∀ (P : FordFareyParameter),
+          P.p₁ * (P.q₂ : Int) - P.p₂ * (P.q₁ : Int) = 1 →
+            P.q₂ < P.q₁ → Nat.Coprime (P.q₁ - P.q₂) (P.p₁ - P.p₂).natAbs
+    ) := by
   classical
-  intro P P₁ P₂ hcrossdet horder
+  intro P hcrossdet horder
   have hc : IsCoprime ((P.q₁-P.q₂ : Nat) : Int) (P.p₁-P.p₂) := by
     have hx : (P.p₁-P.p₂) * (P.q₂ : Int) -
         P.p₂ * ((P.q₁-P.q₂ : Nat) : Int) = 1 := by
@@ -276,20 +281,24 @@ private theorem hcoordsAt312 :
     (by
       classical
       exact
-        ∀ (P : FordFareyParameter), (FordFareyParameter) → ((FordFareyParameter) → (((2 : ℕ) <
-            P.q) → ((∀ (q : Nat), ∀ (x : GaussianInt), x ∈ P4062T1InteriorSquare q ↔ 1 ≤ x.re ∧
-            x.re ≤ (q : Int) - 1 ∧ 1 ≤ x.im ∧ x.im ≤ (q : Int) - 1) → ((P.q = P.q₁ + P.q₂) →
-            ((P.p₁ * (P.q₂ : Int) - P.p₂ * (P.q₁ : Int) = 1) → ((0 < P.q₁) → ((0 < P.q₂) → (∀ (hr
-            : Fin (4 : ℕ) → Finset GaussianInt), (hr 0 = P4062T1InteriorSquare P.q₁) → ((hr 1 =
-            (P4062T1InteriorSquare P.q₁).image (fun y => y+⟨(P.q₂ : Int),(P.q₂ : Int)⟩)) →
-            ((P.q₂ < P.q₁) → ((P.q₁ - P.q₂ < P.q) → (((P.p₁-P.p₂) * (P.q₁ : Int) - ((P.q₁-P.q₂ :
-            Nat) : Int) * P.p₁ = 1) → (∀ (H : FordFareyParameter), (H.q = P.q₁ - P.q₂) →
-            ((Nat.Coprime P.q₁ P.p₁.natAbs) → ((FordFareyParameter) → (∀ x ∈ hr (0 : Fin (4 : ℕ))
-            ∩ hr (1 : Fin (4 : ℕ)), (↑P.q₂ : ℤ) + (1 : ℤ) ≤ x.re ∧ x.re ≤ (↑P.q₁ : ℤ) - (1 : ℤ) ∧
-            (↑P.q₂ : ℤ) + (1 : ℤ) ≤ x.im ∧ x.im ≤ (↑P.q₁ : ℤ) - (1 : ℤ))))))))))))))))) ) := by
+        ∀ (P : FordFareyParameter),
+          (∀ (q : Nat),
+              ∀ (x : GaussianInt),
+                x ∈ P4062T1InteriorSquare q ↔
+                  1 ≤ x.re ∧ x.re ≤ (q : Int) - 1 ∧ 1 ≤ x.im ∧ x.im ≤ (q : Int) - 1) →
+            ∀ (hr : Fin (4 : ℕ) → Finset GaussianInt),
+              hr 0 = P4062T1InteriorSquare P.q₁ →
+                (hr 1 =
+                    (P4062T1InteriorSquare P.q₁).image fun y =>
+                      y + ⟨(P.q₂ : Int), (P.q₂ : Int)⟩) →
+                  FordFareyParameter →
+                    ∀ x ∈ hr (0 : Fin (4 : ℕ)) ∩ hr (1 : Fin (4 : ℕ)),
+                      (↑P.q₂ : ℤ) + (1 : ℤ) ≤ x.re ∧
+                        x.re ≤ (↑P.q₁ : ℤ) - (1 : ℤ) ∧
+                          (↑P.q₂ : ℤ) + (1 : ℤ) ≤ x.im ∧ x.im ≤ (↑P.q₁ : ℤ) - (1 : ℤ)
+    ) := by
   classical
-  intro P P₁ P₂ hP squareCoordinates hsum hcrossdet hpos₁ hpos₂ hr hA0 hA1 horder hdlt hdetdiff H
-      hHq hredParent R x hx
+  intro P squareCoordinates hr hA0 hA1 H x hx
   rcases Finset.mem_inter.mp hx with ⟨h0,h1⟩
   rw [hA0] at h0
   have b0 := (squareCoordinates P.q₁ x).mp h0
@@ -307,8 +316,9 @@ private theorem htargetAt327 :
     (by
       classical
       exact
-        ∀ (P : FordFareyParameter), ∀ (P₁ : FordFareyParameter), (FordFareyParameter) → (((2 : ℕ)
-            < P.q) → ((P₁.q = P.q₁) → (∀ (hsum : P.q = P.q₁ + P.q₂), ∀ (hcrossdet : P.p₁ * (P.q₂
+        ∀ (P : FordFareyParameter), ∀ (P₁ : FordFareyParameter),
+                                                                                        (
+                     ((P₁.q = P.q₁) → (∀ (hsum : P.q = P.q₁ + P.q₂), ∀ (hcrossdet : P.p₁ * (P.q₂
             : Int) - P.p₂ * (P.q₁ : Int) = 1), ∀ (hpos₁ : 0 < P.q₁), ∀ (hpos₂ : 0 < P.q₂), (∀ x,
             x ∈ FordRecursiveVertexDomains P 0 →
             FordOdometer P x = FordOdometer P₁ x) → ((∀ x, x ∈
@@ -355,9 +365,8 @@ private theorem htargetAt327 :
             FourNeighborLaplacian (FordOdometer H) (x-⟨(P.q₂ : Int), (P.q₂ :
                 Int)⟩)))))))))))))))) := by
   classical
-  intro P P₁ P₂ hP hq₁ hsum hcrossdet hpos₁ hpos₂ hrec₀' hrec₁' hlapAffine hrec0Member
-      hrec1Member hr horder hdlt hdetdiff H hHq hredParent Q R hR hpar hparP hch₀' hch₁' hcoords
-      x hx
+  intro P P₁ hq₁ hsum hcrossdet hpos₁ hpos₂ hrec₀' hrec₁' hlapAffine hrec0Member hrec1Member hr
+      horder hdlt hdetdiff H hHq hredParent Q R hR hpar hparP hch₀' hch₁' hcoords x hx
   have hb := hcoords x hx
   have hpt (z : GaussianInt) (hzr : (P.q₂ : Int) ≤ z.re)
       (hzr' : z.re ≤ (P.q₁ : Int)) (hzi : (P.q₂ : Int) ≤ z.im)
@@ -457,11 +466,13 @@ private theorem hdetdiffAt465 :
     (by
       classical
       exact
-        ∀ (P : FordFareyParameter), (FordFareyParameter) → ((FordFareyParameter) → ((P.p₁ * (P.q₂
-            : Int) - P.p₂ * (P.q₁ : Int) = 1) → ((P.q₁ < P.q₂) → ((P.p₂-P.p₁) * (P.q₂ : Int) -
-            ((P.q₂-P.q₁ : Nat) : Int) * P.p₂ = -1)))) ) := by
+        ∀ (P : FordFareyParameter),
+          P.p₁ * (P.q₂ : Int) - P.p₂ * (P.q₁ : Int) = 1 →
+            P.q₁ < P.q₂ →
+              (P.p₂ - P.p₁) * (P.q₂ : Int) - ((P.q₂ - P.q₁ : Nat) : Int) * P.p₂ = -1
+    ) := by
   classical
-  intro P P₁ P₂ hcrossdet horder
+  intro P hcrossdet horder
   rw [Nat.cast_sub (by omega : P.q₁ ≤ P.q₂)]
   nlinarith only [hcrossdet]
 
@@ -469,11 +480,12 @@ private theorem hcopAt469 :
     (by
       classical
       exact
-        ∀ (P : FordFareyParameter), (FordFareyParameter) → ((FordFareyParameter) → ((P.p₁ * (P.q₂
-            : Int) - P.p₂ * (P.q₁ : Int) = 1) → ((P.q₁ < P.q₂) → (Nat.Coprime (P.q₂-P.q₁)
-            (P.p₂-P.p₁).natAbs)))) ) := by
+        ∀ (P : FordFareyParameter),
+          P.p₁ * (P.q₂ : Int) - P.p₂ * (P.q₁ : Int) = 1 →
+            P.q₁ < P.q₂ → Nat.Coprime (P.q₂ - P.q₁) (P.p₂ - P.p₁).natAbs
+    ) := by
   classical
-  intro P P₁ P₂ hcrossdet horder
+  intro P hcrossdet horder
   have hc : IsCoprime ((P.q₂-P.q₁ : Nat) : Int) (P.p₂-P.p₁) := by
     have hx : P.p₁ * ((P.q₂-P.q₁ : Nat) : Int) -
         (P.q₁ : Int) * (P.p₂-P.p₁) = 1 := by
@@ -531,18 +543,25 @@ private theorem hcoordsAt511 :
     (by
       classical
       exact
-        ∀ (P : FordFareyParameter), (FordFareyParameter) → (∀ (P₂ : FordFareyParameter), (∀ (q :
-            Nat), ∀ (x : GaussianInt), x ∈ P4062T1InteriorSquare q ↔ 1 ≤ x.re ∧ x.re ≤ (q :
-            Int) - 1 ∧ 1 ≤ x.im ∧ x.im ≤ (q : Int) - 1) → (∀ (hr : Fin (4 : ℕ) → Finset
-            GaussianInt), (hr 2 = (P4062T1InteriorSquare P.q₂).image (fun y => y+⟨(P.q₁ :
-            Int),0⟩)) → ((hr 3 = (P4062T1InteriorSquare P.q₂).image (fun y => y+⟨0,(P.q₁ :
-            Int)⟩)) → ((FordFareyParameter) → (∀ (R : FordFareyParameter), (R.p = P.p₂ ∧ R.q =
-            P.q₂) → ((P₂.p₁ = P.p₁ ∧ P₂.q₁ = P.q₁ ∧ P₂.p₂ = P.p₂-P.p₁ ∧ P₂.q₂ = P.q₂-P.q₁) → (∀ x
-            ∈ hr (2 : Fin (4 : ℕ)) ∩ hr (3 : Fin (4 : ℕ)), (↑P.q₁ : ℤ) + (1 : ℤ) ≤ x.re ∧ x.re ≤
-            (↑P.q₂ : ℤ) - (1 : ℤ) ∧ (↑P.q₁ : ℤ) + (1 : ℤ) ≤ x.im ∧ x.im ≤ (↑P.q₂ : ℤ) - (1 :
-            ℤ)))))))) ) := by
+        ∀ (P : FordFareyParameter),
+          FordFareyParameter →
+            (∀ (q : Nat),
+                ∀ (x : GaussianInt),
+                  x ∈ P4062T1InteriorSquare q ↔
+                    1 ≤ x.re ∧ x.re ≤ (q : Int) - 1 ∧ 1 ≤ x.im ∧ x.im ≤ (q : Int) - 1) →
+              ∀ (hr : Fin (4 : ℕ) → Finset GaussianInt),
+                (hr 2 =
+                    (P4062T1InteriorSquare P.q₂).image fun y => y + ⟨(P.q₁ : Int), 0⟩) →
+                  (hr 3 =
+                      (P4062T1InteriorSquare P.q₂).image fun y => y + ⟨0, (P.q₁ : Int)⟩) →
+                    FordFareyParameter →
+                      ∀ x ∈ hr (2 : Fin (4 : ℕ)) ∩ hr (3 : Fin (4 : ℕ)),
+                        (↑P.q₁ : ℤ) + (1 : ℤ) ≤ x.re ∧
+                          x.re ≤ (↑P.q₂ : ℤ) - (1 : ℤ) ∧
+                            (↑P.q₁ : ℤ) + (1 : ℤ) ≤ x.im ∧ x.im ≤ (↑P.q₂ : ℤ) - (1 : ℤ)
+    ) := by
   classical
-  intro P P₁ P₂ squareCoordinates hr hA2 hA3 H R hR hpar x hx
+  intro P P₂ squareCoordinates hr hA2 hA3 R x hx
   rcases Finset.mem_inter.mp hx with ⟨h2,h3⟩
   rw [hA2] at h2
   rw [hA3] at h3
@@ -576,29 +595,67 @@ private theorem htargetAt542 :
     (by
       classical
       exact
-        ∀ (P : FordFareyParameter), (FordFareyParameter) → (∀ (P₂ : FordFareyParameter), (P₂.q =
-            P.q₂) → ((P.q = P.q₁ + P.q₂) → ((P.q₂ < P.q) → ((∀ x, x ∈ FordRecursiveVertexDomains
-            P 2 → FordOdometer P x = FordOdometer P₂ (x - ⟨(P.q₁ : Int), 0⟩) + P.p₁ * x.im) → ((∀
-            (f : GaussianInt → Int), ∀ (f' : GaussianInt → Int), ∀ (x : GaussianInt), ∀ (t :
-            GaussianInt), ∀ (A : Int), ∀ (B : Int), ∀ (C : Int), (f x = f' (x - t) + A * x.re + B
-            * x.im + C) → ((f (x - 1) = f' ((x - t) - 1) + A * (x - 1).re + B * (x - 1).im + C) →
-            ((f (x + 1) = f' ((x - t) + 1) + A * (x + 1).re + B * (x + 1).im + C) → ((f (x - ⟨0,
-            1⟩) = f' ((x - t) - ⟨0, 1⟩) + A * (x - ⟨0, 1⟩).re + B * (x - ⟨0, 1⟩).im + C) → ((f (x
-            + ⟨0, 1⟩) = f' ((x - t) + ⟨0, 1⟩) + A * (x + ⟨0, 1⟩).re + B * (x + ⟨0, 1⟩).im + C) →
-            (FourNeighborLaplacian f x = FourNeighborLaplacian f' (x - t))))))) → ((∀ (z :
-            GaussianInt), ((P.q₁ : Int) ≤ z.re) → ((z.re ≤ (P.q : Int)) → ((0 ≤ z.im) → ((z.im ≤
-            (P.q₂ : Int)) → (z ∈ FordRecursiveVertexDomains P 2))))) → (∀ (hr : Fin (4 : ℕ) →
-            Finset GaussianInt), (P.q₁ < P.q₂) → (∀ (H : FordFareyParameter), (H.q = P.q₂ - P.q₁)
-            → (∀ (R : FordFareyParameter), (R.p = P.p₂ ∧ R.q = P.q₂) → ((P₂.p₁ = P.p₁ ∧ P₂.q₁ =
-            P.q₁ ∧ P₂.p₂ = P.p₂-P.p₁ ∧ P₂.q₂ = P.q₂-P.q₁) → ((∀ z, z ∈ FordRecursiveVertexDomains
-            P₂ 3 → FordOdometer P₂ z = FordOdometer H (z-⟨0,(P₂.q₁ : Int)⟩) + P₂.p₁*z.re) → ((∀
-            (x : GaussianInt), (x ∈ hr 2 ∩ hr 3) → ((P.q₁ : Int)+1 ≤ x.re ∧ x.re ≤ (P.q₂ : Int)-1
-            ∧ (P.q₁ : Int)+1 ≤ x.im ∧ x.im ≤ (P.q₂ : Int)-1)) → (∀ x ∈ hr 2 ∩ hr 3,
-            FourNeighborLaplacian (FordOdometer P) x = FourNeighborLaplacian (FordOdometer H)
-            (x-⟨(P.q₁ : Int),(P.q₁ : Int)⟩)))))))))))))) ) := by
+        ∀ (P : FordFareyParameter),
+          ∀ (P₂ : FordFareyParameter),
+            P₂.q = P.q₂ →
+              P.q = P.q₁ + P.q₂ →
+                P.q₂ < P.q →
+                  (∀ x,
+                      x ∈ FordRecursiveVertexDomains P 2 →
+                        FordOdometer P x =
+                          FordOdometer P₂ (x - ⟨(P.q₁ : Int), 0⟩) + P.p₁ * x.im) →
+                    (∀ (f : GaussianInt → Int),
+                        ∀ (f' : GaussianInt → Int),
+                          ∀ (x : GaussianInt),
+                            ∀ (t : GaussianInt),
+                              ∀ (A : Int),
+                                ∀ (B : Int),
+                                ∀ (C : Int),
+                                f x = f' (x - t) + A * x.re + B * x.im + C →
+                                f (x - 1) =
+                                f' (x - t - 1) + A * (x - 1).re + B * (x - 1).im + C →
+                                f (x + 1) =
+                                f' (x - t + 1) + A * (x + 1).re + B * (x + 1).im + C →
+                                f (x - ⟨0, 1⟩) =
+                                f' (x - t - ⟨0, 1⟩) + A * (x - ⟨0, 1⟩).re +
+                                B * (x - ⟨0, 1⟩).im +
+                                C →
+                                f (x + ⟨0, 1⟩) =
+                                f' (x - t + ⟨0, 1⟩) + A * (x + ⟨0, 1⟩).re +
+                                B * (x + ⟨0, 1⟩).im +
+                                C →
+                                FourNeighborLaplacian f x =
+                                FourNeighborLaplacian f' (x - t)) →
+                      (∀ (z : GaussianInt),
+                          (P.q₁ : Int) ≤ z.re →
+                            z.re ≤ (P.q : Int) →
+                              0 ≤ z.im →
+                                z.im ≤ (P.q₂ : Int) →
+                                z ∈ FordRecursiveVertexDomains P 2) →
+                        ∀ (hr : Fin (4 : ℕ) → Finset GaussianInt),
+                          P.q₁ < P.q₂ →
+                            ∀ (H : FordFareyParameter),
+                              ∀ (R : FordFareyParameter),
+                                R.p = P.p₂ ∧ R.q = P.q₂ →
+                                P₂.p₁ = P.p₁ ∧
+                                P₂.q₁ = P.q₁ ∧ P₂.p₂ = P.p₂ - P.p₁ ∧ P₂.q₂ = P.q₂ - P.q₁ →
+                                (∀ z,
+                                z ∈ FordRecursiveVertexDomains P₂ 3 →
+                                FordOdometer P₂ z =
+                                FordOdometer H (z - ⟨0, (P₂.q₁ : Int)⟩) + P₂.p₁ * z.re) →
+                                (∀ (x : GaussianInt),
+                                x ∈ hr 2 ∩ hr 3 →
+                                (P.q₁ : Int) + 1 ≤ x.re ∧
+                                x.re ≤ (P.q₂ : Int) - 1 ∧
+                                (P.q₁ : Int) + 1 ≤ x.im ∧ x.im ≤ (P.q₂ : Int) - 1) →
+                                ∀ x ∈ hr 2 ∩ hr 3,
+                                FourNeighborLaplacian (FordOdometer P) x =
+                                FourNeighborLaplacian (FordOdometer H)
+                                (x - ⟨(P.q₁ : Int), (P.q₁ : Int)⟩)
+    ) := by
   classical
-  intro P P₁ P₂ hq₂ hsum hlt₂ hrec₂' hlapAffine hrec2Member hr horder H hHq R hR hpar hch₃'
-      hcoords x hx
+  intro P P₂ hq₂ hsum hlt₂ hrec₂' hlapAffine hrec2Member hr horder H R hR hpar hch₃' hcoords x
+      hx
   have hb := hcoords x hx
   have hpt (z : GaussianInt) (hzr : (P.q₁ : Int) ≤ z.re)
       (hzr' : z.re ≤ (P.q₂ : Int)) (hzi : (P.q₁ : Int) ≤ z.im)
@@ -835,7 +892,7 @@ theorem P4062T1OverlapDescent (P P₁ P₂ : FordFareyParameter)
   have squareCoordinates (q : Nat) (x : GaussianInt) := FordInteriorSquareCoordinates.membership q x
   have hsum : P.q = P.q₁ + P.q₂ := P.sum_q
   have hcrossdet := OverlapDescentDetails.hcrossdet P
-  have hpos₁ := OverlapDescentDetails.hpos₁ P P₁ P₂ hP hq₁ hsum
+  have hpos₁ := OverlapDescentDetails.hpos₁ P P₁ hP hq₁ hsum
   have hpos₂ : 0 < P.q₂ := P.q₂_pos
   have hlt₁ : P.q₁ < P.q := P.q₁_lt
   have hlt₂ : P.q₂ < P.q := by omega
@@ -887,10 +944,9 @@ theorem P4062T1OverlapDescent (P P₁ P₂ : FordFareyParameter)
   · intro horder
     have hdiff : 0 < P.q₁ - P.q₂ := by omega
     have hdlt : P.q₁ - P.q₂ < P.q := by omega
-    have hdetdiff := OverlapDescentDetails.hdetdiffAt260 P P₁ P₂
+    have hdetdiff := OverlapDescentDetails.hdetdiffAt260 P
             hcrossdet horder
-    have hcop := OverlapDescentDetails.hcopAt264 P
-        P₁ P₂ hcrossdet horder
+    have hcop := OverlapDescentDetails.hcopAt264 P hcrossdet horder
     obtain ⟨H, ⟨hHp,hHq⟩, _⟩ :=
       FordFareyParentsExist (P.p₁-P.p₂) (P.q₁-P.q₂) hdiff hcop
     have hredParent : Nat.Coprime P.q₁ P.p₁.natAbs := hred₁.1
@@ -923,10 +979,9 @@ theorem P4062T1OverlapDescent (P P₁ P₂ : FordFareyParameter)
     rcases hchildRec with ⟨hch₀, hch₁, _, _⟩
     have hch₀' := OverlapDescentDetails.hch₀' P₁ H hch₀
     have hch₁' := OverlapDescentDetails.hch₁' P₁ H hch₁
-    have hcoords (x : GaussianInt) (hx : x ∈ hr 0 ∩ hr 1) := OverlapDescentDetails.hcoordsAt312 P P₁
-            P₂ hP squareCoordinates hsum hcrossdet hpos₁ hpos₂ hr hA0 hA1 horder hdlt hdetdiff H
-            hHq hredParent R x hx
-    have htarget := OverlapDescentDetails.htargetAt327 P P₁ P₂ hP hq₁
+    have hcoords (x : GaussianInt) (hx : x ∈ hr 0 ∩ hr 1) := OverlapDescentDetails.hcoordsAt312
+        P squareCoordinates hr hA0 hA1 H x hx
+    have htarget := OverlapDescentDetails.htargetAt327 P P₁ hq₁
                 hsum hcrossdet hpos₁ hpos₂ hrec₀' hrec₁' hlapAffine hrec0Member hrec1Member hr
                 horder hdlt hdetdiff H hHq hredParent R hR hpar hparP hch₀' hch₁' hcoords
     refine ⟨H, hHp, hHq, by simpa [hHq] using hdlt, hparP.1, hparP.2.1,
@@ -965,10 +1020,9 @@ theorem P4062T1OverlapDescent (P P₁ P₂ : FordFareyParameter)
   · intro horder
     have hdiff : 0 < P.q₂ - P.q₁ := by omega
     have hdlt : P.q₂ - P.q₁ < P.q := by omega
-    have hdetdiff := OverlapDescentDetails.hdetdiffAt465 P P₁ P₂
+    have hdetdiff := OverlapDescentDetails.hdetdiffAt465 P
             hcrossdet horder
-    have hcop := OverlapDescentDetails.hcopAt469 P
-        P₁ P₂ hcrossdet horder
+    have hcop := OverlapDescentDetails.hcopAt469 P hcrossdet horder
     obtain ⟨H, ⟨hHp,hHq⟩, _⟩ :=
       FordFareyParentsExist (P.p₂-P.p₁) (P.q₂-P.q₁) hdiff hcop
     have hredParent : Nat.Coprime P.q₂ P.p₂.natAbs := hred₁.2
@@ -998,10 +1052,10 @@ theorem P4062T1OverlapDescent (P P₁ P₂ : FordFareyParameter)
       (hHp.trans hpar.2.2.1.symm) (hHq.trans hpar.2.2.2.symm)
     rcases hchildRec with ⟨_, _, hch₂, hch₃⟩
     have hch₃' := OverlapDescentDetails.hch₃' P₂ H hch₃
-    have hcoords (x : GaussianInt) (hx : x ∈ hr 2 ∩ hr 3) := OverlapDescentDetails.hcoordsAt511 P P₁
-            P₂ squareCoordinates hr hA2 hA3 H R hR hpar x hx
-    have htarget := OverlapDescentDetails.htargetAt542 P P₁ P₂ hq₂
-                hsum hlt₂ hrec₂' hlapAffine hrec2Member hr horder H hHq R hR hpar hch₃' hcoords
+    have hcoords (x : GaussianInt) (hx : x ∈ hr 2 ∩ hr 3) := OverlapDescentDetails.hcoordsAt511 P
+            P₂ squareCoordinates hr hA2 hA3 R x hx
+    have htarget := OverlapDescentDetails.htargetAt542 P P₂ hq₂
+                hsum hlt₂ hrec₂' hlapAffine hrec2Member hr horder H R hR hpar hch₃' hcoords
     refine ⟨H, hHp, hHq, by simpa [hHq] using hdlt,
       hpar.1, hpar.2.1, hpar.2.2.1, hpar.2.2.2, ?_, htarget⟩
     ext x

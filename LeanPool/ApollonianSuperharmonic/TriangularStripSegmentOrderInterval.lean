@@ -26,12 +26,16 @@ namespace ApollonianSuperharmonic
 namespace StripOrderIntervalProof
 
 private theorem walk :
-    (Int × Int) → ((Int × Int) → (∀ (p : List Int), ∀ (a : Int), ∀ (b : Int), p.head? = some a →
-        p.getLast? = some b → p.Nodup →
-      p.IsChain (fun u v : Int => v = u + 1 ∨ u = v + 1) →
-      (∀ z : Int, z ∈ p ↔ min a b ≤ z ∧ z ≤ max a b))) := by
+    ∀ (p : List Int),
+      ∀ (a : Int),
+        ∀ (b : Int),
+          p.head? = some a →
+            p.getLast? = some b →
+              p.Nodup →
+                (p.IsChain fun u v : Int => v = u + 1 ∨ u = v + 1) →
+                  ∀ z : Int, z ∈ p ↔ min a b ≤ z ∧ z ≤ max a b := by
   classical
-  intro x y p
+  intro p
   induction p using List.reverseRecOn with
   | nil =>
       intro a b ha hb hn hc
@@ -176,14 +180,22 @@ private theorem hindices_chain :
   · exact hdata.2.2.2.2
 
 private theorem trim_property :
-    ∀ (x : Int × Int), ∀ (y : Int × Int), (ℤ ≃ { z : ℤ × ℤ // TriangularBoundaryStrip x y z }) →
-        ((ℤ) → ((ℤ) → ((∀ (p : List Int), ∀ (a : Int), ∀ (b : Int), p.head? = some a → p.getLast?
-        = some b → p.Nodup → p.IsChain (fun u v : Int => v = u + 1 ∨ u = v + 1) → (∀ z : Int, z ∈
-        p ↔ min a b ≤ z ∧ z ≤ max a b)) → (∀ (l : List Int), ∀ (a : Int), ∀ (b : Int), l.head? =
-        some a → l.getLast? = some b → l.Nodup →
-      ∀ q, q ∈ (l.drop 1).dropLast ↔ q ∈ l ∧ q ≠ a ∧ q ≠ b)))) := by
+    (∀ (p : List Int),
+        ∀ (a : Int),
+          ∀ (b : Int),
+            p.head? = some a →
+              p.getLast? = some b →
+                p.Nodup →
+                  (p.IsChain fun u v : Int => v = u + 1 ∨ u = v + 1) →
+                    ∀ z : Int, z ∈ p ↔ min a b ≤ z ∧ z ≤ max a b) →
+      ∀ (l : List Int),
+        ∀ (a : Int),
+          ∀ (b : Int),
+            l.head? = some a →
+              l.getLast? = some b →
+                l.Nodup → ∀ q, q ∈ (l.drop 1).dropLast ↔ q ∈ l ∧ q ≠ a ∧ q ≠ b := by
   classical
-  intro x y order m n walk l
+  intro walk l
   cases l with
   | nil =>
       intro a b ha hb hn q
@@ -317,7 +329,7 @@ theorem TriangularStripSegmentOrderInterval
   have walk : ∀ (p : List Int) (a b : Int),
       p.head? = some a → p.getLast? = some b → p.Nodup →
       p.IsChain (fun u v : Int => v = u + 1 ∨ u = v + 1) →
-      (∀ z : Int, z ∈ p ↔ min a b ≤ z ∧ z ≤ max a b) := StripOrderIntervalProof.walk x y
+      (∀ z : Int, z ∈ p ↔ min a b ≤ z ∧ z ≤ max a b) := StripOrderIntervalProof.walk
   have hfirst : path.head? = some x := hdata.1
   have hlast : path.getLast? = some y := hdata.2.1
   classical
@@ -353,7 +365,7 @@ theorem TriangularStripSegmentOrderInterval
   have trim_property : ∀ (l : List Int) (a b : Int),
       l.head? = some a → l.getLast? = some b → l.Nodup →
       ∀ q, q ∈ (l.drop 1).dropLast ↔ q ∈ l ∧ q ≠ a ∧ q ≠ b :=
-          StripOrderIntervalProof.trim_property x y order m n walk
+          StripOrderIntervalProof.trim_property walk
   have hmaptrim : ∀ z, TriangularBoundaryStrip x y z →
       (z ∈ (path.drop 1).dropLast ↔
       index z ∈ (indices.drop 1).dropLast) := StripOrderIntervalProof.hmaptrim x y path order

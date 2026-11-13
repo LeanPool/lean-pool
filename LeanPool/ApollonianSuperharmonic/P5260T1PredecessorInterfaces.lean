@@ -113,14 +113,24 @@ private theorem staircaseBetween :
     (by
       classical
       exact
-        (Nat) → (∀ (z : GaussianInt), ∀ (horizontalFirst : Bool), ∀ (s : Int), (s = 1 ∨ s = -1) →
-            (∀ (N : Nat), (0 < N) → (SimpleGridPathBetween {v | ∃ j ≤ N, v =
-            P5157T1StaircasePoint z horizontalFirst s j} {e | ∃ j < N, e =
-            {P5157T1StaircasePoint z horizontalFirst s j,
-            P5157T1StaircasePoint z horizontalFirst s (j + 1)}} (P5157T1StaircasePoint z
-            horizontalFirst s 0) (P5157T1StaircasePoint z horizontalFirst s N)))) ) := by
+        ∀ (z : GaussianInt),
+          ∀ (horizontalFirst : Bool),
+            ∀ (s : Int),
+              s = 1 ∨ s = -1 →
+                ∀ (N : Nat),
+                  0 < N →
+                    SimpleGridPathBetween
+                      {v | ∃ j ≤ N, v = P5157T1StaircasePoint z horizontalFirst s j}
+                      {e |
+                        ∃ j < N,
+                          e =
+                            {P5157T1StaircasePoint z horizontalFirst s j,
+                              P5157T1StaircasePoint z horizontalFirst s (j + 1)}}
+                      (P5157T1StaircasePoint z horizontalFirst s 0)
+                      (P5157T1StaircasePoint z horizontalFirst s N)
+    ) := by
   classical
-  intro k z horizontalFirst s hs N hN
+  intro z horizontalFirst s hs N hN
   let p := P5157T1StaircasePoint z horizontalFirst s
   let l := List.ofFn (fun j : Fin (N + 1) => p j)
   have inj : Function.Injective p :=
@@ -190,14 +200,20 @@ private theorem capBetween :
     (by
       classical
       exact
-        (Nat) → (∀ (m : Nat), (0 < m) → (∀ (u : GaussianInt), SimpleGridPathBetween
-            (BoundaryFootprintVertices (TileTranslation (DiamondTile m) u) ∩
-            BoundaryFootprintVertices (TileTranslation (DiamondTile m) (u + ⟨0, 2 * (m : Int)⟩)))
-            (BoundaryFootprintEdges (TileTranslation (DiamondTile m) u) ∩ BoundaryFootprintEdges
-            (TileTranslation (DiamondTile m) (u + ⟨0, 2 * (m : Int)⟩))) (u + ⟨-1, 2 * (m : Int)⟩)
-            (u + ⟨1, 2 * (m : Int)⟩))) ) := by
+        ∀ (m : Nat),
+          0 < m →
+            ∀ (u : GaussianInt),
+              SimpleGridPathBetween
+                (BoundaryFootprintVertices (TileTranslation (DiamondTile m) u) ∩
+                  BoundaryFootprintVertices
+                    (TileTranslation (DiamondTile m) (u + ⟨0, 2 * (m : Int)⟩)))
+                (BoundaryFootprintEdges (TileTranslation (DiamondTile m) u) ∩
+                  BoundaryFootprintEdges
+                    (TileTranslation (DiamondTile m) (u + ⟨0, 2 * (m : Int)⟩)))
+                (u + ⟨-1, 2 * (m : Int)⟩) (u + ⟨1, 2 * (m : Int)⟩)
+    ) := by
   classical
-  intro k m hm u
+  intro m hm u
   have hcap := P5203T1CapInterface m hm u
   dsimp only at hcap
   obtain ⟨hneT, hneU, hdisj, hV, hE, _⟩ := hcap
@@ -352,12 +368,18 @@ private theorem twoVertexPath :
     (by
       classical
       exact
-        (Nat) → (∀ (V : Set GaussianInt), ∀ (E : Set (Finset GaussianInt)), ∀ (x : GaussianInt),
-            ∀ (y : GaussianInt), (x ≠ y) → ((V = {x, y}) → ((E = {{x, y}}) → ((y = x + 1 ∨ y = x
-            - 1 ∨ y = x + ⟨0, 1⟩ ∨
-            y = x - ⟨0, 1⟩) → (SimpleGridPathBetween V E x y))))) ) := by
+        ∀ (V : Set GaussianInt),
+          ∀ (E : Set (Finset GaussianInt)),
+            ∀ (x : GaussianInt),
+              ∀ (y : GaussianInt),
+                x ≠ y →
+                  V = { x, y } →
+                    E = {{ x, y }} →
+                      y = x + 1 ∨ y = x - 1 ∨ y = x + ⟨0, 1⟩ ∨ y = x - ⟨0, 1⟩ →
+                        SimpleGridPathBetween V E x y
+    ) := by
   classical
-  intro k V E x y hne hV hE hstep
+  intro V E x y hne hV hE hstep
   rw [hV, hE]
   refine ⟨[x, y], ?_⟩
   constructor
@@ -845,12 +867,13 @@ private theorem F_inj :
     (by
       classical
       exact
-        (Nat) → (∀ (u : GaussianInt),
-        let Q : GaussianInt → GaussianInt := GaussianQuarterTurn
-        let F : GaussianInt → GaussianInt := fun z => Q z + u
-        Function.Injective F) ) := by
+        ∀ (u : GaussianInt),
+          let Q : GaussianInt → GaussianInt := GaussianQuarterTurn
+          let F : GaussianInt → GaussianInt := fun z => Q z + u
+          Function.Injective F
+    ) := by
   classical
-  intro k u Q F a b hab
+  intro u Q F a b hab
   have hq : Q a = Q b := add_right_cancel hab
   apply Zsqrtd.ext
   · have h := congrArg (fun z : GaussianInt => z.im) hq
@@ -863,13 +886,15 @@ private theorem F_step :
     (by
       classical
       exact
-        (Nat) → (∀ (u : GaussianInt),
-        let Q : GaussianInt → GaussianInt := GaussianQuarterTurn
-        let F : GaussianInt → GaussianInt := fun z => Q z + u
-        ∀ a b : GaussianInt, (b = a + 1 ∨ b = a - 1 ∨ b = a + ⟨0, 1⟩ ∨ b = a - ⟨0, 1⟩) → (F b = F
-            a + 1 ∨ F b = F a - 1 ∨ F b = F a + ⟨0, 1⟩ ∨ F b = F a - ⟨0, 1⟩)) ) := by
+        ∀ (u : GaussianInt),
+          let Q : GaussianInt → GaussianInt := GaussianQuarterTurn
+          let F : GaussianInt → GaussianInt := fun z => Q z + u
+          ∀ a b : GaussianInt,
+            b = a + 1 ∨ b = a - 1 ∨ b = a + ⟨0, 1⟩ ∨ b = a - ⟨0, 1⟩ →
+              F b = F a + 1 ∨ F b = F a - 1 ∨ F b = F a + ⟨0, 1⟩ ∨ F b = F a - ⟨0, 1⟩
+    ) := by
   classical
-  intro k u Q F a b hab
+  intro u Q F a b hab
   rcases hab with h | h | h | h
   · subst b; right; right; left; apply Zsqrtd.ext <;> simp [F, Q, GaussianQuarterTurn]; omega
   · subst b; right; right; right; apply Zsqrtd.ext <;> simp [F, Q, GaussianQuarterTurn];
@@ -1110,12 +1135,16 @@ private theorem capBoundaryVerticesEq :
     (by
       classical
       exact
-        (Nat) → (∀ (m : Nat), (0 < m) → (∀ (v : GaussianInt), BoundaryFootprintVertices
-            (TileTranslation (DiamondTile m) v) ∩ BoundaryFootprintVertices (TileTranslation
-            (DiamondTile m) (v + ⟨0, 2 * (m : Int)⟩)) = {v + ⟨-1, 2 * (m : Int)⟩, v + ⟨0,
-            2 * (m : Int)⟩, v + ⟨1, 2 * (m : Int)⟩})) ) := by
+        ∀ (m : Nat),
+          0 < m →
+            ∀ (v : GaussianInt),
+              BoundaryFootprintVertices (TileTranslation (DiamondTile m) v) ∩
+                  BoundaryFootprintVertices
+                    (TileTranslation (DiamondTile m) (v + ⟨0, 2 * (m : Int)⟩)) =
+                {v + ⟨-1, 2 * (m : Int)⟩, v + ⟨0, 2 * (m : Int)⟩, v + ⟨1, 2 * (m : Int)⟩}
+    ) := by
   classical
-  intro k m hm v
+  intro m hm v
   exact (by
     have hcap := P5203T1CapInterface m hm v
     dsimp only at hcap
@@ -3051,8 +3080,8 @@ theorem P5260T1PredecessorInterfaces (k : Nat) (hk : 1 < k) (b : Bool) :
   have rawBoundaryVertices := PredecessorInterfaceGeometry.rawBoundaryVertices
   have rawBoundaryEdges := CellDisjointCommonEdgesBoundary
   have rawStaircase := PredecessorInterfaceGeometry.rawStaircase rawBoundaryVertices
-      rawBoundaryEdges (PredecessorInterfaceGeometry.staircaseBetween k)
-  have twoVertexPath := PredecessorInterfaceGeometry.twoVertexPath k
+      rawBoundaryEdges (PredecessorInterfaceGeometry.staircaseBetween)
+  have twoVertexPath := PredecessorInterfaceGeometry.twoVertexPath
   have diamondCellsNonempty := PredecessorInterfaceGeometry.diamondCellsNonempty
   have reversePath {V : Set GaussianInt} {E : Set (Finset GaussianInt)}
       {x y : GaussianInt} (hp : SimpleGridPathBetween V E x y) :=
@@ -3084,7 +3113,7 @@ theorem P5260T1PredecessorInterfaces (k : Nat) (hk : 1 < k) (b : Bool) :
   have hcapLow := P5203T1CapInterface k hkpos shiftLow
   dsimp only at hcapLow
   have pathLow := (PredecessorInterfaceGeometry.rawCapBetween rawBoundaryVertices
-      rawBoundaryEdges (PredecessorInterfaceGeometry.capBetween k)) k hkpos shiftLow hcapLow.2.2.1
+      rawBoundaryEdges (PredecessorInterfaceGeometry.capBetween)) k hkpos shiftLow hcapLow.2.2.1
   have hlowZero : shiftLow + ⟨0, 2 * (k : Int)⟩ = 0 := by
     apply Zsqrtd.ext <;> simp [shiftLow]
   have hlowTile : TileTranslation D
@@ -3100,7 +3129,7 @@ theorem P5260T1PredecessorInterfaces (k : Nat) (hk : 1 < k) (b : Bool) :
   have huEq := PredecessorInterfaceGeometry.huEq k u hu
   let Q : GaussianInt → GaussianInt := GaussianQuarterTurn
   let F : GaussianInt → GaussianInt := fun z => Q z + u
-  have F_inj := PredecessorInterfaceGeometry.F_inj k u
+  have F_inj := PredecessorInterfaceGeometry.F_inj u
   have quarterVertices := PredecessorInterfaceGeometry.quarterVertices k u
   have quarterBaseVertices := PredecessorInterfaceGeometry.quarterBaseVertices k u
       hquarterVertices
@@ -3111,7 +3140,7 @@ theorem P5260T1PredecessorInterfaces (k : Nat) (hk : 1 < k) (b : Bool) :
     apply Zsqrtd.ext <;> simp [Q, GaussianQuarterTurn, shiftLow, shiftR]
   have hxlow := PredecessorInterfaceGeometry.hxlow k u huEq
   have hxhigh := PredecessorInterfaceGeometry.hxhigh k u huEq
-  have capBoundaryVerticesEq := PredecessorInterfaceGeometry.capBoundaryVerticesEq k
+  have capBoundaryVerticesEq := PredecessorInterfaceGeometry.capBoundaryVerticesEq
   let U : ProtoTile := ⟨{⟨0, -1⟩}, ⟨0, -1⟩⟩
   have hleft := P5253T1LeftSquareContacts (k - 1) hsmall
     ⟨(k : Int), 1 - (k : Int)⟩ ((k : Int) - 2) (Or.inl (by omega))
@@ -3175,7 +3204,7 @@ theorem P5260T1PredecessorInterfaces (k : Nat) (hk : 1 < k) (b : Bool) :
       (PredecessorInterfaceGeometry.hqStart) (PredecessorInterfaceGeometry.hqEnd k hk)
       (PredecessorInterfaceGeometry.pathWDrev k reversePath pathDW)
       (PredecessorInterfaceGeometry.pathRAB k u (PredecessorInterfaceGeometry.pathRAB0 k
-      translateZero pathLow u F_inj (PredecessorInterfaceGeometry.F_step k u) quarterVertices
+      translateZero pathLow u F_inj (PredecessorInterfaceGeometry.F_step u) quarterVertices
       (PredecessorInterfaceGeometry.quarterEdges k u) quarterBaseVertices
       (PredecessorInterfaceGeometry.quarterBaseEdges k u hquarterCells) quarterVerticesAt
       (PredecessorInterfaceGeometry.quarterEdgesAt k u quarterCellsAt) shiftQuarter) hxlow

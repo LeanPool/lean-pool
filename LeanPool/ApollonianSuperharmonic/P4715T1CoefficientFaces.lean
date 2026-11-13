@@ -309,43 +309,55 @@ private theorem region_image :
     (by
       classical
       exact
-        let faceDet (f : PeriodicSubtileFaceIndex) : ℝ :=
-          let p0 := P4715T1Position (SixSubtileFaceVertices f 0)
-          let p1 := P4715T1Position (SixSubtileFaceVertices f 1)
-          let p2 := P4715T1Position (SixSubtileFaceVertices f 2)
-          p1.1 * p2.2 - p1.1 * p0.2 - p0.1 * p2.2 - p1.2 * p2.1 +
-            p1.2 * p0.1 + p0.2 * p2.1
-        ∀ (delta_nonzero : ∀ (f : PeriodicSubtileFaceIndex), (P4715T1Position
-            (SixSubtileFaceVertices f 1) - P4715T1Position (SixSubtileFaceVertices f 0)).1 *
-            (P4715T1Position (SixSubtileFaceVertices f 2) - P4715T1Position
-            (SixSubtileFaceVertices f 0)).2 - (P4715T1Position (SixSubtileFaceVertices f 1) -
-            P4715T1Position (SixSubtileFaceVertices f 0)).2 * (P4715T1Position
-            (SixSubtileFaceVertices f 2) - P4715T1Position (SixSubtileFaceVertices f 0)).1 ≠ 0),
-        let lin (v w x : ℝ × ℝ) : ℝ × ℝ :=
-          (x.1 * v.1 + x.2 * w.1, x.1 * v.2 + x.2 * w.2)
-        let invlin (v w x : ℝ × ℝ) : ℝ × ℝ :=
-          let d := v.1 * w.2 - v.2 * w.1
-          ((x.1 * w.2 - x.2 * w.1) / d, (v.1 * x.2 - v.2 * x.1) / d)
-        ∀ (inv_right : ∀ (v : ℝ × ℝ), ∀ (w : ℝ × ℝ), ∀ (x : ℝ × ℝ), (v.1 * w.2 - v.2 * w.1 ≠ 0) →
-            (lin v w (invlin v w x) = x)), ∀ (inv_left : ∀ (v : ℝ × ℝ), ∀ (w : ℝ × ℝ), ∀ (x : ℝ ×
-            ℝ), (v.1 * w.2 - v.2 * w.1 ≠ 0) → (invlin v w (lin v w x) = x)),
-        let affineHomeo (q v w : ℝ × ℝ) (hd : v.1 * w.2 - v.2 * w.1 ≠ 0) :
-            Homeomorph (ℝ × ℝ) (ℝ × ℝ) := {
-          toFun := fun x => q + lin v w x
-          invFun := fun y => invlin v w (y - q)
-          left_inv := fun x => by simp [inv_left, hd]
-          right_inv := fun y => by simp [inv_right, hd]
-          continuous_toFun := by dsimp [lin]; fun_prop
-          continuous_invFun := by dsimp [invlin]; fun_prop
-        }
-        let D : Set (ℝ × ℝ) := {x | 0 < x.1 ∧ 0 < x.2 ∧ x.1 + x.2 < 1}
-        ∀ (f : PeriodicSubtileFaceIndex), (faceDet f ≠ 0) → (P4715T1Region f = affineHomeo
-            (P4715T1Position (SixSubtileFaceVertices f 0)) (P4715T1Position
-            (SixSubtileFaceVertices f 1) - P4715T1Position (SixSubtileFaceVertices f 0))
-            (P4715T1Position (SixSubtileFaceVertices f 2) - P4715T1Position
-            (SixSubtileFaceVertices f 0)) (delta_nonzero f) '' D) ) := by
+        ∀
+          (delta_nonzero :
+            ∀ (f : PeriodicSubtileFaceIndex),
+              (P4715T1Position (SixSubtileFaceVertices f 1) -
+                        P4715T1Position (SixSubtileFaceVertices f 0)).1 *
+                    (P4715T1Position (SixSubtileFaceVertices f 2) -
+                        P4715T1Position (SixSubtileFaceVertices f 0)).2 -
+                  (P4715T1Position (SixSubtileFaceVertices f 1) -
+                        P4715T1Position (SixSubtileFaceVertices f 0)).2 *
+                    (P4715T1Position (SixSubtileFaceVertices f 2) -
+                        P4715T1Position (SixSubtileFaceVertices f 0)).1 ≠
+                0),
+          let lin (v w x : ℝ × ℝ) : ℝ × ℝ :=
+            (x.1 * v.1 + x.2 * w.1, x.1 * v.2 + x.2 * w.2);
+          let invlin (v w x : ℝ × ℝ) : ℝ × ℝ :=
+            let d := v.1 * w.2 - v.2 * w.1
+            ((x.1 * w.2 - x.2 * w.1) / d, (v.1 * x.2 - v.2 * x.1) / d);
+          ∀
+            (inv_right :
+              ∀ (v : ℝ × ℝ),
+                ∀ (w : ℝ × ℝ),
+                  ∀ (x : ℝ × ℝ), v.1 * w.2 - v.2 * w.1 ≠ 0 → lin v w (invlin v w x) = x),
+            ∀
+              (inv_left :
+                ∀ (v : ℝ × ℝ),
+                  ∀ (w : ℝ × ℝ),
+                    ∀ (x : ℝ × ℝ),
+                      v.1 * w.2 - v.2 * w.1 ≠ 0 → invlin v w (lin v w x) = x),
+              let affineHomeo (q v w : ℝ × ℝ) (hd : v.1 * w.2 - v.2 * w.1 ≠ 0) :
+                Homeomorph (ℝ × ℝ) (ℝ × ℝ) :=
+                { toFun := fun x => q + lin v w x
+                  invFun := fun y => invlin v w (y - q)
+                  left_inv := fun x => by simp [inv_left, hd]
+                  right_inv := fun y => by simp [inv_right, hd]
+                  continuous_toFun := by dsimp [lin]; fun_prop
+                  continuous_invFun := by dsimp [invlin]; fun_prop };
+              let D : Set (ℝ × ℝ) := {x | 0 < x.1 ∧ 0 < x.2 ∧ x.1 + x.2 < 1};
+              ∀ (f : PeriodicSubtileFaceIndex),
+                P4715T1Region f =
+                  affineHomeo (P4715T1Position (SixSubtileFaceVertices f 0))
+                      (P4715T1Position (SixSubtileFaceVertices f 1) -
+                        P4715T1Position (SixSubtileFaceVertices f 0))
+                      (P4715T1Position (SixSubtileFaceVertices f 2) -
+                        P4715T1Position (SixSubtileFaceVertices f 0))
+                      (delta_nonzero f) ''
+                    D
+    ) := by
   classical
-  intro faceDet delta_nonzero lin invlin inv_right inv_left affineHomeo D f hd
+  intro delta_nonzero lin invlin inv_right inv_left affineHomeo D f
   ext z
   constructor
   · rintro ⟨s,t,hs,ht,hst,rfl⟩
@@ -1375,7 +1387,7 @@ theorem P4715T1CoefficientFaces :
   have hull_affine (q v w : ℝ×ℝ) := CoefficientFaceTopology.hull_affine W_eq_stdHull q v w
   have region_image (f : PeriodicSubtileFaceIndex) (hd : faceDet f ≠ 0) :=
       CoefficientFaceProof.region_image delta_nonzero inv_right
-              inv_left f hd
+              inv_left f
   have W_decomp := CoefficientFaceProof.W_decomp Dopen D_subset_W D_closure
   have triangle_image (f : PeriodicSubtileFaceIndex) := CoefficientFaceProof.triangle_image
       delta_nonzero inv_right

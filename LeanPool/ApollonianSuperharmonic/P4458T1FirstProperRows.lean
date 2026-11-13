@@ -50,24 +50,24 @@ private theorem forestRows :
     (by
       classical
       exact
-        (BandCircle) → (
         let I : GaussianInt := ⟨0, 1⟩
         let cyc := fun (q : Fin 4 → CircleCoordinates) (i : Fin 3) =>
-          ![q 0, q i.succ, q ((i + 1).succ), q ((i + 2).succ)]
+          ![q 0, q i.succ, q (i + 1).succ, q (i + 2).succ]
         let L := fun z : GaussianInt =>
-          ![((4 : ℤ), 1 + 8 * z + 4 * I),
-            (1, 1 + 2 * z), (0, -1), (1, 1 + 2 * z + 2 * I)]
+          ![((4 : ℤ), 1 + 8 * z + 4 * I), (1, 1 + 2 * z), (0, -1), (1, 1 + 2 * z + 2 * I)]
         let R := fun z : GaussianInt =>
-          ![((4 : ℤ), 7 + 8 * z + 4 * I),
-            (1, 1 + 2 * z), (1, 1 + 2 * z + 2 * I), (0, 1)]
-        (∀ q : Fin 4 → CircleCoordinates, ProperBandQuadruple q → 1 < (q 0).1) → ((∀ (q : Fin 4 →
-            CircleCoordinates), ∀ (i : Fin 3), ∀ (j : Fin 3), cyc (cyc q i) j = cyc q (i + j)) →
-                (∀ q
-            : Fin 4 → CircleCoordinates, SemiProperQuadruple q → ProperBandQuadruple q → (∀ j : Fin
-            3, (q j.succ).1 ≤ 1) → ∃ z : GaussianInt, ∃ k : Fin 3, q = cyc (L z) k ∨ q = cyc (R z)
-            k))) ) := by
+          ![((4 : ℤ), 7 + 8 * z + 4 * I), (1, 1 + 2 * z), (1, 1 + 2 * z + 2 * I), (0, 1)]
+        (∀ q : Fin 4 → CircleCoordinates, ProperBandQuadruple q → 1 < (q 0).1) →
+          (∀ (q : Fin 4 → CircleCoordinates),
+              ∀ (i : Fin 3), ∀ (j : Fin 3), cyc (cyc q i) j = cyc q (i + j)) →
+            ∀ q : Fin 4 → CircleCoordinates,
+              SemiProperQuadruple q →
+                ProperBandQuadruple q →
+                  (∀ j : Fin 3, (q j.succ).1 ≤ 1) →
+                    ∃ z : GaussianInt, ∃ k : Fin 3, q = cyc (L z) k ∨ q = cyc (R z) k
+    ) := by
   classical
-  intro C I cyc L R properGt cycCyc q hq
+  intro I cyc L R properGt cycCyc q hq
   induction hq with
   | base z =>
       intro hp hs
@@ -169,51 +169,67 @@ private theorem rootValues :
     (by
       classical
       exact
-        (BandCircle) → (
         let I : GaussianInt := ⟨0, 1⟩
         (∀ (z : GaussianInt),
-        let q := ![((1 : ℤ), (1 : GaussianInt) + (2 : GaussianInt) * z), ((1 :
-            ℤ), (1 : GaussianInt) + (2 : GaussianInt) * z + (2 : GaussianInt) * ⟨(0 : ℤ), (1 : ℤ)⟩),
-            ((0 : ℤ), (1 : GaussianInt)), ((0 : ℤ), (-1 : GaussianInt))]; BandVectors.1 (q (3 : Fin
-            (4 : ℕ))) (q (2 : Fin (4 : ℕ))) = (0 : GaussianInt) ∧ BandVectors.1 (q (2 : Fin (4 :
-                ℕ)))
-            (q (1 : Fin (4 : ℕ))) = (-1 : GaussianInt) ∧ BandVectors.1 (q (1 : Fin (4 : ℕ))) (q (3 :
-            Fin (4 : ℕ))) = (1 : GaussianInt) ∧ BandVectors.2 (q (3 : Fin (4 : ℕ))) (q (2 : Fin (4 :
-            ℕ))) = (1 : GaussianInt) ∧ BandVectors.2 (q (2 : Fin (4 : ℕ))) (q (1 : Fin (4 : ℕ))) =
-            (-1 : GaussianInt) - z - ⟨(0 : ℤ), (1 : ℤ)⟩ ∧ BandVectors.2 (q (1 : Fin (4 : ℕ))) (q
-                (3 :
-            Fin (4 : ℕ))) = z + ⟨(0 : ℤ), (1 : ℤ)⟩) → ((∀ (q : Fin (4 : ℕ) → CircleCoordinates),
-                SemiProperQuadruple q → BandVectors.1 (q (2 : Fin (4 : ℕ))) (q (0 : Fin (4 : ℕ))) =
-            BandVectors.1 (q (2 : Fin (4 : ℕ))) (q (1 : Fin (4 : ℕ))) - ⟨(0 : ℤ), (1 : ℤ)⟩ *
-            BandVectors.1 (q (3 : Fin (4 : ℕ))) (q (2 : Fin (4 : ℕ))) ∧ BandVectors.1 (q (0 : Fin (4
-            : ℕ))) (q (3 : Fin (4 : ℕ))) = BandVectors.1 (q (1 : Fin (4 : ℕ))) (q (3 : Fin (4 : ℕ)))
-            + ⟨(0 : ℤ), (1 : ℤ)⟩ * BandVectors.1 (q (3 : Fin (4 : ℕ))) (q (2 : Fin (4 : ℕ))) ∧
-            BandVectors.2 (q (2 : Fin (4 : ℕ))) (q (0 : Fin (4 : ℕ))) = BandVectors.2 (q (2 : Fin (4
-            : ℕ))) (q (1 : Fin (4 : ℕ))) + ⟨(0 : ℤ), (1 : ℤ)⟩ * BandVectors.2 (q (3 : Fin (4 : ℕ)))
-            (q (2 : Fin (4 : ℕ))) ∧ BandVectors.2 (q (0 : Fin (4 : ℕ))) (q (3 : Fin (4 : ℕ))) =
-            BandVectors.2 (q (1 : Fin (4 : ℕ))) (q (3 : Fin (4 : ℕ))) - ⟨(0 : ℤ), (1 : ℤ)⟩ *
-            BandVectors.2 (q (3 : Fin (4 : ℕ))) (q (2 : Fin (4 : ℕ)))) → ((∀ (C :
-                CircleCoordinates), ∀ (D : CircleCoordinates), PrimitiveVectorOrientation C D →
-                BandVectors.1 D C = ⟨(0 :
-                ℤ),
-            (1 : ℤ)⟩ * BandVectors.1 C D ∧ BandVectors.2 D C = -⟨(0 : ℤ), (1 : ℤ)⟩ * BandVectors.2 C
-            D) → (∀ (z : GaussianInt),
-        let U : CircleCoordinates := (1, 1 + 2 * z)
-          let H : CircleCoordinates := (1, 1 + 2 * z + 2 * I)
-          BandVectors.1 (0, -1) U = -I ∧
-          BandVectors.2 (0, -1) U = I * z ∧
-          BandVectors.1 U H = -1 + I ∧
-          BandVectors.2 U H = -z - I - I * z ∧
-          BandVectors.1 H (0, -1) = 1 ∧
-          BandVectors.2 H (0, -1) = z + I ∧
-          BandVectors.1 H U = 1 + I ∧
-          BandVectors.2 H U = 1 + z - I * z ∧
-          BandVectors.1 U (0, 1) = -I ∧
-          BandVectors.2 U (0, 1) = I + I * z ∧
-          BandVectors.1 (0, 1) H = -1 ∧
-          BandVectors.2 (0, 1) H = -1 - z - I)))) ) := by
+            let q :=
+              ![((1 : ℤ), (1 : GaussianInt) + (2 : GaussianInt) * z),
+                ((1 : ℤ),
+                  (1 : GaussianInt) + (2 : GaussianInt) * z +
+                    (2 : GaussianInt) * ⟨(0 : ℤ), (1 : ℤ)⟩),
+                ((0 : ℤ), (1 : GaussianInt)), ((0 : ℤ), (-1 : GaussianInt))];
+            BandVectors.1 (q (3 : Fin (4 : ℕ))) (q (2 : Fin (4 : ℕ))) =
+                (0 : GaussianInt) ∧
+              BandVectors.1 (q (2 : Fin (4 : ℕ))) (q (1 : Fin (4 : ℕ))) =
+                  (-1 : GaussianInt) ∧
+                BandVectors.1 (q (1 : Fin (4 : ℕ))) (q (3 : Fin (4 : ℕ))) =
+                    (1 : GaussianInt) ∧
+                  BandVectors.2 (q (3 : Fin (4 : ℕ))) (q (2 : Fin (4 : ℕ))) =
+                      (1 : GaussianInt) ∧
+                    BandVectors.2 (q (2 : Fin (4 : ℕ))) (q (1 : Fin (4 : ℕ))) =
+                        (-1 : GaussianInt) - z - ⟨(0 : ℤ), (1 : ℤ)⟩ ∧
+                      BandVectors.2 (q (1 : Fin (4 : ℕ))) (q (3 : Fin (4 : ℕ))) =
+                        z + ⟨(0 : ℤ), (1 : ℤ)⟩) →
+          (∀ (q : Fin (4 : ℕ) → CircleCoordinates),
+              SemiProperQuadruple q →
+                BandVectors.1 (q (2 : Fin (4 : ℕ))) (q (0 : Fin (4 : ℕ))) =
+                    BandVectors.1 (q (2 : Fin (4 : ℕ))) (q (1 : Fin (4 : ℕ))) -
+                      ⟨(0 : ℤ), (1 : ℤ)⟩ *
+                        BandVectors.1 (q (3 : Fin (4 : ℕ))) (q (2 : Fin (4 : ℕ))) ∧
+                  BandVectors.1 (q (0 : Fin (4 : ℕ))) (q (3 : Fin (4 : ℕ))) =
+                      BandVectors.1 (q (1 : Fin (4 : ℕ))) (q (3 : Fin (4 : ℕ))) +
+                        ⟨(0 : ℤ), (1 : ℤ)⟩ *
+                          BandVectors.1 (q (3 : Fin (4 : ℕ))) (q (2 : Fin (4 : ℕ))) ∧
+                    BandVectors.2 (q (2 : Fin (4 : ℕ))) (q (0 : Fin (4 : ℕ))) =
+                        BandVectors.2 (q (2 : Fin (4 : ℕ))) (q (1 : Fin (4 : ℕ))) +
+                          ⟨(0 : ℤ), (1 : ℤ)⟩ *
+                            BandVectors.2 (q (3 : Fin (4 : ℕ))) (q (2 : Fin (4 : ℕ))) ∧
+                      BandVectors.2 (q (0 : Fin (4 : ℕ))) (q (3 : Fin (4 : ℕ))) =
+                        BandVectors.2 (q (1 : Fin (4 : ℕ))) (q (3 : Fin (4 : ℕ))) -
+                          ⟨(0 : ℤ), (1 : ℤ)⟩ *
+                            BandVectors.2 (q (3 : Fin (4 : ℕ))) (q (2 : Fin (4 : ℕ)))) →
+            (∀ (C : CircleCoordinates),
+                ∀ (D : CircleCoordinates),
+                  PrimitiveVectorOrientation C D →
+                    BandVectors.1 D C = ⟨(0 : ℤ), (1 : ℤ)⟩ * BandVectors.1 C D ∧
+                      BandVectors.2 D C = -⟨(0 : ℤ), (1 : ℤ)⟩ * BandVectors.2 C D) →
+              ∀ (z : GaussianInt),
+                let U : CircleCoordinates := (1, 1 + 2 * z)
+                let H : CircleCoordinates := (1, 1 + 2 * z + 2 * I)
+                BandVectors.1 (0, -1) U = -I ∧
+                  BandVectors.2 (0, -1) U = I * z ∧
+                    BandVectors.1 U H = -1 + I ∧
+                      BandVectors.2 U H = -z - I - I * z ∧
+                        BandVectors.1 H (0, -1) = 1 ∧
+                          BandVectors.2 H (0, -1) = z + I ∧
+                            BandVectors.1 H U = 1 + I ∧
+                              BandVectors.2 H U = 1 + z - I * z ∧
+                                BandVectors.1 U (0, 1) = -I ∧
+                                BandVectors.2 U (0, 1) = I + I * z ∧
+                                BandVectors.1 (0, 1) H = -1 ∧
+                                BandVectors.2 (0, 1) H = -1 - z - I
+    ) := by
   classical
-  intro C I baseLaw stepLaw flipLaw z
+  intro I baseLaw stepLaw flipLaw z
   let b : Fin 4 → CircleCoordinates :=
     ![(1, 1 + 2 * z), (1, 1 + 2 * z + 2 * I), (0, 1), (0, -1)]
   have hb : SemiProperQuadruple b := SemiProperQuadruple.base z
@@ -1053,7 +1069,7 @@ theorem P4458T1FirstProperRows
       SemiProperQuadruple q → ProperBandQuadruple q →
       (∀ j : Fin 3, (q j.succ).1 ≤ 1) →
       ∃ z : GaussianInt, ∃ k : Fin 3,
-        q = cyc (L z) k ∨ q = cyc (R z) k := FirstProperRowProof.forestRows C
+        q = cyc (L z) k ∨ q = cyc (R z) k := FirstProperRowProof.forestRows
             (FirstProperRowProof.properGt) cycCyc
   let r : Fin 4 → CircleCoordinates := cyc F.q F.slot
   have hr : ProperBandQuadruple r := FirstProperRowProof.hrAt221 C orientation base Rminus Rplus
@@ -1118,7 +1134,7 @@ theorem P4458T1FirstProperRows
       (da.re : ℝ) = CircleMatrix C 0 0 * d.re + CircleMatrix C 0 1 * d.im ∧
       (da.im : ℝ) = CircleMatrix C 1 0 * d.re + CircleMatrix C 1 1 * d.im
   have htable : Row orientation y (I * x) ya (-I * xa) := FirstProperRowProof.htable C
-      orientation base Rminus Rplus hminus hplus F hcr z hrows (FirstProperRowProof.rootValues C
+      orientation base Rminus Rplus hminus hplus F hcr z hrows (FirstProperRowProof.rootValues
           baseLaw stepLaw flipLaw)
   rcases htable with ⟨hyStep, hxStep, hyNe, hxNe, hyRe, hyIm, hxRe, hxIm⟩
   -- Subtract the actual endpoint offsets from the selected negative piece.

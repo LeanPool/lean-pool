@@ -395,15 +395,17 @@ private abbrev pair_eq :=
   @PairAssignmentFacts.finsetPair GaussianInt inferInstance
 
 private theorem edgeOf_injective :
-    (ProtoTile) → (
     let I : GaussianInt := ⟨0, 1⟩
     let edgeOf : GaussianInt × Bool → Finset GaussianInt := fun p =>
       if p.2 then {p.1, p.1 + I} else {p.1, p.1 + 1}
-    (∀ {a : GaussianInt}, ∀ {b : GaussianInt}, ∀ {c : GaussianInt}, ∀ {d : GaussianInt}, (({a, b}
-        : Finset GaussianInt) = {c, d}) → ((a = c ∧ b = d) ∨ (a = d ∧ b = c))) →
-        (Function.Injective edgeOf)) := by
+    (∀ {a : GaussianInt},
+        ∀ {b : GaussianInt},
+          ∀ {c : GaussianInt},
+            ∀ {d : GaussianInt},
+              ({ a, b } : Finset GaussianInt) = { c, d } → a = c ∧ b = d ∨ a = d ∧ b = c) →
+      Function.Injective edgeOf := by
   classical
-  intro T I edgeOf pair_eq
+  intro I edgeOf pair_eq
   rintro ⟨z, b⟩ ⟨w, d⟩ h
   cases b <;> cases d
   · change ({z, z + 1} : Finset GaussianInt) = {w, w + 1} at h
@@ -938,7 +940,7 @@ theorem FiniteSquareIncidenceIdentities (T : ProtoTile) (hne : T.cells.Nonempty)
       (h : ({a, b} : Finset GaussianInt) = {c, d}) :
       (a = c ∧ b = d) ∨ (a = d ∧ b = c) := SquareIncidenceProof.pair_eq (a := a) (b := b) (c :=
           c) (d := d) h
-  have edgeOf_injective : Function.Injective edgeOf := SquareIncidenceProof.edgeOf_injective T
+  have edgeOf_injective : Function.Injective edgeOf := SquareIncidenceProof.edgeOf_injective
       pair_eq
   have hedgeSet :
       ((edgeBag.toFinset.image edgeOf : Finset (Finset GaussianInt)) :

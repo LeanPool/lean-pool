@@ -6,6 +6,7 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.LatticeTileNonempty
 
 public import LeanPool.ApollonianSuperharmonic.CurvatureOneBandCircleClassification
 public import LeanPool.ApollonianSuperharmonic.P3996T1AdjacentParentPlacement
@@ -35,24 +36,51 @@ private theorem hdata :
     (by
       classical
       exact
-        ∀ (C : BandCircle), ∀ (T₁ : ProtoTile), ∀ (T₂ : ProtoTile), (ℕ) → ((C.1.1.1 = (1 : ℤ)) →
-            (∀ (p₁ : ℝ × ℝ), ∀ (p₂ : ℝ × ℝ), ((C.1.1.1 = (1 : ℤ) ∧ ∃ (orientation : Bool) (v :
-            GaussianInt), UnitTriangularStep orientation v ∧ TileCentroid T₂ - TileCentroid T₁ =
-            GaussianRealPoint v ∧ p₂.1 - p₁.1 = CircleMatrix C (0 : Fin (2 : ℕ)) (0 : Fin (2 :
-            ℕ)) * (↑v.re : ℝ) + CircleMatrix C (0 : Fin (2 : ℕ)) (1 : Fin (2 : ℕ)) * (↑v.im : ℝ)
-            ∧ p₂.2 - p₁.2 = CircleMatrix C (1 : Fin (2 : ℕ)) (0 : Fin (2 : ℕ)) * (↑v.re : ℝ) +
-            CircleMatrix C (1 : Fin (2 : ℕ)) (1 : Fin (2 : ℕ)) * (↑v.im : ℝ)) ∨ ∃ (q : Fin (4 :
-            ℕ) → CircleCoordinates) (i : Fin (3 : ℕ)) (e : Bool), ProperBandQuadruple q ∧ q (0 :
-            Fin (4 : ℕ)) = C.1.1 ∧ TileCentroid T₂ - TileCentroid T₁ = (if e = true then (1 : ℝ)
-            else (-1 : ℝ)) • GaussianRealPoint (BandVectors.1 (q i.succ) (q (0 : Fin (4 : ℕ)))) ∧
-            p₂.1 - p₁.1 = (if e = true then (1 : ℝ) else (-1 : ℝ)) * (↑(BandVectors.2 (q i.succ)
-            (q (0 : Fin (4 : ℕ)))).re : ℝ) ∧ p₂.2 - p₁.2 = (if e = true then (1 : ℝ) else (-1 :
-            ℝ)) * (↑(BandVectors.2 (q i.succ) (q (0 : Fin (4 : ℕ)))).im : ℝ)) → (∃ v :
-            GaussianInt, TileCentroid T₂ - TileCentroid T₁ = GaussianRealPoint v ∧ p₂.1-p₁.1 =
-            CircleMatrix C 0 0*v.re + CircleMatrix C 0 1*v.im ∧ p₂.2-p₁.2 = CircleMatrix C 1
-            0*v.re + CircleMatrix C 1 1*v.im))) ) := by
+        ∀ (C : BandCircle),
+          ∀ (T₁ : ProtoTile),
+            ∀ (T₂ : ProtoTile),
+              C.1.1.1 = (1 : ℤ) →
+                ∀ (p₁ : ℝ × ℝ),
+                  ∀ (p₂ : ℝ × ℝ),
+                    ((C.1.1.1 = (1 : ℤ) ∧
+                          ∃ (orientation : Bool) (v : GaussianInt),
+                            UnitTriangularStep orientation v ∧
+                              TileCentroid T₂ - TileCentroid T₁ = GaussianRealPoint v ∧
+                                p₂.1 - p₁.1 =
+                                CircleMatrix C (0 : Fin (2 : ℕ)) (0 : Fin (2 : ℕ)) *
+                                (↑v.re : ℝ) +
+                                CircleMatrix C (0 : Fin (2 : ℕ)) (1 : Fin (2 : ℕ)) *
+                                (↑v.im : ℝ) ∧
+                                p₂.2 - p₁.2 =
+                                CircleMatrix C (1 : Fin (2 : ℕ)) (0 : Fin (2 : ℕ)) *
+                                (↑v.re : ℝ) +
+                                CircleMatrix C (1 : Fin (2 : ℕ)) (1 : Fin (2 : ℕ)) *
+                                (↑v.im : ℝ)) ∨
+                        ∃ (q : Fin (4 : ℕ) → CircleCoordinates) (i : Fin (3 : ℕ)) (e :
+                          Bool),
+                          ProperBandQuadruple q ∧
+                            q (0 : Fin (4 : ℕ)) = C.1.1 ∧
+                              TileCentroid T₂ - TileCentroid T₁ =
+                                (if e = true then (1 : ℝ) else (-1 : ℝ)) •
+                                GaussianRealPoint
+                                (BandVectors.1 (q i.succ) (q (0 : Fin (4 : ℕ)))) ∧
+                                p₂.1 - p₁.1 =
+                                (if e = true then (1 : ℝ) else (-1 : ℝ)) *
+                                (↑(BandVectors.2 (q i.succ) (q (0 : Fin (4 : ℕ)))).re :
+                                ℝ) ∧
+                                p₂.2 - p₁.2 =
+                                (if e = true then (1 : ℝ) else (-1 : ℝ)) *
+                                (↑(BandVectors.2 (q i.succ) (q (0 : Fin (4 : ℕ)))).im :
+                                ℝ)) →
+                      ∃ v : GaussianInt,
+                        TileCentroid T₂ - TileCentroid T₁ = GaussianRealPoint v ∧
+                          p₂.1 - p₁.1 =
+                              CircleMatrix C 0 0 * v.re + CircleMatrix C 0 1 * v.im ∧
+                            p₂.2 - p₁.2 =
+                              CircleMatrix C 1 0 * v.re + CircleMatrix C 1 1 * v.im
+    ) := by
   classical
-  intro C T₁ T₂ n hc p₁ p₂ hstep
+  intro C T₁ T₂ hc p₁ p₂ hstep
   rcases hstep with ⟨_, orientation, v, _, hv, hr, hi⟩ | ⟨q,i,e,hq,hqC,_⟩
   · exact ⟨v,hv,hr,hi⟩
   · have hqone : (q 0).1 = 1 := by rw [hqC, hc]
@@ -202,26 +230,47 @@ private theorem translationAt244 :
     (by
       classical
       exact
-        ∀ (C : BandCircle), (IntegerLatticeFunction) → (∀ (x : GaussianInt), (C.1.1.1 = (1 :
-            ℤ)) → (∀ (z : GaussianInt), (CircleMatrix C = ![![(↑((1 : ℤ) + z.re) : ℝ), (↑z.im :
-            ℝ)], ![(↑z.im : ℝ), -(↑z.re : ℝ)]]) → ((
-        let g := fun (x : GaussianInt) => ((1 : ℤ) + z.re) * (x.re * (x.re - (1 : ℤ)) / (2 : ℤ))
-            - z.re * (x.im * (x.im - (1 : ℤ)) / (2 : ℤ)) + z.im * x.re * x.im;
-        let T := (⟨{(0 : LatticeCell)}, (0 : GaussianInt)⟩ : ProtoTile);
-        let h := CurvatureOneOdometer z; BandPrototile C.1.1 T ∧ TileOdometer C.1.1 T h ∧
-            (↑h.domain : Set GaussianInt) = FootprintVertices T ∧ (∀ x ∈ h.domain, g x = h.value
-            x) ∧ GlobalOdometerExtends g h ∧ IntegerSuperharmonicRepresentative (CircleMatrix C)
-            g ∧ (∀ v ∈ TilingLattice C, ∃ (a : GaussianInt), (CircleMatrix C).mulVec ![(↑v.re :
-            ℝ), (↑v.im : ℝ)] = ![(↑a.re : ℝ), (↑a.im : ℝ)] ∧ ∀ (x : GaussianInt), g (x + v) = g x
-            + x.re * a.re + x.im * a.im + g v) ∧ ∃ (b : ℝ × ℝ), ∀ v ∈ TilingLattice C, ∀ (x :
-                GaussianInt), (↑(g (x + v)) : ℝ) - LatticeQuadraticForm (CircleMatrix C) (x + v) -
-            (b.1 * (↑(x + v).re : ℝ) + b.2 * (↑(x + v).im : ℝ)) = (↑(g x) : ℝ) -
-            LatticeQuadraticForm (CircleMatrix C) x - (b.1 * (↑x.re : ℝ) + b.2 * (↑x.im : ℝ))) →
-            (∀ (v : GaussianInt), P5570T1UnitQuadratic z (x+v) = P5570T1UnitQuadratic z x +
-            P5570T1UnitQuadratic z v + ((1+z.re)*v.re+z.im*v.im)*x.re +
-            (z.im*v.re-z.re*v.im)*x.im))))) := by
+        ∀ (C : BandCircle),
+          ∀ (x : GaussianInt),
+            C.1.1.1 = (1 : ℤ) →
+              ∀ (z : GaussianInt),
+                CircleMatrix C =
+                    ![![(↑((1 : ℤ) + z.re) : ℝ), (↑z.im : ℝ)],
+                      ![(↑z.im : ℝ), -(↑z.re : ℝ)]] →
+                  (let g := fun (x : GaussianInt) =>
+                      ((1 : ℤ) + z.re) * (x.re * (x.re - (1 : ℤ)) / (2 : ℤ)) -
+                          z.re * (x.im * (x.im - (1 : ℤ)) / (2 : ℤ)) +
+                        z.im * x.re * x.im;
+                    let T := (⟨{(0 : LatticeCell)}, (0 : GaussianInt)⟩ : ProtoTile);
+                    let h := CurvatureOneOdometer z;
+                    BandPrototile C.1.1 T ∧
+                      TileOdometer C.1.1 T h ∧
+                        (↑h.domain : Set GaussianInt) = FootprintVertices T ∧
+                          (∀ x ∈ h.domain, g x = h.value x) ∧
+                            GlobalOdometerExtends g h ∧
+                              IntegerSuperharmonicRepresentative (CircleMatrix C) g ∧
+                                (∀ v ∈ TilingLattice C,
+                                ∃ (a : GaussianInt),
+                                (CircleMatrix C).mulVec ![(↑v.re : ℝ), (↑v.im : ℝ)] =
+                                ![(↑a.re : ℝ), (↑a.im : ℝ)] ∧
+                                ∀ (x : GaussianInt),
+                                g (x + v) = g x + x.re * a.re + x.im * a.im + g v) ∧
+                                ∃ (b : ℝ × ℝ),
+                                ∀ v ∈ TilingLattice C,
+                                ∀ (x : GaussianInt),
+                                (↑(g (x + v)) : ℝ) -
+                                LatticeQuadraticForm (CircleMatrix C) (x + v) -
+                                (b.1 * (↑(x + v).re : ℝ) + b.2 * (↑(x + v).im : ℝ)) =
+                                (↑(g x) : ℝ) - LatticeQuadraticForm (CircleMatrix C) x -
+                                (b.1 * (↑x.re : ℝ) + b.2 * (↑x.im : ℝ))) →
+                    ∀ (v : GaussianInt),
+                      P5570T1UnitQuadratic z (x + v) =
+                        P5570T1UnitQuadratic z x + P5570T1UnitQuadratic z v +
+                            ((1 + z.re) * v.re + z.im * v.im) * x.re +
+                          (z.im * v.re - z.re * v.im) * x.im
+    ) := by
   classical
-  intro C g x hc z hmatrix hperiodic v
+  intro C x hc z hmatrix hperiodic v
   obtain ⟨w, hw, hshift⟩ := hperiodic.2.2.2.2.2.2.1 v
     (by simp [TilingLattice, hc])
   have hr : (1+z.re)*v.re+z.im*v.im = w.re := by
@@ -334,70 +383,6 @@ private theorem haMV :
   classical
   intro q i U V M hcells hanchor hempty
   exact (hanchor (hcells.trans hempty)).symm
-
-private theorem hnV :
-    (by
-      classical
-      exact
-        (BandCircle) → ((ℕ) → (∀ (q : Fin (4 : ℕ) → CircleCoordinates), (Fin (3 : ℕ)) →
-            ((ProperBandQuadruple q) → ((ProtoTile) → (∀ (V : ProtoTile), (LatticeTile V ∧
-            TileArea V = (q (0 : Fin (4 : ℕ))).1.toNat ∧ (∀ (S : Fin (3 : ℕ) → Bool → ProtoTile),
-                (∀ (i : Fin (3 : ℕ)), ∀ (s : Bool), BandSubtileOccurrence q V i s (S i s)) → (∀
-                (x : LatticeCell), x ∈ V.cells ↔ ∃ (i : Fin (3 : ℕ)) (s : Bool), x ∈ (S i
-                s).cells) → ∀ (i : Fin (3 : ℕ)), ∀ (s : Bool), LatticeTile (TileCellComplement V
-                (S i s)) ∧
-            TileTouching (TileCellComplement V (S i s)) (S i s)) ∧ QuarterTurnSymmetric V ∧ ((1 :
-            ℤ) < (q (0 : Fin (4 : ℕ))).1 → ∀ (i : Fin (3 : ℕ)), TouchingTriple V (TileTranslation
-            V (BandVectors.1 (q i.succ) (q (0 : Fin (4 : ℕ))))) (TileTranslation V
-            (-BandVectors.1 (q (i + (1 : Fin (3 : ℕ))).succ) (q (0 : Fin (4 : ℕ)))))) ∧ ((1 : ℤ)
-            < (q (0 : Fin (4 : ℕ))).1 → ∀ (i : Fin (3 : ℕ)), ∀ (U : ProtoTile), BandPrototile (q
-            i.succ) U → TileCentroid U - TileCentroid V = (1 / 2 : ℝ) • (GaussianRealPoint
-            (BandVectors.1 (q i.succ) (q (0 : Fin (4 : ℕ)))) + GaussianRealPoint (BandVectors.1
-            (q (0 : Fin (4 : ℕ))) (q i.succ))) → TouchingTriple V (TileTranslation V
-            (BandVectors.1 (q i.succ) (q (0 : Fin (4 : ℕ))))) U) ∧ (∀ (i : Fin (3 : ℕ)), ∀ (U :
-                ProtoTile), ∀ (V_1 : ProtoTile), BandPrototile (q i.succ) U → BandPrototile (q (i +
-            (1 : Fin (3 : ℕ))).succ) V_1 → TileCentroid U - TileCentroid V = (1 / 2 : ℝ) •
-            (GaussianRealPoint (BandVectors.1 (q i.succ) (q (0 : Fin (4 : ℕ)))) +
-            GaussianRealPoint (BandVectors.1 (q (0 : Fin (4 : ℕ))) (q i.succ))) → TileCentroid
-            V_1 - TileCentroid V = (1 / 2 : ℝ) • (GaussianRealPoint (BandVectors.1 (q (i + (1 :
-            Fin (3 : ℕ))).succ) (q (0 : Fin (4 : ℕ)))) - GaussianRealPoint (BandVectors.1 (q (0 :
-            Fin (4 : ℕ))) (q (i + (1 : Fin (3 : ℕ))).succ))) → TouchingTriple V U V_1) ∧ ∀ (r :
-                Fin (4 : ℕ) → CircleCoordinates), ProperBandQuadruple r → r (0 : Fin (4 : ℕ)) = q (1
-            : Fin (4 : ℕ)) → r (2 : Fin (4 : ℕ)) = q (2 : Fin (4 : ℕ)) → r (3 : Fin (4 : ℕ)) = q
-            (3 : Fin (4 : ℕ)) → (q (2 : Fin (4 : ℕ))).1 ≤ (q (1 : Fin (4 : ℕ))).1 → (q (3 : Fin
-            (4 : ℕ))).1 ≤ (q (2 : Fin (4 : ℕ))).1 → (1 : ℤ) < (q (2 : Fin (4 : ℕ))).1 → ∀ (P :
-                Fin (3 : ℕ) → Bool → ProtoTile), ∀ (Q : Fin (3 : ℕ) → Bool → ProtoTile), ∀ (S : Fin
-            (3 : ℕ) → Bool → ProtoTile), (∀ (i : Fin (3 : ℕ)), ∀ (s : Bool),
-                BandSubtileOccurrence q V i s (P i s)) → (∀ (x : LatticeCell), x ∈ V.cells ↔ ∃ (i :
-            Fin (3 : ℕ)) (s : Bool), x ∈ (P i s).cells) → (∀ (i : Fin (3 : ℕ)), ∀ (s : Bool),
-                BandSubtileOccurrence r (P (0 : Fin (3 : ℕ)) true) i s (Q i s)) → (∀ (x :
-                LatticeCell), x ∈ (P (0 : Fin (3 : ℕ)) true).cells ↔ ∃ (i : Fin (3 : ℕ)) (s : Bool),
-            x ∈ (Q i s).cells) → (∀ (i : Fin (3 : ℕ)), ∀ (s : Bool), BandSubtileOccurrence r (P
-            (0 : Fin (3 : ℕ)) false) i s (S i s)) → (∀ (x : LatticeCell), x ∈ (P (0 : Fin (3 :
-            ℕ)) false).cells ↔ ∃ (i : Fin (3 : ℕ)) (s : Bool), x ∈ (S i s).cells) →
-        let u := BandVectors.1 (q (0 : Fin (4 : ℕ))) (q (1 : Fin (4 : ℕ)));
-        let v := BandVectors.1 (q (0 : Fin (4 : ℕ))) (q (2 : Fin (4 : ℕ))); (∀ (a :
-            PeriodicSubtileIndex), ∀ (b : PeriodicSubtileIndex), a ≠ b → ((FootprintEdges
-            (SubtileOccurrenceInterpretation P u v a) ∩ FootprintEdges
-            (SubtileOccurrenceInterpretation P u v b)).Nonempty → AllowedSubtileIncidence a b) ∧
-            (¬AllowedSubtileIncidence a b → FootprintVertices (SubtileOccurrenceInterpretation P
-            u v a) ∩ FootprintVertices (SubtileOccurrenceInterpretation P u v b) = ∅ ∨
-            (FootprintVertices (SubtileOccurrenceInterpretation P u v a) ∩ FootprintVertices
-            (SubtileOccurrenceInterpretation P u v b)).Subsingleton)) ∧ FootprintVertices (P (0 :
-            Fin (3 : ℕ)) true) ∩ FootprintVertices (P (1 : Fin (3 : ℕ)) true) ⊆ FootprintVertices
-            (Q (1 : Fin (3 : ℕ)) true) ∩ FootprintVertices (P (1 : Fin (3 : ℕ)) true) ∧
-            FootprintVertices (P (0 : Fin (3 : ℕ)) true) ∩ FootprintVertices (P (0 : Fin (3 : ℕ))
-            false) ⊆ FootprintVertices (Q (1 : Fin (3 : ℕ)) true) ∩ FootprintVertices (S (2 : Fin
-            (3 : ℕ)) false) ∪ FootprintVertices (Q (0 : Fin (3 : ℕ)) false) ∪ FootprintVertices
-            (Q (2 : Fin (3 : ℕ)) true) ∩ FootprintVertices (S (1 : Fin (3 : ℕ)) false)) →
-            (V.cells ≠ ∅)))))) ) := by
-  classical
-  intro C n q i hq U V hgeomV
-  have harea := hgeomV.2.1
-  have hcpos := (ProperBandCurvatureStructure q hq).1
-  intro he
-  simp only [TileArea, he, Finset.card_empty] at harea
-  omega
 
 private theorem touchingRetarget :
     (by
@@ -537,28 +522,51 @@ private theorem hnadj :
     (by
       classical
       exact
-        (BandCircle) → ((ℕ) → (∀ (q : Fin (4 : ℕ) → CircleCoordinates), ∀ (i : Fin (3 : ℕ)), ∀
-            (hq : ProperBandQuadruple q), ((q i.succ).1 = (1 : ℤ)) → (∀ (hpos : 0 < (q i.succ).1),
-        let Ci : BandCircle :=
-          ⟨⟨q i.succ, Or.inl hpos, q, hq.1, i.succ, rfl⟩, hpos⟩
-        ∀ (U : ProtoTile), (ProtoTile) → (∀ (orientation : Bool), ∀ (base : ProtoTile), ∀ (Rminus
-            : ProtoTile), ∀ (Rplus : ProtoTile), ∀ (tiles : List ProtoTile), ∀ (reverseTiles :
-            List ProtoTile), ∀ (hs : List PartialOdometer), ∀ (reverseHs : List PartialOdometer),
-            (TileString Ci orientation base Rplus Rminus reverseTiles) → ((OdometerStringRespect
-            Ci orientation base Rminus Rplus tiles hs) → ((OdometerStringRespect Ci orientation
-            base Rplus Rminus reverseTiles reverseHs) → (∀ (r : Fin (4 : ℕ) → CircleCoordinates),
-            (Ci.1.1.1 = (1 : ℤ) → UnitOccurrenceOrientation r i orientation) → ((TileString Ci
-            orientation base Rminus Rplus tiles) → ((TileCentroid Rminus - TileCentroid U = (1 /
-            2 : ℝ) • GaussianRealPoint (BandVectors.1 (q i.succ) (q (0 : Fin (4 : ℕ))) -
-            BandVectors.1 (q (0 : Fin (4 : ℕ))) (q i.succ))) → ((TileCentroid Rplus -
-            TileCentroid U = (1 / 2 : ℝ) • GaussianRealPoint (BandVectors.1 (q i.succ) (q (0 :
-            Fin (4 : ℕ))) + BandVectors.1 (q (0 : Fin (4 : ℕ))) (q i.succ))) → ((Zsqrtd.norm
-            (BandVectors.1 (q 0) (q i.succ)) = (q 0).1+1) → (¬ ∃ v : GaussianInt,
-            UnitTriangularStep orientation v ∧ TileCentroid Rplus - TileCentroid Rminus =
-            GaussianRealPoint v)))))))))))) ) := by
+        ∀ (q : Fin (4 : ℕ) → CircleCoordinates),
+          ∀ (i : Fin (3 : ℕ)),
+            ∀ (hq : ProperBandQuadruple q),
+              (q i.succ).1 = (1 : ℤ) →
+                ∀ (hpos : 0 < (q i.succ).1),
+                  let Ci : BandCircle :=
+                    ⟨⟨q i.succ, Or.inl hpos, q, hq.1, i.succ, rfl⟩, hpos⟩;
+                  ∀ (U : ProtoTile),
+                    ∀ (orientation : Bool),
+                      ∀ (base : ProtoTile),
+                        ∀ (Rminus : ProtoTile),
+                          ∀ (Rplus : ProtoTile),
+                            ∀ (tiles : List ProtoTile),
+                              ∀ (reverseTiles : List ProtoTile),
+                                ∀ (hs : List PartialOdometer),
+                                ∀ (reverseHs : List PartialOdometer),
+                                TileString Ci orientation base Rplus Rminus reverseTiles →
+                                OdometerStringRespect Ci orientation base Rminus Rplus
+                                tiles hs →
+                                OdometerStringRespect Ci orientation base Rplus Rminus
+                                reverseTiles reverseHs →
+                                ∀ (r : Fin (4 : ℕ) → CircleCoordinates),
+                                (Ci.1.1.1 = (1 : ℤ) →
+                                UnitOccurrenceOrientation r i orientation) →
+                                TileString Ci orientation base Rminus Rplus tiles →
+                                TileCentroid Rminus - TileCentroid U =
+                                (1 / 2 : ℝ) •
+                                GaussianRealPoint
+                                (BandVectors.1 (q i.succ) (q (0 : Fin (4 : ℕ))) -
+                                BandVectors.1 (q (0 : Fin (4 : ℕ))) (q i.succ)) →
+                                TileCentroid Rplus - TileCentroid U =
+                                (1 / 2 : ℝ) •
+                                GaussianRealPoint
+                                (BandVectors.1 (q i.succ) (q (0 : Fin (4 : ℕ))) +
+                                BandVectors.1 (q (0 : Fin (4 : ℕ))) (q i.succ)) →
+                                Zsqrtd.norm (BandVectors.1 (q 0) (q i.succ)) =
+                                (q 0).1 + 1 →
+                                ¬∃ v : GaussianInt,
+                                UnitTriangularStep orientation v ∧
+                                TileCentroid Rplus - TileCentroid Rminus =
+                                GaussianRealPoint v
+    ) := by
   classical
-  intro C n q i hq hunit hpos Ci U V orientation base Rminus Rplus tiles reverseTiles hs
-      reverseHs hreverse hrespect hreverseRespect r horientation hstring hcminus hcplus hnorm
+  intro q i hq hunit hpos Ci U orientation base Rminus Rplus tiles reverseTiles hs reverseHs
+      hreverse hrespect hreverseRespect r horientation hstring hcminus hcplus hnorm
   rintro ⟨v,hv,hcv⟩
   have hveq : v = BandVectors.1 (q 0) (q i.succ) := by
     apply Zsqrtd.ext
@@ -730,30 +738,52 @@ private theorem translationAt543 :
     (by
       classical
       exact
-        (IntegerLatticeFunction) → (∀ (x : GaussianInt), ∀ (q : Fin (4 : ℕ) →
-            CircleCoordinates), ∀ (i : Fin (3 : ℕ)), ∀ (hq : ProperBandQuadruple q), ∀ (hpos : 0
-            < (q i.succ).1),
-        let Ci : BandCircle :=
-          ⟨⟨q i.succ, Or.inl hpos, q, hq.1, i.succ, rfl⟩, hpos⟩
-        ∀ (z : GaussianInt), (Ci.1.1.1 = 1) → ((CircleMatrix Ci = ![![((1+z.re : ℤ) : ℝ), (z.im :
-            ℝ)], ![(z.im : ℝ), (-z.re : ℝ)]]) → ((
-        let g := fun (x : GaussianInt) => ((1 : ℤ) + z.re) * (x.re * (x.re - (1 : ℤ)) / (2 : ℤ))
-            - z.re * (x.im * (x.im - (1 : ℤ)) / (2 : ℤ)) + z.im * x.re * x.im;
-        let T := (⟨{(0 : LatticeCell)}, (0 : GaussianInt)⟩ : ProtoTile);
-        let h := CurvatureOneOdometer z; BandPrototile Ci.1.1 T ∧ TileOdometer Ci.1.1 T h ∧
-            (↑h.domain : Set GaussianInt) = FootprintVertices T ∧ (∀ x ∈ h.domain, g x = h.value
-            x) ∧ GlobalOdometerExtends g h ∧ IntegerSuperharmonicRepresentative (CircleMatrix Ci)
-            g ∧ (∀ v ∈ TilingLattice Ci, ∃ (a : GaussianInt), (CircleMatrix Ci).mulVec ![(↑v.re :
-            ℝ), (↑v.im : ℝ)] = ![(↑a.re : ℝ), (↑a.im : ℝ)] ∧ ∀ (x : GaussianInt), g (x + v) = g x
-            + x.re * a.re + x.im * a.im + g v) ∧ ∃ (b : ℝ × ℝ), ∀ v ∈ TilingLattice Ci, ∀ (x :
-                GaussianInt), (↑(g (x + v)) : ℝ) - LatticeQuadraticForm (CircleMatrix Ci) (x + v) -
-            (b.1 * (↑(x + v).re : ℝ) + b.2 * (↑(x + v).im : ℝ)) = (↑(g x) : ℝ) -
-            LatticeQuadraticForm (CircleMatrix Ci) x - (b.1 * (↑x.re : ℝ) + b.2 * (↑x.im : ℝ))) →
-            (∀ (v : GaussianInt), P5570T1UnitQuadratic z (x+v) = P5570T1UnitQuadratic z x +
-            P5570T1UnitQuadratic z v + ((1+z.re)*v.re+z.im*v.im)*x.re +
-            (z.im*v.re-z.re*v.im)*x.im))))) := by
+        ∀ (x : GaussianInt),
+          ∀ (q : Fin (4 : ℕ) → CircleCoordinates),
+            ∀ (i : Fin (3 : ℕ)),
+              ∀ (hq : ProperBandQuadruple q),
+                ∀ (hpos : 0 < (q i.succ).1),
+                  let Ci : BandCircle :=
+                    ⟨⟨q i.succ, Or.inl hpos, q, hq.1, i.succ, rfl⟩, hpos⟩
+                  ∀ (z : GaussianInt),
+                    Ci.1.1.1 = 1 →
+                      CircleMatrix Ci =
+                          ![![((1 + z.re : ℤ) : ℝ), (z.im : ℝ)],
+                            ![(z.im : ℝ), (-z.re : ℝ)]] →
+                        (let g := fun (x : GaussianInt) =>
+                            ((1 : ℤ) + z.re) * (x.re * (x.re - (1 : ℤ)) / (2 : ℤ)) -
+                                z.re * (x.im * (x.im - (1 : ℤ)) / (2 : ℤ)) +
+                              z.im * x.re * x.im;
+                          let T := (⟨{(0 : LatticeCell)}, (0 : GaussianInt)⟩ : ProtoTile);
+                          let h := CurvatureOneOdometer z;
+                          BandPrototile Ci.1.1 T ∧
+                            TileOdometer Ci.1.1 T h ∧
+                              (↑h.domain : Set GaussianInt) = FootprintVertices T ∧
+                                (∀ x ∈ h.domain, g x = h.value x) ∧
+                                GlobalOdometerExtends g h ∧
+                                IntegerSuperharmonicRepresentative (CircleMatrix Ci) g ∧
+                                (∀ v ∈ TilingLattice Ci,
+                                ∃ (a : GaussianInt),
+                                (CircleMatrix Ci).mulVec ![(↑v.re : ℝ), (↑v.im : ℝ)] =
+                                ![(↑a.re : ℝ), (↑a.im : ℝ)] ∧
+                                ∀ (x : GaussianInt),
+                                g (x + v) = g x + x.re * a.re + x.im * a.im + g v) ∧
+                                ∃ (b : ℝ × ℝ),
+                                ∀ v ∈ TilingLattice Ci,
+                                ∀ (x : GaussianInt),
+                                (↑(g (x + v)) : ℝ) -
+                                LatticeQuadraticForm (CircleMatrix Ci) (x + v) -
+                                (b.1 * (↑(x + v).re : ℝ) + b.2 * (↑(x + v).im : ℝ)) =
+                                (↑(g x) : ℝ) - LatticeQuadraticForm (CircleMatrix Ci) x -
+                                (b.1 * (↑x.re : ℝ) + b.2 * (↑x.im : ℝ))) →
+                          ∀ (v : GaussianInt),
+                            P5570T1UnitQuadratic z (x + v) =
+                              P5570T1UnitQuadratic z x + P5570T1UnitQuadratic z v +
+                                ((1 + z.re) * v.re + z.im * v.im) * x.re +
+                                (z.im * v.re - z.re * v.im) * x.im
+    ) := by
   classical
-  intro g x q i hq hpos Ci z hCiunit hmatrix hperiodic v
+  intro x q i hq hpos Ci z hCiunit hmatrix hperiodic v
   obtain ⟨w,hw,hshift⟩ := hperiodic.2.2.2.2.2.2.1 v
     (by simp [TilingLattice, hCiunit])
   have hr : (1+z.re)*v.re+z.im*v.im = w.re := by
@@ -797,10 +827,12 @@ private theorem hposAt619 :
     (by
       classical
       exact
-        (BandCircle) → ((ℕ) → (∀ (q : Fin (4 : ℕ) → CircleCoordinates), ∀ (i : Fin (3 : ℕ)),
-            (ProperBandQuadruple q) → ((¬(q i.succ).1 = (0 : ℤ)) → (0 < (q i.succ).1)))) ) := by
+        ∀ (q : Fin (4 : ℕ) → CircleCoordinates),
+          ∀ (i : Fin (3 : ℕ)),
+            ProperBandQuadruple q → ¬(q i.succ).1 = (0 : ℤ) → 0 < (q i.succ).1
+    ) := by
   classical
-  intro C n q i hq hzero
+  intro q i hq hzero
   have hnonneg := (ProperBandCurvatureStructure q hq).2.1 i
   omega
 
@@ -853,23 +885,43 @@ private theorem positiveStep :
     (by
       classical
       exact
-        ∀ (C : BandCircle), ∀ (g : IntegerLatticeFunction), ∀ (x : GaussianInt), (ℕ) → (∀ (q :
-            Fin (4 : ℕ) → CircleCoordinates), ∀ (i : Fin (3 : ℕ)), (ProperBandQuadruple
-            q) → ((q (0 : Fin (4 : ℕ)) = C.1.1) → (((q i.succ).1 = (1 : ℤ)) → ((0 < (q
-            i.succ).1) → (∀ (U : ProtoTile), ∀ (V : ProtoTile), ∀ (f : PartialOdometer), ∀ (k :
-                PartialOdometer), ∀ (p : Real × Real), ∀ (p' : Real × Real), (TileOdometer C.1.1
-                U f) → ((TileOdometer
-            C.1.1 V k) → ((PartialOdometerSlope f = some p) → ((PartialOdometerSlope k = some p')
-            → ((TileCentroid V - TileCentroid U =
-            GaussianRealPoint (BandVectors.1 (q i.succ) (q 0))) → ((p' - p = GaussianRealPoint
-                (BandVectors.2 (q i.succ) (q 0))) → ((OdometerCompatibility f k) →
-                ((GlobalOdometerExtends g f) → ((GlobalOdometerExtends g k) → ((x ∈ f.domain) →
-                ((x ∈ k.domain) → ((∀ y, y = x ∨ y = x + 1 ∨ y = x - 1 ∨
-              y = x + ⟨0, 1⟩ ∨ y = x - ⟨0, 1⟩ →
-              y ∈ f.domain ∨ y ∈ k.domain) → (FourNeighborLaplacian g x = 1)))))))))))))))))) := by
+        ∀ (C : BandCircle),
+          ∀ (g : IntegerLatticeFunction),
+            ∀ (x : GaussianInt),
+              ℕ →
+                ∀ (q : Fin (4 : ℕ) → CircleCoordinates),
+                  ∀ (i : Fin (3 : ℕ)),
+                    ProperBandQuadruple q →
+                      q (0 : Fin (4 : ℕ)) = C.1.1 →
+                        (q i.succ).1 = (1 : ℤ) →
+                          0 < (q i.succ).1 →
+                            ∀ (U : ProtoTile),
+                              ∀ (V : ProtoTile),
+                                ∀ (f : PartialOdometer),
+                                ∀ (k : PartialOdometer),
+                                ∀ (p : Real × Real),
+                                ∀ (p' : Real × Real),
+                                TileOdometer C.1.1 U f →
+                                TileOdometer C.1.1 V k →
+                                PartialOdometerSlope f = some p →
+                                PartialOdometerSlope k = some p' →
+                                TileCentroid V - TileCentroid U =
+                                GaussianRealPoint (BandVectors.1 (q i.succ) (q 0)) →
+                                p' - p =
+                                GaussianRealPoint (BandVectors.2 (q i.succ) (q 0)) →
+                                GlobalOdometerExtends g f →
+                                GlobalOdometerExtends g k →
+                                x ∈ f.domain →
+                                x ∈ k.domain →
+                                (∀ y,
+                                y = x ∨
+                                y = x + 1 ∨ y = x - 1 ∨ y = x + ⟨0, 1⟩ ∨ y = x - ⟨0, 1⟩ →
+                                y ∈ f.domain ∨ y ∈ k.domain) →
+                                FourNeighborLaplacian g x = 1
+    ) := by
   classical
-  intro C g x n q i hq hqC hunit hpos U V f k p p' hOf hOk hpf hpk hcUV hpUV hcomp hgf hgk hxf
-      hxk hcover
+  intro C g x n q i hq hqC hunit hpos U V f k p p' hOf hOk hpf hpk hcUV hpUV hgf hgk hxf hxk
+      hcover
   let Ci : BandCircle :=
     ⟨⟨q i.succ, Or.inl hpos, q, hq.1, i.succ, rfl⟩, hpos⟩
   classical
@@ -939,7 +991,7 @@ private theorem positiveStep :
     ExactTileInterfaceTripleRetargetMiddle U M V Rplus hMV haMV Ep
   have hgeomU := BandTileSimultaneousInduction q hq U hU
   have hgeomV := BandTileSimultaneousInduction q hq V hV
-  have hnV : V.cells ≠ ∅ := LeftWebGeometry.hnV C n q i hq U V hgeomV
+  have hnV : V.cells ≠ ∅ := (LatticeTileNonempty.cells V hgeomV.1).ne_empty
   have touchingRetarget (W : ProtoTile) (ht : TouchingTriple U M W) :
       TouchingTriple U V W := LeftWebGeometry.touchingRetarget q i U V hMV hobsMV hnV
           W ht
@@ -969,7 +1021,7 @@ private theorem positiveStep :
       (q 0).1+1 := LeftWebGeometry.hnorm q i hq hunit
   have hnadj : ¬ ∃ v : GaussianInt, UnitTriangularStep orientation v ∧
       TileCentroid Rplus - TileCentroid Rminus = GaussianRealPoint v :=
-          LeftWebGeometry.hnadj C n q i hq hunit hpos U V orientation base Rminus
+          LeftWebGeometry.hnadj q i hq hunit hpos U orientation base Rminus
           Rplus tiles reverseTiles hs reverseHs hreverse hrespect hreverseRespect r
           horientation hstring hcminus hcplus hnorm
   have hUn : U.cells.Nonempty := LeftWebGeometry.hUn q hq U V hgeomU hgeomV
@@ -994,7 +1046,7 @@ private theorem positiveStep :
       P5570T1UnitQuadratic z (x+v) =
         P5570T1UnitQuadratic z x + P5570T1UnitQuadratic z v +
         ((1+z.re)*v.re+z.im*v.im)*x.re +
-        (z.im*v.re-z.re*v.im)*x.im := LeftWebGeometry.translationAt543 g x q i hq
+        (z.im*v.re-z.re*v.im)*x.im := LeftWebGeometry.translationAt543 x q i hq
             hpos z hCiunit hmatrix hperiodic v
   have hquad : FourNeighborLaplacian
       (fun y => P5570T1UnitQuadratic z y + A.re*y.re + A.im*y.im + B) x = 1 :=
@@ -1038,7 +1090,7 @@ theorem P5596T1LeftWeb
       by_cases hc : C.1.1.1 = 1
       · obtain ⟨z, hz⟩ := CurvatureOneBandCircleClassification C hc
         obtain ⟨ht₁, ht₂, p₁, p₂, hp₁, hp₂, hstep⟩ := hleft
-        have hdata := LeftWebGeometry.hdata C T₁ T₂ n hc p₁ p₂ hstep
+        have hdata := LeftWebGeometry.hdata C T₁ T₂ hc p₁ p₂ hstep
         obtain ⟨v, hv, hr, hi⟩ := hdata
         obtain ⟨u₁, a₁, b₁, hu₁, hd₁, hcent₁, hval₁, hs₁⟩ :=
           P5570T1UnitNormalForm C z T₁ h₁ hz ht₁
@@ -1078,7 +1130,7 @@ theorem P5596T1LeftWeb
         have hq : FourNeighborLaplacian
             (fun y => P5570T1UnitQuadratic z y +
               a₁.re * y.re + a₁.im * y.im + (b₁ + c₁)) x = 1 := LeftWebGeometry.hq x z a₁ b₁ c₁
-                  (LeftWebGeometry.translationAt244 C g x hc z hmatrix hperiodic)
+                  (LeftWebGeometry.translationAt244 C x hc z hmatrix hperiodic)
         simpa only [FourNeighborLaplacian,
           hvalues x (Or.inl rfl),
           hvalues (x + 1) (Or.inr (Or.inl rfl)),
@@ -1108,7 +1160,7 @@ theorem P5596T1LeftWeb
                     y = x + ⟨0, 1⟩ ∨ y = x - ⟨0, 1⟩ →
                     y ∈ f.domain ∨ y ∈ k.domain) :
                 FourNeighborLaplacian g x = 1 := LeftWebStep.positiveStep C g x n q i hq hqC
-                    hunit hpos U V f k p p' hOf hOk hpf hpk hcUV hpUV hcomp hgf hgk hxf hxk hcover
+                    hunit hpos U V f k p p' hOf hOk hpf hpk hcUV hpUV hgf hgk hxf hxk hcover
             cases e
             · apply positiveStep T₂ T₁ h₂ h₁ p₂ p₁ hO₂ hO₁ hp₂ hp₁
               · simp only [Bool.false_eq_true, ite_false, neg_one_smul] at hcent
@@ -1146,7 +1198,7 @@ theorem P5596T1LeftWeb
             · exact P5596T1LineParent q hq i e hzero T₁ T₂ h₁ h₂ p₁ p₂ g x
                 (by simpa only [hqC] using hO₁) (by simpa only [hqC] using hO₂)
                 hp₁ hp₂ hcent hr hi hg₁ hg₂ hx₁ hx₂ hstar
-            · have hpos : 0 < (q i.succ).1 := LeftWebGeometry.hposAt619 C n q i hq hzero
+            · have hpos : 0 < (q i.succ).1 := LeftWebGeometry.hposAt619 q i hq hzero
               let Ci : BandCircle :=
                 ⟨⟨q i.succ, Or.inl hpos, q, hq.1, i.succ, rfl⟩, hpos⟩
               have hlarge : 1 < Ci.1.1.1 := by change 1 < (q i.succ).1; omega

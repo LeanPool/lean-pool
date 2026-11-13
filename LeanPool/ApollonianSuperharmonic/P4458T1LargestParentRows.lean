@@ -965,12 +965,12 @@ private theorem hCgt1 :
     (by
       classical
       exact
-        ∀ (C : BandCircle), ∀ (orientation : Bool), ∀ (base : ProtoTile), ∀ (Rminus : ProtoTile),
-            ∀ (Rplus : ProtoTile), ∀ (hminus : PartialOdometer), ∀ (hplus : PartialOdometer),
-            (P4458T1BoundaryFrame C orientation base Rminus Rplus hminus hplus) → (∀ (p : Fin 4
-            → CircleCoordinates), (ProperBandQuadruple p) → ((C.1.1 = p 0) → (1 < C.1.1.1))) ) := by
+        ∀ (C : BandCircle),
+          ∀ (p : Fin 4 → CircleCoordinates),
+            ProperBandQuadruple p → C.1.1 = p 0 → 1 < C.1.1.1
+    ) := by
   classical
-  intro C orientation base Rminus Rplus hminus hplus F p hp hCcoord
+  intro C p hp hCcoord
   rw [hCcoord]
   have hfacts := ProperBandCurvatureStructure p hp
   have hpositive' : 0 < (p 0).1 := hfacts.1
@@ -2290,7 +2290,7 @@ private theorem largestParentCertificate :
       ha10Re ha10Im ha01Re ha01Im hminusSlopeVector hplusSlopeVector ha10ReC ha10ImC ha01ReC
       ha01ImC hsumReC hsumImC hplusVectorRe hplusVectorIm hplusVectorRe' hplusVectorIm'
       hplusVectorReC hplusVectorImC hminusSlope hplusSlope
-  have hCgt1 := LargestParentGeometry.hCgt1 C orientation base Rminus Rplus hminus hplus F p hp
+  have hCgt1 := LargestParentGeometry.hCgt1 C p hp
       hCcoord
   have hpTangency : BandTangency (p 0) (p 3) := by
     exact ⟨p, hp.1, 0, 3, by decide, rfl, rfl⟩

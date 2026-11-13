@@ -32,19 +32,24 @@ private theorem obs :
     (by
       classical
       exact
-        (FordFareyParameter) → (
         let rect : Int → Int → Int → Set GaussianInt := fun a b n =>
           {z | a ≤ z.re ∧ z.re ≤ a + n ∧ b ≤ z.im ∧ z.im ≤ b + n}
         let adj := fun x y : GaussianInt =>
           y = x + 1 ∨ y = x - 1 ∨ y = x + ⟨0, 1⟩ ∨ y = x - ⟨0, 1⟩
         let edges : Set GaussianInt → Set (Finset GaussianInt) := fun V =>
-          {e | ∃ x ∈ V, ∃ y ∈ V, adj x y ∧ e = {x, y}}
-        ∀ (T : ProtoTile), ∀ (a : Int), ∀ (b : Int), ∀ (n : Int), (0 < n) → ((∀ z : GaussianInt,
-            z ∈ T.cells ↔
-            a ≤ z.re ∧ z.re < a + n ∧ b ≤ z.im ∧ z.im < b + n) → (FootprintVertices T = rect a b
-                n ∧ FootprintEdges T = edges (rect a b n)))) ) := by
+          {e | ∃ x ∈ V, ∃ y ∈ V, adj x y ∧ e = { x, y }}
+        ∀ (T : ProtoTile),
+          ∀ (a : Int),
+            ∀ (b : Int),
+              ∀ (n : Int),
+                0 < n →
+                  (∀ z : GaussianInt,
+                      z ∈ T.cells ↔ a ≤ z.re ∧ z.re < a + n ∧ b ≤ z.im ∧ z.im < b + n) →
+                    FootprintVertices T = rect a b n ∧
+                      FootprintEdges T = edges (rect a b n)
+    ) := by
   classical
-  intro P rect adj edges T a b n hn hc
+  intro rect adj edges T a b n hn hc
   have hne : T.cells.Nonempty := ⟨⟨a,b⟩, (hc _).mpr (by dsimp; omega)⟩
   have hv (z : GaussianInt) : z ∈ FootprintVertices T ↔ z ∈ rect a b n := by
     simp only [FootprintVertices, ite_eq_left hne, Set.mem_ofPred_eq]
@@ -134,17 +139,21 @@ private theorem linepath :
     (by
       classical
       exact
-        (FordFareyParameter) → (
         let adj := fun x y : GaussianInt =>
           y = x + 1 ∨ y = x - 1 ∨ y = x + ⟨0, 1⟩ ∨ y = x - ⟨0, 1⟩
         let edges : Set GaussianInt → Set (Finset GaussianInt) := fun V =>
-          {e | ∃ x ∈ V, ∃ y ∈ V, adj x y ∧ e = {x, y}}
-        ∀ (f : Nat → GaussianInt), ∀ (n : Nat), (0 < n) → ((Function.Injective f) → ((∀ k, adj (f
-            k) (f (k+1))) → ((∀ j, ∀ k, adj (f j) (f k) → k = j+1 ∨ j = k+1) →
-            (SimpleGridPathBetween (f '' Set.Icc 0 n) (edges (f '' Set.Icc 0 n)) (f 0) (f n))))))
-            ) := by
+          {e | ∃ x ∈ V, ∃ y ∈ V, adj x y ∧ e = { x, y }}
+        ∀ (f : Nat → GaussianInt),
+          ∀ (n : Nat),
+            0 < n →
+              Function.Injective f →
+                (∀ k, adj (f k) (f (k + 1))) →
+                  (∀ j, ∀ k, adj (f j) (f k) → k = j + 1 ∨ j = k + 1) →
+                    SimpleGridPathBetween (f '' Set.Icc 0 n) (edges (f '' Set.Icc 0 n))
+                      (f 0) (f n)
+    ) := by
   classical
-  intro P adj edges f n hn hf hs ha
+  intro adj edges f n hn hf hs ha
   let p := (List.range (n+1)).map f
   have hm (z : GaussianInt) : z ∈ p ↔ z ∈ f '' Set.Icc 0 n := by
     simp [p]
@@ -184,19 +193,28 @@ private theorem horizontal :
     (by
       classical
       exact
-        (FordFareyParameter) → (
         let adj := fun x y : GaussianInt =>
           y = x + 1 ∨ y = x - 1 ∨ y = x + ⟨0, 1⟩ ∨ y = x - ⟨0, 1⟩
         let edges : Set GaussianInt → Set (Finset GaussianInt) := fun V =>
-          {e | ∃ x ∈ V, ∃ y ∈ V, adj x y ∧ e = {x, y}}
-        (∀ (f : Nat → GaussianInt), ∀ (n : Nat), (0 < n) → ((Function.Injective f) → ((∀ k, adj
-            (f k) (f (k+1))) → ((∀ j, ∀ k, adj (f j) (f k) → k = j+1 ∨ j = k+1) →
-            (SimpleGridPathBetween (f '' Set.Icc 0 n) (edges (f '' Set.Icc 0 n)) (f 0) (f n))))))
-            → (∀ (l : Int), ∀ (h : Int), ∀ (b : Int), (l < h) → (SimpleGridPathBetween {z :
-            GaussianInt | l ≤ z.re ∧ z.re ≤ h ∧ z.im = b} (edges {z : GaussianInt | l ≤ z.re ∧
-            z.re ≤ h ∧ z.im = b}) ⟨l,b⟩ ⟨h,b⟩))) ) := by
+          {e | ∃ x ∈ V, ∃ y ∈ V, adj x y ∧ e = { x, y }}
+        (∀ (f : Nat → GaussianInt),
+            ∀ (n : Nat),
+              0 < n →
+                Function.Injective f →
+                  (∀ k, adj (f k) (f (k + 1))) →
+                    (∀ j, ∀ k, adj (f j) (f k) → k = j + 1 ∨ j = k + 1) →
+                      SimpleGridPathBetween (f '' Set.Icc 0 n) (edges (f '' Set.Icc 0 n))
+                        (f 0) (f n)) →
+          ∀ (l : Int),
+            ∀ (h : Int),
+              ∀ (b : Int),
+                l < h →
+                  SimpleGridPathBetween {z : GaussianInt | l ≤ z.re ∧ z.re ≤ h ∧ z.im = b}
+                    (edges {z : GaussianInt | l ≤ z.re ∧ z.re ≤ h ∧ z.im = b}) ⟨l, b⟩
+                    ⟨h, b⟩
+    ) := by
   classical
-  intro P adj edges linepath l h b hlh
+  intro adj edges linepath l h b hlh
   let f := fun k : Nat => (⟨l+k,b⟩ : GaussianInt)
   let n := (h-l).toNat
   have hn : (n : Int) = h-l := by dsimp [n]; omega
@@ -219,19 +237,28 @@ private theorem vertical :
     (by
       classical
       exact
-        (FordFareyParameter) → (
         let adj := fun x y : GaussianInt =>
           y = x + 1 ∨ y = x - 1 ∨ y = x + ⟨0, 1⟩ ∨ y = x - ⟨0, 1⟩
         let edges : Set GaussianInt → Set (Finset GaussianInt) := fun V =>
-          {e | ∃ x ∈ V, ∃ y ∈ V, adj x y ∧ e = {x, y}}
-        (∀ (f : Nat → GaussianInt), ∀ (n : Nat), (0 < n) → ((Function.Injective f) → ((∀ k, adj
-            (f k) (f (k+1))) → ((∀ j, ∀ k, adj (f j) (f k) → k = j+1 ∨ j = k+1) →
-            (SimpleGridPathBetween (f '' Set.Icc 0 n) (edges (f '' Set.Icc 0 n)) (f 0) (f n))))))
-            → (∀ (l : Int), ∀ (h : Int), ∀ (a : Int), (l < h) → (SimpleGridPathBetween {z :
-            GaussianInt | l ≤ z.im ∧ z.im ≤ h ∧ z.re = a} (edges {z : GaussianInt | l ≤ z.im ∧
-            z.im ≤ h ∧ z.re = a}) ⟨a,l⟩ ⟨a,h⟩))) ) := by
+          {e | ∃ x ∈ V, ∃ y ∈ V, adj x y ∧ e = { x, y }}
+        (∀ (f : Nat → GaussianInt),
+            ∀ (n : Nat),
+              0 < n →
+                Function.Injective f →
+                  (∀ k, adj (f k) (f (k + 1))) →
+                    (∀ j, ∀ k, adj (f j) (f k) → k = j + 1 ∨ j = k + 1) →
+                      SimpleGridPathBetween (f '' Set.Icc 0 n) (edges (f '' Set.Icc 0 n))
+                        (f 0) (f n)) →
+          ∀ (l : Int),
+            ∀ (h : Int),
+              ∀ (a : Int),
+                l < h →
+                  SimpleGridPathBetween {z : GaussianInt | l ≤ z.im ∧ z.im ≤ h ∧ z.re = a}
+                    (edges {z : GaussianInt | l ≤ z.im ∧ z.im ≤ h ∧ z.re = a}) ⟨a, l⟩
+                    ⟨a, h⟩
+    ) := by
   classical
-  intro P adj edges linepath l h a hlh
+  intro adj edges linepath l h a hlh
   let f := fun k : Nat => (⟨a,l+k⟩ : GaussianInt)
   let n := (h-l).toNat
   have hn : (n : Int) = h-l := by dsimp [n]; omega
@@ -256,10 +283,12 @@ private theorem fordcell :
     (by
       classical
       exact
-        (FordFareyParameter) → (∀ (n : Nat), ∀ (z : GaussianInt), z ∈ (FordTile n).cells ↔ 0 ≤
-            z.re ∧ z.re < n ∧ 0 ≤ z.im ∧ z.im < n) ) := by
+        ∀ (n : Nat),
+          ∀ (z : GaussianInt),
+            z ∈ (FordTile n).cells ↔ 0 ≤ z.re ∧ z.re < n ∧ 0 ≤ z.im ∧ z.im < n
+    ) := by
   classical
-  intro P n z
+  intro n z
   change z ∈ ((Finset.range n).product (Finset.range n)).image
     (fun a => (⟨(a.1:Int),(a.2:Int)⟩ : GaussianInt)) ↔ _
   rw [Finset.mem_image]
@@ -278,14 +307,18 @@ private theorem sqcell :
     (by
       classical
       exact
-        (FordFareyParameter) → ((∀ (n : Nat), ∀ (z : GaussianInt), z ∈ (FordTile n).cells ↔ 0 ≤
-            z.re ∧ z.re < n ∧ 0 ≤ z.im ∧ z.im < n) → (
-        let sq := fun n : Nat => fun a b : Int =>
-          TileTranslation (FordTile n) ⟨a,b⟩
-        ∀ (n : Nat), ∀ (a : Int), ∀ (b : Int), ∀ (z : GaussianInt), z ∈ (sq n a b).cells ↔ a ≤
-            z.re ∧ z.re < a+n ∧ b ≤ z.im ∧ z.im < b+n)) ) := by
+        (∀ (n : Nat),
+            ∀ (z : GaussianInt),
+              z ∈ (FordTile n).cells ↔ 0 ≤ z.re ∧ z.re < n ∧ 0 ≤ z.im ∧ z.im < n) →
+          let sq := fun n : Nat => fun a b : Int => TileTranslation (FordTile n) ⟨a, b⟩
+          ∀ (n : Nat),
+            ∀ (a : Int),
+              ∀ (b : Int),
+                ∀ (z : GaussianInt),
+                  z ∈ (sq n a b).cells ↔ a ≤ z.re ∧ z.re < a + n ∧ b ≤ z.im ∧ z.im < b + n
+    ) := by
   classical
-  intro P fordcell sq n a b z
+  intro fordcell sq n a b z
   change z ∈ (FordTile n).cells.image (GaussianTranslation ⟨a,b⟩) ↔ _
   constructor
   · rintro hz
@@ -300,11 +333,14 @@ private theorem fordcent :
     (by
       classical
       exact
-        (FordFareyParameter) → ((∀ (n : Nat), ∀ (z : GaussianInt), z ∈ (FordTile n).cells ↔ 0 ≤
-            z.re ∧ z.re < n ∧ 0 ≤ z.im ∧ z.im < n) → (∀ (n : Nat), (0 < n) → (TileCentroid
-            (FordTile n) = ((n:Real)/2,(n:Real)/2)))) ) := by
+        (∀ (n : Nat),
+            ∀ (z : GaussianInt),
+              z ∈ (FordTile n).cells ↔ 0 ≤ z.re ∧ z.re < n ∧ 0 ≤ z.im ∧ z.im < n) →
+          ∀ (n : Nat),
+            0 < n → TileCentroid (FordTile n) = ((n : Real) / 2, (n : Real) / 2)
+    ) := by
   classical
-  intro P fordcell n hn
+  intro fordcell n hn
   let R := TileTranslation (TileQuarterTurn (FordTile n)) ⟨n,0⟩
   have hc : R.cells = (FordTile n).cells := by
     ext z
@@ -415,37 +451,85 @@ private theorem ledger0 :
     (by
       classical
       exact
-        (FordFareyParameter) → (
         let rect : Int → Int → Int → Set GaussianInt := fun a b n =>
           {z | a ≤ z.re ∧ z.re ≤ a + n ∧ b ≤ z.im ∧ z.im ≤ b + n}
         let adj := fun x y : GaussianInt =>
           y = x + 1 ∨ y = x - 1 ∨ y = x + ⟨0, 1⟩ ∨ y = x - ⟨0, 1⟩
         let edges : Set GaussianInt → Set (Finset GaussianInt) := fun V =>
-          {e | ∃ x ∈ V, ∃ y ∈ V, adj x y ∧ e = {x, y}}
-        (∀ {V : Set GaussianInt}, ∀ {E : Set (Finset GaussianInt)}, ∀ {x : GaussianInt}, ∀
-            {y : GaussianInt}, (SimpleGridPathBetween V E x y) → (SimpleGridPathBetween V E y x))
-            → (
-        let sq := fun n : Nat => fun a b : Int =>
-          TileTranslation (FordTile n) ⟨a,b⟩
-        (∀ (n : Nat), ∀ (a : Int), ∀ (b : Int), (0 < n) → (FootprintVertices (sq n a b) = rect a
-            b n ∧ FootprintEdges (sq n a b) = edges (rect a b n))) → ((∀ (n : Nat), ∀ (m : Nat),
-            ∀ (a : Int), ∀ (b : Int), ∀ (c : Int), ∀ (d : Int), ∀ (l : Int), ∀ (h : Int), ∀ (y :
-            Int), (0 < n) → ((0 < m) → ((l < h) → ((rect a b n ∩ rect c d m = {z : GaussianInt |
-            l ≤ z.re ∧ z.re ≤ h ∧ z.im = y}) → (SimpleGridPathBetween (FootprintVertices (sq n a
-            b) ∩ FootprintVertices (sq m c d)) (FootprintEdges (sq n a b) ∩ FootprintEdges (sq m
-            c d)) ⟨l,y⟩ ⟨h,y⟩))))) → ((∀ (n : Nat), ∀ (m : Nat), ∀ (a : Int), ∀ (b : Int), ∀ (c :
-            Int), ∀ (d : Int), ∀ (l : Int), ∀ (h : Int), ∀ (x : Int), (0 < n) → ((0 < m) → ((l <
-            h) → ((rect a b n ∩ rect c d m = {z : GaussianInt | l ≤ z.im ∧ z.im ≤ h ∧ z.re = x})
-            → (SimpleGridPathBetween (FootprintVertices (sq n a b) ∩ FootprintVertices (sq m c
-            d)) (FootprintEdges (sq n a b) ∩ FootprintEdges (sq m c d)) ⟨x,l⟩ ⟨x,h⟩))))) → (∀ (r
-            : Nat), ∀ (s : Nat), (0 < r) → ((0 < s) → (∃ R : ExactTileInterfaceTriple (sq (r+s) 0
-            0) (sq (r+s) (-(s:Int)) (-(r+s:Int))) (sq s (-(s:Int)) 0), ∃ I :
-            ExactTileInterfaceTriple (sq (r+s) 0 0) (sq (r+s) (-(r+s:Int)) s) (sq s (-(s:Int))
-            0), ∃ A : ExactTileInterfaceTriple (sq (r+s) 0 0) (sq s (-(s:Int)) 0) (sq r
-            (-(r:Int)) s), R.point = ⟨0,0⟩ ∧ I.point = ⟨0,s⟩ ∧ A.point = ⟨0,s⟩ ∧ R.otherCA =
-            ⟨0,s⟩ ∧ I.otherCA = ⟨0,0⟩ ∧ A.otherAB = ⟨0,0⟩ ∧ A.otherCA = ⟨0,r+s⟩))))))) ) := by
+          {e | ∃ x ∈ V, ∃ y ∈ V, adj x y ∧ e = { x, y }}
+        (∀ {V : Set GaussianInt},
+            ∀ {E : Set (Finset GaussianInt)},
+              ∀ {x : GaussianInt},
+                ∀ {y : GaussianInt},
+                  SimpleGridPathBetween V E x y → SimpleGridPathBetween V E y x) →
+          let sq := fun n : Nat => fun a b : Int => TileTranslation (FordTile n) ⟨a, b⟩
+          (∀ (n : Nat),
+              ∀ (a : Int),
+                ∀ (b : Int),
+                  0 < n →
+                    FootprintVertices (sq n a b) = rect a b n ∧
+                      FootprintEdges (sq n a b) = edges (rect a b n)) →
+            (∀ (n : Nat),
+                ∀ (m : Nat),
+                  ∀ (a : Int),
+                    ∀ (b : Int),
+                      ∀ (c : Int),
+                        ∀ (d : Int),
+                          ∀ (l : Int),
+                            ∀ (h : Int),
+                              ∀ (y : Int),
+                                0 < n →
+                                0 < m →
+                                l < h →
+                                rect a b n ∩ rect c d m =
+                                {z : GaussianInt | l ≤ z.re ∧ z.re ≤ h ∧ z.im = y} →
+                                SimpleGridPathBetween
+                                (FootprintVertices (sq n a b) ∩
+                                FootprintVertices (sq m c d))
+                                (FootprintEdges (sq n a b) ∩ FootprintEdges (sq m c d))
+                                ⟨l, y⟩ ⟨h, y⟩) →
+              (∀ (n : Nat),
+                  ∀ (m : Nat),
+                    ∀ (a : Int),
+                      ∀ (b : Int),
+                        ∀ (c : Int),
+                          ∀ (d : Int),
+                            ∀ (l : Int),
+                              ∀ (h : Int),
+                                ∀ (x : Int),
+                                0 < n →
+                                0 < m →
+                                l < h →
+                                rect a b n ∩ rect c d m =
+                                {z : GaussianInt | l ≤ z.im ∧ z.im ≤ h ∧ z.re = x} →
+                                SimpleGridPathBetween
+                                (FootprintVertices (sq n a b) ∩
+                                FootprintVertices (sq m c d))
+                                (FootprintEdges (sq n a b) ∩ FootprintEdges (sq m c d))
+                                ⟨x, l⟩ ⟨x, h⟩) →
+                ∀ (r : Nat),
+                  ∀ (s : Nat),
+                    0 < r →
+                      0 < s →
+                        ∃ R :
+                          ExactTileInterfaceTriple (sq (r + s) 0 0)
+                            (sq (r + s) (-(s : Int)) (-(r + s : Int)))
+                            (sq s (-(s : Int)) 0),
+                          ∃ I :
+                            ExactTileInterfaceTriple (sq (r + s) 0 0)
+                              (sq (r + s) (-(r + s : Int)) s) (sq s (-(s : Int)) 0),
+                            ∃ A :
+                              ExactTileInterfaceTriple (sq (r + s) 0 0)
+                                (sq s (-(s : Int)) 0) (sq r (-(r : Int)) s),
+                              R.point = ⟨0, 0⟩ ∧
+                                I.point = ⟨0, s⟩ ∧
+                                A.point = ⟨0, s⟩ ∧
+                                R.otherCA = ⟨0, s⟩ ∧
+                                I.otherCA = ⟨0, 0⟩ ∧
+                                A.otherAB = ⟨0, 0⟩ ∧ A.otherCA = ⟨0, r + s⟩
+    ) := by
   classical
-  intro P rect adj edges reverse_path sq sqobs hpH hpV r s hr hs
+  intro rect adj edges reverse_path sq sqobs hpH hpV r s hr hs
   have hq : 0 < r+s := by omega
   have ca := hpV s (r+s) (-(s:Int)) 0 0 0 0 s 0 hs hq (by omega)
     (by ext z; simp only [rect, Set.mem_inter_iff, Set.mem_ofPred_eq, Nat.cast_add]; omega)
@@ -507,43 +591,104 @@ private theorem ledger1 :
     (by
       classical
       exact
-        (FordFareyParameter) → (
         let rect : Int → Int → Int → Set GaussianInt := fun a b n =>
           {z | a ≤ z.re ∧ z.re ≤ a + n ∧ b ≤ z.im ∧ z.im ≤ b + n}
         let adj := fun x y : GaussianInt =>
           y = x + 1 ∨ y = x - 1 ∨ y = x + ⟨0, 1⟩ ∨ y = x - ⟨0, 1⟩
         let edges : Set GaussianInt → Set (Finset GaussianInt) := fun V =>
-          {e | ∃ x ∈ V, ∃ y ∈ V, adj x y ∧ e = {x, y}}
-        (∀ {V : Set GaussianInt}, ∀ {E : Set (Finset GaussianInt)}, ∀ {x : GaussianInt}, ∀
-            {y : GaussianInt}, (SimpleGridPathBetween V E x y) → (SimpleGridPathBetween V E y x))
-            → (
-        let sq := fun n : Nat => fun a b : Int =>
-          TileTranslation (FordTile n) ⟨a,b⟩
-        (∀ (n : Nat), ∀ (a : Int), ∀ (b : Int), (0 < n) → (FootprintVertices (sq n a b) = rect a
-            b n ∧ FootprintEdges (sq n a b) = edges (rect a b n))) → ((∀ (n : Nat), ∀ (m : Nat),
-            ∀ (a : Int), ∀ (b : Int), ∀ (c : Int), ∀ (d : Int), ∀ (l : Int), ∀ (h : Int), ∀ (y :
-            Int), (0 < n) → ((0 < m) → ((l < h) → ((rect a b n ∩ rect c d m = {z : GaussianInt |
-            l ≤ z.re ∧ z.re ≤ h ∧ z.im = y}) → (SimpleGridPathBetween (FootprintVertices (sq n a
-            b) ∩ FootprintVertices (sq m c d)) (FootprintEdges (sq n a b) ∩ FootprintEdges (sq m
-            c d)) ⟨l,y⟩ ⟨h,y⟩))))) → ((∀ (n : Nat), ∀ (m : Nat), ∀ (a : Int), ∀ (b : Int), ∀ (c :
-            Int), ∀ (d : Int), ∀ (l : Int), ∀ (h : Int), ∀ (x : Int), (0 < n) → ((0 < m) → ((l <
-            h) → ((rect a b n ∩ rect c d m = {z : GaussianInt | l ≤ z.im ∧ z.im ≤ h ∧ z.re = x})
-            → (SimpleGridPathBetween (FootprintVertices (sq n a b) ∩ FootprintVertices (sq m c
-            d)) (FootprintEdges (sq n a b) ∩ FootprintEdges (sq m c d)) ⟨x,l⟩ ⟨x,h⟩))))) → ((∀ (r
-            : Nat), ∀ (s : Nat), (0 < r) → ((0 < s) → (∃ R : ExactTileInterfaceTriple (sq (r+s) 0
-            0) (sq (r+s) (-(s:Int)) (-(r+s:Int))) (sq s (-(s:Int)) 0), ∃ I :
-            ExactTileInterfaceTriple (sq (r+s) 0 0) (sq (r+s) (-(r+s:Int)) s) (sq s (-(s:Int))
-            0), ∃ A : ExactTileInterfaceTriple (sq (r+s) 0 0) (sq s (-(s:Int)) 0) (sq r
-            (-(r:Int)) s), R.point = ⟨0,0⟩ ∧ I.point = ⟨0,s⟩ ∧ A.point = ⟨0,s⟩ ∧ R.otherCA =
-            ⟨0,s⟩ ∧ I.otherCA = ⟨0,0⟩ ∧ A.otherAB = ⟨0,0⟩ ∧ A.otherCA = ⟨0,r+s⟩))) → (∀ (r :
-            Nat), ∀ (s : Nat), (0 < r) → ((0 < s) → (∃ R : ExactTileInterfaceTriple (sq (r+s) 0
-            0) (sq (r+s) (-(r:Int)) (r+s)) (sq r (-(r:Int)) s), ∃ I : ExactTileInterfaceTriple
-            (sq (r+s) 0 0) (sq (r+s) (-(r+s:Int)) (-(r:Int))) (sq r (-(r:Int)) s), ∃ A :
-            ExactTileInterfaceTriple (sq (r+s) 0 0) (sq r (-(r:Int)) s) (sq s (-(s:Int)) 0),
-            R.point = ⟨0,r+s⟩ ∧ I.point = ⟨0,s⟩ ∧ A.point = ⟨0,s⟩ ∧ R.otherCA = ⟨0,s⟩ ∧ I.otherCA
-            = ⟨0,r+s⟩ ∧ A.otherAB = ⟨0,r+s⟩)))))))) ) := by
+          {e | ∃ x ∈ V, ∃ y ∈ V, adj x y ∧ e = { x, y }}
+        (∀ {V : Set GaussianInt},
+            ∀ {E : Set (Finset GaussianInt)},
+              ∀ {x : GaussianInt},
+                ∀ {y : GaussianInt},
+                  SimpleGridPathBetween V E x y → SimpleGridPathBetween V E y x) →
+          let sq := fun n : Nat => fun a b : Int => TileTranslation (FordTile n) ⟨a, b⟩
+          (∀ (n : Nat),
+              ∀ (a : Int),
+                ∀ (b : Int),
+                  0 < n →
+                    FootprintVertices (sq n a b) = rect a b n ∧
+                      FootprintEdges (sq n a b) = edges (rect a b n)) →
+            (∀ (n : Nat),
+                ∀ (m : Nat),
+                  ∀ (a : Int),
+                    ∀ (b : Int),
+                      ∀ (c : Int),
+                        ∀ (d : Int),
+                          ∀ (l : Int),
+                            ∀ (h : Int),
+                              ∀ (y : Int),
+                                0 < n →
+                                0 < m →
+                                l < h →
+                                rect a b n ∩ rect c d m =
+                                {z : GaussianInt | l ≤ z.re ∧ z.re ≤ h ∧ z.im = y} →
+                                SimpleGridPathBetween
+                                (FootprintVertices (sq n a b) ∩
+                                FootprintVertices (sq m c d))
+                                (FootprintEdges (sq n a b) ∩ FootprintEdges (sq m c d))
+                                ⟨l, y⟩ ⟨h, y⟩) →
+              (∀ (n : Nat),
+                  ∀ (m : Nat),
+                    ∀ (a : Int),
+                      ∀ (b : Int),
+                        ∀ (c : Int),
+                          ∀ (d : Int),
+                            ∀ (l : Int),
+                              ∀ (h : Int),
+                                ∀ (x : Int),
+                                0 < n →
+                                0 < m →
+                                l < h →
+                                rect a b n ∩ rect c d m =
+                                {z : GaussianInt | l ≤ z.im ∧ z.im ≤ h ∧ z.re = x} →
+                                SimpleGridPathBetween
+                                (FootprintVertices (sq n a b) ∩
+                                FootprintVertices (sq m c d))
+                                (FootprintEdges (sq n a b) ∩ FootprintEdges (sq m c d))
+                                ⟨x, l⟩ ⟨x, h⟩) →
+                (∀ (r : Nat),
+                    ∀ (s : Nat),
+                      0 < r →
+                        0 < s →
+                          ∃ R :
+                            ExactTileInterfaceTriple (sq (r + s) 0 0)
+                              (sq (r + s) (-(s : Int)) (-(r + s : Int)))
+                              (sq s (-(s : Int)) 0),
+                            ∃ I :
+                              ExactTileInterfaceTriple (sq (r + s) 0 0)
+                                (sq (r + s) (-(r + s : Int)) s) (sq s (-(s : Int)) 0),
+                              ∃ A :
+                                ExactTileInterfaceTriple (sq (r + s) 0 0)
+                                (sq s (-(s : Int)) 0) (sq r (-(r : Int)) s),
+                                R.point = ⟨0, 0⟩ ∧
+                                I.point = ⟨0, s⟩ ∧
+                                A.point = ⟨0, s⟩ ∧
+                                R.otherCA = ⟨0, s⟩ ∧
+                                I.otherCA = ⟨0, 0⟩ ∧
+                                A.otherAB = ⟨0, 0⟩ ∧ A.otherCA = ⟨0, r + s⟩) →
+                  ∀ (r : Nat),
+                    ∀ (s : Nat),
+                      0 < r →
+                        0 < s →
+                          ∃ R :
+                            ExactTileInterfaceTriple (sq (r + s) 0 0)
+                              (sq (r + s) (-(r : Int)) (r + s)) (sq r (-(r : Int)) s),
+                            ∃ I :
+                              ExactTileInterfaceTriple (sq (r + s) 0 0)
+                                (sq (r + s) (-(r + s : Int)) (-(r : Int)))
+                                (sq r (-(r : Int)) s),
+                              ∃ A :
+                                ExactTileInterfaceTriple (sq (r + s) 0 0)
+                                (sq r (-(r : Int)) s) (sq s (-(s : Int)) 0),
+                                R.point = ⟨0, r + s⟩ ∧
+                                I.point = ⟨0, s⟩ ∧
+                                A.point = ⟨0, s⟩ ∧
+                                R.otherCA = ⟨0, s⟩ ∧
+                                I.otherCA = ⟨0, r + s⟩ ∧ A.otherAB = ⟨0, r + s⟩
+    ) := by
   classical
-  intro P rect adj edges reverse_path sq sqobs hpH hpV ledger0 r s hr hs
+  intro rect adj edges reverse_path sq sqobs hpH hpV ledger0 r s hr hs
   have hq : 0 < r+s := by omega
   have ca := hpV r (r+s) (-(r:Int)) s 0 0 s (r+s) 0 hr hq (by omega)
     (by ext z; simp only [rect, Set.mem_inter_iff, Set.mem_ofPred_eq, Nat.cast_add]; omega)
@@ -590,26 +735,43 @@ private theorem base0 :
     (by
       classical
       exact
-        (FordFareyParameter) → (
-        let sq := fun n : Nat => fun a b : Int =>
-          TileTranslation (FordTile n) ⟨a,b⟩
-        (∀ (r : Nat), ∀ (s : Nat), (0 < r) → ((0 < s) → (∃ R : ExactTileInterfaceTriple (sq (r+s)
-            0 0) (sq (r+s) (-(s:Int)) (-(r+s:Int))) (sq s (-(s:Int)) 0), ∃ I :
-            ExactTileInterfaceTriple (sq (r+s) 0 0) (sq (r+s) (-(r+s:Int)) s) (sq s (-(s:Int))
-            0), ∃ A : ExactTileInterfaceTriple (sq (r+s) 0 0) (sq s (-(s:Int)) 0) (sq r
-            (-(r:Int)) s), R.point = ⟨0,0⟩ ∧ I.point = ⟨0,s⟩ ∧ A.point = ⟨0,s⟩ ∧ R.otherCA =
-            ⟨0,s⟩ ∧ I.otherCA = ⟨0,0⟩ ∧ A.otherAB = ⟨0,0⟩ ∧ A.otherCA = ⟨0,r+s⟩))) → (
-        let package := fun U UR UL W Z : ProtoTile =>
-          ∃ R : ExactTileInterfaceTriple U UR W,
-          ∃ I : ExactTileInterfaceTriple U UL W,
-          ∃ A : ExactTileInterfaceTriple U W Z,
-            R.point ≠ I.point ∧ A.point = I.point ∧ R.otherCA = I.point ∧
-              I.otherCA = R.point ∧ A.otherAB = R.point
-        ∀ (r : Nat), ∀ (s : Nat), (0 < r) → ((0 < s) → (package (sq (r+s) 0 0) (sq (r+s)
-            (-(s:Int)) (-(r+s:Int))) (sq (r+s) (-(r+s:Int)) s) (sq s (-(s:Int)) 0) (sq r
-            (-(r:Int)) s))))) ) := by
+        let sq := fun n : Nat => fun a b : Int => TileTranslation (FordTile n) ⟨a, b⟩
+        (∀ (r : Nat),
+            ∀ (s : Nat),
+              0 < r →
+                0 < s →
+                  ∃ R :
+                    ExactTileInterfaceTriple (sq (r + s) 0 0)
+                      (sq (r + s) (-(s : Int)) (-(r + s : Int))) (sq s (-(s : Int)) 0),
+                    ∃ I :
+                      ExactTileInterfaceTriple (sq (r + s) 0 0)
+                        (sq (r + s) (-(r + s : Int)) s) (sq s (-(s : Int)) 0),
+                      ∃ A :
+                        ExactTileInterfaceTriple (sq (r + s) 0 0) (sq s (-(s : Int)) 0)
+                          (sq r (-(r : Int)) s),
+                        R.point = ⟨0, 0⟩ ∧
+                          I.point = ⟨0, s⟩ ∧
+                            A.point = ⟨0, s⟩ ∧
+                              R.otherCA = ⟨0, s⟩ ∧
+                                I.otherCA = ⟨0, 0⟩ ∧
+                                A.otherAB = ⟨0, 0⟩ ∧ A.otherCA = ⟨0, r + s⟩) →
+          let package := fun U UR UL W Z : ProtoTile =>
+            ∃ R : ExactTileInterfaceTriple U UR W,
+              ∃ I : ExactTileInterfaceTriple U UL W,
+                ∃ A : ExactTileInterfaceTriple U W Z,
+                  R.point ≠ I.point ∧
+                    A.point = I.point ∧
+                      R.otherCA = I.point ∧ I.otherCA = R.point ∧ A.otherAB = R.point
+          ∀ (r : Nat),
+            ∀ (s : Nat),
+              0 < r →
+                0 < s →
+                  package (sq (r + s) 0 0) (sq (r + s) (-(s : Int)) (-(r + s : Int)))
+                    (sq (r + s) (-(r + s : Int)) s) (sq s (-(s : Int)) 0)
+                    (sq r (-(r : Int)) s)
+    ) := by
   classical
-  intro P sq ledger0 package r s hr hs
+  intro sq ledger0 package r s hr hs
   obtain ⟨R,I,A,hR,hI,hA,hRC,hIC,hAB,_⟩ := ledger0 r s hr hs
   refine ⟨R,I,A,?_,hA.trans hI.symm,hRC.trans hI.symm,
     hIC.trans hR.symm,hAB.trans hR.symm⟩
@@ -623,26 +785,42 @@ private theorem base1 :
     (by
       classical
       exact
-        (FordFareyParameter) → (
-        let sq := fun n : Nat => fun a b : Int =>
-          TileTranslation (FordTile n) ⟨a,b⟩
-        (∀ (r : Nat), ∀ (s : Nat), (0 < r) → ((0 < s) → (∃ R : ExactTileInterfaceTriple (sq (r+s)
-            0 0) (sq (r+s) (-(r:Int)) (r+s)) (sq r (-(r:Int)) s), ∃ I : ExactTileInterfaceTriple
-            (sq (r+s) 0 0) (sq (r+s) (-(r+s:Int)) (-(r:Int))) (sq r (-(r:Int)) s), ∃ A :
-            ExactTileInterfaceTriple (sq (r+s) 0 0) (sq r (-(r:Int)) s) (sq s (-(s:Int)) 0),
-            R.point = ⟨0,r+s⟩ ∧ I.point = ⟨0,s⟩ ∧ A.point = ⟨0,s⟩ ∧ R.otherCA = ⟨0,s⟩ ∧ I.otherCA
-            = ⟨0,r+s⟩ ∧ A.otherAB = ⟨0,r+s⟩))) → (
-        let package := fun U UR UL W Z : ProtoTile =>
-          ∃ R : ExactTileInterfaceTriple U UR W,
-          ∃ I : ExactTileInterfaceTriple U UL W,
-          ∃ A : ExactTileInterfaceTriple U W Z,
-            R.point ≠ I.point ∧ A.point = I.point ∧ R.otherCA = I.point ∧
-              I.otherCA = R.point ∧ A.otherAB = R.point
-        ∀ (r : Nat), ∀ (s : Nat), (0 < r) → ((0 < s) → (package (sq (r+s) 0 0) (sq (r+s)
-            (-(r:Int)) (r+s)) (sq (r+s) (-(r+s:Int)) (-(r:Int))) (sq r (-(r:Int)) s) (sq s
-            (-(s:Int)) 0))))) ) := by
+        let sq := fun n : Nat => fun a b : Int => TileTranslation (FordTile n) ⟨a, b⟩
+        (∀ (r : Nat),
+            ∀ (s : Nat),
+              0 < r →
+                0 < s →
+                  ∃ R :
+                    ExactTileInterfaceTriple (sq (r + s) 0 0)
+                      (sq (r + s) (-(r : Int)) (r + s)) (sq r (-(r : Int)) s),
+                    ∃ I :
+                      ExactTileInterfaceTriple (sq (r + s) 0 0)
+                        (sq (r + s) (-(r + s : Int)) (-(r : Int))) (sq r (-(r : Int)) s),
+                      ∃ A :
+                        ExactTileInterfaceTriple (sq (r + s) 0 0) (sq r (-(r : Int)) s)
+                          (sq s (-(s : Int)) 0),
+                        R.point = ⟨0, r + s⟩ ∧
+                          I.point = ⟨0, s⟩ ∧
+                            A.point = ⟨0, s⟩ ∧
+                              R.otherCA = ⟨0, s⟩ ∧
+                                I.otherCA = ⟨0, r + s⟩ ∧ A.otherAB = ⟨0, r + s⟩) →
+          let package := fun U UR UL W Z : ProtoTile =>
+            ∃ R : ExactTileInterfaceTriple U UR W,
+              ∃ I : ExactTileInterfaceTriple U UL W,
+                ∃ A : ExactTileInterfaceTriple U W Z,
+                  R.point ≠ I.point ∧
+                    A.point = I.point ∧
+                      R.otherCA = I.point ∧ I.otherCA = R.point ∧ A.otherAB = R.point
+          ∀ (r : Nat),
+            ∀ (s : Nat),
+              0 < r →
+                0 < s →
+                  package (sq (r + s) 0 0) (sq (r + s) (-(r : Int)) (r + s))
+                    (sq (r + s) (-(r + s : Int)) (-(r : Int))) (sq r (-(r : Int)) s)
+                    (sq s (-(s : Int)) 0)
+    ) := by
   classical
-  intro P sq ledger1 package r s hr hs
+  intro sq ledger1 package r s hr hs
   obtain ⟨R,I,A,hR,hI,hA,hRC,hIC,hAB⟩ := ledger1 r s hr hs
   refine ⟨R,I,A,?_,hA.trans hI.symm,hRC.trans hI.symm,
     hIC.trans hR.symm,hAB.trans hR.symm⟩
@@ -656,27 +834,48 @@ private theorem sameobs :
     (by
       classical
       exact
-        (FordFareyParameter) → (
         let rect : Int → Int → Int → Set GaussianInt := fun a b n =>
           {z | a ≤ z.re ∧ z.re ≤ a + n ∧ b ≤ z.im ∧ z.im ≤ b + n}
         let adj := fun x y : GaussianInt =>
           y = x + 1 ∨ y = x - 1 ∨ y = x + ⟨0, 1⟩ ∨ y = x - ⟨0, 1⟩
         let edges : Set GaussianInt → Set (Finset GaussianInt) := fun V =>
-          {e | ∃ x ∈ V, ∃ y ∈ V, adj x y ∧ e = {x, y}}
-        (∀ (T : ProtoTile), ∀ (a : Int), ∀ (b : Int), ∀ (n : Int), (0 < n) → ((∀ z : GaussianInt,
-            z ∈ T.cells ↔ a ≤ z.re ∧ z.re < a + n ∧ b ≤ z.im ∧ z.im < b + n) → (FootprintVertices
-            T = rect a b n ∧ FootprintEdges T = edges (rect a b n)))) → (
-        let sq := fun n : Nat => fun a b : Int =>
-          TileTranslation (FordTile n) ⟨a,b⟩
-        (∀ (n : Nat), ∀ (a : Int), ∀ (b : Int), ∀ (z : GaussianInt), z ∈ (sq n a b).cells ↔ a ≤
-            z.re ∧ z.re < a+n ∧ b ≤ z.im ∧ z.im < b+n) → ((∀ (n : Nat), ∀ (a : Int), ∀ (b : Int),
-            (0 < n) → ((sq n a b).cells.Nonempty)) → ((∀ (n : Nat), ∀ (a : Int), ∀ (b : Int), (0
-            < n) → (TileCentroid (sq n a b) = ((a:Real)+(n:Real)/2,(b:Real)+(n:Real)/2))) → (∀ (T
-            : ProtoTile), ∀ (n : Nat), ∀ (a : Int), ∀ (b : Int), (0 < n) → ((T.cells = (sq n a
-            b).cells) → (FootprintVertices T = rect a b n ∧ FootprintEdges T = edges (rect a b n)
-            ∧ TileCentroid T = ((a:Real)+(n:Real)/2,(b:Real)+(n:Real)/2)))))))) ) := by
+          {e | ∃ x ∈ V, ∃ y ∈ V, adj x y ∧ e = { x, y }}
+        (∀ (T : ProtoTile),
+            ∀ (a : Int),
+              ∀ (b : Int),
+                ∀ (n : Int),
+                  0 < n →
+                    (∀ z : GaussianInt,
+                        z ∈ T.cells ↔ a ≤ z.re ∧ z.re < a + n ∧ b ≤ z.im ∧ z.im < b + n) →
+                      FootprintVertices T = rect a b n ∧
+                        FootprintEdges T = edges (rect a b n)) →
+          let sq := fun n : Nat => fun a b : Int => TileTranslation (FordTile n) ⟨a, b⟩
+          (∀ (n : Nat),
+              ∀ (a : Int),
+                ∀ (b : Int),
+                  ∀ (z : GaussianInt),
+                    z ∈ (sq n a b).cells ↔
+                      a ≤ z.re ∧ z.re < a + n ∧ b ≤ z.im ∧ z.im < b + n) →
+            (∀ (n : Nat), ∀ (a : Int), ∀ (b : Int), 0 < n → (sq n a b).cells.Nonempty) →
+              (∀ (n : Nat),
+                  ∀ (a : Int),
+                    ∀ (b : Int),
+                      0 < n →
+                        TileCentroid (sq n a b) =
+                          ((a : Real) + (n : Real) / 2, (b : Real) + (n : Real) / 2)) →
+                ∀ (T : ProtoTile),
+                  ∀ (n : Nat),
+                    ∀ (a : Int),
+                      ∀ (b : Int),
+                        0 < n →
+                          T.cells = (sq n a b).cells →
+                            FootprintVertices T = rect a b n ∧
+                              FootprintEdges T = edges (rect a b n) ∧
+                                TileCentroid T =
+                                ((a : Real) + (n : Real) / 2, (b : Real) + (n : Real) / 2)
+    ) := by
   classical
-  intro P rect adj edges obs sq sqcell sqne sqcent T n a b hn hc
+  intro rect adj edges obs sq sqcell sqne sqcent T n a b hn hc
   have h := obs T a b n (by omega) (by intro z; rw [hc]; exact sqcell n a b z)
   have ht : T.cells.Nonempty := hc ▸ sqne n a b hn
   refine ⟨h.1,h.2,?_⟩
@@ -763,38 +962,75 @@ private theorem finish0 :
     (by
       classical
       exact
-        (FordFareyParameter) → (
-        let sq := fun n : Nat => fun a b : Int =>
-          TileTranslation (FordTile n) ⟨a,b⟩
+        let sq := fun n : Nat => fun a b : Int => TileTranslation (FordTile n) ⟨a, b⟩
         let package := fun U UR UL W Z : ProtoTile =>
           ∃ R : ExactTileInterfaceTriple U UR W,
-          ∃ I : ExactTileInterfaceTriple U UL W,
-          ∃ A : ExactTileInterfaceTriple U W Z,
-            R.point ≠ I.point ∧ A.point = I.point ∧ R.otherCA = I.point ∧
-              I.otherCA = R.point ∧ A.otherAB = R.point
-        (∀ (r : Nat), ∀ (s : Nat), (0 < r) → ((0 < s) → (package (sq (r+s) 0 0) (sq (r+s)
-            (-(s:Int)) (-(r+s:Int))) (sq (r+s) (-(r+s:Int)) s) (sq s (-(s:Int)) 0) (sq r
-            (-(r:Int)) s)))) → (
-        let ax := fun (q : Int) (flip : Bool) (t a n : Int) =>
-          (if flip then q-a-n else a)+t
-        (∀ (q : Int), ∀ (flip : Bool), ∀ (t : GaussianInt), ∀ (N : Fin 5 → Nat), ∀ (X : Fin 5 →
-            Int), ∀ (Y : Fin 5 → Int), (∀ k, 0 < N k) → (∀ (T : Fin 5 → ProtoTile), (∀ k, (T
-            k).cells = (sq (N k) (ax q flip t.re (X k) (N k)) (ax q flip t.im (Y k) (N
-            k))).cells) → ((package (sq (N 0) (X 0) (Y 0)) (sq (N 1) (X 1) (Y 1)) (sq (N 2) (X 2)
-            (Y 2)) (sq (N 3) (X 3) (Y 3)) (sq (N 4) (X 4) (Y 4))) → (package (T 0) (T 1) (T 2) (T
-            3) (T 4))))) → ((∀ (T : ProtoTile), ∀ (n : Nat), ∀ (a : Int), ∀ (b : Int), ∀ (u :
-            GaussianInt), (T.cells = (sq n a b).cells) → ((TileTranslation T u).cells = (sq n
-            (a+u.re) (b+u.im)).cells)) → (∀ (r : Nat), ∀ (s : Nat), (0 < r) → ((0 < s) → (∀ (a :
-            Int), ∀ (b : Int), ∀ (flip : Bool), ∀ (U : ProtoTile), ∀ (W : ProtoTile), ∀ (Z :
-            ProtoTile), (U.cells = (sq (r+s) a b).cells) → ((W.cells = (sq s (if flip then
-            a+(r+s:Int) else a-s)
-            (if flip then b+r else b)).cells) → ((Z.cells = (sq r (if flip then a+(r+s:Int) else
-                a-r)
-            (if flip then b else b+s)).cells) → (package U (TileTranslation U (if flip then
-                ⟨s,r+s⟩ else ⟨-(s:Int),-(r+s:Int)⟩)) (TileTranslation U (if flip then
-                ⟨r+s,-(s:Int)⟩ else ⟨-(r+s:Int),s⟩)) W Z))))))))) ) := by
+            ∃ I : ExactTileInterfaceTriple U UL W,
+              ∃ A : ExactTileInterfaceTriple U W Z,
+                R.point ≠ I.point ∧
+                  A.point = I.point ∧
+                    R.otherCA = I.point ∧ I.otherCA = R.point ∧ A.otherAB = R.point
+        (∀ (r : Nat),
+            ∀ (s : Nat),
+              0 < r →
+                0 < s →
+                  package (sq (r + s) 0 0) (sq (r + s) (-(s : Int)) (-(r + s : Int)))
+                    (sq (r + s) (-(r + s : Int)) s) (sq s (-(s : Int)) 0)
+                    (sq r (-(r : Int)) s)) →
+          let ax := fun (q : Int) (flip : Bool) (t a n : Int) =>
+            (if flip then q - a - n else a) + t
+          (∀ (q : Int),
+              ∀ (flip : Bool),
+                ∀ (t : GaussianInt),
+                  ∀ (N : Fin 5 → Nat),
+                    ∀ (X : Fin 5 → Int),
+                      ∀ (Y : Fin 5 → Int),
+                        (∀ k, 0 < N k) →
+                          ∀ (T : Fin 5 → ProtoTile),
+                            (∀ k,
+                                (T k).cells =
+                                (sq (N k) (ax q flip t.re (X k) (N k))
+                                (ax q flip t.im (Y k) (N k))).cells) →
+                              package (sq (N 0) (X 0) (Y 0)) (sq (N 1) (X 1) (Y 1))
+                                (sq (N 2) (X 2) (Y 2)) (sq (N 3) (X 3) (Y 3))
+                                (sq (N 4) (X 4) (Y 4)) →
+                                package (T 0) (T 1) (T 2) (T 3) (T 4)) →
+            (∀ (T : ProtoTile),
+                ∀ (n : Nat),
+                  ∀ (a : Int),
+                    ∀ (b : Int),
+                      ∀ (u : GaussianInt),
+                        T.cells = (sq n a b).cells →
+                          (TileTranslation T u).cells =
+                            (sq n (a + u.re) (b + u.im)).cells) →
+              ∀ (r : Nat),
+                ∀ (s : Nat),
+                  0 < r →
+                    0 < s →
+                      ∀ (a : Int),
+                        ∀ (b : Int),
+                          ∀ (flip : Bool),
+                            ∀ (U : ProtoTile),
+                              ∀ (W : ProtoTile),
+                                ∀ (Z : ProtoTile),
+                                U.cells = (sq (r + s) a b).cells →
+                                W.cells =
+                                (sq s (if flip then a + (r + s : Int) else a - s)
+                                (if flip then b + r else b)).cells →
+                                Z.cells =
+                                (sq r (if flip then a + (r + s : Int) else a - r)
+                                (if flip then b else b + s)).cells →
+                                package U
+                                (TileTranslation U
+                                (if flip then ⟨s, r + s⟩
+                              else ⟨-(s : Int), -(r + s : Int)⟩))
+                                (TileTranslation U
+                                (if flip then ⟨r + s, -(s : Int)⟩
+                              else ⟨-(r + s : Int), s⟩))
+                                W Z
+    ) := by
   classical
-  intro P sq package base0 ax carry_squares translate_cells r s hr hs a b flip U W Z hU hW hZ
+  intro sq package base0 ax carry_squares translate_cells r s hr hs a b flip U W Z hU hW hZ
   refine carry_squares (r+s) flip ⟨a,b⟩ ![r+s,r+s,r+s,s,r]
     ![0,-(s:Int),-(r+s:Int),-(s:Int),-(r:Int)]
     ![0,-(r+s:Int),s,0,s] ?_
@@ -818,38 +1054,75 @@ private theorem finish1 :
     (by
       classical
       exact
-        (FordFareyParameter) → (
-        let sq := fun n : Nat => fun a b : Int =>
-          TileTranslation (FordTile n) ⟨a,b⟩
+        let sq := fun n : Nat => fun a b : Int => TileTranslation (FordTile n) ⟨a, b⟩
         let package := fun U UR UL W Z : ProtoTile =>
           ∃ R : ExactTileInterfaceTriple U UR W,
-          ∃ I : ExactTileInterfaceTriple U UL W,
-          ∃ A : ExactTileInterfaceTriple U W Z,
-            R.point ≠ I.point ∧ A.point = I.point ∧ R.otherCA = I.point ∧
-              I.otherCA = R.point ∧ A.otherAB = R.point
-        (∀ (r : Nat), ∀ (s : Nat), (0 < r) → ((0 < s) → (package (sq (r+s) 0 0) (sq (r+s)
-            (-(r:Int)) (r+s)) (sq (r+s) (-(r+s:Int)) (-(r:Int))) (sq r (-(r:Int)) s) (sq s
-            (-(s:Int)) 0)))) → (
-        let ax := fun (q : Int) (flip : Bool) (t a n : Int) =>
-          (if flip then q-a-n else a)+t
-        (∀ (q : Int), ∀ (flip : Bool), ∀ (t : GaussianInt), ∀ (N : Fin 5 → Nat), ∀ (X : Fin 5 →
-            Int), ∀ (Y : Fin 5 → Int), (∀ k, 0 < N k) → (∀ (T : Fin 5 → ProtoTile), (∀ k, (T
-            k).cells = (sq (N k) (ax q flip t.re (X k) (N k)) (ax q flip t.im (Y k) (N
-            k))).cells) → ((package (sq (N 0) (X 0) (Y 0)) (sq (N 1) (X 1) (Y 1)) (sq (N 2) (X 2)
-            (Y 2)) (sq (N 3) (X 3) (Y 3)) (sq (N 4) (X 4) (Y 4))) → (package (T 0) (T 1) (T 2) (T
-            3) (T 4))))) → ((∀ (T : ProtoTile), ∀ (n : Nat), ∀ (a : Int), ∀ (b : Int), ∀ (u :
-            GaussianInt), (T.cells = (sq n a b).cells) → ((TileTranslation T u).cells = (sq n
-            (a+u.re) (b+u.im)).cells)) → (∀ (r : Nat), ∀ (s : Nat), (0 < r) → ((0 < s) → (∀ (a :
-            Int), ∀ (b : Int), ∀ (flip : Bool), ∀ (U : ProtoTile), ∀ (W : ProtoTile), ∀ (Z :
-            ProtoTile), (U.cells = (sq (r+s) a b).cells) → ((W.cells = (sq r (if flip then
-            a+(r+s:Int) else a-r)
-            (if flip then b else b+s)).cells) → ((Z.cells = (sq s (if flip then a+(r+s:Int) else
-                a-s)
-            (if flip then b+r else b)).cells) → (package U (TileTranslation U (if flip then
-                ⟨r,-(r+s:Int)⟩ else ⟨-(r:Int),r+s⟩)) (TileTranslation U (if flip then ⟨r+s,r⟩
-                else ⟨-(r+s:Int),-(r:Int)⟩)) W Z))))))))) ) := by
+            ∃ I : ExactTileInterfaceTriple U UL W,
+              ∃ A : ExactTileInterfaceTriple U W Z,
+                R.point ≠ I.point ∧
+                  A.point = I.point ∧
+                    R.otherCA = I.point ∧ I.otherCA = R.point ∧ A.otherAB = R.point
+        (∀ (r : Nat),
+            ∀ (s : Nat),
+              0 < r →
+                0 < s →
+                  package (sq (r + s) 0 0) (sq (r + s) (-(r : Int)) (r + s))
+                    (sq (r + s) (-(r + s : Int)) (-(r : Int))) (sq r (-(r : Int)) s)
+                    (sq s (-(s : Int)) 0)) →
+          let ax := fun (q : Int) (flip : Bool) (t a n : Int) =>
+            (if flip then q - a - n else a) + t
+          (∀ (q : Int),
+              ∀ (flip : Bool),
+                ∀ (t : GaussianInt),
+                  ∀ (N : Fin 5 → Nat),
+                    ∀ (X : Fin 5 → Int),
+                      ∀ (Y : Fin 5 → Int),
+                        (∀ k, 0 < N k) →
+                          ∀ (T : Fin 5 → ProtoTile),
+                            (∀ k,
+                                (T k).cells =
+                                (sq (N k) (ax q flip t.re (X k) (N k))
+                                (ax q flip t.im (Y k) (N k))).cells) →
+                              package (sq (N 0) (X 0) (Y 0)) (sq (N 1) (X 1) (Y 1))
+                                (sq (N 2) (X 2) (Y 2)) (sq (N 3) (X 3) (Y 3))
+                                (sq (N 4) (X 4) (Y 4)) →
+                                package (T 0) (T 1) (T 2) (T 3) (T 4)) →
+            (∀ (T : ProtoTile),
+                ∀ (n : Nat),
+                  ∀ (a : Int),
+                    ∀ (b : Int),
+                      ∀ (u : GaussianInt),
+                        T.cells = (sq n a b).cells →
+                          (TileTranslation T u).cells =
+                            (sq n (a + u.re) (b + u.im)).cells) →
+              ∀ (r : Nat),
+                ∀ (s : Nat),
+                  0 < r →
+                    0 < s →
+                      ∀ (a : Int),
+                        ∀ (b : Int),
+                          ∀ (flip : Bool),
+                            ∀ (U : ProtoTile),
+                              ∀ (W : ProtoTile),
+                                ∀ (Z : ProtoTile),
+                                U.cells = (sq (r + s) a b).cells →
+                                W.cells =
+                                (sq r (if flip then a + (r + s : Int) else a - r)
+                                (if flip then b else b + s)).cells →
+                                Z.cells =
+                                (sq s (if flip then a + (r + s : Int) else a - s)
+                                (if flip then b + r else b)).cells →
+                                package U
+                                (TileTranslation U
+                                (if flip then ⟨r, -(r + s : Int)⟩
+                              else ⟨-(r : Int), r + s⟩))
+                                (TileTranslation U
+                                (if flip then ⟨r + s, r⟩
+                              else ⟨-(r + s : Int), -(r : Int)⟩))
+                                W Z
+    ) := by
   classical
-  intro P sq package base1 ax carry_squares translate_cells r s hr hs a b flip U W Z hU hW hZ
+  intro sq package base1 ax carry_squares translate_cells r s hr hs a b flip U W Z hU hW hZ
   refine carry_squares (r+s) flip ⟨a,b⟩ ![r+s,r+s,r+s,r,s]
     ![0,-(r:Int),-(r+s:Int),-(r:Int),-(s:Int)]
     ![0,r+s,-(r:Int),s,0] ?_
@@ -873,10 +1146,10 @@ private theorem hrAt727 :
     (by
       classical
       exact
-        ∀ (P : FordFareyParameter), ((1 : ℕ) < P.q) → ((Fin (3 : ℕ)) → ((Fin (4 : ℕ)) → (0 <
-            P.q₁))) ) := by
+        ∀ (P : FordFareyParameter), (1 : ℕ) < P.q → 0 < P.q₁
+    ) := by
   classical
-  intro P hq i s
+  intro P hq
   by_contra h
   have hz : P.q₁ = 0 := by omega
   have hd := P.det₁
@@ -1273,28 +1546,28 @@ theorem FordOrientedChildParentEndpoints
     y = x + 1 ∨ y = x - 1 ∨ y = x + ⟨0, 1⟩ ∨ y = x - ⟨0, 1⟩
   let edges : Set GaussianInt → Set (Finset GaussianInt) := fun V =>
     {e | ∃ x ∈ V, ∃ y ∈ V, adj x y ∧ e = {x, y}}
-  have obs := FordEndpointProof.obs P
+  have obs := FordEndpointProof.obs
   have edge_inter := FordEndpointProof.edge_inter
   -- Enumerate every vertex and every edge of a straight segment.
-  have linepath := FordEndpointProof.linepath P
+  have linepath := FordEndpointProof.linepath
   have reverse_path {V : Set GaussianInt} {E : Set (Finset GaussianInt)} {x y : GaussianInt}
       (hp : SimpleGridPathBetween V E x y) := FordEndpointProof.reverse_path (V := V) (E :=
           E) (x := x) (y := y) hp
-  have fordcell := FordEndpointProof.fordcell P
+  have fordcell := FordEndpointProof.fordcell
   let sq := fun n : Nat => fun a b : Int =>
     TileTranslation (FordTile n) ⟨a,b⟩
   have sqcell (n : Nat) (a b : Int) (z : GaussianInt) :
       z ∈ (sq n a b).cells ↔
-        a ≤ z.re ∧ z.re < a+n ∧ b ≤ z.im ∧ z.im < b+n := FordEndpointProof.sqcell P fordcell
+        a ≤ z.re ∧ z.re < a+n ∧ b ≤ z.im ∧ z.im < b+n := FordEndpointProof.sqcell fordcell
             n a b z
   have sqobs := FordEndpointAssembly.sqobs obs sqcell
   have sqne (n : Nat) (a b : Int) (hn : 0 < n) : (sq n a b).cells.Nonempty :=
     ⟨⟨a,b⟩, (sqcell n a b _).mpr (by dsimp; omega)⟩
   -- A centered quarter-turn determines the square's centroid without sums.
-  have hpH := FordEndpointProof.hpH edge_inter (FordEndpointProof.horizontal P linepath) sqobs
-  have hpV := FordEndpointProof.hpV edge_inter (FordEndpointProof.vertical P linepath) sqobs
+  have hpH := FordEndpointProof.hpH edge_inter (FordEndpointProof.horizontal linepath) sqobs
+  have hpV := FordEndpointProof.hpV edge_inter (FordEndpointProof.vertical linepath) sqobs
   -- The complete path ledger for rotation zero.
-  have ledger0 := FordEndpointProof.ledger0 P reverse_path sqobs hpH hpV
+  have ledger0 := FordEndpointProof.ledger0 reverse_path sqobs hpH hpV
   -- The second ledger uses the same child-parent junction with parents swapped.
   let package := fun U UR UL W Z : ProtoTile =>
     ∃ R : ExactTileInterfaceTriple U UR W,
@@ -1306,8 +1579,8 @@ theorem FordOrientedChildParentEndpoints
     (if flip then (⟨q,q⟩ : GaussianInt) - z else z) + t
   let ax := fun (q : Int) (flip : Bool) (t a n : Int) =>
     (if flip then q-a-n else a)+t
-  have sameobs := FordEndpointProof.sameobs P obs sqcell sqne (FordEndpointProof.sqcent
-      (FordEndpointProof.fordcent P fordcell))
+  have sameobs := FordEndpointProof.sameobs obs sqcell sqne (FordEndpointProof.sqcent
+      (FordEndpointProof.fordcent fordcell))
   have carry_squares := FordEndpointProof.carry_squares
   have translate_cells := FordEndpointProof.translate_cells
   have finish0 (r s : Nat) (hr : 0 < r) (hs : 0 < s) (a b : Int)
@@ -1320,7 +1593,7 @@ theorem FordOrientedChildParentEndpoints
       package U
         (TileTranslation U (if flip then ⟨s,r+s⟩ else ⟨-(s:Int),-(r+s:Int)⟩))
         (TileTranslation U (if flip then ⟨r+s,-(s:Int)⟩ else ⟨-(r+s:Int),s⟩)) W Z :=
-            FordEndpointProof.finish0 P (FordEndpointProof.base0 P ledger0) carry_squares
+            FordEndpointProof.finish0 (FordEndpointProof.base0 ledger0) carry_squares
                 translate_cells r s hr hs a b
             flip U W Z hU hW hZ
   have finish1 (r s : Nat) (hr : 0 < r) (hs : 0 < s) (a b : Int)
@@ -1333,13 +1606,13 @@ theorem FordOrientedChildParentEndpoints
       package U
         (TileTranslation U (if flip then ⟨r,-(r+s:Int)⟩ else ⟨-(r:Int),r+s⟩))
         (TileTranslation U (if flip then ⟨r+s,r⟩ else ⟨-(r+s:Int),-(r:Int)⟩)) W Z :=
-            FordEndpointProof.finish1 P (FordEndpointProof.base1 P
-                (FordEndpointProof.ledger1 P reverse_path sqobs hpH hpV ledger0)) carry_squares
+            FordEndpointProof.finish1 (FordEndpointProof.base1
+                (FordEndpointProof.ledger1 reverse_path sqobs hpH hpV ledger0)) carry_squares
                 translate_cells r s hr hs a b
             flip U W Z hU hW hZ
   dsimp only
   intro i s U W Z hU hW hZ hUpos hWpos hZpos hcw hcz
-  have hr : 0 < P.q₁ := FordEndpointProof.hrAt727 P hq i s
+  have hr : 0 < P.q₁ := FordEndpointProof.hrAt727 P hq
   have hs : 0 < P.q₂ := P.q₂_pos
   have hr0 : P.q₁ ≠ 0 := by omega
   have hqs : P.q = P.q₁ + P.q₂ := P.sum_q

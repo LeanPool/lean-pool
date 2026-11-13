@@ -1758,11 +1758,14 @@ private theorem hdist :
   ring
 
 private theorem hball :
-    ∀ (x : Real × Real), ∀ (r : Real), (∀ (w : Real × Real), (‖w‖ = 1) → (∀ (t : Real), (0 < t) →
-        (dist (x + t • w) x = t))) → (∀ (w : Real × Real), (‖w‖ = 1) → (∀ (t : Real), (0 < t) →
-        ((t < r) → (Metric.ball (x + t • w) (r - t) ⊆ Metric.ball x r)))) := by
+    ∀ (x : Real × Real),
+      ∀ (r : Real),
+        (∀ (w : Real × Real), ‖w‖ = 1 → ∀ (t : Real), 0 < t → dist (x + t • w) x = t) →
+          ∀ (w : Real × Real),
+            ‖w‖ = 1 →
+              ∀ (t : Real), 0 < t → Metric.ball (x + t • w) (r - t) ⊆ Metric.ball x r := by
   classical
-  intro x r hdist w hw t ht htr
+  intro x r hdist w hw t ht
   apply Metric.ball_subset_ball'
   rw [hdist w hw t ht]
   exact le_of_eq (sub_add_cancel r t)
@@ -2260,16 +2263,27 @@ private theorem nondegenerateContinuation :
       · simpa [haEq] using hRa
 
 private theorem oppositeContinuation :
-    ∀ (x : Real × Real), ∀ (r : Real), ∀ (u : Real × Real), ∀ (v : Real × Real), (0 < r) → ((‖u‖
-        = 1) → ((‖v‖ = 1) → ((u ≠ v) → (∀ (E : P3889T1TwoRaySectorDecomposition x r u v),
-    (u ≠ ((0 : ℝ), (0 : ℝ))) → ((u.1 ≠ (0 : ℝ) ∨ u.2 ≠ (0 : ℝ)) → ((v = -u) → (∃ e : Bool, ∀ t :
-        Real, 0 < t → t < r →
-      P3934T1LocalSide E.left (x + t • u) (-u) e ∧
-      P3934T1LocalSide E.left (x + t • v) v e ∧
-      P3934T1LocalSide E.right (x + t • u) (-u) (!e) ∧
-      P3934T1LocalSide E.right (x + t • v) v (!e)))))))) := by
+    ∀ (x : Real × Real),
+      ∀ (r : Real),
+        ∀ (u : Real × Real),
+          ∀ (v : Real × Real),
+            0 < r →
+              ‖u‖ = 1 →
+                ‖v‖ = 1 →
+                  ∀ (E : P3889T1TwoRaySectorDecomposition x r u v),
+                    u ≠ ((0 : ℝ), (0 : ℝ)) →
+                      u.1 ≠ (0 : ℝ) ∨ u.2 ≠ (0 : ℝ) →
+                        v = -u →
+                          ∃ e : Bool,
+                            ∀ t : Real,
+                            0 < t →
+                            t < r →
+                            P3934T1LocalSide E.left (x + t • u) (-u) e ∧
+                            P3934T1LocalSide E.left (x + t • v) v e ∧
+                            P3934T1LocalSide E.right (x + t • u) (-u) !e ∧
+                            P3934T1LocalSide E.right (x + t • v) v !e := by
   classical
-  intro x r u v hr hu hv huv E hu_ne hcoord hvneg
+  intro x r u v hr hu hv E hu_ne hcoord hvneg
   let det : (Real × Real) → (Real × Real) → Real :=
     fun a b => a.1 * b.2 - a.2 * b.1
   let A : (Real × Real) → Real := fun p => det u (p - x)
@@ -2285,7 +2299,7 @@ private theorem oppositeContinuation :
     exact sub_pos.mpr htr
   have hball (w : Real × Real) (hw : ‖w‖ = 1) (t : Real)
     (ht : 0 < t) (htr : t < r) := SectorContinuationFacts.hball x r
-        hdist w hw t ht htr
+        hdist w hw t ht
   have hlocalP (w : Real × Real) (hw : w = u ∨ w = v)
   (hwNorm : ‖w‖ = 1) (t : Real) (ht : 0 < t) (htr : t < r) :
   P3934T1LocalSide P (x + t • w) (-u) false := SectorContinuationGeometry.hlocalP x r u v
@@ -2436,7 +2450,7 @@ theorem P3934T1SectorContinuation (x : Real × Real) (r : Real)
       P3934T1LocalSide E.left (x + t • v) v e ∧
       P3934T1LocalSide E.right (x + t • u) (-u) (!e) ∧
       P3934T1LocalSide E.right (x + t • v) v (!e) :=
-          SectorContinuationCases.oppositeContinuation x r u v hr hu hv huv E hu_ne hcoord hvneg
+          SectorContinuationCases.oppositeContinuation x r u v hr hu hv E hu_ne hcoord hvneg
   exact hdet_cases.elim nondegenerateContinuation oppositeContinuation
 
 end ApollonianSuperharmonic

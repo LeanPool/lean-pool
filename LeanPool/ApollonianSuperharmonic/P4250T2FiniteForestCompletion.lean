@@ -28,11 +28,13 @@ namespace ApollonianSuperharmonic
 namespace ForestCompletionLemmas
 
 private theorem noGridTriangle :
-    (Finset GaussianInt) → (Finset GaussianInt) → ∀ (x : GaussianInt), ∀ (y : GaussianInt), ∀ (z
-        : GaussianInt), (FourNeighborAdjacent x y) → (FourNeighborAdjacent y z) →
-        (FourNeighborAdjacent z x) → False := by
+    ∀ (x : GaussianInt),
+      ∀ (y : GaussianInt),
+        ∀ (z : GaussianInt),
+          FourNeighborAdjacent x y →
+            FourNeighborAdjacent y z → FourNeighborAdjacent z x → False := by
   classical
-  intro W R x y z hxy hyz hzx
+  intro x y z hxy hyz hzx
   simp [FourNeighborAdjacent, Zsqrtd.ext_iff] at hxy hyz hzx
   omega
 
@@ -45,24 +47,31 @@ private theorem adjacentSymm :
   all_goals simp [FourNeighborAdjacent, Zsqrtd.ext_iff]
 
 private theorem hHacyclic :
-    ∀ (W : Finset GaussianInt), (Finset GaussianInt) → (∀ V E, SimpleGridCycle V E → ¬ V ⊆ (W :
-        Set GaussianInt)) → (∀ (x : GaussianInt), ∀ (y : GaussianInt), ∀ (z : GaussianInt),
-            (FourNeighborAdjacent x y) → (FourNeighborAdjacent y z) → (FourNeighborAdjacent z x) →
-        False) → ∀ (adjacentSymm : ∀ {a : GaussianInt}, ∀ {b : GaussianInt},
-            (FourNeighborAdjacent a b) → FourNeighborAdjacent b a),
-    let H : SimpleGraph GaussianInt := {
-      Adj := fun x y => FourNeighborAdjacent x y ∧ x ∈ W ∧ y ∈ W
-      symm := ⟨by
-        intro x y h
-        exact ⟨adjacentSymm h.1, h.2.2, h.2.1⟩⟩
-      loopless := ⟨by
-        intro x h
-        rcases h.1 with h | h | h | h <;>
-          simp [Zsqrtd.ext_iff] at h <;> omega⟩
-    }
-    H.IsAcyclic := by
+    ∀ (W : Finset GaussianInt),
+      (∀ V E, SimpleGridCycle V E → ¬V ⊆ (W : Set GaussianInt)) →
+        (∀ (x : GaussianInt),
+            ∀ (y : GaussianInt),
+              ∀ (z : GaussianInt),
+                FourNeighborAdjacent x y →
+                  FourNeighborAdjacent y z → FourNeighborAdjacent z x → False) →
+          ∀
+            (adjacentSymm :
+              ∀ {a : GaussianInt},
+                ∀ {b : GaussianInt}, FourNeighborAdjacent a b → FourNeighborAdjacent b a),
+            let H : SimpleGraph GaussianInt :=
+              { Adj := fun x y => FourNeighborAdjacent x y ∧ x ∈ W ∧ y ∈ W
+                symm :=
+                  ⟨by
+                    intro x y h
+                    exact ⟨adjacentSymm h.1, h.2.2, h.2.1⟩⟩
+                loopless :=
+                  ⟨by
+                    intro x h
+                    rcases h.1 with h | h | h | h <;> simp [Zsqrtd.ext_iff] at h <;>
+                      omega⟩ }
+            H.IsAcyclic := by
   classical
-  intro W R hcycle noGridTriangle adjacentSymm H a c hc
+  intro W hcycle noGridTriangle adjacentSymm H a c hc
   have walkW {u v : GaussianInt} (p : H.Walk u v) (hu : u ∈ W) :
       ∀ z ∈ p.support, z ∈ W := by
     intro z hz
@@ -146,26 +155,29 @@ private theorem hHacyclic :
       hverts
 
 private theorem hPQ :
-    ∀ (W : Finset GaussianInt), (Finset GaussianInt) → ∀ (adjacentSymm : ∀ {a : GaussianInt}, ∀
-        {b : GaussianInt}, (FourNeighborAdjacent a b) → FourNeighborAdjacent b a),
-    let X := {x : GaussianInt // x ∈ W}
-    let G : SimpleGraph X := {
-      Adj := fun x y => FourNeighborAdjacent x.1 y.1
-      symm := ⟨by
-        intro x y h
-        exact adjacentSymm h⟩
-      loopless := ⟨by
-        intro x h
-        rcases h with h | h | h | h <;>
-          simp [Zsqrtd.ext_iff] at h <;> omega⟩
-    }
-    letI : DecidableRel FourNeighborAdjacent := fun _ _ => Classical.propDecidable _
-    letI : DecidableRel G.Adj := fun _ _ => Classical.propDecidable _
-    let P := (W.product W).filter fun e => FourNeighborAdjacent e.1 e.2
-    let Q := Finset.univ.filter fun e : X × X => G.Adj e.1 e.2
-    P.card = Q.card := by
+    ∀ (W : Finset GaussianInt),
+      ∀
+        (adjacentSymm :
+          ∀ {a : GaussianInt},
+            ∀ {b : GaussianInt}, FourNeighborAdjacent a b → FourNeighborAdjacent b a),
+        let X := { x : GaussianInt // x ∈ W }
+        let G : SimpleGraph X :=
+          { Adj := fun x y => FourNeighborAdjacent x.1 y.1
+            symm :=
+              ⟨by
+                intro x y h
+                exact adjacentSymm h⟩
+            loopless :=
+              ⟨by
+                intro x h
+                rcases h with h | h | h | h <;> simp [Zsqrtd.ext_iff] at h <;> omega⟩ }
+        letI : DecidableRel FourNeighborAdjacent := fun _ _ => Classical.propDecidable _
+        letI : DecidableRel G.Adj := fun _ _ => Classical.propDecidable _
+        let P := (W.product W).filter fun e => FourNeighborAdjacent e.1 e.2
+        let Q := Finset.univ.filter fun e : X × X => G.Adj e.1 e.2
+        P.card = Q.card := by
   classical
-  intro W R adjacentSymm X G P Q
+  intro W adjacentSymm X G P Q
   refine Finset.card_bij' (s := P) (t := Q)
     (fun e he => (⟨e.1, (Finset.mem_product.mp (Finset.mem_filter.mp he).1).1⟩,
       ⟨e.2, (Finset.mem_product.mp (Finset.mem_filter.mp he).1).2⟩))
@@ -183,50 +195,56 @@ private theorem hPQ :
     apply Prod.ext <;> apply Subtype.ext <;> rfl
 
 private theorem hordered :
-    ∀ (W : Finset GaussianInt), (Finset GaussianInt) → ∀ (adjacentSymm : ∀ {a : GaussianInt}, ∀
-        {b : GaussianInt}, (FourNeighborAdjacent a b) → FourNeighborAdjacent b a),
-    let X := {x : GaussianInt // x ∈ W}
-    let G : SimpleGraph X := {
-      Adj := fun x y => FourNeighborAdjacent x.1 y.1
-      symm := ⟨by
-        intro x y h
-        exact adjacentSymm h⟩
-      loopless := ⟨by
-        intro x h
-        rcases h with h | h | h | h <;>
-          simp [Zsqrtd.ext_iff] at h <;> omega⟩
-    }
-    letI : DecidableRel FourNeighborAdjacent := fun _ _ => Classical.propDecidable _
-    letI : DecidableRel G.Adj := fun _ _ => Classical.propDecidable _
-    let P := (W.product W).filter fun e => FourNeighborAdjacent e.1 e.2
-    let Q := Finset.univ.filter fun e : X × X => G.Adj e.1 e.2
-    (P.card = Q.card) → P.card = 2 * G.edgeFinset.card := by
+    ∀ (W : Finset GaussianInt),
+      ∀
+        (adjacentSymm :
+          ∀ {a : GaussianInt},
+            ∀ {b : GaussianInt}, FourNeighborAdjacent a b → FourNeighborAdjacent b a),
+        let X := { x : GaussianInt // x ∈ W }
+        let G : SimpleGraph X :=
+          { Adj := fun x y => FourNeighborAdjacent x.1 y.1
+            symm :=
+              ⟨by
+                intro x y h
+                exact adjacentSymm h⟩
+            loopless :=
+              ⟨by
+                intro x h
+                rcases h with h | h | h | h <;> simp [Zsqrtd.ext_iff] at h <;> omega⟩ }
+        letI : DecidableRel FourNeighborAdjacent := fun _ _ => Classical.propDecidable _
+        letI : DecidableRel G.Adj := fun _ _ => Classical.propDecidable _
+        let P := (W.product W).filter fun e => FourNeighborAdjacent e.1 e.2
+        let Q := Finset.univ.filter fun e : X × X => G.Adj e.1 e.2
+        P.card = Q.card → P.card = 2 * G.edgeFinset.card := by
   classical
-  intro W R adjacentSymm X G P Q hPQ
+  intro W adjacentSymm X G P Q hPQ
   calc
     _ = Q.card := hPQ
     _ = 2 * G.edgeFinset.card := by simpa [Q] using G.two_mul_card_edgeFinset.symm
 
 private theorem hdiv :
-    ∀ (W : Finset GaussianInt), (Finset GaussianInt) → ∀ (adjacentSymm : ∀ {a : GaussianInt}, ∀
-        {b : GaussianInt}, (FourNeighborAdjacent a b) → FourNeighborAdjacent b a),
-    let X := {x : GaussianInt // x ∈ W}
-    let G : SimpleGraph X := {
-      Adj := fun x y => FourNeighborAdjacent x.1 y.1
-      symm := ⟨by
-        intro x y h
-        exact adjacentSymm h⟩
-      loopless := ⟨by
-        intro x h
-        rcases h with h | h | h | h <;>
-          simp [Zsqrtd.ext_iff] at h <;> omega⟩
-    }
-    letI : DecidableRel FourNeighborAdjacent := fun _ _ => Classical.propDecidable _
-    letI : DecidableRel G.Adj := fun _ _ => Classical.propDecidable _
-    let P := (W.product W).filter fun e => FourNeighborAdjacent e.1 e.2
-    (P.card = 2 * G.edgeFinset.card) → P.card / 2 = G.edgeFinset.card := by
+    ∀ (W : Finset GaussianInt),
+      ∀
+        (adjacentSymm :
+          ∀ {a : GaussianInt},
+            ∀ {b : GaussianInt}, FourNeighborAdjacent a b → FourNeighborAdjacent b a),
+        let X := { x : GaussianInt // x ∈ W }
+        let G : SimpleGraph X :=
+          { Adj := fun x y => FourNeighborAdjacent x.1 y.1
+            symm :=
+              ⟨by
+                intro x y h
+                exact adjacentSymm h⟩
+            loopless :=
+              ⟨by
+                intro x h
+                rcases h with h | h | h | h <;> simp [Zsqrtd.ext_iff] at h <;> omega⟩ }
+        letI : DecidableRel FourNeighborAdjacent := fun _ _ => Classical.propDecidable _
+        letI : DecidableRel G.Adj := fun _ _ => Classical.propDecidable _
+        let P := (W.product W).filter fun e => FourNeighborAdjacent e.1 e.2
+        P.card = 2 * G.edgeFinset.card → P.card / 2 = G.edgeFinset.card := by
   classical
-  intro W R adjacentSymm X G P hordered
+  intro W adjacentSymm X G P hordered
   rw [hordered]
   simp
 
@@ -259,23 +277,30 @@ private theorem hcountGraph :
     _ = ↑G.edgeFinset.card := by rw [hdiv]
 
 private theorem supportAdj :
-    ∀ (W : Finset GaussianInt), (Finset GaussianInt) → ∀ (adjacentSymm : ∀ {a : GaussianInt}, ∀
-        {b : GaussianInt}, (FourNeighborAdjacent a b) → FourNeighborAdjacent b a),
-    let H : SimpleGraph GaussianInt := {
-      Adj := fun x y => FourNeighborAdjacent x y ∧ x ∈ W ∧ y ∈ W
-      symm := ⟨by
-        intro x y h
-        exact ⟨adjacentSymm h.1, h.2.2, h.2.1⟩⟩
-      loopless := ⟨by
-        intro x h
-        rcases h.1 with h | h | h | h <;>
-          simp [Zsqrtd.ext_iff] at h <;> omega⟩
-    }
-    ∀ {s : GaussianInt}, ∀ {t : GaussianInt}, ∀ (q : H.Walk s t), ∀ {l₁ : List GaussianInt}, ∀
-        {l₂ : List GaussianInt}, ∀ {x : GaussianInt}, ∀ {y : GaussianInt}, q.support = l₁ ++ x ::
-        y :: l₂ → H.Adj x y := by
+    ∀ (W : Finset GaussianInt),
+      ∀
+        (adjacentSymm :
+          ∀ {a : GaussianInt},
+            ∀ {b : GaussianInt}, FourNeighborAdjacent a b → FourNeighborAdjacent b a),
+        let H : SimpleGraph GaussianInt :=
+          { Adj := fun x y => FourNeighborAdjacent x y ∧ x ∈ W ∧ y ∈ W
+            symm :=
+              ⟨by
+                intro x y h
+                exact ⟨adjacentSymm h.1, h.2.2, h.2.1⟩⟩
+            loopless :=
+              ⟨by
+                intro x h
+                rcases h.1 with h | h | h | h <;> simp [Zsqrtd.ext_iff] at h <;> omega⟩ }
+        ∀ {s : GaussianInt},
+          ∀ {t : GaussianInt},
+            ∀ (q : H.Walk s t),
+              ∀ {l₁ : List GaussianInt},
+                ∀ {l₂ : List GaussianInt},
+                  ∀ {x : GaussianInt},
+                    ∀ {y : GaussianInt}, q.support = l₁ ++ x :: y :: l₂ → H.Adj x y := by
   classical
-  intro W R adjacentSymm H s t q
+  intro W adjacentSymm H s t q
   induction q with
   | nil =>
     intro l₁ l₂ x y heq
@@ -302,22 +327,25 @@ private theorem supportAdj :
       exact ih htail
 
 private theorem allWalkW :
-    ∀ (W : Finset GaussianInt), (Finset GaussianInt) → ∀ (adjacentSymm : ∀ {a : GaussianInt}, ∀
-        {b : GaussianInt}, (FourNeighborAdjacent a b) → FourNeighborAdjacent b a),
-    let H : SimpleGraph GaussianInt := {
-      Adj := fun x y => FourNeighborAdjacent x y ∧ x ∈ W ∧ y ∈ W
-      symm := ⟨by
-        intro x y h
-        exact ⟨adjacentSymm h.1, h.2.2, h.2.1⟩⟩
-      loopless := ⟨by
-        intro x h
-        rcases h.1 with h | h | h | h <;>
-          simp [Zsqrtd.ext_iff] at h <;> omega⟩
-    }
-    ∀ {u : GaussianInt}, ∀ {v : GaussianInt}, ∀ (q : H.Walk u v), (u ∈ W) → ∀ z ∈ q.support, z ∈
-        W := by
+    ∀ (W : Finset GaussianInt),
+      ∀
+        (adjacentSymm :
+          ∀ {a : GaussianInt},
+            ∀ {b : GaussianInt}, FourNeighborAdjacent a b → FourNeighborAdjacent b a),
+        let H : SimpleGraph GaussianInt :=
+          { Adj := fun x y => FourNeighborAdjacent x y ∧ x ∈ W ∧ y ∈ W
+            symm :=
+              ⟨by
+                intro x y h
+                exact ⟨adjacentSymm h.1, h.2.2, h.2.1⟩⟩
+            loopless :=
+              ⟨by
+                intro x h
+                rcases h.1 with h | h | h | h <;> simp [Zsqrtd.ext_iff] at h <;> omega⟩ }
+        ∀ {u : GaussianInt},
+          ∀ {v : GaussianInt}, ∀ (q : H.Walk u v), u ∈ W → ∀ z ∈ q.support, z ∈ W := by
   classical
-  intro W R adjacentSymm H u v q hu z hz
+  intro W adjacentSymm H u v q hu z hz
   induction q with
   | nil =>
     simp only [SimpleGraph.Walk.support, List.mem_cons, List.not_mem_nil, or_false] at hz
@@ -331,26 +359,39 @@ private theorem allWalkW :
     · exact ih hadj.2.2 hz
 
 private theorem pathToGrid :
-    ∀ (W : Finset GaussianInt), (Finset GaussianInt) → ∀ (adjacentSymm : ∀ {a : GaussianInt}, ∀
-        {b : GaussianInt}, (FourNeighborAdjacent a b) → FourNeighborAdjacent b a),
-    let H : SimpleGraph GaussianInt := {
-      Adj := fun x y => FourNeighborAdjacent x y ∧ x ∈ W ∧ y ∈ W
-      symm := ⟨by
-        intro x y h
-        exact ⟨adjacentSymm h.1, h.2.2, h.2.1⟩⟩
-      loopless := ⟨by
-        intro x h
-        rcases h.1 with h | h | h | h <;>
-          simp [Zsqrtd.ext_iff] at h <;> omega⟩
-    }
-    (∀ {s : GaussianInt}, ∀ {t : GaussianInt}, ∀ (q : H.Walk s t), ∀ {l₁ : List GaussianInt}, ∀
-        {l₂ : List GaussianInt}, ∀ {x : GaussianInt}, ∀ {y : GaussianInt}, q.support = l₁ ++ x ::
-        y :: l₂ → H.Adj x y) → (∀ {u : GaussianInt}, ∀ {v : GaussianInt}, ∀ (q : H.Walk u v), (u
-        ∈ W) → ∀ z ∈ q.support, z ∈ W) → ∀ {s : GaussianInt}, ∀ {t : GaussianInt}, ∀ (p : H.Walk
-        s t), (p.IsPath) → (s ≠ t) → (s ∈ W) → (t ∈ W) → ∃ V E, SimpleGridPathBetween V E s t ∧ V
-        ⊆ (W : Set GaussianInt) := by
+    ∀ (W : Finset GaussianInt),
+      ∀
+        (adjacentSymm :
+          ∀ {a : GaussianInt},
+            ∀ {b : GaussianInt}, FourNeighborAdjacent a b → FourNeighborAdjacent b a),
+        let H : SimpleGraph GaussianInt :=
+          { Adj := fun x y => FourNeighborAdjacent x y ∧ x ∈ W ∧ y ∈ W
+            symm :=
+              ⟨by
+                intro x y h
+                exact ⟨adjacentSymm h.1, h.2.2, h.2.1⟩⟩
+            loopless :=
+              ⟨by
+                intro x h
+                rcases h.1 with h | h | h | h <;> simp [Zsqrtd.ext_iff] at h <;> omega⟩ };
+        (∀ {s : GaussianInt},
+            ∀ {t : GaussianInt},
+              ∀ (q : H.Walk s t),
+                ∀ {l₁ : List GaussianInt},
+                  ∀ {l₂ : List GaussianInt},
+                    ∀ {x : GaussianInt},
+                      ∀ {y : GaussianInt}, q.support = l₁ ++ x :: y :: l₂ → H.Adj x y) →
+          (∀ {u : GaussianInt},
+              ∀ {v : GaussianInt}, ∀ (q : H.Walk u v), u ∈ W → ∀ z ∈ q.support, z ∈ W) →
+            ∀ {s : GaussianInt},
+              ∀ {t : GaussianInt},
+                ∀ (p : H.Walk s t),
+                  p.IsPath →
+                    s ≠ t →
+                      s ∈ W →
+                        ∃ V E, SimpleGridPathBetween V E s t ∧ V ⊆ (W : Set GaussianInt) := by
   classical
-  intro W R adjacentSymm H supportAdj allWalkW s t p hp hne hs ht
+  intro W adjacentSymm H supportAdj allWalkW s t p hp hne hs
   let l : List GaussianInt := p.support
   let E : Set (Finset GaussianInt) := {e | ∃ x y l₁ l₂,
     l = l₁ ++ x :: y :: l₂ ∧ e = {x, y}}
@@ -427,12 +468,13 @@ private theorem hrootSeparateGraph :
     exact (heq (hseparate x.1 hx y.1 hy V E hgrid hV)).elim
 
 private theorem forestCount :
-    (Finset GaussianInt) → (Finset GaussianInt) → (∀ {a : GaussianInt}, ∀ {b : GaussianInt},
-        (FourNeighborAdjacent a b) → FourNeighborAdjacent b a) → ∀ {V : Type}, ∀ [Fintype V], ∀
-        (G : SimpleGraph V), ∀ [DecidableRel G.Adj], (G.IsAcyclic) → G.edgeFinset.card + Nat.card
-        G.ConnectedComponent = Fintype.card V := by
+    ∀ {V : Type},
+      ∀ [Fintype V],
+        ∀ (G : SimpleGraph V),
+          ∀ [DecidableRel G.Adj],
+            G.IsAcyclic → G.edgeFinset.card + Nat.card G.ConnectedComponent = Fintype.card V := by
   classical
-  intro W R adjacentSymm V finiteType G adjacencyDecidability hG
+  intro V finiteType G adjacencyDecidability hG
   classical
   let : Fintype G.ConnectedComponent := Fintype.ofFinite _
   have hdegree (c : G.ConnectedComponent) (v : c) :
@@ -467,19 +509,28 @@ private theorem forestCount :
   simpa [Nat.card_eq_fintype_card] using hsum
 
 private theorem forestRooted :
-    (Finset GaussianInt) → (Finset GaussianInt) → (∀ {a : GaussianInt}, ∀ {b : GaussianInt},
-        (FourNeighborAdjacent a b) → FourNeighborAdjacent b a) → (∀ {V : Type}, ∀ [Fintype V], ∀
-        (G : SimpleGraph V), ∀ [DecidableRel G.Adj], (G.IsAcyclic) → G.edgeFinset.card + Nat.card
-        G.ConnectedComponent = Fintype.card V) → ∀ {V : Type}, ∀ [Fintype V], ∀ (G : SimpleGraph
-            V), ∀ [DecidableRel G.Adj], (G.IsAcyclic) → ∀ (S : Set V), (∀ x ∈ S, ∀ y ∈ S,
-            G.Reachable x y → x = y) → (G.edgeFinset.card + Nat.card S = Fintype.card V) → ∃
-            parent : V → V, ∃ rank : V → ℕ,
-        (∀ r ∈ S, parent r = r) ∧
-        (∀ x, x ∉ S → G.Adj (parent x) x ∧ rank (parent x) < rank x) ∧
-        (∀ x, x ∈ S ↔ rank x = 0) ∧
-        (∀ x y, G.Adj x y → x = parent y ∨ y = parent x) := by
+    (∀ {V : Type},
+        ∀ [Fintype V],
+          ∀ (G : SimpleGraph V),
+            ∀ [DecidableRel G.Adj],
+              G.IsAcyclic →
+                G.edgeFinset.card + Nat.card G.ConnectedComponent = Fintype.card V) →
+      ∀ {V : Type},
+        ∀ [Fintype V],
+          ∀ (G : SimpleGraph V),
+            ∀ [DecidableRel G.Adj],
+              G.IsAcyclic →
+                ∀ (S : Set V),
+                  (∀ x ∈ S, ∀ y ∈ S, G.Reachable x y → x = y) →
+                    G.edgeFinset.card + Nat.card S = Fintype.card V →
+                      ∃ parent : V → V,
+                        ∃ rank : V → ℕ,
+                          (∀ r ∈ S, parent r = r) ∧
+                            (∀ x, x ∉ S → G.Adj (parent x) x ∧ rank (parent x) < rank x) ∧
+                            (∀ x, x ∈ S ↔ rank x = 0) ∧
+                            ∀ x y, G.Adj x y → x = parent y ∨ y = parent x := by
   classical
-  intro W R adjacentSymm forestCount V finiteType G adjacencyDecidability hG S hsep hnum
+  intro forestCount V finiteType G adjacencyDecidability hG S hsep hnum
   classical
   let : Fintype G.ConnectedComponent := Fintype.ofFinite _
   have hcard : Fintype.card S = Fintype.card G.ConnectedComponent := by
@@ -643,38 +694,6 @@ private theorem hcardS :
     _ = Nat.card {x : GaussianInt // x ∈ R} := Nat.card_congr e
     _ = R.card := by simp [Nat.card_eq_fintype_card]
 
-private theorem hbudget :
-    ∀ (W : Finset GaussianInt), ∀ (R : Finset GaussianInt), ((∑ x ∈ W, (1 - if x ∈ R then (1 : ℤ)
-        else 0)) = ((((W.product W).filter fun e => @decide (FourNeighborAdjacent e.1 e.2)
-        (Classical.propDecidable _)).card / 2 : ℕ) : ℤ)) → ∀ (adjacentSymm : ∀ {a : GaussianInt},
-            ∀ {b : GaussianInt}, (FourNeighborAdjacent a b) → FourNeighborAdjacent b a),
-    let X := {x : GaussianInt // x ∈ W}
-    let G : SimpleGraph X := {
-      Adj := fun x y => FourNeighborAdjacent x.1 y.1
-      symm := ⟨by
-        intro x y h
-        exact adjacentSymm h⟩
-      loopless := ⟨by
-        intro x h
-        rcases h with h | h | h | h <;>
-          simp [Zsqrtd.ext_iff] at h <;> omega⟩
-    }
-    letI : DecidableRel FourNeighborAdjacent := fun _ _ => Classical.propDecidable _
-    letI : DecidableRel G.Adj := fun _ _ => Classical.propDecidable _
-    let P := (W.product W).filter fun e => FourNeighborAdjacent e.1 e.2
-    (P.card / 2 = G.edgeFinset.card) → ((∑ x ∈ W, (1 - if x ∈ R then (1 : ℤ) else 0)) =
-        (G.edgeFinset.card : ℤ)) → ((∑ x ∈ W, (1 - if x ∈ R then (1 : ℤ) else 0)) = (W.card : ℤ)
-        - (R.card : ℤ)) →
-    let S : Set X := {x | x.val ∈ R}
-    (Nat.card S = R.card) → G.edgeFinset.card + Nat.card S = Fintype.card X := by
-  classical
-  intro W R hcount adjacentSymm X G P hdiv hcountGraph hsumIndicator S hcardS
-  have hc : (W.card : ℤ) - (R.card : ℤ) = (G.edgeFinset.card : ℤ) :=
-    hsumIndicator.symm.trans hcountGraph
-  have hcardX : Fintype.card X = W.card := by simp [X]
-  rw [hcardS, hcardX]
-  omega
-
 private theorem hparent :
     ∀ (W : Finset GaussianInt),
     let X := {x : GaussianInt // x ∈ W}
@@ -713,7 +732,7 @@ theorem P4250T2FiniteForestCompletion
   have noGridTriangle (x y z : GaussianInt)
       (hxy : FourNeighborAdjacent x y)
       (hyz : FourNeighborAdjacent y z)
-      (hzx : FourNeighborAdjacent z x) : False := ForestCompletionLemmas.noGridTriangle W R x y z
+      (hzx : FourNeighborAdjacent z x) : False := ForestCompletionLemmas.noGridTriangle x y z
           hxy hyz hzx
   have adjacentSymm {a b : GaussianInt} (h : FourNeighborAdjacent a b) :
       FourNeighborAdjacent b a := ForestCompletionLemmas.adjacentSymm (a := a) (b := b) h
@@ -727,7 +746,7 @@ theorem P4250T2FiniteForestCompletion
       rcases h.1 with h | h | h | h <;>
         simp [Zsqrtd.ext_iff] at h <;> omega⟩
   }
-  have hHacyclic : H.IsAcyclic := ForestCompletionLemmas.hHacyclic W R hcycle noGridTriangle
+  have hHacyclic : H.IsAcyclic := ForestCompletionLemmas.hHacyclic W hcycle noGridTriangle
       adjacentSymm
   let X := {x : GaussianInt // x ∈ W}
   let G : SimpleGraph X := {
@@ -760,32 +779,38 @@ theorem P4250T2FiniteForestCompletion
       exact hHacyclic (c.map f) (hc.map finj))
   let P := (W.product W).filter fun e => FourNeighborAdjacent e.1 e.2
   let Q := Finset.univ.filter fun e : X × X => G.Adj e.1 e.2
-  have hPQ : P.card = Q.card := ForestCompletionLemmas.hPQ W R adjacentSymm
-  have hordered : P.card = 2 * G.edgeFinset.card := ForestCompletionLemmas.hordered W R
+  have hPQ : P.card = Q.card := ForestCompletionLemmas.hPQ W adjacentSymm
+  have hordered : P.card = 2 * G.edgeFinset.card := ForestCompletionLemmas.hordered W
       adjacentSymm hPQ
-  have hdiv : P.card / 2 = G.edgeFinset.card := ForestCompletionLemmas.hdiv W R adjacentSymm
+  have hdiv : P.card / 2 = G.edgeFinset.card := ForestCompletionLemmas.hdiv W adjacentSymm
       hordered
   have hcountGraph : (∑ x ∈ W, (1 - if x ∈ R then (1 : ℤ) else 0)) =
       (G.edgeFinset.card : ℤ) := ForestCompletionLemmas.hcountGraph W R hcount adjacentSymm hdiv
   have supportAdj : ∀ {s t : GaussianInt} (q : H.Walk s t)
       {l₁ l₂ : List GaussianInt} {x y : GaussianInt},
-      q.support = l₁ ++ x :: y :: l₂ → H.Adj x y := ForestCompletionLemmas.supportAdj W R
+      q.support = l₁ ++ x :: y :: l₂ → H.Adj x y := ForestCompletionLemmas.supportAdj W
           adjacentSymm
   have allWalkW {u v : GaussianInt} (q : H.Walk u v) (hu : u ∈ W) :
-      ∀ z ∈ q.support, z ∈ W := ForestCompletionLemmas.allWalkW W R adjacentSymm (u := u) (v :=
+      ∀ z ∈ q.support, z ∈ W := ForestCompletionLemmas.allWalkW W adjacentSymm (u := u) (v :=
           v) q hu
   have pathToGrid {s t : GaussianInt} (p : H.Walk s t) (hp : p.IsPath)
       (hne : s ≠ t) (hs : s ∈ W) (ht : t ∈ W) :
       ∃ V E, SimpleGridPathBetween V E s t ∧ V ⊆ (W : Set GaussianInt) :=
-          ForestCompletionLemmas.pathToGrid W R adjacentSymm supportAdj allWalkW (s := s) (t :=
-          t) p hp hne hs ht
+          (show
+              ∀ {s : GaussianInt}, ∀ {t : GaussianInt}, ∀ (p : H.Walk s t),
+              (p.IsPath) → (s ≠ t) → (s ∈ W) → (t ∈ W) → ∃ V E,
+              SimpleGridPathBetween V E s t ∧ V ⊆ (W : Set GaussianInt)
+            from by
+              intro s t p hp hne hs ht
+              exact ForestCompletionLemmas.pathToGrid W adjacentSymm supportAdj allWalkW p hp
+                  hne hs) p hp hne hs ht
   have hrootSeparateGraph : ∀ x : X, x.1 ∈ R → ∀ y : X, y.1 ∈ R →
       G.Reachable x y → x.1 = y.1 := ForestCompletionLemmas.hrootSeparateGraph W R hseparate
           adjacentSymm finj pathToGrid
   have forestCount {V : Type} [Fintype V] (G : SimpleGraph V) [DecidableRel G.Adj]
       (hG : G.IsAcyclic) :
       G.edgeFinset.card + Nat.card G.ConnectedComponent = Fintype.card V :=
-          ForestCompletionLemmas.forestCount W R adjacentSymm (V := V) G hG
+          ForestCompletionLemmas.forestCount (V := V) G hG
   have forestRooted {V : Type} [Fintype V] (G : SimpleGraph V) [DecidableRel G.Adj]
       (hG : G.IsAcyclic) (S : Set V)
       (hsep : ∀ x ∈ S, ∀ y ∈ S, G.Reachable x y → x = y)
@@ -794,14 +819,18 @@ theorem P4250T2FiniteForestCompletion
         (∀ r ∈ S, parent r = r) ∧
         (∀ x, x ∉ S → G.Adj (parent x) x ∧ rank (parent x) < rank x) ∧
         (∀ x, x ∈ S ↔ rank x = 0) ∧
-        (∀ x y, G.Adj x y → x = parent y ∨ y = parent x) := ForestCompletionLemmas.forestRooted W
-            R adjacentSymm forestCount (V := V) G hG S hsep hnum
+        (∀ x y, G.Adj x y → x = parent y ∨ y = parent x) := ForestCompletionLemmas.forestRooted
+            forestCount (V := V) G hG S hsep hnum
   have hsumIndicator : (∑ x ∈ W, (1 - if x ∈ R then (1 : ℤ) else 0)) =
       (W.card : ℤ) - (R.card : ℤ) := ForestCompletionLemmas.hsumIndicator W R hRW
   let S : Set X := {x | x.val ∈ R}
   have hcardS : Nat.card S = R.card := ForestCompletionLemmas.hcardS W R hRW
-  have hbudget : G.edgeFinset.card + Nat.card S = Fintype.card X :=
-      ForestCompletionLemmas.hbudget W R hcount adjacentSymm hdiv hcountGraph hsumIndicator hcardS
+  have hbudget : G.edgeFinset.card + Nat.card S = Fintype.card X := by
+    have hc : (W.card : ℤ) - (R.card : ℤ) = (G.edgeFinset.card : ℤ) :=
+      hsumIndicator.symm.trans hcountGraph
+    have hcardX : Fintype.card X = W.card := by simp [X]
+    rw [hcardS, hcardX]
+    omega
   obtain ⟨p, depth, hp, hpar, hzero, hedge⟩ :=
     forestRooted G hGacyclic S
       (by

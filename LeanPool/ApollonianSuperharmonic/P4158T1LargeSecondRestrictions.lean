@@ -53,9 +53,10 @@ private theorem hqgt :
     (by
       classical
       exact
-        ∀ (P : FordFareyParameter), (BandCircle) → ((1 < P.q₂) → (1 < P.q)) ) := by
+        ∀ (P : FordFareyParameter), 1 < P.q₂ → 1 < P.q
+    ) := by
   classical
-  intro P Ci hcurv
+  intro P hcurv
   have hsum := P.sum_q
   omega
 
@@ -208,15 +209,17 @@ private theorem hv13 :
     (by
       classical
       exact
-        ∀ (P : FordFareyParameter), (BandCircle) → (
-        let w := BandVectors.1 (FordRecursiveQuadruple P 3) (FordRecursiveQuadruple P 2)
-        let a := BandVectors.1 (FordRecursiveQuadruple P 1) (FordRecursiveQuadruple P 3)
-        let b := BandVectors.1 (FordRecursiveQuadruple P 2) (FordRecursiveQuadruple P 1)
-        (w + a + b = 0) → ((a - (⟨0, 1⟩ : GaussianInt) * b = ⟨(P.q : Int), (P.q₁ : Int)⟩) → ((b -
-            (⟨0, 1⟩ : GaussianInt) * w = ⟨-(P.q : Int), (P.q₂ : Int)⟩) → (((P.q : Int) = (P.q₁ :
-            Int) + (P.q₂ : Int)) → (a = ⟨(P.q₁ : Int), 0⟩))))) ) := by
+        ∀ (P : FordFareyParameter),
+          let w := BandVectors.1 (FordRecursiveQuadruple P 3) (FordRecursiveQuadruple P 2)
+          let a := BandVectors.1 (FordRecursiveQuadruple P 1) (FordRecursiveQuadruple P 3)
+          let b := BandVectors.1 (FordRecursiveQuadruple P 2) (FordRecursiveQuadruple P 1)
+          w + a + b = 0 →
+            a - (⟨0, 1⟩ : GaussianInt) * b = ⟨(P.q : Int), (P.q₁ : Int)⟩ →
+              b - (⟨0, 1⟩ : GaussianInt) * w = ⟨-(P.q : Int), (P.q₂ : Int)⟩ →
+                (P.q : Int) = (P.q₁ : Int) + (P.q₂ : Int) → a = ⟨(P.q₁ : Int), 0⟩
+    ) := by
   classical
-  intro P Ci w a b hsum' hfirst hsecond hqsum
+  intro P w a b hsum' hfirst hsecond hqsum
   have hre := congrArg (fun z : GaussianInt => z.re) hsum'
   have him := congrArg (fun z : GaussianInt => z.im) hsum'
   have hfre := congrArg (fun z : GaussianInt => z.re) hfirst
@@ -300,10 +303,12 @@ private theorem fordCentroid :
     (by
       classical
       exact
-        (FordFareyParameter) → ((BandCircle) → (∀ (n : ℕ), (0 : ℕ) < n → TileCentroid (FordTile
-            n) = ((↑n : ℝ) / (2 : ℝ), (↑n : ℝ) / (2 : ℝ)))) ) := by
+        ∀ (n : ℕ),
+          (0 : ℕ) < n →
+            TileCentroid (FordTile n) = ((↑n : ℝ) / (2 : ℝ), (↑n : ℝ) / (2 : ℝ))
+    ) := by
   classical
-  intro P Ci n hn
+  intro n hn
   let domain : Finset GaussianInt := FordCellDomain n
   have hne : domain.Nonempty := by
     refine ⟨⟨0, 0⟩, ?_⟩
@@ -633,9 +638,10 @@ private theorem hcurvNZ :
     (by
       classical
       exact
-        ∀ (P : FordFareyParameter), (BandCircle) → ((FordRecursiveQuadruple P 2).1 ≠ 0) ) := by
+        ∀ (P : FordFareyParameter), (FordRecursiveQuadruple P 2).1 ≠ 0
+    ) := by
   classical
-  intro P Ci
+  intro P
   have hpNat : 0 < P.q₂ * P.q₂ := Nat.mul_pos P.q₂_pos P.q₂_pos
   have hpInt : (0 : Int) < (P.q₂ * P.q₂ : Nat) := by exact_mod_cast hpNat
   have hp : 0 < (FordRecursiveQuadruple P 2).1 := by
@@ -908,7 +914,7 @@ theorem P4158T1LargeSecondRestrictions
 -- BODY
   classical
   have hcurv := LargeSecondRestrictions.hcurv P Ci hCi hlarge horder T' u hc'
-  have hqgt := LargeSecondRestrictions.hqgt P Ci hcurv
+  have hqgt := LargeSecondRestrictions.hqgt P hcurv
   have hq0 : 1 < (FordRecursiveQuadruple P 0).1 := LargeSecondRestrictions.hq0 P hqgt
   have hd := TileOdometerReindexedDecomposition
     (FordRecursiveQuadruple P) hq T h hq0 (by simpa [hC0] using hO)
@@ -960,10 +966,10 @@ theorem P4158T1LargeSecondRestrictions
   have hsecond := LargeSecondRestrictions.hsecond P h20 hstep
   have hqsum : (P.q : Int) = (P.q₁ : Int) + (P.q₂ : Int) := by
     exact_mod_cast P.sum_q
-  have hv13 := LargeSecondRestrictions.hv13 P Ci hsum' hfirst hsecond hqsum
+  have hv13 := LargeSecondRestrictions.hv13 P hsum' hfirst hsecond hqsum
   have hoffU := LargeSecondRestrictions.hoffU P T S hcent hv13
   have hoffV := LargeSecondRestrictions.hoffV P T' S₂ hcent₂ hv13
-  have fordCentroid (n : Nat) (hn : 0 < n) := LargeSecondRestrictions.fordCentroid P Ci n hn
+  have fordCentroid (n : Nat) (hn : 0 < n) := LargeSecondRestrictions.fordCentroid n hn
   have rootCentroidEq := LargeSecondRestrictions.rootCentroidEq P T u hc
   have rootCentroid := LargeSecondRestrictions.rootCentroid P T u fordCentroid rootCentroidEq
   let v : GaussianInt := u + ⟨-(P.q : Int), P.q₂⟩
@@ -993,7 +999,7 @@ theorem P4158T1LargeSecondRestrictions
   have hveca : BandVectors.2 (FordRecursiveQuadruple P ((1 : Fin 3) + 2).succ)
       (FordRecursiveQuadruple P ((1 : Fin 3) + 1).succ) =
       (⟨0, P.p₁⟩ : GaussianInt) := LargeSecondRestrictions.hveca P ha13
-  have hcurvNZ := LargeSecondRestrictions.hcurvNZ P Ci
+  have hcurvNZ := LargeSecondRestrictions.hcurvNZ P
   obtain hzU | ⟨pRootU, pU, hrootU, hsU, hxU, hyU⟩ := hslope 1 false
   · exact (hcurvNZ hzU).elim
   have hpRootU := LargeSecondRestrictions.hpRootU h p hs pRootU hrootU

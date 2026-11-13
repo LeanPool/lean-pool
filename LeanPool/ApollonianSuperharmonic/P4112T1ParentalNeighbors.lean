@@ -264,14 +264,13 @@ private theorem transpose_mem :
     constructor <;> intro hz <;> omega
 
 private theorem transpose_candidate :
-    (FordFareyParameter) → (
     let candidate (z : GaussianInt) : Finset GaussianInt :=
       {z + 1, z - 1, z + ⟨0, 1⟩, z - ⟨0, 1⟩}
     let transpose (z : GaussianInt) : GaussianInt := ⟨z.im, z.re⟩
-    ∀ (x : GaussianInt), ∀ (z : GaussianInt), z ∈ candidate x ↔ transpose z ∈ candidate
-        (transpose x)) := by
+    ∀ (x : GaussianInt),
+      ∀ (z : GaussianInt), z ∈ candidate x ↔ transpose z ∈ candidate (transpose x) := by
   classical
-  intro P candidate transpose x z
+  intro candidate transpose x z
   cases x with
   | mk a b =>
     cases z with
@@ -885,7 +884,7 @@ theorem P4112T1ParentalNeighbors (P : FordFareyParameter) (hP : 2 < P.q) :
       ParentalNeighborLemmas.transpose_mem P hP q1pos q2posI hsumN hmem z
   have transpose_candidate (x z : GaussianInt) :
       z ∈ candidate x ↔ transpose z ∈ candidate (transpose x) :=
-          ParentalNeighborLemmas.transpose_candidate P x z
+          ParentalNeighborLemmas.transpose_candidate x z
   have transpose_filter_card (x : GaussianInt) :
       (Finset.filter (fun z => z ∈ E) (candidate x)).card =
         (Finset.filter (fun z => z ∈ E) (candidate (transpose x))).card :=

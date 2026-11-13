@@ -359,37 +359,6 @@ private theorem hQ1S1 :
     exact Finset.mem_inter.mpr ⟨hxP, hxM⟩
   exact Finset.disjoint_left.mp hOQ1.symm hxQ hxO
 
-private theorem normalize_pair :
-    (by
-      classical
-      exact
-        ∀ (D : ProtoTile), ∀ (U : ProtoTile), ∀ (V : ProtoTile), (ProtoTile) → (∀ (x :
-            GaussianInt), (D = U ∨ D = V) → ((∃ j : Fin 4,
-            LatticeVertexIncidentCell x j ∈ U.cells ∧
-              LatticeVertexIncidentCell x (j + 2) ∈ V.cells) → ((x ∈ FootprintVertices U) → ((x ∈
-                  FootprintVertices V) → ((∀ y, y = x ∨ y = x + 1 ∨ y = x - 1 ∨
-            y = x + ⟨0, 1⟩ ∨ y = x - ⟨0, 1⟩ →
-              y ∈ FootprintVertices U ∨ y ∈ FootprintVertices V) → (∃ W : ProtoTile, ∃ j : Fin 4,
-                  LatticeVertexIncidentCell x j ∈ D.cells ∧ LatticeVertexIncidentCell x (j + 2) ∈
-                  W.cells ∧ x ∈ FootprintVertices D ∧ x ∈ FootprintVertices W ∧ (∀ y, y = x ∨ y =
-                  x + 1 ∨ y = x - 1 ∨ y = x + ⟨0, 1⟩ ∨ y = x - ⟨0, 1⟩ → y ∈ FootprintVertices D ∨
-                  y ∈ FootprintVertices W))))))) ) := by
-  classical
-  intro D U V R x hD hopp hU hV hstar
-  rcases hopp with ⟨j, hjU, hjV⟩
-  rcases hD with hDU | hDV
-  · subst U
-    exact ⟨V, j, hjU, hjV, hU, hV, hstar⟩
-  · subst V
-    have hindex : (j + 2) + 2 = j := by fin_cases j <;> decide
-    refine ⟨U, j + 2, ?_, ?_, hV, hU, ?_⟩
-    · exact hjV
-    · simpa [hindex] using hjU
-    · intro y hy
-      rcases hstar y hy with hyU | hyV
-      · exact Or.inr hyU
-      · exact Or.inl hyV
-
 private theorem selectA_Q :
     (by
       classical
@@ -474,24 +443,42 @@ private theorem normalize_selected :
     (by
       classical
       exact
-        ∀ (X : ProtoTile), ∀ (Y : ProtoTile), ∀ (Z : ProtoTile), ∀ (x : GaussianInt), (X ≠ Y) →
-            ((X ≠ Z) → ((Y ≠ Z) → ((∃ U V R : ProtoTile,
-            (X = U ∨ X = V) ∧
-            ((U = X ∧ V = Y ∧ R = Z) ∨ (U = Y ∧ V = X ∧ R = Z) ∨
-             (U = X ∧ V = Z ∧ R = Y) ∨ (U = Z ∧ V = X ∧ R = Y) ∨
-             (U = Y ∧ V = Z ∧ R = X) ∨ (U = Z ∧ V = Y ∧ R = X)) ∧
-            (∃ j : Fin 4, LatticeVertexIncidentCell x j ∈ U.cells ∧
-              LatticeVertexIncidentCell x (j + 2) ∈ V.cells) ∧
-            x ∈ FootprintVertices U ∧ x ∈ FootprintVertices V ∧
-            (∀ y, y = x ∨ y = x + 1 ∨ y = x - 1 ∨
-              y = x + ⟨0, 1⟩ ∨ y = x - ⟨0, 1⟩ →
-              y ∈ FootprintVertices U ∨ y ∈ FootprintVertices V)) → (∃ W : ProtoTile, (W = Y ∨ W
-                  = Z) ∧ ∃ j : Fin 4, LatticeVertexIncidentCell x j ∈ X.cells ∧
-                  LatticeVertexIncidentCell x (j + 2) ∈ W.cells ∧ x ∈ FootprintVertices X ∧ x ∈
-                  FootprintVertices W ∧ (∀ y, y = x ∨ y = x + 1 ∨ y = x - 1 ∨ y = x + ⟨0, 1⟩ ∨ y
-                  = x - ⟨0, 1⟩ → y ∈ FootprintVertices X ∨ y ∈ FootprintVertices W))))) ) := by
+        ∀ (X : ProtoTile),
+          ∀ (Y : ProtoTile),
+            ∀ (Z : ProtoTile),
+              ∀ (x : GaussianInt),
+                X ≠ Y →
+                  X ≠ Z →
+                    (∃ U V R : ProtoTile,
+                        (X = U ∨ X = V) ∧
+                          (U = X ∧ V = Y ∧ R = Z ∨
+                              U = Y ∧ V = X ∧ R = Z ∨
+                                U = X ∧ V = Z ∧ R = Y ∨
+                                U = Z ∧ V = X ∧ R = Y ∨
+                                U = Y ∧ V = Z ∧ R = X ∨ U = Z ∧ V = Y ∧ R = X) ∧
+                            (∃ j : Fin 4,
+                                LatticeVertexIncidentCell x j ∈ U.cells ∧
+                                LatticeVertexIncidentCell x (j + 2) ∈ V.cells) ∧
+                              x ∈ FootprintVertices U ∧
+                                x ∈ FootprintVertices V ∧
+                                ∀ y,
+                                y = x ∨
+                                y = x + 1 ∨ y = x - 1 ∨ y = x + ⟨0, 1⟩ ∨ y = x - ⟨0, 1⟩ →
+                                y ∈ FootprintVertices U ∨ y ∈ FootprintVertices V) →
+                      ∃ W : ProtoTile,
+                        (W = Y ∨ W = Z) ∧
+                          ∃ j : Fin 4,
+                            LatticeVertexIncidentCell x j ∈ X.cells ∧
+                              LatticeVertexIncidentCell x (j + 2) ∈ W.cells ∧
+                                x ∈ FootprintVertices X ∧
+                                x ∈ FootprintVertices W ∧
+                                ∀ y,
+                                y = x ∨
+                                y = x + 1 ∨ y = x - 1 ∨ y = x + ⟨0, 1⟩ ∨ y = x - ⟨0, 1⟩ →
+                                y ∈ FootprintVertices X ∨ y ∈ FootprintVertices W
+    ) := by
   classical
-  intro X Y Z x hXY hXZ hYZ hsel
+  intro X Y Z x hXY hXZ hsel
   rcases hsel with ⟨U, V, R, hD, hperm, hopp, hU, hV, hstar⟩
   have reverse (A B : ProtoTile)
       (hopp : ∃ j : Fin 4, LatticeVertexIncidentCell x j ∈ A.cells ∧
@@ -727,9 +714,9 @@ private theorem hnotEven3 :
     (by
       classical
       exact
-        ∀ (q : Fin 4 → CircleCoordinates), (BandOrderedGeneralConfiguration q) → (¬ Even 3) ) := by
+        ¬Even 3
+    ) := by
   classical
-  intro q cfg
   rintro ⟨n, hn⟩
   omega
 
@@ -1846,7 +1833,6 @@ theorem BandOrderedGeneralPositiveCutGeometry
   have hQ2S2 := touching_disjoint _ _ cert.double_first.1 hQ2ne hS3ne
   have hOQ1 := touching_disjoint _ _ cert.precursor_first.2.2.1 hOne hQ2ne
   have hS1O := touching_disjoint _ _ cert.precursor_second.2.1 hS2ne hOne
-  have normalize_pair := PositiveCutGeometry.normalize_pair
   have selectB_Q := PositiveCutGeometry.selectB_Q q cfg C₀ T cert hQ3lat hS2lat hOlat hQ3check
       hS2check hOcheck hQ3occ hS2occ hBowners hOoccB hQ3S2 hS2O hOQ3
   have normalize_selected := PositiveCutGeometry.normalize_selected
@@ -1868,25 +1854,25 @@ theorem BandOrderedGeneralPositiveCutGeometry
   have hneB_OS := ne_of_disjoint _ _ hS2O.symm hOne
   have hneB_OQ := ne_of_disjoint _ _ hOQ3 hOne
   have selected_p2_a := normalize_selected (cert.Q 1 true) (cert.S 2 false) cert.O
-    cert.exceptionalSegments.a hneA_QS hneA_QO hneA_SO
+    cert.exceptionalSegments.a hneA_QS hneA_QO
     ((PositiveCutGeometry.selectA_Q q cfg C₀ T cert hQ2lat hS3lat hOlat hQ2check hS3check hOcheck
         hQ2occ hS3occ hAowners hOoccA hQS hSO hOQ) (cert.Q 1 true) (Or.inl rfl))
   have selected_p2_b := normalize_selected (cert.S 1 false) (cert.Q 2 true) cert.O
-    cert.exceptionalSegments.b hneB_SQ hneB_SO' hneB_QO'
+    cert.exceptionalSegments.b hneB_SQ hneB_SO'
     ((PositiveCutGeometry.selectB_S q cfg C₀ T cert hQ3lat hS2lat hOlat hQ3check hS2check hOcheck
         hQ3occ hS2occ hBowners hOoccB hQ3S2 hS2O hOQ3) (cert.S 1 false) (Or.inl rfl))
   have selected_p4_a := normalize_selected cert.O (cert.Q 1 true) (cert.S 2 false)
-    cert.exceptionalSegments.a hneA_OQ hneA_OS hneA_QS
+    cert.exceptionalSegments.a hneA_OQ hneA_OS
     ((PositiveCutGeometry.selectA_O q cfg C₀ T cert hQ2lat hS3lat hOlat hQ2check hS3check hOcheck
         hQ2occ hS3occ hAowners hOoccA hQS hSO hOQ) cert.O (Or.inl rfl))
   have selected_p4_b := normalize_selected cert.O (cert.S 1 false) (cert.Q 2 true)
-    cert.exceptionalSegments.b hneB_OS hneB_OQ hneB_SQ
+    cert.exceptionalSegments.b hneB_OS hneB_OQ
     ((PositiveCutGeometry.selectB_O q cfg C₀ T cert hQ3lat hS2lat hOlat hQ3check hS2check hOcheck
         hQ3occ hS2occ hBowners hOoccB hQ3S2 hS2O hOQ3) cert.O (Or.inl rfl))
   let I : GaussianInt := ⟨0, 1⟩
   have hI2 : I ^ 2 = -1 := by dsimp [I]; decide
   have hI3 : I ^ 3 = -I := by dsimp [I]; decide
-  have hnotEven3 := PositiveCutGeometry.hnotEven3 q cfg
+  have hnotEven3 := PositiveCutGeometry.hnotEven3
   have hodd3 : ¬ (∃ r : ℕ, 3 = r + r) := by omega
   have occurrence_centroid := PositiveCutGeometry.occurrence_centroid
   have vectorSystem : RecursiveVectorSystem BandVectors := by

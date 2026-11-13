@@ -176,32 +176,41 @@ private theorem ha32At288 :
       ext <;> simp
 
 private theorem hsemiAt342 :
-    (ℕ) → (∀ (Q : FordFareyParameter), ∀ (q1pos : 0 < Q.q₁), ∀ (hgtq : Q.q₁ > Q.q₂),
-    let pd : Int
-        := Q.p₁ - Q.p₂
-    let qd : Nat := Q.q₁ - Q.q₂
-    (0 < qd) → (∀ (hqdlt : qd < Q.q₁), ∀ (hd1 : pd * (Q.q₁ : Int) - (qd : Int) * Q.p₁ =
-        1), ∀ (hd2 : Q.p₂ * (Q.q₁ : Int) - (Q.q₂ : Int) * Q.p₁ = -1), ∀ (hred : Nat.Coprime Q.q₁
-        Q.p₁.natAbs), ∀ (hq1gt : 1 < Q.q₁),
-    let R : FordFareyParameter := {
-      p := Q.p₁, q := Q.q₁, q_pos := q1pos, reduced := hred,
-      p₁ := pd, q₁ := qd, p₂ := Q.p₂, q₂ := Q.q₂,
-      sum_p := by dsimp [pd]; ring,
-      sum_q := by dsimp [qd]; omega,
-      det₁ := hd1, det₂ := hd2, q₁_lt := hqdlt,
-      q₂_pos := Q.q₂_pos,
-      unit_case := by intro hu; omega }
-    (SemiProperQuadruple ![((2 : ℤ) * (FordRecursiveQuadruple R (0 : Fin (4 : ℕ))).1 + (2 : ℤ) *
-        (FordRecursiveQuadruple R (2 : Fin (4 : ℕ))).1 + (2 : ℤ) * (FordRecursiveQuadruple R (3 :
-        Fin (4 : ℕ))).1 - (FordRecursiveQuadruple R (1 : Fin (4 : ℕ))).1, (2 : GaussianInt) *
-        (FordRecursiveQuadruple R (0 : Fin (4 : ℕ))).2 + (2 : GaussianInt) *
-        (FordRecursiveQuadruple R (2 : Fin (4 : ℕ))).2 + (2 : GaussianInt) *
-        (FordRecursiveQuadruple R (3 : Fin (4 : ℕ))).2 - (FordRecursiveQuadruple R (1 : Fin (4 :
-        ℕ))).2), FordRecursiveQuadruple R (0 : Fin (4 : ℕ)), FordRecursiveQuadruple R (2 : Fin (4
-        : ℕ)), FordRecursiveQuadruple R (3 : Fin (4 : ℕ))]) → (SemiProperQuadruple
-        (FordRecursiveQuadruple Q)))) := by
+    ∀ (Q : FordFareyParameter),
+      ∀ (q1pos : 0 < Q.q₁),
+        ∀ (hgtq : Q.q₁ > Q.q₂),
+          let pd : Int := Q.p₁ - Q.p₂
+          let qd : Nat := Q.q₁ - Q.q₂
+          0 < qd →
+            ∀ (hqdlt : qd < Q.q₁),
+              ∀ (hd1 : pd * (Q.q₁ : Int) - (qd : Int) * Q.p₁ = 1),
+                ∀ (hd2 : Q.p₂ * (Q.q₁ : Int) - (Q.q₂ : Int) * Q.p₁ = -1),
+                  ∀ (hred : Nat.Coprime Q.q₁ Q.p₁.natAbs),
+                    ∀ (hq1gt : 1 < Q.q₁),
+                      let R : FordFareyParameter :=
+                        { p := Q.p₁, q := Q.q₁, q_pos := q1pos, reduced := hred, p₁ := pd,
+                          q₁ := qd, p₂ := Q.p₂, q₂ := Q.q₂, sum_p := by dsimp [pd]; ring,
+                          sum_q := by dsimp [qd]; omega, det₁ := hd1, det₂ := hd2,
+                          q₁_lt := hqdlt, q₂_pos := Q.q₂_pos,
+                          unit_case := by intro hu; omega }
+                      SemiProperQuadruple
+                          ![((2 : ℤ) * (FordRecursiveQuadruple R (0 : Fin (4 : ℕ))).1 +
+                            (2 : ℤ) * (FordRecursiveQuadruple R (2 : Fin (4 : ℕ))).1 +
+                            (2 : ℤ) * (FordRecursiveQuadruple R (3 : Fin (4 : ℕ))).1 -
+                            (FordRecursiveQuadruple R (1 : Fin (4 : ℕ))).1,
+                            (2 : GaussianInt) *
+                            (FordRecursiveQuadruple R (0 : Fin (4 : ℕ))).2 +
+                            (2 : GaussianInt) *
+                            (FordRecursiveQuadruple R (2 : Fin (4 : ℕ))).2 +
+                            (2 : GaussianInt) *
+                            (FordRecursiveQuadruple R (3 : Fin (4 : ℕ))).2 -
+                            (FordRecursiveQuadruple R (1 : Fin (4 : ℕ))).2),
+                            FordRecursiveQuadruple R (0 : Fin (4 : ℕ)),
+                            FordRecursiveQuadruple R (2 : Fin (4 : ℕ)),
+                            FordRecursiveQuadruple R (3 : Fin (4 : ℕ))] →
+                        SemiProperQuadruple (FordRecursiveQuadruple Q) := by
   classical
-  intro n Q q1pos hgtq pd qd hqdpos hqdlt hd1 hd2 hred hq1gt R hsucc
+  intro Q q1pos hgtq pd qd hqdpos hqdlt hd1 hd2 hred hq1gt R hsucc
   convert hsucc using 1;
     simp only [FordRecursiveQuadruple, FordCircleCoordinate, Q.sum_q, Nat.cast_mul,
         Nat.cast_add, Int.reduceNeg, Q.sum_p, hqdpos.ne', ↓reduceIte, Fin.isValue,
@@ -214,44 +223,61 @@ private theorem hsemiAt342 :
   all_goals try (intro hz; omega)
 
 private theorem hv13At359 :
-    (ℕ) → (∀ (Q : FordFareyParameter), ∀ (q1pos : 0 < Q.q₁), ∀ (hgtq : Q.q₁ > Q.q₂),
-    let pd : Int
-        := Q.p₁ - Q.p₂
-    let qd : Nat := Q.q₁ - Q.q₂
-    ∀ (hqdlt : qd < Q.q₁), ∀ (hd1 : pd * (Q.q₁ : Int) - (qd : Int) * Q.p₁ = 1), ∀ (hd2 : Q.p₂ *
-        (Q.q₁ : Int) - (Q.q₂ : Int) * Q.p₁ = -1), ∀ (hred : Nat.Coprime Q.q₁ Q.p₁.natAbs), ∀
-            (hq1gt : 1 < Q.q₁),
-    let R : FordFareyParameter := {
-      p := Q.p₁, q := Q.q₁, q_pos := q1pos, reduced := hred,
-      p₁ := pd, q₁ := qd, p₂ := Q.p₂, q₂ := Q.q₂,
-      sum_p := by dsimp [pd]; ring,
-      sum_q := by dsimp [qd]; omega,
-      det₁ := hd1, det₂ := hd2, q₁_lt := hqdlt,
-      q₂_pos := Q.q₂_pos,
-      unit_case := by intro hu; omega }
-    (BandVectors.1 (FordRecursiveQuadruple R (3 : Fin (4 : ℕ))) (FordRecursiveQuadruple R (2 :
-        Fin (4 : ℕ))) = -(⟨(0 : ℤ), (1 : ℤ)⟩ * (↑R.q₂ : GaussianInt))) → ((BandVectors.1
-        (FordRecursiveQuadruple R (1 : Fin (4 : ℕ))) (FordRecursiveQuadruple R (3 : Fin (4 : ℕ)))
-        = (↑R.q₁ : GaussianInt)) → ((BandVectors.1 (FordRecursiveQuadruple R (2 : Fin (4 : ℕ)))
-        (FordRecursiveQuadruple R (0 : Fin (4 : ℕ))) = BandVectors.1 (FordRecursiveQuadruple R (2
-        : Fin (4 : ℕ))) (FordRecursiveQuadruple R (1 : Fin (4 : ℕ))) - ⟨(0 : ℤ), (1 : ℤ)⟩ *
-        BandVectors.1 (FordRecursiveQuadruple R (3 : Fin (4 : ℕ))) (FordRecursiveQuadruple R (2 :
-        Fin (4 : ℕ))) ∧ BandVectors.1 (FordRecursiveQuadruple R (0 : Fin (4 : ℕ)))
-        (FordRecursiveQuadruple R (3 : Fin (4 : ℕ))) = BandVectors.1 (FordRecursiveQuadruple R (1
-        : Fin (4 : ℕ))) (FordRecursiveQuadruple R (3 : Fin (4 : ℕ))) + ⟨(0 : ℤ), (1 : ℤ)⟩ *
-        BandVectors.1 (FordRecursiveQuadruple R (3 : Fin (4 : ℕ))) (FordRecursiveQuadruple R (2 :
-        Fin (4 : ℕ))) ∧ BandVectors.2 (FordRecursiveQuadruple R (2 : Fin (4 : ℕ)))
-        (FordRecursiveQuadruple R (0 : Fin (4 : ℕ))) = BandVectors.2 (FordRecursiveQuadruple R (2
-        : Fin (4 : ℕ))) (FordRecursiveQuadruple R (1 : Fin (4 : ℕ))) + ⟨(0 : ℤ), (1 : ℤ)⟩ *
-        BandVectors.2 (FordRecursiveQuadruple R (3 : Fin (4 : ℕ))) (FordRecursiveQuadruple R (2 :
-        Fin (4 : ℕ))) ∧ BandVectors.2 (FordRecursiveQuadruple R (0 : Fin (4 : ℕ)))
-        (FordRecursiveQuadruple R (3 : Fin (4 : ℕ))) = BandVectors.2 (FordRecursiveQuadruple R (1
-        : Fin (4 : ℕ))) (FordRecursiveQuadruple R (3 : Fin (4 : ℕ))) - ⟨(0 : ℤ), (1 : ℤ)⟩ *
-        BandVectors.2 (FordRecursiveQuadruple R (3 : Fin (4 : ℕ))) (FordRecursiveQuadruple R (2 :
-        Fin (4 : ℕ)))) → (BandVectors.1 ((FordRecursiveQuadruple Q) 1)
-        ((FordRecursiveQuadruple Q) 3) = (Q.q₁ : GaussianInt))))) := by
+    ∀ (Q : FordFareyParameter),
+      ∀ (q1pos : 0 < Q.q₁),
+        ∀ (hgtq : Q.q₁ > Q.q₂),
+          let pd : Int := Q.p₁ - Q.p₂
+          let qd : Nat := Q.q₁ - Q.q₂
+          ∀ (hqdlt : qd < Q.q₁),
+            ∀ (hd1 : pd * (Q.q₁ : Int) - (qd : Int) * Q.p₁ = 1),
+              ∀ (hd2 : Q.p₂ * (Q.q₁ : Int) - (Q.q₂ : Int) * Q.p₁ = -1),
+                ∀ (hred : Nat.Coprime Q.q₁ Q.p₁.natAbs),
+                  ∀ (hq1gt : 1 < Q.q₁),
+                    let R : FordFareyParameter :=
+                      { p := Q.p₁, q := Q.q₁, q_pos := q1pos, reduced := hred, p₁ := pd,
+                        q₁ := qd, p₂ := Q.p₂, q₂ := Q.q₂, sum_p := by dsimp [pd]; ring,
+                        sum_q := by dsimp [qd]; omega, det₁ := hd1, det₂ := hd2,
+                        q₁_lt := hqdlt, q₂_pos := Q.q₂_pos,
+                        unit_case := by intro hu; omega }
+                    BandVectors.1 (FordRecursiveQuadruple R (3 : Fin (4 : ℕ)))
+                          (FordRecursiveQuadruple R (2 : Fin (4 : ℕ))) =
+                        -(⟨(0 : ℤ), (1 : ℤ)⟩ * (↑R.q₂ : GaussianInt)) →
+                      BandVectors.1 (FordRecursiveQuadruple R (1 : Fin (4 : ℕ)))
+                            (FordRecursiveQuadruple R (3 : Fin (4 : ℕ))) =
+                          (↑R.q₁ : GaussianInt) →
+                        BandVectors.1 (FordRecursiveQuadruple R (2 : Fin (4 : ℕ)))
+                            (FordRecursiveQuadruple R (0 : Fin (4 : ℕ))) =
+                            BandVectors.1 (FordRecursiveQuadruple R (2 : Fin (4 : ℕ)))
+                            (FordRecursiveQuadruple R (1 : Fin (4 : ℕ))) -
+                            ⟨(0 : ℤ), (1 : ℤ)⟩ *
+                            BandVectors.1 (FordRecursiveQuadruple R (3 : Fin (4 : ℕ)))
+                            (FordRecursiveQuadruple R (2 : Fin (4 : ℕ))) ∧
+                            BandVectors.1 (FordRecursiveQuadruple R (0 : Fin (4 : ℕ)))
+                            (FordRecursiveQuadruple R (3 : Fin (4 : ℕ))) =
+                            BandVectors.1 (FordRecursiveQuadruple R (1 : Fin (4 : ℕ)))
+                            (FordRecursiveQuadruple R (3 : Fin (4 : ℕ))) +
+                            ⟨(0 : ℤ), (1 : ℤ)⟩ *
+                            BandVectors.1 (FordRecursiveQuadruple R (3 : Fin (4 : ℕ)))
+                            (FordRecursiveQuadruple R (2 : Fin (4 : ℕ))) ∧
+                            BandVectors.2 (FordRecursiveQuadruple R (2 : Fin (4 : ℕ)))
+                            (FordRecursiveQuadruple R (0 : Fin (4 : ℕ))) =
+                            BandVectors.2 (FordRecursiveQuadruple R (2 : Fin (4 : ℕ)))
+                            (FordRecursiveQuadruple R (1 : Fin (4 : ℕ))) +
+                            ⟨(0 : ℤ), (1 : ℤ)⟩ *
+                            BandVectors.2 (FordRecursiveQuadruple R (3 : Fin (4 : ℕ)))
+                            (FordRecursiveQuadruple R (2 : Fin (4 : ℕ))) ∧
+                            BandVectors.2 (FordRecursiveQuadruple R (0 : Fin (4 : ℕ)))
+                            (FordRecursiveQuadruple R (3 : Fin (4 : ℕ))) =
+                            BandVectors.2 (FordRecursiveQuadruple R (1 : Fin (4 : ℕ)))
+                            (FordRecursiveQuadruple R (3 : Fin (4 : ℕ))) -
+                            ⟨(0 : ℤ), (1 : ℤ)⟩ *
+                            BandVectors.2 (FordRecursiveQuadruple R (3 : Fin (4 : ℕ)))
+                            (FordRecursiveQuadruple R (2 : Fin (4 : ℕ))) →
+                          BandVectors.1 ((FordRecursiveQuadruple Q) 1)
+                            ((FordRecursiveQuadruple Q) 3) =
+                            (Q.q₁ : GaussianInt) := by
   classical
-  intro n Q q1pos hgtq pd qd hqdlt hd1 hd2 hred hq1gt R rv32 rv13 direct
+  intro Q q1pos hgtq pd qd hqdlt hd1 hd2 hred hq1gt R rv32 rv13 direct
   have hx := direct.2.1
   rw [rv13, rv32] at hx
   simp only [FordRecursiveQuadruple, Fin.isValue, Matrix.cons_val_zero, Matrix.cons_val,
@@ -280,45 +306,61 @@ private theorem hv13At359 :
   simpa [FordRecursiveQuadruple, R, Q.sum_q, q1pos.ne'] using hx
 
 private theorem ha13At390 :
-    (ℕ) → (∀ (Q : FordFareyParameter), ∀ (q1pos : 0 < Q.q₁), ∀ (hgtq : Q.q₁ > Q.q₂),
-    let pd : Int
-        := Q.p₁ - Q.p₂
-    let qd : Nat := Q.q₁ - Q.q₂
-    ∀ (hqdlt : qd < Q.q₁), ∀ (hd1 : pd * (Q.q₁ : Int) - (qd : Int) * Q.p₁ = 1), ∀ (hd2 : Q.p₂ *
-        (Q.q₁ : Int) - (Q.q₂ : Int) * Q.p₁ = -1), ∀ (hred : Nat.Coprime Q.q₁ Q.p₁.natAbs), ∀
-            (hq1gt : 1 < Q.q₁),
-    let R : FordFareyParameter := {
-      p := Q.p₁, q := Q.q₁, q_pos := q1pos, reduced := hred,
-      p₁ := pd, q₁ := qd, p₂ := Q.p₂, q₂ := Q.q₂,
-      sum_p := by dsimp [pd]; ring,
-      sum_q := by dsimp [qd]; omega,
-      det₁ := hd1, det₂ := hd2, q₁_lt := hqdlt,
-      q₂_pos := Q.q₂_pos,
-      unit_case := by intro hu; omega }
-    (BandVectors.2 (FordRecursiveQuadruple R (3 : Fin (4 : ℕ))) (FordRecursiveQuadruple R (2 :
-        Fin (4 : ℕ))) = -(↑R.p₂ : GaussianInt)) → ((BandVectors.2 (FordRecursiveQuadruple R (1 :
-        Fin (4 : ℕ))) (FordRecursiveQuadruple R (3 : Fin (4 : ℕ))) = ⟨(0 : ℤ), (1 : ℤ)⟩ * (↑R.p₁
-        : GaussianInt)) → ((BandVectors.1 (FordRecursiveQuadruple R (2 : Fin (4 : ℕ)))
-        (FordRecursiveQuadruple R (0 : Fin (4 : ℕ))) = BandVectors.1 (FordRecursiveQuadruple R (2
-        : Fin (4 : ℕ))) (FordRecursiveQuadruple R (1 : Fin (4 : ℕ))) - ⟨(0 : ℤ), (1 : ℤ)⟩ *
-        BandVectors.1 (FordRecursiveQuadruple R (3 : Fin (4 : ℕ))) (FordRecursiveQuadruple R (2 :
-        Fin (4 : ℕ))) ∧ BandVectors.1 (FordRecursiveQuadruple R (0 : Fin (4 : ℕ)))
-        (FordRecursiveQuadruple R (3 : Fin (4 : ℕ))) = BandVectors.1 (FordRecursiveQuadruple R (1
-        : Fin (4 : ℕ))) (FordRecursiveQuadruple R (3 : Fin (4 : ℕ))) + ⟨(0 : ℤ), (1 : ℤ)⟩ *
-        BandVectors.1 (FordRecursiveQuadruple R (3 : Fin (4 : ℕ))) (FordRecursiveQuadruple R (2 :
-        Fin (4 : ℕ))) ∧ BandVectors.2 (FordRecursiveQuadruple R (2 : Fin (4 : ℕ)))
-        (FordRecursiveQuadruple R (0 : Fin (4 : ℕ))) = BandVectors.2 (FordRecursiveQuadruple R (2
-        : Fin (4 : ℕ))) (FordRecursiveQuadruple R (1 : Fin (4 : ℕ))) + ⟨(0 : ℤ), (1 : ℤ)⟩ *
-        BandVectors.2 (FordRecursiveQuadruple R (3 : Fin (4 : ℕ))) (FordRecursiveQuadruple R (2 :
-        Fin (4 : ℕ))) ∧ BandVectors.2 (FordRecursiveQuadruple R (0 : Fin (4 : ℕ)))
-        (FordRecursiveQuadruple R (3 : Fin (4 : ℕ))) = BandVectors.2 (FordRecursiveQuadruple R (1
-        : Fin (4 : ℕ))) (FordRecursiveQuadruple R (3 : Fin (4 : ℕ))) - ⟨(0 : ℤ), (1 : ℤ)⟩ *
-        BandVectors.2 (FordRecursiveQuadruple R (3 : Fin (4 : ℕ))) (FordRecursiveQuadruple R (2 :
-        Fin (4 : ℕ)))) → (BandVectors.2 ((FordRecursiveQuadruple Q) 1)
-        ((FordRecursiveQuadruple Q) 3) =
-        (⟨0, 1⟩ : GaussianInt) * (Q.p₁ : GaussianInt))))) := by
+    ∀ (Q : FordFareyParameter),
+      ∀ (q1pos : 0 < Q.q₁),
+        ∀ (hgtq : Q.q₁ > Q.q₂),
+          let pd : Int := Q.p₁ - Q.p₂
+          let qd : Nat := Q.q₁ - Q.q₂
+          ∀ (hqdlt : qd < Q.q₁),
+            ∀ (hd1 : pd * (Q.q₁ : Int) - (qd : Int) * Q.p₁ = 1),
+              ∀ (hd2 : Q.p₂ * (Q.q₁ : Int) - (Q.q₂ : Int) * Q.p₁ = -1),
+                ∀ (hred : Nat.Coprime Q.q₁ Q.p₁.natAbs),
+                  ∀ (hq1gt : 1 < Q.q₁),
+                    let R : FordFareyParameter :=
+                      { p := Q.p₁, q := Q.q₁, q_pos := q1pos, reduced := hred, p₁ := pd,
+                        q₁ := qd, p₂ := Q.p₂, q₂ := Q.q₂, sum_p := by dsimp [pd]; ring,
+                        sum_q := by dsimp [qd]; omega, det₁ := hd1, det₂ := hd2,
+                        q₁_lt := hqdlt, q₂_pos := Q.q₂_pos,
+                        unit_case := by intro hu; omega }
+                    BandVectors.2 (FordRecursiveQuadruple R (3 : Fin (4 : ℕ)))
+                          (FordRecursiveQuadruple R (2 : Fin (4 : ℕ))) =
+                        -(↑R.p₂ : GaussianInt) →
+                      BandVectors.2 (FordRecursiveQuadruple R (1 : Fin (4 : ℕ)))
+                            (FordRecursiveQuadruple R (3 : Fin (4 : ℕ))) =
+                          ⟨(0 : ℤ), (1 : ℤ)⟩ * (↑R.p₁ : GaussianInt) →
+                        BandVectors.1 (FordRecursiveQuadruple R (2 : Fin (4 : ℕ)))
+                            (FordRecursiveQuadruple R (0 : Fin (4 : ℕ))) =
+                            BandVectors.1 (FordRecursiveQuadruple R (2 : Fin (4 : ℕ)))
+                            (FordRecursiveQuadruple R (1 : Fin (4 : ℕ))) -
+                            ⟨(0 : ℤ), (1 : ℤ)⟩ *
+                            BandVectors.1 (FordRecursiveQuadruple R (3 : Fin (4 : ℕ)))
+                            (FordRecursiveQuadruple R (2 : Fin (4 : ℕ))) ∧
+                            BandVectors.1 (FordRecursiveQuadruple R (0 : Fin (4 : ℕ)))
+                            (FordRecursiveQuadruple R (3 : Fin (4 : ℕ))) =
+                            BandVectors.1 (FordRecursiveQuadruple R (1 : Fin (4 : ℕ)))
+                            (FordRecursiveQuadruple R (3 : Fin (4 : ℕ))) +
+                            ⟨(0 : ℤ), (1 : ℤ)⟩ *
+                            BandVectors.1 (FordRecursiveQuadruple R (3 : Fin (4 : ℕ)))
+                            (FordRecursiveQuadruple R (2 : Fin (4 : ℕ))) ∧
+                            BandVectors.2 (FordRecursiveQuadruple R (2 : Fin (4 : ℕ)))
+                            (FordRecursiveQuadruple R (0 : Fin (4 : ℕ))) =
+                            BandVectors.2 (FordRecursiveQuadruple R (2 : Fin (4 : ℕ)))
+                            (FordRecursiveQuadruple R (1 : Fin (4 : ℕ))) +
+                            ⟨(0 : ℤ), (1 : ℤ)⟩ *
+                            BandVectors.2 (FordRecursiveQuadruple R (3 : Fin (4 : ℕ)))
+                            (FordRecursiveQuadruple R (2 : Fin (4 : ℕ))) ∧
+                            BandVectors.2 (FordRecursiveQuadruple R (0 : Fin (4 : ℕ)))
+                            (FordRecursiveQuadruple R (3 : Fin (4 : ℕ))) =
+                            BandVectors.2 (FordRecursiveQuadruple R (1 : Fin (4 : ℕ)))
+                            (FordRecursiveQuadruple R (3 : Fin (4 : ℕ))) -
+                            ⟨(0 : ℤ), (1 : ℤ)⟩ *
+                            BandVectors.2 (FordRecursiveQuadruple R (3 : Fin (4 : ℕ)))
+                            (FordRecursiveQuadruple R (2 : Fin (4 : ℕ))) →
+                          BandVectors.2 ((FordRecursiveQuadruple Q) 1)
+                            ((FordRecursiveQuadruple Q) 3) =
+                            (⟨0, 1⟩ : GaussianInt) * (Q.p₁ : GaussianInt) := by
   classical
-  intro n Q q1pos hgtq pd qd hqdlt hd1 hd2 hred hq1gt R ra32 ra13 direct
+  intro Q q1pos hgtq pd qd hqdlt hd1 hd2 hred hq1gt R ra32 ra13 direct
   have hx := direct.2.2.2
   rw [ra13, ra32] at hx
   have hx' : BandVectors.2 ((FordRecursiveQuadruple Q) 1)
@@ -336,122 +378,209 @@ private theorem ha13At390 :
       ext <;> simp
 
 private theorem hsemiAt448 :
-    (ℕ) → (∀ (Q : FordFareyParameter), ∀ (hgtq : ¬Q.q₁ > Q.q₂),
-    let pd : Int := Q.p₂ - Q.p₁
-    let qd : Nat := Q.q₂ - Q.q₁
-    (0 < Q.q₁) → (∀ (hqdpos : 0 < qd), ∀ (hd1 : Q.p₁ * (Q.q₂ : Int) - (Q.q₁ : Int) *
-        Q.p₂ = 1), ∀ (hd2 : pd * (Q.q₂ : Int) - (qd : Int) * Q.p₂ = -1), ∀ (hred : Nat.Coprime
-        Q.q₂ Q.p₂.natAbs), ∀ (hq2gt : 1 < Q.q₂),
-    let R : FordFareyParameter := {
-      p := Q.p₂, q := Q.q₂, q_pos := Q.q₂_pos, reduced := hred,
-      p₁ := Q.p₁, q₁ := Q.q₁, p₂ := pd, q₂ := qd,
-      sum_p := by dsimp [pd]; ring,
-      sum_q := by dsimp [qd]; omega,
-      det₁ := hd1, det₂ := hd2, q₁_lt := by omega,
-      q₂_pos := hqdpos,
-      unit_case := by intro hu; omega }
-    let rotatedTuple : Fin 4 → CircleCoordinates :=
-      ![FordRecursiveQuadruple R 0, FordRecursiveQuadruple R 2,
-        FordRecursiveQuadruple R 3, FordRecursiveQuadruple R 1]
-    (SemiProperQuadruple ![![![((2 : ℤ) * (rotatedTuple (0 : Fin (4 : ℕ))).1 + (2 : ℤ) *
-        (rotatedTuple (2 : Fin (4 : ℕ))).1 + (2 : ℤ) * (rotatedTuple (3 : Fin (4 : ℕ))).1 -
-        (rotatedTuple (1 : Fin (4 : ℕ))).1, (2 : GaussianInt) * (rotatedTuple (0 : Fin (4 :
-        ℕ))).2 + (2 : GaussianInt) * (rotatedTuple (2 : Fin (4 : ℕ))).2 + (2 : GaussianInt) *
-        (rotatedTuple (3 : Fin (4 : ℕ))).2 - (rotatedTuple (1 : Fin (4 : ℕ))).2), rotatedTuple (0
-        : Fin (4 : ℕ)), rotatedTuple (2 : Fin (4 : ℕ)), rotatedTuple (3 : Fin (4 : ℕ))] (0 : Fin
-        (4 : ℕ)), ![((2 : ℤ) * (rotatedTuple (0 : Fin (4 : ℕ))).1 + (2 : ℤ) * (rotatedTuple (2 :
-        Fin (4 : ℕ))).1 + (2 : ℤ) * (rotatedTuple (3 : Fin (4 : ℕ))).1 - (rotatedTuple (1 : Fin
-        (4 : ℕ))).1, (2 : GaussianInt) * (rotatedTuple (0 : Fin (4 : ℕ))).2 + (2 : GaussianInt) *
-        (rotatedTuple (2 : Fin (4 : ℕ))).2 + (2 : GaussianInt) * (rotatedTuple (3 : Fin (4 :
-        ℕ))).2 - (rotatedTuple (1 : Fin (4 : ℕ))).2), rotatedTuple (0 : Fin (4 : ℕ)),
-        rotatedTuple (2 : Fin (4 : ℕ)), rotatedTuple (3 : Fin (4 : ℕ))] (2 : Fin (4 : ℕ)), ![((2
-        : ℤ) * (rotatedTuple (0 : Fin (4 : ℕ))).1 + (2 : ℤ) * (rotatedTuple (2 : Fin (4 : ℕ))).1
-        + (2 : ℤ) * (rotatedTuple (3 : Fin (4 : ℕ))).1 - (rotatedTuple (1 : Fin (4 : ℕ))).1, (2 :
-        GaussianInt) * (rotatedTuple (0 : Fin (4 : ℕ))).2 + (2 : GaussianInt) * (rotatedTuple (2
-        : Fin (4 : ℕ))).2 + (2 : GaussianInt) * (rotatedTuple (3 : Fin (4 : ℕ))).2 -
-        (rotatedTuple (1 : Fin (4 : ℕ))).2), rotatedTuple (0 : Fin (4 : ℕ)), rotatedTuple (2 :
-        Fin (4 : ℕ)), rotatedTuple (3 : Fin (4 : ℕ))] (3 : Fin (4 : ℕ)), ![((2 : ℤ) *
-        (rotatedTuple (0 : Fin (4 : ℕ))).1 + (2 : ℤ) * (rotatedTuple (2 : Fin (4 : ℕ))).1 + (2 :
-        ℤ) * (rotatedTuple (3 : Fin (4 : ℕ))).1 - (rotatedTuple (1 : Fin (4 : ℕ))).1, (2 :
-        GaussianInt) * (rotatedTuple (0 : Fin (4 : ℕ))).2 + (2 : GaussianInt) * (rotatedTuple (2
-        : Fin (4 : ℕ))).2 + (2 : GaussianInt) * (rotatedTuple (3 : Fin (4 : ℕ))).2 -
-        (rotatedTuple (1 : Fin (4 : ℕ))).2), rotatedTuple (0 : Fin (4 : ℕ)), rotatedTuple (2 :
-        Fin (4 : ℕ)), rotatedTuple (3 : Fin (4 : ℕ))] (1 : Fin (4 : ℕ))] (0 : Fin (4 : ℕ)),
-        ![![((2 : ℤ) * (rotatedTuple (0 : Fin (4 : ℕ))).1 + (2 : ℤ) * (rotatedTuple (2 : Fin (4 :
-        ℕ))).1 + (2 : ℤ) * (rotatedTuple (3 : Fin (4 : ℕ))).1 - (rotatedTuple (1 : Fin (4 :
-        ℕ))).1, (2 : GaussianInt) * (rotatedTuple (0 : Fin (4 : ℕ))).2 + (2 : GaussianInt) *
-        (rotatedTuple (2 : Fin (4 : ℕ))).2 + (2 : GaussianInt) * (rotatedTuple (3 : Fin (4 :
-        ℕ))).2 - (rotatedTuple (1 : Fin (4 : ℕ))).2), rotatedTuple (0 : Fin (4 : ℕ)),
-        rotatedTuple (2 : Fin (4 : ℕ)), rotatedTuple (3 : Fin (4 : ℕ))] (0 : Fin (4 : ℕ)), ![((2
-        : ℤ) * (rotatedTuple (0 : Fin (4 : ℕ))).1 + (2 : ℤ) * (rotatedTuple (2 : Fin (4 : ℕ))).1
-        + (2 : ℤ) * (rotatedTuple (3 : Fin (4 : ℕ))).1 - (rotatedTuple (1 : Fin (4 : ℕ))).1, (2 :
-        GaussianInt) * (rotatedTuple (0 : Fin (4 : ℕ))).2 + (2 : GaussianInt) * (rotatedTuple (2
-        : Fin (4 : ℕ))).2 + (2 : GaussianInt) * (rotatedTuple (3 : Fin (4 : ℕ))).2 -
-        (rotatedTuple (1 : Fin (4 : ℕ))).2), rotatedTuple (0 : Fin (4 : ℕ)), rotatedTuple (2 :
-        Fin (4 : ℕ)), rotatedTuple (3 : Fin (4 : ℕ))] (2 : Fin (4 : ℕ)), ![((2 : ℤ) *
-        (rotatedTuple (0 : Fin (4 : ℕ))).1 + (2 : ℤ) * (rotatedTuple (2 : Fin (4 : ℕ))).1 + (2 :
-        ℤ) * (rotatedTuple (3 : Fin (4 : ℕ))).1 - (rotatedTuple (1 : Fin (4 : ℕ))).1, (2 :
-        GaussianInt) * (rotatedTuple (0 : Fin (4 : ℕ))).2 + (2 : GaussianInt) * (rotatedTuple (2
-        : Fin (4 : ℕ))).2 + (2 : GaussianInt) * (rotatedTuple (3 : Fin (4 : ℕ))).2 -
-        (rotatedTuple (1 : Fin (4 : ℕ))).2), rotatedTuple (0 : Fin (4 : ℕ)), rotatedTuple (2 :
-        Fin (4 : ℕ)), rotatedTuple (3 : Fin (4 : ℕ))] (3 : Fin (4 : ℕ)), ![((2 : ℤ) *
-        (rotatedTuple (0 : Fin (4 : ℕ))).1 + (2 : ℤ) * (rotatedTuple (2 : Fin (4 : ℕ))).1 + (2 :
-        ℤ) * (rotatedTuple (3 : Fin (4 : ℕ))).1 - (rotatedTuple (1 : Fin (4 : ℕ))).1, (2 :
-        GaussianInt) * (rotatedTuple (0 : Fin (4 : ℕ))).2 + (2 : GaussianInt) * (rotatedTuple (2
-        : Fin (4 : ℕ))).2 + (2 : GaussianInt) * (rotatedTuple (3 : Fin (4 : ℕ))).2 -
-        (rotatedTuple (1 : Fin (4 : ℕ))).2), rotatedTuple (0 : Fin (4 : ℕ)), rotatedTuple (2 :
-        Fin (4 : ℕ)), rotatedTuple (3 : Fin (4 : ℕ))] (1 : Fin (4 : ℕ))] (2 : Fin (4 : ℕ)),
-        ![![((2 : ℤ) * (rotatedTuple (0 : Fin (4 : ℕ))).1 + (2 : ℤ) * (rotatedTuple (2 : Fin (4 :
-        ℕ))).1 + (2 : ℤ) * (rotatedTuple (3 : Fin (4 : ℕ))).1 - (rotatedTuple (1 : Fin (4 :
-        ℕ))).1, (2 : GaussianInt) * (rotatedTuple (0 : Fin (4 : ℕ))).2 + (2 : GaussianInt) *
-        (rotatedTuple (2 : Fin (4 : ℕ))).2 + (2 : GaussianInt) * (rotatedTuple (3 : Fin (4 :
-        ℕ))).2 - (rotatedTuple (1 : Fin (4 : ℕ))).2), rotatedTuple (0 : Fin (4 : ℕ)),
-        rotatedTuple (2 : Fin (4 : ℕ)), rotatedTuple (3 : Fin (4 : ℕ))] (0 : Fin (4 : ℕ)), ![((2
-        : ℤ) * (rotatedTuple (0 : Fin (4 : ℕ))).1 + (2 : ℤ) * (rotatedTuple (2 : Fin (4 : ℕ))).1
-        + (2 : ℤ) * (rotatedTuple (3 : Fin (4 : ℕ))).1 - (rotatedTuple (1 : Fin (4 : ℕ))).1, (2 :
-        GaussianInt) * (rotatedTuple (0 : Fin (4 : ℕ))).2 + (2 : GaussianInt) * (rotatedTuple (2
-        : Fin (4 : ℕ))).2 + (2 : GaussianInt) * (rotatedTuple (3 : Fin (4 : ℕ))).2 -
-        (rotatedTuple (1 : Fin (4 : ℕ))).2), rotatedTuple (0 : Fin (4 : ℕ)), rotatedTuple (2 :
-        Fin (4 : ℕ)), rotatedTuple (3 : Fin (4 : ℕ))] (2 : Fin (4 : ℕ)), ![((2 : ℤ) *
-        (rotatedTuple (0 : Fin (4 : ℕ))).1 + (2 : ℤ) * (rotatedTuple (2 : Fin (4 : ℕ))).1 + (2 :
-        ℤ) * (rotatedTuple (3 : Fin (4 : ℕ))).1 - (rotatedTuple (1 : Fin (4 : ℕ))).1, (2 :
-        GaussianInt) * (rotatedTuple (0 : Fin (4 : ℕ))).2 + (2 : GaussianInt) * (rotatedTuple (2
-        : Fin (4 : ℕ))).2 + (2 : GaussianInt) * (rotatedTuple (3 : Fin (4 : ℕ))).2 -
-        (rotatedTuple (1 : Fin (4 : ℕ))).2), rotatedTuple (0 : Fin (4 : ℕ)), rotatedTuple (2 :
-        Fin (4 : ℕ)), rotatedTuple (3 : Fin (4 : ℕ))] (3 : Fin (4 : ℕ)), ![((2 : ℤ) *
-        (rotatedTuple (0 : Fin (4 : ℕ))).1 + (2 : ℤ) * (rotatedTuple (2 : Fin (4 : ℕ))).1 + (2 :
-        ℤ) * (rotatedTuple (3 : Fin (4 : ℕ))).1 - (rotatedTuple (1 : Fin (4 : ℕ))).1, (2 :
-        GaussianInt) * (rotatedTuple (0 : Fin (4 : ℕ))).2 + (2 : GaussianInt) * (rotatedTuple (2
-        : Fin (4 : ℕ))).2 + (2 : GaussianInt) * (rotatedTuple (3 : Fin (4 : ℕ))).2 -
-        (rotatedTuple (1 : Fin (4 : ℕ))).2), rotatedTuple (0 : Fin (4 : ℕ)), rotatedTuple (2 :
-        Fin (4 : ℕ)), rotatedTuple (3 : Fin (4 : ℕ))] (1 : Fin (4 : ℕ))] (3 : Fin (4 : ℕ)),
-        ![![((2 : ℤ) * (rotatedTuple (0 : Fin (4 : ℕ))).1 + (2 : ℤ) * (rotatedTuple (2 : Fin (4 :
-        ℕ))).1 + (2 : ℤ) * (rotatedTuple (3 : Fin (4 : ℕ))).1 - (rotatedTuple (1 : Fin (4 :
-        ℕ))).1, (2 : GaussianInt) * (rotatedTuple (0 : Fin (4 : ℕ))).2 + (2 : GaussianInt) *
-        (rotatedTuple (2 : Fin (4 : ℕ))).2 + (2 : GaussianInt) * (rotatedTuple (3 : Fin (4 :
-        ℕ))).2 - (rotatedTuple (1 : Fin (4 : ℕ))).2), rotatedTuple (0 : Fin (4 : ℕ)),
-        rotatedTuple (2 : Fin (4 : ℕ)), rotatedTuple (3 : Fin (4 : ℕ))] (0 : Fin (4 : ℕ)), ![((2
-        : ℤ) * (rotatedTuple (0 : Fin (4 : ℕ))).1 + (2 : ℤ) * (rotatedTuple (2 : Fin (4 : ℕ))).1
-        + (2 : ℤ) * (rotatedTuple (3 : Fin (4 : ℕ))).1 - (rotatedTuple (1 : Fin (4 : ℕ))).1, (2 :
-        GaussianInt) * (rotatedTuple (0 : Fin (4 : ℕ))).2 + (2 : GaussianInt) * (rotatedTuple (2
-        : Fin (4 : ℕ))).2 + (2 : GaussianInt) * (rotatedTuple (3 : Fin (4 : ℕ))).2 -
-        (rotatedTuple (1 : Fin (4 : ℕ))).2), rotatedTuple (0 : Fin (4 : ℕ)), rotatedTuple (2 :
-        Fin (4 : ℕ)), rotatedTuple (3 : Fin (4 : ℕ))] (2 : Fin (4 : ℕ)), ![((2 : ℤ) *
-        (rotatedTuple (0 : Fin (4 : ℕ))).1 + (2 : ℤ) * (rotatedTuple (2 : Fin (4 : ℕ))).1 + (2 :
-        ℤ) * (rotatedTuple (3 : Fin (4 : ℕ))).1 - (rotatedTuple (1 : Fin (4 : ℕ))).1, (2 :
-        GaussianInt) * (rotatedTuple (0 : Fin (4 : ℕ))).2 + (2 : GaussianInt) * (rotatedTuple (2
-        : Fin (4 : ℕ))).2 + (2 : GaussianInt) * (rotatedTuple (3 : Fin (4 : ℕ))).2 -
-        (rotatedTuple (1 : Fin (4 : ℕ))).2), rotatedTuple (0 : Fin (4 : ℕ)), rotatedTuple (2 :
-        Fin (4 : ℕ)), rotatedTuple (3 : Fin (4 : ℕ))] (3 : Fin (4 : ℕ)), ![((2 : ℤ) *
-        (rotatedTuple (0 : Fin (4 : ℕ))).1 + (2 : ℤ) * (rotatedTuple (2 : Fin (4 : ℕ))).1 + (2 :
-        ℤ) * (rotatedTuple (3 : Fin (4 : ℕ))).1 - (rotatedTuple (1 : Fin (4 : ℕ))).1, (2 :
-        GaussianInt) * (rotatedTuple (0 : Fin (4 : ℕ))).2 + (2 : GaussianInt) * (rotatedTuple (2
-        : Fin (4 : ℕ))).2 + (2 : GaussianInt) * (rotatedTuple (3 : Fin (4 : ℕ))).2 -
-        (rotatedTuple (1 : Fin (4 : ℕ))).2), rotatedTuple (0 : Fin (4 : ℕ)), rotatedTuple (2 :
-        Fin (4 : ℕ)), rotatedTuple (3 : Fin (4 : ℕ))] (1 : Fin (4 : ℕ))] (1 : Fin (4 : ℕ))]) →
-        (SemiProperQuadruple (FordRecursiveQuadruple Q)))) := by
+    ∀ (Q : FordFareyParameter),
+      ∀ (hgtq : ¬Q.q₁ > Q.q₂),
+        let pd : Int := Q.p₂ - Q.p₁
+        let qd : Nat := Q.q₂ - Q.q₁
+        0 < Q.q₁ →
+          ∀ (hqdpos : 0 < qd),
+            ∀ (hd1 : Q.p₁ * (Q.q₂ : Int) - (Q.q₁ : Int) * Q.p₂ = 1),
+              ∀ (hd2 : pd * (Q.q₂ : Int) - (qd : Int) * Q.p₂ = -1),
+                ∀ (hred : Nat.Coprime Q.q₂ Q.p₂.natAbs),
+                  ∀ (hq2gt : 1 < Q.q₂),
+                    let R : FordFareyParameter :=
+                      { p := Q.p₂, q := Q.q₂, q_pos := Q.q₂_pos, reduced := hred,
+                        p₁ := Q.p₁, q₁ := Q.q₁, p₂ := pd, q₂ := qd,
+                        sum_p := by dsimp [pd]; ring, sum_q := by dsimp [qd]; omega,
+                        det₁ := hd1, det₂ := hd2, q₁_lt := by omega, q₂_pos := hqdpos,
+                        unit_case := by intro hu; omega }
+                    let rotatedTuple : Fin 4 → CircleCoordinates :=
+                      ![FordRecursiveQuadruple R 0, FordRecursiveQuadruple R 2,
+                        FordRecursiveQuadruple R 3, FordRecursiveQuadruple R 1]
+                    SemiProperQuadruple
+                        ![![![((2 : ℤ) * (rotatedTuple (0 : Fin (4 : ℕ))).1 +
+                            (2 : ℤ) * (rotatedTuple (2 : Fin (4 : ℕ))).1 +
+                            (2 : ℤ) * (rotatedTuple (3 : Fin (4 : ℕ))).1 -
+                            (rotatedTuple (1 : Fin (4 : ℕ))).1,
+                            (2 : GaussianInt) * (rotatedTuple (0 : Fin (4 : ℕ))).2 +
+                            (2 : GaussianInt) * (rotatedTuple (2 : Fin (4 : ℕ))).2 +
+                            (2 : GaussianInt) * (rotatedTuple (3 : Fin (4 : ℕ))).2 -
+                            (rotatedTuple (1 : Fin (4 : ℕ))).2),
+                            rotatedTuple (0 : Fin (4 : ℕ)), rotatedTuple (2 : Fin (4 : ℕ)),
+                            rotatedTuple (3 : Fin (4 : ℕ))]
+                            (0 : Fin (4 : ℕ)),
+                            ![((2 : ℤ) * (rotatedTuple (0 : Fin (4 : ℕ))).1 +
+                            (2 : ℤ) * (rotatedTuple (2 : Fin (4 : ℕ))).1 +
+                            (2 : ℤ) * (rotatedTuple (3 : Fin (4 : ℕ))).1 -
+                            (rotatedTuple (1 : Fin (4 : ℕ))).1,
+                            (2 : GaussianInt) * (rotatedTuple (0 : Fin (4 : ℕ))).2 +
+                            (2 : GaussianInt) * (rotatedTuple (2 : Fin (4 : ℕ))).2 +
+                            (2 : GaussianInt) * (rotatedTuple (3 : Fin (4 : ℕ))).2 -
+                            (rotatedTuple (1 : Fin (4 : ℕ))).2),
+                            rotatedTuple (0 : Fin (4 : ℕ)), rotatedTuple (2 : Fin (4 : ℕ)),
+                            rotatedTuple (3 : Fin (4 : ℕ))]
+                            (2 : Fin (4 : ℕ)),
+                            ![((2 : ℤ) * (rotatedTuple (0 : Fin (4 : ℕ))).1 +
+                            (2 : ℤ) * (rotatedTuple (2 : Fin (4 : ℕ))).1 +
+                            (2 : ℤ) * (rotatedTuple (3 : Fin (4 : ℕ))).1 -
+                            (rotatedTuple (1 : Fin (4 : ℕ))).1,
+                            (2 : GaussianInt) * (rotatedTuple (0 : Fin (4 : ℕ))).2 +
+                            (2 : GaussianInt) * (rotatedTuple (2 : Fin (4 : ℕ))).2 +
+                            (2 : GaussianInt) * (rotatedTuple (3 : Fin (4 : ℕ))).2 -
+                            (rotatedTuple (1 : Fin (4 : ℕ))).2),
+                            rotatedTuple (0 : Fin (4 : ℕ)), rotatedTuple (2 : Fin (4 : ℕ)),
+                            rotatedTuple (3 : Fin (4 : ℕ))]
+                            (3 : Fin (4 : ℕ)),
+                            ![((2 : ℤ) * (rotatedTuple (0 : Fin (4 : ℕ))).1 +
+                            (2 : ℤ) * (rotatedTuple (2 : Fin (4 : ℕ))).1 +
+                            (2 : ℤ) * (rotatedTuple (3 : Fin (4 : ℕ))).1 -
+                            (rotatedTuple (1 : Fin (4 : ℕ))).1,
+                            (2 : GaussianInt) * (rotatedTuple (0 : Fin (4 : ℕ))).2 +
+                            (2 : GaussianInt) * (rotatedTuple (2 : Fin (4 : ℕ))).2 +
+                            (2 : GaussianInt) * (rotatedTuple (3 : Fin (4 : ℕ))).2 -
+                            (rotatedTuple (1 : Fin (4 : ℕ))).2),
+                            rotatedTuple (0 : Fin (4 : ℕ)), rotatedTuple (2 : Fin (4 : ℕ)),
+                            rotatedTuple (3 : Fin (4 : ℕ))]
+                            (1 : Fin (4 : ℕ))]
+                            (0 : Fin (4 : ℕ)),
+                          ![![((2 : ℤ) * (rotatedTuple (0 : Fin (4 : ℕ))).1 +
+                            (2 : ℤ) * (rotatedTuple (2 : Fin (4 : ℕ))).1 +
+                            (2 : ℤ) * (rotatedTuple (3 : Fin (4 : ℕ))).1 -
+                            (rotatedTuple (1 : Fin (4 : ℕ))).1,
+                            (2 : GaussianInt) * (rotatedTuple (0 : Fin (4 : ℕ))).2 +
+                            (2 : GaussianInt) * (rotatedTuple (2 : Fin (4 : ℕ))).2 +
+                            (2 : GaussianInt) * (rotatedTuple (3 : Fin (4 : ℕ))).2 -
+                            (rotatedTuple (1 : Fin (4 : ℕ))).2),
+                            rotatedTuple (0 : Fin (4 : ℕ)), rotatedTuple (2 : Fin (4 : ℕ)),
+                            rotatedTuple (3 : Fin (4 : ℕ))]
+                            (0 : Fin (4 : ℕ)),
+                            ![((2 : ℤ) * (rotatedTuple (0 : Fin (4 : ℕ))).1 +
+                            (2 : ℤ) * (rotatedTuple (2 : Fin (4 : ℕ))).1 +
+                            (2 : ℤ) * (rotatedTuple (3 : Fin (4 : ℕ))).1 -
+                            (rotatedTuple (1 : Fin (4 : ℕ))).1,
+                            (2 : GaussianInt) * (rotatedTuple (0 : Fin (4 : ℕ))).2 +
+                            (2 : GaussianInt) * (rotatedTuple (2 : Fin (4 : ℕ))).2 +
+                            (2 : GaussianInt) * (rotatedTuple (3 : Fin (4 : ℕ))).2 -
+                            (rotatedTuple (1 : Fin (4 : ℕ))).2),
+                            rotatedTuple (0 : Fin (4 : ℕ)), rotatedTuple (2 : Fin (4 : ℕ)),
+                            rotatedTuple (3 : Fin (4 : ℕ))]
+                            (2 : Fin (4 : ℕ)),
+                            ![((2 : ℤ) * (rotatedTuple (0 : Fin (4 : ℕ))).1 +
+                            (2 : ℤ) * (rotatedTuple (2 : Fin (4 : ℕ))).1 +
+                            (2 : ℤ) * (rotatedTuple (3 : Fin (4 : ℕ))).1 -
+                            (rotatedTuple (1 : Fin (4 : ℕ))).1,
+                            (2 : GaussianInt) * (rotatedTuple (0 : Fin (4 : ℕ))).2 +
+                            (2 : GaussianInt) * (rotatedTuple (2 : Fin (4 : ℕ))).2 +
+                            (2 : GaussianInt) * (rotatedTuple (3 : Fin (4 : ℕ))).2 -
+                            (rotatedTuple (1 : Fin (4 : ℕ))).2),
+                            rotatedTuple (0 : Fin (4 : ℕ)), rotatedTuple (2 : Fin (4 : ℕ)),
+                            rotatedTuple (3 : Fin (4 : ℕ))]
+                            (3 : Fin (4 : ℕ)),
+                            ![((2 : ℤ) * (rotatedTuple (0 : Fin (4 : ℕ))).1 +
+                            (2 : ℤ) * (rotatedTuple (2 : Fin (4 : ℕ))).1 +
+                            (2 : ℤ) * (rotatedTuple (3 : Fin (4 : ℕ))).1 -
+                            (rotatedTuple (1 : Fin (4 : ℕ))).1,
+                            (2 : GaussianInt) * (rotatedTuple (0 : Fin (4 : ℕ))).2 +
+                            (2 : GaussianInt) * (rotatedTuple (2 : Fin (4 : ℕ))).2 +
+                            (2 : GaussianInt) * (rotatedTuple (3 : Fin (4 : ℕ))).2 -
+                            (rotatedTuple (1 : Fin (4 : ℕ))).2),
+                            rotatedTuple (0 : Fin (4 : ℕ)), rotatedTuple (2 : Fin (4 : ℕ)),
+                            rotatedTuple (3 : Fin (4 : ℕ))]
+                            (1 : Fin (4 : ℕ))]
+                            (2 : Fin (4 : ℕ)),
+                          ![![((2 : ℤ) * (rotatedTuple (0 : Fin (4 : ℕ))).1 +
+                            (2 : ℤ) * (rotatedTuple (2 : Fin (4 : ℕ))).1 +
+                            (2 : ℤ) * (rotatedTuple (3 : Fin (4 : ℕ))).1 -
+                            (rotatedTuple (1 : Fin (4 : ℕ))).1,
+                            (2 : GaussianInt) * (rotatedTuple (0 : Fin (4 : ℕ))).2 +
+                            (2 : GaussianInt) * (rotatedTuple (2 : Fin (4 : ℕ))).2 +
+                            (2 : GaussianInt) * (rotatedTuple (3 : Fin (4 : ℕ))).2 -
+                            (rotatedTuple (1 : Fin (4 : ℕ))).2),
+                            rotatedTuple (0 : Fin (4 : ℕ)), rotatedTuple (2 : Fin (4 : ℕ)),
+                            rotatedTuple (3 : Fin (4 : ℕ))]
+                            (0 : Fin (4 : ℕ)),
+                            ![((2 : ℤ) * (rotatedTuple (0 : Fin (4 : ℕ))).1 +
+                            (2 : ℤ) * (rotatedTuple (2 : Fin (4 : ℕ))).1 +
+                            (2 : ℤ) * (rotatedTuple (3 : Fin (4 : ℕ))).1 -
+                            (rotatedTuple (1 : Fin (4 : ℕ))).1,
+                            (2 : GaussianInt) * (rotatedTuple (0 : Fin (4 : ℕ))).2 +
+                            (2 : GaussianInt) * (rotatedTuple (2 : Fin (4 : ℕ))).2 +
+                            (2 : GaussianInt) * (rotatedTuple (3 : Fin (4 : ℕ))).2 -
+                            (rotatedTuple (1 : Fin (4 : ℕ))).2),
+                            rotatedTuple (0 : Fin (4 : ℕ)), rotatedTuple (2 : Fin (4 : ℕ)),
+                            rotatedTuple (3 : Fin (4 : ℕ))]
+                            (2 : Fin (4 : ℕ)),
+                            ![((2 : ℤ) * (rotatedTuple (0 : Fin (4 : ℕ))).1 +
+                            (2 : ℤ) * (rotatedTuple (2 : Fin (4 : ℕ))).1 +
+                            (2 : ℤ) * (rotatedTuple (3 : Fin (4 : ℕ))).1 -
+                            (rotatedTuple (1 : Fin (4 : ℕ))).1,
+                            (2 : GaussianInt) * (rotatedTuple (0 : Fin (4 : ℕ))).2 +
+                            (2 : GaussianInt) * (rotatedTuple (2 : Fin (4 : ℕ))).2 +
+                            (2 : GaussianInt) * (rotatedTuple (3 : Fin (4 : ℕ))).2 -
+                            (rotatedTuple (1 : Fin (4 : ℕ))).2),
+                            rotatedTuple (0 : Fin (4 : ℕ)), rotatedTuple (2 : Fin (4 : ℕ)),
+                            rotatedTuple (3 : Fin (4 : ℕ))]
+                            (3 : Fin (4 : ℕ)),
+                            ![((2 : ℤ) * (rotatedTuple (0 : Fin (4 : ℕ))).1 +
+                            (2 : ℤ) * (rotatedTuple (2 : Fin (4 : ℕ))).1 +
+                            (2 : ℤ) * (rotatedTuple (3 : Fin (4 : ℕ))).1 -
+                            (rotatedTuple (1 : Fin (4 : ℕ))).1,
+                            (2 : GaussianInt) * (rotatedTuple (0 : Fin (4 : ℕ))).2 +
+                            (2 : GaussianInt) * (rotatedTuple (2 : Fin (4 : ℕ))).2 +
+                            (2 : GaussianInt) * (rotatedTuple (3 : Fin (4 : ℕ))).2 -
+                            (rotatedTuple (1 : Fin (4 : ℕ))).2),
+                            rotatedTuple (0 : Fin (4 : ℕ)), rotatedTuple (2 : Fin (4 : ℕ)),
+                            rotatedTuple (3 : Fin (4 : ℕ))]
+                            (1 : Fin (4 : ℕ))]
+                            (3 : Fin (4 : ℕ)),
+                          ![![((2 : ℤ) * (rotatedTuple (0 : Fin (4 : ℕ))).1 +
+                            (2 : ℤ) * (rotatedTuple (2 : Fin (4 : ℕ))).1 +
+                            (2 : ℤ) * (rotatedTuple (3 : Fin (4 : ℕ))).1 -
+                            (rotatedTuple (1 : Fin (4 : ℕ))).1,
+                            (2 : GaussianInt) * (rotatedTuple (0 : Fin (4 : ℕ))).2 +
+                            (2 : GaussianInt) * (rotatedTuple (2 : Fin (4 : ℕ))).2 +
+                            (2 : GaussianInt) * (rotatedTuple (3 : Fin (4 : ℕ))).2 -
+                            (rotatedTuple (1 : Fin (4 : ℕ))).2),
+                            rotatedTuple (0 : Fin (4 : ℕ)), rotatedTuple (2 : Fin (4 : ℕ)),
+                            rotatedTuple (3 : Fin (4 : ℕ))]
+                            (0 : Fin (4 : ℕ)),
+                            ![((2 : ℤ) * (rotatedTuple (0 : Fin (4 : ℕ))).1 +
+                            (2 : ℤ) * (rotatedTuple (2 : Fin (4 : ℕ))).1 +
+                            (2 : ℤ) * (rotatedTuple (3 : Fin (4 : ℕ))).1 -
+                            (rotatedTuple (1 : Fin (4 : ℕ))).1,
+                            (2 : GaussianInt) * (rotatedTuple (0 : Fin (4 : ℕ))).2 +
+                            (2 : GaussianInt) * (rotatedTuple (2 : Fin (4 : ℕ))).2 +
+                            (2 : GaussianInt) * (rotatedTuple (3 : Fin (4 : ℕ))).2 -
+                            (rotatedTuple (1 : Fin (4 : ℕ))).2),
+                            rotatedTuple (0 : Fin (4 : ℕ)), rotatedTuple (2 : Fin (4 : ℕ)),
+                            rotatedTuple (3 : Fin (4 : ℕ))]
+                            (2 : Fin (4 : ℕ)),
+                            ![((2 : ℤ) * (rotatedTuple (0 : Fin (4 : ℕ))).1 +
+                            (2 : ℤ) * (rotatedTuple (2 : Fin (4 : ℕ))).1 +
+                            (2 : ℤ) * (rotatedTuple (3 : Fin (4 : ℕ))).1 -
+                            (rotatedTuple (1 : Fin (4 : ℕ))).1,
+                            (2 : GaussianInt) * (rotatedTuple (0 : Fin (4 : ℕ))).2 +
+                            (2 : GaussianInt) * (rotatedTuple (2 : Fin (4 : ℕ))).2 +
+                            (2 : GaussianInt) * (rotatedTuple (3 : Fin (4 : ℕ))).2 -
+                            (rotatedTuple (1 : Fin (4 : ℕ))).2),
+                            rotatedTuple (0 : Fin (4 : ℕ)), rotatedTuple (2 : Fin (4 : ℕ)),
+                            rotatedTuple (3 : Fin (4 : ℕ))]
+                            (3 : Fin (4 : ℕ)),
+                            ![((2 : ℤ) * (rotatedTuple (0 : Fin (4 : ℕ))).1 +
+                            (2 : ℤ) * (rotatedTuple (2 : Fin (4 : ℕ))).1 +
+                            (2 : ℤ) * (rotatedTuple (3 : Fin (4 : ℕ))).1 -
+                            (rotatedTuple (1 : Fin (4 : ℕ))).1,
+                            (2 : GaussianInt) * (rotatedTuple (0 : Fin (4 : ℕ))).2 +
+                            (2 : GaussianInt) * (rotatedTuple (2 : Fin (4 : ℕ))).2 +
+                            (2 : GaussianInt) * (rotatedTuple (3 : Fin (4 : ℕ))).2 -
+                            (rotatedTuple (1 : Fin (4 : ℕ))).2),
+                            rotatedTuple (0 : Fin (4 : ℕ)), rotatedTuple (2 : Fin (4 : ℕ)),
+                            rotatedTuple (3 : Fin (4 : ℕ))]
+                            (1 : Fin (4 : ℕ))]
+                            (1 : Fin (4 : ℕ))] →
+                      SemiProperQuadruple (FordRecursiveQuadruple Q) := by
   classical
-  intro n Q hgtq pd qd q1pos' hqdpos hd1 hd2 hred hq2gt R rotatedTuple hfinal
+  intro Q hgtq pd qd q1pos' hqdpos hd1 hd2 hred hq2gt R rotatedTuple hfinal
   have rcond : R.q₁ ≠ 0 := by simp [R, q1pos'.ne']
   have rentry : FordRecursiveQuadruple R 1 =
       FordCircleCoordinate Q.p₁ Q.q₁ := by
@@ -481,44 +610,64 @@ private theorem hsemiAt448 :
 
 
 private theorem hv32At473 :
-    (ℕ) → (∀ (Q : FordFareyParameter), ∀ (hgtq : ¬Q.q₁ > Q.q₂),
-    let pd : Int := Q.p₂ - Q.p₁
-    let qd : Nat := Q.q₂ - Q.q₁
-    (0 < Q.q₁) → (∀ (hqdpos : 0 < qd), ∀ (hd1 : Q.p₁ * (Q.q₂ : Int) - (Q.q₁ : Int) *
-        Q.p₂ = 1), ∀ (hd2 : pd * (Q.q₂ : Int) - (qd : Int) * Q.p₂ = -1), ∀ (hred : Nat.Coprime
-        Q.q₂ Q.p₂.natAbs), ∀ (hq2gt : 1 < Q.q₂),
-    let R : FordFareyParameter := {
-      p := Q.p₂, q := Q.q₂, q_pos := Q.q₂_pos, reduced := hred,
-      p₁ := Q.p₁, q₁ := Q.q₁, p₂ := pd, q₂ := qd,
-      sum_p := by dsimp [pd]; ring,
-      sum_q := by dsimp [qd]; omega,
-      det₁ := hd1, det₂ := hd2, q₁_lt := by omega,
-      q₂_pos := hqdpos,
-      unit_case := by intro hu; omega }
-    (BandVectors.1 (FordRecursiveQuadruple R (3 : Fin (4 : ℕ))) (FordRecursiveQuadruple R (2 :
-        Fin (4 : ℕ))) = -(⟨(0 : ℤ), (1 : ℤ)⟩ * (↑R.q₂ : GaussianInt))) → ((BandVectors.1
-        (FordRecursiveQuadruple R (1 : Fin (4 : ℕ))) (FordRecursiveQuadruple R (3 : Fin (4 : ℕ)))
-        = (↑R.q₁ : GaussianInt)) → (
-    let rotatedTuple : Fin 4 → CircleCoordinates :=
-      ![FordRecursiveQuadruple R 0, FordRecursiveQuadruple R 2,
-        FordRecursiveQuadruple R 3, FordRecursiveQuadruple R 1]
-    (BandVectors.1 (rotatedTuple (2 : Fin (4 : ℕ))) (rotatedTuple (0 : Fin (4 : ℕ))) =
-        BandVectors.1 (rotatedTuple (2 : Fin (4 : ℕ))) (rotatedTuple (1 : Fin (4 : ℕ))) - ⟨(0 :
-        ℤ), (1 : ℤ)⟩ * BandVectors.1 (rotatedTuple (3 : Fin (4 : ℕ))) (rotatedTuple (2 : Fin (4 :
-        ℕ))) ∧ BandVectors.1 (rotatedTuple (0 : Fin (4 : ℕ))) (rotatedTuple (3 : Fin (4 : ℕ))) =
-        BandVectors.1 (rotatedTuple (1 : Fin (4 : ℕ))) (rotatedTuple (3 : Fin (4 : ℕ))) + ⟨(0 :
-        ℤ), (1 : ℤ)⟩ * BandVectors.1 (rotatedTuple (3 : Fin (4 : ℕ))) (rotatedTuple (2 : Fin (4 :
-        ℕ))) ∧ BandVectors.2 (rotatedTuple (2 : Fin (4 : ℕ))) (rotatedTuple (0 : Fin (4 : ℕ))) =
-        BandVectors.2 (rotatedTuple (2 : Fin (4 : ℕ))) (rotatedTuple (1 : Fin (4 : ℕ))) + ⟨(0 :
-        ℤ), (1 : ℤ)⟩ * BandVectors.2 (rotatedTuple (3 : Fin (4 : ℕ))) (rotatedTuple (2 : Fin (4 :
-        ℕ))) ∧ BandVectors.2 (rotatedTuple (0 : Fin (4 : ℕ))) (rotatedTuple (3 : Fin (4 : ℕ))) =
-        BandVectors.2 (rotatedTuple (1 : Fin (4 : ℕ))) (rotatedTuple (3 : Fin (4 : ℕ))) - ⟨(0 :
-        ℤ), (1 : ℤ)⟩ * BandVectors.2 (rotatedTuple (3 : Fin (4 : ℕ))) (rotatedTuple (2 : Fin (4 :
-        ℕ)))) → (BandVectors.1 ((FordRecursiveQuadruple Q) 3)
-        ((FordRecursiveQuadruple Q) 2) =
-        -((⟨0, 1⟩ : GaussianInt) * (Q.q₂ : GaussianInt))))))) := by
+    ∀ (Q : FordFareyParameter),
+      ∀ (hgtq : ¬Q.q₁ > Q.q₂),
+        let pd : Int := Q.p₂ - Q.p₁
+        let qd : Nat := Q.q₂ - Q.q₁
+        0 < Q.q₁ →
+          ∀ (hqdpos : 0 < qd),
+            ∀ (hd1 : Q.p₁ * (Q.q₂ : Int) - (Q.q₁ : Int) * Q.p₂ = 1),
+              ∀ (hd2 : pd * (Q.q₂ : Int) - (qd : Int) * Q.p₂ = -1),
+                ∀ (hred : Nat.Coprime Q.q₂ Q.p₂.natAbs),
+                  ∀ (hq2gt : 1 < Q.q₂),
+                    let R : FordFareyParameter :=
+                      { p := Q.p₂, q := Q.q₂, q_pos := Q.q₂_pos, reduced := hred,
+                        p₁ := Q.p₁, q₁ := Q.q₁, p₂ := pd, q₂ := qd,
+                        sum_p := by dsimp [pd]; ring, sum_q := by dsimp [qd]; omega,
+                        det₁ := hd1, det₂ := hd2, q₁_lt := by omega, q₂_pos := hqdpos,
+                        unit_case := by intro hu; omega }
+                    BandVectors.1 (FordRecursiveQuadruple R (3 : Fin (4 : ℕ)))
+                          (FordRecursiveQuadruple R (2 : Fin (4 : ℕ))) =
+                        -(⟨(0 : ℤ), (1 : ℤ)⟩ * (↑R.q₂ : GaussianInt)) →
+                      BandVectors.1 (FordRecursiveQuadruple R (1 : Fin (4 : ℕ)))
+                            (FordRecursiveQuadruple R (3 : Fin (4 : ℕ))) =
+                          (↑R.q₁ : GaussianInt) →
+                        let rotatedTuple : Fin 4 → CircleCoordinates :=
+                          ![FordRecursiveQuadruple R 0, FordRecursiveQuadruple R 2,
+                            FordRecursiveQuadruple R 3, FordRecursiveQuadruple R 1]
+                        BandVectors.1 (rotatedTuple (2 : Fin (4 : ℕ)))
+                            (rotatedTuple (0 : Fin (4 : ℕ))) =
+                            BandVectors.1 (rotatedTuple (2 : Fin (4 : ℕ)))
+                            (rotatedTuple (1 : Fin (4 : ℕ))) -
+                            ⟨(0 : ℤ), (1 : ℤ)⟩ *
+                            BandVectors.1 (rotatedTuple (3 : Fin (4 : ℕ)))
+                            (rotatedTuple (2 : Fin (4 : ℕ))) ∧
+                            BandVectors.1 (rotatedTuple (0 : Fin (4 : ℕ)))
+                            (rotatedTuple (3 : Fin (4 : ℕ))) =
+                            BandVectors.1 (rotatedTuple (1 : Fin (4 : ℕ)))
+                            (rotatedTuple (3 : Fin (4 : ℕ))) +
+                            ⟨(0 : ℤ), (1 : ℤ)⟩ *
+                            BandVectors.1 (rotatedTuple (3 : Fin (4 : ℕ)))
+                            (rotatedTuple (2 : Fin (4 : ℕ))) ∧
+                            BandVectors.2 (rotatedTuple (2 : Fin (4 : ℕ)))
+                            (rotatedTuple (0 : Fin (4 : ℕ))) =
+                            BandVectors.2 (rotatedTuple (2 : Fin (4 : ℕ)))
+                            (rotatedTuple (1 : Fin (4 : ℕ))) +
+                            ⟨(0 : ℤ), (1 : ℤ)⟩ *
+                            BandVectors.2 (rotatedTuple (3 : Fin (4 : ℕ)))
+                            (rotatedTuple (2 : Fin (4 : ℕ))) ∧
+                            BandVectors.2 (rotatedTuple (0 : Fin (4 : ℕ)))
+                            (rotatedTuple (3 : Fin (4 : ℕ))) =
+                            BandVectors.2 (rotatedTuple (1 : Fin (4 : ℕ)))
+                            (rotatedTuple (3 : Fin (4 : ℕ))) -
+                            ⟨(0 : ℤ), (1 : ℤ)⟩ *
+                            BandVectors.2 (rotatedTuple (3 : Fin (4 : ℕ)))
+                            (rotatedTuple (2 : Fin (4 : ℕ))) →
+                          BandVectors.1 ((FordRecursiveQuadruple Q) 3)
+                            ((FordRecursiveQuadruple Q) 2) =
+                            -((⟨0, 1⟩ : GaussianInt) * (Q.q₂ : GaussianInt)) := by
   classical
-  intro n Q hgtq pd qd q1pos' hqdpos hd1 hd2 hred hq2gt R rv32 rv13 rotatedTuple direct
+  intro Q hgtq pd qd q1pos' hqdpos hd1 hd2 hred hq2gt R rv32 rv13 rotatedTuple direct
   have hx := direct.1
   have rv32' : BandVectors.1 (rotatedTuple 2) (rotatedTuple 1) =
       -((⟨0, 1⟩ : GaussianInt) * (qd : GaussianInt)) := by
@@ -543,43 +692,64 @@ private theorem hv32At473 :
   simpa [rotatedTuple, FordRecursiveQuadruple, R, q1pos'.ne'] using hx
 
 private theorem ha32At503 :
-    (ℕ) → (∀ (Q : FordFareyParameter), ∀ (hgtq : ¬Q.q₁ > Q.q₂),
-    let pd : Int := Q.p₂ - Q.p₁
-    let qd : Nat := Q.q₂ - Q.q₁
-    (0 < Q.q₁) → (∀ (hqdpos : 0 < qd), ∀ (hd1 : Q.p₁ * (Q.q₂ : Int) - (Q.q₁ : Int) *
-        Q.p₂ = 1), ∀ (hd2 : pd * (Q.q₂ : Int) - (qd : Int) * Q.p₂ = -1), ∀ (hred : Nat.Coprime
-        Q.q₂ Q.p₂.natAbs), ∀ (hq2gt : 1 < Q.q₂),
-    let R : FordFareyParameter := {
-      p := Q.p₂, q := Q.q₂, q_pos := Q.q₂_pos, reduced := hred,
-      p₁ := Q.p₁, q₁ := Q.q₁, p₂ := pd, q₂ := qd,
-      sum_p := by dsimp [pd]; ring,
-      sum_q := by dsimp [qd]; omega,
-      det₁ := hd1, det₂ := hd2, q₁_lt := by omega,
-      q₂_pos := hqdpos,
-      unit_case := by intro hu; omega }
-    (BandVectors.2 (FordRecursiveQuadruple R (3 : Fin (4 : ℕ))) (FordRecursiveQuadruple R (2 :
-        Fin (4 : ℕ))) = -(↑R.p₂ : GaussianInt)) → ((BandVectors.2 (FordRecursiveQuadruple R (1 :
-        Fin (4 : ℕ))) (FordRecursiveQuadruple R (3 : Fin (4 : ℕ))) = ⟨(0 : ℤ), (1 : ℤ)⟩ * (↑R.p₁
-        : GaussianInt)) → (
-    let rotatedTuple : Fin 4 → CircleCoordinates :=
-      ![FordRecursiveQuadruple R 0, FordRecursiveQuadruple R 2,
-        FordRecursiveQuadruple R 3, FordRecursiveQuadruple R 1]
-    (BandVectors.1 (rotatedTuple (2 : Fin (4 : ℕ))) (rotatedTuple (0 : Fin (4 : ℕ))) =
-        BandVectors.1 (rotatedTuple (2 : Fin (4 : ℕ))) (rotatedTuple (1 : Fin (4 : ℕ))) - ⟨(0 :
-        ℤ), (1 : ℤ)⟩ * BandVectors.1 (rotatedTuple (3 : Fin (4 : ℕ))) (rotatedTuple (2 : Fin (4 :
-        ℕ))) ∧ BandVectors.1 (rotatedTuple (0 : Fin (4 : ℕ))) (rotatedTuple (3 : Fin (4 : ℕ))) =
-        BandVectors.1 (rotatedTuple (1 : Fin (4 : ℕ))) (rotatedTuple (3 : Fin (4 : ℕ))) + ⟨(0 :
-        ℤ), (1 : ℤ)⟩ * BandVectors.1 (rotatedTuple (3 : Fin (4 : ℕ))) (rotatedTuple (2 : Fin (4 :
-        ℕ))) ∧ BandVectors.2 (rotatedTuple (2 : Fin (4 : ℕ))) (rotatedTuple (0 : Fin (4 : ℕ))) =
-        BandVectors.2 (rotatedTuple (2 : Fin (4 : ℕ))) (rotatedTuple (1 : Fin (4 : ℕ))) + ⟨(0 :
-        ℤ), (1 : ℤ)⟩ * BandVectors.2 (rotatedTuple (3 : Fin (4 : ℕ))) (rotatedTuple (2 : Fin (4 :
-        ℕ))) ∧ BandVectors.2 (rotatedTuple (0 : Fin (4 : ℕ))) (rotatedTuple (3 : Fin (4 : ℕ))) =
-        BandVectors.2 (rotatedTuple (1 : Fin (4 : ℕ))) (rotatedTuple (3 : Fin (4 : ℕ))) - ⟨(0 :
-        ℤ), (1 : ℤ)⟩ * BandVectors.2 (rotatedTuple (3 : Fin (4 : ℕ))) (rotatedTuple (2 : Fin (4 :
-        ℕ)))) → (BandVectors.2 ((FordRecursiveQuadruple Q) 3)
-        ((FordRecursiveQuadruple Q) 2) = -(Q.p₂ : GaussianInt)))))) := by
+    ∀ (Q : FordFareyParameter),
+      ∀ (hgtq : ¬Q.q₁ > Q.q₂),
+        let pd : Int := Q.p₂ - Q.p₁
+        let qd : Nat := Q.q₂ - Q.q₁
+        0 < Q.q₁ →
+          ∀ (hqdpos : 0 < qd),
+            ∀ (hd1 : Q.p₁ * (Q.q₂ : Int) - (Q.q₁ : Int) * Q.p₂ = 1),
+              ∀ (hd2 : pd * (Q.q₂ : Int) - (qd : Int) * Q.p₂ = -1),
+                ∀ (hred : Nat.Coprime Q.q₂ Q.p₂.natAbs),
+                  ∀ (hq2gt : 1 < Q.q₂),
+                    let R : FordFareyParameter :=
+                      { p := Q.p₂, q := Q.q₂, q_pos := Q.q₂_pos, reduced := hred,
+                        p₁ := Q.p₁, q₁ := Q.q₁, p₂ := pd, q₂ := qd,
+                        sum_p := by dsimp [pd]; ring, sum_q := by dsimp [qd]; omega,
+                        det₁ := hd1, det₂ := hd2, q₁_lt := by omega, q₂_pos := hqdpos,
+                        unit_case := by intro hu; omega }
+                    BandVectors.2 (FordRecursiveQuadruple R (3 : Fin (4 : ℕ)))
+                          (FordRecursiveQuadruple R (2 : Fin (4 : ℕ))) =
+                        -(↑R.p₂ : GaussianInt) →
+                      BandVectors.2 (FordRecursiveQuadruple R (1 : Fin (4 : ℕ)))
+                            (FordRecursiveQuadruple R (3 : Fin (4 : ℕ))) =
+                          ⟨(0 : ℤ), (1 : ℤ)⟩ * (↑R.p₁ : GaussianInt) →
+                        let rotatedTuple : Fin 4 → CircleCoordinates :=
+                          ![FordRecursiveQuadruple R 0, FordRecursiveQuadruple R 2,
+                            FordRecursiveQuadruple R 3, FordRecursiveQuadruple R 1]
+                        BandVectors.1 (rotatedTuple (2 : Fin (4 : ℕ)))
+                            (rotatedTuple (0 : Fin (4 : ℕ))) =
+                            BandVectors.1 (rotatedTuple (2 : Fin (4 : ℕ)))
+                            (rotatedTuple (1 : Fin (4 : ℕ))) -
+                            ⟨(0 : ℤ), (1 : ℤ)⟩ *
+                            BandVectors.1 (rotatedTuple (3 : Fin (4 : ℕ)))
+                            (rotatedTuple (2 : Fin (4 : ℕ))) ∧
+                            BandVectors.1 (rotatedTuple (0 : Fin (4 : ℕ)))
+                            (rotatedTuple (3 : Fin (4 : ℕ))) =
+                            BandVectors.1 (rotatedTuple (1 : Fin (4 : ℕ)))
+                            (rotatedTuple (3 : Fin (4 : ℕ))) +
+                            ⟨(0 : ℤ), (1 : ℤ)⟩ *
+                            BandVectors.1 (rotatedTuple (3 : Fin (4 : ℕ)))
+                            (rotatedTuple (2 : Fin (4 : ℕ))) ∧
+                            BandVectors.2 (rotatedTuple (2 : Fin (4 : ℕ)))
+                            (rotatedTuple (0 : Fin (4 : ℕ))) =
+                            BandVectors.2 (rotatedTuple (2 : Fin (4 : ℕ)))
+                            (rotatedTuple (1 : Fin (4 : ℕ))) +
+                            ⟨(0 : ℤ), (1 : ℤ)⟩ *
+                            BandVectors.2 (rotatedTuple (3 : Fin (4 : ℕ)))
+                            (rotatedTuple (2 : Fin (4 : ℕ))) ∧
+                            BandVectors.2 (rotatedTuple (0 : Fin (4 : ℕ)))
+                            (rotatedTuple (3 : Fin (4 : ℕ))) =
+                            BandVectors.2 (rotatedTuple (1 : Fin (4 : ℕ)))
+                            (rotatedTuple (3 : Fin (4 : ℕ))) -
+                            ⟨(0 : ℤ), (1 : ℤ)⟩ *
+                            BandVectors.2 (rotatedTuple (3 : Fin (4 : ℕ)))
+                            (rotatedTuple (2 : Fin (4 : ℕ))) →
+                          BandVectors.2 ((FordRecursiveQuadruple Q) 3)
+                            ((FordRecursiveQuadruple Q) 2) =
+                            -(Q.p₂ : GaussianInt) := by
   classical
-  intro n Q hgtq pd qd q1pos' hqdpos hd1 hd2 hred hq2gt R ra32 ra13 rotatedTuple direct
+  intro Q hgtq pd qd q1pos' hqdpos hd1 hd2 hred hq2gt R ra32 ra13 rotatedTuple direct
   have hx := direct.2.2.1
   have ra32' : BandVectors.2 (rotatedTuple 2) (rotatedTuple 1) =
       -(pd : GaussianInt) := by
@@ -790,13 +960,14 @@ private theorem hv13At868 :
     Q.sum_q, z, coord1] using b1.2.2.1
 
 private theorem hd1At883 :
-    (ℕ) → (∀ (Q : FordFareyParameter), (Q.p₁ * (Q.q₂ : Int) - (Q.q₁ : Int) * Q.p₂ = 1) → ((Q.q₁ >
-        Q.q₂) → (
-    let pd : Int := Q.p₁ - Q.p₂
-    let qd : Nat := Q.q₁ - Q.q₂
-    pd * (Q.q₁ : Int) - (qd : Int) * Q.p₁ = 1))) := by
+    ∀ (Q : FordFareyParameter),
+      Q.p₁ * (Q.q₂ : Int) - (Q.q₁ : Int) * Q.p₂ = 1 →
+        Q.q₁ > Q.q₂ →
+          let pd : Int := Q.p₁ - Q.p₂
+          let qd : Nat := Q.q₁ - Q.q₂
+          pd * (Q.q₁ : Int) - (qd : Int) * Q.p₁ = 1 := by
   classical
-  intro n Q cross hgtq pd qd
+  intro Q cross hgtq pd qd
   dsimp [pd, qd]
   rw [Nat.cast_sub (by omega)]
   nlinarith [cross]
@@ -853,13 +1024,14 @@ private theorem ha32At914 :
   simpa [FordRecursiveQuadruple, R] using ra32
 
 private theorem hd2At925 :
-    (ℕ) → (∀ (Q : FordFareyParameter), (Q.p₁ * (Q.q₂ : Int) - (Q.q₁ : Int) * Q.p₂ = 1) → ((¬Q.q₁
-        > Q.q₂) → (
-    let pd : Int := Q.p₂ - Q.p₁
-    let qd : Nat := Q.q₂ - Q.q₁
-    pd * (Q.q₂ : Int) - (qd : Int) * Q.p₂ = -1))) := by
+    ∀ (Q : FordFareyParameter),
+      Q.p₁ * (Q.q₂ : Int) - (Q.q₁ : Int) * Q.p₂ = 1 →
+        ¬Q.q₁ > Q.q₂ →
+          let pd : Int := Q.p₂ - Q.p₁
+          let qd : Nat := Q.q₂ - Q.q₁
+          pd * (Q.q₂ : Int) - (qd : Int) * Q.p₂ = -1 := by
   classical
-  intro n Q cross hgtq pd qd
+  intro Q cross hgtq pd qd
   dsimp [pd, qd]
   rw [Nat.cast_sub (by omega)]
   nlinarith [cross]
@@ -1237,7 +1409,7 @@ theorem FordCoordinateConfiguration (P : FordFareyParameter) :
           have q2pos : 0 < Q.q₂ := Q.q₂_pos
           have hqdpos : 0 < qd := by dsimp [qd]; omega
           have hqdlt : qd < Q.q₁ := by dsimp [qd]; omega
-          have hd1 := FordConfigurationDetails.hd1At883 n Q cross hgtq
+          have hd1 := FordConfigurationDetails.hd1At883 Q cross hgtq
           have hd2 : Q.p₂ * (Q.q₁ : Int) - (Q.q₂ : Int) * Q.p₁ = -1 := by
             nlinarith [cross]
           have hred : Nat.Coprime Q.q₁ Q.p₁.natAbs :=
@@ -1255,24 +1427,24 @@ theorem FordCoordinateConfiguration (P : FordFareyParameter) :
           have hrec := ih Q.q₁ hq1ltN R (by simp [R]) (by simpa [R] using hq1gt)
           rcases hrec with ⟨rsemi, rv32, rv13, ra32, ra13⟩
           have hsucc := SemiProperQuadruple.successor rsemi
-          have hsemi := FordConfigurationProof.hsemiAt342 n Q q1pos hgtq hqdpos hqdlt hd1 hd2
+          have hsemi := FordConfigurationProof.hsemiAt342 Q q1pos hgtq hqdpos hqdlt hd1 hd2
               hred hq1gt hsucc
           have direct := stepLaw (FordRecursiveQuadruple R) rsemi
           have hv32 := FordConfigurationDetails.hv32At908 Q q1pos hgtq hqdlt hd1 hd2 hred hq1gt
               rv32
-          have hv13 := FordConfigurationProof.hv13At359 n Q q1pos hgtq hqdlt hd1 hd2 hred hq1gt rv32
+          have hv13 := FordConfigurationProof.hv13At359 Q q1pos hgtq hqdlt hd1 hd2 hred hq1gt rv32
                     rv13 direct
           have ha32 := FordConfigurationDetails.ha32At914 Q q1pos hgtq hqdlt hd1 hd2 hred hq1gt
               ra32
-          have ha13 := FordConfigurationProof.ha13At390
-                    n Q q1pos hgtq hqdlt hd1 hd2 hred hq1gt ra32 ra13 direct
+          have ha13 := FordConfigurationProof.ha13At390 Q q1pos hgtq hqdlt hd1 hd2 hred hq1gt
+              ra32 ra13 direct
           exact ⟨hsemi, hv32, hv13, ha32, ha13⟩
         · let pd : Int := Q.p₂ - Q.p₁
           let qd : Nat := Q.q₂ - Q.q₁
           have q1pos' : 0 < Q.q₁ := q1pos
           have hqdpos : 0 < qd := by dsimp [qd]; omega
           have hd1 : Q.p₁ * (Q.q₂ : Int) - (Q.q₁ : Int) * Q.p₂ = 1 := cross
-          have hd2 := FordConfigurationDetails.hd2At925 n Q cross hgtq
+          have hd2 := FordConfigurationDetails.hd2At925 Q cross hgtq
           have hred := FordConfigurationDetails.hredAt929 Q
               determinantCoprime hd2
           have hq2gt : 1 < Q.q₂ := by omega
@@ -1295,14 +1467,14 @@ theorem FordCoordinateConfiguration (P : FordFareyParameter) :
             simpa [rotatedTuple] using SemiProperQuadruple.rotate rsemi
           have hsucc := SemiProperQuadruple.successor trot
           have hfinal := SemiProperQuadruple.rotate (SemiProperQuadruple.rotate hsucc)
-          have hsemi := FordConfigurationProof.hsemiAt448 n Q hgtq q1pos' hqdpos hd1 hd2 hred
+          have hsemi := FordConfigurationProof.hsemiAt448 Q hgtq q1pos' hqdpos hd1 hd2 hred
               hq2gt hfinal
           have direct := stepLaw _ trot
           have hv13 := FordConfigurationDetails.hv13At961 Q hgtq hqdpos hd1 hd2 hred hq2gt rv13
-          have hv32 := FordConfigurationProof.hv32At473 n Q hgtq q1pos' hqdpos hd1 hd2 hred hq2gt
+          have hv32 := FordConfigurationProof.hv32At473 Q hgtq q1pos' hqdpos hd1 hd2 hred hq2gt
                     rv32 rv13 direct
           have ha13 := FordConfigurationDetails.ha13At966 Q hgtq hqdpos hd1 hd2 hred hq2gt ra13
-          have ha32 := FordConfigurationProof.ha32At503 n Q hgtq q1pos' hqdpos hd1 hd2 hred hq2gt
+          have ha32 := FordConfigurationProof.ha32At503 Q hgtq q1pos' hqdpos hd1 hd2 hred hq2gt
                     ra32 ra13 direct
           exact ⟨hsemi, hv32, hv13, ha32, ha13⟩
   have circleExists := FordConfigurationProof.circleExists P claim

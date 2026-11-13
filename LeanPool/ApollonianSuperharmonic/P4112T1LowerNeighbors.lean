@@ -88,10 +88,10 @@ private theorem natAbs_form :
     (by
       classical
       exact
-        (FordFareyParameter) → (∀ (z : ℤ), z.natAbs = if z ≤ (0 : ℤ) then (-z).toNat else z.toNat)
+        ∀ (z : ℤ), z.natAbs = if z ≤ (0 : ℤ) then (-z).toNat else z.toNat
     ) := by
   classical
-  intro P z
+  intro z
   by_cases hz : z ≤ 0
   · rw [ite_eq_left hz]
     have hc : (z.natAbs : Int) = -z := Int.ofNat_natAbs_of_nonpos hz
@@ -199,13 +199,19 @@ private theorem root_candidate_empty :
     (by
       classical
       exact
-        (FordFareyParameter) → (∀ (S : Finset GaussianInt), ∀ (ρ : GaussianInt → ℕ), ∀ (x :
-            GaussianInt), ρ x = (0 : ℕ) → ({y ∈ {x + (1 : GaussianInt), x - (1 : GaussianInt),
-            x + ⟨(0 : ℤ), (1 : ℤ)⟩, x - ⟨(0 : ℤ), (1 : ℤ)⟩} | y ∈ S ∧ ρ y < ρ x} : Finset
-            GaussianInt) = ∅)
+        ∀ (S : Finset GaussianInt),
+          ∀ (ρ : GaussianInt → ℕ),
+            ∀ (x : GaussianInt),
+              ρ x = (0 : ℕ) →
+                ({y ∈
+                        {x + (1 : GaussianInt), x - (1 : GaussianInt),
+                          x + ⟨(0 : ℤ), (1 : ℤ)⟩, x - ⟨(0 : ℤ), (1 : ℤ)⟩} |
+                      y ∈ S ∧ ρ y < ρ x} :
+                    Finset GaussianInt) =
+                  ∅
     ) := by
   classical
-  intro P S ρ x hz
+  intro S ρ x hz
   ext y
   simp only [Finset.mem_filter, Finset.notMem_empty]
   constructor
@@ -504,15 +510,16 @@ private theorem hpredDistAt490 :
       classical
       exact
         ∀ (P : FordFareyParameter),
-        let B := P4062T1RemainderPaths P
-        let rootDist (j : Fin 2) (z : GaussianInt) : Nat :=
-          (z.re-(B j).2.re).natAbs + (z.im-(B j).2.im).natAbs
-        ∀ (x : GaussianInt), ((B (0 : Fin (2 : ℕ))).2 = ⟨(↑P.q₁ : ℤ), (↑P.q₁ : ℤ)⟩) → ((x.re =
-            (↑P.q₁ : ℤ) ∧ x.im ≤ (↑P.q₁ : ℤ)) → ((x.re = (P.q₁ : Int)) → ((x.im < (P.q₁ : Int)) →
-            (rootDist 0 (x + ⟨0, 1⟩) < rootDist 0 x))))
+          let B := P4062T1RemainderPaths P;
+          let rootDist (j : Fin 2) (z : GaussianInt) : Nat :=
+            (z.re - (B j).2.re).natAbs + (z.im - (B j).2.im).natAbs;
+          ∀ (x : GaussianInt),
+            (B (0 : Fin (2 : ℕ))).2 = ⟨(↑P.q₁ : ℤ), (↑P.q₁ : ℤ)⟩ →
+              x.re = (P.q₁ : Int) →
+                x.im < (P.q₁ : Int) → rootDist 0 (x + ⟨0, 1⟩) < rootDist 0 x
     ) := by
   classical
-  intro P B rootDist x hb0root harm hr hhi
+  intro P B rootDist x hb0root hr hhi
   have ha : 0 ≤ (P.q₁ : Int) - (x.im + 1) := by omega
   have hab : (P.q₁ : Int) - (x.im + 1) < (P.q₁ : Int) - x.im := by omega
   have hn := Int.natAbs_lt_natAbs_of_nonneg_of_lt ha hab
@@ -528,13 +535,17 @@ private theorem hnotRightAt501 :
     (by
       classical
       exact
-        ∀ (P : FordFareyParameter), ∀ (x : GaussianInt), (x.re = (↑P.q₁ : ℤ) ∧ x.im ≤ (↑P.q₁ :
-            ℤ)) → ((x.re = (P.q₁ : Int)) → ((x.im < (P.q₁ : Int)) → (x + 1 ∉
-            (P4062T1InteriorSquare P.q).filter (fun z => (z.re = (P.q₁ : Int) ∧ z.im ≤ (P.q₁ :
-            Int)) ∨ (z.im = (P.q₁ : Int) ∧ z.re ≤ (P.q₁ : Int))))))
+        ∀ (P : FordFareyParameter),
+          ∀ (x : GaussianInt),
+            x.re = (P.q₁ : Int) →
+              x.im < (P.q₁ : Int) →
+                x + 1 ∉
+                  (P4062T1InteriorSquare P.q).filter fun z =>
+                    z.re = (P.q₁ : Int) ∧ z.im ≤ (P.q₁ : Int) ∨
+                      z.im = (P.q₁ : Int) ∧ z.re ≤ (P.q₁ : Int)
     ) := by
   classical
-  intro P x harm hr hhi hz
+  intro P x hr hhi hz
   simp only [Finset.mem_filter] at hz
   rcases hz with ⟨_, hz | hz⟩
   · simp [Zsqrtd.re_add, hr] at hz
@@ -545,13 +556,17 @@ private theorem hnotLeftAt511 :
     (by
       classical
       exact
-        ∀ (P : FordFareyParameter), ∀ (x : GaussianInt), (x.re = (↑P.q₁ : ℤ) ∧ x.im ≤ (↑P.q₁ :
-            ℤ)) → ((x.re = (P.q₁ : Int)) → ((x.im < (P.q₁ : Int)) → (x - 1 ∉
-            (P4062T1InteriorSquare P.q).filter (fun z => (z.re = (P.q₁ : Int) ∧ z.im ≤ (P.q₁ :
-            Int)) ∨ (z.im = (P.q₁ : Int) ∧ z.re ≤ (P.q₁ : Int))))))
+        ∀ (P : FordFareyParameter),
+          ∀ (x : GaussianInt),
+            x.re = (P.q₁ : Int) →
+              x.im < (P.q₁ : Int) →
+                x - 1 ∉
+                  (P4062T1InteriorSquare P.q).filter fun z =>
+                    z.re = (P.q₁ : Int) ∧ z.im ≤ (P.q₁ : Int) ∨
+                      z.im = (P.q₁ : Int) ∧ z.re ≤ (P.q₁ : Int)
     ) := by
   classical
-  intro P x harm hr hhi hz
+  intro P x hr hhi hz
   simp only [Finset.mem_filter] at hz
   rcases hz with ⟨_, hz | hz⟩
   · simp [Zsqrtd.re_sub, hr] at hz
@@ -563,15 +578,16 @@ private theorem hnotPredAt521 :
       classical
       exact
         ∀ (P : FordFareyParameter),
-        let B := P4062T1RemainderPaths P
-        let rootDist (j : Fin 2) (z : GaussianInt) : Nat :=
-          (z.re-(B j).2.re).natAbs + (z.im-(B j).2.im).natAbs
-        ∀ (x : GaussianInt), ((B (0 : Fin (2 : ℕ))).2 = ⟨(↑P.q₁ : ℤ), (↑P.q₁ : ℤ)⟩) → ((x.re =
-            (↑P.q₁ : ℤ) ∧ x.im ≤ (↑P.q₁ : ℤ)) → ((x.re = (P.q₁ : Int)) → ((x.im < (P.q₁ : Int)) →
-            (¬ rootDist 0 (x - ⟨0, 1⟩) < rootDist 0 x))))
+          let B := P4062T1RemainderPaths P;
+          let rootDist (j : Fin 2) (z : GaussianInt) : Nat :=
+            (z.re - (B j).2.re).natAbs + (z.im - (B j).2.im).natAbs;
+          ∀ (x : GaussianInt),
+            (B (0 : Fin (2 : ℕ))).2 = ⟨(↑P.q₁ : ℤ), (↑P.q₁ : ℤ)⟩ →
+              x.re = (P.q₁ : Int) →
+                x.im < (P.q₁ : Int) → ¬rootDist 0 (x - ⟨0, 1⟩) < rootDist 0 x
     ) := by
   classical
-  intro P B rootDist x hb0root harm hr hhi
+  intro P B rootDist x hb0root hr hhi
   have ha : 0 ≤ (P.q₁ : Int) - x.im := by omega
   have hab : (P.q₁ : Int) - x.im < (P.q₁ : Int) - (x.im - 1) := by omega
   have hn := Int.natAbs_lt_natAbs_of_nonneg_of_lt ha hab
@@ -651,15 +667,16 @@ private theorem hpredDistAt583 :
       classical
       exact
         ∀ (P : FordFareyParameter),
-        let B := P4062T1RemainderPaths P
-        let rootDist (j : Fin 2) (z : GaussianInt) : Nat :=
-          (z.re-(B j).2.re).natAbs + (z.im-(B j).2.im).natAbs
-        ∀ (x : GaussianInt), ((B (0 : Fin (2 : ℕ))).2 = ⟨(↑P.q₁ : ℤ), (↑P.q₁ : ℤ)⟩) → ((x.im =
-            (↑P.q₁ : ℤ) ∧ x.re ≤ (↑P.q₁ : ℤ)) → ((x.im = (P.q₁ : Int)) → ((x.re < (P.q₁ : Int)) →
-            (rootDist 0 (x + 1) < rootDist 0 x))))
+          let B := P4062T1RemainderPaths P;
+          let rootDist (j : Fin 2) (z : GaussianInt) : Nat :=
+            (z.re - (B j).2.re).natAbs + (z.im - (B j).2.im).natAbs;
+          ∀ (x : GaussianInt),
+            (B (0 : Fin (2 : ℕ))).2 = ⟨(↑P.q₁ : ℤ), (↑P.q₁ : ℤ)⟩ →
+              x.im = (P.q₁ : Int) →
+                x.re < (P.q₁ : Int) → rootDist 0 (x + 1) < rootDist 0 x
     ) := by
   classical
-  intro P B rootDist x hb0root harm hr hhi
+  intro P B rootDist x hb0root hr hhi
   have ha : 0 ≤ (P.q₁ : Int) - (x.re + 1) := by omega
   have hab : (P.q₁ : Int) - (x.re + 1) < (P.q₁ : Int) - x.re := by omega
   have hn := Int.natAbs_lt_natAbs_of_nonneg_of_lt ha hab
@@ -676,15 +693,16 @@ private theorem hnotLeftAt594 :
       classical
       exact
         ∀ (P : FordFareyParameter),
-        let B := P4062T1RemainderPaths P
-        let rootDist (j : Fin 2) (z : GaussianInt) : Nat :=
-          (z.re-(B j).2.re).natAbs + (z.im-(B j).2.im).natAbs
-        ∀ (x : GaussianInt), ((B (0 : Fin (2 : ℕ))).2 = ⟨(↑P.q₁ : ℤ), (↑P.q₁ : ℤ)⟩) → ((x.im =
-            (↑P.q₁ : ℤ) ∧ x.re ≤ (↑P.q₁ : ℤ)) → ((x.im = (P.q₁ : Int)) → ((x.re < (P.q₁ : Int)) →
-            (¬ rootDist 0 (x - 1) < rootDist 0 x))))
+          let B := P4062T1RemainderPaths P;
+          let rootDist (j : Fin 2) (z : GaussianInt) : Nat :=
+            (z.re - (B j).2.re).natAbs + (z.im - (B j).2.im).natAbs;
+          ∀ (x : GaussianInt),
+            (B (0 : Fin (2 : ℕ))).2 = ⟨(↑P.q₁ : ℤ), (↑P.q₁ : ℤ)⟩ →
+              x.im = (P.q₁ : Int) →
+                x.re < (P.q₁ : Int) → ¬rootDist 0 (x - 1) < rootDist 0 x
     ) := by
   classical
-  intro P B rootDist x hb0root harm hr hhi
+  intro P B rootDist x hb0root hr hhi
   have ha : 0 ≤ (P.q₁ : Int) - x.re := by omega
   have hab : (P.q₁ : Int) - x.re < (P.q₁ : Int) - (x.re - 1) := by omega
   have hn := Int.natAbs_lt_natAbs_of_nonneg_of_lt ha hab
@@ -703,13 +721,17 @@ private theorem hnotUpAt608 :
     (by
       classical
       exact
-        ∀ (P : FordFareyParameter), ∀ (x : GaussianInt), (x.im = (↑P.q₁ : ℤ) ∧ x.re ≤ (↑P.q₁ :
-            ℤ)) → ((x.im = (P.q₁ : Int)) → ((x.re < (P.q₁ : Int)) → (x + ⟨0, 1⟩ ∉
-            (P4062T1InteriorSquare P.q).filter (fun z => (z.re = (P.q₁ : Int) ∧ z.im ≤ (P.q₁ :
-            Int)) ∨ (z.im = (P.q₁ : Int) ∧ z.re ≤ (P.q₁ : Int))))))
+        ∀ (P : FordFareyParameter),
+          ∀ (x : GaussianInt),
+            x.im = (P.q₁ : Int) →
+              x.re < (P.q₁ : Int) →
+                x + ⟨0, 1⟩ ∉
+                  (P4062T1InteriorSquare P.q).filter fun z =>
+                    z.re = (P.q₁ : Int) ∧ z.im ≤ (P.q₁ : Int) ∨
+                      z.im = (P.q₁ : Int) ∧ z.re ≤ (P.q₁ : Int)
     ) := by
   classical
-  intro P x harm hr hhi hz
+  intro P x hr hhi hz
   simp only [Finset.mem_filter] at hz
   rcases hz with ⟨_, hz | hz⟩
   · simp [Zsqrtd.re_add] at hz
@@ -720,13 +742,17 @@ private theorem hnotDownAt618 :
     (by
       classical
       exact
-        ∀ (P : FordFareyParameter), ∀ (x : GaussianInt), (x.im = (↑P.q₁ : ℤ) ∧ x.re ≤ (↑P.q₁ :
-            ℤ)) → ((x.im = (P.q₁ : Int)) → ((x.re < (P.q₁ : Int)) → (x - ⟨0, 1⟩ ∉
-            (P4062T1InteriorSquare P.q).filter (fun z => (z.re = (P.q₁ : Int) ∧ z.im ≤ (P.q₁ :
-            Int)) ∨ (z.im = (P.q₁ : Int) ∧ z.re ≤ (P.q₁ : Int))))))
+        ∀ (P : FordFareyParameter),
+          ∀ (x : GaussianInt),
+            x.im = (P.q₁ : Int) →
+              x.re < (P.q₁ : Int) →
+                x - ⟨0, 1⟩ ∉
+                  (P4062T1InteriorSquare P.q).filter fun z =>
+                    z.re = (P.q₁ : Int) ∧ z.im ≤ (P.q₁ : Int) ∨
+                      z.im = (P.q₁ : Int) ∧ z.re ≤ (P.q₁ : Int)
     ) := by
   classical
-  intro P x harm hr hhi hz
+  intro P x hr hhi hz
   simp only [Finset.mem_filter] at hz
   rcases hz with ⟨_, hz | hz⟩
   · simp [Zsqrtd.re_sub] at hz
@@ -1062,15 +1088,16 @@ private theorem hnotUpAt899 :
       classical
       exact
         ∀ (P : FordFareyParameter),
-        let B := P4062T1RemainderPaths P
-        let rootDist (j : Fin 2) (z : GaussianInt) : Nat :=
-          (z.re-(B j).2.re).natAbs + (z.im-(B j).2.im).natAbs
-        ∀ (x : GaussianInt), ((B (1 : Fin (2 : ℕ))).2 = ⟨(↑P.q₂ : ℤ), (↑P.q₂ : ℤ)⟩) → ((x.re =
-            (↑P.q₂ : ℤ) ∧ (↑P.q₂ : ℤ) ≤ x.im) → ((x.re = (P.q₂ : Int)) → (((P.q₂ : Int) < x.im) →
-            (¬ rootDist 1 (x + ⟨0, 1⟩) < rootDist 1 x))))
+          let B := P4062T1RemainderPaths P;
+          let rootDist (j : Fin 2) (z : GaussianInt) : Nat :=
+            (z.re - (B j).2.re).natAbs + (z.im - (B j).2.im).natAbs;
+          ∀ (x : GaussianInt),
+            (B (1 : Fin (2 : ℕ))).2 = ⟨(↑P.q₂ : ℤ), (↑P.q₂ : ℤ)⟩ →
+              x.re = (P.q₂ : Int) →
+                (P.q₂ : Int) < x.im → ¬rootDist 1 (x + ⟨0, 1⟩) < rootDist 1 x
     ) := by
   classical
-  intro P B rootDist x hb1root harm hr hlo
+  intro P B rootDist x hb1root hr hlo
   have ha : 0 ≤ x.im - (P.q₂ : Int) := by omega
   have hab : x.im - (P.q₂ : Int) < x.im + 1 - (P.q₂ : Int) := by omega
   have hn := Int.natAbs_lt_natAbs_of_nonneg_of_lt ha hab
@@ -1085,13 +1112,17 @@ private theorem hnotRightAt909 :
     (by
       classical
       exact
-        ∀ (P : FordFareyParameter), ∀ (x : GaussianInt), (x.re = (↑P.q₂ : ℤ) ∧ (↑P.q₂ : ℤ) ≤
-            x.im) → ((x.re = (P.q₂ : Int)) → (((P.q₂ : Int) < x.im) → (x + 1 ∉
-            (P4062T1InteriorSquare P.q).filter (fun z => (z.re = (P.q₂ : Int) ∧ (P.q₂ : Int) ≤
-            z.im) ∨ (z.im = (P.q₂ : Int) ∧ (P.q₂ : Int) ≤ z.re)))))
+        ∀ (P : FordFareyParameter),
+          ∀ (x : GaussianInt),
+            x.re = (P.q₂ : Int) →
+              (P.q₂ : Int) < x.im →
+                x + 1 ∉
+                  (P4062T1InteriorSquare P.q).filter fun z =>
+                    z.re = (P.q₂ : Int) ∧ (P.q₂ : Int) ≤ z.im ∨
+                      z.im = (P.q₂ : Int) ∧ (P.q₂ : Int) ≤ z.re
     ) := by
   classical
-  intro P x harm hr hlo hz
+  intro P x hr hlo hz
   simp only [Finset.mem_filter] at hz
   rcases hz with ⟨_, hz | hz⟩
   · simp [Zsqrtd.re_add, hr] at hz
@@ -1102,13 +1133,17 @@ private theorem hnotLeftAt919 :
     (by
       classical
       exact
-        ∀ (P : FordFareyParameter), ∀ (x : GaussianInt), (x.re = (↑P.q₂ : ℤ) ∧ (↑P.q₂ : ℤ) ≤
-            x.im) → ((x.re = (P.q₂ : Int)) → (((P.q₂ : Int) < x.im) → (x - 1 ∉
-            (P4062T1InteriorSquare P.q).filter (fun z => (z.re = (P.q₂ : Int) ∧ (P.q₂ : Int) ≤
-            z.im) ∨ (z.im = (P.q₂ : Int) ∧ (P.q₂ : Int) ≤ z.re)))))
+        ∀ (P : FordFareyParameter),
+          ∀ (x : GaussianInt),
+            x.re = (P.q₂ : Int) →
+              (P.q₂ : Int) < x.im →
+                x - 1 ∉
+                  (P4062T1InteriorSquare P.q).filter fun z =>
+                    z.re = (P.q₂ : Int) ∧ (P.q₂ : Int) ≤ z.im ∨
+                      z.im = (P.q₂ : Int) ∧ (P.q₂ : Int) ≤ z.re
     ) := by
   classical
-  intro P x harm hr hlo hz
+  intro P x hr hlo hz
   simp only [Finset.mem_filter] at hz
   rcases hz with ⟨_, hz | hz⟩
   · simp [Zsqrtd.re_sub, hr] at hz
@@ -1181,15 +1216,16 @@ private theorem hnotRightAt987 :
       classical
       exact
         ∀ (P : FordFareyParameter),
-        let B := P4062T1RemainderPaths P
-        let rootDist (j : Fin 2) (z : GaussianInt) : Nat :=
-          (z.re-(B j).2.re).natAbs + (z.im-(B j).2.im).natAbs
-        ∀ (x : GaussianInt), ((B (1 : Fin (2 : ℕ))).2 = ⟨(↑P.q₂ : ℤ), (↑P.q₂ : ℤ)⟩) → ((x.im =
-            (↑P.q₂ : ℤ) ∧ (↑P.q₂ : ℤ) ≤ x.re) → ((x.im = (P.q₂ : Int)) → (((P.q₂ : Int) < x.re) →
-            (¬ rootDist 1 (x + 1) < rootDist 1 x))))
+          let B := P4062T1RemainderPaths P;
+          let rootDist (j : Fin 2) (z : GaussianInt) : Nat :=
+            (z.re - (B j).2.re).natAbs + (z.im - (B j).2.im).natAbs;
+          ∀ (x : GaussianInt),
+            (B (1 : Fin (2 : ℕ))).2 = ⟨(↑P.q₂ : ℤ), (↑P.q₂ : ℤ)⟩ →
+              x.im = (P.q₂ : Int) →
+                (P.q₂ : Int) < x.re → ¬rootDist 1 (x + 1) < rootDist 1 x
     ) := by
   classical
-  intro P B rootDist x hb1root harm hr hlo
+  intro P B rootDist x hb1root hr hlo
   have ha : 0 ≤ x.re - (P.q₂ : Int) := by omega
   have hab : x.re - (P.q₂ : Int) < x.re + 1 - (P.q₂ : Int) := by omega
   have hn := Int.natAbs_lt_natAbs_of_nonneg_of_lt ha hab
@@ -1424,10 +1460,10 @@ private theorem firstPathDescendingCount :
         exact hroot this.symm
       have hpred := LowerNeighborGeometry.hpredAt476
                 P hq1pos hsum squareCoordinates x horder' harm hr hlo hhi
-      have hpredDist := LowerNeighborGeometry.hpredDistAt490 P x hb0root harm hr hhi
-      have hnotRight := LowerNeighborGeometry.hnotRightAt501 P x harm hr hhi
-      have hnotLeft := LowerNeighborGeometry.hnotLeftAt511 P x harm hr hhi
-      have hnotPred := LowerNeighborGeometry.hnotPredAt521 P x hb0root harm hr hhi
+      have hpredDist := LowerNeighborGeometry.hpredDistAt490 P x hb0root hr hhi
+      have hnotRight := LowerNeighborGeometry.hnotRightAt501 P x hr hhi
+      have hnotLeft := LowerNeighborGeometry.hnotLeftAt511 P x hr hhi
+      have hnotPred := LowerNeighborGeometry.hnotPredAt521 P x hb0root hr hhi
       have hset := LowerNeighborGeometry.hsetAt535 P x hpred hpredDist hnotRight hnotLeft
                     hnotPred
       rw [hset]
@@ -1447,10 +1483,10 @@ private theorem firstPathDescendingCount :
         exact hroot this
       have hpred := LowerNeighborGeometry.hpredAt570
                 P hq1pos hsum squareCoordinates x horder' harm hr hlo hhi
-      have hpredDist := LowerNeighborGeometry.hpredDistAt583 P x hb0root harm hr hhi
-      have hnotLeft := LowerNeighborGeometry.hnotLeftAt594 P x hb0root harm hr hhi
-      have hnotUp := LowerNeighborGeometry.hnotUpAt608 P x harm hr hhi
-      have hnotDown := LowerNeighborGeometry.hnotDownAt618 P x harm hr hhi
+      have hpredDist := LowerNeighborGeometry.hpredDistAt583 P x hb0root hr hhi
+      have hnotLeft := LowerNeighborGeometry.hnotLeftAt594 P x hb0root hr hhi
+      have hnotUp := LowerNeighborGeometry.hnotUpAt608 P x hr hhi
+      have hnotDown := LowerNeighborGeometry.hnotDownAt618 P x hr hhi
       have hset := LowerNeighborGeometry.hsetAt628 P
                     x hpred hpredDist hnotLeft hnotUp hnotDown
       rw [hset]
@@ -1614,9 +1650,9 @@ private theorem secondPathDescendingCount :
           hr]
         simp only [Int.sub_zero, sub_self, Int.natAbs_zero, zero_add]
         exact hn
-      have hnotUp := LowerNeighborGeometry.hnotUpAt899 P x hb1root harm hr hlo
-      have hnotRight := LowerNeighborGeometry.hnotRightAt909 P x harm hr hlo
-      have hnotLeft := LowerNeighborGeometry.hnotLeftAt919 P x harm hr hlo
+      have hnotUp := LowerNeighborGeometry.hnotUpAt899 P x hb1root hr hlo
+      have hnotRight := LowerNeighborGeometry.hnotRightAt909 P x hr hlo
+      have hnotLeft := LowerNeighborGeometry.hnotLeftAt919 P x hr hlo
       have hset := LowerNeighborGeometry.hsetAt929 P x hpred hpredDist hnotUp hnotRight
                     hnotLeft
       rw [hset]
@@ -1646,7 +1682,7 @@ private theorem secondPathDescendingCount :
           Zsqrtd.re_one, Zsqrtd.im_one, hr]
         simp only [Int.sub_zero, sub_self, Int.natAbs_zero]
         exact hn
-      have hnotRight := LowerNeighborGeometry.hnotRightAt987 P x hb1root harm hr hlo
+      have hnotRight := LowerNeighborGeometry.hnotRightAt987 P x hb1root hr hlo
       have hnotUp := LowerNeighborGeometry.hnotUpAt997 P x harm hr hlo
       have hnotDown := LowerNeighborGeometry.hnotDownAt1008 P x harm hr
       have hset := LowerNeighborGeometry.hsetAt1018 P
@@ -1690,7 +1726,7 @@ theorem P4112T1LowerNeighbors (P : FordFareyParameter) (hP : 2 < P.q) :
     ((B j).1.filter (fun y => FourNeighborAdjacent y x ∧ d y < d x)).card =
       (if x = (B j).2 then 0 else 1)
   have squareCoordinates (q : Nat) (z : GaussianInt) := LowerNeighborGeometry.squareCoordinates q z
-  have natAbs_form (z : Int) := LowerNeighborGeometry.natAbs_form P z
+  have natAbs_form (z : Int) := LowerNeighborGeometry.natAbs_form z
   have d_on_path (j : Fin 2) (z : GaussianInt) (hz : z ∈ (B j).1) :=
       LowerNeighborGeometry.d_on_path P hP j z hz
   have neighbor_filter (S : Finset GaussianInt) (x : GaussianInt)
@@ -1700,7 +1736,7 @@ theorem P4112T1LowerNeighbors (P : FordFareyParameter) (hP : 2 < P.q) :
   have count_eq (j : Fin 2) (x : GaussianInt) (hx : x ∈ (B j).1) :=
       LowerNeighborGeometry.count_eq P d_on_path neighbor_filter j x hx
   have root_candidate_empty (S : Finset GaussianInt) (ρ : GaussianInt → Nat)
-      (x : GaussianInt) (hz : ρ x = 0) := LowerNeighborGeometry.root_candidate_empty P S ρ x hz
+      (x : GaussianInt) (hz : ρ x = 0) := LowerNeighborGeometry.root_candidate_empty S ρ x hz
   intro j
   fin_cases j
   · intro x hx

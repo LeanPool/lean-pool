@@ -454,62 +454,126 @@ private theorem hfirst_criterion :
     (by
       classical
       exact
-        ∀ (q : Fin 4 → CircleCoordinates), ∀ (cfg : BandOrderedGeneralConfiguration q), ∀ (C :
-            BandCircle), ∀ (T : ProtoTile), ∀ (cert : BandOrderedGeneralLayoutCertificate q cfg C
-            T), ∀ (a : PeriodicSubtileIndex), ∀ (b : PeriodicSubtileIndex), ∀ (row :
-            BandOrderedGeneralSelectedContactRow q cfg C T cert a b), ∀ (data :
-            P4418T3SelectedInterfaceData (SubtileOccurrenceInterpretation cert.P cert.u cert.v
-            a) (SubtileOccurrenceInterpretation cert.P cert.u cert.v b)
-            (SubtileOccurrenceInterpretation cert.P cert.u cert.v (P4418T3EndpointOwnerIndices
-            q cfg C T cert a b row).1) (SubtileOccurrenceInterpretation cert.P cert.u cert.v
-            (P4418T3EndpointOwnerIndices q cfg C T cert a b row).2)), ∀ (x : GaussianInt), ∀ (j
-            : Fin 4), ∀ (edge : Finset GaussianInt), (x ∈ edge) → ((edge ∈ FootprintEdges
-            (SubtileOccurrenceInterpretation cert.P cert.u cert.v a) ∩ FootprintEdges
-            (SubtileOccurrenceInterpretation cert.P cert.u cert.v b)) →
-            ((LatticeVertexIncidentCell x j ∈ (SubtileOccurrenceInterpretation cert.P cert.u
-            cert.v a).cells) → ((LatticeVertexIncidentCell x (j + (2 : Fin (4 : ℕ))) ∈
-            (SubtileOccurrenceInterpretation cert.P cert.u cert.v b).cells) → (
-        let shift : GaussianInt := match P3996T1SRowTable q cfg C T cert row with
-          | some z => z.oldShift
-          | none => match a.label with
-            | .A => if a.first = -1 then -cert.u else cert.u
-            | .B => if a.first = 1 then cert.u else -cert.u
-            | .C => -cert.v
-            | .D => cert.v
-            | .E | .F => 0
-        let oldCoord : Int × Int := routedOldCoordinates row
-        (shift = (oldCoord.1 : GaussianInt) * cert.u + (oldCoord.2 : GaussianInt) * cert.v) →
-            (((a.first, a.second) ≠ oldCoord) → (((b.first, b.second) ≠ oldCoord) → ((∀ (m :
-            Int), ∀ (n : Int), ∀ (r : Int), ∀ (s : Int), ((m, n) ≠ (r, s)) → (Disjoint
-            (TileTranslation T ((m : GaussianInt) * cert.u + (n : GaussianInt) * cert.v)).cells
-            (TileTranslation T ((r : GaussianInt) * cert.u + (s : GaussianInt) * cert.v)).cells))
-            → (((TileTranslation T shift).cells.Nonempty) → ((∀ (U : ProtoTile),
-            (U.cells.Nonempty) → (∀ (z : GaussianInt), (z ∈ FootprintVertices U) → (∃ k : Fin 4,
-            LatticeVertexIncidentCell z k ∈ U.cells))) → ((∀ (U : ProtoTile), (U.cells.Nonempty)
-            → (∀ (z : GaussianInt), ∀ (k : Fin 4), (LatticeVertexIncidentCell z k ∈ U.cells) → (z
-            ∈ FootprintVertices U))) → (
-        let V := SubtileOccurrenceInterpretation cert.P cert.u cert.v a
-        let W := SubtileOccurrenceInterpretation cert.P cert.u cert.v b
-        let G₀ := SubtileOccurrenceInterpretation cert.P cert.u cert.v
-          (P4418T3EndpointOwnerIndices q cfg C T cert a b row).1
-        (∀ c : LatticeCell, c ∈ G₀.cells → c ∈ (TileTranslation T
-            (((P4418T3EndpointOwnerIndices q cfg C T cert a b row).1.first : GaussianInt) *
-            cert.u + ((P4418T3EndpointOwnerIndices q cfg C T cert a b row).1.second :
-            GaussianInt) * cert.v)).cells) → ((Disjoint V.cells (TileTranslation T shift).cells)
-            → ((Disjoint W.cells (TileTranslation T shift).cells) → ((∃ e : Finset GaussianInt, x
-            ∈ e ∧ e ∈ FootprintEdges V ∩ FootprintEdges W) → ((x = data.first ∨ x = data.last ∨ ∃
-            (e : Finset GaussianInt) (f : Finset GaussianInt), e ≠ f ∧ x ∈ e ∧ x ∈ f ∧ e ∈
-            FootprintEdges (SubtileOccurrenceInterpretation cert.P cert.u cert.v a) ∩
-            FootprintEdges (SubtileOccurrenceInterpretation cert.P cert.u cert.v b) ∧ f ∈
-            FootprintEdges (SubtileOccurrenceInterpretation cert.P cert.u cert.v a) ∩
-            FootprintEdges (SubtileOccurrenceInterpretation cert.P cert.u cert.v b)) → (
-        let o₀ := (P4418T3EndpointOwnerIndices q cfg C T cert a b row).1
-        x = data.first → (x ∈ FootprintVertices (TileTranslation T shift) ↔ oldCoord = (o₀.first,
-            o₀.second)))))))))))))))))) ) := by
+        ∀ (q : Fin 4 → CircleCoordinates),
+          ∀ (cfg : BandOrderedGeneralConfiguration q),
+            ∀ (C : BandCircle),
+              ∀ (T : ProtoTile),
+                ∀ (cert : BandOrderedGeneralLayoutCertificate q cfg C T),
+                  ∀ (a : PeriodicSubtileIndex),
+                    ∀ (b : PeriodicSubtileIndex),
+                      ∀ (row : BandOrderedGeneralSelectedContactRow q cfg C T cert a b),
+                        ∀
+                          (data :
+                            P4418T3SelectedInterfaceData
+                              (SubtileOccurrenceInterpretation cert.P cert.u cert.v a)
+                              (SubtileOccurrenceInterpretation cert.P cert.u cert.v b)
+                              (SubtileOccurrenceInterpretation cert.P cert.u cert.v
+                                (P4418T3EndpointOwnerIndices q cfg C T cert a b row).1)
+                              (SubtileOccurrenceInterpretation cert.P cert.u cert.v
+                                (P4418T3EndpointOwnerIndices q cfg C T cert a b row).2)),
+                          ∀ (x : GaussianInt),
+                            ∀ (j : Fin 4),
+                              ∀ (edge : Finset GaussianInt),
+                                x ∈ edge →
+                                edge ∈
+                                FootprintEdges
+                                (SubtileOccurrenceInterpretation cert.P cert.u cert.v a) ∩
+                                FootprintEdges
+                                (SubtileOccurrenceInterpretation cert.P cert.u cert.v b) →
+                                LatticeVertexIncidentCell x j ∈
+                                (SubtileOccurrenceInterpretation cert.P cert.u cert.v
+                                a).cells →
+                                LatticeVertexIncidentCell x (j + (2 : Fin (4 : ℕ))) ∈
+                                (SubtileOccurrenceInterpretation cert.P cert.u cert.v
+                                b).cells →
+                                let shift : GaussianInt :=
+                                match P3996T1SRowTable q cfg C T cert row with
+                              | some z => z.oldShift
+                              | none =>
+                                match a.label with
+                              | .A => if a.first = -1 then -cert.u else cert.u
+                              | .B => if a.first = 1 then cert.u else -cert.u
+                              | .C => -cert.v
+                              | .D => cert.v
+                              | .E | .F => 0;
+                              let oldCoord : Int × Int := routedOldCoordinates row;
+                              shift =
+                                (oldCoord.1 : GaussianInt) * cert.u +
+                                (oldCoord.2 : GaussianInt) * cert.v →
+                                (∀ (m : Int),
+                                ∀ (n : Int),
+                                ∀ (r : Int),
+                                ∀ (s : Int),
+                                (m, n) ≠ (r, s) →
+                                Disjoint
+                                (TileTranslation T
+                                ((m : GaussianInt) * cert.u +
+                                (n : GaussianInt) * cert.v)).cells
+                                (TileTranslation T
+                                ((r : GaussianInt) * cert.u +
+                                (s : GaussianInt) * cert.v)).cells) →
+                                (TileTranslation T shift).cells.Nonempty →
+                                (∀ (U : ProtoTile),
+                                U.cells.Nonempty →
+                                ∀ (z : GaussianInt),
+                                z ∈ FootprintVertices U →
+                                ∃ k : Fin 4, LatticeVertexIncidentCell z k ∈ U.cells) →
+                                (∀ (U : ProtoTile),
+                                U.cells.Nonempty →
+                                ∀ (z : GaussianInt),
+                                ∀ (k : Fin 4),
+                                LatticeVertexIncidentCell z k ∈ U.cells →
+                                z ∈ FootprintVertices U) →
+                                let V :=
+                                SubtileOccurrenceInterpretation cert.P cert.u cert.v a
+                              let W :=
+                                SubtileOccurrenceInterpretation cert.P cert.u cert.v b
+                              let G₀ :=
+                                SubtileOccurrenceInterpretation cert.P cert.u cert.v
+                                (P4418T3EndpointOwnerIndices q cfg C T cert a b row).1
+                              (∀ c : LatticeCell,
+                                c ∈ G₀.cells →
+                                c ∈
+                                (TileTranslation T
+                                (((P4418T3EndpointOwnerIndices q cfg C T cert a b
+                                row).1.first :
+                                GaussianInt) *
+                                cert.u +
+                                ((P4418T3EndpointOwnerIndices q cfg C T cert a b
+                                row).1.second :
+                                GaussianInt) *
+                                cert.v)).cells) →
+                                Disjoint V.cells (TileTranslation T shift).cells →
+                                Disjoint W.cells (TileTranslation T shift).cells →
+                                (∃ e : Finset GaussianInt,
+                                x ∈ e ∧ e ∈ FootprintEdges V ∩ FootprintEdges W) →
+                                (x = data.first ∨
+                                x = data.last ∨
+                                ∃ (e : Finset GaussianInt) (f : Finset GaussianInt),
+                                e ≠ f ∧
+                                x ∈ e ∧
+                                x ∈ f ∧
+                                e ∈
+                                FootprintEdges
+                                (SubtileOccurrenceInterpretation cert.P cert.u cert.v a) ∩
+                                FootprintEdges
+                                (SubtileOccurrenceInterpretation cert.P cert.u cert.v b) ∧
+                                f ∈
+                                FootprintEdges
+                                (SubtileOccurrenceInterpretation cert.P cert.u cert.v a) ∩
+                                FootprintEdges
+                                (SubtileOccurrenceInterpretation cert.P cert.u cert.v
+                                b)) →
+                                let o₀ :=
+                                (P4418T3EndpointOwnerIndices q cfg C T cert a b row).1
+                              x = data.first →
+                                (x ∈ FootprintVertices (TileTranslation T shift) ↔
+                                oldCoord = (o₀.first, o₀.second))
+    ) := by
   classical
-  intro q cfg C T cert a b row data x j edge hx hedge ha hb shift oldCoord hshift a_coord_ne
-      b_coord_ne root_disjoint old_nonempty footprint_incident incident_footprint V W G₀ hG₀root
-      hVold hWold hxedge htri o₀ hfirst
+  intro q cfg C T cert a b row data x j edge hx hedge ha hb shift oldCoord hshift root_disjoint
+      old_nonempty footprint_incident incident_footprint V W G₀ hG₀root hVold hWold hxedge htri
+      o₀ hfirst
   subst x
   obtain ⟨k, hk⟩ :=
     ((LocalLatticeInterfaceSectors.1 V W G₀ data.first data.latticeV
@@ -564,64 +628,131 @@ private theorem hlast_criterion :
     (by
       classical
       exact
-        ∀ (q : Fin 4 → CircleCoordinates), ∀ (cfg : BandOrderedGeneralConfiguration q), ∀ (C :
-            BandCircle), ∀ (T : ProtoTile), ∀ (cert : BandOrderedGeneralLayoutCertificate q cfg C
-            T), ∀ (a : PeriodicSubtileIndex), ∀ (b : PeriodicSubtileIndex), ∀ (row :
-            BandOrderedGeneralSelectedContactRow q cfg C T cert a b), ∀ (data :
-            P4418T3SelectedInterfaceData (SubtileOccurrenceInterpretation cert.P cert.u cert.v
-            a) (SubtileOccurrenceInterpretation cert.P cert.u cert.v b)
-            (SubtileOccurrenceInterpretation cert.P cert.u cert.v (P4418T3EndpointOwnerIndices
-            q cfg C T cert a b row).1) (SubtileOccurrenceInterpretation cert.P cert.u cert.v
-            (P4418T3EndpointOwnerIndices q cfg C T cert a b row).2)), ∀ (x : GaussianInt), ∀ (j
-            : Fin 4), ∀ (edge : Finset GaussianInt), (x ∈ edge) → ((edge ∈ FootprintEdges
-            (SubtileOccurrenceInterpretation cert.P cert.u cert.v a) ∩ FootprintEdges
-            (SubtileOccurrenceInterpretation cert.P cert.u cert.v b)) →
-            ((LatticeVertexIncidentCell x j ∈ (SubtileOccurrenceInterpretation cert.P cert.u
-            cert.v a).cells) → ((LatticeVertexIncidentCell x (j + (2 : Fin (4 : ℕ))) ∈
-            (SubtileOccurrenceInterpretation cert.P cert.u cert.v b).cells) → (
-        let shift : GaussianInt := match P3996T1SRowTable q cfg C T cert row with
-          | some z => z.oldShift
-          | none => match a.label with
-            | .A => if a.first = -1 then -cert.u else cert.u
-            | .B => if a.first = 1 then cert.u else -cert.u
-            | .C => -cert.v
-            | .D => cert.v
-            | .E | .F => 0
-        let oldCoord : Int × Int := routedOldCoordinates row
-        (shift = (oldCoord.1 : GaussianInt) * cert.u + (oldCoord.2 : GaussianInt) * cert.v) →
-            (((a.first, a.second) ≠ oldCoord) → (((b.first, b.second) ≠ oldCoord) → ((∀ (m :
-            Int), ∀ (n : Int), ∀ (r : Int), ∀ (s : Int), ((m, n) ≠ (r, s)) → (Disjoint
-            (TileTranslation T ((m : GaussianInt) * cert.u + (n : GaussianInt) * cert.v)).cells
-            (TileTranslation T ((r : GaussianInt) * cert.u + (s : GaussianInt) * cert.v)).cells))
-            → (((TileTranslation T shift).cells.Nonempty) → ((∀ (U : ProtoTile),
-            (U.cells.Nonempty) → (∀ (z : GaussianInt), (z ∈ FootprintVertices U) → (∃ k : Fin 4,
-            LatticeVertexIncidentCell z k ∈ U.cells))) → ((∀ (U : ProtoTile), (U.cells.Nonempty)
-            → (∀ (z : GaussianInt), ∀ (k : Fin 4), (LatticeVertexIncidentCell z k ∈ U.cells) → (z
-            ∈ FootprintVertices U))) → (
-        let V := SubtileOccurrenceInterpretation cert.P cert.u cert.v a
-        let W := SubtileOccurrenceInterpretation cert.P cert.u cert.v b
-        let G₁ := SubtileOccurrenceInterpretation cert.P cert.u cert.v
-          (P4418T3EndpointOwnerIndices q cfg C T cert a b row).2
-        (∀ c : LatticeCell, c ∈ G₁.cells → c ∈ (TileTranslation T
-            (((P4418T3EndpointOwnerIndices q cfg C T cert a b row).2.first : GaussianInt) *
-            cert.u + ((P4418T3EndpointOwnerIndices q cfg C T cert a b row).2.second :
-            GaussianInt) * cert.v)).cells) → ((Disjoint V.cells (TileTranslation T shift).cells)
-            → ((Disjoint W.cells (TileTranslation T shift).cells) → ((∃ e : Finset GaussianInt, x
-            ∈ e ∧ e ∈ FootprintEdges V ∩ FootprintEdges W) → ((x = data.first ∨ x = data.last ∨ ∃
-            (e : Finset GaussianInt) (f : Finset GaussianInt), e ≠ f ∧ x ∈ e ∧ x ∈ f ∧ e ∈
-            FootprintEdges (SubtileOccurrenceInterpretation cert.P cert.u cert.v a) ∩
-            FootprintEdges (SubtileOccurrenceInterpretation cert.P cert.u cert.v b) ∧ f ∈
-            FootprintEdges (SubtileOccurrenceInterpretation cert.P cert.u cert.v a) ∩
-            FootprintEdges (SubtileOccurrenceInterpretation cert.P cert.u cert.v b)) → (
-        let o₀ := (P4418T3EndpointOwnerIndices q cfg C T cert a b row).1
-        let o₁ := (P4418T3EndpointOwnerIndices q cfg C T cert a b row).2
-        (x = data.first → (x ∈ FootprintVertices (TileTranslation T shift) ↔ oldCoord =
-            (o₀.first, o₀.second))) → (x = data.last → (x ∈ FootprintVertices (TileTranslation T
-            shift) ↔ oldCoord = (o₁.first, o₁.second))))))))))))))))))) ) := by
+        ∀ (q : Fin 4 → CircleCoordinates),
+          ∀ (cfg : BandOrderedGeneralConfiguration q),
+            ∀ (C : BandCircle),
+              ∀ (T : ProtoTile),
+                ∀ (cert : BandOrderedGeneralLayoutCertificate q cfg C T),
+                  ∀ (a : PeriodicSubtileIndex),
+                    ∀ (b : PeriodicSubtileIndex),
+                      ∀ (row : BandOrderedGeneralSelectedContactRow q cfg C T cert a b),
+                        ∀
+                          (data :
+                            P4418T3SelectedInterfaceData
+                              (SubtileOccurrenceInterpretation cert.P cert.u cert.v a)
+                              (SubtileOccurrenceInterpretation cert.P cert.u cert.v b)
+                              (SubtileOccurrenceInterpretation cert.P cert.u cert.v
+                                (P4418T3EndpointOwnerIndices q cfg C T cert a b row).1)
+                              (SubtileOccurrenceInterpretation cert.P cert.u cert.v
+                                (P4418T3EndpointOwnerIndices q cfg C T cert a b row).2)),
+                          ∀ (x : GaussianInt),
+                            ∀ (j : Fin 4),
+                              ∀ (edge : Finset GaussianInt),
+                                x ∈ edge →
+                                edge ∈
+                                FootprintEdges
+                                (SubtileOccurrenceInterpretation cert.P cert.u cert.v a) ∩
+                                FootprintEdges
+                                (SubtileOccurrenceInterpretation cert.P cert.u cert.v b) →
+                                LatticeVertexIncidentCell x j ∈
+                                (SubtileOccurrenceInterpretation cert.P cert.u cert.v
+                                a).cells →
+                                LatticeVertexIncidentCell x (j + (2 : Fin (4 : ℕ))) ∈
+                                (SubtileOccurrenceInterpretation cert.P cert.u cert.v
+                                b).cells →
+                                let shift : GaussianInt :=
+                                match P3996T1SRowTable q cfg C T cert row with
+                              | some z => z.oldShift
+                              | none =>
+                                match a.label with
+                              | .A => if a.first = -1 then -cert.u else cert.u
+                              | .B => if a.first = 1 then cert.u else -cert.u
+                              | .C => -cert.v
+                              | .D => cert.v
+                              | .E | .F => 0;
+                              let oldCoord : Int × Int := routedOldCoordinates row;
+                              shift =
+                                (oldCoord.1 : GaussianInt) * cert.u +
+                                (oldCoord.2 : GaussianInt) * cert.v →
+                                (∀ (m : Int),
+                                ∀ (n : Int),
+                                ∀ (r : Int),
+                                ∀ (s : Int),
+                                (m, n) ≠ (r, s) →
+                                Disjoint
+                                (TileTranslation T
+                                ((m : GaussianInt) * cert.u +
+                                (n : GaussianInt) * cert.v)).cells
+                                (TileTranslation T
+                                ((r : GaussianInt) * cert.u +
+                                (s : GaussianInt) * cert.v)).cells) →
+                                (TileTranslation T shift).cells.Nonempty →
+                                (∀ (U : ProtoTile),
+                                U.cells.Nonempty →
+                                ∀ (z : GaussianInt),
+                                z ∈ FootprintVertices U →
+                                ∃ k : Fin 4, LatticeVertexIncidentCell z k ∈ U.cells) →
+                                (∀ (U : ProtoTile),
+                                U.cells.Nonempty →
+                                ∀ (z : GaussianInt),
+                                ∀ (k : Fin 4),
+                                LatticeVertexIncidentCell z k ∈ U.cells →
+                                z ∈ FootprintVertices U) →
+                                let V :=
+                                SubtileOccurrenceInterpretation cert.P cert.u cert.v a
+                              let W :=
+                                SubtileOccurrenceInterpretation cert.P cert.u cert.v b
+                              let G₁ :=
+                                SubtileOccurrenceInterpretation cert.P cert.u cert.v
+                                (P4418T3EndpointOwnerIndices q cfg C T cert a b row).2
+                              (∀ c : LatticeCell,
+                                c ∈ G₁.cells →
+                                c ∈
+                                (TileTranslation T
+                                (((P4418T3EndpointOwnerIndices q cfg C T cert a b
+                                row).2.first :
+                                GaussianInt) *
+                                cert.u +
+                                ((P4418T3EndpointOwnerIndices q cfg C T cert a b
+                                row).2.second :
+                                GaussianInt) *
+                                cert.v)).cells) →
+                                Disjoint V.cells (TileTranslation T shift).cells →
+                                Disjoint W.cells (TileTranslation T shift).cells →
+                                (∃ e : Finset GaussianInt,
+                                x ∈ e ∧ e ∈ FootprintEdges V ∩ FootprintEdges W) →
+                                (x = data.first ∨
+                                x = data.last ∨
+                                ∃ (e : Finset GaussianInt) (f : Finset GaussianInt),
+                                e ≠ f ∧
+                                x ∈ e ∧
+                                x ∈ f ∧
+                                e ∈
+                                FootprintEdges
+                                (SubtileOccurrenceInterpretation cert.P cert.u cert.v a) ∩
+                                FootprintEdges
+                                (SubtileOccurrenceInterpretation cert.P cert.u cert.v b) ∧
+                                f ∈
+                                FootprintEdges
+                                (SubtileOccurrenceInterpretation cert.P cert.u cert.v a) ∩
+                                FootprintEdges
+                                (SubtileOccurrenceInterpretation cert.P cert.u cert.v
+                                b)) →
+                                let o₀ :=
+                                (P4418T3EndpointOwnerIndices q cfg C T cert a b row).1
+                              let o₁ :=
+                                (P4418T3EndpointOwnerIndices q cfg C T cert a b row).2
+                              (x = data.first →
+                                (x ∈ FootprintVertices (TileTranslation T shift) ↔
+                                oldCoord = (o₀.first, o₀.second))) →
+                                x = data.last →
+                                (x ∈ FootprintVertices (TileTranslation T shift) ↔
+                                oldCoord = (o₁.first, o₁.second))
+    ) := by
   classical
-  intro q cfg C T cert a b row data x j edge hx hedge ha hb shift oldCoord hshift a_coord_ne
-      b_coord_ne root_disjoint old_nonempty footprint_incident incident_footprint V W G₁ hG₁root
-      hVold hWold hxedge htri o₀ o₁ hfirst_criterion hlast
+  intro q cfg C T cert a b row data x j edge hx hedge ha hb shift oldCoord hshift root_disjoint
+      old_nonempty footprint_incident incident_footprint V W G₁ hG₁root hVold hWold hxedge htri
+      o₀ o₁ hfirst_criterion hlast
   subst x
   obtain ⟨k, hk⟩ :=
     ((LocalLatticeInterfaceSectors.1 V W G₁ data.last data.latticeV
@@ -676,52 +807,81 @@ private theorem hcriterion :
     (by
       classical
       exact
-        ∀ (q : Fin 4 → CircleCoordinates), ∀ (cfg : BandOrderedGeneralConfiguration q), ∀ (C :
-            BandCircle), ∀ (T : ProtoTile), ∀ (cert : BandOrderedGeneralLayoutCertificate q cfg C
-            T), ∀ (a : PeriodicSubtileIndex), ∀ (b : PeriodicSubtileIndex), ∀ (row :
-            BandOrderedGeneralSelectedContactRow q cfg C T cert a b), ∀ (data :
-            P4418T3SelectedInterfaceData (SubtileOccurrenceInterpretation cert.P cert.u cert.v
-            a) (SubtileOccurrenceInterpretation cert.P cert.u cert.v b)
-            (SubtileOccurrenceInterpretation cert.P cert.u cert.v (P4418T3EndpointOwnerIndices
-            q cfg C T cert a b row).1) (SubtileOccurrenceInterpretation cert.P cert.u cert.v
-            (P4418T3EndpointOwnerIndices q cfg C T cert a b row).2)), ∀ (x : GaussianInt), ∀ (j
-            : Fin 4), ∀ (edge : Finset GaussianInt), (edge ∈ FootprintEdges
-            (SubtileOccurrenceInterpretation cert.P cert.u cert.v a) ∩ FootprintEdges
-            (SubtileOccurrenceInterpretation cert.P cert.u cert.v b)) →
-            ((LatticeVertexIncidentCell x j ∈ (SubtileOccurrenceInterpretation cert.P cert.u
-            cert.v a).cells) → ((LatticeVertexIncidentCell x (j + (2 : Fin (4 : ℕ))) ∈
-            (SubtileOccurrenceInterpretation cert.P cert.u cert.v b).cells) → (
-        let shift : GaussianInt := match P3996T1SRowTable q cfg C T cert row with
-          | some z => z.oldShift
-          | none => match a.label with
-            | .A => if a.first = -1 then -cert.u else cert.u
-            | .B => if a.first = 1 then cert.u else -cert.u
-            | .C => -cert.v
-            | .D => cert.v
-            | .E | .F => 0
-        let oldCoord : Int × Int := routedOldCoordinates row
-        ((TileTranslation T shift).cells.Nonempty) → ((∀ (U : ProtoTile), (U.cells.Nonempty) → (∀
-            (z : GaussianInt), (z ∈ FootprintVertices U) → (∃ k : Fin 4,
-            LatticeVertexIncidentCell z k ∈ U.cells))) → (
-        let V := SubtileOccurrenceInterpretation cert.P cert.u cert.v a
-        let W := SubtileOccurrenceInterpretation cert.P cert.u cert.v b
-        (Disjoint V.cells (TileTranslation T shift).cells) → ((Disjoint W.cells (TileTranslation
-            T shift).cells) → ((x = data.first ∨ x = data.last ∨ ∃ (e : Finset GaussianInt) (f :
-            Finset GaussianInt), e ≠ f ∧ x ∈ e ∧ x ∈ f ∧ e ∈ FootprintEdges
-            (SubtileOccurrenceInterpretation cert.P cert.u cert.v a) ∩ FootprintEdges
-            (SubtileOccurrenceInterpretation cert.P cert.u cert.v b) ∧ f ∈ FootprintEdges
-            (SubtileOccurrenceInterpretation cert.P cert.u cert.v a) ∩ FootprintEdges
-            (SubtileOccurrenceInterpretation cert.P cert.u cert.v b)) → (
-        let o₀ := (P4418T3EndpointOwnerIndices q cfg C T cert a b row).1
-        let o₁ := (P4418T3EndpointOwnerIndices q cfg C T cert a b row).2
-        (x = data.first → (x ∈ FootprintVertices (TileTranslation T shift) ↔ oldCoord =
-            (o₀.first, o₀.second))) → ((x = data.last → (x ∈ FootprintVertices (TileTranslation T
-            shift) ↔ oldCoord = (o₁.first, o₁.second))) → (x ∈ FootprintVertices (TileTranslation
-            T shift) ↔ (x = data.first ∧ oldCoord = (o₀.first, o₀.second)) ∨ (x = data.last ∧
-            oldCoord = (o₁.first, o₁.second)))))))))))) ) := by
+        ∀ (q : Fin 4 → CircleCoordinates),
+          ∀ (cfg : BandOrderedGeneralConfiguration q),
+            ∀ (C : BandCircle),
+              ∀ (T : ProtoTile),
+                ∀ (cert : BandOrderedGeneralLayoutCertificate q cfg C T),
+                  ∀ (a : PeriodicSubtileIndex),
+                    ∀ (b : PeriodicSubtileIndex),
+                      ∀ (row : BandOrderedGeneralSelectedContactRow q cfg C T cert a b),
+                        ∀
+                          (data :
+                            P4418T3SelectedInterfaceData
+                              (SubtileOccurrenceInterpretation cert.P cert.u cert.v a)
+                              (SubtileOccurrenceInterpretation cert.P cert.u cert.v b)
+                              (SubtileOccurrenceInterpretation cert.P cert.u cert.v
+                                (P4418T3EndpointOwnerIndices q cfg C T cert a b row).1)
+                              (SubtileOccurrenceInterpretation cert.P cert.u cert.v
+                                (P4418T3EndpointOwnerIndices q cfg C T cert a b row).2)),
+                          ∀ (x : GaussianInt),
+                            let shift : GaussianInt :=
+                              match P3996T1SRowTable q cfg C T cert row with
+                              | some z => z.oldShift
+                              | none =>
+                                match a.label with
+                              | .A => if a.first = -1 then -cert.u else cert.u
+                              | .B => if a.first = 1 then cert.u else -cert.u
+                              | .C => -cert.v
+                              | .D => cert.v
+                              | .E | .F => 0
+                            let oldCoord : Int × Int := routedOldCoordinates row
+                            (TileTranslation T shift).cells.Nonempty →
+                              (∀ (U : ProtoTile),
+                                U.cells.Nonempty →
+                                ∀ (z : GaussianInt),
+                                z ∈ FootprintVertices U →
+                                ∃ k : Fin 4, LatticeVertexIncidentCell z k ∈ U.cells) →
+                                let V :=
+                                SubtileOccurrenceInterpretation cert.P cert.u cert.v a
+                              let W :=
+                                SubtileOccurrenceInterpretation cert.P cert.u cert.v b
+                              Disjoint V.cells (TileTranslation T shift).cells →
+                                Disjoint W.cells (TileTranslation T shift).cells →
+                                (x = data.first ∨
+                                x = data.last ∨
+                                ∃ (e : Finset GaussianInt) (f : Finset GaussianInt),
+                                e ≠ f ∧
+                                x ∈ e ∧
+                                x ∈ f ∧
+                                e ∈
+                                FootprintEdges
+                                (SubtileOccurrenceInterpretation cert.P cert.u cert.v a) ∩
+                                FootprintEdges
+                                (SubtileOccurrenceInterpretation cert.P cert.u cert.v b) ∧
+                                f ∈
+                                FootprintEdges
+                                (SubtileOccurrenceInterpretation cert.P cert.u cert.v a) ∩
+                                FootprintEdges
+                                (SubtileOccurrenceInterpretation cert.P cert.u cert.v
+                                b)) →
+                                let o₀ :=
+                                (P4418T3EndpointOwnerIndices q cfg C T cert a b row).1
+                              let o₁ :=
+                                (P4418T3EndpointOwnerIndices q cfg C T cert a b row).2
+                              (x = data.first →
+                                (x ∈ FootprintVertices (TileTranslation T shift) ↔
+                                oldCoord = (o₀.first, o₀.second))) →
+                                (x = data.last →
+                                (x ∈ FootprintVertices (TileTranslation T shift) ↔
+                                oldCoord = (o₁.first, o₁.second))) →
+                                (x ∈ FootprintVertices (TileTranslation T shift) ↔
+                                x = data.first ∧ oldCoord = (o₀.first, o₀.second) ∨
+                                x = data.last ∧ oldCoord = (o₁.first, o₁.second))
+    ) := by
   classical
-  intro q cfg C T cert a b row data x j edge hedge ha hb shift oldCoord old_nonempty
-      footprint_incident V W hVold hWold htri o₀ o₁ hfirst_criterion hlast_criterion
+  intro q cfg C T cert a b row data x shift oldCoord old_nonempty footprint_incident V W hVold
+      hWold htri o₀ o₁ hfirst_criterion hlast_criterion
   rcases htri with hfirst | hlast | hinside
   · have hnotlast : x ≠ data.last := by
       intro h
@@ -849,15 +1009,15 @@ theorem P4418T3RoutedBlockCriterion
   let o₀ := (P4418T3EndpointOwnerIndices q cfg C T cert a b row).1
   let o₁ := (P4418T3EndpointOwnerIndices q cfg C T cert a b row).2
   have hfirst_criterion := RoutedBlockGeometry.hfirst_criterion q cfg C T cert a b row data x j
-      edge hx hedge ha hb hshift a_coord_ne b_coord_ne root_disjoint old_nonempty
+      edge hx hedge ha hb hshift root_disjoint old_nonempty
       footprint_incident incident_footprint hG₀root hVold hWold hxedge htri
   have hlast_criterion := RoutedBlockGeometry.hlast_criterion q cfg C T cert a b row data x j
-      edge hx hedge ha hb hshift a_coord_ne b_coord_ne root_disjoint old_nonempty
+      edge hx hedge ha hb hshift root_disjoint old_nonempty
       footprint_incident incident_footprint hG₁root hVold hWold hxedge htri hfirst_criterion
   have hcriterion : x ∈ FootprintVertices (TileTranslation T shift) ↔
       (x = data.first ∧ oldCoord = (o₀.first, o₀.second)) ∨
       (x = data.last ∧ oldCoord = (o₁.first, o₁.second)) := RoutedBlockGeometry.hcriterion q cfg
-          C T cert a b row data x j edge hedge ha hb old_nonempty footprint_incident hVold hWold
+          C T cert a b row data x old_nonempty footprint_incident hVold hWold
           htri hfirst_criterion hlast_criterion
   change (x ∈ FootprintVertices (TileTranslation T shift) ↔ _)
   rw [hcriterion]
