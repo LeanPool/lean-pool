@@ -4,30 +4,21 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Wesley Pegden
 -/
 module
-
 public import Mathlib.Init
-
 public import LeanPool.ApollonianSuperharmonic.FordOrientedChildParentEndpoints
 public import LeanPool.ApollonianSuperharmonic.DiamondOrientedChildParentEndpoints
 public import LeanPool.ApollonianSuperharmonic.P4055T1PlacementNormalization
 public import LeanPool.ApollonianSuperharmonic.P4055T1BandQuarterTurn
 public import LeanPool.ApollonianSuperharmonic.P4055T1OrderedGeneralOppositeEndpoints
-
 -- [TABLET NODE: BandOrientedChildParentEndpoints]
-
 /-!
 # BandOrientedChildParentEndpoints
-
 Adapted from Wesley Pegden’s Apache-2.0 Trellis formalization of Levine–Pegden–Smart.
 Changes: pool module paths, public exports, project namespace and current Mathlib compatibility.
 -/
-
 @[expose] public section
-
 namespace ApollonianSuperharmonic
-
 namespace OrientedEndpointGeometry
-
 private theorem hregimeNormalized :
     (by
       classical
@@ -46,7 +37,6 @@ private theorem hregimeNormalized :
   classical
   intro r a g' p qg hregimeQ
   simpa [qg] using hregimeQ
-
 private theorem normalized :
     (by
       classical
@@ -171,7 +161,6 @@ private theorem normalized :
             simpa only [j, ht, ite_true, ite_false] using hZcentNorm)
         cert hUQuarter (P4055T1BandQuarterTurn _ _ hW')
         (P4055T1BandQuarterTurn _ _ hZ')
-
 private theorem transR :
     (by
       classical
@@ -202,7 +191,6 @@ private theorem transR :
   intro r i s U a g' p qg k t U' ii hdispR uR vR
   rw [(BandPackingSymmetryTilingTransport g').2.2.2.2.2.2.1]
   exact congrArg (TileTranslation U') hdispR
-
 private theorem transL :
     (by
       classical
@@ -233,7 +221,6 @@ private theorem transL :
   intro r i s U a g' p qg k t U' ii hdispL uL vL
   rw [(BandPackingSymmetryTilingTransport g').2.2.2.2.2.2.1]
   exact congrArg (TileTranslation U') hdispL
-
 private theorem hv :
     (by
       classical
@@ -245,7 +232,6 @@ private theorem hv :
   classical
   intro g' f hfun T
   simpa only [hfun] using (BandPackingSymmetryTilingTransport g').2.2.2.2.2.2.2.1 T
-
 private theorem he :
     (by
       classical
@@ -257,7 +243,6 @@ private theorem he :
   classical
   intro g' f hfun T
   simpa only [hfun] using (BandPackingSymmetryTilingTransport g').2.2.2.2.2.2.2.2.1 T
-
 private theorem hiv :
     (by
       classical
@@ -270,7 +255,6 @@ private theorem hiv :
   intro g' f hv T
   rw [hv]
   simp [Set.image_image]
-
 private theorem hie :
     (by
       classical
@@ -284,131 +268,7 @@ private theorem hie :
   intro g' f he T
   rw [he]
   simp [Set.image_image, Finset.image_image]
-
-private theorem hivR :
-    (by
-      classical
-      exact
-        ∀ (r : Fin 4 → CircleCoordinates), ∀ (i : Fin 3), ∀ (s : Fin 4), ∀ (U : ProtoTile), ∀ (a
-            : Fin (3 : ℕ)), ∀ (g' : BandPackingSymmetry),
-        let p : Fin 4 → CircleCoordinates :=
-          ![r 0, r a.succ, r (a + 1).succ, r (a + 2).succ]
-        let qg := BandPackingSymmetryQuadrupleAction g' p
-        let k : Fin 3 := if BandPackingSymmetryReversesOrientation g'
-          then -(i - a) else i - a
-        let t : Fin 4 := if BandPackingSymmetryReversesOrientation g'
-          then -s - 1 else s
-        let U' := BandPackingSymmetryTileAction g' U
-        let ii : GaussianInt := ⟨0, 1⟩
-        let uR := ii ^ s.val *
-          (if Even s.val then BandVectors.1 (r 0) (r i.succ)
-            else BandVectors.1 (r i.succ) (r 0))
-        let vR := ii ^ t.val *
-          (if Even t.val then BandVectors.1 (qg 0) (qg k.succ)
-            else BandVectors.1 (qg k.succ) (qg 0))
-        (BandPackingSymmetryTileAction g' (TileTranslation U uR) = TileTranslation U' vR) → (∀ (f
-            : GaussianInt ≃ GaussianInt), (∀ (T : ProtoTile), FootprintVertices T = f.symm ''
-            FootprintVertices (BandPackingSymmetryTileAction g' T)) → (FootprintVertices
-            (TileTranslation U uR) = f.symm '' FootprintVertices (TileTranslation U' vR))) ) := by
-  classical
-  intro r i s U a g' p qg k t U' ii uR vR transR f hiv
-  rw [← transR]
-  exact hiv _
-
-private theorem hieR :
-    (by
-      classical
-      exact
-        ∀ (r : Fin 4 → CircleCoordinates), ∀ (i : Fin 3), ∀ (s : Fin 4), ∀ (U : ProtoTile), ∀ (a
-            : Fin (3 : ℕ)), ∀ (g' : BandPackingSymmetry),
-        let p : Fin 4 → CircleCoordinates :=
-          ![r 0, r a.succ, r (a + 1).succ, r (a + 2).succ]
-        let qg := BandPackingSymmetryQuadrupleAction g' p
-        let k : Fin 3 := if BandPackingSymmetryReversesOrientation g'
-          then -(i - a) else i - a
-        let t : Fin 4 := if BandPackingSymmetryReversesOrientation g'
-          then -s - 1 else s
-        let U' := BandPackingSymmetryTileAction g' U
-        let ii : GaussianInt := ⟨0, 1⟩
-        let uR := ii ^ s.val *
-          (if Even s.val then BandVectors.1 (r 0) (r i.succ)
-            else BandVectors.1 (r i.succ) (r 0))
-        let vR := ii ^ t.val *
-          (if Even t.val then BandVectors.1 (qg 0) (qg k.succ)
-            else BandVectors.1 (qg k.succ) (qg 0))
-        (BandPackingSymmetryTileAction g' (TileTranslation U uR) = TileTranslation U' vR) → (∀ (f
-            : GaussianInt ≃ GaussianInt), (∀ (T : ProtoTile), FootprintEdges T = (fun e : Finset
-            GaussianInt => e.image f.symm) '' FootprintEdges (BandPackingSymmetryTileAction g'
-            T)) → (FootprintEdges (TileTranslation U uR) = (fun e : Finset GaussianInt => e.image
-            f.symm) '' FootprintEdges (TileTranslation U' vR))) ) := by
-  classical
-  intro r i s U a g' p qg k t U' ii uR vR transR f hie
-  rw [← transR]
-  exact hie _
-
-private theorem hivL :
-    (by
-      classical
-      exact
-        ∀ (r : Fin 4 → CircleCoordinates), ∀ (i : Fin 3), ∀ (s : Fin 4), ∀ (U : ProtoTile), ∀ (a
-            : Fin (3 : ℕ)), ∀ (g' : BandPackingSymmetry),
-        let p : Fin 4 → CircleCoordinates :=
-          ![r 0, r a.succ, r (a + 1).succ, r (a + 2).succ]
-        let qg := BandPackingSymmetryQuadrupleAction g' p
-        let k : Fin 3 := if BandPackingSymmetryReversesOrientation g'
-          then -(i - a) else i - a
-        let t : Fin 4 := if BandPackingSymmetryReversesOrientation g'
-          then -s - 1 else s
-        let U' := BandPackingSymmetryTileAction g' U
-        let ii : GaussianInt := ⟨0, 1⟩
-        let uL := ii ^ s.val *
-          (if Even s.val then BandVectors.1 (r i.succ) (r 0)
-            else BandVectors.1 (r 0) (r i.succ))
-        let vL := ii ^ t.val *
-          (if Even t.val then BandVectors.1 (qg k.succ) (qg 0)
-            else BandVectors.1 (qg 0) (qg k.succ))
-        (BandPackingSymmetryTileAction g' (TileTranslation U uL) = TileTranslation U' vL) → (∀ (f
-            : GaussianInt ≃ GaussianInt), (∀ (T : ProtoTile), FootprintVertices T = f.symm ''
-            FootprintVertices (BandPackingSymmetryTileAction g' T)) → (FootprintVertices
-            (TileTranslation U uL) = f.symm '' FootprintVertices (TileTranslation U' vL))) ) := by
-  classical
-  intro r i s U a g' p qg k t U' ii uL vL transL f hiv
-  rw [← transL]
-  exact hiv _
-
-private theorem hieL :
-    (by
-      classical
-      exact
-        ∀ (r : Fin 4 → CircleCoordinates), ∀ (i : Fin 3), ∀ (s : Fin 4), ∀ (U : ProtoTile), ∀ (a
-            : Fin (3 : ℕ)), ∀ (g' : BandPackingSymmetry),
-        let p : Fin 4 → CircleCoordinates :=
-          ![r 0, r a.succ, r (a + 1).succ, r (a + 2).succ]
-        let qg := BandPackingSymmetryQuadrupleAction g' p
-        let k : Fin 3 := if BandPackingSymmetryReversesOrientation g'
-          then -(i - a) else i - a
-        let t : Fin 4 := if BandPackingSymmetryReversesOrientation g'
-          then -s - 1 else s
-        let U' := BandPackingSymmetryTileAction g' U
-        let ii : GaussianInt := ⟨0, 1⟩
-        let uL := ii ^ s.val *
-          (if Even s.val then BandVectors.1 (r i.succ) (r 0)
-            else BandVectors.1 (r 0) (r i.succ))
-        let vL := ii ^ t.val *
-          (if Even t.val then BandVectors.1 (qg k.succ) (qg 0)
-            else BandVectors.1 (qg 0) (qg k.succ))
-        (BandPackingSymmetryTileAction g' (TileTranslation U uL) = TileTranslation U' vL) → (∀ (f
-            : GaussianInt ≃ GaussianInt), (∀ (T : ProtoTile), FootprintEdges T = (fun e : Finset
-            GaussianInt => e.image f.symm) '' FootprintEdges (BandPackingSymmetryTileAction g'
-            T)) → (FootprintEdges (TileTranslation U uL) = (fun e : Finset GaussianInt => e.image
-            f.symm) '' FootprintEdges (TileTranslation U' vL))) ) := by
-  classical
-  intro r i s U a g' p qg k t U' ii uL vL transL f hie
-  rw [← transL]
-  exact hie _
-
 end OrientedEndpointGeometry
-
 theorem BandOrientedChildParentEndpoints
     (r : Fin 4 → CircleCoordinates) (hproper : ProperBandQuadruple r)
     (i : Fin 3) (s : Fin 4) (U W Z : ProtoTile)
@@ -555,17 +415,21 @@ theorem BandOrientedChildParentEndpoints
         FootprintEdges (BandPackingSymmetryTileAction g' T) := OrientedEndpointGeometry.hie g' f
             he T
   have hivR : FootprintVertices (TileTranslation U uR) =
-      f.symm '' FootprintVertices (TileTranslation U' vR) := OrientedEndpointGeometry.hivR r i s
-          U a g' transR f hiv
+      f.symm '' FootprintVertices (TileTranslation U' vR) := by
+    rw [← transR]
+    exact hiv _
   have hieR : FootprintEdges (TileTranslation U uR) =
-      (fun e : Finset GaussianInt => e.image f.symm) '' FootprintEdges (TileTranslation U' vR) :=
-          OrientedEndpointGeometry.hieR r i s U a g' transR f hie
+      (fun e : Finset GaussianInt => e.image f.symm) '' FootprintEdges (TileTranslation U' vR) := by
+    rw [← transR]
+    exact hie _
   have hivL : FootprintVertices (TileTranslation U uL) =
-      f.symm '' FootprintVertices (TileTranslation U' vL) := OrientedEndpointGeometry.hivL r i s
-          U a g' transL f hiv
+      f.symm '' FootprintVertices (TileTranslation U' vL) := by
+    rw [← transL]
+    exact hiv _
   have hieL : FootprintEdges (TileTranslation U uL) =
-      (fun e : Finset GaussianInt => e.image f.symm) '' FootprintEdges (TileTranslation U' vL) :=
-          OrientedEndpointGeometry.hieL r i s U a g' transL f hie
+      (fun e : Finset GaussianInt => e.image f.symm) '' FootprintEdges (TileTranslation U' vL) := by
+    rw [← transL]
+    exact hie _
   obtain ⟨R₀, hrp, _, _, hrc⟩ := P4055T1ExactTripleImage f.symm f.symm.injective hi
     _ _ _ U (TileTranslation U uR) W
     (hiv U) hivR (hiv W) (hie U) hieR (hie W) R
@@ -582,7 +446,5 @@ theorem BandOrientedChildParentEndpoints
   · rw [hrc, hip, hrca]
   · rw [hic, hrp, hica]
   · rw [hab, hrp, haab]
-
 end ApollonianSuperharmonic
-
 end

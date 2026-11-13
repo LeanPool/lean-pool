@@ -4,39 +4,28 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Wesley Pegden
 -/
 module
-
 public import Mathlib.Init
-
 public import Mathlib.Algebra.Order.Interval.Set.Instances
-
 public import LeanPool.ApollonianSuperharmonic.P3776T1SectorMaps
 public import LeanPool.ApollonianSuperharmonic.P3832T1CollapsedConeDescent
 public import LeanPool.ApollonianSuperharmonic.P3832T1ChamberOverlap
 public import LeanPool.ApollonianSuperharmonic.P3832T1FiniteClosedCoverPasting
 public import Mathlib.Algebra.BigOperators.Fin
-
 -- [TABLET NODE: P3776T1SectorMapsExist]
-
 /-!
 # P3776T1SectorMapsExist
-
 Adapted from Wesley Pegden’s Apache-2.0 Trellis formalization of Levine–Pegden–Smart.
 Changes: pool module paths, public exports, project namespace and current Mathlib compatibility.
 -/
-
 @[expose] public section
-
 namespace ApollonianSuperharmonic
-
 namespace SectorMapsProof
-
 private theorem sectorCollapse_surjective :
     let sectorCollapse := P3832T1ConeCollapse
     Function.Surjective sectorCollapse := by
   classical
   intro sectorCollapse
   exact (P3832T1CollapsedConeDescent (Y := ℝ × ℝ)).1
-
 private theorem sectorConeDescent :
     let SectorInterval := Set.Icc (0 : ℝ) 1
     let SectorCone := {z : SectorInterval × SectorInterval // (z.2 : ℝ) ≤ z.1}
@@ -47,7 +36,6 @@ private theorem sectorConeDescent :
   classical
   intro SectorInterval SectorCone sectorCollapse g c hzero
   exact (P3832T1CollapsedConeDescent (Y := ℝ × ℝ)).2 g c hzero
-
 private theorem sectorSupportedHalfCone :
     let SectorInterval := Set.Icc (0 : ℝ) 1
     let SectorCone := {z : SectorInterval × SectorInterval // (z.2 : ℝ) ≤ z.1}
@@ -73,7 +61,6 @@ private theorem sectorSupportedHalfCone :
     ⟨fun z => H.homotopy a z.1 (E.half f a b z.2), hc⟩
   exact sectorConeDescent g (H.center a)
     (fun t => H.zero a _ (hp.2.2.2.1 t).1)
-
 private theorem sectorOrderExists :
     ∀ x : Fin 3 → ℝ,
       ∃ i j k : Fin 3, i ≠ j ∧ i ≠ k ∧ j ≠ k ∧ x k ≤ x j ∧ x j ≤ x i := by
@@ -90,7 +77,6 @@ private theorem sectorOrderExists :
     · by_cases h12 : x 1 ≤ x 2
       · exact ⟨0,2,1,by decide,by decide,by decide,by linarith,by linarith⟩
       · exact ⟨0,1,2,by decide,by decide,by decide,by linarith,by linarith⟩
-
 private theorem sectorChamber_closed :
     let SectorSimplex := StandardSimplex (Fin 3)
     let sectorChamber : Fin 3 → Fin 3 → Fin 3 → Set SectorSimplex := fun i j k =>
@@ -103,7 +89,6 @@ private theorem sectorChamber_closed :
       ((continuous_apply i).comp continuous_subtype_val)
   · exact isClosed_le ((continuous_apply k).comp continuous_subtype_val)
       ((continuous_apply j).comp continuous_subtype_val)
-
 private theorem sectorOrder_cover :
     let SectorSimplex := StandardSimplex (Fin 3)
     let sectorChamber : Fin 3 → Fin 3 → Fin 3 → Set SectorSimplex := fun i j k =>
@@ -120,7 +105,6 @@ private theorem sectorOrder_cover :
   intro SectorSimplex sectorChamber SectorOrder sectorI sectorJ sectorK sectorCh sectorOrderExists s
   obtain ⟨i,j,k,hij,hik,hjk,hkj,hji⟩ := sectorOrderExists s.1
   exact ⟨⟨(i,j,k),hij,hik,hjk⟩,hji,hkj⟩
-
 private theorem sectorIndexCover :
     let SectorOrder := {t : Fin 3 × Fin 3 × Fin 3 //
       t.1 ≠ t.2.1 ∧ t.1 ≠ t.2.2 ∧ t.2.1 ≠ t.2.2}
@@ -136,7 +120,6 @@ private theorem sectorIndexCover :
   have huniv := Finset.eq_univ_of_card t hcard
   have hn : n ∈ t := by rw [huniv]; simp
   simpa [t] using hn
-
 private theorem sectorOrderedSum :
     let SectorSimplex := StandardSimplex (Fin 3)
     ∀ (s : SectorSimplex), ∀ (i : Fin 3), ∀ (j : Fin 3), ∀ (k : Fin 3), (i ≠ j) → ((i ≠ k) → ((j
@@ -150,8 +133,7 @@ private theorem sectorOrderedSum :
     first
     | contradiction
     | simpa [Fin.sum_univ_succ, add_assoc, add_comm, add_left_comm] using hs
-
-private theorem sectorParam_values :
+private noncomputable abbrev sectorParameter :
     let SectorInterval := Set.Icc (0 : ℝ) 1;
     let SectorCone := {z : SectorInterval × SectorInterval // (z.2 : ℝ) ≤ z.1};
     let SectorSimplex := StandardSimplex (Fin 3);
@@ -163,39 +145,53 @@ private theorem sectorParam_values :
     let sectorJ : SectorOrder → Fin 3 := fun o => o.1.2.1;
     let sectorK : SectorOrder → Fin 3 := fun o => o.1.2.2;
     let sectorCh := fun o : SectorOrder => sectorChamber (sectorI o) (sectorJ o) (sectorK o);
+    (∀ (s : SectorSimplex), ∀ (i : Fin 3), ∀ (j : Fin 3), ∀ (k : Fin 3), (i
+        ≠ j) → ((i ≠ k) → ((j ≠ k) → (s.1 i + s.1 j + s.1 k = 1)))) →
+    ∀ (o : SectorOrder) (s : SectorSimplex), s ∈ sectorCh o → SectorCone := by
+  classical
+  intro SectorInterval SectorCone SectorSimplex sectorChamber SectorOrder sectorI sectorJ sectorK
+    sectorCh sectorOrderedSum
+  exact fun (o : SectorOrder) (s : SectorSimplex) (hs : s ∈ sectorCh o) =>
+    let i := sectorI o
+    let j := sectorJ o
+    let k := sectorK o
+    have hc : (∀ n, 0 ≤ s.1 n) ∧ ∑ n : Fin 3, s.1 n = 1 := by
+      simpa only [SectorSimplex, StandardSimplex, Set.mem_ofPred_eq] using s.2
+    have hsum : s.1 i + s.1 j + s.1 k = 1 :=
+      sectorOrderedSum s i j k o.2.1 o.2.2.1 o.2.2.2
+    have hxy := hs.1
+    have hyz := hs.2
+    have hr0 : 0 ≤ 2 * (s.1 j - s.1 k) + 3 * s.1 k := by
+      linarith [hc.1 j, hc.1 k]
+    have hr1 : 2 * (s.1 j - s.1 k) + 3 * s.1 k ≤ 1 := by
+      linarith [hc.1 i, hsum]
+    have hb0 : 0 ≤ 2 * (s.1 j - s.1 k) := by linarith [hyz]
+    have hbr : 2 * (s.1 j - s.1 k) ≤ 2 * (s.1 j - s.1 k) + 3 * s.1 k := by
+      nlinarith [hc.1 k]
+    (⟨⟨⟨2*(s.1 j-s.1 k)+3*s.1 k,hr0,hr1⟩,
+      ⟨2*(s.1 j-s.1 k),hb0,le_trans hbr hr1⟩⟩,hbr⟩ : SectorCone)
+private theorem sectorParam_values :
+    let SectorSimplex := StandardSimplex (Fin 3);
+    let sectorChamber : Fin 3 → Fin 3 → Fin 3 → Set SectorSimplex := fun i j k =>
+      {s | s.1 j ≤ s.1 i ∧ s.1 k ≤ s.1 j};
+    let SectorOrder := {t : Fin 3 × Fin 3 × Fin 3 //
+      t.1 ≠ t.2.1 ∧ t.1 ≠ t.2.2 ∧ t.2.1 ≠ t.2.2};
+    let sectorI : SectorOrder → Fin 3 := fun o => o.1.1;
+    let sectorJ : SectorOrder → Fin 3 := fun o => o.1.2.1;
+    let sectorK : SectorOrder → Fin 3 := fun o => o.1.2.2;
+    let sectorCh := fun o : SectorOrder => sectorChamber (sectorI o) (sectorJ o) (sectorK o);
     ∀ (sectorOrderedSum : ∀ (s : SectorSimplex), ∀ (i : Fin 3), ∀ (j : Fin 3), ∀ (k : Fin 3), (i
         ≠ j) → ((i ≠ k) → ((j ≠ k) → (s.1 i + s.1 j + s.1 k = 1)))),
-    let sectorParam := fun (o : SectorOrder) (s : SectorSimplex) (hs : s ∈ sectorCh o) =>
-      let i := sectorI o
-      let j := sectorJ o
-      let k := sectorK o
-      have hc : (∀ n, 0 ≤ s.1 n) ∧ ∑ n : Fin 3, s.1 n = 1 := by
-        simpa only [SectorSimplex, StandardSimplex, Set.mem_ofPred_eq] using s.2
-      have hsum : s.1 i + s.1 j + s.1 k = 1 :=
-        sectorOrderedSum s i j k o.2.1 o.2.2.1 o.2.2.2
-      have hxy := hs.1
-      have hyz := hs.2
-      have hr0 : 0 ≤ 2 * (s.1 j - s.1 k) + 3 * s.1 k := by
-        linarith [hc.1 j, hc.1 k]
-      have hr1 : 2 * (s.1 j - s.1 k) + 3 * s.1 k ≤ 1 := by
-        linarith [hc.1 i, hsum]
-      have hb0 : 0 ≤ 2 * (s.1 j - s.1 k) := by linarith [hyz]
-      have hbr : 2 * (s.1 j - s.1 k) ≤ 2 * (s.1 j - s.1 k) + 3 * s.1 k := by
-        nlinarith [hc.1 k]
-      (⟨⟨⟨2*(s.1 j-s.1 k)+3*s.1 k,hr0,hr1⟩,
-        ⟨2*(s.1 j-s.1 k),hb0,le_trans hbr hr1⟩⟩,hbr⟩ : SectorCone);
+    let sectorParam := SectorMapsProof.sectorParameter sectorOrderedSum;
     ∀ (o : SectorOrder), ∀ (s : SectorSimplex), ∀ (hs : s ∈ sectorCh o), (sectorParam o s hs).1.1
         = 2*(s.1 (sectorJ o)-s.1 (sectorK o))+3*s.1 (sectorK o) ∧
       (sectorParam o s hs).1.2 = 2*(s.1 (sectorJ o)-s.1 (sectorK o)) := by
   classical
-  intro SectorInterval SectorCone SectorSimplex sectorChamber SectorOrder sectorI sectorJ sectorK
+  intro SectorSimplex sectorChamber SectorOrder sectorI sectorJ sectorK
       sectorCh
       sectorOrderedSum sectorParam o s hs
   constructor <;> rfl
-
 private theorem sectorParam_continuous :
-    let SectorInterval := Set.Icc (0 : ℝ) 1
-    let SectorCone := {z : SectorInterval × SectorInterval // (z.2 : ℝ) ≤ z.1}
     let SectorSimplex := StandardSimplex (Fin 3)
     let sectorChamber : Fin 3 → Fin 3 → Fin 3 → Set SectorSimplex := fun i j k =>
       {s | s.1 j ≤ s.1 i ∧ s.1 k ≤ s.1 j}
@@ -207,29 +203,11 @@ private theorem sectorParam_continuous :
     let sectorCh := fun o : SectorOrder => sectorChamber (sectorI o) (sectorJ o) (sectorK o)
     ∀ (sectorOrderedSum : ∀ (s : SectorSimplex), ∀ (i : Fin 3), ∀ (j : Fin 3), ∀ (k : Fin 3), (i
         ≠ j) → ((i ≠ k) → ((j ≠ k) → (s.1 i + s.1 j + s.1 k = 1)))),
-    let sectorParam := fun (o : SectorOrder) (s : SectorSimplex) (hs : s ∈ sectorCh o) =>
-      let i := sectorI o
-      let j := sectorJ o
-      let k := sectorK o
-      have hc : (∀ n, 0 ≤ s.1 n) ∧ ∑ n : Fin 3, s.1 n = 1 := by
-        simpa only [SectorSimplex, StandardSimplex, Set.mem_ofPred_eq] using s.2
-      have hsum : s.1 i + s.1 j + s.1 k = 1 :=
-        sectorOrderedSum s i j k o.2.1 o.2.2.1 o.2.2.2
-      have hxy := hs.1
-      have hyz := hs.2
-      have hr0 : 0 ≤ 2 * (s.1 j - s.1 k) + 3 * s.1 k := by
-        linarith [hc.1 j, hc.1 k]
-      have hr1 : 2 * (s.1 j - s.1 k) + 3 * s.1 k ≤ 1 := by
-        linarith [hc.1 i, hsum]
-      have hb0 : 0 ≤ 2 * (s.1 j - s.1 k) := by linarith [hyz]
-      have hbr : 2 * (s.1 j - s.1 k) ≤ 2 * (s.1 j - s.1 k) + 3 * s.1 k := by
-        nlinarith [hc.1 k]
-      (⟨⟨⟨2*(s.1 j-s.1 k)+3*s.1 k,hr0,hr1⟩,
-        ⟨2*(s.1 j-s.1 k),hb0,le_trans hbr hr1⟩⟩,hbr⟩ : SectorCone)
+    let sectorParam := SectorMapsProof.sectorParameter sectorOrderedSum
     ∀ (o : SectorOrder), Continuous (fun s : {s : SectorSimplex // s ∈ sectorCh o} => sectorParam
         o s.1 s.2) := by
   classical
-  intro SectorInterval SectorCone SectorSimplex sectorChamber SectorOrder sectorI sectorJ sectorK
+  intro SectorSimplex sectorChamber SectorOrder sectorI sectorJ sectorK
       sectorCh sectorOrderedSum sectorParam o
   let A := {s : SectorSimplex // s ∈ sectorCh o}
   let y : A → ℝ := fun s => s.1.1 (sectorJ o)
@@ -248,7 +226,6 @@ private theorem sectorParam_continuous :
     exact hr
   · apply Continuous.subtype_mk
     exact hb
-
 private theorem sectorOrdersTie :
     let SectorSimplex := StandardSimplex (Fin 3)
     let sectorChamber : Fin 3 → Fin 3 → Fin 3 → Set SectorSimplex := fun i j k =>
@@ -265,7 +242,6 @@ private theorem sectorOrdersTie :
   classical
   intro SectorSimplex sectorChamber SectorOrder sectorI sectorJ sectorK sectorCh s o o' ho ho'
   exact (P3832T1ChamberOverlap s.1 o o' ho ho').1
-
 private theorem sectorOrderedBetaTop :
     let SectorSimplex := StandardSimplex (Fin 3)
     let sectorChamber : Fin 3 → Fin 3 → Fin 3 → Set SectorSimplex := fun i j k =>
@@ -282,7 +258,6 @@ private theorem sectorOrderedBetaTop :
   classical
   intro SectorSimplex sectorChamber SectorOrder sectorI sectorJ sectorK sectorCh s o o' ho ho' ht
   exact ((P3832T1ChamberOverlap s.1 o o' ho ho').2.1 ht).2.1
-
 private theorem sectorOrderedRBottom :
     let SectorSimplex := StandardSimplex (Fin 3)
     let sectorChamber : Fin 3 → Fin 3 → Fin 3 → Set SectorSimplex := fun i j k =>
@@ -300,10 +275,7 @@ private theorem sectorOrderedRBottom :
   classical
   intro SectorSimplex sectorChamber SectorOrder sectorI sectorJ sectorK sectorCh s o o' ho ho' ht
   exact ((P3832T1ChamberOverlap s.1 o o' ho ho').2.2 ht).2.1
-
 private theorem sectorTopTieParams :
-    let SectorInterval := Set.Icc (0 : ℝ) 1
-    let SectorCone := {z : SectorInterval × SectorInterval // (z.2 : ℝ) ≤ z.1}
     let SectorSimplex := StandardSimplex (Fin 3)
     let sectorChamber : Fin 3 → Fin 3 → Fin 3 → Set SectorSimplex := fun i j k =>
       {s | s.1 j ≤ s.1 i ∧ s.1 k ≤ s.1 j}
@@ -315,25 +287,7 @@ private theorem sectorTopTieParams :
     let sectorCh := fun o : SectorOrder => sectorChamber (sectorI o) (sectorJ o) (sectorK o)
     ∀ (sectorOrderedSum : ∀ (s : SectorSimplex), ∀ (i : Fin 3), ∀ (j : Fin 3), ∀ (k : Fin 3), (i
         ≠ j) → ((i ≠ k) → ((j ≠ k) → (s.1 i + s.1 j + s.1 k = 1)))),
-    let sectorParam := fun (o : SectorOrder) (s : SectorSimplex) (hs : s ∈ sectorCh o) =>
-      let i := sectorI o
-      let j := sectorJ o
-      let k := sectorK o
-      have hc : (∀ n, 0 ≤ s.1 n) ∧ ∑ n : Fin 3, s.1 n = 1 := by
-        simpa only [SectorSimplex, StandardSimplex, Set.mem_ofPred_eq] using s.2
-      have hsum : s.1 i + s.1 j + s.1 k = 1 :=
-        sectorOrderedSum s i j k o.2.1 o.2.2.1 o.2.2.2
-      have hxy := hs.1
-      have hyz := hs.2
-      have hr0 : 0 ≤ 2 * (s.1 j - s.1 k) + 3 * s.1 k := by
-        linarith [hc.1 j, hc.1 k]
-      have hr1 : 2 * (s.1 j - s.1 k) + 3 * s.1 k ≤ 1 := by
-        linarith [hc.1 i, hsum]
-      have hb0 : 0 ≤ 2 * (s.1 j - s.1 k) := by linarith [hyz]
-      have hbr : 2 * (s.1 j - s.1 k) ≤ 2 * (s.1 j - s.1 k) + 3 * s.1 k := by
-        nlinarith [hc.1 k]
-      (⟨⟨⟨2*(s.1 j-s.1 k)+3*s.1 k,hr0,hr1⟩,
-        ⟨2*(s.1 j-s.1 k),hb0,le_trans hbr hr1⟩⟩,hbr⟩ : SectorCone)
+    let sectorParam := SectorMapsProof.sectorParameter sectorOrderedSum
     (∀ (o : SectorOrder), ∀ (s : SectorSimplex), ∀ (hs : s ∈ sectorCh o), (sectorParam o s
         hs).1.1 = 2*(s.1 (sectorJ o)-s.1 (sectorK o))+3*s.1 (sectorK o) ∧ (sectorParam o s
         hs).1.2 = 2*(s.1 (sectorJ o)-s.1 (sectorK o))) → ((∀ (s : SectorSimplex), ∀ (o :
@@ -344,7 +298,7 @@ private theorem sectorTopTieParams :
         (sectorJ o)) → ((sectorParam o s ho).1.1=1 ∧
         (sectorParam o s ho).1.2=(sectorParam o' s ho').1.2))) := by
   classical
-  intro SectorInterval SectorCone SectorSimplex sectorChamber SectorOrder sectorI sectorJ sectorK
+  intro SectorSimplex sectorChamber SectorOrder sectorI sectorJ sectorK
       sectorCh sectorOrderedSum sectorParam sectorParam_values sectorOrderedBetaTop s o o' ho ho' ht
   rcases sectorParam_values o s ho with ⟨hr,hb⟩
   rcases sectorParam_values o' s ho' with ⟨_,hb'⟩
@@ -361,10 +315,7 @@ private theorem sectorTopTieParams :
   · apply Subtype.ext
     rw [hb,hb']
     exact sectorOrderedBetaTop s o o' ho ho' ht
-
 private theorem sectorBottomTieParams :
-    let SectorInterval := Set.Icc (0 : ℝ) 1;
-    let SectorCone := {z : SectorInterval × SectorInterval // (z.2 : ℝ) ≤ z.1};
     let SectorSimplex := StandardSimplex (Fin 3);
     let sectorChamber : Fin 3 → Fin 3 → Fin 3 → Set SectorSimplex := fun i j k =>
       {s | s.1 j ≤ s.1 i ∧ s.1 k ≤ s.1 j};
@@ -376,25 +327,7 @@ private theorem sectorBottomTieParams :
     let sectorCh := fun o : SectorOrder => sectorChamber (sectorI o) (sectorJ o) (sectorK o);
     ∀ (sectorOrderedSum : ∀ (s : SectorSimplex), ∀ (i : Fin 3), ∀ (j : Fin 3), ∀ (k : Fin 3), (i
         ≠ j) → ((i ≠ k) → ((j ≠ k) → (s.1 i + s.1 j + s.1 k = 1)))),
-    let sectorParam := fun (o : SectorOrder) (s : SectorSimplex) (hs : s ∈ sectorCh o) =>
-      let i := sectorI o
-      let j := sectorJ o
-      let k := sectorK o
-      have hc : (∀ n, 0 ≤ s.1 n) ∧ ∑ n : Fin 3, s.1 n = 1 := by
-        simpa only [SectorSimplex, StandardSimplex, Set.mem_ofPred_eq] using s.2
-      have hsum : s.1 i + s.1 j + s.1 k = 1 :=
-        sectorOrderedSum s i j k o.2.1 o.2.2.1 o.2.2.2
-      have hxy := hs.1
-      have hyz := hs.2
-      have hr0 : 0 ≤ 2 * (s.1 j - s.1 k) + 3 * s.1 k := by
-        linarith [hc.1 j, hc.1 k]
-      have hr1 : 2 * (s.1 j - s.1 k) + 3 * s.1 k ≤ 1 := by
-        linarith [hc.1 i, hsum]
-      have hb0 : 0 ≤ 2 * (s.1 j - s.1 k) := by linarith [hyz]
-      have hbr : 2 * (s.1 j - s.1 k) ≤ 2 * (s.1 j - s.1 k) + 3 * s.1 k := by
-        nlinarith [hc.1 k]
-      (⟨⟨⟨2*(s.1 j-s.1 k)+3*s.1 k,hr0,hr1⟩,
-        ⟨2*(s.1 j-s.1 k),hb0,le_trans hbr hr1⟩⟩,hbr⟩ : SectorCone);
+    let sectorParam := SectorMapsProof.sectorParameter sectorOrderedSum;
     (∀ (s : SectorSimplex), ∀ (o : SectorOrder), ∀ (o' : SectorOrder), (s ∈ sectorCh o) → ((s ∈
         sectorCh o') → ((s.1 (sectorJ o)=s.1 (sectorK o)) → (2*(s.1 (sectorJ o)-s.1 (sectorK
         o))+3*s.1 (sectorK o)= 2*(s.1 (sectorJ o')-s.1 (sectorK o'))+3*s.1 (sectorK o'))))) → (∀
@@ -402,7 +335,7 @@ private theorem sectorBottomTieParams :
         ∀ (ho' : s ∈ sectorCh o'), (s.1 (sectorJ o)=s.1 (sectorK o)) → ((sectorParam o s ho).1.2=0 ∧
         (sectorParam o s ho).1.1=(sectorParam o' s ho').1.1)) := by
   classical
-  intro SectorInterval SectorCone SectorSimplex sectorChamber SectorOrder sectorI sectorJ sectorK
+  intro SectorSimplex sectorChamber SectorOrder sectorI sectorJ sectorK
       sectorCh
       sectorOrderedSum sectorParam sectorOrderedRBottom s o o' ho ho' ht
   constructor
@@ -413,7 +346,6 @@ private theorem sectorBottomTieParams :
     change 2*(s.1 (sectorJ o)-s.1 (sectorK o))+3*s.1 (sectorK o) =
       2*(s.1 (sectorJ o')-s.1 (sectorK o'))+3*s.1 (sectorK o')
     exact sectorOrderedRBottom s o o' ho ho' ht
-
 private theorem sectorBottomSameTop :
     let SectorSimplex := StandardSimplex (Fin 3)
     let sectorChamber : Fin 3 → Fin 3 → Fin 3 → Set SectorSimplex := fun i j k =>
@@ -430,7 +362,6 @@ private theorem sectorBottomSameTop :
   classical
   intro SectorSimplex sectorChamber SectorOrder sectorI sectorJ sectorK sectorCh s o o' ho ho' ht
   exact ((P3832T1ChamberOverlap s.1 o o' ho ho').2.2 ht).2.2
-
 private theorem sectorTopTieOther :
     let SectorSimplex := StandardSimplex (Fin 3)
     let sectorChamber : Fin 3 → Fin 3 → Fin 3 → Set SectorSimplex := fun i j k =>
@@ -447,7 +378,6 @@ private theorem sectorTopTieOther :
   classical
   intro SectorSimplex sectorChamber SectorOrder sectorI sectorJ sectorK sectorCh s o o' ho ho' ht
   exact ((P3832T1ChamberOverlap s.1 o o' ho ho').2.1 ht).1
-
 private theorem sectorBottomTieOther :
     let SectorSimplex := StandardSimplex (Fin 3)
     let sectorChamber : Fin 3 → Fin 3 → Fin 3 → Set SectorSimplex := fun i j k =>
@@ -464,7 +394,6 @@ private theorem sectorBottomTieOther :
   classical
   intro SectorSimplex sectorChamber SectorOrder sectorI sectorJ sectorK sectorCh s o o' ho ho' ht
   exact ((P3832T1ChamberOverlap s.1 o o' ho ho').2.2 ht).1
-
 private theorem sectorTopPairClassify :
     let SectorSimplex := StandardSimplex (Fin 3);
     let sectorChamber : Fin 3 → Fin 3 → Fin 3 → Set SectorSimplex := fun i j k =>
@@ -484,7 +413,6 @@ private theorem sectorTopPairClassify :
   intro SectorSimplex sectorChamber SectorOrder sectorI sectorJ sectorK sectorCh s o o' ho ho'
       ht
   exact ((P3832T1ChamberOverlap s.1 o o' ho ho').2.1 ht).2.2
-
 private theorem sectorChosenCone_spec :
     ∀ (ι : Type), ∀ (P : PeriodicTileCore ι), ∀ (H : P3776T1TileContractions P), ∀ (E :
         P3776T1DualEdges P),
@@ -517,7 +445,6 @@ private theorem sectorChosenCone_spec :
     (P.plane.faceVertex f (sectorI o)) (P.plane.faceVertex f (sectorJ o))
     (P.plane.face_edges f (sectorI o) (sectorJ o) o.2.1)
     ⟨sectorI o,rfl⟩ ⟨sectorJ o,rfl⟩) z
-
 private theorem sectorChosenPiece_top :
     ∀ (ι : Type), ∀ (P : PeriodicTileCore ι), ∀ (H : P3776T1TileContractions P), ∀ (E :
         P3776T1DualEdges P),
@@ -540,25 +467,7 @@ private theorem sectorChosenPiece_top :
     let sectorCh := fun o : SectorOrder => sectorChamber (sectorI o) (sectorJ o) (sectorK o)
     ∀ (sectorOrderedSum : ∀ (s : SectorSimplex), ∀ (i : Fin 3), ∀ (j : Fin 3), ∀ (k : Fin 3), (i
         ≠ j) → ((i ≠ k) → ((j ≠ k) → (s.1 i + s.1 j + s.1 k = 1)))),
-    let sectorParam := fun (o : SectorOrder) (s : SectorSimplex) (hs : s ∈ sectorCh o) =>
-      let i := sectorI o
-      let j := sectorJ o
-      let k := sectorK o
-      have hc : (∀ n, 0 ≤ s.1 n) ∧ ∑ n : Fin 3, s.1 n = 1 := by
-        simpa only [SectorSimplex, StandardSimplex, Set.mem_ofPred_eq] using s.2
-      have hsum : s.1 i + s.1 j + s.1 k = 1 :=
-        sectorOrderedSum s i j k o.2.1 o.2.2.1 o.2.2.2
-      have hxy := hs.1
-      have hyz := hs.2
-      have hr0 : 0 ≤ 2 * (s.1 j - s.1 k) + 3 * s.1 k := by
-        linarith [hc.1 j, hc.1 k]
-      have hr1 : 2 * (s.1 j - s.1 k) + 3 * s.1 k ≤ 1 := by
-        linarith [hc.1 i, hsum]
-      have hb0 : 0 ≤ 2 * (s.1 j - s.1 k) := by linarith [hyz]
-      have hbr : 2 * (s.1 j - s.1 k) ≤ 2 * (s.1 j - s.1 k) + 3 * s.1 k := by
-        nlinarith [hc.1 k]
-      (⟨⟨⟨2*(s.1 j-s.1 k)+3*s.1 k,hr0,hr1⟩,
-        ⟨2*(s.1 j-s.1 k),hb0,le_trans hbr hr1⟩⟩,hbr⟩ : SectorCone)
+    let sectorParam := SectorMapsProof.sectorParameter sectorOrderedSum
     ∀ (sectorParam_continuous : ∀ (o : SectorOrder), Continuous (fun s :
         {s : SectorSimplex // s ∈ sectorCh o} => sectorParam o s.1 s.2)), (∀ (s : SectorSimplex),
         ∀ (o : SectorOrder), ∀ (o' : SectorOrder), ∀ (ho : s ∈ sectorCh o), ∀ (ho' : s ∈ sectorCh
@@ -608,7 +517,6 @@ private theorem sectorChosenPiece_top :
   have hin := (hp.2.2.2.1 t).1
   simpa [t] using H.one (P.plane.faceVertex f (sectorI o))
     (E.half f (P.plane.faceVertex f (sectorI o)) (P.plane.faceVertex f (sectorJ o)) t) hin
-
 private theorem sectorChosenPiece_bottom :
     ∀ (ι : Type), ∀ (P : PeriodicTileCore ι), ∀ (H : P3776T1TileContractions P), ∀ (E :
         P3776T1DualEdges P),
@@ -631,25 +539,7 @@ private theorem sectorChosenPiece_bottom :
     let sectorCh := fun o : SectorOrder => sectorChamber (sectorI o) (sectorJ o) (sectorK o)
     ∀ (sectorOrderedSum : ∀ (s : SectorSimplex), ∀ (i : Fin 3), ∀ (j : Fin 3), ∀ (k : Fin 3), (i
         ≠ j) → ((i ≠ k) → ((j ≠ k) → (s.1 i + s.1 j + s.1 k = 1)))),
-    let sectorParam := fun (o : SectorOrder) (s : SectorSimplex) (hs : s ∈ sectorCh o) =>
-      let i := sectorI o
-      let j := sectorJ o
-      let k := sectorK o
-      have hc : (∀ n, 0 ≤ s.1 n) ∧ ∑ n : Fin 3, s.1 n = 1 := by
-        simpa only [SectorSimplex, StandardSimplex, Set.mem_ofPred_eq] using s.2
-      have hsum : s.1 i + s.1 j + s.1 k = 1 :=
-        sectorOrderedSum s i j k o.2.1 o.2.2.1 o.2.2.2
-      have hxy := hs.1
-      have hyz := hs.2
-      have hr0 : 0 ≤ 2 * (s.1 j - s.1 k) + 3 * s.1 k := by
-        linarith [hc.1 j, hc.1 k]
-      have hr1 : 2 * (s.1 j - s.1 k) + 3 * s.1 k ≤ 1 := by
-        linarith [hc.1 i, hsum]
-      have hb0 : 0 ≤ 2 * (s.1 j - s.1 k) := by linarith [hyz]
-      have hbr : 2 * (s.1 j - s.1 k) ≤ 2 * (s.1 j - s.1 k) + 3 * s.1 k := by
-        nlinarith [hc.1 k]
-      (⟨⟨⟨2*(s.1 j-s.1 k)+3*s.1 k,hr0,hr1⟩,
-        ⟨2*(s.1 j-s.1 k),hb0,le_trans hbr hr1⟩⟩,hbr⟩ : SectorCone)
+    let sectorParam := SectorMapsProof.sectorParameter sectorOrderedSum
     ∀ (sectorParam_continuous : ∀ (o : SectorOrder), Continuous (fun s :
         {s : SectorSimplex // s ∈ sectorCh o} => sectorParam o s.1 s.2)), (∀ (s : SectorSimplex),
         ∀ (o : SectorOrder), ∀ (o' : SectorOrder), ∀ (ho : s ∈ sectorCh o), ∀ (ho' : s ∈ sectorCh
@@ -697,10 +587,8 @@ private theorem sectorChosenPiece_bottom :
     (P.plane.face_edges f (sectorI o) (sectorJ o) o.2.1)
     ⟨sectorI o,rfl⟩ ⟨sectorJ o,rfl⟩
   rw [hp.2.1]
-
 private theorem sectorParam_beta_zero :
     let SectorInterval := Set.Icc (0 : ℝ) 1;
-    let SectorCone := {z : SectorInterval × SectorInterval // (z.2 : ℝ) ≤ z.1};
     let SectorSimplex := StandardSimplex (Fin 3);
     let sectorChamber : Fin 3 → Fin 3 → Fin 3 → Set SectorSimplex := fun i j k =>
       {s | s.1 j ≤ s.1 i ∧ s.1 k ≤ s.1 j};
@@ -712,39 +600,20 @@ private theorem sectorParam_beta_zero :
     let sectorCh := fun o : SectorOrder => sectorChamber (sectorI o) (sectorJ o) (sectorK o);
     ∀ (sectorOrderedSum : ∀ (s : SectorSimplex), ∀ (i : Fin 3), ∀ (j : Fin 3), ∀ (k : Fin 3), (i
         ≠ j) → ((i ≠ k) → ((j ≠ k) → (s.1 i + s.1 j + s.1 k = 1)))),
-    let sectorParam := fun (o : SectorOrder) (s : SectorSimplex) (hs : s ∈ sectorCh o) =>
-      let i := sectorI o
-      let j := sectorJ o
-      let k := sectorK o
-      have hc : (∀ n, 0 ≤ s.1 n) ∧ ∑ n : Fin 3, s.1 n = 1 := by
-        simpa only [SectorSimplex, StandardSimplex, Set.mem_ofPred_eq] using s.2
-      have hsum : s.1 i + s.1 j + s.1 k = 1 :=
-        sectorOrderedSum s i j k o.2.1 o.2.2.1 o.2.2.2
-      have hxy := hs.1
-      have hyz := hs.2
-      have hr0 : 0 ≤ 2 * (s.1 j - s.1 k) + 3 * s.1 k := by
-        linarith [hc.1 j, hc.1 k]
-      have hr1 : 2 * (s.1 j - s.1 k) + 3 * s.1 k ≤ 1 := by
-        linarith [hc.1 i, hsum]
-      have hb0 : 0 ≤ 2 * (s.1 j - s.1 k) := by linarith [hyz]
-      have hbr : 2 * (s.1 j - s.1 k) ≤ 2 * (s.1 j - s.1 k) + 3 * s.1 k := by
-        nlinarith [hc.1 k]
-      (⟨⟨⟨2*(s.1 j-s.1 k)+3*s.1 k,hr0,hr1⟩,
-        ⟨2*(s.1 j-s.1 k),hb0,le_trans hbr hr1⟩⟩,hbr⟩ : SectorCone);
+    let sectorParam := SectorMapsProof.sectorParameter sectorOrderedSum;
     (∀ (o : SectorOrder), ∀ (s : SectorSimplex), ∀ (hs : s ∈ sectorCh o), (sectorParam o s
         hs).1.1 = 2*(s.1 (sectorJ o)-s.1 (sectorK o))+3*s.1 (sectorK o) ∧ (sectorParam o s
         hs).1.2 = 2*(s.1 (sectorJ o)-s.1 (sectorK o))) → (∀ (o : SectorOrder), ∀ (s :
         SectorSimplex), ∀ (hs : s ∈ sectorCh o), (s.1 (sectorJ o)=s.1 (sectorK o)) →
         ((sectorParam o s hs).1.2=⟨0,by norm_num [SectorInterval]⟩)) := by
   classical
-  intro SectorInterval SectorCone SectorSimplex sectorChamber SectorOrder sectorI sectorJ sectorK
+  intro SectorInterval SectorSimplex sectorChamber SectorOrder sectorI sectorJ sectorK
       sectorCh
       sectorOrderedSum sectorParam sectorParam_values o s hs ht
   apply Subtype.ext
   rcases sectorParam_values o s hs with ⟨_,hb⟩
   rw [hb,ht]
   norm_num
-
 private theorem sectorChosenPieces_agree :
     ∀ (ι : Type), ∀ (P : PeriodicTileCore ι), ∀ (H : P3776T1TileContractions P), ∀ (E :
         P3776T1DualEdges P),
@@ -767,25 +636,7 @@ private theorem sectorChosenPieces_agree :
     let sectorCh := fun o : SectorOrder => sectorChamber (sectorI o) (sectorJ o) (sectorK o)
     ∀ (sectorOrderedSum : ∀ (s : SectorSimplex), ∀ (i : Fin 3), ∀ (j : Fin 3), ∀ (k : Fin 3), (i
         ≠ j) → ((i ≠ k) → ((j ≠ k) → (s.1 i + s.1 j + s.1 k = 1)))),
-    let sectorParam := fun (o : SectorOrder) (s : SectorSimplex) (hs : s ∈ sectorCh o) =>
-      let i := sectorI o
-      let j := sectorJ o
-      let k := sectorK o
-      have hc : (∀ n, 0 ≤ s.1 n) ∧ ∑ n : Fin 3, s.1 n = 1 := by
-        simpa only [SectorSimplex, StandardSimplex, Set.mem_ofPred_eq] using s.2
-      have hsum : s.1 i + s.1 j + s.1 k = 1 :=
-        sectorOrderedSum s i j k o.2.1 o.2.2.1 o.2.2.2
-      have hxy := hs.1
-      have hyz := hs.2
-      have hr0 : 0 ≤ 2 * (s.1 j - s.1 k) + 3 * s.1 k := by
-        linarith [hc.1 j, hc.1 k]
-      have hr1 : 2 * (s.1 j - s.1 k) + 3 * s.1 k ≤ 1 := by
-        linarith [hc.1 i, hsum]
-      have hb0 : 0 ≤ 2 * (s.1 j - s.1 k) := by linarith [hyz]
-      have hbr : 2 * (s.1 j - s.1 k) ≤ 2 * (s.1 j - s.1 k) + 3 * s.1 k := by
-        nlinarith [hc.1 k]
-      (⟨⟨⟨2*(s.1 j-s.1 k)+3*s.1 k,hr0,hr1⟩,
-        ⟨2*(s.1 j-s.1 k),hb0,le_trans hbr hr1⟩⟩,hbr⟩ : SectorCone)
+    let sectorParam := SectorMapsProof.sectorParameter sectorOrderedSum
     ∀ (sectorParam_continuous : ∀ (o : SectorOrder), Continuous (fun s :
         {s : SectorSimplex // s ∈ sectorCh o} => sectorParam o s.1 s.2)), (∀ (s : SectorSimplex),
         ∀ (o : SectorOrder), ∀ (o' : SectorOrder), (s ∈ sectorCh o) → ((s ∈ sectorCh o') → (o =
@@ -912,7 +763,6 @@ private theorem sectorChosenPieces_agree :
             GaussianRealPoint (P.rho f) := by simpa using hone
         _ = H.homotopy (P.plane.faceVertex f (sectorI o')) 1 _ := by
           simpa using hone'.symm
-
 private theorem sectorGlobalMap :
     ∀ (ι : Type), ∀ (P : PeriodicTileCore ι), ∀ (H : P3776T1TileContractions P), ∀ (E :
         P3776T1DualEdges P),
@@ -937,25 +787,7 @@ private theorem sectorGlobalMap :
         SectorSimplex, ∃ o : SectorOrder, s ∈ sectorCh o) → (∀ (sectorOrderedSum : ∀ (s :
         SectorSimplex), ∀ (i : Fin 3), ∀ (j : Fin 3), ∀ (k : Fin 3), (i ≠ j) → ((i ≠ k) → ((j ≠
         k) → (s.1 i + s.1 j + s.1 k = 1)))),
-    let sectorParam := fun (o : SectorOrder) (s : SectorSimplex) (hs : s ∈ sectorCh o) =>
-      let i := sectorI o
-      let j := sectorJ o
-      let k := sectorK o
-      have hc : (∀ n, 0 ≤ s.1 n) ∧ ∑ n : Fin 3, s.1 n = 1 := by
-        simpa only [SectorSimplex, StandardSimplex, Set.mem_ofPred_eq] using s.2
-      have hsum : s.1 i + s.1 j + s.1 k = 1 :=
-        sectorOrderedSum s i j k o.2.1 o.2.2.1 o.2.2.2
-      have hxy := hs.1
-      have hyz := hs.2
-      have hr0 : 0 ≤ 2 * (s.1 j - s.1 k) + 3 * s.1 k := by
-        linarith [hc.1 j, hc.1 k]
-      have hr1 : 2 * (s.1 j - s.1 k) + 3 * s.1 k ≤ 1 := by
-        linarith [hc.1 i, hsum]
-      have hb0 : 0 ≤ 2 * (s.1 j - s.1 k) := by linarith [hyz]
-      have hbr : 2 * (s.1 j - s.1 k) ≤ 2 * (s.1 j - s.1 k) + 3 * s.1 k := by
-        nlinarith [hc.1 k]
-      (⟨⟨⟨2*(s.1 j-s.1 k)+3*s.1 k,hr0,hr1⟩,
-        ⟨2*(s.1 j-s.1 k),hb0,le_trans hbr hr1⟩⟩,hbr⟩ : SectorCone)
+    let sectorParam := SectorMapsProof.sectorParameter sectorOrderedSum
     ∀ (sectorParam_continuous : ∀ (o : SectorOrder), Continuous (fun s :
         {s : SectorSimplex // s ∈ sectorCh o} => sectorParam o s.1 s.2)),
     let sectorPiece (o : SectorOrder)
@@ -997,7 +829,6 @@ private theorem sectorGlobalMap :
     exact sectorChosenPieces_agree f s o o' ho ho'
   obtain ⟨F,hF⟩ := P3832T1FiniteClosedCoverPasting (S:=S) hclosed hcover φ hagree
   exact ⟨F,fun o s hs => hF o s hs⟩
-
 private theorem sectorChosenPiece_support :
     ∀ (ι : Type), ∀ (P : PeriodicTileCore ι), ∀ (H : P3776T1TileContractions P), ∀ (E :
         P3776T1DualEdges P),
@@ -1021,25 +852,7 @@ private theorem sectorChosenPiece_support :
     let sectorCh := fun o : SectorOrder => sectorChamber (sectorI o) (sectorJ o) (sectorK o)
     ∀ (sectorOrderedSum : ∀ (s : SectorSimplex), ∀ (i : Fin 3), ∀ (j : Fin 3), ∀ (k : Fin 3), (i
         ≠ j) → ((i ≠ k) → ((j ≠ k) → (s.1 i + s.1 j + s.1 k = 1)))),
-    let sectorParam := fun (o : SectorOrder) (s : SectorSimplex) (hs : s ∈ sectorCh o) =>
-      let i := sectorI o
-      let j := sectorJ o
-      let k := sectorK o
-      have hc : (∀ n, 0 ≤ s.1 n) ∧ ∑ n : Fin 3, s.1 n = 1 := by
-        simpa only [SectorSimplex, StandardSimplex, Set.mem_ofPred_eq] using s.2
-      have hsum : s.1 i + s.1 j + s.1 k = 1 :=
-        sectorOrderedSum s i j k o.2.1 o.2.2.1 o.2.2.2
-      have hxy := hs.1
-      have hyz := hs.2
-      have hr0 : 0 ≤ 2 * (s.1 j - s.1 k) + 3 * s.1 k := by
-        linarith [hc.1 j, hc.1 k]
-      have hr1 : 2 * (s.1 j - s.1 k) + 3 * s.1 k ≤ 1 := by
-        linarith [hc.1 i, hsum]
-      have hb0 : 0 ≤ 2 * (s.1 j - s.1 k) := by linarith [hyz]
-      have hbr : 2 * (s.1 j - s.1 k) ≤ 2 * (s.1 j - s.1 k) + 3 * s.1 k := by
-        nlinarith [hc.1 k]
-      (⟨⟨⟨2*(s.1 j-s.1 k)+3*s.1 k,hr0,hr1⟩,
-        ⟨2*(s.1 j-s.1 k),hb0,le_trans hbr hr1⟩⟩,hbr⟩ : SectorCone)
+    let sectorParam := SectorMapsProof.sectorParameter sectorOrderedSum
     ∀ (sectorParam_continuous : ∀ (o : SectorOrder), Continuous (fun s :
         {s : SectorSimplex // s ∈ sectorCh o} => sectorParam o s.1 s.2)),
     let sectorPiece (o : SectorOrder)
@@ -1085,7 +898,6 @@ private theorem sectorChosenPiece_support :
   exact H.support (P.plane.faceVertex f (sectorI o)) w.1 w.1.2
     (E.half f (P.plane.faceVertex f (sectorI o))
       (P.plane.faceVertex f (sectorJ o)) w.2) hmember
-
 private theorem sectorTopPositive :
     let SectorSimplex := StandardSimplex (Fin 3)
     let sectorChamber : Fin 3 → Fin 3 → Fin 3 → Set SectorSimplex := fun i j k =>
@@ -1107,7 +919,6 @@ private theorem sectorTopPositive :
   have hj : s.1 (sectorJ o) ≤ s.1 (sectorI o) := hs.1
   have hk : s.1 (sectorK o) ≤ s.1 (sectorJ o) := hs.2
   linarith
-
 private theorem sectorChosenCone_periodic :
     ∀ (ι : Type), ∀ (P : PeriodicTileCore ι), ∀ (H : P3776T1TileContractions P), ∀ (E :
         P3776T1DualEdges P),
@@ -1163,7 +974,6 @@ private theorem sectorChosenCone_periodic :
     _ = sectorChosenCone f o (sectorCollapse w) + GaussianRealPoint u := by
       rw [sectorChosenCone_spec f o w]
     _ = sectorChosenCone f o z + GaussianRealPoint u := by rw [hw]
-
 private theorem sectorGlobalChosen_periodic :
     ∀ (ι : Type), ∀ (P : PeriodicTileCore ι), ∀ (H : P3776T1TileContractions P), ∀ (E :
         P3776T1DualEdges P),
@@ -1187,25 +997,7 @@ private theorem sectorGlobalChosen_periodic :
     (∀ s : SectorSimplex, ∃ o : SectorOrder, s ∈ sectorCh o) → (∀ (sectorOrderedSum : ∀ (s :
         SectorSimplex), ∀ (i : Fin 3), ∀ (j : Fin 3), ∀ (k : Fin 3), (i ≠ j) → ((i ≠ k) → ((j ≠
         k) → (s.1 i + s.1 j + s.1 k = 1)))),
-    let sectorParam := fun (o : SectorOrder) (s : SectorSimplex) (hs : s ∈ sectorCh o) =>
-      let i := sectorI o
-      let j := sectorJ o
-      let k := sectorK o
-      have hc : (∀ n, 0 ≤ s.1 n) ∧ ∑ n : Fin 3, s.1 n = 1 := by
-        simpa only [SectorSimplex, StandardSimplex, Set.mem_ofPred_eq] using s.2
-      have hsum : s.1 i + s.1 j + s.1 k = 1 :=
-        sectorOrderedSum s i j k o.2.1 o.2.2.1 o.2.2.2
-      have hxy := hs.1
-      have hyz := hs.2
-      have hr0 : 0 ≤ 2 * (s.1 j - s.1 k) + 3 * s.1 k := by
-        linarith [hc.1 j, hc.1 k]
-      have hr1 : 2 * (s.1 j - s.1 k) + 3 * s.1 k ≤ 1 := by
-        linarith [hc.1 i, hsum]
-      have hb0 : 0 ≤ 2 * (s.1 j - s.1 k) := by linarith [hyz]
-      have hbr : 2 * (s.1 j - s.1 k) ≤ 2 * (s.1 j - s.1 k) + 3 * s.1 k := by
-        nlinarith [hc.1 k]
-      (⟨⟨⟨2*(s.1 j-s.1 k)+3*s.1 k,hr0,hr1⟩,
-        ⟨2*(s.1 j-s.1 k),hb0,le_trans hbr hr1⟩⟩,hbr⟩ : SectorCone)
+    let sectorParam := SectorMapsProof.sectorParameter sectorOrderedSum
     ∀ (sectorParam_continuous : ∀ (o : SectorOrder), Continuous (fun s :
         {s : SectorSimplex // s ∈ sectorCh o} => sectorParam o s.1 s.2)),
     let sectorPiece (o : SectorOrder)
@@ -1242,7 +1034,6 @@ private theorem sectorGlobalChosen_periodic :
   change sectorChosenCone (P.faceShift u f) o (sectorParam o s ho) =
     sectorChosenCone f o (sectorParam o s ho) + GaussianRealPoint u
   exact sectorChosenCone_periodic u f o (sectorParam o s ho)
-
 private theorem sectorGlobalChosen_support :
     ∀ (ι : Type), ∀ (P : PeriodicTileCore ι), ∀ (H : P3776T1TileContractions P), ∀ (E :
         P3776T1DualEdges P),
@@ -1266,25 +1057,7 @@ private theorem sectorGlobalChosen_support :
     (∀ s : SectorSimplex, ∃ o : SectorOrder, s ∈ sectorCh o) → (∀ (sectorOrderedSum : ∀ (s :
         SectorSimplex), ∀ (i : Fin 3), ∀ (j : Fin 3), ∀ (k : Fin 3), (i ≠ j) → ((i ≠ k) → ((j ≠
         k) → (s.1 i + s.1 j + s.1 k = 1)))),
-    let sectorParam := fun (o : SectorOrder) (s : SectorSimplex) (hs : s ∈ sectorCh o) =>
-      let i := sectorI o
-      let j := sectorJ o
-      let k := sectorK o
-      have hc : (∀ n, 0 ≤ s.1 n) ∧ ∑ n : Fin 3, s.1 n = 1 := by
-        simpa only [SectorSimplex, StandardSimplex, Set.mem_ofPred_eq] using s.2
-      have hsum : s.1 i + s.1 j + s.1 k = 1 :=
-        sectorOrderedSum s i j k o.2.1 o.2.2.1 o.2.2.2
-      have hxy := hs.1
-      have hyz := hs.2
-      have hr0 : 0 ≤ 2 * (s.1 j - s.1 k) + 3 * s.1 k := by
-        linarith [hc.1 j, hc.1 k]
-      have hr1 : 2 * (s.1 j - s.1 k) + 3 * s.1 k ≤ 1 := by
-        linarith [hc.1 i, hsum]
-      have hb0 : 0 ≤ 2 * (s.1 j - s.1 k) := by linarith [hyz]
-      have hbr : 2 * (s.1 j - s.1 k) ≤ 2 * (s.1 j - s.1 k) + 3 * s.1 k := by
-        nlinarith [hc.1 k]
-      (⟨⟨⟨2*(s.1 j-s.1 k)+3*s.1 k,hr0,hr1⟩,
-        ⟨2*(s.1 j-s.1 k),hb0,le_trans hbr hr1⟩⟩,hbr⟩ : SectorCone)
+    let sectorParam := SectorMapsProof.sectorParameter sectorOrderedSum
     ∀ (sectorParam_continuous : ∀ (o : SectorOrder), Continuous (fun s :
         {s : SectorSimplex // s ∈ sectorCh o} => sectorParam o s.1 s.2)),
     let sectorPiece (o : SectorOrder)
@@ -1320,7 +1093,6 @@ private theorem sectorGlobalChosen_support :
   refine ⟨sectorI o, sectorTopPositive s o ho, ?_⟩
   rw [sectorGlobalChosen_spec f o s ho]
   exact sectorChosenPiece_support f o s ho
-
 private theorem sectorGlobalChosen_vertex :
     ∀ (ι : Type), ∀ (P : PeriodicTileCore ι), ∀ (H : P3776T1TileContractions P), ∀ (E :
         P3776T1DualEdges P),
@@ -1345,25 +1117,7 @@ private theorem sectorGlobalChosen_vertex :
         3), n = sectorI o ∨ n = sectorJ o ∨ n = sectorK o) → (∀ (sectorOrderedSum : ∀ (s :
         SectorSimplex), ∀ (i : Fin 3), ∀ (j : Fin 3), ∀ (k : Fin 3), (i ≠ j) → ((i ≠ k) → ((j ≠
         k) → (s.1 i + s.1 j + s.1 k = 1)))),
-    let sectorParam := fun (o : SectorOrder) (s : SectorSimplex) (hs : s ∈ sectorCh o) =>
-      let i := sectorI o
-      let j := sectorJ o
-      let k := sectorK o
-      have hc : (∀ n, 0 ≤ s.1 n) ∧ ∑ n : Fin 3, s.1 n = 1 := by
-        simpa only [SectorSimplex, StandardSimplex, Set.mem_ofPred_eq] using s.2
-      have hsum : s.1 i + s.1 j + s.1 k = 1 :=
-        sectorOrderedSum s i j k o.2.1 o.2.2.1 o.2.2.2
-      have hxy := hs.1
-      have hyz := hs.2
-      have hr0 : 0 ≤ 2 * (s.1 j - s.1 k) + 3 * s.1 k := by
-        linarith [hc.1 j, hc.1 k]
-      have hr1 : 2 * (s.1 j - s.1 k) + 3 * s.1 k ≤ 1 := by
-        linarith [hc.1 i, hsum]
-      have hb0 : 0 ≤ 2 * (s.1 j - s.1 k) := by linarith [hyz]
-      have hbr : 2 * (s.1 j - s.1 k) ≤ 2 * (s.1 j - s.1 k) + 3 * s.1 k := by
-        nlinarith [hc.1 k]
-      (⟨⟨⟨2*(s.1 j-s.1 k)+3*s.1 k,hr0,hr1⟩,
-        ⟨2*(s.1 j-s.1 k),hb0,le_trans hbr hr1⟩⟩,hbr⟩ : SectorCone)
+    let sectorParam := SectorMapsProof.sectorParameter sectorOrderedSum
     (∀ (o : SectorOrder), ∀ (s : SectorSimplex), ∀ (hs : s ∈ sectorCh o), (sectorParam o s
         hs).1.1 = 2*(s.1 (sectorJ o)-s.1 (sectorK o))+3*s.1 (sectorK o) ∧ (sectorParam o s
         hs).1.2 = 2*(s.1 (sectorJ o)-s.1 (sectorK o))) → (∀ (sectorParam_continuous : ∀ (o :
@@ -1458,7 +1212,6 @@ private theorem sectorGlobalChosen_vertex :
   rw [hI]
   rw [hI] at hm0
   exact H.zero (P.plane.faceVertex f i) (GaussianRealPoint (P.rho f)) hm0
-
 private theorem sectorGlobalChosen_edge :
     ∀ (ι : Type), ∀ (P : PeriodicTileCore ι), ∀ (H : P3776T1TileContractions P), ∀ (E :
         P3776T1DualEdges P),
@@ -1481,25 +1234,7 @@ private theorem sectorGlobalChosen_edge :
     let sectorCh := fun o : SectorOrder => sectorChamber (sectorI o) (sectorJ o) (sectorK o)
     ∀ (sectorOrderedSum : ∀ (s : SectorSimplex), ∀ (i : Fin 3), ∀ (j : Fin 3), ∀ (k : Fin 3), (i
         ≠ j) → ((i ≠ k) → ((j ≠ k) → (s.1 i + s.1 j + s.1 k = 1)))),
-    let sectorParam := fun (o : SectorOrder) (s : SectorSimplex) (hs : s ∈ sectorCh o) =>
-      let i := sectorI o
-      let j := sectorJ o
-      let k := sectorK o
-      have hc : (∀ n, 0 ≤ s.1 n) ∧ ∑ n : Fin 3, s.1 n = 1 := by
-        simpa only [SectorSimplex, StandardSimplex, Set.mem_ofPred_eq] using s.2
-      have hsum : s.1 i + s.1 j + s.1 k = 1 :=
-        sectorOrderedSum s i j k o.2.1 o.2.2.1 o.2.2.2
-      have hxy := hs.1
-      have hyz := hs.2
-      have hr0 : 0 ≤ 2 * (s.1 j - s.1 k) + 3 * s.1 k := by
-        linarith [hc.1 j, hc.1 k]
-      have hr1 : 2 * (s.1 j - s.1 k) + 3 * s.1 k ≤ 1 := by
-        linarith [hc.1 i, hsum]
-      have hb0 : 0 ≤ 2 * (s.1 j - s.1 k) := by linarith [hyz]
-      have hbr : 2 * (s.1 j - s.1 k) ≤ 2 * (s.1 j - s.1 k) + 3 * s.1 k := by
-        nlinarith [hc.1 k]
-      (⟨⟨⟨2*(s.1 j-s.1 k)+3*s.1 k,hr0,hr1⟩,
-        ⟨2*(s.1 j-s.1 k),hb0,le_trans hbr hr1⟩⟩,hbr⟩ : SectorCone)
+    let sectorParam := SectorMapsProof.sectorParameter sectorOrderedSum
     (∀ (o : SectorOrder), ∀ (s : SectorSimplex), ∀ (hs : s ∈ sectorCh o), (sectorParam o s
         hs).1.1 = 2*(s.1 (sectorJ o)-s.1 (sectorK o))+3*s.1 (sectorK o) ∧ (sectorParam o s
         hs).1.2 = 2*(s.1 (sectorJ o)-s.1 (sectorK o))) → (∀ (sectorParam_continuous : ∀ (o :
@@ -1636,9 +1371,7 @@ private theorem sectorGlobalChosen_edge :
     have hone : one = ⟨1, by norm_num [SectorInterval]⟩ := by apply Subtype.ext; rfl
     rw [hone, hp.2.2.1]
     rw [ite_eq_right hr]
-
 end SectorMapsProof
-
 theorem P3776T1SectorMapsExist {ι : Type} (P : PeriodicTileCore ι)
     (H : P3776T1TileContractions P) (E : P3776T1DualEdges P) :
     Nonempty (P3776T1SectorMaps P H E) := by
@@ -1671,25 +1404,7 @@ theorem P3776T1SectorMapsExist {ι : Type} (P : PeriodicTileCore ι)
   have sectorOrderedSum (s : SectorSimplex) (i j k : Fin 3)
       (hij : i ≠ j) (hik : i ≠ k) (hjk : j ≠ k) := SectorMapsProof.sectorOrderedSum s i j k hij
           hik hjk
-  let sectorParam := fun (o : SectorOrder) (s : SectorSimplex) (hs : s ∈ sectorCh o) =>
-    let i := sectorI o
-    let j := sectorJ o
-    let k := sectorK o
-    have hc : (∀ n, 0 ≤ s.1 n) ∧ ∑ n : Fin 3, s.1 n = 1 := by
-      simpa only [SectorSimplex, StandardSimplex, Set.mem_ofPred_eq] using s.2
-    have hsum : s.1 i + s.1 j + s.1 k = 1 :=
-      sectorOrderedSum s i j k o.2.1 o.2.2.1 o.2.2.2
-    have hxy := hs.1
-    have hyz := hs.2
-    have hr0 : 0 ≤ 2 * (s.1 j - s.1 k) + 3 * s.1 k := by
-      linarith [hc.1 j, hc.1 k]
-    have hr1 : 2 * (s.1 j - s.1 k) + 3 * s.1 k ≤ 1 := by
-      linarith [hc.1 i, hsum]
-    have hb0 : 0 ≤ 2 * (s.1 j - s.1 k) := by linarith [hyz]
-    have hbr : 2 * (s.1 j - s.1 k) ≤ 2 * (s.1 j - s.1 k) + 3 * s.1 k := by
-      nlinarith [hc.1 k]
-    (⟨⟨⟨2*(s.1 j-s.1 k)+3*s.1 k,hr0,hr1⟩,
-      ⟨2*(s.1 j-s.1 k),hb0,le_trans hbr hr1⟩⟩,hbr⟩ : SectorCone)
+  let sectorParam := SectorMapsProof.sectorParameter sectorOrderedSum
   have sectorParam_values (o : SectorOrder) (s : SectorSimplex) (hs : s ∈ sectorCh o) :=
       SectorMapsProof.sectorParam_values sectorOrderedSum o s hs
   have sectorParam_continuous (o : SectorOrder) := SectorMapsProof.sectorParam_continuous
@@ -1821,7 +1536,5 @@ theorem P3776T1SectorMapsExist {ι : Type} (P : PeriodicTileCore ι)
     exact sectorGlobalChosen_edge f i j hij r s hcoord
   · intro u f s
     exact sectorGlobalChosen_periodic u f s
-
 end ApollonianSuperharmonic
-
 end

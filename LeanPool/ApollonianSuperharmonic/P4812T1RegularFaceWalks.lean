@@ -4,31 +4,22 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Wesley Pegden
 -/
 module
-
 public import Mathlib.Init
 public import LeanPool.ApollonianSuperharmonic.BoundaryFootprintInclusion
 public import LeanPool.ApollonianSuperharmonic.TileTranslationProperties
-
 public import LeanPool.ApollonianSuperharmonic.P4812T1AffineDrawing
 public import LeanPool.ApollonianSuperharmonic.P4677T2TouchingWalk
 public import LeanPool.ApollonianSuperharmonic.P4733T1WalkTransport
 public import LeanPool.ApollonianSuperharmonic.TouchingTriple
-
 -- [TABLET NODE: P4812T1RegularFaceWalks]
-
 /-!
 # P4812T1RegularFaceWalks
-
 Adapted from Wesley Pegden’s Apache-2.0 Trellis formalization of Levine–Pegden–Smart.
 Changes: pool module paths, public exports, project namespace and current Mathlib compatibility.
 -/
-
 @[expose] public section
-
 namespace ApollonianSuperharmonic
-
 namespace RegularFaceWalkProof
-
 private theorem boundaryFoot :
     (by
       classical
@@ -70,9 +61,7 @@ private theorem boundaryFoot :
     · exact ⟨c, hc, Or.inr (Or.inr (Or.inl rfl))⟩
     · exact ⟨c, hc, Or.inr (Or.inr (Or.inr rfl))⟩
   · simpa [BoundaryFootprintVertices, FootprintVertices, hW] using hz
-
 private abbrev translateComp := ApollonianSuperharmonic.TileTranslationProperties.add
-
 private theorem edgeDiff :
     (by
       classical
@@ -119,7 +108,6 @@ private theorem edgeDiff :
   · have hm : y - x = a + b := by
       simpa [map_sub, k.apply_symm_apply, a, b, k11] using congrArg k h6
     exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inl (forward hm)))))
-
 private theorem uniquePair :
     (by
       classical
@@ -163,7 +151,6 @@ private theorem uniquePair :
   · rcases hcd' with ⟨hcp, hdq⟩ | ⟨hcq, hdp⟩
     · exact Or.inr ⟨hfq.trans hdq.symm, hgp.trans hcp.symm⟩
     · exact Or.inl ⟨hfq.trans hcq.symm, hgp.trans hdp.symm⟩
-
 private theorem rho_mem :
     (by
       classical
@@ -263,9 +250,7 @@ private theorem rho_mem :
       rw [← translateComp T (b : GaussianInt) (x : GaussianInt)]
       exact boundaryFoot _ _ (translateBoundary (TileTranslation T (b : GaussianInt))
         rd (x : GaussianInt) rdb)
-
 private abbrev transZero := ApollonianSuperharmonic.TileTranslationProperties.zero
-
 private theorem mapTranslateRev :
     (by
       classical
@@ -286,7 +271,6 @@ private theorem mapTranslateRev :
     _ = (((p.map (fun z => z + (x : GaussianInt))).reverse).map
         (fun z => z + (u : GaussianInt))) := by
           simp [List.map_reverse]
-
 private theorem ifMap3 :
     (by
       classical
@@ -305,9 +289,7 @@ private theorem ifMap3 :
   intro L u P0 P1 P2 Q0 Q1 Q2 h0 h1 h2 A0 A1 A2 B0 B1 B2 m0 m1 m2
   by_cases hq0 : Q0 <;> by_cases hq1 : Q1 <;> by_cases hq2 : Q2 <;>
     simp [h0, h1, h2, hq0, hq1, hq2, m0, m1, m2]
-
 private abbrev boundaryEdgeFoot := ApollonianSuperharmonic.BoundaryFootprintInclusion.boundaryEdge
-
 private theorem commonEdgeTouch :
     (by
       classical
@@ -337,7 +319,6 @@ private theorem commonEdgeTouch :
         exact ⟨e, boundaryEdgeFoot V e he.1, boundaryEdgeFoot W e he.2⟩
   · exact (Finset.nonempty_iff_ne_empty.mp hneV h.1).elim
   · exact (Finset.nonempty_iff_ne_empty.mp hneW h.1).elim
-
 private theorem rowEdge2 :
     (by
       classical
@@ -366,7 +347,6 @@ private theorem rowEdge2 :
       sub_eq_add_neg, add_assoc, add_comm, add_left_comm] using
       footprintEdgeTranslate (TileTranslation T (-(b : GaussianInt)))
         (w : GaussianInt) e2 he2.2
-
 private theorem rowWalk0 :
     (by
       classical
@@ -404,7 +384,6 @@ private theorem rowWalk0 :
     (rho fU) (rho fDa) p0 hb).2 (w : GaussianInt)
   simpa [P4733T1ContainedWalk, tileAdd, rhoUpShift, rhoDown0Shift,
     add_assoc, add_comm, add_left_comm] using ht
-
 private theorem rowWalk1 :
     (by
       classical
@@ -443,7 +422,6 @@ private theorem rowWalk1 :
   simpa [P4733T1ContainedWalk, translateComp, rhoUpShift, rhoDown1Shift,
     AddSubgroup.coe_neg, AddSubgroup.coe_sub, sub_eq_add_neg,
     add_assoc, add_comm, add_left_comm] using ht
-
 private theorem rowWalk2 :
     (by
       classical
@@ -484,7 +462,6 @@ private theorem rowWalk2 :
   simpa [P4733T1ContainedWalk, translateComp, rhoUpShift, rhoDown2Shift, fDamB,
     AddSubgroup.coe_neg, AddSubgroup.coe_sub, AddSubgroup.coe_add,
     sub_eq_add_neg, add_assoc, add_comm, add_left_comm] using ht
-
 private theorem row0Inc :
     (by
       classical
@@ -505,7 +482,6 @@ private theorem row0Inc :
   · exact ⟨1, by simp [D.up_vertices, a]⟩
   · exact ⟨1, by simp [D.down_vertices, a, sub_eq_add_neg]⟩
   · exact ⟨0, by simp [D.down_vertices]⟩
-
 private theorem row1Inc :
     (by
       classical
@@ -527,7 +503,26 @@ private theorem row1Inc :
   · exact ⟨0, by simp [D.down_vertices]⟩
   · exact ⟨2, by simp [D.down_vertices, b,
       sub_eq_add_neg, add_comm, add_left_comm]⟩
-
+private noncomputable abbrev regularFacePath
+    (L : AddSubgroup GaussianInt) (k : (Int × Int) ≃+ L)
+    (D : P4812T1AffineDrawing L k) (a b : L)
+    (rowPath : Fin 3 → List GaussianInt) :
+    D.plane.Face → D.plane.Face → List GaussianInt := fun f g => by
+  letI : ∀ p : Prop, Decidable p := Classical.propDecidable
+  exact match D.faces.symm f, D.faces.symm g with
+  | Sum.inl x, Sum.inr y =>
+      if y = x + a then (rowPath 0).map (fun z => z + (x : GaussianInt))
+      else if y = x - b then (rowPath 1).map (fun z => z + (x : GaussianInt))
+      else if y = x + (a - b) then
+        (rowPath 2).map (fun z => z + (x : GaussianInt))
+      else []
+  | Sum.inr y, Sum.inl x =>
+      if y = x + a then ((rowPath 0).map (fun z => z + (x : GaussianInt))).reverse
+      else if y = x - b then ((rowPath 1).map (fun z => z + (x : GaussianInt))).reverse
+      else if y = x + (a - b) then
+        ((rowPath 2).map (fun z => z + (x : GaussianInt))).reverse
+      else []
+  | _, _ => []
 private theorem row2CanonicalForward :
     (by
       classical
@@ -539,22 +534,9 @@ private theorem row2CanonicalForward :
         ∀ (p0 : List GaussianInt), ∀ (p1 : List GaussianInt), ∀ (p2 : List GaussianInt),
         let rowPath : Fin 3 → List GaussianInt := fun r =>
           if r = 0 then p0 else if r = 1 then p1 else p2
-        let path : D.plane.Face → D.plane.Face → List GaussianInt := fun f g => by
-          letI : ∀ p : Prop, Decidable p := Classical.propDecidable
-          exact match D.faces.symm f, D.faces.symm g with
-          | Sum.inl x, Sum.inr y =>
-              if y = x + a then (rowPath 0).map (fun z => z + (x : GaussianInt))
-              else if y = x - b then (rowPath 1).map (fun z => z + (x : GaussianInt))
-              else if y = x + (a - b) then
-                (rowPath 2).map (fun z => z + (x : GaussianInt))
-              else []
-          | Sum.inr y, Sum.inl x =>
-              if y = x + a then ((rowPath 0).map (fun z => z + (x : GaussianInt))).reverse
-              else if y = x - b then ((rowPath 1).map (fun z => z + (x : GaussianInt))).reverse
-              else if y = x + (a - b) then
-                ((rowPath 2).map (fun z => z + (x : GaussianInt))).reverse
-              else []
-          | _, _ => []
+        let path : D.plane.Face → D.plane.Face → List GaussianInt :=
+          RegularFaceWalkProof.regularFacePath
+          L k D a b rowPath
         (a ≠ a - b) → ((-b ≠ a - b) → (∀ (w : ↥L), path ((D.faces : ↥L ⊕ ↥L → D.plane.Face)
             (Sum.inl w)) ((D.faces : ↥L ⊕ ↥L → D.plane.Face) (Sum.inr (w + a - b))) = List.map
             (fun (z : GaussianInt) => z + (↑w : GaussianInt)) p2))
@@ -574,10 +556,10 @@ private theorem row2CanonicalForward :
       simpa [sub_eq_add_neg, add_assoc] using hh
     exact (add_left_cancel h').symm
   have ht : w + a - b = w + (a - b) := by abel
-  simp only [path, D.faces.symm_apply_apply, ite_eq_right hn1, ite_eq_right hn2,
+  simp only [path, RegularFaceWalkProof.regularFacePath,
+     D.faces.symm_apply_apply, ite_eq_right hn1, ite_eq_right hn2,
     ite_eq_left ht, rowPath]
   simp
-
 private theorem row1CanonicalForward :
     (by
       classical
@@ -589,22 +571,9 @@ private theorem row1CanonicalForward :
         ∀ (p0 : List GaussianInt), ∀ (p1 : List GaussianInt), ∀ (p2 : List GaussianInt),
         let rowPath : Fin 3 → List GaussianInt := fun r =>
           if r = 0 then p0 else if r = 1 then p1 else p2
-        let path : D.plane.Face → D.plane.Face → List GaussianInt := fun f g => by
-          letI : ∀ p : Prop, Decidable p := Classical.propDecidable
-          exact match D.faces.symm f, D.faces.symm g with
-          | Sum.inl x, Sum.inr y =>
-              if y = x + a then (rowPath 0).map (fun z => z + (x : GaussianInt))
-              else if y = x - b then (rowPath 1).map (fun z => z + (x : GaussianInt))
-              else if y = x + (a - b) then
-                (rowPath 2).map (fun z => z + (x : GaussianInt))
-              else []
-          | Sum.inr y, Sum.inl x =>
-              if y = x + a then ((rowPath 0).map (fun z => z + (x : GaussianInt))).reverse
-              else if y = x - b then ((rowPath 1).map (fun z => z + (x : GaussianInt))).reverse
-              else if y = x + (a - b) then
-                ((rowPath 2).map (fun z => z + (x : GaussianInt))).reverse
-              else []
-          | _, _ => []
+        let path : D.plane.Face → D.plane.Face → List GaussianInt :=
+          RegularFaceWalkProof.regularFacePath
+          L k D a b rowPath
         (a ≠ -b) → (∀ (w : ↥L), path ((D.faces : ↥L ⊕ ↥L → D.plane.Face) (Sum.inl w)) ((D.faces :
             ↥L ⊕ ↥L → D.plane.Face) (Sum.inr (w - b))) = List.map (fun (z : GaussianInt) => z +
             (↑w : GaussianInt)) p1)
@@ -616,10 +585,9 @@ private theorem row1CanonicalForward :
     apply aNeNegB
     have h' : w + (-b) = w + a := by simpa [sub_eq_add_neg] using hh
     exact (add_left_cancel h').symm
-  simp only [path, D.faces.symm_apply_apply, ite_eq_right hn,
+  simp only [path, RegularFaceWalkProof.regularFacePath, D.faces.symm_apply_apply, ite_eq_right hn,
     rowPath]
   simp
-
 private theorem row1CanonicalBackward :
     (by
       classical
@@ -631,22 +599,9 @@ private theorem row1CanonicalBackward :
         ∀ (p0 : List GaussianInt), ∀ (p1 : List GaussianInt), ∀ (p2 : List GaussianInt),
         let rowPath : Fin 3 → List GaussianInt := fun r =>
           if r = 0 then p0 else if r = 1 then p1 else p2
-        let path : D.plane.Face → D.plane.Face → List GaussianInt := fun f g => by
-          letI : ∀ p : Prop, Decidable p := Classical.propDecidable
-          exact match D.faces.symm f, D.faces.symm g with
-          | Sum.inl x, Sum.inr y =>
-              if y = x + a then (rowPath 0).map (fun z => z + (x : GaussianInt))
-              else if y = x - b then (rowPath 1).map (fun z => z + (x : GaussianInt))
-              else if y = x + (a - b) then
-                (rowPath 2).map (fun z => z + (x : GaussianInt))
-              else []
-          | Sum.inr y, Sum.inl x =>
-              if y = x + a then ((rowPath 0).map (fun z => z + (x : GaussianInt))).reverse
-              else if y = x - b then ((rowPath 1).map (fun z => z + (x : GaussianInt))).reverse
-              else if y = x + (a - b) then
-                ((rowPath 2).map (fun z => z + (x : GaussianInt))).reverse
-              else []
-          | _, _ => []
+        let path : D.plane.Face → D.plane.Face → List GaussianInt :=
+          RegularFaceWalkProof.regularFacePath
+          L k D a b rowPath
         (a ≠ -b) → (∀ (w : ↥L), path ((D.faces : ↥L ⊕ ↥L → D.plane.Face) (Sum.inr (w - b)))
             ((D.faces : ↥L ⊕ ↥L → D.plane.Face) (Sum.inl w)) = (List.map (fun (z : GaussianInt)
             => z + (↑w : GaussianInt)) p1).reverse)
@@ -658,10 +613,9 @@ private theorem row1CanonicalBackward :
     apply aNeNegB
     have h' : w + (-b) = w + a := by simpa [sub_eq_add_neg] using hh
     exact (add_left_cancel h').symm
-  simp only [path, D.faces.symm_apply_apply, ite_eq_right hn,
+  simp only [path, RegularFaceWalkProof.regularFacePath, D.faces.symm_apply_apply, ite_eq_right hn,
     rowPath]
   simp
-
 private theorem row2CanonicalBackward :
     (by
       classical
@@ -673,22 +627,9 @@ private theorem row2CanonicalBackward :
         ∀ (p0 : List GaussianInt), ∀ (p1 : List GaussianInt), ∀ (p2 : List GaussianInt),
         let rowPath : Fin 3 → List GaussianInt := fun r =>
           if r = 0 then p0 else if r = 1 then p1 else p2
-        let path : D.plane.Face → D.plane.Face → List GaussianInt := fun f g => by
-          letI : ∀ p : Prop, Decidable p := Classical.propDecidable
-          exact match D.faces.symm f, D.faces.symm g with
-          | Sum.inl x, Sum.inr y =>
-              if y = x + a then (rowPath 0).map (fun z => z + (x : GaussianInt))
-              else if y = x - b then (rowPath 1).map (fun z => z + (x : GaussianInt))
-              else if y = x + (a - b) then
-                (rowPath 2).map (fun z => z + (x : GaussianInt))
-              else []
-          | Sum.inr y, Sum.inl x =>
-              if y = x + a then ((rowPath 0).map (fun z => z + (x : GaussianInt))).reverse
-              else if y = x - b then ((rowPath 1).map (fun z => z + (x : GaussianInt))).reverse
-              else if y = x + (a - b) then
-                ((rowPath 2).map (fun z => z + (x : GaussianInt))).reverse
-              else []
-          | _, _ => []
+        let path : D.plane.Face → D.plane.Face → List GaussianInt :=
+          RegularFaceWalkProof.regularFacePath
+          L k D a b rowPath
         (a ≠ a - b) → ((-b ≠ a - b) → (∀ (w : ↥L), path ((D.faces : ↥L ⊕ ↥L → D.plane.Face)
             (Sum.inr (w + a - b))) ((D.faces : ↥L ⊕ ↥L → D.plane.Face) (Sum.inl w)) = (List.map
             (fun (z : GaussianInt) => z + (↑w : GaussianInt)) p2).reverse))
@@ -708,10 +649,10 @@ private theorem row2CanonicalBackward :
       simpa [sub_eq_add_neg, add_assoc] using hh
     exact (add_left_cancel h').symm
   have ht : w + a - b = w + (a - b) := by abel
-  simp only [path, D.faces.symm_apply_apply, ite_eq_right hn1, ite_eq_right hn2,
+  simp only [path, RegularFaceWalkProof.regularFacePath,
+     D.faces.symm_apply_apply, ite_eq_right hn1, ite_eq_right hn2,
     ite_eq_left ht, rowPath]
   simp
-
 private theorem walkClaims :
     (by
       classical
@@ -728,22 +669,9 @@ private theorem walkClaims :
         ∀ (p0 : List GaussianInt), ∀ (p1 : List GaussianInt), ∀ (p2 : List GaussianInt),
         let rowPath : Fin 3 → List GaussianInt := fun r =>
           if r = 0 then p0 else if r = 1 then p1 else p2
-        let path : D.plane.Face → D.plane.Face → List GaussianInt := fun f g => by
-          letI : ∀ p : Prop, Decidable p := Classical.propDecidable
-          exact match D.faces.symm f, D.faces.symm g with
-          | Sum.inl x, Sum.inr y =>
-              if y = x + a then (rowPath 0).map (fun z => z + (x : GaussianInt))
-              else if y = x - b then (rowPath 1).map (fun z => z + (x : GaussianInt))
-              else if y = x + (a - b) then
-                (rowPath 2).map (fun z => z + (x : GaussianInt))
-              else []
-          | Sum.inr y, Sum.inl x =>
-              if y = x + a then ((rowPath 0).map (fun z => z + (x : GaussianInt))).reverse
-              else if y = x - b then ((rowPath 1).map (fun z => z + (x : GaussianInt))).reverse
-              else if y = x + (a - b) then
-                ((rowPath 2).map (fun z => z + (x : GaussianInt))).reverse
-              else []
-          | _, _ => []
+        let path : D.plane.Face → D.plane.Face → List GaussianInt :=
+          RegularFaceWalkProof.regularFacePath
+          L k D a b rowPath
         ∀ (A : ProtoTile), ∀ (B : ProtoTile), ∀ (fc : D.plane.Face), ∀ (gc : D.plane.Face), ∀ (P
             : List GaussianInt), P4733T1ContainedWalk A B (rho fc) (rho gc) P → path fc gc = P
             → path gc fc = P.reverse → ∀ (f : D.plane.Face), ∀ (g : D.plane.Face), f = fc ∧ g =
@@ -759,7 +687,6 @@ private theorem walkClaims :
   · simpa [P4733T1ContainedWalk, hf, hg, hforward] using hw
   · have hr := (P4733T1WalkTransport A B (rho fc) (rho gc) P hw).1
     simpa [P4733T1ContainedWalk, hf, hg, hbackward] using hr
-
 private theorem commonEdgeForAdjacent :
     (by
       classical
@@ -806,7 +733,6 @@ private theorem commonEdgeForAdjacent :
     have hy : y + b - b = y := by abel
     have hx : y + b + a = x := by rw [h]; abel
     simpa [hy, hx] using rowEdge2 (y + b)
-
 private theorem hcAt922 :
     (by
       classical
@@ -831,39 +757,7 @@ private theorem hcAt922 :
                               if r = 0 then p0 else if r = 1 then p1 else p2;
                             (let path :
                               D.plane.Face → D.plane.Face → List GaussianInt :=
-                              fun f g =>
-                              by
-                              letI : ∀ p : Prop, Decidable p :=
-                                Classical.propDecidable
-                              exact
-                                match D.faces.symm f, D.faces.symm g with
-                                | Sum.inl x, Sum.inr y =>
-                                  if y = x + a then
-                                    (rowPath 0).map (fun z => z + (x : GaussianInt))
-                                  else
-                                    if y = x - b then
-                                      (rowPath 1).map
-                                        (fun z => z + (x : GaussianInt))
-                                    else
-                                      if y = x + (a - b) then
-                                        (rowPath 2).map
-                                          (fun z => z + (x : GaussianInt))
-                                      else []
-                                | Sum.inr y, Sum.inl x =>
-                                  if y = x + a then
-                                    ((rowPath 0).map
-                                        (fun z => z + (x : GaussianInt))).reverse
-                                  else
-                                    if y = x - b then
-                                      ((rowPath 1).map
-                                          (fun z => z + (x : GaussianInt))).reverse
-                                    else
-                                      if y = x + (a - b) then
-                                        ((rowPath 2).map
-                                            (fun z =>
-                                              z + (x : GaussianInt))).reverse
-                                      else []
-                                | _, _ => [];
+                              RegularFaceWalkProof.regularFacePath L k D a b rowPath
                             (∀ (A : ProtoTile),
                                 ∀ (B : ProtoTile),
                                   ∀ (fc : D.plane.Face),
@@ -940,7 +834,6 @@ private theorem hcAt922 :
   exact walkClaims (TileTranslation T (w : GaussianInt))
     (TileTranslation T ((w - b : L) : GaussianInt)) fc gc
     (p1.map (fun z => z + (w : GaussianInt))) hw hforward hbackward f g hpair
-
 private theorem hdAt961 :
     (by
       classical
@@ -972,7 +865,6 @@ private theorem hdAt961 :
   · refine ⟨2, ?_⟩
     change D.plane.faceVertex (D.faces (.inr (w + a - b))) 2 = y
     exact (D.down_vertices (w + a - b)).2.2.trans h2
-
 private theorem hdAt1029 :
     (by
       classical
@@ -1005,11 +897,8 @@ private theorem hdAt1029 :
   · refine ⟨2, ?_⟩
     change D.plane.faceVertex (D.faces (.inr (w + a - b))) 2 = x
     exact (D.down_vertices (w + a - b)).2.2.trans h2
-
 end RegularFaceWalkProof
-
 namespace RegularFaceDetails
-
 private theorem translateBoundary :
     (by
       classical
@@ -1022,7 +911,6 @@ private theorem translateBoundary :
   rw [(TileTranslationFormulas W v).2.2.2.2.2.2.2.1]
   exact ⟨z, hz, by simp [GaussianTranslation]
     ⟩
-
 private theorem k11 :
     (by
       classical
@@ -1036,7 +924,6 @@ private theorem k11 :
   have h : ((1, 1) : Int × Int) = ((1, 0) : Int × Int) + (0, 1) := by
     ext <;> norm_num
   rw [h, map_add]
-
 private theorem kneg11 :
     (by
       classical
@@ -1050,7 +937,6 @@ private theorem kneg11 :
   have h : ((-1, -1) : Int × Int) = -((1, 1) : Int × Int) := by
     ext <;> norm_num
   rw [h, map_neg, k11]
-
 private theorem kneg10 :
     (by
       classical
@@ -1063,7 +949,6 @@ private theorem kneg10 :
   have h : ((-1, 0) : Int × Int) = -((1, 0) : Int × Int) := by
     ext <;> norm_num
   rw [h, map_neg]
-
 private theorem kneg01 :
     (by
       classical
@@ -1076,7 +961,6 @@ private theorem kneg01 :
   have h : ((0, -1) : Int × Int) = -((0, 1) : Int × Int) := by
     ext <;> norm_num
   rw [h, map_neg]
-
 private theorem touchSymm :
     (by
       classical
@@ -1090,7 +974,6 @@ private theorem touchSymm :
       by simpa [Set.inter_comm] using hp⟩
   · exact Or.inr (Or.inr ⟨h.1, h.2⟩)
   · exact Or.inr (Or.inl ⟨h.1, h.2⟩)
-
 private theorem dmb0 :
     (by
       classical
@@ -1112,7 +995,6 @@ private theorem dmb0 :
   intro L k D T b ru rd rho rho_mem transZero fDmb
   simpa [fDmb, b, D.down_vertices, transZero, add_assoc, add_comm, add_left_comm] using
     rho_mem (.inr (-b)) 2
-
 private theorem damB_mb :
     (by
       classical
@@ -1134,7 +1016,6 @@ private theorem damB_mb :
   intro L k D T a b ru rd rho rho_mem fDamB
   have heq : (a - b - a : L) = -b := by abel
   simpa [fDamB, a, b, D.down_vertices, heq] using rho_mem (.inr (a - b)) 1
-
 private theorem shiftEq :
     (by
       classical
@@ -1145,7 +1026,6 @@ private theorem shiftEq :
   intro L u x y d
   rw [add_assoc]
   exact add_left_cancel_iff
-
 private theorem mapTranslate :
     (by
       classical
@@ -1161,7 +1041,6 @@ private theorem mapTranslate :
   funext z
   simp only [AddSubgroup.coe_add]
   abel
-
 private theorem transNonempty :
     (by
       classical
@@ -1174,7 +1053,6 @@ private theorem transNonempty :
   change (T.cells.image (GaussianTranslation v)).Nonempty
   refine ⟨GaussianTranslation v c, ?_⟩
   exact Finset.mem_image.mpr ⟨c, hc, rfl⟩
-
 private theorem footprintEdgeTranslate :
     (by
       classical
@@ -1185,7 +1063,6 @@ private theorem footprintEdgeTranslate :
   intro V v e he
   rw [(TileTranslationFormulas V v).2.2.2.2.2.2.1]
   exact ⟨e, he, by simp⟩
-
 private theorem tileAdd :
     (by
       classical
@@ -1199,7 +1076,6 @@ private theorem tileAdd :
   intro L T translateComp v w
   rw [translateComp]
   simp only [AddSubgroup.coe_add]
-
 private theorem rowEdge0 :
     (by
       classical
@@ -1220,7 +1096,6 @@ private theorem rowEdge0 :
   simpa [tileAdd, add_comm] using
     footprintEdgeTranslate (TileTranslation T (a : GaussianInt))
       (w : GaussianInt) e0 he0.2
-
 private theorem rowEdge1 :
     (by
       classical
@@ -1242,7 +1117,6 @@ private theorem rowEdge1 :
     sub_eq_add_neg, add_assoc, add_comm, add_left_comm] using
     footprintEdgeTranslate (TileTranslation T (-(b : GaussianInt)))
       (w : GaussianInt) e1 he1.2
-
 private theorem rhoUpShift :
     (by
       classical
@@ -1259,7 +1133,6 @@ private theorem rhoUpShift :
   classical
   intro L k D ru rd rho fU w
   simp [rho, fU, D.faces.symm_apply_apply]
-
 private theorem rhoDown0Shift :
     (by
       classical
@@ -1277,7 +1150,6 @@ private theorem rhoDown0Shift :
   classical
   intro L k D a ru rd rho w
   simp [rho, D.faces.symm_apply_apply, AddSubgroup.coe_add, add_comm, add_left_comm]
-
 private theorem rhoDown1Shift :
     (by
       classical
@@ -1296,7 +1168,6 @@ private theorem rhoDown1Shift :
   intro L k D b ru rd rho w
   simp [rho, D.faces.symm_apply_apply,
     sub_eq_add_neg, add_comm, add_left_comm]
-
 private theorem rhoDown2Shift :
     (by
       classical
@@ -1316,7 +1187,6 @@ private theorem rhoDown2Shift :
   intro L k D a b ru rd rho w
   simp [rho, D.faces.symm_apply_apply, AddSubgroup.coe_add,
     sub_eq_add_neg, add_assoc, add_comm, add_left_comm]
-
 private theorem faceTagsNe :
     (by
       classical
@@ -1328,7 +1198,6 @@ private theorem faceTagsNe :
   intro L k D x y h
   have hh := D.faces.injective h
   cases hh
-
 private theorem aNeNegB :
     (by
       classical
@@ -1341,7 +1210,6 @@ private theorem aNeNegB :
   intro L k a b h
   have hcoord := congrArg k.symm h
   norm_num [a, b] at hcoord
-
 private theorem aNeAmB :
     (by
       classical
@@ -1354,7 +1222,6 @@ private theorem aNeAmB :
   intro L k a b h
   have hcoord := congrArg k.symm h
   norm_num [a, b] at hcoord
-
 private theorem negBNeAmB :
     (by
       classical
@@ -1367,7 +1234,6 @@ private theorem negBNeAmB :
   intro L k a b h
   have hcoord := congrArg k.symm h
   norm_num [a, b] at hcoord
-
 private theorem row0CanonicalForward :
     (by
       classical
@@ -1379,29 +1245,15 @@ private theorem row0CanonicalForward :
         ∀ (p0 : List GaussianInt), ∀ (p1 : List GaussianInt), ∀ (p2 : List GaussianInt),
         let rowPath : Fin 3 → List GaussianInt := fun r =>
           if r = 0 then p0 else if r = 1 then p1 else p2
-        let path : D.plane.Face → D.plane.Face → List GaussianInt := fun f g => by
-          letI : ∀ p : Prop, Decidable p := Classical.propDecidable
-          exact match D.faces.symm f, D.faces.symm g with
-          | Sum.inl x, Sum.inr y =>
-              if y = x + a then (rowPath 0).map (fun z => z + (x : GaussianInt))
-              else if y = x - b then (rowPath 1).map (fun z => z + (x : GaussianInt))
-              else if y = x + (a - b) then
-                (rowPath 2).map (fun z => z + (x : GaussianInt))
-              else []
-          | Sum.inr y, Sum.inl x =>
-              if y = x + a then ((rowPath 0).map (fun z => z + (x : GaussianInt))).reverse
-              else if y = x - b then ((rowPath 1).map (fun z => z + (x : GaussianInt))).reverse
-              else if y = x + (a - b) then
-                ((rowPath 2).map (fun z => z + (x : GaussianInt))).reverse
-              else []
-          | _, _ => []
+        let path : D.plane.Face → D.plane.Face → List GaussianInt :=
+          RegularFaceWalkProof.regularFacePath
+          L k D a b rowPath
         ∀ (w : ↥L), path ((D.faces : ↥L ⊕ ↥L → D.plane.Face) (Sum.inl w)) ((D.faces : ↥L ⊕ ↥L →
             D.plane.Face) (Sum.inr (w + a))) = List.map (fun (z : GaussianInt) => z + (↑w :
             GaussianInt)) p0 ) := by
   classical
   intro L k D a b p0 p1 p2 rowPath path w
-  simp [path, rowPath, D.faces.symm_apply_apply]
-
+  simp [path, RegularFaceWalkProof.regularFacePath, rowPath, D.faces.symm_apply_apply]
 private theorem row0CanonicalBackward :
     (by
       classical
@@ -1413,29 +1265,15 @@ private theorem row0CanonicalBackward :
         ∀ (p0 : List GaussianInt), ∀ (p1 : List GaussianInt), ∀ (p2 : List GaussianInt),
         let rowPath : Fin 3 → List GaussianInt := fun r =>
           if r = 0 then p0 else if r = 1 then p1 else p2
-        let path : D.plane.Face → D.plane.Face → List GaussianInt := fun f g => by
-          letI : ∀ p : Prop, Decidable p := Classical.propDecidable
-          exact match D.faces.symm f, D.faces.symm g with
-          | Sum.inl x, Sum.inr y =>
-              if y = x + a then (rowPath 0).map (fun z => z + (x : GaussianInt))
-              else if y = x - b then (rowPath 1).map (fun z => z + (x : GaussianInt))
-              else if y = x + (a - b) then
-                (rowPath 2).map (fun z => z + (x : GaussianInt))
-              else []
-          | Sum.inr y, Sum.inl x =>
-              if y = x + a then ((rowPath 0).map (fun z => z + (x : GaussianInt))).reverse
-              else if y = x - b then ((rowPath 1).map (fun z => z + (x : GaussianInt))).reverse
-              else if y = x + (a - b) then
-                ((rowPath 2).map (fun z => z + (x : GaussianInt))).reverse
-              else []
-          | _, _ => []
+        let path : D.plane.Face → D.plane.Face → List GaussianInt :=
+          RegularFaceWalkProof.regularFacePath
+          L k D a b rowPath
         ∀ (w : ↥L), path ((D.faces : ↥L ⊕ ↥L → D.plane.Face) (Sum.inr (w + a))) ((D.faces : ↥L ⊕
             ↥L → D.plane.Face) (Sum.inl w)) = (List.map (fun (z : GaussianInt) => z + (↑w :
             GaussianInt)) p0).reverse ) := by
   classical
   intro L k D a b p0 p1 p2 rowPath path w
-  simp [path, rowPath, D.faces.symm_apply_apply]
-
+  simp [path, RegularFaceWalkProof.regularFacePath, rowPath, D.faces.symm_apply_apply]
 private theorem transportContainedWalk :
     (by
       classical
@@ -1447,7 +1285,6 @@ private theorem transportContainedWalk :
   intro A B A' B' s t P hA hB hw
   rw [← hA, ← hB]
   exact hw
-
 private theorem hs1At1481 :
     (by
       classical
@@ -1460,7 +1297,6 @@ private theorem hs1At1481 :
   intro L k b shiftEq u x y
   have := shiftEq u x y (-b)
   simpa [sub_eq_add_neg] using this
-
 private theorem hs1At1495 :
     (by
       classical
@@ -1473,7 +1309,6 @@ private theorem hs1At1495 :
   intro L k b shiftEq u x y
   have := shiftEq u y x (-b)
   simpa [sub_eq_add_neg] using this
-
 private theorem hwAt1515 :
     (by
       classical
@@ -1497,7 +1332,6 @@ private theorem hwAt1515 :
   classical
   intro L k D T a ru rd x rho p0 rowWalk0 y h fc gc
   simpa [h] using rowWalk0 x
-
 private theorem hcAt1607 :
     (by
       classical
@@ -1520,7 +1354,6 @@ private theorem hcAt1607 :
   · refine ⟨1, ?_⟩
     change D.plane.faceVertex (D.faces (.inl w)) 1 = y
     exact (D.up_vertices w).2.1.trans hwy
-
 private theorem hwxAt1656 :
     (by
       classical
@@ -1537,7 +1370,6 @@ private theorem hwxAt1656 :
     w + a = y + b + a := by rfl
     _ = y + (a + b) := by abel
     _ = x := h.symm
-
 private theorem hcAt1662 :
     (by
       classical
@@ -1560,7 +1392,6 @@ private theorem hcAt1662 :
   · refine ⟨1, ?_⟩
     change D.plane.faceVertex (D.faces (.inl w)) 1 = x
     exact (D.up_vertices w).2.1.trans hwx
-
 private theorem hwAt1679 :
     (by
       classical
@@ -1588,11 +1419,8 @@ private theorem hwAt1679 :
   classical
   intro L k D T a b ru rd rho p2 rowWalk2 y w fc gc
   exact rowWalk2 w
-
 end RegularFaceDetails
-
 namespace RegularFaceProperties
-
 private theorem rhoPeriodic :
     (by
       classical
@@ -1625,7 +1453,6 @@ private theorem rhoPeriodic :
         (rd + (x : GaussianInt)) + (u : GaussianInt)
       simp only [AddSubgroup.coe_add]
       abel
-
 private theorem pathReverse :
     (by
       classical
@@ -1637,39 +1464,25 @@ private theorem pathReverse :
         ∀ (p0 : List GaussianInt), ∀ (p1 : List GaussianInt), ∀ (p2 : List GaussianInt),
         let rowPath : Fin 3 → List GaussianInt := fun r =>
           if r = 0 then p0 else if r = 1 then p1 else p2
-        let path : D.plane.Face → D.plane.Face → List GaussianInt := fun f g => by
-          letI : ∀ p : Prop, Decidable p := Classical.propDecidable
-          exact match D.faces.symm f, D.faces.symm g with
-          | Sum.inl x, Sum.inr y =>
-              if y = x + a then (rowPath 0).map (fun z => z + (x : GaussianInt))
-              else if y = x - b then (rowPath 1).map (fun z => z + (x : GaussianInt))
-              else if y = x + (a - b) then
-                (rowPath 2).map (fun z => z + (x : GaussianInt))
-              else []
-          | Sum.inr y, Sum.inl x =>
-              if y = x + a then ((rowPath 0).map (fun z => z + (x : GaussianInt))).reverse
-              else if y = x - b then ((rowPath 1).map (fun z => z + (x : GaussianInt))).reverse
-              else if y = x + (a - b) then
-                ((rowPath 2).map (fun z => z + (x : GaussianInt))).reverse
-              else []
-          | _, _ => []
+        let path : D.plane.Face → D.plane.Face → List GaussianInt :=
+          RegularFaceWalkProof.regularFacePath
+          L k D a b rowPath
         ∀ f, ∀ g, path g f = (path f g).reverse ) := by
   classical
   intro L k D a b p0 p1 p2 rowPath path f g
   cases hf : D.faces.symm f with
   | inl x =>
     cases hg : D.faces.symm g with
-    | inl y => simp [path, hf, hg]
+    | inl y => simp [path, RegularFaceWalkProof.regularFacePath, hf, hg]
     | inr y =>
-      simp only [path, hf, hg]
+      simp only [path, RegularFaceWalkProof.regularFacePath, hf, hg]
       split_ifs <;> simp
   | inr x =>
     cases hg : D.faces.symm g with
     | inl y =>
-      simp only [path, hf, hg]
+      simp only [path, RegularFaceWalkProof.regularFacePath, hf, hg]
       split_ifs <;> simp
-    | inr y => simp [path, hf, hg]
-
+    | inr y => simp [path, RegularFaceWalkProof.regularFacePath, hf, hg]
 private theorem pathPeriodic :
     (by
       classical
@@ -1681,22 +1494,9 @@ private theorem pathPeriodic :
         ∀ (p0 : List GaussianInt), ∀ (p1 : List GaussianInt), ∀ (p2 : List GaussianInt),
         let rowPath : Fin 3 → List GaussianInt := fun r =>
           if r = 0 then p0 else if r = 1 then p1 else p2
-        let path : D.plane.Face → D.plane.Face → List GaussianInt := fun f g => by
-          letI : ∀ p : Prop, Decidable p := Classical.propDecidable
-          exact match D.faces.symm f, D.faces.symm g with
-          | Sum.inl x, Sum.inr y =>
-              if y = x + a then (rowPath 0).map (fun z => z + (x : GaussianInt))
-              else if y = x - b then (rowPath 1).map (fun z => z + (x : GaussianInt))
-              else if y = x + (a - b) then
-                (rowPath 2).map (fun z => z + (x : GaussianInt))
-              else []
-          | Sum.inr y, Sum.inl x =>
-              if y = x + a then ((rowPath 0).map (fun z => z + (x : GaussianInt))).reverse
-              else if y = x - b then ((rowPath 1).map (fun z => z + (x : GaussianInt))).reverse
-              else if y = x + (a - b) then
-                ((rowPath 2).map (fun z => z + (x : GaussianInt))).reverse
-              else []
-          | _, _ => []
+        let path : D.plane.Face → D.plane.Face → List GaussianInt :=
+          RegularFaceWalkProof.regularFacePath
+          L k D a b rowPath
         (∀ (u : L), ∀ (x : L), ∀ (y : L), ∀ (d : L), (u + y = u + x + d) ↔ y = x + d) → ((∀ (p :
             List GaussianInt), ∀ (x : L), ∀ (u : L), p.map (fun z => z + ((u + x : L) :
             GaussianInt)) = (p.map (fun z => z + (x : GaussianInt))).map (fun z => z + (u :
@@ -1722,9 +1522,9 @@ private theorem pathPeriodic :
   cases hf : D.faces.symm f with
   | inl x =>
     cases hg : D.faces.symm g with
-    | inl y => simp [path, hf, hg, D.faces.symm_apply_apply]
+    | inl y => simp [path, RegularFaceWalkProof.regularFacePath, hf, hg, D.faces.symm_apply_apply]
     | inr y =>
-      simp only [path, hf, hg, D.faces.symm_apply_apply,
+      simp only [path, RegularFaceWalkProof.regularFacePath, hf, hg, D.faces.symm_apply_apply,
         Sum.map_inl, Sum.map_inr]
       have hs0 := shiftEq u x y a
       have hs1 : (u + y = u + x - b) ↔ y = x - b := RegularFaceDetails.hs1At1481 L k
@@ -1737,7 +1537,7 @@ private theorem pathPeriodic :
   | inr x =>
     cases hg : D.faces.symm g with
     | inl y =>
-      simp only [path, hf, hg, D.faces.symm_apply_apply,
+      simp only [path, RegularFaceWalkProof.regularFacePath, hf, hg, D.faces.symm_apply_apply,
         Sum.map_inl, Sum.map_inr]
       have hs0 := shiftEq u y x a
       have hs1 : (u + x = u + y - b) ↔ x = y - b := RegularFaceDetails.hs1At1495 L k
@@ -1747,8 +1547,7 @@ private theorem pathPeriodic :
       exact ifMap3 u _ _ _ _ _ _ hs0 hs1 hs2 _ _ _ _ _ _
         (mapTranslateRev (rowPath 0) y u) (mapTranslateRev (rowPath 1) y u)
         (mapTranslateRev (rowPath 2) y u)
-    | inr y => simp [path, hf, hg, D.faces.symm_apply_apply]
-
+    | inr y => simp [path, RegularFaceWalkProof.regularFacePath, hf, hg, D.faces.symm_apply_apply]
 private theorem firstForward :
     (by
       classical
@@ -1773,22 +1572,9 @@ private theorem firstForward :
         let rowPath : Fin 3 → List GaussianInt := fun r =>
           if r = 0 then p0 else if r = 1 then p1 else p2
         ∀ (y : ↥L),
-        let path : D.plane.Face → D.plane.Face → List GaussianInt := fun f g => by
-          letI : ∀ p : Prop, Decidable p := Classical.propDecidable
-          exact match D.faces.symm f, D.faces.symm g with
-          | Sum.inl x, Sum.inr y =>
-              if y = x + a then (rowPath 0).map (fun z => z + (x : GaussianInt))
-              else if y = x - b then (rowPath 1).map (fun z => z + (x : GaussianInt))
-              else if y = x + (a - b) then
-                (rowPath 2).map (fun z => z + (x : GaussianInt))
-              else []
-          | Sum.inr y, Sum.inl x =>
-              if y = x + a then ((rowPath 0).map (fun z => z + (x : GaussianInt))).reverse
-              else if y = x - b then ((rowPath 1).map (fun z => z + (x : GaussianInt))).reverse
-              else if y = x + (a - b) then
-                ((rowPath 2).map (fun z => z + (x : GaussianInt))).reverse
-              else []
-          | _, _ => []
+        let path : D.plane.Face → D.plane.Face → List GaussianInt :=
+          RegularFaceWalkProof.regularFacePath
+          L k D a b rowPath
         (∀ (w : L), P4733T1ContainedWalk (TileTranslation T (w : GaussianInt)) (TileTranslation
             T ((w + a : L) : GaussianInt)) (rho (D.faces (.inl w))) (rho (D.faces (.inr (w +
             a)))) (p0.map (fun z => z + (w : GaussianInt)))) → ((∀ (x : L), ∀ (y : L), D.faces
@@ -1830,7 +1616,6 @@ private theorem firstForward :
       (p0.map (fun z => z + (x : GaussianInt))) := RegularFaceDetails.hwAt1515 L k D T
           ru rd x p0 rowWalk0 y h
   exact walkClaims _ _ fc gc _ hw hforward hbackward f g hpair
-
 private theorem firstBackward :
     (by
       classical
@@ -1855,22 +1640,9 @@ private theorem firstBackward :
         let rowPath : Fin 3 → List GaussianInt := fun r =>
           if r = 0 then p0 else if r = 1 then p1 else p2
         ∀ (y : ↥L),
-        let path : D.plane.Face → D.plane.Face → List GaussianInt := fun f g => by
-          letI : ∀ p : Prop, Decidable p := Classical.propDecidable
-          exact match D.faces.symm f, D.faces.symm g with
-          | Sum.inl x, Sum.inr y =>
-              if y = x + a then (rowPath 0).map (fun z => z + (x : GaussianInt))
-              else if y = x - b then (rowPath 1).map (fun z => z + (x : GaussianInt))
-              else if y = x + (a - b) then
-                (rowPath 2).map (fun z => z + (x : GaussianInt))
-              else []
-          | Sum.inr y, Sum.inl x =>
-              if y = x + a then ((rowPath 0).map (fun z => z + (x : GaussianInt))).reverse
-              else if y = x - b then ((rowPath 1).map (fun z => z + (x : GaussianInt))).reverse
-              else if y = x + (a - b) then
-                ((rowPath 2).map (fun z => z + (x : GaussianInt))).reverse
-              else []
-          | _, _ => []
+        let path : D.plane.Face → D.plane.Face → List GaussianInt :=
+          RegularFaceWalkProof.regularFacePath
+          L k D a b rowPath
         (∀ (w : L), P4733T1ContainedWalk (TileTranslation T (w : GaussianInt)) (TileTranslation
             T ((w + a : L) : GaussianInt)) (rho (D.faces (.inl w))) (rho (D.faces (.inr (w +
             a)))) (p0.map (fun z => z + (w : GaussianInt)))) → ((∀ (x : L), ∀ (y : L), D.faces
@@ -1915,7 +1687,6 @@ private theorem firstBackward :
       (p0.map (fun z => z + (w : GaussianInt))) := rowWalk0 w
   have hclaims := walkClaims _ _ fc gc _ hw hforward hbackward f g hpair
   simpa [h, w, Set.inter_comm, P4733T1ContainedWalk] using hclaims
-
 private theorem secondForward :
     (by
       classical
@@ -1940,22 +1711,9 @@ private theorem secondForward :
         let rowPath : Fin 3 → List GaussianInt := fun r =>
           if r = 0 then p0 else if r = 1 then p1 else p2
         ∀ (y : ↥L),
-        let path : D.plane.Face → D.plane.Face → List GaussianInt := fun f g => by
-          letI : ∀ p : Prop, Decidable p := Classical.propDecidable
-          exact match D.faces.symm f, D.faces.symm g with
-          | Sum.inl x, Sum.inr y =>
-              if y = x + a then (rowPath 0).map (fun z => z + (x : GaussianInt))
-              else if y = x - b then (rowPath 1).map (fun z => z + (x : GaussianInt))
-              else if y = x + (a - b) then
-                (rowPath 2).map (fun z => z + (x : GaussianInt))
-              else []
-          | Sum.inr y, Sum.inl x =>
-              if y = x + a then ((rowPath 0).map (fun z => z + (x : GaussianInt))).reverse
-              else if y = x - b then ((rowPath 1).map (fun z => z + (x : GaussianInt))).reverse
-              else if y = x + (a - b) then
-                ((rowPath 2).map (fun z => z + (x : GaussianInt))).reverse
-              else []
-          | _, _ => []
+        let path : D.plane.Face → D.plane.Face → List GaussianInt :=
+          RegularFaceWalkProof.regularFacePath
+          L k D a b rowPath
         (∀ (w : L), P4733T1ContainedWalk (TileTranslation T (w : GaussianInt)) (TileTranslation
             T ((w - b : L) : GaussianInt)) (rho (D.faces (.inl w))) (rho (D.faces (.inr (w -
             b)))) (p1.map (fun z => z + (w : GaussianInt)))) → ((∀ (x : L), ∀ (y : L), D.faces
@@ -2009,7 +1767,6 @@ private theorem secondForward :
     rcases he x' y' l₁ l₂ hp with ⟨he1, he2⟩
     exact ⟨by simpa [hwx, AddSubgroup.coe_sub] using he2,
       by simpa [w] using he1⟩
-
 private theorem secondBackward :
     (by
       classical
@@ -2034,22 +1791,9 @@ private theorem secondBackward :
         let rowPath : Fin 3 → List GaussianInt := fun r =>
           if r = 0 then p0 else if r = 1 then p1 else p2
         ∀ (y : ↥L),
-        let path : D.plane.Face → D.plane.Face → List GaussianInt := fun f g => by
-          letI : ∀ p : Prop, Decidable p := Classical.propDecidable
-          exact match D.faces.symm f, D.faces.symm g with
-          | Sum.inl x, Sum.inr y =>
-              if y = x + a then (rowPath 0).map (fun z => z + (x : GaussianInt))
-              else if y = x - b then (rowPath 1).map (fun z => z + (x : GaussianInt))
-              else if y = x + (a - b) then
-                (rowPath 2).map (fun z => z + (x : GaussianInt))
-              else []
-          | Sum.inr y, Sum.inl x =>
-              if y = x + a then ((rowPath 0).map (fun z => z + (x : GaussianInt))).reverse
-              else if y = x - b then ((rowPath 1).map (fun z => z + (x : GaussianInt))).reverse
-              else if y = x + (a - b) then
-                ((rowPath 2).map (fun z => z + (x : GaussianInt))).reverse
-              else []
-          | _, _ => []
+        let path : D.plane.Face → D.plane.Face → List GaussianInt :=
+          RegularFaceWalkProof.regularFacePath
+          L k D a b rowPath
         (∀ (w : L), P4733T1ContainedWalk (TileTranslation T (w : GaussianInt)) (TileTranslation
             T ((w - b : L) : GaussianInt)) (rho (D.faces (.inl w))) (rho (D.faces (.inr (w -
             b)))) (p1.map (fun z => z + (w : GaussianInt)))) → ((∀ (x : L), ∀ (y : L), D.faces
@@ -2112,7 +1856,6 @@ private theorem secondBackward :
     rcases he x' y' l₁ l₂ hp with ⟨he1, he2⟩
     exact ⟨by simpa [w] using he1,
       by simpa [hwy, AddSubgroup.coe_sub] using he2⟩
-
 private theorem thirdForward :
     (by
       classical
@@ -2137,22 +1880,9 @@ private theorem thirdForward :
         let rowPath : Fin 3 → List GaussianInt := fun r =>
           if r = 0 then p0 else if r = 1 then p1 else p2
         ∀ (y : ↥L),
-        let path : D.plane.Face → D.plane.Face → List GaussianInt := fun f g => by
-          letI : ∀ p : Prop, Decidable p := Classical.propDecidable
-          exact match D.faces.symm f, D.faces.symm g with
-          | Sum.inl x, Sum.inr y =>
-              if y = x + a then (rowPath 0).map (fun z => z + (x : GaussianInt))
-              else if y = x - b then (rowPath 1).map (fun z => z + (x : GaussianInt))
-              else if y = x + (a - b) then
-                (rowPath 2).map (fun z => z + (x : GaussianInt))
-              else []
-          | Sum.inr y, Sum.inl x =>
-              if y = x + a then ((rowPath 0).map (fun z => z + (x : GaussianInt))).reverse
-              else if y = x - b then ((rowPath 1).map (fun z => z + (x : GaussianInt))).reverse
-              else if y = x + (a - b) then
-                ((rowPath 2).map (fun z => z + (x : GaussianInt))).reverse
-              else []
-          | _, _ => []
+        let path : D.plane.Face → D.plane.Face → List GaussianInt :=
+          RegularFaceWalkProof.regularFacePath
+          L k D a b rowPath
         (∀ (w : L), P4733T1ContainedWalk (TileTranslation T ((w + a : L) : GaussianInt))
             (TileTranslation T ((w - b : L) : GaussianInt)) (rho (D.faces (.inl w))) (rho
             (D.faces (.inr (w + a - b)))) (p2.map (fun z => z + (w : GaussianInt)))) → ((∀ (x :
@@ -2223,7 +1953,6 @@ private theorem thirdForward :
     rw [hwxG] at he2'
     rw [hwyG] at he1'
     exact ⟨he2', he1'⟩
-
 private theorem thirdBackward :
     (by
       classical
@@ -2248,22 +1977,9 @@ private theorem thirdBackward :
         let rowPath : Fin 3 → List GaussianInt := fun r =>
           if r = 0 then p0 else if r = 1 then p1 else p2
         ∀ (y : ↥L),
-        let path : D.plane.Face → D.plane.Face → List GaussianInt := fun f g => by
-          letI : ∀ p : Prop, Decidable p := Classical.propDecidable
-          exact match D.faces.symm f, D.faces.symm g with
-          | Sum.inl x, Sum.inr y =>
-              if y = x + a then (rowPath 0).map (fun z => z + (x : GaussianInt))
-              else if y = x - b then (rowPath 1).map (fun z => z + (x : GaussianInt))
-              else if y = x + (a - b) then
-                (rowPath 2).map (fun z => z + (x : GaussianInt))
-              else []
-          | Sum.inr y, Sum.inl x =>
-              if y = x + a then ((rowPath 0).map (fun z => z + (x : GaussianInt))).reverse
-              else if y = x - b then ((rowPath 1).map (fun z => z + (x : GaussianInt))).reverse
-              else if y = x + (a - b) then
-                ((rowPath 2).map (fun z => z + (x : GaussianInt))).reverse
-              else []
-          | _, _ => []
+        let path : D.plane.Face → D.plane.Face → List GaussianInt :=
+          RegularFaceWalkProof.regularFacePath
+          L k D a b rowPath
         (∀ (w : L), P4733T1ContainedWalk (TileTranslation T ((w + a : L) : GaussianInt))
             (TileTranslation T ((w - b : L) : GaussianInt)) (rho (D.faces (.inl w))) (rho
             (D.faces (.inr (w + a - b)))) (p2.map (fun z => z + (w : GaussianInt)))) → ((∀ (x :
@@ -2322,7 +2038,6 @@ private theorem thirdBackward :
     (congrArg (TileTranslation T) hwxG)
     (congrArg (TileTranslation T) hwyG) hw
   exact walkClaims _ _ fc gc _ hw' hforward hbackward f g hpair
-
 private theorem pathDiagonal :
     (by
       classical
@@ -2334,37 +2049,21 @@ private theorem pathDiagonal :
         ∀ (p0 : List GaussianInt), ∀ (p1 : List GaussianInt), ∀ (p2 : List GaussianInt),
         let rowPath : Fin 3 → List GaussianInt := fun r =>
           if r = 0 then p0 else if r = 1 then p1 else p2
-        let path : D.plane.Face → D.plane.Face → List GaussianInt := fun f g => by
-          letI : ∀ p : Prop, Decidable p := Classical.propDecidable
-          exact match D.faces.symm f, D.faces.symm g with
-          | Sum.inl x, Sum.inr y =>
-              if y = x + a then (rowPath 0).map (fun z => z + (x : GaussianInt))
-              else if y = x - b then (rowPath 1).map (fun z => z + (x : GaussianInt))
-              else if y = x + (a - b) then
-                (rowPath 2).map (fun z => z + (x : GaussianInt))
-              else []
-          | Sum.inr y, Sum.inl x =>
-              if y = x + a then ((rowPath 0).map (fun z => z + (x : GaussianInt))).reverse
-              else if y = x - b then ((rowPath 1).map (fun z => z + (x : GaussianInt))).reverse
-              else if y = x + (a - b) then
-                ((rowPath 2).map (fun z => z + (x : GaussianInt))).reverse
-              else []
-          | _, _ => []
+        let path : D.plane.Face → D.plane.Face → List GaussianInt :=
+          RegularFaceWalkProof.regularFacePath
+          L k D a b rowPath
         ∀ f, path f f = [] ) := by
   classical
   intro L k D a b p0 p1 p2 rowPath path f
   cases hf : D.faces.symm f with
   | inl x =>
       rw [← D.faces.apply_symm_apply f, hf]
-      simp only [path, D.faces.symm_apply_apply]
+      simp only [path, RegularFaceWalkProof.regularFacePath, D.faces.symm_apply_apply]
   | inr x =>
       rw [← D.faces.apply_symm_apply f, hf]
-      simp only [path, D.faces.symm_apply_apply]
-
+      simp only [path, RegularFaceWalkProof.regularFacePath, D.faces.symm_apply_apply]
 end RegularFaceProperties
-
 namespace RegularIncidentWalks
-
 private theorem incidentWalks :
     (by
       classical
@@ -2389,22 +2088,9 @@ private theorem incidentWalks :
                 List GaussianInt), ∀ (p1 : List GaussianInt), ∀ (p2 : List GaussianInt),
         let rowPath : Fin 3 → List GaussianInt := fun r =>
           if r = 0 then p0 else if r = 1 then p1 else p2
-        let path : D.plane.Face → D.plane.Face → List GaussianInt := fun f g => by
-          letI : ∀ p : Prop, Decidable p := Classical.propDecidable
-          exact match D.faces.symm f, D.faces.symm g with
-          | Sum.inl x, Sum.inr y =>
-              if y = x + a then (rowPath 0).map (fun z => z + (x : GaussianInt))
-              else if y = x - b then (rowPath 1).map (fun z => z + (x : GaussianInt))
-              else if y = x + (a - b) then
-                (rowPath 2).map (fun z => z + (x : GaussianInt))
-              else []
-          | Sum.inr y, Sum.inl x =>
-              if y = x + a then ((rowPath 0).map (fun z => z + (x : GaussianInt))).reverse
-              else if y = x - b then ((rowPath 1).map (fun z => z + (x : GaussianInt))).reverse
-              else if y = x + (a - b) then
-                ((rowPath 2).map (fun z => z + (x : GaussianInt))).reverse
-              else []
-          | _, _ => []
+        let path : D.plane.Face → D.plane.Face → List GaussianInt :=
+          RegularFaceWalkProof.regularFacePath
+          L k D a b rowPath
         (∀ (w : L), P4733T1ContainedWalk (TileTranslation T (w : GaussianInt)) (TileTranslation
             T ((w + a : L) : GaussianInt)) (rho (D.faces (.inl w))) (rho (D.faces (.inr (w +
             a)))) (p0.map (fun z => z + (w : GaussianInt)))) → ((∀ (w : L),
@@ -2494,9 +2180,7 @@ private theorem incidentWalks :
   · exact secondBackward h
   · exact thirdForward h
   · exact thirdBackward h
-
 end RegularIncidentWalks
-
 theorem P4812T1RegularFaceWalks
     (L : AddSubgroup GaussianInt) (k : (Int × Int) ≃+ L)
     (D : P4812T1AffineDrawing L k) (T : ProtoTile)
@@ -2604,22 +2288,9 @@ theorem P4812T1RegularFaceWalks
         ⟨damB_a, (RegularFaceDetails.damB_mb L k D T ru rd rho_mem)⟩
       let rowPath : Fin 3 → List GaussianInt := fun r =>
         if r = 0 then p0 else if r = 1 then p1 else p2
-      let path : D.plane.Face → D.plane.Face → List GaussianInt := fun f g => by
-        letI : ∀ p : Prop, Decidable p := Classical.propDecidable
-        exact match D.faces.symm f, D.faces.symm g with
-        | Sum.inl x, Sum.inr y =>
-            if y = x + a then (rowPath 0).map (fun z => z + (x : GaussianInt))
-            else if y = x - b then (rowPath 1).map (fun z => z + (x : GaussianInt))
-            else if y = x + (a - b) then
-              (rowPath 2).map (fun z => z + (x : GaussianInt))
-            else []
-        | Sum.inr y, Sum.inl x =>
-            if y = x + a then ((rowPath 0).map (fun z => z + (x : GaussianInt))).reverse
-            else if y = x - b then ((rowPath 1).map (fun z => z + (x : GaussianInt))).reverse
-            else if y = x + (a - b) then
-              ((rowPath 2).map (fun z => z + (x : GaussianInt))).reverse
-            else []
-        | _, _ => []
+      let path : D.plane.Face → D.plane.Face → List GaussianInt :=
+        RegularFaceWalkProof.regularFacePath
+        L k D a b rowPath
       have mapTranslate (p : List GaussianInt) (x u : L) := RegularFaceDetails.mapTranslate L p x u
       have commonEdgeTouch (V W : ProtoTile) (hneV : V.cells.Nonempty)
           (hneW : W.cells.Nonempty) (h : TileTouching V W) := RegularFaceWalkProof.commonEdgeTouch
@@ -2670,7 +2341,5 @@ theorem P4812T1RegularFaceWalks
           (RegularFaceWalkProof.rowEdge2 L k T translateComp e2 he2 footprintEdgeTranslate
           tileAdd)) x y hxy
   ))
-
 end ApollonianSuperharmonic
-
 end

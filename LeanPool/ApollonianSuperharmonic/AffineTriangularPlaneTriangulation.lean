@@ -4,29 +4,20 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Wesley Pegden
 -/
 module
-
 public import Mathlib.Init
-
 public import LeanPool.ApollonianSuperharmonic.PlaneTriangulation
 public import LeanPool.ApollonianSuperharmonic.TriangularLatticeAdjacent
 public import Mathlib.Analysis.Convex.Topology
 public import Mathlib.Analysis.Convex.PathConnected
-
 -- [TABLET NODE: AffineTriangularPlaneTriangulation]
-
 /-!
 # AffineTriangularPlaneTriangulation
-
 Adapted from Wesley Pegden’s Apache-2.0 Trellis formalization of Levine–Pegden–Smart.
 Changes: pool module paths, public exports, project namespace and current Mathlib compatibility.
 -/
-
 @[expose] public section
-
 namespace ApollonianSuperharmonic
-
 namespace AffineTriangulationLemmas
-
 private theorem symm_adj :
     ∀ (a : (Int × Int)), ∀ (b : (Int × Int)), TriangularLatticeAdjacent a b ↔
         TriangularLatticeAdjacent b a := by
@@ -34,13 +25,11 @@ private theorem symm_adj :
   intro a b
   simp only [TriangularLatticeAdjacent, Prod.ext_iff, Prod.fst_sub, Prod.snd_sub]
   omega
-
 private theorem irrefl_adj :
     ∀ (a : (Int × Int)), ¬ TriangularLatticeAdjacent a a := by
   classical
   intro a
   simp [TriangularLatticeAdjacent, Prod.ext_iff]
-
 private theorem finite_adj :
     ∀ (a : (Int × Int)), Set.Finite {b | TriangularLatticeAdjacent a b} := by
   classical
@@ -54,7 +43,6 @@ private theorem finite_adj :
   all_goals simp only [Prod.ext_iff, Prod.fst_sub, Prod.snd_sub,
     Prod.fst_add, Prod.snd_add] at h ⊢
   all_goals omega
-
 private theorem distinct_fv :
     let fv : (Sum (Int × Int) (Int × Int)) → Fin 3 → (Int × Int) := fun
       | Sum.inl x => ![x, x + (1, 0), x - (0, 1)]
@@ -64,7 +52,6 @@ private theorem distinct_fv :
   intro fv f i j h
   cases f <;> fin_cases i <;> fin_cases j <;>
     simp [fv, Prod.ext_iff] at h ⊢ <;> omega
-
 private theorem edges_fv :
     let fv : (Sum (Int × Int) (Int × Int)) → Fin 3 → (Int × Int) := fun
       | Sum.inl x => ![x, x + (1, 0), x - (0, 1)]
@@ -75,7 +62,6 @@ private theorem edges_fv :
   intro fv f i j h
   cases f <;> fin_cases i <;> fin_cases j <;>
     simp [fv, TriangularLatticeAdjacent, Prod.ext_iff] at h ⊢
-
 private theorem two_faces :
     let fv : (Sum (Int × Int) (Int × Int)) → Fin 3 → (Int × Int) := fun
       | Sum.inl x => ![x, x + (1, 0), x - (0, 1)]
@@ -172,7 +158,6 @@ private theorem two_faces :
     simp only [Prod.ext_iff, Prod.fst_sub, Prod.snd_sub] at h ⊢
     omega
   · exact positive a b (Or.inr (Or.inr h))
-
 private theorem int_walk :
     ∀ {R : (Int × Int) → (Int × Int) → Prop}, (∀ a b, R a b → R b a) → (∀ (f : Int → (Int ×
         Int)), (∀ k, R (f k) (f (k + 1))) → (∀ (m : Int), ∀ (n : Int), Relation.ReflTransGen R (f
@@ -192,7 +177,6 @@ private theorem int_walk :
   by_cases hmn : m ≤ n
   · exact forward m n hmn
   · exact reverse (forward n m (by omega))
-
 private theorem deletion_walk :
     (∀ (a : (Int × Int)), ∀ (b : (Int × Int)), TriangularLatticeAdjacent a b ↔
         TriangularLatticeAdjacent b a) → ((∀ {R : (Int × Int) → (Int × Int) → Prop}, (∀ a b, R a
@@ -276,7 +260,6 @@ private theorem deletion_walk :
   · exact hl.induction (fun x => x ∉ D) (a :: l) (fun {_ _} h _ => h.2.2) (fun _ => ha)
   · intro x y l₁ l₂ heq
     exact ((List.isChain_iff_forall_rel_of_append_cons_cons.mp hl) heq).1
-
 private theorem coord_injective :
     let coord (x : (Int × Int)) : (Real × Real) := (x.1, x.2)
     Function.Injective coord := by
@@ -286,7 +269,6 @@ private theorem coord_injective :
   have h2 := congrArg Prod.snd h
   simp only [coord] at h1 h2
   exact Prod.ext (by exact_mod_cast h1) (by exact_mod_cast h2)
-
 private theorem segment_homeo :
     ∀ (a : (Real × Real)), ∀ (b : (Real × Real)), (a ≠ b) → (∃ h : (Set.Icc (0 : Real) 1) ≃ₜ
         segment Real a b,
@@ -315,7 +297,6 @@ private theorem segment_homeo :
     simp
   · change AffineMap.lineMap a b (1 : Real) = b
     simp
-
 private theorem arc_homeo :
     let coord (x : (Int × Int)) : (Real × Real) := (x.1, x.2)
     let shear : (Real × Real) ≃ₜ (Real × Real) := {
@@ -341,7 +322,6 @@ private theorem arc_homeo :
     rw [h0]
   · change shear ((h ⟨1, by norm_num⟩ : segment Real (coord a) (coord b)) : (Real × Real)) = _
     rw [h1]
-
 private theorem open_T :
     let T : Set (Real × Real) := {p | 0 < p.1 ∧ 0 < p.2 ∧ p.1 + p.2 < 1}
     IsOpen T := by
@@ -350,7 +330,6 @@ private theorem open_T :
   exact (isOpen_lt continuous_const continuous_fst).inter
       ((isOpen_lt continuous_const continuous_snd).inter
         (isOpen_lt (continuous_fst.add continuous_snd) continuous_const))
-
 private theorem closed_C :
     let C : Set (Real × Real) := {p | 0 ≤ p.1 ∧ 0 ≤ p.2 ∧ p.1 + p.2 ≤ 1}
     IsClosed C := by
@@ -359,7 +338,6 @@ private theorem closed_C :
   exact (isClosed_le continuous_const continuous_fst).inter
       ((isClosed_le continuous_const continuous_snd).inter
         (isClosed_le (continuous_fst.add continuous_snd) continuous_const))
-
 private theorem convex_T :
     let T : Set (Real × Real) := {p | 0 < p.1 ∧ 0 < p.2 ∧ p.1 + p.2 < 1}
     Convex Real T := by
@@ -369,14 +347,12 @@ private theorem convex_T :
     ((convex_halfSpace_gt (LinearMap.snd Real Real Real).isLinear 0).inter
       (convex_halfSpace_lt ((LinearMap.fst Real Real Real) +
         (LinearMap.snd Real Real Real)).isLinear 1))
-
 private theorem connected_T :
     let T : Set (Real × Real) := {p | 0 < p.1 ∧ 0 < p.2 ∧ p.1 + p.2 < 1}
     (Convex Real T) → (IsConnected T) := by
   classical
   intro T convex_T
   exact convex_T.isConnected ⟨(1 / 3, 1 / 3), by norm_num [T]⟩
-
 private theorem closure_T :
     let T : Set (Real × Real) := {p | 0 < p.1 ∧ 0 < p.2 ∧ p.1 + p.2 < 1}
     let C : Set (Real × Real) := {p | 0 ≤ p.1 ∧ 0 ≤ p.2 ∧ p.1 + p.2 ≤ 1}
@@ -399,7 +375,6 @@ private theorem closure_T :
           mul_nonneg ha.le (show 0 ≤ 1 - (p.1 + p.2) by linarith [hp.2.2])]
     apply closure_mono hsegment
     exact segment_subset_closure_openSegment (left_mem_segment Real p (1 / 3, 1 / 3))
-
 private theorem boundary_T :
     let T : Set (Real × Real) := {p | 0 < p.1 ∧ 0 < p.2 ∧ p.1 + p.2 < 1}
     let C : Set (Real × Real) := {p | 0 ≤ p.1 ∧ 0 ≤ p.2 ∧ p.1 + p.2 ≤ 1}
@@ -441,23 +416,25 @@ private theorem boundary_T :
     all_goals norm_num at h0 h1 ⊢
     all_goals constructor
     all_goals assumption
-
+private noncomputable abbrev tile :
+    Sum (Int × Int) (Int × Int) → (Real × Real) ≃ₜ (Real × Real) := fun
+  | Sum.inl x => {
+      toFun := fun q => ((x.1 : Real) + q.1, (x.2 : Real) - q.2)
+      invFun := fun p => (p.1 - (x.1 : Real), (x.2 : Real) - p.2)
+      left_inv := by intro p; ext <;> dsimp <;> ring
+      right_inv := by intro p; ext <;> dsimp <;> ring
+      continuous_toFun := by fun_prop
+      continuous_invFun := by fun_prop }
+  | Sum.inr x => {
+      toFun := fun q => ((x.1 : Real) - q.1, (x.2 : Real) + q.2)
+      invFun := fun p => ((x.1 : Real) - p.1, p.2 - (x.2 : Real))
+      left_inv := by intro p; ext <;> dsimp <;> ring
+      right_inv := by intro p; ext <;> dsimp <;> ring
+      continuous_toFun := by fun_prop
+      continuous_invFun := by fun_prop }
 private theorem tile_segment :
-    let tile : (Sum (Int × Int) (Int × Int)) → (Real × Real) ≃ₜ (Real × Real) := fun
-      | Sum.inl x => {
-          toFun := fun q => ((x.1 : Real) + q.1, (x.2 : Real) - q.2)
-          invFun := fun p => (p.1 - (x.1 : Real), (x.2 : Real) - p.2)
-          left_inv := by intro p; ext <;> dsimp <;> ring
-          right_inv := by intro p; ext <;> dsimp <;> ring
-          continuous_toFun := by fun_prop
-          continuous_invFun := by fun_prop }
-      | Sum.inr x => {
-          toFun := fun q => ((x.1 : Real) - q.1, (x.2 : Real) + q.2)
-          invFun := fun p => ((x.1 : Real) - p.1, p.2 - (x.2 : Real))
-          left_inv := by intro p; ext <;> dsimp <;> ring
-          right_inv := by intro p; ext <;> dsimp <;> ring
-          continuous_toFun := by fun_prop
-          continuous_invFun := by fun_prop }
+    let tile : (Sum (Int × Int) (Int × Int)) → (Real × Real) ≃ₜ (Real × Real) :=
+      AffineTriangulationLemmas.tile
     ∀ (f : (Sum (Int × Int) (Int × Int))), ∀ (a : (Real × Real)), ∀ (b : (Real × Real)), tile f
         '' segment Real a b = segment Real (tile f a) (tile f b) := by
   classical
@@ -467,34 +444,19 @@ private theorem tile_segment :
   funext t
   cases f <;> ext <;>
     simp [tile, Prod.smul_fst, Prod.smul_snd, smul_eq_mul] <;> ring
-
 private theorem tile_vertices :
     let fv : (Sum (Int × Int) (Int × Int)) → Fin 3 → (Int × Int) := fun
       | Sum.inl x => ![x, x + (1, 0), x - (0, 1)]
       | Sum.inr x => ![x, x - (1, 0), x + (0, 1)]
     let coord (x : (Int × Int)) : (Real × Real) := (x.1, x.2)
-    let tile : (Sum (Int × Int) (Int × Int)) → (Real × Real) ≃ₜ (Real × Real) := fun
-      | Sum.inl x => {
-          toFun := fun q => ((x.1 : Real) + q.1, (x.2 : Real) - q.2)
-          invFun := fun p => (p.1 - (x.1 : Real), (x.2 : Real) - p.2)
-          left_inv := by intro p; ext <;> dsimp <;> ring
-          right_inv := by intro p; ext <;> dsimp <;> ring
-          continuous_toFun := by fun_prop
-          continuous_invFun := by fun_prop }
-      | Sum.inr x => {
-          toFun := fun q => ((x.1 : Real) - q.1, (x.2 : Real) + q.2)
-          invFun := fun p => ((x.1 : Real) - p.1, p.2 - (x.2 : Real))
-          left_inv := by intro p; ext <;> dsimp <;> ring
-          right_inv := by intro p; ext <;> dsimp <;> ring
-          continuous_toFun := by fun_prop
-          continuous_invFun := by fun_prop }
+    let tile : (Sum (Int × Int) (Int × Int)) → (Real × Real) ≃ₜ (Real × Real) :=
+      AffineTriangulationLemmas.tile
     ∀ (f : (Sum (Int × Int) (Int × Int))), tile f (0, 0) = coord (fv f 0) ∧
       tile f (1, 0) = coord (fv f 1) ∧
       tile f (0, 1) = coord (fv f 2) := by
   classical
   intro fv coord tile f
   cases f <;> simp [tile, fv, coord]
-
 private theorem boundary_region :
     let fv : (Sum (Int × Int) (Int × Int)) → Fin 3 → (Int × Int) := fun
       | Sum.inl x => ![x, x + (1, 0), x - (0, 1)]
@@ -511,21 +473,8 @@ private theorem boundary_region :
     let T : Set (Real × Real) := {p | 0 < p.1 ∧ 0 < p.2 ∧ p.1 + p.2 < 1}
     (frontier T = segment Real ((0, 0) : (Real × Real)) (1, 0) ∪ segment Real ((1, 0) : (Real ×
         Real)) (0, 1) ∪ segment Real ((0, 1) : (Real × Real)) (0, 0)) → (
-    let tile : (Sum (Int × Int) (Int × Int)) → (Real × Real) ≃ₜ (Real × Real) := fun
-      | Sum.inl x => {
-          toFun := fun q => ((x.1 : Real) + q.1, (x.2 : Real) - q.2)
-          invFun := fun p => (p.1 - (x.1 : Real), (x.2 : Real) - p.2)
-          left_inv := by intro p; ext <;> dsimp <;> ring
-          right_inv := by intro p; ext <;> dsimp <;> ring
-          continuous_toFun := by fun_prop
-          continuous_invFun := by fun_prop }
-      | Sum.inr x => {
-          toFun := fun q => ((x.1 : Real) - q.1, (x.2 : Real) + q.2)
-          invFun := fun p => ((x.1 : Real) - p.1, p.2 - (x.2 : Real))
-          left_inv := by intro p; ext <;> dsimp <;> ring
-          right_inv := by intro p; ext <;> dsimp <;> ring
-          continuous_toFun := by fun_prop
-          continuous_invFun := by fun_prop }
+    let tile : (Sum (Int × Int) (Int × Int)) → (Real × Real) ≃ₜ (Real × Real) :=
+      AffineTriangulationLemmas.tile
     let region (f : (Sum (Int × Int) (Int × Int))) : Set (Real × Real) := shear '' tile f '' T
     (∀ (f : (Sum (Int × Int) (Int × Int))), ∀ (a : (Real × Real)), ∀ (b : (Real × Real)), tile f
         '' segment Real a b = segment Real (tile f a) (tile f b)) → ((∀ (f : (Sum (Int × Int)
@@ -538,7 +487,6 @@ private theorem boundary_region :
   rw [← shear.image_frontier, ← (tile f).image_frontier, boundary_T]
   simp only [Set.image_union, tile_segment]
   rw [(tile_vertices f).1, (tile_vertices f).2.1, (tile_vertices f).2.2]
-
 private theorem open_region :
     let shear : (Real × Real) ≃ₜ (Real × Real) := {
       toFun p := (p.1 - p.2 / 2, p.2)
@@ -549,27 +497,13 @@ private theorem open_region :
       continuous_invFun := by fun_prop }
     let T : Set (Real × Real) := {p | 0 < p.1 ∧ 0 < p.2 ∧ p.1 + p.2 < 1}
     (IsOpen T) → (
-    let tile : (Sum (Int × Int) (Int × Int)) → (Real × Real) ≃ₜ (Real × Real) := fun
-      | Sum.inl x => {
-          toFun := fun q => ((x.1 : Real) + q.1, (x.2 : Real) - q.2)
-          invFun := fun p => (p.1 - (x.1 : Real), (x.2 : Real) - p.2)
-          left_inv := by intro p; ext <;> dsimp <;> ring
-          right_inv := by intro p; ext <;> dsimp <;> ring
-          continuous_toFun := by fun_prop
-          continuous_invFun := by fun_prop }
-      | Sum.inr x => {
-          toFun := fun q => ((x.1 : Real) - q.1, (x.2 : Real) + q.2)
-          invFun := fun p => ((x.1 : Real) - p.1, p.2 - (x.2 : Real))
-          left_inv := by intro p; ext <;> dsimp <;> ring
-          right_inv := by intro p; ext <;> dsimp <;> ring
-          continuous_toFun := by fun_prop
-          continuous_invFun := by fun_prop }
+    let tile : (Sum (Int × Int) (Int × Int)) → (Real × Real) ≃ₜ (Real × Real) :=
+      AffineTriangulationLemmas.tile
     let region (f : (Sum (Int × Int) (Int × Int))) : Set (Real × Real) := shear '' tile f '' T
     ∀ (f : (Sum (Int × Int) (Int × Int))), IsOpen (region f)) := by
   classical
   intro shear T open_T tile region f
   exact shear.isOpenMap _ ((tile f).isOpenMap _ open_T)
-
 private theorem connected_region :
     let shear : (Real × Real) ≃ₜ (Real × Real) := {
       toFun p := (p.1 - p.2 / 2, p.2)
@@ -580,45 +514,18 @@ private theorem connected_region :
       continuous_invFun := by fun_prop }
     let T : Set (Real × Real) := {p | 0 < p.1 ∧ 0 < p.2 ∧ p.1 + p.2 < 1}
     (IsConnected T) → (
-    let tile : (Sum (Int × Int) (Int × Int)) → (Real × Real) ≃ₜ (Real × Real) := fun
-      | Sum.inl x => {
-          toFun := fun q => ((x.1 : Real) + q.1, (x.2 : Real) - q.2)
-          invFun := fun p => (p.1 - (x.1 : Real), (x.2 : Real) - p.2)
-          left_inv := by intro p; ext <;> dsimp <;> ring
-          right_inv := by intro p; ext <;> dsimp <;> ring
-          continuous_toFun := by fun_prop
-          continuous_invFun := by fun_prop }
-      | Sum.inr x => {
-          toFun := fun q => ((x.1 : Real) - q.1, (x.2 : Real) + q.2)
-          invFun := fun p => ((x.1 : Real) - p.1, p.2 - (x.2 : Real))
-          left_inv := by intro p; ext <;> dsimp <;> ring
-          right_inv := by intro p; ext <;> dsimp <;> ring
-          continuous_toFun := by fun_prop
-          continuous_invFun := by fun_prop }
+    let tile : (Sum (Int × Int) (Int × Int)) → (Real × Real) ≃ₜ (Real × Real) :=
+      AffineTriangulationLemmas.tile
     let region (f : (Sum (Int × Int) (Int × Int))) : Set (Real × Real) := shear '' tile f '' T
     ∀ (f : (Sum (Int × Int) (Int × Int))), IsConnected (region f)) := by
   classical
   intro shear T connected_T tile region f
   exact (connected_T.image (tile f) (tile f).continuous.continuousOn).image
       shear shear.continuous.continuousOn
-
 private theorem closed_cover :
     let C : Set (Real × Real) := {p | 0 ≤ p.1 ∧ 0 ≤ p.2 ∧ p.1 + p.2 ≤ 1}
-    let tile : (Sum (Int × Int) (Int × Int)) → (Real × Real) ≃ₜ (Real × Real) := fun
-      | Sum.inl x => {
-          toFun := fun q => ((x.1 : Real) + q.1, (x.2 : Real) - q.2)
-          invFun := fun p => (p.1 - (x.1 : Real), (x.2 : Real) - p.2)
-          left_inv := by intro p; ext <;> dsimp <;> ring
-          right_inv := by intro p; ext <;> dsimp <;> ring
-          continuous_toFun := by fun_prop
-          continuous_invFun := by fun_prop }
-      | Sum.inr x => {
-          toFun := fun q => ((x.1 : Real) - q.1, (x.2 : Real) + q.2)
-          invFun := fun p => ((x.1 : Real) - p.1, p.2 - (x.2 : Real))
-          left_inv := by intro p; ext <;> dsimp <;> ring
-          right_inv := by intro p; ext <;> dsimp <;> ring
-          continuous_toFun := by fun_prop
-          continuous_invFun := by fun_prop }
+    let tile : (Sum (Int × Int) (Int × Int)) → (Real × Real) ≃ₜ (Real × Real) :=
+      AffineTriangulationLemmas.tile
     ∀ (p : (Real × Real)), ∃ f : (Sum (Int × Int) (Int × Int)), p ∈ tile f '' C := by
   classical
   intro C tile p
@@ -637,7 +544,6 @@ private theorem closed_cover :
     · simp only [C, Set.mem_ofPred_eq]
       exact ⟨by linarith, by linarith, by linarith⟩
     · ext <;> simp [tile]
-
 private theorem strip_unique :
     ∀ (m : Int), ∀ (n : Int), ∀ (r : Real), ((m : Real) < r ∧ r < (m : Real) + 1) → (((n : Real)
         < r ∧ r < (n : Real) + 1) → (m = n)) := by
@@ -649,24 +555,10 @@ private theorem strip_unique :
   · exact h
   · have h' : (n : Real) + 1 ≤ (m : Real) := by exact_mod_cast (show n + 1 ≤ m by omega)
     linarith
-
 private theorem tiles_disjoint :
     let T : Set (Real × Real) := {p | 0 < p.1 ∧ 0 < p.2 ∧ p.1 + p.2 < 1}
-    let tile : (Sum (Int × Int) (Int × Int)) → (Real × Real) ≃ₜ (Real × Real) := fun
-      | Sum.inl x => {
-          toFun := fun q => ((x.1 : Real) + q.1, (x.2 : Real) - q.2)
-          invFun := fun p => (p.1 - (x.1 : Real), (x.2 : Real) - p.2)
-          left_inv := by intro p; ext <;> dsimp <;> ring
-          right_inv := by intro p; ext <;> dsimp <;> ring
-          continuous_toFun := by fun_prop
-          continuous_invFun := by fun_prop }
-      | Sum.inr x => {
-          toFun := fun q => ((x.1 : Real) - q.1, (x.2 : Real) + q.2)
-          invFun := fun p => ((x.1 : Real) - p.1, p.2 - (x.2 : Real))
-          left_inv := by intro p; ext <;> dsimp <;> ring
-          right_inv := by intro p; ext <;> dsimp <;> ring
-          continuous_toFun := by fun_prop
-          continuous_invFun := by fun_prop }
+    let tile : (Sum (Int × Int) (Int × Int)) → (Real × Real) ≃ₜ (Real × Real) :=
+      AffineTriangulationLemmas.tile
     (∀ (m : Int), ∀ (n : Int), ∀ (r : Real), ((m : Real) < r ∧ r < (m : Real) + 1) → (((n : Real)
         < r ∧ r < (n : Real) + 1) → (m = n))) → (Pairwise fun f g => Disjoint (tile f '' T) (tile
         g '' T)) := by
@@ -726,7 +618,6 @@ private theorem tiles_disjoint :
       have hy : x.2 = y.2 := strip_unique x.2 y.2 ((x.2 : Real) + u.2)
         ⟨by linarith [hu.2.1], by linarith⟩ ⟨by linarith [hv.2.1, heq.2], by linarith [heq.2]⟩
       exact hfg (congrArg Sum.inr (Prod.ext (by omega) hy))
-
 private theorem regions_disjoint :
     let shear : (Real × Real) ≃ₜ (Real × Real) := {
       toFun p := (p.1 - p.2 / 2, p.2)
@@ -736,21 +627,8 @@ private theorem regions_disjoint :
       continuous_toFun := by fun_prop
       continuous_invFun := by fun_prop }
     let T : Set (Real × Real) := {p | 0 < p.1 ∧ 0 < p.2 ∧ p.1 + p.2 < 1}
-    let tile : (Sum (Int × Int) (Int × Int)) → (Real × Real) ≃ₜ (Real × Real) := fun
-      | Sum.inl x => {
-          toFun := fun q => ((x.1 : Real) + q.1, (x.2 : Real) - q.2)
-          invFun := fun p => (p.1 - (x.1 : Real), (x.2 : Real) - p.2)
-          left_inv := by intro p; ext <;> dsimp <;> ring
-          right_inv := by intro p; ext <;> dsimp <;> ring
-          continuous_toFun := by fun_prop
-          continuous_invFun := by fun_prop }
-      | Sum.inr x => {
-          toFun := fun q => ((x.1 : Real) - q.1, (x.2 : Real) + q.2)
-          invFun := fun p => ((x.1 : Real) - p.1, p.2 - (x.2 : Real))
-          left_inv := by intro p; ext <;> dsimp <;> ring
-          right_inv := by intro p; ext <;> dsimp <;> ring
-          continuous_toFun := by fun_prop
-          continuous_invFun := by fun_prop }
+    let tile : (Sum (Int × Int) (Int × Int)) → (Real × Real) ≃ₜ (Real × Real) :=
+      AffineTriangulationLemmas.tile
     let region (f : (Sum (Int × Int) (Int × Int))) : Set (Real × Real) := shear '' tile f '' T
     (Pairwise fun f g => Disjoint (tile f '' T) (tile g '' T)) → (Pairwise fun f g => Disjoint
         (region f) (region g)) := by
@@ -758,7 +636,6 @@ private theorem regions_disjoint :
   intro shear T tile region tiles_disjoint f g hfg
   exact (tiles_disjoint hfg).image (shear.injective.injOn (s := Set.univ))
     (Set.subset_univ _) (Set.subset_univ _)
-
 private theorem plane_cover :
     let fv : (Sum (Int × Int) (Int × Int)) → Fin 3 → (Int × Int) := fun
       | Sum.inl x => ![x, x + (1, 0), x - (0, 1)]
@@ -777,21 +654,8 @@ private theorem plane_cover :
     let T : Set (Real × Real) := {p | 0 < p.1 ∧ 0 < p.2 ∧ p.1 + p.2 < 1}
     let C : Set (Real × Real) := {p | 0 ≤ p.1 ∧ 0 ≤ p.2 ∧ p.1 + p.2 ≤ 1}
     (closure T = C) → (
-    let tile : (Sum (Int × Int) (Int × Int)) → (Real × Real) ≃ₜ (Real × Real) := fun
-      | Sum.inl x => {
-          toFun := fun q => ((x.1 : Real) + q.1, (x.2 : Real) - q.2)
-          invFun := fun p => (p.1 - (x.1 : Real), (x.2 : Real) - p.2)
-          left_inv := by intro p; ext <;> dsimp <;> ring
-          right_inv := by intro p; ext <;> dsimp <;> ring
-          continuous_toFun := by fun_prop
-          continuous_invFun := by fun_prop }
-      | Sum.inr x => {
-          toFun := fun q => ((x.1 : Real) - q.1, (x.2 : Real) + q.2)
-          invFun := fun p => ((x.1 : Real) - p.1, p.2 - (x.2 : Real))
-          left_inv := by intro p; ext <;> dsimp <;> ring
-          right_inv := by intro p; ext <;> dsimp <;> ring
-          continuous_toFun := by fun_prop
-          continuous_invFun := by fun_prop }
+    let tile : (Sum (Int × Int) (Int × Int)) → (Real × Real) ≃ₜ (Real × Real) :=
+      AffineTriangulationLemmas.tile
     let region (f : (Sum (Int × Int) (Int × Int))) : Set (Real × Real) := shear '' tile f '' T
     (∀ (f : (Sum (Int × Int) (Int × Int))), frontier (region f) = arc (fv f 0) (fv f 1) ∪ arc (fv
         f 1) (fv f 2) ∪ arc (fv f 2) (fv f 0)) → ((∀ (p : (Real × Real)), ∃ f : (Sum (Int × Int)
@@ -816,7 +680,6 @@ private theorem plane_cover :
     · exact Or.inl (Or.inr ⟨fv f 0, fv f 1, edges_fv f 0 1 (by decide), hp⟩)
     · exact Or.inl (Or.inr ⟨fv f 1, fv f 2, edges_fv f 1 2 (by decide), hp⟩)
     · exact Or.inl (Or.inr ⟨fv f 2, fv f 0, edges_fv f 2 0 (by decide), hp⟩)
-
 private theorem fraction_integer :
     ∀ (m : Int), ∀ (n : Int), ∀ (s : Real), (s ∈ Set.Icc (0 : Real) 1) → (((m : Real) + s = (n :
         Real)) → (s = 0 ∨ s = 1)) := by
@@ -830,7 +693,6 @@ private theorem fraction_integer :
     left; linarith
   · have h' : (n : Real) = (m : Real) + 1 := by exact_mod_cast heq
     right; linarith
-
 private theorem fraction_gap :
     ∀ (m : Int), ∀ (n : Int), ∀ (s : Real), ∀ (t : Real), (s ∈ Set.Icc (0 : Real) 1) → ((t ∈
         Set.Icc (0 : Real) 1) → (((m : Real) + s = (n : Real) + t) → ((m ≠ n) → ((s = 0 ∨ s = 1)
@@ -845,7 +707,6 @@ private theorem fraction_gap :
   · have h' : (n : Real) + 1 ≤ (m : Real) := by exact_mod_cast (show n + 1 ≤ m by omega)
     exact ⟨Or.inl (by linarith [hs.1, hs.2, ht.1, ht.2]),
       Or.inr (by linarith [hs.1, hs.2, ht.1, ht.2])⟩
-
 private theorem endpoint_parameters :
     let coord (x : (Int × Int)) : (Real × Real) := (x.1, x.2)
     let delta : Fin 3 → (Int × Int) := ![(1, 0), (0, 1), (1, 1)]
@@ -907,7 +768,6 @@ private theorem endpoint_parameters :
       have heq := Prod.ext hx hy
       exact hne (by rw [heq])
     exact fraction_gap x.1 y.1 s t hs ht h.1 hx
-
 private theorem canonical_intersection :
     let coord (x : (Int × Int)) : (Real × Real) := (x.1, x.2)
     (Function.Injective coord) → (
@@ -950,7 +810,6 @@ private theorem canonical_intersection :
     · rcases hb with rfl | rfl
       · exact left_mem_segment Real _ _
       · exact right_mem_segment Real _ _
-
 private theorem orient_edge :
     let coord (x : (Int × Int)) : (Real × Real) := (x.1, x.2)
     let delta : Fin 3 → (Int × Int) := ![(1, 0), (0, 1), (1, 1)]
@@ -978,7 +837,6 @@ private theorem orient_edge :
   · have heq : b = a + delta 2 := by simp [delta, Prod.ext_iff] at h ⊢; omega
     subst b
     exact ⟨2, a, rfl, rfl⟩
-
 private theorem segment_intersections :
     let coord (x : (Int × Int)) : (Real × Real) := (x.1, x.2)
     let delta : Fin 3 → (Int × Int) := ![(1, 0), (0, 1), (1, 1)]
@@ -1000,7 +858,6 @@ private theorem segment_intersections :
   rw [hp, hq] at hne
   rw [he, hf, hp, hq]
   exact canonical_intersection x y k l hne
-
 private theorem arc_symmetric :
     let coord (x : (Int × Int)) : (Real × Real) := (x.1, x.2)
     let shear : (Real × Real) ≃ₜ (Real × Real) := {
@@ -1016,7 +873,6 @@ private theorem arc_symmetric :
   intro coord shear arc a b
   dsimp [arc]
   rw [segment_symm]
-
 private theorem arc_intersections :
     let coord (x : (Int × Int)) : (Real × Real) := (x.1, x.2)
     let shear : (Real × Real) ≃ₜ (Real × Real) := {
@@ -1040,9 +896,7 @@ private theorem arc_intersections :
   dsimp only [arc]
   rw [← Set.image_inter shear.injective, segment_intersections a b c d hab hcd hne,
     Set.image_image]
-
 end AffineTriangulationLemmas
-
 theorem AffineTriangularPlaneTriangulation :
     ∃ (P : PlaneTriangulation (Int × Int))
       (up down : (Int × Int) → P.Face),
@@ -1118,21 +972,8 @@ theorem AffineTriangularPlaneTriangulation :
   have closure_T := AffineTriangulationLemmas.closure_T closed_C
   have boundary_T := AffineTriangulationLemmas.boundary_T open_T
           closure_T
-  let tile : (Sum (Int × Int) (Int × Int)) → (Real × Real) ≃ₜ (Real × Real) := fun
-    | Sum.inl x => {
-        toFun := fun q => ((x.1 : Real) + q.1, (x.2 : Real) - q.2)
-        invFun := fun p => (p.1 - (x.1 : Real), (x.2 : Real) - p.2)
-        left_inv := by intro p; ext <;> dsimp <;> ring
-        right_inv := by intro p; ext <;> dsimp <;> ring
-        continuous_toFun := by fun_prop
-        continuous_invFun := by fun_prop }
-    | Sum.inr x => {
-        toFun := fun q => ((x.1 : Real) - q.1, (x.2 : Real) + q.2)
-        invFun := fun p => ((x.1 : Real) - p.1, p.2 - (x.2 : Real))
-        left_inv := by intro p; ext <;> dsimp <;> ring
-        right_inv := by intro p; ext <;> dsimp <;> ring
-        continuous_toFun := by fun_prop
-        continuous_invFun := by fun_prop }
+  let tile : (Sum (Int × Int) (Int × Int)) → (Real × Real) ≃ₜ (Real × Real) :=
+    AffineTriangulationLemmas.tile
   let region (f : (Sum (Int × Int) (Int × Int))) : Set (Real × Real) := shear '' tile f '' T
   have tile_segment (f : (Sum (Int × Int) (Int × Int))) (a b : (Real × Real)) :=
       AffineTriangulationLemmas.tile_segment f a b
@@ -1241,7 +1082,5 @@ theorem AffineTriangularPlaneTriangulation :
     change shear '' tile (Sum.inr x) '' T = _
     rw [Set.image_image]
     rfl
-
 end ApollonianSuperharmonic
-
 end

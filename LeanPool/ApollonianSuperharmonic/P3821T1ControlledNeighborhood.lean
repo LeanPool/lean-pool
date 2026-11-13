@@ -4,30 +4,21 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Wesley Pegden
 -/
 module
-
 public import Mathlib.Init
 public import Mathlib.Tactic.Positivity
-
 public import Mathlib.Algebra.BigOperators.Field
 public import Mathlib.Algebra.Order.Algebra
 public import Mathlib.Analysis.Complex.Circle
 public import Mathlib.Analysis.SpecialFunctions.Log.Basic
-
 -- [TABLET NODE: P3821T1ControlledNeighborhood]
-
 /-!
 # P3821T1ControlledNeighborhood
-
 Adapted from Wesley Pegden’s Apache-2.0 Trellis formalization of Levine–Pegden–Smart.
 Changes: pool module paths, public exports, project namespace and current Mathlib compatibility.
 -/
-
 @[expose] public section
-
 namespace ApollonianSuperharmonic
-
 namespace ControlledNeighborhoodConstruction
-
 private noncomputable abbrev f (e : C(Circle, ℂ)) (he : Function.Injective e) : Circle ≃
     Set.range e := by
   classical
@@ -39,109 +30,57 @@ private noncomputable abbrev f (e : C(Circle, ℂ)) (he : Function.Injective e) 
         exact congrArg Subtype.val h
       · rintro ⟨z, x, rfl⟩
         exact ⟨x, rfl⟩)
-
 private theorem hf (e : C(Circle, ℂ)) (he : Function.Injective e) : Continuous (f e he) := by
   classical
-  let f : Circle ≃ Set.range e := Equiv.ofBijective
-    (fun x => (⟨e x, ⟨x, rfl⟩⟩ : Set.range e)) (by
-      constructor
-      · intro x y h
-        apply he
-        exact congrArg Subtype.val h
-      · rintro ⟨z, x, rfl⟩
-        exact ⟨x, rfl⟩)
+  let f : Circle ≃ Set.range e := ControlledNeighborhoodConstruction.f e he
   change (Continuous f)
   change Continuous (fun x : Circle => (⟨e x, ⟨x, rfl⟩⟩ : Set.range e))
   exact Continuous.subtype_mk e.continuous (fun x => ⟨x, rfl⟩)
-
 private noncomputable abbrev ψ (e : C(Circle, ℂ)) (he : Function.Injective e) : Set.range e →
     Circle := by
   classical
-  let f : Circle ≃ Set.range e := Equiv.ofBijective
-    (fun x => (⟨e x, ⟨x, rfl⟩⟩ : Set.range e)) (by
-      constructor
-      · intro x y h
-        apply he
-        exact congrArg Subtype.val h
-      · rintro ⟨z, x, rfl⟩
-        exact ⟨x, rfl⟩)
+  let f : Circle ≃ Set.range e := ControlledNeighborhoodConstruction.f e he
   exact fun x => f.symm x
-
 private theorem hψc (e : C(Circle, ℂ)) (he : Function.Injective e) : Continuous (ψ e he) := by
   classical
-  let f : Circle ≃ Set.range e := Equiv.ofBijective
-    (fun x => (⟨e x, ⟨x, rfl⟩⟩ : Set.range e)) (by
-      constructor
-      · intro x y h
-        apply he
-        exact congrArg Subtype.val h
-      · rintro ⟨z, x, rfl⟩
-        exact ⟨x, rfl⟩)
+  let f : Circle ≃ Set.range e := ControlledNeighborhoodConstruction.f e he
   have hf : Continuous f := hf e he
   let ψ : Set.range e → Circle := f.symm
   change (Continuous ψ)
   exact hf.continuous_symm_of_equiv_compact_to_t2
-
 private theorem hψleft (e : C(Circle, ℂ)) (he : Function.Injective e) : Function.LeftInverse (ψ e
     he) (fun x : Circle => ⟨e x, ⟨x, rfl⟩⟩) := by
   classical
-  let f : Circle ≃ Set.range e := Equiv.ofBijective
-    (fun x => (⟨e x, ⟨x, rfl⟩⟩ : Set.range e)) (by
-      constructor
-      · intro x y h
-        apply he
-        exact congrArg Subtype.val h
-      · rintro ⟨z, x, rfl⟩
-        exact ⟨x, rfl⟩)
+  let f : Circle ≃ Set.range e := ControlledNeighborhoodConstruction.f e he
   let ψ : Set.range e → Circle := f.symm
   change (Function.LeftInverse ψ (fun x : Circle => ⟨e x, ⟨x, rfl⟩⟩))
   intro x
   exact f.symm_apply_apply x
-
 private noncomputable abbrev u (e : C(Circle, ℂ)) (he : Function.Injective e) : Set.range e → ℂ
     := by
   classical
-  let f : Circle ≃ Set.range e := Equiv.ofBijective
-    (fun x => (⟨e x, ⟨x, rfl⟩⟩ : Set.range e)) (by
-      constructor
-      · intro x y h
-        apply he
-        exact congrArg Subtype.val h
-      · rintro ⟨z, x, rfl⟩
-        exact ⟨x, rfl⟩)
+  let f : Circle ≃ Set.range e := ControlledNeighborhoodConstruction.f e he
   let ψ : Set.range e → Circle := f.symm
   exact fun k => (ψ k : ℂ)
-
 private theorem hu (e : C(Circle, ℂ)) (he : Function.Injective e) : Continuous (u e he) := by
   classical
-  let f : Circle ≃ Set.range e := Equiv.ofBijective
-    (fun x => (⟨e x, ⟨x, rfl⟩⟩ : Set.range e)) (by
-      constructor
-      · intro x y h
-        apply he
-        exact congrArg Subtype.val h
-      · rintro ⟨z, x, rfl⟩
-        exact ⟨x, rfl⟩)
+  let f : Circle ≃ Set.range e := ControlledNeighborhoodConstruction.f e he
   let ψ : Set.range e → Circle := f.symm
   have hψc : Continuous ψ := hψc e he
   let u : Set.range e → ℂ := fun k => (ψ k : ℂ)
   change (Continuous u)
   exact continuous_subtype_val.comp hψc
-
 private theorem heUC (e : C(Circle, ℂ)) : UniformContinuous e := by
   classical
   exact CompactSpace.uniformContinuous_of_continuous e.continuous
-
 private noncomputable abbrev δ (δ₀ : ℝ) := by
   classical
   exact min (δ₀ / 4) (1 / 8)
-
 private theorem hδpos (δ₀ : ℝ) (hδ₀ : δ₀ > 0) : 0 < (δ δ₀) := by
   classical
   let δ := min (δ₀ / 4) (1 / 8)
   change (0 < δ)
   dsimp [δ]; positivity
-
 private theorem hδlt (δ₀ : ℝ) (hδ₀ : δ₀ > 0) : (δ δ₀) < 1 / 4 := by
   classical
   let δ := min (δ₀ / 4) (1 / 8)
@@ -150,40 +89,28 @@ private theorem hδlt (δ₀ : ℝ) (hδ₀ : δ₀ > 0) : (δ δ₀) < 1 / 4 :=
   dsimp [δ]
   have : min (δ₀ / 4) (1 / 8) ≤ 1 / 8 := min_le_right _ _
   linarith
-
 private theorem hKcompact (e : C(Circle, ℂ)) : IsCompact (Set.range e) := by
   classical
   exact isCompact_range e.continuous
-
 private theorem hψUC (e : C(Circle, ℂ)) (he : Function.Injective e) : UniformContinuous (u e he)
     := by
   classical
   let : CompactSpace (Set.range e) :=
     isCompact_iff_compactSpace.mp (isCompact_range e.continuous)
-  let f : Circle ≃ Set.range e := Equiv.ofBijective
-    (fun x => (⟨e x, ⟨x, rfl⟩⟩ : Set.range e)) (by
-      constructor
-      · intro x y h
-        apply he
-        exact congrArg Subtype.val h
-      · rintro ⟨z, x, rfl⟩
-        exact ⟨x, rfl⟩)
+  let f : Circle ≃ Set.range e := ControlledNeighborhoodConstruction.f e he
   let ψ : Set.range e → Circle := f.symm
   let u : Set.range e → ℂ := fun k => (ψ k : ℂ)
   have hu : Continuous u := hu e he
   change (UniformContinuous u)
   exact CompactSpace.uniformContinuous_of_continuous hu
-
 private noncomputable abbrev r (eps : ℝ) (η : ℝ) := by
   classical
   exact min (η / 8) (eps / 8)
-
 private theorem hrpos (eps : ℝ) (heps : 0 < eps) (η : ℝ) (hη : η > 0) : 0 < (r eps η) := by
   classical
   let r := min (η / 8) (eps / 8)
   change (0 < r)
   dsimp [r]; positivity
-
 private theorem hrerr (eps : ℝ) (heps : 0 < eps) (η : ℝ) (hη : η > 0) : 2 * (r eps η) < eps / 2
     := by
   classical
@@ -193,7 +120,6 @@ private theorem hrerr (eps : ℝ) (heps : 0 < eps) (η : ℝ) (hη : η > 0) : 2
   dsimp [r]
   have hle : min (η / 8) (eps / 8) ≤ eps / 8 := min_le_right _ _
   linarith
-
 private theorem heclose (e : C(Circle, ℂ)) (eps : ℝ) (δ₀ : ℝ) (hδ : ∀ ⦃a b : Circle⦄, dist a b <
     δ₀ → dist (e a) (e b) < eps / 2) (hδ₀ : δ₀ > 0) : ∀ u v : Circle, dist u v < 2 * (δ δ₀) →
     dist (e u) (e v) < eps / 2 := by
@@ -205,20 +131,12 @@ private theorem heclose (e : C(Circle, ℂ)) (eps : ℝ) (δ₀ : ℝ) (hδ : �
   apply hδ
   have hle : δ ≤ δ₀ / 4 := by dsimp [δ]; exact min_le_left _ _
   linarith
-
 private theorem hψclose (e : C(Circle, ℂ)) (he : Function.Injective e) (eps : ℝ) (heps : 0 < eps)
     (δ₀ : ℝ) (η : ℝ) (hη : η > 0) (hηψ : ∀ ⦃a b : ↑(Set.range ⇑e)⦄, dist a b < η → dist ((u e he)
     a) ((u e he) b) < (δ δ₀)) : ∀ k l : Set.range e, dist k l < 4 * (r eps η) →
       dist (((ψ e he) k : Circle) : ℂ) (((ψ e he) l : Circle) : ℂ) < (δ δ₀) := by
   classical
-  let f : Circle ≃ Set.range e := Equiv.ofBijective
-    (fun x => (⟨e x, ⟨x, rfl⟩⟩ : Set.range e)) (by
-      constructor
-      · intro x y h
-        apply he
-        exact congrArg Subtype.val h
-      · rintro ⟨z, x, rfl⟩
-        exact ⟨x, rfl⟩)
+  let f : Circle ≃ Set.range e := ControlledNeighborhoodConstruction.f e he
   let ψ : Set.range e → Circle := f.symm
   let δ := min (δ₀ / 4) (1 / 8)
   let r := min (η / 8) (eps / 8)
@@ -229,26 +147,22 @@ private theorem hψclose (e : C(Circle, ℂ)) (he : Function.Injective e) (eps :
   apply hηψ
   have hle : r ≤ η / 8 := by dsimp [r]; exact min_le_left _ _
   linarith
-
 private noncomputable abbrev F (e : C(Circle, ℂ)) (S : Set ↑(Set.range ⇑e)) (hSf : S.Finite) :
     Finset (Set.range e) := by
   classical
   exact hSf.toFinset
-
 private theorem hFS (e : C(Circle, ℂ)) (S : Set ↑(Set.range ⇑e)) (hSf : S.Finite) : ((F e S hSf)
     : Set (Set.range e)) = S := by
   classical
   let F : Finset (Set.range e) := hSf.toFinset
   change ((F : Set (Set.range e)) = S)
   ext c; simp [F]
-
 private theorem hFsub (e : C(Circle, ℂ)) (S : Set ↑(Set.range ⇑e)) (hSf : S.Finite) : ((F e S
     hSf) : Set (Set.range e)) ⊆ Set.univ := by
   classical
   let F : Finset (Set.range e) := hSf.toFinset
   change ((F : Set (Set.range e)) ⊆ Set.univ)
   simp
-
 private theorem hcover' (e : C(Circle, ℂ)) (eps : ℝ) (S : Set ↑(Set.range ⇑e)) (η : ℝ) (hSf :
     S.Finite) (hcover : Set.univ ⊆ ⋃ x ∈ S, Metric.ball x (r eps η)) : (Set.univ : Set (Set.range
     e)) ⊆
@@ -260,12 +174,10 @@ private theorem hcover' (e : C(Circle, ℂ)) (eps : ℝ) (S : Set ↑(Set.range 
   change ((Set.univ : Set (Set.range e)) ⊆
       ⋃ c ∈ (F : Set (Set.range e)), Metric.ball c r)
   simpa [hFS] using hcover
-
 private noncomputable abbrev w (e : C(Circle, ℂ)) (eps : ℝ) (η : ℝ) : Set.range e → ℂ → ℝ := by
   classical
   let r := min (η / 8) (eps / 8)
   exact fun c z => max 0 (2 * r - dist z (c : ℂ))
-
 private noncomputable abbrev W (e : C(Circle, ℂ)) (eps : ℝ) (S : Set ↑(Set.range ⇑e)) (η : ℝ)
     (hSf : S.Finite) : ℂ → ℝ := by
   classical
@@ -273,7 +185,6 @@ private noncomputable abbrev W (e : C(Circle, ℂ)) (eps : ℝ) (S : Set ↑(Set
   let F : Finset (Set.range e) := hSf.toFinset
   let w : Set.range e → ℂ → ℝ := fun c z => max 0 (2 * r - dist z (c : ℂ))
   exact fun z => ∑ c ∈ F, w c z
-
 private theorem hw_cont (e : C(Circle, ℂ)) (eps : ℝ) (η : ℝ) (c : Set.range e) : Continuous ((w e
     eps η) c) := by
   classical
@@ -282,7 +193,6 @@ private theorem hw_cont (e : C(Circle, ℂ)) (eps : ℝ) (η : ℝ) (c : Set.ran
   change (Continuous (w c))
   dsimp [w]
   fun_prop
-
 private theorem hW_cont (e : C(Circle, ℂ)) (eps : ℝ) (S : Set ↑(Set.range ⇑e)) (η : ℝ) (hSf :
     S.Finite) : Continuous (W e eps S η hSf) := by
   classical
@@ -294,7 +204,6 @@ private theorem hW_cont (e : C(Circle, ℂ)) (eps : ℝ) (S : Set ↑(Set.range 
   change (Continuous W)
   dsimp [W]
   exact continuous_finsetSum F (fun c hc => hw_cont c)
-
 private noncomputable abbrev N (e : C(Circle, ℂ)) (eps : ℝ) (S : Set ↑(Set.range ⇑e)) (η : ℝ)
     (hSf : S.Finite) : Set ℂ := by
   classical
@@ -303,7 +212,6 @@ private noncomputable abbrev N (e : C(Circle, ℂ)) (eps : ℝ) (S : Set ↑(Set
   let w : Set.range e → ℂ → ℝ := fun c z => max 0 (2 * r - dist z (c : ℂ))
   let W : ℂ → ℝ := fun z => ∑ c ∈ F, w c z
   exact {z | 0 < W z}
-
 private theorem hNopen (e : C(Circle, ℂ)) (eps : ℝ) (S : Set ↑(Set.range ⇑e)) (η : ℝ) (hSf :
     S.Finite) : IsOpen (N e eps S η hSf) := by
   classical
@@ -316,7 +224,6 @@ private theorem hNopen (e : C(Circle, ℂ)) (eps : ℝ) (S : Set ↑(Set.range �
   dsimp only [ControlledNeighborhoodConstruction.N] at *
   change (IsOpen N)
   exact isOpen_lt continuous_const hW_cont
-
 private theorem hKN (e : C(Circle, ℂ)) (eps : ℝ) (heps : 0 < eps) (S : Set ↑(Set.range ⇑e)) (η :
     ℝ) (hSf : S.Finite) (hcover : Set.univ ⊆ ⋃ x ∈ S, Metric.ball x (r eps η)) (hη : η > 0) :
     Set.range e ⊆ (N e eps S η hSf) := by
@@ -347,7 +254,6 @@ private theorem hKN (e : C(Circle, ℂ)) (eps : ℝ) (heps : 0 < eps) (S : Set �
       (fun j hj => le_max_left 0 (2 * r - dist z (j : ℂ))) (a := c) hcF')
   change 0 < W z
   linarith
-
 private theorem hW_N (e : C(Circle, ℂ)) (eps : ℝ) (S : Set ↑(Set.range ⇑e)) (η : ℝ) (hSf :
     S.Finite) : Continuous (fun z : (N e eps S η hSf) => (W e eps S η hSf) (z : ℂ)) := by
   classical
@@ -360,7 +266,6 @@ private theorem hW_N (e : C(Circle, ℂ)) (eps : ℝ) (S : Set ↑(Set.range ⇑
   dsimp only [ControlledNeighborhoodConstruction.N] at *
   change (Continuous (fun z : N => W (z : ℂ)))
   exact hW_cont.comp continuous_subtype_val
-
 private noncomputable abbrev a (e : C(Circle, ℂ)) (eps : ℝ) (S : Set ↑(Set.range ⇑e)) (η : ℝ)
     (hSf : S.Finite) : (N e eps S η hSf) → Set.range e → ℝ := by
   classical
@@ -372,7 +277,6 @@ private noncomputable abbrev a (e : C(Circle, ℂ)) (eps : ℝ) (S : Set ↑(Set
   dsimp only [ControlledNeighborhoodConstruction.N] at *
   change (N → Set.range e → ℝ)
   exact fun z c => w c (z : ℂ) / W (z : ℂ)
-
 private theorem ha_cont (e : C(Circle, ℂ)) (eps : ℝ) (S : Set ↑(Set.range ⇑e)) (η : ℝ) (hSf :
     S.Finite) (c : Set.range e) : Continuous (fun z : (N e eps S η hSf) => (a e eps S η hSf) z c)
     := by
@@ -389,18 +293,10 @@ private theorem ha_cont (e : C(Circle, ℂ)) (eps : ℝ) (S : Set ↑(Set.range 
   change (Continuous (fun z : N => a z c))
   dsimp [a]
   exact (hw_cont c).comp continuous_subtype_val |>.div hW_N (fun z => ne_of_gt z.property)
-
 private noncomputable abbrev v (e : C(Circle, ℂ)) (he : Function.Injective e) (eps : ℝ) (S : Set
     ↑(Set.range ⇑e)) (η : ℝ) (hSf : S.Finite) : (N e eps S η hSf) → ℂ := by
   classical
-  let f : Circle ≃ Set.range e := Equiv.ofBijective
-    (fun x => (⟨e x, ⟨x, rfl⟩⟩ : Set.range e)) (by
-      constructor
-      · intro x y h
-        apply he
-        exact congrArg Subtype.val h
-      · rintro ⟨z, x, rfl⟩
-        exact ⟨x, rfl⟩)
+  let f : Circle ≃ Set.range e := ControlledNeighborhoodConstruction.f e he
   let ψ : Set.range e → Circle := f.symm
   let u : Set.range e → ℂ := fun k => (ψ k : ℂ)
   let r := min (η / 8) (eps / 8)
@@ -412,18 +308,10 @@ private noncomputable abbrev v (e : C(Circle, ℂ)) (he : Function.Injective e) 
   dsimp only [ControlledNeighborhoodConstruction.N] at *
   change (N → ℂ)
   exact fun z => ∑ c ∈ F, (a z c : ℂ) * u c
-
 private theorem hv_cont (e : C(Circle, ℂ)) (he : Function.Injective e) (eps : ℝ) (S : Set
     ↑(Set.range ⇑e)) (η : ℝ) (hSf : S.Finite) : Continuous (v e he eps S η hSf) := by
   classical
-  let f : Circle ≃ Set.range e := Equiv.ofBijective
-    (fun x => (⟨e x, ⟨x, rfl⟩⟩ : Set.range e)) (by
-      constructor
-      · intro x y h
-        apply he
-        exact congrArg Subtype.val h
-      · rintro ⟨z, x, rfl⟩
-        exact ⟨x, rfl⟩)
+  let f : Circle ≃ Set.range e := ControlledNeighborhoodConstruction.f e he
   let ψ : Set.range e → Circle := f.symm
   let u : Set.range e → ℂ := fun k => (ψ k : ℂ)
   let r := min (η / 8) (eps / 8)
@@ -440,7 +328,6 @@ private theorem hv_cont (e : C(Circle, ℂ)) (he : Function.Injective e) (eps : 
   intro c hc
   have hac := ha_cont c
   fun_prop
-
 private theorem hactive (e : C(Circle, ℂ)) (eps : ℝ) (S : Set ↑(Set.range ⇑e)) (η : ℝ) (hSf :
     S.Finite) (z : (N e eps S η hSf)) : ∃ i ∈ (F e S hSf), 0 < (w e eps η) i (z : ℂ) := by
   classical
@@ -456,7 +343,6 @@ private theorem hactive (e : C(Circle, ℂ)) (eps : ℝ) (S : Set ↑(Set.range 
     Finset.sum_nonpos (fun c hc => h c hc)
   have hz : 0 < W (z : ℂ) := z.property
   linarith
-
 private theorem hw_active_dist (e : C(Circle, ℂ)) (eps : ℝ) (S : Set ↑(Set.range ⇑e)) (η : ℝ)
     (hSf : S.Finite) (z : (N e eps S η hSf)) (c : Set.range e) (hc : 0 < (w e eps η) c (z : ℂ)) :
       dist (z : ℂ) (c : ℂ) < 2 * (r eps η) := by
@@ -466,18 +352,10 @@ private theorem hw_active_dist (e : C(Circle, ℂ)) (eps : ℝ) (S : Set ↑(Set
   change (dist (z : ℂ) (c : ℂ) < 2 * r)
   change 0 < max 0 (2 * r - dist (z : ℂ) (c : ℂ)) at hc
   exact sub_pos.mp ((lt_max_iff.mp hc).resolve_left (lt_irrefl 0))
-
 private theorem hψmap (e : C(Circle, ℂ)) (he : Function.Injective e) (c : Set.range e) : e ((ψ e
     he) c) = c := by
   classical
-  let f : Circle ≃ Set.range e := Equiv.ofBijective
-    (fun x => (⟨e x, ⟨x, rfl⟩⟩ : Set.range e)) (by
-      constructor
-      · intro x y h
-        apply he
-        exact congrArg Subtype.val h
-      · rintro ⟨z, x, rfl⟩
-        exact ⟨x, rfl⟩)
+  let f : Circle ≃ Set.range e := ControlledNeighborhoodConstruction.f e he
   let ψ : Set.range e → Circle := f.symm
   have hψleft : Function.LeftInverse ψ (fun x : Circle => ⟨e x, ⟨x, rfl⟩⟩) := hψleft e he
   change (e (ψ c) = c)
@@ -486,7 +364,6 @@ private theorem hψmap (e : C(Circle, ℂ)) (he : Function.Injective e) (c : Set
   have hh := hψleft x
   change ψ ⟨e x, ⟨x, rfl⟩⟩ = x at hh
   rw [hh]
-
 private theorem ha_nonneg (e : C(Circle, ℂ)) (eps : ℝ) (S : Set ↑(Set.range ⇑e)) (η : ℝ) (hSf :
     S.Finite) (z : (N e eps S η hSf)) (c : Set.range e) : 0 ≤ (a e eps S η hSf) z c := by
   classical
@@ -500,7 +377,6 @@ private theorem ha_nonneg (e : C(Circle, ℂ)) (eps : ℝ) (S : Set ↑(Set.rang
   apply div_nonneg
   · exact le_max_left 0 _
   · exact le_of_lt z.property
-
 private theorem hsum_a (e : C(Circle, ℂ)) (eps : ℝ) (S : Set ↑(Set.range ⇑e)) (η : ℝ) (hSf :
     S.Finite) (z : (N e eps S η hSf)) : (∑ c ∈ (F e S hSf), (a e eps S η hSf) z c) = 1 := by
   classical
@@ -514,21 +390,13 @@ private theorem hsum_a (e : C(Circle, ℂ)) (eps : ℝ) (S : Set ↑(Set.range �
   rw [← Finset.sum_div]
   rw [show (∑ c ∈ F, w c (z : ℂ)) = W (z : ℂ) by rfl]
   exact div_self z.property.ne'
-
 private theorem hv_close (e : C(Circle, ℂ)) (he : Function.Injective e) (eps : ℝ) (heps : 0 <
     eps) (S : Set ↑(Set.range ⇑e)) (δ₀ : ℝ) (η : ℝ) (hSf : S.Finite) (hη : η > 0) (hδ₀ : δ₀ > 0)
     (hηψ : ∀ ⦃a b : ↑(Set.range ⇑e)⦄, dist a b < η → dist ((u e he) a) ((u e he) b) < (δ δ₀)) (z
     : (N e eps S η hSf)) (i : Set.range e) (hi : i ∈ (F e S hSf))
       (hwi : 0 < (w e eps η) i (z : ℂ)) : ‖(v e he eps S η hSf) z - (u e he) i‖ < (δ δ₀) := by
   classical
-  let f : Circle ≃ Set.range e := Equiv.ofBijective
-    (fun x => (⟨e x, ⟨x, rfl⟩⟩ : Set.range e)) (by
-      constructor
-      · intro x y h
-        apply he
-        exact congrArg Subtype.val h
-      · rintro ⟨z, x, rfl⟩
-        exact ⟨x, rfl⟩)
+  let f : Circle ≃ Set.range e := ControlledNeighborhoodConstruction.f e he
   let ψ : Set.range e → Circle := f.symm
   let u : Set.range e → ℂ := fun k => (ψ k : ℂ)
   let δ := min (δ₀ / 4) (1 / 8)
@@ -613,37 +481,21 @@ private theorem hv_close (e : C(Circle, ℂ)) (he : Function.Injective e) (eps :
       exact norm_sum_le _ _
     _ < ∑ c ∈ F, a z c * δ := hsum_strict
     _ = δ := by rw [← Finset.sum_mul, hsum_a z]; ring
-
 private theorem hunit (e : C(Circle, ℂ)) (he : Function.Injective e) (c : Set.range e) : ‖(u e
     he) c‖ = 1 := by
   classical
-  let f : Circle ≃ Set.range e := Equiv.ofBijective
-    (fun x => (⟨e x, ⟨x, rfl⟩⟩ : Set.range e)) (by
-      constructor
-      · intro x y h
-        apply he
-        exact congrArg Subtype.val h
-      · rintro ⟨z, x, rfl⟩
-        exact ⟨x, rfl⟩)
+  let f : Circle ≃ Set.range e := ControlledNeighborhoodConstruction.f e he
   let ψ : Set.range e → Circle := f.symm
   let u : Set.range e → ℂ := fun k => (ψ k : ℂ)
   change (‖u c‖ = 1)
   dsimp [u]
   exact Circle.norm_coe (ψ c)
-
 private theorem hv_lower (e : C(Circle, ℂ)) (he : Function.Injective e) (eps : ℝ) (heps : 0 <
     eps) (S : Set ↑(Set.range ⇑e)) (δ₀ : ℝ) (η : ℝ) (hSf : S.Finite) (hη : η > 0) (hδ₀ : δ₀ > 0)
     (hηψ : ∀ ⦃a b : ↑(Set.range ⇑e)⦄, dist a b < η → dist ((u e he) a) ((u e he) b) < (δ δ₀)) (z
     : (N e eps S η hSf)) : 1 - (δ δ₀) < ‖(v e he eps S η hSf) z‖ := by
   classical
-  let f : Circle ≃ Set.range e := Equiv.ofBijective
-    (fun x => (⟨e x, ⟨x, rfl⟩⟩ : Set.range e)) (by
-      constructor
-      · intro x y h
-        apply he
-        exact congrArg Subtype.val h
-      · rintro ⟨z, x, rfl⟩
-        exact ⟨x, rfl⟩)
+  let f : Circle ≃ Set.range e := ControlledNeighborhoodConstruction.f e he
   let ψ : Set.range e → Circle := f.symm
   let u : Set.range e → ℂ := fun k => (ψ k : ℂ)
   let δ := min (δ₀ / 4) (1 / 8)
@@ -671,20 +523,12 @@ private theorem hv_lower (e : C(Circle, ℂ)) (he : Function.Injective e) (eps :
       _ ≤ ‖u i - v z‖ + ‖v z‖ := norm_add_le _ _
       _ = ‖v z - u i‖ + ‖v z‖ := by rw [hrev]
   linarith
-
 private theorem hv_pos (e : C(Circle, ℂ)) (he : Function.Injective e) (eps : ℝ) (heps : 0 < eps)
     (S : Set ↑(Set.range ⇑e)) (δ₀ : ℝ) (η : ℝ) (hSf : S.Finite) (hη : η > 0) (hδ₀ : δ₀ > 0) (hηψ
     : ∀ ⦃a b : ↑(Set.range ⇑e)⦄, dist a b < η → dist ((u e he) a) ((u e he) b) < (δ δ₀)) (z : (N
     e eps S η hSf)) : 0 < ‖(v e he eps S η hSf) z‖ := by
   classical
-  let f : Circle ≃ Set.range e := Equiv.ofBijective
-    (fun x => (⟨e x, ⟨x, rfl⟩⟩ : Set.range e)) (by
-      constructor
-      · intro x y h
-        apply he
-        exact congrArg Subtype.val h
-      · rintro ⟨z, x, rfl⟩
-        exact ⟨x, rfl⟩)
+  let f : Circle ≃ Set.range e := ControlledNeighborhoodConstruction.f e he
   let ψ : Set.range e → Circle := f.symm
   let u : Set.range e → ℂ := fun k => (ψ k : ℂ)
   let δ := min (δ₀ / 4) (1 / 8)
@@ -700,18 +544,10 @@ private theorem hv_pos (e : C(Circle, ℂ)) (he : Function.Injective e) (eps : �
   have hv_lower (z : N) : 1 - δ < ‖v z‖ := hv_lower e he eps heps S δ₀ η hSf hη hδ₀ hηψ z
   change (0 < ‖v z‖)
   linarith [hv_lower z]
-
 private noncomputable abbrev p (e : C(Circle, ℂ)) (he : Function.Injective e) (eps : ℝ) (S : Set
     ↑(Set.range ⇑e)) (η : ℝ) (hSf : S.Finite) : (N e eps S η hSf) → ℂ := by
   classical
-  let f : Circle ≃ Set.range e := Equiv.ofBijective
-    (fun x => (⟨e x, ⟨x, rfl⟩⟩ : Set.range e)) (by
-      constructor
-      · intro x y h
-        apply he
-        exact congrArg Subtype.val h
-      · rintro ⟨z, x, rfl⟩
-        exact ⟨x, rfl⟩)
+  let f : Circle ≃ Set.range e := ControlledNeighborhoodConstruction.f e he
   let ψ : Set.range e → Circle := f.symm
   let u : Set.range e → ℂ := fun k => (ψ k : ℂ)
   let r := min (η / 8) (eps / 8)
@@ -724,20 +560,12 @@ private noncomputable abbrev p (e : C(Circle, ℂ)) (he : Function.Injective e) 
   dsimp only [ControlledNeighborhoodConstruction.N] at *
   change (N → ℂ)
   exact fun z => v z / (‖v z‖ : ℂ)
-
 private theorem hp_norm (e : C(Circle, ℂ)) (he : Function.Injective e) (eps : ℝ) (heps : 0 < eps)
     (S : Set ↑(Set.range ⇑e)) (δ₀ : ℝ) (η : ℝ) (hSf : S.Finite) (hη : η > 0) (hδ₀ : δ₀ > 0) (hηψ
     : ∀ ⦃a b : ↑(Set.range ⇑e)⦄, dist a b < η → dist ((u e he) a) ((u e he) b) < (δ δ₀)) (z : (N
     e eps S η hSf)) : ‖(p e he eps S η hSf) z‖ = 1 := by
   classical
-  let f : Circle ≃ Set.range e := Equiv.ofBijective
-    (fun x => (⟨e x, ⟨x, rfl⟩⟩ : Set.range e)) (by
-      constructor
-      · intro x y h
-        apply he
-        exact congrArg Subtype.val h
-      · rintro ⟨z, x, rfl⟩
-        exact ⟨x, rfl⟩)
+  let f : Circle ≃ Set.range e := ControlledNeighborhoodConstruction.f e he
   let ψ : Set.range e → Circle := f.symm
   let u : Set.range e → ℂ := fun k => (ψ k : ℂ)
   let r := min (η / 8) (eps / 8)
@@ -757,7 +585,6 @@ private theorem hp_norm (e : C(Circle, ℂ)) (he : Function.Injective e) (eps : 
       _ = ‖v z‖ := abs_of_nonneg (norm_nonneg _)
   rw [norm_div, hden]
   exact div_self (ne_of_gt (hv_pos z))
-
 private noncomputable abbrev phiVal (e : C(Circle, ℂ)) (he : Function.Injective e) (eps : ℝ)
     (heps : 0 < eps) (S : Set ↑(Set.range ⇑e)) (δ₀ : ℝ) (η : ℝ) (hSf : S.Finite) (hη : η > 0)
     (hδ₀ : δ₀ > 0) (hηψ : ∀ ⦃a b : ↑(Set.range ⇑e)⦄, dist a b < η → dist ((u e he) a) ((u e he)
@@ -765,21 +592,12 @@ private noncomputable abbrev phiVal (e : C(Circle, ℂ)) (he : Function.Injectiv
   exact fun z =>
     ⟨p e he eps S η hSf z,
       (mem_sphere_zero_iff_norm).2 (hp_norm e he eps heps S δ₀ η hSf hη hδ₀ hηψ z)⟩
-
-
 private theorem hp_cont (e : C(Circle, ℂ)) (he : Function.Injective e) (eps : ℝ) (heps : 0 < eps)
     (S : Set ↑(Set.range ⇑e)) (δ₀ : ℝ) (η : ℝ) (hSf : S.Finite) (hη : η > 0) (hδ₀ : δ₀ > 0) (hηψ
     : ∀ ⦃a b : ↑(Set.range ⇑e)⦄, dist a b < η → dist ((u e he) a) ((u e he) b) < (δ δ₀)) :
     Continuous (p e he eps S η hSf) := by
   classical
-  let f : Circle ≃ Set.range e := Equiv.ofBijective
-    (fun x => (⟨e x, ⟨x, rfl⟩⟩ : Set.range e)) (by
-      constructor
-      · intro x y h
-        apply he
-        exact congrArg Subtype.val h
-      · rintro ⟨z, x, rfl⟩
-        exact ⟨x, rfl⟩)
+  let f : Circle ≃ Set.range e := ControlledNeighborhoodConstruction.f e he
   let ψ : Set.range e → Circle := f.symm
   let u : Set.range e → ℂ := fun k => (ψ k : ℂ)
   let r := min (η / 8) (eps / 8)
@@ -798,20 +616,12 @@ private theorem hp_cont (e : C(Circle, ℂ)) (he : Function.Injective e) (eps : 
   apply hv_cont.div hden
   intro z
   exact_mod_cast (ne_of_gt (hv_pos z))
-
 private theorem hphiVal_cont (e : C(Circle, ℂ)) (he : Function.Injective e) (eps : ℝ) (heps : 0 <
     eps) (S : Set ↑(Set.range ⇑e)) (δ₀ : ℝ) (η : ℝ) (hSf : S.Finite) (hη : η > 0) (hδ₀ : δ₀ > 0)
     (hηψ : ∀ ⦃a b : ↑(Set.range ⇑e)⦄, dist a b < η → dist ((u e he) a) ((u e he) b) < (δ δ₀)) :
     Continuous (phiVal e he eps heps S δ₀ η hSf hη hδ₀ hηψ) := by
   classical
-  let f : Circle ≃ Set.range e := Equiv.ofBijective
-    (fun x => (⟨e x, ⟨x, rfl⟩⟩ : Set.range e)) (by
-      constructor
-      · intro x y h
-        apply he
-        exact congrArg Subtype.val h
-      · rintro ⟨z, x, rfl⟩
-        exact ⟨x, rfl⟩)
+  let f : Circle ≃ Set.range e := ControlledNeighborhoodConstruction.f e he
   let ψ : Set.range e → Circle := f.symm
   let u : Set.range e → ℂ := fun k => (ψ k : ℂ)
   let r := min (η / 8) (eps / 8)
@@ -828,7 +638,6 @@ private theorem hphiVal_cont (e : C(Circle, ℂ)) (he : Function.Injective e) (e
   change (Continuous phiVal)
   dsimp [phiVal]
   exact Continuous.subtype_mk hp_cont (fun z => (mem_sphere_zero_iff_norm).2 (hp_norm z))
-
 private theorem norm_normalize (x : ℂ) (hx : 0 < ‖x‖) :
       ‖x / (‖x‖ : ℂ) - x‖ = |1 - ‖x‖| := by
   classical
@@ -847,21 +656,13 @@ private theorem norm_normalize (x : ℂ) (hx : 0 < ‖x‖) :
       rw [show 1 / ‖x‖ - 1 = (1 - ‖x‖) / ‖x‖ by field_simp]
       rw [abs_div, abs_of_pos hx]
       field_simp
-
 private theorem hphi_near (e : C(Circle, ℂ)) (he : Function.Injective e) (eps : ℝ) (heps : 0 <
     eps) (S : Set ↑(Set.range ⇑e)) (δ₀ : ℝ) (η : ℝ) (hSf : S.Finite) (hη : η > 0) (hδ₀ : δ₀ > 0)
     (hηψ : ∀ ⦃a b : ↑(Set.range ⇑e)⦄, dist a b < η → dist ((u e he) a) ((u e he) b) < (δ δ₀)) (z
     : (N e eps S η hSf)) : ∀ i ∈ (F e S hSf), 0 < (w e eps η) i (z : ℂ) →
       ‖(p e he eps S η hSf) z - (u e he) i‖ < 2 * (δ δ₀) := by
   classical
-  let f : Circle ≃ Set.range e := Equiv.ofBijective
-    (fun x => (⟨e x, ⟨x, rfl⟩⟩ : Set.range e)) (by
-      constructor
-      · intro x y h
-        apply he
-        exact congrArg Subtype.val h
-      · rintro ⟨z, x, rfl⟩
-        exact ⟨x, rfl⟩)
+  let f : Circle ≃ Set.range e := ControlledNeighborhoodConstruction.f e he
   let ψ : Set.range e → Circle := f.symm
   let u : Set.range e → ℂ := fun k => (ψ k : ℂ)
   let δ := min (δ₀ / 4) (1 / 8)
@@ -896,7 +697,6 @@ private theorem hphi_near (e : C(Circle, ℂ)) (he : Function.Injective e) (eps 
       ‖p z - u i‖ = ‖(p z - v z) + (v z - u i)‖ := by congr 1; abel
       _ ≤ ‖p z - v z‖ + ‖v z - u i‖ := norm_add_le _ _
   linarith
-
 private theorem hphi_circle_close (e : C(Circle, ℂ)) (he : Function.Injective e) (eps : ℝ) (heps
     : 0 < eps) (S : Set ↑(Set.range ⇑e)) (δ₀ : ℝ) (η : ℝ) (hSf : S.Finite) (hη : η > 0) (hδ₀ : δ₀
     > 0) (hηψ : ∀ ⦃a b : ↑(Set.range ⇑e)⦄, dist a b < η → dist ((u e he) a) ((u e he) b) < (δ
@@ -904,14 +704,7 @@ private theorem hphi_circle_close (e : C(Circle, ℂ)) (he : Function.Injective 
       (hwi : 0 < (w e eps η) i (z : ℂ)) : dist ((phiVal e he eps heps S δ₀ η hSf hη hδ₀ hηψ) z)
           ((ψ e he) i) < 2 * (δ δ₀) := by
   classical
-  let f : Circle ≃ Set.range e := Equiv.ofBijective
-    (fun x => (⟨e x, ⟨x, rfl⟩⟩ : Set.range e)) (by
-      constructor
-      · intro x y h
-        apply he
-        exact congrArg Subtype.val h
-      · rintro ⟨z, x, rfl⟩
-        exact ⟨x, rfl⟩)
+  let f : Circle ≃ Set.range e := ControlledNeighborhoodConstruction.f e he
   let ψ : Set.range e → Circle := f.symm
   let u : Set.range e → ℂ := fun k => (ψ k : ℂ)
   let δ := min (δ₀ / 4) (1 / 8)
@@ -937,23 +730,14 @@ private theorem hphi_circle_close (e : C(Circle, ℂ)) (he : Function.Injective 
     _ = dist (p z) (u i) := by rfl
     _ = ‖p z - u i‖ := dist_eq_norm _ _
     _ < 2 * δ := h
-
 end ControlledNeighborhoodConstruction
-
 theorem P3821T1ControlledNeighborhood (e : C(Circle, ℂ))
     (he : Function.Injective e) (eps : ℝ) (heps : 0 < eps) :
     ∃ N : Set ℂ, IsOpen N ∧ Set.range e ⊆ N ∧
       ∃ phi : C(N, Circle), ∀ z : N, ‖e (phi z) - (z : ℂ)‖ < eps := by
 -- BODY
   classical
-  let f : Circle ≃ Set.range e := Equiv.ofBijective
-    (fun x => (⟨e x, ⟨x, rfl⟩⟩ : Set.range e)) (by
-      constructor
-      · intro x y h
-        apply he
-        exact congrArg Subtype.val h
-      · rintro ⟨z, x, rfl⟩
-        exact ⟨x, rfl⟩)
+  let f : Circle ≃ Set.range e := ControlledNeighborhoodConstruction.f e he
   let : T2Space (Set.range e) := inferInstance
   let ψ : Set.range e → Circle := f.symm
   let u : Set.range e → ℂ := fun k => (ψ k : ℂ)
@@ -1013,7 +797,5 @@ theorem P3821T1ControlledNeighborhood (e : C(Circle, ℂ))
       rw [hecenter] at hecurve
       have hzcenter' : dist (i : ℂ) (z : ℂ) < 2 * r := by simpa [dist_comm] using hzcenter
       linarith [hecurve, hzcenter', hrerr]
-
 end ApollonianSuperharmonic
-
 end
