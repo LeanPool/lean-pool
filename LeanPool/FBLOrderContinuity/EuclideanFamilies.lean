@@ -6,9 +6,9 @@ Authors: Raúl E. Pariente-Martín, Pedro Tradacete
 
 module
 
-public import LeanPool.FBLOrderContinuity.HilbertComparison
-public import Mathlib.Analysis.InnerProductSpace.Projection.FiniteDimensional
-public import Mathlib.Topology.Algebra.Module.Determinant
+public import LeanPool.FBLOrderContinuity.Model
+public import Mathlib.Analysis.Normed.Module.DoubleDual
+public import Mathlib.Analysis.InnerProductSpace.PiL2
 
 
 

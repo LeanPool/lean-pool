@@ -7,6 +7,7 @@ Authors: Raúl E. Pariente-Martín, Pedro Tradacete
 module
 
 public import LeanPool.FBLOrderContinuity.Order
+public import Mathlib.Analysis.Normed.Lp.lpSpace
 public import Mathlib.Analysis.Convex.Gauge
 public import Mathlib.Analysis.Convex.SpecificFunctions.Basic
 public import Mathlib.Analysis.Normed.Affine.Convex
@@ -720,20 +721,12 @@ private theorem majorantDelta_norm_le (p : Exponent) (hp : p.IsFinite) :
       (by intro φ; change |φ x| ≤ _; simp [scalarPSum_fin1])
 
 /-- Evaluation on a free lattice as a lattice homomorphism. -/
-def freeEvaluation (p : Exponent) (φ : Dual E) : VecLatHom (Free p E) ℝ where
-  toFun f := f φ
-  map_add' := by intros; rfl
-  map_smul' := by intros; rfl
-  map_sup' := by intros; rfl
-  map_inf' := by intros; rfl
+abbrev freeEvaluation (p : Exponent) (φ : Dual E) : VecLatHom (Free p E) ℝ :=
+  evalVecLatHom p φ
 
 /-- Evaluation at a vector as a homomorphism of homogeneous-function lattices. -/
-def posHomEvaluation {n : ℕ} (a : Fin n → ℝ) : VecLatHom (posHomFunctions n) ℝ where
-  toFun H := H a
-  map_add' := by intros; rfl
-  map_smul' := by intros; rfl
-  map_sup' := by intros; rfl
-  map_inf' := by intros; rfl
+abbrev posHomEvaluation {n : ℕ} (a : Fin n → ℝ) : VecLatHom (posHomFunctions n) ℝ :=
+  realPosHomEval a
 
 private theorem freeCalculus_apply (p : Exponent) {n : ℕ} (f : Fin n → Free p E)
     (H : posHomFunctions n) (φ : Dual E) :
@@ -1675,19 +1668,7 @@ theorem fvl_majorant_nonempty (p : Exponent) (hp : p.IsFinite) (v : FVL E) :
 
 /-- Continuous evaluation on the free lattice at an arbitrary dual functional. -/
 def freeEvaluationCLM (p : Exponent) (φ : Dual E) : Free p E →L[ℝ] ℝ :=
-  (freeEvaluation p φ).toLinearMap.mkContinuous (‖φ‖ + 1) (by
-    intro f
-    have hr : 0 < ‖φ‖ + 1 := by positivity
-    have hψ : ‖(‖φ‖ + 1)⁻¹ • φ‖ ≤ 1 := by
-      rw [norm_smul, Real.norm_eq_abs, abs_of_pos (inv_pos.mpr hr)]
-      exact (inv_mul_le_one₀ hr).mpr (le_add_of_nonneg_right zero_le_one)
-    have h := ofReal_abs_le_freeNormExt p f ((‖φ‖ + 1)⁻¹ • φ) hψ
-    rw [freeNormExt_eq_norm] at h
-    have hb := (ENNReal.ofReal_le_ofReal_iff (norm_nonneg f)).mp h
-    rw [f.1.2.1 _ (inv_nonneg.mpr hr.le), abs_mul, abs_of_pos (inv_pos.mpr hr)] at hb
-    have hc := mul_le_mul_of_nonneg_left hb hr.le
-    rw [← mul_assoc, mul_inv_cancel₀ hr.ne', one_mul] at hc
-    exact hc)
+  (hpEvaluation p φ).comp (freeSublattice p E).toSubmodule.subtypeL
 
 private theorem norm_sub_lt_quarter_step {X : Type*} [SeminormedAddCommGroup X]
     (f : ℕ → X) (g : X)
@@ -2232,7 +2213,7 @@ private theorem ofFVL_map (p : Exponent) (T : F →L[ℝ] E) (v : FVL F) :
 /-- A finite family of vectors generates a p-compact disk contained in its linear span.
 The disk’s support at φ is exactly the scalar p-sum of the values of φ on that family.
 This supplies compact, finite-dimensional support majorants for algebraic free elements. -/
-theorem finite_family_disk_in_span [CompleteSpace E] (p : Exponent) (hp : p.IsFinite)
+theorem finite_family_disk_in_span (p : Exponent) (hp : p.IsFinite)
     {n : ℕ} (x : Fin n → E) : ∃ K : Set E, IsPCompactDisk p K ∧
       K ⊆ Submodule.span ℝ (Set.range x) ∧
       ∀ φ, support K φ = scalarPSum p (fun i => φ (x i)) := by
@@ -2770,7 +2751,7 @@ theorem outer_polytope_approximation (K : Set E) (hne : K.Nonempty)
       absConvexHull ℝ (A : Set E) ⊆ (1 + θ) • K :=
   outer_polytope_proof K hne ha hk hfd θ hθ
 
-private theorem finite_support_image_norm_le [CompleteSpace E] (p : Exponent) (hp : p.IsFinite)
+private theorem finite_support_image_norm_le (p : Exponent) (hp : p.IsFinite)
     (M : Submodule ℝ E) {n : ℕ} (x : Fin n → E) (K : Set E) (hKc : IsCompact K)
     (hsupport : ∀ φ, support K φ = scalarPSum p (fun i => φ (x i)))
     (L : Set M) (hLK : ∀ {a : M}, a ∈ L → (a : E) ∈ K)
@@ -3086,7 +3067,7 @@ theorem seriesDisk_properties [CompleteSpace E] (K : ℕ → Set E) (c : ℕ →
     exact hb
 
 /-- Section 2: bounded weak-star continuity for every parameter. -/
-theorem free_boundedWeakStar_continuous [CompleteSpace E] (p : Exponent) (f : Free p E) :
+theorem free_boundedWeakStar_continuous (p : Exponent) (f : Free p E) :
     @Continuous (Dual E) ℝ (boundedWeakStar E) inferInstance f := by
   let : TopologicalSpace (Dual E) := boundedWeakStar E
   rw [continuous_iff_continuousAt]

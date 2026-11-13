@@ -7,6 +7,7 @@ Authors: Raúl E. Pariente-Martín, Pedro Tradacete
 module
 
 public import LeanPool.FBLOrderContinuity.Support
+public import Mathlib.Topology.ContinuousMap.ZeroAtInfty
 public import LeanPool.FBLOrderContinuity.LpExtension
 public import Mathlib.Topology.Algebra.Module.Complement
 public import Mathlib.Topology.Algebra.Module.Equiv.Submodule
@@ -194,7 +195,7 @@ theorem poe_infinity_one (M : Submodule ℝ E)
 /-- For a closed subspace of a Banach space, POE at p is equivalent to a positive
 lower norm bound for the induced free-lattice inclusion. Finite exponents use the
 tensor-gauge extension theorem; the endpoint uses coordinatewise Hahn–Banach. -/
-theorem poe_iff_boundedBelow [CompleteSpace E] (p : Exponent)
+theorem poe_iff_boundedBelow (p : Exponent)
     (M : Submodule ℝ E) (hM : IsClosed (M : Set E)) :
     HasPOE p E M ↔ BoundedBelow (induced p M.subtypeL) := by
   constructor
@@ -217,7 +218,7 @@ theorem poe_iff_boundedBelow [CompleteSpace E] (p : Exponent)
 /-- The sharp version of `poe_iff_boundedBelow`: the pair has extension constant one
 exactly when the canonical free-lattice inclusion is isometric. This applies to every
 exponent and is used for Banach-space ideals and the canonical bidual pair. -/
-theorem poe_one_iff_isometry [CompleteSpace E] (p : Exponent)
+theorem poe_one_iff_isometry (p : Exponent)
     (M : Submodule ℝ E) (hM : IsClosed (M : Set E)) :
     POEWith p E M 1 ↔ Isometry (induced p M.subtypeL) := by
   constructor

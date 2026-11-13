@@ -6,9 +6,9 @@ Authors: Raúl E. Pariente-Martín, Pedro Tradacete
 
 module
 
-public import LeanPool.FBLOrderContinuity.ParameterWitness
+public import LeanPool.FBLOrderContinuity.Model
 public import Mathlib.Algebra.Order.BigOperators.Expect
-public import Mathlib.Analysis.InnerProductSpace.l2Space
+public import Mathlib.Analysis.InnerProductSpace.Basic
 public import Mathlib.Analysis.SpecialFunctions.Sqrt
 
 

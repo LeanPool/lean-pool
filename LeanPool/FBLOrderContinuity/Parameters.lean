@@ -7,6 +7,10 @@ Authors: Raúl E. Pariente-Martín, Pedro Tradacete
 module
 
 public import LeanPool.FBLOrderContinuity.ConvexityBound
+public import LeanPool.FBLOrderContinuity.HilbertComparison
+public import LeanPool.FBLOrderContinuity.ParameterWitness
+public import LeanPool.FBLOrderContinuity.BanLat.OrderDense
+public import Mathlib.Analysis.InnerProductSpace.l2Space
 public import Mathlib.Order.Cofinal
 
 

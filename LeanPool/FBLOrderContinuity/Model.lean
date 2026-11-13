@@ -10,23 +10,15 @@ public import Mathlib.Analysis.MeanInequalitiesPow
 public import Mathlib.Analysis.SpecialFunctions.Pow.Deriv
 public import LeanPool.FBLOrderContinuity.BanLat.Pi
 public import Mathlib.Analysis.Calculus.LocalExtr.Basic
-public import Mathlib.Analysis.Convex.Combination
 public import LeanPool.FBLOrderContinuity.BanLat.Free.FBL
 public import LeanPool.FBLOrderContinuity.BanLat.FunctionalCalculus
 public import LeanPool.FBLOrderContinuity.BanLat.Quotient
-public import LeanPool.FBLOrderContinuity.BanLat.Operators.OrderContinuous
-public import LeanPool.FBLOrderContinuity.BanLat.OrderDense
-public import LeanPool.FBLOrderContinuity.BanLat.Convergences.Uniform
-public import Mathlib.Analysis.Normed.Lp.PiLp
-public import Mathlib.Analysis.Normed.Lp.lpSpace
-public import Mathlib.Analysis.Normed.Module.DoubleDual
 public import Mathlib.Analysis.Normed.Operator.Banach
 public import Mathlib.Analysis.LocallyConvex.AbsConvex
 public import Mathlib.Analysis.LocallyConvex.Separation
 public import Mathlib.Topology.Algebra.Module.ContinuousLinearMap.Quotient
 public import Mathlib.Topology.Algebra.Module.FiniteDimension
 public import Mathlib.Topology.Algebra.Module.Spaces.CompactConvergenceCLM
-public import Mathlib.Topology.ContinuousMap.ZeroAtInfty
 public import Mathlib.Topology.ContinuousMap.StoneWeierstrass
 public import Mathlib.Topology.Compactness.CompactlyGeneratedSpace
 
@@ -711,63 +703,68 @@ instance (p : Exponent) : VectorLattice (HP p E) :=
 instance (p : Exponent) : CoeFun (HP p E) (fun _ => Dual E → ℝ) := ⟨fun f => f.1⟩
 instance (p : Exponent) : Norm (HP p E) := ⟨fun f => (freeNormExt p f.1).toReal⟩
 
+-- Opaque norm proofs keep the instance value small during later type-class normalization.
+private theorem hp_norm_smul (p : Exponent) (c : ℝ) (f : HP p E) :
+    ‖c • f‖ = ‖c‖ * ‖f‖ := by
+  change (freeNormExt p (c • (f : Dual E → ℝ))).toReal =
+    ‖c‖ * (freeNormExt p f.1).toReal
+  rw [freeNormExt_smul, ENNReal.toReal_mul,
+    ENNReal.toReal_ofReal (abs_nonneg c), Real.norm_eq_abs]
+
+private theorem hp_norm_triangle (p : Exponent) (f g : HP p E) :
+    ‖f + g‖ ≤ ‖f‖ + ‖g‖ := by
+  change (freeNormExt p (f.1 + g.1)).toReal ≤
+    (freeNormExt p f.1).toReal + (freeNormExt p g.1).toReal
+  calc
+    (freeNormExt p (f.1 + g.1)).toReal ≤
+        (freeNormExt p f.1 + freeNormExt p g.1).toReal := by
+      apply ENNReal.toReal_mono
+      · exact ENNReal.add_ne_top.mpr ⟨ne_of_lt f.2.2, ne_of_lt g.2.2⟩
+      · exact freeNormExt_add_le p f.1 g.1
+    _ ≤ (freeNormExt p f.1).toReal + (freeNormExt p g.1).toReal :=
+      ENNReal.toReal_add_le
+
+private theorem hp_norm_eq_zero_iff (p : Exponent) (f : HP p E) :
+    ‖f‖ = 0 ↔ f = 0 := by
+  constructor
+  · intro hnorm
+    have hzero : freeNormExt p f.1 = 0 := by
+      have hfin : freeNormExt p f.1 ≠ ⊤ := ne_of_lt f.2.2
+      exact (ENNReal.toReal_eq_zero_iff _).mp hnorm |>.resolve_right hfin
+    apply Subtype.ext
+    funext φ
+    change f.1 φ = 0
+    let ψ : Dual E := ‖φ‖⁻¹ • φ
+    have hψnorm : ‖ψ‖ ≤ 1 := by
+      change ‖‖φ‖⁻¹ • φ‖ ≤ 1
+      exact mem_closedBall_zero_iff.mp (inv_norm_smul_mem_unitClosedBall φ)
+    have hψval : f.1 ψ = 0 := by
+      have hle := ofReal_abs_le_freeNormExt p f.1 ψ hψnorm
+      rw [hzero] at hle
+      have habs : |f.1 ψ| ≤ 0 :=
+        (ENNReal.ofReal_eq_zero.mp (le_zero_iff.mp hle))
+      exact abs_eq_zero.mp (le_antisymm habs (abs_nonneg _))
+    by_cases hφ : φ = 0
+    · subst φ
+      have hz := f.2.1 0 (le_refl 0) (0 : Dual E)
+      simpa using hz
+    · have hφnorm : ‖φ‖ ≠ 0 := norm_ne_zero_iff.mpr hφ
+      have hsmul : ‖φ‖ • ψ = φ := by
+        dsimp [ψ]
+        rw [smul_smul, mul_inv_cancel₀ hφnorm, one_smul]
+      rw [← hsmul, f.2.1 ‖φ‖ (norm_nonneg _) ψ, hψval, mul_zero]
+  · intro hf
+    subst f
+    change (freeNormExt p (fun _ : Dual E => 0)).toReal = 0
+    rw [freeNormExt_zero]
+    rfl
+
 instance hpNormedAddCommGroup (p : Exponent) : NormedAddCommGroup (HP p E) :=
   NormedAddCommGroup.ofCore (𝕜 := ℝ) {
-    norm_nonneg := by
-      intro f
-      exact ENNReal.toReal_nonneg
-    norm_smul := by
-      intro c f
-      change (freeNormExt p (c • (f : Dual E → ℝ))).toReal =
-        ‖c‖ * (freeNormExt p f.1).toReal
-      rw [freeNormExt_smul, ENNReal.toReal_mul,
-        ENNReal.toReal_ofReal (abs_nonneg c), Real.norm_eq_abs]
-    norm_triangle := by
-      intro f g
-      change (freeNormExt p (f.1 + g.1)).toReal ≤
-        (freeNormExt p f.1).toReal + (freeNormExt p g.1).toReal
-      calc
-        (freeNormExt p (f.1 + g.1)).toReal ≤
-            (freeNormExt p f.1 + freeNormExt p g.1).toReal := by
-          apply ENNReal.toReal_mono
-          · exact ENNReal.add_ne_top.mpr ⟨ne_of_lt f.2.2, ne_of_lt g.2.2⟩
-          · exact freeNormExt_add_le p f.1 g.1
-        _ ≤ (freeNormExt p f.1).toReal + (freeNormExt p g.1).toReal :=
-          ENNReal.toReal_add_le
-    norm_eq_zero_iff := by
-      intro f
-      constructor
-      · intro hnorm
-        have hzero : freeNormExt p f.1 = 0 := by
-          have hfin : freeNormExt p f.1 ≠ ⊤ := ne_of_lt f.2.2
-          exact (ENNReal.toReal_eq_zero_iff _).mp hnorm |>.resolve_right hfin
-        apply Subtype.ext
-        funext φ
-        change f.1 φ = 0
-        let ψ : Dual E := ‖φ‖⁻¹ • φ
-        have hψnorm : ‖ψ‖ ≤ 1 := by
-          change ‖‖φ‖⁻¹ • φ‖ ≤ 1
-          exact mem_closedBall_zero_iff.mp (inv_norm_smul_mem_unitClosedBall φ)
-        have hψval : f.1 ψ = 0 := by
-          have hle := ofReal_abs_le_freeNormExt p f.1 ψ hψnorm
-          rw [hzero] at hle
-          have habs : |f.1 ψ| ≤ 0 :=
-            (ENNReal.ofReal_eq_zero.mp (le_zero_iff.mp hle))
-          exact abs_eq_zero.mp (le_antisymm habs (abs_nonneg _))
-        by_cases hφ : φ = 0
-        · subst φ
-          have hz := f.2.1 0 (le_refl 0) (0 : Dual E)
-          simpa using hz
-        · have hφnorm : ‖φ‖ ≠ 0 := norm_ne_zero_iff.mpr hφ
-          have hsmul : ‖φ‖ • ψ = φ := by
-            dsimp [ψ]
-            rw [smul_smul, mul_inv_cancel₀ hφnorm, one_smul]
-          rw [← hsmul, f.2.1 ‖φ‖ (norm_nonneg _) ψ, hψval, mul_zero]
-      · intro hf
-        subst f
-        change (freeNormExt p (fun _ : Dual E => 0)).toReal = 0
-        rw [freeNormExt_zero]
-        rfl }
+    norm_nonneg := fun _ => ENNReal.toReal_nonneg
+    norm_smul := by exact hp_norm_smul p
+    norm_triangle := by exact hp_norm_triangle p
+    norm_eq_zero_iff := by exact hp_norm_eq_zero_iff p }
 
 instance hpNormedVectorLattice (p : Exponent) : NormedVectorLattice (HP p E) where
   toVectorLattice := inferInstance
@@ -776,12 +773,7 @@ instance hpNormedVectorLattice (p : Exponent) : NormedVectorLattice (HP p E) whe
     change (freeNormExt p f.1).toReal ≤ (freeNormExt p g.1).toReal
     exact ENNReal.toReal_mono (ne_of_lt g.2.2)
       (freeNormExt_mono_abs p (fun φ => hfg φ))
-  norm_smul := by
-    intro c f
-    change (freeNormExt p (c • (f : Dual E → ℝ))).toReal =
-      ‖c‖ * (freeNormExt p f.1).toReal
-    rw [freeNormExt_smul, ENNReal.toReal_mul,
-      ENNReal.toReal_ofReal (abs_nonneg c), Real.norm_eq_abs]
+  norm_smul := by exact hp_norm_smul p
 
 private theorem hp_unit_eval_le (p : Exponent) (f : HP p E) (φ : Dual E)
     (hφ : ‖φ‖ ≤ 1) : |f φ| ≤ ‖f‖ := by
@@ -1062,23 +1054,31 @@ theorem radialEval_eq_liftToFree (p : Exponent) (φ : Dual E) (v : FVL E) :
   have h := DFunLike.congr_fun (hleft.trans hright.symm) v
   exact h
 
+/-- Radial extension of an algebraic free element has finite free norm. -/
+theorem fvlFunction_mem_finiteNormSublattice (p : Exponent) (v : FVL E) :
+    fvlFunction v ∈ finiteNormSublattice p E := by
+  have hfun : fvlFunction v = (liftToFree p v).1.1 :=
+    funext fun φ => radialEval_eq_liftToFree p φ v
+  rw [hfun]
+  exact (liftToFree p v).1.2
+
+/-- The radial model of an algebraic free element belongs to the closed generated lattice. -/
+theorem fvlFunction_mem_freeSublattice (p : Exponent) (v : FVL E) :
+    (⟨fvlFunction v, fvlFunction_mem_finiteNormSublattice p v⟩ : HP p E) ∈
+      freeSublattice p E := by
+  have heq : (⟨fvlFunction v, fvlFunction_mem_finiteNormSublattice p v⟩ : HP p E) =
+      (liftToFree p v).1 := by
+    apply Subtype.ext
+    exact funext fun φ => radialEval_eq_liftToFree p φ v
+  rw [heq]
+  exact (liftToFree p v).2
+
 /-- Embed BanLat’s algebraic free vector lattice into `Free p E` by radial extension from
 the dual unit ball. The embedding preserves lattice operations, agrees with `delta` on
 generators, and has norm-dense range. -/
 def ofFVL (p : Exponent) : VecLatHom (FVL E) (Free p E) where
-  toFun v := by
-    let hmem : fvlFunction v ∈ finiteNormSublattice p E := by
-      have hfun : fvlFunction v = (liftToFree p v).1.1 :=
-        funext fun φ => radialEval_eq_liftToFree p φ v
-      rw [hfun]
-      exact (liftToFree p v).1.2
-    have hmemFree : (⟨fvlFunction v, hmem⟩ : HP p E) ∈ freeSublattice p E := by
-      have heq : (⟨fvlFunction v, hmem⟩ : HP p E) = (liftToFree p v).1 := by
-        apply Subtype.ext
-        exact funext fun φ => radialEval_eq_liftToFree p φ v
-      rw [heq]
-      exact (liftToFree p v).2
-    exact ⟨⟨fvlFunction v, hmem⟩, hmemFree⟩
+  toFun v := ⟨⟨fvlFunction v, fvlFunction_mem_finiteNormSublattice p v⟩,
+    fvlFunction_mem_freeSublattice p v⟩
   map_add' := by
     intro v w
     apply Subtype.ext
@@ -1282,11 +1282,14 @@ theorem denseRange_ofFVL (p : Exponent) : DenseRange (ofFVL p (E := E)) := by
       trivial
     exact closure_mono hι_range hz
 
+/-- The norm of an algebraic element is the concrete extended norm’s real part. -/
+theorem norm_ofFVL_eq_toReal (p : Exponent) (v : FVL E) :
+    ‖ofFVL p v‖ = (freeNormExt p (fvlFunction v)).toReal := rfl
+
 /-- The endpoint free norm is contractive on the common algebraic free lattice. -/
 theorem norm_ofFVL_infinity_le (p : Exponent) (v : FVL E) :
     ‖ofFVL Exponent.infinity v‖ ≤ ‖ofFVL p v‖ := by
-  change (freeNormExt Exponent.infinity (fvlFunction v)).toReal ≤
-    (freeNormExt p (fvlFunction v)).toReal
+  rw [norm_ofFVL_eq_toReal, norm_ofFVL_eq_toReal]
   exact ENNReal.toReal_mono (ne_of_lt (ofFVL p v).1.2.2)
     (freeNormExt_infinity_le p (fvlFunction v))
 
@@ -1294,8 +1297,7 @@ theorem norm_ofFVL_infinity_le (p : Exponent) (v : FVL E) :
 decrease the free norm. This includes the target endpoint ∞. -/
 theorem norm_ofFVL_mono {p q : Exponent} (hpq : p ≤ q) (v : FVL E) :
     ‖ofFVL q v‖ ≤ ‖ofFVL p v‖ := by
-  change (freeNormExt q (fvlFunction v)).toReal ≤
-    (freeNormExt p (fvlFunction v)).toReal
+  rw [norm_ofFVL_eq_toReal, norm_ofFVL_eq_toReal]
   exact ENNReal.toReal_mono (ne_of_lt (ofFVL p v).1.2.2)
     (freeNormExt_mono hpq (fvlFunction v) (ofFVL p v).1.2.1)
 
@@ -1346,13 +1348,15 @@ private theorem normAdmissible_one_component_norm_le {n : ℕ}
       (fun j _ => abs_nonneg _) (Finset.mem_univ i)
   simpa [Real.norm_eq_abs] using hi.trans hsum
 
-private theorem freeNormExt_one_ofFVL_eq_banlat (v : FVL E) :
-    freeNormExt Exponent.one (ofFVL Exponent.one v).1.1 =
-      _root_.FBL.freeNormExt E (_root_.FBL.ofFVLv v).1.1 := by
+-- Compare the plain functions before specializing to completed free-lattice elements.
+private theorem freeNormExt_one_eq_of_restriction (f : Dual E → ℝ)
+    (g : C(FVLv.dualUnitBall E, ℝ))
+    (hfg : ∀ ψ, f (WeakDual.toStrongDual ψ.1) = g ψ) :
+    freeNormExt Exponent.one f = _root_.FBL.freeNormExt E g := by
   have htop : (Exponent.one : Exponent).1 ≠ ⊤ := by norm_num [Exponent.one]
+  rw [freeNormExt, ite_eq_right htop, _root_.FBL.freeNormExt]
   apply le_antisymm
-  · rw [freeNormExt, ite_eq_right htop]
-    refine iSup_le fun n => iSup_le fun φ => iSup_le fun hφ => ?_
+  · refine iSup_le fun n => iSup_le fun φ => iSup_le fun hφ => ?_
     let ψ : Fin n → FVLv.dualUnitBall E := fun i =>
       ⟨StrongDual.toWeakDual (φ i), by
         dsimp [FVLv.dualUnitBall]
@@ -1363,46 +1367,30 @@ private theorem freeNormExt_one_ofFVL_eq_banlat (v : FVL E) :
         intro x hx
         simpa only [ψ, scalarPSum_one_eq_sum, WeakDual.toStrongDual_apply,
           StrongDual.toWeakDual_apply] using hφ x hx)
-    have hfun (i : Fin n) : ofFVL Exponent.one v (φ i) =
-        (_root_.FBL.ofFVLv v : _root_.FBL E) (ψ i) := by
-      calc
-        ofFVL Exponent.one v (φ i) =
-            ofFVL Exponent.one v (WeakDual.toStrongDual (ψ i).1) := rfl
-        _ = v (ψ i) := ofFVL_apply_ball Exponent.one v (ψ i)
-        _ = (_root_.FBL.ofFVLv v : _root_.FBL E) (ψ i) :=
-          (banlat_ofFVLv_apply v (ψ i)).symm
-    calc
-      ENNReal.ofReal (scalarPSum Exponent.one (fun i => ofFVL Exponent.one v (φ i))) =
-          ENNReal.ofReal (∑ i, |(_root_.FBL.ofFVLv v : _root_.FBL E) (ψ i)|) := by
-        congr 1
-        rw [scalarPSum_one_eq_sum]
-        apply Finset.sum_congr rfl
-        intro i _
-        rw [hfun i]
-      _ ≤ _root_.FBL.freeNormExt E (_root_.FBL.ofFVLv v).1.1 := by
-        rw [_root_.FBL.freeNormExt]
-        exact le_iSup_of_le n (le_iSup_of_le ψ (le_iSup_of_le hψ le_rfl))
-  · rw [_root_.FBL.freeNormExt]
-    refine iSup_le fun n => iSup_le fun ψ => iSup_le fun hψ => ?_
+    have heq : scalarPSum Exponent.one (fun i => f (φ i)) = ∑ i, |g (ψ i)| := by
+      rw [scalarPSum_one_eq_sum]
+      apply Finset.sum_congr rfl
+      intro i _
+      exact congrArg abs (hfg (ψ i))
+    rw [heq]
+    exact le_iSup_of_le n (le_iSup_of_le ψ (le_iSup_of_le hψ le_rfl))
+  · refine iSup_le fun n => iSup_le fun ψ => iSup_le fun hψ => ?_
     let φ : Fin n → Dual E := fun i => WeakDual.toStrongDual (ψ i).1
-    have hφ : NormAdmissible Exponent.one φ :=
-      (normAdmissible_one_iff_ball ψ).mpr hψ
-    have hfun (i : Fin n) :
-        (_root_.FBL.ofFVLv v : _root_.FBL E) (ψ i) =
-          ofFVL Exponent.one v (φ i) := by
-      rw [banlat_ofFVLv_apply, ← ofFVL_apply_ball]
-    calc
-      ENNReal.ofReal (∑ i, |(_root_.FBL.ofFVLv v : _root_.FBL E) (ψ i)|) =
-          ENNReal.ofReal (scalarPSum Exponent.one
-            (fun i => ofFVL Exponent.one v (φ i))) := by
-        congr 1
-        rw [scalarPSum_one_eq_sum]
-        apply Finset.sum_congr rfl
-        intro i _
-        rw [hfun i]
-      _ ≤ freeNormExt Exponent.one (ofFVL Exponent.one v).1.1 := by
-        rw [freeNormExt, ite_eq_right htop]
-        exact le_iSup_of_le n (le_iSup_of_le φ (le_iSup_of_le hφ le_rfl))
+    have hφ : NormAdmissible Exponent.one φ := (normAdmissible_one_iff_ball ψ).mpr hψ
+    have heq : (∑ i, |g (ψ i)|) = scalarPSum Exponent.one (fun i => f (φ i)) := by
+      rw [scalarPSum_one_eq_sum]
+      apply Finset.sum_congr rfl
+      intro i _
+      exact congrArg abs (hfg (ψ i)).symm
+    rw [heq]
+    exact le_iSup_of_le n (le_iSup_of_le φ (le_iSup_of_le hφ le_rfl))
+
+private theorem freeNormExt_one_ofFVL_eq_banlat (v : FVL E) :
+    freeNormExt Exponent.one (ofFVL Exponent.one v).1.1 =
+      _root_.FBL.freeNormExt E (_root_.FBL.ofFVLv v).1.1 := by
+  apply freeNormExt_one_eq_of_restriction
+  intro ψ
+  exact (ofFVL_apply_ball Exponent.one v ψ).trans (banlat_ofFVLv_apply v ψ).symm
 
 theorem norm_ofFVL_one_eq_banlat (v : FVL E) :
     ‖ofFVL Exponent.one v‖ = ‖_root_.FBL.ofFVLv v‖ := by
@@ -1440,55 +1428,44 @@ private theorem banlatLinearEquiv_ofFVL (v : FVL E) :
     (_root_.FBL.denseRange_ofFVLv (E := E))
     (fun w => (norm_ofFVL_one_eq_banlat w).symm) v
 
+-- Keep density arguments abstract so their proofs do not repeatedly reduce the concrete norms.
+private theorem map_binary_of_dense_range {A X Y : Type*}
+    [TopologicalSpace X] [TopologicalSpace Y] [T2Space Y]
+    (i : A → X) (hi : DenseRange i) (f : X → Y) (hf : Continuous f)
+    (sourceOperation : X → X → X) (targetOperation : Y → Y → Y)
+    (hX : Continuous (fun z : X × X => sourceOperation z.1 z.2))
+    (hY : Continuous (fun z : Y × Y => targetOperation z.1 z.2))
+    (hcore : ∀ a b, f (sourceOperation (i a) (i b)) = targetOperation (f (i a)) (f (i b)))
+    (x y : X) : f (sourceOperation x y) = targetOperation (f x) (f y) := by
+  have heq := (hi.prodMap hi).equalizer (hf.comp hX)
+    (hY.comp ((hf.comp continuous_fst).prodMk (hf.comp continuous_snd))) (by
+      funext z
+      exact hcore z.1 z.2)
+  exact congrFun heq (x, y)
+
 private theorem banlatLinearEquiv_map_sup (f g : Free Exponent.one E) :
     banlatLinearEquiv (f ⊔ g) = banlatLinearEquiv f ⊔ banlatLinearEquiv g := by
-  let e : FVL E × FVL E → Free Exponent.one E × Free Exponent.one E :=
-    fun z => (ofFVL Exponent.one z.1, ofFVL Exponent.one z.2)
-  have he : DenseRange e :=
-    (denseRange_ofFVL Exponent.one (E := E)).prodMap
-      (denseRange_ofFVL Exponent.one (E := E))
-  have hg : Continuous (fun z : Free Exponent.one E × Free Exponent.one E =>
-      banlatLinearEquiv (z.1 ⊔ z.2)) :=
-    banlatLinearEquiv.continuous.comp (continuous_fst.sup continuous_snd)
-  have hh : Continuous (fun z : Free Exponent.one E × Free Exponent.one E =>
-      banlatLinearEquiv z.1 ⊔ banlatLinearEquiv z.2) :=
-    (banlatLinearEquiv.continuous.comp continuous_fst).sup
-      (banlatLinearEquiv.continuous.comp continuous_snd)
-  have hEq := he.equalizer hg hh (by
-    funext z
-    rcases z with ⟨v, w⟩
-    change banlatLinearEquiv (ofFVL Exponent.one v ⊔ ofFVL Exponent.one w) =
-      banlatLinearEquiv (ofFVL Exponent.one v) ⊔
-        banlatLinearEquiv (ofFVL Exponent.one w)
-    rw [← map_sup (ofFVL Exponent.one (E := E)) v w,
-      banlatLinearEquiv_ofFVL, banlatLinearEquiv_ofFVL,
-      banlatLinearEquiv_ofFVL, banlat_ofFVLv_sup])
-  exact congrFun hEq (f, g)
+  refine map_binary_of_dense_range
+    (ofFVL Exponent.one (E := E)) (denseRange_ofFVL Exponent.one)
+    (banlatLinearEquiv (E := E)) banlatLinearEquiv.continuous
+    (· ⊔ ·) (· ⊔ ·) (continuous_fst.sup continuous_snd)
+    (continuous_fst.sup continuous_snd) ?_ f g
+  intro v w
+  rw [← map_sup (ofFVL Exponent.one (E := E)) v w,
+    banlatLinearEquiv_ofFVL, banlatLinearEquiv_ofFVL,
+    banlatLinearEquiv_ofFVL, banlat_ofFVLv_sup]
 
 private theorem banlatLinearEquiv_map_inf (f g : Free Exponent.one E) :
     banlatLinearEquiv (f ⊓ g) = banlatLinearEquiv f ⊓ banlatLinearEquiv g := by
-  let e : FVL E × FVL E → Free Exponent.one E × Free Exponent.one E :=
-    fun z => (ofFVL Exponent.one z.1, ofFVL Exponent.one z.2)
-  have he : DenseRange e :=
-    (denseRange_ofFVL Exponent.one (E := E)).prodMap
-      (denseRange_ofFVL Exponent.one (E := E))
-  have hg : Continuous (fun z : Free Exponent.one E × Free Exponent.one E =>
-      banlatLinearEquiv (z.1 ⊓ z.2)) :=
-    banlatLinearEquiv.continuous.comp (continuous_fst.inf continuous_snd)
-  have hh : Continuous (fun z : Free Exponent.one E × Free Exponent.one E =>
-      banlatLinearEquiv z.1 ⊓ banlatLinearEquiv z.2) :=
-    (banlatLinearEquiv.continuous.comp continuous_fst).inf
-      (banlatLinearEquiv.continuous.comp continuous_snd)
-  have hEq := he.equalizer hg hh (by
-    funext z
-    rcases z with ⟨v, w⟩
-    change banlatLinearEquiv (ofFVL Exponent.one v ⊓ ofFVL Exponent.one w) =
-      banlatLinearEquiv (ofFVL Exponent.one v) ⊓
-        banlatLinearEquiv (ofFVL Exponent.one w)
-    rw [← map_inf (ofFVL Exponent.one (E := E)) v w,
-      banlatLinearEquiv_ofFVL, banlatLinearEquiv_ofFVL,
-      banlatLinearEquiv_ofFVL, banlat_ofFVLv_inf])
-  exact congrFun hEq (f, g)
+  refine map_binary_of_dense_range
+    (ofFVL Exponent.one (E := E)) (denseRange_ofFVL Exponent.one)
+    (banlatLinearEquiv (E := E)) banlatLinearEquiv.continuous
+    (· ⊓ ·) (· ⊓ ·) (continuous_fst.inf continuous_snd)
+    (continuous_fst.inf continuous_snd) ?_ f g
+  intro v w
+  rw [← map_inf (ofFVL Exponent.one (E := E)) v w,
+    banlatLinearEquiv_ofFVL, banlatLinearEquiv_ofFVL,
+    banlatLinearEquiv_ofFVL, banlat_ofFVLv_inf]
 
 private theorem banlat_eval_abs_le_norm (g : _root_.FBL E)
     (ψ : FVLv.dualUnitBall E) : |g ψ| ≤ ‖g‖ := by
@@ -2445,47 +2422,25 @@ private theorem endpointExtension_norm_le (p : Exponent) (x : Free p E) :
 
 theorem endpointExtension_map_sup (p : Exponent) (f g : Free p E) :
     endpointExtension p (f ⊔ g) = endpointExtension p f ⊔ endpointExtension p g := by
-  let e : FBLOrderContinuousLH.FVL E × FBLOrderContinuousLH.FVL E →
-      Free p E × Free p E := fun z => (ofFVL p z.1, ofFVL p z.2)
-  have he : DenseRange e := (denseRange_ofFVL p (E := E)).prodMap
-    (denseRange_ofFVL p (E := E))
-  have hleft : Continuous (fun z : Free p E × Free p E => endpointExtension p (z.1 ⊔ z.2)) :=
-    (endpointExtension p).continuous.comp (continuous_fst.sup continuous_snd)
-  have hright : Continuous (fun z : Free p E × Free p E =>
-      endpointExtension p z.1 ⊔ endpointExtension p z.2) :=
-    ((endpointExtension p).continuous.comp continuous_fst).sup
-      ((endpointExtension p).continuous.comp continuous_snd)
-  have heq := he.equalizer hleft hright (by
-    funext z
-    rcases z with ⟨v, w⟩
-    change endpointExtension p (ofFVL p v ⊔ ofFVL p w) =
-      endpointExtension p (ofFVL p v) ⊔ endpointExtension p (ofFVL p w)
-    rw [← map_sup (ofFVL p (E := E)) v w,
-      endpointExtension_ofFVL, endpointExtension_ofFVL, endpointExtension_ofFVL,
-      map_sup (ofFVL Exponent.infinity (E := E)) v w])
-  exact congrFun heq (f, g)
+  refine map_binary_of_dense_range (ofFVL p (E := E)) (denseRange_ofFVL p)
+    (endpointExtension p) (endpointExtension p).continuous
+    (· ⊔ ·) (· ⊔ ·) (continuous_fst.sup continuous_snd)
+    (continuous_fst.sup continuous_snd) ?_ f g
+  intro v w
+  rw [← map_sup (ofFVL p (E := E)) v w,
+    endpointExtension_ofFVL, endpointExtension_ofFVL, endpointExtension_ofFVL,
+    map_sup (ofFVL Exponent.infinity (E := E)) v w]
 
 theorem endpointExtension_map_inf (p : Exponent) (f g : Free p E) :
     endpointExtension p (f ⊓ g) = endpointExtension p f ⊓ endpointExtension p g := by
-  let e : FBLOrderContinuousLH.FVL E × FBLOrderContinuousLH.FVL E →
-      Free p E × Free p E := fun z => (ofFVL p z.1, ofFVL p z.2)
-  have he : DenseRange e := (denseRange_ofFVL p (E := E)).prodMap
-    (denseRange_ofFVL p (E := E))
-  have hleft : Continuous (fun z : Free p E × Free p E => endpointExtension p (z.1 ⊓ z.2)) :=
-    (endpointExtension p).continuous.comp (continuous_fst.inf continuous_snd)
-  have hright : Continuous (fun z : Free p E × Free p E =>
-      endpointExtension p z.1 ⊓ endpointExtension p z.2) :=
-    ((endpointExtension p).continuous.comp continuous_fst).inf
-      ((endpointExtension p).continuous.comp continuous_snd)
-  have heq := he.equalizer hleft hright (by
-    funext z
-    rcases z with ⟨v, w⟩
-    change endpointExtension p (ofFVL p v ⊓ ofFVL p w) =
-      endpointExtension p (ofFVL p v) ⊓ endpointExtension p (ofFVL p w)
-    rw [← map_inf (ofFVL p (E := E)) v w,
-      endpointExtension_ofFVL, endpointExtension_ofFVL, endpointExtension_ofFVL,
-      map_inf (ofFVL Exponent.infinity (E := E)) v w])
-  exact congrFun heq (f, g)
+  refine map_binary_of_dense_range (ofFVL p (E := E)) (denseRange_ofFVL p)
+    (endpointExtension p) (endpointExtension p).continuous
+    (· ⊓ ·) (· ⊓ ·) (continuous_fst.inf continuous_snd)
+    (continuous_fst.inf continuous_snd) ?_ f g
+  intro v w
+  rw [← map_inf (ofFVL p (E := E)) v w,
+    endpointExtension_ofFVL, endpointExtension_ofFVL, endpointExtension_ofFVL,
+    map_inf (ofFVL Exponent.infinity (E := E)) v w]
 
 private theorem endpointExtension_apply (p : Exponent) (f : Free p E) (φ : Dual E) :
     endpointExtension p f φ = f φ := by
@@ -3908,44 +3863,28 @@ private theorem exists_algebraic_lift_extension (p : Exponent) {X : Type w}
   rw [LinearEquiv.symm_apply_apply]
 
 private theorem algebraic_lift_extension_map_sup (p : Exponent) {X : Type w}
-    [NormedAddCommGroup X] [Lattice X] [IsOrderedAddMonoid X] [BanachLattice X]
+    [NormedAddCommGroup X] [Lattice X] [IsOrderedAddMonoid X] [NormedVectorLattice X]
     (S : E →L[ℝ] X) (A : Free p E →L[ℝ] X)
     (hA : ∀ v : FVLv E, A (ofFVL p v) = FVLv.lift S.toLinearMap v)
     (f g : Free p E) : A (f ⊔ g) = A f ⊔ A g := by
-  have heq := ((denseRange_ofFVL p (E := E)).prodMap
-    (denseRange_ofFVL p (E := E))).equalizer
-    (A.continuous.comp NormedVectorLattice.continuous_sup)
-    (NormedVectorLattice.continuous_sup.comp
-      ((A.continuous.comp continuous_fst).prodMk
-        (A.continuous.comp continuous_snd))) (by
-      funext z
-      change A (ofFVL p z.1 ⊔ ofFVL p z.2) =
-        A (ofFVL p z.1) ⊔ A (ofFVL p z.2)
-      have hmap : ofFVL p (z.1 ⊔ z.2) =
-          ofFVL p z.1 ⊔ ofFVL p z.2 := (ofFVL p).map_sup' z.1 z.2
-      rw [← hmap, hA, hA, hA]
-      exact (FVLv.lift S.toLinearMap).map_sup' z.1 z.2)
-  exact congrFun heq (f, g)
+  refine map_binary_of_dense_range (ofFVL p (E := E)) (denseRange_ofFVL p)
+    A A.continuous (· ⊔ ·) (· ⊔ ·) (continuous_fst.sup continuous_snd)
+    (continuous_fst.sup continuous_snd) ?_ f g
+  intro v w
+  rw [← map_sup (ofFVL p (E := E)) v w, hA, hA, hA]
+  exact (FVLv.lift S.toLinearMap).map_sup' v w
 
 private theorem algebraic_lift_extension_map_inf (p : Exponent) {X : Type w}
-    [NormedAddCommGroup X] [Lattice X] [IsOrderedAddMonoid X] [BanachLattice X]
+    [NormedAddCommGroup X] [Lattice X] [IsOrderedAddMonoid X] [NormedVectorLattice X]
     (S : E →L[ℝ] X) (A : Free p E →L[ℝ] X)
     (hA : ∀ v : FVLv E, A (ofFVL p v) = FVLv.lift S.toLinearMap v)
     (f g : Free p E) : A (f ⊓ g) = A f ⊓ A g := by
-  have heq := ((denseRange_ofFVL p (E := E)).prodMap
-    (denseRange_ofFVL p (E := E))).equalizer
-    (A.continuous.comp NormedVectorLattice.continuous_inf)
-    (NormedVectorLattice.continuous_inf.comp
-      ((A.continuous.comp continuous_fst).prodMk
-        (A.continuous.comp continuous_snd))) (by
-      funext z
-      change A (ofFVL p z.1 ⊓ ofFVL p z.2) =
-        A (ofFVL p z.1) ⊓ A (ofFVL p z.2)
-      have hmap : ofFVL p (z.1 ⊓ z.2) =
-          ofFVL p z.1 ⊓ ofFVL p z.2 := (ofFVL p).map_inf' z.1 z.2
-      rw [← hmap, hA, hA, hA]
-      exact (FVLv.lift S.toLinearMap).map_inf' z.1 z.2)
-  exact congrFun heq (f, g)
+  refine map_binary_of_dense_range (ofFVL p (E := E)) (denseRange_ofFVL p)
+    A A.continuous (· ⊓ ·) (· ⊓ ·) (continuous_fst.inf continuous_snd)
+    (continuous_fst.inf continuous_snd) ?_ f g
+  intro v w
+  rw [← map_inf (ofFVL p (E := E)) v w, hA, hA, hA]
+  exact (FVLv.lift S.toLinearMap).map_inf' v w
 
 /-- A norm estimate on the algebraic free vector lattice extends its lift to the completed
 free Banach lattice, preserving both lattice operations. -/
@@ -4796,7 +4735,7 @@ private theorem surjective_of_dual_bound {E F : Type*} [NormedAddCommGroup E] [N
   exact ⟨x, by simpa using feq⟩
 
 /-- Surjectivity of the induced free-lattice map forces surjectivity of the original map. -/
-theorem induced_surjective_imp [CompleteSpace E] [CompleteSpace F]
+theorem induced_surjective_imp [CompleteSpace F]
     (p : Exponent) (T : F →L[ℝ] E)
     (h : Function.Surjective (induced p T)) : Function.Surjective T := by
   obtain ⟨C, hC, hb⟩ := induced_surjective_dual_bound p T h

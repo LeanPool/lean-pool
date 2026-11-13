@@ -215,8 +215,11 @@ theorem of_latticeLinearIndependent : LatticeLinearIndependent (of : α → FVL 
 
 /-- A finite lattice-expression representation of a free-vector-lattice element. -/
 structure Repr (f : FVL α) where
+  /-- The number of generators in this representation. -/
   n : ℕ
+  /-- The generators at which the lattice expression is evaluated. -/
   a : Fin n → α
+  /-- The lattice expression representing the element. -/
   e : LLexpr n
   eval_eq : LLexpr.eval (fun i => of (a i)) e = f
 

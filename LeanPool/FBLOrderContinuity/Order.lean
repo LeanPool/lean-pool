@@ -7,6 +7,8 @@ Authors: Raúl E. Pariente-Martín, Pedro Tradacete
 module
 
 public import LeanPool.FBLOrderContinuity.Model
+public import LeanPool.FBLOrderContinuity.BanLat.Operators.OrderContinuous
+public import Mathlib.Analysis.Normed.Module.DoubleDual
 public import Mathlib.ModelTheory.Substructures
 
 
@@ -325,7 +327,7 @@ theorem disjoint_positive_countable (p : Exponent) (A : Set (Free p E))
   exact Set.mem_iUnion.mpr ⟨n, Set.mem_iUnion.mpr ⟨m,
     Set.mem_iUnion.mpr ⟨k, hf, φ, x, hφ, hx, hcert⟩⟩⟩
 
-private theorem countable_disjoint_detection [CompleteSpace E] (p : Exponent)
+private theorem countable_disjoint_detection (p : Exponent)
     (C : Set (Free p E)) (hC : ∀ f ∈ C, 0 ≤ f) :
     ∃ B : Set (Free p E), B ⊆ C ∧ B.Countable ∧
       ∀ g : Free p E, 0 ≤ g → (∀ b ∈ B, g ⊓ b = 0) → ∀ c ∈ C, g ⊓ c = 0 := by
@@ -365,7 +367,7 @@ private theorem countable_disjoint_detection [CompleteSpace E] (p : Exponent)
     have hzD : z ∈ D := hmax hinsert (Set.subset_insert _ _) (Set.mem_insert _ _)
     exact hzlt.ne' (by simpa only [inf_idem] using hzy z hzD)
 
-private theorem countable_lower_approximation [CompleteSpace E] (p : Exponent)
+private theorem countable_lower_approximation (p : Exponent)
     (A : Set (Free p E)) (a : Free p E) (ha : 0 ≤ a) (hA : IsLUB A a)
     (r : ℝ) (hr : 0 ≤ r) (hr1 : r < 1) :
     ∃ B : Set (Free p E), B ⊆ A ∧ B.Countable ∧
@@ -426,7 +428,7 @@ private theorem countable_lower_approximation [CompleteSpace E] (p : Exponent)
     have hap : 0 < a φ := by nlinarith
     exact (lt_min (lt_max_of_lt_left (by linarith)) (mul_pos (by linarith) hap)).not_ge hgz
 
-private theorem countable_lub_positive [CompleteSpace E] (p : Exponent)
+private theorem countable_lub_positive (p : Exponent)
     (A : Set (Free p E)) (a : Free p E) (hA : IsLUB A a) (hne : A.Nonempty)
     (hpos : ∀ u ∈ A, 0 ≤ u) :
     ∃ B : Set (Free p E), B ⊆ A ∧ B.Countable ∧ IsLUB B a := by
@@ -463,7 +465,7 @@ private theorem countable_lub_positive [CompleteSpace E] (p : Exponent)
 /-- Lemma 2.1 (`lem:csp`): every free p-convex lattice over a Banach space has the
 countable supremum property. The proof first shows that pairwise disjoint families of
 strictly positive elements are countable, then extracts a countable set with the same supremum. -/
-theorem csp [CompleteSpace E] (p : Exponent) : CountableSupProperty (Free p E) := by
+theorem csp (p : Exponent) : CountableSupProperty (Free p E) := by
   classical
   intro A a hA
   by_cases hne : A.Nonempty
@@ -504,7 +506,7 @@ theorem csp [CompleteSpace E] (p : Exponent) : CountableSupProperty (Free p E) :
 /-- Lemma 2.3 (`lem:sigma-order-continuity`): a positive linear map from `Free p E`
 is order continuous exactly when it preserves decreasing order-null sequences. The
 countable supremum property supplies the reduction; boundedness of the map is unnecessary. -/
-theorem sigma_order_continuity [CompleteSpace E] (p : Exponent)
+theorem sigma_order_continuity (p : Exponent)
     {Y : Type v} [NormedAddCommGroup Y] [Lattice Y] [IsOrderedAddMonoid Y]
     [BanachLattice Y] (S : Free p E →ₗ[ℝ] Y) (hS : ∀ x, 0 ≤ x → 0 ≤ S x) :
     IsOrderContinuousOp S ↔ SigmaOrderContinuous S := csp_operator (csp p) S hS
@@ -609,8 +611,7 @@ private theorem sigma_test_of_fvl (p : Exponent) (S : LatticeOperator (Free p F)
 can be tested on positive sequences in the algebraic free lattice that decrease to zero
 in `Free p F`. Norm density and lattice approximation reduce the general sequential test
 to this common algebraic core. -/
-theorem fvl_sequential_test [CompleteSpace E] [CompleteSpace F]
-    (p : Exponent) (T : F →L[ℝ] E) :
+theorem fvl_sequential_test (p : Exponent) (T : F →L[ℝ] E) :
     IsOrderContinuousOp (induced p T).toContinuousLinearMap.toLinearMap ↔
       ∀ f : ℕ → FVL F, (∀ n, 0 ≤ f n) →
         DecreasesToZero (fun n => ofFVL p (f n)) →
@@ -1051,7 +1052,7 @@ theorem fvl_finite_generators (p : Exponent) (f : FVL E) :
   exact ((induced_norm_generators p M.subtypeL).2 _).trans (ofFVL_of p (x i)).symm
 
 /-- Countably many generators suffice to lift a free element through an ideal inclusion. -/
-private theorem free_countable_generators [CompleteSpace E] (p : Exponent) (f : Free p E) :
+private theorem free_countable_generators (p : Exponent) (f : Free p E) :
     ∃ A : Set E, A.Countable ∧ ∀ M : Submodule ℝ E, IsBanachSpaceIdeal M → A ⊆ M →
       f ∈ Set.range (induced p M.subtypeL) := by
   obtain ⟨w, hw, hlim⟩ := mem_closure_iff_seq_limit.mp (denseRange_ofFVL p f)
@@ -1073,7 +1074,7 @@ private theorem banachSpaceIdeal_top : IsBanachSpaceIdeal (⊤ : Submodule ℝ E
   · intro h
     exact ContinuousLinearMap.ext (fun x => h ⟨x, Submodule.mem_top⟩)
 
-private theorem separable_ideal_containing [CompleteSpace E] (A : Set E) (hA : A.Countable) :
+private theorem separable_ideal_containing (A : Set E) (hA : A.Countable) :
     ∃ M : Submodule ℝ E, A ⊆ M ∧ IsBanachSpaceIdeal M ∧
       TopologicalSpace.SeparableSpace M ∧ (TopologicalSpace.SeparableSpace E → M = ⊤) := by
   classical
@@ -1285,7 +1286,7 @@ theorem collision_sequence_properties (p : Exponent) (T : F →L[ℝ] E) (x y : 
 /-- Proposition 3.1 (`prop:injectivity`): if T is nonzero and its induced free-lattice
 map is order continuous, then T is injective. Otherwise a collision sequence has a
 constant nonzero image, contradicting preservation of decrease to zero. -/
-theorem injectivity [CompleteSpace E] [CompleteSpace F] (p : Exponent)
+theorem injectivity (p : Exponent)
     (T : F →L[ℝ] E) (hT : T ≠ 0)
     (h : IsOrderContinuousOp (induced p T).toContinuousLinearMap.toLinearMap) :
     Function.Injective T := by
@@ -1485,7 +1486,7 @@ private theorem exists_unit_image_small (T : F →L[ℝ] E) (hT : ¬ BoundedBelo
 /-- Proposition 1.2 (`prop:necessary`): an operator between Banach spaces whose induced
 free-lattice map is order continuous must be zero or bounded below. The proof combines
 injectivity with the noncompact-minima witness to exclude an unbounded inverse on the range. -/
-theorem necessary [CompleteSpace E] [CompleteSpace F] (p : Exponent) (T : F →L[ℝ] E)
+theorem necessary [CompleteSpace F] (p : Exponent) (T : F →L[ℝ] E)
     (h : IsOrderContinuousOp (induced p T).toContinuousLinearMap.toLinearMap) :
     T = 0 ∨ BoundedBelow T := by
   classical
