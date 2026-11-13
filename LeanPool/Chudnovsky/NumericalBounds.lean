@@ -6,9 +6,12 @@ Authors: Xuanji Li, Lean Pool contributors
 module
 
 public import Mathlib.Basic.Real.Basic
-import Mathlib.Algebra.Order.Ring.Pow
-import Mathlib.Tactic.Linarith
-import Mathlib.Tactic.Ring
+import Mathlib.Data.Rat.Cast.Order
+import Mathlib.Tactic.Linarith.Frontend
+import Mathlib.Tactic.NormNum.Abs
+import Mathlib.Tactic.NormNum.DivMod
+import Mathlib.Tactic.NormNum.OfScientific
+import Mathlib.Tactic.Ring.RingNF
 
 /-!
 # Real interval certificates for the Chudnovsky coefficients
