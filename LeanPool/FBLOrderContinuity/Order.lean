@@ -1009,33 +1009,37 @@ theorem normAdmissible_linearIsometry (p : Exponent)
     (scalarPSum_eq_piLp_norm p _).trans_le hbound).trans
       (by nlinarith [norm_nonneg θ, norm_nonneg x])
 
+/-- An isometric extension of dual functionals makes the induced contraction isometric. -/
+theorem induced_isometry_of_dual_extension (p : Exponent) (T : F →L[ℝ] E)
+    (hT : ‖T‖ ≤ 1) (Φ : Dual F →ₗᵢ[ℝ] Dual E)
+    (hext : ∀ ψ, (Φ ψ).comp T = ψ) : Isometry (induced p T) := by
+  apply AddMonoidHomClass.isometry_of_norm (induced p T).toContinuousLinearMap
+  intro f
+  apply le_antisymm
+  · exact ((induced p T).toContinuousLinearMap.le_opNorm f).trans (by
+      rw [(induced_norm_generators p T).1]
+      simpa only [one_mul] using mul_le_mul_of_nonneg_right hT (norm_nonneg f))
+  · apply (ENNReal.ofReal_le_ofReal_iff (norm_nonneg _)).mp
+    rw [← freeNormExt_eq_norm p f, ← freeNormExt_eq_norm p (induced p T f)]
+    by_cases htop : p.1 = ⊤
+    · simp only [freeNormExt, ite_eq_left htop]
+      refine iSup_le fun ψ => iSup_le fun hψ => ?_
+      exact le_iSup_of_le (Φ ψ) (le_iSup_of_le (by simpa only [Φ.norm_map] using hψ)
+        (by rw [canonical_map_formulas, hext]))
+    · simp only [freeNormExt, ite_eq_right htop]
+      refine iSup_le fun n => iSup_le fun ψ => iSup_le fun hψ => ?_
+      exact le_iSup_of_le n (le_iSup_of_le (fun i => Φ (ψ i))
+        (le_iSup_of_le (normAdmissible_linearIsometry p Φ ψ hψ)
+          (by simp only [canonical_map_formulas, hext]; exact le_rfl)))
+
 /-- Section 2: ideal inclusions induce isometric embeddings. -/
 theorem ideal_induced_isometry (p : Exponent)
     (M : Submodule ℝ E) (hM : IsBanachSpaceIdeal M) :
     Isometry (induced p M.subtypeL) := by
   obtain ⟨_, Φ, hext⟩ := hM
-  have hrestrict (ψ : Dual M) : (Φ ψ).comp M.subtypeL = ψ :=
-    ContinuousLinearMap.ext (hext ψ)
-  apply AddMonoidHomClass.isometry_of_norm (induced p M.subtypeL).toContinuousLinearMap
-  intro f
-  apply le_antisymm
-  · have hnorm : ‖M.subtypeL‖ ≤ 1 := M.subtypeL.opNorm_le_bound zero_le_one
-      (fun x => by simp)
-    exact ((induced p M.subtypeL).toContinuousLinearMap.le_opNorm f).trans (by
-      rw [(induced_norm_generators p M.subtypeL).1]
-      simpa only [one_mul] using mul_le_mul_of_nonneg_right hnorm (norm_nonneg f))
-  · apply (ENNReal.ofReal_le_ofReal_iff (norm_nonneg _)).mp
-    rw [← freeNormExt_eq_norm p f, ← freeNormExt_eq_norm p (induced p M.subtypeL f)]
-    by_cases htop : p.1 = ⊤
-    · simp only [freeNormExt, ite_eq_left htop]
-      refine iSup_le fun ψ => iSup_le fun hψ => ?_
-      exact le_iSup_of_le (Φ ψ) (le_iSup_of_le (by simpa only [Φ.norm_map] using hψ)
-        (by rw [canonical_map_formulas, hrestrict]))
-    · simp only [freeNormExt, ite_eq_right htop]
-      refine iSup_le fun n => iSup_le fun ψ => iSup_le fun hψ => ?_
-      exact le_iSup_of_le n (le_iSup_of_le (fun i => Φ (ψ i))
-        (le_iSup_of_le (normAdmissible_linearIsometry p Φ ψ hψ)
-          (by simp only [canonical_map_formulas, hrestrict]; exact le_rfl)))
+  apply induced_isometry_of_dual_extension p M.subtypeL
+    (M.subtypeL.opNorm_le_bound zero_le_one (fun x => by simp)) Φ
+  exact fun ψ => ContinuousLinearMap.ext (hext ψ)
 
 /-- Each lattice expression depends on finitely many generators. -/
 theorem fvl_finite_generators (p : Exponent) (f : FVL E) :

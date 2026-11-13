@@ -491,38 +491,10 @@ theorem freeNormExt_sub_limit_le_of_cauchySeq' {u : ℕ → FunctionSpace E}
     {N : ℕ} {r : ℝ}
     (hN : ∀ᶠ m in Filter.atTop, ‖u N - u m‖ ≤ r) :
     freeNormExt E ((u N : C(FVLv.dualUnitBall E, ℝ)) - g) ≤ ENNReal.ofReal r := by
-  apply freeNormExt_le_of_forall
-  intro n φ hφ
-  apply ENNReal.ofReal_le_ofReal
-  have hsum_tend :
-      Filter.Tendsto
-        (fun m => ∑ i, |((u N : C(FVLv.dualUnitBall E, ℝ)) -
-          (u m : C(FVLv.dualUnitBall E, ℝ))) (φ i)|) Filter.atTop
-        (nhds (∑ i, |((u N : C(FVLv.dualUnitBall E, ℝ)) - g) (φ i)|)) := by
-    apply tendsto_finsetSum
-    intro i hi
-    have hdiff_tend :
-        Filter.Tendsto
-          (fun m => (u N : C(FVLv.dualUnitBall E, ℝ)) -
-            (u m : C(FVLv.dualUnitBall E, ℝ))) Filter.atTop
-          (nhds ((u N : C(FVLv.dualUnitBall E, ℝ)) - g)) :=
-      tendsto_const_nhds.sub hg
-    have heval_tend :
-        Filter.Tendsto
-          (fun m => ((u N : C(FVLv.dualUnitBall E, ℝ)) -
-            (u m : C(FVLv.dualUnitBall E, ℝ))) (φ i)) Filter.atTop
-          (nhds (((u N : C(FVLv.dualUnitBall E, ℝ)) - g) (φ i))) := by
-      exact (((continuous_eval_const (φ i)).tendsto
-        ((u N : C(FVLv.dualUnitBall E, ℝ)) - g)).comp hdiff_tend).congr' <|
-          Filter.Eventually.of_forall fun _ => by rfl
-    exact (continuous_abs.tendsto _).comp heval_tend
-  have htail :
-      ∀ᶠ m in Filter.atTop,
-        ∑ i, |((u N : C(FVLv.dualUnitBall E, ℝ)) -
-          (u m : C(FVLv.dualUnitBall E, ℝ))) (φ i)| ≤ r := by
-    filter_upwards [hN] with m hm
-    exact (sum_abs_apply_le_freeNorm E (u N - u m) φ hφ).trans (by simpa using hm)
-  exact le_of_tendsto_of_tendsto hsum_tend tendsto_const_nhds htail
+  rw [← neg_sub g (u N : C(FVLv.dualUnitBall E, ℝ)), freeNormExt_neg]
+  apply freeNormExt_sub_limit_le_of_cauchySeq E hg
+  filter_upwards [hN] with m hm
+  simpa only [norm_sub_rev] using hm
 
 private noncomputable instance instCompleteSpaceFunctionSpace :
     CompleteSpace (FunctionSpace E) := by
