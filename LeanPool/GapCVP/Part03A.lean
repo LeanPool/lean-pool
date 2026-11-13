@@ -1297,6 +1297,7 @@ macro "prefixWriterStepTac" : tactic =>
             (first | rfl | simp [Function.update]) } <;>
           try rfl)))
 
+/-- Prove a prefix writer step using the fixed simplification rules. -/
 macro "prefixWriterStepOnly" : tactic =>
   `(tactic| machineStackEquality [
       structuralPrefixWriter, prefixWriterConfiguration, prefixWriterPeek, prefixWriterPop,

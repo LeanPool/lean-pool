@@ -1764,6 +1764,7 @@ macro "naturalBinaryWriterStepTac" : tactic =>
             (first | rfl | simp [Function.update]) } <;>
           try rfl)))
 
+/-- Prove a natural binary writer step using the fixed simplification rules. -/
 macro "naturalBinaryWriterStepOnly" : tactic =>
   `(tactic| machineStackEquality [
       structuralNaturalBinaryWriter, naturalBinaryWriterConfiguration, naturalBinaryWriterPeek,

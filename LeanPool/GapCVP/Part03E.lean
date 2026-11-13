@@ -340,6 +340,7 @@ macro "delimitedCompareStepTac" : tactic =>
             (first | rfl | simp [Function.update]) } <;>
           try rfl)))
 
+/-- Prove a delimited compare step using the fixed simplification rules. -/
 macro "delimitedCompareStepOnly" : tactic =>
   `(tactic| machineStackEquality [
       delimitedPairComparisonMachine, delimitedCompareConfiguration, delimitedComparePeekFirst,

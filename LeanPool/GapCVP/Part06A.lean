@@ -2223,6 +2223,7 @@ macro "sourceIntegerMultiplicationStepTac" : tactic =>
            (first | rfl | simp [Function.update]) } <;>
          try rfl)))
 
+/-- Prove a source integer multiplication step using the fixed simplification rules. -/
 macro "sourceIntegerMultiplicationStepOnly" : tactic =>
   `(tactic| machineStackEquality [
       sourceUnaryIntegerMultiplicationMachine, sourceIntegerMultiplicationConfiguration,

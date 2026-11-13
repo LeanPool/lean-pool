@@ -1115,6 +1115,7 @@ macro "polynomialRowMarkerStepTac" : tactic =>
             (first | rfl | simp [Function.update]) } <;>
           try rfl)))
 
+/-- Prove a polynomial row marker step using the fixed simplification rules. -/
 macro "polynomialRowMarkerStepOnly" : tactic =>
   `(tactic| machineStackEquality [
       polynomialRowMarkerMachine, polynomialRowMarkerConfiguration, polynomialRowMarkerPeek,

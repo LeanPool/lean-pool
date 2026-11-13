@@ -2100,6 +2100,7 @@ macro "binaryGaussianPivotStepTac" : tactic =>
             (first | rfl | simp [Function.update]) } <;>
           try rfl)))
 
+/-- Prove a binary Gaussian pivot step using the fixed simplification rules. -/
 macro "binaryGaussianPivotStepOnly" : tactic =>
   `(tactic| machineStackEquality [
       binaryGaussianPivotMachine, pivotConfiguration, pivotPeek, pivotGoto, pivotScanStatement,

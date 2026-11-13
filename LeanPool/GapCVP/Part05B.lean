@@ -904,6 +904,7 @@ macro "sourceMarkerStepTac" : tactic =>
            (first | rfl | simp [Function.update]) } <;>
          try rfl)))
 
+/-- Prove a source marker step using the fixed simplification rules. -/
 macro "sourceMarkerStepOnly" : tactic =>
   `(tactic| machineStackEquality [
       sourceMarkerRotationMachine, sourceMarkerConfiguration, sourceMarkerPeek, sourceMarkerPop,
@@ -1259,6 +1260,7 @@ macro "radiusMarkerTailStepTac" : tactic =>
             (first | rfl | simp [Function.update]) } <;>
           try rfl)))
 
+/-- Prove a radius marker tail step using the fixed simplification rules. -/
 macro "radiusMarkerTailStepOnly" : tactic =>
   `(tactic| machineStackEquality [
       radiusMarkerTailMachine, radiusMarkerTailConfiguration, radiusMarkerTailPeek,
@@ -1530,6 +1532,7 @@ macro "rationalRadiusStepTac" : tactic =>
             (first | rfl | simp [Function.update]) } <;>
           try rfl)))
 
+/-- Prove a rational radius step using the fixed simplification rules. -/
 macro "rationalRadiusStepOnly" : tactic =>
   `(tactic| machineStackEquality [
       rationalRadiusMachine, rationalRadiusConfiguration, rationalRadiusFailureStatement,

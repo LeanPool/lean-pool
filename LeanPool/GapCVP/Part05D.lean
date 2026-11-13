@@ -1565,6 +1565,7 @@ macro "flatAdjacentRecordStepTac" : tactic =>
             (first | rfl | simp [Function.update]) } <;>
           try rfl)))
 
+/-- Prove a flat adjacent record step using the fixed simplification rules. -/
 macro "flatAdjacentRecordStepOnly" : tactic =>
   `(tactic| machineStackEquality [
       actualFlatAdjacentRecordSwapMachine, flatAdjacentRecordConfiguration,

@@ -988,6 +988,7 @@ macro "cappedUnaryMinimumStepTac" : tactic =>
             (first | rfl | simp [Function.update]) } <;>
           try rfl)))
 
+/-- Prove a capped unary minimum step using the fixed simplification rules. -/
 macro "cappedUnaryMinimumStepOnly" : tactic =>
   `(tactic| machineStackEquality [
       actualCappedUnaryMinimumMachine, cappedUnaryMinimumConfiguration, cappedUnaryMinimumPeek,

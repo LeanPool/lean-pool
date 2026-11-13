@@ -816,6 +816,7 @@ macro "sourceFlatAtomicStepTac" : tactic =>
             (first | rfl | simp [Function.update]) } <;>
           try rfl)))
 
+/-- Prove a source flat atomic step using the fixed simplification rules. -/
 macro "sourceFlatAtomicStepOnly" : tactic =>
   `(tactic| machineStackEquality [
       sourceFlatAtomicRecordMachine, sourceFlatAtomicConfiguration, sourceFlatAtomicPeek,
@@ -1597,6 +1598,7 @@ macro "sourceGridIndexStepTac" : tactic =>
             (first | rfl | simp [Function.update]) } <;>
           try rfl)))
 
+/-- Prove a source grid index step using the fixed simplification rules. -/
 macro "sourceGridIndexStepOnly" : tactic =>
   `(tactic| machineStackEquality [
       sourceCanonicalUnaryGridIndexMachine, sourceGridIndexConfiguration, sourceGridIndexPeek,

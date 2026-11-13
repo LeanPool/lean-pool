@@ -617,6 +617,7 @@ macro "sourcePairPrefixStepTac" : tactic =>
             (first | rfl | simp [Function.update]) } <;>
           try rfl)))
 
+/-- Prove a source pair prefix step using the fixed simplification rules. -/
 macro "sourcePairPrefixStepOnly" : tactic =>
   `(tactic| machineStackEquality [
       actualSourcePairPrefixMachine, sourcePairPrefixConfiguration, sourcePairPrefixPeek,

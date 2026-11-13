@@ -851,6 +851,7 @@ macro "sourceUnaryDivisionStepTac" : tactic =>
             (first | rfl | simp [Function.update]) } <;>
           try rfl)))
 
+/-- Prove a source unary division step using the fixed simplification rules. -/
 macro "sourceUnaryDivisionStepOnly" : tactic =>
   `(tactic| machineStackEquality [
       sourceUnaryDivisionMachine, sourceUnaryDivisionConfiguration, sourceUnaryDivisionControl,

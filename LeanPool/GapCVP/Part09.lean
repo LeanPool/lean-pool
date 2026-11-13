@@ -5776,6 +5776,7 @@ macro "preservingXorStepTac" : tactic =>
             (first | rfl | simp [Function.update]) } <;>
           try rfl)))
 
+/-- Prove a preserving XOR step using the fixed simplification rules. -/
 macro "preservingXorStepOnly" : tactic =>
   `(tactic| machineStackEquality [
       preservingXorMachine, preservingXorConfiguration, preservingXorPeek, preservingXorGoto,
@@ -6380,6 +6381,7 @@ macro "binaryGaussianXorStepTac" : tactic =>
             (first | rfl | simp [Function.update]) } <;>
           try rfl)))
 
+/-- Prove a binary Gaussian XOR step using the fixed simplification rules. -/
 macro "binaryGaussianXorStepOnly" : tactic =>
   `(tactic| machineStackEquality [
       binaryGaussianXorMachine, binaryGaussianXorConfiguration, binaryGaussianXorPeek,

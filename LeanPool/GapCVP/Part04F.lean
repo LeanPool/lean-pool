@@ -1389,6 +1389,7 @@ macro "unaryPairStepTac" : tactic =>
             (first | rfl | simp [Function.update]) } <;>
           try rfl)))
 
+/-- Prove a unary pair step using the fixed simplification rules. -/
 macro "unaryPairStepOnly" : tactic =>
   `(tactic| machineStackEquality [
       actualUnaryPairIndexMachine, unaryPairConfiguration, unaryPairPeek, unaryPairPop,

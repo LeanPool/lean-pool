@@ -866,6 +866,7 @@ macro "flatLiteralRecordStepTac" : tactic =>
             (first | rfl | simp [Function.update]) } <;>
           try rfl)))
 
+/-- Prove a flat literal record step using the fixed simplification rules. -/
 macro "flatLiteralRecordStepOnly" : tactic =>
   `(tactic| machineStackEquality [
       actualFlatLiteralRecordWorker, flatLiteralRecordConfiguration, flatLiteralRecordPeek,
