@@ -37,11 +37,12 @@ private theorem hnegativeSlope :
         ∀ (C : BandCircle), ∀ (orientation : Bool), ∀ (base : ProtoTile), ∀ (Rminus : ProtoTile),
             ∀ (Rplus : ProtoTile), ∀ (hminus : PartialOdometer), ∀ (hplus : PartialOdometer), ∀
             (F : P4458T1BoundaryFrame C orientation base Rminus Rplus hminus hplus), ∀ (D :
-            P4458T1RestrictionFamily F), (Fin (4 : ℕ) → CircleCoordinates) → ((0 < (F.q
+            P4458T1RestrictionFamily F),
+        ((0 < (F.q
             F.slot.succ).1) → (∃ s, PartialOdometerSlope (D.functions F.slot false) = some s)) )
             := by
   classical
-  intro C orientation base Rminus Rplus hminus hplus F D p hCpositive
+  intro C orientation base Rminus Rplus hminus hplus F D hCpositive
   rcases D.slopes F.slot false with hz | ⟨root, child, hroot, hchild, _, _⟩
   · omega
   · exact ⟨child, hchild⟩
@@ -270,18 +271,19 @@ private theorem hSlopeInfo :
         ∀ (C : BandCircle), ∀ (orientation : Bool), ∀ (base : ProtoTile), ∀ (Rminus : ProtoTile),
             ∀ (Rplus : ProtoTile), ∀ (hminus : PartialOdometer), ∀ (hplus : PartialOdometer), ∀
             (F : P4458T1BoundaryFrame C orientation base Rminus Rplus hminus hplus), ∀ (D :
-            P4458T1RestrictionFamily F), (Fin (4 : ℕ) → CircleCoordinates) → ((0 < (F.q
+            P4458T1RestrictionFamily F),
+        ((0 < (F.q
             F.slot.succ).1) → (
         let r : Fin 4 → CircleCoordinates :=
           ![F.q 0, F.q F.slot.succ, F.q ((F.slot + 1).succ),
-            F.q ((F.slot + 2).succ)]
-        let wa : GaussianInt := BandVectors.2 (r 3) (r 2)
+            F.q ((F.slot + 2).succ)];
+        let wa : GaussianInt := BandVectors.2 (r 3) (r 2);
         ∃ root child : ℝ × ℝ, PartialOdometerSlope F.odometer = some root ∧ PartialOdometerSlope
             (D.functions F.slot false) = some child ∧ child.1 - root.1 = -(1 / 2 : ℝ) * (((wa.re
             : ℤ) : ℝ) - ((wa.im : ℤ) : ℝ)) ∧ child.2 - root.2 = -(1 / 2 : ℝ) * (((wa.im : ℤ) : ℝ)
             + ((wa.re : ℤ) : ℝ)))) ) := by
   classical
-  intro C orientation base Rminus Rplus hminus hplus F D p hCpositive r wa
+  intro C orientation base Rminus Rplus hminus hplus F D hCpositive r wa
   rcases D.slopes F.slot false with hz | ⟨root, child, hroot, hchild, hre, him⟩
   · have hz' : (F.q F.slot.succ).1 = 0 := hz
     omega
@@ -595,18 +597,19 @@ private theorem ha10ReAt509 :
       exact
         ∀ (C : BandCircle), ∀ (orientation : Bool), ∀ (base : ProtoTile), ∀ (Rminus : ProtoTile),
             ∀ (Rplus : ProtoTile), ∀ (hminus : PartialOdometer), ∀ (hplus : PartialOdometer), ∀
-            (F : P4458T1BoundaryFrame C orientation base Rminus Rplus hminus hplus), (Fin (3 :
-            ℕ)) → ((Fin (4 : ℕ) → CircleCoordinates) → (
+            (F : P4458T1BoundaryFrame C orientation base Rminus Rplus hminus hplus),
+        (
+        (
         let r : Fin 4 → CircleCoordinates :=
           ![F.q 0, F.q F.slot.succ, F.q ((F.slot + 1).succ),
-            F.q ((F.slot + 2).succ)]
-        let I : GaussianInt := ⟨0, 1⟩
-        let xa : GaussianInt := BandVectors.2 (r 1) (r 3)
-        let ya : GaussianInt := BandVectors.2 (r 2) (r 1)
+            F.q ((F.slot + 2).succ)];
+        let I : GaussianInt := ⟨0, 1⟩;
+        let xa : GaussianInt := BandVectors.2 (r 1) (r 3);
+        let ya : GaussianInt := BandVectors.2 (r 2) (r 1);
         (BandVectors.2 (r 1) (r 0) = xa + I * ya) → ((BandVectors.2 (r 1) (r 0)).re = xa.re -
             ya.im))) ) := by
   classical
-  intro C orientation base Rminus Rplus hminus hplus F a p r I xa ya harec
+  intro C orientation base Rminus Rplus hminus hplus F r I xa ya harec
   have h := congrArg (fun z : GaussianInt => z.re) harec
   norm_num [I, Zsqrtd.re_mul, Zsqrtd.im_mul] at h ⊢
   omega
@@ -661,18 +664,19 @@ private theorem ha01ImAt522 :
       exact
         ∀ (C : BandCircle), ∀ (orientation : Bool), ∀ (base : ProtoTile), ∀ (Rminus : ProtoTile),
             ∀ (Rplus : ProtoTile), ∀ (hminus : PartialOdometer), ∀ (hplus : PartialOdometer), ∀
-            (F : P4458T1BoundaryFrame C orientation base Rminus Rplus hminus hplus), (Fin (3 :
-            ℕ)) → ((Fin (4 : ℕ) → CircleCoordinates) → (
+            (F : P4458T1BoundaryFrame C orientation base Rminus Rplus hminus hplus),
+        (
+        (
         let r : Fin 4 → CircleCoordinates :=
           ![F.q 0, F.q F.slot.succ, F.q ((F.slot + 1).succ),
-            F.q ((F.slot + 2).succ)]
-        let I : GaussianInt := ⟨0, 1⟩
-        let xa : GaussianInt := BandVectors.2 (r 1) (r 3)
-        let ya : GaussianInt := BandVectors.2 (r 2) (r 1)
+            F.q ((F.slot + 2).succ)];
+        let I : GaussianInt := ⟨0, 1⟩;
+        let xa : GaussianInt := BandVectors.2 (r 1) (r 3);
+        let ya : GaussianInt := BandVectors.2 (r 2) (r 1);
         (BandVectors.2 (r 0) (r 1) = -I * BandVectors.2 (r 1) (r 0)) → (((BandVectors.2 (r 1) (r
             0)).re = xa.re - ya.im) → ((BandVectors.2 (r 0) (r 1)).im = -xa.re + ya.im)))) ) := by
   classical
-  intro C orientation base Rminus Rplus hminus hplus F a p r I xa ya haflip ha10Re
+  intro C orientation base Rminus Rplus hminus hplus F r I xa ya haflip ha10Re
   have h := congrArg (fun z : GaussianInt => z.im) haflip
   simp only [Int.reduceNeg, Fin.isValue, neg_mul, Zsqrtd.im_neg, Zsqrtd.im_mul, zero_mul,
       one_mul, zero_add, I] at h
@@ -705,17 +709,17 @@ private theorem hplusImVec :
       exact
         ∀ (C : BandCircle), ∀ (orientation : Bool), ∀ (base : ProtoTile), ∀ (Rminus : ProtoTile),
             ∀ (Rplus : ProtoTile), ∀ (hminus : PartialOdometer), ∀ (hplus : PartialOdometer), ∀
-            (F : P4458T1BoundaryFrame C orientation base Rminus Rplus hminus hplus), (Fin (3 :
-            ℕ)) → (∀ (p : Fin (4 : ℕ) → CircleCoordinates),
+            (F : P4458T1BoundaryFrame C orientation base Rminus Rplus hminus hplus),
+        (∀ (p : Fin (4 : ℕ) → CircleCoordinates),
         let r : Fin 4 → CircleCoordinates :=
           ![F.q 0, F.q F.slot.succ, F.q ((F.slot + 1).succ),
-            F.q ((F.slot + 2).succ)]
-        let I : GaussianInt := ⟨0, 1⟩
-        let xa : GaussianInt := BandVectors.2 (r 1) (r 3)
+            F.q ((F.slot + 2).succ)];
+        let I : GaussianInt := ⟨0, 1⟩;
+        let xa : GaussianInt := BandVectors.2 (r 1) (r 3);
         (BandVectors.2 (p 2) (p 0) = xa) → ((BandVectors.2 (p 0) (p 2) = -I * xa) →
             ((BandVectors.2 (p 2) (p 0) + BandVectors.2 (p 0) (p 2)).im = xa.im - xa.re))) ) := by
   classical
-  intro C orientation base Rminus Rplus hminus hplus F a p r I xa haBA haAB
+  intro C orientation base Rminus Rplus hminus hplus F p r I xa haBA haAB
   rw [haBA, haAB]
   norm_num [I, Zsqrtd.re_mul, Zsqrtd.im_mul]
   omega
@@ -1851,18 +1855,19 @@ private theorem ha01ReAt959 :
       exact
         ∀ (C : BandCircle), ∀ (orientation : Bool), ∀ (base : ProtoTile), ∀ (Rminus : ProtoTile),
             ∀ (Rplus : ProtoTile), ∀ (hminus : PartialOdometer), ∀ (hplus : PartialOdometer), ∀
-            (F : P4458T1BoundaryFrame C orientation base Rminus Rplus hminus hplus), (Fin (3 :
-            ℕ)) → ((Fin (4 : ℕ) → CircleCoordinates) → (
+            (F : P4458T1BoundaryFrame C orientation base Rminus Rplus hminus hplus),
+        (
+        (
         let r : Fin 4 → CircleCoordinates :=
           ![F.q 0, F.q F.slot.succ, F.q ((F.slot + 1).succ),
-            F.q ((F.slot + 2).succ)]
-        let I : GaussianInt := ⟨0, 1⟩
-        let xa : GaussianInt := BandVectors.2 (r 1) (r 3)
-        let ya : GaussianInt := BandVectors.2 (r 2) (r 1)
+            F.q ((F.slot + 2).succ)];
+        let I : GaussianInt := ⟨0, 1⟩;
+        let xa : GaussianInt := BandVectors.2 (r 1) (r 3);
+        let ya : GaussianInt := BandVectors.2 (r 2) (r 1);
         (BandVectors.2 (r 0) (r 1) = -I * BandVectors.2 (r 1) (r 0)) → (((BandVectors.2 (r 1) (r
             0)).im = xa.im + ya.re) → ((BandVectors.2 (r 0) (r 1)).re = xa.im + ya.re)))) ) := by
   classical
-  intro C orientation base Rminus Rplus hminus hplus F a p r I xa ya haflip ha10Im
+  intro C orientation base Rminus Rplus hminus hplus F r I xa ya haflip ha10Im
   have h := congrArg (fun z : GaussianInt => z.re) haflip
   norm_num [I, Zsqrtd.re_mul, Zsqrtd.im_mul] at h ⊢
   omega
@@ -1873,18 +1878,19 @@ private theorem ha01ImAt963 :
       exact
         ∀ (C : BandCircle), ∀ (orientation : Bool), ∀ (base : ProtoTile), ∀ (Rminus : ProtoTile),
             ∀ (Rplus : ProtoTile), ∀ (hminus : PartialOdometer), ∀ (hplus : PartialOdometer), ∀
-            (F : P4458T1BoundaryFrame C orientation base Rminus Rplus hminus hplus), (Fin (3 :
-            ℕ)) → ((Fin (4 : ℕ) → CircleCoordinates) → (
+            (F : P4458T1BoundaryFrame C orientation base Rminus Rplus hminus hplus),
+        (
+        (
         let r : Fin 4 → CircleCoordinates :=
           ![F.q 0, F.q F.slot.succ, F.q ((F.slot + 1).succ),
-            F.q ((F.slot + 2).succ)]
-        let I : GaussianInt := ⟨0, 1⟩
-        let xa : GaussianInt := BandVectors.2 (r 1) (r 3)
-        let ya : GaussianInt := BandVectors.2 (r 2) (r 1)
+            F.q ((F.slot + 2).succ)];
+        let I : GaussianInt := ⟨0, 1⟩;
+        let xa : GaussianInt := BandVectors.2 (r 1) (r 3);
+        let ya : GaussianInt := BandVectors.2 (r 2) (r 1);
         (BandVectors.2 (r 0) (r 1) = -I * BandVectors.2 (r 1) (r 0)) → (((BandVectors.2 (r 1) (r
             0)).re = xa.re - ya.im) → ((BandVectors.2 (r 0) (r 1)).im = -xa.re + ya.im)))) ) := by
   classical
-  intro C orientation base Rminus Rplus hminus hplus F a p r I xa ya haflip ha10Re
+  intro C orientation base Rminus Rplus hminus hplus F r I xa ya haflip ha10Re
   have h := congrArg (fun z : GaussianInt => z.im) haflip
   norm_num [I, Zsqrtd.re_mul, Zsqrtd.im_mul] at h ⊢
   omega
@@ -2166,12 +2172,11 @@ private theorem hidxB2 :
     (by
       classical
       exact
-        ∀ (C : BandCircle), ∀ (orientation : Bool), ∀ (base : ProtoTile), ∀ (Rminus : ProtoTile),
-            ∀ (Rplus : ProtoTile), ∀ (hminus : PartialOdometer), ∀ (hplus : PartialOdometer),
-            (P4458T1BoundaryFrame C orientation base Rminus Rplus hminus hplus) → (∀ (a : Fin
-            (3 : ℕ)), (Fin (4 : ℕ) → CircleCoordinates) → ((a + 1) + 2 = a)) ) := by
+        (∀ (a : Fin
+            (3 : ℕ)),
+        ((a + 1) + 2 = a)) ) := by
   classical
-  intro C orientation base Rminus Rplus hminus hplus F a p
+  intro a
   apply Fin.ext
   simp [Fin.val_add]; omega
 
@@ -3343,8 +3348,7 @@ private theorem secondParentPlacement :
     TileOdometerBandPrototile (p 2) (D.tiles (a + 1) true)
       (D.functions (a + 1) true) houterBOdo
   have ht1C : t 1 = C.1.1 := ht1.trans hparentD
-  have hidxB2 := SecondNewerRowsGeometry.hidxB2 C orientation base Rminus Rplus hminus hplus
-      F a p
+  have hidxB2 := SecondNewerRowsGeometry.hidxB2 a
   have hidxB1 := SecondNewerRowsGeometry.hidxB1 a
   have hBocc := SecondNewerRowsGeometry.hBocc C orientation base Rminus Rplus hminus hplus F
       D a p hqA hqD hr1 hr2 hidxB2 hidxB1
@@ -3732,17 +3736,17 @@ private theorem directParentCase :
   have hFplusIm := SecondNewerRowsGeometry.hFplusIm C orientation base Rminus Rplus hminus
       hplus F rootSlope hFplusSlope
   have ha10Re := SecondNewerRowsGeometry.ha10ReAt509 C orientation base Rminus Rplus hminus
-      hplus F a p harec
+      hplus F harec
   have ha10Im := SecondNewerRowsGeometry.ha10ImAt513 C orientation base Rminus Rplus hminus
       hplus F harec
   have ha01Re := SecondNewerRowsGeometry.ha01ReAt517 C orientation base Rminus Rplus hminus
       hplus F haflip ha10Im
   have ha01Im := SecondNewerRowsGeometry.ha01ImAt522 C orientation base Rminus Rplus hminus
-      hplus F a p haflip ha10Re
+      hplus F haflip ha10Re
   have hplusReVec := SecondNewerRowsGeometry.hplusReVec C orientation base Rminus Rplus
       hminus hplus F p haBA haAB
   have hplusImVec := SecondNewerRowsGeometry.hplusImVec C orientation base Rminus Rplus
-      hminus hplus F a p haBA haAB
+      hminus hplus F p haBA haAB
   have hFplusRe' := SecondNewerRowsGeometry.hFplusRe' C orientation base Rminus Rplus hminus
       hplus F rootSlope toRealRe hFplusRe
   have hFplusIm' := SecondNewerRowsGeometry.hFplusIm' C orientation base Rminus Rplus hminus
@@ -3927,13 +3931,13 @@ private theorem recursiveParentCase :
   have hAIm' := SecondNewerRowsGeometry.hAIm'At948 C orientation base Rminus Rplus hminus
       hplus F a p hqB hqD hr1 hr3 rootA slopeA hAIm
   have ha10Re := SecondNewerRowsGeometry.ha10ReAt509 C orientation base Rminus Rplus hminus
-      hplus F a p harec
+      hplus F harec
   have ha10Im := SecondNewerRowsGeometry.ha10ImAt955 C orientation base Rminus Rplus hminus
       hplus F harec
   have ha01Re := SecondNewerRowsGeometry.ha01ReAt959 C orientation base Rminus Rplus hminus
-      hplus F a p haflip ha10Im
+      hplus F haflip ha10Im
   have ha01Im := SecondNewerRowsGeometry.ha01ImAt963 C orientation base Rminus Rplus hminus
-      hplus F a p haflip ha10Re
+      hplus F haflip ha10Re
   have hyaA : ya = BandVectors.2 (p 0) (p 3) := by
     simp [ya, hr1, hr2]
   have ha10ReR : ((BandVectors.2 (r 1) (r 0)).re : ℝ) =
@@ -4004,7 +4008,7 @@ theorem P4458T1SecondNewerRows :
     have hselectedOdo := D.odometers F.slot false
     have hselectedOcc := D.occurrences F.slot false
     have hnegativeSlope := SecondNewerRowsGeometry.hnegativeSlope C orientation base Rminus Rplus
-        hminus hplus F D p hCpositive
+        hminus hplus F D hCpositive
     let r : Fin 4 → CircleCoordinates :=
       ![F.q 0, F.q F.slot.succ, F.q ((F.slot + 1).succ),
         F.q ((F.slot + 2).succ)]
@@ -4110,7 +4114,7 @@ theorem P4458T1SecondNewerRows :
     have hslot := SecondNewerRowsGeometry.hslot C orientation base Rminus Rplus hminus hplus F a
         p selected
     have hSlopeInfo := SecondNewerRowsGeometry.hSlopeInfo C orientation base Rminus Rplus hminus
-        hplus F D p hCpositive
+        hplus F D hCpositive
     obtain ⟨rootNeg, joinSlope, hrootNeg, hjoinSlope,
       hjoinSlopeRe, hjoinSlopeIm⟩ := hSlopeInfo
     have hrootNegEq : rootNeg = F.outerSlope :=

@@ -252,17 +252,18 @@ private theorem hPval :
       exact
         ∀ (K : DiamondParameter), ∀ (hk : (1 : ℕ) < K.1), ∀ (f : IntegerLatticeFunction), ∀ (B :
             Int),
-        let k : Int := K.1
-        let d : GaussianInt := ⟨k,k+1⟩
-        let pred := P5352T2Sources K hk 3
+        let k : Int := K.1;
+        let d : GaussianInt := ⟨k,k+1⟩;
+        let pred := P5352T2Sources K hk 3;
         (∀ (y : GaussianInt), y - d ∈ FootprintVertices pred.1 → f y = pred.2.1 (y - d)
             + (⟨k, (0 : ℤ)⟩ : GaussianInt).re * y.re + (⟨k, (0 : ℤ)⟩ : GaussianInt).im * y.im +
-                B) → ((ℤ) → (∀ (hcast : (↑(K.1
+                B) → (
+        (∀ (hcast : (↑(K.1
             - (1 : ℕ)) : ℤ) = k - (1 : ℤ)), ∀ (y : GaussianInt), ∀ (w : GaussianInt), (y-d
             ∈ FootprintVertices pred.1) → ((y-d=w) → (f y = DiamondOdometer (⟨K.1-1,by
             omega⟩) w + k*y.re+B))))) := by
   classical
-  intro K hk f B k d pred hpred p hcast y w hy heq
+  intro K hk f B k d pred hpred hcast y w hy heq
   have hh := hpred y (by simpa [pred,P5352T2Sources] using hy)
   rw [heq] at hh
   simpa [pred,P5352T2Sources] using hh
@@ -332,12 +333,15 @@ private theorem sqOdd :
     (by
       classical
       exact
-        ∀ (K : DiamondParameter), ((1 : ℕ) < K.1) → ((IntegerLatticeFunction) → ((Int) → (
-        let k : Int := K.1
-        (ℤ) → (((↑(K.1 - (1 : ℕ)) : ℤ) = k - (1 : ℤ)) → (∀ (m : ℤ), ((2 : ℤ) * m + (1 : ℤ)) ^ (2
+        (DiamondParameter) →
+        (
+        (
+        (
+        (
+        (∀ (m : ℤ), ((2 : ℤ) * m + (1 : ℤ)) ^ (2
             : ℕ) / (4 : ℤ) = m ^ (2 : ℕ) + m))))) ) := by
   classical
-  intro K hk f B k p hcast m
+  intro K m
   have h := P4207T1FloorArithmetic.1 1 m
   have he : 1+2*m=2*m+1 := by ring
   rw [he] at h
@@ -390,13 +394,16 @@ private theorem tdiffRev :
     (by
       classical
       exact
-        ∀ (K : DiamondParameter), ((1 : ℕ) < K.1) → ((IntegerLatticeFunction) → ((Int) → (
-        let k : Int := K.1
-        (ℤ) → (((↑(K.1 - (1 : ℕ)) : ℤ) = k - (1 : ℤ)) → ((∀ (a : Int),
+        (DiamondParameter) →
+        (
+        (
+        (
+        (
+        ((∀ (a : Int),
             a*(a-1)/2-(a-1)*(a-2)/2=a-1) → (∀ (a : ℤ), (a - (1 : ℤ)) * (a - (2 : ℤ)) / (2 : ℤ) -
             a * (a - (1 : ℤ)) / (2 : ℤ) = (1 : ℤ) - a)))))) ) := by
   classical
-  intro K hk f B k p hcast tdiff a
+  intro K tdiff a
   have hh := tdiff a
   omega
 
@@ -780,7 +787,7 @@ theorem P5352T2Predecessor1 (K : DiamondParameter) (hk : 1 < K.1)
       have hSval := FirstPredecessorProof.hSval K hk f hchildTile hchild p hS
       have hPval (y : GaussianInt) (w : GaussianInt)
           (hy : y-d ∈ FootprintVertices pred.1) (heq : y-d=w) := FirstPredecessorProof.hPval K
-              hk f B hpred p hcast y w hy heq
+              hk f B hpred hcast y w hy heq
       have hPcenter : f ⟨p,2*k+1-p⟩ =
           DiamondOdometer (⟨K.1-1,by omega⟩) ⟨p-k,k-p⟩ + k*p+B := FirstPredecessorProof.hPcenter
               K hk f B p hcast hpz hPval
@@ -805,12 +812,11 @@ theorem P5352T2Predecessor1 (K : DiamondParameter) (hk : 1 < K.1)
         simpa [Q] using (P5352T2DomainRows ⟨K.1-1,by omega⟩ ⟨p-k,k+1-p⟩).2 hPn
       -- The exact four increments follow by reducing the even and odd squares.
       have sqEven (m : Int) := EvenSquareQuotient.square m
-      have sqOdd (m : Int) := FirstPredecessorProof.sqOdd K hk f B p hcast m
+      have sqOdd (m : Int) := FirstPredecessorProof.sqOdd K m
       have tri (a : Int) := FirstPredecessorProof.tri K hk f B p hcast a
       have tdiff (a : Int) := FirstPredecessorProof.tdiff K hk f B
           p hcast tri a
-      have tdiffRev (a : Int) := FirstPredecessorProof.tdiffRev K
-          hk f B p hcast tdiff a
+      have tdiffRev (a : Int) := FirstPredecessorProof.tdiffRev K tdiff a
       have absP : (Int.natAbs p : Int)=p := by rw [Int.natCast_natAbs,abs_of_nonneg (by omega)]
       have absPm : (Int.natAbs (p-1) : Int)=p-1 := by rw [Int.natCast_natAbs,abs_of_nonneg (by
           omega)]

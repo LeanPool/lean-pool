@@ -763,7 +763,8 @@ private theorem hminusheight :
     (by
       classical
       exact
-        ∀ (P : FordFareyParameter), (BandCircle) → (∀ (Ci : BandCircle), ∀ (i : Fin 3),
+        ∀ (P : FordFareyParameter),
+        (∀ (Ci : BandCircle), ∀ (i : Fin 3),
             (FordRecursiveQuadruple P i.succ = Ci.1.1) → ((i = (0 : Fin (3 : ℕ)) ∧ P.q₁ < P.q₂ ∨
             i = (1 : Fin (3 : ℕ)) ∧ P.q₂ < P.q₁) → (∀ (T : ProtoTile), ∀ (T' : ProtoTile), ∀ (u :
             GaussianInt), (T'.cells = (TileTranslation (FordTile P.q) (u + if i = (0 : Fin (3 :
@@ -780,14 +781,14 @@ private theorem hminusheight :
             (FordRecursiveQuadruple P (0 : Fin (4 : ℕ))) + BandVectors.1 (FordRecursiveQuadruple
             P (0 : Fin (4 : ℕ))) (FordRecursiveQuadruple P i.succ))) → (((P.q : Int) = P.q₁ +
             P.q₂) → (
-        let n := if i = 0 then P.q₁ else P.q₂
+        let n := if i = 0 then P.q₁ else P.q₂;
         (0 < n) → ((n < P.q) → ((Ci.1.1.1 = (n : Int) ^ 2) → ((1 < n) → ((BandPrototile Ci.1.1
             (FordTile n)) → ((∀ (A : ProtoTile), ∀ (m : Nat), (0 < m) → (∀ (v : GaussianInt),
             (A.cells = (TileTranslation (FordTile m) v).cells) → (FootprintVertices A =
             FootprintVertices (TileTranslation (FordTile m) v) ∧ TileCentroid A = TileCentroid
             (TileTranslation (FordTile m) v)))) → (
-        let vm : GaussianInt := u + if i = 0 then ⟨P.q, 0⟩ else ⟨0, P.q⟩
-        let vp : GaussianInt := u + if i = 0 then ⟨P.q₂, P.q⟩ else ⟨-(P.q₂ : Int), 0⟩
+        let vm : GaussianInt := u + if i = 0 then ⟨P.q, 0⟩ else ⟨0, P.q⟩;
+        let vp : GaussianInt := u + if i = 0 then ⟨P.q₂, P.q⟩ else ⟨-(P.q₂ : Int), 0⟩;
         (BandVectors.1 (FordRecursiveQuadruple P (0 : Fin (4 : ℕ))) (FordRecursiveQuadruple P
             i.succ) = (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt) * BandVectors.1 (FordRecursiveQuadruple
             P i.succ) (FordRecursiveQuadruple P (0 : Fin (4 : ℕ)))) → ((TileCentroid Rminus =
@@ -803,7 +804,7 @@ private theorem hminusheight :
             → (∀ (x : GaussianInt), (x ∈ walk) → ((x ∈ FootprintVertices Rminus) → ((x - u).im =
             if i = 0 then (n : Int) else P.q))))))))))))))))))))))))) ) := by
   classical
-  intro P C0 Ci i hCi hsmall T T' u hc' hsegment Rminus Rplus hcm hcp hsum n hnpos hnq hCicurv
+  intro P Ci i hCi hsmall T T' u hc' hsegment Rminus Rplus hcm hcp hsum n hnpos hnq hCicurv
       hnlarge hFord cellobs vm vp hflip hcmcand hcpcand heqm heqp hdelta hnormdelta walk
       hwsegment squarefoot x hx hxm
   rw [(cellobs Rminus n hnpos vm heqm).1] at hxm
@@ -816,7 +817,8 @@ private theorem hplusheight :
     (by
       classical
       exact
-        ∀ (P : FordFareyParameter), (BandCircle) → (∀ (Ci : BandCircle), ∀ (i : Fin 3),
+        ∀ (P : FordFareyParameter),
+        (∀ (Ci : BandCircle), ∀ (i : Fin 3),
             (FordRecursiveQuadruple P i.succ = Ci.1.1) → ((i = (0 : Fin (3 : ℕ)) ∧ P.q₁ < P.q₂ ∨
             i = (1 : Fin (3 : ℕ)) ∧ P.q₂ < P.q₁) → (∀ (T : ProtoTile), ∀ (T' : ProtoTile), ∀ (u :
             GaussianInt), (T'.cells = (TileTranslation (FordTile P.q) (u + if i = (0 : Fin (3 :
@@ -833,14 +835,14 @@ private theorem hplusheight :
             (FordRecursiveQuadruple P (0 : Fin (4 : ℕ))) + BandVectors.1 (FordRecursiveQuadruple
             P (0 : Fin (4 : ℕ))) (FordRecursiveQuadruple P i.succ))) → (((P.q : Int) = P.q₁ +
             P.q₂) → (
-        let n := if i = 0 then P.q₁ else P.q₂
+        let n := if i = 0 then P.q₁ else P.q₂;
         (0 < n) → ((n < P.q) → ((Ci.1.1.1 = (n : Int) ^ 2) → ((1 < n) → ((BandPrototile Ci.1.1
             (FordTile n)) → ((∀ (A : ProtoTile), ∀ (m : Nat), (0 < m) → (∀ (v : GaussianInt),
             (A.cells = (TileTranslation (FordTile m) v).cells) → (FootprintVertices A =
             FootprintVertices (TileTranslation (FordTile m) v) ∧ TileCentroid A = TileCentroid
             (TileTranslation (FordTile m) v)))) → (
-        let vm : GaussianInt := u + if i = 0 then ⟨P.q, 0⟩ else ⟨0, P.q⟩
-        let vp : GaussianInt := u + if i = 0 then ⟨P.q₂, P.q⟩ else ⟨-(P.q₂ : Int), 0⟩
+        let vm : GaussianInt := u + if i = 0 then ⟨P.q, 0⟩ else ⟨0, P.q⟩;
+        let vp : GaussianInt := u + if i = 0 then ⟨P.q₂, P.q⟩ else ⟨-(P.q₂ : Int), 0⟩;
         (BandVectors.1 (FordRecursiveQuadruple P (0 : Fin (4 : ℕ))) (FordRecursiveQuadruple P
             i.succ) = (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt) * BandVectors.1 (FordRecursiveQuadruple
             P i.succ) (FordRecursiveQuadruple P (0 : Fin (4 : ℕ)))) → ((TileCentroid Rminus =
@@ -858,7 +860,7 @@ private theorem hplusheight :
             FootprintVertices Rplus) → ((x - u).im = if i = 0 then (P.q : Int) else
             n)))))))))))))))))))))))))) ) := by
   classical
-  intro P C0 Ci i hCi hsmall T T' u hc' hsegment Rminus Rplus hcm hcp hsum n hnpos hnq hCicurv
+  intro P Ci i hCi hsmall T T' u hc' hsegment Rminus Rplus hcm hcp hsum n hnpos hnq hCicurv
       hnlarge hFord cellobs vm vp hflip hcmcand hcpcand heqm heqp hdelta hnormdelta walk
       hwsegment squarefoot hminusheight x hx hxp
   rw [(cellobs Rplus n hnpos vp heqp).1] at hxp
@@ -938,17 +940,20 @@ private theorem hta :
     (by
       classical
       exact
-        ∀ (P : FordFareyParameter), (BandCircle) → ((BandCircle) → (∀ (i : Fin 3), ∀ (u :
+        ∀ (P : FordFareyParameter),
+        (
+        (∀ (i : Fin 3), ∀ (u :
             GaussianInt), ((P.q : Int) = P.q₁ + P.q₂) → (
-        let n := if i = 0 then P.q₁ else P.q₂
+        let n := if i = 0 then P.q₁ else P.q₂;
         ∀ (z : GaussianInt), ((z - u).im < (↑P.q : ℤ)) → (((n : Int) ≤ (z - u).im) → (∀ (a :
-            GaussianInt), (GaussianInt) → (((a - u).im = if i = (0 : Fin (3 : ℕ)) then (↑n : ℤ)
+            GaussianInt),
+        (((a - u).im = if i = (0 : Fin (3 : ℕ)) then (↑n : ℤ)
             else (↑P.q : ℤ)) → (
         let test := fun x : GaussianInt =>
-          if i = 0 then (x - u).im ≤ (z - u).im else (z - u).im < (x - u).im
+          if i = 0 then (x - u).im ≤ (z - u).im else (z - u).im < (x - u).im;
         test a))))))) ) := by
   classical
-  intro P C0 Ci i u hsum n z hzhi hzlo' a b haheight test
+  intro P i u hsum n z hzhi hzlo' a haheight test
   by_cases hi : i = 0
   · simp only [test, ite_eq_left hi] at *
     omega
@@ -959,17 +964,20 @@ private theorem htb :
     (by
       classical
       exact
-        ∀ (P : FordFareyParameter), (BandCircle) → ((BandCircle) → (∀ (i : Fin 3), ∀ (u :
+        ∀ (P : FordFareyParameter),
+        (
+        (∀ (i : Fin 3), ∀ (u :
             GaussianInt), ((P.q : Int) = P.q₁ + P.q₂) → (
-        let n := if i = 0 then P.q₁ else P.q₂
+        let n := if i = 0 then P.q₁ else P.q₂;
         ∀ (z : GaussianInt), ((z - u).re = if i = (0 : Fin (3 : ℕ)) then (↑P.q : ℤ) else (0 : ℤ))
-            → (((z - u).im < (↑P.q : ℤ)) → (((n : Int) ≤ (z - u).im) → ((GaussianInt) → (∀ (b :
+            → (((z - u).im < (↑P.q : ℤ)) → (((n : Int) ≤ (z - u).im) → (
+        (∀ (b :
             GaussianInt), ((b - u).im = if i = (0 : Fin (3 : ℕ)) then (↑P.q : ℤ) else (↑n : ℤ)) → (
         let test := fun x : GaussianInt =>
-          if i = 0 then (x - u).im ≤ (z - u).im else (z - u).im < (x - u).im
+          if i = 0 then (x - u).im ≤ (z - u).im else (z - u).im < (x - u).im;
         ¬ test b)))))))) ) := by
   classical
-  intro P C0 Ci i u hsum n z hzre hzhi hzlo' a b hbheight test
+  intro P i u hsum n z hzre hzhi hzlo' b hbheight test
   by_cases hi : i = 0
   · simp only [test, ite_eq_left hi] at *
     omega
@@ -1115,10 +1123,10 @@ theorem P4158T1SmallerStringEdges
       (SmallerStringGeometry.hwroot C0 Ci T T' h h' tiles reverseTiles hs reverseHs hanc hanc'
       walk hwvertices (SmallerStringGeometry.ancestorFoot C0 Ci hC0pos))
   have squarefoot := SmallerStringGeometry.squarefoot
-  have hminusheight := SmallerStringGeometry.hminusheight P C0 Ci i hCi hsmall T T' u hc'
+  have hminusheight := SmallerStringGeometry.hminusheight P Ci i hCi hsmall T T' u hc'
       hsegment Rminus Rplus hcm hcp hsum hnpos hnq hCicurv hnlarge hFord cellobs hflip hcmcand
       hcpcand heqm heqp hdelta hnormdelta walk hwsegment squarefoot
-  have hplusheight := SmallerStringGeometry.hplusheight P C0 Ci i hCi hsmall T T' u hc' hsegment
+  have hplusheight := SmallerStringGeometry.hplusheight P Ci i hCi hsmall T T' u hc' hsegment
       Rminus Rplus hcm hcp hsum hnpos hnq hCicurv hnlarge hFord cellobs hflip hcmcand hcpcand
       heqm heqp hdelta hnormdelta walk hwsegment squarefoot hminusheight
   have crossing := SmallerStringGeometry.crossing
@@ -1133,8 +1141,8 @@ theorem P4158T1SmallerStringEdges
   have hbheight := hplusheight b (List.mem_of_mem_getLast? (by simp [hb])) hbp
   let test := fun x : GaussianInt =>
     if i = 0 then (x - u).im ≤ (z - u).im else (z - u).im < (x - u).im
-  have hta := SmallerStringGeometry.hta P C0 Ci i u hsum z hzhi hzlo' a b haheight
-  have htb := SmallerStringGeometry.htb P C0 Ci i u hsum z hzre hzhi hzlo' a b hbheight
+  have hta := SmallerStringGeometry.hta P i u hsum z hzhi hzlo' a haheight
+  have htb := SmallerStringGeometry.htb P i u hsum z hzre hzhi hzlo' b hbheight
   obtain ⟨x, y, l₁, l₂, he, htx, hty⟩ :=
     crossing test walk ⟨a, ha, hta⟩ ⟨b, hb, htb⟩
   have hxmem : x ∈ walk := by rw [he]; simp

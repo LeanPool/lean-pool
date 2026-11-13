@@ -6,6 +6,7 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.TileTranslationProperties
 
 public import LeanPool.ApollonianSuperharmonic.BandRegularTileTouchingClassification
 
@@ -70,28 +71,6 @@ private theorem centroid_difference :
   rw [(TileTranslationFormulas T y).2.2.2.2.1,
     (TileTranslationFormulas T x).2.2.2.2.1]
   ext <;> simp [GaussianRealPoint]
-
-private theorem translate_zero :
-    (by
-      classical
-      exact
-        ∀ (C : BandCircle), ∀ (q : Fin 4 → CircleCoordinates), ∀ (T : ProtoTile), (BandPrototile
-            (q (0 : Fin (4 : ℕ))) T) → (∀ (P : PeriodicTileComplex ↥(TilingLattice C)), (∀ (u :
-            ↥(TilingLattice C)), P.tile u = TileTranslation T (↑u : GaussianInt)) → (∀ [
-            Nonempty (AffineTriangularComplexChart P fun (mn : ℤ × ℤ) => TileTranslation T
-            ((↑mn.1 : GaussianInt) * BandVectors.1 (q (1 : Fin (4 : ℕ))) (q (0 : Fin (4 : ℕ))) +
-            (↑mn.2 : GaussianInt) * BandVectors.1 (q (2 : Fin (4 : ℕ))) (q (0 : Fin (4 : ℕ)))))],
-            (RegularTileFamily T (TilingLattice C) = Set.range P.tile) → ((∀ (x : GaussianInt), ∀
-            (y : GaussianInt), TileCentroid (TileTranslation T y) - TileCentroid (TileTranslation
-            T x) = GaussianRealPoint (y - x)) → (TileTranslation T 0 = T)))) ) := by
-  classical
-  intro C q T hT P htile hchart family_eq centroid_difference
-  cases T with
-  | mk cells anchor =>
-    apply congrArg₂ ProtoTile.mk
-    · ext z
-      simp [GaussianTranslation]
-    · simp [GaussianTranslation]
 
 private theorem hnonempty :
     (by
@@ -647,8 +626,7 @@ theorem BandTileTopologyApplication (C : BandCircle)
     have centroid_difference (x y : GaussianInt) :
         TileCentroid (TileTranslation T y) - TileCentroid (TileTranslation T x) =
           GaussianRealPoint (y - x) := TileTopologyGeometry.centroid_difference T x y
-    have translate_zero : TileTranslation T 0 = T := @TileTopologyGeometry.translate_zero C q T hT
-        P htile hchart family_eq centroid_difference
+    have translate_zero : TileTranslation T 0 = T := TileTranslationProperties.zero T
     have realPoint_injective : Function.Injective GaussianRealPoint :=
         GaussianRealPointProperties.injective
     have hpositive : 0 < (q 0).1 := (ProperBandCurvatureStructure q hq).1

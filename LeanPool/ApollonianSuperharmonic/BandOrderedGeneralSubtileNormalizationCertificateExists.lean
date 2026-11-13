@@ -203,19 +203,21 @@ private theorem hqbarᵢPos :
     (by
       classical
       exact
-        (BandCircle) → (∀ (q : Fin 4 → CircleCoordinates), ∀ (i : Fin 3), (Fin 4) → (∀ (r : Fin
+        (∀ (q : Fin 4 → CircleCoordinates), ∀ (i : Fin 3),
+        (∀ (r : Fin
             (3 : ℕ)), ∀ (g : BandPackingSymmetry),
         let qrot : Fin 4 → CircleCoordinates :=
-          ![q 0, q r.succ, q (r + 1).succ, q (r + 2).succ]
-        let irot : Fin 3 := i - r
-        let qbar := BandPackingSymmetryQuadrupleAction g qrot
-        (ProperBandQuadruple qbar) → ((BandOrderedGeneralConfiguration qbar) → ((Bool) → ((Fin (4
-            : ℕ)) → (
-        let reverse := BandPackingSymmetryReversesOrientation g
-        let ibar : Fin 3 := if reverse then -irot else irot
+          ![q 0, q r.succ, q (r + 1).succ, q (r + 2).succ];
+        let irot : Fin 3 := i - r;
+        let qbar := BandPackingSymmetryQuadrupleAction g qrot;
+        (ProperBandQuadruple qbar) → ((BandOrderedGeneralConfiguration qbar) → (
+        (
+        (
+        let reverse := BandPackingSymmetryReversesOrientation g;
+        let ibar : Fin 3 := if reverse then -irot else irot;
         0 < (qbar ibar.succ).1)))))) ) := by
   classical
-  intro Cᵢ q i s r g qrot irot qbar hqbar cfg negative sbar reverse ibar
+  intro q i r g qrot irot qbar hqbar cfg reverse ibar
   have hn := (ProperBandCurvatureStructure qbar hqbar).2.1 ibar
   have hnl := cfg.noLine ibar.succ
   omega
@@ -290,61 +292,17 @@ private theorem hsmallT1 :
     (by
       classical
       exact
-        ∀ (q : Fin 4 → CircleCoordinates), ∀ (r : Fin (3 : ℕ)), ∀ (g : BandPackingSymmetry),
-        let qrot : Fin 4 → CircleCoordinates :=
-          ![q 0, q r.succ, q (r + 1).succ, q (r + 2).succ]
-        let qbar := BandPackingSymmetryQuadrupleAction g qrot
         ∀ (q' : Fin 4 → CircleCoordinates), ∀ (T' : ProtoTile), ∀ (S' : Fin 3 → Bool →
             ProtoTile), ProperBandQuadruple q' → BandPrototile (q' 0) T' → (∀ i, ∀ s,
             BandSubtileOccurrence q' T' i s (S' i s)) → (∀ z, z ∈ T'.cells ↔ ∃ i s, z ∈ (S' i
-            s).cells) → Int.toNat (q' 0).1 < Int.toNat (qbar 0).1 → LatticeTile T' ∧ TileArea T'
+            s).cells) →
+        LatticeTile T' ∧ TileArea T'
             = Int.toNat (q' 0).1 ∧ ∀ i, ∀ s, LatticeTile (TileCellComplement T' (S' i s)) ∧
             TileTouching (TileCellComplement T' (S' i s)) (S' i s) ) := by
   classical
-  intro q r g qrot qbar q' T' S' hq' hT' hocc hcells _
+  intro q' T' S' hq' hT' hocc hcells
   have hI := BandTileSimultaneousInduction q' hq' T' hT'
   exact ⟨hI.1, hI.2.1, hI.2.2.1 S' hocc hcells⟩
-
-private theorem hsmallT4 :
-    (by
-      classical
-      exact
-        ∀ (q : Fin 4 → CircleCoordinates), ∀ (r : Fin (3 : ℕ)), ∀ (g : BandPackingSymmetry),
-        let qrot : Fin 4 → CircleCoordinates :=
-          ![q 0, q r.succ, q (r + 1).succ, q (r + 2).succ]
-        let qbar := BandPackingSymmetryQuadrupleAction g qrot
-        ∀ (q' : Fin 4 → CircleCoordinates), ∀ (T' : ProtoTile), ∀ (U : ProtoTile),
-            ProperBandQuadruple q' → BandPrototile (q' 0) T' → Int.toNat (q' 0).1 < Int.toNat
-            (qbar 0).1 → 1 < (q' 0).1 → ∀ i : Fin 3, BandPrototile (q' i.succ) U → TileCentroid U
-            - TileCentroid T' = (1 / 2 : Real) • (GaussianRealPoint (BandVectors.1 (q' i.succ)
-            (q' 0)) + GaussianRealPoint (BandVectors.1 (q' 0) (q' i.succ))) → TouchingTriple T'
-            (TileTranslation T' (BandVectors.1 (q' i.succ) (q' 0))) U ) := by
-  classical
-  intro q r g qrot qbar q' T' U hq' hT' _ hlarge i hU hcentU
-  exact (BandTileSimultaneousInduction q' hq' T' hT').2.2.2.2.2.1
-    hlarge i U hU hcentU
-
-private theorem hsmallT5 :
-    (by
-      classical
-      exact
-        ∀ (q : Fin 4 → CircleCoordinates), ∀ (r : Fin (3 : ℕ)), ∀ (g : BandPackingSymmetry),
-        let qrot : Fin 4 → CircleCoordinates :=
-          ![q 0, q r.succ, q (r + 1).succ, q (r + 2).succ]
-        let qbar := BandPackingSymmetryQuadrupleAction g qrot
-        ∀ (q' : Fin 4 → CircleCoordinates), ∀ (T' : ProtoTile), ∀ (U : ProtoTile), ∀ (V :
-            ProtoTile), ProperBandQuadruple q' → BandPrototile (q' 0) T' → Int.toNat (q' 0).1 <
-            Int.toNat (qbar 0).1 → ∀ i : Fin 3, BandPrototile (q' i.succ) U → BandPrototile (q'
-            ((i + 1).succ)) V → TileCentroid U - TileCentroid T' = (1 / 2 : Real) •
-            (GaussianRealPoint (BandVectors.1 (q' i.succ) (q' 0)) + GaussianRealPoint
-            (BandVectors.1 (q' 0) (q' i.succ))) → TileCentroid V - TileCentroid T' = (1 / 2 :
-            Real) • (GaussianRealPoint (BandVectors.1 (q' ((i + 1).succ)) (q' 0)) -
-            GaussianRealPoint (BandVectors.1 (q' 0) (q' ((i + 1).succ)))) → TouchingTriple T' U V
-            ) := by
-  classical
-  intro q r g qrot qbar q' T' U V hq' hT' _ i hU hV hcentU hcentV
-  exact (BandTileSimultaneousInduction q' hq' T' hT').2.2.2.2.2.2.1
-    i U V hU hV hcentU hcentV
 
 private theorem hstarFootprint :
     (by
@@ -899,14 +857,8 @@ private theorem subtileNormalizationCertificate :
           layout.v exteriorIndex) - TileCentroid T₀bar =
         (1 / 2 : ℝ) • GaussianRealPoint
           ((⟨0, 1⟩ : GaussianInt) ^ sbar.val *
-            (incoming ibar + outgoing ibar)) := (show
-                TileCentroid (SubtileOccurrenceInterpretation layout.P layout.u
-                layout.v exteriorIndex) - TileCentroid T₀bar = (1 / 2 : ℝ) •
-                GaussianRealPoint ((⟨0, 1⟩ : GaussianInt) ^ sbar.val * (incoming
-                ibar + outgoing ibar))
-              from by
-                classical
-                simpa [exteriorIndex] using hrows.1)
+            (incoming ibar + outgoing ibar)) := by
+    simpa [exteriorIndex] using hrows.1
   have hexteriorBand : BandPrototile (qbar ibar.succ)
       (SubtileOccurrenceInterpretation layout.P layout.u layout.v
         exteriorIndex) := SubtileNormalizationGeometry.hexteriorBand q i T₀ r g hqbar cfg sbar
@@ -1087,8 +1039,8 @@ theorem BandOrderedGeneralSubtileNormalizationCertificateExists
           r g hrotParent
   have hqbar₀Pos : 0 < (qbar 0).1 :=
     (ProperBandCurvatureStructure qbar hqbar).1
-  have hqbarᵢPos : 0 < (qbar ibar.succ).1 := SubtileNormalizationGeometry.hqbarᵢPos Cᵢ q i s r g
-      hqbar cfg negative sbar
+  have hqbarᵢPos : 0 < (qbar ibar.succ).1 := SubtileNormalizationGeometry.hqbarᵢPos q i r g
+      hqbar cfg
   let C₀bar : BandCircle :=
     ⟨⟨qbar 0, ⟨Or.inl hqbar₀Pos, ⟨qbar, hqbar.1, ⟨0, rfl⟩⟩⟩⟩, hqbar₀Pos⟩
   let Cᵢbar : BandCircle :=
@@ -1114,8 +1066,9 @@ theorem BandOrderedGeneralSubtileNormalizationCertificateExists
       Int.toNat (q' 0).1 < Int.toNat (qbar 0).1 →
       LatticeTile T' ∧ TileArea T' = Int.toNat (q' 0).1 ∧
         ∀ i s, LatticeTile (TileCellComplement T' (S' i s)) ∧
-          TileTouching (TileCellComplement T' (S' i s)) (S' i s) :=
-              SubtileNormalizationGeometry.hsmallT1 q r g
+          TileTouching (TileCellComplement T' (S' i s)) (S' i s) := by
+    intro q' T' S' hq' hT' hocc hcells retainedInput7
+    exact SubtileNormalizationGeometry.hsmallT1 q' T' S' hq' hT' hocc hcells
   have hsmallT2 : ∀ (D : CircleCoordinates) (U : ProtoTile),
       BandPrototile D U → Int.toNat D.1 < Int.toNat (qbar 0).1 →
       QuarterTurnSymmetric U := fun D U hU _ => BandPrototileQuarterTurn.symmetry D U hU
@@ -1128,8 +1081,10 @@ theorem BandOrderedGeneralSubtileNormalizationCertificateExists
         (GaussianRealPoint (BandVectors.1 (q' i.succ) (q' 0)) +
           GaussianRealPoint (BandVectors.1 (q' 0) (q' i.succ))) →
       TouchingTriple T'
-        (TileTranslation T' (BandVectors.1 (q' i.succ) (q' 0))) U :=
-            SubtileNormalizationGeometry.hsmallT4 q r g
+        (TileTranslation T' (BandVectors.1 (q' i.succ) (q' 0))) U := by
+    intro q' T' U hq' hT' _ hlarge i hU hcentU
+    exact (BandTileSimultaneousInduction q' hq' T' hT').2.2.2.2.2.1
+      hlarge i U hU hcentU
   have hsmallT5 : ∀ (q' : Fin 4 → CircleCoordinates)
       (T' U V : ProtoTile), ProperBandQuadruple q' →
       BandPrototile (q' 0) T' →
@@ -1142,7 +1097,10 @@ theorem BandOrderedGeneralSubtileNormalizationCertificateExists
       TileCentroid V - TileCentroid T' = (1 / 2 : Real) •
         (GaussianRealPoint (BandVectors.1 (q' ((i + 1).succ)) (q' 0)) -
           GaussianRealPoint (BandVectors.1 (q' 0) (q' ((i + 1).succ)))) →
-      TouchingTriple T' U V := SubtileNormalizationGeometry.hsmallT5 q r g
+      TouchingTriple T' U V := by
+    intro q' T' U V hq' hT' _ i hU hV hcentU hcentV
+    exact (BandTileSimultaneousInduction q' hq' T' hT').2.2.2.2.2.2.1
+      i U V hU hV hcentU hcentV
   obtain ⟨layout⟩ := BandOrderedGeneralLayout qbar cfg C₀bar
     rfl T₀bar hT₀barBand hsmallT1 hsmallT2 hsmallT4 hsmallT5
   obtain ⟨pieces, functions, hrootBand, hpieceOdometer, hpieceCells,

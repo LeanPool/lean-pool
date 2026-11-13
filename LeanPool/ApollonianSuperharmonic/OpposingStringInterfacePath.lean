@@ -917,8 +917,8 @@ private theorem htileXi :
       exact
         ∀ (C : BandCircle), ∀ (base : ProtoTile), ∀ (a : GaussianInt), ∀ (b : GaussianInt),
         let tileAt : Int × Int → ProtoTile := fun z =>
-          TileTranslation base ((z.1 : GaussianInt) * a + (z.2 : GaussianInt) * b)
-        (List (ℤ × ℤ)) → (∀ (q : Fin (4 : ℕ) → CircleCoordinates), ∀ (P : PeriodicTileComplex
+          TileTranslation base ((z.1 : GaussianInt) * a + (z.2 : GaussianInt) * b);
+        (∀ (q : Fin (4 : ℕ) → CircleCoordinates), ∀ (P : PeriodicTileComplex
             ↥(TilingLattice C)), ∀ (chart : AffineTriangularComplexChart P fun (mn : ℤ × ℤ) =>
             TileTranslation base ((↑mn.1 : GaussianInt) * BandVectors.1 (q (1 : Fin (4 : ℕ))) (q
             (0 : Fin (4 : ℕ))) + (↑mn.2 : GaussianInt) * BandVectors.1 (q (2 : Fin (4 : ℕ))) (q
@@ -939,10 +939,10 @@ private theorem htileXi :
             (AffineTriangularFaceVertices f) = {P.plane.faceVertex F (0 : Fin (3 : ℕ)),
             P.plane.faceVertex F (1 : Fin (3 : ℕ)), P.plane.faceVertex F (2 : Fin (3 : ℕ))}) → (
         let xi := fun z : Int × Int =>
-          chart.vertexEquiv (Prod.swap z)
+          chart.vertexEquiv (Prod.swap z);
         ∀ (z : Int × Int), P.tile (xi z) = tileAt z))))) := by
   classical
-  intro C base a b tileAt F q P chart haV hbV halign xi z
+  intro C base a b tileAt q P chart haV hbV halign xi z
   change P.tile (chart.vertexEquiv (Prod.swap z)) = tileAt z
   simpa [tileAt, haV, hbV, add_comm] using (halign.2.2.1 z).symm
 
@@ -986,7 +986,8 @@ private theorem hincAt826 :
     (by
       classical
       exact
-        ∀ (C : BandCircle), ∀ (base : ProtoTile), (List (ℤ × ℤ)) → (∀ (q : Fin (4 : ℕ) →
+        ∀ (C : BandCircle), ∀ (base : ProtoTile),
+        (∀ (q : Fin (4 : ℕ) →
             CircleCoordinates), ∀ (P : PeriodicTileComplex ↥(TilingLattice C)), ∀ (chart :
                 AffineTriangularComplexChart P fun (mn : ℤ × ℤ) => TileTranslation base ((↑mn.1 :
             GaussianInt) * BandVectors.1 (q (1 : Fin (4 : ℕ))) (q (0 : Fin (4 : ℕ))) + (↑mn.2 :
@@ -1006,16 +1007,16 @@ private theorem hincAt826 :
             (AffineTriangularFaceVertices f) = {P.plane.faceVertex F (0 : Fin (3 : ℕ)),
             P.plane.faceVertex F (1 : Fin (3 : ℕ)), P.plane.faceVertex F (2 : Fin (3 : ℕ))}) → (
         let xi := fun z : Int × Int =>
-          chart.vertexEquiv (Prod.swap z)
+          chart.vertexEquiv (Prod.swap z);
         let faceAt : AffineTriangularFace → P.plane.Face := fun f =>
           match AffineTriangularFaceCoordinateSwap f with
           | .up z => chart.up z
-          | .down z => chart.down z
+          | .down z => chart.down z;
         ∀ (f : AffineTriangularFace), (AffineTriangularFaceVertices f).image xi =
             {P.plane.faceVertex (faceAt f) 0, P.plane.faceVertex (faceAt f) 1,
             P.plane.faceVertex (faceAt f) 2}))) := by
   classical
-  intro C base F q P chart halign xi faceAt f
+  intro C base q P chart halign xi faceAt f
   change (AffineTriangularFaceVertices f).image
       (fun z => chart.vertexEquiv (Prod.swap z)) = _
   exact halign.2.2.2 f
@@ -1480,9 +1481,9 @@ theorem OpposingStringInterfacePath
         | .up z => chart.up z
         | .down z => chart.down z
       have hadjXi := OpposingInterfaceGeometry.hadjXiAt795 C base F q P chart halign
-      have htileXi := OpposingInterfaceGeometry.htileXi C base a b F q P chart haV hbV halign
+      have htileXi := OpposingInterfaceGeometry.htileXi C base a b q P chart haV hbV halign
       have hinjFace := OpposingInterfaceGeometry.hinjFaceAt805 C base q P chart
-      have hinc := OpposingInterfaceGeometry.hincAt826 C base F q P chart halign
+      have hinc := OpposingInterfaceGeometry.hincAt826 C base q P chart halign
       exact finish P xi faceAt hadjXi htileXi hinjFace hinc
 
 end ApollonianSuperharmonic

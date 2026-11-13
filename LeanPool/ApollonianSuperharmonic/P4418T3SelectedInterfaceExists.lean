@@ -6,6 +6,7 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.SimpleGridPathBetween
 public import LeanPool.ApollonianSuperharmonic.TileTranslationProperties
 public import LeanPool.ApollonianSuperharmonic.BandOriginalParentContainment
 
@@ -651,45 +652,7 @@ private theorem faceTable :
         neg_add_cancel, P4418T3EndpointOwnerIndices, exists_and_left, exists_and_right,
         selectedSecondFace, F0, face0, owners, F1, face1, zero_add, zero_sub, sub_self] <;> decide
 
-private theorem reversePath :
-    (by
-      classical
-      exact
-        ∀ {V : Set GaussianInt}, ∀ {E : Set (Finset GaussianInt)}, ∀ {x : GaussianInt}, ∀
-            {y : GaussianInt}, (SimpleGridPathBetween V E x y) → (SimpleGridPathBetween V E y x)
-            ) := by
-  classical
-  intro V E x y h
-  rcases h with ⟨p, hnd, hlen, hh, hl, hV, hstep, hE⟩
-  have reverseRaw (r : List GaussianInt) (e : Finset GaussianInt) :
-      (∃ a b l₁ l₂, r = l₁ ++ a :: b :: l₂ ∧ e = {a,b}) →
-      ∃ a b l₁ l₂, r.reverse = l₁ ++ a :: b :: l₂ ∧ e = {a,b} := by
-    rintro ⟨a, b, l₁, l₂, hr, he⟩
-    refine ⟨b, a, l₂.reverse, l₁.reverse, ?_, ?_⟩
-    · rw [hr]
-      simp [List.reverse_append, List.append_assoc]
-    · simpa [Finset.pair_comm] using he
-  refine ⟨p.reverse, List.nodup_reverse.mpr hnd, ?_, ?_, ?_, ?_, ?_, ?_⟩
-  · simpa using hlen
-  · simpa using hl
-  · simpa using hh
-  · simpa using hV
-  · intro a b l₁ l₂ hr
-    have hp : p = l₂.reverse ++ b :: a :: l₁.reverse := by
-      have hh := congrArg List.reverse hr
-      simpa [List.reverse_append, List.append_assoc] using hh
-    rcases hstep b a l₂.reverse l₁.reverse hp with h | h | h | h
-    · exact Or.inr (Or.inl (by rw [h]; simp))
-    · exact Or.inl (by rw [h]; simp)
-    · exact Or.inr (Or.inr (Or.inr (by rw [h]; simp)))
-    · exact Or.inr (Or.inr (Or.inl (by rw [h]; simp)))
-  · intro e
-    constructor
-    · intro he
-      exact reverseRaw p e ((hE e).mp he)
-    · intro he
-      apply (hE e).mpr
-      simpa using reverseRaw p.reverse e he
+private abbrev reversePath := @SimpleGridPathBetween.reverse
 
 private theorem allowed :
     (by

@@ -654,13 +654,13 @@ private theorem hsetAt539 :
     (by
       classical
       exact
-        (Nat) → (∀ (w : GaussianInt), ∀ (x : GaussianInt), ∀ (y : GaussianInt), ∀ (a : ℕ), ∀ (b :
+        (∀ (w : GaussianInt), ∀ (x : GaussianInt), ∀ (y : GaussianInt), ∀ (a : ℕ), ∀ (b :
             ℕ), (x = w + ⟨(↑a : ℤ), (↑b : ℤ)⟩) → (∀ (c : ℕ), ∀ (d : ℕ), (y = w + ⟨(↑c : ℤ), (↑d :
             ℤ)⟩) → ((a = c + 1 ∧ b = d) → (({x,y} : Finset GaussianInt) = {w + (⟨(c : Int),
             (d : Int)⟩ : GaussianInt), w + (⟨((c+1 : Nat) : Int), (d : Int)⟩ : GaussianInt)}))))
             ) := by
   classical
-  intro n w x y a b hxcoord c d hycoord hcd
+  intro w x y a b hxcoord c d hycoord hcd
   rw [hxcoord, hycoord, hcd.1, hcd.2]
   apply Finset.ext
   intro q
@@ -745,13 +745,13 @@ private theorem hsetAt580 :
     (by
       classical
       exact
-        (Nat) → (∀ (w : GaussianInt), ∀ (x : GaussianInt), ∀ (y : GaussianInt), ∀ (a : ℕ), ∀ (b :
+        (∀ (w : GaussianInt), ∀ (x : GaussianInt), ∀ (y : GaussianInt), ∀ (a : ℕ), ∀ (b :
             ℕ), (x = w + ⟨(↑a : ℤ), (↑b : ℤ)⟩) → (∀ (c : ℕ), ∀ (d : ℕ), (y = w + ⟨(↑c : ℤ), (↑d :
             ℤ)⟩) → ((a = c ∧ b = d + 1) → (({x,y} : Finset GaussianInt) = {w + (⟨(c : Int),
             (d : Int)⟩ : GaussianInt), w + (⟨(c : Int), ((d+1 : Nat) : Int)⟩ : GaussianInt)}))))
             ) := by
   classical
-  intro n w x y a b hxcoord c d hycoord hcd
+  intro w x y a b hxcoord c d hycoord hcd
   rw [hxcoord, hycoord, hcd.1, hcd.2]
   apply Finset.ext
   intro q
@@ -881,8 +881,8 @@ theorem P4456T2SquareEdges (n : Nat) (hn : 0 < n)
       have hcd : a = c + 1 ∧ b = d := SquareEdgeDetails.hcdAt532 n w a b c d heq
       have hset : ({x,y} : Finset GaussianInt) =
           {w + (⟨(c : Int), (d : Int)⟩ : GaussianInt),
-            w + (⟨((c+1 : Nat) : Int), (d : Int)⟩ : GaussianInt)} := SquareEdgeDetails.hsetAt539
-                n w x y a b hxcoord c d hycoord hcd
+            w + (⟨((c+1 : Nat) : Int), (d : Int)⟩ : GaussianInt)} :=
+              SquareEdgeDetails.hsetAt539 w x y a b hxcoord c d hycoord hcd
       rw [hset, Finset.pair_comm]
       simpa [Finset.pair_comm] using hEdgeH c d (by omega) (by omega)
     · have heq : w + (⟨(c : Int), (d : Int)⟩ : GaussianInt) =
@@ -901,8 +901,8 @@ theorem P4456T2SquareEdges (n : Nat) (hn : 0 < n)
       have hcd : a = c ∧ b = d + 1 := SquareEdgeDetails.hcdAt573 n w a b c d heq
       have hset : ({x,y} : Finset GaussianInt) =
           {w + (⟨(c : Int), (d : Int)⟩ : GaussianInt),
-            w + (⟨(c : Int), ((d+1 : Nat) : Int)⟩ : GaussianInt)} := SquareEdgeDetails.hsetAt580
-                n w x y a b hxcoord c d hycoord hcd
+            w + (⟨(c : Int), ((d+1 : Nat) : Int)⟩ : GaussianInt)} :=
+              SquareEdgeDetails.hsetAt580 w x y a b hxcoord c d hycoord hcd
       rw [hset, Finset.pair_comm]
       simpa [Finset.pair_comm] using hEdgeV c d (by omega) (by omega)
 

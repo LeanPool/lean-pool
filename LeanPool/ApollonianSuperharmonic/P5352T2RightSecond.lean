@@ -519,21 +519,21 @@ private theorem southAt385 :
       classical
       exact
         ∀ (K : DiamondParameter), ∀ (f : IntegerLatticeFunction),
-        let k : Int := K.1
-        let rho : GaussianInt := ⟨-k, -k-1⟩
+        let k : Int := K.1;
+        let rho : GaussianInt := ⟨-k, -k-1⟩;
         (∀ (t : Int), (0 ≤ t) → ((t < k) → ((⟨-t,t⟩ : GaussianInt)-⟨0,1⟩-rho ∈ FootprintVertices
             (DiamondTile K.1)))) → (
-        let S (a b : Int) : Int := 2*a^2-2*|a|-(a-b)^2+(a-b)%2
+        let S (a b : Int) : Int := 2*a^2-2*|a|-(a-b)^2+(a-b)%2;
         (∀ (a : Int), ∀ (b : Int), ∀ (m : Int), (a-b = 2*m) → (S a b = 2*a^2-2*|a|-4*m^2)) → ((∀
             (a : Int), ∀ (b : Int), ∀ (m : Int), (a-b = 2*m+1) → (S a b = 2*a^2-2*|a|-4*m^2-4*m))
             → ((∀ (x : GaussianInt), ∀ (y : GaussianInt), (x-rho ∈ FootprintVertices (DiamondTile
             K.1)) → ((y-rho ∈ FootprintVertices (DiamondTile K.1)) → (4*(f y-f x) = S (y-rho).re
             (y-rho).im-S (x-rho).re (x-rho).im - 4*k*(y-x).re))) → (∀ (t : ℤ), ((0 : ℤ) ≤ t) →
-            ((t < k) → ((⟨-t, t⟩ - rho ∈ FootprintVertices (DiamondTile K.1)) → ((f ((⟨-t,t⟩ :
-            GaussianInt)-1)-f ⟨-t,t⟩ = 0) → ((f ((⟨-t,t⟩ : GaussianInt)+⟨0,1⟩)-f ⟨-t,t⟩ = -t) →
+            ((t < k) → ((⟨-t, t⟩ - rho ∈ FootprintVertices (DiamondTile K.1)) → (
+        ((f ((⟨-t,t⟩ : GaussianInt)+⟨0,1⟩)-f ⟨-t,t⟩ = -t) →
             (f ((⟨-t,t⟩ : GaussianInt)-⟨0,1⟩)-f ⟨-t,t⟩ = t))))))))) ) := by
   classical
-  intro K f k rho footBS S sEven sOdd diffR t ht0 htk hzR west north
+  intro K f k rho footBS S sEven sOdd diffR t ht0 htk hzR north
   have h := diffR _ _ hzR (footBS t ht0 htk)
   rw [sEven _ _ (-t) (by dsimp [rho]; ring),
     sOdd _ _ (-t-1) (by dsimp [rho]; ring)] at h
@@ -546,17 +546,17 @@ private theorem htAt399 :
       classical
       exact
         ∀ (K : DiamondParameter), ∀ (f : IntegerLatticeFunction),
-        let k : Int := K.1
-        let rho : GaussianInt := ⟨-k, -k-1⟩
+        let k : Int := K.1;
+        let rho : GaussianInt := ⟨-k, -k-1⟩;
         let covered (x : GaussianInt) : Prop :=
           ∀ y, y=x ∨ y=x-1 ∨ y=x-⟨0,1⟩ ∨ y=x-1-⟨0,1⟩ →
-            y ∈ DiamondCellDomain K.1 ∨ y-rho ∈ DiamondCellDomain K.1
-        ∀ (t : ℤ), ((0 : ℤ) ≤ t) → ((covered ⟨-t, t⟩ ↔ (0 : ℤ) < t) → ((f ((⟨-t,t⟩ :
-            GaussianInt)-1)-f ⟨-t,t⟩ = 0) → ((f ((⟨-t,t⟩ : GaussianInt)+⟨0,1⟩)-f ⟨-t,t⟩ = -t) →
+            y ∈ DiamondCellDomain K.1 ∨ y-rho ∈ DiamondCellDomain K.1;
+        ∀ (t : ℤ), ((0 : ℤ) ≤ t) → ((covered ⟨-t, t⟩ ↔ (0 : ℤ) < t) → (
+        ((f ((⟨-t,t⟩ : GaussianInt)+⟨0,1⟩)-f ⟨-t,t⟩ = -t) →
             ((f ((⟨-t,t⟩ : GaussianInt)-⟨0,1⟩)-f ⟨-t,t⟩ = t) → ((¬covered ⟨-t, t⟩) → (t=0)))))) )
             := by
   classical
-  intro K f k rho covered t ht0 cells west north south hc
+  intro K f k rho covered t ht0 cells north south hc
   have : ¬ 0 < t := fun ht => hc (cells.mpr ht)
   omega
 
@@ -689,7 +689,7 @@ theorem P5352T2RightSecond (K : DiamondParameter) (hk : 1 < K.1)
       have north : f ((⟨-t,t⟩ : GaussianInt)+⟨0,1⟩)-f ⟨-t,t⟩ = -t :=
           DiamondRightSecond.northAt379 K f footBN sEven sOdd diffC t ht0 htk hz
       have south : f ((⟨-t,t⟩ : GaussianInt)-⟨0,1⟩)-f ⟨-t,t⟩ = t := DiamondRightSecond.southAt385
-          K f footBS sEven sOdd diffR t ht0 htk hzR west north
+          K f footBS sEven sOdd diffR t ht0 htk hzR north
       rw [lap, east, west, north, south]
       constructor
       · intro hc
@@ -697,7 +697,7 @@ theorem P5352T2RightSecond (K : DiamondParameter) (hk : 1 < K.1)
         rw [ite_eq_right ht]
         ring
       · intro hc
-        have ht : t=0 := DiamondRightSecond.htAt399 K f t ht0 cells west north south hc
+        have ht : t=0 := DiamondRightSecond.htAt399 K f t ht0 cells north south hc
         rw [ite_eq_left ht]
         ring
   )

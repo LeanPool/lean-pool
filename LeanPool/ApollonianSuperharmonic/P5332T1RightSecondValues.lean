@@ -146,10 +146,11 @@ private theorem hSouth :
   simpa [IntegerCeilDiv] using hs
 
 private theorem westUnion :
-    ∀ (P : FordFareyParameter), ((1 : ℕ) < P.q) → ((IntegerLatticeFunction) → (((P.q : Int) ≠ 0)
-        → (∀ (X : ℤ), ((P.q : Int) = (P.q₁ : Int) + P.q₂) → (((0 : ℤ) ≤ X ∧ X ≤ (↑P.q : ℤ) ∧ (0 :
+    ∀ (P : FordFareyParameter), ((1 : ℕ) < P.q) → (
+        (
+        (∀ (X : ℤ), ((P.q : Int) = (P.q₁ : Int) + P.q₂) → (((0 : ℤ) ≤ X ∧ X ≤ (↑P.q : ℤ) ∧ (0 :
         ℤ) ≤ (0 : ℤ) ∧ (0 : ℤ) ≤ (↑P.q : ℤ)) → (
-    let t : Int := X
+    let t : Int := X;
     (∀ (u : Int), ∀ (v : Int), (⟨u,v⟩ : GaussianInt) ∈ (FordTile P.q).cells ↔ 0 ≤ u ∧ u < P.q ∧ 0
         ≤ v ∧ v < P.q) → ((∀ (u : Int), ∀ (v : Int), ((⟨u,v⟩ : GaussianInt) - (P5332T1RightRows
         P 1 0).displacement) ∈ (FordTile P.q).cells ↔ 0 ≤ u + P.q₂ ∧ u + P.q₂ < P.q ∧ 0 ≤ v + P.q
@@ -157,7 +158,7 @@ private theorem westUnion :
         (⟨t-1,0⟩ : GaussianInt) - (P5332T1RightRows P 1 0).displacement ∈
           (FordTile P.q).cells ↔ 0 < t))))))) := by
   classical
-  intro P hq f hqn X hsum hx t rect transRect
+  intro P hq X hsum hx t rect transRect
   rw [rect, transRect]
   constructor
   · rintro (⟨hlo,_,_,_⟩ | ⟨_,hhi,_,_⟩) <;> omega
@@ -166,11 +167,12 @@ private theorem westUnion :
     exact ⟨by omega, by omega, by omega, by omega⟩
 
 private theorem lowerUnion :
-    ∀ (P : FordFareyParameter), ((1 : ℕ) < P.q) → ((IntegerLatticeFunction) → (((P.q : Int) ≠ 0)
-        → (∀ (X : ℤ), ((P.q : Int) = (P.q₁ : Int) + P.q₂) → (((0 : ℤ) ≤ X - -(↑P.q₂ : ℤ) ∧ X -
+    ∀ (P : FordFareyParameter), ((1 : ℕ) < P.q) → (
+        (
+        (∀ (X : ℤ), ((P.q : Int) = (P.q₁ : Int) + P.q₂) → (((0 : ℤ) ≤ X - -(↑P.q₂ : ℤ) ∧ X -
         -(↑P.q₂ : ℤ) ≤ (↑P.q : ℤ) ∧ (0 : ℤ) ≤ (0 : ℤ) - -(↑P.q : ℤ) ∧ (0 : ℤ) - -(↑P.q : ℤ) ≤
         (↑P.q : ℤ)) → (
-    let t : Int := X
+    let t : Int := X;
     (∀ (u : Int), ∀ (v : Int), (⟨u,v⟩ : GaussianInt) ∈ (FordTile P.q).cells ↔ 0 ≤ u ∧ u < P.q ∧ 0
         ≤ v ∧ v < P.q) → ((∀ (u : Int), ∀ (v : Int), ((⟨u,v⟩ : GaussianInt) - (P5332T1RightRows
         P 1 0).displacement) ∈ (FordTile P.q).cells ↔ 0 ≤ u + P.q₂ ∧ u + P.q₂ < P.q ∧ 0 ≤ v + P.q
@@ -178,7 +180,7 @@ private theorem lowerUnion :
         (⟨t,-1⟩ : GaussianInt) - (P5332T1RightRows P 1 0).displacement ∈
           (FordTile P.q).cells ↔ t < P.q₁))))))) := by
   classical
-  intro P hq f hqn X hsum hx' t rect transRect
+  intro P hq X hsum hx' t rect transRect
   rw [rect, transRect]
   constructor
   · rintro (⟨_,_,hlo,_⟩ | ⟨hlo,hhi,_,_⟩) <;> omega
@@ -346,12 +348,12 @@ theorem P5332T1RightSecondValues (P : FordFareyParameter) (hq : 1 < P.q)
     have westUnion :
         (⟨t-1,0⟩ : GaussianInt) ∈ (FordTile P.q).cells ∨
           (⟨t-1,0⟩ : GaussianInt) - (P5332T1RightRows P 1 0).displacement ∈
-            (FordTile P.q).cells ↔ 0 < t := RightSecondValuesProof.westUnion P hq f hqn X hsum hx
+            (FordTile P.q).cells ↔ 0 < t := RightSecondValuesProof.westUnion P hq X hsum hx
                 rect transRect
     have lowerUnion :
         (⟨t,-1⟩ : GaussianInt) ∈ (FordTile P.q).cells ∨
           (⟨t,-1⟩ : GaussianInt) - (P5332T1RightRows P 1 0).displacement ∈
-            (FordTile P.q).cells ↔ t < P.q₁ := RightSecondValuesProof.lowerUnion P hq f hqn X
+            (FordTile P.q).cells ↔ t < P.q₁ := RightSecondValuesProof.lowerUnion P hq X
                 hsum hx' rect transRect
     have centerCell : (⟨t,0⟩ : GaussianInt) ∈ (FordTile P.q).cells := by
       rw [rect]

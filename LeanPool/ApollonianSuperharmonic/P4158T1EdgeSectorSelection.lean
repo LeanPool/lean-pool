@@ -237,14 +237,17 @@ private theorem ford_disjoint_re :
     (by
       classical
       exact
-        (FordFareyParameter) → ((BandCircle) → ((Fin (3 : ℕ)) → ((GaussianInt) → ((GaussianInt) →
-            ((∀ (n : Nat), ∀ (w : GaussianInt), ∀ (c : GaussianInt), (c ∈ (TileTranslation
+        (
+        (
+        (
+        (
+        ((∀ (n : Nat), ∀ (w : GaussianInt), ∀ (c : GaussianInt), (c ∈ (TileTranslation
             (FordTile n) w).cells) → (0 ≤ (c-w).re ∧ (c-w).re < n ∧ 0 ≤ (c-w).im ∧ (c-w).im < n))
             → (∀ (n : Nat), ∀ (m : Nat), ∀ (w : GaussianInt), ∀ (v : GaussianInt), (w.re + n ≤
             v.re) → (Disjoint (TileTranslation (FordTile n) w).cells (TileTranslation (FordTile
             m) v).cells))))))) ) := by
   classical
-  intro P Ci i u x translated_ford_bounds n m w v hgap
+  intro translated_ford_bounds n m w v hgap
   apply Finset.disjoint_left.mpr
   intro c hcW hcV
   have hW := translated_ford_bounds n w c hcW
@@ -256,14 +259,17 @@ private theorem ford_disjoint_im :
     (by
       classical
       exact
-        (FordFareyParameter) → ((BandCircle) → ((Fin (3 : ℕ)) → ((GaussianInt) → ((GaussianInt) →
-            ((∀ (n : Nat), ∀ (w : GaussianInt), ∀ (c : GaussianInt), (c ∈ (TileTranslation
+        (
+        (
+        (
+        (
+        ((∀ (n : Nat), ∀ (w : GaussianInt), ∀ (c : GaussianInt), (c ∈ (TileTranslation
             (FordTile n) w).cells) → (0 ≤ (c-w).re ∧ (c-w).re < n ∧ 0 ≤ (c-w).im ∧ (c-w).im < n))
             → (∀ (n : Nat), ∀ (m : Nat), ∀ (w : GaussianInt), ∀ (v : GaussianInt), (w.im + n ≤
             v.im) → (Disjoint (TileTranslation (FordTile n) w).cells (TileTranslation (FordTile
             m) v).cells))))))) ) := by
   classical
-  intro P Ci i u x translated_ford_bounds n m w v hgap
+  intro translated_ford_bounds n m w v hgap
   apply Finset.disjoint_left.mpr
   intro c hcW hcV
   have hW := translated_ford_bounds n w c hcW
@@ -1677,12 +1683,14 @@ private theorem hq1castAt1045 :
     (by
       classical
       exact
-        ∀ (P : FordFareyParameter), (BandCircle) → (((0 : ℕ) < P.q₁) → (∀ (u : GaussianInt), ∀ (x
-            : GaussianInt), ((x - u).im = (↑P.q : ℤ)) → ((x.im - u.im = P.q) → (((P.q₁ : Int) +
+        ∀ (P : FordFareyParameter),
+        (((0 : ℕ) < P.q₁) → (∀ (u : GaussianInt), ∀ (x
+            : GaussianInt),
+        ((x.im - u.im = P.q) → (((P.q₁ : Int) +
             P.q₂ = P.q) → ((((P.q - 1 : Nat) : Int) = (P.q : Int) - 1) → (((P.q₁ - 1 : Nat) :
             Int) = (P.q₁ : Int) - 1)))))) ) := by
   classical
-  intro P Ci hrpos u x htop hxim' hqsum hqcast
+  intro P hrpos u x hxim' hqsum hqcast
   exact_mod_cast Nat.cast_sub (by omega : 1 ≤ P.q₁)
 
 private theorem hmcAt1049 :
@@ -2243,8 +2251,8 @@ theorem P4158T1EdgeSectorSelection :
         (EdgeSectorGeometry.pair_eq_iff)
     have translated_ford_bounds := EdgeSectorGeometry.translated_ford_bounds P Ci i u x
     have translated_ford_cell := EdgeSectorGeometry.translated_ford_cell
-    have ford_disjoint_re := EdgeSectorGeometry.ford_disjoint_re P Ci i u x translated_ford_bounds
-    have ford_disjoint_im := EdgeSectorGeometry.ford_disjoint_im P Ci i u x translated_ford_bounds
+    have ford_disjoint_re := EdgeSectorGeometry.ford_disjoint_re translated_ford_bounds
+    have ford_disjoint_im := EdgeSectorGeometry.ford_disjoint_im translated_ford_bounds
     have q₁pos := hrpos
     have lower_lt_q := EdgeSectorGeometry.lower_lt_q P i hsmall
     let z : GaussianInt :=
@@ -2376,7 +2384,7 @@ theorem P4158T1EdgeSectorSelection :
             exact_mod_cast P.sum_q.symm
           have hqcast : ((P.q - 1 : Nat) : Int) = (P.q : Int) - 1 := by
             exact_mod_cast Nat.cast_sub (by omega : 1 ≤ P.q)
-          have hq1cast := EdgeSectorGeometry.hq1castAt1045 P Ci hrpos u x htop hxim' hqsum hqcast
+          have hq1cast := EdgeSectorGeometry.hq1castAt1045 P hrpos u x hxim' hqsum hqcast
           let m : GaussianInt := x - 1
           have hmc := EdgeSectorGeometry.hmcAt1049 P Ci u x hxre'' hxim'' hqsum hqcast
           have hRmem : Rminus ∈ tiles := List.mem_of_head? hf.2.1

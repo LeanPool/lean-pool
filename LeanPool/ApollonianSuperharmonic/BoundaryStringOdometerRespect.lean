@@ -152,11 +152,11 @@ private theorem root :
     (by
       classical
       exact
-        (ℕ) → (∀ (C : BandCircle), ∀ (ε : Bool), ∀ (B : ProtoTile), ∀ (R : ProtoTile), ∀ (S :
+        (∀ (C : BandCircle), ∀ (ε : Bool), ∀ (B : ProtoTile), ∀ (R : ProtoTile), ∀ (S :
             ProtoTile), ∀ (g : PartialOdometer), ∀ (h : PartialOdometer), ∀ (F :
             P4458T1BoundaryFrame C ε B R S g h), 1 < (F.q 0).1) ) := by
   classical
-  intro n C ε B R S g h F
+  intro C ε B R S g h F
   have positive := C.property
   have smaller := F.proper.2 F.slot
   rw [F.parent] at smaller
@@ -565,7 +565,7 @@ theorem BoundaryStringOdometerRespect :
     induction n using Nat.strong_induction_on with
     | h n ih =>
       intro C ε B R S g h F hn
-      have root := BoundaryOdometerGeometry.root n C ε B R S g h F
+      have root := BoundaryOdometerGeometry.root C ε B R S g h F
       obtain ⟨T, H, hband, hsub, hcells, hfoot, hcent, hdom, hvalue, hcompat, hslope⟩ :=
         TileOdometerReindexedDecomposition F.q F.proper F.tile F.odometer root
           (by simpa only [F.child] using F.outer_odo)

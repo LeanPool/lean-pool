@@ -2031,40 +2031,6 @@ end IndexedFaceLedgerProof
 
 namespace IndexedLedgerAssembly
 
-private theorem hcross :
-    (by
-      classical
-      exact
-        ∀ (n : Nat), ∀ (p : P3381T1PolygonBoundary n), ∀ (S : P3544T1DiagonalSplit p), ∀ (XL
-            : Set (Real × Real)), ∀ (XR : Set (Real × Real)), ∀ (L : P3511T1SourceDissection
-            S.left XL), ∀ (R : P3511T1SourceDissection S.right XR), ∀ (i : Fin L.count), ∀ (j :
-            Fin R.count), Set.range (S.il ∘ L.face i) ≠ Set.range (S.ir ∘ R.face j) ) := by
-  classical
-  intro n p S XL XR L R i j
-  exact IndexedFaceLedgerProof.hcrossAt176 n p S XL XR L R i j
-
-private theorem hblock :
-    (by
-      classical
-      exact
-        ∀ {l : ℕ}, ∀ {r : ℕ}, ∀ (P : Fin l → Prop), ∀ (Q : Fin r → Prop), {k : Fin (l + r) |
-            Fin.addCases P Q k}.ncard = {i : Fin l | P i}.ncard + {j : Fin r | Q j}.ncard ) := by
-  classical
-  intro l r P Q
-  exact IndexedFaceLedgerProof.hblock (l := l) (r := r) P Q
-
-private theorem hmodShift :
-    (by
-      classical
-      exact
-        ∀ (n : Nat), ∀ (p : P3381T1PolygonBoundary n), (P3544T1DiagonalSplit p) → (∀ {m : ℕ},
-            ∀ {r : ℕ}, ∀ {x : ℕ}, ∀ {y : ℕ}, (0 : ℕ) < m → x < m → y < m → (r + x) % m = (r + y)
-            % m → x = y) ) := by
-  classical
-  intro n p S m r x y hm hx hy he
-  exact IndexedFaceLedgerProof.hmodShift n p S (m := m) (r :=
-          r) (x := x) (y := y) hm hx hy he
-
 private theorem hleftOrd :
     (by
       classical
@@ -2156,49 +2122,6 @@ private theorem hrightCountMapped :
           (IndexedFaceLedgerProof.hrightUsedMap n p S XR R
               (IndexedFaceLedgerProof.hrightFaceMem n p S XR R)) i j hi hj hij
 
-private theorem hleftZeroPair :
-    (by
-      classical
-      exact
-        ∀ (n : Nat), ∀ (p : P3381T1PolygonBoundary n), ∀ (S : P3544T1DiagonalSplit p), ∀ (XL
-            : Set (Real × Real)), ∀ (L : P3511T1SourceDissection S.left XL), ∀ (i : Fin (n + (3
-            : ℕ))), ∀ (j : Fin (n + (3 : ℕ))), ¬(i ∈ Set.range S.il ∧ j ∈ Set.range S.il) → {k :
-            Fin L.count | i ∈ Set.range (S.il ∘ L.face k) ∧ j ∈ Set.range (S.il ∘ L.face
-            k)}.ncard = (0 : ℕ) ) := by
-  classical
-  intro n p S XL L i j hno
-  exact IndexedFaceLedgerProof.hleftZeroPair n p S XL L i j hno
-
-private theorem hrightZeroPair :
-    (by
-      classical
-      exact
-        ∀ (n : Nat), ∀ (p : P3381T1PolygonBoundary n), ∀ (S : P3544T1DiagonalSplit p), ∀ (XR
-            : Set (Real × Real)), ∀ (R : P3511T1SourceDissection S.right XR), ∀ (i : Fin (n +
-            (3 : ℕ))), ∀ (j : Fin (n + (3 : ℕ))), ¬(i ∈ Set.range S.ir ∧ j ∈ Set.range S.ir) → {k
-            : Fin R.count | i ∈ Set.range (S.ir ∘ R.face k) ∧ j ∈ Set.range (S.ir ∘ R.face
-            k)}.ncard = (0 : ℕ) ) := by
-  classical
-  intro n p S XR R i j hno
-  exact IndexedFaceLedgerProof.hrightZeroPair n p S XR R i j hno
-
-private theorem hnotDiagBoundary :
-    (by
-      classical
-      exact
-        ∀ (n : Nat), ∀ (p : P3381T1PolygonBoundary n), ∀ (S : P3544T1DiagonalSplit p), (S.il
-            (0 : Fin (S.leftParameter + (3 : ℕ))) = S.a) → ((S.il (Fin.last (S.leftParameter + (2
-                : ℕ))) = S.b)
-            → ((∀ (x : Fin (S.leftParameter + (3 : ℕ))), ∀ (y : Fin (S.leftParameter + (3 : ℕ))),
-                S.il y = S.il
-            x + (1 : Fin (n + (3 : ℕ))) ∨ S.il x = S.il y + (1 : Fin (n + (3 : ℕ))) ↔ (↑y : ℕ) =
-            (↑x : ℕ) + (1 : ℕ) ∨ (↑x : ℕ) = (↑y : ℕ) + (1 : ℕ)) → (∀ (i : Fin (n + (3 : ℕ))), ∀
-            (j : Fin (n + (3 : ℕ))), i = S.a ∧ j = S.b ∨ j = S.a ∧ i = S.b → ¬(j = i + (1 : Fin
-            (n + (3 : ℕ))) ∨ i = j + (1 : Fin (n + (3 : ℕ))))))) ) := by
-  classical
-  intro n p S hleftA hleftB hleftOrd i j hdiag
-  exact IndexedFaceLedgerProof.hnotDiagBoundary n p S hleftA hleftB hleftOrd i j hdiag
-
 private theorem hcoverPair :
     (by
       classical
@@ -2228,233 +2151,6 @@ private theorem hcoverPair :
     (IndexedFaceLedgerProof.hcover n p S) (IndexedFaceLedgerProof.hcrossNoAdj n p S hlenP
     hlenL hlenR hleftcoord hrightcoord hmodShift hmodSucc hleftA hleftB hrightB hrightA
     hparentSuccVal)) i j hboundary
-
-private theorem hcountLAt2222 :
-    (by
-      classical
-      exact
-        ∀ (n : Nat), ∀ (p : P3381T1PolygonBoundary n), ∀ (S : P3544T1DiagonalSplit p), ∀ (XL
-            : Set (Real × Real)), ∀ (L : P3511T1SourceDissection S.left XL), (∀ (i : Fin (n +
-            (3 : ℕ))), ∀ (j : Fin (n + (3 : ℕ))), i ∈ Set.range S.il → j ∈ Set.range S.il → i ≠ j
-            → {k : Fin L.count | i ∈ Set.range (S.il ∘ L.face k) ∧ j ∈ Set.range (S.il ∘ L.face
-            k)}.ncard = if j = i + (1 : Fin (n + (3 : ℕ))) ∨ i = j + (1 : Fin (n + (3 : ℕ))) ∨ i
-            = S.a ∧ j = S.b ∨ j = S.a ∧ i = S.b then (1 : ℕ) else if ∃ (k : Fin L.count), i ∈
-            Set.range (S.il ∘ L.face k) ∧ j ∈ Set.range (S.il ∘ L.face k) then (2 : ℕ) else (0 :
-            ℕ)) → (∀ (i : Fin (n + (3 : ℕ))), ∀ (j : Fin (n + (3 : ℕ))), (i ≠ j) → ((j = i + (1 :
-            Fin (n + (3 : ℕ))) ∨ i = j + (1 : Fin (n + (3 : ℕ)))) → ((i ∈ Set.range S.il) → ((j ∈
-            Set.range S.il) → (Set.ncard {k : Fin L.count | i ∈ Set.range (S.il ∘ L.face k) ∧ j ∈
-            Set.range (S.il ∘ L.face k)} = 1))))) ) := by
-  classical
-  intro n p S XL L hleftCountMapped i j hij hboundary hiL hjL
-  exact IndexedFaceLedgerProof.hcountLAt1167 n p S XL L hleftCountMapped i j hij
-          hboundary hiL hjL
-
-private theorem hcountRAt2231 :
-    (by
-      classical
-      exact
-        ∀ (n : Nat), ∀ (p : P3381T1PolygonBoundary n), ∀ (S : P3544T1DiagonalSplit p), ∀ (XR
-            : Set (Real × Real)), ∀ (R : P3511T1SourceDissection S.right XR), (∀ (i : Fin (n +
-            (3 : ℕ))), ∀ (j : Fin (n + (3 : ℕ))), i ∈ Set.range S.ir → j ∈ Set.range S.ir → i ≠ j
-            → {k : Fin R.count | i ∈ Set.range (S.ir ∘ R.face k) ∧ j ∈ Set.range (S.ir ∘ R.face
-            k)}.ncard = if j = i + (1 : Fin (n + (3 : ℕ))) ∨ i = j + (1 : Fin (n + (3 : ℕ))) ∨ i
-            = S.a ∧ j = S.b ∨ j = S.a ∧ i = S.b then (1 : ℕ) else if ∃ (k : Fin R.count), i ∈
-            Set.range (S.ir ∘ R.face k) ∧ j ∈ Set.range (S.ir ∘ R.face k) then (2 : ℕ) else (0 :
-            ℕ)) → (∀ (i : Fin (n + (3 : ℕ))), ∀ (j : Fin (n + (3 : ℕ))), (i ≠ j) → ((j = i + (1 :
-            Fin (n + (3 : ℕ))) ∨ i = j + (1 : Fin (n + (3 : ℕ)))) → ((i ∈ Set.range S.ir) → ((j ∈
-            Set.range S.ir) → (Set.ncard {k : Fin R.count | i ∈ Set.range (S.ir ∘ R.face k) ∧ j ∈
-            Set.range (S.ir ∘ R.face k)} = 1))))) ) := by
-  classical
-  intro n p S XR R hrightCountMapped i j hij hboundary hiR hjR
-  exact IndexedFaceLedgerProof.hcountRAt1188 n p S XR R hrightCountMapped i j hij
-          hboundary hiR hjR
-
-private theorem hcountLAt2242 :
-    (by
-      classical
-      exact
-        ∀ (n : Nat), ∀ (p : P3381T1PolygonBoundary n), ∀ (S : P3544T1DiagonalSplit p), ∀ (XL
-            : Set (Real × Real)), ∀ (L : P3511T1SourceDissection S.left XL), (∀ (i : Fin (n +
-            (3 : ℕ))), ∀ (j : Fin (n + (3 : ℕ))), i ∈ Set.range S.il → j ∈ Set.range S.il → i ≠ j
-            → {k : Fin L.count | i ∈ Set.range (S.il ∘ L.face k) ∧ j ∈ Set.range (S.il ∘ L.face
-            k)}.ncard = if j = i + (1 : Fin (n + (3 : ℕ))) ∨ i = j + (1 : Fin (n + (3 : ℕ))) ∨ i
-            = S.a ∧ j = S.b ∨ j = S.a ∧ i = S.b then (1 : ℕ) else if ∃ (k : Fin L.count), i ∈
-            Set.range (S.il ∘ L.face k) ∧ j ∈ Set.range (S.il ∘ L.face k) then (2 : ℕ) else (0 :
-            ℕ)) → (∀ (i : Fin (n + (3 : ℕ))), ∀ (j : Fin (n + (3 : ℕ))), (i ≠ j) → ((i = S.a ∧ j
-            = S.b ∨ j = S.a ∧ i = S.b) → ((i ∈ Set.range S.il) → ((j ∈ Set.range S.il) →
-            (Set.ncard {k : Fin L.count | i ∈ Set.range (S.il ∘ L.face k) ∧ j ∈ Set.range (S.il ∘
-            L.face k)} = 1))))) ) := by
-  classical
-  intro n p S XL L hleftCountMapped i j hij hdiag hiL hjL
-  exact IndexedFaceLedgerProof.hcountLAt1209 n p S XL L hleftCountMapped i j hij hdiag
-          hiL hjL
-
-private theorem hcountRAt2246 :
-    (by
-      classical
-      exact
-        ∀ (n : Nat), ∀ (p : P3381T1PolygonBoundary n), ∀ (S : P3544T1DiagonalSplit p), ∀ (XR
-            : Set (Real × Real)), ∀ (R : P3511T1SourceDissection S.right XR), (∀ (i : Fin (n +
-            (3 : ℕ))), ∀ (j : Fin (n + (3 : ℕ))), i ∈ Set.range S.ir → j ∈ Set.range S.ir → i ≠ j
-            → {k : Fin R.count | i ∈ Set.range (S.ir ∘ R.face k) ∧ j ∈ Set.range (S.ir ∘ R.face
-            k)}.ncard = if j = i + (1 : Fin (n + (3 : ℕ))) ∨ i = j + (1 : Fin (n + (3 : ℕ))) ∨ i
-            = S.a ∧ j = S.b ∨ j = S.a ∧ i = S.b then (1 : ℕ) else if ∃ (k : Fin R.count), i ∈
-            Set.range (S.ir ∘ R.face k) ∧ j ∈ Set.range (S.ir ∘ R.face k) then (2 : ℕ) else (0 :
-            ℕ)) → (∀ (i : Fin (n + (3 : ℕ))), ∀ (j : Fin (n + (3 : ℕ))), (i ≠ j) → ((i = S.a ∧ j
-            = S.b ∨ j = S.a ∧ i = S.b) → ((i ∈ Set.range S.ir) → ((j ∈ Set.range S.ir) →
-            (Set.ncard {k : Fin R.count | i ∈ Set.range (S.ir ∘ R.face k) ∧ j ∈ Set.range (S.ir ∘
-            R.face k)} = 1))))) ) := by
-  classical
-  intro n p S XR R hrightCountMapped i j hij hdiag hiR hjR
-  exact IndexedFaceLedgerProof.hcountRAt1219 n p S XR R hrightCountMapped i j hij hdiag
-          hiR hjR
-
-private theorem hcount :
-    (by
-      classical
-      exact
-        ∀ (n : Nat), ∀ (p : P3381T1PolygonBoundary n), ∀ (S : P3544T1DiagonalSplit p), ∀ (XL
-            : Set (Real × Real)), ∀ (XR : Set (Real × Real)), ∀ (L : P3511T1SourceDissection
-            S.left XL), ∀ (R : P3511T1SourceDissection S.right XR),
-        let f : Fin (L.count + R.count) → Fin 3 → Fin (n + 3) :=
-          Fin.addCases (fun k => S.il ∘ L.face k) (fun k => S.ir ∘ R.face k)
-        ∀ (i : Fin (n + (3 : ℕ))), ∀ (j : Fin (n + (3 : ℕ))), ({k : Fin (L.count + R.count) | i ∈
-            Set.range ((fun (i : Fin (L.count + R.count)) => Fin.addCases (motive := fun (_ : Fin
-            (L.count + R.count)) => Fin (3 : ℕ) → Fin (n + (3 : ℕ))) (fun (k : Fin L.count) =>
-            S.il ∘ L.face k) (fun (k : Fin R.count) => S.ir ∘ R.face k) i) k) ∧ j ∈ Set.range
-            ((fun (i : Fin (L.count + R.count)) => Fin.addCases (motive := fun (_ : Fin (L.count
-            + R.count)) => Fin (3 : ℕ) → Fin (n + (3 : ℕ))) (fun (k : Fin L.count) => S.il ∘
-            L.face k) (fun (k : Fin R.count) => S.ir ∘ R.face k) i) k)}.ncard = {k : Fin L.count
-            | i ∈ Set.range (S.il ∘ L.face k) ∧ j ∈ Set.range (S.il ∘ L.face k)}.ncard + {k : Fin
-            R.count | i ∈ Set.range (S.ir ∘ R.face k) ∧ j ∈ Set.range (S.ir ∘ R.face k)}.ncard) →
-            ((Set.ncard {k : Fin L.count | i ∈ Set.range (S.il ∘ L.face k) ∧ j ∈ Set.range (S.il
-            ∘ L.face k)} = 1) → ((Set.ncard {k : Fin R.count | i ∈ Set.range (S.ir ∘ R.face k) ∧
-            j ∈ Set.range (S.ir ∘ R.face k)} = 1) → (Set.ncard {k : Fin (L.count + R.count) | i ∈
-            Set.range (f k) ∧ j ∈ Set.range (f k)} = 2)))) := by
-  classical
-  intro n p S XL XR L R f i j htotal hcountL hcountR
-  exact IndexedFaceLedgerProof.hcountAt1229
-          n p S XL XR L R i j htotal hcountL hcountR
-
-private theorem hused :
-    (by
-      classical
-      exact
-        ∀ (n : Nat), ∀ (p : P3381T1PolygonBoundary n), ∀ (S : P3544T1DiagonalSplit p), ∀ (XL
-            : Set (Real × Real)), ∀ (XR : Set (Real × Real)), ∀ (L : P3511T1SourceDissection
-            S.left XL), ∀ (R : P3511T1SourceDissection S.right XR),
-        let f : Fin (L.count + R.count) → Fin 3 → Fin (n + 3) :=
-          Fin.addCases (fun k => S.il ∘ L.face k) (fun k => S.ir ∘ R.face k)
-        ∀ (i : Fin (n + (3 : ℕ))), ∀ (j : Fin (n + (3 : ℕ))), (Set.ncard {k : Fin (L.count +
-            R.count) | i ∈ Set.range (f k) ∧ j ∈ Set.range (f k)} = 2) → (∃ k : Fin (L.count +
-            R.count), i ∈ Set.range (f k) ∧ j ∈ Set.range (f k)) ) := by
-  classical
-  intro n p S XL XR L R f i j hcount
-  exact IndexedFaceLedgerProof.hused n p S XL XR
-          L R i j hcount
-
-private theorem hNoSpecial :
-    (by
-      classical
-      exact
-        ∀ (n : Nat), ∀ (p : P3381T1PolygonBoundary n), ∀ (S : P3544T1DiagonalSplit p), ∀ (i :
-            Fin (n + (3 : ℕ))), ∀ (j : Fin (n + (3 : ℕ))), (¬(j = i + (1 : Fin (n + (3 : ℕ))) ∨ i
-            = j + (1 : Fin (n + (3 : ℕ))))) → ((¬(i = S.a ∧ j = S.b ∨ j = S.a ∧ i = S.b)) → (¬ (j
-            = i + 1 ∨ i = j + 1 ∨ (i = S.a ∧ j = S.b) ∨ (j = S.a ∧ i = S.b)))) ) := by
-  classical
-  intro n p S i j hboundary hdiag
-  exact IndexedFaceLedgerProof.hNoSpecial n p S i j hboundary hdiag
-
-private theorem hcountLAt2267 :
-    (by
-      classical
-      exact
-        ∀ (n : Nat), ∀ (p : P3381T1PolygonBoundary n), ∀ (S : P3544T1DiagonalSplit p), ∀ (XL
-            : Set (Real × Real)), ∀ (L : P3511T1SourceDissection S.left XL), (∀ (i : Fin (n +
-            (3 : ℕ))), ∀ (j : Fin (n + (3 : ℕ))), i ∈ Set.range S.il → j ∈ Set.range S.il → i ≠ j
-            → {k : Fin L.count | i ∈ Set.range (S.il ∘ L.face k) ∧ j ∈ Set.range (S.il ∘ L.face
-            k)}.ncard = if j = i + (1 : Fin (n + (3 : ℕ))) ∨ i = j + (1 : Fin (n + (3 : ℕ))) ∨ i
-            = S.a ∧ j = S.b ∨ j = S.a ∧ i = S.b then (1 : ℕ) else if ∃ (k : Fin L.count), i ∈
-            Set.range (S.il ∘ L.face k) ∧ j ∈ Set.range (S.il ∘ L.face k) then (2 : ℕ) else (0 :
-            ℕ)) → (∀ (i : Fin (n + (3 : ℕ))), ∀ (j : Fin (n + (3 : ℕ))), (i ≠ j) → ((¬ (j = i + 1
-            ∨ i = j + 1 ∨ (i = S.a ∧ j = S.b) ∨ (j = S.a ∧ i = S.b))) → (∀ (k : Fin L.count), (i
-            ∈ Set.range (S.il ∘ L.face k)) → ((j ∈ Set.range (S.il ∘ L.face k)) → ((i ∈ Set.range
-            S.il) → ((j ∈ Set.range S.il) → (Set.ncard {k : Fin L.count | i ∈ Set.range (S.il ∘
-            L.face k) ∧ j ∈ Set.range (S.il ∘ L.face k)} = 2))))))) ) := by
-  classical
-  intro n p S XL L hleftCountMapped i j hij hNoSpecial k hik hjk hiL hjL
-  exact IndexedFaceLedgerProof.hcountLAt1267 n p S XL L hleftCountMapped i j hij
-          hNoSpecial k hik hjk hiL hjL
-
-private theorem hcountRAt2278 :
-    (by
-      classical
-      exact
-        ∀ (n : Nat), ∀ (p : P3381T1PolygonBoundary n), ∀ (S : P3544T1DiagonalSplit p), ∀ (XR
-            : Set (Real × Real)), ∀ (R : P3511T1SourceDissection S.right XR), (∀ (i : Fin (n +
-            (3 : ℕ))), ∀ (j : Fin (n + (3 : ℕ))), i ∈ Set.range S.ir → j ∈ Set.range S.ir → i ≠ j
-            → {k : Fin R.count | i ∈ Set.range (S.ir ∘ R.face k) ∧ j ∈ Set.range (S.ir ∘ R.face
-            k)}.ncard = if j = i + (1 : Fin (n + (3 : ℕ))) ∨ i = j + (1 : Fin (n + (3 : ℕ))) ∨ i
-            = S.a ∧ j = S.b ∨ j = S.a ∧ i = S.b then (1 : ℕ) else if ∃ (k : Fin R.count), i ∈
-            Set.range (S.ir ∘ R.face k) ∧ j ∈ Set.range (S.ir ∘ R.face k) then (2 : ℕ) else (0 :
-            ℕ)) → (∀ (i : Fin (n + (3 : ℕ))), ∀ (j : Fin (n + (3 : ℕ))), (i ≠ j) → ((¬ (j = i + 1
-            ∨ i = j + 1 ∨ (i = S.a ∧ j = S.b) ∨ (j = S.a ∧ i = S.b))) → (∀ (k : Fin R.count), (i
-            ∈ Set.range (S.ir ∘ R.face k)) → ((j ∈ Set.range (S.ir ∘ R.face k)) → ((i ∈ Set.range
-            S.ir) → ((j ∈ Set.range S.ir) → (Set.ncard {k : Fin R.count | i ∈ Set.range (S.ir ∘
-            R.face k) ∧ j ∈ Set.range (S.ir ∘ R.face k)} = 2))))))) ) := by
-  classical
-  intro n p S XR R hrightCountMapped i j hij hNoSpecial k hik hjk hiR hjR
-  exact IndexedFaceLedgerProof.hcountRAt1293 n p S XR R hrightCountMapped i j hij
-          hNoSpecial k hik hjk hiR hjR
-
-private theorem hnoUsedL :
-    (by
-      classical
-      exact
-        ∀ (n : Nat), ∀ (p : P3381T1PolygonBoundary n), ∀ (S : P3544T1DiagonalSplit p), ∀ (XL
-            : Set (Real × Real)), ∀ (XR : Set (Real × Real)), ∀ (L : P3511T1SourceDissection
-            S.left XL), ∀ (R : P3511T1SourceDissection S.right XR),
-        let f : Fin (L.count + R.count) → Fin 3 → Fin (n + 3) :=
-          Fin.addCases (fun k => S.il ∘ L.face k) (fun k => S.ir ∘ R.face k)
-        (∀ (i : Fin (n + (3 : ℕ))), ∀ (j : Fin (n + (3 : ℕ))), (∃ (k : Fin (L.count + R.count)),
-            i ∈ Set.range ((fun (i : Fin (L.count + R.count)) => Fin.addCases (motive := fun (_ :
-            Fin (L.count + R.count)) => Fin (3 : ℕ) → Fin (n + (3 : ℕ))) (fun (k : Fin L.count)
-            => S.il ∘ L.face k) (fun (k : Fin R.count) => S.ir ∘ R.face k) i) k) ∧ j ∈ Set.range
-            ((fun (i : Fin (L.count + R.count)) => Fin.addCases (motive := fun (_ : Fin (L.count
-            + R.count)) => Fin (3 : ℕ) → Fin (n + (3 : ℕ))) (fun (k : Fin L.count) => S.il ∘
-            L.face k) (fun (k : Fin R.count) => S.ir ∘ R.face k) i) k)) ↔ (∃ (k : Fin L.count), i
-            ∈ Set.range (S.il ∘ L.face k) ∧ j ∈ Set.range (S.il ∘ L.face k)) ∨ ∃ (k : Fin
-            R.count), i ∈ Set.range (S.ir ∘ R.face k) ∧ j ∈ Set.range (S.ir ∘ R.face k)) → (∀ (i
-                : Fin (n + (3 : ℕ))), ∀ (j : Fin (n + (3 : ℕ))), (¬∃ (k : Fin (L.count +
-                R.count)), i
-            ∈ Set.range (f k) ∧ j ∈ Set.range (f k)) → (¬ ∃ k : Fin L.count, i ∈ Set.range (S.il
-            ∘ L.face k) ∧ j ∈ Set.range (S.il ∘ L.face k)))) := by
-  classical
-  intro n p S XL XR L R f husedSplit i j hused
-  exact IndexedFaceLedgerProof.hnoUsedL n p S XL XR L R husedSplit i j hused
-
-private theorem hcountLAt2288 :
-    (by
-      classical
-      exact
-        ∀ (n : Nat), ∀ (p : P3381T1PolygonBoundary n), ∀ (S : P3544T1DiagonalSplit p), ∀ (XL
-            : Set (Real × Real)), ∀ (L : P3511T1SourceDissection S.left XL), (∀ (i : Fin (n +
-            (3 : ℕ))), ∀ (j : Fin (n + (3 : ℕ))), i ∈ Set.range S.il → j ∈ Set.range S.il → i ≠ j
-            → {k : Fin L.count | i ∈ Set.range (S.il ∘ L.face k) ∧ j ∈ Set.range (S.il ∘ L.face
-            k)}.ncard = if j = i + (1 : Fin (n + (3 : ℕ))) ∨ i = j + (1 : Fin (n + (3 : ℕ))) ∨ i
-            = S.a ∧ j = S.b ∨ j = S.a ∧ i = S.b then (1 : ℕ) else if ∃ (k : Fin L.count), i ∈
-            Set.range (S.il ∘ L.face k) ∧ j ∈ Set.range (S.il ∘ L.face k) then (2 : ℕ) else (0 :
-            ℕ)) → ((∀ (i : Fin (n + (3 : ℕ))), ∀ (j : Fin (n + (3 : ℕ))), ¬(i ∈ Set.range S.il ∧
-            j ∈ Set.range S.il) → {k : Fin L.count | i ∈ Set.range (S.il ∘ L.face k) ∧ j ∈
-            Set.range (S.il ∘ L.face k)}.ncard = (0 : ℕ)) → (∀ (i : Fin (n + (3 : ℕ))), ∀ (j :
-            Fin (n + (3 : ℕ))), (i ≠ j) → ((¬ (j = i + 1 ∨ i = j + 1 ∨ (i = S.a ∧ j = S.b) ∨ (j =
-            S.a ∧ i = S.b))) → ((¬ ∃ k : Fin L.count, i ∈ Set.range (S.il ∘ L.face k) ∧ j ∈
-            Set.range (S.il ∘ L.face k)) → (Set.ncard {k : Fin L.count | i ∈ Set.range (S.il ∘
-            L.face k) ∧ j ∈ Set.range (S.il ∘ L.face k)} = 0))))) ) := by
-  classical
-  intro n p S XL L hleftCountMapped hleftZeroPair i j hij hNoSpecial hnoUsedL
-  exact IndexedFaceLedgerProof.hcountLAt1312 n p S XL L hleftCountMapped hleftZeroPair
-          i j hij hNoSpecial hnoUsedL
 
 private theorem hcountRAt2292 :
     (by
@@ -2492,20 +2188,6 @@ private theorem hcountRAt2292 :
           hrightZeroPair i j hij hNoSpecial (IndexedFaceLedgerProof.hnoUsedR n p S XL XR
               L R husedSplit i j hused)
 
-private theorem hdiag :
-    (by
-      classical
-      exact
-        ∀ (n : Nat), ∀ {m : ℕ}, ∀ {q : P3381T1PolygonBoundary m}, ∀ {X : Set (ℝ × ℝ)}, ∀ (D :
-            P3511T1SourceDissection q X), ∀ (e : Fin (m + (3 : ℕ)) → Fin (n + (3 : ℕ))), ∀ (a :
-            Fin (n + (3 : ℕ))), ∀ (b : Fin (n + (3 : ℕ))), ∀ (u : List (Fin (n + (3 : ℕ)))),
-            List.ofFn e = a :: (u ++ [b]) → ∃ (k : Fin D.count), a ∈ Set.range (e ∘ D.face k) ∧ b
-            ∈ Set.range (e ∘ D.face k) ) := by
-  classical
-  intro n m q X D e a b u horder
-  exact IndexedFaceLedgerProof.hdiag n (m := m) (q :=
-          q) (X := X) D e a b u horder
-
 end IndexedLedgerAssembly
 
 theorem P3652T1IndexedFaceLedger {n : Nat} {p : P3381T1PolygonBoundary n}
@@ -2539,7 +2221,8 @@ theorem P3652T1IndexedFaceLedger {n : Nat} {p : P3381T1PolygonBoundary n}
       (IndexedFaceLedgerProof.hmap)), (IndexedFaceLedgerProof.hinjective n p S XL XR L R), ?_,
       ?_, (IndexedFaceLedgerProof.hnondegenerate n p S XL XR L R), ?_, ?_, ?_⟩
   · have hcross (i : Fin L.count) (j : Fin R.count) :
-        Set.range (S.il ∘ L.face i) ≠ Set.range (S.ir ∘ R.face j) := IndexedLedgerAssembly.hcross
+        Set.range (S.il ∘ L.face i) ≠ Set.range (S.ir ∘ R.face j) :=
+            IndexedFaceLedgerProof.hcrossAt176
             n p S XL XR L R i j
     intro k l
     refine Fin.addCases (fun i => ?_) (fun j => ?_) k
@@ -2578,7 +2261,7 @@ theorem P3652T1IndexedFaceLedger {n : Nat} {p : P3381T1PolygonBoundary n}
   · have hblock {l r : Nat} (P : Fin l → Prop) (Q : Fin r → Prop) :
         Set.ncard {k : Fin (l + r) | Fin.addCases P Q k} =
           Set.ncard {i : Fin l | P i} + Set.ncard {j : Fin r | Q j} :=
-              IndexedLedgerAssembly.hblock (l := l) (r := r) P Q
+              IndexedFaceLedgerProof.hblock (l := l) (r := r) P Q
     have hlenP := IndexedFaceLedgerProof.hlenP n p S
     have hlenL := IndexedFaceLedgerProof.hlenL n p S
     have hlenR := IndexedFaceLedgerProof.hlenR n p S
@@ -2589,7 +2272,7 @@ theorem P3652T1IndexedFaceLedger {n : Nat} {p : P3381T1PolygonBoundary n}
         hlenP
         hlenL hlenR haCoord y
     have hmodShift {m r x y : Nat} (hm : 0 < m) (hx : x < m) (hy : y < m)
-        (he : (r + x) % m = (r + y) % m) := IndexedLedgerAssembly.hmodShift n p S (m := m) (r :=
+        (he : (r + x) % m = (r + y) % m) := IndexedFaceLedgerProof.hmodShift n p S (m := m) (r :=
             r) (x := x) (y := y) hm hx hy he
     have hmodSucc {m r x : Nat} (hm : 1 < m) := IndexedFaceLedgerProof.hmodSucc (m := m) (r := r)
         (x := x) hm
@@ -2620,13 +2303,13 @@ theorem P3652T1IndexedFaceLedger {n : Nat} {p : P3381T1PolygonBoundary n}
             hmodShift hmodSucc hfinAdj hrightB hrightA hparentSuccVal i j hi hj hij
     have hleftZeroPair (i j : Fin (n + 3))
         (hno : ¬ (i ∈ Set.range S.il ∧ j ∈ Set.range S.il)) :=
-            IndexedLedgerAssembly.hleftZeroPair n p S XL L i j hno
+            IndexedFaceLedgerProof.hleftZeroPair n p S XL L i j hno
     have hrightZeroPair (i j : Fin (n + 3))
         (hno : ¬ (i ∈ Set.range S.ir ∧ j ∈ Set.range S.ir)) :=
-            IndexedLedgerAssembly.hrightZeroPair n p S XR R i j hno
+            IndexedFaceLedgerProof.hrightZeroPair n p S XR R i j hno
     have hnotDiagBoundary (i j : Fin (n + 3))
         (hdiag : (i = S.a ∧ j = S.b) ∨ (j = S.a ∧ i = S.b)) :=
-            IndexedLedgerAssembly.hnotDiagBoundary n p S hleftA hleftB hleftOrd i j hdiag
+            IndexedFaceLedgerProof.hnotDiagBoundary n p S hleftA hleftB hleftOrd i j hdiag
     intro i j hij
     have htotal := (IndexedFaceLedgerProof.hblockCount n p S XL XR L R hblock) i j
     by_cases hboundary : j = i + 1 ∨ i = j + 1
@@ -2638,7 +2321,7 @@ theorem P3652T1IndexedFaceLedger {n : Nat} {p : P3381T1PolygonBoundary n}
           IndexedFaceLedgerProof.hnoRAt1159 n p S hdiagPair i j hij hnotDiag hiL hjL
         have hcountL : Set.ncard {k : Fin L.count |
             i ∈ Set.range (S.il ∘ L.face k) ∧ j ∈ Set.range (S.il ∘ L.face k)} = 1 :=
-                IndexedLedgerAssembly.hcountLAt2222 n p S XL L hleftCountMapped i j hij hboundary
+                IndexedFaceLedgerProof.hcountLAt1167 n p S XL L hleftCountMapped i j hij hboundary
                 hiL hjL
         have hcountR := hrightZeroPair i j hnoR
         rw [htotal, hcountL, hcountR]
@@ -2647,7 +2330,7 @@ theorem P3652T1IndexedFaceLedger {n : Nat} {p : P3381T1PolygonBoundary n}
           IndexedFaceLedgerProof.hnoLAt1180 n p S hdiagPair i j hij hnotDiag hiR hjR
         have hcountR : Set.ncard {k : Fin R.count |
             i ∈ Set.range (S.ir ∘ R.face k) ∧ j ∈ Set.range (S.ir ∘ R.face k)} = 1 :=
-                IndexedLedgerAssembly.hcountRAt2231 n p S XR R hrightCountMapped i j hij
+                IndexedFaceLedgerProof.hcountRAt1188 n p S XR R hrightCountMapped i j hij
                 hboundary hiR hjR
         have hcountL := hleftZeroPair i j hnoL
         rw [htotal, hcountL, hcountR]
@@ -2658,22 +2341,23 @@ theorem P3652T1IndexedFaceLedger {n : Nat} {p : P3381T1PolygonBoundary n}
         rcases hcommon with ⟨hiL, hiR, hjL, hjR⟩
         have hcountL : Set.ncard {k : Fin L.count |
             i ∈ Set.range (S.il ∘ L.face k) ∧ j ∈ Set.range (S.il ∘ L.face k)} = 1 :=
-                IndexedLedgerAssembly.hcountLAt2242 n p S XL L hleftCountMapped i j hij hdiag hiL
+                IndexedFaceLedgerProof.hcountLAt1209 n p S XL L hleftCountMapped i j hij hdiag hiL
                 hjL
         have hcountR : Set.ncard {k : Fin R.count |
             i ∈ Set.range (S.ir ∘ R.face k) ∧ j ∈ Set.range (S.ir ∘ R.face k)} = 1 :=
-                IndexedLedgerAssembly.hcountRAt2246 n p S XR R hrightCountMapped i j hij hdiag
+                IndexedFaceLedgerProof.hcountRAt1219 n p S XR R hrightCountMapped i j hij hdiag
                 hiR hjR
         have hcount : Set.ncard {k : Fin (L.count + R.count) |
-            i ∈ Set.range (f k) ∧ j ∈ Set.range (f k)} = 2 := IndexedLedgerAssembly.hcount n p S
+            i ∈ Set.range (f k) ∧ j ∈ Set.range (f k)} = 2 :=
+                IndexedFaceLedgerProof.hcountAt1229 n p S
                 XL XR L R i j htotal hcountL hcountR
         have hused : ∃ k : Fin (L.count + R.count),
-            i ∈ Set.range (f k) ∧ j ∈ Set.range (f k) := IndexedLedgerAssembly.hused n p S XL XR
+            i ∈ Set.range (f k) ∧ j ∈ Set.range (f k) := IndexedFaceLedgerProof.hused n p S XL XR
                 L R i j hcount
         rw [hcount, ite_eq_right hnotBoundary, ite_eq_left hused]
       · have hNoSpecial :
             ¬ (j = i + 1 ∨ i = j + 1 ∨ (i = S.a ∧ j = S.b) ∨ (j = S.a ∧ i = S.b)) :=
-                IndexedLedgerAssembly.hNoSpecial n p S i j hboundary hdiag
+                IndexedFaceLedgerProof.hNoSpecial n p S i j hboundary hdiag
         by_cases hused : ∃ k : Fin (L.count + R.count),
             i ∈ Set.range (f k) ∧ j ∈ Set.range (f k)
         · rcases (husedSplit i j).1 hused with husedL | husedR
@@ -2683,7 +2367,7 @@ theorem P3652T1IndexedFaceLedger {n : Nat} {p : P3381T1PolygonBoundary n}
             have hnoR := IndexedFaceLedgerProof.hnoRAt1259 n p S hdiagPair i j hij hdiag hiL hjL
             have hcountL : Set.ncard {k : Fin L.count |
                 i ∈ Set.range (S.il ∘ L.face k) ∧ j ∈ Set.range (S.il ∘ L.face k)} = 2 :=
-                    IndexedLedgerAssembly.hcountLAt2267 n p S XL L hleftCountMapped i j hij
+                    IndexedFaceLedgerProof.hcountLAt1267 n p S XL L hleftCountMapped i j hij
                     hNoSpecial k hik hjk hiL hjL
             have hcountR := hrightZeroPair i j hnoR
             rw [htotal, hcountL, hcountR]
@@ -2694,17 +2378,17 @@ theorem P3652T1IndexedFaceLedger {n : Nat} {p : P3381T1PolygonBoundary n}
             have hnoL := IndexedFaceLedgerProof.hnoLAt1285 n p S hdiagPair i j hij hdiag hiR hjR
             have hcountR : Set.ncard {k : Fin R.count |
                 i ∈ Set.range (S.ir ∘ R.face k) ∧ j ∈ Set.range (S.ir ∘ R.face k)} = 2 :=
-                    IndexedLedgerAssembly.hcountRAt2278 n p S XR R hrightCountMapped i j hij
+                    IndexedFaceLedgerProof.hcountRAt1293 n p S XR R hrightCountMapped i j hij
                     hNoSpecial k hik hjk hiR hjR
             have hcountL := hleftZeroPair i j hnoL
             rw [htotal, hcountL, hcountR]
             rw [ite_eq_right hboundary, ite_eq_left hused]
         · have hnoUsedL : ¬ ∃ k : Fin L.count,
               i ∈ Set.range (S.il ∘ L.face k) ∧ j ∈ Set.range (S.il ∘ L.face k) :=
-                  IndexedLedgerAssembly.hnoUsedL n p S XL XR L R husedSplit i j hused
+                  IndexedFaceLedgerProof.hnoUsedL n p S XL XR L R husedSplit i j hused
           have hcountL : Set.ncard {k : Fin L.count |
               i ∈ Set.range (S.il ∘ L.face k) ∧ j ∈ Set.range (S.il ∘ L.face k)} = 0 :=
-                  IndexedLedgerAssembly.hcountLAt2288 n p S XL L hleftCountMapped hleftZeroPair i
+                  IndexedFaceLedgerProof.hcountLAt1312 n p S XL L hleftCountMapped hleftZeroPair i
                   j hij hNoSpecial hnoUsedL
           have hcountR : Set.ncard {k : Fin R.count |
               i ∈ Set.range (S.ir ∘ R.face k) ∧ j ∈ Set.range (S.ir ∘ R.face k)} = 0 :=
@@ -2716,7 +2400,7 @@ theorem P3652T1IndexedFaceLedger {n : Nat} {p : P3381T1PolygonBoundary n}
     have hdiag {m : Nat} {q : P3381T1PolygonBoundary m} {X : Set (Real × Real)}
         (D : P3511T1SourceDissection q X) (e : Fin (m + 3) → Fin (n + 3))
         (a b : Fin (n + 3)) (u : List (Fin (n + 3)))
-        (horder : List.ofFn e = a :: (u ++ [b])) := IndexedLedgerAssembly.hdiag n (m := m) (q :=
+        (horder : List.ofFn e = a :: (u ++ [b])) := IndexedFaceLedgerProof.hdiag n (m := m) (q :=
             q) (X := X) D e a b u horder
   · exact hdiag L S.il S.a S.b S.u S.left_order
   · obtain ⟨k, hb, ha⟩ := hdiag R S.ir S.b S.a S.v S.right_order

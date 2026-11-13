@@ -1389,28 +1389,28 @@ private theorem hupper :
             PeriodicSubtileIndex, a.first = 0 ∧ a.second = 0 ∧ c ∈ (cert.modified.tile
                 a).cells)),
         let owner : Fin 4 → PeriodicSubtileIndex := fun j =>
-          Classical.choose (modified_cell_owner (LatticeVertexIncidentCell x j) (cells j))
+          Classical.choose (modified_cell_owner (LatticeVertexIncidentCell x j) (cells j));
         ∀ (parent_boundary_incident_cell : ∀ (i : Fin 3), ∀ (s : Bool), (x ∈
             BoundaryFootprintVertices (cert.P i s)) → (∃ j : Fin 4, LatticeVertexIncidentCell x j
             ∈ (cert.P i s).cells)),
         let modifiedOwners : Finset PeriodicSubtileIndex :=
-                Finset.univ.image owner
-        (Fin (4 : ℕ)) → (
+                Finset.univ.image owner;
+        (
         let BoundaryParents := {a : Fin 3 × Bool //
-          x ∈ BoundaryFootprintVertices (cert.P a.1 a.2)}
+          x ∈ BoundaryFootprintVertices (cert.P a.1 a.2)};
         let parentCellIndex : BoundaryParents → Fin 4 := fun p =>
-          Classical.choose (parent_boundary_incident_cell p.1.1 p.1.2 p.2)
-        let ModOwner := {m : PeriodicSubtileIndex // m ∈ modifiedOwners}
+          Classical.choose (parent_boundary_incident_cell p.1.1 p.1.2 p.2);
+        let ModOwner := {m : PeriodicSubtileIndex // m ∈ modifiedOwners};
         let parentMap : BoundaryParents → Sum ModOwner Unit := fun p =>
           if p.1 = (0, true) then Sum.inr Unit.unit
           else
             let j := parentCellIndex p
-            Sum.inl ⟨owner j, Finset.mem_image.mpr ⟨j, Finset.mem_univ _, rfl⟩⟩
+            Sum.inl ⟨owner j, Finset.mem_image.mpr ⟨j, Finset.mem_univ _, rfl⟩⟩;
         (Function.Injective parentMap) → (Nat.card BoundaryParents ≤ modifiedOwners.card + 1)))
             := by
   classical
   intro q cfg C T cert x cells modified_cell_owner owner parent_boundary_incident_cell
-      modifiedOwners j BoundaryParents parentCellIndex ModOwner parentMap parentMap_injective
+      modifiedOwners BoundaryParents parentCellIndex ModOwner parentMap parentMap_injective
   have hcard := Fintype.card_le_of_injective parentMap parentMap_injective
   simpa [BoundaryParents, ModOwner, Nat.card_eq_fintype_card,
     Fintype.card_sum] using hcard
@@ -1589,7 +1589,7 @@ theorem P4120T1GeneralDescent
             adjacent_of_edge) (GeneralDescentGeometry.adj30 q cfg C T cert x cells
             modified_cell_owner owner_spec cell_edge_hbottom cell_edge_htop adjacent_of_edge))))
             (GeneralDescentGeometry.hupper q cfg C T cert x cells modified_cell_owner
-            parent_boundary_incident_cell j (GeneralDescentGeometry.parentMap_injective q cfg C T
+            parent_boundary_incident_cell (GeneralDescentGeometry.parentMap_injective q cfg C T
             cert x cells modified_cell_owner parent_boundary_incident_cell j
             (GeneralDescentGeometry.parent_matches_owner q cfg C T cert x cells
             modified_cell_owner owner_spec parent_boundary_incident_cell

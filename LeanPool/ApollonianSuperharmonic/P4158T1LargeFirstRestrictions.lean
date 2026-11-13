@@ -652,19 +652,22 @@ private theorem hcentUV :
     (by
       classical
       exact
-        ∀ (P : FordFareyParameter), (BandCircle) → ((P.q₂ < P.q₁) → (∀ (u : GaussianInt), (1 <
+        ∀ (P : FordFareyParameter),
+        (
+        (∀ (u : GaussianInt), (1 <
             P.q₁) → (∀ (S : Fin (3 : ℕ) → Bool → ProtoTile), ∀ (S' : Fin (3 : ℕ) → Bool →
             ProtoTile),
-        let U := S 0 false
-        let V := S' 0 true
-        (P.p₁ * (P.q₂ : Int) - (P.q₁ : Int) * P.p₂ = 1) → ((Nat.Coprime P.q₁ P.p₁.natAbs) → ((∀
+        let U := S 0 false;
+        let V := S' 0 true;
+        (
+        ((∀
             (n : Nat), (0 < n) → (TileCentroid (FordTile n) = ((n : Real) / 2, (n : Real) / 2))) → (
-        let Uc := TileTranslation (FordTile P.q₁) (u + ⟨P.q₂, P.q₂⟩)
-        let Vc := TileTranslation (FordTile P.q₁) (u + ⟨P.q, P.q₁⟩)
+        let Uc := TileTranslation (FordTile P.q₁) (u + ⟨P.q₂, P.q₂⟩);
+        let Vc := TileTranslation (FordTile P.q₁) (u + ⟨P.q, P.q₁⟩);
         (TileCentroid U = TileCentroid Uc) → ((TileCentroid V = TileCentroid Vc) → (TileCentroid
             V - TileCentroid U = GaussianRealPoint ⟨P.q₁, (P.q₁ : Int) - P.q₂⟩)))))))) ) := by
   classical
-  intro P Ci horder u hq1 S S' U V hcross hcop fordCentroid Uc Vc hUCcent hVCcent
+  intro P u hq1 S S' U V fordCentroid Uc Vc hUCcent hVCcent
   rw [hVCcent, hUCcent,
     (TileTranslationFormulas (FordTile P.q₁) (u + ⟨P.q, P.q₁⟩)).2.2.2.2.1,
     (TileTranslationFormulas (FordTile P.q₁) (u + ⟨P.q₂, P.q₂⟩)).2.2.2.2.1,
@@ -1006,7 +1009,7 @@ theorem P4158T1LargeFirstRestrictions
   have hVcells : V.cells = Vc.cells :=
     (BandPrototileCentroidUnique Ci.1.1 V Vc
       (TileOdometerBandPrototile Ci.1.1 V k hVk) hVcBand hVCcent).1
-  have hcentUV := LargeFirstRestrictions.hcentUV P Ci horder u hq1 S S' hcross hcop fordCentroid
+  have hcentUV := LargeFirstRestrictions.hcentUV P u hq1 S S' fordCentroid
       hUCcent hVCcent
   have hnonzero := LargeFirstRestrictions.hnonzero P Ci horder hq1 hcross hcop
   have hslopeUdata := LargeFirstRestrictions.hslopeUdata P h gS hslope hnonzero

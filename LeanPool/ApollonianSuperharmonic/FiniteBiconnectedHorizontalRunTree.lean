@@ -723,23 +723,16 @@ private theorem hqfar :
   simpa [reachRel, heq, heqLast] using h
 
 private theorem far_step_zero :
-    ∀ (S : Finset GaussianInt),
-    let I : GaussianInt := ⟨0, 1⟩
-    let VF : Finset GaussianInt := S.filter fun z => z + I ∈ S
-    let JF : Finset GaussianInt := VF.filter fun z =>
-      ¬ (z - 1 ∈ S ∧ z - 1 + I ∈ S)
-    let X := {z : GaussianInt // z ∈ S}
-    let rel : X → X → Prop := fun a b =>
-      b.1 = a.1 + 1 ∨ (b.1 = a.1 + I ∧ a.1 ∈ JF)
-    let G : SimpleGraph X := SimpleGraph.fromRel rel
-    ∀ (leftmost : GaussianInt), ∀ (u : X), (G.Walk u u) → ((X) → (
-    let far : GaussianInt := leftmost - 1
+        ∀ (leftmost : GaussianInt),
+        (
+        (
+    let far : GaussianInt := leftmost - 1;
     ∀ (a : GaussianInt), ∀ (b : GaussianInt), (leftmost.re ≤ a.re) → ((if b = a + ⟨0, 1⟩ ∧ a.im =
         far.im ∧ a.re ≤ far.re then 1
         else if b = a - ⟨0, 1⟩ ∧ b.im = far.im ∧ a.re ≤ far.re
           then -1 else 0) = 0))) := by
   classical
-  intro S I VF JF X rel G leftmost u c v far a b ha
+  intro leftmost far a b ha
   split_ifs with hup hdown
   · simp [far] at hup
     omega
@@ -1482,7 +1475,7 @@ theorem FiniteBiconnectedHorizontalRunTree (S : Finset GaussianInt)
     have far_step_zero (a b : GaussianInt) (ha : leftmost.re ≤ a.re) :
         (if b = a + ⟨0, 1⟩ ∧ a.im = far.im ∧ a.re ≤ far.re then 1
           else if b = a - ⟨0, 1⟩ ∧ b.im = far.im ∧ a.re ≤ far.re
-            then -1 else 0) = 0 := HorizontalRunTreeProof.far_step_zero S leftmost u c v a b ha
+            then -1 else 0) = 0 := HorizontalRunTreeProof.far_step_zero leftmost a b ha
     have hfarzero : GridRayCrossingIndex far path = 0 := HorizontalRunTreeProof.hfarzero S
         leftmost hmin u c path_head path_last path_vertex_re_min far_step_zero
     exact hqnonzero (hqfar.trans hfarzero)

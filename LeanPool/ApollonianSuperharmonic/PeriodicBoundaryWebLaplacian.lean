@@ -848,18 +848,19 @@ private theorem hcurvature :
     (by
       classical
       exact
-        ∀ (C : BandCircle), (¬C.1.1.1 = (1 : ℤ)) → ((PeriodicTileComplex ↥(TilingLattice C)) → (∀
+        ∀ (C : BandCircle), (¬C.1.1.1 = (1 : ℤ)) → (
+        (∀
             (a0 : ↥(TilingLattice C)), ∀ (a1 : ↥(TilingLattice C)), ∀ (a2 : ↥(TilingLattice C)),
             ∀ (a3 : ↥(TilingLattice C)),
-        let owner : Fin 4 → TilingLattice C := ![a0, a1, a2, a3]
+        let owner : Fin 4 → TilingLattice C := ![a0, a1, a2, a3];
         ∀ (m : Fin (4 : ℕ)), ∀ (w : Fin (4 : ℕ)),
-        let next : Fin 4 → Fin 4 := ![1, 2, 3, 0]
+        let next : Fin 4 → Fin 4 := ![1, 2, 3, 0];
         let col : Fin 4 → Fin 3 := fun i =>
-          if owner i = owner m then 0 else if owner i = owner w then 1 else 2
+          if owner i = owner m then 0 else if owner i = owner w then 1 else 2;
         ∀ (e : Fin (4 : ℕ)), (col e = (0 : Fin (3 : ℕ)) ∧ col (next e) = (1 : Fin (3 : ℕ)) ∨ col
             e = (1 : Fin (3 : ℕ)) ∧ col (next e) = (0 : Fin (3 : ℕ))) → (1 < C.1.1.1))) ) := by
   classical
-  intro C hc P a0 a1 a2 a3 owner m w next col e hecolor
+  intro C hc a0 a1 a2 a3 owner m w next col e hecolor
   have hpos : 0 < C.1.1.1 := C.2
   omega
 
@@ -1681,7 +1682,7 @@ theorem PeriodicBoundaryWebLaplacian (C : BandCircle)
         edge_mem_e edge_mem_next))
     obtain ⟨j, hsign⟩ := hdisplacement
     have slope_for := WebLaplacianGeometry.slope_for C P a0 a1 a2 a3 m w
-    have hcurvature := WebLaplacianGeometry.hcurvature C hc P a0 a1 a2 a3 m w e hecolor
+    have hcurvature := WebLaplacianGeometry.hcurvature C hc a0 a1 a2 a3 m w e hecolor
     obtain ⟨p, hp⟩ := slope_for C.1.1 T h hodo hcurvature
     let u : GaussianInt := owner m
     let u' : GaussianInt := owner w

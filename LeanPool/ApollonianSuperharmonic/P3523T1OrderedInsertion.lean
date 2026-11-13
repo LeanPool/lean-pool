@@ -107,18 +107,18 @@ private theorem hstepAt162 :
 
 private theorem hstrict :
     ∀ (r : Nat), ∀ (n : Nat), ∀ (q : P3381T1PolygonBoundary r), ∀ (p : P3381T1PolygonBoundary
-        n), ∀ (s : P3475T1BoundarySubdivision q p), (∀ (j : Fin (n + (3 : ℕ))), ∃ k < n + (3 :
-        ℕ), s.edge (j + (↑(k + (1 : ℕ)) : Fin (n + (3 : ℕ)))) ≠ s.edge j) → (∀ (i : Fin (r + (3 :
+        n), ∀ (s : P3475T1BoundarySubdivision q p),
+        (∀ (i : Fin (r + (3 :
         ℕ))), ∀ (ex : ∃ k < n + (3 : ℕ), s.edge (s.start i + (↑(k + (1 : ℕ)) : Fin (n + (3 :
         ℕ)))) ≠ s.edge (s.start i)),
-    let k₀ := Nat.find ex
-    let m := k₀ + 1
+    let k₀ := Nat.find ex;
+    let m := k₀ + 1;
     (∀ (k : Nat), (k + 1 < m) → (s.parameter (s.start i + (k : Fin (n + 3))) < s.parameter
         (s.start i + ((k + 1 : Nat) : Fin (n + 3))))) → (∀ (l : Nat), l < m → ∀ k : Nat, k < l →
       s.parameter (s.start i + (k : Fin (n + 3))) <
         s.parameter (s.start i + (l : Fin (n + 3))))) := by
   classical
-  intro r n q p s hexit i ex k₀ m hstep l
+  intro r n q p s i ex k₀ m hstep l
   induction l with
   | zero => intro _ k hk; omega
   | succ l ih =>
@@ -1503,7 +1503,7 @@ theorem P3523T1OrderedInsertion {r n : Nat}
     have hstep (k : Nat) (hk : k + 1 < m) := OrderedInsertionGeometry.hstepAt162 r n q p s hexit
         i ex hsame k hk
     exact ⟨m, by dsimp [m]; omega, hm, hstart, hsame,
-      fun k l hkl hl => OrderedInsertionGeometry.hstrict r n q p s hexit i ex hstep l hl k hkl⟩
+      fun k l hkl hl => OrderedInsertionGeometry.hstrict r n q p s i ex hstep l hl k hkl⟩
   · have hvalid : (∀ h : Nat, ∀ hh : h < (P3523T1InsertionConstruction s t).steps.length,
       let e := (P3523T1InsertionConstruction s t).steps.get ⟨h, hh⟩
       e.1 ≠ e.2.2 ∧ e.1 ∈ (P3523T1InsertionConstruction s t).vertices h ∧

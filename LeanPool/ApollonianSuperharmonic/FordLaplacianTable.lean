@@ -287,16 +287,18 @@ private theorem ha0 :
   omega
 
 private theorem parentValue :
-    (FordFareyParameter) → ((∀ (P : FordFareyParameter), ∀ x ∈ FordDoubledBoundary P.q,
+    ((∀ (P : FordFareyParameter), ∀ x ∈ FordDoubledBoundary P.q,
         Classical.choose FordOdometerFamilyExistsUnique P x = IntegerCeilDiv (P.p * x.re * x.im)
-        (↑P.q : ℤ) (by exact_mod_cast P.q_pos.ne')) → ((GaussianInt) → (
-    let cdiv (n d : Int) := -((-n) / d)
-    (FordFareyParameter) → ((FordFareyParameter) → (∀ (R : FordFareyParameter), ∀ (r : ℤ), ∀ (s :
+        (↑P.q : ℤ) (by exact_mod_cast P.q_pos.ne')) → (
+        (
+    let cdiv (n d : Int) := -((-n) / d);
+    (
+        (∀ (R : FordFareyParameter), ∀ (r : ℤ), ∀ (s :
         ℤ), (0 : ℤ) ≤ r ∧ r ≤ (↑R.q : ℤ) ∧ (0 : ℤ) ≤ s ∧ s ≤ (↑R.q : ℤ) → r ≤ (1 : ℤ) ∨ (↑R.q :
         ℤ) - (1 : ℤ) ≤ r ∨ s ≤ (1 : ℤ) ∨ (↑R.q : ℤ) - (1 : ℤ) ≤ s → Classical.choose
         FordOdometerFamilyExistsUnique R ⟨r, s⟩ = cdiv (R.p * r * s) (↑R.q : ℤ)))))) := by
   classical
-  intro P hbdy x cdiv P₁ P₂ R r s hrect hedge
+  intro hbdy cdiv R r s hrect hedge
   apply hbdy R
   change (0 ≤ r ∧ r ≤ R.q ∧ 0 ≤ s ∧ s ≤ R.q) ∧
     ¬(2 ≤ r ∧ r ≤ (R.q : Int) - 2 ∧
@@ -396,18 +398,19 @@ private theorem v3 :
 
 private theorem near0 :
     ∀ (P : FordFareyParameter),
-    let g := FordOdometer P
-    (GaussianInt) → (
-    let a : Int := P.q₁
-    let A := P.p₁
-    let cdiv (n d : Int) := -((-n) / d)
-    (0 < a) → (∀ (P₁ : FordFareyParameter), (P₁.q = P.q₁) → ((FordFareyParameter) → ((∀ (r :
+    let g := FordOdometer P;
+    (
+    let a : Int := P.q₁;
+    let A := P.p₁;
+    let cdiv (n d : Int) := -((-n) / d);
+    (0 < a) → (∀ (P₁ : FordFareyParameter), (P₁.q = P.q₁) → (
+        ((∀ (r :
         Int), ∀ (s : Int), (0 ≤ r ∧ r ≤ a ∧ 0 ≤ s ∧ s ≤ a) → ((r ≤ 1 ∨ a - 1 ≤ r ∨ s ≤ 1 ∨ a - 1
         ≤ s) → (g ⟨r, s⟩ = cdiv (A * r * s) a))) → ((∀ (d : Int), ∀ (n : Int), ∀ (k : Int), (d ≠
         0) → (cdiv (k * d - n) d = k - n / d)) → (∀ (t : ℤ), (0 : ℤ) ≤ t → t ≤ a → g ⟨a - (1 :
         ℤ), t⟩ = A * t - A * t / a ∧ g ⟨t, a - (1 : ℤ)⟩ = A * t - A * t / a)))))) := by
   classical
-  intro P g x a A cdiv ha0 P₁ hq₁ P₂ v0 cminus t ht ht'
+  intro P g a A cdiv ha0 P₁ hq₁ v0 cminus t ht ht'
   have hl := v0 (a - 1) t (by omega) (by omega)
   have hv := v0 t (a - 1) (by omega) (by omega)
   rw [show A * (a - 1) * t = (A * t) * a - A * t by ring,
@@ -418,13 +421,14 @@ private theorem near0 :
 
 private theorem edge2 :
     ∀ (P : FordFareyParameter),
-    let g := FordOdometer P
-    ((P.q₁ : Int) < P.q) → ((GaussianInt) → (
-    let a : Int := P.q₁
-    let b : Int := P.q₂
-    let A := P.p₁
-    let B := P.p₂
-    let cdiv (n d : Int) := -((-n) / d)
+    let g := FordOdometer P;
+    ((P.q₁ : Int) < P.q) → (
+        (
+    let a : Int := P.q₁;
+    let b : Int := P.q₂;
+    let A := P.p₁;
+    let B := P.p₂;
+    let cdiv (n d : Int) := -((-n) / d);
     ((P.q : Int) = a + b) → ((A * b - B * a = 1) → ((0 < b) → (∀ (P₁ : FordFareyParameter), (P₁.q
         = P.q₁) → (∀ (P₂ : FordFareyParameter), (P₂.q = P.q₂) → ((∀ (r : Int), ∀ (s : Int), (a ≤
         r ∧ r ≤ P.q ∧ 0 ≤ s ∧ s ≤ b) → ((r - a ≤ 1 ∨ b - 1 ≤ r - a ∨ s ≤ 1 ∨ b - 1 ≤ s) → (g ⟨r,
@@ -434,7 +438,7 @@ private theorem edge2 :
         (∀ (r : ℤ), a ≤ r → r ≤ (↑P.q : ℤ) → g ⟨r, b⟩ = B * r + (1 : ℤ) ∧ g ⟨b, r⟩ = B * r + (1 :
         ℤ))))))))))) := by
   classical
-  intro P g ha x a b A B cdiv hsum hdet hb P₁ hq₁ P₂ hq₂ v2 v3 cmul r ht ht'
+  intro P g ha a b A B cdiv hsum hdet hb P₁ hq₁ P₂ hq₂ v2 v3 cmul r ht ht'
   have hl := v2 r b (by omega) (by omega)
   have hv := v3 b r (by omega) (by omega)
   rw [cmul _ _ (ne_of_gt hb)] at hl
@@ -813,18 +817,19 @@ private theorem cplus :
 
 private theorem edge0 :
     ∀ (P : FordFareyParameter),
-    let g := FordOdometer P
-    (GaussianInt) → (
-    let a : Int := P.q₁
-    let A := P.p₁
-    let cdiv (n d : Int) := -((-n) / d)
-    (0 < a) → (∀ (P₁ : FordFareyParameter), (P₁.q = P.q₁) → ((FordFareyParameter) → ((∀ (r :
+    let g := FordOdometer P;
+    (
+    let a : Int := P.q₁;
+    let A := P.p₁;
+    let cdiv (n d : Int) := -((-n) / d);
+    (0 < a) → (∀ (P₁ : FordFareyParameter), (P₁.q = P.q₁) → (
+        ((∀ (r :
         Int), ∀ (s : Int), (0 ≤ r ∧ r ≤ a ∧ 0 ≤ s ∧ s ≤ a) → ((r ≤ 1 ∨ a - 1 ≤ r ∨ s ≤ 1 ∨ a - 1
         ≤ s) → (g ⟨r, s⟩ = cdiv (A * r * s) a))) → ((∀ (d : Int), ∀ (k : Int), (d ≠ 0) → (cdiv (k
         * d) d = k)) → (∀ (t : ℤ), (0 : ℤ) ≤ t → t ≤ a → g ⟨a, t⟩ = A * t ∧ g ⟨t, a⟩ = A *
         t)))))) := by
   classical
-  intro P g x a A cdiv ha0 P₁ hq₁ P₂ v0 cmul t ht ht'
+  intro P g a A cdiv ha0 P₁ hq₁ v0 cmul t ht ht'
   have hl := v0 a t (by omega) (by omega)
   have hv := v0 t a (by omega) (by omega)
   rw [show A * a * t = (A * t) * a by ring, cmul _ _ (ne_of_gt ha0)] at hl
@@ -833,14 +838,16 @@ private theorem edge0 :
 
 private theorem outward :
     ∀ (P : FordFareyParameter),
-    let g := FordOdometer P
-    ((P.q₁ : Int) < P.q) → ((GaussianInt) → (
-    let a : Int := P.q₁
-    let b : Int := P.q₂
-    let A := P.p₁
-    let B := P.p₂
-    let cdiv (n d : Int) := -((-n) / d)
-    ((P.q : Int) = a + b) → ((FordFareyParameter) → (∀ (P₂ : FordFareyParameter), (P₂.q = P.q₂) →
+    let g := FordOdometer P;
+    ((P.q₁ : Int) < P.q) → (
+        (
+    let a : Int := P.q₁;
+    let b : Int := P.q₂;
+    let A := P.p₁;
+    let B := P.p₂;
+    let cdiv (n d : Int) := -((-n) / d);
+    ((P.q : Int) = a + b) → (
+        (∀ (P₂ : FordFareyParameter), (P₂.q = P.q₂) →
         ((∀ (r : Int), ∀ (s : Int), (a ≤ r ∧ r ≤ P.q ∧ 0 ≤ s ∧ s ≤ b) → ((r - a ≤ 1 ∨ b - 1 ≤ r -
         a ∨ s ≤ 1 ∨ b - 1 ≤ s) → (g ⟨r, s⟩ = cdiv (B * (r - a) * s) b + A * s))) → ((∀ (r : Int),
         ∀ (s : Int), (0 ≤ r ∧ r ≤ b ∧ a ≤ s ∧ s ≤ P.q) → ((r ≤ 1 ∨ b - 1 ≤ r ∨ s - a ≤ 1 ∨ b - 1
@@ -848,20 +855,21 @@ private theorem outward :
         ≤ b → g ⟨a + (1 : ℤ), t⟩ = cdiv (B * t) b + A * t ∧ g ⟨t, a + (1 : ℤ)⟩ = cdiv (B * t) b +
         A * t))))))) := by
   classical
-  intro P g ha x a b A B cdiv hsum P₁ P₂ hq₂ v2 v3 t ht ht'
+  intro P g ha a b A B cdiv hsum P₂ hq₂ v2 v3 t ht ht'
   have hl := v2 (a + 1) t (by omega) (by omega)
   have hv := v3 t (a + 1) (by omega) (by omega)
   simpa only [add_sub_cancel_left, mul_one] using And.intro hl hv
 
 private theorem near2 :
     ∀ (P : FordFareyParameter),
-    let g := FordOdometer P
-    ((P.q₁ : Int) < P.q) → ((GaussianInt) → (
-    let a : Int := P.q₁
-    let b : Int := P.q₂
-    let A := P.p₁
-    let B := P.p₂
-    let cdiv (n d : Int) := -((-n) / d)
+    let g := FordOdometer P;
+    ((P.q₁ : Int) < P.q) → (
+        (
+    let a : Int := P.q₁;
+    let b : Int := P.q₂;
+    let A := P.p₁;
+    let B := P.p₂;
+    let cdiv (n d : Int) := -((-n) / d);
     ((P.q : Int) = a + b) → (∀ (P₁ : FordFareyParameter), (P₁.q = P.q₁) → (∀ (P₂ :
         FordFareyParameter), (P₂.q = P.q₂) → ((∀ (r : Int), ∀ (s : Int), (a ≤ r ∧ r ≤ P.q ∧ 0 ≤ s
         ∧ s ≤ b) → ((r - a ≤ 1 ∨ b - 1 ≤ r - a ∨ s ≤ 1 ∨ b - 1 ≤ s) → (g ⟨r, s⟩ = cdiv (B * (r -
@@ -871,7 +879,7 @@ private theorem near2 :
         (b - (1 : ℤ))) b + A * (b - (1 : ℤ)) ∧ g ⟨b - (1 : ℤ), r⟩ = cdiv (B * (r - a) * (b - (1 :
         ℤ))) b + A * (b - (1 : ℤ))))))))) := by
   classical
-  intro P g ha x a b A B cdiv hsum P₁ hq₁ P₂ hq₂ v2 v3 r ht ht'
+  intro P g ha a b A B cdiv hsum P₁ hq₁ P₂ hq₂ v2 v3 r ht ht'
   have hl := v2 r (b - 1) (by omega) (by omega)
   have hv := v3 (b - 1) r (by omega) (by omega)
   rw [show B * (b - 1) * (r - a) = B * (r - a) * (b - 1) by ring] at hv
@@ -879,15 +887,16 @@ private theorem near2 :
 
 private theorem b0 :
     ∀ (P : FordFareyParameter), ∀ (x : GaussianInt), ((1 : ℤ) ≤ x.re) → (((1 : ℤ) ≤ x.im) → (
-    let a : Int := P.q₁
-    (0 < a) → (∀ (P₁ : FordFareyParameter), (P₁.q = P.q₁) → ((FordFareyParameter) → ((∀ (l :
+    let a : Int := P.q₁;
+    (0 < a) → (∀ (P₁ : FordFareyParameter), (P₁.q = P.q₁) → (
+        ((∀ (l :
         Int), ∀ (r : Int), ∀ (d : Int), ∀ (u : Int), ∀ (z : GaussianInt), z ∈
         LatticeVertexBoundary {w : GaussianInt | l ≤ w.re ∧ w.re ≤ r ∧ d ≤ w.im ∧ w.im ≤ u} ↔ (l
         ≤ z.re ∧ z.re ≤ r ∧ d ≤ z.im ∧ z.im ≤ u) ∧ (z.re = l ∨ z.re = r ∨ z.im = d ∨ z.im = u)) →
         (x ∈ LatticeVertexBoundary (FordRecursiveVertexDomains P 0) ↔ x.re ≤ a ∧ x.im ≤ a ∧ (x.re
         = a ∨ x.im = a))))))) := by
   classical
-  intro P x hr hs a ha0 P₁ hq₁ P₂ rectBoundary
+  intro P x hr hs a ha0 P₁ hq₁ rectBoundary
   change x ∈ LatticeVertexBoundary {z : GaussianInt |
     0 ≤ z.re ∧ z.re ≤ a ∧ 0 ≤ z.im ∧ z.im ≤ a} ↔ _
   rw [rectBoundary]
@@ -912,10 +921,11 @@ private theorem b1 :
   omega
 
 private theorem b2 :
-    ∀ (P : FordFareyParameter), ((P.q₁ : Int) < P.q) → (∀ (x : GaussianInt), (x.re ≤ (↑P.q : ℤ) -
+    ∀ (P : FordFareyParameter),
+        (∀ (x : GaussianInt), (x.re ≤ (↑P.q : ℤ) -
         (1 : ℤ)) → (((1 : ℤ) ≤ x.im) → (
-    let a : Int := P.q₁
-    let b : Int := P.q₂
+    let a : Int := P.q₁;
+    let b : Int := P.q₂;
     ((P.q : Int) = a + b) → (∀ (P₁ : FordFareyParameter), (P₁.q = P.q₁) → (∀ (P₂ :
         FordFareyParameter), (P₂.q = P.q₂) → ((∀ (l : Int), ∀ (r : Int), ∀ (d : Int), ∀ (u :
         Int), ∀ (z : GaussianInt), z ∈ LatticeVertexBoundary {w : GaussianInt | l ≤ w.re ∧ w.re ≤
@@ -923,7 +933,7 @@ private theorem b2 :
         = r ∨ z.im = d ∨ z.im = u)) → (x ∈ LatticeVertexBoundary (FordRecursiveVertexDomains P 2)
         ↔ a ≤ x.re ∧ x.im ≤ b ∧ (x.re = a ∨ x.im = b)))))))) := by
   classical
-  intro P ha x hr' hs a b hsum P₁ hq₁ P₂ hq₂ rectBoundary
+  intro P x hr' hs a b hsum P₁ hq₁ P₂ hq₂ rectBoundary
   change x ∈ LatticeVertexBoundary {z : GaussianInt |
     a ≤ z.re ∧ z.re ≤ P.q ∧ 0 ≤ z.im ∧ z.im ≤ b} ↔ _
   rw [rectBoundary]
@@ -976,34 +986,36 @@ private theorem hcaseAt988 :
   split_ifs at count <;> omega
 
 private theorem hfAt993 :
-    ∀ (P : FordFareyParameter), ((P.q₁ : Int) < P.q) → ((GaussianInt) → (
-    let a : Int := P.q₁
-    let b : Int := P.q₂
-    let A := P.p₁
-    let B := P.p₂
+    ∀ (P : FordFareyParameter), ((P.q₁ : Int) < P.q) → (
+        (
+    let a : Int := P.q₁;
+    let b : Int := P.q₂;
+    let A := P.p₁;
+    let B := P.p₂;
     ((P.q : Int) = a + b) → ((A * b - B * a = 1) → ((0 < a) → (∀ (P₁ : FordFareyParameter), (P₁.q
         = P.q₁) → (∀ (P₂ : FordFareyParameter), (P₂.q = P.q₂) → ((b < a) → (A * b / a = B))))))))
         := by
   classical
-  intro P ha x a b A B hsum hdet ha0 P₁ hq₁ P₂ hq₂ hab
+  intro P ha a b A B hsum hdet ha0 P₁ hq₁ P₂ hq₂ hab
   rw [show A * b = 1 + B * a by nlinarith only [hdet],
     Int.add_mul_ediv_right _ _ (ne_of_gt ha0)]
   rw [Int.ediv_eq_zero_of_lt (by norm_num) (by omega)]
   ring
 
 private theorem hcAt1006 :
-    ∀ (P : FordFareyParameter), ((P.q₁ : Int) < P.q) → (((1 : ℕ) < P.q) → ((GaussianInt) → (
-    let a : Int := P.q₁
-    let b : Int := P.q₂
-    let A := P.p₁
-    let B := P.p₂
-    let cdiv (n d : Int) := -((-n) / d)
+    ∀ (P : FordFareyParameter), ((P.q₁ : Int) < P.q) → (((1 : ℕ) < P.q) → (
+        (
+    let a : Int := P.q₁;
+    let b : Int := P.q₂;
+    let A := P.p₁;
+    let B := P.p₂;
+    let cdiv (n d : Int) := -((-n) / d);
     ((P.q : Int) = a + b) → ((A * b - B * a = 1) → ((0 < b) → (∀ (P₁ : FordFareyParameter), (P₁.q
         = P.q₁) → (∀ (P₂ : FordFareyParameter), (P₂.q = P.q₂) → ((∀ (d : Int), ∀ (n : Int), ∀ (k
         : Int), (d ≠ 0) → (cdiv (k * d - n) d = k - n / d)) → ((a < b) → (cdiv (B * a) b =
         A)))))))))) := by
   classical
-  intro P ha hbig x a b A B cdiv hsum hdet hb P₁ hq₁ P₂ hq₂ cminus hab
+  intro P ha hbig a b A B cdiv hsum hdet hb P₁ hq₁ P₂ hq₂ cminus hab
   rw [show B * a = A * b - 1 by nlinarith only [hdet], cminus _ _ _ (ne_of_gt hb),
     Int.ediv_eq_zero_of_lt (by norm_num) (by omega)]
   ring
@@ -1121,7 +1133,7 @@ private theorem interiorLaplacian :
       (hedge : r ≤ 1 ∨ (R.q : Int) - 1 ≤ r ∨
         s ≤ 1 ∨ (R.q : Int) - 1 ≤ s) :
       Classical.choose FordOdometerFamilyExistsUnique R ⟨r, s⟩ =
-        cdiv (R.p * r * s) R.q := FordLaplacianProof.parentValue P hbdy x P₁ P₂ R r s hrect hedge
+        cdiv (R.p * r * s) R.q := FordLaplacianProof.parentValue hbdy R r s hrect hedge
   -- Use the literal restrictions on the four parent doubled boundaries.
   have v0 (r s : Int) (hrect : 0 ≤ r ∧ r ≤ a ∧ 0 ≤ s ∧ s ≤ a)
       (hedge : r ≤ 1 ∨ a - 1 ≤ r ∨ s ≤ 1 ∨ a - 1 ≤ s) :
@@ -1140,15 +1152,15 @@ private theorem interiorLaplacian :
   have cmul (d k : Int) (hd : d ≠ 0) : cdiv (k * d) d = k := by
     simpa using cminus d 0 k hd
   have edge0 (t : Int) (ht : 0 ≤ t) (ht' : t ≤ a) :
-      g ⟨a, t⟩ = A * t ∧ g ⟨t, a⟩ = A * t := FordLaplacianDetails.edge0 P x ha0 P₁ hq₁ P₂ v0
+      g ⟨a, t⟩ = A * t ∧ g ⟨t, a⟩ = A * t := FordLaplacianDetails.edge0 P ha0 P₁ hq₁ v0
           cmul t ht ht'
   have near0 (t : Int) (ht : 0 ≤ t) (ht' : t ≤ a) :
       g ⟨a - 1, t⟩ = A * t - A * t / a ∧
-      g ⟨t, a - 1⟩ = A * t - A * t / a := FordLaplacianProof.near0 P x ha0 P₁ hq₁ P₂ v0 cminus
+      g ⟨t, a - 1⟩ = A * t - A * t / a := FordLaplacianProof.near0 P ha0 P₁ hq₁ v0 cminus
           t ht ht'
   have outward (t : Int) (ht : 0 ≤ t) (ht' : t ≤ b) :
       g ⟨a + 1, t⟩ = cdiv (B * t) b + A * t ∧
-      g ⟨t, a + 1⟩ = cdiv (B * t) b + A * t := FordLaplacianDetails.outward P ha x hsum P₁ P₂
+      g ⟨t, a + 1⟩ = cdiv (B * t) b + A * t := FordLaplacianDetails.outward P ha hsum P₂
           hq₂ v2 v3 t ht ht'
   have lowFormula (t : Int) (ht : 0 < t) (hta : t < a) (htb : t ≤ b) :
       FourNeighborLaplacian g ⟨a, t⟩ = cdiv (B * t) b - A * t / a ∧
@@ -1158,7 +1170,7 @@ private theorem interiorLaplacian :
       FourNeighborLaplacian g ⟨(P.q : Int) - t, b⟩ = cdiv (B * t) b - A * t / a ∧
       FourNeighborLaplacian g ⟨b, (P.q : Int) - t⟩ = cdiv (B * t) b - A * t / a :=
           FordLaplacianProof.highFormula P lapCoord hsum hdet hb ha0 P₁ hq₁ P₂ hq₂ cminus
-          (FordLaplacianDetails.cplus) (FordLaplacianProof.edge2 P ha x hsum hdet hb P₁ hq₁ P₂
+          (FordLaplacianDetails.cplus) (FordLaplacianProof.edge2 P ha hsum hdet hb P₁ hq₁ P₂
               hq₂ v2 v3 cmul) ((show
                   ∀ (r : ℤ), b ≤ r → r ≤ (↑P.q : ℤ) → g ⟨r, b + (1 : ℤ)⟩ =
                   cdiv (A * (r - b)) a + B * r + B + (1 : ℤ) ∧ g ⟨b + (1 : ℤ),
@@ -1178,7 +1190,7 @@ private theorem interiorLaplacian :
                   constructor
                   · nlinarith only [hl]
                   · nlinarith only [hv]))
-              (FordLaplacianDetails.near2 P ha x hsum P₁ hq₁ P₂ hq₂ v2 v3) t ht hta htb
+              (FordLaplacianDetails.near2 P ha hsum P₁ hq₁ P₂ hq₂ v2 v3) t ht hta htb
   have roundArm (t : Int) (ht : 0 < t) (hta : t < a) (htb : t < b) :
       cdiv (B * t) b - A * t / a = 1 := FordLaplacianProof.roundArm P hdet hb ha0 t ht hta htb
   have rectBoundary (l r d u : Int) (z : GaussianInt) :
@@ -1191,9 +1203,9 @@ private theorem interiorLaplacian :
       (if b ≤ x.re ∧ b ≤ x.im ∧ (x.re = b ∨ x.im = b) then 1 else 0) +
       (if a ≤ x.re ∧ x.im ≤ b ∧ (x.re = a ∨ x.im = b) then 1 else 0) +
       (if x.re ≤ b ∧ a ≤ x.im ∧ (x.re = b ∨ x.im = a) then 1 else 0) :=
-          FordLaplacianProof.count P x P₁ P₂ (FordLaplacianDetails.b0 P x hr hs ha0 P₁ hq₁ P₂
+          FordLaplacianProof.count P x P₁ P₂ (FordLaplacianDetails.b0 P x hr hs ha0 P₁ hq₁
               rectBoundary) (FordLaplacianDetails.b1 P x hr' hs' hsum P₁ hq₁ P₂ hq₂ rectBoundary)
-              (FordLaplacianDetails.b2 P ha x hr' hs hsum P₁ hq₁ P₂ hq₂ rectBoundary)
+              (FordLaplacianDetails.b2 P x hr' hs hsum P₁ hq₁ P₂ hq₂ rectBoundary)
               (FordLaplacianDetails.b3 P ha x hr hs' hsum P₁ hq₁ P₂ hq₂ rectBoundary)
   refine ⟨?_, ?_, ?_⟩
   · intro hn
@@ -1223,7 +1235,7 @@ private theorem interiorLaplacian :
         (a < b ∧ ((x.re = a ∧ x.im = a) ∨ (x.re = b ∧ x.im = b))) :=
             FordLaplacianDetails.hcaseAt988 P x count hn
     rcases hcase with ⟨hab, hcase⟩ | ⟨hab, hcase⟩
-    · have hf : A * b / a = B := FordLaplacianDetails.hfAt993 P ha x hsum hdet ha0 P₁ hq₁ P₂
+    · have hf : A * b / a = B := FordLaplacianDetails.hfAt993 P ha hsum hdet ha0 P₁ hq₁ P₂
         hq₂ hab
       have hc : cdiv (B * b) b = B := cmul b B (ne_of_gt hb)
       rcases hcase with h | h
@@ -1233,7 +1245,7 @@ private theorem interiorLaplacian :
       · have hx : x = ⟨b, a⟩ := by ext <;> simp [h.1, h.2]
         rw [hx, (lowFormula b hb hab le_rfl).2, hc, hf]
         ring
-    · have hc : cdiv (B * a) b = A := FordLaplacianDetails.hcAt1006 P ha hbig x hsum hdet hb P₁
+    · have hc : cdiv (B * a) b = A := FordLaplacianDetails.hcAt1006 P ha hbig hsum hdet hb P₁
         hq₁ P₂ hq₂ cminus hab
       have hf : A * a / a = A := Int.mul_ediv_cancel _ (ne_of_gt ha0)
       rcases hcase with h | h

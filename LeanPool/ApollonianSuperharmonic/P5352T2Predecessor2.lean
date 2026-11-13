@@ -842,28 +842,6 @@ private theorem htable' :
   rw [FourNeighborLaplacian] at htable
   linarith
 
-private theorem hcompAt447 :
-    (by
-      classical
-      exact
-        ∀ (K : DiamondParameter), ∀ (hk : (1 : ℕ) < K.1), (IntegerLatticeFunction) → (
-        let k : Int := K.1
-        let r : GaussianInt := ⟨-2*k,0⟩
-        let child := P5352T2Sources K hk 0
-        (child.1=DiamondTile K.1) → (∀ (a : ℤ), ∀ (b : ℤ), (k < b ∧ b ≤ (2 : ℤ) * (k - (1 : ℤ)) +
-            (k + (1 : ℤ)) ∧ -(k - (1 : ℤ)) ≤ a + k ∧ a + k ≤ k - (1 : ℤ) ∧ k < a + k + (1 : ℤ) +
-            b ∧ a + k ≤ b - (k + (1 : ℤ)) + (1 : ℤ) ∧ b ≤ (1 : ℤ) + (a + k) + (2 : ℤ) * (k - (1 :
-            ℤ)) + (k + (1 : ℤ)) ∧ a + k ≤ (2 : ℤ) * (k - (1 : ℤ)) - (b - (k + (1 : ℤ))) + (1 :
-            ℤ)) → (((↑(K.1 - (1 : ℕ)) : ℤ) = k - (1 : ℤ)) → ((b = (2 : ℤ) * k + a) → (
-        let t : Int := -a
-        let zB : GaussianInt := ⟨-t,2*k-t⟩
-        zB-r∉FootprintVertices child.1))))) ) := by
-  classical
-  intro K hk f k r child hchildTile a b hdpred hcast hb t zB hmem
-  have hd := (P5352T2DomainRows K (zB-r)).1.mp (hchildTile ▸ hmem)
-  simp [zB,r] at hd
-  omega
-
 end SecondPredecessorProof
 
 theorem P5352T2Predecessor2 (K : DiamondParameter) (hk : 1 < K.1)
@@ -1063,8 +1041,14 @@ theorem P5352T2Predecessor2 (K : DiamondParameter) (hk : 1 < K.1)
         exact childOdometer _ (by simpa [hchildTile] using hc)
       have htable' := SecondPredecessorProof.htable'
               K a htable
-      have hcomp : zB-r∉FootprintVertices child.1 := SecondPredecessorProof.hcompAt447 K hk f
-          hchildTile a b hdpred hcast hb
+      have hcomp : zB-r∉FootprintVertices child.1 := (show
+          zB-r∉FootprintVertices child.1
+        from by
+          classical
+          intro hmem
+          have hd := (P5352T2DomainRows K (zB-r)).1.mp (hchildTile ▸ hmem)
+          simp [zB,r] at hd
+          omega)
       rw [hzB] at ⊢
       refine ⟨?_,?_⟩
       · intro hm

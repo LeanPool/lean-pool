@@ -942,11 +942,10 @@ private theorem hpEq :
       classical
       exact
         ∀ (q : Fin 4 → CircleCoordinates), ∀ (s0 : Real × Real), ∀ (g : PartialOdometer),
-        let i : Fin 3 := 0
-        let v := BandVectors.2 (q ((i + 2).succ)) (q ((i + 1).succ))
+        let i : Fin 3 := 0;
+        let v := BandVectors.2 (q ((i + 2).succ)) (q ((i + 1).succ));
         ∀ (ai : GaussianInt),
-        let a := ai - (v + GaussianQuarterTurn v)
-        ∀ (x : GaussianInt),
+        let a := ai - (v + GaussianQuarterTurn v);
         let p : Real × Real :=
           ((∑ x ∈ PartialOdometerSquares g,
               ((g.value (x + 1) - g.value x + g.value (x + 1 + ⟨0, 1⟩) -
@@ -955,11 +954,11 @@ private theorem hpEq :
            (∑ x ∈ PartialOdometerSquares g,
               ((g.value (x + ⟨0, 1⟩) - g.value x + g.value (x + 1 + ⟨0, 1⟩) -
                 g.value (x + 1) : Int) : Real)) /
-            (2 * ((PartialOdometerSquares g).card : Real)))
+            (2 * ((PartialOdometerSquares g).card : Real)));
         (some p = some (-p.1 + (↑a.re : ℝ), -p.2 + (↑a.im : ℝ))) → (((a.re : Real) = 2 * s0.1) →
             (((a.im : Real) = 2 * s0.2) → (p = s0))) ) := by
   classical
-  intro q s0 g i v ai a x p hcov haRe haIm
+  intro q s0 g i v ai a p hcov haRe haIm
   have hpair := Option.some.inj hcov
   apply Prod.ext
   · have hh := congrArg Prod.fst hpair
@@ -1056,7 +1055,7 @@ theorem P4250T1ReflectedGluingSlope
         (-p.1 + (a.re : Real), -p.2 + (a.im : Real))) := ReflectedGluingGeometry.hcov q g ai u
   rw [hsharpSlope, hgslope] at hcov
   simp only [Option.map_some] at hcov
-  have hpEq : p = s0 := ReflectedGluingGeometry.hpEq q s0 g ai x hcov
+  have hpEq : p = s0 := ReflectedGluingGeometry.hpEq q s0 g ai hcov
       (ReflectedGluingGeometry.haRe q s0 ai ha) (ReflectedGluingGeometry.haIm q s0 ai ha)
   refine ⟨u, a, hu, ha.symm, ?_⟩
   rw [hgslope, hpEq]

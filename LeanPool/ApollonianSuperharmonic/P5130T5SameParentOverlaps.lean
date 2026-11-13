@@ -30,16 +30,6 @@ namespace ApollonianSuperharmonic
 
 namespace SameParentOverlapLemmas
 
-private theorem harith :
-    ∀ (P : FordFareyParameter), (1 < P.q) → 0 < P.q₁ ∧
-  P.q₁ < P.q ∧
-    0 < P.q₂ ∧
-      P.q₂ < P.q ∧ P.q₁.Coprime P.p₁.natAbs ∧ P.q₂.Coprime P.p₂.natAbs ∧ P.p₁ * (↑P.q₂ : ℤ) -
-          P.p₂ * (↑P.q₁ : ℤ) = 1 := by
-  classical
-  intro P hq
-  exact P5130T5ParentArithmetic P hq
-
 private theorem hq1 :
     ∀ (P : FordFareyParameter), ∀ (P₁ : FordFareyParameter), (P₁.q = P.q₁) → P₁.q = P.q₁ := by
   classical
@@ -284,7 +274,7 @@ theorem P5130T5SameParentOverlaps (P P₁ P₂ : FordFareyParameter)
         x) := by
 -- BODY
   dsimp
-  have harith := SameParentOverlapLemmas.harith P hq
+  have harith := P5130T5ParentArithmetic P hq
   rcases harith with ⟨hq1pos, hq1lt, hq2pos, hq2lt, hred1, hred2, hcross⟩
   have hq1 : P₁.q = P.q₁ := SameParentOverlapLemmas.hq1 P P₁ hq₁
   have hq2 : P₂.q = P.q₂ := SameParentOverlapLemmas.hq2 P P₂ hq₂

@@ -87,7 +87,8 @@ private theorem hb :
     (by
       classical
       exact
-        ∀ (q : Fin 4 → CircleCoordinates), (FordFareyParameter) → (((q (2 : Fin (4 : ℕ))).1 ≤ (q
+        ∀ (q : Fin 4 → CircleCoordinates),
+        (((q (2 : Fin (4 : ℕ))).1 ≤ (q
             (1 : Fin (4 : ℕ))).1) → (((1 : ℤ) < (q (2 : Fin (4 : ℕ))).1) → (((0 : ℤ) < (q (0 :
             Fin (4 : ℕ))).1 ∧ (∀ (i : Fin (3 : ℕ)), (0 : ℤ) ≤ (q i.succ).1) ∧ ∀ (i : Fin (3 :
             ℕ)), ∀ (j : Fin (3 : ℕ)), (q i.succ).1 = (0 : ℤ) → (q j.succ).1 = (0 : ℤ) → i = j) →
@@ -97,7 +98,7 @@ private theorem hb :
             Fin (3 : ℕ))).succ, q (b + (2 : Fin (3 : ℕ))).succ] = FordRecursiveQuadruple F') → (b
             = 0))))))) ) := by
   classical
-  intro q F h12 hlarge qcur hlineq b h F' hzero hnorm
+  intro q h12 hlarge qcur hlineq b h F' hzero hnorm
   fin_cases b
   · rfl
   · have := qcur.2.1 0
@@ -1074,7 +1075,7 @@ theorem P4564T2FordT6Transport :
   have hlineq := FordT6Geometry.hlineq q hq a g F hnormal h12 hlarge qcur
   obtain ⟨b, h, F', hF', hrev, hword, hzero, hnorm⟩ :=
     FordRegimeConverse q hq hlineq
-  have hb := FordT6Geometry.hb q F h12 hlarge qcur hlineq b h F' hzero hnorm
+  have hb := FordT6Geometry.hb q h12 hlarge qcur hlineq b h F' hzero hnorm
   subst b
   have hnormq := FordT6Geometry.hnormq q h F' hnorm
   obtain ⟨negative, hphase, hphaseR, hphaseT, hcircle, horientation,

@@ -316,27 +316,6 @@ private theorem hqinterior :
     dsimp [P]
     nlinarith [mul_pos ht0 hcoord2]
 
-private theorem hqmargin :
-    (by
-      classical
-      exact
-        ∀ (n : Nat), ∀ (p : P3381T1PolygonBoundary n), ∀ (E : P3650T1ExposedCorner p), ∀ (d :
-            Fin (n + (3 : ℕ))), ∀ (A : AffineBasis (Fin (3 : ℕ)) ℝ (ℝ × ℝ)), (A.coord 0 (p.vertex
-            d) + A.coord 1 (p.vertex d) + A.coord 2 (p.vertex d) = 1) → ((E.height (p.vertex d) =
-            A.coord 1 (p.vertex d)) → ((0 < A.coord 0 (p.vertex d)) → ((0 < A.coord 2 (p.vertex
-            d)) → (
-        let B := p.vertex E.b
-        let P := p.vertex d
-        let q : Real → Real × Real := AffineMap.lineMap B P
-        (∀ t, E.height (q t) = (1 - t) + t * E.height P) → (∀ t, 0 < t → t < 1 → E.height P <
-            E.height (q t)))))) ) := by
-  classical
-  intro n p E d A hsum hheightd hcoord0 hcoord2 B P q hqheight t ht0 ht1
-  rw [hqheight]
-  have hprod : 0 < (1 - t) * (1 - E.height P) :=
-    mul_pos (by linarith) (by linarith [hheightlt])
-  nlinarith
-
 private theorem hqleft :
     (by
       classical
@@ -814,7 +793,15 @@ theorem P3650T1MaximalHeightDiagonal {n : Nat} (p : P3381T1PolygonBoundary n)
   have hqheight := MaximalHeightGeometry.hqheight n p E d A hheight hcoordB1 hqcoord
   have hqinterior := MaximalHeightGeometry.hqinterior n p E d A hint hcoord_nonneg hsum hcoord0
       hcoord2 hcoordB0 hcoordB1 hcoordB2 hqcoord
-  have hqmargin := MaximalHeightGeometry.hqmargin n p E d A hsum hheightd hcoord0 hcoord2 hqheight
+  have hqmargin := (show
+      ∀ t, 0 < t → t < 1 → E.height P < E.height (q t)
+    from by
+      classical
+      intro t ht0 ht1
+      rw [hqheight]
+      have hprod : 0 < (1 - t) * (1 - E.height P) :=
+        mul_pos (by linarith) (by linarith [hheightlt])
+      nlinarith)
   have hqleft := MaximalHeightGeometry.hqleft n p E d A hA0 hcoord2 hcoordB2 hqcoord
   have hqright := MaximalHeightGeometry.hqright n p E d A hA2 hcoord0 hcoordB0 hqcoord
   have hqclear := MaximalHeightGeometry.hqclear n p E hentry d hdmax A hcoord_nonneg hheightd

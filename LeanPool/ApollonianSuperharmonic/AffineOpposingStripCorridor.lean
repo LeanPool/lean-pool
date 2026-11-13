@@ -628,19 +628,19 @@ private theorem pmem :
       classical
       exact
         ∀ (P : List (ℤ × ℤ)), ∀ (A : ℤ), ∀ (B : ℤ),
-        let h : Int → Int := fun k => (B*k+A-1)/A
-        (TriangularMaxIncrement (0,0) (A,B) = A) → ((TriangularMaxIncrement (A,B) (0,0) = A) → (
-        let N := A.toNat
+        let h : Int → Int := fun k => (B*k+A-1)/A;
+        ((TriangularMaxIncrement (A,B) (0,0) = A) → (
+        let N := A.toNat;
         ((N : Int) = A) → (
-        let p : Nat → Int × Int := fun k => (k, h k)
-        let PP := (List.range (N+1)).map p
+        let p : Nat → Int × Int := fun k => (k, h k);
+        let PP := (List.range (N+1)).map p;
         (PP.head? = some (0,0)) → ((PP.getLast? = some (A,B)) → ((P = PP) → ((∀ (path : List (Int
             × Int)), ∀ (a : Int × Int), ∀ (b : Int × Int), ∀ (z : Int × Int), (path.head? = some
             a) → ((path.getLast? = some b) → ((z ∈ path) → ((z ≠ a) → ((z ≠ b) → (z ∈ (path.drop
             1).dropLast)))))) → (∀ (k : ℕ), (0 : ℕ) < k ∧ k < N → p k ∈ (List.drop (1 : ℕ)
             P).dropLast))))))) ) := by
   classical
-  intro P A B h hmax hrmax N hN p PP phead plast Peq interior k hk
+  intro P A B h hrmax N hN p PP phead plast Peq interior k hk
   rw [Peq]
   apply interior PP (0,0) (A,B) (p k) phead plast
   · apply List.mem_map.mpr
@@ -653,19 +653,19 @@ private theorem qmem :
       classical
       exact
         ∀ (Q : List (ℤ × ℤ)), ∀ (A : ℤ), ∀ (B : ℤ),
-        let l : Int → Int := fun k => (B*k)/A
-        (TriangularMaxIncrement (0,0) (A,B) = A) → ((TriangularMaxIncrement (A,B) (0,0) = A) → (
-        let N := A.toNat
+        let l : Int → Int := fun k => (B*k)/A;
+        ((TriangularMaxIncrement (A,B) (0,0) = A) → (
+        let N := A.toNat;
         ((N : Int) = A) → (
-        let q : Nat → Int × Int := fun k => (k, l k)
-        let QQ := ((List.range (N+1)).map q).reverse
+        let q : Nat → Int × Int := fun k => (k, l k);
+        let QQ := ((List.range (N+1)).map q).reverse;
         (((List.range (N+1)).map q).head? = some (0,0)) → ((((List.range (N+1)).map q).getLast? =
             some (A,B)) → ((Q = QQ) → ((∀ (path : List (Int × Int)), ∀ (a : Int × Int), ∀ (b :
             Int × Int), ∀ (z : Int × Int), (path.head? = some a) → ((path.getLast? = some b) →
             ((z ∈ path) → ((z ≠ a) → ((z ≠ b) → (z ∈ (path.drop 1).dropLast)))))) → (∀ (k : ℕ),
             (0 : ℕ) < k ∧ k < N → q k ∈ (List.drop (1 : ℕ) Q).dropLast))))))) ) := by
   classical
-  intro Q A B l hmax hrmax N hN q QQ qhead qlast Qeq interior k hk
+  intro Q A B l hrmax N hN q QQ qhead qlast Qeq interior k hk
   rw [Qeq]
   apply interior QQ (A,B) (0,0) (q k)
   · simpa [QQ] using qlast
@@ -1158,9 +1158,9 @@ theorem AffineOpposingStripCorridor
         (ha : path.head? = some a) (hb : path.getLast? = some b)
         (hz : z ∈ path) (hza : z ≠ a) (hzb : z ≠ b) := OpposingStripProof.interior path a b z ha
             hb hz hza hzb
-    have pmem (k : Nat) (hk : 0 < k ∧ k < N) := OpposingStripDetails.pmem P A B hmax hrmax hN
+    have pmem (k : Nat) (hk : 0 < k ∧ k < N) := OpposingStripDetails.pmem P A B hrmax hN
         phead plast Peq interior k hk
-    have qmem (k : Nat) (hk : 0 < k ∧ k < N) := OpposingStripDetails.qmem Q A B hmax hrmax hN
+    have qmem (k : Nat) (hk : 0 < k ∧ k < N) := OpposingStripDetails.qmem Q A B hrmax hN
         qhead qlast Qeq interior k hk
     have gap (k : Int) := OpposingStripDetails.gap A B hA hl hh k
     have between (k : Int) := OpposingStripDetails.between A B

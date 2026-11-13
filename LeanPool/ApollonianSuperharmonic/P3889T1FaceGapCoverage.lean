@@ -999,22 +999,23 @@ private theorem hfg :
     (by
       classical
       exact
-        ∀ (ι : Type), ∀ (P : PeriodicTileComplex ι), ∀ (a : ι), (ι) → (
-        let Nsub := {c : ι // P.plane.adjacent a c}
+        ∀ (ι : Type), ∀ (P : PeriodicTileComplex ι), ∀ (a : ι),
+        (
+        let Nsub := {c : ι // P.plane.adjacent a c};
         let first (c : Nsub) : P.plane.Face :=
-          Classical.choose (P.plane.every_edge_two_faces a c.1 c.2)
+          Classical.choose (P.plane.every_edge_two_faces a c.1 c.2);
         let second (c : Nsub) : P.plane.Face :=
           Classical.choose (Classical.choose_spec
-            (P.plane.every_edge_two_faces a c.1 c.2))
+            (P.plane.every_edge_two_faces a c.1 c.2));
         ∀ (f : P.plane.Face), ∀ (e : ι), ∀ (hae : P.plane.adjacent a e),
-        let en : Nsub := ⟨e, hae⟩
-        let f0 := first en
-        let f1 := second en
+        let en : Nsub := ⟨e, hae⟩;
+        let f0 := first en;
+        let f1 := second en;
         (f0 ≠ f1) → (
-        let g := if f = f0 then f1 else f0
+        let g := if f = f0 then f1 else f0;
         f ≠ g))) := by
   classical
-  intro ι P a c Nsub first second f e hae en f0 f1 hne g
+  intro ι P a Nsub first second f e hae en f0 f1 hne g
   dsimp [g]
   split_ifs with h
   · intro hEq
@@ -1025,23 +1026,24 @@ private theorem hgI :
     (by
       classical
       exact
-        ∀ (ι : Type), ∀ (P : PeriodicTileComplex ι), ∀ (a : ι), (ι) → (
-        let Nsub := {c : ι // P.plane.adjacent a c}
+        ∀ (ι : Type), ∀ (P : PeriodicTileComplex ι), ∀ (a : ι),
+        (
+        let Nsub := {c : ι // P.plane.adjacent a c};
         let first (c : Nsub) : P.plane.Face :=
-          Classical.choose (P.plane.every_edge_two_faces a c.1 c.2)
+          Classical.choose (P.plane.every_edge_two_faces a c.1 c.2);
         let second (c : Nsub) : P.plane.Face :=
           Classical.choose (Classical.choose_spec
-            (P.plane.every_edge_two_faces a c.1 c.2))
+            (P.plane.every_edge_two_faces a c.1 c.2));
         ∀ (f : P.plane.Face), ∀ (e : ι), ∀ (hae : P.plane.adjacent a e),
-        let en : Nsub := ⟨e, hae⟩
-        let f0 := first en
-        let f1 := second en
+        let en : Nsub := ⟨e, hae⟩;
+        let f0 := first en;
+        let f1 := second en;
         (∃ (i : Fin (3 : ℕ)), P.plane.faceVertex (f0) i = a) → ((∃ (i : Fin (3 :
             ℕ)), P.plane.faceVertex (f1) i = a) → (
-        let g := if f = f0 then f1 else f0
+        let g := if f = f0 then f1 else f0;
         ∃ j, P.plane.faceVertex g j = a)))) := by
   classical
-  intro ι P a c Nsub first second f e hae en f0 f1 hf0a hf1a g
+  intro ι P a Nsub first second f e hae en f0 f1 hf0a hf1a g
   dsimp [g]
   split_ifs with h
   · exact hf1a
@@ -1051,23 +1053,24 @@ private theorem hgE :
     (by
       classical
       exact
-        ∀ (ι : Type), ∀ (P : PeriodicTileComplex ι), ∀ (a : ι), (ι) → (
-        let Nsub := {c : ι // P.plane.adjacent a c}
+        ∀ (ι : Type), ∀ (P : PeriodicTileComplex ι), ∀ (a : ι),
+        (
+        let Nsub := {c : ι // P.plane.adjacent a c};
         let first (c : Nsub) : P.plane.Face :=
-          Classical.choose (P.plane.every_edge_two_faces a c.1 c.2)
+          Classical.choose (P.plane.every_edge_two_faces a c.1 c.2);
         let second (c : Nsub) : P.plane.Face :=
           Classical.choose (Classical.choose_spec
-            (P.plane.every_edge_two_faces a c.1 c.2))
+            (P.plane.every_edge_two_faces a c.1 c.2));
         ∀ (f : P.plane.Face), ∀ (e : ι), ∀ (hae : P.plane.adjacent a e),
-        let en : Nsub := ⟨e, hae⟩
-        let f0 := first en
-        let f1 := second en
+        let en : Nsub := ⟨e, hae⟩;
+        let f0 := first en;
+        let f1 := second en;
         (∃ (i : Fin (3 : ℕ)), P.plane.faceVertex (f0) i = e) → ((∃ (i : Fin (3 :
             ℕ)), P.plane.faceVertex (f1) i = e) → (
-        let g := if f = f0 then f1 else f0
+        let g := if f = f0 then f1 else f0;
         ∃ j, P.plane.faceVertex g j = e)))) := by
   classical
-  intro ι P a c Nsub first second f e hae en f0 f1 hf0e hf1e g
+  intro ι P a Nsub first second f e hae en f0 f1 hf0e hf1e g
   dsimp [g]
   split_ifs with h
   · exact hf1e
@@ -1269,62 +1272,6 @@ private theorem hzeroK :
       simpa only [Set.mem_union, Set.mem_inter_iff] using hqrayG
     exact hmem.1
   exact Set.mem_iUnion₂.mpr ⟨f, ⟨i, hi⟩, frontier_subset_closure hqfrontF⟩
-
-private theorem memK :
-    (by
-      classical
-      exact
-        ∀ (ι : Type), ∀ (P : PeriodicTileComplex ι), ∀ (D : P3723T1AllContactRouting P), ∀ (F :
-            P3861T1FacialDomains P D), ∀ (a : ι),
-        let I : Set P.plane.Face := {f | ∃ i, P.plane.faceVertex f i = a}
-        (P.plane.Face) → (
-        let K : Set (Real × Real) := ⋃ f ∈ I, closure (F.region f)
-        ∀ (g : P.plane.Face), ∀ (j : Fin (3 : ℕ)), P.plane.faceVertex g j = a → ∀ q ∈ F.region g,
-            q ∈ K)) := by
-  classical
-  intro ι P D F a I f K g j hj q hq
-  exact Set.mem_iUnion₂.mpr ⟨g, ⟨j, hj⟩, subset_closure hq⟩
-
-private theorem build :
-    (by
-      classical
-      exact
-        ∀ (ι : Type), ∀ (P : PeriodicTileComplex ι), ∀ (D : P3723T1AllContactRouting P), ∀ (F :
-            P3861T1FacialDomains P D), ∀ (a : ι), ∀ (u : ι → ℝ × ℝ),
-        let I : Set P.plane.Face := {f | ∃ i, P.plane.faceVertex f i = a}
-        ∀ (c : ι),
-        let Nsub := {c : ι // P.plane.adjacent a c}
-        let first (c : Nsub) : P.plane.Face :=
-          Classical.choose (P.plane.every_edge_two_faces a c.1 c.2)
-        let second (c : Nsub) : P.plane.Face :=
-          Classical.choose (Classical.choose_spec
-            (P.plane.every_edge_two_faces a c.1 c.2))
-        ∀ (f : P.plane.Face),
-        let K : Set (Real × Real) := ⋃ f ∈ I, closure (F.region f)
-        ∀ (z : ℝ × ℝ), ∀ (i : Fin (3 : ℕ)), (P.plane.faceVertex f i = a) → (∀ (e : ι), ∀ (hae :
-            P.plane.adjacent a e), ∀ (t : ℝ),
-        let en : Nsub := ⟨e, hae⟩
-        let f0 := first en
-        let f1 := second en
-        let g := if f = f0 then f1 else f0
-        ∀ (j : Fin (3 : ℕ)), (P.plane.faceVertex g j = a) → (∀ (δ₁ : ℝ), ∀ (δ₂ : ℝ),
-        let eps := min δ₁ (min δ₂ t) / 2
-        (∀ q ∈ Metric.ball z eps, (u e).1 * (q.2 - z.2) - (u e).2 * (q.1 - z.1) = 0 → q ∈ K) →
-            ((∀ (g : P.plane.Face), ∀ (j : Fin 3), (P.plane.faceVertex g j = a) → (∀ (q : Real ×
-            Real), (q ∈ F.region g) → (q ∈ K))) → ((∀ q ∈ Metric.ball z eps, (0 : ℝ) < (u e).1 *
-            (q.2 - z.2) - (u e).2 * (q.1 - z.1) → q ∈ F.region f) → (∀ q ∈ Metric.ball z eps, (u
-            e).1 * (q.2 - z.2) - (u e).2 * (q.1 - z.1) < (0 : ℝ) → q ∈ F.region g) → Metric.ball
-            z eps ⊆ K)))) ) := by
-  classical
-  intro ι P D F a u I c Nsub first second f K z i hi e hae t en f0 f1 g j hj δ₁ δ₂ eps hzeroK
-      memK hpos hneg q hq
-  by_cases hqpos : 0 < (u e).1 * (q.2 - z.2) - (u e).2 * (q.1 - z.1)
-  · exact memK f i hi q (hpos q hq hqpos)
-  · by_cases hqneg : (u e).1 * (q.2 - z.2) - (u e).2 * (q.1 - z.1) < 0
-    · exact memK g j hj q (hneg q hq hqneg)
-    · have hqzero : (u e).1 * (q.2 - z.2) - (u e).2 * (q.1 - z.1) = 0 := by
-        linarith
-      exact hzeroK q hq hqzero
 
 private theorem huAt878 :
     (by
@@ -1859,9 +1806,9 @@ private theorem hKlocal :
       obtain ⟨hf1a, hf1e⟩ := hf1
       have hcase := hexhaust f ⟨⟨i, hi⟩, he⟩
       let g := if f = f0 then f1 else f0
-      have hfg := FaceGapProof.hfg ι P a c f e hae hne
-      have hgE := FaceGapProof.hgE ι P a c f e hae hf0e hf1e
-      obtain ⟨j, hj⟩ := (FaceGapProof.hgI ι P a c f e hae hf0a hf1a)
+      have hfg := FaceGapProof.hfg ι P a f e hae hne
+      have hgE := FaceGapProof.hgE ι P a f e hae hf0e hf1e
+      obtain ⟨j, hj⟩ := (FaceGapProof.hgI ι P a f e hae hf0a hf1a)
       obtain ⟨δ₁, hδ₁, hball₁, hside₁⟩ :=
         localSide f i hi e he hea t ht htr hzeq
       obtain ⟨δ₂, hδ₂, hball₂, hside₂⟩ :=
@@ -1878,7 +1825,12 @@ private theorem hKlocal :
                   t δ₁ hball₁ δ₂ heps₁)
       have memK (g : P.plane.Face) (j : Fin 3)
           (hj : P.plane.faceVertex g j = a) (q : Real × Real)
-          (hq : q ∈ F.region g) := FaceGapProof.memK ι P D F a f g j hj q hq
+          (hq : q ∈ F.region g) := (show
+              ∀ q ∈ F.region g, q ∈ K
+            from by
+              classical
+              intro q hq
+              exact Set.mem_iUnion₂.mpr ⟨g, ⟨j, hj⟩, subset_closure hq⟩) q hq
       rcases hside₁ with hpos₁ | hneg₁ <;> rcases hside₂ with hpos₂ | hneg₂
       · exfalso
         let v : Real × Real := (-(u e).2, (u e).1)
@@ -1892,8 +1844,20 @@ private theorem hKlocal :
         exact (Set.disjoint_left.mp (hd hfg) (hpos₁ qplus (FaceGapProof.hqplus1 ι u z e t δ₁ δ₂
             heps heps₁ hvnorm) hdetplus)
           (hpos₂ qplus (FaceGapProof.hqplus2 ι u z e t δ₁ δ₂ heps heps₂ hvnorm) hdetplus))
-      · refine ⟨eps, heps, (FaceGapProof.build ι P D F a u c f z i hi e hae t j hj δ₁ δ₂ hzeroK
-          memK) ?_ ?_⟩
+      · refine ⟨eps, heps, ((show
+          (∀ q ∈ Metric.ball z eps, (0 : ℝ) < (u e).1 * (q.2 - z.2) - (u e).2 * (q.1 -
+          z.1) → q ∈ F.region f) → (∀ q ∈ Metric.ball z eps, (u e).1 * (q.2 - z.2) -
+          (u e).2 * (q.1 - z.1) < (0 : ℝ) → q ∈ F.region g) → Metric.ball z eps ⊆ K
+        from by
+          classical
+          intro hpos hneg q hq
+          by_cases hqpos : 0 < (u e).1 * (q.2 - z.2) - (u e).2 * (q.1 - z.1)
+          · exact memK f i hi q (hpos q hq hqpos)
+          · by_cases hqneg : (u e).1 * (q.2 - z.2) - (u e).2 * (q.1 - z.1) < 0
+            · exact memK g j hj q (hneg q hq hqneg)
+            · have hqzero : (u e).1 * (q.2 - z.2) - (u e).2 * (q.1 - z.1) = 0 := by
+                linarith
+              exact hzeroK q hq hqzero)) ?_ ?_⟩
         · intro q hq hqpos
           exact hpos₁ q (Metric.ball_subset_ball (le_of_lt heps₁) hq) hqpos
         · intro q hq hqneg

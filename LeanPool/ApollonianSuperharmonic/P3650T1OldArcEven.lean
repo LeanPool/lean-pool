@@ -2619,80 +2619,6 @@ end OldArcParityProof
 
 namespace OldArcAssembly
 
-private theorem oldArcEvenOnPreconnected :
-    (by
-      classical
-      exact
-        ∀ {X : Type}, ∀ [inst : TopologicalSpace X], ∀ (O : Set X), ∀ (K : Set X), ∀ (S : Set X),
-            IsOpen O → closure O = O ∪ K → IsPreconnected S → Disjoint S K → ∀ x ∈ S, x ∉ O →
-            Disjoint S O ) := by
-  classical
-  intro X typeclassInstance0 O K S hO hclosure hS hSK x hx hxO
-  exact OldArcParityProof.oldArcEvenOnPreconnected (X := X) O
-          K S hO hclosure hS hSK x hx hxO
-
-private theorem oldArcOddOnPreconnected :
-    (by
-      classical
-      exact
-        (∀ {X : Type}, ∀ [inst : TopologicalSpace X], ∀ (O : Set X), ∀ (K : Set X), ∀ (S : Set
-            X), IsOpen O → closure O = O ∪ K → IsPreconnected S → Disjoint S K → ∀ x ∈ S, x ∉ O →
-            Disjoint S O) → (∀ {X : Type}, ∀ [inst : TopologicalSpace X], ∀ (O : Set X), ∀ (K :
-            Set X), ∀ (S : Set X), IsOpen O → closure O = O ∪ K → IsPreconnected S → Disjoint S K
-            → ∀ x ∈ S, x ∈ O → S ⊆ O) ) := by
-  classical
-  intro oldArcEvenOnPreconnected X typeclassInstance0 O K S hO hclosure hS hSK x hx hxO
-  exact OldArcParityProof.oldArcOddOnPreconnected
-          oldArcEvenOnPreconnected (X := X) O K S hO hclosure hS hSK x hx hxO
-
-private theorem oldArcEvenClosure :
-    (by
-      classical
-      exact
-        ∀ {X : Type}, ∀ [inst : TopologicalSpace X], ∀ (O : Set X), ∀ (S : Set X), IsOpen O →
-            Disjoint S O → Disjoint (closure S) O ) := by
-  classical
-  intro X typeclassInstance0 O S hO hSO
-  exact OldArcParityProof.oldArcEvenClosure
-          (X := X) O S hO hSO
-
-private theorem parityEvenAlongPath :
-    (by
-      classical
-      exact
-        (∀ {X : Type}, ∀ [inst : TopologicalSpace X], ∀ (O : Set X), ∀ (K : Set X), ∀ (S : Set
-            X), IsOpen O → closure O = O ∪ K → IsPreconnected S → Disjoint S K → ∀ x ∈ S, x ∉ O →
-            Disjoint S O) → (∀ {m : Nat}, ∀ (q : P3381T1PolygonBoundary m), ∀ (γ : Real → Real
-            × Real), (ContinuousOn γ (Set.Icc (0 : Real) 1)) → ((∀ t ∈ Set.Icc (0 : Real) 1,
-            γ t ∉ P3544T1BoundaryCarrier q) → ((γ 0 ∉ P3544T1RayParity q) → (∀ t ∈ Set.Icc (0
-                : Real) 1, γ t ∉ P3544T1RayParity q)))) ) := by
-  classical
-  intro oldArcEvenOnPreconnected m q γ hcont havoid hstart
-  exact OldArcParityProof.parityEvenAlongPath oldArcEvenOnPreconnected (m := m) q γ hcont
-          havoid hstart
-
-private theorem upperHalfplaneEven :
-    (by
-      classical
-      exact
-        ∀ {m : Nat}, ∀ (q : P3381T1PolygonBoundary m), ∀ (ell : (Real × Real) →ₗ[Real] Real), ∀
-            (H : Real), (∀ i, ell (q.vertex i) ≤ H) → (∀ (x : Real × Real), (H < ell x) → (x ∉
-            P3544T1RayParity q)) ) := by
-  classical
-  intro m q ell H hbound x hx
-  exact OldArcParityProof.upperHalfplaneEven (m := m) q ell H hbound x hx
-
-private theorem middleNotSegment :
-    (by
-      classical
-      exact
-        ∀ {a : ℝ × ℝ}, ∀ {b : ℝ × ℝ}, ∀ {c : ℝ × ℝ}, P3381T1TriangleDeterminant ![a, b, c] ≠ (0
-            : ℝ) → b ∉ segment ℝ a c ) := by
-  classical
-  intro a b c hdet
-  exact OldArcParityProof.middleNotSegment
-          (a := a) (b := b) (c := c) hdet
-
 private theorem strictUpperHalfplaneEven :
     (by
       classical
@@ -2705,20 +2631,6 @@ private theorem strictUpperHalfplaneEven :
   classical
   intro upperHalfplaneEven m q ell H hbound x hx
   exact upperHalfplaneEven q ell H (fun i => le_of_lt (hbound i)) x hx
-
-private theorem rightPreviousParent :
-    (by
-      classical
-      exact
-        ∀ (n : Nat), ∀ (p : P3381T1PolygonBoundary n), ∀ (E : P3650T1ExposedCorner p), ∀ (D :
-            P3650T1VisibleDiagonal p E), (P3650T1CyclicChildren p D.a D.b) → (∀ {m : Nat}, ∀
-            (q : P3381T1PolygonBoundary m), ∀ (a : Fin (m + 3)), ∀ (b : Fin (m +
-            3)), ∀ (K : P3650T1CyclicChildren q a b), (K.rotation % (m + 3) = a.val) → (K.ir
-                ⟨K.rightParameter + 1, by omega⟩ = a - 1))) := by
-  classical
-  intro n p E D C m q a b K hrot
-  exact OldArcParityProof.rightPreviousParent n p E D C
-          (m := m) q a b K hrot
 
 private theorem hseedRAt3047 :
     (by
@@ -2995,15 +2907,15 @@ theorem P3650T1OldArcEven {n : Nat} (p : P3381T1PolygonBoundary n)
   have oldArcEvenOnPreconnected {X : Type} [TopologicalSpace X]
       (O K S : Set X) (hO : IsOpen O) (hclosure : closure O = O ∪ K)
       (hS : IsPreconnected S) (hSK : Disjoint S K)
-      (x : X) (hx : x ∈ S) (hxO : x ∉ O) := OldArcAssembly.oldArcEvenOnPreconnected (X := X) O K
+      (x : X) (hx : x ∈ S) (hxO : x ∉ O) := OldArcParityProof.oldArcEvenOnPreconnected (X := X) O K
           S hO hclosure hS hSK x hx hxO
   have oldArcOddOnPreconnected {X : Type} [TopologicalSpace X]
       (O K S : Set X) (hO : IsOpen O) (hclosure : closure O = O ∪ K)
       (hS : IsPreconnected S) (hSK : Disjoint S K)
-      (x : X) (hx : x ∈ S) (hxO : x ∈ O) := OldArcAssembly.oldArcOddOnPreconnected
+      (x : X) (hx : x ∈ S) (hxO : x ∈ O) := OldArcParityProof.oldArcOddOnPreconnected
           oldArcEvenOnPreconnected (X := X) O K S hO hclosure hS hSK x hx hxO
   have oldArcEvenClosure {X : Type} [TopologicalSpace X]
-      (O S : Set X) (hO : IsOpen O) (hSO : Disjoint S O) := OldArcAssembly.oldArcEvenClosure (X
+      (O S : Set X) (hO : IsOpen O) (hSO : Disjoint S O) := OldArcParityProof.oldArcEvenClosure (X
           := X) O S hO hSO
   obtain ⟨leftArcPreconnected, rightArcPreconnected⟩ :=
     P5667T1CyclicChildrenOldArcsPreconnected p D.a D.b C
@@ -3021,17 +2933,17 @@ theorem P3650T1OldArcEven {n : Nat} (p : P3381T1PolygonBoundary n)
       (γ : Real → Real × Real) (hcont : ContinuousOn γ (Set.Icc (0 : Real) 1))
       (havoid : ∀ t ∈ Set.Icc (0 : Real) 1,
         γ t ∉ P3544T1BoundaryCarrier q)
-      (hstart : γ 0 ∉ P3544T1RayParity q) := OldArcAssembly.parityEvenAlongPath
+      (hstart : γ 0 ∉ P3544T1RayParity q) := OldArcParityProof.parityEvenAlongPath
           oldArcEvenOnPreconnected (m := m) q γ hcont havoid hstart
   have upperHalfplaneEven {m : Nat} (q : P3381T1PolygonBoundary m)
       (ell : (Real × Real) →ₗ[Real] Real) (H : Real)
       (hbound : ∀ i, ell (q.vertex i) ≤ H)
-      (x : Real × Real) (hx : H < ell x) := OldArcAssembly.upperHalfplaneEven (m := m) q ell H
+      (x : Real × Real) (hx : H < ell x) := OldArcParityProof.upperHalfplaneEven (m := m) q ell H
           hbound x hx
   have triangleHull {m : Nat} (q : P3381T1PolygonBoundary m)
       (hm : m = 0) := OldArcParityProof.triangleHull (m := m) q hm
   have middleNotSegment {a b c : Real × Real}
-      (hdet : P3381T1TriangleDeterminant ![a, b, c] ≠ 0) := OldArcAssembly.middleNotSegment (a
+      (hdet : P3381T1TriangleDeterminant ![a, b, c] ≠ 0) := OldArcParityProof.middleNotSegment (a
           := a) (b := b) (c := c) hdet
   have prevIndexNe {m : Nat} (i : Fin (m + 3)) := OldArcParityProof.prevIndexNe n p E D C (m := m) i
   have nextIndexNe {m : Nat} (i : Fin (m + 3)) := OldArcParityProof.nextIndexNe n p E D C (m := m) i
@@ -3045,7 +2957,7 @@ theorem P3650T1OldArcEven {n : Nat} (p : P3381T1PolygonBoundary n)
   have rightPreviousParent {m : Nat} (q : P3381T1PolygonBoundary m)
       (a b : Fin (m + 3)) (K : P3650T1CyclicChildren q a b)
       (hrot : K.rotation % (m + 3) = a.val) :
-      K.ir ⟨K.rightParameter + 1, by omega⟩ = a - 1 := OldArcAssembly.rightPreviousParent n p E D
+      K.ir ⟨K.rightParameter + 1, by omega⟩ = a - 1 := OldArcParityProof.rightPreviousParent n p E D
           C (m
           := m) q a b K hrot
   rcases D.route with hbase | htop

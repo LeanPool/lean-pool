@@ -309,21 +309,6 @@ private theorem hCcomponent :
   change reach x z
   exact Relation.ReflTransGen.tail hy he
 
-private theorem hz₀not :
-    ∀ (q : IntegerLatticeFunction), (ℤ) → (ℕ) →
-    let S : Set GaussianInt := {x | 0 < q x}
-    let edge (x y : GaussianInt) : Prop :=
-      FourNeighborAdjacent x y ∧ x ∈ S ∧ y ∈ S
-    let reach (x y : GaussianInt) : Prop := Relation.ReflTransGen edge x y
-    ∀ (x : GaussianInt), ∀ (z₀ : GaussianInt), (q z₀ = 0) →
-    let C : Set GaussianInt := {y | reach x y}
-    (C ⊆ S) → z₀ ∉ C := by
-  classical
-  intro q M N S edge reach x z₀ hz₀ C hCpos hz
-  have hpos := hCpos hz
-  change 0 < q z₀ at hpos
-  omega
-
 private theorem firstExit :
     ∀ (q : IntegerLatticeFunction),
     let S : Set GaussianInt := {x | 0 < q x}
@@ -344,17 +329,18 @@ private theorem firstExit :
     · exact ih hbC
 
 private theorem hzEq :
-    ∀ (q : IntegerLatticeFunction), (ℤ) → (∀ x, 0 ≤ q x) → (ℕ) →
-    let S : Set GaussianInt := {x | 0 < q x}
+    ∀ (q : IntegerLatticeFunction),
+        (∀ x, 0 ≤ q x) →
+        let S : Set GaussianInt := {x | 0 < q x};
     let edge (x y : GaussianInt) : Prop :=
-      FourNeighborAdjacent x y ∧ x ∈ S ∧ y ∈ S
-    let reach (x y : GaussianInt) : Prop := Relation.ReflTransGen edge x y
-    ∀ (x : GaussianInt), (GaussianInt) →
-    let C : Set GaussianInt := {y | reach x y}
+      FourNeighborAdjacent x y ∧ x ∈ S ∧ y ∈ S;
+    let reach (x y : GaussianInt) : Prop := Relation.ReflTransGen edge x y;
+    ∀ (x : GaussianInt),
+        let C : Set GaussianInt := {y | reach x y};
     (P4849T1Component S C) → ∀ (a : GaussianInt), ∀ (z : GaussianInt), (a ∈ C) → (z ∉ C) →
         (FourNeighborAdjacent a z) → q z = 0 := by
   classical
-  intro q M hq N S edge reach x z₀ C hCcomponent a z haC hzC haz
+  intro q hq S edge reach x C hCcomponent a z haC hzC haz
   by_contra hn
   have hqn := hq z
   have hpos : 0 < q z := by omega
@@ -363,22 +349,23 @@ private theorem hzEq :
   exact hzC hzIn
 
 private theorem hNoBig :
-    ∀ (q : IntegerLatticeFunction), (ℤ) → ∀ (N : ℕ), (¬∃ (C : Set GaussianInt),
+    ∀ (q : IntegerLatticeFunction),
+        ∀ (N : ℕ), (¬∃ (C : Set GaussianInt),
         P4849T1Component {x : GaussianInt | 0 < q x} C ∧ ∃ (z : GaussianInt) (a : GaussianInt),
         q z = 0 ∧ a ∈ C ∧ FourNeighborAdjacent z a ∧ ∃ (F : Finset GaussianInt), (↑F : Set
         GaussianInt) ⊆ C ∧ N < F.card) →
-    let S : Set GaussianInt := {x | 0 < q x}
+    let S : Set GaussianInt := {x | 0 < q x};
     let edge (x y : GaussianInt) : Prop :=
-      FourNeighborAdjacent x y ∧ x ∈ S ∧ y ∈ S
-    let reach (x y : GaussianInt) : Prop := Relation.ReflTransGen edge x y
+      FourNeighborAdjacent x y ∧ x ∈ S ∧ y ∈ S;
+    let reach (x y : GaussianInt) : Prop := Relation.ReflTransGen edge x y;
     (∀ {x : GaussianInt}, ∀ {y : GaussianInt}, (FourNeighborAdjacent x y) → FourNeighborAdjacent
-        y x) → ∀ (x : GaussianInt), (GaussianInt) →
-    let C : Set GaussianInt := {y | reach x y}
+        y x) → ∀ (x : GaussianInt),
+        let C : Set GaussianInt := {y | reach x y};
     (P4849T1Component S C) → ∀ (a : GaussianInt), ∀ (z : GaussianInt), (a ∈ C) →
         (FourNeighborAdjacent a z) → (q z = 0) → ∀ (F : Finset GaussianInt), ((↑F : Set
         GaussianInt) ⊆ C) → F.card ≤ N := by
   classical
-  intro q M N hbad S edge reach adjSymm x z₀ C hCcomponent a z haC haz hzEq F hF
+  intro q N hbad S edge reach adjSymm x C hCcomponent a z haC haz hzEq F hF
   by_contra hcard
   have hgt : N < F.card := by omega
   apply hbad
@@ -438,17 +425,24 @@ theorem P4849T1LargePositiveComponents (q : IntegerLatticeFunction) (M : ℤ)
   have hCconn : FourNeighborConnected C := PositiveComponentLemmas.hCconn q reachSymm chainReach
       reachWalk x hxC hCpos
   have hCcomponent : P4849T1Component S C := PositiveComponentLemmas.hCcomponent q x hCpos hCconn
-  have hz₀not : z₀ ∉ C := PositiveComponentLemmas.hz₀not q M N x z₀ hz₀ hCpos
+  have hz₀not : z₀ ∉ C := (show
+      z₀ ∉ C
+    from by
+      classical
+      intro hz
+      have hpos := hCpos hz
+      change 0 < q z₀ at hpos
+      omega)
   have firstExit {a b : GaussianInt}
       (h : Relation.ReflTransGen FourNeighborAdjacent a b)
       (ha : a ∈ C) (hb : b ∉ C) :
       ∃ y z, y ∈ C ∧ z ∉ C ∧ FourNeighborAdjacent y z := PositiveComponentLemmas.firstExit q x (a
           := a) (b := b) h ha hb
   obtain ⟨a, z, haC, hzC, haz⟩ := firstExit (gridReach x z₀) hxC hz₀not
-  have hzEq : q z = 0 := PositiveComponentLemmas.hzEq q M hq N x z₀ hCcomponent a z haC hzC haz
+  have hzEq : q z = 0 := PositiveComponentLemmas.hzEq q hq x hCcomponent a z haC hzC haz
   have hNoBig (F : Finset GaussianInt)
-      (hF : (↑F : Set GaussianInt) ⊆ C) : F.card ≤ N := PositiveComponentLemmas.hNoBig q M N hbad
-          adjSymm x z₀ hCcomponent a z haC haz hzEq F hF
+      (hF : (↑F : Set GaussianInt) ⊆ C) : F.card ≤ N := PositiveComponentLemmas.hNoBig q N hbad
+          adjSymm x hCcomponent a z haC haz hzEq F hF
   by_cases hN : N = 0
   · have hsingle : (↑({x} : Finset GaussianInt) : Set GaussianInt) ⊆ C := by
       intro y hy

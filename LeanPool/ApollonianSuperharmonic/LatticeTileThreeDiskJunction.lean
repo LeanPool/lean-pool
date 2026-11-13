@@ -6,6 +6,7 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.SimpleGridPathBetween
 
 public import LeanPool.ApollonianSuperharmonic.ExactTileInterfaceTriple
 public import LeanPool.ApollonianSuperharmonic.LatticeTileDiskUnionInterface
@@ -601,55 +602,7 @@ private theorem hendCA :
   exact endpoint_of_third C A B hC hA hBne hdisjointCA hdisjointBC.symm
       hdisjointAB hVrawCA ⟨hrho.2, hrho.1.1⟩ hrho.1.2 xCA yCA hpathCA
 
-private theorem reverse_path :
-    (by
-      classical
-      exact
-        ∀ {V : Set GaussianInt}, ∀ {E : Set (Finset GaussianInt)}, ∀ {a : GaussianInt}, ∀
-            {b : GaussianInt}, (SimpleGridPathBetween V E a b) → (SimpleGridPathBetween V E b a)
-            ) := by
-  classical
-  intro V E a b hpath
-  rcases hpath with ⟨p, hnodup, hlen, hhead, hlast, hvertices,
-    hstep, hedges⟩
-  refine ⟨p.reverse, List.nodup_reverse.mpr hnodup, ?_, ?_, ?_, ?_, ?_, ?_⟩
-  · simpa using hlen
-  · simpa using hlast
-  · simpa using hhead
-  · rw [hvertices]
-    ext z
-    simp
-  · intro x y l₁ l₂ hrev
-    have hforward : p = l₂.reverse ++ y :: x :: l₁.reverse := by
-      have := congrArg List.reverse hrev
-      simpa [List.reverse_append, List.append_assoc] using this
-    rcases hstep y x l₂.reverse l₁.reverse hforward with h | h | h | h
-    · right; left
-      rw [h]
-      ring
-    · left
-      rw [h]
-      ring
-    · right; right; right
-      rw [h]
-      ring
-    · right; right; left
-      rw [h]
-      ring
-  · intro e
-    constructor
-    · intro he
-      rcases (hedges e).1 he with ⟨x, y, l₁, l₂, hp, rfl⟩
-      refine ⟨y, x, l₂.reverse, l₁.reverse, ?_, ?_⟩
-      · rw [hp]
-        simp [List.reverse_append, List.append_assoc]
-      · simp [Finset.pair_comm]
-    · rintro ⟨x, y, l₁, l₂, hrev, rfl⟩
-      apply (hedges {x, y}).2
-      refine ⟨y, x, l₂.reverse, l₁.reverse, ?_, ?_⟩
-      · have := congrArg List.reverse hrev
-        simpa [List.reverse_append, List.append_assoc] using this
-      · simp [Finset.pair_comm]
+private abbrev reverse_path := @SimpleGridPathBetween.reverse
 
 private theorem orient_path :
     (by
@@ -855,7 +808,7 @@ theorem LatticeTileThreeDiskJunction
       hBne hVrawCA xCA yCA hpathCA rho hrho endpoint_of_third
   have reverse_path {V : Set GaussianInt} {E : Set (Finset GaussianInt)}
       {a b : GaussianInt} (hpath : SimpleGridPathBetween V E a b) :=
-          ThreeDiskJunctionGeometry.reverse_path (V := V) (E := E) (a := a) (b := b) hpath
+          ThreeDiskJunctionGeometry.reverse_path (V := V) (E := E) (x := a) (y := b) hpath
   have orient_path {V : Set GaussianInt} {E : Set (Finset GaussianInt)}
       {a b : GaussianInt} (hpath : SimpleGridPathBetween V E a b)
       (hend : rho = a ∨ rho = b) := ThreeDiskJunctionGeometry.orient_path rho reverse_path (V :=

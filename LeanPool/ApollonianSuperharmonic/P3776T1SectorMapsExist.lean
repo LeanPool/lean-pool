@@ -152,17 +152,17 @@ private theorem sectorOrderedSum :
     | simpa [Fin.sum_univ_succ, add_assoc, add_comm, add_left_comm] using hs
 
 private theorem sectorParam_values :
-    let SectorInterval := Set.Icc (0 : ℝ) 1
-    let SectorCone := {z : SectorInterval × SectorInterval // (z.2 : ℝ) ≤ z.1}
-    let SectorSimplex := StandardSimplex (Fin 3)
+    let SectorInterval := Set.Icc (0 : ℝ) 1;
+    let SectorCone := {z : SectorInterval × SectorInterval // (z.2 : ℝ) ≤ z.1};
+    let SectorSimplex := StandardSimplex (Fin 3);
     let sectorChamber : Fin 3 → Fin 3 → Fin 3 → Set SectorSimplex := fun i j k =>
-      {s | s.1 j ≤ s.1 i ∧ s.1 k ≤ s.1 j}
+      {s | s.1 j ≤ s.1 i ∧ s.1 k ≤ s.1 j};
     let SectorOrder := {t : Fin 3 × Fin 3 × Fin 3 //
-      t.1 ≠ t.2.1 ∧ t.1 ≠ t.2.2 ∧ t.2.1 ≠ t.2.2}
-    let sectorI : SectorOrder → Fin 3 := fun o => o.1.1
-    let sectorJ : SectorOrder → Fin 3 := fun o => o.1.2.1
-    let sectorK : SectorOrder → Fin 3 := fun o => o.1.2.2
-    let sectorCh := fun o : SectorOrder => sectorChamber (sectorI o) (sectorJ o) (sectorK o)
+      t.1 ≠ t.2.1 ∧ t.1 ≠ t.2.2 ∧ t.2.1 ≠ t.2.2};
+    let sectorI : SectorOrder → Fin 3 := fun o => o.1.1;
+    let sectorJ : SectorOrder → Fin 3 := fun o => o.1.2.1;
+    let sectorK : SectorOrder → Fin 3 := fun o => o.1.2.2;
+    let sectorCh := fun o : SectorOrder => sectorChamber (sectorI o) (sectorJ o) (sectorK o);
     ∀ (sectorOrderedSum : ∀ (s : SectorSimplex), ∀ (i : Fin 3), ∀ (j : Fin 3), ∀ (k : Fin 3), (i
         ≠ j) → ((i ≠ k) → ((j ≠ k) → (s.1 i + s.1 j + s.1 k = 1)))),
     let sectorParam := fun (o : SectorOrder) (s : SectorSimplex) (hs : s ∈ sectorCh o) =>
@@ -183,13 +183,14 @@ private theorem sectorParam_values :
       have hbr : 2 * (s.1 j - s.1 k) ≤ 2 * (s.1 j - s.1 k) + 3 * s.1 k := by
         nlinarith [hc.1 k]
       (⟨⟨⟨2*(s.1 j-s.1 k)+3*s.1 k,hr0,hr1⟩,
-        ⟨2*(s.1 j-s.1 k),hb0,le_trans hbr hr1⟩⟩,hbr⟩ : SectorCone)
+        ⟨2*(s.1 j-s.1 k),hb0,le_trans hbr hr1⟩⟩,hbr⟩ : SectorCone);
     ∀ (o : SectorOrder), ∀ (s : SectorSimplex), ∀ (hs : s ∈ sectorCh o), (sectorParam o s hs).1.1
         = 2*(s.1 (sectorJ o)-s.1 (sectorK o))+3*s.1 (sectorK o) ∧
       (sectorParam o s hs).1.2 = 2*(s.1 (sectorJ o)-s.1 (sectorK o)) := by
   classical
   intro SectorInterval SectorCone SectorSimplex sectorChamber SectorOrder sectorI sectorJ sectorK
-      sectorCh sectorOrderedSum sectorParam o s hs
+      sectorCh
+      sectorOrderedSum sectorParam o s hs
   constructor <;> rfl
 
 private theorem sectorParam_continuous :
@@ -362,17 +363,17 @@ private theorem sectorTopTieParams :
     exact sectorOrderedBetaTop s o o' ho ho' ht
 
 private theorem sectorBottomTieParams :
-    let SectorInterval := Set.Icc (0 : ℝ) 1
-    let SectorCone := {z : SectorInterval × SectorInterval // (z.2 : ℝ) ≤ z.1}
-    let SectorSimplex := StandardSimplex (Fin 3)
+    let SectorInterval := Set.Icc (0 : ℝ) 1;
+    let SectorCone := {z : SectorInterval × SectorInterval // (z.2 : ℝ) ≤ z.1};
+    let SectorSimplex := StandardSimplex (Fin 3);
     let sectorChamber : Fin 3 → Fin 3 → Fin 3 → Set SectorSimplex := fun i j k =>
-      {s | s.1 j ≤ s.1 i ∧ s.1 k ≤ s.1 j}
+      {s | s.1 j ≤ s.1 i ∧ s.1 k ≤ s.1 j};
     let SectorOrder := {t : Fin 3 × Fin 3 × Fin 3 //
-      t.1 ≠ t.2.1 ∧ t.1 ≠ t.2.2 ∧ t.2.1 ≠ t.2.2}
-    let sectorI : SectorOrder → Fin 3 := fun o => o.1.1
-    let sectorJ : SectorOrder → Fin 3 := fun o => o.1.2.1
-    let sectorK : SectorOrder → Fin 3 := fun o => o.1.2.2
-    let sectorCh := fun o : SectorOrder => sectorChamber (sectorI o) (sectorJ o) (sectorK o)
+      t.1 ≠ t.2.1 ∧ t.1 ≠ t.2.2 ∧ t.2.1 ≠ t.2.2};
+    let sectorI : SectorOrder → Fin 3 := fun o => o.1.1;
+    let sectorJ : SectorOrder → Fin 3 := fun o => o.1.2.1;
+    let sectorK : SectorOrder → Fin 3 := fun o => o.1.2.2;
+    let sectorCh := fun o : SectorOrder => sectorChamber (sectorI o) (sectorJ o) (sectorK o);
     ∀ (sectorOrderedSum : ∀ (s : SectorSimplex), ∀ (i : Fin 3), ∀ (j : Fin 3), ∀ (k : Fin 3), (i
         ≠ j) → ((i ≠ k) → ((j ≠ k) → (s.1 i + s.1 j + s.1 k = 1)))),
     let sectorParam := fun (o : SectorOrder) (s : SectorSimplex) (hs : s ∈ sectorCh o) =>
@@ -393,7 +394,7 @@ private theorem sectorBottomTieParams :
       have hbr : 2 * (s.1 j - s.1 k) ≤ 2 * (s.1 j - s.1 k) + 3 * s.1 k := by
         nlinarith [hc.1 k]
       (⟨⟨⟨2*(s.1 j-s.1 k)+3*s.1 k,hr0,hr1⟩,
-        ⟨2*(s.1 j-s.1 k),hb0,le_trans hbr hr1⟩⟩,hbr⟩ : SectorCone)
+        ⟨2*(s.1 j-s.1 k),hb0,le_trans hbr hr1⟩⟩,hbr⟩ : SectorCone);
     (∀ (s : SectorSimplex), ∀ (o : SectorOrder), ∀ (o' : SectorOrder), (s ∈ sectorCh o) → ((s ∈
         sectorCh o') → ((s.1 (sectorJ o)=s.1 (sectorK o)) → (2*(s.1 (sectorJ o)-s.1 (sectorK
         o))+3*s.1 (sectorK o)= 2*(s.1 (sectorJ o')-s.1 (sectorK o'))+3*s.1 (sectorK o'))))) → (∀
@@ -402,7 +403,8 @@ private theorem sectorBottomTieParams :
         (sectorParam o s ho).1.1=(sectorParam o' s ho').1.1)) := by
   classical
   intro SectorInterval SectorCone SectorSimplex sectorChamber SectorOrder sectorI sectorJ sectorK
-      sectorCh sectorOrderedSum sectorParam sectorOrderedRBottom s o o' ho ho' ht
+      sectorCh
+      sectorOrderedSum sectorParam sectorOrderedRBottom s o o' ho ho' ht
   constructor
   · apply Subtype.ext
     change 2 * (s.1 (sectorJ o) - s.1 (sectorK o)) = 0
@@ -464,23 +466,23 @@ private theorem sectorBottomTieOther :
   exact ((P3832T1ChamberOverlap s.1 o o' ho ho').2.2 ht).1
 
 private theorem sectorTopPairClassify :
-    let SectorSimplex := StandardSimplex (Fin 3)
+    let SectorSimplex := StandardSimplex (Fin 3);
     let sectorChamber : Fin 3 → Fin 3 → Fin 3 → Set SectorSimplex := fun i j k =>
-      {s | s.1 j ≤ s.1 i ∧ s.1 k ≤ s.1 j}
+      {s | s.1 j ≤ s.1 i ∧ s.1 k ≤ s.1 j};
     let SectorOrder := {t : Fin 3 × Fin 3 × Fin 3 //
-      t.1 ≠ t.2.1 ∧ t.1 ≠ t.2.2 ∧ t.2.1 ≠ t.2.2}
-    let sectorI : SectorOrder → Fin 3 := fun o => o.1.1
-    let sectorJ : SectorOrder → Fin 3 := fun o => o.1.2.1
-    let sectorK : SectorOrder → Fin 3 := fun o => o.1.2.2
-    let sectorCh := fun o : SectorOrder => sectorChamber (sectorI o) (sectorJ o) (sectorK o)
+      t.1 ≠ t.2.1 ∧ t.1 ≠ t.2.2 ∧ t.2.1 ≠ t.2.2};
+    let sectorI : SectorOrder → Fin 3 := fun o => o.1.1;
+    let sectorJ : SectorOrder → Fin 3 := fun o => o.1.2.1;
+    let sectorK : SectorOrder → Fin 3 := fun o => o.1.2.2;
+    let sectorCh := fun o : SectorOrder => sectorChamber (sectorI o) (sectorJ o) (sectorK o);
     ∀ (s : SectorSimplex), ∀ (o : SectorOrder), ∀ (o' : SectorOrder), (s ∈ sectorCh o) → ((s ∈
-        sectorCh o') → ((s.1 (sectorI o)=s.1 (sectorJ o)) → ((s.1 (sectorI o')=s.1 (sectorJ o'))
-        → ((sectorI o=sectorI o' ∧ sectorJ o=sectorJ o' ∧ sectorK o=sectorK o') ∨
+        sectorCh o') → ((s.1 (sectorI o)=s.1 (sectorJ o)) → (
+        ((sectorI o=sectorI o' ∧ sectorJ o=sectorJ o' ∧ sectorK o=sectorK o') ∨
       (sectorI o=sectorJ o' ∧ sectorJ o=sectorI o' ∧ sectorK o=sectorK o') ∨
       (s.1 (sectorI o)=s.1 (sectorJ o) ∧ s.1 (sectorJ o)=s.1 (sectorK o)))))) := by
   classical
-  intro SectorSimplex sectorChamber SectorOrder sectorI sectorJ sectorK sectorCh s o o' ho ho' ht
-      ht'
+  intro SectorSimplex sectorChamber SectorOrder sectorI sectorJ sectorK sectorCh s o o' ho ho'
+      ht
   exact ((P3832T1ChamberOverlap s.1 o o' ho ho').2.1 ht).2.2
 
 private theorem sectorChosenCone_spec :
@@ -697,17 +699,17 @@ private theorem sectorChosenPiece_bottom :
   rw [hp.2.1]
 
 private theorem sectorParam_beta_zero :
-    let SectorInterval := Set.Icc (0 : ℝ) 1
-    let SectorCone := {z : SectorInterval × SectorInterval // (z.2 : ℝ) ≤ z.1}
-    let SectorSimplex := StandardSimplex (Fin 3)
+    let SectorInterval := Set.Icc (0 : ℝ) 1;
+    let SectorCone := {z : SectorInterval × SectorInterval // (z.2 : ℝ) ≤ z.1};
+    let SectorSimplex := StandardSimplex (Fin 3);
     let sectorChamber : Fin 3 → Fin 3 → Fin 3 → Set SectorSimplex := fun i j k =>
-      {s | s.1 j ≤ s.1 i ∧ s.1 k ≤ s.1 j}
+      {s | s.1 j ≤ s.1 i ∧ s.1 k ≤ s.1 j};
     let SectorOrder := {t : Fin 3 × Fin 3 × Fin 3 //
-      t.1 ≠ t.2.1 ∧ t.1 ≠ t.2.2 ∧ t.2.1 ≠ t.2.2}
-    let sectorI : SectorOrder → Fin 3 := fun o => o.1.1
-    let sectorJ : SectorOrder → Fin 3 := fun o => o.1.2.1
-    let sectorK : SectorOrder → Fin 3 := fun o => o.1.2.2
-    let sectorCh := fun o : SectorOrder => sectorChamber (sectorI o) (sectorJ o) (sectorK o)
+      t.1 ≠ t.2.1 ∧ t.1 ≠ t.2.2 ∧ t.2.1 ≠ t.2.2};
+    let sectorI : SectorOrder → Fin 3 := fun o => o.1.1;
+    let sectorJ : SectorOrder → Fin 3 := fun o => o.1.2.1;
+    let sectorK : SectorOrder → Fin 3 := fun o => o.1.2.2;
+    let sectorCh := fun o : SectorOrder => sectorChamber (sectorI o) (sectorJ o) (sectorK o);
     ∀ (sectorOrderedSum : ∀ (s : SectorSimplex), ∀ (i : Fin 3), ∀ (j : Fin 3), ∀ (k : Fin 3), (i
         ≠ j) → ((i ≠ k) → ((j ≠ k) → (s.1 i + s.1 j + s.1 k = 1)))),
     let sectorParam := fun (o : SectorOrder) (s : SectorSimplex) (hs : s ∈ sectorCh o) =>
@@ -728,7 +730,7 @@ private theorem sectorParam_beta_zero :
       have hbr : 2 * (s.1 j - s.1 k) ≤ 2 * (s.1 j - s.1 k) + 3 * s.1 k := by
         nlinarith [hc.1 k]
       (⟨⟨⟨2*(s.1 j-s.1 k)+3*s.1 k,hr0,hr1⟩,
-        ⟨2*(s.1 j-s.1 k),hb0,le_trans hbr hr1⟩⟩,hbr⟩ : SectorCone)
+        ⟨2*(s.1 j-s.1 k),hb0,le_trans hbr hr1⟩⟩,hbr⟩ : SectorCone);
     (∀ (o : SectorOrder), ∀ (s : SectorSimplex), ∀ (hs : s ∈ sectorCh o), (sectorParam o s
         hs).1.1 = 2*(s.1 (sectorJ o)-s.1 (sectorK o))+3*s.1 (sectorK o) ∧ (sectorParam o s
         hs).1.2 = 2*(s.1 (sectorJ o)-s.1 (sectorK o))) → (∀ (o : SectorOrder), ∀ (s :
@@ -736,7 +738,8 @@ private theorem sectorParam_beta_zero :
         ((sectorParam o s hs).1.2=⟨0,by norm_num [SectorInterval]⟩)) := by
   classical
   intro SectorInterval SectorCone SectorSimplex sectorChamber SectorOrder sectorI sectorJ sectorK
-      sectorCh sectorOrderedSum sectorParam sectorParam_values o s hs ht
+      sectorCh
+      sectorOrderedSum sectorParam sectorParam_values o s hs ht
   apply Subtype.ext
   rcases sectorParam_values o s hs with ⟨_,hb⟩
   rw [hb,ht]
@@ -1730,7 +1733,7 @@ theorem P3776T1SectorMapsExist {ι : Type} (P : PeriodicTileCore ι)
       (ho : s ∈ sectorCh o) (ho' : s ∈ sectorCh o')
       (ht : s.1 (sectorI o)=s.1 (sectorJ o))
       (ht' : s.1 (sectorI o')=s.1 (sectorJ o')) := SectorMapsProof.sectorTopPairClassify s o o'
-          ho ho' ht ht'
+          ho ho' ht
   let sectorPiece (o : SectorOrder)
       (G : C(SectorCone,ℝ×ℝ)) : C({s : SectorSimplex // s ∈ sectorCh o},ℝ×ℝ) :=
     ⟨fun s => G (sectorParam o s.1 s.2),

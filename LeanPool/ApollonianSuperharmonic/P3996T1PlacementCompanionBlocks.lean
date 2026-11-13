@@ -167,14 +167,10 @@ private theorem positive_parent :
         ∀ (C : BandCircle), ∀ (D : BandCircle), ∀ (T : ProtoTile), ∀ (N : ProtoTile), ∀ (h :
             PartialOdometer), ∀ (k : PartialOdometer), ∀ (x : GaussianInt), ∀ (bundle :
             BandOrderedGeneralNormalizedOccurrenceBundle C D T N h k x),
-            (BandOrderedGeneralRightPlacement bundle.normalizedPresentation bundle.configuration
-            bundle.normalizedCircle bundle.normalizedRoot bundle.normalizedFixed
-            bundle.normalizedRootFunction bundle.normalizedFixedFunction bundle.normalizedPoint
-            bundle.pieces bundle.functions bundle.selectedSlot bundle.selectedSign
-            bundle.routedDirection) → (∀ (i : Fin 3), 0 < (bundle.normalizedPresentation
+        (∀ (i : Fin 3), 0 < (bundle.normalizedPresentation
             i.succ).1) ) := by
   classical
-  intro C D T N h k x bundle placement i
+  intro C D T N h k x bundle i
   have hn := (ProperBandCurvatureStructure bundle.normalizedPresentation
     bundle.configuration.proper).2.1 i
   have hne := bundle.configuration.noLine i.succ
@@ -201,18 +197,15 @@ private theorem slot_of_count :
         ∀ (C : BandCircle), ∀ (D : BandCircle), ∀ (T : ProtoTile), ∀ (N : ProtoTile), ∀ (h :
             PartialOdometer), ∀ (k : PartialOdometer), ∀ (x : GaussianInt), ∀ (bundle :
             BandOrderedGeneralNormalizedOccurrenceBundle C D T N h k x),
-            (BandOrderedGeneralRightPlacement bundle.normalizedPresentation bundle.configuration
-            bundle.normalizedCircle bundle.normalizedRoot bundle.normalizedFixed
-            bundle.normalizedRootFunction bundle.normalizedFixedFunction bundle.normalizedPoint
-            bundle.pieces bundle.functions bundle.selectedSlot bundle.selectedSign
-            bundle.routedDirection) → ((PeriodicSubtileIndex) → ((∀ (i : Fin 3), 0 <
+        (
+        ((∀ (i : Fin 3), 0 <
             (bundle.normalizedPresentation i.succ).1) → (((bundle.normalizedPresentation 2).1 <
             (bundle.normalizedPresentation 1).1) → (((bundle.normalizedPresentation 3).1 <
             (bundle.normalizedPresentation 2).1) → (∀ (s : Fin 3), ∀ (i : Fin 3), (Int.toNat
             (bundle.normalizedPresentation s.succ).1 =
             Int.toNat (bundle.normalizedPresentation i.succ).1) → (s = i)))))) ) := by
   classical
-  intro C D T N h k x bundle placement a positive_parent strict_parent12 strict_parent23 s i hcount
+  intro C D T N h k x bundle positive_parent strict_parent12 strict_parent23 s i hcount
   have hn12 : Int.toNat (bundle.normalizedPresentation 2).1 <
       Int.toNat (bundle.normalizedPresentation 1).1 :=
     (Int.toNat_lt_toNat (positive_parent 0)).2 strict_parent12
@@ -1108,7 +1101,7 @@ theorem P3996T1PlacementCompanionBlocks
   have area_translation (V : ProtoTile) (d : GaussianInt) :
       TileArea (TileTranslation V d) = TileArea V :=
     (TileDiskAreaCovariance V d).2.2.2.1
-  have positive_parent := PlacementCompanionGeometry.positive_parent C D T N h k x bundle placement
+  have positive_parent := PlacementCompanionGeometry.positive_parent C D T N h k x bundle
   have strict_parent12 :
       (bundle.normalizedPresentation 2).1 <
         (bundle.normalizedPresentation 1).1 := bundle.configuration.order12
@@ -1121,7 +1114,7 @@ theorem P3996T1PlacementCompanionBlocks
     (PlacementCompanionGeometry.slot_of_exterior C D T N h k x bundle placement area_of_band
         (PlacementCompanionGeometry.selected_area C D T N h k x bundle placement area_translation
         (PlacementCompanionGeometry.area_cells)) (PlacementCompanionGeometry.slot_of_count C D T
-        N h k x bundle placement a positive_parent strict_parent12
+        N h k x bundle positive_parent strict_parent12
         (PlacementCompanionGeometry.strict_parent23 C D T N h k x bundle))) exteriorSlot
         (PlacementCompanionGeometry.exterior_area C D T N h k x bundle placement
         (PlacementCompanionGeometry.occurrence_area C D T N h k x bundle placement area_of_band

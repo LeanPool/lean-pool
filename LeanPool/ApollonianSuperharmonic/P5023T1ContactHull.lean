@@ -32,14 +32,6 @@ namespace ApollonianSuperharmonic
 
 namespace ContactHullLemmas
 
-private theorem curv :
-    ∀ (q : Fin 4 → CircleCoordinates), (ProperBandQuadruple q) → 0 < (q 0).1 ∧ (∀ (i : Fin 3), 0
-        ≤ (q i.succ).1) ∧ ∀ (i : Fin 3), ∀ (j : Fin 3), (q i.succ).1 = 0 → (q j.succ).1 = 0 → i =
-        j := by
-  classical
-  intro q hq
-  exact ProperBandCurvatureStructure q hq
-
 private theorem pair :
     ∀ (q : Fin 4 → CircleCoordinates), (ProperBandQuadruple q) →
     let p (i : Fin 4) : ℂ := (q i).2 / ((q i).1 : ℝ)
@@ -138,7 +130,7 @@ theorem P5023T1ContactHull (L : ℝ) (q : Fin 4 → CircleCoordinates)
   classical
   let p (i : Fin 4) : ℂ := (q i).2 / ((q i).1 : ℝ)
   let r (i : Fin 4) : ℝ := 1 / ((q i).1 : ℝ)
-  have curv := ContactHullLemmas.curv q hq
+  have curv := ProperBandCurvatureStructure q hq
   have pair (i j : Fin 4) (hij : i ≠ j)
       (hi : 0 < (q i).1) (hj : 0 < (q j).1) :
       dist (p i) (p j) = r i + r j ∧

@@ -145,77 +145,6 @@ private theorem hHacyclic :
           rfl)
       hverts
 
-private theorem finj :
-    ∀ (W : Finset GaussianInt), (Finset GaussianInt) → ∀ (adjacentSymm : ∀ {a : GaussianInt}, ∀
-        {b : GaussianInt}, (FourNeighborAdjacent a b) → FourNeighborAdjacent b a),
-    let H : SimpleGraph GaussianInt := {
-      Adj := fun x y => FourNeighborAdjacent x y ∧ x ∈ W ∧ y ∈ W
-      symm := ⟨by
-        intro x y h
-        exact ⟨adjacentSymm h.1, h.2.2, h.2.1⟩⟩
-      loopless := ⟨by
-        intro x h
-        rcases h.1 with h | h | h | h <;>
-          simp [Zsqrtd.ext_iff] at h <;> omega⟩
-    }
-    let X := {x : GaussianInt // x ∈ W}
-    let G : SimpleGraph X := {
-      Adj := fun x y => FourNeighborAdjacent x.1 y.1
-      symm := ⟨by
-        intro x y h
-        exact adjacentSymm h⟩
-      loopless := ⟨by
-        intro x h
-        rcases h with h | h | h | h <;>
-          simp [Zsqrtd.ext_iff] at h <;> omega⟩
-    }
-    let f : G →g H := {
-      toFun := Subtype.val
-      map_rel' := by
-        intro x y h
-        exact ⟨h, x.2, y.2⟩
-    }
-    Function.Injective f := by
-  classical
-  intro W R adjacentSymm H X G f x y h
-  exact Subtype.ext h
-
-private theorem hGacyclic :
-    ∀ (W : Finset GaussianInt), (Finset GaussianInt) → ∀ (adjacentSymm : ∀ {a : GaussianInt}, ∀
-        {b : GaussianInt}, (FourNeighborAdjacent a b) → FourNeighborAdjacent b a),
-    let H : SimpleGraph GaussianInt := {
-      Adj := fun x y => FourNeighborAdjacent x y ∧ x ∈ W ∧ y ∈ W
-      symm := ⟨by
-        intro x y h
-        exact ⟨adjacentSymm h.1, h.2.2, h.2.1⟩⟩
-      loopless := ⟨by
-        intro x h
-        rcases h.1 with h | h | h | h <;>
-          simp [Zsqrtd.ext_iff] at h <;> omega⟩
-    }
-    (H.IsAcyclic) →
-    let X := {x : GaussianInt // x ∈ W}
-    let G : SimpleGraph X := {
-      Adj := fun x y => FourNeighborAdjacent x.1 y.1
-      symm := ⟨by
-        intro x y h
-        exact adjacentSymm h⟩
-      loopless := ⟨by
-        intro x h
-        rcases h with h | h | h | h <;>
-          simp [Zsqrtd.ext_iff] at h <;> omega⟩
-    }
-    let f : G →g H := {
-      toFun := Subtype.val
-      map_rel' := by
-        intro x y h
-        exact ⟨h, x.2, y.2⟩
-    }
-    (Function.Injective f) → G.IsAcyclic := by
-  classical
-  intro W R adjacentSymm H hHacyclic X G f finj x c hc
-  exact hHacyclic (c.map f) (hc.map finj)
-
 private theorem hPQ :
     ∀ (W : Finset GaussianInt), (Finset GaussianInt) → ∀ (adjacentSymm : ∀ {a : GaussianInt}, ∀
         {b : GaussianInt}, (FourNeighborAdjacent a b) → FourNeighborAdjacent b a),
@@ -817,8 +746,18 @@ theorem P4250T2FiniteForestCompletion
       intro x y h
       exact ⟨h, x.2, y.2⟩
   }
-  have finj : Function.Injective f := ForestCompletionLemmas.finj W R adjacentSymm
-  have hGacyclic : G.IsAcyclic := ForestCompletionLemmas.hGacyclic W R adjacentSymm hHacyclic finj
+  have finj : Function.Injective f := (show
+      Function.Injective f
+    from by
+      classical
+      intro x y h
+      exact Subtype.ext h)
+  have hGacyclic : G.IsAcyclic := (show
+      G.IsAcyclic
+    from by
+      classical
+      intro x c hc
+      exact hHacyclic (c.map f) (hc.map finj))
   let P := (W.product W).filter fun e => FourNeighborAdjacent e.1 e.2
   let Q := Finset.univ.filter fun e : X × X => G.Adj e.1 e.2
   have hPQ : P.card = Q.card := ForestCompletionLemmas.hPQ W R adjacentSymm

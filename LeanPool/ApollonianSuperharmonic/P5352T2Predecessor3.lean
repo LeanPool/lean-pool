@@ -478,16 +478,16 @@ private theorem qPredC :
       classical
       exact
         ∀ (K : DiamondParameter), ∀ (f : IntegerLatticeFunction), ∀ (B : Int),
-        let k : Int := K.1
+        let k : Int := K.1;
         let Q : Int → Int → Int := fun a b =>
-          (Int.natAbs a : Int) * ((Int.natAbs a : Int)-1)/2 - (a-b)^2/4
-        (((K.1-1 : Nat) : Int) = k-1) → ((∀ (m : Int), (-2*m)^2/4 = m^2) → (∀ (t : ℤ), (t ≤ k) → (
-        let x : GaussianInt := ⟨-t,t-1⟩
+          (Int.natAbs a : Int) * ((Int.natAbs a : Int)-1)/2 - (a-b)^2/4;
+        ((∀ (m : Int), (-2*m)^2/4 = m^2) → (∀ (t : ℤ), (t ≤ k) → (
+        let x : GaussianInt := ⟨-t,t-1⟩;
         (f x = Q (-t) (t-1)) → ((f x = Q (k-t) (k+t-2) + (1-k)*(-t) - (t-1)+B) → ((f (⟨-t-1,t-1⟩
             : GaussianInt) = Q (k-t-1) (k+t-2) + (1-k)*(-t-1) - (t-1)+B) → (Q (k-t) (k+t-2) =
             (k-t)*(k-t-1)/2-(t-1)^2)))))) ) := by
   classical
-  intro K f B k Q hkm floorEven t htk x hChildC hPredC hPredW
+  intro K f B k Q floorEven t htk x hChildC hPredC hPredW
   simp only [Q, Int.natCast_natAbs]
   rw [abs_of_nonneg (by omega : 0 ≤ k-t)]
   rw [show (k-t)-(k+t-2)=-2*(t-1) by ring, floorEven]
@@ -497,17 +497,17 @@ private theorem qPredWlt :
       classical
       exact
         ∀ (K : DiamondParameter), ∀ (f : IntegerLatticeFunction), ∀ (B : Int),
-        let k : Int := K.1
+        let k : Int := K.1;
         let Q : Int → Int → Int := fun a b =>
-          (Int.natAbs a : Int) * ((Int.natAbs a : Int)-1)/2 - (a-b)^2/4
-        (((K.1-1 : Nat) : Int) = k-1) → ((∀ (m : Int), (1-2*m)^2/4 = m^2-m) → (∀ (t : ℤ),
-        let x : GaussianInt := ⟨-t,t-1⟩
-        (f x = Q (-t) (t-1)) → ((f x = Q (k-t) (k+t-2) + (1-k)*(-t) - (t-1)+B) → ((f (⟨-t-1,t-1⟩
+          (Int.natAbs a : Int) * ((Int.natAbs a : Int)-1)/2 - (a-b)^2/4;
+        ((∀ (m : Int), (1-2*m)^2/4 = m^2-m) → (∀ (t : ℤ),
+        (
+        ((f (⟨-t-1,t-1⟩
             : GaussianInt) = Q (k-t-1) (k+t-2) + (1-k)*(-t-1) - (t-1)+B) → (t < k → Q (k - t - (1
             : ℤ)) (k + t - (2 : ℤ)) = (k - t - (1 : ℤ)) * (k - t - (2 : ℤ)) / (2 : ℤ) - (t * t -
             t)))))) ) := by
   classical
-  intro K f B k Q hkm floorOdd t x hChildC hPredC hPredW ht
+  intro K f B k Q floorOdd t hPredW ht
   simp only [Q, Int.natCast_natAbs]
   rw [abs_of_nonneg (by omega : 0 ≤ k-t-1)]
   rw [show (k-t-1)-(k+t-2)=1-2*t by ring, floorOdd]
@@ -541,17 +541,17 @@ private theorem qPredS :
       classical
       exact
         ∀ (K : DiamondParameter), ∀ (f : IntegerLatticeFunction), ∀ (B : Int),
-        let k : Int := K.1
+        let k : Int := K.1;
         let Q : Int → Int → Int := fun a b =>
-          (Int.natAbs a : Int) * ((Int.natAbs a : Int)-1)/2 - (a-b)^2/4
-        (((K.1-1 : Nat) : Int) = k-1) → ((∀ (m : Int), (1-2*m)^2/4 = m^2-m) → (∀ (t : ℤ), (t ≤ k)
+          (Int.natAbs a : Int) * ((Int.natAbs a : Int)-1)/2 - (a-b)^2/4;
+        ((∀ (m : Int), (1-2*m)^2/4 = m^2-m) → (∀ (t : ℤ), (t ≤ k)
             → (
-        let x : GaussianInt := ⟨-t,t-1⟩
+        let x : GaussianInt := ⟨-t,t-1⟩;
         (f x = Q (-t) (t-1)) → ((f x = Q (k-t) (k+t-2) + (1-k)*(-t) - (t-1)+B) → ((f (⟨-t-1,t-1⟩
             : GaussianInt) = Q (k-t-1) (k+t-2) + (1-k)*(-t-1) - (t-1)+B) → (Q (k-t) (k+t-3) =
             (k-t)*(k-t-1)/2-((t-1)^2-(t-1)))))))) ) := by
   classical
-  intro K f B k Q hkm floorOdd t htk x hChildC hPredC hPredW
+  intro K f B k Q floorOdd t htk x hChildC hPredC hPredW
   simp only [Q, Int.natCast_natAbs]
   rw [abs_of_nonneg (by omega : 0 ≤ k-t)]
   rw [show (k-t)-(k+t-3)=1-2*(t-1) by ring, floorOdd]
@@ -807,23 +807,6 @@ private theorem hNotTrue :
   clear * - hiI
   omega
 
-private theorem hCompFalse :
-    (by
-      classical
-      exact
-        ∀ (K : DiamondParameter), (IntegerLatticeFunction) → (
-        let k : Int := K.1
-        let r : GaussianInt := ⟨-2*k, 0⟩
-        (((K.1-1 : Nat) : Int) = k-1) → (∀ (u : ℤ), (u < k) → (
-        let x : GaussianInt := ⟨-u,u⟩
-        ((Int.natAbs (-u) : Int) = u) → (((Int.natAbs (u-(K.1:Int)) : Int) = k-u) → (x-r ∉
-            FootprintVertices (DiamondTile K.1)))))) ) := by
-  classical
-  intro K f k r hkm u huk x habsA habsB hh
-  have h := (P5352T2DomainRows K (x-r)).1.mp hh
-  simp only [x, r, Zsqrtd.re_sub, Zsqrtd.im_sub] at h
-  omega
-
 end FourthPredecessorCases
 
 theorem P5352T2Predecessor3 (K : DiamondParameter) (hk : 1 < K.1)
@@ -940,11 +923,10 @@ theorem P5352T2Predecessor3 (K : DiamondParameter) (hk : 1 < K.1)
           tri tdiff
       have qChildN := FourthPredecessorCases.qChildN K f B floorEven t ht1 hChildC hPredC hPredW
           tri tdiff
-      have qPredC := FourthPredecessorCases.qPredC K f B hkm floorEven t htk hChildC hPredC hPredW
-      have qPredWlt (ht : t<k) := FourthPredecessorCases.qPredWlt K f B hkm floorOdd t hChildC
-          hPredC hPredW ht
+      have qPredC := FourthPredecessorCases.qPredC K f B floorEven t htk hChildC hPredC hPredW
+      have qPredWlt (ht : t<k) := FourthPredecessorCases.qPredWlt K f B floorOdd t hPredW ht
       have qPredWeq (ht : t=k) := FourthPredecessorCases.qPredWeq K floorOdd t ht
-      have qPredS := FourthPredecessorCases.qPredS K f B hkm floorOdd t htk hChildC hPredC hPredW
+      have qPredS := FourthPredecessorCases.qPredS K f B floorOdd t htk hChildC hPredC hPredW
       have hAgree : Q (-t) (t-1) = Q (k-t) (k+t-2) +
           (1-k)*(-t)-(t-1)+B := by rw [← hChildC, hPredC]
       have hEastDiff := FourthPredecessorCases.hEastDiff f t hChildC hChildE qChildC qChildE
@@ -1000,7 +982,14 @@ theorem P5352T2Predecessor3 (K : DiamondParameter) (hk : 1 < K.1)
       have hNotTrue := FourthPredecessorCases.hNotTrue K hkm u habsA habsB
       have htable := (DiamondLaplacianTable K).2.1 x hFalse hNotTrue
       have hLapOne : FourNeighborLaplacian f x=1 := hLap.trans htable
-      have hCompFalse := FourthPredecessorCases.hCompFalse K f hkm u huk habsA habsB
+      have hCompFalse := (show
+          x-r ∉ FootprintVertices (DiamondTile K.1)
+        from by
+          classical
+          intro hh
+          have h := (P5352T2DomainRows K (x-r)).1.mp hh
+          simp only [x, r, Zsqrtd.re_sub, Zsqrtd.im_sub] at h
+          omega)
       constructor
       · intro hh
         exact (hCompFalse hh).elim

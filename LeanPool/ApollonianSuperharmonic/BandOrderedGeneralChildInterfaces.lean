@@ -316,28 +316,6 @@ private theorem blockDisjoint :
   rw [blockEq m n, blockEq r s]
   exact (BandOrderedGeneralPeriodicBlockCells q cfg C₀ T cert).2 m n r s hne
 
-private theorem patchUnion :
-    (by
-      classical
-      exact
-        ∀ (q : Fin 4 → CircleCoordinates), ∀ (cfg : BandOrderedGeneralConfiguration q), ∀ (C₀ :
-            BandCircle), ∀ (T : ProtoTile), ∀ (cert : BandOrderedGeneralLayoutCertificate q cfg
-            C₀ T),
-        let K : Int → Int → Finset PeriodicSubtileIndex := fun m n ↦
-          {⟨.A, m, n⟩, ⟨.B, m, n⟩, ⟨.C, m, n⟩,
-            ⟨.D, m, n⟩, ⟨.E, m, n⟩, ⟨.F, m, n⟩}
-        let blockTile (m n : Int) : ProtoTile :=
-          ⟨(K m n).biUnion (fun a => (cert.modified.tile a).cells), 0⟩
-        ∀ (p : FiniteInducedTilePatch cert.modified.plane cert.modified.tile), ∀ (σ : Finset (Int
-            × Int)), (p.indices = σ.biUnion (fun mn => K mn.1 mn.2)) → ((∀ x, x ∈
-            p.unionTile.cells ↔
-            ∃ mn ∈ σ, ∃ a ∈ K mn.1 mn.2, x ∈ (cert.modified.tile a).cells) → (∀ x, x ∈
-                p.unionTile.cells ↔ ∃ mn ∈ σ, x ∈ (blockTile mn.1 mn.2).cells)) ) := by
-  classical
-  intro q cfg C₀ T cert K blockTile p σ hp he x
-  rw [he x]
-  simp only [blockTile, Finset.mem_biUnion]
-
 private theorem hUA :
     (by
       classical
@@ -1461,7 +1439,16 @@ theorem BandOrderedGeneralChildInterfaces
       (TileTranslation T ((m : GaussianInt) * cert.u +
         (n : GaussianInt) * cert.v)).cells := ChildInterfaceGeometry.blockEq q cfg C₀ T cert m n
   have blockDisjoint := ChildInterfaceGeometry.blockDisjoint q cfg C₀ T cert blockEq
-  have patchUnion := ChildInterfaceGeometry.patchUnion q cfg C₀ T cert
+  have patchUnion := (show
+      ∀ (p : FiniteInducedTilePatch cert.modified.plane cert.modified.tile), ∀ (σ : Finset
+      (Int × Int)), (p.indices = σ.biUnion (fun mn => K mn.1 mn.2)) → ((∀ x, x ∈
+      p.unionTile.cells ↔ ∃ mn ∈ σ, ∃ a ∈ K mn.1 mn.2, x ∈ (cert.modified.tile a).cells) →
+      (∀ x, x ∈ p.unionTile.cells ↔ ∃ mn ∈ σ, x ∈ (blockTile mn.1 mn.2).cells))
+    from by
+      classical
+      intro p σ hp he x
+      rw [he x]
+      simp only [blockTile, Finset.mem_biUnion])
   let σA : Finset (Int × Int) := {(0,0)}
   let σB : Finset (Int × Int) := {(0,1)}
   let σC : Finset (Int × Int) := {(1,1)}

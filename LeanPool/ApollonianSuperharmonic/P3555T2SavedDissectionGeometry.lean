@@ -674,16 +674,16 @@ private theorem hchildNextAt805 :
         u.length),
     let iA : Fin (a :: (u ++ [b])).length :=
       ⟨k.val, by have hlen : (a :: (u ++ [b])).length = u.length + 2 := by simp
-                 rw [hlen]; omega⟩
+                 rw [hlen]; omega⟩;
     let iA1 : Fin (a :: (u ++ [b])).length :=
       ⟨k.val + 1, by have hlen : (a :: (u ++ [b])).length = u.length + 2 := by simp
-                     rw [hlen]; omega⟩
-    (k.val + 1 < (a :: (u ++ b :: v)).length) → ((a :: (u ++ [b])).get
+                     rw [hlen]; omega⟩;
+    ((a :: (u ++ [b])).get
           ⟨(iA.val + 1) % (a :: (u ++ [b])).length,
             Nat.mod_lt _ (Nat.zero_lt_of_lt iA.isLt)⟩ =
         (a :: (u ++ [b])).get iA1) := by
   classical
-  intro n a b u v k hkA iA iA1 hk1Lt
+  intro n a b u v k hkA iA iA1
   apply congrArg
   apply Fin.ext
   have hlen : (a :: (u ++ [b])).length = u.length + 2 := by simp
@@ -979,7 +979,7 @@ private theorem leftBoundaryCase :
         rw [hnextIndex]
       _ = (a :: (u ++ [b])).get iA1 := by
         exact hAget k1 (by dsimp [k1]; omega)
-  have hchildNext := SavedDissectionProof.hchildNextAt805 n a b u v k hkA hk1Lt
+  have hchildNext := SavedDissectionProof.hchildNextAt805 n a b u v k hkA
   have hincA := (hgoodA hndA hcycA).2.2.2.2 iA
   rcases hincA with ⟨f, hfA, huniqA⟩
   have hfAfirst : (a :: (u ++ [b])).get iA ∈ Set.range f := hfA.2.1

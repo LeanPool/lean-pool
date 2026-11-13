@@ -6,6 +6,7 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.SimpleGridPathBetween
 
 public import LeanPool.ApollonianSuperharmonic.BandRegularTileTouchingClassification
 public import LeanPool.ApollonianSuperharmonic.BoundaryString
@@ -956,60 +957,7 @@ private theorem houterEnds :
     exact (hpt heq).elim
   · exact ⟨hswap.2.symm, hswap.1.symm⟩
 
-private theorem reversePath :
-    (by
-      classical
-      exact
-        ∀ {V : Set GaussianInt}, ∀ {E : Set (Finset GaussianInt)}, ∀ {x : GaussianInt}, ∀
-            {y : GaussianInt}, (SimpleGridPathBetween V E x y) → (SimpleGridPathBetween V E y x)
-            ) := by
-  classical
-  intro V E x y P
-  rcases P with ⟨p, hnodup, hlength, hhead, hlast, hvertices, hsteps, hedges⟩
-  have reverse_decomp (a b : GaussianInt) (l1 l2 : List GaussianInt)
-      (hr : p.reverse = l1 ++ a :: b :: l2) :
-      p = l2.reverse ++ b :: a :: l1.reverse := by
-    have h := congrArg List.reverse hr
-    simpa [List.reverse_append] using h
-  have forward_decomp (a b : GaussianInt) (l1 l2 : List GaussianInt)
-      (hp : p = l1 ++ a :: b :: l2) :
-      p.reverse = l2.reverse ++ b :: a :: l1.reverse := by
-    have h := congrArg List.reverse hp
-    simpa [List.reverse_append] using h
-  refine ⟨p.reverse, List.nodup_reverse.mpr hnodup, ?_, ?_, ?_, ?_, ?_, ?_⟩
-  · simpa using hlength
-  · simpa [hhead]
-  · simpa [hlast]
-  · rw [hvertices]
-    simp
-  · intro a b l1 l2 hr
-    have hp := reverse_decomp a b l1 l2 hr
-    have hstep := hsteps b a l2.reverse l1.reverse hp
-    rcases hstep with h | h | h | h
-    · right; left
-      rw [h]
-      abel
-    · left
-      rw [h]
-      abel
-    · right; right; right
-      rw [h]
-      abel
-    · right; right; left
-      rw [h]
-      abel
-  · intro e
-    constructor
-    · intro he
-      rcases (hedges e).1 he with ⟨a, b, l1, l2, hr, heq⟩
-      have hp := forward_decomp a b l1 l2 hr
-      refine ⟨b, a, l2.reverse, l1.reverse, hp, ?_⟩
-      simpa [Finset.pair_comm] using heq
-    · intro he
-      rcases he with ⟨a, b, l1, l2, hp, heq⟩
-      have hporig := reverse_decomp a b l1 l2 hp
-      exact (hedges e).2 ⟨b, a, l2.reverse, l1.reverse, hporig, by
-        simpa [Finset.pair_comm] using heq⟩
+private abbrev reversePath := @SimpleGridPathBetween.reverse
 
 private theorem hOuterPath :
     (by

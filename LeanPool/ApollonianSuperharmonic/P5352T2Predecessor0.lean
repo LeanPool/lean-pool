@@ -421,15 +421,17 @@ private theorem qCW :
     (by
       classical
       exact
-        (DiamondParameter) → ((IntegerLatticeFunction) → ((Int) → (∀ (p : ℤ), ∀ (q : ℤ), ((1 : ℤ)
+        (
+        (
+        (∀ (p : ℤ), ∀ (q : ℤ), ((1 : ℤ)
             ≤ p) → (
         let Q : Int → Int → Int := fun a b =>
-          (Int.natAbs a : Int) * ((Int.natAbs a : Int)-1) / 2 - (a-b)^2/4
+          (Int.natAbs a : Int) * ((Int.natAbs a : Int)-1) / 2 - (a-b)^2/4;
         (q = p - (1 : ℤ)) → (
-        let valW : Int := Q (p-1) (p-1)
+        let valW : Int := Q (p-1) (p-1);
         valW = (p-1)*(p-2)/2))))) ) := by
   classical
-  intro K f B p q hp1 Q hq valW
+  intro p q hp1 Q hq valW
   simp [valW, Q, abs_of_nonneg (show 0 ≤ p-1 by omega)]
   ring
 
@@ -461,16 +463,18 @@ private theorem qP0 :
     (by
       classical
       exact
-        ∀ (K : DiamondParameter), (IntegerLatticeFunction) → ((Int) → (
-        let k : Int := K.1
+        ∀ (K : DiamondParameter),
+        (
+        (
+        let k : Int := K.1;
         ∀ (p : ℤ), ∀ (q : ℤ), (p ≤ k) → (
         let Q : Int → Int → Int := fun a b =>
-          (Int.natAbs a : Int) * ((Int.natAbs a : Int)-1) / 2 - (a-b)^2/4
+          (Int.natAbs a : Int) * ((Int.natAbs a : Int)-1) / 2 - (a-b)^2/4;
         (q = p - (1 : ℤ)) → (
-        let valC : Int := Q (p-k) (p-1-(1-k))
+        let valC : Int := Q (p-k) (p-1-(1-k));
         (∀ (m : Int), (-2*m)^2/4 = m^2) → (valC = (k-p)*(k-p-1)/2-(k-1)^2))))) ) := by
   classical
-  intro K f B k p q hpk Q hq valC floorEven
+  intro K k p q hpk Q hq valC floorEven
   simp only [valC, Q, Int.natCast_natAbs]
   rw [abs_of_nonpos (show p-k ≤ 0 by omega)]
   rw [show (p-k)-(p-1-(1-k)) = -2*(k-1) by ring, floorEven]
@@ -480,16 +484,18 @@ private theorem qPeLt :
     (by
       classical
       exact
-        ∀ (K : DiamondParameter), (IntegerLatticeFunction) → ((Int) → (
-        let k : Int := K.1
-        ∀ (p : ℤ), ∀ (q : ℤ),
+        ∀ (K : DiamondParameter),
+        (
+        (
+        let k : Int := K.1;
+        ∀ (p : ℤ), (ℤ) →
         let Q : Int → Int → Int := fun a b =>
-          (Int.natAbs a : Int) * ((Int.natAbs a : Int)-1) / 2 - (a-b)^2/4
-        (q = p - (1 : ℤ)) → ((∀ (m : Int), (1-2*m)^2/4 = m^2-m) → (p < k → Q (p + (1 : ℤ) - k) (p
+          (Int.natAbs a : Int) * ((Int.natAbs a : Int)-1) / 2 - (a-b)^2/4;
+        ((∀ (m : Int), (1-2*m)^2/4 = m^2-m) → (p < k → Q (p + (1 : ℤ) - k) (p
             - (1 : ℤ) - ((1 : ℤ) - k)) = (k - p - (1 : ℤ)) * (k - p - (2 : ℤ)) / (2 : ℤ) - ((k -
             (1 : ℤ)) ^ (2 : ℕ) - (k - (1 : ℤ))))))) ) := by
   classical
-  intro K f B k p q Q hq floorOdd hpk'
+  intro K k p q Q floorOdd hpk'
   simp only [Q, Int.natCast_natAbs]
   rw [abs_of_nonpos (show p+1-k ≤ 0 by omega)]
   rw [show (p+1-k)-(p-1-(1-k)) = 1-2*(k-1) by ring, floorOdd]
@@ -523,16 +529,18 @@ private theorem qPs :
     (by
       classical
       exact
-        ∀ (K : DiamondParameter), (IntegerLatticeFunction) → ((Int) → (
-        let k : Int := K.1
+        ∀ (K : DiamondParameter),
+        (
+        (
+        let k : Int := K.1;
         ∀ (p : ℤ), ∀ (q : ℤ), (p ≤ k) → (
         let Q : Int → Int → Int := fun a b =>
-          (Int.natAbs a : Int) * ((Int.natAbs a : Int)-1) / 2 - (a-b)^2/4
+          (Int.natAbs a : Int) * ((Int.natAbs a : Int)-1) / 2 - (a-b)^2/4;
         (q = p - (1 : ℤ)) → (
-        let valS : Int := Q (p-k) (p-1-1-(1-k))
+        let valS : Int := Q (p-k) (p-1-1-(1-k));
         (∀ (m : Int), (1-2*m)^2/4 = m^2-m) → (valS = (k-p)*(k-p-1)/2-((k-1)^2-(k-1))))))) ) := by
   classical
-  intro K f B k p q hpk Q hq valS floorOdd
+  intro K k p q hpk Q hq valS floorOdd
   simp only [valS, Q, Int.natCast_natAbs]
   rw [abs_of_nonpos (show p-k ≤ 0 by omega)]
   rw [show (p-k)-(p-1-1-(1-k)) = 1-2*(k-1) by ring, floorOdd]
@@ -932,17 +940,17 @@ theorem P5352T2Predecessor0 (K : DiamondParameter) (hk : 1 < K.1)
         hzA hW hN hz hchild childMem childValue
       have qC0 : val0 = p*(p-1)/2 := by
         simp [val0, Q, abs_of_nonneg (show 0 ≤ p by omega)]
-      have qCW := FirstPredecessorCases.qCW K f B p q hp1 hq
+      have qCW := FirstPredecessorCases.qCW p q hp1 hq
       have qCN : valN = p*(p-1)/2 := by
         simp [valN, Q, abs_of_nonneg (show 0 ≤ p by omega)]
       have qCS : Q p (p-2) = p*(p-1)/2-1 := by
         simp [Q, abs_of_nonneg (show 0 ≤ p by omega)]
       have floorEven (m : Int) := FirstPredecessorCases.floorEven m
       have floorOdd (m : Int) := FirstPredecessorCases.floorOdd K f B p q m
-      have qP0 := FirstPredecessorCases.qP0 K f B p q hpk hq floorEven
-      have qPeLt (hpk' : p < k) := FirstPredecessorCases.qPeLt K f B p q hq floorOdd hpk'
+      have qP0 := FirstPredecessorCases.qP0 K p q hpk hq floorEven
+      have qPeLt (hpk' : p < k) := FirstPredecessorCases.qPeLt K p q floorOdd hpk'
       have qPeEq (hpk' : p = k) := FirstPredecessorCases.qPeEq K p floorOdd hpk'
-      have qPs := FirstPredecessorCases.qPs K f B p q hpk hq floorOdd
+      have qPs := FirstPredecessorCases.qPs K p q hpk hq floorOdd
       have hQdelta : valS - valC = k-1 := by
         linear_combination qPs-qP0
       have tri (a : Int) := FirstPredecessorCases.tri K f B p q a

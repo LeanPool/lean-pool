@@ -129,16 +129,17 @@ private theorem hbAt227 :
     (by
       classical
       exact
-        (BandCircle) → (∀ (h₁ : PartialOdometer), ∀ (h₂ : PartialOdometer), ∀ (g :
+        (∀ (h₁ : PartialOdometer), ∀ (h₂ : PartialOdometer), ∀ (g :
             IntegerLatticeFunction), ∀ (x : GaussianInt), ∀ (c₁ : ℤ), (∀ x ∈ h₁.domain, g x =
             h₁.value x + c₁) → (∀ (c₂ : ℤ), (∀ x ∈ h₂.domain, g x = h₂.value x + c₂) → ((x ∈
-            h₁.domain) → ((x ∈ h₂.domain) → ((ℕ) → (∀ (z : GaussianInt), ∀ (a₁ : GaussianInt), ∀
+            h₁.domain) → ((x ∈ h₂.domain) → (
+        (∀ (z : GaussianInt), ∀ (a₁ : GaussianInt), ∀
             (b₁ : ℤ), (∀ x ∈ h₁.domain, h₁.value x = P5570T1UnitQuadratic z x + a₁.re * x.re +
             a₁.im * x.im + b₁) → (∀ (b₂ : ℤ), (∀ x ∈ h₂.domain, h₂.value x =
             P5570T1UnitQuadratic z x + a₁.re * x.re + a₁.im * x.im + b₂) → (b₁+c₁ =
             b₂+c₂)))))))) ) := by
   classical
-  intro C h₁ h₂ g x c₁ hg₁ c₂ hg₂ hx₁ hx₂ n z a₁ b₁ hval₁ b₂ hval₂
+  intro h₁ h₂ g x c₁ hg₁ c₂ hg₂ hx₁ hx₂ z a₁ b₁ hval₁ b₂ hval₂
   have he₁ := hg₁ x hx₁
   have he₂ := hg₂ x hx₂
   rw [hval₁ x hx₁] at he₁
@@ -591,8 +592,9 @@ private theorem hUn :
     (by
       classical
       exact
-        (BandCircle) → ((ℕ) → (∀ (q : Fin (4 : ℕ) → CircleCoordinates), (Fin (3 : ℕ)) →
-            ((ProperBandQuadruple q) → (∀ (U : ProtoTile), ∀ (V : ProtoTile), (LatticeTile U ∧
+        (
+        (∀ (q : Fin (4 : ℕ) → CircleCoordinates),
+        ((ProperBandQuadruple q) → (∀ (U : ProtoTile), ∀ (V : ProtoTile), (LatticeTile U ∧
             TileArea U = (q (0 : Fin (4 : ℕ))).1.toNat ∧ (∀ (S : Fin (3 : ℕ) → Bool → ProtoTile),
                 (∀ (i : Fin (3 : ℕ)), ∀ (s : Bool), BandSubtileOccurrence q U i s (S i s)) → (∀
                 (x : LatticeCell), x ∈ U.cells ↔ ∃ (i : Fin (3 : ℕ)) (s : Bool), x ∈ (S i
@@ -693,7 +695,7 @@ private theorem hUn :
             (Q (2 : Fin (3 : ℕ)) true) ∩ FootprintVertices (S (1 : Fin (3 : ℕ)) false)) →
             (U.cells.Nonempty)))))) ) := by
   classical
-  intro C n q i hq U V hgeomU hgeomV
+  intro q hq U V hgeomU hgeomV
   have ha := hgeomU.2.1
   have hp := (ProperBandCurvatureStructure q hq).1
   by_contra he
@@ -970,7 +972,7 @@ private theorem positiveStep :
           LeftWebGeometry.hnadj C n q i hq hunit hpos U V orientation base Rminus
           Rplus tiles reverseTiles hs reverseHs hreverse hrespect hreverseRespect r
           horientation hstring hcminus hcplus hnorm
-  have hUn : U.cells.Nonempty := LeftWebGeometry.hUn C n q i hq U V hgeomU hgeomV
+  have hUn : U.cells.Nonempty := LeftWebGeometry.hUn q hq U V hgeomU hgeomV
   have hVn : V.cells.Nonempty := Finset.nonempty_iff_ne_empty.mpr hnV
   have hselection := P5589T1UnitInterfaceSelection C Ci hunit orientation
     base Rminus Rplus U V tiles reverseTiles hs reverseHs hminus hplus f k
@@ -1063,7 +1065,7 @@ theorem P5596T1LeftWeb
         subst a₂
         obtain ⟨c₁, hg₁⟩ := hg₁
         obtain ⟨c₂, hg₂⟩ := hg₂
-        have hb := LeftWebGeometry.hbAt227 C h₁ h₂ g x c₁ hg₁ c₂ hg₂ hx₁ hx₂ n z a₁ b₁ hval₁ b₂
+        have hb := LeftWebGeometry.hbAt227 h₁ h₂ g x c₁ hg₁ c₂ hg₂ hx₁ hx₂ z a₁ b₁ hval₁ b₂
             hval₂
         have hvalues (y : GaussianInt)
             (hy : y = x ∨ y = x + 1 ∨ y = x - 1 ∨

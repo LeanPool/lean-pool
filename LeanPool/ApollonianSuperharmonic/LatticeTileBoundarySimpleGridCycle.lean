@@ -50,36 +50,6 @@ private theorem closed_grid_index_zero :
   exact TopologicalDiskGridRayCrossingIndexZero
     (TileRealization T) hT q hq p x y hhead hlast hadj hclose hedge
 
-private theorem adjacent_grid_index_control :
-    (by
-      classical
-      exact
-        ∀ (p : List GaussianInt), ∀ (x : GaussianInt), ∀ (y : GaussianInt), p.head? = some x →
-            p.getLast? = some y → p.Nodup → 3 ≤ p.length →
-            (∀ a, ∀ b, (a, b) ∈ p.zip p.tail → FourNeighborAdjacent a b) →
-            FourNeighborAdjacent y x →
-            let cyclicEdges := (p.zip p.tail) ++ [(y, x)]
-            ∀ q : LatticeCell,
-              (((q + 1, q + 1 + ⟨0, 1⟩) ∉ cyclicEdges ∧
-                  (q + 1 + ⟨0, 1⟩, q + 1) ∉ cyclicEdges) →
-                  GridRayCrossingIndex (q + 1) p = GridRayCrossingIndex q p) ∧
-              (((q + 1, q + 1 + ⟨0, 1⟩) ∈ cyclicEdges ∨
-                  (q + 1 + ⟨0, 1⟩, q + 1) ∈ cyclicEdges) →
-                  Int.natAbs (GridRayCrossingIndex (q + 1) p -
-                    GridRayCrossingIndex q p) = 1) ∧
-              (((q + 1 + ⟨0, 1⟩, q + ⟨0, 1⟩) ∉ cyclicEdges ∧
-                  (q + ⟨0, 1⟩, q + 1 + ⟨0, 1⟩) ∉ cyclicEdges) →
-                  GridRayCrossingIndex (q + ⟨0, 1⟩) p =
-                    GridRayCrossingIndex q p) ∧
-              (((q + 1 + ⟨0, 1⟩, q + ⟨0, 1⟩) ∈ cyclicEdges ∨
-                  (q + ⟨0, 1⟩, q + 1 + ⟨0, 1⟩) ∈ cyclicEdges) →
-                  Int.natAbs (GridRayCrossingIndex (q + ⟨0, 1⟩) p -
-                    GridRayCrossingIndex q p) = 1)
-    ) := by
-  classical
-  intro p x y hhead hlast hnodup hlen hadj hclose
-  exact GridRayCrossingIndexAdjacentCell p x y hhead hlast hnodup hlen hadj hclose
-
 private theorem boundary_edge_segment :
     (by
       classical
@@ -728,7 +698,7 @@ theorem LatticeTileBoundarySimpleGridCycle (T : ProtoTile) (hT : LatticeTile T) 
           (((q + 1 + ⟨0, 1⟩, q + ⟨0, 1⟩) ∈ cyclicEdges ∨
               (q + ⟨0, 1⟩, q + 1 + ⟨0, 1⟩) ∈ cyclicEdges) →
               Int.natAbs (GridRayCrossingIndex (q + ⟨0, 1⟩) p -
-                GridRayCrossingIndex q p) = 1) := BoundaryCycleProof.adjacent_grid_index_control
+                GridRayCrossingIndex q p) = 1) := GridRayCrossingIndexAdjacentCell
   obtain ⟨gridPath, x, y, z, gridPath_nodup, gridPath_length_four,
       gridPath_head, gridPath_last, gridPath_chain, gridPath_close,
       gridPath_fourNeighbor, gridPath_close_fourNeighbor, gridPath_zip_fourNeighbor,

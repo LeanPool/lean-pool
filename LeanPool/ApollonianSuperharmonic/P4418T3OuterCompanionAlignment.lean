@@ -147,16 +147,12 @@ private theorem parent_area_injective :
         ∀ (C : BandCircle), ∀ (D : BandCircle), ∀ (T : ProtoTile), ∀ (N : ProtoTile), ∀ (h :
             PartialOdometer), ∀ (fixedFunction : PartialOdometer), ∀ (x : GaussianInt), ∀ (bundle :
             BandOrderedGeneralNormalizedOccurrenceBundle C D T N h fixedFunction x),
-            (BandOrderedGeneralSubtilePlacement bundle.normalizedPresentation
-            bundle.configuration bundle.normalizedCircle bundle.normalizedFixedCircle
-            bundle.normalizedRoot bundle.normalizedFixed bundle.normalizedRootFunction
-            bundle.normalizedFixedFunction bundle.normalizedPoint bundle.pieces bundle.functions
-            bundle.selectedSlot bundle.selectedSign bundle.routedDirection) → (
-        let q := bundle.normalizedPresentation
+        (
+        let q := bundle.normalizedPresentation;
         (∀ (j : Fin 3), 0 < (q j.succ).1) → (((q 3).1 < (q 2).1) → (∀ (j : Fin 3), ∀ (k : Fin 3),
             (Int.toNat (q j.succ).1 = Int.toNat (q k.succ).1) → (j = k)))) ) := by
   classical
-  intro C D T N h fixedFunction x bundle placement q positive_parent strict23 j k heq
+  intro C D T N h fixedFunction x bundle q positive_parent strict23 j k heq
   let cfg := bundle.configuration
   have hj := positive_parent j
   have hk := positive_parent k
@@ -589,7 +585,7 @@ theorem P4418T3OuterCompanionAlignment :
   have strict23 : (q 3).1 < (q 2).1 := CompanionAlignmentGeometry.strict23 C D T N h k x bundle
   have parent_area_injective (j otherSlot : Fin 3)
       (heq : Int.toNat (q j.succ).1 = Int.toNat (q otherSlot.succ).1) : j = otherSlot :=
-          CompanionAlignmentGeometry.parent_area_injective C D T N h k x bundle placement
+          CompanionAlignmentGeometry.parent_area_injective C D T N h k x bundle
           positive_parent strict23 j otherSlot heq
   obtain ⟨rotation, hrotation, _⟩ :=
     BandPredecessorNoCollision q r cfg.proper hr

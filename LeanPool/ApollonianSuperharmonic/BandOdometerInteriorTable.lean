@@ -126,28 +126,6 @@ private theorem orderedGeneralRowDispatch :
       · intro _
         exact lap
 
-private theorem orderedGeneralCenteredDispatch :
-    (by
-      classical
-      exact
-        ∀ (q' : Fin 4 → CircleCoordinates), ∀ (cfg' : BandOrderedGeneralConfiguration q'), ∀ (C0'
-            : BandCircle), ∀ (T' : ProtoTile), ∀ (cert' : BandOrderedGeneralLayoutCertificate q'
-            cfg' C0' T'), ∀ (h' : PartialOdometer), ∀ (P' : Fin 3 → Bool → ProtoTile), ∀ (r' :
-            Fin 3 → Bool → PartialOdometer), ∀ (Q' : Fin 3 → Bool → ProtoTile), ∀ (S' : Fin 3 →
-            Bool → ProtoTile), ∀ (u' : Fin 3 → Bool → PartialOdometer), ∀ (v' : Fin 3 → Bool →
-            PartialOdometer), ∀ (g'' : IntegerLatticeFunction), ∀ (x' : GaussianInt),
-            BandOrderedGeneralOdometerRowData q' cfg' C0' T' cert' h' P' r' Q' S' u' v' g'' →
-            GlobalOdometerExtends g'' h' → Nat.card
-            {is : Fin 3 × Bool // x' ∈ BoundaryFootprintVertices (cert'.P is.1 is.2)} = 2 →
-            GaussianRealPoint x' = TileCentroid T' → (cfg'.firstPredecessor 1).1 = 0 →
-            FourNeighborLaplacian g'' x' = 0 ) := by
-  classical
-  intro q' cfg' C0' T' cert' h' P' r' Q' S' u' v' g'' x'
-    data hext' hk' hcenter' hzero'
-  exact FordCenteredInteriorOdometerStencil
-    q' cfg' C0' T' cert' h' P' r' Q' S' u' v' g'' x'
-    data hext' hk' hcenter' hzero'
-
 private theorem layout :
     (by
       classical
@@ -319,7 +297,7 @@ theorem BandOdometerInteriorTable :
         exact ⟨a.1, a.2, by simpa only [obs.1] using hp,
           obs.2.1.mp hf, fun hboundary => hb (obs.2.2.mpr hboundary)⟩
   have orderedGeneralRowDispatch := InteriorTableGeometry.orderedGeneralRowDispatch
-  have orderedGeneralCenteredDispatch := InteriorTableGeometry.orderedGeneralCenteredDispatch
+  have orderedGeneralCenteredDispatch := FordCenteredInteriorOdometerStencil
   dsimp only
   rcases regimes with ⟨P, hP, hqP⟩ | ⟨K, hK, hqK⟩ | ⟨cfg⟩
   · subst qn

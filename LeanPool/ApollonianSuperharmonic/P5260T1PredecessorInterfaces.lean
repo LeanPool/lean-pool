@@ -6,6 +6,7 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.SimpleGridPathBetween
 
 public import LeanPool.ApollonianSuperharmonic.P5260T1PlacementLedger
 public import LeanPool.ApollonianSuperharmonic.ExactTileInterfaceTriple
@@ -107,16 +108,6 @@ private theorem rawBoundaryVertices :
           rcases hze with h | h <;> subst z <;>
             simp [sub_eq_add_neg, add_assoc, add_comm, add_left_comm]
     exact ⟨boundaryRaw X hX hz.1, boundaryRaw Y hY hz.2⟩
-
-private theorem rawBoundaryEdges :
-    (by
-      classical
-      exact
-        ∀ (X : ProtoTile), ∀ (Y : ProtoTile), (Disjoint X.cells Y.cells) → (FootprintEdges X ∩
-            FootprintEdges Y = BoundaryFootprintEdges X ∩ BoundaryFootprintEdges Y) ) := by
-  classical
-  intro X Y hdisj
-  exact CellDisjointCommonEdgesBoundary X Y hdisj
 
 private theorem staircaseBetween :
     (by
@@ -417,38 +408,7 @@ private theorem diamondCellsNonempty :
   norm_num
   omega
 
-private theorem reversePath :
-    (by
-      classical
-      exact
-        ∀ {V : Set GaussianInt}, ∀ {E : Set (Finset GaussianInt)}, ∀ {x : GaussianInt}, ∀
-            {y : GaussianInt}, (SimpleGridPathBetween V E x y) → (SimpleGridPathBetween V E y x)
-            ) := by
-  classical
-  intro V E x y hp
-  rcases hp with ⟨p, hn, hl, hh, ht, hV, hs, he⟩
-  have revstep : ∀ a b l₁ l₂, p.reverse = l₁ ++ a :: b :: l₂ →
-      b = a + 1 ∨ b = a - 1 ∨ b = a + ⟨0, 1⟩ ∨ b = a - ⟨0, 1⟩ := by
-    intro a b l₁ l₂ h
-    have h' : p = l₂.reverse ++ b :: a :: l₁.reverse := by
-      have := congrArg List.reverse h
-      simpa [List.reverse_append, List.append_assoc] using this
-    rcases hs b a _ _ h' with h | h | h | h
-    · exact Or.inr (Or.inl (by rw [h]; simp))
-    · exact Or.inl (by rw [h]; simp)
-    · exact Or.inr (Or.inr (Or.inr (by rw [h]; simp)))
-    · exact Or.inr (Or.inr (Or.inl (by rw [h]; simp)))
-  have revocc (q : List GaussianInt) (e : Finset GaussianInt)
-      (ho : ∃ a b l₁ l₂, q = l₁ ++ a :: b :: l₂ ∧ e = {a, b}) :
-      ∃ a b l₁ l₂, q.reverse = l₁ ++ a :: b :: l₂ ∧ e = {a, b} := by
-    rcases ho with ⟨a, b, l₁, l₂, rfl, rfl⟩
-    exact ⟨b, a, l₂.reverse, l₁.reverse,
-      by simp [List.reverse_append, List.append_assoc], Finset.pair_comm _ _⟩
-  refine ⟨p.reverse, List.nodup_reverse.mpr hn, by simpa using hl,
-    by simpa using ht, by simpa using hh, by simpa using hV, revstep, ?_⟩
-  intro e
-  exact ⟨fun h => revocc p e ((he e).mp h), fun h =>
-    (he e).mpr (by simpa using revocc p.reverse e h)⟩
+private abbrev reversePath := @SimpleGridPathBetween.reverse
 
 private theorem translatedDiamondCellsNonempty :
     (by
@@ -3089,7 +3049,7 @@ theorem P5260T1PredecessorInterfaces (k : Nat) (hk : 1 < k) (b : Bool) :
 -- BODY
   classical
   have rawBoundaryVertices := PredecessorInterfaceGeometry.rawBoundaryVertices
-  have rawBoundaryEdges := PredecessorInterfaceGeometry.rawBoundaryEdges
+  have rawBoundaryEdges := CellDisjointCommonEdgesBoundary
   have rawStaircase := PredecessorInterfaceGeometry.rawStaircase rawBoundaryVertices
       rawBoundaryEdges (PredecessorInterfaceGeometry.staircaseBetween k)
   have twoVertexPath := PredecessorInterfaceGeometry.twoVertexPath k

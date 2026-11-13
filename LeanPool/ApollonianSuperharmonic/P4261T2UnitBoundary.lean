@@ -735,34 +735,16 @@ private theorem kval :
   rw [hkeq] at hy ⊢
   exact (PartialOdometerAffineTranslateFormulas _ v a' b').2.2.1 y hy
 
-private theorem overlapBounds :
-    (by
-      classical
-      exact
-        (BandCircle) → (∀ (h : PartialOdometer), ∀ (k : PartialOdometer), (GaussianInt) → (∀ (u :
-            LatticeCell), ∀ (v : LatticeCell), (GaussianInt) → ((GaussianInt) → ((∀ (y :
-            GaussianInt), (y ∈ h.domain) → (y.re = u.re ∨ y.re = u.re + 1)) → ((∀ (y :
-            GaussianInt), (y ∈ h.domain) → (y.im = u.im ∨ y.im = u.im + 1)) → ((∀ (y :
-            GaussianInt), (y ∈ k.domain) → (y.re = v.re ∨ y.re = v.re + 1)) → ((∀ (y :
-            GaussianInt), (y ∈ k.domain) → (y.im = v.im ∨ y.im = v.im + 1)) → (∀ y ∈ h.domain, y
-            ∈ k.domain → (-1 : ℤ) ≤ v.re - u.re ∧ v.re - u.re ≤ (1 : ℤ) ∧ (-1 : ℤ) ≤ v.im - u.im
-            ∧ v.im - u.im ≤ (1 : ℤ))))))))) ) := by
-  classical
-  intro C h k z u v a a' hReMem hImMem kReMem kImMem y hy ky
-  rcases hReMem y hy with h0 | h1 <;> rcases kReMem y ky with k0 | k1 <;>
-    rcases hImMem y hy with hi0 | hi1 <;> rcases kImMem y ky with ki0 | ki1 <;>
-    omega
-
 private theorem hcoefAt798 :
     (by
       classical
       exact
-        (BandCircle) → (∀ (z : GaussianInt), ∀ (u : LatticeCell), ∀ (v : LatticeCell), ∀ (a :
+        (∀ (z : GaussianInt), ∀ (u : LatticeCell), ∀ (v : LatticeCell), ∀ (a :
             GaussianInt), ∀ (a' : GaussianInt), (a'.im - a.im = z.im * (v.re - u.re) - z.re *
             (v.im - u.im)) → ((v.re - u.re = (-1 : ℤ)) → ((v.im - u.im = (0 : ℤ)) → (a.im - a'.im
             = z.im)))) ) := by
   classical
-  intro C z u v a a' h1Int hx hy
+  intro z u v a a' h1Int hx hy
   rw [hx, hy] at h1Int
   omega
 
@@ -770,12 +752,12 @@ private theorem hcoefAt810 :
     (by
       classical
       exact
-        (BandCircle) → (∀ (z : GaussianInt), ∀ (u : LatticeCell), ∀ (v : LatticeCell), ∀ (a :
+        (∀ (z : GaussianInt), ∀ (u : LatticeCell), ∀ (v : LatticeCell), ∀ (a :
             GaussianInt), ∀ (a' : GaussianInt), (a'.re - a.re = (1 + z.re) * (v.re - u.re) + z.im
             * (v.im - u.im)) → ((v.re - u.re = (0 : ℤ)) → ((v.im - u.im = (-1 : ℤ)) → (a.re -
             a'.re = z.im)))) ) := by
   classical
-  intro C z u v a a' h0Int hx hy
+  intro z u v a a' h0Int hx hy
   rw [hx, hy] at h0Int
   omega
 
@@ -783,12 +765,12 @@ private theorem hAre :
     (by
       classical
       exact
-        (BandCircle) → (∀ (z : GaussianInt), ∀ (u : LatticeCell), ∀ (v : LatticeCell), ∀ (a :
+        (∀ (z : GaussianInt), ∀ (u : LatticeCell), ∀ (v : LatticeCell), ∀ (a :
             GaussianInt), ∀ (a' : GaussianInt), (a'.re - a.re = (1 + z.re) * (v.re - u.re) + z.im
             * (v.im - u.im)) → ((v.re - u.re = (0 : ℤ)) → ((v.im - u.im = (0 : ℤ)) → (a'.re =
             a.re)))) ) := by
   classical
-  intro C z u v a a' h0Int hx hy
+  intro z u v a a' h0Int hx hy
   rw [hx, hy] at h0Int
   omega
 
@@ -796,12 +778,12 @@ private theorem hAim :
     (by
       classical
       exact
-        (BandCircle) → (∀ (z : GaussianInt), ∀ (u : LatticeCell), ∀ (v : LatticeCell), ∀ (a :
+        (∀ (z : GaussianInt), ∀ (u : LatticeCell), ∀ (v : LatticeCell), ∀ (a :
             GaussianInt), ∀ (a' : GaussianInt), (a'.im - a.im = z.im * (v.re - u.re) - z.re *
             (v.im - u.im)) → ((v.re - u.re = (0 : ℤ)) → ((v.im - u.im = (0 : ℤ)) → (a'.im =
             a.im)))) ) := by
   classical
-  intro C z u v a a' h1Int hx hy
+  intro z u v a a' h1Int hx hy
   rw [hx, hy] at h1Int
   omega
 
@@ -809,12 +791,12 @@ private theorem hcoefAt830 :
     (by
       classical
       exact
-        (BandCircle) → (∀ (z : GaussianInt), ∀ (u : LatticeCell), ∀ (v : LatticeCell), ∀ (a :
+        (∀ (z : GaussianInt), ∀ (u : LatticeCell), ∀ (v : LatticeCell), ∀ (a :
             GaussianInt), ∀ (a' : GaussianInt), (a'.re - a.re = (1 + z.re) * (v.re - u.re) + z.im
             * (v.im - u.im)) → ((v.re - u.re = (0 : ℤ)) → ((v.im - u.im = (1 : ℤ)) → (a'.re -
             a.re = z.im)))) ) := by
   classical
-  intro C z u v a a' h0Int hx hy
+  intro z u v a a' h0Int hx hy
   rw [hx, hy] at h0Int
   omega
 
@@ -822,12 +804,12 @@ private theorem hcoefAt842 :
     (by
       classical
       exact
-        (BandCircle) → (∀ (z : GaussianInt), ∀ (u : LatticeCell), ∀ (v : LatticeCell), ∀ (a :
+        (∀ (z : GaussianInt), ∀ (u : LatticeCell), ∀ (v : LatticeCell), ∀ (a :
             GaussianInt), ∀ (a' : GaussianInt), (a'.im - a.im = z.im * (v.re - u.re) - z.re *
             (v.im - u.im)) → ((v.re - u.re = (1 : ℤ)) → ((v.im - u.im = (0 : ℤ)) → (a'.im - a.im
             = z.im)))) ) := by
   classical
-  intro C z u v a a' h1Int hx hy
+  intro z u v a a' h1Int hx hy
   rw [hx, hy] at h1Int
   omega
 
@@ -930,8 +912,15 @@ theorem P4261T2UnitBoundary
       y.im = v.im ∨ y.im = v.im + 1 := UnitBoundaryProof.kImMem k v kdomSq y hy
   have overlapBounds (y : GaussianInt) (hy : y ∈ h.domain) (ky : y ∈ k.domain) :
       -1 ≤ v.re - u.re ∧ v.re - u.re ≤ 1 ∧
-      -1 ≤ v.im - u.im ∧ v.im - u.im ≤ 1 := UnitBoundaryDetails.overlapBounds C h k z u v a a'
-          hReMem hImMem kReMem kImMem y hy ky
+      -1 ≤ v.im - u.im ∧ v.im - u.im ≤ 1 := (show
+          ∀ y ∈ h.domain, y ∈ k.domain → (-1 : ℤ) ≤ v.re - u.re ∧ v.re - u.re ≤ (1 :
+          ℤ) ∧ (-1 : ℤ) ≤ v.im - u.im ∧ v.im - u.im ≤ (1 : ℤ)
+        from by
+          classical
+          intro y hy ky
+          rcases hReMem y hy with h0 | h1 <;> rcases kReMem y ky with k0 | k1 <;>
+            rcases hImMem y hy with hi0 | hi1 <;> rcases kImMem y ky with ki0 | ki1 <;>
+            omega) y hy ky
   have horizontalPositive (f g : PartialOdometer) (x y α β : GaussianInt)
       (B D : ℤ)
       (df : (f.domain : Set GaussianInt) =
@@ -985,7 +974,7 @@ theorem P4261T2UnitBoundary
       rw [hEq]
     · have vu : u = v + 1 := by
         apply Zsqrtd.ext <;> simp [] <;> omega
-      have hcoef : a.im - a'.im = z.im := UnitBoundaryDetails.hcoefAt798 C z u v a a' h1Int hx hy
+      have hcoef : a.im - a'.im = z.im := UnitBoundaryDetails.hcoefAt798 z u v a a' h1Int hx hy
       exact compatibilitySymm k h (horizontalPositive k h v u a' a b' b
         kdomSq hdomSq kval hval vu hcoef)
     · right
@@ -995,13 +984,13 @@ theorem P4261T2UnitBoundary
       rw [hEq]
     · have vu : u = v + ⟨0, 1⟩ := by
         apply Zsqrtd.ext <;> simp [] <;> omega
-      have hcoef : a.re - a'.re = z.im := UnitBoundaryDetails.hcoefAt810 C z u v a a' h0Int hx hy
+      have hcoef : a.re - a'.re = z.im := UnitBoundaryDetails.hcoefAt810 z u v a a' h0Int hx hy
       exact compatibilitySymm k h (verticalPositive k h v u a' a b' b
         kdomSq hdomSq kval hval vu hcoef)
     · have vu : v = u := by
         apply Zsqrtd.ext <;> omega
-      have hAre : a'.re = a.re := UnitBoundaryDetails.hAre C z u v a a' h0Int hx hy
-      have hAim : a'.im = a.im := UnitBoundaryDetails.hAim C z u v a a' h1Int hx hy
+      have hAre : a'.re = a.re := UnitBoundaryDetails.hAre z u v a a' h0Int hx hy
+      have hAim : a'.im = a.im := UnitBoundaryDetails.hAim z u v a a' h1Int hx hy
       right
       refine ⟨b' - b, ?_⟩
       intro y yh yk
@@ -1009,7 +998,7 @@ theorem P4261T2UnitBoundary
       ring
     · have vu : v = u + ⟨0, 1⟩ := by
         apply Zsqrtd.ext <;> simp [] <;> omega
-      have hcoef : a'.re - a.re = z.im := UnitBoundaryDetails.hcoefAt830 C z u v a a' h0Int hx hy
+      have hcoef : a'.re - a.re = z.im := UnitBoundaryDetails.hcoefAt830 z u v a a' h0Int hx hy
       exact verticalPositive h k u v a a' b b'
         hdomSq kdomSq hval kval vu hcoef
     · right
@@ -1019,7 +1008,7 @@ theorem P4261T2UnitBoundary
       rw [hEq]
     · have vu : v = u + 1 := by
         apply Zsqrtd.ext <;> simp [] <;> omega
-      have hcoef : a'.im - a.im = z.im := UnitBoundaryDetails.hcoefAt842 C z u v a a' h1Int hx hy
+      have hcoef : a'.im - a.im = z.im := UnitBoundaryDetails.hcoefAt842 z u v a a' h1Int hx hy
       exact horizontalPositive h k u v a a' b b'
         hdomSq kdomSq hval kval vu hcoef
     · right

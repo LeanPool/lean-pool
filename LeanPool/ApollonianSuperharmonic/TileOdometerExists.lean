@@ -188,11 +188,14 @@ private theorem compat_symm :
     (by
       classical
       exact
-        (BandCircle) → ((ℕ) → ((Fin (4 : ℕ) → CircleCoordinates) → ((Fin (3 : ℕ)) →
-            ((BandPackingSymmetry) → (∀ (h : PartialOdometer), ∀ (k : PartialOdometer),
+        (
+        (
+        (
+        (
+        (∀ (h : PartialOdometer), ∀ (k : PartialOdometer),
             (OdometerCompatibility h k) → (OdometerCompatibility k h)))))) ) := by
   classical
-  intro C n q r g h k hc
+  intro h k hc
   rcases hc with hd | ⟨c, hc⟩
   · exact Or.inl hd.symm
   · refine Or.inr ⟨-c, ?_⟩
@@ -350,17 +353,20 @@ private theorem hnvalue :
     (by
       classical
       exact
-        (BandCircle) → ((ℕ) → (∀ (hs : Fin (3 : ℕ) → Bool → PartialOdometer), ∀ (c : Fin (3 : ℕ)
+        (
+        (∀ (hs : Fin (3 : ℕ) → Bool → PartialOdometer), ∀ (c : Fin (3 : ℕ)
             → Bool → ℤ),
         let hn : Fin 3 → Bool → PartialOdometer := fun i s =>
-          PartialOdometerAffineTranslate (hs i s) 0 0 (-c i s)
+          PartialOdometerAffineTranslate (hs i s) 0 0 (-c i s);
         ∀ (h0 : PartialOdometer), (∀ (i : Fin (3 : ℕ)), ∀ (s : Bool), ∀ x ∈ (hs i s).domain, (hs
-            i s).value x - h0.value x = c i s) → ((Fin (4 : ℕ) → CircleCoordinates) → ((Fin (3 :
-            ℕ)) → ((BandPackingSymmetry) → ((∀ (i : Fin 3), ∀ (s : Bool), ∀ (x : GaussianInt), x
+            i s).value x - h0.value x = c i s) → (
+        (
+        (
+        ((∀ (i : Fin 3), ∀ (s : Bool), ∀ (x : GaussianInt), x
             ∈ (hn i s).domain ↔ x ∈ (hs i s).domain) → (∀ (i : Fin 3), ∀ (s : Bool), ∀ (x :
             GaussianInt), (x ∈ (hn i s).domain) → (h0.value x = (hn i s).value x)))))))) ) := by
   classical
-  intro C n hs c hn h0 hc q r g hndom i s x hx
+  intro hs c hn h0 hc hndom i s x hx
   have hv := (PartialOdometerAffineTranslateFormulas
     (hs i s) 0 0 (-c i s)).2.2.1 x hx
   have he := hc i s x ((hndom i s x).1 hx)
@@ -523,7 +529,7 @@ theorem TileOdometerExists (C : BandCircle) :
               have hnest := P4250T1NestedCompatibility
                 q' cfg C' T cert hs s0 hsub hslope
               have hcompat := TileOdometerExistenceGeometry.hcompat hs hord hnest
-                  (TileOdometerExistenceGeometry.compat_symm C n q r g)
+                  (TileOdometerExistenceGeometry.compat_symm)
               have hdomain (i : Fin 3) (s : Bool) :
                   ((hs i s).domain : Set GaussianInt) = FootprintVertices (cert.P i s) :=
                 PositiveCurvatureTileOdometerDomain _ _ _ (hpositive i) (hsub i s)
@@ -572,7 +578,7 @@ theorem TileOdometerExists (C : BandCircle) :
               have hndom := TileOdometerExistenceGeometry.hndom hs c
               have hnvalue (i : Fin 3) (s : Bool) (x : GaussianInt)
                   (hx : x ∈ (hn i s).domain) : h0.value x = (hn i s).value x :=
-                      TileOdometerExistenceGeometry.hnvalue C n hs c h0 hc q r g hndom i s x hx
+                      TileOdometerExistenceGeometry.hnvalue hs c h0 hc hndom i s x hx
               refine ⟨T, h0, ?_⟩
               apply TileOdometer.decompose cfg.proper hT (TileOdometerExistenceGeometry.hnsub C
                   hs c q r g hcurv cfg hpositive T cert hsub) cert.outer_union

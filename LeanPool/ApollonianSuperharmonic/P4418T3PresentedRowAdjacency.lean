@@ -122,15 +122,12 @@ private theorem positive_parent :
         ∀ (C : BandCircle), ∀ (D : BandCircle), ∀ (T : ProtoTile), ∀ (N : ProtoTile), ∀ (h :
             PartialOdometer), ∀ (k : PartialOdometer), ∀ (x : GaussianInt), ∀ (bundle :
             BandOrderedGeneralNormalizedOccurrenceBundle C D T N h k x),
-            (BandOrderedGeneralSubtilePlacement bundle.normalizedPresentation
-            bundle.configuration bundle.normalizedCircle bundle.normalizedFixedCircle
-            bundle.normalizedRoot bundle.normalizedFixed bundle.normalizedRootFunction
-            bundle.normalizedFixedFunction bundle.normalizedPoint bundle.pieces bundle.functions
-            bundle.selectedSlot bundle.selectedSign bundle.routedDirection) → ((Fin 4) → (
-        let q := bundle.normalizedPresentation
+        (
+        (
+        let q := bundle.normalizedPresentation;
         ∀ (j : Fin 3), 0 < (q j.succ).1)) ) := by
   classical
-  intro C D T N h k x bundle placement s q j
+  intro C D T N h k x bundle q j
   let cfg := bundle.configuration
   have hn := (ProperBandCurvatureStructure q cfg.proper).2.1 j
   have hne := cfg.noLine j.succ
@@ -1174,7 +1171,6 @@ theorem P4418T3PresentedRowAdjacency :
         (sign placement.centralIndex.label)) := PresentedRowAdjacencyGeometry.central_centroid C
             D T N h k x bundle placement (PresentedRowAdjacencyGeometry.translate_zero_centroid)
   have positive_parent := PresentedRowAdjacencyGeometry.positive_parent C D T N h k x bundle
-      placement s
   have area_of_band := PresentedRowAdjacencyGeometry.area_of_band
   have selected_area :
       TileArea (bundle.pieces bundle.selectedSlot bundle.selectedSign) =

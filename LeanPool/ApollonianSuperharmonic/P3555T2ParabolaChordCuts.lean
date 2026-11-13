@@ -53,18 +53,6 @@ private theorem htailNodup :
   intro n a b u v L hL
   exact (List.nodup_cons.mp hL).2
 
-private theorem hne :
-    ∀ (n : Nat), (Fin (n + 3) → Real × Real) → (∀ (a : Fin (n + 3)), ∀ (b : Fin (n + 3)), ∀ (u :
-        List (Fin (n + 3))), ∀ (v : List (Fin (n + 3))), ((a :: (u ++ b :: v)).Nodup) → ((∃ k :
-        Nat, (a :: (u ++ b :: v)).Sublist ((List.ofFn (fun i : Fin (n + 3) => i)).rotate k)) → (
-    let L := a :: (u ++ b :: v)
-    (L.Nodup) → ((a ∉ u ++ b :: v) → (((u ++ b :: v).Nodup) → (a ≠ b)))))) := by
-  classical
-  intro n q a b u v hboundary hcyclic L hL haNotTail htailNodup hab
-  subst b
-  apply haNotTail
-  simp
-
 private theorem hparts :
     ∀ (n : Nat), ∀ (b : Fin (n + 3)), ∀ (u : List (Fin (n + 3))), ∀ (v : List (Fin (n + 3))), ((u
         ++ b :: v).Nodup) → (u.Nodup ∧ (b :: v).Nodup ∧ ∀ a ∈ u, ∀ b_1 ∈ b :: v, a ≠ b_1) := by
@@ -688,19 +676,20 @@ private theorem hrankV :
 private theorem hrankFormula :
     ∀ (n : Nat), ∀ (a : Fin (n + 3)), ∀ (b : Fin (n + 3)), ∀ (u : List (Fin (n + 3))), ∀ (v :
         List (Fin (n + 3))),
-    let L := a :: (u ++ b :: v)
+    let L := a :: (u ++ b :: v);
     ∀ (k : ℕ),
-    let root := List.ofFn (fun i : Fin (n + 3) => i)
-    let R := root.rotate k
+    let root := List.ofFn (fun i : Fin (n + 3) => i);
+    let R := root.rotate k;
     ∀ (emb : Fin (a :: (u ++ b :: v)).length ↪o Fin ((List.ofFn fun (i : Fin (n + (3 : ℕ))) =>
-        i).rotate k).length), (u.length+1 < L.length) → (
-    let ia : Fin L.length := ⟨0, by simp [L]⟩
+        i).rotate k).length),
+        (
+    let ia : Fin L.length := ⟨0, by simp [L]⟩;
     (R.get (emb ia) = a) → ((a.val = ((emb ia).val + k) % (n + 3)) → (
-    let rank := fun i : Fin (n+3) => (i.val + (n+3) - a.val) % (n+3)
+    let rank := fun i : Fin (n+3) => (i.val + (n+3) - a.val) % (n+3);
     ∀ (i : Fin (n+3)), rank i =
       if a.val ≤ i.val then i.val-a.val else n+3-a.val+i.val))) := by
   classical
-  intro n a b u v L k root R emb hsourceB ia haAtRoot hvalA rank i
+  intro n a b u v L k root R emb ia haAtRoot hvalA rank i
   by_cases h : a.val ≤ i.val
   · have heq : i.val+(n+3)-a.val = (n+3)+(i.val-a.val) := by omega
     simp [rank, h, heq, Nat.mod_eq_of_lt (by omega : i.val-a.val < n+3)]
@@ -1718,7 +1707,9 @@ theorem P3555T2ParabolaChordCuts {n : Nat}
   have hL : L.Nodup := ParabolaChordLemmas.hL n a b u v hboundary
   have haNotTail : a ∉ u ++ b :: v := ParabolaChordLemmas.haNotTail n a b u v hL
   have htailNodup : (u ++ b :: v).Nodup := ParabolaChordLemmas.htailNodup n a b u v hL
-  have hne : a ≠ b := ParabolaChordLemmas.hne n q a b u v hboundary hcyclic hL haNotTail htailNodup
+  have hne : a ≠ b := by
+    rintro rfl
+    exact haNotTail (by simp)
   have hparts := ParabolaChordLemmas.hparts n b u v htailNodup
   have huNodup : u.Nodup := ParabolaChordLemmas.huNodup n b u v hparts
   have hbNotU : b ∉ u := ParabolaChordLemmas.hbNotU n b u v hparts
@@ -1729,12 +1720,9 @@ theorem P3555T2ParabolaChordCuts {n : Nat}
   have huvDisjoint : ∀ i, i ∈ u → i ∈ v → False := ParabolaChordLemmas.huvDisjoint n b u v hparts
   have hANodup : A.Nodup := ParabolaChordLemmas.hANodup n a b u hne huNodup hbNotU haNotU
   have hBNodup : B.Nodup := ParabolaChordLemmas.hBNodup n a b v hne hvNodup hbNotV haNotV
-  have hsets : {i | i ∈ A} ∩ {i | i ∈ B} = {a, b} := (show
-      {i | i ∈ A} ∩ {i | i ∈ B} = {a, b}
-    from by
-      classical
-      ext i
-      simp [A, B, List.mem_cons, List.mem_append]; aesop)
+  have hsets : {i | i ∈ A} ∩ {i | i ∈ B} = {a, b} := by
+    ext i
+    simp [A, B, List.mem_cons, List.mem_append]; aesop
   have hnil (xs : List (Fin (n + 3))) :
       ([] : List (Fin (n + 3))).Sublist xs := ParabolaChordLemmas.hnil n xs
   have hnilv := ParabolaChordLemmas.hnilv n v hnil
@@ -1791,7 +1779,7 @@ theorem P3555T2ParabolaChordCuts {n : Nat}
       u v k emb hsourceB hrootOrder hrankB' hrankAt i hi
   have hrankFormula (i : Fin (n+3)) : rank i =
       if a.val ≤ i.val then i.val-a.val else n+3-a.val+i.val := ParabolaChordLemmas.hrankFormula
-          n a b u v k emb hsourceB haAtRoot hvalA i
+          n a b u v k emb haAtRoot hvalA i
   have hrankHi (i : Fin (n+3)) (h : a.val ≤ i.val) : rank i = i.val-a.val :=
       ParabolaChordLemmas.hrankHi n a hrankFormula i h
   have hrankLo (i : Fin (n+3)) (h : ¬ a.val ≤ i.val) :

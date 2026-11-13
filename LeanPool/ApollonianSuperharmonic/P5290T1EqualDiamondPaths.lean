@@ -97,37 +97,7 @@ private theorem staircaseBetween :
       obtain ⟨j, hj, rfl, rfl⟩ := consecutive a b l₁ l₂ heq
       exact ⟨j, hj, rfl⟩
 
-private theorem reversePath :
-    (by
-      classical
-      exact
-        ∀ {V : Set GaussianInt}, ∀ {E : Set (Finset GaussianInt)}, ∀ {x : GaussianInt}, ∀
-            {y : GaussianInt}, SimpleGridPathBetween V E x y → SimpleGridPathBetween V E y x ) := by
-  classical
-  intro V E x y hp
-  rcases hp with ⟨p, hn, hl, hh, ht, hV, hs, he⟩
-  have revstep : ∀ a b l₁ l₂, p.reverse = l₁ ++ a :: b :: l₂ →
-      b = a + 1 ∨ b = a - 1 ∨ b = a + ⟨0, 1⟩ ∨ b = a - ⟨0, 1⟩ := by
-    intro a b l₁ l₂ h
-    have h' : p = l₂.reverse ++ b :: a :: l₁.reverse := by
-      have := congrArg List.reverse h
-      simpa [List.reverse_append, List.append_assoc] using this
-    rcases hs b a _ _ h' with hh | hh | hh | hh
-    · exact Or.inr (Or.inl (by rw [hh]; simp))
-    · exact Or.inl (by rw [hh]; simp)
-    · exact Or.inr (Or.inr (Or.inr (by rw [hh]; simp)))
-    · exact Or.inr (Or.inr (Or.inl (by rw [hh]; simp)))
-  have revocc (q : List GaussianInt) (e : Finset GaussianInt)
-      (ho : ∃ a b l₁ l₂, q = l₁ ++ a :: b :: l₂ ∧ e = {a, b}) :
-      ∃ a b l₁ l₂, q.reverse = l₁ ++ a :: b :: l₂ ∧ e = {a, b} := by
-    rcases ho with ⟨a, b, l₁, l₂, rfl, rfl⟩
-    exact ⟨b, a, l₂.reverse, l₁.reverse,
-      by simp [List.reverse_append, List.append_assoc], Finset.pair_comm _ _⟩
-  refine ⟨p.reverse, List.nodup_reverse.mpr hn, by simpa using hl,
-    by simpa using ht, by simpa using hh, by simpa using hV, revstep, ?_⟩
-  intro e
-  exact ⟨fun h => revocc p e ((he e).mp h), fun h =>
-    (he e).mpr (by simpa using revocc p.reverse e h)⟩
+private abbrev reversePath := @SimpleGridPathBetween.reverse
 
 private theorem qstep :
     (by

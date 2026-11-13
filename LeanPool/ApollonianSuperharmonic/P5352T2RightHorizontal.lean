@@ -350,16 +350,18 @@ private theorem qChildCenter :
     (by
       classical
       exact
-        ∀ (K : DiamondParameter), ((1 : ℕ) < K.1) → ((IntegerLatticeFunction) → ((Int) → (∀ (z :
+        ∀ (K : DiamondParameter), ((1 : ℕ) < K.1) → (
+        (
+        (∀ (z :
             GaussianInt),
-        let n : Int := K.1
+        let n : Int := K.1;
         let Q (x : GaussianInt) : Int :=
           (Int.natAbs x.re : Int) * ((Int.natAbs x.re : Int)-1)/2 -
-            (x.re-x.im)^2/4
+            (x.re-x.im)^2/4;
         (z.re = n) → (((1-2*n)^2/4 = n^2-n) → (((-n-n)^2/4 = n^2) → (((1-n-n)^2/4 = n^2-n) → (Q
             ⟨-n,n⟩ = n*(n-1)/2-n^2))))))) ) := by
   classical
-  intro K hk f B z n Q hzr hsq1 hsq0' hsq1'
+  intro K hk z n Q hzr hsq1 hsq0' hsq1'
   change (Int.natAbs (-n) : Int) * ((Int.natAbs (-n) : Int)-1)/2 -
     (-n-n)^2/4 = n*(n-1)/2-n^2
   simp only [Int.natCast_natAbs, abs_of_nonpos (show -n ≤ 0 by omega)]
@@ -370,16 +372,18 @@ private theorem qChildEast :
     (by
       classical
       exact
-        ∀ (K : DiamondParameter), ((1 : ℕ) < K.1) → ((IntegerLatticeFunction) → ((Int) → (∀ (z :
+        ∀ (K : DiamondParameter), ((1 : ℕ) < K.1) → (
+        (
+        (∀ (z :
             GaussianInt),
-        let n : Int := K.1
+        let n : Int := K.1;
         let Q (x : GaussianInt) : Int :=
           (Int.natAbs x.re : Int) * ((Int.natAbs x.re : Int)-1)/2 -
-            (x.re-x.im)^2/4
+            (x.re-x.im)^2/4;
         (z.re = n) → (((1-2*n)^2/4 = n^2-n) → (((-n-n)^2/4 = n^2) → (((1-n-n)^2/4 = n^2-n) → (Q
             ⟨1-n,n⟩ = (n-1)*(n-2)/2-(n^2-n)))))))) ) := by
   classical
-  intro K hk f B z n Q hzr hsq1 hsq0' hsq1'
+  intro K hk z n Q hzr hsq1 hsq0' hsq1'
   change (Int.natAbs (1-n) : Int) * ((Int.natAbs (1-n) : Int)-1)/2 -
     ((1-n)-n)^2/4 = (n-1)*(n-2)/2-(n^2-n)
   simp only [Int.natCast_natAbs, abs_of_nonpos (show 1-n ≤ 0 by omega)]
@@ -534,8 +538,8 @@ theorem P5352T2RightHorizontal (K : DiamondParameter) (hk : 1 < K.1)
   have hsq1 := DiamondRightHorizontal.hsq1 K f B z hzr
   have hsq0' := DiamondRightHorizontal.hsq0' K hsq0
   have hsq1' := DiamondRightHorizontal.hsq1' K hsq1
-  have qChildCenter := DiamondRightHorizontal.qChildCenter K hk f B z hzr hsq1 hsq0' hsq1'
-  have qChildEast := DiamondRightHorizontal.qChildEast K hk f B z hzr hsq1 hsq0' hsq1'
+  have qChildCenter := DiamondRightHorizontal.qChildCenter K hk z hzr hsq1 hsq0' hsq1'
+  have qChildEast := DiamondRightHorizontal.qChildEast K hk z hzr hsq1 hsq0' hsq1'
   have hChildCenter : z-M = ⟨-n,n⟩ := by rw [hzc]; ext <;> simp [M]; ring
   have hChildEast : (z+1)-M = ⟨1-n,n⟩ := by rw [hzc]; ext <;> simp [M]; ring
   have hLap := DiamondRightHorizontal.hLap K f B z hzr hzc hWc hNc hSc hEc hfCenter hfWest

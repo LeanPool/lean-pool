@@ -1058,553 +1058,6 @@ private theorem hac :
 
 end ContactPortGeometry
 
-namespace ContactPortClosure
-
-private theorem owner_unique :
-    (by
-      classical
-      exact
-        ∀ (ι : Type), ∀ (P : PeriodicTileComplex ι), ∀ (a : ι), ∀ (b : ι), ∀ z ∈ (P.tile
-            a).cells, z ∈ (P.tile b).cells → a = b ) := by
-  classical
-  intro ι P a b z ha hb
-  exact ContactPortGeometry.owner_unique
-          ι P a b z ha hb
-
-private theorem coord_unique :
-    (by
-      classical
-      exact
-        ∀ (m : ℤ), ∀ (n : ℤ), ∀ (t : ℝ), (↑m : ℝ) < t ∧ t < (↑m : ℝ) + (1 : ℝ) → (↑n : ℝ) ≤ t ∧ t
-            ≤ (↑n : ℝ) + (1 : ℝ) → m = n ) := by
-  classical
-  intro m n t hm hn
-  exact ContactPortGeometry.coord_unique m n t hm hn
-
-private theorem square_unique :
-    (by
-      classical
-      exact
-        let openSquare (z : GaussianInt) : Set (Real × Real) :=
-          Set.Ioo (z.re : Real) ((z.re : Real) + 1) ×ˢ
-            Set.Ioo (z.im : Real) ((z.im : Real) + 1)
-        (∀ (m : ℤ), ∀ (n : ℤ), ∀ (t : ℝ), (↑m : ℝ) < t ∧ t < (↑m : ℝ) + (1 : ℝ) → (↑n : ℝ) ≤ t ∧
-            t ≤ (↑n : ℝ) + (1 : ℝ) → m = n) → (∀ (x : GaussianInt), ∀ (y : GaussianInt), ∀ p ∈
-            openSquare x, p ∈ ClosedSquareRealization y → x = y) ) := by
-  classical
-  intro openSquare coord_unique x y p hx hy
-  exact ContactPortGeometry.square_unique coord_unique x y p hx hy
-
-private theorem midpoint_cell :
-    (by
-      classical
-      exact
-        (∀ (z : GaussianInt), (fun (e : Finset GaussianInt) => ((∑ z ∈ e, (↑z.re : ℝ)) / (2 : ℝ),
-            (∑ z ∈ e, (↑z.im : ℝ)) / (2 : ℝ))) {z, z + (1 : GaussianInt)} = ((↑z.re : ℝ) + (1 / 2
-            : ℝ), (↑z.im : ℝ))) → ((∀ (z : GaussianInt), (fun (e : Finset GaussianInt) => ((∑ z ∈
-            e, (↑z.re : ℝ)) / (2 : ℝ), (∑ z ∈ e, (↑z.im : ℝ)) / (2 : ℝ))) {z, z + (⟨(0 : ℤ),
-            (1 : ℤ)⟩ : GaussianInt)} = ((↑z.re : ℝ), (↑z.im : ℝ) + (1 / 2 : ℝ))) → (∀ (T :
-            ProtoTile), ∀ e ∈ FootprintEdges T, ∃ z ∈ T.cells, (fun (e : Finset GaussianInt) =>
-            ((∑ z ∈ e, (↑z.re : ℝ)) / (2 : ℝ), (∑ z ∈ e, (↑z.im : ℝ)) / (2 : ℝ))) e ∈
-            ClosedSquareRealization z)) ) := by
-  classical
-  intro horizontal_midpoint vertical_midpoint T e he
-  exact ContactPortGeometry.midpoint_cell horizontal_midpoint
-          vertical_midpoint T e he
-
-private theorem midpoint_two_cells :
-    (by
-      classical
-      exact
-        (∀ (m : ℤ), ∀ (n : ℤ), ∀ (t : ℝ), (↑m : ℝ) < t ∧ t < (↑m : ℝ) + (1 : ℝ) → (↑n : ℝ) ≤ t ∧
-            t ≤ (↑n : ℝ) + (1 : ℝ) → m = n) → ((∀ (z : GaussianInt), (fun (e : Finset
-            GaussianInt) => ((∑ z ∈ e, (↑z.re : ℝ)) / (2 : ℝ), (∑ z ∈ e, (↑z.im : ℝ)) / (2 : ℝ)))
-            {z, z + (1 : GaussianInt)} = ((↑z.re : ℝ) + (1 / 2 : ℝ), (↑z.im : ℝ))) → ((∀ (z :
-            GaussianInt), (fun (e : Finset GaussianInt) => ((∑ z ∈ e, (↑z.re : ℝ)) / (2 : ℝ), (∑
-            z ∈ e, (↑z.im : ℝ)) / (2 : ℝ))) {z, z + (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt)} = ((↑z.re
-            : ℝ), (↑z.im : ℝ) + (1 / 2 : ℝ))) → ((∀ (T : ProtoTile), ∀ e ∈ FootprintEdges T, ∃ (z
-            : GaussianInt), e = {z, z + (1 : GaussianInt)} ∨ e = {z, z + (⟨(0 : ℤ),
-            (1 : ℤ)⟩ : GaussianInt)}) → (∀ (T : ProtoTile), ∀ e ∈ FootprintEdges T, ∃ (x :
-            GaussianInt) (y : GaussianInt), x ≠ y ∧ ∀ (z : LatticeCell), (fun (e : Finset
-            GaussianInt) => ((∑ z ∈ e, (↑z.re : ℝ)) / (2 : ℝ), (∑ z ∈ e, (↑z.im : ℝ)) / (2 : ℝ)))
-            e ∈ ClosedSquareRealization z → z = x ∨ z = y)))) ) := by
-  classical
-  intro coord_unique horizontal_midpoint vertical_midpoint edge_normal T e he
-  exact ContactPortGeometry.midpoint_two_cells coord_unique
-          horizontal_midpoint vertical_midpoint edge_normal T e he
-
-private theorem common_midpoint :
-    (by
-      classical
-      exact
-        ∀ (ι : Type), ∀ (P : PeriodicTileComplex ι), (∀ (a : ι), ∀ (b : ι), ∀ z ∈ (P.tile
-            a).cells, z ∈ (P.tile b).cells → a = b) → ((∀ (T : ProtoTile), ∀ e ∈ FootprintEdges
-            T, ∃ z ∈ T.cells, (fun (e : Finset GaussianInt) => ((∑ z ∈ e, (↑z.re : ℝ)) / (2 : ℝ),
-            (∑ z ∈ e, (↑z.im : ℝ)) / (2 : ℝ))) e ∈ ClosedSquareRealization z) → ((∀ (T :
-            ProtoTile), ∀ e ∈ FootprintEdges T, ∃ (x : GaussianInt) (y : GaussianInt), x ≠ y ∧ ∀
-            (z : LatticeCell), (fun (e : Finset GaussianInt) => ((∑ z ∈ e, (↑z.re : ℝ)) / (2 :
-            ℝ), (∑ z ∈ e, (↑z.im : ℝ)) / (2 : ℝ))) e ∈ ClosedSquareRealization z → z = x ∨ z = y)
-            → (∀ (a : ι), ∀ (b : ι), a ≠ b → ∀ e ∈ FootprintEdges (P.tile a) ∩ FootprintEdges
-            (P.tile b), (fun (e : Finset GaussianInt) => ((∑ z ∈ e, (↑z.re : ℝ)) / (2 : ℝ), (∑ z
-            ∈ e, (↑z.im : ℝ)) / (2 : ℝ))) e ∈ TileRealization (P.tile a) ∩ TileRealization
-            (P.tile b) ∧ ∀ (c : ι), (fun (e : Finset GaussianInt) => ((∑ z ∈ e, (↑z.re : ℝ)) / (2
-            : ℝ), (∑ z ∈ e, (↑z.im : ℝ)) / (2 : ℝ))) e ∈ TileRealization (P.tile c) → c = a ∨ c =
-            b))) ) := by
-  classical
-  intro ι P owner_unique midpoint_cell midpoint_two_cells a b hab e he
-  exact ContactPortGeometry.common_midpoint ι P owner_unique midpoint_cell midpoint_two_cells a
-          b hab e he
-
-private theorem common_frontier :
-    (by
-      classical
-      exact
-        ∀ (ι : Type), ∀ (P : PeriodicTileComplex ι), (∀ (T : ProtoTile), IsClosed
-            (TileRealization T)) → ((∀ (a : ι), ∀ (b : ι), a ≠ b → Disjoint (interior
-            (TileRealization (P.tile a))) (TileRealization (P.tile b))) → ((∀ (a : ι), ∀ (b : ι),
-            a ≠ b → ∀ e ∈ FootprintEdges (P.tile a) ∩ FootprintEdges (P.tile b), (fun (e : Finset
-            GaussianInt) => ((∑ z ∈ e, (↑z.re : ℝ)) / (2 : ℝ), (∑ z ∈ e, (↑z.im : ℝ)) / (2 : ℝ)))
-            e ∈ TileRealization (P.tile a) ∩ TileRealization (P.tile b) ∧ ∀ (c : ι), (fun (e :
-            Finset GaussianInt) => ((∑ z ∈ e, (↑z.re : ℝ)) / (2 : ℝ), (∑ z ∈ e, (↑z.im : ℝ)) / (2
-            : ℝ))) e ∈ TileRealization (P.tile c) → c = a ∨ c = b) → (∀ (a : ι), ∀ (b : ι), a ≠ b
-            → ∀ e ∈ FootprintEdges (P.tile a) ∩ FootprintEdges (P.tile b), (fun (e : Finset
-            GaussianInt) => ((∑ z ∈ e, (↑z.re : ℝ)) / (2 : ℝ), (∑ z ∈ e, (↑z.im : ℝ)) / (2 : ℝ)))
-            e ∈ frontier (TileRealization (P.tile a)) ∩ frontier (TileRealization (P.tile b)))))
-            ) := by
-  classical
-  intro ι P realization_closed interior_disjoint common_midpoint a b hab e he
-  exact ContactPortGeometry.common_frontier ι P realization_closed interior_disjoint
-          common_midpoint a b hab e he
-
-private theorem contact_symmetric :
-    (by
-      classical
-      exact
-        ∀ (ι : Type), ∀ (P : PeriodicTileComplex ι), ∀ (a : ι), ∀ (b : ι), P3723T1EdgeContact P
-            a b ↔ P3723T1EdgeContact P b a ) := by
-  classical
-  intro ι P a b
-  exact PeriodicEdgeContactSymmetry.symmetric ι P a b
-
-private theorem common_edge_transport :
-    (by
-      classical
-      exact
-        ∀ (ι : Type), ∀ (P : PeriodicTileComplex ι), (∀ (u : ↥P.lattice), ∀ (a : ι),
-            FootprintEdges (P.tile (P.shift u a)) = (fun (e : Finset GaussianInt) => Finset.image
-            (fun (z : GaussianInt) => z + (↑u : GaussianInt)) e) '' FootprintEdges (P.tile a)) →
-            (∀ (u : P.lattice), ∀ (a : ι), ∀ (b : ι), ∀ (e : Finset GaussianInt), (e ∈
-            FootprintEdges (P.tile a) ∩ FootprintEdges (P.tile b)) → (e.image (fun z => z + (u :
-            GaussianInt)) ∈ FootprintEdges (P.tile (P.shift u a)) ∩ FootprintEdges (P.tile
-            (P.shift u b)))) ) := by
-  classical
-  intro ι P edges_periodic u a b e he
-  exact ContactPortGeometry.common_edge_transport ι P edges_periodic u a b e he
-
-private theorem contact_forward :
-    (by
-      classical
-      exact
-        ∀ (ι : Type), ∀ (P : PeriodicTileComplex ι), (∀ (u : ↥P.lattice), Function.Injective
-            (P.shift u)) → ((∀ (u : P.lattice), ∀ (a : ι), ∀ (b : ι), ∀ (e : Finset GaussianInt),
-            (e ∈ FootprintEdges (P.tile a) ∩ FootprintEdges (P.tile b)) → (e.image (fun z => z +
-            (u : GaussianInt)) ∈ FootprintEdges (P.tile (P.shift u a)) ∩ FootprintEdges (P.tile
-            (P.shift u b)))) → (∀ (u : ↥P.lattice), ∀ (a : ι), ∀ (b : ι), P3723T1EdgeContact P
-            a b → P3723T1EdgeContact P (P.shift u a) (P.shift u b))) ) := by
-  classical
-  intro ι P shift_injective common_edge_transport u a b hab
-  exact ContactPortGeometry.contact_forward ι P
-          shift_injective common_edge_transport u a b hab
-
-private theorem contact_periodic :
-    (by
-      classical
-      exact
-        ∀ (ι : Type), ∀ (P : PeriodicTileComplex ι), (∀ (u : P.lattice), ∀ (a : ι), P.shift (-u)
-            (P.shift u a) = a) → ((∀ (u : ↥P.lattice), ∀ (a : ι), ∀ (b : ι), P3723T1EdgeContact
-            P a b → P3723T1EdgeContact P (P.shift u a) (P.shift u b)) → (∀ (u : P.lattice), ∀
-            (a : ι), ∀ (b : ι), P3723T1EdgeContact P (P.shift u a) (P.shift u b) ↔
-            P3723T1EdgeContact P a b)) ) := by
-  classical
-  intro ι P shift_cancel contact_forward u a b
-  exact ContactPortGeometry.contact_periodic ι P shift_cancel
-            contact_forward u a b
-
-private theorem position_cell :
-    (by
-      classical
-      exact
-        ∀ (ι : Type), ∀ (P : PeriodicTileComplex ι), ∀ (cells_nonempty : ∀ (a : ι), (P.tile
-            a).cells.Nonempty),
-        let cell (a : ι) : GaussianInt := Classical.choose (cells_nonempty a)
-        (∀ (a : ι), cell a ∈ (P.tile a).cells) → (
-        let rep (a : ι) : ι := Classical.choose (P.vertex_orbit_representatives a).exists
-        ∀ (rep_spec : ∀ (a : ι), rep a ∈ P.vertexOrbitReps ∧ ∃ u : P.lattice, a = P.shift u (rep
-            a)),
-        let period (a : ι) : P.lattice := Classical.choose (rep_spec a).2
-        (∀ (a : ι), a = P.shift (period a) (rep a)) → (
-        let position (a : ι) : Real × Real :=
-          GaussianRealPoint (cell (rep a) + (period a : GaussianInt)) + (1 / 2, 1 / 2)
-        ∀ (a : ι), ∃ z ∈ (P.tile a).cells, position a = GaussianRealPoint z + ((1 / 2 : Real), (1
-            / 2 : Real)))) ) := by
-  classical
-  intro ι P cells_nonempty cell cell_mem rep rep_spec period period_spec position a
-  exact ContactPortGeometry.position_cell ι P cells_nonempty cell_mem
-      rep_spec period_spec a
-
-private theorem position_interior :
-    (by
-      classical
-      exact
-        ∀ (ι : Type), ∀ (P : PeriodicTileComplex ι), (∀ (a : ι), ∀ z ∈ (P.tile a).cells,
-            GaussianRealPoint z + ((1 / 2 : ℝ), (1 / 2 : ℝ)) ∈ interior (TileRealization (P.tile
-            a))) → (∀ (cells_nonempty : ∀ (a : ι), (P.tile a).cells.Nonempty),
-        let cell (a : ι) : GaussianInt := Classical.choose (cells_nonempty a)
-        let rep (a : ι) : ι := Classical.choose (P.vertex_orbit_representatives a).exists
-        ∀ (rep_spec : ∀ (a : ι), rep a ∈ P.vertexOrbitReps ∧ ∃ u : P.lattice, a = P.shift u (rep
-            a)),
-        let period (a : ι) : P.lattice := Classical.choose (rep_spec a).2
-        let position (a : ι) : Real × Real :=
-          GaussianRealPoint (cell (rep a) + (period a : GaussianInt)) + (1 / 2, 1 / 2)
-        (∀ (a : ι), ∃ z ∈ (P.tile a).cells, position a = GaussianRealPoint z + ((1 / 2 : Real),
-            (1 / 2 : Real))) → (∀ (a : ι), position a ∈ interior (TileRealization (P.tile a)))) )
-            := by
-  classical
-  intro ι P center_interior cells_nonempty cell rep rep_spec period position position_cell a
-  exact ContactPortGeometry.position_interior ι P center_interior cells_nonempty rep_spec
-      position_cell a
-
-private theorem representative_eq :
-    (by
-      classical
-      exact
-        ∀ (ι : Type), ∀ (P : PeriodicTileComplex ι), ∀ (shift_cancel : ∀ (u : P.lattice), ∀ (a :
-            ι), P.shift (-u) (P.shift u a) = a),
-        let S : Setoid (ι × ι) := {
-          r := fun p q => ∃ u : P.lattice,
-            ({P.shift u p.1, P.shift u p.2} : Set ι) = {q.1, q.2}
-          iseqv := {
-            refl := by
-              intro p
-              exact ⟨0, by simp only [P.shift_zero]⟩
-            symm := by
-              intro p q h
-              obtain ⟨u, hu⟩ := h
-              refine ⟨-u, ?_⟩
-              have hh := congrArg (fun s : Set ι => P.shift (-u) '' s) hu
-              simpa only [Set.image_insert_eq, Set.image_singleton, shift_cancel] using hh.symm
-            trans := by
-              intro p q r hpq hqr
-              obtain ⟨u, hu⟩ := hpq
-              obtain ⟨v, hv⟩ := hqr
-              refine ⟨v + u, ?_⟩
-              have hh := congrArg (fun s : Set ι => P.shift v '' s) hu
-              simp only [Set.image_insert_eq, Set.image_singleton, ← P.shift_add] at hh
-              exact hh.trans hv
-          }
-        }
-        let representative (p : ι × ι) : ι × ι := (Quotient.mk S p).out
-        ∀ (p : ι × ι), ∀ (q : ι × ι), (S.r p q) → (representative p = representative q) ) := by
-  classical
-  intro ι P shift_cancel S representative p q h
-  exact ContactPortGeometry.representative_eq ι P
-          shift_cancel p q h
-
-private theorem transport_spec :
-    (by
-      classical
-      exact
-        ∀ (ι : Type), ∀ (P : PeriodicTileComplex ι), ∀ (shift_cancel : ∀ (u : P.lattice), ∀ (a :
-            ι), P.shift (-u) (P.shift u a) = a),
-        let S : Setoid (ι × ι) := {
-          r := fun p q => ∃ u : P.lattice,
-            ({P.shift u p.1, P.shift u p.2} : Set ι) = {q.1, q.2}
-          iseqv := {
-            refl := by
-              intro p
-              exact ⟨0, by simp only [P.shift_zero]⟩
-            symm := by
-              intro p q h
-              obtain ⟨u, hu⟩ := h
-              refine ⟨-u, ?_⟩
-              have hh := congrArg (fun s : Set ι => P.shift (-u) '' s) hu
-              simpa only [Set.image_insert_eq, Set.image_singleton, shift_cancel] using hh.symm
-            trans := by
-              intro p q r hpq hqr
-              obtain ⟨u, hu⟩ := hpq
-              obtain ⟨v, hv⟩ := hqr
-              refine ⟨v + u, ?_⟩
-              have hh := congrArg (fun s : Set ι => P.shift v '' s) hu
-              simp only [Set.image_insert_eq, Set.image_singleton, ← P.shift_add] at hh
-              exact hh.trans hv
-          }
-        }
-        let representative (p : ι × ι) : ι × ι := (Quotient.mk S p).out
-        ∀ (representative_spec : ∀ (p : ι × ι), S.r (representative p) p),
-        let transport (p : ι × ι) : P.lattice := Classical.choose (representative_spec p)
-        ∀ (p : ι × ι), ({P.shift (transport p) (representative p).1,
-            P.shift (transport p) (representative p).2} : Set ι) = {p.1, p.2} ) := by
-  classical
-  intro ι P shift_cancel S representative representative_spec transport p
-  exact ContactPortGeometry.transport_spec ι P shift_cancel
-      representative_spec p
-
-private theorem transport_unique :
-    (by
-      classical
-      exact
-        ∀ (ι : Type), ∀ (P : PeriodicTileComplex ι), (∀ (u : P.lattice), ∀ (a : ι), P.shift (-u)
-            (P.shift u a) = a) → (∀ (r : ι × ι), ∀ (p : ι × ι), ∀ (u : ↥P.lattice), ∀ (v :
-            ↥P.lattice), ({P.shift u r.1, P.shift u r.2} : Set ι) = {p.1, p.2} → ({P.shift v r.1,
-            P.shift v r.2} : Set ι) = {p.1, p.2} → u = v) ) := by
-  classical
-  intro ι P shift_cancel r p u v hu hv
-  exact ContactPortGeometry.transport_unique ι P shift_cancel r p u v hu hv
-
-private theorem transport_swap :
-    (by
-      classical
-      exact
-        ∀ (ι : Type), ∀ (P : PeriodicTileComplex ι), ∀ (shift_cancel : ∀ (u : P.lattice), ∀ (a :
-            ι), P.shift (-u) (P.shift u a) = a),
-        let S : Setoid (ι × ι) := {
-          r := fun p q => ∃ u : P.lattice,
-            ({P.shift u p.1, P.shift u p.2} : Set ι) = {q.1, q.2}
-          iseqv := {
-            refl := by
-              intro p
-              exact ⟨0, by simp only [P.shift_zero]⟩
-            symm := by
-              intro p q h
-              obtain ⟨u, hu⟩ := h
-              refine ⟨-u, ?_⟩
-              have hh := congrArg (fun s : Set ι => P.shift (-u) '' s) hu
-              simpa only [Set.image_insert_eq, Set.image_singleton, shift_cancel] using hh.symm
-            trans := by
-              intro p q r hpq hqr
-              obtain ⟨u, hu⟩ := hpq
-              obtain ⟨v, hv⟩ := hqr
-              refine ⟨v + u, ?_⟩
-              have hh := congrArg (fun s : Set ι => P.shift v '' s) hu
-              simp only [Set.image_insert_eq, Set.image_singleton, ← P.shift_add] at hh
-              exact hh.trans hv
-          }
-        }
-        let representative (p : ι × ι) : ι × ι := (Quotient.mk S p).out
-        ∀ (representative_spec : ∀ (p : ι × ι), S.r (representative p) p),
-        let transport (p : ι × ι) : P.lattice := Classical.choose (representative_spec p)
-        (∀ (p : ι × ι), ({P.shift (transport p) (representative p).1,
-            P.shift (transport p) (representative p).2} : Set ι) = {p.1, p.2}) → ((∀ (r : ι × ι),
-            ∀ (p : ι × ι), ∀ (u : ↥P.lattice), ∀ (v : ↥P.lattice), ({P.shift u r.1,
-                P.shift u r.2} : Set ι)
-            = {p.1, p.2} → ({P.shift v r.1, P.shift v r.2} : Set ι) = {p.1, p.2} → u = v) → ((∀
-                (a : ι), ∀
-            (b : ι), representative (a, b) = representative (b, a)) → (∀ (a : ι), ∀ (b : ι),
-            transport (a, b) = transport (b, a)))) ) := by
-  classical
-  intro ι P shift_cancel S representative representative_spec transport transport_spec
-      transport_unique representative_swap a b
-  exact ContactPortGeometry.transport_swap ι P shift_cancel representative_spec transport_spec
-      transport_unique representative_swap a b
-
-private theorem representative_shift :
-    (by
-      classical
-      exact
-        ∀ (ι : Type), ∀ (P : PeriodicTileComplex ι), ∀ (shift_cancel : ∀ (u : P.lattice), ∀ (a :
-            ι), P.shift (-u) (P.shift u a) = a),
-        let S : Setoid (ι × ι) := {
-          r := fun p q => ∃ u : P.lattice,
-            ({P.shift u p.1, P.shift u p.2} : Set ι) = {q.1, q.2}
-          iseqv := {
-            refl := by
-              intro p
-              exact ⟨0, by simp only [P.shift_zero]⟩
-            symm := by
-              intro p q h
-              obtain ⟨u, hu⟩ := h
-              refine ⟨-u, ?_⟩
-              have hh := congrArg (fun s : Set ι => P.shift (-u) '' s) hu
-              simpa only [Set.image_insert_eq, Set.image_singleton, shift_cancel] using hh.symm
-            trans := by
-              intro p q r hpq hqr
-              obtain ⟨u, hu⟩ := hpq
-              obtain ⟨v, hv⟩ := hqr
-              refine ⟨v + u, ?_⟩
-              have hh := congrArg (fun s : Set ι => P.shift v '' s) hu
-              simp only [Set.image_insert_eq, Set.image_singleton, ← P.shift_add] at hh
-              exact hh.trans hv
-          }
-        }
-        let representative (p : ι × ι) : ι × ι := (Quotient.mk S p).out
-        (∀ (p : ι × ι), ∀ (q : ι × ι), (S.r p q) → (representative p = representative q)) → (∀ (u
-            : P.lattice), ∀ (a : ι), ∀ (b : ι), representative (P.shift u a, P.shift u b) =
-            representative (a, b)) ) := by
-  classical
-  intro ι P shift_cancel S representative representative_eq u a b
-  exact ContactPortGeometry.representative_shift ι P shift_cancel representative_eq u a b
-
-private theorem transport_shift :
-    (by
-      classical
-      exact
-        ∀ (ι : Type), ∀ (P : PeriodicTileComplex ι), ∀ (shift_cancel : ∀ (u : P.lattice), ∀ (a :
-            ι), P.shift (-u) (P.shift u a) = a),
-        let S : Setoid (ι × ι) := {
-          r := fun p q => ∃ u : P.lattice,
-            ({P.shift u p.1, P.shift u p.2} : Set ι) = {q.1, q.2}
-          iseqv := {
-            refl := by
-              intro p
-              exact ⟨0, by simp only [P.shift_zero]⟩
-            symm := by
-              intro p q h
-              obtain ⟨u, hu⟩ := h
-              refine ⟨-u, ?_⟩
-              have hh := congrArg (fun s : Set ι => P.shift (-u) '' s) hu
-              simpa only [Set.image_insert_eq, Set.image_singleton, shift_cancel] using hh.symm
-            trans := by
-              intro p q r hpq hqr
-              obtain ⟨u, hu⟩ := hpq
-              obtain ⟨v, hv⟩ := hqr
-              refine ⟨v + u, ?_⟩
-              have hh := congrArg (fun s : Set ι => P.shift v '' s) hu
-              simp only [Set.image_insert_eq, Set.image_singleton, ← P.shift_add] at hh
-              exact hh.trans hv
-          }
-        }
-        let representative (p : ι × ι) : ι × ι := (Quotient.mk S p).out
-        ∀ (representative_spec : ∀ (p : ι × ι), S.r (representative p) p),
-        let transport (p : ι × ι) : P.lattice := Classical.choose (representative_spec p)
-        (∀ (p : ι × ι), ({P.shift (transport p) (representative p).1,
-            P.shift (transport p) (representative p).2} : Set ι) = {p.1, p.2}) → ((∀ (r : ι × ι),
-            ∀ (p : ι × ι), ∀ (u : ↥P.lattice), ∀ (v : ↥P.lattice), ({P.shift u r.1,
-                P.shift u r.2} : Set ι)
-            = {p.1, p.2} → ({P.shift v r.1, P.shift v r.2} : Set ι) = {p.1, p.2} → u = v) → ((∀ (u :
-            P.lattice), ∀ (a : ι), ∀ (b : ι), representative (P.shift u a, P.shift u b) =
-            representative (a, b)) → (∀ (u : P.lattice), ∀ (a : ι), ∀ (b : ι), transport (P.shift
-            u a, P.shift u b) = u + transport (a, b)))) ) := by
-  classical
-  intro ι P shift_cancel S representative representative_spec transport transport_spec
-      transport_unique representative_shift u a b
-  exact ContactPortGeometry.transport_shift ι P shift_cancel representative_spec
-          transport_spec transport_unique representative_shift u a b
-
-private theorem representative_contact :
-    (by
-      classical
-      exact
-        ∀ (ι : Type), ∀ (P : PeriodicTileComplex ι), ∀ (shift_cancel : ∀ (u : P.lattice), ∀ (a :
-            ι), P.shift (-u) (P.shift u a) = a), (∀ (u : P.lattice), ∀ (a : ι), ∀ (b : ι),
-            P3723T1EdgeContact P (P.shift u a) (P.shift u b) ↔
-            P3723T1EdgeContact P a b) → (
-        let S : Setoid (ι × ι) := {
-          r := fun p q => ∃ u : P.lattice,
-            ({P.shift u p.1, P.shift u p.2} : Set ι) = {q.1, q.2}
-          iseqv := {
-            refl := by
-              intro p
-              exact ⟨0, by simp only [P.shift_zero]⟩
-            symm := by
-              intro p q h
-              obtain ⟨u, hu⟩ := h
-              refine ⟨-u, ?_⟩
-              have hh := congrArg (fun s : Set ι => P.shift (-u) '' s) hu
-              simpa only [Set.image_insert_eq, Set.image_singleton, shift_cancel] using hh.symm
-            trans := by
-              intro p q r hpq hqr
-              obtain ⟨u, hu⟩ := hpq
-              obtain ⟨v, hv⟩ := hqr
-              refine ⟨v + u, ?_⟩
-              have hh := congrArg (fun s : Set ι => P.shift v '' s) hu
-              simp only [Set.image_insert_eq, Set.image_singleton, ← P.shift_add] at hh
-              exact hh.trans hv
-          }
-        }
-        let representative (p : ι × ι) : ι × ι := (Quotient.mk S p).out
-        ∀ (representative_spec : ∀ (p : ι × ι), S.r (representative p) p),
-        let transport (p : ι × ι) : P.lattice := Classical.choose (representative_spec p)
-        (∀ (p : ι × ι), ({P.shift (transport p) (representative p).1,
-            P.shift (transport p) (representative p).2} : Set ι) = {p.1, p.2}) → ((∀ (a : ι), ∀
-                (b : ι), ∀ (c : ι), ∀ (d : ι), ({a, b} : Set ι) = {c, d} → (P3723T1EdgeContact
-                P a b ↔
-            P3723T1EdgeContact P c d)) → (∀ (p : ι × ι), (P3723T1EdgeContact P p.1 p.2) →
-            (P3723T1EdgeContact P (representative p).1 (representative p).2))))) := by
-  classical
-  intro ι P shift_cancel contact_periodic S representative representative_spec transport
-      transport_spec pair_contact p hp
-  exact ContactPortGeometry.representative_contact ι P shift_cancel contact_periodic
-      representative_spec transport_spec pair_contact p hp
-
-private theorem edge_common :
-    (by
-      classical
-      exact
-        ∀ (ι : Type), ∀ (P : PeriodicTileComplex ι), ∀ (shift_cancel : ∀ (u : P.lattice), ∀ (a :
-            ι), P.shift (-u) (P.shift u a) = a), (∀ (u : P.lattice), ∀ (a : ι), ∀ (b : ι), ∀ (e :
-            Finset GaussianInt), (e ∈ FootprintEdges (P.tile a) ∩
-            FootprintEdges (P.tile b)) → (e.image (fun z => z + (u : GaussianInt)) ∈
-            FootprintEdges (P.tile (P.shift u a)) ∩ FootprintEdges (P.tile (P.shift u b)))) → (
-        let S : Setoid (ι × ι) := {
-          r := fun p q => ∃ u : P.lattice,
-            ({P.shift u p.1, P.shift u p.2} : Set ι) = {q.1, q.2}
-          iseqv := {
-            refl := by
-              intro p
-              exact ⟨0, by simp only [P.shift_zero]⟩
-            symm := by
-              intro p q h
-              obtain ⟨u, hu⟩ := h
-              refine ⟨-u, ?_⟩
-              have hh := congrArg (fun s : Set ι => P.shift (-u) '' s) hu
-              simpa only [Set.image_insert_eq, Set.image_singleton, shift_cancel] using hh.symm
-            trans := by
-              intro p q r hpq hqr
-              obtain ⟨u, hu⟩ := hpq
-              obtain ⟨v, hv⟩ := hqr
-              refine ⟨v + u, ?_⟩
-              have hh := congrArg (fun s : Set ι => P.shift v '' s) hu
-              simp only [Set.image_insert_eq, Set.image_singleton, ← P.shift_add] at hh
-              exact hh.trans hv
-          }
-        }
-        let representative (p : ι × ι) : ι × ι := (Quotient.mk S p).out
-        ∀ (representative_spec : ∀ (p : ι × ι), S.r (representative p) p),
-        let transport (p : ι × ι) : P.lattice := Classical.choose (representative_spec p)
-        (∀ (p : ι × ι), ({P.shift (transport p) (representative p).1,
-            P.shift (transport p) (representative p).2} : Set ι) = {p.1, p.2}) → ((∀ (p : ι × ι),
-                (P3723T1EdgeContact P p.1 p.2) → (P3723T1EdgeContact P (representative p).1
-            (representative p).2)) → (
-        let baseEdge (p : ι × ι) : Finset GaussianInt :=
-          if hp : P3723T1EdgeContact P p.1 p.2 then Classical.choose hp.2 else ∅
-        (∀ (p : ι × ι), (P3723T1EdgeContact P p.1 p.2) → (baseEdge p ∈ FootprintEdges (P.tile
-            p.1) ∩ FootprintEdges (P.tile p.2))) → (
-        let edge (a b : ι) : Finset GaussianInt :=
-          if P3723T1EdgeContact P a b then
-            (baseEdge (representative (a, b))).image
-              (fun z => z + (transport (a, b) : GaussianInt))
-          else ∅
-        ∀ (a : ι), ∀ (b : ι), P3723T1EdgeContact P a b →
-          edge a b ∈ FootprintEdges (P.tile a) ∩ FootprintEdges (P.tile b)))))) := by
-  classical
-  intro ι P shift_cancel common_edge_transport S representative representative_spec transport
-      transport_spec representative_contact baseEdge baseEdge_common edge a b hab
-  exact ContactPortGeometry.edge_common ι P shift_cancel common_edge_transport
-      representative_spec transport_spec representative_contact baseEdge_common a b hab
-
-private theorem midpoint_periodic :
-    (by
-      classical
-      exact
-        let midpoint (e : Finset GaussianInt) : Real × Real :=
-          ((∑ z ∈ e, (z.re : Real)) / 2, (∑ z ∈ e, (z.im : Real)) / 2)
-        ∀ (e : Finset GaussianInt), ∀ (u : GaussianInt), (e.card = 2) → (midpoint (e.image (fun z
-            => z + u)) = midpoint e + GaussianRealPoint u) ) := by
-  classical
-  intro midpoint e u he
-  exact ContactPortGeometry.midpoint_periodic e u he
-
-end ContactPortClosure
 
 namespace ContactPortConstruction
 
@@ -1774,15 +1227,15 @@ theorem P3723T1ContactPortsExist {ι : Type} (P : PeriodicTileComplex ι) :
 -- BODY
   classical
   -- Unique cell ownership controls the square and midpoint geometry.
-  have owner_unique := ContactPortClosure.owner_unique ι P
+  have owner_unique := ContactPortGeometry.owner_unique ι P
   let openSquare (z : GaussianInt) : Set (Real × Real) :=
     Set.Ioo (z.re : Real) ((z.re : Real) + 1) ×ˢ
       Set.Ioo (z.im : Real) ((z.im : Real) + 1)
   have openSquare_open (z : GaussianInt) : IsOpen (openSquare z) :=
     isOpen_Ioo.prod isOpen_Ioo
   have openSquare_closure := ContactPortGeometry.openSquare_closure
-  have coord_unique := ContactPortClosure.coord_unique
-  have square_unique := ContactPortClosure.square_unique coord_unique
+  have coord_unique := ContactPortGeometry.coord_unique
+  have square_unique := ContactPortGeometry.square_unique coord_unique
   have realization_closed (T : ProtoTile) : IsClosed (TileRealization T) :=
     isClosed_biUnion_finset (fun _ _ => isClosed_Icc)
   have interior_disjoint := ContactPortGeometry.interior_disjoint ι P owner_unique
@@ -1793,12 +1246,12 @@ theorem P3723T1ContactPortsExist {ι : Type} (P : PeriodicTileComplex ι) :
   have horizontal_midpoint := ContactPortGeometry.horizontal_midpoint
   have vertical_midpoint := ContactPortGeometry.vertical_midpoint
   have edge_normal := ContactPortGeometry.edge_normal
-  have midpoint_cell := ContactPortClosure.midpoint_cell horizontal_midpoint vertical_midpoint
-  have midpoint_two_cells := ContactPortClosure.midpoint_two_cells coord_unique
+  have midpoint_cell := ContactPortGeometry.midpoint_cell horizontal_midpoint vertical_midpoint
+  have midpoint_two_cells := ContactPortGeometry.midpoint_two_cells coord_unique
       horizontal_midpoint vertical_midpoint edge_normal
-  have common_midpoint := ContactPortClosure.common_midpoint ι P owner_unique midpoint_cell
+  have common_midpoint := ContactPortGeometry.common_midpoint ι P owner_unique midpoint_cell
       midpoint_two_cells
-  have common_frontier := ContactPortClosure.common_frontier ι P realization_closed
+  have common_frontier := ContactPortGeometry.common_frontier ι P realization_closed
       interior_disjoint common_midpoint
   have footprint_finite := ContactPortGeometry.footprint_finite
   have finite_degree := ContactPortGeometry.finite_degree ι P midpoint_cell common_midpoint
@@ -1818,7 +1271,7 @@ theorem P3723T1ContactPortsExist {ι : Type} (P : PeriodicTileComplex ι) :
     GaussianRealPoint (cell (rep a) + (period a : GaussianInt)) + (1 / 2, 1 / 2)
   have contact_symmetric (a b : ι) :
       P3723T1EdgeContact P a b ↔ P3723T1EdgeContact P b a :=
-          ContactPortClosure.contact_symmetric ι P a b
+          PeriodicEdgeContactSymmetry.symmetric ι P a b
   have shift_cancel (u : P.lattice) (a : ι) : P.shift (-u) (P.shift u a) = a := by
     rw [← P.shift_add, neg_add_cancel, P.shift_zero]
   have shift_injective := ContactPortGeometry.shift_injective ι P shift_cancel
@@ -1827,12 +1280,12 @@ theorem P3723T1ContactPortsExist {ι : Type} (P : PeriodicTileComplex ι) :
       (he : e ∈ FootprintEdges (P.tile a) ∩ FootprintEdges (P.tile b)) :
       e.image (fun z => z + (u : GaussianInt)) ∈
         FootprintEdges (P.tile (P.shift u a)) ∩ FootprintEdges (P.tile (P.shift u b)) :=
-            ContactPortClosure.common_edge_transport ι P edges_periodic u a b e he
-  have contact_forward := ContactPortClosure.contact_forward ι P shift_injective
+            ContactPortGeometry.common_edge_transport ι P edges_periodic u a b e he
+  have contact_forward := ContactPortGeometry.contact_forward ι P shift_injective
       common_edge_transport
   have contact_periodic (u : P.lattice) (a b : ι) :
       P3723T1EdgeContact P (P.shift u a) (P.shift u b) ↔
-        P3723T1EdgeContact P a b := ContactPortClosure.contact_periodic ι P shift_cancel
+        P3723T1EdgeContact P a b := ContactPortGeometry.contact_periodic ι P shift_cancel
             contact_forward u a b
   have period_unique := ContactPortGeometry.period_unique ι P shift_cancel
   have rep_shift := ContactPortGeometry.rep_shift ι P rep_spec period_spec
@@ -1841,9 +1294,9 @@ theorem P3723T1ContactPortsExist {ι : Type} (P : PeriodicTileComplex ι) :
   have real_add := ContactPortGeometry.real_add
   have position_cell (a : ι) : ∃ z ∈ (P.tile a).cells,
       position a = GaussianRealPoint z + ((1 / 2 : Real), (1 / 2 : Real)) :=
-          ContactPortClosure.position_cell ι P cells_nonempty cell_mem rep_spec period_spec a
+          ContactPortGeometry.position_cell ι P cells_nonempty cell_mem rep_spec period_spec a
   have position_interior (a : ι) : position a ∈ interior (TileRealization (P.tile a)) :=
-      ContactPortClosure.position_interior ι P center_interior cells_nonempty rep_spec
+      ContactPortGeometry.position_interior ι P center_interior cells_nonempty rep_spec
       position_cell a
   have position_periodic := ContactPortGeometry.position_periodic ι P cells_nonempty rep_spec
       rep_shift period_shift real_add
@@ -1885,30 +1338,30 @@ theorem P3723T1ContactPortsExist {ι : Type} (P : PeriodicTileComplex ι) :
     have representative_spec (p : ι × ι) : S.r (representative p) p :=
       @Quotient.mk_out _ S p
     have representative_eq (p q : ι × ι) (h : S.r p q) :
-        representative p = representative q := ContactPortClosure.representative_eq ι P
+        representative p = representative q := ContactPortGeometry.representative_eq ι P
             shift_cancel p q h
     let transport (p : ι × ι) : P.lattice := Classical.choose (representative_spec p)
     have transport_spec (p : ι × ι) :
         ({P.shift (transport p) (representative p).1,
           P.shift (transport p) (representative p).2} : Set ι) = {p.1, p.2} :=
-              ContactPortClosure.transport_spec ι P shift_cancel representative_spec p
-    have transport_unique := ContactPortClosure.transport_unique ι P shift_cancel
+              ContactPortGeometry.transport_spec ι P shift_cancel representative_spec p
+    have transport_unique := ContactPortGeometry.transport_unique ι P shift_cancel
     have representative_swap (a b : ι) : representative (a, b) = representative (b, a) :=
       representative_eq _ _ ⟨0, by simp only [P.shift_zero]; exact Set.pair_comm _ _⟩
     have transport_swap (a b : ι) : transport (a, b) = transport (b, a) :=
-        ContactPortClosure.transport_swap ι P shift_cancel representative_spec transport_spec
+        ContactPortGeometry.transport_swap ι P shift_cancel representative_spec transport_spec
         transport_unique representative_swap a b
     have representative_shift (u : P.lattice) (a b : ι) :
         representative (P.shift u a, P.shift u b) = representative (a, b) :=
-            ContactPortClosure.representative_shift ι P shift_cancel representative_eq u a b
+            ContactPortGeometry.representative_shift ι P shift_cancel representative_eq u a b
     have transport_shift (u : P.lattice) (a b : ι) :
         transport (P.shift u a, P.shift u b) = u + transport (a, b) :=
-            ContactPortClosure.transport_shift ι P shift_cancel representative_spec
+            ContactPortGeometry.transport_shift ι P shift_cancel representative_spec
             transport_spec transport_unique representative_shift u a b
     have pair_contact := ContactPortGeometry.pair_contact ι P contact_symmetric
     have representative_contact (p : ι × ι) (hp : P3723T1EdgeContact P p.1 p.2) :
         P3723T1EdgeContact P (representative p).1 (representative p).2 :=
-            ContactPortClosure.representative_contact ι P shift_cancel contact_periodic
+            ContactPortGeometry.representative_contact ι P shift_cancel contact_periodic
             representative_spec transport_spec pair_contact p hp
     let baseEdge (p : ι × ι) : Finset GaussianInt :=
       if hp : P3723T1EdgeContact P p.1 p.2 then Classical.choose hp.2 else ∅
@@ -1920,7 +1373,7 @@ theorem P3723T1ContactPortsExist {ι : Type} (P : PeriodicTileComplex ι) :
         (baseEdge (representative (a, b))).image
           (fun z => z + (transport (a, b) : GaussianInt))
       else ∅
-    have edge_common := ContactPortClosure.edge_common ι P shift_cancel common_edge_transport
+    have edge_common := ContactPortGeometry.edge_common ι P shift_cancel common_edge_transport
         representative_spec transport_spec representative_contact baseEdge_common
     have footprint_card := ContactPortGeometry.footprint_card
     refine ⟨edge, edge_common, ?_, ?_, ?_, ?_⟩
@@ -1951,7 +1404,7 @@ theorem P3723T1ContactPortsExist {ι : Type} (P : PeriodicTileComplex ι) :
   have port_present := ContactPortGeometry.port_present ι P edge
   have midpoint_periodic (e : Finset GaussianInt) (u : GaussianInt) (he : e.card = 2) :
       midpoint (e.image (fun z => z + u)) = midpoint e + GaussianRealPoint u :=
-          ContactPortClosure.midpoint_periodic e u he
+          ContactPortGeometry.midpoint_periodic e u he
   have finiteOrbitRepresentatives : ∃ reps : Finset (ι × ι),
       (∀ e ∈ reps, P3723T1EdgeContact P e.1 e.2) ∧
       (∀ a b, P3723T1EdgeContact P a b →

@@ -217,7 +217,9 @@ private theorem hparAt293 :
     (by
       classical
       exact
-        ∀ (P : FordFareyParameter), (FordFareyParameter) → ((FordFareyParameter) → (∀ (hP : (2 :
+        ∀ (P : FordFareyParameter),
+        (
+        (∀ (hP : (2 :
             ℕ) < P.q), ∀ (hsum : P.q = P.q₁ + P.q₂), ∀ (hcrossdet : P.p₁ * (P.q₂ :
             Int) - P.p₂ * (P.q₁ : Int) = 1), ∀ (hpos₁ : 0 < P.q₁), ∀ (hpos₂ : 0 < P.q₂), ∀
                 (horder : P.q₂ < P.q₁), ∀ (hdlt : P.q₁ - P.q₂ < P.q), ∀ (hdetdiff : (P.p₁-P.p₂) *
@@ -236,10 +238,10 @@ private theorem hparAt293 :
           · exact hpos₂
           · intro hu
             have : P.q₁ = 1 := by simpa using hu
-            omega
+            omega;
         Q.p₁ = P.p₁-P.p₂ ∧ Q.q₁ = P.q₁-P.q₂ ∧ Q.p₂ = P.p₂ ∧ Q.q₂ = P.q₂))) := by
   classical
-  intro P P₁ P₂ hP hsum hcrossdet hpos₁ hpos₂ horder hdlt hdetdiff H hHq hredParent Q
+  intro P hP hsum hcrossdet hpos₁ hpos₂ horder hdlt hdetdiff H hHq hredParent Q
   exact ⟨rfl, rfl, rfl, rfl⟩
 
 private theorem hch₀' :
@@ -484,7 +486,8 @@ private theorem hparAt498 :
     (by
       classical
       exact
-        ∀ (P : FordFareyParameter), (FordFareyParameter) → (∀ (P₂ : FordFareyParameter), ∀ (hP :
+        ∀ (P : FordFareyParameter),
+        (∀ (P₂ : FordFareyParameter), ∀ (hP :
             (2 : ℕ) < P.q), ∀ (hsum : P.q = P.q₁ + P.q₂), ∀ (hcrossdet : P.p₁ * (P.q₂ :
             Int) - P.p₂ * (P.q₁ : Int) = 1), ∀ (hpos₂ : 0 < P.q₂), ∀ (horder : P.q₁ < P.q₂), ∀
                 (hdiff : 0 < P.q₂ - P.q₁), ∀ (hdetdiff : (P.p₂-P.p₁) * (P.q₂ : Int) - ((P.q₂-P.q₁ :
@@ -503,10 +506,10 @@ private theorem hparAt498 :
           · omega
           · intro hu
             have : P.q₂ = 1 := by simpa using hu
-            omega
+            omega;
         (Q = P₂) → (P₂.p₁ = P.p₁ ∧ P₂.q₁ = P.q₁ ∧ P₂.p₂ = P.p₂-P.p₁ ∧ P₂.q₂ = P.q₂-P.q₁))) := by
   classical
-  intro P P₁ P₂ hP hsum hcrossdet hpos₂ horder hdiff hdetdiff H hHq hredParent Q hQeq
+  intro P P₂ hP hsum hcrossdet hpos₂ horder hdiff hdetdiff H hHq hredParent Q hQeq
   simpa [hQeq] using (show Q.p₁ = P.p₁ ∧ Q.q₁ = P.q₁ ∧
     Q.p₂ = P.p₂-P.p₁ ∧ Q.q₂ = P.q₂-P.q₁ from ⟨rfl,rfl,rfl,rfl⟩)
 
@@ -691,17 +694,18 @@ private theorem hyAt644 :
     (by
       classical
       exact
-        ∀ (P : FordFareyParameter), (FordFareyParameter) → (∀ (P₂ : FordFareyParameter), (∀ (q :
+        ∀ (P : FordFareyParameter),
+        (∀ (P₂ : FordFareyParameter), (∀ (q :
             Nat), ∀ (x : GaussianInt), x ∈ P4062T1InteriorSquare q ↔ 1 ≤ x.re ∧ x.re ≤ (q :
-            Int) - 1 ∧ 1 ≤ x.im ∧ x.im ≤ (q : Int) - 1) → ((P.q₁ < P.q₂) → ((FordFareyParameter)
-            → (∀ (R : FordFareyParameter), (R.p = P.p₂ ∧ R.q = P.q₂) → ((P₂.p₁ = P.p₁ ∧ P₂.q₁ =
+            Int) - 1 ∧ 1 ≤ x.im ∧ x.im ≤ (q : Int) - 1) → ((P.q₁ < P.q₂) → (
+        (∀ (R : FordFareyParameter), (R.p = P.p₂ ∧ R.q = P.q₂) → ((P₂.p₁ = P.p₁ ∧ P₂.q₁ =
             P.q₁ ∧ P₂.p₂ = P.p₂-P.p₁ ∧ P₂.q₂ = P.q₂-P.q₁) → (∀ (x : GaussianInt), ((↑P.q₁ : ℤ) +
             (1 : ℤ) ≤ x.re ∧ x.re ≤ (↑P.q₂ : ℤ) - (1 : ℤ) ∧ (↑P.q₁ : ℤ) + (1 : ℤ) ≤ x.im ∧ x.im ≤
             (↑P.q₂ : ℤ) - (1 : ℤ)) → (
-        let y : GaussianInt := x-⟨(P.q₁ : Int),(P.q₁ : Int)⟩
+        let y : GaussianInt := x-⟨(P.q₁ : Int),(P.q₁ : Int)⟩;
         y ∈ P4062T1InteriorSquare (P.q₂-P.q₁)))))))) ) := by
   classical
-  intro P P₁ P₂ squareCoordinates horder H R hR hpar x hc y
+  intro P P₂ squareCoordinates horder R hR hpar x hc y
   apply (squareCoordinates (P.q₂-P.q₁) y).mpr
   dsimp [y]
   rw [Nat.cast_sub (by omega : P.q₁ ≤ P.q₂)]
@@ -711,13 +715,15 @@ private theorem hcastAt656 :
     (by
       classical
       exact
-        ∀ (P : FordFareyParameter), (FordFareyParameter) → (∀ (P₂ : FordFareyParameter), (P.q₁ <
+        ∀ (P : FordFareyParameter),
+        (∀ (P₂ : FordFareyParameter), (P.q₁ <
             P.q₂) → (∀ (H : FordFareyParameter), (H.q = P.q₂ - P.q₁) → (∀ (R :
             FordFareyParameter), (R.p = P.p₂ ∧ R.q = P.q₂) → ((P₂.p₁ = P.p₁ ∧ P₂.q₁ = P.q₁ ∧
-            P₂.p₂ = P.p₂-P.p₁ ∧ P₂.q₂ = P.q₂-P.q₁) → ((GaussianInt) → ((H.q : Int) = (P.q₂ :
+            P₂.p₂ = P.p₂-P.p₁ ∧ P₂.q₂ = P.q₂-P.q₁) → (
+        ((H.q : Int) = (P.q₂ :
             Int)-P.q₁)))))) ) := by
   classical
-  intro P P₁ P₂ horder H hHq R hR hpar y
+  intro P P₂ horder H hHq R hR hpar
   calc
     (H.q : Int) = ((P.q₂-P.q₁ : Nat) : Int) := by exact_mod_cast hHq
     _ = (P.q₂ : Int)-P.q₁ := by
@@ -727,7 +733,8 @@ private theorem hu :
     (by
       classical
       exact
-        ∀ (P : FordFareyParameter), (FordFareyParameter) → (∀ (P₂ : FordFareyParameter), (∀ (q :
+        ∀ (P : FordFareyParameter),
+        (∀ (P₂ : FordFareyParameter), (∀ (q :
             Nat), ∀ (x : GaussianInt), x ∈ P4062T1InteriorSquare q ↔ 1 ≤ x.re ∧ x.re ≤ (q :
             Int) - 1 ∧ 1 ≤ x.im ∧ x.im ≤ (q : Int) - 1) → ((P.q = P.q₁ + P.q₂) → ((P.q₂ - P.q₁ <
             P.q) → (∀ (H : FordFareyParameter), (H.q = P.q₂ - P.q₁) → (∀ (R :
@@ -737,7 +744,7 @@ private theorem hu :
             Int) = (P.q₂ : Int)-P.q₁) → (y+⟨0,(P.q₁ : Int)⟩ ∈ P4062T1InteriorSquare
             P.q₂))))))))) ) := by
   classical
-  intro P P₁ P₂ squareCoordinates hsum hdlt H hHq R hR hpar y hyc hcast
+  intro P P₂ squareCoordinates hsum hdlt H hHq R hR hpar y hyc hcast
   apply (squareCoordinates P.q₂ _).mpr
   simp only [Zsqrtd.re_add, Zsqrtd.im_add,
     ]
@@ -747,7 +754,8 @@ private theorem hv :
     (by
       classical
       exact
-        ∀ (P : FordFareyParameter), (FordFareyParameter) → (∀ (P₂ : FordFareyParameter), (∀ (q :
+        ∀ (P : FordFareyParameter),
+        (∀ (P₂ : FordFareyParameter), (∀ (q :
             Nat), ∀ (x : GaussianInt), x ∈ P4062T1InteriorSquare q ↔ 1 ≤ x.re ∧ x.re ≤ (q :
             Int) - 1 ∧ 1 ≤ x.im ∧ x.im ≤ (q : Int) - 1) → ((P.q = P.q₁ + P.q₂) → ((P.q₂ - P.q₁ <
             P.q) → (∀ (H : FordFareyParameter), (H.q = P.q₂ - P.q₁) → (∀ (R :
@@ -757,7 +765,7 @@ private theorem hv :
             Int) = (P.q₂ : Int)-P.q₁) → (y+⟨(P.q₁ : Int),0⟩ ∈ P4062T1InteriorSquare
             P.q₂))))))))) ) := by
   classical
-  intro P P₁ P₂ squareCoordinates hsum hdlt H hHq R hR hpar y hyc hcast
+  intro P P₂ squareCoordinates hsum hdlt H hHq R hR hpar y hyc hcast
   apply (squareCoordinates P.q₂ _).mpr
   simp only [Zsqrtd.re_add, Zsqrtd.im_add,
     ]
@@ -905,7 +913,7 @@ theorem P4062T1OverlapDescent (P P₁ P₂ : FordFareyParameter)
     have hQeq : Q = P₁ := by
       exact (hRuniq Q ⟨rfl, rfl⟩).trans (hRuniq P₁ ⟨hp₁, hq₁⟩).symm
     have hpar : Q.p₁ = P.p₁-P.p₂ ∧ Q.q₁ = P.q₁-P.q₂ ∧
-        Q.p₂ = P.p₂ ∧ Q.q₂ = P.q₂ := OverlapDescentDetails.hparAt293 P P₁ P₂ hP hsum hcrossdet
+        Q.p₂ = P.p₂ ∧ Q.q₂ = P.q₂ := OverlapDescentDetails.hparAt293 P hP hsum hcrossdet
             hpos₁ hpos₂ horder hdlt hdetdiff H hHq hredParent
     have hparP : P₁.p₁ = P.p₁-P.p₂ ∧ P₁.q₁ = P.q₁-P.q₂ ∧
         P₁.p₂ = P.p₂ ∧ P₁.q₂ = P.q₂ := by simpa [hQeq] using hpar
@@ -983,7 +991,7 @@ theorem P4062T1OverlapDescent (P P₁ P₂ : FordFareyParameter)
     have hQeq : Q = P₂ := by
       exact (hRuniq Q ⟨rfl, rfl⟩).trans (hRuniq P₂ ⟨hp₂, hq₂⟩).symm
     have hpar : P₂.p₁ = P.p₁ ∧ P₂.q₁ = P.q₁ ∧
-        P₂.p₂ = P.p₂-P.p₁ ∧ P₂.q₂ = P.q₂-P.q₁ := OverlapDescentDetails.hparAt498 P P₁ P₂ hP hsum
+        P₂.p₂ = P.p₂-P.p₁ ∧ P₂.q₂ = P.q₂-P.q₁ := OverlapDescentDetails.hparAt498 P P₂ hP hsum
             hcrossdet hpos₂ horder hdiff hdetdiff H hHq hredParent hQeq
     have hchildRec := hfamilyRec P₂ P₁ H (by rw [hq₂]; omega)
       (hp₁.trans hpar.1.symm) (hq₁.trans hpar.2.1.symm)
@@ -1001,8 +1009,8 @@ theorem P4062T1OverlapDescent (P P₁ P₂ : FordFareyParameter)
     · intro hx
       have hc := hcoords x hx
       let y : GaussianInt := x-⟨(P.q₁ : Int),(P.q₁ : Int)⟩
-      have hy := OverlapDescentDetails.hyAt644 P P₁ P₂
-          squareCoordinates horder H R hR hpar x hc
+      have hy := OverlapDescentDetails.hyAt644 P P₂
+          squareCoordinates horder R hR hpar x hc
       refine Finset.mem_image.mpr ⟨y, ?_, ?_⟩
       · simpa [hHq] using hy
       · dsimp [y]
@@ -1010,14 +1018,14 @@ theorem P4062T1OverlapDescent (P P₁ P₂ : FordFareyParameter)
     · intro hx
       obtain ⟨y, hy, hxy⟩ := Finset.mem_image.mp hx
       have hyc := (squareCoordinates H.q y).mp hy
-      have hcast := OverlapDescentDetails.hcastAt656 P P₁ P₂
-          horder H hHq R hR hpar y
+      have hcast := OverlapDescentDetails.hcastAt656 P P₂
+          horder H hHq R hR hpar
       have hsmall := hyc
       rw [hcast] at hsmall
-      have hu := OverlapDescentDetails.hu P
-          P₁ P₂ squareCoordinates hsum hdlt H hHq R hR hpar y hyc hcast
-      have hv := OverlapDescentDetails.hv P
-          P₁ P₂ squareCoordinates hsum hdlt H hHq R hR hpar y hyc hcast
+      have hu :=
+        OverlapDescentDetails.hu P P₂ squareCoordinates hsum hdlt H hHq R hR hpar y hyc hcast
+      have hv :=
+        OverlapDescentDetails.hv P P₂ squareCoordinates hsum hdlt H hHq R hR hpar y hyc hcast
       have hmem2 := OverlapDescentDetails.hmem2 P hr hA2 y hu
       have hmem3 := OverlapDescentDetails.hmem3 P hr hA3 y hv
       exact Finset.mem_inter.mpr

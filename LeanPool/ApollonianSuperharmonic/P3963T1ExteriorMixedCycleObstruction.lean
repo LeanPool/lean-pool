@@ -1161,42 +1161,6 @@ end ExteriorMixedCycleProof
 
 namespace ExteriorCycleDetails
 
-private theorem hsectorRay :
-    ∀ (U : ProtoTile), ∀ (V : ProtoTile), ∀ (x : GaussianInt), ∀ (e : Finset GaussianInt), ∀ (f :
-        Finset GaussianInt), (x ∈ e) → ((x ∈ f) → ((e ∈ FootprintEdges U) → ((f ∈ FootprintEdges
-        V) → (
-    let c0 : GaussianInt := x
-    let c1 : GaussianInt := x - 1
-    let c2 : GaussianInt := x - 1 - ⟨0, 1⟩
-    let c3 : GaussianInt := x - ⟨0, 1⟩
-    (¬ (c0 ∈ U.cells ∧ c1 ∈ V.cells)) → ((¬ (c1 ∈ U.cells ∧ c0 ∈ V.cells)) → ((¬ (c1 ∈ U.cells ∧
-        c2 ∈ V.cells)) → ((¬ (c2 ∈ U.cells ∧ c1 ∈ V.cells)) → ((¬ (c2 ∈ U.cells ∧ c3 ∈ V.cells))
-        → ((¬ (c3 ∈ U.cells ∧ c2 ∈ V.cells)) → ((¬ (c3 ∈ U.cells ∧ c0 ∈ V.cells)) → ((¬ (c0 ∈
-        U.cells ∧ c3 ∈ V.cells)) → ((¬ (c0 ∈ U.cells ∧ c0 ∈ V.cells)) → ((¬ (c1 ∈ U.cells ∧ c1 ∈
-        V.cells)) → ((¬ (c2 ∈ U.cells ∧ c2 ∈ V.cells)) → ((¬ (c3 ∈ U.cells ∧ c3 ∈ V.cells)) →
-        (((c0 ∈ U.cells ∧ c2 ∈ V.cells) ∨ (c2 ∈ U.cells ∧ c0 ∈ V.cells) ∨ (c1 ∈ U.cells ∧ c3 ∈
-        V.cells) ∨ (c3 ∈ U.cells ∧ c1 ∈ V.cells)) → ((∀ (T : ProtoTile), ∀ (g : Finset
-        GaussianInt), (x ∈ g) → ((g ∈ FootprintEdges T) → ((c1 ∉ T.cells) → ((c2 ∉ T.cells) →
-        ((c3 ∉ T.cells) → (g = {x, x + ⟨0, 1⟩} ∨ g = {x, x + 1})))))) → ((∀ (T : ProtoTile), ∀ (g
-            : Finset GaussianInt), (x ∈ g) → ((g ∈ FootprintEdges T) → ((c0 ∉ T.cells) → ((c2 ∉
-        T.cells) → ((c3 ∉ T.cells) → (g = {x, x + ⟨0, 1⟩} ∨ g = {x - 1, x})))))) → ((∀ (T :
-            ProtoTile), ∀ (g : Finset GaussianInt), (x ∈ g) → ((g ∈ FootprintEdges T) → ((c0 ∉
-        T.cells) → ((c1 ∉ T.cells) → ((c3 ∉ T.cells) → (g = {x - 1, x} ∨ g = {x - ⟨0, 1⟩,
-        x})))))) → ((∀ (T : ProtoTile), ∀ (g : Finset GaussianInt), (x ∈ g) → ((g ∈
-        FootprintEdges T) → ((c0 ∉ T.cells) → ((c1 ∉ T.cells) → ((c2 ∉ T.cells) → (g = {x - ⟨0,
-        1⟩, x} ∨ g = {x, x + 1})))))) → ((c0 ∈ U.cells ∧ c2 ∈ V.cells ∧ (e = {x, x + ⟨0, 1⟩} ∨ e
-        = {x, x + 1}) ∧ (f = {x - ⟨0, 1⟩, x} ∨ f = {x - 1, x})) ∨ (c2 ∈ U.cells ∧ c0 ∈ V.cells ∧
-        (e = {x - 1, x} ∨ e = {x - ⟨0, 1⟩, x}) ∧ (f = {x, x + ⟨0, 1⟩} ∨ f = {x, x + 1})) ∨ (c1 ∈
-        U.cells ∧ c3 ∈ V.cells ∧ (e = {x, x + ⟨0, 1⟩} ∨ e = {x - 1, x}) ∧ (f = {x - ⟨0, 1⟩, x} ∨
-        f = {x, x + 1})) ∨ (c3 ∈ U.cells ∧ c1 ∈ V.cells ∧ (e = {x - ⟨0, 1⟩, x} ∨ e = {x, x + 1})
-        ∧ (f = {x, x + ⟨0, 1⟩} ∨ f = {x - 1, x}))))))))))))))))))))))) := by
-  classical
-  intro U V x e f hxe hxf hUedge hVedge c0 c1 c2 c3 no01 no10 no12 no21 no23 no32 no30 no03
-      noSame0 noSame1 noSame2 noSame3 hpattern rayAt0 rayAt1 rayAt2 rayAt3
-  exact ExteriorMixedCycleProof.hsectorRay U V x e f
-            hxe hxf hUedge hVedge no01 no10 no12 no21 no23 no32 no30 no03 noSame0 noSame1 noSame2
-            noSame3 hpattern rayAt0 rayAt1 rayAt2 rayAt3
-
 private theorem indexAdjacentExterior :
     ∀ (U : ProtoTile), ∀ (V : ProtoTile), ∀ (F : Set (Finset GaussianInt)), ∀ (p : List
         GaussianInt), ∀ (u : GaussianInt), ∀ (v : GaussianInt), (∀ (a : GaussianInt), ∀ (b :
@@ -1743,7 +1707,7 @@ private theorem hindexDiff :
   let sDir : Fin 4 := 2
   let wDir : Fin 4 := 3
   have c1addi : c1 + 1 + ⟨0, 1⟩ = x + ⟨0, 1⟩ := by dsimp [c1]; ring
-  rcases (ExteriorCycleDetails.hsectorRay U V x e f hxe hxf hUedge hVedge no01 no10 no12 no21
+  rcases (ExteriorMixedCycleProof.hsectorRay U V x e f hxe hxf hUedge hVedge no01 no10 no12 no21
       no23 no32 no30 no03 noSame0 noSame1 noSame2 noSame3 hpattern
       (ExteriorMixedCycleProof.rayAt0 x supportedRay) (ExteriorMixedCycleProof.rayAt1 x
       supportedRay) (ExteriorMixedCycleProof.rayAt2 x supportedRay)

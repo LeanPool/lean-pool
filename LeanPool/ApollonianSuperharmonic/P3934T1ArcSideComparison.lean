@@ -490,14 +490,6 @@ private theorem negSign :
   intro k x
   cases k <;> simp [Bool.not]
 
-private theorem reverseLocal :
-    (∀ (k : Bool), ∀ (x : Real), (if k then 0 < x else x < 0) ↔ (if !k then 0 < -x else -x < 0))
-        → (∀ (W : Set (ℝ × ℝ)), ∀ (z : ℝ × ℝ), ∀ (B : ℝ × ℝ), ∀ (k : Bool), P3934T1LocalSide W
-        z B k → P3934T1LocalSide W z (-B) !k) := by
-  classical
-  intro negSign
-  exact ArcComparisonGeometry.reverseLocal negSign
-
 namespace ArcComparisonCoreFacts
 
 private theorem hgfun_surj :
@@ -1325,7 +1317,7 @@ theorem P3934T1ArcSideComparison (U V S : Set (Real × Real))
   have negSign (k : Bool) (x : Real) :
       (if k then 0 < x else x < 0) ↔
         (if !k then 0 < -x else -x < 0) := ArcComparisonMainProof.negSign k x
-  have reverseLocal := ArcComparisonMainProof.reverseLocal negSign
+  have reverseLocal := ArcComparisonGeometry.reverseLocal negSign
   have compareCore : ∀ (U₁ U₂ : Set (Real × Real))
       (g h : Set.Icc (0 : Real) 1 → Real × Real)
       (p : P3723T1PolygonalParameterization g)

@@ -1592,21 +1592,6 @@ end TileOdometerSymmetryProof
 
 namespace TileOdometerAssembly
 
-private theorem actionDiff :
-    (by
-      classical
-      exact
-        (∀ (a : BandPackingSymmetry), ∀ (k : PartialOdometer), ∀ x ∈ k.domain,
-            BandPackingSymmetryVectorAction a x ∈ (BandPackingSymmetryPartialOdometerAction a
-            k).domain) → (∀ (a : BandPackingSymmetry), ∀ (k : PartialOdometer), ∀ (l :
-            PartialOdometer), ∀ x ∈ k.domain, x ∈ l.domain →
-            (BandPackingSymmetryPartialOdometerAction a l).value (BandPackingSymmetryVectorAction
-            a x) - (BandPackingSymmetryPartialOdometerAction a k).value
-            (BandPackingSymmetryVectorAction a x) = l.value x - k.value x) ) := by
-  classical
-  intro actionForward a k l x hk hl
-  exact TileOdometerSymmetryProof.actionDiff actionForward a k l x hk hl
-
 private theorem hpsi :
     (by
       classical
@@ -1646,70 +1631,6 @@ private theorem hpsi :
     BandPackingShiftPotential ⟨wr, wi⟩ v
   exact TileOdometerSymmetryProof.hpsi z wr wi v
           hcorner r hr
-
-private theorem hcurvAt1757 :
-    (by
-      classical
-      exact
-        ∀ (z : GaussianInt), ∀ (wr : ℤ), ∀ (wi : ℤ), ∀ (r : GaussianInt), (r ∈
-            (CurvatureOneOdometer z).domain) → ((CurvatureOneOdometer (z + ⟨wr, wi⟩)).value r =
-            (CurvatureOneOdometer z).value r + wi * r.re * r.im) ) := by
-  classical
-  intro z wr wi r hr
-  exact TileOdometerSymmetryProof.hcurvAt595 z wr wi r hr
-
-private theorem hCAt1762 :
-    (by
-      classical
-      exact
-        ∀ (z : GaussianInt), ∀ (wr : ℤ), ∀ (wi : ℤ), BandPackingSymmetryCircleAction (.shift ⟨wr,
-            wi⟩) (1, 1 + 2 * z) = (1, 1 + 2 * (z + ⟨wr, wi⟩)) ) := by
-  classical
-  intro z wr wi
-  exact TileOdometerSymmetryProof.hCAt611
-          z wr wi
-
-private theorem hunitValueAt1803 :
-    (by
-      classical
-      exact
-        ∀ (z : GaussianInt), ∀ r ∈ (CurvatureOneOdometer z).domain, (CurvatureOneOdometer
-            z).value ((⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt) - GaussianQuarterTurn r) =
-            (CurvatureOneOdometer (-z - (1 : GaussianInt))).value r + z.im * r.im ) := by
-  classical
-  intro z r hr
-  exact TileOdometerSymmetryProof.hunitValueAt682 z r hr
-
-private theorem hcellAt1824 :
-    (by
-      classical
-      exact
-        ∀ (U : ProtoTile), ∀ (x : GaussianInt), (U.cells = {x}) → ((BandPackingSymmetryTileAction
-            .conjugate U).cells = {-GaussianReflection x - 1}) ) := by
-  classical
-  intro U x hU
-  exact TileOdometerSymmetryProof.hcellAt753 U x hU
-
-private theorem hunitValueAt1829 :
-    (by
-      classical
-      exact
-        ∀ (z : GaussianInt), ∀ r ∈ (CurvatureOneOdometer z).domain, (CurvatureOneOdometer
-            z).value ((1 : GaussianInt) - GaussianReflection r) = (CurvatureOneOdometer
-            (GaussianReflection z)).value r + z.im * r.im ) := by
-  classical
-  intro z r hr
-  exact TileOdometerSymmetryProof.hunitValueAt805 z r hr
-
-private theorem hCAt1836 :
-    (by
-      classical
-      exact
-        ∀ (z : GaussianInt), BandPackingSymmetryCircleAction .conjugate (1, 1 + 2 * z) = (1, 1 +
-            2 * GaussianReflection z) ) := by
-  classical
-  intro z
-  exact TileOdometerSymmetryProof.hCAt864 z
 
 private theorem hcentroid' :
     (by
@@ -1777,103 +1698,9 @@ private theorem hOorig :
   exact TileOdometer.decompose hq hT hsub hcells hfoot hcentroid
       hdom hvalue hcompat hslope
 
-private theorem hout :
-    (by
-      classical
-      exact
-        ∀ (h : PartialOdometer), ∀ (U : ProtoTile), ∀ (a : BandPackingSymmetry),
-        let P := BandPackingSymmetryPartialOdometerAction
-        (PartialOdometerSlope (BandPackingSymmetryPartialOdometerAction a h) = Option.map
-            (BandPackingSymmetrySlopeAction a U) (PartialOdometerSlope h)) → (∀ (p₀ : ℝ × ℝ),
-            (PartialOdometerSlope h = some p₀) → (PartialOdometerSlope (P a h) = some
-            (BandPackingSymmetrySlopeAction a U p₀))) ) := by
-  classical
-  intro h U a P houterSlope p₀ hp₀
-  exact TileOdometerSymmetryProof.hout h
-          U a houterSlope p₀ hp₀
-
-private theorem hchild :
-    (by
-      classical
-      exact
-        ∀ (S : Fin (3 : ℕ) → Bool → ProtoTile), ∀ (hs : Fin (3 : ℕ) → Bool → PartialOdometer), ∀
-            (a : BandPackingSymmetry),
-        let P := BandPackingSymmetryPartialOdometerAction
-        ∀ (e : Fin (3 : ℕ) × Bool ≃ Fin (3 : ℕ) × Bool), ∀ (i : Fin (3 : ℕ)), ∀ (s : Bool),
-        let p := e.symm (i, s)
-        (PartialOdometerSlope (BandPackingSymmetryPartialOdometerAction a (hs p.1 p.2)) =
-            Option.map (BandPackingSymmetrySlopeAction a (S p.1 p.2)) (PartialOdometerSlope (hs
-            p.1 p.2))) → (∀ (pᵢ : ℝ × ℝ), (PartialOdometerSlope (hs p.1 p.2) = some pᵢ) →
-            (PartialOdometerSlope (P a (hs p.1 p.2)) = some (BandPackingSymmetrySlopeAction a (S
-            p.1 p.2) pᵢ))) ) := by
-  classical
-  intro S hs a P e i s p hchildSlope pᵢ hpᵢ
-  exact TileOdometerSymmetryProof.hchild S hs a e i s hchildSlope pᵢ hpᵢ
-
-private theorem hslopeCov :
-    (by
-      classical
-      exact
-        ∀ (U : ProtoTile), ∀ (q : Fin (4 : ℕ) → CircleCoordinates), ∀ (S : Fin (3 : ℕ) → Bool →
-            ProtoTile), ∀ (a : BandPackingSymmetry),
-        let Q := BandPackingSymmetryQuadrupleAction
-        let q' := Q a q
-        ∀ (e : Fin (3 : ℕ) × Bool ≃ Fin (3 : ℕ) × Bool), ∀ (negative : Bool), ∀ (i : Fin (3 :
-            ℕ)), ∀ (s : Bool),
-        let p := e.symm (i, s)
-        ∀ (p₀ : ℝ × ℝ), ∀ (pᵢ : ℝ × ℝ), ((if s = true then (1 : ℝ) else (-1 : ℝ)) = (if ((e.symm
-            : Fin (3 : ℕ) × Bool → Fin (3 : ℕ) × Bool) (i, s)).2 = true then (1 : ℝ) else (-1 :
-            ℝ)) * if negative = true then (-1 : ℝ) else (1 : ℝ)) → (
-        let v0 := BandVectors.1 (q ((p.1 + 2).succ)) (q ((p.1 + 1).succ))
-        let u0 := BandVectors.2 (q ((p.1 + 2).succ)) (q ((p.1 + 1).succ))
-        let vmix := v0 - GaussianQuarterTurn v0
-        let umix := u0 + GaussianQuarterTurn u0
-        let scale : ℝ := (if p.2 = true then (1 : ℝ) else -1) * (1 / 2)
-        (TileCentroid (BandPackingSymmetryTileAction a (S p.1 p.2)) - TileCentroid
-            (BandPackingSymmetryTileAction a U) = scale • GaussianRealPoint
-            (BandPackingSymmetryAffineVectorAction a (vmix, umix)).1 ∧
-            BandPackingSymmetrySlopeAction a (S p.1 p.2) pᵢ - BandPackingSymmetrySlopeAction a U
-            p₀ = scale • GaussianRealPoint (BandPackingSymmetryAffineVectorAction a (vmix,
-            umix)).2) → ((BandVectors.2 (BandPackingSymmetryQuadrupleAction a q (i + (2 : Fin (3
-            : ℕ))).succ) (BandPackingSymmetryQuadrupleAction a q (i + (1 : Fin (3 : ℕ))).succ) +
-            GaussianQuarterTurn (BandVectors.2 (BandPackingSymmetryQuadrupleAction a q (i + (2 :
-            Fin (3 : ℕ))).succ) (BandPackingSymmetryQuadrupleAction a q (i + (1 : Fin (3 :
-            ℕ))).succ)) = (if negative = true then (-1 : GaussianInt) else (1 : GaussianInt)) *
-            (BandPackingSymmetryAffineVectorAction a ((fun (r : Bool) (z : GaussianInt ×
-            GaussianInt) => if r = true then (z.1 + GaussianQuarterTurn z.1, z.2 -
-            GaussianQuarterTurn z.2) else (z.1 - GaussianQuarterTurn z.1, z.2 +
-            GaussianQuarterTurn z.2)) false (BandVectors.1 (q (((e.symm : Fin (3 : ℕ) × Bool →
-            Fin (3 : ℕ) × Bool) (i, s)).1 + (2 : Fin (3 : ℕ))).succ) (q (((e.symm : Fin (3 : ℕ) ×
-            Bool → Fin (3 : ℕ) × Bool) (i, s)).1 + (1 : Fin (3 : ℕ))).succ), BandVectors.2 (q
-            (((e.symm : Fin (3 : ℕ) × Bool → Fin (3 : ℕ) × Bool) (i, s)).1 + (2 : Fin (3 :
-            ℕ))).succ) (q (((e.symm : Fin (3 : ℕ) × Bool → Fin (3 : ℕ) × Bool) (i, s)).1 + (1 :
-            Fin (3 : ℕ))).succ)))).2) → (BandPackingSymmetrySlopeAction a (S p.1 p.2) pᵢ -
-            BandPackingSymmetrySlopeAction a U p₀ = ((if s = true then (1 : ℝ) else -1) * (1 /
-            2)) • GaussianRealPoint (BandVectors.2 (q' ((i + 2).succ)) (q' ((i + 1).succ)) +
-            GaussianQuarterTurn (BandVectors.2 (q' ((i + 2).succ)) (q' ((i + 1).succ))))))) ) := by
-  classical
-  intro U q S a Q q' e negative i s p p₀ pᵢ hsign v0 u0 vmix umix scale hdiffTransport hsum
-  exact TileOdometerSymmetryProof.hslopeCov U q S a
-                      e negative i s p₀ pᵢ hsign hdiffTransport hsum
-
 end TileOdometerAssembly
 
 namespace TileOdometerConclusion
-
-private theorem actionDiff :
-    (by
-      classical
-      exact
-        (∀ (a : BandPackingSymmetry), ∀ (k : PartialOdometer), ∀ x ∈ k.domain,
-            BandPackingSymmetryVectorAction a x ∈ (BandPackingSymmetryPartialOdometerAction a
-            k).domain) → (∀ (a : BandPackingSymmetry), ∀ (k : PartialOdometer), ∀ (l :
-            PartialOdometer), ∀ x ∈ k.domain, x ∈ l.domain →
-            (BandPackingSymmetryPartialOdometerAction a l).value (BandPackingSymmetryVectorAction
-            a x) - (BandPackingSymmetryPartialOdometerAction a k).value
-            (BandPackingSymmetryVectorAction a x) = l.value x - k.value x) ) := by
-  classical
-  intro actionForward a k l x hk hl
-  exact TileOdometerAssembly.actionDiff actionForward a k l x hk hl
 
 private theorem hpsi :
     (by
@@ -1914,149 +1741,6 @@ private theorem hpsi :
     BandPackingShiftPotential ⟨wr, wi⟩ v
   exact TileOdometerAssembly.hpsi z wr wi v
           hcorner r hr
-
-private theorem hcurvAt2025 :
-    (by
-      classical
-      exact
-        ∀ (z : GaussianInt), ∀ (wr : ℤ), ∀ (wi : ℤ), ∀ (r : GaussianInt), (r ∈
-            (CurvatureOneOdometer z).domain) → ((CurvatureOneOdometer (z + ⟨wr, wi⟩)).value r =
-            (CurvatureOneOdometer z).value r + wi * r.re * r.im) ) := by
-  classical
-  intro z wr wi r hr
-  exact TileOdometerAssembly.hcurvAt1757 z wr wi r hr
-
-private theorem hCAt2030 :
-    (by
-      classical
-      exact
-        ∀ (z : GaussianInt), ∀ (wr : ℤ), ∀ (wi : ℤ), BandPackingSymmetryCircleAction (.shift ⟨wr,
-            wi⟩) (1, 1 + 2 * z) = (1, 1 + 2 * (z + ⟨wr, wi⟩)) ) := by
-  classical
-  intro z wr wi
-  exact TileOdometerAssembly.hCAt1762 z
-          wr wi
-
-private theorem hunitValueAt2071 :
-    (by
-      classical
-      exact
-        ∀ (z : GaussianInt), ∀ r ∈ (CurvatureOneOdometer z).domain, (CurvatureOneOdometer
-            z).value ((⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt) - GaussianQuarterTurn r) =
-            (CurvatureOneOdometer (-z - (1 : GaussianInt))).value r + z.im * r.im ) := by
-  classical
-  intro z r hr
-  exact TileOdometerAssembly.hunitValueAt1803 z r hr
-
-private theorem hcellAt2092 :
-    (by
-      classical
-      exact
-        ∀ (U : ProtoTile), ∀ (x : GaussianInt), (U.cells = {x}) → ((BandPackingSymmetryTileAction
-            .conjugate U).cells = {-GaussianReflection x - 1}) ) := by
-  classical
-  intro U x hU
-  exact TileOdometerAssembly.hcellAt1824 U x hU
-
-private theorem hunitValueAt2097 :
-    (by
-      classical
-      exact
-        ∀ (z : GaussianInt), ∀ r ∈ (CurvatureOneOdometer z).domain, (CurvatureOneOdometer
-            z).value ((1 : GaussianInt) - GaussianReflection r) = (CurvatureOneOdometer
-            (GaussianReflection z)).value r + z.im * r.im ) := by
-  classical
-  intro z r hr
-  exact TileOdometerAssembly.hunitValueAt1829 z r hr
-
-private theorem hCAt2104 :
-    (by
-      classical
-      exact
-        ∀ (z : GaussianInt), BandPackingSymmetryCircleAction .conjugate (1, 1 + 2 * z) = (1, 1 +
-            2 * GaussianReflection z) ) := by
-  classical
-  intro z
-  exact TileOdometerAssembly.hCAt1836 z
-
-private theorem hout :
-    (by
-      classical
-      exact
-        ∀ (h : PartialOdometer), ∀ (U : ProtoTile), ∀ (a : BandPackingSymmetry),
-        let P := BandPackingSymmetryPartialOdometerAction
-        (PartialOdometerSlope (BandPackingSymmetryPartialOdometerAction a h) = Option.map
-            (BandPackingSymmetrySlopeAction a U) (PartialOdometerSlope h)) → (∀ (p₀ : ℝ × ℝ),
-            (PartialOdometerSlope h = some p₀) → (PartialOdometerSlope (P a h) = some
-            (BandPackingSymmetrySlopeAction a U p₀))) ) := by
-  classical
-  intro h U a P houterSlope p₀ hp₀
-  exact TileOdometerAssembly.hout h U a
-          houterSlope p₀ hp₀
-
-private theorem hchild :
-    (by
-      classical
-      exact
-        ∀ (S : Fin (3 : ℕ) → Bool → ProtoTile), ∀ (hs : Fin (3 : ℕ) → Bool → PartialOdometer), ∀
-            (a : BandPackingSymmetry),
-        let P := BandPackingSymmetryPartialOdometerAction
-        ∀ (e : Fin (3 : ℕ) × Bool ≃ Fin (3 : ℕ) × Bool), ∀ (i : Fin (3 : ℕ)), ∀ (s : Bool),
-        let p := e.symm (i, s)
-        (PartialOdometerSlope (BandPackingSymmetryPartialOdometerAction a (hs p.1 p.2)) =
-            Option.map (BandPackingSymmetrySlopeAction a (S p.1 p.2)) (PartialOdometerSlope (hs
-            p.1 p.2))) → (∀ (pᵢ : ℝ × ℝ), (PartialOdometerSlope (hs p.1 p.2) = some pᵢ) →
-            (PartialOdometerSlope (P a (hs p.1 p.2)) = some (BandPackingSymmetrySlopeAction a (S
-            p.1 p.2) pᵢ))) ) := by
-  classical
-  intro S hs a P e i s p hchildSlope pᵢ hpᵢ
-  exact TileOdometerAssembly.hchild S hs a e i s hchildSlope pᵢ hpᵢ
-
-private theorem hslopeCov :
-    (by
-      classical
-      exact
-        ∀ (U : ProtoTile), ∀ (q : Fin (4 : ℕ) → CircleCoordinates), ∀ (S : Fin (3 : ℕ) → Bool →
-            ProtoTile), ∀ (a : BandPackingSymmetry),
-        let Q := BandPackingSymmetryQuadrupleAction
-        let q' := Q a q
-        ∀ (e : Fin (3 : ℕ) × Bool ≃ Fin (3 : ℕ) × Bool), ∀ (negative : Bool), ∀ (i : Fin (3 :
-            ℕ)), ∀ (s : Bool),
-        let p := e.symm (i, s)
-        ∀ (p₀ : ℝ × ℝ), ∀ (pᵢ : ℝ × ℝ), ((if s = true then (1 : ℝ) else (-1 : ℝ)) = (if ((e.symm
-            : Fin (3 : ℕ) × Bool → Fin (3 : ℕ) × Bool) (i, s)).2 = true then (1 : ℝ) else (-1 :
-            ℝ)) * if negative = true then (-1 : ℝ) else (1 : ℝ)) → (
-        let v0 := BandVectors.1 (q ((p.1 + 2).succ)) (q ((p.1 + 1).succ))
-        let u0 := BandVectors.2 (q ((p.1 + 2).succ)) (q ((p.1 + 1).succ))
-        let vmix := v0 - GaussianQuarterTurn v0
-        let umix := u0 + GaussianQuarterTurn u0
-        let scale : ℝ := (if p.2 = true then (1 : ℝ) else -1) * (1 / 2)
-        (TileCentroid (BandPackingSymmetryTileAction a (S p.1 p.2)) - TileCentroid
-            (BandPackingSymmetryTileAction a U) = scale • GaussianRealPoint
-            (BandPackingSymmetryAffineVectorAction a (vmix, umix)).1 ∧
-            BandPackingSymmetrySlopeAction a (S p.1 p.2) pᵢ - BandPackingSymmetrySlopeAction a U
-            p₀ = scale • GaussianRealPoint (BandPackingSymmetryAffineVectorAction a (vmix,
-            umix)).2) → ((BandVectors.2 (BandPackingSymmetryQuadrupleAction a q (i + (2 : Fin (3
-            : ℕ))).succ) (BandPackingSymmetryQuadrupleAction a q (i + (1 : Fin (3 : ℕ))).succ) +
-            GaussianQuarterTurn (BandVectors.2 (BandPackingSymmetryQuadrupleAction a q (i + (2 :
-            Fin (3 : ℕ))).succ) (BandPackingSymmetryQuadrupleAction a q (i + (1 : Fin (3 :
-            ℕ))).succ)) = (if negative = true then (-1 : GaussianInt) else (1 : GaussianInt)) *
-            (BandPackingSymmetryAffineVectorAction a ((fun (r : Bool) (z : GaussianInt ×
-            GaussianInt) => if r = true then (z.1 + GaussianQuarterTurn z.1, z.2 -
-            GaussianQuarterTurn z.2) else (z.1 - GaussianQuarterTurn z.1, z.2 +
-            GaussianQuarterTurn z.2)) false (BandVectors.1 (q (((e.symm : Fin (3 : ℕ) × Bool →
-            Fin (3 : ℕ) × Bool) (i, s)).1 + (2 : Fin (3 : ℕ))).succ) (q (((e.symm : Fin (3 : ℕ) ×
-            Bool → Fin (3 : ℕ) × Bool) (i, s)).1 + (1 : Fin (3 : ℕ))).succ), BandVectors.2 (q
-            (((e.symm : Fin (3 : ℕ) × Bool → Fin (3 : ℕ) × Bool) (i, s)).1 + (2 : Fin (3 :
-            ℕ))).succ) (q (((e.symm : Fin (3 : ℕ) × Bool → Fin (3 : ℕ) × Bool) (i, s)).1 + (1 :
-            Fin (3 : ℕ))).succ)))).2) → (BandPackingSymmetrySlopeAction a (S p.1 p.2) pᵢ -
-            BandPackingSymmetrySlopeAction a U p₀ = ((if s = true then (1 : ℝ) else -1) * (1 /
-            2)) • GaussianRealPoint (BandVectors.2 (q' ((i + 2).succ)) (q' ((i + 1).succ)) +
-            GaussianQuarterTurn (BandVectors.2 (q' ((i + 2).succ)) (q' ((i + 1).succ))))))) ) := by
-  classical
-  intro U q S a Q q' e negative i s p p₀ pᵢ hsign v0 u0 vmix umix scale hdiffTransport hsum
-  exact TileOdometerAssembly.hslopeCov U q S a e
-                      negative i s p₀ pᵢ hsign hdiffTransport hsum
 
 end TileOdometerConclusion
 
@@ -2104,9 +1788,9 @@ private theorem unitSymmetry :
           r ∈ (CurvatureOneOdometer z).domain) :
           (CurvatureOneOdometer (z + ⟨wr, wi⟩)).value r =
             (CurvatureOneOdometer z).value r + wi * r.re * r.im :=
-                TileOdometerConclusion.hcurvAt2025 z wr wi r hr
+                TileOdometerSymmetryProof.hcurvAt595 z wr wi r hr
       have hC : BandPackingSymmetryCircleAction (.shift ⟨wr, wi⟩)
-          (1, 1 + 2 * z) = (1, 1 + 2 * (z + ⟨wr, wi⟩)) := TileOdometerConclusion.hCAt2030 z
+          (1, 1 + 2 * z) = (1, 1 + 2 * (z + ⟨wr, wi⟩)) := TileOdometerSymmetryProof.hCAt611 z
               wr wi
       rw [hC]
       simp only [BandPackingSymmetryTileAction]
@@ -2146,7 +1830,7 @@ private theorem unitSymmetry :
           {GaussianQuarterTurn x - 1} := TileOdometerSymmetryProof.hcellAt653 U x hU
       have hdomain := TileOdometerSymmetryProof.hdomainAt657 U k hdom
       have hdomainUnit := TileOdometerSymmetryProof.hdomainUnitAt664 z
-      have hunitValue := TileOdometerConclusion.hunitValueAt2071 z
+      have hunitValue := TileOdometerSymmetryProof.hunitValueAt682 z
       have hinverse := TileOdometerSymmetryProof.hinverseAt694 v
       have himage := TileOdometerSymmetryProof.himageAt698 k
       have htrans' := TileOdometerSymmetryProof.htrans'At711 k z v a0 b0 hvdom hvval
@@ -2167,17 +1851,17 @@ private theorem unitSymmetry :
       let bk := b0 - z.im * vk.im
       have hcell :
           (BandPackingSymmetryTileAction .conjugate U).cells =
-            {-GaussianReflection x - 1} := TileOdometerConclusion.hcellAt2092 U x hU
+            {-GaussianReflection x - 1} := TileOdometerSymmetryProof.hcellAt753 U x hU
       have hdomain := TileOdometerSymmetryProof.hdomainAt763 U k hdom
       have hdomainUnit := TileOdometerSymmetryProof.hdomainUnitAt787 z
-      have hunitValue := TileOdometerConclusion.hunitValueAt2097 z
+      have hunitValue := TileOdometerSymmetryProof.hunitValueAt805 z
       have hinverse := TileOdometerSymmetryProof.hinverseAt818 v
       have himage := TileOdometerSymmetryProof.himageAt823 k
       have htrans' := TileOdometerSymmetryProof.htrans'At836 k z v a0 b0 hvdom hvval
           hdomainUnit hunitValue hinverse himage
       have hC : BandPackingSymmetryCircleAction .conjugate
           (1, 1 + 2 * z) =
-            (1, 1 + 2 * GaussianReflection z) := TileOdometerConclusion.hCAt2104 z
+            (1, 1 + 2 * GaussianReflection z) := TileOdometerSymmetryProof.hCAt864 z
       rw [hC]
       refine TileOdometer.unit (GaussianReflection z)
         (-GaussianReflection x - 1)
@@ -2226,7 +1910,7 @@ theorem BandPackingSymmetryTileOdometerCovariance
   have tileEmpty := TileOdometerSymmetryProof.tileEmpty
   have zeroLine := TileOdometerSymmetryProof.zeroLine
   have actionForward := TileOdometerSymmetryProof.actionForward
-  have actionDiff := TileOdometerConclusion.actionDiff actionForward
+  have actionDiff := TileOdometerSymmetryProof.actionDiff actionForward
   have lineCov := TileOdometerSymmetryProof.lineCov lineCircle tileEmpty zeroLine
   have circleCurvature := TileOdometerSymmetryProof.circleCurvature
   have extractUnit := TileOdometerSymmetryProof.extractUnit
@@ -2315,11 +1999,11 @@ theorem BandPackingSymmetryTileOdometerCovariance
           rcases hslope p.1 p.2 with hzero | ⟨p₀, pᵢ, hp₀, hpᵢ, hdx, hdy⟩
           · omega
           · have hout : PartialOdometerSlope (P a h) =
-                some (BandPackingSymmetrySlopeAction a U p₀) := TileOdometerConclusion.hout h U a
+                some (BandPackingSymmetrySlopeAction a U p₀) := TileOdometerSymmetryProof.hout h U a
                     houterSlope p₀ hp₀
             have hchild : PartialOdometerSlope (P a (hs p.1 p.2)) =
                 some (BandPackingSymmetrySlopeAction a (S p.1 p.2) pᵢ) :=
-                    TileOdometerConclusion.hchild S hs a e i s hchildSlope pᵢ hpᵢ
+                    TileOdometerSymmetryProof.hchild S hs a e i s hchildSlope pᵢ hpᵢ
             have hidx2 : sigma p.1 + 2 = i + 2 := congrArg (fun j : Fin 3 => j + 2) hidx
             have hidx1 : sigma p.1 + 1 = i + 1 := congrArg (fun j : Fin 3 => j + 1) hidx
             have hvecTarget := TileOdometerSymmetryProof.hvecTarget q a e negative hvecAffine i s
@@ -2348,7 +2032,7 @@ theorem BandPackingSymmetryTileOdometerCovariance
                       (BandVectors.2 (q' ((i + 2).succ)) (q' ((i + 1).succ)) +
                         GaussianQuarterTurn
                           (BandVectors.2 (q' ((i + 2).succ))
-                            (q' ((i + 1).succ)))) := TileOdometerConclusion.hslopeCov U q S a e
+                            (q' ((i + 1).succ)))) := TileOdometerSymmetryProof.hslopeCov U q S a e
                                 negative i s p₀ pᵢ hsign hdiffTransport hsum
             refine Or.inr ⟨BandPackingSymmetrySlopeAction a U p₀,
               BandPackingSymmetrySlopeAction a (S p.1 p.2) pᵢ, ?_, ?_, ?_, ?_⟩

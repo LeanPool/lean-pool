@@ -510,16 +510,17 @@ private theorem hUcCentroid :
     (by
       classical
       exact
-        ∀ (P : FordFareyParameter), (BandCircle) → (∀ (u : GaussianInt), (1 < P.q₂) → (∀ (S : Fin
+        ∀ (P : FordFareyParameter),
+        (∀ (u : GaussianInt), (1 < P.q₂) → (∀ (S : Fin
             (3 : ℕ) → Bool → ProtoTile),
-        let U := S 1 false
+        let U := S 1 false;
         ((P.q : Int) = (P.q₁ : Int) + (P.q₂ : Int)) → ((∀ (n : Nat), (0 < n) → (TileCentroid
             (FordTile n) = ((n : Real) / 2, (n : Real) / 2))) → ((TileCentroid U = ((u.re : Real)
             + (P.q₂ : Real) / 2, (u.im : Real) + (P.q₁ : Real) + (P.q₂ : Real) / 2)) → (
-        let Uc := TileTranslation (FordTile P.q₂) (u + ⟨0, P.q₁⟩)
+        let Uc := TileTranslation (FordTile P.q₂) (u + ⟨0, P.q₁⟩);
         TileCentroid Uc = TileCentroid U))))) ) := by
   classical
-  intro P Ci u hcurv S U hqsum fordCentroid hUcenter Uc
+  intro P u hcurv S U hqsum fordCentroid hUcenter Uc
   rw [hUcenter]
   rw [(TileTranslationFormulas _ _).2.2.2.2.1, fordCentroid P.q₂ (by omega)]
   simp [GaussianInt.intCast_re, GaussianInt.intCast_im]
@@ -529,16 +530,17 @@ private theorem hVcCentroid :
     (by
       classical
       exact
-        ∀ (P : FordFareyParameter), (BandCircle) → (∀ (u : GaussianInt), (1 < P.q₂) → (∀ (S₂ :
+        ∀ (P : FordFareyParameter),
+        (∀ (u : GaussianInt), (1 < P.q₂) → (∀ (S₂ :
             Fin (3 : ℕ) → Bool → ProtoTile),
-        let V := S₂ 1 true
+        let V := S₂ 1 true;
         ((P.q : Int) = (P.q₁ : Int) + (P.q₂ : Int)) → ((∀ (n : Nat), (0 < n) → (TileCentroid
             (FordTile n) = ((n : Real) / 2, (n : Real) / 2))) → ((TileCentroid V = ((u.re : Real)
             - (P.q₂ : Real) / 2, (u.im : Real) + 3 * (P.q₂ : Real) / 2)) → (
-        let Vc := TileTranslation (FordTile P.q₂) (u + ⟨-(P.q₂ : Int), P.q₂⟩)
+        let Vc := TileTranslation (FordTile P.q₂) (u + ⟨-(P.q₂ : Int), P.q₂⟩);
         TileCentroid Vc = TileCentroid V))))) ) := by
   classical
-  intro P Ci u hcurv S₂ V hqsum fordCentroid hVcenter Vc
+  intro P u hcurv S₂ V hqsum fordCentroid hVcenter Vc
   rw [hVcenter]
   rw [(TileTranslationFormulas _ _).2.2.2.2.1, fordCentroid P.q₂ (by omega)]
   simp [GaussianInt.intCast_re, GaussianInt.intCast_im]
@@ -972,8 +974,8 @@ theorem P4158T1LargeSecondRestrictions
   have hVcenter := LargeSecondRestrictions.hVcenter P T' u S₂ hoffV rootCentroid' hqreal
   let Uc := TileTranslation (FordTile P.q₂) (u + ⟨0, P.q₁⟩)
   let Vc := TileTranslation (FordTile P.q₂) (u + ⟨-(P.q₂ : Int), P.q₂⟩)
-  have hUcCentroid := LargeSecondRestrictions.hUcCentroid P Ci u hcurv S hqsum fordCentroid hUcenter
-  have hVcCentroid := LargeSecondRestrictions.hVcCentroid P Ci u hcurv S₂ hqsum fordCentroid
+  have hUcCentroid := LargeSecondRestrictions.hUcCentroid P u hcurv S hqsum fordCentroid hUcenter
+  have hVcCentroid := LargeSecondRestrictions.hVcCentroid P u hcurv S₂ hqsum fordCentroid
       hVcenter
   have hQrec := FordTileRecursiveIdentification Q
   have hQcircle : FordCircleCoordinate Q.p Q.q = Ci.1.1 := by

@@ -221,61 +221,17 @@ private theorem hsmallT1 :
     (by
       classical
       exact
-        ∀ (q : Fin (4 : ℕ) → CircleCoordinates), ∀ (r : Fin (3 : ℕ)), ∀ (g : BandPackingSymmetry),
-        let qrot : Fin 4 → CircleCoordinates :=
-          ![q 0, q r.succ, q (r + 1).succ, q (r + 2).succ]
-        let qbar := BandPackingSymmetryQuadrupleAction g qrot
         ∀ (q' : Fin 4 → CircleCoordinates), ∀ (T' : ProtoTile), ∀ (S' : Fin 3 → Bool →
             ProtoTile), ProperBandQuadruple q' → BandPrototile (q' 0) T' → (∀ i, ∀ s,
             BandSubtileOccurrence q' T' i s (S' i s)) → (∀ z, z ∈ T'.cells ↔ ∃ i s, z ∈ (S' i
-            s).cells) → Int.toNat (q' 0).1 < Int.toNat (qbar 0).1 → LatticeTile T' ∧ TileArea T'
+            s).cells) →
+        LatticeTile T' ∧ TileArea T'
             = Int.toNat (q' 0).1 ∧ ∀ i, ∀ s, LatticeTile (TileCellComplement T' (S' i s)) ∧
             TileTouching (TileCellComplement T' (S' i s)) (S' i s) ) := by
   classical
-  intro q r g qrot qbar q' T' S' hq' hT' hocc hcells _
+  intro q' T' S' hq' hT' hocc hcells
   have hI := BandTileSimultaneousInduction q' hq' T' hT'
   exact ⟨hI.1, hI.2.1, hI.2.2.1 S' hocc hcells⟩
-
-private theorem hsmallT4 :
-    (by
-      classical
-      exact
-        ∀ (q : Fin (4 : ℕ) → CircleCoordinates), ∀ (r : Fin (3 : ℕ)), ∀ (g : BandPackingSymmetry),
-        let qrot : Fin 4 → CircleCoordinates :=
-          ![q 0, q r.succ, q (r + 1).succ, q (r + 2).succ]
-        let qbar := BandPackingSymmetryQuadrupleAction g qrot
-        ∀ (q' : Fin 4 → CircleCoordinates), ∀ (T' : ProtoTile), ∀ (U : ProtoTile),
-            ProperBandQuadruple q' → BandPrototile (q' 0) T' → Int.toNat (q' 0).1 < Int.toNat
-            (qbar 0).1 → 1 < (q' 0).1 → ∀ i : Fin 3, BandPrototile (q' i.succ) U → TileCentroid U
-            - TileCentroid T' = (1 / 2 : Real) • (GaussianRealPoint (BandVectors.1 (q' i.succ)
-            (q' 0)) + GaussianRealPoint (BandVectors.1 (q' 0) (q' i.succ))) → TouchingTriple T'
-            (TileTranslation T' (BandVectors.1 (q' i.succ) (q' 0))) U ) := by
-  classical
-  intro q r g qrot qbar q' T' U hq' hT' _ hlarge i hU hcentU
-  exact (BandTileSimultaneousInduction q' hq' T' hT').2.2.2.2.2.1
-    hlarge i U hU hcentU
-
-private theorem hsmallT5 :
-    (by
-      classical
-      exact
-        ∀ (q : Fin (4 : ℕ) → CircleCoordinates), ∀ (r : Fin (3 : ℕ)), ∀ (g : BandPackingSymmetry),
-        let qrot : Fin 4 → CircleCoordinates :=
-          ![q 0, q r.succ, q (r + 1).succ, q (r + 2).succ]
-        let qbar := BandPackingSymmetryQuadrupleAction g qrot
-        ∀ (q' : Fin 4 → CircleCoordinates), ∀ (T' : ProtoTile), ∀ (U : ProtoTile), ∀ (V :
-            ProtoTile), ProperBandQuadruple q' → BandPrototile (q' 0) T' → Int.toNat (q' 0).1 <
-            Int.toNat (qbar 0).1 → ∀ i : Fin 3, BandPrototile (q' i.succ) U → BandPrototile (q'
-            ((i + 1).succ)) V → TileCentroid U - TileCentroid T' = (1 / 2 : Real) •
-            (GaussianRealPoint (BandVectors.1 (q' i.succ) (q' 0)) + GaussianRealPoint
-            (BandVectors.1 (q' 0) (q' i.succ))) → TileCentroid V - TileCentroid T' = (1 / 2 :
-            Real) • (GaussianRealPoint (BandVectors.1 (q' ((i + 1).succ)) (q' 0)) -
-            GaussianRealPoint (BandVectors.1 (q' 0) (q' ((i + 1).succ)))) → TouchingTriple T' U V
-            ) := by
-  classical
-  intro q r g qrot qbar q' T' U V hq' hT' _ i hU hV hcentU hcentV
-  exact (BandTileSimultaneousInduction q' hq' T' hT').2.2.2.2.2.2.1
-    i U V hU hV hcentU hcentV
 
 private theorem hadjbar :
     (by
@@ -557,17 +513,24 @@ theorem BandOrderedGeneralRightNormalizationCertificateExists
     TileOdometerBandPrototile _ _ _ hONbar
   have hTind := BandTileSimultaneousInduction qbar hqbar Tbar hTbarBand
   have hNind := BandTileSimultaneousInduction qbar hqbar Nbar hNbarBand
-  have hsmallT1 := RightNormalizationGeometry.hsmallT1 q r g
   have hsmallT2 (D : CircleCoordinates) (U : ProtoTile) (hU : BandPrototile D U)
       (_ : Int.toNat D.1 < Int.toNat (qbar 0).1) : QuarterTurnSymmetric U :=
     BandPrototileQuarterTurn.symmetry D U hU
-  have hsmallT4 := RightNormalizationGeometry.hsmallT4 q r g
-  have hsmallT5 := RightNormalizationGeometry.hsmallT5 q r g
   have hqbarPos : 0 < (qbar 0).1 := (ProperBandCurvatureStructure qbar hqbar).1
   let Cbar : BandCircle :=
     ⟨⟨qbar 0, ⟨Or.inl hqbarPos, ⟨qbar, hqbar.1, ⟨0, rfl⟩⟩⟩⟩, hqbarPos⟩
   obtain ⟨layout⟩ := BandOrderedGeneralLayout qbar cfg Cbar
-    rfl Nbar hNbarBand hsmallT1 hsmallT2 hsmallT4 hsmallT5
+    rfl Nbar hNbarBand (by
+      intro q' T' S' hq' hT' hocc hcells retainedInput7
+      exact RightNormalizationGeometry.hsmallT1 q' T' S' hq' hT' hocc hcells) hsmallT2
+    (by
+      intro q' T' U hq' hT' _ hlarge i hU hcentU
+      exact (BandTileSimultaneousInduction q' hq' T' hT').2.2.2.2.2.1
+        hlarge i U hU hcentU)
+    (by
+      intro q' T' U V hq' hT' _ i hU hV hcentU hcentV
+      exact (BandTileSimultaneousInduction q' hq' T' hT').2.2.2.2.2.2.1
+        i U V hU hV hcentU hcentV)
   obtain ⟨pieces, functions, hrootBand, hpieceOdometer, hpieceCells,
       hpieceFootprint, hpieceCentroid, hfunctionDomains,
       hfunctionRestriction, hfunctionCompatibility, hpieceSlope⟩ :=

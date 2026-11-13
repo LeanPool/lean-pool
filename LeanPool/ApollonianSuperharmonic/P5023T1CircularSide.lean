@@ -454,23 +454,24 @@ private theorem hunitEq :
       exact
         ∀ (L : ℝ), ∀ (q : Fin (4 : ℕ) → CircleCoordinates), ∀ (i : Fin (3 : ℕ)), ∀ (a : Fin (3 :
             ℕ)),
-        let p (a : Fin 4) : ℂ := (q a).2 / ((q a).1 : ℝ)
-        let rad (a : Fin 4) : ℝ := 1 / ((q a).1 : ℝ)
+        let p (a : Fin 4) : ℂ := (q a).2 / ((q a).1 : ℝ);
+        let rad (a : Fin 4) : ℝ := 1 / ((q a).1 : ℝ);
         (0 < (q i.succ).1) → (
-        let A : ℂ := p i.succ
-        ((q i.succ).1 ≠ 0) → (
+        let A : ℂ := p i.succ;
+        (
         let V (a : Fin 3) : ℂ :=
         if (q a.succ).1 = 0 then
         ⟨if (q a.succ).2 = -1 then L else L + 2, A.im⟩
         else
         ((q i.succ).2 + (q a.succ).2 : ℂ) /
-        (((q i.succ).1 : ℝ) + ((q a.succ).1 : ℝ))
-        ((0 : ℤ) < (q a.succ).1) → ((0 < (q a.succ).1) → ((V a - A = ((q a.succ).1 : ℂ) / ((((q
+        (((q i.succ).1 : ℝ) + ((q a.succ).1 : ℝ));
+        ((0 : ℤ) < (q a.succ).1) → (
+        ((V a - A = ((q a.succ).1 : ℂ) / ((((q
         i.succ).1 + (q a.succ).1 : ℤ) : ℂ)) * (p a.succ - A)) → ((rad i.succ + rad a.succ = (((q
         i.succ).1 + (q a.succ).1 : ℤ) : ℝ) / (((q i.succ).1 * (q a.succ).1 : ℤ) : ℝ)) → ((V a -
         A) / (rad i.succ : ℂ) = (p a.succ - A) / ((rad i.succ + rad a.succ : ℝ) : ℂ))))))) ) := by
   classical
-  intro L q i a p rad hparent A hparne V hapos haposZ hrel hsumRad
+  intro L q i a p rad hparent A V hapos hrel hsumRad
   rw [hrel]
   rw [hsumRad]
   dsimp [rad]
@@ -642,13 +643,12 @@ private theorem hextra :
       classical
       exact
         ∀ (q : Fin (4 : ℕ) → CircleCoordinates), ∀ (i : Fin (3 : ℕ)), ∀ (a : Fin (3 : ℕ)),
-        let p (a : Fin 4) : ℂ := (q a).2 / ((q a).1 : ℝ)
-        let rad (a : Fin 4) : ℝ := 1 / ((q a).1 : ℝ)
-        (dist (p a.succ) (p 0) = rad a.succ + rad 0) → ((0 < (q i.succ).1) → ((0 < rad 0) → ((0 <
+        let rad (a : Fin 4) : ℝ := 1 / ((q a).1 : ℝ);
+        ((0 < (q i.succ).1) → ((0 < rad 0) → ((0 <
         (rad i.succ + rad a.succ) * (rad i.succ + rad 0)) → (0 < (2 * rad i.succ * rad 0) / ((rad
         i.succ + rad a.succ) * (rad i.succ + rad 0)))))) ) := by
   classical
-  intro q i a p rad hchild hparent hR hposden
+  intro q i a rad hparent hR hposden
   exact div_pos (by positivity) hposden
 
 private theorem hid :
@@ -1159,7 +1159,7 @@ theorem P5023T1CircularSide :
                   hapos
         have hunitEq : (V a - A) / (rad i.succ : ℂ) =
             (p a.succ - A) / ((rad i.succ + rad a.succ : ℝ) : ℂ) := CircularSideProof.hunitEq L q
-                i a hparent hparne hapos haposZ hrel hsumRad
+                i a hparent hapos hrel hsumRad
         have hdistParent : ‖p a.succ - A‖ = rad i.succ + rad a.succ :=
             CircularSideProof.hdistParent q i a hcenter
         have hunitNorm : ‖(V a - A) / (rad i.succ : ℂ)‖ = 1 := CircularSideProof.hunitNorm L q i
@@ -1187,7 +1187,7 @@ theorem P5023T1CircularSide :
           have hposden : 0 < (rad i.succ + rad a.succ) * (rad i.succ + rad 0) := by positivity
           have hextra : 0 < (2 * rad i.succ * rad 0) /
               ((rad i.succ + rad a.succ) * (rad i.succ + rad 0)) := CircularSideProof.hextra q i
-                  a hchild hparent hR hposden
+                  a hparent hR hposden
           have hid : (((rad i.succ + rad a.succ) ^ 2 + (rad i.succ + rad 0) ^ 2 -
               (rad a.succ + rad 0) ^ 2) / 2) /
               ((rad i.succ + rad a.succ) * (rad i.succ + rad 0)) =

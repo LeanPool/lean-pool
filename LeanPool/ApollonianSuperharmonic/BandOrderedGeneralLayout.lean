@@ -638,10 +638,10 @@ private theorem commonVertices :
     (by
       classical
       exact
-        ∀ (q : Fin 4 → CircleCoordinates), (BandOrderedGeneralConfiguration q) → ((BandCircle) →
-            (∀ (P : Fin (3 : ℕ) → Bool → ProtoTile), ∀ (Q : Fin (3 : ℕ) → Bool → ProtoTile),
-        let O := Q 0 false
-        (Finset GaussianInt) → (((FootprintEdges (TileCellComplement (P 0 true) O) ∩
+        (
+        (∀ (P : Fin (3 : ℕ) → Bool → ProtoTile), ∀ (Q : Fin (3 : ℕ) → Bool → ProtoTile),
+        let O := Q 0 false;
+        (((FootprintEdges (TileCellComplement (P 0 true) O) ∩
             FootprintEdges (P 0 false)).Nonempty) → ((∀ (U : ProtoTile), ∀ (e : Finset
             GaussianInt), (e ∈ FootprintEdges U) → (∀ (x : GaussianInt), (x ∈ e) → (x ∈
             FootprintVertices U))) → (∃ x y : GaussianInt, x ≠ y ∧ x ∈ FootprintVertices
@@ -649,7 +649,7 @@ private theorem commonVertices :
             FootprintVertices (TileCellComplement (P 0 true) O) ∩ FootprintVertices (P 0
             false)))))) ) := by
   classical
-  intro q cfg C₀ P Q O R abEdge edgeVertex
+  intro P Q O abEdge edgeVertex
   obtain ⟨e, heA, heB⟩ := abEdge
   have hc : e.card = 2 := by
     obtain ⟨z, _, h⟩ := heA
@@ -1099,8 +1099,8 @@ theorem BandOrderedGeneralLayout
     (hQcells 1 true) (hScells 2 false) (hQcells 2 true) (hScells 1 false)
     (qne 1 true (Or.inl rfl)) (sne 2 false (Or.inr rfl))
     (qne 2 true (Or.inr rfl)) (sne 1 false (Or.inl rfl)) crossO1 crossO2 point1 point2
-    compQ.2 compB.2 central osym isolated arcs (OrderedLayoutGeometry.commonVertices q cfg C₀ P Q
-        R abEdge (OrderedLayoutGeometry.edgeVertex))
+    compQ.2 compB.2 central osym isolated arcs
+    (OrderedLayoutGeometry.commonVertices P Q abEdge OrderedLayoutGeometry.edgeVertex)
   obtain ⟨M, mlattice, mtiles, madj, me, mpoints, mvertices, mreps⟩ :=
     BandModifiedPeriodicComplex P O u v L K (OrderedLayoutGeometry.modifiedDisks q P Q pdisks
         compQ) hpartition hOA hOB
