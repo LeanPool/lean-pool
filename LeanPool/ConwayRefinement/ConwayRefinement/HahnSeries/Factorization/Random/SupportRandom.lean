@@ -132,7 +132,7 @@ theorem IsMutuallySupportRandom.truncationsIndependent {ι : Type} {b : ι → S
     apply hinjL
     rw [map_add, map_add, L.linearCombination_indicatorFinsupp_of_mem ℚ hβL,
       L.linearCombination_indicatorFinsupp_of_mem ℚ hβ'L, hcomb k₁, hcomb k₀, hβ, hβ']
-    ring
+    ac_rfl
   -- Evaluate at `β`: the right side must be nonzero there.
   have hpos : 0 < (L.indicatorFinsupp ℚ β + L.indicatorFinsupp ℚ (γ k₁)) ⟨β, hβL⟩ := by
     rw [Finsupp.add_apply, L.indicatorFinsupp_apply_self hβL]

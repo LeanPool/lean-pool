@@ -16,9 +16,7 @@ public import Mathlib.Data.Finsupp.Weight
 public import LeanPool.ConwayRefinement.ConwayRefinement.Algebra.Valuation.DegreeWeightedPolynomial
 public import LeanPool.ConwayRefinement.ConwayRefinement.Algebra.MvPolynomial.BaseChange
 
-import Mathlib.Algebra.MvPolynomial.Rename
-import Mathlib.RingTheory.MvPolynomial.Tower
-import Mathlib.Algebra.MvPolynomial.Basic
+
 
 /-!
 # The series ring over the finite-support series and `RV̂ ≅ P̂ ⊗_K K_fin`

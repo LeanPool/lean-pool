@@ -11,7 +11,7 @@ public import LeanPool.ConwayRefinement.ConwayRefinement.Order.Filter.FunAtZeroM
 public import LeanPool.ConwayRefinement.ConwayRefinement.Order.Filter.FunAtZeroMinus.Pointwise
 public import LeanPool.ConwayRefinement.ConwayRefinement.SetTheory.Ordinal.FinitePart
 
-import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.OrdinalValue.OrdinalValueSubmultiplicative
+
 
 /-!
 # The map `∂ : P_{α+1} → Fun_{0⁻}(P_α)`

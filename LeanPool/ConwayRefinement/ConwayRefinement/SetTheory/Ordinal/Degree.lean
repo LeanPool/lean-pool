@@ -8,7 +8,6 @@ module
 public import LeanPool.ConwayRefinement.CombinatorialGames.NatOrdinal.Pow
 public import Mathlib.SetTheory.Ordinal.Exponential
 
-import Mathlib.Algebra.Order.SuccPred
 import Mathlib.SetTheory.Ordinal.Principal
 
 /-!

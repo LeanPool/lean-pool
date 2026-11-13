@@ -13,10 +13,8 @@ public import Mathlib.Algebra.MvPolynomial.Eval
 public import Mathlib.LinearAlgebra.Basis.VectorSpace
 public import Mathlib.RingTheory.Ideal.Quotient.Operations
 
-import LeanPool.ConwayRefinement.ConwayRefinement.Algebra.Valuation.AssociatedGradedValuation
 import LeanPool.ConwayRefinement.ConwayRefinement.Algebra.Valuation.DegreeAssociatedGradedDomain
 import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.OrdinalValue.Statements.OrdinalValueDegree
-import Mathlib.LinearAlgebra.Projection
 
 /-!
 # The internal grading of `P̂`, its finite-degree part `P̂_{<ω}` and the quotient `P̂/I`

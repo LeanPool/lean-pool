@@ -19,8 +19,6 @@ public import LeanPool.ConwayRefinement.ConwayRefinement.Surreal.RealArchimedean
 
 import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.CardinalTruncationIrreducible
 import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.DomainEmbedding
-import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.DomainEquiv
-import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.IntegerPart.ReducedCharacterization
 import LeanPool.ConwayRefinement.ConwayRefinement.Surreal.HahnSeries.DegreeTransfer
 
 /-!

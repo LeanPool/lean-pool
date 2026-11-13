@@ -614,7 +614,7 @@ theorem injectiveAt_of_forall_lt [CharZero K] (hgz : GradeZeroScalars A)
     rw [Finset.sum_comm]
     refine Finset.sum_congr rfl fun t ht ↦ ?_
     rw [hsum' t ht, Finset.sum_mul]
-    exact Finset.sum_congr rfl fun b _ ↦ by ring
+    exact Finset.sum_congr rfl fun b _ ↦ by ac_rfl
   -- the evaluated syzygy, homogeneous of degree `δ`
   obtain ⟨u, hu'⟩ : ∃ u : ↥B → R, ∀ b, u b = aeval x (W b) := ⟨_, fun _ ↦ rfl⟩
   have hsyz : ∑ b : ↥B, aeval x (c b) * u b = 0 := by

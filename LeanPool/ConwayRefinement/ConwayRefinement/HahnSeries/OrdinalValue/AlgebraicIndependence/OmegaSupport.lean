@@ -9,10 +9,7 @@ module
 import LeanPool.ConwayRefinement.ConwayRefinement.Blueprint
 public import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.OrdinalValue.AlgebraicIndependence.DerivAt
 public import LeanPool.ConwayRefinement.ConwayRefinement.SetTheory.Ordinal.SetOrderType
-import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.OrdinalValue.Germ
-import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.OrdinalValue.OrdinalValueDegree
 import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.PrincipalAddition
-import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.OrderType
 import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.OrdinalValue.AlgebraicIndependence.DerivAtInjective
 
 /-!

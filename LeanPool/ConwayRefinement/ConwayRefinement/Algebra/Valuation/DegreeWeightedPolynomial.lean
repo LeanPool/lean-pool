@@ -9,8 +9,7 @@ public import LeanPool.ConwayRefinement.ConwayRefinement.Algebra.Valuation.Degre
 public import LeanPool.ConwayRefinement.ConwayRefinement.Algebra.MvPolynomial.WeightedTotalDegree
 public import Mathlib.Algebra.MvPolynomial.Eval
 
-import Mathlib.Algebra.BigOperators.Ring.Finset
-import Mathlib.Algebra.BigOperators.Finsupp.Basic
+
 
 /-!
 # The degree of a polynomial in elements with independent initial forms

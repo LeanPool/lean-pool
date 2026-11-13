@@ -7,7 +7,11 @@ module
 
 public import LeanPool.ConwayRefinement.ConwayRefinement.SetTheory.Ordinal.SuccessorFactorization
 
-import Mathlib.Tactic.NormNum
+import Mathlib.Data.Rat.Cast.Order
+import Mathlib.Tactic.NormNum.Abs
+import Mathlib.Tactic.NormNum.DivMod
+import Mathlib.Tactic.NormNum.OfScientific
+import Mathlib.Tactic.NormNum.Pow
 
 /-!
 # API checks for successor-exponent factorisation

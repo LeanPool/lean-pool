@@ -8,7 +8,7 @@ module
 public import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.OrdinalValue.Germ
 public import LeanPool.ConwayRefinement.CombinatorialGames.NatOrdinal.Basic
 
-import Mathlib.Tactic.Abel
+
 
 /-!
 # Berarducci's ordinal value

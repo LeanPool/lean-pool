@@ -11,7 +11,6 @@ public import LeanPool.ConwayRefinement.ConwayRefinement.SetTheory.Ordinal.Finit
 
 import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.OrdinalValue.OrdinalValueSubmultiplicative
 import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.OrdinalValue.OrdinalValueImage
-import Mathlib.Topology.Instances.Real.Lemmas
 
 /-!
 # The Leibniz remainder of a product near zero

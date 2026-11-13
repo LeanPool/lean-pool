@@ -12,11 +12,6 @@ public import LeanPool.ConwayRefinement.ConwayRefinement.Examples.OmnificInteger
 
 public import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.Factorization.DegreeTwo.DegreeTwoExample
 import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.CharZero
-import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.NonpositiveCoefficientMap
-import LeanPool.ConwayRefinement.ConwayRefinement.SetTheory.Ordinal.Degree
-import LeanPool.ConwayRefinement.ConwayRefinement.Surreal.ArchimedeanAssumptions
-import LeanPool.ConwayRefinement.ConwayRefinement.Surreal.HahnSeries.DegreeTransfer
-import LeanPool.ConwayRefinement.ConwayRefinement.Surreal.HahnSeries.IntegerPart
 import LeanPool.ConwayRefinement.ConwayRefinement.Surreal.HahnSeries.RealLeadingSplit
 
 /-!

@@ -7,9 +7,11 @@ module
 
 public import LeanPool.ConwayRefinement.ConwayRefinement.SetTheory.Ordinal.AdditivelyPrincipal
 
-import LeanPool.ConwayRefinement.CombinatorialGames.NatOrdinal.Pow
-import Mathlib.Algebra.Order.SuccPred
-import Mathlib.Tactic.NormNum
+import Mathlib.Data.Rat.Cast.Order
+import Mathlib.Tactic.NormNum.Abs
+import Mathlib.Tactic.NormNum.DivMod
+import Mathlib.Tactic.NormNum.OfScientific
+import Mathlib.Tactic.NormNum.Pow
 
 /-!
 # Multiplicatively principal ordinal factors

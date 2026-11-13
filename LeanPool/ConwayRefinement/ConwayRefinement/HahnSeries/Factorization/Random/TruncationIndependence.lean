@@ -7,8 +7,7 @@ module
 
 public import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.Factorization.Random.HereditaryIndependence
 
-import Mathlib.Data.Finset.Lattice.Fold
-import Mathlib.Data.Finset.Max
+
 
 /-!
 # Hereditary `rv_J`-independence from the independence of truncations

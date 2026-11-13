@@ -10,8 +10,12 @@ public import LeanPool.ConwayRefinement.ConwayRefinement.Standalone.Mathlib.Supp
 public import LeanPool.ConwayRefinement.ConwayRefinement.Standalone.CombinatorialGames.ConwayRefinement
 public import LeanPool.ConwayRefinement.ConwayRefinement.Standalone.CombinatorialGames.Support.ConwayRefinementConsequences
 public import LeanPool.ConwayRefinement.CombinatorialGames.Game.Functor
-import Mathlib.Tactic.Linarith
 import LeanPool.ConwayRefinement.ConwayRefinement.Standalone.CombinatorialGames.ConwayRefinementProof
+import Mathlib.Data.Rat.Cast.Order
+import Mathlib.Tactic.Linarith.Frontend
+import Mathlib.Tactic.NormNum.Abs
+import Mathlib.Tactic.NormNum.DivMod
+import Mathlib.Tactic.NormNum.OfScientific
 
 /-! # Inline Conway Refinement Proof -/
 

@@ -8,7 +8,6 @@ module
 public import LeanPool.ConwayRefinement.ConwayRefinement.Algebra.GeometricIntegrality
 
 import Mathlib.Algebra.MvPolynomial.Division
-import Mathlib.RingTheory.TensorProduct.Maps
 import Mathlib.RingTheory.TensorProduct.MvPolynomial
 
 /-!

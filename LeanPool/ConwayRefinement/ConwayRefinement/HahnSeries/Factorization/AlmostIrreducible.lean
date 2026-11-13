@@ -10,7 +10,7 @@ public import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.RealSupportS
 public import Mathlib.Algebra.Group.Irreducible.Defs
 public import Mathlib.GroupTheory.Divisible
 
-import Mathlib.Algebra.GroupWithZero.Divisibility
+
 
 /-!
 # Almost-irreducible Hahn series

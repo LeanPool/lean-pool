@@ -9,9 +9,8 @@ public import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.OrdinalValue
 public import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.FiniteSupportMonoidAlgebra
 
 import LeanPool.ConwayRefinement.ConwayRefinement.Algebra.MonoidAlgebra.SingleZeroFactors
-import LeanPool.ConwayRefinement.ConwayRefinement.Algebra.Valuation.AssociatedGradedDivisibility
-import Mathlib.Algebra.Algebra.Tower
 import Mathlib.RingTheory.TensorProduct.MonoidAlgebra
+import LeanPool.ConwayRefinement.ConwayRefinement.Algebra.Valuation.DegreeAssociatedGradedDomain
 
 /-!
 # The degree-graded ring as a monoid algebra

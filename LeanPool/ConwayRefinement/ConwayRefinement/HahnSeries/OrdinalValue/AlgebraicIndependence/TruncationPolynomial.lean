@@ -11,7 +11,6 @@ public import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.OrdinalValue
 public import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.OrdinalValue.Convolution
 public import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.OrdinalValue.TruncationDrop
 public import LeanPool.ConwayRefinement.ConwayRefinement.Algebra.MvPolynomial.OrdinalExpansion
-import Mathlib.Topology.Order.LeftRightNhds
 
 /-!
 # The polynomial of a translated truncation, and the convolution formula read in polynomials

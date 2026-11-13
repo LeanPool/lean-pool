@@ -7,7 +7,7 @@ module
 
 public import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.Factorization.InfiniteSupport
 
-import Mathlib.Algebra.GroupWithZero.Associated
+
 
 /-!
 # Uniqueness of the finite-support factor

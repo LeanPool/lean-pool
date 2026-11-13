@@ -5,9 +5,10 @@ Authors: Violeta Hernández Palacios
 -/
 module
 
+
 public import LeanPool.ConwayRefinement.CombinatorialGames.Game.IGame
 
-meta import LeanPool.ConwayRefinement.CombinatorialGames.Tactic.Register
+import LeanPool.ConwayRefinement.CombinatorialGames.Tactic.Register
 
 /-!
 # Tactic for game inequalities

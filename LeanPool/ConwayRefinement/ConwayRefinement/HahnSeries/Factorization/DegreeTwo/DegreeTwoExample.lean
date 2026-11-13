@@ -10,9 +10,6 @@ public import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.Factorizatio
 public import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.NonpositiveCoefficientMap
 import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.TruncationIntegerPartPrimal
 import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.Domain
-import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.OrderType
-import Mathlib.Order.Prod.Lex.Basic
-import Mathlib.SetTheory.Ordinal.Arithmetic
 
 /-!
 # An explicit PS06 degree-two irreducible

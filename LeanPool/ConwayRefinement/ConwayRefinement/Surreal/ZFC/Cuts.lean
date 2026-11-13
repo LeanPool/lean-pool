@@ -9,8 +9,7 @@ public import LeanPool.ConwayRefinement.ConwayRefinement.Surreal.ZFC.Basic
 public import LeanPool.ConwayRefinement.CombinatorialGames.Surreal.Basic
 public import Mathlib.Logic.Small.Set
 
-import LeanPool.ConwayRefinement.CombinatorialGames.Game.Basic
-import Mathlib.Data.Set.Image
+
 
 /-!
 # Small Conway cuts of class-coded surreal values

@@ -7,7 +7,7 @@ module
 
 public import LeanPool.ConwayRefinement.ConwayRefinement.SetTheory.Ordinal.AdditivelyPrincipal
 
-import Mathlib.Data.List.Sort
+
 
 /-!
 # Number of terms in an uncompressed Cantor normal form

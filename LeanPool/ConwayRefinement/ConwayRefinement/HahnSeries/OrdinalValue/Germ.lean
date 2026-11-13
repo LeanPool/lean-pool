@@ -8,7 +8,7 @@ module
 public import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.NegativeMonomialIdeal
 public import Mathlib.RingTheory.Ideal.Quotient.Defs
 
-import Mathlib.Algebra.Group.Subgroup.Lattice
+
 
 /-!
 # Berarducci germs of nonpositive real Hahn series

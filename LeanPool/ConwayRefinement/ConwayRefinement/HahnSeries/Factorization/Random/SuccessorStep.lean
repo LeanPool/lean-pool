@@ -11,9 +11,6 @@ public import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.OrdinalValue
 public import LeanPool.ConwayRefinement.ConwayRefinement.LinearAlgebra.FiniteSpanRelation
 
 import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.OrdinalValue.ResidualPointCofinality
-import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.OrdinalValue.OrdinalValueImage
-import Mathlib.Order.ConditionallyCompleteLattice.Finset
-import Mathlib.Topology.Instances.Real.Lemmas
 
 /-!
 # The successor step `(*)_α ⇒ (*)_{α+1}` and `(*)_n` for finite `n`

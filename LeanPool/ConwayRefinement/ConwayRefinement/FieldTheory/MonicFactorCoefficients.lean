@@ -76,7 +76,7 @@ theorem exists_scalar_of_mul_eq_map
     rw [show algebraMap K L P.leadingCoeff⁻¹ = (q.leadingCoeff * r.leadingCoeff)⁻¹ by
       rw [← hlc, hPlc, map_inv₀]]
     rw [mul_inv, Polynomial.C_mul]
-    ring
+    ac_rfl
   refine ⟨q.leadingCoeff⁻¹, inv_ne_zero hc, fun j ↦ ?_⟩
   have := coeff_mem_range_of_mul_eq_map hclosed hq1 hr1 hprod j
   rwa [Polynomial.coeff_C_mul] at this

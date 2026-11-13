@@ -9,10 +9,8 @@ public import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.Factorizatio
 
 import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.Factorization.MaximalFiniteMultiplicativity
 import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.Factorization.SeriesMaximalMultiplicativity
-import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.OrdinalValue.Statements.ProductValue
 import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.FiniteSupportUnit
 import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.FiniteSupportGCDProof
-import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.Degree.Statements.Degree
 import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.Factorization.Statements.PrincipalSubringPrimality
 
 /-!

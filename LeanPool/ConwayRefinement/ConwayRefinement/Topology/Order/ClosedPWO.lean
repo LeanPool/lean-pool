@@ -11,8 +11,6 @@ public import LeanPool.ConwayRefinement.ConwayRefinement.Topology.CantorBendixso
 public import LeanPool.ConwayRefinement.ConwayRefinement.Topology.Order.PWOAddition
 public import Mathlib.Topology.Instances.Real.Lemmas
 
-import Mathlib.SetTheory.Ordinal.FixedPoint
-import Mathlib.Topology.Order.Monotone
 import Mathlib.Topology.Order.MonotoneContinuity
 import LeanPool.ConwayRefinement.ConwayRefinement.Blueprint
 

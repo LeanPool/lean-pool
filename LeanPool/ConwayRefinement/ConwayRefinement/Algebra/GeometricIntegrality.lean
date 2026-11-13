@@ -14,9 +14,6 @@ import Mathlib.LinearAlgebra.Basis.VectorSpace
 import Mathlib.Algebra.Field.ULift
 import Mathlib.Algebra.Ring.Hom.InjSurj
 import Mathlib.RingTheory.Flat.Basic
-import Mathlib.RingTheory.Ideal.Quotient.Basic
-import Mathlib.RingTheory.Ideal.Quotient.Operations
-import Mathlib.RingTheory.Localization.FractionRing
 import Mathlib.RingTheory.Polynomial.UniqueFactorization
 import Mathlib.RingTheory.TensorProduct.MvPolynomial
 import Mathlib.RingTheory.TensorProduct.Quotient

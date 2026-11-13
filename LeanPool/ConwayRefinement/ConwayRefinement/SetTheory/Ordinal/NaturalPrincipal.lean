@@ -9,7 +9,7 @@ public import LeanPool.ConwayRefinement.CombinatorialGames.NatOrdinal.Pow
 public import LeanPool.ConwayRefinement.ConwayRefinement.SetTheory.Ordinal.MultiplicativelyPrincipal
 
 import LeanPool.ConwayRefinement.ConwayRefinement.SetTheory.Ordinal.Degree
-import Mathlib.Tactic.Ring
+import Mathlib.Tactic.Ring.RingNF
 
 /-!
 # Principality of the natural operations
@@ -127,7 +127,7 @@ theorem naturalMul_mul_lt_of_lt {ρ₁ ρ₂ π₁ π₂ α₁ α₂ : NatOrdina
     simpa using NatOrdinal.of.le_iff_le.mpr (NatOrdinal.omul_le_mul' ρ₂.val α₂.val)
   calc NatOrdinal.of (ρ₁.val * α₁.val) * NatOrdinal.of (ρ₂.val * α₂.val)
       ≤ (ρ₁ * α₁) * (ρ₂ * α₂) := mul_le_mul' h₁ h₂
-    _ = (ρ₁ * ρ₂) * (α₁ * α₂) := by ring
+    _ = (ρ₁ * ρ₂) * (α₁ * α₂) := by ac_rfl
     _ < (ρ₁ * ρ₂) * π₂ := by
         refine mul_lt_mul_of_pos_left ?_ hρ
         exact mul_lt_of_isMultiplicativelyPrincipal hmp (hα₁.trans_le hπ) hα₂

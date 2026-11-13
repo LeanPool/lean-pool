@@ -7,8 +7,9 @@ module
 
 public import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.OrdinalValue.Convolution
 
-import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.OrdinalValue.ResidualPointWellOrdered
-import Mathlib.Topology.Instances.Real.Lemmas
+import Mathlib.Data.EReal.Operations
+import Mathlib.Topology.MetricSpace.Bounded
+import Mathlib.Topology.Order.T5
 
 /-!
 # The multi-factor convolution formula

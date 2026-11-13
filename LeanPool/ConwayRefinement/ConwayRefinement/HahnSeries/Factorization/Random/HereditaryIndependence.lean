@@ -9,7 +9,7 @@ public import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.OrdinalValue
 public import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.OrdinalValue.Truncation
 public import LeanPool.ConwayRefinement.ConwayRefinement.Algebra.Valuation.DegreeInitialForm
 
-import LeanPool.ConwayRefinement.ConwayRefinement.Algebra.Valuation.DegreeSum
+
 
 /-!
 # Hereditary `rv_J`-independence at finite ordinal-value degrees

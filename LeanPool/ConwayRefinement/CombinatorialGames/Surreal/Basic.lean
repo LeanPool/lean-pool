@@ -7,7 +7,6 @@ module
 
 public import LeanPool.ConwayRefinement.CombinatorialGames.Game.Birthday
 
-import LeanPool.ConwayRefinement.CombinatorialGames.Tactic.AddInstances
 import Mathlib.Data.Int.Cast.Lemmas
 
 /-!

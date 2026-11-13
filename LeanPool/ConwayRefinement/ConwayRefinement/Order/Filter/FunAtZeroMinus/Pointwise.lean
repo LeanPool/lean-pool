@@ -8,7 +8,8 @@ module
 public import LeanPool.ConwayRefinement.ConwayRefinement.Order.Filter.FunAtZeroMinus
 
 import LeanPool.ConwayRefinement.ConwayRefinement.Topology.Order.LeftNeighborhood
-import Mathlib.Topology.Instances.Real.Lemmas
+import Mathlib.Data.EReal.Operations
+import Mathlib.Topology.MetricSpace.Bounded
 
 /-!
 # Pointwise identities in `Fun_{0⁻}(V)`

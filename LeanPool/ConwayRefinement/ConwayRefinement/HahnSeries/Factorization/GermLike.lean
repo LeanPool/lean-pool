@@ -5,12 +5,12 @@ Authors: Dan Abramov
 -/
 module
 
+
 public import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.OrdinalValue.CriticalPointExistence
 
 import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.OrdinalValue.Statements.ProductValue
 import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.Factorization.DegreeTwo.FactorizationClassification
 import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.OrdinalValue.OrdinalValueFinalSegment
-import Mathlib.Tactic.Linarith
 
 /-!
 # Factorisation of germ-like series

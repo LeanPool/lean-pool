@@ -8,7 +8,7 @@ module
 public import LeanPool.ConwayRefinement.ConwayRefinement.Algebra.Valuation.DegreeInitialForm
 public import Mathlib.Algebra.Group.Subgroup.Finite
 
-import Mathlib.Tactic.Ring
+import Mathlib.Tactic.Ring.RingNF
 
 /-!
 # Degrees and homogeneous classes of finite sums

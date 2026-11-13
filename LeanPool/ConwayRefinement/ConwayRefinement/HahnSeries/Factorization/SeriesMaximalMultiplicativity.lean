@@ -8,8 +8,6 @@ module
 public import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.Factorization.NormalizedSeriesMaximalFinite
 
 import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.Factorization.RVGradedMaximalFinite
-import Mathlib.Algebra.GCDMonoid.Basic
-import Mathlib.Order.RelClasses
 
 /-!
 # Multiplicativity of maximal finite-support divisors of Hahn series
@@ -384,7 +382,7 @@ theorem seriesNormalizedMaximalFiniteSupportDivisor_mul_of_graded
         ((pB * pC : FiniteSupportRing (K := K)) : Series K) * (b₀ * c₀) := by
     rw [hbFactor, hcFactor]
     simp only [Subring.coe_mul]
-    ring
+    ac_rfl
   have hrDiv : (r : Series K) ∣ b₀ * c₀ := by
     have hdiv :
         ((pB * pC * r : FiniteSupportRing (K := K)) : Series K) ∣ b * c := by

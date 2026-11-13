@@ -6,8 +6,6 @@ Authors: Dan Abramov
 module
 
 public import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.Germ.AlgebraicIndependence.Derivative
-import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.Germ.AlgebraicIndependence.Leibniz
-import Mathlib.Tactic.Abel
 
 /-!
 # Boundary estimates for Cantor–Bendixson degrees of truncations

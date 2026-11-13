@@ -10,9 +10,7 @@ public import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.Germ.Algebra
 public import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.Germ.AlgebraicIndependence.SeparatedPieceCantorBendixson
 public import LeanPool.ConwayRefinement.ConwayRefinement.Topology.Order.CantorBendixsonConvexCover
 public import LeanPool.ConwayRefinement.ConwayRefinement.Algebra.MvPolynomial.ComponentsSpan
-import LeanPool.ConwayRefinement.ConwayRefinement.Algebra.MvPolynomial.Components
 import Mathlib.Algebra.MvPolynomial.CommRing
-import LeanPool.ConwayRefinement.ConwayRefinement.Algebra.GradedRing.HomogeneousSpan
 import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.Germ.AlgebraicIndependence.Boundary
 import LeanPool.ConwayRefinement.ConwayRefinement.Topology.Order.LeftNeighborhood
 
