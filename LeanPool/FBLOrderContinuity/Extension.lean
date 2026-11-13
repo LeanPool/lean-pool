@@ -1094,7 +1094,8 @@ at every exponent. This follows from the isometric free-lattice inclusion and
 theorem bidual_poe_one [CompleteSpace E] (p : Exponent) :
     POEWith p (Dual (Dual E)) (NormedSpace.inclusionInDoubleDual ℝ E).toLinearMap.range 1 := by
   let T : E →L[ℝ] Dual (Dual E) := NormedSpace.inclusionInDoubleDual ℝ E
-  have hclosed := (NormedSpace.inclusionInDoubleDualLi (E := E) ℝ).isometry.isClosedEmbedding
+  have hclosed := Isometry.isClosedEmbedding (f := T)
+    (NormedSpace.inclusionInDoubleDualLi (E := E) ℝ).isometry
   refine ⟨hclosed.isClosed_range, le_rfl, fun n R => ?_⟩
   obtain ⟨S, hS, hnorm⟩ := finiteLp_extension_of_dual_extension p T
     (NormedSpace.inclusionInDoubleDualLi (E := Dual E) ℝ)

@@ -3687,8 +3687,9 @@ private theorem exists_algebraic_lift_extension (p : Exponent) {X : Type w}
       ‖FVLv.lift S.toLinearMap v‖ ≤ C * ‖ofFVL p v‖) :
     ∃ A : Free p E →L[ℝ] X,
       (∀ v : FVLv E, A (ofFVL p v) = FVLv.lift S.toLinearMap v) ∧ ‖A‖ ≤ C := by
-  exact exists_bounded_linear_extension (ofFVL p (E := E)).toLinearMap
-    (denseRange_ofFVL p) (FVLv.lift S.toLinearMap).toLinearMap C hC hb
+  exact exists_bounded_linear_extension (V := FVLv E) (W := Free p E) (X := X)
+    (ofFVL p (E := E)).toLinearMap (denseRange_ofFVL p)
+    (FVLv.lift S.toLinearMap).toLinearMap C hC hb
 
 private theorem algebraic_lift_extension_map_sup (p : Exponent) {X : Type w}
     [NormedAddCommGroup X] [Lattice X] [IsOrderedAddMonoid X] [NormedVectorLattice X]
