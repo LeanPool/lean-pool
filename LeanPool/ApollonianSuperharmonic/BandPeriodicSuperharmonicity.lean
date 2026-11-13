@@ -6,6 +6,7 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.TileOdometerBandPrototile
 public import LeanPool.ApollonianSuperharmonic.CircleMatrixSymmetry
 
 public import LeanPool.ApollonianSuperharmonic.BandOdometerInteriorTable
@@ -181,24 +182,6 @@ private theorem hK :
   have hx' := (div_le_iff₀ hε).mp hx
   dsimp [K]
   nlinarith
-
-private theorem tile_band :
-    (by
-      classical
-      exact
-        ∀ (c : CircleCoordinates), ∀ (U : ProtoTile), ∀ (k : PartialOdometer), TileOdometer c U k
-            → BandPrototile c U ) := by
-  classical
-  intro c U k ho
-  induction ho with
-  | line w z hw k hd => exact BandPrototile.line w z hw
-  | unit z x U k hU hd ht =>
-      cases U with
-      | mk cells anchor =>
-          simp_all only
-          exact BandPrototile.unit z x anchor
-  | @decompose q hq S U hs k hU hsub hc hf hcent hd hv hcomp hsl ih =>
-      exact BandPrototile.decompose hq (fun i s => ih i s) hc hf hcent
 
 private theorem local_bound :
     (by
@@ -452,7 +435,7 @@ theorem BandPeriodicSuperharmonicity (C : BandCircle)
     nlinarith
   · intro x
     have hlocal := (PeriodicSuperharmonicGeometry.local_bound g
-        (PeriodicSuperharmonicGeometry.tile_band)) _ _ _ hodo hext
+        (TileOdometerBandPrototile)) _ _ _ hodo hext
     have lap_periodic := PeriodicSuperharmonicGeometry.lap_periodic C g hcocycle
     by_cases hr : C.1.1.1 = 1
     · generalize hc : C.1.1 = c at hT hodo

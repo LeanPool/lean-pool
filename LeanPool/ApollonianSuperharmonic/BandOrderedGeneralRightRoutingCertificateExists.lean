@@ -411,54 +411,6 @@ private theorem hselectedAnchor :
   rw [hexteriorOccurrence]
   exact hselectedUnique.2
 
-private theorem hselectedFootprint :
-    (by
-      classical
-      exact
-        ∀ (C : BandCircle), ∀ (T : ProtoTile), ∀ (N : ProtoTile), ∀ (h : PartialOdometer), ∀ (k :
-            PartialOdometer), ∀ (x : GaussianInt), ∀ (normalization :
-            BandOrderedGeneralRightNormalizationCertificate C T N h k x), ∀ (selectedSlot : Fin
-            (3 : ℕ)), ∀ (selectedSign : Bool),
-        let m : Int := if normalization.rightDirectionSlot = 0 then
-            (if normalization.rightNeighborPositive = true then 1 else -1)
-          else if normalization.rightDirectionSlot = 1 then 0
-          else if normalization.rightNeighborPositive = true then -1 else 1
-        let n : Int := if normalization.rightDirectionSlot = 0 then 0
-          else if normalization.rightDirectionSlot = 1 then
-            (if normalization.rightNeighborPositive = true then 1 else -1)
-          else if normalization.rightNeighborPositive = true then -1 else 1
-        let labelOf : Fin 3 → Bool → SixSubtileLabel := fun i s =>
-          if i = 0 then (if s = true then .A else .B)
-          else if i = 1 then (if s = true then .C else .D)
-          else (if s = true then .E else .F)
-        let exteriorIndex : PeriodicSubtileIndex :=
-          ⟨labelOf selectedSlot selectedSign, m, n⟩
-        (SubtileOccurrenceInterpretation normalization.layout.P normalization.layout.u
-            normalization.layout.v exteriorIndex = TileTranslation (normalization.layout.P
-            selectedSlot selectedSign) normalization.rightNeighborDisplacement) →
-            ((FootprintVertices (normalization.pieces selectedSlot selectedSign) =
-            FootprintVertices (TileTranslation (normalization.layout.P selectedSlot selectedSign)
-            normalization.rightNeighborDisplacement) ∧ BoundaryFootprintVertices
-            (normalization.pieces selectedSlot selectedSign) = BoundaryFootprintVertices
-            (TileTranslation (normalization.layout.P selectedSlot selectedSign)
-            normalization.rightNeighborDisplacement) ∧ BoundaryFootprintEdges
-            (normalization.pieces selectedSlot selectedSign) = BoundaryFootprintEdges
-            (TileTranslation (normalization.layout.P selectedSlot selectedSign)
-            normalization.rightNeighborDisplacement) ∧ TileRealization (normalization.pieces
-            selectedSlot selectedSign) = TileRealization (TileTranslation (normalization.layout.P
-            selectedSlot selectedSign) normalization.rightNeighborDisplacement) ∧ TileCentroid
-            (normalization.pieces selectedSlot selectedSign) = TileCentroid (TileTranslation
-            (normalization.layout.P selectedSlot selectedSign)
-            normalization.rightNeighborDisplacement)) → (FootprintVertices (normalization.pieces
-            selectedSlot selectedSign) = FootprintVertices (SubtileOccurrenceInterpretation
-            normalization.layout.P normalization.layout.u normalization.layout.v exteriorIndex)))
-            ) := by
-  classical
-  intro C T N h k x normalization selectedSlot selectedSign m n labelOf exteriorIndex
-      hexteriorOccurrence hselectedObservables
-  rw [hexteriorOccurrence]
-  exact hselectedObservables.1
-
 private theorem hparentPositive :
     (by
       classical
@@ -1030,8 +982,12 @@ theorem BandOrderedGeneralRightRoutingCertificateExists
       selectedSlot selectedSign hexteriorOccurrence hselectedUnique
   have hselectedAnchor := RightRoutingGeometry.hselectedAnchor C T N h k x normalization
       selectedSlot selectedSign hexteriorOccurrence hselectedUnique
-  have hselectedFootprint := RightRoutingGeometry.hselectedFootprint C T N h k x normalization
-      selectedSlot selectedSign hexteriorOccurrence hselectedObservables
+  have hselectedFootprint :
+      FootprintVertices (normalization.pieces selectedSlot selectedSign) =
+        FootprintVertices (SubtileOccurrenceInterpretation normalization.layout.P
+          normalization.layout.u normalization.layout.v exteriorIndex) := by
+    rw [hexteriorOccurrence]
+    exact hselectedObservables.1
   have hparentNonnegative : 0 ≤ (q selectedSlot.succ).1 :=
     (ProperBandCurvatureStructure q normalization.configuration.proper).2.1
       selectedSlot

@@ -572,68 +572,6 @@ private theorem hFixedBand :
     simpa [Q] using normalization.normalized_parent_coordinate]
   exact TileOdometerBandPrototile _ _ _ normalization.normalized_fixed_odometer
 
-private theorem hUcent :
-    (by
-      classical
-      exact
-        ∀ (C₀ : BandCircle), ∀ (Cᵢ : BandCircle), ∀ (q : Fin 4 → CircleCoordinates), ∀ (i : Fin
-            3), ∀ (T₀ : ProtoTile), ∀ (Tᵢ : ProtoTile), ∀ (h₀ : PartialOdometer), ∀ (hᵢ :
-            PartialOdometer), ∀ (x : GaussianInt), ∀ (normalization :
-            BandOrderedGeneralSubtileNormalizationCertificate C₀ Cᵢ q i T₀ Tᵢ h₀ hᵢ x),
-        let Q := normalization.normalizedPresentation
-        let incoming : Fin 3 → GaussianInt := fun j =>
-          BandVectors.1 (Q j.succ) (Q 0)
-        let outgoing : Fin 3 → GaussianInt := fun j =>
-          BandVectors.1 (Q 0) (Q j.succ)
-        (TileCentroid (SubtileOccurrenceInterpretation normalization.layout.P
-            normalization.layout.u normalization.layout.v (if normalization.normalizedParentSlot
-            = (0 : Fin (3 : ℕ)) then if normalization.normalizedQuarterTurn = (0 : Fin (4 : ℕ))
-            then (⟨SixSubtileLabel.A, (0 : ℤ), (-1 : ℤ)⟩ : PeriodicSubtileIndex) else if
-            normalization.normalizedQuarterTurn = (1 : Fin (4 : ℕ)) then (⟨SixSubtileLabel.B, (1
-            : ℤ), (1 : ℤ)⟩ : PeriodicSubtileIndex) else if normalization.normalizedQuarterTurn =
-            (2 : Fin (4 : ℕ)) then (⟨SixSubtileLabel.B, (0 : ℤ), (1 : ℤ)⟩ : PeriodicSubtileIndex)
-            else (⟨SixSubtileLabel.A, (-1 : ℤ), (-1 : ℤ)⟩ : PeriodicSubtileIndex) else if
-            normalization.normalizedParentSlot = (1 : Fin (3 : ℕ)) then if
-            normalization.normalizedQuarterTurn = (0 : Fin (4 : ℕ)) then (⟨SixSubtileLabel.C, (1
-            : ℤ), (1 : ℤ)⟩ : PeriodicSubtileIndex) else if normalization.normalizedQuarterTurn =
-            (1 : Fin (4 : ℕ)) then (⟨SixSubtileLabel.D, (-1 : ℤ), (0 : ℤ)⟩ :
-            PeriodicSubtileIndex) else if normalization.normalizedQuarterTurn = (2 : Fin (4 : ℕ))
-            then (⟨SixSubtileLabel.D, (-1 : ℤ), (-1 : ℤ)⟩ : PeriodicSubtileIndex) else
-            (⟨SixSubtileLabel.C, (1 : ℤ), (0 : ℤ)⟩ : PeriodicSubtileIndex) else if
-            normalization.normalizedQuarterTurn = (0 : Fin (4 : ℕ)) then (⟨SixSubtileLabel.E, (-1
-            : ℤ), (0 : ℤ)⟩ : PeriodicSubtileIndex) else if normalization.normalizedQuarterTurn =
-            (1 : Fin (4 : ℕ)) then (⟨SixSubtileLabel.F, (0 : ℤ), (-1 : ℤ)⟩ :
-            PeriodicSubtileIndex) else if normalization.normalizedQuarterTurn = (2 : Fin (4 : ℕ))
-            then (⟨SixSubtileLabel.F, (1 : ℤ), (0 : ℤ)⟩ : PeriodicSubtileIndex) else
-            (⟨SixSubtileLabel.E, (0 : ℤ), (1 : ℤ)⟩ : PeriodicSubtileIndex))) - TileCentroid
-            normalization.normalizedRoot = (1 / 2 : ℝ) • GaussianRealPoint ((⟨(0 : ℤ), (1 : ℤ)⟩ :
-            GaussianInt) ^ (↑normalization.normalizedQuarterTurn : ℕ) * (incoming
-            normalization.normalizedParentSlot + outgoing normalization.normalizedParentSlot))) → (
-        let uIndex : PeriodicSubtileIndex :=
-          if normalization.normalizedParentSlot = 0 then
-            if normalization.normalizedQuarterTurn = 0 then ⟨.A, 0, -1⟩
-            else if normalization.normalizedQuarterTurn = 1 then ⟨.B, 1, 1⟩
-            else if normalization.normalizedQuarterTurn = 2 then ⟨.B, 0, 1⟩
-            else ⟨.A, -1, -1⟩
-          else if normalization.normalizedParentSlot = 1 then
-            if normalization.normalizedQuarterTurn = 0 then ⟨.C, 1, 1⟩
-            else if normalization.normalizedQuarterTurn = 1 then ⟨.D, -1, 0⟩
-            else if normalization.normalizedQuarterTurn = 2 then ⟨.D, -1, -1⟩
-            else ⟨.C, 1, 0⟩
-          else if normalization.normalizedQuarterTurn = 0 then ⟨.E, -1, 0⟩
-          else if normalization.normalizedQuarterTurn = 1 then ⟨.F, 0, -1⟩
-          else if normalization.normalizedQuarterTurn = 2 then ⟨.F, 1, 0⟩
-          else ⟨.E, 0, 1⟩
-        let U := SubtileOccurrenceInterpretation normalization.layout.P
-          normalization.layout.u normalization.layout.v uIndex
-        TileCentroid U - TileCentroid normalization.normalizedRoot = (1 / 2 : Real) •
-            GaussianRealPoint ((⟨0, 1⟩ : GaussianInt) ^ normalization.normalizedQuarterTurn.val *
-            (incoming normalization.normalizedParentSlot + outgoing
-            normalization.normalizedParentSlot))) ) := by
-  classical
-  intro C₀ Cᵢ q i T₀ Tᵢ h₀ hᵢ x normalization Q incoming outgoing hUcentroid uIndex U
-  simpa [U, uIndex] using hUcentroid
-
 private theorem hfixedCent :
     (by
       classical
@@ -1172,75 +1110,6 @@ private theorem hVSym :
     | exact normalization.layout.parent_quarter_turn 1 false
     | exact normalization.layout.parent_quarter_turn 2 true
     | exact normalization.layout.parent_quarter_turn 2 false
-
-private theorem hVcent :
-    (by
-      classical
-      exact
-        ∀ (C₀ : BandCircle), ∀ (Cᵢ : BandCircle), ∀ (q : Fin 4 → CircleCoordinates), ∀ (i : Fin
-            3), ∀ (T₀ : ProtoTile), ∀ (Tᵢ : ProtoTile), ∀ (h₀ : PartialOdometer), ∀ (hᵢ :
-            PartialOdometer), ∀ (x : GaussianInt), ∀ (normalization :
-            BandOrderedGeneralSubtileNormalizationCertificate C₀ Cᵢ q i T₀ Tᵢ h₀ hᵢ x),
-        let Q := normalization.normalizedPresentation
-        let incoming : Fin 3 → GaussianInt := fun j =>
-          BandVectors.1 (Q j.succ) (Q 0)
-        let outgoing : Fin 3 → GaussianInt := fun j =>
-          BandVectors.1 (Q 0) (Q j.succ)
-        (TileCentroid (SubtileOccurrenceInterpretation normalization.layout.P
-            normalization.layout.u normalization.layout.v (if normalization.normalizedParentSlot
-            = (0 : Fin (3 : ℕ)) then if normalization.normalizedQuarterTurn = (0 : Fin (4 : ℕ))
-            then (⟨SixSubtileLabel.C, (1 : ℤ), (0 : ℤ)⟩ : PeriodicSubtileIndex) else if
-            normalization.normalizedQuarterTurn = (1 : Fin (4 : ℕ)) then (⟨SixSubtileLabel.F, (1
-            : ℤ), (0 : ℤ)⟩ : PeriodicSubtileIndex) else if normalization.normalizedQuarterTurn =
-            (2 : Fin (4 : ℕ)) then (⟨SixSubtileLabel.D, (-1 : ℤ), (0 : ℤ)⟩ :
-            PeriodicSubtileIndex) else (⟨SixSubtileLabel.E, (-1 : ℤ), (0 : ℤ)⟩ :
-            PeriodicSubtileIndex) else if normalization.normalizedParentSlot = (1 : Fin (3 : ℕ))
-            then if normalization.normalizedQuarterTurn = (0 : Fin (4 : ℕ)) then
-            (⟨SixSubtileLabel.E, (0 : ℤ), (1 : ℤ)⟩ : PeriodicSubtileIndex) else if
-            normalization.normalizedQuarterTurn = (1 : Fin (4 : ℕ)) then (⟨SixSubtileLabel.B, (0
-            : ℤ), (1 : ℤ)⟩ : PeriodicSubtileIndex) else if normalization.normalizedQuarterTurn =
-            (2 : Fin (4 : ℕ)) then (⟨SixSubtileLabel.F, (0 : ℤ), (-1 : ℤ)⟩ :
-            PeriodicSubtileIndex) else (⟨SixSubtileLabel.A, (0 : ℤ), (-1 : ℤ)⟩ :
-            PeriodicSubtileIndex) else if normalization.normalizedQuarterTurn = (0 : Fin (4 : ℕ))
-            then (⟨SixSubtileLabel.A, (-1 : ℤ), (-1 : ℤ)⟩ : PeriodicSubtileIndex) else if
-            normalization.normalizedQuarterTurn = (1 : Fin (4 : ℕ)) then (⟨SixSubtileLabel.D, (-1
-            : ℤ), (-1 : ℤ)⟩ : PeriodicSubtileIndex) else if normalization.normalizedQuarterTurn =
-            (2 : Fin (4 : ℕ)) then (⟨SixSubtileLabel.B, (1 : ℤ), (1 : ℤ)⟩ : PeriodicSubtileIndex)
-            else (⟨SixSubtileLabel.C, (1 : ℤ), (1 : ℤ)⟩ : PeriodicSubtileIndex))) - TileCentroid
-            normalization.normalizedRoot = (1 / 2 : ℝ) • GaussianRealPoint ((⟨(0 : ℤ), (1 : ℤ)⟩ :
-            GaussianInt) ^ (↑normalization.normalizedQuarterTurn : ℕ) * if Even
-            (↑normalization.normalizedQuarterTurn : ℕ) then incoming
-            (normalization.normalizedParentSlot + (1 : Fin (3 : ℕ))) - outgoing
-            (normalization.normalizedParentSlot + (1 : Fin (3 : ℕ))) else outgoing
-            (normalization.normalizedParentSlot - (1 : Fin (3 : ℕ))) - incoming
-            (normalization.normalizedParentSlot - (1 : Fin (3 : ℕ))))) → (
-        let vIndex : PeriodicSubtileIndex :=
-          if normalization.normalizedParentSlot = 0 then
-            if normalization.normalizedQuarterTurn = 0 then ⟨.C, 1, 0⟩
-            else if normalization.normalizedQuarterTurn = 1 then ⟨.F, 1, 0⟩
-            else if normalization.normalizedQuarterTurn = 2 then ⟨.D, -1, 0⟩
-            else ⟨.E, -1, 0⟩
-          else if normalization.normalizedParentSlot = 1 then
-            if normalization.normalizedQuarterTurn = 0 then ⟨.E, 0, 1⟩
-            else if normalization.normalizedQuarterTurn = 1 then ⟨.B, 0, 1⟩
-            else if normalization.normalizedQuarterTurn = 2 then ⟨.F, 0, -1⟩
-            else ⟨.A, 0, -1⟩
-          else if normalization.normalizedQuarterTurn = 0 then ⟨.A, -1, -1⟩
-          else if normalization.normalizedQuarterTurn = 1 then ⟨.D, -1, -1⟩
-          else if normalization.normalizedQuarterTurn = 2 then ⟨.B, 1, 1⟩
-          else ⟨.C, 1, 1⟩
-        let V := SubtileOccurrenceInterpretation normalization.layout.P
-          normalization.layout.u normalization.layout.v vIndex
-        TileCentroid V - TileCentroid normalization.normalizedRoot = (1 / 2 : Real) •
-            GaussianRealPoint ((⟨0, 1⟩ : GaussianInt) ^ normalization.normalizedQuarterTurn.val *
-            (if Even normalization.normalizedQuarterTurn.val then incoming
-            (normalization.normalizedParentSlot + 1) - outgoing
-            (normalization.normalizedParentSlot + 1) else outgoing
-            (normalization.normalizedParentSlot - 1) - incoming
-            (normalization.normalizedParentSlot - 1)))) ) := by
-  classical
-  intro C₀ Cᵢ q i T₀ Tᵢ h₀ hᵢ x normalization Q incoming outgoing hVcentroid vIndex V
-  simpa [V, vIndex] using hVcentroid
 
 private theorem hVbarCent :
     (by
@@ -1918,8 +1787,7 @@ private theorem rowPackage :
   have hUBand := SubtileInterfaceAssembly.hUBand C₀ Cᵢ q i T₀ Tᵢ h₀ hᵢ x normalization
   have hVBand := SubtileInterfaceAssembly.hVBand
           C₀ Cᵢ q i T₀ Tᵢ h₀ hᵢ x normalization
-  have hUcent := SubtileInterfaceAssembly.hUcent C₀
-                Cᵢ q i T₀ Tᵢ h₀ hᵢ x normalization hUcentroid
+  have hUcent := hUcentroid
   have hfixedEq := BandPrototileCentroidUnique
     (Q normalization.normalizedParentSlot.succ) U normalization.normalizedFixed
     hUBand (SubtileInterfaceAssembly.hFixedBand C₀ Cᵢ q i T₀ Tᵢ h₀ hᵢ x normalization)
@@ -1950,9 +1818,8 @@ private theorem rowPackage :
       (TileTranslationFormulas normalization.normalizedRoot _).1, hrootBar]
   · let Vbar := SubtileOccurrenceInterpretation normalization.layout.P
       normalization.layout.u normalization.layout.v vBar
-    have hrot := rotatedCentroid V Vbar _ (SubtileInterfaceAssembly.hVcent C₀ Cᵢ q i T₀ Tᵢ h₀
-        hᵢ x normalization hVcentroid) (SubtileInterfaceAssembly.hVbarCent C₀ Cᵢ q i T₀ Tᵢ h₀
-        hᵢ x normalization hflips rowsAt)
+    have hrot := rotatedCentroid V Vbar _ (by simpa [V, vIndex] using hVcentroid)
+      (SubtileInterfaceAssembly.hVbarCent C₀ Cᵢ q i T₀ Tᵢ h₀ hᵢ x normalization hflips rowsAt)
     exact (centeredCompare _ V Vbar hVBand (SubtileInterfaceAssembly.hVbarBand C₀ Cᵢ q i T₀ Tᵢ
         h₀ hᵢ x normalization occurrenceBand) (SubtileInterfaceAssembly.hVSym C₀ Cᵢ q i T₀ Tᵢ
         h₀ hᵢ x normalization quarterSymmetricTranslation) hrot).1

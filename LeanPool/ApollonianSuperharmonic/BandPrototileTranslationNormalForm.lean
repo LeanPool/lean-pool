@@ -6,6 +6,7 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.BandPrototileNonempty
 
 public import LeanPool.ApollonianSuperharmonic.BandPrototileCentroidUnique
 public import LeanPool.ApollonianSuperharmonic.BandPrototileTranslation
@@ -109,48 +110,16 @@ private theorem positiveChild :
       dsimp at h e f g
       omega
 
-private theorem positiveCells :
-    (∀ r : Fin 4 → CircleCoordinates, SemiProperQuadruple r → 0 < (r 0).1 → ∃ j : Fin 3, 0 < (r
-        j.succ).1) → (∀ (C : CircleCoordinates), ∀ (P : ProtoTile), 0 < C.1 → BandPrototile C P →
-        P.cells.Nonempty) := by
-  classical
-  intro positiveChild C P hC hP
-  induction hP with
-  | line w x hw =>
-      simp at hC
-  | unit z x anchor =>
-      simp
-  | @decompose q hq S V hS hcells hfoot hcentroid ih =>
-      rcases positiveChild q hq.1 (by simpa using hC) with ⟨j, hj⟩
-      have hp := ih j false hj
-      rcases hp with ⟨a, ha⟩
-      exact ⟨a, (hcells a).mpr ⟨j, false, ha⟩⟩
-
-private theorem vectorMatch :
-    ∀ (q : Fin (4 : ℕ) → CircleCoordinates), ∀ (S : Fin (3 : ℕ) → Bool → ProtoTile), ∀ (q' : Fin
-        (4 : ℕ) → CircleCoordinates), ∀ (S' : Fin (3 : ℕ) → Bool → ProtoTile), ∀ (r : Fin (3 :
-        ℕ)), (∀ (j : Fin (3 : ℕ)), q' j.succ = q (j + r).succ) → ((∀ (y : Fin (3 : ℕ)), (fun (r :
-        Fin (3 : ℕ)) => ∀ (j : Fin (3 : ℕ)), q' j.succ = q (j + r).succ) y → y = r) → (∀ (k : Fin
-        (3 : ℕ)), ((0 : ℤ) < (q k.succ).1) → (
-    let i : Fin 3 := k - r
-    (q' i.succ = q k.succ) → (∀ (u : GaussianInt), ((S k true).cells = (TileTranslation (S' i
-        true) u).cells) → (((S k true).cells = ∅ → (S k true).anchor = (TileTranslation (S' i
-        true) u).anchor) → (((S k true).cells.Nonempty) → (((TileTranslation (S' i true)
-        u).cells.Nonempty) → ((TileCentroid (S k true) = TileCentroid (TileTranslation (S' i
-        true) u)) → (BandVectors.1 (q' ((i + 2).succ)) (q' ((i + 1).succ)) = BandVectors.1 (q ((k
-        + 2).succ)) (q ((k + 1).succ))))))))))) := by
-  classical
-  intro q S q' S' r hrotation hunique k hk i hi u hcellsParent hemptyParent nonemptyParent
-      translatedNonempty parentCentroid
-  have idxA : (i + 2 + r : Fin 3) = k + 2 := by
-    fin_cases k <;> fin_cases r <;> simp [i]
-  have idxB : (i + 1 + r : Fin 3) = k + 1 := by
-    fin_cases k <;> fin_cases r <;> simp [i]
-  have ha := hrotation (i + 2)
-  have hb := hrotation (i + 1)
-  rw [idxA] at ha
-  rw [idxB] at hb
-  rw [ha, hb]
+private theorem vectorMatch {α β : Type*} (f : α → α → β)
+    (q q' : Fin 4 → α) (r k : Fin 3)
+    (hrotation : ∀ j : Fin 3, q' j.succ = q (j + r).succ) :
+    f (q' ((k - r + 2).succ)) (q' ((k - r + 1).succ)) =
+      f (q ((k + 2).succ)) (q ((k + 1).succ)) := by
+  have idxA : (k - r + 2 + r : Fin 3) = k + 2 := by
+    fin_cases k <;> fin_cases r <;> decide
+  have idxB : (k - r + 1 + r : Fin 3) = k + 1 := by
+    fin_cases k <;> fin_cases r <;> decide
+  rw [hrotation, hrotation, idxA, idxB]
 
 private theorem childCentroid :
     ∀ (S : Fin (3 : ℕ) → Bool → ProtoTile), ∀ (V : ProtoTile), ∀ (S' : Fin (3 : ℕ) → Bool →
@@ -191,8 +160,7 @@ theorem BandPrototileTranslationNormalForm (C : CircleCoordinates)
       SemiProperQuadruple r → 0 < (r 0).1 →
       ∃ j : Fin 3, 0 < (r j.succ).1 := TranslationNormalFormProof.positiveChild nonnegative
   have positiveCells : ∀ (C : CircleCoordinates) (P : ProtoTile),
-      0 < C.1 → BandPrototile C P → P.cells.Nonempty := TranslationNormalFormProof.positiveCells
-          positiveChild
+      0 < C.1 → BandPrototile C P → P.cells.Nonempty := BandPrototileNonempty.positive
   refine BandPrototile.rec (motive := fun C T _ =>
     ∀ U, BandPrototile C U →
       ∃ u : GaussianInt, T.cells = (TileTranslation U u).cells ∧
@@ -269,8 +237,7 @@ theorem BandPrototileTranslationNormalForm (C : CircleCoordinates)
       have vectorMatch :
           BandVectors.1 (q' ((i + 2).succ)) (q' ((i + 1).succ)) =
             BandVectors.1 (q ((k + 2).succ)) (q ((k + 1).succ)) :=
-                TranslationNormalFormProof.vectorMatch q S q' S' r hrotation hunique k hk hi u
-                hcellsParent hemptyParent nonemptyParent translatedNonempty parentCentroid
+                TranslationNormalFormProof.vectorMatch BandVectors.1 q q' r k hrotation
       have differenceMatch :
           TileCentroid (S k true) - TileCentroid V =
             TileCentroid (S' i true) - TileCentroid W := by

@@ -108,6 +108,32 @@ theorem VectorRecursionLaws (q : Fin 4 → CircleCoordinates)
       exact ⟨flipLaw _ _ (PrimitiveVectorOrientation.parentChild proper j) |>.1,
         flipLaw _ _ (PrimitiveVectorOrientation.parentChild proper j) |>.2⟩
 
+/-- The four vector recursion laws at any cyclic parent occurrence. -/
+theorem VectorRecursionLaws.cyclic (q : Fin 4 → CircleCoordinates)
+    (hq : SemiProperQuadruple q) (i : Fin 3) :
+    BandVectors.1 (q ((i + 2).succ)) (q ((i + 1).succ)) +
+        BandVectors.1 (q i.succ) (q ((i + 2).succ)) +
+        BandVectors.1 (q ((i + 1).succ)) (q i.succ) = 0 ∧
+    BandVectors.2 (q ((i + 2).succ)) (q ((i + 1).succ)) +
+        BandVectors.2 (q i.succ) (q ((i + 2).succ)) +
+        BandVectors.2 (q ((i + 1).succ)) (q i.succ) = 0 ∧
+    BandVectors.1 (q i.succ) (q 0) =
+        BandVectors.1 (q i.succ) (q ((i + 2).succ)) -
+          (⟨0, 1⟩ : GaussianInt) * BandVectors.1 (q ((i + 1).succ)) (q i.succ) ∧
+    BandVectors.2 (q i.succ) (q 0) =
+        BandVectors.2 (q i.succ) (q ((i + 2).succ)) +
+          (⟨0, 1⟩ : GaussianInt) * BandVectors.2 (q ((i + 1).succ)) (q i.succ) := by
+  fin_cases i
+  · have h := VectorRecursionLaws q hq
+    simpa using And.intro h.1 (And.intro h.2.1 (And.intro h.2.2.1 h.2.2.2.1))
+  · have h := VectorRecursionLaws ![q 0, q 2, q 3, q 1]
+      (SemiProperQuadruple.rotate hq)
+    simpa using And.intro h.1 (And.intro h.2.1 (And.intro h.2.2.1 h.2.2.2.1))
+  · have hr : SemiProperQuadruple ![q 0, q 3, q 1, q 2] := by
+      simpa using SemiProperQuadruple.rotate (SemiProperQuadruple.rotate hq)
+    have h := VectorRecursionLaws ![q 0, q 3, q 1, q 2] hr
+    simpa using And.intro h.1 (And.intro h.2.1 (And.intro h.2.2.1 h.2.2.2.1))
+
 end ApollonianSuperharmonic
 
 end

@@ -6,6 +6,7 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.BandPrototileNonempty
 public import LeanPool.ApollonianSuperharmonic.BoundaryFrameJoinGeometry
 public import LeanPool.ApollonianSuperharmonic.BoundaryFrameRowGeometry
 
@@ -292,39 +293,6 @@ private theorem hjoinOdo :
     (by rw [← F.parent]; exact hCpositive)
     (by rw [← F.parent]; exact hselectedOdo) hjoinBand hjoinCells.1
 
-
-private theorem positiveCells :
-    (by
-      classical
-      exact
-        ∀ (C : BandCircle), ∀ (orientation : Bool), ∀ (base : ProtoTile), ∀ (Rminus : ProtoTile),
-            ∀ (Rplus : ProtoTile), ∀ (hminus : PartialOdometer), ∀ (hplus : PartialOdometer),
-            (P4458T1BoundaryFrame C orientation base Rminus Rplus hminus hplus) → (∀ (c :
-            CircleCoordinates), ∀ (T : ProtoTile), 0 < c.1 → BandPrototile c T →
-            T.cells.Nonempty) ) := by
-  classical
-  intro C orientation base Rminus Rplus hminus hplus F c T hc hT
-  induction hT with
-  | line w z hw => simp at hc
-  | unit z x anchor => simp
-  | @decompose q hq S T hs hcells hfoot hcentroid ih =>
-      have hp : ∃ i : Fin 3, 0 < (q i.succ).1 := by
-        by_cases h0 : 0 < (q (0 : Fin 3).succ).1
-        · exact ⟨0, h0⟩
-        by_cases h1 : 0 < (q (1 : Fin 3).succ).1
-        · exact ⟨1, h1⟩
-        by_cases h2 : 0 < (q (2 : Fin 3).succ).1
-        · exact ⟨2, h2⟩
-        have facts := ProperBandCurvatureStructure q hq
-        have n0 := facts.2.1 (0 : Fin 3)
-        have n1 := facts.2.1 (1 : Fin 3)
-        have hzero0 : (q (0 : Fin 3).succ).1 = 0 := by omega
-        have hzero1 : (q (1 : Fin 3).succ).1 = 0 := by omega
-        exact False.elim ((by decide : (0 : Fin 3) ≠ 1)
-          (facts.2.2 0 1 hzero0 hzero1))
-      rcases hp with ⟨i, hi⟩
-      rcases ih i false hi with ⟨x, hx⟩
-      exact ⟨x, (hcells x).mpr ⟨i, false, hx⟩⟩
 
 private theorem hjoinFootEq :
     (by
@@ -2505,8 +2473,7 @@ theorem P4458T1LargestParentRows
       D hCpositive hselectedOdo u hjoinBand hjoinCells
   have hjoinAncestor := BoundaryFrameJoinGeometry.joinAncestor C orientation base Rminus Rplus
       hminus hplus F D hCpositive hstrict hselectedAnc u hjoinBand hjoinCells
-  have positiveCells := LargestParentGeometry.positiveCells C orientation base Rminus Rplus
-      hminus hplus F
+  have positiveCells := BandPrototileNonempty.positive
   have hUnonempty : (D.tiles F.slot false).cells.Nonempty :=
     positiveCells _ _ hCpositive hUband
   have hJnonempty : join.cells.Nonempty := by rw [← hjoinCells.1]; exact hUnonempty

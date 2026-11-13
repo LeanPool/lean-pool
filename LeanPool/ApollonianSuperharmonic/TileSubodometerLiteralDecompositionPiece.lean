@@ -6,6 +6,8 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.BandPrototileNonempty
+public import LeanPool.ApollonianSuperharmonic.TileOdometerBandPrototile
 
 public import LeanPool.ApollonianSuperharmonic.BandPrototileCentroidUnique
 public import LeanPool.ApollonianSuperharmonic.PositiveCurvatureTileOdometerDomain
@@ -80,39 +82,9 @@ theorem TileSubodometerLiteralDecompositionPiece
   obtain ⟨S, hs, hT, hOchild, hcells, hfoot, hcent, hdom, hvalue,
     hcompat, hslope⟩ :=
     TileOdometerReindexedDecomposition q hq T h root hOq
-  have band_of_odo : ∀ (d : CircleCoordinates) (u : ProtoTile)
-      k, TileOdometer d u k → BandPrototile d u := by
-    intro d u k ho
-    induction ho with
-    | line w x hw k hdom => exact BandPrototile.line w x hw
-    | unit z x u k hu hdom htrans =>
-        cases u with
-        | mk cells anchor =>
-            simp_all only []
-            exact BandPrototile.unit z x anchor
-    | decompose hq hT hsub hcells hfoot hcent hdom hvalue hcompat hslope ih =>
-        exact hT
-  have nonempty_of_odo : ∀ (d : CircleCoordinates) (u : ProtoTile)
-      k, 0 < d.1 → TileOdometer d u k → u.cells.Nonempty := by
-    intro d u k hd ho
-    induction ho with
-    | line w x hw k hdom => simp at hd
-    | unit z x u k hu hdom htrans => simp [hu]
-    | @decompose r hr V U hV hsub hT hsubTiles hcells hfoot hcent hdom hvalue hcompat hslope ih =>
-        have curvature_data := ProperBandCurvatureStructure r hr
-        rcases curvature_data with ⟨hrootpos, hnonneg, hunique⟩
-        have some_positive : ∃ j : Fin 3, 0 < (r j.succ).1 := by
-          by_contra none
-          have zeros : ∀ j : Fin 3, (r j.succ).1 = 0 := by
-            intro j
-            have non := hnonneg j
-            have notpos : ¬ 0 < (r j.succ).1 := fun hp => none ⟨j, hp⟩
-            omega
-          have bad := hunique 0 1 (zeros 0) (zeros 1)
-          omega
-        rcases some_positive with ⟨j, hj⟩
-        obtain ⟨x, hx⟩ := ih j false hj
-        exact ⟨x, (hcells x).mpr ⟨j, false, hx⟩⟩
+  have band_of_odo := TileOdometerBandPrototile
+  have nonempty_of_odo := fun d u k hd ho =>
+    BandPrototileNonempty.positive d u hd (TileOdometerBandPrototile d u k ho)
   have hbandT' : BandPrototile C'.1.1 T' := band_of_odo _ _ _ hO'
   have hbandS : BandPrototile C'.1.1 (S i s) := by
     rw [← hqi]

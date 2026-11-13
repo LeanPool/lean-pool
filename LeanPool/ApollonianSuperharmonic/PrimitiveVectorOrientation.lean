@@ -36,9 +36,10 @@ $$
  C_3\longrightarrow C_2,\qquad C_2\longrightarrow C_1,\qquad
  C_3\longrightarrow C_1,\qquad C_1\longrightarrow C_0.
 $$
-For the first two, the manuscript gives the primitive base value directly.
-For $C_3\to C_1$ it gives the opposite value $v_{13},a_{13}$, from which the
-primitive value is recovered by the single quarter-turn rule.  The fourth is
+For the first two, our product-compatible initialization in `RecursiveVectorSystem`
+specifies the primitive base values directly.  For $C_3\to C_1$ our system specifies
+the opposite value $v_{13},a_{13}$, from which the primitive value is recovered by
+the single quarter-turn rule.  The fourth is
 the remaining edge between adjacent unit circles; its values are obtained by
 applying the successor formulas to a parent rotation of the root.  Parameter
 shifts identify the other two child--line edges with the displayed root

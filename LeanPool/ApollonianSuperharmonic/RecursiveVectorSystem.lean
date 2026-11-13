@@ -33,6 +33,14 @@ $$
 (v_{32},v_{21},v_{13})=(0,-1,1),\qquad
 (a_{32},a_{21},a_{13})=(1,-1-z-i,z+i).
 $$
+This formalization retains upstream’s product-compatible initialization, rather than
+the printed initialization in [Section 5.3, page 19](https://arxiv.org/pdf/1309.3267#page=19).
+For the same ordered quadruple that display gives $(0,1,-1)$ and $(1,z,-1-z)$.
+The difference includes affine offsets, not only signs.  Our values satisfy
+$2v_{21}a_{21}=w_2+w_1$ with $w_j=(q_j).2$; at $z=0$ the printed values give
+$0$ instead of $2+2i$.  Auxiliary vector statements below use our explicitly
+specified initialization; the five headline results are proved from this system.
+
 For every semi-proper quadruple the successor values are prescribed by
 $$
 \begin{aligned}

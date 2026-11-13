@@ -6,6 +6,7 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.BandPrototileNonempty
 
 public import LeanPool.ApollonianSuperharmonic.P4250T1SlopeOffset
 public import LeanPool.ApollonianSuperharmonic.RightSubtileOdometerCompatibility
@@ -1649,37 +1650,6 @@ private theorem properLarge :
   obtain ⟨i, hi⟩ := hsome
   have hlt := hr.2 i
   omega
-
-private theorem bandPositiveNonempty :
-    (by
-      classical
-      exact
-        ∀ (q : Fin 4 → CircleCoordinates), (BandOrderedGeneralConfiguration q) → (∀ (D :
-            CircleCoordinates), ∀ (X : ProtoTile), BandPrototile D X → 0 < D.1 →
-            X.cells.Nonempty) ) := by
-  classical
-  intro q cfg D X hX
-  induction hX with
-  | line w x hw => intro hp; simp at hp
-  | unit z x a => intro hp; exact ⟨x, by simp⟩
-  | @decompose r hr S X hS hc hf hcent ih =>
-      intro hp
-      have facts := ProperBandCurvatureStructure r hr
-      have hsome : ∃ i : Fin 3, 0 < (r i.succ).1 := by
-        by_cases h0 : 0 < (r (0 : Fin 3).succ).1
-        · exact ⟨0, h0⟩
-        by_cases h1 : 0 < (r (1 : Fin 3).succ).1
-        · exact ⟨1, h1⟩
-        by_cases h2 : 0 < (r (2 : Fin 3).succ).1
-        · exact ⟨2, h2⟩
-        have z0 : (r (0 : Fin 3).succ).1 = 0 := by
-          have hn := facts.2.1 0; omega
-        have z1 : (r (1 : Fin 3).succ).1 = 0 := by
-          have hn := facts.2.1 1; omega
-        exact ((by decide : (0 : Fin 3) ≠ 1) (facts.2.2 0 1 z0 z1)).elim
-      obtain ⟨i, hi⟩ := hsome
-      obtain ⟨x, hx⟩ := ih i true hi
-      exact ⟨x, (hc x).mpr ⟨i, true, hx⟩⟩
 
 private theorem qSCells :
     (by
@@ -3374,7 +3344,7 @@ theorem P4250T1NestedCompatibility
           (NestedCompatibilityGeometry.hcenterQ3 q cfg C T cert U hcentA alignA hcenterA))
           (NestedCompatibilityGeometry.crossSlope2 q cfg s0 hpredA secondFlip
           (NestedCompatibilityGeometry.hIneg hI2) (NestedCompatibilityGeometry.hI3neg hI2) hIprod))
-  have bandPositiveNonempty := NestedCompatibilityGeometry.bandPositiveNonempty q cfg
+  have bandPositiveNonempty := (fun D V hV hD => BandPrototileNonempty.positive D V hD hV)
   have qSCells := NestedCompatibilityGeometry.qSCells q cfg C T cert
   have qSAnchor := NestedCompatibilityGeometry.qSAnchor q cfg C T cert
   have uvCells := NestedCompatibilityGeometry.uvCells q cfg C T cert U V alignA alignB qSCells

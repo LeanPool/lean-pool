@@ -6,6 +6,7 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.BandPrototileNonempty
 
 public import LeanPool.ApollonianSuperharmonic.AncestorOdometer
 
@@ -32,29 +33,7 @@ theorem AncestorOdometerInnerSupportNormalization
 -- BODY
   classical
   rcases hancestor with ⟨hO, hAT, hfoot, hsub, hval⟩
-  have positive_cells : ∀ (D : CircleCoordinates) (W : ProtoTile),
-      0 < D.1 → BandPrototile D W → W.cells.Nonempty := by
-    intro D W hD hW
-    induction hW with
-    | line w x hw => simp at hD
-    | unit z x => simp
-    | @decompose q hq S W hS hcells hfoot hcentroid ih =>
-        have facts := ProperBandCurvatureStructure q hq
-        have hp : ∃ i : Fin 3, 0 < (q i.succ).1 := by
-          by_cases h0 : 0 < (q (0 : Fin 3).succ).1
-          · exact ⟨0, h0⟩
-          by_cases h1 : 0 < (q (1 : Fin 3).succ).1
-          · exact ⟨1, h1⟩
-          by_cases h2 : 0 < (q (2 : Fin 3).succ).1
-          · exact ⟨2, h2⟩
-          have n0 := facts.2.1 (0 : Fin 3)
-          have n1 := facts.2.1 (1 : Fin 3)
-          have z0 : (q (0 : Fin 3).succ).1 = 0 := by omega
-          have z1 : (q (1 : Fin 3).succ).1 = 0 := by omega
-          exact ((by decide : (0 : Fin 3) ≠ 1) (facts.2.2 0 1 z0 z1)).elim
-        rcases hp with ⟨i, hi⟩
-        rcases ih i false hi with ⟨x, hx⟩
-        exact ⟨x, (hcells x).mpr ⟨i, false, hx⟩⟩
+  have positive_cells := BandPrototileNonempty.positive
   have hUne : U.cells.Nonempty := positive_cells C U hpositive hU
   have hVne : V.cells.Nonempty := by rw [hcells]; exact hUne
   have hfoot_eq : FootprintVertices V = FootprintVertices U := by

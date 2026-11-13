@@ -6,6 +6,7 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.BandPrototileNonempty
 
 public import LeanPool.ApollonianSuperharmonic.AncestorOdometerCentralCovariance
 public import LeanPool.ApollonianSuperharmonic.AncestorOdometerOuterSupportNormalization
@@ -119,35 +120,6 @@ private theorem hC₀positive :
   have hpos : 0 < (q i.succ).1 := by simpa only [hCᵢ] using hpositive
   rw [hC₀] at hlt
   omega
-
-private theorem positive_cells :
-    (by
-      classical
-      exact
-        (BandCircle) → ((BandCircle) → (∀ (D : CircleCoordinates), ∀ (V : ProtoTile), 0 < D.1 →
-            BandPrototile D V → V.cells.Nonempty)) ) := by
-  classical
-  intro C₀ Cᵢ D V hD hV
-  induction hV with
-  | line w x hw => simp at hD
-  | unit z x anchor => simp
-  | @decompose qd hqd S V hS hcells hfoot hcentroid ih =>
-      have facts := ProperBandCurvatureStructure qd hqd
-      have hp : ∃ j : Fin 3, 0 < (qd j.succ).1 := by
-        by_cases h0 : 0 < (qd (0 : Fin 3).succ).1
-        · exact ⟨0, h0⟩
-        by_cases h1 : 0 < (qd (1 : Fin 3).succ).1
-        · exact ⟨1, h1⟩
-        by_cases h2 : 0 < (qd (2 : Fin 3).succ).1
-        · exact ⟨2, h2⟩
-        have n0 := facts.2.1 (0 : Fin 3)
-        have n1 := facts.2.1 (1 : Fin 3)
-        have z0 : (qd (0 : Fin 3).succ).1 = 0 := by omega
-        have z1 : (qd (1 : Fin 3).succ).1 = 0 := by omega
-        exact ((by decide : (0 : Fin 3) ≠ 1) (facts.2.2 0 1 z0 z1)).elim
-      rcases hp with ⟨j, hj⟩
-      rcases ih j false hj with ⟨x, hx⟩
-      exact ⟨x, (hcells x).mpr ⟨j, false, hx⟩⟩
 
 private theorem hbarO :
     (by
@@ -2145,7 +2117,7 @@ theorem OpposingBoundaryOdometerStrings
     simpa [pminus, d, hpouter_eq] using hseedSlopeData
   have hsminus := OpposingBoundaryGeometry.hsminus q i p₀ hseed pseed hseedSlope hminusSlopeCalc
   have hC₀positive := OpposingBoundaryGeometry.hC₀positive q hq C₀ Cᵢ i hC₀ hCᵢ hpositive
-  have positive_cells := OpposingBoundaryGeometry.positive_cells C₀ Cᵢ
+  have positive_cells := BandPrototileNonempty.positive
   let hbar := PartialOdometerAffineTranslate
     (PartialOdometerHalfTurn h₀) centerShift 0 0
   let Tbar := TileTranslation (TileHalfTurn T₀) centerShift

@@ -6,6 +6,7 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.BandPrototileNonempty
 
 public import LeanPool.ApollonianSuperharmonic.BandOrderedGeneralOdometerRowData
 public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryTileOdometerCovariance
@@ -124,27 +125,7 @@ theorem P5472T1FordSlopeDifference
     apply Prod.ext
     · cases b <;> simpa [hAreal, smul_eq_mul] using hdx
     · cases b <;> simpa [hAreal, smul_eq_mul] using hdy
-  have positiveCells : ∀ (D : CircleCoordinates) (V : ProtoTile),
-      0 < D.1 → BandPrototile D V → V.cells.Nonempty := by
-    intro D V hD hV
-    induction hV with
-    | line w x hw => simp at hD
-    | unit z x anchor => simp
-    | @decompose q hq S V hS hcells hfoot hcentroid ih =>
-        have facts := ProperBandCurvatureStructure q hq
-        have hp : ∃ i : Fin 3, 0 < (q i.succ).1 := by
-          by_cases h0 : 0 < (q (0 : Fin 3).succ).1
-          · exact ⟨0, h0⟩
-          by_cases h1 : 0 < (q (1 : Fin 3).succ).1
-          · exact ⟨1, h1⟩
-          have n0 := facts.2.1 (0 : Fin 3)
-          have n1 := facts.2.1 (1 : Fin 3)
-          have z0 : (q (0 : Fin 3).succ).1 = 0 := by omega
-          have z1 : (q (1 : Fin 3).succ).1 = 0 := by omega
-          exact ((by decide : (0 : Fin 3) ≠ 1) (facts.2.2 0 1 z0 z1)).elim
-        rcases hp with ⟨i, hi⟩
-        rcases ih i false hi with ⟨z, hz⟩
-        exact ⟨z, (hcells z).mpr ⟨i, false, hz⟩⟩
+  have positiveCells := BandPrototileNonempty.positive
   have hTne := positiveCells (q 0) T (ProperBandCurvatureStructure q cfg.proper).1
     data.hPband
   have hsigned (b : Bool) :

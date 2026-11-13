@@ -6,6 +6,8 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.TileOdometerBandPrototile
+public import LeanPool.ApollonianSuperharmonic.BandPrototileNonempty
 
 public import LeanPool.ApollonianSuperharmonic.BandTileSimultaneousInduction
 public import LeanPool.ApollonianSuperharmonic.RightLatticeAdjacent
@@ -25,57 +27,6 @@ Changes: pool module paths, public exports, project namespace and current Mathli
 namespace ApollonianSuperharmonic
 
 namespace LatticeInterfacePathGeometry
-
-private theorem band_of_odometer :
-    (by
-      classical
-      exact
-        ∀ (C : CircleCoordinates), ∀ (T : ProtoTile), ∀ (h : PartialOdometer), (TileOdometer C T
-            h) → (BandPrototile C T) ) := by
-  classical
-  intro C T h ho
-  induction ho with
-  | line w x hw => exact BandPrototile.line w x hw
-  | unit z x T h hT hdom htrans =>
-      cases T with
-      | mk cells anchor =>
-          simp only [] at hT
-          subst cells
-          exact BandPrototile.unit z x anchor
-  | decompose hq hT hsub hcells hfoot hcent hdom hvalue hcompat hslope => exact hT
-
-private theorem positive_nonempty :
-    (by
-      classical
-      exact
-        ∀ (C : CircleCoordinates), ∀ (T : ProtoTile), (BandPrototile C T) → (0 < C.1 →
-            T.cells.Nonempty) ) := by
-  classical
-  intro C T hT
-  induction hT with
-  | line w x hw =>
-      intro hpos
-      simp at hpos
-  | unit z x a =>
-      intro hpos
-      exact ⟨x, by simp⟩
-  | @decompose q hq S T hS hcells hfoot hcent ih =>
-      intro hpos
-      have hs := ProperBandCurvatureStructure q hq
-      have hsome : ∃ i : Fin 3, 0 < (q i.succ).1 := by
-        by_contra hn
-        have hz : ∀ i : Fin 3, (q i.succ).1 = 0 := by
-          intro i
-          have hn' : ¬ 0 < (q i.succ).1 := by
-            intro hp
-            exact hn ⟨i, hp⟩
-          exact le_antisymm (by linarith [hs.2.1 i]) (hs.2.1 i)
-        have h01 := hs.2.2 0 1 (hz 0) (hz 1)
-        exact (by decide : (0 : Fin 3) ≠ 1) h01
-      obtain ⟨i, hi⟩ := hsome
-      have hchild := ih i true hi
-      obtain ⟨x, hx⟩ := hchild
-      exact ⟨x, (hcells x).2 ⟨i, true, hx⟩⟩
 
 private theorem incident_boundary :
     (by
@@ -849,10 +800,10 @@ theorem LatticeAdjacentInterfacePath :
   classical
   have band_of_odometer (C : CircleCoordinates) (T : ProtoTile) (h : PartialOdometer)
       (ho : TileOdometer C T h) : BandPrototile C T :=
-          LatticeInterfacePathGeometry.band_of_odometer C T h ho
+          TileOdometerBandPrototile C T h ho
   have positive_nonempty : ∀ (C : CircleCoordinates) (T : ProtoTile)
       (hT : BandPrototile C T), 0 < C.1 → T.cells.Nonempty :=
-          LatticeInterfacePathGeometry.positive_nonempty
+          (fun D V hV hD => BandPrototileNonempty.positive D V hD hV)
   have incident_boundary (U V : ProtoTile) (x : GaussianInt)
       (hd : Disjoint U.cells V.cells)
       (hu : ∃ j : Fin 4, LatticeVertexIncidentCell x j ∈ U.cells)

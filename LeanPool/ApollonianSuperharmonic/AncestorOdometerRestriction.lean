@@ -6,6 +6,8 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.TileOdometerBandPrototile
+public import LeanPool.ApollonianSuperharmonic.BandPrototileNonempty
 
 public import LeanPool.ApollonianSuperharmonic.AncestorOdometer
 public import LeanPool.ApollonianSuperharmonic.TileOdometerDomain
@@ -25,37 +27,6 @@ Changes: pool module paths, public exports, project namespace and current Mathli
 namespace ApollonianSuperharmonic
 
 namespace AncestorRestrictionProof
-
-private theorem positive_cells :
-    (by
-      classical
-      exact
-        ∀ (c : CircleCoordinates), ∀ (U : ProtoTile), 0 < c.1 → BandPrototile c U →
-            U.cells.Nonempty ) := by
-  classical
-  intro c U hc hu
-  induction hu with
-  | line w x hw => simp at hc
-  | unit z x => simp
-  | @decompose q hq S U hs hcells hfoot hcentroid ih =>
-      have facts := ProperBandCurvatureStructure q hq
-      have hp : ∃ i : Fin 3, 0 < (q i.succ).1 := by
-        by_cases h0 : 0 < (q (0 : Fin 3).succ).1
-        · exact ⟨0, h0⟩
-        by_cases h1 : 0 < (q (1 : Fin 3).succ).1
-        · exact ⟨1, h1⟩
-        by_cases h2 : 0 < (q (2 : Fin 3).succ).1
-        · exact ⟨2, h2⟩
-        have n0 := facts.2.1 (0 : Fin 3)
-        have n1 := facts.2.1 (1 : Fin 3)
-        have n2 := facts.2.1 (2 : Fin 3)
-        have z0 : (q (0 : Fin 3).succ).1 = 0 := by omega
-        have z1 : (q (1 : Fin 3).succ).1 = 0 := by omega
-        have bad := facts.2.2 0 1 z0 z1
-        exact ((by decide : (0 : Fin 3) ≠ 1) bad).elim
-      rcases hp with ⟨i, hi⟩
-      rcases ih i false hi with ⟨x, hx⟩
-      exact ⟨x, (hcells x).mpr ⟨i, false, hx⟩⟩
 
 private theorem odo_eq :
     (by
@@ -80,26 +51,6 @@ private theorem odo_eq :
         · rw [ao x hx, bo x hx]
       subst bv
       rfl
-
-private theorem band_from_odo :
-    (by
-      classical
-      exact
-        ∀ (c : CircleCoordinates), ∀ (U : ProtoTile), ∀ (k : PartialOdometer), TileOdometer c U k →
-        BandPrototile c U ) := by
-  classical
-  intro c U k ho
-  induction ho with
-  | line w x hw hdom => exact BandPrototile.line w x hw
-  | unit z x U k hU hdom htrans =>
-      cases U with
-      | mk cells anchor =>
-          dsimp at hU ⊢
-          subst cells
-          exact BandPrototile.unit z x anchor
-  | decompose hq hT hsub hcells hfoot hcentroid hdom hvalue hcompat hslope ih =>
-      exact BandPrototile.decompose hq (fun i s => ih i s)
-        hcells hfoot hcentroid
 
 private theorem band_one :
     (by
@@ -456,7 +407,7 @@ theorem AncestorOdometerRestriction
         (k.domain : Set GaussianInt) = FootprintVertices U :=
             TileOdometerDomain
   have positive_cells : ∀ (c : CircleCoordinates) (U : ProtoTile),
-      0 < c.1 → BandPrototile c U → U.cells.Nonempty := AncestorRestrictionProof.positive_cells
+      0 < c.1 → BandPrototile c U → U.cells.Nonempty := BandPrototileNonempty.positive
   let vertices : ProtoTile → Finset GaussianInt := fun U =>
     if U.cells.Nonempty then
       U.cells.biUnion (fun x => {x, x + 1, x + ⟨0, 1⟩, x + 1 + ⟨0, 1⟩})
@@ -500,7 +451,7 @@ theorem AncestorOdometerRestriction
       (∀ x, x ∈ a.domain → a.value x = b.value x) → a = b := AncestorRestrictionProof.odo_eq
   have band_from_odo : ∀ (c : CircleCoordinates) (U : ProtoTile)
       (k : PartialOdometer), TileOdometer c U k → BandPrototile c U :=
-          AncestorRestrictionProof.band_from_odo
+          TileOdometerBandPrototile
   have one_step : ∀ (X Y : CircleCoordinates × ProtoTile),
       (∃ r : Fin 4 → CircleCoordinates, ∃ i : Fin 3, ∃ s : Bool,
         ProperBandQuadruple r ∧ r 0 = Y.1 ∧ r i.succ = X.1 ∧

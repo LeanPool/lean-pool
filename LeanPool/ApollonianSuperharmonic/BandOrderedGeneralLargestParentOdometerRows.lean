@@ -6,6 +6,7 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.TileOdometerBandPrototile
 public import LeanPool.ApollonianSuperharmonic.BandOdometerParentCentroids
 
 public import LeanPool.ApollonianSuperharmonic.BandOrderedGeneralInteriorWebRow
@@ -25,25 +26,6 @@ Changes: pool module paths, public exports, project namespace and current Mathli
 namespace ApollonianSuperharmonic
 
 namespace LargestParentOdometerGeometry
-
-private theorem band_of_odo :
-    (by
-      classical
-      exact
-        ∀ (c : CircleCoordinates), ∀ (U : ProtoTile), ∀ (k : PartialOdometer), TileOdometer c U k
-            → BandPrototile c U ) := by
-  classical
-  intro c U k hk
-  induction hk with
-  | line w x hw k hdom => exact BandPrototile.line w x hw
-  | unit z x U k hU hdom htrans =>
-      cases U with
-      | mk cells anchor =>
-          change cells = {x} at hU
-          rw [hU]
-          exact BandPrototile.unit z x anchor
-  | @decompose q hq S U hs k hU hsub hcells hfoot hcentroid hdom hvalue hcompat hslope ih =>
-      exact hU
 
 private theorem firstRotateV :
     (by
@@ -2035,7 +2017,7 @@ theorem BandOrderedGeneralLargestParentOdometerRows
     (marked = false -> FourNeighborLaplacian g x = 1) := by
 -- BODY
   classical
-  have band_of_odo := LargestParentOdometerGeometry.band_of_odo
+  have band_of_odo := TileOdometerBandPrototile
   let cOff (z : GaussianInt) : Real × Real :=
     (1 / 2 : Real) • (GaussianRealPoint z -
       (-(GaussianRealPoint z).2, (GaussianRealPoint z).1))

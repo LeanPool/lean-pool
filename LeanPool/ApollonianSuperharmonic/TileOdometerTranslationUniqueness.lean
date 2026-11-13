@@ -6,6 +6,8 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.TileOdometerBandPrototile
+public import LeanPool.ApollonianSuperharmonic.BandPrototileNonempty
 
 public import LeanPool.ApollonianSuperharmonic.BandTileSimultaneousInduction
 public import LeanPool.ApollonianSuperharmonic.OdometerGluing
@@ -28,63 +30,6 @@ Changes: pool module paths, public exports, project namespace and current Mathli
 namespace ApollonianSuperharmonic
 
 namespace OdometerTranslationGeometry
-
-private theorem hTproto :
-    (by
-      classical
-      exact
-        ∀ (C : CircleCoordinates), ∀ (T : ProtoTile), ∀ (h : PartialOdometer), (TileOdometer C T
-            h) → (BandPrototile C T) ) := by
-  classical
-  intro C T h hT
-  induction hT with
-  | line w x hw h hdom =>
-      exact BandPrototile.line w x hw
-  | unit z x T h hT hdom htrans =>
-      cases T with
-      | mk cells anchor =>
-          dsimp at hT ⊢
-          subst cells
-          exact BandPrototile.unit z x anchor
-  | decompose hq hT hsub hcells hfoot hcentroid hdom hvalue hcompat hslope ih =>
-      exact BandPrototile.decompose hq ih hcells hfoot hcentroid
-
-private theorem hUproto :
-    (by
-      classical
-      exact
-        ∀ (C : CircleCoordinates), ∀ (U : ProtoTile), ∀ (g : PartialOdometer), (TileOdometer C U
-            g) → (BandPrototile C U) ) := by
-  classical
-  intro C U g hU
-  induction hU with
-  | line w x hw h hdom =>
-      exact BandPrototile.line w x hw
-  | unit z x T h hT hdom htrans =>
-      cases T with
-      | mk cells anchor =>
-          dsimp at hT ⊢
-          subst cells
-          exact BandPrototile.unit z x anchor
-  | decompose hq hT hsub hcells hfoot hcentroid hdom hvalue hcompat hslope ih =>
-      exact BandPrototile.decompose hq ih hcells hfoot hcentroid
-
-private theorem proto :
-    (by
-      classical
-      exact
-        ∀ D, ∀ V, ∀ k, TileOdometer D V k → BandPrototile D V ) := by
-  classical
-  intro D V k hk
-  induction hk with
-  | line w x hw k hd => exact BandPrototile.line w x hw
-  | unit z x V k hc hd ht =>
-      cases V with
-      | mk cells anchor =>
-          dsimp at hc ⊢
-          subst cells
-          exact BandPrototile.unit z x anchor
-  | decompose hq hV hsub hc hf hcent hd hv hcompat hslope ih => exact hV
 
 private theorem positive_parent :
     (by
@@ -115,23 +60,6 @@ private theorem proper_large :
   obtain ⟨i, hi⟩ := positive_parent q hq
   have hb := hq.2 i
   omega
-
-private theorem positive_cells :
-    (by
-      classical
-      exact
-        (∀ q, ProperBandQuadruple q → ∃ i : Fin 3, 0 < (q i.succ).1) → (∀ D, ∀ V, BandPrototile D
-            V → 0 < D.1 → V.cells.Nonempty) ) := by
-  classical
-  intro positive_parent D V hV
-  induction hV with
-  | line w x hw => simp
-  | unit z x anchor => simp
-  | @decompose q hq S V hS hc hf hcent ih =>
-      intro hp
-      obtain ⟨i, hi⟩ := positive_parent q hq
-      obtain ⟨x, hx⟩ := ih i false hi
-      exact ⟨x, (hc x).mpr ⟨i, false, hx⟩⟩
 
 private theorem zero_cells :
     (by
@@ -696,15 +624,15 @@ theorem TileOdometerTranslationUniqueness
             a.re * x.re + a.im * x.im + b := by
 -- BODY
   classical
-  have hTproto : BandPrototile C T := OdometerTranslationGeometry.hTproto C T h hT
-  have hUproto : BandPrototile C U := OdometerTranslationGeometry.hUproto C U g hU
-  have proto : ∀ D V k, TileOdometer D V k → BandPrototile D V := OdometerTranslationGeometry.proto
+  have hTproto : BandPrototile C T := TileOdometerBandPrototile C T h hT
+  have hUproto : BandPrototile C U := TileOdometerBandPrototile C U g hU
+  have proto : ∀ D V k, TileOdometer D V k → BandPrototile D V := TileOdometerBandPrototile
   have positive_parent : ∀ q, ProperBandQuadruple q →
       ∃ i : Fin 3, 0 < (q i.succ).1 := OdometerTranslationGeometry.positive_parent C
   have proper_large : ∀ q, ProperBandQuadruple q → 1 < (q 0).1 :=
       OdometerTranslationGeometry.proper_large C positive_parent
   have positive_cells : ∀ D V, BandPrototile D V → 0 < D.1 →
-      V.cells.Nonempty := OdometerTranslationGeometry.positive_cells positive_parent
+      V.cells.Nonempty := (fun D V hV hD => BandPrototileNonempty.positive D V hD hV)
   have zero_cells : ∀ D V, BandPrototile D V → D.1 = 0 → V.cells = ∅ :=
       OdometerTranslationGeometry.zero_cells
   have cent_eq : ∀ V W : ProtoTile, V.cells = W.cells →

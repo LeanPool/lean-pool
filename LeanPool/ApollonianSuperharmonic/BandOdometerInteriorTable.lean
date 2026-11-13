@@ -6,6 +6,7 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.BandPrototileQuarterTurn
 
 public import LeanPool.ApollonianSuperharmonic.P4120T1RootNormalization
 public import LeanPool.ApollonianSuperharmonic.P4120T1AffineComparison
@@ -143,30 +144,7 @@ private theorem layout :
     have hI := BandTileSimultaneousInduction q' hq' T' hT'
     exact ⟨hI.1, hI.2.1, hI.2.2.1 S' hocc hcells⟩
   · intro D U hU _
-    cases hU with
-    | line w z hw =>
-        intro p
-        simp [TileRealization, TileCentroid]
-    | unit z a anchor =>
-        intro p
-        have hc : TileCentroid (⟨{a}, anchor⟩ : ProtoTile) =
-            (((a.re : Int) : Real) + (1 / 2 : Real),
-              ((a.im : Int) : Real) + (1 / 2 : Real)) := by
-          simp [TileCentroid]
-        rw [hc]
-        rcases p with ⟨px, py⟩
-        simp only [TileRealization, Finset.mem_singleton, Set.mem_iUnion]
-        simp only [ClosedSquareRealization, Set.mem_Icc, Prod.le_def]
-        constructor
-        · rintro ⟨b, rfl, hlo, hhi⟩
-          refine ⟨b, rfl, ?_, ?_⟩ <;> constructor <;>
-            linarith [hlo.1, hlo.2, hhi.1, hhi.2]
-        · rintro ⟨b, rfl, hlo, hhi⟩
-          refine ⟨b, rfl, ?_, ?_⟩ <;> constructor <;>
-            linarith [hlo.1, hlo.2, hhi.1, hhi.2]
-    | @decompose q' hq' S' U' hS hcells hfoot hcent =>
-        exact (BandTileSimultaneousInduction q' hq' U
-          (.decompose hq' hS hcells hfoot hcent)).2.2.2.1
+    exact BandPrototileQuarterTurn.symmetry D U hU
   · intro q' T' U hq' hT' _ hlarge i hU hcentU
     exact (BandTileSimultaneousInduction q' hq' T' hT').2.2.2.2.2.1
       hlarge i U hU hcentU

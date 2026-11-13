@@ -6,8 +6,8 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.BandPrototileQuarterTurn
 
-public import LeanPool.ApollonianSuperharmonic.BandTileSimultaneousInduction
 
 -- [TABLET NODE: P4055T1BandQuarterTurn]
 
@@ -25,30 +25,7 @@ namespace ApollonianSuperharmonic
 theorem P4055T1BandQuarterTurn (D : CircleCoordinates) (V : ProtoTile)
     (hV : BandPrototile D V) : QuarterTurnSymmetric V := by
 -- BODY
-  cases hV with
-  | line w z hw =>
-      intro p
-      simp [TileRealization, TileCentroid]
-  | unit z a anchor =>
-      intro p
-      have hc : TileCentroid (⟨{a}, anchor⟩ : ProtoTile) =
-          (((a.re : Int) : Real) + (1 / 2 : Real),
-            ((a.im : Int) : Real) + (1 / 2 : Real)) := by
-        simp [TileCentroid]
-      rw [hc]
-      rcases p with ⟨px, py⟩
-      simp only [TileRealization, Finset.mem_singleton, Set.mem_iUnion]
-      simp only [ClosedSquareRealization, Set.mem_Icc, Prod.le_def]
-      constructor
-      · rintro ⟨b, rfl, hlo, hhi⟩
-        refine ⟨b, rfl, ?_, ?_⟩ <;> constructor <;>
-          linarith [hlo.1, hlo.2, hhi.1, hhi.2]
-      · rintro ⟨b, rfl, hlo, hhi⟩
-        refine ⟨b, rfl, ?_, ?_⟩ <;> constructor <;>
-          linarith [hlo.1, hlo.2, hhi.1, hhi.2]
-  | @decompose q hq S V hS hcells hfoot hcent =>
-      exact (BandTileSimultaneousInduction q hq V
-        (.decompose hq hS hcells hfoot hcent)).2.2.2.1
+  exact BandPrototileQuarterTurn.symmetry D V hV
 
 end ApollonianSuperharmonic
 

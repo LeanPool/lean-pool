@@ -38,4 +38,7 @@ cocycles, and supporting geometric lemmas from upstream. The upstream paper,
 process tooling and development history are not imported.
 The upstream reference notes explain two local repairs to the printed proof:
 edge-supported interfaces with isolated corners, and occurrence-oriented unit strings.
+The recursive-vector API also retains upstream’s product-compatible initialization,
+whose signs and affine offsets differ from the printed Section 5.3 display.
+`RecursiveVectorSystem` records both triples and the base product-identity discrepancy.
 -/

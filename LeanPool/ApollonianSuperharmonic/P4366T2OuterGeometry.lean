@@ -6,6 +6,7 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.BandPrototileNonempty
 public import LeanPool.ApollonianSuperharmonic.SimpleGridPathBetween
 
 public import LeanPool.ApollonianSuperharmonic.BandRegularTileTouchingClassification
@@ -51,36 +52,6 @@ private theorem hcurvi :
   intro q Ci i hCi hlarge
   rw [hCi]
   omega
-
-private theorem positive_nonempty :
-    (by
-      classical
-      exact
-        (Fin 4 -> CircleCoordinates) → ((BandCircle) → ((Fin 3) → (∀ (D : CircleCoordinates), ∀
-            (U : ProtoTile), BandPrototile D U → 0 < D.1 → U.cells.Nonempty))) ) := by
-  classical
-  intro q Ci i D U hU
-  induction hU with
-  | line w x hw => intro hp; simp at hp
-  | unit z x a => intro hp; exact ⟨x, by simp⟩
-  | @decompose r hr S U hs hc hf' hcent ih =>
-      intro hp
-      have str := ProperBandCurvatureStructure r hr
-      have pos : ∃ j : Fin 3, 0 < (r j.succ).1 := by
-        by_contra hn
-        push Not at hn
-        have z0 : (r (0 : Fin 3).succ).1 = 0 := by
-          have := str.2.1 0
-          have h := hn 0
-          omega
-        have z1 : (r (1 : Fin 3).succ).1 = 0 := by
-          have := str.2.1 1
-          have h := hn 1
-          omega
-        exact (by decide : (0 : Fin 3) ≠ 1) (str.2.2 0 1 z0 z1)
-      obtain ⟨j, hj⟩ := pos
-      obtain ⟨x, hx⟩ := ih j true hj
-      exact ⟨x, (hc x).mpr ⟨j, true, hx⟩⟩
 
 private theorem hcplus :
     (by
@@ -1368,7 +1339,8 @@ theorem P4366T2OuterGeometry
   have hcurv0 : 0 < (q 0).1 := OuterGeometry.hcurv0 q C0 hC0
   have hcurvi : 0 < (q i.succ).1 := OuterGeometry.hcurvi q Ci i hCi hlarge
   have positive_nonempty : ∀ (D : CircleCoordinates) (U : ProtoTile),
-      BandPrototile D U → 0 < D.1 → U.cells.Nonempty := OuterGeometry.positive_nonempty q Ci i
+      BandPrototile D U → 0 < D.1 → U.cells.Nonempty :=
+        fun D V hV hD => BandPrototileNonempty.positive D V hD hV
   have hT0 : BandPrototile C0.1.1 T0 := TileOdometerBandPrototile _ _ _ hO0
   have hT0' : BandPrototile C0.1.1 T0' := TileOdometerBandPrototile _ _ _ hO0'
   have hRm : BandPrototile Ci.1.1 Rminus := TileOdometerBandPrototile _ _ _ hOm

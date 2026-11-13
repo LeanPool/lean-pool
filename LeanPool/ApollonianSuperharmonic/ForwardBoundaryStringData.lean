@@ -30,57 +30,6 @@ namespace ApollonianSuperharmonic
 
 namespace ForwardBoundaryGeometry
 
-private theorem hroot :
-    (by
-      classical
-      exact
-        ∀ (q : Fin 4 -> CircleCoordinates), (ProperBandQuadruple q) → ((BandCircle) → (∀ (i : Fin
-            3), (0 < (q i.succ).1) → (1 < (q 0).1))) ) := by
-  classical
-  intro q hq Cᵢ i hparent
-  have hlt := hq.2 i
-  omega
-
-private theorem hcyclic :
-    (by
-      classical
-      exact
-        ∀ (q : Fin 4 -> CircleCoordinates), (ProperBandQuadruple q) → (∀ (Cᵢ : BandCircle), ∀ (i
-            : Fin 3), (q i.succ = Cᵢ.1.1) → (∀ (orientation : Bool), (Cᵢ.1.1.1 = (1 : ℤ) →
-            UnitOccurrenceOrientation q i orientation) → ((0 < (q i.succ).1) → (∀ (S : Fin (3 :
-            ℕ) → Bool → ProtoTile), ∀ (hs : Fin (3 : ℕ) → Bool → PartialOdometer),
-        let B := S i false
-        let g := hs i false
-        (TileOdometer Cᵢ.1.1 B g) → ((BandPrototile Cᵢ.1.1 B) → (∀ (pouter : ℝ × ℝ), ∀ (pseed : ℝ
-            × ℝ), (PartialOdometerSlope (hs i false) = some pseed) → ((pseed.1 - pouter.1 = (if
-            false = true then (1 : ℝ) else (-1 : ℝ)) * (1 / 2 : ℝ) * ((↑(BandVectors.2 (q (i + (2
-            : Fin (3 : ℕ))).succ) (q (i + (1 : Fin (3 : ℕ))).succ)).re : ℝ) - (↑(BandVectors.2 (q
-            (i + (2 : Fin (3 : ℕ))).succ) (q (i + (1 : Fin (3 : ℕ))).succ)).im : ℝ))) → ((pseed.2
-            - pouter.2 = (if false = true then (1 : ℝ) else (-1 : ℝ)) * (1 / 2 : ℝ) *
-            ((↑(BandVectors.2 (q (i + (2 : Fin (3 : ℕ))).succ) (q (i + (1 : Fin (3 :
-            ℕ))).succ)).im : ℝ) + (↑(BandVectors.2 (q (i + (2 : Fin (3 : ℕ))).succ) (q (i + (1 :
-            Fin (3 : ℕ))).succ)).re : ℝ))) → (BandVectors.1 (q ((i + 2).succ)) (q ((i + 1).succ))
-            + BandVectors.1 (q i.succ) (q ((i + 2).succ)) + BandVectors.1 (q ((i + 1).succ)) (q
-            i.succ) = 0 ∧ BandVectors.2 (q ((i + 2).succ)) (q ((i + 1).succ)) + BandVectors.2 (q
-            i.succ) (q ((i + 2).succ)) + BandVectors.2 (q ((i + 1).succ)) (q i.succ) = 0 ∧
-            BandVectors.1 (q i.succ) (q 0) = BandVectors.1 (q i.succ) (q ((i + 2).succ)) - (⟨0,
-            1⟩ : GaussianInt) * BandVectors.1 (q ((i + 1).succ)) (q i.succ) ∧ BandVectors.2 (q
-            i.succ) (q 0) = BandVectors.2 (q i.succ) (q ((i + 2).succ)) + (⟨0, 1⟩ : GaussianInt)
-            * BandVectors.2 (q ((i + 1).succ)) (q i.succ)))))))))) ) := by
-  classical
-  intro q hq Cᵢ i hCᵢ orientation horientation hparent S hs B g hBodometer hB pouter pseed hpseed
-      hpre hpim
-  fin_cases i
-  · have h := VectorRecursionLaws q hq.1
-    simpa using And.intro h.1 (And.intro h.2.1 (And.intro h.2.2.1 h.2.2.2.1))
-  · have h := VectorRecursionLaws ![q 0, q 2, q 3, q 1]
-      (SemiProperQuadruple.rotate hq.1)
-    simpa using And.intro h.1 (And.intro h.2.1 (And.intro h.2.2.1 h.2.2.2.1))
-  · have hr : SemiProperQuadruple ![q 0, q 3, q 1, q 2] := by
-      simpa using SemiProperQuadruple.rotate (SemiProperQuadruple.rotate hq.1)
-    have h := VectorRecursionLaws ![q 0, q 3, q 1, q 2] hr
-    simpa using And.intro h.1 (And.intro h.2.1 (And.intro h.2.2.1 h.2.2.2.1))
-
 private theorem hseedIdentity :
     (by
       classical
@@ -249,7 +198,9 @@ theorem ForwardBoundaryStringData
 -- BODY
   have hparent : 0 < (q i.succ).1 := by
     simpa only [hCᵢ] using hpositive
-  have hroot : 1 < (q 0).1 := ForwardBoundaryGeometry.hroot q hq Cᵢ i hparent
+  have hroot : 1 < (q 0).1 := by
+    have hlt := hq.2 i
+    omega
   have houter : TileOdometer (q 0) T₀ h₀ := by
     simpa only [hC₀] using hO₀
   obtain ⟨S, hs, hT₀, hsub, _, _, hcentroid, _, _, _, hslope⟩ :=
@@ -276,8 +227,7 @@ theorem ForwardBoundaryStringData
       BandVectors.2 (q i.succ) (q 0) =
           BandVectors.2 (q i.succ) (q ((i + 2).succ)) +
             (⟨0, 1⟩ : GaussianInt) * BandVectors.2 (q ((i + 1).succ)) (q i.succ) :=
-                ForwardBoundaryGeometry.hcyclic q hq Cᵢ i hCᵢ orientation horientation hparent S
-                hs hBodometer hB pouter pseed hpseed hpre hpim
+                VectorRecursionLaws.cyclic q hq.1 i
   obtain ⟨hvsum, hasum, hvchild, hachild⟩ := hcyclic
   obtain ⟨hvflip, haflip⟩ := (VectorRecursionLaws q hq.1).2.2.2.2 hq i
   have hseedIdentity :
