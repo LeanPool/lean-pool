@@ -1399,7 +1399,29 @@ theorem unaryPair_first_true
       some (unaryPairConfiguration 0 input
         (true :: first) second matchedFirst matchedSecond
         base outer output scratch) := by
-  unaryPairStepTac
+  machineStackEquality [
+      actualUnaryPairIndexMachine,
+      unaryPairConfiguration,
+      unaryPairPeek,
+      unaryPairPop,
+      unaryPairPush,
+      unaryPairGoto,
+      unaryPairFirstStatement,
+      unaryPairSecondStatement,
+      unaryPairCompareStatement,
+      unaryPairGreaterBaseStatement,
+      unaryPairGreaterOffsetStatement,
+      unaryPairLessBaseStatement,
+      unaryPairLessOffsetStatement,
+      unaryPairOuterStatement,
+      unaryPairSquareCopyStatement,
+      unaryPairSquareRestoreStatement,
+      unaryPairSquareCleanupStatement,
+      unaryPairFailureStatement,
+      Turing.haltList,
+      Turing.FinTM2.step,
+      Turing.TM2.step,
+      Turing.TM2.stepAux]
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem unaryPair_first_false
@@ -1412,7 +1434,29 @@ theorem unaryPair_first_false
       some (unaryPairConfiguration 1 input
         first second matchedFirst matchedSecond
         base outer output scratch) := by
-  unaryPairStepTac
+  machineStackEquality [
+      actualUnaryPairIndexMachine,
+      unaryPairConfiguration,
+      unaryPairPeek,
+      unaryPairPop,
+      unaryPairPush,
+      unaryPairGoto,
+      unaryPairFirstStatement,
+      unaryPairSecondStatement,
+      unaryPairCompareStatement,
+      unaryPairGreaterBaseStatement,
+      unaryPairGreaterOffsetStatement,
+      unaryPairLessBaseStatement,
+      unaryPairLessOffsetStatement,
+      unaryPairOuterStatement,
+      unaryPairSquareCopyStatement,
+      unaryPairSquareRestoreStatement,
+      unaryPairSquareCleanupStatement,
+      unaryPairFailureStatement,
+      Turing.haltList,
+      Turing.FinTM2.step,
+      Turing.TM2.step,
+      Turing.TM2.stepAux]
 
 theorem unaryPair_first_missing
     (first second matchedFirst matchedSecond
@@ -1424,7 +1468,7 @@ theorem unaryPair_first_missing
       some (unaryPairConfiguration 11 []
         first second matchedFirst matchedSecond
         base outer output scratch) := by
-  unaryPairStepTac
+  rfl
 
 theorem unaryPair_second_true
     (input first second matchedFirst matchedSecond
@@ -1436,7 +1480,29 @@ theorem unaryPair_second_true
       some (unaryPairConfiguration 1 input first
         (true :: second) matchedFirst matchedSecond
         base outer output scratch) := by
-  unaryPairStepTac
+  machineStackEquality [
+      actualUnaryPairIndexMachine,
+      unaryPairConfiguration,
+      unaryPairPeek,
+      unaryPairPop,
+      unaryPairPush,
+      unaryPairGoto,
+      unaryPairFirstStatement,
+      unaryPairSecondStatement,
+      unaryPairCompareStatement,
+      unaryPairGreaterBaseStatement,
+      unaryPairGreaterOffsetStatement,
+      unaryPairLessBaseStatement,
+      unaryPairLessOffsetStatement,
+      unaryPairOuterStatement,
+      unaryPairSquareCopyStatement,
+      unaryPairSquareRestoreStatement,
+      unaryPairSquareCleanupStatement,
+      unaryPairFailureStatement,
+      Turing.haltList,
+      Turing.FinTM2.step,
+      Turing.TM2.step,
+      Turing.TM2.stepAux]
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem unaryPair_second_false
@@ -1448,7 +1514,29 @@ theorem unaryPair_second_false
         base outer output scratch) =
       some (unaryPairConfiguration 2 input first second
         matchedFirst matchedSecond base outer output scratch) := by
-  unaryPairStepTac
+  machineStackEquality [
+      actualUnaryPairIndexMachine,
+      unaryPairConfiguration,
+      unaryPairPeek,
+      unaryPairPop,
+      unaryPairPush,
+      unaryPairGoto,
+      unaryPairFirstStatement,
+      unaryPairSecondStatement,
+      unaryPairCompareStatement,
+      unaryPairGreaterBaseStatement,
+      unaryPairGreaterOffsetStatement,
+      unaryPairLessBaseStatement,
+      unaryPairLessOffsetStatement,
+      unaryPairOuterStatement,
+      unaryPairSquareCopyStatement,
+      unaryPairSquareRestoreStatement,
+      unaryPairSquareCleanupStatement,
+      unaryPairFailureStatement,
+      Turing.haltList,
+      Turing.FinTM2.step,
+      Turing.TM2.step,
+      Turing.TM2.stepAux]
 
 theorem unaryPair_second_missing
     (first second matchedFirst matchedSecond
@@ -1458,7 +1546,7 @@ theorem unaryPair_second_missing
         matchedFirst matchedSecond base outer output scratch) =
       some (unaryPairConfiguration 11 [] first second
         matchedFirst matchedSecond base outer output scratch) := by
-  unaryPairStepTac
+  rfl
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem unaryPair_compare_match
@@ -1471,7 +1559,29 @@ theorem unaryPair_compare_match
       some (unaryPairConfiguration 2 [] first second
         (true :: matchedFirst) (true :: matchedSecond)
         base outer output scratch) := by
-  unaryPairStepTac
+  machineStackEquality [
+      actualUnaryPairIndexMachine,
+      unaryPairConfiguration,
+      unaryPairPeek,
+      unaryPairPop,
+      unaryPairPush,
+      unaryPairGoto,
+      unaryPairFirstStatement,
+      unaryPairSecondStatement,
+      unaryPairCompareStatement,
+      unaryPairGreaterBaseStatement,
+      unaryPairGreaterOffsetStatement,
+      unaryPairLessBaseStatement,
+      unaryPairLessOffsetStatement,
+      unaryPairOuterStatement,
+      unaryPairSquareCopyStatement,
+      unaryPairSquareRestoreStatement,
+      unaryPairSquareCleanupStatement,
+      unaryPairFailureStatement,
+      Turing.haltList,
+      Turing.FinTM2.step,
+      Turing.TM2.step,
+      Turing.TM2.stepAux]
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem unaryPair_compare_greater
@@ -1482,7 +1592,7 @@ theorem unaryPair_compare_greater
         matchedFirst matchedSecond base outer output scratch) =
       some (unaryPairConfiguration 3 [] first []
         matchedFirst matchedSecond base outer output scratch) := by
-  cases first <;> unaryPairStepTac
+  cases first <;> rfl
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem unaryPair_compare_less
@@ -1493,7 +1603,7 @@ theorem unaryPair_compare_less
         matchedFirst matchedSecond base outer output scratch) =
       some (unaryPairConfiguration 5 [] [] (true :: second)
         matchedFirst matchedSecond base outer output scratch) := by
-  unaryPairStepTac
+  rfl
 
 theorem unaryPair_compare_trailing
     (bit : Bool)
@@ -1506,7 +1616,7 @@ theorem unaryPair_compare_trailing
       some (unaryPairConfiguration 11 (bit :: input)
         first second matchedFirst matchedSecond
         base outer output scratch) := by
-  cases bit <;> unaryPairStepTac
+  rfl
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem unaryPair_greater_base_first
@@ -1518,7 +1628,29 @@ theorem unaryPair_greater_base_first
       some (unaryPairConfiguration 3 [] first []
         matchedFirst matchedSecond
         (true :: base) (true :: outer) (true :: output) []) := by
-  unaryPairStepTac
+  machineStackEquality [
+      actualUnaryPairIndexMachine,
+      unaryPairConfiguration,
+      unaryPairPeek,
+      unaryPairPop,
+      unaryPairPush,
+      unaryPairGoto,
+      unaryPairFirstStatement,
+      unaryPairSecondStatement,
+      unaryPairCompareStatement,
+      unaryPairGreaterBaseStatement,
+      unaryPairGreaterOffsetStatement,
+      unaryPairLessBaseStatement,
+      unaryPairLessOffsetStatement,
+      unaryPairOuterStatement,
+      unaryPairSquareCopyStatement,
+      unaryPairSquareRestoreStatement,
+      unaryPairSquareCleanupStatement,
+      unaryPairFailureStatement,
+      Turing.haltList,
+      Turing.FinTM2.step,
+      Turing.TM2.step,
+      Turing.TM2.stepAux]
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem unaryPair_greater_base_matched
@@ -1530,7 +1662,29 @@ theorem unaryPair_greater_base_matched
       some (unaryPairConfiguration 3 [] [] []
         matchedFirst matchedSecond
         (true :: base) (true :: outer) (true :: output) []) := by
-  unaryPairStepTac
+  machineStackEquality [
+      actualUnaryPairIndexMachine,
+      unaryPairConfiguration,
+      unaryPairPeek,
+      unaryPairPop,
+      unaryPairPush,
+      unaryPairGoto,
+      unaryPairFirstStatement,
+      unaryPairSecondStatement,
+      unaryPairCompareStatement,
+      unaryPairGreaterBaseStatement,
+      unaryPairGreaterOffsetStatement,
+      unaryPairLessBaseStatement,
+      unaryPairLessOffsetStatement,
+      unaryPairOuterStatement,
+      unaryPairSquareCopyStatement,
+      unaryPairSquareRestoreStatement,
+      unaryPairSquareCleanupStatement,
+      unaryPairFailureStatement,
+      Turing.haltList,
+      Turing.FinTM2.step,
+      Turing.TM2.step,
+      Turing.TM2.stepAux]
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem unaryPair_greater_base_finish
@@ -1540,7 +1694,7 @@ theorem unaryPair_greater_base_finish
         base outer output []) =
       some (unaryPairConfiguration 4 [] [] [] [] matchedSecond
         base outer output []) := by
-  unaryPairStepTac
+  rfl
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem unaryPair_greater_offset_step
@@ -1550,7 +1704,29 @@ theorem unaryPair_greater_offset_step
         (true :: matchedSecond) base outer output []) =
       some (unaryPairConfiguration 4 [] [] [] [] matchedSecond
         base outer (true :: output) []) := by
-  unaryPairStepTac
+  machineStackEquality [
+      actualUnaryPairIndexMachine,
+      unaryPairConfiguration,
+      unaryPairPeek,
+      unaryPairPop,
+      unaryPairPush,
+      unaryPairGoto,
+      unaryPairFirstStatement,
+      unaryPairSecondStatement,
+      unaryPairCompareStatement,
+      unaryPairGreaterBaseStatement,
+      unaryPairGreaterOffsetStatement,
+      unaryPairLessBaseStatement,
+      unaryPairLessOffsetStatement,
+      unaryPairOuterStatement,
+      unaryPairSquareCopyStatement,
+      unaryPairSquareRestoreStatement,
+      unaryPairSquareCleanupStatement,
+      unaryPairFailureStatement,
+      Turing.haltList,
+      Turing.FinTM2.step,
+      Turing.TM2.step,
+      Turing.TM2.stepAux]
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem unaryPair_greater_offset_finish
@@ -1560,7 +1736,7 @@ theorem unaryPair_greater_offset_finish
         base outer output []) =
       some (unaryPairConfiguration 7 [] [] [] [] []
         base outer output []) := by
-  unaryPairStepTac
+  rfl
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem unaryPair_less_base_second
@@ -1571,7 +1747,29 @@ theorem unaryPair_less_base_second
       some (unaryPairConfiguration 5 [] [] second
         matchedFirst matchedSecond
         (true :: base) (true :: outer) output []) := by
-  unaryPairStepTac
+  machineStackEquality [
+      actualUnaryPairIndexMachine,
+      unaryPairConfiguration,
+      unaryPairPeek,
+      unaryPairPop,
+      unaryPairPush,
+      unaryPairGoto,
+      unaryPairFirstStatement,
+      unaryPairSecondStatement,
+      unaryPairCompareStatement,
+      unaryPairGreaterBaseStatement,
+      unaryPairGreaterOffsetStatement,
+      unaryPairLessBaseStatement,
+      unaryPairLessOffsetStatement,
+      unaryPairOuterStatement,
+      unaryPairSquareCopyStatement,
+      unaryPairSquareRestoreStatement,
+      unaryPairSquareCleanupStatement,
+      unaryPairFailureStatement,
+      Turing.haltList,
+      Turing.FinTM2.step,
+      Turing.TM2.step,
+      Turing.TM2.stepAux]
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem unaryPair_less_base_matched
@@ -1583,7 +1781,29 @@ theorem unaryPair_less_base_matched
       some (unaryPairConfiguration 5 [] [] []
         matchedFirst matchedSecond
         (true :: base) (true :: outer) output []) := by
-  unaryPairStepTac
+  machineStackEquality [
+      actualUnaryPairIndexMachine,
+      unaryPairConfiguration,
+      unaryPairPeek,
+      unaryPairPop,
+      unaryPairPush,
+      unaryPairGoto,
+      unaryPairFirstStatement,
+      unaryPairSecondStatement,
+      unaryPairCompareStatement,
+      unaryPairGreaterBaseStatement,
+      unaryPairGreaterOffsetStatement,
+      unaryPairLessBaseStatement,
+      unaryPairLessOffsetStatement,
+      unaryPairOuterStatement,
+      unaryPairSquareCopyStatement,
+      unaryPairSquareRestoreStatement,
+      unaryPairSquareCleanupStatement,
+      unaryPairFailureStatement,
+      Turing.haltList,
+      Turing.FinTM2.step,
+      Turing.TM2.step,
+      Turing.TM2.stepAux]
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem unaryPair_less_base_finish
@@ -1593,7 +1813,7 @@ theorem unaryPair_less_base_finish
         base outer output []) =
       some (unaryPairConfiguration 6 [] [] [] matchedFirst []
         base outer output []) := by
-  unaryPairStepTac
+  rfl
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem unaryPair_less_offset_step
@@ -1603,7 +1823,29 @@ theorem unaryPair_less_offset_step
         (true :: matchedFirst) [] base outer output []) =
       some (unaryPairConfiguration 6 [] [] []
         matchedFirst [] base outer (true :: output) []) := by
-  unaryPairStepTac
+  machineStackEquality [
+      actualUnaryPairIndexMachine,
+      unaryPairConfiguration,
+      unaryPairPeek,
+      unaryPairPop,
+      unaryPairPush,
+      unaryPairGoto,
+      unaryPairFirstStatement,
+      unaryPairSecondStatement,
+      unaryPairCompareStatement,
+      unaryPairGreaterBaseStatement,
+      unaryPairGreaterOffsetStatement,
+      unaryPairLessBaseStatement,
+      unaryPairLessOffsetStatement,
+      unaryPairOuterStatement,
+      unaryPairSquareCopyStatement,
+      unaryPairSquareRestoreStatement,
+      unaryPairSquareCleanupStatement,
+      unaryPairFailureStatement,
+      Turing.haltList,
+      Turing.FinTM2.step,
+      Turing.TM2.step,
+      Turing.TM2.stepAux]
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem unaryPair_less_offset_finish
@@ -1613,7 +1855,7 @@ theorem unaryPair_less_offset_finish
         base outer output []) =
       some (unaryPairConfiguration 7 [] [] [] [] []
         base outer output []) := by
-  unaryPairStepTac
+  rfl
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem unaryPair_outer_step
@@ -1623,7 +1865,29 @@ theorem unaryPair_outer_step
         base (true :: outer) output []) =
       some (unaryPairConfiguration 8 [] [] [] [] []
         base outer output []) := by
-  unaryPairStepTac
+  machineStackEquality [
+      actualUnaryPairIndexMachine,
+      unaryPairConfiguration,
+      unaryPairPeek,
+      unaryPairPop,
+      unaryPairPush,
+      unaryPairGoto,
+      unaryPairFirstStatement,
+      unaryPairSecondStatement,
+      unaryPairCompareStatement,
+      unaryPairGreaterBaseStatement,
+      unaryPairGreaterOffsetStatement,
+      unaryPairLessBaseStatement,
+      unaryPairLessOffsetStatement,
+      unaryPairOuterStatement,
+      unaryPairSquareCopyStatement,
+      unaryPairSquareRestoreStatement,
+      unaryPairSquareCleanupStatement,
+      unaryPairFailureStatement,
+      Turing.haltList,
+      Turing.FinTM2.step,
+      Turing.TM2.step,
+      Turing.TM2.stepAux]
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem unaryPair_outer_finish
@@ -1633,7 +1897,7 @@ theorem unaryPair_outer_finish
         base [] output []) =
       some (unaryPairConfiguration 10 [] [] [] [] []
         base [] output []) := by
-  unaryPairStepTac
+  rfl
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem unaryPair_square_copy_step
@@ -1643,7 +1907,29 @@ theorem unaryPair_square_copy_step
         (true :: base) outer output scratch) =
       some (unaryPairConfiguration 8 [] [] [] [] []
         base outer (true :: output) (true :: scratch)) := by
-  unaryPairStepTac
+  machineStackEquality [
+      actualUnaryPairIndexMachine,
+      unaryPairConfiguration,
+      unaryPairPeek,
+      unaryPairPop,
+      unaryPairPush,
+      unaryPairGoto,
+      unaryPairFirstStatement,
+      unaryPairSecondStatement,
+      unaryPairCompareStatement,
+      unaryPairGreaterBaseStatement,
+      unaryPairGreaterOffsetStatement,
+      unaryPairLessBaseStatement,
+      unaryPairLessOffsetStatement,
+      unaryPairOuterStatement,
+      unaryPairSquareCopyStatement,
+      unaryPairSquareRestoreStatement,
+      unaryPairSquareCleanupStatement,
+      unaryPairFailureStatement,
+      Turing.haltList,
+      Turing.FinTM2.step,
+      Turing.TM2.step,
+      Turing.TM2.stepAux]
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem unaryPair_square_copy_finish
@@ -1653,7 +1939,7 @@ theorem unaryPair_square_copy_finish
         [] outer output scratch) =
       some (unaryPairConfiguration 9 [] [] [] [] []
         [] outer output scratch) := by
-  unaryPairStepTac
+  rfl
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem unaryPair_square_restore_step
@@ -1663,7 +1949,29 @@ theorem unaryPair_square_restore_step
         base outer output (true :: scratch)) =
       some (unaryPairConfiguration 9 [] [] [] [] []
         (true :: base) outer output scratch) := by
-  unaryPairStepTac
+  machineStackEquality [
+      actualUnaryPairIndexMachine,
+      unaryPairConfiguration,
+      unaryPairPeek,
+      unaryPairPop,
+      unaryPairPush,
+      unaryPairGoto,
+      unaryPairFirstStatement,
+      unaryPairSecondStatement,
+      unaryPairCompareStatement,
+      unaryPairGreaterBaseStatement,
+      unaryPairGreaterOffsetStatement,
+      unaryPairLessBaseStatement,
+      unaryPairLessOffsetStatement,
+      unaryPairOuterStatement,
+      unaryPairSquareCopyStatement,
+      unaryPairSquareRestoreStatement,
+      unaryPairSquareCleanupStatement,
+      unaryPairFailureStatement,
+      Turing.haltList,
+      Turing.FinTM2.step,
+      Turing.TM2.step,
+      Turing.TM2.stepAux]
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem unaryPair_square_restore_finish
@@ -1673,7 +1981,7 @@ theorem unaryPair_square_restore_finish
         base outer output []) =
       some (unaryPairConfiguration 7 [] [] [] [] []
         base outer output []) := by
-  unaryPairStepTac
+  rfl
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem unaryPair_square_cleanup_step
@@ -1683,14 +1991,58 @@ theorem unaryPair_square_cleanup_step
         (true :: base) [] output []) =
       some (unaryPairConfiguration 10 [] [] [] [] []
         base [] output []) := by
-  unaryPairStepTac
+  machineStackEquality [
+      actualUnaryPairIndexMachine,
+      unaryPairConfiguration,
+      unaryPairPeek,
+      unaryPairPop,
+      unaryPairPush,
+      unaryPairGoto,
+      unaryPairFirstStatement,
+      unaryPairSecondStatement,
+      unaryPairCompareStatement,
+      unaryPairGreaterBaseStatement,
+      unaryPairGreaterOffsetStatement,
+      unaryPairLessBaseStatement,
+      unaryPairLessOffsetStatement,
+      unaryPairOuterStatement,
+      unaryPairSquareCopyStatement,
+      unaryPairSquareRestoreStatement,
+      unaryPairSquareCleanupStatement,
+      unaryPairFailureStatement,
+      Turing.haltList,
+      Turing.FinTM2.step,
+      Turing.TM2.step,
+      Turing.TM2.stepAux]
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem unaryPair_square_cleanup_finish (output : List Bool) :
     actualUnaryPairIndexMachine.step
       (unaryPairConfiguration 10 [] [] [] [] [] [] [] output []) =
       some (Turing.haltList actualUnaryPairIndexMachine output) := by
-  unaryPairStepTac
+  machineStackEquality [
+      actualUnaryPairIndexMachine,
+      unaryPairConfiguration,
+      unaryPairPeek,
+      unaryPairPop,
+      unaryPairPush,
+      unaryPairGoto,
+      unaryPairFirstStatement,
+      unaryPairSecondStatement,
+      unaryPairCompareStatement,
+      unaryPairGreaterBaseStatement,
+      unaryPairGreaterOffsetStatement,
+      unaryPairLessBaseStatement,
+      unaryPairLessOffsetStatement,
+      unaryPairOuterStatement,
+      unaryPairSquareCopyStatement,
+      unaryPairSquareRestoreStatement,
+      unaryPairSquareCleanupStatement,
+      unaryPairFailureStatement,
+      Turing.haltList,
+      Turing.FinTM2.step,
+      Turing.TM2.step,
+      Turing.TM2.stepAux]
 
 theorem unaryPair_failure_input_step
     (bit : Bool)
@@ -1701,7 +2053,29 @@ theorem unaryPair_failure_input_step
         first second matchedFirst matchedSecond base outer [] scratch) =
       some (unaryPairConfiguration 11 input
         first second matchedFirst matchedSecond base outer [] scratch) := by
-  cases bit <;> unaryPairStepTac
+  machineStackEquality [
+      actualUnaryPairIndexMachine,
+      unaryPairConfiguration,
+      unaryPairPeek,
+      unaryPairPop,
+      unaryPairPush,
+      unaryPairGoto,
+      unaryPairFirstStatement,
+      unaryPairSecondStatement,
+      unaryPairCompareStatement,
+      unaryPairGreaterBaseStatement,
+      unaryPairGreaterOffsetStatement,
+      unaryPairLessBaseStatement,
+      unaryPairLessOffsetStatement,
+      unaryPairOuterStatement,
+      unaryPairSquareCopyStatement,
+      unaryPairSquareRestoreStatement,
+      unaryPairSquareCleanupStatement,
+      unaryPairFailureStatement,
+      Turing.haltList,
+      Turing.FinTM2.step,
+      Turing.TM2.step,
+      Turing.TM2.stepAux]
 
 theorem unaryPair_failure_first_step
     (bit : Bool)
@@ -1713,7 +2087,29 @@ theorem unaryPair_failure_first_step
         base outer [] scratch) =
       some (unaryPairConfiguration 11 [] first second
         matchedFirst matchedSecond base outer [] scratch) := by
-  cases bit <;> unaryPairStepTac
+  machineStackEquality [
+      actualUnaryPairIndexMachine,
+      unaryPairConfiguration,
+      unaryPairPeek,
+      unaryPairPop,
+      unaryPairPush,
+      unaryPairGoto,
+      unaryPairFirstStatement,
+      unaryPairSecondStatement,
+      unaryPairCompareStatement,
+      unaryPairGreaterBaseStatement,
+      unaryPairGreaterOffsetStatement,
+      unaryPairLessBaseStatement,
+      unaryPairLessOffsetStatement,
+      unaryPairOuterStatement,
+      unaryPairSquareCopyStatement,
+      unaryPairSquareRestoreStatement,
+      unaryPairSquareCleanupStatement,
+      unaryPairFailureStatement,
+      Turing.haltList,
+      Turing.FinTM2.step,
+      Turing.TM2.step,
+      Turing.TM2.stepAux]
 
 theorem unaryPair_failure_second_step
     (bit : Bool)
@@ -1725,7 +2121,29 @@ theorem unaryPair_failure_second_step
         base outer [] scratch) =
       some (unaryPairConfiguration 11 [] [] second
         matchedFirst matchedSecond base outer [] scratch) := by
-  cases bit <;> unaryPairStepTac
+  machineStackEquality [
+      actualUnaryPairIndexMachine,
+      unaryPairConfiguration,
+      unaryPairPeek,
+      unaryPairPop,
+      unaryPairPush,
+      unaryPairGoto,
+      unaryPairFirstStatement,
+      unaryPairSecondStatement,
+      unaryPairCompareStatement,
+      unaryPairGreaterBaseStatement,
+      unaryPairGreaterOffsetStatement,
+      unaryPairLessBaseStatement,
+      unaryPairLessOffsetStatement,
+      unaryPairOuterStatement,
+      unaryPairSquareCopyStatement,
+      unaryPairSquareRestoreStatement,
+      unaryPairSquareCleanupStatement,
+      unaryPairFailureStatement,
+      Turing.haltList,
+      Turing.FinTM2.step,
+      Turing.TM2.step,
+      Turing.TM2.stepAux]
 
 theorem unaryPair_failure_matchedFirst_step
     (bit : Bool)
@@ -1736,7 +2154,29 @@ theorem unaryPair_failure_matchedFirst_step
         base outer [] scratch) =
       some (unaryPairConfiguration 11 [] [] []
         matchedFirst matchedSecond base outer [] scratch) := by
-  cases bit <;> unaryPairStepTac
+  machineStackEquality [
+      actualUnaryPairIndexMachine,
+      unaryPairConfiguration,
+      unaryPairPeek,
+      unaryPairPop,
+      unaryPairPush,
+      unaryPairGoto,
+      unaryPairFirstStatement,
+      unaryPairSecondStatement,
+      unaryPairCompareStatement,
+      unaryPairGreaterBaseStatement,
+      unaryPairGreaterOffsetStatement,
+      unaryPairLessBaseStatement,
+      unaryPairLessOffsetStatement,
+      unaryPairOuterStatement,
+      unaryPairSquareCopyStatement,
+      unaryPairSquareRestoreStatement,
+      unaryPairSquareCleanupStatement,
+      unaryPairFailureStatement,
+      Turing.haltList,
+      Turing.FinTM2.step,
+      Turing.TM2.step,
+      Turing.TM2.stepAux]
 
 theorem unaryPair_failure_matchedSecond_step
     (bit : Bool)
@@ -1746,7 +2186,29 @@ theorem unaryPair_failure_matchedSecond_step
         (bit :: matchedSecond) base outer [] scratch) =
       some (unaryPairConfiguration 11 [] [] [] []
         matchedSecond base outer [] scratch) := by
-  cases bit <;> unaryPairStepTac
+  machineStackEquality [
+      actualUnaryPairIndexMachine,
+      unaryPairConfiguration,
+      unaryPairPeek,
+      unaryPairPop,
+      unaryPairPush,
+      unaryPairGoto,
+      unaryPairFirstStatement,
+      unaryPairSecondStatement,
+      unaryPairCompareStatement,
+      unaryPairGreaterBaseStatement,
+      unaryPairGreaterOffsetStatement,
+      unaryPairLessBaseStatement,
+      unaryPairLessOffsetStatement,
+      unaryPairOuterStatement,
+      unaryPairSquareCopyStatement,
+      unaryPairSquareRestoreStatement,
+      unaryPairSquareCleanupStatement,
+      unaryPairFailureStatement,
+      Turing.haltList,
+      Turing.FinTM2.step,
+      Turing.TM2.step,
+      Turing.TM2.stepAux]
 
 theorem unaryPair_failure_base_step
     (bit : Bool) (base outer scratch : List Bool) :
@@ -1755,7 +2217,29 @@ theorem unaryPair_failure_base_step
         (bit :: base) outer [] scratch) =
       some (unaryPairConfiguration 11 [] [] [] [] []
         base outer [] scratch) := by
-  cases bit <;> unaryPairStepTac
+  machineStackEquality [
+      actualUnaryPairIndexMachine,
+      unaryPairConfiguration,
+      unaryPairPeek,
+      unaryPairPop,
+      unaryPairPush,
+      unaryPairGoto,
+      unaryPairFirstStatement,
+      unaryPairSecondStatement,
+      unaryPairCompareStatement,
+      unaryPairGreaterBaseStatement,
+      unaryPairGreaterOffsetStatement,
+      unaryPairLessBaseStatement,
+      unaryPairLessOffsetStatement,
+      unaryPairOuterStatement,
+      unaryPairSquareCopyStatement,
+      unaryPairSquareRestoreStatement,
+      unaryPairSquareCleanupStatement,
+      unaryPairFailureStatement,
+      Turing.haltList,
+      Turing.FinTM2.step,
+      Turing.TM2.step,
+      Turing.TM2.stepAux]
 
 theorem unaryPair_failure_outer_step
     (bit : Bool) (outer scratch : List Bool) :
@@ -1764,7 +2248,29 @@ theorem unaryPair_failure_outer_step
         (bit :: outer) [] scratch) =
       some (unaryPairConfiguration 11 [] [] [] [] [] []
         outer [] scratch) := by
-  cases bit <;> unaryPairStepTac
+  machineStackEquality [
+      actualUnaryPairIndexMachine,
+      unaryPairConfiguration,
+      unaryPairPeek,
+      unaryPairPop,
+      unaryPairPush,
+      unaryPairGoto,
+      unaryPairFirstStatement,
+      unaryPairSecondStatement,
+      unaryPairCompareStatement,
+      unaryPairGreaterBaseStatement,
+      unaryPairGreaterOffsetStatement,
+      unaryPairLessBaseStatement,
+      unaryPairLessOffsetStatement,
+      unaryPairOuterStatement,
+      unaryPairSquareCopyStatement,
+      unaryPairSquareRestoreStatement,
+      unaryPairSquareCleanupStatement,
+      unaryPairFailureStatement,
+      Turing.haltList,
+      Turing.FinTM2.step,
+      Turing.TM2.step,
+      Turing.TM2.stepAux]
 
 theorem unaryPair_failure_scratch_step
     (bit : Bool) (scratch : List Bool) :
@@ -1773,13 +2279,57 @@ theorem unaryPair_failure_scratch_step
         [] (bit :: scratch)) =
       some (unaryPairConfiguration 11 [] [] [] [] [] [] []
         [] scratch) := by
-  cases bit <;> unaryPairStepTac
+  machineStackEquality [
+      actualUnaryPairIndexMachine,
+      unaryPairConfiguration,
+      unaryPairPeek,
+      unaryPairPop,
+      unaryPairPush,
+      unaryPairGoto,
+      unaryPairFirstStatement,
+      unaryPairSecondStatement,
+      unaryPairCompareStatement,
+      unaryPairGreaterBaseStatement,
+      unaryPairGreaterOffsetStatement,
+      unaryPairLessBaseStatement,
+      unaryPairLessOffsetStatement,
+      unaryPairOuterStatement,
+      unaryPairSquareCopyStatement,
+      unaryPairSquareRestoreStatement,
+      unaryPairSquareCleanupStatement,
+      unaryPairFailureStatement,
+      Turing.haltList,
+      Turing.FinTM2.step,
+      Turing.TM2.step,
+      Turing.TM2.stepAux]
 
 theorem unaryPair_failure_finish :
     actualUnaryPairIndexMachine.step
       (unaryPairConfiguration 11 [] [] [] [] [] [] [] [] []) =
       some (Turing.haltList actualUnaryPairIndexMachine []) := by
-  unaryPairStepTac
+  machineStackEquality [
+      actualUnaryPairIndexMachine,
+      unaryPairConfiguration,
+      unaryPairPeek,
+      unaryPairPop,
+      unaryPairPush,
+      unaryPairGoto,
+      unaryPairFirstStatement,
+      unaryPairSecondStatement,
+      unaryPairCompareStatement,
+      unaryPairGreaterBaseStatement,
+      unaryPairGreaterOffsetStatement,
+      unaryPairLessBaseStatement,
+      unaryPairLessOffsetStatement,
+      unaryPairOuterStatement,
+      unaryPairSquareCopyStatement,
+      unaryPairSquareRestoreStatement,
+      unaryPairSquareCleanupStatement,
+      unaryPairFailureStatement,
+      Turing.haltList,
+      Turing.FinTM2.step,
+      Turing.TM2.step,
+      Turing.TM2.stepAux]
 
 end CNFUnaryPairIndexTM
 

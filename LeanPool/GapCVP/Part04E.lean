@@ -424,7 +424,7 @@ private theorem boundedFoldRunBudget_le
   | zero => simp only [boundedFoldRunBudget, zero_mul, zero_add, Std.le_refl]
   | succ count ih =>
       have hseed : seed.length ≤ bound.eval inputLength := by
-        simpa only [Function.iterate_zero, id_eq] using hstates 0 (by omega)
+        exact hstates 0 (by omega)
       have htime :
           computer.time.eval seed.length ≤
             computer.time.eval (bound.eval inputLength) :=
@@ -432,13 +432,13 @@ private theorem boundedFoldRunBudget_le
           computer.time hseed
       have houtput : (worker seed).length ≤
           bound.eval inputLength := by
-        simpa only [Function.iterate_one] using hstates 1 (by omega)
+        exact hstates 1 (by omega)
       have hremaining :
           ∀ stage : ℕ, stage ≤ count →
             ((worker^[stage]) (worker seed)).length ≤
               bound.eval inputLength := by
         intro stage hstage
-        simpa only [Function.iterate_succ_apply] using
+        exact
           hstates (stage + 1) (by omega)
       have htail := ih (worker seed) hremaining
       let cost :=
@@ -447,7 +447,7 @@ private theorem boundedFoldRunBudget_le
       have htail' :
           boundedFoldRunBudget computer count (worker seed) ≤
             count * cost + 1 := by
-        simpa only using htail
+        exact htail
       change
         1 + computer.time.eval seed.length +
             (2 * (worker seed).length + 2) +
@@ -875,7 +875,26 @@ theorem flatLiteralRecord_prefix_true
         (true :: input) count reversed markers suffix output) =
       some (flatLiteralRecordConfiguration 0 sign input
         (true :: count) reversed markers suffix output) := by
-  flatLiteralRecordStepTac
+  machineStackEquality [
+      actualFlatLiteralRecordWorker,
+      flatLiteralRecordConfiguration,
+      flatLiteralRecordPeek,
+      flatLiteralRecordPop,
+      flatLiteralRecordPushBit,
+      flatLiteralRecordPushConstant,
+      flatLiteralRecordGoto,
+      flatLiteralRecordPrefixStatement,
+      flatLiteralRecordSignStatement,
+      flatLiteralRecordPayloadStatement,
+      flatLiteralRecordRestoreStatement,
+      flatLiteralRecordMarkerStatement,
+      flatLiteralRecordSuffixScanStatement,
+      flatLiteralRecordSuffixRestoreStatement,
+      flatLiteralRecordInvalidStatement,
+      Turing.haltList,
+      Turing.FinTM2.step,
+      Turing.TM2.step,
+      Turing.TM2.stepAux]
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem flatLiteralRecord_prefix_false
@@ -886,7 +905,26 @@ theorem flatLiteralRecord_prefix_false
         (false :: input) count reversed markers suffix output) =
       some (flatLiteralRecordConfiguration 1 sign
         input count reversed markers suffix output) := by
-  flatLiteralRecordStepTac
+  machineStackEquality [
+      actualFlatLiteralRecordWorker,
+      flatLiteralRecordConfiguration,
+      flatLiteralRecordPeek,
+      flatLiteralRecordPop,
+      flatLiteralRecordPushBit,
+      flatLiteralRecordPushConstant,
+      flatLiteralRecordGoto,
+      flatLiteralRecordPrefixStatement,
+      flatLiteralRecordSignStatement,
+      flatLiteralRecordPayloadStatement,
+      flatLiteralRecordRestoreStatement,
+      flatLiteralRecordMarkerStatement,
+      flatLiteralRecordSuffixScanStatement,
+      flatLiteralRecordSuffixRestoreStatement,
+      flatLiteralRecordInvalidStatement,
+      Turing.haltList,
+      Turing.FinTM2.step,
+      Turing.TM2.step,
+      Turing.TM2.stepAux]
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem flatLiteralRecord_prefix_missing
@@ -897,7 +935,7 @@ theorem flatLiteralRecord_prefix_missing
         [] count reversed markers suffix output) =
       some (flatLiteralRecordConfiguration 7 sign
         [] count reversed markers suffix output) := by
-  flatLiteralRecordStepTac
+  rfl
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem flatLiteralRecord_sign_step
@@ -909,7 +947,26 @@ theorem flatLiteralRecord_sign_step
         reversed markers suffix output) =
       some (flatLiteralRecordConfiguration 2 (some sign)
         input count reversed markers suffix output) := by
-  cases sign <;> cases marker <;> flatLiteralRecordStepTac
+  cases marker <;> machineStackEquality [
+      actualFlatLiteralRecordWorker,
+      flatLiteralRecordConfiguration,
+      flatLiteralRecordPeek,
+      flatLiteralRecordPop,
+      flatLiteralRecordPushBit,
+      flatLiteralRecordPushConstant,
+      flatLiteralRecordGoto,
+      flatLiteralRecordPrefixStatement,
+      flatLiteralRecordSignStatement,
+      flatLiteralRecordPayloadStatement,
+      flatLiteralRecordRestoreStatement,
+      flatLiteralRecordMarkerStatement,
+      flatLiteralRecordSuffixScanStatement,
+      flatLiteralRecordSuffixRestoreStatement,
+      flatLiteralRecordInvalidStatement,
+      Turing.haltList,
+      Turing.FinTM2.step,
+      Turing.TM2.step,
+      Turing.TM2.stepAux]
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem flatLiteralRecord_sign_empty
@@ -920,7 +977,7 @@ theorem flatLiteralRecord_sign_empty
         input [] reversed markers suffix output) =
       some (flatLiteralRecordConfiguration 7 sign
         input [] reversed markers suffix output) := by
-  flatLiteralRecordStepTac
+  rfl
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem flatLiteralRecord_sign_missing
@@ -931,7 +988,7 @@ theorem flatLiteralRecord_sign_missing
         [] (marker :: count) reversed markers suffix output) =
       some (flatLiteralRecordConfiguration 7 sign
         [] (marker :: count) reversed markers suffix output) := by
-  cases marker <;> flatLiteralRecordStepTac
+  cases marker <;> rfl
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem flatLiteralRecord_payload_step
@@ -943,7 +1000,26 @@ theorem flatLiteralRecord_payload_step
         reversed markers suffix output) =
       some (flatLiteralRecordConfiguration 2 sign input count
         (bit :: reversed) (true :: markers) suffix output) := by
-  cases bit <;> cases marker <;> flatLiteralRecordStepTac
+  cases marker <;> machineStackEquality [
+      actualFlatLiteralRecordWorker,
+      flatLiteralRecordConfiguration,
+      flatLiteralRecordPeek,
+      flatLiteralRecordPop,
+      flatLiteralRecordPushBit,
+      flatLiteralRecordPushConstant,
+      flatLiteralRecordGoto,
+      flatLiteralRecordPrefixStatement,
+      flatLiteralRecordSignStatement,
+      flatLiteralRecordPayloadStatement,
+      flatLiteralRecordRestoreStatement,
+      flatLiteralRecordMarkerStatement,
+      flatLiteralRecordSuffixScanStatement,
+      flatLiteralRecordSuffixRestoreStatement,
+      flatLiteralRecordInvalidStatement,
+      Turing.haltList,
+      Turing.FinTM2.step,
+      Turing.TM2.step,
+      Turing.TM2.stepAux]
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem flatLiteralRecord_payload_finish
@@ -954,7 +1030,26 @@ theorem flatLiteralRecord_payload_finish
         input [] reversed markers suffix output) =
       some (flatLiteralRecordConfiguration 3 (some sign)
         input [] reversed markers suffix (sign :: output)) := by
-  cases sign <;> flatLiteralRecordStepTac
+  machineStackEquality [
+      actualFlatLiteralRecordWorker,
+      flatLiteralRecordConfiguration,
+      flatLiteralRecordPeek,
+      flatLiteralRecordPop,
+      flatLiteralRecordPushBit,
+      flatLiteralRecordPushConstant,
+      flatLiteralRecordGoto,
+      flatLiteralRecordPrefixStatement,
+      flatLiteralRecordSignStatement,
+      flatLiteralRecordPayloadStatement,
+      flatLiteralRecordRestoreStatement,
+      flatLiteralRecordMarkerStatement,
+      flatLiteralRecordSuffixScanStatement,
+      flatLiteralRecordSuffixRestoreStatement,
+      flatLiteralRecordInvalidStatement,
+      Turing.haltList,
+      Turing.FinTM2.step,
+      Turing.TM2.step,
+      Turing.TM2.stepAux]
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem flatLiteralRecord_payload_missing
@@ -965,7 +1060,7 @@ theorem flatLiteralRecord_payload_missing
         [] (marker :: count) reversed markers suffix output) =
       some (flatLiteralRecordConfiguration 7 sign
         [] (marker :: count) reversed markers suffix output) := by
-  cases marker <;> flatLiteralRecordStepTac
+  cases marker <;> rfl
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem flatLiteralRecord_restore_step
@@ -976,7 +1071,26 @@ theorem flatLiteralRecord_restore_step
         input [] (bit :: reversed) markers suffix output) =
       some (flatLiteralRecordConfiguration 3 sign
         input [] reversed markers suffix (bit :: output)) := by
-  cases bit <;> flatLiteralRecordStepTac
+  machineStackEquality [
+      actualFlatLiteralRecordWorker,
+      flatLiteralRecordConfiguration,
+      flatLiteralRecordPeek,
+      flatLiteralRecordPop,
+      flatLiteralRecordPushBit,
+      flatLiteralRecordPushConstant,
+      flatLiteralRecordGoto,
+      flatLiteralRecordPrefixStatement,
+      flatLiteralRecordSignStatement,
+      flatLiteralRecordPayloadStatement,
+      flatLiteralRecordRestoreStatement,
+      flatLiteralRecordMarkerStatement,
+      flatLiteralRecordSuffixScanStatement,
+      flatLiteralRecordSuffixRestoreStatement,
+      flatLiteralRecordInvalidStatement,
+      Turing.haltList,
+      Turing.FinTM2.step,
+      Turing.TM2.step,
+      Turing.TM2.stepAux]
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem flatLiteralRecord_restore_finish
@@ -987,7 +1101,26 @@ theorem flatLiteralRecord_restore_finish
         input [] [] markers suffix output) =
       some (flatLiteralRecordConfiguration 4 sign
         input [] [] markers suffix (false :: output)) := by
-  flatLiteralRecordStepTac
+  machineStackEquality [
+      actualFlatLiteralRecordWorker,
+      flatLiteralRecordConfiguration,
+      flatLiteralRecordPeek,
+      flatLiteralRecordPop,
+      flatLiteralRecordPushBit,
+      flatLiteralRecordPushConstant,
+      flatLiteralRecordGoto,
+      flatLiteralRecordPrefixStatement,
+      flatLiteralRecordSignStatement,
+      flatLiteralRecordPayloadStatement,
+      flatLiteralRecordRestoreStatement,
+      flatLiteralRecordMarkerStatement,
+      flatLiteralRecordSuffixScanStatement,
+      flatLiteralRecordSuffixRestoreStatement,
+      flatLiteralRecordInvalidStatement,
+      Turing.haltList,
+      Turing.FinTM2.step,
+      Turing.TM2.step,
+      Turing.TM2.stepAux]
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem flatLiteralRecord_marker_step
@@ -998,7 +1131,26 @@ theorem flatLiteralRecord_marker_step
         input [] [] (marker :: markers) suffix output) =
       some (flatLiteralRecordConfiguration 4 sign
         input [] [] markers suffix (true :: output)) := by
-  cases marker <;> flatLiteralRecordStepTac
+  cases marker <;> machineStackEquality [
+      actualFlatLiteralRecordWorker,
+      flatLiteralRecordConfiguration,
+      flatLiteralRecordPeek,
+      flatLiteralRecordPop,
+      flatLiteralRecordPushBit,
+      flatLiteralRecordPushConstant,
+      flatLiteralRecordGoto,
+      flatLiteralRecordPrefixStatement,
+      flatLiteralRecordSignStatement,
+      flatLiteralRecordPayloadStatement,
+      flatLiteralRecordRestoreStatement,
+      flatLiteralRecordMarkerStatement,
+      flatLiteralRecordSuffixScanStatement,
+      flatLiteralRecordSuffixRestoreStatement,
+      flatLiteralRecordInvalidStatement,
+      Turing.haltList,
+      Turing.FinTM2.step,
+      Turing.TM2.step,
+      Turing.TM2.stepAux]
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem flatLiteralRecord_marker_finish
@@ -1009,7 +1161,7 @@ theorem flatLiteralRecord_marker_finish
         input [] [] [] suffix output) =
       some (flatLiteralRecordConfiguration 5 sign
         input [] [] [] suffix output) := by
-  flatLiteralRecordStepTac
+  rfl
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem flatLiteralRecord_suffix_scan_step
@@ -1020,7 +1172,26 @@ theorem flatLiteralRecord_suffix_scan_step
         (bit :: input) [] [] [] suffix output) =
       some (flatLiteralRecordConfiguration 5 sign
         input [] [] [] (bit :: suffix) output) := by
-  cases bit <;> flatLiteralRecordStepTac
+  machineStackEquality [
+      actualFlatLiteralRecordWorker,
+      flatLiteralRecordConfiguration,
+      flatLiteralRecordPeek,
+      flatLiteralRecordPop,
+      flatLiteralRecordPushBit,
+      flatLiteralRecordPushConstant,
+      flatLiteralRecordGoto,
+      flatLiteralRecordPrefixStatement,
+      flatLiteralRecordSignStatement,
+      flatLiteralRecordPayloadStatement,
+      flatLiteralRecordRestoreStatement,
+      flatLiteralRecordMarkerStatement,
+      flatLiteralRecordSuffixScanStatement,
+      flatLiteralRecordSuffixRestoreStatement,
+      flatLiteralRecordInvalidStatement,
+      Turing.haltList,
+      Turing.FinTM2.step,
+      Turing.TM2.step,
+      Turing.TM2.stepAux]
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem flatLiteralRecord_suffix_scan_finish
@@ -1030,7 +1201,7 @@ theorem flatLiteralRecord_suffix_scan_finish
         [] [] [] [] suffix output) =
       some (flatLiteralRecordConfiguration 6 sign
         [] [] [] [] suffix output) := by
-  flatLiteralRecordStepTac
+  rfl
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem flatLiteralRecord_suffix_restore_step
@@ -1041,7 +1212,26 @@ theorem flatLiteralRecord_suffix_restore_step
         [] [] [] [] (bit :: suffix) output) =
       some (flatLiteralRecordConfiguration 6 sign
         [] [] [] [] suffix (bit :: output)) := by
-  cases bit <;> flatLiteralRecordStepTac
+  machineStackEquality [
+      actualFlatLiteralRecordWorker,
+      flatLiteralRecordConfiguration,
+      flatLiteralRecordPeek,
+      flatLiteralRecordPop,
+      flatLiteralRecordPushBit,
+      flatLiteralRecordPushConstant,
+      flatLiteralRecordGoto,
+      flatLiteralRecordPrefixStatement,
+      flatLiteralRecordSignStatement,
+      flatLiteralRecordPayloadStatement,
+      flatLiteralRecordRestoreStatement,
+      flatLiteralRecordMarkerStatement,
+      flatLiteralRecordSuffixScanStatement,
+      flatLiteralRecordSuffixRestoreStatement,
+      flatLiteralRecordInvalidStatement,
+      Turing.haltList,
+      Turing.FinTM2.step,
+      Turing.TM2.step,
+      Turing.TM2.stepAux]
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem flatLiteralRecord_suffix_restore_finish
@@ -1050,7 +1240,26 @@ theorem flatLiteralRecord_suffix_restore_finish
       (flatLiteralRecordConfiguration 6 sign
         [] [] [] [] [] output) =
       some (Turing.haltList actualFlatLiteralRecordWorker output) := by
-  flatLiteralRecordStepTac
+  machineStackEquality [
+      actualFlatLiteralRecordWorker,
+      flatLiteralRecordConfiguration,
+      flatLiteralRecordPeek,
+      flatLiteralRecordPop,
+      flatLiteralRecordPushBit,
+      flatLiteralRecordPushConstant,
+      flatLiteralRecordGoto,
+      flatLiteralRecordPrefixStatement,
+      flatLiteralRecordSignStatement,
+      flatLiteralRecordPayloadStatement,
+      flatLiteralRecordRestoreStatement,
+      flatLiteralRecordMarkerStatement,
+      flatLiteralRecordSuffixScanStatement,
+      flatLiteralRecordSuffixRestoreStatement,
+      flatLiteralRecordInvalidStatement,
+      Turing.haltList,
+      Turing.FinTM2.step,
+      Turing.TM2.step,
+      Turing.TM2.stepAux]
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem flatLiteralRecord_invalid_count
@@ -1061,7 +1270,26 @@ theorem flatLiteralRecord_invalid_count
         input (bit :: count) reversed markers [] []) =
       some (flatLiteralRecordConfiguration 7 sign
         input count reversed markers [] []) := by
-  cases bit <;> flatLiteralRecordStepTac
+  machineStackEquality [
+      actualFlatLiteralRecordWorker,
+      flatLiteralRecordConfiguration,
+      flatLiteralRecordPeek,
+      flatLiteralRecordPop,
+      flatLiteralRecordPushBit,
+      flatLiteralRecordPushConstant,
+      flatLiteralRecordGoto,
+      flatLiteralRecordPrefixStatement,
+      flatLiteralRecordSignStatement,
+      flatLiteralRecordPayloadStatement,
+      flatLiteralRecordRestoreStatement,
+      flatLiteralRecordMarkerStatement,
+      flatLiteralRecordSuffixScanStatement,
+      flatLiteralRecordSuffixRestoreStatement,
+      flatLiteralRecordInvalidStatement,
+      Turing.haltList,
+      Turing.FinTM2.step,
+      Turing.TM2.step,
+      Turing.TM2.stepAux]
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem flatLiteralRecord_invalid_reversed
@@ -1072,7 +1300,26 @@ theorem flatLiteralRecord_invalid_reversed
         input [] (bit :: reversed) markers [] []) =
       some (flatLiteralRecordConfiguration 7 sign
         input [] reversed markers [] []) := by
-  cases bit <;> flatLiteralRecordStepTac
+  machineStackEquality [
+      actualFlatLiteralRecordWorker,
+      flatLiteralRecordConfiguration,
+      flatLiteralRecordPeek,
+      flatLiteralRecordPop,
+      flatLiteralRecordPushBit,
+      flatLiteralRecordPushConstant,
+      flatLiteralRecordGoto,
+      flatLiteralRecordPrefixStatement,
+      flatLiteralRecordSignStatement,
+      flatLiteralRecordPayloadStatement,
+      flatLiteralRecordRestoreStatement,
+      flatLiteralRecordMarkerStatement,
+      flatLiteralRecordSuffixScanStatement,
+      flatLiteralRecordSuffixRestoreStatement,
+      flatLiteralRecordInvalidStatement,
+      Turing.haltList,
+      Turing.FinTM2.step,
+      Turing.TM2.step,
+      Turing.TM2.stepAux]
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem flatLiteralRecord_invalid_markers
@@ -1083,7 +1330,26 @@ theorem flatLiteralRecord_invalid_markers
         input [] [] (bit :: markers) [] []) =
       some (flatLiteralRecordConfiguration 7 sign
         input [] [] markers [] []) := by
-  cases bit <;> flatLiteralRecordStepTac
+  machineStackEquality [
+      actualFlatLiteralRecordWorker,
+      flatLiteralRecordConfiguration,
+      flatLiteralRecordPeek,
+      flatLiteralRecordPop,
+      flatLiteralRecordPushBit,
+      flatLiteralRecordPushConstant,
+      flatLiteralRecordGoto,
+      flatLiteralRecordPrefixStatement,
+      flatLiteralRecordSignStatement,
+      flatLiteralRecordPayloadStatement,
+      flatLiteralRecordRestoreStatement,
+      flatLiteralRecordMarkerStatement,
+      flatLiteralRecordSuffixScanStatement,
+      flatLiteralRecordSuffixRestoreStatement,
+      flatLiteralRecordInvalidStatement,
+      Turing.haltList,
+      Turing.FinTM2.step,
+      Turing.TM2.step,
+      Turing.TM2.stepAux]
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem flatLiteralRecord_invalid_input
@@ -1093,7 +1359,26 @@ theorem flatLiteralRecord_invalid_input
         (bit :: input) [] [] [] [] []) =
       some (flatLiteralRecordConfiguration 7 sign
         input [] [] [] [] []) := by
-  cases bit <;> flatLiteralRecordStepTac
+  machineStackEquality [
+      actualFlatLiteralRecordWorker,
+      flatLiteralRecordConfiguration,
+      flatLiteralRecordPeek,
+      flatLiteralRecordPop,
+      flatLiteralRecordPushBit,
+      flatLiteralRecordPushConstant,
+      flatLiteralRecordGoto,
+      flatLiteralRecordPrefixStatement,
+      flatLiteralRecordSignStatement,
+      flatLiteralRecordPayloadStatement,
+      flatLiteralRecordRestoreStatement,
+      flatLiteralRecordMarkerStatement,
+      flatLiteralRecordSuffixScanStatement,
+      flatLiteralRecordSuffixRestoreStatement,
+      flatLiteralRecordInvalidStatement,
+      Turing.haltList,
+      Turing.FinTM2.step,
+      Turing.TM2.step,
+      Turing.TM2.stepAux]
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem flatLiteralRecord_invalid_finish (sign : Option Bool) :
@@ -1101,7 +1386,26 @@ theorem flatLiteralRecord_invalid_finish (sign : Option Bool) :
       (flatLiteralRecordConfiguration 7 sign
         [] [] [] [] [] []) =
       some (Turing.haltList actualFlatLiteralRecordWorker []) := by
-  flatLiteralRecordStepTac
+  machineStackEquality [
+      actualFlatLiteralRecordWorker,
+      flatLiteralRecordConfiguration,
+      flatLiteralRecordPeek,
+      flatLiteralRecordPop,
+      flatLiteralRecordPushBit,
+      flatLiteralRecordPushConstant,
+      flatLiteralRecordGoto,
+      flatLiteralRecordPrefixStatement,
+      flatLiteralRecordSignStatement,
+      flatLiteralRecordPayloadStatement,
+      flatLiteralRecordRestoreStatement,
+      flatLiteralRecordMarkerStatement,
+      flatLiteralRecordSuffixScanStatement,
+      flatLiteralRecordSuffixRestoreStatement,
+      flatLiteralRecordInvalidStatement,
+      Turing.haltList,
+      Turing.FinTM2.step,
+      Turing.TM2.step,
+      Turing.TM2.stepAux]
 
 end CNFFlatStructuralRecordWorkerTM
 

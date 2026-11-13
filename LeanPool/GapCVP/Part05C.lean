@@ -434,8 +434,7 @@ theorem readUnaryPrefix_none_eq_replicate
           cases hrest : readUnaryPrefix rest with
           | none =>
               have htail := ih hrest
-              simpa only [List.length_cons, List.replicate_succ]
-                using congrArg (fun tail : List Bool => true :: tail) htail
+              exact congrArg (fun tail : List Bool => true :: tail) htail
           | some pair =>
               simp only [readUnaryPrefix, hrest, reduceCtorEq] at hread
 
@@ -824,7 +823,24 @@ private theorem sourceFlatAtomic_prefix_true
         (true :: input) counter payload pending output) =
       some (sourceFlatAtomicConfiguration 0
         input (true :: counter) payload pending output) := by
-  sourceFlatAtomicStepTac
+  machineStackEquality [
+      sourceFlatAtomicRecordMachine,
+      sourceFlatAtomicConfiguration,
+      sourceFlatAtomicPeek,
+      sourceFlatAtomicPop,
+      sourceFlatAtomicPushBit,
+      sourceFlatAtomicPushConstant,
+      sourceFlatAtomicGoto,
+      sourceFlatAtomicPrefixStatement,
+      sourceFlatAtomicPayloadStatement,
+      sourceFlatAtomicPayloadOutputStatement,
+      sourceFlatAtomicPendingStatement,
+      sourceFlatAtomicRestoreStatement,
+      sourceFlatAtomicFailureStatement,
+      Turing.haltList,
+      Turing.FinTM2.step,
+      Turing.TM2.step,
+      Turing.TM2.stepAux]
 
 private theorem sourceFlatAtomic_prefix_delimiter
     (input counter payload pending output : List Bool) :
@@ -833,7 +849,24 @@ private theorem sourceFlatAtomic_prefix_delimiter
         (false :: input) counter payload pending output) =
       some (sourceFlatAtomicConfiguration 1
         input counter payload pending output) := by
-  sourceFlatAtomicStepTac
+  machineStackEquality [
+      sourceFlatAtomicRecordMachine,
+      sourceFlatAtomicConfiguration,
+      sourceFlatAtomicPeek,
+      sourceFlatAtomicPop,
+      sourceFlatAtomicPushBit,
+      sourceFlatAtomicPushConstant,
+      sourceFlatAtomicGoto,
+      sourceFlatAtomicPrefixStatement,
+      sourceFlatAtomicPayloadStatement,
+      sourceFlatAtomicPayloadOutputStatement,
+      sourceFlatAtomicPendingStatement,
+      sourceFlatAtomicRestoreStatement,
+      sourceFlatAtomicFailureStatement,
+      Turing.haltList,
+      Turing.FinTM2.step,
+      Turing.TM2.step,
+      Turing.TM2.stepAux]
 
 private theorem sourceFlatAtomic_prefix_missing
     (counter payload pending output : List Bool) :
@@ -842,7 +875,7 @@ private theorem sourceFlatAtomic_prefix_missing
         [] counter payload pending output) =
       some (sourceFlatAtomicConfiguration 5
         [] counter payload pending output) := by
-  sourceFlatAtomicStepTac
+  rfl
 
 private theorem sourceFlatAtomic_payload_step
     (bit : Bool) (input counter payload pending output : List Bool) :
@@ -852,7 +885,24 @@ private theorem sourceFlatAtomic_payload_step
         payload pending output) =
       some (sourceFlatAtomicConfiguration 1
         input counter (bit :: payload) pending output) := by
-  cases bit <;> sourceFlatAtomicStepTac
+  machineStackEquality [
+      sourceFlatAtomicRecordMachine,
+      sourceFlatAtomicConfiguration,
+      sourceFlatAtomicPeek,
+      sourceFlatAtomicPop,
+      sourceFlatAtomicPushBit,
+      sourceFlatAtomicPushConstant,
+      sourceFlatAtomicGoto,
+      sourceFlatAtomicPrefixStatement,
+      sourceFlatAtomicPayloadStatement,
+      sourceFlatAtomicPayloadOutputStatement,
+      sourceFlatAtomicPendingStatement,
+      sourceFlatAtomicRestoreStatement,
+      sourceFlatAtomicFailureStatement,
+      Turing.haltList,
+      Turing.FinTM2.step,
+      Turing.TM2.step,
+      Turing.TM2.stepAux]
 
 private theorem sourceFlatAtomic_payload_missing
     (counter payload pending output : List Bool) :
@@ -861,7 +911,24 @@ private theorem sourceFlatAtomic_payload_missing
         [] (true :: counter) payload pending output) =
       some (sourceFlatAtomicConfiguration 5
         [] counter payload pending output) := by
-  sourceFlatAtomicStepTac
+  machineStackEquality [
+      sourceFlatAtomicRecordMachine,
+      sourceFlatAtomicConfiguration,
+      sourceFlatAtomicPeek,
+      sourceFlatAtomicPop,
+      sourceFlatAtomicPushBit,
+      sourceFlatAtomicPushConstant,
+      sourceFlatAtomicGoto,
+      sourceFlatAtomicPrefixStatement,
+      sourceFlatAtomicPayloadStatement,
+      sourceFlatAtomicPayloadOutputStatement,
+      sourceFlatAtomicPendingStatement,
+      sourceFlatAtomicRestoreStatement,
+      sourceFlatAtomicFailureStatement,
+      Turing.haltList,
+      Turing.FinTM2.step,
+      Turing.TM2.step,
+      Turing.TM2.stepAux]
 
 private theorem sourceFlatAtomic_payload_finish
     (input payload pending output : List Bool) :
@@ -870,7 +937,7 @@ private theorem sourceFlatAtomic_payload_finish
         input [] payload pending output) =
       some (sourceFlatAtomicConfiguration 2
         input [] payload pending output) := by
-  sourceFlatAtomicStepTac
+  rfl
 
 private theorem sourceFlatAtomic_payload_output_step
     (bit : Bool) (input payload pending output : List Bool) :
@@ -879,7 +946,24 @@ private theorem sourceFlatAtomic_payload_output_step
         input [] (bit :: payload) pending output) =
       some (sourceFlatAtomicConfiguration 2
         input [] payload pending (bit :: output)) := by
-  cases bit <;> sourceFlatAtomicStepTac
+  machineStackEquality [
+      sourceFlatAtomicRecordMachine,
+      sourceFlatAtomicConfiguration,
+      sourceFlatAtomicPeek,
+      sourceFlatAtomicPop,
+      sourceFlatAtomicPushBit,
+      sourceFlatAtomicPushConstant,
+      sourceFlatAtomicGoto,
+      sourceFlatAtomicPrefixStatement,
+      sourceFlatAtomicPayloadStatement,
+      sourceFlatAtomicPayloadOutputStatement,
+      sourceFlatAtomicPendingStatement,
+      sourceFlatAtomicRestoreStatement,
+      sourceFlatAtomicFailureStatement,
+      Turing.haltList,
+      Turing.FinTM2.step,
+      Turing.TM2.step,
+      Turing.TM2.stepAux]
 
 private theorem sourceFlatAtomic_payload_output_finish
     (input pending output : List Bool) :
@@ -888,7 +972,7 @@ private theorem sourceFlatAtomic_payload_output_finish
         input [] [] pending output) =
       some (sourceFlatAtomicConfiguration 3
         input [] [] pending output) := by
-  sourceFlatAtomicStepTac
+  rfl
 
 private theorem sourceFlatAtomic_pending_step
     (bit : Bool) (input pending output : List Bool) :
@@ -897,7 +981,24 @@ private theorem sourceFlatAtomic_pending_step
         (bit :: input) [] [] pending output) =
       some (sourceFlatAtomicConfiguration 3
         input [] [] (bit :: pending) output) := by
-  cases bit <;> sourceFlatAtomicStepTac
+  machineStackEquality [
+      sourceFlatAtomicRecordMachine,
+      sourceFlatAtomicConfiguration,
+      sourceFlatAtomicPeek,
+      sourceFlatAtomicPop,
+      sourceFlatAtomicPushBit,
+      sourceFlatAtomicPushConstant,
+      sourceFlatAtomicGoto,
+      sourceFlatAtomicPrefixStatement,
+      sourceFlatAtomicPayloadStatement,
+      sourceFlatAtomicPayloadOutputStatement,
+      sourceFlatAtomicPendingStatement,
+      sourceFlatAtomicRestoreStatement,
+      sourceFlatAtomicFailureStatement,
+      Turing.haltList,
+      Turing.FinTM2.step,
+      Turing.TM2.step,
+      Turing.TM2.stepAux]
 
 private theorem sourceFlatAtomic_pending_finish
     (pending output : List Bool) :
@@ -906,7 +1007,7 @@ private theorem sourceFlatAtomic_pending_finish
         [] [] [] pending output) =
       some (sourceFlatAtomicConfiguration 4
         [] [] [] pending output) := by
-  sourceFlatAtomicStepTac
+  rfl
 
 private theorem sourceFlatAtomic_restore_step
     (bit : Bool) (pending output : List Bool) :
@@ -915,13 +1016,47 @@ private theorem sourceFlatAtomic_restore_step
         [] [] [] (bit :: pending) output) =
       some (sourceFlatAtomicConfiguration 4
         [] [] [] pending (bit :: output)) := by
-  cases bit <;> sourceFlatAtomicStepTac
+  machineStackEquality [
+      sourceFlatAtomicRecordMachine,
+      sourceFlatAtomicConfiguration,
+      sourceFlatAtomicPeek,
+      sourceFlatAtomicPop,
+      sourceFlatAtomicPushBit,
+      sourceFlatAtomicPushConstant,
+      sourceFlatAtomicGoto,
+      sourceFlatAtomicPrefixStatement,
+      sourceFlatAtomicPayloadStatement,
+      sourceFlatAtomicPayloadOutputStatement,
+      sourceFlatAtomicPendingStatement,
+      sourceFlatAtomicRestoreStatement,
+      sourceFlatAtomicFailureStatement,
+      Turing.haltList,
+      Turing.FinTM2.step,
+      Turing.TM2.step,
+      Turing.TM2.stepAux]
 
 private theorem sourceFlatAtomic_restore_finish (output : List Bool) :
     sourceFlatAtomicRecordMachine.step
       (sourceFlatAtomicConfiguration 4 [] [] [] [] output) =
       some (Turing.haltList sourceFlatAtomicRecordMachine output) := by
-  sourceFlatAtomicStepTac
+  machineStackEquality [
+      sourceFlatAtomicRecordMachine,
+      sourceFlatAtomicConfiguration,
+      sourceFlatAtomicPeek,
+      sourceFlatAtomicPop,
+      sourceFlatAtomicPushBit,
+      sourceFlatAtomicPushConstant,
+      sourceFlatAtomicGoto,
+      sourceFlatAtomicPrefixStatement,
+      sourceFlatAtomicPayloadStatement,
+      sourceFlatAtomicPayloadOutputStatement,
+      sourceFlatAtomicPendingStatement,
+      sourceFlatAtomicRestoreStatement,
+      sourceFlatAtomicFailureStatement,
+      Turing.haltList,
+      Turing.FinTM2.step,
+      Turing.TM2.step,
+      Turing.TM2.stepAux]
 
 private theorem sourceFlatAtomic_failure_input_step
     (bit : Bool) (input counter payload pending output : List Bool) :
@@ -930,7 +1065,24 @@ private theorem sourceFlatAtomic_failure_input_step
         (bit :: input) counter payload pending output) =
       some (sourceFlatAtomicConfiguration 5
         input counter payload pending output) := by
-  cases bit <;> sourceFlatAtomicStepTac
+  machineStackEquality [
+      sourceFlatAtomicRecordMachine,
+      sourceFlatAtomicConfiguration,
+      sourceFlatAtomicPeek,
+      sourceFlatAtomicPop,
+      sourceFlatAtomicPushBit,
+      sourceFlatAtomicPushConstant,
+      sourceFlatAtomicGoto,
+      sourceFlatAtomicPrefixStatement,
+      sourceFlatAtomicPayloadStatement,
+      sourceFlatAtomicPayloadOutputStatement,
+      sourceFlatAtomicPendingStatement,
+      sourceFlatAtomicRestoreStatement,
+      sourceFlatAtomicFailureStatement,
+      Turing.haltList,
+      Turing.FinTM2.step,
+      Turing.TM2.step,
+      Turing.TM2.stepAux]
 
 private theorem sourceFlatAtomic_failure_counter_step
     (bit : Bool) (counter payload pending output : List Bool) :
@@ -939,7 +1091,24 @@ private theorem sourceFlatAtomic_failure_counter_step
         [] (bit :: counter) payload pending output) =
       some (sourceFlatAtomicConfiguration 5
         [] counter payload pending output) := by
-  cases bit <;> sourceFlatAtomicStepTac
+  machineStackEquality [
+      sourceFlatAtomicRecordMachine,
+      sourceFlatAtomicConfiguration,
+      sourceFlatAtomicPeek,
+      sourceFlatAtomicPop,
+      sourceFlatAtomicPushBit,
+      sourceFlatAtomicPushConstant,
+      sourceFlatAtomicGoto,
+      sourceFlatAtomicPrefixStatement,
+      sourceFlatAtomicPayloadStatement,
+      sourceFlatAtomicPayloadOutputStatement,
+      sourceFlatAtomicPendingStatement,
+      sourceFlatAtomicRestoreStatement,
+      sourceFlatAtomicFailureStatement,
+      Turing.haltList,
+      Turing.FinTM2.step,
+      Turing.TM2.step,
+      Turing.TM2.stepAux]
 
 private theorem sourceFlatAtomic_failure_payload_step
     (bit : Bool) (payload pending output : List Bool) :
@@ -948,7 +1117,24 @@ private theorem sourceFlatAtomic_failure_payload_step
         [] [] (bit :: payload) pending output) =
       some (sourceFlatAtomicConfiguration 5
         [] [] payload pending output) := by
-  cases bit <;> sourceFlatAtomicStepTac
+  machineStackEquality [
+      sourceFlatAtomicRecordMachine,
+      sourceFlatAtomicConfiguration,
+      sourceFlatAtomicPeek,
+      sourceFlatAtomicPop,
+      sourceFlatAtomicPushBit,
+      sourceFlatAtomicPushConstant,
+      sourceFlatAtomicGoto,
+      sourceFlatAtomicPrefixStatement,
+      sourceFlatAtomicPayloadStatement,
+      sourceFlatAtomicPayloadOutputStatement,
+      sourceFlatAtomicPendingStatement,
+      sourceFlatAtomicRestoreStatement,
+      sourceFlatAtomicFailureStatement,
+      Turing.haltList,
+      Turing.FinTM2.step,
+      Turing.TM2.step,
+      Turing.TM2.stepAux]
 
 private theorem sourceFlatAtomic_failure_pending_step
     (bit : Bool) (pending output : List Bool) :
@@ -957,7 +1143,24 @@ private theorem sourceFlatAtomic_failure_pending_step
         [] [] [] (bit :: pending) output) =
       some (sourceFlatAtomicConfiguration 5
         [] [] [] pending output) := by
-  cases bit <;> sourceFlatAtomicStepTac
+  machineStackEquality [
+      sourceFlatAtomicRecordMachine,
+      sourceFlatAtomicConfiguration,
+      sourceFlatAtomicPeek,
+      sourceFlatAtomicPop,
+      sourceFlatAtomicPushBit,
+      sourceFlatAtomicPushConstant,
+      sourceFlatAtomicGoto,
+      sourceFlatAtomicPrefixStatement,
+      sourceFlatAtomicPayloadStatement,
+      sourceFlatAtomicPayloadOutputStatement,
+      sourceFlatAtomicPendingStatement,
+      sourceFlatAtomicRestoreStatement,
+      sourceFlatAtomicFailureStatement,
+      Turing.haltList,
+      Turing.FinTM2.step,
+      Turing.TM2.step,
+      Turing.TM2.stepAux]
 
 private theorem sourceFlatAtomic_failure_output_step
     (bit : Bool) (output : List Bool) :
@@ -966,13 +1169,47 @@ private theorem sourceFlatAtomic_failure_output_step
         [] [] [] [] (bit :: output)) =
       some (sourceFlatAtomicConfiguration 5
         [] [] [] [] output) := by
-  cases bit <;> sourceFlatAtomicStepTac
+  machineStackEquality [
+      sourceFlatAtomicRecordMachine,
+      sourceFlatAtomicConfiguration,
+      sourceFlatAtomicPeek,
+      sourceFlatAtomicPop,
+      sourceFlatAtomicPushBit,
+      sourceFlatAtomicPushConstant,
+      sourceFlatAtomicGoto,
+      sourceFlatAtomicPrefixStatement,
+      sourceFlatAtomicPayloadStatement,
+      sourceFlatAtomicPayloadOutputStatement,
+      sourceFlatAtomicPendingStatement,
+      sourceFlatAtomicRestoreStatement,
+      sourceFlatAtomicFailureStatement,
+      Turing.haltList,
+      Turing.FinTM2.step,
+      Turing.TM2.step,
+      Turing.TM2.stepAux]
 
 private theorem sourceFlatAtomic_failure_finish :
     sourceFlatAtomicRecordMachine.step
       (sourceFlatAtomicConfiguration 5 [] [] [] [] []) =
       some (Turing.haltList sourceFlatAtomicRecordMachine []) := by
-  sourceFlatAtomicStepTac
+  machineStackEquality [
+      sourceFlatAtomicRecordMachine,
+      sourceFlatAtomicConfiguration,
+      sourceFlatAtomicPeek,
+      sourceFlatAtomicPop,
+      sourceFlatAtomicPushBit,
+      sourceFlatAtomicPushConstant,
+      sourceFlatAtomicGoto,
+      sourceFlatAtomicPrefixStatement,
+      sourceFlatAtomicPayloadStatement,
+      sourceFlatAtomicPayloadOutputStatement,
+      sourceFlatAtomicPendingStatement,
+      sourceFlatAtomicRestoreStatement,
+      sourceFlatAtomicFailureStatement,
+      Turing.haltList,
+      Turing.FinTM2.step,
+      Turing.TM2.step,
+      Turing.TM2.stepAux]
 
 private def sourceFlatAtomicFailureBudget
     (input counter payload pending output : List Bool) : ℕ :=
@@ -1597,7 +1834,25 @@ theorem sourceGridIndex_prefix_true
         (true :: input) counter scratch archive output) =
       some (sourceGridIndexConfiguration 0
         input (true :: counter) scratch archive output) := by
-  sourceGridIndexStepTac
+  machineStackEquality [
+      sourceCanonicalUnaryGridIndexMachine,
+      sourceGridIndexConfiguration,
+      sourceGridIndexPeek,
+      sourceGridIndexPop,
+      sourceGridIndexPushBit,
+      sourceGridIndexPushConstant,
+      sourceGridIndexGoto,
+      sourceGridIndexPrefixStatement,
+      sourceGridIndexArchiveStatement,
+      sourceGridIndexSourceRestoreStatement,
+      sourceGridIndexOuterStatement,
+      sourceGridIndexCopyStatement,
+      sourceGridIndexTemplateRestoreStatement,
+      sourceGridIndexFailureStatement,
+      Turing.haltList,
+      Turing.FinTM2.step,
+      Turing.TM2.step,
+      Turing.TM2.stepAux]
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem sourceGridIndex_prefix_false
@@ -1607,7 +1862,25 @@ theorem sourceGridIndex_prefix_false
         (false :: input) counter scratch archive output) =
       some (sourceGridIndexConfiguration 1
         input counter scratch archive output) := by
-  sourceGridIndexStepTac
+  machineStackEquality [
+      sourceCanonicalUnaryGridIndexMachine,
+      sourceGridIndexConfiguration,
+      sourceGridIndexPeek,
+      sourceGridIndexPop,
+      sourceGridIndexPushBit,
+      sourceGridIndexPushConstant,
+      sourceGridIndexGoto,
+      sourceGridIndexPrefixStatement,
+      sourceGridIndexArchiveStatement,
+      sourceGridIndexSourceRestoreStatement,
+      sourceGridIndexOuterStatement,
+      sourceGridIndexCopyStatement,
+      sourceGridIndexTemplateRestoreStatement,
+      sourceGridIndexFailureStatement,
+      Turing.haltList,
+      Turing.FinTM2.step,
+      Turing.TM2.step,
+      Turing.TM2.stepAux]
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem sourceGridIndex_prefix_missing
@@ -1617,7 +1890,7 @@ theorem sourceGridIndex_prefix_missing
         [] counter scratch archive output) =
       some (sourceGridIndexConfiguration 6
         [] counter scratch archive output) := by
-  sourceGridIndexStepTac
+  rfl
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem sourceGridIndex_archive_step
@@ -1627,7 +1900,25 @@ theorem sourceGridIndex_archive_step
         (bit :: input) counter scratch archive output) =
       some (sourceGridIndexConfiguration 1
         input counter scratch (bit :: archive) output) := by
-  cases bit <;> sourceGridIndexStepTac
+  machineStackEquality [
+      sourceCanonicalUnaryGridIndexMachine,
+      sourceGridIndexConfiguration,
+      sourceGridIndexPeek,
+      sourceGridIndexPop,
+      sourceGridIndexPushBit,
+      sourceGridIndexPushConstant,
+      sourceGridIndexGoto,
+      sourceGridIndexPrefixStatement,
+      sourceGridIndexArchiveStatement,
+      sourceGridIndexSourceRestoreStatement,
+      sourceGridIndexOuterStatement,
+      sourceGridIndexCopyStatement,
+      sourceGridIndexTemplateRestoreStatement,
+      sourceGridIndexFailureStatement,
+      Turing.haltList,
+      Turing.FinTM2.step,
+      Turing.TM2.step,
+      Turing.TM2.stepAux]
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem sourceGridIndex_archive_finish
@@ -1637,7 +1928,7 @@ theorem sourceGridIndex_archive_finish
         [] counter scratch archive output) =
       some (sourceGridIndexConfiguration 2
         [] counter scratch archive output) := by
-  sourceGridIndexStepTac
+  rfl
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem sourceGridIndex_source_restore_step
@@ -1647,7 +1938,25 @@ theorem sourceGridIndex_source_restore_step
         [] counter scratch (bit :: archive) output) =
       some (sourceGridIndexConfiguration 2
         [] counter scratch archive (bit :: output)) := by
-  cases bit <;> sourceGridIndexStepTac
+  machineStackEquality [
+      sourceCanonicalUnaryGridIndexMachine,
+      sourceGridIndexConfiguration,
+      sourceGridIndexPeek,
+      sourceGridIndexPop,
+      sourceGridIndexPushBit,
+      sourceGridIndexPushConstant,
+      sourceGridIndexGoto,
+      sourceGridIndexPrefixStatement,
+      sourceGridIndexArchiveStatement,
+      sourceGridIndexSourceRestoreStatement,
+      sourceGridIndexOuterStatement,
+      sourceGridIndexCopyStatement,
+      sourceGridIndexTemplateRestoreStatement,
+      sourceGridIndexFailureStatement,
+      Turing.haltList,
+      Turing.FinTM2.step,
+      Turing.TM2.step,
+      Turing.TM2.stepAux]
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem sourceGridIndex_source_restore_finish
@@ -1657,7 +1966,7 @@ theorem sourceGridIndex_source_restore_finish
         [] counter scratch [] output) =
       some (sourceGridIndexConfiguration 3
         [] counter scratch [] output) := by
-  sourceGridIndexStepTac
+  rfl
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem sourceGridIndex_outer_step
@@ -1667,7 +1976,25 @@ theorem sourceGridIndex_outer_step
         [] (true :: counter) [] [] output) =
       some (sourceGridIndexConfiguration 4
         [] counter [] [] output) := by
-  sourceGridIndexStepTac
+  machineStackEquality [
+      sourceCanonicalUnaryGridIndexMachine,
+      sourceGridIndexConfiguration,
+      sourceGridIndexPeek,
+      sourceGridIndexPop,
+      sourceGridIndexPushBit,
+      sourceGridIndexPushConstant,
+      sourceGridIndexGoto,
+      sourceGridIndexPrefixStatement,
+      sourceGridIndexArchiveStatement,
+      sourceGridIndexSourceRestoreStatement,
+      sourceGridIndexOuterStatement,
+      sourceGridIndexCopyStatement,
+      sourceGridIndexTemplateRestoreStatement,
+      sourceGridIndexFailureStatement,
+      Turing.haltList,
+      Turing.FinTM2.step,
+      Turing.TM2.step,
+      Turing.TM2.stepAux]
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem sourceGridIndex_outer_finish (output : List Bool) :
@@ -1675,7 +2002,25 @@ theorem sourceGridIndex_outer_finish (output : List Bool) :
       (sourceGridIndexConfiguration 3 [] [] [] [] output) =
       some (Turing.haltList
         sourceCanonicalUnaryGridIndexMachine output) := by
-  sourceGridIndexStepTac
+  machineStackEquality [
+      sourceCanonicalUnaryGridIndexMachine,
+      sourceGridIndexConfiguration,
+      sourceGridIndexPeek,
+      sourceGridIndexPop,
+      sourceGridIndexPushBit,
+      sourceGridIndexPushConstant,
+      sourceGridIndexGoto,
+      sourceGridIndexPrefixStatement,
+      sourceGridIndexArchiveStatement,
+      sourceGridIndexSourceRestoreStatement,
+      sourceGridIndexOuterStatement,
+      sourceGridIndexCopyStatement,
+      sourceGridIndexTemplateRestoreStatement,
+      sourceGridIndexFailureStatement,
+      Turing.haltList,
+      Turing.FinTM2.step,
+      Turing.TM2.step,
+      Turing.TM2.stepAux]
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem sourceGridIndex_copy_step
@@ -1685,7 +2030,25 @@ theorem sourceGridIndex_copy_step
         [] (true :: counter) scratch [] output) =
       some (sourceGridIndexConfiguration 4
         [] counter (true :: scratch) [] (true :: output)) := by
-  sourceGridIndexStepTac
+  machineStackEquality [
+      sourceCanonicalUnaryGridIndexMachine,
+      sourceGridIndexConfiguration,
+      sourceGridIndexPeek,
+      sourceGridIndexPop,
+      sourceGridIndexPushBit,
+      sourceGridIndexPushConstant,
+      sourceGridIndexGoto,
+      sourceGridIndexPrefixStatement,
+      sourceGridIndexArchiveStatement,
+      sourceGridIndexSourceRestoreStatement,
+      sourceGridIndexOuterStatement,
+      sourceGridIndexCopyStatement,
+      sourceGridIndexTemplateRestoreStatement,
+      sourceGridIndexFailureStatement,
+      Turing.haltList,
+      Turing.FinTM2.step,
+      Turing.TM2.step,
+      Turing.TM2.stepAux]
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem sourceGridIndex_copy_finish
@@ -1695,7 +2058,25 @@ theorem sourceGridIndex_copy_finish
         [] [] scratch [] output) =
       some (sourceGridIndexConfiguration 5
         [] [] scratch [] (false :: output)) := by
-  sourceGridIndexStepTac
+  machineStackEquality [
+      sourceCanonicalUnaryGridIndexMachine,
+      sourceGridIndexConfiguration,
+      sourceGridIndexPeek,
+      sourceGridIndexPop,
+      sourceGridIndexPushBit,
+      sourceGridIndexPushConstant,
+      sourceGridIndexGoto,
+      sourceGridIndexPrefixStatement,
+      sourceGridIndexArchiveStatement,
+      sourceGridIndexSourceRestoreStatement,
+      sourceGridIndexOuterStatement,
+      sourceGridIndexCopyStatement,
+      sourceGridIndexTemplateRestoreStatement,
+      sourceGridIndexFailureStatement,
+      Turing.haltList,
+      Turing.FinTM2.step,
+      Turing.TM2.step,
+      Turing.TM2.stepAux]
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem sourceGridIndex_template_restore_step
@@ -1705,7 +2086,25 @@ theorem sourceGridIndex_template_restore_step
         [] counter (true :: scratch) [] output) =
       some (sourceGridIndexConfiguration 5
         [] (true :: counter) scratch [] (true :: output)) := by
-  sourceGridIndexStepTac
+  machineStackEquality [
+      sourceCanonicalUnaryGridIndexMachine,
+      sourceGridIndexConfiguration,
+      sourceGridIndexPeek,
+      sourceGridIndexPop,
+      sourceGridIndexPushBit,
+      sourceGridIndexPushConstant,
+      sourceGridIndexGoto,
+      sourceGridIndexPrefixStatement,
+      sourceGridIndexArchiveStatement,
+      sourceGridIndexSourceRestoreStatement,
+      sourceGridIndexOuterStatement,
+      sourceGridIndexCopyStatement,
+      sourceGridIndexTemplateRestoreStatement,
+      sourceGridIndexFailureStatement,
+      Turing.haltList,
+      Turing.FinTM2.step,
+      Turing.TM2.step,
+      Turing.TM2.stepAux]
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem sourceGridIndex_template_restore_finish
@@ -1715,7 +2114,7 @@ theorem sourceGridIndex_template_restore_finish
         [] counter [] [] output) =
       some (sourceGridIndexConfiguration 3
         [] counter [] [] output) := by
-  sourceGridIndexStepTac
+  rfl
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem sourceGridIndex_failure_step
@@ -1725,7 +2124,25 @@ theorem sourceGridIndex_failure_step
         [] (true :: counter) [] [] []) =
       some (sourceGridIndexConfiguration 6
         [] counter [] [] []) := by
-  sourceGridIndexStepTac
+  machineStackEquality [
+      sourceCanonicalUnaryGridIndexMachine,
+      sourceGridIndexConfiguration,
+      sourceGridIndexPeek,
+      sourceGridIndexPop,
+      sourceGridIndexPushBit,
+      sourceGridIndexPushConstant,
+      sourceGridIndexGoto,
+      sourceGridIndexPrefixStatement,
+      sourceGridIndexArchiveStatement,
+      sourceGridIndexSourceRestoreStatement,
+      sourceGridIndexOuterStatement,
+      sourceGridIndexCopyStatement,
+      sourceGridIndexTemplateRestoreStatement,
+      sourceGridIndexFailureStatement,
+      Turing.haltList,
+      Turing.FinTM2.step,
+      Turing.TM2.step,
+      Turing.TM2.stepAux]
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem sourceGridIndex_failure_finish :
@@ -1733,7 +2150,25 @@ theorem sourceGridIndex_failure_finish :
       (sourceGridIndexConfiguration 6 [] [] [] [] []) =
       some (Turing.haltList
         sourceCanonicalUnaryGridIndexMachine []) := by
-  sourceGridIndexStepTac
+  machineStackEquality [
+      sourceCanonicalUnaryGridIndexMachine,
+      sourceGridIndexConfiguration,
+      sourceGridIndexPeek,
+      sourceGridIndexPop,
+      sourceGridIndexPushBit,
+      sourceGridIndexPushConstant,
+      sourceGridIndexGoto,
+      sourceGridIndexPrefixStatement,
+      sourceGridIndexArchiveStatement,
+      sourceGridIndexSourceRestoreStatement,
+      sourceGridIndexOuterStatement,
+      sourceGridIndexCopyStatement,
+      sourceGridIndexTemplateRestoreStatement,
+      sourceGridIndexFailureStatement,
+      Turing.haltList,
+      Turing.FinTM2.step,
+      Turing.TM2.step,
+      Turing.TM2.stepAux]
 
 end SourceCanonicalUnaryGridIndexTM
 

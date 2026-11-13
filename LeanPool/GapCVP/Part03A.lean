@@ -755,7 +755,7 @@ private theorem paddedAcceptedExecutionNaturalRow_initializationWindows
         execution.certificate
         (execution.trace.configuration 0)
         (supported 0) (hint 0) false := by
-    simpa only [Fin.coe_ofNat_eq_mod, Nat.zero_mod, add_zero] using
+    exact
         paddedAcceptedExecutionNaturalRow_verifying bound machine execution supported hint 0
   rw [hsource, htarget]
   simp only [List.take_length]
@@ -818,7 +818,7 @@ private theorem paddedAcceptedExecutionNaturalRow_verifierWindows
         (execution.trace.configuration (Fin.castSucc time))
         (supported (Fin.castSucc time))
         (hint (Fin.castSucc time)) false := by
-    simpa only [Fin.val_castSucc] using
+    exact
       paddedAcceptedExecutionNaturalRow_verifying
         bound machine execution supported hint (Fin.castSucc time)
   have htarget :
@@ -829,7 +829,7 @@ private theorem paddedAcceptedExecutionNaturalRow_verifierWindows
         execution.certificate
         (execution.trace.configuration time.succ)
         (supported time.succ) (hint time.succ) false := by
-    simpa only [Nat.add_assoc, Fin.val_succ] using
+    exact
         paddedAcceptedExecutionNaturalRow_verifying bound machine execution supported hint
             time.succ
   rw [hsource, htarget]
@@ -1304,14 +1304,28 @@ theorem prefixWriterScanStep (bit : Bool)
         (bit :: input) scratch markers output) =
       some (prefixWriterConfiguration 0
         input (bit :: scratch) (true :: markers) output) := by
-  cases bit <;> prefixWriterStepTac
+  machineStackEquality [
+      structuralPrefixWriter,
+      prefixWriterConfiguration,
+      prefixWriterPeek,
+      prefixWriterPop,
+      prefixWriterPushBit,
+      prefixWriterPushMarker,
+      prefixWriterGoto,
+      prefixWriterScanStatement,
+      prefixWriterRestoreStatement,
+      prefixWriterMarkerStatement,
+      Turing.haltList,
+      Turing.FinTM2.step,
+      Turing.TM2.step,
+      Turing.TM2.stepAux]
 
 theorem prefixWriterScanFinish
     (scratch markers output : List Bool) :
     structuralPrefixWriter.step
       (prefixWriterConfiguration 0 [] scratch markers output) =
       some (prefixWriterConfiguration 1 [] scratch markers output) := by
-  prefixWriterStepTac
+  rfl
 
 theorem prefixWriterRestoreStep (bit : Bool)
     (scratch markers output : List Bool) :
@@ -1320,7 +1334,21 @@ theorem prefixWriterRestoreStep (bit : Bool)
         (bit :: scratch) markers output) =
       some (prefixWriterConfiguration 1 []
         scratch markers (bit :: output)) := by
-  cases bit <;> prefixWriterStepTac
+  machineStackEquality [
+      structuralPrefixWriter,
+      prefixWriterConfiguration,
+      prefixWriterPeek,
+      prefixWriterPop,
+      prefixWriterPushBit,
+      prefixWriterPushMarker,
+      prefixWriterGoto,
+      prefixWriterScanStatement,
+      prefixWriterRestoreStatement,
+      prefixWriterMarkerStatement,
+      Turing.haltList,
+      Turing.FinTM2.step,
+      Turing.TM2.step,
+      Turing.TM2.stepAux]
 
 theorem prefixWriterRestoreFinish
     (markers output : List Bool) :
@@ -1328,7 +1356,21 @@ theorem prefixWriterRestoreFinish
       (prefixWriterConfiguration 1 [] [] markers output) =
       some (prefixWriterConfiguration 2 [] [] markers
         (false :: output)) := by
-  prefixWriterStepTac
+  machineStackEquality [
+      structuralPrefixWriter,
+      prefixWriterConfiguration,
+      prefixWriterPeek,
+      prefixWriterPop,
+      prefixWriterPushBit,
+      prefixWriterPushMarker,
+      prefixWriterGoto,
+      prefixWriterScanStatement,
+      prefixWriterRestoreStatement,
+      prefixWriterMarkerStatement,
+      Turing.haltList,
+      Turing.FinTM2.step,
+      Turing.TM2.step,
+      Turing.TM2.stepAux]
 
 theorem prefixWriterMarkerStep (bit : Bool)
     (markers output : List Bool) :
@@ -1336,13 +1378,41 @@ theorem prefixWriterMarkerStep (bit : Bool)
       (prefixWriterConfiguration 2 [] [] (bit :: markers) output) =
       some (prefixWriterConfiguration 2 [] [] markers
         (true :: output)) := by
-  cases bit <;> prefixWriterStepTac
+  machineStackEquality [
+      structuralPrefixWriter,
+      prefixWriterConfiguration,
+      prefixWriterPeek,
+      prefixWriterPop,
+      prefixWriterPushBit,
+      prefixWriterPushMarker,
+      prefixWriterGoto,
+      prefixWriterScanStatement,
+      prefixWriterRestoreStatement,
+      prefixWriterMarkerStatement,
+      Turing.haltList,
+      Turing.FinTM2.step,
+      Turing.TM2.step,
+      Turing.TM2.stepAux]
 
 theorem prefixWriterFinish (output : List Bool) :
     structuralPrefixWriter.step
       (prefixWriterConfiguration 2 [] [] [] output) =
       some (Turing.haltList structuralPrefixWriter output) := by
-  prefixWriterStepTac
+  machineStackEquality [
+      structuralPrefixWriter,
+      prefixWriterConfiguration,
+      prefixWriterPeek,
+      prefixWriterPop,
+      prefixWriterPushBit,
+      prefixWriterPushMarker,
+      prefixWriterGoto,
+      prefixWriterScanStatement,
+      prefixWriterRestoreStatement,
+      prefixWriterMarkerStatement,
+      Turing.haltList,
+      Turing.FinTM2.step,
+      Turing.TM2.step,
+      Turing.TM2.stepAux]
 
 /-- The scan phase reverses the input onto scratch and records its length in markers. -/
 def prefixWriterScanTrace
@@ -1740,8 +1810,9 @@ private theorem unaryPrefixMachine_drain_step
     unaryPrefixMachine.step
         (unaryConfiguration false (bit :: input) count) =
       some (unaryConfiguration false input count) := by
-  cases bit <;>
-    compactMachineStepTac [unaryPrefixMachine, unaryConfiguration]
+  machineStackEquality [
+      unaryPrefixMachine,
+      unaryConfiguration]
 
 private theorem unaryPrefixMachine_finish_prefix (count : ℕ) :
     unaryPrefixMachine.step (unaryConfiguration true [] count) =
@@ -1989,14 +2060,18 @@ theorem payload_prefix_true
       (payloadConfiguration 0 (true :: input) counter reversed output) =
       some (payloadConfiguration 0 input (true :: counter)
         reversed output) := by
-  compactMachineStepTac [payloadDecoderMachine, payloadConfiguration]
+  machineStackEquality [
+      payloadDecoderMachine,
+      payloadConfiguration]
 
 theorem payloadPrefixDelimiter
     (input counter reversed output : List Bool) :
     payloadDecoderMachine.step
       (payloadConfiguration 0 (false :: input) counter reversed output) =
       some (payloadConfiguration 1 input counter reversed output) := by
-  compactMachineStepTac [payloadDecoderMachine, payloadConfiguration]
+  machineStackEquality [
+      payloadDecoderMachine,
+      payloadConfiguration]
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem payload_prefix_missing_delimiter
@@ -2004,7 +2079,7 @@ theorem payload_prefix_missing_delimiter
     payloadDecoderMachine.step
       (payloadConfiguration 0 [] counter reversed output) =
       some (payloadConfiguration 4 [] counter reversed output) := by
-  compactMachineStepTac [payloadDecoderMachine, payloadConfiguration]
+  rfl
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem payload_copy_step
@@ -2014,7 +2089,9 @@ theorem payload_copy_step
         (true :: counter) reversed output) =
       some (payloadConfiguration 1 input counter
         (bit :: reversed) output) := by
-  cases bit <;> compactMachineStepTac [payloadDecoderMachine, payloadConfiguration]
+  machineStackEquality [
+      payloadDecoderMachine,
+      payloadConfiguration]
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem payload_insufficient
@@ -2023,7 +2100,7 @@ theorem payload_insufficient
       (payloadConfiguration 1 [] (true :: counter) reversed output) =
       some (payloadConfiguration 4 []
         (true :: counter) reversed output) := by
-  compactMachineStepTac [payloadDecoderMachine, payloadConfiguration]
+  rfl
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem payload_counter_complete
@@ -2031,14 +2108,16 @@ theorem payload_counter_complete
     payloadDecoderMachine.step
       (payloadConfiguration 1 input [] reversed output) =
       some (payloadConfiguration 2 input [] reversed output) := by
-  compactMachineStepTac [payloadDecoderMachine, payloadConfiguration]
+  rfl
 
 theorem payloadReverseStep
     (bit : Bool) (input reversed output : List Bool) :
     payloadDecoderMachine.step
       (payloadConfiguration 2 input [] (bit :: reversed) output) =
       some (payloadConfiguration 2 input [] reversed (bit :: output)) := by
-  cases bit <;> compactMachineStepTac [payloadDecoderMachine, payloadConfiguration]
+  machineStackEquality [
+      payloadDecoderMachine,
+      payloadConfiguration]
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem payload_reverse_complete
@@ -2046,21 +2125,25 @@ theorem payload_reverse_complete
     payloadDecoderMachine.step
       (payloadConfiguration 2 input [] [] output) =
       some (payloadConfiguration 3 input [] [] output) := by
-  compactMachineStepTac [payloadDecoderMachine, payloadConfiguration]
+  rfl
 
 theorem payloadDrainStep
     (bit : Bool) (input output : List Bool) :
     payloadDecoderMachine.step
       (payloadConfiguration 3 (bit :: input) [] [] output) =
       some (payloadConfiguration 3 input [] [] output) := by
-  cases bit <;> compactMachineStepTac [payloadDecoderMachine, payloadConfiguration]
+  machineStackEquality [
+      payloadDecoderMachine,
+      payloadConfiguration]
 
 theorem payloadDrainFinish
     (output : List Bool) :
     payloadDecoderMachine.step
       (payloadConfiguration 3 [] [] [] output) =
       some (Turing.haltList payloadDecoderMachine (true :: output)) := by
-  compactMachineStepTac [payloadDecoderMachine, payloadConfiguration]
+  machineStackEquality [
+      payloadDecoderMachine,
+      payloadConfiguration]
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem payload_failure_drop_input
@@ -2068,7 +2151,9 @@ theorem payload_failure_drop_input
     payloadDecoderMachine.step
       (payloadConfiguration 4 (bit :: input) counter reversed output) =
       some (payloadConfiguration 4 input counter reversed output) := by
-  cases bit <;> compactMachineStepTac [payloadDecoderMachine, payloadConfiguration]
+  machineStackEquality [
+      payloadDecoderMachine,
+      payloadConfiguration]
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem payload_failure_drop_counter
@@ -2076,7 +2161,9 @@ theorem payload_failure_drop_counter
     payloadDecoderMachine.step
       (payloadConfiguration 4 [] (bit :: counter) reversed output) =
       some (payloadConfiguration 4 [] counter reversed output) := by
-  cases bit <;> compactMachineStepTac [payloadDecoderMachine, payloadConfiguration]
+  machineStackEquality [
+      payloadDecoderMachine,
+      payloadConfiguration]
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem payload_failure_drop_reversed
@@ -2084,7 +2171,9 @@ theorem payload_failure_drop_reversed
     payloadDecoderMachine.step
       (payloadConfiguration 4 [] [] (bit :: reversed) output) =
       some (payloadConfiguration 4 [] [] reversed output) := by
-  cases bit <;> compactMachineStepTac [payloadDecoderMachine, payloadConfiguration]
+  machineStackEquality [
+      payloadDecoderMachine,
+      payloadConfiguration]
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem payload_failure_finish
@@ -2092,7 +2181,9 @@ theorem payload_failure_finish
     payloadDecoderMachine.step
       (payloadConfiguration 4 [] [] [] output) =
       some (Turing.haltList payloadDecoderMachine (false :: output)) := by
-  compactMachineStepTac [payloadDecoderMachine, payloadConfiguration]
+  machineStackEquality [
+      payloadDecoderMachine,
+      payloadConfiguration]
 
 @[simp] theorem replicate_true_append_cons
     (count : ℕ) (tail : List Bool) :

@@ -2105,46 +2105,112 @@ private theorem pivot_scan_false
     binaryGaussianPivotMachine.step
       (pivotConfiguration 0 (false :: input) output) =
       some (pivotConfiguration 0 input (true :: output)) := by
-  binaryGaussianPivotStepTac
+  machineStackEquality [
+      binaryGaussianPivotMachine,
+      pivotConfiguration,
+      pivotPeek,
+      pivotGoto,
+      pivotScanStatement,
+      pivotSuccessDrainStatement,
+      pivotFailureStatement,
+      Turing.haltList,
+      Turing.FinTM2.step,
+      Turing.TM2.step,
+      Turing.TM2.stepAux]
 
 private theorem pivot_scan_true
     (input output : List Bool) :
     binaryGaussianPivotMachine.step
       (pivotConfiguration 0 (true :: input) output) =
       some (pivotConfiguration 1 input (true :: output)) := by
-  binaryGaussianPivotStepTac
+  machineStackEquality [
+      binaryGaussianPivotMachine,
+      pivotConfiguration,
+      pivotPeek,
+      pivotGoto,
+      pivotScanStatement,
+      pivotSuccessDrainStatement,
+      pivotFailureStatement,
+      Turing.haltList,
+      Turing.FinTM2.step,
+      Turing.TM2.step,
+      Turing.TM2.stepAux]
 
 private theorem pivot_scan_missing (output : List Bool) :
     binaryGaussianPivotMachine.step
       (pivotConfiguration 0 [] output) =
       some (pivotConfiguration 2 [] output) := by
-  binaryGaussianPivotStepTac
+  rfl
 
 private theorem pivot_success_drain_step
     (bit : Bool) (input output : List Bool) :
     binaryGaussianPivotMachine.step
       (pivotConfiguration 1 (bit :: input) output) =
       some (pivotConfiguration 1 input output) := by
-  cases bit <;> binaryGaussianPivotStepTac
+  machineStackEquality [
+      binaryGaussianPivotMachine,
+      pivotConfiguration,
+      pivotPeek,
+      pivotGoto,
+      pivotScanStatement,
+      pivotSuccessDrainStatement,
+      pivotFailureStatement,
+      Turing.haltList,
+      Turing.FinTM2.step,
+      Turing.TM2.step,
+      Turing.TM2.stepAux]
 
 private theorem pivot_success_finish (output : List Bool) :
     binaryGaussianPivotMachine.step
       (pivotConfiguration 1 [] output) =
       some (Turing.haltList binaryGaussianPivotMachine output) := by
-  binaryGaussianPivotStepTac
+  machineStackEquality [
+      binaryGaussianPivotMachine,
+      pivotConfiguration,
+      pivotPeek,
+      pivotGoto,
+      pivotScanStatement,
+      pivotSuccessDrainStatement,
+      pivotFailureStatement,
+      Turing.haltList,
+      Turing.FinTM2.step,
+      Turing.TM2.step,
+      Turing.TM2.stepAux]
 
 private theorem pivot_failure_drain_step
     (bit : Bool) (output : List Bool) :
     binaryGaussianPivotMachine.step
       (pivotConfiguration 2 [] (bit :: output)) =
       some (pivotConfiguration 2 [] output) := by
-  cases bit <;> binaryGaussianPivotStepTac
+  machineStackEquality [
+      binaryGaussianPivotMachine,
+      pivotConfiguration,
+      pivotPeek,
+      pivotGoto,
+      pivotScanStatement,
+      pivotSuccessDrainStatement,
+      pivotFailureStatement,
+      Turing.haltList,
+      Turing.FinTM2.step,
+      Turing.TM2.step,
+      Turing.TM2.stepAux]
 
 private theorem pivot_failure_finish :
     binaryGaussianPivotMachine.step
       (pivotConfiguration 2 [] []) =
       some (Turing.haltList binaryGaussianPivotMachine [false]) := by
-  binaryGaussianPivotStepTac
+  machineStackEquality [
+      binaryGaussianPivotMachine,
+      pivotConfiguration,
+      pivotPeek,
+      pivotGoto,
+      pivotScanStatement,
+      pivotSuccessDrainStatement,
+      pivotFailureStatement,
+      Turing.haltList,
+      Turing.FinTM2.step,
+      Turing.TM2.step,
+      Turing.TM2.stepAux]
 
 private def pivot_successDrainTrace
     (input output : List Bool) :
@@ -3247,7 +3313,7 @@ private theorem effectiveGaussianPivotCandidates_findIdxOption
           state.system.check row column = (1 : ZMod 2))) with
   | none => rfl
   | some row =>
-      simpa only [Option.bind_some, Option.map_some] using finRange_idxOfOption_eq_some row
+      exact finRange_idxOfOption_eq_some row
 
 theorem binaryGaussianPivotWord_effective
     {m n : ℕ} (state : State m n) (column : Fin n) :
@@ -3789,11 +3855,11 @@ private theorem sourcePhysicalLagrangeProduct_iterate_length_le
       have hanchor' :
           (sourcePhysicalLagrangeProductAnchor current).length ≤
             state.length := by
-        simpa only using hcurrentAnchor.symm ▸ hanchor
+        exact hcurrentAnchor.symm ▸ hanchor
       have hacc' :
           (sourcePhysicalLagrangeProductAccumulator current).length ≤
             state.length := by
-        simpa only using hcurrentAccumulator.symm ▸ hacc
+        exact hcurrentAccumulator.symm ▸ hacc
       omega
 
 private def sourcePhysicalLagrangeProductStatePolynomial : Polynomial ℕ :=
@@ -3931,7 +3997,7 @@ private theorem sourcePhysicalLagrangeProduct_iterate_valid
             (GapCVP.Core.EffectiveBinaryField.multiplyMod
               lower initial factor)
             factors source) = _
-      simpa only [List.foldl_cons] using ih (GapCVP.Core.EffectiveBinaryField.multiplyMod lower
+      exact ih (GapCVP.Core.EffectiveBinaryField.multiplyMod lower
           initial factor)
 
 /-- GapCVP reduction support. -/

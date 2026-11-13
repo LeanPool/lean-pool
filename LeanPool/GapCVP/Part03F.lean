@@ -1019,13 +1019,11 @@ theorem lexicographicEncodedWordResidualsFirstLengthLe
       | nil => simp only [lexicographicEncodedWordResiduals, List.length_cons, Std.le_refl]
       | cons next second =>
           cases bit <;> cases next
-          · simpa only [lexicographicEncodedWordResiduals, List.length_cons, Nat.succ_eq_add_one]
-              using
+          · exact
                 Nat.le_trans (ih second) (Nat.le_succ remaining.length)
           · simp only [lexicographicEncodedWordResiduals, List.length_cons, Std.le_refl]
           · simp only [lexicographicEncodedWordResiduals, List.length_cons, Std.le_refl]
-          · simpa only [lexicographicEncodedWordResiduals, List.length_cons, Nat.succ_eq_add_one]
-              using
+          · exact
                 Nat.le_trans (ih second) (Nat.le_succ remaining.length)
 
 theorem lexicographicEncodedWordResidualsSecondLengthLe
@@ -1039,13 +1037,11 @@ theorem lexicographicEncodedWordResidualsSecondLengthLe
       | nil => simp only [lexicographicEncodedWordResiduals, List.length_nil, Std.le_refl]
       | cons next second =>
           cases bit <;> cases next
-          · simpa only [lexicographicEncodedWordResiduals, List.length_cons, Nat.succ_eq_add_one]
-              using
+          · exact
                 Nat.le_trans (ih second) (Nat.le_succ second.length)
           · simp only [lexicographicEncodedWordResiduals, List.length_cons, Std.le_refl]
           · simp only [lexicographicEncodedWordResiduals, List.length_cons, Std.le_refl]
-          · simpa only [lexicographicEncodedWordResiduals, List.length_cons, Nat.succ_eq_add_one]
-              using
+          · exact
                 Nat.le_trans (ih second) (Nat.le_succ second.length)
 
 /-- Parses both records, runs a supplied phase-six comparison, and restores the input. -/

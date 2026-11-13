@@ -46,7 +46,7 @@ private theorem flatCappedUnarySourceListStep_iterate
   | cons head remaining ih =>
       rw [List.length_cons, Function.iterate_succ_apply,
         flatCappedUnarySourceListStep_state]
-      simpa only [Nat.succ_eq_add_one, List.foldl_cons] using ih (min cap (Nat.succ (Nat.pair head
+      exact ih (min cap (Nat.succ (Nat.pair head
           accumulator)))
 
 private theorem flatCappedUnaryReverseFold_eq_source
@@ -347,7 +347,7 @@ private theorem flatCappedUnarySourceListStep_pending
           rw [hshape]
           simp only [sourcePairPrefixOutput_pair,
             flatUnaryDropFields_two_unaryPair]
-          simpa [List.append_assoc] using
+          exact
             flatUnaryDropFields_six_unaryPairs
               cap cap first second next next suffix
 
@@ -801,13 +801,13 @@ private theorem sourceInputErase_scan_step
     sourceInputEraseMachine.step
       (sourceInputEraseConfiguration (bit :: input)) =
         some (sourceInputEraseConfiguration input) := by
-  cases bit <;> compactMachineStepTac [sourceInputEraseMachine, sourceInputEraseConfiguration]
+  rfl
 
 private theorem sourceInputErase_finish :
     sourceInputEraseMachine.step
       (sourceInputEraseConfiguration []) =
         some (Turing.haltList sourceInputEraseMachine []) := by
-  compactMachineStepTac [sourceInputEraseMachine, sourceInputEraseConfiguration]
+  rfl
 
 private def sourceInputErase_totalTrace (input : List Bool) :
     EvalsToInTime sourceInputEraseMachine.step (sourceInputEraseConfiguration input)
@@ -2231,7 +2231,28 @@ theorem sourceIntegerMultiplication_left_true
         (true :: input) left right restore output) =
       some (sourceIntegerMultiplicationConfiguration 0
         input (true :: left) right restore output) := by
-  sourceIntegerMultiplicationStepTac
+  machineStackEquality [
+      sourceUnaryIntegerMultiplicationMachine,
+      sourceIntegerMultiplicationConfiguration,
+      sourceIntegerMultiplicationPeek,
+      sourceIntegerMultiplicationPop,
+      sourceIntegerMultiplicationPush,
+      sourceIntegerMultiplicationGoto,
+      sourceIntegerMultiplicationLeftStatement,
+      sourceIntegerMultiplicationRightStatement,
+      sourceIntegerMultiplicationOuterStatement,
+      sourceIntegerMultiplicationCopyStatement,
+      sourceIntegerMultiplicationRestoreStatement,
+      sourceIntegerMultiplicationSuccessCleanupStatement,
+      sourceIntegerMultiplicationFailureInputStatement,
+      sourceIntegerMultiplicationFailureLeftStatement,
+      sourceIntegerMultiplicationFailureRightStatement,
+      sourceIntegerMultiplicationFailureRestoreStatement,
+      sourceIntegerMultiplicationFailureOutputStatement,
+      Turing.haltList,
+      Turing.FinTM2.step,
+      Turing.TM2.step,
+      Turing.TM2.stepAux]
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem sourceIntegerMultiplication_left_delimiter
@@ -2241,7 +2262,28 @@ theorem sourceIntegerMultiplication_left_delimiter
         (false :: input) left right restore output) =
       some (sourceIntegerMultiplicationConfiguration 1
         input left right restore output) := by
-  sourceIntegerMultiplicationStepTac
+  machineStackEquality [
+      sourceUnaryIntegerMultiplicationMachine,
+      sourceIntegerMultiplicationConfiguration,
+      sourceIntegerMultiplicationPeek,
+      sourceIntegerMultiplicationPop,
+      sourceIntegerMultiplicationPush,
+      sourceIntegerMultiplicationGoto,
+      sourceIntegerMultiplicationLeftStatement,
+      sourceIntegerMultiplicationRightStatement,
+      sourceIntegerMultiplicationOuterStatement,
+      sourceIntegerMultiplicationCopyStatement,
+      sourceIntegerMultiplicationRestoreStatement,
+      sourceIntegerMultiplicationSuccessCleanupStatement,
+      sourceIntegerMultiplicationFailureInputStatement,
+      sourceIntegerMultiplicationFailureLeftStatement,
+      sourceIntegerMultiplicationFailureRightStatement,
+      sourceIntegerMultiplicationFailureRestoreStatement,
+      sourceIntegerMultiplicationFailureOutputStatement,
+      Turing.haltList,
+      Turing.FinTM2.step,
+      Turing.TM2.step,
+      Turing.TM2.stepAux]
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem sourceIntegerMultiplication_left_missing
@@ -2251,7 +2293,7 @@ theorem sourceIntegerMultiplication_left_missing
         [] left right restore output) =
       some (sourceIntegerMultiplicationConfiguration 6
         [] left right restore output) := by
-  sourceIntegerMultiplicationStepTac
+  rfl
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem sourceIntegerMultiplication_right_true
@@ -2261,7 +2303,28 @@ theorem sourceIntegerMultiplication_right_true
         (true :: input) left right restore output) =
       some (sourceIntegerMultiplicationConfiguration 1
         input left (true :: right) restore output) := by
-  sourceIntegerMultiplicationStepTac
+  machineStackEquality [
+      sourceUnaryIntegerMultiplicationMachine,
+      sourceIntegerMultiplicationConfiguration,
+      sourceIntegerMultiplicationPeek,
+      sourceIntegerMultiplicationPop,
+      sourceIntegerMultiplicationPush,
+      sourceIntegerMultiplicationGoto,
+      sourceIntegerMultiplicationLeftStatement,
+      sourceIntegerMultiplicationRightStatement,
+      sourceIntegerMultiplicationOuterStatement,
+      sourceIntegerMultiplicationCopyStatement,
+      sourceIntegerMultiplicationRestoreStatement,
+      sourceIntegerMultiplicationSuccessCleanupStatement,
+      sourceIntegerMultiplicationFailureInputStatement,
+      sourceIntegerMultiplicationFailureLeftStatement,
+      sourceIntegerMultiplicationFailureRightStatement,
+      sourceIntegerMultiplicationFailureRestoreStatement,
+      sourceIntegerMultiplicationFailureOutputStatement,
+      Turing.haltList,
+      Turing.FinTM2.step,
+      Turing.TM2.step,
+      Turing.TM2.stepAux]
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem sourceIntegerMultiplication_right_false
@@ -2271,7 +2334,28 @@ theorem sourceIntegerMultiplication_right_false
         (false :: input) left right restore output) =
       some (sourceIntegerMultiplicationConfiguration 6
         input left right restore output) := by
-  sourceIntegerMultiplicationStepTac
+  machineStackEquality [
+      sourceUnaryIntegerMultiplicationMachine,
+      sourceIntegerMultiplicationConfiguration,
+      sourceIntegerMultiplicationPeek,
+      sourceIntegerMultiplicationPop,
+      sourceIntegerMultiplicationPush,
+      sourceIntegerMultiplicationGoto,
+      sourceIntegerMultiplicationLeftStatement,
+      sourceIntegerMultiplicationRightStatement,
+      sourceIntegerMultiplicationOuterStatement,
+      sourceIntegerMultiplicationCopyStatement,
+      sourceIntegerMultiplicationRestoreStatement,
+      sourceIntegerMultiplicationSuccessCleanupStatement,
+      sourceIntegerMultiplicationFailureInputStatement,
+      sourceIntegerMultiplicationFailureLeftStatement,
+      sourceIntegerMultiplicationFailureRightStatement,
+      sourceIntegerMultiplicationFailureRestoreStatement,
+      sourceIntegerMultiplicationFailureOutputStatement,
+      Turing.haltList,
+      Turing.FinTM2.step,
+      Turing.TM2.step,
+      Turing.TM2.stepAux]
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem sourceIntegerMultiplication_right_finish
@@ -2281,7 +2365,7 @@ theorem sourceIntegerMultiplication_right_finish
         [] left right restore output) =
       some (sourceIntegerMultiplicationConfiguration 2
         [] left right restore output) := by
-  sourceIntegerMultiplicationStepTac
+  rfl
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem sourceIntegerMultiplication_outer_step
@@ -2291,7 +2375,28 @@ theorem sourceIntegerMultiplication_outer_step
         [] (true :: left) right restore output) =
       some (sourceIntegerMultiplicationConfiguration 3
         [] left right restore output) := by
-  sourceIntegerMultiplicationStepTac
+  machineStackEquality [
+      sourceUnaryIntegerMultiplicationMachine,
+      sourceIntegerMultiplicationConfiguration,
+      sourceIntegerMultiplicationPeek,
+      sourceIntegerMultiplicationPop,
+      sourceIntegerMultiplicationPush,
+      sourceIntegerMultiplicationGoto,
+      sourceIntegerMultiplicationLeftStatement,
+      sourceIntegerMultiplicationRightStatement,
+      sourceIntegerMultiplicationOuterStatement,
+      sourceIntegerMultiplicationCopyStatement,
+      sourceIntegerMultiplicationRestoreStatement,
+      sourceIntegerMultiplicationSuccessCleanupStatement,
+      sourceIntegerMultiplicationFailureInputStatement,
+      sourceIntegerMultiplicationFailureLeftStatement,
+      sourceIntegerMultiplicationFailureRightStatement,
+      sourceIntegerMultiplicationFailureRestoreStatement,
+      sourceIntegerMultiplicationFailureOutputStatement,
+      Turing.haltList,
+      Turing.FinTM2.step,
+      Turing.TM2.step,
+      Turing.TM2.stepAux]
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem sourceIntegerMultiplication_outer_finish
@@ -2301,7 +2406,7 @@ theorem sourceIntegerMultiplication_outer_finish
         [] [] right restore output) =
       some (sourceIntegerMultiplicationConfiguration 5
         [] [] right restore output) := by
-  sourceIntegerMultiplicationStepTac
+  rfl
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem sourceIntegerMultiplication_copy_step
@@ -2311,7 +2416,28 @@ theorem sourceIntegerMultiplication_copy_step
         [] left (true :: right) restore output) =
       some (sourceIntegerMultiplicationConfiguration 3
         [] left right (true :: restore) (true :: output)) := by
-  sourceIntegerMultiplicationStepTac
+  machineStackEquality [
+      sourceUnaryIntegerMultiplicationMachine,
+      sourceIntegerMultiplicationConfiguration,
+      sourceIntegerMultiplicationPeek,
+      sourceIntegerMultiplicationPop,
+      sourceIntegerMultiplicationPush,
+      sourceIntegerMultiplicationGoto,
+      sourceIntegerMultiplicationLeftStatement,
+      sourceIntegerMultiplicationRightStatement,
+      sourceIntegerMultiplicationOuterStatement,
+      sourceIntegerMultiplicationCopyStatement,
+      sourceIntegerMultiplicationRestoreStatement,
+      sourceIntegerMultiplicationSuccessCleanupStatement,
+      sourceIntegerMultiplicationFailureInputStatement,
+      sourceIntegerMultiplicationFailureLeftStatement,
+      sourceIntegerMultiplicationFailureRightStatement,
+      sourceIntegerMultiplicationFailureRestoreStatement,
+      sourceIntegerMultiplicationFailureOutputStatement,
+      Turing.haltList,
+      Turing.FinTM2.step,
+      Turing.TM2.step,
+      Turing.TM2.stepAux]
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem sourceIntegerMultiplication_copy_finish
@@ -2321,7 +2447,7 @@ theorem sourceIntegerMultiplication_copy_finish
         [] left [] restore output) =
       some (sourceIntegerMultiplicationConfiguration 4
         [] left [] restore output) := by
-  sourceIntegerMultiplicationStepTac
+  rfl
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem sourceIntegerMultiplication_restore_step
@@ -2331,7 +2457,28 @@ theorem sourceIntegerMultiplication_restore_step
         [] left right (true :: restore) output) =
       some (sourceIntegerMultiplicationConfiguration 4
         [] left (true :: right) restore output) := by
-  sourceIntegerMultiplicationStepTac
+  machineStackEquality [
+      sourceUnaryIntegerMultiplicationMachine,
+      sourceIntegerMultiplicationConfiguration,
+      sourceIntegerMultiplicationPeek,
+      sourceIntegerMultiplicationPop,
+      sourceIntegerMultiplicationPush,
+      sourceIntegerMultiplicationGoto,
+      sourceIntegerMultiplicationLeftStatement,
+      sourceIntegerMultiplicationRightStatement,
+      sourceIntegerMultiplicationOuterStatement,
+      sourceIntegerMultiplicationCopyStatement,
+      sourceIntegerMultiplicationRestoreStatement,
+      sourceIntegerMultiplicationSuccessCleanupStatement,
+      sourceIntegerMultiplicationFailureInputStatement,
+      sourceIntegerMultiplicationFailureLeftStatement,
+      sourceIntegerMultiplicationFailureRightStatement,
+      sourceIntegerMultiplicationFailureRestoreStatement,
+      sourceIntegerMultiplicationFailureOutputStatement,
+      Turing.haltList,
+      Turing.FinTM2.step,
+      Turing.TM2.step,
+      Turing.TM2.stepAux]
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem sourceIntegerMultiplication_restore_finish
@@ -2341,7 +2488,7 @@ theorem sourceIntegerMultiplication_restore_finish
         [] left right [] output) =
       some (sourceIntegerMultiplicationConfiguration 2
         [] left right [] output) := by
-  sourceIntegerMultiplicationStepTac
+  rfl
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem sourceIntegerMultiplication_success_step
@@ -2351,7 +2498,28 @@ theorem sourceIntegerMultiplication_success_step
         [] [] (true :: right) [] output) =
       some (sourceIntegerMultiplicationConfiguration 5
         [] [] right [] output) := by
-  sourceIntegerMultiplicationStepTac
+  machineStackEquality [
+      sourceUnaryIntegerMultiplicationMachine,
+      sourceIntegerMultiplicationConfiguration,
+      sourceIntegerMultiplicationPeek,
+      sourceIntegerMultiplicationPop,
+      sourceIntegerMultiplicationPush,
+      sourceIntegerMultiplicationGoto,
+      sourceIntegerMultiplicationLeftStatement,
+      sourceIntegerMultiplicationRightStatement,
+      sourceIntegerMultiplicationOuterStatement,
+      sourceIntegerMultiplicationCopyStatement,
+      sourceIntegerMultiplicationRestoreStatement,
+      sourceIntegerMultiplicationSuccessCleanupStatement,
+      sourceIntegerMultiplicationFailureInputStatement,
+      sourceIntegerMultiplicationFailureLeftStatement,
+      sourceIntegerMultiplicationFailureRightStatement,
+      sourceIntegerMultiplicationFailureRestoreStatement,
+      sourceIntegerMultiplicationFailureOutputStatement,
+      Turing.haltList,
+      Turing.FinTM2.step,
+      Turing.TM2.step,
+      Turing.TM2.stepAux]
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem sourceIntegerMultiplication_success_finish
@@ -2361,7 +2529,28 @@ theorem sourceIntegerMultiplication_success_finish
         [] [] [] [] output) =
       some (Turing.haltList
         sourceUnaryIntegerMultiplicationMachine output) := by
-  sourceIntegerMultiplicationStepTac
+  machineStackEquality [
+      sourceUnaryIntegerMultiplicationMachine,
+      sourceIntegerMultiplicationConfiguration,
+      sourceIntegerMultiplicationPeek,
+      sourceIntegerMultiplicationPop,
+      sourceIntegerMultiplicationPush,
+      sourceIntegerMultiplicationGoto,
+      sourceIntegerMultiplicationLeftStatement,
+      sourceIntegerMultiplicationRightStatement,
+      sourceIntegerMultiplicationOuterStatement,
+      sourceIntegerMultiplicationCopyStatement,
+      sourceIntegerMultiplicationRestoreStatement,
+      sourceIntegerMultiplicationSuccessCleanupStatement,
+      sourceIntegerMultiplicationFailureInputStatement,
+      sourceIntegerMultiplicationFailureLeftStatement,
+      sourceIntegerMultiplicationFailureRightStatement,
+      sourceIntegerMultiplicationFailureRestoreStatement,
+      sourceIntegerMultiplicationFailureOutputStatement,
+      Turing.haltList,
+      Turing.FinTM2.step,
+      Turing.TM2.step,
+      Turing.TM2.stepAux]
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem sourceIntegerMultiplication_failure_input_step
@@ -2371,7 +2560,28 @@ theorem sourceIntegerMultiplication_failure_input_step
         (bit :: input) left right restore output) =
       some (sourceIntegerMultiplicationConfiguration 6
         input left right restore output) := by
-  cases bit <;> sourceIntegerMultiplicationStepTac
+  machineStackEquality [
+      sourceUnaryIntegerMultiplicationMachine,
+      sourceIntegerMultiplicationConfiguration,
+      sourceIntegerMultiplicationPeek,
+      sourceIntegerMultiplicationPop,
+      sourceIntegerMultiplicationPush,
+      sourceIntegerMultiplicationGoto,
+      sourceIntegerMultiplicationLeftStatement,
+      sourceIntegerMultiplicationRightStatement,
+      sourceIntegerMultiplicationOuterStatement,
+      sourceIntegerMultiplicationCopyStatement,
+      sourceIntegerMultiplicationRestoreStatement,
+      sourceIntegerMultiplicationSuccessCleanupStatement,
+      sourceIntegerMultiplicationFailureInputStatement,
+      sourceIntegerMultiplicationFailureLeftStatement,
+      sourceIntegerMultiplicationFailureRightStatement,
+      sourceIntegerMultiplicationFailureRestoreStatement,
+      sourceIntegerMultiplicationFailureOutputStatement,
+      Turing.haltList,
+      Turing.FinTM2.step,
+      Turing.TM2.step,
+      Turing.TM2.stepAux]
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem sourceIntegerMultiplication_failure_input_finish
@@ -2381,7 +2591,7 @@ theorem sourceIntegerMultiplication_failure_input_finish
         [] left right restore output) =
       some (sourceIntegerMultiplicationConfiguration 7
         [] left right restore output) := by
-  sourceIntegerMultiplicationStepTac
+  rfl
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem sourceIntegerMultiplication_failure_left_step
@@ -2391,7 +2601,28 @@ theorem sourceIntegerMultiplication_failure_left_step
         [] (bit :: left) right restore output) =
       some (sourceIntegerMultiplicationConfiguration 7
         [] left right restore output) := by
-  cases bit <;> sourceIntegerMultiplicationStepTac
+  machineStackEquality [
+      sourceUnaryIntegerMultiplicationMachine,
+      sourceIntegerMultiplicationConfiguration,
+      sourceIntegerMultiplicationPeek,
+      sourceIntegerMultiplicationPop,
+      sourceIntegerMultiplicationPush,
+      sourceIntegerMultiplicationGoto,
+      sourceIntegerMultiplicationLeftStatement,
+      sourceIntegerMultiplicationRightStatement,
+      sourceIntegerMultiplicationOuterStatement,
+      sourceIntegerMultiplicationCopyStatement,
+      sourceIntegerMultiplicationRestoreStatement,
+      sourceIntegerMultiplicationSuccessCleanupStatement,
+      sourceIntegerMultiplicationFailureInputStatement,
+      sourceIntegerMultiplicationFailureLeftStatement,
+      sourceIntegerMultiplicationFailureRightStatement,
+      sourceIntegerMultiplicationFailureRestoreStatement,
+      sourceIntegerMultiplicationFailureOutputStatement,
+      Turing.haltList,
+      Turing.FinTM2.step,
+      Turing.TM2.step,
+      Turing.TM2.stepAux]
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem sourceIntegerMultiplication_failure_left_finish
@@ -2401,7 +2632,7 @@ theorem sourceIntegerMultiplication_failure_left_finish
         [] [] right restore output) =
       some (sourceIntegerMultiplicationConfiguration 8
         [] [] right restore output) := by
-  sourceIntegerMultiplicationStepTac
+  rfl
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem sourceIntegerMultiplication_failure_right_step
@@ -2411,7 +2642,28 @@ theorem sourceIntegerMultiplication_failure_right_step
         [] [] (bit :: right) restore output) =
       some (sourceIntegerMultiplicationConfiguration 8
         [] [] right restore output) := by
-  cases bit <;> sourceIntegerMultiplicationStepTac
+  machineStackEquality [
+      sourceUnaryIntegerMultiplicationMachine,
+      sourceIntegerMultiplicationConfiguration,
+      sourceIntegerMultiplicationPeek,
+      sourceIntegerMultiplicationPop,
+      sourceIntegerMultiplicationPush,
+      sourceIntegerMultiplicationGoto,
+      sourceIntegerMultiplicationLeftStatement,
+      sourceIntegerMultiplicationRightStatement,
+      sourceIntegerMultiplicationOuterStatement,
+      sourceIntegerMultiplicationCopyStatement,
+      sourceIntegerMultiplicationRestoreStatement,
+      sourceIntegerMultiplicationSuccessCleanupStatement,
+      sourceIntegerMultiplicationFailureInputStatement,
+      sourceIntegerMultiplicationFailureLeftStatement,
+      sourceIntegerMultiplicationFailureRightStatement,
+      sourceIntegerMultiplicationFailureRestoreStatement,
+      sourceIntegerMultiplicationFailureOutputStatement,
+      Turing.haltList,
+      Turing.FinTM2.step,
+      Turing.TM2.step,
+      Turing.TM2.stepAux]
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem sourceIntegerMultiplication_failure_right_finish
@@ -2421,7 +2673,7 @@ theorem sourceIntegerMultiplication_failure_right_finish
         [] [] [] restore output) =
       some (sourceIntegerMultiplicationConfiguration 9
         [] [] [] restore output) := by
-  sourceIntegerMultiplicationStepTac
+  rfl
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem sourceIntegerMultiplication_failure_restore_step
@@ -2431,7 +2683,28 @@ theorem sourceIntegerMultiplication_failure_restore_step
         [] [] [] (bit :: restore) output) =
       some (sourceIntegerMultiplicationConfiguration 9
         [] [] [] restore output) := by
-  cases bit <;> sourceIntegerMultiplicationStepTac
+  machineStackEquality [
+      sourceUnaryIntegerMultiplicationMachine,
+      sourceIntegerMultiplicationConfiguration,
+      sourceIntegerMultiplicationPeek,
+      sourceIntegerMultiplicationPop,
+      sourceIntegerMultiplicationPush,
+      sourceIntegerMultiplicationGoto,
+      sourceIntegerMultiplicationLeftStatement,
+      sourceIntegerMultiplicationRightStatement,
+      sourceIntegerMultiplicationOuterStatement,
+      sourceIntegerMultiplicationCopyStatement,
+      sourceIntegerMultiplicationRestoreStatement,
+      sourceIntegerMultiplicationSuccessCleanupStatement,
+      sourceIntegerMultiplicationFailureInputStatement,
+      sourceIntegerMultiplicationFailureLeftStatement,
+      sourceIntegerMultiplicationFailureRightStatement,
+      sourceIntegerMultiplicationFailureRestoreStatement,
+      sourceIntegerMultiplicationFailureOutputStatement,
+      Turing.haltList,
+      Turing.FinTM2.step,
+      Turing.TM2.step,
+      Turing.TM2.stepAux]
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem sourceIntegerMultiplication_failure_restore_finish
@@ -2441,7 +2714,7 @@ theorem sourceIntegerMultiplication_failure_restore_finish
         [] [] [] [] output) =
       some (sourceIntegerMultiplicationConfiguration 10
         [] [] [] [] output) := by
-  sourceIntegerMultiplicationStepTac
+  rfl
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem sourceIntegerMultiplication_failure_output_step
@@ -2451,7 +2724,28 @@ theorem sourceIntegerMultiplication_failure_output_step
         [] [] [] [] (bit :: output)) =
       some (sourceIntegerMultiplicationConfiguration 10
         [] [] [] [] output) := by
-  cases bit <;> sourceIntegerMultiplicationStepTac
+  machineStackEquality [
+      sourceUnaryIntegerMultiplicationMachine,
+      sourceIntegerMultiplicationConfiguration,
+      sourceIntegerMultiplicationPeek,
+      sourceIntegerMultiplicationPop,
+      sourceIntegerMultiplicationPush,
+      sourceIntegerMultiplicationGoto,
+      sourceIntegerMultiplicationLeftStatement,
+      sourceIntegerMultiplicationRightStatement,
+      sourceIntegerMultiplicationOuterStatement,
+      sourceIntegerMultiplicationCopyStatement,
+      sourceIntegerMultiplicationRestoreStatement,
+      sourceIntegerMultiplicationSuccessCleanupStatement,
+      sourceIntegerMultiplicationFailureInputStatement,
+      sourceIntegerMultiplicationFailureLeftStatement,
+      sourceIntegerMultiplicationFailureRightStatement,
+      sourceIntegerMultiplicationFailureRestoreStatement,
+      sourceIntegerMultiplicationFailureOutputStatement,
+      Turing.haltList,
+      Turing.FinTM2.step,
+      Turing.TM2.step,
+      Turing.TM2.stepAux]
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem sourceIntegerMultiplication_failure_finish :
@@ -2460,7 +2754,28 @@ theorem sourceIntegerMultiplication_failure_finish :
         [] [] [] [] []) =
       some (Turing.haltList
         sourceUnaryIntegerMultiplicationMachine []) := by
-  sourceIntegerMultiplicationStepTac
+  machineStackEquality [
+      sourceUnaryIntegerMultiplicationMachine,
+      sourceIntegerMultiplicationConfiguration,
+      sourceIntegerMultiplicationPeek,
+      sourceIntegerMultiplicationPop,
+      sourceIntegerMultiplicationPush,
+      sourceIntegerMultiplicationGoto,
+      sourceIntegerMultiplicationLeftStatement,
+      sourceIntegerMultiplicationRightStatement,
+      sourceIntegerMultiplicationOuterStatement,
+      sourceIntegerMultiplicationCopyStatement,
+      sourceIntegerMultiplicationRestoreStatement,
+      sourceIntegerMultiplicationSuccessCleanupStatement,
+      sourceIntegerMultiplicationFailureInputStatement,
+      sourceIntegerMultiplicationFailureLeftStatement,
+      sourceIntegerMultiplicationFailureRightStatement,
+      sourceIntegerMultiplicationFailureRestoreStatement,
+      sourceIntegerMultiplicationFailureOutputStatement,
+      Turing.haltList,
+      Turing.FinTM2.step,
+      Turing.TM2.step,
+      Turing.TM2.stepAux]
 
 end
 

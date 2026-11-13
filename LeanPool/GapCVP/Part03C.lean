@@ -613,8 +613,13 @@ theorem variablePrefixTrue
       some (variableConfiguration (variablePrefixLabel position)
         input (true :: counter) count) := by
   fin_cases position <;>
-    compactMachineStepTac [variableClauseMachine, variableConfiguration, variablePrefixLabel,
-      variablePrefixStatement]
+    reduceMachineConfiguration
+      [variableConfiguration]
+      (compactMachineStepTac [
+        variableClauseMachine,
+        variableConfiguration,
+        variablePrefixLabel,
+        variablePrefixStatement])
 
 theorem variablePrefixDelimiter
     (position : Fin 3) (input counter : List Bool) (count : ℕ) :
@@ -624,8 +629,14 @@ theorem variablePrefixDelimiter
       some (variableConfiguration (variablePayloadLabel position)
         input counter count) := by
   fin_cases position <;>
-    compactMachineStepTac [variableClauseMachine, variableConfiguration, variablePrefixLabel,
-      variablePayloadLabel, variablePrefixStatement]
+    reduceMachineConfiguration
+      [variableConfiguration]
+      (compactMachineStepTac [
+        variableClauseMachine,
+        variableConfiguration,
+        variablePrefixLabel,
+        variablePayloadLabel,
+        variablePrefixStatement])
 
 theorem variablePayloadStep
     (position : Fin 3) (bit counterBit : Bool)
@@ -635,9 +646,14 @@ theorem variablePayloadStep
         (bit :: input) (counterBit :: counter) count) =
       some (variableConfiguration (variablePayloadLabel position)
         input counter count) := by
-  fin_cases position <;> cases bit <;> cases counterBit <;>
-    compactMachineStepTac [variableClauseMachine, variableConfiguration, variablePayloadLabel,
-      variablePayloadStatement]
+  fin_cases position <;>
+    reduceMachineConfiguration
+      [variableConfiguration]
+      (compactMachineStepTac [
+        variableClauseMachine,
+        variableConfiguration,
+        variablePayloadLabel,
+        variablePayloadStatement])
 
 theorem variableSignStep
     (position : Fin 3) (hposition : position ≠ 2)
@@ -648,12 +664,17 @@ theorem variableSignStep
       some (variableConfiguration
         (variablePrefixLabel (nextLiteralPosition position))
         input [] count) := by
-  fin_cases position <;> cases sign <;>
-    first
+  fin_cases position <;> first
     | exact (hposition rfl).elim
-    | compactMachineStepTac [variableClauseMachine, variableConfiguration,
-        variablePrefixLabel, variablePayloadLabel, nextLiteralPosition,
-        variablePayloadStatement]
+    | reduceMachineConfiguration
+        [variableConfiguration]
+        (compactMachineStepTac [
+          variableClauseMachine,
+          variableConfiguration,
+          variablePrefixLabel,
+          variablePayloadLabel,
+          nextLiteralPosition,
+          variablePayloadStatement])
 
 theorem variableCompleteClauseStep
     (sign : Bool) (input : List Bool) (count : ℕ) :
@@ -662,18 +683,28 @@ theorem variableCompleteClauseStep
         (sign :: input) [] count) =
       some (variableConfiguration (variablePrefixLabel 0)
         input [] (count + 1)) := by
-  cases sign <;>
-    compactMachineStepTac [variableClauseMachine, variableConfiguration,
-      variablePrefixLabel, variablePayloadLabel, variablePayloadStatement,
-      List.replicate_succ]
+  reduceMachineConfiguration
+    [variableConfiguration]
+    (compactMachineStepTac [
+      variableClauseMachine,
+      variableConfiguration,
+      variablePrefixLabel,
+      variablePayloadLabel,
+      variablePayloadStatement,
+      List.replicate_succ])
 
 theorem variableFinishValid (count : ℕ) :
     variableClauseMachine.step
       (variableConfiguration (variablePrefixLabel 0) [] [] count) =
       some (Turing.haltList variableClauseMachine
         (true :: List.replicate count true)) := by
-  compactMachineStepTac [variableClauseMachine, variableConfiguration, variablePrefixLabel,
-    variablePrefixStatement]
+  reduceMachineConfiguration
+    [variableConfiguration]
+    (compactMachineStepTac [
+      variableClauseMachine,
+      variableConfiguration,
+      variablePrefixLabel,
+      variablePrefixStatement])
 
 theorem variablePrefixUnfinished
     (position : Fin 3) (bit : Bool)
@@ -682,9 +713,8 @@ theorem variablePrefixUnfinished
       (variableConfiguration (variablePrefixLabel position)
         [] (bit :: counter) count) =
       some (variableConfiguration 6 [] (bit :: counter) count) := by
-  fin_cases position <;> cases bit <;>
-    compactMachineStepTac [variableClauseMachine, variableConfiguration, variablePrefixLabel,
-      variablePrefixStatement]
+  fin_cases position <;>
+    rfl
 
 theorem variablePrefixIncompleteClause
     (position : Fin 3) (hposition : position ≠ 0) (count : ℕ) :
@@ -705,29 +735,34 @@ theorem variablePayloadMissing
         [] counter count) =
       some (variableConfiguration 6 [] counter count) := by
   fin_cases position <;> cases counter <;>
-    compactMachineStepTac [variableClauseMachine, variableConfiguration, variablePayloadLabel,
-      variablePayloadStatement]
+    rfl
 
 theorem variableFailureDropInput
     (bit : Bool) (input counter : List Bool) (count : ℕ) :
     variableClauseMachine.step
       (variableConfiguration 6 (bit :: input) counter count) =
       some (variableConfiguration 6 input counter count) := by
-  cases bit <;> compactMachineStepTac [variableClauseMachine, variableConfiguration]
+  machineStackEquality [
+      variableClauseMachine,
+      variableConfiguration]
 
 theorem variableFailureDropCounter
     (bit : Bool) (counter : List Bool) (count : ℕ) :
     variableClauseMachine.step
       (variableConfiguration 6 [] (bit :: counter) count) =
       some (variableConfiguration 6 [] counter count) := by
-  cases bit <;> compactMachineStepTac [variableClauseMachine, variableConfiguration]
+  machineStackEquality [
+      variableClauseMachine,
+      variableConfiguration]
 
 theorem variableFailureFinish (count : ℕ) :
     variableClauseMachine.step
       (variableConfiguration 6 [] [] count) =
       some (Turing.haltList variableClauseMachine
         (false :: List.replicate count true)) := by
-  compactMachineStepTac [variableClauseMachine, variableConfiguration]
+  machineStackEquality [
+      variableClauseMachine,
+      variableConfiguration]
 
 /-- Clear the decoder work stacks and emit a failure marker. -/
 def variableFailureTrace
@@ -1058,7 +1093,7 @@ private theorem binaryStackValue_encodeNum (value : Num) :
   | zero =>
       rfl
   | pos value =>
-      simpa only [Computability.encodeNum, Num.cast_pos] using binaryStackValue_encodePosNum value
+      exact binaryStackValue_encodePosNum value
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem binaryStackValue_encodeNat (value : ℕ) :
@@ -1111,8 +1146,7 @@ theorem binaryStackValue_eq_zero_iff
   | nil =>
       simp only [binaryStackValue, List.not_mem_nil, IsEmpty.forall_iff, implies_true]
   | cons bit bits ih =>
-      cases bit <;>
-        simp [binaryStackValue, ih]
+      simp [binaryStackValue, ih]
 
 /-- GapCVP reduction support. -/
 def canonicalPrefixLabel (position : Fin 3) : Fin 17 :=
@@ -1300,7 +1334,9 @@ theorem canonical_header_prefix_true
         counter field binary borrow output) =
       some (canonicalConfiguration 0 input
         (true :: counter) field binary borrow output) := by
-  compactMachineStepTac [canonicalFormulaMachine, canonicalConfiguration]
+  machineStackEquality [
+      canonicalFormulaMachine,
+      canonicalConfiguration]
 
 theorem canonicalHeaderPrefixDelimiter
     (input counter field binary borrow output : List Bool) :
@@ -1309,7 +1345,9 @@ theorem canonicalHeaderPrefixDelimiter
         counter field binary borrow output) =
       some (canonicalConfiguration 1 input
         counter field binary borrow output) := by
-  compactMachineStepTac [canonicalFormulaMachine, canonicalConfiguration]
+  machineStackEquality [
+      canonicalFormulaMachine,
+      canonicalConfiguration]
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem canonical_header_prefix_missing
@@ -1319,7 +1357,7 @@ theorem canonical_header_prefix_missing
         counter field binary borrow output) =
       some (canonicalConfiguration 15 []
         counter field binary borrow output) := by
-  compactMachineStepTac [canonicalFormulaMachine, canonicalConfiguration]
+  rfl
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem canonical_header_payload_step
@@ -1329,7 +1367,9 @@ theorem canonical_header_payload_step
         (true :: counter) field binary borrow output) =
       some (canonicalConfiguration 1 input
         counter (bit :: field) binary borrow output) := by
-  cases bit <;> compactMachineStepTac [canonicalFormulaMachine, canonicalConfiguration]
+  machineStackEquality [
+      canonicalFormulaMachine,
+      canonicalConfiguration]
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem canonical_header_payload_missing
@@ -1339,7 +1379,7 @@ theorem canonical_header_payload_missing
         field binary borrow output) =
       some (canonicalConfiguration 15 [] (true :: counter)
         field binary borrow output) := by
-  compactMachineStepTac [canonicalFormulaMachine, canonicalConfiguration]
+  rfl
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem canonical_header_payload_complete
@@ -1349,7 +1389,7 @@ theorem canonical_header_payload_complete
         field binary borrow output) =
       some (canonicalConfiguration 2 input []
         field binary borrow output) := by
-  compactMachineStepTac [canonicalFormulaMachine, canonicalConfiguration]
+  rfl
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem canonical_header_check_true
@@ -1359,7 +1399,7 @@ theorem canonical_header_check_true
         (true :: field) binary borrow output) =
       some (canonicalConfiguration 3 input []
         (true :: field) binary borrow output) := by
-  compactMachineStepTac [canonicalFormulaMachine, canonicalConfiguration]
+  rfl
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem canonical_header_check_false
@@ -1369,7 +1409,7 @@ theorem canonical_header_check_false
         (false :: field) binary borrow output) =
       some (canonicalConfiguration 15 input []
         (false :: field) binary borrow output) := by
-  compactMachineStepTac [canonicalFormulaMachine, canonicalConfiguration]
+  rfl
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem canonical_header_check_zero
@@ -1379,7 +1419,7 @@ theorem canonical_header_check_zero
         [] binary borrow output) =
       some (canonicalConfiguration (canonicalPrefixLabel 0) input []
         [] binary borrow output) := by
-  compactMachineStepTac [canonicalFormulaMachine, canonicalConfiguration, canonicalPrefixLabel]
+  rfl
 
 theorem canonicalHeaderReverseStep
     (bit : Bool) (input field binary borrow output : List Bool) :
@@ -1388,7 +1428,9 @@ theorem canonicalHeaderReverseStep
         (bit :: field) binary borrow output) =
       some (canonicalConfiguration 3 input []
         field (bit :: binary) borrow output) := by
-  cases bit <;> compactMachineStepTac [canonicalFormulaMachine, canonicalConfiguration]
+  machineStackEquality [
+      canonicalFormulaMachine,
+      canonicalConfiguration]
 
 theorem canonicalHeaderReverseComplete
     (input binary borrow output : List Bool) :
@@ -1397,7 +1439,7 @@ theorem canonicalHeaderReverseComplete
         [] binary borrow output) =
       some (canonicalConfiguration (canonicalPrefixLabel 0) input []
         [] binary borrow output) := by
-  compactMachineStepTac [canonicalFormulaMachine, canonicalConfiguration, canonicalPrefixLabel]
+  rfl
 
 theorem canonicalBorrowZero
     (input counter field binary borrow output : List Bool) :
@@ -1406,7 +1448,9 @@ theorem canonicalBorrowZero
         (false :: binary) borrow output) =
       some (canonicalConfiguration 13 input counter field
         binary (true :: borrow) output) := by
-  compactMachineStepTac [canonicalFormulaMachine, canonicalConfiguration]
+  machineStackEquality [
+      canonicalFormulaMachine,
+      canonicalConfiguration]
 
 theorem canonicalBorrowOne
     (input counter field binary borrow output : List Bool) :
@@ -1415,7 +1459,9 @@ theorem canonicalBorrowOne
         (true :: binary) borrow output) =
       some (canonicalConfiguration 14 input counter field
         (false :: binary) borrow output) := by
-  compactMachineStepTac [canonicalFormulaMachine, canonicalConfiguration]
+  machineStackEquality [
+      canonicalFormulaMachine,
+      canonicalConfiguration]
 
 theorem canonicalBorrowExhausted
     (input counter field borrow output : List Bool) :
@@ -1424,7 +1470,7 @@ theorem canonicalBorrowExhausted
         [] borrow output) =
       some (canonicalConfiguration 15 input counter field
         [] borrow output) := by
-  compactMachineStepTac [canonicalFormulaMachine, canonicalConfiguration]
+  rfl
 
 theorem canonicalBorrowRestoreStep
     (bit : Bool) (input counter field binary borrow output : List Bool) :
@@ -1433,7 +1479,9 @@ theorem canonicalBorrowRestoreStep
         binary (bit :: borrow) output) =
       some (canonicalConfiguration 14 input counter field
         (true :: binary) borrow output) := by
-  cases bit <;> compactMachineStepTac [canonicalFormulaMachine, canonicalConfiguration]
+  machineStackEquality [
+      canonicalFormulaMachine,
+      canonicalConfiguration]
 
 theorem canonicalBorrowRestoreComplete
     (input counter field binary output : List Bool) :
@@ -1442,7 +1490,7 @@ theorem canonicalBorrowRestoreComplete
         binary [] output) =
       some (canonicalConfiguration (canonicalPrefixLabel 0)
         input counter field binary [] output) := by
-  compactMachineStepTac [canonicalFormulaMachine, canonicalConfiguration, canonicalPrefixLabel]
+  rfl
 
 theorem canonicalZeroCheckFalse
     (input counter field binary borrow output : List Bool) :
@@ -1451,7 +1499,9 @@ theorem canonicalZeroCheckFalse
         (false :: binary) borrow output) =
       some (canonicalConfiguration 16 input counter field
         binary borrow output) := by
-  compactMachineStepTac [canonicalFormulaMachine, canonicalConfiguration]
+  machineStackEquality [
+      canonicalFormulaMachine,
+      canonicalConfiguration]
 
 theorem canonicalZeroCheckTrue
     (input counter field binary borrow output : List Bool) :
@@ -1460,13 +1510,17 @@ theorem canonicalZeroCheckTrue
         (true :: binary) borrow output) =
       some (canonicalConfiguration 15 input counter field
         (true :: binary) borrow output) := by
-  compactMachineStepTac [canonicalFormulaMachine, canonicalConfiguration]
+  rfl
 
 theorem canonicalZeroCheckFinish :
     canonicalFormulaMachine.step
       (canonicalConfiguration 16 [] [] [] [] [] []) =
       some (Turing.haltList canonicalFormulaMachine [true]) := by
-  compactMachineStepTac [canonicalFormulaMachine, canonicalConfiguration]
+  reduceMachineConfiguration
+    [canonicalConfiguration]
+    (compactMachineStepTac [
+      canonicalFormulaMachine,
+      canonicalConfiguration])
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem canonical_literal_prefix_true
@@ -1478,9 +1532,13 @@ theorem canonical_literal_prefix_true
       some (canonicalConfiguration (canonicalPrefixLabel position)
         input (true :: counter) field binary borrow output) := by
   fin_cases position <;>
-    compactMachineStepTac [canonicalFormulaMachine, canonicalConfiguration,
+    reduceMachineConfiguration
+      [canonicalConfiguration]
+      (compactMachineStepTac [
+        canonicalFormulaMachine,
+        canonicalConfiguration,
         canonicalPrefixLabel,
-      canonicalPrefixStatement]
+        canonicalPrefixStatement])
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem canonical_literal_prefix_delimiter
@@ -1492,9 +1550,14 @@ theorem canonical_literal_prefix_delimiter
       some (canonicalConfiguration (canonicalPayloadLabel position)
         input counter field binary borrow output) := by
   fin_cases position <;>
-    compactMachineStepTac [canonicalFormulaMachine, canonicalConfiguration,
+    reduceMachineConfiguration
+      [canonicalConfiguration]
+      (compactMachineStepTac [
+        canonicalFormulaMachine,
+        canonicalConfiguration,
         canonicalPrefixLabel,
-      canonicalPayloadLabel, canonicalPrefixStatement]
+        canonicalPayloadLabel,
+        canonicalPrefixStatement])
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem canonical_literal_payload_step
@@ -1506,9 +1569,13 @@ theorem canonical_literal_payload_step
         field binary borrow output) =
       some (canonicalConfiguration (canonicalPayloadLabel position)
         input counter (bit :: field) binary borrow output) := by
-  fin_cases position <;> cases bit <;>
-    compactMachineStepTac [canonicalFormulaMachine, canonicalConfiguration,
-      canonicalPayloadLabel, canonicalPayloadStatement]
+  fin_cases position <;> reduceMachineConfiguration
+                           [canonicalConfiguration]
+                           (compactMachineStepTac [
+                             canonicalFormulaMachine,
+                             canonicalConfiguration,
+                             canonicalPayloadLabel,
+                             canonicalPayloadStatement])
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem canonical_literal_payload_missing
@@ -1520,8 +1587,7 @@ theorem canonical_literal_payload_missing
       some (canonicalConfiguration 15 []
         (true :: counter) field binary borrow output) := by
   fin_cases position <;>
-    compactMachineStepTac [canonicalFormulaMachine, canonicalConfiguration,
-      canonicalPayloadLabel, canonicalPayloadStatement]
+    rfl
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem canonical_literal_field_true
@@ -1533,8 +1599,7 @@ theorem canonical_literal_field_true
       some (canonicalConfiguration (canonicalClearLabel position)
         input [] (true :: field) binary borrow output) := by
   fin_cases position <;>
-    compactMachineStepTac [canonicalFormulaMachine, canonicalConfiguration,
-      canonicalPayloadLabel, canonicalClearLabel, canonicalPayloadStatement]
+    rfl
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem canonical_literal_field_false
@@ -1546,8 +1611,7 @@ theorem canonical_literal_field_false
       some (canonicalConfiguration 15
         input [] (false :: field) binary borrow output) := by
   fin_cases position <;>
-    compactMachineStepTac [canonicalFormulaMachine, canonicalConfiguration,
-      canonicalPayloadLabel, canonicalPayloadStatement]
+    rfl
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem canonical_literal_clear_step
@@ -1558,9 +1622,14 @@ theorem canonical_literal_clear_step
         input [] (bit :: field) binary borrow output) =
       some (canonicalConfiguration (canonicalClearLabel position)
         input [] field binary borrow output) := by
-  fin_cases position <;> cases bit <;>
-    compactMachineStepTac [canonicalFormulaMachine, canonicalConfiguration, canonicalClearLabel,
-      canonicalClearStatement]
+  fin_cases position <;>
+    reduceMachineConfiguration
+      [canonicalConfiguration]
+      (compactMachineStepTac [
+        canonicalFormulaMachine,
+        canonicalConfiguration,
+        canonicalClearLabel,
+        canonicalClearStatement])
 
 theorem canonicalClearSignStep
     (position : Fin 3) (hposition : position ≠ 2)
@@ -1571,12 +1640,18 @@ theorem canonicalClearSignStep
       some (canonicalConfiguration
         (canonicalPrefixLabel (nextLiteralPosition position))
         input [] [] binary borrow output) := by
-  fin_cases position <;> cases sign <;>
-    first
+  fin_cases position <;> first
     | exact (hposition rfl).elim
-    | compactMachineStepTac [canonicalFormulaMachine, canonicalConfiguration,
-        canonicalClearLabel, canonicalPrefixLabel, canonicalClearStatement,
-        canonicalSignStatement, nextLiteralPosition]
+    | reduceMachineConfiguration
+        [canonicalConfiguration]
+        (compactMachineStepTac [
+          canonicalFormulaMachine,
+          canonicalConfiguration,
+          canonicalClearLabel,
+          canonicalPrefixLabel,
+          canonicalClearStatement,
+          canonicalSignStatement,
+          nextLiteralPosition])
 
 theorem canonicalClearCompleteClause
     (sign : Bool) (input binary borrow output : List Bool) :
@@ -1585,9 +1660,14 @@ theorem canonicalClearCompleteClause
         (sign :: input) [] [] binary borrow output) =
       some (canonicalConfiguration 13
         input [] [] binary borrow output) := by
-  cases sign <;>
-    compactMachineStepTac [canonicalFormulaMachine, canonicalConfiguration, canonicalClearLabel,
-      canonicalClearStatement, canonicalSignStatement]
+  reduceMachineConfiguration
+    [canonicalConfiguration]
+    (compactMachineStepTac [
+      canonicalFormulaMachine,
+      canonicalConfiguration,
+      canonicalClearLabel,
+      canonicalClearStatement,
+      canonicalSignStatement])
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem canonical_zero_field_sign_step
@@ -1599,12 +1679,18 @@ theorem canonical_zero_field_sign_step
       some (canonicalConfiguration
         (canonicalPrefixLabel (nextLiteralPosition position))
         input [] [] binary borrow output) := by
-  fin_cases position <;> cases sign <;>
-    first
+  fin_cases position <;> first
     | exact (hposition rfl).elim
-    | compactMachineStepTac [canonicalFormulaMachine, canonicalConfiguration,
-        canonicalPayloadLabel, canonicalPrefixLabel, canonicalPayloadStatement,
-        canonicalSignStatement, nextLiteralPosition]
+    | reduceMachineConfiguration
+        [canonicalConfiguration]
+        (compactMachineStepTac [
+          canonicalFormulaMachine,
+          canonicalConfiguration,
+          canonicalPayloadLabel,
+          canonicalPrefixLabel,
+          canonicalPayloadStatement,
+          canonicalSignStatement,
+          nextLiteralPosition])
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem canonical_zero_field_completeClause
@@ -1614,9 +1700,14 @@ theorem canonical_zero_field_completeClause
         (sign :: input) [] [] binary borrow output) =
       some (canonicalConfiguration 13
         input [] [] binary borrow output) := by
-  cases sign <;>
-    compactMachineStepTac [canonicalFormulaMachine, canonicalConfiguration,
-      canonicalPayloadLabel, canonicalPayloadStatement, canonicalSignStatement]
+  reduceMachineConfiguration
+    [canonicalConfiguration]
+    (compactMachineStepTac [
+      canonicalFormulaMachine,
+      canonicalConfiguration,
+      canonicalPayloadLabel,
+      canonicalPayloadStatement,
+      canonicalSignStatement])
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem canonical_body_finish
@@ -1626,8 +1717,7 @@ theorem canonical_body_finish
         [] [] [] binary borrow output) =
       some (canonicalConfiguration 16 [] [] []
         binary borrow output) := by
-  compactMachineStepTac [canonicalFormulaMachine, canonicalConfiguration, canonicalPrefixLabel,
-    canonicalPrefixStatement]
+  rfl
 
 /-- Borrow across zero bits until a one bit is reached. -/
 def canonicalBorrowZerosTrace
@@ -1725,7 +1815,9 @@ theorem canonicalFailureDropInput
         counter field binary borrow output) =
       some (canonicalConfiguration 15 input
         counter field binary borrow output) := by
-  cases bit <;> compactMachineStepTac [canonicalFormulaMachine, canonicalConfiguration]
+  machineStackEquality [
+      canonicalFormulaMachine,
+      canonicalConfiguration]
 
 theorem canonicalFailureDropCounter
     (bit : Bool)
@@ -1735,7 +1827,9 @@ theorem canonicalFailureDropCounter
         (bit :: counter) field binary borrow output) =
       some (canonicalConfiguration 15 []
         counter field binary borrow output) := by
-  cases bit <;> compactMachineStepTac [canonicalFormulaMachine, canonicalConfiguration]
+  machineStackEquality [
+      canonicalFormulaMachine,
+      canonicalConfiguration]
 
 theorem canonicalFailureDropField
     (bit : Bool) (field binary borrow output : List Bool) :
@@ -1744,7 +1838,9 @@ theorem canonicalFailureDropField
         (bit :: field) binary borrow output) =
       some (canonicalConfiguration 15 [] []
         field binary borrow output) := by
-  cases bit <;> compactMachineStepTac [canonicalFormulaMachine, canonicalConfiguration]
+  machineStackEquality [
+      canonicalFormulaMachine,
+      canonicalConfiguration]
 
 theorem canonicalFailureDropBinary
     (bit : Bool) (binary borrow output : List Bool) :
@@ -1753,7 +1849,9 @@ theorem canonicalFailureDropBinary
         (bit :: binary) borrow output) =
       some (canonicalConfiguration 15 [] [] []
         binary borrow output) := by
-  cases bit <;> compactMachineStepTac [canonicalFormulaMachine, canonicalConfiguration]
+  machineStackEquality [
+      canonicalFormulaMachine,
+      canonicalConfiguration]
 
 theorem canonicalFailureDropBorrow
     (bit : Bool) (borrow output : List Bool) :
@@ -1762,14 +1860,18 @@ theorem canonicalFailureDropBorrow
         (bit :: borrow) output) =
       some (canonicalConfiguration 15 [] [] [] []
         borrow output) := by
-  cases bit <;> compactMachineStepTac [canonicalFormulaMachine, canonicalConfiguration]
+  machineStackEquality [
+      canonicalFormulaMachine,
+      canonicalConfiguration]
 
 theorem canonicalFailureFinish (output : List Bool) :
     canonicalFormulaMachine.step
       (canonicalConfiguration 15 [] [] [] [] [] output) =
       some (Turing.haltList canonicalFormulaMachine
         (false :: output)) := by
-  compactMachineStepTac [canonicalFormulaMachine, canonicalConfiguration]
+  machineStackEquality [
+      canonicalFormulaMachine,
+      canonicalConfiguration]
 
 /-- Internal support shared across GapCVP continuation modules. -/
 def canonicalFailureTrace
@@ -1916,7 +2018,7 @@ theorem encodeNat_canonical (number : ℕ) :
   | zero =>
       simp only [isCanonicalBinaryWord, Computability.encodeNum, List.reverse_nil]
   | pos positive =>
-      simpa only [Computability.encodeNum] using encodePosNum_canonical positive
+      exact encodePosNum_canonical positive
 
 /-- Internal support shared across GapCVP continuation modules. -/
 def canonicalHeaderPrefixTrace
@@ -2247,10 +2349,7 @@ theorem canonical_literal_prefix_missing_counter
         [] (counterBit :: counter) field binary borrow output) =
       some (canonicalConfiguration 15
         [] (counterBit :: counter) field binary borrow output) := by
-  fin_cases position <;> cases counterBit <;>
-    compactMachineStepTac [canonicalFormulaMachine, canonicalConfiguration,
-        canonicalPrefixLabel,
-      canonicalPrefixStatement]
+  fin_cases position <;> rfl
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem canonical_literal_prefix_incomplete
@@ -2276,8 +2375,7 @@ theorem canonical_zero_field_missing_sign
       some (canonicalConfiguration 15
         [] [] [] binary borrow output) := by
   fin_cases position <;>
-    compactMachineStepTac [canonicalFormulaMachine, canonicalConfiguration,
-      canonicalPayloadLabel, canonicalPayloadStatement, canonicalSignStatement]
+    rfl
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem canonical_clear_missing_sign
@@ -2288,8 +2386,7 @@ theorem canonical_clear_missing_sign
       some (canonicalConfiguration 15
         [] [] [] binary borrow output) := by
   fin_cases position <;>
-    compactMachineStepTac [canonicalFormulaMachine, canonicalConfiguration, canonicalClearLabel,
-      canonicalClearStatement, canonicalSignStatement]
+    rfl
 
 end FormulaTotalCert
 

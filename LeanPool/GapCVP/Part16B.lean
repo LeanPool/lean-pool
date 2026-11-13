@@ -854,7 +854,7 @@ private theorem compactPhysicalDecodingBinaryIntegerAtom_of_rational
   | nil =>
       have hrational : (0 : ℚ) = (value : ℚ) :=
         compactPhysicalDecodingAtomic_injective
-          (by simpa only [effectiveTargetPackedAtom, markerConditionalOutput] using hatom)
+          (by exact hatom)
       have hinteger : value = 0 := by
         exact_mod_cast hrational.symm
       simp only [compactPhysicalDecodingBinaryIntegerAtom, markerConditionalOutput, hinteger]
@@ -863,14 +863,14 @@ private theorem compactPhysicalDecodingBinaryIntegerAtom_of_rational
       | false =>
           have hrational : (0 : ℚ) = (value : ℚ) :=
             compactPhysicalDecodingAtomic_injective
-              (by simpa only [effectiveTargetPackedAtom, markerConditionalOutput] using hatom)
+              (by exact hatom)
           have hinteger : value = 0 := by
             exact_mod_cast hrational.symm
           simp only [compactPhysicalDecodingBinaryIntegerAtom_false, hinteger]
       | true =>
           have hrational : (1 : ℚ) = (value : ℚ) :=
             compactPhysicalDecodingAtomic_injective
-              (by simpa only [effectiveTargetPackedAtom, markerConditionalOutput] using hatom)
+              (by exact hatom)
           have hinteger : value = 1 := by
             exact_mod_cast hrational.symm
           simp only [compactPhysicalDecodingBinaryIntegerAtom_true, hinteger]
@@ -1330,7 +1330,7 @@ private theorem paperVariableArityCodingCheckIntegerFold_valid
     paperVariableArityCanonicalBinaryMatrixCheckFoldPreparation_valid
       paperCanonicalPhysicalMatrixShape formula]
   unfold sourcePhysicalWordPackedQueryPreparation
-  simpa only [fourFamilyOriginalMarkerStream] using
+  exact
       boundedRecordFoldOutput_sourceFourFamilyOriginalMarkerQueries (paperCodingCheckIntegerMarker
           worker)
         (paperCanonicalBinaryMatrixCheckQueries paperCanonicalPhysicalMatrixShape formula)
@@ -1350,7 +1350,7 @@ private theorem paperVariableArityCodingRhsIntegerFold_valid
     paperVariableArityCanonicalBinaryMatrixRhsFoldPreparation_valid
       paperCanonicalPhysicalMatrixShape formula]
   unfold sourcePhysicalWordPackedQueryPreparation
-  simpa only [fourFamilyOriginalMarkerStream] using
+  exact
       boundedRecordFoldOutput_sourceFourFamilyOriginalMarkerQueries (paperCodingRhsIntegerMarker
           worker)
         (paperCanonicalBinaryMatrixRhsQueries paperCanonicalPhysicalMatrixShape formula)
@@ -1410,7 +1410,7 @@ private theorem paperVariableArityCodingRhsIntegerPayload_valid
         (encodeThreeCNF formula).length formula).dimension :=
     ⟨0, paperCanonicalPhysicalMatrixShape.columnsPositive
       formula⟩
-  simpa only [ZMod.natCast_val] using
+  exact
     paperVariableArityCodingRhsIntegerMarker_valid
       worker formula row column
 

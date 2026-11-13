@@ -2839,7 +2839,7 @@ theorem
     change
       physicalInterpolationNestedDenominatorNodeProductWord
         width outer = finiteWordBits denominator
-    simpa only [outer, cell, denominator, Fin.val_castLE] using
+    exact
       paperVariableArityPhysicalInterpolationNestedDenominatorNodeProductWord_valid
         width outerWidth row column formula
         (Fin.castLE bounded node) count correctWidth bounded
@@ -2894,7 +2894,7 @@ theorem
       (compactPhysicalLagrangeNestedNodeEnvelope outerWidth node.val
         (affineCellQuery row column
           (encodeThreeCNF formula))) = _
-  simpa only [Fin.val_castLE] using
+  exact
     paperVariableArityPhysicalInterpolationNestedNumeratorNodeProductWord_valid
       family width outerWidth row column formula
       (Fin.castLE bounded node) count correctWidth bounded
@@ -5251,7 +5251,7 @@ private theorem paperVariableArityPhysicalOrdinaryDependentFamilyPrefix
         formula tag).isLt
     rw [paperVariableArityPhysicalOrdinaryDependentFamilyIndex_val]
       at bounded
-    simpa only [count, familyCount] using bounded
+    exact bounded
   have hwhole : 1 + count + tag.val ≤ familyCount := hstrict.le
   have hfirst : 1 + count ≤ familyCount := by omega
   let candidate : Fin familyCount :=
@@ -5694,9 +5694,7 @@ private theorem paperVariableArityPhysicalOrdinaryFamilySourceTypeCardWordRank
     ((sourceTypeCardWordOrder formula).symm
       ((paperOrdinaryFamilyWordOrder formula
         momentBudget tag).1)).val = tag.val / (momentBudget + 1) := by
-  simpa only [sourceTypeCardWordOrder, Equiv.symm_trans, finCongr_symm, Equiv.trans_apply,
-      finCongr_apply,
-      Fin.val_cast] using paperVariableArityPhysicalOrdinaryFamilySourceTypeWordRank formula
+  exact paperVariableArityPhysicalOrdinaryFamilySourceTypeWordRank formula
           momentBudget tag
 
 private theorem paperVariableArityPhysicalOrdinarySourceRowTypeCardWordRank

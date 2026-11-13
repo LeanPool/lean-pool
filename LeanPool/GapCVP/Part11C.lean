@@ -1052,7 +1052,7 @@ private theorem factor400BinarySourceModularPhysicalCellOutput_query
       simp only [Bool.true_and, ↓reduceIte]
       rw [factor400BinarySourceModularShiftXor_coefficient
         lower leading.val (xorAt current leading true)
-        (by simpa only [leading] using hposition)
+        (by exact hposition)
         (⟨rank, hrank⟩ : Fin (2 * degree))]
       by_cases hrankLeading : rank = leading.val
       · have hindex :
@@ -1064,7 +1064,7 @@ private theorem factor400BinarySourceModularPhysicalCellOutput_query
         have hdifference :
             leading.val - (leading.val - degree) = degree := by
           have hbound : degree ≤ leading.val := by
-            simpa only [leading] using hposition.1
+            exact hposition.1
           omega
         have hdrop :
             (finiteWordBits lower).drop
@@ -1364,8 +1364,7 @@ private theorem factor400BinarySourceModularReduction_iterate_valid
         (finiteWordBits (reducePrefix lower stage product)) source := by
   induction stage with
   | zero =>
-      simpa only [Function.iterate_zero, id_eq,
-        reducePrefix, List.range_zero, List.foldl_nil] using
+      exact
         factor400BinarySourceModularReductionInitialState_degreeState
           (finiteWordBits lower) (finiteWordBits product) source
   | succ stage ih =>
@@ -3540,7 +3539,7 @@ theorem finitePExponent_cast (p : ℚ) (hp : 1 ≤ p) :
   have habs : (p.num.natAbs : ℤ) = p.num :=
     Int.natAbs_of_nonneg hnum
   congr 1
-  simpa only [Int.cast_natCast] using
+  exact
     congrArg (fun value : ℤ => (value : ℝ)) habs.symm
 
 theorem four_mul_le_finitePRadiusScale (p : ℚ) :
@@ -4973,9 +4972,7 @@ private theorem paperSourceLiteralEraseDups_nodup
 theorem paperNormalizedClause_length_le_three
     (clause : ThreeClause) :
     (paperSourceNormalizedClause clause).length ≤ 3 := by
-  simpa only [paperSourceNormalizedClause, paperSourceClauseLiterals, Fin.isValue,
-      List.length_cons,
-      List.length_nil, zero_add, Nat.reduceAdd] using
+  exact
       paperSourceLiteralEraseDups_length_le (paperSourceClauseLiterals clause)
 
 theorem paperSourceNormalizedClause_ne_nil
