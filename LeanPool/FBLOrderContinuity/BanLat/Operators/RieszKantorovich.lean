@@ -10,6 +10,7 @@ module
 Authors: David Muñoz-Lahoz
 -/
 
+public import Mathlib.Algebra.Order.Group.Pointwise.Bounds
 public import LeanPool.FBLOrderContinuity.BanLat.Sublattice
 public import LeanPool.FBLOrderContinuity.BanLat.Operators.OrderBounded
 public import LeanPool.FBLOrderContinuity.BanLat.Operators.Regular
@@ -30,6 +31,8 @@ formulas for the lattice operations (the **Riesz-Kantorovich formulas**).
 @[expose] public section
 
 namespace OrderBoundedHom
+
+open scoped Pointwise
 
 variable {X Y : Type*} [AddCommGroup X] [AddCommGroup Y]
   [Lattice X] [ConditionallyCompleteLattice Y] [IsOrderedAddMonoid X]
@@ -291,6 +294,9 @@ lemma add_apply' (f g : OrderBoundedHom X Y) (y : X) :
 lemma map_sub_val (f : OrderBoundedHom X Y) (a b : X) :
     f (a - b) = f a - f b :=
   show f.toLinearMap (a - b) = _ from map_sub f.toLinearMap a b
+
+private lemma map_neg_value (f : OrderBoundedHom X Y) (x : X) : f (-x) = -f x :=
+  map_neg f.toLinearMap x
 
 lemma sup_zero_eq_obPosPart
     (f : OrderBoundedHom X Y) :
@@ -950,31 +956,8 @@ theorem isGLB_apply_inf {f : OrderBoundedHom X Y}
     IsGLB {w | ∃ g : OrderBoundedHom X Y,
         0 ≤ g ∧ g ≤ f ∧ w = g x + (f - g) y}
       (f (x ⊓ y)) := by
-  -- Use x ⊓ y = x + y - x ⊔ y. The set is symmetric: replacing g by f - g sends
-  -- g x + (f-g) y to (f-g) x + g y, and the sum (g x + (f-g) y) + ((f-g) x + g y)
-  -- = f x + f y. So the inf set is the reflection of the sup set about (f x + f y)/2.
-  set S : Set Y := {w | ∃ g : OrderBoundedHom X Y, 0 ≤ g ∧ g ≤ f ∧ w = g x + (f - g) y}
-  set c : Y := f x + f y with hcdef
-  have hsym : ∀ w ∈ S, c - w ∈ S := by
-    rintro _ ⟨g, hg0, hgf, rfl⟩
-    refine ⟨f - g, sub_nonneg.mpr hgf, sub_le_self f hg0, ?_⟩
-    rw [sub_sub_cancel, sub_apply, sub_apply]
-    change f x + f y - (g x + (f y - g y)) = (f x - g x) + g y
-    abel
-  have hsup : IsLUB S (f (x ⊔ y)) := isLUB_apply_sup hf x y
-  have hadd : f (x ⊓ y) + f (x ⊔ y) = c := by
-    change f.toLinearMap (x ⊓ y) + f.toLinearMap (x ⊔ y) = f.toLinearMap x + f.toLinearMap y
-    rw [← map_add f.toLinearMap, inf_add_sup, map_add]
-  have hinf : f (x ⊓ y) = c - f (x ⊔ y) := eq_sub_of_add_eq hadd
-  rw [hinf]
-  refine ⟨?_, ?_⟩
-  · intro w hw
-    exact sub_le_comm.mp (hsup.1 (hsym w hw))
-  · intro b hb
-    have hub : ∀ w ∈ S, w ≤ c - b := fun w hw =>
-      le_sub_comm.mp (hb (hsym w hw))
-    exact le_sub_comm.mpr (hsup.2 hub)
-
+  simpa only [Set.neg_ofPred, map_neg_value, ← neg_inf, ← neg_add, neg_neg, neg_inj] using
+    (isLUB_apply_sup hf (-x) (-y)).neg
 
 lemma sum_apply_finset {ι : Type*} (s : Finset ι)
     (g : ι → OrderBoundedHom X Y) (x : X) :
@@ -1069,79 +1052,10 @@ theorem isGLB_apply_finset_inf {ι : Type*} {s : Finset ι} (hs : s.Nonempty)
           (∑ i ∈ s, g i = f) ∧
           w = ∑ i ∈ s, g i (x i)}
       (f (s.inf' hs x)) := by
-  classical
-  revert f x
-  induction hs using Finset.Nonempty.cons_induction with
-  | singleton a =>
-      intro f hf x
-      refine ⟨?_, ?_⟩
-      · rintro _ ⟨g, _hg0, hgsum, rfl⟩
-        exact ge_of_eq (by
-          simpa using congrArg (fun h : OrderBoundedHom X Y => h (x a)) hgsum)
-      · intro b hb
-        exact hb ⟨fun _ => f, by simpa using hf, by simp, by simp⟩
-  | cons a t ha ht ih =>
-      intro f hf x
-      refine ⟨?_, ?_⟩
-      · rintro _ ⟨g, hg0, hgsum, rfl⟩
-        rw [Finset.inf'_cons ht x]
-        have hrest_nn : 0 ≤ ∑ i ∈ t, g i :=
-          Finset.sum_nonneg fun i hi => hg0 i (Finset.mem_cons.mpr (Or.inr hi))
-        have hgaf : g a ≤ f := by
-          rw [← hgsum, Finset.sum_cons]
-          exact le_add_of_nonneg_right hrest_nn
-        have hrest_sum : ∑ i ∈ t, g i = f - g a := by
-          have hsum := hgsum
-          rw [Finset.sum_cons] at hsum
-          rw [← hsum]
-          abel_nf
-        have hrest := ih (f := f - g a) (sub_nonneg.mpr hgaf) x
-        have hrest_le : (f - g a) (t.inf' ht x) ≤ ∑ i ∈ t, g i (x i) :=
-          hrest.1 ⟨g, fun i hi => hg0 i (Finset.mem_cons.mpr (Or.inr hi)), hrest_sum, rfl⟩
-        have hbin := isGLB_apply_inf hf (x a) (t.inf' ht x)
-        calc
-          f (x a ⊓ t.inf' ht x) ≤ g a (x a) + (f - g a) (t.inf' ht x) :=
-            hbin.1 ⟨g a, hg0 a (Finset.mem_cons_self a t), hgaf, rfl⟩
-          _ ≤ g a (x a) + ∑ i ∈ t, g i (x i) := by
-            gcongr
-          _ = ∑ i ∈ Finset.cons a t ha, g i (x i) := by rw [Finset.sum_cons]
-      · intro b hb
-        rw [Finset.inf'_cons ht x]
-        have hinf := isGLB_apply_inf hf (x a) (t.inf' ht x)
-        apply hinf.2
-        rintro _ ⟨g, hg0, hgf, rfl⟩
-        have hrest := ih (f := f - g) (sub_nonneg.mpr hgf) x
-        have hle : b - g (x a) ≤ (f - g) (t.inf' ht x) := by
-          apply hrest.2
-          rintro _ ⟨k, hk0, hksum, rfl⟩
-          let G : ι → OrderBoundedHom X Y := fun i => if i = a then g else k i
-          have hG0 : ∀ i ∈ Finset.cons a t ha, (0 : OrderBoundedHom X Y) ≤ G i := by
-            intro i hi
-            rcases Finset.mem_cons.mp hi with rfl | hit
-            · simp [G, hg0]
-            · have hia : i ≠ a := fun h => ha (h ▸ hit)
-              simp [G, hia, hk0 i hit]
-          have hGsum : ∑ i ∈ Finset.cons a t ha, G i = f := by
-            rw [Finset.sum_cons]
-            have hsum_t : ∑ i ∈ t, G i = f - g := by
-              rw [← hksum]
-              refine Finset.sum_congr rfl fun i hit => ?_
-              have hia : i ≠ a := fun h => ha (h ▸ hit)
-              simp [G, hia]
-            rw [hsum_t]
-            rw [show G a = g by simp [G]]
-            abel
-          have hfull : b ≤ ∑ i ∈ Finset.cons a t ha, G i (x i) :=
-            hb ⟨G, hG0, hGsum, rfl⟩
-          rw [Finset.sum_cons] at hfull
-          have hsum_t : ∑ i ∈ t, G i (x i) = ∑ i ∈ t, k i (x i) := by
-            refine Finset.sum_congr rfl fun i hit => ?_
-            have hia : i ≠ a := fun h => ha (h ▸ hit)
-            simp [G, hia]
-          rw [hsum_t] at hfull
-          exact sub_le_iff_le_add.mpr (by simpa [G, add_comm] using hfull)
-        have := sub_le_iff_le_add.mp hle
-        rwa [add_comm] at this
+  have hsup : s.sup' hs (fun i => -x i) = -(s.inf' hs x) :=
+    (map_finset_inf' (OrderIso.neg X) hs x).symm
+  simpa only [Set.neg_ofPred, map_neg_value, hsup, Finset.sum_neg_distrib, neg_neg, neg_inj] using
+    (isLUB_apply_finset_sup hs hf (fun i => -x i)).neg
 
 /-- **Dual Riesz-Kantorovich for the modulus.** For a positive order bounded
 operator `f` and `x : X`,

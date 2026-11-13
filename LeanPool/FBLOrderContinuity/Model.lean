@@ -2114,16 +2114,6 @@ private theorem freeNormExt_comp_le (p : Exponent) (T : F →L[ℝ] E)
         _ ≤ ENNReal.ofReal ‖T‖ * freeNormExt p f :=
           mul_le_mul_of_nonneg_left hle (by positivity)
 
-private theorem freeNormExt_comp_norm_le (p : Exponent) (T : F →L[ℝ] E)
-    (f : Free p F) :
-    (freeNormExt p (fun φ : Dual E => f (φ.comp T))).toReal ≤ ‖T‖ * ‖f‖ := by
-  have hle := freeNormExt_comp_le p T f.1.1 f.1.2.1
-  have hnorm : freeNormExt p f.1.1 = ENNReal.ofReal ‖f‖ :=
-    freeNormExt_eq_norm p f
-  rw [hnorm, ← ENNReal.ofReal_mul (norm_nonneg T)] at hle
-  exact ENNReal.toReal_le_of_le_ofReal
-    (mul_nonneg (norm_nonneg T) (norm_nonneg f)) hle
-
 private theorem hp_comp_norm_le (p : Exponent) (T : F →L[ℝ] E)
     (f : HP p F) :
     (freeNormExt p (fun φ : Dual E => f (φ.comp T))).toReal ≤ ‖T‖ * ‖f‖ := by
@@ -2138,48 +2128,37 @@ private theorem hp_comp_norm_le (p : Exponent) (T : F →L[ℝ] E)
       rw [ENNReal.toReal_mul, ENNReal.toReal_ofReal (norm_nonneg T)]
       rfl
 
+private theorem freeNormExt_comp_norm_le (p : Exponent) (T : F →L[ℝ] E)
+    (f : Free p F) :
+    (freeNormExt p (fun φ : Dual E => f (φ.comp T))).toReal ≤ ‖T‖ * ‖f‖ :=
+  hp_comp_norm_le p T f.1
+
 /-- The lattice operator on homogeneous functions induced by composition with an adjoint. -/
 def compHP (p : Exponent) (T : F →L[ℝ] E) :
     LatticeOperator (HP p F) (HP p E) where
-  toFun f := ⟨fun φ => f (φ.comp T), by
-    refine ⟨?_, ?_⟩
-    · intro a ha φ
-      change f ((a • φ).comp T) = a * f (φ.comp T)
-      have hcomp : (a • φ).comp T = a • (φ.comp T) := by
-        ext x
+  toContinuousLinearMap := LinearMap.mkContinuous
+    { toFun f := ⟨fun φ => f (φ.comp T), by
+        refine ⟨?_, ?_⟩
+        · intro a ha φ
+          change f ((a • φ).comp T) = a * f (φ.comp T)
+          have hcomp : (a • φ).comp T = a • (φ.comp T) := by
+            ext x
+            rfl
+          rw [hcomp]
+          exact f.2.1 a ha (φ.comp T)
+        · exact (freeNormExt_comp_le p T f.1 f.2.1).trans_lt
+            (ENNReal.mul_lt_top ENNReal.ofReal_lt_top f.2.2)⟩
+      map_add' := by
+        intro f g
+        apply Subtype.ext
+        funext φ
         rfl
-      rw [hcomp]
-      exact f.2.1 a ha (φ.comp T)
-    · exact (freeNormExt_comp_le p T f.1 f.2.1).trans_lt
-        (ENNReal.mul_lt_top ENNReal.ofReal_lt_top f.2.2)⟩
-  map_add' := by
-    intro f g
-    apply Subtype.ext
-    funext φ
-    rfl
-  map_smul' := by
-    intro c f
-    apply Subtype.ext
-    funext φ
-    rfl
-  cont := by
-    refine (Metric.continuous_iff (α := HP p F) (β := HP p E)).mpr fun f ε hε => ?_
-    let K : ℝ := ‖T‖ + 1
-    have hK : 0 < K := by dsimp [K]; positivity
-    refine ⟨ε / K, by positivity, ?_⟩
-    intro g hgf
-    erw [dist_eq_norm] at hgf ⊢
-    change (freeNormExt p (fun φ : Dual E => (g - f) (φ.comp T))).toReal < ε
-    calc
-      (freeNormExt p (fun φ : Dual E => (g - f) (φ.comp T))).toReal ≤
-          ‖T‖ * ‖g - f‖ := hp_comp_norm_le p T (g - f)
-      _ ≤ K * ‖g - f‖ :=
-        mul_le_mul_of_nonneg_right (by dsimp [K]; linarith) (norm_nonneg _)
-      _ < ε := by
-        have hmul := mul_lt_mul_of_pos_left hgf hK
-        have hcalc : K * (ε / K) = ε := by field_simp
-        rw [hcalc] at hmul
-        exact hmul
+      map_smul' := by
+        intro c f
+        apply Subtype.ext
+        funext φ
+        rfl }
+    ‖T‖ (by intro f; exact hp_comp_norm_le p T f)
   map_sup' := by
     intro f g
     apply Subtype.ext
@@ -2237,61 +2216,17 @@ private theorem compHP_mem_free (p : Exponent) (T : F →L[ℝ] E)
 
 /-- Equation (2.3): induced operator is composition with the adjoint. -/
 def induced (p : Exponent) (T : F →L[ℝ] E) : LatticeOperator (Free p F) (Free p E) where
-  toFun f := ⟨⟨fun φ => f (φ.comp T), by
-    refine ⟨?_, ?_⟩
-    · intro a ha φ
-      change f ((a • φ).comp T) = a * f (φ.comp T)
-      have hcomp : (a • φ).comp T = a • (φ.comp T) := by
-        ext x
-        rfl
-      rw [hcomp]
-      exact f.1.2.1 a ha (φ.comp T)
-    · exact (freeNormExt_comp_le p T f.1.1 f.1.2.1).trans_lt
-        (ENNReal.mul_lt_top ENNReal.ofReal_lt_top f.1.2.2)⟩, by
-          change compHP p T f.1 ∈ freeSublattice p E
-          exact compHP_mem_free p T f⟩
-  map_add' := by
-    intro f g
-    apply Subtype.ext
-    apply Subtype.ext
-    funext φ
-    rfl
-  map_smul' := by
-    intro c f
-    apply Subtype.ext
-    apply Subtype.ext
-    funext φ
-    rfl
-  cont := by
-    refine Metric.continuous_iff.mpr fun f ε hε => ?_
-    let K : ℝ := ‖T‖ + 1
-    have hK : 0 < K := by dsimp [K]; positivity
-    refine ⟨ε / K, by positivity, ?_⟩
-    intro g hgf
-    rw [dist_eq_norm] at hgf ⊢
-    change (freeNormExt p (fun φ : Dual E => (g - f) (φ.comp T))).toReal < ε
-    calc
-      (freeNormExt p (fun φ : Dual E => (g - f) (φ.comp T))).toReal ≤
-          ‖T‖ * ‖g - f‖ := freeNormExt_comp_norm_le p T (g - f)
-      _ ≤ K * ‖g - f‖ :=
-        mul_le_mul_of_nonneg_right (by dsimp [K]; linarith) (norm_nonneg _)
-      _ < ε := by
-        have hmul := mul_lt_mul_of_pos_left hgf hK
-        have hcalc : K * (ε / K) = ε := by field_simp
-        rw [hcalc] at hmul
-        exact hmul
+  toContinuousLinearMap :=
+    ((compHP p T).toContinuousLinearMap.domRestrict (freeSublattice p F).toSubmodule).codRestrict
+      (freeSublattice p E).toSubmodule (by intro f; exact compHP_mem_free p T f)
   map_sup' := by
     intro f g
     apply Subtype.ext
-    apply Subtype.ext
-    funext φ
-    rfl
+    exact (compHP p T).map_sup' f.1 g.1
   map_inf' := by
     intro f g
     apply Subtype.ext
-    apply Subtype.ext
-    funext φ
-    rfl
+    exact (compHP p T).map_inf' f.1 g.1
 
 /-- Equation (2.3): the induced map acts by precomposition with the continuous adjoint,
 so its value at φ is the original function evaluated at `φ.comp T`. -/
