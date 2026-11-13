@@ -86,7 +86,7 @@ private theorem factorial_ratio_succ (n : ℕ) :
       _ = 1728 * (((3 * n + 3) * (3 * n + 2) * (3 * n + 1)) * (n + 1) ^ 3) := by ring
   calc (6 * (n + 1))! * ((3 * n)! * (n !) ^ 3 * 1728 ^ n)
       = ((6 * n + 6) * (6 * n + 5) * (6 * n + 4) * (6 * n + 3) * (6 * n + 2) * (6 * n + 1))
-          * ((6 * n)! * ((3 * n)! * (n !) ^ 3 * 1728 ^ n)) := by rw [e6]; ring
+          * ((6 * n)! * ((3 * n)! * (n !) ^ 3 * 1728 ^ n)) := by rw [e6]; ac_rfl
     _ ≤ (1728 * (((3 * n + 3) * (3 * n + 2) * (3 * n + 1)) * (n + 1) ^ 3))
           * ((6 * n)! * ((3 * n)! * (n !) ^ 3 * 1728 ^ n)) := Nat.mul_le_mul hPQ le_rfl
     _ = (6 * n)! * ((3 * (n + 1))! * ((n + 1)!) ^ 3 * 1728 ^ (n + 1)) := by
@@ -96,7 +96,7 @@ private theorem factorial_ratio_succ (n : ℕ) :
 theorem factorial_ratio_le (n : ℕ) :
     (6 * n)! ≤ 1728 ^ n * ((3 * n)! * (n !) ^ 3) := by
   induction n with
-  | zero => simp
+  | zero => simp only [mul_zero, factorial_zero, pow_zero, one_pow, mul_one, Std.le_refl]
   | succ n ih =>
     apply (mul_le_mul_iff_of_pos_right
       (by positivity : 0 < (3 * n)! * (n !) ^ 3 * 1728 ^ n)).mp
@@ -106,7 +106,7 @@ theorem factorial_ratio_le (n : ℕ) :
       _ ≤ (1728 ^ n * ((3 * n)! * (n !) ^ 3))
           * ((3 * (n + 1))! * ((n + 1)!) ^ 3 * 1728 ^ (n + 1)) := Nat.mul_le_mul_right _ ih
       _ = (1728 ^ (n + 1) * ((3 * (n + 1))! * ((n + 1)!) ^ 3))
-          * ((3 * n)! * (n !) ^ 3 * 1728 ^ n) := by ring
+          * ((3 * n)! * (n !) ^ 3 * 1728 ^ n) := by ac_rfl
 
 /-- The Main Theorem's series converges absolutely on the region `Im τ > 1.25`
 (ratio test: `(6n)!/((3n)!(n!)³) ≤ 1728ⁿ` and `‖1728·J‖ > 1728` on the region). -/
@@ -117,9 +117,9 @@ theorem summable_mainSummand {τ : ℍ} (hτ : τ ∈ Region) :
   have hqb : ‖q τ‖ < 0.000389 := lt_trans (norm_q_lt_of_mem_Region hτ) exp_neg_bound
   have hM : (1728 : ℝ) < M := by
     have h1 : (1728 : ℝ) < 0.737 / ‖q τ‖ := by
-      rw [lt_div_iff₀ hqpos]; nlinarith [hqb, hqpos]
+      rw [lt_div_iff₀ hqpos]; linarith [hqb, hqpos]
     exact lt_trans h1 (theonaeherJ_lower hτ)
-  have hMpos : 0 < M := lt_trans (by norm_num) hM
+  have hMpos : 0 < M := lt_trans (by norm_num1) hM
   set r : ℝ := 1728 / M with hrdef
   have hr0 : 0 ≤ r := by rw [hrdef]; positivity
   have hr1 : r < 1 := by rw [hrdef, div_lt_one hMpos]; exact hM
@@ -130,7 +130,7 @@ theorem summable_mainSummand {τ : ℍ} (hτ : τ ∈ Region) :
   have hgeom1 : Summable (fun n : ℕ => (n : ℝ) * r ^ n) := by
     have h := summable_pow_mul_geometric_of_norm_lt_one 1 (r := r)
       (by rw [Real.norm_eq_abs, abs_of_nonneg hr0]; exact hr1)
-    simpa using h
+    simpa only [pow_one] using h
   have hg : Summable (fun n : ℕ => (C + n) * r ^ n) := by
     have he : (fun n : ℕ => (C + (n : ℝ)) * r ^ n)
         = fun n : ℕ => C * r ^ n + (n : ℝ) * r ^ n := by ext n; ring
@@ -143,7 +143,7 @@ theorem summable_mainSummand {τ : ℍ} (hτ : τ ∈ Region) :
       Complex.norm_natCast, div_le_iff₀ hden_pos]
     calc ((6 * n)! : ℝ) ≤ ((1728 ^ n * ((3 * n)! * (n !) ^ 3) : ℕ) : ℝ) := by
             exact_mod_cast factorial_ratio_le n
-      _ = 1728 ^ n * (((3 * n)! : ℝ) * ((n ! : ℝ)) ^ 3) := by push_cast; ring
+      _ = 1728 ^ n * (((3 * n)! : ℝ) * ((n ! : ℝ)) ^ 3) := by push_cast; ac_rfl
   have hA : ‖(1 - s₂ τ) / 6 + (n : ℂ)‖ ≤ C + n := by
     calc ‖(1 - s₂ τ) / 6 + (n : ℂ)‖ ≤ ‖(1 - s₂ τ) / 6‖ + ‖(n : ℂ)‖ := norm_add_le _ _
       _ = C + n := by rw [Complex.norm_natCast, hCdef]
@@ -175,7 +175,7 @@ theorem sq_eq_on_preconnected_eq {X : Type*} [TopologicalSpace X] {s : Set X}
     have h : IsClosed {x : s | (fun x : s => f x + g x) x = 0} :=
       isClosed_eq (hfc.add hgc) continuous_const
     convert h using 2 with x
-    simp [eq_neg_iff_add_eq_zero]
+    simp only [eq_neg_iff_add_eq_zero]
   -- `A ∪ B = univ` since `(f - g)(f + g) = f² - g² = 0`.
   have hcover : A ∪ B = Set.univ := by
     ext x
@@ -205,7 +205,7 @@ theorem sq_eq_on_preconnected_eq {X : Type*} [TopologicalSpace X] {s : Set X}
     hAclopen.eq_univ ⟨⟨x₀, hx₀⟩, h₀⟩
   intro x hx
   have : (⟨x, hx⟩ : s) ∈ A := hAuniv ▸ Set.mem_univ _
-  simpa [hA] using this
+  simpa only [hA, Set.mem_ofPred_eq] using this
 
 /-- The region `Im τ > 1.25` is preconnected. -/
 theorem isPreconnected_Region : IsPreconnected (Region : Set ℍ) := by
@@ -217,7 +217,7 @@ theorem isPreconnected_Region : IsPreconnected (Region : Set ℍ) := by
     · rintro ⟨τ, hτ, rfl⟩
       rw [UpperHalfPlane.coe_im]; exact hτ
     · intro hz
-      exact ⟨⟨z, lt_trans (by norm_num) hz⟩, hz, rfl⟩
+      exact ⟨⟨z, lt_trans (by norm_num1) hz⟩, hz, rfl⟩
   rw [himg]
   exact (convex_halfSpace_im_gt (5 / 4)).isPreconnected
 
@@ -248,7 +248,7 @@ private lemma Gsq_eq_tsum {z : ℂ} (hz : ‖z‖ < 1) :
   refine tsum_congr fun n => ?_
   have h3n : ((3 * n)! : ℂ) ≠ 0 := Nat.cast_ne_zero.2 (Nat.factorial_ne_zero _)
   have hn : ((n ! : ℕ) : ℂ) ≠ 0 := Nat.cast_ne_zero.2 (Nat.factorial_ne_zero n)
-  have h12 : ((12 : ℂ)) ^ (3 * n) = 1728 ^ n := by rw [pow_mul]; norm_num
+  have h12 : ((12 : ℂ)) ^ (3 * n) = 1728 ^ n := by rw [pow_mul]; norm_num only
   rw [mainCoeff, h12]
   field_simp
 
@@ -264,10 +264,10 @@ private lemma hasDerivAt_tsum_mainCoeff {z : ℂ} (hz : ‖z‖ < 1) :
     have h : Summable fun n : ℕ => (n : ℝ) * ρ ^ n := by
       have := summable_pow_mul_geometric_of_norm_lt_one (R := ℝ) 1 (r := ρ)
         (by rw [Real.norm_eq_abs, abs_of_nonneg hρpos.le]; exact hρ1)
-      simpa using this
+      simpa only [pow_one] using this
     refine (h.mul_left ρ⁻¹).congr fun n => ?_
     rcases n with _ | k
-    · simp
+    · simp only [CharP.cast_eq_zero, pow_zero, mul_one, mul_zero, zero_tsub]
     · rw [Nat.succ_sub_one, pow_succ]
       push_cast
       field_simp
@@ -310,7 +310,7 @@ private lemma mainSummand_eq {τ : ℍ} (hJ0 : J τ ≠ 0) (n : ℕ) :
     mainSummand τ n = ((1 - s₂ τ) / 6 + n) * (mainCoeff n * (1 / J τ) ^ n) := by
   have h3n : ((3 * n)! : ℂ) ≠ 0 := Nat.cast_ne_zero.2 (Nat.factorial_ne_zero _)
   have hn : ((n ! : ℕ) : ℂ) ≠ 0 := Nat.cast_ne_zero.2 (Nat.factorial_ne_zero n)
-  have h1728 : (1728 : ℂ) ≠ 0 := by norm_num
+  have h1728 : (1728 : ℂ) ≠ 0 := by norm_num1
   have hJn : J τ ^ n ≠ 0 := pow_ne_zero n hJ0
   rw [mainSummand, mainCoeff, mul_pow, one_div, inv_pow]
   field_simp
@@ -346,7 +346,7 @@ private lemma norm_mainCoeff_antitone : Antitone fun n => ‖mainCoeff n‖ :=
 `0.15` of `1`.  Six explicit terms of the (positive, decreasing) coefficient sequence
 `mainCoeff` plus a geometric tail. -/
 private lemma norm_Gsq_sub_one_le {z : ℂ} (hz : ‖z‖ ≤ 0.9125) : ‖Gsq z - 1‖ ≤ 0.15 := by
-  have hz1 : ‖z‖ < 1 := lt_of_le_of_lt hz (by norm_num)
+  have hz1 : ‖z‖ < 1 := lt_of_le_of_lt hz (by norm_num1)
   have hz0 : (0 : ℝ) ≤ ‖z‖ := norm_nonneg z
   -- summability of the series and of its norms
   have hSnorm : Summable fun n : ℕ => ‖mainCoeff n * z ^ n‖ := by
@@ -405,15 +405,15 @@ private lemma norm_Gsq_sub_one_le {z : ℂ} (hz : ‖z‖ ≤ 0.9125) : ‖Gsq z
             hterm _ _ hc
         _ = (0.00467 * 0.9125 ^ 7) * 0.9125 ^ i := by ring
     have hgeom : Summable fun i : ℕ => (0.00467 * 0.9125 ^ 7 : ℝ) * 0.9125 ^ i :=
-      (summable_geometric_of_lt_one (by norm_num) (by norm_num)).mul_left _
+      (summable_geometric_of_lt_one (by norm_num1) (by norm_num1)).mul_left _
     calc ∑' i : ℕ, ‖mainCoeff (i + 6 + 1) * z ^ (i + 6 + 1)‖
         ≤ ∑' i : ℕ, (0.00467 * 0.9125 ^ 7 : ℝ) * 0.9125 ^ i :=
           ((summable_nat_add_iff (f := fun n : ℕ => ‖mainCoeff (n + 1) * z ^ (n + 1)‖) 6).mpr
             hSnorm1).tsum_le_tsum hmaj hgeom
       _ = (0.00467 * 0.9125 ^ 7) * (1 - 0.9125)⁻¹ := by
-          rw [tsum_mul_left, tsum_geometric_of_lt_one (by norm_num) (by norm_num)]
+          rw [tsum_mul_left, tsum_geometric_of_lt_one (by norm_num1) (by norm_num1)]
   refine le_trans (add_le_add hhead htail) ?_
-  norm_num
+  norm_num1
 
 /-- On `Region`, `E₆` is within `0.199` of `1` (from the truncation bounds of
 `Estimates.lean`). -/
@@ -423,7 +423,7 @@ private lemma norm_E₆_sub_one_le {τ : ℍ} (hτ : τ ∈ Region) : ‖E₆ τ
   have hQ : Q < 0.000389 := lt_trans (norm_q_lt_of_mem_Region hτ) exp_neg_bound
   have htail : ‖eisensteinTail 5 3 τ‖ ≤ 245.6 * Q ^ 3 := norm_eisensteinTail_sigma₅ hτ
   have hqq : ‖q τ + (33 : ℂ) * q τ ^ 2‖ ≤ Q + 33 * Q ^ 2 :=
-    norm_q_add_smul_sq_le (by norm_num)
+    norm_q_add_smul_sq_le (by norm_num1)
   have heq : E₆ τ - 1 = -(504 * (q τ + 33 * q τ ^ 2)) - 504 * eisensteinTail 5 3 τ := by
     rw [E₆_eq_trunc τ, E₆trunc]; ring
   rw [heq]
@@ -439,7 +439,7 @@ private lemma re_div_pos_of_norm_sub_lt {a b : ℂ} (hb : ‖a - b‖ < ‖b‖)
   have h2 : ‖a / b - 1‖ < 1 := by
     rw [h1, norm_div, div_lt_one hbn]; exact hb
   have h3 : |(a / b - 1).re| ≤ ‖a / b - 1‖ := Complex.abs_re_le_norm _
-  have h4 : (a / b - 1).re = (a / b).re - 1 := by simp
+  have h4 : (a / b - 1).re = (a / b).re - 1 := by simp only [sub_re, one_re]
   have h5 := (abs_le.mp h3).1
   linarith
 
@@ -485,8 +485,8 @@ private lemma hasDerivAt_J_comp (τ : ℍ) :
       (-(2 * π * Complex.I) * E₄ τ ^ 2 * E₆ τ / (E₄ τ ^ 3 - E₆ τ ^ 2)) ↑τ := by
   have h4 := hasDerivAt_E₄_comp τ
   have h6 := hasDerivAt_E₆_comp τ
-  have hcomp4 : ((⇑E₄) ∘ ofComplex) ↑τ = E₄ τ := by simp [Function.comp_apply, ofComplex_apply]
-  have hcomp6 : ((⇑E₆) ∘ ofComplex) ↑τ = E₆ τ := by simp [Function.comp_apply, ofComplex_apply]
+  have hcomp4 : ((⇑E₄) ∘ ofComplex) ↑τ = E₄ τ := by simp only [Function.comp_apply, ofComplex_apply]
+  have hcomp6 : ((⇑E₆) ∘ ofComplex) ↑τ = E₆ τ := by simp only [Function.comp_apply, ofComplex_apply]
   have hden : ((⇑E₄ ∘ ofComplex) ↑τ) ^ 3 - ((⇑E₆ ∘ ofComplex) ↑τ) ^ 2 ≠ 0 := by
     rw [hcomp4, hcomp6]; exact E₄_cube_sub_E₆_sq_ne_zero τ
   have hquot := (h4.pow 3).div ((h4.pow 3).sub (h6.pow 2)) hden
@@ -509,7 +509,7 @@ private lemma E2_mul_eq_of_mem_Region {τ : ℍ} (hτ : τ ∈ Region) :
   -- non-vanishing facts
   have hJnorm : 1 < ‖J τ‖ := one_lt_norm_J hτ
   have hJ0 : J τ ≠ 0 := by
-    intro h; rw [h, norm_zero] at hJnorm; norm_num at hJnorm
+    intro h; rw [h, norm_zero] at hJnorm; norm_num1 at hJnorm
   have hden : E₄ τ ^ 3 - E₆ τ ^ 2 ≠ 0 := E₄_cube_sub_E₆_sq_ne_zero τ
   have hE₄0 : E₄ τ ≠ 0 := by
     intro h
@@ -545,7 +545,7 @@ private lemma E2_mul_eq_of_mem_Region {τ : ℍ} (hτ : τ ∈ Region) :
   have hev : (⇑E₄ ∘ ofComplex) =ᶠ[nhds (↑τ : ℂ)]
       fun z => hyp2F1 (((J ∘ ofComplex) z)⁻¹) ^ 4 := by
     filter_upwards [hopen.mem_nhds hmem] with z hz
-    have hz0 : 0 < z.im := lt_trans (by norm_num) hz
+    have hz0 : 0 < z.im := lt_trans (by norm_num1) hz
     have hzR : ofComplex z ∈ Region := by
       rw [ofComplex_apply_of_im_pos hz0]
       exact hz
@@ -585,13 +585,13 @@ theorem thm42 {τ : ℍ} (hτ : τ ∈ Region) :
   -- basic non-vanishing facts
   have hJnorm : (1.096 : ℝ) < ‖J τ‖ := theonaeherJ_norm_J hτ
   have hJ0 : J τ ≠ 0 := by
-    intro h; rw [h, norm_zero] at hJnorm; norm_num at hJnorm
+    intro h; rw [h, norm_zero] at hJnorm; norm_num only at hJnorm
   have hden : E₄ τ ^ 3 - E₆ τ ^ 2 ≠ 0 := E₄_cube_sub_E₆_sq_ne_zero τ
   have hE₄0 : E₄ τ ≠ 0 := by
     intro h
     apply hJ0
     rw [J, h]
-    simp
+    simp only [ne_eq, OfNat.ofNat_ne_zero, not_false_eq_true, zero_pow, zero_sub, zero_div]
   have hE₆0 : E₆ τ ≠ 0 := E₆_ne_zero_of_mem_Region hτ
   have hπ0 : (π : ℂ) ≠ 0 := Complex.ofReal_ne_zero.mpr Real.pi_ne_zero
   have him0 : ((τ.im : ℝ) : ℂ) ≠ 0 := Complex.ofReal_ne_zero.mpr (ne_of_gt τ.im_pos)
@@ -613,17 +613,13 @@ theorem thm42 {τ : ℍ} (hτ : τ ∈ Region) :
     rw [hone]
     have hG : HasDerivAt hyp2F1 (deriv hyp2F1 (J τ)⁻¹) (J τ)⁻¹ :=
       (hyp2F1_analyticAt hu).differentiableAt.hasDerivAt
-    have h2 : deriv (fun w => hyp2F1 w ^ 2) (J τ)⁻¹ =
-        (2 : ℕ) * hyp2F1 (J τ)⁻¹ ^ (2 - 1) * deriv hyp2F1 (J τ)⁻¹ := (hG.pow 2).deriv
-    rw [h2]
-    norm_num
+    simpa only [Nat.cast_ofNat, Nat.reduceSub, pow_one] using (hG.fun_pow 2).deriv
   -- `J/(J−1)` is the square of `G⁶/E₆`
   have hsq : J τ / (J τ - 1) = (hyp2F1 (J τ)⁻¹ ^ 6 / E₆ τ) ^ 2 := by
     have hJ1 : J τ - 1 ≠ 0 := by
       intro h
-      have h2 : (J τ - 1) * (E₄ τ ^ 3 - E₆ τ ^ 2) = E₆ τ ^ 2 := by linear_combination hJmul
-      rw [h, zero_mul] at h2
-      exact hE₆0 (pow_eq_zero_iff (n := 2) (by norm_num) |>.mp h2.symm)
+      rw [sub_eq_zero.mp h, norm_one] at hJnorm
+      norm_num1 at hJnorm
     have hJmul' := hJmul
     rw [hE₄] at hJmul'
     rw [div_pow, div_eq_div_iff hJ1 (pow_ne_zero 2 hE₆0)]
@@ -631,8 +627,8 @@ theorem thm42 {τ : ℍ} (hτ : τ ∈ Region) :
   -- positivity of `Re(G⁶/E₆)`: quantitative bounds
   have hznorm : ‖(J τ)⁻¹‖ ≤ 0.9125 := by
     rw [norm_inv]
-    have h2 : (1.096 : ℝ)⁻¹ ≤ 0.9125 := by norm_num
-    exact le_trans (inv_anti₀ (by norm_num) hJnorm.le) h2
+    have h2 : (1.096 : ℝ)⁻¹ ≤ 0.9125 := by norm_num only
+    exact le_trans (inv_anti₀ (by norm_num only) hJnorm.le) h2
   have hb2 : ‖hyp2F1 (J τ)⁻¹ ^ 2 - 1‖ ≤ 0.15 := norm_Gsq_sub_one_le hznorm
   have hb6 : ‖hyp2F1 (J τ)⁻¹ ^ 6 - 1‖ ≤ 0.520875 := by
     have hexp : hyp2F1 (J τ)⁻¹ ^ 6 - 1 =
@@ -652,25 +648,21 @@ theorem thm42 {τ : ℍ} (hτ : τ ∈ Region) :
     calc ‖(hyp2F1 (J τ)⁻¹ ^ 6 - 1) - (E₆ τ - 1)‖
         ≤ ‖hyp2F1 (J τ)⁻¹ ^ 6 - 1‖ + ‖E₆ τ - 1‖ := norm_sub_le _ _
       _ ≤ 0.520875 + 0.199 := add_le_add hb6 hE₆b
-      _ < 0.8 := by norm_num
+      _ < 0.8 := by norm_num only
       _ < ‖E₆ τ‖ := hE₆big
   have hre : 0 < (hyp2F1 (J τ)⁻¹ ^ 6 / E₆ τ).re := re_div_pos_of_norm_sub_lt hsub
   -- resolve the branch of the square root
   have hbranch : (J τ / (J τ - 1)) ^ (1 / 2 : ℂ) = hyp2F1 (J τ)⁻¹ ^ 6 / E₆ τ := by
-    rw [hsq, show (1 / 2 : ℂ) = ((2 : ℂ)⁻¹ : ℂ) by norm_num]
+    rw [hsq, show (1 / 2 : ℂ) = ((2 : ℂ)⁻¹ : ℂ) by norm_num only]
     exact Complex.sq_cpow_two_inv hre
-  -- solve the E₂ identity for `E2 τ` and substitute everything
-  have hE2' : E2 τ = (E₆ τ * (E₄ τ * J τ) +
-      12 * hyp2F1 (J τ)⁻¹ ^ 3 * deriv hyp2F1 (J τ)⁻¹ * E₆ τ) / (E₄ τ ^ 2 * J τ) := by
-    rw [eq_div_iff (mul_ne_zero (pow_ne_zero 2 hE₄0) hJ0)]
-    exact hE2
   rw [hbranch, hderivsq, hone]
   simp only [s₂, E₂star]
-  rw [hE2', hE₄]
-  set g : ℂ := hyp2F1 (J τ)⁻¹ with hgdef
-  set g' : ℂ := deriv hyp2F1 (J τ)⁻¹ with hg'def
-  field_simp
-  ring
+  rw [hE₄] at hE2 ⊢
+  -- Multiply by the square so the differential identity applies directly.
+  apply mul_left_cancel₀ (pow_ne_zero 2 hG0)
+  field_simp (disch := first | assumption | norm_num1 | positivity)
+  simp only [one_div]
+  linear_combination (2 * (π : ℂ) * (τ.im : ℂ)) * hE2
 
 /-- **The Main Theorem** (Milla, Thm. `hauptformel`; Chudnovsky–Chudnovsky 1988,
 Eq. (1.4)): for all `τ` with `Im τ > 1.25`,
@@ -683,7 +675,7 @@ theorem hauptformel {τ : ℍ} (hτ : τ ∈ Region) :
   have hJ0 : J τ ≠ 0 := by
     intro h
     rw [h, norm_zero] at hJ
-    exact absurd hJ (by norm_num)
+    exact absurd hJ (by norm_num1)
   have hw : ‖1 / J τ‖ < 1 := by
     rw [norm_div, norm_one, div_lt_one (lt_trans one_pos hJ)]
     exact hJ
@@ -701,12 +693,12 @@ theorem hauptformel {τ : ℍ} (hτ : τ ∈ Region) :
     refine Summable.of_norm_bounded (g := fun n : ℕ => (n : ℝ) * ‖w‖ ^ n) ?_ fun n => ?_
     · have := summable_pow_mul_geometric_of_norm_lt_one (R := ℝ) 1 (r := ‖w‖)
         (by rw [Real.norm_eq_abs, abs_of_nonneg (norm_nonneg w)]; exact hw)
-      simpa using this
+      simpa only [pow_one] using this
     · rw [norm_mul, norm_mul, norm_pow, Complex.norm_natCast]
       calc (n : ℝ) * (‖mainCoeff n‖ * ‖w‖ ^ n) ≤ (n : ℝ) * (1 * ‖w‖ ^ n) := by
             gcongr
             exact norm_mainCoeff_le_one n
-        _ = (n : ℝ) * ‖w‖ ^ n := by ring
+        _ = (n : ℝ) * ‖w‖ ^ n := by ac_rfl
   rw [thm42 hτ, Gsq_eq_tsum hw, deriv_Gsq_eq hw, ← hwdef]
   -- Push the constants into the sums.
   rw [← tsum_mul_left, ← tsum_mul_left]
@@ -714,10 +706,10 @@ theorem hauptformel {τ : ℍ} (hτ : τ ∈ Region) :
       = fun n : ℕ => (n : ℂ) * (mainCoeff n * w ^ n) := by
     ext n
     rcases n with _ | k
-    · simp
+    · simp only [CharP.cast_eq_zero, zero_tsub, pow_zero, mul_one, mul_zero, zero_mul]
     · rw [Nat.succ_sub_one, pow_succ]
       push_cast
-      ring
+      ac_rfl
   rw [hstep]
   rw [← (hS0.mul_left ((1 - s₂ τ) / 6)).tsum_add hS1]
   refine tsum_congr fun n => ?_

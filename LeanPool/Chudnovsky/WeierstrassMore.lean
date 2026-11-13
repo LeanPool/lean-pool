@@ -72,7 +72,7 @@ theorem notMem_lattice_of_mem_fund {z : ℂ} (hz : z ∈ L.fundamentalParallelog
   rw [mem_lattice] at hlat
   obtain ⟨m, n, hmn⟩ := hlat
   have hmn' : (s : ℂ) * L.ω₁ + (t : ℂ) * L.ω₂ = (m : ℂ) * L.ω₁ + (n : ℂ) * L.ω₂ := by
-    rw [hmn]; simp [Complex.real_smul]
+    rw [hmn]; simp only [Complex.real_smul]
   have key : (s - (m : ℝ)) • L.ω₁ + (t - (n : ℝ)) • L.ω₂ = 0 := by
     simp only [sub_smul, Complex.real_smul]
     push_cast
@@ -94,7 +94,7 @@ theorem notMem_lattice_of_mem_fund {z : ℂ} (hz : z ∈ L.fundamentalParallelog
     omega
   apply hz0
   rw [← hs, ← ht, hm0, hn0]
-  simp
+  simp only [Int.cast_zero, zero_smul, add_zero]
 
 /-- `℘ - c` has a pole of order `2` at each lattice point. -/
 theorem meromorphicOrderAt_weierstrassP_sub {c : ℂ} {l₀ : ℂ} (h : l₀ ∈ L.lattice) :
@@ -113,7 +113,7 @@ theorem meromorphicOrderAt_weierstrassP_sub {c : ℂ} {l₀ : ℂ} (h : l₀ ∈
 /-- `℘ - c` is an elliptic function. -/
 theorem isEllipticWith_weierstrassP_sub (c : ℂ) :
     L.IsEllipticWith (fun z => ℘[L] z - c) :=
-  ⟨by fun_prop, fun z l => by simp⟩
+  ⟨by fun_prop, fun z l => by simp only [weierstrassP_add_coe]⟩
 
 /-- **Counting bound** from the third Liouville theorem: the elliptic function `℘ - c`
 has, counted with multiplicity, at most `2` zeros in the fundamental parallelogram, since
@@ -139,7 +139,8 @@ theorem sum_untop₀_meromorphicOrderAt_le_two (c : ℂ) (A : Finset ℂ)
   have hLiou : ∑ z ∈ T, (meromorphicOrderAt f z).untop₀ = 0 :=
     hell.sum_meromorphicOrderAt_eq_zero h0
   have hfund0 : (0 : ℂ) ∈ L.fundamentalParallelogram :=
-    ⟨0, Set.left_mem_Ico.mpr zero_lt_one, 0, Set.left_mem_Ico.mpr zero_lt_one, by simp⟩
+    ⟨0, Set.left_mem_Ico.mpr zero_lt_one, 0, Set.left_mem_Ico.mpr zero_lt_one, by simp only [
+      zero_smul, add_zero]⟩
   have hord0 : meromorphicOrderAt f (0 : ℂ) = -2 := by
     rw [hf_def, L.meromorphicOrderAt_weierstrassP_sub L.lattice.zero_mem]
   have h0T : (0 : ℂ) ∈ T := (hmemT 0).mpr ⟨hfund0, by rw [hord0]; decide⟩
@@ -156,7 +157,7 @@ theorem sum_untop₀_meromorphicOrderAt_le_two (c : ℂ) (A : Finset ℂ)
     refine ⟨hane, (hmemT a).mpr ⟨hAf a ha, ?_⟩⟩
     have hAn : AnalyticAt ℂ f a := by
       rw [hf_def]; have := L.analyticOnNhd_weierstrassP a (hAl a ha); fun_prop
-    have hfa : f a = 0 := by rw [hf_def]; simp [hAz a ha]
+    have hfa : f a = 0 := by rw [hf_def]; simp only [hAz a ha, sub_self]
     rw [hAn.meromorphicOrderAt_eq]
     intro hcontra
     exact hAn.analyticOrderAt_ne_zero.mpr hfa (ENat.map_natCast_eq_zero.mp hcontra)
@@ -181,14 +182,14 @@ theorem two_le_untop₀_meromorphicOrderAt {c : ℂ} {a : ℂ} (ha : a ∉ L.lat
   set f : ℂ → ℂ := fun z => ℘[L] z - c with hf_def
   have hAn : AnalyticAt ℂ f a := by
     rw [hf_def]; have := L.analyticOnNhd_weierstrassP a ha; fun_prop
-  have hfa : f a = 0 := by rw [hf_def]; simp [hc]
+  have hfa : f a = 0 := by rw [hf_def]; simp only [hc, sub_self]
   have hderiv' : deriv f a = 0 := by
     rw [hf_def, deriv_sub_const, L.deriv_weierstrassP]; exact hderiv
   have h2 : (2 : ℕ) ≤ analyticOrderAt f a := by
     rw [natCast_le_analyticOrderAt_iff_iteratedDeriv_eq_zero hAn]
     intro i hi
     interval_cases i
-    · simpa [iteratedDeriv_zero] using hfa
+    · simpa only [iteratedDeriv_zero] using hfa
     · rw [iteratedDeriv_one]; exact hderiv'
   have hne : meromorphicOrderAt f a ≠ ⊤ := by
     have hmero : Meromorphic f := by rw [hf_def]; fun_prop
@@ -220,7 +221,7 @@ theorem half_ne_half {a b a' b' : ℝ} (h : ¬ (a = a' ∧ b = b')) :
     a • L.ω₁ + b • L.ω₂ ≠ a' • L.ω₁ + b' • L.ω₂ := by
   intro he
   have he' : (a : ℂ) * L.ω₁ + (b : ℂ) * L.ω₂ = (a' : ℂ) * L.ω₁ + (b' : ℂ) * L.ω₂ := by
-    simpa [Complex.real_smul] using he
+    simpa only [Complex.real_smul] using he
   have key : (a - a') • L.ω₁ + (b - b') • L.ω₂ = 0 := by
     simp only [sub_smul, Complex.real_smul]; linear_combination he'
   obtain ⟨h1, h2⟩ := LinearIndependent.pair_iff.mp L.indep _ _ key
@@ -256,37 +257,43 @@ theorem weierstrassP_ne_of_half {p q : ℂ}
 
 /-- Membership of `ω₁/2` in the fundamental parallelogram. -/
 private theorem mem_fund_ω₁_div_two : L.ω₁ / 2 ∈ L.fundamentalParallelogram :=
-  ⟨1 / 2, ⟨by norm_num, by norm_num⟩, 0, ⟨le_refl 0, zero_lt_one⟩, by
-    simp [Complex.real_smul]; ring⟩
+  ⟨1 / 2, ⟨by norm_num1, by norm_num1⟩, 0, ⟨le_refl 0, zero_lt_one⟩, by
+    simp only [one_div, Complex.real_smul, Complex.ofReal_inv, Complex.ofReal_ofNat, zero_smul,
+      add_zero]; ac_rfl⟩
 
 private theorem mem_fund_ω₂_div_two : L.ω₂ / 2 ∈ L.fundamentalParallelogram :=
-  ⟨0, ⟨le_refl 0, zero_lt_one⟩, 1 / 2, ⟨by norm_num, by norm_num⟩, by
-    simp [Complex.real_smul]; ring⟩
+  ⟨0, ⟨le_refl 0, zero_lt_one⟩, 1 / 2, ⟨by norm_num1, by norm_num1⟩, by
+    simp only [zero_smul, one_div, Complex.real_smul, Complex.ofReal_inv, Complex.ofReal_ofNat,
+      zero_add]; ac_rfl⟩
 
 private theorem mem_fund_add_div_two : (L.ω₁ + L.ω₂) / 2 ∈ L.fundamentalParallelogram :=
-  ⟨1 / 2, ⟨by norm_num, by norm_num⟩, 1 / 2, ⟨by norm_num, by norm_num⟩, by
-    simp [Complex.real_smul]; ring⟩
+  ⟨1 / 2, ⟨by norm_num1, by norm_num1⟩, 1 / 2, ⟨by norm_num1, by norm_num1⟩, by
+    simp only [one_div, Complex.real_smul, Complex.ofReal_inv, Complex.ofReal_ofNat]; ring⟩
 
 private theorem ω₁_div_two_ne_ω₂_div_two : L.ω₁ / 2 ≠ L.ω₂ / 2 := by
   have h := L.half_ne_half (a := 1 / 2) (b := 0) (a' := 0) (b' := 1 / 2) (by norm_num)
   rwa [show (1 / 2 : ℝ) • L.ω₁ + (0 : ℝ) • L.ω₂ = L.ω₁ / 2 by
-        simp [Complex.real_smul]; ring,
+        simp only [one_div, Complex.real_smul, Complex.ofReal_inv, Complex.ofReal_ofNat, zero_smul,
+          add_zero]; ac_rfl,
       show (0 : ℝ) • L.ω₁ + (1 / 2 : ℝ) • L.ω₂ = L.ω₂ / 2 by
-        simp [Complex.real_smul]; ring] at h
+        simp only [zero_smul, one_div, Complex.real_smul, Complex.ofReal_inv, Complex.ofReal_ofNat,
+          zero_add]; ac_rfl] at h
 
 private theorem ω₁_div_two_ne_add_div_two : L.ω₁ / 2 ≠ (L.ω₁ + L.ω₂) / 2 := by
   have h := L.half_ne_half (a := 1 / 2) (b := 0) (a' := 1 / 2) (b' := 1 / 2) (by norm_num)
   rwa [show (1 / 2 : ℝ) • L.ω₁ + (0 : ℝ) • L.ω₂ = L.ω₁ / 2 by
-        simp [Complex.real_smul]; ring,
+        simp only [one_div, Complex.real_smul, Complex.ofReal_inv, Complex.ofReal_ofNat, zero_smul,
+          add_zero]; ac_rfl,
       show (1 / 2 : ℝ) • L.ω₁ + (1 / 2 : ℝ) • L.ω₂ = (L.ω₁ + L.ω₂) / 2 by
-        simp [Complex.real_smul]; ring] at h
+        simp only [one_div, Complex.real_smul, Complex.ofReal_inv, Complex.ofReal_ofNat]; ring] at h
 
 private theorem ω₂_div_two_ne_add_div_two : L.ω₂ / 2 ≠ (L.ω₁ + L.ω₂) / 2 := by
   have h := L.half_ne_half (a := 0) (b := 1 / 2) (a' := 1 / 2) (b' := 1 / 2) (by norm_num)
   rwa [show (0 : ℝ) • L.ω₁ + (1 / 2 : ℝ) • L.ω₂ = L.ω₂ / 2 by
-        simp [Complex.real_smul]; ring,
+        simp only [zero_smul, one_div, Complex.real_smul, Complex.ofReal_inv, Complex.ofReal_ofNat,
+          zero_add]; ac_rfl,
       show (1 / 2 : ℝ) • L.ω₁ + (1 / 2 : ℝ) • L.ω₂ = (L.ω₁ + L.ω₂) / 2 by
-        simp [Complex.real_smul]; ring] at h
+        simp only [one_div, Complex.real_smul, Complex.ofReal_inv, Complex.ofReal_ofNat]; ring] at h
 
 /-- The half-lattice values are pairwise distinct: `e₁ ≠ e₂`. -/
 theorem e₁_ne_e₂ : L.e₁ ≠ L.e₂ :=
@@ -401,7 +408,7 @@ theorem derivWeierstrassP_eq_zero_iff {z : ℂ} (hz : z ∉ L.lattice) :
       rw [hderiv0] at h
       have h4 : (4 : ℂ) * ((℘[L] z - L.e₁) * (℘[L] z - L.e₂) * (℘[L] z - L.e₃)) = 0 := by
         linear_combination -h
-      exact (mul_eq_zero.mp h4).resolve_left (by norm_num)
+      exact (mul_eq_zero.mp h4).resolve_left (by norm_num1)
     -- If `℘ p = e_k` but `p ≠ ω_k/2`, we get 4 zeros vs 2 poles, contradiction.
     have finish : ∀ q ω : ℂ, ω ∈ L.lattice → q = ω / 2 →
         q ∈ L.fundamentalParallelogram → q ∉ L.lattice → ℘'[L] q = 0 →

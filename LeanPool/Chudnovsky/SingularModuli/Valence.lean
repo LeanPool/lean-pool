@@ -85,7 +85,7 @@ theorem exists_smul_mem_fd_j (τ : ℍ) :
 theorem j_eq_iff_J (τ₁ τ₂ : ℍ) : j τ₁ = j τ₂ ↔ J τ₁ = J τ₂ := by
   rw [j_def, j_def]
   constructor
-  · exact fun h ↦ mul_left_cancel₀ (by norm_num : (1728 : ℂ) ≠ 0) h
+  · exact fun h ↦ mul_left_cancel₀ (by norm_num1 : (1728 : ℂ) ≠ 0) h
   · exact fun h ↦ by rw [h]
 
 /-- `j τ₁ = j τ₂` iff Klein's absolute invariants of the lattices `L_{τ₁}`, `L_{τ₂}` agree.
@@ -140,8 +140,8 @@ theorem exists_units_smul_g₂_g₃ (L₁ L₂ : PeriodPair)
   suffices h : ∃ α : ℂ, α ≠ 0 ∧ (α ^ 4)⁻¹ * L₂.g₂ = L₁.g₂ ∧ (α ^ 6)⁻¹ * L₂.g₃ = L₁.g₃ by
     obtain ⟨α, hα, h2, h3⟩ := h
     refine ⟨Units.mk0 α hα, ?_, ?_⟩
-    · rw [PeriodPair.g₂_smul]; simpa using h2
-    · rw [PeriodPair.g₃_smul]; simpa using h3
+    · rw [PeriodPair.g₂_smul]; simpa only [Units.val_mk0] using h2
+    · rw [PeriodPair.g₃_smul]; simpa only [Units.val_mk0] using h3
   by_cases ha2 : L₁.g₂ = 0
   · -- `J₁ = 0`, so `L₂.g₂ = 0`; match the `g₃`'s by a 6th root.
     have ha3 : L₁.g₃ ≠ 0 := fun h ↦ hd₁ (by simp [PeriodPair.discr, ha2, h])
@@ -150,12 +150,12 @@ theorem exists_units_smul_g₂_g₃ (L₁ L₂ : PeriodPair)
       have : L₂.g₂ ^ 3 = 0 := by
         rcases mul_eq_zero.mp hz with h | h
         · exact h
-        · exact absurd (pow_eq_zero_iff (by norm_num) |>.mp h) ha3
-      exact pow_eq_zero_iff (by norm_num) |>.mp this
+        · exact absurd (pow_eq_zero_iff (by norm_num1) |>.mp h) ha3
+      exact pow_eq_zero_iff (by norm_num1) |>.mp this
     have hb3 : L₂.g₃ ≠ 0 := fun h ↦ hd₂ (by simp [PeriodPair.discr, hb2, h])
-    obtain ⟨α, hα6⟩ := IsAlgClosed.exists_pow_nat_eq (L₂.g₃ / L₁.g₃) (n := 6) (by norm_num)
+    obtain ⟨α, hα6⟩ := IsAlgClosed.exists_pow_nat_eq (L₂.g₃ / L₁.g₃) (n := 6) (by norm_num1)
     have hαne : α ≠ 0 := by
-      rintro rfl; rw [zero_pow (by norm_num)] at hα6
+      rintro rfl; rw [zero_pow (by norm_num1)] at hα6
       exact (div_ne_zero hb3 ha3) hα6.symm
     refine ⟨α, hαne, ?_, ?_⟩
     · rw [ha2, hb2]; ring
@@ -166,13 +166,13 @@ theorem exists_units_smul_g₂_g₃ (L₁ L₂ : PeriodPair)
         have hz : L₁.g₂ ^ 3 * L₂.g₃ ^ 2 = 0 := by rw [hR, ha3]; ring
         have : L₂.g₃ ^ 2 = 0 := by
           rcases mul_eq_zero.mp hz with h | h
-          · exact absurd (pow_eq_zero_iff (by norm_num) |>.mp h) ha2
+          · exact absurd (pow_eq_zero_iff (by norm_num1) |>.mp h) ha2
           · exact h
-        exact pow_eq_zero_iff (by norm_num) |>.mp this
+        exact pow_eq_zero_iff (by norm_num1) |>.mp this
       have hb2 : L₂.g₂ ≠ 0 := fun h ↦ hd₂ (by simp [PeriodPair.discr, h, hb3])
-      obtain ⟨α, hα4⟩ := IsAlgClosed.exists_pow_nat_eq (L₂.g₂ / L₁.g₂) (n := 4) (by norm_num)
+      obtain ⟨α, hα4⟩ := IsAlgClosed.exists_pow_nat_eq (L₂.g₂ / L₁.g₂) (n := 4) (by norm_num1)
       have hαne : α ≠ 0 := by
-        rintro rfl; rw [zero_pow (by norm_num)] at hα4
+        rintro rfl; rw [zero_pow (by norm_num1)] at hα4
         exact (div_ne_zero hb2 ha2) hα4.symm
       refine ⟨α, hαne, ?_, ?_⟩
       · rw [hα4, inv_div, div_mul_cancel₀ _ hb2]
@@ -184,9 +184,9 @@ theorem exists_units_smul_g₂_g₃ (L₁ L₂ : PeriodPair)
           have hz : L₁.g₂ ^ 3 * L₂.g₃ ^ 2 = 0 := by rw [hR, h]; ring
           have : L₂.g₃ ^ 2 = 0 := by
             rcases mul_eq_zero.mp hz with h' | h'
-            · exact absurd (pow_eq_zero_iff (by norm_num) |>.mp h') ha2
+            · exact absurd (pow_eq_zero_iff (by norm_num1) |>.mp h') ha2
             · exact h'
-          exact pow_eq_zero_iff (by norm_num) |>.mp this
+          exact pow_eq_zero_iff (by norm_num1) |>.mp this
         exact hd₂ (by simp [PeriodPair.discr, h, hb3z])
       have hb3 : L₂.g₃ ≠ 0 := by
         intro h
@@ -194,28 +194,28 @@ theorem exists_units_smul_g₂_g₃ (L₁ L₂ : PeriodPair)
         have : L₂.g₂ ^ 3 = 0 := by
           rcases mul_eq_zero.mp hz with h' | h'
           · exact h'
-          · exact absurd (pow_eq_zero_iff (by norm_num) |>.mp h') ha3
-        exact hb2 (pow_eq_zero_iff (by norm_num) |>.mp this)
+          · exact absurd (pow_eq_zero_iff (by norm_num1) |>.mp h') ha3
+        exact hb2 (pow_eq_zero_iff (by norm_num1) |>.mp this)
       -- `u = g₂₂/g₂₁`, `v = g₃₂/g₃₁`, and `u³ = v²`; pick `α` with `α² = v/u`.
       have hcube : (L₂.g₂ / L₁.g₂) ^ 3 = (L₂.g₃ / L₁.g₃) ^ 2 := by
-        field_simp
+        field_simp (disch := first | assumption | norm_num1 | positivity)
         linear_combination -hR
       obtain ⟨α, hα2⟩ :=
-        IsAlgClosed.exists_pow_nat_eq ((L₂.g₃ / L₁.g₃) / (L₂.g₂ / L₁.g₂)) (n := 2) (by norm_num)
+        IsAlgClosed.exists_pow_nat_eq ((L₂.g₃ / L₁.g₃) / (L₂.g₂ / L₁.g₂)) (n := 2) (by norm_num1)
       have hu : L₂.g₂ / L₁.g₂ ≠ 0 := div_ne_zero hb2 ha2
       have hv : L₂.g₃ / L₁.g₃ ≠ 0 := div_ne_zero hb3 ha3
       have hαne : α ≠ 0 := by
-        rintro rfl; rw [zero_pow (by norm_num)] at hα2
+        rintro rfl; rw [zero_pow (by norm_num1)] at hα2
         exact (div_ne_zero hv hu) hα2.symm
       -- `α⁴ = (v/u)² = u`  and  `α⁶ = (v/u)³ = v`.
       have h4 : α ^ 4 = L₂.g₂ / L₁.g₂ := by
         have : α ^ 4 = (α ^ 2) ^ 2 := by ring
         rw [this, hα2, div_pow, ← hcube]
-        field_simp
+        field_simp (disch := first | assumption | norm_num1 | positivity)
       have h6 : α ^ 6 = L₂.g₃ / L₁.g₃ := by
         have : α ^ 6 = (α ^ 2) ^ 3 := by ring
         rw [this, hα2, div_pow, hcube]
-        field_simp
+        field_simp (disch := first | assumption | norm_num1 | positivity)
       refine ⟨α, hαne, ?_, ?_⟩
       · rw [h4, inv_div, div_mul_cancel₀ _ hb2]
       · rw [h6, inv_div, div_mul_cancel₀ _ hb3]
@@ -226,7 +226,7 @@ theorem exists_units_smul_g₂_g₃ (L₁ L₂ : PeriodPair)
 theorem discr_Lτ_ne_zero (τ : ℍ) : (Lτ τ).discr ≠ 0 := by
   rw [discr_Lτ]
   refine mul_ne_zero ?_ (E₄_cube_sub_E₆_sq_ne_zero τ)
-  refine div_ne_zero (pow_ne_zero _ ?_) (by norm_num)
+  refine div_ne_zero (pow_ne_zero _ ?_) (by norm_num1)
   simp [Real.pi_ne_zero]
 
 /-
@@ -357,7 +357,7 @@ theorem weierstrassP_eventuallyEq_of_g₂_g₃ (L₁ L₂ : PeriodPair)
     intro L t
     have h := L.weierstrassPExcept_add (0 : L.lattice) t
     simp only [ZeroMemClass.coe_zero, sub_zero] at h
-    have h0 : (1 : ℂ) / (0 : ℂ) ^ 2 = 0 := by norm_num
+    have h0 : (1 : ℂ) / (0 : ℂ) ^ 2 = 0 := by norm_num1
     rw [h0, sub_zero] at h
     linear_combination h
   -- `HasDerivAt` facts, reconstructed from the analyticity lemmas
@@ -436,7 +436,7 @@ theorem weierstrassP_eventuallyEq_of_g₂_g₃ (L₁ L₂ : PeriodPair)
     induction m using Nat.strongRecOn with
     | ind m IH =>
       rcases eq_or_ne m 0 with rfl | hm0
-      · simp [iteratedDeriv_zero, hwdef]
+      · simp only [hwdef, iteratedDeriv_zero, PeriodPair.weierstrassPExcept_zero, sub_self]
       rcases eq_or_ne m 1 with rfl | hm1
       · rw [hwdef, iteratedDeriv_fun_sub hf₁.contDiffAt hf₂.contDiffAt,
             L₁.iteratedDeriv_weierstrassPExcept_self 0, L₂.iteratedDeriv_weierstrassPExcept_self 0]
@@ -447,7 +447,7 @@ theorem weierstrassP_eventuallyEq_of_g₂_g₃ (L₁ L₂ : PeriodPair)
         have hG6 : L₁.G 6 = L₂.G 6 := by
           have e : (140 : ℂ) * L₁.G 6 = 140 * L₂.G 6 := by
             have hh := h3; simp only [PeriodPair.g₃] at hh; exact hh
-          exact mul_left_cancel₀ (by norm_num) e
+          exact mul_left_cancel₀ (by norm_num1) e
         rw [hwdef, iteratedDeriv_fun_sub hf₁.contDiffAt hf₂.contDiffAt,
             L₁.iteratedDeriv_weierstrassPExcept_self 0, L₂.iteratedDeriv_weierstrassPExcept_self 0,
             L₁.sumInvPow_zero, L₂.sumInvPow_zero]
@@ -495,7 +495,7 @@ theorem weierstrassP_eventuallyEq_of_g₂_g₃ (L₁ L₂ : PeriodPair)
         rw [hfac]
         refine mul_ne_zero (sub_ne_zero.mpr ?_) ?_
         · exact_mod_cast hm4
-        · have hc3 : ((m : ℂ) + 3) = ((m + 3 : ℕ) : ℂ) := by push_cast; ring
+        · have hc3 : ((m : ℂ) + 3) = ((m + 3 : ℕ) : ℂ) := by push_cast; ac_rfl
           rw [hc3]; exact_mod_cast (by omega : m + 3 ≠ 0)
       exact (mul_eq_zero.mp hcoef).resolve_left hne
   -- Part B: `w` vanishes to infinite order, hence identically near `0`
@@ -507,7 +507,7 @@ theorem weierstrassP_eventuallyEq_of_g₂_g₃ (L₁ L₂ : PeriodPair)
   have hwloc : ∀ᶠ z in 𝓝[≠] (0 : ℂ), w z = 0 := hworder.filter_mono nhdsWithin_le_nhds
   filter_upwards [hwloc] with z hz
   have hfe : L₁.weierstrassPExcept 0 z = L₂.weierstrassPExcept 0 z := by
-    rw [hwdef] at hz; simpa [sub_eq_zero] using hz
+    rw [hwdef] at hz; simpa only [sub_eq_zero] using hz
   rw [hPexc L₁ z, hPexc L₂ z] at hfe
   linear_combination hfe
 
@@ -530,7 +530,7 @@ lemma lattice_subset_of_eqOn (L₁ L₂ : PeriodPair)
     simp only [Set.mem_compl_iff, Set.mem_union, not_or]
     refine ⟨?_, hzB⟩
     intro hzL1
-    exact hzA ⟨hzL1, fun hh => hzne (by simpa using hh)⟩
+    exact hzA ⟨hzL1, fun hh => hzne (by simpa only [Set.mem_singleton_iff] using hh)⟩
   have hord1 : meromorphicOrderAt L₁.weierstrassP ω = -2 := L₁.order_weierstrassP ω hω1
   have hnn : 0 ≤ meromorphicOrderAt L₂.weierstrassP ω :=
     (L₂.analyticOnNhd_weierstrassP ω hω2).meromorphicOrderAt_nonneg
@@ -547,7 +547,7 @@ theorem lattice_eq_of_weierstrassP_eventuallyEq (L₁ L₂ : PeriodPair)
   have hScount : S.Countable := (lattice_countable L₁).union (lattice_countable L₂)
   have hUconn : IsPreconnected Sᶜ :=
     (hScount.isConnected_compl_of_one_lt_rank
-      (by rw [Complex.rank_real_complex]; norm_num)).isPreconnected
+      (by rw [Complex.rank_real_complex]; norm_num1)).isPreconnected
   have hUdense : Dense Sᶜ := hScount.dense_compl ℝ
   have ha1 : AnalyticOnNhd ℂ L₁.weierstrassP Sᶜ :=
     (L₁.analyticOnNhd_weierstrassP).mono
@@ -586,7 +586,7 @@ lemma orient_eq {b s t : ℂ} {m₁ n₁ m₂ n₂ : ℤ}
   have e : starRingEnd ℂ b * (b * t) = ↑(Complex.normSq b) * t := by
     rw [← mul_assoc, ← Complex.normSq_eq_conj_mul_self]
   have hcb : starRingEnd ℂ b = ↑m₁ + ↑n₁ * starRingEnd ℂ s := by
-    rw [h1]; simp
+    rw [h1]; simp only [map_add, map_intCast, map_mul]
   rw [hcb, h2] at e
   have him := congrArg Complex.im e
   simp only [Complex.mul_im, Complex.add_im, Complex.add_re, Complex.intCast_im,
@@ -605,10 +605,12 @@ theorem exists_sl2_of_lattice_eq {σ₁ σ₂ : ℍ} {a : ℂˣ}
   -- Forward direction: `a` and `a·σ₂` lie in `Lτ σ₁`'s lattice
   have ha_mem : (↑a : ℂ) ∈ (Lτ σ₁).lattice := by
     rw [hlat, PeriodPair.mem_smul_lattice_iff]
-    exact ⟨1, PeriodPair.mem_lattice.mpr ⟨1, 0, by simp⟩, by rw [mul_one]⟩
+    exact ⟨1, PeriodPair.mem_lattice.mpr ⟨1, 0, by simp only [Int.cast_one, Lτ_ω₁, mul_one,
+      Int.cast_zero, Lτ_ω₂, zero_mul, add_zero]⟩, by rw [mul_one]⟩
   have hb_mem : (↑a : ℂ) * ↑σ₂ ∈ (Lτ σ₁).lattice := by
     rw [hlat, PeriodPair.mem_smul_lattice_iff]
-    exact ⟨↑σ₂, PeriodPair.mem_lattice.mpr ⟨0, 1, by simp⟩, rfl⟩
+    exact ⟨↑σ₂, PeriodPair.mem_lattice.mpr ⟨0, 1, by simp only [Int.cast_zero, Lτ_ω₁, mul_one,
+      Int.cast_one, Lτ_ω₂, one_mul, zero_add]⟩, rfl⟩
   obtain ⟨m₁, n₁, hA⟩ := PeriodPair.mem_lattice.mp ha_mem
   obtain ⟨m₂, n₂, hB⟩ := PeriodPair.mem_lattice.mp hb_mem
   simp only [Lτ_ω₁, Lτ_ω₂, mul_one] at hA hB
@@ -620,21 +622,25 @@ theorem exists_sl2_of_lattice_eq {σ₁ σ₂ : ℍ} {a : ℂˣ}
     rw [PeriodPair.mem_smul_lattice_iff]
     constructor
     · intro hz
-      refine ⟨(↑a : ℂ) * z, ?_, by rw [← mul_assoc]; simp⟩
+      refine ⟨(↑a : ℂ) * z, ?_, by rw [← mul_assoc]; simp only [Units.val_inv_eq_inv_val, ne_eq,
+        Units.ne_zero, not_false_eq_true, inv_mul_cancel₀, one_mul]⟩
       rw [hlat, PeriodPair.mem_smul_lattice_iff]
       exact ⟨z, hz, rfl⟩
     · rintro ⟨w, hw, rfl⟩
       rw [hlat, PeriodPair.mem_smul_lattice_iff] at hw
       obtain ⟨w', hw', rfl⟩ := hw
       rw [← mul_assoc]
-      simpa using hw'
+      simpa only [Units.val_inv_eq_inv_val, ne_eq, Units.ne_zero, not_false_eq_true,
+        inv_mul_cancel₀, one_mul] using hw'
   -- Reverse direction: `a⁻¹` and `a⁻¹·σ₁` lie in `Lτ σ₂`'s lattice
   have ha'_mem : ((a⁻¹ : ℂˣ) : ℂ) ∈ (Lτ σ₂).lattice := by
     rw [hlat2, PeriodPair.mem_smul_lattice_iff]
-    exact ⟨1, PeriodPair.mem_lattice.mpr ⟨1, 0, by simp⟩, by rw [mul_one]⟩
+    exact ⟨1, PeriodPair.mem_lattice.mpr ⟨1, 0, by simp only [Int.cast_one, Lτ_ω₁, mul_one,
+      Int.cast_zero, Lτ_ω₂, zero_mul, add_zero]⟩, by rw [mul_one]⟩
   have hb'_mem : ((a⁻¹ : ℂˣ) : ℂ) * ↑σ₁ ∈ (Lτ σ₂).lattice := by
     rw [hlat2, PeriodPair.mem_smul_lattice_iff]
-    exact ⟨↑σ₁, PeriodPair.mem_lattice.mpr ⟨0, 1, by simp⟩, rfl⟩
+    exact ⟨↑σ₁, PeriodPair.mem_lattice.mpr ⟨0, 1, by simp only [Int.cast_zero, Lτ_ω₁, mul_one,
+      Int.cast_one, Lτ_ω₂, one_mul, zero_add]⟩, rfl⟩
   obtain ⟨m₁', n₁', hA'⟩ := PeriodPair.mem_lattice.mp ha'_mem
   obtain ⟨m₂', n₂', hB'⟩ := PeriodPair.mem_lattice.mp hb'_mem
   simp only [Lτ_ω₁, Lτ_ω₂, mul_one] at hA' hB'
@@ -660,7 +666,8 @@ theorem exists_sl2_of_lattice_eq {σ₁ σ₂ : ℍ} {a : ℂˣ}
   -- product of `normSq`s is `1`
   have hnprod : Complex.normSq (↑a : ℂ) * Complex.normSq ((a⁻¹ : ℂˣ) : ℂ) = 1 := by
     rw [← Complex.normSq_mul]
-    simp
+    simp only [Units.val_inv_eq_inv_val, ne_eq, Units.ne_zero, not_false_eq_true, mul_inv_cancel₀,
+      map_one]
   -- product of the determinants is `1`
   have hprodR : (((m₁ * n₂ - n₁ * m₂ : ℤ) : ℝ) * ((m₁' * n₂' - n₁' * m₂' : ℤ) : ℝ))
       * ((↑σ₁ : ℂ).im * (↑σ₂ : ℂ).im) = (↑σ₁ : ℂ).im * (↑σ₂ : ℂ).im := by
@@ -691,7 +698,7 @@ theorem exists_sl2_of_lattice_eq {σ₁ σ₂ : ℍ} {a : ℂˣ}
   refine ⟨γ, ?_⟩
   rw [← UpperHalfPlane.coe_inj, coe_specialLinearGroup_apply]
   have hden : (↑n₁ : ℂ) * ↑σ₁ + ↑m₁ ≠ 0 := by
-    have : (↑n₁ : ℂ) * ↑σ₁ + ↑m₁ = ↑a := by rw [h1]; ring
+    have : (↑n₁ : ℂ) * ↑σ₁ + ↑m₁ = ↑a := by rw [h1]; ac_rfl
     rw [this]; exact a.ne_zero
   change (↑σ₂ : ℂ) = _
   simp only [hγ, hM, Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val',
@@ -739,12 +746,12 @@ of `ℂ`.
 for the open mapping theorem). Uses the cusp bracketing `theonaeherJ_lower`/`theonaeherJ_upper`:
 at `im = 3` the lower bound `0.737·e^{6π}` exceeds the upper bound `1.321·e^{4π}` at `im = 2`. -/
 theorem j_two_values : ∃ τ₁ τ₂ : ℍ, j τ₁ ≠ j τ₂ := by
-  set τa : ℍ := UpperHalfPlane.mk ⟨0, 3⟩ (by norm_num) with hτa
-  set τb : ℍ := UpperHalfPlane.mk ⟨0, 2⟩ (by norm_num) with hτb
+  set τa : ℍ := UpperHalfPlane.mk ⟨0, 3⟩ (by norm_num1) with hτa
+  set τb : ℍ := UpperHalfPlane.mk ⟨0, 2⟩ (by norm_num1) with hτb
   have hima : τa.im = 3 := rfl
   have himb : τb.im = 2 := rfl
-  have hRa : τa ∈ Region := by rw [Region, Set.mem_ofPred_eq, hima]; norm_num
-  have hRb : τb ∈ Region := by rw [Region, Set.mem_ofPred_eq, himb]; norm_num
+  have hRa : τa ∈ Region := by rw [Region, Set.mem_ofPred_eq, hima]; norm_num1
+  have hRb : τb ∈ Region := by rw [Region, Set.mem_ofPred_eq, himb]; norm_num1
   refine ⟨τa, τb, ?_⟩
   have hlow := theonaeherJ_lower hRa
   have hup := theonaeherJ_upper hRb
@@ -760,7 +767,7 @@ theorem j_two_values : ∃ τ₁ τ₂ : ℍ, j τ₁ ≠ j τ₂ := by
       linarith only [hae, Real.pi_gt_three]
     have hE : Real.exp (-(2 * π)) ≤ 1 / 7 := by
       rw [Real.exp_neg, inv_eq_one_div]
-      exact one_div_le_one_div_of_le (by norm_num) h7
+      exact one_div_le_one_div_of_le (by norm_num1) h7
     have hBpos : 0 < Real.exp (-(2 * π * 2)) := Real.exp_pos _
     rw [e1, mul_left_comm, mul_comm (0.737 : ℝ)]
     exact mul_le_mul_of_nonneg_left (by linarith only [hE]) hBpos.le
@@ -873,7 +880,7 @@ theorem isClosed_range_j : IsClosed (Set.range (j : ℍ → ℂ)) := by
     have him2 : z.im ≤ M := hz.2.2.2
     have habs : ‖z‖ ≤ |z.re| + |z.im| := Complex.norm_le_abs_re_add_abs_im z
     have himabs : |z.im| ≤ |M| := by
-      rw [abs_of_nonneg (le_trans (by norm_num) him1)]
+      rw [abs_of_nonneg (le_trans (by norm_num1) him1)]
       exact him2.trans (le_abs_self M)
     exact habs.trans (add_le_add hre himabs)
   have hKc_compact : IsCompact Kc :=
@@ -885,12 +892,12 @@ theorem isClosed_range_j : IsClosed (Set.range (j : ℍ → ℂ)) := by
     · rw [UpperHalfPlane.coe_im]; exact him_ge n
     · rw [UpperHalfPlane.coe_im]; exact him_le n
   obtain ⟨a, haKc, φ, hφmono, hφlim⟩ := hKc_compact.tendsto_subseq hmem
-  have haim : (0 : ℝ) < a.im := lt_of_lt_of_le (by norm_num) haKc.2.2.1
+  have haim : (0 : ℝ) < a.im := lt_of_lt_of_le (by norm_num1) haKc.2.2.1
   set τstar : ℍ := UpperHalfPlane.mk a haim with hτstar
   have hcoe : (τstar : ℂ) = a := rfl
   have htend : Filter.Tendsto (fun k => τ (φ k)) Filter.atTop (𝓝 τstar) := by
     rw [UpperHalfPlane.isEmbedding_coe.tendsto_nhds_iff]
-    simpa [Function.comp_def, hcoe] using hφlim
+    simpa only [Function.comp_def, hcoe] using hφlim
   have hjcont : Continuous (j : ℍ → ℂ) := mdifferentiable_j.continuous
   have htendj : Filter.Tendsto (fun k => j (τ (φ k))) Filter.atTop (𝓝 (j τstar)) :=
     (hjcont.tendsto τstar).comp htend
@@ -909,7 +916,7 @@ theorem j_surjective : Function.Surjective (j : ℍ → ℂ) := by
   intro w
   have hcl : IsClopen (Set.range (j : ℍ → ℂ)) := ⟨isClosed_range_j, isOpen_range_j⟩
   have hne : (Set.range (j : ℍ → ℂ)).Nonempty :=
-    ⟨j (UpperHalfPlane.mk ⟨0, 1⟩ (by norm_num)), Set.mem_range_self _⟩
+    ⟨j (UpperHalfPlane.mk ⟨0, 1⟩ (by norm_num1)), Set.mem_range_self _⟩
   have hall : Set.range (j : ℍ → ℂ) = Set.univ := hcl.eq_univ hne
   have hw : w ∈ Set.range (j : ℍ → ℂ) := hall ▸ Set.mem_univ w
   exact hw

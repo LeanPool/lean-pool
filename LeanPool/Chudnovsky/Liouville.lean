@@ -303,7 +303,7 @@ theorem IsEllipticWith.exists_eq_const_of_differentiable (hf : L.IsEllipticWith 
         L.exists_sub_mem_lattice_of_mem_fundamentalParallelogram z
       have h := hf.2 (s • L.ω₁ + t • L.ω₂) ⟨z - (s • L.ω₁ + t • L.ω₂), hl⟩
       rw [show (s • L.ω₁ + t • L.ω₂) + ((⟨z - (s • L.ω₁ + t • L.ω₂), hl⟩ : L.lattice) : ℂ) = z
-        from by simp] at h
+        from by simp only [Complex.real_smul, add_sub_cancel]] at h
       rw [h]
       exact hM (Set.mem_image_of_mem f
         ⟨(s, t), ⟨⟨hs.1, hs.2.le⟩, ⟨ht.1, ht.2.le⟩⟩, rfl⟩)
@@ -372,7 +372,8 @@ private lemma integral_edge_eq_sub {f F : ℂ → ℂ} {p ω : ℂ}
     ∫ t in (0 : ℝ)..1, f (p + (t : ℂ) * ω) * ω = F (p + ω) - F p := by
   have hγ : ∀ t : ℝ, HasDerivAt (fun s : ℝ ↦ p + (s : ℂ) * ω) ω t := by
     intro t
-    simpa using ((Complex.ofRealCLM.hasDerivAt (x := t)).mul_const ω).const_add p
+    simpa only [hasDerivAt_const_add_iff, Complex.ofRealCLM_apply, Complex.ofReal_one,
+      one_mul] using ((Complex.ofRealCLM.hasDerivAt (x := t)).mul_const ω).const_add p
   have key : ∀ t ∈ Set.uIcc (0 : ℝ) 1,
       HasDerivAt (fun s : ℝ ↦ F (p + (s : ℂ) * ω)) (f (p + (t : ℂ) * ω) * ω) t := by
     intro t ht
@@ -633,7 +634,8 @@ private lemma coord_eq_zero_of_eq_zero {L : PeriodPair} {r s : ℝ}
   have hli := Fintype.linearIndependent_iff.mp L.indep ![r, s]
   have hsum : ∑ i, (![r, s] i) • (![L.ω₁, L.ω₂] i) = 0 := by
     rw [Fin.sum_univ_two]
-    simpa [Complex.real_smul] using h
+    simpa only [Nat.succ_eq_add_one, Nat.reduceAdd, Fin.isValue, Matrix.cons_val_zero,
+      Complex.real_smul, Matrix.cons_val_one, Matrix.cons_val_fin_one] using h
   have hall := hli hsum
   exact ⟨hall 0, hall 1⟩
 
@@ -1092,7 +1094,8 @@ private lemma exists_decomposition {f : ℂ → ℂ} {c : ℂ} (hf : Meromorphic
   by_cases hord : meromorphicOrderAt f c = ⊤
   · refine ⟨0, 0, fun _ => 0, fun _ => 0, analyticAt_const, ?_⟩
     filter_upwards [meromorphicOrderAt_eq_top_iff.mp hord] with z hz
-    simp [hz]
+    simp only [hz, zero_mul, Finset.range_zero, neg_add_rev, Int.reduceNeg, Finset.sum_const_zero,
+      add_zero]
   · obtain ⟨g, hg_an, hg_ne, hg_eq⟩ := (meromorphicOrderAt_ne_top_iff hf).1 hord
     set n : ℤ := (meromorphicOrderAt f c).untop₀ with hn
     by_cases hn0 : 0 ≤ n
@@ -1118,7 +1121,7 @@ private lemma exists_decomposition {f : ℂ → ℂ} {c : ℂ} (hf : Meromorphic
       obtain ⟨A, h, hh, hEq⟩ := exists_principalPart (N + 1) g c hg_an
       refine ⟨A 0, N, fun k => A (k + 1), h, hh, ?_⟩
       filter_upwards [hg_eq, self_mem_nhdsWithin] with z hz hzne
-      have hzc : z ≠ c := by simpa using hzne
+      have hzc : z ≠ c := by simpa only [ne_eq, Set.mem_compl_iff, Set.mem_singleton_iff] using hzne
       rw [hz, smul_eq_mul,
         show n = -(((N + 1 : ℕ) : ℤ)) from by linarith [hN₁n], hEq z hzc,
         Finset.sum_range_succ']
@@ -1130,7 +1133,7 @@ private lemma exists_decomposition {f : ℂ → ℂ} {c : ℂ} (hf : Meromorphic
       rw [Finset.sum_congr rfl hre]
       push_cast
       ring_nf
-      rw [show (-1 : ℤ) = -(0 + 1) from by ring, ← zpow_neg_one (z - c)]
+      rw [show (-1 : ℤ) = -(0 + 1) from by ac_rfl, ← zpow_neg_one (z - c)]
       ring_nf
 
 /-- The residue of a decomposition `a·(z-c)⁻¹ + higher principal part + analytic` is `a`. -/
@@ -1211,8 +1214,10 @@ private lemma analyticAt_sub_zpow (c : ℂ) (n : ℤ) {z : ℂ} (hzc : z ≠ c) 
     intro w hw
     apply DifferentiableAt.differentiableWithinAt
     have hbase : DifferentiableAt ℂ (fun w : ℂ ↦ w - c) w := differentiableAt_id.sub_const c
-    exact hbase.zpow (Or.inl (sub_ne_zero.2 (by simpa using hw)))
-  exact hd.analyticOnNhd isOpen_compl_singleton z (by simpa using hzc)
+    exact hbase.zpow (Or.inl (sub_ne_zero.2 (by simpa only [ne_eq, Set.mem_compl_iff,
+      Set.mem_singleton_iff] using hw)))
+  exact hd.analyticOnNhd isOpen_compl_singleton z (by simpa only [Set.mem_compl_iff,
+    Set.mem_singleton_iff, ne_eq] using hzc)
 
 /-- Away from `c`, the simple pole `(w - c)⁻¹` is analytic. -/
 private lemma analyticAt_sub_inv (c : ℂ) {z : ℂ} (hzc : z ≠ c) :
@@ -1221,8 +1226,10 @@ private lemma analyticAt_sub_inv (c : ℂ) {z : ℂ} (hzc : z ≠ c) :
     intro w hw
     apply DifferentiableAt.differentiableWithinAt
     have hbase : DifferentiableAt ℂ (fun w : ℂ ↦ w - c) w := differentiableAt_id.sub_const c
-    exact hbase.inv (sub_ne_zero.2 (by simpa using hw))
-  exact hd.analyticOnNhd isOpen_compl_singleton z (by simpa using hzc)
+    exact hbase.inv (sub_ne_zero.2 (by simpa only [ne_eq, Set.mem_compl_iff,
+      Set.mem_singleton_iff] using hw))
+  exact hd.analyticOnNhd isOpen_compl_singleton z (by simpa only [Set.mem_compl_iff,
+    Set.mem_singleton_iff, ne_eq] using hzc)
 
 /-- The boundary integral of a principal part `a·(z-c)⁻¹ + higher-order terms` reduces to
 `a` times the boundary integral of the simple pole: the higher-order (order `≤ -2`) terms
@@ -1255,7 +1262,7 @@ private lemma boundaryIntegral_principalPart {L : PeriodPair} {v c : ℂ} (a : �
       intro k _
       apply continuousOn_const.mul
       refine (continuousOn_id.sub continuousOn_const).zpow₀ _ (fun z hz => ?_)
-      exact Or.inl (by simpa using sub_ne_zero.2 (hbne z hz))
+      exact Or.inl (by simpa only [Pi.sub_apply, id_eq, ne_eq] using sub_ne_zero.2 (hbne z hz))
     rw [boundaryIntegral_finsetSum hterm]
     apply Finset.sum_eq_zero
     intro k _
@@ -1762,7 +1769,7 @@ theorem IsEllipticWith.sum_meromorphicOrderAt_eq_zero (hf : L.IsEllipticWith f)
       Chudnovsky.residue_eq_zero_of_analyticAt hana
     rw [hres z] at hz0
     have huntop : (meromorphicOrderAt f z).untop₀ ≠ 0 := fun h =>
-      hzord (by rw [← WithTop.coe_untop₀_of_ne_top (hforall z), h]; simp)
+      hzord (by rw [← WithTop.coe_untop₀_of_ne_top (hforall z), h]; simp only [WithTop.coe_zero])
     exact huntop (by exact_mod_cast hz0)
   -- At the extra non-analyticity points the order (and hence the residue) is `0`.
   have hzero : ∀ z ∈ hg.finite_nonAnalytic.toFinset,
@@ -1772,7 +1779,7 @@ theorem IsEllipticWith.sum_meromorphicOrderAt_eq_zero (hf : L.IsEllipticWith f)
     have hord0 : meromorphicOrderAt f z = 0 := by
       by_contra hne
       exact hznotin ⟨hz.1, hne⟩
-    rw [hres z, hord0]; simp
+    rw [hres z, hord0]; simp only [WithTop.untop₀_zero, Int.cast_zero]
   have key : ∑ z ∈ (hf.finite_order_ne_zero h0).toFinset,
       Chudnovsky.residue (logDeriv f) z = 0 := by
     rw [Finset.sum_subset hsub hzero]; exact hsum0
@@ -1798,7 +1805,7 @@ private lemma codiscrete_add_preimage {S : Set ℂ} (l : ℂ)
     simp only [Set.mem_preimage, Set.mem_image]
     constructor
     · intro hz; exact ⟨z + l, hz, by ring⟩
-    · rintro ⟨w, hw, rfl⟩; simpa using hw
+    · rintro ⟨w, hw, rfl⟩; simpa only [neg_add_cancel_right] using hw
   rw [hEq]; exact key
 
 /-- **Workhorse lemma** (used throughout the paper, e.g. in `pstrichprod`,

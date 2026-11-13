@@ -243,7 +243,7 @@ theorem fixes_classification {f : BQF} (hf : IsPrimitive f) (hpd : IsPosDef f)
   obtain ⟨u, v, w, huvw⟩ := bezout_of_primitive hf
   have hdvd : f.a ∣ r := by
     refine ⟨u * r + v * (s - p) + w * (-q), ?_⟩
-    have hr : r * (u * f.a + v * f.b + w * f.c) = r := by rw [huvw]; ring
+    have hr : r * (u * f.a + v * f.b + w * f.c) = r := by rw [huvw]; ac_rfl
     linear_combination -hr + v * hr1 + w * hr2
   obtain ⟨k, hk⟩ := hdvd
   refine ⟨k, hk.trans (mul_comm _ _), ?_, ?_⟩

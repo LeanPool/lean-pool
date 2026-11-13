@@ -74,7 +74,7 @@ lemma deriv_eqOn_upperHalfPlaneSet {F G : ℂ → ℂ} (h : Set.EqOn F G upperHa
 /-! ### Transformation behaviour of `E₂` and of level-one modular forms under `T` and `S` -/
 
 lemma E2_slash_T : E2 ∣[(2 : ℤ)] ModularGroup.T = E2 := by
-  simp [E2_slash_action, D2_T]
+  simp only [E2_slash_action, one_div, mul_inv_rev, D2_T, smul_zero, sub_zero]
 
 private lemma denom_T (τ : ℍ) : denom ModularGroup.T τ = 1 := by
   simp [ModularGroup.denom_apply, ModularGroup.coe_T]
@@ -83,7 +83,7 @@ private lemma denom_T (τ : ℍ) : denom ModularGroup.T τ = 1 := by
 lemma E2_vadd_one (τ : ℍ) : E2 ((1 : ℝ) +ᵥ τ) = E2 τ := by
   have h := congr_fun E2_slash_T τ
   rw [SL_slash_apply, denom_T, modular_T_smul] at h
-  simpa using h
+  simpa only [Int.reduceNeg, zpow_neg, zpow_ofNat, one_pow, inv_one, mul_one] using h
 
 lemma E2_periodic_comp_ofComplex : Periodic (E2 ∘ ofComplex) 1 :=
   periodic_comp_ofComplex_of_vadd E2_vadd_one
@@ -103,7 +103,7 @@ lemma E2_S_smul (τ : ℍ) :
   have hkey : (6 : ℂ) / (π * I) = -(6 * I / π) := by
     rw [div_mul_eq_div_div, div_I]; ring
   rw [h, hkey]
-  field_simp
+  field_simp (disch := first | assumption | norm_num1 | positivity)
   ring
 
 /-- Any level-one modular form is invariant under `τ ↦ τ + 1`. -/
@@ -147,7 +147,7 @@ lemma tendsto_E2_atImInfty : Tendsto E2 atImInfty (𝓝 1) := by
   have hr0 : 0 < r := Real.exp_pos _
   have hr1 : r < 1 := by
     rw [hrdef, Real.exp_lt_one_iff]
-    have := Real.pi_pos; linarith
+    have := Real.pi_pos; linarith only [this]
   -- the constant `C = ∑ (n+1)²·rⁿ`
   have hC : Summable fun n : ℕ ↦ ((n : ℝ) + 1) ^ 2 * r ^ n := by
     have h2 : Summable fun n : ℕ ↦ (n : ℝ) ^ 2 * r ^ n :=
@@ -190,14 +190,14 @@ lemma tendsto_E2_atImInfty : Tendsto E2 atImInfty (𝓝 1) := by
       calc (ArithmeticFunction.sigma 1 (n + 1) : ℝ) * (‖q τ‖ ^ n * ‖q τ‖)
           ≤ ((n : ℝ) + 1) ^ 2 * (r ^ n * ‖q τ‖) := by
             apply mul_le_mul hσ (by gcongr) (by positivity) (by positivity)
-        _ = ((n : ℝ) + 1) ^ 2 * r ^ n * ‖q τ‖ := by ring
+        _ = ((n : ℝ) + 1) ^ 2 * r ^ n * ‖q τ‖ := by ac_rfl
     rw [hE, norm_neg, norm_mul]
     calc ‖(24 : ℂ)‖ * ‖∑' n : ℕ, (ArithmeticFunction.sigma 1 (n + 1) : ℂ) * q τ ^ (n + 1)‖
         ≤ 24 * (C * ‖q τ‖) := by
           rw [Complex.norm_ofNat]
           exact mul_le_mul_of_nonneg_left
-            ((norm_tsum_le_tsum_norm hsumnorm).trans hbound) (by norm_num)
-      _ = 24 * C * ‖q τ‖ := by ring
+            ((norm_tsum_le_tsum_norm hsumnorm).trans hbound) (by norm_num1)
+      _ = 24 * C * ‖q τ‖ := by ac_rfl
   -- squeeze
   rw [← tendsto_sub_nhds_zero_iff]
   have hev : ∀ᶠ τ : ℍ in atImInfty, ‖E2 τ - 1‖ ≤ 24 * C * ‖q τ‖ := by
@@ -205,8 +205,8 @@ lemma tendsto_E2_atImInfty : Tendsto E2 atImInfty (𝓝 1) := by
     exact ⟨1, key⟩
   have hg : Tendsto (fun τ : ℍ ↦ 24 * C * ‖q τ‖) atImInfty (𝓝 0) := by
     have hq0 : Tendsto (fun τ : ℍ ↦ ‖q τ‖) atImInfty (𝓝 0) := by
-      simpa [q] using (qParam_tendsto_atImInfty one_pos).norm
-    simpa using hq0.const_mul (24 * C)
+      simpa only [q, norm_zero] using (qParam_tendsto_atImInfty one_pos).norm
+    simpa only [mul_zero] using hq0.const_mul (24 * C)
   exact squeeze_zero_norm' hev hg
 
 lemma isBoundedAtImInfty_E2 : IsBoundedAtImInfty E2 :=
@@ -227,7 +227,7 @@ lemma tendsto_valueAtInfty_atImInfty {f : ℍ → ℂ} (hper : Periodic (f ∘ o
   have h1 := (Periodic.tendsto_at_I_inf one_pos hper h_hol h_bd).comp tendsto_coe_atImInfty
   have h2 : Tendsto f atImInfty (𝓝 (cuspFunction 1 f 0)) := by
     refine h1.congr fun τ ↦ ?_
-    simp [Function.comp_def, ofComplex_apply]
+    simp only [comp_def, comp_apply, ofComplex_apply]
   rwa [cuspFunction_apply_zero one_pos
     (analyticAt_cuspFunction_zero one_pos hper hhol hbdd) hper] at h2
 
@@ -282,7 +282,7 @@ lemma normalizedDeriv_eq_q_mul_deriv_cuspFunction (hper : Periodic (f ∘ ofComp
     have h2 := hq'.hasDerivAt
     have hq_eq : Periodic.qParam 1 (↑τ : ℂ) = q τ := rfl
     rw [hq_eq] at h2
-    simpa [mul_comm] using h2
+    simpa only [mul_comm, div_one] using h2
   have hFq : DifferentiableAt ℂ (cuspFunction 1 f) (q τ) :=
     differentiableAt_cuspFunction one_pos hper hhol hbdd (norm_q_lt_one τ)
   have hd : deriv (f ∘ ofComplex) ↑τ = deriv (cuspFunction 1 f) (q τ) * (2 * π * I * q τ) := by
@@ -301,7 +301,7 @@ lemma isZeroAtImInfty_normalizedDeriv (hper : Periodic (f ∘ ofComplex) 1)
     analyticAt_cuspFunction_zero one_pos hper hhol hbdd
   have hc : ContinuousAt (deriv (cuspFunction 1 f)) 0 := hana.deriv.continuousAt
   have hq0 : Tendsto (fun τ : ℍ ↦ q τ) atImInfty (𝓝 0) := by
-    simpa [q] using qParam_tendsto_atImInfty one_pos
+    simpa only [q] using qParam_tendsto_atImInfty one_pos
   have h : Tendsto (fun τ : ℍ ↦ q τ * deriv (cuspFunction 1 f) (q τ)) atImInfty
       (𝓝 (0 * deriv (cuspFunction 1 f) 0)) :=
     hq0.mul ((hc.tendsto).comp hq0)
@@ -351,7 +351,7 @@ lemma deriv_comp_ofComplex_S (hhol : MDiff f) {Φ : ℂ → ℂ}
 
 private lemma coe_S_smul (τ : ℍ) : ((ModularGroup.S • τ : ℍ) : ℂ) = -(↑τ : ℂ)⁻¹ := by
   rw [modular_S_smul]
-  simp [inv_neg]
+  simp only [inv_neg]
 
 /-- How `D f` transforms under `S` for a function of weight `m + 1`:
 if `f(-1/τ) = τ^(m+1)·f(τ)` then
@@ -375,7 +375,8 @@ lemma normalizedDeriv_S_smul_of_weight (hhol : MDiff f) {m : ℕ}
   have hd := deriv_comp_ofComplex_S hhol heq τ
   -- compute the derivative of the right-hand side
   have hp : HasDerivAt (fun w : ℂ ↦ w ^ (m + 1)) ((((m + 1) : ℕ) : ℂ) * (↑τ : ℂ) ^ m) ↑τ := by
-    simpa using hasDerivAt_pow (m + 1) (↑τ : ℂ)
+    simpa only [Nat.cast_add, Nat.cast_one,
+      add_tsub_cancel_right] using hasDerivAt_pow (m + 1) (↑τ : ℂ)
   have hΦ : HasDerivAt (fun w : ℂ ↦ w ^ (m + 1) * (f ∘ ofComplex) w)
       ((((m + 1) : ℕ) : ℂ) * (↑τ : ℂ) ^ m * (f ∘ ofComplex) ↑τ +
         (↑τ : ℂ) ^ (m + 1) * deriv (f ∘ ofComplex) ↑τ) ↑τ :=
@@ -412,7 +413,7 @@ lemma normalizedDeriv_E2_S_smul (τ : ℍ) :
     simp only [comp_apply, hofS, E2_S_smul ⟨w, hw⟩, ofComplex_apply_of_im_pos hw]
   have hd := deriv_comp_ofComplex_S E2_mdifferentiable heq τ
   have hp : HasDerivAt (fun w : ℂ ↦ w ^ 2) (2 * (↑τ : ℂ)) ↑τ := by
-    simpa using hasDerivAt_pow 2 (↑τ : ℂ)
+    simpa only [Nat.cast_ofNat, Nat.add_one_sub_one, pow_one] using hasDerivAt_pow 2 (↑τ : ℂ)
   have hlin : HasDerivAt (fun w : ℂ ↦ 6 / (π * I) * w) (6 / (π * I) * 1) ↑τ :=
     (hasDerivAt_id (↑τ : ℂ)).const_mul (6 / (π * I) : ℂ)
   have hΦ : HasDerivAt (fun w : ℂ ↦ w ^ 2 * (E2 ∘ ofComplex) w + 6 / (π * I) * w)
@@ -444,7 +445,7 @@ private lemma serreDerivative_slash_T {kc : ℂ} {f : ℍ → ℂ} {w : ℤ}
   rw [SL_slash_apply, denom_T, modular_T_smul]
   simp only [serreDerivative_apply]
   rw [normalizedDeriv_vadd_one (periodic_comp_ofComplex_of_vadd hf) τ, E2_vadd_one, hf]
-  simp
+  simp only [zpow_neg, one_zpow, inv_one, mul_one]
 
 /-- Boundedness at `i∞` of a Serre derivative. -/
 private lemma isBoundedAtImInfty_serre {kc : ℂ} {f : ℍ → ℂ}
@@ -475,7 +476,7 @@ private lemma tendsto_serre_atImInfty {kc : ℂ} {f : ℍ → ℂ} {a : ℂ}
     ((tendsto_const_nhds.mul tendsto_E2_atImInfty).mul hlim)
   have h := hD.sub h2
   rw [serreDerivative_eq]
-  simpa using h
+  simpa only [mul_one, zero_sub] using h
 
 /-- Slash-invariance under `S` of `∂₄E₄` (weight 6). -/
 private lemma serre_E₄_slash_S :
@@ -495,7 +496,7 @@ private lemma serre_E₄_slash_S :
     rw [zpow_neg]; norm_cast
   rw [hz]
   push_cast
-  field_simp
+  field_simp (disch := first | assumption | norm_num1 | positivity)
   ring
 
 /-- Slash-invariance under `S` of `∂₆E₆` (weight 8). -/
@@ -516,7 +517,7 @@ private lemma serre_E₆_slash_S :
     rw [zpow_neg]; norm_cast
   rw [hz]
   push_cast
-  field_simp
+  field_simp (disch := first | assumption | norm_num1 | positivity)
   ring
 
 /-- Slash-invariance under `S` of `∂₁E₂ = D E₂ - E₂²/12` (weight 4): the quasimodularity
@@ -533,7 +534,7 @@ private lemma serre_E2_slash_S :
   have hz : ((↑τ : ℂ) ^ (-(4 : ℤ))) = ((↑τ : ℂ) ^ (4 : ℕ))⁻¹ := by
     rw [zpow_neg]; norm_cast
   rw [hz]
-  field_simp
+  field_simp (disch := first | assumption | norm_num1 | positivity)
   ring
 
 /-- `∂₄E₄ = D E₄ - (1/3)·E₂·E₄`, as a modular form of weight 6 and level one. -/
@@ -604,16 +605,17 @@ private lemma E₄sq_ne_zero : E₄sq ≠ 0 := by
       rw [E₄sq_coe]; rfl
     rw [hcoe, qExpansion_mul_coeff_zero hana.continuousAt hana.continuousAt, h4, mul_one]
   rw [(ModularForm.qExpansion_eq_zero_iff one_pos one_mem_strictPeriods_SL E₄sq).mpr h] at h0
-  simp at h0
+  simp only [PowerSeries.coeff_zero_eq_constantCoeff, PowerSeries.constantCoeff_zero,
+    zero_ne_one] at h0
 
 private lemma tendsto_E₄sq_atImInfty : Tendsto (⇑E₄sq) atImInfty (𝓝 1) := by
   rw [E₄sq_coe]
-  simpa using tendsto_E₄_atImInfty.mul tendsto_E₄_atImInfty
+  simpa only [mul_one] using tendsto_E₄_atImInfty.mul tendsto_E₄_atImInfty
 
 private lemma rank_eight : Module.rank ℂ (ModularForm 𝒮ℒ (8 : ℤ)) = 1 := by
   have h := ModularForm.dimension_level_one 8 (by decide)
   rw [ite_eq_right (by decide)] at h
-  simpa using h
+  simpa only [Nat.cast_ofNat, Nat.reduceDiv, zero_add, Nat.cast_one] using h
 
 /-- Extract the scalar from a rank-one comparison by taking limits at `i∞`. -/
 private lemma smul_const_of_tendsto {k : ℤ} {e : ModularForm 𝒮ℒ k} {g : ℍ → ℂ} {c a b : ℂ}
@@ -621,7 +623,7 @@ private lemma smul_const_of_tendsto {k : ℤ} {e : ModularForm 𝒮ℒ k} {g : �
     (hg : Tendsto g atImInfty (𝓝 b)) : c * a = b := by
   have h1 : Tendsto (⇑(c • e)) atImInfty (𝓝 (c * a)) := by
     have hcoe : (⇑(c • e) : ℍ → ℂ) = fun τ ↦ c * e τ := by
-      ext τ; simp
+      ext τ; simp only [smul_apply, smul_eq_mul]
     rw [hcoe]
     exact tendsto_const_nhds.mul he
   rw [h] at h1
@@ -640,10 +642,10 @@ theorem serreDerivative_E₄_eq : serreDerivative 4 (⇑E₄) = fun τ : ℍ ↦
         (ModularFormClass.bdd_at_infty E₄) tendsto_E₄_atImInfty)
   have hcval : c = -(3⁻¹) := by
     rw [mul_one] at hval
-    rw [hval]; norm_num
+    rw [hval]; norm_num1
   funext τ
   rw [← hfun, hcval]
-  simp
+  simp only [_root_.neg_smul, neg_apply, smul_apply, smul_eq_mul, neg_mul]
 
 /-- The Serre-derivative form of Ramanujan's identity for `E₆`:
 `D E₆ - (1/2)·E₂·E₆ = -(1/2)·E₄²`. -/
@@ -659,11 +661,11 @@ theorem serreDerivative_E₆_eq :
         (ModularFormClass.bdd_at_infty E₆) tendsto_E₆_atImInfty)
   have hcval : c = -(2⁻¹) := by
     rw [mul_one] at hval
-    rw [hval]; norm_num
+    rw [hval]; norm_num1
   funext τ
   have h := congr_fun hfun τ
   rw [← h, hcval]
-  simp [E₄sq_coe]
+  simp only [_root_.neg_smul, neg_apply, smul_apply, E₄sq_coe, smul_eq_mul, neg_mul]
 
 /-- The Serre-derivative form of Ramanujan's identity for `E₂`:
 `D E₂ - (1/12)·E₂² = -(1/12)·E₄`. -/
@@ -678,10 +680,10 @@ theorem serreDerivative_E2_eq : serreDerivative 1 E2 = fun τ : ℍ ↦ -(12⁻�
         tendsto_E2_atImInfty)
   have hcval : c = -(12⁻¹) := by
     rw [mul_one] at hval
-    rw [hval]; norm_num
+    rw [hval]; norm_num1
   funext τ
   rw [← hfun, hcval]
-  simp
+  simp only [_root_.neg_smul, neg_apply, smul_apply, smul_eq_mul, neg_mul]
 
 end RankOne
 

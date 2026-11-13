@@ -84,11 +84,13 @@ def Acol (m : ℕ) [NeZero m] (b : ℤ) : GL (Fin 2) ℝ :=
 
 lemma det_AInf_pos [NeZero m] : 0 < (AInf m).det.val := by
   rw [Matrix.GeneralLinearGroup.val_det_apply, val_AInf, Matrix.det_fin_two_of]
-  simpa using (Nat.cast_pos.mpr (Nat.pos_of_ne_zero (NeZero.ne m)) : (0 : ℝ) < m)
+  simpa only [mul_one, mul_zero, sub_zero,
+    Nat.cast_pos] using (Nat.cast_pos.mpr (Nat.pos_of_ne_zero (NeZero.ne m)) : (0 : ℝ) < m)
 
 lemma det_Acol_pos [NeZero m] (b : ℤ) : 0 < (Acol m b).det.val := by
   rw [Matrix.GeneralLinearGroup.val_det_apply, val_Acol, Matrix.det_fin_two_of]
-  simpa using (Nat.cast_pos.mpr (Nat.pos_of_ne_zero (NeZero.ne m)) : (0 : ℝ) < m)
+  simpa only [one_mul, mul_zero, sub_zero,
+    Nat.cast_pos] using (Nat.cast_pos.mpr (Nat.pos_of_ne_zero (NeZero.ne m)) : (0 : ℝ) < m)
 
 /-- The `∞`-coset point: `AInf m • τ = m·τ`. -/
 lemma coe_AInf_smul [NeZero m] (τ : ℍ) : (↑(AInf m • τ) : ℂ) = m * τ := by
@@ -148,7 +150,7 @@ private lemma dvd_val_add [NeZero m] (b : ZMod m) (c : ℤ) :
     (m : ℤ) ∣ ((b.val : ℤ) + c) - ((b + (c : ZMod m)).val : ℤ) := by
   rw [← ZMod.intCast_zmod_eq_zero_iff_dvd]
   push_cast [ZMod.natCast_val, ZMod.intCast_cast, ZMod.ringHom_map_cast]
-  simp
+  simp only [ZMod.cast_id', id_eq, dvd_refl, ZMod.cast_add, ZMod.cast_intCast, sub_self]
 
 /-! ## The `T`-permutation
 
@@ -171,17 +173,18 @@ lemma f_T_smul [NeZero m] (i : Option (ZMod m)) (τ : ℍ) :
       simp only [coe_AInf_smul, UpperHalfPlane.coe_vadd]
       push_cast; ring
     rw [hpt]
-    simpa using j_vadd_int (m : ℤ) (AInf m • τ)
+    simpa only [j_def, mul_eq_mul_left_iff, OfNat.ofNat_ne_zero, or_false,
+      Int.cast_natCast] using j_vadd_int (m : ℤ) (AInf m • τ)
   | some b =>
     simp only [f_some, σT_some]
     -- first move the `+1` inside the coset offset: point equality
     have hpt : Acol m b.val • ((1 : ℝ) +ᵥ τ) = Acol m (b.val + 1) • τ := by
       apply UpperHalfPlane.ext
       simp only [coe_Acol_smul, UpperHalfPlane.coe_vadd]
-      push_cast; ring
+      push_cast; ac_rfl
     rw [hpt]
     -- then reduce `(b.val + 1)` to `(b+1).val` mod m
-    exact j_Acol_smul_congr (by simpa using dvd_val_add b 1) τ
+    exact j_Acol_smul_congr (by simpa only [ZMod.natCast_val, Int.cast_one] using dvd_val_add b 1) τ
 
 /-! ## The `S`-permutation
 
@@ -210,12 +213,12 @@ def sSfun (m : ℕ) [Fact m.Prime] : Option (ZMod m) → Option (ZMod m)
 lemma sSfun_involutive [Fact m.Prime] : Function.Involutive (sSfun m) := by
   intro i
   cases i with
-  | none => simp [sSfun]
+  | none => simp only [sSfun, ↓reduceIte]
   | some b =>
     by_cases hb : b = 0
-    · simp [sSfun, hb]
+    · simp only [sSfun, hb, ↓reduceIte]
     · have hb' : -b⁻¹ ≠ 0 := neg_ne_zero.mpr (inv_ne_zero hb)
-      simp [sSfun, hb, hb', inv_neg, inv_inv]
+      simp only [sSfun, hb, ↓reduceIte, hb', inv_neg, inv_inv, neg_neg]
 
 /-- The `S`-permutation as an `Equiv.Perm`. -/
 def σS (m : ℕ) [Fact m.Prime] : Equiv.Perm (Option (ZMod m)) := sSfun_involutive.toPerm
@@ -239,14 +242,16 @@ lemma f_S_smul [Fact m.Prime] (i : Option (ZMod m)) (τ : ℍ) :
   | some b =>
     by_cases hb : b = 0
     · subst hb
-      have htarget : σS m (some (0 : ZMod m)) = none := by simp [σS, sSfun]
+      have htarget : σS m (some (0 : ZMod m)) = none := by simp only [σS,
+        Function.Involutive.coe_toPerm, sSfun, ↓reduceIte]
       rw [f_some, j_smul_S_mul, htarget, f_none]
       -- matrix identity  Acol 0 · S = S · AInf
       refine j_matrix_transfer ModularGroup.S _ (AInf m) τ ?_
       apply Matrix.GeneralLinearGroup.ext
       simp [Fin.forall_fin_two, val_AInf, val_Acol, Matrix.mul_apply, Fin.sum_univ_two,
         ModularGroup.coe_S]
-    · have htarget : σS m (some b) = some (-b⁻¹) := by simp [σS, sSfun, hb]
+    · have htarget : σS m (some b) = some (-b⁻¹) := by simp only [σS,
+      Function.Involutive.coe_toPerm, sSfun, hb, ↓reduceIte]
       rw [f_some, j_smul_S_mul, htarget, f_some]
       -- integers  B = b.val,  B' = (-b⁻¹).val,  and the quotient q with  B·B' + 1 = m·q
       set B : ℤ := (b.val : ℤ) with hB

@@ -64,12 +64,12 @@ the endpoint rationals below satisfy `lo² < 163 < hi²` (verified exactly). -/
 /-- Lower bound for `√163` (21 significant digits). To be proved from
 `lo² < 163` via `Real.lt_sqrt` / `nlinarith` (PLAN D1). -/
 theorem sqrt_163_gt : 12.7671453348037046617 < Real.sqrt 163 := by
-  rw [Real.lt_sqrt (by norm_num)]; norm_num
+  rw [Real.lt_sqrt (by norm_num1)]; norm_num1
 
 /-- Upper bound for `√163` (21 significant digits). To be proved from
 `163 < hi²` via `Real.sqrt_lt'` / `nlinarith` (PLAN D1). -/
 theorem sqrt_163_lt : Real.sqrt 163 < 12.7671453348037046618 := by
-  rw [Real.sqrt_lt' (by norm_num)]; norm_num
+  rw [Real.sqrt_lt' (by norm_num1)]; norm_num1
 
 /-! ### High-precision internal bounds (Phase D1 certificates)
 
@@ -185,12 +185,12 @@ private theorem pi_lt_d38 :
 private theorem sqrt_163_gt_d38 :
     (638357266740185233085547600489044617369/50000000000000000000000000000000000000 : ℝ)
       < Real.sqrt 163 := by
-  rw [Real.lt_sqrt (by norm_num)]; norm_num
+  rw [Real.lt_sqrt (by norm_num1)]; norm_num1
 
 /-- Internal 38-digit upper bound for `√163`. -/
 private theorem sqrt_163_lt_d38 : Real.sqrt 163 <
     (1276714533480370466171095200978089234739/100000000000000000000000000000000000000 : ℝ) := by
-  rw [Real.sqrt_lt' (by norm_num)]; norm_num
+  rw [Real.sqrt_lt' (by norm_num1)]; norm_num1
 
 /-- Rational lower bound for `x := π·√163`: `x_lo < π·√163`. -/
 private theorem x_lo_lt :
@@ -200,9 +200,9 @@ private theorem x_lo_lt :
       (314159265358979323846264338327950288419/100000000000000000000000000000000000000 : ℝ)
         * (638357266740185233085547600489044617369/50000000000000000000000000000000000000 : ℝ)
         < π * Real.sqrt 163 :=
-    mul_lt_mul'' pi_gt_d38 sqrt_163_gt_d38 (by norm_num) (by norm_num)
+    mul_lt_mul'' pi_gt_d38 sqrt_163_gt_d38 (by norm_num1) (by norm_num1)
   refine lt_of_le_of_lt ?_ h
-  norm_num
+  norm_num1
 
 /-- Rational upper bound for `x := π·√163`: `π·√163 < x_hi`. -/
 private theorem lt_x_hi : π * Real.sqrt 163 <
@@ -212,7 +212,7 @@ private theorem lt_x_hi : π * Real.sqrt 163 <
         * (1276714533480370466171095200978089234739/100000000000000000000000000000000000000 : ℝ) :=
     mul_lt_mul'' pi_lt_d38 sqrt_163_lt_d38 Real.pi_pos.le (Real.sqrt_nonneg 163)
   refine lt_of_lt_of_le h ?_
-  norm_num
+  norm_num1
 
 /-- Upper bound for `exp(x_hi/128)` from the degree-26 Taylor remainder. -/
 private theorem exp_b_le :
@@ -222,10 +222,10 @@ private theorem exp_b_le :
         ℝ) := by
   have hb := Real.exp_bound'
     (x := (4010916999113251975535008362290414005397/12800000000000000000000000000000000000000 : ℝ))
-    (by norm_num) (by norm_num) (n := 26)
-    (by norm_num)
+    (by norm_num1) (by norm_num1) (n := 26)
+    (by norm_num1)
   refine hb.trans ?_
-  norm_num [Finset.sum_range_succ, Nat.factorial]
+  norm_num only [Finset.sum_range_succ, Nat.factorial]
 
 /-- Lower bound for `exp(x_lo/128)` from the degree-26 Taylor partial sum. -/
 private theorem le_exp_a :
@@ -233,8 +233,8 @@ private theorem le_exp_a :
       ℝ) ≤
     Real.exp
       (200545849955662598776750418114520700269/640000000000000000000000000000000000000 : ℝ) := by
-  refine le_trans ?_ (Real.sum_le_exp_of_nonneg (by norm_num) 26)
-  norm_num [Finset.sum_range_succ, Nat.factorial]
+  refine le_trans ?_ (Real.sum_le_exp_of_nonneg (by norm_num1) 26)
+  norm_num only [Finset.sum_range_succ, Nat.factorial]
 
 /-- `exp(π·√163) < (exp(x_hi/128))^128`-bound. -/
 private theorem exp_pi_sqrt_163_lt_Ubig :
@@ -255,7 +255,7 @@ private theorem exp_pi_sqrt_163_lt_Ubig :
     rw [show (4010916999113251975535008362290414005397/100000000000000000000000000000000000000 : ℝ)
         = (128 : ℕ)
         * (4010916999113251975535008362290414005397/12800000000000000000000000000000000000000 : ℝ)
-        by push_cast; norm_num, Real.exp_nat_mul]
+        by push_cast; norm_num1, Real.exp_nat_mul]
   rw [e]
   exact pow_le_pow_left₀ (Real.exp_nonneg _) exp_b_le 128
 
@@ -277,9 +277,9 @@ private theorem Lbig_lt_exp_pi_sqrt_163 :
     rw [show (200545849955662598776750418114520700269/5000000000000000000000000000000000000 : ℝ)
         = (128 : ℕ)
         * (200545849955662598776750418114520700269/640000000000000000000000000000000000000 : ℝ)
-        by push_cast; norm_num, Real.exp_nat_mul]
+        by push_cast; norm_num1, Real.exp_nat_mul]
   rw [e]
-  exact pow_le_pow_left₀ (by norm_num) le_exp_a 128
+  exact pow_le_pow_left₀ (by norm_num1) le_exp_a 128
 
 /-! ### Bounds for `e^{-π√163}`
 
@@ -301,7 +301,7 @@ theorem exp_neg_pi_sqrt_163_gt :
         ℝ) ^ 128 := by positivity
   have hEpos : (0 : ℝ) < Real.exp (π * Real.sqrt 163) := Real.exp_pos _
   refine lt_of_le_of_lt ?_ ((inv_lt_inv₀ hUpos hEpos).mpr hE)
-  rw [← one_div, le_div_iff₀ hUpos]; norm_num
+  rw [← one_div, le_div_iff₀ hUpos]; norm_num1
 
 /-- Upper bound for `e^{-π√163}` (30 significant digits), i.e.
 `e^{-π√163} < 380898093700765233822623151648 / 10^47`.
@@ -317,7 +317,7 @@ theorem exp_neg_pi_sqrt_163_lt :
         ℝ) ^ 128 := by positivity
   have hEpos : (0 : ℝ) < Real.exp (π * Real.sqrt 163) := Real.exp_pos _
   refine lt_of_lt_of_le ((inv_lt_inv₀ hEpos hLpos).mpr hE) ?_
-  rw [← one_div, div_le_iff₀ hLpos]; norm_num
+  rw [← one_div, div_le_iff₀ hLpos]; norm_num1
 
 /-! ### The nome at `τ₁₆₃` -/
 

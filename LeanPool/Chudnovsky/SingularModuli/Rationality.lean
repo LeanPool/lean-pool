@@ -112,7 +112,7 @@ def cmGL (n : ℤ) : GL (Fin 2) ℝ :=
 
 lemma cmGL_det_pos (n : ℤ) : 0 < (cmGL n).det.val := by
   rw [Matrix.GeneralLinearGroup.val_det_apply, val_cmGL, Matrix.det_fin_two_of]
-  nlinarith [sq_nonneg (2 * (n : ℝ) + 1)]
+  linarith [sq_nonneg (2 * (n : ℝ) + 1)]
 
 /-- **`M_n` fixes `τ₁₆₃`** as a Möbius transformation. -/
 lemma cmGL_smul_eq (n : ℤ) : cmGL n • τ₁₆₃ = τ₁₆₃ := by
@@ -157,7 +157,7 @@ lemma cm_coset_rel (n : ℤ) [NeZero m] (hm : (m : ℤ) = n ^ 2 + n + 41) :
   have hdvd : (m : ℤ) ∣ ((n : ZMod m).val : ℤ) - n := by
     rw [← ZMod.intCast_zmod_eq_zero_iff_dvd]
     push_cast [ZMod.natCast_val, ZMod.intCast_cast, ZMod.ringHom_map_cast]
-    simp
+    simp only [dvd_refl, ZMod.cast_intCast, sub_self]
   rw [j_Acol_smul_congr hdvd τ₁₆₃]
   exact cm_coset_val n hm
 
@@ -313,7 +313,7 @@ lemma fixes_of_coset {e f g : ℤ} (γ : SL(2, ℤ)) {Aτ τ' : ℍ}
       simp only [eq_intCast] at h0
       push_cast at h0
       obtain ⟨hc0, hd0⟩ := QF.int_lin_eq_zero Aτ h0
-      rw [hc0, hd0] at hdet; simp at hdet
+      rw [hc0, hd0] at hdet; simp only [Fin.isValue, mul_zero, sub_self, zero_ne_one] at hdet
     rw [eq_div_iff hden, hW] at hco
     simp only [eq_intCast] at hco
     simp only [QF.Fixes]
@@ -335,14 +335,14 @@ lemma exists_fixes_of_coincidence [Fact m.Prime] {τ' : ℍ} {i : Option (ZMod m
     obtain ⟨γ, hγ⟩ := j_injective_mod_Γ hj
     obtain ⟨p, q, r, s, hfix, hdet⟩ :=
       fixes_of_coset (e := (m : ℤ)) (f := 0) (g := 1) γ
-        (by rw [coe_AInf_smul]; push_cast; ring) (by norm_num) hγ.symm
+        (by rw [coe_AInf_smul]; push_cast; ring) (by norm_num only) hγ.symm
     exact ⟨p, q, r, s, hfix, by rw [hdet]; ring⟩
   | some b =>
     have hj : j (Acol m (b.val : ℤ) • τ') = j τ' := by rw [← f_some]; exact h
     obtain ⟨γ, hγ⟩ := j_injective_mod_Γ hj
     obtain ⟨p, q, r, s, hfix, hdet⟩ :=
       fixes_of_coset (e := 1) (f := (b.val : ℤ)) (g := (m : ℤ)) γ
-        (by rw [coe_Acol_smul]; push_cast; ring) (by exact_mod_cast hmpos.ne') hγ.symm
+        (by rw [coe_Acol_smul]; push_cast; ring) (by exact Nat.cast_ne_zero.mpr hmpos.ne') hγ.symm
     exact ⟨p, q, r, s, hfix, by rw [hdet]; ring⟩
 
 /-- **(C4), packaged.** A coset coincidence at `τ′` produces a positive-definite integer form
@@ -397,9 +397,9 @@ theorem cm_bridge {τ' : ℍ}
     (h43 : ∃ i : Option (ZMod 43), f 43 i τ' = j τ')
     (h61 : ∃ i : Option (ZMod 61), f 61 i τ' = j τ') :
     ∃ M : SL(2, ℤ), M • τ' = τ₁₆₃ := by
-  have : Fact (Nat.Prime 41) := ⟨by norm_num⟩
-  have : Fact (Nat.Prime 43) := ⟨by norm_num⟩
-  have : Fact (Nat.Prime 61) := ⟨by norm_num⟩
+  have : Fact (Nat.Prime 41) := ⟨by norm_num1⟩
+  have : Fact (Nat.Prime 43) := ⟨by norm_num1⟩
+  have : Fact (Nat.Prime 61) := ⟨by norm_num1⟩
   obtain ⟨i41, hi41⟩ := h41
   obtain ⟨i43, hi43⟩ := h43
   obtain ⟨i61, hi61⟩ := h61
@@ -457,12 +457,12 @@ lemma phi_coincidence (n : ℤ) (mm : ℕ) [NeZero mm] [Fact mm.Prime] (hm : (mm
 `j τ₁₆₃`, the value `j τ₁₆₃` is rational. -/
 theorem j_τ₁₆₃_rational_of (hsurj : Function.Surjective (j : ℍ → ℂ))
     (hint : IsIntegral ℤ (j τ₁₆₃)) : ∃ r : ℚ, j τ₁₆₃ = (r : ℂ) := by
-  have : NeZero (41 : ℕ) := ⟨by norm_num⟩
-  have : NeZero (43 : ℕ) := ⟨by norm_num⟩
-  have : NeZero (61 : ℕ) := ⟨by norm_num⟩
-  have : Fact (Nat.Prime 41) := ⟨by norm_num⟩
-  have : Fact (Nat.Prime 43) := ⟨by norm_num⟩
-  have : Fact (Nat.Prime 61) := ⟨by norm_num⟩
+  have : NeZero (41 : ℕ) := ⟨by norm_num1⟩
+  have : NeZero (43 : ℕ) := ⟨by norm_num1⟩
+  have : NeZero (61 : ℕ) := ⟨by norm_num1⟩
+  have : Fact (Nat.Prime 41) := ⟨by norm_num1⟩
+  have : Fact (Nat.Prime 43) := ⟨by norm_num1⟩
+  have : Fact (Nat.Prime 61) := ⟨by norm_num1⟩
   set j₀ : ℂ := j τ₁₆₃ with hj0
   -- `j₀` is integral (hence algebraic) over `ℚ`.
   have hintQ : IsIntegral ℚ j₀ := by
@@ -474,9 +474,9 @@ theorem j_τ₁₆₃_rational_of (hsurj : Function.Surjective (j : ℍ → ℂ)
   have hallroots : ∀ x : ℂ, (aeval x) (minpoly ℚ j₀) = 0 → x = j₀ := by
     intro x hx
     obtain ⟨τ', hτ'⟩ := hsurj x
-    have h41 := phi_coincidence 0 41 (by norm_num) hx hτ'
-    have h43 := phi_coincidence 1 43 (by norm_num) hx hτ'
-    have h61 := phi_coincidence 4 61 (by norm_num) hx hτ'
+    have h41 := phi_coincidence 0 41 (by norm_num1) hx hτ'
+    have h43 := phi_coincidence 1 43 (by norm_num1) hx hτ'
+    have h61 := phi_coincidence 4 61 (by norm_num1) hx hτ'
     obtain ⟨M, hM⟩ := cm_bridge h41 h43 h61
     rw [← hτ', hj0, ← hM, j_smul]
   -- Finish: all roots equal `j₀`, so `j₀` is rational (Vieta on the subleading coefficient).

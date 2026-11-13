@@ -101,7 +101,7 @@ theorem kummerB_satisfiesPicardFuchs :
   obtain ⟨hznorm, hzim⟩ := hz
   -- Basic numerical facts on the region `S = {1 < ‖z‖, im z ≠ 0}`.
   have hz0 : z ≠ 0 := by
-    intro h; rw [h, norm_zero] at hznorm; exact absurd hznorm (by norm_num)
+    intro h; rw [h, norm_zero] at hznorm; exact absurd hznorm (by norm_num only)
   have hz1 : z ≠ 1 := by
     intro h; rw [h, norm_one] at hznorm; exact absurd hznorm (lt_irrefl 1)
   have h1z : (1 : ℂ) - z ≠ 0 := sub_ne_zero.2 (Ne.symm hz1)
@@ -144,7 +144,7 @@ theorem kummerB_satisfiesPicardFuchs :
     intro w hw
     obtain ⟨hwn, hwim⟩ := hw
     have hw0 : w ≠ 0 := by
-      intro h; rw [h, norm_zero] at hwn; exact absurd hwn (by norm_num)
+      intro h; rw [h, norm_zero] at hwn; exact absurd hwn (by norm_num only)
     have hw1 : w ≠ 1 := by
       intro h; rw [h, norm_one] at hwn; exact lt_irrefl 1 hwn
     have hwslit : w ∈ Complex.slitPlane := Or.inr hwim
@@ -195,7 +195,7 @@ theorem kummerB_satisfiesPicardFuchs :
   rw [heqEv.deriv_eq, hderivKummer z ⟨hznorm, hzim⟩, hHD_D1.deriv]
   simp only [hD1def, kummerB, id_eq, Pi.mul_apply, Pi.neg_apply, Pi.inv_apply, Function.comp_apply]
   rw [eZ1z, eW1z, hF2]
-  field_simp
+  field_simp (disch := first | assumption | norm_num1 | positivity)
   ring
 
 /-- On `Region`, the argument `1/J(τ)` of the hypergeometric function lies in the open unit
@@ -342,7 +342,7 @@ private lemma hasDerivAt_invJ (τ : ℍ) (h4 : E₄ τ ≠ 0) :
   have hq : HasDerivAt
       (fun z => (E₄ (ofComplex z) ^ 3 - E₆ (ofComplex z) ^ 2) / E₄ (ofComplex z) ^ 3) _ ↑τ :=
     hnum.div hden hden0
-  convert hq using 1
+  refine hq.congr_deriv (Eq.symm ?_)
   simp only [Pi.pow_apply, Pi.sub_apply, ofComplex_apply]
   rw [inv_J_eq]
   field_simp
@@ -395,7 +395,7 @@ private lemma hasDerivAt_YhC (τ : ℍ) (h4 : E₄ τ ≠ 0) (h6 : E₆ τ ≠ 0
           + 1 / 12 * (5 / 12) * hyp2F1 (J τ)⁻¹) / ((J τ)⁻¹ * ((J τ)⁻¹ - 1)) := by
     rw [eq_div_iff hden]
     linear_combination hODE
-  convert h using 1
+  refine h.congr_deriv (Eq.symm ?_)
   rw [XhC_apply, YhC_apply, hF2]
   simp only [m22]
   rw [inv_J_sub_one h4, inv_J_eq]
@@ -412,7 +412,7 @@ private lemma hasDerivAt_XtC (τ : ℍ) (hs : E₄ τ ∈ Complex.slitPlane) (h6
     rw [ofComplex_apply]
     exact hs
   have h : HasDerivAt XtC _ ↑τ := (hasDerivAt_E₄C τ).cpow_const (c := (1 / 4 : ℂ)) hsC
-  convert h using 1
+  refine h.congr_deriv (Eq.symm ?_)
   simp only [ofComplex_apply]
   rw [YtC_apply, Complex.cpow_sub _ _ h4, Complex.cpow_one, inv_J_eq]
   field_simp
@@ -436,9 +436,9 @@ private lemma hasDerivAt_YtC (τ : ℍ) (hs : E₄ τ ∈ Complex.slitPlane) (h6
     (12 : ℂ)).mul (hasDerivAt_E₆C τ)
   have hden0 : 12 * (E₄ (ofComplex ↑τ) ^ 3 - E₆ (ofComplex ↑τ) ^ 2) * E₆ (ofComplex ↑τ) ≠ 0 := by
     rw [ofComplex_apply]
-    exact mul_ne_zero (mul_ne_zero (by norm_num) hB) h6
+    exact mul_ne_zero (mul_ne_zero (by norm_num only) hB) h6
   have h : HasDerivAt YtC _ ↑τ := hnum.div hden hden0
-  convert h using 1
+  refine h.congr_deriv (Eq.symm ?_)
   simp only [Pi.pow_apply, Pi.sub_apply, Pi.mul_apply, ofComplex_apply]
   rw [XtC_apply, YtC_apply]
   simp only [m22]
@@ -455,7 +455,7 @@ private lemma hasDerivAt_WrC (τ : ℍ) (hs : E₄ τ ∈ Complex.slitPlane) (h6
   have h : HasDerivAt WrC _ ↑τ :=
     ((hasDerivAt_XhC τ h4 hu).mul (hasDerivAt_YtC τ hs h6)).sub
       ((hasDerivAt_YhC τ h4 h6 hu).mul (hasDerivAt_XtC τ hs h6))
-  convert h using 1
+  refine h.congr_deriv (Eq.symm ?_)
   rw [WrC_apply]
   ring
 
@@ -465,12 +465,12 @@ All limits are soft consequences of `E₂, E₄, E₆ → 1` except `Ytilde → 
 cusp-function factorization of `D E₄` and `kfun → 1`. -/
 
 private lemma tendsto_q_zero : Tendsto (fun τ : ℍ => q τ) atImInfty (𝓝 0) := by
-  simpa [q] using qParam_tendsto_atImInfty one_pos
+  simpa only [q] using qParam_tendsto_atImInfty one_pos
 
 private lemma tendsto_invJ : Tendsto (fun τ : ℍ => (J τ)⁻¹) atImInfty (𝓝 0) := by
   have h := ((tendsto_E₄_atImInfty.pow 3).sub (tendsto_E₆_atImInfty.pow 2)).div
-    (tendsto_E₄_atImInfty.pow 3) (by norm_num)
-  norm_num at h
+    (tendsto_E₄_atImInfty.pow 3) (by norm_num only)
+  norm_num only at h
   exact h.congr fun τ => (inv_J_eq τ).symm
 
 private lemma tendsto_XhC : Tendsto (fun τ : ℍ => XhC ↑τ) atImInfty (𝓝 1) := by
@@ -499,7 +499,7 @@ private lemma deriv_hyp2F1_zero : deriv hyp2F1 0 = 5 / 144 := by
   rw [hat.deriv, ordinaryHypergeometricSeries_apply_eq]
   simp only [ascPochhammer_one, Polynomial.eval_X, Nat.factorial_one, Nat.cast_one, inv_one,
     one_mul, one_pow, smul_eq_mul, mul_one]
-  norm_num
+  norm_num only
 
 private lemma tendsto_YhC : Tendsto (fun τ : ℍ => YhC ↑τ) atImInfty (𝓝 (5 / 144)) := by
   have hF : ContinuousAt (deriv hyp2F1) 0 :=
@@ -534,14 +534,15 @@ private lemma YtC_eq (τ : ℍ) :
     field_simp
   rcases eq_or_ne (E₆ τ) 0 with h6 | h6
   · rw [YtC_apply, h6]
-    simp
+    simp only [one_div, sub_zero, ne_eq, OfNat.ofNat_ne_zero, not_false_eq_true, zero_pow, mul_zero,
+      div_zero]
   · have hk : kfun τ ≠ 0 :=
-      div_ne_zero (E₄_cube_sub_E₆_sq_ne_zero τ) (mul_ne_zero (by norm_num) hq)
+      div_ne_zero (E₄_cube_sub_E₆_sq_ne_zero τ) (mul_ne_zero (by norm_num only) hq)
     have hd1 : (12 : ℂ) * (1728 * q τ * kfun τ) * E₆ τ ≠ 0 :=
-      mul_ne_zero (mul_ne_zero (by norm_num)
-        (mul_ne_zero (mul_ne_zero (by norm_num) hq) hk)) h6
+      mul_ne_zero (mul_ne_zero (by norm_num only)
+        (mul_ne_zero (mul_ne_zero (by norm_num only) hq) hk)) h6
     have hd2 : (6912 : ℂ) * kfun τ * E₆ τ ≠ 0 :=
-      mul_ne_zero (mul_ne_zero (by norm_num) hk) h6
+      mul_ne_zero (mul_ne_zero (by norm_num only) hk) h6
     rw [YtC_apply, XtC_apply, hkey, hB, div_eq_div_iff hd1 hd2]
     ring
 
@@ -550,15 +551,16 @@ private lemma tendsto_kfun : Tendsto kfun atImInfty (𝓝 1) := by
     have h1 : Tendsto (fun τ : ℍ => (1 : ℂ) - q τ - q τ ^ 2) atImInfty (𝓝 (1 - 0 - 0 ^ 2)) :=
       (tendsto_const_nhds.sub tendsto_q_zero).sub (tendsto_q_zero.pow 2)
     have h2 := h1.pow 24
-    norm_num at h2
+    norm_num only at h2
     exact h2.congr fun τ => by rw [ktilde]
   have hdiff : Tendsto (fun τ : ℍ => kfun τ - ktilde τ) atImInfty (𝓝 0) := by
     have hev : ∀ᶠ τ : ℍ in atImInfty, ‖kfun τ - ktilde τ‖ ≤ 365.6 * ‖q τ‖ ^ 2 := by
       rw [eventually_iff, atImInfty_mem]
-      exact ⟨2, fun τ hτ => lemk (lt_of_lt_of_le (by norm_num) hτ)⟩
+      exact ⟨2, fun τ hτ => lemk (lt_of_lt_of_le (by norm_num only) hτ)⟩
     have hg : Tendsto (fun τ : ℍ => 365.6 * ‖q τ‖ ^ 2) atImInfty (𝓝 0) := by
       have h := (tendsto_q_zero.norm.pow 2).const_mul (365.6 : ℝ)
-      simpa using h
+      simpa only [norm_zero, ne_eq, OfNat.ofNat_ne_zero, not_false_eq_true, zero_pow,
+        mul_zero] using h
     exact squeeze_zero_norm' hev hg
   have h := hkt.add hdiff
   rw [add_zero] at h
@@ -571,21 +573,21 @@ private lemma tendsto_YtC : Tendsto (fun τ : ℍ => YtC ↑τ) atImInfty (𝓝 
   have hΦ0 : deriv (cuspFunction 1 ⇑E₄) 0 = 240 := by
     have h := ModularForm.E₄_qExpansion_coeff_one
     rw [qExpansion_coeff] at h
-    simpa [iteratedDeriv_one] using h
+    simpa only [Nat.factorial_one, Nat.cast_one, inv_one, iteratedDeriv_one, one_mul] using h
   have hΦ : Tendsto (fun τ : ℍ => deriv (cuspFunction 1 ⇑E₄) (q τ)) atImInfty (𝓝 240) := by
     have h := (hΦana.deriv.continuousAt.tendsto).comp tendsto_q_zero
     rwa [hΦ0] at h
   have hnum := (tendsto_XtC.mul (tendsto_E₄_atImInfty.pow 3)).mul hΦ
   have hden : Tendsto (fun τ : ℍ => 6912 * kfun τ * E₆ τ) atImInfty (𝓝 (6912 * 1 * 1)) :=
     (tendsto_kfun.const_mul (6912 : ℂ)).mul tendsto_E₆_atImInfty
-  have h := hnum.div hden (by norm_num)
-  have hval : ((1 * 1 ^ 3 * 240 : ℂ)) / (6912 * 1 * 1) = 5 / 144 := by norm_num
+  have h := hnum.div hden (by norm_num only)
+  have hval : ((1 * 1 ^ 3 * 240 : ℂ)) / (6912 * 1 * 1) = 5 / 144 := by norm_num only
   rw [hval] at h
   exact h.congr fun τ => (YtC_eq τ).symm
 
 private lemma tendsto_WrC : Tendsto (fun τ : ℍ => WrC ↑τ) atImInfty (𝓝 0) := by
   have h := (tendsto_XhC.mul tendsto_YtC).sub (tendsto_YhC.mul tendsto_XtC)
-  norm_num at h
+  norm_num only at h
   exact h.congr fun τ => by rw [WrC_apply]
 
 private lemma tendsto_m22 : Tendsto (fun τ : ℍ => m22 τ) atImInfty (𝓝 (-1)) := by
@@ -606,7 +608,7 @@ private lemma near_one_slitPlane {z : ℂ} (h : ‖z - 1‖ < 1 / 2) : z ∈ Com
 private lemma near_one_ne_zero {z : ℂ} (h : ‖z - 1‖ < 1 / 2) : z ≠ 0 := by
   intro h0
   rw [h0, zero_sub, norm_neg, norm_one] at h
-  norm_num at h
+  norm_num only at h
 
 private lemma re_le_neg_half {z : ℂ} (h : ‖z + 1‖ < 1 / 2) : z.re ≤ -(1 / 2) := by
   have h1 : |(z + 1).re| ≤ ‖z + 1‖ := Complex.abs_re_le_norm _
@@ -625,20 +627,20 @@ private lemma eventually_good : ∀ᶠ τ : ℍ in atImInfty,
     E₄ τ ∈ Complex.slitPlane ∧ E₆ τ ≠ 0 ∧ J τ ≠ 0 ∧ ‖(J τ)⁻¹‖ < 1 ∧ XhC ↑τ ≠ 0 ∧
       (m22 τ).re ≤ -(1 / 2) := by
   have h₁ : ∀ᶠ τ : ℍ in atImInfty, ‖E₄ τ - 1‖ < 1 / 2 := by
-    have h := Metric.tendsto_nhds.mp tendsto_E₄_atImInfty (1 / 2) (by norm_num)
-    simpa [dist_eq_norm] using h
+    have h := Metric.tendsto_nhds.mp tendsto_E₄_atImInfty (1 / 2) (by norm_num only)
+    simpa only [one_div, dist_eq_norm] using h
   have h₂ : ∀ᶠ τ : ℍ in atImInfty, ‖E₆ τ - 1‖ < 1 / 2 := by
-    have h := Metric.tendsto_nhds.mp tendsto_E₆_atImInfty (1 / 2) (by norm_num)
-    simpa [dist_eq_norm] using h
+    have h := Metric.tendsto_nhds.mp tendsto_E₆_atImInfty (1 / 2) (by norm_num only)
+    simpa only [one_div, dist_eq_norm] using h
   have h₃ : ∀ᶠ τ : ℍ in atImInfty, ‖(J τ)⁻¹‖ < 1 := by
     have h := Metric.tendsto_nhds.mp tendsto_invJ 1 one_pos
-    simpa [dist_eq_norm] using h
+    simpa only [norm_inv, dist_eq_norm, sub_zero] using h
   have h₄ : ∀ᶠ τ : ℍ in atImInfty, ‖XhC ↑τ - 1‖ < 1 / 2 := by
-    have h := Metric.tendsto_nhds.mp tendsto_XhC (1 / 2) (by norm_num)
-    simpa [dist_eq_norm] using h
+    have h := Metric.tendsto_nhds.mp tendsto_XhC (1 / 2) (by norm_num only)
+    simpa only [one_div, dist_eq_norm] using h
   have h₅ : ∀ᶠ τ : ℍ in atImInfty, ‖m22 τ + 1‖ < 1 / 2 := by
-    have h := Metric.tendsto_nhds.mp tendsto_m22 (1 / 2) (by norm_num)
-    simpa [dist_eq_norm, sub_neg_eq_add] using h
+    have h := Metric.tendsto_nhds.mp tendsto_m22 (1 / 2) (by norm_num only)
+    simpa only [one_div, dist_eq_norm, sub_neg_eq_add] using h
   filter_upwards [h₁, h₂, h₃, h₄, h₅] with τ k₁ k₂ k₃ k₄ k₅
   exact ⟨near_one_slitPlane k₁, near_one_ne_zero k₂, J_ne_zero (near_one_ne_zero k₁), k₃,
     near_one_ne_zero k₄, re_le_neg_half k₅⟩
@@ -659,7 +661,7 @@ private lemma E₄_ne_zero_of_mem_Region {τ : ℍ} (hτ : τ ∈ Region) : E₄
   have hq3 : ‖q τ‖ ^ 3 ≤ (0.000389 : ℝ) ^ 3 := pow_le_pow_left₀ hqpos.le hq.le 3
   intro h0
   rw [h0, zero_sub, norm_neg] at h2
-  nlinarith [hq3]
+  linarith [hq3]
 
 private lemma im_add_vert (z₀ : ℂ) (t : ℝ) : (z₀ + ↑t * Complex.I).im = z₀.im + t := by
   simp [Complex.add_im, Complex.mul_im]
@@ -681,7 +683,7 @@ private lemma tendsto_vertical {z₀ : ℂ} (h : 0 < z₀.im) :
   exact tendsto_comap_iff.mpr key
 
 /-- **Vanishing of the Wronskian** on `{Im z > A}`: a solution of `D w = M₂₂ w` with
-`Re M₂₂ ≤ -1/2` has `‖w‖²·e^{-2πt}` nondecreasing along vertical lines, so `w → 0` at
+`Re M₂₂ ≤ -1/2` has nondecreasing squared modulus along vertical lines, so `w → 0` at
 `i∞` forces `w = 0`. -/
 private lemma WrC_eq_zero {A : ℝ} (hA : 2 ≤ A)
     (hgood : ∀ σ : ℍ, A ≤ σ.im →
@@ -712,7 +714,8 @@ private lemma WrC_eq_zero {A : ℝ} (hA : 2 ≤ A)
       exact coe_ofComplex (him t ht)
     rw [hcoe] at hW
     have hline : HasDerivAt (fun w : ℂ => z₀ + w * Complex.I) Complex.I ((t : ℝ) : ℂ) := by
-      simpa using ((hasDerivAt_id ((t : ℝ) : ℂ)).mul_const Complex.I).const_add z₀
+      simpa only [hasDerivAt_const_add_iff, id_eq,
+        one_mul] using ((hasDerivAt_id ((t : ℝ) : ℂ)).mul_const Complex.I).const_add z₀
     have hcc := hW.comp ((t : ℝ) : ℂ) hline
     have hcomp : HasDerivAt (fun s : ℝ => WrC (z₀ + ↑s * Complex.I))
         (2 * ↑π * Complex.I * (m22 σ * WrC (z₀ + ↑t * Complex.I)) * Complex.I) t :=
@@ -731,43 +734,27 @@ private lemma WrC_eq_zero {A : ℝ} (hA : 2 ≤ A)
     rwa [show -(2 * ↑π) * (m22 (ofComplex (z₀ + ↑t * Complex.I)) * WrC (z₀ + ↑t * Complex.I))
         = (-(2 * ↑π) * m22 (ofComplex (z₀ + ↑t * Complex.I))) * WrC (z₀ + ↑t * Complex.I)
         from (mul_assoc _ _ _).symm, real_inner_mul_self] at h
-  -- the weighted modulus `g(t) = r(t)·e^{-2πt}` and its monotonicity
-  have hgd : ∀ t : ℝ, 0 ≤ t →
-      HasDerivAt (fun s : ℝ => ‖WrC (z₀ + ↑s * Complex.I)‖ ^ 2 * Real.exp (-(2 * π) * s))
-        (2 * ((-(2 * ↑π) * m22 (ofComplex (z₀ + ↑t * Complex.I))).re
-            * ‖WrC (z₀ + ↑t * Complex.I)‖ ^ 2) * Real.exp (-(2 * π) * t)
-          + ‖WrC (z₀ + ↑t * Complex.I)‖ ^ 2 * (-(2 * π) * Real.exp (-(2 * π) * t))) t := by
-    intro t ht
-    have hexp : HasDerivAt (fun s : ℝ => Real.exp (-(2 * π) * s))
-        (-(2 * π) * Real.exp (-(2 * π) * t)) t := by
-      have h1 : HasDerivAt (fun s : ℝ => -(2 * π) * s) (-(2 * π)) t := by
-        simpa using (hasDerivAt_id t).const_mul (-(2 * π))
-      have h2 := (Real.hasDerivAt_exp (-(2 * π) * t)).comp t h1
-      rw [show Real.exp (-(2 * π) * t) * (-(2 * π))
-        = -(2 * π) * Real.exp (-(2 * π) * t) from mul_comm _ _] at h2
-      exact h2
-    exact (hrd t ht).mul hexp
-  have hmono : MonotoneOn (fun s : ℝ => ‖WrC (z₀ + ↑s * Complex.I)‖ ^ 2
-      * Real.exp (-(2 * π) * s)) (Set.Ici (0 : ℝ)) := by
+  -- The squared modulus is nondecreasing along the vertical ray.
+  have hmono : MonotoneOn (fun s : ℝ => ‖WrC (z₀ + ↑s * Complex.I)‖ ^ 2)
+      (Set.Ici (0 : ℝ)) := by
     apply monotoneOn_of_deriv_nonneg (convex_Ici 0)
-    · exact fun s hs => ((hgd s hs).continuousAt).continuousWithinAt
+    · exact fun s hs => ((hrd s hs).continuousAt).continuousWithinAt
     · rw [interior_Ici]
-      exact fun s hs => (hgd s (le_of_lt hs)).differentiableAt.differentiableWithinAt
+      exact fun s hs => (hrd s (le_of_lt hs)).differentiableAt.differentiableWithinAt
     · rw [interior_Ici]
       intro s hs
-      rw [(hgd s (le_of_lt hs)).deriv]
+      rw [(hrd s (le_of_lt hs)).deriv]
       obtain ⟨_, _, _, _, _, hre⟩ :=
         hgood (ofComplex (z₀ + ↑s * Complex.I)) (himA s (le_of_lt hs))
-      have h1 : (0 : ℝ) ≤ ‖WrC (z₀ + ↑s * Complex.I)‖ ^ 2 := by positivity
-      have h2 : (0 : ℝ) < Real.exp (-(2 * π) * s) := Real.exp_pos _
-      have h3 : (-(2 * ↑π) * m22 (ofComplex (z₀ + ↑s * Complex.I))).re
+      have hreal : (-(2 * ↑π) * m22 (ofComplex (z₀ + ↑s * Complex.I))).re
           = -(2 * π) * (m22 (ofComplex (z₀ + ↑s * Complex.I))).re := by
         rw [show (-(2 * ↑π) : ℂ) = ((-(2 * π) : ℝ) : ℂ) from by push_cast; ring,
           Complex.re_ofReal_mul]
-      rw [h3]
-      have key : (0 : ℝ) ≤ -(4 * π * (m22 (ofComplex (z₀ + ↑s * Complex.I))).re) - 2 * π := by
-        nlinarith only [hre, Real.pi_pos]
-      linear_combination mul_nonneg (mul_nonneg h1 h2.le) key
+      rw [hreal]
+      have hnonneg : 0 ≤ -(2 * π) * (m22 (ofComplex (z₀ + ↑s * Complex.I))).re :=
+        mul_nonneg_of_nonpos_of_nonpos (neg_nonpos.mpr (by positivity))
+          (hre.trans (by norm_num only))
+      exact mul_nonneg (by norm_num only) (mul_nonneg hnonneg (sq_nonneg _))
   -- `ψ → 0` along the ray, so `r → 0`
   have hψ0 : Tendsto (fun t : ℝ => WrC (z₀ + ↑t * Complex.I)) atTop (𝓝 0) := by
     have h := tendsto_WrC.comp (tendsto_vertical hz₀im)
@@ -777,21 +764,14 @@ private lemma WrC_eq_zero {A : ℝ} (hA : 2 ≤ A)
     rw [coe_ofComplex (him t ht)]
   have hr0 : Tendsto (fun t : ℝ => ‖WrC (z₀ + ↑t * Complex.I)‖ ^ 2) atTop (𝓝 0) := by
     have h := (hψ0.norm).pow 2
-    simpa using h
-  -- squeeze: `g 0 ≤ g t ≤ r t → 0`
-  have hg0 : ‖WrC (z₀ + ↑(0 : ℝ) * Complex.I)‖ ^ 2 * Real.exp (-(2 * π) * 0) ≤ 0 := by
-    have hle : ∀ᶠ t : ℝ in atTop,
-        ‖WrC (z₀ + ↑(0 : ℝ) * Complex.I)‖ ^ 2 * Real.exp (-(2 * π) * 0)
-          ≤ ‖WrC (z₀ + ↑t * Complex.I)‖ ^ 2 := by
-      filter_upwards [eventually_ge_atTop (0 : ℝ)] with t ht
-      have hmt := hmono Set.self_mem_Ici (Set.mem_Ici.mpr ht) ht
-      have hexp1 : Real.exp (-(2 * π) * t) ≤ 1 := by
-        apply Real.exp_le_one_iff.mpr
-        exact mul_nonpos_of_nonpos_of_nonneg (neg_nonpos.mpr (by positivity)) ht
-      exact hmt.trans (mul_le_of_le_one_right (sq_nonneg _) hexp1)
-    exact ge_of_tendsto hr0 hle
+    simpa only [norm_zero, ne_eq, OfNat.ofNat_ne_zero, not_false_eq_true, zero_pow] using h
+  -- A nondecreasing nonnegative function tending to zero vanishes at the origin.
+  have hg0 : ‖WrC (z₀ + ↑(0 : ℝ) * Complex.I)‖ ^ 2 ≤ 0 := by
+    apply ge_of_tendsto hr0
+    filter_upwards [eventually_ge_atTop (0 : ℝ)] with t ht
+    exact hmono Set.self_mem_Ici (Set.mem_Ici.mpr ht) ht
   have hz : WrC (z₀ + ↑(0 : ℝ) * Complex.I) = WrC z₀ := by norm_num
-  rw [hz, mul_zero, Real.exp_zero, mul_one] at hg0
+  rw [hz] at hg0
   have hnorm : ‖WrC z₀‖ = 0 := sq_eq_zero_iff.mp (le_antisymm hg0 (sq_nonneg _))
   exact norm_eq_zero.mp hnorm
 
@@ -846,7 +826,7 @@ private lemma XtC_eq_XhC {A : ℝ} (hA : 2 ≤ A)
   have hray : Tendsto (fun t : ℝ => XtC (z + ↑t * Complex.I) / XhC (z + ↑t * Complex.I))
       atTop (𝓝 1) := by
     have h := (tendsto_XtC.div tendsto_XhC one_ne_zero).comp (tendsto_vertical hz0)
-    norm_num at h
+    norm_num only at h
     refine h.congr' ?_
     filter_upwards [eventually_ge_atTop (0 : ℝ)] with t ht
     have him : 0 < (z + ↑t * Complex.I).im := by
@@ -894,7 +874,7 @@ theorem E₄_eq_hyp2F1_pow_four {τ : ℍ} (hτ : τ ∈ Region) :
     have h := XtC_eq_XhC hA2 hgood hw
     have h4 : E₄ (ofComplex w) = XtC w ^ 4 := by
       rw [show XtC w = E₄ (ofComplex w) ^ (1 / 4 : ℂ) from rfl, ← Complex.cpow_nat_mul,
-        show ((4 : ℕ) : ℂ) * (1 / 4) = 1 by norm_num, Complex.cpow_one]
+        show ((4 : ℕ) : ℂ) * (1 / 4) = 1 by norm_num only, Complex.cpow_one]
     rw [h4, h]
     rfl
   -- both sides are analytic on `S = {Im z > 5/4}`
@@ -910,7 +890,7 @@ theorem E₄_eq_hyp2F1_pow_four {τ : ℍ} (hτ : τ ∈ Region) :
   have hg : AnalyticOnNhd ℂ (fun w => hyp2F1 (J (ofComplex w))⁻¹ ^ 4)
       {w : ℂ | 5 / 4 < w.im} := by
     refine DifferentiableOn.analyticOnNhd (fun w hw => ?_) hSo
-    have hw0 : 0 < w.im := lt_trans (by norm_num) hw
+    have hw0 : 0 < w.im := lt_trans (by norm_num only) hw
     have hR : ofComplex w ∈ Region := by
       change 5 / 4 < (ofComplex w).im
       rw [im_ofComplex hw0]
@@ -933,7 +913,7 @@ theorem E₄_eq_hyp2F1_pow_four {τ : ℍ} (hτ : τ ∈ Region) :
       refine (isOpen_lt continuous_const Complex.continuous_im).mem_nhds ?_
       change A < (((A + 1 : ℝ) : ℂ) * Complex.I).im
       rw [him]
-      linarith
+      linarith only []
     exact Filter.eventuallyEq_of_mem hmem fun w hw => hΩeq w hw
   have heq := hf.eqOn_of_preconnected_of_eventuallyEq hg hSc hz₀S hev
   have hτS : (↑τ : ℂ) ∈ {w : ℂ | 5 / 4 < w.im} := by

@@ -21,19 +21,19 @@ namespace Chudnovsky
 /-- The fourth Bernoulli number, using the known value of `bernoulli'`. -/
 lemma bernoulli_four_value : bernoulli 4 = -1 / 30 := by
   rw [bernoulli, bernoulli'_four]
-  norm_num
+  norm_num1
 
 /-- The sixth Bernoulli number, evaluated from the preceding values. -/
 lemma bernoulli_six_value : bernoulli 6 = 1 / 42 := by
-  have h5 : bernoulli' 5 = 0 := bernoulli'_eq_zero_of_odd ⟨2, rfl⟩ (by norm_num)
+  have h5 : bernoulli' 5 = 0 := bernoulli'_eq_zero_of_odd ⟨2, rfl⟩ (by norm_num1)
   have h6 : bernoulli' 6 = 1 / 42 := by
     rw [bernoulli'_def]
     rw [Finset.sum_range_succ, Finset.sum_range_succ, Finset.sum_range_succ,
       Finset.sum_range_succ, Finset.sum_range_succ, Finset.sum_range_succ,
       Finset.sum_range_zero, bernoulli'_zero, bernoulli'_one, bernoulli'_two,
       bernoulli'_three, bernoulli'_four, h5]
-    norm_num [Nat.choose]
+    norm_num only [Nat.choose]
   rw [bernoulli, h6]
-  norm_num
+  norm_num1
 
 end Chudnovsky
