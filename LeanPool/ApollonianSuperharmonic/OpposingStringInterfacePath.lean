@@ -1152,70 +1152,33 @@ end OpposingInterfaceConclusion
 
 namespace OpposingUnitInterface
 
-private theorem unrotatedInterface :
-    (by
-      classical
-      exact
-        ∀ (C : BandCircle), ∀ (orientation : Bool), ∀ (base : ProtoTile), ∀ (R : ProtoTile), ∀ (S
-            : ProtoTile), ∀ (forward : List ProtoTile), ∀ (reverse : List ProtoTile), ∀ (a :
-            GaussianInt), ∀ (b : GaussianInt), ((0 : ℤ) < a.re * b.im - a.im * b.re) → (
-                               (
-                                                        ((∀ (w : ↥(TilingLattice C)), ∃! z : ℤ ×
-            ℤ, (↑z.1 : GaussianInt) * a + (↑z.2 : GaussianInt) * b = (↑w : GaussianInt)) → ((∀ (U
-            : ProtoTile), U ∈ RegularTileFamily base (TilingLattice C) ↔ ∃! z : ℤ × ℤ, U = (fun
-            (z : ℤ × ℤ) => TileTranslation base ((↑z.1 : GaussianInt) * a + (↑z.2 : GaussianInt)
-            * b)) z) → ((∀ (x : ℤ × ℤ), ∀ (y : ℤ × ℤ), (fun (T U : ProtoTile) => if C.1.1.1 = (1
-            : ℤ) then ∃ (v : GaussianInt), UnitTriangularStep orientation v ∧ TileCentroid U -
-            TileCentroid T = GaussianRealPoint v else TileTouching T U) ((fun (z : ℤ × ℤ) =>
-            TileTranslation base ((↑z.1 : GaussianInt) * a + (↑z.2 : GaussianInt) * b)) x) ((fun
-            (z : ℤ × ℤ) => TileTranslation base ((↑z.1 : GaussianInt) * a + (↑z.2 : GaussianInt)
-            * b)) y) ↔ TriangularLatticeAdjacent x y) → (
-                                                            ((∀ (R : ProtoTile), ∀ (S :
-            ProtoTile), ∀ (tiles : List ProtoTile), ∀ (r : ℤ × ℤ), ∀ (s : ℤ × ℤ), R = (fun (z : ℤ
-            × ℤ) => TileTranslation base ((↑z.1 : GaussianInt) * a + (↑z.2 : GaussianInt) * b)) r
-            → S = (fun (z : ℤ × ℤ) => TileTranslation base ((↑z.1 : GaussianInt) * a + (↑z.2 :
-            GaussianInt) * b)) s → (TileString C orientation base R S tiles ↔ ∃! coordinates :
-            List (ℤ × ℤ), List.Forall₂ (fun (T : ProtoTile) (z : ℤ × ℤ) => T = (fun (z : ℤ × ℤ)
-            => TileTranslation base ((↑z.1 : GaussianInt) * a + (↑z.2 : GaussianInt) * b)) z)
-            tiles coordinates ∧ TriangularStripSegment r s coordinates)) → (
-        let tileAt : Int × Int → ProtoTile := fun z =>
-          TileTranslation base ((z.1 : GaussianInt) * a + (z.2 : GaussianInt) * b)
-        ∀ (r : ℤ × ℤ), (R = (fun (z : ℤ × ℤ) => TileTranslation base ((↑z.1 : GaussianInt) * a +
-            (↑z.2 : GaussianInt) * b)) r) → ((∀ (y : ℤ × ℤ), (fun (z : ℤ × ℤ) => R = (fun (z : ℤ
-            × ℤ) => TileTranslation base ((↑z.1 : GaussianInt) * a + (↑z.2 : GaussianInt) * b))
-            z) y → y = r) → (∀ (s : ℤ × ℤ), (S = (fun (z : ℤ × ℤ) => TileTranslation base ((↑z.1
-            : GaussianInt) * a + (↑z.2 : GaussianInt) * b)) s) → ((∀ (y : ℤ × ℤ), (fun (z : ℤ ×
-            ℤ) => S = (fun (z : ℤ × ℤ) => TileTranslation base ((↑z.1 : GaussianInt) * a + (↑z.2
-            : GaussianInt) * b)) z) y → y = s) → ((R = tileAt r) → ((S = tileAt s) → (∀ (F : List
-            (ℤ × ℤ)), ∀ (G : List (ℤ × ℤ)), (List.Forall₂ (fun (T : ProtoTile) (z : ℤ × ℤ) => T =
-            (fun (z : ℤ × ℤ) => TileTranslation base ((↑z.1 : GaussianInt) * a + (↑z.2 :
-            GaussianInt) * b)) z) forward F) → ((TriangularStripSegment r s F) → ((List.Forall₂
-            (fun (T : ProtoTile) (z : ℤ × ℤ) => T = (fun (z : ℤ × ℤ) => TileTranslation base
-            ((↑z.1 : GaussianInt) * a + (↑z.2 : GaussianInt) * b)) z) reverse G) →
-            ((TriangularStripSegment s r G) → ((r ≠ s) → ((¬TriangularLatticeAdjacent r s) →
-            ((List.Forall₂ (fun (T : ProtoTile) (z : ℤ × ℤ) => T = (fun (z : ℤ × ℤ) =>
-            TileTranslation base ((↑z.1 : GaussianInt) * a + (↑z.2 : GaussianInt) * b)) z)
-            (List.drop (1 : ℕ) forward).dropLast (List.drop (1 : ℕ) F).dropLast) → ((List.Forall₂
-            (fun (T : ProtoTile) (z : ℤ × ℤ) => T = (fun (z : ℤ × ℤ) => TileTranslation base
-            ((↑z.1 : GaussianInt) * a + (↑z.2 : GaussianInt) * b)) z) (List.drop (1 : ℕ)
-            reverse).dropLast (List.drop (1 : ℕ) G).dropLast) → ((∀ z ∈ (List.drop (1 : ℕ)
-            F).dropLast, ∃ T ∈ (List.drop (1 : ℕ) forward).dropLast, T = (fun (z : ℤ × ℤ) =>
-            TileTranslation base ((↑z.1 : GaussianInt) * a + (↑z.2 : GaussianInt) * b)) z) → ((∀
-            z ∈ (List.drop (1 : ℕ) G).dropLast, ∃ T ∈ (List.drop (1 : ℕ) reverse).dropLast, T =
-            (fun (z : ℤ × ℤ) => TileTranslation base ((↑z.1 : GaussianInt) * a + (↑z.2 :
-            GaussianInt) * b)) z) → (∀ (x : GaussianInt), (base.cells = {x}) → ((a = (1 :
-            GaussianInt)) → ((b = (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt)) → (∃ p : List GaussianInt,
-            (∃ x, p.head? = some x ∧ x ∈ FootprintVertices R) ∧ (∃ y, p.getLast? = some y ∧ y ∈
-            FootprintVertices S) ∧ p.IsChain (fun x y => y = x + 1 ∨ y = x - 1 ∨ y = x + ⟨0, 1⟩ ∨
-            y = x - ⟨0, 1⟩) ∧ (∀ x, x ∈ p → (∃ a ∈ (forward.drop 1).dropLast, x ∈
-            FootprintVertices a) ∧ (∃ b ∈ (reverse.drop 1).dropLast, x ∈ FootprintVertices b)) ∧
-            ∀ x y : GaussianInt, ∀ l₁ l₂ : List GaussianInt, p = l₁ ++ x :: y :: l₂ → (∃ a ∈
-            (forward.drop 1).dropLast, {x, y} ∈ FootprintEdges a) ∧ (∃ b ∈ (reverse.drop
-            1).dropLast, {x, y} ∈ FootprintEdges b)))))))))))))))))))))))))))) ) := by
+private theorem unitInterface (base R S : ProtoTile)
+    (forward reverse : List ProtoTile) (a b : GaussianInt) :
+    let tileAt : Int × Int → ProtoTile := fun z =>
+      TileTranslation base ((z.1 : GaussianInt) * a + (z.2 : GaussianInt) * b)
+    ∀ (r s : Int × Int), R = tileAt r → S = tileAt s →
+      ∀ (F G : List (Int × Int)), TriangularStripSegment r s F →
+        TriangularStripSegment s r G → r ≠ s → ¬ TriangularLatticeAdjacent r s →
+        (∀ z ∈ (F.drop 1).dropLast,
+          ∃ T ∈ (forward.drop 1).dropLast, T = tileAt z) →
+        (∀ z ∈ (G.drop 1).dropLast,
+          ∃ T ∈ (reverse.drop 1).dropLast, T = tileAt z) →
+        ∀ (x : GaussianInt), base.cells = {x} → a = 1 → b = ⟨0, 1⟩ →
+          ∃ p : List GaussianInt,
+            (∃ x, p.head? = some x ∧ x ∈ FootprintVertices R) ∧
+            (∃ y, p.getLast? = some y ∧ y ∈ FootprintVertices S) ∧
+            p.IsChain (fun x y => y = x + 1 ∨ y = x - 1 ∨
+              y = x + ⟨0, 1⟩ ∨ y = x - ⟨0, 1⟩) ∧
+            (∀ x, x ∈ p →
+              (∃ a ∈ (forward.drop 1).dropLast, x ∈ FootprintVertices a) ∧
+              (∃ b ∈ (reverse.drop 1).dropLast, x ∈ FootprintVertices b)) ∧
+            ∀ x y : GaussianInt, ∀ l₁ l₂ : List GaussianInt,
+              p = l₁ ++ x :: y :: l₂ →
+                (∃ a ∈ (forward.drop 1).dropLast, {x, y} ∈ FootprintEdges a) ∧
+                (∃ b ∈ (reverse.drop 1).dropLast, {x, y} ∈ FootprintEdges b) := by
   classical
-  intro C orientation base R S forward reverse a b hdet hcoords hfamily hadj htransport tileAt r
-      hrcoord hruniq s hscoord hsuniq hR hS F G hFtiles hFstrip hGtiles hGstrip hrs hnadjCoord
-      forall₂_interior rfor₂_interior forwardInterior reverseInterior x hcells ha1 hb1
+  intro tileAt r s hR hS F G hFstrip hGstrip hrs hnadjCoord
+      forwardInterior reverseInterior x hcells ha1 hb1
   subst a
   subst b
   obtain ⟨p, hphead, hplast, hpchain, hpvertices, hpedges⟩ :=
@@ -1357,10 +1320,9 @@ theorem OpposingStringInterfacePath
                   (∃ a ∈ (forward.drop 1).dropLast,
                     {x, y} ∈ FootprintEdges a) ∧
                   (∃ b ∈ (reverse.drop 1).dropLast,
-                    {x, y} ∈ FootprintEdges b) := OpposingUnitInterface.unrotatedInterface C
-                        orientation base R S forward reverse a b hdet hcoords hfamily hadj
-                            htransport r hrcoord hruniq s hscoord hsuniq hR hS F G hFtiles
-                        hFstrip hGtiles hGstrip hrs hnadjCoord forall₂_interior rfor₂_interior
+                    {x, y} ∈ FootprintEdges b) :=
+                      OpposingUnitInterface.unitInterface base R S forward reverse a b
+                        r s hR hS F G hFstrip hGstrip hrs hnadjCoord
                         forwardInterior reverseInterior x hcells ha1 hb1
       exact unrotatedInterface
     · subst a

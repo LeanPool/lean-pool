@@ -142,18 +142,6 @@ private theorem hnonvertex :
     rw [← hk]
     exact left_mem_segment Real _ _
 
-private theorem hD :
-    ∀ (n : Nat), ∀ (p : P3381T1PolygonBoundary n), ∀ (d : ℝ × ℝ), (∀ (i : Fin (n + (3 : ℕ))),
-        d.1 * (p.vertex (i + (1 : Fin (n + (3 : ℕ)))) - p.vertex i).2 - d.2 * (p.vertex (i + (1 :
-        Fin (n + (3 : ℕ)))) - p.vertex i).1 ≠ (0 : ℝ)) → (
-    let D : Fin (n + 3) → Real := fun j =>
-      d.1 * (p.vertex (j + 1) - p.vertex j).2 -
-        d.2 * (p.vertex (j + 1) - p.vertex j).1
-    ∀ j, D j ≠ 0) := by
-  classical
-  intro n p d hde D j
-  exact hde j
-
 private theorem hparam :
     ∀ (n : Nat), ∀ (p : P3381T1PolygonBoundary n), ∀ (x : Real × Real), ∀ (d : ℝ × ℝ),
     let D : Fin (n + 3) → Real := fun j =>
@@ -1629,7 +1617,7 @@ theorem P3597T1SideCrossing {n : Nat} (p : P3381T1PolygonBoundary n)
       (p.vertex j - y).2 * (p.vertex (j + 1) - p.vertex j).1) / D j)
   let U : Fin (n + 3) → (Real × Real) → Real := fun j y =>
     (((p.vertex j - y).1 * d.2 - (p.vertex j - y).2 * d.1) / D j)
-  have hD : ∀ j, D j ≠ 0 := SideCrossingProof.hD n p d hde
+  have hD : ∀ j, D j ≠ 0 := hde
   have hparam (j : Fin (n + 3)) := SideCrossingProof.hparam n p x d hD j
   have hcontT (j : Fin (n + 3)) : Continuous (T j) := SideCrossingProof.hcontT n p d hD j
   have hcontU (j : Fin (n + 3)) : Continuous (U j) := SideCrossingProof.hcontU n p d hD j

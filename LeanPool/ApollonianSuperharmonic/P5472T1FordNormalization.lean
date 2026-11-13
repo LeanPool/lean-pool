@@ -54,22 +54,6 @@ private theorem hridx :
     have eq := hcurv.2.2 1 0 hzero2 hzero
     exact False.elim ((by decide : (1 : Fin 3) ≠ 0) eq)
 
-private theorem hford' :
-    (by
-      classical
-      exact
-        ∀ (q : Fin 4 → CircleCoordinates), ∀ (cfg : BandOrderedGeneralConfiguration q),
-        let t := cfg.firstPredecessor
-        ∀ (s : BandPackingSymmetry), ∀ (F : FordFareyParameter),
-            (BandPackingSymmetryQuadrupleAction s ![t (0 : Fin (4 : ℕ)), t (Fin.succ (1 : Fin (3
-            : ℕ))), t ((1 : Fin (3 : ℕ)) + (1 : Fin (3 : ℕ))).succ, t ((1 : Fin (3 : ℕ)) + (2 :
-            Fin (3 : ℕ))).succ] = FordRecursiveQuadruple F) → (BandPackingSymmetryQuadrupleAction
-            s ![cfg.firstPredecessor 0, cfg.firstPredecessor 2, cfg.firstPredecessor 3,
-            cfg.firstPredecessor 1] = FordRecursiveQuadruple F) ) := by
-  classical
-  intro q cfg t s F hford
-  simpa using hford
-
 private theorem hqSucc :
     (by
       classical
@@ -410,7 +394,7 @@ theorem P5472T1FordNormalization
     FordRegimeConverse t htproper ⟨1, hzero⟩
   have hridx := FordNormalizationProof.hridx q cfg hzero hcurv ridx hline
   subst ridx
-  have hford' := FordNormalizationProof.hford' q cfg s F hford
+  have hford' := hford
   have hqSucc := FordNormalizationProof.hqSucc q cfg
   have hsuccCov := FordNormalizationProof.hsuccCov q cfg s hword
   have hF0 : BandPackingSymmetryCircleAction s (t 0) =

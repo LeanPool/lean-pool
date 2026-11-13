@@ -901,19 +901,6 @@ private theorem quarterEdges :
   simp [F, Q, GaussianTranslation, GaussianQuarterTurn,
     add_comm, add_left_comm]
 
-private theorem quarterBaseVertices :
-    (by
-      classical
-      exact
-        ∀ (k : Nat),
-        let D := DiamondTile k
-        ∀ (u : GaussianInt), (FootprintVertices (TileTranslation (TileQuarterTurn D) u) =
-            FootprintVertices D) → (FootprintVertices (TileTranslation (TileQuarterTurn D) u) =
-            FootprintVertices D) ) := by
-  classical
-  intro k D u hquarterVertices
-  exact hquarterVertices
-
 private theorem quarterBaseEdges :
     (by
       classical
@@ -2983,8 +2970,6 @@ theorem P5260T1PredecessorInterfaces (k : Nat) (hk : 1 < k) (b : Bool) :
   let Q : GaussianInt → GaussianInt := GaussianQuarterTurn
   have F_inj := PredecessorInterfaceGeometry.F_inj u
   have quarterVertices := PredecessorInterfaceGeometry.quarterVertices k u
-  have quarterBaseVertices := PredecessorInterfaceGeometry.quarterBaseVertices k u
-      hquarterVertices
   have quarterCellsAt := PredecessorInterfaceGeometry.quarterCellsAt k translateComp u hquarterCells
   have quarterVerticesAt := PredecessorInterfaceGeometry.quarterVerticesAt k
       translatedDiamondCellsNonempty hkpos u quarterCellsAt
@@ -3046,7 +3031,7 @@ theorem P5260T1PredecessorInterfaces (k : Nat) (hk : 1 < k) (b : Bool) :
       (PredecessorInterfaceGeometry.pathWDrev k reversePath pathDW)
       (PredecessorInterfaceGeometry.pathRAB k u (PredecessorInterfaceGeometry.pathRAB0 k
       translateZero pathLow u F_inj (PredecessorInterfaceGeometry.F_step u) quarterVertices
-      (PredecessorInterfaceGeometry.quarterEdges k u) quarterBaseVertices
+      (PredecessorInterfaceGeometry.quarterEdges k u) hquarterVertices
       (PredecessorInterfaceGeometry.quarterBaseEdges k u hquarterCells) quarterVerticesAt
       (PredecessorInterfaceGeometry.quarterEdgesAt k u quarterCellsAt) shiftQuarter) hxlow
       hxhigh) (PredecessorInterfaceGeometry.hAunique k (PredecessorInterfaceGeometry.hWURaw k
@@ -3072,7 +3057,7 @@ theorem P5260T1PredecessorInterfaces (k : Nat) (hk : 1 < k) (b : Bool) :
       (PredecessorInterfaceGeometry.hRABraw k u huEq hxlow hxhigh
       (PredecessorInterfaceGeometry.hcapLowRawVertices k rawBoundaryVertices hkpos hcapLow
       hlowTile capBoundaryVerticesEq) (PredecessorInterfaceGeometry.hRABimage k u F_inj
-      quarterVertices quarterBaseVertices quarterVerticesAt shiftQuarter
+      quarterVertices hquarterVertices quarterVerticesAt shiftQuarter
       (PredecessorInterfaceGeometry.quarterVerticesZero k translateZero u quarterVertices)))
       hDWraw (PredecessorInterfaceGeometry.pImagBound k hk))))
 

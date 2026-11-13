@@ -308,23 +308,6 @@ private theorem hi'At370 :
   intro q slopeShift kl mn i hi
   exact_mod_cast hi
 
-private theorem hstep'' :
-    (by
-      classical
-      exact
-        ∀ (C : BandCircle), ∀ (q : Fin (4 : ℕ) → CircleCoordinates),
-        let shift (kl : Int × Int) : GaussianInt :=
-          (kl.1 : GaussianInt) * BandVectors.1 (q 1) (q 0) +
-            (kl.2 : GaussianInt) * BandVectors.1 (q 2) (q 0)
-        ∀ (lattice_coords : ∀ kl : Int × Int, shift kl ∈ TilingLattice C),
-        let index (kl : Int × Int) : TilingLattice C := ⟨shift kl, lattice_coords kl⟩
-        ∀ (kl : ℤ × ℤ), ∀ (mn : ℤ × ℤ), ∀ (i : Fin (3 : ℕ)), ((↑(index mn) : GaussianInt) -
-            (↑(index kl) : GaussianInt) = -BandVectors.1 (q i.succ) (q (0 : Fin (4 : ℕ)))) →
-            (shift mn - shift kl = -BandVectors.1 (q i.succ) (q 0)) ) := by
-  classical
-  intro C q shift lattice_coords index kl mn i hstep
-  simpa [index] using hstep
-
 private theorem hr'At406 :
     (by
       classical
@@ -538,8 +521,7 @@ private theorem adjacentCompatibility :
         have hc2 := (TileTranslationFormulas T (shift mn)).2.2.2.2.1
         rw [hc2, hc1]
         have hstep'' : shift mn - shift kl =
-            -BandVectors.1 (q i.succ) (q 0) := PositiveTranslationGeometry.hstep'' C q
-                lattice_coords kl mn i hstep
+            -BandVectors.1 (q i.succ) (q 0) := hstep
         have hr := congrArg (fun z : GaussianInt => z.re) hstep''
         have hi := congrArg (fun z : GaussianInt => z.im) hstep''
         apply Prod.ext

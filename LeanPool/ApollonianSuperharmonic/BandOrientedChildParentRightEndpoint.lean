@@ -569,25 +569,6 @@ private theorem middleVector :
   · simp only [Int.reduceNeg, parity, ↓reduceIte, Fin.isValue]
     rw [actionCommute, phaseForward]
 
-private theorem transformedTriple :
-    (by
-      classical
-      exact
-        ∀ (r : Fin 4 → CircleCoordinates), ∀ (i : Fin 3), ∀ (s : Fin 4), ∀ (U : ProtoTile), ∀ (W
-            : ProtoTile), ∀ (g : BandPackingSymmetry), ∀ [Nonempty
-            (ExactTileInterfaceTriple (BandPackingSymmetryTileAction g U)
-            (BandPackingSymmetryTileAction g (TileTranslation U ((⟨(0 : ℤ), (1 : ℤ)⟩ :
-            GaussianInt) ^ (↑s : ℕ) * if Even (↑s : ℕ) then BandVectors.1 (r (0 : Fin (4 : ℕ)))
-            (r i.succ) else BandVectors.1 (r i.succ) (r (0 : Fin (4 : ℕ))))))
-            (BandPackingSymmetryTileAction g W))], Nonempty (ExactTileInterfaceTriple
-            (BandPackingSymmetryTileAction g U) (BandPackingSymmetryTileAction g (TileTranslation
-            U ((⟨0, 1⟩ : GaussianInt) ^ s.val * (if Even s.val then BandVectors.1 (r 0) (r
-            i.succ) else BandVectors.1 (r i.succ) (r 0))))) (BandPackingSymmetryTileAction g W))
-            ) := by
-  classical
-  intro r i s U W g fordResult
-  exact fordResult
-
 end OrientedRightEndpointGeometry
 
 theorem BandOrientedChildParentRightEndpoint
@@ -743,20 +724,11 @@ theorem BandOrientedChildParentRightEndpoint
         (if Even s.val then BandVectors.1 (r 0) (r i.succ)
          else BandVectors.1 (r i.succ) (r 0)))
     rw [← middleVector, ← transport] at fordResult
-    have transformedTriple : Nonempty (ExactTileInterfaceTriple
-        (BandPackingSymmetryTileAction g U)
-        (BandPackingSymmetryTileAction g
-          (TileTranslation U
-            ((⟨0, 1⟩ : GaussianInt) ^ s.val *
-              (if Even s.val then BandVectors.1 (r 0) (r i.succ)
-               else BandVectors.1 (r i.succ) (r 0)))))
-        (BandPackingSymmetryTileAction g W)) := @OrientedRightEndpointGeometry.transformedTriple r
-            i s U W g fordResult
     exact (ExactTileInterfaceTriplePackingSymmetryCovariance g U
       (TileTranslation U
         ((⟨0, 1⟩ : GaussianInt) ^ s.val *
           (if Even s.val then BandVectors.1 (r 0) (r i.succ)
-           else BandVectors.1 (r i.succ) (r 0)))) W).mpr transformedTriple
+           else BandVectors.1 (r i.succ) (r 0)))) W).mpr fordResult
 
 end ApollonianSuperharmonic
 

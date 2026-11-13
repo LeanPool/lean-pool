@@ -30,30 +30,6 @@ namespace ApollonianSuperharmonic
 
 namespace SameParentOverlapLemmas
 
-private theorem hq1 :
-    ∀ (P : FordFareyParameter), ∀ (P₁ : FordFareyParameter), (P₁.q = P.q₁) → P₁.q = P.q₁ := by
-  classical
-  intro P P₁ hq₁
-  exact hq₁
-
-private theorem hq2 :
-    ∀ (P : FordFareyParameter), ∀ (P₂ : FordFareyParameter), (P₂.q = P.q₂) → P₂.q = P.q₂ := by
-  classical
-  intro P P₂ hq₂
-  exact hq₂
-
-private theorem hp1 :
-    ∀ (P : FordFareyParameter), ∀ (P₁ : FordFareyParameter), (P₁.p = P.p₁) → P₁.p = P.p₁ := by
-  classical
-  intro P P₁ hp₁
-  exact hp₁
-
-private theorem hp2 :
-    ∀ (P : FordFareyParameter), ∀ (P₂ : FordFareyParameter), (P₂.p = P.p₂) → P₂.p = P.p₂ := by
-  classical
-  intro P P₂ hp₂
-  exact hp₂
-
 private theorem hq1lt' :
     ∀ (P : FordFareyParameter),
       ∀ (P₁ : FordFareyParameter), P₁.q = P.q₁ → P.q₁ < P.q → P₁.q < P.q := by
@@ -72,7 +48,7 @@ end SameParentOverlapLemmas
 
 namespace FirstParentOverlap
 
-private theorem first_parent_overlap :
+private theorem overlap :
     ∀ (P : FordFareyParameter), ∀ (P₁ : FordFareyParameter), ∀ (P₂ : FordFareyParameter), (P₁.p =
         P.p₁) → (P₁.q = P.q₁) → (P₂.p = P.p₂) → (P₂.q = P.q₂) → ∀ (G : FordFareyParameter →
         IntegerLatticeFunction), (∀ R, R.q < P.q → ∀ x ∈ FordDoubledBoundary R.q, G R x =
@@ -80,13 +56,13 @@ private theorem first_parent_overlap :
         P.q → 1 < R.q → A.p = R.p₁ → A.q = R.q₁ → B.p = R.p₂ → B.q = R.q₂ → ∀ i x, x ∈
         FordRecursiveVertexDomains R i → G R x = P5130T5Prescription R (G A) (G B) i x) → ((0 :
         ℕ) < P.q₁) → ((0 : ℕ) < P.q₂) → (P.p₁ * (↑P.q₂ : ℤ) - P.p₂ * (↑P.q₁ : ℤ) = (1 : ℤ)) →
-        (P₁.q = P.q₁) → (P₂.q = P.q₂) → (P₁.p = P.p₁) → (P₂.p = P.p₂) → (P₁.q < P.q) → (P₂.q <
+        (P₁.q < P.q) → (P₂.q <
         P.q) → ∀ x,
       x ∈ FordRecursiveVertexDomains P 0 → x ∈ FordRecursiveVertexDomains P 1 →
       P5130T5Prescription P (G P₁) (G P₂) 0 x =
         P5130T5Prescription P (G P₁) (G P₂) 1 x := by
   classical
-  intro P P₁ P₂ hp₁ hq₁ hp₂ hq₂ G hB hR hq1pos hq2pos hcross hq1 hq2 hp1 hp2 hq1lt' hq2lt' x hx0 hx1
+  intro P P₁ P₂ hp₁ hq₁ hp₂ hq₂ G hB hR hq1pos hq2pos hcross hq1lt' hq2lt' x hx0 hx1
   by_cases hgt : P.q₁ > P.q₂
   · have hqdiff : P.q₂ + (P.q₁ - P.q₂) = P.q₁ := Nat.add_sub_of_le hgt.le
     let q3 : Nat := P.q₁ - P.q₂
@@ -132,11 +108,11 @@ private theorem first_parent_overlap :
     let T : FordFareyParameter := {
       p := P₁.p, q := P₁.q, q_pos := P₁.q_pos, reduced := P₁.reduced,
       p₁ := p3, q₁ := q3, p₂ := P₂.p, q₂ := P₂.q,
-      sum_p := by dsimp [p3]; rw [hp1, hp2]; have hs := P.sum_p; omega,
-      sum_q := by dsimp [q3]; rw [hq1, hq2]; have hs := P.sum_q; omega,
-      det₁ := by dsimp [p3]; rw [hp1, hq1]; exact hdet3b,
-      det₂ := by rw [hp2, hq2, hp1, hq1]; exact hdetP1₂,
-      q₁_lt := by dsimp [q3]; rw [hq1]; omega,
+      sum_p := by dsimp [p3]; rw [hp₁, hp₂]; have hs := P.sum_p; omega,
+      sum_q := by dsimp [q3]; rw [hq₁, hq₂]; have hs := P.sum_q; omega,
+      det₁ := by dsimp [p3]; rw [hp₁, hq₁]; exact hdet3b,
+      det₂ := by rw [hp₂, hq₂, hp₁, hq₁]; exact hdetP1₂,
+      q₁_lt := by dsimp [q3]; rw [hq₁]; omega,
       q₂_pos := P₂.q_pos,
       unit_case := by intro hu; have := hq3pos; have := P₂.q_pos; omega }
     obtain ⟨W, hW, huniq⟩ := FordFareyParentsExist P₁.p P₁.q P₁.q_pos P₁.reduced
@@ -171,9 +147,9 @@ private theorem first_parent_overlap :
       simp only [FordRecursiveVertexDomains, Matrix.cons_val_one]
       change (P₁.q₂ : Int) ≤ x.re ∧ x.re ≤ (P₁.q : Int) ∧
         (P₁.q₂ : Int) ≤ x.im ∧ x.im ≤ (P₁.q : Int)
-      exact ⟨by simpa [hq32, hq2] using hx1r, by simpa [hq1] using hx0r',
-        by simpa [hq32, hq2] using hx1i, by simpa [hq1] using hx0i'⟩
-    have hP1gt : 1 < P₁.q := by rw [hq1]; omega
+      exact ⟨by simpa [hq32, hq₂] using hx1r, by simpa [hq₁] using hx0r',
+        by simpa [hq32, hq₂] using hx1i, by simpa [hq₁] using hx0i'⟩
+    have hP1gt : 1 < P₁.q := by rw [hq₁]; omega
     have hrx := hR P₁ P₃ P₂ hq1lt' hP1gt
       (by exact hP₃.1.trans hp31.symm)
       (by exact hP₃.2.trans hq31.symm)
@@ -185,7 +161,7 @@ private theorem first_parent_overlap :
     simp only [P5130T5Prescription, Matrix.cons_val_zero, Matrix.cons_val_one]
     change G P₁ x = G P₁ y + P.p₂ * x.re + P.p₂ * x.im - P.p₂ * (P.q₂ : Int) + 1
     have hrx' : G P₁ x = G P₃ y + P.p₂ * x.re + P.p₂ * x.im - P.p₂ * (P.q₂ : Int) + 1 := by
-      simpa [P5130T5Prescription, y, hp32, hq32, hp2, hq2] using hrx
+      simpa [P5130T5Prescription, y, hp32, hq32, hp₂, hq₂] using hrx
     have hry' : G P₁ y = G P₃ y := by simpa [P5130T5Prescription] using hry
     rw [hrx', hry']
   · by_cases hlt : P.q₂ > P.q₁
@@ -229,7 +205,7 @@ private theorem first_parent_overlap :
         ext <;> simp [c, z, hq2int]
       rw [hshift]
       simp [c, z, hq2int,
-        hval, hz1, hc1, hp2]
+        hval, hz1, hc1, hp₂]
 
 end FirstParentOverlap
 
@@ -251,17 +227,13 @@ theorem P5130T5SameParentOverlaps (P P₁ P₂ : FordFareyParameter)
   dsimp
   have harith := P5130T5ParentArithmetic P hq
   rcases harith with ⟨hq1pos, hq1lt, hq2pos, hq2lt, hred1, hred2, hcross⟩
-  have hq1 : P₁.q = P.q₁ := SameParentOverlapLemmas.hq1 P P₁ hq₁
-  have hq2 : P₂.q = P.q₂ := SameParentOverlapLemmas.hq2 P P₂ hq₂
-  have hp1 : P₁.p = P.p₁ := SameParentOverlapLemmas.hp1 P P₁ hp₁
-  have hp2 : P₂.p = P.p₂ := SameParentOverlapLemmas.hp2 P P₂ hp₂
   have hq1lt' : P₁.q < P.q := SameParentOverlapLemmas.hq1lt' P P₁ hq₁ hq1lt
   have hq2lt' : P₂.q < P.q := SameParentOverlapLemmas.hq2lt' P P₂ hq₂ hq2lt
   have first_parent_overlap : ∀ x,
       x ∈ FordRecursiveVertexDomains P 0 → x ∈ FordRecursiveVertexDomains P 1 →
       P5130T5Prescription P (G P₁) (G P₂) 0 x =
-        P5130T5Prescription P (G P₁) (G P₂) 1 x := FirstParentOverlap.first_parent_overlap P P₁
-            P₂ hp₁ hq₁ hp₂ hq₂ G hB hR hq1pos hq2pos hcross hq1 hq2 hp1 hp2 hq1lt' hq2lt'
+        P5130T5Prescription P (G P₁) (G P₂) 1 x := FirstParentOverlap.overlap P P₁
+            P₂ hp₁ hq₁ hp₂ hq₂ G hB hR hq1pos hq2pos hcross hq1lt' hq2lt'
   refine ⟨first_parent_overlap, ?_⟩
   intro x hx2 hx3
   by_cases hlt : P.q₂ > P.q₁
@@ -302,11 +274,11 @@ theorem P5130T5SameParentOverlaps (P P₁ P₂ : FordFareyParameter)
     let T : FordFareyParameter := {
       p := P₂.p, q := P₂.q, q_pos := P₂.q_pos, reduced := P₂.reduced,
       p₁ := P₁.p, q₁ := P₁.q, p₂ := p4, q₂ := q4,
-      sum_p := by dsimp [p4]; rw [hp1, hp2]; have hs := P.sum_p; omega,
-      sum_q := by dsimp [q4]; rw [hq1, hq2]; have hs := P.sum_q; omega,
-      det₁ := by rw [hp1, hq1, hp2, hq2]; simpa [mul_comm] using hcross,
-      det₂ := by dsimp [p4]; rw [hp2, hq2]; exact hdet4b,
-      q₁_lt := by rw [hq1]; omega,
+      sum_p := by dsimp [p4]; rw [hp₁, hp₂]; have hs := P.sum_p; omega,
+      sum_q := by dsimp [q4]; rw [hq₁, hq₂]; have hs := P.sum_q; omega,
+      det₁ := by rw [hp₁, hq₁, hp₂, hq₂]; simpa [mul_comm] using hcross,
+      det₂ := by dsimp [p4]; rw [hp₂, hq₂]; exact hdet4b,
+      q₁_lt := by rw [hq₁]; omega,
       q₂_pos := hq4pos,
       unit_case := by intro hu; have := hq4pos; have := P₁.q_pos; omega }
     obtain ⟨W, hW, huniq⟩ := FordFareyParentsExist P₂.p P₂.q P₂.q_pos P₂.reduced
@@ -332,17 +304,17 @@ theorem P5130T5SameParentOverlaps (P P₁ P₂ : FordFareyParameter)
       simp only [FordRecursiveVertexDomains, Matrix.cons_val_three]
       change 0 ≤ u.re ∧ u.re ≤ (P₂.q₂ : Int) ∧
         (P₂.q₁ : Int) ≤ u.im ∧ u.im ≤ (P₂.q : Int)
-      rw [hq42, hq41, hq2, hq1]
+      rw [hq42, hq41, hq₂, hq₁]
       simp [u, sub_eq_add_neg]
       omega
     have hv2 : v ∈ FordRecursiveVertexDomains P₂ 2 := by
       simp only [FordRecursiveVertexDomains, Matrix.cons_val_two]
       change (P₂.q₁ : Int) ≤ v.re ∧ v.re ≤ (P₂.q : Int) ∧
         0 ≤ v.im ∧ v.im ≤ (P₂.q₂ : Int)
-      rw [hq41, hq42, hq2, hq1]
+      rw [hq41, hq42, hq₂, hq₁]
       simp [v, sub_eq_add_neg]
       omega
-    have hP2gt : 1 < P₂.q := by rw [hq2]; omega
+    have hP2gt : 1 < P₂.q := by rw [hq₂]; omega
     have hru := hR P₂ P₁ P₄ hq2lt' hP2gt hp41.symm hq41.symm
       (by exact hP₄.1.trans hp42.symm) (by exact hP₄.2.trans hq42.symm) 3 u hu3
     have hrv := hR P₂ P₁ P₄ hq2lt' hP2gt hp41.symm hq41.symm
@@ -350,11 +322,11 @@ theorem P5130T5SameParentOverlaps (P P₁ P₂ : FordFareyParameter)
     simp only [P5130T5Prescription, Matrix.cons_val_two, Matrix.cons_val_three]
     change G P₂ u + P.p₁ * x.im = G P₂ v + P.p₁ * x.re
     have hru' : G P₂ u = G P₄ (u - ⟨0, (P₁.q : Int)⟩) + P.p₁ * u.re := by
-      simpa [P5130T5Prescription, hp41, hq41, hp1] using hru
+      simpa [P5130T5Prescription, hp41, hq41, hp₁] using hru
     have hrv' : G P₂ v = G P₄ (v - ⟨(P₁.q : Int), 0⟩) + P.p₁ * v.im := by
-      simpa [P5130T5Prescription, hp41, hq41, hp1] using hrv
+      simpa [P5130T5Prescription, hp41, hq41, hp₁] using hrv
     have hcomm : u - ⟨0, (P₁.q : Int)⟩ = v - ⟨(P₁.q : Int), 0⟩ := by
-      ext <;> simp [u, v, sub_eq_add_neg, hq1]
+      ext <;> simp [u, v, sub_eq_add_neg, hq₁]
     rw [hru', hrv']
     rw [hcomm]
     simp [u, v]

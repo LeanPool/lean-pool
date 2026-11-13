@@ -25,20 +25,6 @@ Changes: pool module paths, public exports, project namespace and current Mathli
 
 namespace ApollonianSuperharmonic
 
-namespace TwoRaySectorsProof
-
-private theorem huOrig :
-    ∀ (u : Real × Real), (‖u‖ = 1) → (
-    let uOrig := u
-    ‖uOrig‖ = 1) := by
-  classical
-  intro u hu uOrig
-  exact hu
-
-private abbrev hvOrig := ApollonianSuperharmonic.TwoRaySectorsProof.huOrig
-
-end TwoRaySectorsProof
-
 namespace TwoRaySectorGeometry
 
 private theorem hscalar :
@@ -1184,8 +1170,8 @@ theorem P3889T1TwoRaySectors (x : Real × Real) (r : Real)
   let det : (Real × Real) → (Real × Real) → Real := fun a b => a.1 * b.2 - a.2 * b.1
   let uOrig := u
   let vOrig := v
-  have huOrig : ‖uOrig‖ = 1 := TwoRaySectorsProof.huOrig u hu
-  have hvOrig : ‖vOrig‖ = 1 := TwoRaySectorsProof.hvOrig v hv
+  have huOrig : ‖uOrig‖ = 1 := hu
+  have hvOrig : ‖vOrig‖ = 1 := hv
   let dOrig := det uOrig vOrig
   have degenerateCase (hd : dOrig = 0) : Nonempty (P3889T1TwoRaySectorDecomposition x r u v) :=
       TwoRayCasesProof.degenerateCase x r u v hr hu hv huv hd

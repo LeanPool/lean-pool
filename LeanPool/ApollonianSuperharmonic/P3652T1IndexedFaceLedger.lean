@@ -1518,19 +1518,6 @@ private theorem hnotDiagBoundary :
     simp only [Fin.val_zero, Fin.val_last] at hnum
     omega
 
-private theorem hnotDiag :
-    (by
-      classical
-      exact
-        ∀ (n : Nat), ∀ (p : P3381T1PolygonBoundary n), ∀ (S : P3544T1DiagonalSplit p), (∀ (i
-            : Fin (n + 3)), ∀ (j : Fin (n + 3)), ((i = S.a ∧ j = S.b) ∨ (j = S.a ∧ i = S.b)) →
-            (¬(j = i + 1 ∨ i = j + 1))) → (∀ (i : Fin (n + (3 : ℕ))), ∀ (j : Fin (n + (3 : ℕ))),
-            (j = i + (1 : Fin (n + (3 : ℕ))) ∨ i = j + (1 : Fin (n + (3 : ℕ)))) → (¬ ((i = S.a ∧
-            j = S.b) ∨ (j = S.a ∧ i = S.b)))) ) := by
-  classical
-  intro n p S hnotDiagBoundary i j hboundary hd
-  exact hnotDiagBoundary i j hd hboundary
-
 private theorem hnoRAt1159 :
     (by
       classical
@@ -2238,7 +2225,7 @@ theorem P3652T1IndexedFaceLedger {n : Nat} {p : P3381T1PolygonBoundary n}
     by_cases hboundary : j = i + 1 ∨ i = j + 1
     · have hcoverPair := IndexedLedgerAssembly.hcoverPair n p S hlenP hlenL hlenR hleftcoord
         hrightcoord hmodShift hmodSucc hleftA hleftB hrightB hrightA hparentSuccVal i j hboundary
-      have hnotDiag := IndexedFaceLedgerProof.hnotDiag n p S hnotDiagBoundary i j hboundary
+      have hnotDiag := fun hd => hnotDiagBoundary i j hd hboundary
       rcases hcoverPair with ⟨hiL, hjL⟩ | ⟨hiR, hjR⟩
       · have hnoR : ¬ (i ∈ Set.range S.ir ∧ j ∈ Set.range S.ir) :=
           IndexedFaceLedgerProof.hnoRAt1159 n p S hdiagPair i j hij hnotDiag hiL hjL

@@ -25,87 +25,6 @@ namespace ApollonianSuperharmonic
 
 namespace EndpointPairProof
 
-private theorem hpne :
-    ∀ (V : Set GaussianInt),
-      ∀ (E : Set (Finset GaussianInt)),
-        ∀ (x : GaussianInt),
-          ∀ (y : GaussianInt),
-            ∀ (p : List GaussianInt),
-              (2 : ℕ) ≤ p.length →
-                p.head? = some x →
-                  p.getLast? = some y →
-                    V = (↑p.toFinset : Set GaussianInt) →
-                      (∀ (a : GaussianInt),
-                          ∀ (b : GaussianInt),
-                            ∀ (l₁ : List GaussianInt),
-                            ∀ (l₂ : List GaussianInt),
-                            p = l₁ ++ a :: b :: l₂ →
-                            b = a + (1 : GaussianInt) ∨
-                            b = a - (1 : GaussianInt) ∨
-                            b = a + { re := (0 : ℤ), im := (1 : ℤ) } ∨
-                            b = a - { re := (0 : ℤ), im := (1 : ℤ) }) →
-                        (∀ (e : Finset GaussianInt),
-                            e ∈ E ↔
-                            ∃ (a : GaussianInt) (b : GaussianInt) (l₁ : List GaussianInt)
-                            (l₂ : List GaussianInt),
-                            p = l₁ ++ a :: b :: l₂ ∧ e = { a, b }) →
-                          p ≠ [] := by
-  classical
-  intro V E x y p hlen hx hy hV hstep hE he
-  subst p
-  simp at hlen
-
-private theorem hqne :
-    ∀ (V : Set GaussianInt),
-      ∀ (E : Set (Finset GaussianInt)),
-        ∀ (x' : GaussianInt),
-          ∀ (y' : GaussianInt),
-            ∀ (q : List GaussianInt),
-              (2 : ℕ) ≤ q.length →
-                q.head? = some x' →
-                  q.getLast? = some y' →
-                    V = (↑q.toFinset : Set GaussianInt) →
-                      (∀ (a : GaussianInt),
-                          ∀ (b : GaussianInt),
-                            ∀ (l₁ : List GaussianInt),
-                            ∀ (l₂ : List GaussianInt),
-                            q = l₁ ++ a :: b :: l₂ →
-                            b = a + (1 : GaussianInt) ∨
-                            b = a - (1 : GaussianInt) ∨
-                            b = a + { re := (0 : ℤ), im := (1 : ℤ) } ∨
-                            b = a - { re := (0 : ℤ), im := (1 : ℤ) }) →
-                        (∀ (e : Finset GaussianInt),
-                            e ∈ E ↔
-                            ∃ (a : GaussianInt) (b : GaussianInt) (l₁ : List GaussianInt)
-                            (l₂ : List GaussianInt),
-                            q = l₁ ++ a :: b :: l₂ ∧ e = { a, b }) →
-                          q ≠ [] := by
-  classical
-  intro V E x' y' q hqlen hx' hy' hV' hstep' hE' he
-  subst q
-  simp at hqlen
-
-private theorem hpform :
-    ∀ (V : Set GaussianInt), ∀ (E : Set (Finset GaussianInt)), ∀ (x : GaussianInt), ∀ (y :
-        GaussianInt), ∀ (p : List GaussianInt), (p.Nodup) → (((2 : ℕ) ≤ p.length) → ((p.head? =
-        some x) → ((p.getLast? = some y) → ((V = (↑p.toFinset : Set GaussianInt)) → ((∀ (a :
-        GaussianInt), ∀ (b : GaussianInt), ∀ (l₁ : List GaussianInt), ∀ (l₂ : List GaussianInt),
-        p = l₁ ++ a :: b :: l₂ → b = a + (1 : GaussianInt) ∨ b = a - (1 : GaussianInt) ∨ b = a +
-        { re := (0 : ℤ), im := (1 : ℤ) } ∨ b = a - { re := (0 : ℤ), im := (1 : ℤ) }) → ((∀ (e :
-        Finset GaussianInt), e ∈ E ↔ ∃ (a : GaussianInt) (b : GaussianInt) (l₁ : List
-        GaussianInt) (l₂ : List GaussianInt), p = l₁ ++ a :: b :: l₂ ∧ e = {a, b}) → ((p ≠ []) →
-        (∃ r, p = x :: r)))))))) := by
-  classical
-  intro V E x y p hp hlen hx hy hV hstep hE hpne
-  cases p with
-  | nil => exact False.elim (hpne rfl)
-  | cons a r =>
-    simp only [List.head?_cons, Option.some.injEq] at hx
-    exact ⟨r, by simp [hx]⟩
-
-private abbrev hqform :=
-  ApollonianSuperharmonic.EndpointPairProof.hpform
-
 private theorem endpoint_edge :
     ∀ (r : List GaussianInt), ∀ (z : GaussianInt), r.Nodup → 2 ≤ r.length → r.head? = some z →
       ∀ e : Finset GaussianInt,
@@ -375,33 +294,6 @@ private theorem hy'q :
     simpa [List.getLast?_eq_some_getLast hqne] using hy'
   exact hlast ▸ List.getLast_mem hqne
 
-private theorem hxclass :
-    ∀ (x : GaussianInt), ∀ (y : GaussianInt), ∀ (x' : GaussianInt), ∀ (q : List GaussianInt),
-        (q.head? = some x') → ((∀ z : GaussianInt, z ∈ q → q.head? = some z → z = x ∨ z = y) →
-        ((x' ∈ q) → (x' = x ∨ x' = y))) := by
-  classical
-  intro x y x' q hx' endpoint_class hx'q
-  exact endpoint_class x' hx'q hx'
-
-private theorem hyclass :
-    ∀ (x : GaussianInt), ∀ (y : GaussianInt), ∀ (y' : GaussianInt), ∀ (q : List GaussianInt),
-        (q.getLast? = some y') → ((∀ z : GaussianInt, z ∈ q → q.getLast? = some z → z = x ∨ z =
-        y) → ((y' ∈ q) → (y' = x ∨ y' = y))) := by
-  classical
-  intro x y y' q hy' endpoint_class_last hy'q
-  exact endpoint_class_last y' hy'q hy'
-
-private theorem hxy :
-    ∀ (x : GaussianInt), ∀ (y : GaussianInt), ∀ (p : List GaussianInt), (p.Nodup) → (((2 : ℕ) ≤
-        p.length) → ((p.head? = some x) → ((p.getLast? = some y) → ((∀ (r : List GaussianInt), ∀
-        (u : GaussianInt), ∀ (v : GaussianInt), r.Nodup → 2 ≤ r.length → r.head? = some u →
-        r.getLast? = some v → u ≠ v) → (x ≠ y))))) := by
-  classical
-  intro x y p hp hlen hx hy endpoint_ne
-  exact endpoint_ne p x y hp hlen hx hy
-
-private abbrev hxy' := ApollonianSuperharmonic.EndpointPairProof.hxy
-
 end EndpointPairProof
 
 theorem SimpleGridPathEndpointPairUnique
@@ -413,11 +305,10 @@ theorem SimpleGridPathEndpointPairUnique
 -- BODY
   rcases h with ⟨p, hp, hlen, hx, hy, hV, hstep, hE⟩
   rcases h' with ⟨q, hq, hqlen, hx', hy', hV', hstep', hE'⟩
-  have hpne : p ≠ [] := EndpointPairProof.hpne V E x y p hlen hx hy hV hstep hE
-  have hqne : q ≠ [] := EndpointPairProof.hqne V E x' y' q hqlen hx' hy' hV' hstep' hE'
-  have hpform : ∃ r, p = x :: r := EndpointPairProof.hpform V E x y p hp hlen hx hy hV hstep hE hpne
-  have hqform : ∃ r, q = x' :: r := EndpointPairProof.hqform V E x' y' q hq hqlen hx' hy' hV'
-      hstep' hE' hqne
+  have hpne : p ≠ [] := List.ne_nil_of_length_pos (by omega)
+  have hqne : q ≠ [] := List.ne_nil_of_length_pos (by omega)
+  have hpform : ∃ r, p = x :: r := List.head?_eq_some_iff.mp hx
+  have hqform : ∃ r, q = x' :: r := List.head?_eq_some_iff.mp hx'
   have endpoint_edge : ∀ (r : List GaussianInt) (z : GaussianInt),
       r.Nodup → 2 ≤ r.length → r.head? = some z →
       ∀ e : Finset GaussianInt,
@@ -462,10 +353,9 @@ theorem SimpleGridPathEndpointPairUnique
       r.getLast? = some v → u ≠ v := EndpointPairProof.endpoint_ne
   have hx'q : x' ∈ q := EndpointPairProof.hx'q x' q hqlen hx'
   have hy'q : y' ∈ q := EndpointPairProof.hy'q y' q hy' hqne
-  have hxclass : x' = x ∨ x' = y := EndpointPairProof.hxclass x y x' q hx' endpoint_class hx'q
-  have hyclass : y' = x ∨ y' = y := EndpointPairProof.hyclass x y y' q hy' endpoint_class_last hy'q
-  have hxy : x ≠ y := EndpointPairProof.hxy x y p hp hlen hx hy endpoint_ne
-  have hxy' : x' ≠ y' := EndpointPairProof.hxy' x' y' q hq hqlen hx' hy' endpoint_ne
+  have hxclass : x' = x ∨ x' = y := endpoint_class x' hx'q hx'
+  have hyclass : y' = x ∨ y' = y := endpoint_class_last y' hy'q hy'
+  have hxy' : x' ≠ y' := endpoint_ne q x' y' hq hqlen hx' hy'
   rcases hxclass with rfl | rfl <;> rcases hyclass with rfl | rfl
   · exact False.elim (hxy' rfl)
   · simp [Finset.pair_comm]

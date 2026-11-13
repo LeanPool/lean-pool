@@ -58,26 +58,6 @@ private theorem vertexNonempty :
   intro X hXne
   exact hXne.to_subtype
 
-private theorem hGconn :
-    ∀ (X : Set GaussianInt), ∀ (E : Set (Finset GaussianInt)), ((SimpleGraph.fromRel fun a b : X
-        => ({a.1, b.1} : Finset GaussianInt) ∈ E).Connected) → (
-    let G : SimpleGraph X := SimpleGraph.fromRel fun a b : X =>
-      ({a.1, b.1} : Finset GaussianInt) ∈ E
-    G.Connected) := by
-  classical
-  intro X E hconnected G
-  exact hconnected
-
-private theorem hGacyc :
-    ∀ (X : Set GaussianInt), ∀ (E : Set (Finset GaussianInt)), ((SimpleGraph.fromRel fun a b : X
-        => ({a.1, b.1} : Finset GaussianInt) ∈ E).IsAcyclic) → (
-    let G : SimpleGraph X := SimpleGraph.fromRel fun a b : X =>
-      ({a.1, b.1} : Finset GaussianInt) ∈ E
-    G.IsAcyclic) := by
-  classical
-  intro X E hacyclic G
-  exact hacyclic
-
 private theorem hlengths :
     ∀ (X : Set GaussianInt), ∀ (E : Set (Finset GaussianInt)),
     let G : SimpleGraph X := SimpleGraph.fromRel fun a b : X =>
@@ -479,8 +459,8 @@ theorem FiniteConnectedAcyclicDegreeTwoGridPath
   have hXfinite : X.Finite := GridPathProof.hXfinite X E hEfinite hendpoints
   have hXne : X.Nonempty := GridPathProof.hXne X E hEne hendpoints hgrid
   let vertexNonempty : Nonempty X := GridPathProof.vertexNonempty X hXne
-  have hGconn : G.Connected := GridPathProof.hGconn X E hconnected
-  have hGacyc : G.IsAcyclic := GridPathProof.hGacyc X E hacyclic
+  have hGconn : G.Connected := hconnected
+  have hGacyc : G.IsAcyclic := hacyclic
   let lengths : Set Nat := {n | ∃ (u v : X) (p : G.Walk u v),
     p.IsPath ∧ p.length = n}
   have hlengths : lengths.Finite := GridPathProof.hlengths X E hXfinite

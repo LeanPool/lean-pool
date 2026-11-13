@@ -179,40 +179,6 @@ private theorem hparent :
   cases ho : BandPackingSymmetryReversesOrientation g' <;>
     simp [sigma, ho, cyclicIndex]
 
-private theorem hparentAction :
-    (by
-      classical
-      exact
-        ∀ (r : Fin 4 → CircleCoordinates), ∀ (a : Fin 3),
-        let q : Fin 4 → CircleCoordinates :=
-          ![r 0, r a.succ, r (a + 1).succ, r (a + 2).succ]
-        ∀ (g' : BandPackingSymmetry),
-        let qg := BandPackingSymmetryQuadrupleAction g' q
-        let sigma : Fin 3 → Fin 3 := fun m =>
-          if BandPackingSymmetryReversesOrientation g' then -m else m
-        (∀ (m : Fin 3), qg (sigma m).succ = BandPackingSymmetryCircleAction g' (r (a + m).succ))
-            → (∀ (m : Fin 3), BandPackingSymmetryQuadrupleAction g' q (if
-            BandPackingSymmetryReversesOrientation g' then -m else m).succ =
-            BandPackingSymmetryCircleAction g' (r (a + m).succ)) ) := by
-  classical
-  intro r a q g' qg sigma hparent m
-  simpa [qg, sigma] using hparent m
-
-private theorem hrootAction :
-    (by
-      classical
-      exact
-        ∀ (r : Fin 4 → CircleCoordinates), ∀ (a : Fin 3),
-        let q : Fin 4 → CircleCoordinates :=
-          ![r 0, r a.succ, r (a + 1).succ, r (a + 2).succ]
-        ∀ (g' : BandPackingSymmetry),
-        let qg := BandPackingSymmetryQuadrupleAction g' q
-        (qg 0 = BandPackingSymmetryCircleAction g' (r 0)) → (BandPackingSymmetryQuadrupleAction
-            g' q 0 = BandPackingSymmetryCircleAction g' (r 0)) ) := by
-  classical
-  intro r a q g' qg hrootLabel
-  simpa [qg] using hrootLabel
-
 private theorem hphaseForward :
     (by
       classical
@@ -1764,8 +1730,8 @@ theorem P4055T1PlacementNormalization
   let sigma : Fin 3 → Fin 3 := fun m =>
     if BandPackingSymmetryReversesOrientation g' then -m else m
   have hparent (m : Fin 3) := PlacementNormalizationProof.hparent r a g' cyclicIndex actionParent m
-  have hparentAction (m : Fin 3) := PlacementNormalizationProof.hparentAction r a g' hparent m
-  have hrootAction := PlacementNormalizationProof.hrootAction r a g' hrootLabel
+  have hparentAction (m : Fin 3) := hparent m
+  have hrootAction := hrootLabel
   have hphaseForward (m : Fin 3) := PlacementNormalizationProof.hphaseForward r a g' hfalse
       cyclicIndex hrootLabel hparent hparentAction hrootAction m
   have hphaseBackward (m : Fin 3) := PlacementNormalizationProof.hphaseBackward r a g' hfalse

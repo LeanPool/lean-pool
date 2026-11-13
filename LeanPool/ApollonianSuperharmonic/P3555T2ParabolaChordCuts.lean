@@ -26,15 +26,6 @@ namespace ApollonianSuperharmonic
 
 namespace ParabolaChordLemmas
 
-private theorem hL :
-    ∀ (n : Nat), ∀ (a : Fin (n + 3)), ∀ (b : Fin (n + 3)), ∀ (u : List (Fin (n + 3))), ∀ (v :
-        List (Fin (n + 3))), ((a :: (u ++ b :: v)).Nodup) → (
-    let L := a :: (u ++ b :: v)
-    L.Nodup) := by
-  classical
-  intro n a b u v hboundary L
-  exact hboundary
-
 private theorem haNotTail :
     ∀ (n : Nat), ∀ (a : Fin (n + 3)), ∀ (b : Fin (n + 3)), ∀ (u : List (Fin (n + 3))), ∀ (v :
         List (Fin (n + 3))),
@@ -151,45 +142,6 @@ private theorem hBNodup :
       simp only [List.mem_singleton] at hy
       have hxa : x = a := hxy.trans hy
       exact haNotV (hxa ▸ hx)⟩
-
-private theorem hnil :
-    ∀ (n : Nat), ∀ (xs : List (Fin (n + 3))), ([] : List (Fin (n + 3))).Sublist xs := by
-  classical
-  intro n xs
-  induction xs with
-  | nil => exact List.Sublist.slnil
-  | cons x xs ih => exact List.Sublist.cons x ih
-
-private theorem hnilv :
-    ∀ (n : Nat), ∀ (v : List (Fin (n + 3))), (∀ (xs : List (Fin (n + 3))), ([] : List (Fin (n +
-        3))).Sublist xs) → ([].Sublist v) := by
-  classical
-  intro n v hnil
-  exact hnil v
-
-private theorem hbSub :
-    ∀ (n : Nat), ∀ (b : Fin (n + 3)), ∀ (v : List (Fin (n + 3))), ([].Sublist v) → (([b] : List
-        (Fin (n + 3))).Sublist (b :: v)) := by
-  classical
-  intro n b v hnilv
-  exact List.Sublist.cons_cons b hnilv
-
-private theorem hAtail :
-    ∀ (n : Nat), ∀ (b : Fin (n + 3)), ∀ (u : List (Fin (n + 3))), ∀ (v : List (Fin (n + 3))),
-        (([b] : List (Fin (n + 3))).Sublist (b :: v)) → ((u ++ [b]).Sublist (u ++ b :: v)) := by
-  classical
-  intro n b u v hbSub
-  exact List.Sublist.append (List.Sublist.refl u) hbSub
-
-private theorem hAsubL :
-    ∀ (n : Nat), ∀ (a : Fin (n + 3)), ∀ (b : Fin (n + 3)), ∀ (u : List (Fin (n + 3))), ∀ (v :
-        List (Fin (n + 3))),
-    let L := a :: (u ++ b :: v)
-    let A := a :: (u ++ [b])
-    ((u ++ [b]).Sublist (u ++ b :: v)) → (A.Sublist L) := by
-  classical
-  intro n a b u v L A hAtail
-  exact List.Sublist.cons_cons a hAtail
 
 private theorem hrootlen :
     ∀ (n : Nat),
@@ -1730,7 +1682,7 @@ theorem P3555T2ParabolaChordCuts {n : Nat}
   let H := convexHull Real (q '' {i | i ∈ L})
   let HA := convexHull Real (q '' {i | i ∈ A})
   let HB := convexHull Real (q '' {i | i ∈ B})
-  have hL : L.Nodup := ParabolaChordLemmas.hL n a b u v hboundary
+  have hL : L.Nodup := hboundary
   have haNotTail : a ∉ u ++ b :: v := ParabolaChordLemmas.haNotTail n a b u v hL
   have htailNodup : (u ++ b :: v).Nodup := ParabolaChordLemmas.htailNodup n a b u v hL
   have hne : a ≠ b := by
@@ -1749,12 +1701,9 @@ theorem P3555T2ParabolaChordCuts {n : Nat}
   have hsets : {i | i ∈ A} ∩ {i | i ∈ B} = {a, b} := by
     ext i
     simp [A, B, List.mem_cons, List.mem_append]; aesop
-  have hnil (xs : List (Fin (n + 3))) :
-      ([] : List (Fin (n + 3))).Sublist xs := ParabolaChordLemmas.hnil n xs
-  have hnilv := ParabolaChordLemmas.hnilv n v hnil
-  have hbSub : ([b] : List (Fin (n + 3))).Sublist (b :: v) := ParabolaChordLemmas.hbSub n b v hnilv
-  have hAtail : (u ++ [b]).Sublist (u ++ b :: v) := ParabolaChordLemmas.hAtail n b u v hbSub
-  have hAsubL : A.Sublist L := ParabolaChordLemmas.hAsubL n a b u v hAtail
+  have hAsubL : A.Sublist L := List.Sublist.cons_cons a
+    (List.Sublist.append (List.Sublist.refl u)
+      (List.Sublist.cons_cons b (List.nil_sublist v)))
   obtain ⟨k, hLrot⟩ := hcyclic
   let root := List.ofFn (fun i : Fin (n + 3) => i)
   let R := root.rotate k
@@ -1889,7 +1838,7 @@ theorem P3555T2ParabolaChordCuts {n : Nat}
   have hBcut : HB ⊆ H ∩ {z | 0 ≤ D z} := ParabolaChordLemmas.hBcut n q a b u v hDgeConv hBinH hBhalf
   clear hdet hAidx hAinH hAhalf hBidx hBinH hBhalf hDleConv hDgeConv
   clear hL haNotTail htailNodup hparts huNodup hbNotU hvNodup hbNotV haNotU haNotV huvDisjoint
-  clear hnil hnilv hbSub hAtail hAsubL hboundary
+  clear hAsubL hboundary
   have hIndexUnion : {i | i ∈ L} = {i | i ∈ A} ∪ {i | i ∈ B} := ParabolaChordLemmas.hIndexUnion n
       a b u v
   have hImageUnion : q '' {i | i ∈ L} =

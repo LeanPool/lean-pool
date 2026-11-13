@@ -1565,42 +1565,6 @@ end TileOdometerSymmetryProof
 
 namespace TileOdometerAssembly
 
-private theorem hpsi :
-    (by
-      classical
-      exact
-        ∀ (z : GaussianInt), ∀ (wr : ℤ), ∀ (wi : ℤ), ∀ (v : GaussianInt),
-        (
-        let d1 := BandPackingShiftPotential (⟨wr, wi⟩ : GaussianInt) (v + (1 : GaussianInt)) -
-            BandPackingShiftPotential (⟨wr, wi⟩ : GaussianInt) v;
-        let d2 := BandPackingShiftPotential (⟨wr, wi⟩ : GaussianInt) (v + (⟨(0 : ℤ), (1 : ℤ)⟩ :
-            GaussianInt)) - BandPackingShiftPotential (⟨wr, wi⟩ : GaussianInt) v;
-            BandPackingShiftPotential (⟨wr, wi⟩ : GaussianInt) (v + (1 : GaussianInt) + (⟨(0 :
-            ℤ), (1 : ℤ)⟩ : GaussianInt)) = BandPackingShiftPotential (⟨wr, wi⟩ : GaussianInt) v +
-            d1 + d2 + wi) → (∀ r ∈ (CurvatureOneOdometer z).domain, BandPackingShiftPotential
-            (⟨wr, wi⟩ : GaussianInt) (v + r) = wi * r.re * r.im + (⟨BandPackingShiftPotential
-                (⟨wr, wi⟩ : GaussianInt) (v + (1 : GaussianInt)) -
-            BandPackingShiftPotential (⟨wr, wi⟩ : GaussianInt) v, BandPackingShiftPotential
-            (⟨wr, wi⟩ : GaussianInt) (v + (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt)) -
-            BandPackingShiftPotential (⟨wr, wi⟩ : GaussianInt) v⟩ : GaussianInt).re * (v + r).re
-                + (⟨BandPackingShiftPotential (⟨wr, wi⟩ : GaussianInt) (v + (1 : GaussianInt)) -
-            BandPackingShiftPotential (⟨wr, wi⟩ : GaussianInt) v, BandPackingShiftPotential
-            (⟨wr, wi⟩ : GaussianInt) (v + (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt)) -
-            BandPackingShiftPotential (⟨wr, wi⟩ : GaussianInt) v⟩ : GaussianInt).im * (v + r).im +
-            BandPackingShiftPotential (⟨wr, wi⟩ : GaussianInt) v - (⟨BandPackingShiftPotential
-                (⟨wr, wi⟩ : GaussianInt) (v + (1 : GaussianInt)) -
-            BandPackingShiftPotential (⟨wr, wi⟩ : GaussianInt) v, BandPackingShiftPotential
-            (⟨wr, wi⟩ : GaussianInt) (v + (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt)) -
-            BandPackingShiftPotential (⟨wr, wi⟩ : GaussianInt) v⟩ : GaussianInt).re * v.re -
-                (⟨BandPackingShiftPotential (⟨wr, wi⟩ : GaussianInt) (v + (1 : GaussianInt)) -
-            BandPackingShiftPotential (⟨wr, wi⟩ : GaussianInt) v, BandPackingShiftPotential
-            (⟨wr, wi⟩ : GaussianInt) (v + (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt)) -
-            BandPackingShiftPotential (⟨wr, wi⟩ : GaussianInt) v⟩ : GaussianInt).im * v.im) ) := by
-  classical
-  intro z wr wi v hcorner r hr
-  exact TileOdometerSymmetryProof.hpsi z wr wi v
-          hcorner r hr
-
 private theorem hcentroid' :
     (by
       classical
@@ -1635,12 +1599,6 @@ private theorem hphaseEq :
       hphaseAffine hphase
 
 end TileOdometerAssembly
-
-namespace TileOdometerConclusion
-
-private abbrev hpsi := ApollonianSuperharmonic.TileOdometerAssembly.hpsi
-
-end TileOdometerConclusion
 
 namespace UnitOdometerSymmetry
 
@@ -1681,7 +1639,7 @@ private theorem unitSymmetry :
       let b1 := b0 + BandPackingShiftPotential ⟨wr, wi⟩ v -
         d.re * v.re - d.im * v.im
       have hcorner := TileOdometerSymmetryProof.hcorner wr wi shiftDx shiftDy v
-      have hpsi := TileOdometerConclusion.hpsi z wr wi v hcorner
+      have hpsi := TileOdometerSymmetryProof.hpsi z wr wi v hcorner
       have hcurv (r : GaussianInt) (hr :
           r ∈ (CurvatureOneOdometer z).domain) :
           (CurvatureOneOdometer (z + ⟨wr, wi⟩)).value r =

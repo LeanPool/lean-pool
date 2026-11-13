@@ -807,18 +807,6 @@ private theorem hzeroMid :
   intro m C z a b k hmidClass hmid
   exact (hmidClass hmid).2.2.2
 
-private theorem hzero :
-    ∀ (m : Nat), ∀ (C : Fin 3 → Bool → ProtoTile), ∀ (z : GaussianInt),
-    let a := z.re
-    let b := z.im
-    let k := Nat.card {a : Fin 3 × Bool //
-      z ∈ BoundaryFootprintVertices (C a.1 a.2)}
-    ((b = m) → ((k = 0 ↔ -((m : Int) - 3) ≤ a ∧ a ≤ (m : Int) - 3))) → (b = m →
-      (k = 0 ↔ -((m : Int) - 3) ≤ a ∧ a ≤ (m : Int) - 3)) := by
-  classical
-  intro m C z a b k hzeroMid hmid
-  exact hzeroMid hmid
-
 private theorem hdescent :
     ∀ (m : Nat), (1 < m) → (∀ (C : Fin 3 → Bool → ProtoTile), (C 2 false = DiamondTile (m - 1)) →
         ((C 2 true = TileTranslation (DiamondTile (m - 1)) ⟨0, 2⟩) → (∀ (z : GaussianInt),
@@ -1054,8 +1042,7 @@ theorem P4194T1DiamondBoundaryLedger
       (k = 0 ↔ -((m : Int) - 3) ≤ a ∧ a ≤ (m : Int) - 3) := DiamondBoundaryProof.hzeroMid m C z
           hmidClass hmid
   have hzero : b = m →
-      (k = 0 ↔ -((m : Int) - 3) ≤ a ∧ a ≤ (m : Int) - 3) := DiamondBoundaryProof.hzero m C z
-          hzeroMid
+      (k = 0 ↔ -((m : Int) - 3) ≤ a ∧ a ≤ (m : Int) - 3) := hzeroMid
   have hdescent : (k = 2 ∨ k = 4) ∨
       ∃ s : Bool, ∀ j : Fin 4,
         LatticeVertexIncidentCell z j ∈ (C 2 s).cells := DiamondBoundaryProof.hdescent m hm C h2f

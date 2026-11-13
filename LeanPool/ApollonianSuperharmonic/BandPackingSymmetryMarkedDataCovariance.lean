@@ -874,34 +874,6 @@ private theorem hphase :
   dsimp [BandPackingSymmetryScopedPhase, sigma, a', a] at hh
   cases delta <;> simpa using hh.1
 
-private theorem linNeg :
-    (by
-      classical
-      exact
-        (∀ (k : BandPackingSymmetry), ∀ (z : GaussianInt), BandPackingSymmetryVectorAction k (-z)
-            = -BandPackingSymmetryVectorAction k z) → (∀ (g : BandPackingSymmetry), ∀ (z :
-            GaussianInt), BandPackingSymmetryVectorAction g (-z) =
-            -BandPackingSymmetryVectorAction g z) ) := by
-  classical
-  intro allNeg g z
-  exact allNeg g z
-
-private theorem linQuarter :
-    (by
-      classical
-      exact
-        (∀ (k : BandPackingSymmetry), ∀ (z : GaussianInt), BandPackingSymmetryVectorAction k
-            (GaussianQuarterTurn z) = if BandPackingSymmetryReversesOrientation k then
-            -GaussianQuarterTurn (BandPackingSymmetryVectorAction k z) else GaussianQuarterTurn
-            (BandPackingSymmetryVectorAction k z)) → (∀ (g : BandPackingSymmetry), ∀ (z :
-            GaussianInt), BandPackingSymmetryVectorAction g (GaussianQuarterTurn z) = if
-            BandPackingSymmetryReversesOrientation g then -GaussianQuarterTurn
-            (BandPackingSymmetryVectorAction g z) else GaussianQuarterTurn
-            (BandPackingSymmetryVectorAction g z)) ) := by
-  classical
-  intro allQuarter g z
-  exact allQuarter g z
-
 private theorem hdisp :
     (by
       classical
@@ -1328,10 +1300,8 @@ theorem BandPackingSymmetryMarkedDataCovariance :
     have hflipA := MarkedCovarianceGeometry.hflipA q i hflip qmul
     have hflipB := MarkedCovarianceGeometry.hflipB g q i hflip' qmul
     have hphase := MarkedCovarianceGeometry.hphase g q i delta hdelta
-    have linNeg := MarkedCovarianceGeometry.linNeg allNeg g
-    have linQuarter := MarkedCovarianceGeometry.linQuarter allQuarter g
     have hdisp := MarkedCovarianceGeometry.hdisp g s delta finiteCompanion q i hflipA hflipB
-        hphase linNeg linQuarter
+        hphase (allNeg g) (allQuarter g)
     rcases BandPackingSymmetryTilingTransport g with
       ⟨_, _, _, _, _, _, htranslation, hfootprint, _, _, _⟩
     have htile := MarkedCovarianceGeometry.htile g q i s delta T hdisp htranslation

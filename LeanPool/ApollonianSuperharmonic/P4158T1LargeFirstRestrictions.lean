@@ -353,18 +353,6 @@ private theorem hvsol :
     simpa [P.sum_q] using hvfirst) (by
     simpa [P.sum_q] using hvsecond)
 
-private theorem haslope32 :
-    (by
-      classical
-      exact
-        ∀ (P : FordFareyParameter), (BandVectors.2 (FordRecursiveQuadruple P (3 : Fin (4 : ℕ)))
-            (FordRecursiveQuadruple P (2 : Fin (4 : ℕ))) = ⟨-P.p₂, (0 : ℤ)⟩) → (BandVectors.2
-            (FordRecursiveQuadruple P 3) (FordRecursiveQuadruple P 2) = -(P.p₂ : GaussianInt)) )
-            := by
-  classical
-  intro P ha32
-  exact ha32
-
 private theorem fordCentroid :
     (by
       classical
@@ -887,7 +875,6 @@ theorem P4158T1LargeFirstRestrictions
   have hvfirst := LargeFirstRestrictions.hvfirst P hq hv10
   have hvsecond := LargeFirstRestrictions.hvsecond P hq hv20
   have hvsol := LargeFirstRestrictions.hvsol P hvsum hvfirst hvsecond
-  have haslope32 := LargeFirstRestrictions.haslope32 P ha32
   have fordCentroid (n : Nat) (hn : 0 < n) := LargeFirstRestrictions.fordCentroid n hn
   let Uc := TileTranslation (FordTile P.q₁) (u + ⟨P.q₂, P.q₂⟩)
   let Vc := TileTranslation (FordTile P.q₁) (u + ⟨P.q, P.q₁⟩)
@@ -922,16 +909,16 @@ theorem P4158T1LargeFirstRestrictions
   let s := pU
   have hslopeU : PartialOdometerSlope g = some s := by
     simpa [g, s] using hspU
-  have hdu1' := LargeFirstRestrictions.hdu1' P p haslope32 p₀ pU hdu1 hp₀
-  have hdu2' := LargeFirstRestrictions.hdu2' P p haslope32 p₀ pU hdu2 hp₀
+  have hdu1' := LargeFirstRestrictions.hdu1' P p ha32 p₀ pU hdu1 hp₀
+  have hdu2' := LargeFirstRestrictions.hdu2' P p ha32 p₀ pU hdu2 hp₀
   have hslopeVdata := LargeFirstRestrictions.hslopeVdata P h' kS hslope' hnonzero
   obtain ⟨p₀', pV, hsp', hspV, hdk1, hdk2⟩ := hslopeVdata
   have hp₀' : p₀' = p' := Option.some.inj (hsp'.symm.trans hs')
   let t := pV
   have hslopeV : PartialOdometerSlope k = some t := by
     simpa [k, t] using hspV
-  have hdk1' := LargeFirstRestrictions.hdk1' P p' haslope32 p₀' pV hdk1 hp₀'
-  have hdk2' := LargeFirstRestrictions.hdk2' P p' haslope32 p₀' pV hdk2 hp₀'
+  have hdk1' := LargeFirstRestrictions.hdk1' P p' ha32 p₀' pV hdk1 hp₀'
+  have hdk2' := LargeFirstRestrictions.hdk2' P p' ha32 p₀' pV hdk2 hp₀'
   have hsl' := LargeFirstRestrictions.hsl' P p p' hsl ha10
   have hSlopeDiff := LargeFirstRestrictions.hSlopeDiff P p p' pU hdu1' hdu2' pV hdk1' hdk2' hsl'
   refine ⟨U, V, g, k, s, t, Q, hAncU, hAncV, hUg, hVk,

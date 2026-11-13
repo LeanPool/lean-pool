@@ -30,27 +30,6 @@ namespace DiamondRightBoundaryProof
 
 private abbrev tri := ApollonianSuperharmonic.DiamondQuadraticArithmetic.triangularScale
 
-private theorem hposResult :
-    (by
-      classical
-      exact
-        ∀ (K : DiamondParameter), ∀ (hk : (1 : ℕ) < K.1),
-        let n : Int := K.1
-        (∀ (i : Fin 3), ∀ (x : GaussianInt), x ∈ FootprintVertices (DiamondTile K.1) → x -
-            (P5352T2PlacementData K.1 i).1.1 ∈ FootprintVertices (DiamondTile K.1) →
-            (P5352T2Sources K hk 0).2.1 (x - (P5352T2PlacementData K.1 i).1.1) +
-            (P5352T2PlacementData K.1 i).1.2.re*x.re + (P5352T2PlacementData K.1
-            i).1.2.im*x.im - (P5352T2Sources K hk 0).2.1 x = if i.val = 0 then -(n*(n+1))/2
-            else if i.val = 1 then n*(n-1)/2 else n*(n-1)) → (∀ (i : Fin 3), ∀ (x : GaussianInt),
-            x ∈ FootprintVertices (DiamondTile K.1) → x - (P5352T2PlacementData K.1 i).1.1 ∈
-            FootprintVertices (DiamondTile K.1) → (P5352T2Sources K hk 0).2.1 (x -
-            (P5352T2PlacementData K.1 i).1.1) + (P5352T2PlacementData K.1 i).1.2.re*x.re +
-            (P5352T2PlacementData K.1 i).1.2.im*x.im - (P5352T2Sources K hk 0).2.1 x = if
-            i.val = 0 then -(n*(n+1))/2 else if i.val = 1 then n*(n-1)/2 else n*(n-1)) ) := by
-  classical
-  intro K hk n hpositive
-  exact hpositive
-
 end DiamondRightBoundaryProof
 
 namespace DiamondBoundaryDetails
@@ -644,17 +623,6 @@ theorem P5491T1DiamondRightBoundary (K : DiamondParameter) (hk : 1 < K.1)
           if i.val = 0 then -(n*(n+1))/2 else
           if i.val = 1 then n*(n-1)/2 else n*(n-1) := DiamondPositiveBoundary.hpositive K hk hF
               hfloorEven hfloorOdd tri foot
-  have hposResult : ∀ (i : Fin 3) (x : GaussianInt),
-      x ∈ FootprintVertices (DiamondTile K.1) →
-      x - (P5352T2PlacementData K.1 i).1.1 ∈ FootprintVertices (DiamondTile K.1) →
-      (P5352T2Sources K hk 0).2.1
-          (x - (P5352T2PlacementData K.1 i).1.1) +
-        (P5352T2PlacementData K.1 i).1.2.re*x.re +
-        (P5352T2PlacementData K.1 i).1.2.im*x.im -
-        (P5352T2Sources K hk 0).2.1 x =
-          if i.val = 0 then -(n*(n+1))/2 else
-          if i.val = 1 then n*(n-1)/2 else n*(n-1) := DiamondRightBoundaryProof.hposResult K hk
-              hpositive
   let c : Int := if i.val = 0 then -(n*(n+1))/2 else
     if i.val = 1 then n*(n-1)/2 else n*(n-1)
   cases e
@@ -665,7 +633,7 @@ theorem P5491T1DiamondRightBoundary (K : DiamondParameter) (hk : 1 < K.1)
       simpa [P5352T2Sources] using hx
     have hx1 : x+M.1 ∈ FootprintVertices (DiamondTile K.1) := by
       simpa [P5352T2Sources, M, P5352T2PlacementData] using hxD
-    have hp := hposResult i (x+M.1) hx1 (by simpa [M] using hx0)
+    have hp := hpositive i (x+M.1) hx1 (by simpa [M] using hx0)
     have hp' := DiamondBoundaryDetails.hp' K hk i x hp
     simp only [Bool.false_eq_true, ↓reduceIte, sub_neg_eq_add]
     simp only [M,
@@ -676,7 +644,7 @@ theorem P5491T1DiamondRightBoundary (K : DiamondParameter) (hk : 1 < K.1)
     have hx0 : x ∈ FootprintVertices (DiamondTile K.1) := by
       simpa [P5352T2Sources] using hx
     have hx1 := DiamondBoundaryDetails.hx1At508 K hk i x hxD
-    have hp := hposResult i x hx0 hx1
+    have hp := hpositive i x hx0 hx1
     simpa [P5352T2Sources, P5352T2PlacementData, c] using hp
 
 end ApollonianSuperharmonic

@@ -207,25 +207,6 @@ private theorem root_cells :
       exact (hbase c).mpr ⟨.F, by
         simpa [ModifiedSubtileOccurrenceInterpretation, hl] using hc'⟩
 
-private theorem hVroot :
-    (by
-      classical
-      exact
-        ∀ (q : Fin 4 → CircleCoordinates), ∀ (cfg : BandOrderedGeneralConfiguration q), ∀ (C :
-            BandCircle), ∀ (T : ProtoTile), ∀ (cert : BandOrderedGeneralLayoutCertificate q cfg C
-            T), ∀ (a : PeriodicSubtileIndex),
-        let V := SubtileOccurrenceInterpretation cert.P cert.u cert.v a
-        (∀ (o : PeriodicSubtileIndex), ∀ (c : LatticeCell), (c ∈ (SubtileOccurrenceInterpretation
-            cert.P cert.u cert.v o).cells) → (c ∈ (TileTranslation T ((o.first : GaussianInt) *
-            cert.u + (o.second : GaussianInt) * cert.v)).cells)) → (∀ c : LatticeCell, c ∈
-            V.cells → c ∈ (TileTranslation T ((a.first : GaussianInt) * cert.u + (a.second :
-            GaussianInt) * cert.v)).cells) ) := by
-  classical
-  intro q cfg C T cert a V root_cells c hc
-  exact root_cells a c (by simpa [V] using hc)
-
-private abbrev hWroot := ApollonianSuperharmonic.RoutedBlockGeometry.hVroot
-
 private theorem hG₀root :
     (by
       classical
@@ -969,8 +950,8 @@ theorem P4418T3RoutedBlockCriterion
   have root_cells (o : PeriodicSubtileIndex) (c : LatticeCell)
       (hc : c ∈ (SubtileOccurrenceInterpretation cert.P cert.u cert.v o).cells) :=
           RoutedBlockGeometry.root_cells q cfg C T cert o c hc
-  have hVroot := RoutedBlockGeometry.hVroot q cfg C T cert a root_cells
-  have hWroot := RoutedBlockGeometry.hWroot q cfg C T cert b root_cells
+  have hVroot := root_cells a
+  have hWroot := root_cells b
   have hG₀root := RoutedBlockGeometry.hG₀root q cfg C T cert a b row root_cells
   have hG₁root := RoutedBlockGeometry.hG₁root q cfg C T cert a b row root_cells
   have hVold := RoutedBlockGeometry.hVold q cfg C T cert a b row hshift

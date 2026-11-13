@@ -535,44 +535,6 @@ private theorem hsumA :
   rw [laws.2.2.2.1, ha2, ha3, h13]
   ring
 
-private theorem hsumARe :
-    (by
-      classical
-      exact
-        ∀ (q : Fin 4 → CircleCoordinates), (((GaussianInt.toComplex : GaussianInt → ℂ)
-            (BandVectors.2 (q (0 : Fin (4 : ℕ))) (q (3 : Fin (4 : ℕ))))).re =
-            -((GaussianInt.toComplex : GaussianInt → ℂ) (BandVectors.2 (q (0 : Fin (4 : ℕ))) (q
-            (1 : Fin (4 : ℕ))))).re - ((GaussianInt.toComplex : GaussianInt → ℂ) (BandVectors.2
-            (q (0 : Fin (4 : ℕ))) (q (2 : Fin (4 : ℕ))))).re ∧ ((GaussianInt.toComplex :
-            GaussianInt → ℂ) (BandVectors.2 (q (0 : Fin (4 : ℕ))) (q (3 : Fin (4 : ℕ))))).im =
-            -((GaussianInt.toComplex : GaussianInt → ℂ) (BandVectors.2 (q (0 : Fin (4 : ℕ))) (q
-            (1 : Fin (4 : ℕ))))).im - ((GaussianInt.toComplex : GaussianInt → ℂ) (BandVectors.2
-            (q (0 : Fin (4 : ℕ))) (q (2 : Fin (4 : ℕ))))).im) → ((GaussianInt.toComplex
-            (BandVectors.2 (q 0) (q 3))).re = -(GaussianInt.toComplex (BandVectors.2 (q 0) (q
-            1))).re - (GaussianInt.toComplex (BandVectors.2 (q 0) (q 2))).re) ) := by
-  classical
-  intro q hsumAPoint
-  exact hsumAPoint.1
-
-private theorem hsumAIm :
-    (by
-      classical
-      exact
-        ∀ (q : Fin 4 → CircleCoordinates), (((GaussianInt.toComplex : GaussianInt → ℂ)
-            (BandVectors.2 (q (0 : Fin (4 : ℕ))) (q (3 : Fin (4 : ℕ))))).re =
-            -((GaussianInt.toComplex : GaussianInt → ℂ) (BandVectors.2 (q (0 : Fin (4 : ℕ))) (q
-            (1 : Fin (4 : ℕ))))).re - ((GaussianInt.toComplex : GaussianInt → ℂ) (BandVectors.2
-            (q (0 : Fin (4 : ℕ))) (q (2 : Fin (4 : ℕ))))).re ∧ ((GaussianInt.toComplex :
-            GaussianInt → ℂ) (BandVectors.2 (q (0 : Fin (4 : ℕ))) (q (3 : Fin (4 : ℕ))))).im =
-            -((GaussianInt.toComplex : GaussianInt → ℂ) (BandVectors.2 (q (0 : Fin (4 : ℕ))) (q
-            (1 : Fin (4 : ℕ))))).im - ((GaussianInt.toComplex : GaussianInt → ℂ) (BandVectors.2
-            (q (0 : Fin (4 : ℕ))) (q (2 : Fin (4 : ℕ))))).im) → ((GaussianInt.toComplex
-            (BandVectors.2 (q 0) (q 3))).im = -(GaussianInt.toComplex (BandVectors.2 (q 0) (q
-            1))).im - (GaussianInt.toComplex (BandVectors.2 (q 0) (q 2))).im) ) := by
-  classical
-  intro q hsumAPoint
-  exact hsumAPoint.2
-
 private theorem hSlopePeriod :
     (by
       classical
@@ -933,10 +895,8 @@ theorem P4261T1RightCoordinates
   simp only [GaussianRealPoint, Int.reduceNeg, Fin.isValue, GaussianInt.intCast_re,
       GaussianInt.intCast_im, Zsqrtd.re_sub, Zsqrtd.re_neg, Int.cast_sub, Int.cast_neg,
       Zsqrtd.im_sub, Zsqrtd.im_neg, Prod.mk.injEq] at hsumAPoint
-  have hsumARe := RightCoordinateGeometry.hsumARe q hsumAPoint
-  have hsumAIm := RightCoordinateGeometry.hsumAIm q hsumAPoint
   have hSlopePeriod := RightCoordinateGeometry.hSlopePeriod q cfg C₀ T₀ cert q' i' e'
-      hq'0 ra hAdjChild hsumARe hsumAIm
+      hq'0 ra hAdjChild hsumAPoint.1 hsumAPoint.2
   have hAdjSlope := RightCoordinateGeometry.hAdjSlope C₀ pN p0 q' i' e' hq'0 hslopeAdj1 hslopeAdj2
   have hSlopeShift := RightCoordinateGeometry.hSlopeShift q pN p0 q' i' e' ra hSlopePeriod hAdjSlope
   rcases hrootSlope j s with hzero | ⟨p, ps, hp, hps, hpx, hpy⟩
