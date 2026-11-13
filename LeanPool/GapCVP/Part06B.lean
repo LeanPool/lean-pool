@@ -851,6 +851,20 @@ macro "sourceUnaryDivisionStepTac" : tactic =>
             (first | rfl | simp [Function.update]) } <;>
           try rfl)))
 
+/-- Prove a source unary division step using the fixed simplification rules. -/
+macro "sourceUnaryDivisionStepOnly" : tactic =>
+  `(tactic| machineStackEquality [
+      sourceUnaryDivisionMachine, sourceUnaryDivisionConfiguration, sourceUnaryDivisionControl,
+      sourceUnaryDivisionPeek, sourceUnaryDivisionPop, sourceUnaryDivisionGoto,
+      sourceUnaryDivisionDividendStatement, sourceUnaryDivisionModulusStatement,
+      sourceUnaryDivisionArchiveSuffixStatement, sourceUnaryDivisionRestoreSourceStatement,
+      sourceUnaryDivisionDispatchStatement, sourceUnaryDivisionMatchStatement,
+      sourceUnaryDivisionRestoreModulusStatement, sourceUnaryDivisionEmitRemainderStatement,
+      sourceUnaryDivisionEmitQuotientStatement, sourceUnaryDivisionCleanupModulusStatement,
+      sourceUnaryDivisionCleanupScratchStatement, sourceUnaryDivisionCleanupDividendStatement,
+      sourceUnaryDivisionCleanupPartialStatement, Turing.haltList, Turing.FinTM2.step,
+      Turing.TM2.step, Turing.TM2.stepAux])
+
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem sourceUnaryDivision_dividend_true
     (valid : Bool)
@@ -863,7 +877,7 @@ theorem sourceUnaryDivision_dividend_true
       some (sourceUnaryDivisionConfiguration 0 valid
         input (true :: archive) (true :: dividend) modulus
         modulusScratch quotient residueStack output) := by
-  sourceUnaryDivisionStepTac
+  sourceUnaryDivisionStepOnly
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem sourceUnaryDivision_dividend_false
@@ -877,7 +891,7 @@ theorem sourceUnaryDivision_dividend_false
       some (sourceUnaryDivisionConfiguration 1 valid
         input (false :: archive) dividend modulus
         modulusScratch quotient residueStack output) := by
-  sourceUnaryDivisionStepTac
+  sourceUnaryDivisionStepOnly
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem sourceUnaryDivision_dividend_missing
@@ -891,7 +905,7 @@ theorem sourceUnaryDivision_dividend_missing
       some (sourceUnaryDivisionConfiguration 2 false
         [] archive dividend modulus
         modulusScratch quotient residueStack output) := by
-  sourceUnaryDivisionStepTac
+  rfl
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem sourceUnaryDivision_modulus_true
@@ -905,7 +919,7 @@ theorem sourceUnaryDivision_modulus_true
       some (sourceUnaryDivisionConfiguration 1 valid
         input (true :: archive) dividend (true :: modulus)
         modulusScratch quotient residueStack output) := by
-  sourceUnaryDivisionStepTac
+  sourceUnaryDivisionStepOnly
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem sourceUnaryDivision_modulus_false
@@ -919,7 +933,7 @@ theorem sourceUnaryDivision_modulus_false
       some (sourceUnaryDivisionConfiguration 2 valid
         input (false :: archive) dividend modulus
         modulusScratch quotient residueStack output) := by
-  sourceUnaryDivisionStepTac
+  sourceUnaryDivisionStepOnly
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem sourceUnaryDivision_modulus_missing
@@ -933,7 +947,7 @@ theorem sourceUnaryDivision_modulus_missing
       some (sourceUnaryDivisionConfiguration 2 false
         [] archive dividend modulus
         modulusScratch quotient residueStack output) := by
-  sourceUnaryDivisionStepTac
+  rfl
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem sourceUnaryDivision_suffix_step
@@ -947,7 +961,7 @@ theorem sourceUnaryDivision_suffix_step
       some (sourceUnaryDivisionConfiguration 2 valid
         input (bit :: archive) dividend modulus
         modulusScratch quotient residueStack output) := by
-  cases bit <;> sourceUnaryDivisionStepTac
+  sourceUnaryDivisionStepOnly
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem sourceUnaryDivision_suffix_finish
@@ -961,7 +975,7 @@ theorem sourceUnaryDivision_suffix_finish
       some (sourceUnaryDivisionConfiguration 3 valid
         [] archive dividend modulus
         modulusScratch quotient residueStack output) := by
-  sourceUnaryDivisionStepTac
+  rfl
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem sourceUnaryDivision_restoreSource_step
@@ -975,7 +989,7 @@ theorem sourceUnaryDivision_restoreSource_step
       some (sourceUnaryDivisionConfiguration 3 valid
         [] archive dividend modulus
         modulusScratch quotient residueStack (bit :: output)) := by
-  cases bit <;> sourceUnaryDivisionStepTac
+  sourceUnaryDivisionStepOnly
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem sourceUnaryDivision_restoreSource_finish
@@ -989,7 +1003,7 @@ theorem sourceUnaryDivision_restoreSource_finish
       some (sourceUnaryDivisionConfiguration 4 valid
         [] [] dividend modulus
         modulusScratch quotient residueStack (false :: output)) := by
-  sourceUnaryDivisionStepTac
+  sourceUnaryDivisionStepOnly
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem sourceUnaryDivision_dispatch_valid
@@ -1002,7 +1016,7 @@ theorem sourceUnaryDivision_dispatch_valid
       some (sourceUnaryDivisionConfiguration 5 true
         [] [] dividend (true :: modulusTail)
         modulusScratch quotient residueStack output) := by
-  sourceUnaryDivisionStepTac
+  rfl
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem sourceUnaryDivision_dispatch_zero
@@ -1014,7 +1028,7 @@ theorem sourceUnaryDivision_dispatch_zero
       some (sourceUnaryDivisionConfiguration 9 true
         [] [] dividend []
         modulusScratch quotient residueStack (false :: output)) := by
-  sourceUnaryDivisionStepTac
+  sourceUnaryDivisionStepOnly
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem sourceUnaryDivision_dispatch_invalid
@@ -1027,7 +1041,7 @@ theorem sourceUnaryDivision_dispatch_invalid
       some (sourceUnaryDivisionConfiguration 9 false
         [] [] dividend modulus
         modulusScratch quotient residueStack (false :: output)) := by
-  sourceUnaryDivisionStepTac
+  sourceUnaryDivisionStepOnly
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem sourceUnaryDivision_match_step
@@ -1042,7 +1056,7 @@ theorem sourceUnaryDivision_match_step
         [] [] dividend modulus
         (true :: modulusScratch) quotient
         (true :: residueStack) output) := by
-  sourceUnaryDivisionStepTac
+  sourceUnaryDivisionStepOnly
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem sourceUnaryDivision_match_full
@@ -1055,7 +1069,7 @@ theorem sourceUnaryDivision_match_full
       some (sourceUnaryDivisionConfiguration 6 valid
         [] [] dividend []
         modulusScratch quotient residueStack output) := by
-  sourceUnaryDivisionStepTac
+  rfl
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem sourceUnaryDivision_match_partial
@@ -1068,7 +1082,7 @@ theorem sourceUnaryDivision_match_partial
       some (sourceUnaryDivisionConfiguration 7 valid
         [] [] [] (true :: modulus)
         modulusScratch quotient residueStack output) := by
-  sourceUnaryDivisionStepTac
+  rfl
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem sourceUnaryDivision_restoreModulus_step
@@ -1081,7 +1095,7 @@ theorem sourceUnaryDivision_restoreModulus_step
       some (sourceUnaryDivisionConfiguration 6 valid
         [] [] dividend (true :: modulus)
         modulusScratch quotient residueStack output) := by
-  sourceUnaryDivisionStepTac
+  sourceUnaryDivisionStepOnly
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem sourceUnaryDivision_restoreModulus_finish
@@ -1092,7 +1106,7 @@ theorem sourceUnaryDivision_restoreModulus_finish
         [] [] dividend modulus [] quotient [] output) =
       some (sourceUnaryDivisionConfiguration 5 valid
         [] [] dividend modulus [] (true :: quotient) [] output) := by
-  sourceUnaryDivisionStepTac
+  sourceUnaryDivisionStepOnly
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem sourceUnaryDivision_emitRemainder_step
@@ -1105,7 +1119,7 @@ theorem sourceUnaryDivision_emitRemainder_step
       some (sourceUnaryDivisionConfiguration 7 valid
         [] [] [] modulus
         modulusScratch quotient residueStack (true :: output)) := by
-  sourceUnaryDivisionStepTac
+  sourceUnaryDivisionStepOnly
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem sourceUnaryDivision_emitRemainder_finish
@@ -1118,7 +1132,7 @@ theorem sourceUnaryDivision_emitRemainder_finish
       some (sourceUnaryDivisionConfiguration 8 valid
         [] [] [] modulus
         modulusScratch quotient [] (false :: output)) := by
-  sourceUnaryDivisionStepTac
+  sourceUnaryDivisionStepOnly
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem sourceUnaryDivision_emitQuotient_step
@@ -1131,7 +1145,7 @@ theorem sourceUnaryDivision_emitQuotient_step
       some (sourceUnaryDivisionConfiguration 8 valid
         [] [] [] modulus
         modulusScratch quotient [] (true :: output)) := by
-  sourceUnaryDivisionStepTac
+  sourceUnaryDivisionStepOnly
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem sourceUnaryDivision_emitQuotient_finish
@@ -1144,7 +1158,7 @@ theorem sourceUnaryDivision_emitQuotient_finish
       some (sourceUnaryDivisionConfiguration 9 valid
         [] [] [] modulus
         modulusScratch [] [] output) := by
-  sourceUnaryDivisionStepTac
+  rfl
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem sourceUnaryDivision_cleanupModulus_step
@@ -1157,7 +1171,7 @@ theorem sourceUnaryDivision_cleanupModulus_step
       some (sourceUnaryDivisionConfiguration 9 valid
         [] [] dividend modulus
         modulusScratch quotient residueStack output) := by
-  sourceUnaryDivisionStepTac
+  sourceUnaryDivisionStepOnly
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem sourceUnaryDivision_cleanupModulus_finish
@@ -1170,7 +1184,7 @@ theorem sourceUnaryDivision_cleanupModulus_finish
       some (sourceUnaryDivisionConfiguration 10 valid
         [] [] dividend []
         modulusScratch quotient residueStack output) := by
-  sourceUnaryDivisionStepTac
+  rfl
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem sourceUnaryDivision_cleanupScratch_step
@@ -1183,7 +1197,7 @@ theorem sourceUnaryDivision_cleanupScratch_step
       some (sourceUnaryDivisionConfiguration 10 valid
         [] [] dividend []
         modulusScratch quotient residueStack output) := by
-  sourceUnaryDivisionStepTac
+  sourceUnaryDivisionStepOnly
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem sourceUnaryDivision_cleanupScratch_finish
@@ -1194,7 +1208,7 @@ theorem sourceUnaryDivision_cleanupScratch_finish
         [] [] dividend [] [] quotient residueStack output) =
       some (sourceUnaryDivisionConfiguration 11 valid
         [] [] dividend [] [] quotient residueStack output) := by
-  sourceUnaryDivisionStepTac
+  rfl
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem sourceUnaryDivision_cleanupDividend_step
@@ -1205,7 +1219,7 @@ theorem sourceUnaryDivision_cleanupDividend_step
         [] [] (true :: dividend) [] [] quotient residueStack output) =
       some (sourceUnaryDivisionConfiguration 11 valid
         [] [] dividend [] [] quotient residueStack output) := by
-  sourceUnaryDivisionStepTac
+  sourceUnaryDivisionStepOnly
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem sourceUnaryDivision_cleanupDividend_finish
@@ -1216,7 +1230,7 @@ theorem sourceUnaryDivision_cleanupDividend_finish
         [] [] [] [] [] quotient residueStack output) =
       some (sourceUnaryDivisionConfiguration 12 valid
         [] [] [] [] [] quotient residueStack output) := by
-  sourceUnaryDivisionStepTac
+  rfl
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem sourceUnaryDivision_cleanupPartial_step
@@ -1227,7 +1241,7 @@ theorem sourceUnaryDivision_cleanupPartial_step
         [] [] [] [] [] quotient (true :: residueStack) output) =
       some (sourceUnaryDivisionConfiguration 12 valid
         [] [] [] [] [] quotient residueStack output) := by
-  sourceUnaryDivisionStepTac
+  sourceUnaryDivisionStepOnly
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem sourceUnaryDivision_cleanupPartial_finish
@@ -1236,7 +1250,7 @@ theorem sourceUnaryDivision_cleanupPartial_finish
       (sourceUnaryDivisionConfiguration 12 valid
         [] [] [] [] [] [] [] output) =
       some (Turing.haltList sourceUnaryDivisionMachine output) := by
-  sourceUnaryDivisionStepTac
+  sourceUnaryDivisionStepOnly
 
 end
 

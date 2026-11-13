@@ -1849,10 +1849,10 @@ theorem fiveFamilyPackedInitialDecodedCell_valid
     rw [← hcenterLength, List.drop_append_length]
   have htake' :
       (center ++ head).take (6 * blockSize machine.tm) = center := by
-    simpa only [block] using htake
+    exact htake
   have hdrop' :
       (center ++ head).drop (6 * blockSize machine.tm) = head := by
-    simpa only [block] using hdrop
+    exact hdrop
   change fiveFamilyPackedInitialDecodedCell machine
     (center ++ head) = initialPhaseCell bound machine original position
   unfold fiveFamilyPackedInitialDecodedCell

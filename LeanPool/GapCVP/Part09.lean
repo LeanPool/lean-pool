@@ -14,7 +14,6 @@ public import Mathlib.RingTheory.Valuation.Basic
 import Mathlib.Algebra.Order.Floor.Semifield
 import Mathlib.Algebra.Order.Star.Int
 import Mathlib.FieldTheory.RatFunc.AsPolynomial
-import Mathlib.RingTheory.Flat.TorsionFree
 import Mathlib.RingTheory.Henselian
 import Mathlib.RingTheory.MvPolynomial.Symmetric.FundamentalTheorem
 import Mathlib.RingTheory.MvPolynomial.Symmetric.NewtonIdentities
@@ -468,7 +467,7 @@ private theorem orderedInterpolationNode_injective {p D : ℕ}
         Fin.castLE (Nat.succ_le_of_lt hdegree) second :=
     hpoints heq
   apply Fin.ext
-  simpa only [Nat.succ_eq_add_one, Fin.val_castLE] using congrArg (fun index : Fin p => index.val)
+  exact congrArg (fun index : Fin p => index.val)
       hcast
 
 /-- GapCVP reduction support. -/
@@ -1023,7 +1022,7 @@ private theorem rootSupportPolynomial_monic
     {h : ℕ} (roots : Fin h → K) :
     (rootSupportPolynomial roots).Monic := by
   classical
-  simpa only [rootSupportPolynomial] using Polynomial.monic_prod_X_sub_C roots (Finset.univ :
+  exact Polynomial.monic_prod_X_sub_C roots (Finset.univ :
       Finset (Fin h))
 
 private theorem rootSupportPolynomial_natDegree
@@ -1247,8 +1246,7 @@ private theorem genericHankelDenominator_eval
     (genericHankelDenominator h moments).eval point
         = ((polynomialHankel moments h).map
             (Polynomial.evalRingHom point)).det := by
-              simpa only [genericHankelDenominator, leadingHankelDet, coe_evalRingHom,
-                  RingHom.mapMatrix_apply] using
+              exact
                   ((Polynomial.evalRingHom point).map_det (polynomialHankel moments h))
     _ = (powerSumHankel roots).det := by
       rw [polynomialHankel_specializes moments point roots hmoments]
@@ -1556,7 +1554,7 @@ private theorem separable_ratFunc_map_of_separable_specialization
   let fiber : K[X] := polynomial.map evaluation
   let generic : (RatFunc K)[X] := polynomial.map embedding
   have hinjective : Function.Injective embedding := by
-    exact FaithfulSMul.algebraMap_injective K[X] (RatFunc K)
+    exact RatFunc.algebraMap_injective K
   have hfiberseparable : fiber.Separable := by
     simpa only using hspecial
   have hfiberdegree : fiber.natDegree = polynomial.natDegree := by
@@ -1782,13 +1780,16 @@ private theorem clearedGenericMomentSupportPolynomial_map_ratFunc
         (algebraMap K[X] (RatFunc K)
           (genericHankelDenominator h moments)) *
         genericMomentSupportPolynomial h moments := by
+  let : FaithfulSMul K[X] (RatFunc K) :=
+    (faithfulSMul_iff_algebraMap_injective K[X] (RatFunc K)).mpr
+      (RatFunc.algebraMap_injective K)
   classical
   have hdenominator' :
       algebraMap K[X] (RatFunc K)
         (genericHankelDenominator h moments) ≠ 0 := by
     intro hzero
     apply hdenominator
-    apply FaithfulSMul.algebraMap_injective K[X] (RatFunc K)
+    apply RatFunc.algebraMap_injective K
     simpa only [map_zero, FaithfulSMul.algebraMap_eq_zero_iff] using hzero
   unfold clearedGenericMomentSupportPolynomial
     genericMomentSupportPolynomial
@@ -1937,8 +1938,7 @@ private theorem genericHankelDenominator_eval_eq_zero_of_smaller_fiber
     (genericHankelDenominator rank moments).eval point =
         ((polynomialHankel moments rank).map
           (Polynomial.evalRingHom point)).det := by
-      simpa only [genericHankelDenominator, leadingHankelDet, coe_evalRingHom,
-          RingHom.mapMatrix_apply] using
+      exact
           (Polynomial.evalRingHom point).map_det (polynomialHankel moments rank)
     _ = (fiberPowerSumHankel rank roots).det := by
       rw [polynomialHankel_specializes_fiberPowerSumHankel
@@ -2040,9 +2040,12 @@ private theorem genericHankelDenominator_ratFunc_ne_zero_of_polynomial
     (hdenominator : genericHankelDenominator h moments ≠ 0) :
     algebraMap K[X] (RatFunc K)
         (genericHankelDenominator h moments) ≠ 0 := by
+  let : FaithfulSMul K[X] (RatFunc K) :=
+    (faithfulSMul_iff_algebraMap_injective K[X] (RatFunc K)).mpr
+      (RatFunc.algebraMap_injective K)
   intro hzero
   apply hdenominator
-  apply FaithfulSMul.algebraMap_injective K[X] (RatFunc K)
+  apply RatFunc.algebraMap_injective K
   simpa only [map_zero, FaithfulSMul.algebraMap_eq_zero_iff] using hzero
 
 private def universalElementaryPowerSum
@@ -2180,7 +2183,7 @@ private theorem clearedMvPolynomialEvaluation_map
       (∏ i ∈ exponent.support,
         map denominator ^ exponent i) =
         map denominator ^ exponent.sum (fun _ power => power) := by
-    simpa only [Finsupp.sum] using
+    exact
         Finset.prod_pow_eq_pow_sum exponent.support (fun i => exponent i) (map denominator)
   simp only [RingHom.coe_comp, Function.comp_apply]
   simp_rw [div_pow]
@@ -2254,7 +2257,7 @@ private theorem clearedGenericRootPowerSum_map_ratFunc
           (Polynomial.C : K →+* K[X]) =
         algebraMap K (RatFunc K) := by
     symm
-    simpa only [Polynomial.algebraMap_eq] using
+    exact
       IsScalarTower.algebraMap_eq K K[X] (RatFunc K)
   have hvariables :
       (fun i : Fin h =>
@@ -2450,7 +2453,7 @@ private theorem genericRootPowerSum_map_eq_rootMoment
             (supportElementaryCoefficients
               (genericHankelCoefficient h moments) i))
         (universalElementaryPowerSum K h j) := by
-      simpa only [IsScalarTower.toAlgHom_apply] using
+      exact
         MvPolynomial.comp_aeval_apply
           (supportElementaryCoefficients
             (genericHankelCoefficient h moments))
@@ -4834,7 +4837,7 @@ private theorem functionFieldExtendedValuation_monic_root_separation
   apply hsum
   have heval := hroot
   rw [Polynomial.eval₂_eq_sum, Polynomial.sum_def] at heval
-  simpa only using heval
+  exact heval
 
 private def normalizedAffineRootPolynomial
     {k : Type*} [Field k]
@@ -5353,8 +5356,7 @@ theorem BinaryAffineSystem.effectiveGaussian_solves_iff
     (H : BinaryAffineSystem) (z : Fin H.dimension → ℤ) :
     H.effectiveGaussianState.system.Satisfies (binaryResidue z) ↔
       H.Solves z := by
-  simpa only [EffectiveBinaryGaussian.System.Satisfies,
-      effectiveGaussianState, effectiveGaussianSystem, Solves] using
+  exact
       EffectiveBinaryGaussian.eliminate_satisfies_iff H.effectiveGaussianSystem (binaryResidue z)
 
 /-- GapCVP reduction support. -/
@@ -5774,6 +5776,14 @@ macro "preservingXorStepTac" : tactic =>
             (first | rfl | simp [Function.update]) } <;>
           try rfl)))
 
+/-- Prove a preserving XOR step using the fixed simplification rules. -/
+macro "preservingXorStepOnly" : tactic =>
+  `(tactic| machineStackEquality [
+      preservingXorMachine, preservingXorConfiguration, preservingXorPeek, preservingXorGoto,
+      preservingXorFirstStatement, preservingXorSecondStatement, preservingXorScanStatement,
+      preservingXorRestoreStatement, Turing.haltList, Turing.FinTM2.step, Turing.TM2.step,
+      Turing.TM2.stepAux])
+
 private theorem preservingXor_first_step
     (first : Bool) (remaining archive output : List Bool) :
     preservingXorMachine.step
@@ -5781,14 +5791,14 @@ private theorem preservingXor_first_step
         (first :: remaining) archive output) =
       some (preservingXorConfiguration 1
         (some first) remaining archive output) := by
-  cases first <;> preservingXorStepTac
+  cases first <;> preservingXorStepOnly
 
 private theorem preservingXor_first_missing
     (archive output : List Bool) :
     preservingXorMachine.step
       (preservingXorConfiguration 0 none [] archive output) =
       some (preservingXorConfiguration 2 none [] archive output) := by
-  preservingXorStepTac
+  rfl
 
 private theorem preservingXor_second_step
     (first second : Bool) (remaining archive output : List Bool) :
@@ -5797,14 +5807,18 @@ private theorem preservingXor_second_step
         (second :: remaining) archive output) =
       some (preservingXorConfiguration 2 none
         remaining (Bool.xor first second :: archive) output) := by
-  cases first <;> cases second <;> preservingXorStepTac
+  cases first <;> cases second <;> reduceMachineConfiguration
+                                     [preservingXorConfiguration]
+                                     (preservingXorStepTac)
 
 private theorem preservingXor_second_missing
     (first : Bool) (archive output : List Bool) :
     preservingXorMachine.step
       (preservingXorConfiguration 1 (some first) [] archive output) =
       some (preservingXorConfiguration 2 none [] archive output) := by
-  cases first <;> preservingXorStepTac
+  cases first <;> reduceMachineConfiguration
+                    [preservingXorConfiguration]
+                    (preservingXorStepTac)
 
 private theorem preservingXor_scan_step
     (bit : Bool) (remaining archive output : List Bool) :
@@ -5813,14 +5827,14 @@ private theorem preservingXor_scan_step
         (bit :: remaining) archive output) =
       some (preservingXorConfiguration 2 none
         remaining (bit :: archive) output) := by
-  cases bit <;> preservingXorStepTac
+  preservingXorStepOnly
 
 private theorem preservingXor_scan_finish
     (archive output : List Bool) :
     preservingXorMachine.step
       (preservingXorConfiguration 2 none [] archive output) =
       some (preservingXorConfiguration 3 none [] archive output) := by
-  preservingXorStepTac
+  rfl
 
 private theorem preservingXor_restore_step
     (bit : Bool) (archive output : List Bool) :
@@ -5829,14 +5843,14 @@ private theorem preservingXor_restore_step
         (bit :: archive) output) =
       some (preservingXorConfiguration 3 none []
         archive (bit :: output)) := by
-  cases bit <;> preservingXorStepTac
+  preservingXorStepOnly
 
 private theorem preservingXor_restore_finish
     (output : List Bool) :
     preservingXorMachine.step
       (preservingXorConfiguration 3 none [] [] output) =
       some (Turing.haltList preservingXorMachine output) := by
-  preservingXorStepTac
+  preservingXorStepOnly
 
 private def preservingXor_scanTrace
     (input archive output : List Bool) :
@@ -6367,6 +6381,14 @@ macro "binaryGaussianXorStepTac" : tactic =>
             (first | rfl | simp [Function.update]) } <;>
           try rfl)))
 
+/-- Prove a binary Gaussian XOR step using the fixed simplification rules. -/
+macro "binaryGaussianXorStepOnly" : tactic =>
+  `(tactic| machineStackEquality [
+      binaryGaussianXorMachine, binaryGaussianXorConfiguration, binaryGaussianXorPeek,
+      binaryGaussianXorGoto, binaryGaussianXorFirstStatement, binaryGaussianXorSecondStatement,
+      binaryGaussianXorDrainStatement, Turing.haltList, Turing.FinTM2.step, Turing.TM2.step,
+      Turing.TM2.stepAux])
+
 private theorem binaryGaussianXor_first_step
     (first : Bool) (remaining output : List Bool) :
     binaryGaussianXorMachine.step
@@ -6374,14 +6396,14 @@ private theorem binaryGaussianXor_first_step
         (first :: remaining) output) =
       some (binaryGaussianXorConfiguration 1
         (some first) remaining output) := by
-  cases first <;> binaryGaussianXorStepTac
+  cases first <;> binaryGaussianXorStepOnly
 
 private theorem binaryGaussianXor_first_missing
     (output : List Bool) :
     binaryGaussianXorMachine.step
       (binaryGaussianXorConfiguration 0 none [] output) =
       some (binaryGaussianXorConfiguration 2 none [] output) := by
-  binaryGaussianXorStepTac
+  rfl
 
 private theorem binaryGaussianXor_second_step
     (first second : Bool) (remaining output : List Bool) :
@@ -6390,14 +6412,18 @@ private theorem binaryGaussianXor_second_step
         (second :: remaining) output) =
       some (binaryGaussianXorConfiguration 2 none
         remaining (Bool.xor first second :: output)) := by
-  cases first <;> cases second <;> binaryGaussianXorStepTac
+  cases first <;> cases second <;> reduceMachineConfiguration
+                                     [binaryGaussianXorConfiguration]
+                                     (binaryGaussianXorStepTac)
 
 private theorem binaryGaussianXor_second_missing
     (first : Bool) (output : List Bool) :
     binaryGaussianXorMachine.step
       (binaryGaussianXorConfiguration 1 (some first) [] output) =
       some (binaryGaussianXorConfiguration 2 none [] output) := by
-  cases first <;> binaryGaussianXorStepTac
+  cases first <;> reduceMachineConfiguration
+                    [binaryGaussianXorConfiguration]
+                    (binaryGaussianXorStepTac)
 
 private theorem binaryGaussianXor_drain_step
     (bit : Bool) (remaining output : List Bool) :
@@ -6406,13 +6432,13 @@ private theorem binaryGaussianXor_drain_step
         (bit :: remaining) output) =
       some (binaryGaussianXorConfiguration 2 none
         remaining output) := by
-  cases bit <;> binaryGaussianXorStepTac
+  binaryGaussianXorStepOnly
 
 private theorem binaryGaussianXor_drain_finish (output : List Bool) :
     binaryGaussianXorMachine.step
       (binaryGaussianXorConfiguration 2 none [] output) =
       some (Turing.haltList binaryGaussianXorMachine output) := by
-  binaryGaussianXorStepTac
+  binaryGaussianXorStepOnly
 
 private def binaryGaussianXor_drainTrace
     (input output : List Bool) :
@@ -8431,8 +8457,13 @@ private theorem sourceFormulaShiftedCommonRoot_separation
                   encodingLength F localVar.val)))) ^
         sourceFormulaGenericRank
           encodingLength F z hz (.inr ⟨clause, tuple⟩) := by
-  simpa only [sourceFormulaNormalizedAffineRootPolynomial_natDegree] using
-    functionFieldExtendedValuation_monic_root_separation
+  have degree :
+      (sourceFormulaNormalizedAffineRootPolynomial
+        encodingLength F z hz clause tuple localVar).natDegree =
+      sourceFormulaGenericRank encodingLength F z hz (.inr ⟨clause, tuple⟩) := by
+    simp only [sourceFormulaNormalizedAffineRootPolynomial_natDegree]
+  apply LE.le.trans_eq
+    (functionFieldExtendedValuation_monic_root_separation
       (sourceFormulaVariablePlace encodingLength F localVar.val)
       (sourceFormulaNormalizedAffineRootPolynomial
         encodingLength F z hz clause tuple localVar)
@@ -8440,7 +8471,8 @@ private theorem sourceFormulaShiftedCommonRoot_separation
         encodingLength F z hz clause tuple localVar) _
       (sourceFormulaNormalizedAffineRootPolynomial_eval₂_eq_zero
         encodingLength F z hz hshort clause tuple localVar index)
-      hlarge
+      hlarge)
+  exact congrArg (fun exponent : ℕ => _ ^ exponent) degree
 
 theorem sourceFormulaShiftedCommonRoot_highPower_separation
     (encodingLength : ℕ) (F : Formula)

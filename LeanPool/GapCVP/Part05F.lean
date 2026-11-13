@@ -389,19 +389,19 @@ private theorem unaryPrefixSuffix_true_step (input : List Bool) :
     actualUnaryPrefixSuffixMachine.step
       (unaryPrefixSuffixConfiguration (true :: input)) =
       some (unaryPrefixSuffixConfiguration input) := by
-  compactMachineStepTac [actualUnaryPrefixSuffixMachine, unaryPrefixSuffixConfiguration]
+  rfl
 
 private theorem unaryPrefixSuffix_false_step (input : List Bool) :
     actualUnaryPrefixSuffixMachine.step
       (unaryPrefixSuffixConfiguration (false :: input)) =
       some (Turing.haltList actualUnaryPrefixSuffixMachine input) := by
-  compactMachineStepTac [actualUnaryPrefixSuffixMachine, unaryPrefixSuffixConfiguration]
+  rfl
 
 private theorem unaryPrefixSuffix_missing_step :
     actualUnaryPrefixSuffixMachine.step
       (unaryPrefixSuffixConfiguration []) =
       some (Turing.haltList actualUnaryPrefixSuffixMachine []) := by
-  compactMachineStepTac [actualUnaryPrefixSuffixMachine, unaryPrefixSuffixConfiguration]
+  rfl
 
 private def unaryPrefixSuffix_validTrace
     (count : ℕ) (suffix : List Bool) :

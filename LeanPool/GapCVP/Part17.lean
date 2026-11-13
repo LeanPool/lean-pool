@@ -1017,7 +1017,7 @@ private theorem paperVariableArityFinitePRadiusAtomicOutput_valid
         (encodeThreeCNF formula).length formula))
     (finitePRadiusScale_pos p hp)
     (paperVariableArityFinitePNumeratorUnary_valid p hp formula)
-  simpa only [finitePRadius] using physical
+  exact physical
 
 /-- Assemble the finite-p physical source word from the Gaussian matrix and radius data. -/
 noncomputable def paperFinitePPhysicalStructuralOutput
@@ -1067,7 +1067,7 @@ private theorem paperVariableArityFinitePPhysicalStructuralOutput_valid
       (paperVariableArityFinitePRadiusAtomicOutput_valid p hp formula)
       (gaussianPaperVariableArityCanonicalSourceReducedStateOutput_effective
         cell formula)
-  simpa only [paperFinitePPhysicalFormulaInstance, paperFinitePPhysicalSystem] using physical
+  exact physical
 
 /-- Route the source to the canonical or structural finite-p output according to its guards. -/
 def paperFinitePPhysicalRoutedOutput

@@ -103,7 +103,7 @@ private theorem factor400IndexedIrreducibleCandidateMarkers_findIdxOption
         id = some rank.val := by
   rw [factor400IndexedIrreducibleCandidateMarkers_eq_finRange,
     List.findIdx?_map]
-  simpa only [CompTriple.comp_eq] using
+  exact
       finRange_findIdxOption_of_findOption
         (fun candidate : Fin (2 ^ degree) => noProperFactors degree (indexedWord degree candidate))
             rank hfound
@@ -304,7 +304,7 @@ private theorem paperVariableAritySourceIrreducibleRankCoefficientWord_query
     lengthPrefixedWord (List.replicate rank true) ++
       lengthPrefixedWord auxiliary ++ encodeThreeCNF formula from rfl,
     paperVariableAritySourceIrreducibleCoefficientBitWord_query]
-  simpa only [degree] using
+  exact
     (List.map_eq_flatMap (f := fun bitRank => rank.testBit bitRank)
       (l := List.range degree)).symm
 

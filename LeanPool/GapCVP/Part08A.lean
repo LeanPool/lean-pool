@@ -464,7 +464,7 @@ private theorem fiveFamilyForbiddenExactWindowDescriptorPayloadWord_valid
     (fun atom => flatSignedLiteralDescriptor
       (sourceLiteral (negative atom)))
     (fun atom => by
-      simpa only [sourceLiteral, negative] using
+      exact
         tableauSourceSignedLiteralDescriptorWord_variable atom false)
   rw [hphysical]
   simp only [flatSourceClauseDescriptorPayload,
@@ -497,7 +497,7 @@ private theorem fiveFamilyForbiddenExactWindowDuplicatedPayloadWord_valid
     (fun atom => flatDuplicatedUnaryField
       (Encodable.encode (negative atom)))
     (fun atom => by
-      simpa only [negative] using
+      exact
         duplicatedUnarySignedLiteralCodeWord_sourceVariable atom false)
   rw [hphysical]
   simp only [flatSourceClauseDuplicatedCodePayload,

@@ -7,7 +7,6 @@ Authors: OpenAI, Dean Cureton
 module -- shake: keep-all
 
 public import Mathlib.Algebra.Group.Translate
-import Mathlib.Algebra.Module.ZLattice.Basic
 public import Mathlib.Algebra.Order.Ring.Star
 public import Mathlib.Algebra.Order.Star.Real
 public import Mathlib.Computability.Language
@@ -201,28 +200,32 @@ private theorem isClosed_of_subset_euclidean_integer_grid
         (Set.range (EuclideanSpace.basisFun (Fin n) ℝ).toBasis) :
           Set (EuclideanSpace ℝ (Fin n)))) :
     IsClosed s := by
+  classical
   let b : Module.Basis (Fin n) ℝ (EuclideanSpace ℝ (Fin n)) :=
     (EuclideanSpace.basisFun (Fin n) ℝ).toBasis
-  let G : Submodule ℤ (EuclideanSpace ℝ (Fin n)) :=
-    Submodule.span ℤ (Set.range b)
-  have hclosed : IsClosed (G : Set (EuclideanSpace ℝ (Fin n))) := by
-    change IsClosed (G.toAddSubgroup : Set (EuclideanSpace ℝ (Fin n)))
-    exact AddSubgroup.isClosed_of_discreteTopology
-  have hsub' : s ⊆ (G : Set (EuclideanSpace ℝ (Fin n))) := hsub
-  let inside : Set G := ((↑) : G → EuclideanSpace ℝ (Fin n)) ⁻¹' s
-  have hinside : IsClosed inside := isClosed_discrete inside
-  have himage : IsClosed
-      (((↑) : G → EuclideanSpace ℝ (Fin n)) '' inside) :=
-    hclosed.isClosedMap_subtype_val inside hinside
-  have heq :
-      (((↑) : G → EuclideanSpace ℝ (Fin n)) '' inside) = s := by
-    ext x
-    constructor
-    · rintro ⟨y, hy, rfl⟩
-      exact hy
-    · intro hx
-      exact ⟨⟨x, hsub' hx⟩, hx, rfl⟩
-  rwa [heq] at himage
+  have coordinates (x : EuclideanSpace ℝ (Fin n)) (hx : x ∈ s) (i : Fin n) :
+      ∃ value : ℤ, (value : ℝ) = x i := by
+    obtain ⟨value, equality⟩ := (b.mem_span_iff_repr_mem ℤ x).mp (hsub hx) i
+    refine ⟨value, ?_⟩
+    exact equality
+  refine Metric.isClosed_of_pairwise_le_dist (show (0 : ℝ) < 1 by norm_num) ?_
+  intro x hx y hy different
+  have differ : ∃ i, x i ≠ y i := by
+    by_contra equal
+    apply different
+    ext i
+    exact not_not.mp (not_exists.mp equal i)
+  obtain ⟨i, hi⟩ := differ
+  obtain ⟨a, ha⟩ := coordinates x hx i
+  obtain ⟨c, hc⟩ := coordinates y hy i
+  have unequal : a - c ≠ 0 := by
+    intro equal
+    exact hi (ha.symm.trans ((congrArg (fun value : ℤ => (value : ℝ))
+      (sub_eq_zero.mp equal)).trans hc))
+  have separated : (1 : ℝ) ≤ dist (x i) (y i) := by
+    rw [Real.dist_eq, ← ha, ← hc, ← Int.cast_sub, ← Int.cast_abs]
+    exact_mod_cast Int.one_le_abs unequal
+  exact separated.trans (PiLp.dist_apply_le x y i)
 
 private theorem instance_latticePoint_range_isClosed (I : GapCVPInstance) :
     IsClosed (Set.range I.latticePoint) := by
@@ -2278,11 +2281,11 @@ private theorem symbol_unique_of_satisfiesFormula {T S : ℕ}
     rcases hliteral with hleft | hright
     · subst literal
       have hfalse : assignment (t, i, a) = false := by
-        simpa only [negative] using hvalue
+        exact hvalue
       simp only [ha, Bool.true_eq_false] at hfalse
     · subst literal
       have hfalse : assignment (t, i, b) = false := by
-        simpa only [negative] using hvalue
+        exact hvalue
       simp only [hb, Bool.true_eq_false] at hfalse
   rcases lt_trichotomy a b with hab | hab | hab
   · exact (exclude a b hab ha hb).elim
@@ -2331,7 +2334,7 @@ private theorem traceOfAssignment_initial {T S : ℕ}
   simp only [initialClause, Finset.mem_singleton] at hliteral
   subst literal
   apply traceOfAssignment_eq_of_selected spec assignment hsat 0 i
-  simpa only [positive] using hvalue
+  exact hvalue
 
 private theorem traceOfAssignment_accepting {T S : ℕ}
     (spec : Specification T S)
@@ -2349,7 +2352,7 @@ private theorem traceOfAssignment_accepting {T S : ℕ}
   obtain ⟨i, rfl⟩ := hliteral
   refine ⟨i, traceOfAssignment_eq_of_selected spec assignment hsat
     (Fin.last T) i spec.accept ?_⟩
-  simpa only [positive] using hvalue
+  exact hvalue
 
 private theorem traceOfAssignment_transition {T S : ℕ}
     (spec : Specification T S)
@@ -2382,7 +2385,7 @@ private theorem traceOfAssignment_transition {T S : ℕ}
     · subst literal
       have hfalse : assignment
           (w.1.1, leftPosition w, symbols.1) = false := by
-        simpa only [negative] using hvalue
+        exact hvalue
       have htrue := traceOfAssignment_selected spec assignment hsat
         w.1.1 (leftPosition w)
       change assignment
@@ -2392,7 +2395,7 @@ private theorem traceOfAssignment_transition {T S : ℕ}
       simp only [htrue, Bool.true_eq_false] at hfalse
     · subst literal
       have hfalse : assignment (w.1.1, w.1.2, symbols.2.1) = false := by
-        simpa only [negative] using hvalue
+        exact hvalue
       have htrue := traceOfAssignment_selected spec assignment hsat
         w.1.1 w.1.2
       change assignment
@@ -2403,7 +2406,7 @@ private theorem traceOfAssignment_transition {T S : ℕ}
     · subst literal
       have hfalse : assignment
           (w.1.1, rightPosition w, symbols.2.2.1) = false := by
-        simpa only [negative] using hvalue
+        exact hvalue
       have htrue := traceOfAssignment_selected spec assignment hsat
         w.1.1 (rightPosition w)
       change assignment
@@ -2414,7 +2417,7 @@ private theorem traceOfAssignment_transition {T S : ℕ}
     · subst literal
       have hfalse : assignment
           (nextTime w, w.1.2, symbols.2.2.2) = false := by
-        simpa only [negative] using hvalue
+        exact hvalue
       have htrue := traceOfAssignment_selected spec assignment hsat
         (nextTime w) w.1.2
       change assignment
@@ -3343,7 +3346,7 @@ theorem ConfigurationTrace.iterate_configuration
           some (trace.configuration ⟨i + 1, by omega⟩)
         exact trace.transition ⟨i, hilt⟩
   have hi : i.val ≤ steps := by omega
-  simpa only [advance] using hprefix i.val hi
+  exact hprefix i.val hi
 
 /-- GapCVP reduction support. -/
 def ConfigurationTrace.evalsToAt
@@ -3420,9 +3423,9 @@ theorem evalsTo_terminal_unique_of_steps_le
     dsimp [extra]
     omega
   have ha_run : (advance^[ha.steps]) (some initial) = some a := by
-    simpa only [advance] using ha.evals_in_steps
+    exact ha.evals_in_steps
   have hb_run : (advance^[hb.steps]) (some initial) = some b := by
-    simpa only [advance] using hb.evals_in_steps
+    exact hb.evals_in_steps
   have hrun : (advance^[extra]) (some a) = some b := by
     calc
       (advance^[extra]) (some a) =
@@ -3438,8 +3441,7 @@ theorem evalsTo_terminal_unique_of_steps_le
   cases he : extra with
   | zero =>
       rw [he] at hrun
-      exact Option.some.inj (by simpa only [Option.some.injEq, Function.iterate_zero, id_eq]
-          using hrun)
+      exact Option.some.inj (by exact hrun)
   | succ n =>
       have hnone : (advance^[extra]) (some a) = none := by
         rw [he, Function.iterate_succ_apply]
@@ -4211,11 +4213,11 @@ def statementPushSources
   | push stack value next ih =>
       simp only [statementPushSources, List.length_cons, ih, statementPushSlots]
   | peek stack value next ih =>
-      simpa only [statementPushSources, statementPushSlots] using ih
+      exact ih
   | pop stack value next ih =>
-      simpa only [statementPushSources, statementPushSlots] using ih
+      exact ih
   | load value next ih =>
-      simpa only [statementPushSources, statementPushSlots] using ih
+      exact ih
   | branch test yes no ihyes ihno =>
       simp only [statementPushSources, List.length_append, ihyes, ihno, statementPushSlots]
   | goto value => rfl
@@ -4821,8 +4823,7 @@ theorem certificatePhase_append_old_marker
     (certificate : List Bool) (bit : Bool) :
     certificatePhase (certificate ++ [bit]) certificate.length =
       if bit then PhaseTag.verifying else PhaseTag.guessing := by
-  cases bit <;>
-    simp [certificatePhase]
+  simp [certificatePhase]
 
 theorem certificatePhase_append_new_marker
     (certificate : List Bool) (bit : Bool) :
@@ -4883,7 +4884,7 @@ theorem guessPhaseWindow_of_append
         certificatePhase (certificate ++ [bit]) index.val = .guessing ∨
           certificatePhase (certificate ++ [bit]) index.val = .verifying
       rw [hmarker, certificatePhase_append_old_marker]
-      cases bit <;> simp
+      simp
   · by_cases hsuccessor : index.val = certificate.length + 1
     · have hleft :
           (leftBlock width index).val = certificate.length := by
@@ -5081,7 +5082,7 @@ private theorem canonicalStackAtoms_drop
               SupportedStackValue machine stack candidate := by
             intro candidate hcandidate
             exact hsupported candidate (by simp only [List.mem_cons, hcandidate, or_true])
-          simpa only [canonicalStackAtoms, List.pmap, List.drop_succ_cons] using ih values htail
+          exact ih values htail
 
 private theorem canonicalStackAtoms_congr
     {verifier : List Bool × List Bool → Bool}
@@ -6620,7 +6621,7 @@ private theorem executePrefixScript_bounds
           at hnext ⊢
         omega
   | peek stack update continuation ih =>
-      simpa only [executePrefixScript, statementStackActions] using
+      exact
           ih (update state (scriptStacks original script stack).head?) script
   | pop stack update continuation ih =>
       have hnext := ih
@@ -6651,7 +6652,7 @@ private theorem executePrefixScript_bounds
                 statementStackActions] at hnext ⊢
             omega
   | load update continuation ih =>
-      simpa only [executePrefixScript, statementStackActions] using ih (update state) script
+      exact ih (update state) script
   | branch test yes no ihyes ihno =>
       cases htest : test state with
       | false =>
@@ -7733,7 +7734,7 @@ theorem configurationTrace_stackAtomSupported
             trace.configuration (⟨0, by omega⟩ : Fin (steps + 1)) =
               Turing.initList machine.tm
                 (verifierInput machine x certificate) := by
-          simpa only [Fin.zero_eta] using trace.initial
+          exact trace.initial
         rw [hzero]
         exact initialConfiguration_stackAtomSupported
           machine x certificate
@@ -7746,7 +7747,7 @@ theorem configurationTrace_stackAtomSupported
           (trace.transition ⟨time, hlt⟩)
           (ih hprior)
   intro time
-  simpa only [Fin.eta] using hprefix time.val (by omega)
+  exact hprefix time.val (by omega)
 
 theorem acceptedExecution_stack_length_le_rowWidth
     (bound : Polynomial ℕ)
@@ -7827,6 +7828,38 @@ theorem pairBitEncoding_append_guess
       List.append_assoc]
 
 end CLCompleteVerifierSimulation
+
+end GapCVP
+
+namespace GapCVP
+
+public meta section
+
+/-- Expose the selected configuration before simplifying its machine program. -/
+macro "reduceMachineConfiguration" "[" configurations:term,* "]"
+    "(" continuation:tactic ")" : tactic =>
+  `(tactic|
+    (dsimp only [$[$configurations:term],*, Turing.haltList, Turing.FinTM2.step,
+      Turing.TM2.step, Turing.TM2.stepAux] <;> $continuation))
+
+/-- Prove a concrete machine step using its definitions and pointwise stack equality. -/
+macro "machineStackEquality" "[" definitions:term,* "]" : tactic =>
+  `(tactic|
+    (first
+      | rfl
+      | (simp only [$[$definitions:term],*,
+          Fin.isValue, Turing.FinTM2.step, Turing.TM2.step, ↓reduceIte, Turing.TM2.stepAux,
+          Matrix.cons_val_zero, List.head?_cons, Option.isSome_some, List.tail_cons,
+          Option.getD_some, ne_eq, not_false_eq_true, Function.update_of_ne,
+          Matrix.cons_val_one, Fin.reduceEq, Matrix.cons_val, cond_eq_ite, List.head?_nil,
+          Option.isSome_none, List.tail_nil, Option.getD_none, Bool.false_eq_true,
+          Turing.haltList, eq_mpr_eq_cast, cast_eq, dite_eq_ite, BEq.rfl,
+          Option.some_beq_some, beq_true, List.isSome_head?, ite_not, Nat.reduceEqDiff,
+          reduceCtorEq] <;>
+          try { congr 2; funext stack; fin_cases stack <;>
+            (first | rfl | simp [Function.update]) } <;> try rfl)))
+
+end
 
 end GapCVP
 

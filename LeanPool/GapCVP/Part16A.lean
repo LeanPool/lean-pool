@@ -84,7 +84,7 @@ private theorem paperVariableArityPhysicalOrderedLagrangeParity_eq_selectedCorre
       intro equality
       apply hposition
       have rank := congrArg Fin.val equality
-      simpa only [Fin.val_castLE] using (rank ▸ node.isLt)
+      exact (rank ▸ node.isLt)
     simp only [Nat.succ_eq_add_one, hcast, ↓reduceIte, zero_mul, Finset.sum_const_zero]
 
 private theorem paperVariableArityPhysicalOrdinaryMaskedNodeSum_eq_selected
@@ -4945,7 +4945,7 @@ private theorem paperVariableArityPhysicalShiftedSourceRowTupleRank_eq
           (finSigmaFinEquiv.symm tag).1
           (finSigmaFinEquiv.symm tag).2).1)).val
   symm
-  simpa only [decoded, moment] using
+  exact
     paperVariableArityPhysicalShiftedClauseTupleWordRank
       formula budget decoded.1 decoded.2
 
@@ -4985,7 +4985,7 @@ private theorem paperVariableArityPhysicalShiftedSourceRowLocalVariableRank_eq
           (finSigmaFinEquiv.symm tag).1
           (finSigmaFinEquiv.symm tag).2).2.1)).val
   symm
-  simpa only [decoded, moment] using
+  exact
     paperVariableArityPhysicalShiftedClauseLocalVariableWordRank
       formula budget decoded.1 decoded.2
 
