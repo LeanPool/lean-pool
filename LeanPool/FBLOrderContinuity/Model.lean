@@ -1038,21 +1038,12 @@ def evalVecLatHom (p : Exponent) (φ : Dual E) : VecLatHom (Free p E) ℝ where
   map_inf' := by intros; rfl
 
 /-- Evaluation of the algebraic free lattice on the dual unit ball. -/
-def evalFVLv (ψ : FVLv.dualUnitBall E) : VecLatHom (FVL E) ℝ where
-  toFun v := v ψ
-  map_add' := by intros; rfl
-  map_smul' := by intros; rfl
-  map_sup' := by intros; rfl
-  map_inf' := by intros; rfl
+abbrev evalFVLv (ψ : FVLv.dualUnitBall E) : VecLatHom (FVL E) ℝ :=
+  FVLv.evalHom ψ
 
 theorem radialEval_eq_liftToFree (p : Exponent) (φ : Dual E) (v : FVL E) :
     fvlFunction v φ = liftToFree p v φ := by
-  let ev : VecLatHom (Free p E) ℝ := {
-    toFun := fun f => f φ
-    map_add' := by intros; rfl
-    map_smul' := by intros; rfl
-    map_sup' := by intros; rfl
-    map_inf' := by intros; rfl }
+  let ev := evalVecLatHom p φ
   have hleft : radialEval φ = FVLv.lift (φ : E →ₗ[ℝ] ℝ) := by
     apply FVLv.lift_unique
     intro x
@@ -1314,12 +1305,8 @@ theorem norm_ofFVL_mono {p q : Exponent} (hpq : p ≤ q) (v : FVL E) :
     (freeNormExt_mono hpq (fvlFunction v) (ofFVL p v).1.2.1)
 
 /-- Evaluation on BanLat’s free Banach lattice as a real lattice homomorphism. -/
-def banlatEval (ψ : FVLv.dualUnitBall E) : VecLatHom (_root_.FBL E) ℝ where
-  toFun f := f ψ
-  map_add' := by intros; rfl
-  map_smul' := by intros; rfl
-  map_sup' := by intros; rfl
-  map_inf' := by intros; rfl
+abbrev banlatEval (ψ : FVLv.dualUnitBall E) : VecLatHom (_root_.FBL E) ℝ :=
+  _root_.FBL.evalAtFBL ψ
 
 private theorem normAdmissible_one_iff_ball {n : ℕ}
     (ψ : Fin n → FVLv.dualUnitBall E) :
@@ -3491,12 +3478,9 @@ theorem fvl_lift_pConvex_norm_le (p : Exponent) {C : ℝ} (hC : ConvexWith p C X
 end PConvexLiftBound
 
 /-- A coordinate projection from a finite real `ℓᵖ` space as a continuous linear map. -/
-def piLpEvalCLM (p : Exponent) (n : ℕ) (i : Fin n) :
-    PiLp p.1 (fun _ : Fin n => ℝ) →L[ℝ] ℝ where
-  toFun z := z i
-  map_add' := by intros; rfl
-  map_smul' := by intros; rfl
-  cont := PiLp.continuous_apply p.1 (fun _ : Fin n => ℝ) i
+abbrev piLpEvalCLM (p : Exponent) (n : ℕ) (i : Fin n) :
+    PiLp p.1 (fun _ : Fin n => ℝ) →L[ℝ] ℝ :=
+  PiLp.proj p.1 (fun _ : Fin n => ℝ) i
 
 /-- A coordinate projection from a finite real `ℓᵖ` space as a lattice homomorphism. -/
 def piLpEvalVec (p : Exponent) (n : ℕ) (i : Fin n) :

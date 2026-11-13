@@ -191,12 +191,8 @@ theorem parameter_compact_majorant [CompleteSpace E]
 /-- Evaluation at a fixed dual functional as a continuous linear functional on
 `Free p E`. The estimate `hp_apply_abs_le` bounds its operator norm by the norm
 of the dual functional and allows evaluation to commute with norm-convergent series. -/
-def freeEvalCLM (p : Exponent) (φ : Dual E) : Free p E →L[ℝ] ℝ :=
-  LinearMap.mkContinuous
-    { toFun := fun f => f φ
-      map_add' := fun _ _ => rfl
-      map_smul' := fun _ _ => rfl }
-    ‖φ‖ (fun f => hp_apply_abs_le p f.1 φ)
+abbrev freeEvalCLM (p : Exponent) (φ : Dual E) : Free p E →L[ℝ] ℝ :=
+  freeEvaluationCLM p φ
 
 private theorem norm_le_of_support_representation (p : Exponent) (K : Set E)
     (hK : IsCompact K) (h : Free p E) (hh : ∀ φ, h φ = support K φ)
