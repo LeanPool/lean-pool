@@ -6,6 +6,7 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.NodupPathEdgeIndices
 public import LeanPool.ApollonianSuperharmonic.GaussianRealPointProperties
 
 public import LeanPool.ApollonianSuperharmonic.P4261T2LiteralInterface
@@ -899,59 +900,6 @@ private theorem hwalkFinish :
   have hpoint := (Epositive.unique_common z).mp hcommon
   exact ⟨z, hzlast, hpoint⟩
 
-private theorem hpathIndex :
-    (by
-      classical
-      exact
-        ∀ (T : ProtoTile),
-          ∀ (U : ProtoTile),
-            ∀ (path : List GaussianInt),
-              path.Nodup →
-                (∀ (e : Finset GaussianInt),
-                    e ∈ FootprintEdges T ∩ FootprintEdges U ↔
-                      ∃ (a : GaussianInt) (b : GaussianInt) (l₁ : List GaussianInt) (l₂ :
-                        List GaussianInt), path = l₁ ++ a :: b :: l₂ ∧ e = { a, b }) →
-                  ∀ a b : GaussianInt,
-                    { a, b } ∈ FootprintEdges T ∩ FootprintEdges U →
-                      path.idxOf a + 1 = path.idxOf b ∨ path.idxOf b + 1 = path.idxOf a
-    ) := by
-  classical
-  intro T U path hpathNodup hpathEdges a b hab
-  rcases (hpathEdges {a, b}).mp hab with ⟨c, d, l, r, heq, hedge⟩
-  have hnd := hpathNodup
-  rw [heq, List.nodup_append] at hnd
-  have hc : c ∉ l := by
-    intro hc
-    exact hnd.2.2 c hc c (by simp) rfl
-  have hd : d ∉ l := by
-    intro hd
-    exact hnd.2.2 d hd d (by simp) rfl
-  have hcd : c ≠ d := by
-    have hcnot := (List.nodup_cons.mp hnd.2.1).1
-    intro h
-    exact hcnot (by simp [h])
-  have hic : path.idxOf c = l.length := by
-    simp [heq, List.idxOf_append, hc]
-  have hid : path.idxOf d = l.length + 1 := by
-    simp [heq, List.idxOf_append, hd, hcd, Nat.add_comm]
-  have ha : a = c ∨ a = d := by
-    have : a ∈ ({c, d} : Finset GaussianInt) := by rw [← hedge]; simp
-    simpa using this
-  have hb : b = c ∨ b = d := by
-    have : b ∈ ({c, d} : Finset GaussianInt) := by rw [← hedge]; simp
-    simpa using this
-  have habne : a ≠ b := by
-    intro h
-    have hcmem : c ∈ ({a, b} : Finset GaussianInt) := by rw [hedge]; simp
-    have hdmem : d ∈ ({a, b} : Finset GaussianInt) := by rw [hedge]; simp
-    simp [h] at hcmem hdmem
-    exact hcd (hcmem.trans hdmem.symm)
-  rcases ha with rfl | rfl <;> rcases hb with rfl | rfl
-  · exact False.elim (habne rfl)
-  · exact Or.inl (by omega)
-  · exact Or.inr (by omega)
-  · exact False.elim (habne rfl)
-
 private theorem hstartIndex :
     (by
       classical
@@ -1309,7 +1257,8 @@ theorem P4261T2UnitInterface
       hwalkInOuter
   obtain ⟨path, hpathNodup, hpathLength, hpathHead, hpathLast,
     hpathVertices, hpathStep, hpathEdges⟩ := Epositive.pathAB
-  have hpathIndex := UnitInterfaceGeometry.hpathIndex T U path hpathNodup hpathEdges
+  have hpathIndex (a b : GaussianInt) (hab : {a, b} ∈ FootprintEdges T ∩ FootprintEdges U) :=
+    NodupPathEdgeIndices path hpathNodup a b ((hpathEdges {a, b}).mp hab)
   have hpathIndexInjective {a b : GaussianInt} (ha : a ∈ path)
       (hidx : path.idxOf a = path.idxOf b) : a = b :=
     (List.idxOf_inj ha).mp hidx

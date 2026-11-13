@@ -6,6 +6,7 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.NodupPathEdgeIndices
 
 public import LeanPool.ApollonianSuperharmonic.P3161T2PathExhaustion
 
@@ -36,43 +37,8 @@ theorem P4366T2WalkExhaustion
   classical
   refine ⟨P3161T2PathExhaustion hpath walk hhead hlast hedges, ?_⟩
   rcases hpath with ⟨p, hp, hlen, hx, hy, hV, hsteps, hE⟩
-  have hindex : ∀ a b, {a, b} ∈ E →
-      p.idxOf a + 1 = p.idxOf b ∨ p.idxOf b + 1 = p.idxOf a := by
-    intro a b hab
-    rcases (hE {a, b}).mp hab with ⟨c, d, l, r, heq, hedge⟩
-    have hnd := hp
-    rw [heq, List.nodup_append] at hnd
-    have hc : c ∉ l := by
-      intro hc
-      exact hnd.2.2 c hc c (by simp) rfl
-    have hd : d ∉ l := by
-      intro hd
-      exact hnd.2.2 d hd d (by simp) rfl
-    have hcd : c ≠ d := by
-      have hcnot := (List.nodup_cons.mp hnd.2.1).1
-      intro h
-      exact hcnot (by simp [h])
-    have hic : p.idxOf c = l.length := by
-      simp [heq, List.idxOf_append, hc]
-    have hid : p.idxOf d = l.length + 1 := by
-      simp [heq, List.idxOf_append, hd, hcd, Nat.add_comm]
-    have ha : a = c ∨ a = d := by
-      have : a ∈ ({c, d} : Finset GaussianInt) := by rw [← hedge]; simp
-      simpa using this
-    have hb : b = c ∨ b = d := by
-      have : b ∈ ({c, d} : Finset GaussianInt) := by rw [← hedge]; simp
-      simpa using this
-    have habne : a ≠ b := by
-      intro h
-      have hcmem : c ∈ ({a, b} : Finset GaussianInt) := by rw [hedge]; simp
-      have hdmem : d ∈ ({a, b} : Finset GaussianInt) := by rw [hedge]; simp
-      simp [h] at hcmem hdmem
-      exact hcd (hcmem.trans hdmem.symm)
-    rcases ha with rfl | rfl <;> rcases hb with rfl | rfl
-    · exact False.elim (habne rfl)
-    · exact Or.inl (by omega)
-    · exact Or.inr (by omega)
-    · exact False.elim (habne rfl)
+  have hindex (a b : GaussianInt) (hab : {a, b} ∈ E) :=
+    NodupPathEdgeIndices p hp a b ((hE {a, b}).mp hab)
   have hix : p.idxOf x = 0 := by
     cases p with
     | nil => simp at hlen

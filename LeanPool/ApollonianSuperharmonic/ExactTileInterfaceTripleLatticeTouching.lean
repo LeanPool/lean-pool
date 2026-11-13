@@ -6,6 +6,7 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.BoundaryFootprintInclusion
 
 public import LeanPool.ApollonianSuperharmonic.ExactTileInterfaceTriple
 public import LeanPool.ApollonianSuperharmonic.CellDisjointCommonEdgesBoundary
@@ -44,45 +45,6 @@ theorem ExactTileInterfaceTripleLatticeTouching
     intro V F x y h
     rcases h with ⟨p, hn, hlen, hhead, hlast, hvertices, hsteps, hedges⟩
     exact ⟨p, hn, hlen, hvertices, hsteps, hedges⟩
-  have boundary_edge_footprint (T : ProtoTile) (e : Finset GaussianInt)
-      (he : e ∈ BoundaryFootprintEdges T) : e ∈ FootprintEdges T := by
-    let I : GaussianInt := ⟨0, 1⟩
-    rcases he with ⟨z, ⟨rfl, h⟩ | ⟨rfl, h⟩⟩
-    · rcases h with ⟨hz, -⟩ | ⟨-, hz⟩
-      · exact ⟨z, hz, Or.inl rfl⟩
-      · refine ⟨z - I, hz, Or.inr (Or.inr (Or.inr ?_))⟩
-        congr 1 <;> simp [I, Zsqrtd.ext_iff]
-    · rcases h with ⟨hz, -⟩ | ⟨-, hz⟩
-      · exact ⟨z, hz, Or.inr (Or.inl rfl)⟩
-      · refine ⟨z - 1, hz, Or.inr (Or.inr (Or.inl ?_))⟩
-        congr 1 <;> simp []
-  have edge_vertex_footprint (T : ProtoTile) (e : Finset GaussianInt)
-      (he : e ∈ FootprintEdges T) (z : GaussianInt) (hz : z ∈ e) :
-      z ∈ FootprintVertices T := by
-    rcases he with ⟨c, hc, he⟩
-    unfold FootprintVertices
-    rw [ite_eq_left ⟨c, hc⟩]
-    rcases he with h | h | h | h <;> subst e
-    all_goals simp only [Finset.mem_insert, Finset.mem_singleton] at hz
-    · rcases hz with rfl | rfl
-      · exact ⟨_, hc, Or.inl rfl⟩
-      · exact ⟨_, hc, Or.inr (Or.inl rfl)⟩
-    · rcases hz with rfl | rfl
-      · exact ⟨_, hc, Or.inl rfl⟩
-      · exact ⟨_, hc, Or.inr (Or.inr (Or.inl rfl))⟩
-    · rcases hz with rfl | rfl
-      · exact ⟨_, hc, Or.inr (Or.inl rfl)⟩
-      · exact ⟨_, hc, Or.inr (Or.inr (Or.inr rfl))⟩
-    · rcases hz with rfl | rfl
-      · exact ⟨_, hc, Or.inr (Or.inr (Or.inl rfl))⟩
-      · exact ⟨_, hc, Or.inr (Or.inr (Or.inr rfl))⟩
-  have boundary_vertex_footprint (T : ProtoTile) (hne : T.cells.Nonempty)
-      (z : GaussianInt) (hz : z ∈ BoundaryFootprintVertices T) :
-      z ∈ FootprintVertices T := by
-    unfold BoundaryFootprintVertices at hz
-    rw [ite_eq_left hne] at hz
-    rcases hz with ⟨e, he, hze⟩
-    exact edge_vertex_footprint T e (boundary_edge_footprint T e he) z hze
   have boundary_vertex_of_edge (T : ProtoTile) (hne : T.cells.Nonempty)
       (e : Finset GaussianInt) (he : e ∈ BoundaryFootprintEdges T)
       (z : GaussianInt) (hze : z ∈ e) :
@@ -115,8 +77,8 @@ theorem ExactTileInterfaceTripleLatticeTouching
       exact ⟨boundary_vertex_of_edge A hneA e he'.1 z hze,
         boundary_vertex_of_edge B hneB e he'.2 z hze⟩
     · rintro z ⟨hzA, hzB⟩
-      exact ⟨boundary_vertex_footprint A hneA z hzA,
-        boundary_vertex_footprint B hneB z hzB⟩
+      exact ⟨BoundaryFootprintInclusion.boundaryVertex_mem A z hzA,
+        BoundaryFootprintInclusion.boundaryVertex_mem B z hzB⟩
   have verticesBC : FootprintVertices B ∩ FootprintVertices C =
       BoundaryFootprintVertices B ∩ BoundaryFootprintVertices C := by
     apply Set.Subset.antisymm
@@ -127,8 +89,8 @@ theorem ExactTileInterfaceTripleLatticeTouching
       exact ⟨boundary_vertex_of_edge B hneB e he'.1 z hze,
         boundary_vertex_of_edge C hneC e he'.2 z hze⟩
     · rintro z ⟨hzB, hzC⟩
-      exact ⟨boundary_vertex_footprint B hneB z hzB,
-        boundary_vertex_footprint C hneC z hzC⟩
+      exact ⟨BoundaryFootprintInclusion.boundaryVertex_mem B z hzB,
+        BoundaryFootprintInclusion.boundaryVertex_mem C z hzC⟩
   have verticesCA : FootprintVertices C ∩ FootprintVertices A =
       BoundaryFootprintVertices C ∩ BoundaryFootprintVertices A := by
     apply Set.Subset.antisymm
@@ -139,8 +101,8 @@ theorem ExactTileInterfaceTripleLatticeTouching
       exact ⟨boundary_vertex_of_edge C hneC e he'.1 z hze,
         boundary_vertex_of_edge A hneA e he'.2 z hze⟩
     · rintro z ⟨hzC, hzA⟩
-      exact ⟨boundary_vertex_footprint C hneC z hzC,
-        boundary_vertex_footprint A hneA z hzA⟩
+      exact ⟨BoundaryFootprintInclusion.boundaryVertex_mem C z hzC,
+        BoundaryFootprintInclusion.boundaryVertex_mem A z hzA⟩
   have pathAB : SimpleGridPath
       (BoundaryFootprintVertices A ∩ BoundaryFootprintVertices B)
       (BoundaryFootprintEdges A ∩ BoundaryFootprintEdges B) := by

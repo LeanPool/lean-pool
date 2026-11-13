@@ -1626,24 +1626,11 @@ private theorem hconeHeight :
       have hsum : s * ell u + t * ell w < 0 := add_neg_of_neg_of_nonpos hsneg htneg.le
       simpa using add_lt_add_left hsum (ell B)
 
-private theorem htranslate :
-    (by
-      classical
-      exact
-        ∀ (n : Nat), ∀ (p : P3381T1PolygonBoundary n),
-        let v := p.vertex
-        ∀ (b : Fin (n + (3 : ℕ))),
-        let B := v b
-        let a := v (b - 1)
-        let c := v (b + 1)
-        ∀ (rK : ℝ),
-        let r := min rK (min (dist B a / 2) (dist B c / 2))
-        ∀ z : Real × Real, z ∈ Metric.ball (0 : Real × Real) r → B + z ∈ Metric.ball B r ) := by
-  classical
-  intro n p v b B a c rK r z hz
-  have he : dist (B + z) B = dist z (0 : Real × Real) := by
+private theorem translateBall (B z : ℝ × ℝ) (r : ℝ)
+    (hz : z ∈ Metric.ball (0 : ℝ × ℝ) r) : B + z ∈ Metric.ball B r := by
+  have he : dist (B + z) B = dist z (0 : ℝ × ℝ) := by
     calc
-      dist (B + z) B = dist (B + z) (B + (0 : Real × Real)) := by simp
+      dist (B + z) B = dist (B + z) (B + (0 : ℝ × ℝ)) := by simp
       _ = dist z 0 := dist_add_left B z 0
   rw [Metric.mem_ball, he]
   exact hz
@@ -2114,32 +2101,6 @@ private theorem hηballNeg :
     simpa [Metric.mem_ball, dist_eq_norm] using hηball
   simpa only [sub_zero, norm_neg] using hh
 
-private theorem htranslateS :
-    (by
-      classical
-      exact
-        ∀ (n : Nat), ∀ (p : P3381T1PolygonBoundary n),
-        let v := p.vertex
-        ∀ (b : Fin (n + (3 : ℕ))),
-        let B := v b
-        let a := v (b - 1)
-        let c := v (b + 1)
-        let u : Real × Real := a - B
-        ∀ (rK : ℝ),
-        let r := min rK (min (dist B a / 2) (dist B c / 2))
-        let σ := min (1 / 2) (r / (4 * (dist B a + 1)))
-        let x0 := B + σ • u
-        ∀ (δ : ℝ), ∀ z : Real × Real, z ∈ Metric.ball (0 : Real × Real) δ → x0 + z ∈ Metric.ball
-            x0 δ ) := by
-  classical
-  intro n p v b B a c u rK r σ x0 δ z hz
-  have he : dist (x0 + z) x0 = dist z (0 : Real × Real) := by
-    calc
-      dist (x0 + z) x0 = dist (x0 + z) (x0 + (0 : Real × Real)) := by simp
-      _ = dist z 0 := dist_add_left x0 z 0
-  rw [Metric.mem_ball, he]
-  exact hz
-
 private theorem hdetSide :
     (by
       classical
@@ -2337,114 +2298,6 @@ private theorem hLocalCone :
 end ExposedCornerGeometry
 
 namespace ExposedCornerAssembly
-
-private theorem hcover :
-    (by
-      classical
-      exact
-        ∀ (n : Nat), ∀ (p : P3381T1PolygonBoundary n),
-        let v := p.vertex
-        ∀ (b : Fin (n + (3 : ℕ))),
-        let B := v b
-        let a := v (b - 1)
-        let c := v (b + 1)
-        (∀ (x : ℝ × ℝ), ∀ (y : ℝ × ℝ), ∀ (t : ℝ), (AffineMap.lineMap x y : ℝ → ℝ × ℝ) t = x + t •
-            (y - x)) → (
-        ∀ (rK : ℝ),
-        let r := min rK (min (dist B a / 2) (dist B c / 2))
-        (0 < r) → ((r < dist B a) → ((r < dist B c) → ((∀ x ∈ Metric.ball (p.vertex b) (min rK
-            (min (dist (p.vertex b) (p.vertex (b - (1 : Fin (n + (3 : ℕ))))) / (2 : ℝ)) (dist
-            (p.vertex b) (p.vertex (b + (1 : Fin (n + (3 : ℕ))))) / (2 : ℝ)))), x ∈
-            P3544T1BoundaryCarrier p ↔ x ∈ segment ℝ (p.vertex b) (p.vertex (b + (1 : Fin (n +
-            (3 : ℕ))))) ∨ x ∈ segment ℝ (p.vertex (b - (1 : Fin (n + (3 : ℕ))))) (p.vertex b)) → (
-        (
-        let U := if (0 : ℝ) < (fun (x y : ℝ × ℝ) => x.1 * y.2 - x.2 * y.1) (p.vertex (b - (1 :
-            Fin (n + (3 : ℕ)))) - p.vertex b) (p.vertex (b + (1 : Fin (n + (3 : ℕ)))) - p.vertex
-            b) then p.vertex (b - (1 : Fin (n + (3 : ℕ)))) - p.vertex b else p.vertex (b + (1 :
-            Fin (n + (3 : ℕ)))) - p.vertex b;
-        let V := if (0 : ℝ) < (fun (x y : ℝ × ℝ) => x.1 * y.2 - x.2 * y.1) (p.vertex (b - (1 :
-            Fin (n + (3 : ℕ)))) - p.vertex b) (p.vertex (b + (1 : Fin (n + (3 : ℕ)))) - p.vertex
-            b) then p.vertex (b + (1 : Fin (n + (3 : ℕ)))) - p.vertex b else p.vertex (b - (1 :
-            Fin (n + (3 : ℕ)))) - p.vertex b; (0 : ℝ) < (fun (x y : ℝ × ℝ) => x.1 * y.2 - x.2 *
-            y.1) U V) → ((∀ (z : ℝ × ℝ), z = ((-(fun (x y : ℝ × ℝ) => x.1 * y.2 - x.2 * y.1) (if
-            (0 : ℝ) < (fun (x y : ℝ × ℝ) => x.1 * y.2 - x.2 * y.1) (p.vertex (b - (1 : Fin (n +
-            (3 : ℕ)))) - p.vertex b) (p.vertex (b + (1 : Fin (n + (3 : ℕ)))) - p.vertex b) then
-            p.vertex (b + (1 : Fin (n + (3 : ℕ)))) - p.vertex b else p.vertex (b - (1 : Fin (n +
-            (3 : ℕ)))) - p.vertex b) z / (fun (x y : ℝ × ℝ) => x.1 * y.2 - x.2 * y.1) (if (0 : ℝ)
-            < (fun (x y : ℝ × ℝ) => x.1 * y.2 - x.2 * y.1) (p.vertex (b - (1 : Fin (n + (3 :
-            ℕ)))) - p.vertex b) (p.vertex (b + (1 : Fin (n + (3 : ℕ)))) - p.vertex b) then
-            p.vertex (b - (1 : Fin (n + (3 : ℕ)))) - p.vertex b else p.vertex (b + (1 : Fin (n +
-            (3 : ℕ)))) - p.vertex b) (if (0 : ℝ) < (fun (x y : ℝ × ℝ) => x.1 * y.2 - x.2 * y.1)
-            (p.vertex (b - (1 : Fin (n + (3 : ℕ)))) - p.vertex b) (p.vertex (b + (1 : Fin (n + (3
-            : ℕ)))) - p.vertex b) then p.vertex (b + (1 : Fin (n + (3 : ℕ)))) - p.vertex b else
-            p.vertex (b - (1 : Fin (n + (3 : ℕ)))) - p.vertex b)) • if (0 : ℝ) < (fun (x y : ℝ ×
-            ℝ) => x.1 * y.2 - x.2 * y.1) (p.vertex (b - (1 : Fin (n + (3 : ℕ)))) - p.vertex b)
-            (p.vertex (b + (1 : Fin (n + (3 : ℕ)))) - p.vertex b) then p.vertex (b - (1 : Fin (n
-            + (3 : ℕ)))) - p.vertex b else p.vertex (b + (1 : Fin (n + (3 : ℕ)))) - p.vertex b) +
-            ((fun (x y : ℝ × ℝ) => x.1 * y.2 - x.2 * y.1) (if (0 : ℝ) < (fun (x y : ℝ × ℝ) => x.1
-            * y.2 - x.2 * y.1) (p.vertex (b - (1 : Fin (n + (3 : ℕ)))) - p.vertex b) (p.vertex (b
-            + (1 : Fin (n + (3 : ℕ)))) - p.vertex b) then p.vertex (b - (1 : Fin (n + (3 : ℕ))))
-            - p.vertex b else p.vertex (b + (1 : Fin (n + (3 : ℕ)))) - p.vertex b) z / (fun (x y
-            : ℝ × ℝ) => x.1 * y.2 - x.2 * y.1) (if (0 : ℝ) < (fun (x y : ℝ × ℝ) => x.1 * y.2 -
-            x.2 * y.1) (p.vertex (b - (1 : Fin (n + (3 : ℕ)))) - p.vertex b) (p.vertex (b + (1 :
-            Fin (n + (3 : ℕ)))) - p.vertex b) then p.vertex (b - (1 : Fin (n + (3 : ℕ)))) -
-            p.vertex b else p.vertex (b + (1 : Fin (n + (3 : ℕ)))) - p.vertex b) (if (0 : ℝ) <
-            (fun (x y : ℝ × ℝ) => x.1 * y.2 - x.2 * y.1) (p.vertex (b - (1 : Fin (n + (3 : ℕ))))
-            - p.vertex b) (p.vertex (b + (1 : Fin (n + (3 : ℕ)))) - p.vertex b) then p.vertex (b
-            + (1 : Fin (n + (3 : ℕ)))) - p.vertex b else p.vertex (b - (1 : Fin (n + (3 : ℕ)))) -
-            p.vertex b)) • if (0 : ℝ) < (fun (x y : ℝ × ℝ) => x.1 * y.2 - x.2 * y.1) (p.vertex (b
-            - (1 : Fin (n + (3 : ℕ)))) - p.vertex b) (p.vertex (b + (1 : Fin (n + (3 : ℕ)))) -
-            p.vertex b) then p.vertex (b + (1 : Fin (n + (3 : ℕ)))) - p.vertex b else p.vertex (b
-            - (1 : Fin (n + (3 : ℕ)))) - p.vertex b) → ((
-        let B := p.vertex b; ∀ (d : ℝ × ℝ), ∀ (t : ℝ), (0 : ℝ) ≤ t → dist (B + t • d) B = t *
-            dist (B + d) B) → ((
-        let B := p.vertex b;
-        let a := p.vertex (b - (1 : Fin (n + (3 : ℕ))));
-        let c := p.vertex (b + (1 : Fin (n + (3 : ℕ))));
-        let u := a - B;
-        let w := c - B;
-        let cross := fun (x y : ℝ × ℝ) => x.1 * y.2 - x.2 * y.1;
-        let U := if (0 : ℝ) < cross u w then u else w; B + U = a ∨ B + U = c) → ((
-        let B := p.vertex b;
-        let a := p.vertex (b - (1 : Fin (n + (3 : ℕ))));
-        let c := p.vertex (b + (1 : Fin (n + (3 : ℕ))));
-        let u := a - B;
-        let w := c - B;
-        let cross := fun (x y : ℝ × ℝ) => x.1 * y.2 - x.2 * y.1;
-        let V := if (0 : ℝ) < cross u w then w else u; B + V = a ∨ B + V = c) → (∀ x ∈
-            Metric.ball (p.vertex b) (min rK (min (dist (p.vertex b) (p.vertex (b - (1 : Fin (n +
-            (3 : ℕ))))) / (2 : ℝ)) (dist (p.vertex b) (p.vertex (b + (1 : Fin (n + (3 : ℕ))))) /
-            (2 : ℝ)))), x ∉ P3544T1BoundaryCarrier p → x ∈ {x : ℝ × ℝ | x ∈ Metric.ball
-            (p.vertex b) (min rK (min (dist (p.vertex b) (p.vertex (b - (1 : Fin (n + (3 : ℕ)))))
-            / (2 : ℝ)) (dist (p.vertex b) (p.vertex (b + (1 : Fin (n + (3 : ℕ))))) / (2 : ℝ)))) ∧
-            (0 : ℝ) < (fun (x y : ℝ × ℝ) => x.1 * y.2 - x.2 * y.1) (if (0 : ℝ) < (fun (x y : ℝ ×
-            ℝ) => x.1 * y.2 - x.2 * y.1) (p.vertex (b - (1 : Fin (n + (3 : ℕ)))) - p.vertex b)
-            (p.vertex (b + (1 : Fin (n + (3 : ℕ)))) - p.vertex b) then p.vertex (b - (1 : Fin (n
-            + (3 : ℕ)))) - p.vertex b else p.vertex (b + (1 : Fin (n + (3 : ℕ)))) - p.vertex b)
-            (x - p.vertex b) ∧ (fun (x y : ℝ × ℝ) => x.1 * y.2 - x.2 * y.1) (if (0 : ℝ) < (fun (x
-            y : ℝ × ℝ) => x.1 * y.2 - x.2 * y.1) (p.vertex (b - (1 : Fin (n + (3 : ℕ)))) -
-            p.vertex b) (p.vertex (b + (1 : Fin (n + (3 : ℕ)))) - p.vertex b) then p.vertex (b +
-            (1 : Fin (n + (3 : ℕ)))) - p.vertex b else p.vertex (b - (1 : Fin (n + (3 : ℕ)))) -
-            p.vertex b) (x - p.vertex b) < (0 : ℝ)} ∨ x ∈ {x : ℝ × ℝ | x ∈ Metric.ball (p.vertex
-            b) (min rK (min (dist (p.vertex b) (p.vertex (b - (1 : Fin (n + (3 : ℕ))))) / (2 :
-            ℝ)) (dist (p.vertex b) (p.vertex (b + (1 : Fin (n + (3 : ℕ))))) / (2 : ℝ)))) ∧ ((fun
-            (x y : ℝ × ℝ) => x.1 * y.2 - x.2 * y.1) (if (0 : ℝ) < (fun (x y : ℝ × ℝ) => x.1 * y.2
-            - x.2 * y.1) (p.vertex (b - (1 : Fin (n + (3 : ℕ)))) - p.vertex b) (p.vertex (b + (1
-            : Fin (n + (3 : ℕ)))) - p.vertex b) then p.vertex (b - (1 : Fin (n + (3 : ℕ)))) -
-            p.vertex b else p.vertex (b + (1 : Fin (n + (3 : ℕ)))) - p.vertex b) (x - p.vertex b)
-            < (0 : ℝ) ∨ (0 : ℝ) < (fun (x y : ℝ × ℝ) => x.1 * y.2 - x.2 * y.1) (if (0 : ℝ) < (fun
-            (x y : ℝ × ℝ) => x.1 * y.2 - x.2 * y.1) (p.vertex (b - (1 : Fin (n + (3 : ℕ)))) -
-            p.vertex b) (p.vertex (b + (1 : Fin (n + (3 : ℕ)))) - p.vertex b) then p.vertex (b +
-            (1 : Fin (n + (3 : ℕ)))) - p.vertex b else p.vertex (b - (1 : Fin (n + (3 : ℕ)))) -
-            p.vertex b) (x - p.vertex b))})))))))))) ) := by
-  classical
-  intro n p v b B a c hlineMap rK r hr hrA hrC hcarrierLocal hUV hdecomp hradialDist hUendpoint
-      hVendpoint
-  exact ExposedCornerGeometry.hcover n p b rK (ExposedCornerGeometry.haxisU n p b
-      hlineMap rK hr hcarrierLocal hUV hdecomp hradialDist hUendpoint
-      (ExposedCornerGeometry.hUdist n p b rK hrA hrC hUendpoint)) (ExposedCornerGeometry.haxisV n
-      p b hlineMap rK hr hcarrierLocal hUV hdecomp hradialDist hVendpoint
-      (ExposedCornerGeometry.hVdist n p b rK hrA hrC hVendpoint))
 
 private theorem hynotC :
     (by
@@ -2904,10 +2757,8 @@ theorem P3650T1ExposedCornerExists {n : Nat} (p : P3381T1PolygonBoundary n) :
   let r := min rK (min (dist B a / 2) (dist B c / 2))
   have hr : 0 < r := by dsimp [r]; positivity
   have hrKle : r ≤ rK := min_le_left _ _
-  have hrAle : r ≤ dist B a / 2 := by
-    exact le_trans (min_le_right _ _) (min_le_left _ _)
-  have hrCle : r ≤ dist B c / 2 := by
-    exact le_trans (min_le_right _ _) (min_le_right _ _)
+  have hrAle : r ≤ dist B a / 2 := le_trans (min_le_right _ _) (min_le_left _ _)
+  have hrCle : r ≤ dist B c / 2 := le_trans (min_le_right _ _) (min_le_right _ _)
   have hrA : r < dist B a := lt_of_le_of_lt hrAle (half_lt_self hdistA)
   have hrC : r < dist B c := lt_of_le_of_lt hrCle (half_lt_self hdistC)
   have hcarrierLocal := ExposedCornerGeometry.hcarrierLocal n p b hprev rK hballK hrKle
@@ -2922,7 +2773,6 @@ theorem P3650T1ExposedCornerExists {n : Nat} (p : P3381T1PolygonBoundary n) :
   have hUV := ExposedCornerGeometry.hUV n p b hswap hpos
   have hdecomp := ExposedCornerGeometry.hdecomp n p b hUV
   have hconeUV := ExposedCornerGeometry.hconeUV n p b hdet hcrossLinear hUV hdecomp
-  have hsmallScale := ExposedCornerGeometry.hsmallScale
   have hconstOn := ExposedCornerGeometry.hconstOn n p hlocal
   let N0 : Set (Real × Real) := {z | z ∈ Metric.ball 0 r ∧
     0 < cross U z ∧ cross V z < 0}
@@ -2932,7 +2782,7 @@ theorem P3650T1ExposedCornerExists {n : Nat} (p : P3381T1PolygonBoundary n) :
   let z0 := U + V
   have hz0U : cross U z0 = cross U V := by dsimp [z0]; dsimp [cross]; ring
   have hz0V : cross V z0 = -cross U V := by dsimp [z0]; dsimp [cross]; ring
-  obtain ⟨τ, hτ, hτball⟩ := hsmallScale z0 r hr
+  obtain ⟨τ, hτ, hτball⟩ := ExposedCornerGeometry.hsmallScale z0 r hr
   have hN0pc : IsPathConnected N0 := by
     exact (ExposedCornerGeometry.hNconvex n p b rK
         hcrossLinear).isPathConnected (ExposedCornerGeometry.hN0ne n p b rK hcrossLinear hUV hz0U
@@ -2965,15 +2815,17 @@ theorem P3650T1ExposedCornerExists {n : Nat} (p : P3381T1PolygonBoundary n) :
   have hradialDist := ExposedCornerGeometry.hradialDist n p b
   have hUendpoint := ExposedCornerGeometry.hUendpoint n p b
   have hVendpoint := ExposedCornerGeometry.hVendpoint n p b
-  have hcover := ExposedCornerAssembly.hcover n p b hlineMap rK hr hrA hrC hcarrierLocal hUV
-      hdecomp hradialDist hUendpoint hVendpoint
-  have htranslate : ∀ z : Real × Real, z ∈ Metric.ball (0 : Real × Real) r →
-      B + z ∈ Metric.ball B r := ExposedCornerGeometry.htranslate n p b rK
+  have haxisU := ExposedCornerGeometry.haxisU n p b hlineMap rK hr hcarrierLocal hUV
+    hdecomp hradialDist hUendpoint
+    (ExposedCornerGeometry.hUdist n p b rK hrA hrC hUendpoint)
+  have haxisV := ExposedCornerGeometry.haxisV n p b hlineMap rK hr hcarrierLocal hUV
+    hdecomp hradialDist hVendpoint
+    (ExposedCornerGeometry.hVdist n p b rK hrA hrC hVendpoint)
+  have hcover := ExposedCornerGeometry.hcover n p b rK haxisU haxisV
   let e : Real × Real := (1, 0)
-  obtain ⟨ε, hε, hεball⟩ := hsmallScale e r hr
+  obtain ⟨ε, hε, hεball⟩ := ExposedCornerGeometry.hsmallScale e r hr
   let y : Real × Real := B + ε • e
-  have hyball : y ∈ Metric.ball B r := by
-    exact htranslate (ε • e) (by simpa [y] using hεball)
+  have hyball := ExposedCornerGeometry.translateBall B (ε • e) r hεball
   have hyheight := ExposedCornerGeometry.hyheight n p hqexists b ε hε
   have hynotC := ExposedCornerAssembly.hynotC n p hqexists b hprev rK hcarrierLocal
       hsegmentHeight ε hyball hyheight
@@ -3009,13 +2861,13 @@ theorem P3650T1ExposedCornerExists {n : Nat} (p : P3381T1PolygonBoundary n) :
   let qside : Real × Real := if 0 < cross u w then w else -w
   have hcrossUq := ExposedCornerGeometry.hcrossUq n p b hdet hcrossLinear
   have hcrossWq := ExposedCornerGeometry.hcrossWq n p b hcrossLinear hcrossSelf
-  obtain ⟨η, hη, hηball⟩ := hsmallScale qside δ hδ
-  have htranslateS := ExposedCornerGeometry.htranslateS n p b rK δ
+  obtain ⟨η, hη, hηball⟩ := ExposedCornerGeometry.hsmallScale qside δ hδ
   let yp := x0 + η • qside
   let ym := x0 - η • qside
-  have hypS : yp ∈ S := hballS (htranslateS (η • qside) hηball)
+  have hypS : yp ∈ S :=
+    hballS (ExposedCornerGeometry.translateBall x0 (η • qside) δ hηball)
   have hymS : ym ∈ S := by
-    have hh := htranslateS (-(η • qside))
+    have hh := ExposedCornerGeometry.translateBall x0 (-(η • qside)) δ
       (ExposedCornerGeometry.hηballNeg n p b δ η hηball)
     simpa [ym, S, x0, σ, u, a, B, c, v, r, sub_eq_add_neg] using hballS hh
   have hyplus : yp - B = σ • u + η • qside := by dsimp [yp, x0]; abel

@@ -743,132 +743,36 @@ private theorem hexteriorIndex :
         Or.inr <| Or.inl ha
     · exact Or.inr <| Or.inr <| Or.inr <| Or.inl ha
 
-private theorem hselectedBoundary :
-    (by
-      classical
-      exact
-        ∀ (C : BandCircle),
-          ∀ (T : ProtoTile),
-            ∀ (N : ProtoTile),
-              ∀ (h : PartialOdometer),
-                ∀ (k : PartialOdometer),
-                  ∀ (x : GaussianInt),
-                    ∀
-                      (normalization :
-                        BandOrderedGeneralRightNormalizationCertificate C T N h k x),
-                      let q := normalization.normalizedPresentation;
-                      ∀ (selectedSlot : Fin (3 : ℕ)),
-                        ∀ (selectedSign : Bool),
-                          ∀ (centralSlot : Fin (3 : ℕ)),
-                            ∀ (centralSign : Bool),
-                              let m : Int :=
-                                if normalization.rightDirectionSlot = 0 then
-                                if normalization.rightNeighborPositive = true then 1
-                              else -1
-                              else
-                                if normalization.rightDirectionSlot = 1 then 0
-                              else
-                                if normalization.rightNeighborPositive = true then -1
-                              else 1;
-                              let n : Int :=
-                                if normalization.rightDirectionSlot = 0 then 0
-                              else
-                                if normalization.rightDirectionSlot = 1 then
-                                if normalization.rightNeighborPositive = true then 1
-                              else -1
-                              else
-                                if normalization.rightNeighborPositive = true then -1
-                              else 1;
-                              let labelOf : Fin 3 → Bool → SixSubtileLabel := fun i s =>
-                                if i = 0 then if s = true then .A else .B
-                              else
-                                if i = 1 then if s = true then .C else .D
-                              else if s = true then .E else .F;
-                              let exteriorIndex : PeriodicSubtileIndex :=
-                                ⟨labelOf selectedSlot selectedSign, m, n⟩;
-                              let centralIndex : PeriodicSubtileIndex :=
-                                ⟨labelOf centralSlot centralSign, 0, 0⟩;
-                              normalization.rightNeighborPositive = true ∧
-                                (normalization.rightDirectionSlot = 0 ∧
-                                exteriorIndex.first = 1 ∧ exteriorIndex.second = 0 ∨
-                                normalization.rightDirectionSlot = 1 ∧
-                                exteriorIndex.first = 0 ∧ exteriorIndex.second = 1 ∨
-                                normalization.rightDirectionSlot = 2 ∧
-                                exteriorIndex.first = -1 ∧ exteriorIndex.second = -1) ∨
-                                normalization.rightNeighborPositive = false ∧
-                                (normalization.rightDirectionSlot = 0 ∧
-                                exteriorIndex.first = -1 ∧ exteriorIndex.second = 0 ∨
-                                normalization.rightDirectionSlot = 1 ∧
-                                exteriorIndex.first = 0 ∧ exteriorIndex.second = -1 ∨
-                                normalization.rightDirectionSlot = 2 ∧
-                                exteriorIndex.first = 1 ∧ exteriorIndex.second = 1) →
-                                0 ≤ (q selectedSlot.succ).1 →
-                                0 < (q selectedSlot.succ).1 →
-                                normalization.rightNeighborPositive = true ∧
-                                (normalization.rightDirectionSlot = (0 : Fin (3 : ℕ)) ∧
-                                (exteriorIndex =
-                                (⟨SixSubtileLabel.C, (1 : ℤ), (0 : ℤ)⟩ :
-                                PeriodicSubtileIndex) ∨
-                                exteriorIndex =
-                                (⟨SixSubtileLabel.F, (1 : ℤ), (0 : ℤ)⟩ :
-                                PeriodicSubtileIndex)) ∨
-                                normalization.rightDirectionSlot = (1 : Fin (3 : ℕ)) ∧
-                                (exteriorIndex =
-                                (⟨SixSubtileLabel.E, (0 : ℤ), (1 : ℤ)⟩ :
-                                PeriodicSubtileIndex) ∨
-                                exteriorIndex =
-                                (⟨SixSubtileLabel.B, (0 : ℤ), (1 : ℤ)⟩ :
-                                PeriodicSubtileIndex)) ∨
-                                normalization.rightDirectionSlot = (2 : Fin (3 : ℕ)) ∧
-                                (exteriorIndex =
-                                (⟨SixSubtileLabel.A, (-1 : ℤ), (-1 : ℤ)⟩ :
-                                PeriodicSubtileIndex) ∨
-                                exteriorIndex =
-                                (⟨SixSubtileLabel.D, (-1 : ℤ), (-1 : ℤ)⟩ :
-                                PeriodicSubtileIndex))) ∨
-                                normalization.rightNeighborPositive = false ∧
-                                (normalization.rightDirectionSlot = (0 : Fin (3 : ℕ)) ∧
-                                (exteriorIndex =
-                                (⟨SixSubtileLabel.D, (-1 : ℤ), (0 : ℤ)⟩ :
-                                PeriodicSubtileIndex) ∨
-                                exteriorIndex =
-                                (⟨SixSubtileLabel.E, (-1 : ℤ), (0 : ℤ)⟩ :
-                                PeriodicSubtileIndex)) ∨
-                                normalization.rightDirectionSlot = (1 : Fin (3 : ℕ)) ∧
-                                (exteriorIndex =
-                                (⟨SixSubtileLabel.F, (0 : ℤ), (-1 : ℤ)⟩ :
-                                PeriodicSubtileIndex) ∨
-                                exteriorIndex =
-                                (⟨SixSubtileLabel.A, (0 : ℤ), (-1 : ℤ)⟩ :
-                                PeriodicSubtileIndex)) ∨
-                                normalization.rightDirectionSlot = (2 : Fin (3 : ℕ)) ∧
-                                (exteriorIndex =
-                                (⟨SixSubtileLabel.B, (1 : ℤ), (1 : ℤ)⟩ :
-                                PeriodicSubtileIndex) ∨
-                                exteriorIndex =
-                                (⟨SixSubtileLabel.C, (1 : ℤ), (1 : ℤ)⟩ :
-                                PeriodicSubtileIndex))) →
-                                ∀
-                                [Nonempty
-                                (BandOrderedGeneralSelectedContactRow q
-                                normalization.configuration normalization.normalizedCircle
-                                normalization.normalizedFixed normalization.layout
-                                exteriorIndex centralIndex)],
-                                selectedSlot = normalization.rightFirstSlot ∧
-                                selectedSign = normalization.firstBoundarySign ∨
-                                selectedSlot = normalization.rightSecondSlot ∧
-                                selectedSign = normalization.secondBoundarySign
-    ) := by
-  classical
-  intro C T N h k x normalization q selectedSlot selectedSign centralSlot centralSign m n
-      labelOf exteriorIndex centralIndex hshift hparentNonnegative hparentPositive
-      hclassification hcontact
-  rcases normalization.right_slots_cyclic with hslots | hslots | hslots <;>
+private theorem boundaryLabelSelection
+    (first second direction selected : Fin 3)
+    (positive firstSign secondSign selectedSign : Bool) (m n : Int)
+    (hslots : (first = 0 ∧ second = 1 ∧ direction = 2) ∨
+      (first = 1 ∧ second = 2 ∧ direction = 0) ∨
+      (first = 2 ∧ second = 0 ∧ direction = 1))
+    (hsigns : (positive = true ∧ firstSign = true ∧ secondSign = false) ∨
+      (positive = false ∧ firstSign = false ∧ secondSign = true)) :
+    let labelOf : Fin 3 → Bool → SixSubtileLabel := fun i s =>
+      if i = 0 then (if s then .A else .B)
+      else if i = 1 then (if s then .C else .D)
+      else (if s then .E else .F)
+    let exterior : PeriodicSubtileIndex := ⟨labelOf selected selectedSign, m, n⟩
+    (positive = true ∧
+      (direction = 0 ∧ (exterior = ⟨.C, 1, 0⟩ ∨ exterior = ⟨.F, 1, 0⟩) ∨
+       direction = 1 ∧ (exterior = ⟨.E, 0, 1⟩ ∨ exterior = ⟨.B, 0, 1⟩) ∨
+       direction = 2 ∧ (exterior = ⟨.A, -1, -1⟩ ∨ exterior = ⟨.D, -1, -1⟩)) ∨
+     positive = false ∧
+      (direction = 0 ∧ (exterior = ⟨.D, -1, 0⟩ ∨ exterior = ⟨.E, -1, 0⟩) ∨
+       direction = 1 ∧ (exterior = ⟨.F, 0, -1⟩ ∨ exterior = ⟨.A, 0, -1⟩) ∨
+       direction = 2 ∧ (exterior = ⟨.B, 1, 1⟩ ∨ exterior = ⟨.C, 1, 1⟩))) →
+      (selected = first ∧ selectedSign = firstSign) ∨
+        (selected = second ∧ selectedSign = secondSign) := by
+  intro labelOf exterior hclassification
+  rcases hslots with hslots | hslots | hslots <;>
     rcases hslots with ⟨hfirst, hsecond, hdirection⟩ <;>
-    rcases normalization.boundary_signs with hsigns | hsigns <;>
+    rcases hsigns with hsigns | hsigns <;>
     rcases hsigns with ⟨hpositive, hfirstSign, hsecondSign⟩ <;>
-    fin_cases selectedSlot <;> cases selectedSign <;>
-    simp [exteriorIndex, labelOf, m, n, hfirst, hsecond, hdirection,
+    fin_cases selected <;> cases selectedSign <;>
+    simp [exterior, labelOf, hfirst, hsecond, hdirection,
       hpositive, hfirstSign, hsecondSign] at hclassification ⊢
 
 end RightRoutingGeometry
@@ -1016,9 +920,11 @@ theorem BandOrderedGeneralRightRoutingCertificateExists
       selectedSlot := selectedSlot
       selectedSign := selectedSign
       selected_piece_cell := hselected
-      selected_boundary_piece := (@RightRoutingGeometry.hselectedBoundary C T N h k x
-          normalization selectedSlot selectedSign centralSlot centralSign hshift
-          hparentNonnegative hparentPositive hclassification hcontact)
+      selected_boundary_piece := (RightRoutingGeometry.boundaryLabelSelection
+          normalization.rightFirstSlot normalization.rightSecondSlot
+          normalization.rightDirectionSlot selectedSlot normalization.rightNeighborPositive
+          normalization.firstBoundarySign normalization.secondBoundarySign selectedSign m n
+          normalization.right_slots_cyclic normalization.boundary_signs hclassification)
       exteriorIndex := exteriorIndex
       centralIndex := centralIndex
       exterior_index := hexteriorIndex
