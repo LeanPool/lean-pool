@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.ApollonianSuperharmonic.AdjacentCellInterior
+
 public import Mathlib.Init
 
 public import LeanPool.ApollonianSuperharmonic.BandOrderedGeneralLayoutCertificate
@@ -285,71 +287,6 @@ private theorem hpCells :
   classical
   intro T p hpInteriorT hTne vertex_cells z hz
   exact vertex_cells T hTne z (hpInteriorT z hz).1 (hpInteriorT z hz).2
-
-private theorem horizontal_interior :
-    (by
-      classical
-      exact
-        ∀ (U : ProtoTile), ∀ (z : GaussianInt), (z ∈ U.cells) → ((z - ⟨0, 1⟩ ∈ U.cells) →
-            (OpenLatticeEdge z (z + 1) ⊆ interior (TileRealization U))) ) := by
-  classical
-  intro U z hz hzs
-  as_aux_lemma =>
-  let R : Set (Real × Real) :=
-    Set.Ioo (z.re : Real) ((z.re : Real) + 1) ×ˢ
-      Set.Ioo ((z.im : Real) - 1) ((z.im : Real) + 1)
-  have hRopen : IsOpen R := isOpen_Ioo.prod isOpen_Ioo
-  have hRU : R ⊆ TileRealization U := by
-    intro a ha
-    rcases ha with ⟨ha₁, ha₂⟩
-    by_cases hs : a.2 ≤ (z.im : Real)
-    · apply Set.mem_iUnion.mpr
-      refine ⟨z - ⟨0, 1⟩, Set.mem_iUnion.mpr ⟨hzs, ?_⟩⟩
-      simp only [ClosedSquareRealization, Set.mem_Icc, Prod.le_def,
-        Zsqrtd.re_sub, Zsqrtd.im_sub, Int.cast_sub, Int.cast_one, sub_zero]
-      constructor <;> constructor <;> linarith [ha₁.1, ha₁.2, ha₂.1, ha₂.2]
-    · apply Set.mem_iUnion.mpr
-      refine ⟨z, Set.mem_iUnion.mpr ⟨hz, ?_⟩⟩
-      simp only [ClosedSquareRealization, Set.mem_Icc, Prod.le_def]
-      constructor <;> constructor <;> linarith [ha₁.1, ha₁.2, ha₂.1, ha₂.2]
-  intro a ha
-  apply interior_maximal hRU hRopen
-  obtain ⟨t, ht₀, ht₁, rfl⟩ := ha
-  simp [R, GaussianRealPoint]
-  constructor <;> constructor <;> nlinarith
-
-private theorem vertical_interior :
-    (by
-      classical
-      exact
-        ∀ (U : ProtoTile), ∀ (z : GaussianInt), (z ∈ U.cells) → ((z - 1 ∈ U.cells) →
-            (OpenLatticeEdge z (z + ⟨0, 1⟩) ⊆ interior (TileRealization U))) ) := by
-  classical
-  intro U z hz hzw
-  as_aux_lemma =>
-  let R : Set (Real × Real) :=
-    Set.Ioo ((z.re : Real) - 1) ((z.re : Real) + 1) ×ˢ
-      Set.Ioo (z.im : Real) ((z.im : Real) + 1)
-  have hRopen : IsOpen R := isOpen_Ioo.prod isOpen_Ioo
-  have hRU : R ⊆ TileRealization U := by
-    intro a ha
-    rcases ha with ⟨ha₁, ha₂⟩
-    by_cases hw : a.1 ≤ (z.re : Real)
-    · apply Set.mem_iUnion.mpr
-      refine ⟨z - 1, Set.mem_iUnion.mpr ⟨hzw, ?_⟩⟩
-      simp only [ClosedSquareRealization, Set.mem_Icc, Prod.le_def,
-        Zsqrtd.re_sub, Zsqrtd.im_sub, Zsqrtd.re_one, Zsqrtd.im_one,
-        Int.cast_sub, Int.cast_one, sub_zero]
-      constructor <;> constructor <;> linarith [ha₁.1, ha₁.2, ha₂.1, ha₂.2]
-    · apply Set.mem_iUnion.mpr
-      refine ⟨z, Set.mem_iUnion.mpr ⟨hz, ?_⟩⟩
-      simp only [ClosedSquareRealization, Set.mem_Icc, Prod.le_def]
-      constructor <;> constructor <;> linarith [ha₁.1, ha₁.2, ha₂.1, ha₂.2]
-  intro a ha
-  apply interior_maximal hRU hRopen
-  obtain ⟨t, ht₀, ht₁, rfl⟩ := ha
-  simp [R, GaussianRealPoint]
-  constructor <;> constructor <;> nlinarith
 
 private theorem edge_vertices :
     (by
@@ -1346,9 +1283,9 @@ theorem P4250T2InterfaceCycleExclusion
       (InterfaceCycleGeometry.parent_index_eq C q cfg T cert p
       (InterfaceCycleGeometry.parent_step C q cfg T cert E p
       (InterfaceCycleGeometry.no_horizontal C q cfg T cert E p hpParentBoundary
-      (InterfaceCycleGeometry.horizontal_interior) edge_vertices parent_regular)
+      (AdjacentCellInterior.horizontal) edge_vertices parent_regular)
       (InterfaceCycleGeometry.no_vertical C q cfg T cert E p hpParentBoundary
-      (InterfaceCycleGeometry.vertical_interior) edge_vertices parent_regular) index_horizontal
+      (AdjacentCellInterior.vertical) edge_vertices parent_regular) index_horizontal
       index_vertical) (InterfaceCycleGeometry.list_end_eq)) (InterfaceCycleGeometry.parent_anchor
       C q cfg T cert attachment E p index_horizontal index_vertical outside_zero
       (InterfaceCycleGeometry.boundary_not_cycle T E p hpInteriorT hTne edge_vertices)

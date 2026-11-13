@@ -5,6 +5,10 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.ApollonianSuperharmonic.AdjacentCellInterior
+
+public import LeanPool.ApollonianSuperharmonic.LatticeFootprintIncidence
+
 public import Mathlib.Init
 public import LeanPool.ApollonianSuperharmonic.TileTranslationProperties
 
@@ -37,22 +41,6 @@ private theorem incident_foot :
   rw [FootprintVertices, ite_eq_left (show U.cells.Nonempty from ⟨_, hj⟩)]
   refine ⟨_, hj, ?_⟩
   fin_cases j <;> simp [LatticeVertexIncidentCell, Zsqrtd.ext_iff]
-
-private theorem foot_incident :
-    (by
-      classical
-      exact
-        ∀ (U : ProtoTile), (U.cells.Nonempty) → (∀ (z : GaussianInt), (z ∈ FootprintVertices U) →
-            (∃ j : Fin 4, LatticeVertexIncidentCell z j ∈ U.cells)) ) := by
-  classical
-  intro U hne z hz
-  as_aux_lemma =>
-  rw [FootprintVertices, ite_eq_left hne] at hz
-  rcases hz with ⟨c, hc, rfl | rfl | rfl | rfl⟩
-  · exact ⟨0, by simpa [LatticeVertexIncidentCell] using hc⟩
-  · exact ⟨1, by simpa [LatticeVertexIncidentCell] using hc⟩
-  · exact ⟨3, by simpa [LatticeVertexIncidentCell] using hc⟩
-  · exact ⟨2, by simpa [LatticeVertexIncidentCell, sub_sub] using hc⟩
 
 private theorem full_iff :
     (by
@@ -127,74 +115,6 @@ private theorem boundary_foot :
       · exact incident_foot U (w + ⟨0, 1⟩) 2 (by simpa [LatticeVertexIncidentCell,
           sub_eq_add_neg, add_assoc, add_comm, add_left_comm] using hw.2)
   · simpa [FootprintVertices, BoundaryFootprintVertices, hne] using hz
-
-private theorem horizontal_interior :
-    (by
-      classical
-      exact
-        ∀ (U : ProtoTile), ∀ (z : GaussianInt), (z ∈ U.cells) → ((z - ⟨0, 1⟩ ∈ U.cells) →
-            (OpenLatticeEdge z (z + 1) ⊆ interior (TileRealization U))) ) := by
-  classical
-  intro U z hu hl
-  as_aux_lemma =>
-  let R := Set.Ioo (z.re : ℝ) ((z.re : ℝ) + 1) ×ˢ
-    Set.Ioo ((z.im : ℝ) - 1) ((z.im : ℝ) + 1)
-  have hopen : IsOpen R := isOpen_Ioo.prod isOpen_Ioo
-  have hsub : R ⊆ TileRealization U := by
-    intro p hp
-    rcases hp with ⟨⟨hxl, hxu⟩, ⟨hyl, hyu⟩⟩
-    by_cases hside : p.2 ≤ (z.im : ℝ)
-    · apply Set.mem_iUnion.mpr
-      refine ⟨z - ⟨0, 1⟩, Set.mem_iUnion.mpr ⟨hl, ?_⟩⟩
-      simp only [ClosedSquareRealization, Set.mem_Icc, Prod.le_def]
-      norm_num
-      rw [GaussianInt.toComplex_def₂]
-      change ((z.re : ℝ) ≤ p.1 ∧ (z.im : ℝ) ≤ p.2 + 1) ∧
-        (p.1 ≤ (z.re : ℝ) + 1 ∧ p.2 ≤ (z.im : ℝ))
-      constructor <;> constructor <;> linarith
-    · apply Set.mem_iUnion.mpr
-      refine ⟨z, Set.mem_iUnion.mpr ⟨hu, ?_⟩⟩
-      simp only [ClosedSquareRealization, Set.mem_Icc, Prod.le_def]
-      constructor <;> constructor <;> linarith
-  intro p hp
-  apply hopen.subset_interior_iff.mpr hsub
-  rcases hp with ⟨t, ht0, ht1, rfl⟩
-  norm_num [R, GaussianRealPoint, Prod.smul_fst, Prod.smul_snd, smul_eq_mul]
-  constructor <;> constructor <;> nlinarith
-
-private theorem vertical_interior :
-    (by
-      classical
-      exact
-        ∀ (U : ProtoTile), ∀ (z : GaussianInt), (z ∈ U.cells) → ((z - 1 ∈ U.cells) →
-            (OpenLatticeEdge z (z + ⟨0, 1⟩) ⊆ interior (TileRealization U))) ) := by
-  classical
-  intro U z hr hl
-  as_aux_lemma =>
-  let R := Set.Ioo ((z.re : ℝ) - 1) ((z.re : ℝ) + 1) ×ˢ
-    Set.Ioo (z.im : ℝ) ((z.im : ℝ) + 1)
-  have hopen : IsOpen R := isOpen_Ioo.prod isOpen_Ioo
-  have hsub : R ⊆ TileRealization U := by
-    intro p hp
-    rcases hp with ⟨⟨hxl, hxu⟩, ⟨hyl, hyu⟩⟩
-    by_cases hside : p.1 ≤ (z.re : ℝ)
-    · apply Set.mem_iUnion.mpr
-      refine ⟨z - 1, Set.mem_iUnion.mpr ⟨hl, ?_⟩⟩
-      simp only [ClosedSquareRealization, Set.mem_Icc, Prod.le_def]
-      norm_num
-      rw [GaussianInt.toComplex_def₂]
-      change ((z.re : ℝ) ≤ p.1 + 1 ∧ (z.im : ℝ) ≤ p.2) ∧
-        (p.1 ≤ (z.re : ℝ) ∧ p.2 ≤ (z.im : ℝ) + 1)
-      constructor <;> constructor <;> linarith
-    · apply Set.mem_iUnion.mpr
-      refine ⟨z, Set.mem_iUnion.mpr ⟨hr, ?_⟩⟩
-      simp only [ClosedSquareRealization, Set.mem_Icc, Prod.le_def]
-      constructor <;> constructor <;> linarith
-  intro p hp
-  apply hopen.subset_interior_iff.mpr hsub
-  rcases hp with ⟨t, ht0, ht1, rfl⟩
-  norm_num [R, GaussianRealPoint, Prod.smul_fst, Prod.smul_snd, smul_eq_mul]
-  constructor <;> constructor <;> nlinarith
 
 private theorem edge_endpoint :
     (by
@@ -1564,7 +1484,8 @@ theorem P4250T2InterfaceNeighborCount :
   classical
   exact (by
     have incident_foot := InterfaceNeighborGeometry.incident_foot
-    have foot_incident := InterfaceNeighborGeometry.foot_incident
+    have foot_incident := fun (U : ProtoTile) (hne : U.cells.Nonempty) (z : GaussianInt) =>
+      LatticeFootprintIncidence.incidentCell U z hne
     have full_iff := InterfaceNeighborGeometry.full_iff incident_foot foot_incident
     have boundary_foot := InterfaceNeighborGeometry.boundary_foot incident_foot
     have hOA := InterfaceNeighborGeometry.hOA C q cfg T cert
@@ -1617,8 +1538,8 @@ theorem P4250T2InterfaceNeighborCount :
     -- Each edge is counted precisely when its two incident cells share a parent.
     have neighbor_bridge := InterfaceNeighborGeometry.neighbor_bridge C q cfg T cert D P hD hP
         incident_foot full_iff (InterfaceNeighborGeometry.edge_endpoint
-        (InterfaceNeighborGeometry.horizontal_interior)
-        (InterfaceNeighborGeometry.vertical_interior)) parent_regular x no_parent_interior
+        (AdjacentCellInterior.horizontal)
+        (AdjacentCellInterior.vertical)) parent_regular x no_parent_interior
         shared_cells
     have neighbor_injective := InterfaceNeighborGeometry.neighbor_injective x
     have neighbor_adjacent (j : Fin 4) : FourNeighborAdjacent (neighbor j) x := by

@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.ApollonianSuperharmonic.LatticeFootprintIncidence
+
 public import LeanPool.ApollonianSuperharmonic.FootprintVertices
 public import LeanPool.ApollonianSuperharmonic.P3161T2IncidentBoundary
 public import Mathlib.Init
@@ -36,7 +38,7 @@ theorem nonempty :
   apply hxb
   simp [BoundaryFootprintVertices, hn, hx]
 
-/-- Shared someIncidentCell identity for InteriorFootprintIncidence. -/
+/-- Incident-cell existence in the calling convention for interior footprint vertices. -/
 theorem someIncidentCell :
     (by
       classical
@@ -44,16 +46,8 @@ theorem someIncidentCell :
         ∀ (T : ProtoTile), ∀ (x : GaussianInt), (x ∈ FootprintVertices T) → ((x ∉
             BoundaryFootprintVertices T) → ((T.cells.Nonempty) → (∃ j : Fin 4,
             LatticeVertexIncidentCell x j ∈ T.cells))) ) := by
-  classical
-  intro T x hx hxb hne
-  rw [FootprintVertices, ite_eq_left hne] at hx
-  rcases hx with ⟨y, hy, rfl | rfl | rfl | rfl⟩
-  · exact ⟨0, by simpa [LatticeVertexIncidentCell] using hy⟩
-  · exact ⟨1, by simpa [LatticeVertexIncidentCell] using hy⟩
-  · exact ⟨3, by simpa [LatticeVertexIncidentCell] using hy⟩
-  · refine ⟨2, ?_⟩
-    simpa [LatticeVertexIncidentCell, sub_eq_add_neg,
-      add_assoc, add_comm, add_left_comm] using hy
+  intro T x hx _ hne
+  exact LatticeFootprintIncidence.incidentCell T x hne hx
 
 /-- Shared allIncidentCells identity for InteriorFootprintIncidence. -/
 theorem allIncidentCells :

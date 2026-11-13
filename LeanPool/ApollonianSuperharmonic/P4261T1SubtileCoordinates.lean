@@ -79,71 +79,6 @@ private theorem hcentroidRows :
   intro q cfg C₀ T₀ cert edge k e
   simpa [edge] using (cert.outer_occurrence k e).2.2
 
-private theorem rows :
-    (by
-      classical
-      exact
-        ∀ (q : Fin 4 → CircleCoordinates), ∀ (cfg : BandOrderedGeneralConfiguration q), ∀ (C₀ :
-            BandCircle), ∀ (T₀ : ProtoTile), ∀ (cert : BandOrderedGeneralLayoutCertificate q cfg
-            C₀ T₀), ∀ (i' : Fin (3 : ℕ)), ∀ (s : Fin (4 : ℕ)), ∀ (r : Fin (3 : ℕ)),
-        let j : Fin 3 := i' + r
-        let edge : Fin 3 → GaussianInt := fun k =>
-          BandVectors.1 (q ((k + 2).succ)) (q ((k + 1).succ))
-        let incoming : Fin 3 → GaussianInt := fun k =>
-          BandVectors.1 (q k.succ) (q 0)
-        let outgoing : Fin 3 → GaussianInt := fun k =>
-          BandVectors.1 (q 0) (q k.succ)
-        (edge 0 + edge 1 + edge 2 = 0) → ((incoming 0 = edge 1 - (⟨0, 1⟩ : GaussianInt) * edge 2)
-            → ((incoming 1 = edge 2 - (⟨0, 1⟩ : GaussianInt) * edge 0) → ((incoming 2 = edge 0 -
-            (⟨0, 1⟩ : GaussianInt) * edge 1) → ((∀ k, outgoing k = (⟨0, 1⟩ : GaussianInt) *
-            incoming k) → ((cert.u = outgoing 0) → ((cert.v = outgoing 1) → ((∀ k, ∀ e,
-            TileCentroid (cert.P k e) - TileCentroid T₀ = (if e = true then (1 : ℝ) else -1) •
-            ((1 / 2 : ℝ) • (GaussianRealPoint (edge k) - (-((GaussianRealPoint (edge k)).2),
-            (GaussianRealPoint (edge k)).1)))) → (
-        let uIndex := if j = (0 : Fin (3 : ℕ)) then if s = (0 : Fin (4 : ℕ)) then
-            (⟨SixSubtileLabel.A, (0 : ℤ), (-1 : ℤ)⟩ : PeriodicSubtileIndex) else if s = (1 : Fin
-            (4 : ℕ)) then (⟨SixSubtileLabel.B, (1 : ℤ), (1 : ℤ)⟩ : PeriodicSubtileIndex) else if
-            s = (2 : Fin (4 : ℕ)) then (⟨SixSubtileLabel.B, (0 : ℤ), (1 : ℤ)⟩ :
-            PeriodicSubtileIndex) else (⟨SixSubtileLabel.A, (-1 : ℤ), (-1 : ℤ)⟩ :
-            PeriodicSubtileIndex) else if j = (1 : Fin (3 : ℕ)) then if s = (0 : Fin (4 : ℕ))
-            then (⟨SixSubtileLabel.C, (1 : ℤ), (1 : ℤ)⟩ : PeriodicSubtileIndex) else if s = (1 :
-            Fin (4 : ℕ)) then (⟨SixSubtileLabel.D, (-1 : ℤ), (0 : ℤ)⟩ : PeriodicSubtileIndex)
-            else if s = (2 : Fin (4 : ℕ)) then (⟨SixSubtileLabel.D, (-1 : ℤ), (-1 : ℤ)⟩ :
-            PeriodicSubtileIndex) else (⟨SixSubtileLabel.C, (1 : ℤ), (0 : ℤ)⟩ :
-            PeriodicSubtileIndex) else if s = (0 : Fin (4 : ℕ)) then (⟨SixSubtileLabel.E, (-1 :
-            ℤ), (0 : ℤ)⟩ : PeriodicSubtileIndex) else if s = (1 : Fin (4 : ℕ)) then
-            (⟨SixSubtileLabel.F, (0 : ℤ), (-1 : ℤ)⟩ : PeriodicSubtileIndex) else if s = (2 : Fin
-            (4 : ℕ)) then (⟨SixSubtileLabel.F, (1 : ℤ), (0 : ℤ)⟩ : PeriodicSubtileIndex) else
-            (⟨SixSubtileLabel.E, (0 : ℤ), (1 : ℤ)⟩ : PeriodicSubtileIndex);
-        let vIndex := if j = (0 : Fin (3 : ℕ)) then if s = (0 : Fin (4 : ℕ)) then
-            (⟨SixSubtileLabel.C, (1 : ℤ), (0 : ℤ)⟩ : PeriodicSubtileIndex) else if s = (1 : Fin
-            (4 : ℕ)) then (⟨SixSubtileLabel.F, (1 : ℤ), (0 : ℤ)⟩ : PeriodicSubtileIndex) else if
-            s = (2 : Fin (4 : ℕ)) then (⟨SixSubtileLabel.D, (-1 : ℤ), (0 : ℤ)⟩ :
-            PeriodicSubtileIndex) else (⟨SixSubtileLabel.E, (-1 : ℤ), (0 : ℤ)⟩ :
-            PeriodicSubtileIndex) else if j = (1 : Fin (3 : ℕ)) then if s = (0 : Fin (4 : ℕ))
-            then (⟨SixSubtileLabel.E, (0 : ℤ), (1 : ℤ)⟩ : PeriodicSubtileIndex) else if s = (1 :
-            Fin (4 : ℕ)) then (⟨SixSubtileLabel.B, (0 : ℤ), (1 : ℤ)⟩ : PeriodicSubtileIndex) else
-            if s = (2 : Fin (4 : ℕ)) then (⟨SixSubtileLabel.F, (0 : ℤ), (-1 : ℤ)⟩ :
-            PeriodicSubtileIndex) else (⟨SixSubtileLabel.A, (0 : ℤ), (-1 : ℤ)⟩ :
-            PeriodicSubtileIndex) else if s = (0 : Fin (4 : ℕ)) then (⟨SixSubtileLabel.A, (-1 :
-            ℤ), (-1 : ℤ)⟩ : PeriodicSubtileIndex) else if s = (1 : Fin (4 : ℕ)) then
-            (⟨SixSubtileLabel.D, (-1 : ℤ), (-1 : ℤ)⟩ : PeriodicSubtileIndex) else if s = (2 : Fin
-            (4 : ℕ)) then (⟨SixSubtileLabel.B, (1 : ℤ), (1 : ℤ)⟩ : PeriodicSubtileIndex) else
-            (⟨SixSubtileLabel.C, (1 : ℤ), (1 : ℤ)⟩ : PeriodicSubtileIndex);
-        let U := SubtileOccurrenceInterpretation cert.P cert.u cert.v uIndex;
-        let V := SubtileOccurrenceInterpretation cert.P cert.u cert.v vIndex; TileCentroid U -
-            TileCentroid T₀ = (1 / 2 : ℝ) • GaussianRealPoint ((⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt)
-            ^ (↑s : ℕ) * (incoming j + outgoing j)) ∧ TileCentroid V - TileCentroid T₀ = (1 / 2 :
-            ℝ) • GaussianRealPoint ((⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt) ^ (↑s : ℕ) * if Even (↑s :
-            ℕ) then incoming (j + (1 : Fin (3 : ℕ))) - outgoing (j + (1 : Fin (3 : ℕ))) else
-            outgoing (j - (1 : Fin (3 : ℕ))) - incoming (j - (1 : Fin (3 : ℕ)))))))))))) ) := by
-  classical
-  intro q cfg C₀ T₀ cert i' s r j edge incoming outgoing hsuper hin0 hin1 hin2 hflip hu hv
-      hcentroidRows
-  exact BandOrderedGeneralSubtileCanonicalRows
-    cert.P T₀ cert.u cert.v j s edge incoming outgoing hsuper hin0 hin1 hin2
-    hflip hu hv hcentroidRows
-
 private theorem tableFacts :
     (by
       classical
@@ -637,8 +572,9 @@ theorem P4261T1SubtileCoordinates
     have hu := SubtileCoordinateGeometry.hu q cfg C₀ T₀ cert
     have hv := SubtileCoordinateGeometry.hv q cfg C₀ T₀ cert
     have hcentroidRows := SubtileCoordinateGeometry.hcentroidRows q cfg C₀ T₀ cert
-    have rows := SubtileCoordinateGeometry.rows q cfg C₀ T₀ cert i' s r hsuper hin0 hin1 hin2
-        hflip hu hv hcentroidRows
+    have rows := BandOrderedGeneralSubtileCanonicalRows
+      cert.P T₀ cert.u cert.v j s edge incoming outgoing hsuper hin0 hin1 hin2
+      hflip hu hv hcentroidRows
     let makeIndex : Fin 3 → Fin 4 → PeriodicSubtileIndex := fun k t =>
       if k = 0 then
         if t = 0 then ⟨.A, 0, -1⟩ else if t = 1 then ⟨.B, 1, 1⟩

@@ -346,71 +346,6 @@ private theorem selected_sign :
   rw [(cert.outer_occurrence _ _).2.2] at hc
   exact signed_injective _ (cyclic_nonzero _) _ _ hc
 
-private theorem fixed_circle :
-    (by
-      classical
-      exact
-        ∀ (C : BandCircle), ∀ (D : BandCircle), ∀ (T : ProtoTile), ∀ (N : ProtoTile), ∀ (h :
-            PartialOdometer), ∀ (k : PartialOdometer), ∀ (x : GaussianInt), ∀ (bundle :
-            BandOrderedGeneralNormalizedOccurrenceBundle C D T N h k x), ∀ (placement :
-            BandOrderedGeneralSubtilePlacement bundle.normalizedPresentation bundle.configuration
-            bundle.normalizedCircle bundle.normalizedFixedCircle bundle.normalizedRoot
-            bundle.normalizedFixed bundle.normalizedRootFunction bundle.normalizedFixedFunction
-            bundle.normalizedPoint bundle.pieces bundle.functions bundle.selectedSlot
-            bundle.selectedSign bundle.routedDirection), ∀ (row :
-            BandOrderedGeneralSelectedContactRow bundle.normalizedPresentation
-            bundle.configuration bundle.normalizedCircle bundle.normalizedRoot placement.layout
-            placement.exteriorIndex placement.centralIndex), ∀ (r : Fin 4 → CircleCoordinates), ∀
-            (i : Fin 3), ∀ (s : Fin 4),
-        let q := bundle.normalizedPresentation
-        let slot : SixSubtileLabel → Fin 3 := fun l => match l with
-          | .A | .B => 0
-          | .C | .D => 1
-          | .E | .F => 2
-        (bundle.normalizedFixedCircle.1.1 =
-            bundle.normalizedPresentation ((match placement.exteriorIndex.label with
-              | SixSubtileLabel.A => (1 : Fin (4 : ℕ))
-              | SixSubtileLabel.B => (1 : Fin (4 : ℕ))
-              | SixSubtileLabel.C => (2 : Fin (4 : ℕ))
-              | SixSubtileLabel.D => (2 : Fin (4 : ℕ))
-              | SixSubtileLabel.E => (3 : Fin (4 : ℕ))
-              | SixSubtileLabel.F => (3 : Fin (4 : ℕ))
-              )) ∧
-            ((↑s : ℕ) = (match placement.exteriorIndex.label with
-              | SixSubtileLabel.A => if placement.exteriorIndex.first = (-1 : ℤ) then (3 : ℕ)
-                  else (0 : ℕ)
-              | SixSubtileLabel.B => if placement.exteriorIndex.first = (1 : ℤ) then (1 : ℕ) else
-                  (2 : ℕ)
-              | SixSubtileLabel.C => if placement.exteriorIndex.second = (0 : ℤ) then (3 : ℕ)
-                  else (0 : ℕ)
-              | SixSubtileLabel.D => if placement.exteriorIndex.second = (0 : ℤ) then (1 : ℕ)
-                  else (2 : ℕ)
-              | SixSubtileLabel.E => if placement.exteriorIndex.first = (0 : ℤ) then (3 : ℕ) else
-                  (0 : ℕ)
-              | SixSubtileLabel.F => if placement.exteriorIndex.first = (0 : ℤ) then (1 : ℕ) else
-                  (2 : ℕ)
-              )) ∧ ((⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt) ^ (↑s : ℕ)
-            * if Even (↑s : ℕ) then BandVectors.1 (r (0 : Fin (4 : ℕ))) (r i.succ) else
-            BandVectors.1 (r i.succ) (r (0 : Fin (4 : ℕ)))) = match P3996T1SRowTable
-            bundle.normalizedPresentation bundle.configuration bundle.normalizedCircle
-            bundle.normalizedRoot placement.layout row with
-            | some z => z.oldShift
-            | none =>
-              (match placement.exteriorIndex.label with
-              | SixSubtileLabel.A => if placement.exteriorIndex.first = (-1 : ℤ) then
-                  -placement.layout.u else placement.layout.u
-              | SixSubtileLabel.B => if placement.exteriorIndex.first = (1 : ℤ) then
-                  placement.layout.u else -placement.layout.u
-              | SixSubtileLabel.C => -placement.layout.v
-              | SixSubtileLabel.D => placement.layout.v
-              | SixSubtileLabel.E => (0 : ℤ√(-1 : ℤ))
-              | SixSubtileLabel.F => (0 : ℤ√(-1 : ℤ))
-              )) →
-            (bundle.normalizedFixedCircle.1.1 = q (slot placement.exteriorIndex.label).succ) ) := by
-  classical
-  intro C D T N h k x bundle placement row r i s q slot outer
-  cases he : placement.exteriorIndex.label <;> simpa [slot, he, q] using outer.1
-
 private theorem selected_slope :
     (by
       classical
@@ -1202,8 +1137,9 @@ theorem P4418T3PresentedRowAdjacency :
           placement positive_parent area_of_band) selected_area
   have selected_circle : C'.1.1 = q (slot placement.centralIndex.label).succ := by
     exact hC'.trans (congrArg (fun j : Fin 3 => q j.succ) selected_slot)
-  have fixed_circle := PresentedRowAdjacencyGeometry.fixed_circle C
-          D T N h k x bundle placement row r i s outer
+  have fixed_circle : bundle.normalizedFixedCircle.1.1 =
+      q (slot placement.exteriorIndex.label).succ := by
+    cases he : placement.exteriorIndex.label <;> simpa [slot, he, q] using outer.1
   have selected_slope : p - bundle.normalizedRootSlope =
       (if sign placement.centralIndex.label = true then (1 : ℝ) else -1) •
         ((1 / 2 : ℝ) • GaussianRealPoint

@@ -8,6 +8,7 @@ module  -- shake: keep-all --deprecated_module: ignore
 -- Generated project imports; run `lake exe mk_all`.
 public import LeanPool.ApollonianSuperharmonic
 public import LeanPool.ApollonianSuperharmonic.AcyclicIndegreeOrientation
+public import LeanPool.ApollonianSuperharmonic.AdjacentCellInterior
 public import LeanPool.ApollonianSuperharmonic.AffineLineMapProperties
 public import LeanPool.ApollonianSuperharmonic.AffineOpposingStripCorridor
 public import LeanPool.ApollonianSuperharmonic.AffineTriangularComplexChart

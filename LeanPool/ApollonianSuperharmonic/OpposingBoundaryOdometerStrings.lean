@@ -1280,51 +1280,6 @@ private theorem htailLength :
   | nil => simp at hhsHead
   | cons x xs => simp [List.length_cons, List.tail]; omega
 
-private theorem hinteriorTransforms :
-    (by
-      classical
-        exact
-        (∀ (centerShift : GaussianInt),
-          (∀ (couter : GaussianInt),
-            ∀ (eouter : ℤ),
-              let a : GaussianInt := -couter;
-              let b : Int := -eouter;
-              ∀ (eback : ℤ),
-                let bplus : Int := -eback;
-                ∀ (hs : List PartialOdometer),
-                  let constAt : Nat → Int := fun n =>
-                    if n = 0 then 0 else if n + 1 = hs.length then bplus else b;
-                  let transformAt : Nat → PartialOdometer → PartialOdometer :=
-                    fun n h =>
-                    PartialOdometerAffineTranslate (PartialOdometerHalfTurn h)
-                      centerShift a (constAt n);
-                  let gs := hs.mapIdx transformAt;
-                  (∀ n,
-                      ∀ (l : List PartialOdometer),
-                        0 < n →
-                          hs.length = n + l.length →
-                            List.Forall₂
-                              (fun h g =>
-                                g =
-                                  PartialOdometerAffineTranslate
-                                    (PartialOdometerHalfTurn h) centerShift a b)
-                              l.dropLast
-                              ((l.mapIdx
-                                  (fun j h => transformAt (n + j) h)).dropLast)) →
-                    ((gs.drop 1 =
-                        hs.tail.mapIdx (fun j h => transformAt (1 + j) h)) →
-                      ((hs.length = 1 + hs.tail.length) →
-                        (List.Forall₂
-                          (fun h g =>
-                            g =
-                              PartialOdometerAffineTranslate
-                                (PartialOdometerHalfTurn h) centerShift a b)
-                          ((hs.drop 1).dropLast) ((gs.drop 1).dropLast))))))) := by
-  classical
-  intro centerShift couter eouter a b eback bplus hs constAt transformAt gs interiorTransforms
-      hgsTail htailLength
-  simpa [hgsTail] using interiorTransforms 1 hs.tail (by omega) htailLength
-
 private theorem zipForall₂ :
     (by
       classical
@@ -1903,8 +1858,12 @@ private theorem opposingBoundaryConclusion :
   have hgsTail := OpposingBoundaryGeometry.hgsTail q i hseed centerShift couter eouter eback hs
       hhsHead
   have htailLength := OpposingBoundaryGeometry.htailLength q i hseed hs hhsHead
-  have hinteriorTransforms := OpposingBoundaryGeometry.hinteriorTransforms
-      centerShift couter eouter eback hs interiorTransforms hgsTail htailLength
+  have hinteriorTransforms : List.Forall₂
+      (fun h g => g = PartialOdometerAffineTranslate
+        (PartialOdometerHalfTurn h) centerShift (-couter) (-eouter))
+      ((hs.drop 1).dropLast) ((gs.drop 1).dropLast) := by
+    rw [hgsTail]
+    simpa only [List.drop_one] using interiorTransforms 1 hs.tail (by omega) htailLength
   have hinteriorZip : List.Forall₂
       (fun X Y => cellRelation X.1 Y.1 ∧
         Y.2 = PartialOdometerAffineTranslate

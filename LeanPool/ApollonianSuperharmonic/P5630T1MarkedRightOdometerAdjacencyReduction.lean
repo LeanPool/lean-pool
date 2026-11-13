@@ -625,55 +625,6 @@ private theorem coverShape :
     · subst z; simpa [LatticeVertexIncidentCell] using h 3
     · subst z; simpa [LatticeVertexIncidentCell] using h 2
 
-private theorem hcoverOriginal :
-    (by
-      classical
-      exact
-        ∀ (C : BandCircle), ∀ (T : ProtoTile), ∀ (T₀ : ProtoTile), ∀ (h : PartialOdometer), ∀ (h₀
-            : PartialOdometer), ∀ (x : GaussianInt), ((∀ (g : BandPackingSymmetry), ∀ (C :
-            CircleCoordinates), ∀ (C' : CircleCoordinates), ∀ (T : ProtoTile), ∀ (T' :
-            ProtoTile), ∀ (h : PartialOdometer), ∀ (h' : PartialOdometer), TileSubodometer C C' T
-            T' h h' ↔ TileSubodometer (BandPackingSymmetryCircleAction g C)
-            (BandPackingSymmetryCircleAction g C') (BandPackingSymmetryTileAction g T)
-            (BandPackingSymmetryTileAction g T') (BandPackingSymmetryPartialOdometerAction g h)
-            (BandPackingSymmetryPartialOdometerAction g h')) ∧ (∀ (g : BandPackingSymmetry), ∀ (x
-            : GaussianInt), ∀ (T : ProtoTile), ∀ (U : ProtoTile), (∀ (j : Fin (4 : ℕ)),
-            LatticeVertexIncidentCell x j ∈ T.cells ∨ LatticeVertexIncidentCell x j ∈ U.cells) ↔
-            ∀ (j : Fin (4 : ℕ)), LatticeVertexIncidentCell (BandPackingSymmetryVectorAction g x)
-            j ∈ (BandPackingSymmetryTileAction g T).cells ∨ LatticeVertexIncidentCell
-            (BandPackingSymmetryVectorAction g x) j ∈ (BandPackingSymmetryTileAction g U).cells)
-            ∧ ∀ (g : BandPackingSymmetry), ∀ (q : Fin (4 : ℕ) → CircleCoordinates),
-            ProperBandQuadruple q → ∀ (i : Fin (3 : ℕ)), ∀ (s : Fin (4 : ℕ)), ∀ (delta : Bool),
-            BandPackingSymmetryScopedPhase g q delta → ∀ (T : ProtoTile), ∀ (x : GaussianInt),
-        let q' := BandPackingSymmetryQuadrupleAction g q;
-        let sigma := fun (j : Fin (3 : ℕ)) => if BandPackingSymmetryReversesOrientation g = true
-            then -j else j;
-        let s' := if BandPackingSymmetryReversesOrientation g = true then -s - (1 : Fin (4 : ℕ))
-            + if delta = true then (2 : Fin (4 : ℕ)) else (0 : Fin (4 : ℕ)) else s + if delta =
-            true then (2 : Fin (4 : ℕ)) else (0 : Fin (4 : ℕ));
-        let oldRight := TileTranslation T ((⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt) ^ (↑s : ℕ) * if
-            Even (↑s : ℕ) then BandVectors.1 (q (0 : Fin (4 : ℕ))) (q i.succ) else BandVectors.1
-            (q i.succ) (q (0 : Fin (4 : ℕ))));
-        let newRight := TileTranslation (BandPackingSymmetryTileAction g T) ((⟨(0 : ℤ), (1 : ℤ)⟩
-            : GaussianInt) ^ (↑s' : ℕ) * if Even (↑s' : ℕ) then BandVectors.1 (q' (0 : Fin (4 :
-            ℕ))) (q' (sigma i).succ) else BandVectors.1 (q' (sigma i).succ) (q' (0 : Fin (4 :
-            ℕ)))); BandPackingSymmetryTileAction g oldRight = newRight ∧ (x ∈ FootprintVertices
-            oldRight ↔ BandPackingSymmetryVectorAction g x ∈ FootprintVertices newRight)) → (∀
-            (bundle : BandOrderedGeneralNormalizedOccurrenceBundle C C T T₀ h h₀ x), (∀ (a :
-            GaussianInt), ∀ (A : ProtoTile), ∀ (B : ProtoTile), (∀ z, z = a ∨ z = a - 1 ∨ z = a -
-            ⟨0, 1⟩ ∨ z = a - 1 - ⟨0, 1⟩ → z ∈ A.cells ∨ z ∈ B.cells) ↔ (∀ j : Fin 4,
-            LatticeVertexIncidentCell a j ∈ A.cells ∨ LatticeVertexIncidentCell a j ∈ B.cells)) →
-            ((∀ z, z = x ∨ z = x - 1 ∨ z = x - ⟨0, 1⟩ ∨ z = x - 1 - ⟨0, 1⟩ → z ∈ T.cells ∨ z ∈
-            T₀.cells) ↔ (∀ z, z = bundle.normalizedPoint ∨ z = bundle.normalizedPoint - 1 ∨ z =
-            bundle.normalizedPoint - ⟨0, 1⟩ ∨ z = bundle.normalizedPoint - 1 - ⟨0, 1⟩ → z ∈
-            bundle.normalizedRoot.cells ∨ z ∈ bundle.normalizedFixed.cells))) ) := by
-  classical
-  intro C T T₀ h h₀ x markedData bundle coverShape
-  rw [coverShape, coverShape]
-  simpa [bundle.normalized_point_eq, bundle.normalized_root_eq,
-    bundle.normalized_fixed_eq] using
-    (markedData.2.1 bundle.symmetry x T T₀)
-
 private theorem hpointInverse :
     (by
       classical
@@ -759,61 +710,6 @@ private theorem hmarkTransport :
   rw [← hcompanion]
   rw [hpointInverse] at hcompanionFootprint
   simpa [bundle.normalized_fixed_eq, htileL, ht'] using hcompanionFootprint
-
-private theorem hmarkedOriginal :
-    (by
-      classical
-      exact
-        ∀ (C : BandCircle), ∀ (T : ProtoTile), ∀ (T₀ : ProtoTile), ∀ (h : PartialOdometer), ∀ (h₀
-            : PartialOdometer), ∀ (x : GaussianInt), ∀ (bundle :
-            BandOrderedGeneralNormalizedOccurrenceBundle C C T T₀ h h₀ x), ∀ (rightPlacement :
-            BandOrderedGeneralRightPlacement bundle.normalizedPresentation bundle.configuration
-            bundle.normalizedCircle bundle.normalizedRoot bundle.normalizedFixed
-            bundle.normalizedRootFunction bundle.normalizedFixedFunction bundle.normalizedPoint
-            bundle.pieces bundle.functions bundle.selectedSlot bundle.selectedSign
-            bundle.routedDirection), ((¬∀ (z : GaussianInt), z = bundle.normalizedPoint ∨ z =
-            bundle.normalizedPoint - (1 : GaussianInt) ∨ z = bundle.normalizedPoint - (⟨(0 : ℤ),
-            (1 : ℤ)⟩ : GaussianInt) ∨ z = bundle.normalizedPoint - (1 : GaussianInt) - (⟨(0 : ℤ),
-            (1 : ℤ)⟩ : GaussianInt) → z ∈ bundle.normalizedRoot.cells ∨ z ∈
-            bundle.normalizedFixed.cells) ↔ bundle.normalizedPoint ∈ FootprintVertices
-            (TileTranslation bundle.normalizedFixed ((if rightPlacement.rightNeighborPositive =
-            true then (-1 : GaussianInt) else (1 : GaussianInt)) * BandVectors.1
-            (bundle.normalizedPresentation (0 : Fin (4 : ℕ))) (bundle.normalizedPresentation
-            bundle.selectedSlot.succ)))) → (∀ (ginv : BandPackingSymmetry), ∀ (t' : Fin (4 : ℕ)),
-            ((∀ z, z = x ∨ z = x - 1 ∨ z = x - ⟨0, 1⟩ ∨ z = x - 1 - ⟨0, 1⟩ → z ∈ T.cells ∨ z ∈
-            T₀.cells) ↔ (∀ z, z = bundle.normalizedPoint ∨ z = bundle.normalizedPoint - 1 ∨ z =
-            bundle.normalizedPoint - ⟨0, 1⟩ ∨ z = bundle.normalizedPoint - 1 - ⟨0, 1⟩ → z ∈
-            bundle.normalizedRoot.cells ∨ z ∈ bundle.normalizedFixed.cells)) → (
-        let oldRight := TileTranslation bundle.normalizedFixed
-          ((if rightPlacement.rightNeighborPositive = true then (-1 : GaussianInt)
-            else 1) *
-            BandVectors.1 (bundle.normalizedPresentation 0)
-              (bundle.normalizedPresentation bundle.selectedSlot.succ))
-        (bundle.normalizedPoint ∈ FootprintVertices oldRight ↔ x ∈ FootprintVertices
-            (TileTranslation T₀ ((⟨0, 1⟩ : GaussianInt) ^ t'.val * (if Even t'.val then
-            BandVectors.1 ((BandPackingSymmetryQuadrupleAction ginv
-            bundle.normalizedPresentation) 0) ((BandPackingSymmetryQuadrupleAction ginv
-            bundle.normalizedPresentation) (if BandPackingSymmetryReversesOrientation ginv then
-            -bundle.selectedSlot else bundle.selectedSlot).succ) else BandVectors.1
-            ((BandPackingSymmetryQuadrupleAction ginv bundle.normalizedPresentation) (if
-            BandPackingSymmetryReversesOrientation ginv then -bundle.selectedSlot else
-            bundle.selectedSlot).succ) ((BandPackingSymmetryQuadrupleAction ginv
-            bundle.normalizedPresentation) 0))))) → ((¬ (∀ z, z = x ∨ z = x - 1 ∨ z = x - ⟨0, 1⟩
-            ∨ z = x - 1 - ⟨0, 1⟩ → z ∈ T.cells ∨ z ∈ T₀.cells)) ↔ x ∈ FootprintVertices
-            (TileTranslation T₀ ((⟨0, 1⟩ : GaussianInt) ^ t'.val * (if Even t'.val then
-            BandVectors.1 ((BandPackingSymmetryQuadrupleAction ginv
-            bundle.normalizedPresentation) 0) ((BandPackingSymmetryQuadrupleAction ginv
-            bundle.normalizedPresentation) (if BandPackingSymmetryReversesOrientation ginv then
-            -bundle.selectedSlot else bundle.selectedSlot).succ) else BandVectors.1
-            ((BandPackingSymmetryQuadrupleAction ginv bundle.normalizedPresentation) (if
-            BandPackingSymmetryReversesOrientation ginv then -bundle.selectedSlot else
-            bundle.selectedSlot).succ) ((BandPackingSymmetryQuadrupleAction ginv
-            bundle.normalizedPresentation) 0))))))) ) := by
-  classical
-  intro C T T₀ h h₀ x bundle rightPlacement outerMarkingCriterion ginv t' hcoverOriginal oldRight
-      hmarkTransport
-  exact (not_congr hcoverOriginal).trans
-    (outerMarkingCriterion.trans hmarkTransport)
 
 end MarkedRightAdjacencyGeometry
 
@@ -976,8 +872,15 @@ theorem P5630T1MarkedRightOdometerAdjacencyReduction :
   have actionCurvature := BandPackingSymmetryCurvature.preserved
   have hsizeOriginal := MarkedRightAdjacencyGeometry.hsizeOriginal C T T₀ h h₀ x bundle C' hsize
       ginv hnorm actionCurvature hinverseProper hinversePositive hinverseCircle
-  have hcoverOriginal := MarkedRightAdjacencyGeometry.hcoverOriginal C T T₀ h h₀ x markedData
-      bundle (MarkedRightAdjacencyGeometry.coverShape)
+  have hcoverOriginal :
+      (∀ z, z = x ∨ z = x - 1 ∨ z = x - ⟨0, 1⟩ ∨ z = x - 1 - ⟨0, 1⟩ →
+        z ∈ T.cells ∨ z ∈ T₀.cells) ↔
+      (∀ z, z = bundle.normalizedPoint ∨ z = bundle.normalizedPoint - 1 ∨
+        z = bundle.normalizedPoint - ⟨0, 1⟩ ∨ z = bundle.normalizedPoint - 1 - ⟨0, 1⟩ →
+        z ∈ bundle.normalizedRoot.cells ∨ z ∈ bundle.normalizedFixed.cells) := by
+    rw [MarkedRightAdjacencyGeometry.coverShape, MarkedRightAdjacencyGeometry.coverShape]
+    simpa [bundle.normalized_point_eq, bundle.normalized_root_eq,
+      bundle.normalized_fixed_eq] using markedData.2.1 bundle.symmetry x T T₀
   have hcompanionCov :=
     markedData.2.2 ginv bundle.normalizedPresentation hq
       bundle.selectedSlot s delta hphaseInv bundle.normalizedFixed
@@ -992,8 +895,7 @@ theorem P5630T1MarkedRightOdometerAdjacencyReduction :
     BandPackingSymmetryProperCovariance ginv bundle.normalizedPresentation hq,
     hrootCoord, hselectedCoord, hcentOriginal, hslopeReInv, hslopeImInv,
     hnewAdj, hxFixedOriginal, hxSelectedOriginal, hstarOriginal,
-    hsizeOriginal, (MarkedRightAdjacencyGeometry.hmarkedOriginal C T T₀ h h₀ x bundle
-        rightPlacement outerMarkingCriterion ginv t' hcoverOriginal
+    hsizeOriginal, (not_congr hcoverOriginal).trans (outerMarkingCriterion.trans
         (MarkedRightAdjacencyGeometry.hmarkTransport C T T₀ h h₀ x bundle rightPlacement s
         hcompanion ginv htileL delta t' ht' hcompanionFootprint
         (MarkedRightAdjacencyGeometry.hpointInverse C T T₀ h h₀ x bundle ginv hvecL hpoint)))⟩
