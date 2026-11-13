@@ -96,9 +96,9 @@ theorem isIntegral_C_mul_conj {τ : ℍ} {A B C : ℤ}
   have hconj : (A : ℂ) + B * (starRingEnd ℂ) (τ : ℂ) +
       C * ((starRingEnd ℂ) (τ : ℂ)) ^ 2 = 0 := by
     have := congrArg (starRingEnd ℂ) hCM
-    simpa using this
+    simpa only [map_add, map_intCast, map_mul, map_pow, map_zero] using this
   refine ⟨Polynomial.X ^ 2 + (Polynomial.C B * Polynomial.X + Polynomial.C (A * C)), ?_, ?_⟩
-  · exact Polynomial.monic_X_pow_add (Polynomial.degree_linear_le.trans_lt (by norm_num))
+  · exact Polynomial.monic_X_pow_add (Polynomial.degree_linear_le.trans_lt (by norm_num1))
   · simp only [Polynomial.eval₂_add, Polynomial.eval₂_pow, Polynomial.eval₂_mul,
       Polynomial.eval₂_X, Polynomial.eval₂_C]
     push_cast
@@ -260,10 +260,11 @@ private lemma C_mul_conj_mul {τ : ℍ} {A B C : ℤ}
     (hCM : (A : ℂ) + B * τ + C * (τ : ℂ) ^ 2 = 0) :
     ((C : ℂ) * τ) * ((C : ℂ) * (starRingEnd ℂ) (τ : ℂ)) = (A : ℂ) * C := by
   rcases eq_or_ne ((C : ℂ)) 0 with hC | hC
-  · simp [hC]
+  · simp only [hC, zero_mul, mul_zero]
   · have hconj : (A : ℂ) + B * (starRingEnd ℂ) (τ : ℂ) +
         C * ((starRingEnd ℂ) (τ : ℂ)) ^ 2 = 0 := by
-      have := congrArg (starRingEnd ℂ) hCM; simpa using this
+      have := congrArg (starRingEnd ℂ) hCM; simpa only [map_add, map_intCast, map_mul, map_pow,
+        map_zero] using this
     have hX : ((C : ℂ) * τ) ^ 2 + B * ((C : ℂ) * τ) + A * C = 0 := by
       linear_combination (C : ℂ) * hCM
     have hY : ((C : ℂ) * (starRingEnd ℂ) (τ : ℂ)) ^ 2 +
@@ -307,7 +308,7 @@ private lemma countable_lattice_cm (L : PeriodPair) : (↑L.lattice : Set ℂ).C
 private helper in `DivisionValues.lean`). -/
 private lemma frac_den_one_imp_zero_cm {m : ℕ} (hm : 0 < m) {k : ℤ}
     (hlt : k.natAbs < m) (h : ((k : ℚ) / (m : ℚ)).den = 1) : k = 0 := by
-  have hmQ : (m : ℚ) ≠ 0 := by exact_mod_cast hm.ne'
+  have hmQ : (m : ℚ) ≠ 0 := by exact Nat.cast_ne_zero.mpr hm.ne'
   set q : ℚ := (k : ℚ) / (m : ℚ) with hqdef
   have heq : ((q.num : ℤ) : ℚ) = q := (Rat.den_eq_one_iff q).mp h
   have hqk : (k : ℚ) = q.num * (m : ℚ) := by
@@ -316,7 +317,7 @@ private lemma frac_den_one_imp_zero_cm {m : ℕ} (hm : 0 < m) {k : ℤ}
   have hnat : k.natAbs = q.num.natAbs * m := by
     rw [hkeq, Int.natAbs_mul, Int.natAbs_natCast]
   rcases Nat.eq_zero_or_pos q.num.natAbs with h0 | h0
-  · rw [hkeq]; simp [Int.natAbs_eq_zero.mp h0]
+  · rw [hkeq]; simp only [Int.natAbs_eq_zero.mp h0, zero_mul]
   · exfalso
     have hle : m ≤ q.num.natAbs * m := Nat.le_mul_of_pos_left m h0
     omega
@@ -353,9 +354,9 @@ private lemma weierstrassZeta_add_int_cm (L : PeriodPair) {ω et : ℂ} (hω : �
     apply hw
     have hb : (b : ℂ) * ω ∈ L.lattice := by
       rw [← zsmul_eq_mul]; exact zsmul_mem hω b
-    simpa using sub_mem hc hb
+    simpa only [add_sub_cancel_right] using sub_mem hc hb
   induction a using Int.induction_on with
-  | zero => simp
+  | zero => simp only [Int.cast_zero, zero_mul, add_zero]
   | succ k ih =>
     rw [show w + ((k + 1 : ℤ) : ℂ) * ω = (w + ((k : ℤ) : ℂ) * ω) + ω by push_cast; ring,
       hq _ (hmem k), ih]
@@ -395,7 +396,7 @@ private def cmSet (B C : ℤ) (M : ℕ) : Finset (Fin M × Fin M) :=
 
 private lemma mem_cmSet_iff {B C : ℤ} {M : ℕ} {v : Fin M × Fin M} :
     v ∈ cmSet B C M ↔ C ∣ (v.2 : ℤ) ∧ (M : ℤ) ∣ C * (v.1 : ℤ) - B * (v.2 : ℤ) := by
-  simp [cmSet]
+  simp only [cmSet, Finset.mem_filter, Finset.mem_univ, true_and]
 
 private lemma zero_mem_cmSet {B C : ℤ} {M : ℕ} [NeZero M] :
     (0 : Fin M × Fin M) ∈ cmSet B C M := by
@@ -585,7 +586,7 @@ private lemma card_cmSet {A B C : ℤ} {M : ℕ} (hA : 0 < A) (hC : 0 < C)
           calc (C : ℤ) * (((v.1 : ℕ) : ℤ) - B * (y : ℤ))
               = C * ((v.1 : ℕ) : ℤ) - B * ((v.2 : ℕ) : ℤ) := by rw [hv2y]; ring
           _ = (M : ℤ) * d := hd
-          _ = C * (A * d) := by rw [hMAC]; ring
+          _ = C * (A * d) := by rw [hMAC]; ac_rfl
         exact mul_left_cancel₀ hCne hCC
       have hmod : (B * (y : ℤ)) % A = ((v.1 : ℕ) : ℤ) % A := by
         conv_rhs => rw [show ((v.1 : ℕ) : ℤ) = B * (y : ℤ) + A * d by linarith only [hAd]]
@@ -607,7 +608,7 @@ private lemma card_cmSet {A B C : ℤ} {M : ℕ} (hA : 0 < A) (hC : 0 < C)
         rw [Nat.add_mul_div_left _ _ ha0,
           Nat.div_eq_of_lt ((Int.toNat_lt_toNat hA).mpr h1), zero_add]
   rw [key, Finset.card_univ]
-  simp [hM]
+  simp only [Fintype.card_prod, Fintype.card_fin, hM]
 
 private lemma cmM_pos {A C : ℤ} {M : ℕ} (hA : 0 < A) (hC : 0 < C)
     (hMAC : (M : ℤ) = A * C) : 0 < M := by
@@ -684,7 +685,7 @@ private lemma analyticAt_mulDiffCM {τ : ℍ} {A B C : ℤ} {M : ℕ}
         intro hcc
         exact divPt_sub_notMem_lattice_cm (Lτ τ) hM0 hne (by
           have h := sub_mem hcc hv₀
-          simpa [add_sub_add_left_eq_sub] using h)
+          simpa only [add_sub_add_left_eq_sub] using h)
       have hf : AnalyticAt ℂ (fun w : ℂ => w + (Lτ τ).divPt M v) z := by fun_prop
       exact ((Lτ τ).analyticOnNhd_weierstrassP _ hnl).comp_of_eq hf rfl
     · apply AnalyticAt.sub
@@ -700,7 +701,7 @@ private lemma analyticAt_mulDiffCM {τ : ℍ} {A B C : ℤ} {M : ℕ}
     · apply Finset.analyticAt_fun_sum
       intro v hv
       have hnl : z + (Lτ τ).divPt M v ∉ (Lτ τ).lattice := fun hcc => hmp (by
-        simpa [mul_add] using
+        simpa only [mul_add, add_sub_cancel_right] using
           sub_mem (cm_alpha_mul_mem hCM hcc) (cmSet_mul_divPt_mem hCM hM0 hMAC hv))
       have hf : AnalyticAt ℂ (fun w : ℂ => w + (Lτ τ).divPt M v) z := by fun_prop
       exact ((Lτ τ).analyticOnNhd_weierstrassP _ hnl).comp_of_eq hf rfl
@@ -754,7 +755,7 @@ private lemma hasDerivAt_zetaCombCM {τ : ℍ} {A B C : ℤ} {M : ℕ}
         (-((Lτ τ).weierstrassP (z + (Lτ τ).divPt M v))) z := by
     intro v hv
     have hp : z + (Lτ τ).divPt M v ∉ (Lτ τ).lattice := fun hcc => hU (by
-      simpa [mul_add] using
+      simpa only [mul_add, add_sub_cancel_right] using
         sub_mem (cm_alpha_mul_mem hCM hcc) (cmSet_mul_divPt_mem hCM hM0 hMAC hv))
     exact (hda _ hp).comp_add_const z _
   have hsum : HasDerivAt
@@ -765,7 +766,7 @@ private lemma hasDerivAt_zetaCombCM {τ : ℍ} {A B C : ℤ} {M : ℕ}
       ((C : ℂ) * τ * -((Lτ τ).weierstrassP ((C : ℂ) * τ * z))) z := by
     have h := HasDerivAt.scomp (𝕜 := ℂ) z (hda _ hU)
       ((hasDerivAt_id' z).const_mul ((C : ℂ) * τ))
-    simpa [Function.comp_def, mul_comm] using h
+    simpa only [mul_comm, mul_neg, Function.comp_def, mul_one, smul_eq_mul] using h
   have hterm2 : HasDerivAt (fun w => (C : ℂ) * τ * (Lτ τ).weierstrassZeta ((C : ℂ) * τ * w))
       ((C : ℂ) * τ * ((C : ℂ) * τ * -((Lτ τ).weierstrassP ((C : ℂ) * τ * z)))) z :=
     HasDerivAt.const_mul ((C : ℂ) * τ) hcomp2
@@ -831,13 +832,16 @@ private lemma mulDiffCM_const_value {τ : ℍ} {A B C : ℤ} {M : ℕ}
   set S : Set ℂ := (fun z => (C : ℂ) * τ * z) ⁻¹' (↑(Lτ τ).lattice) with hSdef
   have hScount : S.Countable :=
     (countable_lattice_cm (Lτ τ)).preimage (mul_right_injective₀ hα0)
-  have hSclosed : IsClosed S := IsClosed.preimage (by fun_prop) (Lτ τ).isClosed_lattice
+  have hSclosed : IsClosed S := IsClosed.preimage
+    SeparatelyContinuousMul.continuous_const_mul (Lτ τ).isClosed_lattice
   have hUopen : IsOpen (Sᶜ : Set ℂ) := hSclosed.isOpen_compl
   have hUconn : IsPreconnected (Sᶜ : Set ℂ) :=
-    (hScount.isConnected_compl_of_one_lt_rank (by simp)).isPreconnected
+    (hScount.isConnected_compl_of_one_lt_rank (by simp only [rank_real_complex,
+      Nat.one_lt_ofNat])).isPreconnected
   have hcount2 : (S ∪ (fun z => z + 1) ⁻¹' S).Countable :=
     hScount.union (hScount.preimage (add_left_injective 1))
-  obtain ⟨z₀, hz₀⟩ := (hcount2.isConnected_compl_of_one_lt_rank (by simp)).nonempty
+  obtain ⟨z₀, hz₀⟩ := (hcount2.isConnected_compl_of_one_lt_rank (by simp only [rank_real_complex,
+    Nat.one_lt_ofNat])).nonempty
   rw [Set.mem_compl_iff, Set.mem_union, not_or] at hz₀
   obtain ⟨hz₀S, hz₀S'⟩ := hz₀
   have hUz₀ : (C : ℂ) * τ * z₀ ∉ (Lτ τ).lattice := hz₀S

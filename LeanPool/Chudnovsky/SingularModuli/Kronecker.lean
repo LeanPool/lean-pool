@@ -60,7 +60,7 @@ variable {m : ℕ}
 
 /-- `q τ → 0` as `Im τ → ∞`. -/
 lemma q_tendsto_zero : Tendsto (fun τ : ℍ ↦ q τ) atImInfty (nhds 0) := by
-  simpa [q] using qParam_tendsto_atImInfty one_pos
+  simpa only [q] using qParam_tendsto_atImInfty one_pos
 
 /-- `j·q` is bounded at the cusp (it tends to `1`); reconstructed from
 `discriminant = q · ∏ (1 − qⁿ)²⁴` and `j·Δ = E₄³`. -/
@@ -79,7 +79,7 @@ lemma isBoundedAtImInfty_jq' : IsBoundedAtImInfty (fun τ : ℍ ↦ j τ * q τ)
   rw [hrec]
   have hE : IsBoundedAtImInfty ⇑E₄ := ModularFormClass.bdd_at_infty E₄
   have hPinv : Tendsto (fun τ : ℍ ↦ (∏' n : ℕ, (1 - eta_q n ↑τ) ^ 24)⁻¹) atImInfty (nhds 1) := by
-    simpa using tendsto_atImInfty_tprod_one_sub_eta_q_pow.inv₀ one_ne_zero
+    simpa only [inv_one] using tendsto_atImInfty_tprod_one_sub_eta_q_pow.inv₀ one_ne_zero
   have hPb : IsBoundedAtImInfty (fun τ : ℍ ↦ (∏' n : ℕ, (1 - eta_q n ↑τ) ^ 24)⁻¹) :=
     hPinv.isBigO_one ℝ
   exact Filter.BoundedAtFilter.mul hE (Filter.BoundedAtFilter.mul hE
@@ -96,7 +96,8 @@ lemma jq_tendsto_one : Tendsto (fun τ : ℍ ↦ j τ * q τ) atImInfty (nhds 1)
   have hcusp0 : cuspFunction 1 (fun τ : ℍ ↦ j τ * q τ) 0 = 1 := by
     have h := j_mul_q_qExpansion_coeff_zero
     rw [qExpansion_coeff] at h
-    simpa using h
+    simpa only [j_def, Nat.factorial_zero, Nat.cast_one, inv_one, iteratedDeriv_zero,
+      one_mul] using h
   have hcomp : Tendsto (fun τ : ℍ ↦ cuspFunction 1 (fun ρ : ℍ ↦ j ρ * q ρ) (q τ)) atImInfty
       (nhds (cuspFunction 1 (fun τ : ℍ ↦ j τ * q τ) 0)) := hcts.tendsto.comp q_tendsto_zero
   rw [hcusp0] at hcomp
@@ -113,9 +114,11 @@ lemma jq_comp_tendsto_one {A : GL (Fin 2) ℝ} (hA : (A : Matrix (Fin 2) (Fin 2)
 lemma wParam_tendsto_zero [NeZero m] :
     Tendsto (fun τ : ℍ ↦ wParam m τ) atImInfty (nhds 0) := by
   have h : Tendsto (fun τ : ℍ ↦ q (Acol m (0 : ℤ) • τ)) atImInfty (nhds 0) :=
-    q_tendsto_zero.comp (tendsto_smul_atImInfty (g := Acol m (0 : ℤ)) (by simp [val_Acol]))
+    q_tendsto_zero.comp (tendsto_smul_atImInfty (g := Acol m (0 : ℤ)) (by simp only [Fin.isValue,
+      val_Acol, Int.cast_zero, Matrix.of_apply, Matrix.cons_val', Matrix.cons_val_zero,
+      Matrix.cons_val_fin_one, Matrix.cons_val_one]))
   refine h.congr (fun τ ↦ ?_)
-  rw [q_Acol_smul]; simp
+  rw [q_Acol_smul]; simp only [zpow_ofNat, pow_zero, one_mul]
 
 /-! ### Per-factor limits of the orbit product -/
 
@@ -139,18 +142,18 @@ lemma some_factor_tendsto_one [Fact m.Prime] (b : ZMod m) :
       rw [show (j (Acol m (b.val : ℤ) • τ) * (zetaM m ^ (b.val : ℤ) * wParam m τ))
             * (zetaM m ^ (-(b.val : ℤ)) * wParam m τ ^ (m - 1))
           = j (Acol m (b.val : ℤ) • τ) * (zetaM m ^ (b.val : ℤ) * zetaM m ^ (-(b.val : ℤ)))
-            * (wParam m τ * wParam m τ ^ (m - 1)) from by ring, hzz, hww, mul_one]
+            * (wParam m τ * wParam m τ ^ (m - 1)) from by ac_rfl, hzz, hww, mul_one]
     have hA : Tendsto (fun τ : ℍ ↦ j (Acol m (b.val : ℤ) • τ) * q (Acol m (b.val : ℤ) • τ))
         atImInfty (nhds 1) :=
       jq_comp_tendsto_one (A := Acol m (b.val : ℤ)) (by simp [val_Acol])
     have hB : Tendsto (fun τ : ℍ ↦ zetaM m ^ (-(b.val : ℤ)) * wParam m τ ^ (m - 1)) atImInfty
         (nhds 0) := by
       have hw : Tendsto (fun τ : ℍ ↦ wParam m τ ^ (m - 1)) atImInfty (nhds 0) := by
-        simpa [zero_pow (show m - 1 ≠ 0 by omega)] using wParam_tendsto_zero.pow (m - 1)
-      simpa using tendsto_const_nhds.mul hw
+        simpa only [zero_pow (show m - 1 ≠ 0 by omega)] using wParam_tendsto_zero.pow (m - 1)
+      simpa only [ZMod.natCast_val, zpow_neg, mul_zero] using tendsto_const_nhds.mul hw
     have hmul : Tendsto (fun τ : ℍ ↦ (j (Acol m (b.val : ℤ) • τ) * q (Acol m (b.val : ℤ) • τ))
         * (zetaM m ^ (-(b.val : ℤ)) * wParam m τ ^ (m - 1))) atImInfty (nhds 0) := by
-      simpa using hA.mul hB
+      simpa only [ZMod.natCast_val, j_def, zpow_neg, mul_zero] using hA.mul hB
     exact hmul.congr (fun τ ↦ (hkey τ).symm)
   have hsub : Tendsto (fun τ : ℍ ↦ j τ * q τ - f m (some b) τ * q τ) atImInfty (nhds (1 - 0)) :=
     jq_tendsto_one.sub hfac
@@ -166,14 +169,15 @@ lemma none_factor_tendsto_neg_one [Fact m.Prime] :
   have hjqm : Tendsto (fun τ : ℍ ↦ j τ * q τ ^ m) atImInfty (nhds 0) := by
     have h1 : Tendsto (fun τ : ℍ ↦ (j τ * q τ) * q τ ^ (m - 1)) atImInfty (nhds (1 * 0)) :=
       jq_tendsto_one.mul (by
-        simpa [zero_pow (show m - 1 ≠ 0 by omega)] using q_tendsto_zero.pow (m - 1))
+        simpa only [zero_pow (show m - 1 ≠ 0 by omega)] using q_tendsto_zero.pow (m - 1))
     rw [mul_zero] at h1
     refine h1.congr (fun τ ↦ ?_)
     rw [mul_assoc, ← pow_succ', Nat.sub_add_cancel (show 1 ≤ m by omega)]
   -- `f_∞ · qᵐ = j(m·τ) · q(m·τ) → 1`
   have hfnone : Tendsto (fun τ : ℍ ↦ f m none τ * q τ ^ m) atImInfty (nhds 1) := by
     have hAI : Tendsto (fun τ : ℍ ↦ j (AInf m • τ) * q (AInf m • τ)) atImInfty (nhds 1) :=
-      jq_comp_tendsto_one (A := AInf m) (by simp [val_AInf])
+      jq_comp_tendsto_one (A := AInf m) (by simp only [Fin.isValue, val_AInf, Matrix.of_apply,
+        Matrix.cons_val', Matrix.cons_val_zero, Matrix.cons_val_fin_one, Matrix.cons_val_one])
     refine hAI.congr (fun τ ↦ ?_)
     rw [f_none, q_AInf_smul (m := m), ← wParam_pow_m (m := m) τ, ← pow_mul, pow_two]
   have hsub : Tendsto (fun τ : ℍ ↦ j τ * q τ ^ m - f m none τ * q τ ^ m) atImInfty (nhds (0 - 1)) :=
@@ -191,14 +195,15 @@ lemma orbit_prod_tendsto_neg_one [Fact m.Prime] :
     have h := tendsto_finsetProd (Finset.univ : Finset (ZMod m))
       (f := fun b (τ : ℍ) ↦ (j τ - f m (some b) τ) * q τ) (a := fun _ ↦ (1 : ℂ))
       (fun b _ ↦ some_factor_tendsto_one b)
-    simpa using h
+    simpa only [j_def, f_some, ZMod.natCast_val, prod_const_one] using h
   have hcombined : Tendsto (fun τ : ℍ ↦ ((j τ - f m none τ) * q τ ^ m)
       * ∏ b : ZMod m, ((j τ - f m (some b) τ) * q τ)) atImInfty (nhds (-1)) := by
-    simpa using none_factor_tendsto_neg_one.mul hprod
+    simpa only [j_def, f_none, f_some, ZMod.natCast_val,
+      mul_one] using none_factor_tendsto_neg_one.mul hprod
   refine hcombined.congr (fun τ ↦ ?_)
   rw [Fintype.prod_option, Finset.prod_mul_distrib, Finset.prod_const, Finset.card_univ, ZMod.card,
     show 2 * m = m + m from two_mul m, pow_add]
-  ring
+  ac_rfl
 
 /-! ### The polynomial side -/
 
@@ -210,18 +215,18 @@ lemma term_tendsto (c : ℂ) (r d : ℕ) (hrd : r ≤ d) :
     intro τ
     have hq : q τ ^ d = q τ ^ r * q τ ^ (d - r) := by
       rw [← pow_add, Nat.add_sub_cancel' hrd]
-    rw [hq, mul_pow]; ring
+    rw [hq, mul_pow]; ac_rfl
   simp_rw [hfun]
   by_cases h : r = d
   · subst h
     simp only [Nat.sub_self, pow_zero, mul_one, ite_true]
-    simpa using tendsto_const_nhds.mul (jq_tendsto_one.pow r)
+    simpa only [j_def, one_pow, mul_one] using tendsto_const_nhds.mul (jq_tendsto_one.pow r)
   · rw [ite_eq_right h]
     have hqdr : Tendsto (fun τ : ℍ ↦ q τ ^ (d - r)) atImInfty (nhds 0) := by
-      simpa [zero_pow (show d - r ≠ 0 by omega)] using q_tendsto_zero.pow (d - r)
+      simpa only [zero_pow (show d - r ≠ 0 by omega)] using q_tendsto_zero.pow (d - r)
     have h2 : Tendsto (fun τ : ℍ ↦ c * (j τ * q τ) ^ r) atImInfty (nhds c) := by
-      simpa using tendsto_const_nhds.mul (jq_tendsto_one.pow r)
-    simpa using h2.mul hqdr
+      simpa only [j_def, one_pow, mul_one] using tendsto_const_nhds.mul (jq_tendsto_one.pow r)
+    simpa only [j_def, mul_zero] using h2.mul hqdr
 
 /-- `G(j τ)·q^{natDegree G} → (leadingCoeff G : ℂ)`: matching the polynomial against its top
 `q`-power isolates the leading coefficient. -/
@@ -275,13 +280,13 @@ theorem diagPhiZ_natDegree_and_leadingCoeff [Fact m.Prime]
     have hshift : Tendsto (fun τ : ℍ ↦ (G.eval₂ (Int.castRingHom ℂ) (j τ) * q τ ^ G.natDegree)
         * q τ ^ (2 * m - G.natDegree)) atImInfty (nhds (((G.leadingCoeff : ℤ) : ℂ) * 0)) :=
       hB.mul (by
-        simpa [zero_pow (show 2 * m - G.natDegree ≠ 0 by omega)]
+        simpa only [zero_pow (show 2 * m - G.natDegree ≠ 0 by omega)]
           using q_tendsto_zero.pow (2 * m - G.natDegree))
     rw [mul_zero] at hshift
     have h0 : Tendsto (fun τ : ℍ ↦ G.eval₂ (Int.castRingHom ℂ) (j τ) * q τ ^ (2 * m)) atImInfty
         (nhds 0) :=
       hshift.congr (fun τ ↦ by rw [mul_assoc, ← pow_add, Nat.add_sub_cancel' hlt.le])
-    exact absurd (tendsto_nhds_unique h0 hA) (by norm_num)
+    exact absurd (tendsto_nhds_unique h0 hA) (by norm_num1)
   · -- `natDegree = 2m` : the two limits agree, so `leadingCoeff = −1`
     have hBeq : Tendsto (fun τ : ℍ ↦ G.eval₂ (Int.castRingHom ℂ) (j τ) * q τ ^ (2 * m)) atImInfty
         (nhds ((G.leadingCoeff : ℤ) : ℂ)) := by rw [← heq]; exact hB
@@ -291,7 +296,7 @@ theorem diagPhiZ_natDegree_and_leadingCoeff [Fact m.Prime]
     have hshift : Tendsto (fun τ : ℍ ↦ (G.eval₂ (Int.castRingHom ℂ) (j τ) * q τ ^ (2 * m))
         * q τ ^ (G.natDegree - 2 * m)) atImInfty (nhds ((-1 : ℂ) * 0)) :=
       hA.mul (by
-        simpa [zero_pow (show G.natDegree - 2 * m ≠ 0 by omega)]
+        simpa only [zero_pow (show G.natDegree - 2 * m ≠ 0 by omega)]
           using q_tendsto_zero.pow (G.natDegree - 2 * m))
     rw [mul_zero] at hshift
     have h0 : Tendsto (fun τ : ℍ ↦ G.eval₂ (Int.castRingHom ℂ) (j τ) * q τ ^ G.natDegree) atImInfty
@@ -304,9 +309,9 @@ theorem diagPhiZ_natDegree_and_leadingCoeff [Fact m.Prime]
     have hA0 : Tendsto (fun τ : ℍ ↦ G.eval₂ (Int.castRingHom ℂ) (j τ) * q τ ^ (2 * m)) atImInfty
         (nhds 0) := by
       have hz : (fun τ : ℍ ↦ G.eval₂ (Int.castRingHom ℂ) (j τ) * q τ ^ (2 * m))
-          = fun _ ↦ (0 : ℂ) := by funext τ; rw [hlcZ]; simp
+          = fun _ ↦ (0 : ℂ) := by funext τ; rw [hlcZ]; simp only [j_def, eval₂_zero, zero_mul]
       rw [hz]; exact tendsto_const_nhds
-    exact absurd (tendsto_nhds_unique hA0 hA) (by norm_num)
+    exact absurd (tendsto_nhds_unique hA0 hA) (by norm_num1)
 
 /-- **`natDegree (diagPhiZ PhiZ) = 2·m`.** -/
 theorem diagPhiZ_natDegree_eq [Fact m.Prime] {PhiZ : Polynomial (Polynomial ℤ)}

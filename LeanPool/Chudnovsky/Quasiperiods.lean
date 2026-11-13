@@ -58,10 +58,11 @@ private theorem weierstrassZeta_add_period (ω : ℂ) (hω : ω ∈ L.lattice)
     L.weierstrassZeta (z + ω) = L.weierstrassZeta z + 2 * L.weierstrassZeta (ω / 2) := by
   have hopen : IsOpen ((↑L.lattice : Set ℂ)ᶜ) := L.isClosed_lattice.isOpen_compl
   have hconn : IsPreconnected ((↑L.lattice : Set ℂ)ᶜ) :=
-    (L.countable_lattice.isConnected_compl_of_one_lt_rank (by simp)).isPreconnected
+    (L.countable_lattice.isConnected_compl_of_one_lt_rank (by simp only [Complex.rank_real_complex,
+      Nat.one_lt_ofNat])).isPreconnected
   have hmem : ∀ {x : ℂ}, x ∉ L.lattice → x + ω ∉ L.lattice := by
     intro x hx hc
-    exact hx (by simpa using sub_mem hc hω)
+    exact hx (by simpa only [add_sub_cancel_right] using sub_mem hc hω)
   have hfdiff : DifferentiableOn ℂ (fun z ↦ L.weierstrassZeta (z + ω)) (↑L.lattice)ᶜ :=
     L.differentiableOn_weierstrassZeta.comp (by fun_prop) (fun x hx ↦ hmem hx)
   have hgdiff : DifferentiableOn ℂ
@@ -80,7 +81,7 @@ private theorem weierstrassZeta_add_period (ω : ℂ) (hω : ω ∈ L.lattice)
   have hx₀ : -(ω / 2) ∈ (↑L.lattice : Set ℂ)ᶜ := by
     change -(ω / 2) ∉ L.lattice
     intro hc
-    exact hω2 (by simpa using neg_mem hc)
+    exact hω2 (by simpa only [neg_neg] using neg_mem hc)
   have hval : L.weierstrassZeta (-(ω / 2) + ω)
       = L.weierstrassZeta (-(ω / 2)) + 2 * L.weierstrassZeta (ω / 2) := by
     rw [show -(ω / 2) + ω = ω / 2 by ring, L.weierstrassZeta_neg]
@@ -248,7 +249,7 @@ private lemma hasSum_symmetricIco_D (τ : ℍ) (z : ℂ) (m : ℤ) :
   refine (tendsto_congr hpart).mpr ?_
   have h1 := tendsto_zero_inv_linear C 1
   have h2 := tendsto_zero_inv_linear_sub C 1
-  simpa using h1.sub h2
+  simpa only [one_mul, one_div, Int.cast_one, sub_self] using h1.sub h2
 
 /-- The reindexing equivalence `ℤ × ℤ ≃ (L_τ).lattice`, `(m,n) ↦ m·τ + n`. -/
 private def bridgeEqv (τ : ℍ) : ℤ × ℤ ≃ (Lτ τ).lattice :=
@@ -480,7 +481,8 @@ oriented basis (`0 < Im(ω₂/ω₁)`; for the opposite orientation the right-ha
 `-2πi`). -/
 theorem legendre_relation (h : 0 < (L.ω₂ / L.ω₁).im) :
     L.eta₁ * L.ω₂ - L.eta₂ * L.ω₁ = 2 * (Real.pi : ℂ) * Complex.I := by
-  have hω₁ : L.ω₁ ≠ 0 := by simpa using L.indep.ne_zero 0
+  have hω₁ : L.ω₁ ≠ 0 := by simpa only [ne_eq, Nat.succ_eq_add_one, Nat.reduceAdd, Fin.isValue,
+    Matrix.cons_val_zero] using L.indep.ne_zero 0
   set τ : ℍ := ⟨L.ω₂ / L.ω₁, h⟩ with hτdef
   set u : ℂˣ := Units.mk0 L.ω₁ hω₁ with hudef
   have huval : (u : ℂ) = L.ω₁ := Units.val_mk0 _
@@ -489,7 +491,7 @@ theorem legendre_relation (h : 0 < (L.ω₂ / L.ω₁).im) :
     apply PeriodPair.periodPair_eq
     · rw [PeriodPair.smulPP_ω₁, Chudnovsky.Lτ_ω₁, huval, mul_one]
     · rw [PeriodPair.smulPP_ω₂, Chudnovsky.Lτ_ω₂, huval, hτc]
-      field_simp
+      field_simp (disch := first | assumption | norm_num1 | positivity)
   have he1 : L.eta₁ = (u : ℂ)⁻¹ * (Chudnovsky.Lτ τ).eta₁ := by
     rw [hLeq]; exact PeriodPair.eta₁_smulPP u (Chudnovsky.Lτ τ)
   have he2 : L.eta₂ = (u : ℂ)⁻¹ * (Chudnovsky.Lτ τ).eta₂ := by
@@ -500,7 +502,7 @@ theorem legendre_relation (h : 0 < (L.ω₂ / L.ω₁).im) :
       - (u : ℂ)⁻¹ * (Chudnovsky.Lτ τ).eta₂ * (u : ℂ)
       = (Chudnovsky.Lτ τ).eta₁ * (τ : ℂ) - (Chudnovsky.Lτ τ).eta₂ := by
     have hune : (u : ℂ) ≠ 0 := u.ne_zero
-    field_simp
+    field_simp (disch := first | assumption | norm_num1 | positivity)
   rw [he1, he2, hω2, ← huval, hrw]
   exact hlτ
 
@@ -516,8 +518,8 @@ open scoped Real
 (paper `legendre` with `ω₁ = 1`, `ω₂ = τ`). -/
 theorem legendre_Lτ (τ : ℍ) :
     (Lτ τ).eta₁ * τ - (Lτ τ).eta₂ = 2 * (π : ℂ) * Complex.I := by
-  have h := (Lτ τ).legendre_relation (by simpa using τ.im_pos)
-  simpa using h
+  have h := (Lτ τ).legendre_relation (by simpa only [Lτ_ω₂, Lτ_ω₁, div_one, coe_im] using τ.im_pos)
+  simpa only [Lτ_ω₂, Lτ_ω₁, mul_one] using h
 
 /-- The first quasiperiod of `L_τ` is the weight-2 Eisenstein series `G₂` in its
 Eisenstein summation order (Mathlib's `EisensteinSeries.G2`, summed over symmetric

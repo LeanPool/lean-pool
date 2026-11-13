@@ -84,11 +84,13 @@ def Acol (m : ℕ) [NeZero m] (b : ℤ) : GL (Fin 2) ℝ :=
 
 lemma det_AInf_pos [NeZero m] : 0 < (AInf m).det.val := by
   rw [Matrix.GeneralLinearGroup.val_det_apply, val_AInf, Matrix.det_fin_two_of]
-  simpa using (Nat.cast_pos.mpr (Nat.pos_of_ne_zero (NeZero.ne m)) : (0 : ℝ) < m)
+  simpa only [mul_one, mul_zero, sub_zero,
+    Nat.cast_pos] using (Nat.cast_pos.mpr (Nat.pos_of_ne_zero (NeZero.ne m)) : (0 : ℝ) < m)
 
 lemma det_Acol_pos [NeZero m] (b : ℤ) : 0 < (Acol m b).det.val := by
   rw [Matrix.GeneralLinearGroup.val_det_apply, val_Acol, Matrix.det_fin_two_of]
-  simpa using (Nat.cast_pos.mpr (Nat.pos_of_ne_zero (NeZero.ne m)) : (0 : ℝ) < m)
+  simpa only [one_mul, mul_zero, sub_zero,
+    Nat.cast_pos] using (Nat.cast_pos.mpr (Nat.pos_of_ne_zero (NeZero.ne m)) : (0 : ℝ) < m)
 
 /-- The `∞`-coset point: `AInf m • τ = m·τ`. -/
 lemma coe_AInf_smul [NeZero m] (τ : ℍ) : (↑(AInf m • τ) : ℂ) = m * τ := by
@@ -171,17 +173,18 @@ lemma f_T_smul [NeZero m] (i : Option (ZMod m)) (τ : ℍ) :
       simp only [coe_AInf_smul, UpperHalfPlane.coe_vadd]
       push_cast; ring
     rw [hpt]
-    simpa using j_vadd_int (m : ℤ) (AInf m • τ)
+    simpa only [j_def, mul_eq_mul_left_iff, OfNat.ofNat_ne_zero, or_false,
+      Int.cast_natCast] using j_vadd_int (m : ℤ) (AInf m • τ)
   | some b =>
     simp only [f_some, σT_some]
     -- first move the `+1` inside the coset offset: point equality
     have hpt : Acol m b.val • ((1 : ℝ) +ᵥ τ) = Acol m (b.val + 1) • τ := by
       apply UpperHalfPlane.ext
       simp only [coe_Acol_smul, UpperHalfPlane.coe_vadd]
-      push_cast; ring
+      push_cast; ac_rfl
     rw [hpt]
     -- then reduce `(b.val + 1)` to `(b+1).val` mod m
-    exact j_Acol_smul_congr (by simpa using dvd_val_add b 1) τ
+    exact j_Acol_smul_congr (by simpa only [ZMod.natCast_val, Int.cast_one] using dvd_val_add b 1) τ
 
 /-! ## The `S`-permutation
 

@@ -25,13 +25,13 @@ lemma periodic_comp_ofComplex_of_vadd {f : ℍ → ℂ} (hf : ∀ τ : ℍ, f ((
     Periodic (f ∘ ofComplex) 1 := by
   intro w
   rcases lt_or_ge 0 w.im with hw | hw
-  · have hw1 : 0 < (w + 1).im := by simpa using hw
+  · have hw1 : 0 < (w + 1).im := by simpa only [add_im, one_im, add_zero] using hw
     simp only [comp_apply, ofComplex_apply_of_im_pos hw1, ofComplex_apply_of_im_pos hw]
     have h := hf ⟨w, hw⟩
     convert h using 2
     ext
-    simp [add_comm]
-  · have hw1 : (w + 1).im ≤ 0 := by simpa using hw
+    simp only [coe_vadd, ofReal_one, add_comm]
+  · have hw1 : (w + 1).im ≤ 0 := by simpa only [add_im, one_im, add_zero] using hw
     simp only [comp_apply]
     rw [ofComplex_apply_eq_of_im_nonpos hw1 (by simpa using hw)]
 

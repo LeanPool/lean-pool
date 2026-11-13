@@ -64,7 +64,8 @@ private def negNonzero : {l : L.lattice // l ≠ 0} ≃ {l : L.lattice // l ≠ 
 
 @[simp] private lemma negNonzero_coe (l : {l : L.lattice // l ≠ 0}) :
     ((L.negNonzero l).1 : ℂ) = -(l.1 : ℂ) := by
-  simp [negNonzero, Equiv.subtypeEquiv]
+  simp only [ne_eq, negNonzero, Equiv.subtypeEquiv, Equiv.neg_apply, Equiv.neg_symm,
+    Equiv.coe_fn_mk, NegMemClass.coe_neg]
 
 private lemma weierstrassSigmaTerm_neg_neg (z w : ℂ) :
     weierstrassSigmaTerm (-z) (-w) = weierstrassSigmaTerm z w := by
@@ -120,7 +121,7 @@ private lemma norm_weierstrassZetaTerm_le (z w : ℂ) (hw : w ≠ 0) (h : 2 * �
     linear_combination mul_le_mul_of_nonneg_left h1
       (by positivity : (0 : ℝ) ≤ 2 * ‖z‖ ^ 2 * ‖w‖ ^ 2)
   refine hbound.trans_eq ?_
-  rw [show (-3 : ℝ) = -(3 : ℕ) by norm_num, Real.rpow_neg hwpos.le, Real.rpow_natCast]
+  rw [show (-3 : ℝ) = -(3 : ℕ) by norm_num1, Real.rpow_neg hwpos.le, Real.rpow_natCast]
   ring
 
 /-- The pointwise bound `‖σ-factor − 1‖ ≤ (4/3)‖z‖³‖ω‖⁻³` for `‖ω‖ ≥ 2‖z‖`. -/
@@ -131,12 +132,12 @@ private lemma norm_weierstrassSigmaTerm_sub_one_le (z w : ℂ) (hw : w ≠ 0) (h
     rw [norm_div, div_le_iff₀ hwpos]; linarith only [h]
   have hlt1 : ‖-(z / w)‖ < 1 := by
     rw [norm_neg]
-    exact hnorm.trans_lt (by norm_num)
+    exact hnorm.trans_lt (by norm_num1)
   have h1a : (1 : ℂ) - z / w ≠ 0 := by
     intro H
     rw [sub_eq_zero] at H
     rw [← H, norm_one] at hnorm
-    norm_num at hnorm
+    norm_num1 at hnorm
   have hexp : weierstrassSigmaTerm z w =
       Complex.exp (Complex.log (1 + -(z / w)) - logTaylor 3 (-(z / w))) := by
     have h1 : (1 : ℂ) + -(z / w) = 1 - z / w := by ring
@@ -148,24 +149,24 @@ private lemma norm_weierstrassSigmaTerm_sub_one_le (z w : ℂ) (hw : w ≠ 0) (h
   rw [hexp]
   have hubound : ‖Complex.log (1 + -(z / w)) - logTaylor 3 (-(z / w))‖ ≤ 2 / 3 * ‖z / w‖ ^ 3 := by
     have hinv : (1 - ‖z / w‖)⁻¹ ≤ 2 := by
-      rw [inv_le_comm₀ (by linarith only [hnorm]) (by norm_num)]
+      rw [inv_le_comm₀ (by linarith only [hnorm]) (by norm_num1)]
       rw [inv_eq_one_div]; linarith only [hnorm]
     calc ‖Complex.log (1 + -(z / w)) - logTaylor 3 (-(z / w))‖
         ≤ ‖-(z / w)‖ ^ (2 + 1) * (1 - ‖-(z / w)‖)⁻¹ / (2 + 1) :=
           norm_log_sub_logTaylor_le 2 hlt1
-      _ = ‖z / w‖ ^ 3 * (1 - ‖z / w‖)⁻¹ / 3 := by rw [norm_neg]; norm_num
+      _ = ‖z / w‖ ^ 3 * (1 - ‖z / w‖)⁻¹ / 3 := by rw [norm_neg]; norm_num only
       _ ≤ ‖z / w‖ ^ 3 * 2 / 3 := by gcongr
       _ = 2 / 3 * ‖z / w‖ ^ 3 := by ring
   have hule1 : ‖Complex.log (1 + -(z / w)) - logTaylor 3 (-(z / w))‖ ≤ 1 := by
     refine hubound.trans ?_
     calc 2 / 3 * ‖z / w‖ ^ 3 ≤ 2 / 3 * (1 / 2 : ℝ) ^ 3 := by gcongr
-      _ ≤ 1 := by norm_num
+      _ ≤ 1 := by norm_num1
   calc ‖Complex.exp (Complex.log (1 + -(z / w)) - logTaylor 3 (-(z / w))) - 1‖
       ≤ 2 * ‖Complex.log (1 + -(z / w)) - logTaylor 3 (-(z / w))‖ := norm_exp_sub_one_le hule1
     _ ≤ 2 * (2 / 3 * ‖z / w‖ ^ 3) := by gcongr
     _ = 4 / 3 * ‖z / w‖ ^ 3 := by ring
     _ = 4 / 3 * ‖z‖ ^ 3 * ‖w‖ ^ (-3 : ℝ) := by
-        rw [norm_div, div_pow, show (-3 : ℝ) = -(3 : ℕ) by norm_num,
+        rw [norm_div, div_pow, show (-3 : ℝ) = -(3 : ℕ) by norm_num1,
           Real.rpow_neg hwpos.le, Real.rpow_natCast]
         ring
 
@@ -185,7 +186,8 @@ private lemma hasDerivAt_weierstrassSigmaTerm (z w : ℂ) :
           * (1 / w + z / w ^ 2))) z := by
   have hquad : HasDerivAt (fun z : ℂ ↦ z ^ 2 / (2 * w ^ 2)) (z / w ^ 2) z := by
     have h : HasDerivAt (fun z : ℂ ↦ z ^ 2 / (2 * w ^ 2)) ((2 * z) / (2 * w ^ 2)) z := by
-      simpa using (hasDerivAt_pow 2 z).div_const (2 * w ^ 2)
+      simpa only [Nat.cast_ofNat, Nat.add_one_sub_one,
+        pow_one] using (hasDerivAt_pow 2 z).div_const (2 * w ^ 2)
     rwa [mul_div_mul_left _ _ two_ne_zero] at h
   exact (((hasDerivAt_id z).div_const w).const_sub 1).mul
     (((hasDerivAt_id z).div_const w).add hquad).cexp
@@ -213,7 +215,7 @@ private lemma deriv_weierstrassZetaTerm {z w : ℂ} (_hw : w ≠ 0) (hzw : z ≠
       exact ((hasDerivAt_id z).sub_const w).inv hzw'
     have h2 : HasDerivAt (fun _ : ℂ ↦ 1 / w) (0 : ℂ) z := hasDerivAt_const z _
     have h3 : HasDerivAt (fun z : ℂ ↦ z / w ^ 2) (1 / w ^ 2) z := by
-      simpa using (hasDerivAt_id z).div_const (w ^ 2)
+      simpa only [one_div, id_eq] using (hasDerivAt_id z).div_const (w ^ 2)
     exact (h1.add h2).add h3
   rw [hd.deriv]; ring
 
@@ -224,14 +226,14 @@ private lemma summable_norm_sigma_sub_one (z : ℂ) :
     ((L.summable_norm_rpow_neg_three).mul_left (4 / 3 * ‖z‖ ^ 3)) ?_
   filter_upwards [L.cofinite_norm_ge (2 * ‖z‖)] with l hl
   rw [norm_norm]
-  have hw : (l.1 : ℂ) ≠ 0 := by simpa using l.2
+  have hw : (l.1 : ℂ) ≠ 0 := by simpa only [ne_eq, ZeroMemClass.coe_eq_zero] using l.2
   exact norm_weierstrassSigmaTerm_sub_one_le z (l.1 : ℂ) hw hl
 
 /-- On a compact set the norm is bounded by a positive constant. -/
 private lemma exists_norm_bound_on_compact {K : Set ℂ} (hK : IsCompact K) :
     ∃ r : ℝ, 0 < r ∧ ∀ x ∈ K, ‖x‖ ≤ r := by
   rcases K.eq_empty_or_nonempty with rfl | hne
-  · exact ⟨1, one_pos, by simp⟩
+  · exact ⟨1, one_pos, by simp only [Set.mem_empty_iff_false, IsEmpty.forall_iff, implies_true]⟩
   · obtain ⟨r, hr⟩ := hK.isBounded.subset_closedBall (0 : ℂ)
     refine ⟨max r 1, lt_of_lt_of_le one_pos (le_max_right _ _), fun x hx => ?_⟩
     have := hr hx
@@ -248,7 +250,7 @@ theorem multipliable_weierstrassSigmaTerm (z : ℂ) :
     refine Summable.of_norm_bounded_eventually
       ((L.summable_norm_rpow_neg_three).mul_left (4 / 3 * ‖z‖ ^ 3)) ?_
     filter_upwards [L.cofinite_norm_ge (2 * ‖z‖)] with l hl
-    have hw : (l.1 : ℂ) ≠ 0 := by simpa using l.2
+    have hw : (l.1 : ℂ) ≠ 0 := by simpa only [ne_eq, ZeroMemClass.coe_eq_zero] using l.2
     exact norm_weierstrassSigmaTerm_sub_one_le z (l.1 : ℂ) hw hl
   exact (Complex.multipliable_one_add_of_summable hsummable).congr fun l ↦ by ring
 
@@ -268,7 +270,7 @@ theorem hasProdLocallyUniformly_weierstrassSigmaTerm :
     · exact Filter.Eventually.of_forall fun n x _ ↦ Finset.prod_congr rfl fun i _ ↦ by ring
     · exact fun x _ ↦ tprod_congr fun l ↦ by ring
   · filter_upwards [L.cofinite_norm_ge (2 * r)] with l hl x hx
-    have hw : (l.1 : ℂ) ≠ 0 := by simpa using l.2
+    have hw : (l.1 : ℂ) ≠ 0 := by simpa only [ne_eq, ZeroMemClass.coe_eq_zero] using l.2
     have hx' : ‖x‖ ≤ r := hKr x hx
     have h2 : 2 * ‖x‖ ≤ ‖(l.1 : ℂ)‖ := le_trans (by linarith) hl
     calc ‖weierstrassSigmaTerm x (l.1 : ℂ) - 1‖
@@ -286,7 +288,7 @@ theorem summable_weierstrassZetaTerm (z : ℂ) (_hz : z ∉ L.lattice) :
   refine Summable.of_norm_bounded_eventually
     ((L.summable_norm_rpow_neg_three).mul_left (2 * ‖z‖ ^ 2)) ?_
   filter_upwards [L.cofinite_norm_ge (2 * ‖z‖)] with l hl
-  have hw : (l.1 : ℂ) ≠ 0 := by simpa using l.2
+  have hw : (l.1 : ℂ) ≠ 0 := by simpa only [ne_eq, ZeroMemClass.coe_eq_zero] using l.2
   exact norm_weierstrassZetaTerm_le z (l.1 : ℂ) hw hl
 
 /-- The ζ-series converges locally uniformly away from the lattice. -/
@@ -302,7 +304,7 @@ theorem hasSumLocallyUniformlyOn_weierstrassZetaTerm :
   apply tendstoUniformlyOn_tsum_of_cofinite_eventually
     ((L.summable_norm_rpow_neg_three).mul_left (2 * r ^ 2))
   filter_upwards [L.cofinite_norm_ge (2 * r)] with l hl x hx
-  have hw : (l.1 : ℂ) ≠ 0 := by simpa using l.2
+  have hw : (l.1 : ℂ) ≠ 0 := by simpa only [ne_eq, ZeroMemClass.coe_eq_zero] using l.2
   have hx' : ‖x‖ ≤ r := hKr x hx
   have h2 : 2 * ‖x‖ ≤ ‖(l.1 : ℂ)‖ := le_trans (by linarith) hl
   calc ‖weierstrassZetaTerm x (l.1 : ℂ)‖
@@ -324,7 +326,7 @@ private lemma differentiable_tprod_weierstrassSigmaTerm :
   refine
     (L.hasProdLocallyUniformly_weierstrassSigmaTerm.hasProdLocallyUniformlyOn).differentiableOn
       (.of_forall fun _ ↦ ?_) isOpen_univ
-  simpa [Finset.prod_fn] using
+  simpa only [ne_eq, Finset.prod_fn] using
     DifferentiableOn.finsetProd fun i _ ↦
       (differentiable_weierstrassSigmaTerm (i.1 : ℂ)).differentiableOn
 
@@ -346,7 +348,7 @@ theorem differentiableOn_weierstrassZeta :
         hopen ?_
     intro l r hr
     have hrne : r ≠ (l.1 : ℂ) := by rintro rfl; exact hr l.1.2
-    have hw : (l.1 : ℂ) ≠ 0 := by simpa using l.2
+    have hw : (l.1 : ℂ) ≠ 0 := by simpa only [ne_eq, ZeroMemClass.coe_eq_zero] using l.2
     have hrw : r - (l.1 : ℂ) ≠ 0 := sub_ne_zero.mpr hrne
     unfold weierstrassZetaTerm
     fun_prop (disch := assumption)
@@ -440,7 +442,7 @@ private lemma differentiable_tprod_family {ι : Type*} (g : ι → ℂ → ℂ)
       exact hi x (hKr x hx)
     · exact fun i ↦ ((hdiff i).continuous.sub continuous_const).continuousOn
   refine hLU.hasProdLocallyUniformlyOn.differentiableOn (.of_forall fun _ ↦ ?_) isOpen_univ
-  simpa [Finset.prod_fn] using DifferentiableOn.finsetProd fun i _ ↦ (hdiff i).differentiableOn
+  simpa only [Finset.prod_fn] using DifferentiableOn.finsetProd fun i _ ↦ (hdiff i).differentiableOn
 
 /-- At a nonzero lattice point `ω`, the derivative of `σ` is nonzero: split the factor at `ω`
 out of the product, `σ z = (z · Q z) · (σ-factor at ω)`, where the factor vanishes simply and
@@ -449,7 +451,7 @@ private lemma deriv_weierstrassSigma_ne_zero_at (i₀ : {l : L.lattice // l ≠ 
     deriv L.weierstrassSigma (i₀.1 : ℂ) ≠ 0 := by
   classical
   set w : ℂ := (i₀.1 : ℂ) with hw
-  have hwne : w ≠ 0 := by rw [hw]; simpa using i₀.2
+  have hwne : w ≠ 0 := by rw [hw]; simpa only [ne_eq, ZeroMemClass.coe_eq_zero] using i₀.2
   -- the σ-product with the factor at `i₀` replaced by `1`
   set g : {l : L.lattice // l ≠ 0} → ℂ → ℂ :=
     fun n z ↦ if n = i₀ then 1 else weierstrassSigmaTerm z (n.1 : ℂ) with hg
@@ -471,7 +473,7 @@ private lemma deriv_weierstrassSigma_ne_zero_at (i₀ : {l : L.lattice // l ≠ 
     · simp only [ite_eq_left h, sub_self, norm_zero]
       positivity
     · simp only [ite_eq_right h]
-      have hwn : (n.1 : ℂ) ≠ 0 := by simpa using n.2
+      have hwn : (n.1 : ℂ) ≠ 0 := by simpa only [ne_eq, ZeroMemClass.coe_eq_zero] using n.2
       have h2 : 2 * ‖x‖ ≤ ‖(n.1 : ℂ)‖ := le_trans (by linarith) hn
       calc ‖weierstrassSigmaTerm x (n.1 : ℂ) - 1‖
           ≤ 4 / 3 * ‖x‖ ^ 3 * ‖(n.1 : ℂ)‖ ^ (-3 : ℝ) :=
@@ -506,7 +508,8 @@ private lemma deriv_weierstrassSigma_ne_zero_at (i₀ : {l : L.lattice // l ≠ 
       by_cases h : n = i₀
       · simp only [ite_eq_left h]; exact one_ne_zero
       · simp only [ite_eq_right h]
-        refine weierstrassSigmaTerm_ne_zero (by simpa using n.2) (fun hcontra ↦ ?_)
+        refine weierstrassSigmaTerm_ne_zero (by simpa only [ne_eq,
+          ZeroMemClass.coe_eq_zero] using n.2) (fun hcontra ↦ ?_)
         exact h (Subtype.ext (Subtype.ext hcontra.symm))
     have hsummable : Summable (fun n ↦ ‖g n w - 1‖) :=
       Summable.of_nonneg_of_le (fun n ↦ norm_nonneg _) hle (L.summable_norm_sigma_sub_one w)
@@ -519,7 +522,7 @@ private lemma deriv_weierstrassSigma_ne_zero_at (i₀ : {l : L.lattice // l ≠ 
     simpa only [div_self hwne, sub_self, zero_mul, add_zero] using
       hasDerivAt_weierstrassSigmaTerm w w
   have hBw : weierstrassSigmaTerm w w = 0 := by
-    rw [weierstrassSigmaTerm, div_self hwne]; simp
+    rw [weierstrassSigmaTerm, div_self hwne]; simp only [sub_self, zero_mul]
   have hdB_ne : (-(1 / w) * Complex.exp (w / w + w ^ 2 / (2 * w ^ 2))) ≠ 0 :=
     mul_ne_zero (neg_ne_zero.mpr (one_div_ne_zero hwne)) (Complex.exp_ne_zero _)
   have hσeq : L.weierstrassSigma = fun z ↦ (z * Q z) * weierstrassSigmaTerm z w := by
@@ -566,7 +569,7 @@ theorem meromorphicOrderAt_weierstrassSigma (l : ℂ) (hl : l ∈ L.lattice) :
       simpa only [hP0, id_eq, one_mul, zero_mul, add_zero] using (one_ne_zero : (1 : ℂ) ≠ 0)
     · -- `l ≠ 0`: reduce to the split-factor lemma at the lattice point `l`.
       have hmem : (⟨l, hl⟩ : L.lattice) ≠ 0 :=
-        fun H ↦ hl0 (by simpa using congrArg Subtype.val H)
+        fun H ↦ hl0 (by simpa only [ZeroMemClass.coe_zero] using congrArg Subtype.val H)
       exact L.deriv_weierstrassSigma_ne_zero_at ⟨⟨l, hl⟩, hmem⟩
   have hord : analyticOrderAt L.weierstrassSigma l = 1 :=
     hAn.analyticOrderAt_eq_one_of_zero_deriv_ne_zero hzero hderiv
@@ -582,7 +585,8 @@ theorem logDeriv_weierstrassSigma (z : ℂ) (hz : z ∉ L.lattice) :
   have hopen : IsOpen ((↑L.lattice : Set ℂ)ᶜ) := L.isClosed_lattice.isOpen_compl
   have hzne : ∀ l : {l : L.lattice // l ≠ 0}, z ≠ (l.1 : ℂ) := by
     intro l; rintro rfl; exact hz l.1.2
-  have hwne : ∀ l : {l : L.lattice // l ≠ 0}, (l.1 : ℂ) ≠ 0 := fun l ↦ by simpa using l.2
+  have hwne : ∀ l : {l : L.lattice // l ≠ 0}, (l.1 : ℂ) ≠ 0 := fun l ↦ by simpa only [ne_eq,
+    ZeroMemClass.coe_eq_zero] using l.2
   have hfacne : ∀ l : {l : L.lattice // l ≠ 0}, weierstrassSigmaTerm z (l.1 : ℂ) ≠ 0 :=
     fun l ↦ weierstrassSigmaTerm_ne_zero (hwne l) (hzne l)
   have hlogterm : ∀ l : {l : L.lattice // l ≠ 0},
@@ -624,7 +628,7 @@ private lemma differentiableOn_weierstrassZetaTerm (l : {l : L.lattice // l ≠ 
     DifferentiableOn ℂ (fun z ↦ weierstrassZetaTerm z (l.1 : ℂ)) (↑L.lattice)ᶜ := by
   intro r hr
   have hrne : r ≠ (l.1 : ℂ) := by rintro rfl; exact hr l.1.2
-  have hw : (l.1 : ℂ) ≠ 0 := by simpa using l.2
+  have hw : (l.1 : ℂ) ≠ 0 := by simpa only [ne_eq, ZeroMemClass.coe_eq_zero] using l.2
   have hrw : r - (l.1 : ℂ) ≠ 0 := sub_ne_zero.mpr hrne
   unfold weierstrassZetaTerm
   refine DifferentiableAt.differentiableWithinAt (((?_ : DifferentiableAt ℂ
@@ -659,7 +663,8 @@ private lemma hasSum_deriv_zetaTerm {z : ℂ} (hz : z ∉ L.lattice) :
   have hzc : z ∈ (↑L.lattice : Set ℂ)ᶜ := hz
   have hzne : ∀ l : {l : L.lattice // l ≠ 0}, z ≠ (l.1 : ℂ) := by
     intro l; rintro rfl; exact hz l.1.2
-  have hwne : ∀ l : {l : L.lattice // l ≠ 0}, (l.1 : ℂ) ≠ 0 := fun l ↦ by simpa using l.2
+  have hwne : ∀ l : {l : L.lattice // l ≠ 0}, (l.1 : ℂ) ≠ 0 := fun l ↦ by simpa only [ne_eq,
+    ZeroMemClass.coe_eq_zero] using l.2
   have hderivS : HasSum
       (fun l : {l : L.lattice // l ≠ 0} ↦ deriv (fun z ↦ weierstrassZetaTerm z (l.1 : ℂ)) z)
       (deriv (fun z ↦ ∑' l : {l : L.lattice // l ≠ 0}, weierstrassZetaTerm z (l.1 : ℂ)) z) := by

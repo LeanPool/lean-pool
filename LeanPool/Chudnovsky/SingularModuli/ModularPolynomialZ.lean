@@ -329,7 +329,8 @@ lemma GoodQ.ana {h : ℝ} (hh : 0 < h) {R : Subring ℂ} {g : ℍ → ℂ} (hg :
 lemma GoodQ.add {h : ℝ} (hh : 0 < h) {R : Subring ℂ} {g₁ g₂ : ℍ → ℂ}
     (h₁ : GoodQ h R g₁) (h₂ : GoodQ h R g₂) : GoodQ h R (fun τ ↦ g₁ τ + g₂ τ) where
   per := by
-    have := h₁.per.add h₂.per; simpa [Function.comp_def] using this
+    have := h₁.per.add h₂.per; simpa only [Function.Periodic, Function.comp_apply,
+      Function.comp_def, Pi.add_apply] using this
   holo := h₁.holo.add h₂.holo
   bdd := h₁.bdd.add h₂.bdd
   mem n := by
@@ -340,7 +341,8 @@ lemma GoodQ.add {h : ℝ} (hh : 0 < h) {R : Subring ℂ} {g₁ g₂ : ℍ → �
 lemma GoodQ.mul {h : ℝ} (hh : 0 < h) {R : Subring ℂ} {g₁ g₂ : ℍ → ℂ}
     (h₁ : GoodQ h R g₁) (h₂ : GoodQ h R g₂) : GoodQ h R (fun τ ↦ g₁ τ * g₂ τ) where
   per := by
-    have := h₁.per.mul h₂.per; simpa [Function.comp_def] using this
+    have := h₁.per.mul h₂.per; simpa only [Function.Periodic, Function.comp_apply,
+      Function.comp_def, Pi.mul_apply] using this
   holo := h₁.holo.mul h₂.holo
   bdd := h₁.bdd.mul h₂.bdd
   mem n := by
@@ -349,14 +351,14 @@ lemma GoodQ.mul {h : ℝ} (hh : 0 < h) {R : Subring ℂ} {g₁ g₂ : ℍ → �
     exact R.sum_mem (fun p _ ↦ R.mul_mem (h₁.mem p.1) (h₂.mem p.2))
 
 lemma goodQ_one {h : ℝ} (_hh : 0 < h) {R : Subring ℂ} : GoodQ h R (fun _ : ℍ ↦ (1:ℂ)) where
-  per := by simp
+  per := by simp only [Function.Periodic, Function.comp_apply, implies_true]
   holo := mdifferentiable_const
   bdd := Filter.const_boundedAtFilter atImInfty (1 : ℂ)
   mem n := by
     have h1 : (fun _ : ℍ ↦ (1:ℂ)) = (1 : ℍ → ℂ) := rfl
     rw [h1, qExpansion_one]
     rcases eq_or_ne n 0 with rfl | hn
-    · simp
+    · simp only [PowerSeries.coeff_one, ↓reduceIte, one_mem]
     · rw [PowerSeries.coeff_one, ite_eq_right hn]; exact R.zero_mem
 
 lemma goodQ_smul {h : ℝ} (hh : 0 < h) {R : Subring ℂ} {g : ℍ → ℂ} (hg : GoodQ h R g)
@@ -384,13 +386,13 @@ lemma GoodQ.neg {h : ℝ} (hh : 0 < h) {R : Subring ℂ} {g : ℍ → ℂ} (hg :
 lemma GoodQ.sub {h : ℝ} (hh : 0 < h) {R : Subring ℂ} {g₁ g₂ : ℍ → ℂ}
     (h₁ : GoodQ h R g₁) (h₂ : GoodQ h R g₂) : GoodQ h R (fun τ ↦ g₁ τ - g₂ τ) := by
   have := h₁.add hh (h₂.neg hh)
-  simpa [sub_eq_add_neg] using this
+  simpa only [sub_eq_add_neg] using this
 
 /-- `wParam` is holomorphic. -/
 lemma mdifferentiable_wParam : MDiff (fun τ : ℍ ↦ wParam m τ) := by
   have heq : (fun τ : ℍ ↦ wParam m τ)
       = (fun z : ℂ ↦ Complex.exp (2 * ↑π * Complex.I * z / m)) ∘ (fun τ : ℍ ↦ (τ : ℂ)) := by
-    funext τ; simp [wParam, Function.comp]
+    funext τ; simp only [wParam, Function.comp]
   rw [heq]
   exact Differentiable.comp_mdifferentiable (by fun_prop) mdifferentiable_coe
 
@@ -398,7 +400,8 @@ lemma mdifferentiable_wParam : MDiff (fun τ : ℍ ↦ wParam m τ) := by
 lemma isBoundedAtImInfty_jqPow (k : ℕ) :
     IsBoundedAtImInfty (fun τ : ℍ ↦ (j τ * q τ) ^ k) := by
   have hA : (1 : GL (Fin 2) ℝ) 1 0 = 0 := by
-    simp [Matrix.one_apply_ne]
+    simp only [Fin.isValue, Units.val_one, ne_eq, one_ne_zero, not_false_eq_true,
+      Matrix.one_apply_ne]
   have h := isBoundedAtImInfty_jqPow_comp k 1 hA
   simpa only [one_smul] using h
 
@@ -451,7 +454,7 @@ lemma goodQ_sum {h : ℝ} (hh : 0 < h) {R : Subring ℂ} {ι : Type*} (s : Finse
     (hg : ∀ i ∈ s, GoodQ h R (g i)) : GoodQ h R (fun τ ↦ ∑ i ∈ s, g i τ) := by
   classical
   induction s using Finset.induction with
-  | empty => simpa using goodQ_const hh (R := R) R.zero_mem
+  | empty => simpa only [sum_empty] using goodQ_const hh (R := R) R.zero_mem
   | @insert a s ha ih =>
     have hrw : (fun τ ↦ ∑ i ∈ insert a s, g i τ)
         = (fun τ ↦ g a τ + ∑ i ∈ s, g i τ) := by
@@ -477,7 +480,7 @@ lemma orbitPoly_coeff_isCuspMeroR_RQ [NeZero m] (n : ℕ) (P : Polynomial ℚ)
       Finset.sum_mul]
     refine Finset.sum_congr rfl (fun k hk ↦ ?_)
     have hk' : k ≤ N := Nat.lt_succ_iff.mp (Finset.mem_range.mp hk)
-    have hcast : algebraMap ℚ ℂ (P.coeff k) = ((P.coeff k : ℚ) : ℂ) := by simp
+    have hcast : algebraMap ℚ ℂ (P.coeff k) = ((P.coeff k : ℚ) : ℂ) := by simp only [eq_ratCast]
     have hdist : (j τ) ^ k * q τ ^ N = (j τ * q τ) ^ k * q τ ^ (N - k) := by
       rw [mul_pow, mul_assoc, ← pow_add, Nat.add_sub_cancel' hk']
     rw [hcast, mul_assoc, hdist]
@@ -505,7 +508,7 @@ lemma wExpansion_coeff_unique_raw [NeZero m] {F : ℍ → ℂ} {c : ℕ → ℂ}
   have hball2 := hasFPowerSeriesOnBall_cuspFunction hm hFan hsum2
   have heq := hball1.hasFPowerSeriesAt.eq_formalMultilinearSeries hball2.hasFPowerSeriesAt
   have hcoeff := congr_arg (fun p : FormalMultilinearSeries ℂ ℂ ℂ ↦ p.coeff n) heq
-  simpa [FormalMultilinearSeries.coeff_ofScalars] using hcoeff
+  simpa only [FormalMultilinearSeries.coeff_ofScalars] using hcoeff
 
 /-! ## Width-`m` machinery: algebraic integrality of the `w`-expansion -/
 
@@ -521,15 +524,17 @@ lemma intCast_mem_RI (n : ℤ) : (n : ℂ) ∈ RI := intCast_mem RI n
 lemma zetaM_mem_RI [NeZero m] : zetaM m ∈ RI := by
   rw [mem_RI_iff]
   refine ⟨X ^ m - C 1, monic_X_pow_sub_C 1 (NeZero.ne m), ?_⟩
-  simp [zetaM_pow_m]
+  simp only [algebraMap_int_eq, eq_intCast, Int.cast_one, eval₂_sub, eval₂_X_pow, zetaM_pow_m,
+    eval₂_one, sub_self]
 
 lemma zetaM_zpow_mem_RI [NeZero m] (n : ℤ) : zetaM m ^ n ∈ RI := by
   rw [mem_RI_iff]
   refine ⟨X ^ m - C 1, monic_X_pow_sub_C 1 (NeZero.ne m), ?_⟩
   have hpow : (zetaM m ^ n) ^ m = 1 := by
     rw [← zpow_natCast (zetaM m ^ n) m, ← zpow_mul]
-    exact (zetaM_zpow_eq_one_iff (n * (m : ℤ))).mpr ⟨n, by ring⟩
-  simp [hpow]
+    exact (zetaM_zpow_eq_one_iff (n * (m : ℤ))).mpr ⟨n, by ac_rfl⟩
+  simp only [algebraMap_int_eq, eq_intCast, Int.cast_one, eval₂_sub, eval₂_X_pow, hpow, eval₂_one,
+    sub_self]
 
 /-- General period-`p` version of `periodic_comp_ofComplex_of_vadd`. -/
 lemma periodic_comp_ofComplex_of_vadd_gen {f : ℍ → ℂ} {p : ℝ} (_hp : 0 < p)
@@ -624,7 +629,8 @@ lemma goodQ_G_none [NeZero m] :
     rw [mul_one] at h
     rw [show wParam m τ ^ (m ^ 2) = q τ ^ m by
       have := wParam_pow_mk (m := m) 1 τ; rwa [mul_one, mul_one] at this]
-    simpa using h
+    simpa only [f_none, j_def, pow_one, mul_eq_mul_left_iff, mul_eq_zero, OfNat.ofNat_ne_zero,
+      false_or] using h
   have hpe : Function.Periodic ((fun τ : ℍ ↦ f m none τ * wParam m τ ^ (m ^ 2)) ∘ ofComplex)
       (m : ℝ) :=
     periodic_comp_ofComplex_of_vadd_gen hm (fun τ ↦ by rw [f_vadd_m, wParam_vadd_m])
@@ -632,7 +638,9 @@ lemma goodQ_G_none [NeZero m] :
     (mdifferentiable_f none).mul (mdifferentiable_wParam.pow (m ^ 2))
   have hbd : IsBoundedAtImInfty (fun τ : ℍ ↦ f m none τ * wParam m τ ^ (m ^ 2)) := by
     rw [funext hval]
-    exact isBoundedAtImInfty_jqPow_comp 1 (AInf m) (by simp [val_AInf])
+    exact isBoundedAtImInfty_jqPow_comp 1 (AInf m) (by simp only [Fin.isValue, val_AInf,
+      Matrix.of_apply, Matrix.cons_val', Matrix.cons_val_zero, Matrix.cons_val_fin_one,
+      Matrix.cons_val_one])
   refine goodQ_of_wHasSum hpe hho hbd (e := fun n ↦ m ^ 2 * n)
     (a := fun n ↦ ((PowerSeries.coeff n jqInt : ℤ) : ℂ))
     (fun a b hab ↦ Nat.eq_of_mul_eq_mul_left (pow_pos (Nat.pos_of_ne_zero (NeZero.ne m)) 2) hab)
@@ -706,7 +714,8 @@ lemma goodQ_G [NeZero m] (i : Option (ZMod m)) :
 
 lemma coeff_linMul_zero (α β : ℂ) (Q : Polynomial ℂ) :
     ((C α * X - C β) * Q).coeff 0 = -(β * Q.coeff 0) := by
-  rw [sub_mul, coeff_sub, mul_assoc, coeff_C_mul, coeff_C_mul, coeff_zero_eq_eval_zero]; simp
+  rw [sub_mul, coeff_sub, mul_assoc, coeff_C_mul, coeff_C_mul, coeff_zero_eq_eval_zero]; simp only [
+    eval_mul, eval_X, zero_mul, mul_zero, zero_sub]
 
 lemma coeff_linMul_succ (α β : ℂ) (Q : Polynomial ℂ) (k : ℕ) :
     ((C α * X - C β) * Q).coeff (k + 1) = α * Q.coeff k - β * Q.coeff (k + 1) := by
@@ -727,9 +736,9 @@ lemma goodQ_prod_coeff [NeZero m] (s : Finset (Option (ZMod m))) :
     intro n
     by_cases hn : n = 0
     · refine (goodQ_const hm (show (1:ℂ) ∈ RI from RI.one_mem)).of_eq (fun τ ↦ ?_)
-      simp [hn]
+      simp only [map_pow, map_mul, prod_empty, hn, coeff_one_zero]
     · refine (goodQ_const hm RI.zero_mem).of_eq (fun τ ↦ ?_)
-      simp [Finset.prod_empty, coeff_one, hn]
+      simp only [map_pow, map_mul, prod_empty, coeff_one, hn, ↓reduceIte]
   | @insert a s ha ih =>
     intro n
     cases n with
