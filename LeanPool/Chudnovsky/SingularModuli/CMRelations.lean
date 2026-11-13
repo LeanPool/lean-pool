@@ -75,15 +75,15 @@ theorem cmMatrix_det_eq_normForm (n : ℤ) :
 
 /-- `M_0` fixes `τ₁₆₃` with determinant `41`. -/
 theorem cm_41 : QF.Fixes (0 + 1) (-41) 1 0 τ₁₆₃ ∧ (0 + 1) * 0 - (-41) * 1 = 41 :=
-  ⟨cmMatrix_fixes 0, by ac_rfl⟩
+  ⟨cmMatrix_fixes 0, by ring⟩
 
 /-- `M_1` fixes `τ₁₆₃` with determinant `43`. -/
 theorem cm_43 : QF.Fixes (1 + 1) (-41) 1 1 τ₁₆₃ ∧ (1 + 1) * 1 - (-41) * 1 = 43 :=
-  ⟨cmMatrix_fixes 1, by ac_rfl⟩
+  ⟨cmMatrix_fixes 1, by ring⟩
 
 /-- `M_4` fixes `τ₁₆₃` with determinant `61`. -/
 theorem cm_61 : QF.Fixes (4 + 1) (-41) 1 4 τ₁₆₃ ∧ (4 + 1) * 4 - (-41) * 1 = 61 :=
-  ⟨cmMatrix_fixes 4, by ac_rfl⟩
+  ⟨cmMatrix_fixes 4, by ring⟩
 
 /-- The three determinants are represented by the norm form `x² + xy + 41 y²` at
 `(x, y) = (0,1), (1,1), (4,1)` — the arithmetic reason the isogenies exist (`m` splits in
@@ -92,7 +92,7 @@ theorem normForm_represents :
     (0 : ℤ) ^ 2 + 0 * 1 + 41 * 1 ^ 2 = 41 ∧
     (1 : ℤ) ^ 2 + 1 * 1 + 41 * 1 ^ 2 = 43 ∧
     (4 : ℤ) ^ 2 + 4 * 1 + 41 * 1 ^ 2 = 61 := by
-  refine ⟨by ac_rfl, by ac_rfl, by ac_rfl⟩
+  refine ⟨by ring, by ring, by ring⟩
 
 /-- **The three-prime input, packaged for the rationality argument.** The traces
 `t = 2n+1` for `n = 0, 1, 4` and multiplier `λ = 1` satisfy the discriminant relations

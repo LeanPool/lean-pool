@@ -86,7 +86,7 @@ private theorem factorial_ratio_succ (n : ℕ) :
       _ = 1728 * (((3 * n + 3) * (3 * n + 2) * (3 * n + 1)) * (n + 1) ^ 3) := by ring
   calc (6 * (n + 1))! * ((3 * n)! * (n !) ^ 3 * 1728 ^ n)
       = ((6 * n + 6) * (6 * n + 5) * (6 * n + 4) * (6 * n + 3) * (6 * n + 2) * (6 * n + 1))
-          * ((6 * n)! * ((3 * n)! * (n !) ^ 3 * 1728 ^ n)) := by rw [e6]; ac_rfl
+          * ((6 * n)! * ((3 * n)! * (n !) ^ 3 * 1728 ^ n)) := by rw [e6]; ring
     _ ≤ (1728 * (((3 * n + 3) * (3 * n + 2) * (3 * n + 1)) * (n + 1) ^ 3))
           * ((6 * n)! * ((3 * n)! * (n !) ^ 3 * 1728 ^ n)) := Nat.mul_le_mul hPQ le_rfl
     _ = (6 * n)! * ((3 * (n + 1))! * ((n + 1)!) ^ 3 * 1728 ^ (n + 1)) := by
@@ -96,7 +96,7 @@ private theorem factorial_ratio_succ (n : ℕ) :
 theorem factorial_ratio_le (n : ℕ) :
     (6 * n)! ≤ 1728 ^ n * ((3 * n)! * (n !) ^ 3) := by
   induction n with
-  | zero => simp only [mul_zero, factorial_zero, pow_zero, one_pow, mul_one, Std.le_refl]
+  | zero => simp
   | succ n ih =>
     apply (mul_le_mul_iff_of_pos_right
       (by positivity : 0 < (3 * n)! * (n !) ^ 3 * 1728 ^ n)).mp
@@ -106,7 +106,7 @@ theorem factorial_ratio_le (n : ℕ) :
       _ ≤ (1728 ^ n * ((3 * n)! * (n !) ^ 3))
           * ((3 * (n + 1))! * ((n + 1)!) ^ 3 * 1728 ^ (n + 1)) := Nat.mul_le_mul_right _ ih
       _ = (1728 ^ (n + 1) * ((3 * (n + 1))! * ((n + 1)!) ^ 3))
-          * ((3 * n)! * (n !) ^ 3 * 1728 ^ n) := by ac_rfl
+          * ((3 * n)! * (n !) ^ 3 * 1728 ^ n) := by ring
 
 /-- The Main Theorem's series converges absolutely on the region `Im τ > 1.25`
 (ratio test: `(6n)!/((3n)!(n!)³) ≤ 1728ⁿ` and `‖1728·J‖ > 1728` on the region). -/
@@ -217,7 +217,7 @@ theorem isPreconnected_Region : IsPreconnected (Region : Set ℍ) := by
     · rintro ⟨τ, hτ, rfl⟩
       rw [UpperHalfPlane.coe_im]; exact hτ
     · intro hz
-      exact ⟨⟨z, lt_trans (by norm_num1) hz⟩, hz, rfl⟩
+      exact ⟨⟨z, lt_trans (by norm_num) hz⟩, hz, rfl⟩
   rw [himg]
   exact (convex_halfSpace_im_gt (5 / 4)).isPreconnected
 
@@ -248,7 +248,7 @@ private lemma Gsq_eq_tsum {z : ℂ} (hz : ‖z‖ < 1) :
   refine tsum_congr fun n => ?_
   have h3n : ((3 * n)! : ℂ) ≠ 0 := Nat.cast_ne_zero.2 (Nat.factorial_ne_zero _)
   have hn : ((n ! : ℕ) : ℂ) ≠ 0 := Nat.cast_ne_zero.2 (Nat.factorial_ne_zero n)
-  have h12 : ((12 : ℂ)) ^ (3 * n) = 1728 ^ n := by rw [pow_mul]; norm_num only
+  have h12 : ((12 : ℂ)) ^ (3 * n) = 1728 ^ n := by rw [pow_mul]; norm_num
   rw [mainCoeff, h12]
   field_simp
 
@@ -310,7 +310,7 @@ private lemma mainSummand_eq {τ : ℍ} (hJ0 : J τ ≠ 0) (n : ℕ) :
     mainSummand τ n = ((1 - s₂ τ) / 6 + n) * (mainCoeff n * (1 / J τ) ^ n) := by
   have h3n : ((3 * n)! : ℂ) ≠ 0 := Nat.cast_ne_zero.2 (Nat.factorial_ne_zero _)
   have hn : ((n ! : ℕ) : ℂ) ≠ 0 := Nat.cast_ne_zero.2 (Nat.factorial_ne_zero n)
-  have h1728 : (1728 : ℂ) ≠ 0 := by norm_num1
+  have h1728 : (1728 : ℂ) ≠ 0 := by norm_num
   have hJn : J τ ^ n ≠ 0 := pow_ne_zero n hJ0
   rw [mainSummand, mainCoeff, mul_pow, one_div, inv_pow]
   field_simp
@@ -346,7 +346,7 @@ private lemma norm_mainCoeff_antitone : Antitone fun n => ‖mainCoeff n‖ :=
 `0.15` of `1`.  Six explicit terms of the (positive, decreasing) coefficient sequence
 `mainCoeff` plus a geometric tail. -/
 private lemma norm_Gsq_sub_one_le {z : ℂ} (hz : ‖z‖ ≤ 0.9125) : ‖Gsq z - 1‖ ≤ 0.15 := by
-  have hz1 : ‖z‖ < 1 := lt_of_le_of_lt hz (by norm_num1)
+  have hz1 : ‖z‖ < 1 := lt_of_le_of_lt hz (by norm_num)
   have hz0 : (0 : ℝ) ≤ ‖z‖ := norm_nonneg z
   -- summability of the series and of its norms
   have hSnorm : Summable fun n : ℕ => ‖mainCoeff n * z ^ n‖ := by
@@ -405,15 +405,15 @@ private lemma norm_Gsq_sub_one_le {z : ℂ} (hz : ‖z‖ ≤ 0.9125) : ‖Gsq z
             hterm _ _ hc
         _ = (0.00467 * 0.9125 ^ 7) * 0.9125 ^ i := by ring
     have hgeom : Summable fun i : ℕ => (0.00467 * 0.9125 ^ 7 : ℝ) * 0.9125 ^ i :=
-      (summable_geometric_of_lt_one (by norm_num1) (by norm_num1)).mul_left _
+      (summable_geometric_of_lt_one (by norm_num) (by norm_num)).mul_left _
     calc ∑' i : ℕ, ‖mainCoeff (i + 6 + 1) * z ^ (i + 6 + 1)‖
         ≤ ∑' i : ℕ, (0.00467 * 0.9125 ^ 7 : ℝ) * 0.9125 ^ i :=
           ((summable_nat_add_iff (f := fun n : ℕ => ‖mainCoeff (n + 1) * z ^ (n + 1)‖) 6).mpr
             hSnorm1).tsum_le_tsum hmaj hgeom
       _ = (0.00467 * 0.9125 ^ 7) * (1 - 0.9125)⁻¹ := by
-          rw [tsum_mul_left, tsum_geometric_of_lt_one (by norm_num1) (by norm_num1)]
+          rw [tsum_mul_left, tsum_geometric_of_lt_one (by norm_num) (by norm_num)]
   refine le_trans (add_le_add hhead htail) ?_
-  norm_num1
+  norm_num
 
 /-- On `Region`, `E₆` is within `0.199` of `1` (from the truncation bounds of
 `Estimates.lean`). -/
@@ -423,13 +423,13 @@ private lemma norm_E₆_sub_one_le {τ : ℍ} (hτ : τ ∈ Region) : ‖E₆ τ
   have hQ : Q < 0.000389 := lt_trans (norm_q_lt_of_mem_Region hτ) exp_neg_bound
   have htail : ‖eisensteinTail 5 3 τ‖ ≤ 245.6 * Q ^ 3 := norm_eisensteinTail_sigma₅ hτ
   have hqq : ‖q τ + (33 : ℂ) * q τ ^ 2‖ ≤ Q + 33 * Q ^ 2 :=
-    norm_q_add_smul_sq_le (by norm_num1)
+    norm_q_add_smul_sq_le (by norm_num)
   have heq : E₆ τ - 1 = -(504 * (q τ + 33 * q τ ^ 2)) - 504 * eisensteinTail 5 3 τ := by
     rw [E₆_eq_trunc τ, E₆trunc]; ring
   rw [heq]
   refine le_trans (norm_sub_le _ _) ?_
   rw [norm_neg, norm_mul, norm_mul, Complex.norm_ofNat]
-  nlinarith [norm_nonneg (eisensteinTail 5 3 τ), pow_pos hQpos 2, pow_pos hQpos 3]
+  nlinarith only [hQ, htail, hqq, pow_pos hQpos 3]
 
 /-- If `a` is closer to `b` than `b` is to `0`, then `a/b` lies in the right half-plane. -/
 private lemma re_div_pos_of_norm_sub_lt {a b : ℂ} (hb : ‖a - b‖ < ‖b‖) : 0 < (a / b).re := by
@@ -485,8 +485,8 @@ private lemma hasDerivAt_J_comp (τ : ℍ) :
       (-(2 * π * Complex.I) * E₄ τ ^ 2 * E₆ τ / (E₄ τ ^ 3 - E₆ τ ^ 2)) ↑τ := by
   have h4 := hasDerivAt_E₄_comp τ
   have h6 := hasDerivAt_E₆_comp τ
-  have hcomp4 : ((⇑E₄) ∘ ofComplex) ↑τ = E₄ τ := by simp only [Function.comp_apply, ofComplex_apply]
-  have hcomp6 : ((⇑E₆) ∘ ofComplex) ↑τ = E₆ τ := by simp only [Function.comp_apply, ofComplex_apply]
+  have hcomp4 : ((⇑E₄) ∘ ofComplex) ↑τ = E₄ τ := by simp [Function.comp_apply, ofComplex_apply]
+  have hcomp6 : ((⇑E₆) ∘ ofComplex) ↑τ = E₆ τ := by simp [Function.comp_apply, ofComplex_apply]
   have hden : ((⇑E₄ ∘ ofComplex) ↑τ) ^ 3 - ((⇑E₆ ∘ ofComplex) ↑τ) ^ 2 ≠ 0 := by
     rw [hcomp4, hcomp6]; exact E₄_cube_sub_E₆_sq_ne_zero τ
   have hquot := (h4.pow 3).div ((h4.pow 3).sub (h6.pow 2)) hden
@@ -509,7 +509,7 @@ private lemma E2_mul_eq_of_mem_Region {τ : ℍ} (hτ : τ ∈ Region) :
   -- non-vanishing facts
   have hJnorm : 1 < ‖J τ‖ := one_lt_norm_J hτ
   have hJ0 : J τ ≠ 0 := by
-    intro h; rw [h, norm_zero] at hJnorm; norm_num1 at hJnorm
+    intro h; rw [h, norm_zero] at hJnorm; norm_num at hJnorm
   have hden : E₄ τ ^ 3 - E₆ τ ^ 2 ≠ 0 := E₄_cube_sub_E₆_sq_ne_zero τ
   have hE₄0 : E₄ τ ≠ 0 := by
     intro h
@@ -545,7 +545,7 @@ private lemma E2_mul_eq_of_mem_Region {τ : ℍ} (hτ : τ ∈ Region) :
   have hev : (⇑E₄ ∘ ofComplex) =ᶠ[nhds (↑τ : ℂ)]
       fun z => hyp2F1 (((J ∘ ofComplex) z)⁻¹) ^ 4 := by
     filter_upwards [hopen.mem_nhds hmem] with z hz
-    have hz0 : 0 < z.im := lt_trans (by norm_num1) hz
+    have hz0 : 0 < z.im := lt_trans (by norm_num) hz
     have hzR : ofComplex z ∈ Region := by
       rw [ofComplex_apply_of_im_pos hz0]
       exact hz
@@ -638,7 +638,7 @@ theorem thm42 {τ : ℍ} (hτ : τ ∈ Region) :
     refine le_trans (norm_add_le _ _) (le_trans (add_le_add (norm_add_le _ _) le_rfl) ?_)
     rw [norm_pow, norm_mul, norm_mul, Complex.norm_ofNat, norm_pow]
     have h0 : (0 : ℝ) ≤ ‖hyp2F1 (J τ)⁻¹ ^ 2 - 1‖ := norm_nonneg _
-    nlinarith [hb2]
+    nlinarith only [hb2, h0]
   have hE₆b : ‖E₆ τ - 1‖ ≤ 0.199 := norm_E₆_sub_one_le hτ
   have hE₆big : (0.8 : ℝ) < ‖E₆ τ‖ := lemE6 hτ
   have hsub : ‖hyp2F1 (J τ)⁻¹ ^ 6 - E₆ τ‖ < ‖E₆ τ‖ := by

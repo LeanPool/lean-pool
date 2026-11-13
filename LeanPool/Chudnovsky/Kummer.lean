@@ -101,7 +101,7 @@ theorem kummerB_satisfiesPicardFuchs :
   obtain ⟨hznorm, hzim⟩ := hz
   -- Basic numerical facts on the region `S = {1 < ‖z‖, im z ≠ 0}`.
   have hz0 : z ≠ 0 := by
-    intro h; rw [h, norm_zero] at hznorm; exact absurd hznorm (by norm_num only)
+    intro h; rw [h, norm_zero] at hznorm; exact absurd hznorm (by norm_num)
   have hz1 : z ≠ 1 := by
     intro h; rw [h, norm_one] at hznorm; exact absurd hznorm (lt_irrefl 1)
   have h1z : (1 : ℂ) - z ≠ 0 := sub_ne_zero.2 (Ne.symm hz1)
@@ -144,7 +144,7 @@ theorem kummerB_satisfiesPicardFuchs :
     intro w hw
     obtain ⟨hwn, hwim⟩ := hw
     have hw0 : w ≠ 0 := by
-      intro h; rw [h, norm_zero] at hwn; exact absurd hwn (by norm_num only)
+      intro h; rw [h, norm_zero] at hwn; exact absurd hwn (by norm_num)
     have hw1 : w ≠ 1 := by
       intro h; rw [h, norm_one] at hwn; exact lt_irrefl 1 hwn
     have hwslit : w ∈ Complex.slitPlane := Or.inr hwim
@@ -195,7 +195,7 @@ theorem kummerB_satisfiesPicardFuchs :
   rw [heqEv.deriv_eq, hderivKummer z ⟨hznorm, hzim⟩, hHD_D1.deriv]
   simp only [hD1def, kummerB, id_eq, Pi.mul_apply, Pi.neg_apply, Pi.inv_apply, Function.comp_apply]
   rw [eZ1z, eW1z, hF2]
-  field_simp (disch := first | assumption | norm_num1 | positivity)
+  field_simp
   ring
 
 /-- On `Region`, the argument `1/J(τ)` of the hypergeometric function lies in the open unit
@@ -342,7 +342,7 @@ private lemma hasDerivAt_invJ (τ : ℍ) (h4 : E₄ τ ≠ 0) :
   have hq : HasDerivAt
       (fun z => (E₄ (ofComplex z) ^ 3 - E₆ (ofComplex z) ^ 2) / E₄ (ofComplex z) ^ 3) _ ↑τ :=
     hnum.div hden hden0
-  refine hq.congr_deriv (Eq.symm ?_)
+  convert hq using 1
   simp only [Pi.pow_apply, Pi.sub_apply, ofComplex_apply]
   rw [inv_J_eq]
   field_simp
@@ -412,7 +412,7 @@ private lemma hasDerivAt_XtC (τ : ℍ) (hs : E₄ τ ∈ Complex.slitPlane) (h6
     rw [ofComplex_apply]
     exact hs
   have h : HasDerivAt XtC _ ↑τ := (hasDerivAt_E₄C τ).cpow_const (c := (1 / 4 : ℂ)) hsC
-  refine h.congr_deriv (Eq.symm ?_)
+  convert h using 1
   simp only [ofComplex_apply]
   rw [YtC_apply, Complex.cpow_sub _ _ h4, Complex.cpow_one, inv_J_eq]
   field_simp
@@ -436,9 +436,9 @@ private lemma hasDerivAt_YtC (τ : ℍ) (hs : E₄ τ ∈ Complex.slitPlane) (h6
     (12 : ℂ)).mul (hasDerivAt_E₆C τ)
   have hden0 : 12 * (E₄ (ofComplex ↑τ) ^ 3 - E₆ (ofComplex ↑τ) ^ 2) * E₆ (ofComplex ↑τ) ≠ 0 := by
     rw [ofComplex_apply]
-    exact mul_ne_zero (mul_ne_zero (by norm_num only) hB) h6
+    exact mul_ne_zero (mul_ne_zero (by norm_num) hB) h6
   have h : HasDerivAt YtC _ ↑τ := hnum.div hden hden0
-  refine h.congr_deriv (Eq.symm ?_)
+  convert h using 1
   simp only [Pi.pow_apply, Pi.sub_apply, Pi.mul_apply, ofComplex_apply]
   rw [XtC_apply, YtC_apply]
   simp only [m22]
@@ -455,7 +455,7 @@ private lemma hasDerivAt_WrC (τ : ℍ) (hs : E₄ τ ∈ Complex.slitPlane) (h6
   have h : HasDerivAt WrC _ ↑τ :=
     ((hasDerivAt_XhC τ h4 hu).mul (hasDerivAt_YtC τ hs h6)).sub
       ((hasDerivAt_YhC τ h4 h6 hu).mul (hasDerivAt_XtC τ hs h6))
-  refine h.congr_deriv (Eq.symm ?_)
+  convert h using 1
   rw [WrC_apply]
   ring
 
@@ -499,7 +499,7 @@ private lemma deriv_hyp2F1_zero : deriv hyp2F1 0 = 5 / 144 := by
   rw [hat.deriv, ordinaryHypergeometricSeries_apply_eq]
   simp only [ascPochhammer_one, Polynomial.eval_X, Nat.factorial_one, Nat.cast_one, inv_one,
     one_mul, one_pow, smul_eq_mul, mul_one]
-  norm_num only
+  norm_num
 
 private lemma tendsto_YhC : Tendsto (fun τ : ℍ => YhC ↑τ) atImInfty (𝓝 (5 / 144)) := by
   have hF : ContinuousAt (deriv hyp2F1) 0 :=
@@ -608,7 +608,7 @@ private lemma near_one_slitPlane {z : ℂ} (h : ‖z - 1‖ < 1 / 2) : z ∈ Com
 private lemma near_one_ne_zero {z : ℂ} (h : ‖z - 1‖ < 1 / 2) : z ≠ 0 := by
   intro h0
   rw [h0, zero_sub, norm_neg, norm_one] at h
-  norm_num only at h
+  norm_num at h
 
 private lemma re_le_neg_half {z : ℂ} (h : ‖z + 1‖ < 1 / 2) : z.re ≤ -(1 / 2) := by
   have h1 : |(z + 1).re| ≤ ‖z + 1‖ := Complex.abs_re_le_norm _
@@ -683,7 +683,7 @@ private lemma tendsto_vertical {z₀ : ℂ} (h : 0 < z₀.im) :
   exact tendsto_comap_iff.mpr key
 
 /-- **Vanishing of the Wronskian** on `{Im z > A}`: a solution of `D w = M₂₂ w` with
-`Re M₂₂ ≤ -1/2` has nondecreasing squared modulus along vertical lines, so `w → 0` at
+`Re M₂₂ ≤ -1/2` has `‖w‖²·e^{-2πt}` nondecreasing along vertical lines, so `w → 0` at
 `i∞` forces `w = 0`. -/
 private lemma WrC_eq_zero {A : ℝ} (hA : 2 ≤ A)
     (hgood : ∀ σ : ℍ, A ≤ σ.im →
@@ -874,7 +874,7 @@ theorem E₄_eq_hyp2F1_pow_four {τ : ℍ} (hτ : τ ∈ Region) :
     have h := XtC_eq_XhC hA2 hgood hw
     have h4 : E₄ (ofComplex w) = XtC w ^ 4 := by
       rw [show XtC w = E₄ (ofComplex w) ^ (1 / 4 : ℂ) from rfl, ← Complex.cpow_nat_mul,
-        show ((4 : ℕ) : ℂ) * (1 / 4) = 1 by norm_num only, Complex.cpow_one]
+        show ((4 : ℕ) : ℂ) * (1 / 4) = 1 by norm_num, Complex.cpow_one]
     rw [h4, h]
     rfl
   -- both sides are analytic on `S = {Im z > 5/4}`
@@ -890,7 +890,7 @@ theorem E₄_eq_hyp2F1_pow_four {τ : ℍ} (hτ : τ ∈ Region) :
   have hg : AnalyticOnNhd ℂ (fun w => hyp2F1 (J (ofComplex w))⁻¹ ^ 4)
       {w : ℂ | 5 / 4 < w.im} := by
     refine DifferentiableOn.analyticOnNhd (fun w hw => ?_) hSo
-    have hw0 : 0 < w.im := lt_trans (by norm_num only) hw
+    have hw0 : 0 < w.im := lt_trans (by norm_num) hw
     have hR : ofComplex w ∈ Region := by
       change 5 / 4 < (ofComplex w).im
       rw [im_ofComplex hw0]
@@ -913,7 +913,7 @@ theorem E₄_eq_hyp2F1_pow_four {τ : ℍ} (hτ : τ ∈ Region) :
       refine (isOpen_lt continuous_const Complex.continuous_im).mem_nhds ?_
       change A < (((A + 1 : ℝ) : ℂ) * Complex.I).im
       rw [him]
-      linarith only []
+      linarith
     exact Filter.eventuallyEq_of_mem hmem fun w hw => hΩeq w hw
   have heq := hf.eqOn_of_preconnected_of_eventuallyEq hg hSc hz₀S hev
   have hτS : (↑τ : ℂ) ∈ {w : ℂ | 5 / 4 < w.im} := by

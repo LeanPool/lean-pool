@@ -21,7 +21,7 @@ namespace Chudnovsky
 /-- The fourth Bernoulli number, using the known value of `bernoulli'`. -/
 lemma bernoulli_four_value : bernoulli 4 = -1 / 30 := by
   rw [bernoulli, bernoulli'_four]
-  norm_num1
+  norm_num
 
 /-- The sixth Bernoulli number, evaluated from the preceding values. -/
 lemma bernoulli_six_value : bernoulli 6 = 1 / 42 := by

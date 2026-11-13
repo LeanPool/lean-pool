@@ -108,7 +108,7 @@ theorem isIntegral_C_mul_conj {τ : ℍ} {A B C : ℤ}
 `j = 1728·J` is (it is a root of `X³ − j`). -/
 theorem isIntegral_E₄_div_eta_pow (τ : ℍ) (hj : IsIntegral ℤ (1728 * J τ)) :
     IsIntegral ℤ (E₄ τ / ModularForm.eta τ ^ 8) := by
-  refine IsIntegral.of_pow (n := 3) (by norm_num1) ?_
+  refine IsIntegral.of_pow (n := 3) (by norm_num) ?_
   have hΔ : ModularForm.discriminant τ = ModularForm.eta τ ^ 24 := rfl
   have hx : (E₄ τ / ModularForm.eta τ ^ 8) ^ 3 = 1728 * J τ := by
     rw [mul_J_eq, div_pow, show (ModularForm.eta τ ^ 8) ^ 3 = ModularForm.discriminant τ by
@@ -119,18 +119,17 @@ theorem isIntegral_E₄_div_eta_pow (τ : ℍ) (hj : IsIntegral ℤ (1728 * J τ
 `j = 1728·J` is (it is a root of `X² − (j − 1728)`). -/
 theorem isIntegral_E₆_div_eta_pow (τ : ℍ) (hj : IsIntegral ℤ (1728 * J τ)) :
     IsIntegral ℤ (E₆ τ / ModularForm.eta τ ^ 12) := by
-  refine IsIntegral.of_pow (n := 2) (by norm_num1) ?_
+  refine IsIntegral.of_pow (n := 2) (by norm_num) ?_
   have hΔ : ModularForm.discriminant τ = ModularForm.eta τ ^ 24 := rfl
   have hne := discriminant_ne_zero τ
   have hrel := E₄_cube_sub_E₆_sq_eq_discriminant τ
   have h1728 : IsIntegral ℤ (1728 : ℂ) := by
-    rw [show (1728 : ℂ) = algebraMap ℤ ℂ 1728 by simp only [algebraMap_int_eq, eq_intCast,
-      Int.cast_ofNat]]
+    rw [show (1728 : ℂ) = algebraMap ℤ ℂ 1728 by simp]
     exact isIntegral_algebraMap
   have hx : (E₆ τ / ModularForm.eta τ ^ 12) ^ 2 = 1728 * J τ - 1728 := by
     rw [mul_J_eq, div_pow, show (ModularForm.eta τ ^ 12) ^ 2 = ModularForm.discriminant τ by
       rw [hΔ]; ring]
-    field_simp (disch := first | assumption | norm_num1 | positivity)
+    field_simp
     linear_combination -hrel
   rw [hx]
   exact hj.sub h1728
@@ -170,14 +169,14 @@ private lemma latHatUnit_pow4 (τ : ℍ) :
     (latHatUnit τ : ℂ) ^ 4 = (π : ℂ) ^ 4 / 9 * ModularForm.eta τ ^ 8 := by
   have hs4 : ((Real.sqrt 3 : ℝ) : ℂ) ^ 4 = 9 := by
     calc ((Real.sqrt 3 : ℝ) : ℂ) ^ 4 = (((Real.sqrt 3 : ℝ) : ℂ) ^ 2) ^ 2 := by ring
-    _ = 9 := by rw [sqrt3_sq]; norm_num1
+    _ = 9 := by rw [sqrt3_sq]; norm_num
   rw [latHatUnit_val, mul_pow, div_pow, hs4]; ring
 
 private lemma latHatUnit_pow6 (τ : ℍ) :
     (latHatUnit τ : ℂ) ^ 6 = (π : ℂ) ^ 6 / 27 * ModularForm.eta τ ^ 12 := by
   have hs6 : ((Real.sqrt 3 : ℝ) : ℂ) ^ 6 = 27 := by
     calc ((Real.sqrt 3 : ℝ) : ℂ) ^ 6 = (((Real.sqrt 3 : ℝ) : ℂ) ^ 2) ^ 3 := by ring
-    _ = 27 := by rw [sqrt3_sq]; norm_num1
+    _ = 27 := by rw [sqrt3_sq]; norm_num
   rw [latHatUnit_val, mul_pow, div_pow, hs6]; ring
 
 /-- `¼g₂(L̂) = 3·E₄/η⁸` (paper `proofzweistern`). -/
@@ -203,8 +202,7 @@ private lemma isIntegral_latHat_g₂_div_four (τ : ℍ) (hj : IsIntegral ℤ (1
     IsIntegral ℤ ((latHatUnit τ • Lτ τ).g₂ / 4) := by
   rw [latHat_g₂_div_four]
   have h3 : IsIntegral ℤ (3 : ℂ) := by
-    rw [show (3 : ℂ) = algebraMap ℤ ℂ 3 by simp only [algebraMap_int_eq, eq_intCast,
-      Int.cast_ofNat]]; exact isIntegral_algebraMap
+    rw [show (3 : ℂ) = algebraMap ℤ ℂ 3 by simp]; exact isIntegral_algebraMap
   exact h3.mul (isIntegral_E₄_div_eta_pow τ hj)
 
 /-- `¼g₃(L̂)` is an algebraic integer whenever `j = 1728J` is. -/
@@ -212,8 +210,7 @@ private lemma isIntegral_latHat_g₃_div_four (τ : ℍ) (hj : IsIntegral ℤ (1
     IsIntegral ℤ ((latHatUnit τ • Lτ τ).g₃ / 4) := by
   rw [latHat_g₃_div_four]
   have h2 : IsIntegral ℤ (2 : ℂ) := by
-    rw [show (2 : ℂ) = algebraMap ℤ ℂ 2 by simp only [algebraMap_int_eq, eq_intCast,
-      Int.cast_ofNat]]; exact isIntegral_algebraMap
+    rw [show (2 : ℂ) = algebraMap ℤ ℂ 2 by simp]; exact isIntegral_algebraMap
   exact h2.mul (isIntegral_E₆_div_eta_pow τ hj)
 
 /-- Transfer of integrality: since `¼g₂(L̂)` and `¼g₃(L̂)` are algebraic integers (given
@@ -305,8 +302,7 @@ section Lemkapa2
 /-- The lattice is countable (local copy of the private helper in `DivisionValues.lean`). -/
 private lemma countable_lattice_cm (L : PeriodPair) : (↑L.lattice : Set ℂ).Countable := by
   have : Countable ↥L.lattice := countable_of_Lindelof_of_discrete
-  simpa only [Subtype.range_coe_subtype,
-    SetLike.setOfPred_mem_eq] using Set.countable_range (Subtype.val : ↥L.lattice → ℂ)
+  simpa using Set.countable_range (Subtype.val : ↥L.lattice → ℂ)
 
 /-- A signed fraction `k/m` with integral value and `|k| < m` is zero (local copy of the
 private helper in `DivisionValues.lean`). -/
@@ -408,7 +404,7 @@ private lemma zero_mem_cmSet {B C : ℤ} {M : ℕ} [NeZero M] :
 
 /-- `Cτ ∈ L_τ`. -/
 private lemma cm_alpha_mem (τ : ℍ) (C : ℤ) : (C : ℂ) * τ ∈ (Lτ τ).lattice :=
-  PeriodPair.mem_lattice.mpr ⟨0, C, by simp only [Int.cast_zero, Lτ_ω₁, mul_one, Lτ_ω₂, zero_add]⟩
+  PeriodPair.mem_lattice.mpr ⟨0, C, by simp⟩
 
 /-- Multiplication by `α = Cτ` maps the lattice into itself (this is complex
 multiplication: `Cτ·1 = Cτ ∈ L` and `Cτ·τ = −A − Bτ ∈ L`). -/
@@ -480,8 +476,8 @@ private lemma cmSet_exists_add_mem {τ : ℍ} {A B C : ℤ} {M : ℕ}
   have hb1 : x.toNat < M := (Int.toNat_lt hx0).mpr hxM
   have hb2 : (C * y).toNat < M := (Int.toNat_lt hCy0).mpr hCyM
   set v : Fin M × Fin M := (⟨x.toNat, hb1⟩, ⟨(C * y).toNat, hb2⟩) with hvdef
-  have hv1 : ((v.1 : ℕ) : ℤ) = x := by simp only [hvdef, Int.toNat_of_nonneg hx0]
-  have hv2 : ((v.2 : ℕ) : ℤ) = C * y := by simp only [hvdef, Int.toNat_of_nonneg hCy0]
+  have hv1 : ((v.1 : ℕ) : ℤ) = x := by simp [hvdef, Int.toNat_of_nonneg hx0]
+  have hv2 : ((v.2 : ℕ) : ℤ) = C * y := by simp [hvdef, Int.toNat_of_nonneg hCy0]
   refine ⟨v, ?_, ?_⟩
   · -- membership in `cmSet`
     rw [mem_cmSet_iff]
@@ -647,7 +643,7 @@ private lemma mulPoleCM_identity {τ : ℍ} {C : ℤ} {M : ℕ}
     exact ((Lτ τ).weierstrassP_add_coe ((C : ℂ) * τ * (w - z)) ⟨_, hmp⟩).symm
   have hfrac : ((C : ℂ) * τ) ^ 2 * (((C : ℂ) * τ * (w - z)) ^ 2)⁻¹ = ((w - z) ^ 2)⁻¹ := by
     rcases eq_or_ne (w - z) 0 with h | h
-    · simp only [h, mul_zero, ne_eq, OfNat.ofNat_ne_zero, not_false_eq_true, zero_pow, inv_zero]
+    · simp [h]
     · field_simp
   rw [hE1, hE2, hP1, hP2]
   linear_combination -hfrac

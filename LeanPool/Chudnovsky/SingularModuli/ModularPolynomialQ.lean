@@ -454,7 +454,7 @@ theorem Sk_eq_poly_j
       split
       · exact hcR
       · exact R.zero_mem
-    · simp only [natDegree_C, Std.le_refl]
+    · simp [natDegree_C]
     · intro τ; rw [hc τ, eval_C]
   | succ N ih =>
     intro R h hinv hholo hmero
@@ -482,7 +482,7 @@ theorem Sk_eq_poly_j
     · refine (natDegree_add_le _ _).trans ?_
       refine max_le (hP'deg.trans (Nat.le_succ N)) ?_
       refine (natDegree_mul_le).trans ?_
-      simp only [natDegree_C, natDegree_pow, natDegree_X, mul_one, zero_add, Std.le_refl]
+      simp [natDegree_C]
     · intro τ
       rw [eval_add, eval_mul, eval_C, eval_pow, eval_X, ← hP'eval τ]
       simp only [hh'_def]
@@ -725,7 +725,7 @@ private lemma isBoundedAtImInfty_jq_pow (n : ℕ) :
   | succ n ih =>
     have hmul : (fun τ : ℍ ↦ (j τ * q τ) ^ (n + 1))
         = (fun τ : ℍ ↦ (j τ * q τ) ^ n) * (fun τ : ℍ ↦ j τ * q τ) := by
-      funext τ; simp only [j_def, pow_succ, Pi.mul_apply]
+      funext τ; simp [pow_succ]
     rw [hmul]
     exact Filter.BoundedAtFilter.mul ih isBoundedAtImInfty_jq_recon
 
@@ -793,7 +793,7 @@ theorem poleReduction (N : ℕ) (R : Subring ℂ) (h : ℍ → ℂ)
   have hF0 : (qExpansion 1
       (fun τ : ℍ ↦ (h τ - c * (j τ) ^ (N + 1)) * q τ ^ (N + 1))).coeff 0 = 0 := by
     rw [hFqexp, map_sub, PowerSeries.coeff_smul, hcoeffJ0, hcoeffA0]
-    simp only [smul_eq_mul, mul_one, sub_self]
+    simp
   -- the `G`-side hypotheses of `divByQ`
   have hGper : Function.Periodic
       ((fun τ : ℍ ↦ (h τ - c * (j τ) ^ (N + 1)) * q τ ^ N) ∘ ofComplex) 1 :=
@@ -1250,7 +1250,7 @@ lemma esf_mem_polyJ [Fact m.Prime] (l : ℕ) : (fun τ ↦ esf m l τ) ∈ polyJ
         have hN := newton_esf (m := m) l τ
         simp only [Pi.mul_apply, Finset.sum_apply, algebraMap_polyJ_apply]
         push_cast
-        field_simp (disch := first | assumption | norm_num1 | positivity)
+        field_simp
         linear_combination hN
       rw [hfun]
       refine mul_mem (Subalgebra.algebraMap_mem _ _) (sum_mem (fun a ha ↦ ?_))

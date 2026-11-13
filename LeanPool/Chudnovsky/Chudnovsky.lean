@@ -47,9 +47,9 @@ theorem summable_chudnovskyTerm : Summable fun n : ℕ ↦ (chudnovskyTerm n : �
   -- Comparison against `(545140134·n + 13591409)·rⁿ` with `r = 1728/640320³ < 1`.
   set r : ℝ := 1728 / 640320 ^ 3 with hr_def
   have hr : ‖r‖ < 1 := by
-    rw [Real.norm_eq_abs, abs_of_nonneg (by positivity)]; rw [hr_def]; norm_num1
+    rw [Real.norm_eq_abs, abs_of_nonneg (by positivity)]; rw [hr_def]; norm_num
   have hg1 : Summable (fun n : ℕ => (n : ℝ) * r ^ n) := by
-    simpa only [pow_one] using summable_pow_mul_geometric_of_norm_lt_one 1 hr
+    simpa using summable_pow_mul_geometric_of_norm_lt_one 1 hr
   have hg0 : Summable (fun n : ℕ => r ^ n) := summable_geometric_of_norm_lt_one hr
   have hg : Summable (fun n : ℕ => (545140134 * (n : ℝ) + 13591409) * r ^ n) := by
     have hrw : (fun n : ℕ => (545140134 * (n : ℝ) + 13591409) * r ^ n)
@@ -72,7 +72,7 @@ theorem summable_chudnovskyTerm : Summable fun n : ℕ ↦ (chudnovskyTerm n : �
   have key : ((6*n)! : ℝ) ≤ 1728^n * (((3*n)! : ℝ) * (n ! )^3) := by
     have h := factorial_six_bound n
     calc ((6*n)! : ℝ) ≤ ((1728^n * ((3*n)! * (n ! )^3) : ℕ) : ℝ) := by exact_mod_cast h
-      _ = 1728^n * (((3*n)! : ℝ) * (n ! )^3) := by push_cast; ac_rfl
+      _ = 1728^n * (((3*n)! : ℝ) * (n ! )^3) := by push_cast; ring
   have hApos : (0:ℝ) ≤ 545140134*(n:ℝ)+13591409 := by positivity
   have hrpow : r^n * (640320:ℝ)^(3*n) = 1728^n := by
     rw [hr_def, div_pow, ← pow_mul,
@@ -80,7 +80,7 @@ theorem summable_chudnovskyTerm : Summable fun n : ℕ ↦ (chudnovskyTerm n : �
   rw [show (545140134 * (n:ℝ) + 13591409) * r ^ n
         * (((3*n)! : ℝ) * (n ! )^3 * 640320^(3*n))
       = (545140134 * (n:ℝ) + 13591409) * (r ^ n * 640320^(3*n))
-          * (((3*n)! : ℝ) * (n ! )^3) from by ac_rfl, hrpow]
+          * (((3*n)! : ℝ) * (n ! )^3) from by ring, hrpow]
   linear_combination mul_le_mul_of_nonneg_left key hApos
 
 /-- The glue lemma: Milla's normalization `√(640320³)/(12π) = ∑ …` implies Mathlib's
@@ -101,8 +101,8 @@ private theorem chudnovsky_glue
       rw [neg_pow, ← pow_mul]
     have h1 : ((3 * n)! : ℂ) ≠ 0 := by exact_mod_cast Nat.factorial_ne_zero _
     have h2 : ((n ! : ℕ) : ℂ) ≠ 0 := by exact_mod_cast Nat.factorial_ne_zero _
-    have h3 : (640320 : ℂ) ^ (3 * n) ≠ 0 := pow_ne_zero _ (by norm_num only)
-    have h4 : ((-1 : ℂ)) ^ n ≠ 0 := pow_ne_zero _ (by norm_num only)
+    have h3 : (640320 : ℂ) ^ (3 * n) ≠ 0 := pow_ne_zero _ (by norm_num)
+    have h4 : ((-1 : ℂ)) ^ n ≠ 0 := pow_ne_zero _ (by norm_num)
     simp only [chudnovskyTerm, chudnovskyNum, chudnovskyDenom]
     rw [hpow]
     push_cast
@@ -118,8 +118,8 @@ private theorem chudnovsky_glue
   -- `640320^(3/2) = √(640320³)`.
   have hrpow : (640320 : ℝ) ^ (3 / 2 : ℝ) = Real.sqrt (640320 ^ 3) := by
     rw [Real.sqrt_eq_rpow, show ((640320 : ℝ) ^ 3) = (640320 : ℝ) ^ ((3 : ℕ) : ℝ) from
-      (Real.rpow_natCast _ 3).symm, ← Real.rpow_mul (by norm_num only)]
-    norm_num only
+      (Real.rpow_natCast _ 3).symm, ← Real.rpow_mul (by norm_num)]
+    norm_num
   have hs : Real.sqrt (640320 ^ 3) ≠ 0 := by positivity
   have hpi : (π : ℝ) ≠ 0 := Real.pi_ne_zero
   -- Assemble.

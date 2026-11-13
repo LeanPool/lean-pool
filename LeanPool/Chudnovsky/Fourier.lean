@@ -88,7 +88,7 @@ private lemma pi_C_ne_zero : (π : ℂ) ≠ 0 := by exact_mod_cast Real.pi_ne_ze
 theorem eta₁_Lτ (τ : ℍ) : (Lτ τ).eta₁ = (π : ℂ) ^ 2 / 3 * E2 τ := by
   have hz : (2 * riemannZeta 2 : ℂ) ≠ 0 := by
     rw [riemannZeta_two]
-    exact mul_ne_zero two_ne_zero (div_ne_zero (pow_ne_zero 2 pi_C_ne_zero) (by norm_num1))
+    exact mul_ne_zero two_ne_zero (div_ne_zero (pow_ne_zero 2 pi_C_ne_zero) (by norm_num))
   have hE2 : G2 τ = 2 * riemannZeta 2 * E2 τ := by
     have hdef : E2 τ = (1 / (2 * riemannZeta 2)) • G2 τ := rfl
     rw [hdef, smul_eq_mul, ← mul_assoc, mul_one_div, div_self hz, one_mul]
@@ -96,14 +96,14 @@ theorem eta₁_Lτ (τ : ℍ) : (Lτ τ).eta₁ = (π : ℂ) ^ 2 / 3 * E2 τ := 
 
 /-- `g₂(L_τ) = (4/3)·π⁴·E₄(τ)` (paper Thm. `fouriertheorem`). -/
 theorem g₂_Lτ (τ : ℍ) : (Lτ τ).g₂ = 4 / 3 * (π : ℂ) ^ 4 * E₄ τ := by
-  rw [PeriodPair.g₂, G_Lτ_eq τ (by norm_num1), eisensteinSeries_eq_two_E τ (by norm_num1)]
-  rw [show ((4 : ℕ) : ℂ) = 4 by norm_num1, riemannZeta_four]
+  rw [PeriodPair.g₂, G_Lτ_eq τ (by norm_num), eisensteinSeries_eq_two_E τ (by norm_num)]
+  rw [show ((4 : ℕ) : ℂ) = 4 by norm_num, riemannZeta_four]
   ring
 
 /-- `g₃(L_τ) = (8/27)·π⁶·E₆(τ)` (paper Thm. `fouriertheorem`). -/
 theorem g₃_Lτ (τ : ℍ) : (Lτ τ).g₃ = 8 / 27 * (π : ℂ) ^ 6 * E₆ τ := by
-  rw [PeriodPair.g₃, G_Lτ_eq τ (by norm_num1), eisensteinSeries_eq_two_E τ (by norm_num1)]
-  rw [show ((6 : ℕ) : ℂ) = 6 by norm_num1, riemannZeta_six]
+  rw [PeriodPair.g₃, G_Lτ_eq τ (by norm_num), eisensteinSeries_eq_two_E τ (by norm_num)]
+  rw [show ((6 : ℕ) : ℂ) = 6 by norm_num, riemannZeta_six]
   ring
 
 /-- `Δ(L_τ) = (2π)¹²/1728·(E₄(τ)³ - E₆(τ)²)` (paper Thm. `fouriertheorem`). -/
@@ -129,8 +129,7 @@ on the connected set `Lᶜ`, hence is constant, and the constant is `-1` by oddn
 /-- The lattice is a countable subset of `ℂ`. -/
 private lemma countable_lattice (L : PeriodPair) : (↑L.lattice : Set ℂ).Countable := by
   have : Countable ↥L.lattice := countable_of_Lindelof_of_discrete
-  simpa only [Subtype.range_coe_subtype,
-    SetLike.setOfPred_mem_eq] using Set.countable_range (Subtype.val : ↥L.lattice → ℂ)
+  simpa using Set.countable_range (Subtype.val : ↥L.lattice → ℂ)
 
 /-- The complement of the lattice is dense in `ℂ`. -/
 private lemma dense_compl_lattice (L : PeriodPair) : Dense (↑L.lattice : Set ℂ)ᶜ :=
@@ -362,7 +361,7 @@ private lemma one_sub_qpow_ne_zero {q : ℂ} (hq : ‖q‖ < 1) (k : ℕ) :
 
 private lemma multipliable_qProd_inv_nat {q : ℂ} (hq : ‖q‖ < 1) :
     Multipliable (fun k : ℕ => (1 - q ^ (k + 1))⁻¹) := by
-  have hpos : 0 < 1 - ‖q‖ := by linarith only [hq]
+  have hpos : 0 < 1 - ‖q‖ := by linarith
   have hsum : Summable (fun k : ℕ => q ^ (k + 1) * (1 - q ^ (k + 1))⁻¹) := by
     refine Summable.of_norm_bounded
       (g := fun k : ℕ => ‖q‖ ^ (k + 1) * (1 - ‖q‖)⁻¹)
@@ -384,7 +383,7 @@ private lemma combined_eq_Gfun {q : ℂ} (hq : ‖q‖ < 1) (w : ℂ) :
   have hA := multipliable_qProd_nat hq w
   have hB := multipliable_qProd_nat hq w⁻¹
   have hD : Multipliable (fun k : ℕ => 1 - q ^ (k + 1)) :=
-    (multipliable_qProd_nat hq 1).congr (fun k => by ac_rfl)
+    (multipliable_qProd_nat hq 1).congr (fun k => by ring)
   have hDsq : Multipliable (fun k : ℕ => (1 - q ^ (k + 1)) ^ 2) :=
     (hD.mul hD).congr (fun k => (sq _).symm)
   have hDinv := multipliable_qProd_inv_nat hq
@@ -394,7 +393,7 @@ private lemma combined_eq_Gfun {q : ℂ} (hq : ‖q‖ < 1) (w : ℂ) :
       (1 - q ^ (k + 1) * w) * (1 - q ^ (k + 1) * w⁻¹) / (1 - q ^ (k + 1)) ^ 2) :=
     ((hA.mul hB).mul hEsq).congr (fun k => by rw [div_eq_mul_inv])
   have hqP1 : qProd q 1 = ∏' k : ℕ, (1 - q ^ (k + 1)) := by
-    simp only [qProd]; exact tprod_congr (fun k => by ac_rfl)
+    simp only [qProd]; exact tprod_congr (fun k => by ring)
   -- `P · ∏'D² = Q(w)·Q(w⁻¹)`
   have hcomb : (fun k : ℕ =>
         (1 - q ^ (k + 1) * w) * (1 - q ^ (k + 1) * w⁻¹) / (1 - q ^ (k + 1)) ^ 2
@@ -558,7 +557,7 @@ private lemma qProd_qz_ne_zero (τ : ℍ) {z : ℂ} (hz : z ∉ (Lτ τ).lattice
 
 private lemma qProd_qzinv_ne_zero (τ : ℍ) {z : ℂ} (hz : z ∉ (Lτ τ).lattice) :
     qProd (q τ) (exp (2 * (π : ℂ) * I * z))⁻¹ ≠ 0 := by
-  have hnegz : -z ∉ (Lτ τ).lattice := fun hc => hz (by simpa only [neg_neg] using neg_mem hc)
+  have hnegz : -z ∉ (Lτ τ).lattice := fun hc => hz (by simpa using neg_mem hc)
   exact qProd_ne_zero (norm_q_lt_one τ) (fun k => by
     rw [qpow_qzinv_eq]; exact exp_add_lattice_ne_one τ hnegz ((k : ℤ) + 1))
 
@@ -578,7 +577,7 @@ private lemma gfun_ne_zero (τ : ℍ) {z : ℂ} (hz : z ∉ (Lτ τ).lattice) : 
   have hqz1 : exp (2 * (π : ℂ) * I * z) - 1 ≠ 0 := by
     rw [sub_ne_zero]
     have := exp_add_lattice_ne_one τ hz 0
-    simpa only [ne_eq, Int.cast_zero, zero_mul, zero_add] using this
+    simpa using this
   simp only [gfun]
   exact mul_ne_zero (div_ne_zero hqz1 h2pi) (Gfun_ne_zero τ hz)
 

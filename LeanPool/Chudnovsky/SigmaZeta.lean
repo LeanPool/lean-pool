@@ -81,14 +81,14 @@ private lemma weierstrassZetaTerm_eq (z w : ℂ) (hw : w ≠ 0) (hzw : z ≠ w) 
     weierstrassZetaTerm z w = z ^ 2 / (w ^ 2 * (z - w)) := by
   have h1 : z - w ≠ 0 := sub_ne_zero.mpr hzw
   rw [weierstrassZetaTerm]
-  field_simp (disch := first | assumption | norm_num1 | positivity)
+  field_simp
   ring
 
 /-- Summability of `‖ω‖⁻³` over the nonzero lattice points. -/
 private lemma summable_norm_rpow_neg_three :
     Summable (fun l : {l : L.lattice // l ≠ 0} ↦ ‖(l.1 : ℂ)‖ ^ (-3 : ℝ)) := by
   have h : (-3 : ℝ) < -(Module.finrank ℤ L.lattice : ℝ) := by
-    rw [L.finrank_lattice]; norm_num1
+    rw [L.finrank_lattice]; norm_num
   exact (ZLattice.summable_norm_rpow L.lattice (-3) h).comp_injective Subtype.val_injective
 
 /-- All but finitely many nonzero lattice points have norm `≥ r`. -/

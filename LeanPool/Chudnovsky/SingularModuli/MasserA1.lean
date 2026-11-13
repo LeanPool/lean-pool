@@ -88,7 +88,7 @@ lemma two_tau_sub_one_ne_zero : 2 * (τ₁₆₃ : ℂ) - 1 ≠ 0 := by
   intro h
   have := two_tau_sub_one_sq
   rw [h] at this
-  norm_num1 at this
+  norm_num at this
 
 /-- The trace-zero fixing matrix `Λ = !![1, −82; 2, −1]` as an element of `GL (Fin 2) ℝ`
 (determinant `163 > 0`). -/
@@ -99,7 +99,7 @@ def LamGL : GL (Fin 2) ℝ :=
 
 lemma LamGL_det_pos : 0 < (LamGL).det.val := by
   rw [Matrix.GeneralLinearGroup.val_det_apply, val_LamGL, Matrix.det_fin_two_of]
-  norm_num1
+  norm_num
 
 /-- **`Λ` fixes `τ₁₆₃`** as a Möbius transformation: `(τ − 82)/(2τ − 1) = τ`. -/
 lemma LamGL_smul_eq : LamGL • τ₁₆₃ = τ₁₆₃ := by
@@ -140,11 +140,11 @@ lemma J_τ₁₆₃_ne_zero : J τ₁₆₃ ≠ 0 := by
   have h := one_lt_norm_J τ₁₆₃_mem_Region
   intro hc
   rw [hc, norm_zero] at h
-  linarith only [h]
+  linarith
 
 /-- `j₀ := 1728·J(τ₁₆₃) ≠ 0`. -/
 lemma j₀_ne_zero : (1728 : ℂ) * J τ₁₆₃ ≠ 0 :=
-  mul_ne_zero (by norm_num1) J_τ₁₆₃_ne_zero
+  mul_ne_zero (by norm_num) J_τ₁₆₃_ne_zero
 
 /-- `j₀ ≠ 1728`: `J(τ₁₆₃) ≠ 1` since `‖J(τ₁₆₃)‖ > 1`. -/
 lemma j₀_ne_1728 : (1728 : ℂ) * J τ₁₆₃ ≠ 1728 := by
@@ -174,10 +174,10 @@ lemma E₄_τ₁₆₃_ne_zero : E₄ τ₁₆₃ ≠ 0 := by
 to fill its `s₂_τ₁₆₃_rational` pin — importing it here would be a cycle). -/
 lemma j₀_rational : ∃ r : ℚ, (1728 : ℂ) * J τ₁₆₃ = (r : ℂ) := by
   have hint : IsIntegral ℤ ((1728 : ℂ) * J τ₁₆₃) := by
-    have : Fact (Nat.Prime 41) := ⟨by norm_num1⟩
-    have : NeZero (41 : ℕ) := ⟨by norm_num1⟩
+    have : Fact (Nat.Prime 41) := ⟨by norm_num⟩
+    have : NeZero (41 : ℕ) := ⟨by norm_num⟩
     obtain ⟨PhiZ, hPhi⟩ := exists_PhiZ_closed (m := 41)
-    obtain ⟨i, hi⟩ := cm_coset_rel (m := 41) 0 (by norm_num1)
+    obtain ⟨i, hi⟩ := cm_coset_rel (m := 41) 0 (by norm_num)
     exact isIntegral_j_of_cm hPhi hi.symm
   exact j_τ₁₆₃_rational_of j_surjective hint
 
@@ -237,7 +237,7 @@ theorem masser_s₂_rational_of
   have hrjne : (rj : ℚ) - 1728 ≠ 0 := by
     rw [sub_ne_zero]
     intro hc
-    exact j₀_ne_1728 (by rw [hrj, hc]; norm_num1)
+    exact j₀_ne_1728 (by rw [hrj, hc]; norm_num)
   refine ⟨3 * rj * γ + 4 + 3 * rj / (rj - 1728), ?_⟩
   rw [key]
   push_cast
@@ -635,13 +635,13 @@ private lemma masser_F_vanishes {z : ℂ} (hz : 0 < z.im) :
 
 private lemma masser_L1 : (163 : ℂ) / (2 * (τ₁₆₃ : ℂ) - 1) ^ 2 = -1 := by
   rw [two_tau_sub_one_sq]
-  norm_num1
+  norm_num
 
 private lemma masserGD_tau_ne_zero : masserGD (τ₁₆₃ : ℂ) ≠ 0 := by
   rw [masserGD_tau]
   refine div_ne_zero (mul_ne_zero (neg_ne_zero.mpr two_pi_I_ne_zero) ?_)
     (E₄_cube_sub_E₆_sq_ne_zero τ₁₆₃)
-  exact mul_ne_zero (mul_ne_zero (by norm_num1) (pow_ne_zero 2 E₄_τ₁₆₃_ne_zero)) E₆_τ₁₆₃_ne_zero
+  exact mul_ne_zero (mul_ne_zero (by norm_num) (pow_ne_zero 2 E₄_τ₁₆₃_ne_zero)) E₆_τ₁₆₃_ne_zero
 
 /-- **The first- and second-order Taylor relations** extracted from `F ≡ 0` at `τ₁₆₃`:
 `β₁₀ = β₀₁` (using `Λ′(τ) = −1`, `g′(τ) ≠ 0`) and Masser's identity (105) in the raw form
@@ -658,7 +658,7 @@ private lemma masser_relations :
     intro z hz
     have h1 := hasDerivAt_cj (masserLam_im_pos hz)
     have h2 := hasDerivAt_masserLam (two_mul_sub_one_ne_zero hz)
-    simpa only [Function.comp_def] using h1.comp z h2
+    simpa [Function.comp_def] using h1.comp z h2
   have hv : ∀ z : ℂ, 0 < z.im → HasDerivAt cj (masserGD z) z := fun z hz ↦ hasDerivAt_cj hz
   have hu' : HasDerivAt (fun z ↦ masserGD (masserLam z) * (163 / (2 * z - 1) ^ 2))
       (masserG2 + masserGD (τ₁₆₃ : ℂ) * (4 / (2 * (τ₁₆₃ : ℂ) - 1))) (τ₁₆₃ : ℂ) := by
@@ -666,10 +666,9 @@ private lemma masser_relations :
       rw [masserLam_tau]; exact hasDerivAt_masserGD
     have h1 : HasDerivAt (fun z ↦ masserGD (masserLam z))
         (masserG2 * (163 / (2 * (τ₁₆₃ : ℂ) - 1) ^ 2)) (τ₁₆₃ : ℂ) := by
-      simpa only [Function.comp_def] using hgd.comp _ (hasDerivAt_masserLam htau_ne)
+      simpa [Function.comp_def] using hgd.comp _ (hasDerivAt_masserLam htau_ne)
     have hlin : HasDerivAt (fun w : ℂ ↦ 2 * w - 1) 2 (τ₁₆₃ : ℂ) := by
-      simpa only [hasDerivAt_sub_const_iff, id_eq,
-        mul_one] using ((hasDerivAt_id ((τ₁₆₃ : ℂ))).const_mul (2 : ℂ)).sub_const 1
+      simpa using ((hasDerivAt_id ((τ₁₆₃ : ℂ))).const_mul (2 : ℂ)).sub_const 1
     have hdiv := (hasDerivAt_const ((τ₁₆₃ : ℂ)) (163 : ℂ)).fun_div (hlin.fun_pow 2)
       (pow_ne_zero 2 htau_ne)
     refine (h1.fun_mul hdiv).congr_deriv ?_
@@ -785,7 +784,7 @@ private lemma masser_lemmaA1 {i : Option (ZMod 163)} (hi : i ≠ some (81 : ZMod
     have hj : j (AInf 163 • τ₁₆₃) = j τ₁₆₃ := by rw [← f_none]; exact h
     obtain ⟨γ, hγ⟩ := j_injective_mod_Γ hj
     obtain ⟨hfix, hdet⟩ := masser_fixes_of_coset (e := 163) (f := 0) (g := 1) γ
-      (by rw [coe_AInf_smul]; push_cast; ring) (by norm_num1) hγ.symm
+      (by rw [coe_AInf_smul]; push_cast; ring) (by norm_num) hγ.symm
     rcases masser_fixes_pm hfix (by linear_combination hdet) with ⟨hp, _, _, _⟩ | ⟨hp, _, _, _⟩
     all_goals omega
   | some b =>
@@ -793,7 +792,7 @@ private lemma masser_lemmaA1 {i : Option (ZMod 163)} (hi : i ≠ some (81 : ZMod
     have hj : j (Acol 163 (b.val : ℤ) • τ₁₆₃) = j τ₁₆₃ := by rw [← f_some]; exact h
     obtain ⟨γ, hγ⟩ := j_injective_mod_Γ hj
     obtain ⟨hfix, hdet⟩ := masser_fixes_of_coset (e := 1) (f := (b.val : ℤ)) (g := 163) γ
-      (by rw [coe_Acol_smul]; push_cast; ring) (by norm_num1) hγ.symm
+      (by rw [coe_Acol_smul]; push_cast; ring) (by norm_num) hγ.symm
     have hvlt : (b.val : ℤ) < 163 := by exact_mod_cast ZMod.val_lt b
     have hvnn : (0 : ℤ) ≤ (b.val : ℤ) := Int.natCast_nonneg _
     have hval : (b.val : ℤ) = 81 := by
@@ -840,7 +839,7 @@ private lemma mβ10_ne_zero : mβ10 ≠ 0 := by
     intro i hi
     exact sub_ne_zero.mpr (Ne.symm (masser_lemmaA1 (Finset.mem_erase.mp hi).1))
   intro h0
-  exact hne (by rw [h0]; norm_num1)
+  exact hne (by rw [h0]; norm_num)
 
 /-! ### The gate and the unconditional theorem -/
 
@@ -871,7 +870,7 @@ theorem masser_gate : ∃ γ : ℚ, E₂star τ₁₆₃
   push_cast
   field_simp at hrel ⊢
   have hpre : ((π : ℝ) : ℂ) * 1728 * E₄ τ₁₆₃ ≠ 0 :=
-    mul_ne_zero (mul_ne_zero hπ (by norm_num1)) h4
+    mul_ne_zero (mul_ne_zero hπ (by norm_num)) h4
   have hrel2 : 2 ^ 2 * (((mβ20 : ℚ) : ℂ) - 2 * ((mβ11 : ℚ) : ℂ) + ((mβ02 : ℚ) : ℂ))
         * ((π : ℝ) : ℂ) * Complex.I ^ 2 * 1728 * E₄ τ₁₆₃ ^ 3 * E₆ τ₁₆₃ ^ 2 * 3
         * ((τ₁₆₃.im : ℝ) : ℂ)

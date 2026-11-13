@@ -72,7 +72,7 @@ theorem notMem_lattice_of_mem_fund {z : ℂ} (hz : z ∈ L.fundamentalParallelog
   rw [mem_lattice] at hlat
   obtain ⟨m, n, hmn⟩ := hlat
   have hmn' : (s : ℂ) * L.ω₁ + (t : ℂ) * L.ω₂ = (m : ℂ) * L.ω₁ + (n : ℂ) * L.ω₂ := by
-    rw [hmn]; simp only [Complex.real_smul]
+    rw [hmn]; simp [Complex.real_smul]
   have key : (s - (m : ℝ)) • L.ω₁ + (t - (n : ℝ)) • L.ω₂ = 0 := by
     simp only [sub_smul, Complex.real_smul]
     push_cast
@@ -94,7 +94,7 @@ theorem notMem_lattice_of_mem_fund {z : ℂ} (hz : z ∈ L.fundamentalParallelog
     omega
   apply hz0
   rw [← hs, ← ht, hm0, hn0]
-  simp only [Int.cast_zero, zero_smul, add_zero]
+  simp
 
 /-- `℘ - c` has a pole of order `2` at each lattice point. -/
 theorem meromorphicOrderAt_weierstrassP_sub {c : ℂ} {l₀ : ℂ} (h : l₀ ∈ L.lattice) :
@@ -139,8 +139,7 @@ theorem sum_untop₀_meromorphicOrderAt_le_two (c : ℂ) (A : Finset ℂ)
   have hLiou : ∑ z ∈ T, (meromorphicOrderAt f z).untop₀ = 0 :=
     hell.sum_meromorphicOrderAt_eq_zero h0
   have hfund0 : (0 : ℂ) ∈ L.fundamentalParallelogram :=
-    ⟨0, Set.left_mem_Ico.mpr zero_lt_one, 0, Set.left_mem_Ico.mpr zero_lt_one, by simp only [
-      zero_smul, add_zero]⟩
+    ⟨0, Set.left_mem_Ico.mpr zero_lt_one, 0, Set.left_mem_Ico.mpr zero_lt_one, by simp⟩
   have hord0 : meromorphicOrderAt f (0 : ℂ) = -2 := by
     rw [hf_def, L.meromorphicOrderAt_weierstrassP_sub L.lattice.zero_mem]
   have h0T : (0 : ℂ) ∈ T := (hmemT 0).mpr ⟨hfund0, by rw [hord0]; decide⟩
@@ -157,7 +156,7 @@ theorem sum_untop₀_meromorphicOrderAt_le_two (c : ℂ) (A : Finset ℂ)
     refine ⟨hane, (hmemT a).mpr ⟨hAf a ha, ?_⟩⟩
     have hAn : AnalyticAt ℂ f a := by
       rw [hf_def]; have := L.analyticOnNhd_weierstrassP a (hAl a ha); fun_prop
-    have hfa : f a = 0 := by rw [hf_def]; simp only [hAz a ha, sub_self]
+    have hfa : f a = 0 := by rw [hf_def]; simp [hAz a ha]
     rw [hAn.meromorphicOrderAt_eq]
     intro hcontra
     exact hAn.analyticOrderAt_ne_zero.mpr hfa (ENat.map_natCast_eq_zero.mp hcontra)
@@ -182,14 +181,14 @@ theorem two_le_untop₀_meromorphicOrderAt {c : ℂ} {a : ℂ} (ha : a ∉ L.lat
   set f : ℂ → ℂ := fun z => ℘[L] z - c with hf_def
   have hAn : AnalyticAt ℂ f a := by
     rw [hf_def]; have := L.analyticOnNhd_weierstrassP a ha; fun_prop
-  have hfa : f a = 0 := by rw [hf_def]; simp only [hc, sub_self]
+  have hfa : f a = 0 := by rw [hf_def]; simp [hc]
   have hderiv' : deriv f a = 0 := by
     rw [hf_def, deriv_sub_const, L.deriv_weierstrassP]; exact hderiv
   have h2 : (2 : ℕ) ≤ analyticOrderAt f a := by
     rw [natCast_le_analyticOrderAt_iff_iteratedDeriv_eq_zero hAn]
     intro i hi
     interval_cases i
-    · simpa only [iteratedDeriv_zero] using hfa
+    · simpa [iteratedDeriv_zero] using hfa
     · rw [iteratedDeriv_one]; exact hderiv'
   have hne : meromorphicOrderAt f a ≠ ⊤ := by
     have hmero : Meromorphic f := by rw [hf_def]; fun_prop
@@ -408,7 +407,7 @@ theorem derivWeierstrassP_eq_zero_iff {z : ℂ} (hz : z ∉ L.lattice) :
       rw [hderiv0] at h
       have h4 : (4 : ℂ) * ((℘[L] z - L.e₁) * (℘[L] z - L.e₂) * (℘[L] z - L.e₃)) = 0 := by
         linear_combination -h
-      exact (mul_eq_zero.mp h4).resolve_left (by norm_num1)
+      exact (mul_eq_zero.mp h4).resolve_left (by norm_num)
     -- If `℘ p = e_k` but `p ≠ ω_k/2`, we get 4 zeros vs 2 poles, contradiction.
     have finish : ∀ q ω : ℂ, ω ∈ L.lattice → q = ω / 2 →
         q ∈ L.fundamentalParallelogram → q ∉ L.lattice → ℘'[L] q = 0 →

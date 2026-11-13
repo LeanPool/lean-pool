@@ -150,7 +150,7 @@ private lemma dvd_val_add [NeZero m] (b : ZMod m) (c : ℤ) :
     (m : ℤ) ∣ ((b.val : ℤ) + c) - ((b + (c : ZMod m)).val : ℤ) := by
   rw [← ZMod.intCast_zmod_eq_zero_iff_dvd]
   push_cast [ZMod.natCast_val, ZMod.intCast_cast, ZMod.ringHom_map_cast]
-  simp only [ZMod.cast_id', id_eq, dvd_refl, ZMod.cast_add, ZMod.cast_intCast, sub_self]
+  simp
 
 /-! ## The `T`-permutation
 
@@ -213,12 +213,12 @@ def sSfun (m : ℕ) [Fact m.Prime] : Option (ZMod m) → Option (ZMod m)
 lemma sSfun_involutive [Fact m.Prime] : Function.Involutive (sSfun m) := by
   intro i
   cases i with
-  | none => simp only [sSfun, ↓reduceIte]
+  | none => simp [sSfun]
   | some b =>
     by_cases hb : b = 0
-    · simp only [sSfun, hb, ↓reduceIte]
+    · simp [sSfun, hb]
     · have hb' : -b⁻¹ ≠ 0 := neg_ne_zero.mpr (inv_ne_zero hb)
-      simp only [sSfun, hb, ↓reduceIte, hb', inv_neg, inv_inv, neg_neg]
+      simp [sSfun, hb, hb', inv_neg, inv_inv]
 
 /-- The `S`-permutation as an `Equiv.Perm`. -/
 def σS (m : ℕ) [Fact m.Prime] : Equiv.Perm (Option (ZMod m)) := sSfun_involutive.toPerm
@@ -242,16 +242,14 @@ lemma f_S_smul [Fact m.Prime] (i : Option (ZMod m)) (τ : ℍ) :
   | some b =>
     by_cases hb : b = 0
     · subst hb
-      have htarget : σS m (some (0 : ZMod m)) = none := by simp only [σS,
-        Function.Involutive.coe_toPerm, sSfun, ↓reduceIte]
+      have htarget : σS m (some (0 : ZMod m)) = none := by simp [σS, sSfun]
       rw [f_some, j_smul_S_mul, htarget, f_none]
       -- matrix identity  Acol 0 · S = S · AInf
       refine j_matrix_transfer ModularGroup.S _ (AInf m) τ ?_
       apply Matrix.GeneralLinearGroup.ext
       simp [Fin.forall_fin_two, val_AInf, val_Acol, Matrix.mul_apply, Fin.sum_univ_two,
         ModularGroup.coe_S]
-    · have htarget : σS m (some b) = some (-b⁻¹) := by simp only [σS,
-      Function.Involutive.coe_toPerm, sSfun, hb, ↓reduceIte]
+    · have htarget : σS m (some b) = some (-b⁻¹) := by simp [σS, sSfun, hb]
       rw [f_some, j_smul_S_mul, htarget, f_some]
       -- integers  B = b.val,  B' = (-b⁻¹).val,  and the quotient q with  B·B' + 1 = m·q
       set B : ℤ := (b.val : ℤ) with hB

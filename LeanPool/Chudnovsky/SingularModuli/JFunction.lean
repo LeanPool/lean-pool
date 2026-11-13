@@ -306,7 +306,7 @@ theorem qExpansion_discriminant_int :
   have h1 := congrArg (PowerSeries.coeff m) hsub
   rw [map_smul, smul_eq_mul, PowerSeries.coeff_map, deltaInt_spec, map_mul, map_ofNat] at h1
   rw [PowerSeries.coeff_map]
-  exact mul_left_cancel₀ (by norm_num1 : (1728 : ℂ) ≠ 0) h1
+  exact mul_left_cancel₀ (by norm_num : (1728 : ℂ) ≠ 0) h1
 
 /-- `Δ` vanishes at the cusp: constant q-expansion coefficient `0`. -/
 theorem deltaInt_coeff_zero : PowerSeries.coeff 0 deltaInt = 0 := by
@@ -348,7 +348,7 @@ theorem constantCoeff_jqInt : PowerSeries.constantCoeff jqInt = 1 := by
   have h4 : PowerSeries.constantCoeff E4Z = 1 := by
     simp [E4Z, sigmaPS, PowerSeries.constantCoeff_mk]
   rw [h4]
-  simp only [one_pow, inv_one, Units.val_one, mul_one]
+  simp
 
 /-! ### The analytic side: `τ ↦ q τ` and `τ ↦ j τ · q τ` -/
 
@@ -367,7 +367,7 @@ lemma mdifferentiable_q : MDiff (fun τ : ℍ ↦ q τ) := by
   have heq : (fun τ : ℍ ↦ q τ)
       = (fun z : ℂ ↦ Complex.exp (2 * ↑π * Complex.I * z)) ∘ (fun τ : ℍ ↦ (τ : ℂ)) := by
     funext τ
-    simp only [q_eq, Function.comp]
+    simp [q_eq, Function.comp]
   rw [heq]
   exact Differentiable.comp_mdifferentiable (by fun_prop) mdifferentiable_coe
 

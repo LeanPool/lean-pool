@@ -283,7 +283,7 @@ private lemma finite_fundamentalParallelogram_inter {L : PeriodPair} {S : Set �
         ≤ ‖s • L.ω₁‖ + ‖t • L.ω₂‖ := norm_add_le _ _
       _ = |s| * ‖L.ω₁‖ + |t| * ‖L.ω₂‖ := by
           rw [norm_smul, norm_smul, Real.norm_eq_abs, Real.norm_eq_abs]
-      _ ≤ ‖L.ω₁‖ + ‖L.ω₂‖ := by nlinarith [norm_nonneg L.ω₁, norm_nonneg L.ω₂]
+      _ ≤ ‖L.ω₁‖ + ‖L.ω₂‖ := by nlinarith only [hs1, ht1, norm_nonneg L.ω₁, norm_nonneg L.ω₂]
   exact (Metric.finite_isBounded_inter_isClosed hdisc Metric.isBounded_closedBall hclosed).subset
     (Set.inter_subset_inter_left S hPsub)
 
@@ -1094,8 +1094,7 @@ private lemma exists_decomposition {f : ℂ → ℂ} {c : ℂ} (hf : Meromorphic
   by_cases hord : meromorphicOrderAt f c = ⊤
   · refine ⟨0, 0, fun _ => 0, fun _ => 0, analyticAt_const, ?_⟩
     filter_upwards [meromorphicOrderAt_eq_top_iff.mp hord] with z hz
-    simp only [hz, zero_mul, Finset.range_zero, neg_add_rev, Int.reduceNeg, Finset.sum_const_zero,
-      add_zero]
+    simp [hz]
   · obtain ⟨g, hg_an, hg_ne, hg_eq⟩ := (meromorphicOrderAt_ne_top_iff hf).1 hord
     set n : ℤ := (meromorphicOrderAt f c).untop₀ with hn
     by_cases hn0 : 0 ≤ n
@@ -1121,7 +1120,7 @@ private lemma exists_decomposition {f : ℂ → ℂ} {c : ℂ} (hf : Meromorphic
       obtain ⟨A, h, hh, hEq⟩ := exists_principalPart (N + 1) g c hg_an
       refine ⟨A 0, N, fun k => A (k + 1), h, hh, ?_⟩
       filter_upwards [hg_eq, self_mem_nhdsWithin] with z hz hzne
-      have hzc : z ≠ c := by simpa only [ne_eq, Set.mem_compl_iff, Set.mem_singleton_iff] using hzne
+      have hzc : z ≠ c := by simpa using hzne
       rw [hz, smul_eq_mul,
         show n = -(((N + 1 : ℕ) : ℤ)) from by linarith [hN₁n], hEq z hzc,
         Finset.sum_range_succ']
@@ -1133,7 +1132,7 @@ private lemma exists_decomposition {f : ℂ → ℂ} {c : ℂ} (hf : Meromorphic
       rw [Finset.sum_congr rfl hre]
       push_cast
       ring_nf
-      rw [show (-1 : ℤ) = -(0 + 1) from by ac_rfl, ← zpow_neg_one (z - c)]
+      rw [show (-1 : ℤ) = -(0 + 1) from by ring, ← zpow_neg_one (z - c)]
       ring_nf
 
 /-- The residue of a decomposition `a·(z-c)⁻¹ + higher principal part + analytic` is `a`. -/
@@ -1214,10 +1213,8 @@ private lemma analyticAt_sub_zpow (c : ℂ) (n : ℤ) {z : ℂ} (hzc : z ≠ c) 
     intro w hw
     apply DifferentiableAt.differentiableWithinAt
     have hbase : DifferentiableAt ℂ (fun w : ℂ ↦ w - c) w := differentiableAt_id.sub_const c
-    exact hbase.zpow (Or.inl (sub_ne_zero.2 (by simpa only [ne_eq, Set.mem_compl_iff,
-      Set.mem_singleton_iff] using hw)))
-  exact hd.analyticOnNhd isOpen_compl_singleton z (by simpa only [Set.mem_compl_iff,
-    Set.mem_singleton_iff, ne_eq] using hzc)
+    exact hbase.zpow (Or.inl (sub_ne_zero.2 (by simpa using hw)))
+  exact hd.analyticOnNhd isOpen_compl_singleton z (by simpa using hzc)
 
 /-- Away from `c`, the simple pole `(w - c)⁻¹` is analytic. -/
 private lemma analyticAt_sub_inv (c : ℂ) {z : ℂ} (hzc : z ≠ c) :
@@ -1226,10 +1223,8 @@ private lemma analyticAt_sub_inv (c : ℂ) {z : ℂ} (hzc : z ≠ c) :
     intro w hw
     apply DifferentiableAt.differentiableWithinAt
     have hbase : DifferentiableAt ℂ (fun w : ℂ ↦ w - c) w := differentiableAt_id.sub_const c
-    exact hbase.inv (sub_ne_zero.2 (by simpa only [ne_eq, Set.mem_compl_iff,
-      Set.mem_singleton_iff] using hw))
-  exact hd.analyticOnNhd isOpen_compl_singleton z (by simpa only [Set.mem_compl_iff,
-    Set.mem_singleton_iff, ne_eq] using hzc)
+    exact hbase.inv (sub_ne_zero.2 (by simpa using hw))
+  exact hd.analyticOnNhd isOpen_compl_singleton z (by simpa using hzc)
 
 /-- The boundary integral of a principal part `a·(z-c)⁻¹ + higher-order terms` reduces to
 `a` times the boundary integral of the simple pole: the higher-order (order `≤ -2`) terms

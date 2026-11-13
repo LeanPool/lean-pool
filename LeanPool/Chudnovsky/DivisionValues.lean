@@ -59,7 +59,7 @@ private lemma div_den_eq_one_imp {m : ℕ} (hm : 0 < m) {k : ℕ} (hk : k < m)
   have hnn : (0 : ℤ) ≤ q.num := by have := h0; rw [← heq] at this; exact_mod_cast this
   have hl1 : q.num < 1 := by have := h1; rw [← heq] at this; exact_mod_cast this
   have hnum0 : q.num = 0 := by omega
-  have hq0 : q = 0 := by rw [← heq, hnum0]; simp only [Int.cast_zero]
+  have hq0 : q = 0 := by rw [← heq, hnum0]; simp
   rw [hqdef] at hq0
   rcases div_eq_zero_iff.mp hq0 with hkq | hmq
   · exact_mod_cast hkq
@@ -94,8 +94,7 @@ plan (parallel to the derivation in `Fourier.lean`, which we cannot import here)
 `Quasiperiods.lean`). -/
 private lemma countable_lattice' : (↑L.lattice : Set ℂ).Countable := by
   have : Countable ↥L.lattice := countable_of_Lindelof_of_discrete
-  simpa only [Subtype.range_coe_subtype,
-    SetLike.setOfPred_mem_eq] using Set.countable_range (Subtype.val : ↥L.lattice → ℂ)
+  simpa using Set.countable_range (Subtype.val : ↥L.lattice → ℂ)
 
 /-- `σ` is nonzero away from the lattice. -/
 private lemma weierstrassSigma_ne_zero {x : ℂ} (hx : x ∉ L.lattice) :
@@ -244,7 +243,7 @@ private theorem Fm_add_intmul {p : ℂ} {m : ℕ} (hp : ∀ w, L.Fm m (w + p) = 
     rw [show x - p + p = x by ring] at this
     exact this.symm
   induction a using Int.induction_on with
-  | zero => simp only [Int.cast_zero, zero_mul, add_zero]
+  | zero => simp
   | succ k ih =>
     have heq : w + ((↑k + 1 : ℤ) : ℂ) * p = (w + (↑k : ℤ) * p) + p := by push_cast; ring
     rw [heq, hp, ih]
@@ -404,7 +403,7 @@ private lemma mulPole_identity {m : ℕ} [NeZero m] {z : ℂ} {v₀ : Fin m × F
     (hv₀ : z + L.divPt m v₀ ∈ L.lattice) (hmp : (m : ℂ) * z ∈ L.lattice) (w : ℂ) :
     L.weierstrassP (w + L.divPt m v₀) - (m : ℂ) ^ 2 * L.weierstrassP (m * w)
       = L.weierstrassPExcept 0 (w - z) - (m : ℂ) ^ 2 * L.weierstrassPExcept 0 (m * (w - z)) := by
-  have hm0 : (m : ℂ) ≠ 0 := by exact Nat.cast_ne_zero.mpr (NeZero.ne m)
+  have hm0 : (m : ℂ) ≠ 0 := by exact_mod_cast (NeZero.pos m).ne'
   have hE1 : L.weierstrassPExcept 0 (w - z) = L.weierstrassP (w - z) + -((w - z) ^ 2)⁻¹ := by
     simpa using L.weierstrassPExcept_def (0 : L.lattice) (w - z)
   have hE2 : L.weierstrassPExcept 0 (m * (w - z))
@@ -418,7 +417,7 @@ private lemma mulPole_identity {m : ℕ} [NeZero m] {z : ℂ} {v₀ : Fin m × F
     exact (L.weierstrassP_add_coe (m * (w - z)) ⟨_, hmp⟩).symm
   have hfrac : (m : ℂ) ^ 2 * (((m : ℂ) * (w - z)) ^ 2)⁻¹ = ((w - z) ^ 2)⁻¹ := by
     rcases eq_or_ne (w - z) 0 with h | h
-    · simp only [h, mul_zero, ne_eq, OfNat.ofNat_ne_zero, not_false_eq_true, zero_pow, inv_zero]
+    · simp [h]
     · field_simp
   rw [hE1, hE2, hP1, hP2]
   linear_combination -hfrac
@@ -701,7 +700,7 @@ private lemma one_le_untop₀_meromorphicOrderAt {c a : ℂ} (ha : a ∉ L.latti
   set f : ℂ → ℂ := fun z => L.weierstrassP z - c with hf_def
   have hAn : AnalyticAt ℂ f a := by
     rw [hf_def]; have := L.analyticOnNhd_weierstrassP a ha; fun_prop
-  have hfa : f a = 0 := by rw [hf_def]; simp only [hc, sub_self]
+  have hfa : f a = 0 := by rw [hf_def]; simp [hc]
   have hz0 : analyticOrderAt f a ≠ 0 := hAn.analyticOrderAt_ne_zero.mpr hfa
   have hne : meromorphicOrderAt f a ≠ ⊤ := by
     have hmero : Meromorphic f := by rw [hf_def]; fun_prop
@@ -880,7 +879,7 @@ private lemma wpsub_meromorphicOrderAt_eq_one {c a : ℂ} (ha : a ∉ L.lattice)
   have hAn : AnalyticAt ℂ (fun z => L.weierstrassP z - c) a := by
     have := L.analyticOnNhd_weierstrassP a ha; fun_prop
   have h1 : analyticOrderAt (fun z => L.weierstrassP z - c) a = 1 := by
-    apply hAn.analyticOrderAt_eq_one_of_zero_deriv_ne_zero (by simp only [hc, sub_self])
+    apply hAn.analyticOrderAt_eq_one_of_zero_deriv_ne_zero (by simp [hc])
     rw [deriv_sub_const, L.deriv_weierstrassP]
     exact hd
   rw [hAn.meromorphicOrderAt_eq, h1]
@@ -1025,7 +1024,7 @@ private lemma periodic_add_intmul {F : ℂ → ℂ} {p : ℂ} (hp : ∀ w, F (w 
     rw [show x - p + p = x by ring] at this
     exact this.symm
   induction a using Int.induction_on with
-  | zero => simp only [Int.cast_zero, zero_mul, add_zero]
+  | zero => simp
   | succ k ih =>
     have heq : w + ((↑k + 1 : ℤ) : ℂ) * p = (w + (↑k : ℤ) * p) + p := by push_cast; ring
     rw [heq, hp, ih]
@@ -1089,8 +1088,8 @@ private lemma trailingCoeff_wpsub_zero (c : ℂ) :
     rw [hP, hh]
     simp only [sub_zero, smul_eq_mul]
     rw [show (z : ℂ) ^ (-2 : ℤ) = (z ^ 2)⁻¹ by
-      rw [zpow_neg, ← zpow_natCast z 2]; norm_num only]
-    field_simp (disch := first | assumption | norm_num1 | positivity)
+      rw [zpow_neg, ← zpow_natCast z 2]; norm_num]
+    field_simp
     ring
   rw [hAn.meromorphicTrailingCoeffAt_of_ne_zero_of_eq_nhdsNE
     (by rw [h0]; exact one_ne_zero) hEq, h0]
@@ -1185,8 +1184,7 @@ theorem lemwpsigma {u v : ℂ} (hu : u ∉ L.lattice) (hv : v ∉ L.lattice) :
     have := L.analyticOnNhd_weierstrassP x hx
     fun_prop
   have hconn : IsPreconnected ((↑L.lattice : Set ℂ)ᶜ) :=
-    (L.countable_lattice'.isConnected_compl_of_one_lt_rank (by simp only [Complex.rank_real_complex,
-      Nat.one_lt_ofNat])).isPreconnected
+    (L.countable_lattice'.isConnected_compl_of_one_lt_rank (by simp)).isPreconnected
   have hx₀ : L.ω₁ / 2 ∈ ((↑L.lattice : Set ℂ)ᶜ) := L.ω₁_div_two_notMem_lattice
   have hfreq : ∃ᶠ z in 𝓝[≠] (L.ω₁ / 2), A z = c * g z := by
     have hm := mem_codiscrete.mp hcod (L.ω₁ / 2)
@@ -1344,7 +1342,7 @@ private lemma Fm_sq_meromorphicOrderAt_eq (m : ℕ) [NeZero m] (z : ℂ) :
             have := sub_mem h hzsub
             rw [show z - L.divPt m v - (z - L.divPt m v₀)
               = -(L.divPt m v - L.divPt m v₀) by ring] at this
-            exact L.divPt_sub_notMem_lattice hvne (by simpa only [neg_sub] using neg_mem this)
+            exact L.divPt_sub_notMem_lattice hvne (by simpa using neg_mem this)
           have hadd : z + L.divPt m v ∉ L.lattice := by
             intro h
             have := sub_mem h hv₀
@@ -1401,7 +1399,7 @@ private lemma Fm_sq_meromorphicOrderAt_eq (m : ℕ) [NeZero m] (z : ℂ) :
             have := sub_mem h hzv₁
             rw [show z - L.divPt m v - (z - L.divPt m v₁)
               = -(L.divPt m v - L.divPt m v₁) by ring] at this
-            exact L.divPt_sub_notMem_lattice hvne₁ (by simpa only [neg_sub] using neg_mem this)
+            exact L.divPt_sub_notMem_lattice hvne₁ (by simpa using neg_mem this)
           have hadd : z + L.divPt m v ∉ L.lattice := by
             intro h
             have := sub_mem h hv₀
@@ -1542,8 +1540,7 @@ theorem propfmprod (m : ℕ) [NeZero m] {z : ℂ} (hz : z ∉ L.lattice) :
         (fun v _ => by fun_prop)
     fun_prop
   have hconn : IsPreconnected ((↑L.lattice : Set ℂ)ᶜ) :=
-    (L.countable_lattice'.isConnected_compl_of_one_lt_rank (by simp only [Complex.rank_real_complex,
-      Nat.one_lt_ofNat])).isPreconnected
+    (L.countable_lattice'.isConnected_compl_of_one_lt_rank (by simp)).isPreconnected
   have hx₀ : L.ω₁ / 2 ∈ ((↑L.lattice : Set ℂ)ᶜ) := L.ω₁_div_two_notMem_lattice
   have hfreq : ∃ᶠ x in 𝓝[≠] (L.ω₁ / 2), F x = c * G x := by
     have hm := mem_codiscrete.mp hcod (L.ω₁ / 2)
@@ -1636,11 +1633,11 @@ noncomputable def P : ℕ → Coeff[X]
   termination_by m => m
   decreasing_by all_goals omega
 
-@[simp] lemma P_zero : P 0 = 0 := by simp only [P]
+@[simp] lemma P_zero : P 0 = 0 := by simp [P]
 
-@[simp] lemma P_one : P 1 = 1 := by simp only [P]
+@[simp] lemma P_one : P 1 = 1 := by simp [P]
 
-@[simp] lemma P_two : P 2 = 1 := by simp only [P]
+@[simp] lemma P_two : P 2 = 1 := by simp [P]
 
 lemma P_three :
     P 3 = C 3 * X ^ 4 - C (6 * h2) * X ^ 2 - C (12 * h3) * X - C (h2 ^ 2) := by
@@ -1743,7 +1740,7 @@ private lemma E_leadingCoeff : E.leadingCoeff = 16 := by
   have hq : (X ^ 3 - C h2 * X - C h3 : Coeff[X]).Monic := by
     rw [sub_sub]
     exact Polynomial.monic_X_pow_sub
-      (Polynomial.degree_linear_le.trans_lt (by norm_num1))
+      (Polynomial.degree_linear_le.trans_lt (by norm_num))
   rw [E, Polynomial.leadingCoeff_mul, Polynomial.leadingCoeff_pow, hq.leadingCoeff, one_pow,
     mul_one]
   rw [show (16 : Coeff[X]) = Polynomial.C (16 : Coeff) from (map_ofNat Polynomial.C 16).symm,
@@ -1760,7 +1757,7 @@ private lemma P_nlc_case_5 (j : ℕ)
       ∧ (P (4 * j + 5)).leadingCoeff = ((j' + 1 : ℕ) : Coeff)) := by
   have hcast_ne : ∀ n : ℕ, 0 < n → ((n : ℕ) : Coeff) ≠ 0 := fun n hn =>
     Nat.cast_ne_zero.mpr hn.ne'
-  have h16 : (16 : Coeff) ≠ 0 := by norm_num1
+  have h16 : (16 : Coeff) ≠ 0 := by norm_num
   rw [show 4 * j + 5 = 4 * (j + 1) + 1 by ring,
     P_four_mul_add_one (by omega : 1 ≤ j + 1),
     show P (2 * (j + 1) - 1) = P (2 * j + 1) by
@@ -1861,7 +1858,7 @@ private lemma P_nlc_case_7 (j : ℕ)
       ∧ (P (4 * j + 7)).leadingCoeff = ((j' + 1 : ℕ) : Coeff)) := by
   have hcast_ne : ∀ n : ℕ, 0 < n → ((n : ℕ) : Coeff) ≠ 0 := fun n hn =>
     Nat.cast_ne_zero.mpr hn.ne'
-  have h16 : (16 : Coeff) ≠ 0 := by norm_num1
+  have h16 : (16 : Coeff) ≠ 0 := by norm_num
   rw [show 4 * j + 7 = 4 * (j + 1) + 3 by ring,
     P_four_mul_add_three (by omega : 1 ≤ j + 1),
     show P (2 * (j + 1) + 3) = P (2 * (j + 2) + 1) by
@@ -2304,7 +2301,7 @@ private theorem wp2_eq_zeta {z : ℂ} (hz : z ∉ L.lattice) (h2z : 2 * z ∉ L.
 private lemma isOpen_U2 : IsOpen {w : ℂ | w ∉ L.lattice ∧ 2 * w ∉ L.lattice} := by
   have h1 : IsOpen ((↑L.lattice : Set ℂ)ᶜ) := L.isClosed_lattice.isOpen_compl
   have h2 : IsOpen ((fun w : ℂ => 2 * w) ⁻¹' (↑L.lattice : Set ℂ)ᶜ) :=
-    h1.preimage SeparatelyContinuousMul.continuous_const_mul
+    h1.preimage (by fun_prop)
   exact h1.inter h2
 
 /-- Duplication formula: `4℘(2z)℘′(z)² = ℘''(z)² − 8℘(z)℘′(z)²` for `z, 2z ∉ L`
@@ -2480,7 +2477,7 @@ theorem lemfrekur_odd (j : ℕ) {z : ℂ}
   have hj2 : ((j + 2 : ℕ) : ℂ) * z ∉ L.lattice := hz (j + 2) (by omega)
   have hM := L.Fm_master (j + 1) 1 hz1 hj1
     (by rwa [show j + 1 + 1 = j + 2 from rfl])
-  simp only [show 2 * (j + 1) + 1 = 2 * j + 3 from by omega,
+  simp only [show 2 * (j + 1) + 1 = 2 * j + 3 from by ring,
     show j + 1 + 1 = j + 2 from rfl] at hM
   rw [L.Fm_one hz1, mul_one] at hM
   have hn1 := L.lemwpnz (j + 1) hz1 hj1
@@ -2490,7 +2487,7 @@ theorem lemfrekur_odd (j : ℕ) {z : ℂ}
   have hne1 : L.Fm (j + 1) z ≠ 0 := L.Fm_ne_zero hz1 hj1
   have hne2 : L.Fm (j + 2) z ≠ 0 := L.Fm_ne_zero hz1 hj2
   rw [hM, hn1, hn2]
-  field_simp (disch := first | assumption | norm_num1 | positivity)
+  field_simp
   ring
 
 /-- Paper `lemfrekur`, second recursion:
@@ -2507,7 +2504,7 @@ theorem lemfrekur_even (j : ℕ) {z : ℂ}
   have hj3 : ((j + 3 : ℕ) : ℂ) * z ∉ L.lattice := hz (j + 3) (by omega)
   have hM := L.Fm_master (j + 1) 2 hz1 hj1
     (by rwa [show j + 1 + 2 = j + 3 from rfl])
-  simp only [show 2 * (j + 1) + 2 = 2 * j + 4 from by omega,
+  simp only [show 2 * (j + 1) + 2 = 2 * j + 4 from by ring,
     show j + 1 + 2 = j + 3 from rfl] at hM
   have hn1 := L.lemwpnz (j + 1) hz1 hj1
   have hn3 := L.lemwpnz (j + 3) hz1 hj3
@@ -2516,7 +2513,7 @@ theorem lemfrekur_even (j : ℕ) {z : ℂ}
   have hne1 : L.Fm (j + 1) z ≠ 0 := L.Fm_ne_zero hz1 hj1
   have hne3 : L.Fm (j + 3) z ≠ 0 := L.Fm_ne_zero hz1 hj3
   rw [hM, hn1, hn3]
-  field_simp (disch := first | assumption | norm_num1 | positivity)
+  field_simp
   ring
 
 /-- `F₃ = 3℘℘′² − ¼℘''²` for `z, 2z ∉ L`. -/
@@ -2525,12 +2522,12 @@ private theorem Fm_three {z : ℂ} (hz : z ∉ L.lattice) (h2z : 2 * z ∉ L.lat
       - (deriv L.derivWeierstrassP z) ^ 2 / 4 := by
   have h1z : ((1 : ℕ) : ℂ) * z ∉ L.lattice := by rwa [Nat.cast_one, one_mul]
   have h2z' : ((1 + 1 : ℕ) : ℂ) * z ∉ L.lattice := by
-    rwa [show ((1 + 1 : ℕ) : ℂ) = (2 : ℂ) by norm_num1]
+    rwa [show ((1 + 1 : ℕ) : ℂ) = (2 : ℂ) by norm_num]
   have hM := L.Fm_master 1 1 hz h1z h2z'
   simp only [show 2 * 1 + 1 = 3 from rfl, show 1 + 1 = 2 from rfl] at hM
   rw [L.Fm_one hz, mul_one, one_pow, mul_one] at hM
   rw [show ((1 : ℕ) : ℂ) * z = z by rw [Nat.cast_one, one_mul],
-    show ((2 : ℕ) : ℂ) * z = 2 * z by norm_num only] at hM
+    show ((2 : ℕ) : ℂ) * z = 2 * z by norm_num] at hM
   rw [L.Fm_two hz] at hM
   have hdup := L.wp_dup hz h2z
   rw [hM]
@@ -2624,18 +2621,18 @@ theorem propfmpm (m : ℕ) {z : ℂ} (hz : ∀ k : ℕ, k ≠ 0 → (k : ℂ) * 
     by_cases h5 : m < 5
     · -- base cases `m = 0, 1, 2, 3, 4`
       interval_cases m
-      · refine ⟨fun h => absurd (Nat.odd_iff.mp h) (by norm_num1), fun _ => ?_⟩
-        simp only [L.Fm_zero, Pc, Milla.P_zero, Polynomial.map_zero, eval_zero, mul_zero]
-      · refine ⟨fun _ => ?_, fun h => absurd (Nat.even_iff.mp h) (by norm_num1)⟩
+      · refine ⟨fun h => absurd (Nat.odd_iff.mp h) (by norm_num), fun _ => ?_⟩
+        simp [L.Fm_zero, Pc]
+      · refine ⟨fun _ => ?_, fun h => absurd (Nat.even_iff.mp h) (by norm_num)⟩
         rw [L.Fm_one hz1, L.Pc_one]
-        simp only [eval_one]
-      · refine ⟨fun h => absurd (Nat.odd_iff.mp h) (by norm_num1), fun _ => ?_⟩
+        simp
+      · refine ⟨fun h => absurd (Nat.odd_iff.mp h) (by norm_num), fun _ => ?_⟩
         rw [L.Fm_two hz1, L.Pc_two]
-        simp only [eval_one, mul_one]
-      · refine ⟨fun _ => ?_, fun h => absurd (Nat.even_iff.mp h) (by norm_num1)⟩
+        simp
+      · refine ⟨fun _ => ?_, fun h => absurd (Nat.even_iff.mp h) (by norm_num)⟩
         rw [L.Fm_three hz1 h2z, L.eval_Pc_three, L.lemwp2str hz1]
         linear_combination (3 * L.weierstrassP z) * hode
-      · refine ⟨fun h => absurd (Nat.odd_iff.mp h) (by norm_num1), fun _ => ?_⟩
+      · refine ⟨fun h => absurd (Nat.odd_iff.mp h) (by norm_num), fun _ => ?_⟩
         rw [L.Fm_four hz1 h2z, L.eval_Pc_four, L.lemwp2str hz1]
         linear_combination (-L.derivWeierstrassP z
           * (3 * L.weierstrassP z * (6 * L.weierstrassP z ^ 2 - L.g₂ / 2)
@@ -2792,7 +2789,7 @@ private lemma infinite_wp_generic :
     have heq2 : (k : ℂ) * zpt n = (((k : ℝ) * t n : ℝ) : ℂ) * L.ω₁ := by
       simp only [hzpt]
       push_cast
-      ac_rfl
+      ring
     rw [heq2]
     exact L.irrational_mul_ω₁_notMem hirr
   have hnotMem : ∀ n, zpt n ∉ L.lattice := by
@@ -2989,7 +2986,7 @@ private lemma eval_baker_zero (m : ℕ) [NeZero m] {v : Fin m × Fin m} (hv : v 
   rw [Polynomial.eval_mul, Polynomial.eval_prod]
   apply mul_eq_zero_of_right
   apply Finset.prod_eq_zero (Finset.mem_erase.mpr ⟨hv, Finset.mem_univ v⟩)
-  simp only [eval_sub, eval_X, eval_C, sub_self]
+  simp
 
 end PeriodPair
 

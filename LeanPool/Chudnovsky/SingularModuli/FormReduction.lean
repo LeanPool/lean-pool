@@ -62,7 +62,7 @@ theorem Equiv.trans {f g h : BQF} (hfg : Equiv f g) (hgh : Equiv g h) : Equiv f 
 
 /-- The `T`-generator: shift `(a, b, c) ↦ (a, b + 2an, a n² + b n + c)`; preserves the form
 class and (obviously) the discriminant. -/
-theorem Equiv.T (f : BQF) (n : ℤ) : Equiv f (act f 1 n 0 1) := ⟨1, n, 0, 1, by omega, rfl⟩
+theorem Equiv.T (f : BQF) (n : ℤ) : Equiv f (act f 1 n 0 1) := ⟨1, n, 0, 1, by ring, rfl⟩
 
 lemma act_T_a (f : BQF) (n : ℤ) : (act f 1 n 0 1).a = f.a := by simp
 lemma act_T_b (f : BQF) (n : ℤ) : (act f 1 n 0 1).b = f.b + 2 * f.a * n := by
@@ -253,12 +253,12 @@ private lemma reprN_of_relation {m : ℕ} (hm : m ≤ 61) {D0 t l : ℤ} (hD3 : 
     have hsq : lN ^ 2 ≤ 9 ^ 2 := by
       have : (lN : ℤ) ^ 2 ≤ 9 ^ 2 := by rw [hlNsq]; omega
       exact_mod_cast this
-    exact (Nat.pow_le_pow_iff_left (by norm_num1)).mp hsq
+    exact (Nat.pow_le_pow_iff_left (by norm_num)).mp hsq
   have htNle : tN < 16 := by
     have hsq : tN ^ 2 < 16 ^ 2 := by
       have : (tN : ℤ) ^ 2 < 16 ^ 2 := by rw [htNsq]; omega
       exact_mod_cast this
-    exact (Nat.pow_lt_pow_iff_left (by norm_num1)).mp hsq
+    exact (Nat.pow_lt_pow_iff_left (by norm_num)).mp hsq
   have htNsq4m : tN ^ 2 ≤ 4 * m := by
     have : (tN : ℤ) ^ 2 ≤ 4 * (m : ℤ) := by rw [htNsq]; omega
     exact_mod_cast this
@@ -281,11 +281,11 @@ theorem disc_of_three_relations {D0 : ℤ} (hD3 : D0 ≤ -3)
     {t1 l1 t2 l2 t3 l3 : ℤ} (hl1 : l1 ≠ 0) (hl2 : l2 ≠ 0) (hl3 : l3 ≠ 0)
     (h1 : t1 ^ 2 - 4 * 41 = D0 * l1 ^ 2) (h2 : t2 ^ 2 - 4 * 43 = D0 * l2 ^ 2)
     (h3 : t3 ^ 2 - 4 * 61 = D0 * l3 ^ 2) : D0 = -163 := by
-  have e1 := reprN_of_relation (m := 41) (by norm_num1) hD3 hl1 (by exact_mod_cast h1)
-  have e2 := reprN_of_relation (m := 43) (by norm_num1) hD3 hl2 (by exact_mod_cast h2)
-  have e3 := reprN_of_relation (m := 61) (by norm_num1) hD3 hl3 (by exact_mod_cast h3)
-  have hl1sq : (1 : ℤ) ≤ l1 ^ 2 := by rcases lt_or_gt_of_ne hl1 with h' | h' <;> nlinarith
-  have hub : (-D0) ≤ 164 := by nlinarith [h1, hl1sq, sq_nonneg t1]
+  have e1 := reprN_of_relation (m := 41) (by norm_num) hD3 hl1 (by exact_mod_cast h1)
+  have e2 := reprN_of_relation (m := 43) (by norm_num) hD3 hl2 (by exact_mod_cast h2)
+  have e3 := reprN_of_relation (m := 61) (by norm_num) hD3 hl3 (by exact_mod_cast h3)
+  have hl1sq : (1 : ℤ) ≤ l1 ^ 2 := by rcases lt_or_gt_of_ne hl1 with h' | h' <;> nlinarith only [h']
+  have hub : (-D0) ≤ 164 := by nlinarith only [h1, hl1sq]
   have hmem : (-D0).toNat ∈ Finset.Icc 1 244 := by
     rw [Finset.mem_Icc]; omega
   have := three_prime_N (-D0).toNat hmem e1 e2 e3
@@ -318,14 +318,14 @@ theorem isRoot_smul {f g : BQF} {p q r s : ℤ} (hdet : p * s - q * r = 1)
     have hlin : ((-r : ℤ) : ℂ) * (τ : ℂ) + ((p : ℤ) : ℂ) = 0 := by rw [← h0, hY]; push_cast; ring
     obtain ⟨hr0, hp0⟩ := int_lin_eq_zero τ hlin
     have hr : r = 0 := by omega
-    rw [hr, hp0] at hdet; simp only [zero_mul, mul_zero, sub_self, zero_ne_one] at hdet
+    rw [hr, hp0] at hdet; simp at hdet
   have hform : (g.a : ℂ) * X ^ 2 + (g.b : ℂ) * X * Y + (g.c : ℂ) * Y ^ 2 = 0 := by
     rw [← hg]
     simp only [act_a, act_b, act_c, hX, hY, IsRoot] at hroot ⊢
     push_cast
     linear_combination ((p : ℂ) * s - q * r) ^ 2 * hroot
   simp only [IsRoot, hcoe]
-  field_simp (disch := first | assumption | norm_num1 | positivity)
+  field_simp
   linear_combination hform
 
 /-- `τ₁₆₃` is the root of the reduced form `(1, −1, 41)` (`41 − τ + τ² = 0`). -/
@@ -341,7 +341,7 @@ theorem isRoot_τ₁₆₃ : IsRoot ⟨1, -1, 41⟩ Chudnovsky.τ₁₆₃ := by
   rw [hτ]; push_cast
   linear_combination (Complex.I ^ 2 / 4) * h163 + (163 / 4) * Complex.I_sq
 
-private lemma posdef_1m141 : IsPosDef ⟨1, -1, 41⟩ := ⟨by norm_num1, by norm_num only [disc]⟩
+private lemma posdef_1m141 : IsPosDef ⟨1, -1, 41⟩ := ⟨by norm_num, by norm_num [disc]⟩
 
 /-- **(C6), analytic form.** Every CM point of a positive-definite form of discriminant
 `−163` is `SL₂(ℤ)`-equivalent to `τ₁₆₃`. -/
@@ -353,7 +353,7 @@ theorem cm_disc_neg163_smul_eq_τ₁₆₃ {f : BQF} (hpd : IsPosDef f) (hdisc :
     exact ⟨N, root_unique posdef_1m141 hN isRoot_τ₁₆₃⟩
   · obtain ⟨N, hN⟩ := isRoot_smul hdet hact hroot
     have hTact : act (⟨1, 1, 41⟩ : BQF) 1 (-1) 0 1 = ⟨1, -1, 41⟩ := by decide
-    obtain ⟨N', hN'⟩ := isRoot_smul (by ac_rfl : (1 : ℤ) * 1 - (-1) * 0 = 1) hTact hN
+    obtain ⟨N', hN'⟩ := isRoot_smul (by ring : (1 : ℤ) * 1 - (-1) * 0 = 1) hTact hN
     refine ⟨N' * N, ?_⟩
     rw [mul_smul]
     exact root_unique posdef_1m141 hN' isRoot_τ₁₆₃

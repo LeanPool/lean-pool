@@ -191,21 +191,21 @@ Proved from `Real.exp_one_gt_d9` and an 8-term Taylor lower bound for `exp 0.852
 lemma exp_neg_bound : Real.exp (-7.852) < 0.000389 := by
   have h1 : (2.7182818283 : ℝ) < Real.exp 1 := Real.exp_one_gt_d9
   have h7 : (2.7182818283 : ℝ) ^ 7 < Real.exp 7 := by
-    have he : Real.exp 7 = Real.exp 1 ^ 7 := by rw [← Real.exp_nat_mul]; norm_num only
-    rw [he]; exact pow_lt_pow_left₀ h1 (by norm_num1) (by norm_num1)
+    have he : Real.exp 7 = Real.exp 1 ^ 7 := by rw [← Real.exp_nat_mul]; norm_num
+    rw [he]; exact pow_lt_pow_left₀ h1 (by norm_num) (by norm_num)
   have h852 : (2.344323 : ℝ) ≤ Real.exp 0.852 := by
-    have hs := Real.sum_le_exp_of_nonneg (by norm_num1 : (0 : ℝ) ≤ 0.852) 8
+    have hs := Real.sum_le_exp_of_nonneg (by norm_num : (0 : ℝ) ≤ 0.852) 8
     refine le_trans ?_ hs
-    norm_num only [Finset.sum_range_succ, Finset.sum_range_zero, Nat.factorial]
+    norm_num [Finset.sum_range_succ, Finset.sum_range_zero, Nat.factorial]
   have hbig : (2570.7 : ℝ) < Real.exp 7.852 := by
-    have he : Real.exp 7.852 = Real.exp 7 * Real.exp 0.852 := by rw [← Real.exp_add]; norm_num only
+    have he : Real.exp 7.852 = Real.exp 7 * Real.exp 0.852 := by rw [← Real.exp_add]; norm_num
     rw [he]
-    calc (2570.7 : ℝ) < 2.7182818283 ^ 7 * 2.344323 := by norm_num1
+    calc (2570.7 : ℝ) < 2.7182818283 ^ 7 * 2.344323 := by norm_num
       _ ≤ Real.exp 7 * Real.exp 0.852 :=
-          mul_le_mul h7.le h852 (by norm_num1) (le_of_lt (lt_trans (by norm_num1) h7))
+          mul_le_mul h7.le h852 (by norm_num) (le_of_lt (lt_trans (by norm_num) h7))
   rw [Real.exp_neg]
-  calc (Real.exp 7.852)⁻¹ < (2570.7 : ℝ)⁻¹ := inv_strictAnti₀ (by norm_num1) hbig
-    _ < 0.000389 := by norm_num1
+  calc (Real.exp 7.852)⁻¹ < (2570.7 : ℝ)⁻¹ := inv_strictAnti₀ (by norm_num) hbig
+    _ < 0.000389 := by norm_num
 
 /-! ### Geometric tail bounds for the Lambert-type series
 (paper Lemmas `lemrestchaetz` and `lemrestkonkr`) -/
@@ -405,7 +405,7 @@ theorem lemE6 {τ : ℍ} (hτ : τ ∈ Region) : 0.8 < ‖E₆ τ‖ := by
   have hQ : Q < 0.000389 := lt_trans (norm_q_lt_of_mem_Region hτ) exp_neg_bound
   have htail : ‖eisensteinTail 5 3 τ‖ ≤ 245.6 * Q ^ 3 := norm_eisensteinTail_sigma₅ hτ
   have hqq : ‖q τ + (33 : ℂ) * q τ ^ 2‖ ≤ Q + 33 * Q ^ 2 :=
-    norm_q_add_smul_sq_le (by norm_num1)
+    norm_q_add_smul_sq_le (by norm_num)
   -- reverse triangle inequality
   rw [E₆_eq_trunc τ, E₆trunc]
   have htri : (1 : ℝ) - ‖(504 : ℂ) * (q τ + 33 * q τ ^ 2)‖ - ‖(504 : ℂ) * eisensteinTail 5 3 τ‖
@@ -418,9 +418,9 @@ theorem lemE6 {τ : ℍ} (hτ : τ ∈ Region) : 0.8 < ‖E₆ τ‖ := by
       _ ≤ ‖1 - 504 * (q τ + 33 * q τ ^ 2) - 504 * eisensteinTail 5 3 τ‖ :=
           norm_sub_norm_le _ _
   have hA : ‖(504 : ℂ) * (q τ + 33 * q τ ^ 2)‖ ≤ 504 * (Q + 33 * Q ^ 2) := by
-    rw [norm_mul, Complex.norm_ofNat]; exact mul_le_mul_of_nonneg_left hqq (by norm_num1)
+    rw [norm_mul, Complex.norm_ofNat]; exact mul_le_mul_of_nonneg_left hqq (by norm_num)
   have hB : ‖(504 : ℂ) * eisensteinTail 5 3 τ‖ ≤ 504 * (245.6 * Q ^ 3) := by
-    rw [norm_mul, Complex.norm_ofNat]; exact mul_le_mul_of_nonneg_left htail (by norm_num1)
+    rw [norm_mul, Complex.norm_ofNat]; exact mul_le_mul_of_nonneg_left htail (by norm_num)
   have hfinal : (0.8 : ℝ) < 1 - 504 * (Q + 33 * Q ^ 2) - 504 * (245.6 * Q ^ 3) := by
     linarith [hQ, sq_le_of_lt hQpos hQ, pow_succ_le_of_lt 2 hQpos hQ]
   linarith [htri, hA, hB, hfinal]
@@ -430,7 +430,7 @@ theorem E₆_ne_zero_of_mem_Region {τ : ℍ} (hτ : τ ∈ Region) : E₆ τ �
   intro h
   have h8 := lemE6 hτ
   rw [h, norm_zero] at h8
-  norm_num1 at h8
+  norm_num at h8
 
 /-! ### Truncation norm bounds (paper Lemma `lemxy`) -/
 
@@ -439,14 +439,14 @@ lemma norm_E₆trunc_ge {τ : ℍ} (hτ : τ ∈ Region) : (0.8014 : ℝ) ≤ �
   have hQpos : 0 < ‖q τ‖ := norm_q_pos τ
   have hQ : ‖q τ‖ < 0.000389 := lt_trans (norm_q_lt_of_mem_Region hτ) exp_neg_bound
   have hqq : ‖q τ + (33 : ℂ) * q τ ^ 2‖ ≤ ‖q τ‖ + 33 * ‖q τ‖ ^ 2 :=
-    norm_q_add_smul_sq_le (by norm_num1)
+    norm_q_add_smul_sq_le (by norm_num)
   rw [E₆trunc]
   have htri : (1 : ℝ) - ‖(504 : ℂ) * (q τ + 33 * q τ ^ 2)‖
       ≤ ‖(1 : ℂ) - 504 * (q τ + 33 * q τ ^ 2)‖ := by
     have := norm_sub_norm_le (1 : ℂ) (504 * (q τ + 33 * q τ ^ 2))
     rwa [norm_one] at this
   have hA : ‖(504 : ℂ) * (q τ + 33 * q τ ^ 2)‖ ≤ 504 * (‖q τ‖ + 33 * ‖q τ‖ ^ 2) := by
-    rw [norm_mul, Complex.norm_ofNat]; exact mul_le_mul_of_nonneg_left hqq (by norm_num1)
+    rw [norm_mul, Complex.norm_ofNat]; exact mul_le_mul_of_nonneg_left hqq (by norm_num)
   have hlow : (0.8014 : ℝ) ≤ 1 - 504 * (‖q τ‖ + 33 * ‖q τ‖ ^ 2) := by
     linarith [hQ, sq_le_of_lt hQpos hQ]
   linarith [htri, hA, hlow]
@@ -455,14 +455,14 @@ lemma E₆trunc_ne_zero {τ : ℍ} (hτ : τ ∈ Region) : E₆trunc τ ≠ 0 :=
   intro h
   have := norm_E₆trunc_ge hτ
   rw [h, norm_zero] at this
-  norm_num1 at this
+  norm_num at this
 
 /-- Paper Lemma `lemxy`: `|X| ≤ 1.0937` where `X = E₄⁽²⁾`. -/
 lemma norm_E₄trunc_le {τ : ℍ} (hτ : τ ∈ Region) : ‖E₄trunc τ‖ ≤ 1.0937 := by
   have hQpos : 0 < ‖q τ‖ := norm_q_pos τ
   have hQ : ‖q τ‖ < 0.000389 := lt_trans (norm_q_lt_of_mem_Region hτ) exp_neg_bound
   have hqq : ‖q τ + (9 : ℂ) * q τ ^ 2‖ ≤ ‖q τ‖ + 9 * ‖q τ‖ ^ 2 :=
-    norm_q_add_smul_sq_le (by norm_num1)
+    norm_q_add_smul_sq_le (by norm_num)
   rw [E₄trunc]
   refine le_trans (norm_add_le _ _) ?_
   rw [norm_one, norm_mul, Complex.norm_ofNat]
@@ -479,7 +479,7 @@ lemma norm_E₂starTrunc_le {τ : ℍ} (hτ : τ ∈ Region) : ‖E₂starTrunc 
     linarith [mul_lt_mul Real.pi_gt_three (by linarith : (1 : ℝ) ≤ τ.im) one_pos Real.pi_pos.le]
   have ht0 : 0 < 3 / (π * τ.im) := by positivity
   have hqq : ‖q τ + (3 : ℂ) * q τ ^ 2‖ ≤ ‖q τ‖ + 3 * ‖q τ‖ ^ 2 :=
-    norm_q_add_smul_sq_le (by norm_num1)
+    norm_q_add_smul_sq_le (by norm_num)
   have hZeq : E₂starTrunc τ = ((1 - 3 / (π * τ.im) : ℝ) : ℂ) - 24 * (q τ + 3 * q τ ^ 2) := by
     rw [E₂starTrunc]; push_cast; ring
   rw [hZeq]
@@ -496,12 +496,12 @@ lemma norm_s₂tilde_le {τ : ℍ} (hτ : τ ∈ Region) : ‖s₂tilde τ‖ �
   have hZ := norm_E₂starTrunc_le hτ
   have hYpos : (0 : ℝ) < ‖E₆trunc τ‖ := by linarith [hY]
   have hdiv : ‖E₄trunc τ‖ / ‖E₆trunc τ‖ ≤ 1.0937 / 0.8014 :=
-    div_le_div₀ (by norm_num1) hX (by norm_num1) hY
+    div_le_div₀ (by norm_num) hX (by norm_num) hY
   have hdivnn : 0 ≤ ‖E₄trunc τ‖ / ‖E₆trunc τ‖ := by positivity
   calc ‖E₄trunc τ‖ / ‖E₆trunc τ‖ * ‖E₂starTrunc τ‖
       ≤ (1.0937 / 0.8014) * 1.0094 :=
-        mul_le_mul hdiv hZ (norm_nonneg _) (by norm_num1)
-    _ ≤ 1.3776 := by norm_num1
+        mul_le_mul hdiv hZ (norm_nonneg _) (by norm_num)
+    _ ≤ 1.3776 := by norm_num
 
 /-- `|δX| = |E₄ - X| ≤ 6744·|q|³`. -/
 lemma norm_sub_E₄trunc_le {τ : ℍ} (hτ : τ ∈ Region) :
@@ -563,8 +563,8 @@ lemma norm_ktilde_ge {τ : ℍ} (hτ : τ ∈ Region) : (0.9907 : ℝ) ≤ ‖kt
   have hlow : (0.9996108 : ℝ) ≤ ‖1 - q τ - q τ ^ 2‖ := by
     have h := (norm_one_sub_q_sub_sq (τ := τ)).1
     linarith [h, hQ, sq_le_of_lt hQpos hQ]
-  calc (0.9907 : ℝ) ≤ 0.9996108 ^ 24 := by norm_num1
-    _ ≤ ‖1 - q τ - q τ ^ 2‖ ^ 24 := pow_le_pow_left₀ (by norm_num1) hlow 24
+  calc (0.9907 : ℝ) ≤ 0.9996108 ^ 24 := by norm_num
+    _ ≤ ‖1 - q τ - q τ ^ 2‖ ^ 24 := pow_le_pow_left₀ (by norm_num) hlow 24
 
 /-- Paper Lemma `lemk`: `|ktilde| ≤ 1.0094`. -/
 lemma norm_ktilde_le {τ : ℍ} (hτ : τ ∈ Region) : ‖ktilde τ‖ ≤ 1.0094 := by
@@ -576,13 +576,13 @@ lemma norm_ktilde_le {τ : ℍ} (hτ : τ ∈ Region) : ‖ktilde τ‖ ≤ 1.00
     linarith [h, hQ, sq_le_of_lt hQpos hQ]
   calc ‖1 - q τ - q τ ^ 2‖ ^ 24 ≤ (1.0003892 : ℝ) ^ 24 :=
         pow_le_pow_left₀ (norm_nonneg _) hhi 24
-    _ ≤ 1.0094 := by norm_num1
+    _ ≤ 1.0094 := by norm_num
 
 lemma ktilde_ne_zero {τ : ℍ} (hτ : τ ∈ Region) : ktilde τ ≠ 0 := by
   intro h
   have := norm_ktilde_ge hτ
   rw [h, norm_zero] at this
-  norm_num1 at this
+  norm_num at this
 
 /-- `1728·q·Jtilde = X³ / ktilde`. -/
 lemma mul_q_Jtilde_eq {τ : ℍ} (hτ : τ ∈ Region) :
@@ -601,7 +601,7 @@ lemma norm_sub_cube_E₄trunc_le {τ : ℍ} (hτ : τ ∈ Region) :
   have hdX := norm_sub_E₄trunc_le hτ
   have hXnn := norm_nonneg (E₄trunc τ)
   have hdXnn := norm_nonneg (E₄ τ - E₄trunc τ)
-  have hQ3 : ‖q τ‖ ^ 3 < 0.000389 ^ 3 := pow_lt_pow_left₀ hQ hQpos.le (by norm_num1)
+  have hQ3 : ‖q τ‖ ^ 3 < 0.000389 ^ 3 := pow_lt_pow_left₀ hQ hQpos.le (by norm_num)
   have heq : E₄ τ ^ 3 - E₄trunc τ ^ 3
       = (E₄ τ - E₄trunc τ) * (3 * E₄trunc τ ^ 2
           + 3 * E₄trunc τ * (E₄ τ - E₄trunc τ) + (E₄ τ - E₄trunc τ) ^ 2) := by ring
@@ -619,10 +619,10 @@ lemma norm_sub_cube_E₄trunc_le {τ : ℍ} (hτ : τ ∈ Region) :
         + (E₄ τ - E₄trunc τ) ^ 2‖ ≤ 3.5886 := by
     refine le_trans hfac ?_
     have hdX' : ‖E₄ τ - E₄trunc τ‖ ≤ 6744 * 0.000389 ^ 3 :=
-      hdX.trans (mul_le_mul_of_nonneg_left hQ3.le (by norm_num1))
+      hdX.trans (mul_le_mul_of_nonneg_left hQ3.le (by norm_num))
     have hX2 : ‖E₄trunc τ‖ ^ 2 ≤ 1.0937 ^ 2 := pow_le_pow_left₀ hXnn hX 2
     have hXdX : ‖E₄trunc τ‖ * ‖E₄ τ - E₄trunc τ‖ ≤ 1.0937 * (6744 * 0.000389 ^ 3) :=
-      mul_le_mul hX hdX' hdXnn (by norm_num1)
+      mul_le_mul hX hdX' hdXnn (by norm_num)
     have hdX2 : ‖E₄ τ - E₄trunc τ‖ ^ 2 ≤ (6744 * 0.000389 ^ 3) ^ 2 :=
       pow_le_pow_left₀ hdXnn hdX' 2
     linarith
@@ -636,7 +636,7 @@ lemma norm_E₆trunc_le {τ : ℍ} (hτ : τ ∈ Region) : ‖E₆trunc τ‖ �
   have hQpos : 0 < ‖q τ‖ := norm_q_pos τ
   have hQ : ‖q τ‖ < 0.000389 := lt_trans (norm_q_lt_of_mem_Region hτ) exp_neg_bound
   have hqq : ‖q τ + (33 : ℂ) * q τ ^ 2‖ ≤ ‖q τ‖ + 33 * ‖q τ‖ ^ 2 :=
-    norm_q_add_smul_sq_le (by norm_num1)
+    norm_q_add_smul_sq_le (by norm_num)
   rw [E₆trunc]
   refine le_trans (norm_sub_le _ _) ?_
   rw [norm_one, norm_mul, Complex.norm_ofNat]
@@ -649,7 +649,7 @@ lemma norm_sub_sq_E₆trunc_le {τ : ℍ} (hτ : τ ∈ Region) :
   have hQ : ‖q τ‖ < 0.000389 := lt_trans (norm_q_lt_of_mem_Region hτ) exp_neg_bound
   have hY := norm_E₆trunc_le hτ
   have hdY := norm_sub_E₆trunc_le hτ
-  have hQ3 : ‖q τ‖ ^ 3 < 0.000389 ^ 3 := pow_lt_pow_left₀ hQ hQpos.le (by norm_num1)
+  have hQ3 : ‖q τ‖ ^ 3 < 0.000389 ^ 3 := pow_lt_pow_left₀ hQ hQpos.le (by norm_num)
   have heq : E₆ τ ^ 2 - E₆trunc τ ^ 2
       = (E₆ τ - E₆trunc τ) * (2 * E₆trunc τ + (E₆ τ - E₆trunc τ)) := by ring
   rw [heq, norm_mul]
@@ -660,7 +660,7 @@ lemma norm_sub_sq_E₆trunc_le {τ : ℍ} (hτ : τ ∈ Region) :
   have hfac2 : ‖2 * E₆trunc τ + (E₆ τ - E₆trunc τ)‖ ≤ 2.3975 := by
     refine le_trans hfac ?_
     have hdY' : ‖E₆ τ - E₆trunc τ‖ ≤ 123783 * 0.000389 ^ 3 :=
-      hdY.trans (mul_le_mul_of_nonneg_left hQ3.le (by norm_num1))
+      hdY.trans (mul_le_mul_of_nonneg_left hQ3.le (by norm_num))
     linarith
   calc ‖E₆ τ - E₆trunc τ‖ * ‖2 * E₆trunc τ + (E₆ τ - E₆trunc τ)‖
       ≤ (123783 * ‖q τ‖ ^ 3) * 2.3975 := mul_le_mul hdY hfac2 (norm_nonneg _) (by positivity)
@@ -710,7 +710,7 @@ lemma lemk {τ : ℍ} (hτ : τ ∈ Region) : ‖kfun τ - ktilde τ‖ ≤ 365.
   have hQpos : 0 < ‖q τ‖ := norm_q_pos τ
   have hQ : ‖q τ‖ < 0.000389 := lt_trans (norm_q_lt_of_mem_Region hτ) exp_neg_bound
   have hqne : q τ ≠ 0 := q_ne_zero τ
-  have hq2 : (1728 : ℂ) * q τ ≠ 0 := mul_ne_zero (by norm_num1) hqne
+  have hq2 : (1728 : ℂ) * q τ ≠ 0 := mul_ne_zero (by norm_num) hqne
   set Gval : ℂ := lemkG.foldr (fun (a : ℤ) (acc : ℂ) => (a : ℂ) + q τ * acc) 0 with hGvaldef
   -- (a) exact polynomial identity for the "truncation" part
   have hpoly : E₄trunc τ ^ 3 - E₆trunc τ ^ 2 - 1728 * q τ * ktilde τ
@@ -721,26 +721,26 @@ lemma lemk {τ : ℍ} (hτ : τ ∈ Region) : ‖kfun τ - ktilde τ‖ ≤ 365.
   -- (b) bound on ‖G(q)‖
   have hGbound : ‖Gval‖ ≤ 179.8 := by
     rw [hGvaldef]
-    refine le_trans (horner_norm_bound (q τ) hQ.le (by norm_num1) lemkG) ?_
+    refine le_trans (horner_norm_bound (q τ) hQ.le (by norm_num) lemkG) ?_
     simp only [lemkG, List.foldr_cons, List.foldr_nil]
-    push_cast; norm_num1
+    push_cast; norm_num
   -- (c) rewrite `k - ktilde` as a single quotient over `1728 q`
   have hid : kfun τ - ktilde τ
       = ((E₄ τ ^ 3 - E₄trunc τ ^ 3) - (E₆ τ ^ 2 - E₆trunc τ ^ 2)
           + 1728 * q τ ^ 3 * Gval) / (1728 * q τ) := by
     rw [← hpoly, kfun]
-    field_simp (disch := first | assumption | norm_num1 | positivity)
+    field_simp
     ring
   rw [hid, norm_div]
   have hden : ‖(1728 : ℂ) * q τ‖ = 1728 * ‖q τ‖ := by rw [norm_mul, Complex.norm_ofNat]
-  rw [hden, div_le_iff₀ (mul_pos (by norm_num1) hQpos)]
+  rw [hden, div_le_iff₀ (mul_pos (by norm_num) hQpos)]
   -- (d) bound the numerator by the three pieces of the paper's proof
   have hp1 : ‖E₄ τ ^ 3 - E₄trunc τ ^ 3‖ ≤ 24202 * ‖q τ‖ ^ 3 := norm_sub_cube_E₄trunc_le hτ
   have hp2 : ‖E₆ τ ^ 2 - E₆trunc τ ^ 2‖ ≤ 296780 * ‖q τ‖ ^ 3 := norm_sub_sq_E₆trunc_le hτ
   have hp3 : ‖(1728 : ℂ) * q τ ^ 3 * Gval‖ ≤ 1728 * ‖q τ‖ ^ 3 * 179.8 := by
     rw [norm_mul, norm_mul, Complex.norm_ofNat, norm_pow]
     exact mul_le_mul_of_nonneg_left hGbound
-      (mul_nonneg (by norm_num1) (pow_nonneg hQpos.le 3))
+      (mul_nonneg (by norm_num) (pow_nonneg hQpos.le 3))
   have hnum : ‖(E₄ τ ^ 3 - E₄trunc τ ^ 3) - (E₆ τ ^ 2 - E₆trunc τ ^ 2)
         + 1728 * q τ ^ 3 * Gval‖
       ≤ 24202 * ‖q τ‖ ^ 3 + 296780 * ‖q τ‖ ^ 3 + 1728 * ‖q τ‖ ^ 3 * 179.8 :=
@@ -775,14 +775,14 @@ lemma norm_E₄trunc_ge {τ : ℍ} (hτ : τ ∈ Region) : (0.9063 : ℝ) ≤ �
   have hQpos : 0 < ‖q τ‖ := norm_q_pos τ
   have hQ : ‖q τ‖ < 0.000389 := lt_trans (norm_q_lt_of_mem_Region hτ) exp_neg_bound
   have hqq : ‖q τ + (9 : ℂ) * q τ ^ 2‖ ≤ ‖q τ‖ + 9 * ‖q τ‖ ^ 2 :=
-    norm_q_add_smul_sq_le (by norm_num1)
+    norm_q_add_smul_sq_le (by norm_num)
   rw [E₄trunc]
   have htri : (1 : ℝ) - ‖(240 : ℂ) * (q τ + 9 * q τ ^ 2)‖
       ≤ ‖(1 : ℂ) + 240 * (q τ + 9 * q τ ^ 2)‖ := by
     have := norm_sub_norm_le (1 : ℂ) (-(240 * (q τ + 9 * q τ ^ 2)))
     rw [norm_one, norm_neg, sub_neg_eq_add] at this; exact this
   have hA : ‖(240 : ℂ) * (q τ + 9 * q τ ^ 2)‖ ≤ 240 * (‖q τ‖ + 9 * ‖q τ‖ ^ 2) := by
-    rw [norm_mul, Complex.norm_ofNat]; exact mul_le_mul_of_nonneg_left hqq (by norm_num1)
+    rw [norm_mul, Complex.norm_ofNat]; exact mul_le_mul_of_nonneg_left hqq (by norm_num)
   have hlow : (0.9063 : ℝ) ≤ 1 - 240 * (‖q τ‖ + 9 * ‖q τ‖ ^ 2) := by
     linarith [hQ, sq_le_of_lt hQpos hQ]
   linarith [htri, hA, hlow]
@@ -795,8 +795,8 @@ lemma norm_Jtilde2_le {τ : ℍ} (hτ : τ ∈ Region) :
   have hk := norm_ktilde_ge hτ
   have h1 : ‖E₄trunc τ‖ ^ 3 ≤ 1.0937 ^ 3 := pow_le_pow_left₀ (norm_nonneg _) hX 3
   calc ‖E₄trunc τ‖ ^ 3 / ‖ktilde τ‖ ≤ 1.0937 ^ 3 / 0.9907 :=
-        div_le_div₀ (by norm_num1) h1 (by norm_num1) hk
-    _ ≤ 1.3206 := by norm_num1
+        div_le_div₀ (by norm_num) h1 (by norm_num) hk
+    _ ≤ 1.3206 := by norm_num
 
 /-- Paper Lemma `lem3`: `0.7374 ≤ |Jtilde₂|` where `Jtilde₂ = X³/ktilde`. -/
 lemma norm_Jtilde2_ge {τ : ℍ} (hτ : τ ∈ Region) :
@@ -805,8 +805,8 @@ lemma norm_Jtilde2_ge {τ : ℍ} (hτ : τ ∈ Region) :
   have hX := norm_E₄trunc_ge hτ
   have hk := norm_ktilde_le hτ
   have hkpos : (0 : ℝ) < ‖ktilde τ‖ := by linarith [norm_ktilde_ge hτ]
-  have h1 : (0.9063 : ℝ) ^ 3 ≤ ‖E₄trunc τ‖ ^ 3 := pow_le_pow_left₀ (by norm_num1) hX 3
-  calc (0.7374 : ℝ) ≤ 0.9063 ^ 3 / 1.0094 := by norm_num1
+  have h1 : (0.9063 : ℝ) ^ 3 ≤ ‖E₄trunc τ‖ ^ 3 := pow_le_pow_left₀ (by norm_num) hX 3
+  calc (0.7374 : ℝ) ≤ 0.9063 ^ 3 / 1.0094 := by norm_num
     _ ≤ ‖E₄trunc τ‖ ^ 3 / ‖ktilde τ‖ := div_le_div₀ (by positivity) h1 hkpos hk
 
 /-- Paper Lemma `lem3`: `|J₂ - Jtilde₂| ≤ 498·|q|²`. -/
@@ -820,7 +820,7 @@ lemma lem3 {τ : ℍ} (hτ : τ ∈ Region) :
       = (E₄ τ ^ 3 - E₄trunc τ ^ 3
           - (E₄trunc τ ^ 3 / ktilde τ) * (kfun τ - ktilde τ)) / kfun τ := by
     rw [mul_q_J_eq, mul_q_Jtilde_eq hτ]
-    field_simp (disch := first | assumption | norm_num1 | positivity)
+    field_simp
     ring
   have hkfpos : (0 : ℝ) < ‖kfun τ‖ := norm_pos_iff.mpr hkf
   rw [hid2, norm_div, div_le_iff₀ hkfpos]
@@ -900,7 +900,7 @@ theorem theonaeherJ_lower {τ : ℍ} (hτ : τ ∈ Region) :
   have heq : 1728 * J τ = (1728 * q τ * J τ) / q τ := by rw [eq_div_iff hq]; ring
   rw [heq, norm_div, div_lt_div_iff₀ hQpos hQpos]
   have hlow := norm_mul_q_J_ge hτ
-  have hQsq : ‖q τ‖ ^ 2 < 0.000389 ^ 2 := pow_lt_pow_left₀ hQ hQpos.le (by norm_num only)
+  have hQsq : ‖q τ‖ ^ 2 < 0.000389 ^ 2 := pow_lt_pow_left₀ hQ hQpos.le (by norm_num)
   linarith [mul_le_mul_of_nonneg_right hlow hQpos.le, mul_lt_mul_of_pos_right hQsq hQpos]
 
 /-- Paper Theorem `theonaeherJ`, upper bracketing:
@@ -913,7 +913,7 @@ theorem theonaeherJ_upper {τ : ℍ} (hτ : τ ∈ Region) :
   have heq : 1728 * J τ = (1728 * q τ * J τ) / q τ := by rw [eq_div_iff hq]; ring
   rw [heq, norm_div, div_lt_div_iff₀ hQpos hQpos]
   have hup := norm_mul_q_J_le hτ
-  have hQsq : ‖q τ‖ ^ 2 < 0.000389 ^ 2 := pow_lt_pow_left₀ hQ hQpos.le (by norm_num only)
+  have hQsq : ‖q τ‖ ^ 2 < 0.000389 ^ 2 := pow_lt_pow_left₀ hQ hQpos.le (by norm_num)
   linarith [mul_le_mul_of_nonneg_right hup hQpos.le, mul_lt_mul_of_pos_right hQsq hQpos]
 
 /-- Paper Theorem `theonaeherJ`: `|J(τ)| > 1.096` for `Im τ > 5/4`. -/
@@ -927,12 +927,12 @@ theorem theonaeherJ_norm_J {τ : ℍ} (hτ : τ ∈ Region) : 1.096 < ‖J τ‖
   have hd : ‖(1728 : ℂ) * q τ‖ = 1728 * ‖q τ‖ := by rw [norm_mul, Complex.norm_ofNat]
   rw [show (1728 : ℂ) * q τ * J τ = 1728 * q τ * J τ from rfl, hd, lt_div_iff₀ (by positivity)]
   have hlow := norm_mul_q_J_ge hτ
-  have hQsq : ‖q τ‖ ^ 2 < 0.000389 ^ 2 := pow_lt_pow_left₀ hQ hQpos.le (by norm_num only)
+  have hQsq : ‖q τ‖ ^ 2 < 0.000389 ^ 2 := pow_lt_pow_left₀ hQ hQpos.le (by norm_num)
   linarith [hlow, hQsq, hQ]
 
 /-- `|J(τ)| > 1` for `Im τ > 5/4`; in particular `J(τ) ≠ 0` and `J(τ) ≠ 1` there. -/
 theorem one_lt_norm_J {τ : ℍ} (hτ : τ ∈ Region) : 1 < ‖J τ‖ :=
-  lt_trans (by norm_num1) (theonaeherJ_norm_J hτ)
+  lt_trans (by norm_num) (theonaeherJ_norm_J hτ)
 
 /-! ### Theorem `theonaehers2` -/
 
@@ -958,10 +958,10 @@ theorem theonaehers2 {τ : ℍ} (hτ : τ ∈ Region) :
         + (E₄ τ - E₄trunc τ) * (E₂star τ - E₂starTrunc τ)
         - s₂tilde τ * (E₆ τ - E₆trunc τ)) / E₆ τ := by
     simp only [s₂, s₂tilde_eq]
-    field_simp (disch := first | assumption | norm_num1 | positivity)
+    field_simp
     ring
   rw [hid, norm_div]
-  rw [div_lt_iff₀ (lt_trans (by norm_num1) hE6norm : (0 : ℝ) < ‖E₆ τ‖)]
+  rw [div_lt_iff₀ (lt_trans (by norm_num) hE6norm : (0 : ℝ) < ‖E₆ τ‖)]
   have hnum : ‖(E₄ τ - E₄trunc τ) * E₂starTrunc τ + E₄trunc τ * (E₂star τ - E₂starTrunc τ)
         + (E₄ τ - E₄trunc τ) * (E₂star τ - E₂starTrunc τ)
         - s₂tilde τ * (E₆ τ - E₆trunc τ)‖
@@ -977,12 +977,12 @@ theorem theonaehers2 {τ : ℍ} (hτ : τ ∈ Region) :
     have h1 : ‖E₄ τ - E₄trunc τ‖ * ‖E₂starTrunc τ‖ ≤ (6744 * Q ^ 3) * 1.0094 :=
       mul_le_mul hdX hZ (norm_nonneg _) (by positivity)
     have h2 : ‖E₄trunc τ‖ * ‖E₂star τ - E₂starTrunc τ‖ ≤ 1.0937 * (96.2 * Q ^ 3) :=
-      mul_le_mul hX hdZ (norm_nonneg _) (by norm_num1)
+      mul_le_mul hX hdZ (norm_nonneg _) (by norm_num)
     have h3 : ‖E₄ τ - E₄trunc τ‖ * ‖E₂star τ - E₂starTrunc τ‖ ≤ (6744 * Q ^ 3) * (96.2 * Q ^ 3) :=
       mul_le_mul hdX hdZ (norm_nonneg _) (by positivity)
     have h4 : ‖s₂tilde τ‖ * ‖E₆ τ - E₆trunc τ‖ ≤ 1.3776 * (123783 * Q ^ 3) :=
-      mul_le_mul hst hdY (norm_nonneg _) (by norm_num1)
-    have hQ3 : Q ^ 3 < 0.000389 ^ 3 := pow_lt_pow_left₀ hQ hQpos.le (by norm_num1)
+      mul_le_mul hst hdY (norm_nonneg _) (by norm_num)
+    have hQ3 : Q ^ 3 < 0.000389 ^ 3 := pow_lt_pow_left₀ hQ hQpos.le (by norm_num)
     have hQ6 : (6744 * Q ^ 3) * (96.2 * Q ^ 3) ≤ 1 * Q ^ 3 := by
       have h33 : Q ^ 3 * Q ^ 3 ≤ 0.000389 ^ 3 * Q ^ 3 :=
         mul_le_mul_of_nonneg_right hQ3.le (pow_pos hQpos 3).le

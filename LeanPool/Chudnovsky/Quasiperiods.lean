@@ -49,8 +49,7 @@ def eta₂ : ℂ := 2 * L.weierstrassZeta (L.ω₂ / 2)
 /-- The lattice is a countable subset of `ℂ`. -/
 private lemma countable_lattice : (↑L.lattice : Set ℂ).Countable := by
   have : Countable ↥L.lattice := countable_of_Lindelof_of_discrete
-  simpa only [Subtype.range_coe_subtype,
-    SetLike.setOfPred_mem_eq] using Set.countable_range (Subtype.val : ↥L.lattice → ℂ)
+  simpa using Set.countable_range (Subtype.val : ↥L.lattice → ℂ)
 
 /-- Quasi-periodicity of `ζ` in an arbitrary period direction `ω ∈ L` (with `ω/2 ∉ L`):
 `ζ(z+ω) = ζ(z) + 2ζ(ω/2)` for `z ∉ L`. Both quasi-period statements are instances of this. -/
@@ -319,7 +318,7 @@ private lemma bridgeF_summable (τ : ℍ) {z : ℂ}
     exact (Equiv.summable_iff (f := fun pp : {p : ℤ × ℤ // p ≠ 0} =>
       weierstrassZetaTerm (z + 1) ((bridgeEqv τ pp.1 : (Lτ τ).lattice) : ℂ)
         - weierstrassZetaTerm z ((bridgeEqv τ pp.1 : (Lτ τ).lattice) : ℂ))
-      (Equiv.subtypeEquivRight (fun x => by simp only [mem_singleton, ne_eq]))).mpr hFsum_sub
+      (Equiv.subtypeEquivRight (fun x => by simp))).mpr hFsum_sub
   refine hFsum.congr (fun p => ?_)
   simp only [bridgeF, bridgeEqv_coe]
 
@@ -445,14 +444,14 @@ private theorem legendre_Lτ_aux (τ : ℍ) :
       refine ⟨(-(n : ℂ)) + (m : ℂ) * (τ : ℂ),
         PeriodPair.mem_lattice.mpr ⟨-n, m, by push_cast; simp [Chudnovsky.Lτ_ω₁, Chudnovsky.Lτ_ω₂]⟩,
         ?_⟩
-      field_simp (disch := first | assumption | norm_num1 | positivity)
+      field_simp
       ring
     · rintro ⟨w, hw, rfl⟩
       obtain ⟨m, n, rfl⟩ := PeriodPair.mem_lattice.mp hw
       refine ⟨n, -m, ?_⟩
       simp only [Chudnovsky.Lτ_ω₁, Chudnovsky.Lτ_ω₂]
       push_cast
-      field_simp (disch := first | assumption | norm_num1 | positivity)
+      field_simp
       ring
   -- `(u • L_τ) ζ` at `1/2` equals `τ · ζ_{L_τ}(τ/2)`.
   have hz : (u : ℂ) * ((τ : ℂ) / 2) = 1 / 2 := by

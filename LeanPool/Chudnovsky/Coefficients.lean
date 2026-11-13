@@ -96,7 +96,7 @@ theorem jwert_τ₁₆₃_of (hjm : ∃ m : ℤ, 1728 * J τ₁₆₃ = (m : ℂ
         ≤ ‖1728 * J τ₁₆₃ - 1728 * Jtilde τ₁₆₃‖
             + ‖1728 * Jtilde τ₁₆₃ - (-640320 ^ 3 : ℂ)‖ := norm_sub_le_norm_sub_add_norm_sub _ _ _
       _ < 0.2 + 1 / 2 := add_lt_add hJJt hnorm_Jt
-      _ < 1 := by norm_num1
+      _ < 1 := by norm_num
   -- an integer within `< 1` of `−640320³` equals it
   rw [hm] at hchain
   have hz : m + 640320 ^ 3 = 0 := by
@@ -186,7 +186,7 @@ theorem s₂_τ₁₆₃_of (hjm : ∃ m : ℤ, 1728 * J τ₁₆₃ = (m : ℂ)
     linear_combination -hrel
   have hKsq : K ^ 2 = (10996566783048 : ℂ) ^ 2 := by
     rw [hKdef, mul_pow, mul_pow, hsq1, hE6sq, jwert_τ₁₆₃_of hjm]
-    push_cast; norm_num only
+    push_cast; norm_num
   -- hence `K = ±b`, so `s₂·b = ±P` is an algebraic integer
   have hbranch : K = (10996566783048 : ℂ) ∨ K = -(10996566783048 : ℂ) := by
     have hfac : (K - 10996566783048) * (K + 10996566783048) = 0 := by linear_combination hKsq
@@ -212,12 +212,12 @@ theorem s₂_τ₁₆₃_of (hjm : ∃ m : ℤ, 1728 * J τ₁₆₃ = (m : ℂ)
     rw [show s₂ τ₁₆₃ * 10996566783048 - s₂tilde τ₁₆₃ * 10996566783048
         = (s₂ τ₁₆₃ - s₂tilde τ₁₆₃) * 10996566783048 from by ring, norm_mul, hbnorm]
     have hq3 : ‖q τ₁₆₃‖ ^ 3 < (3.80898093700765233822623151648e-18 : ℝ) ^ 3 :=
-      pow_lt_pow_left₀ hqbound (norm_nonneg _) (by norm_num only)
+      pow_lt_pow_left₀ hqbound (norm_nonneg _) (by norm_num)
     calc ‖s₂ τ₁₆₃ - s₂tilde τ₁₆₃‖ * 10996566783048
         < 222000 * ‖q τ₁₆₃‖ ^ 3 * 10996566783048 := by nlinarith [theonaehers2 hτ, hqpos]
       _ < 222000 * (3.80898093700765233822623151648e-18 : ℝ) ^ 3 * 10996566783048 := by
           nlinarith [hq3]
-      _ < 1 / 4 := by norm_num only
+      _ < 1 / 4 := by norm_num
   have hnum := s2tilde_real_bound (e := Real.exp (-(π * Real.sqrt 163))) (pv := π)
     (sv := Real.sqrt 163) exp_neg_pi_sqrt_163_gt exp_neg_pi_sqrt_163_lt
     pi_gt_high_precision pi_lt_high_precision sqrt_163_gt sqrt_163_lt
@@ -243,7 +243,7 @@ theorem s₂_τ₁₆₃_of (hjm : ∃ m : ℤ, 1728 * J τ₁₆₃ = (m : ℂ)
             + (s₂tilde τ₁₆₃ * 10996566783048 - 9351571368960)‖ := by congr 1; ring
       _ ≤ _ := norm_add_le _ _
       _ < 1 / 4 + 1 / 2 := add_lt_add hpart1 hpart2
-      _ < 1 := by norm_num only
+      _ < 1 := by norm_num
   rw [hm] at hpin
   have hmval : m = 9351571368960 := by
     have hlt : ‖((m - 9351571368960 : ℤ) : ℂ)‖ < 1 := by
@@ -256,8 +256,8 @@ theorem s₂_τ₁₆₃_of (hjm : ∃ m : ℤ, 1728 * J τ₁₆₃ = (m : ℂ)
   -- conclude `s₂ = 9351571368960/10996566783048 = 77265280/90856689`
   have hfinal : s₂ τ₁₆₃ * 10996566783048 = ((9351571368960 : ℤ) : ℂ) := by rw [hm, hmval]
   have hval : s₂ τ₁₆₃ = 9351571368960 / 10996566783048 := by
-    rw [eq_div_iff (by norm_num only : (10996566783048 : ℂ) ≠ 0), hfinal]; norm_num only
-  rw [hval]; push_cast; norm_num only
+    rw [eq_div_iff (by norm_num : (10996566783048 : ℂ) ≠ 0), hfinal]; norm_num
+  rw [hval]; push_cast; norm_num
 
 /-- Milla's `s2nenner`/`satzhilfszahlen` at `N = 163`:
 `s₂(τ₁₆₃) = 77265280/90856689`. -/
@@ -269,7 +269,7 @@ rationality inputs as hypotheses: `(1 − s₂(τ₁₆₃))/6 = 13591409/545140
 theorem one_sub_s₂_τ₁₆₃_div_six_of (hjm : ∃ m : ℤ, 1728 * J τ₁₆₃ = (m : ℂ))
     (hsr : ∃ r : ℚ, s₂ τ₁₆₃ = (r : ℂ)) :
     (1 - s₂ τ₁₆₃) / 6 = (13591409 / 545140134 : ℚ) := by
-  rw [s₂_τ₁₆₃_of hjm hsr]; push_cast; norm_num1
+  rw [s₂_τ₁₆₃_of hjm hsr]; push_cast; norm_num
 
 /-- The combination entering the Chudnovsky formula:
 `(1 − s₂(τ₁₆₃))/6 = 13591409/545140134`. -/

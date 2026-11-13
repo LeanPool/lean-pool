@@ -153,7 +153,7 @@ lemma int_lin_eq_zero (τ : ℍ) {α β : ℤ} (h : (α : ℂ) * (τ : ℂ) + (�
 lemma IsPosDef.c_pos {f : BQF} (hf : IsPosDef f) : 0 < f.c := by
   obtain ⟨ha, hd⟩ := hf
   simp only [disc] at hd
-  nlinarith [sq_nonneg f.b, hd, ha]
+  nlinarith only [ha, hd]
 
 /-- The square-completion identity `(2aτ + b)² = disc f` for a root `τ` of `f`. -/
 lemma sq_two_a_root {f : BQF} {τ : ℍ} (h : IsRoot f τ) :
@@ -243,7 +243,7 @@ theorem fixes_classification {f : BQF} (hf : IsPrimitive f) (hpd : IsPosDef f)
   obtain ⟨u, v, w, huvw⟩ := bezout_of_primitive hf
   have hdvd : f.a ∣ r := by
     refine ⟨u * r + v * (s - p) + w * (-q), ?_⟩
-    have hr : r * (u * f.a + v * f.b + w * f.c) = r := by rw [huvw]; ac_rfl
+    have hr : r * (u * f.a + v * f.b + w * f.c) = r := by rw [huvw]; ring
     linear_combination -hr + v * hr1 + w * hr2
   obtain ⟨k, hk⟩ := hdvd
   refine ⟨k, hk.trans (mul_comm _ _), ?_, ?_⟩

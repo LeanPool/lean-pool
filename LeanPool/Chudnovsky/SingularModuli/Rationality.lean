@@ -157,7 +157,7 @@ lemma cm_coset_rel (n : ℤ) [NeZero m] (hm : (m : ℤ) = n ^ 2 + n + 41) :
   have hdvd : (m : ℤ) ∣ ((n : ZMod m).val : ℤ) - n := by
     rw [← ZMod.intCast_zmod_eq_zero_iff_dvd]
     push_cast [ZMod.natCast_val, ZMod.intCast_cast, ZMod.ringHom_map_cast]
-    simp only [dvd_refl, ZMod.cast_intCast, sub_self]
+    simp
   rw [j_Acol_smul_congr hdvd τ₁₆₃]
   exact cm_coset_val n hm
 
@@ -397,9 +397,9 @@ theorem cm_bridge {τ' : ℍ}
     (h43 : ∃ i : Option (ZMod 43), f 43 i τ' = j τ')
     (h61 : ∃ i : Option (ZMod 61), f 61 i τ' = j τ') :
     ∃ M : SL(2, ℤ), M • τ' = τ₁₆₃ := by
-  have : Fact (Nat.Prime 41) := ⟨by norm_num1⟩
-  have : Fact (Nat.Prime 43) := ⟨by norm_num1⟩
-  have : Fact (Nat.Prime 61) := ⟨by norm_num1⟩
+  have : Fact (Nat.Prime 41) := ⟨by norm_num⟩
+  have : Fact (Nat.Prime 43) := ⟨by norm_num⟩
+  have : Fact (Nat.Prime 61) := ⟨by norm_num⟩
   obtain ⟨i41, hi41⟩ := h41
   obtain ⟨i43, hi43⟩ := h43
   obtain ⟨i61, hi61⟩ := h61
@@ -457,12 +457,12 @@ lemma phi_coincidence (n : ℤ) (mm : ℕ) [NeZero mm] [Fact mm.Prime] (hm : (mm
 `j τ₁₆₃`, the value `j τ₁₆₃` is rational. -/
 theorem j_τ₁₆₃_rational_of (hsurj : Function.Surjective (j : ℍ → ℂ))
     (hint : IsIntegral ℤ (j τ₁₆₃)) : ∃ r : ℚ, j τ₁₆₃ = (r : ℂ) := by
-  have : NeZero (41 : ℕ) := ⟨by norm_num1⟩
-  have : NeZero (43 : ℕ) := ⟨by norm_num1⟩
-  have : NeZero (61 : ℕ) := ⟨by norm_num1⟩
-  have : Fact (Nat.Prime 41) := ⟨by norm_num1⟩
-  have : Fact (Nat.Prime 43) := ⟨by norm_num1⟩
-  have : Fact (Nat.Prime 61) := ⟨by norm_num1⟩
+  have : NeZero (41 : ℕ) := ⟨by norm_num⟩
+  have : NeZero (43 : ℕ) := ⟨by norm_num⟩
+  have : NeZero (61 : ℕ) := ⟨by norm_num⟩
+  have : Fact (Nat.Prime 41) := ⟨by norm_num⟩
+  have : Fact (Nat.Prime 43) := ⟨by norm_num⟩
+  have : Fact (Nat.Prime 61) := ⟨by norm_num⟩
   set j₀ : ℂ := j τ₁₆₃ with hj0
   -- `j₀` is integral (hence algebraic) over `ℚ`.
   have hintQ : IsIntegral ℚ j₀ := by
@@ -474,9 +474,9 @@ theorem j_τ₁₆₃_rational_of (hsurj : Function.Surjective (j : ℍ → ℂ)
   have hallroots : ∀ x : ℂ, (aeval x) (minpoly ℚ j₀) = 0 → x = j₀ := by
     intro x hx
     obtain ⟨τ', hτ'⟩ := hsurj x
-    have h41 := phi_coincidence 0 41 (by norm_num1) hx hτ'
-    have h43 := phi_coincidence 1 43 (by norm_num1) hx hτ'
-    have h61 := phi_coincidence 4 61 (by norm_num1) hx hτ'
+    have h41 := phi_coincidence 0 41 (by norm_num) hx hτ'
+    have h43 := phi_coincidence 1 43 (by norm_num) hx hτ'
+    have h61 := phi_coincidence 4 61 (by norm_num) hx hτ'
     obtain ⟨M, hM⟩ := cm_bridge h41 h43 h61
     rw [← hτ', hj0, ← hM, j_smul]
   -- Finish: all roots equal `j₀`, so `j₀` is rational (Vieta on the subleading coefficient).

@@ -118,10 +118,10 @@ def Region : Set ℍ := {τ : ℍ | 5 / 4 < τ.im}
 
 lemma τ₁₆₃_mem_Region : τ₁₆₃ ∈ Region := by
   simp only [Region, Set.mem_ofPred_eq, τ₁₆₃_im]
-  nlinarith [Real.sq_sqrt (by norm_num1 : (163 : ℝ) ≥ 0).le, Real.sqrt_nonneg (163 : ℝ)]
+  nlinarith only [Real.sq_sqrt (by norm_num : (163 : ℝ) ≥ 0).le, Real.sqrt_nonneg (163 : ℝ)]
 
 lemma τ₈_mem_Region : τ₈ ∈ Region := by
   simp only [Region, Set.mem_ofPred_eq, τ₈_im]
-  nlinarith [Real.sq_sqrt (by norm_num1 : (2 : ℝ) ≥ 0).le, Real.sqrt_nonneg (2 : ℝ)]
+  nlinarith only [Real.sq_sqrt (by norm_num : (2 : ℝ) ≥ 0).le, Real.sqrt_nonneg (2 : ℝ)]
 
 end Chudnovsky
