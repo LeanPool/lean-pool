@@ -494,13 +494,7 @@ theorem P4456T2OrderedNoChord
     -- Construct one integral half-turn centered at the outer centroid.
     obtain ⟨u, hu, _⟩ := QuarterTurnSymmetricCenteredTransport
       (layout.P 0 false) (layout.parent_quarter_turn 0 false)
-    let w := BandVectors.1 (q 3) (q 2)
-    let t : GaussianInt :=
-      ⟨u.re - u.im + w.re + w.im, u.re + u.im + w.im - w.re⟩
     have ht := OrderedNoChordGeometry.ht q cfg C T layout u hu
-    let H : ProtoTile → ProtoTile := fun U =>
-      TileTranslation (TileQuarterTurn (TileQuarterTurn U)) t
-    let tau : GaussianInt → GaussianInt := fun z => t - z - 1 - ⟨0, 1⟩
     have htau := TileHalfTurnGeometry.involutive q u
     have hHcells := TileHalfTurnGeometry.cells q u
     have hHreal := TileHalfTurnGeometry.realization q T u ht
@@ -510,10 +504,6 @@ theorem P4456T2OrderedNoChord
     have hHsigned := OrderedNoChordGeometry.hHsigned q cfg C T layout u htau hHcells hHreal hcenter
     have touch_flip := OrderedNoChordGeometry.touch_flip q cfg C T layout hne u hHsigned
     have touch_sym := OrderedNoChordGeometry.touch_sym
-    let V : Fin 6 → Fin 3 × Bool :=
-      ![(0, true), (2, false), (1, true), (0, false), (2, true), (1, false)]
-    let P : Fin 6 → ProtoTile := fun j => layout.P (V j).1 (V j).2
-    let l : Fin 6 → Int := fun j => k (V j).1 (V j).2
     have hlabels := OrderedNoChordGeometry.hlabels q cfg C T layout side k hk
     have hcontacts := OrderedNoChordGeometry.hcontacts q cfg C T layout touch_flip touch_sym
     obtain ⟨z, z', hform⟩ := P4397T1UnitEdgeCells.1 x y hxy

@@ -690,7 +690,6 @@ private theorem hrankV :
     simp [ia, ib]
   have hr := hrankAt p (hiaB.trans hposB.le) i hpi
   rw [hr, hrankB']
-  have he1 : (emb ia).val < (emb ib).val := hrootOrder
   have he2 : (emb ib).val < (emb p).val := emb.lt_iff_lt.mpr hposB
   omega
 
@@ -1242,7 +1241,6 @@ private theorem hVpos :
       intro h
       have hformI := hrankHi i h
       have hformB := hrankLo b (not_le_of_gt hba)
-      have hiBound : i.val < n+3 := i.isLt
       omega
     have hformI := hrankLo i hAi
     have hformB := hrankLo b (not_le_of_gt hba)

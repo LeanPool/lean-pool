@@ -61,18 +61,6 @@ theorem IntegralityLatticeIndex (C : BandCircle) :
   have index_pos : 0 < index := by
     dsimp [index]
     exact Fintype.card_pos
-  have card_multiple (z : GaussianInt ⧸ IntegralityLattice C) :
-      index • z = 0 := by
-    have hs := Fintype.sum_equiv (Equiv.addLeft z) (fun x => z + x)
-      (fun x => x) (fun x => rfl)
-    have hs' : (∑ x : GaussianInt ⧸ IntegralityLattice C, (z + x)) =
-        ∑ x : GaussianInt ⧸ IntegralityLattice C, x := by
-      simpa using hs
-    rw [Finset.sum_add_distrib, Finset.sum_const] at hs'
-    have hz : index • z + (∑ x : GaussianInt ⧸ IntegralityLattice C, x) =
-        0 + (∑ x : GaussianInt ⧸ IntegralityLattice C, x) := by
-      simp [index]
-    exact add_right_cancel hz
   have multiple (z : GaussianInt) : index • z ∈ IntegralityLattice C := by
     have hzero : quotientMap (index • z) = 0 := by
       simp [quotientMap, index]
@@ -112,7 +100,6 @@ theorem IntegralityLatticeIndex (C : BandCircle) :
     have hc_nat : (C.1.1.1.natAbs : ℤ) = C.1.1.1 := Int.natAbs_of_nonneg hc_nonneg
     have hnat : (C.1.1.1.natAbs : ℤ) ≤ (index : ℤ) := by
       rw [hc_nat, ← hprod_int]
-      have hn_one : (1 : ℤ) ≤ n := by omega
       have hfactor : 0 ≤ (n - 1) * C.1.1.1 :=
         mul_nonneg (by omega) hc_nonneg
       nlinarith

@@ -114,7 +114,6 @@ theorem PartialOdometerAffineTranslateFormulas
     exact membership x
   · intro x hx
     change x ∈ h.domain.image (GaussianTranslation u) at hx
-    have hxu := (membership x).mp hx
     simp [hx]
   · intro T hT
     rw [setImage, hT]
@@ -129,77 +128,10 @@ theorem PartialOdometerAffineTranslateFormulas
              intro x hx
              simp [hx] } : PartialOdometer) = _
     have translatedSquares := PartialTranslationSquares.translatedSquares h u a b
-    have valueFormula (z : GaussianInt) (hz : z ∈ h.domain) :
-        (if GaussianTranslation u z ∈ h.domain.image (GaussianTranslation u) then
-          h.value (GaussianTranslation u z - u) + a.re * (GaussianTranslation u z).re +
-            a.im * (GaussianTranslation u z).im + b
-        else 0) =
-          h.value z + a.re * (GaussianTranslation u z).re +
-            a.im * (GaussianTranslation u z).im + b := by
-      have hz' : GaussianTranslation u z - u ∈ h.domain := by
-        simpa [GaussianTranslation, add_assoc, add_comm, add_left_comm] using hz
-      rw [ite_eq_left ((membership _).mpr hz')]
-      simp [GaussianTranslation, add_comm, add_left_comm]
-    have reAdd (x y : GaussianInt) :
-        ((x + y).re : ℝ) = (x.re : ℝ) + (y.re : ℝ) := by
-      cases x; cases y; simp
-    have imAdd (x y : GaussianInt) :
-        ((x + y).im : ℝ) = (x.im : ℝ) + (y.im : ℝ) := by
-      cases x; cases y; simp
     have reInt (x y : GaussianInt) : (x + y).re = x.re + y.re := by
       cases x; cases y; rfl
     have imInt (x y : GaussianInt) : (x + y).im = x.im + y.im := by
       cases x; cases y; rfl
-    have horizontal (x : GaussianInt) (hx : x ∈ PartialOdometerSquares h) :
-        (((if GaussianTranslation u (x + 1) ∈ h.domain.image (GaussianTranslation u) then
-          h.value (GaussianTranslation u (x + 1) - u) + a.re * (GaussianTranslation u (x + 1)).re +
-            a.im * (GaussianTranslation u (x + 1)).im + b else 0) -
-          (if GaussianTranslation u x ∈ h.domain.image (GaussianTranslation u) then
-          h.value (GaussianTranslation u x - u) + a.re * (GaussianTranslation u x).re +
-            a.im * (GaussianTranslation u x).im + b else 0) +
-          (if GaussianTranslation u (x + 1 + ⟨0, 1⟩) ∈ h.domain.image (GaussianTranslation u) then
-          h.value (GaussianTranslation u (x + 1 + ⟨0, 1⟩) - u) + a.re * (GaussianTranslation u (x
-              + 1 + ⟨0, 1⟩)).re +
-            a.im * (GaussianTranslation u (x + 1 + ⟨0, 1⟩)).im + b else 0) -
-          (if GaussianTranslation u (x + ⟨0, 1⟩) ∈ h.domain.image (GaussianTranslation u) then
-          h.value (GaussianTranslation u (x + ⟨0, 1⟩) - u) + a.re * (GaussianTranslation u (x +
-              ⟨0, 1⟩)).re +
-            a.im * (GaussianTranslation u (x + ⟨0, 1⟩)).im + b else 0) : ℤ) : ℝ) =
-          ((h.value (x + 1) - h.value x + h.value (x + 1 + ⟨0, 1⟩) -
-            h.value (x + ⟨0, 1⟩) : ℤ) : ℝ) + 2 * (a.re : ℝ) := by
-      have hx0 := (Finset.mem_filter.mp hx).1
-      have hx1 := (Finset.mem_filter.mp hx).2.1
-      have hxi := (Finset.mem_filter.mp hx).2.2.1
-      have hx1i := (Finset.mem_filter.mp hx).2.2.2
-      rw [valueFormula (x + 1) hx1, valueFormula x hx0,
-        valueFormula (x + 1 + ⟨0, 1⟩) hx1i, valueFormula (x + ⟨0, 1⟩) hxi]
-      simp [GaussianTranslation, reInt, imInt]
-      ring
-    have vertical (x : GaussianInt) (hx : x ∈ PartialOdometerSquares h) :
-        (((if GaussianTranslation u (x + ⟨0, 1⟩) ∈ h.domain.image (GaussianTranslation u) then
-          h.value (GaussianTranslation u (x + ⟨0, 1⟩) - u) + a.re * (GaussianTranslation u (x +
-              ⟨0, 1⟩)).re +
-            a.im * (GaussianTranslation u (x + ⟨0, 1⟩)).im + b else 0) -
-          (if GaussianTranslation u x ∈ h.domain.image (GaussianTranslation u) then
-          h.value (GaussianTranslation u x - u) + a.re * (GaussianTranslation u x).re +
-            a.im * (GaussianTranslation u x).im + b else 0) +
-          (if GaussianTranslation u (x + 1 + ⟨0, 1⟩) ∈ h.domain.image (GaussianTranslation u) then
-          h.value (GaussianTranslation u (x + 1 + ⟨0, 1⟩) - u) + a.re * (GaussianTranslation u (x
-              + 1 + ⟨0, 1⟩)).re +
-            a.im * (GaussianTranslation u (x + 1 + ⟨0, 1⟩)).im + b else 0) -
-          (if GaussianTranslation u (x + 1) ∈ h.domain.image (GaussianTranslation u) then
-          h.value (GaussianTranslation u (x + 1) - u) + a.re * (GaussianTranslation u (x + 1)).re +
-            a.im * (GaussianTranslation u (x + 1)).im + b else 0) : ℤ) : ℝ) =
-          ((h.value (x + ⟨0, 1⟩) - h.value x + h.value (x + 1 + ⟨0, 1⟩) -
-            h.value (x + 1) : ℤ) : ℝ) + 2 * (a.im : ℝ) := by
-      have hx0 := (Finset.mem_filter.mp hx).1
-      have hx1 := (Finset.mem_filter.mp hx).2.1
-      have hxi := (Finset.mem_filter.mp hx).2.2.1
-      have hx1i := (Finset.mem_filter.mp hx).2.2.2
-      rw [valueFormula (x + ⟨0, 1⟩) hxi, valueFormula x hx0,
-        valueFormula (x + 1 + ⟨0, 1⟩) hx1i, valueFormula (x + 1) hx1]
-      simp [GaussianTranslation, reInt, imInt]
-      ring
     simp only [PartialOdometerSlope]
     rw [translatedSquares]
     have injectiveTranslation : Function.Injective (GaussianTranslation u) := by

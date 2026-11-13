@@ -1001,22 +1001,14 @@ theorem P4250T1ReflectedGluingSlope
       (h 0 true) hpositive (ho 0 true)
   have htwo_s0 := ReflectedGluingGeometry.htwo_s0 q s0 pchild ai hhalf
       (ReflectedGluingGeometry.hpchild q h s0 hp pchild hchild)
-  have hturn := BandSignedOccurrenceHalfTurn q (TileCentroid T) cert.P
-    (fun j s => (cert.outer_occurrence j s).1)
-    (fun j s => (cert.outer_occurrence j s).2.2)
-  have hreflect := ReflectedGluingGeometry.hreflect q cfg C T cert hturn
   have hcenterIntegral := ReflectedGluingGeometry.hcenterIntegral q cfg C T cert hcells
   obtain ⟨u, hu⟩ := hcenterIntegral
   let a := ai - (v + GaussianQuarterTurn v)
   have ha : GaussianRealPoint a = (2 : Real) • s0 := htwo_s0.symm
   have positive := ReflectedGluingGeometry.positive q cfg
-  let reflectedK (j : Fin 3) (s : Bool) : PartialOdometer :=
-    PartialOdometerAffineTranslate
-      (PartialOdometerHalfTurn (h j (!s))) u a 0
   have reflectedChild := ReflectedGluingGeometry.reflectedChild q cfg C T cert h s0 ho hp ai u hu
       ha positive
   have childNonempty := ReflectedGluingGeometry.childNonempty q cfg C T cert h ho positive
-  have halfSet := ReflectedGluingGeometry.halfSet
   have affineHalfMem := ReflectedGluingGeometry.affineHalfMem q ai u
   let gsharp := PartialOdometerAffineTranslate (PartialOdometerHalfTurn g) u a 0
   have hgsharpdom := ReflectedGluingGeometry.hgsharpdom q cfg C T cert g hgdom ai u

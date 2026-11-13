@@ -577,7 +577,6 @@ private theorem stripSegment :
     · exact (List.isChain_map f).mpr (hc.imp fun m n h => (hadj m n).mpr h)
   · intro path hp
     have hco := hcoords path hp
-    have hl : (l.map f).map g = l := by simp [List.map_map, Function.comp_def, hgf]
     have he : path.map g = l := intUnique _ _ _ _ hco ⟨hh, ht, hn, hc⟩
     have hp' := hp
     simp only [TriangularStripSegment, ite_eq_right hxy] at hp'

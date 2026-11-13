@@ -1215,9 +1215,6 @@ private theorem sectorOrderCertificate :
         have hSmissQ : ∃ j, LatticeVertexIncidentCell x j ∉ S.cells :=
           ⟨hQinc.choose, fun hs =>
             Finset.disjoint_left.mp hQSC hQinc.choose_spec hs⟩
-        have hOmissQ : ∃ j, LatticeVertexIncidentCell x j ∉ Q.cells :=
-          ⟨hOinc.choose, fun hq =>
-            Finset.disjoint_left.mp (hQO hOne) hq hOinc.choose_spec⟩
         have hbQ := P3161T2IncidentBoundary Q x hQinc hQmissS
         have hbS := P3161T2IncidentBoundary S x hSinc hSmissQ
         have hOmissO : ∃ j, LatticeVertexIncidentCell x j ∉ O.cells :=
@@ -1241,9 +1238,6 @@ private theorem sectorOrderCertificate :
         have hVmissR : ∃ j, LatticeVertexIncidentCell x j ∉ V.cells :=
           ⟨hRinc.choose, fun hv =>
             Finset.disjoint_left.mp hRVD hRinc.choose_spec hv⟩
-        have hOmissR : ∃ j, LatticeVertexIncidentCell x j ∉ R.cells :=
-          ⟨hOinc.choose, fun hr =>
-            Finset.disjoint_left.mp (hRO hOne) hr hOinc.choose_spec⟩
         have hbR := P3161T2IncidentBoundary R x hRinc hRmissV
         have hbV := P3161T2IncidentBoundary V x hVinc hVmissR
         have hOmissO : ∃ j, LatticeVertexIncidentCell x j ∉ O.cells :=
@@ -1330,11 +1324,9 @@ theorem BandExceptionalRestorationSectorOrder
       tile_from_band
   have nonempty_cells := RestorationSectorGeometry.nonempty_cells
   have touching_disjoint := TileTouchingDisjoint.cells
-  have hA : LatticeTile A := cert.parent_lattice 0 true
   have hB : LatticeTile B := cert.parent_lattice 0 false
   have hCparent : LatticeTile C := cert.parent_lattice 1 true
   have hDparent : LatticeTile D := cert.parent_lattice 1 false
-  have hAne := nonempty_cells A hA
   have hBne := nonempty_cells B hB
   have hCne := nonempty_cells C hCparent
   have hDne := nonempty_cells D hDparent
@@ -1349,10 +1341,6 @@ theorem BandExceptionalRestorationSectorOrder
   have trzero := RestorationSectorGeometry.trzero
   have hsep := BandOriginalPairSeparation cert.P O cert.u cert.v
     seg.precursor_in_left seg.precursor_in_right cert.partition
-  let iA : PeriodicSubtileIndex := ⟨.A, 0, 0⟩
-  let iB : PeriodicSubtileIndex := ⟨.B, 0, 0⟩
-  let iC : PeriodicSubtileIndex := ⟨.C, 0, 0⟩
-  let iD : PeriodicSubtileIndex := ⟨.D, 0, 0⟩
   have hcompB : Disjoint (TileCellComplement A O).cells B.cells :=
       RestorationSectorGeometry.hcompB q cfg C₀ T cert (RestorationSectorGeometry.htileComp q cfg
           C₀ T cert trzero) (RestorationSectorGeometry.htileB q cfg C₀ T cert trzero)
@@ -1361,12 +1349,6 @@ theorem BandExceptionalRestorationSectorOrder
         i.label = .B ∧ j.label = .A) ∧ i.first = j.first ∧ i.second = j.second)) :
       Disjoint (SubtileOccurrenceInterpretation cert.P cert.u cert.v i).cells
         (SubtileOccurrenceInterpretation cert.P cert.u cert.v j).cells := hsep.2 i j hij hlabels
-  have hBC := RestorationSectorGeometry.hBC q cfg C₀ T cert trzero
-      indexed_disjoint
-  have hBD := RestorationSectorGeometry.hBD q cfg C₀ T cert trzero
-      indexed_disjoint
-  have hCD := RestorationSectorGeometry.hCD q cfg C₀ T cert trzero
-      indexed_disjoint
   have hOC := RestorationSectorGeometry.hOC q cfg C₀ T cert (RestorationSectorGeometry.hAC q cfg
       C₀ T cert trzero indexed_disjoint)
   have hOD := RestorationSectorGeometry.hOD q cfg C₀ T cert (RestorationSectorGeometry.hAD q cfg
@@ -1386,15 +1368,9 @@ theorem BandExceptionalRestorationSectorOrder
   have boundary_missing_incident := RestorationSectorGeometry.boundary_missing_incident
   have hQO := RestorationSectorGeometry.hQO q cfg
       C₀ T cert touching_disjoint hQne
-  have hSO := RestorationSectorGeometry.hSO q cfg
-      C₀ T cert touching_disjoint hSne
   have hRO := RestorationSectorGeometry.hRO q cfg
       C₀ T cert touching_disjoint hRne
-  have hVO := RestorationSectorGeometry.hVO q cfg
-      C₀ T cert touching_disjoint hVne
   have rho_mem := RestorationSectorGeometry.rho_mem q cfg C₀ T cert
-  let f1 : PeriodicSubtileFaceIndex := ⟨.I1, 0, 0⟩
-  let f2 : PeriodicSubtileFaceIndex := ⟨.I2, 0, 0⟩
   have hp1QS : p1 ∈ FootprintVertices Q ∩ FootprintVertices S := by
     exact cert.inner_first
   have hp2RV : p2 ∈ FootprintVertices R ∩ FootprintVertices V := by

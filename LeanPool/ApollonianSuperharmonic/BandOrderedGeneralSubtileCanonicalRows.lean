@@ -160,11 +160,6 @@ theorem BandOrderedGeneralSubtileCanonicalRows
   have f1im := congrArg (fun z : GaussianInt => z.im) hf1
   have f2re := congrArg (fun z : GaussianInt => z.re) hf2
   have f2im := congrArg (fun z : GaussianInt => z.im) hf2
-  have even0 : Even 0 := ⟨0, rfl⟩
-  have notEven1 : ¬ Even 1 := by
-    rintro ⟨r, hr⟩
-    omega
-  have even2 : Even 2 := ⟨1, rfl⟩
   have notEven3 : ¬ Even 3 := by
     rintro ⟨r, hr⟩
     omega

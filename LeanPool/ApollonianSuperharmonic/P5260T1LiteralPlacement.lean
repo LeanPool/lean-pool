@@ -109,7 +109,6 @@ theorem P5260T1LiteralPlacement :
     (ProtoTileObservableExtensionality _ _ hcU haU).2.2.2.2
   let g := fun z : GaussianInt =>
     a + (if s.val < 2 then z else C - z - 1 - ⟨0, 1⟩)
-  let f := fun z : GaussianInt => a + (if s.val < 2 then z else C - z)
   have image_place (S : Finset GaussianInt) (center v : GaussianInt)
       (hsym : S.image (fun z => center - z - 1 - ⟨0, 1⟩) = S) :
       (S.image (GaussianTranslation

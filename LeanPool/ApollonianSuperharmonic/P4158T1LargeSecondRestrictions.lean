@@ -71,7 +71,6 @@ private theorem hq0 :
   classical
   intro P hqgt
   have hq0sq : (1 : Int) < (P.q * P.q : Nat) := by
-    have hqreal : (1 : Int) < P.q := by exact_mod_cast hqgt
     have hqcast : (1 : Int) < (P.q : Int) * P.q := by nlinarith
     exact_mod_cast hqcast
   simpa [FordRecursiveQuadruple, FordCircleCoordinate] using hq0sq
@@ -303,10 +302,6 @@ private theorem rootCentroidEq :
             (TileTranslation (FordTile P.q) u)) ) := by
   classical
   intro P T u hc
-  have hneF : (FordTile P.q).cells.Nonempty := by
-    refine ⟨0, ?_⟩
-    apply Finset.mem_image.mpr
-    exact ⟨(0, 0), Finset.mem_product.mpr ⟨by simpa using P.q_pos, by simpa using P.q_pos⟩, rfl⟩
   have hzero : (0 : GaussianInt) ∈ (FordTile P.q).cells := by
     apply Finset.mem_image.mpr
     exact ⟨(0, 0), Finset.mem_product.mpr ⟨by simpa using P.q_pos, by simpa using P.q_pos⟩, rfl⟩
@@ -340,10 +335,6 @@ private theorem rootCentroidEq' :
         TileCentroid T' = TileCentroid (TileTranslation (FordTile P.q) v)) ) := by
   classical
   intro P T' u hc' v
-  have hneF : (FordTile P.q).cells.Nonempty := by
-    refine ⟨0, ?_⟩
-    apply Finset.mem_image.mpr
-    exact ⟨(0, 0), Finset.mem_product.mpr ⟨by simpa using P.q_pos, by simpa using P.q_pos⟩, rfl⟩
   have hzero : (0 : GaussianInt) ∈ (FordTile P.q).cells := by
     apply Finset.mem_image.mpr
     exact ⟨(0, 0), Finset.mem_product.mpr ⟨by simpa using P.q_pos, by simpa using P.q_pos⟩, rfl⟩
@@ -869,7 +860,6 @@ theorem P4158T1LargeSecondRestrictions
   have fordCentroid (n : Nat) (hn : 0 < n) := LargeSecondRestrictions.fordCentroid n hn
   have rootCentroidEq := LargeSecondRestrictions.rootCentroidEq P T u hc
   have rootCentroid := LargeSecondRestrictions.rootCentroid P T u fordCentroid rootCentroidEq
-  let v : GaussianInt := u + ⟨-(P.q : Int), P.q₂⟩
   have rootCentroidEq' := LargeSecondRestrictions.rootCentroidEq' P T' u hc'
   have rootCentroid' := LargeSecondRestrictions.rootCentroid' P T' u fordCentroid rootCentroidEq'
   have hqreal : (P.q : Real) = (P.q₁ : Real) + P.q₂ := by exact_mod_cast P.sum_q

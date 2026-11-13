@@ -978,8 +978,6 @@ theorem P3650T1LocalCoherence {n : Nat} (p : P3381T1PolygonBoundary n)
     obtain ⟨rL, hrL, hpathL, _⟩ := (P3544T1LocalParity C.left).2.2.2.2.2.2.2.1 iL
     obtain ⟨rR, hrR, hpathR, _⟩ := (P3544T1LocalParity C.right).2.2.2.2.2.2.2.1 iR
     have hopenP : IsOpen Op := (P3544T1LocalParity p).2.1
-    have hopenL : IsOpen OL := (P3544T1LocalParity C.left).2.1
-    have hopenR : IsOpen OR := (P3544T1LocalParity C.right).2.1
     have hclosureL : closure OL = OL ∪ CL := by
       simpa [OL, CL] using (P3544T1LocalParity C.left).1
     have hclosureR : closure OR = OR ∪ CR := by
@@ -1105,11 +1103,8 @@ theorem P3650T1LocalCoherence {n : Nat} (p : P3381T1PolygonBoundary n)
       Metric.ball_subset_ball (le_trans (min_le_left (min rL rR) rp) (min_le_left rL rR))
     have hsmallR : Metric.ball x r ⊆ Metric.ball x rR :=
       Metric.ball_subset_ball (le_trans (min_le_left (min rL rR) rp) (min_le_right rL rR))
-    have hsmallP : Metric.ball x r ⊆ Metric.ball x rp :=
-      Metric.ball_subset_ball (min_le_right (min rL rR) rp)
     have hyL : y ∈ Metric.ball x rL := hsmallL hy
     have hyR : y ∈ Metric.ball x rR := hsmallR hy
-    have hyP : y ∈ Metric.ball x rp := hsmallP hy
     have hL := hcanonL y hyL
     have hR := hcanonR y hyR
     simpa [H, s, hsignsOpp] using And.intro hL hR

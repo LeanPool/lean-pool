@@ -1430,7 +1430,6 @@ private theorem hbound :
   classical
   intro q cfg C T cert x cells modified_cell_owner owner modifiedOwners modifiedOwnerCard
       BoundaryParents hupper
-  have hcard : modifiedOwners.card + 1 ≤ 4 := by omega
   omega
 
 end GeneralDescentGeometry
@@ -1457,7 +1456,6 @@ theorem P4120T1GeneralDescent
   have modified_cell_owner := GeneralDescentGeometry.modified_cell_owner q cfg C T cert hOsub
   let owner : Fin 4 → PeriodicSubtileIndex := fun j =>
     Classical.choose (modified_cell_owner (LatticeVertexIncidentCell x j) (cells j))
-  let I : GaussianInt := ⟨0, 1⟩
   have owner_spec (j : Fin 4) : (owner j).first = 0 ∧ (owner j).second = 0 ∧
       LatticeVertexIncidentCell x j ∈ (cert.modified.tile (owner j)).cells :=
     Classical.choose_spec (modified_cell_owner (LatticeVertexIncidentCell x j) (cells j))
@@ -1484,7 +1482,6 @@ theorem P4120T1GeneralDescent
       (h : ({a, b} : Finset GaussianInt) = {c, d}) := GeneralDescentGeometry.pair_right_mem (a :=
           a) (b := b) (c := c) (d := d) h
   have adjacent_of_edge := GeneralDescentGeometry.adjacent_of_edge q cfg C T cert
-  let modifiedOwners : Finset PeriodicSubtileIndex := Finset.univ.image owner
   change ((Nat.card {a : Fin 3 × Bool //
     x ∈ BoundaryFootprintVertices (cert.P a.1 a.2)} = 2 ∨
       Nat.card {a : Fin 3 × Bool //
@@ -1530,9 +1527,6 @@ theorem P4120T1GeneralDescent
     rcases another_parent with ⟨j, hj⟩
     let BoundaryParents := {a : Fin 3 × Bool //
       x ∈ BoundaryFootprintVertices (cert.P a.1 a.2)}
-    let p0 : BoundaryParents := ⟨parentOwner 0, parentOwner_boundary 0⟩
-    let pj : BoundaryParents := ⟨parentOwner j, parentOwner_boundary j⟩
-    let chooseTwo : Fin 2 → BoundaryParents := fun n => if n = 0 then p0 else pj
     have two_le_card : 2 ≤ Nat.card BoundaryParents  := GeneralDescentGeometry.two_le_card q cfg C
         T cert x sourceParent parentOwner_boundary j (GeneralDescentGeometry.chooseTwo_injective
             q cfg C T cert x sourceParent parentOwner_boundary j (GeneralDescentGeometry.hp0j q
@@ -1553,8 +1547,6 @@ theorem P4120T1GeneralDescent
       | (1, false) => .D
       | (2, true) => .E
       | (2, false) => .F
-    let originalIndex : Fin 3 × Bool → PeriodicSubtileIndex := fun p =>
-      ⟨labelFromParent p, 0, 0⟩
     have parent_label_roundtrip := GeneralDescentGeometry.parent_label_roundtrip
     let parentCellIndex : BoundaryParents → Fin 4 := fun p =>
       Classical.choose (parent_boundary_incident_cell p.1.1 p.1.2 p.2)
@@ -1562,12 +1554,6 @@ theorem P4120T1GeneralDescent
         LatticeVertexIncidentCell x (parentCellIndex p) ∈
           (cert.P p.1.1 p.1.2).cells :=
       Classical.choose_spec (parent_boundary_incident_cell p.1.1 p.1.2 p.2)
-    let ModOwner := {m : PeriodicSubtileIndex // m ∈ modifiedOwners}
-    let parentMap : BoundaryParents → Sum ModOwner Unit := fun p =>
-      if p.1 = (0, true) then Sum.inr Unit.unit
-      else
-        let j := parentCellIndex p
-        Sum.inl ⟨owner j, Finset.mem_image.mpr ⟨j, Finset.mem_univ _, rfl⟩⟩
     have hbound : Nat.card BoundaryParents ≤ 4  := GeneralDescentGeometry.hbound q cfg C T cert x
         cells modified_cell_owner
         (GeneralDescentGeometry.modifiedOwnerCard q cfg C T cert x cells modified_cell_owner
@@ -1598,8 +1584,6 @@ theorem P4120T1GeneralDescent
             parent_label_roundtrip) (GeneralDescentGeometry.originalIndex_parent q cfg C T cert
             (GeneralDescentGeometry.tile_zero))) (GeneralDescentGeometry.hAB q cfg C T cert
             hseparation (GeneralDescentGeometry.htrans)) parentCellIndex_spec)))
-    have hlower : 2 ≤ Nat.card BoundaryParents := by
-      simpa [BoundaryParents] using two_le_card
     have hk : Nat.card BoundaryParents = 2 ∨ Nat.card BoundaryParents = 3 ∨
         Nat.card BoundaryParents = 4 := by omega
     exact hcount (by simpa [BoundaryParents] using hk)

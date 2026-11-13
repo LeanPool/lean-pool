@@ -64,13 +64,6 @@ theorem PeriodicQuadraticRemainder (C : BandCircle)
   have delta_zero : d 0 = 0 := by
     have hz := delta_add 0 0 (TilingLattice C).zero_mem
     simpa using hz
-  have delta_neg : ∀ v, v ∈ TilingLattice C → d (-v) = -d v := by
-    intro v hv
-    have h := delta_add (-v) v hv
-    have hmem : -v ∈ TilingLattice C := (TilingLattice C).neg_mem hv
-    have hzero : -v + v = 0 := by simp
-    rw [hzero, delta_zero] at h
-    linarith
   let deltaHom : TilingLattice C →+ ℝ :=
     { toFun := fun v => d v
       map_zero' := delta_zero
@@ -114,13 +107,6 @@ theorem PeriodicQuadraticRemainder (C : BandCircle)
       have hzero : (0 : Int × Int) = mn := hmu (0, 0) (by simp [hz])
       have hone : (1, 0) = mn := hmu (1, 0) (by simp [hz])
       have hh := congrArg Prod.fst (hone.trans hzero.symm)
-      norm_num at hh
-    have hv0 : v ≠ 0 := by
-      intro hz
-      obtain ⟨mn, hm, hmu⟩ := hcoord ⟨0, (TilingLattice C).zero_mem⟩
-      have hzero : (0 : Int × Int) = mn := hmu (0, 0) (by simp [hz])
-      have hone : (0, 1) = mn := hmu (0, 1) (by simp [hz])
-      have hh := congrArg Prod.snd (hone.trans hzero.symm)
       norm_num at hh
     by_cases hreal : v.re = 0 ∧ u.re = 0
     · have himag : v.im ≠ 0 ∨ u.im ≠ 0 := by
@@ -177,10 +163,6 @@ theorem PeriodicQuadraticRemainder (C : BandCircle)
     obtain ⟨mn, hm, hmu⟩ := hcoord w
     have hlinear : d ((mn.1 : GaussianInt) * u + (mn.2 : GaussianInt) * v) =
         (mn.1 : ℝ) * d u + (mn.2 : ℝ) * d v := by
-      have hu' : (⟨u, hu⟩ : TilingLattice C) =
-          (⟨u, hu⟩ : TilingLattice C) := rfl
-      have hv' : (⟨v, hv⟩ : TilingLattice C) =
-          (⟨v, hv⟩ : TilingLattice C) := rfl
       have hm1 := deltaHom.map_zsmul mn.1 (⟨u, hu⟩ : TilingLattice C)
       have hm2 := deltaHom.map_zsmul mn.2 (⟨v, hv⟩ : TilingLattice C)
       have hadd := deltaHom.map_add

@@ -62,8 +62,6 @@ theorem BandDescartesGapSubdivision
   dsimp at classified
   rcases classified with special | classified
   · exfalso
-    have hpos := curvature.1
-    have n1 : 0 ≤ (q 1).1 := by simpa using curvature.2.1 (0 : Fin 3)
     have n2 : 0 ≤ (q 2).1 := by simpa using curvature.2.1 (1 : Fin 3)
     have n3 : 0 ≤ (q 3).1 := by simpa using curvature.2.1 (2 : Fin 3)
     have hlt : (q 1).1 < (q 0).1 := by simpa using hq.2 (0 : Fin 3)
@@ -71,7 +69,6 @@ theorem BandDescartesGapSubdivision
     change 2 * (q 0).1 + 2 * (q 2).1 + 2 * (q 3).1 - (q 1).1 = 1 at special
     have hz2 : (q 2).1 = 0 := by omega
     have hz3 : (q 3).1 = 0 := by omega
-    have hz1 : (q 1).1 = 0 := by omega
     have : (1 : Fin 3) = 2 := hzero 1 2 (by simpa using hz2) (by simpa using hz3)
     exact (by decide : (1 : Fin 3) ≠ 2) this
   rcases classified with ⟨hs, h0, h2, h3⟩
@@ -79,9 +76,6 @@ theorem BandDescartesGapSubdivision
     ![(2 * (q 0).1 + 2 * (q 2).1 + 2 * (q 3).1 - (q 1).1,
         2 * (q 0).2 + 2 * (q 2).2 + 2 * (q 3).2 - (q 1).2),
       q 0, q 2, q 3]
-  have hsdef : s = ![(2 * (q 0).1 + 2 * (q 2).1 + 2 * (q 3).1 - (q 1).1,
-        2 * (q 0).2 + 2 * (q 2).2 + 2 * (q 3).2 - (q 1).2),
-      q 0, q 2, q 3] := rfl
   have hssemi : SemiProperQuadruple s := by
     simpa [s] using successor
   have hdpos : 0 < (s 0).1 := by

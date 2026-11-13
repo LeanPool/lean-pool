@@ -413,8 +413,6 @@ private theorem huOut (U : ProtoTile) (u : ApollonianSuperharmonic.LatticeCell) 
   have := huMax (u + 1) hu1
   simp at this
 
-private abbrev hvOut := ApollonianSuperharmonic.CommonBoundaryAcyclicityConstruction.huOut
-
 private theorem huNotV (U : ProtoTile) (V : ProtoTile) (hdisjoint : Disjoint U.cells V.cells) (u
     : ApollonianSuperharmonic.LatticeCell) (hu : u ∈ U.cells) : u ∉ V.cells := by
   classical
@@ -574,44 +572,6 @@ theorem DisjointBoundaryCommonEdgeGraphAcyclic (U V : ProtoTile)
       FootprintEdges U ∩ FootprintEdges V
   change G.IsAcyclic
   intro v c hc
-  have cycle_subcycle_eq {B : SimpleGraph GaussianInt} {u w : GaussianInt}
-      (outer : B.Walk u u) (inner : B.Walk w w)
-      (houter : outer.IsCycle) (hinner : inner.IsCycle)
-      (hle : inner.toSubgraph ≤ outer.toSubgraph) :
-      inner.toSubgraph = outer.toSubgraph :=
-          CommonBoundaryAcyclicityConstruction.cycle_subcycle_eq (B := B) (u := u) (w := w) outer
-          inner houter hinner hle
-  let boundaryGraph (T : ProtoTile) : SimpleGraph GaussianInt :=
-    SimpleGraph.fromRel fun a b =>
-      ({a, b} : Finset GaussianInt) ∈ BoundaryFootprintEdges T
-  have pair_eq_iff_sym2 (a b r s' : GaussianInt) :
-      ({a, b} : Finset GaussianInt) = {r, s'} ↔ s(a, b) = s(r, s') :=
-          CommonBoundaryAcyclicityConstruction.pair_eq_iff_sym2 a b r s'
-  have boundary_cycle (T : ProtoTile)
-      (ht : SimpleGridCycle (BoundaryFootprintVertices T)
-        (BoundaryFootprintEdges T)) :
-      ∃ (z : GaussianInt) (d : (boundaryGraph T).Walk z z), d.IsCycle ∧
-        ∀ {a b : GaussianInt}, a ≠ b →
-          (({a, b} : Finset GaussianInt) ∈ BoundaryFootprintEdges T ↔
-            d.toSubgraph.Adj a b) := CommonBoundaryAcyclicityConstruction.boundary_cycle T ht
-  have boundary_pair_common (T : ProtoTile)
-      (ht : SimpleGridCycle (BoundaryFootprintVertices T)
-        (BoundaryFootprintEdges T))
-      (hsub : FootprintEdges U ∩ FootprintEdges V ⊆
-        BoundaryFootprintEdges T) :
-      ∀ {a b : GaussianInt}, a ≠ b →
-        ({a, b} : Finset GaussianInt) ∈ BoundaryFootprintEdges T →
-        ({a, b} : Finset GaussianInt) ∈ FootprintEdges U ∩ FootprintEdges V :=
-            CommonBoundaryAcyclicityConstruction.boundary_pair_common U V v c hc T ht hsub
-  have hsubU : FootprintEdges U ∩ FootprintEdges V ⊆
-      BoundaryFootprintEdges U := CommonBoundaryAcyclicityConstruction.hsubU U V hedges
-  have hsubV : FootprintEdges U ∩ FootprintEdges V ⊆
-      BoundaryFootprintEdges V := CommonBoundaryAcyclicityConstruction.hsubV U V hedges
-  have vertical_boundary_iff (T : ProtoTile) (z : GaussianInt) :
-      ({z, z + ⟨0, 1⟩} : Finset GaussianInt) ∈ BoundaryFootprintEdges T ↔
-        ((z ∈ T.cells ∧ z - 1 ∉ T.cells) ∨
-          (z ∉ T.cells ∧ z - 1 ∈ T.cells)) :=
-              CommonBoundaryAcyclicityConstruction.vertical_boundary_iff T z
   obtain ⟨e, heU, heV⟩ := hcommon
   obtain ⟨u0, hu0, _⟩ := heU
   obtain ⟨v0, hv0, _⟩ := heV
@@ -619,24 +579,6 @@ theorem DisjointBoundaryCommonEdgeGraphAcyclic (U V : ProtoTile)
     U.cells.exists_max_image (fun q => q.re) ⟨u0, hu0⟩
   obtain ⟨v', hv', hvMax⟩ :=
     V.cells.exists_max_image (fun q => q.re) ⟨v0, hv0⟩
-  have huOut : u + 1 ∉ U.cells := CommonBoundaryAcyclicityConstruction.huOut U u huMax
-  have hvOut : v' + 1 ∉ V.cells := CommonBoundaryAcyclicityConstruction.hvOut V v' hvMax
-  have huNotV : u ∉ V.cells := CommonBoundaryAcyclicityConstruction.huNotV U V hdisjoint u hu
-  have hvNotU : v' ∉ U.cells := CommonBoundaryAcyclicityConstruction.hvNotU U V hdisjoint v' hv'
-  have hUne : u + 1 ≠ u + 1 + ⟨0, 1⟩ := CommonBoundaryAcyclicityConstruction.hUne u
-  have hVne : v' + 1 ≠ v' + 1 + ⟨0, 1⟩ := CommonBoundaryAcyclicityConstruction.hVne v'
-  have hUright : ({u + 1, u + 1 + ⟨0, 1⟩} : Finset GaussianInt) ∈
-      BoundaryFootprintEdges U := CommonBoundaryAcyclicityConstruction.hUright U u hu huMax
-  have hVright : ({v' + 1, v' + 1 + ⟨0, 1⟩} : Finset GaussianInt) ∈
-      BoundaryFootprintEdges V := CommonBoundaryAcyclicityConstruction.hVright V v' hv' hvMax
-  have hUcommon := boundary_pair_common U hUcycle hsubU hUne hUright
-  have hVcommon := boundary_pair_common V hVcycle hsubV hVne hVright
-  have hUrightV : ({u + 1, u + 1 + ⟨0, 1⟩} : Finset GaussianInt) ∈
-      BoundaryFootprintEdges V := CommonBoundaryAcyclicityConstruction.hUrightV U V hUcycle
-          hedges v u c hu huMax hc
-  have hVrightU : ({v' + 1, v' + 1 + ⟨0, 1⟩} : Finset GaussianInt) ∈
-      BoundaryFootprintEdges U := CommonBoundaryAcyclicityConstruction.hVrightU U V hVcycle
-          hedges v v' c hv' hvMax hc
   have hu1V : u + 1 ∈ V.cells := CommonBoundaryAcyclicityConstruction.hu1V U V hdisjoint hUcycle
       hedges v u c hu huMax hc
   have hv1U : v' + 1 ∈ U.cells := CommonBoundaryAcyclicityConstruction.hv1U U V hdisjoint hVcycle

@@ -445,34 +445,8 @@ theorem TilingLatticeIndex (C : BandCircle) :
   have determinant_value : Int.natAbs (a.re * b.im - a.im * b.re) =
       C.1.1.1.natAbs := TilingIndexProof.determinant_value C q hC successor_semi successor_positive
   have determinant_positive := TilingIndexProof.determinant_positive C q determinant_value
-  let f : (Fin 2 → ℤ) →ₗ[ℤ] K :=
-    { toFun := fun x => ⟨x 0 • a + x 1 • b,
-        K.add_mem (K.zsmul_mem (AddSubgroup.subset_closure (by simp [])) (x 0))
-          (K.zsmul_mem (AddSubgroup.subset_closure (by simp [])) (x 1))⟩
-      map_add' := by
-        intro x y
-        apply Subtype.ext
-        simp [zsmul_eq_mul, Int.cast_add]
-        ring
-      map_smul' := by
-        intro n x
-        apply Subtype.ext
-        simp [zsmul_eq_mul, Int.cast_mul]
-        ring }
   have f_injective := TilingIndexProof.f_injective q determinant_positive
   have f_surjective := TilingIndexProof.f_surjective q
-  let coordinates : GaussianInt ≃ₗ[ℤ] (Fin 2 → ℤ) :=
-    { toFun := fun z => ![z.re, z.im]
-      invFun := fun x => ⟨x 0, x 1⟩
-      left_inv := by intro z; ext <;> simp
-      right_inv := by intro x; funext i; fin_cases i <;> simp
-      map_add' := by intro x y; funext i; fin_cases i <;> simp
-      map_smul' := by intro n x; funext i; fin_cases i <;> simp }
-  let e : (Fin 2 → ℤ) ≃ₗ[ℤ] K :=
-    LinearEquiv.ofBijective f ⟨f_injective, f_surjective⟩
-  let basisK : Module.Basis (Fin 2) ℤ K := (Pi.basisFun ℤ (Fin 2)).map e
-  let basisG : Module.Basis (Fin 2) ℤ GaussianInt :=
-    Module.Basis.ofEquivFun coordinates
   have index_value : K.index = Int.natAbs (a.re * b.im - a.im * b.re) :=
       TilingIndexProof.index_value q f_injective f_surjective
   have quotient_card : Nat.card (GaussianInt ⧸ K) = C.1.1.1.natAbs := by

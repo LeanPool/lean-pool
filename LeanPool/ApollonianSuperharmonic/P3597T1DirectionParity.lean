@@ -48,11 +48,6 @@ private theorem coordA_swap :
         = coordB d e v) := by
   classical
   intro det2 coordA coordB d e v hD
-  have hED : det2 e d ≠ 0 := by
-    intro h
-    have hs : det2 e d = -det2 d e := by dsimp [det2]; ring
-    rw [hs] at h
-    exact hD (by linarith)
   have hnum : det2 v d = -det2 d v := by dsimp [det2]; ring
   have hden : det2 e d = -det2 d e := by dsimp [det2]; ring
   dsimp [coordA, coordB]
@@ -67,11 +62,6 @@ private theorem coordB_swap :
         = coordA d e v) := by
   classical
   intro det2 coordA coordB d e v hD
-  have hED : det2 e d ≠ 0 := by
-    intro h
-    have hs : det2 e d = -det2 d e := by dsimp [det2]; ring
-    rw [hs] at h
-    exact hD (by linarith)
   have hnum : det2 e v = -det2 v e := by dsimp [det2]; ring
   have hden : det2 e d = -det2 d e := by dsimp [det2]; ring
   dsimp [coordA, coordB]
@@ -388,12 +378,6 @@ private theorem cyclic_xor_count :
     have hcard : ((Finset.univ.filter tr).card : Int) =
         ∑ i : Fin (m+1), if b i = b (cyclicSucc m i) then (0 : Int) else 1 := by
       simp [tr, Finset.card_filter]
-    have hk' : ((Finset.univ.filter tr).card : Int) = 2*k := by
-      rw [hcard]
-      exact hk
-    have hk0 : 0 ≤ k := by
-      have hc : 0 ≤ ((Finset.univ.filter tr).card : Int) := Int.natCast_nonneg _
-      omega
     refine ⟨k.toNat, ?_⟩
     omega
   obtain ⟨k, hk⟩ := htrans
@@ -417,10 +401,6 @@ private theorem affine_root_between :
   have ha : a ≠ 0 := by
     intro h
     rw [h, zero_mul] at hac
-    exact (lt_irrefl 0) hac
-  have hc : c ≠ 0 := by
-    intro h
-    rw [h, mul_zero] at hac
     exact (lt_irrefl 0) hac
   by_cases hap : 0 < a
   · have hcn : c < 0 := by
@@ -535,9 +515,6 @@ private theorem affine_axis_crossing_iff :
       intro heq
       rw [heq] at hbd
       nlinarith [sq_nonneg b]
-    have hu : u=b/(b-d) := by
-      apply (eq_div_iff (sub_ne_zero.mpr hbdne)).2
-      nlinarith [hroot]
     have hid : (d-b)*((1-u)*a+u*c)=a*d-b*c := by
       linear_combination (c-a)*hroot
     have hcrit : 0<(a*d-b*c)*(d-b) :=
@@ -982,20 +959,6 @@ private theorem choose_common_generic :
     rw [hzero] at hh
     exact hh (by simp [])
   let k : Real × Real := (-g.2, g.1)
-  have hGk : det2 g k ≠ 0 := by
-    intro hzero
-    have hpos : 0 < g.1^2+g.2^2 := by
-      have hcoord : g.1 ≠ 0 ∨ g.2 ≠ 0 := by
-        by_contra h
-        push Not at h
-        apply hgn
-        exact Prod.ext h.1 h.2
-      rcases hcoord with hcoord | hcoord
-      · exact add_pos_of_pos_of_nonneg (sq_pos_of_ne_zero hcoord) (sq_nonneg _)
-      · exact add_pos_of_nonneg_of_pos (sq_nonneg _) (sq_pos_of_ne_zero hcoord)
-    have hh : det2 g k = g.1^2+g.2^2 := by dsimp [det2, k]; ring
-    rw [hh] at hzero
-    linarith
   have hIndependent (z : Real × Real) (h1 : det2 g z = 0)
       (h2 : det2 k z = 0) : z=0 := by
     have hpos : 0 < g.1^2+g.2^2 := by
@@ -1263,18 +1226,12 @@ theorem P3597T1DirectionParity {n : Nat} (p : P3381T1PolygonBoundary n)
   }
   let cyclicSucc_eq_add {m : Nat} (i : Fin (m+1)) : cyclicSucc m i = i + 1 :=
       DirectionParityLemmas.cyclicSucc_eq_add (m := m) i
-  let transition_sum_even {m : Nat} (b : Fin (m+1) → Bool) :
-      (∑ i : Fin (m+1), (if b i = b (cyclicSucc m i) then (0 : Int) else 1)) % 2 = 0 :=
-          DirectionParityLemmas.transition_sum_even (m := m) b
   let cyclic_xor_count {m : Nat} (P Q : Fin (m+1) → Prop)
       [DecidablePred P] [DecidablePred Q] (b : Fin (m+1) → Bool)
       (hxor : ∀ i, (P i ∧ ¬ Q i ∨ ¬ P i ∧ Q i) ↔
         b i ≠ b (cyclicSucc m i)) :
       (Finset.univ.filter P).card % 2 = (Finset.univ.filter Q).card % 2 :=
           DirectionParityLemmas.cyclic_xor_count (m := m) P Q b hxor
-  let ncard_filter {m : Nat} (P : Fin (m+1) → Prop) [DecidablePred P] :
-      Set.ncard {i : Fin (m+1) | P i} = (Finset.univ.filter P).card :=
-          DirectionParityLemmas.ncard_filter (m := m) P
   let affine_root_between (a c : Real) (hac : a*c < 0) :
       ∃ u, 0 < u ∧ u < 1 ∧ (1-u)*a+u*c=0 := DirectionParityLemmas.affine_root_between a c hac
   let axis_root_x_identity (a b c d u : Real)

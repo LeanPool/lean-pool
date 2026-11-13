@@ -38,7 +38,6 @@ private theorem hq1pos :
   have hd := P.det₁
   rw [hz] at hd
   simp only [Nat.cast_zero, zero_mul] at hd
-  have hqint : 2 < (P.q : Int) := by exact_mod_cast hP
   by_cases hp : P.p₁ ≤ 0
   · have hqnonneg : 0 ≤ (P.q : Int) := by omega
     have : P.p₁ * (P.q : Int) ≤ 0 := mul_nonpos_of_nonpos_of_nonneg hp hqnonneg
@@ -401,16 +400,6 @@ theorem P4062T1InteriorGeometry (P : FordFareyParameter)
       1 ≤ x.re ∧ x.re ≤ (P.q₂ : Int)-1 ∧
       (P.q₁ : Int)+1 ≤ x.im ∧ x.im ≤ (P.q : Int)-1 := InteriorGeometryProof.mem3 P hsum
           squareCoordinates coord3 x
-  have bounds (i : Fin 4) (x : GaussianInt) (hx : x ∈ A i) :
-      (i = 0 → 1 ≤ x.re ∧ x.re ≤ (P.q₁ : Int)-1 ∧
-        1 ≤ x.im ∧ x.im ≤ (P.q₁ : Int)-1) ∧
-      (i = 1 → (P.q₂ : Int)+1 ≤ x.re ∧ x.re ≤ (P.q : Int)-1 ∧
-        (P.q₂ : Int)+1 ≤ x.im ∧ x.im ≤ (P.q : Int)-1) ∧
-      (i = 2 → (P.q₁ : Int)+1 ≤ x.re ∧ x.re ≤ (P.q : Int)-1 ∧
-        1 ≤ x.im ∧ x.im ≤ (P.q₂ : Int)-1) ∧
-      (i = 3 → 1 ≤ x.re ∧ x.re ≤ (P.q₂ : Int)-1 ∧
-        (P.q₁ : Int)+1 ≤ x.im ∧ x.im ≤ (P.q : Int)-1) := InteriorGeometryProof.bounds P coord0
-            coord1 coord2 coord3 i x hx
   have adjacentCoordinates (x y : GaussianInt) (h : FourNeighborAdjacent x y) :
       (x.re = y.re ∧ (y.im = x.im+1 ∨ x.im = y.im+1)) ∨
       (x.im = y.im ∧ (y.re = x.re+1 ∨ x.re = y.re+1)) :=

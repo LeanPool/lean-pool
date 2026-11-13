@@ -526,14 +526,9 @@ private theorem every_outside_reaches :
   intro T S step reach reach_target_out around base boundary_outside_reaches z exterior
       hexteriorBase right_halfplane q hqOut
   by_contra hqbase
-  have hqle : q.re ≤ z.re := by
-    by_contra hnot
-    exact hqbase (Relation.ReflTransGen.trans
-      (right_halfplane q (by omega)) hexteriorBase)
   let distance (r : LatticeCell) : Nat := Int.natAbs (z.re - r.re)
   have hfind : ∃ n, ∃ r : LatticeCell, reach q r ∧ n = distance r :=
     ⟨distance q, q, Relation.ReflTransGen.refl, rfl⟩
-  let n := Nat.find hfind
   rcases Nat.find_spec hfind with ⟨r, hqr, hn⟩
   have hrOut : r ∉ S := reach_target_out hqOut hqr
   have hrbase : ¬ reach r base := by
@@ -695,7 +690,6 @@ theorem LatticeTileComplementGridConnected (T : ProtoTile)
   have hzS : z ∈ S := hz
   let exterior : LatticeCell := z + 1
   have hexteriorOut : exterior ∉ S := ComplementGridPaths.hexteriorOut T z hzmax
-  let rightEdge : Finset GaussianInt := {z + 1, z + 1 + ⟨0, 1⟩}
   have hrightEdge := ComplementGridPaths.hrightEdge T z hzS hexteriorOut
   have hexteriorBase := ComplementGridPaths.hexteriorBase T base boundary_outside_reaches z
       hexteriorOut hrightEdge

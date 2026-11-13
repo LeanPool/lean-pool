@@ -207,7 +207,6 @@ private theorem hxBoundary :
       hjY jZ hjZ
   have hXY := Finset.disjoint_left.mp hXYdisjoint
   have hYZ := Finset.disjoint_left.mp hYZdisjoint
-  have hZX := Finset.disjoint_left.mp hZXdisjoint
   have hxXB : x ∈ BoundaryFootprintVertices X :=
     incident_boundary X x hXne ⟨jX, hjX⟩ ⟨jY, fun h => hXY h hjY⟩
   have hxYB : x ∈ BoundaryFootprintVertices Y :=
@@ -533,9 +532,6 @@ theorem LocalLatticeInterfaceSectors :
       (hsome : ∃ j : Fin 4, LatticeVertexIncidentCell x j ∈ T.cells)
       (hmissing : ∃ j : Fin 4, LatticeVertexIncidentCell x j ∉ T.cells) :=
           InterfaceSectorGeometry.incident_boundary T x hsome hmissing
-  let I : GaussianInt := ⟨0, 1⟩
-  let edgeAt (x : GaussianInt) : Fin 4 → Finset GaussianInt :=
-    ![{x, x + I}, {x - 1, x}, {x - I, x}, {x, x + 1}]
   have common_edge_transition (U V : ProtoTile) (x : GaussianInt)
       (e : Finset GaussianInt) (hdisjoint : Disjoint U.cells V.cells)
       (hxe : x ∈ e)

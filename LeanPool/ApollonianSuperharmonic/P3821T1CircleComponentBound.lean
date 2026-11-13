@@ -80,7 +80,6 @@ private theorem boundedComponent :
   rw [Metric.isBounded_iff_subset_closedBall (0 : ℂ)]
   refine ⟨R, ?_⟩
   intro v hv
-  have hvT : v ∈ T := connectedComponentIn_subset T w hv
   by_contra hvball
   have hvU : v ∈ U := by
     change R < ‖v‖
@@ -136,8 +135,6 @@ private theorem hcomp_push :
         connectedComponentIn T ((h : ℝ × ℝ → ℂ) v)) := by
   classical
   intro e h₀ h ec K T S hImageS u v hu hv hcmp
-  have huT : h u ∈ T := by rw [← hImageS]; exact Set.mem_image_of_mem h hu
-  have hvT : h v ∈ T := by rw [← hImageS]; exact Set.mem_image_of_mem h hv
   have hmem : v ∈ connectedComponentIn S u := by rw [hcmp]; exact mem_connectedComponentIn hv
   have himage := h.continuous.continuousOn.image_connectedComponentIn_subset
     (s := S) (a := u) hu
@@ -290,10 +287,6 @@ private theorem impossible_pair :
       P3821T1LoopIndex (j.comp (alphaOf (k i) (hkN i))) 0 *
         P3821T1LoopIndex ec q :=
     index_relation (k i) (hkN i) q hq hqMargin (fun t => (hkAvoid i t).1)
-  have hBrelP (i : Fin m) : P3821T1LoopIndex (k i) p =
-      P3821T1LoopIndex (j.comp (alphaOf (k i) (hkN i))) 0 *
-        P3821T1LoopIndex ec p :=
-    index_relation (k i) (hkN i) p hp hpMargin (fun t => (hkAvoid i t).2)
   let dk : Fin m → ℝ := fun i =>
     P3821T1LoopIndex (j.comp (alphaOf (k i) (hkN i))) 0
   let B : ℝ := ∑ i, dk i
@@ -305,20 +298,9 @@ private theorem impossible_pair :
       _ = B * P3821T1LoopIndex ec q := by
         dsimp [B]
         rw [Finset.sum_mul]
-  have hrowkp : (∑ i, P3821T1LoopIndex (k i) p) = B *
-      P3821T1LoopIndex ec p := by
-    calc
-      _ = ∑ i, dk i * P3821T1LoopIndex ec p :=
-        Finset.sum_congr rfl (fun i _ => hBrelP i)
-      _ = B * P3821T1LoopIndex ec p := by
-        dsimp [B]
-        rw [Finset.sum_mul]
   have hBq : B * P3821T1LoopIndex ec q = 1 := by
     rw [← hrowkq]
     exact hkq
-  have hBp : B * P3821T1LoopIndex ec p = 0 := by
-    rw [← hrowkp]
-    exact hkp
   have hbzero : P3821T1LoopIndex ec q = 0 :=
     (mul_eq_zero.mp hAzero).resolve_left hAne
   rw [hbzero] at hBq
@@ -423,19 +405,12 @@ theorem P3821T1CircleComponentBound (e : C(Circle, Real × Real))
       (hcmp : connectedComponentIn T (h u) = connectedComponentIn T (h v)) :
       connectedComponentIn S u = connectedComponentIn S v := CircleComponentProof.hcomp_pull e
           hImageS hSymmImageT u v hu hv hcmp
-  have hcomp_push (u v : Real × Real) (hu : u ∈ S) (hv : v ∈ S)
-      (hcmp : connectedComponentIn S u = connectedComponentIn S v) :
-      connectedComponentIn T (h u) = connectedComponentIn T (h v) :=
-          CircleComponentProof.hcomp_push e hImageS u v hu hv hcmp
   have hxS : x ∈ S := hx
   have hyS : y ∈ S := hy
   have hzS : z ∈ S := hz
   have hxT : h x ∈ T := by rw [← hImageS]; exact Set.mem_image_of_mem h hxS
   have hyT : h y ∈ T := by rw [← hImageS]; exact Set.mem_image_of_mem h hyS
   have hzT : h z ∈ T := by rw [← hImageS]; exact Set.mem_image_of_mem h hzS
-  have final_of (u v : Real × Real) (hu : u ∈ S) (hv : v ∈ S)
-      (hcmp : connectedComponentIn T (h u) = connectedComponentIn T (h v)) :
-      connectedComponentIn S u = connectedComponentIn S v := hcomp_pull u v hu hv hcmp
   have hKne : K.Nonempty := ⟨ec 1, ⟨1, rfl⟩⟩
   have impossible_pair (p q : ℂ) (hp : p ∈ T) (hq : q ∈ T)
       (hne : connectedComponentIn T p ≠ connectedComponentIn T q)

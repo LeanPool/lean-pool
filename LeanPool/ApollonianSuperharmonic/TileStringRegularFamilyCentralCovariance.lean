@@ -619,9 +619,6 @@ theorem TileStringRegularFamilyCentralCovariance
   let tileAt := fun z : Int × Int =>
     TileTranslation base ((z.1 : GaussianInt) * a + (z.2 : GaussianInt) * b)
   let reflect := fun z : Int × Int => (r.1 + s.1 - z.1, r.2 + s.2 - z.2)
-  have coordinate_value := RegularStringCentralGeometry.coordinate_value base a b
-  have reflected_corr := RegularStringCentralGeometry.reflected_corr base tiles a b coordinates
-      hcorr
   let reverseTiles := coordinates.map (fun z => tileAt (reflect z))
   have reverse_string := RegularStringCentralGeometry.reverse_string C orientation base R S a b
       htransport r hr s hs coordinates (RegularStringCentralGeometry.reflected_segment r s

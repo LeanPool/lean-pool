@@ -485,9 +485,6 @@ private theorem hsubInverse :
   classical
   intro C₀ Cᵢ T₀ Tᵢ h₀ hᵢ x bundle markedData C' ginv hcircleL htileL hfunL inversePresentation
       inverseSlot hinverseProper hinversePositive inverseCircle hinverseCircle hsubNormalized
-  let g := bundle.symmetry
-  let sigma : Fin 3 → Fin 3 := fun j =>
-    if BandPackingSymmetryReversesOrientation g then -j else j
   have htransport :=
     (markedData.1 ginv
       (BandPackingSymmetryCircleAction bundle.symmetry C₀.1.1) C'.1.1
@@ -2504,10 +2501,6 @@ private theorem leftAdjacencyCase :
       exact hnotMarked (hmarkedOld.mp hx))
   rcases hleftAdj with ⟨hOFixed, hOSelected, pFixed, pSelected,
     hslopeFixed, hslopeSelected, hleftGeometry⟩
-  have hpFixedEq := MarkedAdjacencyGeometry.hpFixedEq C₀ Cᵢ T₀ Tᵢ h₀ hᵢ x bundle pFixed
-      hslopeFixed
-  have hpSelectedEq := MarkedAdjacencyGeometry.hpSelectedEq C₀ Cᵢ T₀ Tᵢ h₀ hᵢ x bundle
-      selectedSlope hslope' pSelected hslopeSelected
   rcases hleftGeometry with hunit | hpresented
   · rcases hunit with ⟨hcurvUnit, orientation, v, hunitStep,
       hcentUnit, hslopeUnitRe, hslopeUnitIm⟩
@@ -2516,28 +2509,6 @@ private theorem leftAdjacencyCase :
         bundle actionCurvature hcurvUnit
     have hcentUnitInv := MarkedAdjacencyGeometry.hcentUnitInv C₀ Cᵢ T₀ Tᵢ h₀ hᵢ x bundle ginv
         htileL v hcentUnit centroidCov
-    let unitPositive :=
-      ({1, -1, ⟨0, 1⟩, -⟨0, 1⟩, 1 + ⟨0, 1⟩,
-        -(1 + ⟨0, 1⟩)} : Finset GaussianInt)
-    let unitNegative :=
-      ({1, -1, ⟨0, 1⟩, -⟨0, 1⟩, -1 + ⟨0, 1⟩,
-        -(-1 + ⟨0, 1⟩)} : Finset GaussianInt)
-    let matrixVector (c : CircleCoordinates) (w : GaussianInt) : ℝ × ℝ :=
-      (((1 + (c.2.re : ℝ)) * (w.re : ℝ) +
-          (c.2.im : ℝ) * (w.im : ℝ)) / 2,
-        ((c.2.im : ℝ) * (w.re : ℝ) +
-          (1 - (c.2.re : ℝ)) * (w.im : ℝ)) / 2)
-    let slopeDifferenceAction : BandPackingSymmetry → GaussianInt →
-        (ℝ × ℝ) → ℝ × ℝ :=
-      BandPackingSymmetry.rec
-        (fun _ d => d)
-        (fun _ d => (-d.2, d.1))
-        (fun _ d => (-d.1, d.2))
-        (fun z w d =>
-          (d.1 + (z.re : ℝ) * (w.re : ℝ) + (z.im : ℝ) * (w.im : ℝ),
-            d.2 + (z.im : ℝ) * (w.re : ℝ) - (z.re : ℝ) * (w.im : ℝ)))
-        (fun a b iha ihb w d =>
-          iha (BandPackingSymmetryVectorAction b w) (ihb w d))
     have matrixCov := MarkedAdjacencyGeometry.matrixCov actionCurvature
     have slopeDiffCov := MarkedAdjacencyGeometry.slopeDiffCov actionCurvature centroidCov
         matrixCov
@@ -2826,10 +2797,6 @@ private theorem forwardAdjacencyCase :
     BandPackingSymmetryProperCovariance ginv r hr, hrootCoord,
     hselectedCoord, hcentOriginal, hslopeReInv, hslopeImInv,
     hnewAdj, ?_⟩)
-  let companionForward := TileTranslation bundle.normalizedFixed
-    ((⟨0, 1⟩ : GaussianInt) ^ t.val *
-      (if Even t.val then BandVectors.1 (r 0) (r j.succ)
-        else BandVectors.1 (r j.succ) (r 0)))
   have hpointInv := MarkedAdjacencyGeometry.hpointInvAt1389 C₀ Cᵢ T₀ Tᵢ h₀ hᵢ x bundle ginv
       hvecL hpoint
   have hmarkCov :=
@@ -3023,10 +2990,6 @@ private theorem reverseAdjacencyCase :
     t', hslopeSelectedInv, hslopeFixedOriginal,
     BandPackingSymmetryProperCovariance ginv r hr, hselectedCoord,
     hfixedCoord, hcentOriginal, hslopeReInv, hslopeImInv, hnewAdj, ?_⟩)
-  let companionReverse := TileTranslation selectedSupport
-    ((⟨0, 1⟩ : GaussianInt) ^ t.val *
-      (if Even t.val then BandVectors.1 (r 0) (r j.succ)
-        else BandVectors.1 (r j.succ) (r 0)))
   have hpointInv := MarkedAdjacencyGeometry.hpointInvAt1389 C₀ Cᵢ T₀ Tᵢ h₀ hᵢ x bundle ginv
       hvecL hpoint
   have hmarkCov :=
@@ -3188,7 +3151,6 @@ theorem MarkedOdometerAdjacencyReduction :
   · exact P5630T1MarkedRightOdometerAdjacencyReduction
   · intro C₀ Cᵢ q i s T₀ Tᵢ h₀ hᵢ x p₀ pᵢ horbit hq hq₀ hqᵢ
       hslope₀ hslopeᵢ hcentroid hslopex hslopey hadj hx₀ hxᵢ hstar
-    have inversePhase := BandPackingSymmetryInversePhaseCancellation
     have markedData := BandPackingSymmetryMarkedDataCovariance
     dsimp
     obtain ⟨bundle, subtilePlacement, hsubtilePlacement⟩ :=
@@ -3232,10 +3194,6 @@ theorem MarkedOdometerAdjacencyReduction :
         hᵢ x bundle transportedFixedSlope hfixedSlope
     have hnormalizedProper : ProperBandQuadruple normalizationPresentation :=
       BandPackingSymmetryProperCovariance g q hq
-    let oldUR := TileTranslation T₀
-      ((⟨0, 1⟩ : GaussianInt) ^ s.val *
-        (if Even s.val then BandVectors.1 (q 0) (q i.succ)
-          else BandVectors.1 (q i.succ) (q 0)))
     let rowUR := TileTranslation bundle.normalizedRoot
       ((⟨0, 1⟩ : GaussianInt) ^ transportedRotation.val *
         (if Even transportedRotation.val then

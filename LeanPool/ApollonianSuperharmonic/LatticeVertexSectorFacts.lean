@@ -81,7 +81,6 @@ theorem edgeInjective :
             := by
   classical
   intro neighbor edgeAt neighbor_ne_center neighbor_injective edgeAt_mem x j k h
-  have hx := (edgeAt_mem x j).1
   have hn := (edgeAt_mem x j).2
   have hnm : neighbor x j ∈ edgeAt x k := by rw [← h]; exact hn
   have hchoices : neighbor x j = x ∨ neighbor x j = neighbor x k := by

@@ -823,8 +823,6 @@ theorem P3776T1DualEdgesExist {ι : Type} (P : PeriodicTileCore ι) :
           P u f a ha
   have faceShift_cancel (u : P.lattice) (f : P.plane.Face) :
       P.faceShift u (P.faceShift (-u) f) = f := DualEdgeDetails.faceShift_cancel ι P u f
-  have faceShift_cancel' (u : P.lattice) (f : P.plane.Face) :
-      P.faceShift (-u) (P.faceShift u f) = f := DualEdgeDetails.faceShift_cancel' ι P u f
   have walk_translate (p : List GaussianInt) (hp : p ≠ [])
       (u : P.lattice) (t : Set.Icc (0 : Real) 1) :
       P3776T1WalkMap (p.map (fun z => z + (u : GaussianInt))) t =

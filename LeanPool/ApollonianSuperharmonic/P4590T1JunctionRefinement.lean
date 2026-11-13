@@ -1566,7 +1566,6 @@ private theorem firstJunction :
   have hx_p1_or_pJ := JunctionRefinementGeometry.hx_p1_or_pJ q cfg C T cert x
       f g hxendpoint (JunctionRefinementGeometry.hfpoint q cfg C T cert f hfclass rhoFace)
           (JunctionRefinementGeometry.hgpoint q cfg C T cert g hgclass rhoFace)
-  let faceJ : PeriodicSubtileFaceIndex := ⟨.J3, -1, -1⟩
   let aJ : PeriodicSubtileIndex := ⟨.A, -1, -1⟩
   have hpJa := JunctionRefinementGeometry.hpJa
       q cfg C T cert (JunctionRefinementGeometry.hJvertex q cfg C T cert)
@@ -1724,7 +1723,6 @@ private theorem secondJunction :
       cert x f2 g2 hxendpointAD (JunctionRefinementGeometry.hf2point q cfg C T cert f2
           hf2class rhoFace2) (JunctionRefinementGeometry.hg2point q cfg C T cert g2 hg2class
           rhoFace2)
-  let faceJ4 : PeriodicSubtileFaceIndex := ⟨.J4, 0, 0⟩
   let bJ4 : PeriodicSubtileIndex := ⟨.B, 1, 1⟩
   have hpJ4b := JunctionRefinementGeometry.hpJ4b q cfg C T cert
       (JunctionRefinementGeometry.hJ4vertex q cfg C T cert)
@@ -1865,7 +1863,6 @@ private theorem thirdJunction :
       cert x f3 g3 hxendpointCF (JunctionRefinementGeometry.hf3point q cfg C T cert f3
           hf3class rhoFace3) (JunctionRefinementGeometry.hg3point q cfg C T cert g3
           hg3class rhoFace3)
-  let faceJ8 : PeriodicSubtileFaceIndex := ⟨.J8, 0, 0⟩
   let dJ8 : PeriodicSubtileIndex := ⟨.D, -1, 0⟩
   have hpJ8d := JunctionRefinementGeometry.hpJ8d q cfg C T cert
       (JunctionRefinementGeometry.hJ8vertex q cfg C T cert)
@@ -2026,13 +2023,10 @@ private theorem fourthJunction :
   have hg4class := classifyDEface g4 hg4
   let p4 := cert.unmodified.core.rho
     (cert.unmodified.faceEquiv.symm ⟨.I4, 0, 0⟩)
-  let pJ7 := cert.unmodified.core.rho
-    (cert.unmodified.faceEquiv.symm ⟨.J7, 1, 0⟩)
   have rhoFace4 := JunctionRefinementGeometry.rhoFace4 q cfg C T cert
   have endpointAlternative := JunctionRefinementGeometry.endpointAlternative q cfg C T cert
       f4 g4 (JunctionRefinementGeometry.hf4point q cfg C T cert f4 hf4class rhoFace4)
       (JunctionRefinementGeometry.hg4point q cfg C T cert g4 hg4class rhoFace4)
-  let faceJ7 : PeriodicSubtileFaceIndex := ⟨.J7, 1, 0⟩
   let cJ7 : PeriodicSubtileIndex := ⟨.C, 1, 0⟩
   have hpJ7c := JunctionRefinementGeometry.hpJ7c q cfg C T cert
       (JunctionRefinementGeometry.hJ7vertex q cfg C T cert)

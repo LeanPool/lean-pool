@@ -123,8 +123,6 @@ private theorem boundaryCase :
   classical
   intro K hk f k r child hchild p q hz hdpred hcast hdchild hp1 hq childMem hqp
   subst q
-  have hplt : p < k := by omega
-  have hpadd : p+1 ≤ k := Int.lt_iff_add_one_le.mp hplt
   have hEb : 0 ≤ p ∧ p ≤ 2*k ∧ -k ≤ p+1 ∧ p+1 ≤ k ∧
       -p-1 ≤ p+1 ∧ p+1 ≤ p+1 ∧ -(2*k-p+1) ≤ p+1 ∧ p+1 ≤ 2*k-p+1 := by
     omega
@@ -874,7 +872,6 @@ theorem P5352T2Predecessor0 (K : DiamondParameter) (hk : 1 < K.1)
     have productGap (a b : Int) : (b-1)*(a-2)-(b-1)*(a-1)=-(b-1) := by ring
     have lapZeroAlgebra (a : Int) : (a-1)+(1-a)=0 := by ring
     have lapOneAlgebra (a : Int) : a+(1-a)=1 := by ring
-    have endAlgebra (b : Int) := FirstPredecessorCases.endAlgebra b
     have endAlgebraB (b c : Int) := FirstPredecessorCases.endAlgebraB b c
     let k : Int := K.1
     let d : GaussianInt := ⟨k, 1-k⟩
@@ -894,7 +891,6 @@ theorem P5352T2Predecessor0 (K : DiamondParameter) (hk : 1 < K.1)
       (z - M.2.2 ∈ FootprintVertices child.1 → FourNeighborLaplacian f z = 0) ∧
       (z - M.2.2 ∉ FootprintVertices child.1 → FourNeighborLaplacian f z = 1)
     intro hchild hpred hz hpz hcover
-    have hkI : 2 ≤ k := by dsimp [k]; exact_mod_cast (show 2 ≤ K.1 by omega)
     have hm : M.1 = d ∧ M.2.1 = ⟨0,k-1⟩ ∧ M.2.2 = r := by
       simp [M, d, r, P5352T2PlacementData, k]
     rcases hm with ⟨hdisp, hcoeff, hr⟩
@@ -966,7 +962,6 @@ theorem P5352T2Predecessor0 (K : DiamondParameter) (hk : 1 < K.1)
       have hPe := FirstPredecessorCases.hPe K hk p q hcast hp1 hpk predFoot hq
       have hPs := FirstPredecessorCases.hPs K hk p q hcast hp1 hpk predFoot hq
       let val0 : Int := Q p (p-1)
-      let valW : Int := Q (p-1) (p-1)
       let valN : Int := Q p p
       have hC0 : f zA = val0 := childValue zA hzA
       have hCW := FirstPredecessorCases.hCW K f p childValue hW
@@ -981,8 +976,6 @@ theorem P5352T2Predecessor0 (K : DiamondParameter) (hk : 1 < K.1)
       have qCW := FirstPredecessorCases.qCW p q hp1 hq
       have qCN : valN = p*(p-1)/2 := by
         simp [valN, Q, abs_of_nonneg (show 0 ≤ p by omega)]
-      have qCS : Q p (p-2) = p*(p-1)/2-1 := by
-        simp [Q, abs_of_nonneg (show 0 ≤ p by omega)]
       have floorEven (m : Int) := FirstPredecessorCases.floorEven m
       have floorOdd (m : Int) := FirstPredecessorCases.floorOdd m
       have qP0 := FirstPredecessorCases.qP0 K p q hpk hq floorEven

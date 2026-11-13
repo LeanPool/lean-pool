@@ -57,7 +57,6 @@ private theorem curvatureBound :
           rw [hz]
           simp
         · have curv := ProperBandCurvatureStructure r old
-          have hpos : 0 < (r 0).1 := curv.1
           have h1 : (r 1).1 < (r 0).1 := old.2 0
           have h2lt : (r 2).1 < (r 0).1 := old.2 1
           have h3lt : (r 3).1 < (r 0).1 := old.2 2
@@ -71,7 +70,6 @@ private theorem curvatureBound :
             have hz2 : (r 2).1 = 0 := by omega
             have hz3 : (r 3).1 = 0 := by omega
             have e : (1 : Fin 3) = 2 := curv.2.2 1 2 hz2 hz3
-            have ev := congrArg Fin.val e
             omega
           have hlarge0 : 4 ≤ (r 0).1 := by
             rcases ih 0 with hz | hone | hlarge
@@ -121,11 +119,7 @@ private theorem buildConfiguration :
     have hn : (p 2).1 ≠ 0 := by simpa [h2] using hnl 2
     omega
   have hu0large : 4 < (u 0).1 := by
-    have hp0 : 0 < (p 0).1 := by
-      have hn : (p 0).1 ≠ 0 := by simpa [h0] using hnl 1
-      omega
     have hp1lt : (p 1).1 < (p 0).1 := by simpa using hp.2 0
-    have hp2lt : (p 2).1 < (p 0).1 := by simpa using hp.2 1
     have hp3lt : (p 3).1 < (p 0).1 := by simpa using hp.2 2
     have hf := congrArg (fun z : Fin 4 → CircleCoordinates => (z 0).1) hs
     simp at hf
@@ -191,11 +185,6 @@ private theorem hq0large :
         (p 3).1) → ((0 < (p 2).1) → (4 < (q 0).1)))))))))))) := by
   classical
   intro q hnoLine positiveLarge p hp hsucc h0 hlt cq cp hp1nonneg' hp1lt' hp3 hp2
-  have hp0 : 0 < (p 0).1 := by
-    have hn : (p 0).1 ≠ 0 := by simpa [h0] using hnoLine 1
-    omega
-  have hp1nonneg := cp.2.1 0
-  have hp1lt := hp.2 0
   have hqformula := congrArg
     (fun z : Fin 4 → CircleCoordinates => (z 0).1) hsucc
   simp only [Fin.isValue, Nat.succ_eq_add_one, Nat.reduceAdd, Matrix.cons_val_zero]
@@ -392,7 +381,6 @@ private theorem hp3 :
   classical
   intro q hnoLine p h3 cp hp3nonneg'
   have hn : (p 3).1 ≠ 0 := by simpa [h3] using hnoLine 3
-  have hn' : 0 ≤ (p 3).1 := by simpa using cp.2.1 2
   omega
 
 private theorem hp2 :
@@ -404,8 +392,6 @@ private theorem hp2 :
         (0 < (p 2).1)))))) := by
   classical
   intro q hnoLine p h2 hlt cp hp2nonneg' hp3
-  have hn : (p 2).1 ≠ 0 := by simpa [h2] using hnoLine 2
-  have hn' : 0 ≤ (p 2).1 := by simpa using cp.2.1 1
   omega
 
 private theorem hq2large :
@@ -1059,9 +1045,6 @@ private theorem firstParentCase :
       have hp1lt' : (p 1).1 < (p 0).1 := by simpa using hp.2 0
       have hp2nonneg' : 0 ≤ (p 2).1 := by simpa using cp.2.1 1
       have hp3nonneg' : 0 ≤ (p 3).1 := by simpa using cp.2.1 2
-      have hq2nonneg := cq.2.1 1
-      have hp2nonneg := cp.2.1 1
-      have hp3nonneg := cp.2.1 2
       have hp3 := RetainedBoundaryDetails.hp3 q hnoLine p h3 cp hp3nonneg'
       have hp2 := RetainedBoundaryDetails.hp2 q hnoLine p h2 hlt cp hp2nonneg' hp3
       have hq0large := RetainedBoundaryProof.hq0large q hnoLine positiveLarge p
@@ -1109,8 +1092,6 @@ private theorem firstParentCase :
       have hs' := RetainedBoundaryProof.hs'At413 q p hsucc negOneSucc negTwoSucc
       have negOne : (-1 : Fin 3) = 2 := by decide
       have negTwo : (-2 : Fin 3) = 1 := by decide
-      let reflect : CircleCoordinates → CircleCoordinates :=
-        fun C => (C.1, GaussianReflection C.2)
       have h0' := RetainedBoundaryDetails.h0'At562 q p h0 negOne negTwo
       have h2' := RetainedBoundaryDetails.h2'At566 q p h3 negOne negTwo
       have h3' := RetainedBoundaryDetails.h3'At570 q p h2 negOne negTwo
@@ -1205,8 +1186,6 @@ private theorem secondParentCase :
       have negOneSucc : (-1 : Fin 3).succ = 3 := by decide
       have negTwoSucc : (-2 : Fin 3).succ = 2 := by decide
       have hs' := RetainedBoundaryProof.hs'At528 q p hsucc negOneSucc negTwoSucc
-      let reflect : CircleCoordinates → CircleCoordinates := fun C => (C.1, GaussianReflection
-          C.2)
       have h0' := RetainedBoundaryDetails.h0'At670 q p h0 negOneSucc negTwoSucc
       have h2' := RetainedBoundaryDetails.h2'At673 q p h3 negOneSucc negTwoSucc
       have h3' := RetainedBoundaryDetails.h3'At676 q p h2 negOneSucc negTwoSucc
@@ -1300,8 +1279,6 @@ private theorem thirdParentCase :
       have negOneSucc : (-1 : Fin 3).succ = 3 := by decide
       have negTwoSucc : (-2 : Fin 3).succ = 2 := by decide
       have hs' := RetainedBoundaryProof.hs'At631 q p hsucc negOneSucc negTwoSucc
-      let reflect : CircleCoordinates → CircleCoordinates := fun C => (C.1, GaussianReflection
-          C.2)
       have h0' := RetainedBoundaryDetails.h0'At771 q p h0 negOneSucc negTwoSucc
       have h2' := RetainedBoundaryDetails.h2'At774 q p h3 negOneSucc negTwoSucc
       have h3' := RetainedBoundaryDetails.h3'At777 q p h2 negOneSucc negTwoSucc

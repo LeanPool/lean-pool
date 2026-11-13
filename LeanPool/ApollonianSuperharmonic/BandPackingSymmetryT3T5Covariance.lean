@@ -886,8 +886,6 @@ theorem BandPackingSymmetryT3T5Covariance :
   have quarter_translate := PackingCovarianceProof.quarter_translate
   have qtwo := PackingCovarianceProof.qtwo
   -- Two centered integral quarter-turns give a common centered half-turn.
-  let H (w : GaussianInt) (A : ProtoTile) :=
-    TileTranslation (TileQuarterTurn (TileQuarterTurn A)) w
   have half_translate := PackingCovarianceProof.half_translate translate_add quarter_translate qtwo
   have half_cov := PackingCovarianceProof.half_cov
   have half_center := PackingCovarianceProof.half_center etrans etranslate equarter translate_add

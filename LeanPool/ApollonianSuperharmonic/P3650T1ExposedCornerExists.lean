@@ -87,7 +87,6 @@ private theorem hnextne :
   intro n b h
   have hv := congrArg Fin.val h
   simp only [Fin.val_add, Fin.val_one] at hv
-  have hN : 2 ≤ n + 3 := by omega
   by_cases hlt : b.val + 1 < n + 3
   · rw [Nat.mod_eq_of_lt hlt] at hv
     omega
@@ -158,7 +157,6 @@ private theorem hellu :
         ell u < 0)) ) := by
   classical
   intro n p v f hqexists q b ell hstrict hprevne B a u
-  let c := v (b + 1)
   have hh := hstrict (b - 1) hprevne
   calc
     ell u = ell (a - B) := rfl
@@ -830,7 +828,6 @@ private theorem hconeUV :
         rw [he, hB]
         exact neg_neg_of_pos (mul_pos ht hUV)
   · rintro ⟨hA, hB⟩
-    have hz := hdecomp (x - B)
     let s := -cross V (x - B) / cross U V
     let t := cross U (x - B) / cross U V
     have hs : 0 < s := by dsimp [s]; exact div_pos (neg_pos.mpr hB) hUV
@@ -909,10 +906,6 @@ private theorem hconstOn :
           exact (Set.disjoint_left.mp hdis hzball) hmem
         simp [hzO, hz'O]
     simpa [f] using heq
-  have hfcont : ContinuousOn (fun z : Real × Real => decide (z ∈ O)) S := by
-    apply continuousOn_iff_continuous_domRestrict.mpr
-    change Continuous f
-    exact hf.continuous
   let : PreconnectedSpace S := isPreconnected_iff_preconnectedSpace.mp hconn.2
   have heq := hf.apply_eq_of_preconnectedSpace ⟨x, hx⟩ ⟨y, hy⟩
   change decide (x ∈ O) = decide (y ∈ O) at heq
@@ -1190,7 +1183,6 @@ private theorem hsegmentHeight :
             → ell x ≤ ell B)) ) := by
   classical
   intro n p v f hqexists q b ell hmax B hsegParam i x hx
-  let c := v (b + 1)
   obtain ⟨t, ht, hform⟩ := hsegParam (v i) (v (i + 1)) x hx
   have hvalue : ell x = (1 - t) * ell (v i) + t * ell (v (i + 1)) := by
     rw [hform, map_add, map_smul, map_sub]
@@ -1782,7 +1774,6 @@ private theorem hyheight :
         ((0 : ℝ) < ε) → (ell B < ell y) ) := by
   classical
   intro n p v f hqexists q b B e ε y ell hε
-  let c := v (b + 1)
   have he : ell e = 1 := by simp [e, ell]
   have hval : ell y = ell B + ε := by
     change ell (B + ε • e) = ell B + ε
@@ -1861,9 +1852,6 @@ private theorem hellD :
         0 < ell d)))) := by
   classical
   intro n p v f hqexists q b e ε ell d0 T κ hκT d
-  let B := v b
-  let c := v (b + 1)
-  let y : Real × Real := B + ε • e
   have heval : ell d = ell d0 + κ := by simp [d, e, ell]; ring
   have hκlarge : -ell d0 + 1 < κ := lt_of_le_of_lt (le_max_right _ _) hκT
   rw [heval]
@@ -1988,7 +1976,6 @@ private theorem hhitsEmpty :
         hits = ∅))) ) := by
   classical
   intro n p v f hqexists q b B e ε y ell hsegmentHeight hyheight d0 κ d hellD hits
-  let c := v (b + 1)
   apply Set.eq_empty_iff_forall_notMem.mpr
   intro i hi
   obtain ⟨t, ht, hseg⟩ := hi
@@ -2455,47 +2442,6 @@ end ExposedCornerGeometry
 
 namespace ExposedCornerAssembly
 
-private theorem hN0pc :
-    (by
-      classical
-      exact
-        ∀ (n : Nat), ∀ (p : P3381T1PolygonBoundary n),
-        let v := p.vertex
-        ∀ (b : Fin (n + (3 : ℕ))),
-        let B := v b
-        let a := v (b - 1)
-        let c := v (b + 1)
-        let u : Real × Real := a - B
-        let w : Real × Real := c - B
-        let cross (x y : Real × Real) : Real := x.1 * y.2 - x.2 * y.1
-        ∀ (rK : ℝ),
-        let r := min rK (min (dist B a / 2) (dist B c / 2))
-        (
-        let cross := fun (x y : ℝ × ℝ) => x.1 * y.2 - x.2 * y.1; ∀ (z : ℝ × ℝ), IsLinearMap ℝ
-            (cross z)) → (
-        let U := if 0 < cross u w then u else w
-        let V := if 0 < cross u w then w else u
-        (
-        let U := if (0 : ℝ) < (fun (x y : ℝ × ℝ) => x.1 * y.2 - x.2 * y.1) (p.vertex (b - (1 :
-            Fin (n + (3 : ℕ)))) - p.vertex b) (p.vertex (b + (1 : Fin (n + (3 : ℕ)))) - p.vertex
-            b) then p.vertex (b - (1 : Fin (n + (3 : ℕ)))) - p.vertex b else p.vertex (b + (1 :
-            Fin (n + (3 : ℕ)))) - p.vertex b;
-        let V := if (0 : ℝ) < (fun (x y : ℝ × ℝ) => x.1 * y.2 - x.2 * y.1) (p.vertex (b - (1 :
-            Fin (n + (3 : ℕ)))) - p.vertex b) (p.vertex (b + (1 : Fin (n + (3 : ℕ)))) - p.vertex
-            b) then p.vertex (b + (1 : Fin (n + (3 : ℕ)))) - p.vertex b else p.vertex (b - (1 :
-            Fin (n + (3 : ℕ)))) - p.vertex b; (0 : ℝ) < (fun (x y : ℝ × ℝ) => x.1 * y.2 - x.2 *
-            y.1) U V) → (
-        let N0 : Set (Real × Real) := {z | z ∈ Metric.ball 0 r ∧
-          0 < cross U z ∧ cross V z < 0}
-        let z0 := U + V
-        (cross U z0 = cross U V) → ((cross V z0 = -cross U V) → (∀ (τ : ℝ), ((0 : ℝ) < τ) → ((τ •
-            z0 ∈ Metric.ball (0 : ℝ × ℝ) r) → (IsPathConnected N0)))))) ) := by
-  classical
-  intro n p v b B a c u w cross rK r hcrossLinear U V hUV N0 z0 hz0U hz0V τ hτ hτball
-  exact (ExposedCornerGeometry.hNconvex n p b rK
-      hcrossLinear).isPathConnected (ExposedCornerGeometry.hN0ne n p b rK hcrossLinear hUV hz0U
-      hz0V τ hτ hτball)
-
 private theorem hcover :
     (by
       classical
@@ -2598,11 +2544,6 @@ private theorem hcover :
   classical
   intro n p v b B a c hlineMap rK r hr hrA hrC hcarrierLocal hUV hdecomp hradialDist hUendpoint
       hVendpoint
-  let u : Real × Real := a - B
-  let w : Real × Real := c - B
-  let cross (x y : Real × Real) : Real := x.1 * y.2 - x.2 * y.1
-  let U := if 0 < cross u w then u else w
-  let V := if 0 < cross u w then w else u
   exact ExposedCornerGeometry.hcover n p b rK (ExposedCornerGeometry.haxisU n p b
       hlineMap rK hr hcarrierLocal hUV hdecomp hradialDist hUendpoint
       (ExposedCornerGeometry.hUdist n p b rK hrA hrC hUendpoint)) (ExposedCornerGeometry.haxisV n
@@ -3096,8 +3037,10 @@ theorem P3650T1ExposedCornerExists {n : Nat} (p : P3381T1PolygonBoundary n) :
   have hz0U : cross U z0 = cross U V := by dsimp [z0]; dsimp [cross]; ring
   have hz0V : cross V z0 = -cross U V := by dsimp [z0]; dsimp [cross]; ring
   obtain ⟨τ, hτ, hτball⟩ := hsmallScale z0 r hr
-  have hN0pc : IsPathConnected N0 := ExposedCornerAssembly.hN0pc n p b rK hcrossLinear hUV hz0U
-      hz0V τ hτ hτball
+  have hN0pc : IsPathConnected N0 := by
+    exact (ExposedCornerGeometry.hNconvex n p b rK
+        hcrossLinear).isPathConnected (ExposedCornerGeometry.hN0ne n p b rK hcrossLinear hUV hz0U
+        hz0V τ hτ hτball)
   have hW1convex : Convex Real W1 :=
     (convex_ball 0 r).inter (convex_halfSpace_lt (hcrossLinear U) 0)
   have hW2convex : Convex Real W2 :=
@@ -3128,8 +3071,6 @@ theorem P3650T1ExposedCornerExists {n : Nat} (p : P3381T1PolygonBoundary n) :
   have hVendpoint := ExposedCornerGeometry.hVendpoint n p b
   have hcover := ExposedCornerAssembly.hcover n p b hlineMap rK hr hrA hrC hcarrierLocal hUV
       hdecomp hradialDist hUendpoint hVendpoint
-  have hellU := ExposedCornerGeometry.hellU n p hqexists b hellu hellw
-  have hellV := ExposedCornerGeometry.hellV n p hqexists b hellu hellw
   have htranslate : ∀ z : Real × Real, z ∈ Metric.ball (0 : Real × Real) r →
       B + z ∈ Metric.ball B r := ExposedCornerGeometry.htranslate n p b rK
   let e : Real × Real := (1, 0)

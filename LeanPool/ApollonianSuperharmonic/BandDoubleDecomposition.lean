@@ -702,7 +702,6 @@ private theorem precursors :
   intro q r hq hr hr0 hr2 h12 h2four x P Q S hQ hS rotatedT5 I a b c d e hc hr32 he hd inverse
       p0x p0y m0x m0y q0x q0y q1x q1y q2x q2y s1x s1y s2x s2y
   have rsmall (j : Fin 3) : Int.toNat (r j.succ).1 < Int.toNat (q 0).1 := by
-    have hn := (SemiProperForestClassification r hr.1).1 j.succ
     have hl := hr.2 j
     have hq1 := hq.2 0
     change (q 1).1 < (q 0).1 at hq1

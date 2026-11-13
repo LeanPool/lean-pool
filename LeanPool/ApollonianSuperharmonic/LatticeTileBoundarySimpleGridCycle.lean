@@ -726,15 +726,6 @@ theorem LatticeTileBoundarySimpleGridCycle (T : ProtoTile) (hT : LatticeTile T) 
           (1 - (t : Real)) * ((a.im : Int) : Real) +
             (t : Real) * ((b.im : Int) : Real)) ∈ TileRealization T :=
                 BoundaryCycleProof.boundary_edge_segment T boundary_edge_card_two a b hab
-  have cyclic_edge_segment :
-      ∀ a b : GaussianInt, (a, b) ∈ cyclicEdges →
-        ∀ t : Set.Icc (0 : Real) 1,
-          ((1 - (t : Real)) * ((a.re : Int) : Real) +
-              (t : Real) * ((b.re : Int) : Real),
-            (1 - (t : Real)) * ((a.im : Int) : Real) +
-              (t : Real) * ((b.im : Int) : Real)) ∈ TileRealization T := by
-    intro a b hab
-    exact boundary_edge_segment a b (cyclic_edge_boundary a b hab)
   have unoccupied_center_outside (q : LatticeCell) (hq : q ∉ T.cells) :
       ((((q.re : Int) : Real) + (1 / 2 : Real)),
           (((q.im : Int) : Real) + (1 / 2 : Real))) ∉ TileRealization T :=

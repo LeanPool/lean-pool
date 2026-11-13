@@ -330,8 +330,6 @@ end QuarterTurnFormulas
 
 private theorem quarterTurnCentroid (T : ProtoTile) :
     TileCentroid (TileQuarterTurn T) = (-(TileCentroid T).2, (TileCentroid T).1) := by
-  have quarter_re := QuarterTurnFormulas.quarter_re
-  have quarter_im := QuarterTurnFormulas.quarter_im
   have quarter_re_cast := QuarterTurnFormulas.quarter_re_cast
   have quarter_im_cast := QuarterTurnFormulas.quarter_im_cast
   have quarter_re_base := QuarterTurnFormulas.quarter_re_base
@@ -351,14 +349,6 @@ private theorem quarterTurnCentroid (T : ProtoTile) :
     have coordIm (x : GaussianInt) :
         (GaussianInt.toComplex x).im = (x.im : Real) := by
       exact (GaussianInt.intCast_im x).symm
-    have sumRe (x : GaussianInt) :
-        (GaussianInt.toComplex (GaussianQuarterTurn x - 1)).re =
-          -(GaussianInt.toComplex x).im - 1 := by
-            rw [quarter_re, coordIm]
-    have sumIm (x : GaussianInt) :
-        (GaussianInt.toComplex (GaussianQuarterTurn x - 1)).im =
-          (GaussianInt.toComplex x).re := by
-            rw [quarter_im, coordRe]
     have sumReInt (x : GaussianInt) :
         ((GaussianQuarterTurn x - 1).re : Real) = -(x.im : Real) - 1 :=
       quarter_re_cast x
@@ -404,24 +394,12 @@ theorem TileQuarterTurnFormulas : ∀ T : ProtoTile,
         BoundaryFootprintEdges T := by
 -- BODY
   intro T
-  have quarter_re (x : GaussianInt) :
-      (GaussianInt.toComplex (GaussianQuarterTurn x - 1)).re =
-        -(x.im : Real) - 1 := QuarterTurnFormulas.quarter_re x
-  have quarter_im (x : GaussianInt) :
-      (GaussianInt.toComplex (GaussianQuarterTurn x - 1)).im =
-        (x.re : Real) := QuarterTurnFormulas.quarter_im x
   have quarter_re_cast (x : GaussianInt) :
       ((GaussianQuarterTurn x - 1).re : Real) = -(x.im : Real) - 1 :=
           QuarterTurnFormulas.quarter_re_cast x
   have quarter_im_cast (x : GaussianInt) :
       ((GaussianQuarterTurn x - 1).im : Real) = (x.re : Real) :=
           QuarterTurnFormulas.quarter_im_cast x
-  have quarter_re_base (x : GaussianInt) :
-      (GaussianInt.toComplex (GaussianQuarterTurn x)).re = -(x.im : Real) :=
-          QuarterTurnFormulas.quarter_re_base x
-  have quarter_im_base (x : GaussianInt) :
-      (GaussianInt.toComplex (GaussianQuarterTurn x)).im = (x.re : Real) :=
-          QuarterTurnFormulas.quarter_im_base x
   have turn_up (a : GaussianInt) :
       GaussianQuarterTurn (a + ⟨0, 1⟩) = GaussianQuarterTurn a - 1 := QuarterTurnFormulas.turn_up a
   have turn_right (a : GaussianInt) :

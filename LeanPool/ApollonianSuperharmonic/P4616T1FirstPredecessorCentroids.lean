@@ -58,7 +58,6 @@ theorem P4616T1FirstPredecessorCentroids
   have hE := (cert.outer_occurrence 2 true).2.2
   have hF := (cert.outer_occurrence 2 false).2.2
   have hs := congrArg GaussianRealPoint (VectorRecursionLaws q cfg.proper.1).1
-  have h20 := congrArg GaussianRealPoint cfg.firstVectorTwo
   have hf2 := congrArg GaussianRealPoint
     (((VectorRecursionLaws cfg.firstPredecessor cfg.firstProper.1).2.2.2.2
       cfg.firstProper 1).1)

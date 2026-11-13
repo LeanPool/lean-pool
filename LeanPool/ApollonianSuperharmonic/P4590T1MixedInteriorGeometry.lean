@@ -246,7 +246,6 @@ private theorem pair_result :
   intro q cfg C T cert x footprint_iff_incident selected_disjoint pair_boundary noOtherFoot
       pair_cover a b k hab hak hbk hnot hthird ha hb
   have hdisjAB := selected_disjoint a.1 b.1 a.2 b.2 hab hnot
-  have hboundaryAB := pair_boundary a.1 b.1 a.2 b.2 hab hnot ha hb
   have hcover := pair_cover a b k hab hak hbk hnot hthird ha hb
   have hU := (footprint_iff_incident a.1 a.2).1 ha
   have hV := (footprint_iff_incident b.1 b.2).1 hb
@@ -419,8 +418,6 @@ theorem P4590T1MixedInteriorGeometry
   have hsep : ∀ (i : Fin 3) (s : Bool) (j : Fin 3) (t : Bool),
       (i, s) ≠ (j, t) → ¬ (i = 0 ∧ j = 0) →
       Disjoint (cert.P i s).cells (cert.P j t).cells := hprec.2.2.2.2.2.2.2
-  have hzero : (cert.P 0 true).cells ∩ (cert.P 0 false).cells = cert.O.cells :=
-    hprec.2.2.2.2.2.2.1
   have hboundaryCount : Nat.card {is : Fin 3 × Bool //
       x ∈ BoundaryFootprintVertices (cert.P is.1 is.2)} = 2 := hk
   have incident_foot (U : ProtoTile) (j : Fin 4)

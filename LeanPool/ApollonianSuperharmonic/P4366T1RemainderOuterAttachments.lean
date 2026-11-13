@@ -480,9 +480,6 @@ theorem P4366T1RemainderOuterAttachments :
             cert isolated corner z hz
   have hOsubA : cert.O.cells ⊆ (cert.P 0 true).cells := RemainderAttachmentGeometry.hOsubA C q
       cfg T cert
-  have hOsubB : cert.O.cells ⊆ (cert.P 0 false).cells := RemainderAttachmentGeometry.hOsubB C q
-      cfg T cert
-  have hpair := (P4339T1PrecursorSupportGeometry C q cfg T cert).2.2.2.2.2.2.1
   have hdisjoint := (P4339T1PrecursorSupportGeometry C q cfg T cert).2.2.2.2.2.2.2
   have hcover : ∀ z, z ∈ T.cells ∧ z ∉ cert.O.cells ↔
       ∃ i s, z ∈ (F i s).cells := RemainderAttachmentGeometry.hcover C q cfg T cert hOsubA hdisjoint

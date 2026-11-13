@@ -908,97 +908,21 @@ theorem P4909T1TriangleFan (L : ℝ) (q : Fin 4 → CircleCoordinates)
   classical
   dsimp only
   -- Establish affine-coordinate topology directly from real and imaginary parts.
-  have normRealSmul (r : ℝ) (z : ℂ) : ‖r • z‖ = |r| * ‖z‖ := TriangleFanConstruction.normRealSmul
-      r z
-  have smallStep (z d : ℂ) (ε : ℝ) (hε : 0 < ε) :
-      ∃ t : ℝ, 0 < t ∧ t • d + z ∈ Metric.ball z ε := TriangleFanConstruction.smallStep z d ε hε
-  have contRe : Continuous (fun z : ℂ => z.re) := TriangleFanConstruction.contRe
-  have contIm : Continuous (fun z : ℂ => z.im) := TriangleFanConstruction.contIm
-  have affineContinuous (f : ℂ →ᵃ[ℝ] ℝ) : Continuous f := TriangleFanConstruction.affineContinuous f
-  have affineShift (f : ℂ →ᵃ[ℝ] ℝ) (z a b : ℂ) (t : ℝ) :
-      f (t • (a - b) + z) = t * (f a - f b) + f z := TriangleFanConstruction.affineShift f z a b t
-  have interiorHull (D : AffineBasis (Fin 3) ℝ ℂ) :
-      interior (convexHull ℝ (Set.range D)) = {z | ∀ i, 0 < D.coord i z} :=
-          TriangleFanConstruction.interiorHull D
-  have spanOfInterior (S : Set ℂ) (x : ℂ)
-      (hx : x ∈ interior (convexHull ℝ S)) : affineSpan ℝ S = ⊤ :=
-          TriangleFanConstruction.spanOfInterior S x hx
   let p (i : Fin 4) : ℂ := (q i).2 / ((q i).1 : ℝ)
   let s (b : Fin 3) := P4828T1Step (P4828T1Rotate q b)
   let P := P4909T1ParentPolygon L q
   let F (b : Fin 3) := P4909T1ParentPolygon L (s b)
-  let v : Fin 3 → ℂ := fun i => p i.succ
-  have parentHull (t : Fin 4 → CircleCoordinates)
-      (ht : ∀ i : Fin 3, 0 < (t i.succ).1) :
-      P4909T1ParentPolygon L t =
-        convexHull ℝ (Set.range fun i : Fin 3 =>
-          ((t i.succ).2 : ℂ) / ((t i.succ).1 : ℝ)) := TriangleFanConstruction.parentHull L t ht
-  have hP : P = convexHull ℝ (Set.range v) := TriangleFanConstruction.hP L q hpos
-  have hxmem : p 0 ∈ interior (convexHull ℝ (Set.range v)) := TriangleFanConstruction.hxmem L q
-      hpos hinside
-  have hspan : affineSpan ℝ (Set.range v) = ⊤ := TriangleFanConstruction.hspan L q hpos hinside
-  have hvspan : vectorSpan ℝ (Set.range v) = ⊤ := TriangleFanConstruction.hvspan L q hpos hinside
-  have hind : AffineIndependent ℝ v := TriangleFanConstruction.hind L q hpos hinside
-  let A : AffineBasis (Fin 3) ℝ ℂ := ⟨v, hind, hspan⟩
-  have hmem (z : ℂ) : z ∈ P ↔ ∀ i, 0 ≤ A.coord i z := TriangleFanConstruction.hmem L q hpos
-      hinside z
-  have hint (z : ℂ) : z ∈ interior P ↔ ∀ i, 0 < A.coord i z := TriangleFanConstruction.hint L q
-      hpos hinside z
-  let alpha (i : Fin 3) : ℝ := A.coord i (p 0)
-  have alphaPos (i : Fin 3) : 0 < alpha i := TriangleFanConstruction.alphaPos L q hpos hinside i
   -- The child basis replaces precisely the omitted parent by the inserted center.
-  let u (b : Fin 3) : Fin 3 → ℂ := Function.update v b (p 0)
-  have huind (b : Fin 3) : AffineIndependent ℝ (u b) := TriangleFanConstruction.huind L q hpos
-      hinside b
-  have hutot (b : Fin 3) : affineSpan ℝ (Set.range (u b)) = ⊤ := TriangleFanConstruction.hutot L
-      q hpos hinside b
-  let B (b : Fin 3) : AffineBasis (Fin 3) ℝ ℂ := ⟨u b, huind b, hutot b⟩
-  have hBself (b : Fin 3) : B b b = p 0 := TriangleFanConstruction.hBself L q hpos hinside b
-  have hBother (b i : Fin 3) (hi : i ≠ b) : B b i = v i := TriangleFanConstruction.hBother L q
-      hpos hinside b i hi
-  have hparents (b : Fin 3) : ∀ i : Fin 3, 0 < (s b i.succ).1 := TriangleFanConstruction.hparents
-      q hpos b
-  have hparentPoint (b j : Fin 3) :
-      ((s b j.succ).2 : ℂ) / ((s b j.succ).1 : ℝ) = B b (j + b) :=
-          TriangleFanConstruction.hparentPoint L q hpos hinside b j
-  have hchild (b : Fin 3) : F b = convexHull ℝ (Set.range (B b)) :=
-      TriangleFanConstruction.hchild L q hpos hinside b
-  have hBmem (b : Fin 3) (z : ℂ) : z ∈ F b ↔ ∀ i, 0 ≤ (B b).coord i z :=
-      TriangleFanConstruction.hBmem L q hpos hinside b z
-  have hBint (b : Fin 3) (z : ℂ) :
-      z ∈ interior (F b) ↔ ∀ i, 0 < (B b).coord i z := TriangleFanConstruction.hBint L q hpos
-          hinside b z
-  have coordSelf (b : Fin 3) :
-      A.coord b = alpha b • (B b).coord b := TriangleFanConstruction.coordSelf L q hpos hinside b
-  have coordOther (b i : Fin 3) (hi : i ≠ b) :
-      A.coord i = alpha i • (B b).coord b + (B b).coord i := TriangleFanConstruction.coordOther L
-          q hpos hinside b i hi
-  have coordSelfApply (b : Fin 3) (z : ℂ) :
-      A.coord b z = alpha b * (B b).coord b z := TriangleFanConstruction.coordSelfApply L q hpos
-          hinside b z
-  have coordOtherApply (b i : Fin 3) (hi : i ≠ b) (z : ℂ) :
-      A.coord i z = alpha i * (B b).coord b z + (B b).coord i z :=
-          TriangleFanConstruction.coordOtherApply L q hpos hinside b i hi z
   have childSubset (b : Fin 3) : F b ⊆ P := TriangleFanConstruction.childSubset L q hpos hinside b
   have omittedNotIn (b : Fin 3) : p b.succ ∉ F b := TriangleFanConstruction.omittedNotIn L q hpos
       hinside b
   -- A minimum barycentric ratio makes all child coordinates nonnegative.
   have childCover (z : ℂ) (hz : z ∈ P) : ∃ b : Fin 3, z ∈ F b :=
       TriangleFanConstruction.childCover L q hpos hinside z hz
-  have intRatio (b : Fin 3) (z : ℂ) (hz : z ∈ interior (F b))
-      (i : Fin 3) (hi : i ≠ b) :
-      A.coord b z / alpha b < A.coord i z / alpha i := TriangleFanConstruction.intRatio L q hpos
-          hinside b z hz i hi
   have disjointInt (b c : Fin 3) (hbc : b ≠ c) :
       Disjoint (interior (F b)) (interior (F c)) := TriangleFanConstruction.disjointInt L q hpos
           hinside b c hbc
   -- A zero coordinate leaves a convex combination of the other two vertices.
-  have segmentOfZero (D : AffineBasis (Fin 3) ℝ ℂ) (z : ℂ)
-      (hnonneg : ∀ i, 0 ≤ D.coord i z) (i : Fin 3) (hi : D.coord i z = 0) :
-      ∃ j k : Fin 3, j ≠ k ∧ j ≠ i ∧ k ≠ i ∧ z ∈ segment ℝ (D j) (D k) :=
-          TriangleFanConstruction.segmentOfZero D z hnonneg i hi
-  have childClosed (b : Fin 3) : IsClosed (F b) := TriangleFanConstruction.childClosed L q hpos
-      hinside b
   have childFrontier (b : Fin 3) : frontier (F b) ⊆ P4909T1ParentEdges L (s b) :=
       TriangleFanConstruction.childFrontier L q hpos hinside b
   have offSeam (z : ℂ) (hz : z ∈ interior P)

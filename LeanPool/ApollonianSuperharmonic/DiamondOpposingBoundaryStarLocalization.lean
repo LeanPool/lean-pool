@@ -1537,7 +1537,6 @@ theorem DiamondOpposingBoundaryStarLocalization
           hT0'cent
       have hshift' := DiamondBoundaryStarGeometry.hshift' K u u' hshift
       have Hmem := DiamondBoundaryStarGeometry.Hmem K H hHdom
-      let z := x - u
       have hzUpper := DiamondBoundaryStarGeometry.hzUpper K h0
           x hx0 H u huDom Hmem
       have hzLower := DiamondBoundaryStarGeometry.hzLower K h0' x hx0' H u u' hu'Dom hshift' Hmem
@@ -1614,7 +1613,6 @@ theorem DiamondOpposingBoundaryStarLocalization
                   hxu
       have h21 := DiamondBoundaryStarGeometry.h21 K hqD hA21
       let Kprev : DiamondParameter := ⟨m, hmpos⟩
-      let qprev := DiamondRecursiveQuadruple Kprev
       rcases DiamondCoordinateConfiguration Kprev with
         ⟨_, hqprev, _, _, hcentprev, _, _, hsloprev, _, _, _⟩
       have hKrel : m + 1 = K.1 := by dsimp [m]; omega
@@ -1623,7 +1621,6 @@ theorem DiamondOpposingBoundaryStarLocalization
       have hmreal := DiamondBoundaryStarGeometry.hmreal K hKreal
       have hqprev0 := DiamondBoundaryStarGeometry.hqprev0 K Ci hCi hmpos hKrel
           hKcast
-      have hv30' := DiamondBoundaryStarGeometry.hv30'At635 K hv30
       have hchildcent := DiamondBoundaryStarGeometry.hchildcent K T0 T0' S S' hmpos hcentprev hKreal
               (DiamondBoundaryStarGeometry.hrootcent K T0 T0' hv30 hcentroid)
                   (DiamondBoundaryStarGeometry.hUreverse T0 S

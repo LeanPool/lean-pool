@@ -87,8 +87,6 @@ private theorem birthData :
   · rcases bad with ⟨birth, hp, _, h0, h2, h3, _, hlt⟩
     have h₂ : (ρ 3).1 ≤ (ρ 2).1 := by
       simpa [ρ, cfg.firstParentTwo, cfg.firstParentThree] using cfg.order23
-    have hbad : (ρ 2).1 < (ρ 3).1 := by
-      exact hlt
     omega
 
 private abbrev prototile_lattice := ApollonianSuperharmonic.P4590T1PositivePrototileDisk
@@ -1766,22 +1764,15 @@ theorem BandOrderedGeneralPositiveCutGeometry
   have hQ3S2 := touching_disjoint _ _ cert.precursor_second.1 hQ3ne hS2ne
   have hS2O := touching_disjoint _ _ cert.precursor_second.2.1 hS2ne hOne
   have hOQ3 := touching_disjoint _ _ cert.precursor_second.2.2.1 hOne hQ3ne
-  have hQ2S2 := touching_disjoint _ _ cert.double_first.1 hQ2ne hS3ne
   have hOQ1 := touching_disjoint _ _ cert.precursor_first.2.2.1 hOne hQ2ne
-  have hS1O := touching_disjoint _ _ cert.precursor_second.2.1 hS2ne hOne
-  have selectB_Q := PositiveCutGeometry.selectB_Q q cfg C₀ T cert hQ3lat hS2lat hOlat hQ3check
-      hS2check hOcheck hQ3occ hS2occ hBowners hOoccB hQ3S2 hS2O hOQ3
   have normalize_selected := PositiveCutGeometry.normalize_selected
   have ne_of_disjoint := PositiveCutGeometry.ne_of_disjoint
-  have hneQ2S2 := ne_of_disjoint _ _ hQ2S2 hQ2ne
   have hneQ1S1 := ne_of_disjoint _ _ (PositiveCutGeometry.hQ1S1 q cfg C₀ T cert hOQ1
       (PositiveCutGeometry.houterIntersection q cfg C₀ T cert)) hQ2ne
   have hneA_QS := ne_of_disjoint _ _ hQS hQ2ne
   have hneA_QO := ne_of_disjoint _ _ hOQ.symm hQ2ne
   have hneA_SO := ne_of_disjoint _ _ hSO hS3ne
-  have hneB_QS := ne_of_disjoint _ _ hQ3S2 hQ3ne
   have hneB_QO := ne_of_disjoint _ _ hOQ3.symm hQ3ne
-  have hneB_SO := ne_of_disjoint _ _ hS2O hS2ne
   have hneB_SQ := ne_of_disjoint _ _ hQ3S2.symm hS2ne
   have hneB_SO' := ne_of_disjoint _ _ hS2O hS2ne
   have hneB_QO' := ne_of_disjoint _ _ hOQ3.symm hQ3ne
@@ -1808,7 +1799,6 @@ theorem BandOrderedGeneralPositiveCutGeometry
   let I : GaussianInt := ⟨0, 1⟩
   have hI2 : I ^ 2 = -1 := by dsimp [I]; decide
   have hI3 : I ^ 3 = -I := by dsimp [I]; decide
-  have hnotEven3 := PositiveCutGeometry.hnotEven3
   have hodd3 : ¬ (∃ r : ℕ, 3 = r + r) := by omega
   have occurrence_centroid := PositiveCutGeometry.occurrence_centroid
   have vectorSystem : RecursiveVectorSystem BandVectors := by

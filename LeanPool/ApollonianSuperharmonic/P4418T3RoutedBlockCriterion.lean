@@ -966,12 +966,6 @@ theorem P4418T3RoutedBlockCriterion
       (z : GaussianInt) (k : Fin 4)
       (hk : LatticeVertexIncidentCell z k ∈ U.cells) := RoutedBlockGeometry.incident_footprint U
           hne z k hk
-  let V := SubtileOccurrenceInterpretation cert.P cert.u cert.v a
-  let W := SubtileOccurrenceInterpretation cert.P cert.u cert.v b
-  let G₀ := SubtileOccurrenceInterpretation cert.P cert.u cert.v
-    (P4418T3EndpointOwnerIndices q cfg C T cert a b row).1
-  let G₁ := SubtileOccurrenceInterpretation cert.P cert.u cert.v
-    (P4418T3EndpointOwnerIndices q cfg C T cert a b row).2
   have root_cells (o : PeriodicSubtileIndex) (c : LatticeCell)
       (hc : c ∈ (SubtileOccurrenceInterpretation cert.P cert.u cert.v o).cells) :=
           RoutedBlockGeometry.root_cells q cfg C T cert o c hc

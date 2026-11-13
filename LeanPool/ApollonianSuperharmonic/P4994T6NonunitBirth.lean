@@ -79,7 +79,6 @@ theorem P4994T6NonunitBirth :
       rw [← hpre, ← hpim, ← hrre, ← hrim]
       ring
     rw [signed, hC, covolume] at factor
-    have positive_curvature := C.2
     nlinarith
   have steps : TriangularLatticeAdjacent 0 p ∧
       TriangularLatticeAdjacent 0 r ∧ TriangularLatticeAdjacent p r := by

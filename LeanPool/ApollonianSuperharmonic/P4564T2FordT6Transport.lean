@@ -66,14 +66,8 @@ private theorem hlineq :
       | exact ⟨1, (hcurv (q 2)).symm.trans hact⟩
       | exact ⟨2, (hcurv (q 3)).symm.trans hact⟩
   rcases hparent with ⟨j, hj⟩
-  have hp1 := qcur.2.1 0
-  have hp2 := qcur.2.1 1
   have hq1 : 0 < (q 1).1 := by
     have := hq.2 0
-    simp at this
-    omega
-  have hq2 : 0 < (q 2).1 := by
-    have := hq.2 1
     simp at this
     omega
   fin_cases j
@@ -1081,11 +1075,6 @@ theorem P4564T2FordT6Transport :
     (by simpa [rN] using hr2hat) (by simpa [rN] using hr3hat)
     horder hlarge' Pbar Qbar Sbar hPford hQbar hSbar
   rcases hFordBase with ⟨hledgerN, hraw1N, hraw2N⟩
-  let v0 := BandVectors.1 (q 0) (q 2)
-  let uN := BandVectors.1 ((FordRecursiveQuadruple F') 0)
-    ((FordRecursiveQuadruple F') 1)
-  let vN := BandVectors.1 ((FordRecursiveQuadruple F') 0)
-    ((FordRecursiveQuadruple F') 2)
   have hq0 := FordT6Geometry.hq0 q h F' hrev gN horientationAdapt hqhat
   have hq1 := FordT6Geometry.hq1At383 q h F' hrev gN horientationAdapt hqhat
   have hq2 := FordT6Geometry.hq2At387 q h F' hrev gN horientationAdapt hqhat

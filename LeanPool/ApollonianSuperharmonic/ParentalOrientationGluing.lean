@@ -278,8 +278,6 @@ private theorem rank_one_bound :
   intro D₁ σ o₁ x hx
   exact Finset.le_sup hx
 
-private abbrev rank_two_bound := ApollonianSuperharmonic.ParentalOrientationLemmas.rank_one_bound
-
 private theorem rank_increasing :
     ∀ (D₁ : Finset GaussianInt), ∀ (D₂ : Finset GaussianInt), ∀ (σ : GaussianInt → ℤ), ∀ (o₁ :
         AcyclicIndegreeOrientation D₁ σ), ∀ (o₂ : AcyclicIndegreeOrientation D₂ σ), (∀ x ∈ D₁ ∩
@@ -298,15 +296,12 @@ private theorem rank_increasing :
   intro D₁ D₂ σ o₁ o₂ hclosed₁ hclosed₂ I agreement edge M rank rank_one_bound x y hxy
   by_cases h1 : x ∈ D₁ ∧ y ∈ D₁
   · have he := (by simpa [edge, h1] using hxy : o₁.edge x y)
-    have hxI : x ∈ I ↔ x ∈ D₂ := by simp [I, h1.1]
-    have hyI : y ∈ I ↔ y ∈ D₂ := by simp [I, h1.2]
     by_cases hx' : x ∈ I
     · by_cases hy' : y ∈ I
       · simp only [hx', ↓reduceIte, hy', gt_iff_lt, rank]
         exact o₁.increasing x y he
       · simp [rank, hx', hy', h1.2]
         have hm : 0 < M := by simp [M]
-        have hr := rank_one_bound y h1.2
         have hp := rank_one_bound x h1.1
         simp [M] at *
         omega
@@ -375,7 +370,6 @@ theorem ParentalOrientationGluing
       (I.filter (fun y => @decide (o₁.edge y x) (o₁.edgeDecidable y x))).card =
         (I.filter (fun y => @decide (o₂.edge y x) (o₂.edgeDecidable y x))).card :=
             ParentalOrientationLemmas.incoming_card D₁ D₂ σ o₁ o₂ incoming_one incoming_two
-  let B := I.filter (fun x => ∃ y ∈ I, o₁.edge x y ≠ o₂.edge x y)
   have agreement : ∀ x ∈ I, ∀ y ∈ I, o₁.edge x y ↔ o₂.edge x y :=
       ParentalOrientationLemmas.agreement D₁ D₂ σ o₁ o₂ incoming_card
   let edge : GaussianInt → GaussianInt → Prop := fun x y =>
@@ -396,8 +390,6 @@ theorem ParentalOrientationGluing
           ParentalOrientationLemmas.edge_oriented D₁ D₂ σ o₁ o₂ hcross
   have rank_one_bound : ∀ x ∈ D₁, o₁.rank x ≤ D₁.sup o₁.rank :=
       ParentalOrientationLemmas.rank_one_bound D₁ σ o₁
-  have rank_two_bound : ∀ x ∈ D₂, o₂.rank x ≤ D₂.sup o₂.rank :=
-      ParentalOrientationLemmas.rank_two_bound D₂ σ o₂
   have rank_increasing : ∀ x y, edge x y → rank x < rank y :=
       ParentalOrientationLemmas.rank_increasing D₁ D₂ σ o₁ o₂ hclosed₁ hclosed₂ agreement
       rank_one_bound

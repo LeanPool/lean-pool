@@ -54,9 +54,6 @@ theorem TileHalfTurnFormulas : ∀ T : ProtoTile,
     apply gaussian_equal <;> simp
   have half_anchor (a : GaussianInt) : -(-a) = a := by
     apply gaussian_equal <;> simp
-  have half_map_normal (x : GaussianInt) :
-      ⟨0, 1⟩ - (-x - 1) - 1 - ⟨0, 1⟩ = x := by
-    apply gaussian_equal <;> simp
   have quarter_twice (x : GaussianInt) :
       GaussianQuarterTurn (GaussianQuarterTurn x - 1) - 1 =
         -x - 1 - ⟨0, 1⟩ := by
@@ -66,10 +63,6 @@ theorem TileHalfTurnFormulas : ∀ T : ProtoTile,
     apply gaussian_equal <;> simp [GaussianQuarterTurn]
   have image_empty (s : Finset GaussianInt) :
       s.image (fun x => -x - 1 - ⟨0, 1⟩) = ∅ ↔ s = ∅ := by
-    have inj : Function.Injective (fun x : GaussianInt => -x - 1 - ⟨0, 1⟩) := by
-      intro a b h
-      have := congrArg (fun z => -z - 1 - ⟨0, 1⟩) h
-      simpa [half_map] using this
     exact Finset.image_eq_empty.trans (by simp [])
   have proto_equal (A B : ProtoTile) (hc : A.cells = B.cells)
       (ha : A.anchor = B.anchor) : A = B := by

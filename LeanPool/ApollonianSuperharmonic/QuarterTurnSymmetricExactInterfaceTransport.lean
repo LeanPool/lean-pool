@@ -430,10 +430,6 @@ theorem QuarterTurnSymmetricExactInterfaceTransport
     apply Zsqrtd.ext
     · simpa [GaussianQuarterTurn] using congrArg (fun z : GaussianInt => z.im) h
     · simpa [GaussianQuarterTurn] using congrArg (fun z : GaussianInt => z.re) h
-  have tinj : Function.Injective (GaussianTranslation u) := by
-    intro x y h
-    dsimp [GaussianTranslation] at h
-    exact add_right_cancel h
   have finj : Function.Injective (fun z : GaussianInt => GaussianQuarterTurn z + u) := by
     intro x y h
     apply qinj
@@ -454,12 +450,6 @@ theorem QuarterTurnSymmetricExactInterfaceTransport
   rw [Set.image_image] at hbaseV'
   have hbaseE' := hbaseE
   rw [Set.image_image] at hbaseE'
-  have point_map (d x : GaussianInt) :
-      GaussianQuarterTurn (GaussianTranslation d x) + u =
-        GaussianTranslation (GaussianQuarterTurn d)
-          (GaussianQuarterTurn x + u) := by
-    simp [GaussianTranslation, GaussianQuarterTurn, add_comm,
-      add_left_comm]
   have vertex_cov (d : GaussianInt) :
       FootprintVertices (TileTranslation T (GaussianQuarterTurn d)) =
         (fun x : GaussianInt => GaussianQuarterTurn x + u) ''

@@ -636,7 +636,6 @@ private theorem hWestDiff :
     have htd : (k-t)*(k-t-1)/2-(k-t-1)*(k-t-2)/2=k-t-1 := by
       simpa [show k-t-1-1=k-t-2 by ring] using tdiff (k-t)
     have htd' : (k-t-1)*(k-t-2)/2-(k-t)*(k-t-1)/2=1-(k-t) := by
-      have h := htd
       omega
     linear_combination htd'
 
@@ -841,7 +840,6 @@ theorem P5352T2Predecessor3 (K : DiamondParameter) (hk : 1 < K.1)
     let r : GaussianInt := ⟨-2*k, 0⟩
     let Q : Int → Int → Int := fun a b =>
       (Int.natAbs a : Int) * ((Int.natAbs a : Int)-1)/2 - (a-b)^2/4
-    have hk2 : 2 ≤ k := by dsimp [k]; exact_mod_cast (show 2 ≤ K.1 by omega)
     have hm : M.1 = d ∧ M.2.1 = ⟨1-k,-1⟩ ∧ M.2.2 = r := by
       simp [M, d, r, P5352T2PlacementData, k]
     rcases hm with ⟨hd, ha, hr⟩
@@ -874,7 +872,6 @@ theorem P5352T2Predecessor3 (K : DiamondParameter) (hk : 1 < K.1)
         (h : 0 ≤ b ∧ b ≤ 2*(k-1) ∧ -(k-1) ≤ a ∧ a ≤ k-1 ∧
           -b-1 ≤ a ∧ a ≤ b+1 ∧ -(2*(k-1)-b+1) ≤ a ∧ a ≤ 2*(k-1)-b+1) :=
               FourthPredecessorCases.predMem K hk hkm a b h
-    let Kp : DiamondParameter := ⟨K.1-1, by omega⟩
     have childValue (w : GaussianInt)
         (hw : w ∈ FootprintVertices (DiamondTile K.1)) :
         f w = Q w.re w.im := FourthPredecessorCases.childValue K hk f hchild hchildTile hchildSrc
@@ -980,7 +977,6 @@ theorem P5352T2Predecessor3 (K : DiamondParameter) (hk : 1 < K.1)
       have hn : x+⟨0,1⟩ = (⟨-u,u+1⟩ : GaussianInt) := by ext <;> simp [x]
       have hs : x-⟨0,1⟩ = (⟨-u,u-1⟩ : GaussianInt) := by ext <;> simp [x]
       have hLap := FourthPredecessorCases.hLap K f u h0 h1 h2 h3 h4 he hw hn hs
-      have huK := FourthPredecessorCases.huK K u huk
       have hFalse : x ∈ DiamondVertexDomains K false := by
         exact hFoot ▸ hX
       have habsA := FourthPredecessorCases.habsA u hu1

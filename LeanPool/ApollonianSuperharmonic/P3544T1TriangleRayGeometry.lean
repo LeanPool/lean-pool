@@ -1662,7 +1662,6 @@ theorem P3544T1TriangleRayGeometry (p : P3381T1PolygonBoundary 0) :
   let gamma : (Real × Real) → Real := fun x =>
     ((b - a).1 * (x - a).2 - (b - a).2 * (x - a).1) / D
   let alpha : (Real × Real) → Real := fun x => 1 - beta x - gamma x
-  have hsum := TriangleRayIntersections.hsum p
   have hrec := TriangleRayIntersections.hrec p hDneq
   have hbeta_affine := TriangleRayIntersections.hbeta_affine p hDneq
   have hgamma_affine := TriangleRayIntersections.hgamma_affine p hDneq

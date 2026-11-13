@@ -38,7 +38,6 @@ private theorem hq1pos :
   have hd := P.det₁
   rw [hz] at hd
   simp only [Nat.cast_zero, zero_mul] at hd
-  have hqint : 2 < (P.q : Int) := by exact_mod_cast hP
   by_cases hp : P.p₁ ≤ 0
   · have hqnonneg : 0 ≤ (P.q : Int) := by omega
     have : P.p₁ * (P.q : Int) ≤ 0 := mul_nonpos_of_nonpos_of_nonneg hp hqnonneg
@@ -61,7 +60,6 @@ private theorem hneq :
   have hd : (P.q₁ : Int) ∣ 1 := ⟨P.p₁ - P.p₂, hm.symm⟩
   have hu : (P.q₁ : Int) = 1 :=
     Int.eq_one_of_dvd_one (by exact_mod_cast (Nat.zero_le P.q₁)) hd
-  have hsum := P.sum_q
   omega
 
 private abbrev squareCoordinates := ApollonianSuperharmonic.FordInteriorSquareCoordinates.membership
@@ -1778,7 +1776,6 @@ theorem P4112T1LowerNeighbors (P : FordFareyParameter) (hP : 2 < P.q) :
         (if x = (B j).2 then 0 else 1) := by
 -- BODY
   classical
-  have hgeom := P4112T1PathGeometry P hP
   have hq1pos := LowerNeighborGeometry.hq1pos P hP
   have hcross : P.p₁ * (P.q₂ : Int) - (P.q₁ : Int) * P.p₂ = 1 := by
     have h1 : P.p₁ * ((P.q₁ + P.q₂ : Nat) : Int) -
@@ -1787,8 +1784,6 @@ theorem P4112T1LowerNeighbors (P : FordFareyParameter) (hP : 2 < P.q) :
     norm_num [Nat.cast_add] at h1
     nlinarith [h1]
   have hsum : P.q = P.q₁ + P.q₂ := P.sum_q
-  have hsumInt : (P.q : Int) = (P.q₁ : Int) + (P.q₂ : Int) := by
-    exact_mod_cast hsum
   have hneq := LowerNeighborGeometry.hneq P hP hq1pos hcross hsum
   let B := P4062T1RemainderPaths P
   let d : GaussianInt → Nat := fun x =>
@@ -1800,13 +1795,10 @@ theorem P4112T1LowerNeighbors (P : FordFareyParameter) (hP : 2 < P.q) :
     ((B j).1.filter (fun y => FourNeighborAdjacent y x ∧ d y < d x)).card =
       (if x = (B j).2 then 0 else 1)
   have squareCoordinates (q : Nat) (z : GaussianInt) := LowerNeighborGeometry.squareCoordinates q z
-  have natAbs_form (z : Int) := LowerNeighborGeometry.natAbs_form z
   have d_on_path (j : Fin 2) (z : GaussianInt) (hz : z ∈ (B j).1) :=
       LowerNeighborGeometry.d_on_path P hP j z hz
   have neighbor_filter (S : Finset GaussianInt) (x : GaussianInt)
       (ρ : GaussianInt → Nat) := LowerNeighborGeometry.neighbor_filter S x ρ
-  let rootDist (j : Fin 2) (z : GaussianInt) : Nat :=
-    (z.re-(B j).2.re).natAbs + (z.im-(B j).2.im).natAbs
   have count_eq (j : Fin 2) (x : GaussianInt) (hx : x ∈ (B j).1) :=
       LowerNeighborGeometry.count_eq P d_on_path neighbor_filter j x hx
   have root_candidate_empty (S : Finset GaussianInt) (ρ : GaussianInt → Nat)

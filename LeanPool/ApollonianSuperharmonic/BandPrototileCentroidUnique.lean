@@ -57,10 +57,7 @@ theorem BandPrototileCentroidUnique (C : CircleCoordinates) (T U : ProtoTile)
         have child0 := hp.2 0
         have child1 := hp.2 1
         have child2 := hp.2 2
-        have non0 := nonnegative r hr 0
         have non1 := nonnegative r hr 1
-        have non2 := nonnegative r hr 2
-        have non3 := nonnegative r hr 3
         dsimp at h child0 child1 child2
         omega
   let property : CircleCoordinates → ProtoTile → Prop := fun D V =>

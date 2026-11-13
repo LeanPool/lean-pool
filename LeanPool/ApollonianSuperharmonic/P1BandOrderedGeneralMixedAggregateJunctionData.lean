@@ -2262,9 +2262,6 @@ private theorem all_centroids :
   have d₃ := (cert.outer_occurrence 2 false).2.2
   norm_num [Prod.ext_iff,GaussianRealPoint,Fin.succ,Fin.add,Fin.add_def,Fin.ofNat,Matrix.cons_val]
     at sumV v₁ v₂ v₃ u v f₁ f₂ f₃ c₁ c₂ c₃ d₁ d₂ d₃
-  have fin2 : (⟨2,by decide⟩ : Fin 4) = 2 := rfl
-  have fin3 : (⟨3,by decide⟩ : Fin 4) = 3 := rfl
-  have fin2_3 : (⟨2,by decide⟩ : Fin 3) = 2 := rfl
   refine ⟨?_,?_,?_,?_⟩
   all_goals intro i; fin_cases i
   all_goals dsimp only [plusRepresentative,minusRepresentative,firstPeriod,firstParent,firstShift]
@@ -2616,61 +2613,8 @@ theorem P1BandOrderedGeneralMixedAggregateJunctionData
           GaussianRealPoint (BandVectors.1 (q 0) (q ((i + 1).succ)))) →
       junctionData T U V) := by
 -- BODY
-  let mixedNeighbors (a : PeriodicSubtileIndex) : Finset PeriodicSubtileIndex :=
-    let m := a.first
-    let n := a.second
-    match a.label with
-    | .A => {⟨.B,m,n⟩, ⟨.B,m,n+1⟩, ⟨.B,m+1,n+1⟩, ⟨.C,m,n⟩,
-        ⟨.C,m+1,n+1⟩, ⟨.D,m,n⟩, ⟨.E,m,n+1⟩, ⟨.F,m,n⟩}
-    | .B => {⟨.A,m,n⟩, ⟨.A,m,n-1⟩, ⟨.A,m-1,n-1⟩, ⟨.C,m,n⟩,
-        ⟨.D,m-1,n-1⟩, ⟨.D,m,n⟩, ⟨.E,m,n⟩, ⟨.F,m,n-1⟩}
-    | .C => {⟨.A,m,n⟩, ⟨.A,m-1,n-1⟩, ⟨.B,m,n⟩, ⟨.D,m-1,n⟩,
-        ⟨.E,m-1,n⟩, ⟨.F,m,n⟩}
-    | .D => {⟨.A,m,n⟩, ⟨.B,m+1,n+1⟩, ⟨.B,m,n⟩, ⟨.C,m+1,n⟩,
-        ⟨.E,m,n⟩, ⟨.F,m+1,n⟩}
-    | .E => {⟨.A,m,n-1⟩, ⟨.B,m,n⟩, ⟨.C,m+1,n⟩, ⟨.D,m,n⟩}
-    | .F => {⟨.A,m,n⟩, ⟨.B,m,n+1⟩, ⟨.C,m,n⟩, ⟨.D,m-1,n⟩}
   have mixedNeighbors_iff := MixedAggregateGeometry.mixedNeighbors_iff
       (MixedAggregateGeometry.mixedNeighbors_symmetric)
-  let mixedDecode (k : Nat) : PeriodicSubtileIndex :=
-    ⟨match k % 6 with | 0 => .A | 1 => .B | 2 => .C | 3 => .D | 4 => .E | _ => .F,
-      (k / 6 / 7 : Int) - 3, (k / 6 % 7 : Int) - 3⟩
-  let mixedBlock (m n : Int) : Finset PeriodicSubtileIndex :=
-    {⟨.A,m,n⟩,⟨.B,m,n⟩,⟨.C,m,n⟩,⟨.D,m,n⟩,⟨.E,m,n⟩,⟨.F,m,n⟩}
-  let mixedComponents (r : Nat) : Finset PeriodicSubtileIndex ×
-      Finset PeriodicSubtileIndex × Finset PeriodicSubtileIndex :=
-    (mixedBlock 0 0, match r with
-      | 0 => (mixedBlock 1 0, {⟨.B,1,1⟩})
-      | 1 => (mixedBlock 0 1, {⟨.D,-1,0⟩})
-      | 2 => (mixedBlock (-1) (-1), {⟨.F,0,-1⟩})
-      | 3 => ({⟨.A,0,-1⟩}, {⟨.C,1,0⟩})
-      | 4 => ({⟨.C,1,1⟩}, {⟨.E,0,1⟩})
-      | _ => ({⟨.E,-1,0⟩}, {⟨.A,-1,-1⟩}))
-  let mixedSelection (j : Fin 42) : Finset PeriodicSubtileIndex :=
-    let c := mixedComponents (j.val / 7)
-    let k := j.val % 7 + 1
-    (if k % 2 = 1 then c.1 else ∅) ∪
-      (if k / 2 % 2 = 1 then c.2.1 else ∅) ∪
-      (if k / 4 % 2 = 1 then c.2.2 else ∅)
-  let mixedTreeVertices (tree : List (Nat × Nat)) (S : Finset PeriodicSubtileIndex) :
-      Finset PeriodicSubtileIndex :=
-    tree.foldl (fun S e => insert (mixedDecode e.1) S) S
-  let mixedTreeCheck (D : Finset PeriodicSubtileIndex) (inside : Bool)
-      (es : List (Nat × Nat)) (S : Finset PeriodicSubtileIndex) : Bool :=
-    es.foldr (fun (a,b) next S =>
-      decide ((if inside then mixedDecode a ∈ D else mixedDecode a ∉ D) ∧
-        mixedDecode b ∈ S ∧ mixedDecode b ∈ mixedNeighbors (mixedDecode a)) &&
-      next (insert (mixedDecode a) S)) (fun _ => true) S
-  let mixedInTrees : List (List (Nat × Nat)) := MixedAggregateGeometry.incomingCertificateTrees
-  let mixedOutTrees : List (List (Nat × Nat)) := MixedAggregateGeometry.outgoingCertificateTrees
-  let mixedInHubs : List Nat :=
-      [144, 186, 144, 193, 144, 186, 144, 144, 150, 144, 105, 144, 150, 144, 144, 96, 144,
-        143, 144, 96, 144, 144, 138, 144, 188, 144, 138, 144, 144, 194, 144, 154, 144, 194,
-        144, 144, 106, 144, 96, 144, 106, 144]
-  let original := SubtileOccurrenceInterpretation cert.P cert.u cert.v
-  let offset (a : PeriodicSubtileIndex) : GaussianInt :=
-    (a.first : GaussianInt) * cert.u + (a.second : GaussianInt) * cert.v
-  let precursor (a : PeriodicSubtileIndex) := TileTranslation cert.O (offset a)
   let paired (a : PeriodicSubtileIndex) : PeriodicSubtileIndex := ⟨.B,a.first,a.second⟩
   have cellDisk := MixedAggregateGeometry.cellDisk
   have translation_complement := MixedAggregateGeometry.translation_complement
@@ -2679,30 +2623,8 @@ theorem P1BandOrderedGeneralMixedAggregateJunctionData
   have precursor_subset_B := MixedAggregateGeometry.precursor_subset_B q cfg C₀ T cert
       (MixedAggregateGeometry.hOB q cfg C₀ T cert)
   have mod_subset := MixedAggregateGeometry.mod_subset q cfg C₀ T cert mod_nonA mod_A
-  let exception (j : Fin 42) : Option PeriodicSubtileIndex :=
-    if j.val / 7 = 3 ∧ (j.val % 7 + 1) / 2 % 2 = 1 then some ⟨.A,0,-1⟩ else
-    if j.val / 7 = 5 ∧ (j.val % 7 + 1) / 4 % 2 = 1 then some ⟨.A,-1,-1⟩ else none
-  let J : ProtoTile → ProtoTile → ProtoTile → Prop := fun A B C =>
-    ∃ AB BC CA ABC : ProtoTile,
-      LatticeTile A ∧ LatticeTile B ∧ LatticeTile C ∧
-      LatticeTile AB ∧ LatticeTile BC ∧ LatticeTile CA ∧ LatticeTile ABC ∧
-      Disjoint A.cells B.cells ∧ Disjoint B.cells C.cells ∧ Disjoint C.cells A.cells ∧
-      (∀ z : LatticeCell, z ∈ AB.cells ↔ z ∈ A.cells ∨ z ∈ B.cells) ∧
-      (∀ z : LatticeCell, z ∈ BC.cells ↔ z ∈ B.cells ∨ z ∈ C.cells) ∧
-      (∀ z : LatticeCell, z ∈ CA.cells ↔ z ∈ C.cells ∨ z ∈ A.cells) ∧
-      (∀ z : LatticeCell, z ∈ ABC.cells ↔ z ∈ A.cells ∨ z ∈ B.cells ∨ z ∈ C.cells) ∧
-      (FootprintEdges A ∩ FootprintEdges B).Nonempty ∧
-      (FootprintEdges B ∩ FootprintEdges C).Nonempty ∧
-      (FootprintEdges C ∩ FootprintEdges A).Nonempty
-  let componentIndices (r : Fin 6) (s : Fin 3) :=
-    let c := mixedComponents r.val
-    if s = 0 then c.1 else if s = 1 then c.2.1 else c.2.2
   let owners (D : Finset PeriodicSubtileIndex) :=
     D ∪ (D.filter (fun a => a.label = .A)).image paired
-  let unionOf (D : Finset PeriodicSubtileIndex) : ProtoTile :=
-    ⟨D.biUnion (fun a => (original a).cells),0⟩
-  let component (r : Fin 6) (s : Fin 3) := unionOf (componentIndices r s)
-  let selectionIndex (r : Fin 6) (s : Fin 7) : Fin 42 := ⟨r.val * 7 + s.val,by omega⟩
   have owners_mono {D E : Finset PeriodicSubtileIndex} (h : D ⊆ E) : owners D ⊆ owners E := by
     exact Finset.union_subset_union h (Finset.image_mono _ (Finset.filter_subset_filter _ h))
   have literal_junctions := MixedAggregateGeometry.literal_junctions q cfg C₀ T cert
@@ -2722,25 +2644,12 @@ theorem P1BandOrderedGeneralMixedAggregateJunctionData
       mod_subset (MixedAggregateGeometry.edge_certificate) (MixedAggregateGeometry.edges_mono))
   have retarget := MixedAggregateGeometry.retarget cellDisk
   have imageJ := MixedAggregateGeometry.imageJ
-  let back (c : GaussianInt) (S : ProtoTile) : ProtoTile :=
-    TileTranslation (TileQuarterTurn (TileQuarterTurn (TileQuarterTurn S))) (GaussianQuarterTurn c)
-  let turn (c : GaussianInt) (S : ProtoTile) : ProtoTile :=
-    TileTranslation (TileQuarterTurn S) c
   have back_shift := MixedAggregateGeometry.back_shift
   have back_symmetric := MixedAggregateGeometry.back_symmetric (MixedAggregateGeometry.back_turn)
       (MixedAggregateGeometry.back_congr)
   have core_cells := MixedAggregateGeometry.core_cells q cfg C₀ T cert
       (MixedAggregateGeometry.outer_cells q cfg C₀ T cert)
   have component_zero := MixedAggregateGeometry.component_zero q cfg C₀ T cert core_cells
-  let firstPeriod (i : Fin 3) : GaussianInt := match i.val with
-    | 0 => cert.u
-    | 1 => cert.v
-    | _ => -cert.u-cert.v
-  let firstShift (i : Fin 3) : GaussianInt := match i.val with
-    | 0 => cert.u+cert.v
-    | 1 => -cert.u
-    | _ => -cert.v
-  let firstParent (i : Fin 3) := TileTranslation (cert.P i false) (firstShift i)
   let plusRepresentative (i : Fin 3) : ProtoTile := match i.val with
     | 0 => TileTranslation (cert.P 0 true) (-cert.v)
     | 1 => TileTranslation (cert.P 1 true) (cert.u + cert.v)

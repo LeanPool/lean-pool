@@ -150,20 +150,6 @@ private theorem hglobal :
         simp []
       rw [he']
       exact ha
-    have baseDomain : x - ((kl.1 : GaussianInt) * BandVectors.1 (q 1) (q 0) +
-        (kl.2 : GaussianInt) * BandVectors.1 (q 2) (q 0)) ∈ h.domain := by
-      change x - ((kl.1 : GaussianInt) * BandVectors.1 (q 1) (q 0) +
-        (kl.2 : GaussianInt) * BandVectors.1 (q 2) (q 0)) ∈
-        (h.domain : Set GaussianInt)
-      rw [hdom]
-      have nonempty : T.cells.Nonempty := ⟨_, base⟩
-      simp only [FootprintVertices, ite_eq_left nonempty, Set.mem_ofPred_eq]
-      exact ⟨_, base, Or.inl rfl⟩
-    have hv : x ∈ FootprintVertices (TileTranslation T
-        ((kl.1 : GaussianInt) * BandVectors.1 (q 1) (q 0) +
-          (kl.2 : GaussianInt) * BandVectors.1 (q 2) (q 0))) := by
-      rw [← (domain_from_odo _ _ _ (htrans kl).1)]
-      exact (htrans kl).2.1 x |>.mpr baseDomain
     have vertex (z : GaussianInt)
         (hz : z = x - ((kl.1 : GaussianInt) * BandVectors.1 (q 1) (q 0) +
           (kl.2 : GaussianInt) * BandVectors.1 (q 2) (q 0)) ∨
@@ -365,7 +351,6 @@ theorem PositiveCurvatureGeneratorCocycles (C : BandCircle)
     domain_from_odo _ _ _ hodo
   have tiling : ExactTileTiling (RegularTileFamily T (TilingLattice C)) :=
     (BandTileTopologyApplication C q hq hqC T (by simpa [hqC] using hT)).1
-  have hlat := GeneratorCocycleGeometry.hlat C q T h H htrans hdom tiling
   have hglobal := GeneratorCocycleGeometry.hglobal C q T h H htrans hcompat domain_from_odo hdom
       (GeneratorCocycleGeometry.hcoords C q hq hqC) tiling (GeneratorCocycleGeometry.hfamily C q
       T hq hqC tiling)

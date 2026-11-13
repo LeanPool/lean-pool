@@ -111,7 +111,6 @@ private theorem hpos :
   intro q cfg i
   have hn := (ProperBandCurvatureStructure q cfg.proper).2.1 i
   have hne := cfg.noLine i.succ
-  have hn' : 0 ≤ (q i.succ).1 := by simpa using hn
   omega
 
 private theorem occCent :
@@ -1763,8 +1762,6 @@ theorem P4250T1OrdinaryCompatibility
     simpa [Fin.add_def, A, sOff] using slope 2 true
   have hs2m : PartialOdometerSlope (h 2 false) = some (s0 - sOff A) := by
     simpa [Fin.add_def, A, sOff, sub_eq_add_neg, smul_eq_mul] using slope 2 false
-  have cadd := OrdinaryCompatibilityGeometry.cadd
-  have cneg := OrdinaryCompatibilityGeometry.cneg
   have sadd (a b : GaussianInt) : sOff (a + b) = sOff a + sOff b := by
     apply Prod.ext <;> simp [sOff, P4250T1SlopeOffset]  <;> ring
   have sneg (a : GaussianInt) : sOff (-a) = -sOff a := by
@@ -1790,10 +1787,6 @@ theorem P4250T1OrdinaryCompatibility
       q cfg)))) (OrdinaryCompatibilityGeometry.hflip03A q cfg hflip03)
   have slopeCoord := OrdinaryCompatibilityGeometry.slopeCoord
   have hnegI3 := OrdinaryCompatibilityGeometry.hnegI3 (OrdinaryCompatibilityGeometry.hI3 hI2)
-  have dompos (i : Fin 3) : 0 < (q i.succ).1 := hpos i
-  have circleEq1 : C1.1.1 = q 1 := rfl
-  have circleEq2 : C2.1.1 = q 2 := rfl
-  have circleEq3 : C3.1.1 = q 3 := rfl
   have compatSelf (a : PartialOdometer) : OdometerCompatibility a a :=
       OrdinaryCompatibilityGeometry.compatSelf a
   have compatSymm {a b : PartialOdometer} (hab : OdometerCompatibility a b) :=

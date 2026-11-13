@@ -73,14 +73,6 @@ private theorem map_mem (P : Fin 3 -> Bool -> ProtoTile) (O : ProtoTile) (L : Ad
     SixSubtileLabel, {y : GaussianInt // y ∈ (base P O) j}) :
       (representative L R hfund) z.2 ∈ R := by
   classical
-  let base : SixSubtileLabel → Finset GaussianInt := fun j =>
-    match j with
-    | .A => (P 0 true).cells \ O.cells
-    | .B => (P 0 false).cells
-    | .C => (P 1 true).cells
-    | .D => (P 1 false).cells
-    | .E => (P 2 true).cells
-    | .F => (P 2 false).cells
   let representative : GaussianInt → GaussianInt := fun y =>
     Classical.choose (hfund y)
   have representative_spec (y : GaussianInt) :
@@ -464,15 +456,8 @@ theorem BandModifiedCellPartition (P : Fin 3 -> Bool -> ProtoTile)
   have representative_spec (y : GaussianInt) :
       representative y ∈ R ∧ y - representative y ∈ L :=
           ModifiedCellPartitionConstruction.representative_spec L R hfund y
-  have map_mem (z : Σ j : SixSubtileLabel, {y : GaussianInt // y ∈ base j}) :
-      representative z.2 ∈ R := ModifiedCellPartitionConstruction.map_mem P O L R hfund z
   let mapped : (Σ j : SixSubtileLabel, {y : GaussianInt // y ∈ base j}) → GaussianInt :=
     fun z => representative z.2
-  have hsurj : Set.SurjOn mapped (incidences : Set _) (R : Set GaussianInt) :=
-      ModifiedCellPartitionConstruction.hsurj P O u v L R hu hv hfund hcover
-  have hcard : incidences.card = R.card := ModifiedCellPartitionConstruction.hcard P O R harea
-  have himage : incidences.image mapped = R := ModifiedCellPartitionConstruction.himage P O u v L
-      R hu hv hfund hcover
   have hinj : Set.InjOn mapped (incidences : Set _) := ModifiedCellPartitionConstruction.hinj P O
       u v L R hu hv hfund hcover harea
   have decode : ∀ (o : PeriodicSubtileIndex) (x : GaussianInt),

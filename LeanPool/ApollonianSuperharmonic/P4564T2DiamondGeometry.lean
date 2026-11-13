@@ -444,9 +444,6 @@ private theorem arbitrary_family :
       (TileRealization (TileCellComplement D (R' i s))) at hDcompDisk
     rw [hcompObs.2.2.2.1] at hDcompDisk
     exact hDcompDisk
-  have hTcompNe : (TileCellComplement T' (R' i s)).cells.Nonempty := by
-    rw [← hDcompCells]
-    exact hDcompNe
   have hTcompTouch :
       TileTouching (TileCellComplement T' (R' i s)) (R' i s) := by
     exact (touching_same_cells _ _ _ hDcompCells hDcompNe

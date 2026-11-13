@@ -215,7 +215,6 @@ private theorem hrootAt310 :
   have hpq1 := hq.2 (1 : Fin 3)
   have huniq01 := hunique 0 1
   by_contra hn
-  have hle : (q 0).1 ≤ 1 := by omega
   have hz0 : (q (0 : Fin 3).succ).1 = 0 := by omega
   have hz1 : (q (1 : Fin 3).succ).1 = 0 := by omega
   have bad := huniq01 hz0 hz1
@@ -331,9 +330,6 @@ private theorem edgeStepAt328 :
       (Int.toNat_lt_toNat (by simpa [hqC] using C.property)).2 hlt
     have hCeq : Int.toNat C.1.1.1 = Int.toNat (q 0).1 := by
       simp [hqC]
-    have hsum : Int.toNat C.1.1.1 + Int.toNat (q j.succ).1 <
-        Int.toNat C.1.1.1 + Int.toNat (q 0).1 :=
-      Nat.add_lt_add_left hltNat _
     have hltSum : Int.toNat C.1.1.1 + Int.toNat (q j.succ).1 < n := by
       omega
     have hltSum' : Int.toNat C.1.1.1 + Int.toNat Cj.1.1.1 < n := by
@@ -517,8 +513,6 @@ private theorem edgeStepAt482 :
       simp [Cj]
     have hltSum : Int.toNat Cᵢ.1.1.1 + Int.toNat (q j.succ).1 < n := by
       omega
-    have hcpt := (ih (Int.toNat Cᵢ.1.1.1 + Int.toNat Cj.1.1.1)
-        (by simpa [Cj] using hltSum)).2
     have common : ∃ c : ℤ, ∀ z, (z = u ∨ z = v) →
         z ∈ hᵢ.domain → z ∈ h₀.domain → hᵢ.value z - h₀.value z = c := by
       have child_mem : ∀ z, z = u ∨ z = v → z ∈ (hsx j t).domain := by
@@ -611,11 +605,6 @@ theorem RightSubtileOdometerCompatibility :
 -- BODY
   have singleton_case := RightCompatibilityGeometry.singleton_case
   have list_glue := RightCompatibilityGeometry.list_glue
-  have child_circle : ∀ (q : Fin 4 → CircleCoordinates),
-      ProperBandQuadruple q → ∀ j : Fin 3, 0 < (q j.succ).1 → BandCircle := by
-    intro q hq j hj
-    refine ⟨⟨q j.succ, ?_⟩, hj⟩
-    exact ⟨Or.inl hj, ⟨q, hq.1, ⟨j.succ, rfl⟩⟩⟩
   have edge_endpoints := RightCompatibilityGeometry.edge_endpoints
   have main : ∀ n : Nat,
       (∀ (C : BandCircle) (T T' : ProtoTile) (h h' : PartialOdometer),

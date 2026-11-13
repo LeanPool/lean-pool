@@ -1330,8 +1330,6 @@ private theorem retainedLeft :
     subst y
     exact hnot ⟨hxH, hyH⟩
   have hleftRet := (hgeo.2.2 J hJsub hJnot).1
-  have hleftFace' : insert d (({a, b, z} : Finset (Fin (n + 3))).erase b) =
-      {a, d, z} := by simpa [hF] using hleftFace
   have hlabels : ((F : Set _) ∩ (H : Set _)) ∩
         (({a, z} : Finset (Fin (n + 3))) : Set (Fin (n + 3))) =
       (((insert d (F.erase b) : Finset (Fin (n + 3))) : Set _) ∩
@@ -1484,8 +1482,6 @@ private theorem retainedRight :
         (({b, z} : Finset (Fin (n + 3))) : Set (Fin (n + 3))) =
       (((insert d (F.erase a) : Finset (Fin (n + 3))) : Set _) ∩
         (H : Set _)) := by
-    have hrightFace' : insert d (({a, b, z} : Finset (Fin (n + 3))).erase a) =
-        {d, b, z} := by simpa [hF] using hrightFace
     ext x
     rw [hrightFace, hF]
     simp only [Set.mem_inter_iff, Finset.mem_coe, Finset.mem_insert,
@@ -2448,12 +2444,6 @@ private theorem pairState :
             e.1 e.2.2 hab hboundary F₀ G₀ hF₀ hG₀
             hhitF.1 hhitF.2 hhitG.1 hhitG.2
           subst G₀
-          have haV0 : e.1 ∈ c.vertices h := hF₀subset haF
-          have hbV0 : e.2.2 ∈ c.vertices h := hF₀subset hbF
-          have hzV0 : z ∈ c.vertices h := hF₀subset (by rw [hFeq]; simp)
-          have hda := FacialInsertionGeometry.hda r n q p s X K t h hh hdV haV0
-          have hdb := FacialInsertionGeometry.hdb r n q p s X K t h hh hdV hbV0
-          have hdz := FacialInsertionGeometry.hdz r n q p s X K t h hh hdV z hzV0
           have siblingsPair (L R : Finset (Fin (n + 3)))
               (hL : L = {e.1, e.2.1, z})
               (hR : R = {e.2.1, e.2.2, z}) := FacialInsertionGeometry.siblingsPair r n q p s X
@@ -2552,9 +2542,6 @@ theorem P3523T1InsertionGeometry {r n : Nat}
   have faceMemTransport {I : Type} [DecidableEq I]
       {fs : Finset (Finset I)} {F G : Finset I} (hFG : F = G)
       (hG : G ∈ fs) : F ∈ fs := hFG ▸ hG
-  let triangleMatrix (v : Fin 3 → Real × Real) :
-      Matrix (Fin 3) (Fin 3) Real :=
-    fun i j => if j = 0 then (v i).1 else if j = 1 then (v i).2 else 1
   have det_range_transport {I : Type} (f g : Fin 3 → I)
       (hf : Function.Injective f) (hg : Function.Injective g)
       (hr : Set.range f = Set.range g) (v : I → Real × Real) :=
@@ -2618,7 +2605,6 @@ theorem P3523T1InsertionGeometry {r n : Nat}
   have sourceState := detState p.vertex sourceInterp sourceInitialDet
   have targetState := detState (P3523T1InterpolatedTarget s t)
     targetInterp targetInitialDet
-  let f := P3523T1FaceEnumeration (c.faces c.steps.length)
   have terminalFace (k : Fin (c.faces c.steps.length).card) :=
       FacialInsertionGeometry.terminalFace r n q p s X K t hfaceRange k
   let faceUnion (v : Fin (n + 3) → Real × Real)

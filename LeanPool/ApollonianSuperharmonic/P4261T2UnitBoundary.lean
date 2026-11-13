@@ -311,7 +311,6 @@ private theorem horizontalPositive :
     rw [vg _ x1ig, vf _ x1if, vg _ x1g, vf _ x1f]
     have h01 : (x + 1) - x = 1 := by abel
     have h11 : (x + 1 + ⟨0, 1⟩) - x = 1 + ⟨0, 1⟩ := by abel
-    have h00 : (x + 1) - (x + 1) = 0 := by simp
     have h10 : (x + 1 + ⟨0, 1⟩) - (x + 1) = ⟨0, 1⟩ := by abel
     have hcoefMul : x.im * β.im - x.im * α.im = x.im * z.im := by
       calc
@@ -450,7 +449,6 @@ private theorem verticalPositive :
     rw [vg _ x1ig, vf _ x1if, vg _ xig, vf _ xif]
     have h01 : (x + ⟨0, 1⟩) - x = ⟨0, 1⟩ := by abel
     have h11 : (x + 1 + ⟨0, 1⟩) - x = 1 + ⟨0, 1⟩ := by abel
-    have h00 : (x + ⟨0, 1⟩) - (x + ⟨0, 1⟩) = 0 := by simp
     have h10 : (x + 1 + ⟨0, 1⟩) - (x + ⟨0, 1⟩) = 1 := by abel
     simp only [CurvatureOneOdometer, Int.reduceNeg, Zsqrtd.ext_iff, Zsqrtd.re_add,
         Zsqrtd.re_one, add_zero, Zsqrtd.im_add, Zsqrtd.im_one, zero_add, h10, zero_ne_one,

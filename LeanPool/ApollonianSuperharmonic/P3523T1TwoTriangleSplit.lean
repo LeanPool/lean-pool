@@ -125,7 +125,6 @@ private theorem affineUnique (A : Real × Real) (B : Real × Real) (C : Real × 
   have he1 := congrArg Prod.fst he
   have he2 := congrArg Prod.snd he
   simp only [Prod.fst_add, Prod.snd_add, Prod.smul_fst, Prod.smul_snd] at he1 he2
-  have hsum : (b - b') + (c - c') = -(a - a') := by linarith
   have hsumdiff : (a - a') + (b - b') + (c - c') = 0 := by linarith
   have hx : (b - b') * (B.1 - A.1) + (c - c') * (C.1 - A.1) = 0 := by
     linear_combination he1 - A.1 * hsumdiff
@@ -361,12 +360,6 @@ private theorem hdiag (A : Real × Real) (B : Real × Real) (C : Real × Real) (
       linear_combination u * huniq.1 - (1-u) * huniq.2.1
     have hl0 : l = 0 := by
       nlinarith [mul_nonneg hu_nonneg hl, mul_nonneg h1u_nonneg hr]
-    have hr0 : r = 0 := by
-      nlinarith [mul_nonneg hu_nonneg hl, mul_nonneg h1u_nonneg hr]
-    have hmm : m = m' := by
-      have hbEq := huniq.2.1
-      rw [hr0] at hbEq
-      nlinarith [hu.1]
     have hmt : m+t = 1 := by nlinarith [hsumL, hl0]
     refine ⟨m, t, hm, ht, hmt, ?_⟩
     calc
@@ -515,7 +508,6 @@ private theorem hleftBC (A : Real × Real) (B : Real × Real) (C : Real × Real)
         convexHull Real ({B, C} : Set (Real × Real)) =
       convexHull Real ({C} : Set (Real × Real)) := by
   classical
-  have h1u_nonneg : 0 ≤ 1-u := h1u_nonneg u hu
   have distinctAC : A ≠ C := distinctAC A B C hn
   have hull3 (P Q R x : Real × Real) (hPQ : P ≠ Q) (hPR : P ≠ R)
       (hQR : Q ≠ R) :
@@ -555,7 +547,6 @@ private theorem hleftBC (A : Real × Real) (B : Real × Real) (C : Real × Real)
     have huniq := affineUnique (l+(1-u)*m) (u*m) t 0 b c hsumOld
       (by simpa using hsumBC) hpoint
     have hm0 : m = 0 := by
-      have hprod : 0 ≤ (1-u)*m := mul_nonneg h1u_nonneg hm
       nlinarith [huniq.1]
     have hl0 : l = 0 := by nlinarith [huniq.1, hm0]
     have ht1 : t = 1 := by nlinarith [hsumL, hl0, hm0]
@@ -977,104 +968,8 @@ theorem P3523T1TwoTriangleSplit (A B C : Real × Real) (u : Real)
         convexHull Real (J ∩ {A, C}) ∧
       convexHull Real ({D, B, C} : Set (Real × Real)) ∩ convexHull Real J =
         convexHull Real (J ∩ {B, C})) := by
--- BODY
-  classical
-  have hu_nonneg : 0 ≤ u := TwoTriangleSplit.hu_nonneg u hu
-  have h1u_nonneg : 0 ≤ 1-u := TwoTriangleSplit.h1u_nonneg u hu
-  let d : Real := (B.1 - A.1) * (C.2 - A.2) - (C.1 - A.1) * (B.2 - A.2)
-  have hd : d ≠ 0 := TwoTriangleSplit.hd A B C hn
-  have distinctAB : A ≠ B := TwoTriangleSplit.distinctAB A B C hn
-  have distinctAC : A ≠ C := TwoTriangleSplit.distinctAC A B C hn
-  have distinctBC : B ≠ C := TwoTriangleSplit.distinctBC A B C hn
-  have hull3 (P Q R x : Real × Real) (hPQ : P ≠ Q) (hPR : P ≠ R)
-      (hQR : Q ≠ R) :
-      x ∈ convexHull Real ({P, Q, R} : Set (Real × Real)) ↔
-        ∃ a b c : Real, 0 ≤ a ∧ 0 ≤ b ∧ 0 ≤ c ∧ a + b + c = 1 ∧
-          a • P + b • Q + c • R = x := TwoTriangleSplit.hull3 P Q R x hPQ hPR hQR
-  have affineUnique (a b c a' b' c' : Real)
-      (hs : a + b + c = 1) (hs' : a' + b' + c' = 1)
-      (he : a • A + b • B + c • C = a' • A + b' • B + c' • C) :
-      a = a' ∧ b = b' ∧ c = c' := TwoTriangleSplit.affineUnique A B C hn a b c a' b' c' hs hs' he
-  have hDneA : (1 - u) • A + u • B ≠ A := TwoTriangleSplit.hDneA A B C u hu hn
-  have hDneB : (1 - u) • A + u • B ≠ B := TwoTriangleSplit.hDneB A B C u hu hn
-  have hDneC : (1 - u) • A + u • B ≠ C := TwoTriangleSplit.hDneC A B C u hn
-  have hleftHull (x : Real × Real) := hull3 A ((1 - u) • A + u • B) C x
-    (fun h => hDneA h.symm) distinctAC hDneC
-  have hrightHull (x : Real × Real) := hull3 ((1 - u) • A + u • B) B C
-    x hDneB hDneC distinctBC
-  have holdHull (x : Real × Real) := hull3 A B C x distinctAB distinctAC distinctBC
-  have coeffSplit (a b c : Real) (ha : 0 ≤ a) (hb : 0 ≤ b) (hc : 0 ≤ c)
-      (hsum : a + b + c = 1) :
-      (∃ l m t : Real, 0 ≤ l ∧ 0 ≤ m ∧ 0 ≤ t ∧ l + m + t = 1 ∧
-        a = l + (1-u)*m ∧ b = u*m ∧ c = t) ∨
-      (∃ m r t : Real, 0 ≤ m ∧ 0 ≤ r ∧ 0 ≤ t ∧ m + r + t = 1 ∧
-        a = (1-u)*m ∧ b = u*m+r ∧ c = t) := TwoTriangleSplit.coeffSplit u hu a b c ha hb hc hsum
-  let D : Real × Real := (1-u) • A + u • B
-  have hcoverage : convexHull Real ({A, B, C} : Set (Real × Real)) =
-      convexHull Real ({A, D, C} : Set (Real × Real)) ∪
-        convexHull Real ({D, B, C} : Set (Real × Real)) := TwoTriangleSplit.hcoverage A B C u hu hn
-  change (convexHull Real ({A, B, C} : Set (Real × Real)) =
-      convexHull Real ({A, D, C} : Set (Real × Real)) ∪
-        convexHull Real ({D, B, C} : Set (Real × Real))) ∧ _ ∧ _
-  have hdiag :
-      convexHull Real ({A, D, C} : Set (Real × Real)) ∩
-        convexHull Real ({D, B, C} : Set (Real × Real)) = segment Real D C :=
-            TwoTriangleSplit.hdiag A B C u hu hn
-  have pairACsubL : convexHull Real ({A, C} : Set (Real × Real)) ⊆
-      convexHull Real ({A, D, C} : Set (Real × Real)) := TwoTriangleSplit.pairACsubL A B C u
-  have pairBCsubR : convexHull Real ({B, C} : Set (Real × Real)) ⊆
-      convexHull Real ({D, B, C} : Set (Real × Real)) := TwoTriangleSplit.pairBCsubR A B C u
-  have hleftAC :
-      convexHull Real ({A, D, C} : Set (Real × Real)) ∩
-        convexHull Real ({A, C} : Set (Real × Real)) =
-      convexHull Real ({A, C} : Set (Real × Real)) := TwoTriangleSplit.hleftAC A B C u
-  have hrightBC :
-      convexHull Real ({D, B, C} : Set (Real × Real)) ∩
-        convexHull Real ({B, C} : Set (Real × Real)) =
-      convexHull Real ({B, C} : Set (Real × Real)) := TwoTriangleSplit.hrightBC A B C u
-  have hrightAC :
-      convexHull Real ({D, B, C} : Set (Real × Real)) ∩
-        convexHull Real ({A, C} : Set (Real × Real)) =
-      convexHull Real ({C} : Set (Real × Real)) := TwoTriangleSplit.hrightAC A B C u hu hn
-  have hleftBC :
-      convexHull Real ({A, D, C} : Set (Real × Real)) ∩
-        convexHull Real ({B, C} : Set (Real × Real)) =
-      convexHull Real ({C} : Set (Real × Real)) := TwoTriangleSplit.hleftBC A B C u hu hn
-  have leftA : convexHull Real ({A, D, C} : Set (Real × Real)) ∩
-      convexHull Real ({A} : Set (Real × Real)) = convexHull Real ({A} : Set (Real × Real)) :=
-          TwoTriangleSplit.leftA A B C u
-  have rightA : convexHull Real ({D, B, C} : Set (Real × Real)) ∩
-      convexHull Real ({A} : Set (Real × Real)) = ∅ := TwoTriangleSplit.rightA A B C u hu hn
-  have leftB : convexHull Real ({A, D, C} : Set (Real × Real)) ∩
-      convexHull Real ({B} : Set (Real × Real)) = ∅ := TwoTriangleSplit.leftB A B C u hu hn
-  have rightB : convexHull Real ({D, B, C} : Set (Real × Real)) ∩
-      convexHull Real ({B} : Set (Real × Real)) = convexHull Real ({B} : Set (Real × Real)) :=
-          TwoTriangleSplit.rightB A B C u
-  have leftC : convexHull Real ({A, D, C} : Set (Real × Real)) ∩
-      convexHull Real ({C} : Set (Real × Real)) = convexHull Real ({C} : Set (Real × Real)) :=
-          TwoTriangleSplit.leftC A B C u
-  have rightC : convexHull Real ({D, B, C} : Set (Real × Real)) ∩
-      convexHull Real ({C} : Set (Real × Real)) = convexHull Real ({C} : Set (Real × Real)) :=
-          TwoTriangleSplit.rightC A B C u
-  have hACinterAC : ({A,C} : Set (Real × Real)) ∩ {A,C} = {A,C} := TwoTriangleSplit.hACinterAC A C
-  have hBCinterBC : ({B,C} : Set (Real × Real)) ∩ {B,C} = {B,C} := TwoTriangleSplit.hBCinterBC B C
-  have hACinterBC : ({A,C} : Set (Real × Real)) ∩ {B,C} = {C} := TwoTriangleSplit.hACinterBC A B
-      C hn
-  have hBCinterAC : ({B,C} : Set (Real × Real)) ∩ {A,C} = {C} := TwoTriangleSplit.hBCinterAC A B
-      C hn
-  have hAinterAC : ({A} : Set (Real × Real)) ∩ {A,C} = {A} := TwoTriangleSplit.hAinterAC A B C hn
-  have hAinterBC : ({A} : Set (Real × Real)) ∩ {B,C} = ∅ := TwoTriangleSplit.hAinterBC A B C hn
-  have hBinterAC : ({B} : Set (Real × Real)) ∩ {A,C} = ∅ := TwoTriangleSplit.hBinterAC A B C hn
-  have hBinterBC : ({B} : Set (Real × Real)) ∩ {B,C} = {B} := TwoTriangleSplit.hBinterBC A B C hn
-  have hCinterAC : ({C} : Set (Real × Real)) ∩ {A,C} = {C} := TwoTriangleSplit.hCinterAC A C
-  have hCinterBC : ({C} : Set (Real × Real)) ∩ {B,C} = {C} := TwoTriangleSplit.hCinterBC B C
-  have hfaces : ∀ J : Set (Real × Real), J ⊆ {A, B, C} →
-      ¬(A ∈ J ∧ B ∈ J) →
-      convexHull Real ({A, D, C} : Set (Real × Real)) ∩ convexHull Real J =
-        convexHull Real (J ∩ {A, C}) ∧
-      convexHull Real ({D, B, C} : Set (Real × Real)) ∩ convexHull Real J =
-        convexHull Real (J ∩ {B, C}) := TwoTriangleSplit.hfaces A B C u hu hn
-  exact ⟨hcoverage, hdiag, hfaces⟩
+  exact ⟨TwoTriangleSplit.hcoverage A B C u hu hn,
+    TwoTriangleSplit.hdiag A B C u hu hn, TwoTriangleSplit.hfaces A B C u hu hn⟩
 
 end ApollonianSuperharmonic
 

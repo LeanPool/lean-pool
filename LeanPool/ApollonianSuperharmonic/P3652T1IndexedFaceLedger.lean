@@ -306,9 +306,6 @@ private theorem hleftcoord :
   have hx : x.val < S.u.length + 2 := by rw [← hlenL]; exact x.isLt
   have hpre : x.val < (S.a :: (S.u ++ [S.b])).length := by simp; omega
   have hfullVal : x.val < n + 3 := by omega
-  have hfull : x.val < (S.a :: (S.u ++ S.b :: S.v)).length := by
-    simp only [List.length_cons, List.length_append]
-    omega
   have hidx? : (List.ofFn S.il)[x.val]? = (S.a :: (S.u ++ [S.b]))[x.val]? := by
     exact congrArg (fun l : List (Fin (n + 3)) => l[x.val]?) S.left_order
   have hrotbound : x.val < ((List.ofFn (fun i : Fin (n + 3) => i)).rotate S.rotation).length
@@ -681,7 +678,6 @@ private theorem hrightSucc :
             ℕ)) = (↑(S.ir y) : ℕ) ↔ (↑y : ℕ) = (↑x : ℕ) + (1 : ℕ)))))))) ) := by
   classical
   intro n p S hlenP hlenL hlenR hrightcoord hmodShift hmodSucc x y hx
-  have hoff : S.u.length + 1 + (S.rightParameter + 2) = n + 3 := by omega
   have hxCoord : (S.ir x).val =
       (S.rotation + (S.u.length + 1 + x.val)) % (n + 3) := by
     simpa [Nat.add_assoc, Nat.add_comm, Nat.add_left_comm] using hrightcoord x
@@ -691,9 +687,7 @@ private theorem hrightSucc :
   rw [hxCoord, hyCoord]
   let tx := S.u.length + 1 + x.val
   let ty := S.u.length + 1 + y.val
-  have htx : tx < n + 3 := by dsimp [tx]; omega
   have htyLe : ty ≤ n + 3 := by dsimp [ty]; omega
-  have htx1 : tx + 1 ≤ n + 3 := by dsimp [tx]; omega
   have hs := hmodSucc (m := n + 3) (by omega) (r := S.rotation) (x := tx)
   have hposMin : 2 ≤ tx := by dsimp [tx]; omega
   constructor
@@ -1024,7 +1018,6 @@ private theorem hcrossNoAdj :
     rw [hx', hleftB]
     exact ⟨0, hrightB⟩
   have hxlo : 1 ≤ x.val := by omega
-  have hxlt : x.val < S.u.length + 2 := by rw [← hlenL]; exact x.isLt
   have hxhi : x.val ≤ S.u.length := by omega
   have hy0 : y.val ≠ 0 := by
     intro hy
@@ -1042,14 +1035,12 @@ private theorem hcrossNoAdj :
     rw [hy', hrightA]
     exact ⟨0, hleftA⟩
   have hylo : 1 ≤ y.val := by omega
-  have hylt : y.val < S.v.length + 2 := by rw [← hlenR]; exact y.isLt
   have hyhi : y.val ≤ S.v.length := by omega
   have hxCoord : (S.il x).val = (S.rotation + x.val) % (n + 3) := by
     simpa only [Nat.add_comm] using hleftcoord x
   have hyCoord : (S.ir y).val =
       (S.rotation + (S.u.length + 1 + y.val)) % (n + 3) := by
     simpa [Nat.add_assoc, Nat.add_comm, Nat.add_left_comm] using hrightcoord y
-  have hM : S.u.length + S.v.length + 2 = n + 3 := by omega
   have hoff : S.u.length + 1 + y.val < n + 3 := by omega
   have hsucc := hmodSucc (m := n + 3) (by omega) (r := S.rotation) (x := x.val)
   intro h
@@ -2272,10 +2263,6 @@ theorem P3652T1IndexedFaceLedger {n : Nat} {p : P3381T1PolygonBoundary n}
         hlenR hleftcoord hmodShift hmodSucc hparentSuccVal x y
     have hdiagPair (i j : Fin (n + 3)) (hij : i ≠ j) := IndexedFaceLedgerProof.hdiagPair n p S
         hleftA hleftB hrightB hrightA i j hij
-    have hleftZero (i j : Fin (n + 3))
-        (hi : i ∉ Set.range S.il) := IndexedFaceLedgerProof.hleftZero n p S XL L i j hi
-    have hrightZero (i j : Fin (n + 3))
-        (hi : i ∉ Set.range S.ir) := IndexedFaceLedgerProof.hrightZero n p S XR R i j hi
     have husedSplit (i j : Fin (n + 3)) := IndexedFaceLedgerProof.husedSplit n p S XL XR L R i j
     have hleftCountMapped (i j : Fin (n + 3))
         (hi : i ∈ Set.range S.il) (hj : j ∈ Set.range S.il) (hij : i ≠ j) :=

@@ -432,55 +432,12 @@ theorem P4828T1LeftRootGeometry (a : GaussianInt) :
       fin_cases k <;> fin_cases j <;>
         simp [P4828T1Root] at hk hj ⊢; ring
   let y : Real := 2 * (a.im : Real)
-  let vertices : Set Complex := {p | ∃ j : Fin 3, 0 < (q j.succ).1 ∧
-    (p = (q j.succ).2 / ((q j.succ).1 : Real) ∨ ∃ k : Fin 3,
-      (q k.succ).1 = 0 ∧ p = ⟨if (q k.succ).2 = -1 then L else L + 2,
-        (((q j.succ).2 : Complex) / ((q j.succ).1 : Real)).im⟩)}
-  let bl : Complex := ⟨L, y⟩
   let br : Complex := ⟨L + 1, y⟩
-  let tl : Complex := ⟨L, y + 2⟩
   let tr : Complex := ⟨L + 1, y + 2⟩
   have hU0 : ((1 + 2 * a : GaussianInt) : Complex) = ⟨L + 1, y⟩ :=
       RootComplexCoordinates.lowerGaussianCoordinate a
   have hU1 : ((1 + 2 * a + 2 * ⟨0, 1⟩ : GaussianInt) : Complex) =
       ⟨L + 1, y + 2⟩ := RootComplexCoordinates.upperGaussianCoordinate a
-  have hU0c : (1 : Complex) + GaussianInt.toComplex (2 : GaussianInt) *
-      (a : Complex) = ⟨L + 1, y⟩ := RootComplexCoordinates.lowerComplexCoordinate a
-  have hU1c : (1 : Complex) + GaussianInt.toComplex (2 : GaussianInt) *
-      (a : Complex) + GaussianInt.toComplex (2 : GaussianInt) *
-      (⟨0, 1⟩ : GaussianInt) = ⟨L + 1, y + 2⟩ := RootComplexCoordinates.upperComplexCoordinate a
-  have htwo_re : (GaussianInt.toComplex (2 : GaussianInt)).re = 2 := RootComplexCoordinates.twoReal
-  have htwo_im : (GaussianInt.toComplex (2 : GaussianInt)).im = 0 :=
-      RootComplexCoordinates.twoImaginary
-  have hvertices : vertices = {bl, br, tl, tr} := RootGeometryLeft.hvertices a
-  have himage : Complex.equivRealProdLm '' vertices =
-      ({L, L + 1} : Set Real) ×ˢ {y, y + 2} := RootGeometryLeft.himage a
-  have hcornerHull : convexHull Real
-      (({L, L + 1} : Set Real) ×ˢ ({y, y + 2} : Set Real)) =
-      Set.Icc L (L + 1) ×ˢ Set.Icc y (y + 2) := RootGeometryLeft.hcornerHull a
-  have hrectImage : Complex.equivRealProdLm ''
-      ((Set.Icc L (L + 1)) ×ℂ (Set.Icc y (y + 2))) =
-      Set.Icc L (L + 1) ×ˢ Set.Icc y (y + 2) := RootGeometryLeft.hrectImage a
-  have himageLin : Complex.equivRealProdLm.toLinearMap '' vertices =
-      ({L, L + 1} : Set Real) ×ˢ {y, y + 2} := RootGeometryLeft.himageLin a
-  have hrectImageLin : Complex.equivRealProdLm.toLinearMap ''
-      ((Set.Icc L (L + 1)) ×ℂ (Set.Icc y (y + 2))) =
-      Set.Icc L (L + 1) ×ˢ Set.Icc y (y + 2) := RootGeometryLeft.hrectImageLin a
-  have hHull : convexHull Real vertices =
-      (Set.Icc L (L + 1)) ×ℂ (Set.Icc y (y + 2)) := RootGeometryLeft.hHull a
-  have rectangleInterior (l u v w : Real) :
-      interior (Set.Icc l u ×ℂ Set.Icc v w) =
-        {z : Complex | l < z.re ∧ z.re < u ∧ v < z.im ∧ z.im < w} :=
-            RootComplexCoordinates.rectangleInterior l u v w
-  have hInterior : interior (convexHull Real vertices) =
-      {p : Complex | L < p.re ∧ p.re < L + 1 ∧ y < p.im ∧ p.im < y + 2} :=
-          RootGeometryLeft.hInterior a
-  have hcenter0 :
-      ((q (0 : Fin 3).succ).2 : Complex) / ((q (0 : Fin 3).succ).1 : Real) =
-        ((1 + 2 * a : GaussianInt) : Complex) := RootGeometryLeft.hcenter0 a
-  have hcenter1 :
-      ((q (2 : Fin 3).succ).2 : Complex) / ((q (2 : Fin 3).succ).1 : Real) =
-        ((1 + 2 * a + 2 * ⟨0, 1⟩ : GaussianInt) : Complex) := RootGeometryLeft.hcenter1 a
   have hGap : P4828T1Gap L q = {p : Complex |
       L < p.re ∧ p.re < L + 1 ∧ y < p.im ∧ p.im < y + 2 ∧
       1 < dist p ((1 + 2 * a : GaussianInt) : Complex) ∧
@@ -489,8 +446,6 @@ theorem P4828T1LeftRootGeometry (a : GaussianInt) :
   have hchild :
       ((q (0 : Fin 4)).2 : Complex) / ((q (0 : Fin 4)).1 : Real) = child :=
           RootGeometryLeft.hchild a
-  have hs25 : Real.sqrt (25 : Real) = 5 := RootComplexCoordinates.sqrtTwentyFive
-  have hs16 : Real.sqrt (16 : Real) = 4 := RootComplexCoordinates.sqrtSixteen
   have hdist0 : dist child br = (5 : Real) / 4 := RootGeometryLeft.hdist0 a
   have hdist1 : dist child tr = (5 : Real) / 4 := RootGeometryLeft.hdist1 a
   · constructor

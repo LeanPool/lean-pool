@@ -59,9 +59,6 @@ theorem OdometerStringRespectRegularFamilyCentralCovariance
   rcases raw with ⟨rawString, rawTiles, rawChain⟩
   rcases hrespect with ⟨originalString, originalTiles, originalChain⟩
   rcases originalString with ⟨hbase0, hhead0, hlast0, hpair0, hmem0, hchain0, hheight0⟩
-  have source_band : ∀ {T : ProtoTile}, T ∈ tiles → BandPrototile C.1.1 T := by
-    intro T hT
-    exact band_of_member (hmem0 T hT)
   have transportAdjacent : ∀ {T T' U U' : ProtoTile} {g g' : PartialOdometer},
       (TileTranslation (TileHalfTurn T) u).cells = U.cells →
       (TileTranslation (TileHalfTurn T') u).cells = U'.cells →

@@ -678,7 +678,6 @@ theorem P4818T1Representatives (K : DiamondParameter) :
   let a : GaussianInt := ⟨0, -2 * k⟩
   let b : GaussianInt := ⟨k + 1, k⟩
   let c : GaussianInt := ⟨-k - 1, k⟩
-  have hk : 0 < k := RepresentativesProof.hk K
   obtain ⟨hcoeff, hA, hB, hC⟩ := P4818T1ClosedOverlaps K
   have hmem (z : GaussianInt) : z ∈ DiamondVertexDomains K false ↔
       -k ≤ z.re ∧ z.re ≤ k ∧ 0 ≤ z.im ∧ z.im ≤ 2 * k ∧

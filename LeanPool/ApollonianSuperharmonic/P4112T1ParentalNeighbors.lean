@@ -72,7 +72,6 @@ private theorem q1pos :
   have hd := P.det₁
   rw [hz] at hd
   simp only [Nat.cast_zero, zero_mul] at hd
-  have hqint : 2 < (P.q : Int) := by exact_mod_cast hP
   by_cases hp : P.p₁ ≤ 0
   · have hqnonneg : 0 ≤ (P.q : Int) := by omega
     have : P.p₁ * (P.q : Int) ≤ 0 := mul_nonpos_of_nonpos_of_nonneg hp hqnonneg
@@ -101,10 +100,6 @@ private theorem unequal :
   have hd : (P.q₁ : Int) ∣ 1 := ⟨P.p₁ - P.p₂, hm.symm⟩
   have hu : (P.q₁ : Int) = 1 :=
     Int.eq_one_of_dvd_one (by exact_mod_cast (Nat.zero_le P.q₁)) hd
-  have hq1 : P.q₁ = 1 := by exact_mod_cast hu
-  have hq2 : P.q₂ = 1 := by omega
-  have hq : P.q = 2 := by omega
-  have hqgt : 2 < P.q := by exact_mod_cast hP
   omega
 
 private theorem hsum :
@@ -575,10 +570,6 @@ private theorem rowSmallRoot :
     rw [show (⟨(P.q₁ : Int), (P.q₁ : Int)⟩ : GaussianInt) + 1 =
       ⟨(P.q₁ : Int)+1, (P.q₁ : Int)⟩ by ext <;> simp [Zsqrtd.re_add, Zsqrtd.im_add]]
     exact hright0
-  have hup : ((⟨(P.q₁ : Int), (P.q₁ : Int)⟩ : GaussianInt) + ⟨0, 1⟩) ∈ E := by
-    rw [show (⟨(P.q₁ : Int), (P.q₁ : Int)⟩ : GaussianInt) + ⟨0, 1⟩ =
-      ⟨(P.q₁ : Int), (P.q₁ : Int)+1⟩ by ext <;> simp []]
-    exact hup0
   have hleft : ((⟨(P.q₁ : Int), (P.q₁ : Int)⟩ : GaussianInt) - 1) ∉ E := by
     rw [show (⟨(P.q₁ : Int), (P.q₁ : Int)⟩ : GaussianInt) - 1 =
       ⟨(P.q₁ : Int)-1, (P.q₁ : Int)⟩ by ext <;> simp [Zsqrtd.re_sub, Zsqrtd.im_sub]]
@@ -587,17 +578,6 @@ private theorem rowSmallRoot :
     rw [show (⟨(P.q₁ : Int), (P.q₁ : Int)⟩ : GaussianInt) - ⟨0, 1⟩ =
       ⟨(P.q₁ : Int), (P.q₁ : Int)-1⟩ by ext <;> simp [Zsqrtd.re_sub, Zsqrtd.im_sub]]
     exact hdown0
-  have hne : (⟨(P.q₁ : Int)+1, (P.q₁ : Int)⟩ : GaussianInt) ≠
-      ⟨(P.q₁ : Int), (P.q₁ : Int)+1⟩ := by
-    intro he
-    have hr := congrArg (fun z : GaussianInt => z.re) he
-    simp at hr
-  have hne' : ((⟨(P.q₁ : Int), (P.q₁ : Int)⟩ : GaussianInt) + 1) ≠
-      ((⟨(P.q₁ : Int), (P.q₁ : Int)⟩ : GaussianInt) + ⟨0, 1⟩) := by
-    intro he
-    have hr := congrArg (fun z : GaussianInt => z.re) he
-    simp only [Zsqrtd.re_add, Zsqrtd.re_one] at hr
-    omega
   have hneDirect : ((⟨(P.q₁ : Int), (P.q₁ : Int)⟩ : GaussianInt) + 1) ≠
       ⟨(P.q₁ : Int), (P.q₁ : Int)+1⟩ := by
     intro he
@@ -713,12 +693,6 @@ private theorem rowSmall :
         intro he
         have hi := congrArg (fun z : GaussianInt => z.im) he
         simp at hi
-        omega
-      have hne' : ((⟨u, (P.q₁ : Int)⟩ : GaussianInt) + ⟨0, 1⟩) ≠
-          (⟨u, (P.q₁ : Int)⟩ - ⟨0, 1⟩) := by
-        intro he
-        have hi := congrArg (fun z : GaussianInt => z.im) he
-        simp only [Zsqrtd.im_add, Zsqrtd.im_sub] at hi
         omega
       have hneDirect : (⟨u, (P.q₁ : Int)+1⟩ : GaussianInt) ≠
           ((⟨u, (P.q₁ : Int)⟩ : GaussianInt) - ⟨0, 1⟩) := by

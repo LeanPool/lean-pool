@@ -931,8 +931,6 @@ private theorem hplusSlope :
   intro C orientation base Rminus Rplus hminus hplus F r I wa xa ya rootSlope joinSlope
       hrootSlopeEq hDoffset hFplusSlope hplusSlopeVector ha10ReC ha10ImC ha01ReC ha01ImC hsumReC
       hsumImC
-  have hre := congrArg (fun z : GaussianInt => (z.re : ℝ)) hplusSlopeVector
-  have him := congrArg (fun z : GaussianInt => (z.im : ℝ)) hplusSlopeVector
   have hDoffset' : joinSlope - rootSlope =
       (-(1 / 2 : ℝ) * ((wa.re : ℤ) : ℝ) +
           (1 / 2 : ℝ) * ((wa.im : ℤ) : ℝ),
@@ -973,9 +971,7 @@ private theorem hCgt1 :
   intro C p hp hCcoord
   rw [hCcoord]
   have hfacts := ProperBandCurvatureStructure p hp
-  have hpositive' : 0 < (p 0).1 := hfacts.1
   by_contra hn
-  have hle : (p 0).1 ≤ 1 := by omega
   have hz : ∀ i : Fin 3, (p i.succ).1 = 0 := by
     intro i
     have hnonneg := hfacts.2.1 i

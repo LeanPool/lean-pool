@@ -326,7 +326,6 @@ theorem TileT1DiskArea (q : Fin 4 → CircleCoordinates)
     have ht := DiskAreaGeometry.ht q cfg C₀ T cert u hu
     let H : ProtoTile → ProtoTile := fun U =>
       TileTranslation (TileQuarterTurn (TileQuarterTurn U)) t
-    let tau : GaussianInt → GaussianInt := fun z => t - z - 1 - ⟨0, 1⟩
     have htau := TileHalfTurnGeometry.involutive q u
     have hHcells := TileHalfTurnGeometry.cells q u
     have hHreal := TileHalfTurnGeometry.realization q T u ht

@@ -1976,9 +1976,6 @@ theorem P1BandOrderedGeneralMixedAggregatePairedEndpoints
     (if i = 0 then -cert.v else if i = 1 then cert.u + cert.v else -cert.u)
   let qLit (i : Fin 3) := TileTranslation (cert.P (i + 1) true)
     (if i = 0 then cert.u else if i = 1 then cert.v else -cert.u - cert.v)
-  let markedPoint (i : Fin 3) := cert.unmodified.core.rho
-    (cert.unmodified.faceEquiv.symm
-      ⟨.J5, if i = 2 then -1 else 0, if i = 1 then 0 else -1⟩)
   have literalData (i : Fin 3) :
       BandPrototile (q i.succ) (pLit i) ∧
       BandPrototile (q ((i + 1).succ)) (qLit i) ∧
@@ -2007,9 +2004,6 @@ theorem P1BandOrderedGeneralMixedAggregatePairedEndpoints
     (if i = 0 then cert.u + cert.v else if i = 1 then -cert.u else -cert.v)
   let qOdd (i : Fin 3) := TileTranslation (cert.P (i - 1) false)
     (if i = 0 then cert.u else if i = 1 then cert.v else -cert.u - cert.v)
-  let oddPoint (i : Fin 3) := cert.unmodified.core.rho
-    (cert.unmodified.faceEquiv.symm
-      ⟨.J6, if i = 0 then 1 else 0, if i = 2 then 0 else 1⟩)
   have signedNeg := PairedEndpointGeometry.signedNeg
   have oddLiteralData (i : Fin 3) :
       BandPrototile (q i.succ) (pOdd i) ∧

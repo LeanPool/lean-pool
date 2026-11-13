@@ -119,9 +119,6 @@ private theorem halfTurnBoundary :
     apply Finset.nonempty_iff_ne_empty.mpr
     intro he
     exact hne.ne_empty ((TileHalfTurnFormulas U).2.2.1.mp he)
-  have hqne : (TileQuarterTurn (TileQuarterTurn U)).cells.Nonempty := by
-    rw [← hcells]
-    exact hhalfne
   have hhalfBound : BoundaryFootprintVertices (TileHalfTurn U) =
       BoundaryFootprintVertices (TileQuarterTurn (TileQuarterTurn U)) := by
     have hempty : (TileHalfTurn U).cells = ∅ →
@@ -1169,8 +1166,6 @@ private theorem hEdgesQC :
     {y, x} he.1 x (by simp)
   have hyC := edgeEndpoint (cert.P 1 true) {y, x} he.2 y (by simp)
   have hxC := edgeEndpoint (cert.P 1 true) {y, x} he.2 x (by simp)
-  have hxA' := edgeEndpoint (cert.P 0 true)
-    {x, z} hf.1 x (by simp)
   have hzA := edgeEndpoint (cert.P 0 true)
     {x, z} hf.1 z (by simp)
   have hxC' := edgeEndpoint (cert.P 1 true) {x, z} hf.2 x (by simp)
@@ -2029,8 +2024,6 @@ private theorem positiveCase :
   have hrho3 : cert.modified.rho f3 =
       cert.unmodified.core.rho (cert.unmodified.faceEquiv.symm ⟨.I3, 0, 0⟩) :=
     cert.modified_face_points _
-  have hz13 := RightInteriorGeometry.hz13 q cfg C T cert f g hpair hrho1 hrho3
-      (RightInteriorGeometry.hend q cfg C T cert f g hpath)
   let b : PeriodicSubtileIndex := ⟨.B, 0, 0⟩
   let fidx : PeriodicSubtileIndex := ⟨.F, 0, 0⟩
   have hfa10 : cert.modified.plane.faceVertex f1 0 = a := by
@@ -2121,7 +2114,6 @@ theorem P4590T1RightInteriorGeometry :
     ⟨u.re - u.im + w.re + w.im, u.re + u.im + w.im - w.re⟩
   let H : ProtoTile → ProtoTile := fun U =>
     TileTranslation (TileHalfTurn U) t
-  let tau : GaussianInt → GaussianInt := fun z => t - z - 1 - ⟨0, 1⟩
   have hHcells := RightInteriorGeometry.hHcells q u
   have halfTurnRealization := RightInteriorGeometry.halfTurnRealization q T u
       (RightInteriorGeometry.ht q cfg C T cert u hu)
@@ -2193,18 +2185,6 @@ theorem P4590T1RightInteriorGeometry :
       exact (image_mem _ _ (parentFootprint 0) v).2 (by simpa [v, F] using hB)
     have hvC : v ∈ FootprintVertices (cert.P 1 true) := by
       exact (image_mem _ _ (parentFootprint 1) v).2 (by simpa [v, F] using hD)
-    let A := {is : Fin 3 × Bool //
-      v ∈ BoundaryFootprintVertices (cert.P is.1 is.2)}
-    let B := {is : Fin 3 × Bool //
-      x ∈ BoundaryFootprintVertices (cert.P is.1 is.2)}
-    let e : A ≃ B :=
-      { toFun := fun a => ⟨(a.val.1, !a.val.2), hboundaryFlip a.val.1 a.val.2 |>.mp a.property⟩
-        invFun := fun b => ⟨(b.val.1, !b.val.2), by
-          have hb : x ∈ BoundaryFootprintVertices
-              (cert.P b.val.1 (!(!b.val.2))) := by simpa using b.property
-          exact (hboundaryFlip b.val.1 (!b.val.2)).mpr hb⟩
-        left_inv := by intro a; apply Subtype.ext; simp
-        right_inv := by intro b; apply Subtype.ext; simp }
     have hvk := RightInteriorGeometry.hvk q cfg C T cert x hk u hboundaryFlip
     have hpositive := positiveCase v hvk hvA hvC
     let wo := BandVectors.1 (q 3) (q 2)

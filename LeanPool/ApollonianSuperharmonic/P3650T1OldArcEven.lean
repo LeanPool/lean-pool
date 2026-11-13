@@ -604,7 +604,6 @@ private theorem rightPreviousParent :
     exact hget
   have hright : some (a - 1) = some (K.ir ⟨K.rightParameter+1, by omega⟩) :=
     hvlast.symm.trans hvget
-  have hne : K.v ≠ [] := List.ne_nil_of_length_pos K.hv
   have hright' := hright
   exact (Option.some.inj hright').symm
 
@@ -633,7 +632,6 @@ private theorem hbaseChild :
   have hrLen : C.rotation % (List.ofFn (fun i : Fin (n + 3) => i)).length = D.a.val := by
     simpa only [hrotLen] using (congrArg Fin.val hrot0).symm
   have hr : C.rotation % (n + 3) = D.a.val := by simpa [hrotLen] using hrLen
-  have hpos2 : 2 < n + 3 := by omega
   have hrot2 := List.getElem?_rotate (l := List.ofFn (fun i : Fin (n + 3) => i))
     (n := C.rotation) (m := 2) (by omega)
   rw [C.parent_order] at hrot2
@@ -651,22 +649,6 @@ private theorem hbaseChild :
       _ = D.b.val := by
         have hv := congrArg Fin.val habFin
         simpa only [Fin.val_add, htwo, Nat.add_comm] using hv
-  have hidxB : (⟨(2 + C.rotation % (List.ofFn (fun i : Fin (n + 3) => i)).length) %
-      (List.ofFn (fun i : Fin (n + 3) => i)).length, by
-        have hlt : (2 + C.rotation % (n + 3)) % (n + 3) < n + 3 := Nat.mod_lt _ hN
-        simpa only [List.length_ofFn] using hlt⟩ : Fin (n + 3)) = D.b := by
-    apply Fin.ext
-    have hmod : (2 + C.rotation % (n + 3)) % (n + 3) =
-        (2 + C.rotation) % (n + 3) := by
-      have h2lt : 2 < n + 3 := by omega
-      calc
-        (2 + C.rotation % (n + 3)) % (n + 3) =
-            (2 % (n + 3) + C.rotation % (n + 3)) % (n + 3) := by
-          rw [Nat.mod_eq_of_lt h2lt]
-        _ = (2 + C.rotation) % (n + 3) := by
-          rw [Nat.add_mod]
-          simp [Nat.mod_eq_of_lt h2lt]
-    simpa only [List.length_ofFn] using hmod.trans hmodB
   have hsource : (List.ofFn (fun i : Fin (n + 3) => i))[
       (2 + C.rotation) % (n + 3)]? = some D.b := by
     have hidxlt : (2 + C.rotation) % (n + 3) <
@@ -702,9 +684,6 @@ private theorem hbaseChild :
   have huLen : C.u.length = 1 := by
     by_contra hn
     have hu2 : 1 < C.u.length := by have hu := C.hu; omega
-    have hcell : (C.u)[1]'(by omega) = D.b := by
-      simpa only [List.getElem_cons_succ,
-        List.getElem_append_left (by omega : 1 < C.u.length)] using hleftCell
     have hnd : (D.a :: (C.u ++ [D.b])).Nodup := by
       rw [← C.left_order]
       exact List.nodup_ofFn_ofInjective C.il_injective
@@ -886,7 +865,6 @@ private theorem hseedLAt728 :
   intro n p E D C e CR OL triangleHull prevIndexNe nextIndexNe ha hb hempty hbaseChild
       hleftIndexRange hleftVertexRange
   let j : Fin (n + 3) := C.ir 1
-  have hjrange : j ∈ Set.range C.ir := ⟨1, rfl⟩
   have hjneA : j ≠ D.a := by
     intro heq
     have hfirst : C.ir 0 = D.b := by
@@ -1096,12 +1074,6 @@ private theorem hside0 :
             segment Real vb vc)) ) := by
   classical
   intro n p E va vb vc vv hind hspan A x hx h0
-  have h0b : A.coord 0 vb = 0 := by
-    change A.coord 0 (A 1) = 0
-    exact A.coord_apply_ne (by decide)
-  have h0c : A.coord 0 vc = 0 := by
-    change A.coord 0 (A 2) = 0
-    exact A.coord_apply_ne (by decide)
   have hn := (Set.ext_iff.mp A.convexHull_eq_nonneg_coord x).mp hx
   have hsum : A.coord 0 x + A.coord 1 x + A.coord 2 x = 1 := by
     simpa only [Fin.sum_univ_three] using A.sum_coord_apply_eq_one x
@@ -1144,12 +1116,6 @@ private theorem hside2 :
             segment Real va vb)) ) := by
   classical
   intro n p E va vb vc vv hind hspan A x hx h2
-  have h2a : A.coord 2 va = 0 := by
-    change A.coord 2 (A 0) = 0
-    exact A.coord_apply_ne (by decide)
-  have h2b : A.coord 2 vb = 0 := by
-    change A.coord 2 (A 1) = 0
-    exact A.coord_apply_ne (by decide)
   have hn := (Set.ext_iff.mp A.convexHull_eq_nonneg_coord x).mp hx
   have hsum : A.coord 0 x + A.coord 1 x + A.coord 2 x = 1 := by
     simpa only [Fin.sum_univ_three] using A.sum_coord_apply_eq_one x
@@ -2868,29 +2834,17 @@ theorem P3650T1OldArcEven {n : Nat} (p : P3381T1PolygonBoundary n)
       (P3544T1RayParity C.left) := by
 -- BODY
   classical
-  let e := segment Real (p.vertex D.a) (p.vertex D.b)
   let CL := P3544T1BoundaryCarrier C.left
   let CR := P3544T1BoundaryCarrier C.right
-  let CP := P3544T1BoundaryCarrier p
   let OL := P3544T1RayParity C.left
   let OR := P3544T1RayParity C.right
   have hLoff := OldArcParityProof.hLoff n p E D C
   have hRoff := OldArcParityProof.hRoff n p E D C
-  have hLparent := OldArcParityProof.hLparent n p E D C
-  have hRparent := OldArcParityProof.hRparent n p E D C
   have oldArcEvenOnPreconnected {X : Type} [TopologicalSpace X]
       (O K S : Set X) (hO : IsOpen O) (hclosure : closure O = O ∪ K)
       (hS : IsPreconnected S) (hSK : Disjoint S K)
       (x : X) (hx : x ∈ S) (hxO : x ∉ O) := OldArcParityProof.oldArcEvenOnPreconnected (X := X) O K
           S hO hclosure hS hSK x hx hxO
-  have oldArcOddOnPreconnected {X : Type} [TopologicalSpace X]
-      (O K S : Set X) (hO : IsOpen O) (hclosure : closure O = O ∪ K)
-      (hS : IsPreconnected S) (hSK : Disjoint S K)
-      (x : X) (hx : x ∈ S) (hxO : x ∈ O) := OldArcParityProof.oldArcOddOnPreconnected
-          oldArcEvenOnPreconnected (X := X) O K S hO hclosure hS hSK x hx hxO
-  have oldArcEvenClosure {X : Type} [TopologicalSpace X]
-      (O S : Set X) (hO : IsOpen O) (hSO : Disjoint S O) := OldArcParityProof.oldArcEvenClosure (X
-          := X) O S hO hSO
   obtain ⟨leftArcPreconnected, rightArcPreconnected⟩ :=
     P5667T1CyclicChildrenOldArcsPreconnected p D.a D.b C
   have leftFirstIndex : C.il 1 = D.a + 1 := OldArcParityProof.leftFirstIndex n p E D C
@@ -2921,11 +2875,6 @@ theorem P3650T1OldArcEven {n : Nat} (p : P3381T1PolygonBoundary n)
           := a) (b := b) (c := c) hdet
   have prevIndexNe {m : Nat} (i : Fin (m + 3)) := OldArcParityProof.prevIndexNe (m := m) i
   have nextIndexNe {m : Nat} (i : Fin (m + 3)) := OldArcParityProof.nextIndexNe (m := m) i
-  have strictUpperHalfplaneEven {m : Nat} (q : P3381T1PolygonBoundary m)
-      (ell : (Real × Real) →ₗ[Real] Real) (H : Real)
-      (hbound : ∀ i, ell (q.vertex i) < H)
-      (x : Real × Real) (hx : H < ell x) := OldArcAssembly.strictUpperHalfplaneEven
-          upperHalfplaneEven (m := m) q ell H hbound x hx
   have nonincidentBall {m : Nat} (q : P3381T1PolygonBoundary m)
       (i : Fin (m + 3)) := OldArcParityProof.nonincidentBall (m := m) q i
   have rightPreviousParent {m : Nat} (q : P3381T1PolygonBoundary m)
@@ -2966,7 +2915,6 @@ theorem P3650T1OldArcEven {n : Nat} (p : P3381T1PolygonBoundary n)
     have htriangle : p.vertex D.b ∈ convexHull Real (Set.range A) := by
       simpa [hrange, va, vb, vc] using hvertex
     have hcoord_nonneg := OldArcParityProof.hcoord_nonneg n p E D hind hspan htriangle
-    have hcoord_sum := OldArcParityProof.hcoord_sum n p E D hind hspan
     have hside0 (x : Real × Real) (hx : x ∈ convexHull Real (Set.range A))
         (h0 : A.coord 0 x = 0) := OldArcParityProof.hside0 n p E hind hspan x hx h0
     have hside2 (x : Real × Real) (hx : x ∈ convexHull Real (Set.range A))

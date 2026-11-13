@@ -411,10 +411,6 @@ theorem P5472T1FordNormalization
   have hridx := FordNormalizationProof.hridx q cfg hzero hcurv ridx hline
   subst ridx
   have hford' := FordNormalizationProof.hford' q cfg s F hford
-  let succ (a : Fin 4 → CircleCoordinates) : Fin 4 → CircleCoordinates :=
-    ![(2 * (a 0).1 + 2 * (a 2).1 + 2 * (a 3).1 - (a 1).1,
-        2 * (a 0).2 + 2 * (a 2).2 + 2 * (a 3).2 - (a 1).2),
-      a 0, a 2, a 3]
   have hqSucc := FordNormalizationProof.hqSucc q cfg
   have hsuccCov := FordNormalizationProof.hsuccCov q cfg s hword
   have hF0 : BandPackingSymmetryCircleAction s (t 0) =

@@ -548,12 +548,6 @@ private theorem sampleA :
     have heq : qplus' - z = ε • j := by simp [qplus']
     rw [heq, norm_smul, Real.norm_eq_abs, abs_of_pos hε, hjnorm]
     simpa using hεη)
-  have hqminusB : 0 < B qminus' := hηsub (by
-    change dist qminus' z < η
-    rw [dist_eq_norm]
-    have heq : qminus' - z = -(ε • j) := by simp [qminus', sub_eq_add_neg]
-    rw [heq, norm_neg, norm_smul, Real.norm_eq_abs, abs_of_pos hε, hjnorm]
-    simpa using hεη)
   have hAplus : A qplus' = ε * (a.1 ^ 2 + a.2 ^ 2) := by
     dsimp [A, qplus', z, j, det]
     ring
@@ -640,12 +634,6 @@ private theorem sampleB :
     have heq : qminus' - z = -(ε • j) := by simp [qminus', sub_eq_add_neg]
     rw [heq, norm_neg, norm_smul, Real.norm_eq_abs, abs_of_pos hε, hjnorm]
     simpa using hεδ
-  have hqplusA : 0 < A qplus' := hηsub (by
-    change dist qplus' z < η
-    rw [dist_eq_norm]
-    have heq : qplus' - z = ε • j := by simp [qplus']
-    rw [heq, norm_smul, Real.norm_eq_abs, abs_of_pos hε, hjnorm]
-    simpa using hεη)
   have hqminusA : 0 < A qminus' := hηsub (by
     change dist qminus' z < η
     rw [dist_eq_norm]
@@ -2105,9 +2093,6 @@ private theorem nondegenerateContinuation :
   have hCopen := SectorContinuationFacts.hCopen x r u v hAcont
   have hDopen := SectorContinuationFacts.hDopen x r u v hBcont
   have hC₂open := SectorContinuationFacts.hC₂open x r u v hCopen hDopen
-  have hC₁conv := SectorContinuationGeometry.hC₁conv x r u v
-  have hCconv := SectorContinuationGeometry.hCconv x r u v
-  have hDconv := SectorContinuationGeometry.hDconv x r u v
   have hsumNorm := SectorContinuationFacts.hsumNorm u v ha hb
   have hr4 : 0 < r / 4 := by positivity
   let qpos : Real × Real := x + (r / 4) • (a + b)
@@ -2117,21 +2102,11 @@ private theorem nondegenerateContinuation :
   have hBqpos : B qpos = (r / 4) * d' := SectorContinuationFacts.hBqpos x r u v
   have hqposA : 0 < A qpos := by rw [hAqpos]; positivity
   have hqposB : 0 < B qpos := by rw [hBqpos]; positivity
-  have hC₁ne : C₁.Nonempty := ⟨qpos, ⟨⟨hqposball, hqposA⟩, hqposB⟩⟩
-  have hC₁conn : IsConnected C₁ := hC₁conv.isConnected hC₁ne
   let qneg : Real × Real := x - (r / 4) • (a + b)
   have hqnegb := SectorContinuationFacts.hqnegbAt1364 x r u v hr
       hsumNorm hr4
   have hAqneg := SectorContinuationFacts.hAqnegAt1373 x r u v
-  have hBqneg := SectorContinuationFacts.hBqneg x r u v
   have hqnegA := SectorContinuationFacts.hqnegAAt1379 x r u v hAqpos hqposA hAqneg
-  have hqnegB := SectorContinuationFacts.hqnegB x r u v hAqpos hqposA hBqneg
-  have hCne : C.Nonempty := ⟨qneg, ⟨hqnegb, hqnegA⟩⟩
-  have hDne : D.Nonempty := ⟨qneg, ⟨hqnegb, hqnegB⟩⟩
-  have hCDne : (C ∩ D).Nonempty := ⟨qneg, ⟨⟨hqnegb, hqnegA⟩, ⟨hqnegb, hqnegB⟩⟩⟩
-  have hCconn : IsConnected C := hCconv.isConnected hCne
-  have hDconn : IsConnected D := hDconv.isConnected hDne
-  have hC₂conn := SectorContinuationFacts.hC₂conn x r u v hCDne hCconn hDconn
   have horder := SectorContinuationFacts.horder u v
   have haRay (k : Real) (hk : 0 ≤ k) := SectorContinuationFacts.haRay x u v horder k hk
   have hbRay (k : Real) (hk : 0 ≤ k) := SectorContinuationFacts.hbRay x u v horder k hk
@@ -2311,26 +2286,6 @@ private theorem oppositeContinuation :
   have hAcont := SectorContinuationFacts.hAcontAt1604 x u
   have hPopen := SectorContinuationFacts.hPopen x r u hAcont
   have hNopen := SectorContinuationFacts.hNopen x r u hAcont
-  let f : (Real × Real) →ᵃ[Real] Real := {
-    toFun := A
-    linear := {
-      toFun := fun y => det u y
-      map_add' := by
-        intro y z
-        dsimp [det]
-        ring
-      map_smul' := by
-        intro c y
-        dsimp [det]
-        ring
-    }
-    map_vadd' := by
-      intro p y
-      dsimp [A, det]
-      ring
-  }
-  have hPconv := SectorContinuationFacts.hPconv x r u
-  have hNconv := SectorContinuationFacts.hNconv x r u
   have hu0 : u ≠ (0, 0) := hu_ne
   have hsqpos := SectorContinuationFacts.hsqpos u hu0
   let j : Real × Real := (-u.2, u.1)
@@ -2347,10 +2302,6 @@ private theorem oppositeContinuation :
       x r u
   have hqposA : 0 < A qpos := by rw [hAqpos]; exact mul_pos hr4 hsqpos
   have hqnegA := SectorContinuationFacts.hqnegAAt1672 x r u hsqpos hr4 hAqneg
-  have hPne : P.Nonempty := ⟨qpos, hqposball, hqposA⟩
-  have hNne : N.Nonempty := ⟨qneg, hqnegb, hqnegA⟩
-  have hPconn : IsConnected P := hPconv.isConnected hPne
-  have hNconn : IsConnected N := hNconv.isConnected hNne
   have hdis := SectorContinuationFacts.hdisAt1679 x r u
   let Rays : Set (Real × Real) :=
     {p | ∃ t : Real, 0 ≤ t ∧ p = x + t • u} ∪

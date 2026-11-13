@@ -837,8 +837,6 @@ private theorem degenerateCase :
     (dOrig = 0) → (Nonempty (P3889T1TwoRaySectorDecomposition x r u v)))))) := by
   classical
   intro x r u v hr hu hv huv det uOrig vOrig dOrig hd
-  have hdet0 : u.1 * v.2 - u.2 * v.1 = 0 := by
-    simpa [dOrig, det, uOrig, vOrig] using hd
   have hu0 : u ≠ (0, 0) := by
     intro h
     rw [h] at hu
@@ -881,12 +879,10 @@ private theorem degenerateCase :
     let j : Real × Real := (-u.2, u.1)
     have hsqpos : 0 < u.1^2 + u.2^2 := by
       by_contra h
-      have hle : u.1^2 + u.2^2 ≤ 0 := le_of_not_gt h
       have h1 : u.1 = 0 := by nlinarith [sq_nonneg u.1, sq_nonneg u.2]
       have h2 : u.2 = 0 := by nlinarith [sq_nonneg u.1, sq_nonneg u.2]
       apply hu0
       ext <;> simp [h1, h2]
-    have hjdet : det u j = u.1^2 + u.2^2 := by dsimp [j, det]; ring
     have hjnorm : ‖j‖ = 1 := by
       dsimp [j]
       simpa [Prod.norm_def, Real.norm_eq_abs, max_comm] using hu
@@ -1046,7 +1042,6 @@ private theorem nondegenerateCase :
     calc ‖positiveFirstDirection + positiveSecondDirection‖ ≤ ‖positiveFirstDirection‖ +
         ‖positiveSecondDirection‖ := norm_add_le _ _
       _ = 2 := by rw [hu, hv]; norm_num
-  have hr4 : 0 < r / 4 := by positivity
   let q : Real × Real := x + (r / 4) • (positiveFirstDirection + positiveSecondDirection)
   have hqball : q ∈ Metric.ball x r := by
     change dist q x < r

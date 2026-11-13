@@ -928,7 +928,6 @@ theorem P4194T1DiamondBoundaryLedger
   let a := z.re
   let b := z.im
   have hrow := DiamondBoundaryProof.hrow m z hz
-  have hm2 : 2 ≤ m := DiamondBoundaryProof.hm2 m hm
   have hdesclow (hb : b < m) :
       ∀ j : Fin 4, LatticeVertexIncidentCell z j ∈ DiamondCellDomain (m - 1) :=
           DiamondBoundaryProof.hdesclow m hm z hrow hb

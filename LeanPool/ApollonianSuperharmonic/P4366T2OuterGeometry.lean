@@ -412,10 +412,6 @@ private theorem hHalfEdges :
     _ = (fun e : Finset GaussianInt => e.image (fun z => -z)) '' FootprintEdges X := by
       rw [(TileQuarterTurnFormulas (TileQuarterTurn X)).2.2.2.2.2.2.1,
         (TileQuarterTurnFormulas X).2.2.2.2.2.2.1]
-      have hneg : (fun z : GaussianInt => GaussianQuarterTurn (GaussianQuarterTurn z)) =
-          (fun z => -z) := by
-        funext z
-        apply Zsqrtd.ext <;> simp [GaussianQuarterTurn]
       rw [Set.image_image]
       have hfin : (fun e : Finset GaussianInt =>
           (e.image GaussianQuarterTurn).image GaussianQuarterTurn) =
@@ -466,8 +462,6 @@ private theorem pathMap :
   rcases P with ⟨p, hnodup, hlength, hhead, hlast, hvertices, hsteps, hedges⟩
   let g : GaussianInt → GaussianInt := fun z => -(z - centerShift)
   have fg (z : GaussianInt) : f (g z) = z := by
-    simp [f, g]
-  have gf (z : GaussianInt) : g (f z) = z := by
     simp [f, g]
   have hlistInjective : Function.Injective (fun r : List GaussianInt => r.map f) :=
     List.map_injective_iff.mpr finj
@@ -1247,7 +1241,6 @@ private theorem hNoTouch :
       have hqless := hproper.2 i
       have hparentEq : (qb 0).1 = (q i.succ).1 := by rw [hqb0, hCi]
       omega
-    have hrootPositive : 0 < (q i.succ).1 + (q 0).1 := by omega
     have hchildPositive : 0 < (qb j.succ).1 + (qb 0).1 := by
       have hnonneg := (ProperBandCurvatureStructure qb hproperB).2.1 j
       have hparentPos : 0 < (qb 0).1 := by simpa [hqb0, hCi] using hcurvi
@@ -1380,17 +1373,11 @@ theorem P4366T2OuterGeometry
   have hregular0_induced := hregular0.2.1
   have hregular0'_induced := hregular0'.2.1
   have centroid_cells_eq := OuterGeometry.centroid_cells_eq
-  have hFplusne := OuterGeometry.hFplusne Rminus Rplus centerShift hpc hRmne
   have hcentFminus : TileCentroid (TileTranslation (TileHalfTurn Rminus) centerShift) =
       TileCentroid Rplus := centroid_cells_eq _ _ hRpne hmc
-  have hcentFplus : TileCentroid (TileTranslation (TileHalfTurn Rplus) centerShift) =
-      TileCentroid Rminus := centroid_cells_eq _ _ hRmne hpc
   have hcentHalfMinus : TileCentroid (TileHalfTurn Rminus) =
       (-(TileCentroid Rminus).1, -(TileCentroid Rminus).2) :=
     (TileHalfTurnFormulas Rminus).2.2.2.2.2.2.2.1
-  have hcentHalfPlus : TileCentroid (TileHalfTurn Rplus) =
-      (-(TileCentroid Rplus).1, -(TileCentroid Rplus).2) :=
-    (TileHalfTurnFormulas Rplus).2.2.2.2.2.2.2.1
   have huCenter : GaussianRealPoint centerShift =
       (2 : Real) • TileCentroid T0 + GaussianRealPoint (BandVectors.1 (q i.succ) (q 0)) :=
     (OuterGeometry.huCent Rminus Rplus centerShift hcentFminus hcentHalfMinus).trans
@@ -1427,9 +1414,6 @@ theorem P4366T2OuterGeometry
       (P : SimpleGridPathBetween V E x y) := OuterGeometry.pathMap centerShift finj
           (OuterGeometry.fstep centerShift) (V := V) (E := E) (V' := V') (E' := E') (x := x) (y
           := y) hV hE P
-  have hVrootNe := OuterGeometry.hVrootNe T0 T0' centerShift hT0'ne hFrootCells
-  have hVroot'Ne := OuterGeometry.hVroot'Ne T0 T0' centerShift hT0ne hFroot'Cells
-  have hVplusNe : (TileTranslation (TileHalfTurn Rplus) centerShift).cells.Nonempty := hFplusne
   have hVrootEq : FootprintVertices T0' =
       FootprintVertices (TileTranslation (TileHalfTurn T0) centerShift) := OuterGeometry.hVrootEq
           T0 T0' centerShift hT0'ne hFrootCells
@@ -1477,8 +1461,6 @@ theorem P4366T2OuterGeometry
       hunique hpt (OuterGeometry.hpairCases T0 T0' Rminus Rplus centerShift Eplus pAB pBC pCA
       hunique hpt hpair)) (OuterGeometry.reversePath)
   have hlatMinus := OuterGeometry.hlatMinus Rminus Rplus centerShift hpc hlatPlus
-  let g : GaussianInt → GaussianInt :=
-    fun x => GaussianTranslation centerShift (-x - 1 - ⟨0, 1⟩)
   have hcellMap := OuterGeometry.hcellMap centerShift
   have hdisjoint_image {A B : Finset GaussianInt}
       (hd : Disjoint A B) := OuterGeometry.hdisjoint_image centerShift (A := A) (B := B) hd
@@ -1486,7 +1468,6 @@ theorem P4366T2OuterGeometry
       hdisjoint0'Plus hFroot'Cells hcellMap hdisjoint_image
   have hdisjoint0'Minus := OuterGeometry.hdisjoint0'Minus T0 T0' Rminus Rplus centerShift hpc
       hdisjoint0Plus hFrootCells hcellMap hdisjoint_image
-  have hproperBase : ProperBandQuadruple qf := hqf
   have hBandBase : BandPrototile Ci.1.1 base := (by
     rcases hstring with ⟨hbase, _, _, _, _, _, _⟩
     exact hbase)

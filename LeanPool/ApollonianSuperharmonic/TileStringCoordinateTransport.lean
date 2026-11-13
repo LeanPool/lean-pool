@@ -445,10 +445,6 @@ private theorem internal_strip :
         cases pre with
         | nil => simp at hp
         | cons a tail => simp
-      have htl : 0 < post.length := by
-        cases post with
-        | nil => simp at ht
-        | cons a tail => simp
       omega
     · rintro ⟨hh, ht, hn, hc, hi⟩
       have hne : xs ≠ [] := by intro he; simp [he] at hh

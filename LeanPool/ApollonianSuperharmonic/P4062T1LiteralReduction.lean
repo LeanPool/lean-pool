@@ -452,7 +452,6 @@ theorem P4062T1LiteralReduction :
   have hqpos : 0 < P.q := P.q_pos
   obtain ⟨hfootSquare, hboundarySquare⟩ := P4062T1CanonicalSupport P.q P.q_pos
   have hFcells : (FordTile P.q).cells.Nonempty := LiteralReductionGeometry.hFcells P
-  have hTcells : T.cells.Nonempty := LiteralReductionGeometry.hTcells P T h k u htrans hFcells
   have htranslatedCells : (TileTranslation (FordTile P.q) u).cells.Nonempty := by
     simpa [TileTranslation] using hFcells.image (GaussianTranslation u)
   have hboundaryTransport :

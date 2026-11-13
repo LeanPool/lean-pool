@@ -881,10 +881,6 @@ theorem P4828T1CircularPlacement (L : Real)
     P4828T1Disk (q 0) ⊆ P4828T1Gap L q := by
 -- BODY
   have hchild : 0 < (q 0).1 := CircularPlacementConstruction.hchild q hq
-  have hcpos : ∀ i : Fin 4, 0 < (q i).1 := CircularPlacementConstruction.hcpos q hq hpositive
-  have normCast (w : GaussianInt) :
-      Complex.normSq (w : Complex) = (Zsqrtd.norm w : Real) :=
-          CircularPlacementConstruction.normCast w
   have circleDist (i j : Fin 4) (hij : i ≠ j)
       (hi : 0 < (q i).1) (hj : 0 < (q j).1) :
       dist (((q i).2 : Complex) / (q i).1)
@@ -892,48 +888,7 @@ theorem P4828T1CircularPlacement (L : Real)
         1 / (q i).1 + 1 / (q j).1 := CircularPlacementConstruction.circleDist q hq i j hij hi hj
   let ctr (i : Fin 4) : Complex := ((q i).2 : Complex) / (q i).1
   let rad (i : Fin 4) : Real := 1 / (q i).1
-  have rpos (i : Fin 4) : 0 < rad i := CircularPlacementConstruction.rpos q hq hpositive i
-  have ctrDist (i j : Fin 4) (hij : i ≠ j) :
-      dist (ctr i) (ctr j) = rad i + rad j := CircularPlacementConstruction.ctrDist q hq
-          hpositive i j hij
-  have hd12 := ctrDist 1 2 (by decide)
-  have hd13 := ctrDist 1 3 (by decide)
-  have hd10 := ctrDist 1 0 (by decide)
-  have hd23 := ctrDist 2 3 (by decide)
-  have hd20 := ctrDist 2 0 (by decide)
-  have hd30 := ctrDist 3 0 (by decide)
-  have hd21 : dist (ctr 2) (ctr 1) = rad 2 + rad 1 := CircularPlacementConstruction.hd21 q hq
-      hpositive
-  have hd31 : dist (ctr 3) (ctr 1) = rad 3 + rad 1 := CircularPlacementConstruction.hd31 q hq
-      hpositive
-  have hd32 : dist (ctr 3) (ctr 2) = rad 3 + rad 2 := CircularPlacementConstruction.hd32 q hq
-      hpositive
   let crossC : Complex → Complex → Real := fun z w => z.re * w.im - z.im * w.re
-  let dotC : Complex → Complex → Real := fun z w => z.re * w.re + z.im * w.im
-  have soddySameSide (A B C D : Complex) (a b c d : Real)
-        (ha : 0 < a) (hb : 0 < b) (hc : 0 < c) (hd : 0 < d)
-        (hdA : d < a) (hdB : d < b)
-        (hAB : dist A B = a + b) (hAC : dist A C = a + c) (hAD : dist A D = a + d)
-        (hBC : dist B C = b + c) (hBD : dist B D = b + d) (hCD : dist C D = c + d) :
-        0 < crossC (B - A) (C - A) * crossC (B - A) (D - A) ∧
-          (d * (a + b)) ^ 2 < crossC (B - A) (D - A) ^ 2 :=
-              CircularPlacementConstruction.soddySameSide A
-              B C D a b c d ha hb hc hd hdA hdB hAB hAC hAD hBC hBD hCD
-  have crossSq_le (z w : Complex) :
-      crossC z w ^ 2 ≤ Complex.normSq z * Complex.normSq w :=
-          CircularPlacementConstruction.crossSq_le z w
-  have diskEdgeSide (A B D p : Complex) (a d : Real)
-      (ha : 0 < a) (hd : 0 < d)
-      (hAB : dist A B = a)
-      (hmargin : (d * a) ^ 2 < crossC (B - A) (D - A) ^ 2)
-      (hpD : dist D p < d) :
-      0 < crossC (B - A) (D - A) * crossC (B - A) (p - A) :=
-          CircularPlacementConstruction.diskEdgeSide A
-          B D p a d ha hd hAB hmargin hpD
-  have sideTrans (x y z : Real) (hxy : 0 < x * y) (hyz : 0 < y * z) :
-      0 < x * z := CircularPlacementConstruction.sideTrans x y z hxy hyz
-  have ratioPos (x y : Real) (hxy : 0 < x * y) : 0 < y / x :=
-      CircularPlacementConstruction.ratioPos x y hxy
   have strictSides (A B C p : Complex)
       (harea : crossC (B - A) (C - A) ≠ 0)
       (hC : 0 < crossC (B - A) (p - A) / crossC (B - A) (C - A))
@@ -942,68 +897,15 @@ theorem P4828T1CircularPlacement (L : Real)
         crossC (B - A) (p - A) / crossC (B - A) (C - A)) :
       p ∈ interior (convexHull Real ({A, B, C} : Set Complex)) :=
           CircularPlacementConstruction.strictSides A B C p harea hC hB hA
-  have radChildLtParent (j : Fin 3) : rad 0 < rad j.succ :=
-      CircularPlacementConstruction.radChildLtParent q hq hpositive j
-  have hr01 : rad 0 < rad 1 := CircularPlacementConstruction.hr01 q hq hpositive
-  have hr02 : rad 0 < rad 2 := CircularPlacementConstruction.hr02 q hq hpositive
-  have hr03 : rad 0 < rad 3 := CircularPlacementConstruction.hr03 q hq hpositive
-  have hside123 := soddySameSide (ctr 1) (ctr 2) (ctr 3) (ctr 0)
-    (rad 1) (rad 2) (rad 3) (rad 0)
-    (rpos 1) (rpos 2) (rpos 3) (rpos 0) hr01 hr02
-    hd12 hd13 hd10 hd23 hd20 hd30
-  have hside231 := soddySameSide (ctr 2) (ctr 3) (ctr 1) (ctr 0)
-    (rad 2) (rad 3) (rad 1) (rad 0)
-    (rpos 2) (rpos 3) (rpos 1) (rpos 0) hr02 hr03
-    hd23 hd21 hd20 hd31 hd30 hd10
-  have hside312 := soddySameSide (ctr 3) (ctr 1) (ctr 2) (ctr 0)
-    (rad 3) (rad 1) (rad 2) (rad 0)
-    (rpos 3) (rpos 1) (rpos 2) (rpos 0) hr03 hr01
-    hd31 hd32 hd30 hd12 hd10 hd20
   intro p hp
   change dist p (ctr 0) < rad 0 at hp
-  have hp12 := diskEdgeSide (ctr 1) (ctr 2) (ctr 0) p
-    (rad 1 + rad 2) (rad 0) (add_pos (rpos 1) (rpos 2)) (rpos 0)
-    (ctrDist 1 2 (by decide)) hside123.2 (by simpa only [ctr, rad, Complex.ofReal_intCast,
-        dist_comm] using hp)
-  have hp23 := diskEdgeSide (ctr 2) (ctr 3) (ctr 0) p
-    (rad 2 + rad 3) (rad 0) (add_pos (rpos 2) (rpos 3)) (rpos 0)
-    (ctrDist 2 3 (by decide)) hside231.2 (by simpa only [ctr, rad, Complex.ofReal_intCast,
-        dist_comm] using hp)
-  have hp31 := diskEdgeSide (ctr 3) (ctr 1) (ctr 0) p
-    (rad 3 + rad 1) (rad 0) (add_pos (rpos 3) (rpos 1)) (rpos 0)
-    (ctrDist 3 1 (by decide)) hside312.2 (by simpa only [ctr, rad, Complex.ofReal_intCast,
-        dist_comm] using hp)
-  have htri123 := sideTrans
-    (crossC (ctr 2 - ctr 1) (ctr 3 - ctr 1))
-    (crossC (ctr 2 - ctr 1) (ctr 0 - ctr 1))
-    (crossC (ctr 2 - ctr 1) (p - ctr 1)) hside123.1 hp12
-  have htri231 := sideTrans
-    (crossC (ctr 3 - ctr 2) (ctr 1 - ctr 2))
-    (crossC (ctr 3 - ctr 2) (ctr 0 - ctr 2))
-    (crossC (ctr 3 - ctr 2) (p - ctr 2)) hside231.1 hp23
-  have htri312 := sideTrans
-    (crossC (ctr 1 - ctr 3) (ctr 2 - ctr 3))
-    (crossC (ctr 1 - ctr 3) (ctr 0 - ctr 3))
-    (crossC (ctr 1 - ctr 3) (p - ctr 3)) hside312.1 hp31
   let den : Real := crossC (ctr 2 - ctr 1) (ctr 3 - ctr 1)
   have harea : crossC (ctr 2 - ctr 1) (ctr 3 - ctr 1) ≠ 0 := CircularPlacementConstruction.harea
       q hq hpositive
   have hLamC : 0 < crossC (ctr 2 - ctr 1) (p - ctr 1) / den :=
       CircularPlacementConstruction.hLamC q hq hpositive p hp
-  have hden312 : crossC (ctr 1 - ctr 3) (ctr 2 - ctr 3) = den :=
-      CircularPlacementConstruction.hden312 q
-  have hnum312 : crossC (ctr 1 - ctr 3) (p - ctr 3) =
-      crossC (p - ctr 1) (ctr 3 - ctr 1) := CircularPlacementConstruction.hnum312 q p
   have hLamB : 0 < crossC (p - ctr 1) (ctr 3 - ctr 1) / den :=
       CircularPlacementConstruction.hLamB q hq hpositive p hp
-  have hden231 : crossC (ctr 3 - ctr 2) (ctr 1 - ctr 2) = den :=
-      CircularPlacementConstruction.hden231 q
-  have hnum231 : crossC (ctr 3 - ctr 2) (p - ctr 2) =
-      crossC (ctr 3 - ctr 2) (ctr 1 - ctr 2) -
-        crossC (p - ctr 1) (ctr 3 - ctr 1) -
-        crossC (ctr 2 - ctr 1) (p - ctr 1) := CircularPlacementConstruction.hnum231 q p
-  have hLamA : 0 < crossC (ctr 3 - ctr 2) (p - ctr 2) / den :=
-      CircularPlacementConstruction.hLamA q hq hpositive p hp
   have hA : 0 < 1 -
       crossC (p - ctr 1) (ctr 3 - ctr 1) / den -
       crossC (ctr 2 - ctr 1) (p - ctr 1) / den := CircularPlacementConstruction.hA q hq hpositive

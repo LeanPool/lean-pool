@@ -37,7 +37,6 @@ theorem P5023T1CircularEstimate (r R : ℝ) (hR : 0 < R)
     have hprod : 0 ≤
         (1 - |(r - R) / (r + R)|) * (1 + |(r - R) / (r + R)|) :=
       mul_nonneg (sub_nonneg.mpr hquot) (by positivity)
-    have hsq : |(r - R) / (r + R)| ^ 2 ≤ 1 := by nlinarith
     rw [← sq_abs]
     nlinarith
   have hidentity :
@@ -57,8 +56,6 @@ theorem P5023T1CircularEstimate (r R : ℝ) (hR : 0 < R)
     have hdenSq : 0 < (r + R) ^ 2 := sq_pos_of_pos hden
     field_simp [ne_of_gt hdenSq]
     nlinarith [mul_le_mul_of_nonneg_right hrCube hR.le]
-  have hleft : 0 ≤ 2 * r * Real.sqrt (1 - ((r - R) / (r + R)) ^ 2) := by
-    exact mul_nonneg (mul_nonneg (by norm_num) (by linarith)) (Real.sqrt_nonneg _)
   have hright : 0 ≤ 4 * Real.sqrt R := by positivity
   nlinarith
 

@@ -105,7 +105,6 @@ theorem BandOdometerMaximality (C : BandCircle)
               ((-a.re : Int) : GaussianInt) * b = 0 := by
             ext <;> simp [him.1, him.2]; ring
           have hpair := he (by simpa using hzero)
-          have hbre : b.re = 0 := congrArg Prod.fst hpair
           have hare : a.re = 0 := by
             have hh := congrArg Prod.snd hpair
             simpa using neg_eq_zero.mp hh

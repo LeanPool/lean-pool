@@ -72,7 +72,6 @@ private theorem hzr :
   classical
   intro K z n M hzB hzMB
   have hlow := hzMB.2.2.1
-  have hhigh := hzB.2.2.2.1
   dsimp [M] at hlow
   omega
 
@@ -103,11 +102,6 @@ private theorem hzi :
   rcases hzMB with ⟨_, _, _, _, _, _, hbound, _⟩
   have him : (z-M).im = z.im := by simp [M]
   have hre : (z-M).re = z.re-2*n := by simp [M]
-  have hreM : (z-M).re = -n := by rw [hre, hzr]; omega
-  have hlower : n-1 ≤ z.im := by rw [← hzr]; omega
-  have hupper : z.im ≤ n+1 := by
-    rw [him, hreM] at hbound
-    omega
   have hnotlow : z.im ≠ n-1 := by
     intro heq
     have hsouth := hstar (z-⟨0,1⟩) (Or.inr (Or.inr (Or.inr (Or.inr rfl))) :
@@ -497,7 +491,6 @@ theorem P5352T2RightHorizontal (K : DiamondParameter) (hk : 1 < K.1)
   dsimp only
   intro hC hR hz hzM hstar
   let n : Int := K.1
-  have hn : 2 ≤ n := by dsimp [n]; exact_mod_cast hk
   let M : GaussianInt := ⟨2*n, 0⟩
   let Q (x : GaussianInt) : Int :=
     (Int.natAbs x.re : Int) * ((Int.natAbs x.re : Int)-1)/2 -
@@ -537,8 +530,6 @@ theorem P5352T2RightHorizontal (K : DiamondParameter) (hk : 1 < K.1)
     rw [hNc]; exact foot n (n+1) (by constructor <;> omega)
   have hsouth : z-⟨0,1⟩ ∈ FootprintVertices (DiamondTile K.1) := by
     rw [hSc]; exact foot n (n-1) (by constructor <;> omega)
-  have hchildCenter : z-M ∈ FootprintVertices (DiamondTile K.1) := by
-    simpa [hA, hM] using hzM
   have hchildEast := DiamondRightHorizontal.hchildEast K hk z hzr foot hEc
   have hparent (w : GaussianInt) (hw : w ∈ FootprintVertices (DiamondTile K.1)) :
       f w = Q w := DiamondRightHorizontal.hparent K hk f hC w hw

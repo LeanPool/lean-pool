@@ -43,7 +43,6 @@ private theorem hcurv :
   simp only [BandPackingSymmetryQuadrupleAction, Fin.isValue, Matrix.cons_val_zero, neg_zero,
       ite_self, Fin.succ_zero_eq_one, Matrix.cons_val_one, Matrix.cons_val_succ] at hecurv
   rw [hc] at hecurv
-  have hqp : (1 : ℝ) < P0.q := by exact_mod_cast hP0
   simp [FordRecursiveQuadruple, FordCircleCoordinate] at hecurv
   nlinarith
 
@@ -191,7 +190,6 @@ private theorem hCpos :
             (BandPackingSymmetryQuadrupleAction g2 barq 0).1)) ) := by
   classical
   intro w r2 g2 P2 hP2 barq heq0'
-  have hqpos : (0 : ℝ) < P2.q := by exact_mod_cast P2.q_pos
   have hh := congrArg Prod.fst heq0'
   simp [FordRecursiveQuadruple, FordCircleCoordinate] at hh
   nlinarith
@@ -725,10 +723,6 @@ theorem FordLeftBoundaryCompatibility
         Complex.add_im, Complex.mul_re, Complex.mul_im, Complex.intCast_re,
         Complex.intCast_im, Complex.I_re, Complex.I_im, zero_mul, add_zero,
         zero_add, mul_one] at sr sr' si si'
-      have hreal (v : GaussianInt) : (GaussianInt.toComplex v).re = v.re := by
-        exact (GaussianInt.intCast_re v).symm
-      have himag (v : GaussianInt) : (GaussianInt.toComplex v).im = v.im := by
-        exact (GaussianInt.intCast_im v).symm
       have haRe : a'.re - a.re =
           (if (ew ^^ negative) = true then 1 else -1) *
             (BandVectors.2 (FordRecursiveQuadruple P2 t.succ)

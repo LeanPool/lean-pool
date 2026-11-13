@@ -45,9 +45,6 @@ theorem BandCircleEnclosureDichotomy (E : EuclideanCircleData) :
     obtain ⟨D, hD⟩ := hexterior
     let d : Real := dist E.center (BandCircleEuclideanData D).center
     let r : Real := (BandCircleEuclideanData D).radius
-    have hd : d < r := by
-      dsimp [d, r]
-      exact lt_of_not_ge hD
     have hrd : r < d + E.radius := by
       by_contra h
       have hh : d + E.radius ≤ r := le_of_not_gt h

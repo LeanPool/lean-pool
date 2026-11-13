@@ -605,12 +605,6 @@ private theorem indexBoundaryPath :
               h2head h2last h2mem h2chain
           exact ⟨l, hhead, hlast, hmem, hchain⟩
 
-private abbrev indexedDisjoint :=
-  ApollonianSuperharmonic.BoundaryWebGeometry.indexedDisjointEarly
-
-private abbrev edgeBoundary :=
-  ApollonianSuperharmonic.BoundaryWebGeometry.edgeBoundaryEarly
-
 private theorem noBoundaryIncident :
     (by
       classical
@@ -692,11 +686,6 @@ private theorem incidentCellsOwned :
     intro he
     exact noBoundaryIncident U x hne hxnot {x - 1, x - 1 + 1} he (by
       simp [Zsqrtd.ext_iff])
-  have hdiagonal : ({x - I, x - I + I} : Finset GaussianInt) ∉
-      BoundaryFootprintEdges U := by
-    intro he
-    exact noBoundaryIncident U x hne hxnot {x - I, x - I + I} he (by
-      simp [I, Zsqrtd.ext_iff])
   have hbelowCell : x - I ∈ U.cells :=
     (horizontalStatus U x htop) |>.mp hxcell
   have hleftCell : x - 1 ∈ U.cells :=
@@ -780,7 +769,6 @@ private theorem ownerFootprint :
   classical
   intro C P ownerExists owner ownerCell x
   have hx := ownerCell x
-  have hne := (owner x).property
   by_cases hcells : (P.tile (owner x)).cells.Nonempty
   · rw [FootprintVertices, ite_eq_left hcells]
     exact ⟨x, hx, Or.inl rfl⟩
@@ -996,10 +984,6 @@ theorem PeriodicBoundaryWebConnected :
                     (BoundaryWebGeometry.commonBoundaryVertex C P
                     (BoundaryWebGeometry.boundaryEndpoint) (BoundaryWebGeometry.edgeBoundaryEarly
                     C P (BoundaryWebGeometry.indexedDisjointEarly C P)))
-    have edgeBoundary := BoundaryWebGeometry.edgeBoundary C P
-        (BoundaryWebGeometry.indexedDisjoint C P)
-    let I : GaussianInt := ⟨0, 1⟩
-    have tileCellsNonempty := BoundaryWebGeometry.tileCellsNonempty C P
     have ownerExists := BoundaryWebGeometry.ownerExists C P
     let owner : GaussianInt → TilingLattice C := fun x =>
       Classical.choose (ownerExists x)

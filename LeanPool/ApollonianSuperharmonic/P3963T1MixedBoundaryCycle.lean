@@ -339,8 +339,6 @@ private theorem hp₁ne :
   intro p₁ hlen₁ h
   simp [h] at hlen₁
 
-private abbrev hp₂ne := ApollonianSuperharmonic.MixedCycleDetails.hp₁ne
-
 private theorem hx₁ :
     ∀ (V₁ : Set GaussianInt), ∀ (V₂ : Set GaussianInt), ∀ (p₁ : List GaussianInt), (V₁ =
         (↑p₁.toFinset : Set GaussianInt)) → (∀ (x : GaussianInt), (x ∈ V₁ ∩ V₂) → (x ∈ p₁)) := by
@@ -356,8 +354,6 @@ private theorem hx₂ :
   intro V₁ V₂ p₂ hV₂ x hx
   rw [hV₂] at hx
   exact List.mem_toFinset.mp hx.2
-
-private abbrev hy₁ := ApollonianSuperharmonic.MixedCycleDetails.hx₁
 
 private abbrev hy₂ := ApollonianSuperharmonic.MixedCycleDetails.hx₂
 
@@ -1220,16 +1216,11 @@ theorem P3963T1MixedBoundaryCycle
     hadj₂, hedge₂⟩ := h₂
   have hcommon := MixedCycleDetails.hcommon V₁ V₂ hmultiple
   obtain ⟨x, y, hx, hy, hxy⟩ := hcommon
-  have hp₁ne := MixedCycleDetails.hp₁ne p₁ hlen₁
-  have hp₂ne := MixedCycleDetails.hp₂ne p₂ hlen₂
   have hx₁ := MixedCycleDetails.hx₁ V₁ V₂ p₁ hV₁ x hx
   have hx₂ := MixedCycleDetails.hx₂ V₁ V₂ p₂ hV₂ x hx
-  have hy₁ := MixedCycleDetails.hy₁ V₁ V₂ p₁ hV₁ y hy
   have hy₂ := MixedCycleDetails.hy₂ V₁ V₂ p₂ hV₂ y hy
   have hidx₁x : p₁.idxOf x < p₁.length := List.idxOf_lt_length_iff.mpr hx₁
-  have hidx₁y : p₁.idxOf y < p₁.length := List.idxOf_lt_length_iff.mpr hy₁
   have hidx₂x : p₂.idxOf x < p₂.length := List.idxOf_lt_length_iff.mpr hx₂
-  have hidx₂y : p₂.idxOf y < p₂.length := List.idxOf_lt_length_iff.mpr hy₂
   have hrot₁x := MixedCycleDetails.hrot₁x p₁ x hx₁ hidx₁x
   have hrot₂x := MixedCycleDetails.hrot₂x p₂ x hx₂ hidx₂x
   have cycle_chain (p : List GaussianInt) (a b : GaussianInt)

@@ -191,11 +191,6 @@ theorem SimpleGridPathEquivariance :
   have backward := PathEquivariance.backward
   let qb : GaussianInt → GaussianInt := fun z =>
       ⟨z.im, -z.re⟩
-  have hqb : Function.Injective qb := by
-    intro a b h
-    apply Zsqrtd.ext
-    · simpa [qb] using congrArg (fun z : GaussianInt => z.im) h
-    · simpa [qb] using congrArg (fun z : GaussianInt => z.re) h
   have transStep : ∀ a b : GaussianInt,
       (b = a + 1 ∨ b = a - 1 ∨ b = a + ⟨0, 1⟩ ∨ b = a - ⟨0, 1⟩) →
       (GaussianTranslation u b = GaussianTranslation u a + 1 ∨

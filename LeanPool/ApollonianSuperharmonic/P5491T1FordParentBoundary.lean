@@ -33,7 +33,6 @@ theorem P5491T1FordParentBoundary :
         R.linear.im*x.im - FordOdometer P x = b))) := by
   intro P A hq j s hp hd
 -- BODY
-  have hnP : (P.q : ℤ) ≠ 0 := by exact_mod_cast P.q_pos.ne'
   have boundary (N : FordFareyParameter) (x y : ℤ)
       (hx : 0 ≤ x) (hxq : x ≤ N.q) (hy : 0 ≤ y) (hyq : y ≤ N.q)
       (hb : x = 0 ∨ x = N.q ∨ y = 0 ∨ y = N.q) :

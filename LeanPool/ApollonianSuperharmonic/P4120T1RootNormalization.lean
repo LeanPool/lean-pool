@@ -640,10 +640,6 @@ theorem P4120T1RootNormalization
   have hodo' := RootNormalizationGeometry.hodo' q T h hodo a s
   obtain ⟨g', hext', hlap⟩ :=
     BandPackingSymmetryGlobalOdometerTransport s g h x hext
-  let R : BandPackingSymmetry → (Real × Real) → (Real × Real) :=
-    BandPackingSymmetry.rec (fun p => p) (fun p => (-p.2, p.1))
-      (fun p => (-p.1, p.2)) (fun _ p => p)
-      (fun _ _ f k p => f (k p))
   have geom (r : BandPackingSymmetry) := RootNormalizationGeometry.geom r
   have hgeom := geom s
   have hinj (r : BandPackingSymmetry) := RootNormalizationGeometry.hinj r

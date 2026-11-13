@@ -500,7 +500,6 @@ private theorem hOcuts :
   intro q cfg C T cert x A B O seg hpre hIncidentA hIncidentB translation_zero incidentRaw
       hOpositive hxO
   have hOne := hOpositive hxO
-  have hOlat : LatticeTile O := hpre.2.2.2.1 hOne
   have hOneCell := incidentRaw O hOne hxO
   have isolated (j : Fin 4) :
       LatticeVertexIncidentCell x j ∈ A.cells ∨
@@ -550,10 +549,6 @@ private theorem hOcuts :
     change LatticeVertexIncidentCell x jB ∉ B.cells \ O.cells
     intro h
     exact hjB (Finset.mem_sdiff.mp h).1
-  have hDplusNe : (TileCellComplement A O).cells.Nonempty :=
-    ⟨LatticeVertexIncidentCell x jB, hDplusIn⟩
-  have hDminusNe : (TileCellComplement B O).cells.Nonempty :=
-    ⟨LatticeVertexIncidentCell x jA, hDminusIn⟩
   have hOB : x ∈ BoundaryFootprintVertices O := by
     exact P3161T2IncidentBoundary O x hOneCell ⟨jA, hjAO⟩
   have hDplusB : x ∈ BoundaryFootprintVertices (TileCellComplement A O) := by
@@ -927,15 +922,7 @@ theorem P4590T1RestoredBoundaryGeometry :
   let V := cert.S 1 false
   let seg := cert.exceptionalSegments
   let sec := BandExceptionalRestorationSectorOrder q cfg C T cert
-  have hsec := sec
   have hpre := P4339T1PrecursorSupportGeometry C q cfg T cert
-  have hABcells : A.cells ∩ B.cells = O.cells := by
-    simpa [A, B, O] using hpre.2.2.2.2.2.2.1
-  have hsep := hpre.2.2.2.2.2.2.2
-  have hABdisj : Disjoint A.cells Ctile.cells := by
-    simpa [A, Ctile] using hsep 0 true 1 true (by decide) (by decide)
-  have hBDdisj : Disjoint B.cells Dtile.cells := by
-    simpa [B, Dtile] using hsep 0 false 1 false (by decide) (by decide)
   have hAne : A.cells.Nonempty :=
     (LatticeTileGridStructure A (cert.parent_lattice 0 true)).1.1
   have hBne : B.cells.Nonempty :=
@@ -959,8 +946,6 @@ theorem P4590T1RestoredBoundaryGeometry :
       (∃ j : Fin 4, LatticeVertexIncidentCell x j ∉ B.cells) :=
     boundary_sectors B hBne (by simpa [B] using hB)
   have noThird := RestoredBoundaryGeometry.noThird q cfg C T cert x hk hA hB
-  have hnotO := RestoredBoundaryGeometry.hnotO q cfg C T cert x hnoncentral hOcent
-  have hrawAB := BandOrderedGeneralRawSupport q cfg C T cert
   have hxA' := rawBoundary A hAne (by simpa [A] using hA)
   have hxB' := rawBoundary B hBne (by simpa [B] using hB)
   have hdeletedNe : (TileCellComplement A O).cells.Nonempty :=
@@ -997,11 +982,6 @@ theorem P4590T1RestoredBoundaryGeometry :
   have hOpositive := RestoredBoundaryGeometry.hOpositive q cfg C T cert x hnoncentral hOcent
   have hOcuts := RestoredBoundaryGeometry.hOcuts q cfg C T cert x hpre hIncidentA hIncidentB
       translation_zero incidentRaw hOpositive
-  have hsupport := RestoredBoundaryGeometry.hsupport q cfg C T cert x hrawAB hxA' hxB'
-  let p1 := cert.unmodified.core.rho
-    (cert.unmodified.faceEquiv.symm ⟨.I1, 0, 0⟩)
-  let p2 := cert.unmodified.core.rho
-    (cert.unmodified.faceEquiv.symm ⟨.I2, 0, 0⟩)
   have hQne : Q.cells.Nonempty := hpre.2.2.2.2.1
   have hSne : S.cells.Nonempty := hpre.2.2.2.2.2.1
   have hCparent : LatticeTile Ctile := cert.parent_lattice 1 true

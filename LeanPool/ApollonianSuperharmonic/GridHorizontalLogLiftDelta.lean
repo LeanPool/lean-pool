@@ -48,8 +48,6 @@ theorem GridHorizontalLogLiftDelta (q a b : GaussianInt)
   have haC : (a : ℂ).im = ((a.im : Int) : Real) := by simp
   have hqC : (q : ℂ).im = ((q.im : Int) : Real) := by simp
   rw [haC, hqC] at hz
-  have heq : ((a.im : Int) : Real) - (q.im : Int) = 1 / 2 := by
-    linarith
   have heq2 : (((2 * (a.im - q.im) : Int) : Real)) = 1 := by
     push_cast
     linarith

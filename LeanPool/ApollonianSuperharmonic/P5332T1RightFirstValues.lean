@@ -49,7 +49,6 @@ theorem P5332T1RightFirstValues (P : FordFareyParameter) (hq : 1 < P.q)
         0 < t ∧ t < (P.q₂ : Int)) := by
 -- BODY
   classical
-  have hq' : 1 < (P.q : Int) := by exact_mod_cast hq
   have hqn : (P.q : Int) ≠ 0 := by omega
   have hr : 0 < P.q₁ := by
     by_contra h
@@ -57,8 +56,6 @@ theorem P5332T1RightFirstValues (P : FordFareyParameter) (hq : 1 < P.q)
     have hd := P.det₁
     rw [hz] at hd
     norm_num at hd
-    have hqpos : 0 < (P.q : Int) := by exact_mod_cast P.q_pos
-    have hpone : P.p₁ * (P.q : Int) = 1 := hd
     have hqdiv : (P.q : Int) ∣ 1 := ⟨P.p₁, by nlinarith [mul_comm P.p₁ (P.q : Int)]⟩
     have hqle : (P.q : Int) ≤ 1 := Int.le_of_dvd (by norm_num) hqdiv
     omega

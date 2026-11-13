@@ -767,7 +767,6 @@ theorem RightLatticeAdjacentPackingSymmetryTransport
   have newFlipRe := congrArg (fun z : GaussianInt => (z.re : ℝ)) newFlip
   have newFlipIm := congrArg (fun z : GaussianInt => (z.im : ℝ)) newFlip
   have turn_mul (z : GaussianInt) := RightLatticeTransportGeometry.turn_mul z
-  have neg_turn_mul (z : GaussianInt) := RightLatticeTransportGeometry.neg_turn_mul turn_mul z
   have neg_turn_mul' (z : GaussianInt) := RightLatticeTransportGeometry.neg_turn_mul' z
   have oldPair := RightLatticeTransportGeometry.oldPair q i oldFlip oldFlipVec turn_mul
       neg_turn_mul'

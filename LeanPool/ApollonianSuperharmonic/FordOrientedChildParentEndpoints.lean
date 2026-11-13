@@ -1509,12 +1509,6 @@ theorem FordOrientedChildParentEndpoints
 -- BODY
   classical
   -- A positive rectangle has the full induced grid graph on its vertices.
-  let rect : Int → Int → Int → Set GaussianInt := fun a b n =>
-    {z | a ≤ z.re ∧ z.re ≤ a + n ∧ b ≤ z.im ∧ z.im ≤ b + n}
-  let adj := fun x y : GaussianInt =>
-    y = x + 1 ∨ y = x - 1 ∨ y = x + ⟨0, 1⟩ ∨ y = x - ⟨0, 1⟩
-  let edges : Set GaussianInt → Set (Finset GaussianInt) := fun V =>
-    {e | ∃ x ∈ V, ∃ y ∈ V, adj x y ∧ e = {x, y}}
   have obs := FordEndpointProof.obs
   have edge_inter := FordEndpointProof.edge_inter
   -- Enumerate every vertex and every edge of a straight segment.
@@ -1544,10 +1538,6 @@ theorem FordOrientedChildParentEndpoints
     ∃ A : ExactTileInterfaceTriple U W Z,
       R.point ≠ I.point ∧ A.point = I.point ∧ R.otherCA = I.point ∧
         I.otherCA = R.point ∧ A.otherAB = R.point
-  let affine := fun (q : Int) (flip : Bool) (t : GaussianInt) (z : GaussianInt) =>
-    (if flip then (⟨q,q⟩ : GaussianInt) - z else z) + t
-  let ax := fun (q : Int) (flip : Bool) (t a n : Int) =>
-    (if flip then q-a-n else a)+t
   have sameobs := FordEndpointProof.sameobs obs sqcell sqne (FordEndpointProof.sqcent
       (FordEndpointProof.fordcent fordcell))
   have carry_squares := FordEndpointProof.carry_squares

@@ -91,7 +91,6 @@ private theorem hHacyclic :
   | @cons u v w hadj p =>
     have hp3 : 3 ≤ p.length + 1 := by
       simpa using (SimpleGraph.Walk.isCycle_iff_isPath_tail_and_le_length.mp hc).2
-    have hp2 : 2 ≤ p.length := by omega
     have hlen : p.length ≠ 2 := by
       intro heq
       have h₁ : H.Adj v (p.getVert 1) := by
@@ -826,8 +825,6 @@ theorem P4250T2FiniteForestCompletion
   let S : Set X := {x | x.val ∈ R}
   have hcardS : Nat.card S = R.card := ForestCompletionLemmas.hcardS W R hRW
   have hbudget : G.edgeFinset.card + Nat.card S = Fintype.card X := by
-    have hc : (W.card : ℤ) - (R.card : ℤ) = (G.edgeFinset.card : ℤ) :=
-      hsumIndicator.symm.trans hcountGraph
     have hcardX : Fintype.card X = W.card := by simp [X]
     rw [hcardS, hcardX]
     omega

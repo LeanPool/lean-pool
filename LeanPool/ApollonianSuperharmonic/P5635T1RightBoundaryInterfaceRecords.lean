@@ -1013,8 +1013,6 @@ theorem P5635T1RightBoundaryInterfaceRecords
   let j := placement.rightSecondSlot
   let directionSlot := placement.rightDirectionSlot
   obtain ⟨hsum, hi, hj, hk⟩ := cyclicVectorRecurrence i j directionSlot hcyc
-  let a := BandVectors.1 (q directionSlot.succ) (q j.succ)
-  let b := BandVectors.1 (q i.succ) (q directionSlot.succ)
   let c := BandVectors.1 (q j.succ) (q i.succ)
   have aux := auxiliaryDisplacements i j directionSlot hcyc
   have hJprev := RightBoundaryRecordsGeometry.hJprev C D T N h k x bundle placement hcyc

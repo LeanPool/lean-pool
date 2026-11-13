@@ -477,11 +477,8 @@ theorem FiniteConnectedAcyclicDegreeTwoGridPath
   let G : SimpleGraph X := SimpleGraph.fromRel fun a b : X =>
     ({a.1, b.1} : Finset GaussianInt) ∈ E
   have hXfinite : X.Finite := GridPathProof.hXfinite X E hEfinite hendpoints
-  let vertexFiniteness : Fintype X := hXfinite.fintype
   have hXne : X.Nonempty := GridPathProof.hXne X E hEne hendpoints hgrid
   let vertexNonempty : Nonempty X := GridPathProof.vertexNonempty X hXne
-  let pairFiniteness : Fintype (Sym2 X) := Fintype.ofFinite _
-  let edgeFiniteness : Fintype G.edgeSet := Fintype.ofFinite _
   have hGconn : G.Connected := GridPathProof.hGconn X E hconnected
   have hGacyc : G.IsAcyclic := GridPathProof.hGacyc X E hacyclic
   let lengths : Set Nat := {n | ∃ (u v : X) (p : G.Walk u v),

@@ -62,7 +62,6 @@ private theorem genericRayDirection {n : Nat} (p : P3381T1PolygonBoundary n) :
       intro he
       have hv := congrArg Fin.val he
       simp only [Fin.val_add, Fin.val_one] at hv
-      have hm : 2 ≤ n + 3 := by omega
       by_cases hs : i.val + 1 < n + 3
       · rw [Nat.mod_eq_of_lt hs] at hv
         omega
@@ -454,36 +453,11 @@ private theorem localRayCrossingStability {n : Nat} (p : P3381T1PolygonBoundary 
           (∃ t : Real, 0 < t ∧
             x + t • d ∈ segment Real (p.vertex i) (p.vertex (i + 1))))) := by
   intro x d hx hg hs
-  let det (v w : Real × Real) := v.1 * w.2 - v.2 * w.1
-  have params : ∀ (y a d' e : Real × Real), det d' e ≠ 0 →
-      y + (det (a - y) e / det d' e) • d' =
-        a + (det (a - y) d' / det d' e) • e ∧
-      (∀ t u : Real, y + t • d' = a + u • e →
-        t = det (a - y) e / det d' e ∧ u = det (a - y) d' / det d' e) := RayCrossingStability.params
-  have hitCriterion : ∀ (y a b d' : Real × Real), det d' (b - a) ≠ 0 →
-      ((∃ t : Real, 0 < t ∧ y + t • d' ∈ segment Real a b) ↔
-      0 < det (a - y) (b - a) / det d' (b - a) ∧
-        0 ≤ det (a - y) d' / det d' (b - a) ∧
-        det (a - y) d' / det d' (b - a) ≤ 1) := RayCrossingStability.hitCriterion
-  have hsegCompact : ∀ i : Fin (n + 3),
-      IsCompact (segment Real (p.vertex i) (p.vertex (i + 1))) :=
-          RayCrossingStability.hsegCompact n p
-  have hcarrierCompact : IsCompact (P3544T1BoundaryCarrier p) :=
-      RayCrossingStability.hcarrierCompact n p
   have hcarrierOpen : IsOpen (P3544T1BoundaryCarrier p)ᶜ := RayCrossingStability.hcarrierOpen n p
-  let T : Fin (n + 3) → (Real × Real) → Real := fun i y =>
-    (((p.vertex i).1 - y.1) * ((p.vertex (i + 1)).2 - (p.vertex i).2) -
-      ((p.vertex i).2 - y.2) * ((p.vertex (i + 1)).1 - (p.vertex i).1)) *
-      (det d (p.vertex (i + 1) - p.vertex i))⁻¹
-  let U : Fin (n + 3) → (Real × Real) → Real := fun i y =>
-    (((p.vertex i).1 - y.1) * d.2 - ((p.vertex i).2 - y.2) * d.1) *
-      (det d (p.vertex (i + 1) - p.vertex i))⁻¹
   let G : Fin (n + 3) → (Real × Real) → Real := fun i y =>
     d.1 * ((p.vertex i).2 - y.2) - d.2 * ((p.vertex i).1 - y.1)
   let H : Fin (n + 3) → (Real × Real) → Prop := fun i y =>
     ∃ t : Real, 0 < t ∧ y + t • d ∈ segment Real (p.vertex i) (p.vertex (i + 1))
-  have hcriterion : ∀ i y, H i y ↔
-      0 < T i y ∧ 0 ≤ U i y ∧ U i y ≤ 1 := RayCrossingStability.hcriterion n p d hs
   have hVi : ∀ i : Fin (n + 3), ∃ V : Set (Real × Real),
       IsOpen V ∧ x ∈ V ∧ ∀ y ∈ V,
         G i y ≠ 0 ∧ (H i y ↔ H i x) := RayCrossingStability.hVi n p x d hx hg hs

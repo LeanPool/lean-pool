@@ -78,10 +78,8 @@ theorem P5332T1Parent1Rotation1Values (P A : FordFareyParameter) (hq : 1 < P.q)
         t = 0 ∧ Even (1+0 : Nat)) := by
 -- BODY
   classical
-  have hq' : 1 < (P.q : Int) := by exact_mod_cast hq
   have hqn : (P.q : Int) ≠ 0 := by omega
   have rposN := (P5130T5ParentArithmetic P hq).1
-  have rpos : 0 < (P.q₁ : Int) := by exact_mod_cast rposN
   have spos : 0 < (P.q₂ : Int) := by exact_mod_cast P.q₂_pos
   have rq : (P.q₁ : Int) + P.q₂ = P.q := by
     have := P.sum_q
@@ -108,7 +106,6 @@ theorem P5332T1Parent1Rotation1Values (P A : FordFareyParameter) (hq : 1 < P.q)
   simp only [FordVertexDomain, Set.mem_ofPred_eq, Zsqrtd.re_sub, Zsqrtd.im_sub] at hx'0
   have hAqNat : A.q = P.q₁ := hAq
   have hAq : (A.q : Int) = P.q₁ := by exact_mod_cast hAqNat
-  have hAp' : A.p = P.p₁ := hAp
   have hX : X = 0 := by omega
   subst X
   let t : Int := Y-P.q₂
@@ -121,9 +118,6 @@ theorem P5332T1Parent1Rotation1Values (P A : FordFareyParameter) (hq : 1 < P.q)
     dsimp [t]
     omega
   have hY : Y = P.q₂+t := by dsimp [t]; omega
-  have hcenter : (⟨0,Y⟩ : GaussianInt) =
-      (P5332T1ParentRows P 0 1 t).center := by
-    simp [P5332T1ParentRows, hY]
   have hcenterbase : f ⟨0,Y⟩ = 0 := by
     rw [hbase _ hx]
     rw [boundary P 0 Y (by omega) (by omega) (by omega) (by omega) (by omega)]
@@ -264,7 +258,6 @@ theorem P5332T1Parent1Rotation1Values (P A : FordFareyParameter) (hq : 1 < P.q)
       by
       rw [rowCompanion]
       simp only [FordVertexDomain, Set.mem_ofPred_eq, Zsqrtd.re_sub, Zsqrtd.im_sub]
-      have hbelow : Y < (P.q : Int) := by rw [hY]; omega
       intro h
       omega
     constructor

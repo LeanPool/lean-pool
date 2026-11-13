@@ -345,7 +345,6 @@ private theorem hDK (n : ℕ) (q : Fin (n + 3) → ℝ × ℝ) (hq : ∀ (i : Fi
     · dsimp [t]
       exact sub_nonneg.mpr hjx
     · dsimp [t]
-      have hxj' : z.1 ≤ (j.val : Real)+1 := hxj
       linarith
   let lower : Real × Real := (1-t) • q jj + t • q jn
   have hlower : lower = (z.1, L j z.1) := by
@@ -396,9 +395,6 @@ private theorem hDK (n : ℕ) (q : Fin (n + 3) → ℝ × ℝ) (hq : ∀ (i : Fi
     have hc : ((j.val+1 : Nat) : Real) ≤ ((n+2 : Nat) : Real) := by
       exact_mod_cast (show j.val+1 ≤ n+2 by omega)
     simpa [M, Nat.cast_add] using hc
-  have hA : 0 ≤ A := by
-    dsimp [A]
-    exact mul_nonneg (Nat.cast_nonneg _) (by linarith)
   have hB : 0 ≤ B := by
     dsimp [B]
     exact mul_nonneg (by positivity) (by linarith [hJplus])
@@ -1236,7 +1232,6 @@ theorem P3555T2ParabolaHullFrontier {n : Nat}
       apply Prod.ext <;> simp [Fin.sum_univ_three, w, p]
     let U : Set (Real × Real) := {z | 0 < z.1 ∧ 0 < z.2 ∧ z.1+z.2 < 1}
     have hUopen : IsOpen U := ParabolaHullInterior.hUopen
-    have hUsub : U ⊆ convexHull Real (Set.range p) := ParabolaHullInterior.hUsub hw_sum hp_sum
     have target_subset : Set.range (q ∘ f) ⊆ Set.range q := by
       rintro x ⟨i, rfl⟩
       exact ⟨f i, rfl⟩
@@ -1262,18 +1257,11 @@ theorem P3555T2ParabolaHullFrontier {n : Nat}
     have ballAt (z : Real × Real) (hz : z ∈ interior D) :
         ∃ e : Real, 0 < e ∧ Metric.ball z e ⊆ D :=
       Metric.mem_nhds_iff.mp (mem_interior_iff_mem_nhds.mp hz)
-    have noLeftInterior (z : Real × Real) (hz : z ∈ interior D) : z.1 ≠ 0 :=
-        ParabolaHullInterior.noLeftInterior n ballAt z hz
-    have noRightInterior (z : Real × Real) (hz : z ∈ interior D) : z.1 ≠ M :=
-        ParabolaHullInterior.noRightInterior n ballAt z hz
     have noUpperInterior (z : Real × Real) (hz : z ∈ interior D)
       (heq : z.2 = M*z.1) : False := ParabolaHullInterior.noUpperInterior n ballAt z hz heq
     have noLowerInterior (z : Real × Real) (hz : z ∈ interior D)
       (j : Fin (n+2)) (heq : L j z.1 = z.2) : False := ParabolaHullInterior.noLowerInterior n
           ballAt z hz j heq
-    have interiorStrict (z : Real × Real) (hz : z ∈ interior D) : z ∈ O :=
-        ParabolaHullInterior.interiorStrict n noLeftInterior noRightInterior noUpperInterior
-        noLowerInterior z hz
     apply Set.ext
     intro x
     constructor

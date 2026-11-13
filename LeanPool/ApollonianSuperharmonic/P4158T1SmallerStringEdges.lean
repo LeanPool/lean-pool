@@ -670,8 +670,6 @@ private theorem hnotouch :
   rw [hnormdelta, hincoming] at hnorm
   have hless := hQless j
   rw [hCicurv] at hnorm hless
-  have hnqZ : (n : Int) < P.q := by exact_mod_cast hnq
-  have hnZ : 0 ≤ (n : Int) := by omega
   nlinarith
 
 private theorem hnadj :

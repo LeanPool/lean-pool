@@ -72,7 +72,6 @@ theorem P5472T1FordSlopeDifference
     simp only [Fin.isValue, FordCircleCoordinate, Nat.cast_mul, Int.reduceNeg] at hh
     have : 0 < F.q * F.q := Nat.mul_pos F.q_pos F.q_pos
     omega
-  let I : GaussianInt := ⟨0, 1⟩
   let Wsource : GaussianInt := BandVectors.1 (q 3) (q 2)
   let Asource : GaussianInt := BandVectors.2 (q 3) (q 2)
   have hrawSlope (b : Bool) :

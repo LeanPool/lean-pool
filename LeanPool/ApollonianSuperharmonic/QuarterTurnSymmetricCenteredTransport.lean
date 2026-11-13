@@ -81,11 +81,6 @@ theorem QuarterTurnSymmetricCenteredTransport : ∀ (T : ProtoTile),
         TileCentroid T := by
 -- BODY
   intro T hT
-  have center_mem : ∀ (S : ProtoTile) (x : GaussianInt),
-      x ∈ S.cells ↔
-        (((x.re : Int) : Real) + (1 / 2 : Real),
-          ((x.im : Int) : Real) + (1 / 2 : Real)) ∈ TileRealization S :=
-              CenteredTransportLemmas.center_mem
   by_cases hempty : T.cells = ∅
   · let u : GaussianInt :=
       ⟨T.anchor.re + T.anchor.im, T.anchor.im - T.anchor.re⟩
@@ -120,7 +115,6 @@ theorem QuarterTurnSymmetricCenteredTransport : ∀ (T : ProtoTile),
     have real_ne : real_parts.Nonempty := hne.image _
     have imag_ne : imag_parts.Nonempty := hne.image _
     let xmin : Int := real_parts.min' real_ne
-    let xmax : Int := real_parts.max' real_ne
     let ymin : Int := imag_parts.min' imag_ne
     let ymax : Int := imag_parts.max' imag_ne
     have lower_re : ∀ p : Real × Real, p ∈ TileRealization T →

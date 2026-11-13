@@ -719,10 +719,6 @@ private theorem hconstOn :
           · exact False.elim (hzO (hsame.mpr hzbase))
           · simp [hzO, hzbase]
       simpa [f] using hbool
-  have hfcont : ContinuousOn (fun z : Real × Real => decide (z ∈ O)) S := by
-    apply continuousOn_iff_continuous_domRestrict.mpr
-    change Continuous f
-    exact hf.continuous
   let : PreconnectedSpace S := isPreconnected_iff_preconnectedSpace.mp hconn.2
   have heq := hf.apply_eq_of_preconnectedSpace ⟨x, hx⟩ ⟨y, hy⟩
   change (decide (x ∈ O) = decide (y ∈ O)) at heq
@@ -2440,11 +2436,6 @@ private theorem hsectorOpp :
     have he : (s • q : Real × Real) - (0, 0) = s • q := by ext <;> simp
     rw [he] at hh
     exact hh
-  have hsmallNeg : -(s • q) ∈ Metric.ball ((0 : Real), (0 : Real)) δ := by
-    rw [Metric.mem_ball, dist_eq_norm]
-    have he : (-(s • q) : Real × Real) - (0, 0) = -(s • q) := by ext <;> simp
-    rw [he]
-    simpa only [norm_neg] using hsmallNorm
   have hplusball : x0 + s • q ∈ Metric.ball x0 δ := VertexSectorProof.hplusball n p i rK δ s
       hsmallNorm
   have hminusball : x0 - s • q ∈ Metric.ball x0 δ := VertexSectorProof.hminusball n p i rK δ s

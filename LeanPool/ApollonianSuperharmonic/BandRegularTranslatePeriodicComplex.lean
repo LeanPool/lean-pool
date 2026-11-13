@@ -131,126 +131,6 @@ private theorem hc1 :
   have he := hc.2.2 0 1 (hz 0) (hz 1)
   norm_num at he
 
-private theorem hne :
-    (by
-      classical
-      exact
-        ∀ (q : Fin 4 → CircleCoordinates), ∀ (T : ProtoTile), (1 < (q 0).1) → ((LatticeTile T ∧
-            TileArea T = (q (0 : Fin (4 : ℕ))).1.toNat ∧ (∀ (S : Fin (3 : ℕ) → Bool → ProtoTile),
-            (∀ (i : Fin (3 : ℕ)), ∀ (s : Bool), BandSubtileOccurrence q T i s (S i s)) → (∀ (x :
-            LatticeCell), x ∈ T.cells ↔ ∃ (i : Fin (3 : ℕ)) (s : Bool), x ∈ (S i s).cells) → ∀ (i
-            : Fin (3 : ℕ)), ∀ (s : Bool), LatticeTile (TileCellComplement T (S i s)) ∧
-            TileTouching (TileCellComplement T (S i s)) (S i s)) ∧ QuarterTurnSymmetric T ∧ ((1 :
-            ℤ) < (q (0 : Fin (4 : ℕ))).1 → ∀ (i : Fin (3 : ℕ)), TouchingTriple T (TileTranslation
-            T (BandVectors.1 (q i.succ) (q (0 : Fin (4 : ℕ))))) (TileTranslation T
-            (-BandVectors.1 (q (i + (1 : Fin (3 : ℕ))).succ) (q (0 : Fin (4 : ℕ)))))) ∧ ((1 : ℤ)
-            < (q (0 : Fin (4 : ℕ))).1 → ∀ (i : Fin (3 : ℕ)), ∀ (U : ProtoTile), BandPrototile (q
-            i.succ) U → TileCentroid U - TileCentroid T = (1 / 2 : ℝ) • (GaussianRealPoint
-            (BandVectors.1 (q i.succ) (q (0 : Fin (4 : ℕ)))) + GaussianRealPoint (BandVectors.1
-            (q (0 : Fin (4 : ℕ))) (q i.succ))) → TouchingTriple T (TileTranslation T
-            (BandVectors.1 (q i.succ) (q (0 : Fin (4 : ℕ))))) U) ∧ (∀ (i : Fin (3 : ℕ)), ∀ (U :
-            ProtoTile), ∀ (V : ProtoTile), BandPrototile (q i.succ) U → BandPrototile (q (i + (1
-            : Fin (3 : ℕ))).succ) V → TileCentroid U - TileCentroid T = (1 / 2 : ℝ) •
-            (GaussianRealPoint (BandVectors.1 (q i.succ) (q (0 : Fin (4 : ℕ)))) +
-            GaussianRealPoint (BandVectors.1 (q (0 : Fin (4 : ℕ))) (q i.succ))) → TileCentroid V
-            - TileCentroid T = (1 / 2 : ℝ) • (GaussianRealPoint (BandVectors.1 (q (i + (1 : Fin
-            (3 : ℕ))).succ) (q (0 : Fin (4 : ℕ)))) - GaussianRealPoint (BandVectors.1 (q (0 : Fin
-            (4 : ℕ))) (q (i + (1 : Fin (3 : ℕ))).succ))) → TouchingTriple T U V) ∧ ∀ (r : Fin (4
-            : ℕ) → CircleCoordinates), ProperBandQuadruple r → r (0 : Fin (4 : ℕ)) = q (1 : Fin
-            (4 : ℕ)) → r (2 : Fin (4 : ℕ)) = q (2 : Fin (4 : ℕ)) → r (3 : Fin (4 : ℕ)) = q (3 :
-            Fin (4 : ℕ)) → (q (2 : Fin (4 : ℕ))).1 ≤ (q (1 : Fin (4 : ℕ))).1 → (q (3 : Fin (4 :
-            ℕ))).1 ≤ (q (2 : Fin (4 : ℕ))).1 → (1 : ℤ) < (q (2 : Fin (4 : ℕ))).1 → ∀ (P : Fin (3
-            : ℕ) → Bool → ProtoTile), ∀ (Q : Fin (3 : ℕ) → Bool → ProtoTile), ∀ (S : Fin (3 : ℕ)
-            → Bool → ProtoTile), (∀ (i : Fin (3 : ℕ)), ∀ (s : Bool), BandSubtileOccurrence q T i
-            s (P i s)) → (∀ (x : LatticeCell), x ∈ T.cells ↔ ∃ (i : Fin (3 : ℕ)) (s : Bool), x ∈
-            (P i s).cells) → (∀ (i : Fin (3 : ℕ)), ∀ (s : Bool), BandSubtileOccurrence r (P (0 :
-            Fin (3 : ℕ)) true) i s (Q i s)) → (∀ (x : LatticeCell), x ∈ (P (0 : Fin (3 : ℕ))
-            true).cells ↔ ∃ (i : Fin (3 : ℕ)) (s : Bool), x ∈ (Q i s).cells) → (∀ (i : Fin (3 :
-            ℕ)), ∀ (s : Bool), BandSubtileOccurrence r (P (0 : Fin (3 : ℕ)) false) i s (S i s)) →
-            (∀ (x : LatticeCell), x ∈ (P (0 : Fin (3 : ℕ)) false).cells ↔ ∃ (i : Fin (3 : ℕ)) (s
-            : Bool), x ∈ (S i s).cells) →
-        let u := BandVectors.1 (q (0 : Fin (4 : ℕ))) (q (1 : Fin (4 : ℕ)));
-        let v := BandVectors.1 (q (0 : Fin (4 : ℕ))) (q (2 : Fin (4 : ℕ))); (∀ (a :
-            PeriodicSubtileIndex), ∀ (b : PeriodicSubtileIndex), a ≠ b → ((FootprintEdges
-            (SubtileOccurrenceInterpretation P u v a) ∩ FootprintEdges
-            (SubtileOccurrenceInterpretation P u v b)).Nonempty → AllowedSubtileIncidence a b) ∧
-            (¬AllowedSubtileIncidence a b → FootprintVertices (SubtileOccurrenceInterpretation P
-            u v a) ∩ FootprintVertices (SubtileOccurrenceInterpretation P u v b) = ∅ ∨
-            (FootprintVertices (SubtileOccurrenceInterpretation P u v a) ∩ FootprintVertices
-            (SubtileOccurrenceInterpretation P u v b)).Subsingleton)) ∧ FootprintVertices (P (0 :
-            Fin (3 : ℕ)) true) ∩ FootprintVertices (P (1 : Fin (3 : ℕ)) true) ⊆ FootprintVertices
-            (Q (1 : Fin (3 : ℕ)) true) ∩ FootprintVertices (P (1 : Fin (3 : ℕ)) true) ∧
-            FootprintVertices (P (0 : Fin (3 : ℕ)) true) ∩ FootprintVertices (P (0 : Fin (3 : ℕ))
-            false) ⊆ FootprintVertices (Q (1 : Fin (3 : ℕ)) true) ∩ FootprintVertices (S (2 : Fin
-            (3 : ℕ)) false) ∪ FootprintVertices (Q (0 : Fin (3 : ℕ)) false) ∪ FootprintVertices
-            (Q (2 : Fin (3 : ℕ)) true) ∩ FootprintVertices (S (1 : Fin (3 : ℕ)) false)) →
-            (T.cells.Nonempty)) ) := by
-  classical
-  intro q T hc1 hgeom
-  apply Finset.card_pos.mp
-  have harea : T.cells.card = Int.toNat (q 0).1 := hgeom.2.1
-  omega
-
-private theorem htu :
-    (by
-      classical
-      exact
-        ∀ (C : BandCircle), ∀ (q : Fin 4 → CircleCoordinates), ∀ (T : ProtoTile), ∀ (k : ℤ × ℤ ≃+
-            ↥(TilingLattice C)), (1 < (q 0).1) → ((LatticeTile T ∧ TileArea T = (q (0 : Fin (4 :
-            ℕ))).1.toNat ∧ (∀ (S : Fin (3 : ℕ) → Bool → ProtoTile), (∀ (i : Fin (3 : ℕ)), ∀ (s :
-            Bool), BandSubtileOccurrence q T i s (S i s)) → (∀ (x : LatticeCell), x ∈ T.cells ↔ ∃
-            (i : Fin (3 : ℕ)) (s : Bool), x ∈ (S i s).cells) → ∀ (i : Fin (3 : ℕ)), ∀ (s : Bool),
-            LatticeTile (TileCellComplement T (S i s)) ∧ TileTouching (TileCellComplement T (S i
-            s)) (S i s)) ∧ QuarterTurnSymmetric T ∧ ((1 : ℤ) < (q (0 : Fin (4 : ℕ))).1 → ∀ (i :
-            Fin (3 : ℕ)), TouchingTriple T (TileTranslation T (BandVectors.1 (q i.succ) (q (0 :
-            Fin (4 : ℕ))))) (TileTranslation T (-BandVectors.1 (q (i + (1 : Fin (3 : ℕ))).succ)
-            (q (0 : Fin (4 : ℕ)))))) ∧ ((1 : ℤ) < (q (0 : Fin (4 : ℕ))).1 → ∀ (i : Fin (3 : ℕ)),
-            ∀ (U : ProtoTile), BandPrototile (q i.succ) U → TileCentroid U - TileCentroid T = (1
-            / 2 : ℝ) • (GaussianRealPoint (BandVectors.1 (q i.succ) (q (0 : Fin (4 : ℕ)))) +
-            GaussianRealPoint (BandVectors.1 (q (0 : Fin (4 : ℕ))) (q i.succ))) → TouchingTriple
-            T (TileTranslation T (BandVectors.1 (q i.succ) (q (0 : Fin (4 : ℕ))))) U) ∧ (∀ (i :
-            Fin (3 : ℕ)), ∀ (U : ProtoTile), ∀ (V : ProtoTile), BandPrototile (q i.succ) U →
-            BandPrototile (q (i + (1 : Fin (3 : ℕ))).succ) V → TileCentroid U - TileCentroid T =
-            (1 / 2 : ℝ) • (GaussianRealPoint (BandVectors.1 (q i.succ) (q (0 : Fin (4 : ℕ)))) +
-            GaussianRealPoint (BandVectors.1 (q (0 : Fin (4 : ℕ))) (q i.succ))) → TileCentroid V
-            - TileCentroid T = (1 / 2 : ℝ) • (GaussianRealPoint (BandVectors.1 (q (i + (1 : Fin
-            (3 : ℕ))).succ) (q (0 : Fin (4 : ℕ)))) - GaussianRealPoint (BandVectors.1 (q (0 : Fin
-            (4 : ℕ))) (q (i + (1 : Fin (3 : ℕ))).succ))) → TouchingTriple T U V) ∧ ∀ (r : Fin (4
-            : ℕ) → CircleCoordinates), ProperBandQuadruple r → r (0 : Fin (4 : ℕ)) = q (1 : Fin
-            (4 : ℕ)) → r (2 : Fin (4 : ℕ)) = q (2 : Fin (4 : ℕ)) → r (3 : Fin (4 : ℕ)) = q (3 :
-            Fin (4 : ℕ)) → (q (2 : Fin (4 : ℕ))).1 ≤ (q (1 : Fin (4 : ℕ))).1 → (q (3 : Fin (4 :
-            ℕ))).1 ≤ (q (2 : Fin (4 : ℕ))).1 → (1 : ℤ) < (q (2 : Fin (4 : ℕ))).1 → ∀ (P : Fin (3
-            : ℕ) → Bool → ProtoTile), ∀ (Q : Fin (3 : ℕ) → Bool → ProtoTile), ∀ (S : Fin (3 : ℕ)
-            → Bool → ProtoTile), (∀ (i : Fin (3 : ℕ)), ∀ (s : Bool), BandSubtileOccurrence q T i
-            s (P i s)) → (∀ (x : LatticeCell), x ∈ T.cells ↔ ∃ (i : Fin (3 : ℕ)) (s : Bool), x ∈
-            (P i s).cells) → (∀ (i : Fin (3 : ℕ)), ∀ (s : Bool), BandSubtileOccurrence r (P (0 :
-            Fin (3 : ℕ)) true) i s (Q i s)) → (∀ (x : LatticeCell), x ∈ (P (0 : Fin (3 : ℕ))
-            true).cells ↔ ∃ (i : Fin (3 : ℕ)) (s : Bool), x ∈ (Q i s).cells) → (∀ (i : Fin (3 :
-            ℕ)), ∀ (s : Bool), BandSubtileOccurrence r (P (0 : Fin (3 : ℕ)) false) i s (S i s)) →
-            (∀ (x : LatticeCell), x ∈ (P (0 : Fin (3 : ℕ)) false).cells ↔ ∃ (i : Fin (3 : ℕ)) (s
-            : Bool), x ∈ (S i s).cells) →
-        let u := BandVectors.1 (q (0 : Fin (4 : ℕ))) (q (1 : Fin (4 : ℕ)));
-        let v := BandVectors.1 (q (0 : Fin (4 : ℕ))) (q (2 : Fin (4 : ℕ))); (∀ (a :
-            PeriodicSubtileIndex), ∀ (b : PeriodicSubtileIndex), a ≠ b → ((FootprintEdges
-            (SubtileOccurrenceInterpretation P u v a) ∩ FootprintEdges
-            (SubtileOccurrenceInterpretation P u v b)).Nonempty → AllowedSubtileIncidence a b) ∧
-            (¬AllowedSubtileIncidence a b → FootprintVertices (SubtileOccurrenceInterpretation P
-            u v a) ∩ FootprintVertices (SubtileOccurrenceInterpretation P u v b) = ∅ ∨
-            (FootprintVertices (SubtileOccurrenceInterpretation P u v a) ∩ FootprintVertices
-            (SubtileOccurrenceInterpretation P u v b)).Subsingleton)) ∧ FootprintVertices (P (0 :
-            Fin (3 : ℕ)) true) ∩ FootprintVertices (P (1 : Fin (3 : ℕ)) true) ⊆ FootprintVertices
-            (Q (1 : Fin (3 : ℕ)) true) ∩ FootprintVertices (P (1 : Fin (3 : ℕ)) true) ∧
-            FootprintVertices (P (0 : Fin (3 : ℕ)) true) ∩ FootprintVertices (P (0 : Fin (3 : ℕ))
-            false) ⊆ FootprintVertices (Q (1 : Fin (3 : ℕ)) true) ∩ FootprintVertices (S (2 : Fin
-            (3 : ℕ)) false) ∪ FootprintVertices (Q (0 : Fin (3 : ℕ)) false) ∪ FootprintVertices
-            (Q (2 : Fin (3 : ℕ)) true) ∩ FootprintVertices (S (1 : Fin (3 : ℕ)) false)) → (((k
-            (1, 0) : GaussianInt) = BandVectors.1 (q 1) (q 0)) → (((k (0, 1) : GaussianInt) =
-            BandVectors.1 (q 2) (q 0)) → (TouchingTriple T (TileTranslation T (k (1, 0) :
-            GaussianInt)) (TileTranslation T (-(k (0, 1) : GaussianInt))))))) ) := by
-  classical
-  intro C q T k hc1 hgeom ka kb
-  simpa [ka, kb] using hgeom.2.2.2.2.1 hc1 0
-
 private theorem fs_zero :
     (by
       classical
@@ -599,15 +479,18 @@ theorem BandRegularTranslatePeriodicComplex (C : BandCircle)
   have hc := ProperBandCurvatureStructure q hq
   have hc1 : 1 < (q 0).1 := RegularPeriodicGeometry.hc1 q hq hc
   have hgeom := BandTileSimultaneousInduction q hq T hT
-  have hne : T.cells.Nonempty := RegularPeriodicGeometry.hne q T hc1 hgeom
+  have hne : T.cells.Nonempty := by
+    apply Finset.card_pos.mp
+    have harea : T.cells.card = Int.toNat (q 0).1 := hgeom.2.1
+    omega
   have ka : (k (1, 0) : GaussianInt) = BandVectors.1 (q 1) (q 0) := by
     simp [hk]
   have kb : (k (0, 1) : GaussianInt) = BandVectors.1 (q 2) (q 0) := by
     simp [hk]
   have htu : TouchingTriple T
       (TileTranslation T (k (1, 0) : GaussianInt))
-      (TileTranslation T (-(k (0, 1) : GaussianInt))) := RegularPeriodicGeometry.htu C q T k hc1
-          hgeom ka kb
+      (TileTranslation T (-(k (0, 1) : GaussianInt))) := by
+    simpa [ka, kb] using hgeom.2.2.2.2.1 hc1 0
   have htd := P4812T1ReflectedTouching T (k (1, 0)) (k (0, 1)) hne
     hgeom.2.2.2.1 htu
   let fs (u : TilingLattice C) (f : D.plane.Face) :=

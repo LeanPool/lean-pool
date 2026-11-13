@@ -39,7 +39,6 @@ private theorem htarget_edge :
     omega
   · have heq : i.val + 1 = r + 3 := by omega
     rw [heq, Nat.mod_self] at hv
-    have hi_lt := i.isLt
     omega
 
 private theorem haffine_injective :

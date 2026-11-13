@@ -47,7 +47,6 @@ theorem P4828T1ConstructorSupport (L : Real)
         (by simpa only [hidx] using hk) (by simpa only [hidx] using hj)
   have facts := ProperBandCurvatureStructure t ht
   have p0 := facts.1
-  have n0 := (SemiProperForestClassification t ht.1).1 (0 : Fin 4)
   have n1 := facts.2.1 (0 : Fin 3)
   have n2 := facts.2.1 (1 : Fin 3)
   have n3 := facts.2.1 (2 : Fin 3)

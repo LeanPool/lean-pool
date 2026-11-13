@@ -100,10 +100,6 @@ private theorem rootValues :
         GaussianInt) + (2 : GaussianInt) * z + (2 : GaussianInt) * I) = (-1 : GaussianInt))))) := by
   classical
   intro p I baseLaw stepLaw flipLaw z
-  let q : Fin 4 → CircleCoordinates :=
-    ![(2 * (p 0).1 + 2 * (p 2).1 + 2 * (p 3).1 - (p 1).1,
-        2 * (p 0).2 + 2 * (p 2).2 + 2 * (p 3).2 - (p 1).2),
-      p 0, p 2, p 3]
   let b : Fin 4 → CircleCoordinates :=
     ![(1, 1 + 2 * z), (1, 1 + 2 * z + 2 * I), (0, 1), (0, -1)]
   have hb : SemiProperQuadruple b := SemiProperQuadruple.base z

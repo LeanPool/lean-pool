@@ -1233,16 +1233,9 @@ theorem P4536T1AFrameD
   have hC := FrameDiagonalProof.hC C orientation base Rminus Rplus hminus hplus F p
       hparent
   have positiveA := FrameDiagonalProof.positiveA p hp
-  have positiveE := FrameDiagonalProof.positiveE C p hC
   let I : GaussianInt := ⟨0, 1⟩
-  let wv := BandVectors.1 (r 3) (r 2)
-  let xv := BandVectors.1 (r 1) (r 3)
-  let yv := BandVectors.1 (r 2) (r 1)
-  let wa := BandVectors.2 (r 3) (r 2)
   let xa := BandVectors.2 (r 1) (r 3)
-  let ya := BandVectors.2 (r 2) (r 1)
   have laws := FrameDiagonalProof.laws C orientation base Rminus Rplus hminus hplus F a hr
-  let rr : Fin 4 → CircleCoordinates := ![r 0, r 3, r 1, r 2]
   have hrr := FrameDiagonalProof.hrr C orientation base Rminus Rplus
       hminus hplus F a hr
   have lawsR := FrameDiagonalProof.lawsR C orientation base Rminus Rplus hminus hplus F a hrr

@@ -222,72 +222,6 @@ private theorem hqbarᵢPos :
   have hnl := cfg.noLine ibar.succ
   omega
 
-private theorem hadjbar :
-    (by
-      classical
-      exact
-        ∀ (q : Fin 4 → CircleCoordinates), ∀ (i : Fin 3), ∀ (T₀ : ProtoTile), ∀ (Tᵢ : ProtoTile),
-            ∀ (h₀ : PartialOdometer), ∀ (hᵢ : PartialOdometer), ∀ (r : Fin (3 : ℕ)), ∀ (g :
-            BandPackingSymmetry),
-        let qrot : Fin 4 → CircleCoordinates :=
-          ![q 0, q r.succ, q (r + 1).succ, q (r + 2).succ]
-        let irot : Fin 3 := i - r
-        let qbar := BandPackingSymmetryQuadrupleAction g qrot
-        ∀ (hqbar : ProperBandQuadruple qbar), ∀ (p₀bar : ℝ × ℝ), ∀ (pᵢbar : ℝ × ℝ), ∀ (sbar : Fin
-            (4 : ℕ)), (TileOdometer (BandPackingSymmetryQuadrupleAction g qrot (0 : Fin (4 : ℕ)))
-            (BandPackingSymmetryTileAction g T₀) (BandPackingSymmetryPartialOdometerAction g h₀))
-            → ((TileOdometer (BandPackingSymmetryQuadrupleAction g qrot ((fun (j : Fin (3 : ℕ))
-            => if BandPackingSymmetryReversesOrientation g = true then -j else j) irot).succ)
-            (BandPackingSymmetryTileAction g Tᵢ) (BandPackingSymmetryPartialOdometerAction g hᵢ))
-            → ((PartialOdometerSlope (BandPackingSymmetryPartialOdometerAction g h₀) = some
-            p₀bar) → ((PartialOdometerSlope (BandPackingSymmetryPartialOdometerAction g hᵢ) =
-            some pᵢbar) → ((TileCentroid (BandPackingSymmetryTileAction g Tᵢ) - TileCentroid
-            (BandPackingSymmetryTileAction g T₀) = (1 / 2 : ℝ) • GaussianRealPoint ((⟨(0 : ℤ), (1
-            : ℤ)⟩ : GaussianInt) ^ (↑sbar : ℕ) * (BandVectors.1
-            (BandPackingSymmetryQuadrupleAction g qrot ((fun (j : Fin (3 : ℕ)) => if
-            BandPackingSymmetryReversesOrientation g = true then -j else j) irot).succ)
-            (BandPackingSymmetryQuadrupleAction g qrot (0 : Fin (4 : ℕ))) + BandVectors.1
-            (BandPackingSymmetryQuadrupleAction g qrot (0 : Fin (4 : ℕ)))
-            (BandPackingSymmetryQuadrupleAction g qrot ((fun (j : Fin (3 : ℕ)) => if
-            BandPackingSymmetryReversesOrientation g = true then -j else j) irot).succ)))) →
-            ((pᵢbar.1 - p₀bar.1 = ((1 / 2 : ℝ) • GaussianRealPoint ((-(⟨(0 : ℤ), (1 : ℤ)⟩ :
-            GaussianInt)) ^ (↑sbar : ℕ) * (BandVectors.2 (BandPackingSymmetryQuadrupleAction g
-            qrot ((fun (j : Fin (3 : ℕ)) => if BandPackingSymmetryReversesOrientation g = true
-            then -j else j) irot).succ) (BandPackingSymmetryQuadrupleAction g qrot (0 : Fin (4 :
-            ℕ))) + BandVectors.2 (BandPackingSymmetryQuadrupleAction g qrot (0 : Fin (4 : ℕ)))
-            (BandPackingSymmetryQuadrupleAction g qrot ((fun (j : Fin (3 : ℕ)) => if
-            BandPackingSymmetryReversesOrientation g = true then -j else j) irot).succ)))).1) →
-            ((pᵢbar.2 - p₀bar.2 = ((1 / 2 : ℝ) • GaussianRealPoint ((-(⟨(0 : ℤ), (1 : ℤ)⟩ :
-            GaussianInt)) ^ (↑sbar : ℕ) * (BandVectors.2 (BandPackingSymmetryQuadrupleAction g
-            qrot ((fun (j : Fin (3 : ℕ)) => if BandPackingSymmetryReversesOrientation g = true
-            then -j else j) irot).succ) (BandPackingSymmetryQuadrupleAction g qrot (0 : Fin (4 :
-            ℕ))) + BandVectors.2 (BandPackingSymmetryQuadrupleAction g qrot (0 : Fin (4 : ℕ)))
-            (BandPackingSymmetryQuadrupleAction g qrot ((fun (j : Fin (3 : ℕ)) => if
-            BandPackingSymmetryReversesOrientation g = true then -j else j) irot).succ)))).2) → (
-        let reverse := BandPackingSymmetryReversesOrientation g
-        let ibar : Fin 3 := if reverse then -irot else irot
-        let T₀bar := BandPackingSymmetryTileAction g T₀
-        let Tᵢbar := BandPackingSymmetryTileAction g Tᵢ
-        let h₀bar := BandPackingSymmetryPartialOdometerAction g h₀
-        let hᵢbar := BandPackingSymmetryPartialOdometerAction g hᵢ
-        ∀ (hqbar₀Pos : 0 < (qbar 0).1), ∀ (hqbarᵢPos : 0 < (qbar ibar.succ).1),
-        let C₀bar : BandCircle :=
-          ⟨⟨qbar 0, ⟨Or.inl hqbar₀Pos, ⟨qbar, hqbar.1, ⟨0, rfl⟩⟩⟩⟩, hqbar₀Pos⟩
-        let Cᵢbar : BandCircle :=
-          ⟨⟨qbar ibar.succ,
-            ⟨Or.inl hqbarᵢPos, ⟨qbar, hqbar.1, ⟨ibar.succ, rfl⟩⟩⟩⟩,
-            hqbarᵢPos⟩
-        SubtileLatticeAdjacent C₀bar Cᵢbar T₀bar Tᵢbar h₀bar hᵢbar))))))) ) := by
-  classical
-  intro q i T₀ Tᵢ h₀ hᵢ r g qrot irot qbar hqbar p₀bar pᵢbar sbar hO₀bar hOᵢbar hp₀bar hpᵢbar
-      hcentroidBar hslopexBar hslopeyBar reverse ibar T₀bar Tᵢbar h₀bar hᵢbar hqbar₀Pos hqbarᵢPos
-      C₀bar Cᵢbar
-  refine ⟨hO₀bar, hOᵢbar, p₀bar, pᵢbar, hp₀bar, hpᵢbar,
-    qbar, ibar, sbar, hqbar, rfl, rfl, ?_, ?_, ?_⟩
-  · simpa [qbar, reverse, ibar] using hcentroidBar
-  · simpa [qbar, reverse, ibar] using hslopexBar
-  · simpa [qbar, reverse, ibar] using hslopeyBar
-
 private theorem hsmallT1 :
     (by
       classical
@@ -1029,8 +963,6 @@ theorem BandOrderedGeneralSubtileNormalizationCertificateExists
   let qbar := BandPackingSymmetryQuadrupleAction g qrot
   have hqbar : ProperBandQuadruple qbar :=
     BandPackingSymmetryProperCovariance g qrot hqrot
-  have hqbar₀ : qbar 0 = BandPackingSymmetryCircleAction g C₀.1.1 := by
-    simp [qbar, qrot, BandPackingSymmetryQuadrupleAction, hq₀]
   have hgeneral : Nonempty (BandOrderedGeneralConfiguration qbar) :=
       SubtileNormalizationGeometry.hgeneral C₀ q horbit hq₀ r g hregime
   obtain ⟨cfg⟩ := hgeneral
@@ -1084,9 +1016,12 @@ theorem BandOrderedGeneralSubtileNormalizationCertificateExists
   have hx₀bar : xbar ∈ h₀bar.domain := BandPackingSymmetryDomainTransport.forward g h₀ x hx₀
   have hxᵢbar : xbar ∈ hᵢbar.domain := BandPackingSymmetryDomainTransport.forward g hᵢ x hxᵢ
   have hadjbar : SubtileLatticeAdjacent C₀bar Cᵢbar
-      T₀bar Tᵢbar h₀bar hᵢbar := SubtileNormalizationGeometry.hadjbar q i T₀ Tᵢ h₀ hᵢ r g hqbar
-          p₀bar pᵢbar sbar hO₀bar hOᵢbar hp₀bar hpᵢbar hcentroidBar hslopexBar hslopeyBar
-          hqbar₀Pos hqbarᵢPos
+      T₀bar Tᵢbar h₀bar hᵢbar := by
+    refine ⟨hO₀bar, hOᵢbar, p₀bar, pᵢbar, hp₀bar, hpᵢbar,
+      qbar, ibar, sbar, hqbar, rfl, rfl, ?_, ?_, ?_⟩
+    · simpa [qbar, reverse, ibar] using hcentroidBar
+    · simpa [qbar, reverse, ibar] using hslopexBar
+    · simpa [qbar, reverse, ibar] using hslopeyBar
   have hT₀barBand : BandPrototile (qbar 0) T₀bar :=
     TileOdometerBandPrototile _ _ _ hO₀bar
   have hTᵢbarBand : BandPrototile (qbar ibar.succ) Tᵢbar :=

@@ -61,7 +61,6 @@ private theorem hpos₁ :
     have hm : P.p₁ * (P.q : Int) = 1 := by simpa using h
     calc 1 = P.p₁ * (P.q : Int) := hm.symm
       _ = (P.q : Int) * P.p₁ := by ring
-  have hq : 2 < (P.q : Int) := by exact_mod_cast hP
   have hl := Int.le_of_dvd (by norm_num : (0 : Int) < 1) hd
   omega
 
@@ -350,30 +349,12 @@ private theorem htargetAt327 :
         (z-⟨(P.q₂ : Int), (P.q₂ : Int)⟩) +
           P.p₂*z.re + P.p₂*z.im - P.p₂*(P.q₂ : Int)+1 := by
     have hz0 := hrec0Member z (by omega) (by omega) (by omega) (by omega)
-    have hz1 : z ∈ FordRecursiveVertexDomains P 1 := by
-      apply hrec1Member z hzr ?_ hzi ?_
-      · have hs : (P.q₁ : Int) + P.q₂ = P.q := by exact_mod_cast P.sum_q.symm
-        omega
-      · have hs : (P.q₁ : Int) + P.q₂ = P.q := by exact_mod_cast P.sum_q.symm
-        omega
-    have hy0 : z-⟨(P.q₂ : Int), (P.q₂ : Int)⟩ ∈
-        FordRecursiveVertexDomains P₁ 0 := by
-      change 0 ≤ (z-⟨(P.q₂ : Int),(P.q₂ : Int)⟩).re ∧
-        (z-⟨(P.q₂ : Int),(P.q₂ : Int)⟩).re ≤ (P₁.q₁ : Int) ∧
-        0 ≤ (z-⟨(P.q₂ : Int),(P.q₂ : Int)⟩).im ∧
-        (z-⟨(P.q₂ : Int),(P.q₂ : Int)⟩).im ≤ (P₁.q₁ : Int)
-      rw [hparP.2.1]
-      simp only [Zsqrtd.re_sub, Zsqrtd.im_sub,
-        ]
-      constructor <;> omega
     have hzchild1 : z ∈ FordRecursiveVertexDomains P₁ 1 := by
       change (P₁.q₂ : Int) ≤ z.re ∧ z.re ≤ (P₁.q : Int) ∧
         (P₁.q₂ : Int) ≤ z.im ∧ z.im ≤ (P₁.q : Int)
       rw [hparP.2.2.2, hq₁]
       exact ⟨by omega, by omega, by omega, by omega⟩
     have houter0 := hrec₀' z hz0
-    have houter1 := hrec₁' z hz1
-    have hchild0 := hch₀' (z-⟨(P.q₂ : Int),(P.q₂ : Int)⟩) hy0
     have hchild1 := hch₁' z hzchild1
     have hshift : z-⟨(P.q₂ : Int),(P.q₂ : Int)⟩ =
         z-⟨(P₁.q₂ : Int),(P₁.q₂ : Int)⟩ := by rw [hparP.2.2.2]
@@ -854,7 +835,6 @@ theorem P4062T1OverlapDescent (P P₁ P₂ : FordFareyParameter)
   have hcrossdet := OverlapDescentDetails.hcrossdet P
   have hpos₁ := OverlapDescentDetails.hpos₁ P P₁ hP hq₁ hsum
   have hpos₂ : 0 < P.q₂ := P.q₂_pos
-  have hlt₁ : P.q₁ < P.q := P.q₁_lt
   have hlt₂ : P.q₂ < P.q := by omega
   have hred₁ := OverlapDescentDetails.hred₁ P hcrossdet
   obtain ⟨_, _, _, _, _, hfamilyRec⟩ :=
@@ -865,7 +845,6 @@ theorem P4062T1OverlapDescent (P P₁ P₂ : FordFareyParameter)
   have hrec₁' := OverlapDescentDetails.hrec₁' P
               P₁ hrec₁
   have hrec₂' := OverlapDescentDetails.hrec₂' P P₂ hrec₂
-  have hrec₃' := OverlapDescentDetails.hrec₃' P P₂ hrec₃
   have hlapAffine (f f' : GaussianInt → Int) (x t : GaussianInt)
       (A B C : Int)
       (h0 : f x = f' (x - t) + A * x.re + B * x.im + C)
@@ -888,10 +867,6 @@ theorem P4062T1OverlapDescent (P P₁ P₂ : FordFareyParameter)
   have hrec2Member (z : GaussianInt)
       (a : (P.q₁ : Int) ≤ z.re) (b : z.re ≤ (P.q : Int))
       (c : 0 ≤ z.im) (d : z.im ≤ (P.q₂ : Int)) := OverlapDescentDetails.hrec2Member P z a b c d
-  have hrec3Member (z : GaussianInt)
-      (a : 0 ≤ z.re) (b : z.re ≤ (P.q₂ : Int))
-      (c : (P.q₁ : Int) ≤ z.im) (d : z.im ≤ (P.q : Int)) := OverlapDescentDetails.hrec3Member P z
-          a b c d
   intro hr
   have hA0 : hr 0 = P4062T1InteriorSquare P.q₁ := by rfl
   have hA1 : hr 1 = (P4062T1InteriorSquare P.q₁).image

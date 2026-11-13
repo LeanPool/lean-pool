@@ -55,19 +55,6 @@ theorem BandOriginalPairSeparation (P : Fin 3 -> Bool -> ProtoTile)
         (P 0 false).cells.image
           (GaussianTranslation ((m : GaussianInt) * u + (n : GaussianInt) * v)) := by
     rfl
-  have original_cells (o : PeriodicSubtileIndex) :
-      (SubtileOccurrenceInterpretation P u v o).cells =
-        (match o.label with
-          | .A => (P 0 true).cells
-          | .B => (P 0 false).cells
-          | .C => (P 1 true).cells
-          | .D => (P 1 false).cells
-          | .E => (P 2 true).cells
-          | .F => (P 2 false).cells).image
-          (GaussianTranslation ((o.first : GaussianInt) * u + (o.second : GaussianInt) * v)) := by
-    cases o with
-    | mk label first second =>
-      cases label <;> rfl
   constructor
   · intro m n
     apply Finset.ext

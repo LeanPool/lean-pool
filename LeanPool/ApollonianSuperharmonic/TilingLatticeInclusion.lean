@@ -78,7 +78,6 @@ theorem TilingLatticeInclusion (C : BandCircle) :
       intro i
       obtain ⟨q, hq, j, hj⟩ := C.1.2.2
       obtain ⟨a, b, ha, hb⟩ := parity q hq j
-      have hreal : (q j).1 = C.1.1.1 := by simp [hj]
       have hxr : C.1.1.2.re = 1 + 2 * a := by simpa [hj] using ha
       have hxi : C.1.1.2.im = 2 * b := by simpa [hj] using hb
       fin_cases i

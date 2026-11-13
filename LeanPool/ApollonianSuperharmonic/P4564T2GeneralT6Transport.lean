@@ -272,52 +272,6 @@ private theorem callerClassification :
   simpa only [(samePeriodic o).1, (samePeriodic p).1,
     (samePeriodic o).2, (samePeriodic p).2] using classification o p hop
 
-private theorem callerRaw :
-    (by
-      classical
-      exact
-        ∀ (q : Fin 4 → CircleCoordinates), ∀ (T : ProtoTile), ∀ (g : BandPackingSymmetry), ∀ (C :
-            BandCircle), ∀ (P : Fin (3 : ℕ) → Bool → ProtoTile), ∀ (Q : Fin (3 : ℕ) → Bool →
-            ProtoTile), ∀ (S : Fin (3 : ℕ) → Bool → ProtoTile), ∀ (cfg :
-            BandOrderedGeneralConfiguration (BandPackingSymmetryQuadrupleAction g q)), ∀ (cert :
-            BandOrderedGeneralLayoutCertificate (BandPackingSymmetryQuadrupleAction g q) cfg C
-                (BandPackingSymmetryTileAction g T)),
-        let P' : Fin 3 → Bool → ProtoTile := fun i s => BandPackingSymmetryTileAction g (P i s)
-        let Q' : Fin 3 → Bool → ProtoTile := fun i s => BandPackingSymmetryTileAction g (Q i s)
-        let S' : Fin 3 → Bool → ProtoTile := fun i s => BandPackingSymmetryTileAction g (S i s)
-        (∀ (i : Fin (3 : ℕ)), ∀ (s : Bool), (BandPackingSymmetryTileAction g (P i s)).cells =
-            (cert.P i s).cells ∧ ((BandPackingSymmetryTileAction g (P i s)).cells = ∅ →
-            (BandPackingSymmetryTileAction g (P i s)).anchor = (cert.P i s).anchor) ∧
-            FootprintVertices (BandPackingSymmetryTileAction g (P i s)) = FootprintVertices
-            (cert.P i s) ∧ TileCentroid (BandPackingSymmetryTileAction g (P i s)) = TileCentroid
-            (cert.P i s)) → ((∀ (i : Fin (3 : ℕ)), ∀ (s : Bool), (BandPackingSymmetryTileAction g
-            (Q i s)).cells = (cert.Q i s).cells ∧ ((BandPackingSymmetryTileAction g (Q i
-            s)).cells = ∅ → (BandPackingSymmetryTileAction g (Q i s)).anchor = (cert.Q i
-            s).anchor) ∧ FootprintVertices (BandPackingSymmetryTileAction g (Q i s)) =
-            FootprintVertices (cert.Q i s) ∧ TileCentroid (BandPackingSymmetryTileAction g (Q i
-            s)) = TileCentroid (cert.Q i s)) → ((∀ (i : Fin (3 : ℕ)), ∀ (s : Bool),
-            (BandPackingSymmetryTileAction g (S i s)).cells = (cert.S i s).cells ∧
-            ((BandPackingSymmetryTileAction g (S i s)).cells = ∅ → (BandPackingSymmetryTileAction
-            g (S i s)).anchor = (cert.S i s).anchor) ∧ FootprintVertices
-            (BandPackingSymmetryTileAction g (S i s)) = FootprintVertices (cert.S i s) ∧
-            TileCentroid (BandPackingSymmetryTileAction g (S i s)) = TileCentroid (cert.S i s)) →
-            ((FootprintVertices (cert.P (0 : Fin (3 : ℕ)) true) ∩ FootprintVertices (cert.P (1 :
-            Fin (3 : ℕ)) true) ⊆ FootprintVertices (cert.Q (1 : Fin (3 : ℕ)) true) ∩
-            FootprintVertices (cert.P (1 : Fin (3 : ℕ)) true) ∧ FootprintVertices (cert.P (0 :
-            Fin (3 : ℕ)) true) ∩ FootprintVertices (cert.P (0 : Fin (3 : ℕ)) false) ⊆
-            FootprintVertices (cert.Q (1 : Fin (3 : ℕ)) true) ∩ FootprintVertices (cert.S (2 :
-            Fin (3 : ℕ)) false) ∪ FootprintVertices (cert.Q (0 : Fin (3 : ℕ)) false) ∪
-            FootprintVertices (cert.Q (2 : Fin (3 : ℕ)) true) ∩ FootprintVertices (cert.S (1 :
-            Fin (3 : ℕ)) false)) → (FootprintVertices (P' 0 true) ∩ FootprintVertices (P' 1 true)
-            ⊆ FootprintVertices (Q' 1 true) ∩ FootprintVertices (P' 1 true) ∧ FootprintVertices
-            (P' 0 true) ∩ FootprintVertices (P' 0 false) ⊆ (FootprintVertices (Q' 1 true) ∩
-            FootprintVertices (S' 2 false)) ∪ FootprintVertices (Q' 0 false) ∪ (FootprintVertices
-            (Q' 2 true) ∩ FootprintVertices (S' 1 false)))))) ) := by
-  classical
-  intro q T g C P Q S cfg cert P' Q' S' sameP sameQ sameS raw
-  simpa only [P', Q', S', (sameP _ _).2.2.1, (sameQ _ _).2.2.1,
-    (sameS _ _).2.2.1] using raw
-
 private theorem period_u :
     (by
       classical
@@ -556,8 +510,9 @@ theorem P4564T2GeneralT6Transport (q : Fin 4 → CircleCoordinates) (hq : Proper
       FootprintVertices (P' 0 true) ∩ FootprintVertices (P' 0 false) ⊆
         (FootprintVertices (Q' 1 true) ∩ FootprintVertices (S' 2 false)) ∪
           FootprintVertices (Q' 0 false) ∪
-          (FootprintVertices (Q' 2 true) ∩ FootprintVertices (S' 1 false)) :=
-              GeneralT6Geometry.callerRaw q T g C P Q S cfg cert sameP sameQ sameS raw
+          (FootprintVertices (Q' 2 true) ∩ FootprintVertices (S' 1 false)) := by
+    simpa only [P', Q', S', (sameP _ _).2.2.1, (sameQ _ _).2.2.1,
+      (sameS _ _).2.2.1] using raw
   -- Use the same false phase for the ordered periods before pulling back.
   let L := BandPackingSymmetryVectorAction g
   have period_u : cert.u = L (BandVectors.1 (q 0) (q 1)) := GeneralT6Geometry.period_u q T g C hg

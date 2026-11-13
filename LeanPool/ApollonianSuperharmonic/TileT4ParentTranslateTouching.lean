@@ -102,9 +102,6 @@ theorem TileT4ParentTranslateTouching (q : Fin 4 → CircleCoordinates)
       FootprintVertices (TileTranslation T₀ (BandVectors.1 (q i.succ) (q 0))) ∩
         FootprintVertices Tᵢ :=
     hbc.2.2.2.trans hbc.1.symm
-  have hsetCA : BoundaryFootprintVertices Tᵢ ∩ BoundaryFootprintVertices T₀ =
-      FootprintVertices Tᵢ ∩ FootprintVertices T₀ :=
-    hca.2.2.2.trans hca.1.symm
   have htriple : ∀ x : GaussianInt,
       (x ∈ BoundaryFootprintVertices T₀ ∧
         x ∈ BoundaryFootprintVertices (TileTranslation T₀ (BandVectors.1 (q i.succ) (q 0))) ∧

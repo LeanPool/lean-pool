@@ -777,9 +777,6 @@ theorem P4984T1IncidentArcs (L : Real)
           slot b
   have closedGapOfParent (u : Fin 4 → CircleCoordinates) (m : Fin 3)
       (hm : 0 < (u m.succ).1) := IncidentArcGeometry.closedGapOfParent L u m hm
-  let arc (b : Fin 3) :=
-    P4984T1ClosedGap L (P4828T1Step (P4828T1Rotate q b)) ∩
-      Metric.sphere a R
   have hchildCover := IncidentArcGeometry.hchildCover L q hq hs hi j hax
   have hchildSub (b : Fin 3) := IncidentArcGeometry.hchildSub L q hq hs hi j b
   have hAllUnion := IncidentArcGeometry.hAllUnion L q j hchildCover hchildSub

@@ -636,7 +636,6 @@ private theorem hcompAt434 (K : DiamondParameter) (hk : 1 < K.1) (p : Int)
     (upper : p ≤ (K.1 : Int)) :
     (⟨p, 2 * (K.1 : Int) + 1 - p⟩ : GaussianInt) - ⟨2 * (K.1 : Int), 0⟩ ∈
       FootprintVertices (DiamondTile K.1) ↔ p = (K.1 : Int) := by
-  have positive : 2 ≤ (K.1 : Int) := by exact_mod_cast (show 2 ≤ K.1 by omega)
   rw [(P5352T2DomainRows K _).1]
   simp only [Zsqrtd.im_sub, Zsqrtd.re_sub, sub_zero]
   constructor

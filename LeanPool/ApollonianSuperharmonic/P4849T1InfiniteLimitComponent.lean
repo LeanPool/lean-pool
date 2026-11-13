@@ -62,7 +62,6 @@ private theorem hconnX :
   have hrev : p.reverse.IsChain FourNeighborAdjacent :=
     List.isChain_reverse.mpr hpc'
   have hqtail : q.tail.IsChain FourNeighborAdjacent := hqc.tail
-  have hpn : p ≠ [] := by intro he; simp [he] at hp
   have hqn : q ≠ [] := by intro he; simp [he] at hq
   have hjoin : (p.reverse ++ q.tail).IsChain FourNeighborAdjacent := by
     apply hrev.append hqtail
@@ -88,7 +87,6 @@ private theorem hconnX :
       simpa using hw
     · apply prefixReach q hq hqmem hqc w
       exact List.mem_of_mem_tail hw
-  have hpne' : p.reverse ≠ [] := List.reverse_ne_nil_iff.mpr hpn
   have hhead : (p.reverse ++ q.tail).head? = some x := by
     simp [List.head?_append, List.head?_reverse, hpx]
   have hlast : (p.reverse ++ q.tail).getLast? = some y := by
@@ -118,7 +116,6 @@ private theorem hadjClose :
   intro L a reachable X x hx y hy hxy
   rcases hx with ⟨p, hp, hpx, hpmem, hpc⟩
   have hchain : p.IsChain FourNeighborAdjacent := hpc
-  have hpn : p ≠ [] := by intro he; simp [he] at hp
   refine ⟨p ++ [y], ?_, ?_, ?_, ?_⟩
   · simp [List.head?_append, hp]
   · simp [hpx]
@@ -215,13 +212,11 @@ private theorem hXinf :
     firstExit p a hp hpb hpmem
       (List.isChain_iff_forall_rel_of_append_cons_cons.mpr hpadj)
       haX hbnotX
-  have hxC : x ∈ C n := hpmem x hxP
   have hyC : y ∈ C n := hpmem y hyP
   have hxShell : x ∈ shell := by simp [shell, hxX]
   have hyShell : y ∈ shell := by
     rcases hxy with rfl | rfl | rfl | rfl <;> simp [shell, hxX]
   have hnN : n ≥ N := by dsimp [n]; omega
-  have hxL : x ∈ L := (hN n hnN x (hshellfin.mem_toFinset.mpr hxShell)).mp hxC
   have hyL : y ∈ L := (hN n hnN y (hshellfin.mem_toFinset.mpr hyShell)).mp hyC
   exact hyX (hadjClose x hxX y hyL hxy)
 

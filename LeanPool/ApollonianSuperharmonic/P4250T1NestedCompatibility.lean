@@ -214,9 +214,7 @@ private theorem hX :
             (xv = -v21 - (1 + I) * w))) ) := by
   classical
   intro q cfg I w xv v21 hcycV hpredV hv21
-  let v13 : GaussianInt := BandVectors.1 (q 1) (q 3)
   apply eq_of_sub_eq_zero
-  have hcyc : w + v13 + v21 = 0 := by simpa [w, v13, v21] using hcycV
   have hpred : w + xv + BandVectors.1 (q 2) (cfg.firstPredecessor 1) = 0 := by
     simpa [w, xv, cfg.firstParentTwo, cfg.firstParentThree] using hpredV
   calc
@@ -263,9 +261,7 @@ private theorem hXalpha :
             alpha) → (xa = -a21 - (1 - I) * alpha))) ) := by
   classical
   intro q cfg I alpha xa a21 hcycA hpredA ha21
-  let a13 : GaussianInt := BandVectors.2 (q 1) (q 3)
   apply eq_of_sub_eq_zero
-  have hcyc : alpha + a13 + a21 = 0 := by simpa [alpha, a13, a21] using hcycA
   have hpred : alpha + xa + BandVectors.2 (q 2) (cfg.firstPredecessor 1) = 0 := by
     simpa [alpha, xa, cfg.firstParentTwo, cfg.firstParentThree] using hpredA
   calc
@@ -2133,18 +2129,7 @@ private theorem reflectedFoot :
     dsimp at hsRe hsIm
     apply Prod.ext <;> dsimp <;> linarith
   have hcells := (BandPrototileCentroidUnique D Z Y hZband hY hcent).1
-  have hXne := bandPositiveNonempty D X
-    (TileOdometerBandPrototile D X g hX) hD
   have hYne := bandPositiveNonempty D Y hY hD
-  have hZne : Z.cells.Nonempty := by
-    dsimp [Z]
-    rw [(TileTranslationFormulas (TileHalfTurn X) u).1]
-    apply Finset.image_nonempty.mpr
-    have he : (TileHalfTurn X).cells ≠ ∅ := by
-      intro h
-      exact (Finset.nonempty_iff_ne_empty.mp hXne)
-        ((TileHalfTurnFormulas X).2.2.1.mp h)
-    exact Finset.nonempty_iff_ne_empty.mpr he
   simp only [Z, FootprintVertices, ite_eq_left hYne, hcells]
 
 private theorem hsumAB :
@@ -2546,9 +2531,6 @@ private theorem compatAB :
   right
   refine ⟨cO, ?_⟩
   intro x hxA hxB
-  have hxraw : x ∈ FootprintVertices A ∩ FootprintVertices B := by
-    exact ⟨by rw [← hdomA]; exact hxA,
-      by rw [← hdomBParent]; exact hxB⟩
   have hcover :
       (↑(h 0 true).domain ∩ ↑(h 0 false).domain : Set GaussianInt) ⊆
         (↑(k 1 true).domain ∩ ↑(l 2 false).domain) ∪
@@ -2854,7 +2836,6 @@ private theorem nestedCompatibilityConclusion :
           (k 1 true) odoQ2 (TileOdometerBandPrototile _ _ _ odoS2)
           pos2 (NestedCompatibilityGeometry.hsumQS q cfg C T cert hcenterQT
               (NestedCompatibilityGeometry.hcenterSTAt1375 q cfg C T cert hcenterB hcenterS))
-  let refl : GaussianInt → GaussianInt := fun x => GaussianTranslation u (-x)
   have reflectedSet := NestedCompatibilityGeometry.reflectedSet u
   have reflectedA := reflectedSet A B hreflectAB
   have reflectedC := reflectedSet (cert.P 1 true) (cert.P 1 false) hreflectCD
@@ -2968,13 +2949,10 @@ theorem P4250T1NestedCompatibility
       (cert.plus_occurrence 2 true).1 (alignA 2 true).1
   let I : GaussianInt := ⟨0, 1⟩
   let w : GaussianInt := BandVectors.1 (q 3) (q 2)
-  let xv : GaussianInt := BandVectors.1 (cfg.firstPredecessor 1) (q 3)
   let v21 : GaussianInt := BandVectors.1 (q 2) (q 1)
   let v13 : GaussianInt := BandVectors.1 (q 1) (q 3)
   let alpha : GaussianInt := BandVectors.2 (q 3) (q 2)
-  let xa : GaussianInt := BandVectors.2 (cfg.firstPredecessor 1) (q 3)
   let a21 : GaussianInt := BandVectors.2 (q 2) (q 1)
-  let a13 : GaussianInt := BandVectors.2 (q 1) (q 3)
   let spatial (z : GaussianInt) : Real × Real :=
     (1 / 2 : Real) • (GaussianRealPoint z -
       (-(GaussianRealPoint z).2, (GaussianRealPoint z).1))
@@ -3056,10 +3034,6 @@ theorem P4250T1NestedCompatibility
           (NestedCompatibilityGeometry.rootSlopeMinus q h s0 hp)
           (NestedCompatibilityGeometry.slopeDeltaMinus q cfg s0 secondFlip
           (NestedCompatibilityGeometry.slopeIdentityMinus q cfg slopeIdentity)))
-  let x2v : GaussianInt :=
-    BandVectors.1 (cfg.firstPredecessor 2) (cfg.firstPredecessor 1)
-  let x2a : GaussianInt :=
-    BandVectors.2 (cfg.firstPredecessor 2) (cfg.firstPredecessor 1)
   have posRoot3 := NestedCompatibilityGeometry.posRoot3 q cfg
   let C3 : BandCircle :=
     ⟨⟨q 3, Or.inl posRoot3, q, cfg.proper.1, 3, rfl⟩, posRoot3⟩

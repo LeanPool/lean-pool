@@ -122,7 +122,6 @@ private theorem hu (e : C(Circle, ℂ)) (he : Function.Injective e) : Continuous
         exact congrArg Subtype.val h
       · rintro ⟨z, x, rfl⟩
         exact ⟨x, rfl⟩)
-  have hf : Continuous f := hf e he
   let ψ : Set.range e → Circle := f.symm
   have hψc : Continuous ψ := hψc e he
   let u : Set.range e → ℂ := fun k => (ψ k : ℂ)
@@ -169,9 +168,7 @@ private theorem hψUC (e : C(Circle, ℂ)) (he : Function.Injective e) : Uniform
         exact congrArg Subtype.val h
       · rintro ⟨z, x, rfl⟩
         exact ⟨x, rfl⟩)
-  have hf : Continuous f := hf e he
   let ψ : Set.range e → Circle := f.symm
-  have hψc : Continuous ψ := hψc e he
   let u : Set.range e → ℂ := fun k => (ψ k : ℂ)
   have hu : Continuous u := hu e he
   change (UniformContinuous u)
@@ -314,7 +311,6 @@ private theorem hNopen (e : C(Circle, ℂ)) (eps : ℝ) (S : Set ↑(Set.range �
   let F : Finset (Set.range e) := hSf.toFinset
   let w : Set.range e → ℂ → ℝ := fun c z => max 0 (2 * r - dist z (c : ℂ))
   let W : ℂ → ℝ := fun z => ∑ c ∈ F, w c z
-  have hw_cont (c : Set.range e) : Continuous (w c) := hw_cont e eps η c
   have hW_cont : Continuous W := hW_cont e eps S η hSf
   let N : Set ℂ := {z | 0 < W z}
   dsimp only [ControlledNeighborhoodConstruction.N] at *
@@ -328,7 +324,6 @@ private theorem hKN (e : C(Circle, ℂ)) (eps : ℝ) (heps : 0 < eps) (S : Set �
   let r := min (η / 8) (eps / 8)
   have hrpos : 0 < r := hrpos eps heps η hη
   let F : Finset (Set.range e) := hSf.toFinset
-  have hFS : (F : Set (Set.range e)) = S := hFS e S hSf
   have hcover' : (Set.univ : Set (Set.range e)) ⊆
       ⋃ c ∈ (F : Set (Set.range e)), Metric.ball c r := hcover' e eps S η hSf hcover
   let w : Set.range e → ℂ → ℝ := fun c z => max 0 (2 * r - dist z (c : ℂ))
@@ -360,7 +355,6 @@ private theorem hW_N (e : C(Circle, ℂ)) (eps : ℝ) (S : Set ↑(Set.range ⇑
   let F : Finset (Set.range e) := hSf.toFinset
   let w : Set.range e → ℂ → ℝ := fun c z => max 0 (2 * r - dist z (c : ℂ))
   let W : ℂ → ℝ := fun z => ∑ c ∈ F, w c z
-  have hw_cont (c : Set.range e) : Continuous (w c) := hw_cont e eps η c
   have hW_cont : Continuous W := hW_cont e eps S η hSf
   let N : Set ℂ := {z | 0 < W z}
   dsimp only [ControlledNeighborhoodConstruction.N] at *
@@ -388,7 +382,6 @@ private theorem ha_cont (e : C(Circle, ℂ)) (eps : ℝ) (S : Set ↑(Set.range 
   let w : Set.range e → ℂ → ℝ := fun c z => max 0 (2 * r - dist z (c : ℂ))
   let W : ℂ → ℝ := fun z => ∑ c ∈ F, w c z
   have hw_cont (c : Set.range e) : Continuous (w c) := hw_cont e eps η c
-  have hW_cont : Continuous W := hW_cont e eps S η hSf
   let N : Set ℂ := {z | 0 < W z}
   have hW_N : Continuous (fun z : N => W (z : ℂ)) := hW_N e eps S η hSf
   let a : N → Set.range e → ℝ := fun z c => w c (z : ℂ) / W (z : ℂ)
@@ -437,10 +430,7 @@ private theorem hv_cont (e : C(Circle, ℂ)) (he : Function.Injective e) (eps : 
   let F : Finset (Set.range e) := hSf.toFinset
   let w : Set.range e → ℂ → ℝ := fun c z => max 0 (2 * r - dist z (c : ℂ))
   let W : ℂ → ℝ := fun z => ∑ c ∈ F, w c z
-  have hw_cont (c : Set.range e) : Continuous (w c) := hw_cont e eps η c
-  have hW_cont : Continuous W := hW_cont e eps S η hSf
   let N : Set ℂ := {z | 0 < W z}
-  have hW_N : Continuous (fun z : N => W (z : ℂ)) := hW_N e eps S η hSf
   let a : N → Set.range e → ℝ := fun z c => w c (z : ℂ) / W (z : ℂ)
   have ha_cont (c : Set.range e) : Continuous (fun z : N => a z c) := ha_cont e eps S η hSf c
   let v : N → ℂ := fun z => ∑ c ∈ F, (a z c : ℂ) * u c
@@ -458,14 +448,12 @@ private theorem hactive (e : C(Circle, ℂ)) (eps : ℝ) (S : Set ↑(Set.range 
   let F : Finset (Set.range e) := hSf.toFinset
   let w : Set.range e → ℂ → ℝ := fun c z => max 0 (2 * r - dist z (c : ℂ))
   let W : ℂ → ℝ := fun z => ∑ c ∈ F, w c z
-  let N : Set ℂ := {z | 0 < W z}
   dsimp only [ControlledNeighborhoodConstruction.N] at *
   change (∃ i ∈ F, 0 < w i (z : ℂ))
   by_contra h
   push Not at h
   have hsum : (∑ c ∈ F, w c (z : ℂ)) ≤ 0 :=
     Finset.sum_nonpos (fun c hc => h c hc)
-  have hWle : W (z : ℂ) ≤ 0 := by simpa [W] using hsum
   have hz : 0 < W (z : ℂ) := z.property
   linarith
 
@@ -474,10 +462,6 @@ private theorem hw_active_dist (e : C(Circle, ℂ)) (eps : ℝ) (S : Set ↑(Set
       dist (z : ℂ) (c : ℂ) < 2 * (r eps η) := by
   classical
   let r := min (η / 8) (eps / 8)
-  let F : Finset (Set.range e) := hSf.toFinset
-  let w : Set.range e → ℂ → ℝ := fun c z => max 0 (2 * r - dist z (c : ℂ))
-  let W : ℂ → ℝ := fun z => ∑ c ∈ F, w c z
-  let N : Set ℂ := {z | 0 < W z}
   dsimp only [ControlledNeighborhoodConstruction.N] at *
   change (dist (z : ℂ) (c : ℂ) < 2 * r)
   change 0 < max 0 (2 * r - dist (z : ℂ) (c : ℂ)) at hc
@@ -550,7 +534,6 @@ private theorem hv_close (e : C(Circle, ℂ)) (he : Function.Injective e) (eps :
   let δ := min (δ₀ / 4) (1 / 8)
   have hδpos : 0 < δ := hδpos δ₀ hδ₀
   let r := min (η / 8) (eps / 8)
-  have hrpos : 0 < r := hrpos eps heps η hη
   have hψclose : ∀ k l : Set.range e, dist k l < 4 * r →
       dist ((ψ k : Circle) : ℂ) ((ψ l : Circle) : ℂ) < δ := hψclose e he eps heps δ₀ η hη hηψ
   let F : Finset (Set.range e) := hSf.toFinset
@@ -664,11 +647,7 @@ private theorem hv_lower (e : C(Circle, ℂ)) (he : Function.Injective e) (eps :
   let ψ : Set.range e → Circle := f.symm
   let u : Set.range e → ℂ := fun k => (ψ k : ℂ)
   let δ := min (δ₀ / 4) (1 / 8)
-  have hδpos : 0 < δ := hδpos δ₀ hδ₀
   let r := min (η / 8) (eps / 8)
-  have hrpos : 0 < r := hrpos eps heps η hη
-  have hψclose : ∀ k l : Set.range e, dist k l < 4 * r →
-      dist ((ψ k : Circle) : ℂ) ((ψ l : Circle) : ℂ) < δ := hψclose e he eps heps δ₀ η hη hηψ
   let F : Finset (Set.range e) := hSf.toFinset
   let w : Set.range e → ℂ → ℝ := fun c z => max 0 (2 * r - dist z (c : ℂ))
   let W : ℂ → ℝ := fun z => ∑ c ∈ F, w c z
@@ -676,10 +655,6 @@ private theorem hv_lower (e : C(Circle, ℂ)) (he : Function.Injective e) (eps :
   let a : N → Set.range e → ℝ := fun z c => w c (z : ℂ) / W (z : ℂ)
   let v : N → ℂ := fun z => ∑ c ∈ F, (a z c : ℂ) * u c
   have hactive (z : N) : ∃ i ∈ F, 0 < w i (z : ℂ) := hactive e eps S η hSf z
-  have hw_active_dist (z : N) (c : Set.range e) (hc : 0 < w c (z : ℂ)) :
-      dist (z : ℂ) (c : ℂ) < 2 * r := hw_active_dist e eps S η hSf z c hc
-  have ha_nonneg (z : N) (c : Set.range e) : 0 ≤ a z c := ha_nonneg e eps S η hSf z c
-  have hsum_a (z : N) : (∑ c ∈ F, a z c) = 1 := hsum_a e eps S η hSf z
   have hv_close (z : N) (i : Set.range e) (hi : i ∈ F)
       (hwi : 0 < w i (z : ℂ)) : ‖v z - u i‖ < δ := hv_close e he eps heps S δ₀ η hSf hη hδ₀ hηψ z
           i hi hwi
@@ -716,27 +691,14 @@ private theorem hv_pos (e : C(Circle, ℂ)) (he : Function.Injective e) (eps : �
   have hδpos : 0 < δ := hδpos δ₀ hδ₀
   have hδlt : δ < 1 / 4 := hδlt δ₀ hδ₀
   let r := min (η / 8) (eps / 8)
-  have hrpos : 0 < r := hrpos eps heps η hη
-  have hψclose : ∀ k l : Set.range e, dist k l < 4 * r →
-      dist ((ψ k : Circle) : ℂ) ((ψ l : Circle) : ℂ) < δ := hψclose e he eps heps δ₀ η hη hηψ
   let F : Finset (Set.range e) := hSf.toFinset
   let w : Set.range e → ℂ → ℝ := fun c z => max 0 (2 * r - dist z (c : ℂ))
   let W : ℂ → ℝ := fun z => ∑ c ∈ F, w c z
   let N : Set ℂ := {z | 0 < W z}
   let a : N → Set.range e → ℝ := fun z c => w c (z : ℂ) / W (z : ℂ)
   let v : N → ℂ := fun z => ∑ c ∈ F, (a z c : ℂ) * u c
-  have hactive (z : N) : ∃ i ∈ F, 0 < w i (z : ℂ) := hactive e eps S η hSf z
-  have hw_active_dist (z : N) (c : Set.range e) (hc : 0 < w c (z : ℂ)) :
-      dist (z : ℂ) (c : ℂ) < 2 * r := hw_active_dist e eps S η hSf z c hc
-  have ha_nonneg (z : N) (c : Set.range e) : 0 ≤ a z c := ha_nonneg e eps S η hSf z c
-  have hsum_a (z : N) : (∑ c ∈ F, a z c) = 1 := hsum_a e eps S η hSf z
-  have hv_close (z : N) (i : Set.range e) (hi : i ∈ F)
-      (hwi : 0 < w i (z : ℂ)) : ‖v z - u i‖ < δ := hv_close e he eps heps S δ₀ η hSf hη hδ₀ hηψ z
-          i hi hwi
-  have hunit (c : Set.range e) : ‖u c‖ = 1 := hunit e he c
   have hv_lower (z : N) : 1 - δ < ‖v z‖ := hv_lower e he eps heps S δ₀ η hSf hη hδ₀ hηψ z
   change (0 < ‖v z‖)
-  have hδbound : δ < 1 := by linarith [hδlt]
   linarith [hv_lower z]
 
 private noncomputable abbrev p (e : C(Circle, ℂ)) (he : Function.Injective e) (eps : ℝ) (S : Set
@@ -778,29 +740,13 @@ private theorem hp_norm (e : C(Circle, ℂ)) (he : Function.Injective e) (eps : 
         exact ⟨x, rfl⟩)
   let ψ : Set.range e → Circle := f.symm
   let u : Set.range e → ℂ := fun k => (ψ k : ℂ)
-  let δ := min (δ₀ / 4) (1 / 8)
-  have hδpos : 0 < δ := hδpos δ₀ hδ₀
-  have hδlt : δ < 1 / 4 := hδlt δ₀ hδ₀
   let r := min (η / 8) (eps / 8)
-  have hrpos : 0 < r := hrpos eps heps η hη
-  have hψclose : ∀ k l : Set.range e, dist k l < 4 * r →
-      dist ((ψ k : Circle) : ℂ) ((ψ l : Circle) : ℂ) < δ := hψclose e he eps heps δ₀ η hη hηψ
   let F : Finset (Set.range e) := hSf.toFinset
   let w : Set.range e → ℂ → ℝ := fun c z => max 0 (2 * r - dist z (c : ℂ))
   let W : ℂ → ℝ := fun z => ∑ c ∈ F, w c z
   let N : Set ℂ := {z | 0 < W z}
   let a : N → Set.range e → ℝ := fun z c => w c (z : ℂ) / W (z : ℂ)
   let v : N → ℂ := fun z => ∑ c ∈ F, (a z c : ℂ) * u c
-  have hactive (z : N) : ∃ i ∈ F, 0 < w i (z : ℂ) := hactive e eps S η hSf z
-  have hw_active_dist (z : N) (c : Set.range e) (hc : 0 < w c (z : ℂ)) :
-      dist (z : ℂ) (c : ℂ) < 2 * r := hw_active_dist e eps S η hSf z c hc
-  have ha_nonneg (z : N) (c : Set.range e) : 0 ≤ a z c := ha_nonneg e eps S η hSf z c
-  have hsum_a (z : N) : (∑ c ∈ F, a z c) = 1 := hsum_a e eps S η hSf z
-  have hv_close (z : N) (i : Set.range e) (hi : i ∈ F)
-      (hwi : 0 < w i (z : ℂ)) : ‖v z - u i‖ < δ := hv_close e he eps heps S δ₀ η hSf hη hδ₀ hηψ z
-          i hi hwi
-  have hunit (c : Set.range e) : ‖u c‖ = 1 := hunit e he c
-  have hv_lower (z : N) : 1 - δ < ‖v z‖ := hv_lower e he eps heps S δ₀ η hSf hη hδ₀ hηψ z
   have hv_pos (z : N) : 0 < ‖v z‖ := hv_pos e he eps heps S δ₀ η hSf hη hδ₀ hηψ z
   let p : N → ℂ := fun z => v z / (‖v z‖ : ℂ)
   change (‖p z‖ = 1)
@@ -872,34 +818,14 @@ private theorem hp_cont (e : C(Circle, ℂ)) (he : Function.Injective e) (eps : 
         exact ⟨x, rfl⟩)
   let ψ : Set.range e → Circle := f.symm
   let u : Set.range e → ℂ := fun k => (ψ k : ℂ)
-  let δ := min (δ₀ / 4) (1 / 8)
-  have hδpos : 0 < δ := hδpos δ₀ hδ₀
-  have hδlt : δ < 1 / 4 := hδlt δ₀ hδ₀
   let r := min (η / 8) (eps / 8)
-  have hrpos : 0 < r := hrpos eps heps η hη
-  have hψclose : ∀ k l : Set.range e, dist k l < 4 * r →
-      dist ((ψ k : Circle) : ℂ) ((ψ l : Circle) : ℂ) < δ := hψclose e he eps heps δ₀ η hη hηψ
   let F : Finset (Set.range e) := hSf.toFinset
   let w : Set.range e → ℂ → ℝ := fun c z => max 0 (2 * r - dist z (c : ℂ))
   let W : ℂ → ℝ := fun z => ∑ c ∈ F, w c z
-  have hw_cont (c : Set.range e) : Continuous (w c) := hw_cont e eps η c
-  have hW_cont : Continuous W := hW_cont e eps S η hSf
   let N : Set ℂ := {z | 0 < W z}
-  have hW_N : Continuous (fun z : N => W (z : ℂ)) := hW_N e eps S η hSf
   let a : N → Set.range e → ℝ := fun z c => w c (z : ℂ) / W (z : ℂ)
-  have ha_cont (c : Set.range e) : Continuous (fun z : N => a z c) := ha_cont e eps S η hSf c
   let v : N → ℂ := fun z => ∑ c ∈ F, (a z c : ℂ) * u c
   have hv_cont : Continuous v := hv_cont e he eps S η hSf
-  have hactive (z : N) : ∃ i ∈ F, 0 < w i (z : ℂ) := hactive e eps S η hSf z
-  have hw_active_dist (z : N) (c : Set.range e) (hc : 0 < w c (z : ℂ)) :
-      dist (z : ℂ) (c : ℂ) < 2 * r := hw_active_dist e eps S η hSf z c hc
-  have ha_nonneg (z : N) (c : Set.range e) : 0 ≤ a z c := ha_nonneg e eps S η hSf z c
-  have hsum_a (z : N) : (∑ c ∈ F, a z c) = 1 := hsum_a e eps S η hSf z
-  have hv_close (z : N) (i : Set.range e) (hi : i ∈ F)
-      (hwi : 0 < w i (z : ℂ)) : ‖v z - u i‖ < δ := hv_close e he eps heps S δ₀ η hSf hη hδ₀ hηψ z
-          i hi hwi
-  have hunit (c : Set.range e) : ‖u c‖ = 1 := hunit e he c
-  have hv_lower (z : N) : 1 - δ < ‖v z‖ := hv_lower e he eps heps S δ₀ η hSf hη hδ₀ hηψ z
   have hv_pos (z : N) : 0 < ‖v z‖ := hv_pos e he eps heps S δ₀ η hSf hη hδ₀ hηψ z
   let p : N → ℂ := fun z => v z / (‖v z‖ : ℂ)
   change (Continuous p)
@@ -924,35 +850,13 @@ private theorem hphiVal_cont (e : C(Circle, ℂ)) (he : Function.Injective e) (e
         exact ⟨x, rfl⟩)
   let ψ : Set.range e → Circle := f.symm
   let u : Set.range e → ℂ := fun k => (ψ k : ℂ)
-  let δ := min (δ₀ / 4) (1 / 8)
-  have hδpos : 0 < δ := hδpos δ₀ hδ₀
-  have hδlt : δ < 1 / 4 := hδlt δ₀ hδ₀
   let r := min (η / 8) (eps / 8)
-  have hrpos : 0 < r := hrpos eps heps η hη
-  have hψclose : ∀ k l : Set.range e, dist k l < 4 * r →
-      dist ((ψ k : Circle) : ℂ) ((ψ l : Circle) : ℂ) < δ := hψclose e he eps heps δ₀ η hη hηψ
   let F : Finset (Set.range e) := hSf.toFinset
   let w : Set.range e → ℂ → ℝ := fun c z => max 0 (2 * r - dist z (c : ℂ))
   let W : ℂ → ℝ := fun z => ∑ c ∈ F, w c z
-  have hw_cont (c : Set.range e) : Continuous (w c) := hw_cont e eps η c
-  have hW_cont : Continuous W := hW_cont e eps S η hSf
   let N : Set ℂ := {z | 0 < W z}
-  have hW_N : Continuous (fun z : N => W (z : ℂ)) := hW_N e eps S η hSf
   let a : N → Set.range e → ℝ := fun z c => w c (z : ℂ) / W (z : ℂ)
-  have ha_cont (c : Set.range e) : Continuous (fun z : N => a z c) := ha_cont e eps S η hSf c
   let v : N → ℂ := fun z => ∑ c ∈ F, (a z c : ℂ) * u c
-  have hv_cont : Continuous v := hv_cont e he eps S η hSf
-  have hactive (z : N) : ∃ i ∈ F, 0 < w i (z : ℂ) := hactive e eps S η hSf z
-  have hw_active_dist (z : N) (c : Set.range e) (hc : 0 < w c (z : ℂ)) :
-      dist (z : ℂ) (c : ℂ) < 2 * r := hw_active_dist e eps S η hSf z c hc
-  have ha_nonneg (z : N) (c : Set.range e) : 0 ≤ a z c := ha_nonneg e eps S η hSf z c
-  have hsum_a (z : N) : (∑ c ∈ F, a z c) = 1 := hsum_a e eps S η hSf z
-  have hv_close (z : N) (i : Set.range e) (hi : i ∈ F)
-      (hwi : 0 < w i (z : ℂ)) : ‖v z - u i‖ < δ := hv_close e he eps heps S δ₀ η hSf hη hδ₀ hηψ z
-          i hi hwi
-  have hunit (c : Set.range e) : ‖u c‖ = 1 := hunit e he c
-  have hv_lower (z : N) : 1 - δ < ‖v z‖ := hv_lower e he eps heps S δ₀ η hSf hη hδ₀ hηψ z
-  have hv_pos (z : N) : 0 < ‖v z‖ := hv_pos e he eps heps S δ₀ η hSf hη hδ₀ hηψ z
   let p : N → ℂ := fun z => v z / (‖v z‖ : ℂ)
   have hp_norm (z : N) : ‖p z‖ = 1 := hp_norm e he eps heps S δ₀ η hSf hη hδ₀ hηψ z
   let phiVal : N → Circle := fun z => ⟨p z, (mem_sphere_zero_iff_norm).2 (hp_norm z)⟩
@@ -997,28 +901,17 @@ private theorem hphi_near (e : C(Circle, ℂ)) (he : Function.Injective e) (eps 
   let ψ : Set.range e → Circle := f.symm
   let u : Set.range e → ℂ := fun k => (ψ k : ℂ)
   let δ := min (δ₀ / 4) (1 / 8)
-  have hδpos : 0 < δ := hδpos δ₀ hδ₀
-  have hδlt : δ < 1 / 4 := hδlt δ₀ hδ₀
   let r := min (η / 8) (eps / 8)
-  have hrpos : 0 < r := hrpos eps heps η hη
-  have hψclose : ∀ k l : Set.range e, dist k l < 4 * r →
-      dist ((ψ k : Circle) : ℂ) ((ψ l : Circle) : ℂ) < δ := hψclose e he eps heps δ₀ η hη hηψ
   let F : Finset (Set.range e) := hSf.toFinset
   let w : Set.range e → ℂ → ℝ := fun c z => max 0 (2 * r - dist z (c : ℂ))
   let W : ℂ → ℝ := fun z => ∑ c ∈ F, w c z
   let N : Set ℂ := {z | 0 < W z}
   let a : N → Set.range e → ℝ := fun z c => w c (z : ℂ) / W (z : ℂ)
   let v : N → ℂ := fun z => ∑ c ∈ F, (a z c : ℂ) * u c
-  have hactive (z : N) : ∃ i ∈ F, 0 < w i (z : ℂ) := hactive e eps S η hSf z
-  have hw_active_dist (z : N) (c : Set.range e) (hc : 0 < w c (z : ℂ)) :
-      dist (z : ℂ) (c : ℂ) < 2 * r := hw_active_dist e eps S η hSf z c hc
-  have ha_nonneg (z : N) (c : Set.range e) : 0 ≤ a z c := ha_nonneg e eps S η hSf z c
-  have hsum_a (z : N) : (∑ c ∈ F, a z c) = 1 := hsum_a e eps S η hSf z
   have hv_close (z : N) (i : Set.range e) (hi : i ∈ F)
       (hwi : 0 < w i (z : ℂ)) : ‖v z - u i‖ < δ := hv_close e he eps heps S δ₀ η hSf hη hδ₀ hηψ z
           i hi hwi
   have hunit (c : Set.range e) : ‖u c‖ = 1 := hunit e he c
-  have hv_lower (z : N) : 1 - δ < ‖v z‖ := hv_lower e he eps heps S δ₀ η hSf hη hδ₀ hηψ z
   have hv_pos (z : N) : 0 < ‖v z‖ := hv_pos e he eps heps S δ₀ η hSf hη hδ₀ hηψ z
   let p : N → ℂ := fun z => v z / (‖v z‖ : ℂ)
   have norm_normalize (x : ℂ) (hx : 0 < ‖x‖) :
@@ -1038,8 +931,6 @@ private theorem hphi_near (e : C(Circle, ℂ)) (he : Function.Injective e) (eps 
     calc
       ‖p z - u i‖ = ‖(p z - v z) + (v z - u i)‖ := by congr 1; abel
       _ ≤ ‖p z - v z‖ + ‖v z - u i‖ := norm_add_le _ _
-  have hshift' : ‖p z - v z‖ = |1 - ‖v z‖| := by
-    simpa [p] using hshift
   linarith
 
 private theorem hphi_circle_close (e : C(Circle, ℂ)) (he : Function.Injective e) (eps : ℝ) (heps
@@ -1060,34 +951,16 @@ private theorem hphi_circle_close (e : C(Circle, ℂ)) (he : Function.Injective 
   let ψ : Set.range e → Circle := f.symm
   let u : Set.range e → ℂ := fun k => (ψ k : ℂ)
   let δ := min (δ₀ / 4) (1 / 8)
-  have hδpos : 0 < δ := hδpos δ₀ hδ₀
-  have hδlt : δ < 1 / 4 := hδlt δ₀ hδ₀
   let r := min (η / 8) (eps / 8)
-  have hrpos : 0 < r := hrpos eps heps η hη
-  have hψclose : ∀ k l : Set.range e, dist k l < 4 * r →
-      dist ((ψ k : Circle) : ℂ) ((ψ l : Circle) : ℂ) < δ := hψclose e he eps heps δ₀ η hη hηψ
   let F : Finset (Set.range e) := hSf.toFinset
   let w : Set.range e → ℂ → ℝ := fun c z => max 0 (2 * r - dist z (c : ℂ))
   let W : ℂ → ℝ := fun z => ∑ c ∈ F, w c z
   let N : Set ℂ := {z | 0 < W z}
   let a : N → Set.range e → ℝ := fun z c => w c (z : ℂ) / W (z : ℂ)
   let v : N → ℂ := fun z => ∑ c ∈ F, (a z c : ℂ) * u c
-  have hactive (z : N) : ∃ i ∈ F, 0 < w i (z : ℂ) := hactive e eps S η hSf z
-  have hw_active_dist (z : N) (c : Set.range e) (hc : 0 < w c (z : ℂ)) :
-      dist (z : ℂ) (c : ℂ) < 2 * r := hw_active_dist e eps S η hSf z c hc
-  have ha_nonneg (z : N) (c : Set.range e) : 0 ≤ a z c := ha_nonneg e eps S η hSf z c
-  have hsum_a (z : N) : (∑ c ∈ F, a z c) = 1 := hsum_a e eps S η hSf z
-  have hv_close (z : N) (i : Set.range e) (hi : i ∈ F)
-      (hwi : 0 < w i (z : ℂ)) : ‖v z - u i‖ < δ := hv_close e he eps heps S δ₀ η hSf hη hδ₀ hηψ z
-          i hi hwi
-  have hunit (c : Set.range e) : ‖u c‖ = 1 := hunit e he c
-  have hv_lower (z : N) : 1 - δ < ‖v z‖ := hv_lower e he eps heps S δ₀ η hSf hη hδ₀ hηψ z
-  have hv_pos (z : N) : 0 < ‖v z‖ := hv_pos e he eps heps S δ₀ η hSf hη hδ₀ hηψ z
   let p : N → ℂ := fun z => v z / (‖v z‖ : ℂ)
   have hp_norm (z : N) : ‖p z‖ = 1 := hp_norm e he eps heps S δ₀ η hSf hη hδ₀ hηψ z
   let phiVal : N → Circle := fun z => ⟨p z, (mem_sphere_zero_iff_norm).2 (hp_norm z)⟩
-  have norm_normalize (x : ℂ) (hx : 0 < ‖x‖) :
-      ‖x / (‖x‖ : ℂ) - x‖ = |1 - ‖x‖| := norm_normalize x hx
   have hphi_near (z : N) : ∀ i ∈ F, 0 < w i (z : ℂ) →
       ‖p z - u i‖ < 2 * δ := hphi_near e he eps heps S δ₀ η hSf hη hδ₀ hηψ z
   dsimp only [ControlledNeighborhoodConstruction.N] at *
@@ -1118,18 +991,12 @@ theorem P3821T1ControlledNeighborhood (e : C(Circle, ℂ))
       · rintro ⟨z, x, rfl⟩
         exact ⟨x, rfl⟩)
   let : T2Space (Set.range e) := inferInstance
-  have hf : Continuous f := ControlledNeighborhoodConstruction.hf e he
   let ψ : Set.range e → Circle := f.symm
-  have hψc : Continuous ψ := ControlledNeighborhoodConstruction.hψc e he
-  have hψleft : Function.LeftInverse ψ (fun x : Circle => ⟨e x, ⟨x, rfl⟩⟩) :=
-      ControlledNeighborhoodConstruction.hψleft e he
   let u : Set.range e → ℂ := fun k => (ψ k : ℂ)
-  have hu : Continuous u := ControlledNeighborhoodConstruction.hu e he
   have heUC : UniformContinuous e := ControlledNeighborhoodConstruction.heUC e
   obtain ⟨δ₀, hδ₀, hδ⟩ := Metric.uniformContinuous_iff.mp heUC (eps / 2) (half_pos heps)
   let δ := min (δ₀ / 4) (1 / 8)
   have hδpos : 0 < δ := ControlledNeighborhoodConstruction.hδpos δ₀ hδ₀
-  have hδlt : δ < 1 / 4 := ControlledNeighborhoodConstruction.hδlt δ₀ hδ₀
   have hKcompact : IsCompact (Set.range e) := ControlledNeighborhoodConstruction.hKcompact e
   let : CompactSpace (Set.range e) := isCompact_iff_compactSpace.mp hKcompact
   have hψUC : UniformContinuous u := ControlledNeighborhoodConstruction.hψUC e he
@@ -1139,67 +1006,31 @@ theorem P3821T1ControlledNeighborhood (e : C(Circle, ℂ))
   have hrerr : 2 * r < eps / 2 := ControlledNeighborhoodConstruction.hrerr eps heps η hη
   have heclose : ∀ u v : Circle, dist u v < 2 * δ → dist (e u) (e v) < eps / 2 :=
       ControlledNeighborhoodConstruction.heclose e eps δ₀ hδ hδ₀
-  have hψclose : ∀ k l : Set.range e, dist k l < 4 * r →
-      dist ((ψ k : Circle) : ℂ) ((ψ l : Circle) : ℂ) < δ :=
-          ControlledNeighborhoodConstruction.hψclose e he eps heps δ₀ η hη hηψ
   have hKcompact' : IsCompact (Set.range e) := ControlledNeighborhoodConstruction.hKcompact e
   let : CompactSpace (Set.range e) := isCompact_iff_compactSpace.mp hKcompact'
   obtain ⟨S, hSsub, hSf, hcover⟩ :=
     (isCompact_univ : IsCompact (Set.univ : Set (Set.range e))).finite_cover_balls
       (X := Set.range e) hrpos
   let F : Finset (Set.range e) := hSf.toFinset
-  have hFS : (F : Set (Set.range e)) = S := ControlledNeighborhoodConstruction.hFS e S hSf
-  have hFsub : (F : Set (Set.range e)) ⊆ Set.univ := ControlledNeighborhoodConstruction.hFsub e S
-      hSf
-  have hcover' : (Set.univ : Set (Set.range e)) ⊆
-      ⋃ c ∈ (F : Set (Set.range e)), Metric.ball c r :=
-          ControlledNeighborhoodConstruction.hcover' e eps S η hSf hcover
   let w : Set.range e → ℂ → ℝ := fun c z => max 0 (2 * r - dist z (c : ℂ))
   let W : ℂ → ℝ := fun z => ∑ c ∈ F, w c z
-  have hw_cont (c : Set.range e) : Continuous (w c) := ControlledNeighborhoodConstruction.hw_cont
-      e eps η c
-  have hW_cont : Continuous W := ControlledNeighborhoodConstruction.hW_cont e eps S η hSf
   let N : Set ℂ := {z | 0 < W z}
   have hNopen : IsOpen N := ControlledNeighborhoodConstruction.hNopen e eps S η hSf
   have hKN : Set.range e ⊆ N := ControlledNeighborhoodConstruction.hKN e eps heps S η hSf hcover hη
-  have hW_N : Continuous (fun z : N => W (z : ℂ)) := ControlledNeighborhoodConstruction.hW_N e
-      eps S η hSf
   let a : N → Set.range e → ℝ := fun z c => w c (z : ℂ) / W (z : ℂ)
-  have ha_cont (c : Set.range e) : Continuous (fun z : N => a z c) :=
-      ControlledNeighborhoodConstruction.ha_cont e eps S η hSf c
   let v : N → ℂ := fun z => ∑ c ∈ F, (a z c : ℂ) * u c
-  have hv_cont : Continuous v := ControlledNeighborhoodConstruction.hv_cont e he eps S η hSf
   have hactive (z : N) : ∃ i ∈ F, 0 < w i (z : ℂ) := ControlledNeighborhoodConstruction.hactive e
       eps S η hSf z
   have hw_active_dist (z : N) (c : Set.range e) (hc : 0 < w c (z : ℂ)) :
       dist (z : ℂ) (c : ℂ) < 2 * r := ControlledNeighborhoodConstruction.hw_active_dist e eps S η
           hSf z c hc
   have hψmap (c : Set.range e) : e (ψ c) = c := ControlledNeighborhoodConstruction.hψmap e he c
-  have ha_nonneg (z : N) (c : Set.range e) : 0 ≤ a z c :=
-      ControlledNeighborhoodConstruction.ha_nonneg e eps S η hSf z c
-  have hsum_a (z : N) : (∑ c ∈ F, a z c) = 1 := ControlledNeighborhoodConstruction.hsum_a e eps S
-      η hSf z
-  have hv_close (z : N) (i : Set.range e) (hi : i ∈ F)
-      (hwi : 0 < w i (z : ℂ)) : ‖v z - u i‖ < δ := ControlledNeighborhoodConstruction.hv_close e
-          he eps heps S δ₀ η hSf hη hδ₀ hηψ z i hi hwi
-  have hunit (c : Set.range e) : ‖u c‖ = 1 := ControlledNeighborhoodConstruction.hunit e he c
-  have hv_lower (z : N) : 1 - δ < ‖v z‖ := ControlledNeighborhoodConstruction.hv_lower e he eps
-      heps S δ₀ η hSf hη hδ₀ hηψ z
-  have hv_pos (z : N) : 0 < ‖v z‖ := ControlledNeighborhoodConstruction.hv_pos e he eps heps S δ₀
-      η hSf hη hδ₀ hηψ z
   let p : N → ℂ := fun z => v z / (‖v z‖ : ℂ)
   have hp_norm (z : N) : ‖p z‖ = 1 := ControlledNeighborhoodConstruction.hp_norm e he eps heps S
       δ₀ η hSf hη hδ₀ hηψ z
   let phiVal : N → Circle := fun z => ⟨p z, (mem_sphere_zero_iff_norm).2 (hp_norm z)⟩
-  have hp_cont : Continuous p := ControlledNeighborhoodConstruction.hp_cont e he eps heps S δ₀ η
-      hSf hη hδ₀ hηψ
   have hphiVal_cont : Continuous phiVal := ControlledNeighborhoodConstruction.hphiVal_cont e he
       eps heps S δ₀ η hSf hη hδ₀ hηψ
-  have norm_normalize (x : ℂ) (hx : 0 < ‖x‖) :
-      ‖x / (‖x‖ : ℂ) - x‖ = |1 - ‖x‖| := ControlledNeighborhoodConstruction.norm_normalize x hx
-  have hphi_near (z : N) : ∀ i ∈ F, 0 < w i (z : ℂ) →
-      ‖p z - u i‖ < 2 * δ := ControlledNeighborhoodConstruction.hphi_near e he eps heps S δ₀ η
-          hSf hη hδ₀ hηψ z
   have hphi_circle_close (z : N) (i : Set.range e) (hi : i ∈ F)
       (hwi : 0 < w i (z : ℂ)) : dist (phiVal z) (ψ i) < 2 * δ :=
           ControlledNeighborhoodConstruction.hphi_circle_close e he eps heps S δ₀ η hSf hη hδ₀

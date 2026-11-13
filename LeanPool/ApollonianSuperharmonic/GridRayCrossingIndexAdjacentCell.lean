@@ -33,16 +33,6 @@ private theorem open_edges_no_reverse {α : Type}
   rw [List.mem_iff_getElem] at huv hvu
   rcases huv with ⟨i, hi, huv⟩
   rcases hvu with ⟨j, hj, hvu⟩
-  have hi' : i < p.tail.length := by
-    simpa [List.length_zip] using hi
-  have hj' : j < p.tail.length := by
-    simpa [List.length_zip] using hj
-  have hip : i + 1 < p.length := by
-    simp only [List.length_tail] at hi'
-    omega
-  have hjp : j + 1 < p.length := by
-    simp only [List.length_tail] at hj'
-    omega
   rw [List.getElem_zip, List.getElem_tail] at huv hvu
   injection huv with huv₁ huv₂
   injection hvu with hvu₁ hvu₂
@@ -58,11 +48,6 @@ private theorem open_head_last_not_edge {α : Type}
   intro hxy
   rw [List.mem_iff_getElem] at hxy
   rcases hxy with ⟨i, hi, hxy⟩
-  have hi' : i < p.tail.length := by
-    simpa [List.length_zip] using hi
-  have hip : i + 1 < p.length := by
-    simp only [List.length_tail] at hi'
-    omega
   rw [List.getElem_zip, List.getElem_tail] at hxy
   injection hxy with hix hiy
   have hpne : p ≠ [] := by
@@ -109,7 +94,7 @@ private theorem cyclic_edges_no_reverse {α : Type}
     · exact hxy h.1
 private theorem open_last_head_not_edge {α : Type}
     {p : List α} (hp : p.Nodup) (hlen : 2 ≤ p.length) {x y : α}
-    (hhead : p.head? = some x) (hlast : p.getLast? = some y) :
+    (hlast : p.getLast? = some y) :
     (y, x) ∉ p.zip p.tail := by
   intro hyx
   rw [List.mem_iff_getElem] at hyx
@@ -124,10 +109,6 @@ private theorem open_last_head_not_edge {α : Type}
   have hpne : p ≠ [] := by
     intro hp0
     simp [hp0] at hlen
-  have hzero : 0 < p.length := by omega
-  have hx0 : p[0] = x := by
-    rw [← List.head_eq_getElem hpne]
-    simpa [List.head?_eq_some_head hpne] using hhead
   have hyLast : p[p.length - 1] = y := by
     rw [← List.getLast_eq_getElem hpne]
     rw [List.getLast?_eq_getLast_of_ne_nil hpne] at hlast
@@ -145,13 +126,13 @@ private theorem open_edges_nodup {α : Type}
   exact (hp.getElem_inj_iff).mp hfirst
 private theorem cyclic_edge_list_nodup {α : Type}
     {p : List α} (hp : p.Nodup) (hlen : 3 ≤ p.length) {x y : α}
-    (hhead : p.head? = some x) (hlast : p.getLast? = some y) :
+    (hlast : p.getLast? = some y) :
     ((p.zip p.tail) ++ [(y, x)]).Nodup := by
   rw [List.nodup_append]
   refine ⟨open_edges_nodup hp, by simp, ?_⟩
   intro a ha b hb hab
   have hbEq : b = (y, x) := by simpa using hb
-  apply open_last_head_not_edge hp (by omega) hhead hlast
+  apply open_last_head_not_edge hp (by omega) hlast
   rw [← hbEq, ← hab]
   exact ha
 private theorem signed_target_sum_formula {α : Type} [DecidableEq α]
@@ -349,7 +330,7 @@ theorem GridRayCrossingIndexAdjacentCell
   dsimp only
   intro q
   let edges := (p.zip p.tail) ++ [(y, x)]
-  have hedges : edges.Nodup := cyclic_edge_list_nodup hnodup hlen hhead hlast
+  have hedges : edges.Nodup := cyclic_edge_list_nodup hnodup hlen hlast
   have edge_adj : ∀ a b, (a, b) ∈ p.zip p.tail ∨ (a = y ∧ b = x) →
       FourNeighborAdjacent a b := by
     intro a b hab

@@ -160,11 +160,6 @@ theorem CurvatureOnePeriodicOdometer (C : BandCircle)
   have circle_formula : CircleMatrix C =
       ![![((1 + z.re : ℤ) : ℝ), (z.im : ℝ)],
         ![(z.im : ℝ), (-z.re : ℝ)]] := CurvatureOneProof.circle_formula C z hradius hcenter
-  have triangular_real (a b : ℤ) :
-      (((a + b) * (a + b - 1) / 2 : ℤ) : ℝ) =
-        ((a * (a - 1) / 2 : ℤ) : ℝ) +
-          ((b * (b - 1) / 2 : ℤ) : ℝ) + (a * b : ℝ) := by
-    exact_mod_cast triangular a b
   have linear_difference (x : GaussianInt) :
       (g x : ℝ) - LatticeQuadraticForm (CircleMatrix C) x =
         (-(1 + (z.re : ℝ)) / 2) * x.re + ((z.re : ℝ) / 2) * x.im :=
@@ -218,7 +213,6 @@ theorem CurvatureOnePeriodicOdometer (C : BandCircle)
       let K : ℝ := |α| ^ 2 + |β| ^ 2
       refine ⟨(2 * K / ε ^ 2) + 1, ?_⟩
       intro x hx
-      have hx0 : 0 ≤ (x.re : ℝ) ^ 2 + (x.im : ℝ) ^ 2 := by positivity
       have ha : |α * (x.re : ℝ)| ≤ ε / 4 * (x.re : ℝ) ^ 2 + |α| ^ 2 / ε := by
         have heq : ε / 4 * (x.re : ℝ) ^ 2 + |α| ^ 2 / ε =
             (ε ^ 2 * (x.re : ℝ) ^ 2 / 4 + |α| ^ 2) / ε := by field_simp
@@ -245,8 +239,6 @@ theorem CurvatureOnePeriodicOdometer (C : BandCircle)
               (ε / 4 * (x.im : ℝ) ^ 2 + |β| ^ 2 / ε) := add_le_add ha hb
           _ = _ := by dsimp [K]; ring
       rw [difference]
-      have hrel : ε ^ 2 * (K / ε ^ 2) = K := by field_simp
-      have hrel2 : ε * (K / ε) = K := by field_simp
       have hbound : K / ε ≤ ε * ((x.re : ℝ) ^ 2 + (x.im : ℝ) ^ 2) / 2 := by
         have hK : 0 ≤ K := by dsimp [K]; positivity
         have hmul := mul_le_mul_of_nonneg_right hx (by positivity : 0 ≤ ε / 2)
@@ -274,8 +266,6 @@ theorem CurvatureOnePeriodicOdometer (C : BandCircle)
       ring_nf
       omega
   · intro v hv
-    have hvtop : v ∈ (⊤ : AddSubgroup GaussianInt) := by
-      trivial
     have hlat : TilingLattice C = ⊤ := by
       simp [TilingLattice, hcoord]
     rw [hlat] at hv

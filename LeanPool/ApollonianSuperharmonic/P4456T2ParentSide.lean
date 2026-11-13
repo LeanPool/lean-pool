@@ -56,8 +56,6 @@ theorem P4456T2ParentSide (T U : ProtoTile)
         (hfc : f ∈ FootprintEdges (⟨{c}, c⟩ : ProtoTile))
         (hfd : f ∈ FootprintEdges (⟨{d}, d⟩ : ProtoTile))
         (hfeq : f = {x, y}) (hlabels : side c ≠ side d) : False := by
-      have hf : f ∈ FootprintEdges (⟨{c}, c⟩ : ProtoTile) ∩
-          FootprintEdges (⟨{d}, d⟩ : ProtoTile) := ⟨hfc, hfd⟩
       have hab : {x, y} ∈ FootprintEdges (⟨{c}, c⟩ : ProtoTile) := by
         rw [← hfeq]
         exact hfc

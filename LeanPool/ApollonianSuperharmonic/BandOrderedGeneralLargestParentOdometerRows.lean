@@ -1634,15 +1634,8 @@ private theorem positiveLargestCase :
   let cOff (z : GaussianInt) : Real × Real :=
     (1 / 2 : Real) • (GaussianRealPoint z -
       (-(GaussianRealPoint z).2, (GaussianRealPoint z).1))
-  let sOff (z : GaussianInt) : Real × Real :=
-    (1 / 2 : Real) •
-      (((z.re : Int) : Real) - ((z.im : Int) : Real),
-        ((z.im : Int) : Real) + ((z.re : Int) : Real))
   let I : GaussianInt := ⟨0, 1⟩
-  let U : GaussianInt := BandVectors.1 (q 2) (q 1)
   let W : GaussianInt := BandVectors.1 (q 3) (q 2)
-  let A : GaussianInt := BandVectors.2 (q 2) (q 1)
-  let B : GaussianInt := BandVectors.2 (q 3) (q 2)
   let C₂ : BandCircle := ⟨⟨q 2,
     ⟨Or.inl hpos2, q, cfg.proper.1, ⟨2, rfl⟩⟩⟩, hpos2⟩
   let C₃ : BandCircle := ⟨⟨q 3,
@@ -1650,12 +1643,8 @@ private theorem positiveLargestCase :
   rcases positiveRow with ⟨left_mem, right_mem, star, companion, rfl⟩
   have bq : BandPrototile (cfg.firstPredecessor 2) (Q 1 true) :=
     band_of_odo _ _ _ (data.hQ 1 true)
-  have bs : BandPrototile (cfg.firstPredecessor 3) (S 2 false) :=
-    band_of_odo _ _ _ (data.hS 2 false)
   have bp : BandPrototile (q 2) (P 1 true) := by
     simpa [cfg.firstParentTwo] using band_of_odo _ _ _ (data.hP 1 true)
-  have hc := data.hQcent 1 true
-  have hs := data.hScent 2 false
   have hQleaf := LargestParentOdometerGeometry.hQleafAt284 q cfg C0 T cert h P r Q S u v g data
   have hSleaf := LargestParentOdometerGeometry.hSleafAt293 q cfg C0 T cert h P r Q S u v g data
   have hQleafOff := LargestParentOdometerGeometry.hQleafOffAt302 q cfg P Q hQleaf
@@ -1836,28 +1825,17 @@ private theorem reflectedLargestCase :
   let cOff (z : GaussianInt) : Real × Real :=
     (1 / 2 : Real) • (GaussianRealPoint z -
       (-(GaussianRealPoint z).2, (GaussianRealPoint z).1))
-  let sOff (z : GaussianInt) : Real × Real :=
-    (1 / 2 : Real) •
-      (((z.re : Int) : Real) - ((z.im : Int) : Real),
-        ((z.im : Int) : Real) + ((z.re : Int) : Real))
   let I : GaussianInt := ⟨0, 1⟩
-  let U : GaussianInt := BandVectors.1 (q 2) (q 1)
   let W : GaussianInt := BandVectors.1 (q 3) (q 2)
-  let A : GaussianInt := BandVectors.2 (q 2) (q 1)
-  let B : GaussianInt := BandVectors.2 (q 3) (q 2)
   let C₂ : BandCircle := ⟨⟨q 2,
     ⟨Or.inl hpos2, q, cfg.proper.1, ⟨2, rfl⟩⟩⟩, hpos2⟩
   let C₃ : BandCircle := ⟨⟨q 3,
     ⟨Or.inl hpos3, q, cfg.proper.1, ⟨3, rfl⟩⟩⟩, hpos3⟩
   rcases reflectedRow with ⟨left_mem, right_mem, star, companion, rfl⟩
-  have bq : BandPrototile (cfg.firstPredecessor 3) (Q 2 true) :=
-    band_of_odo _ _ _ (data.hQ 2 true)
   have bs : BandPrototile (cfg.firstPredecessor 2) (S 1 false) :=
     band_of_odo _ _ _ (data.hS 1 false)
   have bp : BandPrototile (q 2) (P 1 false) := by
     simpa [cfg.firstParentTwo] using band_of_odo _ _ _ (data.hP 1 false)
-  have hc := data.hQcent 2 true
-  have hs := data.hScent 1 false
   have hQleaf := LargestParentOdometerGeometry.hQleafAt647 q cfg C0 T cert h P r Q S u v g data
   have hSleaf := LargestParentOdometerGeometry.hSleafAt656 q cfg C0 T cert h P r Q S u v g data
   have hQleafOff := LargestParentOdometerGeometry.hQleafOffAt665 q cfg P Q hQleaf
@@ -2018,18 +1996,6 @@ theorem BandOrderedGeneralLargestParentOdometerRows
 -- BODY
   classical
   have band_of_odo := TileOdometerBandPrototile
-  let cOff (z : GaussianInt) : Real × Real :=
-    (1 / 2 : Real) • (GaussianRealPoint z -
-      (-(GaussianRealPoint z).2, (GaussianRealPoint z).1))
-  let sOff (z : GaussianInt) : Real × Real :=
-    (1 / 2 : Real) •
-      (((z.re : Int) : Real) - ((z.im : Int) : Real),
-        ((z.im : Int) : Real) + ((z.re : Int) : Real))
-  let I : GaussianInt := ⟨0, 1⟩
-  let U : GaussianInt := BandVectors.1 (q 2) (q 1)
-  let W : GaussianInt := BandVectors.1 (q 3) (q 2)
-  let A : GaussianInt := BandVectors.2 (q 2) (q 1)
-  let B : GaussianInt := BandVectors.2 (q 3) (q 2)
   have v21 := LargestParentOdometerGeometry.v21 q cfg (LargestParentOdometerGeometry.firstRotateV
       q cfg)
   have a21 := LargestParentOdometerGeometry.a21 q cfg (LargestParentOdometerGeometry.firstRotateA
@@ -2040,10 +2006,6 @@ theorem BandOrderedGeneralLargestParentOdometerRows
   have slopeAlgebra := LargestParentOdometerGeometry.slopeAlgebra q
   have hpos2 := LargestParentOdometerGeometry.hpos2 q cfg
   have hpos3 := LargestParentOdometerGeometry.hpos3 q cfg
-  let C₂ : BandCircle := ⟨⟨q 2,
-    ⟨Or.inl hpos2, q, cfg.proper.1, ⟨2, rfl⟩⟩⟩, hpos2⟩
-  let C₃ : BandCircle := ⟨⟨q 3,
-    ⟨Or.inl hpos3, q, cfg.proper.1, ⟨3, rfl⟩⟩⟩, hpos3⟩
   rcases largest with leftCase | rightCase
   · have positiveRow :
       (exists

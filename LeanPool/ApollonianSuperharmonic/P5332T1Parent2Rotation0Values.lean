@@ -163,7 +163,6 @@ private theorem values :
     simpa only [hy] using hp
   · simp only [Int.reduceNeg, Nat.succ_eq_add_one, Nat.reduceAdd, Fin.reduceFinMk,
       Matrix.cons_val, Zsqrtd.add_def, add_zero, Fin.isValue]
-    have northArg : (⟨0,Y⟩ : GaussianInt) + ⟨0,1⟩ = ⟨0,Y+1⟩ := by ext <;> simp
     have hh := hbase ⟨0,Y+1⟩ (by
       change (0 : Int) ≤ 0 ∧ 0 ≤ (P.q : Int) ∧ 0 ≤ Y+1 ∧ Y+1 ≤ (P.q : Int)
       omega)
@@ -171,7 +170,6 @@ private theorem values :
     simp [P5332T1ParentRows]
   · simp only [Int.reduceNeg, Nat.succ_eq_add_one, Nat.reduceAdd, Fin.reduceFinMk,
       Matrix.cons_val, Fin.isValue]
-    have southArg : (⟨0,Y⟩ : GaussianInt) - ⟨0,1⟩ = ⟨0,Y-1⟩ := by ext <;> simp
     have southPlus : (⟨0,Y⟩ : GaussianInt) + (-⟨0,1⟩) = ⟨0,Y-1⟩ := by
       ext <;> simp; ring
     rw [southPlus]
@@ -201,8 +199,6 @@ private theorem companion :
     rw [hcomp] at h
     simp only [FordVertexDomain, Set.mem_ofPred_eq, Zsqrtd.re_sub,
       Zsqrtd.im_sub] at h
-    have hy : Y ≥ 0 := hx0.2.2.1
-    have hqnat : (P.q : Int) = (P.q₁ : Int)+(P.q₂ : Int) := qsum
     omega
   · rintro ⟨_, he⟩
     exact (hn he).elim
@@ -236,14 +232,7 @@ theorem P5332T1Parent2Rotation0Values (P A : FordFareyParameter) (hq : 1 < P.q)
   have qsum : (P.q : Int) = (P.q₁ : Int) + (P.q₂ : Int) := by exact_mod_cast P.sum_q
   have rpos : 0 < (P.q₁ : Int) := Parent2Rotation0Proof.rpos P hq hq'
   have spos : 0 < (P.q₂ : Int) := by exact_mod_cast P.q₂_pos
-  have rlt : (P.q₁ : Int) < P.q := by exact_mod_cast P.q₁_lt
-  have slt : (P.q₂ : Int) < P.q := by omega
-  have hqn : (P.q : Int) ≠ 0 := by omega
   have hsn : (P.q₂ : Int) ≠ 0 := by omega
-  have hdet : P.p₂ * (P.q : Int) - (P.q₂ : Int) * P.p = -1 := P.det₂
-  have hsumP : P.p = P.p₁ + P.p₂ := P.sum_p
-  have hcross : P.p₁ * (P.q₂ : Int) - P.p₂ * (P.q₁ : Int) = 1 := by
-    nlinarith [P.det₁, P.det₂, P.sum_q, P.sum_p]
   have laws := (Classical.choose_spec FordOdometerFamilyExistsUnique).1
   change (∀ P x, P.q = 1 → FordOdometer P x = _) ∧
     (∀ P x, x ∈ FordDoubledBoundary P.q → FordOdometer P x = _) ∧ _ at laws
@@ -290,13 +279,6 @@ theorem P5332T1Parent2Rotation0Values (P A : FordFareyParameter) (hq : 1 < P.q)
       FordOdometer P ⟨0,v⟩ = 0 := by
     rw [boundary P 0 v (by omega) (by omega) hv hvq (by omega)]
     simp [IntegerCeilDiv]
-  have valRight (v : Int) (hv : 0 ≤ v) (hvq : v ≤ P.q) :
-      FordOdometer P ⟨(P.q : Int),v⟩ = P.p*v := by
-    rw [boundary P P.q v (by omega) (by omega) hv hvq (by omega)]
-    unfold IntegerCeilDiv
-    rw [show -(P.p*(P.q : Int)*v) = -(P.p*v)*(P.q : Int) by ring,
-      Int.mul_ediv_cancel _ hqn]
-    ring
   have valChildEast (v : Int) (hv : 0 ≤ v) (hvq : v ≤ P.q) :
       FordOdometer P ⟨1,v⟩ = IntegerCeilDiv (P.p*v) P.q (by exact_mod_cast P.q_pos.ne') := by
     rw [boundary P 1 v (by omega) (by omega) hv hvq (by omega)]

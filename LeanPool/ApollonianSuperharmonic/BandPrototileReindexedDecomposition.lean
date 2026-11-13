@@ -53,10 +53,7 @@ theorem BandPrototileReindexedDecomposition (q : Fin 4 → CircleCoordinates)
         · simpa using hp.2 1
     | @successor r hr ih =>
         intro h hp
-        have a := nonnegative r hr 0
         have b := nonnegative r hr 1
-        have c := nonnegative r hr 2
-        have d := nonnegative r hr 3
         have h1 := hp.2 0
         have h2 := hp.2 1
         have h3 := hp.2 2

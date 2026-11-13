@@ -687,8 +687,6 @@ theorem P4418T3NestedCompanionEndpoint
   let V := occ z.childIndex
   let W := occ z.parentIndex
   let K := TileTranslation V z.rightShift
-  let G₀ := occ (P4418T3EndpointOwnerIndices q cfg C T cert a b row).1
-  let G₁ := occ (P4418T3EndpointOwnerIndices q cfg C T cert a b row).2
   obtain ⟨_, _, _, _, _, _, hindices, _, _⟩ :=
     P3996T1SRowAlignment q cfg C T cert a b row z hz
   have hpath := NestedCompanionGeometry.hpath q cfg C T cert a b z E hindices

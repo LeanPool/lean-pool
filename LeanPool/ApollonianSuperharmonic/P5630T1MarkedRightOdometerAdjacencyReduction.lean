@@ -911,7 +911,6 @@ theorem P5630T1MarkedRightOdometerAdjacencyReduction :
                   else BandVectors.1 (q i.succ) (q 0)))))) := by
 -- BODY
   intro C T T₀ h h₀ x horbit hadj hx hx₀ hstar
-  have inversePhase := BandPackingSymmetryInversePhaseCancellation
   have markedData := BandPackingSymmetryMarkedDataCovariance
   obtain ⟨bundle, rightPlacement, hrightPlacement⟩ :=
     BandOrderedGeneralRightNormalizedBundleExists
@@ -926,9 +925,6 @@ theorem P5630T1MarkedRightOdometerAdjacencyReduction :
       rightPlacement.exterior_routed_cell rightPlacement.central_routed_cell
       rightPlacement.selected_star
   obtain ⟨row⟩ := selectedRow
-  have rightGeometry := BandOrderedGeneralRightSelectedRowGeometry
-    C C T T₀ h h₀ x bundle rightPlacement selectedEdge
-    hxSelectedEdge hselectedEdge row
   have selectedAdjacency := BandOrderedGeneralRightSelectedAdjacency
     C C T T₀ h h₀ x bundle rightPlacement selectedEdge
     hxSelectedEdge hselectedEdge row
@@ -1026,11 +1022,6 @@ theorem P5630T1MarkedRightOdometerAdjacencyReduction :
       ginv hnorm actionCurvature hinverseProper hinversePositive hinverseCircle
   have hcoverOriginal := MarkedRightAdjacencyGeometry.hcoverOriginal C T T₀ h h₀ x markedData
       bundle (MarkedRightAdjacencyGeometry.coverShape)
-  let oldRight := TileTranslation bundle.normalizedFixed
-    ((if rightPlacement.rightNeighborPositive = true then (-1 : GaussianInt)
-      else 1) *
-      BandVectors.1 (bundle.normalizedPresentation 0)
-        (bundle.normalizedPresentation bundle.selectedSlot.succ))
   have hcompanionCov :=
     markedData.2.2 ginv bundle.normalizedPresentation hq
       bundle.selectedSlot s delta hphaseInv bundle.normalizedFixed

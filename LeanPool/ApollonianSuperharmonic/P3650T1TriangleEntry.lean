@@ -226,7 +226,6 @@ private theorem hreach :
   obtain ⟨m, hmI, hmmax⟩ :=
     hIcompact.exists_isMaxOn ⟨t, htI⟩ continuous_id.continuousOn
   have htm : t ≤ m := hmmax htI
-  have hmpos : 0 < m := ht0.trans_le htm
   have hmheight : 0 < E.height (q m) := by
     have hhwle : E.height w ≤ E.height (q m) := by
       rw [← htq, hhq, hhq]

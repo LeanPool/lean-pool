@@ -39,7 +39,6 @@ theorem OppositeRoutedCommonEdgeOutsideCellUnique
       LatticeVertexIncidentCell x s ∉ F.cells →
       LatticeVertexIncidentCell x r = LatticeVertexIncidentCell x s := by
 -- BODY
-  let I : GaussianInt := ⟨0, 1⟩
   obtain ⟨a, _, ha⟩ :=
     P3102T2CommonEdgeSectorTransition E F x edge hdisjoint hx hedge
   have ha0 : LatticeVertexIncidentCell x a ∈ E.cells ∨

@@ -1027,10 +1027,6 @@ private theorem hcoord0j :
             0 (p.vertex j) = 1 - z0))) ) := by
   classical
   intro n p E a b c v hind hspan A j hposj hα0 z0 hsum0
-  have hh : A.coord 0 (p.vertex j) + z0 = 1 := by
-    dsimp [z0] at *
-    rw [hα0] at hsum0
-    simpa only [add_zero] using hsum0
   linarith
 
 private theorem hcoord01 :
@@ -1051,10 +1047,6 @@ private theorem hcoord01 :
             1)) = 1) → (A.coord 0 (p.vertex (j + 1)) = 1 - z1))) ) := by
   classical
   intro n p E a b c v hind hspan A j hposnext hβ0 z1 hsum1
-  have hh : A.coord 0 (p.vertex (j + 1)) + z1 = 1 := by
-    dsimp [z1] at *
-    rw [hβ0] at hsum1
-    simpa only [add_zero] using hsum1
   linarith
 
 private theorem hnotIoo0 :
@@ -1940,10 +1932,8 @@ private theorem hbaseAvoid :
         simpa [z0, z1] using hline 2 s
       have hzt : (1 - t) * z0 + t * z1 = A.coord 2 x := TriangleDiagonalGeometry.hzt n p E hind
           hspan x j t hqtq hline2
-      have hzpos : 0 < (1 - t) * z0 + t * z1 := by rw [hzt]; exact hxb.2.2
       have hxsum : A.coord 0 x + A.coord 1 x + A.coord 2 x = 1 := by
         simpa only [Fin.sum_univ_three] using A.sum_coord_apply_eq_one x
-      have hzlt := TriangleDiagonalGeometry.hzlt n p E hind hspan x hxb hxsum
       have hstraddle := TriangleDiagonalGeometry.hstraddle n p E hind hspan x j hxb t ht' hzt
           (TriangleDiagonalGeometry.hz0case n p E hind hspan j
           (TriangleDiagonalGeometry.hnotIoo0 n p E hempty hind hspan hmem hcoordA hcoordB
@@ -2005,9 +1995,6 @@ theorem P3650T1EmptyTriangleDiagonal {n : Nat} (p : P3381T1PolygonBoundary n)
   have hind := TriangleDiagonalGeometry.hind n p E hdet
   have hspan := TriangleDiagonalGeometry.hspan n p E hind
   let A : AffineBasis (Fin 3) Real (Real × Real) := ⟨triangleVertices, hind, hspan⟩
-  have hA0 : A 0 = a := rfl
-  have hA1 : A 1 = b := rfl
-  have hA2 : A 2 = c := rfl
   have hheight : E.height = A.coord 1 := TriangleDiagonalGeometry.hheight n p E hind hspan
   let T := convexHull Real ({a, b, c} : Set (Real × Real))
   have hrange := TriangleDiagonalGeometry.hrangeAt179 n p E hind hspan
@@ -2015,7 +2002,6 @@ theorem P3650T1EmptyTriangleDiagonal {n : Nat} (p : P3381T1PolygonBoundary n)
       hspan hrange
   have hint := TriangleDiagonalGeometry.hint n p E
       hind hspan hrange
-  have hbase := TriangleDiagonalGeometry.hbase n p E
   have hheightcoord (x : Real × Real) : E.height x = A.coord 1 x := by
     rw [hheight]
   have hvertexSide (i j : Fin (n + 3)) := TriangleDiagonalGeometry.hvertexSide n p i j
@@ -2027,7 +2013,6 @@ theorem P3650T1EmptyTriangleDiagonal {n : Nat} (p : P3381T1PolygonBoundary n)
           hind hspan x hx hxs
   have habdist := TriangleDiagonalGeometry.habdist n p E (TriangleDiagonalGeometry.hacOuter n p E
       hdet)
-  have hbcOuter := TriangleDiagonalGeometry.hbcOuter n p E
   have habNext := TriangleDiagonalGeometry.habNext n p E
   have hcaNext := TriangleDiagonalGeometry.hcaNext n p hn E
   have hintAvoid := TriangleDiagonalGeometry.hintAvoid n p E hentry hempty hind hspan hint
@@ -2039,7 +2024,6 @@ theorem P3650T1EmptyTriangleDiagonal {n : Nat} (p : P3381T1PolygonBoundary n)
   have hbaseAvoid := TriangleBaseAvoidance.hbaseAvoid n p E hempty hind hspan hmem hint
       hvertexSide hleftFace hrightFace habdist habNext hcaNext hintAvoid hcoordA hcoordB hcoordC
   let O := P3544T1RayParity p
-  let C := P3544T1BoundaryCarrier p
   obtain ⟨rcone, hrcone, hcone⟩ := E.cone_odd
   let m : Real × Real := AffineMap.lineMap a c (1 / 2 : Real)
   let q : Real → Real × Real := fun t => AffineMap.lineMap b m t

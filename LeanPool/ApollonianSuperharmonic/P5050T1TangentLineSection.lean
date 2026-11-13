@@ -450,12 +450,6 @@ theorem P5050T1TangentLineSection (h σ : ℝ) (a b : ℂ) (r s : ℝ)
           rw [hperm]
           exact hsub
         exact convexHull_mono hs hzTwo
-  have hσsqOuter : σ * σ = 1 := by nlinarith [hσ]
-  have hσmulOuter : ∀ x : ℝ, σ * (σ * x) = x := by
-    intro x
-    calc
-      σ * (σ * x) = (σ * σ) * x := by ring
-      _ = x := by rw [hσsqOuter]; ring
   have absSigned (y t : ℝ) (ht : 0 < t) (hy : σ * (y - h) = t) :
       |y - h| = t := by
     have hh := congrArg (fun x : ℝ => x ^ 2) hy

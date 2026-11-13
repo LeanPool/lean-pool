@@ -85,7 +85,6 @@ private theorem hstarFace :
       have hdis := (P3767T1FixedFaceComponents P.plane).1 f |>.1
       exact fun h => (Set.disjoint_left.mp hdis) (Or.inl ⟨a, rfl⟩) h
     have hfr : P.plane.position a ∈ frontier (P.plane.faceRegion f) := by
-      have hopen := P.plane.region_open f
       have hcl : P.plane.position a ∈ closure (P.plane.faceRegion f) := hxf
       rw [frontier, (P.plane.region_open f).interior_eq]
       exact ⟨hcl, hnotreg⟩

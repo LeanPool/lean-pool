@@ -570,13 +570,9 @@ theorem TileT2QuarterTurn (q : Fin 4 → CircleCoordinates)
     QuarterTurnSymmetricCenteredTransport ring hRing
   let turn (x : GaussianInt) : GaussianInt :=
     ⟨-x.im - 1 + u.re, x.re + u.im⟩
-  let back (x : GaussianInt) : GaussianInt :=
-    ⟨x.im - u.im, -x.re - 1 + u.re⟩
   have turn_back (x : GaussianInt) := QuarterTurnTileGeometry.turn_back u x
   have back_turn (x : GaussianInt) := QuarterTurnTileGeometry.back_turn u x
   have hRingImage := QuarterTurnTileGeometry.hRingImage ring u hRingCells
-  have turn_add (x d : GaussianInt) := QuarterTurnTileGeometry.turn_add u x d
-  have back_add (x d : GaussianInt) := QuarterTurnTileGeometry.back_add u x d
   dsimp [UniqueBoundedGridComplementComponent] at hUnique
   let gridConnected := fun S : Set GaussianInt =>
     S.Nonempty ∧ ∀ x ∈ S, ∀ y ∈ S, ∃ p : List GaussianInt,
@@ -616,14 +612,11 @@ theorem TileT2QuarterTurn (q : Fin 4 → CircleCoordinates)
       (-(p.2) + (u.re : Real), p.1 + (u.im : Real))
     have hreal := QuarterTurnTileGeometry.hreal T u hCells
     have hset := QuarterTurnTileGeometry.hset T u hreal
-    let unrotate (p : Real × Real) : Real × Real :=
-      (p.2 - (u.im : Real), -p.1 + (u.re : Real))
     have hrotate (p : Real × Real) :
         rotate p = ((TileCentroid T).1 - (p.2 - (TileCentroid T).2),
           (TileCentroid T).2 + (p.1 - (TileCentroid T).1)) := QuarterTurnTileGeometry.hrotate T u
               hu_re hu_im p
     have hleft (p : Real × Real) := QuarterTurnTileGeometry.hleft u p
-    have hright (p : Real × Real) := QuarterTurnTileGeometry.hright u p
     have hforward (p : Real × Real) (hp : p ∈ TileRealization T) :=
         QuarterTurnTileGeometry.hforward T u hset p hp
     have hback (p : Real × Real) (hp : p ∈ TileRealization T) := QuarterTurnTileGeometry.hback T

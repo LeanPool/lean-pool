@@ -1071,7 +1071,6 @@ private theorem hnonunit :
   have hcurv := ProperBandCurvatureStructure t ht
   have hrootlarge : 1 < (t 0).1 := by
     by_contra hn
-    have hrootle : (t 0).1 ≤ 1 := by omega
     have hzeros : ∀ k : Fin 3, (t k.succ).1 = 0 := by
       intro k
       have hnonneg := hcurv.2.1 k
@@ -3545,7 +3544,6 @@ private theorem recursiveParentCase :
         (-(GaussianRealPoint x).2, (GaussianRealPoint x).1)) :=
             SecondNewerRowsGeometry.hAoccAt816 C orientation base Rminus Rplus hminus hplus F
             D a p hqB hqD hr1 hr3
-  let pRot : Fin 4 → CircleCoordinates := ![p 0, p 3, p 1, p 2]
   have hpRot := SecondNewerRowsGeometry.hpRot p hp
   have hRotV := SecondNewerRowsGeometry.hRotV p hpRot
   have hRotA := SecondNewerRowsGeometry.hRotA p hpRot
@@ -3577,14 +3575,6 @@ private theorem recursiveParentCase :
   have toRealIm (z : GaussianInt) :
       (GaussianInt.toComplex z).im = (z.im : ℝ) :=
     (GaussianInt.intCast_im z).symm
-  have hrecVC := SecondNewerRowsGeometry.hrecVC C orientation base Rminus Rplus hminus hplus
-      F hvrec
-  have hflipVC := SecondNewerRowsGeometry.hflipVC C orientation base Rminus Rplus hminus
-      hplus F hvflip
-  have hRotVC := SecondNewerRowsGeometry.hRotVC p hRotV
-  have hyRotC : GaussianInt.toComplex y =
-      GaussianInt.toComplex (BandVectors.1 (p 0) (p 3)) :=
-    congrArg GaussianInt.toComplex hyRot
   have hleftAminus := SecondNewerRowsGeometry.hleftAminus C orientation base Rminus Rplus
       hminus hplus F D a p hMcenter hAocc hRotVReR hRotVImR hrecVReR hrecVImR hflipVReR
       hflipVImR hyRot

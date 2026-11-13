@@ -545,18 +545,6 @@ private theorem hno :
   have hpw : (w - 1) + 1 = w := by simp
   have hsw := s.successor (w - 1)
   rw [hpw] at hsw
-  have hsamew : s.edge (w - 1) = s.edge w := by
-    rcases hsw with h | h
-    · exact h.1.symm
-    · exact False.elim (hparamw h.2)
-  have hneW : w - 1 ≠ s.start (s.edge w + 1) := by
-    intro heqW
-    have hed := congrArg s.edge heqW
-    rw [hsamew, s.edge_start] at hed
-    have hone : (1 : Fin (r + 3)) = 0 := add_left_cancel
-      (show s.edge w + 1 = s.edge w + 0 by simp at hed)
-    have hvone := congrArg Fin.val hone
-    norm_num at hvone
   have horient := pairCases hne hpair
   rcases horient with ⟨hleft, hright⟩ | ⟨hleft, hright⟩
   · have hwj : w = j := by
@@ -584,7 +572,6 @@ private theorem hno :
           have hwleft : z.1 = w - 1 := congrArg Prod.fst hztuple.symm
           rw [← hwleft, hright]
     let b := s.start (s.edge j + 1)
-    have hparamb : s.parameter b = 0 := s.parameter_start (s.edge j + 1)
     have hsb := s.successor b
     have hbnext : s.edge b = s.edge j + 1 := s.edge_start _
     have hsameb : s.edge (b + 1) = s.edge b := by
@@ -761,9 +748,6 @@ private theorem boundaryCardUpdate :
   have had : a ≠ d := by
     intro h
     exact hd (h ▸ ha)
-  have hbd : b ≠ d := by
-    intro h
-    exact hd (h ▸ hb)
   have hnewA : ({a, d} : Finset (Fin (n + 3))) ∉ B := by
     intro hmem
     have hdmem : d ∈ ({a, d} : Finset (Fin (n + 3))) := by simp
@@ -793,7 +777,6 @@ private theorem boundaryCardUpdate :
     Finset.card_insert_of_notMem hnewBErase,
     Finset.card_erase_of_mem herase]
   have hcardpos : 0 < B.card := Finset.card_pos.mpr ⟨{a, b}, herase⟩
-  have hcardpos' : 1 ≤ B.card := hcardpos
   omega
 
 private theorem hstate :
@@ -1430,15 +1413,6 @@ private theorem hboundary :
     dsimp [initialBoundary, initialVertices]
     rw [Finset.card_image_of_injective _ boundaryEdgeInj,
       Finset.card_image_of_injective _ s.start_injective]
-  have hinitEndpoints : ∀ P ∈ initialBoundary, ∀ x ∈ P, x ∈ initialVertices := by
-    intro P hP x hx
-    rcases Finset.mem_image.mp hP with ⟨i, -, rfl⟩
-    simp only [Finset.mem_insert, Finset.mem_singleton] at hx
-    rcases hx with hx | hx
-    · subst x
-      exact Finset.mem_image.mpr ⟨i, Finset.mem_univ _, rfl⟩
-    · subst x
-      exact Finset.mem_image.mpr ⟨i + 1, Finset.mem_univ _, rfl⟩
   have pairEq {a b c d : Fin (n + 3)} (hac : a = c) (hbd : b = d) :
       ({a, b} : Finset (Fin (n + 3))) = {c, d} := by
     ext z
@@ -1492,15 +1466,6 @@ private theorem hboundary :
   have memStep (j : Fin (n + 3)) (hj : s.parameter j ≠ 0) :
       (j - 1, j, s.start (s.edge j + 1)) ∈ c.steps := OrderedInsertionGeometry.memStep r n q
           p s X K t hshiftImage j hj
-  have offsetNe (a : Fin (r + 3)) (k : Nat) (hk : k < r + 3)
-      (hkpos : 0 < k) : a + (k : Fin (r + 3)) ≠ a := by
-    intro heq
-    have hkfin : (k : Fin (r + 3)) = 0 :=
-      add_left_cancel (show a + (k : Fin (r + 3)) = a + 0 by simpa using heq)
-    have hv := congrArg Fin.val hkfin
-    change k % (r + 3) = 0 at hv
-    rw [Nat.mod_eq_of_lt hk] at hv
-    omega
   have noErase (x : Fin (n + 3)) :
       ∀ e ∈ c.steps, ({x, x + 1} : Finset (Fin (n + 3))) ≠ {e.1, e.2.2} :=
           OrderedInsertionGeometry.noErase r n q p s X K t pairCases targetAdjNe x

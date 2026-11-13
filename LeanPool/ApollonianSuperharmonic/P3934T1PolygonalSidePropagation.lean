@@ -614,9 +614,6 @@ private theorem pieceConstant :
     · have hl : i.succ ≤ Fin.last (s k).count := Fin.le_last _
       calc (s k).time i.succ ≤ (s k).time (Fin.last (s k).count) := (s k).strict.monotone hl
           _ = 1 := (s k).finish⟩
-  have hab : a < b := by
-    change (s k).time i.castSucc < (s k).time i.succ
-    exact (s k).strict Fin.castSucc_lt_succ
   let I := Set.Ioo a b
   let param (x : I) : Set.Icc (0 : Real) 1 := x.1
   let point (t : Set.Icc (0 : Real) 1)
@@ -1679,8 +1676,6 @@ theorem P3934T1PolygonalSidePropagation
       (ht : g l t = g k ⟨1, by norm_num⟩) := PolygonSidePropagation.joinPreimage g hi hjoin hv
           hinter k l t ht
   let first (k : Fin 3) : Fin (s k).count := ⟨0, (s k).positive⟩
-  let last (k : Fin 3) : Fin (s k).count :=
-    ⟨(s k).count - 1, by have := (s k).positive; omega⟩
   have joinSignAgree (k : Fin 3) := PolygonSidePropagation.joinSignAgree g s hi hjoin hinter U
       pieceSide vertexLabels isolateNeighborhood next_ne joinPreimage k
   have arcAgree (k : Fin 3) := PolygonSidePropagation.arcAgree g s U pieceSide signChain

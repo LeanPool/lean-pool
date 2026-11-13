@@ -176,7 +176,6 @@ private theorem finD :
   have hr := Int.natCast_natAbs x.re
   have hi := Int.natCast_natAbs (x.im-k)
   have hk : 0 < k := by dsimp [k]; exact_mod_cast K.2
-  have hkdef : (K.1 : Int) = k := rfl
   simp only [abs_eq_max_neg] at hr hi
   change x ∈ box
   dsimp only [box]
@@ -489,7 +488,6 @@ theorem DiamondExceptionalMaximality (K : DiamondParameter) :
 -- BODY
   classical
   let g := DiamondOdometer K
-  let k : Int := K.1
   let a : GaussianInt := ⟨0, -(2 * K.1 : Int)⟩
   let b : GaussianInt := ⟨(K.1 + 1 : Int), (K.1 : Int)⟩
   let D := DiamondVertexDomains K true
@@ -501,17 +499,6 @@ theorem DiamondExceptionalMaximality (K : DiamondParameter) :
     AddSubgroup.subset_closure (Or.inl rfl)
   have hb : b ∈ DiamondExceptionalLattice K :=
     AddSubgroup.subset_closure (Or.inr rfl)
-  let H : AddSubgroup GaussianInt :=
-    { carrier := {v | ∀ x, FourNeighborLaplacian g (x+v) = FourNeighborLaplacian g x}
-      zero_mem' := by intro x; simp
-      add_mem' := by
-        intro u v hu hv x
-        rw [← add_assoc, hv, hu]
-      neg_mem' := by
-        intro v hv x
-        have h := hv (x-v)
-        rw [sub_add_cancel] at h
-        simpa only [sub_eq_add_neg] using h.symm }
   have hgen := ExceptionalMaximalityProof.hgen K tab
   have periods := ExceptionalMaximalityProof.periods K hgen
   have bound := ExceptionalMaximalityProof.bound K tab ha hb periods

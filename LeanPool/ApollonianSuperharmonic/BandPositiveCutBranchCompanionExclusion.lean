@@ -1345,7 +1345,6 @@ private theorem fourthParentExclusion :
       hI3 hI2mul hOcent hQ2cent hQ3cent hS2cent hS3cent hPminus gaussianPoint_neg
       gaussianPoint_Iminus_one hsumGaussianPointFst hsumGaussianPointSnd hp4
   let u : GaussianInt := BandVectors.1 (q 2) (cfg.firstPredecessor 1)
-  let w : GaussianInt := BandVectors.1 (q 3) (q 2)
   let t : GaussianInt := BandVectors.1 (cfg.firstPredecessor 1) (q 3)
   have hf4 := (VectorRecursionLaws birth hproper.1).2.2.2.2 hproper
   have hforward2 : BandVectors.1 (birth 0) (birth 2) = I * u := by
@@ -1530,7 +1529,6 @@ theorem BandPositiveCutBranchCompanionExclusion
   have hI2mul : I * I = -1 := by dsimp [I]; decide
   let u : GaussianInt := BandVectors.1 (q 2) (cfg.firstPredecessor 1)
   let w : GaussianInt := BandVectors.1 (q 3) (q 2)
-  let t : GaussianInt := BandVectors.1 (cfg.firstPredecessor 1) (q 3)
   have hOcent := PositiveCutExclusionGeometry.hOcent q cfg C₀ T cert occurrence_centroid
   have hQ2cent := PositiveCutExclusionGeometry.hQ2cent q
           cfg C₀ T cert occurrence_centroid

@@ -77,8 +77,6 @@ theorem GridVerticalUpLogLiftDelta (q a : GaussianInt)
       have ha : ((a.re : Int) : Real) ≤ (q.re : Int) := by
         exact_mod_cast hcross.2
       have haC : (a : ℂ).re ≤ (q : ℂ).re := by simpa using ha
-      have ht0 : 0 ≤ (t : Real) := t.2.1
-      have ht1 : (t : Real) ≤ 1 := t.2.2
       linarith
     have hd := GridSegmentLogLiftDelta (-z0) (-z1) hslit M hM hMexp
     have hre0 : z0.re < 0 := by

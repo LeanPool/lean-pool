@@ -831,7 +831,6 @@ private theorem hsplit_eq :
   have hFLFR : FL ≠ FR := by
     intro h
     have hda : d ≠ a := by intro hda; subst d; exact hd F hF hpF.1
-    have hdb : d ≠ b := by intro hdb; subst d; exact hd F hF hpF.2
     have haFL : a ∈ FL := Finset.mem_insert.mpr
       (Or.inr (Finset.mem_erase.mpr ⟨hab, hpF.1⟩))
     have haFR : a ∉ FR := by simp [FR, hda.symm]

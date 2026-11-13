@@ -76,7 +76,6 @@ theorem P3555T2ParabolaSupporting {n : Nat}
         omega
       have hjlt : j.val < i.val := by
         have hjne : j.val ≠ i.val := fun h => hji (Fin.ext h)
-        have hjbound := j.isLt
         omega
       have hI : 0 < (i.val : Real) := by exact_mod_cast (show 0 < i.val by omega)
       have hJ : 0 < (j.val : Real) := by exact_mod_cast hjpos

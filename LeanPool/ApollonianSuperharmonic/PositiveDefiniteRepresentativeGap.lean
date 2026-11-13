@@ -59,7 +59,6 @@ theorem PositiveDefiniteRepresentativeGap
       (le_trans (le_max_left Rh (2 * M / k))
         (le_max_right Rg (max Rh (2 * M / k)))) hx)
     have hq := hlower x
-    have hn : 0 ≤ (x.re : ℝ) ^ 2 + (x.im : ℝ) ^ 2 := by positivity
     have hmain : k / 2 * ((x.re : ℝ) ^ 2 + (x.im : ℝ) ^ 2) ≤
         (g x : ℝ) - (h x : ℝ) := by
       have hgl : -(k / 4 * ((x.re : ℝ) ^ 2 + (x.im : ℝ) ^ 2)) ≤

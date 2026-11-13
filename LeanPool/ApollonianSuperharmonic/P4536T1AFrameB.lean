@@ -164,7 +164,6 @@ private theorem hcentJK :
   classical
   intro C orientation base Rminus Rplus hminus hplus F D a J r I w x y vAlg halfPoint
       halfPoint_sub hcentJ hcentK
-  have h := vAlg.2.2.1
   calc
     _ = (TileCentroid J - TileCentroid F.tile) -
         (TileCentroid (D.tiles a true) - TileCentroid F.tile) := by abel
@@ -897,20 +896,14 @@ theorem P4536T1AFrameB
         ![F.q 0, F.q a.succ, F.q (a + 1).succ, F.q (a + 2).succ]
       have hr : ProperBandQuadruple r := AFrameBProof.hr C orientation base Rminus Rplus hminus
           hplus F a
-      have hcoord : r 0 = (2 * (p 0).1 + 2 * (p 2).1 + 2 * (p 3).1 - (p 1).1,
-            2 * (p 0).2 + 2 * (p 2).2 + 2 * (p 3).2 - (p 1).2) := AFrameBDetails.hcoord C
-                orientation base Rminus Rplus hminus hplus F a p hstep
       have hA : r 1 = p 0 := AFrameBDetails.hA C orientation base Rminus Rplus hminus hplus F a p
           hstep
       have hB : r 2 = p 2 := AFrameBDetails.hB C orientation base Rminus Rplus hminus hplus F a p
-          hstep
-      have hE : r 3 = p 3 := AFrameBDetails.hE C orientation base Rminus Rplus hminus hplus F a p
           hstep
       have hparent : r 2 = C.1.1 := AFrameBDetails.hparent C orientation base Rminus Rplus hminus
           hplus F a hslot
       have hpB : p 2 = C.1.1 := hB.symm.trans hparent
       have hposA : 0 < (p 0).1 := (ProperBandCurvatureStructure p hp).1
-      have hposB : 0 < (p 2).1 := by rw [hpB]; exact C.2
       let I : GaussianInt := ⟨0, 1⟩
       let w := BandVectors.1 (r 3) (r 2)
       let x := BandVectors.1 (r 1) (r 3)
@@ -939,7 +932,6 @@ theorem P4536T1AFrameB
       have aThird := aAlg.2.2.1
       have aFourth := aAlg.2.2.2.1
       have vflip := hflipv
-      have aflip := hflipa
       let halfPoint : GaussianInt → ℝ × ℝ :=
         fun z => (1 / 2 : ℝ) • GaussianRealPoint z
       have halfPoint_sub (u v : GaussianInt) :
@@ -966,7 +958,6 @@ theorem P4536T1AFrameB
           AFrameBDetails.hodoK C orientation base Rminus Rplus hminus hplus F D a p hA
       have hbandK : BandPrototile (p 0) (D.tiles a true) :=
         TileOdometerBandPrototile _ _ _ hodoK
-      have hparentNew : p 2 = C.1.1 := hpB
       have hAcoord : F.q a.succ = p 0 := by simpa [r] using hA
       have hBcoord : F.q ((a + 1).succ) = p 2 := by simpa [r] using hB
       have hfamilyR : Rplus ∈ RegularTileFamily base (TilingLattice C) := by

@@ -170,7 +170,6 @@ private theorem unit_shift :
     ) := by
   classical
   intro z x V k hc hd v hv
-  have hn : V.cells.Nonempty := by rw [hc]; simp
   have h0 : v ∈ FootprintVertices V := by
     rw [← hd]
     exact (hv v).mpr (by simp [CurvatureOneOdometer])

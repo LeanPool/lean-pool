@@ -146,14 +146,12 @@ private theorem D_closure :
       rw [Real.dist_eq]
       have heq : ((1-r) • z + r • c).1 - z.1 = r * (1/3-z.1) := by dsimp [c]; ring
       rw [heq, abs_mul, abs_of_pos hr0]
-      have hz1 : 0 ≤ z.1 ∧ z.1 ≤ 1 := ⟨hzw.1, by linarith [hzw.2.1]⟩
       have hc : |(1:ℝ)/3-z.1| ≤ 1 := by rw [abs_le]; constructor <;> linarith
       nlinarith [mul_le_mul_of_nonneg_left hc hr0.le]
     have hcoord2 : dist y.2 z.2 ≤ r := by
       rw [Real.dist_eq]
       have heq : ((1-r) • z + r • c).2 - z.2 = r * (1/3-z.2) := by dsimp [c]; ring
       rw [heq, abs_mul, abs_of_pos hr0]
-      have hz2 : 0 ≤ z.2 ∧ z.2 ≤ 1 := ⟨hzw.2.1, by linarith [hzw.2.2]⟩
       have hc : |(1:ℝ)/3-z.2| ≤ 1 := by rw [abs_le]; constructor <;> linarith
       nlinarith [mul_le_mul_of_nonneg_left hc hr0.le]
     have hdist : dist y z ≤ r := by
@@ -1358,7 +1356,6 @@ theorem P4715T1CoefficientFaces :
   have Dopen := CoefficientFaceTopology.Dopen
   have Dconvex := CoefficientFaceProof.Dconvex
   have D_nonempty := CoefficientFaceTopology.D_nonempty
-  let W : Set (ℝ × ℝ) := {z | 0 ≤ z.1 ∧ 0 ≤ z.2 ∧ z.1+z.2 ≤ 1}
   have D_subset_W := CoefficientFaceTopology.D_subset_W
   have W_closed := CoefficientFaceTopology.W_closed
   have D_closure := CoefficientFaceProof.D_closure D_subset_W
@@ -1370,20 +1367,9 @@ theorem P4715T1CoefficientFaces :
   have image_segment (q v w : ℝ×ℝ)
       (hd : v.1*w.2-v.2*w.1≠0) (x y : ℝ×ℝ) := CoefficientFaceTopology.image_segment inv_right
           inv_left q v w hd x y
-  let stdPts : Fin 3 → ℝ×ℝ := ![(0,0),(1,0),(0,1)]
   have W_convex := CoefficientFaceTopology.W_convex
   have W_eq_stdHull := CoefficientFaceProof.W_eq_stdHull
       W_convex
-  let affineLin (v w : ℝ×ℝ) : (ℝ×ℝ) →ₗ[ℝ] (ℝ×ℝ) := {
-    toFun := lin v w
-    map_add' := by intro x y; ext <;> simp [lin] <;> ring
-    map_smul' := by intro c x; ext <;> simp [lin] <;> ring
-  }
-  let affineMapTri (q v w : ℝ×ℝ) : AffineMap ℝ (ℝ×ℝ) (ℝ×ℝ) := {
-    toFun := fun x => q + lin v w x
-    linear := affineLin v w
-    map_vadd' := by intro x y; ext <;> simp [affineLin,lin] <;> ring
-  }
   have hull_affine (q v w : ℝ×ℝ) := CoefficientFaceTopology.hull_affine W_eq_stdHull q v w
   have region_image (f : PeriodicSubtileFaceIndex) (hd : faceDet f ≠ 0) :=
       CoefficientFaceProof.region_image delta_nonzero inv_right
@@ -1407,15 +1393,6 @@ theorem P4715T1CoefficientFaces :
       (hij : i ≠ j) := CoefficientFaceProof.region_disjoint_arc faceDet_nonzero delta_nonzero
           inv_right
             inv_left image_segment region_image std_edge_disjoint f i j hij
-  let translation (k : Int × Int) : AffineMap ℝ (ℝ × ℝ) (ℝ × ℝ) := {
-    toFun := fun x => x + ((k.1 : Real), (k.2 : Real))
-    linear := LinearMap.id
-    map_vadd' := by intro x y; simp [add_assoc]
-  }
-  let bary (f : PeriodicSubtileFaceIndex) (s t : Real) : ℝ × ℝ :=
-    (1 - s - t) • P4715T1Position (SixSubtileFaceVertices f 0) +
-      s • P4715T1Position (SixSubtileFaceVertices f 1) +
-      t • P4715T1Position (SixSubtileFaceVertices f 2)
   have bary_shift (k : Int × Int) (j : Fin 12) (s t : Real) := CoefficientFaceTopology.bary_shift
             position_shift face_vertex_shift k j s t
   have region_shift (k : Int × Int) (j : Fin 12) := CoefficientFaceProof.region_shift bary_shift k j

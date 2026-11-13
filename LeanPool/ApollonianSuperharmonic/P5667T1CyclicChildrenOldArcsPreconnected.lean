@@ -202,14 +202,6 @@ theorem P5667T1CyclicChildrenOldArcsPreconnected {n : Nat} (p : P3381T1PolygonBo
   let e := segment Real (p.vertex a) (p.vertex b)
   let CL := P3544T1BoundaryCarrier C.left
   let CR := P3544T1BoundaryCarrier C.right
-  have chainUnionPreconnected {X : Type} [TopologicalSpace X] {m : Nat}
-      (S : Fin (m + 1) → Set X) (hpre : ∀ i, IsPreconnected (S i))
-      (hadj : ∀ i : Fin m, (S i.castSucc ∩ S i.succ).Nonempty) :
-      IsPreconnected (⋃ i, S i) := OldArcs.chainUnionPreconnected (X := X) (m := m) S hpre hadj
-  have segmentSdiffPreconnected (a b : Real × Real)
-      (z : Set (Real × Real))
-      (hdisj : Disjoint (openSegment Real a b) z) :
-      IsPreconnected (segment Real a b \ z) := OldArcs.segmentSdiffPreconnected a b z hdisj
   have polygonOldArcPreconnected {m : Nat} (q : P3381T1PolygonBoundary m) :
       IsPreconnected (P3544T1BoundaryCarrier q \
         segment Real (q.vertex 0) (q.vertex (Fin.last (m + 2)))) :=

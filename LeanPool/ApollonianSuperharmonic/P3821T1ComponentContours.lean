@@ -811,7 +811,6 @@ private theorem hpcenter_comp :
   intro K p η εp hballp εq h h2p s t o up hpclose segment_ball
   have hpath : Set.range (Path.segment p ((h : ℂ) * GridCellCenter up + o)) ⊆ Kᶜ := by
     rintro z ⟨v, rfl⟩
-    have hreal : (v : ℝ) ∈ Set.Icc 0 1 := v.2
     apply hballp
     apply Metric.mem_ball.mpr
     rw [dist_eq_norm]
@@ -834,7 +833,6 @@ private theorem hqcenter_comp :
   intro K q η εp εq hballq h h2q s t o uq hqclose segment_ball
   have hpath : Set.range (Path.segment q ((h : ℂ) * GridCellCenter uq + o)) ⊆ Kᶜ := by
     rintro z ⟨v, rfl⟩
-    have hreal : (v : ℝ) ∈ Set.Icc 0 1 := v.2
     apply hballq
     apply Metric.mem_ball.mpr
     rw [dist_eq_norm]
@@ -1588,10 +1586,6 @@ theorem P3821T1ComponentContours (K N : Set ℂ) (hK : IsCompact K)
   have dart_adjacent (u : GaussianInt) (k : Fin 4) :
       FourNeighborAdjacent (corner u k) (corner u (k + 1)) :=
           ComponentContourDetails.dart_adjacent u k
-  let rayStep (r a b : GaussianInt) : ℤ :=
-    if b = a + ⟨0, 1⟩ ∧ a.im = r.im ∧ a.re ≤ r.re then 1
-    else if b = a - ⟨0, 1⟩ ∧ b.im = r.im ∧ a.re ≤ r.re then -1
-    else 0
   let box (u : GaussianInt) (z : ℂ) : Prop :=
     (u.re : ℝ) ≤ z.re ∧ z.re ≤ (u.re : ℝ) + 1 ∧
       (u.im : ℝ) ≤ z.im ∧ z.im ≤ (u.im : ℝ) + 1
@@ -1621,7 +1615,6 @@ theorem P3821T1ComponentContours (K N : Set ℂ) (hK : IsCompact K)
       (h : ℝ) (hh : 0 < h) (o : ℂ) :
       {u : GaussianInt | (h : ℂ) * GridCellCenter u + o ∈ U}.Finite :=
           ComponentContoursProof.finite_centers center_re center_im U hU h hh o
-  have hKne : K.Nonempty := ComponentContourDetails.hKne K p q hne
   let V := N ∩ ({p, q} : Set ℂ)ᶜ
   have hV : IsOpen V := hN.inter
     (isClosed_singleton.union isClosed_singleton).isOpen_compl

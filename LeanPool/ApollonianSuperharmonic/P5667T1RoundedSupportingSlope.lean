@@ -114,10 +114,6 @@ theorem P5667T1RoundedSupportingSlope
             (1 / 2 : Real) * (abs x.im + abs y.im) := by
           nlinarith [this]
         simpa [ax] using h1a
-      have hxa : (0 : Real) ≤ (abs x.re + abs x.im : Int) := by
-        exact_mod_cast (add_nonneg (abs_nonneg x.re) (abs_nonneg x.im))
-      have hya : (0 : Real) ≤ (abs y.re + abs y.im : Int) := by
-        exact_mod_cast (add_nonneg (abs_nonneg y.re) (abs_nonneg y.im))
       have herr : -(
           |((p.re : Real) - (Matrix.mulVec A vx) 0) * ((x.re : Real) - y.re)| +
           |((p.im : Real) - (Matrix.mulVec A vx) 1) * ((x.im : Real) - y.im)|) ≤

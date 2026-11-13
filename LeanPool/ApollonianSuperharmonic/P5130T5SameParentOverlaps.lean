@@ -221,31 +221,20 @@ private theorem first_parent_overlap :
       have hqle : (P.q₁ : Int) ≤ 1 := Int.le_of_dvd (by norm_num) hdiv
       have hqone : P.q₁ = 1 := by omega
       have hq2one : P.q₂ = 1 := by omega
-      have hq1int : (P.q₁ : Int) = 1 := by exact_mod_cast hqone
       have hq2int : (P.q₂ : Int) = 1 := by exact_mod_cast hq2one
       have hxre : x.re = 1 := by omega
       have hxim : x.im = 1 := by omega
       let c : GaussianInt := ⟨1, 1⟩
       have hxc : x = c := by ext <;> simp [c, hxre, hxim]
       have hpone : P.p₁ = P.p₂ + 1 := by nlinarith [hmul, hqone]
-      have hPq : P.q = 2 := by have hs := P.sum_q; omega
       have hP1q : P₁.q = 1 := by omega
-      have hP2q : P₂.q = 1 := by omega
       let z : GaussianInt := ⟨0, 0⟩
-      let u : GaussianInt := ⟨0, 1⟩
-      let v : GaussianInt := ⟨1, 0⟩
       have hz1 : G P₁ z = 0 := by
         have hb := hB P₁ (by omega) z (by simp [z, FordDoubledBoundary, FordVertexDomain])
         simpa [z, IntegerCeilDiv] using hb
       have hc1 : G P₁ c = P₁.p := by
         have hb := hB P₁ (by omega) c (by simp [c, hP1q, FordDoubledBoundary, FordVertexDomain])
         simpa [c, IntegerCeilDiv, hP1q] using hb
-      have hu2 : G P₂ u = 0 := by
-        have hb := hB P₂ (by omega) u (by simp [u, hP2q, FordDoubledBoundary, FordVertexDomain])
-        simpa [u, IntegerCeilDiv] using hb
-      have hv2 : G P₂ v = 0 := by
-        have hb := hB P₂ (by omega) v (by simp [v, hP2q, FordDoubledBoundary, FordVertexDomain])
-        simpa [v, IntegerCeilDiv] using hb
       have hval : P₁.p = P₂.p + 1 := by omega
       rw [hxc]
       simp only [P5130T5Prescription, Matrix.cons_val_zero, Matrix.cons_val_one,
@@ -280,8 +269,6 @@ theorem P5130T5SameParentOverlaps (P P₁ P₂ : FordFareyParameter)
   have hq2 : P₂.q = P.q₂ := SameParentOverlapLemmas.hq2 P P₂ hq₂
   have hp1 : P₁.p = P.p₁ := SameParentOverlapLemmas.hp1 P P₁ hp₁
   have hp2 : P₂.p = P.p₂ := SameParentOverlapLemmas.hp2 P P₂ hp₂
-  have hq1pos' : 0 < P₁.q := SameParentOverlapLemmas.hq1pos' P P₁ hq₁ hq1pos
-  have hq2pos' : 0 < P₂.q := SameParentOverlapLemmas.hq2pos' P P₂ hq₂ hq2pos
   have hq1lt' : P₁.q < P.q := SameParentOverlapLemmas.hq1lt' P P₁ hq₁ hq1lt
   have hq2lt' : P₂.q < P.q := SameParentOverlapLemmas.hq2lt' P P₂ hq₂ hq2lt
   have first_parent_overlap : ∀ x,
@@ -296,7 +283,6 @@ theorem P5130T5SameParentOverlaps (P P₁ P₂ : FordFareyParameter)
     let q4 : Nat := P.q₂ - P.q₁
     let p4 : Int := P.p₂ - P.p₁
     have hq4pos : 0 < q4 := by dsimp [q4]; omega
-    have hq4lt : q4 < P.q₂ := by dsimp [q4]; omega
     have hq4cast : (P.q₂ : Int) = (P.q₁ : Int) + (q4 : Int) := by
       dsimp [q4]
       rw [Nat.cast_sub hlt.le]
@@ -356,7 +342,6 @@ theorem P5130T5SameParentOverlaps (P P₁ P₂ : FordFareyParameter)
     rcases hx3 with ⟨hx3r, hx3r', hx3i, hx3i'⟩
     let u : GaussianInt := x - ⟨(P.q₁ : Int), 0⟩
     let v : GaussianInt := x - ⟨0, (P.q₁ : Int)⟩
-    let w : GaussianInt := x - ⟨(P.q₁ : Int), (P.q₁ : Int)⟩
     have hu3 : u ∈ FordRecursiveVertexDomains P₂ 3 := by
       simp only [FordRecursiveVertexDomains, Matrix.cons_val_three]
       change 0 ≤ u.re ∧ u.re ≤ (P₂.q₂ : Int) ∧
@@ -403,32 +388,23 @@ theorem P5130T5SameParentOverlaps (P P₁ P₂ : FordFareyParameter)
       have hdiv : (P.q₁ : Int) ∣ (1 : Int) := ⟨P.p₁ - P.p₂, hmul.symm⟩
       have hqle : (P.q₁ : Int) ≤ 1 := Int.le_of_dvd (by norm_num) hdiv
       have hqone : P.q₁ = 1 := by omega
-      have hq2one : P.q₂ = 1 := by omega
       simp only [FordRecursiveVertexDomains] at hx2 hx3
       rcases hx2 with ⟨hx2r, hx2r', hx2i, hx2i'⟩
       rcases hx3 with ⟨hx3r, hx3r', hx3i, hx3i'⟩
       have hq1int : (P.q₁ : Int) = 1 := by exact_mod_cast hqone
-      have hq2int : (P.q₂ : Int) = 1 := by exact_mod_cast hq2one
       have hxre : x.re = 1 := by omega
       have hxim : x.im = 1 := by omega
       let c : GaussianInt := ⟨1, 1⟩
       have hxc : x = c := by ext <;> simp [c, hxre, hxim]
-      have hpone : P.p₁ = P.p₂ + 1 := by nlinarith [hmul, hqone]
-      have hPq : P.q = 2 := by have hs := P.sum_q; omega
-      have hP1q : P₁.q = 1 := by omega
       have hP2q : P₂.q = 1 := by omega
       let u : GaussianInt := ⟨0, 1⟩
       let v : GaussianInt := ⟨1, 0⟩
-      have hc1 : G P₁ c = P₁.p := by
-        have hb := hB P₁ (by omega) c (by simp [c, hP1q, FordDoubledBoundary, FordVertexDomain])
-        simpa [c, IntegerCeilDiv, hP1q] using hb
       have hu2 : G P₂ u = 0 := by
         have hb := hB P₂ (by omega) u (by simp [u, hP2q, FordDoubledBoundary, FordVertexDomain])
         simpa [u, IntegerCeilDiv] using hb
       have hv2 : G P₂ v = 0 := by
         have hb := hB P₂ (by omega) v (by simp [v, hP2q, FordDoubledBoundary, FordVertexDomain])
         simpa [v, IntegerCeilDiv] using hb
-      have hval : P₁.p = P₂.p + 1 := by omega
       rw [hxc]
       simp only [P5130T5Prescription,
         Matrix.cons_val_two, Matrix.cons_val_three]

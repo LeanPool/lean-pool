@@ -820,9 +820,6 @@ private theorem hdispR :
                         (∀ (x : GaussianInt), q3 x = q ^ (3 : ℕ) * x) → q3 vR = uL) := by
   classical
   intro r i s q t hq2 hq3 hq2act uL q3 vR even0 even2 notEven1 notEven3 hq3mul
-  let uR : GaussianInt := q ^ s.val *
-    (if Even s.val then BandVectors.1 (r 0) (r i.succ)
-      else BandVectors.1 (r i.succ) (r 0))
   rw [hq3mul]
   fin_cases s <;> simp [vR, uL, t,
     even0, even2, notEven1, notEven3, hq2, hq3] <;>
@@ -1099,8 +1096,6 @@ theorem P4055T1OrderedGeneralOppositeEndpoints :
   have hq4 := OppositeEndpointGeometry.hq4 hq2
   have hq3 := OppositeEndpointGeometry.hq3 hq2
   have hq2act := OppositeEndpointGeometry.hq2act hq2
-  have hq4act := OppositeEndpointGeometry.hq4act hq4
-  have hq6act := OppositeEndpointGeometry.hq6act (OppositeEndpointGeometry.hq6 hq2)
   have hpower := OppositeEndpointGeometry.hpower s hq2 hq4
   have hWsrc : TileCentroid Wp - TileCentroid U = (1 / 2 : Real) •
       GaussianRealPoint (q ^ t.val *
@@ -1155,8 +1150,6 @@ theorem P4055T1OrderedGeneralOppositeEndpoints :
           α) (β := β) (γ := γ) g h S
   have hFchildV := OppositeEndpointGeometry.hFchildV U aU hFvU hFtranslate setImageComp
   have hFchildE := OppositeEndpointGeometry.hFchildE U aU hFeU hFtranslateE setImageComp
-  let q3 : GaussianInt → GaussianInt := fun x =>
-    GaussianQuarterTurn (GaussianQuarterTurn (GaussianQuarterTurn x))
   have hQq3 := OppositeEndpointGeometry.hQq3
   have hbaseV := OppositeEndpointGeometry.hbaseV
       U aU hFvU hinvV

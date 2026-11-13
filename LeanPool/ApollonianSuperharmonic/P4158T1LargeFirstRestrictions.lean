@@ -914,7 +914,6 @@ theorem P4158T1LargeFirstRestrictions
       LargeFirstRestrictions.rootNonempty n hn z
   have hrootCent := LargeFirstRestrictions.hrootCent P T u hc rootNonempty
   have hrootCent' := LargeFirstRestrictions.hrootCent' P T' u hc' rootNonempty
-  have hw' := LargeFirstRestrictions.hw' P hvsol
   have hUoffset := LargeFirstRestrictions.hUoffset P T S hcent hvsol
   have hVoffset := LargeFirstRestrictions.hVoffset P T' S' hcent' hvsol
   have hUCcent := LargeFirstRestrictions.hUCcent P T u hq1 S fordCentroid

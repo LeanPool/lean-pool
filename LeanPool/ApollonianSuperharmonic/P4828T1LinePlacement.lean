@@ -211,11 +211,7 @@ theorem P4828T1LinePlacement (L : Real)
     (hline : ∃ j : Fin 3, (q j.succ).1 = 0) :
     P4828T1Disk (q 0) ⊆ P4828T1Gap L q := by
 -- BODY
-  have hc := ProperBandCurvatureStructure q hq
   rcases hline with ⟨j, hj⟩
-  have hparent_nonneg : ∀ i : Fin 3, 0 ≤ (q i.succ).1 := LinePlacementConstruction.hparent_nonneg
-      q hq
-  have hline_unique := hc.2.2
   have hparent_pos : ∀ i : Fin 3, i ≠ j → 0 < (q i.succ).1 :=
       LinePlacementConstruction.hparent_pos q hq j hj
   have hchild_pos : 0 < (q 0).1 := LinePlacementConstruction.hchild_pos q hq
@@ -228,9 +224,6 @@ theorem P4828T1LinePlacement (L : Real)
         -n * ((center k).re - b) = 1 / (q k).1) ∧
       (if (q j.succ).2 = -1 then L else L + 2) = b := LinePlacementConstruction.hsupport L q hs j hj
   rcases hsupport with ⟨n, boundary, hn, hcenterX, hfoot⟩
-  have centerCoordSq : ∀ u v : Fin 4, u ≠ v → 0 < (q u).1 → 0 < (q v).1 →
-      ((center u).re - (center v).re)^2 + ((center u).im - (center v).im)^2 =
-        (1 / (q u).1 + 1 / (q v).1)^2 := LinePlacementConstruction.centerCoordSq q hq
   have verticalSq : ∀ u v : Fin 4, u ≠ v → 0 < (q u).1 → 0 < (q v).1 →
       -n * ((center u).re - boundary) = 1 / (q u).1 →
       -n * ((center v).re - boundary) = 1 / (q v).1 →

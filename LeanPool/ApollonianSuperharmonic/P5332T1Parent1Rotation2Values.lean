@@ -46,7 +46,6 @@ theorem P5332T1Parent1Rotation2Values (P A : FordFareyParameter) (hq : 1 < P.q)
         t = 0 ∧ Even (2+0 : Nat)) := by
 -- BODY
   classical
-  have hq' : 1 < (P.q : Int) := by exact_mod_cast hq
   have hqtwo : 2 ≤ (P.q : Int) := by omega
   have hqn : (P.q : Int) ≠ 0 := by omega
   have hrpos : 0 < P.q₁ := by

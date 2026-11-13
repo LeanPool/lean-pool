@@ -131,10 +131,6 @@ private theorem hunit :
     norm_num at h
     omega
   intro y
-  have hre (x w : GaussianInt) : (x + w).re = x.re + w.re := by
-    cases x; cases w; rfl
-  have him (x w : GaussianInt) : (x + w).im = x.im + w.im := by
-    cases x; cases w; rfl
   have hpairs : g (y + 1) + g (y - 1) - 2 * g y =
       g 1 + g (-1) := by
     have hsub : y - 1 = y + (-1) := by abel
@@ -1663,7 +1659,6 @@ theorem PeriodicBoundaryWebLaplacian (C : BandCircle)
     have hother := WebLaplacianGeometry.hother C v hv a0 a1 a2 a3 m hm
         (WebLaplacianGeometry.hnotall C v hv a0 a1 a2 a3 hvnotfour)
     obtain ⟨w, hmw, hcover⟩ := secondOwnerCoversThree owner m hother hnotinj
-    let next : Fin 4 → Fin 4 := ![1, 2, 3, 0]
     have colorCycle := WebLaplacianGeometry.colorCycle
     let col : Fin 4 → Fin 3 := fun i =>
       if owner i = owner m then 0 else if owner i = owner w then 1 else 2
@@ -1672,11 +1667,6 @@ theorem PeriodicBoundaryWebLaplacian (C : BandCircle)
     have hcol2unique := WebLaplacianGeometry.hcol2unique C a0 a1 a2 a3 m w hmw hcover
     obtain ⟨e, hecolor⟩ := colorCycle col ⟨m, hmcol⟩ ⟨w, hwcol⟩ hcol2unique
     have hepair := WebLaplacianGeometry.hepair C a0 a1 a2 a3 m w e hecolor
-    let sector : Fin 4 → GaussianInt :=
-      ![x, x - 1, x - 1 - ⟨0, 1⟩, x - ⟨0, 1⟩]
-    let edge : Fin 4 → Finset GaussianInt :=
-      ![{x, x + ⟨0, 1⟩}, {x - 1, x},
-        {x - ⟨0, 1⟩, x}, {x, x + 1}]
     have hsector := WebLaplacianGeometry.hsector C x P a0 ha0 a1 ha1 a2 ha2 a3 ha3
     have hsectorNot := WebLaplacianGeometry.hsectorNot C x P a0 a1 a2 a3 hsector
     have hedgeBoundary := WebLaplacianGeometry.hedgeBoundary C x P a0 ha0 a1 ha1 a2 ha2 a3 ha3
@@ -1694,7 +1684,6 @@ theorem PeriodicBoundaryWebLaplacian (C : BandCircle)
     obtain ⟨p, hp⟩ := slope_for C.1.1 T h hodo hcurvature
     let u : GaussianInt := owner m
     let u' : GaussianInt := owner w
-    have hu_eq := WebLaplacianGeometry.hu_eq C v hv a0 a1 a2 a3 m hm
     have hu_mem : u ∈ TilingLattice C := (owner m).property
     have hu'_mem : u' ∈ TilingLattice C := (owner w).property
     obtain ⟨au, hAu, hshiftu⟩ := hcocycle u hu_mem
@@ -1723,8 +1712,6 @@ theorem PeriodicBoundaryWebLaplacian (C : BandCircle)
       simpa [hu'Odo] using translateExtends u' au' hshiftu'
     have hmatrixDiff := WebLaplacianGeometry.hmatrixDiff C a0 a1 a2 a3 m w au hAu au' hAu'
     have hincoming := CircleMatrixIncomingVector C q hsemi hqC j
-    have hAdiff := WebLaplacianGeometry.hAdiff C q a0 a1 a2 a3 m w j hsign au au' hmatrixDiff
-        hincoming
     have tileM : P.tile (owner m) = TileTranslation T u := by
       simpa [u] using hPtile (owner m)
     have tileW : P.tile (owner w) = TileTranslation T u' := by
@@ -1743,10 +1730,6 @@ theorem PeriodicBoundaryWebLaplacian (C : BandCircle)
         w j au au' hmatrixDiff hincoming) (WebLaplacianGeometry.aDiffMinus C q a0 a1 a2 a3 m w j
         au au' hmatrixDiff hincoming) (WebLaplacianGeometry.hslopeU C h a0 a1 a2 a3 m p hp au)
         (WebLaplacianGeometry.hslopeU' C h a0 a1 a2 a3 w p hp au')
-    have hnoCheckerboard0 := WebLaplacianGeometry.hnoCheckerboard0 C x P a0 ha0 a1 hu1 a2 ha2 a3 hu3
-    have hnoCheckerboard1 := WebLaplacianGeometry.hnoCheckerboard1 C x P a0 hu0 a1 ha1 a2 hu2 a3 ha3
-    have hnoCheckerboard2 := WebLaplacianGeometry.hnoCheckerboard2 C x P a0 ha0 a1 hu1 a2 ha2 a3 hu3
-    have hnoCheckerboard3 := WebLaplacianGeometry.hnoCheckerboard3 C x P a0 hu0 a1 ha1 a2 hu2 a3 ha3
     have hcompat : OdometerCompatibility huOdo hu'Odo :=
       (LeftAdjacentOdometerCompatibility C (TileTranslation T u)
         (TileTranslation T u') huOdo hu'Odo hadjOdo).1

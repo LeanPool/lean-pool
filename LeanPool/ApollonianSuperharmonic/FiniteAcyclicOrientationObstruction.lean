@@ -92,10 +92,6 @@ theorem FiniteAcyclicOrientationObstruction
     intro h
     have q := congrArg (fun z : GaussianInt => z.re) h
     simp at q
-  have h24 : x - 1 ≠ x - ⟨0, 1⟩ := by
-    intro h
-    have q := congrArg (fun z : GaussianInt => z.re) h
-    simp at q
   have h34 : x + ⟨0, 1⟩ ≠ x - ⟨0, 1⟩ := by
     intro h
     have q := congrArg (fun z : GaussianInt => z.im) h

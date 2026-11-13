@@ -281,15 +281,10 @@ private theorem cross₀₁ :
       rw [← hint₀₁]
       exact hmem
     simpa using hm
-  have hu : u = ⟨1, by norm_num⟩ := by
-    apply h₀.injective
-    apply Subtype.ext
-    exact hpos.trans h₀b.symm
   have hv : v = ⟨0, by norm_num⟩ := by
     apply h₁.injective
     apply Subtype.ext
     exact hxy.symm.trans hpos |>.trans h₁b.symm
-  have hx : x = 1 := congrArg Subtype.val hu
   have hy : y - 1 = 0 := congrArg Subtype.val hv
   linarith
 
@@ -328,15 +323,10 @@ private theorem cross₁₂ :
       rw [← hint₁₂]
       exact hmem
     simpa using hm
-  have hu : u = ⟨1, by norm_num⟩ := by
-    apply h₁.injective
-    apply Subtype.ext
-    exact hpos.trans h₁c.symm
   have hv : v = ⟨0, by norm_num⟩ := by
     apply h₂.injective
     apply Subtype.ext
     exact hxy.symm.trans hpos |>.trans h₂c.symm
-  have hx : x - 1 = 1 := congrArg Subtype.val hu
   have hy : y - 2 = 0 := congrArg Subtype.val hv
   linarith
 
@@ -365,19 +355,12 @@ private theorem cross₀₂ :
   let v : Set.Icc (0 : ℝ) 1 := ⟨y - 2, ⟨by linarith, by linarith⟩⟩
   have hmem₀ : ((h₀ u : P.edgeArc a b) : Real × Real) ∈ P.edgeArc a b := (h₀ u).property
   have hmem₂ : ((h₂ v : P.edgeArc c a) : Real × Real) ∈ P.edgeArc c a := (h₂ v).property
-  have hmem : ((h₀ u : P.edgeArc a b) : Real × Real) ∈
-      P.edgeArc a b ∩ P.edgeArc c a := ⟨hmem₀, hxy ▸ hmem₂⟩
   have hpos : ((h₀ u : P.edgeArc a b) : Real × Real) = P.position a := by
     have hm : ((h₀ u : P.edgeArc a b) : Real × Real) ∈
         ({P.position a} : Set (Real × Real)) := by
       rw [← hint₂₀]
       exact ⟨hxy ▸ hmem₂, hmem₀⟩
     simpa using hm
-  have hu : u = ⟨0, by norm_num⟩ := by
-    apply h₀.injective
-    apply Subtype.ext
-    exact hpos.trans h₀a.symm
-  have hx : x = 0 := congrArg Subtype.val hu
   have hv : v = ⟨1, by norm_num⟩ := by
     apply h₂.injective
     apply Subtype.ext

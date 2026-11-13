@@ -45,11 +45,6 @@ theorem TileTouchingCovariance : ∀ (T U : ProtoTile) (u : GaussianInt),
     · rintro ⟨⟨a, ha, hax⟩, ⟨b, hb, hbx⟩⟩
       have hab : a = b := hf (hax.trans hbx.symm)
       exact ⟨a, ⟨ha, hab ▸ hb⟩, hax⟩
-  have image_disjoint : ∀ (A B : Set GaussianInt) (f : GaussianInt → GaussianInt),
-      Function.Injective f →
-      (Disjoint A B ↔ Disjoint (f '' A) (f '' B)) := by
-    intro A B f hf
-    exact (Set.disjoint_image_iff hf).symm
   have image_mem : ∀ (A : Set GaussianInt) (f : GaussianInt → GaussianInt),
       Function.Bijective f → ∀ x, (x ∈ A ↔ f x ∈ f '' A) := by
     intro A f hf x

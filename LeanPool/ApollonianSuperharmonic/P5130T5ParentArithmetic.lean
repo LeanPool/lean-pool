@@ -44,7 +44,6 @@ theorem P5130T5ParentArithmetic (P : FordFareyParameter) (hq : 1 < P.q) :
     have hz : P.q₁ = 0 := by omega
     rw [hz] at hd
     simp only [Nat.cast_zero, zero_mul, sub_zero] at hd
-    have hqi : (1 : Int) < P.q := by exact_mod_cast hq
     have : (P.q : Int) ∣ 1 := ⟨P.p₁, by nlinarith [hd]⟩
     have := Int.le_of_dvd (by norm_num : (0 : Int) < 1) this
     omega

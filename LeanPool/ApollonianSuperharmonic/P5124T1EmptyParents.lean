@@ -784,13 +784,6 @@ theorem P5124T1EmptyParents :
     have hVa : V.anchor = ⟨-1, 0⟩ := by dsimp [V, P5124T1ParentModel]; decide +kernel
     have hVne : ¬ V.cells.Nonempty := by rw [hVc]; simp
     have hWc : W.cells = {⟨1, 0⟩} := by dsimp [W, P5124T1ParentModel]
-    let sqE : Set (Finset GaussianInt) := {e |
-      e = {⟨-1, 0⟩, ⟨0, 0⟩} ∨ e = {⟨0, 0⟩, ⟨1, 0⟩} ∨
-      e = {⟨-1, 2⟩, ⟨0, 2⟩} ∨ e = {⟨0, 2⟩, ⟨1, 2⟩} ∨
-      e = {⟨-1, 0⟩, ⟨-1, 1⟩} ∨ e = {⟨1, 0⟩, ⟨1, 1⟩} ∨
-      e = {⟨-1, 1⟩, ⟨-1, 2⟩} ∨ e = {⟨1, 1⟩, ⟨1, 2⟩}}
-    let sqV : Set GaussianInt := {⟨-1, 0⟩, ⟨0, 0⟩, ⟨1, 0⟩,
-      ⟨-1, 1⟩, ⟨1, 1⟩, ⟨-1, 2⟩, ⟨0, 2⟩, ⟨1, 2⟩}
     let r : Int → Int := fun b => min (b + 1) (2 * (1 : Int) - b)
     let H : Int → Int → Prop := fun a b =>
       ((b = 0 ∨ b = 2 * (1 : Int)) ∧ -1 ≤ a ∧ a < 1) ∨
@@ -811,8 +804,6 @@ theorem P5124T1EmptyParents :
       e = {⟨-1, 0⟩, ⟨0, 0⟩} ∨ e = {⟨0, 0⟩, ⟨1, 0⟩} ∨
       e = {⟨-1, -2⟩, ⟨-1, -1⟩} ∨ e = {⟨1, -2⟩, ⟨1, -1⟩} ∨
       e = {⟨-1, -1⟩, ⟨-1, 0⟩} ∨ e = {⟨1, -1⟩, ⟨1, 0⟩}}
-    let lowV : Set GaussianInt := {⟨-1, -2⟩, ⟨0, -2⟩, ⟨1, -2⟩,
-      ⟨-1, -1⟩, ⟨1, -1⟩, ⟨-1, 0⟩, ⟨0, 0⟩, ⟨1, 0⟩}
     obtain ⟨_, _, _, _, _, _, _, hBV, hBE⟩ := TileTranslationFormulas D ⟨0, -2⟩
     have hBe : BoundaryFootprintEdges B = lowE := by
       change BoundaryFootprintEdges (TileTranslation D ⟨0, -2⟩) = lowE
@@ -832,10 +823,6 @@ theorem P5124T1EmptyParents :
     have pairEq {α : Type} [DecidableEq α] (a b c d : α) := EmptyParentGeometry.pairEq (α := α) a
         b c d
     have hDBe := EmptyParentGeometry.hDBe hDe hBe pairEq
-    let unitE : Set (Finset GaussianInt) := {e |
-      e = {⟨-2, 0⟩, ⟨-1, 0⟩} ∨ e = {⟨-2, 0⟩, ⟨-2, 1⟩} ∨
-      e = {⟨-1, 0⟩, ⟨-1, 1⟩} ∨ e = {⟨-2, 1⟩, ⟨-1, 1⟩}}
-    let unitV : Set GaussianInt := {⟨-2, 0⟩, ⟨-1, 0⟩, ⟨-2, 1⟩, ⟨-1, 1⟩}
     have hUe := EmptyParentGeometry.hUe hUc
     have hUne : U.cells.Nonempty := by rw [hUc]; simp
     have hUv := EmptyParentGeometry.hUv hUe hUne
@@ -843,10 +830,6 @@ theorem P5124T1EmptyParents :
       simp only [W, U, P5124T1ParentModel, TileTranslation]
       constructor
     obtain ⟨_, _, _, _, _, _, _, hWtV, hWtE⟩ := TileTranslationFormulas U ⟨3, 0⟩
-    let rightE : Set (Finset GaussianInt) := {e |
-      e = {⟨1, 0⟩, ⟨2, 0⟩} ∨ e = {⟨1, 0⟩, ⟨1, 1⟩} ∨
-      e = {⟨2, 0⟩, ⟨2, 1⟩} ∨ e = {⟨1, 1⟩, ⟨2, 1⟩}}
-    let rightV : Set GaussianInt := {⟨1, 0⟩, ⟨2, 0⟩, ⟨1, 1⟩, ⟨2, 1⟩}
     have gt20 : GaussianTranslation ⟨3, 0⟩ ⟨-2, 0⟩ = ⟨1, 0⟩ := by decide +kernel
     have gt10 : GaussianTranslation ⟨3, 0⟩ ⟨-1, 0⟩ = ⟨2, 0⟩ := by decide +kernel
     have gt21 : GaussianTranslation ⟨3, 0⟩ ⟨-2, 1⟩ = ⟨1, 1⟩ := by decide +kernel
@@ -896,7 +879,6 @@ theorem P5124T1EmptyParents :
     have hWn : W.cells.Nonempty := by rw [hWc]; simp
     have hDBdis : Disjoint D.cells B.cells := by rw [hDc, hBc]; decide +kernel
     have hDUdis : Disjoint D.cells U.cells := by rw [hDc, hUc]; decide +kernel
-    have hDWdis : Disjoint D.cells W.cells := by rw [hDc, hWc]; decide +kernel
     have pDB : SimpleGridPath
         (BoundaryFootprintVertices D ∩ BoundaryFootprintVertices B)
         (BoundaryFootprintEdges D ∩ BoundaryFootprintEdges B) := by

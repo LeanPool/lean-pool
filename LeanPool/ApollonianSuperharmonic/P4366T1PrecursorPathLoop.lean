@@ -597,11 +597,9 @@ theorem P4366T1PrecursorPathLoop
 -- BODY
   classical
   dsimp only
-  let F := P4366T1PrecursorRemainderFamily cert.P cert.O
   obtain ⟨_, _, _, _, _, _, hpair, hdisjoint⟩ :=
     P4339T1PrecursorSupportGeometry C q cfg T cert
   have hOA := PrecursorLoopGeometry.hOA C q cfg T cert hpair
-  have hOB := PrecursorLoopGeometry.hOB C q cfg T cert hpair
   have parent_sub (i : Fin 3) (s : Bool) : (cert.P i s).cells ⊆ T.cells :=
     fun z hz => (cert.outer_union z).mpr ⟨i, s, hz⟩
   have hOT : cert.O.cells ⊆ T.cells := fun z hz => parent_sub 0 true (hOA hz)

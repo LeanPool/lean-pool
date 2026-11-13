@@ -386,7 +386,6 @@ private theorem proper :
   intro K currentSemi
   refine ⟨currentSemi, ?_⟩
   have hk : 0 < K.1 := K.2
-  have hk' : 1 ≤ K.1 := by omega
   have hsub : K.1 - 1 ≤ K.1 := Nat.sub_le _ _
   intro j
   fin_cases j <;> simp [DiamondRecursiveQuadruple]
@@ -401,8 +400,6 @@ private theorem properAt :
   classical
   intro configuration semi n
   refine ⟨semi n, ?_⟩
-  have hn : 0 < n + 1 := Nat.succ_pos n
-  have hsub : (n + 1) - 1 ≤ n + 1 := Nat.sub_le _ _
   intro j
   fin_cases j <;> simp [configuration, DiamondRecursiveQuadruple]
   all_goals nlinarith
@@ -474,11 +471,6 @@ private theorem claims :
       have coordU : ((1 : Int), 1 + 2 * (⟨0, 1⟩ : GaussianInt)) =
           ((1 : Int), ⟨1, 2⟩) := by
         norm_num [Zsqrtd.ext_iff]
-      have coordU2 : ((1 : Int), 1 + 2 * (0 : GaussianInt) +
-          2 * (⟨0, 1⟩ : GaussianInt)) = (1, ⟨1, 2⟩) := by
-        norm_num [Zsqrtd.ext_iff]
-      have coordB : ((0 : Int), (-1 : GaussianInt)) =
-          ((0 : Int), ⟨-1, 0⟩) := by rfl
       have root10' := DiamondConfigurationProof.root10'At246 r21 r13 root10 coordU
       have hx := DiamondConfigurationProof.hxAt261 r13 coordU
       have hy : BandVectors.1 (configuration 0 2) (configuration 0 1) =

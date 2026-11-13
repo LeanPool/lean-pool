@@ -53,7 +53,6 @@ private theorem edge_endpoint_square (c : LatticeCell) (e : Finset GaussianInt)
       (z : GaussianInt) (hz : z ∈ e) :
       GaussianRealPoint z ∈ ClosedSquareRealization c := by
   classical
-  let I : GaussianInt := ⟨0, 1⟩
   rcases he with rfl | rfl | rfl | rfl
   all_goals simp only [Finset.mem_insert, Finset.mem_singleton] at hz
   all_goals rcases hz with rfl | rfl
@@ -100,12 +99,6 @@ theorem DisjointSquareUnionCommonEdgeCarrier (U V : ProtoTile)
   let I : GaussianInt := ⟨0, 1⟩
   have footprint_finite (T : ProtoTile) : (FootprintEdges T).Finite :=
       SquareUnionCommonCarrierConstruction.footprint_finite T
-  have edge_endpoint_square (c : LatticeCell) (e : Finset GaussianInt)
-      (he : e = {c, c + 1} ∨ e = {c, c + I} ∨
-        e = {c + 1, c + 1 + I} ∨ e = {c + I, c + 1 + I})
-      (z : GaussianInt) (hz : z ∈ e) :
-      GaussianRealPoint z ∈ ClosedSquareRealization c :=
-          SquareUnionCommonCarrierConstruction.edge_endpoint_square c e he z hz
   have edge_carrier_subset (T : ProtoTile) (e : Finset GaussianInt)
       (he : e ∈ FootprintEdges T) : GridEdgeCarrier e ⊆ TileRealization T :=
           SquareUnionCommonCarrierConstruction.edge_carrier_subset T e he

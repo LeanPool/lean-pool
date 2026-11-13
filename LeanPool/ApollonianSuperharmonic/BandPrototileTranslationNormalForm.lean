@@ -69,10 +69,7 @@ private theorem noProperUnit :
       · simpa using hp.2 1
   | @successor r hr ih =>
       intro h hp
-      have a := nonnegative r hr 0
       have b := nonnegative r hr 1
-      have c := nonnegative r hr 2
-      have d := nonnegative r hr 3
       have h1 := hp.2 0
       have h2 := hp.2 1
       have h3 := hp.2 2
@@ -179,7 +176,6 @@ theorem BandPrototileTranslationNormalForm (C : CircleCoordinates)
     · intro q' hq' S' V' hS' hcells' hfoot' hcentroid' ih' hC
       have hbad := hq'.2 0
       have hnon := nonnegative q' hq'.1 1
-      have hnon' : 0 ≤ (q' 1).1 := by simpa using hnon
       rw [hC] at hbad
       have hbad' : (q' 1).1 < 0 := by simpa using hbad
       have : False := by omega

@@ -127,9 +127,6 @@ private theorem hOpp :
       (hCe : BoundaryFootprintEdges C = BoundaryFootprintEdges C')
       (hnA : A.cells.Nonempty) (hnB : B.cells.Nonempty) (hnC : C.cells.Nonempty)
       (hh : TouchingTriple A B C) : TouchingTriple A' B' C' := by
-    have hnA' : A'.cells.Nonempty := by rw [← hAc]; exact hnA
-    have hnB' : B'.cells.Nonempty := by rw [← hBc]; exact hnB
-    have hnC' : C'.cells.Nonempty := by rw [← hCc]; exact hnC
     have touch (X X' Y Y' : ProtoTile) (hX : X.cells = X'.cells)
         (hY : Y.cells = Y'.cells)
         (hXb : BoundaryFootprintVertices X = BoundaryFootprintVertices X')
@@ -888,10 +885,6 @@ theorem P4456T2BandGraphTriangle (q : Fin 4 → CircleCoordinates)
       BandGraphTriangleGeometry.shift_e1 q shift_add w
   have shift_e2 (w : Int × Int) : shift (w + (0, 1)) = shift w + v :=
       BandGraphTriangleGeometry.shift_e2 q shift_add w
-  have shift_neg_e1 (w : Int × Int) : shift (w - (1, 0)) = shift w - u :=
-      BandGraphTriangleGeometry.shift_neg_e1 q shift_add w
-  have shift_neg_e2 (w : Int × Int) : shift (w - (0, 1)) = shift w - v :=
-      BandGraphTriangleGeometry.shift_neg_e2 q shift_add w
   have shift_mne1 (w : Int × Int) : shift (w + (-1, 0)) = shift w - u :=
       BandGraphTriangleGeometry.shift_mne1 q shift_add w
   have shift_mne2 (w : Int × Int) : shift (w + (0, -1)) = shift w - v :=

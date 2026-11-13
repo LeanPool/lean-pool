@@ -48,8 +48,6 @@ theorem IntegerSuperharmonicClosedness
       intro d hd
       rw [Real.dist_eq]
       simp only [Prod.dist_eq, Real.dist_eq, max_lt_iff] at hd
-      have h1 : |d.1 - c.1| < e / 2 := by simpa [abs_sub_comm] using hd.1
-      have h2 : |d.2 - c.2| < e / 2 := by simpa [abs_sub_comm] using hd.2
       calc
         |(d.1 - d.2) - (c.1 - c.2)| = |(d.1 - c.1) - (d.2 - c.2)| := by ring_nf
         _ ≤ |d.1 - c.1| + |d.2 - c.2| := by
@@ -73,7 +71,6 @@ theorem IntegerSuperharmonicClosedness
       rw [abs_of_pos (by positivity : (0 : Real) < 1 / (k + 1 : Real))]
       rw [div_lt_iff₀ (by positivity : (0 : Real) < k + 1)]
       have hkreal : (N : Real) ≤ k := by exact_mod_cast hk
-      have hk' : (1 / e : Real) < k + 1 := by linarith
       have hrec : e * (1 / e : Real) = 1 := by field_simp
       nlinarith
     by_cases hij : i = j

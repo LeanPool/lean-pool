@@ -44,18 +44,6 @@ lemma SimpleGridPathPointTrichotomy
       simp
     · rw [hraw]
       simp
-  have hpne : p ≠ [] := by
-    intro hpnil
-    have hzero : (2 : Nat) ≤ 0 := by simpa only [hpnil, List.length_nil] using hlen
-    omega
-  have hfirst : ∀ z : GaussianInt, p.head? = some z → p = z :: p.tail := by
-    intro z hz
-    cases p with
-    | nil => exact False.elim (hpne rfl)
-    | cons q r =>
-      simp only [List.head?_cons, Option.some.injEq] at hz
-      subst q
-      rfl
   have split_mem : ∀ (r : List GaussianInt) (z : GaussianInt),
       z ∈ r → ∃ l t, r = l ++ z :: t := by
     intro r z hz

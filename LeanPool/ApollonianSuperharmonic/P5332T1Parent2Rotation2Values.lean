@@ -332,23 +332,16 @@ theorem P5332T1Parent2Rotation2Values (P A : FordFareyParameter) (hq : 1 < P.q)
   let p : Int := P.p
   let a : Int := P.p₁
   let b : Int := P.p₂
-  have hqI : 1 < q := by dsimp [q]; exact_mod_cast hq
   have hsum : q = r + s := by
     dsimp [q, r, s]
     exact_mod_cast P.sum_q
-  have hpsum : p = a + b := by dsimp [p,a,b]; exact P.sum_p
   have hr : 0 < r := by
     have hpos := (P5130T5ParentArithmetic P hq).1
     dsimp [r]
     exact_mod_cast hpos
   have hs : 0 < s := by dsimp [s]; exact_mod_cast P.q₂_pos
-  have hrq : r < q := by omega
-  have hsq : s < q := by omega
   have hdet₁ : a*q - r*p = 1 := by
     exact P.det₁
-  have hdet₂ : b*q - s*p = -1 := by
-    change P.p₂ * (P.q : Int) - (P.q₂ : Int) * P.p = -1
-    exact P.det₂
   have hqn : q ≠ 0 := by omega
   have hsn : s ≠ 0 := by omega
   have laws := (Classical.choose_spec FordOdometerFamilyExistsUnique).1

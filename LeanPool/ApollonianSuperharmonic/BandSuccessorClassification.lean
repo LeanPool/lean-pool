@@ -73,7 +73,6 @@ theorem BandSuccessorClassification (q : Fin 4 → CircleCoordinates)
     · change SemiProperQuadruple _ ∧ _
       refine ⟨SemiProperQuadruple.successor proper.1, ?_⟩
       have h0 : (q 1).1 < (q 0).1 := by simpa using proper.2 0
-      have h1 : (q 2).1 < (q 0).1 := by simpa using proper.2 1
       have h2 : (q 3).1 < (q 0).1 := by simpa using proper.2 2
       intro j
       fin_cases j

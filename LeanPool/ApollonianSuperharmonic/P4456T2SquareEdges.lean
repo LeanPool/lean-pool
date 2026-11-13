@@ -137,8 +137,6 @@ private theorem hvertex_box :
     simp only [Zsqrtd.re_add, Zsqrtd.im_add,
       ]
     norm_num
-    have ha' : (a : Int) < n := by exact_mod_cast ha
-    have hb' : (b : Int) < n := by exact_mod_cast hb
     omega
 
 private theorem hstarCoords :
@@ -817,9 +815,6 @@ theorem P4456T2SquareEdges (n : Nat) (hn : 0 < n)
       ∃ a b : Nat, a ≤ n ∧ b ≤ n ∧
         v = w + (⟨(a : Int), (b : Int)⟩ : GaussianInt) := SquareEdgeProof.hvertex_coords n w T
             hcell hnonempty v hv
-  have hvertex_box (v : GaussianInt) (hv : v ∈ FootprintVertices T) :
-      (w.re : Int) ≤ v.re ∧ v.re ≤ w.re + n ∧
-      w.im ≤ v.im ∧ v.im ≤ w.im + n := SquareEdgeProof.hvertex_box n w T hcell hnonempty v hv
   have hstarCoords (a b : Nat) (ha0 : 0 < a) (haN : a < n)
       (hb0 : 0 < b) (hbN : b < n) :
       ∀ j : Fin 4, LatticeVertexIncidentCell

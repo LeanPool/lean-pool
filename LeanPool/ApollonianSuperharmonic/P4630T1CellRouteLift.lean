@@ -426,11 +426,8 @@ theorem P4630T1CellRouteLift
   classical
   let safe := fun a : PeriodicSubtileIndex =>
     ¬ (a.first = 0 ∧ a.second = 0) ∧ ∀ i k, a ≠ P4630T1RingIndex i k
-  let shift := fun a : PeriodicSubtileIndex =>
-    (a.first : GaussianInt) * cert.u + (a.second : GaussianInt) * cert.v
   let clean := fun x : LatticeCell => ∀ i k,
     x ∉ (SubtileOccurrenceInterpretation cert.P cert.u cert.v (P4630T1RingIndex i k)).cells
-  let O := fun a : PeriodicSubtileIndex => TileTranslation cert.O (shift a)
   let V := fun a : PeriodicSubtileIndex =>
     (⟨(cert.modified.tile a).cells.filter clean, (cert.modified.tile a).anchor⟩ : ProtoTile)
   let E := fun c d => AllowedSubtileIncidence c d ∧ safe c ∧ safe d

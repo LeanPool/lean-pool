@@ -148,12 +148,7 @@ private theorem reflectY_mem (K : DiamondParameter) (z : GaussianInt) (hz : z �
   change (reflectY z ∈ domain)
   rw [mem_domain] at hz ⊢
   rcases hz with ⟨y, hy, him, hlo, hhi⟩
-  have hypos : y ≤ 2 * k := Nat.le_of_lt_succ (by omega)
   have hcast : ((2 * k - y : Nat) : Int) = 2 * (k : Int) - y := by omega
-  have hlo' : -min ((y : Int) + 1) (2 * (k : Int) - y) ≤ z.re := by
-    simpa [Nat.cast_min, hcast] using hlo
-  have hhi' : z.re < min ((y : Int) + 1) (2 * (k : Int) - y) := by
-    simpa [Nat.cast_min, hcast] using hhi
   have hr : (2 * k - 1 - y + 1).min (2 * k - (2 * k - 1 - y)) =
       (y + 1).min (2 * k - y) := by
     have hfirst : 2 * k - 1 - y + 1 = 2 * k - y := by omega
@@ -364,38 +359,13 @@ theorem DiamondBaseT2 (K : DiamondParameter) :
     QuarterTurnSymmetric (DiamondTile K.1) := by
 -- BODY
   let k : Nat := K.1
-  have hk : 0 < k := DiamondQuarterTurnConstruction.hk K
-  have mem_domain (z : GaussianInt) : z ∈ DiamondCellDomain k ↔
-      ∃ y : Nat, y < 2 * k ∧
-        (let r := Nat.min (y + 1) (2 * k - y);
-         z.im = (y : Int) ∧ -(r : Int) ≤ z.re ∧ z.re < (r : Int)) :=
-             DiamondQuarterTurnConstruction.mem_domain K z
   let domain : Finset GaussianInt := DiamondCellDomain k
-  have domain_nonempty : domain.Nonempty := DiamondQuarterTurnConstruction.domain_nonempty K
-  let reflectX : GaussianInt → GaussianInt :=
-    fun z => (⟨-z.re - 1, z.im⟩ : GaussianInt)
-  let reflectY : GaussianInt → GaussianInt :=
-    fun z => (⟨z.re, 2 * (k : Int) - 1 - z.im⟩ : GaussianInt)
-  have reflectX_mem (z : GaussianInt) (hz : z ∈ domain) : reflectX z ∈ domain :=
-      DiamondQuarterTurnConstruction.reflectX_mem K z hz
-  have reflectY_mem (z : GaussianInt) (hz : z ∈ domain) : reflectY z ∈ domain :=
-      DiamondQuarterTurnConstruction.reflectY_mem K z hz
-  have sum_re_reflect : domain.sum (fun z => z.re) =
-      domain.sum (fun z => (reflectX z).re) := DiamondQuarterTurnConstruction.sum_re_reflect K
-  have sum_re_formula : domain.sum (fun z => z.re) * 2 =
-      -(domain.card : Int) := DiamondQuarterTurnConstruction.sum_re_formula K
-  have sum_im_reflect : domain.sum (fun z => z.im) =
-      domain.sum (fun z => (reflectY z).im) := DiamondQuarterTurnConstruction.sum_im_reflect K
-  have sum_im_formula : domain.sum (fun z => z.im) * 2 =
-      (2 * (k : Int) - 1) * domain.card := DiamondQuarterTurnConstruction.sum_im_formula K
   have centroid_formula : TileCentroid (DiamondTile k) = (0, (k : Real)) :=
       DiamondQuarterTurnConstruction.centroid_formula K
   let rotate : GaussianInt → GaussianInt :=
     fun z => (⟨(k : Int) - 1 - z.im, z.re + k⟩ : GaussianInt)
   have rotate_mem (z : GaussianInt) (hz : z ∈ domain) : rotate z ∈ domain :=
       DiamondQuarterTurnConstruction.rotate_mem K z hz
-  have rotate_injective : Set.InjOn rotate (domain : Set GaussianInt) :=
-      DiamondQuarterTurnConstruction.rotate_injective K
   have rotate_surjective (z : GaussianInt) (hz : z ∈ domain) :
       ∃ w ∈ domain, rotate w = z := DiamondQuarterTurnConstruction.rotate_surjective K z hz
   change QuarterTurnSymmetric (DiamondTile k)

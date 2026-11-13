@@ -492,8 +492,6 @@ private theorem kids :
         ∀ a, Nonempty (AcyclicIndegreeOrientation (A a) σ)))) ) := by
   classical
   intro n U s V k l ih q hn r qr p hp hcurv hpos cfg B cert restrict ls hlsdom hls G hrest A σ a
-  let D := l.domain.filter fun x =>
-    @decide (x ∉ BoundaryFootprintVertices V) (Classical.propDecidable _)
   have hsmall : (p a.1.succ).1.toNat < n := by
     rw [← hn, ← hcurv]
     exact (Int.toNat_lt_toNat hpos).mpr (hp.2 a.1)
@@ -708,8 +706,6 @@ theorem BandTileAcyclicIndegree :
         let A := fun a : Fin 3 × Bool => (ls a.1 a.2).domain.filter fun x =>
           @decide (x ∉ BoundaryFootprintVertices (cert.P a.1 a.2))
             (Classical.propDecidable _)
-        let I := (ks true).domain.filter fun x =>
-          @decide (x ∉ BoundaryFootprintVertices cert.O) (Classical.propDecidable _)
         let σ := fun x => 2 + FourNeighborLaplacian G x
         have kids := BandAcyclicIndegreeGeometry.kids n U s k ih q hn r hp hcurv hpos cfg cert
             hlsdom hls G hrest

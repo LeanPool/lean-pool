@@ -276,7 +276,6 @@ private theorem ha0 :
   intro P hbig a b hsum
   let A := P.p₁
   by_contra h
-  have hanon : 0 ≤ a := by dsimp [a]; omega
   have haz : a = 0 := by omega
   have hd : (P.q : Int) ∣ 1 := by
     refine ⟨A, ?_⟩
@@ -1345,7 +1344,6 @@ private theorem interiorLaplacian :
     have hd : (P.q₁ : Int) ∣ 1 := FordLaplacianDetails.hdAt1050 P he hsum hdet hp
     have ha1 := Int.le_of_dvd (by norm_num : (0 : Int) < 1) hd
     have hqa : (P.q₁ : Int) = 1 := by omega
-    have hqb : (P.q₂ : Int) = 1 := by omega
     have hqq : (P.q : Int) = 2 := by omega
     have hx : x = ⟨1, 1⟩ := by ext <;> dsimp <;> omega
     have hnum : P.p = P.p₁ * 2 - 1 := FordLaplacianDetails.hnum P hdet hqa hqq

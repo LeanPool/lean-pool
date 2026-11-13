@@ -111,16 +111,6 @@ private theorem border_touch :
   obtain ⟨a, ha, hua⟩ := RegularTileFamilyTranslationUnique T
     (TilingLattice C) U hU
   have hUform : U = TileTranslation T (a : GaussianInt) := ha
-  have ha0 : a ≠ 0 := by
-    intro hz
-    apply hneq
-    rw [hUform, hz]
-    cases T with
-    | mk cells anchor =>
-      apply congrArg₂ ProtoTile.mk
-      · ext z
-        simp [GaussianTranslation]
-      · simp [GaussianTranslation]
   rw [hUform]
   intro ht
   rcases ht with ht | ht | ht
@@ -625,8 +615,6 @@ theorem BandTileTopologyApplication (C : BandCircle)
         TileCentroid (TileTranslation T y) - TileCentroid (TileTranslation T x) =
           GaussianRealPoint (y - x) := TileTopologyGeometry.centroid_difference T x y
     have translate_zero : TileTranslation T 0 = T := TileTranslationProperties.zero T
-    have realPoint_injective : Function.Injective GaussianRealPoint :=
-        GaussianRealPointProperties.injective
     have hpositive : 0 < (q 0).1 := (ProperBandCurvatureStructure q hq).1
     have harea := (BandTileSimultaneousInduction q hq T hT).2.1
     have hnonempty (x : GaussianInt) :

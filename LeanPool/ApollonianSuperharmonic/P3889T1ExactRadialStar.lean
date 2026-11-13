@@ -357,10 +357,6 @@ private theorem hu_injective :
   intro ι P D a hadj_contact hlocal localU localEps rN u u_norm localRay rF0 r hr hr_local c d
       hac had hdirs
   by_contra hne
-  have hca : c ≠ a := by
-    intro h
-    subst c
-    exact P.plane.adjacent_irreflexive a hac
   have hda : d ≠ a := by
     intro h
     subst d
@@ -496,12 +492,6 @@ theorem P3889T1ExactRadialStar {ι : Type} (P : PeriodicTileComplex ι)
   have hposition_arc_endpoint (v c d : ι) (hcd : P3723T1EdgeContact P c d)
       (hv : D.position v ∈ D.edgeArc c d) : v = c ∨ v = d :=
           RadialStarProof.hposition_arc_endpoint ι P D  hadj_contact v c d hcd hv
-  have hincident_position (c : ι) (hac : P.plane.adjacent a c) :
-      D.position a ∈ D.edgeArc a c := by
-    obtain ⟨g, _, _, hrange, hg0, _, _⟩ := D.edgeArc_parameterization a c (hadj_contact a c hac)
-    rw [← hrange]
-    rw [← hg0]
-    exact ⟨⟨0, by norm_num⟩, rfl⟩
   have hlocal (c : ι) (hac : P.plane.adjacent a c) :
       ∃ u : Real × Real, ‖u‖ = 1 ∧ ∃ ε > 0,
         D.edgeArc a c ∩ Metric.ball (D.position a) ε =
@@ -550,7 +540,6 @@ theorem P3889T1ExactRadialStar {ι : Type} (P : PeriodicTileComplex ι)
     rw [← hrange]
     exact isCompact_range hg
   let Q : Set (Real × Real) := Metric.closedBall (D.position a) 1
-  have hQ : IsCompact Q := by dsimp [Q]; exact isCompact_closedBall _ _
   let E : Set (ι × ι) := {e | P3723T1EdgeContact P e.1 e.2 ∧
       (D.edgeArc e.1 e.2 ∩ Q).Nonempty}
   have hE : E.Finite := by
@@ -576,7 +565,6 @@ theorem P3889T1ExactRadialStar {ι : Type} (P : PeriodicTileComplex ι)
   obtain ⟨rF0, hrF0, hballF0⟩ :=
     (Metric.isOpen_iff.mp hAcompact.isClosed.isOpen_compl) (D.position a) hxA
   have hballF : Metric.ball (D.position a) rF0 ⊆ Aᶜ := hballF0
-  have hrF0pos : 0 < rF0 := hrF0
   let r : Real := min rN (min rF0 1) / 2
   have hr : 0 < r := by dsimp [r]; positivity
   have hrNlt : r < rN := by dsimp [r]; have := min_le_left rN (min rF0 1); linarith

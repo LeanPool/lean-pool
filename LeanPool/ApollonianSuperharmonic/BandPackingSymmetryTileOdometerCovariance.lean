@@ -480,8 +480,6 @@ private theorem hcorner :
     add_zero] at hdx
   have hd1 : d1 = wr * v.re + wi * v.im := by
     simpa [d1] using hdx0
-  have hd2 : d2 = -wr * v.im + wi * v.re := by
-    simpa [d2] using hdy0
   have hv : BandPackingShiftPotential ⟨wr, wi⟩ (v + ⟨0, 1⟩) =
       BandPackingShiftPotential ⟨wr, wi⟩ v + d2 := by
     dsimp [d2]
@@ -988,8 +986,6 @@ private theorem hT' :
             s).cells) → (BandPrototile (q' 0) (B a U))) ) := by
   classical
   intro U q hT a Q B q' cov
-  let sigma : Fin 3 → Fin 3 := fun i =>
-    if BandPackingSymmetryReversesOrientation a then -i else i
   have ht := cov.2.1 (q 0) U
   have ht' := ht.mp hT
   simpa [q', Q, B, BandPackingSymmetryQuadrupleAction] using ht'
@@ -1085,7 +1081,6 @@ private theorem hdom' :
     exact ⟨x, hxs, rfl⟩
   · rintro ⟨j, s, hy⟩
     let p := e.symm (j, s)
-    have hp : e p = (j, s) := e.apply_symm_apply (j, s)
     change y ∈ ((P a (hs p.1 p.2)).domain : Set GaussianInt) at hy
     rw [(BandPackingSymmetryPartialOdometerActionFormulas a
       (hs p.1 p.2) (hs p.1 p.2)).1] at hy
@@ -1603,10 +1598,6 @@ private theorem hpsi :
             BandPackingShiftPotential (⟨wr, wi⟩ : GaussianInt) v⟩ : GaussianInt).im * v.im) ) := by
   classical
   intro z wr wi v hcorner r hr
-  let d1 := BandPackingShiftPotential ⟨wr, wi⟩ (v + 1) -
-    BandPackingShiftPotential ⟨wr, wi⟩ v
-  let d2 := BandPackingShiftPotential ⟨wr, wi⟩ (v + ⟨0, 1⟩) -
-    BandPackingShiftPotential ⟨wr, wi⟩ v
   exact TileOdometerSymmetryProof.hpsi z wr wi v
           hcorner r hr
 
@@ -1763,9 +1754,6 @@ private theorem unitSymmetry :
   | negate =>
       rcases htrans with ⟨v, a0, b0, hvdom, hvval⟩
       let I : GaussianInt := ⟨0, 1⟩
-      let vn := GaussianQuarterTurn v - 1
-      let an := GaussianQuarterTurn a0 + ⟨0, z.im⟩
-      let bn := b0 - z.im * vn.im
       have hcell : (TileQuarterTurn U).cells =
           {GaussianQuarterTurn x - 1} := TileOdometerSymmetryProof.hcellAt653 U x hU
       have hdomain := TileOdometerSymmetryProof.hdomainAt657 U k hdom
@@ -1786,9 +1774,6 @@ private theorem unitSymmetry :
   | conjugate =>
       rcases htrans with ⟨v, a0, b0, hvdom, hvval⟩
       let I : GaussianInt := ⟨0, 1⟩
-      let vk := -GaussianReflection v - 1
-      let ak := -GaussianReflection a0 + ⟨0, z.im⟩
-      let bk := b0 - z.im * vk.im
       have hcell :
           (BandPackingSymmetryTileAction .conjugate U).cells =
             {-GaussianReflection x - 1} := TileOdometerSymmetryProof.hcellAt753 U x hU
@@ -1855,10 +1840,6 @@ theorem BandPackingSymmetryTileOdometerCovariance
   have circleCurvature := TileOdometerSymmetryProof.circleCurvature
   have extractUnit := TileOdometerSymmetryProof.extractUnit
   have differenceTransport := TileOdometerSymmetryProof.differenceTransport
-  let symmetryMix : Bool → GaussianInt × GaussianInt → GaussianInt × GaussianInt :=
-    fun r z => if r then
-      (z.1 + GaussianQuarterTurn z.1, z.2 - GaussianQuarterTurn z.2)
-    else (z.1 - GaussianQuarterTurn z.1, z.2 + GaussianQuarterTurn z.2)
   have affineMix := TileOdometerSymmetryProof.affineMix
   have transform : ∀ (D : CircleCoordinates) (U : ProtoTile) (k : PartialOdometer),
       TileOdometer D U k → ∀ a : BandPackingSymmetry,
@@ -1878,7 +1859,6 @@ theorem BandPackingSymmetryTileOdometerCovariance
     | @decompose q hq S U hs h hT hsub hcells hfoot hcentroid hdom hvalue hcompat hslope ih =>
         intro a
         let Q := BandPackingSymmetryQuadrupleAction
-        let A := BandPackingSymmetryCircleAction
         let B := BandPackingSymmetryTileAction
         let P := BandPackingSymmetryPartialOdometerAction
         let q' := Q a q
@@ -1903,7 +1883,6 @@ theorem BandPackingSymmetryTileOdometerCovariance
         have hfoot' : ∀ i s, FootprintVertices (S' i s) ⊆
             FootprintVertices (B a U) := fun i s => (hocc' i s).2.1
         have hcentroid' := TileOdometerAssembly.hcentroid' U q a S' hocc'
-        have hcompatInput := BandPackingSymmetryPartialOdometerActionFormulas a h h
         obtain ⟨negative, hphaseAffine, hvecAffine⟩ :=
           BandPackingSymmetryAffineVectorCovariance a q hq
         have hphaseEq := TileOdometerAssembly.hphaseEq q hq a delta hphase negative hphaseAffine

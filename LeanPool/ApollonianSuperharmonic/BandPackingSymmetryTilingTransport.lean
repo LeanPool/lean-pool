@@ -369,9 +369,6 @@ private theorem conjugation :
   have image_subsingleton (f : GaussianInt → GaussianInt)
       (hf : Function.Injective f) (A B : Set GaussianInt) :=
           TilingTransportProof.image_subsingletonAt247 f hf A B
-  have reflection_injective : Function.Injective
-      (fun z : GaussianInt => -GaussianReflection z) :=
-          TilingTransportDetails.reflection_injective
   refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
   · intro T
     exact ((TileDiskAreaCovariance T 0).2.2.1).trans

@@ -902,7 +902,6 @@ private theorem endpoint_parameters :
   · have hx : x.1 ≠ y.1 := by
       intro hx
       have hx' : (x.1 : Real) = (y.1 : Real) := by exact_mod_cast hx
-      have hst : s = t := by linarith [h.1]
       have hy : x.2 = y.2 := by
         exact_mod_cast (show (x.2 : Real) = (y.2 : Real) by linarith [h.2])
       have heq := Prod.ext hx hy
@@ -1112,7 +1111,6 @@ theorem AffineTriangularPlaneTriangulation :
   have arc_homeo (a b : (Int × Int)) (hne : a ≠ b) := AffineTriangulationLemmas.arc_homeo
       coord_injective segment_homeo a b hne
   let T : Set (Real × Real) := {p | 0 < p.1 ∧ 0 < p.2 ∧ p.1 + p.2 < 1}
-  let C : Set (Real × Real) := {p | 0 ≤ p.1 ∧ 0 ≤ p.2 ∧ p.1 + p.2 ≤ 1}
   have open_T := AffineTriangulationLemmas.open_T
   have closed_C := AffineTriangulationLemmas.closed_C
   have convex_T := AffineTriangulationLemmas.convex_T

@@ -251,7 +251,6 @@ private theorem Yconn :
   have hrev : p.reverse.IsChain FourNeighborAdjacent :=
     List.isChain_reverse.mpr hpc'
   have hqtail : q.tail.IsChain FourNeighborAdjacent := hqc.tail
-  have hpn : p ≠ [] := by intro he; simp [he] at hp
   have hqn : q ≠ [] := by intro he; simp [he] at hq
   have hjoin : (p.reverse ++ q.tail).IsChain FourNeighborAdjacent := by
     apply hrev.append hqtail
@@ -510,14 +509,6 @@ private theorem hlapInd :
     rw [show p + v - ⟨0, 1⟩ - v = p - ⟨0, 1⟩ by abel] at hh
     simp only [not_not] at hh
     exact hh
-  have h2'' : -1 + p ∈ Z ↔ -1 + p + v ∉ X := by
-    convert h2' using 1 <;> abel
-  have h4'' : -⟨0, 1⟩ + p ∈ Z ↔ -⟨0, 1⟩ + p + v ∉ X := by
-    convert h4' using 1 <;> abel
-  have e1 : 1 + p + v ∉ X ↔ p + 1 ∈ Z := by
-    convert h1'.symm using 1; abel
-  have e2 : -1 + p + v ∉ X ↔ p - 1 ∈ Z := by
-    convert h2'.symm using 1; abel
   have e3 : p + v + ⟨0, 1⟩ ∉ X ↔ p + ⟨0, 1⟩ ∈ Z := h3'.symm
   have e4 : p + v - ⟨0, 1⟩ ∉ X ↔ p - ⟨0, 1⟩ ∈ Z := h4'.symm
   simp only [FourNeighborLaplacian]
@@ -641,7 +632,6 @@ theorem PeriodicOdometerIndicatorRigidity (C : BandCircle)
     p.head? = some a ∧ p.getLast? = some b ∧
       (∀ z ∈ p, z ∉ X) ∧ p.IsChain FourNeighborAdjacent
   let Y : Set GaussianInt := {y | reachable x y}
-  have Ynonempty := PeriodicIndicatorGeometry.Ynonempty X x hxX
   have xY := PeriodicIndicatorGeometry.xY X x hxX
   have Yout := PeriodicIndicatorGeometry.Yout X x
   have Yconn := PeriodicIndicatorGeometry.Yconn X x xY

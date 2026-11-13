@@ -116,9 +116,6 @@ private theorem hpathPlusO :
   · exact (Finset.not_nonempty_iff_eq_empty.mpr hE hDplus).elim
   · exact (Finset.not_nonempty_iff_eq_empty.mpr hE hO).elim
 
-private abbrev hpathMinusO :=
-  ApollonianSuperharmonic.ContactStarCases.hpathPlusO
-
 private abbrev boundaryEdgeFootprint :=
   BoundaryFootprintInclusion.boundaryEdge
 
@@ -880,16 +877,12 @@ theorem P4638T1ContactStarCoverage (Dplus Dminus O O' X Y U V : ProtoTile)
     (LatticeTileGridStructure Dplus hplus).1.1
   have hDminus : Dminus.cells.Nonempty :=
     (LatticeTileGridStructure Dminus hminus).1.1
-  have hcheckO : NoCheckerboardCellVertex (O.cells : Set LatticeCell) :=
-    (LatticeTileGridStructure O hOL).2.1
   have hcheckPlus : NoCheckerboardCellVertex (Dplus.cells : Set LatticeCell) :=
     (LatticeTileGridStructure Dplus hplus).2.1
   have hcheckMinus : NoCheckerboardCellVertex (Dminus.cells : Set LatticeCell) :=
     (LatticeTileGridStructure Dminus hminus).2.1
   have hdisjPlusO := ContactStarCases.hdisjPlusO Dplus O hO htplus hDplus
   have hdisjMinusO := ContactStarCases.hdisjMinusO Dminus O hO htminus hDminus
-  have hpathPlusO := ContactStarCases.hpathPlusO Dplus O hO htplus hDplus
-  have hpathMinusO := ContactStarCases.hpathMinusO Dminus O hO htminus hDminus
   have boundaryEdgeFootprint (T : ProtoTile) (e : Finset GaussianInt)
       (he : e ∈ BoundaryFootprintEdges T) := ContactStarCases.boundaryEdgeFootprint T e he
   let edgeAt (y : GaussianInt) : Fin 4 → Finset GaussianInt :=
@@ -968,9 +961,8 @@ theorem P4638T1ContactStarCoverage (Dplus Dminus O O' X Y U V : ProtoTile)
           Dplus Dminus O O' X Y U V hO hX hY hU hV data hcheckPlus hcheckMinus hdisjPlusO
           hdisjMinusO boundaryVertexOfCross coverLeft coverRight noCheckerboardDiagonal
           mixedCornerContradiction y j hcenter hside1O hside3O
-  have singletonCorner (y : GaussianInt) (j : Fin 4) := ContactStarCases.singletonCorner y j
   intro y hy a hya
-  obtain ⟨jo, hjo⟩ := incident O y hO hy
+  obtain ⟨jo, hjo⟩ := incident O y (LatticeTileGridStructure O hOL).1.1 hy
   have ha := ContactStarCases.ha y a hya
   have coverAt (i : Fin 4) := ContactStarCases.coverAt Dplus Dminus O coverLeft coverRight
       cornerRescue y jo hjo i

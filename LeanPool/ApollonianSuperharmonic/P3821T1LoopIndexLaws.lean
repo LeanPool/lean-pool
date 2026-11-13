@@ -60,7 +60,6 @@ private theorem integralIndex :
   refine ⟨n, ?_⟩
   change P3821T1AngularIncrement γ p / (2 * Real.pi) = (n : ℝ)
   rw [hn]
-  have hpi : (2 * Real.pi : ℝ) ≠ 0 := by positivity
   field_simp
 
 private theorem compositionIndex :
@@ -184,7 +183,6 @@ private theorem compositionIndex :
     ⟨fun t => a t / (2 * Real.pi), by fun_prop⟩
   let fracPoint (t : unitInterval) : unitInterval :=
     ⟨Int.fract (xMap t), Int.fract_nonneg _, (Int.fract_lt_one _).le⟩
-  have hpi : (2 * Real.pi : ℝ) ≠ 0 := by positivity
   have hax (t : unitInterval) : a t = 2 * Real.pi * xMap t := by
     dsimp [xMap]
     field_simp
@@ -340,7 +338,6 @@ private theorem hlocal :
       have := lt_of_le_of_lt hb (hratioNear z)
       simpa using this
     rcases abs_lt.mp hb' with ⟨hlo, hhi⟩
-    have hre : (ratio z).re - 1 > -1 := by linarith
     linarith
   have hratioCont : Continuous ratio := by
     apply Continuous.div
@@ -604,8 +601,6 @@ theorem P3821T1LoopIndexLaws :
         ⟨fun z => H (⟨1, by norm_num⟩, z), by fun_prop⟩ p) := by
 -- BODY
   classical
-  let q : C(unitInterval, Circle) :=
-    ⟨fun t => Circle.exp (2 * Real.pi * (t : ℝ)), by fun_prop⟩
   rcases P3821T1AngularIncrementLaws with ⟨hlift, _, _⟩
   have integralIndex :
       (∀ (g : C(Circle, ℂ)) (p : ℂ), (∀ z, g z ≠ p) →

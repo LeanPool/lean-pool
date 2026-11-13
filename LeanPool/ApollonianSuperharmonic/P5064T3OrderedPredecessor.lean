@@ -52,7 +52,6 @@ theorem P5064T3OrderedPredecessor (P : FordFareyParameter)
     have hh : (P.q₂ : Int) * (P.q₂ : Int) ≤ (P.q₁ : Int) * (P.q₁ : Int) := by
       simpa [FordRecursiveQuadruple, FordCircleCoordinate, hn] using h12
     by_contra h
-    have hgt : (P.q₁ : Int) < (P.q₂ : Int) := by omega
     nlinarith [Nat.cast_nonneg (α := Int) P.q₁,
       Nat.cast_nonneg (α := Int) P.q₂]
   have cross : P.p₁ * (P.q₂ : Int) - (P.q₁ : Int) * P.p₂ = 1 := by

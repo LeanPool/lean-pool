@@ -454,7 +454,6 @@ private theorem walk_reverse :
     let j := n - 1 - k
     have hj : j + k + 1 = n := by dsimp [j]; omega
     have hjlt : j < n := by dsimp [j]; omega
-    have hnR : (0 : Real) < n := by exact_mod_cast hn
     have hncast : (n : Real) = (p.length : Real) - 1 := by
       dsimp [n]
       rw [Nat.cast_sub (by omega : 1 ≤ p.length)]
@@ -724,14 +723,6 @@ private theorem walk_contained :
       exact List.getD_eq_getElem (l := p) (d := 0) hk0
     have hgetB : b = p[k + 1] := by
       exact List.getD_eq_getElem (l := p) (d := 0) hk1
-    have haV : a ∈ FootprintVertices T := by
-      apply hv a
-      rw [hgetA]
-      exact List.getElem_mem hk0
-    have hbV : b ∈ FootprintVertices T := by
-      apply hv b
-      rw [hgetB]
-      exact List.getElem_mem hk1
     have hdrop0 : p.drop k = a :: p.drop (k + 1) := by
       calc
         p.drop k = p[k] :: p.drop (k + 1) := (List.cons_getElem_drop_succ (h := hk0)).symm

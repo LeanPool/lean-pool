@@ -1102,14 +1102,10 @@ private theorem sectorTopPositive :
   classical
   intro SectorSimplex sectorChamber SectorOrder sectorI sectorJ sectorK sectorCh sectorOrderedSum
       s o hs
-  have hc : (∀ n, 0 ≤ s.1 n) ∧ ∑ n : Fin 3, s.1 n = 1 := by
-    simpa only [SectorSimplex, StandardSimplex, Set.mem_ofPred_eq] using s.2
   have hsum := sectorOrderedSum s (sectorI o) (sectorJ o) (sectorK o)
     o.2.1 o.2.2.1 o.2.2.2
   have hj : s.1 (sectorJ o) ≤ s.1 (sectorI o) := hs.1
   have hk : s.1 (sectorK o) ≤ s.1 (sectorJ o) := hs.2
-  have hj0 := hc.1 (sectorJ o)
-  have hk0 := hc.1 (sectorK o)
   linarith
 
 private theorem sectorChosenCone_periodic :
@@ -1650,7 +1646,6 @@ theorem P3776T1SectorMapsExist {ι : Type} (P : PeriodicTileCore ι)
   classical
   let SectorInterval := Set.Icc (0 : ℝ) 1
   let SectorCone := {z : SectorInterval × SectorInterval // (z.2 : ℝ) ≤ z.1}
-  let sectorCollapse := P3832T1ConeCollapse
   have sectorCollapse_surjective := SectorMapsProof.sectorCollapse_surjective
   have sectorConeDescent (g : C(SectorInterval × SectorInterval, ℝ × ℝ)) (c : ℝ × ℝ)
       (hzero : ∀ t : SectorInterval, g (⟨0, by norm_num [SectorInterval]⟩, t) = c) :=
@@ -1671,7 +1666,6 @@ theorem P3776T1SectorMapsExist {ι : Type} (P : PeriodicTileCore ι)
   let sectorK : SectorOrder → Fin 3 := fun o => o.1.2.2
   let sectorCh := fun o : SectorOrder => sectorChamber (sectorI o) (sectorJ o) (sectorK o)
   have sectorOrderExists := SectorMapsProof.sectorOrderExists
-  have sectorChamber_closed := SectorMapsProof.sectorChamber_closed
   have sectorOrder_cover := SectorMapsProof.sectorOrder_cover sectorOrderExists
   have sectorIndexCover (o : SectorOrder) (n : Fin 3) := SectorMapsProof.sectorIndexCover o n
   have sectorOrderedSum (s : SectorSimplex) (i j k : Fin 3)

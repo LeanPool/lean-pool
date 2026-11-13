@@ -1620,8 +1620,6 @@ theorem P5635T1EndpointDiagonalOwnership {ι : Type}
 -- BODY
   classical
   have triple_label_pattern := EndpointDiagonalGeometry.triple_label_pattern
-  let neighbor (x : GaussianInt) : Fin 4 → GaussianInt :=
-    ![x + ⟨0, 1⟩, x - 1, x - ⟨0, 1⟩, x + 1]
   let edgeAt (x : GaussianInt) : Fin 4 → Finset GaussianInt :=
     ![{x, x + ⟨0, 1⟩}, {x - 1, x},
       {x - ⟨0, 1⟩, x}, {x, x + 1}]
@@ -1708,8 +1706,6 @@ theorem P5635T1EndpointDiagonalOwnership {ι : Type}
   have hownerAligned := EndpointDiagonalGeometry.hownerAligned ι P owner owner_mem_iff T0 T0' U V
       hdis ia ib hUidx hVidx hUsub hVsub x label_T0 label_T0' jAB htransABx hownerAB
   have hlabelsAB := EndpointDiagonalGeometry.hlabelsAB T0 T0' x label_T0 label_T0' jAB htransABx
-  let o0 := owner (LatticeVertexIncidentCell x jAB)
-  let o1 := owner (LatticeVertexIncidentCell x (jAB + 1))
   let o2 := owner (LatticeVertexIncidentCell x (jAB + 2))
   let o3 := owner (LatticeVertexIncidentCell x (jAB + 3))
   have hownerAligned' := EndpointDiagonalGeometry.hownerAligned' ι owner T0 T0' ia ib x jAB

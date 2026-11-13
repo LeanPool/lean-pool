@@ -516,9 +516,6 @@ theorem TileOdometerExists (C : BandCircle) :
                   intro p V U W hp hV _ i hU hW hcU hcW
                   exact (BandTileSimultaneousInduction p hp V hV).2.2.2.2.2.2.1
                     i U W hU hW hcU hcW)
-              let D : Fin 3 → BandCircle := fun i =>
-                ⟨⟨q' i.succ, Or.inl (hpositive i),
-                  q', cfg.proper.1, i.succ, rfl⟩, hpositive i⟩
               choose U k hU hk using (TileOdometerExistenceGeometry.parents C n ih hn q r g hcurv
                   cfg hpositive)
               choose p a hp ha hnonempty using fun i =>

@@ -511,8 +511,6 @@ private theorem translatedFootprint :
             ) := by
   classical
   intro P hFnon hFfoot w
-  have htn : (TileTranslation (FordTile P.q) w).cells.Nonempty := by
-    simpa [TileTranslation] using hFnon.image (GaussianTranslation w)
   calc
     FootprintVertices (TileTranslation (FordTile P.q) w) =
         GaussianTranslation w '' FootprintVertices (FordTile P.q) :=
@@ -645,7 +643,6 @@ theorem P4158T1MatchedFordPair
   have hrpos : 0 < P.q₁ := MatchedFordGeometry.hrpos P hqgt
   have hspos : 0 < P.q₂ := P.q₂_pos
   have hneq : P.q₁ ≠ P.q₂ := MatchedFordGeometry.hneq P Ci i hCi hlarge hidx hrpos hspos
-  have hcurv : 0 < (FordCircleCoordinate P.p P.q).1 := MatchedFordGeometry.hcurv P hqpos
   obtain ⟨H, hHO, hHD, hHV⟩ := FordTileOdometerRestriction P
   have hHcircle : TileOdometer C0.1.1 (FordTile P.q) H := MatchedFordGeometry.hHcircle P C0 hC0 H
       hHO
@@ -663,8 +660,6 @@ theorem P4158T1MatchedFordPair
       MatchedFordGeometry.hcentT P T h H u hu hFnon hTnon
   have hcentT' : TileCentroid T' = TileCentroid (TileTranslation (FordTile P.q) v) :=
       MatchedFordGeometry.hcentT' P T' h' H v hv hFnon hT'non
-  have hfordcent : TileCentroid (FordTile P.q) =
-      ((P.q : ℝ) / 2, (P.q : ℝ) / 2) := MatchedFordGeometry.hfordcent P hqgt hqpos
   have hcentdiff : TileCentroid T' - TileCentroid T =
       GaussianRealPoint (v - u) := MatchedFordGeometry.hcentdiff P T T' u v hcentT hcentT'
   obtain ⟨_, hconfig⟩ := FordCoordinateConfiguration P

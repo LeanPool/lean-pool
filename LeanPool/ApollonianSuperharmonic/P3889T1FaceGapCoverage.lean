@@ -1293,23 +1293,6 @@ private theorem hzeroK :
     exact hmem.1
   obtain ⟨cg, dg, hcg, hdg, hcdg, hacg, hadg, hcgi, hdgi, hfrontG⟩ :=
     hincidentSectorData g j hj
-  have hfrontG := hfrontG.1
-  have hmatchG := faceOtherMatch g j hj e hgE hea cg dg hcg hdg hcdg hcgi hdgi
-  have hqrayG : (q ∈ B ∩ {q | ∃ s : Real, 0 ≤ s ∧ q = x + s • u cg}) ∨
-      (q ∈ B ∩ {q | ∃ s : Real, 0 ≤ s ∧ q = x + s • u dg}) := by
-    rcases hmatchG with hce | hde
-    · left
-      refine ⟨hqBF, s, le_of_lt hs, ?_⟩
-      simpa [hce] using hqeq
-    · right
-      refine ⟨hqBF, s, le_of_lt hs, ?_⟩
-      simpa [hde] using hqeq
-  have hqfrontG : q ∈ frontier (F.region g) := by
-    have heq := congrArg (fun S : Set (Real × Real) => q ∈ S) hfrontG
-    have hmem : q ∈ frontier (F.region g) ∩ B := by
-      apply heq.mpr
-      simpa only [Set.mem_union, Set.mem_inter_iff] using hqrayG
-    exact hmem.1
   exact Set.mem_iUnion₂.mpr ⟨f, ⟨i, hi⟩, frontier_subset_closure hqfrontF⟩
 
 private theorem huAt878 :
@@ -1707,7 +1690,6 @@ private theorem hfaceFillsSector :
   obtain ⟨c, d, hca, hda, hcd, hac, had, hci, hdi, hfront, ⟨S⟩⟩ :=
     hincidentSectorData f i hi
   let U := F.region f
-  let V := (closure U)ᶜ
   have hxB : x ∈ B := by simp [B, Metric.mem_ball_self hr]
   have hxfront := FaceGapProof.hxfront ι P D F a r u f c d hfront (FaceGapProof.hxray ι P D a r
       u c hxB)
@@ -1833,7 +1815,6 @@ private theorem hKlocal :
           (P.plane.every_edge_two_faces a e hae)))
       obtain ⟨hf0a, hf0e⟩ := hf0
       obtain ⟨hf1a, hf1e⟩ := hf1
-      have hcase := hexhaust f ⟨⟨i, hi⟩, he⟩
       let g := if f = f0 then f1 else f0
       have hfg := FaceGapProof.hfg ι P a f e hae hne
       have hgE := FaceGapProof.hgE ι P a f e hae hf0e hf1e
@@ -1846,8 +1827,6 @@ private theorem hKlocal :
       have heps : 0 < eps := by dsimp [eps]; positivity
       have heps₁ := FaceGapProof.heps₁ t δ₁ hδ₁ δ₂
       have heps₂ := FaceGapProof.heps₂ t δ₁ δ₂ hδ₂
-      have hball₂' := FaceGapProof.hball₂' ι P D a r z t δ₁ δ₂ hball₂
-          heps₂
       have hzeroK := FaceGapProof.hzeroK ι P
               D F a r u hunit hincidentSectorData faceOtherMatch f z i hi e he hea hae t hzeq
               hgE j hj δ₁ δ₂ (FaceGapProof.hepst t ht δ₁ δ₂) (FaceGapProof.hball₁' ι P D a r z
@@ -1960,9 +1939,6 @@ theorem P3889T1FaceGapCoverage :
     {q | ∃ c d, P.plane.adjacent c d ∧ q ∈ D.edgeArc c d}
   have hpB : p ∈ B := hp
   have hpNotT : p ∉ T := hnot
-  have hpNotRay (c : ι) (hac : P.plane.adjacent a c) := FaceGapProof.hpNotRay ι P D a r u p hpB
-          (FaceGapProof.hpNotRays ι P D a r u htrace p hpNotT) c hac
-  let N : Set ι := {c | P.plane.adjacent a c}
   have hincidentSectorData (f : P.plane.Face) (i : Fin 3)
       (hi : P.plane.faceVertex f i = a) := FaceGapProof.hincidentSectorData ι P D F a r u hedge
           hsectors (FaceGapProof.hfaceFrontier ι P D F a r hforeign) f i hi
@@ -1980,14 +1956,6 @@ theorem P3889T1FaceGapCoverage :
   have hpSphere : p ∈ Metric.sphere x rho := by
     simp [rho]
   let I : Set P.plane.Face := {f | ∃ i, P.plane.faceVertex f i = a}
-  let Nsub := {c : ι // P.plane.adjacent a c}
-  let first (c : Nsub) : P.plane.Face :=
-    Classical.choose (P.plane.every_edge_two_faces a c.1 c.2)
-  let second (c : Nsub) : P.plane.Face :=
-    Classical.choose (Classical.choose_spec
-      (P.plane.every_edge_two_faces a c.1 c.2))
-  let facePick : Nsub × Fin 2 → P.plane.Face := fun z =>
-    if z.2 = 0 then first z.1 else second z.1
   have faceOtherMatch (g : P.plane.Face) (j : Fin 3)
       (hj : P.plane.faceVertex g j = a) (e : ι)
       (he : ∃ k, P.plane.faceVertex g k = e) (hea : e ≠ a)
@@ -2002,8 +1970,6 @@ theorem P3889T1FaceGapCoverage :
   have hKlocal (z : Real × Real) (hzS : z ∈ Metric.sphere x rho)
       (hzK : z ∈ K) : ∃ δ > 0, Metric.ball z δ ⊆ K := FaceGapSectorGeometry.hKlocal ι P D F hd a
           r u hunit p hincidentSectorData hfaceFillsSector hrho hrho' faceOtherMatch z hzS hzK
-  have hSnonempty : (Metric.sphere x rho).Nonempty := by
-    exact ⟨p, hpSphere⟩
   have hAclosed : IsClosed ((Subtype.val : Metric.sphere x rho → Real × Real) ⁻¹' K) :=
     hKclosed.preimage continuous_subtype_val
   obtain ⟨f, hfI, hpc⟩ := Set.mem_iUnion₂.mp (FaceGapProof.hpK ι P D F a p hpSphere

@@ -388,7 +388,6 @@ private theorem oneUnitContacts (k : Nat) (hk : 0 < k) :
     unitContactConclusion k 1 := by
   classical
   have makePath := UnitContactProof.makePath
-  have rightContact := UnitContactProof.rightContact k hk
   have singletonPath := UnitContactProof.singletonPath makePath
   let M := P5260T1PlacementLedger k 1 false
   let D := DiamondTile k
@@ -534,8 +533,6 @@ private theorem oneUnitContacts (k : Nat) (hk : 0 < k) :
     (by simpa [Finset.pair_comm] using hPairEdgeRight)
     (Or.inr (Or.inl rfl))
   let z1 : GaussianInt := ⟨-(k : Int) - 1, (k : Int)⟩
-  have hPairBase : c1 + ⟨0, 1⟩ = z1 := by
-    ext <;> simp [c1, z1]
   have hPairBaseCoord :
       (⟨-(k : Int) - 1, (k : Int) - 1⟩ : GaussianInt) + ⟨0, 1⟩ =
         ⟨-(k : Int) - 1, (k : Int)⟩ := by

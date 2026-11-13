@@ -112,10 +112,6 @@ theorem CircleMatrixEnclosureCriterion
         hCircleCoordinates.1)
   let x := SymmetricMatrixCoordinates A
   let e := BandCircleEuclideanData C
-  have entrySub (P Q : Matrix (Fin 2) (Fin 2) Real) (i j : Fin 2) :
-      (P - Q) i j = P i j - Q i j := by rfl
-  have entrySmul (a : Real) (P : Matrix (Fin 2) (Fin 2) Real) (i j : Fin 2) :
-      (a • P) i j = a * P i j := by rfl
   have hminus :
       CircleMatrix C - A = (2 : Real)⁻¹ •
         ((![![e.radius - x.2 + (e.center - x.1).re,

@@ -307,40 +307,6 @@ theorem P5691T1DiamondReflectionFootprints
   classical
   let J : GaussianInt → GaussianInt := fun z =>
     GaussianTranslation ⟨0, 2 * (k : Int)⟩ (GaussianReflection z)
-  have diamondCellsNonempty (m : Nat) (hm : 0 < m) :
-      (DiamondTile m).cells.Nonempty :=
-          DiamondReflectionFootprintConstruction.diamondCellsNonempty m hm
-  have sameCellObs (T T' : ProtoTile) (hc : T.cells = T'.cells)
-      (hne : T.cells.Nonempty) :
-      FootprintVertices T = FootprintVertices T' ∧
-        FootprintEdges T = FootprintEdges T' :=
-            DiamondReflectionFootprintConstruction.sameCellObs T T' hc hne
-  have centeredCellEq (m : Nat) :
-      (TileTranslation (TileReflection (DiamondTile m))
-        ⟨0, 2 * (m : Int)⟩).cells = (DiamondTile m).cells :=
-            DiamondReflectionFootprintConstruction.centeredCellEq m
-  have centeredVertices (m : Nat) (hm : 0 < m) :
-      GaussianTranslation ⟨0, 2 * (m : Int)⟩ ''
-        FootprintVertices (TileReflection (DiamondTile m)) =
-          FootprintVertices (DiamondTile m) :=
-              DiamondReflectionFootprintConstruction.centeredVertices m hm
-  have centeredEdges (m : Nat) (hm : 0 < m) :
-      (fun e : Finset GaussianInt =>
-        e.image (GaussianTranslation ⟨0, 2 * (m : Int)⟩)) ''
-        FootprintEdges (TileReflection (DiamondTile m)) =
-          FootprintEdges (DiamondTile m) := DiamondReflectionFootprintConstruction.centeredEdges
-              m hm
-  have rhoVertexImage (m : Nat) (hm : 0 < m) :
-      (fun z => GaussianTranslation ⟨0, 2 * (m : Int)⟩
-        (GaussianReflection z)) ''
-        FootprintVertices (DiamondTile m) = FootprintVertices (DiamondTile m) :=
-            DiamondReflectionFootprintConstruction.rhoVertexImage m hm
-  have rhoEdgeImage (m : Nat) (hm : 0 < m) :
-      (fun e : Finset GaussianInt =>
-        e.image (fun z => GaussianTranslation ⟨0, 2 * (m : Int)⟩
-          (GaussianReflection z))) ''
-        FootprintEdges (DiamondTile m) = FootprintEdges (DiamondTile m) :=
-            DiamondReflectionFootprintConstruction.rhoEdgeImage m hm
   have JtranslatedVertices (m : Nat) (hm : 0 < m)
       (s t : GaussianInt) (hst : t = ⟨s.re, 2 * (k : Int) -
         2 * (m : Int) - s.im⟩) :

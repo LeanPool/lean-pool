@@ -571,8 +571,6 @@ private theorem abEdge :
         (P 0 true) (P 0 false) O (hPr true) (hPr false) he (zero he)
         (by simpa [O] using hac) (by simpa [O] using hbc)
     let a := (BandPackingSymmetryTileAction g O).anchor
-    have h1' : 0 < (F.q₁ : Int) := by exact_mod_cast h1
-    have h2' : 0 < (F.q₂ : Int) := by exact_mod_cast h2
     have hA : a ∈ (BandPackingSymmetryTileAction g (P 0 true)).cells := by
       apply (upper a).mpr
       simp only [a, sub_self]

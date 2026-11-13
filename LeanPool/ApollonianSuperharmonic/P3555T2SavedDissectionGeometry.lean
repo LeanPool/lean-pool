@@ -211,7 +211,6 @@ private theorem hcross :
   classical
   intro n q a b u v left right hAB hfaceA hfaceB f hf g hg heq
   have hfi := (hfaceA f hf).1
-  have hgi := (hfaceB g hg).1
   have hsubA := (hfaceA f hf).2.1
   have hsubB := (hfaceB g hg).2.1
   have hsmall : Set.range f ⊆ ({a, b} : Set (Fin (n + 3))) := by
@@ -540,7 +539,6 @@ private theorem hBget :
     simp; omega
   have hlenB : (b :: (v ++ [a])).length = v.length + 2 := by simp
   have hip : (a :: u).length ≤ j.val := by simp; omega
-  have hj' : j.val < u.length + v.length + 2 := by simpa [hlenL] using j.isLt
   let jB : Fin (b :: (v ++ [a])).length :=
     ⟨j.val - (u.length + 1), by rw [hlenB]; omega⟩
   have hpre : (a :: u).length = u.length + 1 := by simp
@@ -583,7 +581,6 @@ private theorem hNoAEndpoints :
   have hne : (a :: (u ++ [b])).get i ≠ (a :: (u ++ [b])).get j := by
     intro heq
     have hij' := (hndA.get_inj_iff).mp heq
-    have hv := congrArg Fin.val hij'
     omega
   have hia' : (a :: (u ++ [b])).get i = a ∨
       (a :: (u ++ [b])).get i = b := by simpa using hia
@@ -647,7 +644,6 @@ private theorem hNoBEndpoints :
         (hndB.get_inj_iff).mp (hja'.trans hend.symm)
       exact hne (by rw [hiend, hjend])
     · have hj0 : j = 0 := (hndB.get_inj_iff).mp (hja'.trans hzero.symm)
-      have hiendv : i.val = v.length + 1 := congrArg Fin.val hiend
       have hj0v : j.val = 0 := congrArg Fin.val hj0
       omega
   · have hi0 : i = 0 := (hndB.get_inj_iff).mp (hia'.trans hzero.symm)
@@ -754,7 +750,6 @@ private theorem hsecondAt889 :
       have hfin : (⟨k1.val - (u.length + 1), (show _ by
           have hlen : (b :: (v ++ [a])).length = v.length + 2 := by simp
           rw [hlen]
-          have hkv : k.val < u.length + v.length + 2 := by simpa [hlenL] using k.isLt
           have hks : k.val + 1 < u.length + v.length + 2 := by dsimp [iB] at hjlast; omega
           dsimp [k1]
           omega)⟩ : Fin (b :: (v ++ [a])).length) = iB1 := Fin.ext hidx
@@ -794,7 +789,6 @@ private theorem hchildNextAt907 :
   apply Fin.ext
   have hlen : (b :: (v ++ [a])).length = v.length + 2 := by simp
   have hstep : iB.val + 1 < (b :: (v ++ [a])).length := by
-    have hvlen : v.length < (b :: (v ++ [a])).length := by omega
     omega
   have hiB1 : iB1.val = iB.val + 1 := by dsimp [iB, iB1, k1]; omega
   exact (Nat.mod_eq_of_lt hstep).trans hiB1.symm
@@ -1444,7 +1438,6 @@ theorem P3555T2SavedDissectionGeometry {n : Nat}
               have hlenL : (a :: (u ++ b :: v)).length = u.length + v.length + 2 := by
                 simp; omega
               have hlenB : (b :: (v ++ [a])).length = v.length + 2 := by simp
-              have hj' : j.val < u.length + v.length + 2 := by simpa [hlenL] using j.isLt
               rw [hlenB]
               omega⟩ := SavedDissectionProof.hBget n a b u v j hj
       have hNoAEndpoints (i j : Fin (a :: (u ++ [b])).length)

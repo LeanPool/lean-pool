@@ -521,55 +521,16 @@ theorem ConnectedGridEdgeCarrierGraph
   let G : SimpleGraph X := SimpleGraph.fromRel fun a b =>
     ({a.1, b.1} : Finset GaussianInt) ∈ E
   change G.Connected
-  let J : GaussianInt := ⟨0, 1⟩
-  have carrier_pair (a b : GaussianInt) :
-      GridEdgeCarrier ({a, b} : Finset GaussianInt) =
-        Set.uIcc (GaussianRealPoint a) (GaussianRealPoint b) := ConnectedEdgeGraph.carrier_pair a b
-  have canonical (e : Finset GaussianInt) (he : e ∈ E) :
-      ∃ a : GaussianInt, e = {a, a + 1} ∨ e = {a, a + J} := ConnectedEdgeGraph.canonical E hgrid
-          e he
-  have point_of_common {e f : Finset GaussianInt} {z : GaussianInt}
-      (hze : z ∈ e) (hzf : z ∈ f) :
-      (GridEdgeCarrier e ∩ GridEdgeCarrier f).Nonempty := ConnectedEdgeGraph.point_of_common (e
-          := e) (f := f) (z := z) hze hzf
-  have horizontal_inter (a c : GaussianInt) :
-      (GridEdgeCarrier ({a, a + 1} : Finset GaussianInt) ∩
-        GridEdgeCarrier ({c, c + 1} : Finset GaussianInt)).Nonempty →
-        ∃ z, z ∈ ({a, a + 1} : Finset GaussianInt) ∧
-          z ∈ ({c, c + 1} : Finset GaussianInt) := ConnectedEdgeGraph.horizontal_inter a c
-  have vertical_inter (a c : GaussianInt) :
-      (GridEdgeCarrier ({a, a + J} : Finset GaussianInt) ∩
-        GridEdgeCarrier ({c, c + J} : Finset GaussianInt)).Nonempty →
-        ∃ z, z ∈ ({a, a + J} : Finset GaussianInt) ∧
-          z ∈ ({c, c + J} : Finset GaussianInt) := ConnectedEdgeGraph.vertical_inter a c
-  have cross_inter (a c : GaussianInt) :
-      (GridEdgeCarrier ({a, a + 1} : Finset GaussianInt) ∩
-        GridEdgeCarrier ({c, c + J} : Finset GaussianInt)).Nonempty →
-        ∃ z, z ∈ ({a, a + 1} : Finset GaussianInt) ∧
-          z ∈ ({c, c + J} : Finset GaussianInt) := ConnectedEdgeGraph.cross_inter a c
-  have carrier_intersection {e f : Finset GaussianInt} (he : e ∈ E) (hf : f ∈ E) :
-      (GridEdgeCarrier e ∩ GridEdgeCarrier f).Nonempty ↔
-        ∃ z, z ∈ e ∧ z ∈ f := ConnectedEdgeGraph.carrier_intersection E hgrid (e := e) (f := f)
-            he hf
   let step : Finset GaussianInt → Finset GaussianInt → Prop := fun e f =>
     e ∈ E ∧ f ∈ E ∧ (GridEdgeCarrier e ∩ GridEdgeCarrier f).Nonempty
   let reach : Finset GaussianInt → Finset GaussianInt → Prop :=
     Relation.ReflTransGen step
-  have step_symm {e f : Finset GaussianInt} (hef : step e f) : step f e :=
-      ConnectedEdgeGraph.step_symm E (e := e) (f := f) hef
   have reach_symm {e f : Finset GaussianInt} (hef : reach e f) : reach f e :=
       ConnectedEdgeGraph.reach_symm E (e := e) (f := f) hef
-  have carrier_closed {e : Finset GaussianInt} (he : e ∈ E) :
-      IsClosed (GridEdgeCarrier e) := ConnectedEdgeGraph.carrier_closed E hgrid (e := e) he
-  have carrier_nonempty {e : Finset GaussianInt} (he : e ∈ E) :
-      (GridEdgeCarrier e).Nonempty := ConnectedEdgeGraph.carrier_nonempty E hgrid (e := e) he
   have E_nonempty : E.Nonempty := ConnectedEdgeGraph.E_nonempty E hconnected
   rcases E_nonempty with ⟨e0, he0⟩
   have reach_all : ∀ f ∈ E, reach e0 f := ConnectedEdgeGraph.reach_all E hEfinite hgrid
       hconnected e0 he0
-  have edge_reachable {e : Finset GaussianInt} (he : e ∈ E)
-      (u v : X) (hu : u.1 ∈ e) (hv : v.1 ∈ e) : G.Reachable u v :=
-          ConnectedEdgeGraph.edge_reachable E hgrid (e := e) he u v hu hv
   have chain_graph : ∀ {e f : Finset GaussianInt}, e ∈ E → f ∈ E → reach e f →
       ∀ (u v : X), u.1 ∈ e → v.1 ∈ f → G.Reachable u v := ConnectedEdgeGraph.chain_graph E hgrid
   have X_nonempty : Nonempty X := ConnectedEdgeGraph.X_nonempty E hgrid e0 he0

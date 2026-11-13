@@ -605,9 +605,6 @@ private theorem hlocalAll :
           _ = t.face k d := congrArg (t.face k) he
           _ = i + 1 := hd
       obtain ⟨c, hac, hdc⟩ := third a d had
-      have hIuniq (l : Fin t.count) (hl : l ∈ I) : l = k := by
-        rw [hIeq] at hl
-        simpa using hl
       have hvA : p.vertex i = p.vertex (t.face k a) := congrArg p.vertex ha.symm
       have hvD : p.vertex (i + 1) = p.vertex (t.face k d) := congrArg p.vertex hd.symm
       have hpoint :

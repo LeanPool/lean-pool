@@ -857,10 +857,6 @@ theorem P4638T1EmptyFordLocalization (r : Fin 4 → CircleCoordinates)
   let E2 : GaussianInt ≃ GaussianInt := E1.trans E1
   let E3 : GaussianInt ≃ GaussianInt := E2.trans E1
   let E : Fin 4 → GaussianInt ≃ GaussianInt := ![Equiv.refl _, E1, E2, E3]
-  let TP (k : Fin 4) (T : ProtoTile) : ProtoTile :=
-    if k = 0 then T else if k = 1 then TileQuarterTurn T else
-      if k = 2 then TileQuarterTurn (TileQuarterTurn T) else
-        TileQuarterTurn (TileQuarterTurn (TileQuarterTurn T))
   let RP (k : Fin 4) (x : Real × Real) : Real × Real :=
     if k = 0 then x else if k = 1 then (-x.2, x.1) else
       if k = 2 then (-x.1, -x.2) else (x.2, -x.1)
@@ -874,8 +870,6 @@ theorem P4638T1EmptyFordLocalization (r : Fin 4 → CircleCoordinates)
   have hanchorpow := EmptyFordGeometry.hanchorpow g k htilepow
   have hcentpow := EmptyFordGeometry.hcentpow g k htilepow
   have hchild := EmptyFordGeometry.hchild r P g hrecg hgfalse
-  let D : GaussianInt → Real × Real := fun z =>
-    (1 / 2 : Real) • (GaussianRealPoint z - (-(GaussianRealPoint z).2, (GaussianRealPoint z).1))
   have hpointrot (z : GaussianInt) := EmptyFordGeometry.hpointrot k z
   have hDrot (z : GaussianInt) := EmptyFordGeometry.hDrot k z
   have hDcanonical := EmptyFordGeometry.hDcanonical r P g htargetvec k hvecpow hDrot
@@ -883,19 +877,16 @@ theorem P4638T1EmptyFordLocalization (r : Fin 4 → CircleCoordinates)
     fin_cases k <;> ext <;> simp [RP] <;> ring
   have hRPsub (x y : Real × Real) : RP k (x - y) = RP k x - RP k y := by
     fin_cases k <;> ext <;> simp [RP] <;> ring
-  have hOempty := EmptyFordGeometry.hOempty O hempty g cellTurn_bij k hcellpow
   let w₀ := (BandPackingSymmetryTileAction g O).anchor
   have hw₀ : w₀ = VP k O.anchor := EmptyFordGeometry.hw₀ O g k hanchorpow
   have hObase : TileCentroid O = GaussianRealPoint O.anchor := by
     simp [TileCentroid, hempty, GaussianRealPoint]
-  have hOcent := EmptyFordGeometry.hOcent O k g hw₀ hcentpow hpointrot hObase
   have hAcent' := EmptyFordGeometry.hAcent' r A O hAcent
   have hBcent' := EmptyFordGeometry.hBcent' r B O hBcent
   have hAactual := EmptyFordGeometry.hAactual r A O P k g hw₀ hcentpow hpointrot hDcanonical
       hRPadd hObase hAcent'
   have hBactual := EmptyFordGeometry.hBactual r B O P k g hw₀ hcentpow hpointrot hDcanonical
       hRPsub hObase hBcent'
-  have hfordC : (FordRecursiveQuadruple P) 0 = FordCircleCoordinate P.p P.q := by rfl
   have hAproto := EmptyFordGeometry.hAproto r A hA P g hchild
   have hBproto := EmptyFordGeometry.hBproto r B hB P g hchild
   let uA : GaussianInt := w₀ - ⟨(P.q₁ : Int), 0⟩

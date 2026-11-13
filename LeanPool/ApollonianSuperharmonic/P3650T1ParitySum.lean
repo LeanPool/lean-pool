@@ -567,14 +567,8 @@ theorem P3650T1ParitySum {n : Nat} (p : P3381T1PolygonBoundary n)
             (x ∉ P3544T1RayParity C.left ∧ x ∈ P3544T1RayParity C.right)))) := by
 -- BODY
   classical
-  let hit (x d : Real × Real) (i j : Fin (n + 3)) : Prop :=
-    ∃ t : Real, 0 < t ∧ x + t • d ∈ segment Real (p.vertex i) (p.vertex j)
-  let weight (x d : Real × Real) (i j : Fin (n + 3)) : Nat :=
-    if hit x d i j then 1 else 0
   have cardPred {k : Nat} (P : Fin k → Prop) [DecidablePred P] := PolygonParityProof.cardPred (k
       := k) P
-  let edges {A : Type} (l : List A) : List (A × A) :=
-    List.zipWith Prod.mk l (l.rotate 1)
   have edges_cons {A : Type} (a : A) (l : List A) := PolygonParityProof.edges_cons (A := A) a l
   have path_split {A : Type} (a b z : A) (u v : List A) := PolygonParityProof.path_split (A := A)
       a b z u v
@@ -586,8 +580,6 @@ theorem P3650T1ParitySum {n : Nat} (p : P3381T1PolygonBoundary n)
       l k
   have edges_ofFn {k : Nat} {A : Type} (f : Fin (k + 3) → A) := PolygonParityProof.edges_ofFn (k
       := k) (A := A) f
-  let edgeWeight (x d : Real × Real) (L : List (Fin (n + 3))) : Nat :=
-    ((edges L).map fun e => weight x d e.1 e.2).sum
   have hsum_ofFn {k : Nat} (f : Fin (k + 3) → Fin (n + 3)) (x d : Real × Real) :=
       PolygonParityProof.hsum_ofFn n p edges_ofFn (k := k) f x d
   have hweight_symm (x d : Real × Real) (i j : Fin (n + 3)) := PolygonParityProof.hweight_symm n

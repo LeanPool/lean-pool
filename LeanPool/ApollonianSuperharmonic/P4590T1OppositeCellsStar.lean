@@ -31,8 +31,6 @@ theorem P4590T1OppositeCellsStar (U V : ProtoTile) (x : GaussianInt)
       y ∈ FootprintVertices U ∨ y ∈ FootprintVertices V := by
 -- BODY
   obtain ⟨j, hj, hk⟩ := hopp
-  have hU : U.cells.Nonempty := ⟨_, hj⟩
-  have hV : V.cells.Nonempty := ⟨_, hk⟩
   have raw (W : ProtoTile) (a : GaussianInt) (ha : a ∈ W.cells)
       (y : GaussianInt)
       (hy : y = a ∨ y = a + 1 ∨ y = a + ⟨0, 1⟩ ∨

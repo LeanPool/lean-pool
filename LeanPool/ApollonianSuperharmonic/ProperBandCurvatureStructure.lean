@@ -83,9 +83,6 @@ theorem ProperBandCurvatureStructure (q : Fin 4 → CircleCoordinates)
               2 * (r 0).1 + 2 * (r 2).1 + 2 * (r 3).1 - (r 1).1 := by
             simpa using hpbelow (0 : Fin 3)
           have a := nonneg (0 : Fin 4)
-          have b := nonneg (1 : Fin 4)
-          have c := nonneg (2 : Fin 4)
-          have d := nonneg (3 : Fin 4)
           change 0 < 2 * (r 0).1 + 2 * (r 2).1 + 2 * (r 3).1 - (r 1).1
           omega
         constructor

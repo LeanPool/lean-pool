@@ -40,7 +40,6 @@ theorem P5416T1SecondUnitGeometry (K : DiamondParameter) (hk : 1 < K.1)
 -- BODY
   classical
   let k : Int := K.1
-  have hk2 : 2 ≤ k := by dsimp [k]; omega
   let C (p q : Int) : Prop :=
     0 ≤ q ∧ q ≤ 2*k ∧ -k ≤ p ∧ p ≤ k ∧
       -q-1 ≤ p ∧ p ≤ q+1 ∧ -(2*k-q+1) ≤ p ∧ p ≤ 2*k-q+1

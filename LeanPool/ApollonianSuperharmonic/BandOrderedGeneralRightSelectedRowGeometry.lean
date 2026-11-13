@@ -588,9 +588,6 @@ private theorem originalSelectedPath :
   classical
   intro C D T N h k x bundle placement selectedEdge hx hedge modifiedPath P u v
       selectedOccurrenceRetarget selectedPath
-  let q := bundle.normalizedPresentation
-  let cfg := bundle.configuration
-  let F := bundle.normalizedFixed
   rcases modifiedPath with ⟨selectedStart, selectedEnd, hpath⟩
   have hpath' := hpath
   rw [placement.layout.modified_tile placement.exteriorIndex,
@@ -4158,10 +4155,7 @@ theorem BandOrderedGeneralRightSelectedRowGeometry
   let q := bundle.normalizedPresentation
   let cfg := bundle.configuration
   let F := bundle.normalizedFixed
-  let root := bundle.normalizedRoot
   have edgeVertex := SelectedRowGeometry.edgeVertex
-  let norm := SelectedRowNormalization.certificate C D T N h k x bundle placement
-  have outer := (BandOrderedGeneralRightInterfaceCertificateExists norm).some
   have childInterfaces := BandOrderedGeneralChildInterfaces q cfg
     bundle.normalizedCircle F placement.layout
       (TileT2QuarterTurn q cfg bundle.normalizedCircle F placement.layout)
@@ -4184,7 +4178,6 @@ theorem BandOrderedGeneralRightSelectedRowGeometry
   have boundaryRecords := P5635T1RightBoundaryInterfaceRecords
     C D T N h k x bundle placement
   have centeredExactTurn := SelectedRowGeometry.centeredExactTurn C D T N h k x bundle placement
-  have twiceExactTurn := SelectedRowGeometry.twiceExactTurn C D T N h k x bundle centeredExactTurn
   have tripleTurnOutgoing (ell : Fin 3) :
       GaussianQuarterTurn (GaussianQuarterTurn
         (GaussianQuarterTurn (BandVectors.1 (q ell.succ) (q 0)))) =
@@ -4195,35 +4188,9 @@ theorem BandOrderedGeneralRightSelectedRowGeometry
         (GaussianQuarterTurn (-BandVectors.1 (q (ell + 1).succ) (q 0)))) =
         BandVectors.1 (q 0) (q (ell + 1).succ) := SelectedRowGeometry.tripleTurnNegativeNext C D
             T N h k x bundle turnOutgoing turnNeg turnThrice ell
-  have swapExact (A B D : ProtoTile) (E : ExactTileInterfaceTriple A B D) :
-      ExactTileInterfaceTriple B A D := SelectedRowExactInterfaces.swapExact A B D E
-  have cycleExact (A B D : ProtoTile) (E : ExactTileInterfaceTriple A B D) :
-      ExactTileInterfaceTriple D A B := SelectedRowExactInterfaces.cycleExact A B D E
-  have retargetExactFirst (A A' B D : ProtoTile)
-      (hcell : A.cells = A'.cells)
-      (hanchor : A.cells = ∅ → A.anchor = A'.anchor)
-      (E : ExactTileInterfaceTriple A B D) : ExactTileInterfaceTriple A' B D :=
-          SelectedRowExactInterfaces.retargetExactFirst A A' B D hcell hanchor E
   have touchingRetarget := ObservableTileRetargeting.triple
   have centeredTurnTouching := SelectedRowGeometry.centeredTurnTouching touchingRetarget
       (TileQuarterTurnTranslation.translated) (SelectedRowGeometry.translateObs)
-  have exactPlus (ell : Fin 3) : ExactTileInterfaceTriple F
-      (TileTranslation F (BandVectors.1 (q 0) (q ell.succ)))
-      (TileTranslation F (-BandVectors.1 (q 0) (q (ell + 1).succ))) := by
-    let E := Classical.choice (centeredExactTurn
-      (BandVectors.1 (q ell.succ) (q 0))
-      (-BandVectors.1 (q (ell + 1).succ) (q 0))
-      (Classical.choice (childInterfaces.1 ell)))
-    simpa [turnOutgoing, turnNeg] using E
-  have exactMinus (ell : Fin 3) : ExactTileInterfaceTriple F
-      (TileTranslation F (-BandVectors.1 (q 0) (q ell.succ)))
-      (TileTranslation F (BandVectors.1 (q 0) (q (ell + 1).succ))) := by
-    let E := Classical.choice ((SelectedRowGeometry.thriceExactTurn C D T N h k x bundle
-        centeredExactTurn)
-      (BandVectors.1 (q ell.succ) (q 0))
-      (-BandVectors.1 (q (ell + 1).succ) (q 0))
-      (Classical.choice (childInterfaces.1 ell)))
-    simpa only [tripleTurnOutgoing, tripleTurnNegativeNext] using E
   have touchingPlus := SelectedRowGeometry.touchingPlus C D T N h k x bundle placement
       translatedTouching turnOutgoing turnNeg centeredTurnTouching
   have touchingMinus := SelectedRowGeometry.touchingMinus C D T N h k x bundle placement
@@ -4236,58 +4203,10 @@ theorem BandOrderedGeneralRightSelectedRowGeometry
   have modifiedAdjacent : placement.layout.modified.plane.adjacent
       placement.exteriorIndex placement.centralIndex :=
     (placement.layout.modified_adjacency _ _).2 originalAllowed
-  let P := placement.layout.P
-  let u := placement.layout.u
-  let v := placement.layout.v
   have selectedOccurrenceRetarget := P5640T1NonpairedOccurrenceIntersections
     q cfg bundle.normalizedCircle F placement.layout
     placement.exteriorIndex placement.centralIndex originalAllowed
     (SelectedRowGeometry.noPairedOccurrence C D T N h k x bundle placement row)
-  let selectedPath : Prop :=
-      (∃ selectedStart selectedEnd : GaussianInt,
-        SimpleGridPathBetween
-          (FootprintVertices
-              (SubtileOccurrenceInterpretation P u v placement.exteriorIndex) ∩
-            FootprintVertices
-              (SubtileOccurrenceInterpretation P u v placement.centralIndex))
-          (FootprintEdges
-              (SubtileOccurrenceInterpretation P u v placement.exteriorIndex) ∩
-            FootprintEdges
-              (SubtileOccurrenceInterpretation P u v placement.centralIndex))
-          selectedStart selectedEnd ∧
-        selectedEdge ∈
-          FootprintEdges
-              (SubtileOccurrenceInterpretation P u v placement.exteriorIndex) ∩
-            FootprintEdges
-              (SubtileOccurrenceInterpretation P u v placement.centralIndex) ∧
-        bundle.normalizedPoint ∈ selectedEdge)
-  let rightGeometry := fun (i j : Fin 3) (sgn : GaussianInt)
-      (firstSign secondSign : Bool) ↦
-    let firstCompanion := TileTranslation F
-      (sgn * BandVectors.1 (q 0) (q i.succ))
-    let secondCompanion := TileTranslation F
-      (sgn * BandVectors.1 (q 0) (q j.succ))
-    let firstPiece := TileTranslation (placement.layout.P i firstSign)
-      placement.rightNeighborDisplacement
-    let secondPiece := TileTranslation (placement.layout.P j secondSign)
-      placement.rightNeighborDisplacement
-    ∃ firstBoundaryData : ExactTileInterfaceTriple F firstCompanion firstPiece,
-      ∃ secondBoundaryData : ExactTileInterfaceTriple F secondCompanion secondPiece,
-        ∃ firstData : ExactTileInterfaceTriple root F firstCompanion,
-          ∃ secondData : ExactTileInterfaceTriple root F secondCompanion,
-            firstBoundaryData.point = firstData.point ∧
-            secondBoundaryData.point = secondData.point ∧
-            LatticeTile root ∧ LatticeTile F ∧ LatticeTile firstCompanion ∧
-            LatticeTile secondCompanion ∧ Disjoint root.cells firstCompanion.cells ∧
-            Disjoint F.cells firstCompanion.cells ∧
-            Disjoint root.cells secondCompanion.cells ∧
-            Disjoint F.cells secondCompanion.cells ∧
-            Disjoint firstCompanion.cells secondCompanion.cells ∧
-            TouchingTriple root F firstCompanion ∧
-            TouchingTriple root F secondCompanion ∧
-            firstData.point ≠ secondData.point ∧
-            secondData.point = firstData.otherAB ∧
-            secondData.otherAB = firstData.point ∧ selectedPath
   have canonicalFinish := SelectedRowGeometry.canonicalFinish C D T N h k x bundle placement
       selectedEdge hedge edgeVertex blockCells fixedPositive touchingRetarget
   have coordinateFactsApos := SelectedRowGeometry.coordinateFactsApos
@@ -4304,9 +4223,6 @@ theorem BandOrderedGeneralRightSelectedRowGeometry
           bundle placement (SelectedRowGeometry.outgoingSum C D T N h k x bundle turnOutgoing
           (SelectedRowGeometry.turnAdd) (SelectedRowGeometry.incomingSum C D T N h k x bundle))
           period0 period1
-  have castTripleOtherABSecond := SelectedRowGeometry.castTripleOtherABSecond
-  have castRoundTrip (P : ProtoTile → Type) {a b : ProtoTile}
-      (h : a = b) (z : P a) := SelectedRowGeometry.castRoundTrip P (a := a) (b := b) h z
   have packageGeometry := SelectedRowGeometry.packageGeometry C D T N h k x bundle placement
       selectedEdge edgeVertex (SelectedRowGeometry.geometryFields C D T N h k x bundle placement
       selectedEdge edgeVertex (SelectedRowGeometry.originalSelectedPath C D T N h k x bundle

@@ -49,12 +49,6 @@ private theorem translationRealization (T : ProtoTile) (u : GaussianInt) :
   have imagAdd (z w : GaussianInt) :
       (((z + w).im : Int) : Real) = (z.im : Real) + (w.im : Real) := by
     cases z; cases w; simp
-  have realCoord (w : GaussianInt) :
-      (GaussianInt.toComplex w).re = (w.re : Real) := by
-    exact (GaussianInt.intCast_re w).symm
-  have imagCoord (w : GaussianInt) :
-      (GaussianInt.toComplex w).im = (w.im : Real) := by
-    exact (GaussianInt.intCast_im w).symm
   constructor
   · rintro ⟨i, hi, hp⟩
     rcases Finset.mem_image.mp hi with ⟨a, ha, hia⟩
@@ -188,17 +182,6 @@ private theorem translationBoundaryVertices (T : ProtoTile) (u : GaussianInt) :
         simpa [add_comm] using ha
       · intro hz
         exact ⟨z - u, hz, by simp⟩
-    have imageMem (z : GaussianInt) :
-        (∃ a ∈ T.cells, a + u = z) ↔ z - u ∈ T.cells := cellMem z
-    have absentMem (z : GaussianInt) :
-        (∀ a ∈ T.cells, ¬a + u = z) ↔ z - u ∉ T.cells := by
-      constructor
-      · intro ha hz
-        obtain ⟨a, hca, heq⟩ := (cellMem z).mpr hz
-        exact ha a hca heq
-      · intro hz a ha heq
-        apply hz
-        exact (cellMem z).mp ⟨a, ha, heq⟩
     have translatedCell (z : GaussianInt) :
         z ∈ (TileTranslation T u).cells ↔ z - u ∈ T.cells := by
       change z ∈ T.cells.image (GaussianTranslation u) ↔ z - u ∈ T.cells

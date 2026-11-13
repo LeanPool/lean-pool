@@ -259,11 +259,6 @@ theorem TopologicalDiskLocallyPuncturedPreconnected
     (U : Set S) (hU : U ∈ nhds z) :
     ∃ W ∈ nhds z, W ⊆ U ∧ IsConnected (W \ {z}) := by
 -- BODY
-  have punctured_rect_pathConnected
-      (a b d : Real × Real) (h1 : a.1 < b.1) (h2 : a.2 < b.2)
-      (hd : d ∈ Set.Icc a.1 b.1 ×ˢ Set.Icc a.2 b.2) :
-      IsPathConnected ((Set.Icc a.1 b.1 ×ˢ Set.Icc a.2 b.2) \ {d}) :=
-          PuncturedDiskConstruction.punctured_rect_pathConnected a b d h1 h2 hd
   have disk_locally_punctured_preconnected
       (d : Metric.closedBall (0 : Real × Real) 1)
       (V₀ : Set (Metric.closedBall (0 : Real × Real) 1)) (hV₀ : V₀ ∈ nhds d) :

@@ -1614,9 +1614,6 @@ private theorem compact_cells_finite :
   by_cases hne : K.Nonempty
   · obtain ⟨p₀, hp₀⟩ := hne
     obtain ⟨C, hC⟩ := Metric.isBounded_iff.mp hK.isBounded
-    have hCpos : 0 ≤ C := by
-      have := hC hp₀ hp₀
-      simpa using this
     let B := max (abs p₀.1) (abs p₀.2) + C + 2
     obtain ⟨N, hN⟩ := exists_nat_gt (B + 1)
     let box : Set (Int × Int) :=
@@ -2468,13 +2465,6 @@ private theorem hpoly :
     have hhi' : (s : Real) ≤ tm ⟨i.val + 1, by omega⟩ := by
       rw [← hsucc]
       exact hhi
-    have hcurIndex : (⟨n - r, by omega⟩ : Fin (n + 1)) = k.succ := by
-      apply Fin.ext
-      dsimp [k]
-      omega
-    have hnextIndex : (⟨n - r - 1, by omega⟩ : Fin (n + 1)) = k.castSucc := by
-      apply Fin.ext
-      dsimp [k]
     have hendIndex : (⟨i.val + 1, by omega⟩ : Fin (m + n + 1)) =
         ⟨m + 1 + r, by omega⟩ := (show
             (⟨i.val + 1, by omega⟩ : Fin (m + n + 1)) = ⟨m + 1 + r, by omega⟩
@@ -2744,17 +2734,9 @@ private theorem drawingCertificate :
           D.position '' (({x, y} : Set ι) ∩ {u, v}) := ContactDrawingGeometry.half_subset ι P D
               localStar rep_spec pulled_contact gintersections half_disjoint x y u v hxy
               huv hxyuv
-    have hstart (x y : ι) (hxy : P3723T1EdgeContact P x y) :
-        D.position x ∈ edgeArc x y := ContactDrawingGeometry.hstartAt1216 ι P D symmetric
-            localStar rep_spec pulled_contact gproperties x y hxy
     have hend (x y : ι) (hxy : P3723T1EdgeContact P x y) :
         D.position y ∈ edgeArc x y := ContactDrawingGeometry.hendAt1222 ι P D symmetric
             localStar rep_spec pulled_contact gproperties x y hxy
-    have vertex_mem (x y i : ι) (hxy : P3723T1EdgeContact P x y)
-        (hi : i = x ∨ i = y) := ContactDrawingGeometry.vertex_mem ι P D localStar rep_spec
-            pulled_contact hstart hend x y i hxy hi
-    have hfull : edgeArc a b = halfArc a b ∪ halfArc b a := rfl
-    have hfull' : edgeArc c d = halfArc c d ∪ halfArc d c := rfl
     simp only [edgeArc, halfArc, ite_eq_left hab, ite_eq_left hba, ite_eq_left hcd, ite_eq_left
         hdc]
     ext z

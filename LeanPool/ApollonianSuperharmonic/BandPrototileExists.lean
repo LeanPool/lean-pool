@@ -101,9 +101,6 @@ private theorem hqbase :
             + 1).succ, q (r + 2).succ])) ) := by
   classical
   intro q hproper r g regime
-  let q' : Fin 4 → CircleCoordinates :=
-    BandPackingSymmetryQuadrupleAction g
-      ![q 0, q r.succ, q (r + 1).succ, q (r + 2).succ]
   fin_cases r
   · have heq : ![q 0, q 1, q 2, q 3] = q := by
       funext i

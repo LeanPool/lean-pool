@@ -299,22 +299,11 @@ theorem BandOrderedGeneralSubtileCanonicalSeparation
         (TileTranslation T
           ((o.first : GaussianInt) * u + (o.second : GaussianInt) * v)).cells :=
               GeneralSeparationProof.occurrence_subset_block P O T u v hOB hBlockCells o
-  have disjoint_of_blocks (a b : PeriodicSubtileIndex)
-      (hcoord : (a.first, a.second) ≠ (b.first, b.second)) :
-      Disjoint (SubtileOccurrenceInterpretation P u v a).cells
-        (SubtileOccurrenceInterpretation P u v b).cells := by
-    apply Finset.disjoint_left.2
-    intro z hza hzb
-    exact (Finset.disjoint_left.1 (hblocks a.first a.second b.first b.second hcoord)
-      (occurrence_subset_block a hza) (occurrence_subset_block b hzb))
   have root_occurrence_disjoint (o : PeriodicSubtileIndex)
       (hnonzero : (o.first, o.second) ≠ (0, 0)) :
       Disjoint T.cells (SubtileOccurrenceInterpretation P u v o).cells :=
           GeneralSeparationProof.root_occurrence_disjoint P T u v hblocks
           occurrence_subset_block o hnonzero
-  have turn_map_injective : Function.Injective (fun z : LatticeCell =>
-      GaussianTranslation g (GaussianQuarterTurn z - 1)) :=
-          GeneralSeparationProof.turn_map_injective g
   have turn_mem (A : ProtoTile) (z : LatticeCell) (hz : z ∈ A.cells) :
       GaussianTranslation g (GaussianQuarterTurn z - 1) ∈
         (TileTranslation (TileQuarterTurn A) g).cells := by

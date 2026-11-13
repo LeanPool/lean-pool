@@ -110,9 +110,7 @@ private theorem rectHull :
     let s : ℝ := z.re - u
     let t : ℝ := (z.im - v) / 2
     let w : Fin 4 → ℝ := ![(1 - s) * (1 - t), s * (1 - t), (1 - s) * t, s * t]
-    have hs0 : 0 ≤ s := by dsimp [s]; linarith
     have hs1 : s ≤ 1 := by dsimp [s]; linarith
-    have ht0 : 0 ≤ t := by dsimp [t]; linarith
     have ht1 : t ≤ 1 := by change (z.im - v) / 2 ≤ 1; linarith
     have hw : ∀ i, 0 ≤ w i := by
       intro i
@@ -149,17 +147,9 @@ private theorem hpolyMinus :
   have hI : GaussianInt.toComplex (⟨0, 1⟩ : GaussianInt) = Complex.I := by
     rw [GaussianInt.toComplex_def₂]
     apply Complex.ext <;> simp
-  have hB : 1 + GaussianInt.toComplex 2 * GaussianInt.toComplex a +
-      GaussianInt.toComplex 2 * GaussianInt.toComplex (⟨0, 1⟩ : GaussianInt) =
-      ⟨2 * (a.re : ℝ) + 1, 2 * (a.im : ℝ) + 2⟩ := by
-    rw [h2, GaussianInt.toComplex_def₂ a, hI]
-    apply Complex.ext <;> simp; ring
   have hA' : 1 + 2 * (a : ℂ) =
       ⟨2 * (a.re : ℝ) + 1, 2 * (a.im : ℝ)⟩ := by
     simpa [h2] using hA
-  have hB' : 1 + 2 * (a : ℂ) + 2 * Complex.I =
-      ⟨2 * (a.re : ℝ) + 1, 2 * (a.im : ℝ) + 2⟩ := by
-    simpa [h2, hI] using hB
   apply congrArg (convexHull ℝ)
   ext z
   simp [P4828T1Root, Fin.exists_fin_succ]
@@ -191,17 +181,9 @@ private theorem hpolyPlus :
   have hI : GaussianInt.toComplex (⟨0, 1⟩ : GaussianInt) = Complex.I := by
     rw [GaussianInt.toComplex_def₂]
     apply Complex.ext <;> simp
-  have hB : 1 + GaussianInt.toComplex 2 * GaussianInt.toComplex a +
-      GaussianInt.toComplex 2 * GaussianInt.toComplex (⟨0, 1⟩ : GaussianInt) =
-      ⟨2 * (a.re : ℝ) + 1, 2 * (a.im : ℝ) + 2⟩ := by
-    rw [h2, GaussianInt.toComplex_def₂ a, hI]
-    apply Complex.ext <;> simp; ring
   have hA' : 1 + 2 * (a : ℂ) =
       ⟨2 * (a.re : ℝ) + 1, 2 * (a.im : ℝ)⟩ := by
     simpa [h2] using hA
-  have hB' : 1 + 2 * (a : ℂ) + 2 * Complex.I =
-      ⟨2 * (a.re : ℝ) + 1, 2 * (a.im : ℝ) + 2⟩ := by
-    simpa [h2, hI] using hB
   apply congrArg (convexHull ℝ)
   ext z
   simp [P4828T1Root, Fin.exists_fin_succ]

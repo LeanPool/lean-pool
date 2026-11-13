@@ -84,7 +84,6 @@ private theorem hWest :
       dsimp [P5332T1RightRows]
       change 0 ≤ -1 - (-(P.q₂ : Int)) ∧ -1 - (-(P.q₂ : Int)) ≤ P.q ∧
         0 ≤ (0 : Int) - (-(P.q : Int)) ∧ (0 : Int) - (-(P.q : Int)) ≤ P.q
-      have hq₂nat : 1 ≤ P.q₂ := Nat.succ_le_of_lt P.q₂_pos
       omega
     have hw := hother ⟨-1,0⟩ hmem
     dsimp [P5332T1RightRows] at hw
@@ -120,8 +119,6 @@ private theorem hSouth :
     dsimp [P5332T1RightRows]
     change 0 ≤ t - (-(P.q₂ : Int)) ∧ t - (-(P.q₂ : Int)) ≤ P.q ∧
       0 ≤ -1 - (-(P.q : Int)) ∧ -1 - (-(P.q : Int)) ≤ P.q
-    have hq2nat : 1 ≤ P.q₂ := Nat.succ_le_of_lt P.q₂_pos
-    have hq1nat : 1 ≤ P.q₁ := Nat.succ_le_of_lt (by exact_mod_cast hq₁pos)
     omega
   have hsarg : (⟨t,-1⟩ : GaussianInt) - (⟨-(P.q₂ : Int),-(P.q : Int)⟩ : GaussianInt) =
       ⟨t+P.q₂,P.q-1⟩ := by
@@ -247,7 +244,6 @@ theorem P5332T1RightSecondValues (P : FordFareyParameter) (hq : 1 < P.q)
         0 < t ∧ t < (P.q₁ : Int)) := by
 -- BODY
   classical
-  have hq' : 1 < (P.q : Int) := by exact_mod_cast hq
   have hqn : (P.q : Int) ≠ 0 := by omega
   have laws := (Classical.choose_spec FordOdometerFamilyExistsUnique).1
   change (∀ P x, P.q = 1 → FordOdometer P x = _) ∧ _ at laws
@@ -288,12 +284,9 @@ theorem P5332T1RightSecondValues (P : FordFareyParameter) (hq : 1 < P.q)
   let t : Int := X
   have ht : 0 ≤ t := hX
   have htr : t ≤ P.q₁ := hXr
-  have hcenter : x₀ = (P5332T1RightRows P 1 t).center := by
-    simp [x₀, t, P5332T1RightRows]
   have hB : B = -P.p * (P.q₂ : Int) := RightSecondValuesProof.hB P hq f B hbase hother bottom top
       X hsum hx hx' ht
   subst B
-  have hq1le : (P.q₁ : Int) ≤ P.q := by omega
   have hbaseval (u v : Int) (hu : 0 ≤ u) (huq : u ≤ P.q)
       (hv : 0 ≤ v) (hvq : v ≤ P.q)
       (hs : u ≤ 1 ∨ P.q - 1 ≤ u ∨ v ≤ 1 ∨ P.q - 1 ≤ v) :
@@ -326,7 +319,6 @@ theorem P5332T1RightSecondValues (P : FordFareyParameter) (hq : 1 < P.q)
     · simpa [P5332T1RightRows, t, IntegerCeilDiv] using hNorth
     · simpa [P5332T1RightRows, t] using hSouth
   · have hq1lt : (P.q₁ : Int) < P.q := by exact_mod_cast P.q₁_lt
-    have hq2nat : 1 ≤ P.q₂ := Nat.succ_le_of_lt P.q₂_pos
     have dval : (P5332T1RightRows P 1 0).displacement =
         (⟨-(P.q₂ : Int),-(P.q : Int)⟩ : GaussianInt) := by
       simp [P5332T1RightRows]

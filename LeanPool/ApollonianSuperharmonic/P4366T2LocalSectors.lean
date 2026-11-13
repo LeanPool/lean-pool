@@ -1513,7 +1513,6 @@ private theorem interiorSector :
     exact hznot (List.mem_cons_of_mem x (List.mem_cons_self ..))
   have hEdgeNe : ({z, x} : Finset GaussianInt) ≠ {x, y} := LocalSectorGeometry.hEdgeNe x
       pre y hpre' hzx hzy
-  have hjne := LocalSectorGeometry.hjne x pre y hpre' jL eL jR eR hzx hzy
   have hedgeL : {z, x} ∈ FootprintEdges T0 ∩ FootprintEdges T0' :=
     (hedgesPath {z, x}).mpr ⟨z, x, pre', y :: rest, hleft, rfl⟩
   have hedgeR : {x, y} ∈ FootprintEdges T0 ∩ FootprintEdges T0' :=
@@ -1659,27 +1658,17 @@ theorem P4366T2LocalSectors
     obtain ⟨P, hPlattice, htiles, hadjacent, hposition, hvertices, hedgesP,
       hfaces, hchart⟩ := BandRegularTranslatePeriodicComplex Ci q hproper hq0
         base hbase'
-    let tileAt : Int × Int → ProtoTile := fun mn => TileTranslation base
-      ((mn.1 : GaussianInt) * BandVectors.1 (q 1) (q 0) +
-        (mn.2 : GaussianInt) * BandVectors.1 (q 2) (q 0))
-    let chart : AffineTriangularComplexChart P tileAt := Classical.choice hchart
     have regular_index := LocalSectorGeometry.regular_index Ci base P htiles
     have htiles_lattice := LocalSectorGeometry.htiles_lattice Ci base q hproper hbase' P htiles
-    let neighbor (x : GaussianInt) : Fin 4 → GaussianInt :=
-      ![x + ⟨0, 1⟩, x - 1, x - ⟨0, 1⟩, x + 1]
     let edgeAt (x : GaussianInt) : Fin 4 → Finset GaussianInt :=
       ![{x, x + ⟨0, 1⟩}, {x - 1, x},
         {x - ⟨0, 1⟩, x}, {x, x + 1}]
     have edgeAt_mem := LatticeVertexSectorFacts.edgeMembership
-    have edgeAt_eq_pair := LatticeVertexSectorFacts.edgePair
     have edgeAt_injective (x : GaussianInt) {j k : Fin 4}
         (h : edgeAt x j = edgeAt x k) := LatticeVertexSectorFacts.edgeInjective
             (LatticeVertexSectorFacts.neighborDistinct) (LocalSectorGeometry.neighbor_injective)
                 edgeAt_mem x (j := j) (k := k) h
     have edge_of_sector_cell := LocalSectorGeometry.edge_of_sector_cell
-    let outerLabel : GaussianInt → Fin 4 → Fin 3 := fun x j =>
-      if LatticeVertexIncidentCell x j ∈ T0.cells then 0
-      else if LatticeVertexIncidentCell x j ∈ T0'.cells then 1 else 2
     have label_T0 := LatticeVertexSectorFacts.firstTileLabel T0 T0'
     have label_T0' := LatticeVertexSectorFacts.secondTileLabel T0 T0' hdis
     rcases hr with ⟨hbaseR, hheadR, hlastR, hpairR, hfamilyR, hchainR, hheightR⟩
@@ -1703,12 +1692,10 @@ theorem P4366T2LocalSectors
       (PeriodicTileIndexedMultiplicityOne P c).unique (owner_cell c) hc
     have index_eq_of_tile_eq := LocalSectorGeometry.index_eq_of_tile_eq Ci P htiles_lattice
     have owner_mem_iff := LocalSectorGeometry.owner_mem_iff Ci P owner_cell owner_unique
-    have owner_eq_tile := LocalSectorGeometry.owner_eq_tile Ci P owner_unique
     have owner_no_fourfold := LocalSectorGeometry.owner_no_fourfold Ci P owner_cell
         (@LocalSectorGeometry.no_fourfold Ci base q P hchart)
     have owner_no_checkerboard := LocalSectorGeometry.owner_no_checkerboard Ci P htiles_lattice
         owner_mem_iff
-    have cross_ne := LocalSectorGeometry.cross_ne Ci T0 T0' hdis P htiles_lattice
     have indexed_transition := LocalSectorGeometry.indexed_transition C0 Ci T0 T0' h0 h0' tiles
         reverseTiles hs reverseHs hdis path P ancestor_cells
         (LocalSectorGeometry.indexed_edge_witnesses C0 Ci T0 T0' h0 h0' tiles reverseTiles hs

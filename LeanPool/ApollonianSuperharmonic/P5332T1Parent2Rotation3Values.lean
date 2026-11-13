@@ -46,7 +46,6 @@ theorem P5332T1Parent2Rotation3Values (P A : FordFareyParameter) (hq : 1 < P.q)
         t = 0 ∧ Even (3+1 : Nat)) := by
 -- BODY
   classical
-  have hqI : 1 < (P.q : Int) := by exact_mod_cast hq
   have hqn : (P.q : Int) ≠ 0 := by omega
   have hrpos : 0 < P.q₁ := by
     by_contra hn
@@ -59,7 +58,6 @@ theorem P5332T1Parent2Rotation3Values (P A : FordFareyParameter) (hq : 1 < P.q)
   have hspos : 0 < P.q₂ := P.q₂_pos
   have hsum : (P.q₁ : Int) + (P.q₂ : Int) = (P.q : Int) := by
     exact_mod_cast P.sum_q.symm
-  have hq2le : (P.q₂ : Int) ≤ P.q := by omega
   have laws := (Classical.choose_spec FordOdometerFamilyExistsUnique).1
   change (∀ P x, P.q = 1 → FordOdometer P x = _) ∧ _ at laws
   -- The parameter record for the child is P itself; use its principal boundary law.
@@ -87,12 +85,10 @@ theorem P5332T1Parent2Rotation3Values (P A : FordFareyParameter) (hq : 1 < P.q)
     Matrix.head_cons, Matrix.tail_cons, FordVertexDomain, Set.mem_ofPred_eq,
     Zsqrtd.re_sub, Zsqrtd.im_sub, sub_zero] at hx'0
   change 0 ≤ X ∧ X ≤ (A.q : Int) ∧ 0 ≤ Y - P.q ∧ Y - P.q ≤ (A.q : Int) at hx'0
-  have hXle : X ≤ (P.q₂ : Int) := by omega
   have hY : Y = P.q := by omega
   have htdef : 0 ≤ (P.q₂ : Int) - X := by omega
   let t : Int := (P.q₂ : Int) - X
   have ht0 : 0 ≤ t := by dsimp [t]; omega
-  have htle : t ≤ P.q₂ := by dsimp [t]; omega
   have hstrict : t < P.q₂ := by
     have hbad := hstar (⟨2, by omega⟩ : Fin 5)
     dsimp at hbad

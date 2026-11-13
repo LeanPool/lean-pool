@@ -1440,10 +1440,6 @@ private theorem hDfilter :
   intro T h D hDcells
   ext z
   rw [hDcells, Finset.mem_filter]
-  have hdec : @decide (z ∉ BoundaryFootprintVertices T)
-      (Classical.propDecidable _) = true ↔
-        z ∉ BoundaryFootprintVertices T := by
-    cases Classical.propDecidable _ <;> simp
   simp []
 
 private theorem hsumFund :
@@ -1784,12 +1780,6 @@ private theorem hD_lap_real :
   intro T h g D hsumDelta_one B hsum_partition hB_lap
   have hs := hsum_partition (fun x => (FourNeighborLaplacian g x : ℝ))
   rw [hB_lap] at hs
-  have hreal :
-      (∑ x ∈ D, (FourNeighborLaplacian g x : ℝ)) +
-          (B.card : ℝ) = 1 := by
-    calc
-      _ = ∑ x ∈ T.cells, (FourNeighborLaplacian g x : ℝ) := hs
-      _ = 1 := hsumDelta_one
   linarith
 
 private theorem hD_lap_int :
@@ -1925,8 +1915,6 @@ private theorem hcountBridge :
       (PeriodicIndegreeGeometry.hBEset T hEset (PeriodicIndegreeGeometry.hBEsub T))
   let A := E.filter fun e => edgeOf e ∉ BoundaryFootprintEdges T
   have hApart : A.card + BE.card = E.card  := PeriodicIndegreeGeometry.hApart T
-  have hAcount : (A.card : Int) = D.card + T.cells.card - 1 := by
-    omega
   have hEocc := PeriodicIndegreeGeometry.hEocc T edgeOf_injective hEmem
   -- A shared side has an open rectangle inside its two incident squares.
   let step : Bool → GaussianInt := fun b => if b then I else 1
@@ -1991,7 +1979,6 @@ theorem PeriodicTileTotalIndegree (C : BandCircle)
             PeriodicCountBridge.hcountBridge C T hT hlat D hDmem hsectorAll
   have htiles := LatticeTileGridStructure T hlat
   have heuler := LatticeTileGridEulerCount T hlat
-  have hreg := LatticeEdgeRegularity C T hT hlat
   let D : Finset GaussianInt := h.domain.filter
     (fun x => @decide (x ∉ BoundaryFootprintVertices T)
       (Classical.propDecidable _))
@@ -2014,14 +2001,12 @@ theorem PeriodicTileTotalIndegree (C : BandCircle)
   have hcell_curv : T.cells.card = C.1.1.1.natAbs  := PeriodicIndegreeGeometry.hcell_curv C T R
       hRcard
       (PeriodicIndegreeGeometry.hcell_card C T hcell_residue_unique hfund R hR)
-  let I : GaussianInt := ⟨0, 1⟩
   have hsectorAll := PeriodicIndegreeGeometry.hsectorAll T (PeriodicIndegreeGeometry.hstatusRight
       T hcells) (PeriodicIndegreeGeometry.hstatusDown T hcells)
       (PeriodicIndegreeGeometry.hstatusLeft T hcells) (PeriodicIndegreeGeometry.hsomeSector T
       hcells)
   have hDcells := PeriodicIndegreeGeometry.hDcells T h hDmem hsectorAll
       (PeriodicIndegreeGeometry.hcellBaseFV T hcells)
-  have hDfilter := PeriodicIndegreeGeometry.hDfilter T h hDcells
   have hsumTranslate := PeriodicIndegreeGeometry.hsumTranslate C T hfund
       (PeriodicIndegreeGeometry.hsumFund C) (PeriodicIndegreeGeometry.hfundTranslate C T hfund)
   -- Each translated periodic stencil has the same sum over the representatives.
@@ -2030,10 +2015,6 @@ theorem PeriodicTileTotalIndegree (C : BandCircle)
     LatticeQuadraticForm (CircleMatrix C) x - (b.1 * x.re + b.2 * x.im)
   have hFperiod (x v : GaussianInt) (hv : v ∈ TilingLattice C) :
       F (x + v) = F x := hb v hv x
-  let u : GaussianInt → ℝ := fun x => (g x : ℝ)
-  let vfun : GaussianInt → ℝ := fun x =>
-    LatticeQuadraticForm (CircleMatrix C) x +
-      dotProduct ![b.1, b.2] ![(x.re : ℝ), (x.im : ℝ)]
   have hDfilterProp := PeriodicIndegreeGeometry.hDfilterProp T h hDcells
   let B : Finset GaussianInt := T.cells.filter
     (fun x => x ∈ BoundaryFootprintVertices T)

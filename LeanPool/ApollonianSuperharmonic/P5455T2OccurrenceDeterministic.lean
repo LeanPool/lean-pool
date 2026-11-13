@@ -172,7 +172,6 @@ private theorem main :
             j = (j - r) + r := by simp
             _ = (j' - r') + r' := by rw [← hia, ← hib, hr]
             _ = j' := sub_add_cancel j' r'
-        have hrEq := hr
         rcases rowA with ⟨hj, ho⟩ | ⟨hj, ho⟩ <;>
           rcases rowB with ⟨hj', ho'⟩ | ⟨hj', ho'⟩ <;> simp_all
       · rcases rootB with ⟨z', htb, rowB⟩

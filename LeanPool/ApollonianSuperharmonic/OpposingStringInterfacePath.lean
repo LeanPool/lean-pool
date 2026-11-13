@@ -195,9 +195,6 @@ private theorem hvertsEqAt258 :
   intro base x tileAt unitAt hcellsEq z
   have hunitne : (unitAt z).cells.Nonempty := by
     simp [unitAt, TileTranslation]
-  have htilene : (tileAt z).cells.Nonempty := by
-    rw [hcellsEq]
-    exact hunitne
   simp [FootprintVertices, hunitne, hcellsEq]
 
 private theorem hedgesEqAt266 :
@@ -261,9 +258,6 @@ private theorem hvertsEqAt314 :
   intro base x tileAt x0 unitAt turnedAt hcellCalc z
   have hturnedne : (turnedAt z).cells.Nonempty := by
     simp [turnedAt, unitAt, TileQuarterTurn, TileTranslation]
-  have htilene : (tileAt z).cells.Nonempty := by
-    rw [hcellCalc]
-    exact hturnedne
   simp [FootprintVertices, hturnedne, hcellCalc]
 
 private theorem hedgesEqAt322 :
@@ -1107,9 +1101,6 @@ private theorem finish :
   intro base R S forward reverse a b tileAt r s hR hS F G hrs hnadjCoord forwardInterior
       reverseInterior faces hfacesNe hfirst hlast hfaceChain ι typeclassInstance0 PP xi faceAt
       hadjXi htileXi hinjFace hinc
-  let goodV : GaussianInt → Prop := fun x =>
-    (∃ a ∈ (F.drop 1).dropLast, x ∈ FootprintVertices (tileAt a)) ∧
-    (∃ b ∈ (G.drop 1).dropLast, x ∈ FootprintVertices (tileAt b))
   let goodE : GaussianInt → GaussianInt → Prop := fun x y =>
     (∃ a ∈ (F.drop 1).dropLast, {x, y} ∈ FootprintEdges (tileAt a)) ∧
     (∃ b ∈ (G.drop 1).dropLast, {x, y} ∈ FootprintEdges (tileAt b))
@@ -1243,7 +1234,6 @@ private theorem unrotatedInterface :
   let unitAt : Int × Int → ProtoTile := fun z =>
     TileTranslation (⟨{x}, x⟩ : ProtoTile)
       (⟨z.1, z.2⟩ : GaussianInt)
-  have hshift := OpposingInterfaceGeometry.hshift
   have hcellsEq := OpposingInterfaceGeometry.hcellsEq base x hcells
       (OpposingInterfaceGeometry.hshift')
   have hvertsEq (z : Int × Int) :
@@ -1386,8 +1376,6 @@ theorem OpposingStringInterfacePath
     · subst a
       subst b
       let x0 : GaussianInt := ⟨x.im, -x.re - 1⟩
-      have hx0 : GaussianQuarterTurn x0 - 1 = x := by
-        ext <;> simp [x0, GaussianQuarterTurn]
       let unitAt : Int × Int → ProtoTile := fun z =>
         TileTranslation (⟨{x0}, x0⟩ : ProtoTile)
           (⟨z.1, z.2⟩ : GaussianInt)

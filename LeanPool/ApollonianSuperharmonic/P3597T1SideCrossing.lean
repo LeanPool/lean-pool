@@ -335,11 +335,6 @@ private theorem hTne :
         (1 : ℝ))) → (∀ (j : Fin (n + 3)), (j ≠ i) → ((0 < U j x ∧ U j x < 1) → (T j x ≠ 0)))) := by
   classical
   intro n p i x hxnotseg d D T U hparam j hji hinside ht
-  have ht' : (((p.vertex j - x).1 * (p.vertex (j + 1) - p.vertex j).2 -
-      (p.vertex j - x).2 * (p.vertex (j + 1) - p.vertex j).1) /
-      (d.1 * (p.vertex (j + 1) - p.vertex j).2 -
-        d.2 * (p.vertex (j + 1) - p.vertex j).1)) = 0 := by
-    simpa [T, D] using ht
   have heq := (hparam j).1
   change x + T j x • d = p.vertex j + U j x •
     (p.vertex (j + 1) - p.vertex j) at heq
@@ -1395,9 +1390,7 @@ private theorem hlocal :
       intro h
       exact hyC ((hcarrier y hy).mpr h)
     have hg := hgenericY y hy
-    have hodd := hparity y hyC hg
     have hcnt := hcount y hy
-    have hselected := hiY y hy
     have hTneY : T i y ≠ 0 := by
       intro ht
       apply hFy

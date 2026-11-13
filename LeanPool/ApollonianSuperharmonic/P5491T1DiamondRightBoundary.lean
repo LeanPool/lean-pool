@@ -627,19 +627,11 @@ theorem P5491T1DiamondRightBoundary (K : DiamondParameter) (hk : 1 < K.1)
 -- BODY
   dsimp only
   let n : Int := K.1
-  have hn : 2 ≤ n := by dsimp [n]; exact_mod_cast hk
-  have hA : (P5352T2Sources K hk 0).1 = DiamondTile K.1 := by
-    simp [P5352T2Sources]
   have hF (z : GaussianInt) (hz : z ∈ FootprintVertices (DiamondTile K.1)) :=
       DiamondBoundaryDetails.hF K hk z hz
   have hfloorEven (m : Int) := DiamondBoundaryDetails.hfloorEven m
   have hfloorOdd (m : Int) := DiamondBoundaryDetails.hfloorOdd m
-  let Q (a b : Int) : Int :=
-    (Int.natAbs a : Int)*((Int.natAbs a : Int)-1)/2-(a-b)^2/4
-  let S (a b : Int) : Int := 2*a^2-2*|a|-(a-b)^2+(a-b)%2
   have tri (a : Int) : 2*(a*(a-1)/2) = a*(a-1) := DiamondRightBoundaryProof.tri a
-  have square (a : Int) : 4*(a^2/4) = a^2-a%2 := DiamondQuadraticArithmetic.squareScale a
-  have scale (a b : Int) := DiamondQuadraticArithmetic.quadraticScale tri square a b
   have foot (z : GaussianInt) := DiamondBoundaryDetails.foot K z
   have hpositive : ∀ (i : Fin 3) (x : GaussianInt),
       x ∈ FootprintVertices (DiamondTile K.1) →

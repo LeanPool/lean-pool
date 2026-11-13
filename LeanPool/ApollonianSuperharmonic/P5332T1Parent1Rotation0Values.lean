@@ -46,13 +46,10 @@ theorem P5332T1Parent1Rotation0Values (P A : FordFareyParameter) (hq : 1 < P.q)
         t = 0 ∧ Even (0+0 : Nat)) := by
 -- BODY
   classical
-  have hq' : 1 < (P.q : Int) := by exact_mod_cast hq
   have hqn : (P.q : Int) ≠ 0 := by omega
   have par := P5130T5ParentArithmetic P hq
   have hr : 0 < (P.q₁ : Int) := by exact_mod_cast par.1
-  have hs : 0 < (P.q₂ : Int) := Int.natCast_pos.mpr P.q₂_pos
   have hrs : (P.q₁ : Int) + P.q₂ = P.q := by exact_mod_cast P.sum_q.symm
-  have hpa : P.p₁ * P.q - (P.q₁ : Int) * P.p = 1 := P.det₁
   have hpb : P.p₂ * P.q - (P.q₂ : Int) * P.p = -1 := P.det₂
   have laws := (Classical.choose_spec FordOdometerFamilyExistsUnique).1
   change (∀ P x, P.q = 1 → FordOdometer P x = _) ∧ _ at laws
@@ -79,11 +76,6 @@ theorem P5332T1Parent1Rotation0Values (P A : FordFareyParameter) (hq : 1 < P.q)
     omega
   let t : Int := X - (P.q₂ : Int)
   have ht0 : 0 ≤ t := by dsimp [t]; omega
-  have htr0 : t ≤ (P.q₁ : Int) := by
-    have := hchild.2.1
-    have hAq' : (A.q : Int) = P.q₁ := by exact_mod_cast hAq
-    dsimp [t]
-    omega
   have hstarTop := hstar 3
   have hstarRight := hstar 1
   dsimp [P5332T1ParentRows] at hstarTop hstarRight
@@ -98,7 +90,6 @@ theorem P5332T1Parent1Rotation0Values (P A : FordFareyParameter) (hq : 1 < P.q)
       omega
   have hcenter : (⟨X,Y⟩ : GaussianInt) = (P5332T1ParentRows P 0 0 t).center := by
     ext <;> simp [P5332T1ParentRows, t, hY]
-  have hcenter0 := hbase (⟨X,Y⟩ : GaussianInt) hx
   have hcenter1 := hother (⟨X,Y⟩ : GaussianInt) (by
     change 0 ≤ X-(P.q₂ : Int) ∧ X-(P.q₂ : Int) ≤ (A.q : Int) ∧
       0 ≤ Y-(P.q : Int) ∧ Y-(P.q : Int) ≤ (A.q : Int)
@@ -111,11 +102,6 @@ theorem P5332T1Parent1Rotation0Values (P A : FordFareyParameter) (hq : 1 < P.q)
     have he : -(N.p*u*(N.q : Int)) = (-N.p*u)*(N.q : Int) := by ring
     rw [he, Int.mul_ediv_cancel _ (by exact_mod_cast N.q_pos.ne')]
     ring
-  have left (N : FordFareyParameter) (v : Int)
-      (hv : 0 ≤ v) (hvq : v ≤ (N.q : Int)) :
-      FordOdometer N ⟨0,v⟩ = 0 := by
-    rw [boundary N 0 v (by omega) (by omega) hv hvq (by omega)]
-    simp [IntegerCeilDiv]
   have bottom (N : FordFareyParameter) (u : Int)
       (hu : 0 ≤ u) (huq : u ≤ (N.q : Int)) :
       FordOdometer N ⟨u,0⟩ = 0 := by

@@ -912,18 +912,6 @@ theorem BandOrderedGeneralRightRoutingCertificateExists
     (normalization.piece_cell_cover _).mp hjroot
   obtain ⟨centralSlot, centralSign, hcentral⟩ :=
     (normalization.layout.outer_union _).mp hjfixed
-  have laws := VectorRecursionLaws q normalization.configuration.proper.1
-  have flip := laws.2.2.2.2 normalization.configuration.proper
-  have turn_flip (s : Fin 3) :
-      GaussianQuarterTurn (BandVectors.1 (q s.succ) (q 0)) =
-        BandVectors.1 (q 0) (q s.succ) := BandParentVectorQuarterTurn.turn
-            (normalization).normalizedPresentation (fun j => (flip j).1) s
-  have turn0 : GaussianQuarterTurn (BandVectors.1 (q 1) (q 0)) =
-      BandVectors.1 (q 0) (q 1) := by simpa using turn_flip (0 : Fin 3)
-  have turn1 : GaussianQuarterTurn (BandVectors.1 (q 2) (q 0)) =
-      BandVectors.1 (q 0) (q 2) := by simpa using turn_flip (1 : Fin 3)
-  have turn2 : GaussianQuarterTurn (BandVectors.1 (q 3) (q 0)) =
-      BandVectors.1 (q 0) (q 3) := by simpa using turn_flip (2 : Fin 3)
   have period0 : BandVectors.1 (q 0) (q 1) = normalization.layout.u :=
     normalization.layout.period_u.symm
   have period1 : BandVectors.1 (q 0) (q 2) = normalization.layout.v :=

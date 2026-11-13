@@ -404,8 +404,6 @@ theorem LatticeTileGridEulerCount (T : ProtoTile) (hT : LatticeTile T) :
       ¬ (z - 1 ∈ T.cells ∧ z - 1 + I ∈ T.cells)).card
     have hrun : R = J + 1  := GridEulerGeometry.hrun T hT hgrid
     have hparts : T.cells.card = H + R ∧ V = Q + J  := GridEulerGeometry.hparts T
-    have hEuler : T.cells.card + Q = H + V + 1 := by
-      omega
     have hcornerMem {z : GaussianInt} (hz : z ∈ T.cells) := GridEulerGeometry.hcornerMem T (z :=
         z) hz
     have hcornerCount (z : GaussianInt) := TileCornerMultiplicity.cornerCount T z

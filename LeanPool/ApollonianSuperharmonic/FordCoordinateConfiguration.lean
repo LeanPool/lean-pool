@@ -154,8 +154,6 @@ private theorem ha32At288 :
   intro Q qone hqone hp hq coord2 b2 f1
   have hx := f1.2
   have hbase := b2.2.2.2.2.2
-  have hi : (⟨0, 1⟩ : GaussianInt) * ⟨0, 1⟩ = -1 := by
-    ext <;> norm_num
   have hx' : -(⟨0, 1⟩ : GaussianInt) *
         BandVectors.2 ((FordRecursiveQuadruple Q) 3)
           ((FordRecursiveQuadruple Q) 2) =
@@ -282,11 +280,6 @@ private theorem hv13At359 :
   rw [rv13, rv32] at hx
   simp only [FordRecursiveQuadruple, Fin.isValue, Matrix.cons_val_zero, Matrix.cons_val,
       Int.reduceNeg, mul_neg, R] at hx
-  have hqdrel : qd + Q.q₂ = Q.q₁ := by
-    dsimp [qd]
-    omega
-  have hqdrel' : (qd : Int) + (Q.q₂ : Int) = (Q.q₁ : Int) := by
-    exact_mod_cast hqdrel
   have hcalc : (qd : GaussianInt) +
       (⟨0, 1⟩ : GaussianInt) *
         (-((⟨0, 1⟩ : GaussianInt) * (Q.q₂ : GaussianInt))) =
@@ -679,10 +672,6 @@ private theorem hv32At473 :
   have hqdrel : qd + Q.q₁ = Q.q₂ := by
     dsimp [qd]
     omega
-  have hqdrel' : (qd : Int) + (Q.q₁ : Int) = (Q.q₂ : Int) := by
-    exact_mod_cast hqdrel
-  have hi : (⟨0, 1⟩ : GaussianInt) * ⟨0, 1⟩ = -1 := by
-    ext <;> norm_num
   have hcalc : -((⟨0, 1⟩ : GaussianInt) * (qd : GaussianInt)) -
       (⟨0, 1⟩ : GaussianInt) * (Q.q₁ : GaussianInt) =
       -((⟨0, 1⟩ : GaussianInt) * (Q.q₂ : GaussianInt)) := by
@@ -785,7 +774,6 @@ private theorem circleExists :
   · have hp1 : P.q₁ = 0 := by
       have h := P.q₁_lt
       omega
-    have hunit := P.unit_case hu
     let z : GaussianInt := ⟨0, P.p - 1⟩
     have hs : SemiProperQuadruple
         ![(1, 1 + 2 * z), (1, 1 + 2 * z + 2 * (⟨0, 1⟩ : GaussianInt)),
@@ -806,14 +794,6 @@ private theorem circleExists :
       exact_mod_cast Nat.mul_pos P.q_pos P.q_pos
   · have hgt : 1 < P.q := by
       have hpq : 1 ≤ P.q := P.q_pos
-      omega
-    have hq1pos : 0 < P.q₁ := by
-      by_contra hz
-      have hz' : P.q₁ = 0 := by omega
-      have hd := P.det₁
-      simp [hz'] at hd
-      have hdv : (P.q : Int) ∣ 1 := ⟨P.p₁, by simpa [mul_comm] using hd.symm⟩
-      have : (P.q : Int) = 1 := Int.eq_one_of_dvd_one (by omega) hdv
       omega
     have hs := claim P.q P rfl hgt
     refine ⟨⟨⟨FordCircleCoordinate P.p P.q, ?_⟩, ?_⟩, rfl⟩
@@ -1056,7 +1036,6 @@ private theorem hq2ltN :
     ∀ (n : ℕ), ∀ (Q : FordFareyParameter), (Q.q = n) → ((Q.q₂ < Q.q) → (Q.q₂ < n)) := by
   classical
   intro n Q hQ q2lt
-  have hlt := q2lt
   omega
 
 private theorem hv13At961 :

@@ -215,7 +215,6 @@ private theorem vertical_reachable :
         exact not_not.mp hzJ
       have hminLeft : leftmost.re ≤ (z - 1).re := hmin (z - 1) hpair.1
       change leftmost.re ≤ z.re - 1 at hminLeft
-      have hminZ : leftmost.re ≤ z.re := hmin z hz
       have hdec : Int.toNat ((z - 1).re - leftmost.re) < n := by
         change Int.toNat (z.re - 1 - leftmost.re) < n
         rw [← hmeasure]
@@ -283,13 +282,8 @@ private theorem hconnected :
   obtain ⟨p, hphead, hplast, hpmem, hpadj⟩ :=
     hinside.2 a.1 a.2 b.1 b.2
   have hpne : p ≠ [] := by intro hp; simp [hp] at hphead
-  have hpchain : List.IsChain FourNeighborAdjacent p := by
-    rw [List.isChain_iff_forall_rel_of_append_cons_cons]
-    exact hpadj
   let toX : GaussianInt → X := fun z =>
     if hz : z ∈ S then ⟨z, hz⟩ else ⟨base, hbase⟩
-  have toX_eq (z : GaussianInt) (hz : z ∈ S) : (toX z).1 = z := by
-    simp [toX, hz]
   have hpchain' : List.IsChain (fun x y : GaussianInt =>
       G.Reachable (toX x) (toX y)) p := by
     rw [List.isChain_iff_forall_rel_of_append_cons_cons]
@@ -543,10 +537,6 @@ private theorem htopzero :
     rcases hn with ⟨e, he, rfl⟩
     rw [List.mem_iff_getElem] at he
     rcases he with ⟨i, hi, he⟩
-    have hit : i < path.tail.length := by
-      simpa [List.length_zip] using hi
-    have hip : i < path.length :=
-      lt_of_lt_of_le hi (by simp [List.length_zip])
     rw [List.getElem_zip, List.getElem_tail] at he
     have he1 := congrArg Prod.fst he
     have he2 := congrArg Prod.snd he
@@ -783,8 +773,6 @@ private theorem hfarzero :
     apply path_vertex_re_min
     rw [List.mem_iff_getElem] at he
     rcases he with ⟨i, hi, he⟩
-    have hip : i < path.length :=
-      lt_of_lt_of_le hi (by simp [List.length_zip])
     rw [List.getElem_zip] at he
     have he1 := congrArg Prod.fst he
     simp [← he1]

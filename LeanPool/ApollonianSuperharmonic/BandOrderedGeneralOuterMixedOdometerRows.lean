@@ -2155,15 +2155,9 @@ theorem BandOrderedGeneralOuterMixedOdometerRows
     rw [← pow_two, hI2]
   let U : GaussianInt := BandVectors.1 (q 2) (q 1)
   let W : GaussianInt := BandVectors.1 (q 3) (q 2)
-  let A : GaussianInt := BandVectors.2 (q 2) (q 1)
-  let B : GaussianInt := BandVectors.2 (q 3) (q 2)
   let cOff (z : GaussianInt) : Real × Real :=
     (1 / 2 : Real) • (GaussianRealPoint z -
       (-(GaussianRealPoint z).2, (GaussianRealPoint z).1))
-  let sOff (z : GaussianInt) : Real × Real :=
-    (1 / 2 : Real) •
-      (((z.re : Int) : Real) - ((z.im : Int) : Real),
-        ((z.im : Int) : Real) + ((z.re : Int) : Real))
   have laws := VectorRecursionLaws q cfg.proper.1
   have firstLaws := VectorRecursionLaws cfg.firstPredecessor cfg.firstProper.1
   have secondFlip := (VectorRecursionLaws cfg.secondPredecessor
@@ -2187,9 +2181,6 @@ theorem BandOrderedGeneralOuterMixedOdometerRows
   have hpos2 := OuterMixedOdometerGeometry.hpos2 q cfg
   have hpos3 := OuterMixedOdometerGeometry.hpos3 q cfg
   have hpos1 := OuterMixedOdometerGeometry.hpos1 q cfg
-  let C1 : BandCircle := ⟨⟨q 1, Or.inl hpos1, q, cfg.proper.1, 1, rfl⟩, hpos1⟩
-  let C2 : BandCircle := ⟨⟨q 2, Or.inl hpos2, q, cfg.proper.1, 2, rfl⟩, hpos2⟩
-  let C3 : BandCircle := ⟨⟨q 3, Or.inl hpos3, q, cfg.proper.1, 3, rfl⟩, hpos3⟩
   have pPack := OuterMixedOdometerGeometry.pPack q cfg C0 T cert h P r Q S u v g data
   have p0plus := pPack 0 true
   have p1minus := pPack 1 false

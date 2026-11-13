@@ -1948,13 +1948,6 @@ private theorem opposingBoundaryConclusion :
   have hreverseRespect := OdometerStringRespectRegularFamilyCentralCovariance
     Cᵢ orientation base Rminus Rplus tiles reverseTiles hs gs centerShift a
     hrespect hreverse hcellPairs htransform
-  have hreverseHead : reverseTiles.head? = some Rplus := hreverse.2.1
-  have hreverseTilesNonempty := OpposingBoundaryGeometry.hreverseTilesNonempty Rplus reverseTiles
-      hreverseHead
-  have hgsNonempty : gs ≠ [] := by
-    have hhead : gs.head? = some hplus := hgsHead
-    intro h
-    simp [h] at hhead
   have forall2_mem_right :
     ∀ {α β : Type} {r : α → β → Prop}
           {xs : List α} {ys : List β}, List.Forall₂ r xs ys →
@@ -2095,12 +2088,6 @@ theorem OpposingBoundaryOdometerStrings
       hplusCells, hcellPairs⟩ :=
     TileStringRegularFamilyCentralCovariance Cᵢ orientation base Rminus Rplus
       tiles hstring
-  have tile_string_normalization :=
-    @TileStringRegularFamilyCentralCovariance
-  have odometer_string_normalization :=
-    @OdometerStringRespectRegularFamilyCentralCovariance
-  have ancestor_inner_normalization :=
-    @AncestorOdometerInnerSupportNormalization
   have hpouter_eq : pouter = p₀ := OpposingBoundaryGeometry.hpouter_eq h₀ p₀ hs₀ pouter hpouter
   let pminus := p₀ + (1 / 2 : Real) • GaussianRealPoint
     (BandVectors.2 (q i.succ) (q 0) - BandVectors.2 (q 0) (q i.succ))
@@ -2218,10 +2205,6 @@ theorem OpposingBoundaryOdometerStrings
   have htbackZero := finiteTranslationFix Rminus tback hRminusCells hbackCells
   have hbackSameDomain := OpposingBoundaryGeometry.hbackSameDomain q i hseed centerShift couter
       tback hbackDomains htbackZero
-  let hminusAffine := PartialOdometerAffineTranslate hminus 0 cback eback
-  let bplus : Int := -eback
-  let hminusBack := PartialOdometerAffineTranslate
-    (PartialOdometerHalfTurn hplus) centerShift a bplus
   have hbackBackDomain := OpposingBoundaryGeometry.hbackBackDomain q i hseed centerShift couter
       eback
   have hminusBackEq := OpposingBoundaryGeometry.hminusBackEq q i hseed centerShift couter tback
@@ -2255,12 +2238,6 @@ theorem OpposingBoundaryOdometerStrings
     (by dsimp [pminus]; abel) (by dsimp [pplus]; abel)
   rcases hrespectResult with ⟨_, _, _, hs, hhsHead, hhsLast, hrespect, hancestorForward⟩
   have hlengthEq : hs.length = tiles.length := hrespect.2.1.length_eq.symm
-  have hlengthHs : 2 ≤ hs.length := by omega
-  let constAt : Nat → Int := fun n =>
-    if n = 0 then 0 else if n + 1 = hs.length then bplus else b
-  let transformAt : Nat → PartialOdometer → PartialOdometer := fun n h =>
-    PartialOdometerAffineTranslate (PartialOdometerHalfTurn h) centerShift a (constAt n)
-  let gs := hs.mapIdx transformAt
   have transformForall := OpposingBoundaryGeometry.transformForall centerShift couter eouter
       eback hs
   exact (OpposingBoundaryConclusion.opposingBoundaryConclusion q hq C₀ Cᵢ i hC₀ hCᵢ T₀ T₀' h₀ h₀'

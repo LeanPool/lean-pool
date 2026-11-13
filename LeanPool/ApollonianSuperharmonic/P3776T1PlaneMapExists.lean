@@ -265,9 +265,6 @@ private theorem hAgree :
     have hab : a ≠ b := by
       intro he
       exact hij (P.plane.face_vertices_distinct g he)
-    have hcd : c ≠ d := by
-      intro he
-      exact hkl (P.plane.face_vertices_distinct h he)
     have hadj := P.plane.face_edges g i j hij
     by_cases hsame : ({a, b} : Set ι) = {c, d}
     · have ha : a = c ∨ a = d := by

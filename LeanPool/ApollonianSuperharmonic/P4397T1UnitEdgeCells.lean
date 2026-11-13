@@ -860,10 +860,6 @@ theorem P4397T1UnitEdgeCells :
     · placeholder
   -/
   · intro a b z w hform U
-    have oneNeImag : (1 : GaussianInt) ≠ ⟨0, 1⟩ := by
-      intro h
-      have hr := congrArg Zsqrtd.re h
-      norm_num at hr
     have hfootV (U : ProtoTile) (z : GaussianInt) :
       ({z + 1, z + 1 + ⟨0, 1⟩} : Finset GaussianInt) ∈ FootprintEdges U ↔
         z ∈ U.cells ∨ z + 1 ∈ U.cells := UnitEdgeCellLemmas.hfootV pairMatch U z

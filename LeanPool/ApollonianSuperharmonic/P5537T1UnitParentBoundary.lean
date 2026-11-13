@@ -35,7 +35,6 @@ theorem P5537T1UnitParentBoundary (K : DiamondParameter) (hk : 1 < K.1) :
         D.2.1 (x-M.1) + M.2.1.re*x.re + M.2.1.im*x.im - A.2.1 x = b := by
 -- BODY
   dsimp only
-  have hn : 2 ≤ (K.1 : Int) := by exact_mod_cast hk
   have unitMem (z : GaussianInt) :
       z ∈ FootprintVertices (⟨{0},0⟩ : ProtoTile) ↔
         0 ≤ z.re ∧ z.re ≤ 1 ∧ 0 ≤ z.im ∧ z.im ≤ 1 := by

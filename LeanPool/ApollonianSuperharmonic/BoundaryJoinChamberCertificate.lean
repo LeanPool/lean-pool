@@ -130,7 +130,6 @@ theorem BoundaryJoinChamberCertificate
       rw [← hpre, ← hpim, ← hrre, ← hrim]
       ring
     rw [physical_det, covolume] at factor
-    have positive_curvature := C.2
     nlinarith
   have common_chamber : ∃ n, P4994T6Chamber n p ∧ P4994T6Chamber n r := by
     by_cases hunit : C.1.1.1 = 1

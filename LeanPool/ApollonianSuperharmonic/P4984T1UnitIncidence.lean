@@ -937,9 +937,6 @@ theorem P4984T1UnitIncidence (a : GaussianInt) :
         simp [arc, A, roots, P4828T1Evaluate]
       have hArc3 : arc (a - ⟨0, 1⟩, true, []) = A 3 := by
         simp [arc, A, roots, P4828T1Evaluate]
-      let γ (left upper : Bool) (t : Real) : Complex :=
-        u + (if left then -(Real.sqrt (1 - t^2) : Real) else Real.sqrt (1 - t^2)) +
-          ((if upper then t else -t : Real) : Complex) * Complex.I
       have hγcontinuous (left upper : Bool) := UnitIncidenceDetails.hγcontinuous u left upper
       have hQimage (left upper : Bool) := UnitIncidenceProof.hQimage a u huDef hu left upper
       have hclosed := UnitIncidenceDetails.hclosed a u hA (UnitIncidenceDetails.hQclosed u

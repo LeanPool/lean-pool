@@ -52,7 +52,6 @@ theorem P5332T1Parent1Rotation3Values (P A : FordFareyParameter) (hq : 1 < P.q)
     have hz : P.q₁ = 0 := by omega
     have : P.p₁ * (P.q : Int) = 1 := by
       simpa [hz] using P.det₁
-    have hqpos : 1 < (P.q : Int) := by exact_mod_cast hq
     by_cases hp : P.p₁ ≤ 0
     · nlinarith
     · have hp1 : 1 ≤ P.p₁ := by omega
@@ -138,7 +137,6 @@ theorem P5332T1Parent1Rotation3Values (P A : FordFareyParameter) (hq : 1 < P.q)
       rw [arg]
       change 0 ≤ (1 : Int) ∧ (1 : Int) ≤ (A.q : Int) ∧
         0 ≤ Y ∧ Y ≤ (A.q : Int)
-      have hrA : 0 < (A.q : Int) := by rw [hA]; exact_mod_cast hq1_pos
       exact ⟨by omega, by omega, hYlow, by simpa [hA] using hYhigh⟩)
     dsimp [P5332T1ParentRows] at he
     rw [arg, boundary A 1 Y (by omega) (by omega) hYlow

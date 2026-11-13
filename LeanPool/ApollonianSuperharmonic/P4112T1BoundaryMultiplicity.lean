@@ -64,7 +64,6 @@ theorem P4112T1BoundaryMultiplicity (P : FordFareyParameter) (hP : 2 < P.q) :
       simp
     have hqNat := P.sum_q
     rw [hzero] at hqNat
-    have hqlarge : 2 < P.q₂ := by omega
     have hdet := P.det₁
     rw [hq] at hdet
     rw [hzero] at hdet
@@ -97,7 +96,6 @@ theorem P4112T1BoundaryMultiplicity (P : FordFareyParameter) (hP : 2 < P.q) :
       have hunit := Int.eq_one_of_dvd_one (by omega) hdiv
       exact_mod_cast hunit
     have hqNat := P.sum_q
-    have hqtwo : P.q = 2 := by omega
     omega
   have b0 : x ∈ LatticeVertexBoundary (FordRecursiveVertexDomains P 0) ↔
       (0 : Int) ≤ x.re ∧ x.re ≤ P.q₁ ∧ (0 : Int) ≤ x.im ∧ x.im ≤ P.q₁ ∧

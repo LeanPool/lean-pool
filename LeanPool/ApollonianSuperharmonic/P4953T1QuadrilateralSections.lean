@@ -651,8 +651,6 @@ private theorem hSegA (h : ℝ) (σ : ℝ) (A : ℂ) (B : ℂ) (hσ : σ ^ 2 = 1
   classical
   let fA : ℂ := ⟨h, A.im⟩
   let d (y : ℝ) := A.re + (B.re - A.re) * (y - A.im) / (B.im - A.im)
-  let T : Set ℂ := {z | A.im ≤ z.im ∧ z.im ≤ B.im ∧
-    0 ≤ σ * (z.re - h) ∧ 0 ≤ σ * (d z.im - z.re)}
   have hda : d A.im = A.re := hda A B hAB
   have segCoords (P R z : ℂ) : z ∈ segment ℝ P R ↔
       ∃ t : ℝ, 0 ≤ t ∧ t ≤ 1 ∧
@@ -679,8 +677,6 @@ private theorem hSegB (h : ℝ) (σ : ℝ) (A : ℂ) (B : ℂ) (hσ : σ ^ 2 = 1
   classical
   let fB : ℂ := ⟨h, B.im⟩
   let d (y : ℝ) := A.re + (B.re - A.re) * (y - A.im) / (B.im - A.im)
-  let T : Set ℂ := {z | A.im ≤ z.im ∧ z.im ≤ B.im ∧
-    0 ≤ σ * (z.re - h) ∧ 0 ≤ σ * (d z.im - z.re)}
   have hdb : d B.im = B.re := hdb A B hAB
   have segCoords (P R z : ℂ) : z ∈ segment ℝ P R ↔
       ∃ t : ℝ, 0 ≤ t ∧ t ≤ 1 ∧
@@ -921,68 +917,17 @@ theorem P4953T1QuadrilateralSections (h σ : ℝ) (A B : ℂ)
   let fB : ℂ := ⟨h, B.im⟩
   let d (y : ℝ) := A.re + (B.re - A.re) * (y - A.im) / (B.im - A.im)
   let Q := convexHull ℝ ({A, B, fA, fB} : Set ℂ)
-  have hσsq : σ * σ = 1 := SignSquareProduct.product σ hσ
   let T : Set ℂ := {z | A.im ≤ z.im ∧ z.im ≤ B.im ∧
     0 ≤ σ * (z.re - h) ∧ 0 ≤ σ * (d z.im - z.re)}
-  have hconv : Convex ℝ T := QuadrilateralSectionsConstruction.hconv h σ A B hAB
-  have hda : d A.im = A.re := QuadrilateralSectionsConstruction.hda A B hAB
-  have hdb : d B.im = B.re := QuadrilateralSectionsConstruction.hdb A B hAB
-  have hQsub : Q ⊆ T := QuadrilateralSectionsConstruction.hQsub h σ A B hA hB hAB
-  have hTsub : T ⊆ Q := QuadrilateralSectionsConstruction.hTsub h σ A B hσ hA hB hAB
   have hQeq : Q = T := QuadrilateralSectionsConstruction.hQeq h σ A B hσ hA hB hAB
   let S : Set ℂ := {z | A.im < z.im} ∩ {z | z.im < B.im} ∩
     {z | 0 < σ * (z.re - h)} ∩ {z | 0 < σ * (d z.im - z.re)}
-  have hcReLip : LipschitzWith 1 (fun z : ℂ => z.re) := QuadrilateralSectionsConstruction.hcReLip
-  have hcImLip : LipschitzWith 1 (fun z : ℂ => z.im) := QuadrilateralSectionsConstruction.hcImLip
-  have hcIm : Continuous fun z : ℂ => z.im := QuadrilateralSectionsConstruction.hcIm
-  have hcRe : Continuous fun z : ℂ => z.re := QuadrilateralSectionsConstruction.hcRe
-  have hcD : Continuous fun z : ℂ => d z.im := QuadrilateralSectionsConstruction.hcD A B
-  have hcSide : Continuous fun z : ℂ => σ * (z.re - h) :=
-      QuadrilateralSectionsConstruction.hcSide h σ
-  have hcTop : Continuous fun z : ℂ => σ * (d z.im - z.re) :=
-      QuadrilateralSectionsConstruction.hcTop σ A B
-  have hSopen : IsOpen S := QuadrilateralSectionsConstruction.hSopen h σ A B
-  have hSsub : S ⊆ Q := QuadrilateralSectionsConstruction.hSsub h σ A B hσ hA hB hAB
-  have hSinter : S ⊆ interior Q := QuadrilateralSectionsConstruction.hSinter h σ A B hσ hA hB hAB
-  have hInteriorRev (x : ℂ) (hx : x ∈ interior Q) : x ∈ S :=
-      QuadrilateralSectionsConstruction.hInteriorRev h σ A B hσ hA hB hAB x hx
   have hInteriorEq : interior Q = S := QuadrilateralSectionsConstruction.hInteriorEq h σ A B hσ
       hA hB hAB
-  have hTclosed : IsClosed T := QuadrilateralSectionsConstruction.hTclosed h σ A B
   have hfrontier : frontier Q = Q \ interior Q := QuadrilateralSectionsConstruction.hfrontier h σ
       A B hσ hA hB hAB
-  have segCoords (P R z : ℂ) : z ∈ segment ℝ P R ↔
-      ∃ t : ℝ, 0 ≤ t ∧ t ≤ 1 ∧
-        z.re = (1 - t) * P.re + t * R.re ∧
-        z.im = (1 - t) * P.im + t * R.im := QuadrilateralSectionsConstruction.segCoords P R z
-  have hDinterp (t : ℝ) : d ((1 - t) * A.im + t * B.im) =
-      (1 - t) * A.re + t * B.re := QuadrilateralSectionsConstruction.hDinterp A B hAB t
-  have heightParam (y u v : ℝ) (huv : u < v) (hyu : u ≤ y) (hyv : y ≤ v) :
-      ∃ t : ℝ, 0 ≤ t ∧ t ≤ 1 ∧ y = (1 - t) * u + t * v :=
-          QuadrilateralSectionsConstruction.heightParam y u v huv hyu hyv
-  have sideParam (x c : ℝ) (hc : 0 < σ * (c - h))
-      (hlo : 0 ≤ σ * (x - h)) (hhi : 0 ≤ σ * (c - x)) :
-      ∃ t : ℝ, 0 ≤ t ∧ t ≤ 1 ∧ x = (1 - t) * c + t * h :=
-          QuadrilateralSectionsConstruction.sideParam h σ hσ x c hc hlo hhi
-  have hSegFoot (z : ℂ) (hzY₁ : A.im ≤ z.im) (hzY₂ : z.im ≤ B.im)
-      (hzx : z.re = h) : z ∈ segment ℝ fA fB := QuadrilateralSectionsConstruction.hSegFoot h A B
-          hAB z hzY₁ hzY₂ hzx
-  have hSegDiag (z : ℂ) (hzY₁ : A.im ≤ z.im) (hzY₂ : z.im ≤ B.im)
-      (hzd : z.re = d z.im) : z ∈ segment ℝ A B := QuadrilateralSectionsConstruction.hSegDiag A B
-          hAB z hzY₁ hzY₂ hzd
-  have hSegA (z : ℂ) (hz : z ∈ T) (hzy : z.im = A.im) :
-      z ∈ segment ℝ A fA := QuadrilateralSectionsConstruction.hSegA h σ A B hσ hA hAB z hz hzy
-  have hSegB (z : ℂ) (hz : z ∈ T) (hzy : z.im = B.im) :
-      z ∈ segment ℝ B fB := QuadrilateralSectionsConstruction.hSegB h σ A B hσ hB hAB z hz hzy
   let E := segment ℝ A B ∪ segment ℝ A fA ∪ segment ℝ B fB ∪
     segment ℝ fA fB
-  have hAin : A ∈ Q := QuadrilateralSectionsConstruction.hAin h A B
-  have hBin : B ∈ Q := QuadrilateralSectionsConstruction.hBin h A B
-  have hfAin : fA ∈ Q := QuadrilateralSectionsConstruction.hfAin h A B
-  have hfBin : fB ∈ Q := QuadrilateralSectionsConstruction.hfBin h A B
-  have hEsub : E ⊆ Q \ interior Q := QuadrilateralSectionsConstruction.hEsub h σ A B hσ hA hB hAB
-  have hBoundarySub : Q \ interior Q ⊆ E := QuadrilateralSectionsConstruction.hBoundarySub h σ A
-      B hσ hA hB hAB
   have hBoundary : Q \ interior Q = E := QuadrilateralSectionsConstruction.hBoundary h σ A B hσ
       hA hB hAB
   refine ⟨?_, ?_, ?_⟩

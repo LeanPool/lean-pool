@@ -2022,7 +2022,6 @@ private theorem rowFirst0 :
   classical
   intro k imagePath qinj decBetween D Q dzeroD c hcEq Fc F_inj hDne quarterVerticesAt
       quarterEdgesAt dShift cellMapZero da cellMapRight ddisjD dneDright disjointImage
-  let F : GaussianInt → GaussianInt := fun z => Q z + c
   exact ⟨hDne, (DiamondPathComparison.firstCells₁ k c cellMapRight dneDright),
         (DiamondPathComparison.firstCellsDisj k c (DiamondPathComparison.F_cell_inj qinj c)
         cellMapZero cellMapRight ddisjD disjointImage), (DiamondPathComparison.firstTurn k
@@ -2177,7 +2176,6 @@ private theorem h0 :
   classical
   intro k dV decVertices D Q dzeroD c hcEq F_inj quarterVerticesAt dShift zeroQ da secondVertices
       rowFirst0 rowSecond0
-  let F : GaussianInt → GaussianInt := fun z => Q z + c
   exact DiamondPathComparison.h0 k c
                 (DiamondPathComparison.firstVertices k decVertices c F_inj
                 (DiamondPathComparison.zeroFvertices k dzeroD c quarterVerticesAt zeroQ)
@@ -2350,7 +2348,6 @@ theorem P5290T1EqualDiamondPaths (k : Nat) (hk : 0 < k)
     2 * (k : Int) ≤ z.re + z.im ∧ z.re + z.im ≤ 2 * (k : Int) + 1}
   let dP : Nat → GaussianInt := fun j =>
     ⟨(k : Int) - (j / 2 : Nat), (k : Int) + ((j + 1) / 2 : Nat)⟩
-  let dE : Set (Finset GaussianInt) := {e | ∃ j < N, e = {dP j, dP (j + 1)}}
   have dq (j : Nat) : GaussianQuarterTurn (q j) = dP j := by
     exact qenum j
   have dec := P5203T1DecreasingInterface k hk 0
@@ -2364,15 +2361,6 @@ theorem P5290T1EqualDiamondPaths (k : Nat) (hk : 0 < k)
       qImagePath (DiamondPathComparison.qendpoint₀ k qenum) (DiamondPathComparison.qendpoint₁ k
       hk qenum) (DiamondPathComparison.dVimage k dq (DiamondPathComparison.dVenum k hk hN))
       (DiamondPathComparison.dEimage k dq)) decVertices decEdges
-  let iV : Set GaussianInt := {z | 1 ≤ z.re ∧ z.re ≤ k ∧
-    z.re - 1 ≤ z.im ∧ z.im ≤ z.re}
-  let iP : Nat → GaussianInt := fun j =>
-    ⟨1 + (j / 2 : Nat), ((j + 1) / 2 : Nat)⟩
-  let iE : Set (Finset GaussianInt) := {e | ∃ j < N, e = {iP j, iP (j + 1)}}
-  let iq : Nat → GaussianInt := P5157T1StaircasePoint 1 false 1
-  have iqenum (j : Nat) : iq j = iP j := by
-    apply Zsqrtd.ext <;> simp [iq, iP, P5157T1StaircasePoint]
-  have iEeq := DiamondPathComparison.iEeq k iqenum
   have inc := P5203T1IncreasingInterface k hk 0
   dsimp only at inc
   rcases inc with ⟨ine, ine', idisj, ivertex0, iedge0, _⟩
@@ -2422,8 +2410,6 @@ theorem P5290T1EqualDiamondPaths (k : Nat) (hk : 0 < k)
     ⟨z.im - (k : Int), (k : Int) - 1 - z.re⟩
   have qInvLeft (z : GaussianInt) : Q (Qinv z) = z := by
     apply Zsqrtd.ext <;> simp [Q, Qinv, GaussianQuarterTurn]
-  have qInvRight (z : GaussianInt) : Qinv (Q z) = z := by
-    apply Zsqrtd.ext <;> simp [Q, Qinv, GaussianQuarterTurn]
   have GF (z : GaussianInt) : G (F z) = z := by
     apply Zsqrtd.ext <;> simp [G, F, Q, GaussianQuarterTurn, hcEq]
   have FG (z : GaussianInt) : F (G z) = z := by
@@ -2468,8 +2454,6 @@ theorem P5290T1EqualDiamondPaths (k : Nat) (hk : 0 < k)
     simpa only [zero_add] using ine'
   have iaTurn : Qinv ia = ⟨-(k : Int), -(k : Int) - 1⟩ := by
     apply Zsqrtd.ext <;> simp [Qinv, ia]; ring
-  have iaNeg : ⟨-(k : Int) - 1, (k : Int)⟩ + ia = 0 := by
-    apply Zsqrtd.ext <;> simp [ia]
   let shift : GaussianInt := ⟨-(k : Int) - 1, (k : Int)⟩
   have translateInj (u : GaussianInt) := DiamondPathComparison.translateInj u
   have shiftCellsOne := DiamondPathComparison.shiftCellsOne k
@@ -2480,9 +2464,6 @@ theorem P5290T1EqualDiamondPaths (k : Nat) (hk : 0 < k)
   have hnestedV : BoundaryFootprintVertices
       (TileTranslation (TileTranslation D ia) shift) = BoundaryFootprintVertices D :=
     vertexCellsEq hnested hDne
-  have hnestedE : BoundaryFootprintEdges
-      (TileTranslation (TileTranslation D ia) shift) = BoundaryFootprintEdges D :=
-    edgeCellsEq hnested
   have secondPath := DiamondRowPaths.secondPath k decBetween
   have secondCellsDisj : Disjoint D.cells (TileTranslation D da).cells := ddisjD
   have secondCells₂ : (TileTranslation D da).cells.Nonempty := dneDright
@@ -2493,13 +2474,6 @@ theorem P5290T1EqualDiamondPaths (k : Nat) (hk : 0 < k)
         (DiamondPathComparison.shiftCellsTwo k dzeroD translateCells))
   have secondVertices : BoundaryFootprintVertices D ∩
       BoundaryFootprintVertices (TileTranslation D da) = dV := decVertices
-  have firstEdges := DiamondPathComparison.firstEdges k decEdges c F_inj
-      (DiamondPathComparison.zeroFedges k dzeroD c quarterEdgesAt zeroQ)
-      (DiamondPathComparison.rightFedges k c quarterEdgesAt dShift)
-  have thirdEdges := DiamondPathComparison.thirdEdges k incEdges G_inj inverseEdgesAt
-      inverseEdgesZero
-  have fourthEdges := DiamondPathComparison.fourthEdges k (DiamondPathComparison.shiftEdges k
-      incEdges translateInj hnestedE)
   have rowFirst0 := DiamondRowConclusions.rowFirst0 k imagePath qinj decBetween dzeroD c hcEq
       F_inj hDne quarterVerticesAt quarterEdgesAt dShift cellMapZero cellMapRight ddisjD
       dneDright disjointImage

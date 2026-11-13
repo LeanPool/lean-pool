@@ -212,7 +212,6 @@ private theorem bridge :
       refine ⟨0, n, (boundary _).mpr ?_⟩
       rw [horizVec]
       dsimp [t]
-      have hj' : (j : Int) ≤ P.q := by exact_mod_cast hj
       omega)
   convert hh using 1
   ext <;> simp; ring
@@ -297,7 +296,6 @@ private theorem reach0 :
       refine ⟨m, n, (boundary _).mpr ?_⟩
       rw [horizVec]
       dsimp [t] at hb ⊢
-      have hj' : (j : Int) ≤ k := by exact_mod_cast hj
       rcases hb with hb | hb <;> omega)
   have he : (⟨n*(P.q : Int), x.im⟩ : GaussianInt) + k • 1 = x := by
     ext <;> simp [hk]

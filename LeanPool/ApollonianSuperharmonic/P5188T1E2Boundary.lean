@@ -329,21 +329,17 @@ theorem P5188T1E2Boundary (P P₁ : FordFareyParameter)
   have hsum : (P.q : Int) = P.q₁ + P.q₂ := SecondEdgeBoundaryConstruction.hsum P
   have hps : P.p = P.p₁ + P.p₂ := SecondEdgeBoundaryConstruction.hps P
   have hcross := SecondEdgeBoundaryConstruction.hcross P hq
-  have hdet₁ := SecondEdgeBoundaryConstruction.hdet₁ P
   have hdet₂ := SecondEdgeBoundaryConstruction.hdet₂ P
   have hqpos : 0 < (P.q : Int) := SecondEdgeBoundaryConstruction.hqpos P
   have ha : 0 < (P.q₁ : Int) := SecondEdgeBoundaryConstruction.ha P hq
   have hb : 0 < (P.q₂ : Int) := SecondEdgeBoundaryConstruction.hb P
   have hab : (P.q₁ : Int) < P.q := SecondEdgeBoundaryConstruction.hab P
-  have hbb : (P.q₂ : Int) < P.q := SecondEdgeBoundaryConstruction.hbb P hsum ha
   let a : Int := P.q₁
   let b : Int := P.q₂
   let A : Int := P.p₁
   let D : Int := P.p₂
   have haq : a + b = P.q := SecondEdgeBoundaryConstruction.haq P hsum
   have hpq : A + D = P.p := SecondEdgeBoundaryConstruction.hpq P hps
-  have hAq : A * P.q - a * P.p = 1 := SecondEdgeBoundaryConstruction.hAq P hdet₁
-  have hpqa : P.p * a = A * P.q - 1 := SecondEdgeBoundaryConstruction.hpqa P hAq
   have hDq : D * P.q - b * P.p = -1 := SecondEdgeBoundaryConstruction.hDq P hdet₂
   have hAB : A * b - D * a = 1 := SecondEdgeBoundaryConstruction.hAB P hcross
   have ceilPerturb := SecondEdgeBoundaryConstruction.ceilPerturb

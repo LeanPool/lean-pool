@@ -49,7 +49,6 @@ theorem P5332T1RightHorizontalValues (P : FordFareyParameter) (hq : 1 < P.q)
         0 < t ∧ t < (P.q : Int)) := by
 -- BODY
   classical
-  have hq' : 1 < (P.q : Int) := by exact_mod_cast hq
   have hqn : (P.q : Int) ≠ 0 := by omega
   have laws := (Classical.choose_spec FordOdometerFamilyExistsUnique).1
   change (∀ P x, P.q = 1 → FordOdometer P x = _) ∧ _ at laws

@@ -83,7 +83,6 @@ theorem P5352T2SourceCertificates (K : DiamondParameter) (hk : 1 < K.1)
     · change 0 < (2 * ((K.1 - 1 : Nat) : Int) * (K.1 : Int))
       have hsub : 0 < K.1 - 1 := by omega
       have hki : 0 < (K.1 : Int) := by omega
-      have hsi : 0 < ((K.1 - 1 : Nat) : Int) := by exact_mod_cast hsub
       positivity
     · simpa [P5352T2Sources, Nat.cast_sub (by omega : 1 ≤ K.1)] using
         P4194T1DiamondCentroid (K.1 - 1) (by omega)

@@ -95,45 +95,6 @@ theorem P4677T2IncidenceLedger :
     induction h with
     | symm _ ih => exact ih.symm
     | _ => simp [forward]
-  have positive (a b : PeriodicSubtileIndex) (h : forward a b) :
-      AllowedSubtileIncidence a b := by
-    rcases a with ⟨al, m, n⟩
-    rcases b with ⟨bl, p, q⟩
-    cases al <;> cases bl <;> simp only [forward] at h
-    · rcases h with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩
-      · exact AllowedSubtileIncidence.AB _ _
-      · exact AllowedSubtileIncidence.AB01 _ _
-      · exact AllowedSubtileIncidence.AB11 _ _
-    · rcases h with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩
-      · exact AllowedSubtileIncidence.AC _ _
-      · exact AllowedSubtileIncidence.AC11 _ _
-    · rcases h with ⟨rfl, rfl⟩
-      exact AllowedSubtileIncidence.AD _ _
-    · rcases h with ⟨rfl, rfl⟩
-      exact AllowedSubtileIncidence.AE01 _ _
-    · rcases h with ⟨rfl, rfl⟩
-      exact AllowedSubtileIncidence.AF _ _
-    · rcases h with ⟨rfl, rfl⟩
-      exact AllowedSubtileIncidence.BC _ _
-    · rcases h with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩
-      · exact AllowedSubtileIncidence.BD _ _
-      · exact AllowedSubtileIncidence.BDm1m1 _ _
-    · rcases h with ⟨rfl, rfl⟩
-      exact AllowedSubtileIncidence.BE _ _
-    · rcases h with ⟨rfl, rfl⟩
-      exact AllowedSubtileIncidence.BF0m1 _ _
-    · rcases h with ⟨rfl, rfl⟩
-      exact AllowedSubtileIncidence.CDm10 _ _
-    · rcases h with ⟨rfl, rfl⟩
-      exact AllowedSubtileIncidence.CEm10 _ _
-    · rcases h with ⟨rfl, rfl⟩
-      exact AllowedSubtileIncidence.CF _ _
-    · rcases h with ⟨rfl, rfl⟩
-      exact AllowedSubtileIncidence.DE _ _
-    · rcases h with ⟨rfl, rfl⟩
-      exact AllowedSubtileIncidence.DF10 _ _
-  have normal_iff (a b) : AllowedSubtileIncidence a b ↔ forward a b ∨ forward b a :=
-    ⟨normal, fun h => h.elim (positive a b) (fun h => .symm (positive b a h))⟩
   refine ⟨fun a b => ⟨AllowedSubtileIncidence.symm, AllowedSubtileIncidence.symm⟩,
     ?_, ?_, ?_, ?_, ?_⟩
   · intro a h

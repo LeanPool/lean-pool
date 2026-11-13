@@ -193,7 +193,6 @@ private theorem capBound :
     nlinarith [sq_nonneg (e.re * v.im - e.im * v.re)]
   have hplus : 4 * t ^ 2 ≤ Complex.normSq (x + y) := by
     have := cauchy2 (x + y)
-    have hnonneg : 0 ≤ dot (x + y) e := le_trans (by positivity) hsumdot
     nlinarith
   have hsum : Complex.normSq (x - y) + Complex.normSq (x + y) = 4 := by
     repeat rw [Complex.normSq_apply]
@@ -208,7 +207,6 @@ private theorem capBound :
   rw [Complex.normSq_eq_norm_sq] at hminus'
   have hnorm : ‖x - y‖ ^ 2 ≤ (2 * Real.sqrt (1 - t ^ 2)) ^ 2 := by
     nlinarith [hminus', Real.sq_sqrt hrad]
-  have hleft : 0 ≤ ‖x - y‖ := norm_nonneg _
   have hright : 0 ≤ 2 * Real.sqrt (1 - t ^ 2) := by positivity
   nlinarith
 
@@ -1078,22 +1076,15 @@ theorem P5023T1CircularSide :
   have hRr : rad 0 < rad i.succ := CircularSideProof.hRr q i hparent hless
   have hden : 0 < rad i.succ + rad 0 := by linarith
   have other_nonneg : ∀ a : Fin 3, 0 ≤ (q a.succ).1 := curv.2.1
-  have other_unique : ∀ a b : Fin 3, (q a.succ).1 = 0 →
-      (q b.succ).1 = 0 → a = b := curv.2.2
   have hji : j ≠ i := by fin_cases i <;> decide
   have hki : k ≠ i := by fin_cases i <;> decide
-  have hjk : j ≠ k := by fin_cases i <;> decide
   have hjpos : 0 < (q j.succ).1 ∨ (q j.succ).1 = 0 := CircularSideProof.hjpos q i other_nonneg
   have hkpos : 0 < (q k.succ).1 ∨ (q k.succ).1 = 0 := CircularSideProof.hkpos q i other_nonneg
-  have hnotbothzero : ¬ ((q j.succ).1 = 0 ∧ (q k.succ).1 = 0) := CircularSideProof.hnotbothzero q
-      i other_unique hjk
   have centerDistance (a b : Fin 4) (hab : a ≠ b)
       (ha : 0 < (q a).1) (hb : 0 < (q b).1) : dist (p a) (p b) = rad a + rad b :=
           CircularSideProof.centerDistance q hq a b hab ha hb
   have hchild_parent : dist (p 0) (p i.succ) = rad 0 + rad i.succ :=
       CircularSideProof.hchild_parent q i hchild hparent centerDistance
-  have hside_nonneg : 0 ≤ (q j.succ).1 ∧ 0 ≤ (q k.succ).1 :=
-    ⟨other_nonneg j, other_nonneg k⟩
   let dot (x y : ℂ) : ℝ := x.re * y.re + x.im * y.im
   have capBound (x y e : ℂ) (t : ℝ)
       (hx : Complex.normSq x = 1) (hy : Complex.normSq y = 1)

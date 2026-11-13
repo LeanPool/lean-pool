@@ -1094,19 +1094,6 @@ theorem P3996T1PlacementCompanionBlocks
         (PlacementCompanionGeometry.exterior_area C D T N h k x bundle placement
         (PlacementCompanionGeometry.occurrence_area C D T N h k x bundle placement area_of_band
         area_translation))
-  let pieceOffset : Real × Real :=
-    GaussianRealPoint
-        (BandVectors.1
-          (bundle.normalizedPresentation ((bundle.selectedSlot + 2).succ))
-          (bundle.normalizedPresentation ((bundle.selectedSlot + 1).succ))) -
-      (-((GaussianRealPoint
-          (BandVectors.1
-            (bundle.normalizedPresentation ((bundle.selectedSlot + 2).succ))
-            (bundle.normalizedPresentation ((bundle.selectedSlot + 1).succ)))).2),
-        (GaussianRealPoint
-          (BandVectors.1
-            (bundle.normalizedPresentation ((bundle.selectedSlot + 2).succ))
-            (bundle.normalizedPresentation ((bundle.selectedSlot + 1).succ)))).1)
   have flip_incoming := PlacementCompanionGeometry.flip_incoming C D T N h k x bundle
   let I : GaussianInt := ⟨0, 1⟩
   let branchDisplacement (i : Fin 3) : Real × Real :=
@@ -1127,8 +1114,6 @@ theorem P3996T1PlacementCompanionBlocks
   let cOff (w : GaussianInt) : Real × Real :=
     (1 / 2 : Real) • (GaussianRealPoint w -
       (-(GaussianRealPoint w).2, (GaussianRealPoint w).1))
-  let edgeCenter (a : GaussianInt) : Real × Real :=
-    (1 / 2 : Real) • GaussianRealPoint ((I - 1) * a)
   have cancel2 := PlacementCompanionGeometry.cancel2
   have gp_neg_any := PlacementCompanionGeometry.gp_neg_any
   let q := bundle.normalizedPresentation

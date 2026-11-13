@@ -110,7 +110,6 @@ private theorem supported {α : Type} {l : List α} {fs : List (Face α)}
       (h : P3511T1CyclicDissection α l fs) :
       ∀ f ∈ fs, ∀ x ∈ Set.range f, x ∈ l := by
   classical
-  let Face (α : Type) := Fin 3 → α
   induction h with
   | triangle a b c =>
     intro f hf x hx
@@ -143,7 +142,6 @@ private theorem triple_pair {α : Type} {f : Face α} (hf : Function.Injective f
       {a b : α} (hab : a ≠ b) (ha : a ∈ Set.range f) (hb : b ∈ Set.range f) :
       ∃ c, a ≠ c ∧ b ≠ c ∧ Set.range f = {a, b, c} := by
   classical
-  let Face (α : Type) := Fin 3 → α
   obtain ⟨i, rfl⟩ := ha
   obtain ⟨j, rfl⟩ := hb
   have hij : i ≠ j := fun h => hab (congrArg f h)
@@ -383,58 +381,11 @@ theorem P3511T1LeafOrder {n : Nat}
   let Face (α : Type) := Fin 3 → α
   let edges {α : Type} (l : List α) : List (α × α) :=
     List.zipWith Prod.mk l (l.rotate 1)
-  have edges_cons {α : Type} (a : α) (l : List α) :
-      edges (a :: l) = List.zipWith Prod.mk (a :: l) (l ++ [a]) :=
-          DissectionLeafOrderConstruction.edges_cons (α := α) a l
-  have path_split {α : Type} (a b z : α) (u v : List α) :
-      List.zipWith Prod.mk (a :: (u ++ b :: v)) ((u ++ b :: v) ++ [z]) =
-        List.zipWith Prod.mk (a :: u) (u ++ [b]) ++
-          List.zipWith Prod.mk (b :: v) (v ++ [z]) := DissectionLeafOrderConstruction.path_split
-              (α := α) a b z u v
-  have edges_split {α : Type} (a b : α) (u v : List α) :
-      edges (a :: (u ++ b :: v)) =
-        List.zipWith Prod.mk (a :: u) (u ++ [b]) ++
-          List.zipWith Prod.mk (b :: v) (v ++ [a]) := DissectionLeafOrderConstruction.edges_split
-              (α := α) a b u v
-  have edges_arc {α : Type} (a b : α) (u : List α) :
-      edges (a :: (u ++ [b])) =
-        List.zipWith Prod.mk (a :: u) (u ++ [b]) ++ [(b, a)] :=
-            DissectionLeafOrderConstruction.edges_arc (α := α) a b u
-  have edges_rotate {α : Type} (l : List α) (k : Nat) :
-      edges (l.rotate k) = (edges l).rotate k := DissectionLeafOrderConstruction.edges_rotate (α
-          := α) l k
-  have edges_members {α : Type} {l : List α} {a b : α}
-      (h : (a, b) ∈ edges l) : a ∈ l ∧ b ∈ l := DissectionLeafOrderConstruction.edges_members (α
-          := α) (l := l) (a := a) (b := b) h
-  have supported {α : Type} {l : List α} {fs : List (Face α)}
-      (h : P3511T1CyclicDissection α l fs) :
-      ∀ f ∈ fs, ∀ x ∈ Set.range f, x ∈ l := DissectionLeafOrderConstruction.supported (α := α) (l
-          := l) (fs := fs) h
   let Shell {α : Type} (fs : List (Face α)) : Prop :=
     ∀ pre f post, fs = pre ++ f :: post → pre ≠ [] →
       ∃ a b c : α, a ≠ b ∧ a ≠ c ∧ b ≠ c ∧ Set.range f = {a, b, c} ∧
         (∀ g ∈ pre, c ∉ Set.range g) ∧
         ∃ g ∈ pre, a ∈ Set.range g ∧ b ∈ Set.range g
-  have triple_pair {α : Type} {f : Face α} (hf : Function.Injective f)
-      {a b : α} (hab : a ≠ b) (ha : a ∈ Set.range f) (hb : b ∈ Set.range f) :
-      ∃ c, a ≠ c ∧ b ≠ c ∧ Set.range f = {a, b, c} := DissectionLeafOrderConstruction.triple_pair
-          (α := α) (f := f) hf (a := a) (b := b) hab ha hb
-  have split_lists {α : Type} {a b : α} {u v : List α}
-      (hn : (a :: (u ++ b :: v)).Nodup) :
-      (a :: (u ++ [b])).Nodup ∧ (b :: (v ++ [a])).Nodup ∧ a ≠ b ∧
-        (∀ x, x ∈ a :: (u ++ [b]) → x ∈ b :: (v ++ [a]) → x = a ∨ x = b) :=
-            DissectionLeafOrderConstruction.split_lists (α := α) (a := a) (b := b) (u := u) (v :=
-            v) hn
-  have shell_join {α : Type} {left : List (Face α)} {r : Face α}
-      {tail : List (Face α)} {a b : α}
-      (hl : Shell left) (hr : Shell (r :: tail))
-      (hab : a ≠ b) (hir : Function.Injective r)
-      (ha : a ∈ Set.range r) (hb : b ∈ Set.range r)
-      (hattach : ∃ g ∈ left, a ∈ Set.range g ∧ b ∈ Set.range g)
-      (hsep : ∀ g ∈ left, ∀ f ∈ r :: tail, ∀ x,
-        x ∈ Set.range g → x ∈ Set.range f → x = a ∨ x = b) :
-      Shell (left ++ r :: tail) := DissectionLeafOrderConstruction.shell_join (α := α) (left :=
-          left) (r := r) (tail := tail) (a := a) (b := b) hl hr hab hir ha hb hattach hsep
   have rooted {α : Type} {l : List α} {fs : List (Face α)}
       (h : P3511T1CyclicDissection α l fs) (hn : l.Nodup)
       (hi : ∀ f ∈ fs, Function.Injective f) :

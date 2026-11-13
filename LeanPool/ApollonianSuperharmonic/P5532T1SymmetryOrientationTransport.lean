@@ -133,7 +133,6 @@ theorem P5532T1SymmetryOrientationTransport
         obtain ⟨y, hy, hyx⟩ := hb
         exact hnb ((grid s).1.1 hyx ▸ hy)
   let e : GaussianInt ≃ GaussianInt := Equiv.ofBijective L (grid s).1
-  have heL : ∀ x, e x = L x := fun _ => rfl
   have hD : D = E.image e.symm := by
     rw [hE, Finset.image_image]
     have hf : e.symm ∘ L = id := by

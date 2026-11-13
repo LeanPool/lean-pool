@@ -1301,8 +1301,6 @@ private theorem hZ' :
             1).succ))) → (BandPrototile (qg j.succ) (BandPackingSymmetryTileAction g' Z)))) ) := by
   classical
   intro r i s Z hZ a q g' qg k htileCov t j hZlabel
-  let sigma : Fin 3 → Fin 3 := fun m =>
-    if BandPackingSymmetryReversesOrientation g' then -m else m
   rw [hZlabel]
   exact (htileCov.2.1
     (r ((if Even s.val then i - 1 else i + 1).succ)) Z).mp hZ
@@ -1337,8 +1335,6 @@ private theorem hUpos' :
             := by
   classical
   intro r hUpos a q g' qg htileCov hrootLabel
-  let sigma : Fin 3 → Fin 3 := fun m =>
-    if BandPackingSymmetryReversesOrientation g' then -m else m
   rw [hrootLabel, htileCov.1]
   exact hUpos
 
@@ -1374,8 +1370,6 @@ private theorem hWpos' :
             k.succ).1))) ) := by
   classical
   intro r i hWpos a q g' qg k htileCov hWlabel
-  let sigma : Fin 3 → Fin 3 := fun m =>
-    if BandPackingSymmetryReversesOrientation g' then -m else m
   rw [hWlabel, htileCov.1]
   exact hWpos
 
@@ -1417,8 +1411,6 @@ private theorem hZpos' :
             1).succ))) → (0 < (qg j.succ).1))) ) := by
   classical
   intro r i s hZpos a q g' qg k htileCov t j hZlabel
-  let sigma : Fin 3 → Fin 3 := fun m =>
-    if BandPackingSymmetryReversesOrientation g' then -m else m
   rw [hZlabel, htileCov.1]
   exact hZpos
 
@@ -1979,9 +1971,6 @@ theorem P4055T1PlacementNormalization
   have hproperG : ProperBandQuadruple qg :=
     BandPackingSymmetryProperCovariance g' q hq
   have htileCov := BandPackingSymmetryCovariance g'
-  let U' : ProtoTile := BandPackingSymmetryTileAction g' U
-  let W' : ProtoTile := BandPackingSymmetryTileAction g' W
-  let Z' : ProtoTile := BandPackingSymmetryTileAction g' Z
   have hU' := PlacementNormalizationProof.hU' r U hU a g g' horientg htileCov
   have hWlabel := PlacementNormalizationProof.hWlabel r i
       a g'
@@ -2016,27 +2005,18 @@ theorem P4055T1PlacementNormalization
   have hnegVal (s₀ : Fin 4) := PlacementNormalizationProof.hnegVal s₀
   let ii : GaussianInt := ⟨0, 1⟩
   have iiSq : ii ^ 2 = -1 := by decide +kernel
-  have iiSqLiteral : (⟨0, 1⟩ : GaussianInt) ^ 2 = -1 := by decide +kernel
   have iiMul : ii * ii = -1 := by simpa [pow_two] using iiSq
-  have iiCancel (x : GaussianInt) := PlacementNormalizationProof.iiCancel iiSq x
-  have iiCancelLiteral (x : GaussianInt) := PlacementNormalizationProof.iiCancelLiteral
-      iiSqLiteral x
   have iiSquareMul (x : GaussianInt) := PlacementNormalizationProof.iiSquareMul iiMul x
   have iiNegSquareMul (x : GaussianInt) := PlacementNormalizationProof.iiNegSquareMul iiSquareMul x
-  have iiCaseA (x : GaussianInt) := PlacementNormalizationProof.iiCaseA iiSq x
-  have iiCaseB (x : GaussianInt) := PlacementNormalizationProof.iiCaseB iiSq x
-  have iiCaseC (x : GaussianInt) := PlacementNormalizationProof.iiCaseC iiSq x
   have iiCaseA' (x : GaussianInt) := PlacementNormalizationProof.iiCaseA' iiNegSquareMul x
   have iiCaseB' (x : GaussianInt) := PlacementNormalizationProof.iiCaseB' iiNegSquareMul x
   have iiCaseC' (x : GaussianInt) := PlacementNormalizationProof.iiCaseC' iiSquareMul x
   have iiCaseD' (x : GaussianInt) := PlacementNormalizationProof.iiCaseD' iiSquareMul x
-  have iiCaseE (x : GaussianInt) := PlacementNormalizationProof.iiCaseE iiSq x
   have iiZCaseA (x : GaussianInt) := PlacementNormalizationProof.iiZCaseA iiNegSquareMul x
   have iiZCaseB (x : GaussianInt) := PlacementNormalizationProof.iiZCaseB iiNegSquareMul x
   have iiZCaseC (x : GaussianInt) := PlacementNormalizationProof.iiZCaseC iiSquareMul x
   have iiZCaseD (x : GaussianInt) := PlacementNormalizationProof.iiZCaseD iiSquareMul x
   have iiCube := PlacementNormalizationProof.iiCube iiSq
-  have iiFourth := PlacementNormalizationProof.iiFourth iiMul iiCube
   have negIiSq := PlacementNormalizationProof.negIiSq iiMul
   have negIiCube := PlacementNormalizationProof.negIiCube negIiSq
   have ladd (g₀ : BandPackingSymmetry) (x y : GaussianInt) := PlacementNormalizationProof.ladd g₀
@@ -2053,7 +2033,6 @@ theorem P4055T1PlacementNormalization
       ii * BandVectors.1 (qg k.succ) (qg 0) := PlacementNormalizationProof.hbackEqual r i a g'
           hvectorForward hvectorBackward lquarter hflip
   let vR := BandVectors.1 (r i.succ) (r 0)
-  let vL := BandVectors.1 (r 0) (r i.succ)
   let vR' := BandVectors.1 (qg k.succ) (qg 0)
   let vL' := BandVectors.1 (qg 0) (qg k.succ)
   have hbackEq' : vL' = ii * vR' := by
@@ -2087,8 +2066,6 @@ theorem P4055T1PlacementNormalization
       hphaseForward hZsigma'
   have hZphaseBackward := PlacementNormalizationProof.hZphaseBackward r i s a g' cyclicCancel
       hphaseBackward hZsigma'
-  let xZ := BandVectors.1 (r adj.succ) (r 0)
-  let yZ := BandVectors.1 (r 0) (r adj.succ)
   let xZ' := BandVectors.1 (qg j.succ) (qg 0)
   let yZ' := BandVectors.1 (qg 0) (qg j.succ)
   have hZflip : yZ' = ii * xZ' :=
@@ -2104,10 +2081,6 @@ theorem P4055T1PlacementNormalization
   have hUpos' := PlacementNormalizationProof.hUpos' r hUpos a g' htileCov hrootLabel
   have hWpos' := PlacementNormalizationProof.hWpos' r i hWpos a g' htileCov hWlabel
   have hZpos' := PlacementNormalizationProof.hZpos' r i s hZpos a g' htileCov hZlabel
-  let R : BandPackingSymmetry → (Real × Real) → (Real × Real) :=
-    BandPackingSymmetry.rec (fun p => p) (fun p => (-p.2, p.1))
-      (fun p => (-p.1, p.2)) (fun _ p => p)
-      (fun _ _ f k p => f (k p))
   have rsub (g₀ : BandPackingSymmetry) (p q₀ : Real × Real) := PlacementNormalizationProof.rsub
       g₀ p q₀
   have rsmul (g₀ : BandPackingSymmetry) (c : Real) (p : Real × Real) :=
@@ -2122,7 +2095,6 @@ theorem P4055T1PlacementNormalization
       rcentroid
   have hWvec := PlacementNormalizationProof.hWvec r i s a g' hdispW
   have hWcentNorm := PlacementNormalizationProof.hWcentNorm r i s U W a g' hWcent' hWvec
-  have hZvec' := PlacementNormalizationProof.hZvec' r i s a g' hZvec
   have hZcentNorm := PlacementNormalizationProof.hZcentNorm r i s U Z a g' hZvec hZcent'
   have hvR : BandPackingSymmetryVectorAction g' vR = vR' := by
     simpa [vR, vR'] using hvectorForward.symm

@@ -486,12 +486,6 @@ theorem P4261T2AncestorSymmetry
           AncestorSymmetryGeometry.literalRestriction actionForward g k h hsub heq
   let A := BandPackingSymmetryCircleAction
   let B := BandPackingSymmetryTileAction
-  let L := BandPackingSymmetryVectorAction
-  let O := BandPackingSymmetryReversesOrientation
-  let Q := BandPackingSymmetryQuadrupleAction
-  let R : BandPackingSymmetry → (Real × Real) → (Real × Real) :=
-    BandPackingSymmetry.rec (fun p => p) (fun p => (-p.2, p.1))
-      (fun p => (-p.1, p.2)) (fun _ p => p) (fun _ _ f k p => f (k p))
   let J : (Real × Real) → (Real × Real) := fun p => (-p.2, p.1)
   let offset : GaussianInt → Real × Real := fun w =>
     (1 / 2 : Real) • (GaussianRealPoint w - J (GaussianRealPoint w))
@@ -499,8 +493,6 @@ theorem P4261T2AncestorSymmetry
   have rsmul (a : BandPackingSymmetry) (c : Real) (p : Real × Real) :=
       AncestorSymmetryGeometry.rsmul a c p
   have rneg (a : BandPackingSymmetry) (p : Real × Real) := AncestorSymmetryGeometry.rneg rsmul a p
-  have rminusq (a : BandPackingSymmetry) (p : Real × Real) := AncestorSymmetryGeometry.rminusq
-      rneg a p
   have rpoint (a : BandPackingSymmetry) (w : GaussianInt) := AncestorSymmetryGeometry.rpoint a w
   have rq (a : BandPackingSymmetry) (p : Real × Real) := AncestorSymmetryGeometry.rq rneg a p
   have offsetCov (a : BandPackingSymmetry) (w : GaussianInt) :=

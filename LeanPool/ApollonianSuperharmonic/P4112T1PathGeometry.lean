@@ -53,7 +53,6 @@ private theorem hr :
   have hd := P.det₁
   rw [hzero] at hd
   simp only [Nat.cast_zero, zero_mul] at hd
-  have hqint : 2 < (P.q : Int) := by exact_mod_cast hP
   by_cases hp : P.p₁ ≤ 0
   · have hqnonneg : 0 ≤ (P.q : Int) := by omega
     have : P.p₁ * (P.q : Int) ≤ 0 := mul_nonpos_of_nonpos_of_nonneg hp hqnonneg
@@ -1503,7 +1502,6 @@ theorem P4112T1PathGeometry (P : FordFareyParameter) (hP : 2 < P.q) :
   have hr := PathGeometryProof.hr P hP hsum
   have hrs := PathGeometryProof.hrs P hP hsum
   have horder := PathGeometryProof.horder P hrs
-  have hsumInt := PathGeometryProof.hsumInt P hsum
   have squareCoordinates (n : Nat) (x : GaussianInt) := PathGeometryProof.squareCoordinates n x
   have mem0 (x : GaussianInt) := PathGeometryProof.mem0 P
           squareCoordinates x
@@ -1598,18 +1596,6 @@ theorem P4112T1PathGeometry (P : FordFareyParameter) (hP : 2 < P.q) :
       (hcoord : x.im = (s:Int)) (hpos : 0 ≤ x.re) (hbound : (s:Int) ≤ x.re) :
       d x = Nat.dist x.re.toNat s := PathGeometryProof.dSmall1H P natAbsDist dSmall1Root hsmall x
           hx hcoord hpos
-  have dLarge0Nat (hlarge : s < r) (x : GaussianInt) (hx : x ∈ (B 0).1) :
-      d x = Nat.dist x.re.toNat r + Nat.dist x.im.toNat s := PathGeometryProof.dLarge0Nat P hsum
-          hs hr memB0Large natAbsDist dLarge0Root hlarge x hx
-  have dLarge1Nat (hlarge : s < r) (x : GaussianInt) (hx : x ∈ (B 1).1) :
-      d x = Nat.dist x.re.toNat s + Nat.dist x.im.toNat r := PathGeometryProof.dLarge1Nat P hs hr
-          memB1Large natAbsDist dLarge1Root hlarge x hx
-  have dSmall0Nat (hsmall : r < s) (x : GaussianInt) (hx : x ∈ (B 0).1) :
-      d x = Nat.dist x.re.toNat r + Nat.dist x.im.toNat r := PathGeometryProof.dSmall0Nat P hr
-          memB0Small natAbsDist dSmall0Root hsmall x hx
-  have dSmall1Nat (hsmall : r < s) (x : GaussianInt) (hx : x ∈ (B 1).1) :
-      d x = Nat.dist x.re.toNat s + Nat.dist x.im.toNat s := PathGeometryProof.dSmall1Nat P hsum
-          hs memB1Small natAbsDist dSmall1Root hsmall x hx
   have adjacentCoordinates (x y : GaussianInt) (ha : FourNeighborAdjacent x y) :=
       PathGeometryProof.adjacentCoordinates x y ha
   have adjacentSymm {x y : GaussianInt} (ha : FourNeighborAdjacent x y) :=

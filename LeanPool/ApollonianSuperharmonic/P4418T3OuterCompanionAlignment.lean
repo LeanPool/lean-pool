@@ -322,7 +322,6 @@ private theorem geometry :
   classical
   intro C D T N h k x bundle placement q cert slot turn shift hin1 hin2 hin3 period_u period_v
       hout1 hout2 hout3 signed_centroid translated_centroid a ha
-  let cfg := bundle.configuration
   rcases ha with rfl | rfl | rfl | rfl | rfl | rfl |
     rfl | rfl | rfl | rfl | rfl | rfl
   all_goals
@@ -394,107 +393,6 @@ private theorem turn_injective :
   intro a b heq
   fin_cases a <;> fin_cases b <;>
     norm_num [pow_succ, Zsqrtd.ext_iff] at heq <;> rfl
-
-private theorem turn_eq :
-    (by
-      classical
-      exact
-        ∀ (C : BandCircle), ∀ (D : BandCircle), ∀ (T : ProtoTile), ∀ (N : ProtoTile), ∀ (h :
-            PartialOdometer), ∀ (k : PartialOdometer), ∀ (x : GaussianInt), ∀ (bundle :
-            BandOrderedGeneralNormalizedOccurrenceBundle C D T N h k x), ∀ (placement :
-            BandOrderedGeneralSubtilePlacement bundle.normalizedPresentation bundle.configuration
-            bundle.normalizedCircle bundle.normalizedFixedCircle bundle.normalizedRoot
-            bundle.normalizedFixed bundle.normalizedRootFunction bundle.normalizedFixedFunction
-            bundle.normalizedPoint bundle.pieces bundle.functions bundle.selectedSlot
-            bundle.selectedSign bundle.routedDirection), ∀ (s : Fin (4 : ℕ)),
-        let q := bundle.normalizedPresentation
-        let cert := placement.layout
-        let slot : PeriodicSubtileIndex → Fin 3 := fun a =>
-          match a.label with
-          | .A | .B => 0
-          | .C | .D => 1
-          | .E | .F => 2
-        (TileCentroid (SubtileOccurrenceInterpretation cert.P cert.u cert.v
-            placement.exteriorIndex) - TileCentroid bundle.normalizedRoot = (1 / 2 : ℝ) •
-            GaussianRealPoint ((⟨0, 1⟩ : GaussianInt) ^ s.val * (BandVectors.1 (q (slot
-            placement.exteriorIndex).succ) (q 0) + BandVectors.1 (q 0) (q (slot
-            placement.exteriorIndex).succ)))) → (
-        let turn : PeriodicSubtileIndex → Fin 4 := fun a =>
-          match a.label with
-          | .A => if a.first = -1 then 3 else 0
-          | .B => if a.first = 1 then 1 else 2
-          | .C => if a.second = 0 then 3 else 0
-          | .D => if a.second = 0 then 1 else 2
-          | .E => if a.first = 0 then 3 else 0
-          | .F => if a.first = 0 then 1 else 2
-        (∀ (z : GaussianInt), ∀ (w : GaussianInt), ((1 / 2 : ℝ) • GaussianRealPoint z = (1 / 2 :
-            ℝ) • GaussianRealPoint w) → (z = w)) → ((∀ (j : Fin 3), BandVectors.1 (q j.succ) (q
-            0) + BandVectors.1 (q 0) (q j.succ) ≠ 0) → ((∀ (a : Fin 4), ∀ (b : Fin 4), ((⟨0, 1⟩ :
-            GaussianInt) ^ a.val = (⟨0, 1⟩ : GaussianInt) ^ b.val) → (a = b)) → ((TileCentroid
-            (SubtileOccurrenceInterpretation cert.P cert.u cert.v placement.exteriorIndex) -
-            TileCentroid bundle.normalizedRoot = (1 / 2 : ℝ) • GaussianRealPoint ((⟨(0 : ℤ), (1 :
-            ℤ)⟩ : GaussianInt) ^ (↑(turn placement.exteriorIndex) : ℕ) * (BandVectors.1 (q (slot
-            placement.exteriorIndex).succ) (q (0 : Fin (4 : ℕ))) + BandVectors.1 (q (0 : Fin (4 :
-            ℕ))) (q (slot placement.exteriorIndex).succ)))) → (s = turn
-            placement.exteriorIndex))))) ) := by
-  classical
-  intro C D T N h k x bundle placement s q cert slot presented_centroid turn half_point_injective
-      sum_ne turn_injective expected_centroid
-  apply turn_injective
-  apply mul_right_cancel₀ (sum_ne (slot placement.exteriorIndex))
-  exact half_point_injective _ _ (presented_centroid.symm.trans expected_centroid)
-
-private theorem shift_eq :
-    (by
-      classical
-      exact
-        ∀ (C : BandCircle), ∀ (D : BandCircle), ∀ (T : ProtoTile), ∀ (N : ProtoTile), ∀ (h :
-            PartialOdometer), ∀ (k : PartialOdometer), ∀ (x : GaussianInt), ∀ (bundle :
-            BandOrderedGeneralNormalizedOccurrenceBundle C D T N h k x), ∀ (placement :
-            BandOrderedGeneralSubtilePlacement bundle.normalizedPresentation bundle.configuration
-            bundle.normalizedCircle bundle.normalizedFixedCircle bundle.normalizedRoot
-            bundle.normalizedFixed bundle.normalizedRootFunction bundle.normalizedFixedFunction
-            bundle.normalizedPoint bundle.pieces bundle.functions bundle.selectedSlot
-            bundle.selectedSign bundle.routedDirection), ∀ (r : Fin (4 : ℕ) → CircleCoordinates),
-            ∀ (i : Fin (3 : ℕ)), ∀ (s : Fin (4 : ℕ)), (r (0 : Fin (4 : ℕ)) =
-            bundle.normalizedCircle.1.1) → ((r i.succ =
-            bundle.normalizedFixedCircle.1.1) → (
-        let q := bundle.normalizedPresentation
-        let cert := placement.layout
-        let slot : PeriodicSubtileIndex → Fin 3 := fun a =>
-          match a.label with
-          | .A | .B => 0
-          | .C | .D => 1
-          | .E | .F => 2
-        (bundle.normalizedFixedCircle.1.1 = q (slot placement.exteriorIndex).succ) → (
-        let turn : PeriodicSubtileIndex → Fin 4 := fun a =>
-          match a.label with
-          | .A => if a.first = -1 then 3 else 0
-          | .B => if a.first = 1 then 1 else 2
-          | .C => if a.second = 0 then 3 else 0
-          | .D => if a.second = 0 then 1 else 2
-          | .E => if a.first = 0 then 3 else 0
-          | .F => if a.first = 0 then 1 else 2
-        let shift : PeriodicSubtileIndex → GaussianInt := fun a =>
-          match a.label with
-          | .A => if a.first = -1 then -cert.u else cert.u
-          | .B => if a.first = 1 then cert.u else -cert.u
-          | .C => if a.second = 0 then -cert.v else cert.v
-          | .D => if a.second = 0 then cert.v else -cert.v
-          | .E => if a.first = 0 then cert.u + cert.v else -cert.u - cert.v
-          | .F => if a.first = 0 then -cert.u - cert.v else cert.u + cert.v
-        (((⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt) ^ (↑(turn placement.exteriorIndex) : ℕ) * if Even
-            (↑(turn placement.exteriorIndex) : ℕ) then BandVectors.1 (q (0 : Fin (4 : ℕ))) (q
-            (slot placement.exteriorIndex).succ) else BandVectors.1 (q (slot
-            placement.exteriorIndex).succ) (q (0 : Fin (4 : ℕ)))) = shift
-            placement.exteriorIndex) → ((s = turn placement.exteriorIndex) → ((⟨0, 1⟩ :
-            GaussianInt) ^ s.val * (if Even s.val then BandVectors.1 (r 0) (r i.succ) else
-            BandVectors.1 (r i.succ) (r 0)) = shift placement.exteriorIndex))))) ) := by
-  classical
-  intro C D T N h k x bundle placement r i s hr0 hri q cert slot parent_eq turn shift
-      expected_shift turn_eq
-  have root_eq : r 0 = q 0 := hr0.trans bundle.normalized_circle_eq.symm
-  simpa only [turn_eq, root_eq, hri, parent_eq] using expected_shift
 
 end CompanionAlignmentGeometry
 
@@ -677,15 +575,16 @@ theorem P4418T3OuterCompanionAlignment :
         (⟨0, 1⟩ : GaussianInt) ^ b.val) : a = b := CompanionAlignmentGeometry.turn_injective a b heq
   obtain ⟨expected_centroid, expected_shift⟩ :=
     geometry placement.exteriorIndex placement.exterior_index
-  have turn_eq : s = turn placement.exteriorIndex := CompanionAlignmentGeometry.turn_eq C D T N h
-      k x bundle placement s presented_centroid half_point_injective sum_ne turn_injective
-      expected_centroid
+  have turn_eq : s = turn placement.exteriorIndex := by
+    apply turn_injective
+    apply mul_right_cancel₀ (sum_ne (slot placement.exteriorIndex))
+    exact half_point_injective _ _ (presented_centroid.symm.trans expected_centroid)
   have shift_eq :
       (⟨0, 1⟩ : GaussianInt) ^ s.val *
         (if Even s.val then BandVectors.1 (r 0) (r i.succ)
-          else BandVectors.1 (r i.succ) (r 0)) = shift placement.exteriorIndex :=
-              CompanionAlignmentGeometry.shift_eq C D T N h k x bundle placement r i s hr0 hri
-              parent_eq expected_shift turn_eq
+          else BandVectors.1 (r i.succ) (r 0)) = shift placement.exteriorIndex := by
+    have root_eq : r 0 = q 0 := hr0.trans bundle.normalized_circle_eq.symm
+    simpa only [turn_eq, root_eq, hri, parent_eq] using expected_shift
   refine ⟨?_, ?_, ?_⟩
   · cases hl : placement.exteriorIndex.label <;> simpa [slot, hl] using parent_eq
   · rw [turn_eq]

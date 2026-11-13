@@ -72,7 +72,6 @@ theorem P5442T1LaplacianBound (P : FordFareyParameter) :
       · have hab : P.q₁ = 1 ∧ P.q₂ = 1 := by
           have hs := P.sum_q
           have ht := P.q₁_lt
-          have hpos := P.q₂_pos
           have hd := P.det₁
           rw [h2] at hs ht hd
           by_cases hz : P.q₁ = 0

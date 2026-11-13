@@ -725,24 +725,6 @@ theorem P5110T1SquareInterface (n m : Nat) (hn : 0 < n) (hm : 0 < m)
       SimpleGridPath (BoundaryFootprintVertices A ∩ BoundaryFootprintVertices B)
         (BoundaryFootprintEdges A ∩ BoundaryFootprintEdges B) := by
 -- BODY
-  have cell (h : Nat) (c z : GaussianInt) :
-      z ∈ (TileTranslation (FordTile h) c).cells ↔
-        c.re ≤ z.re ∧ z.re < c.re + (h : Int) ∧
-          c.im ≤ z.im ∧ z.im < c.im + (h : Int) := SquareInterfaceConstruction.cell h c z
-  have vertex (h : Nat) (hh : 0 < h) (c z : GaussianInt) :
-      z ∈ BoundaryFootprintVertices (TileTranslation (FordTile h) c) ↔
-        c.re ≤ z.re ∧ z.re ≤ c.re + (h : Int) ∧
-          c.im ≤ z.im ∧ z.im ≤ c.im + (h : Int) ∧
-          (z.re = c.re ∨ z.re = c.re + (h : Int) ∨
-            z.im = c.im ∨ z.im = c.im + (h : Int)) := SquareInterfaceConstruction.vertex h hh c z
-  have edge (h : Nat) (hh : 0 < h) (c : GaussianInt) (e : Finset GaussianInt) :
-      e ∈ BoundaryFootprintEdges (TileTranslation (FordTile h) c) ↔
-        (∃ z : GaussianInt, e = {z, z + 1} ∧
-          c.re ≤ z.re ∧ z.re < c.re + (h : Int) ∧
-          (z.im = c.im ∨ z.im = c.im + (h : Int))) ∨
-        (∃ z : GaussianInt, e = {z, z + ⟨0, 1⟩} ∧
-          c.im ≤ z.im ∧ z.im < c.im + (h : Int) ∧
-          (z.re = c.re ∨ z.re = c.re + (h : Int))) := SquareInterfaceConstruction.edge h hh c e
   let A := TileTranslation (FordTile n) a
   let B := TileTranslation (FordTile m) b
   let l := max (if vertical then a.im else a.re) (if vertical then b.im else b.re)
@@ -759,45 +741,16 @@ theorem P5110T1SquareInterface (n m : Nat) (hn : 0 < n) (hm : 0 < m)
       {z | if vertical then z.re = b.re ∧ l ≤ z.im ∧ z.im ≤ u
         else z.im = b.im ∧ l ≤ z.re ∧ z.re ≤ u} := SquareInterfaceConstruction.vertices n m hn hm
             a b vertical hside hoverlap
-  have endpoints (e : Finset GaussianInt)
-      (he : e ∈ BoundaryFootprintEdges A ∩ BoundaryFootprintEdges B)
-      (z : GaussianInt) (hz : z ∈ e) :
-      z ∈ BoundaryFootprintVertices A ∩ BoundaryFootprintVertices B :=
-          SquareInterfaceConstruction.endpoints n m hn hm a b e he z hz
   have edges : BoundaryFootprintEdges A ∩ BoundaryFootprintEdges B =
       {e | ∃ t : Int, l ≤ t ∧ t < u ∧ e = if vertical then
         {(⟨b.re, t⟩ : GaussianInt), ⟨b.re, t + 1⟩}
         else {(⟨t, b.im⟩ : GaussianInt), ⟨t + 1, b.im⟩}} := SquareInterfaceConstruction.edges n m
             hn hm a b vertical hside hoverlap
-  have hlu : l < u := SquareInterfaceConstruction.hlu n m a b vertical hoverlap
-  have hdelta : (((u - l).toNat : Nat) : Int) = u - l := SquareInterfaceConstruction.hdelta n m a
-      b vertical hoverlap
-  have positive_length : 0 < (u - l).toNat := SquareInterfaceConstruction.positive_length n m a b
-      vertical hoverlap
-  have finj : Function.Injective f := SquareInterfaceConstruction.finj n m hn hm a b vertical
-      hside hoverlap
   have pnd : p.Nodup := SquareInterfaceConstruction.pnd n m hn hm a b vertical hside hoverlap
   have plen : 2 ≤ p.length := SquareInterfaceConstruction.plen n m a b vertical hoverlap
   have pvertices : BoundaryFootprintVertices A ∩ BoundaryFootprintVertices B =
       (p.toFinset : Set GaussianInt) := SquareInterfaceConstruction.pvertices n m hn hm a b
           vertical hside hoverlap
-  let adj := fun x y : GaussianInt => y = x + 1 ∨ y = x - 1 ∨
-    y = x + ⟨0, 1⟩ ∨ y = x - ⟨0, 1⟩
-  have fstep (k : Nat) : adj (f k) (f (k + 1)) := SquareInterfaceConstruction.fstep n m hn hm a b
-      vertical hside hoverlap k
-  have chain : p.IsChain adj := SquareInterfaceConstruction.chain n m hn hm a b vertical hside
-      hoverlap
-  have step : ∀ x y l₁ l₂, p = l₁ ++ x :: y :: l₂ → adj x y := SquareInterfaceConstruction.step n
-      m hn hm a b vertical hside hoverlap
-  have occurs (k : Nat) (hk : k < (u - l).toNat) :
-      ∃ l₁ l₂, p = l₁ ++ f k :: f (k + 1) :: l₂ := SquareInterfaceConstruction.occurs n m a b
-          vertical k hk
-  have edge_step (k : Nat) (hk : k < (u - l).toNat) :
-      {f k, f (k + 1)} ∈ BoundaryFootprintEdges A ∩ BoundaryFootprintEdges B :=
-          SquareInterfaceConstruction.edge_step n m hn hm a b vertical hside hoverlap k hk
-  have adjacent_indices (j k : Nat) (h : adj (f j) (f k)) :
-      k = j + 1 ∨ j = k + 1 := SquareInterfaceConstruction.adjacent_indices n m hn hm a b
-          vertical hside hoverlap j k h
   have path : SimpleGridPath (BoundaryFootprintVertices A ∩ BoundaryFootprintVertices B)
       (BoundaryFootprintEdges A ∩ BoundaryFootprintEdges B) := SquareInterfaceConstruction.path n
           m hn hm a b vertical hside hoverlap

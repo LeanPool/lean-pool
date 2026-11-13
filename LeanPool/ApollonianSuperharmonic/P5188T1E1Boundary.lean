@@ -39,29 +39,20 @@ theorem P5188T1E1Boundary (P P₁ : FordFareyParameter)
       IntegerCeilDiv (P.p * x.re * x.im) P.q (by exact_mod_cast P.q_pos.ne') := by
 -- BODY
   have hsum : (P.q : Int) = P.q₁ + P.q₂ := by exact_mod_cast P.sum_q
-  have hps : P.p = P.p₁ + P.p₂ := P.sum_p
-  have hcross := (P5130T5ParentArithmetic P hq).2.2.2.2.2.2
   have hdet₁ := P.det₁
-  have hdet₂ := P.det₂
   have hqpos : 0 < (P.q : Int) := by exact_mod_cast P.q_pos
   have ha : 0 < (P.q₁ : Int) := by have := (P5130T5ParentArithmetic P hq).1; exact_mod_cast this
   have hb : 0 < (P.q₂ : Int) := by have := P.q₂_pos; exact_mod_cast this
   have hab : (P.q₁ : Int) < P.q := by have := P.q₁_lt; exact_mod_cast this
-  have hbb : (P.q₂ : Int) < P.q := by rw [hsum]; omega
   let a : Int := P.q₁
   let b : Int := P.q₂
   let A : Int := P.p₁
-  let D : Int := P.p₂
-  have haq : a + b = P.q := by dsimp [a, b]; exact hsum.symm
-  have hpq : A + D = P.p := by dsimp [A, D]; exact hps.symm
   have hAq : A * P.q - a * P.p = 1 := by simpa [a, A] using hdet₁
   have hpqa : P.p * a = A * P.q - 1 := by
     have haux : A * P.q - P.p * a = 1 := by
       rw [mul_comm P.p a]
       exact hAq
     omega
-  have hDq : D * P.q - b * P.p = -1 := by simpa [b, D] using hdet₂
-  have hAB : A * b - D * a = 1 := by simpa [a, b, A, D] using hcross
   have ceilPerturb := P5188T1CeilingStability
   have ceilBelow := P5188T1CeilingBelow
   have ceilMul (c t d : Int) (hd : d ≠ 0) :

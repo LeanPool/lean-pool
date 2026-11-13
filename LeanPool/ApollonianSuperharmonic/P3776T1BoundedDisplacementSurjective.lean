@@ -471,8 +471,6 @@ private theorem hJexp (f : ℝ × ℝ → ℝ × ℝ) (hf : Continuous f) (M : �
   change (∀ t, Complex.exp (J t) = 1)
   intro t
   have hFval := hF ⟨c t, hcin t⟩
-  have hA := hAform t
-  have hEcomplex : E t = Complex.exp ((θ t : ℂ) * Complex.I) := rfl
   have hfac : (R : ℂ) * E t * A t = pc (f (c t)) - pc y := by
     dsimp [A]
     have hden : (R : ℂ) * E t ≠ 0 := mul_ne_zero (by exact_mod_cast hRpos.ne') (hEne t)

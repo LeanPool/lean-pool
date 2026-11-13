@@ -148,7 +148,6 @@ private theorem hsigSucc (n : Nat) (k : Fin (L n)) (hk : k.val ≠ 0) :
   dsimp only [StraightDeletionConstruction.L] at *
   change (sig (k + 1) = sig k + 1)
   apply Fin.ext
-  have hpos : 0 < k.val := Nat.pos_of_ne_zero hk
   have hk0 : k ≠ 0 := by
     intro h
     apply hk
@@ -158,7 +157,6 @@ private theorem hsigSucc (n : Nat) (k : Fin (L n)) (hk : k.val ≠ 0) :
       hk0, hLM, Nat.mod_eq_of_lt hM1, Nat.mod_eq_of_lt hL1]
   · have hklt : k.val < L := k.isLt
     have hnext : k.val + 1 < L := by omega
-    have hbound : k.val + 2 < M := by omega
     have hcond1 : ¬ L ≤ k.val + 1 := by omega
     have hcond2 : ¬ M ≤ k.val + 1 + 1 := by omega
     simp [sig, Fin.val_add_eq_ite, hk,
@@ -635,28 +633,21 @@ private theorem firstInt (n : Nat) (p : P3381T1PolygonBoundary (n + 1)) (i : Fin
   let rot : Fin M → Fin M := fun h => i + h
   let sig : Fin L → Fin M := fun k =>
     ⟨if k.val = 0 then 0 else k.val + 1, by split_ifs <;> omega⟩
-  have hM : 4 ≤ M := hM n
   have hM1 : 1 < M := hM1 n
   have hsigSucc (k : Fin L) (hk : k.val ≠ 0) :
       sig (k + 1) = sig k + 1 := hsigSucc n k hk
   let r : Fin M → Real × Real := fun h => p.vertex (rot h)
   have ha : r 0 ≠ r 1 := ha n p i
   have hbc : r 1 ≠ r 2 := hbc n p i
-  have hac : r 0 ≠ r 2 := hac n p i
   have oldInt (a b : Fin M) (hab : a ≠ b) :
       segment Real (r a) (r (a + 1)) ∩ segment Real (r b) (r (b + 1)) =
         {x | (x = r a ∨ x = r (a + 1)) ∧ (x = r b ∨ x = r (b + 1))} := oldInt n p i a b hab
   have rEq (a b : Fin M) : r a = r b ↔ a = b := rEq n p i a b
   have sig0 : sig (0 : Fin L) = 0 := sig0 n
-  have hval2M : (2 : Fin M).val = 2 := hval2M n
-  have hmod1M : 1 % M = 1 := hmod1M n
-  have hmod2M : 2 % M = 2 := hmod2M n
-  have hmod3M : 3 % M = 3 := hmod3M n
   have new01 : (0 : Fin L) + 1 = 1 := new01 n
   have sig1 : sig (1 : Fin L) = 2 := sig1 n
   have old01 : (0 : Fin M) + 1 = 1 := old01 n
   have old12 : (1 : Fin M) + 1 = 2 := old12 n
-  have old23 : (2 : Fin M) + 1 = 3 := old23 n
   have qedge0 : segment Real (r (sig 0)) (r (sig (0 + 1))) =
       segment Real (r 0) (r 2) := qedge0 n p i
   have qedgePos (k : Fin L) (hk : k.val ≠ 0) :

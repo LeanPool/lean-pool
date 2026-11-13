@@ -649,76 +649,17 @@ theorem P3092T1CenteredRectangleDisk
   let q : Nat → (ℝ × ℝ) → ℝ := fun j x => max (|x.1| / a j) (|x.2| / b j)
   let g : (ℝ × ℝ) → ℝ := fun x => J.inf' hJ (fun j => q j x)
   let R : (ℝ × ℝ) → ℝ := fun x => J.sup' hJ (fun j => (q j x)⁻¹)
-  have hq_nonneg (j : Nat) (hj : j ∈ J) (x : ℝ × ℝ) : 0 ≤ q j x :=
-      CenteredRectangleDiskConstruction.hq_nonneg J a b ha j hj x
-  have hq_pos (j : Nat) (hj : j ∈ J) (x : ℝ × ℝ) (hx : x ≠ 0) : 0 < q j x :=
-      CenteredRectangleDiskConstruction.hq_pos J a b ha hb j hj x hx
-  have hg_nonneg (x : ℝ × ℝ) : 0 ≤ g x := CenteredRectangleDiskConstruction.hg_nonneg J hJ a b ha x
-  have hg_pos (x : ℝ × ℝ) (hx : x ≠ 0) : 0 < g x := CenteredRectangleDiskConstruction.hg_pos J hJ
-      a b ha hb x hx
-  have hg_zero : g 0 = 0 := CenteredRectangleDiskConstruction.hg_zero J hJ a b
-  have hq_smul (t : ℝ) (ht : 0 ≤ t) (j : Nat) (x : ℝ × ℝ) :
-      q j (t • x) = t * q j x := CenteredRectangleDiskConstruction.hq_smul a b t ht j x
-  have hg_smul (t : ℝ) (ht : 0 ≤ t) (x : ℝ × ℝ) : g (t • x) = t * g x :=
-      CenteredRectangleDiskConstruction.hg_smul J hJ a b t ht x
-  have hg_cont : Continuous g := CenteredRectangleDiskConstruction.hg_cont J hJ a b
   -- The reciprocal of the minimum gauge is the attained outer ray radius.
-  have hR_eq (x : ℝ × ℝ) (hx : x ≠ 0) : R x = (g x)⁻¹ := CenteredRectangleDiskConstruction.hR_eq
-      J hJ a b ha hb x hx
-  have hR_attained (x : ℝ × ℝ) : ∃ j ∈ J, R x = (q j x)⁻¹ :=
-      CenteredRectangleDiskConstruction.hR_attained J hJ a b x
-  have hR_pos (x : ℝ × ℝ) (hx : x ≠ 0) : 0 < R x := CenteredRectangleDiskConstruction.hR_pos J hJ
-      a b ha hb x hx
-  have hR_cont (x : ℝ × ℝ) (hx : x ≠ 0) : ContinuousAt R x :=
-      CenteredRectangleDiskConstruction.hR_cont J hJ a b ha hb x hx
   have hmem (x : ℝ × ℝ) :
       c + x ∈ (⋃ j ∈ J, Set.Icc (c.1 - a j, c.2 - b j)
           (c.1 + a j, c.2 + b j)) ↔ g x ≤ 1 := CenteredRectangleDiskConstruction.hmem J hJ c a b
               ha hb x
-  have hray (u : ℝ × ℝ) (hu : ‖u‖ = 1) (t : ℝ) (ht : 0 ≤ t) :
-      c + t • u ∈ (⋃ j ∈ J, Set.Icc (c.1 - a j, c.2 - b j)
-          (c.1 + a j, c.2 + b j)) ↔ t ≤ R u := CenteredRectangleDiskConstruction.hray J hJ c a b
-              ha hb u hu t ht
   -- Uniform bounds suffice for continuity at the center in both directions.
-  let j₀ := hJ.choose
-  have hj₀ : j₀ ∈ J := CenteredRectangleDiskConstruction.hj₀ J hJ
-  let M := J.sup' hJ (fun j => max (a j) (b j))
-  let C := max (a j₀)⁻¹ (b j₀)⁻¹
-  have hM_pos : 0 < M := CenteredRectangleDiskConstruction.hM_pos J hJ a b ha
-  have hC_pos : 0 < C := CenteredRectangleDiskConstruction.hC_pos J hJ a b ha
-  have hq_bound (j : Nat) (hj : j ∈ J) (x : ℝ × ℝ) : ‖x‖ ≤ M * q j x :=
-      CenteredRectangleDiskConstruction.hq_bound J hJ a b ha hb j hj x
-  have hg_lower (x : ℝ × ℝ) : ‖x‖ ≤ M * g x := CenteredRectangleDiskConstruction.hg_lower J hJ a
-      b ha hb x
-  have hg_upper (x : ℝ × ℝ) : g x ≤ C * ‖x‖ := CenteredRectangleDiskConstruction.hg_upper J hJ a
-      b ha hb x
-  have hunit (x : ℝ × ℝ) (hx : x ≠ 0) : ‖‖x‖⁻¹ • x‖ = 1 :=
-      CenteredRectangleDiskConstruction.hunit x hx
-  have hR_normalized (x : ℝ × ℝ) (hx : x ≠ 0) : R (‖x‖⁻¹ • x) = ‖x‖ / g x :=
-      CenteredRectangleDiskConstruction.hR_normalized J hJ a b ha hb x hx
   let F : (ℝ × ℝ) → (ℝ × ℝ) := fun x => R (‖x‖⁻¹ • x) • x
   let G : (ℝ × ℝ) → (ℝ × ℝ) := fun x => (R (‖x‖⁻¹ • x))⁻¹ • x
-  have hF_zero : F 0 = 0 := CenteredRectangleDiskConstruction.hF_zero J hJ a b
-  have hG_zero : G 0 = 0 := CenteredRectangleDiskConstruction.hG_zero J hJ a b
-  have hF_formula (x : ℝ × ℝ) : F x = (‖x‖ / g x) • x :=
-      CenteredRectangleDiskConstruction.hF_formula J hJ a b ha hb x
-  have hG_formula (x : ℝ × ℝ) : G x = (g x / ‖x‖) • x :=
-      CenteredRectangleDiskConstruction.hG_formula J hJ a b ha hb x
-  have hF_norm (x : ℝ × ℝ) : ‖F x‖ = (‖x‖ / g x) * ‖x‖ :=
-      CenteredRectangleDiskConstruction.hF_norm J hJ a b ha hb x
-  have hG_norm (x : ℝ × ℝ) : ‖G x‖ = g x := CenteredRectangleDiskConstruction.hG_norm J hJ a b ha
-      hb x
   have hgF (x : ℝ × ℝ) : g (F x) = ‖x‖ := CenteredRectangleDiskConstruction.hgF J hJ a b ha hb x
   have hGF (x : ℝ × ℝ) : G (F x) = x := CenteredRectangleDiskConstruction.hGF J hJ a b ha hb x
   have hFG (x : ℝ × ℝ) : F (G x) = x := CenteredRectangleDiskConstruction.hFG J hJ a b ha hb x
-  have hF_bound (x : ℝ × ℝ) : ‖F x‖ ≤ M * ‖x‖ := CenteredRectangleDiskConstruction.hF_bound J hJ
-      a b ha hb x
-  have hG_bound (x : ℝ × ℝ) : ‖G x‖ ≤ C * ‖x‖ := CenteredRectangleDiskConstruction.hG_bound J hJ
-      a b ha hb x
-  have hradial_cont (f : (ℝ × ℝ) → (ℝ × ℝ)) (K : ℝ) (hK : 0 ≤ K)
-      (hf0 : f 0 = 0) (hf_bound : ∀ x, ‖f x‖ ≤ K * ‖x‖)
-      (hf_off : ∀ x, x ≠ 0 → ContinuousAt f x) : Continuous f :=
-          CenteredRectangleDiskConstruction.hradial_cont f K hK hf0 hf_bound hf_off
   have hF_cont : Continuous F := CenteredRectangleDiskConstruction.hF_cont J hJ a b ha hb
   have hG_cont : Continuous G := CenteredRectangleDiskConstruction.hG_cont J hJ a b ha hb
   let H : (ℝ × ℝ) ≃ₜ (ℝ × ℝ) :=

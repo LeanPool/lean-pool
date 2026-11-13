@@ -143,7 +143,6 @@ theorem GridVerticalDownLogLiftDelta (q a : GaussianInt)
           linarith [t.2.1, t.2.2]
         have hlo : (-1 : Int) < a.im - q.im - 1 := by exact_mod_cast hloR
         have hhi : a.im - q.im - 1 < (1 : Int) := by exact_mod_cast hhiR
-        have heq : a.im - q.im - 1 = 0 := by omega
         change a.im - 1 = q.im
         omega
       · dsimp [GridCellCenter] at hre

@@ -187,10 +187,6 @@ private theorem foot_cover (L : Real) (q : Fin 4 → CircleCoordinates) (hs : P4
   classical
   let p (i : Fin 4) : ℂ := (q i).2 / ((q i).1 : ℝ)
   let r (i : Fin 4) : ℝ := 1 / ((q i).1 : ℝ)
-  have rpos (i : Fin 4) (hi : 0 < (q i).1) : 0 < r i := rpos q i hi
-  have support (k i : Fin 4) (hk : (q k).1 = 0) (hi : 0 < (q i).1) :
-      if (q k).2 = -1 then (p i).re = L + r i
-      else (p i).re = L + 2 - r i := support L q hs k i hk hi
   have foot_dist (k i : Fin 4) (hk : (q k).1 = 0) (hi : 0 < (q i).1) :
       dist (p i) ⟨if (q k).2 = -1 then L else L + 2, (p i).im⟩ = r i := foot_dist L q hs k i hk hi
   change (segment ℝ (p i)
@@ -289,11 +285,6 @@ private theorem geometry (L : Real) (q : Fin 4 → CircleCoordinates) (hq : Prop
   let s (b : Fin 3) := P4828T1Step (P4828T1Rotate q b)
   let P := P4909T1ParentPolygon L q
   let F (b : Fin 3) := P4909T1ParentPolygon L (s b)
-  have gap_iff (t : Fin 4 → CircleCoordinates) (z : ℂ) :
-      z ∈ P4828T1Gap L t ↔
-        z ∈ interior (P4909T1ParentPolygon L t) ∧
-        ∀ j : Fin 3, 0 < (t j.succ).1 →
-          1 / ((t j.succ).1 : ℝ) < dist z ((t j.succ).2 / ((t j.succ).1 : ℝ)) := gap_iff L t z
   have hc := ProperBandCurvatureStructure q hq
   have rpos (i : Fin 4) (hi : 0 < (q i).1) : 0 < r i := rpos q i hi
   have hcenter : p 0 ∈ interior P := hcenter L q hq hinside
@@ -341,17 +332,7 @@ private theorem omitted (L : Real) (q : Fin 4 → CircleCoordinates) (hq : Prope
   have parent (b j : Fin 3) : s b j.succ = q (idx b j) := parent q b j
   have idx_inj (b : Fin 3) : Function.Injective (idx b) := idx_inj b
   have idx_ne (b j : Fin 3) : idx b j ≠ b.succ := idx_ne b j
-  have gap_iff (t : Fin 4 → CircleCoordinates) (z : ℂ) :
-      z ∈ P4828T1Gap L t ↔
-        z ∈ interior (P4909T1ParentPolygon L t) ∧
-        ∀ j : Fin 3, 0 < (t j.succ).1 →
-          1 / ((t j.succ).1 : ℝ) < dist z ((t j.succ).2 / ((t j.succ).1 : ℝ)) := gap_iff L t z
-  have hc := ProperBandCurvatureStructure q hq
   have rpos (i : Fin 4) (hi : 0 < (q i).1) : 0 < r i := rpos q i hi
-  have hcenter : p 0 ∈ interior P := hcenter L q hq hinside
-  have support (k i : Fin 4) (hk : (q k).1 = 0) (hi : 0 < (q i).1) :
-      if (q k).2 = -1 then (p i).re = L + r i
-      else (p i).re = L + 2 - r i := support L q hs k i hk hi
   have foot_dist (k i : Fin 4) (hk : (q k).1 = 0) (hi : 0 < (q i).1) :
       dist (p i) ⟨if (q k).2 = -1 then L else L + 2, (p i).im⟩ = r i := foot_dist L q hs k i hk hi
   have foot_cover (k i : Fin 4) (hk : (q k).1 = 0) (hi : 0 < (q i).1) :
@@ -440,8 +421,6 @@ private theorem gap_subset (L : Real) (q : Fin 4 → CircleCoordinates) (hq : Pr
   let F (b : Fin 3) := P4909T1ParentPolygon L (s b)
   let idx (b j : Fin 3) : Fin 4 := ![0, (b + 1).succ, (b + 2).succ] j
   have parent (b j : Fin 3) : s b j.succ = q (idx b j) := parent q b j
-  have idx_inj (b : Fin 3) : Function.Injective (idx b) := idx_inj b
-  have idx_ne (b j : Fin 3) : idx b j ≠ b.succ := idx_ne b j
   have old_retained (b j : Fin 3) (hne : j ≠ b) :
       ∃ k : Fin 3, idx b k = j.succ := old_retained b j hne
   have gap_iff (t : Fin 4 → CircleCoordinates) (z : ℂ) :
@@ -449,24 +428,6 @@ private theorem gap_subset (L : Real) (q : Fin 4 → CircleCoordinates) (hq : Pr
         z ∈ interior (P4909T1ParentPolygon L t) ∧
         ∀ j : Fin 3, 0 < (t j.succ).1 →
           1 / ((t j.succ).1 : ℝ) < dist z ((t j.succ).2 / ((t j.succ).1 : ℝ)) := gap_iff L t z
-  have hc := ProperBandCurvatureStructure q hq
-  have rpos (i : Fin 4) (hi : 0 < (q i).1) : 0 < r i := rpos q i hi
-  have hcenter : p 0 ∈ interior P := hcenter L q hq hinside
-  have support (k i : Fin 4) (hk : (q k).1 = 0) (hi : 0 < (q i).1) :
-      if (q k).2 = -1 then (p i).re = L + r i
-      else (p i).re = L + 2 - r i := support L q hs k i hk hi
-  have foot_dist (k i : Fin 4) (hk : (q k).1 = 0) (hi : 0 < (q i).1) :
-      dist (p i) ⟨if (q k).2 = -1 then L else L + 2, (p i).im⟩ = r i := foot_dist L q hs k i hk hi
-  have foot_cover (k i : Fin 4) (hk : (q k).1 = 0) (hi : 0 < (q i).1) :
-      segment ℝ (p i)
-        ⟨if (q k).2 = -1 then L else L + 2, (p i).im⟩ ⊆
-        Metric.closedBall (p i) (r i) := foot_cover L q hs k i hk hi
-  have line_dist (k i : Fin 4) (hk : (q k).1 = 0) (hi : 0 < (q i).1)
-      (z : ℂ) (hz : z.re = if (q k).2 = -1 then L else L + 2) :
-      r i ≤ dist z (p i) := line_dist L q hs k i hk hi z hz
-  have center_dist (i j : Fin 4) (hij : i ≠ j)
-      (hi : 0 < (q i).1) (hj : 0 < (q j).1) :
-      dist (p i) (p j) = r i + r j := center_dist q hq i j hij hi hj
   have geometry :
       (∀ b, F b ⊆ P ∧ (0 < (q b.succ).1 → p b.succ ∉ F b) ∧
         frontier (F b) ⊆ P4909T1ParentEdges L (s b)) ∧
@@ -517,10 +478,6 @@ theorem P4828T1ResidualPatches (L : Real)
   let F (b : Fin 3) := P4909T1ParentPolygon L (s b)
   let idx (b j : Fin 3) : Fin 4 := ![0, (b + 1).succ, (b + 2).succ] j
   have parent (b j : Fin 3) : s b j.succ = q (idx b j) := ResidualGapConstruction.parent q b j
-  have idx_inj (b : Fin 3) : Function.Injective (idx b) := ResidualGapConstruction.idx_inj b
-  have idx_ne (b j : Fin 3) : idx b j ≠ b.succ := ResidualGapConstruction.idx_ne b j
-  have old_retained (b j : Fin 3) (hne : j ≠ b) :
-      ∃ k : Fin 3, idx b k = j.succ := ResidualGapConstruction.old_retained b j hne
   have gap_iff (t : Fin 4 → CircleCoordinates) (z : ℂ) :
       z ∈ P4828T1Gap L t ↔
         z ∈ interior (P4909T1ParentPolygon L t) ∧
@@ -529,11 +486,7 @@ theorem P4828T1ResidualPatches (L : Real)
               ResidualGapConstruction.gap_iff L t z
   have hc := ProperBandCurvatureStructure q hq
   have rpos (i : Fin 4) (hi : 0 < (q i).1) : 0 < r i := ResidualGapConstruction.rpos q i hi
-  have hcenter : p 0 ∈ interior P := ResidualGapConstruction.hcenter L q hq hinside
   -- Divide the signed supporting-line equation, preserving its actual offset.
-  have support (k i : Fin 4) (hk : (q k).1 = 0) (hi : 0 < (q i).1) :
-      if (q k).2 = -1 then (p i).re = L + r i
-      else (p i).re = L + 2 - r i := ResidualGapConstruction.support L q hs k i hk hi
   have foot_dist (k i : Fin 4) (hk : (q k).1 = 0) (hi : 0 < (q i).1) :
       dist (p i) ⟨if (q k).2 = -1 then L else L + 2, (p i).im⟩ = r i :=
           ResidualGapConstruction.foot_dist L q hs k i hk hi
@@ -541,9 +494,6 @@ theorem P4828T1ResidualPatches (L : Real)
       segment ℝ (p i)
         ⟨if (q k).2 = -1 then L else L + 2, (p i).im⟩ ⊆
         Metric.closedBall (p i) (r i) := ResidualGapConstruction.foot_cover L q hs k i hk hi
-  have line_dist (k i : Fin 4) (hk : (q k).1 = 0) (hi : 0 < (q i).1)
-      (z : ℂ) (hz : z.re = if (q k).2 = -1 then L else L + 2) :
-      r i ≤ dist z (p i) := ResidualGapConstruction.line_dist L q hs k i hk hi z hz
   -- External tangency is obtained directly from the registered norm identity.
   have center_dist (i j : Fin 4) (hij : i ≠ j)
       (hi : 0 < (q i).1) (hj : 0 < (q j).1) :
@@ -560,9 +510,6 @@ theorem P4828T1ResidualPatches (L : Real)
             ⟨if (q k.succ).2 = -1 then L else L + 2, (p 0).im⟩) →
         ∃ b, z ∈ interior (F b)) := ResidualGapConstruction.geometry L q hq hs hinside
   -- No point of an omitted open disk can cross the concrete boundary carrier.
-  have omitted (b : Fin 3) (hb : 0 < (q b.succ).1) :
-      ∀ z ∈ interior (F b), r b.succ < dist z (p b.succ) := ResidualGapConstruction.omitted L q
-          hq hs hinside b hb
   have inserted_exterior (b : Fin 3) (z : ℂ)
       (hz : z ∈ P4828T1Gap L (s b)) : r 0 < dist z (p 0) :=
           ResidualGapConstruction.inserted_exterior L q hq b z hz

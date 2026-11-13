@@ -1392,8 +1392,6 @@ theorem P3723T1ContactPortsExist {ι : Type} (P : PeriodicTileComplex ι) :
       · have hn : ¬ P3723T1EdgeContact P (P.shift u a) (P.shift u b) :=
           fun h => hab ((contact_periodic u a b).mp h)
         simp only [edge, ite_eq_right hab, ite_eq_right hn, Finset.image_empty]
-  let port (a b : ι) : Option (Real × Real) :=
-    if P3723T1EdgeContact P a b then some (midpoint (edge a b)) else none
   have port_present := ContactPortGeometry.port_present ι P edge
   have midpoint_periodic (e : Finset GaussianInt) (u : GaussianInt) (he : e.card = 2) :
       midpoint (e.image (fun z => z + u)) = midpoint e + GaussianRealPoint u :=

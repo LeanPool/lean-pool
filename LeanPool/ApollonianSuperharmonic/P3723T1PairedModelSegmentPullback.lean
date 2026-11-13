@@ -51,8 +51,6 @@ private theorem hgconst :
   have hline : (1 - (s : Real)) • (b : Real × Real) +
       (s : Real) • (b : Real × Real) = b := by
     ext <;> simp [smul_eq_mul] <;> ring
-  have hzero : (1 - (0 : Real)) • (b : Real × Real) +
-      (0 : Real) • (b : Real × Real) = b := by simp
   exact (hs.trans hline).trans (h0.trans (by simp)).symm
 
 private theorem hFbounds :
@@ -293,38 +291,6 @@ private theorem piece :
   obtain ⟨w1, hw1sum, hw1nonneg, hw1target⟩ := target_weights k (L v) hvE
   let x0 : Real × Real := ∑ j, w0 j • p.vertex (t.face k j)
   let x1 : Real × Real := ∑ j, w1 j • p.vertex (t.face k j)
-  have hx0src : x0 ∈ convexHull Real (Set.range (p.vertex ∘ t.face k)) := by
-    exact source_hull k w0 hw0sum hw0nonneg
-  have hx1src : x1 ∈ convexHull Real (Set.range (p.vertex ∘ t.face k)) := by
-    exact source_hull k w1 hw1sum hw1nonneg
-  have hx0X : x0 ∈ X := by
-    rw [t.source_cover]
-    exact Set.mem_iUnion.mpr ⟨k, hx0src⟩
-  have hx1X : x1 ∈ X := by
-    rw [t.source_cover]
-    exact Set.mem_iUnion.mpr ⟨k, hx1src⟩
-  let z0 : X := ⟨x0, hx0X⟩
-  let z1 : X := ⟨x1, hx1X⟩
-  have hz0map : (h z0 : Real × Real) = L u := by
-    calc
-      (h z0 : Real × Real) = ∑ j, w0 j • t.target (t.face k j) :=
-        haffine k z0 hx0src w0 hw0sum rfl
-      _ = L u := hw0target.symm
-  have hz1map : (h z1 : Real × Real) = L v := by
-    calc
-      (h z1 : Real × Real) = ∑ j, w1 j • t.target (t.face k j) :=
-        haffine k z1 hx1src w1 hw1sum rfl
-      _ = L v := hw1target.symm
-  let su : Set.Icc (0 : Real) 1 := ⟨u, huI'.1⟩
-  let sv : Set.Icc (0 : Real) 1 := ⟨v, hvI'.1⟩
-  have hg0 : g su = z0 := by
-    apply h.injective
-    apply Subtype.ext
-    rw [hg su, ← hL u, hz0map]
-  have hg1 : g sv = z1 := by
-    apply h.injective
-    apply Subtype.ext
-    rw [hg sv, ← hL v, hz1map]
   let B : Real × Real := (v - u)⁻¹ • (x1 - x0)
   let A : Real × Real := x0 - u • B
   refine ⟨A, B, ?_⟩

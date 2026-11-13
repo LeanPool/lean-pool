@@ -139,14 +139,6 @@ theorem PartialOdometerHalfTurnFormulas (h : PartialOdometer) :
       have hx1 := (Finset.mem_filter.mp hx).2.1
       have hxi := (Finset.mem_filter.mp hx).2.2.1
       have hx1i := (Finset.mem_filter.mp hx).2.2.2
-      have hm0 : -x ∈ h.domain.image (fun z => -z) := by
-        apply (membership _).mpr; simpa using hx0
-      have hm1 : -(x + 1) ∈ h.domain.image (fun z => -z) := by
-        apply (membership _).mpr; simpa using hx1
-      have hmi : -(x + ⟨0, 1⟩) ∈ h.domain.image (fun z => -z) := by
-        apply (membership _).mpr; simpa using hxi
-      have hm1i : -(x + 1 + ⟨0, 1⟩) ∈ h.domain.image (fun z => -z) := by
-        apply (membership _).mpr; simpa using hx1i
       have ha : -x - 1 - ⟨0, 1⟩ + 1 ∈ h.domain.image (fun z => -z) := by
         apply (membership _).mpr
         simpa [sub_eq_add_neg, add_assoc, add_comm, add_left_comm] using hxi

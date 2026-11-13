@@ -931,12 +931,10 @@ theorem P3996T1SRowAlignment
       (SubtileOccurrenceInterpretation cert.P cert.u cert.v ⟨.F, m, n⟩) :=
           SRowAlignmentGeometry.occF q cfg C T cert m n
   have cellsTranslate := TileTranslationProperties.cells
-  have anchorTranslate := SRowAlignmentGeometry.anchorTranslate
   have centroidTranslate := SRowAlignmentGeometry.centroidTranslate
   have translationCentroidGP (X : ProtoTile) (d : GaussianInt) :
       TileCentroid (TileTranslation X d) = TileCentroid X + GaussianRealPoint d :=
           SRowAlignmentGeometry.translationCentroidGP centroidTranslate X d
-  have composeCells := SRowAlignmentGeometry.composeCells cellsTranslate
   have composeCellsEq := SRowAlignmentGeometry.composeCellsEq cellsTranslate
   have composeAnchor (X : ProtoTile) (s d : GaussianInt) :
       (TileTranslation (TileTranslation X s) d).anchor =
@@ -947,7 +945,6 @@ theorem P3996T1SRowAlignment
             t h
   let I : GaussianInt := ⟨0, 1⟩
   have hI2 : I * I = -1 := by dsimp [I]; apply Zsqrtd.ext <;> norm_num
-  have hIinv : -I * I = 1 := by rw [show -I * I = -(I * I) by ring, hI2]; norm_num
   have cI2 : (GaussianInt.toComplex (⟨0, 1⟩ : GaussianInt)) ^ 2 = -1 := by
     norm_num [GaussianInt.toComplex_def]
   have cI3 : (GaussianInt.toComplex (⟨0, 1⟩ : GaussianInt)) ^ 3 =
@@ -987,17 +984,6 @@ theorem P3996T1SRowAlignment
       q10 qflip1
   have certV : cert.v = I * edgeVector + w := SRowAlignmentGeometry.certV q cfg C T cert hI2
       qflip2 q20
-  have rflip1 := (VectorRecursionLaws cfg.firstPredecessor cfg.firstProper.1).2.2.2.2
-    cfg.firstProper 1 |>.1
-  have rflip2 := (VectorRecursionLaws cfg.firstPredecessor cfg.firstProper.1).2.2.2.2
-    cfg.firstProper 2 |>.1
-  have rvec2 : BandVectors.1 (cfg.firstPredecessor 0) (cfg.firstPredecessor 2) = I * edgeVector :=
-      SRowAlignmentGeometry.rvec2 q cfg rflip1
-  have rvec3 : BandVectors.1 (cfg.firstPredecessor 3) (cfg.firstPredecessor 0) = I * (edgeVector
-      + w) :=
-      SRowAlignmentGeometry.rvec3 q cfg hIinv q13 rflip2
-  have tvec1 : BandVectors.1 (cfg.secondPredecessor 0) (cfg.secondPredecessor 1) = I * w :=
-      SRowAlignmentGeometry.tvec1 q cfg
   have qnormal :
       BandVectors.1 (q 1) (q 2) = I * edgeVector := SRowAlignmentGeometry.qnormal q cfg
   have q31 : BandVectors.1 (q 3) (q 1) = I * (edgeVector + w) := SRowAlignmentGeometry.q31 q cfg

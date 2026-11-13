@@ -1571,15 +1571,6 @@ theorem P4250T2InterfaceNeighborCount :
     have hOB := InterfaceNeighborGeometry.hOB C q cfg T cert
     have hsep := BandOriginalPairSeparation cert.P cert.O cert.u cert.v hOA hOB cert.partition
     have hAB := InterfaceNeighborGeometry.hAB C q cfg T cert hsep
-    let parentLabel (a : Fin 3 × Bool) : SixSubtileLabel :=
-      match a.1.val, a.2 with
-      | 0, true => .A
-      | 0, false => .B
-      | 1, true => .C
-      | 1, false => .D
-      | 2, true => .E
-      | _, _ => .F
-    let parentIndex (a : Fin 3 × Bool) : PeriodicSubtileIndex := ⟨parentLabel a, 0, 0⟩
     have parent_disjoint := InterfaceNeighborGeometry.parent_disjoint C q cfg T cert hsep
         (InterfaceNeighborGeometry.parentLabel_injective)
         (InterfaceNeighborGeometry.parentOccurrence C q cfg T cert)
@@ -1672,8 +1663,6 @@ theorem P4250T2InterfaceNeighborCount :
               owner_spec owner_iff
       have hclass := BandOrderedGeneralInteriorStarClassification q cfg C T cert hlat x hxT.1 hxT.2
       have hsum := (InterfaceNeighborGeometry.finite_countAt614) owner hdiag hnot_constant
-      have hhigh : (Finset.univ.image owner).card ≤ 4 := by
-        exact (Finset.card_image_le).trans (by simp)
       have hk23 := InterfaceNeighborGeometry.hk23 C q cfg T cert P x neighbor_count owner_exists
           hcard hncount hclass hsum (InterfaceNeighborGeometry.hlow C q cfg T cert x owner_exists
           hnot_constant)

@@ -218,9 +218,6 @@ private theorem trim_property :
             have hqb : q ≠ b := by
               intro hqb
               subst q
-              have hlast_mem : b ∈ (d :: s) := by
-                apply List.mem_of_getLast?
-                exact htail
               have hdup : d :: s = (d :: s).dropLast ++ [b] :=
                 (List.dropLast_append_getLast? b (by simpa using htail)).symm
               rw [hdup] at htail_nodup
@@ -320,12 +317,6 @@ theorem TriangularStripSegmentOrderInterval
     exact List.mem_of_getLast? hdata.2.1
   obtain ⟨m, hm⟩ := order.surjective ⟨x, hdata.2.2.2.1 x hxmem⟩
   obtain ⟨n, hn⟩ := order.surjective ⟨y, hdata.2.2.2.1 y hymem⟩
-  have hmn : m ≠ n := by
-    intro he
-    apply hxy
-    have hh : (⟨x, _⟩ : {z : Int × Int // TriangularBoundaryStrip x y z}) =
-        ⟨y, _⟩ := hm.symm.trans ((congrArg order he).trans hn)
-    exact congrArg Subtype.val hh
   have walk : ∀ (p : List Int) (a b : Int),
       p.head? = some a → p.getLast? = some b → p.Nodup →
       p.IsChain (fun u v : Int => v = u + 1 ∨ u = v + 1) →

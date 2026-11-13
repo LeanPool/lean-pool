@@ -1193,7 +1193,6 @@ private theorem piece_overlap_forward :
       _ = (u : Real) := hparam.symm
       _ ≤ (s k).time r.succ := t.property.2
   have htime : (s k).time r.succ = (s k).time r'.castSucc := le_antisymm hmono hback
-  have hindices : r.succ = r'.castSucc := (s k).strict.injective htime
   have hu : (u : Real) = (s k).time r.succ := by
     apply le_antisymm t.property.2
     calc
@@ -1865,16 +1864,10 @@ theorem P3913T1RoutedFaceSubdivision :
       (RoutedFaceDetails.faceContact ι P f (RoutedFaceDetails.cyc_ne)) i j hij
   have v_distinct (i j : Fin 3) (hij : i ≠ j) := RoutedFaceDetails.v_distinct ι P f i
       j hij
-  have v01 : v 0 ≠ v 1 := v_distinct 0 1 (by decide)
-  have v02 : v 0 ≠ v 2 := v_distinct 0 2 (by decide)
-  have v12 : v 1 ≠ v 2 := v_distinct 1 2 (by decide)
   have arc_inter_singleton (i j : Fin 3) (hij : i ≠ j) := RoutedFaceDetails.arc_inter_singleton ι
             P D f arc_inter (RoutedFaceDetails.pair_inter ι P f v_distinct) i j hij
   have w_arc (k : Fin 3) (i : Fin ((s k).count + 1)) := RoutedFaceDetails.w_arc ι P D f g hr s
       k i
-  have w_before_end (k : Fin 3) (i : Fin (s k).count) := RoutedFaceDetails.w_before_end g s k i
-  have w_start (k : Fin 3) := RoutedFaceDetails.w_start ι P D f g
-      h0 s k
   have w_ne_finish (k : Fin 3) (i : Fin (s k).count) :
       w k i.castSucc ≠ D.position (v (k + 1)) := RoutedSubdivisionProof.w_ne_finish ι P D f g hi
           s (RoutedFaceDetails.w_finish ι P D f g h1 s) k i
@@ -1884,9 +1877,6 @@ theorem P3913T1RoutedFaceSubdivision :
           w_ne_finish (RoutedFaceDetails.arc12 ι P D f arc_inter_singleton))
           (RoutedFaceDetails.no_cross02 ι P D f g s w_arc w_ne_finish (RoutedFaceDetails.arc20
           ι P D f arc_inter_singleton)) (RoutedFaceDetails.w_block_injective g hi s)
-  let b0 (i : Fin m0) : Fin M := Fin.castAdd (m1 + m2) i
-  let b1 (i : Fin m1) : Fin M := Fin.natAdd m0 (Fin.castAdd m2 i)
-  let b2 (i : Fin m2) : Fin M := Fin.natAdd m0 (Fin.natAdd m1 i)
   have hM' : n + 3 = m0 + (m1 + m2) := by simpa [M] using hM
   have p_edge_piece (i : Fin (n + 3)) :
       ∃ k : Fin 3, ∃ r : Fin (s k).count,

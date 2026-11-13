@@ -89,12 +89,6 @@ theorem P5448T1CenteredFordGeometry
   let c := BandPackingSymmetryVectorAction s x
   let H := PartialOdometerAffineTranslate
     (BandPackingSymmetryPartialOdometerAction s h) (-c) 0 0
-  let U := TileTranslation (BandPackingSymmetryTileAction s (P 0 (!delta))) (-c)
-  let V := TileTranslation (BandPackingSymmetryTileAction s (P 0 delta)) (-c)
-  let hp := PartialOdometerAffineTranslate
-    (BandPackingSymmetryPartialOdometerAction s (r 0 (!delta))) (-c) 0 0
-  let hm := PartialOdometerAffineTranslate
-    (BandPackingSymmetryPartialOdometerAction s (r 0 delta)) (-c) 0 0
   obtain ⟨g', hext', hlap'⟩ :=
     BandPackingSymmetryGlobalOdometerTransport s g h x hext
   let f : IntegerLatticeFunction := fun z => g' (z + c)

@@ -1052,68 +1052,6 @@ private theorem ownerPoint1 :
   rw [ho1, cert.modified_tile] at h
   exact modifiedFootSubset owners.2 h
 
-private theorem originalPair0 :
-    (by
-      classical
-      exact
-        ∀ (q : Fin 4 → CircleCoordinates), ∀ (cfg : BandOrderedGeneralConfiguration q), ∀ (C :
-            BandCircle), ∀ (T : ProtoTile), ∀ (cert : BandOrderedGeneralLayoutCertificate q cfg C
-            T), ∀ (a : PeriodicSubtileIndex), ∀ (b : PeriodicSubtileIndex), ∀ (row :
-            BandOrderedGeneralSelectedContactRow q cfg C T cert a b),
-        let P := cert.P
-        let O := cert.O
-        let u := cert.u
-        let v := cert.v
-        ((FootprintEdges (ModifiedSubtileOccurrenceInterpretation P O u v a) ∩ FootprintEdges
-            (ModifiedSubtileOccurrenceInterpretation P O u v b) = FootprintEdges
-            (SubtileOccurrenceInterpretation P u v a) ∩ FootprintEdges
-            (SubtileOccurrenceInterpretation P u v b)) ∧ (FootprintVertices
-            (ModifiedSubtileOccurrenceInterpretation P O u v a) ∩ FootprintVertices
-            (ModifiedSubtileOccurrenceInterpretation P O u v b) = FootprintVertices
-            (SubtileOccurrenceInterpretation P u v a) ∩ FootprintVertices
-            (SubtileOccurrenceInterpretation P u v b))) → (
-        let occurrence := SubtileOccurrenceInterpretation cert.P cert.u cert.v
-        let face0 : PeriodicSubtileFaceIndex := selectedFirstFace q cfg C T cert a b row
-        let F0 := cert.modifiedFaceEquivalence.symm face0
-        (cert.modified.rho F0 ∈ FootprintVertices (ModifiedSubtileOccurrenceInterpretation P O u
-            v a) ∩ FootprintVertices (ModifiedSubtileOccurrenceInterpretation P O u v b)) →
-            (cert.modified.rho F0 ∈ FootprintVertices (occurrence a) ∩ FootprintVertices
-            (occurrence b))) ) := by
-  classical
-  intro q cfg C T cert a b row P O u v retargeted occurrence face0 F0 commonPair0
-  simpa only [retargeted.2] using commonPair0
-
-private theorem originalPair1 :
-    (by
-      classical
-      exact
-        ∀ (q : Fin 4 → CircleCoordinates), ∀ (cfg : BandOrderedGeneralConfiguration q), ∀ (C :
-            BandCircle), ∀ (T : ProtoTile), ∀ (cert : BandOrderedGeneralLayoutCertificate q cfg C
-            T), ∀ (a : PeriodicSubtileIndex), ∀ (b : PeriodicSubtileIndex), ∀ (row :
-            BandOrderedGeneralSelectedContactRow q cfg C T cert a b),
-        let P := cert.P
-        let O := cert.O
-        let u := cert.u
-        let v := cert.v
-        ((FootprintEdges (ModifiedSubtileOccurrenceInterpretation P O u v a) ∩ FootprintEdges
-            (ModifiedSubtileOccurrenceInterpretation P O u v b) = FootprintEdges
-            (SubtileOccurrenceInterpretation P u v a) ∩ FootprintEdges
-            (SubtileOccurrenceInterpretation P u v b)) ∧ (FootprintVertices
-            (ModifiedSubtileOccurrenceInterpretation P O u v a) ∩ FootprintVertices
-            (ModifiedSubtileOccurrenceInterpretation P O u v b) = FootprintVertices
-            (SubtileOccurrenceInterpretation P u v a) ∩ FootprintVertices
-            (SubtileOccurrenceInterpretation P u v b))) → (
-        let occurrence := SubtileOccurrenceInterpretation cert.P cert.u cert.v
-        let face1 : PeriodicSubtileFaceIndex := selectedSecondFace q cfg C T cert a b row
-        let F1 := cert.modifiedFaceEquivalence.symm face1
-        (cert.modified.rho F1 ∈ FootprintVertices (ModifiedSubtileOccurrenceInterpretation P O u
-            v a) ∩ FootprintVertices (ModifiedSubtileOccurrenceInterpretation P O u v b)) →
-            (cert.modified.rho F1 ∈ FootprintVertices (occurrence a) ∩ FootprintVertices
-            (occurrence b))) ) := by
-  classical
-  intro q cfg C T cert a b row P O u v retargeted occurrence face1 F1 commonPair1
-  simpa only [retargeted.2] using commonPair1
-
 private theorem latticeOccurrence :
     (by
       classical
@@ -1503,11 +1441,11 @@ private theorem selectedCertificate :
       SelectedInterfaceGeometry.ownerPoint1 q cfg C T cert a b row modifiedFootSubset
       jO ho1
   have originalPair0 : cert.modified.rho F0 ∈
-      FootprintVertices (occurrence a) ∩ FootprintVertices (occurrence b) :=
-          SelectedInterfaceGeometry.originalPair0 q cfg C T cert a b row retargeted commonPair0
+      FootprintVertices (occurrence a) ∩ FootprintVertices (occurrence b) := by
+    simpa only [retargeted.2] using commonPair0
   have originalPair1 : cert.modified.rho F1 ∈
-      FootprintVertices (occurrence a) ∩ FootprintVertices (occurrence b) :=
-          SelectedInterfaceGeometry.originalPair1 q cfg C T cert a b row retargeted commonPair1
+      FootprintVertices (occurrence a) ∩ FootprintVertices (occurrence b) := by
+    simpa only [retargeted.2] using commonPair1
   have latticeOccurrence : ∀ x : PeriodicSubtileIndex, LatticeTile (occurrence x) :=
       SelectedInterfaceGeometry.latticeOccurrence q cfg C T cert
   have disjointData :
@@ -1522,7 +1460,6 @@ private theorem selectedCertificate :
           SelectedInterfaceGeometry.translateAdd X x y
   have translateZero (X : ProtoTile) : TileTranslation X 0 = X :=
       SelectedInterfaceGeometry.translateZero X
-  have cancelSum (x y : GaussianInt) : x + (y + (-x + -y)) = 0 := by abel
   have touchTranslate (X Y Z : ProtoTile) (d : GaussianInt)
       (h : TouchingTriple X Y Z) :
       TouchingTriple (TileTranslation X d) (TileTranslation Y d)

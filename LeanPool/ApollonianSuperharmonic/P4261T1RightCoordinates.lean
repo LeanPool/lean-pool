@@ -894,7 +894,6 @@ theorem P4261T1RightCoordinates
   have hparent : q'' i''.succ = q j.succ := by
     simpa [j] using hrotate i''
   have hvector := RightCoordinateGeometry.hvector q q'' i'' r hrotate
-  have hslopeVector := RightCoordinateGeometry.hslopeVector q q'' i'' r hrotate
   have hsCent := RightCoordinateGeometry.hsCent q N q'' i'' s S' hcent' R hrootCent r hvector
   have hbandSelected := RightCoordinateGeometry.hbandSelected q q'' i'' s S' hs' hchild' r hparent
   have hbandFresh : BandPrototile (q j.succ) (R j s) :=

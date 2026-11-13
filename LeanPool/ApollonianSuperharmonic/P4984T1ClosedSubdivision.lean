@@ -480,10 +480,6 @@ private theorem makeChild :
   · have hp : s b k.succ = q 0 := by rw [parent, hzero]
     simpa only [hp, p, r] using hinsert
   · obtain ⟨j, hj⟩ := Fin.exists_succ_eq.mpr hzero
-    have hjb : j ≠ b := by
-      intro he
-      subst j
-      exact idx_ne b k (by simp only [hj])
     have hp : s b k.succ = q j.succ := by rw [parent, hj]
     have hjpos : 0 < (q j.succ).1 := by simpa only [hp] using hk
     have hh := hold j hjpos
@@ -605,13 +601,10 @@ theorem P4984T1ClosedSubdivision (L : Real)
   have hzunique := hcurv.2.2
   have fan := ClosedSubdivisionProof.fan L q hs hchildpos hparentsNonneg hinside
           hzunique
-  have polygonClosed (t : Fin 4 → CircleCoordinates) := ClosedSubdivisionProof.polygonClosed L t
   have gapClosed (t : Fin 4 → CircleCoordinates) := ClosedSubdivisionProof.gapClosed L  t
   have hHclosed : IsClosed H := by
     change IsClosed (P4984T1ClosedGap L q)
     exact gapClosed q
-  have hchildClosed (b : Fin 3) : IsClosed (child b) := by
-    exact gapClosed (s b)
   let idx (b j : Fin 3) : Fin 4 := ![0, (b + 1).succ, (b + 2).succ] j
   have parent (b j : Fin 3) : s b j.succ = q (idx b j) := by
     fin_cases b <;> fin_cases j <;> rfl

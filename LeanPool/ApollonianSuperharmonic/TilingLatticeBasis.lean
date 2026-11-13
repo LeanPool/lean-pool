@@ -716,9 +716,6 @@ theorem TilingLatticeBasis (C : BandCircle)
   have determinant := VectorDeterminant successorQuad
     (SemiProperQuadruple.successor hq.1) (by simpa [successorQuad] using positive)
   have determinant_value := TilingBasisProof.determinant_value q determinant
-  let determinantNumber : Int :=
-      (BandVectors.1 (q 1) (q 0)).re * (BandVectors.1 (q 2) (q 0)).im -
-        (BandVectors.1 (q 1) (q 0)).im * (BandVectors.1 (q 2) (q 0)).re
   have determinant_nonzero := TilingBasisProof.determinant_nonzero q relation positive
       determinant_value
   have coordinate_for := TilingBasisProof.coordinate_for q
@@ -778,7 +775,6 @@ theorem TilingLatticeBasis (C : BandCircle)
       let ii : GaussianInt := ⟨0, 1⟩
       have iiSquare := TilingBasisProof.iiSquareAt530
       have hunit : -ii * ii = 1 := TilingBasisProof.hunitAt533 iiSquare
-      have hunit' : ii * (-ii) = 1 := by simpa [mul_comm] using hunit
       have image_tiling := TilingBasisProof.image_tiling C q flipA flipB lattice_le lattice_eq
           first_layout second_layout
       have layout_preimage := TilingBasisProof.layout_preimage C q flipA flipB first_mem

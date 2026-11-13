@@ -212,9 +212,6 @@ private theorem hrLast :
   intro x y p k q j hj hyidx hjpos r
   change (q.take (j + 1)).getLast? = some y
   rw [List.getLast?_take]
-  have hqj : q[j]? = some y := by
-    rw [List.getElem?_eq_getElem hj]
-    exact congrArg some hyidx
   rw [ite_eq_right (show j + 1 ≠ 0 by omega)]
   have hj' : j + 1 - 1 = j := by omega
   rw [hj']
@@ -243,7 +240,6 @@ private theorem hrLen :
     dsimp [r] at hsmall
     simp only [List.length_take] at hsmall
     omega
-  have hjnot0 : j ≠ 0 := by omega
   have hj1 : j = 1 := by omega
   have hqxy : ({x, y} : Finset GaussianInt) ∈ BoundaryFootprintEdges T := by
     have hqchain := (List.isChain_iff_getElem.mp hqBoundaryChain) 0 (by
@@ -799,7 +795,6 @@ theorem P4456T2CrosscutIndex (T : ProtoTile) (hT : LatticeTile T)
     rcases hf with ⟨hfc, hfd⟩
     have hfcOrig := hfc
     have hfdOrig := hfd
-    have hcdAdj := CrosscutIndexProof.hcdAdj c d hcd f hfc hfd
     change (∃ z ∈ ({c} : Finset GaussianInt),
       f = {z, z + 1} ∨ f = {z, z + ⟨0, 1⟩} ∨
         f = {z + 1, z + 1 + ⟨0, 1⟩} ∨

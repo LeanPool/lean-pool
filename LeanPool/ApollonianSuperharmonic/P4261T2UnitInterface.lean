@@ -515,8 +515,6 @@ private theorem hvertices :
   intro centerShift F f X
   rw [(TileTranslationFormulas (TileHalfTurn X) centerShift).2.2.2.2.2.1,
     (TileHalfTurnFormulas X).2.2.2.2.2.2.1]
-  have hq (z : GaussianInt) : GaussianQuarterTurn (GaussianQuarterTurn z) = -z := by
-    apply Zsqrtd.ext <;> simp [GaussianQuarterTurn]
   simp only [Set.image_image]
   congr 1
 
@@ -1074,7 +1072,6 @@ private theorem hcovered :
       hstartIndex hfinishIndex hpathIndexEdge hwalkHeadPos hwalkLastPos hwalkVertexPath u v pre
       post hsplit
   have hindices := hpathIndexEdge u v pre post hsplit
-  have humem : u ∈ path := by rw [hsplit]; simp
   have hvmem : v ∈ path := by rw [hsplit]; simp
   by_contra hnot
   have hnoPair : ∀ a b : GaussianInt, ∀ l r : List GaussianInt,
@@ -1216,8 +1213,6 @@ theorem P4261T2UnitInterface
     hcentPlus⟩
   have hTband : BandPrototile C.1.1 T := TileOdometerBandPrototile _ _ _ hh
   have hUband : BandPrototile C.1.1 U := TileOdometerBandPrototile _ _ _ hk
-  have hRminusBand : BandPrototile D.1.1 Rminus :=
-    TileOdometerBandPrototile _ _ _ hOminus
   have hRplusBand : BandPrototile D.1.1 Rplus :=
     TileOdometerBandPrototile _ _ _ hOplus
   obtain ⟨_, _, _, _, hRminusNe⟩ :=
@@ -1239,7 +1234,6 @@ theorem P4261T2UnitInterface
   have hcentDiff := UnitInterfaceGeometry.hcentDiff q i T Rminus Rplus
       (UnitInterfaceGeometry.hcentMinusQ q i T Rminus q' hcentMinus hqi' hq0')
       (UnitInterfaceGeometry.hcentPlusQ q i T Rplus q' hcentPlus hqi' hq0')
-  let w : GaussianInt := BandVectors.1 (q 0) (q i.succ)
   have hneq : (0 : Fin 4) ≠ i.succ := (Fin.succ_ne_zero i).symm
   have hvector := (VectorSquareProduct q cfg.proper.1 0 i.succ hneq).1
   have htangent := TangencyCoordinateIdentity q cfg.proper.1 0 i.succ hneq
@@ -1270,9 +1264,6 @@ theorem P4261T2UnitInterface
       (UnitInterfaceGeometry.hvertices centerShift) (UnitInterfaceGeometry.hedges centerShift)
   obtain ⟨Epositive⟩ := htriplePositive
   obtain ⟨Eimage, himagePoint, himageAB⟩ := hpositiveImage Epositive
-  have hFNeT : (F T).cells.Nonempty := by rw [hFTCells]; exact hUNe
-  have hFNeU : (F U).cells.Nonempty := by rw [hFUCells]; exact hTNe
-  have hFNeRminus : (F Rplus).cells.Nonempty := by rw [hFRplusCells]; exact hRminusNe
   have hvFT : FootprintVertices (F T) = FootprintVertices U := by
     simp [FootprintVertices, hFTCells, hUNe]
   have hvFU : FootprintVertices (F U) = FootprintVertices T := by
@@ -1285,17 +1276,6 @@ theorem P4261T2UnitInterface
     simp [FootprintEdges, hFUCells]
   have heFR : FootprintEdges (F Rplus) = FootprintEdges Rminus := by
     simp [FootprintEdges, hFRplusCells]
-  let Enegative : ExactTileInterfaceTriple U T Rminus := {
-    point := Eimage.point
-    otherAB := Eimage.otherAB
-    otherBC := Eimage.otherBC
-    otherCA := Eimage.otherCA
-    pathAB := by simpa [hvFT, hvFU, heFT, heFU] using Eimage.pathAB
-    pathBC := by simpa [hvFU, hvFR, heFU, heFR] using Eimage.pathBC
-    pathCA := by simpa [hvFR, hvFT, heFR, heFT] using Eimage.pathCA
-    unique_common := by
-      intro z
-      simpa [hvFT, hvFU, hvFR] using Eimage.unique_common z }
   have hposPath : SimpleGridPathBetween
       (FootprintVertices T ∩ FootprintVertices U)
       (FootprintEdges T ∩ FootprintEdges U)

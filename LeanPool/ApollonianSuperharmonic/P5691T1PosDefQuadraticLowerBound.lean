@@ -77,10 +77,9 @@ theorem P5691T1PosDefQuadraticLowerBound
         (a * d - b ^ 2) / (2 * (a + d)) *
           ((x.re : ℝ)^2 + (x.im : ℝ)^2) := by
     rw [hquad]
-    have hs1 : 0 ≤ (a * (x.re : ℝ) + b * (x.im : ℝ)) ^ 2 := sq_nonneg _
-    have hs2 : 0 ≤ (b * (x.re : ℝ) + d * (x.im : ℝ)) ^ 2 := sq_nonneg _
     field_simp
-    nlinarith
+    nlinarith only [sq_nonneg (a * (x.re : ℝ) + b * (x.im : ℝ)),
+      sq_nonneg (b * (x.re : ℝ) + d * (x.im : ℝ))]
   let k : ℝ := (a * d - b ^ 2) / (2 * (a + d))
   have hk : 0 < k := by
     dsimp [k]

@@ -70,7 +70,6 @@ theorem SuperharmonicDownwardClosure
         apply (div_le_iff₀ hε).mp at hlarge'
         nlinarith
       have hmul := mul_le_mul_of_nonneg_right hprod ht
-      have hsquare' := mul_le_mul_of_nonneg_left hsquare (by norm_num : (0 : ℝ) ≤ 16)
       have hsum : |(x.re : ℝ)| + |(x.im : ℝ)| ≤
           ε * ((x.re : ℝ) ^ 2 + (x.im : ℝ) ^ 2) / 4 := by
         nlinarith [sq_nonneg (ε * ((x.re : ℝ) ^ 2 + (x.im : ℝ) ^ 2) -

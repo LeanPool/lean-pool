@@ -858,54 +858,6 @@ theorem BandOrderedGeneralRightInterfaceCertificateExists
 -- BODY
   classical
   have touchingRetarget := ObservableTileRetargeting.triple
-  have swapAB : forall (A B D : ProtoTile),
-      ExactTileInterfaceTriple A B D -> ExactTileInterfaceTriple B A D := by
-    intro A B D E
-    exact
-      { point := E.point
-        otherAB := E.otherAB
-        otherBC := E.otherCA
-        otherCA := E.otherBC
-        pathAB := by simpa [Set.inter_comm] using E.pathAB
-        pathBC := by simpa [Set.inter_comm] using E.pathCA
-        pathCA := by simpa [Set.inter_comm] using E.pathBC
-        unique_common := by
-          intro y
-          simpa [Set.inter_comm, Set.inter_left_comm, Set.inter_assoc] using
-            E.unique_common y }
-  have cycleCAB : forall (A B D : ProtoTile),
-      ExactTileInterfaceTriple A B D -> ExactTileInterfaceTriple D A B := by
-    intro A B D E
-    exact
-      { point := E.point
-        otherAB := E.otherCA
-        otherBC := E.otherAB
-        otherCA := E.otherBC
-        pathAB := E.pathCA
-        pathBC := E.pathAB
-        pathCA := E.pathBC
-        unique_common := by
-          intro y
-          simpa [Set.inter_comm, Set.inter_left_comm, Set.inter_assoc] using
-            E.unique_common y }
-  have retargetFirst : forall (A A' B D : ProtoTile),
-      A.cells = A'.cells -> (A.cells = ∅ -> A.anchor = A'.anchor) ->
-      ExactTileInterfaceTriple A B D -> ExactTileInterfaceTriple A' B D := by
-    intro A A' B D hAc hAa E
-    have hAo := ProtoTileObservableExtensionality A A' hAc hAa
-    have hAe : FootprintEdges A = FootprintEdges A' := RightInterfaceCertificateGeometry.hAeAt211
-        A A' hAc
-    exact
-      { point := E.point
-        otherAB := E.otherAB
-        otherBC := E.otherBC
-        otherCA := E.otherCA
-        pathAB := by simpa [hAo.1, hAe] using E.pathAB
-        pathBC := E.pathBC
-        pathCA := by simpa [hAo.1, hAe] using E.pathCA
-        unique_common := by
-          intro y
-          simpa [hAo.1] using E.unique_common y }
   have centeredTurnTouching := RightInterfaceCertificateGeometry.centeredTurnTouching
       touchingRetarget
             (TileQuarterTurnTranslation.translated)
@@ -975,30 +927,6 @@ theorem BandOrderedGeneralRightInterfaceCertificateExists
     (BandVectors.1 (q (2 : Fin 3).succ) (q 0))
     (-BandVectors.1 (q (((2 : Fin 3) + 1).succ)) (q 0))
     normalization.fixed_quarter_turn X2
-  have X0p : ExactTileInterfaceTriple F
-      (TileTranslation F (BandVectors.1 (q 0) (q 1)))
-      (TileTranslation F (-BandVectors.1 (q 0) (q 2))) := by
-    simpa [turn0, turn1, turn_neg] using X0p0
-  have X1p : ExactTileInterfaceTriple F
-      (TileTranslation F (BandVectors.1 (q 0) (q 2)))
-      (TileTranslation F (-BandVectors.1 (q 0) (q 3))) := by
-    simpa [turn1, turn2, turn_neg] using X1p0
-  have X2p : ExactTileInterfaceTriple F
-      (TileTranslation F (BandVectors.1 (q 0) (q 3)))
-      (TileTranslation F (-BandVectors.1 (q 0) (q 1))) := by
-    simpa [turn2, turn0, turn_neg] using X2p0
-  have X0m : ExactTileInterfaceTriple F
-      (TileTranslation F (-BandVectors.1 (q 0) (q 1)))
-      (TileTranslation F (BandVectors.1 (q 0) (q 2))) := by
-    simpa [turn_three, turn_two, turn0, turn1, turn_neg] using X0m0
-  have X1m : ExactTileInterfaceTriple F
-      (TileTranslation F (-BandVectors.1 (q 0) (q 2)))
-      (TileTranslation F (BandVectors.1 (q 0) (q 3))) := by
-    simpa [turn_three, turn_two, turn1, turn2, turn_neg] using X1m0
-  have X2m : ExactTileInterfaceTriple F
-      (TileTranslation F (-BandVectors.1 (q 0) (q 3)))
-      (TileTranslation F (BandVectors.1 (q 0) (q 1))) := by
-    simpa [turn_three, turn_two, turn2, turn0, turn_neg] using X2m0
   have touch0p : TouchingTriple F
       (TileTranslation F (BandVectors.1 (q 0) (q 1)))
       (TileTranslation F (-BandVectors.1 (q 0) (q 2))) :=

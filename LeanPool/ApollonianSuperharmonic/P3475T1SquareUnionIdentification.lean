@@ -484,13 +484,6 @@ private theorem boundary_side_segment_in_C :
   intro T n p v hvertex hedges C pair_eq_cases e he a b hab habne q hq
   rw [hedges] at he
   obtain ⟨i, hi⟩ := he
-  have hneq : v i ≠ v (i + 1) := by
-    intro h
-    have heq : ({v i, v (i + 1)} : Finset GaussianInt) = {a, b} := hi.symm.trans hab
-    rw [h] at heq
-    have hcard : ({a, b} : Finset GaussianInt).card = 2 := by simp [habne]
-    rw [← heq] at hcard
-    simp at hcard
   have hp := pair_eq_cases (v i) (v (i + 1)) a b habne (hi.symm.trans hab)
   rcases hp with ⟨ha, hb⟩ | ⟨ha, hb⟩
   · subst a; subst b
@@ -721,7 +714,6 @@ private theorem east_same_center_segment_avoids :
       rw [← hm]
       linarith [hxlo]
     have hlow2 : 2 * a.re + 1 ≤ 2 * m := by exact_mod_cast hlow2R
-    have hlow : a.re + 1 ≤ m := by omega
     have hhighR : (m : Real) < (a.re : Real) + 2 := by rw [← hm]; linarith
     have hhigh : m < a.re + 2 := by exact_mod_cast hhighR
     have hmEq : m = a.re + 1 := by omega
@@ -830,7 +822,6 @@ private theorem north_same_center_segment_avoids :
       rw [← hm]
       linarith [hylo]
     have hlow2 : 2 * a.im + 1 ≤ 2 * m := by exact_mod_cast hlow2R
-    have hlow : a.im + 1 ≤ m := by omega
     have hhighR : (m : Real) < (a.im : Real) + 2 := by rw [← hm]; linarith [hyhi]
     have hhigh : m < a.im + 2 := by exact_mod_cast hhighR
     have hmEq : m = a.im + 1 := by omega

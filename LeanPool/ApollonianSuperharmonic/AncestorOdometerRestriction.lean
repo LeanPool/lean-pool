@@ -88,9 +88,7 @@ private theorem parent_gt_one :
             0).1)) ) := by
   classical
   intro q hq facts
-  have hp := facts.1
   by_contra hn
-  have hle : (q 0).1 ≤ 1 := by omega
   have z0 : (q (0 : Fin 3).succ).1 = 0 := by
     have hb := hq.2 0
     have hn0 := facts.2.1 (0 : Fin 3)
@@ -217,9 +215,6 @@ private theorem hrestrict :
               (Set.ext_iff.mp (restrict_domain X.2 g) x |>.mp hx)
           have hxhs : x ∈ (hs a s).domain :=
             Set.ext_iff.mp (domain_from_odo _ _ _ (hcells a s)) x |>.mpr hx'
-          have hxg : x ∈ g.domain :=
-            Set.ext_iff.mp hgd x |>.mpr
-              (hfoot (Set.ext_iff.mp (restrict_domain X.2 g) x |>.mp hx))
           simp [restrict, hx, hcompat a s x hxhs]
         rw [hkeq]
         have ho := hcells a s
@@ -425,8 +420,6 @@ theorem AncestorOdometerRestriction
       (k : PartialOdometer), TileOdometer c U k →
         (k.domain : Set GaussianInt) = FootprintVertices U :=
             TileOdometerDomain
-  have positive_cells : ∀ (c : CircleCoordinates) (U : ProtoTile),
-      0 < c.1 → BandPrototile c U → U.cells.Nonempty := BandPrototileNonempty.positive
   let vertices : ProtoTile → Finset GaussianInt := fun U =>
     if U.cells.Nonempty then
       U.cells.biUnion (fun x => {x, x + 1, x + ⟨0, 1⟩, x + 1 + ⟨0, 1⟩})
@@ -451,20 +444,6 @@ theorem AncestorOdometerRestriction
       ((restrict U g).domain : Set GaussianInt) = FootprintVertices U := by
     intro U g
     exact vertices_spec U
-  have restrict_subset : ∀ U g V,
-      (g.domain : Set GaussianInt) = FootprintVertices V →
-      FootprintVertices U ⊆ FootprintVertices V →
-      (restrict U g).domain ⊆ g.domain := by
-    intro U g V hgd hincl x hx
-    have hx' : x ∈ FootprintVertices U :=
-      Set.ext_iff.mp (restrict_domain U g) x |>.mp hx
-    have hx'' := hincl hx'
-    exact Set.ext_iff.mp hgd x |>.mpr hx''
-  have restrict_agrees : ∀ U g,
-      ∀ x, x ∈ (restrict U g).domain → (restrict U g).value x = g.value x := by
-    intro U g x hx
-    have hx' : x ∈ vertices U := hx
-    simp [restrict, hx']
   have odo_eq : ∀ a b : PartialOdometer,
       (a.domain : Set GaussianInt) = b.domain →
       (∀ x, x ∈ a.domain → a.value x = b.value x) → a = b := AncestorRestrictionProof.odo_eq
@@ -493,9 +472,6 @@ theorem AncestorOdometerRestriction
         TileOdometer X.1 X.2 (restrict X.2 g) := by
     intro X Y hedge g hgd hgo
     rcases hedge with ⟨q, i, s, hq, hq0, hqi, hY, hX, hfoot, hcent⟩
-    have band_one : ∀ c : CircleCoordinates, ∀ U : ProtoTile,
-        BandPrototile c U → c.1 = 1 → ∃ x : GaussianInt, U.cells = {x} :=
-            AncestorRestrictionProof.band_one
     have facts := ProperBandCurvatureStructure q hq
     have parent_gt_one : 1 < (q 0).1 := AncestorRestrictionProof.parent_gt_one q hq facts
     have hrestrict : TileOdometer X.1 X.2 (restrict X.2 g) := AncestorRestrictionProof.hrestrict

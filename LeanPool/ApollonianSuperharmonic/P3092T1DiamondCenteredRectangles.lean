@@ -62,7 +62,6 @@ theorem P3092T1DiamondCenteredRectangles (k : Nat) (hk : 0 < k) :
     have hreal_y : (r : Real) ≤ (y : Real) + 1 := by exact_mod_cast hry
     have hreal_y' : (r : Real) + (y : Real) ≤ 2 * (k : Real) := by
       exact_mod_cast hry'
-    have hreal_i0 : 0 ≤ (i : Real) := Nat.cast_nonneg _
     have hp' :
         ((i : Real) - (r : Real) ≤ p.1 ∧ (y : Real) ≤ p.2) ∧
         (p.1 ≤ (i : Real) - (r : Real) + 1 ∧ p.2 ≤ (y : Real) + 1) := by

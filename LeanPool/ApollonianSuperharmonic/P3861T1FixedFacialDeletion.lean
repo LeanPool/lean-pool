@@ -937,8 +937,6 @@ theorem P3861T1FixedFacialDeletion {ι : Type} (P : PeriodicTileCore ι) :
     P.plane.face_boundary f
   have hCtrace (f : P.plane.Face) : C f ⊆ P3767T1FixedTrace P.plane :=
     htrace.1 f |>.2
-  have hCcompact (f : P.plane.Face) := FacialDeletionProof.hCcompact ι P hfront f
-  have hWopen (f : P.plane.Face) : IsOpen (W f) := isClosed_closure.isOpen_compl
   have hWnonempty (f : P.plane.Face) := FacialDeletionProof.hWnonempty ι P hgeom f
   have hWpartition (f : P.plane.Face) := FacialDeletionProof.hWpartition ι P f
   have hUsub (f : P.plane.Face) := FacialDeletionProof.hUsub ι P f
@@ -971,8 +969,6 @@ theorem P3861T1FixedFacialDeletion {ι : Type} (P : PeriodicTileCore ι) :
   have hSopen (S : Set (Real × Real))
       (hS : S = ⋃ v ∈ B, P3776T1OpenStar P v) := FacialDeletionProof.hSopen ι P hgeom f a S hS
   let S : Set (Real × Real) := ⋃ v ∈ B, P3776T1OpenStar P v
-  let T : Set (Real × Real) :=
-    ⋃ v ∈ {v : ι | v ∉ A ∧ v ∉ B}, P3776T1OpenStar P v
   have hSopen' : IsOpen S := hSopen S rfl
   have hTopen := FacialDeletionProof.hTopen ι P hgeom f a
   have hST := FacialDeletionProof.hST ι P f a hstarIntersect

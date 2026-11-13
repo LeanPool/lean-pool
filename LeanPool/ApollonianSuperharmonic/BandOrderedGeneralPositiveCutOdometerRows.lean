@@ -897,7 +897,6 @@ theorem BandOrderedGeneralPositiveCutOdometerRows
   have posO := PositiveCutOdometerGeometry.posO q cfg C0 T cert
       x geometry (PositiveCutOdometerGeometry.positive_of_nonempty)
   have nestedPositive := PositiveCutOdometerGeometry.nestedPositive q cfg pos2 pos3 posO
-  let I : GaussianInt := ⟨0, 1⟩
   let cOff (z : GaussianInt) : Real × Real :=
     (1 / 2 : Real) • (GaussianRealPoint z -
       (-(GaussianRealPoint z).2, (GaussianRealPoint z).1))
@@ -905,11 +904,7 @@ theorem BandOrderedGeneralPositiveCutOdometerRows
     ((1 / 2 : Real) * ((z.re : Real) - (z.im : Real)),
       (1 / 2 : Real) * ((z.im : Real) + (z.re : Real)))
   let W := BandVectors.1 (q 3) (q 2)
-  let Z := BandVectors.1 (cfg.firstPredecessor 1) (q 3)
-  let X := BandVectors.1 (q 2) (cfg.firstPredecessor 1)
   let A := BandVectors.2 (q 3) (q 2)
-  let B := BandVectors.2 (cfg.firstPredecessor 1) (q 3)
-  let D := BandVectors.2 (q 2) (cfg.firstPredecessor 1)
   have cadd (a b : GaussianInt) : cOff (a + b) = cOff a + cOff b := by
     apply Prod.ext <;> simp [cOff, GaussianRealPoint, Prod.smul_mk] <;> ring
   have sadd (a b : GaussianInt) : sOff (a + b) = sOff a + sOff b := by
@@ -995,16 +990,6 @@ theorem BandOrderedGeneralPositiveCutOdometerRows
       slopePm
   have slopeS2 := PositiveCutOdometerGeometry.slopeS2 q cfg sumS z zm zS2 dzS2
       slopePm
-  let cTarget (s : Fin 4) : Real × Real :=
-    (1 / 2 : Real) • GaussianRealPoint
-      (I ^ s.val *
-        (BandVectors.1 (geometry.birth geometry.parentIndex.succ) (geometry.birth 0) +
-          BandVectors.1 (geometry.birth 0) (geometry.birth geometry.parentIndex.succ)))
-  let sTarget (s : Fin 4) : Real × Real :=
-    (1 / 2 : Real) • GaussianRealPoint
-      ((-I) ^ s.val *
-        (BandVectors.2 (geometry.birth geometry.parentIndex.succ) (geometry.birth 0) +
-          BandVectors.2 (geometry.birth 0) (geometry.birth geometry.parentIndex.succ)))
   have flip := (VectorRecursionLaws geometry.birth geometry.proper.1).2.2.2.2
     geometry.proper geometry.parentIndex
   have cforms := PositiveCutOdometerGeometry.cforms q cfg C0 T cert x geometry flip

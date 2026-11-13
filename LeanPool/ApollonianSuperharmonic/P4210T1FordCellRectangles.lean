@@ -62,7 +62,6 @@ theorem P4210T1FordCellRectangles (q : Nat) (z : GaussianInt) :
         ⟨z - u, hz, by simp [GaussianTranslation]⟩
   refine ⟨coordinates q z, ?_⟩
   intro r s hq
-  have hsum : (q : Int) = (r : Int) + (s : Int) := by exact_mod_cast hq
   simp only [translated_mem, coordinates, Zsqrtd.re_sub, Zsqrtd.im_sub]
   omega
 

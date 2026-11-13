@@ -145,7 +145,6 @@ private theorem hkne1 (n : Nat) (a : Fin (n + 3)) (b : Fin (n + 3)) (hnext : b �
   let N := n + 3
   have hN : 3 ≤ N := hN n
   let rot : Fin N → Fin N := fun i => a + i
-  have hrot_inj : Function.Injective rot := hrot_inj n a
   let k : Nat := (b.val + N - a.val) % N
   have hklt : k < N := hklt n a b
   have hrotk : rot ⟨k, hklt⟩ = b := hrotk n a b
@@ -155,7 +154,6 @@ private theorem hkne1 (n : Nat) (a : Fin (n + 3)) (b : Fin (n + 3)) (hnext : b �
   have hidx : (⟨k, hklt⟩ : Fin N) = 1 := by
     apply Fin.ext
     simp [he, Nat.mod_eq_of_lt (show 1 < N by omega)]
-  have heq := hrot_inj (show rot ⟨k, hklt⟩ = rot 1 by rw [hidx])
   apply hnext
   calc
     b = rot 1 := hrotk.symm.trans (congrArg rot hidx)
@@ -212,7 +210,6 @@ private theorem hk_bounds (n : Nat) (a : Fin (n + 3)) (b : Fin (n + 3)) (hab : a
   let N := n + 3
   have hN : 3 ≤ N := hN n
   let k : Nat := (b.val + N - a.val) % N
-  have hklt : k < N := hklt n a b
   have hkv : k = if a.val ≤ b.val then b.val - a.val else b.val + N - a.val := hkv n a b
   have hkpos : 0 < k := hkpos n a b hab
   have hkne1 : k ≠ 1 := hkne1 n a b hnext
@@ -292,7 +289,6 @@ private theorem hlu (n : Nat) (a : Fin (n + 3)) (b : Fin (n + 3)) (hprev : a ≠
   let N := n + 3
   let rot : Fin N → Fin N := fun i => a + i
   let k : Nat := (b.val + N - a.val) % N
-  have hklt : k < N := hklt n a b
   have hkv : k = if a.val ≤ b.val then b.val - a.val else b.val + N - a.val := hkv n a b
   have hkle : k + 2 ≤ N := hkle n a b hprev
   let root : List (Fin N) := List.ofFn (fun i : Fin N => i)
@@ -310,7 +306,6 @@ private theorem hlv (n : Nat) (a : Fin (n + 3)) (b : Fin (n + 3)) (hprev : a ≠
   let N := n + 3
   let rot : Fin N → Fin N := fun i => a + i
   let k : Nat := (b.val + N - a.val) % N
-  have hklt : k < N := hklt n a b
   have hkv : k = if a.val ≤ b.val then b.val - a.val else b.val + N - a.val := hkv n a b
   have hkle : k + 2 ≤ N := hkle n a b hprev
   let root : List (Fin N) := List.ofFn (fun i : Fin N => i)
@@ -412,7 +407,6 @@ private theorem hleftLen (n : Nat) (a : Fin (n + 3)) (b : Fin (n + 3)) (hab : a 
   classical
   let N := n + 3
   let k : Nat := (b.val + N - a.val) % N
-  have hklt : k < N := hklt n a b
   have hkv : k = if a.val ≤ b.val then b.val - a.val else b.val + N - a.val := hkv n a b
   have hk_bounds : 2 ≤ k ∧ k ≤ N - 2 := hk_bounds n a b hab hnext hprev
   let leftN := k - 2
@@ -425,7 +419,6 @@ private theorem hrightLen (n : Nat) (a : Fin (n + 3)) (b : Fin (n + 3)) (hab : a
   classical
   let N := n + 3
   let k : Nat := (b.val + N - a.val) % N
-  have hklt : k < N := hklt n a b
   have hkv : k = if a.val ≤ b.val then b.val - a.val else b.val + N - a.val := hkv n a b
   have hkle : k + 2 ≤ N := hkle n a b hprev
   let root : List (Fin N) := List.ofFn (fun i : Fin N => i)
@@ -443,7 +436,6 @@ private theorem hleftLt (n : Nat) (a : Fin (n + 3)) (b : Fin (n + 3)) (hab : a �
   classical
   let N := n + 3
   let k : Nat := (b.val + N - a.val) % N
-  have hklt : k < N := hklt n a b
   have hkv : k = if a.val ≤ b.val then b.val - a.val else b.val + N - a.val := hkv n a b
   have hkle : k + 2 ≤ N := hkle n a b hprev
   let root : List (Fin N) := List.ofFn (fun i : Fin N => i)
@@ -459,7 +451,6 @@ private theorem hrightLt (n : Nat) (a : Fin (n + 3)) (b : Fin (n + 3)) (hab : a 
   classical
   let N := n + 3
   let k : Nat := (b.val + N - a.val) % N
-  have hklt : k < N := hklt n a b
   have hkv : k = if a.val ≤ b.val then b.val - a.val else b.val + N - a.val := hkv n a b
   have hkle : k + 2 ≤ N := hkle n a b hprev
   have hk_bounds : 2 ≤ k ∧ k ≤ N - 2 := hk_bounds n a b hab hnext hprev
@@ -506,7 +497,6 @@ private theorem hposRlt (n : Nat) (a : Fin (n + 3)) (b : Fin (n + 3)) (hab : a �
   let N := n + 3
   have hNpos : 0 < N := hNpos n
   let k : Nat := (b.val + N - a.val) % N
-  have hklt : k < N := hklt n a b
   have hkv : k = if a.val ≤ b.val then b.val - a.val else b.val + N - a.val := hkv n a b
   have hkle : k + 2 ≤ N := hkle n a b hprev
   let root : List (Fin N) := List.ofFn (fun i : Fin N => i)
@@ -544,7 +534,6 @@ private theorem hleft_inj (n : Nat) (a : Fin (n + 3)) (b : Fin (n + 3)) (hab : a
   let rot : Fin N → Fin N := fun i => a + i
   have hrot_inj : Function.Injective rot := hrot_inj n a
   let k : Nat := (b.val + N - a.val) % N
-  have hklt : k < N := hklt n a b
   have hkv : k = if a.val ≤ b.val then b.val - a.val else b.val + N - a.val := hkv n a b
   have hkle : k + 2 ≤ N := hkle n a b hprev
   let root : List (Fin N) := List.ofFn (fun i : Fin N => i)
@@ -567,13 +556,11 @@ private theorem hright_inj (n : Nat) (a : Fin (n + 3)) (b : Fin (n + 3)) (hab : 
   let rot : Fin N → Fin N := fun i => a + i
   have hrot_inj : Function.Injective rot := hrot_inj n a
   let k : Nat := (b.val + N - a.val) % N
-  have hklt : k < N := hklt n a b
   have hkv : k = if a.val ≤ b.val then b.val - a.val else b.val + N - a.val := hkv n a b
   have hk_bounds : 2 ≤ k ∧ k ≤ N - 2 := hk_bounds n a b hab hnext hprev
   let leftN := k - 2
   let rightN := N - k - 2
   have hleftLen : leftN + 3 = k + 1 := hleftLen n a b hab hnext hprev
-  have hrightLen : rightN + 3 = N - k + 1 := hrightLen n a b hab hnext hprev
   let posR : Fin (rightN + 3) → Nat := fun i =>
     if i.val = N - k then 0 else k + i.val
   have hposRlt (i : Fin (rightN + 3)) : posR i < N := hposRlt n a b hab hnext hprev i
@@ -583,14 +570,6 @@ private theorem hright_inj (n : Nat) (a : Fin (n + 3)) (b : Fin (n + 3)) (hab : 
   have heq := hrot_inj hij
   have hval : posR i = posR j := congrArg Fin.val heq
   apply Fin.ext
-  have hi_lt : i.val < N - k + 1 := by
-    calc i.val < rightN + 3 := i.isLt
-      _ = N - k + 1 := hrightLen
-  have hj_lt : j.val < N - k + 1 := by
-    calc j.val < rightN + 3 := j.isLt
-      _ = N - k + 1 := hrightLen
-  have hi : i.val ≤ N - k := by omega
-  have hj : j.val ≤ N - k := by omega
   dsimp [posR] at hval
   split_ifs at hval <;> omega
 
@@ -633,7 +612,6 @@ private theorem hleft_order (n : Nat) (a : Fin (n + 3)) (b : Fin (n + 3)) (hab :
     | succ j =>
       by_cases hjk : j + 1 = k
       · have hlast : j = u.length := by rw [hlu]; omega
-        have hpos : j + 1 = k := hjk
         simp only [List.getElem_cons_succ]
         rw [List.getElem_append_right (as := u) (bs := [b]) (by omega)]
         simp only [hlast, Nat.sub_self, List.getElem_cons_zero]
@@ -736,7 +714,6 @@ private theorem hAil (n : Nat) (a : Fin (n + 3)) (b : Fin (n + 3)) (hab : a ≠ 
   let N := n + 3
   let rot : Fin N → Fin N := fun i => a + i
   let k : Nat := (b.val + N - a.val) % N
-  have hklt : k < N := hklt n a b
   have hrotzero : rot (0 : Fin N) = a := hrotzero n a
   have hkv : k = if a.val ≤ b.val then b.val - a.val else b.val + N - a.val := hkv n a b
   have hkle : k + 2 ≤ N := hkle n a b hprev
@@ -753,11 +730,6 @@ private theorem hik (n : Nat) (a : Fin (n + 3)) (b : Fin (n + 3)) (hab : a ≠ b
   classical
   let N := n + 3
   let k : Nat := (b.val + N - a.val) % N
-  have hklt : k < N := hklt n a b
-  have hkv : k = if a.val ≤ b.val then b.val - a.val else b.val + N - a.val := hkv n a b
-  have hkle : k + 2 ≤ N := hkle n a b hprev
-  let root : List (Fin N) := List.ofFn (fun i : Fin N => i)
-  have hrootlen : root.length = N := hrootlen n
   let leftN := k - 2
   have hleftLen : leftN + 3 = k + 1 := hleftLen n a b hab hnext hprev
   dsimp only [CyclicChildrenConstruction.k, CyclicChildrenConstruction.leftN] at *
@@ -803,20 +775,13 @@ private theorem hBir (n : Nat) (a : Fin (n + 3)) (b : Fin (n + 3)) (hab : a ≠ 
   let rot : Fin N → Fin N := fun i => a + i
   let k : Nat := (b.val + N - a.val) % N
   have hklt : k < N := hklt n a b
-  have hkv : k = if a.val ≤ b.val then b.val - a.val else b.val + N - a.val := hkv n a b
   have hrotk : rot ⟨k, hklt⟩ = b := hrotk n a b
-  have hkle : k + 2 ≤ N := hkle n a b hprev
-  let root : List (Fin N) := List.ofFn (fun i : Fin N => i)
-  have hrootlen : root.length = N := hrootlen n
-  let leftN := k - 2
   let rightN := N - k - 2
-  have hleftLen : leftN + 3 = k + 1 := hleftLen n a b hab hnext hprev
   have hrightLen : rightN + 3 = N - k + 1 := hrightLen n a b hab hnext hprev
   let posR : Fin (rightN + 3) → Nat := fun i =>
     if i.val = N - k then 0 else k + i.val
   have hposRlt (i : Fin (rightN + 3)) : posR i < N := hposRlt n a b hab hnext hprev i
   let ir : Fin (rightN + 3) → Fin N := fun i => rot ⟨posR i, hposRlt i⟩
-  have hik : k < leftN + 3 := hik n a b hab hnext hprev
   change (ir 0 = b)
   have hz : ¬ (0 : Nat) = N - k := by omega
   simp [ir, posR, hz, hrotk]
@@ -826,19 +791,8 @@ private theorem hlastRlt (n : Nat) (a : Fin (n + 3)) (b : Fin (n + 3)) (hab : a 
   classical
   let N := n + 3
   let k : Nat := (b.val + N - a.val) % N
-  have hklt : k < N := hklt n a b
-  have hkv : k = if a.val ≤ b.val then b.val - a.val else b.val + N - a.val := hkv n a b
-  have hkle : k + 2 ≤ N := hkle n a b hprev
-  let root : List (Fin N) := List.ofFn (fun i : Fin N => i)
-  have hrootlen : root.length = N := hrootlen n
-  let leftN := k - 2
   let rightN := N - k - 2
-  have hleftLen : leftN + 3 = k + 1 := hleftLen n a b hab hnext hprev
   have hrightLen : rightN + 3 = N - k + 1 := hrightLen n a b hab hnext hprev
-  let posR : Fin (rightN + 3) → Nat := fun i =>
-    if i.val = N - k then 0 else k + i.val
-  have hposRlt (i : Fin (rightN + 3)) : posR i < N := hposRlt n a b hab hnext hprev i
-  have hik : k < leftN + 3 := hik n a b hab hnext hprev
   dsimp only [CyclicChildrenConstruction.N, CyclicChildrenConstruction.k,
       CyclicChildrenConstruction.rightN] at *
   change (N - k < rightN + 3)
@@ -881,7 +835,6 @@ private theorem hcommon (n : Nat) (a : Fin (n + 3)) (b : Fin (n + 3)) (hab : a �
   let rot : Fin N → Fin N := fun i => a + i
   have hrot_inj : Function.Injective rot := hrot_inj n a
   let k : Nat := (b.val + N - a.val) % N
-  have hklt : k < N := hklt n a b
   have hkv : k = if a.val ≤ b.val then b.val - a.val else b.val + N - a.val := hkv n a b
   have hkle : k + 2 ≤ N := hkle n a b hprev
   let root : List (Fin N) := List.ofFn (fun i : Fin N => i)
@@ -889,7 +842,6 @@ private theorem hcommon (n : Nat) (a : Fin (n + 3)) (b : Fin (n + 3)) (hab : a �
   let leftN := k - 2
   let rightN := N - k - 2
   have hleftLen : leftN + 3 = k + 1 := hleftLen n a b hab hnext hprev
-  have hrightLen : rightN + 3 = N - k + 1 := hrightLen n a b hab hnext hprev
   let il : Fin (leftN + 3) → Fin N := fun i => rot ⟨i.val, by rw [hleftLen] at i; omega⟩
   let posR : Fin (rightN + 3) → Nat := fun i =>
     if i.val = N - k then 0 else k + i.val
@@ -919,12 +871,6 @@ private theorem hcommon (n : Nat) (a : Fin (n + 3)) (b : Fin (n + 3)) (hab : a �
       apply hrot_inj
       simpa [il, ir] using hEq.symm
     have hv : i.val = posR j := congrArg Fin.val hpos
-    have hi : i.val ≤ k := by
-      have hbound : i.val < k + 1 := by simpa only [hleftLen] using i.isLt
-      omega
-    have hj : j.val ≤ N - k := by
-      have hbound : j.val < N - k + 1 := by simpa only [hrightLen] using j.isLt
-      omega
     by_cases hend : j.val = N - k
     · have hzero : posR j = 0 := by simp [posR, hend]
       have hizero : i.val = 0 := by omega
@@ -935,7 +881,6 @@ private theorem hcommon (n : Nat) (a : Fin (n + 3)) (b : Fin (n + 3)) (hab : a �
         _ = il 0 := by rw [hi0]
         _ = a := hAil
     · have hposr : posR j = k + j.val := by simp [posR, hend]
-      have hjeq : j.val = 0 := by omega
       have hival : i.val = k := by omega
       have hiK : i = ik := Fin.ext hival
       apply Or.inr
@@ -956,7 +901,6 @@ private theorem hopen_old_disjoint (n : Nat) (p : P3381T1PolygonBoundary n) (a :
       x ∈ openSegment Real (p.vertex a) (p.vertex b)) (j : Fin (N n)) :
       x ∉ segment Real (p.vertex j) (p.vertex (j + 1)) := by
   classical
-  let N := n + 3
   dsimp only [CyclicChildrenConstruction.N] at *
   intro hxj
   have hxC : x ∈ P3544T1BoundaryCarrier p := by
@@ -968,7 +912,6 @@ private theorem hvertex_side (n : Nat) (p : P3381T1PolygonBoundary n) (e j : Fin
       p.vertex e ∈ segment Real (p.vertex j) (p.vertex (j + 1))) :
       e = j ∨ e = j + 1 := by
   classical
-  let N := n + 3
   dsimp only [CyclicChildrenConstruction.N] at *
   by_cases heq : e = j
   · exact Or.inl heq
@@ -1029,25 +972,11 @@ private theorem hchord_old (n : Nat) (p : P3381T1PolygonBoundary n) (a : Fin (n 
       · rw [hxj1]
         exact right_mem_segment Real _ _
 
-private theorem hrot_succ (n : Nat) (a : Fin (n + 3)) (b : Fin (n + 3)) (hab : a ≠ b) (hnext : b
-    ≠ a + 1) (hprev : a ≠ b + 1) (i : Fin (N n)) : (rot n a) (i + 1) = (rot n a) i + 1 := by
+private theorem hrot_succ (n : Nat) (a : Fin (n + 3)) (i : Fin (N n)) :
+    (rot n a) (i + 1) = (rot n a) i + 1 := by
   classical
   let N := n + 3
   let rot : Fin N → Fin N := fun i => a + i
-  let k : Nat := (b.val + N - a.val) % N
-  have hklt : k < N := hklt n a b
-  have hkv : k = if a.val ≤ b.val then b.val - a.val else b.val + N - a.val := hkv n a b
-  have hkle : k + 2 ≤ N := hkle n a b hprev
-  let root : List (Fin N) := List.ofFn (fun i : Fin N => i)
-  have hrootlen : root.length = N := hrootlen n
-  let leftN := k - 2
-  let rightN := N - k - 2
-  have hleftLen : leftN + 3 = k + 1 := hleftLen n a b hab hnext hprev
-  let posR : Fin (rightN + 3) → Nat := fun i =>
-    if i.val = N - k then 0 else k + i.val
-  have hposRlt (i : Fin (rightN + 3)) : posR i < N := hposRlt n a b hab hnext hprev i
-  have hik : k < leftN + 3 := hik n a b hab hnext hprev
-  have hlastRlt : N - k < rightN + 3 := hlastRlt n a b hab hnext hprev
   dsimp only [CyclicChildrenConstruction.N] at *
   change (rot (i + 1) = rot i + 1)
   apply Fin.ext
@@ -1066,20 +995,10 @@ private theorem hleftLen_gt (n : Nat) (a : Fin (n + 3)) (b : Fin (n + 3)) (hab :
   classical
   let N := n + 3
   let k : Nat := (b.val + N - a.val) % N
-  have hklt : k < N := hklt n a b
   have hkv : k = if a.val ≤ b.val then b.val - a.val else b.val + N - a.val := hkv n a b
-  have hkle : k + 2 ≤ N := hkle n a b hprev
   have hk_bounds : 2 ≤ k ∧ k ≤ N - 2 := hk_bounds n a b hab hnext hprev
-  let root : List (Fin N) := List.ofFn (fun i : Fin N => i)
-  have hrootlen : root.length = N := hrootlen n
   let leftN := k - 2
-  let rightN := N - k - 2
   have hleftLen : leftN + 3 = k + 1 := hleftLen n a b hab hnext hprev
-  let posR : Fin (rightN + 3) → Nat := fun i =>
-    if i.val = N - k then 0 else k + i.val
-  have hposRlt (i : Fin (rightN + 3)) : posR i < N := hposRlt n a b hab hnext hprev i
-  have hik : k < leftN + 3 := hik n a b hab hnext hprev
-  have hlastRlt : N - k < rightN + 3 := hlastRlt n a b hab hnext hprev
   dsimp only [CyclicChildrenConstruction.leftN] at *
   change (1 < leftN + 3)
   rw [hleftLen]; omega
@@ -1089,20 +1008,8 @@ private theorem hrightLen_gt (n : Nat) (a : Fin (n + 3)) (b : Fin (n + 3)) (hab 
   classical
   let N := n + 3
   let k : Nat := (b.val + N - a.val) % N
-  have hklt : k < N := hklt n a b
-  have hkv : k = if a.val ≤ b.val then b.val - a.val else b.val + N - a.val := hkv n a b
-  have hkle : k + 2 ≤ N := hkle n a b hprev
-  let root : List (Fin N) := List.ofFn (fun i : Fin N => i)
-  have hrootlen : root.length = N := hrootlen n
-  let leftN := k - 2
   let rightN := N - k - 2
-  have hleftLen : leftN + 3 = k + 1 := hleftLen n a b hab hnext hprev
   have hrightLen : rightN + 3 = N - k + 1 := hrightLen n a b hab hnext hprev
-  let posR : Fin (rightN + 3) → Nat := fun i =>
-    if i.val = N - k then 0 else k + i.val
-  have hposRlt (i : Fin (rightN + 3)) : posR i < N := hposRlt n a b hab hnext hprev i
-  have hik : k < leftN + 3 := hik n a b hab hnext hprev
-  have hlastRlt : N - k < rightN + 3 := hlastRlt n a b hab hnext hprev
   dsimp only [CyclicChildrenConstruction.rightN] at *
   change (1 < rightN + 3)
   rw [hrightLen]; omega
@@ -1115,21 +1022,14 @@ private theorem hleft_succ (n : Nat) (a : Fin (n + 3)) (b : Fin (n + 3)) (hab : 
   have hN : 3 ≤ N := hN n
   let rot : Fin N → Fin N := fun i => a + i
   let k : Nat := (b.val + N - a.val) % N
-  have hklt : k < N := hklt n a b
   have hkv : k = if a.val ≤ b.val then b.val - a.val else b.val + N - a.val := hkv n a b
   have hkle : k + 2 ≤ N := hkle n a b hprev
   let root : List (Fin N) := List.ofFn (fun i : Fin N => i)
   have hrootlen : root.length = N := hrootlen n
   let leftN := k - 2
-  let rightN := N - k - 2
   have hleftLen : leftN + 3 = k + 1 := hleftLen n a b hab hnext hprev
   let il : Fin (leftN + 3) → Fin N := fun i => rot ⟨i.val, by rw [hleftLen] at i; omega⟩
-  let posR : Fin (rightN + 3) → Nat := fun i =>
-    if i.val = N - k then 0 else k + i.val
-  have hposRlt (i : Fin (rightN + 3)) : posR i < N := hposRlt n a b hab hnext hprev i
-  have hik : k < leftN + 3 := hik n a b hab hnext hprev
-  have hlastRlt : N - k < rightN + 3 := hlastRlt n a b hab hnext hprev
-  have hrot_succ (i : Fin N) : rot (i + 1) = rot i + 1 := hrot_succ n a b hab hnext hprev i
+  have hrot_succ (i : Fin N) : rot (i + 1) = rot i + 1 := hrot_succ n a i
   have hleftLen_gt : 1 < leftN + 3 := hleftLen_gt n a b hab hnext hprev
   dsimp only [CyclicChildrenConstruction.k, CyclicChildrenConstruction.leftN] at *
   change (il (i + 1) = il i + 1)
@@ -1164,7 +1064,6 @@ private theorem hright_succ (n : Nat) (a : Fin (n + 3)) (b : Fin (n + 3)) (hab :
   have hN : 3 ≤ N := hN n
   let rot : Fin N → Fin N := fun i => a + i
   let k : Nat := (b.val + N - a.val) % N
-  have hklt : k < N := hklt n a b
   have hkv : k = if a.val ≤ b.val then b.val - a.val else b.val + N - a.val := hkv n a b
   have hkle : k + 2 ≤ N := hkle n a b hprev
   let root : List (Fin N) := List.ofFn (fun i : Fin N => i)
@@ -1177,9 +1076,7 @@ private theorem hright_succ (n : Nat) (a : Fin (n + 3)) (b : Fin (n + 3)) (hab :
     if i.val = N - k then 0 else k + i.val
   have hposRlt (i : Fin (rightN + 3)) : posR i < N := hposRlt n a b hab hnext hprev i
   let ir : Fin (rightN + 3) → Fin N := fun i => rot ⟨posR i, hposRlt i⟩
-  have hik : k < leftN + 3 := hik n a b hab hnext hprev
-  have hlastRlt : N - k < rightN + 3 := hlastRlt n a b hab hnext hprev
-  have hrot_succ (i : Fin N) : rot (i + 1) = rot i + 1 := hrot_succ n a b hab hnext hprev i
+  have hrot_succ (i : Fin N) : rot (i + 1) = rot i + 1 := hrot_succ n a i
   have hrightLen_gt : 1 < rightN + 3 := hrightLen_gt n a b hab hnext hprev
   dsimp only [CyclicChildrenConstruction.N, CyclicChildrenConstruction.k,
       CyclicChildrenConstruction.rightN] at *
@@ -1232,21 +1129,12 @@ private theorem hleft_wrap (n : Nat) (a : Fin (n + 3)) (b : Fin (n + 3)) (hab : 
   classical
   let N := n + 3
   let k : Nat := (b.val + N - a.val) % N
-  have hklt : k < N := hklt n a b
   have hkv : k = if a.val ≤ b.val then b.val - a.val else b.val + N - a.val := hkv n a b
-  have hkle : k + 2 ≤ N := hkle n a b hprev
   have hk_bounds : 2 ≤ k ∧ k ≤ N - 2 := hk_bounds n a b hab hnext hprev
-  let root : List (Fin N) := List.ofFn (fun i : Fin N => i)
-  have hrootlen : root.length = N := hrootlen n
   let leftN := k - 2
-  let rightN := N - k - 2
   have hleftLen : leftN + 3 = k + 1 := hleftLen n a b hab hnext hprev
-  let posR : Fin (rightN + 3) → Nat := fun i =>
-    if i.val = N - k then 0 else k + i.val
-  have hposRlt (i : Fin (rightN + 3)) : posR i < N := hposRlt n a b hab hnext hprev i
   have hik : k < leftN + 3 := hik n a b hab hnext hprev
   let ik : Fin (leftN + 3) := ⟨k, hik⟩
-  have hlastRlt : N - k < rightN + 3 := hlastRlt n a b hab hnext hprev
   change (ik + 1 = 0)
   apply Fin.ext
   simp [ik, Fin.val_add_eq_ite, hleftLen,
@@ -1257,19 +1145,8 @@ private theorem hright_wrap (n : Nat) (a : Fin (n + 3)) (b : Fin (n + 3)) (hab :
   classical
   let N := n + 3
   let k : Nat := (b.val + N - a.val) % N
-  have hklt : k < N := hklt n a b
-  have hkv : k = if a.val ≤ b.val then b.val - a.val else b.val + N - a.val := hkv n a b
-  have hkle : k + 2 ≤ N := hkle n a b hprev
-  let root : List (Fin N) := List.ofFn (fun i : Fin N => i)
-  have hrootlen : root.length = N := hrootlen n
-  let leftN := k - 2
   let rightN := N - k - 2
-  have hleftLen : leftN + 3 = k + 1 := hleftLen n a b hab hnext hprev
   have hrightLen : rightN + 3 = N - k + 1 := hrightLen n a b hab hnext hprev
-  let posR : Fin (rightN + 3) → Nat := fun i =>
-    if i.val = N - k then 0 else k + i.val
-  have hposRlt (i : Fin (rightN + 3)) : posR i < N := hposRlt n a b hab hnext hprev i
-  have hik : k < leftN + 3 := hik n a b hab hnext hprev
   have hlastRlt : N - k < rightN + 3 := hlastRlt n a b hab hnext hprev
   let lastR : Fin (rightN + 3) := ⟨N - k, hlastRlt⟩
   change (lastR + 1 = 0)
@@ -1286,7 +1163,6 @@ private theorem hleft_last_edge (n : Nat) (p : P3381T1PolygonBoundary n) (a : Fi
   let N := n + 3
   let rot : Fin N → Fin N := fun i => a + i
   let k : Nat := (b.val + N - a.val) % N
-  have hklt : k < N := hklt n a b
   have hkv : k = if a.val ≤ b.val then b.val - a.val else b.val + N - a.val := hkv n a b
   have hkle : k + 2 ≤ N := hkle n a b hprev
   let root : List (Fin N) := List.ofFn (fun i : Fin N => i)
@@ -1338,7 +1214,6 @@ private theorem hleft_nonlast (n : Nat) (p : P3381T1PolygonBoundary n) (a : Fin 
   let N := n + 3
   let rot : Fin N → Fin N := fun i => a + i
   let k : Nat := (b.val + N - a.val) % N
-  have hklt : k < N := hklt n a b
   have hkv : k = if a.val ≤ b.val then b.val - a.val else b.val + N - a.val := hkv n a b
   have hkle : k + 2 ≤ N := hkle n a b hprev
   let root : List (Fin N) := List.ofFn (fun i : Fin N => i)
@@ -1393,7 +1268,6 @@ private theorem hleft_old_old (n : Nat) (p : P3381T1PolygonBoundary n) (a : Fin 
   let N := n + 3
   let rot : Fin N → Fin N := fun i => a + i
   let k : Nat := (b.val + N - a.val) % N
-  have hklt : k < N := hklt n a b
   have hkv : k = if a.val ≤ b.val then b.val - a.val else b.val + N - a.val := hkv n a b
   have hkle : k + 2 ≤ N := hkle n a b hprev
   let root : List (Fin N) := List.ofFn (fun i : Fin N => i)
@@ -1469,7 +1343,6 @@ private theorem hleft_old_last (n : Nat) (p : P3381T1PolygonBoundary n) (a : Fin
   let N := n + 3
   let rot : Fin N → Fin N := fun i => a + i
   let k : Nat := (b.val + N - a.val) % N
-  have hklt : k < N := hklt n a b
   have hkv : k = if a.val ≤ b.val then b.val - a.val else b.val + N - a.val := hkv n a b
   have hkle : k + 2 ≤ N := hkle n a b hprev
   let root : List (Fin N) := List.ofFn (fun i : Fin N => i)
@@ -1577,7 +1450,6 @@ private theorem hleft_last_old (n : Nat) (p : P3381T1PolygonBoundary n) (a : Fin
   let N := n + 3
   let rot : Fin N → Fin N := fun i => a + i
   let k : Nat := (b.val + N - a.val) % N
-  have hklt : k < N := hklt n a b
   have hkv : k = if a.val ≤ b.val then b.val - a.val else b.val + N - a.val := hkv n a b
   have hkle : k + 2 ≤ N := hkle n a b hprev
   let root : List (Fin N) := List.ofFn (fun i : Fin N => i)
@@ -1865,7 +1737,6 @@ private theorem hcarrier_union (n : Nat) (p : P3381T1PolygonBoundary n) (a : Fin
   let N := n + 3
   let rot : Fin N → Fin N := fun i => a + i
   let k : Nat := (b.val + N - a.val) % N
-  have hklt : k < N := hklt n a b
   have hkv : k = if a.val ≤ b.val then b.val - a.val else b.val + N - a.val := hkv n a b
   have hkle : k + 2 ≤ N := hkle n a b hprev
   let root : List (Fin N) := List.ofFn (fun i : Fin N => i)
@@ -1879,8 +1750,6 @@ private theorem hcarrier_union (n : Nat) (p : P3381T1PolygonBoundary n) (a : Fin
     if i.val = N - k then 0 else k + i.val
   have hposRlt (i : Fin (rightN + 3)) : posR i < N := hposRlt n a b hab hnext hprev i
   let ir : Fin (rightN + 3) → Fin N := fun i => rot ⟨posR i, hposRlt i⟩
-  have hleft_inj : Function.Injective il := hleft_inj n a b hab hnext hprev
-  have hright_inj : Function.Injective ir := hright_inj n a b hab hnext hprev
   have hik : k < leftN + 3 := hik n a b hab hnext hprev
   let ik : Fin (leftN + 3) := ⟨k, hik⟩
   have hlastRlt : N - k < rightN + 3 := hlastRlt n a b hab hnext hprev
@@ -1903,44 +1772,6 @@ private theorem hcarrier_union (n : Nat) (p : P3381T1PolygonBoundary n) (a : Fin
       segment Real (p.vertex (ir i)) (p.vertex (ir (i + 1))) =
         segment Real (p.vertex (ir i)) (p.vertex (ir i + 1)) := hright_nonlast n p a b hab hnext
             hprev i hi
-  have hleft_old_old (i j : Fin (leftN + 3)) (hi : i.val < k)
-      (hj : j.val < k) (hij : i ≠ j) :
-      segment Real (p.vertex (il i)) (p.vertex (il (i + 1))) ∩
-          segment Real (p.vertex (il j)) (p.vertex (il (j + 1))) =
-        {x | (x = p.vertex (il i) ∨ x = p.vertex (il (i + 1))) ∧
-          (x = p.vertex (il j) ∨ x = p.vertex (il (j + 1)))} := hleft_old_old n p a b hab hnext
-              hprev i j hi hj hij
-  have hright_old_old (i j : Fin (rightN + 3)) (hi : i.val < N - k)
-      (hj : j.val < N - k) (hij : i ≠ j) :
-      segment Real (p.vertex (ir i)) (p.vertex (ir (i + 1))) ∩
-          segment Real (p.vertex (ir j)) (p.vertex (ir (j + 1))) =
-        {x | (x = p.vertex (ir i) ∨ x = p.vertex (ir (i + 1))) ∧
-          (x = p.vertex (ir j) ∨ x = p.vertex (ir (j + 1)))} := hright_old_old n p a b hab hnext
-              hprev i j hi hj hij
-  have hleft_old_last (i : Fin (leftN + 3)) (hi : i.val < k) :
-      segment Real (p.vertex (il i)) (p.vertex (il (i + 1))) ∩
-          segment Real (p.vertex (il ik)) (p.vertex (il (ik + 1))) =
-        {x | (x = p.vertex (il i) ∨ x = p.vertex (il (i + 1))) ∧
-          (x = p.vertex (il ik) ∨ x = p.vertex (il (ik + 1)))} := hleft_old_last n p a b hab
-              hnext hprev hclear i hi
-  have hright_old_last (i : Fin (rightN + 3)) (hi : i.val < N - k) :
-      segment Real (p.vertex (ir i)) (p.vertex (ir (i + 1))) ∩
-          segment Real (p.vertex (ir lastR)) (p.vertex (ir (lastR + 1))) =
-        {x | (x = p.vertex (ir i) ∨ x = p.vertex (ir (i + 1))) ∧
-          (x = p.vertex (ir lastR) ∨ x = p.vertex (ir (lastR + 1)))} := hright_old_last n p a b
-              hab hnext hprev hclear i hi
-  have hleft_last_old (i : Fin (leftN + 3)) (hi : i.val < k) :
-      segment Real (p.vertex (il ik)) (p.vertex (il (ik + 1))) ∩
-          segment Real (p.vertex (il i)) (p.vertex (il (i + 1))) =
-        {x | (x = p.vertex (il ik) ∨ x = p.vertex (il (ik + 1))) ∧
-          (x = p.vertex (il i) ∨ x = p.vertex (il (i + 1)))} := hleft_last_old n p a b hab hnext
-              hprev hclear i hi
-  have hright_last_old (i : Fin (rightN + 3)) (hi : i.val < N - k) :
-      segment Real (p.vertex (ir lastR)) (p.vertex (ir (lastR + 1))) ∩
-          segment Real (p.vertex (ir i)) (p.vertex (ir (i + 1))) =
-        {x | (x = p.vertex (ir lastR) ∨ x = p.vertex (ir (lastR + 1))) ∧
-          (x = p.vertex (ir i) ∨ x = p.vertex (ir (i + 1)))} := hright_last_old n p a b hab hnext
-              hprev hclear i hi
   let leftPoly : P3381T1PolygonBoundary leftN := CyclicChildrenConstruction.leftPoly n p a b
       hab hnext hprev hclear
   let rightPoly : P3381T1PolygonBoundary rightN := CyclicChildrenConstruction.rightPoly n p a b
@@ -2032,9 +1863,6 @@ private theorem hcarrier_union (n : Nat) (p : P3381T1PolygonBoundary n) (a : Fin
     · have hxiL : x ∈ segment Real (p.vertex (il ik)) (p.vertex (il (ik + 1))) := by
         rw [hleft_last_edge]
         exact hx
-      have hxiR : x ∈ segment Real (p.vertex (ir lastR)) (p.vertex (ir (lastR + 1))) := by
-        rw [hright_last_edge]
-        exact hx
       exact Or.inl ((hleft_mem x).mpr ⟨ik, hxiL⟩)
 
 private theorem hcommon_index (n : Nat) (a : Fin (n + 3)) (b : Fin (n + 3)) (hab : a ≠ b) (hnext
@@ -2045,7 +1873,6 @@ private theorem hcommon_index (n : Nat) (a : Fin (n + 3)) (b : Fin (n + 3)) (hab
   let N := n + 3
   let rot : Fin N → Fin N := fun i => a + i
   let k : Nat := (b.val + N - a.val) % N
-  have hklt : k < N := hklt n a b
   have hkv : k = if a.val ≤ b.val then b.val - a.val else b.val + N - a.val := hkv n a b
   have hkle : k + 2 ≤ N := hkle n a b hprev
   let root : List (Fin N) := List.ofFn (fun i : Fin N => i)
@@ -2074,7 +1901,6 @@ private theorem hpoint_chord (n : Nat) (p : P3381T1PolygonBoundary n) (a : Fin (
       (hxs : x = p.vertex s) (hs : s = a ∨ s = b) :
       x ∈ segment Real (p.vertex a) (p.vertex b) := by
   classical
-  let N := n + 3
   dsimp only [CyclicChildrenConstruction.N] at *
   rcases hs with h | h
   · rw [hxs, h]
@@ -2092,7 +1918,6 @@ private theorem hcarrier_intersection (n : Nat) (p : P3381T1PolygonBoundary n) (
   let N := n + 3
   let rot : Fin N → Fin N := fun i => a + i
   let k : Nat := (b.val + N - a.val) % N
-  have hklt : k < N := hklt n a b
   have hkv : k = if a.val ≤ b.val then b.val - a.val else b.val + N - a.val := hkv n a b
   have hkle : k + 2 ≤ N := hkle n a b hprev
   let root : List (Fin N) := List.ofFn (fun i : Fin N => i)
@@ -2134,44 +1959,6 @@ private theorem hcarrier_intersection (n : Nat) (p : P3381T1PolygonBoundary n) (
       segment Real (p.vertex (ir i)) (p.vertex (ir (i + 1))) =
         segment Real (p.vertex (ir i)) (p.vertex (ir i + 1)) := hright_nonlast n p a b hab hnext
             hprev i hi
-  have hleft_old_old (i j : Fin (leftN + 3)) (hi : i.val < k)
-      (hj : j.val < k) (hij : i ≠ j) :
-      segment Real (p.vertex (il i)) (p.vertex (il (i + 1))) ∩
-          segment Real (p.vertex (il j)) (p.vertex (il (j + 1))) =
-        {x | (x = p.vertex (il i) ∨ x = p.vertex (il (i + 1))) ∧
-          (x = p.vertex (il j) ∨ x = p.vertex (il (j + 1)))} := hleft_old_old n p a b hab hnext
-              hprev i j hi hj hij
-  have hright_old_old (i j : Fin (rightN + 3)) (hi : i.val < N - k)
-      (hj : j.val < N - k) (hij : i ≠ j) :
-      segment Real (p.vertex (ir i)) (p.vertex (ir (i + 1))) ∩
-          segment Real (p.vertex (ir j)) (p.vertex (ir (j + 1))) =
-        {x | (x = p.vertex (ir i) ∨ x = p.vertex (ir (i + 1))) ∧
-          (x = p.vertex (ir j) ∨ x = p.vertex (ir (j + 1)))} := hright_old_old n p a b hab hnext
-              hprev i j hi hj hij
-  have hleft_old_last (i : Fin (leftN + 3)) (hi : i.val < k) :
-      segment Real (p.vertex (il i)) (p.vertex (il (i + 1))) ∩
-          segment Real (p.vertex (il ik)) (p.vertex (il (ik + 1))) =
-        {x | (x = p.vertex (il i) ∨ x = p.vertex (il (i + 1))) ∧
-          (x = p.vertex (il ik) ∨ x = p.vertex (il (ik + 1)))} := hleft_old_last n p a b hab
-              hnext hprev hclear i hi
-  have hright_old_last (i : Fin (rightN + 3)) (hi : i.val < N - k) :
-      segment Real (p.vertex (ir i)) (p.vertex (ir (i + 1))) ∩
-          segment Real (p.vertex (ir lastR)) (p.vertex (ir (lastR + 1))) =
-        {x | (x = p.vertex (ir i) ∨ x = p.vertex (ir (i + 1))) ∧
-          (x = p.vertex (ir lastR) ∨ x = p.vertex (ir (lastR + 1)))} := hright_old_last n p a b
-              hab hnext hprev hclear i hi
-  have hleft_last_old (i : Fin (leftN + 3)) (hi : i.val < k) :
-      segment Real (p.vertex (il ik)) (p.vertex (il (ik + 1))) ∩
-          segment Real (p.vertex (il i)) (p.vertex (il (i + 1))) =
-        {x | (x = p.vertex (il ik) ∨ x = p.vertex (il (ik + 1))) ∧
-          (x = p.vertex (il i) ∨ x = p.vertex (il (i + 1)))} := hleft_last_old n p a b hab hnext
-              hprev hclear i hi
-  have hright_last_old (i : Fin (rightN + 3)) (hi : i.val < N - k) :
-      segment Real (p.vertex (ir lastR)) (p.vertex (ir (lastR + 1))) ∩
-          segment Real (p.vertex (ir i)) (p.vertex (ir (i + 1))) =
-        {x | (x = p.vertex (ir lastR) ∨ x = p.vertex (ir (lastR + 1))) ∧
-          (x = p.vertex (ir i) ∨ x = p.vertex (ir (i + 1)))} := hright_last_old n p a b hab hnext
-              hprev hclear i hi
   let leftPoly : P3381T1PolygonBoundary leftN := CyclicChildrenConstruction.leftPoly n p a b
       hab hnext hprev hclear
   let rightPoly : P3381T1PolygonBoundary rightN := CyclicChildrenConstruction.rightPoly n p a b

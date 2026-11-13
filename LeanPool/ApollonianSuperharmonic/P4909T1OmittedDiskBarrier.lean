@@ -41,7 +41,6 @@ theorem P4909T1OmittedDiskBarrier (P : Set ℂ) (a : ℂ) (r : ℝ)
       simpa only [Real.dist_eq] using hu
     have hprod := (lt_div_iff₀ (by linarith : 0 < ‖z - a‖ + 1)).mp hu'
     nlinarith [abs_nonneg (u - t)]
-  have hball : a ∈ Metric.ball a r := Metric.mem_ball_self hr
   have hdisj : Disjoint (interior P) (interior Pᶜ) := by
     rw [Set.disjoint_left]
     intro z hz hc

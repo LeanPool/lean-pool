@@ -1492,7 +1492,6 @@ theorem BandOrderedGeneralChildInterfaces
           hdisjBC hdisjCA (ChildInterfaceGeometry.hcommonAB q cfg C₀ T cert)
               (ChildInterfaceGeometry.hcommonBC q cfg C₀ T cert)
               (ChildInterfaceGeometry.hcommonCA q cfg C₀ T cert) hLA' hLB' hLC'
-  let retargetTriple := retargetNonemptyTriple
   have hzero : (TileTranslation T 0).cells = T.cells := ChildInterfaceGeometry.hzero T
   have rootNe : T.cells.Nonempty := ChildInterfaceGeometry.rootNe q cfg C₀ T cert blockEq hLA' hzero
   have transZeroNe : (TileTranslation T 0).cells.Nonempty := by
@@ -1507,8 +1506,6 @@ theorem BandOrderedGeneralChildInterfaces
   have rowJunction := ChildInterfaceGeometry.rowJunction q cfg C₀ T cert patchForAt blockDisjoint
       patchUnion blockLattice
   have blockEdge := ChildInterfaceGeometry.blockEdge q cfg C₀ T cert
-  let τ1 : Finset (Int × Int) := {(0,0),(1,0),(0,-1)}
-  let τ3 : Finset (Int × Int) := {(0,0),(-1,-1),(-1,0)}
   have row1 := ChildInterfaceGeometry.row1 q cfg C₀ T cert
           rowJunction blockEdge
   have row3 := ChildInterfaceGeometry.row3 q cfg C₀ T cert

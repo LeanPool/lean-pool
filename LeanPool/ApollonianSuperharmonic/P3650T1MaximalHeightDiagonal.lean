@@ -201,9 +201,6 @@ private theorem hheightlt :
   classical
   intro n p E d A hcoord_nonneg hsum hheightd hcoord0 hcoord2
   rw [hheightd]
-  have h1 := hcoord_nonneg 1
-  have h2 := hcoord_nonneg 2
-  have h0 := hcoord0
   linarith
 
 private theorem hcoordB0 :
@@ -487,8 +484,6 @@ private theorem hPdecomp :
   rw [Fin.sum_univ_three, hA0, hA1, hA2] at hcomb
   have hsumP : A.coord 0 P + A.coord 1 P + A.coord 2 P = 1 := by
     simpa only [Fin.sum_univ_three] using A.sum_coord_apply_eq_one P
-  have hcoord1P : A.coord 1 P = 1 - A.coord 0 P - A.coord 2 P := by
-    linarith [hsumP]
   apply Prod.ext
   · have hxcomb := congrArg Prod.fst hcomb
     change A.coord 0 P * (p.vertex (E.b - 1)).1 +

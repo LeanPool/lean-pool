@@ -1309,8 +1309,6 @@ theorem P4418T3PresentedRowAdjacency :
   obtain ⟨a13, a12, a31, a23, a01, a02, a03, sum12, sum13, sum23⟩ :=
     P4387T1ParentSlopeNormalForms q cfg
   simp only [q] at a13 a12 a31 a23 a01 a02 a03 sum12 sum13 sum23
-  have fin2 : (⟨2, by decide⟩ : Fin 4) = 2 := rfl
-  have fin3 : (⟨3, by decide⟩ : Fin 4) = 3 := rfl
   -- Keep the table's predecessor, parent slot, rotation, and directed order.
   have presentedAdjacency :
     let S := bundle.pieces bundle.selectedSlot bundle.selectedSign

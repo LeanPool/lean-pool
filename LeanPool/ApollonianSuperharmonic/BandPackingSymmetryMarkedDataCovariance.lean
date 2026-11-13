@@ -1122,23 +1122,15 @@ private theorem finiteCompanion :
   classical
   intro L rev delta s a a' hneg hquarter hphase
   dsimp
-  let s' : Fin 4 := if rev then -s - 1 + (if delta then 2 else 0)
-    else s + (if delta then 2 else 0)
   have qm (z : GaussianInt) : GaussianQuarterTurn z =
       (⟨0, 1⟩ : GaussianInt) * z := by
     ext <;> simp [GaussianQuarterTurn]
-  have p0 (z : GaussianInt) : (⟨0, 1⟩ : GaussianInt)^0 * z = z := by simp
-  have p1 (z : GaussianInt) : (⟨0, 1⟩ : GaussianInt)^1 * z =
-      GaussianQuarterTurn z := by simpa using (qm z).symm
   have unit2 : (⟨0, 1⟩ : GaussianInt)^2 = -1 := by
     simp only [pow_two]
     ext <;> norm_num
   have unit3 : (⟨0, 1⟩ : GaussianInt)^3 = -⟨0, 1⟩ := by
     rw [pow_succ, unit2]
     norm_num
-  have q2 (z : GaussianInt) :
-      GaussianQuarterTurn (GaussianQuarterTurn z) = -z := by
-    ext <;> simp [GaussianQuarterTurn]
   have qneg (z : GaussianInt) :
       GaussianQuarterTurn (-z) = -GaussianQuarterTurn z := by
     ext <;> simp [GaussianQuarterTurn]
@@ -1154,7 +1146,6 @@ private theorem finiteCompanion :
       _ = -GaussianQuarterTurn z := by rw [qm]
   have ev0 : Even 0 := ⟨0, by omega⟩
   have ev2 : Even 2 := ⟨1, by omega⟩
-  have odd1 : ¬ Even 1 := by rintro ⟨r, hr⟩; omega
   have odd3 : ¬ Even 3 := by rintro ⟨r, hr⟩; omega
   cases hrev : rev <;> cases hdel : delta <;> fin_cases s
   all_goals
@@ -1260,7 +1251,6 @@ private theorem hphase :
     ) := by
   classical
   intro g q i delta hdelta q' sigma a a'
-  let b' := BandVectors.1 (q' 0) (q' (sigma i).succ)
   have hh := hdelta i
   dsimp [BandPackingSymmetryScopedPhase, sigma, a', a] at hh
   cases delta <;> simpa using hh.1
@@ -1547,12 +1537,7 @@ private theorem forwardSub :
     let Z : GaussianInt × GaussianInt := (W, A)
     let M : GaussianInt × GaussianInt :=
       (W - GaussianQuarterTurn W, A + GaussianQuarterTurn A)
-    let W' := BandVectors.1 (q' ((sigma i + 2).succ))
-      (q' ((sigma i + 1).succ))
-    let A' := BandVectors.2 (q' ((sigma i + 2).succ))
-      (q' ((sigma i + 1).succ))
     let eReal : ℝ := if e then 1 else -1
-    let deltaReal : ℝ := if delta then -1 else 1
     let k : ℝ := eReal / 2
     have hcentM := MarkedCovarianceGeometry.hcentM T T' q i e hcent
     have hWphase := MarkedCovarianceGeometry.hWphase g q i delta hphase
@@ -1575,12 +1560,9 @@ private theorem forwardSub :
         rw [circleCurvature, ← hqC']
         exact hzero
       · right
-        have hnonneg := (ProperBandCurvatureStructure q hq).2.1 i
-        have hpos : 0 < (q i.succ).1 := by omega
         rcases hslope with hz | ⟨p, p', hsp, hsp', hRe, hIm⟩
         · have heq := congrArg Prod.fst hqC'
           exact False.elim (hzero (by simpa [heq] using hz))
-        have hposC := MarkedCovarianceGeometry.hposC C q hq hqC
         have hTne := positiveSupport C T h p hO hsp
         have heq := congrArg Prod.fst hqC'
         have hT'ne := positiveSupport C' T' h' p' hO' hsp'
@@ -1669,10 +1651,6 @@ theorem BandPackingSymmetryMarkedDataCovariance :
   have starCov := MarkedCovarianceGeometry.starCov negStar conjugateStar
   have partialValueCov := MarkedCovarianceGeometry.partialValueCov
   have differenceTransport := P5625T1CentroidSlopeDifferenceCovariance.2
-  let affineQuarter : GaussianInt × GaussianInt → GaussianInt × GaussianInt :=
-    fun z => (GaussianQuarterTurn z.1, -GaussianQuarterTurn z.2)
-  have affineQuarterNeg (z : GaussianInt × GaussianInt) :=
-      MarkedCovarianceGeometry.affineQuarterNeg z
   have affineFacts := MarkedCovarianceGeometry.affineFacts
   have affineFirst := MarkedCovarianceGeometry.affineFirst
   have circleCurvature := MarkedCovarianceGeometry.circleCurvature
@@ -1710,7 +1688,6 @@ theorem BandPackingSymmetryMarkedDataCovariance :
     let b := BandVectors.1 (q 0) (q i.succ)
     let a' := BandVectors.1 (q' (sigma i).succ) (q' 0)
     let b' := BandVectors.1 (q' 0) (q' (sigma i).succ)
-    let epsilon : GaussianInt := if delta then -1 else 1
     let d := (⟨0, 1⟩ : GaussianInt)^s.val * (if Even s.val then b else a)
     let d' := (⟨0, 1⟩ : GaussianInt)^s'.val *
       (if Even s'.val then b' else a')

@@ -426,7 +426,6 @@ theorem BandPeriodicSuperharmonicity (C : BandCircle)
     have hcross : |b.1 * x.re + b.2 * x.im| ≤
         ε / 4 * ((x.re : ℝ)^2 + (x.im : ℝ)^2) +
         (b.1^2 + b.2^2) / ε := PeriodicSuperharmonicGeometry.hcross b ε hε x
-    have hnon : 0 ≤ (x.re : ℝ)^2 + (x.im : ℝ)^2 := by positivity
     have hbase : |(g x : ℝ) - LatticeQuadraticForm (CircleMatrix C) x| ≤
         ε / 2 * ((x.re : ℝ)^2 + (x.im : ℝ)^2) + K := PeriodicSuperharmonicGeometry.hbase C g b R
             hvals ε hε x r hF hM hcross

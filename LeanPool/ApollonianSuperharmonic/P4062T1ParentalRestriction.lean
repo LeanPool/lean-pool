@@ -43,7 +43,6 @@ private theorem hparent₁pos :
     calc
       1 = P.p₁ * (P.q : Int) := hmul.symm
       _ = (P.q : Int) * P.p₁ := by ring
-  have hqint : 1 < (P.q : Int) := by exact_mod_cast hbig
   have hle := Int.le_of_dvd (by norm_num : (0 : Int) < 1) hdvd
   omega
 
@@ -304,9 +303,7 @@ theorem P4062T1ParentalRestriction (P : FordFareyParameter)
       x ∈ P4062T1InteriorSquare q ↔
         1 ≤ x.re ∧ x.re ≤ (q : Int) - 1 ∧
         1 ≤ x.im ∧ x.im ≤ (q : Int) - 1 := FordInteriorSquareCoordinates.membership q x
-  have hqpos : 0 < P.q := P.q_pos
   have hsum : P.q = P.q₁ + P.q₂ := P.sum_q
-  have hparent₁ : P.q₁ < P.q := P.q₁_lt
   have hcrossdet : P.p₁ * (P.q₂ : Int) - P.p₂ * (P.q₁ : Int) = 1 := by
     have hdet := P.det₁
     have hsumI : (P.q : Int) = P.q₁ + P.q₂ := by exact_mod_cast P.sum_q
@@ -431,7 +428,6 @@ theorem P4062T1ParentalRestriction (P : FordFareyParameter)
       rw [← he] at hcrossdet
       nlinarith only [hcrossdet]
     have hb := Int.le_of_dvd (by norm_num : (0 : Int) < 1) hd
-    have hp := P.q₂_pos
     omega
   refine ⟨P₁, P₂, hp₁, hq₁, hp₂, hq₂, ?_, ?_, hne, ?_⟩
   · rw [hq₁]

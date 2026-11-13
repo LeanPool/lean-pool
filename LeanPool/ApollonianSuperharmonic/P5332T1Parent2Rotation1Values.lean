@@ -129,10 +129,6 @@ private theorem southVal :
   have hsource : (⟨X,Y⟩-⟨0,1⟩ : GaussianInt) = ⟨P.q₁+t,-1⟩ := by
     rw [southArg, hX, hy]
     ext <;> simp
-  have yarg : (⟨X,Y⟩-⟨0,1⟩ : GaussianInt) -
-      (P5332T1ParentRows P 1 1 0).displacement = ⟨t,P.q₂-1⟩ := by
-    rw [hsource, hdis]
-    ext <;> simp [t]; omega
   have hychild : (⟨t,P.q₂-1⟩ : GaussianInt) ∈ FordVertexDomain A.q := by
     simp only [FordVertexDomain, Set.mem_ofPred_eq]
     omega
@@ -206,14 +202,11 @@ theorem P5332T1Parent2Rotation1Values (P A : FordFareyParameter) (hq : 1 < P.q)
         t = 0 ∧ Even (1+1 : Nat)) := by
 -- BODY
   classical
-  have hq' : 1 < (P.q : Int) := by exact_mod_cast hq
   have hqn : (P.q : Int) ≠ 0 := by omega
   have hrpos : 0 < P.q₁ := ParentTwoRotationOneProof.hrpos P hq
   have hspos : 0 < P.q₂ := P.q₂_pos
   have hsumq : (P.q : Int) = (P.q₁ : Int) + (P.q₂ : Int) := by exact_mod_cast P.sum_q
-  have hpairs : P.p = P.p₁ + P.p₂ := P.sum_p
   have hdet1 : P.p₁ * (P.q : Int) - (P.q₁ : Int) * P.p = 1 := P.det₁
-  have hdet2 : P.p₂ * (P.q : Int) - (P.q₂ : Int) * P.p = -1 := P.det₂
   have laws := (Classical.choose_spec FordOdometerFamilyExistsUnique).1
   change (∀ P x, P.q = 1 → FordOdometer P x = _) ∧ _ at laws
   have boundaryP (r z : Int) (hr : 0 ≤ r) (hrq : r ≤ P.q)
@@ -232,8 +225,6 @@ theorem P5332T1Parent2Rotation1Values (P A : FordFareyParameter) (hq : 1 < P.q)
     change (0 ≤ r ∧ r ≤ (A.q : Int) ∧ 0 ≤ z ∧ z ≤ (A.q : Int)) ∧
       ¬ (2 ≤ r ∧ r ≤ (A.q : Int)-2 ∧ 2 ≤ z ∧ z ≤ (A.q : Int)-2)
     omega
-  have hr : 0 < (P.q₁ : Int) := by omega
-  have hs : 0 < (P.q₂ : Int) := by exact_mod_cast hspos
   have hqsum : (P.q : Int) = (P.q₁ : Int) + (P.q₂ : Int) := hsumq
   rcases x with ⟨X,Y⟩
   have hxcoord := hx
@@ -245,12 +236,10 @@ theorem P5332T1Parent2Rotation1Values (P A : FordFareyParameter) (hq : 1 < P.q)
     ] at hx'
   have hAqInt : (A.q : Int) = P.q₂ := by exact_mod_cast hAq
   have hy : Y = 0 := by omega
-  have hXlo : (P.q₁ : Int) ≤ X := by omega
   have hXhi : X ≤ (P.q : Int) := hxcoord.2.1
   have htdef : 0 ≤ X-(P.q₁ : Int) ∧ X-(P.q₁ : Int) ≤ P.q₂ := by omega
   let t : Int := X-(P.q₁ : Int)
   have ht0 : 0 ≤ t := htdef.1
-  have htle : t ≤ P.q₂ := htdef.2
   have hX : X = P.q₁ + t := by dsimp [t]; omega
   have hxrow : (⟨X,Y⟩ : GaussianInt) = (P5332T1ParentRows P 1 1 t).center := by
     rw [hX, hy]
@@ -273,7 +262,6 @@ theorem P5332T1Parent2Rotation1Values (P A : FordFareyParameter) (hq : 1 < P.q)
   have hrow0 : (P5332T1ParentRows P 1 1 0).linear = ⟨-P.p₂,P.p₁⟩ := by rfl
   simp only [hrow0] at hxother
   rw [hX, hy] at hxother
-  have hpnum : P.p₂ * (P.q : Int) - P.q₂ * P.p = -1 := hdet2
   have hcenterP : FordOdometer P ⟨X,Y⟩ = 0 := by
     rw [hX, hy, boundaryP (P.q₁+t) 0 (by omega) (by omega) (by omega) (by omega) (by omega)]
     simp [IntegerCeilDiv]
@@ -285,11 +273,6 @@ theorem P5332T1Parent2Rotation1Values (P A : FordFareyParameter) (hq : 1 < P.q)
     rw [hX, hy] at hxcenter
     linear_combination hxcenter - hxother
   subst B
-  have valueChild (u v : Int) (hu : 0 ≤ u) (huq : u ≤ P.q)
-      (hv : 0 ≤ v) (hvq : v ≤ P.q)
-      (hb : u ≤ 1 ∨ P.q-1 ≤ u ∨ v ≤ 1 ∨ P.q-1 ≤ v) :
-      f ⟨u,v⟩ = IntegerCeilDiv (P.p*u*v) P.q hqn := by
-    exact (hbase ⟨u,v⟩ ⟨hu,huq,hv,hvq⟩).trans (boundaryP u v hu huq hv hvq hb)
   have centerVal : f ⟨X,Y⟩ = 0 := by rw [hbase _ hx, hcenterP]
   have eastArg : (⟨X,Y⟩ : GaussianInt)+1 = ⟨X+1,Y⟩ := by ext <;> simp
   have westArg : (⟨X,Y⟩ : GaussianInt)-1 = ⟨X-1,Y⟩ := by ext <;> simp

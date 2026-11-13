@@ -34,7 +34,6 @@ theorem P4638T1MidpointReflection (C : CircleCoordinates) (T U : ProtoTile)
   have htransnonempty : (TileTranslation T u).cells.Nonempty := by
     rw [(TileTranslationFormulas T u).1]
     exact hnonempty.image _
-  have hUnonempty : U.cells.Nonempty := hcells.symm ▸ htransnonempty
   have hcentcells : TileCentroid U = TileCentroid (TileTranslation T u) := by
     simp only [TileCentroid, ite_eq_left htransnonempty, hcells]
   have hrealcells : TileRealization U = TileRealization (TileTranslation T u) := by

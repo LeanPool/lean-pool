@@ -880,8 +880,6 @@ theorem P4677T2ThreeConnected
     cases z with | mk l m n => cases l <;> simp [linkList]
   have nonempty (z : PeriodicSubtileIndex) : linkList z ≠ [] := by
     cases z with | mk l m n => cases l <;> simp [linkList]
-  have adjacent (z : PeriodicSubtileIndex) :
-      ∀ u ∈ linkList z, AllowedSubtileIncidence z u := ThreeConnectivityProof.adjacent z
   have edge_mem_link {z u : PeriodicSubtileIndex}
       (h : AllowedSubtileIncidence z u) : u ∈ linkList z ∧ z ∈ linkList u :=
           ThreeConnectivityProof.edge_mem_link (z := z) (u := u) h

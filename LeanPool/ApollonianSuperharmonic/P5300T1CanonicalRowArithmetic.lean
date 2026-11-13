@@ -74,7 +74,6 @@ theorem P5300T1CanonicalRowArithmetic (K : DiamondParameter)
 -- BODY
   classical
   dsimp only
-  let q := DiamondRecursiveQuadruple K
   let b : Bool := decide (s.val % 2 = 1)
   let j : Fin 3 := if Even s.val then i - 1 else i + 1
   let M := P5260T1PlacementLedger K.1 i b

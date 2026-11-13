@@ -119,7 +119,6 @@ theorem LatticeDiskUnionIntersectionConnected (U V W : ProtoTile)
     rw [← hvertices] at hvertexIE
     rw [← hedges] at hedgeIE
     omega
-  have hEfinite : E.Finite := (edge_finite U).inter_of_left (FootprintEdges V)
   have hXfinite : X.Finite := (vertex_finite U).inter_of_left (FootprintVertices V)
   have hgrid : ∀ e ∈ E, ∃ a b : GaussianInt,
       e = {a, b} ∧ FourNeighborAdjacent a b := by

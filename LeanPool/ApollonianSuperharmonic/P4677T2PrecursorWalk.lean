@@ -181,8 +181,6 @@ private theorem p₁mem :
   have hzv := hp₁v z hz
   exact ⟨hXf hzv.1, hYf hzv.2⟩
 
-private abbrev p₃mem := ApollonianSuperharmonic.PrecursorWalkGeometry.p₁mem
-
 private theorem qmem :
     (by
       classical
@@ -402,15 +400,10 @@ theorem P4677T2PrecursorWalk :
     P4677T2TouchingWalk X Y x a hfirst.1 ⟨hx.1, hx.2⟩ ⟨haX, haY⟩
   obtain ⟨p₃, hp₃h, hp₃l, hp₃v, hp₃e⟩ :=
     P4677T2TouchingWalk Z W b y hlast.1 ⟨hbZ, hbW⟩ ⟨hy.1, hy.2⟩
-  have hOeq : O.cells = O'.cells := hcell
   let R : GaussianInt → GaussianInt → Prop := fun u v =>
     u ∈ FootprintVertices A ∩ FootprintVertices B ∧
     v ∈ FootprintVertices A ∩ FootprintVertices B ∧
     {u, v} ∈ FootprintEdges A ∩ FootprintEdges B
-  have R_symm (u v : GaussianInt) (huv : R u v) : R v u := PrecursorWalkGeometry.R_symm A B u v huv
-  have reverse_reach {u v : GaussianInt}
-      (h : Relation.ReflTransGen R u v) : Relation.ReflTransGen R v u :=
-          PrecursorWalkGeometry.reverse_reach A B R_symm (u := u) (v := v) h
   have head_reach (u : GaussianInt) (l : List GaussianInt)
       (hc : List.IsChain R (u :: l)) :
       ∀ z ∈ u :: l, Relation.ReflTransGen R u z := PrecursorWalkGeometry.head_reach A B u l hc
@@ -429,12 +422,6 @@ theorem P4677T2PrecursorWalk :
       hp₁v hp₁e edge_parent edge_parentB
   have p₃chain : List.IsChain R p₃ := PrecursorWalkGeometry.p₃chain A B Z W hZc hWc hZf hWf p₃
       hp₃v hp₃e edge_parent edge_parentB
-  have p₁mem (z : GaussianInt) (hz : z ∈ p₁) :
-      z ∈ FootprintVertices A ∩ FootprintVertices B := PrecursorWalkGeometry.p₁mem A B X Y hXf
-          hYf p₁ hp₁v z hz
-  have p₃mem (z : GaussianInt) (hz : z ∈ p₃) :
-      z ∈ FootprintVertices A ∩ FootprintVertices B := PrecursorWalkGeometry.p₃mem A B Z W hZf
-          hWf p₃ hp₃v z hz
   by_cases hneO : O.cells.Nonempty
   · have hneO' : O'.cells.Nonempty := by rw [← hcell]; exact hneO
     have hcycle := LatticeTileBoundarySimpleGridCycle O (hdisk hneO)

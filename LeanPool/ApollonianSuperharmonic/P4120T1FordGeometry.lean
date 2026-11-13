@@ -170,13 +170,6 @@ private theorem fordCentroid :
     exact_mod_cast arithmetic
   rw [rangeSum] at arithmeticCast
   rw [hqcast] at arithmeticCast
-  have natIdentity : P.q * (P.q - 1) / 2 * 2 + P.q = P.q * P.q := by
-    rw [← Finset.sum_range_id P.q]
-    rw [Finset.sum_range_id_mul_two]
-    have hprod : P.q ≤ P.q * P.q := by nlinarith
-    rw [Nat.mul_sub_left_distrib]
-    simp only [Nat.mul_one]
-    rw [Nat.sub_add_cancel hprod]
   norm_num [Int.subNatNat, pow_two]
   have hreal :
       (((P.q : Int) * ((P.q : Int) - 1) / 2 : Int) : Real) * 2 =
@@ -268,7 +261,6 @@ private theorem hrpos :
   intro P hP
   by_contra hn
   have hz : P.q₁ = 0 := by omega
-  have hqint : 1 < (P.q : Int) := by exact_mod_cast hP
   have hdet := P.det₁
   rw [hz] at hdet
   have hdiv : (P.q : Int) ∣ 1 := by
@@ -1242,7 +1234,6 @@ private theorem countFourConclusion :
       _ = 1 := by simpa [mul_comm, mul_left_comm, mul_assoc] using hdet
   have hdiv : (P.q₁ : Int) ∣ 1 := ⟨P.p₁ - P.p₂, hprod.symm⟩
   have hroneInt := Int.eq_one_of_dvd_one (by omega : (0 : Int) ≤ P.q₁) hdiv
-  have hrone : P.q₁ = 1 := by exact_mod_cast hroneInt
   have hqone : P.q = 2 := by omega
   have hyre : y.re = 1 := by omega
   have hyim : y.im = 1 := by omega
@@ -1479,12 +1470,6 @@ private theorem descent :
       incidentFootprint noBoundaryFour incidentOwner twoBoundaryCount multiplicityBound hno
   have hkle : Nat.card {a : Fin 3 × Bool //
       x ∈ BoundaryFootprintVertices (S a.1 a.2)} ≤ 1 := by
-    have hmax : Nat.card {a : Fin 3 × Bool //
-        x ∈ BoundaryFootprintVertices (S a.1 a.2)} ≤ 4 := by
-      calc
-        Nat.card {a : Fin 3 × Bool //
-          x ∈ BoundaryFootprintVertices (S a.1 a.2)} = FordBoundaryMultiplicity P y := hcount
-        _ ≤ 4 := multiplicityBound
     omega
   obtain ⟨a, haCell⟩ := incidentOwner 0
   have findInteriorOwner : ∃ b : Fin 3 × Bool, ∃ j : Fin 4,
@@ -1552,7 +1537,6 @@ theorem P4120T1FordGeometry
   have hne := InteriorFootprintIncidence.nonempty T x hx hxb
   have hsome := InteriorFootprintIncidence.someIncidentCell T x hx hxb hne
   have cells := InteriorFootprintIncidence.allIncidentCells T x hxb hsome
-  let y : GaussianInt := x - u
   have cellCanonical (z : GaussianInt) := FordTileGeometry.cellCanonical P T u hcells z
   have squareCell (z : GaussianInt) := FordTileGeometry.squareCell P z
   have hbounds := FordTileGeometry.hbounds P T u x cells cellCanonical squareCell
@@ -1575,28 +1559,16 @@ theorem P4120T1FordGeometry
   have hparentCells (i : Fin 3) (s : Bool) := FordTileGeometry.hparentCells P T S u hS Sc
       hScTranslated hparentCentroid i s
   have hrpos := FordTileGeometry.hrpos P hP
-  have hr : (P.q₁ : Int) > 0 := by exact_mod_cast hrpos
   have ht : (P.q₂ : Int) > 0 := by exact_mod_cast P.q₂_pos
   have hqsum : (P.q : Int) = P.q₁ + P.q₂ := by exact_mod_cast P.sum_q
   have rectBoundary (l r b t : Int) (z : GaussianInt) := FordTileGeometry.rectBoundary l r
       b t z
   have boundaryTranslation (A : ProtoTile) (v z : GaussianInt) :=
       FordTileGeometry.boundaryTranslation A v z
-  have footprintTranslation (A : ProtoTile) (v z : GaussianInt) :=
-      FordTileGeometry.footprintTranslation A v z
   have hSc00 := FordTileGeometry.hSc00 P Sc h00 hrpos
   have hSc01 := FordTileGeometry.hSc01 P Sc h01 hrpos
   have hSc10 := FordTileGeometry.hSc10 P Sc h10
   have hSc11 := FordTileGeometry.hSc11 P Sc h11
-  have hSc00Foot := FordTileGeometry.hSc00Foot P Sc h00 hrpos
-  have hSc01Foot := FordTileGeometry.hSc01Foot P Sc h01 hrpos
-  have hSc10Foot := FordTileGeometry.hSc10Foot P Sc h10
-  have hSc11Foot := FordTileGeometry.hSc11Foot P Sc h11
-  have foot0 := FordTileGeometry.foot0 P S u x Sc hparentObs hrpos footprintTranslation hSc00Foot
-  have foot1 := FordTileGeometry.foot1 P S u x Sc hparentObs hrpos hqsum footprintTranslation
-      hSc01Foot
-  have foot2 := FordTileGeometry.foot2 P S u x Sc hparentObs hqsum footprintTranslation hSc10Foot
-  have foot3 := FordTileGeometry.foot3 P S u x Sc hparentObs hqsum footprintTranslation hSc11Foot
   have squareBoundary (n : Nat) (hn : 0 < n) (z : GaussianInt) := FordTileGeometry.squareBoundary
       n hn z
   have domain0 := FordTileGeometry.domain0 P u x rectBoundary

@@ -210,7 +210,6 @@ private theorem ht :
             ℤ)) → (1≤-a ∧ -a≤k ∧ (b=2*k+1+a ∨ b=2*k+a)))) ) := by
   classical
   intro K k a b hdpred hcast hdchild
-  have h : -k≤a ∧ a≤-1 ∧ (b-a=2*k+1 ∨ b-a=2*k) := by omega
   omega
 
 private theorem hcompAt243 :
@@ -417,7 +416,6 @@ private theorem hPW :
             (k-t)+(-t-1)-k*(2*k+1-t)+B)) ) := by
   classical
   intro K f B k d a Q predTranslatedValue t zA hpw
-  have he : (zA-1)-d=(⟨k-t-1,k-t⟩:GaussianInt) := by ext <;> simp [zA,d] <;> ring
   have hv := predTranslatedValue (zA-1) hpw
   convert hv using 1; simp [zA,d]; ring
 
@@ -439,7 +437,6 @@ private theorem hPN :
             (k+1-t)+(-t)-k*(2*k+2-t)+B)) ) := by
   classical
   intro K f B k d a Q predTranslatedValue t zA hpn
-  have he : (zA+⟨0,1⟩)-d=(⟨k-t,k+1-t⟩:GaussianInt) := by ext <;> simp [zA,d] <;> ring
   have hv := predTranslatedValue (zA+⟨0,1⟩) hpn
   convert hv using 1; simp [zA,d]; ring
 
@@ -883,7 +880,6 @@ theorem P5352T2Predecessor2 (K : DiamondParameter) (hk : 1 < K.1)
     let child := P5352T2Sources K hk 0
     let pred := P5352T2Sources K hk 3
     let M := (P5352T2PlacementData K.1 2).2 2
-    have hkI : 2 ≤ k := by dsimp [k]; exact_mod_cast (show 2 ≤ K.1 by omega)
     have hm : M.1=d ∧ M.2.1=⟨1,-k⟩ ∧ M.2.2=r := by
       simp [M,d,r,P5352T2PlacementData,k]
     rcases hm with ⟨hdisp,hcoeff,hr⟩

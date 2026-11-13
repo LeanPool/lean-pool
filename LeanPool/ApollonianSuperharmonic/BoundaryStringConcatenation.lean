@@ -844,7 +844,6 @@ theorem BoundaryStringConcatenation
           BandVectors.1 (q ((i + 1).succ)) (q i.succ) := BoundaryConcatenationGeometry.hin q hq i
   have hflip := (VectorRecursionLaws q hq.1).2.2.2.2 hq i
   let I : GaussianInt := ⟨0, 1⟩
-  let w := BandVectors.1 (q ((i + 2).succ)) (q ((i + 1).succ))
   let x := BandVectors.1 (q i.succ) (q ((i + 2).succ))
   let y := BandVectors.1 (q ((i + 1).succ)) (q i.succ)
   have hminus' := BoundaryConcatenationGeometry.hminus' q i T₀ Tminus hminus
@@ -924,7 +923,6 @@ theorem BoundaryStringConcatenation
       {x y : Int × Int} {path : List (Int × Int)}
       (hseg : TriangularStripSegment x y path) := BoundaryConcatenationGeometry.mapSegment ρ
           hadjρ hheightρ hmaxρ (x := x) (y := y) (path := path) hseg
-  have hσrNe := BoundaryConcatenationGeometry.hσrNe r m σ a b c d hdetσ hσmr
   have hPσ := mapSegment σ hσadj hσheight hmaxσ hP.2
   rw [hσm] at hPσ
   have hQσ := mapSegment σ hσadj hσheight hmaxσ hQ.2

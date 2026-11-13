@@ -403,10 +403,6 @@ theorem P4849T1LargePositiveComponents (q : IntegerLatticeFunction) (M : ℤ)
   have chainReach (p : List GaussianInt) (hp : p.IsChain edge) (hne : p ≠ []) :
       ∀ y, y ∈ p → Relation.ReflTransGen edge (p.head hne) y :=
           PositiveComponentLemmas.chainReach q p hp hne
-  have walkReach : ∀ (p : List GaussianInt) (a b : GaussianInt),
-      p.head? = some a → p.getLast? = some b →
-      (∀ x ∈ p, x ∈ S) → p.IsChain FourNeighborAdjacent → reach a b :=
-          PositiveComponentLemmas.walkReach q
   have reachPos {a b : GaussianInt} (ha : a ∈ S) (h : reach a b) : b ∈ S :=
       PositiveComponentLemmas.reachPos q (a := a) (b := b) ha h
   have reachWalk : ∀ (x y : GaussianInt), x ∈ S → reach x y →

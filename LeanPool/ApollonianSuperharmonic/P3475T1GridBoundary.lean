@@ -503,7 +503,6 @@ private theorem cyclic_endpoints_mem (gridPath : List GaussianInt) (y : Gaussian
     some y) (gridPath_length_four : 4 ≤ gridPath.length) (a b : GaussianInt) (hab : (a, b) ∈
     (cyclicEdges gridPath y x)) : a ∈ gridPath ∧ b ∈ gridPath := by
   classical
-  let cyclicEdges := (gridPath.zip gridPath.tail) ++ [(y, x)]
   have zip_mem_decompose (a b : GaussianInt)
       (hab : (a, b) ∈ gridPath.zip gridPath.tail) :
       ∃ l₁ l₂ : List GaussianInt, gridPath = l₁ ++ a :: b :: l₂ := zip_mem_decompose gridPath
@@ -681,7 +680,6 @@ private theorem cyclic_rep (gridPath : List GaussianInt) (y : GaussianInt) (x : 
     gridPath y x)) : ∃ i : Fin ((n gridPath) + 3), a = (v gridPath gridPath_length_four) i ∧ b =
     (v gridPath gridPath_length_four) (i + 1) := by
   classical
-  let cyclicEdges := (gridPath.zip gridPath.tail) ++ [(y, x)]
   let n := gridPath.length - 3
   have hn : n + 3 = gridPath.length := hn gridPath gridPath_length_four
   let v : Fin (n + 3) → GaussianInt :=
@@ -822,67 +820,11 @@ theorem P3475T1GridBoundary (T : ProtoTile)
       gridPath_mem_boundary, hz, hmax, hzout, cyclic_edge_boundary,
       cyclic_edge_fourNeighbor, component_edge_cyclic, hrightCyclic⟩ :=
     P5620T1BoundaryComponentCycle T cells_nonempty boundary_degree_two
-  have gridPath_length : 3 ≤ gridPath.length := GridBoundaryConstruction.gridPath_length gridPath
-      gridPath_length_four
-  have component_index_control := GridRayCrossingIndexAdjacentCell gridPath x y
-    gridPath_head gridPath_last gridPath_nodup gridPath_length
-    gridPath_zip_fourNeighbor gridPath_close_fourNeighbor
   let cyclicEdges := (gridPath.zip gridPath.tail) ++ [(y, x)]
-  have same_vertical_not_boundary (q : LatticeCell)
-      (hstatus : q ∈ T.cells ↔ q - 1 ∈ T.cells) :
-      ({q, q + ⟨0, 1⟩} : Finset GaussianInt) ∉ BoundaryFootprintEdges T :=
-          GridBoundaryConstruction.same_vertical_not_boundary T q hstatus
-  have same_horizontal_not_boundary (q : LatticeCell)
-      (hstatus : q ∈ T.cells ↔ q - ⟨0, 1⟩ ∈ T.cells) :
-      ({q, q + 1} : Finset GaussianInt) ∉ BoundaryFootprintEdges T :=
-          GridBoundaryConstruction.same_horizontal_not_boundary T q hstatus
-  have adjacent_index_same_status (a b : LatticeCell)
-      (hs : a ∈ T.cells ↔ b ∈ T.cells) (hab : FourNeighborAdjacent a b) :
-      GridRayCrossingIndex a gridPath = GridRayCrossingIndex b gridPath :=
-          GridBoundaryConstruction.adjacent_index_same_status T gridPath y x cyclic_edge_boundary
-          gridPath_head gridPath_last gridPath_nodup gridPath_zip_fourNeighbor
-          gridPath_close_fourNeighbor gridPath_length_four a b hs hab
-  have index_constant (S : Set LatticeCell) (hS : FourNeighborConnected S)
-      (I : LatticeCell → Int)
-      (hstep : ∀ a, a ∈ S → ∀ b, b ∈ S →
-        FourNeighborAdjacent a b → I a = I b)
-      (x : LatticeCell) (hx : x ∈ S) (y : LatticeCell) (hy : y ∈ S) :
-      I x = I y := GridBoundaryConstruction.index_constant S hS I hstep x hx y hy
   obtain ⟨w, hw, hmin⟩ := (T.cells ∪ gridPath.toFinset).exists_min_image
     (fun q => q.re) (by
       obtain ⟨a, ha⟩ := cells_nonempty
       exact ⟨a, Finset.mem_union_left _ ha⟩)
-  let q0 : LatticeCell := ⟨w.re - 1, 0⟩
-  have q0_outside : q0 ∉ T.cells := GridBoundaryConstruction.q0_outside T gridPath w hmin
-  have path_left (a : GaussianInt) (ha : a ∈ gridPath) : q0.re < a.re :=
-      GridBoundaryConstruction.path_left T gridPath w hmin a ha
-  let step : GaussianInt → GaussianInt → Int := fun a b =>
-    if b = a + ⟨0, 1⟩ ∧ a.im = q0.im ∧ a.re ≤ q0.re then 1
-    else if b = a - ⟨0, 1⟩ ∧ b.im = q0.im ∧ a.re ≤ q0.re then -1 else 0
-  have step_zero (a : GaussianInt) (ha : a ∈ gridPath) (b : GaussianInt) :
-      step a b = 0 := GridBoundaryConstruction.step_zero T gridPath w hmin a ha b
-  have zip_zero (r s : List GaussianInt) (hr : ∀ a ∈ r, a ∈ gridPath) :
-      (List.zipWith step r s).sum = 0 := GridBoundaryConstruction.zip_zero T gridPath w hmin r s hr
-  have q0_index_zero : GridRayCrossingIndex q0 gridPath = 0 :=
-      GridBoundaryConstruction.q0_index_zero T gridPath y x gridPath_head gridPath_last w hmin
-  have unoccupied_index_zero (q : LatticeCell) (hq : q ∉ T.cells) :
-      GridRayCrossingIndex q gridPath = 0 := GridBoundaryConstruction.unoccupied_index_zero T
-          houtside gridPath y x cyclic_edge_boundary gridPath_head gridPath_last gridPath_nodup
-          gridPath_zip_fourNeighbor gridPath_close_fourNeighbor w gridPath_length_four hmin q hq
-  have hrightJump :
-      Int.natAbs (GridRayCrossingIndex (z + 1) gridPath -
-        GridRayCrossingIndex z gridPath) = 1 := GridBoundaryConstruction.hrightJump gridPath y x
-            gridPath_head gridPath_last gridPath_nodup gridPath_zip_fourNeighbor
-            gridPath_close_fourNeighbor z gridPath_length_four hrightCyclic
-  have hzIndexNonzero : GridRayCrossingIndex z gridPath ≠ 0 :=
-      GridBoundaryConstruction.hzIndexNonzero T houtside gridPath y x cyclic_edge_boundary
-      gridPath_head gridPath_last gridPath_nodup gridPath_zip_fourNeighbor
-      gridPath_close_fourNeighbor z w gridPath_length_four hrightCyclic hzout hmin
-  have occupied_index_nonzero (q : LatticeCell) (hq : q ∈ T.cells) :
-      GridRayCrossingIndex q gridPath ≠ 0 := GridBoundaryConstruction.occupied_index_nonzero T
-          hinside houtside gridPath y x cyclic_edge_boundary gridPath_head gridPath_last
-          gridPath_nodup gridPath_zip_fourNeighbor gridPath_close_fourNeighbor z w
-          gridPath_length_four hrightCyclic hzout hz hmin q hq
   have boundary_edge_cyclic (e : Finset GaussianInt)
       (he : e ∈ BoundaryFootprintEdges T) :
       ∃ a b : GaussianInt, e = {a, b} ∧
@@ -891,13 +833,6 @@ theorem P3475T1GridBoundary (T : ProtoTile)
             cyclic_edge_boundary gridPath_head gridPath_last gridPath_nodup
             gridPath_zip_fourNeighbor gridPath_close_fourNeighbor z w gridPath_length_four
             hrightCyclic hzout hz hmin e he
-  have zip_mem_decompose (a b : GaussianInt)
-      (hab : (a, b) ∈ gridPath.zip gridPath.tail) :
-      ∃ l₁ l₂ : List GaussianInt, gridPath = l₁ ++ a :: b :: l₂ :=
-          GridBoundaryConstruction.zip_mem_decompose gridPath gridPath_length_four a b hab
-  have cyclic_endpoints_mem (a b : GaussianInt) (hab : (a, b) ∈ cyclicEdges) :
-      a ∈ gridPath ∧ b ∈ gridPath := GridBoundaryConstruction.cyclic_endpoints_mem gridPath y x
-          gridPath_head gridPath_last gridPath_length_four a b hab
   have boundary_vertices_eq :
       BoundaryFootprintVertices T = (gridPath.toFinset : Set GaussianInt) :=
           GridBoundaryConstruction.boundary_vertices_eq T hinside houtside gridPath y x
@@ -910,13 +845,6 @@ theorem P3475T1GridBoundary (T : ProtoTile)
     fun i => gridPath[i.val]'(by rw [← hn]; exact i.isLt)
   have v_injective : Function.Injective v := GridBoundaryConstruction.v_injective gridPath
       gridPath_nodup gridPath_length_four
-  have successor_val (i : Fin (n + 3)) :
-      (i + 1).val = if i.val + 1 < n + 3 then i.val + 1 else 0 :=
-          GridBoundaryConstruction.successor_val i
-  have v_head : v 0 = x := GridBoundaryConstruction.v_head gridPath x gridPath_head
-      gridPath_length_four
-  have v_last : v ⟨n + 2, by omega⟩ = y := GridBoundaryConstruction.v_last gridPath y
-      gridPath_last gridPath_length_four
   have cyclic_index (i : Fin (n + 3)) : (v i, v (i + 1)) ∈ cyclicEdges :=
       GridBoundaryConstruction.cyclic_index gridPath y x gridPath_head gridPath_last
           gridPath_length_four i

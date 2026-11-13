@@ -830,7 +830,6 @@ theorem P5290T1PredecessorPath (k : Nat) (hk : 1 < k) :
   have hDedges : BoundaryFootprintEdges D =
       (fun e : Finset GaussianInt => e.image J) '' BoundaryFootprintEdges D :=
           PredecessorPathDetails.hDedges k hScells hSedges hBoundaryE
-  let JE : Finset GaussianInt → Finset GaussianInt := fun e => e.image J
   have hJEinj := PredecessorPathProof.hJEinj k hJinj
   have hVerticesInter := PredecessorPathProof.hVerticesInter k hJinj hZvertices hDvertices
   have hEdgesInter := PredecessorPathProof.hEdgesInter k hZedges hDedges hJEinj

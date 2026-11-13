@@ -466,7 +466,6 @@ private theorem noThreeNeighbors :
     exact edgeEndpointInW edge hedge z hze
   let : Finite (Subtype X) := (hWfinite.subset hXsubset).to_subtype
   have hEsub : E ⊆ F := by intro edge hedge; exact hedge
-  have hXends : X = {z | ∃ edge ∈ E, z ∈ edge} := rfl
   have hcycle' : SimpleGridCycle W F := by
     exact ⟨p, u, v, hnodup, hlen, hhead, hlast, hvertices,
       hclose, hsteps, hedges⟩
@@ -1923,7 +1922,6 @@ theorem P3963T1ExteriorMixedCycleObstruction
   have hlen3 : 3 ≤ p.length := by omega
   have hcross := GridRayCrossingIndexAdjacentCell p u v hhead hlast hnodup
     hlen3 (ExteriorMixedCycleProof.hadj p hlen hsteps) hclose
-  have hmixed : e ≠ f := ExteriorIndexCases.hmixed U V hedge F e f he hf
   have hUedge : e ∈ FootprintEdges U := he.2
   have hVedge : f ∈ FootprintEdges V := hf.2
   have hcycleEdge (g : Finset GaussianInt) (hg : g ∈ F) :
@@ -1982,12 +1980,6 @@ theorem P3963T1ExteriorMixedCycleObstruction
   have inExterior (q : GaussianInt) (hu : q ∉ U.cells)
       (hv : q ∉ V.cells) : q ∈ (↑(U.cells ∪ V.cells) : Set GaussianInt)ᶜ :=
           ExteriorIndexCases.inExterior U V q hu hv
-  have hExteriorPair :
-      (c1 ∈ (↑(U.cells ∪ V.cells) : Set GaussianInt)ᶜ ∧
-        c3 ∈ (↑(U.cells ∪ V.cells) : Set GaussianInt)ᶜ) ∨
-      (c0 ∈ (↑(U.cells ∪ V.cells) : Set GaussianInt)ᶜ ∧
-        c2 ∈ (↑(U.cells ∪ V.cells) : Set GaussianInt)ᶜ) := ExteriorMixedCycleProof.hExteriorPair
-            U V x no01 no10 no12 no21 no23 no32 no30 no03 hpattern inExterior
   have pairCases (a b c d : GaussianInt)
       (hpair : ({a, b} : Finset GaussianInt) = {c, d}) (hcd : c ≠ d) :
       (a = c ∧ b = d) ∨ (a = d ∧ b = c) := ExteriorMixedCycleProof.pairCases a b c d hpair hcd
@@ -2004,7 +1996,6 @@ theorem P3963T1ExteriorMixedCycleObstruction
       (b, a) ∈ (p.zip p.tail) ++ [(v, u)] := ExteriorMixedCycleProof.cyclicPair F p u v hhead
           hlast hclose hsteps hedges hcross hcycleEdge (ExteriorMixedCycleProof.adjNe)
               pairCases (ExteriorMixedCycleProof.adjacentMemZip) a b hab
-  have hpne : p ≠ [] := ExteriorIndexCases.hpne p hlen
   have huMem : u ∈ p := ExteriorIndexCases.huMem p u hhead
   have hvMem : v ∈ p := ExteriorIndexCases.hvMem p v hlast
   have vertexInW (z : GaussianInt) (hz : z ∈ p) : z ∈ W := ExteriorIndexCases.vertexInW W p
@@ -2019,10 +2010,6 @@ theorem P3963T1ExteriorMixedCycleObstruction
     | 1 => x + 1
     | 2 => x - ⟨0, 1⟩
     | _ => x - 1
-  let nDir : Fin 4 := 0
-  let eDir : Fin 4 := 1
-  let sDir : Fin 4 := 2
-  let wDir : Fin 4 := 3
   have dirInj : Function.Injective dir := ExteriorIndexCases.dirInj x
   have dirNeX (i : Fin 4) : x ≠ dir i := ExteriorIndexCases.dirNeX x i
   have noThreeDir (i j k : Fin 4)
@@ -2064,7 +2051,6 @@ theorem P3963T1ExteriorMixedCycleObstruction
       (GridRayCrossingIndex (q + ⟨0, 1⟩) p - GridRayCrossingIndex q p).natAbs = 1 :=
     (hcross q).2.2.2 hcyc
   have c1add : c1 + 1 = x := by dsimp [c1]; ring
-  have c1addi : c1 + 1 + ⟨0, 1⟩ = x + ⟨0, 1⟩ := by dsimp [c1]; ring
   have c2add : c2 + 1 = x - ⟨0, 1⟩ := by dsimp [c2]; ring
   have c2addi : c2 + 1 + ⟨0, 1⟩ = x := by dsimp [c2]; ring
   have c2i : c2 + ⟨0, 1⟩ = x - 1 := by dsimp [c2]; ring

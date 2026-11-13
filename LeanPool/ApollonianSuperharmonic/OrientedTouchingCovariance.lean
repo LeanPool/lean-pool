@@ -574,9 +574,6 @@ theorem OrientedTouchingCovariance :
         (GaussianRealPoint (GaussianQuarterTurn z) - GaussianRealPoint (GaussianQuarterTurn w)) →
       TouchingTriple T U V := TouchingCovarianceProof.turn5 quarter_translate same_touch
           shift_centroid
-  have inverse_turn (x : GaussianInt) :
-      GaussianQuarterTurn ⟨x.im, -x.re⟩ = x := by
-    ext <;> simp [GaussianQuarterTurn]
   constructor
   · intro T₀ Tᵢ i s h₀ hᵢ hc
     fin_cases s

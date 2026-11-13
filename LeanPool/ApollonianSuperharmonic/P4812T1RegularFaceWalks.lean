@@ -2642,8 +2642,6 @@ theorem P4812T1RegularFaceWalks
       have aNeNegB := RegularFaceDetails.aNeNegB L k
       have aNeAmB := RegularFaceDetails.aNeAmB L k
       have negBNeAmB := RegularFaceDetails.negBNeAmB L k
-      let fs := fun (u : L) (f : D.plane.Face) =>
-        D.faces (Sum.map (u + ·) (u + ·) (D.faces.symm f))
       refine ⟨rho, ?_, (RegularFaceProperties.rhoPeriodic L k D ru rd), path,
           (RegularFaceProperties.pathReverse L k D p0 p1 p2), (RegularFaceProperties.pathPeriodic
           L k D p0 p1 p2 (RegularFaceDetails.shiftEq L) mapTranslate

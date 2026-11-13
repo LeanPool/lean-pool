@@ -42,8 +42,6 @@ theorem P4207T1FloorArithmetic :
     · norm_num
   have successive (n : Int) : (n + 1) ^ 2 / 4 - n ^ 2 / 4 = (n + 1) / 2 := by
     have hr0 : 0 ≤ n % 2 := Int.emod_nonneg n (by norm_num)
-    have hr1 : n % 2 < 2 := Int.emod_lt_of_pos n (by norm_num)
-    have hn : n = n % 2 + 2 * (n / 2) := by omega
     have hr : n % 2 = 0 ∨ n % 2 = 1 := by omega
     generalize hq : n / 2 = q at *
     rcases hr with hr | hr

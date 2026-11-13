@@ -156,12 +156,8 @@ private theorem hne (L : ℝ) (q : Fin 4 → CircleCoordinates) (l : Fin 3) (hl 
     l).succ).im ≠ ((p q) (b₀ l).succ).im := by
   classical
   let p (i : Fin 4) : ℂ := (q i).2 / ((q i).1 : ℝ)
-  let P := P4909T1ParentPolygon L q
   let h := if (q l.succ).2 = -1 then L else L + 2
-  let σ : ℝ := if (q l.succ).2 = -1 then 1 else -1
   let x := p 0
-  have hσ : σ ^ 2 = 1 := hσ q l
-  have side (i : Fin 4) (hi : 0 < (q i).1) : 0 < σ * ((p i).re - h) := side L q l hside i hi
   let a₀ : Fin 3 := if l = 0 then 1 else 0
   let b₀ : Fin 3 := if l = 2 then 1 else 2
   have ha₀ : a₀ ≠ l := ha₀ L q l hl hpos hnormal hside
@@ -196,12 +192,6 @@ private theorem hvertices (L : ℝ) (q : Fin 4 → CircleCoordinates) (l : Fin 3
     (B q b).im⟩} : Set ℂ)) : (A q a) ∈ (P L q) ∧ (B q b) ∈ (P L q) ∧ (foot L q l) (A q a) ∈ (P L
     q) ∧ (foot L q l) (B q b) ∈ (P L q) := by
   classical
-  let p (i : Fin 4) : ℂ := (q i).2 / ((q i).1 : ℝ)
-  let P := P4909T1ParentPolygon L q
-  let h := if (q l.succ).2 = -1 then L else L + 2
-  let foot (z : ℂ) : ℂ := ⟨h, z.im⟩
-  let A := p a.succ
-  let B := p b.succ
   rw [hP]
   exact ⟨subset_convexHull ℝ _ (by simp), subset_convexHull ℝ _ (by simp),
     subset_convexHull ℝ _ (by simp), subset_convexHull ℝ _ (by simp)⟩
@@ -256,9 +246,7 @@ private theorem subC (L : ℝ) (q : Fin 4 → CircleCoordinates) (l : Fin 3) (hi
     := by
   classical
   let p (i : Fin 4) : ℂ := (q i).2 / ((q i).1 : ℝ)
-  let s (c : Fin 3) := P4828T1Step (P4828T1Rotate q c)
   let P := P4909T1ParentPolygon L q
-  let F (c : Fin 3) := P4909T1ParentPolygon L (s c)
   let h := if (q l.succ).2 = -1 then L else L + 2
   let foot (z : ℂ) : ℂ := ⟨h, z.im⟩
   let x := p 0
@@ -289,16 +277,12 @@ private theorem subU (L : ℝ) (q : Fin 4 → CircleCoordinates) (l : Fin 3) (hi
     q).im < ((p q) b.succ).im) : (F L q) a ⊆ (P L q) := by
   classical
   let p (i : Fin 4) : ℂ := (q i).2 / ((q i).1 : ℝ)
-  let s (c : Fin 3) := P4828T1Step (P4828T1Rotate q c)
   let P := P4909T1ParentPolygon L q
-  let F (c : Fin 3) := P4909T1ParentPolygon L (s c)
   let h := if (q l.succ).2 = -1 then L else L + 2
-  let σ : ℝ := if (q l.succ).2 = -1 then 1 else -1
   let foot (z : ℂ) : ℂ := ⟨h, z.im⟩
   let x := p 0
   let A := p a.succ
   let B := p b.succ
-  have hxi := (qint x).mp hinside
   have hvertices : A ∈ P ∧ B ∈ P ∧ foot A ∈ P ∧ foot B ∈ P := hvertices L q l a b hP
   have hxP : x ∈ P := hxP L q hinside
   have hfxP : foot x ∈ P := hfxP L q l hinside a b qmem qint hAx hxB
@@ -326,16 +310,12 @@ private theorem subD (L : ℝ) (q : Fin 4 → CircleCoordinates) (l : Fin 3) (hi
     q).im < ((p q) b.succ).im) : (F L q) b ⊆ (P L q) := by
   classical
   let p (i : Fin 4) : ℂ := (q i).2 / ((q i).1 : ℝ)
-  let s (c : Fin 3) := P4828T1Step (P4828T1Rotate q c)
   let P := P4909T1ParentPolygon L q
-  let F (c : Fin 3) := P4909T1ParentPolygon L (s c)
   let h := if (q l.succ).2 = -1 then L else L + 2
-  let σ : ℝ := if (q l.succ).2 = -1 then 1 else -1
   let foot (z : ℂ) : ℂ := ⟨h, z.im⟩
   let x := p 0
   let A := p a.succ
   let B := p b.succ
-  have hxi := (qint x).mp hinside
   have hvertices : A ∈ P ∧ B ∈ P ∧ foot A ∈ P ∧ foot B ∈ P := hvertices L q l a b hP
   have hxP : x ∈ P := hxP L q hinside
   have hfxP : foot x ∈ P := hfxP L q l hinside a b qmem qint hAx hxB
@@ -427,9 +407,7 @@ private theorem sub (L : ℝ) (q : Fin 4 → CircleCoordinates) (l : Fin 3) (hl 
   have hx := side 0 hzero
   have hxi := (qint x).mp hinside
   have hvertices : A ∈ P ∧ B ∈ P ∧ foot A ∈ P ∧ foot B ∈ P := hvertices L q l a b hP
-  have hxP : x ∈ P := hxP L q hinside
   have hfxP : foot x ∈ P := hfxP L q l hinside a b qmem qint hAx hxB
-  have convexP : Convex ℝ P := convexP L q
   have subC : F l ⊆ P := subC L q l hinside a b hP hC
   have subU : F a ⊆ P := subU L q l hinside a b qmem qint hP hU hAx hxB
   have subD : F b ⊆ P := subD L q l hinside a b qmem qint hP hD hAx hxB
@@ -517,9 +495,7 @@ private theorem omitted (L : ℝ) (q : Fin 4 → CircleCoordinates) (l : Fin 3) 
   have hx := side 0 hzero
   have hxi := (qint x).mp hinside
   have hvertices : A ∈ P ∧ B ∈ P ∧ foot A ∈ P ∧ foot B ∈ P := hvertices L q l a b hP
-  have hxP : x ∈ P := hxP L q hinside
   have hfxP : foot x ∈ P := hfxP L q l hinside a b qmem qint hAx hxB
-  have convexP : Convex ℝ P := convexP L q
   have subC : F l ⊆ P := subC L q l hinside a b hP hC
   have subU : F a ⊆ P := subU L q l hinside a b qmem qint hP hU hAx hxB
   have subD : F b ⊆ P := subD L q l hinside a b qmem qint hP hD hAx hxB
@@ -665,14 +641,9 @@ private theorem frontC (L : ℝ) (q : Fin 4 → CircleCoordinates) (l : Fin 3) (
   classical
   let p (i : Fin 4) : ℂ := (q i).2 / ((q i).1 : ℝ)
   let s (c : Fin 3) := P4828T1Step (P4828T1Rotate q c)
-  let F (c : Fin 3) := P4909T1ParentPolygon L (s c)
   let x := p 0
-  let A := p a.succ
-  let B := p b.succ
   have ha := hpos a hal
   have hb := hpos b hbl
-  have root (c : Fin 3) : s c (0 : Fin 3).succ = q 0 := root q slots c
-  have keep (c i : Fin 3) (hi : i ≠ c) : s c (i - c).succ = q i.succ := keep q slots c i hi
   have radial (c i : Fin 3) (hi : i ≠ c) (hpi : 0 < (q i.succ).1) :
       segment ℝ x (p i.succ) ⊆ P4909T1ParentEdges L (s c) := radial L q hzero slots c i hi hpi
   have retained (c i j : Fin 3) (hi : i ≠ c) (hj : j ≠ c)
@@ -694,14 +665,11 @@ private theorem frontU (L : ℝ) (q : Fin 4 → CircleCoordinates) (l : Fin 3) (
   classical
   let p (i : Fin 4) : ℂ := (q i).2 / ((q i).1 : ℝ)
   let s (c : Fin 3) := P4828T1Step (P4828T1Rotate q c)
-  let F (c : Fin 3) := P4909T1ParentPolygon L (s c)
   let h := if (q l.succ).2 = -1 then L else L + 2
   let foot (z : ℂ) : ℂ := ⟨h, z.im⟩
   let x := p 0
   let B := p b.succ
   have hb := hpos b hbl
-  have root (c : Fin 3) : s c (0 : Fin 3).succ = q 0 := root q slots c
-  have keep (c i : Fin 3) (hi : i ≠ c) : s c (i - c).succ = q i.succ := keep q slots c i hi
   have radial (c i : Fin 3) (hi : i ≠ c) (hpi : 0 < (q i.succ).1) :
       segment ℝ x (p i.succ) ⊆ P4909T1ParentEdges L (s c) := radial L q hzero slots c i hi hpi
   have rootFoot (c : Fin 3) (hc : l ≠ c) :
@@ -735,8 +703,6 @@ private theorem frontD (L : ℝ) (q : Fin 4 → CircleCoordinates) (l : Fin 3) (
   let x := p 0
   let A := p a.succ
   have ha := hpos a hal
-  have root (c : Fin 3) : s c (0 : Fin 3).succ = q 0 := root q slots c
-  have keep (c i : Fin 3) (hi : i ≠ c) : s c (i - c).succ = q i.succ := keep q slots c i hi
   have radial (c i : Fin 3) (hi : i ≠ c) (hpi : 0 < (q i.succ).1) :
       segment ℝ x (p i.succ) ⊆ P4909T1ParentEdges L (s c) := radial L q hzero slots c i hi hpi
   have rootFoot (c : Fin 3) (hc : l ≠ c) :
@@ -834,20 +800,10 @@ private theorem front (L : ℝ) (q : Fin 4 → CircleCoordinates) (l : Fin 3) (h
   have hx := side 0 hzero
   have hxi := (qint x).mp hinside
   have hvertices : A ∈ P ∧ B ∈ P ∧ foot A ∈ P ∧ foot B ∈ P := hvertices L q l a b hP
-  have hxP : x ∈ P := hxP L q hinside
   have hfxP : foot x ∈ P := hfxP L q l hinside a b qmem qint hAx hxB
-  have convexP : Convex ℝ P := convexP L q
   have subC : F l ⊆ P := subC L q l hinside a b hP hC
   have subU : F a ⊆ P := subU L q l hinside a b qmem qint hP hU hAx hxB
   have subD : F b ⊆ P := subD L q l hinside a b qmem qint hP hD hAx hxB
-  have root (c : Fin 3) : s c (0 : Fin 3).succ = q 0 := root q slots c
-  have keep (c i : Fin 3) (hi : i ≠ c) : s c (i - c).succ = q i.succ := keep q slots c i hi
-  have radial (c i : Fin 3) (hi : i ≠ c) (hpi : 0 < (q i.succ).1) :
-      segment ℝ x (p i.succ) ⊆ P4909T1ParentEdges L (s c) := radial L q hzero slots c i hi hpi
-  have retained (c i j : Fin 3) (hi : i ≠ c) (hj : j ≠ c)
-      (hij : i ≠ j) (hpi : 0 < (q i.succ).1) (hpj : 0 < (q j.succ).1) :
-      segment ℝ (p i.succ) (p j.succ) ⊆ P4909T1ParentEdges L (s c) := retained L q slots c i j
-          hi hj hij hpi hpj
   have rootFoot (c : Fin 3) (hc : l ≠ c) :
       segment ℝ x (foot x) ⊆ P4909T1ParentEdges L (s c) := rootFoot L q l hl hzero slots c hc
   have retainedFoot (c i : Fin 3) (hc : l ≠ c) (hi : i ≠ c)
@@ -879,15 +835,8 @@ private theorem sepCU (L : ℝ) (q : Fin 4 → CircleCoordinates) (l : Fin 3) (a
     - (fun y => (x q).re + ((B q b).re - (x q).re) * (y - (x q).im) / ((B q b).im - (x q).im))
     z.im)) : Disjoint (interior ((F L q) l)) (interior ((F L q) a)) := by
   classical
-  let p (i : Fin 4) : ℂ := (q i).2 / ((q i).1 : ℝ)
   let s (c : Fin 3) := P4828T1Step (P4828T1Rotate q c)
   let F (c : Fin 3) := P4909T1ParentPolygon L (s c)
-  let h := if (q l.succ).2 = -1 then L else L + 2
-  let σ : ℝ := if (q l.succ).2 = -1 then 1 else -1
-  let foot (z : ℂ) : ℂ := ⟨h, z.im⟩
-  let x := p 0
-  let A := p a.succ
-  let B := p b.succ
   change (Disjoint (interior (F l)) (interior (F a)))
   apply Set.disjoint_left.mpr
   intro z ht hu
@@ -905,15 +854,8 @@ private theorem sepCD (L : ℝ) (q : Fin 4 → CircleCoordinates) (l : Fin 3) (a
     (z.re - (fun y => (x q).re + ((B q b).re - (x q).re) * (y - (x q).im) / ((B q b).im - (x
     q).im)) z.im)) : Disjoint (interior ((F L q) l)) (interior ((F L q) b)) := by
   classical
-  let p (i : Fin 4) : ℂ := (q i).2 / ((q i).1 : ℝ)
   let s (c : Fin 3) := P4828T1Step (P4828T1Rotate q c)
   let F (c : Fin 3) := P4909T1ParentPolygon L (s c)
-  let h := if (q l.succ).2 = -1 then L else L + 2
-  let σ : ℝ := if (q l.succ).2 = -1 then 1 else -1
-  let foot (z : ℂ) : ℂ := ⟨h, z.im⟩
-  let x := p 0
-  let A := p a.succ
-  let B := p b.succ
   change (Disjoint (interior (F l)) (interior (F b)))
   apply Set.disjoint_left.mpr
   intro z ht hd
@@ -929,15 +871,8 @@ private theorem sepUD (L : ℝ) (q : Fin 4 → CircleCoordinates) (l : Fin 3) (a
     (σ q l) * ((fun y => (x q).re + ((B q b).re - (x q).re) * (y - (x q).im) / ((B q b).im - (x
     q).im)) z.im - z.re)) : Disjoint (interior ((F L q) a)) (interior ((F L q) b)) := by
   classical
-  let p (i : Fin 4) : ℂ := (q i).2 / ((q i).1 : ℝ)
   let s (c : Fin 3) := P4828T1Step (P4828T1Rotate q c)
   let F (c : Fin 3) := P4909T1ParentPolygon L (s c)
-  let h := if (q l.succ).2 = -1 then L else L + 2
-  let σ : ℝ := if (q l.succ).2 = -1 then 1 else -1
-  let foot (z : ℂ) : ℂ := ⟨h, z.im⟩
-  let x := p 0
-  let A := p a.succ
-  let B := p b.succ
   change (Disjoint (interior (F a)) (interior (F b)))
   apply Set.disjoint_left.mpr
   intro z hu hd
@@ -1023,20 +958,10 @@ private theorem sep (L : ℝ) (q : Fin 4 → CircleCoordinates) (l : Fin 3) (hl 
   have hx := side 0 hzero
   have hxi := (qint x).mp hinside
   have hvertices : A ∈ P ∧ B ∈ P ∧ foot A ∈ P ∧ foot B ∈ P := hvertices L q l a b hP
-  have hxP : x ∈ P := hxP L q hinside
   have hfxP : foot x ∈ P := hfxP L q l hinside a b qmem qint hAx hxB
-  have convexP : Convex ℝ P := convexP L q
   have subC : F l ⊆ P := subC L q l hinside a b hP hC
   have subU : F a ⊆ P := subU L q l hinside a b qmem qint hP hU hAx hxB
   have subD : F b ⊆ P := subD L q l hinside a b qmem qint hP hD hAx hxB
-  have root (c : Fin 3) : s c (0 : Fin 3).succ = q 0 := root q slots c
-  have keep (c i : Fin 3) (hi : i ≠ c) : s c (i - c).succ = q i.succ := keep q slots c i hi
-  have radial (c i : Fin 3) (hi : i ≠ c) (hpi : 0 < (q i.succ).1) :
-      segment ℝ x (p i.succ) ⊆ P4909T1ParentEdges L (s c) := radial L q hzero slots c i hi hpi
-  have retained (c i j : Fin 3) (hi : i ≠ c) (hj : j ≠ c)
-      (hij : i ≠ j) (hpi : 0 < (q i.succ).1) (hpj : 0 < (q j.succ).1) :
-      segment ℝ (p i.succ) (p j.succ) ⊆ P4909T1ParentEdges L (s c) := retained L q slots c i j
-          hi hj hij hpi hpj
   have rootFoot (c : Fin 3) (hc : l ≠ c) :
       segment ℝ x (foot x) ⊆ P4909T1ParentEdges L (s c) := rootFoot L q l hl hzero slots c hc
   have retainedFoot (c i : Fin 3) (hc : l ≠ c) (hi : i ≠ c)
@@ -1090,11 +1015,8 @@ private theorem cover (L : ℝ) (q : Fin 4 → CircleCoordinates) (l : Fin 3) (a
   classical
   let p (i : Fin 4) : ℂ := (q i).2 / ((q i).1 : ℝ)
   let s (c : Fin 3) := P4828T1Step (P4828T1Rotate q c)
-  let P := P4909T1ParentPolygon L q
   let F (c : Fin 3) := P4909T1ParentPolygon L (s c)
-  let h := if (q l.succ).2 = -1 then L else L + 2
   let σ : ℝ := if (q l.succ).2 = -1 then 1 else -1
-  let foot (z : ℂ) : ℂ := ⟨h, z.im⟩
   let x := p 0
   let A := p a.succ
   let B := p b.succ
@@ -1206,9 +1128,7 @@ theorem P4909T1LineFan (L : ℝ) (q : Fin 4 → CircleCoordinates)
   -- Containment uses only convexity and the inserted foot's actual height.
   have hvertices : A ∈ P ∧ B ∈ P ∧ foot A ∈ P ∧ foot B ∈ P := LineFanConstruction.hvertices L q l
       a b hP
-  have hxP : x ∈ P := LineFanConstruction.hxP L q hinside
   have hfxP : foot x ∈ P := LineFanConstruction.hfxP L q l hinside a b qmem qint hAx hxB
-  have convexP : Convex ℝ P := LineFanConstruction.convexP L q
   have subC : F l ⊆ P := LineFanConstruction.subC L q l hinside a b hP hC
   have subU : F a ⊆ P := LineFanConstruction.subU L q l hinside a b qmem qint hP hU hAx hxB
   have subD : F b ⊆ P := LineFanConstruction.subD L q l hinside a b qmem qint hP hD hAx hxB
@@ -1220,16 +1140,6 @@ theorem P4909T1LineFan (L : ℝ) (q : Fin 4 → CircleCoordinates)
       umem tupper qint qfront dint dfront uint ufront tint tfront hal hbl hab hP hD hC hU hAx hxB
       c hc
   -- Build the literal edge witnesses without identifying same-center records.
-  have root (c : Fin 3) : s c (0 : Fin 3).succ = q 0 := LineFanConstruction.root q slots c
-  have keep (c i : Fin 3) (hi : i ≠ c) : s c (i - c).succ = q i.succ := LineFanConstruction.keep
-      q slots c i hi
-  have radial (c i : Fin 3) (hi : i ≠ c) (hpi : 0 < (q i.succ).1) :
-      segment ℝ x (p i.succ) ⊆ P4909T1ParentEdges L (s c) := LineFanConstruction.radial L q
-          hzero slots c i hi hpi
-  have retained (c i j : Fin 3) (hi : i ≠ c) (hj : j ≠ c)
-      (hij : i ≠ j) (hpi : 0 < (q i.succ).1) (hpj : 0 < (q j.succ).1) :
-      segment ℝ (p i.succ) (p j.succ) ⊆ P4909T1ParentEdges L (s c) :=
-          LineFanConstruction.retained L q slots c i j hi hj hij hpi hpj
   have rootFoot (c : Fin 3) (hc : l ≠ c) :
       segment ℝ x (foot x) ⊆ P4909T1ParentEdges L (s c) := LineFanConstruction.rootFoot L q l
           hl hzero slots c hc

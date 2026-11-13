@@ -615,7 +615,6 @@ private theorem forward_support :
       have hzstep : ((z-1)-u).re = (z-u).re - 1 := by
         simp [Zsqrtd.re_sub]
         omega
-      have hneg : 0 ≤ -1 := by simpa [hzstep, hzr] using hb.1
       omega
 
 private theorem reverse_support :
@@ -1580,10 +1579,6 @@ private theorem he_ne_aAt984 :
             e).cells) → ((Disjoint T.cells Rplus.cells) → (e ≠ a))))))) ) := by
   classical
   intro Ci T Rplus PP x U a hUa U_in_T cf hcf n e he hEcell hEidx hdisET heq
-  have hcfA : cf ∈ (PP.tile a).cells := by simpa [hUa] using hcf
-  have hcfE : cf ∈ Rplus.cells := by
-    rw [← he]
-    simpa [heq] using hcfA
   have hnA : n ∈ (PP.tile a).cells := by simpa [heq] using hEidx
   have hnU : n ∈ U.cells := by simpa [hUa] using hnA
   exact (Finset.disjoint_left.mp hdisET) (U_in_T hnU) hEcell
@@ -1601,10 +1596,6 @@ private theorem he_ne_bAt993 :
             e).cells) → ((Disjoint Rplus.cells T'.cells) → (e ≠ b))))))) ) := by
   classical
   intro Ci T' Rplus PP x V b hVb V_in_T' cb hcb n e he hEcell hEidx hdisET' heq
-  have hcbB : cb ∈ (PP.tile b).cells := by simpa [hVb] using hcb
-  have hcbE : cb ∈ Rplus.cells := by
-    rw [← he]
-    simpa [heq] using hcbB
   have hnB : n ∈ (PP.tile b).cells := by simpa [heq] using hEidx
   have hnV : n ∈ V.cells := by simpa [hVb] using hnB
   exact (Finset.disjoint_left.mp hdisET') hEcell (V_in_T' hnV)
@@ -2147,7 +2138,6 @@ private theorem lowerBoundary :
     let m : GaussianInt := x - 1 - ⟨0,1⟩
     have hqcast : ((P.q - 1 : Nat) : Int) = (P.q : Int) - 1 := by
       exact_mod_cast Nat.cast_sub (by omega : 1 ≤ P.q)
-    have hq1leq : P.q₁ ≤ P.q := by omega
     have hmc := EdgeSectorGeometry.hmcAt766 P u x hx hnatcast hqcast
     have hmTtrans := translated_ford_cell P.q (P.q - 1) (P.q₁ - 1) u
       (by omega) (by omega)
@@ -2272,9 +2262,6 @@ theorem P4158T1EdgeSectorSelection :
   all_goals
     classical
     have regular_index := EdgeSectorGeometry.regular_index Ci base PP htiles
-    have same_index_of_cell (c : GaussianInt) (a b : TilingLattice Ci)
-        (ha : c ∈ (PP.tile a).cells) (hb : c ∈ (PP.tile b).cells) : a = b :=
-      (PeriodicTileIndexedMultiplicityOne PP c).unique ha hb
     have vertical_edge_cells := EdgeSectorGeometry.vertical_edge_cells
         (EdgeSectorGeometry.pair_eq_iff)
     have translated_ford_bounds := EdgeSectorGeometry.translated_ford_bounds

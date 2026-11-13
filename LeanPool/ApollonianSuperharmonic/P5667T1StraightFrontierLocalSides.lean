@@ -75,7 +75,6 @@ private theorem hDleft :
     ) := by
   classical
   intro x B r n d D ray E hcol hleftball hleftnotray q hq hzero
-  have hqball := hleftball q hq
   have hy : d.1 * (q.2 - x.2) - d.2 * (q.1 - x.1) = 0 := by
     simpa [D] using hzero
   obtain ⟨c, hc⟩ := hcol (q - x) (by simpa using hy)
@@ -112,7 +111,6 @@ private theorem hDright :
     ) := by
   classical
   intro x B r n d D ray E hcol hrightball hrightnotray q hq hzero
-  have hqball := hrightball q hq
   have hy : d.1 * (q.2 - x.2) - d.2 * (q.1 - x.1) = 0 := by
     simpa [D] using hzero
   obtain ⟨c, hc⟩ := hcol (q - x) (by simpa using hy)

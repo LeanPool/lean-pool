@@ -230,8 +230,6 @@ private theorem capBetween :
       have him' : z.im - u.im = 2 * (m : Int) := by
         simpa only [Zsqrtd.im_sub] using him
       have hre' : z.re - u.re = (z - u).re := by simp
-      have hlo' : -1 ≤ z.re - u.re := by simpa only [Zsqrtd.re_sub] using hlow
-      have hhi' : z.re - u.re ≤ 1 := by simpa only [Zsqrtd.re_sub] using hhigh
       have hre : (z - u).re = -1 ∨ (z - u).re = 0 ∨ (z - u).re = 1 := by omega
       rcases hre with h | h | h
       · left
@@ -1127,8 +1125,6 @@ private theorem capBoundaryVerticesEq :
     · rintro ⟨him, hlo, hhi⟩
       have him' : z.im - v.im = 2 * (m : Int) := by
         simpa only [Zsqrtd.im_sub] using him
-      have hlo' : -1 ≤ z.re - v.re := by simpa only [Zsqrtd.re_sub] using hlo
-      have hhi' : z.re - v.re ≤ 1 := by simpa only [Zsqrtd.re_sub] using hhi
       have hcase : (z - v).re = -1 ∨ (z - v).re = 0 ∨ (z - v).re = 1 := by
         omega
       rcases hcase with h | h | h
@@ -2150,7 +2146,6 @@ private theorem sameCellObs :
     | mk uc ua =>
       dsimp only at hc
       subst uc
-      have hne' : tc.Nonempty := hne
       simp [FootprintVertices, FootprintEdges, hne]
 
 private theorem JtranslatedVertices :
@@ -2950,7 +2945,6 @@ private theorem reflectedInterfaces :
   let shiftLow : GaussianInt := ⟨0, -(2 * (k : Int))⟩
   let U : ProtoTile := ⟨{⟨0, -1⟩}, ⟨0, -1⟩⟩
   let x : GaussianInt := ⟨(k : Int), (k : Int) - 1⟩
-  let y : GaussianInt := 1
   have Jinj := PredecessorInterfaceGeometry.Jinj k
   have Jstep := PredecessorInterfaceGeometry.Jstep k
   have hzero : (0 : GaussianInt) =
@@ -3078,7 +3072,6 @@ theorem P5260T1PredecessorInterfaces (k : Nat) (hk : 1 < k) (b : Bool) :
   let shiftR : GaussianInt := ⟨2 * (k : Int), 0⟩
   have hpStart := PredecessorInterfaceGeometry.hpStart
   have hpEnd := PredecessorInterfaceGeometry.hpEnd k hk
-  have pathWD := PredecessorInterfaceGeometry.pathWD k pathDW
   have translateZero (T : ProtoTile) : TileTranslation T 0 = T :=
       PredecessorInterfaceGeometry.translateZero T
   let shiftLow : GaussianInt := ⟨0, -(2 * (k : Int))⟩
@@ -3100,7 +3093,6 @@ theorem P5260T1PredecessorInterfaces (k : Nat) (hk : 1 < k) (b : Bool) :
       zero_add, sub_zero, Prod.mk.injEq] at hu
   have huEq := PredecessorInterfaceGeometry.huEq k u hu
   let Q : GaussianInt → GaussianInt := GaussianQuarterTurn
-  let F : GaussianInt → GaussianInt := fun z => Q z + u
   have F_inj := PredecessorInterfaceGeometry.F_inj u
   have quarterVertices := PredecessorInterfaceGeometry.quarterVertices k u
   have quarterBaseVertices := PredecessorInterfaceGeometry.quarterBaseVertices k u
@@ -3143,28 +3135,17 @@ theorem P5260T1PredecessorInterfaces (k : Nat) (hk : 1 < k) (b : Bool) :
   have hUedgeBot' : {0, 1} ∈ BoundaryFootprintEdges U := (PredecessorInterfaceGeometry.hUedgeBot)
   have hyDL := PredecessorInterfaceGeometry.hyDL k (PredecessorInterfaceGeometry.hDLboundary k
       hkpos hlowTile capBoundaryVerticesEq) (PredecessorInterfaceGeometry.hcapRight k)
-  have hyDW := PredecessorInterfaceGeometry.hyDW k hDWv
   have hsmallTriple := P5124T1SmallerParents k hk
   have hIboundaryUnique := PredecessorInterfaceGeometry.hIboundaryUnique k hyDL
       (PredecessorInterfaceGeometry.hyLW k hLWv) (PredecessorInterfaceGeometry.hsmallI k
       hsmallTriple)
-  let J : GaussianInt → GaussianInt := fun z =>
-    GaussianTranslation ⟨0, 2 * (k : Int)⟩ (GaussianReflection z)
   have Jcoordinate := PredecessorInterfaceGeometry.Jcoordinate k
-  have reflectedPath {V : Set GaussianInt} {E : Set (Finset GaussianInt)}
-      {x y : GaussianInt} (hp : SimpleGridPathBetween V E x y) :=
-          PredecessorInterfaceGeometry.reflectedPath k (V := V) (E := E) (x := x) (y := y) hp
-  let x : GaussianInt := ⟨(k : Int), (k : Int) - 1⟩
-  let y : GaussianInt := 1
   have hDWraw := PredecessorInterfaceGeometry.hDWraw k rawBoundaryVertices diamondCellsNonempty
       hkpos hDWd hDWv hWne
-  have hLWraw := PredecessorInterfaceGeometry.hLWraw k rawBoundaryVertices
-      translatedDiamondCellsNonempty hkpos hLWd hLWv hWne
   have hlowStart : shiftLow + ⟨1, 2 * (k : Int)⟩ = 1 := by
     apply Zsqrtd.ext <;> simp [shiftLow]
   have hlowEnd : shiftLow + ⟨-1, 2 * (k : Int)⟩ = -1 := by
     apply Zsqrtd.ext <;> simp [shiftLow]
-  have hIABoundary := PredecessorInterfaceGeometry.hIABoundary k hIboundaryUnique
   exact (PredecessorReflection.reflectedInterfaces k hk b hkpos hsmall translateZero
       (PredecessorInterfaceGeometry.Jx k Jcoordinate) (PredecessorInterfaceGeometry.Jy k
       Jcoordinate) (PredecessorInterfaceGeometry.sameCellObs)

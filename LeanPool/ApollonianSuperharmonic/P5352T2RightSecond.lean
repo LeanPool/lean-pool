@@ -586,7 +586,6 @@ theorem P5352T2RightSecond (K : DiamondParameter) (hk : 1 < K.1)
     intro hC hR hz hzR hstar
     let k : Int := K.1
     let rho : GaussianInt := ⟨-k, -k-1⟩
-    have hkI : 2 ≤ k := by dsimp [k]; exact_mod_cast hk
     change (∀ y, y ∈ FootprintVertices (DiamondTile K.1) →
       f y = DiamondOdometer K y) at hC
     change (∀ y, y-rho ∈ FootprintVertices (DiamondTile K.1) →
@@ -636,7 +635,6 @@ theorem P5352T2RightSecond (K : DiamondParameter) (hk : 1 < K.1)
         ht0 htk
     let Q (a b : Int) : Int :=
       (Int.natAbs a : Int)*((Int.natAbs a : Int)-1)/2-(a-b)^2/4
-    let S (a b : Int) : Int := 2*a^2-2*|a|-(a-b)^2+(a-b)%2
     have tri (a : Int) := DiamondQuadraticArithmetic.triangularScale a
     have square (a : Int) := DiamondQuadraticArithmetic.squareScale a
     have scale (a b : Int) := DiamondQuadraticArithmetic.quadraticScale tri square a b
