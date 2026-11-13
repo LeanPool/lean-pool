@@ -78,40 +78,9 @@ private theorem hnonempty :
   have hp : 0 < Int.toNat (q 0).1 := by omega
   omega
 
-private theorem border_touch :
-    (by
-      classical
-      exact
-        ∀ (C : BandCircle),
-          ∀ (q : Fin 4 → CircleCoordinates),
-            ∀ (T : ProtoTile),
-              ∀ (P : PeriodicTileComplex ↥(TilingLattice C)),
-                (∀ (u : ↥(TilingLattice C)),
-                    P.tile u = TileTranslation T (↑u : GaussianInt)) →
-                  ∀
-                    [Nonempty
-                        (AffineTriangularComplexChart P fun (mn : ℤ × ℤ) =>
-                          TileTranslation T
-                            ((↑mn.1 : GaussianInt) *
-                                BandVectors.1 (q (1 : Fin (4 : ℕ)))
-                                (q (0 : Fin (4 : ℕ))) +
-                              (↑mn.2 : GaussianInt) *
-                                BandVectors.1 (q (2 : Fin (4 : ℕ)))
-                                (q (0 : Fin (4 : ℕ)))))],
-                    RegularTileFamily T (TilingLattice C) = Set.range P.tile →
-                      TileTranslation T 0 = T →
-                        TileArea T = (q (0 : Fin (4 : ℕ))).1.toNat →
-                          (∀ (x : GaussianInt), (TileTranslation T x).cells.Nonempty) →
-                            ∀ (U : ProtoTile),
-                              U ∈ RegularTileFamily T (TilingLattice C) →
-                                U ≠ T → TileTouching T U → TileBordering T U
-    ) := by
-  classical
-  intro C q T P htile hchart family_eq translate_zero harea hnonempty U hU hneq
-  obtain ⟨a, ha, hua⟩ := RegularTileFamilyTranslationUnique T
-    (TilingLattice C) U hU
-  have hUform : U = TileTranslation T (a : GaussianInt) := ha
-  rw [hUform]
+private theorem border_touch (T U : ProtoTile)
+    (hT : T.cells.Nonempty) (hU : U.cells.Nonempty) :
+    TileTouching T U → TileBordering T U := by
   intro ht
   rcases ht with ht | ht | ht
   · exact ⟨ht.2.2.1, by
@@ -125,8 +94,8 @@ private theorem border_touch :
           refine ⟨{x, y}, ?_⟩
           rw [hed]
           exact ⟨x, y, [], p, by simp⟩⟩
-  · exact False.elim ((hnonempty 0).ne_empty (by simpa [translate_zero] using ht.1))
-  · exact False.elim ((hnonempty (a : GaussianInt)).ne_empty ht.1)
+  · exact False.elim (hT.ne_empty ht.1)
+  · exact False.elim (hU.ne_empty ht.1)
 
 private theorem border_iff_index :
     (by
@@ -601,7 +570,7 @@ theorem BandTileTopologyApplication (C : BandCircle)
           TileBordering T U} = 6 := by
 -- BODY
   classical
-  obtain ⟨P, hPlattice, htile, hadj, hpos, hv, he, hf, hchart⟩ :=
+  obtain ⟨P, _, htile, hadj, _, _, _, _, _⟩ :=
     BandRegularTranslatePeriodicComplex C q hq hqC T hT
   have family_eq : RegularTileFamily T (TilingLattice C) = Set.range P.tile :=
       TileTopologyGeometry.family_eq C T P htile
@@ -620,10 +589,12 @@ theorem BandTileTopologyApplication (C : BandCircle)
     have hnonempty (x : GaussianInt) :
         (TileTranslation T x).cells.Nonempty := TileTopologyGeometry.hnonempty q T hpositive
             harea x
-    have border_touch (U : ProtoTile) (hU : U ∈ RegularTileFamily T (TilingLattice C))
-        (hneq : U ≠ T) : TileTouching T U → TileBordering T U :=
-            @TileTopologyGeometry.border_touch C q T P htile hchart family_eq translate_zero harea
-                hnonempty U hU hneq
+    have border_touch (U : ProtoTile) (hU : U ∈ RegularTileFamily T (TilingLattice C)) :
+        U ≠ T → TileTouching T U → TileBordering T U := by
+      obtain ⟨a, _, rfl⟩ := hU
+      intro _
+      exact TileTopologyGeometry.border_touch T (TileTranslation T a)
+        (by simpa only [translate_zero] using hnonempty 0) (hnonempty a)
     have border_iff_index (a : TilingLattice C) (ha0 : a ≠ 0) :
         TileBordering T (P.tile a) ↔
           ∃ j : Fin 3, (a : GaussianInt) = BandVectors.1 (q j.succ) (q 0) ∨
