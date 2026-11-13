@@ -6,8 +6,7 @@ Authors: Marc Kegel, Shana Yunsheng Li, Qiuyu Ren
 
 module
 
-public import LeanPool.SmallUndecidableGroups.Borisov.Model.FinalModel
-public import LeanPool.SmallUndecidableGroups.Borisov.Assertions.InputsBridge
+public import LeanPool.SmallUndecidableGroups.Host.YStage.Definitions
 
 /-!
 # The first compression HNN extension
@@ -48,14 +47,6 @@ visible before adjoining `c`:
 honest automorphism of the four-generator group `Gamma3`; its inverse sends
 `d ↦ e`, `e ↦ d⁻¹` and has the same action on the stable letters.
 -/
-
-/-- The four generator images defining the twisting automorphism of the initial Borisov group. -/
-def twistGenerator : Fin 4 → Gamma3 :=
-  ![e3⁻¹, d3, secondStableInStageThree⁻¹, firstStableInStageThree⁻¹]
-
-/-- The four generator images defining the inverse twisting automorphism. -/
-def untwistGenerator : Fin 4 → Gamma3 :=
-  ![e3, d3⁻¹, secondStableInStageThree⁻¹, firstStableInStageThree⁻¹]
 
 private theorem stable_conjugates_d
     (s : Gamma3) (hs : d3 ^ 4 * s = s * d3) :
@@ -311,25 +302,6 @@ theorem untwist_mem_V {x : Gamma3}
   rw [← V_inf_J3 datum 1]
   exact ⟨hxV, hxJ⟩
 
-/-- The source rule subgroup restricted to the selected three-generator subgroup. -/
-abbrev CRestrictedA (beta : Fin 2) :=
-  restrictedA (A := U datum) (J3 beta)
-
-/-- The target rule subgroup restricted to the selected three-generator subgroup. -/
-abbrev CRestrictedB (beta : Fin 2) :=
-  restrictedB (B := V datum) (J3 beta)
-
-/-- The rewriting-rule subgroup isomorphism restricted to the selected base subgroup. -/
-def cRestrictedPhi (beta : Fin 2) :
-    CRestrictedA datum beta ≃* CRestrictedB datum beta :=
-  restrictedPhi (J3 beta)
-    (cEquiv_mem_J3_iff datum (rankFiveFree datum) beta)
-
-/-- The exact restricted `c`-HNN extension over `J_beta`. -/
-abbrev CRestricted (beta : Fin 2) :=
-  HNNExtension (J3 beta) (CRestrictedA datum beta) (CRestrictedB datum beta)
-    (cRestrictedPhi datum beta)
-
 /-- The twisting equivalence between the two restricted source rule subgroups. -/
 def cRestrictedAEquiv :
     CRestrictedA datum 0 ≃* CRestrictedA datum 1 where
@@ -401,17 +373,6 @@ def cRestrictedEquiv : CRestricted datum 0 ≃* CRestricted datum 1 :=
         (HNNExtension.t : CRestricted datum 0) =
       (HNNExtension.t : CRestricted datum 1) := rfl
 
-/-- The exact subgroup `⟨d,e,c,s_beta⟩` of `Gamma2`. -/
-def CSubgroup (beta : Fin 2) : Subgroup (Gamma2 datum (rankFiveFree datum)) :=
-  generatedWithStable (A := U datum) (B := V datum)
-    (phi := cEquiv datum (rankFiveFree datum)) (J3 beta)
-
-/-- The equivalence from the restricted HNN model onto its generated subgroup. -/
-def cRestrictedRangeEquiv (beta : Fin 2) :
-    CRestricted datum beta ≃* CSubgroup datum beta :=
-  restrictedEquivGeneratedWithStable (J3 beta)
-    (cEquiv_mem_J3_iff datum (rankFiveFree datum) beta)
-
 @[simp] private theorem cRestrictedRangeEquiv_of_coe
     (beta : Fin 2) (x : J3 beta) :
     ((cRestrictedRangeEquiv datum beta (HNNExtension.of x) :
@@ -453,37 +414,6 @@ private theorem cRestrictedRangeEquiv_inv_t_coe (beta : Fin 2) :
 def cSubgroupEquiv : CSubgroup datum 0 ≃* CSubgroup datum 1 :=
   (cRestrictedRangeEquiv datum 0).symm.trans
     ((cRestrictedEquiv datum).trans (cRestrictedRangeEquiv datum 1))
-
-theorem d3_mem_J3 (beta : Fin 2) : d3 ∈ J3 beta :=
-  Subgroup.subset_closure (by simp)
-
-theorem e3_mem_J3 (beta : Fin 2) : e3 ∈ J3 beta :=
-  Subgroup.subset_closure (by simp)
-
-theorem stable3_mem_J3 (beta : Fin 2) : stable3 beta ∈ J3 beta :=
-  Subgroup.subset_closure (by simp)
-
-/-- The generator `d` regarded as an element of the selected core subgroup. -/
-def coreD (beta : Fin 2) : CSubgroup datum beta :=
-  ⟨of3 datum (rankFiveFree datum) d3,
-    Subgroup.subset_closure (Or.inl ⟨d3, d3_mem_J3 beta, rfl⟩)⟩
-
-/-- The generator `e` regarded as an element of the selected core subgroup. -/
-def coreE (beta : Fin 2) : CSubgroup datum beta :=
-  ⟨of3 datum (rankFiveFree datum) e3,
-    Subgroup.subset_closure (Or.inl ⟨e3, e3_mem_J3 beta, rfl⟩)⟩
-
-/-- The selected stable generator regarded as an element of the core subgroup. -/
-def coreStable (beta : Fin 2) : CSubgroup datum beta :=
-  ⟨of3 datum (rankFiveFree datum) (stable3 beta),
-    Subgroup.subset_closure
-      (Or.inl ⟨stable3 beta, stable3_mem_J3 beta, rfl⟩)⟩
-
-/-- The generator `c` regarded as an element of the core subgroup. -/
-def coreC (beta : Fin 2) : CSubgroup datum beta :=
-  ⟨BorisovCStage.c datum (rankFiveFree datum),
-    (CSubgroup datum beta).inv_mem
-      (Subgroup.subset_closure (Or.inr (Set.mem_singleton _)))⟩
 
 private theorem cRestrictedRangeEquiv_symm_of (beta : Fin 2) (x : J3 beta) :
     (cRestrictedRangeEquiv datum beta).symm
@@ -854,65 +784,6 @@ def minusEmbedding :
     MinusRestricted datum →* FinalStage datum (rankFiveFree datum) :=
   (toFinalStage datum (rankFiveFree datum)).comp (minusEmbeddingToT datum)
 
-/-- The proved freeness witness supplying the concrete iterated-HNN model. -/
-abbrev FreeInput : RankFiveFree datum := rankFiveFree datum
-
-/-- The semantic Borisov group `Gamma`. -/
-abbrev Gamma := FinalStage datum (FreeInput datum)
-
-/-- The concrete generator `d` in the final Borisov model. -/
-def d : Gamma datum := modelD datum (FreeInput datum)
-/-- The concrete generator `e` in the final Borisov model. -/
-def e : Gamma datum := modelE datum (FreeInput datum)
-/-- The concrete first stable generator in the final Borisov model. -/
-def s1 : Gamma datum := modelS1 datum (FreeInput datum)
-/-- The concrete second stable generator in the final Borisov model. -/
-def s2 : Gamma datum := modelS2 datum (FreeInput datum)
-/-- The concrete generator `c` in the final Borisov model. -/
-def c : Gamma datum := modelC datum (FreeInput datum)
-/-- The concrete generator `t` in the final Borisov model. -/
-def t : Gamma datum := modelT datum (FreeInput datum)
-/-- The concrete generator `k` in the final Borisov model. -/
-def k : Gamma datum := modelK datum (FreeInput datum)
-
-/-- `H_y^- = ⟨d,e,c,t,s₁⟩`. -/
-def HMinus : Subgroup (Gamma datum) :=
-  Subgroup.closure ({d datum, e datum, c datum, t datum, s1 datum} : Set (Gamma datum))
-
-/-- `H_y^+ = ⟨d,e,c,k,s₂⟩`. -/
-def HPlus : Subgroup (Gamma datum) :=
-  Subgroup.closure ({d datum, e datum, c datum, k datum, s2 datum} : Set (Gamma datum))
-
-@[simp] theorem d_mem_HMinus : d datum ∈ HMinus datum :=
-  Subgroup.subset_closure (Or.inl rfl)
-
-@[simp] theorem e_mem_HMinus : e datum ∈ HMinus datum :=
-  Subgroup.subset_closure (Or.inr (Or.inl rfl))
-
-@[simp] theorem c_mem_HMinus : c datum ∈ HMinus datum :=
-  Subgroup.subset_closure (Or.inr (Or.inr (Or.inl rfl)))
-
-@[simp] theorem t_mem_HMinus : t datum ∈ HMinus datum :=
-  Subgroup.subset_closure (Or.inr (Or.inr (Or.inr (Or.inl rfl))))
-
-@[simp] theorem s1_mem_HMinus : s1 datum ∈ HMinus datum :=
-  Subgroup.subset_closure (Or.inr (Or.inr (Or.inr (Or.inr rfl))))
-
-@[simp] theorem d_mem_HPlus : d datum ∈ HPlus datum :=
-  Subgroup.subset_closure (Or.inl rfl)
-
-@[simp] theorem e_mem_HPlus : e datum ∈ HPlus datum :=
-  Subgroup.subset_closure (Or.inr (Or.inl rfl))
-
-@[simp] theorem c_mem_HPlus : c datum ∈ HPlus datum :=
-  Subgroup.subset_closure (Or.inr (Or.inr (Or.inl rfl)))
-
-@[simp] theorem k_mem_HPlus : k datum ∈ HPlus datum :=
-  Subgroup.subset_closure (Or.inr (Or.inr (Or.inr (Or.inl rfl))))
-
-@[simp] theorem s2_mem_HPlus : s2 datum ∈ HPlus datum :=
-  Subgroup.subset_closure (Or.inr (Or.inr (Or.inr (Or.inr rfl))))
-
 private theorem J3_zero_to_HMinus {x : Gamma3} (hx : x ∈ J3 0) :
     cStageToFinal datum (rankFiveFree datum)
         (of3 datum (rankFiveFree datum) x) ∈ HMinus datum := by
@@ -1154,28 +1025,6 @@ def plusParamS2 : PlusRestricted datum :=
   HNNExtension.of (cSubgroupToPlusBase datum (coreStable datum 1))
 /-- The stable generator `k` in the positive restricted model. -/
 def plusParamK : PlusRestricted datum := HNNExtension.t
-
-/-- The element `d` with its membership witness in the negative associated subgroup. -/
-def minusD : HMinus datum := ⟨d datum, d_mem_HMinus datum⟩
-/-- The element `e` with its membership witness in the negative associated subgroup. -/
-def minusE : HMinus datum := ⟨e datum, e_mem_HMinus datum⟩
-/-- The element `c` with its membership witness in the negative associated subgroup. -/
-def minusC : HMinus datum := ⟨c datum, c_mem_HMinus datum⟩
-/-- The element `t` with its membership witness in the negative associated subgroup. -/
-def minusT : HMinus datum := ⟨t datum, t_mem_HMinus datum⟩
-/-- The first stable element with its membership witness in the negative associated subgroup. -/
-def minusS1 : HMinus datum := ⟨s1 datum, s1_mem_HMinus datum⟩
-
-/-- The element `d` with its membership witness in the positive associated subgroup. -/
-def plusD : HPlus datum := ⟨d datum, d_mem_HPlus datum⟩
-/-- The element `e` with its membership witness in the positive associated subgroup. -/
-def plusE : HPlus datum := ⟨e datum, e_mem_HPlus datum⟩
-/-- The element `c` with its membership witness in the positive associated subgroup. -/
-def plusC : HPlus datum := ⟨c datum, c_mem_HPlus datum⟩
-/-- The element `k` with its membership witness in the positive associated subgroup. -/
-def plusK : HPlus datum := ⟨k datum, k_mem_HPlus datum⟩
-/-- The second stable element with its membership witness in the positive associated subgroup. -/
-def plusS2 : HPlus datum := ⟨s2 datum, s2_mem_HPlus datum⟩
 
 @[simp] private theorem minusParamEquiv_paramD :
     minusParamEquiv datum (minusParamD datum) = minusD datum := by
