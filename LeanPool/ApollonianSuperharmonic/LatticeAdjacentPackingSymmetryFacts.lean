@@ -96,26 +96,8 @@ theorem vectorNegation :
       exact
         ∀ (a : BandPackingSymmetry), ∀ (v : GaussianInt), BandPackingSymmetryVectorAction a (-v)
             = -BandPackingSymmetryVectorAction a v ) := by
-  classical
-  intro a
-  induction a with
-  | identity => intro v; rfl
-  | negate =>
-      intro v
-      rcases v with ⟨a, b⟩
-      rfl
-  | conjugate =>
-      intro v
-      rcases v with ⟨a, b⟩
-      rfl
-  | shift w => intro v; rfl
-  | comp a b iha ihb =>
-      intro v
-      change BandPackingSymmetryVectorAction a
-          (BandPackingSymmetryVectorAction b (-v)) =
-        -BandPackingSymmetryVectorAction a
-          (BandPackingSymmetryVectorAction b v)
-      rw [ihb, iha]
+  intro a v
+  exact BandPackingSymmetryVectorAction.negation a v
 
 /-- The affine vector action commutes with simultaneous negation. -/
 theorem affineNegation :

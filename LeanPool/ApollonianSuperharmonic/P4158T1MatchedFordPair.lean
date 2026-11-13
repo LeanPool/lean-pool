@@ -6,6 +6,7 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.FordTileCellMembership
 
 public import LeanPool.ApollonianSuperharmonic.FordTileOdometerRestriction
 public import LeanPool.ApollonianSuperharmonic.TileOdometerTranslationUniqueness
@@ -396,36 +397,8 @@ private theorem squareCell :
             z ∈ (FordTile P.q).cells ↔
               0 ≤ z.re ∧ z.re < (P.q : Int) ∧ 0 ≤ z.im ∧ z.im < (P.q : Int)
     ) := by
-  classical
   intro P z
-  change z ∈ FordCellDomain P.q ↔ _
-  change z ∈ ((Finset.range P.q).product (Finset.range P.q)).image
-    (fun a => (⟨(a.1 : Int), (a.2 : Int)⟩ : GaussianInt)) ↔ _
-  rw [Finset.mem_image]
-  constructor
-  · rintro ⟨⟨a,b⟩, hab, hz⟩
-    have hab := Finset.mem_product.mp hab
-    have ha := Finset.mem_range.mp hab.1
-    have hb := Finset.mem_range.mp hab.2
-    have hre : z.re = (a : Int) := by
-      have hh := congrArg (fun w : GaussianInt => w.re) hz
-      simpa using hh.symm
-    have him : z.im = (b : Int) := by
-      have hh := congrArg (fun w : GaussianInt => w.im) hz
-      simpa using hh.symm
-    rw [hre, him]
-    exact ⟨by exact_mod_cast Nat.zero_le a, by exact_mod_cast ha,
-      by exact_mod_cast Nat.zero_le b, by exact_mod_cast hb⟩
-  · rintro ⟨hr, hrq, hi, hiq⟩
-    let a := z.re.toNat
-    let b := z.im.toNat
-    have ha : (a : Int) = z.re := Int.toNat_of_nonneg hr
-    have hb : (b : Int) = z.im := Int.toNat_of_nonneg hi
-    have haq : a < P.q := by exact_mod_cast (show (a : Int) < P.q by omega)
-    have hbq : b < P.q := by exact_mod_cast (show (b : Int) < P.q by omega)
-    refine ⟨(a,b), Finset.mem_product.mpr
-      ⟨Finset.mem_range.mpr haq, Finset.mem_range.mpr hbq⟩, ?_⟩
-    apply Zsqrtd.ext <;> simp [ha, hb]
+  exact FordTileCellMembership P.q z
 
 private theorem translatedCell :
     (by

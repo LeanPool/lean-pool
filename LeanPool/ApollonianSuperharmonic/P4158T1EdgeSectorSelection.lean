@@ -6,6 +6,7 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.FordTileCellMembership
 
 public import LeanPool.ApollonianSuperharmonic.AncestorOdometer
 public import LeanPool.ApollonianSuperharmonic.FordFareyParameter
@@ -195,27 +196,8 @@ private theorem translated_ford_bounds :
               c ∈ (TileTranslation (FordTile n) w).cells →
                 0 ≤ (c - w).re ∧ (c - w).re < n ∧ 0 ≤ (c - w).im ∧ (c - w).im < n
     ) := by
-  classical
   intro n w c hc
-  change c ∈ (FordCellDomain n).image (GaussianTranslation w) at hc
-  obtain ⟨t, ht, htc⟩ := Finset.mem_image.mp hc
-  change t ∈ FordCellDomain n at ht
-  change t + w = c at htc
-  simp only [FordCellDomain, Finset.mem_image] at ht
-  obtain ⟨a, ha, hat⟩ := ht
-  obtain ⟨ha₁, ha₂⟩ := Finset.mem_product.mp ha
-  simp only [Finset.mem_range] at ha₁ ha₂
-  have ht_eq : (⟨(a.1 : Int), (a.2 : Int)⟩ : GaussianInt) = t := hat
-  have hcw : c - w = t := by rw [← htc]; abel
-  have hr : (c-w).re = (a.1 : Int) := by rw [hcw, ← ht_eq]
-  have hi : (c-w).im = (a.2 : Int) := by rw [hcw, ← ht_eq]
-  constructor
-  · rw [hr]; omega
-  constructor
-  · rw [hr]; exact_mod_cast ha₁
-  constructor
-  · rw [hi]; omega
-  · rw [hi]; exact_mod_cast ha₂
+  exact (FordTileCellMembership.translated n w c).mp hc
 
 private theorem translated_ford_cell :
     (by

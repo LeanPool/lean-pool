@@ -8,7 +8,6 @@ module
 public import Mathlib.Init
 public import LeanPool.ApollonianSuperharmonic.TileQuarterTurnTranslation
 public import LeanPool.ApollonianSuperharmonic.GaussianQuarterTurnProperties
-public import LeanPool.ApollonianSuperharmonic.LatticeAdjacentPackingSymmetryFacts
 public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryLinearIdentities
 public import LeanPool.ApollonianSuperharmonic.TileTranslationProperties
 public import LeanPool.ApollonianSuperharmonic.GaussianRealPointProperties
@@ -566,7 +565,7 @@ private theorem rminus :
   cases hh : BandPackingSymmetryReversesOrientation h <;>
     simp [GaussianRealPoint, GaussianQuarterTurn, sub_eq_add_neg]
 
-private abbrev lneg := ApollonianSuperharmonic.LatticeAdjacentPackingSymmetryFacts.vectorNegation
+private abbrev lneg := ApollonianSuperharmonic.BandPackingSymmetryVectorAction.negation
 
 private theorem tile_surj :
     (by

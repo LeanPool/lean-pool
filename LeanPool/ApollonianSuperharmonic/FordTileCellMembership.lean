@@ -7,6 +7,7 @@ module
 
 public import LeanPool.ApollonianSuperharmonic.FordTile
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.TileTranslation
 
 /-!
 # Ford tile cell membership
@@ -36,6 +37,24 @@ theorem FordTileCellMembership (m : Nat) (z : GaussianInt) :
       Finset.mem_product.mpr ⟨Finset.mem_range.mpr (by omega),
         Finset.mem_range.mpr (by omega)⟩,
       by ext <;> dsimp <;> omega⟩
+
+namespace FordTileCellMembership
+
+/-- Translating a Ford square translates its coordinate bounds. -/
+theorem translated (n : Nat) (v z : GaussianInt) :
+    z ∈ (TileTranslation (FordTile n) v).cells ↔
+      0 ≤ (z - v).re ∧ (z - v).re < n ∧ 0 ≤ (z - v).im ∧ (z - v).im < n := by
+  classical
+  rw [← FordTileCellMembership n (z - v)]
+  change z ∈ (FordTile n).cells.image (GaussianTranslation v) ↔ _
+  constructor
+  · intro hz
+    obtain ⟨w, hw, rfl⟩ := Finset.mem_image.mp hz
+    simpa [GaussianTranslation] using hw
+  · intro hz
+    exact Finset.mem_image.mpr ⟨z - v, hz, by simp [GaussianTranslation]⟩
+
+end FordTileCellMembership
 
 end ApollonianSuperharmonic
 

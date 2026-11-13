@@ -45,6 +45,23 @@ def BandPackingSymmetryVectorAction :
         BandPackingSymmetryVectorAction g
           (BandPackingSymmetryVectorAction h v)
 
+namespace BandPackingSymmetryVectorAction
+
+/-- The canonical Gaussian vector action commutes with negation. -/
+theorem negation (a : BandPackingSymmetry) (v : GaussianInt) :
+    BandPackingSymmetryVectorAction a (-v) = -BandPackingSymmetryVectorAction a v := by
+  induction a generalizing v with
+  | identity => rfl
+  | negate => rcases v with ⟨x, y⟩; rfl
+  | conjugate => rcases v with ⟨x, y⟩; rfl
+  | shift w => rfl
+  | comp a b iha ihb =>
+    change BandPackingSymmetryVectorAction a (BandPackingSymmetryVectorAction b (-v)) =
+      -BandPackingSymmetryVectorAction a (BandPackingSymmetryVectorAction b v)
+    rw [ihb, iha]
+
+end BandPackingSymmetryVectorAction
+
 end ApollonianSuperharmonic
 
 end

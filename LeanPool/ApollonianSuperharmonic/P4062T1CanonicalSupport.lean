@@ -28,41 +28,6 @@ namespace ApollonianSuperharmonic
 
 namespace CanonicalSupport
 
-private theorem hcellCoord (q : Nat) (z : GaussianInt) :
-      z ∈ FordCellDomain q ↔
-        0 ≤ z.re ∧ z.re < (q : Int) ∧
-          0 ≤ z.im ∧ z.im < (q : Int) := by
-  classical
-  constructor
-  · intro hz
-    change z ∈ ((Finset.range q).product (Finset.range q)).image
-      (fun a => (⟨(a.1 : Int), (a.2 : Int)⟩ : GaussianInt)) at hz
-    rcases Finset.mem_image.mp hz with ⟨a, ha, heq⟩
-    have hab := Finset.mem_product.mp ha
-    rcases a with ⟨m, n⟩
-    have hm := Finset.mem_range.mp hab.1
-    have hn := Finset.mem_range.mp hab.2
-    have hre : z.re = (m : Int) := by
-      have hh := congrArg (fun w : GaussianInt => w.re) heq
-      simpa using hh.symm
-    have him : z.im = (n : Int) := by
-      have hh := congrArg (fun w : GaussianInt => w.im) heq
-      simpa using hh.symm
-    simp [hre, him, hm, hn]
-  · rintro ⟨hzr, hzr', hzi, hzi'⟩
-    let m := z.re.toNat
-    let n := z.im.toNat
-    have hmcast : (m : Int) = z.re := Int.toNat_of_nonneg hzr
-    have hncast : (n : Int) = z.im := Int.toNat_of_nonneg hzi
-    have hm : m < q := by
-      exact_mod_cast (show (m : Int) < q by omega)
-    have hn : n < q := by
-      exact_mod_cast (show (n : Int) < q by omega)
-    apply Finset.mem_image.mpr
-    refine ⟨(m, n), Finset.mem_product.mpr
-      ⟨Finset.mem_range.mpr hm, Finset.mem_range.mpr hn⟩, ?_⟩
-    apply Zsqrtd.ext <;> simp [hmcast, hncast]
-
 private theorem hfootSquare (q : Nat) (hqpos : 0 < q) :
       FootprintVertices (FordTile q) = FordVertexDomain q := by
   classical
@@ -311,36 +276,7 @@ theorem P4062T1CanonicalSupport (q : Nat) (hqpos : 0 < q) :
       {x | 0 ≤ x.re ∧ x.re ≤ (q : Int) ∧
         0 ≤ x.im ∧ x.im ≤ (q : Int) ∧
         (x.re = 0 ∨ x.re = (q : Int) ∨ x.im = 0 ∨ x.im = (q : Int))} := by
--- BODY
-  classical
-  have hcellCoord (z : GaussianInt) :
-      z ∈ FordCellDomain q ↔
-        0 ≤ z.re ∧ z.re < (q : Int) ∧
-          0 ≤ z.im ∧ z.im < (q : Int) := CanonicalSupport.hcellCoord q z
-  have hfootSquare :
-      FootprintVertices (FordTile q) = FordVertexDomain q := CanonicalSupport.hfootSquare q hqpos
-  have hFcells : (FordTile q).cells.Nonempty := CanonicalSupport.hFcells q hqpos
-  have hcellTiles (z : GaussianInt) :
-      z ∈ (FordTile q).cells ↔
-        0 ≤ z.re ∧ z.re < (q : Int) ∧
-          0 ≤ z.im ∧ z.im < (q : Int) := CanonicalSupport.hcellTiles q z
-  have hhoriz (z : GaussianInt) :
-      ((z ∈ (FordTile q).cells ∧ z - ⟨0, 1⟩ ∉ (FordTile q).cells) ∨
-        (z ∉ (FordTile q).cells ∧ z - ⟨0, 1⟩ ∈ (FordTile q).cells)) ↔
-      0 ≤ z.re ∧ z.re < (q : Int) ∧
-        (z.im = 0 ∨ z.im = q) := CanonicalSupport.hhoriz q z
-  have hvert (z : GaussianInt) :
-      ((z ∈ (FordTile q).cells ∧ z - 1 ∉ (FordTile q).cells) ∨
-        (z ∉ (FordTile q).cells ∧ z - 1 ∈ (FordTile q).cells)) ↔
-      0 ≤ z.im ∧ z.im < (q : Int) ∧
-        (z.re = 0 ∨ z.re = q) := CanonicalSupport.hvert q z
-  have hboundarySquare :
-      BoundaryFootprintVertices (FordTile q) =
-        {x | 0 ≤ x.re ∧ x.re ≤ (q : Int) ∧
-          0 ≤ x.im ∧ x.im ≤ (q : Int) ∧
-          (x.re = 0 ∨ x.re = (q : Int) ∨
-            x.im = 0 ∨ x.im = (q : Int))} := CanonicalSupport.hboundarySquare q hqpos
-  exact ⟨hfootSquare, hboundarySquare⟩
+  exact ⟨CanonicalSupport.hfootSquare q hqpos, CanonicalSupport.hboundarySquare q hqpos⟩
 
 end ApollonianSuperharmonic
 

@@ -6,6 +6,7 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.FordTileCellMembership
 
 public import LeanPool.ApollonianSuperharmonic.P4158T1MatchedFordPair
 public import LeanPool.ApollonianSuperharmonic.P4158T1LargeFirstRestrictions
@@ -57,30 +58,8 @@ private theorem squareCell :
                 0 ≤ (z - v).re ∧
                   (z - v).re < (n : Int) ∧ 0 ≤ (z - v).im ∧ (z - v).im < (n : Int)
     ) := by
-  classical
   intro n v z
-  change z ∈ (FordCellDomain n).image (GaussianTranslation v) ↔ _
-  constructor
-  · rintro hz
-    obtain ⟨w, hw, rfl⟩ := Finset.mem_image.mp hz
-    obtain ⟨a, ha, rfl⟩ := Finset.mem_image.mp hw
-    have hrange := Finset.mem_product.mp ha
-    have hm := Finset.mem_range.mp hrange.1
-    have hn := Finset.mem_range.mp hrange.2
-    simp only [GaussianTranslation, add_sub_cancel_right]
-    change 0 ≤ (a.1 : Int) ∧ (a.1 : Int) < n ∧
-      0 ≤ (a.2 : Int) ∧ (a.2 : Int) < n
-    exact ⟨by omega, by omega, by omega, by omega⟩
-  · rintro ⟨h0r, hnr, h0i, hni⟩
-    apply Finset.mem_image.mpr
-    refine ⟨z - v, ?_, by simp [GaussianTranslation]⟩
-    apply Finset.mem_image.mpr
-    refine ⟨((z - v).re.toNat, (z - v).im.toNat), ?_, ?_⟩
-    · apply Finset.mem_product.mpr
-      constructor <;> apply Finset.mem_range.mpr <;> omega
-    · apply Zsqrtd.ext
-      · exact Int.toNat_of_nonneg h0r
-      · exact Int.toNat_of_nonneg h0i
+  exact FordTileCellMembership.translated n v z
 
 private theorem smaller :
     (by

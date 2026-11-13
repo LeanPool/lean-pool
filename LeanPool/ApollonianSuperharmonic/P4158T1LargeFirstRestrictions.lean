@@ -6,6 +6,8 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.P4210T1FordSquareCentroid
+public import LeanPool.ApollonianSuperharmonic.FordTileCellMembership
 public import LeanPool.ApollonianSuperharmonic.FordFareySum
 
 public import LeanPool.ApollonianSuperharmonic.AncestorOdometer
@@ -371,84 +373,7 @@ private theorem fordCentroid :
           (0 : ℕ) < n →
             TileCentroid (FordTile n) = ((↑n : ℝ) / (2 : ℝ), (↑n : ℝ) / (2 : ℝ))
     ) := by
-  classical
-  intro n hn
-  let D : Finset GaussianInt :=
-    (Finset.range n).product (Finset.range n) |>.image
-      (fun a => (⟨(a.1 : Int), (a.2 : Int)⟩ : GaussianInt))
-  have hne : D.Nonempty := by
-    refine ⟨⟨0, 0⟩, ?_⟩
-    simp [D, hn]
-  have hinj : Set.InjOn
-      (fun a : Nat × Nat => (⟨(a.1 : Int), (a.2 : Int)⟩ : GaussianInt))
-      ↑((Finset.range n).product (Finset.range n)) := by
-    intro a ha b hb hab
-    apply Prod.ext
-    · have hh := congrArg (fun z : GaussianInt => z.re) hab
-      change (a.1 : Int) = b.1 at hh
-      exact_mod_cast hh
-    · have hh := congrArg (fun z : GaussianInt => z.im) hab
-      change (a.2 : Int) = b.2 at hh
-      exact_mod_cast hh
-  have hcard : D.card = n * n := by
-    calc
-      D.card = ((Finset.range n).product (Finset.range n)).card := by
-        dsimp [D]
-        exact Finset.card_image_iff.mpr hinj
-      _ = n * n := by simp
-  have hsumR : D.sum (fun z : GaussianInt => z.re) =
-      (n : Int) * ((n - 1 : Nat) : Int) / 2 * (n : Int) := by
-    have hrange : (Finset.range n).sum (fun a => (a : Int)) =
-        (n : Int) * ((n - 1 : Nat) : Int) / 2 := by
-      rw [← Nat.cast_sum]
-      simp [Finset.sum_range_id]
-    simp only [Int.reduceNeg, Finset.product_eq_sprod, Finset.coe_product, Finset.coe_range,
-        Zsqrtd.mk.injEq, Nat.cast_inj, Prod.forall, Prod.mk.injEq, implies_true,
-        Set.injOn_of_eq_iff_eq, Finset.sum_image, Finset.sum_product, Finset.sum_const,
-        Finset.card_range, Int.nsmul_eq_mul, D]
-    conv_lhs => rw [← Finset.mul_sum (Finset.range n)
-      (fun a => (a : Int)) (n : Int)]
-    rw [hrange]
-    ring
-  have hsumI : D.sum (fun z : GaussianInt => z.im) =
-      (n : Int) * ((n - 1 : Nat) : Int) / 2 * (n : Int) := by
-    have hrange : (Finset.range n).sum (fun a => (a : Int)) =
-        (n : Int) * ((n - 1 : Nat) : Int) / 2 := by
-      rw [← Nat.cast_sum]
-      simp [Finset.sum_range_id]
-    simp only [Int.reduceNeg, Finset.product_eq_sprod, Finset.coe_product, Finset.coe_range,
-        Zsqrtd.mk.injEq, Nat.cast_inj, Prod.forall, Prod.mk.injEq, implies_true,
-        Set.injOn_of_eq_iff_eq, Finset.sum_image, Finset.sum_product, Finset.sum_const,
-        Finset.card_range, Int.nsmul_eq_mul, D]
-    rw [hrange]
-    ring
-  change (if D.Nonempty then
-    (((D.sum (fun z : GaussianInt => z.re) : Int) : Real) / D.card + 1 / 2,
-     ((D.sum (fun z : GaussianInt => z.im) : Int) : Real) / D.card + 1 / 2)
-    else _) = _
-  rw [ite_eq_left hne, hcard, hsumR, hsumI]
-  have hncast : ((n - 1 : Nat) : Int) = (n : Int) - 1 := by omega
-  rw [hncast]
-  norm_num
-  field_simp
-  have rangeSum : (Finset.range n).sum (fun a => (a : Int)) =
-      (n : Int) * ((n - 1 : Nat) : Int) / 2 := by
-    rw [← Nat.cast_sum]
-    simp [Finset.sum_range_id]
-  have arithmeticCast :
-      ((Finset.range n).sum (fun a => (a : Int))) * 2 =
-        (n : Int) * ((n - 1 : Nat) : Int) := by
-    rw [← Nat.cast_sum]
-    exact_mod_cast Finset.sum_range_id_mul_two n
-  rw [rangeSum] at arithmeticCast
-  rw [hncast] at arithmeticCast
-  have hreal :
-      ((((n : Int) * ((n : Int) - 1) / 2 : Int) : Real) * 2) =
-        (((n : Int) * ((n : Int) - 1) : Int) : Real) := by
-    exact_mod_cast arithmeticCast
-  rw [hreal]
-  push_cast
-  ring
+  exact P4210T1FordSquareCentroid
 
 private theorem rootNonempty :
     (by
@@ -456,18 +381,8 @@ private theorem rootNonempty :
       exact
         ∀ (n : ℕ), (0 : ℕ) < n → ∀ (z : GaussianInt), Finset.Nonempty (TileTranslation (FordTile
             n) z).cells ) := by
-  classical
   intro n hn z
-  refine ⟨z, ?_⟩
-  rw [(TileTranslationFormulas (FordTile n) z).1]
-  apply Finset.mem_image.mpr
-  refine ⟨0, ?_, ?_⟩
-  · change (0 : GaussianInt) ∈ FordCellDomain n
-    unfold FordCellDomain
-    apply Finset.mem_image.mpr
-    refine ⟨(0, 0), Finset.mem_product.mpr ⟨by simp [hn], by simp [hn]⟩, ?_⟩
-    ext <;> simp
-  · simp [GaussianTranslation]
+  exact ⟨z, (FordTileCellMembership.translated n z z).mpr (by simpa using And.intro hn hn)⟩
 
 private theorem hrootCent :
     (by
