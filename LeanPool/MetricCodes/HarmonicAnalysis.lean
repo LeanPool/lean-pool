@@ -12,14 +12,10 @@ public import Mathlib.LinearAlgebra.Trace
 public import Mathlib.RingTheory.MvPolynomial.Homogeneous
 import Mathlib.Algebra.MvPolynomial.CommRing
 import Mathlib.Algebra.Order.Antidiag.FinsuppEquiv
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Star.Real
-import Mathlib.Algebra.Ring.IsFormallyReal
 import Mathlib.Analysis.InnerProductSpace.Trace
 import Mathlib.Analysis.Matrix.Hermitian
 import Mathlib.Data.Nat.Dist
 import Mathlib.RingTheory.MvPolynomial.EulerIdentity
-import Mathlib.Tactic.NormNum.RealSqrt
 import Mathlib.Topology.MetricSpace.CoveringNumbers
 
 /-!
@@ -644,7 +640,7 @@ theorem alphaSq_pos {n k i : ℕ}
   have hki' : (k : ℝ) ≤ i := by exact_mod_cast hki
   unfold alphaSq
   apply div_pos
-  · apply mul_pos <;> linarith
+  · apply mul_pos <;> linarith only [hn', hki']
   · apply mul_pos <;> linarith
 
 theorem jacobiCoefficient_pos {n k i : ℕ}
@@ -653,7 +649,7 @@ theorem jacobiCoefficient_pos {n k i : ℕ}
   have hki' : (k : ℝ) ≤ i := by exact_mod_cast hki
   unfold jacobiCoefficient
   apply div_pos
-  · apply mul_pos <;> linarith
+  · apply mul_pos <;> linarith only [hn', hki']
   · apply Real.sqrt_pos.2
     have h₁ : 0 < (i : ℝ) + 1 := by linarith only []
     have h₂ : 0 < (i : ℝ) + (n : ℝ) - 2 := by linarith only [hn']
@@ -3662,8 +3658,7 @@ theorem exists_nonnegative_unit_topEigenvector
 theorem unit_coordinate_sq_sum
     {k L : ℕ} {x : Jacobi.Space k L} (hx : ‖x‖ = 1) :
     (∑ p : Jacobi.Index k L, x p ^ 2) = 1 := by
-  rw [← EuclideanSpace.real_norm_sq_eq, hx]
-  norm_num
+  exact MetricCodes.Spherical.HigherHierarchyFinitePerron.unit_coordinate_sq_sum hx
 
 end Perron
 
@@ -5447,7 +5442,7 @@ theorem positiveRadicalSymmetrization
   have hright : 0 ≤
       (r / Real.sqrt (a * b * p * q)) * Real.sqrt e := by
     positivity
-  nlinarith only [hsquare, hleft, hright]
+  exact (sq_eq_sq₀ hleft hright).mp hsquare
 
 theorem alphaSq_sqrt_harmonicDimension
     {n k i : ℕ} (hn : 3 ≤ n) (hki : k ≤ i) :
@@ -6041,7 +6036,7 @@ theorem sourceAdjacentBlockCoefficient_amplitude_identity
       HarmonicCertificateAssembly.harmonicFibreAmplitudes_sq
         n k L hn source]
     field_simp [heigen.ne', hsource.ne', hnormal.ne']
-  nlinarith only [hsquare, hleft, hright]
+  exact (sq_eq_sq₀ hleft hright).mp hsquare
 
 theorem sourceAdjacentBlockCoefficient_amplitude_sum
     {n k L : ℕ} (hn : 3 ≤ n) (hkl : k < L)
@@ -8797,41 +8792,39 @@ theorem solidHarmonicSourceLowerIsometryCoefficient_sq
       SpherePacking.Gegenbauer.betaSq n k (k + (r + 1)) := by
   have hnreal : (3 : ℝ) ≤ (n : ℝ) := by exact_mod_cast hn
   have hweight := lowerChannelWeight_pos hn (k + r)
-  have hmiddle :
-      0 < (k : ℝ) + (r : ℝ) + (n : ℝ) - 2 := by
+  have hmiddle : 0 < (k : ℝ) + (r : ℝ) + (n : ℝ) - 2 := by
     linarith only [hnreal]
-  have hlowerden :
-      0 < 2 * ((k : ℝ) + (r : ℝ)) + (n : ℝ) - 2 := by
+  have hlowerden : 0 < 2 * ((k : ℝ) + (r : ℝ)) + (n : ℝ) - 2 := by
     linarith only [hnreal]
-  have hupperden :
-      0 < 2 * ((k : ℝ) + (r : ℝ)) + (n : ℝ) := by
+  have hupperden : 0 < 2 * ((k : ℝ) + (r : ℝ)) + (n : ℝ) := by
     linarith only [hnreal]
-  have hfirstden :
-      0 < 2 * (r : ℝ) +
-        ((n : ℝ) + 2 * (k : ℝ)) - 2 := by
-    linarith only [hnreal]
-  have hfirstden_rev :
-      0 < (r : ℝ) * 2 +
-        ((n : ℝ) + 2 * (k : ℝ)) - 2 := by
-    linarith only [hnreal]
-  have hbetafirst :
-      0 < (k : ℝ) + ((r : ℝ) + 1) + (n : ℝ) - 3 := by
-    linarith only [hnreal]
-  have hbetasecond :
-      0 < 2 * ((k : ℝ) + ((r : ℝ) + 1)) + (n : ℝ) - 2 := by
-    linarith only [hnreal]
+  have hbeta : SpherePacking.Gegenbauer.betaSq n k (k + (r + 1)) =
+      (((r : ℝ) + 1) * ((r : ℝ) + ((n : ℝ) + 2 * (k : ℝ)) - 2)) /
+        (((k : ℝ) + (r : ℝ) + (n : ℝ) - 2) *
+          (2 * ((k : ℝ) + (r : ℝ)) + (n : ℝ))) := by
+    unfold SpherePacking.Gegenbauer.betaSq
+    push_cast
+    congr 2 <;> ring
   unfold solidHarmonicSourceLowerIsometryCoefficient
   rw [div_pow, Real.sq_sqrt hweight.le,
-    solidHarmonicSourceLowerCoefficient_sq hn k r]
-  unfold lowerChannelWeight upperChannelDenominator
-    SpherePacking.Gegenbauer.betaSq
-    SpherePacking.harmonicAxisParameter
+    solidHarmonicSourceLowerCoefficient_sq hn k r, hbeta]
+  unfold lowerChannelWeight upperChannelDenominator SpherePacking.harmonicAxisParameter
   push_cast
-  field_simp [ne_of_gt hmiddle, ne_of_gt hlowerden,
-    ne_of_gt hupperden, ne_of_gt hfirstden,
-    ne_of_gt hfirstden_rev,
-    ne_of_gt hbetafirst, ne_of_gt hbetasecond]
-  ring
+  have hfirstden : 2 * (r : ℝ) + ((n : ℝ) + 2 * (k : ℝ)) - 2 =
+      2 * ((k : ℝ) + (r : ℝ)) + (n : ℝ) - 2 := by ring
+  rw [hfirstden]
+  let radialFactor := (r : ℝ) + 1
+  let harmonicFactor := (r : ℝ) + ((n : ℝ) + 2 * (k : ℝ)) - 2
+  let lowerNumerator := (k : ℝ) + (r : ℝ) + (n : ℝ) - 2
+  let upperDenominator := 2 * ((k : ℝ) + (r : ℝ)) + (n : ℝ)
+  let lowerDenominator := 2 * ((k : ℝ) + (r : ℝ)) + (n : ℝ) - 2
+  change ((radialFactor * harmonicFactor) / (lowerDenominator * upperDenominator)) /
+      (lowerNumerator / lowerDenominator) =
+    (radialFactor * harmonicFactor) / (lowerNumerator * upperDenominator)
+  have hlowerNumerator : lowerNumerator ≠ 0 := hmiddle.ne'
+  have hupperDenominator : upperDenominator ≠ 0 := hupperden.ne'
+  have hlowerDenominator : lowerDenominator ≠ 0 := hlowerden.ne'
+  field_simp [hlowerNumerator, hupperDenominator, hlowerDenominator]
 
 theorem solidHarmonicSourceLowerIsometryCoefficient_pos
     {n : ℕ} (hn : 3 ≤ n) (k r : ℕ) :
@@ -8856,7 +8849,7 @@ theorem solidHarmonicSourceLowerIsometryCoefficient_eq_sqrt
   have hroot := Real.sq_sqrt hbeta
   have hroot_nonneg := Real.sqrt_nonneg
     (SpherePacking.Gegenbauer.betaSq n k (k + (r + 1)))
-  nlinarith only [hsquare, hroot, hcoef, hroot_nonneg]
+  exact (sq_eq_sq₀ hcoef.le hroot_nonneg).mp (hsquare.trans hroot.symm)
 
 theorem lowerChannelIsometry_adjoint_solidHarmonicSource
     {n : ℕ} (hn : 3 ≤ n) (k r : ℕ)

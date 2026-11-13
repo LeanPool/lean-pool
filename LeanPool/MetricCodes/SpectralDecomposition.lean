@@ -7,10 +7,7 @@ module
 
 public import LeanPool.MetricCodes.Rigidity
 public import Mathlib.LinearAlgebra.Lagrange
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Ring.IsFormallyReal
 import Mathlib.LinearAlgebra.Eigenspace.Minpoly
-import Mathlib.Tactic.NormNum.RealSqrt
 
 /-!
 # Canonical spectral decomposition
@@ -1107,9 +1104,8 @@ theorem rotationIntertwiner_ambientPositiveRoot_zero_of_signatures
         one_smul, zero_smul, add_zero, zero_add, add_assoc,
         Derivation.add_apply, Derivation.smul_apply]
         using hroot)
-  simpa only [Fin.sum_univ_succ, Fin.sum_univ_zero, Fin.cons_zero,
-    Fin.cons_succ, Matrix.cons_val_zero, Matrix.cons_val_succ,
-    one_smul, zero_smul, add_zero, zero_add, add_assoc]
+  simpa only [add_assoc, Fin.sum_univ_succ, Matrix.cons_val_zero, one_smul, Matrix.cons_val_succ,
+      Fin.sum_univ_zero, add_zero, zero_smul]
     using h
 
 theorem rotationIntertwiner_ambientSumPositiveRoot_zero_of_signatures
@@ -1151,10 +1147,8 @@ theorem rotationIntertwiner_ambientSumPositiveRoot_zero_of_signatures
         zero_add, sub_eq_add_neg, add_assoc, Derivation.add_apply,
         neg_apply, LinearMap.neg_apply, Derivation.neg_apply,
         Derivation.smul_apply] using hroot)
-  simpa only [Fin.sum_univ_succ, Fin.sum_univ_zero, Fin.cons_zero,
-    Fin.cons_succ, Matrix.cons_val_zero, Matrix.cons_val_succ,
-    one_smul, neg_one_smul, zero_smul, add_zero,
-    zero_add, sub_eq_add_neg, add_assoc] using h
+  simpa only [sub_eq_add_neg, add_assoc, Fin.sum_univ_succ, Matrix.cons_val_zero, one_smul,
+      Matrix.cons_val_succ, neg_one_smul, Fin.sum_univ_zero, add_zero, zero_smul] using h
 
 theorem rotationIntertwiner_ambientShortPositiveRoot_zero_of_signatures
     {r n : ℕ} (hn : 2 * (r + 1) ≤ n)
@@ -7735,9 +7729,7 @@ theorem gtRelativeCasimir_eigen_inner_eq_zero
   rw [hu, hv] at hsym
   rw [real_inner_smul_left u v s,
     real_inner_smul_right u v t] at hsym
-  have hmul : (s - t) * ⟪u, v⟫_ℝ = 0 := by
-    nlinarith
-  exact (mul_eq_zero.mp hmul).resolve_left (sub_ne_zero.mpr hne)
+  exact (mul_eq_mul_right_iff.mp hsym).resolve_left hne
 
 end AllRankGTRelativeCasimirCompressedResolvent
 

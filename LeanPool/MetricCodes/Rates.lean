@@ -10,12 +10,9 @@ public import Mathlib.Analysis.SpecialFunctions.Sqrt
 public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Chebyshev.Orthogonality
 public import Mathlib.Probability.Distributions.Beta
 import Mathlib.Algebra.Order.Archimedean.Real.Hom
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Star.Real
-import Mathlib.Algebra.Ring.IsFormallyReal
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.InverseDeriv
 import Mathlib.LinearAlgebra.Lagrange
-import Mathlib.Tactic.NormNum.RealSqrt
+import Mathlib.Tactic.NormNum.RealSqrt -- shake: keep
 
 /-!
 # Strict rate improvements
@@ -671,7 +668,7 @@ theorem eventually_binaryEntropy_inward_improvement
           (MetricCodes.binaryEntropy a - MetricCodes.binaryEntropy (a - C * e)) < M := by
     have h := hslope.eventually (gt_mem_nhds hM)
     filter_upwards [h] with e he
-    simpa [f, smul_eq_mul] using he
+    simpa only [zero_add, mul_zero, sub_zero, sub_self, smul_eq_mul, f] using he
   have hloglim :
       Tendsto (fun e : ℝ => -Real.logb 2 e) (𝓝[>] 0) atTop := by
     simpa only [tendsto_neg_atTop_iff, Function.comp_def] using
@@ -4205,7 +4202,7 @@ theorem eventually_sphericalEntropy_improvement {a : ℝ} (ha : 0 < a) :
             MetricCodes.sphericalEntropy a) < M := by
     have h := hslope.eventually (gt_mem_nhds hM)
     filter_upwards [h] with b hb
-    simpa [f, sphericalImprovementPath, smul_eq_mul] using hb
+    simpa only [sphericalImprovementPath, zero_add, mul_zero, add_zero, smul_eq_mul, f] using hb
   have hloglim :
       Tendsto (fun b : ℝ => -Real.logb 2 b) (𝓝[>] 0) atTop := by
     simpa only [tendsto_neg_atTop_iff, Function.comp_def] using
