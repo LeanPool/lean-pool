@@ -1826,9 +1826,11 @@ theorem rescaledW_derivative_bound {ω φ : ℝ → ℂ} (hω : ContDiff ℝ (�
   calc ∑ k : Fin 4, (D : ℝ) ^ (m + n + 1) * (‖c k‖ * G (m + k) * G (n + (4 - k))) ≤
       ∑ k : Fin 4, ‖c k‖ * (Bp / 34) := by
         apply Finset.sum_le_sum; intro k _
+        clear_value c G Bp
         have := mul_le_mul_of_nonneg_left (hk k) (norm_nonneg (c k))
         nlinarith only [this]
     _ = 24 / 34 * Bp := by
+        clear_value Bp
         simp [Fin.sum_univ_four, c]; norm_num; ring
     _ ≤ Bp := by
         have : 0 ≤ Bp := by positivity
