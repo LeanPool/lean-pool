@@ -1,0 +1,80 @@
+slug: finite-dimensional-copulas
+title: Finite-dimensional copulas and Sklar's theorem
+summary: >-
+  Constructs copulas as probability measures with uniform coordinate marginals,
+  proves Sklar's theorem for arbitrary finite-dimensional real laws, and proves
+  uniqueness for continuous marginals and equality on marginal CDF ranges in
+  general. Establishes the equivalence with the classical normalized, grounded,
+  uniform-margin, rectangle-increasing CDF conditions without assuming continuity.
+  Includes compact quantile sampling, randomized inverse disintegration, general
+  lifting of joint laws, Lipschitz bounds, and finite atomic approximation.
+branch: probability theory
+entry_module: LeanPool.Copula
+authors:
+- Marcus Rockel
+- Gaëtan Serré
+- Rémy Degenne
+source:
+  title: Copula — finite-dimensional copulas in Lean 4
+  authors:
+  - Marcus Rockel
+  url: https://github.com/Corrram/copula/tree/fe53ea2f3e6af41da8541e7d0aa2edc38ed0dcc8
+  github_repo: Corrram/copula
+  commit: fe53ea2f3e6af41da8541e7d0aa2edc38ed0dcc8
+license: Apache-2.0
+status: verified
+provenance: mix
+provenance_evidence: >-
+  The original September 18 core commits credit Marcus Rockel without a proof-tool
+  disclosure. The retained Rectangle module was subsequently revised by Claude in
+  9d07e1456c8ec655666255ec966f138e28c56477 on October 3; this import's proof
+  optimization and port are by Codex. Mixed provenance is inferred from the human
+  author records and these documented AI contributions. The original core's proof
+  production is not explicitly disclosed and requires confirmation before merging.
+main_declarations:
+- ProbabilityTheory.Copula.exists_sklarCopula
+main_results:
+- declaration: ProbabilityTheory.Copula.exists_sklarCopula
+  informal: >-
+    Every probability measure on a finite-dimensional real vector space admits
+    a copula whose CDF, evaluated at the marginal CDFs, equals the joint CDF.
+    Atoms, singular joint laws, and dimension zero are allowed.
+  source_ref: >-
+    Upstream Copula/Sklar/General.lean. Completed in commit
+    eaee4eab6931066921870358c0f4bc0b8bd32068 on 2026-09-18 at 13:15:59 UTC;
+    publicly released as v0.1.0 on 2026-09-19 at 07:05:23 UTC at
+    https://github.com/Corrram/copula/releases/tag/v0.1.0.
+- declaration: ProbabilityTheory.Copula.existsUnique_sklarCopula_of_continuous
+  informal: >-
+    If each marginal CDF is continuous, the Sklar copula exists and is unique
+    on the entire closed unit cube; strict monotonicity is unnecessary.
+  source_ref: Upstream Copula/Sklar/Continuous.lean.
+- declaration: ProbabilityTheory.Copula.IsSklarCopula.cdf_eq_on_ranges
+  informal: >-
+    Any two Sklar copulas for the same real joint law have equal CDFs whenever
+    every coordinate belongs to the range of the corresponding marginal CDF.
+  source_ref: Upstream Copula/Sklar/Continuous.lean.
+- declaration: ProbabilityTheory.Copula.isClassical_iff_existsUnique
+  informal: >-
+    A real function on the finite unit cube is normalized, grounded, has uniform
+    one-dimensional margins, and has nonnegative ordered rectangle increments
+    if and only if it is the CDF of exactly one copula probability measure.
+    Continuity follows from these conditions and is not an extra hypothesis.
+  source_ref: >-
+    Upstream Copula/Classical/Characterization.lean, completed in commit
+    5578d2b62ad948570a3edce60330d012e6b5c97b on 2026-09-18 at 13:58:11 UTC.
+- declaration: ProbabilityTheory.Copula.exists_lift
+  informal: >-
+    A joint probability law on a finite power of a standard Borel space
+    lifts to a copula through any measurable coordinate sampling maps from the
+    uniform unit interval whose pushforwards are the given marginal laws.
+  source_ref: Upstream Copula/Sklar/Lift.lean.
+tags:
+- copulas
+- sklar-theorem
+- probability-measures
+- disintegration
+- quantiles
+msc:
+- 60E05
+- 60B05
