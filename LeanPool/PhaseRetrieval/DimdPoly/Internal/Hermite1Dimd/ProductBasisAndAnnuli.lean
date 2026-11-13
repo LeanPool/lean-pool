@@ -774,8 +774,7 @@ private lemma rotate_one_gaussian_preserving
       (gaussianMeasure d) (gaussianMeasure d) := by
   classical
   let f : CSpace d → CSpace d := fun z => Function.update z q0 ((ω : ℂ) * z q0)
-  have hvol : MeasurePreserving f (volume : Measure (CSpace d)) (volume : Measure (CSpace d)) := by
-    exact (rotate_one_volume_preserving (q0 := q0) (ω := ω))
+  have hvol := (rotate_one_volume_preserving (q0 := q0) (ω := ω))
   have hmeas : MeasurableEmbedding f := rotate_one_measurableEmbedding (q0 := q0) (ω := ω)
   have hdens : ∀ z : CSpace d,
       ENNReal.ofReal (gaussianDensity d (f z)) = ENNReal.ofReal (gaussianDensity d z) := by

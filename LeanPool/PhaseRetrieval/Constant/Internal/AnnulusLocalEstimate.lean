@@ -274,6 +274,12 @@ private lemma annulus_low_freq {D : ℕ} (hD : 1 ≤ D) (a : Fin D → ℂ)
       OfNat.ofNat_ne_zero, not_false_eq_true, integral_zero]
     apply mul_nonneg (by norm_num) (integral_nonneg (fun t => sq_nonneg _))
 
+-- Keep the original generated name after the shared Parseval proof changes elaboration order.
+private theorem annulus_low_freq._simp_1_3.{u_1}
+    {R : Type u_1} [inst : AddMonoidWithOne R] [CharZero R]
+    (n : ℕ) [inst_2 : n.AtLeastTwo] :
+    ((ofNat(n) : R) = 0) = False := annulus_low_freq._simp_1_2 n
+
 /-- The high-frequency NL condition: `1343 * (11(2j+1))² ≤ ((j-5)²)²` for `j ≥ 818`. -/
 private lemma high_freq_NL_condition (j : ℕ) (hj : 818 ≤ j) :
     1343 * (11 * (2 * j + 1)) ^ 2 ≤ ((j - 5) ^ 2) ^ 2 := by

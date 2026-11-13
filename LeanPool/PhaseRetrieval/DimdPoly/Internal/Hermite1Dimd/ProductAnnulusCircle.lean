@@ -190,7 +190,7 @@ private theorem localOrbit_eq_positiveFrequencyPolynomial
                       rw [← fourier_add]
                       simp [hadd]
     _ = ∑ n ∈ s.image totalDegree, orbitCoeff κ j M G z n * fourier (n : ℤ) t := by
-          simpa [s] using hgroup.symm
+          exact hgroup.symm
     _ = ∑ n ∈ localDegreeSet j M G, orbitCoeff κ j M G z n * fourier (n : ℤ) t := by rw [hs]
     _ = positiveFrequencyPolynomial (localDegreeSet j M G) (orbitCoeff κ j M G z) t := by
           simp [positiveFrequencyPolynomial]
@@ -597,11 +597,7 @@ private lemma defectAnnulusMass_localOrbit_lintegral
           hrho_le
       simp [Set.indicator, hz, hsq]
     · simp [Set.indicator, hz]
-  have hdef_int :
-      Integrable
-        ((productAnnulus j).indicator
-          (fun z : CSpace d => rho (nuKappa κ z) (evalHermiteSum κ (localPart j M G) z) ^ 2))
-        (gaussianMeasure d) :=
+  have hdef_int :=
     hmass_int.mono hdef_meas hdef_le_mass
   have hdef0 :
       ENNReal.ofReal (defectAnnulusMass κ j (evalHermiteSum κ (localPart j M G))) =
@@ -822,7 +818,7 @@ theorem productAnnulusEstimate
             · simp [fdef, Set.indicator, hz]
       _ = ENNReal.ofReal (productAnnulusConstantSq d M) *
             ∫⁻ z : CSpace d, fdef z ∂ gaussianMeasure d := by
-              simpa [fdef] using
+              exact
                 (MeasureTheory.lintegral_const_mul'
                   (μ := gaussianMeasure d)
                   (r := ENNReal.ofReal (productAnnulusConstantSq d M))

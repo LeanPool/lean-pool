@@ -1070,10 +1070,7 @@ private theorem annulusIntegralSq_phi0_eq
     rw [show T = 2 * Real.pi by rfl]
     field_simp
   let srad : Set ℝ := Set.Ioi (0 : ℝ) ∩ Set.Ico (j : ℝ) (((j + 1 : ℕ) : ℝ))
-  have hset_eq :
-      (∫ r in srad, phi0AnnulusIntegrand k (‖g 0‖ ^ 2) r)
-        =
-      ∫ r in (j : ℝ)..(((j + 1 : ℕ) : ℝ)), phi0AnnulusIntegrand k (‖g 0‖ ^ 2) r :=
+  have hset_eq :=
     setIntegral_radialStrip_eq_intervalIntegral j (phi0AnnulusIntegrand k (‖g 0‖ ^ 2))
   calc
     (1 / Real.pi) *
@@ -1643,9 +1640,7 @@ private theorem scaled_laguerre_bound_Pkn (k : ℕ) :
       -- Convert IH0 to (√(m+1) + |x-(m+1)|)^k form
       have hm1_pos : (0 : ℝ) < (m : ℝ) + 1 := by linarith only [hm_pos]
       have hm1_nn : (0 : ℝ) ≤ (m : ℝ) + 1 := le_of_lt hm1_pos
-      have hS1_eq : ((m : ℝ) + 1) ^ ((k : ℝ) / 2) *
-          (1 + |x - ((m : ℝ) + 1)| / Real.sqrt ((m : ℝ) + 1)) ^ k =
-          (Real.sqrt ((m : ℝ) + 1) + |x - ((m : ℝ) + 1)|) ^ k :=
+      have hS1_eq :=
         rpow_half_mul_pow_eq hm1_pos (x - ((m : ℝ) + 1)) k
       -- Bound √(m+1) + |x-(m+1)| ≤ S + 2
       have hshift : Real.sqrt ((m : ℝ) + 1) + |x - ((m : ℝ) + 1)| ≤ S + 2 := by
@@ -1994,11 +1989,7 @@ private lemma radial_density_large_step (k n : ℕ) (hkn_strict : k < n) (r : �
     ring
   rw [hLHS_eq]
   -- Now bound |Pkn.eval(r²)|² ≤ Ak² * m^k * (1+|u|)^(2k)
-  have hPkn_sq :
-      ((Pkn k n).eval (r ^ 2)) ^ 2 ≤
-        Ak ^ 2 * ((n : ℝ) - (k : ℝ) + 1) ^ k *
-          (1 + |r ^ 2 - ((n : ℝ) - (k : ℝ) + 1)| /
-            Real.sqrt ((n : ℝ) - (k : ℝ) + 1)) ^ (2 * k) :=
+  have hPkn_sq :=
     Pkn_sq_bound k n hkn_strict r hPkn
   -- Now use mk_div_nfact_le: m^k / n! ≤ 1/α!
   have hm_R : ((n : ℝ) - (k : ℝ) + 1) = ((α + 1 : ℕ) : ℝ) := hm_R_eq.symm
@@ -2124,9 +2115,7 @@ private lemma radial_density_large_step (k n : ℕ) (hkn_strict : k < n) (r : �
         have hm_nonneg : 0 ≤ (↑n - ↑k + 1 : ℝ) := by
           linarith only [show (k : ℝ) < (n : ℝ) by exact_mod_cast hkn_strict]
         have hcoef_nonneg : 0 ≤ Ak ^ 2 * (↑n - ↑k + 1) ^ k := by positivity
-        have hmid :
-            Ak ^ 2 * (↑n - ↑k + 1) ^ k * (1 + |r ^ 2 - (↑n - ↑k + 1)| / √(↑n - ↑k + 1)) ^ (2 * k)
-            ≤ Ak ^ 2 * (↑n - ↑k + 1) ^ k * (1 + |r - √↑(α + 1)|) ^ (4 * k) :=
+        have hmid :=
           mul_le_mul_of_nonneg_left hu_sq_bound hcoef_nonneg
         have hmid' :
             (1 / (↑k.factorial * ↑n.factorial)) *
@@ -2353,7 +2342,7 @@ private theorem radial_density_gaussian_bound_small (k : ℕ) :
   refine ⟨K0 + 1, by positivity, ?_⟩
   intro n hn hkn r hr
   have hA : |r ^ k * qkn k n r| ≤ A * (1 + r ^ (2 * k)) := by
-    simpa [A] using qkn_small_n_growth k n hn hkn.le hr
+    exact qkn_small_n_growth k n hn hkn.le hr
   have hA_sq : |r ^ k * qkn k n r| ^ 2 ≤ (A * (1 + r ^ (2 * k))) ^ 2 := by
     nlinarith only [hA, abs_nonneg (r ^ k * qkn k n r)]
   have hmain1 :
@@ -2612,10 +2601,7 @@ theorem single_basis_localization :
   rw [annulusIntegralSq_Phi_eq k n j]
   have hjle : (j : ℝ) ≤ ((j + 1 : ℕ) : ℝ) := by exact_mod_cast Nat.le_succ j
   -- Integrability of the radial integrand on [j, j+1].
-  have hint : IntervalIntegrable
-      (fun r => r * Real.exp (-r ^ 2) *
-        ((((r ^ k) / Real.sqrt ((Nat.factorial k : ℕ) : ℝ)) ^ 2) * |qkn k n r| ^ 2))
-      volume (j : ℝ) ((j + 1 : ℕ) : ℝ) := intervalIntegrable_basisRadialTerm k n j
+  have hint := intervalIntegrable_basisRadialTerm k n j
   -- Bound the integral pointwise: replace integrand by the shell-level Gaussian.
   have hbound_int :
       ∫ r in (j : ℝ)..((j + 1 : ℕ) : ℝ),

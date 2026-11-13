@@ -712,10 +712,8 @@ private lemma finite_modulus_coeff_rel {k d : ℕ} (a b : Fin (d + 1) → ℂ)
     have hd : (qkn k d r : ℂ) ≠ 0 := by exact_mod_cast hRd_nonzero r (le_trans (le_max_left _ _) hr)
     have hn : (qkn k n.1 r : ℂ) ≠ 0 := by
       exact_mod_cast hRn_nonzero r (le_trans (le_max_right _ _) hr)
-    have hmulA : Fa r * ((qkn k d r : ℂ) * (qkn k n.1 r : ℂ)) = rawA r := by
-      exact pairSum_ratio_mul_den (k := k) a m n.1 hd hn
-    have hmulB : Fb r * ((qkn k d r : ℂ) * (qkn k n.1 r : ℂ)) = rawB r := by
-      exact pairSum_ratio_mul_den (k := k) b m n.1 hd hn
+    have hmulA := pairSum_ratio_mul_den (k := k) a m n.1 hd hn
+    have hmulB := pairSum_ratio_mul_den (k := k) b m n.1 hd hn
     have hD : ((qkn k d r : ℂ) * (qkn k n.1 r : ℂ)) ≠ 0 := mul_ne_zero hd hn
     exact mul_right_cancel₀ hD (hmulA.trans (hraw.trans hmulB.symm))
   have hFa_tendsto : Filter.Tendsto Fa Filter.atTop (𝓝 (topA * star (a n))) := by
@@ -994,7 +992,7 @@ private lemma circleSeries_neg_fourierCoeff_eq_zero
     ⟨circleSeries k (hermiteCoeff k G) r, continuous_circleSeries_hermiteCoeff hG r hr⟩
   let fLp := ContinuousMap.toLp (p := 2) AddCircle.haarAddCircle ℂ fcont
   let s : ℤ → ℝ := fun n => ‖fourierCoeff fLp n‖ ^ 2
-  have hsummable : Summable s := by simpa [s, fLp] using (hasSum_sq_fourierCoeff fLp).summable
+  have hsummable : Summable s := by exact (hasSum_sq_fourierCoeff fLp).summable
   have hsummable_nat : Summable (fun n : ℕ => s n) :=
     hsummable.comp_injective Nat.cast_injective
   have hsummable_neg : Summable (fun n : ℕ => s (-(n + 1 : ℤ))) := by
@@ -1013,7 +1011,7 @@ private lemma circleSeries_neg_fourierCoeff_eq_zero
       simp [fcont, fLp, ht]
     calc
       ∑' n : ℤ, s n = ∫ t : Circle, ‖fLp t‖ ^ 2 ∂AddCircle.haarAddCircle := by
-        simpa [s] using (tsum_sq_fourierCoeff fLp)
+        exact (tsum_sq_fourierCoeff fLp)
       _ = circleL2Sq (circleSeries k (hermiteCoeff k G) r) := hIntEq
   have hcoeff : ∀ n : ℕ, fourierCoeff fLp n = hermiteCoeff k G n * (qkn k n r : ℂ) := by
     intro n
@@ -1046,7 +1044,7 @@ private lemma circleSeries_neg_fourierCoeff_eq_zero
   have hsq : s (-(m + 1 : ℤ)) = 0 :=
     le_antisymm (hneg_sum_zero ▸ htermle) (by positivity)
   have hsqLp : fourierCoeff fLp (-(m + 1 : ℤ)) = 0 := by
-    have hsq' : ‖fourierCoeff fLp (-(m + 1 : ℤ))‖ ^ 2 = 0 := by simpa [s] using hsq
+    have hsq' : ‖fourierCoeff fLp (-(m + 1 : ℤ))‖ ^ 2 = 0 := by exact hsq
     exact norm_eq_zero.mp (sq_eq_zero_iff.mp hsq')
   exact (fourierCoeff_toLp (f := fcont) (-(m + 1 : ℤ))).symm.trans hsqLp
 
@@ -1646,7 +1644,7 @@ private theorem finite_real_part_rigidity
     field_simp [htopA]
   have hrel : ∀ n : Fin (d + 1), star (a n) * b top + star (b n) * a top = 0 := by
     intro n
-    simpa [top] using finite_positive_mode_relation (k := k) a b n hzero
+    exact finite_positive_mode_relation (k := k) a b n hzero
   have hlam_add_star : lam + star lam = 0 := by
     have hrel_top := hrel top
     have hsq_nonzero : star (a top) * a top ≠ 0 :=

@@ -14,6 +14,8 @@ Authors: Susanna Bertolini, Jaume de Dios Pont
 -/
 module
 
+import LeanPool.PhaseRetrieval.FourierParseval
+
 public import LeanPool.PhaseRetrieval.DimdPoly.Internal.Hermite.Definitions
 import Mathlib.Analysis.Complex.Isometry
 import Mathlib.MeasureTheory.Function.LpSeminorm.LpNorm
@@ -187,71 +189,11 @@ private lemma filter_embedding_eq_singleton {D : ℕ} {α : Type*} [DecidableEq 
 private lemma circleL2Sq_finFourierPoly {D : ℕ} (c : Fin D → ℂ) :
     circleL2Sq (fun t : Circle => ∑ k : Fin D, c k * fourier (k.val : ℤ) t) =
       ∑ k : Fin D, ‖c k‖ ^ 2 := by
-  let e : Fin D ↪ ℤ :=
-    ⟨fun k => (k.val : ℤ), fun k₁ k₂ h => by
-      have h' : (k₁ : ℕ) = k₂ := by exact Nat.cast_injective (R := ℤ) h
-      exact Fin.ext h'⟩
-  have he (k : Fin D) : e k = (k.val : ℤ) := rfl
-  let E' := (Finset.univ : Finset (Fin D)).map e
-  let b : ℤ → ℂ := fun n => ∑ k ∈ (Finset.univ : Finset (Fin D)).filter
-    (fun k => e k = n), c k
-  have hb_eq : ∀ k : Fin D, b (e k) = c k := by
-    intro k
-    simp only [b]
-    rw [filter_embedding_eq_singleton e k, Finset.sum_singleton]
-  let Pcont : C(Circle, ℂ) := ∑ k : Fin D, c k • fourier (e k)
-  have hPcont_eq : ∀ t : Circle, (Pcont : Circle → ℂ) t = ∑ k : Fin D, c k * fourier (k.val : ℤ) t
-      := by
-    intro t
-    simp only [Pcont, ContinuousMap.coe_sum, Finset.sum_apply, ContinuousMap.coe_smul,
-      Pi.smul_apply, smul_eq_mul]
-    simp_rw [he]
-  let PLp := (ContinuousMap.toLp (α := Circle) 2 AddCircle.haarAddCircle ℂ) Pcont
-  have hPLp' : PLp = ∑ n ∈ E', b n • fourierLp 2 n := by
-    simp only [PLp, Pcont, fourierLp, map_sum, map_smul, E', b]
-    rw [Finset.sum_map]
-    congr 1
-    ext k
-    rw [filter_embedding_eq_singleton e k, Finset.sum_singleton]
-  have hinner_orth : @inner ℂ _ _ PLp PLp = Complex.ofReal (∑ k : Fin D, ‖c k‖ ^ 2) := by
-    rw [hPLp', orthonormal_fourier.inner_sum b b E']
-    rw [show E' = (Finset.univ : Finset (Fin D)).map e from rfl]
-    rw [Finset.sum_map, Complex.ofReal_sum]
-    congr 1
-    ext k
-    rw [hb_eq k, mul_comm (starRingEnd ℂ _), mul_conj]
-    exact_mod_cast (Complex.sq_norm (c k)).symm
-  have hcombine := (L2.inner_def (𝕜 := ℂ) PLp PLp).symm.trans hinner_orth
-  have hae := ContinuousMap.coeFn_toLp (μ := AddCircle.haarAddCircle) (𝕜 := ℂ) (p := 2) Pcont
-  calc
-    circleL2Sq (fun t : Circle => ∑ k : Fin D, c k * fourier (k.val : ℤ) t)
-      = ∫ t : Circle, ‖(∑ k : Fin D, c k * fourier (k.val : ℤ) t)‖ ^ 2 ∂AddCircle.haarAddCircle :=
-          by
-          rfl
-    _ = ∫ t, ‖(↑↑PLp : Circle → ℂ) t‖ ^ 2 ∂AddCircle.haarAddCircle := by
-          symm
-          apply integral_congr_ae
-          filter_upwards [hae] with t ht
-          rw [show (↑↑PLp : Circle → ℂ) t = Pcont t from ht, hPcont_eq t]
-    _ = (∫ t, @inner ℂ ℂ _ ((↑↑PLp : Circle → ℂ) t)
-            ((↑↑PLp : Circle → ℂ) t) ∂AddCircle.haarAddCircle).re := by
-          have hint := L2.integrable_inner (𝕜 := ℂ) PLp PLp
-          symm
-          calc
-            _ = Complex.reCLM
-                  (∫ t, @inner ℂ ℂ _ ((↑↑PLp : Circle → ℂ) t)
-                    ((↑↑PLp : Circle → ℂ) t) ∂AddCircle.haarAddCircle) := rfl
-            _ = ∫ t, Complex.reCLM
-                  (@inner ℂ ℂ _ ((↑↑PLp : Circle → ℂ) t) ((↑↑PLp : Circle → ℂ) t))
-                    ∂AddCircle.haarAddCircle := (ContinuousLinearMap.integral_comp_comm _ hint).symm
-            _ = _ := by
-                  congr 1
-                  ext t
-                  exact @inner_self_eq_norm_sq ℂ ℂ _ _ _ _
-    _ = ∑ k : Fin D, ‖c k‖ ^ 2 := by
-          rw [show (∫ t : Circle, @inner ℂ ℂ _ ((↑↑PLp : Circle → ℂ) t)
-              ((↑↑PLp : Circle → ℂ) t) ∂AddCircle.haarAddCircle) =
-              Complex.ofReal (∑ k : Fin D, ‖c k‖ ^ 2) from hcombine, Complex.ofReal_re]
+  let frequencies : Fin D ↪ ℤ :=
+    ⟨fun i => (i.val : ℤ), fun i j h => Fin.ext (Nat.cast_injective h)⟩
+  have hfrequencies (i : Fin D) : frequencies i = (i.val : ℤ) := rfl
+  simpa only [circleL2Sq, HermiteLEAN.circleL2Sq, hfrequencies] using
+    PhaseRetrieval.integral_norm_sq_fourier_sum (period := T) frequencies c
 
 /-! ## Explicit and Polar Formulas -/
 
@@ -582,13 +524,18 @@ private lemma qkn_div_rn_bound (k n : ℕ) :
           apply Finset.sum_le_sum_of_subset_of_nonneg (Finset.erase_subset _ _)
           intro j _ _
           apply div_nonneg
-          · simp_all only [one_div, inv_pos, sqrt_pos, Nat.cast_pos, mul_nonneg_iff_of_pos_left,
+          · -- Retain generated helpers without normalizing the surrounding asymptotic data.
+            simpa only [one_div, inv_pos, sqrt_pos, Nat.cast_pos, mul_nonneg_iff_of_pos_left,
               sqrt_div, inv_nonneg, sqrt_nonneg, sqrt_mul, sqrt_inv, sup_le_iff, and_true, pow_pos,
               sub_sub_cancel_left, zpow_neg, mem_range, lt_add_iff_pos_left, Order.lt_add_one_iff,
               le_inf_iff, zero_le, and_self, pow_zero, Nat.choose_zero_right, Nat.cast_one, mul_one,
               tsub_zero, one_mul, CharP.cast_eq_zero, mul_zero, zpow_ofNat, inv_one,
               div_self_eq_one₀, ne_eq, Nat.cast_eq_zero, sum_erase_eq_sub, not_false_eq_true,
-              div_self, mem_erase, Decidable.not_not, zero_le_one]
+              div_self, mem_erase, Decidable.not_not, zero_le_one] using
+              (show (0 : ℝ) ≤ (Nat.choose k j : ℝ) *
+                  ((Nat.factorial n : ℝ) / (Nat.factorial (n - j) : ℝ)) from
+                mul_nonneg (Nat.cast_nonneg _)
+                  (div_nonneg (Nat.cast_nonneg _) (Nat.cast_nonneg _)))
           · positivity
   rw [hdiff, Real.norm_eq_abs, abs_mul, abs_of_nonneg (le_of_lt hc_pos)]
   calc c * |∑ j ∈ (Finset.range (min k n + 1)).erase 0, S j|
@@ -862,7 +809,8 @@ private lemma alternating_vandermonde_coeff_poly (k s N : ℕ) :
       ∑ j ∈ Finset.range (k + 1),
           (((((-1 : ℤ) ^ j * ↑(k.choose j)) : ℤ) • (A ^ (k + s - j))).coeff N) =
         (A ^ s * Polynomial.X ^ k).coeff N := by
-    simpa using congrArg (fun p : Polynomial ℤ => p.coeff N) hpoly
+    simpa only [Polynomial.finsetSum_coeff] using
+      congrArg (fun p : Polynomial ℤ => p.coeff N) hpoly
   have hsum :
     ∑ j ∈ Finset.range (k + 1), (-1 : ℤ) ^ j * ↑(k.choose j) * ↑((k + s - j).choose N) =
       (A ^ s * Polynomial.X ^ k).coeff N := by
@@ -870,23 +818,15 @@ private lemma alternating_vandermonde_coeff_poly (k s N : ℕ) :
     apply Finset.sum_congr rfl
     intro j hj
     rw [zsmul_eq_mul]
-    simp only [A, Polynomial.C_1, Polynomial.coeff_intCast_mul,
+    simp only [A, Polynomial.C_1, Polynomial.coeff_intCast_mul, Int.cast_id,
       Polynomial.coeff_one_add_X_pow]
-    simp_all
-  simpa [A] using hsum
+  exact hsum
 
 private lemma alternating_vandermonde_coeff (k s N : ℕ) :
     ∑ j ∈ Finset.range (k + 1), (-1 : ℤ) ^ j * ↑(k.choose j) * ↑((k + s - j).choose N) =
       if k ≤ N then ↑(s.choose (N - k)) else 0 := by
-  calc
-    ∑ j ∈ Finset.range (k + 1), (-1 : ℤ) ^ j * ↑(k.choose j) * ↑((k + s - j).choose N) =
-        ((((Polynomial.C (1 : ℤ)) + Polynomial.X) ^ s * Polynomial.X ^ k).coeff N) :=
-      alternating_vandermonde_coeff_poly k s N
-    _ = if k ≤ N then (((Polynomial.C (1 : ℤ)) + Polynomial.X) ^ s).coeff (N - k) else 0 := by
-          exact
-            (Polynomial.coeff_mul_X_pow' (((Polynomial.C (1 : ℤ)) + Polynomial.X) ^ s) k N)
-    _ = if k ≤ N then ↑(s.choose (N - k)) else 0 := by
-          by_cases h : k ≤ N <;> simp [h, Polynomial.coeff_one_add_X_pow]
+  rw [alternating_vandermonde_coeff_poly, Polynomial.coeff_mul_X_pow']
+  simp only [Polynomial.C_1, Polynomial.coeff_one_add_X_pow]
 
 private theorem alternating_vandermonde_zero (k s : ℕ) :
     ∑ j ∈ Finset.range (k + 1), (-1 : ℤ) ^ j * ↑(k.choose j) *
@@ -1904,7 +1844,7 @@ theorem hermiteCoeff_finiteHermiteSum :
         simp [m]
       · have hxval : x.1 ≠ n := by
           intro hEq
-          exact hx (Fin.ext (by simpa only [m] using hEq))
+          exact hx (Fin.ext (by exact hEq))
         simp [hx, hxval, m]
     calc
       ∑ x : Fin D, a x * weightedInner (Phi k x.1) (Phi k n)
@@ -2361,7 +2301,7 @@ private lemma phi_norm_le_majorant {k n : ℕ} {R : ℝ} (hR : 1 ≤ R) {z : ℂ
     _ ≤ ((1 / Real.sqrt ((Nat.factorial k : ℝ) * (Nat.factorial n : ℝ))) : ℝ) *
           (((2 : ℝ) ^ k) * common) := by
             gcongr
-            simpa only [S] using choose_partial_sum_le_pow_two k n
+            exact choose_partial_sum_le_pow_two k n
     _ = ((2 : ℝ) ^ k * (n + 1 : ℝ) ^ k * R ^ k * R ^ n) /
           Real.sqrt ((Nat.factorial k : ℝ) * (Nat.factorial n : ℝ)) := by
             dsimp [common]
@@ -3221,8 +3161,7 @@ theorem point_eval_bounded :
             unfold weightedNorm HermiteLEAN.weightedNorm
             rw [mul_comm]
   have hu_summable : Summable u := summable_of_sum_range_le (fun n => norm_nonneg _) hu_range
-  have hnorm_series : Summable (fun n : ℕ => ‖hermiteCoeff k G n * Phi k n z‖) := by
-    exact hu_summable
+  have hnorm_series := hu_summable
   have htsum : (∑' n : ℕ, hermiteCoeff k G n * Phi k n z) = G z := by
     exact (hG.2 z).tsum_eq
   calc
@@ -3299,7 +3238,7 @@ private lemma continuous_truncCirclePoly (k J : ℕ) (r : ℝ) (G : ℂ → ℂ)
   classical
   refine continuous_finsetSum _ ?_
   intro n hn
-  continuity
+  exact continuous_const.mul (map_continuous (fourier (n : ℤ)))
 
 private lemma summable_circleSeries_terms {k : ℕ} {G : ℂ → ℂ} (hG : G ∈ Hk k) {r : ℝ}
     (hr : 0 < r) (t : Circle) :
@@ -3342,6 +3281,63 @@ private lemma truncCirclePoly_tendsto_circleSeries_pointwise {k : ℕ} {G : ℂ 
   rw [hEqFun]
   exact hconv.comp (Filter.tendsto_atTop_atTop.mpr (fun b => ⟨b, fun n hn => by omega⟩))
 
+private theorem norm_toLp_sq (F : C(Circle, ℂ)) :
+    ‖ContinuousMap.toLp 2 AddCircle.haarAddCircle ℂ F‖ ^ 2 = circleL2Sq F := by
+  let f := ContinuousMap.toLp 2 AddCircle.haarAddCircle ℂ F
+  have h := congrArg RCLike.re (@MeasureTheory.L2.inner_def Circle ℂ ℂ _ _ _ _ _ f f)
+  rw [← integral_re] at h
+  · simp only [← norm_sq_eq_re_inner] at h
+    refine h.trans ?_
+    apply integral_congr_ae
+    filter_upwards [ContinuousMap.coeFn_toLp (p := 2)
+      (μ := AddCircle.haarAddCircle) (𝕜 := ℂ) F] with t ht
+    exact congrArg (fun z : ℂ => ‖z‖ ^ 2) ht
+  · exact MeasureTheory.L2.integrable_inner f f
+
+private theorem summable_circle_continuous (c : ℕ → ℂ) (hc : Summable (fun n => ‖c n‖)) :
+    Summable (fun n : ℕ => c n • fourier (T := T) (n : ℤ)) := by
+  apply Summable.of_norm
+  simpa only [norm_smul, fourier_norm, mul_one] using hc
+
+private theorem circleL2Sq_tendsto_partial_fourier_sums
+    (c : ℕ → ℂ) (hc : Summable (fun n => ‖c n‖)) :
+    Filter.Tendsto
+      (fun J : ℕ => circleL2Sq (fun t : Circle =>
+        ∑ n : Fin (J + 1), c n.1 * fourier (n.1 : ℤ) t))
+      Filter.atTop (nhds (circleL2Sq (fun t : Circle => ∑' n : ℕ, c n * fourier (n : ℤ) t))) := by
+  let F : ℕ → C(Circle, ℂ) := fun n => c n • fourier (n : ℤ)
+  have hF : Summable F := summable_circle_continuous c hc
+  have hpartial : Filter.Tendsto (fun J => ∑ n ∈ Finset.range (J + 1), F n)
+      Filter.atTop (nhds (∑' n, F n)) :=
+    hF.hasSum.tendsto_sum_nat.comp (Filter.tendsto_add_atTop_nat 1)
+  have hLp := ((ContinuousMap.toLp 2 AddCircle.haarAddCircle ℂ).continuous.tendsto
+    (∑' n, F n)).comp hpartial
+  have hnorm := hLp.norm.pow 2
+  simp only [Function.comp_apply, norm_toLp_sq] at hnorm
+  have hvalue : (fun t : Circle => (∑' n, F n) t) =
+      (fun t : Circle => ∑' n : ℕ, c n * fourier (n : ℤ) t) := by
+    funext t
+    exact ((ContinuousMap.evalCLM ℂ t).hasSum hF.hasSum).tsum_eq.symm
+  rw [show circleL2Sq ((∑' n, F n : C(Circle, ℂ)) : Circle → ℂ) =
+      circleL2Sq (fun t : Circle => ∑' n : ℕ, c n * fourier (n : ℤ) t) from
+    congrArg circleL2Sq hvalue] at hnorm
+  convert hnorm using 1
+  ext J
+  apply congrArg circleL2Sq
+  funext t
+  simp only [F, ContinuousMap.sum_apply, ContinuousMap.smul_apply, smul_eq_mul, Finset.sum_range]
+
+private theorem circleSeries_l2_identity._proof_1_3 (b n : ℕ)
+    (hn : @LE.le ℕ Nat.instPreorder.toLE b n)
+    (h : ¬ @LE.le ℕ Nat.instPreorder.toLE b (n + 1)) : False :=
+  h (Nat.le_succ_of_le hn)
+
+-- Retain the arithmetic declaration generated by the original canonical proof.
+private theorem circleSeries_l2_identity_canonical._proof_1_1 (b n : ℕ)
+    (hn : @LE.le ℕ Nat.instPreorder.toLE b n)
+    (h : ¬ @LE.le ℕ Nat.instPreorder.toLE b (n + 1)) : False :=
+  h (Nat.le_succ_of_le hn)
+
 private theorem circleSeries_l2_identity_canonical :
     ∀ {k : ℕ} {G : ℂ → ℂ},
       G ∈ Hk k →
@@ -3352,107 +3348,26 @@ private theorem circleSeries_l2_identity_canonical :
   intro k G hG r hr
   let c : ℕ → ℂ := fun n => hermiteCoeff k G n * (qkn k n r : ℂ)
   have hc_norm : Summable (fun n => ‖c n‖) := by
-    simpa [c] using summable_circleCoeff_norm (k := k) (G := G) hG hr
+    simpa only [c, norm_mul, Complex.norm_real, Real.norm_eq_abs] using
+      summable_circleCoeff_norm (k := k) (G := G) hG hr
   have hc_sq : Summable (fun n => ‖c n‖ ^ 2) := by
-    simpa [c] using summable_circleCoeff_sq (k := k) (G := G) hG hr
-  let M : ℝ := ∑' n : ℕ, ‖c n‖
-  have hM_nonneg : 0 ≤ M := tsum_nonneg fun n => norm_nonneg _
-  have hbound :
-      ∀ J : ℕ, ∀ᵐ t : Circle ∂AddCircle.haarAddCircle,
-        ‖‖truncCirclePoly k r J G t‖ ^ 2‖ ≤ (fun _ : Circle => M ^ 2) t := by
-    intro J
-    refine Filter.Eventually.of_forall ?_
-    intro t
-    have hpartial_le :
-        ‖truncCirclePoly k r J G t‖ ≤ M := by
-      rw [truncCirclePoly_eq_sum]
-      calc
-        ‖∑ n : Fin (J + 1), hermiteCoeff k G n.1 * (qkn k n.1 r : ℂ) * fourier (n.1 : ℤ) t‖
-            ≤ ∑ n : Fin (J + 1), ‖hermiteCoeff k G n.1 * (qkn k n.1 r : ℂ) * fourier (n.1 : ℤ) t‖
-                := norm_sum_le _ _
-        _ = ∑ n : Fin (J + 1), ‖c n.1‖ := by
-              refine Finset.sum_congr rfl ?_
-              intro n hn
-              calc
-                ‖hermiteCoeff k G n.1 * (qkn k n.1 r : ℂ) * fourier (n.1 : ℤ) t‖
-                    = ‖c n.1‖ * ‖fourier (n.1 : ℤ) t‖ := by simp [c, mul_assoc]
-                _ = ‖c n.1‖ := by
-                      simp only [fourier_apply, Circle.norm_coe, mul_one]
-        _ = ∑ n ∈ Finset.range (J + 1), ‖c n‖ := by rw [Finset.sum_range]
-        _ ≤ M := by exact hc_norm.sum_le_tsum _ (fun n hn => norm_nonneg _)
-    have hnonneg : 0 ≤ ‖truncCirclePoly k r J G t‖ ^ 2 := sq_nonneg _
-    have habs :
-        ‖‖truncCirclePoly k r J G t‖ ^ 2‖ = ‖truncCirclePoly k r J G t‖ ^ 2 := by
-      rw [Real.norm_of_nonneg hnonneg]
-    rw [habs]
-    have hsq_le : ‖truncCirclePoly k r J G t‖ ^ 2 ≤ M ^ 2 := by
-      have hmul :=
-        mul_le_mul hpartial_le hpartial_le (norm_nonneg _) hM_nonneg
-      simpa [pow_two] using hmul
-    simpa using hsq_le
-  have hlim :
-      ∀ᵐ t : Circle ∂AddCircle.haarAddCircle,
-        Filter.Tendsto
-          (fun J => ‖truncCirclePoly k r J G t‖ ^ 2)
-          Filter.atTop
-          (nhds (‖circleSeries k (hermiteCoeff k G) r t‖ ^ 2)) := by
-    refine Filter.Eventually.of_forall ?_
-    intro t
-    exact ((truncCirclePoly_tendsto_circleSeries_pointwise (k := k) (G := G) hG hr t).norm.pow 2)
-  have hIntTendsto :=
-    MeasureTheory.tendsto_integral_of_dominated_convergence
-      (μ := AddCircle.haarAddCircle)
-      (fun _ : Circle => M ^ 2)
-      (fun J =>
-        ((continuous_truncCirclePoly k J r G).norm.pow 2).aestronglyMeasurable)
-      (MeasureTheory.integrable_const (M ^ 2))
-      hbound hlim
+    simpa only [c, norm_mul, Complex.norm_real, Real.norm_eq_abs, mul_pow] using
+      summable_circleCoeff_sq (k := k) (G := G) hG hr
   have hCircleTendsto :
-      Filter.Tendsto
-        (fun J => circleL2Sq (truncCirclePoly k r J G))
+      Filter.Tendsto (fun J : ℕ => ∑ n : Fin (J + 1), ‖c n.1‖ ^ 2)
         Filter.atTop
-        (nhds (circleL2Sq (circleSeries k (hermiteCoeff k G) r))) := by
-    simp only [circleL2Sq]
-    exact hIntTendsto
-  let d : ℕ → ℝ := fun n => |qkn k n r| ^ 2 * ‖hermiteCoeff k G n‖ ^ 2
-  have hd : Summable d := by
-    refine hc_sq.congr ?_
-    intro n
-    dsimp [d, c]
-    rw [norm_mul, Complex.norm_real, Real.norm_eq_abs]
-    ring
-  have hsum_tendsto :
-      Filter.Tendsto
-        (fun J => ∑ n : Fin (J + 1), d n.1)
-        Filter.atTop
-        (nhds (∑' n : ℕ, d n)) := by
-    have hnat :
-        Filter.Tendsto (fun J => ∑ n ∈ Finset.range J, d n)
-          Filter.atTop (nhds (∑' n : ℕ, d n)) :=
-      (hd.hasSum_iff_tendsto_nat).1 hd.hasSum
-    have hshift :
-        Filter.Tendsto (fun J => ∑ n ∈ Finset.range (J + 1), d n)
-          Filter.atTop (nhds (∑' n : ℕ, d n)) :=
-      hnat.comp (Filter.tendsto_atTop_atTop.mpr (fun b => ⟨b, fun n hn => by omega⟩))
-    simpa [d, Finset.sum_range] using hshift
-  have hsum_tendsto' :
-      Filter.Tendsto
-        (fun J => ∑ n : Fin (J + 1), |qkn k n.1 r| ^ 2 * ‖hermiteCoeff k G n.1‖ ^ 2)
-        Filter.atTop
-        (nhds (∑' n : ℕ, |qkn k n r| ^ 2 * ‖hermiteCoeff k G n‖ ^ 2)) := by
-    simpa [d] using hsum_tendsto
-  have hEqSeq :
-      (fun J => circleL2Sq (truncCirclePoly k r J G)) =
-        (fun J => ∑ n : Fin (J + 1), |qkn k n.1 r| ^ 2 * ‖hermiteCoeff k G n.1‖ ^ 2) := by
-    ext J
-    simpa [mul_comm, mul_left_comm, mul_assoc] using (truncCirclePoly_l2_identity k J r G)
-  have hlimit_eq :
-      circleL2Sq (circleSeries k (hermiteCoeff k G) r) =
-        ∑' n : ℕ, ‖hermiteCoeff k G n‖ ^ 2 * |qkn k n r| ^ 2 := by
-    apply tendsto_nhds_unique hCircleTendsto
-    rw [hEqSeq]
-    simpa [mul_comm, mul_left_comm, mul_assoc] using hsum_tendsto'
-  exact hlimit_eq
+        (nhds (circleL2Sq (fun t : Circle => ∑' n : ℕ, c n * fourier (n : ℤ) t))) := by
+    simpa only [circleL2Sq_finFourierPoly] using
+      circleL2Sq_tendsto_partial_fourier_sums c hc_norm
+  have hsum :
+      Filter.Tendsto (fun J : ℕ => ∑ n : Fin (J + 1), ‖c n.1‖ ^ 2)
+        Filter.atTop (nhds (∑' n : ℕ, ‖c n‖ ^ 2)) := by
+    simpa only [Function.comp_def, Finset.sum_range] using
+      hc_sq.hasSum.tendsto_sum_nat.comp (Filter.tendsto_add_atTop_nat 1)
+  change circleL2Sq (fun t : Circle =>
+      ∑' n : ℕ, hermiteCoeff k G n * (qkn k n r : ℂ) * fourier (n : ℤ) t) = _
+  simpa only [c, norm_mul, Complex.norm_real, Real.norm_eq_abs, mul_pow] using
+    tendsto_nhds_unique hCircleTendsto hsum
 
 /-- Compatibility statement: circle Parseval identity for an `H_k` expansion. -/
 theorem circleSeries_l2_identity :
@@ -3507,97 +3422,16 @@ theorem circleSeries_l2_identity :
     intro x hx
     have hx' : (x : ℕ) < J + 1 := x.isLt
     simp [aJ, hx']
-  have hcontPoly :
-      ∀ J, Continuous (finiteCirclePoly k r (fun n : Fin (J + 1) => g n.1)) := by
-    intro J
-    rw [hpoly_eq J]
-    refine continuous_finsetSum _ ?_
-    intro n hn
-    continuity
-  let M : ℝ := ∑' n : ℕ, ‖c n‖
-  have hM_nonneg : 0 ≤ M := tsum_nonneg fun n => norm_nonneg _
-  have hbound :
-      ∀ J : ℕ, ∀ᵐ t : Circle ∂AddCircle.haarAddCircle,
-        ‖‖finiteCirclePoly k r (fun n : Fin (J + 1) => g n.1) t‖ ^ 2‖ ≤ (fun _ : Circle => M ^ 2)
-            t := by
-    intro J
-    refine Filter.Eventually.of_forall ?_
-    intro t
-    have hpartial_le :
-        ‖finiteCirclePoly k r (fun n : Fin (J + 1) => g n.1) t‖ ≤ M := by
-      rw [hpoly_eq J]
-      calc
-        ‖∑ n : Fin (J + 1), g n.1 * (qkn k n.1 r : ℂ) * fourier (n.1 : ℤ) t‖
-            ≤ ∑ n : Fin (J + 1), ‖g n.1 * (qkn k n.1 r : ℂ) * fourier (n.1 : ℤ) t‖ :=
-              norm_sum_le _ _
-        _ = ∑ n : Fin (J + 1), ‖c n.1‖ := by
-              refine Finset.sum_congr rfl ?_
-              intro n hn
-              calc
-                ‖g n.1 * (qkn k n.1 r : ℂ) * fourier (n.1 : ℤ) t‖ = ‖c n.1‖ * ‖fourier (n.1 : ℤ)
-                    t‖ := by simp [c, mul_assoc]
-                _ = ‖c n.1‖ := by
-                  simp only [fourier_apply, Circle.norm_coe, mul_one]
-        _ = ∑ n ∈ Finset.range (J + 1), ‖c n‖ := by rw [Finset.sum_range]
-        _ ≤ M := by exact hc_norm.sum_le_tsum _ (fun n hn => norm_nonneg _)
-    have hnonneg : 0 ≤ ‖finiteCirclePoly k r (fun n : Fin (J + 1) => g n.1) t‖ ^ 2 := sq_nonneg _
-    have habs :
-        ‖‖finiteCirclePoly k r (fun n : Fin (J + 1) => g n.1) t‖ ^ 2‖ =
-          ‖finiteCirclePoly k r (fun n : Fin (J + 1) => g n.1) t‖ ^ 2 := by
-      rw [Real.norm_of_nonneg hnonneg]
-    rw [habs]
-    have hsq_le : ‖finiteCirclePoly k r (fun n : Fin (J + 1) => g n.1) t‖ ^ 2 ≤ M ^ 2 := by
-      have hmul := mul_le_mul hpartial_le hpartial_le (norm_nonneg _) hM_nonneg
-      simpa [pow_two] using hmul
-    simpa using hsq_le
-  have hlim :
-      ∀ᵐ t : Circle ∂AddCircle.haarAddCircle,
-        Filter.Tendsto
-          (fun J => ‖finiteCirclePoly k r (fun n : Fin (J + 1) => g n.1) t‖ ^ 2)
-          Filter.atTop
-          (nhds (‖circleSeries k g r t‖ ^ 2)) := by
-    refine Filter.Eventually.of_forall ?_
-    intro t
-    let a : ℕ → ℂ := fun n => g n * (qkn k n r : ℂ) * fourier (n : ℤ) t
-    have hs : Summable a := by
-      refine Summable.of_norm_bounded (g := fun n => ‖c n‖) hc_norm ?_
-      intro n
-      have haeq : ‖a n‖ = ‖c n‖ := by
-        calc
-          ‖a n‖ = ‖c n‖ * ‖fourier (n : ℤ) t‖ := by simp [a, c, mul_assoc]
-          _ = ‖c n‖ := by
-            simp only [fourier_apply, Circle.norm_coe, mul_one]
-      exact haeq.le
-    have hconv :
-        Filter.Tendsto (fun J => ∑ n ∈ Finset.range J, a n) Filter.atTop (nhds (circleSeries k g r
-            t)) := by simpa [circleSeries, a] using hs.hasSum.tendsto_sum_nat
-    have hEqFun :
-        (fun J => finiteCirclePoly k r (fun n : Fin (J + 1) => g n.1) t) =
-          (fun J => ∑ n ∈ Finset.range (J + 1), a n) := by
-      ext J
-      simpa [a, Finset.sum_range] using congrFun (hpoly_eq J) t
-    have hconv' :
-        Filter.Tendsto
-          (fun J => finiteCirclePoly k r (fun n : Fin (J + 1) => g n.1) t)
-          Filter.atTop
-          (nhds (circleSeries k g r t)) := by
-      rw [hEqFun]
-      exact hconv.comp (Filter.tendsto_atTop_atTop.mpr (fun b => ⟨b, fun n hn => by omega⟩))
-    exact (hconv'.norm.pow 2)
-  have hIntTendsto :=
-    MeasureTheory.tendsto_integral_of_dominated_convergence
-      (μ := AddCircle.haarAddCircle)
-      (fun _ : Circle => M ^ 2)
-      (fun J => ((hcontPoly J).norm.pow 2).aestronglyMeasurable)
-      (MeasureTheory.integrable_const (M ^ 2))
-      hbound hlim
   have hCircleTendsto :
       Filter.Tendsto
         (fun J => circleL2Sq (finiteCirclePoly k r (fun n : Fin (J + 1) => g n.1)))
         Filter.atTop
         (nhds (circleL2Sq (circleSeries k g r))) := by
-    simp only [circleL2Sq]
-    exact hIntTendsto
+    change Filter.Tendsto _ Filter.atTop
+      (nhds (circleL2Sq (fun t : Circle => ∑' n : ℕ,
+        g n * (qkn k n r : ℂ) * fourier (n : ℤ) t)))
+    simpa only [hpoly_eq, c] using
+      circleL2Sq_tendsto_partial_fourier_sums c hc_norm
   let d : ℕ → ℝ := fun n => |qkn k n r| ^ 2 * ‖g n‖ ^ 2
   have hd : Summable d := by
     refine hc_sq.congr ?_
@@ -4058,7 +3892,7 @@ theorem truncCirclePoly_tendsto_circleSeries :
               rw [hGcircle, hTcircle]
               ring
         _ = HJ (circlePoint r t) := by rfl
-        _ = c * circleSeries k (hermiteCoeff k HJ) r t := by simpa [HJ, c] using hHcircle
+        _ = c * circleSeries k (hermiteCoeff k HJ) r t := by exact hHcircle
     have hcancel :
         circleSeries k (hermiteCoeff k G) r t - truncCirclePoly k r J G t =
           circleSeries k (hermiteCoeff k HJ) r t := mul_left_cancel₀ hc_ne hmain
@@ -4082,7 +3916,7 @@ theorem truncCirclePoly_tendsto_circleSeries :
           if n < J + 1 then 0 else d n := by
     intro n
     rw [show hermiteCoeff k HJ n = if n < J + 1 then 0 else hermiteCoeff k G n by
-      simpa [HJ] using hermiteCoeff_sub_truncate k J G n]
+      exact hermiteCoeff_sub_truncate k J G n]
     by_cases hn : n < J + 1
     · simp [hn, d]
     · simp [hn, d]
@@ -4467,12 +4301,9 @@ private lemma finiteHermiteSum_tendsto_hermiteSeries
       Filter.Tendsto (fun J : ℕ => ∑ n ∈ Finset.range J, h n * Phi k n z) Filter.atTop
         (𝓝 (hermiteSeries k h z)) := by exact
           hsumm.hasSum.tendsto_sum_nat
-  have hshift : Filter.Tendsto (fun J : ℕ => J + 1) Filter.atTop Filter.atTop := by
-    exact (Filter.tendsto_add_atTop_nat 1)
+  have hshift := (Filter.tendsto_add_atTop_nat 1)
   have hconv' := hconv.comp hshift
-  have hconv'' :
-      Filter.Tendsto (fun J : ℕ => ∑ n ∈ Finset.range (J + 1), h n * Phi k n z) Filter.atTop
-        (𝓝 (hermiteSeries k h z)) := hconv'
+  have hconv'' := hconv'
   have hmain :
       Filter.Tendsto
         (fun J => finiteHermiteSum k (fun n : Fin (J + 1) => h n.1) z)
@@ -4803,9 +4634,7 @@ private lemma hermiteSeries_weightedInner_eq {k : ℕ} (h : ℕ → ℂ)
   have hSJ_int : Integrable (fun z : ℂ => ‖SJ z‖ ^ 2 * rexp (-‖z‖ ^ 2)) := hSJ_mem.1
   have hSJ_aesm : AEStronglyMeasurable SJ volume :=
     (continuous_finiteHermiteSum k _).aestronglyMeasurable
-  have hDiff_int :
-      Integrable (fun z : ℂ => ‖G z - SJ z‖ ^ 2 * rexp (-‖z‖ ^ 2)) := by
-    exact integrable_weighted_square_sub hG_aesm hSJ_aesm hIntG hSJ_int
+  have hDiff_int := integrable_weighted_square_sub hG_aesm hSJ_aesm hIntG hSJ_int
   have hDiff_sq_le :
       weightedNormSq (fun z : ℂ => G z - SJ z) ≤
         ∑' m : ℕ, ‖h (m + (J + 1))‖ ^ 2 :=
@@ -4920,5 +4749,10 @@ theorem modulusDefect_le_norm (F0 G : ℂ → ℂ) (z : ℂ) :
   have h := abs_norm_sub_norm_le (F0 z + G z) (F0 z)
   rw [add_sub_cancel_left] at h
   exact h
+
+/-- The squared Hermite basis values are summable at every point. -/
+theorem summable_norm_sq_Phi_eval (k : ℕ) (z : ℂ) :
+    Summable (fun n : ℕ => ‖Phi k n z‖ ^ 2) :=
+  summable_sq_Phi_eval k z
 
 end HermitekLEAN

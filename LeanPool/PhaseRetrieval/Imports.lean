@@ -49,3 +49,4 @@ public import LeanPool.PhaseRetrieval.DimdPoly.Internal.OrthogonalReduction.Orth
 public import LeanPool.PhaseRetrieval.DimdPoly.Internal.PhaseStability
 public import LeanPool.PhaseRetrieval.DimdPoly.Internal.ProductAnnulusLocalization
 public import LeanPool.PhaseRetrieval.DimdPoly.Internal.TensorBasis
+public import LeanPool.PhaseRetrieval.FourierParseval

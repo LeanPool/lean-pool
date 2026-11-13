@@ -594,7 +594,7 @@ theorem lowAnnulusProjection
     calc
       ‖Hnear‖ ^ 2
           = Finset.sum E (fun alpha => ‖coeffSkappa (ofPkappa kappa H) alpha‖ ^ 2) := by
-              simpa [Hnear] using exact_truncate_coeff_energy hd E (ofPkappa kappa H)
+              exact exact_truncate_coeff_energy hd E (ofPkappa kappa H)
       _ = Finset.sum E (fun alpha => ‖coeffPkappa H alpha‖ ^ 2) := by
             refine Finset.sum_congr rfl ?_
             intro alpha hα
@@ -610,7 +610,7 @@ theorem lowAnnulusProjection
   have hH_sq : ‖H‖ ^ 2 = 1 := by nlinarith only [hH_norm]
   have hfar_norm_sq_le_one : ‖Hfar‖ ^ 2 ≤ 1 := by
     calc
-      ‖Hfar‖ ^ 2 ≤ ‖H‖ ^ 2 := by simpa [Hfar, Hnear] using norm_sq_farPart_le_wip kappa E H
+      ‖Hfar‖ ^ 2 ≤ ‖H‖ ^ 2 := by exact norm_sq_farPart_le_wip kappa E H
       _ = 1 := hH_sq
   have hfar_norm_sq_nonneg : 0 ≤ ‖Hfar‖ ^ 2 := by positivity
   have hfar_self :
@@ -637,7 +637,7 @@ theorem lowAnnulusProjection
     positivity
   have hloc_small :
       Hermite1DimdLEAN.localizationLeakageCoefficient C c B d M ≤ rho :=
-    le_of_lt (by simpa [rho] using hM M le_rfl)
+    le_of_lt (by exact hM M le_rfl)
   have hfar_low :
       lowAnnulusMass J (ofPkappa kappa Hfar) ≤ rho := by
     calc
