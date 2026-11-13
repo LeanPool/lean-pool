@@ -1297,6 +1297,13 @@ macro "prefixWriterStepTac" : tactic =>
             (first | rfl | simp [Function.update]) } <;>
           try rfl)))
 
+macro "prefixWriterStepOnly" : tactic =>
+  `(tactic| machineStackEquality [
+      structuralPrefixWriter, prefixWriterConfiguration, prefixWriterPeek, prefixWriterPop,
+      prefixWriterPushBit, prefixWriterPushMarker, prefixWriterGoto, prefixWriterScanStatement,
+      prefixWriterRestoreStatement, prefixWriterMarkerStatement, Turing.haltList,
+      Turing.FinTM2.step, Turing.TM2.step, Turing.TM2.stepAux])
+
 theorem prefixWriterScanStep (bit : Bool)
     (input scratch markers output : List Bool) :
     structuralPrefixWriter.step
@@ -1304,11 +1311,7 @@ theorem prefixWriterScanStep (bit : Bool)
         (bit :: input) scratch markers output) =
       some (prefixWriterConfiguration 0
         input (bit :: scratch) (true :: markers) output) := by
-  machineStackEquality [
-      structuralPrefixWriter, prefixWriterConfiguration, prefixWriterPeek, prefixWriterPop,
-      prefixWriterPushBit, prefixWriterPushMarker, prefixWriterGoto, prefixWriterScanStatement,
-      prefixWriterRestoreStatement, prefixWriterMarkerStatement, Turing.haltList,
-      Turing.FinTM2.step, Turing.TM2.step, Turing.TM2.stepAux]
+  prefixWriterStepOnly
 
 theorem prefixWriterScanFinish
     (scratch markers output : List Bool) :
@@ -1324,11 +1327,7 @@ theorem prefixWriterRestoreStep (bit : Bool)
         (bit :: scratch) markers output) =
       some (prefixWriterConfiguration 1 []
         scratch markers (bit :: output)) := by
-  machineStackEquality [
-      structuralPrefixWriter, prefixWriterConfiguration, prefixWriterPeek, prefixWriterPop,
-      prefixWriterPushBit, prefixWriterPushMarker, prefixWriterGoto, prefixWriterScanStatement,
-      prefixWriterRestoreStatement, prefixWriterMarkerStatement, Turing.haltList,
-      Turing.FinTM2.step, Turing.TM2.step, Turing.TM2.stepAux]
+  prefixWriterStepOnly
 
 theorem prefixWriterRestoreFinish
     (markers output : List Bool) :
@@ -1336,11 +1335,7 @@ theorem prefixWriterRestoreFinish
       (prefixWriterConfiguration 1 [] [] markers output) =
       some (prefixWriterConfiguration 2 [] [] markers
         (false :: output)) := by
-  machineStackEquality [
-      structuralPrefixWriter, prefixWriterConfiguration, prefixWriterPeek, prefixWriterPop,
-      prefixWriterPushBit, prefixWriterPushMarker, prefixWriterGoto, prefixWriterScanStatement,
-      prefixWriterRestoreStatement, prefixWriterMarkerStatement, Turing.haltList,
-      Turing.FinTM2.step, Turing.TM2.step, Turing.TM2.stepAux]
+  prefixWriterStepOnly
 
 theorem prefixWriterMarkerStep (bit : Bool)
     (markers output : List Bool) :
@@ -1348,21 +1343,13 @@ theorem prefixWriterMarkerStep (bit : Bool)
       (prefixWriterConfiguration 2 [] [] (bit :: markers) output) =
       some (prefixWriterConfiguration 2 [] [] markers
         (true :: output)) := by
-  machineStackEquality [
-      structuralPrefixWriter, prefixWriterConfiguration, prefixWriterPeek, prefixWriterPop,
-      prefixWriterPushBit, prefixWriterPushMarker, prefixWriterGoto, prefixWriterScanStatement,
-      prefixWriterRestoreStatement, prefixWriterMarkerStatement, Turing.haltList,
-      Turing.FinTM2.step, Turing.TM2.step, Turing.TM2.stepAux]
+  prefixWriterStepOnly
 
 theorem prefixWriterFinish (output : List Bool) :
     structuralPrefixWriter.step
       (prefixWriterConfiguration 2 [] [] [] output) =
       some (Turing.haltList structuralPrefixWriter output) := by
-  machineStackEquality [
-      structuralPrefixWriter, prefixWriterConfiguration, prefixWriterPeek, prefixWriterPop,
-      prefixWriterPushBit, prefixWriterPushMarker, prefixWriterGoto, prefixWriterScanStatement,
-      prefixWriterRestoreStatement, prefixWriterMarkerStatement, Turing.haltList,
-      Turing.FinTM2.step, Turing.TM2.step, Turing.TM2.stepAux]
+  prefixWriterStepOnly
 
 /-- The scan phase reverses the input onto scratch and records its length in markers. -/
 def prefixWriterScanTrace

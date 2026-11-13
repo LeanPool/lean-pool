@@ -1565,6 +1565,17 @@ macro "flatAdjacentRecordStepTac" : tactic =>
             (first | rfl | simp [Function.update]) } <;>
           try rfl)))
 
+macro "flatAdjacentRecordStepOnly" : tactic =>
+  `(tactic| machineStackEquality [
+      actualFlatAdjacentRecordSwapMachine, flatAdjacentRecordConfiguration,
+      flatAdjacentRecordPeek, flatAdjacentRecordPop, flatAdjacentRecordPushBit,
+      flatAdjacentRecordPushConstant, flatAdjacentRecordGoto,
+      flatAdjacentRecordFirstPrefixStatement, flatAdjacentRecordFirstPayloadStatement,
+      flatAdjacentRecordSecondPrefixStatement, flatAdjacentRecordSecondPayloadStatement,
+      flatAdjacentRecordRestoreFirstStatement, flatAdjacentRecordRestoreSecondStatement,
+      flatAdjacentRecordFailureStatement, Turing.haltList, Turing.FinTM2.step, Turing.TM2.step,
+      Turing.TM2.stepAux])
+
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem flatAdjacentRecord_firstPrefix_true
     (input first second counter : List Bool) :
@@ -1573,15 +1584,7 @@ theorem flatAdjacentRecord_firstPrefix_true
         (true :: input) first second counter) =
       some (flatAdjacentRecordConfiguration 0
         input (true :: first) second (true :: counter)) := by
-  machineStackEquality [
-      actualFlatAdjacentRecordSwapMachine, flatAdjacentRecordConfiguration,
-      flatAdjacentRecordPeek, flatAdjacentRecordPop, flatAdjacentRecordPushBit,
-      flatAdjacentRecordPushConstant, flatAdjacentRecordGoto,
-      flatAdjacentRecordFirstPrefixStatement, flatAdjacentRecordFirstPayloadStatement,
-      flatAdjacentRecordSecondPrefixStatement, flatAdjacentRecordSecondPayloadStatement,
-      flatAdjacentRecordRestoreFirstStatement, flatAdjacentRecordRestoreSecondStatement,
-      flatAdjacentRecordFailureStatement, Turing.haltList, Turing.FinTM2.step, Turing.TM2.step,
-      Turing.TM2.stepAux]
+  flatAdjacentRecordStepOnly
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem flatAdjacentRecord_firstPrefix_false
@@ -1591,15 +1594,7 @@ theorem flatAdjacentRecord_firstPrefix_false
         (false :: input) first second counter) =
       some (flatAdjacentRecordConfiguration 1
         input (false :: first) second counter) := by
-  machineStackEquality [
-      actualFlatAdjacentRecordSwapMachine, flatAdjacentRecordConfiguration,
-      flatAdjacentRecordPeek, flatAdjacentRecordPop, flatAdjacentRecordPushBit,
-      flatAdjacentRecordPushConstant, flatAdjacentRecordGoto,
-      flatAdjacentRecordFirstPrefixStatement, flatAdjacentRecordFirstPayloadStatement,
-      flatAdjacentRecordSecondPrefixStatement, flatAdjacentRecordSecondPayloadStatement,
-      flatAdjacentRecordRestoreFirstStatement, flatAdjacentRecordRestoreSecondStatement,
-      flatAdjacentRecordFailureStatement, Turing.haltList, Turing.FinTM2.step, Turing.TM2.step,
-      Turing.TM2.stepAux]
+  flatAdjacentRecordStepOnly
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem flatAdjacentRecord_firstPrefix_missing
@@ -1618,15 +1613,7 @@ theorem flatAdjacentRecord_firstPayload_step
         (bit :: input) first second (true :: counter)) =
       some (flatAdjacentRecordConfiguration 1
         input (bit :: first) second counter) := by
-  machineStackEquality [
-      actualFlatAdjacentRecordSwapMachine, flatAdjacentRecordConfiguration,
-      flatAdjacentRecordPeek, flatAdjacentRecordPop, flatAdjacentRecordPushBit,
-      flatAdjacentRecordPushConstant, flatAdjacentRecordGoto,
-      flatAdjacentRecordFirstPrefixStatement, flatAdjacentRecordFirstPayloadStatement,
-      flatAdjacentRecordSecondPrefixStatement, flatAdjacentRecordSecondPayloadStatement,
-      flatAdjacentRecordRestoreFirstStatement, flatAdjacentRecordRestoreSecondStatement,
-      flatAdjacentRecordFailureStatement, Turing.haltList, Turing.FinTM2.step, Turing.TM2.step,
-      Turing.TM2.stepAux]
+  flatAdjacentRecordStepOnly
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem flatAdjacentRecord_firstPayload_missing
@@ -1654,15 +1641,7 @@ theorem flatAdjacentRecord_secondPrefix_true
         (true :: input) first second counter) =
       some (flatAdjacentRecordConfiguration 2
         input first (true :: second) (true :: counter)) := by
-  machineStackEquality [
-      actualFlatAdjacentRecordSwapMachine, flatAdjacentRecordConfiguration,
-      flatAdjacentRecordPeek, flatAdjacentRecordPop, flatAdjacentRecordPushBit,
-      flatAdjacentRecordPushConstant, flatAdjacentRecordGoto,
-      flatAdjacentRecordFirstPrefixStatement, flatAdjacentRecordFirstPayloadStatement,
-      flatAdjacentRecordSecondPrefixStatement, flatAdjacentRecordSecondPayloadStatement,
-      flatAdjacentRecordRestoreFirstStatement, flatAdjacentRecordRestoreSecondStatement,
-      flatAdjacentRecordFailureStatement, Turing.haltList, Turing.FinTM2.step, Turing.TM2.step,
-      Turing.TM2.stepAux]
+  flatAdjacentRecordStepOnly
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem flatAdjacentRecord_secondPrefix_false
@@ -1672,15 +1651,7 @@ theorem flatAdjacentRecord_secondPrefix_false
         (false :: input) first second counter) =
       some (flatAdjacentRecordConfiguration 3
         input first (false :: second) counter) := by
-  machineStackEquality [
-      actualFlatAdjacentRecordSwapMachine, flatAdjacentRecordConfiguration,
-      flatAdjacentRecordPeek, flatAdjacentRecordPop, flatAdjacentRecordPushBit,
-      flatAdjacentRecordPushConstant, flatAdjacentRecordGoto,
-      flatAdjacentRecordFirstPrefixStatement, flatAdjacentRecordFirstPayloadStatement,
-      flatAdjacentRecordSecondPrefixStatement, flatAdjacentRecordSecondPayloadStatement,
-      flatAdjacentRecordRestoreFirstStatement, flatAdjacentRecordRestoreSecondStatement,
-      flatAdjacentRecordFailureStatement, Turing.haltList, Turing.FinTM2.step, Turing.TM2.step,
-      Turing.TM2.stepAux]
+  flatAdjacentRecordStepOnly
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem flatAdjacentRecord_secondPrefix_missing
@@ -1699,15 +1670,7 @@ theorem flatAdjacentRecord_secondPayload_step
         (bit :: input) first second (true :: counter)) =
       some (flatAdjacentRecordConfiguration 3
         input first (bit :: second) counter) := by
-  machineStackEquality [
-      actualFlatAdjacentRecordSwapMachine, flatAdjacentRecordConfiguration,
-      flatAdjacentRecordPeek, flatAdjacentRecordPop, flatAdjacentRecordPushBit,
-      flatAdjacentRecordPushConstant, flatAdjacentRecordGoto,
-      flatAdjacentRecordFirstPrefixStatement, flatAdjacentRecordFirstPayloadStatement,
-      flatAdjacentRecordSecondPrefixStatement, flatAdjacentRecordSecondPayloadStatement,
-      flatAdjacentRecordRestoreFirstStatement, flatAdjacentRecordRestoreSecondStatement,
-      flatAdjacentRecordFailureStatement, Turing.haltList, Turing.FinTM2.step, Turing.TM2.step,
-      Turing.TM2.stepAux]
+  flatAdjacentRecordStepOnly
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem flatAdjacentRecord_secondPayload_missing
@@ -1735,15 +1698,7 @@ theorem flatAdjacentRecord_restoreFirst_step
         input (bit :: first) second []) =
       some (flatAdjacentRecordConfiguration 4
         (bit :: input) first second []) := by
-  machineStackEquality [
-      actualFlatAdjacentRecordSwapMachine, flatAdjacentRecordConfiguration,
-      flatAdjacentRecordPeek, flatAdjacentRecordPop, flatAdjacentRecordPushBit,
-      flatAdjacentRecordPushConstant, flatAdjacentRecordGoto,
-      flatAdjacentRecordFirstPrefixStatement, flatAdjacentRecordFirstPayloadStatement,
-      flatAdjacentRecordSecondPrefixStatement, flatAdjacentRecordSecondPayloadStatement,
-      flatAdjacentRecordRestoreFirstStatement, flatAdjacentRecordRestoreSecondStatement,
-      flatAdjacentRecordFailureStatement, Turing.haltList, Turing.FinTM2.step, Turing.TM2.step,
-      Turing.TM2.stepAux]
+  flatAdjacentRecordStepOnly
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem flatAdjacentRecord_restoreFirst_finish
@@ -1761,15 +1716,7 @@ theorem flatAdjacentRecord_restoreSecond_step
         input [] (bit :: second) []) =
       some (flatAdjacentRecordConfiguration 5
         (bit :: input) [] second []) := by
-  machineStackEquality [
-      actualFlatAdjacentRecordSwapMachine, flatAdjacentRecordConfiguration,
-      flatAdjacentRecordPeek, flatAdjacentRecordPop, flatAdjacentRecordPushBit,
-      flatAdjacentRecordPushConstant, flatAdjacentRecordGoto,
-      flatAdjacentRecordFirstPrefixStatement, flatAdjacentRecordFirstPayloadStatement,
-      flatAdjacentRecordSecondPrefixStatement, flatAdjacentRecordSecondPayloadStatement,
-      flatAdjacentRecordRestoreFirstStatement, flatAdjacentRecordRestoreSecondStatement,
-      flatAdjacentRecordFailureStatement, Turing.haltList, Turing.FinTM2.step, Turing.TM2.step,
-      Turing.TM2.stepAux]
+  flatAdjacentRecordStepOnly
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem flatAdjacentRecord_restoreSecond_finish
@@ -1777,15 +1724,7 @@ theorem flatAdjacentRecord_restoreSecond_finish
     actualFlatAdjacentRecordSwapMachine.step
       (flatAdjacentRecordConfiguration 5 input [] [] []) =
       some (Turing.haltList actualFlatAdjacentRecordSwapMachine input) := by
-  machineStackEquality [
-      actualFlatAdjacentRecordSwapMachine, flatAdjacentRecordConfiguration,
-      flatAdjacentRecordPeek, flatAdjacentRecordPop, flatAdjacentRecordPushBit,
-      flatAdjacentRecordPushConstant, flatAdjacentRecordGoto,
-      flatAdjacentRecordFirstPrefixStatement, flatAdjacentRecordFirstPayloadStatement,
-      flatAdjacentRecordSecondPrefixStatement, flatAdjacentRecordSecondPayloadStatement,
-      flatAdjacentRecordRestoreFirstStatement, flatAdjacentRecordRestoreSecondStatement,
-      flatAdjacentRecordFailureStatement, Turing.haltList, Turing.FinTM2.step, Turing.TM2.step,
-      Turing.TM2.stepAux]
+  flatAdjacentRecordStepOnly
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem flatAdjacentRecord_failure_input
@@ -1795,15 +1734,7 @@ theorem flatAdjacentRecord_failure_input
         (bit :: input) first second counter) =
       some (flatAdjacentRecordConfiguration 6
         input first second counter) := by
-  machineStackEquality [
-      actualFlatAdjacentRecordSwapMachine, flatAdjacentRecordConfiguration,
-      flatAdjacentRecordPeek, flatAdjacentRecordPop, flatAdjacentRecordPushBit,
-      flatAdjacentRecordPushConstant, flatAdjacentRecordGoto,
-      flatAdjacentRecordFirstPrefixStatement, flatAdjacentRecordFirstPayloadStatement,
-      flatAdjacentRecordSecondPrefixStatement, flatAdjacentRecordSecondPayloadStatement,
-      flatAdjacentRecordRestoreFirstStatement, flatAdjacentRecordRestoreSecondStatement,
-      flatAdjacentRecordFailureStatement, Turing.haltList, Turing.FinTM2.step, Turing.TM2.step,
-      Turing.TM2.stepAux]
+  flatAdjacentRecordStepOnly
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem flatAdjacentRecord_failure_first
@@ -1813,15 +1744,7 @@ theorem flatAdjacentRecord_failure_first
         [] (bit :: first) second counter) =
       some (flatAdjacentRecordConfiguration 6
         [] first second counter) := by
-  machineStackEquality [
-      actualFlatAdjacentRecordSwapMachine, flatAdjacentRecordConfiguration,
-      flatAdjacentRecordPeek, flatAdjacentRecordPop, flatAdjacentRecordPushBit,
-      flatAdjacentRecordPushConstant, flatAdjacentRecordGoto,
-      flatAdjacentRecordFirstPrefixStatement, flatAdjacentRecordFirstPayloadStatement,
-      flatAdjacentRecordSecondPrefixStatement, flatAdjacentRecordSecondPayloadStatement,
-      flatAdjacentRecordRestoreFirstStatement, flatAdjacentRecordRestoreSecondStatement,
-      flatAdjacentRecordFailureStatement, Turing.haltList, Turing.FinTM2.step, Turing.TM2.step,
-      Turing.TM2.stepAux]
+  flatAdjacentRecordStepOnly
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem flatAdjacentRecord_failure_second
@@ -1831,15 +1754,7 @@ theorem flatAdjacentRecord_failure_second
         [] [] (bit :: second) counter) =
       some (flatAdjacentRecordConfiguration 6
         [] [] second counter) := by
-  machineStackEquality [
-      actualFlatAdjacentRecordSwapMachine, flatAdjacentRecordConfiguration,
-      flatAdjacentRecordPeek, flatAdjacentRecordPop, flatAdjacentRecordPushBit,
-      flatAdjacentRecordPushConstant, flatAdjacentRecordGoto,
-      flatAdjacentRecordFirstPrefixStatement, flatAdjacentRecordFirstPayloadStatement,
-      flatAdjacentRecordSecondPrefixStatement, flatAdjacentRecordSecondPayloadStatement,
-      flatAdjacentRecordRestoreFirstStatement, flatAdjacentRecordRestoreSecondStatement,
-      flatAdjacentRecordFailureStatement, Turing.haltList, Turing.FinTM2.step, Turing.TM2.step,
-      Turing.TM2.stepAux]
+  flatAdjacentRecordStepOnly
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem flatAdjacentRecord_failure_counter
@@ -1849,30 +1764,14 @@ theorem flatAdjacentRecord_failure_counter
         [] [] [] (bit :: counter)) =
       some (flatAdjacentRecordConfiguration 6
         [] [] [] counter) := by
-  machineStackEquality [
-      actualFlatAdjacentRecordSwapMachine, flatAdjacentRecordConfiguration,
-      flatAdjacentRecordPeek, flatAdjacentRecordPop, flatAdjacentRecordPushBit,
-      flatAdjacentRecordPushConstant, flatAdjacentRecordGoto,
-      flatAdjacentRecordFirstPrefixStatement, flatAdjacentRecordFirstPayloadStatement,
-      flatAdjacentRecordSecondPrefixStatement, flatAdjacentRecordSecondPayloadStatement,
-      flatAdjacentRecordRestoreFirstStatement, flatAdjacentRecordRestoreSecondStatement,
-      flatAdjacentRecordFailureStatement, Turing.haltList, Turing.FinTM2.step, Turing.TM2.step,
-      Turing.TM2.stepAux]
+  flatAdjacentRecordStepOnly
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem flatAdjacentRecord_failure_finish :
     actualFlatAdjacentRecordSwapMachine.step
       (flatAdjacentRecordConfiguration 6 [] [] [] []) =
       some (Turing.haltList actualFlatAdjacentRecordSwapMachine []) := by
-  machineStackEquality [
-      actualFlatAdjacentRecordSwapMachine, flatAdjacentRecordConfiguration,
-      flatAdjacentRecordPeek, flatAdjacentRecordPop, flatAdjacentRecordPushBit,
-      flatAdjacentRecordPushConstant, flatAdjacentRecordGoto,
-      flatAdjacentRecordFirstPrefixStatement, flatAdjacentRecordFirstPayloadStatement,
-      flatAdjacentRecordSecondPrefixStatement, flatAdjacentRecordSecondPayloadStatement,
-      flatAdjacentRecordRestoreFirstStatement, flatAdjacentRecordRestoreSecondStatement,
-      flatAdjacentRecordFailureStatement, Turing.haltList, Turing.FinTM2.step, Turing.TM2.step,
-      Turing.TM2.stepAux]
+  flatAdjacentRecordStepOnly
 
 end CNFFlatAdjacentRecordSwapTM
 

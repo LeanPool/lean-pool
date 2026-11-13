@@ -1764,6 +1764,15 @@ macro "naturalBinaryWriterStepTac" : tactic =>
             (first | rfl | simp [Function.update]) } <;>
           try rfl)))
 
+macro "naturalBinaryWriterStepOnly" : tactic =>
+  `(tactic| machineStackEquality [
+      structuralNaturalBinaryWriter, naturalBinaryWriterConfiguration, naturalBinaryWriterPeek,
+      naturalBinaryWriterPop, naturalBinaryWriterPushBit, naturalBinaryWriterPushConstant,
+      naturalBinaryWriterGoto, naturalBinaryWriterInputStatement,
+      naturalBinaryWriterCarryStatement, naturalBinaryWriterRestoreStatement,
+      naturalBinaryWriterPrepareStatement, naturalBinaryWriterOutputStatement, Turing.haltList,
+      Turing.FinTM2.step, Turing.TM2.step, Turing.TM2.stepAux])
+
 theorem naturalBinaryWriterInputStep (bit : Bool)
     (input digits carry output : List Bool) :
     structuralNaturalBinaryWriter.step
@@ -1771,13 +1780,7 @@ theorem naturalBinaryWriterInputStep (bit : Bool)
         (bit :: input) digits carry output) =
       some (naturalBinaryWriterConfiguration 1
         input digits carry output) := by
-  machineStackEquality [
-      structuralNaturalBinaryWriter, naturalBinaryWriterConfiguration, naturalBinaryWriterPeek,
-      naturalBinaryWriterPop, naturalBinaryWriterPushBit, naturalBinaryWriterPushConstant,
-      naturalBinaryWriterGoto, naturalBinaryWriterInputStatement,
-      naturalBinaryWriterCarryStatement, naturalBinaryWriterRestoreStatement,
-      naturalBinaryWriterPrepareStatement, naturalBinaryWriterOutputStatement, Turing.haltList,
-      Turing.FinTM2.step, Turing.TM2.step, Turing.TM2.stepAux]
+  naturalBinaryWriterStepOnly
 
 theorem naturalBinaryWriterInputFinish
     (digits carry output : List Bool) :
@@ -1794,13 +1797,7 @@ theorem naturalBinaryWriterCarryTrueStep
         input (true :: digits) carry output) =
       some (naturalBinaryWriterConfiguration 1
         input digits (false :: carry) output) := by
-  machineStackEquality [
-      structuralNaturalBinaryWriter, naturalBinaryWriterConfiguration, naturalBinaryWriterPeek,
-      naturalBinaryWriterPop, naturalBinaryWriterPushBit, naturalBinaryWriterPushConstant,
-      naturalBinaryWriterGoto, naturalBinaryWriterInputStatement,
-      naturalBinaryWriterCarryStatement, naturalBinaryWriterRestoreStatement,
-      naturalBinaryWriterPrepareStatement, naturalBinaryWriterOutputStatement, Turing.haltList,
-      Turing.FinTM2.step, Turing.TM2.step, Turing.TM2.stepAux]
+  naturalBinaryWriterStepOnly
 
 theorem naturalBinaryWriterCarryFalseStep
     (input digits carry output : List Bool) :
@@ -1809,13 +1806,7 @@ theorem naturalBinaryWriterCarryFalseStep
         input (false :: digits) carry output) =
       some (naturalBinaryWriterConfiguration 2
         input (true :: digits) carry output) := by
-  machineStackEquality [
-      structuralNaturalBinaryWriter, naturalBinaryWriterConfiguration, naturalBinaryWriterPeek,
-      naturalBinaryWriterPop, naturalBinaryWriterPushBit, naturalBinaryWriterPushConstant,
-      naturalBinaryWriterGoto, naturalBinaryWriterInputStatement,
-      naturalBinaryWriterCarryStatement, naturalBinaryWriterRestoreStatement,
-      naturalBinaryWriterPrepareStatement, naturalBinaryWriterOutputStatement, Turing.haltList,
-      Turing.FinTM2.step, Turing.TM2.step, Turing.TM2.stepAux]
+  naturalBinaryWriterStepOnly
 
 theorem naturalBinaryWriterCarryEmptyStep
     (input carry output : List Bool) :
@@ -1824,13 +1815,7 @@ theorem naturalBinaryWriterCarryEmptyStep
         input [] carry output) =
       some (naturalBinaryWriterConfiguration 2
         input [true] carry output) := by
-  machineStackEquality [
-      structuralNaturalBinaryWriter, naturalBinaryWriterConfiguration, naturalBinaryWriterPeek,
-      naturalBinaryWriterPop, naturalBinaryWriterPushBit, naturalBinaryWriterPushConstant,
-      naturalBinaryWriterGoto, naturalBinaryWriterInputStatement,
-      naturalBinaryWriterCarryStatement, naturalBinaryWriterRestoreStatement,
-      naturalBinaryWriterPrepareStatement, naturalBinaryWriterOutputStatement, Turing.haltList,
-      Turing.FinTM2.step, Turing.TM2.step, Turing.TM2.stepAux]
+  naturalBinaryWriterStepOnly
 
 theorem naturalBinaryWriterRestoreStep (bit : Bool)
     (input digits carry output : List Bool) :
@@ -1839,13 +1824,7 @@ theorem naturalBinaryWriterRestoreStep (bit : Bool)
         input digits (bit :: carry) output) =
       some (naturalBinaryWriterConfiguration 2
         input (bit :: digits) carry output) := by
-  machineStackEquality [
-      structuralNaturalBinaryWriter, naturalBinaryWriterConfiguration, naturalBinaryWriterPeek,
-      naturalBinaryWriterPop, naturalBinaryWriterPushBit, naturalBinaryWriterPushConstant,
-      naturalBinaryWriterGoto, naturalBinaryWriterInputStatement,
-      naturalBinaryWriterCarryStatement, naturalBinaryWriterRestoreStatement,
-      naturalBinaryWriterPrepareStatement, naturalBinaryWriterOutputStatement, Turing.haltList,
-      Turing.FinTM2.step, Turing.TM2.step, Turing.TM2.stepAux]
+  naturalBinaryWriterStepOnly
 
 theorem naturalBinaryWriterRestoreFinish
     (input digits output : List Bool) :
@@ -1863,13 +1842,7 @@ theorem naturalBinaryWriterPrepareStep (bit : Bool)
         [] (bit :: digits) carry output) =
       some (naturalBinaryWriterConfiguration 3
         [] digits (bit :: carry) output) := by
-  machineStackEquality [
-      structuralNaturalBinaryWriter, naturalBinaryWriterConfiguration, naturalBinaryWriterPeek,
-      naturalBinaryWriterPop, naturalBinaryWriterPushBit, naturalBinaryWriterPushConstant,
-      naturalBinaryWriterGoto, naturalBinaryWriterInputStatement,
-      naturalBinaryWriterCarryStatement, naturalBinaryWriterRestoreStatement,
-      naturalBinaryWriterPrepareStatement, naturalBinaryWriterOutputStatement, Turing.haltList,
-      Turing.FinTM2.step, Turing.TM2.step, Turing.TM2.stepAux]
+  naturalBinaryWriterStepOnly
 
 theorem naturalBinaryWriterPrepareFinish
     (carry output : List Bool) :
@@ -1886,25 +1859,13 @@ theorem naturalBinaryWriterOutputStep (bit : Bool)
         [] [] (bit :: carry) output) =
       some (naturalBinaryWriterConfiguration 4
         [] [] carry (bit :: output)) := by
-  machineStackEquality [
-      structuralNaturalBinaryWriter, naturalBinaryWriterConfiguration, naturalBinaryWriterPeek,
-      naturalBinaryWriterPop, naturalBinaryWriterPushBit, naturalBinaryWriterPushConstant,
-      naturalBinaryWriterGoto, naturalBinaryWriterInputStatement,
-      naturalBinaryWriterCarryStatement, naturalBinaryWriterRestoreStatement,
-      naturalBinaryWriterPrepareStatement, naturalBinaryWriterOutputStatement, Turing.haltList,
-      Turing.FinTM2.step, Turing.TM2.step, Turing.TM2.stepAux]
+  naturalBinaryWriterStepOnly
 
 theorem naturalBinaryWriterOutputFinish (output : List Bool) :
     structuralNaturalBinaryWriter.step
       (naturalBinaryWriterConfiguration 4 [] [] [] output) =
       some (Turing.haltList structuralNaturalBinaryWriter output) := by
-  machineStackEquality [
-      structuralNaturalBinaryWriter, naturalBinaryWriterConfiguration, naturalBinaryWriterPeek,
-      naturalBinaryWriterPop, naturalBinaryWriterPushBit, naturalBinaryWriterPushConstant,
-      naturalBinaryWriterGoto, naturalBinaryWriterInputStatement,
-      naturalBinaryWriterCarryStatement, naturalBinaryWriterRestoreStatement,
-      naturalBinaryWriterPrepareStatement, naturalBinaryWriterOutputStatement, Turing.haltList,
-      Turing.FinTM2.step, Turing.TM2.step, Turing.TM2.stepAux]
+  naturalBinaryWriterStepOnly
 
 /-- Propagate a carry to the first zero bit or the end of the binary counter. -/
 def naturalBinaryWriterCarrySearchTrace

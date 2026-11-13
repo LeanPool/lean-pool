@@ -5776,6 +5776,13 @@ macro "preservingXorStepTac" : tactic =>
             (first | rfl | simp [Function.update]) } <;>
           try rfl)))
 
+macro "preservingXorStepOnly" : tactic =>
+  `(tactic| machineStackEquality [
+      preservingXorMachine, preservingXorConfiguration, preservingXorPeek, preservingXorGoto,
+      preservingXorFirstStatement, preservingXorSecondStatement, preservingXorScanStatement,
+      preservingXorRestoreStatement, Turing.haltList, Turing.FinTM2.step, Turing.TM2.step,
+      Turing.TM2.stepAux])
+
 private theorem preservingXor_first_step
     (first : Bool) (remaining archive output : List Bool) :
     preservingXorMachine.step
@@ -5783,11 +5790,7 @@ private theorem preservingXor_first_step
         (first :: remaining) archive output) =
       some (preservingXorConfiguration 1
         (some first) remaining archive output) := by
-  cases first <;> machineStackEquality [
-      preservingXorMachine, preservingXorConfiguration, preservingXorPeek, preservingXorGoto,
-      preservingXorFirstStatement, preservingXorSecondStatement, preservingXorScanStatement,
-      preservingXorRestoreStatement, Turing.haltList, Turing.FinTM2.step, Turing.TM2.step,
-      Turing.TM2.stepAux]
+  cases first <;> preservingXorStepOnly
 
 private theorem preservingXor_first_missing
     (archive output : List Bool) :
@@ -5823,11 +5826,7 @@ private theorem preservingXor_scan_step
         (bit :: remaining) archive output) =
       some (preservingXorConfiguration 2 none
         remaining (bit :: archive) output) := by
-  machineStackEquality [
-      preservingXorMachine, preservingXorConfiguration, preservingXorPeek, preservingXorGoto,
-      preservingXorFirstStatement, preservingXorSecondStatement, preservingXorScanStatement,
-      preservingXorRestoreStatement, Turing.haltList, Turing.FinTM2.step, Turing.TM2.step,
-      Turing.TM2.stepAux]
+  preservingXorStepOnly
 
 private theorem preservingXor_scan_finish
     (archive output : List Bool) :
@@ -5843,22 +5842,14 @@ private theorem preservingXor_restore_step
         (bit :: archive) output) =
       some (preservingXorConfiguration 3 none []
         archive (bit :: output)) := by
-  machineStackEquality [
-      preservingXorMachine, preservingXorConfiguration, preservingXorPeek, preservingXorGoto,
-      preservingXorFirstStatement, preservingXorSecondStatement, preservingXorScanStatement,
-      preservingXorRestoreStatement, Turing.haltList, Turing.FinTM2.step, Turing.TM2.step,
-      Turing.TM2.stepAux]
+  preservingXorStepOnly
 
 private theorem preservingXor_restore_finish
     (output : List Bool) :
     preservingXorMachine.step
       (preservingXorConfiguration 3 none [] [] output) =
       some (Turing.haltList preservingXorMachine output) := by
-  machineStackEquality [
-      preservingXorMachine, preservingXorConfiguration, preservingXorPeek, preservingXorGoto,
-      preservingXorFirstStatement, preservingXorSecondStatement, preservingXorScanStatement,
-      preservingXorRestoreStatement, Turing.haltList, Turing.FinTM2.step, Turing.TM2.step,
-      Turing.TM2.stepAux]
+  preservingXorStepOnly
 
 private def preservingXor_scanTrace
     (input archive output : List Bool) :
@@ -6389,6 +6380,13 @@ macro "binaryGaussianXorStepTac" : tactic =>
             (first | rfl | simp [Function.update]) } <;>
           try rfl)))
 
+macro "binaryGaussianXorStepOnly" : tactic =>
+  `(tactic| machineStackEquality [
+      binaryGaussianXorMachine, binaryGaussianXorConfiguration, binaryGaussianXorPeek,
+      binaryGaussianXorGoto, binaryGaussianXorFirstStatement, binaryGaussianXorSecondStatement,
+      binaryGaussianXorDrainStatement, Turing.haltList, Turing.FinTM2.step, Turing.TM2.step,
+      Turing.TM2.stepAux])
+
 private theorem binaryGaussianXor_first_step
     (first : Bool) (remaining output : List Bool) :
     binaryGaussianXorMachine.step
@@ -6396,11 +6394,7 @@ private theorem binaryGaussianXor_first_step
         (first :: remaining) output) =
       some (binaryGaussianXorConfiguration 1
         (some first) remaining output) := by
-  cases first <;> machineStackEquality [
-      binaryGaussianXorMachine, binaryGaussianXorConfiguration, binaryGaussianXorPeek,
-      binaryGaussianXorGoto, binaryGaussianXorFirstStatement, binaryGaussianXorSecondStatement,
-      binaryGaussianXorDrainStatement, Turing.haltList, Turing.FinTM2.step, Turing.TM2.step,
-      Turing.TM2.stepAux]
+  cases first <;> binaryGaussianXorStepOnly
 
 private theorem binaryGaussianXor_first_missing
     (output : List Bool) :
@@ -6436,21 +6430,13 @@ private theorem binaryGaussianXor_drain_step
         (bit :: remaining) output) =
       some (binaryGaussianXorConfiguration 2 none
         remaining output) := by
-  machineStackEquality [
-      binaryGaussianXorMachine, binaryGaussianXorConfiguration, binaryGaussianXorPeek,
-      binaryGaussianXorGoto, binaryGaussianXorFirstStatement, binaryGaussianXorSecondStatement,
-      binaryGaussianXorDrainStatement, Turing.haltList, Turing.FinTM2.step, Turing.TM2.step,
-      Turing.TM2.stepAux]
+  binaryGaussianXorStepOnly
 
 private theorem binaryGaussianXor_drain_finish (output : List Bool) :
     binaryGaussianXorMachine.step
       (binaryGaussianXorConfiguration 2 none [] output) =
       some (Turing.haltList binaryGaussianXorMachine output) := by
-  machineStackEquality [
-      binaryGaussianXorMachine, binaryGaussianXorConfiguration, binaryGaussianXorPeek,
-      binaryGaussianXorGoto, binaryGaussianXorFirstStatement, binaryGaussianXorSecondStatement,
-      binaryGaussianXorDrainStatement, Turing.haltList, Turing.FinTM2.step, Turing.TM2.step,
-      Turing.TM2.stepAux]
+  binaryGaussianXorStepOnly
 
 private def binaryGaussianXor_drainTrace
     (input output : List Bool) :
