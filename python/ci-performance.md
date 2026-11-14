@@ -19,6 +19,24 @@ its key. All consumers use the same paths and compatibility keys. Preflight and
 Mathlib documentation restore only dependencies. Existing `Lake-` caches expire
 normally; the first run after this migration must seed the new namespaces.
 
+### Slim Lake setup files
+
+Before compiling a module, Lake writes `.lake/build/ir/<Module>.setup.json` for
+`lean --setup`. Its `importArts` field lists the absolute artifact paths of every
+transitive import, so a module that imports Mathlib carries about 3,000 entries
+(about 1.6 MB). On November 14, 2026 these files were 46 GB of a 69 GB pool build.
+Every job wrote them out on cache restore, hauled them through cache saves and
+artifact uploads, and JSON-parsed them during the lint and quality steps, where
+that parsing accounted for most of their time.
+
+Lake never reads a setup file back; it rewrites one when it recompiles that
+module. The only readers, `validation_cache` and the exposition extractor, use
+just the `importArts` keys that name a `LeanPool` module or a Lean source in the
+checkout, never the artifact paths. So every CI build step is followed by
+`python3 -m lean_pool.slim_setup`, which keeps only those names, with empty
+artifact lists, and preserves
+modification times, so shard packaging still ships only fresh files.
+
 Documentation retains its separate, integrity-checked SQLite checkpoints. They
 still depend on available cache capacity; this change reduces duplicate data
 instead of changing the repository's paid storage limit.
