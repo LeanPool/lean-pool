@@ -6,11 +6,9 @@ Authors: Egor Lyfar
 module
 
 public import LeanPool.Erdos132ConvexK3.Basic
-import Mathlib.Algebra.Order.Algebra
-import Mathlib.Algebra.Order.BigOperators.Expect
-import Mathlib.Analysis.Complex.Order
-import Mathlib.Data.EReal.Inv
-import Mathlib.Tactic.ContinuousFunctionalCalculus
+import Mathlib.Tactic.Linarith.Frontend
+import Mathlib.Tactic.Ring.RingNF
+import Mathlib.Tactic.Positivity.Basic
 
 /-!
 # The shared-diameter lens

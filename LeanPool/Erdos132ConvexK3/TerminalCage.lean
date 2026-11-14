@@ -7,14 +7,6 @@ module
 
 public import Mathlib.Basic.Real.Basic
 import LeanPool.Erdos132ConvexK3.MetricDichotomy
-import Mathlib.Algebra.Order.Algebra
-import Mathlib.Algebra.Order.BigOperators.Expect
-import Mathlib.Analysis.Complex.Order
-import Mathlib.Combinatorics.SimpleGraph.Init
-import Mathlib.Data.EReal.Inv
-import Mathlib.Data.Sym.Sym2.Init
-import Mathlib.Tactic.ContinuousFunctionalCalculus
-import Mathlib.Tactic.Positivity.Finset
 
 /-!
 # Terminal d2-cage
