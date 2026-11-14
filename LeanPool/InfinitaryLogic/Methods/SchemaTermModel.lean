@@ -82,6 +82,34 @@ theorem exists_body_of_subset (F : Finset (((localColim s₀)[[ℕ]])[[ℕ]].Sen
   obtain ⟨h, hh⟩ := hsat σ hmono hrange
   exact ⟨σ, h, hh⟩
 
+/-- A theory member has a body, with its sentence kept abstract during extraction. -/
+theorem schemaCompletionTheory_body_of_mem
+    (τ : (((localColim s₀)[[ℕ]])[[ℕ]]).Sentenceω)
+    (hτ : τ ∈ schemaCompletionTheory (schemaEnumeration s₀) hM) :
+    ∃ (σ w : ℕ → M), realizeWith σ w τ (Empty.elim : Empty → M) Fin.elim0 := by
+  classical
+  obtain ⟨σ, w, hbody⟩ := exists_body_of_subset hM {τ} fun ψ hψ => by
+    rw [Finset.mem_singleton] at hψ
+    exact hψ ▸ hτ
+  exact ⟨σ, w, @hbody τ (Finset.mem_singleton_self _)⟩
+
+/-- Extract two jointly realized sentences without normalizing their formula encodings. -/
+theorem schemaCompletionTheory_body_of_pair
+    (τ υ : (((localColim s₀)[[ℕ]])[[ℕ]]).Sentenceω)
+    (hτ : τ ∈ schemaCompletionTheory (schemaEnumeration s₀) hM)
+    (hυ : υ ∈ schemaCompletionTheory (schemaEnumeration s₀) hM) :
+    ∃ (σ w : ℕ → M),
+      realizeWith σ w τ (Empty.elim : Empty → M) Fin.elim0 ∧
+      realizeWith σ w υ (Empty.elim : Empty → M) Fin.elim0 := by
+  classical
+  obtain ⟨σ, w, hbody⟩ := exists_body_of_subset hM {τ, υ} fun ψ hψ => by
+    rw [Finset.mem_insert, Finset.mem_singleton] at hψ
+    rcases hψ with rfl | rfl
+    · exact hτ
+    · exact hυ
+  exact ⟨σ, w, @hbody τ (Finset.mem_insert_self _ _),
+    @hbody υ (by rw [Finset.mem_insert, Finset.mem_singleton]; exact Or.inr rfl)⟩
+
 omit [LinearOrder M] [WellFoundedLT M] in
 /-- The de-substituted equality atom of a term with itself realizes to `True` (reflexivity of the
 underlying `=`), on any valuation. -/
@@ -135,13 +163,12 @@ private theorem locDeTermFin_realize_constInterp_nat (σ : ℕ → M) {S : Finse
 /-- **Reflexivity.** `t ≈ t`: the theory decides `schemaEqSentence t t`; the negative sign is
 impossible because any source body would have to realize `¬(t = t)`. -/
 private theorem schemaTermEq_refl (t : (localColim s₀)[[ℕ]].Term Empty) : SchemaTermEq hM t t := by
-  rcases (schemaCompletionTheorySpec hM).complete_on_universe _ (schemaEqSentence_mem_universe t t)
+  rcases schemaCompletionTheory_complete_of_universe hM
+    (τ := schemaEqSentence t t) (schemaEqSentence_mem_universe t t)
     with hpos | hneg
   · exact hpos
   · exfalso
-    obtain ⟨σ, h, hbody⟩ := exists_body_of_subset hM {(schemaEqSentence t t).not}
-      (fun τ hτ => by rw [Finset.mem_singleton] at hτ; exact hτ ▸ hneg)
-    have hneg' := hbody (schemaEqSentence t t).not (Finset.mem_singleton_self _)
+    obtain ⟨σ, h, hneg'⟩ := schemaCompletionTheory_body_of_mem hM (schemaEqSentence t t).not hneg
     rw [realizeWith_not] at hneg'
     exact hneg' (by
       rw [schemaEqSentence, realizeWith_templateSentence]
@@ -170,20 +197,14 @@ theorem realize_schemaEqSentence_iff (σ h : ℕ → M) (t u : (localColim s₀)
 private theorem schemaTermEq_symm {t u : (localColim s₀)[[ℕ]].Term Empty} (h : SchemaTermEq
   hM t u) :
     SchemaTermEq hM u t := by
-  rcases (schemaCompletionTheorySpec hM).complete_on_universe _ (schemaEqSentence_mem_universe u t)
+  rcases schemaCompletionTheory_complete_of_universe hM
+    (τ := schemaEqSentence u t) (schemaEqSentence_mem_universe u t)
     with hpos | hneg
   · exact hpos
   · exfalso
     classical
-    obtain ⟨σ, hh, hbody⟩ := exists_body_of_subset hM
-      {schemaEqSentence t u, (schemaEqSentence u t).not} (fun τ hτ => by
-        rw [Finset.mem_insert, Finset.mem_singleton] at hτ
-        rcases hτ with rfl | rfl
-        · exact h
-        · exact hneg)
-    have h1 := hbody (schemaEqSentence t u) (Finset.mem_insert_self _ _)
-    have h2 := hbody (schemaEqSentence u t).not
-      (by rw [Finset.mem_insert]; exact Or.inr (Finset.mem_singleton_self _))
+    obtain ⟨σ, hh, h1, h2⟩ := schemaCompletionTheory_body_of_pair hM
+      (schemaEqSentence t u) (schemaEqSentence u t).not h hneg
     rw [realize_schemaEqSentence_iff] at h1
     rw [realizeWith_not, realize_schemaEqSentence_iff] at h2
     exact h2 h1.symm
@@ -192,7 +213,8 @@ private theorem schemaTermEq_symm {t u : (localColim s₀)[[ℕ]].Term Empty} (h
 contradicts `Eq.trans`. -/
 private theorem schemaTermEq_trans {t u v : (localColim s₀)[[ℕ]].Term Empty}
     (h1 : SchemaTermEq hM t u) (h2 : SchemaTermEq hM u v) : SchemaTermEq hM t v := by
-  rcases (schemaCompletionTheorySpec hM).complete_on_universe _ (schemaEqSentence_mem_universe t v)
+  rcases schemaCompletionTheory_complete_of_universe hM
+    (τ := schemaEqSentence t v) (schemaEqSentence_mem_universe t v)
     with hpos | hneg
   · exact hpos
   · exfalso
@@ -204,10 +226,10 @@ private theorem schemaTermEq_trans {t u v : (localColim s₀)[[ℕ]].Term Empty}
         · exact h1
         · exact h2
         · exact hneg)
-    have ha := hbody (schemaEqSentence t u) (Finset.mem_insert_self _ _)
-    have hb := hbody (schemaEqSentence u v)
+    have ha := @hbody (schemaEqSentence t u) (Finset.mem_insert_self _ _)
+    have hb := @hbody (schemaEqSentence u v)
       (by rw [Finset.mem_insert]; exact Or.inr (Finset.mem_insert_self _ _))
-    have hc := hbody (schemaEqSentence t v).not (by
+    have hc := @hbody (schemaEqSentence t v).not (by
       rw [Finset.mem_insert, Finset.mem_insert]; exact Or.inr (Or.inr
         (Finset.mem_singleton_self _)))
     rw [realize_schemaEqSentence_iff] at ha hb
@@ -221,7 +243,8 @@ private theorem schemaTermEq_func {n : ℕ} (f : (localColim s₀)[[ℕ]].Functi
     (ts us : Fin n → (localColim s₀)[[ℕ]].Term Empty)
     (h : ∀ i, SchemaTermEq hM (ts i) (us i)) :
     SchemaTermEq hM (Term.func f ts) (Term.func f us) := by
-  rcases (schemaCompletionTheorySpec hM).complete_on_universe _
+  rcases schemaCompletionTheory_complete_of_universe hM
+    (τ := schemaEqSentence (Term.func f ts) (Term.func f us))
     (schemaEqSentence_mem_universe (Term.func f ts) (Term.func f us)) with hpos | hneg
   · exact hpos
   · exfalso
@@ -234,13 +257,13 @@ private theorem schemaTermEq_func {n : ℕ} (f : (localColim s₀)[[ℕ]].Functi
         rcases hτ with rfl | ⟨i, _, rfl⟩
         · exact hneg
         · exact h i)
-    have hc := hbody (schemaEqSentence (Term.func f ts) (Term.func f us)).not
+    have hc := @hbody (schemaEqSentence (Term.func f ts) (Term.func f us)).not
       (Finset.mem_insert_self _ _)
     rw [realizeWith_not, realize_schemaEqSentence_iff] at hc
     refine hc ?_
     have hi : ∀ i, letI : (constantsOn ℕ).Structure M := constantsOn.structure σ
         (ts i).realize (Empty.elim : Empty → M) = (us i).realize Empty.elim := fun i => by
-      have := hbody (schemaEqSentence (ts i) (us i))
+      have := @hbody (schemaEqSentence (ts i) (us i))
         (Finset.mem_insert_of_mem (Finset.mem_image_of_mem _ (Finset.mem_univ i)))
       rwa [realize_schemaEqSentence_iff] at this
     simp only [Term.realize_func]
@@ -307,8 +330,8 @@ private theorem schemaTermRel_congr {l : ℕ} (R : (localColim s₀).Relations l
     {ts us : Fin l → (localColim s₀)[[ℕ]].Term Empty}
     (h : ∀ i, SchemaTermEq hM (ts i) (us i)) (hR : SchemaTermRel hM R ts) :
     SchemaTermRel hM R us := by
-  rcases (schemaCompletionTheorySpec hM).complete_on_universe _
-    (schemaRelSentence_mem_universe R us) with hpos | hneg
+  rcases schemaCompletionTheory_complete_of_universe hM
+    (τ := schemaRelSentence R us) (schemaRelSentence_mem_universe R us) with hpos | hneg
   · exact hpos
   · exfalso
     classical
@@ -321,15 +344,15 @@ private theorem schemaTermRel_congr {l : ℕ} (R : (localColim s₀).Relations l
         · exact hR
         · exact hneg
         · exact h i)
-    have ha := hbody (schemaRelSentence R ts) (Finset.mem_insert_self _ _)
-    have hc := hbody (schemaRelSentence R us).not
+    have ha := @hbody (schemaRelSentence R ts) (Finset.mem_insert_self _ _)
+    have hc := @hbody (schemaRelSentence R us).not
       (Finset.mem_insert_of_mem (Finset.mem_insert_self _ _))
     rw [realize_schemaRelSentence_iff] at ha
     rw [realizeWith_not, realize_schemaRelSentence_iff] at hc
     refine hc ?_
     have hi : ∀ i, letI : (constantsOn ℕ).Structure M := constantsOn.structure σ
         (ts i).realize (Empty.elim : Empty → M) = (us i).realize Empty.elim := fun i => by
-      have := hbody (schemaEqSentence (ts i) (us i))
+      have := @hbody (schemaEqSentence (ts i) (us i))
         (Finset.mem_insert_of_mem (Finset.mem_insert_of_mem
           (Finset.mem_image_of_mem _ (Finset.mem_univ i))))
       rwa [realize_schemaEqSentence_iff] at this
@@ -496,20 +519,13 @@ private theorem schemaLift_mem_of_semantic_imp {m : ℕ}
         realizeWith σ h (schemaLift χ u) (Empty.elim : Empty → M) Fin.elim0)
     (hmem : schemaLift ψ t ∈ schemaCompletionTheory (schemaEnumeration s₀) hM) :
     schemaLift χ u ∈ schemaCompletionTheory (schemaEnumeration s₀) hM := by
-  rcases (schemaCompletionTheorySpec hM).complete_on_universe _
-    (schemaLift_mem_universe hχ u) with hv | hnv
+  rcases schemaCompletionTheory_complete_of_universe hM
+    (τ := schemaLift χ u) (schemaLift_mem_universe hχ u) with hv | hnv
   · exact hv
   · exfalso
     classical
-    obtain ⟨σ, w, hbody⟩ := exists_body_of_subset hM
-      {schemaLift ψ t, (schemaLift χ u).not} (fun τ hτ => by
-        rw [Finset.mem_insert, Finset.mem_singleton] at hτ
-        rcases hτ with rfl | rfl
-        · exact hmem
-        · exact hnv)
-    have h1 := hbody (schemaLift ψ t) (Finset.mem_insert_self _ _)
-    have h2 := hbody (schemaLift χ u).not
-      (by rw [Finset.mem_insert]; exact Or.inr (Finset.mem_singleton_self _))
+    obtain ⟨σ, w, h1, h2⟩ := schemaCompletionTheory_body_of_pair hM
+      (schemaLift ψ t) (schemaLift χ u).not hmem hnv
     rw [realizeWith_not] at h2
     exact h2 (hsem σ w h1)
 

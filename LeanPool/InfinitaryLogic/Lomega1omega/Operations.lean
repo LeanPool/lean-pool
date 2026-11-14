@@ -6,7 +6,6 @@ Authors: Cameron Freer
 module
 
 public import LeanPool.InfinitaryLogic.Lomega1omega.Semantics
-import LeanPool.Incompleteness.Foundation.Vorspiel.Vorspiel
 import LeanPool.InfinitaryLogic.Util
 /-!
 # Operations on Lω₁ω Formulas

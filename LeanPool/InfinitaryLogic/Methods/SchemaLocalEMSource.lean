@@ -49,7 +49,7 @@ private theorem schemaCompletionTheory_not_mem_iff_sentence
       schemaFSentenceUniverse s₀) :
     τ.not ∈ schemaCompletionTheory (schemaEnumeration s₀) hM ↔
       τ ∉ schemaCompletionTheory (schemaEnumeration s₀) hM :=
-  schemaCompletionTheory_not_mem_iff hM ⟨τ, hτ⟩ hτu
+  schemaCompletionTheory_not_mem_iff_of_universe hM (τ := τ) (support := hτ) hτu
 
 /-- **The schema term model satisfies the Skolem-universality mixin** — the full arbitrary-stage
 form. This is what plugs the schema term model into the generic local-EM truth lemma
@@ -138,22 +138,14 @@ theorem schemaTerm_localSkolemUniversalForColim
     (schemaCompletionTheory_not_mem_iff_sentence hM negSentence hnegSupport hnegUniverse).mpr
       hneg_not_mem
   have hAllT : allSentence ∈ schemaCompletionTheory (schemaEnumeration s₀) hM := by
-    rcases (schemaCompletionTheorySpec hM).complete_on_universe _
+    rcases schemaCompletionTheory_complete_of_universe hM (τ := allSentence)
       (schemaFormulaSentence_mem_universe
+        (φ := (BoundedFormulaω.all ψ).mapLanguage (LlocalInclusion s₀ k))
         (toLocalColimFormula_mem_ΓlocalColim s₀ h) ts) with hpos | hneg
     · exact hpos
     · exfalso
-      obtain ⟨σ, w', hbody⟩ := exists_body_of_subset hM
-        {negSentence.not, allSentence.not}
-        (fun τ hτ => by
-          rw [Finset.mem_insert, Finset.mem_singleton] at hτ
-          rcases hτ with rfl | rfl
-          · exact hneg_not_T
-          · exact hneg)
-      have h1 := hbody _ (Finset.mem_insert_self _ _)
-      have h2 := hbody _
-        (by rw [Finset.mem_insert]
-            exact Or.inr (Finset.mem_singleton_self _))
+      obtain ⟨σ, w', h1, h2⟩ := schemaCompletionTheory_body_of_pair hM
+        negSentence.not allSentence.not hneg_not_T hneg
       rw [realizeWith_not, realize_schemaFormulaSentence_iff] at h1 h2
       change ¬ (((ψ.not).mapLanguage (LlocalHom s₀ k)).mapLanguage
         (LlocalInclusion s₀ (k + 1))).Realize _ _ at h1

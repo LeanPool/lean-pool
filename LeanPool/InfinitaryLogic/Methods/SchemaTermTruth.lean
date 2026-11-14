@@ -93,22 +93,28 @@ would be a consistent set containing a sentence and its negation; backward: comp
 theorem schemaCompletionTheory_not_mem_iff
     (τ : FSentence (L'' := localColim s₀) (J := ℕ)) (hτ : τ ∈ schemaFSentenceUniverse s₀) :
     τ.1.not ∈ schemaCompletionTheory (schemaEnumeration s₀) hM ↔
-      τ.1 ∉ schemaCompletionTheory (schemaEnumeration s₀) hM := by
-  classical
-  constructor
-  · intro hneg hpos
-    refine markerHenkinConsistent_not_mem_and_not_mem
-      ((schemaCompletionTheorySpec hM).finite_consistent {τ.1, τ.1.not} fun τ' hτ' => ?_) τ.1
-      ⟨Finset.mem_insert_self _ _, by
-        rw [Finset.mem_insert]; exact Or.inr (Finset.mem_singleton_self _)⟩
-    rw [Finset.mem_insert, Finset.mem_singleton] at hτ'
-    rcases hτ' with rfl | rfl
-    · exact hpos
-    · exact hneg
-  · intro hnot
-    rcases (schemaCompletionTheorySpec hM).complete_on_universe τ hτ with hpos | hneg
-    · exact absurd hpos hnot
-    · exact hneg
+      τ.1 ∉ schemaCompletionTheory (schemaEnumeration s₀) hM :=
+  schemaCompletionTheory_not_mem_iff_of_universe hM (τ := τ.1) (support := τ.2) hτ
+
+/-- Completeness on formula sentences, with the finite-support coercion already reduced. -/
+private theorem schemaFormulaSentence_complete {n : ℕ}
+    {φ : (localColim s₀).BoundedFormulaω Empty n}
+    (hφ : (⟨n, φ⟩ : Σ n, (localColim s₀).BoundedFormulaω Empty n) ∈ ΓlocalColim s₀)
+    (ts : Fin n → (localColim s₀)[[ℕ]].Term Empty) :
+    schemaFormulaSentence φ ts ∈ schemaCompletionTheory (schemaEnumeration s₀) hM ∨
+      (schemaFormulaSentence φ ts).not ∈ schemaCompletionTheory (schemaEnumeration s₀) hM :=
+  schemaCompletionTheory_complete_of_universe hM (τ := schemaFormulaSentence φ ts)
+    (schemaFormulaSentence_mem_universe (φ := φ) hφ ts)
+
+/-- The sign flip on formula sentences, without exposing the finite-support subtype. -/
+private theorem schemaFormulaSentence_not_mem_iff {n : ℕ}
+    {φ : (localColim s₀).BoundedFormulaω Empty n}
+    (hφ : (⟨n, φ⟩ : Σ n, (localColim s₀).BoundedFormulaω Empty n) ∈ ΓlocalColim s₀)
+    (ts : Fin n → (localColim s₀)[[ℕ]].Term Empty) :
+    (schemaFormulaSentence φ ts).not ∈ schemaCompletionTheory (schemaEnumeration s₀) hM ↔
+      schemaFormulaSentence φ ts ∉ schemaCompletionTheory (schemaEnumeration s₀) hM :=
+  schemaCompletionTheory_not_mem_iff_of_universe hM (τ := schemaFormulaSentence φ ts)
+    (schemaFormulaSentence_mem_universe (φ := φ) hφ ts)
 
 /-- **The carrier term bridge**: an open `(localColim s₀)[[ℕ]]`-term realized in the schema term
 model at class-valued variables is the class of its closed substitution instance. -/
@@ -177,10 +183,8 @@ private theorem schemaTruthStage_falsum
   intro _ ts
   simp only [BoundedFormulaω.mapLanguage, BoundedFormulaω.realize_falsum, false_iff]
   intro hT
-  obtain ⟨σ, w, hbody⟩ := exists_body_of_subset hM
-    {schemaFormulaSentence (BoundedFormulaω.falsum.mapLanguage (LlocalInclusion s₀ (k + 1))) ts}
-    (fun τ hτ => by rw [Finset.mem_singleton] at hτ; exact hτ ▸ hT)
-  have hf := hbody _ (Finset.mem_singleton_self _)
+  obtain ⟨σ, w, hf⟩ := schemaCompletionTheory_body_of_mem hM
+    (schemaFormulaSentence (BoundedFormulaω.falsum : (localColim s₀).BoundedFormulaω Empty n) ts) hT
   rw [realize_schemaFormulaSentence_iff] at hf
   exact hf
 
@@ -295,12 +299,6 @@ private theorem schemaTruthStage_imp
   have hψmem : (⟨_, ψ'⟩ : Σ n, (Llocal s₀ (k + 1)).BoundedFormulaω Empty n)
       ∈ Γlocal s₀ (k + 1) :=
     bfSubformulas_subset_Γlocal_succ s₀ hmem (Set.mem_insert_of_mem _ rfl)
-  have hφu := schemaFormulaSentence_mem_universe
-    (toLocalColimFormula_mem_ΓlocalColim s₀ hφmem) ts
-  have hψu := schemaFormulaSentence_mem_universe
-    (toLocalColimFormula_mem_ΓlocalColim s₀ hψmem) ts
-  have himpu := schemaFormulaSentence_mem_universe
-    (toLocalColimFormula_mem_ΓlocalColim s₀ hmem) ts
   rw [show (BoundedFormulaω.mapLanguage (LlocalInclusion s₀ (k + 1)) (φ.imp ψ')).mapLanguage
         (lhomWithConstants (localColim s₀) ℕ)
       = ((BoundedFormulaω.mapLanguage (LlocalInclusion s₀ (k + 1)) φ).mapLanguage
@@ -310,45 +308,37 @@ private theorem schemaTruthStage_imp
     BoundedFormulaω.realize_imp, ihφ hφmem ts, ihψ hψmem ts]
   constructor
   · intro h
-    rcases (schemaCompletionTheorySpec hM).complete_on_universe _ himpu with hpos | hneg
+    rcases schemaFormulaSentence_complete hM
+      (φ := (φ.imp ψ').mapLanguage (LlocalInclusion s₀ (k + 1)))
+      (toLocalColimFormula_mem_ΓlocalColim s₀ hmem) ts with hpos | hneg
     · exact hpos
     · exfalso
       by_cases hφT : schemaFormulaSentence (BoundedFormulaω.mapLanguage (LlocalInclusion s₀
         (k + 1)) φ) ts
           ∈ schemaCompletionTheory (schemaEnumeration s₀) hM
-      · obtain ⟨σ, w, hbody⟩ := exists_body_of_subset hM
-          {(schemaFormulaSentence (BoundedFormulaω.mapLanguage (LlocalInclusion s₀ (k + 1))
-            (φ.imp ψ')) ts).not,
-            schemaFormulaSentence (BoundedFormulaω.mapLanguage (LlocalInclusion s₀ (k + 1)) ψ') ts}
-          (fun τ hτ => by
-            rw [Finset.mem_insert, Finset.mem_singleton] at hτ
-            rcases hτ with rfl | rfl
-            · exact hneg
-            · exact h hφT)
-        have h1 := hbody _ (Finset.mem_insert_self _ _)
-        have h2 := hbody _
-          (by rw [Finset.mem_insert]; exact Or.inr (Finset.mem_singleton_self _))
+      · obtain ⟨σ, w, h1, h2⟩ := schemaCompletionTheory_body_of_pair hM
+          ((schemaFormulaSentence (BoundedFormulaω.mapLanguage (LlocalInclusion s₀ (k + 1))
+            (φ.imp ψ')) ts).not)
+          (schemaFormulaSentence (BoundedFormulaω.mapLanguage (LlocalInclusion s₀ (k + 1)) ψ') ts)
+          hneg (h hφT)
         rw [realizeWith_not, realize_schemaFormulaSentence_iff] at h1
         rw [realize_schemaFormulaSentence_iff] at h2
         exact h1 fun _ => h2
-      · obtain ⟨σ, w, hbody⟩ := exists_body_of_subset hM
-          {(schemaFormulaSentence (BoundedFormulaω.mapLanguage (LlocalInclusion s₀ (k + 1))
-            (φ.imp ψ')) ts).not,
-            (schemaFormulaSentence (BoundedFormulaω.mapLanguage (LlocalInclusion s₀ (k + 1))
-              φ) ts).not}
-          (fun τ hτ => by
-            rw [Finset.mem_insert, Finset.mem_singleton] at hτ
-            rcases hτ with rfl | rfl
-            · exact hneg
-            · exact (schemaCompletionTheory_not_mem_iff hM _ hφu).mpr hφT)
-        have h1 := hbody _ (Finset.mem_insert_self _ _)
-        have h2 := hbody _
-          (by rw [Finset.mem_insert]; exact Or.inr (Finset.mem_singleton_self _))
+      · obtain ⟨σ, w, h1, h2⟩ := schemaCompletionTheory_body_of_pair hM
+          ((schemaFormulaSentence (BoundedFormulaω.mapLanguage (LlocalInclusion s₀ (k + 1))
+            (φ.imp ψ')) ts).not)
+          ((schemaFormulaSentence (BoundedFormulaω.mapLanguage (LlocalInclusion s₀ (k + 1)) φ)
+            ts).not)
+          hneg ((schemaFormulaSentence_not_mem_iff hM
+            (φ := φ.mapLanguage (LlocalInclusion s₀ (k + 1)))
+            (toLocalColimFormula_mem_ΓlocalColim s₀ hφmem) ts).mpr hφT)
         rw [realizeWith_not, realize_schemaFormulaSentence_iff] at h1
         rw [realizeWith_not, realize_schemaFormulaSentence_iff] at h2
         exact h1 fun hφr => absurd hφr h2
   · intro himp hφT
-    rcases (schemaCompletionTheorySpec hM).complete_on_universe _ hψu with hpos | hneg
+    rcases schemaFormulaSentence_complete hM
+      (φ := ψ'.mapLanguage (LlocalInclusion s₀ (k + 1)))
+      (toLocalColimFormula_mem_ΓlocalColim s₀ hψmem) ts with hpos | hneg
     · exact hpos
     · exfalso
       obtain ⟨σ, w, hbody⟩ := exists_body_of_subset hM
@@ -363,11 +353,11 @@ private theorem schemaTruthStage_imp
           · exact himp
           · exact hφT
           · exact hneg)
-      have h1 := hbody _ (Finset.mem_insert_self _ _)
-      have h2 := hbody _
+      have h1 := @hbody _ (Finset.mem_insert_self _ _)
+      have h2 := @hbody _
         (by rw [Finset.mem_insert, Finset.mem_insert]
             exact Or.inr (Or.inl rfl))
-      have h3 := hbody _
+      have h3 := @hbody _
         (by rw [Finset.mem_insert, Finset.mem_insert, Finset.mem_singleton]
             exact Or.inr (Or.inr rfl))
       rw [realize_schemaFormulaSentence_iff] at h1 h2
@@ -402,24 +392,17 @@ private theorem schemaTruthStage_all
         (Fin.comp_snoc (SchemaTermCarrier.mk hM) ts
           (locSkWitnessTerm s₀ ℕ hmem ts)).symm] at hw
     have hwT := (ih hbodymem (Fin.snoc ts (locSkWitnessTerm s₀ ℕ hmem ts))).mp hw
-    rcases (schemaCompletionTheorySpec hM).complete_on_universe _
-      (schemaFormulaSentence_mem_universe (toLocalColimFormula_mem_ΓlocalColim s₀ hmem) ts)
-      with hpos | hneg
+    rcases schemaFormulaSentence_complete hM
+      (φ := (BoundedFormulaω.all ψ₀).mapLanguage (LlocalInclusion s₀ (k + 1)))
+      (toLocalColimFormula_mem_ΓlocalColim s₀ hmem) ts with hpos | hneg
     · exact hpos
     · exfalso
-      obtain ⟨σ, w', hbody⟩ := exists_body_of_subset hM
-        {schemaFormulaSentence (BoundedFormulaω.mapLanguage (LlocalInclusion s₀ (k + 1)) ψ₀)
-            (Fin.snoc ts (locSkWitnessTerm s₀ ℕ hmem ts)),
-          (schemaFormulaSentence ((BoundedFormulaω.all ψ₀).mapLanguage
-            (LlocalInclusion s₀ (k + 1))) ts).not}
-        (fun τ hτ => by
-          rw [Finset.mem_insert, Finset.mem_singleton] at hτ
-          rcases hτ with rfl | rfl
-          · exact hwT
-          · exact hneg)
-      have h1 := hbody _ (Finset.mem_insert_self _ _)
-      have h2 := hbody _
-        (by rw [Finset.mem_insert]; exact Or.inr (Finset.mem_singleton_self _))
+      obtain ⟨σ, w', h1, h2⟩ := schemaCompletionTheory_body_of_pair hM
+        (schemaFormulaSentence (BoundedFormulaω.mapLanguage (LlocalInclusion s₀ (k + 1)) ψ₀)
+          (Fin.snoc ts (locSkWitnessTerm s₀ ℕ hmem ts)))
+        ((schemaFormulaSentence ((BoundedFormulaω.all ψ₀).mapLanguage
+          (LlocalInclusion s₀ (k + 1))) ts).not)
+        hwT hneg
       rw [realize_schemaFormulaSentence_iff] at h1
       rw [realizeWith_not, realize_schemaFormulaSentence_iff] at h2
       let : (constantsOn ℕ).Structure M := constantsOn.structure σ
@@ -441,24 +424,17 @@ private theorem schemaTruthStage_all
             ((Fin.snoc ts u : Fin _ → (localColim s₀)[[ℕ]].Term Empty) i) from
         (Fin.comp_snoc (SchemaTermCarrier.mk hM) ts u).symm]
     refine (ih hbodymem (Fin.snoc ts u)).mpr ?_
-    rcases (schemaCompletionTheorySpec hM).complete_on_universe _
-      (schemaFormulaSentence_mem_universe
-        (toLocalColimFormula_mem_ΓlocalColim s₀ hbodymem) (Fin.snoc ts u)) with hpos | hneg
+    rcases schemaFormulaSentence_complete hM
+      (φ := ψ₀.mapLanguage (LlocalInclusion s₀ (k + 1)))
+      (toLocalColimFormula_mem_ΓlocalColim s₀ hbodymem) (Fin.snoc ts u) with hpos | hneg
     · exact hpos
     · exfalso
-      obtain ⟨σ, w', hbody⟩ := exists_body_of_subset hM
-        {schemaFormulaSentence ((BoundedFormulaω.all ψ₀).mapLanguage
-            (LlocalInclusion s₀ (k + 1))) ts,
-          (schemaFormulaSentence (BoundedFormulaω.mapLanguage (LlocalInclusion s₀ (k + 1)) ψ₀)
-            (Fin.snoc ts u)).not}
-        (fun τ hτ => by
-          rw [Finset.mem_insert, Finset.mem_singleton] at hτ
-          rcases hτ with rfl | rfl
-          · exact hT
-          · exact hneg)
-      have h1 := hbody _ (Finset.mem_insert_self _ _)
-      have h2 := hbody _
-        (by rw [Finset.mem_insert]; exact Or.inr (Finset.mem_singleton_self _))
+      obtain ⟨σ, w', h1, h2⟩ := schemaCompletionTheory_body_of_pair hM
+        (schemaFormulaSentence ((BoundedFormulaω.all ψ₀).mapLanguage
+          (LlocalInclusion s₀ (k + 1))) ts)
+        ((schemaFormulaSentence (BoundedFormulaω.mapLanguage (LlocalInclusion s₀ (k + 1)) ψ₀)
+          (Fin.snoc ts u)).not)
+        hT hneg
       rw [realize_schemaFormulaSentence_iff] at h1
       rw [realizeWith_not, realize_schemaFormulaSentence_iff] at h2
       let : (constantsOn ℕ).Structure M := constantsOn.structure σ
@@ -494,28 +470,22 @@ private theorem schemaTruthStage_iSup
   constructor
   · rintro ⟨i, hi⟩
     have hiT := (ih i (bfSubformulas_subset_Γlocal_succ s₀ hmem (Set.mem_range_self i)) ts).mp hi
-    rcases (schemaCompletionTheorySpec hM).complete_on_universe _
-      (schemaFormulaSentence_mem_universe (toLocalColimFormula_mem_ΓlocalColim s₀ hmem) ts)
-      with hpos | hneg
+    rcases schemaFormulaSentence_complete hM
+      (φ := (BoundedFormulaω.iSup φs).mapLanguage (LlocalInclusion s₀ (k + 1)))
+      (toLocalColimFormula_mem_ΓlocalColim s₀ hmem) ts with hpos | hneg
     · exact hpos
     · exfalso
-      obtain ⟨σ, w, hbody⟩ := exists_body_of_subset hM
-        {schemaFormulaSentence (BoundedFormulaω.mapLanguage (LlocalInclusion s₀ (k + 1)) (φs i)) ts,
-          (schemaFormulaSentence ((BoundedFormulaω.iSup φs).mapLanguage
-            (LlocalInclusion s₀ (k + 1))) ts).not}
-        (fun τ hτ => by
-          rw [Finset.mem_insert, Finset.mem_singleton] at hτ
-          rcases hτ with rfl | rfl
-          · exact hiT
-          · exact hneg)
-      have h1 := hbody _ (Finset.mem_insert_self _ _)
-      have h2 := hbody _
-        (by rw [Finset.mem_insert]; exact Or.inr (Finset.mem_singleton_self _))
+      obtain ⟨σ, w, h1, h2⟩ := schemaCompletionTheory_body_of_pair hM
+        (schemaFormulaSentence (BoundedFormulaω.mapLanguage (LlocalInclusion s₀ (k + 1)) (φs i)) ts)
+        ((schemaFormulaSentence ((BoundedFormulaω.iSup φs).mapLanguage
+          (LlocalInclusion s₀ (k + 1))) ts).not)
+        hiT hneg
       rw [realize_schemaFormulaSentence_iff] at h1
       rw [realizeWith_not, realize_schemaFormulaSentence_iff] at h2
       exact h2 ⟨i, h1⟩
   · intro hT
     obtain ⟨j, hj⟩ := schemaCompletionTheory_iSup_witness_canonDeForm hM
+      (φs := fun i => BoundedFormulaω.mapLanguage (LlocalInclusion s₀ (k + 1)) (φs i))
       (toLocalColimFormula_mem_ΓlocalColim s₀ hmem)
       (fun i => locDeTermFin (localColim s₀) ℕ (schemaRelSupport ts) (ts i)
         (locJSupport_subset_schemaRelSupport ts i))
@@ -547,8 +517,8 @@ private theorem schemaTruthStage_iInf
             BoundedFormulaω.mapLanguage (LlocalInclusion s₀ (k + 1)) (φs i)) ts from rfl]
   constructor
   · intro h
-    rcases (schemaCompletionTheorySpec hM).complete_on_universe _
-      (schemaFormulaSentence_mem_universe hcolim ts) with hpos | hneg
+    rcases schemaFormulaSentence_complete hM (φ := BoundedFormulaω.iInf fun i =>
+      BoundedFormulaω.mapLanguage (LlocalInclusion s₀ (k + 1)) (φs i)) hcolim ts with hpos | hneg
     · exact hpos
     · exfalso
       obtain ⟨j, hj⟩ := schemaCompletionTheory_neg_iInf_witness_canonDeForm hM hcolim
@@ -557,32 +527,24 @@ private theorem schemaTruthStage_iInf
         ((schemaRelSupport ts).orderEmbOfFin rfl) hneg
       have hjT := (ih j (bfSubformulas_subset_Γlocal_succ s₀ hmem (Set.mem_range_self j)) ts).mp
         (h j)
-      exact (schemaCompletionTheory_not_mem_iff hM _
-        (schemaFormulaSentence_mem_universe
-          (toLocalColimFormula_mem_ΓlocalColim s₀
-            (bfSubformulas_subset_Γlocal_succ s₀ hmem (Set.mem_range_self j))) ts)).mp hj hjT
+      exact (schemaFormulaSentence_not_mem_iff hM
+        (φ := (φs j).mapLanguage (LlocalInclusion s₀ (k + 1)))
+        (toLocalColimFormula_mem_ΓlocalColim s₀
+          (bfSubformulas_subset_Γlocal_succ s₀ hmem (Set.mem_range_self j))) ts).mp hj hjT
   · intro hT j
     apply (ih j (bfSubformulas_subset_Γlocal_succ s₀ hmem (Set.mem_range_self j)) ts).mpr
-    rcases (schemaCompletionTheorySpec hM).complete_on_universe _
-      (schemaFormulaSentence_mem_universe
-        (toLocalColimFormula_mem_ΓlocalColim s₀
-          (bfSubformulas_subset_Γlocal_succ s₀ hmem (Set.mem_range_self j))) ts)
-      with hpos | hneg
+    rcases schemaFormulaSentence_complete hM
+      (φ := (φs j).mapLanguage (LlocalInclusion s₀ (k + 1)))
+      (toLocalColimFormula_mem_ΓlocalColim s₀
+        (bfSubformulas_subset_Γlocal_succ s₀ hmem (Set.mem_range_self j))) ts with hpos | hneg
     · exact hpos
     · exfalso
-      obtain ⟨σ, w, hbody⟩ := exists_body_of_subset hM
-        {schemaFormulaSentence ((BoundedFormulaω.iInf φs).mapLanguage
-            (LlocalInclusion s₀ (k + 1))) ts,
-          (schemaFormulaSentence (BoundedFormulaω.mapLanguage (LlocalInclusion s₀ (k + 1))
-            (φs j)) ts).not}
-        (fun τ hτ => by
-          rw [Finset.mem_insert, Finset.mem_singleton] at hτ
-          rcases hτ with rfl | rfl
-          · exact hT
-          · exact hneg)
-      have h1 := hbody _ (Finset.mem_insert_self _ _)
-      have h2 := hbody _
-        (by rw [Finset.mem_insert]; exact Or.inr (Finset.mem_singleton_self _))
+      obtain ⟨σ, w, h1, h2⟩ := schemaCompletionTheory_body_of_pair hM
+        (schemaFormulaSentence ((BoundedFormulaω.iInf φs).mapLanguage
+          (LlocalInclusion s₀ (k + 1))) ts)
+        ((schemaFormulaSentence (BoundedFormulaω.mapLanguage (LlocalInclusion s₀ (k + 1))
+          (φs j)) ts).not)
+        hT hneg
       rw [realize_schemaFormulaSentence_iff] at h1
       rw [realizeWith_not, realize_schemaFormulaSentence_iff] at h2
       exact h2 (h1 j)
@@ -1042,23 +1004,32 @@ theorem schemaSeq_tailTemplateOmegaWitnessed :
     (lhomWithConstants (localColim s₀) ℕ).reduct _
   constructor
   · intro m φs hmem p g htruth
-    obtain ⟨k, hk⟩ := schemaCompletionTheory_iSup_witness_canonDeForm hM hmem g (stdTuple p)
-      ((tailTemplate_schemaSeq_truth_iff hM (canonDeForm_mem_ΓEMlocal hmem g)).mp htruth)
+    obtain ⟨k, hk⟩ := schemaCompletionTheory_iSup_witness_canonDeForm hM
+      (φs := φs) hmem g (stdTuple p)
+      ((tailTemplate_schemaSeq_truth_iff hM
+        (ψ := canonDeForm (localColim s₀) (BoundedFormulaω.iSup φs) g)
+        (canonDeForm_mem_ΓEMlocal hmem g)).mp htruth)
     exact ⟨k, (tailTemplate_schemaSeq_truth_iff hM
+      (ψ := canonDeForm (localColim s₀) (φs k) g)
       (canonDeForm_mem_ΓEMlocal (iSup_component_mem_ΓlocalColim s₀ hmem k) g)).mpr hk⟩
   · intro m φs hmem p g hall
-    refine (tailTemplate_schemaSeq_truth_iff hM (canonDeForm_mem_ΓEMlocal hmem g)).mpr ?_
-    rcases (schemaCompletionTheorySpec hM).complete_on_universe _
+    refine (tailTemplate_schemaSeq_truth_iff hM
+      (ψ := canonDeForm (localColim s₀) (BoundedFormulaω.iInf φs) g)
+      (canonDeForm_mem_ΓEMlocal hmem g)).mpr ?_
+    rcases schemaCompletionTheory_complete_of_universe hM
+      (τ := schemaLift (canonDeForm (localColim s₀) (BoundedFormulaω.iInf φs) g) (stdTuple p))
       (schemaLift_mem_universe (canonDeForm_mem_ΓEMlocal hmem g) (stdTuple p))
       with hpos | hneg
     · exact hpos
     · exfalso
-      obtain ⟨k, hk⟩ := schemaCompletionTheory_neg_iInf_witness_canonDeForm hM hmem g
+      obtain ⟨k, hk⟩ := schemaCompletionTheory_neg_iInf_witness_canonDeForm hM (φs := φs) hmem g
         (stdTuple p) hneg
-      exact (schemaCompletionTheory_not_mem_iff hM _
+      exact (schemaCompletionTheory_not_mem_iff_of_universe hM
+          (τ := schemaLift (canonDeForm (localColim s₀) (φs k) g) (stdTuple p))
           (schemaLift_mem_universe (canonDeForm_mem_ΓEMlocal
             (iInf_component_mem_ΓlocalColim s₀ hmem k) g) (stdTuple p))).mp hk
         ((tailTemplate_schemaSeq_truth_iff hM
+          (ψ := canonDeForm (localColim s₀) (φs k) g)
           (canonDeForm_mem_ΓEMlocal (iInf_component_mem_ΓlocalColim s₀ hmem k) g)).mp (hall k))
 
 end SequenceBridge
@@ -1086,15 +1057,15 @@ theorem schemaLift_mem_of_valid {m : ℕ}
     (hvalid : ∀ σ h : ℕ → M,
       realizeWith σ h (schemaLift ψ t) (Empty.elim : Empty → M) Fin.elim0) :
     schemaLift ψ t ∈ schemaCompletionTheory (schemaEnumeration s₀) hM := by
-  rcases (schemaCompletionTheorySpec hM).complete_on_universe _
-    (schemaLift_mem_universe hψ t) with hpos | hneg
+  rcases schemaCompletionTheory_complete_of_universe hM
+    (τ := schemaLift ψ t) (schemaLift_mem_universe hψ t) with hpos | hneg
   · exact hpos
   · exfalso
     obtain ⟨σ, w, hbody⟩ := exists_body_of_subset hM {(schemaLift ψ t).not}
       (fun τ hτ => by
         rw [Finset.mem_singleton] at hτ
         exact hτ ▸ hneg)
-    have hn := hbody (schemaLift ψ t).not (Finset.mem_singleton_self _)
+    have hn := @hbody (schemaLift ψ t).not (Finset.mem_singleton_self _)
     rw [realizeWith_not] at hn
     exact hn (hvalid σ w)
 

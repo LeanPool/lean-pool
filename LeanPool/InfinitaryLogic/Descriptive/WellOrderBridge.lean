@@ -9,11 +9,7 @@ public import LeanPool.InfinitaryLogic.Descriptive.WellOrderClass
 public import LeanPool.InfinitaryLogic.Lomega1omega.InfiniteAxiom
 import LeanPool.InfinitaryLogic.Descriptive.CodeTransport
 import LeanPool.InfinitaryLogic.ModelTheory.FragmentLowenheimSkolem
-import Mathlib.Analysis.Normed.Group.Basic
-import Mathlib.Data.EReal.Inv
 import Mathlib.Tactic.FinCases
-import Mathlib.Topology.Algebra.InfiniteSum.Order
-import Mathlib.Topology.MetricSpace.Bounded
 /-!
 # From coded well-orders to models: the defect bridge
 

@@ -7,10 +7,6 @@ module
 
 public import LeanPool.InfinitaryLogic.Descriptive.SatisfactionBorel
 import LeanPool.InfinitaryLogic.Lomega1omega.Theory
-import Mathlib.Analysis.Normed.Group.Basic
-import Mathlib.Data.EReal.Inv
-import Mathlib.Topology.Algebra.InfiniteSum.Order
-import Mathlib.Topology.MetricSpace.Bounded
 /-!
 # López-Escobar, the easy direction
 
