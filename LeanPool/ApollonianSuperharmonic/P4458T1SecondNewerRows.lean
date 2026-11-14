@@ -431,134 +431,44 @@ private theorem hFplusSlope :
   rw [hrootSlopeEq]
   simpa [r, GaussianRealPoint, Prod.smul_mk] using F.plus_difference
 
-private theorem hFplusRe :
-    (by
-      classical
-      exact
-        ∀ (C : BandCircle), ∀ (orientation : Bool), ∀ (base : ProtoTile), ∀ (Rminus : ProtoTile),
-            ∀ (Rplus : ProtoTile), ∀ (hminus : PartialOdometer), ∀ (hplus : PartialOdometer), ∀
-            (F : P4458T1BoundaryFrame C orientation base Rminus Rplus hminus hplus),
-        let r : Fin 4 → CircleCoordinates :=
-          ![F.q 0, F.q F.slot.succ, F.q ((F.slot + 1).succ),
-            F.q ((F.slot + 2).succ)]
-        ∀ (rootSlope : ℝ × ℝ), (F.plusSlope - rootSlope = (1 / 2 : ℝ) • GaussianRealPoint
-            (BandVectors.2 (r 1) (r 0) + BandVectors.2 (r 0) (r 1))) → (F.plusSlope.1 -
-            rootSlope.1 = (1 / 2 : ℝ) * (((GaussianInt.toComplex (BandVectors.2 (r 1) (r 0))).re)
-            + ((GaussianInt.toComplex (BandVectors.2 (r 0) (r 1))).re))) ) := by
-  classical
-  intro C orientation base Rminus Rplus hminus hplus F r rootSlope hFplusSlope
-  have h := congrArg Prod.fst hFplusSlope
-  simpa [GaussianRealPoint] using h
+private theorem hFplusRe (u v : ℝ × ℝ) (a b : GaussianInt)
+    (h : u - v = (1 / 2 : ℝ) • GaussianRealPoint (a + b)) :
+    u.1 - v.1 = (1 / 2 : ℝ) *
+      ((GaussianInt.toComplex a).re + (GaussianInt.toComplex b).re) := by
+  have hh := congrArg Prod.fst h
+  simpa [GaussianRealPoint] using hh
 
-private theorem hFplusIm :
-    (by
-      classical
-      exact
-        ∀ (C : BandCircle), ∀ (orientation : Bool), ∀ (base : ProtoTile), ∀ (Rminus : ProtoTile),
-            ∀ (Rplus : ProtoTile), ∀ (hminus : PartialOdometer), ∀ (hplus : PartialOdometer), ∀
-            (F : P4458T1BoundaryFrame C orientation base Rminus Rplus hminus hplus),
-        let r : Fin 4 → CircleCoordinates :=
-          ![F.q 0, F.q F.slot.succ, F.q ((F.slot + 1).succ),
-            F.q ((F.slot + 2).succ)]
-        ∀ (rootSlope : ℝ × ℝ), (F.plusSlope - rootSlope = (1 / 2 : ℝ) • GaussianRealPoint
-            (BandVectors.2 (r 1) (r 0) + BandVectors.2 (r 0) (r 1))) → (F.plusSlope.2 -
-            rootSlope.2 = (1 / 2 : ℝ) * (((GaussianInt.toComplex (BandVectors.2 (r 1) (r 0))).im)
-            + ((GaussianInt.toComplex (BandVectors.2 (r 0) (r 1))).im))) ) := by
-  classical
-  intro C orientation base Rminus Rplus hminus hplus F r rootSlope hFplusSlope
-  have h := congrArg Prod.snd hFplusSlope
-  simpa [GaussianRealPoint] using h
+private theorem hFplusIm (u v : ℝ × ℝ) (a b : GaussianInt)
+    (h : u - v = (1 / 2 : ℝ) • GaussianRealPoint (a + b)) :
+    u.2 - v.2 = (1 / 2 : ℝ) *
+      ((GaussianInt.toComplex a).im + (GaussianInt.toComplex b).im) := by
+  have hh := congrArg Prod.snd h
+  simpa [GaussianRealPoint] using hh
 
-private theorem ha10ReAt509 :
-    (by
-      classical
-      exact
-        ∀ (C : BandCircle), ∀ (orientation : Bool), ∀ (base : ProtoTile), ∀ (Rminus : ProtoTile),
-            ∀ (Rplus : ProtoTile), ∀ (hminus : PartialOdometer), ∀ (hplus : PartialOdometer), ∀
-            (F : P4458T1BoundaryFrame C orientation base Rminus Rplus hminus hplus),
-        (
-        (
-        let r : Fin 4 → CircleCoordinates :=
-          ![F.q 0, F.q F.slot.succ, F.q ((F.slot + 1).succ),
-            F.q ((F.slot + 2).succ)];
-        let I : GaussianInt := ⟨0, 1⟩;
-        let xa : GaussianInt := BandVectors.2 (r 1) (r 3);
-        let ya : GaussianInt := BandVectors.2 (r 2) (r 1);
-        (BandVectors.2 (r 1) (r 0) = xa + I * ya) → ((BandVectors.2 (r 1) (r 0)).re = xa.re -
-            ya.im))) ) := by
-  classical
-  intro C orientation base Rminus Rplus hminus hplus F r I xa ya harec
-  have h := congrArg (fun z : GaussianInt => z.re) harec
-  norm_num [I, Zsqrtd.re_mul, Zsqrtd.im_mul] at h ⊢
+private theorem ha10ReAt509 (a x y : GaussianInt)
+    (h : a = x + (⟨0, 1⟩ : GaussianInt) * y) : a.re = x.re - y.im := by
+  have hh := congrArg (fun z : GaussianInt => z.re) h
+  norm_num [Zsqrtd.re_mul, Zsqrtd.im_mul] at hh ⊢
   omega
 
-private theorem ha10ImAt513 :
-    (by
-      classical
-      exact
-        ∀ (C : BandCircle), ∀ (orientation : Bool), ∀ (base : ProtoTile), ∀ (Rminus : ProtoTile),
-            ∀ (Rplus : ProtoTile), ∀ (hminus : PartialOdometer), ∀ (hplus : PartialOdometer), ∀
-            (F : P4458T1BoundaryFrame C orientation base Rminus Rplus hminus hplus),
-        let r : Fin 4 → CircleCoordinates :=
-          ![F.q 0, F.q F.slot.succ, F.q ((F.slot + 1).succ),
-            F.q ((F.slot + 2).succ)]
-        let I : GaussianInt := ⟨0, 1⟩
-        let xa : GaussianInt := BandVectors.2 (r 1) (r 3)
-        let ya : GaussianInt := BandVectors.2 (r 2) (r 1)
-        (BandVectors.2 (r 1) (r 0) = xa + I * ya) → ((BandVectors.2 (r 1) (r 0)).im = xa.im +
-            ya.re) ) := by
-  classical
-  intro C orientation base Rminus Rplus hminus hplus F r I xa ya harec
-  have h := congrArg (fun z : GaussianInt => z.im) harec
-  simp [I, Zsqrtd.im_mul] at h
+private theorem ha10ImAt513 (a x y : GaussianInt)
+    (h : a = x + (⟨0, 1⟩ : GaussianInt) * y) : a.im = x.im + y.re := by
+  have hh := congrArg (fun z : GaussianInt => z.im) h
+  norm_num [Zsqrtd.re_mul, Zsqrtd.im_mul] at hh ⊢
   omega
 
-private theorem ha01ReAt517 :
-    (by
-      classical
-      exact
-        ∀ (C : BandCircle), ∀ (orientation : Bool), ∀ (base : ProtoTile), ∀ (Rminus : ProtoTile),
-            ∀ (Rplus : ProtoTile), ∀ (hminus : PartialOdometer), ∀ (hplus : PartialOdometer), ∀
-            (F : P4458T1BoundaryFrame C orientation base Rminus Rplus hminus hplus),
-        let r : Fin 4 → CircleCoordinates :=
-          ![F.q 0, F.q F.slot.succ, F.q ((F.slot + 1).succ),
-            F.q ((F.slot + 2).succ)]
-        let I : GaussianInt := ⟨0, 1⟩
-        let xa : GaussianInt := BandVectors.2 (r 1) (r 3)
-        let ya : GaussianInt := BandVectors.2 (r 2) (r 1)
-        (BandVectors.2 (r 0) (r 1) = -I * BandVectors.2 (r 1) (r 0)) → (((BandVectors.2 (r 1) (r
-            0)).im = xa.im + ya.re) → ((BandVectors.2 (r 0) (r 1)).re = xa.im + ya.re)) ) := by
-  classical
-  intro C orientation base Rminus Rplus hminus hplus F r I xa ya haflip ha10Im
-  have h := congrArg (fun z : GaussianInt => z.re) haflip
-  simp only [Int.reduceNeg, Fin.isValue, neg_mul, Zsqrtd.re_neg, Zsqrtd.re_mul, zero_mul,
-      mul_one, one_mul, zero_add, neg_neg, I] at h
-  rw [ha10Im] at h
+private theorem ha01ReAt517 (a b x y : GaussianInt)
+    (hflip : b = -(⟨0, 1⟩ : GaussianInt) * a) (h : a.im = x.im + y.re) :
+    b.re = x.im + y.re := by
+  have hh := congrArg (fun z : GaussianInt => z.re) hflip
+  norm_num [Zsqrtd.re_mul, Zsqrtd.im_mul] at hh
   omega
 
-private theorem ha01ImAt522 :
-    (by
-      classical
-      exact
-        ∀ (C : BandCircle), ∀ (orientation : Bool), ∀ (base : ProtoTile), ∀ (Rminus : ProtoTile),
-            ∀ (Rplus : ProtoTile), ∀ (hminus : PartialOdometer), ∀ (hplus : PartialOdometer), ∀
-            (F : P4458T1BoundaryFrame C orientation base Rminus Rplus hminus hplus),
-        (
-        (
-        let r : Fin 4 → CircleCoordinates :=
-          ![F.q 0, F.q F.slot.succ, F.q ((F.slot + 1).succ),
-            F.q ((F.slot + 2).succ)];
-        let I : GaussianInt := ⟨0, 1⟩;
-        let xa : GaussianInt := BandVectors.2 (r 1) (r 3);
-        let ya : GaussianInt := BandVectors.2 (r 2) (r 1);
-        (BandVectors.2 (r 0) (r 1) = -I * BandVectors.2 (r 1) (r 0)) → (((BandVectors.2 (r 1) (r
-            0)).re = xa.re - ya.im) → ((BandVectors.2 (r 0) (r 1)).im = -xa.re + ya.im)))) ) := by
-  classical
-  intro C orientation base Rminus Rplus hminus hplus F r I xa ya haflip ha10Re
-  have h := congrArg (fun z : GaussianInt => z.im) haflip
-  simp only [Int.reduceNeg, Fin.isValue, neg_mul, Zsqrtd.im_neg, Zsqrtd.im_mul, zero_mul,
-      one_mul, zero_add, I] at h
-  rw [ha10Re] at h
+private theorem ha01ImAt522 (a b x y : GaussianInt)
+    (hflip : b = -(⟨0, 1⟩ : GaussianInt) * a) (h : a.re = x.re - y.im) :
+    b.im = -x.re + y.im := by
+  have hh := congrArg (fun z : GaussianInt => z.im) hflip
+  norm_num [Zsqrtd.re_mul, Zsqrtd.im_mul] at hh
   omega
 
 private theorem hplusReVec :
@@ -2704,18 +2614,18 @@ private theorem directParentCase :
       rootSlope aSlope hrootSlopeEq haBA haAB hARe' hAIm' hasumReR hasumImR toRealRe toRealIm
   have hFplusSlope := SecondNewerRowsGeometry.hFplusSlope C orientation base Rminus Rplus
       hminus hplus F rootSlope hrootSlopeEq
-  have hFplusRe := SecondNewerRowsGeometry.hFplusRe C orientation base Rminus Rplus hminus
-      hplus F rootSlope hFplusSlope
-  have hFplusIm := SecondNewerRowsGeometry.hFplusIm C orientation base Rminus Rplus hminus
-      hplus F rootSlope hFplusSlope
-  have ha10Re := SecondNewerRowsGeometry.ha10ReAt509 C orientation base Rminus Rplus hminus
-      hplus F harec
-  have ha10Im := SecondNewerRowsGeometry.ha10ImAt513 C orientation base Rminus Rplus hminus
-      hplus F harec
-  have ha01Re := SecondNewerRowsGeometry.ha01ReAt517 C orientation base Rminus Rplus hminus
-      hplus F haflip ha10Im
-  have ha01Im := SecondNewerRowsGeometry.ha01ImAt522 C orientation base Rminus Rplus hminus
-      hplus F haflip ha10Re
+  have hFplusRe := SecondNewerRowsGeometry.hFplusRe F.plusSlope rootSlope
+      (BandVectors.2 (r 1) (r 0)) (BandVectors.2 (r 0) (r 1)) hFplusSlope
+  have hFplusIm := SecondNewerRowsGeometry.hFplusIm F.plusSlope rootSlope
+      (BandVectors.2 (r 1) (r 0)) (BandVectors.2 (r 0) (r 1)) hFplusSlope
+  have ha10Re := SecondNewerRowsGeometry.ha10ReAt509
+      (BandVectors.2 (r 1) (r 0)) xa ya harec
+  have ha10Im := SecondNewerRowsGeometry.ha10ImAt513
+      (BandVectors.2 (r 1) (r 0)) xa ya harec
+  have ha01Re := SecondNewerRowsGeometry.ha01ReAt517
+      (BandVectors.2 (r 1) (r 0)) (BandVectors.2 (r 0) (r 1)) xa ya haflip ha10Im
+  have ha01Im := SecondNewerRowsGeometry.ha01ImAt522
+      (BandVectors.2 (r 1) (r 0)) (BandVectors.2 (r 0) (r 1)) xa ya haflip ha10Re
   have hplusReVec := SecondNewerRowsGeometry.hplusReVec C orientation base Rminus Rplus
       hminus hplus F p haBA haAB
   have hplusImVec := SecondNewerRowsGeometry.hplusImVec C orientation base Rminus Rplus
@@ -2890,14 +2800,14 @@ private theorem recursiveParentCase :
       hplus F a p hqB hqD hr1 hr3 rootA slopeA hARe
   have hAIm' := SecondNewerRowsGeometry.hAIm'At948 C orientation base Rminus Rplus hminus
       hplus F a p hqB hqD hr1 hr3 rootA slopeA hAIm
-  have ha10Re := SecondNewerRowsGeometry.ha10ReAt509 C orientation base Rminus Rplus hminus
-      hplus F harec
-  have ha10Im := SecondNewerRowsGeometry.ha10ImAt955 C orientation base Rminus Rplus hminus
-      hplus F harec
-  have ha01Re := SecondNewerRowsGeometry.ha01ReAt959 C orientation base Rminus Rplus hminus
-      hplus F haflip ha10Im
-  have ha01Im := SecondNewerRowsGeometry.ha01ImAt963 C orientation base Rminus Rplus hminus
-      hplus F haflip ha10Re
+  have ha10Re := SecondNewerRowsGeometry.ha10ReAt509
+      (BandVectors.2 (r 1) (r 0)) xa ya harec
+  have ha10Im := SecondNewerRowsGeometry.ha10ImAt955
+      (BandVectors.2 (r 1) (r 0)) xa ya harec
+  have ha01Re := SecondNewerRowsGeometry.ha01ReAt959
+      (BandVectors.2 (r 1) (r 0)) (BandVectors.2 (r 0) (r 1)) xa ya haflip ha10Im
+  have ha01Im := SecondNewerRowsGeometry.ha01ImAt963
+      (BandVectors.2 (r 1) (r 0)) (BandVectors.2 (r 0) (r 1)) xa ya haflip ha10Re
   have hyaA : ya = BandVectors.2 (p 0) (p 3) := by
     simp [ya, hr1, hr2]
   have ha10ReR : ((BandVectors.2 (r 1) (r 0)).re : ℝ) =

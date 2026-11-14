@@ -33,6 +33,81 @@ namespace ApollonianSuperharmonic
 
 namespace LargestParentGeometry
 
+private theorem ha10Re (a x y : GaussianInt)
+    (h : a = x + (⟨0, 1⟩ : GaussianInt) * y) : a.re = x.re - y.im := by
+  have hh := congrArg (fun z : GaussianInt => z.re) h
+  norm_num [Zsqrtd.re_mul, Zsqrtd.im_mul] at hh ⊢
+  omega
+
+private theorem ha10Im (a x y : GaussianInt)
+    (h : a = x + (⟨0, 1⟩ : GaussianInt) * y) : a.im = x.im + y.re := by
+  have hh := congrArg (fun z : GaussianInt => z.im) h
+  norm_num [Zsqrtd.re_mul, Zsqrtd.im_mul] at hh ⊢
+  omega
+
+private theorem ha01Re (a b x y : GaussianInt)
+    (hflip : b = -(⟨0, 1⟩ : GaussianInt) * a) (h : a.im = x.im + y.re) :
+    b.re = x.im + y.re := by
+  have hh := congrArg (fun z : GaussianInt => z.re) hflip
+  norm_num [Zsqrtd.re_mul, Zsqrtd.im_mul] at hh
+  omega
+
+private theorem ha01Im (a b x y : GaussianInt)
+    (hflip : b = -(⟨0, 1⟩ : GaussianInt) * a) (h : a.re = x.re - y.im) :
+    b.im = -x.re + y.im := by
+  have hh := congrArg (fun z : GaussianInt => z.im) hflip
+  norm_num [Zsqrtd.re_mul, Zsqrtd.im_mul] at hh
+  omega
+
+private theorem ha10ReC (a x y : GaussianInt)
+    (h : a.re = x.re - y.im) :
+    (GaussianInt.toComplex a).re =
+      (GaussianInt.toComplex x).re - (GaussianInt.toComplex y).im := by
+  rw [← GaussianInt.intCast_re, ← GaussianInt.intCast_re,
+    ← GaussianInt.intCast_im]
+  exact_mod_cast h
+
+private theorem ha10ImC (a x y : GaussianInt)
+    (h : a.im = x.im + y.re) :
+    (GaussianInt.toComplex a).im =
+      (GaussianInt.toComplex x).im + (GaussianInt.toComplex y).re := by
+  rw [← GaussianInt.intCast_im, ← GaussianInt.intCast_im,
+    ← GaussianInt.intCast_re]
+  exact_mod_cast h
+
+private theorem ha01ReC (a x y : GaussianInt)
+    (h : a.re = x.im + y.re) :
+    (GaussianInt.toComplex a).re =
+      (GaussianInt.toComplex x).im + (GaussianInt.toComplex y).re := by
+  rw [← GaussianInt.intCast_re, ← GaussianInt.intCast_im,
+    ← GaussianInt.intCast_re]
+  exact_mod_cast h
+
+private theorem ha01ImC (a x y : GaussianInt)
+    (h : a.im = -x.re + y.im) :
+    (GaussianInt.toComplex a).im =
+      -(GaussianInt.toComplex x).re + (GaussianInt.toComplex y).im := by
+  rw [← GaussianInt.intCast_im, ← GaussianInt.intCast_re,
+    ← GaussianInt.intCast_im]
+  exact_mod_cast h
+
+private theorem hsumReC (a x y : GaussianInt)
+    (h : a.re + x.re + y.re = 0) :
+    (GaussianInt.toComplex a).re + (GaussianInt.toComplex x).re +
+      (GaussianInt.toComplex y).re = 0 := by
+  rw [← GaussianInt.intCast_re, ← GaussianInt.intCast_re,
+    ← GaussianInt.intCast_re]
+  exact_mod_cast h
+
+private theorem hsumImC (a x y : GaussianInt)
+    (h : a.im + x.im + y.im = 0) :
+    (GaussianInt.toComplex a).im + (GaussianInt.toComplex x).im +
+      (GaussianInt.toComplex y).im = 0 := by
+  rw [← GaussianInt.intCast_im, ← GaussianInt.intCast_im,
+    ← GaussianInt.intCast_im]
+  exact_mod_cast h
+
+
 private theorem hCpositive :
     (by
       classical
@@ -355,90 +430,6 @@ private theorem hFplusSlope :
 
 
 
-private theorem ha10Re :
-    (by
-      classical
-      exact
-        ∀ (C : BandCircle), ∀ (orientation : Bool), ∀ (base : ProtoTile), ∀ (Rminus : ProtoTile),
-            ∀ (Rplus : ProtoTile), ∀ (hminus : PartialOdometer), ∀ (hplus : PartialOdometer), ∀
-            (F : P4458T1BoundaryFrame C orientation base Rminus Rplus hminus hplus),
-        let r : Fin 4 → CircleCoordinates :=
-          ![F.q 0, F.q F.slot.succ, F.q ((F.slot + 1).succ),
-            F.q ((F.slot + 2).succ)]
-        let I : GaussianInt := ⟨0, 1⟩
-        let xa : GaussianInt := BandVectors.2 (r 1) (r 3)
-        let ya : GaussianInt := BandVectors.2 (r 2) (r 1)
-        (BandVectors.2 (r 1) (r 0) = xa + I * ya) → ((BandVectors.2 (r 1) (r 0)).re = xa.re -
-            ya.im) ) := by
-  classical
-  intro C orientation base Rminus Rplus hminus hplus F r I xa ya harec
-  have h := congrArg (fun z : GaussianInt => z.re) harec
-  have hh : (BandVectors.2 (r 1) (r 0)).re = xa.re + -ya.im := by
-    simpa [I, xa, ya, Zsqrtd.re_mul, Zsqrtd.im_mul] using h
-  linarith
-
-private theorem ha10Im :
-    (by
-      classical
-      exact
-        ∀ (C : BandCircle), ∀ (orientation : Bool), ∀ (base : ProtoTile), ∀ (Rminus : ProtoTile),
-            ∀ (Rplus : ProtoTile), ∀ (hminus : PartialOdometer), ∀ (hplus : PartialOdometer), ∀
-            (F : P4458T1BoundaryFrame C orientation base Rminus Rplus hminus hplus),
-        let r : Fin 4 → CircleCoordinates :=
-          ![F.q 0, F.q F.slot.succ, F.q ((F.slot + 1).succ),
-            F.q ((F.slot + 2).succ)]
-        let I : GaussianInt := ⟨0, 1⟩
-        let xa : GaussianInt := BandVectors.2 (r 1) (r 3)
-        let ya : GaussianInt := BandVectors.2 (r 2) (r 1)
-        (BandVectors.2 (r 1) (r 0) = xa + I * ya) → ((BandVectors.2 (r 1) (r 0)).im = xa.im +
-            ya.re) ) := by
-  classical
-  intro C orientation base Rminus Rplus hminus hplus F r I xa ya harec
-  have h := congrArg (fun z : GaussianInt => z.im) harec
-  simpa [I, xa, ya, Zsqrtd.re_mul, Zsqrtd.im_mul] using h
-
-private theorem ha01Re :
-    (by
-      classical
-      exact
-        ∀ (C : BandCircle), ∀ (orientation : Bool), ∀ (base : ProtoTile), ∀ (Rminus : ProtoTile),
-            ∀ (Rplus : ProtoTile), ∀ (hminus : PartialOdometer), ∀ (hplus : PartialOdometer), ∀
-            (F : P4458T1BoundaryFrame C orientation base Rminus Rplus hminus hplus),
-        let r : Fin 4 → CircleCoordinates :=
-          ![F.q 0, F.q F.slot.succ, F.q ((F.slot + 1).succ),
-            F.q ((F.slot + 2).succ)]
-        let I : GaussianInt := ⟨0, 1⟩
-        let xa : GaussianInt := BandVectors.2 (r 1) (r 3)
-        let ya : GaussianInt := BandVectors.2 (r 2) (r 1)
-        (BandVectors.2 (r 0) (r 1) = -I * BandVectors.2 (r 1) (r 0)) → (((BandVectors.2 (r 1) (r
-            0)).im = xa.im + ya.re) → ((BandVectors.2 (r 0) (r 1)).re = xa.im + ya.re)) ) := by
-  classical
-  intro C orientation base Rminus Rplus hminus hplus F r I xa ya haflip ha10Im
-  have h := congrArg (fun z : GaussianInt => z.re) haflip
-  simpa [I, ha10Im, Zsqrtd.re_mul, Zsqrtd.im_mul] using h
-
-private theorem ha01Im :
-    (by
-      classical
-      exact
-        ∀ (C : BandCircle), ∀ (orientation : Bool), ∀ (base : ProtoTile), ∀ (Rminus : ProtoTile),
-            ∀ (Rplus : ProtoTile), ∀ (hminus : PartialOdometer), ∀ (hplus : PartialOdometer), ∀
-            (F : P4458T1BoundaryFrame C orientation base Rminus Rplus hminus hplus),
-        let r : Fin 4 → CircleCoordinates :=
-          ![F.q 0, F.q F.slot.succ, F.q ((F.slot + 1).succ),
-            F.q ((F.slot + 2).succ)]
-        let I : GaussianInt := ⟨0, 1⟩
-        let xa : GaussianInt := BandVectors.2 (r 1) (r 3)
-        let ya : GaussianInt := BandVectors.2 (r 2) (r 1)
-        (BandVectors.2 (r 0) (r 1) = -I * BandVectors.2 (r 1) (r 0)) → (((BandVectors.2 (r 1) (r
-            0)).re = xa.re - ya.im) → ((BandVectors.2 (r 0) (r 1)).im = -xa.re + ya.im)) ) := by
-  classical
-  intro C orientation base Rminus Rplus hminus hplus F r I xa ya haflip ha10Re
-  have h := congrArg (fun z : GaussianInt => z.im) haflip
-  have hh : (BandVectors.2 (r 0) (r 1)).im = ya.im - xa.re := by
-    simpa [I, ha10Re, Zsqrtd.re_mul, Zsqrtd.im_mul] using h
-  linarith
-
 private theorem hminusSlopeVector :
     (by
       classical
@@ -468,224 +459,6 @@ private theorem hminusSlopeVector :
   · norm_num [I, Zsqrtd.ext_iff, Zsqrtd.re_mul, Zsqrtd.im_mul]
     rw [ha10Im, ha01Im]
     omega
-
-private theorem ha10ReC :
-    (by
-      classical
-      exact
-        ∀ (C : BandCircle), ∀ (orientation : Bool), ∀ (base : ProtoTile), ∀ (Rminus : ProtoTile),
-            ∀ (Rplus : ProtoTile), ∀ (hminus : PartialOdometer), ∀ (hplus : PartialOdometer), ∀
-            (F : P4458T1BoundaryFrame C orientation base Rminus Rplus hminus hplus),
-        let r : Fin 4 → CircleCoordinates :=
-          ![F.q 0, F.q F.slot.succ, F.q ((F.slot + 1).succ),
-            F.q ((F.slot + 2).succ)]
-        let xa : GaussianInt := BandVectors.2 (r 1) (r 3)
-        let ya : GaussianInt := BandVectors.2 (r 2) (r 1)
-        ((BandVectors.2 (r 1) (r 0)).re = xa.re - ya.im) → ((∀ (z : GaussianInt),
-            (GaussianInt.toComplex z).re = (z.re : ℝ)) → ((∀ (z : GaussianInt),
-            (GaussianInt.toComplex z).im = (z.im : ℝ)) → ((GaussianInt.toComplex (BandVectors.2
-            (r 1) (r 0))).re = (GaussianInt.toComplex xa).re - (GaussianInt.toComplex ya).im))) )
-            := by
-  classical
-  intro C orientation base Rminus Rplus hminus hplus F r xa ya ha10Re toRealRe toRealIm
-  rw [toRealRe, toRealRe, toRealIm]
-  exact_mod_cast ha10Re
-
-private theorem ha10ImC :
-    (by
-      classical
-      exact
-        ∀ (C : BandCircle), ∀ (orientation : Bool), ∀ (base : ProtoTile), ∀ (Rminus : ProtoTile),
-            ∀ (Rplus : ProtoTile), ∀ (hminus : PartialOdometer), ∀ (hplus : PartialOdometer), ∀
-            (F : P4458T1BoundaryFrame C orientation base Rminus Rplus hminus hplus),
-        let r : Fin 4 → CircleCoordinates :=
-          ![F.q 0, F.q F.slot.succ, F.q ((F.slot + 1).succ),
-            F.q ((F.slot + 2).succ)]
-        let xa : GaussianInt := BandVectors.2 (r 1) (r 3)
-        let ya : GaussianInt := BandVectors.2 (r 2) (r 1)
-        ((BandVectors.2 (r 1) (r 0)).im = xa.im + ya.re) → ((∀ (z : GaussianInt),
-            (GaussianInt.toComplex z).re = (z.re : ℝ)) → ((∀ (z : GaussianInt),
-            (GaussianInt.toComplex z).im = (z.im : ℝ)) → ((GaussianInt.toComplex (BandVectors.2
-            (r 1) (r 0))).im = (GaussianInt.toComplex xa).im + (GaussianInt.toComplex ya).re))) )
-            := by
-  classical
-  intro C orientation base Rminus Rplus hminus hplus F r xa ya ha10Im toRealRe toRealIm
-  rw [toRealIm, toRealIm, toRealRe]
-  exact_mod_cast ha10Im
-
-private theorem ha01ReC :
-    (by
-      classical
-      exact
-        ∀ (C : BandCircle), ∀ (orientation : Bool), ∀ (base : ProtoTile), ∀ (Rminus : ProtoTile),
-            ∀ (Rplus : ProtoTile), ∀ (hminus : PartialOdometer), ∀ (hplus : PartialOdometer), ∀
-            (F : P4458T1BoundaryFrame C orientation base Rminus Rplus hminus hplus),
-        let r : Fin 4 → CircleCoordinates :=
-          ![F.q 0, F.q F.slot.succ, F.q ((F.slot + 1).succ),
-            F.q ((F.slot + 2).succ)]
-        let xa : GaussianInt := BandVectors.2 (r 1) (r 3)
-        let ya : GaussianInt := BandVectors.2 (r 2) (r 1)
-        ((BandVectors.2 (r 0) (r 1)).re = xa.im + ya.re) → ((∀ (z : GaussianInt),
-            (GaussianInt.toComplex z).re = (z.re : ℝ)) → ((∀ (z : GaussianInt),
-            (GaussianInt.toComplex z).im = (z.im : ℝ)) → ((GaussianInt.toComplex (BandVectors.2
-            (r 0) (r 1))).re = (GaussianInt.toComplex xa).im + (GaussianInt.toComplex ya).re))) )
-            := by
-  classical
-  intro C orientation base Rminus Rplus hminus hplus F r xa ya ha01Re toRealRe toRealIm
-  rw [toRealRe, toRealIm, toRealRe]
-  exact_mod_cast ha01Re
-
-private theorem ha01ImC :
-    (by
-      classical
-      exact
-        ∀ (C : BandCircle), ∀ (orientation : Bool), ∀ (base : ProtoTile), ∀ (Rminus : ProtoTile),
-            ∀ (Rplus : ProtoTile), ∀ (hminus : PartialOdometer), ∀ (hplus : PartialOdometer), ∀
-            (F : P4458T1BoundaryFrame C orientation base Rminus Rplus hminus hplus),
-        let r : Fin 4 → CircleCoordinates :=
-          ![F.q 0, F.q F.slot.succ, F.q ((F.slot + 1).succ),
-            F.q ((F.slot + 2).succ)]
-        let xa : GaussianInt := BandVectors.2 (r 1) (r 3)
-        let ya : GaussianInt := BandVectors.2 (r 2) (r 1)
-        ((BandVectors.2 (r 0) (r 1)).im = -xa.re + ya.im) → ((∀ (z : GaussianInt),
-            (GaussianInt.toComplex z).re = (z.re : ℝ)) → ((∀ (z : GaussianInt),
-            (GaussianInt.toComplex z).im = (z.im : ℝ)) → ((GaussianInt.toComplex (BandVectors.2
-            (r 0) (r 1))).im = -(GaussianInt.toComplex xa).re + (GaussianInt.toComplex ya).im)))
-            ) := by
-  classical
-  intro C orientation base Rminus Rplus hminus hplus F r xa ya ha01Im toRealRe toRealIm
-  rw [toRealIm, toRealRe, toRealIm]
-  exact_mod_cast ha01Im
-
-private theorem hsumReC :
-    (by
-      classical
-      exact
-        ∀ (C : BandCircle), ∀ (orientation : Bool), ∀ (base : ProtoTile), ∀ (Rminus : ProtoTile),
-            ∀ (Rplus : ProtoTile), ∀ (hminus : PartialOdometer), ∀ (hplus : PartialOdometer), ∀
-            (F : P4458T1BoundaryFrame C orientation base Rminus Rplus hminus hplus),
-        let r : Fin 4 → CircleCoordinates :=
-          ![F.q 0, F.q F.slot.succ, F.q ((F.slot + 1).succ),
-            F.q ((F.slot + 2).succ)]
-        let wa : GaussianInt := BandVectors.2 (r 3) (r 2)
-        let xa : GaussianInt := BandVectors.2 (r 1) (r 3)
-        let ya : GaussianInt := BandVectors.2 (r 2) (r 1)
-        (wa.re + xa.re + ya.re = 0) → ((∀ (z : GaussianInt), (GaussianInt.toComplex z).re = (z.re
-            : ℝ)) → ((GaussianInt.toComplex wa).re + (GaussianInt.toComplex xa).re +
-            (GaussianInt.toComplex ya).re = 0)) ) := by
-  classical
-  intro C orientation base Rminus Rplus hminus hplus F r wa xa ya hasumRe toRealRe
-  rw [toRealRe, toRealRe, toRealRe]
-  exact_mod_cast hasumRe
-
-private theorem hsumImC :
-    (by
-      classical
-      exact
-        ∀ (C : BandCircle), ∀ (orientation : Bool), ∀ (base : ProtoTile), ∀ (Rminus : ProtoTile),
-            ∀ (Rplus : ProtoTile), ∀ (hminus : PartialOdometer), ∀ (hplus : PartialOdometer), ∀
-            (F : P4458T1BoundaryFrame C orientation base Rminus Rplus hminus hplus),
-        let r : Fin 4 → CircleCoordinates :=
-          ![F.q 0, F.q F.slot.succ, F.q ((F.slot + 1).succ),
-            F.q ((F.slot + 2).succ)]
-        let wa : GaussianInt := BandVectors.2 (r 3) (r 2)
-        let xa : GaussianInt := BandVectors.2 (r 1) (r 3)
-        let ya : GaussianInt := BandVectors.2 (r 2) (r 1)
-        (wa.im + xa.im + ya.im = 0) → ((∀ (z : GaussianInt), (GaussianInt.toComplex z).im = (z.im
-            : ℝ)) → ((GaussianInt.toComplex wa).im + (GaussianInt.toComplex xa).im +
-            (GaussianInt.toComplex ya).im = 0)) ) := by
-  classical
-  intro C orientation base Rminus Rplus hminus hplus F r wa xa ya hasumIm toRealIm
-  rw [toRealIm, toRealIm, toRealIm]
-  exact_mod_cast hasumIm
-
-private theorem hplusVectorRe' :
-    (by
-      classical
-      exact
-        ∀ (C : BandCircle), ∀ (orientation : Bool), ∀ (base : ProtoTile), ∀ (Rminus : ProtoTile),
-            ∀ (Rplus : ProtoTile), ∀ (hminus : PartialOdometer), ∀ (hplus : PartialOdometer), ∀
-            (F : P4458T1BoundaryFrame C orientation base Rminus Rplus hminus hplus),
-        let r : Fin 4 → CircleCoordinates :=
-          ![F.q 0, F.q F.slot.succ, F.q ((F.slot + 1).succ),
-            F.q ((F.slot + 2).succ)]
-        let wa : GaussianInt := BandVectors.2 (r 3) (r 2)
-        let xa : GaussianInt := BandVectors.2 (r 1) (r 3)
-        let ya : GaussianInt := BandVectors.2 (r 2) (r 1)
-        (wa.re + xa.re + ya.re = 0) → ((wa.im + xa.im + ya.im = 0) → (((BandVectors.2 (r 1) (r
-            0)).re = xa.re - ya.im) → (((BandVectors.2 (r 1) (r 0)).im = xa.im + ya.re) →
-            ((BandVectors.2 (r 1) (r 0)).re + (BandVectors.2 (r 1) (r 0)).im + wa.re - wa.im = 2
-            * xa.im)))) ) := by
-  classical
-  intro C orientation base Rminus Rplus hminus hplus F r wa xa ya hasumRe hasumIm ha10Re ha10Im
-  omega
-
-private theorem hplusVectorIm' :
-    (by
-      classical
-      exact
-        ∀ (C : BandCircle), ∀ (orientation : Bool), ∀ (base : ProtoTile), ∀ (Rminus : ProtoTile),
-            ∀ (Rplus : ProtoTile), ∀ (hminus : PartialOdometer), ∀ (hplus : PartialOdometer), ∀
-            (F : P4458T1BoundaryFrame C orientation base Rminus Rplus hminus hplus),
-        let r : Fin 4 → CircleCoordinates :=
-          ![F.q 0, F.q F.slot.succ, F.q ((F.slot + 1).succ),
-            F.q ((F.slot + 2).succ)]
-        let wa : GaussianInt := BandVectors.2 (r 3) (r 2)
-        let xa : GaussianInt := BandVectors.2 (r 1) (r 3)
-        let ya : GaussianInt := BandVectors.2 (r 2) (r 1)
-        (wa.re + xa.re + ya.re = 0) → ((wa.im + xa.im + ya.im = 0) → (((BandVectors.2 (r 1) (r
-            0)).re = xa.re - ya.im) → (((BandVectors.2 (r 1) (r 0)).im = xa.im + ya.re) →
-            ((BandVectors.2 (r 1) (r 0)).im - (BandVectors.2 (r 1) (r 0)).re + wa.im + wa.re = -2
-            * xa.re)))) ) := by
-  classical
-  intro C orientation base Rminus Rplus hminus hplus F r wa xa ya hasumRe hasumIm ha10Re ha10Im
-  omega
-
-private theorem hplusVectorReC :
-    (by
-      classical
-      exact
-        ∀ (C : BandCircle), ∀ (orientation : Bool), ∀ (base : ProtoTile), ∀ (Rminus : ProtoTile),
-            ∀ (Rplus : ProtoTile), ∀ (hminus : PartialOdometer), ∀ (hplus : PartialOdometer), ∀
-            (F : P4458T1BoundaryFrame C orientation base Rminus Rplus hminus hplus),
-        let r : Fin 4 → CircleCoordinates :=
-          ![F.q 0, F.q F.slot.succ, F.q ((F.slot + 1).succ),
-            F.q ((F.slot + 2).succ)]
-        let wa : GaussianInt := BandVectors.2 (r 3) (r 2)
-        let xa : GaussianInt := BandVectors.2 (r 1) (r 3)
-        (∀ (z : GaussianInt), (GaussianInt.toComplex z).re = (z.re : ℝ)) → ((∀ (z : GaussianInt),
-            (GaussianInt.toComplex z).im = (z.im : ℝ)) → (((BandVectors.2 (r 1) (r 0)).re +
-            (BandVectors.2 (r 1) (r 0)).im + wa.re - wa.im = 2 * xa.im) → ((GaussianInt.toComplex
-            (BandVectors.2 (r 1) (r 0))).re + (GaussianInt.toComplex (BandVectors.2 (r 1) (r
-            0))).im + (GaussianInt.toComplex wa).re - (GaussianInt.toComplex wa).im = 2 *
-            (GaussianInt.toComplex xa).im))) ) := by
-  classical
-  intro C orientation base Rminus Rplus hminus hplus F r wa xa toRealRe toRealIm hplusVectorRe'
-  rw [toRealRe, toRealIm, toRealRe, toRealIm, toRealIm]
-  exact_mod_cast hplusVectorRe'
-
-private theorem hplusVectorImC :
-    (by
-      classical
-      exact
-        ∀ (C : BandCircle), ∀ (orientation : Bool), ∀ (base : ProtoTile), ∀ (Rminus : ProtoTile),
-            ∀ (Rplus : ProtoTile), ∀ (hminus : PartialOdometer), ∀ (hplus : PartialOdometer), ∀
-            (F : P4458T1BoundaryFrame C orientation base Rminus Rplus hminus hplus),
-        let r : Fin 4 → CircleCoordinates :=
-          ![F.q 0, F.q F.slot.succ, F.q ((F.slot + 1).succ),
-            F.q ((F.slot + 2).succ)]
-        let wa : GaussianInt := BandVectors.2 (r 3) (r 2)
-        let xa : GaussianInt := BandVectors.2 (r 1) (r 3)
-        (∀ (z : GaussianInt), (GaussianInt.toComplex z).re = (z.re : ℝ)) → ((∀ (z : GaussianInt),
-            (GaussianInt.toComplex z).im = (z.im : ℝ)) → (((BandVectors.2 (r 1) (r 0)).im -
-            (BandVectors.2 (r 1) (r 0)).re + wa.im + wa.re = -2 * xa.re) →
-            ((GaussianInt.toComplex (BandVectors.2 (r 1) (r 0))).im - (GaussianInt.toComplex
-            (BandVectors.2 (r 1) (r 0))).re + (GaussianInt.toComplex wa).im +
-            (GaussianInt.toComplex wa).re = -2 * (GaussianInt.toComplex xa).re))) ) := by
-  classical
-  intro C orientation base Rminus Rplus hminus hplus F r wa xa toRealRe toRealIm hplusVectorIm'
-  rw [toRealIm, toRealRe, toRealIm, toRealRe, toRealRe]
-  exact_mod_cast hplusVectorIm'
 
 private theorem hminusSlope :
     (by
@@ -808,12 +581,10 @@ private theorem hplusSlope :
   apply Prod.ext
   · simp [GaussianRealPoint]
     norm_num [I, Zsqrtd.re_mul, Zsqrtd.im_mul]
-    linarith [ha10ReC, ha01ReC, hsumReC, hsumImC,
-      hplusVectorReC]
+    linarith [ha10ReC, ha01ReC, hsumReC, hsumImC]
   · simp [GaussianRealPoint]
     norm_num [I, Zsqrtd.re_mul, Zsqrtd.im_mul]
-    linarith [ha10ImC, ha01ImC, hsumReC, hsumImC,
-      hplusVectorImC]
+    linarith [ha10ImC, ha01ImC, hsumReC, hsumImC]
 
 private theorem hCgt1 :
     (by
@@ -1466,32 +1237,36 @@ theorem P4458T1LargestParentRows
   have hasumIm : wa.im + xa.im + ya.im = 0 := by
     simpa only [Zsqrtd.im_add, Zsqrtd.im_zero] using
       congrArg (fun z : GaussianInt => z.im) hasum
-  have ha10Re := LargestParentGeometry.ha10Re C orientation base Rminus Rplus hminus hplus F harec
-  have ha10Im := LargestParentGeometry.ha10Im C orientation base Rminus Rplus hminus hplus F harec
-  have ha01Re := LargestParentGeometry.ha01Re C orientation base Rminus Rplus hminus hplus F
+  have ha10Re := LargestParentGeometry.ha10Re
+      (BandVectors.2 (r 1) (r 0)) xa ya harec
+  have ha10Im := LargestParentGeometry.ha10Im
+      (BandVectors.2 (r 1) (r 0)) xa ya harec
+  have ha01Re := LargestParentGeometry.ha01Re
+      (BandVectors.2 (r 1) (r 0)) (BandVectors.2 (r 0) (r 1)) xa ya
       haflip ha10Im
-  have ha01Im := LargestParentGeometry.ha01Im C orientation base Rminus Rplus hminus hplus F
+  have ha01Im := LargestParentGeometry.ha01Im
+      (BandVectors.2 (r 1) (r 0)) (BandVectors.2 (r 0) (r 1)) xa ya
       haflip ha10Re
   have hminusSlopeVector := LargestParentGeometry.hminusSlopeVector C orientation base Rminus
       Rplus hminus hplus F hasumRe hasumIm ha10Re ha10Im ha01Re ha01Im
-  have toRealRe (z : GaussianInt) :
-      (GaussianInt.toComplex z).re = (z.re : ℝ) :=
-    (GaussianInt.intCast_re z).symm
-  have toRealIm (z : GaussianInt) :
-      (GaussianInt.toComplex z).im = (z.im : ℝ) :=
-    (GaussianInt.intCast_im z).symm
-  have ha10ReC := LargestParentGeometry.ha10ReC C orientation base Rminus Rplus hminus hplus F
-      ha10Re toRealRe toRealIm
-  have ha10ImC := LargestParentGeometry.ha10ImC C orientation base Rminus Rplus hminus hplus F
-      ha10Im toRealRe toRealIm
-  have ha01ReC := LargestParentGeometry.ha01ReC C orientation base Rminus Rplus hminus hplus F
-      ha01Re toRealRe toRealIm
-  have ha01ImC := LargestParentGeometry.ha01ImC C orientation base Rminus Rplus hminus hplus F
-      ha01Im toRealRe toRealIm
-  have hsumReC := LargestParentGeometry.hsumReC C orientation base Rminus Rplus hminus hplus F
-      hasumRe toRealRe
-  have hsumImC := LargestParentGeometry.hsumImC C orientation base Rminus Rplus hminus hplus F
-      hasumIm toRealIm
+  have ha10ReC := LargestParentGeometry.ha10ReC
+      (BandVectors.2 (r 1) (r 0)) xa ya
+      ha10Re
+  have ha10ImC := LargestParentGeometry.ha10ImC
+      (BandVectors.2 (r 1) (r 0)) xa ya
+      ha10Im
+  have ha01ReC := LargestParentGeometry.ha01ReC
+      (BandVectors.2 (r 0) (r 1)) xa ya
+      ha01Re
+  have ha01ImC := LargestParentGeometry.ha01ImC
+      (BandVectors.2 (r 0) (r 1)) xa ya
+      ha01Im
+  have hsumReC := LargestParentGeometry.hsumReC
+      wa xa ya
+      hasumRe
+  have hsumImC := LargestParentGeometry.hsumImC
+      wa xa ya
+      hasumIm
   have hminusSlope : joinSlope - F.minusSlope = GaussianRealPoint ya :=
       LargestParentGeometry.hminusSlope C orientation base Rminus Rplus hminus hplus F rootSlope
       joinSlope hrootSlopeEq hDoffset hFminusSlope hminusSlopeVector ha10ReC ha10ImC ha01ReC

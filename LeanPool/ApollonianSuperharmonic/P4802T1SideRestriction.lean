@@ -68,7 +68,7 @@ private theorem sideBoundary0 (z : PeriodicSubtileIndex)
       have hnlo : (-2 : Int) < n := by exact_mod_cast hnloR
       have hnhi : n < (2 : Int) := by exact_mod_cast hnhiR
       interval_cases m <;> interval_cases n <;>
-        norm_num at hzt ⊢ <;> linarith only [hzt.1, hzt.2, ht.1, ht.2]
+        norm_num1 at hzt ⊢ <;> first | decide | linarith only [hzt.1, hzt.2, ht.1, ht.2]
 
 private theorem sideBoundary1 (z : PeriodicSubtileIndex)
     (hz : P4715T1Position z ∈ P4715T1Arc
@@ -106,7 +106,7 @@ private theorem sideBoundary1 (z : PeriodicSubtileIndex)
       have hnlo : (-2 : Int) < n := by exact_mod_cast hnloR
       have hnhi : n < (2 : Int) := by exact_mod_cast hnhiR
       interval_cases m <;> interval_cases n <;>
-        norm_num at hzt ⊢ <;> linarith only [hzt.1, hzt.2, ht.1, ht.2]
+        norm_num1 at hzt ⊢ <;> first | decide | linarith only [hzt.1, hzt.2, ht.1, ht.2]
 
 private theorem sideBoundary2 (z : PeriodicSubtileIndex)
     (hz : P4715T1Position z ∈ P4715T1Arc
@@ -145,7 +145,7 @@ private theorem sideBoundary2 (z : PeriodicSubtileIndex)
       have hnlo : (-2 : Int) < n := by exact_mod_cast hnloR
       have hnhi : n < (2 : Int) := by exact_mod_cast hnhiR
       interval_cases m <;> interval_cases n <;>
-        norm_num at hzt ⊢ <;> linarith only [hzt.1, hzt.2, ht.1, ht.2]
+        norm_num1 at hzt ⊢ <;> first | decide | linarith only [hzt.1, hzt.2, ht.1, ht.2]
 
 private theorem sideBoundary3 (z : PeriodicSubtileIndex)
     (hz : P4715T1Position z ∈ P4715T1Arc
@@ -184,7 +184,7 @@ private theorem sideBoundary3 (z : PeriodicSubtileIndex)
       have hnlo : (-2 : Int) < n := by exact_mod_cast hnloR
       have hnhi : n < (2 : Int) := by exact_mod_cast hnhiR
       interval_cases m <;> interval_cases n <;>
-        norm_num at hzt ⊢ <;> linarith only [hzt.1, hzt.2, ht.1, ht.2]
+        norm_num1 at hzt ⊢ <;> first | decide | linarith only [hzt.1, hzt.2, ht.1, ht.2]
 
 private theorem sideBoundary4 (z : PeriodicSubtileIndex)
     (hz : P4715T1Position z ∈ P4715T1Arc
@@ -223,7 +223,7 @@ private theorem sideBoundary4 (z : PeriodicSubtileIndex)
       have hnlo : (-2 : Int) < n := by exact_mod_cast hnloR
       have hnhi : n < (2 : Int) := by exact_mod_cast hnhiR
       interval_cases m <;> interval_cases n <;>
-        norm_num at hzt ⊢ <;> linarith only [hzt.1, hzt.2, ht.1, ht.2]
+        norm_num1 at hzt ⊢ <;> first | decide | linarith only [hzt.1, hzt.2, ht.1, ht.2]
 
 private theorem sideBoundary5 (z : PeriodicSubtileIndex)
     (hz : P4715T1Position z ∈ P4715T1Arc
@@ -261,7 +261,7 @@ private theorem sideBoundary5 (z : PeriodicSubtileIndex)
       have hnlo : (-2 : Int) < n := by exact_mod_cast hnloR
       have hnhi : n < (2 : Int) := by exact_mod_cast hnhiR
       interval_cases m <;> interval_cases n <;>
-        norm_num at hzt ⊢ <;> linarith only [hzt.1, hzt.2, ht.1, ht.2]
+        norm_num1 at hzt ⊢ <;> first | decide | linarith only [hzt.1, hzt.2, ht.1, ht.2]
 
 theorem P4802T1SideRestriction (k : Int × Int) (r : Fin 6)
     (S : Set PeriodicSubtileIndex)

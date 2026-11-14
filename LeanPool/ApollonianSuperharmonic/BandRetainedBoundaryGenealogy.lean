@@ -246,27 +246,6 @@ private theorem config :
   · simp [h0, h3]
   · simp [hb0, hb1, h2, h3]
 
-private theorem haum'At397 :
-    ∀ (q : Fin 4 → CircleCoordinates), (∀ (i : Fin (4 : ℕ)), ∀ (j : Fin (4 : ℕ)), (q i).1 = (1 :
-        ℤ) → (q j).1 = (1 : ℤ) → i = j) → (
-    let u := BandPackingSymmetryQuadrupleAction .conjugate q
-    ∀ i j : Fin 4, (u i).1 = 1 → (u j).1 = 1 → i = j) := by
-  classical
-  intro q hatMostOneUnit u
-  let index : Fin 4 → Fin 4 := ![0, 1, 3, 2]
-  have negOne : (-1 : Fin 3) = 2 := by decide
-  have negTwo : (-2 : Fin 3) = 1 := by decide
-  have hiMap : ∀ i : Fin 4, (u i).1 = (q (index i)).1 := by
-    intro i
-    fin_cases i <;> simp [index, u, BandPackingSymmetryQuadrupleAction,
-      BandPackingSymmetryReversesOrientation, BandPackingSymmetryCircleAction,
-      negOne, negTwo]
-  intro i j hi hj
-  have hi' : (q (index i)).1 = 1 := by rw [← hiMap i]; exact hi
-  have hj' : (q (index j)).1 = 1 := by rw [← hiMap j]; exact hj
-  have he := hatMostOneUnit (index i) (index j) hi' hj'
-  fin_cases i <;> fin_cases j <;> simp [index] at he ⊢
-
 private theorem conjugateSuccessor (base p : Fin 4 → CircleCoordinates)
     (hsucc : base =
       ![(2 * (p 0).1 + 2 * (p 2).1 + 2 * (p 3).1 - (p 1).1,
@@ -296,6 +275,32 @@ private theorem conjugateSuccessor (base p : Fin 4 → CircleCoordinates)
 end RetainedBoundaryProof
 
 namespace RetainedBoundaryDetails
+
+private theorem curvatureInvariants (q u : Fin 4 → CircleCoordinates)
+    (index : Fin 4 → Fin 4) (hinjective : Function.Injective index)
+    (hcurvature : ∀ i, (u i).1 = (q (index i)).1)
+    (hnoLine : ∀ i, (q i).1 ≠ 0)
+    (hunit : ∀ i j, (q i).1 = 1 → (q j).1 = 1 → i = j) :
+    (∀ i, (u i).1 ≠ 0) ∧ (∀ i j, (u i).1 = 1 → (u j).1 = 1 → i = j) := by
+  constructor
+  · intro i
+    rw [hcurvature]
+    exact hnoLine _
+  · intro i j hi hj
+    apply hinjective
+    exact hunit _ _ ((hcurvature i).symm.trans hi) ((hcurvature j).symm.trans hj)
+
+private theorem conjugateCoordinate (p q : Fin 4 → CircleCoordinates)
+    (i j : Fin 4) (h : p i = q j) :
+    BandPackingSymmetryQuadrupleAction .conjugate p (![0, 1, 3, 2] i) =
+      BandPackingSymmetryQuadrupleAction .conjugate q (![0, 1, 3, 2] j) := by
+  have hh := congrArg (BandPackingSymmetryCircleAction .conjugate) h
+  have negOne : (-1 : Fin 3).succ = 3 := by decide
+  have negTwo : (-2 : Fin 3).succ = 2 := by decide
+  fin_cases i <;> fin_cases j <;>
+    simpa [BandPackingSymmetryQuadrupleAction, BandPackingSymmetryReversesOrientation,
+      negOne, negTwo] using hh
+
 
 private theorem positiveLarge :
     (∀ (r : Fin (4 : ℕ) → CircleCoordinates), SemiProperQuadruple r → ∀ (i : Fin (4 : ℕ)), (r
@@ -393,66 +398,6 @@ private theorem htuple :
   funext i
   fin_cases i <;> rfl
 
-private theorem hnl'At549 :
-    ∀ (q : Fin 4 → CircleCoordinates), (∀ (i : Fin (4 : ℕ)), (q i).1 ≠ (0 : ℤ)) → (
-    let u := BandPackingSymmetryQuadrupleAction .conjugate q
-    ∀ i : Fin 4, (u i).1 ≠ 0) := by
-  classical
-  intro q hnoLine u i
-  fin_cases i <;> simp only [BandPackingSymmetryQuadrupleAction,
-      BandPackingSymmetryCircleAction, Fin.isValue, BandPackingSymmetryReversesOrientation,
-      ↓reduceIte, neg_zero, Fin.succ_zero_eq_one, Fin.mk_one, Matrix.cons_val_one,
-      Matrix.cons_val_zero, ne_eq, u, Fin.reduceFinMk, Matrix.cons_val, Fin.zero_eta] <;>
-    apply hnoLine
-
-private theorem h0'At562 :
-    ∀ (q : Fin 4 → CircleCoordinates), ∀ (p : Fin (4 : ℕ) → CircleCoordinates), (p (0 : Fin (4 :
-        ℕ)) = q (1 : Fin (4 : ℕ))) → (
-    let pr : Fin 4 → CircleCoordinates := p
-    let u := BandPackingSymmetryQuadrupleAction .conjugate q
-    let pp := BandPackingSymmetryQuadrupleAction .conjugate pr
-    ((-1 : Fin 3) = 2) → (((-2 : Fin 3) = 1) → (
-    pp 0 = u 1))) := by
-  classical
-  intro q p h0 pr u pp negOne negTwo
-  let reflect : CircleCoordinates → CircleCoordinates :=
-    fun C => (C.1, GaussianReflection C.2)
-  simpa [u, pp, pr, BandPackingSymmetryQuadrupleAction,
-    BandPackingSymmetryReversesOrientation, BandPackingSymmetryCircleAction,
-    negOne, negTwo, reflect] using congrArg reflect h0
-
-private theorem h2'At566 :
-    ∀ (q : Fin 4 → CircleCoordinates), ∀ (p : Fin (4 : ℕ) → CircleCoordinates), (p (3 : Fin (4 :
-        ℕ)) = q (3 : Fin (4 : ℕ))) → (
-    let pr : Fin 4 → CircleCoordinates := p
-    let u := BandPackingSymmetryQuadrupleAction .conjugate q
-    let pp := BandPackingSymmetryQuadrupleAction .conjugate pr
-    ((-1 : Fin 3) = 2) → (((-2 : Fin 3) = 1) → (
-    pp 2 = u 2))) := by
-  classical
-  intro q p h3 pr u pp negOne negTwo
-  let reflect : CircleCoordinates → CircleCoordinates :=
-    fun C => (C.1, GaussianReflection C.2)
-  simpa [u, pp, pr, BandPackingSymmetryQuadrupleAction,
-    BandPackingSymmetryReversesOrientation, BandPackingSymmetryCircleAction,
-    negOne, negTwo, reflect] using congrArg reflect h3
-
-private theorem h3'At570 :
-    ∀ (q : Fin 4 → CircleCoordinates), ∀ (p : Fin (4 : ℕ) → CircleCoordinates), (p (2 : Fin (4 :
-        ℕ)) = q (2 : Fin (4 : ℕ))) → (
-    let pr : Fin 4 → CircleCoordinates := p
-    let u := BandPackingSymmetryQuadrupleAction .conjugate q
-    let pp := BandPackingSymmetryQuadrupleAction .conjugate pr
-    ((-1 : Fin 3) = 2) → (((-2 : Fin 3) = 1) → (
-    pp 3 = u 3))) := by
-  classical
-  intro q p h2 pr u pp negOne negTwo
-  let reflect : CircleCoordinates → CircleCoordinates :=
-    fun C => (C.1, GaussianReflection C.2)
-  simpa [u, pp, pr, BandPackingSymmetryQuadrupleAction,
-    BandPackingSymmetryReversesOrientation, BandPackingSymmetryCircleAction,
-    negOne, negTwo, reflect] using congrArg reflect h2
-
 private theorem ht0'At574 :
     ∀ (q : Fin 4 → CircleCoordinates), ∀ (p : Fin (4 : ℕ) → CircleCoordinates), (p (3 : Fin (4 :
         ℕ)) = q (3 : Fin (4 : ℕ))) → (∀ (t : Fin (4 : ℕ) → CircleCoordinates), (t (0 : Fin (4 :
@@ -517,18 +462,6 @@ private theorem hlt3'At583 :
      BandPackingSymmetryReversesOrientation, BandPackingSymmetryCircleAction, negOneSucc,
          negTwoSucc] using hfirst.2.2.2.2.2.1
 
-private theorem hord'At586 :
-    ∀ (q : Fin 4 → CircleCoordinates), ∀ (p : Fin (4 : ℕ) → CircleCoordinates), (p (2 : Fin (4 :
-        ℕ)) = q (2 : Fin (4 : ℕ))) → ((p (3 : Fin (4 : ℕ)) = q (3 : Fin (4 : ℕ))) → (((p (2 : Fin
-        (4 : ℕ))).1 < (p (3 : Fin (4 : ℕ))).1) → (
-    let u := BandPackingSymmetryQuadrupleAction .conjugate q
-    ((-1 : Fin 3).succ = 3) → (((-2 : Fin 3).succ = 2) → ((u 3).1 < (u 2).1))))) := by
-  classical
-  intro q p h2 h3 hlt u negOneSucc negTwoSucc
-  simpa [u, BandPackingSymmetryQuadrupleAction,
-     BandPackingSymmetryReversesOrientation, BandPackingSymmetryCircleAction, negOneSucc,
-         negTwoSucc, h2, h3] using hlt
-
 private theorem huAt613 :
     ∀ (q : Fin 4 → CircleCoordinates), (ProperBandQuadruple q) → (
     let u : Fin 4 → CircleCoordinates := ![q 0, q 2, q 3, q 1]
@@ -541,28 +474,6 @@ private theorem huAt613 :
   · simpa [u] using hq.2 1
   · simpa [u] using hq.2 2
   · simpa [u] using hq.2 0
-
-private theorem hnl'At620 :
-    ∀ (q : Fin 4 → CircleCoordinates), (∀ (i : Fin (4 : ℕ)), (q i).1 ≠ (0 : ℤ)) → (
-    let u : Fin 4 → CircleCoordinates := ![q 0, q 2, q 3, q 1]
-    ∀ i : Fin 4, (u i).1 ≠ 0) := by
-  classical
-  intro q hnoLine u i
-  fin_cases i <;> simp only [Fin.isValue, Fin.mk_one, Matrix.cons_val_one,
-      Matrix.cons_val_zero, ne_eq, u, Fin.reduceFinMk, Matrix.cons_val, Fin.zero_eta] <;> apply
-          hnoLine
-
-private theorem haum'At623 :
-    ∀ (q : Fin 4 → CircleCoordinates), (∀ (i : Fin (4 : ℕ)), ∀ (j : Fin (4 : ℕ)), (q i).1 = (1 :
-        ℤ) → (q j).1 = (1 : ℤ) → i = j) → (
-    let u : Fin 4 → CircleCoordinates := ![q 0, q 2, q 3, q 1]
-    ∀ i j : Fin 4, (u i).1 = 1 → (u j).1 = 1 → i = j) := by
-  classical
-  intro q hatMostOneUnit u i j hi hj
-  fin_cases i <;> fin_cases j <;> simp only [Fin.isValue, Fin.mk_one, Matrix.cons_val_one,
-      Matrix.cons_val_zero, Fin.reduceFinMk, Matrix.cons_val, Fin.reduceEq, u, Fin.zero_eta,
-      one_ne_zero, zero_ne_one] at hi hj ⊢ <;>
-    (exfalso; have e := hatMostOneUnit _ _ hi hj; omega)
 
 private theorem huAt646 :
     ∀ (q : Fin 4 → CircleCoordinates), (ProperBandQuadruple q) → (
@@ -578,81 +489,6 @@ private theorem huAt646 :
         · simpa [base] using hq.2 1
         · simpa [base] using hq.2 2
         · simpa [base] using hq.2 0⟩))
-
-private theorem hnl'At656 :
-    ∀ (q : Fin 4 → CircleCoordinates), (∀ (i : Fin (4 : ℕ)), (q i).1 ≠ (0 : ℤ)) → (
-    let base : Fin 4 → CircleCoordinates := ![q 0, q 2, q 3, q 1]
-    let u := BandPackingSymmetryQuadrupleAction .conjugate base
-    ∀ i : Fin 4, (u i).1 ≠ 0) := by
-  classical
-  intro q hnoLine base u i; fin_cases i <;> simp only [BandPackingSymmetryQuadrupleAction,
-      BandPackingSymmetryCircleAction, Fin.isValue, Matrix.cons_val_zero,
-      BandPackingSymmetryReversesOrientation, ↓reduceIte, neg_zero, Fin.succ_zero_eq_one,
-      Matrix.cons_val_one, Matrix.cons_val_succ, Matrix.cons_val, Fin.mk_one, ne_eq, u, base,
-      Fin.reduceFinMk, Fin.zero_eta] <;> apply hnoLine
-
-private theorem haum'At660 :
-    ∀ (q : Fin 4 → CircleCoordinates), (∀ (i : Fin (4 : ℕ)), ∀ (j : Fin (4 : ℕ)), (q i).1 = (1 :
-        ℤ) → (q j).1 = (1 : ℤ) → i = j) → (
-    let base : Fin 4 → CircleCoordinates := ![q 0, q 2, q 3, q 1]
-    let u := BandPackingSymmetryQuadrupleAction .conjugate base
-    ∀ i j : Fin 4, (u i).1 = 1 → (u j).1 = 1 → i = j) := by
-  classical
-  intro q hatMostOneUnit base u i j hi hj
-  fin_cases i <;> fin_cases j <;> simp only [BandPackingSymmetryQuadrupleAction,
-      BandPackingSymmetryCircleAction, Fin.isValue, Matrix.cons_val_zero,
-      BandPackingSymmetryReversesOrientation, ↓reduceIte, neg_zero, Fin.succ_zero_eq_one,
-      Matrix.cons_val_one, Matrix.cons_val_succ, Matrix.cons_val, Fin.mk_one, Fin.reduceFinMk,
-      Fin.reduceEq, u, base, Fin.zero_eta, one_ne_zero, zero_ne_one] at hi hj ⊢ <;>
-    (exfalso; have e := hatMostOneUnit _ _ hi hj; omega)
-
-private theorem h0'At670 :
-    ∀ (q : Fin 4 → CircleCoordinates), ∀ (p : Fin (4 : ℕ) → CircleCoordinates), (p (0 : Fin (4 :
-        ℕ)) = q (2 : Fin (4 : ℕ))) → (
-    let base : Fin 4 → CircleCoordinates := ![q 0, q 2, q 3, q 1]
-    let u := BandPackingSymmetryQuadrupleAction .conjugate base
-    let pp := BandPackingSymmetryQuadrupleAction .conjugate p
-    ((-1 : Fin 3).succ = 3) → (((-2 : Fin 3).succ = 2) → (
-    pp 0 = u 1))) := by
-  classical
-  intro q p h0 base u pp negOneSucc negTwoSucc
-  let reflect : CircleCoordinates → CircleCoordinates := fun C => (C.1, GaussianReflection
-      C.2)
-  simpa [u, pp, base, BandPackingSymmetryQuadrupleAction,
-     BandPackingSymmetryReversesOrientation, BandPackingSymmetryCircleAction, negOneSucc,
-         negTwoSucc, reflect] using congrArg reflect h0
-
-private theorem h2'At673 :
-    ∀ (q : Fin 4 → CircleCoordinates), ∀ (p : Fin (4 : ℕ) → CircleCoordinates), (p (3 : Fin (4 :
-        ℕ)) = q (1 : Fin (4 : ℕ))) → (
-    let base : Fin 4 → CircleCoordinates := ![q 0, q 2, q 3, q 1]
-    let u := BandPackingSymmetryQuadrupleAction .conjugate base
-    let pp := BandPackingSymmetryQuadrupleAction .conjugate p
-    ((-1 : Fin 3).succ = 3) → (((-2 : Fin 3).succ = 2) → (
-    pp 2 = u 2))) := by
-  classical
-  intro q p h3 base u pp negOneSucc negTwoSucc
-  let reflect : CircleCoordinates → CircleCoordinates := fun C => (C.1, GaussianReflection
-      C.2)
-  simpa [u, pp, base, BandPackingSymmetryQuadrupleAction,
-     BandPackingSymmetryReversesOrientation, BandPackingSymmetryCircleAction, negOneSucc,
-         negTwoSucc, reflect] using congrArg reflect h3
-
-private theorem h3'At676 :
-    ∀ (q : Fin 4 → CircleCoordinates), ∀ (p : Fin (4 : ℕ) → CircleCoordinates), (p (2 : Fin (4 :
-        ℕ)) = q (3 : Fin (4 : ℕ))) → (
-    let base : Fin 4 → CircleCoordinates := ![q 0, q 2, q 3, q 1]
-    let u := BandPackingSymmetryQuadrupleAction .conjugate base
-    let pp := BandPackingSymmetryQuadrupleAction .conjugate p
-    ((-1 : Fin 3).succ = 3) → (((-2 : Fin 3).succ = 2) → (
-    pp 3 = u 3))) := by
-  classical
-  intro q p h2 base u pp negOneSucc negTwoSucc
-  let reflect : CircleCoordinates → CircleCoordinates := fun C => (C.1, GaussianReflection
-      C.2)
-  simpa [u, pp, base, BandPackingSymmetryQuadrupleAction,
-     BandPackingSymmetryReversesOrientation, BandPackingSymmetryCircleAction, negOneSucc,
-         negTwoSucc, reflect] using congrArg reflect h2
 
 private theorem hlt2'At683 :
     ∀ (q : Fin 4 → CircleCoordinates), ∀ (p : Fin (4 : ℕ) → CircleCoordinates),
@@ -692,19 +528,6 @@ private theorem hlt3'At686 :
      BandPackingSymmetryReversesOrientation, BandPackingSymmetryCircleAction] using
          hsecond.2.2.2.2.2.1
 
-private theorem hord'At689 :
-    ∀ (q : Fin 4 → CircleCoordinates), ∀ (p : Fin (4 : ℕ) → CircleCoordinates), (p (2 : Fin (4 :
-        ℕ)) = q (3 : Fin (4 : ℕ))) → ((p (3 : Fin (4 : ℕ)) = q (1 : Fin (4 : ℕ))) → (((p (2 : Fin
-        (4 : ℕ))).1 < (p (3 : Fin (4 : ℕ))).1) → (
-    let base : Fin 4 → CircleCoordinates := ![q 0, q 2, q 3, q 1]
-    let u := BandPackingSymmetryQuadrupleAction .conjugate base
-    ((-1 : Fin 3).succ = 3) → (((-2 : Fin 3).succ = 2) → ((u 3).1 < (u 2).1))))) := by
-  classical
-  intro q p h2 h3 hlt base u negOneSucc negTwoSucc
-  simpa [u, base, BandPackingSymmetryQuadrupleAction,
-     BandPackingSymmetryReversesOrientation, BandPackingSymmetryCircleAction, negOneSucc,
-         negTwoSucc, h2, h3] using hlt
-
 private theorem huAt713 :
     ∀ (q : Fin 4 → CircleCoordinates), (ProperBandQuadruple q) → (
     let u : Fin 4 → CircleCoordinates := ![q 0, q 3, q 1, q 2]
@@ -718,105 +541,8 @@ private theorem huAt713 :
   · simpa [u] using hq.2 0
   · simpa [u] using hq.2 1
 
-private theorem hnl'At720 :
-    ∀ (q : Fin 4 → CircleCoordinates), (∀ (i : Fin (4 : ℕ)), (q i).1 ≠ (0 : ℤ)) → (
-    let u : Fin 4 → CircleCoordinates := ![q 0, q 3, q 1, q 2]
-    ∀ i : Fin 4, (u i).1 ≠ 0) := by
-  classical
-  intro q hnoLine u i
-  fin_cases i <;> simp only [Fin.isValue, Fin.mk_one, Matrix.cons_val_one,
-      Matrix.cons_val_zero, ne_eq, u, Fin.reduceFinMk, Matrix.cons_val, Fin.zero_eta] <;> apply
-          hnoLine
-
-private theorem haum'At723 :
-    ∀ (q : Fin 4 → CircleCoordinates), (∀ (i : Fin (4 : ℕ)), ∀ (j : Fin (4 : ℕ)), (q i).1 = (1 :
-        ℤ) → (q j).1 = (1 : ℤ) → i = j) → (
-    let u : Fin 4 → CircleCoordinates := ![q 0, q 3, q 1, q 2]
-    ∀ i j : Fin 4, (u i).1 = 1 → (u j).1 = 1 → i = j) := by
-  classical
-  intro q hatMostOneUnit u i j hi hj
-  fin_cases i <;> fin_cases j <;> simp only [Fin.isValue, Fin.mk_one, Matrix.cons_val_one,
-      Matrix.cons_val_zero, Fin.reduceFinMk, Matrix.cons_val, Fin.reduceEq, u, Fin.zero_eta,
-      one_ne_zero, zero_ne_one] at hi hj ⊢ <;>
-    (exfalso; have e := hatMostOneUnit _ _ hi hj; omega)
-
 private abbrev hb :=
   ApollonianSuperharmonic.RetainedBoundaryDetails.huAt713
-
-private theorem hnl'At757 :
-    ∀ (q : Fin 4 → CircleCoordinates), (∀ (i : Fin (4 : ℕ)), (q i).1 ≠ (0 : ℤ)) → (
-    let base : Fin 4 → CircleCoordinates := ![q 0, q 3, q 1, q 2]
-    let u := BandPackingSymmetryQuadrupleAction .conjugate base
-    ∀ i : Fin 4, (u i).1 ≠ 0) := by
-  classical
-  intro q hnoLine base u i; fin_cases i <;> simp only [BandPackingSymmetryQuadrupleAction,
-      BandPackingSymmetryCircleAction, Fin.isValue, Matrix.cons_val_zero,
-      BandPackingSymmetryReversesOrientation, ↓reduceIte, neg_zero, Fin.succ_zero_eq_one,
-      Matrix.cons_val_one, Matrix.cons_val_succ, Matrix.cons_val, Fin.mk_one, ne_eq, u, base,
-      Fin.reduceFinMk, Fin.zero_eta] <;> apply hnoLine
-
-private theorem haum'At761 :
-    ∀ (q : Fin 4 → CircleCoordinates), (∀ (i : Fin (4 : ℕ)), ∀ (j : Fin (4 : ℕ)), (q i).1 = (1 :
-        ℤ) → (q j).1 = (1 : ℤ) → i = j) → (
-    let base : Fin 4 → CircleCoordinates := ![q 0, q 3, q 1, q 2]
-    let u := BandPackingSymmetryQuadrupleAction .conjugate base
-    ∀ i j : Fin 4, (u i).1 = 1 → (u j).1 = 1 → i = j) := by
-  classical
-  intro q hatMostOneUnit base u i j hi hj
-  fin_cases i <;> fin_cases j <;> simp only [BandPackingSymmetryQuadrupleAction,
-      BandPackingSymmetryCircleAction, Fin.isValue, Matrix.cons_val_zero,
-      BandPackingSymmetryReversesOrientation, ↓reduceIte, neg_zero, Fin.succ_zero_eq_one,
-      Matrix.cons_val_one, Matrix.cons_val_succ, Matrix.cons_val, Fin.mk_one, Fin.reduceFinMk,
-      Fin.reduceEq, u, base, Fin.zero_eta, one_ne_zero, zero_ne_one] at hi hj ⊢ <;>
-    (exfalso; have e := hatMostOneUnit _ _ hi hj; omega)
-
-private theorem h0'At771 :
-    ∀ (q : Fin 4 → CircleCoordinates), ∀ (p : Fin (4 : ℕ) → CircleCoordinates), (p (0 : Fin (4 :
-        ℕ)) = q (3 : Fin (4 : ℕ))) → (
-    let base : Fin 4 → CircleCoordinates := ![q 0, q 3, q 1, q 2]
-    let u := BandPackingSymmetryQuadrupleAction .conjugate base
-    let pp := BandPackingSymmetryQuadrupleAction .conjugate p
-    ((-1 : Fin 3).succ = 3) → (((-2 : Fin 3).succ = 2) → (
-    pp 0 = u 1))) := by
-  classical
-  intro q p h0 base u pp negOneSucc negTwoSucc
-  let reflect : CircleCoordinates → CircleCoordinates := fun C => (C.1, GaussianReflection
-      C.2)
-  simpa [u, pp, base, BandPackingSymmetryQuadrupleAction,
-     BandPackingSymmetryReversesOrientation, BandPackingSymmetryCircleAction, negOneSucc,
-         negTwoSucc, reflect] using congrArg reflect h0
-
-private theorem h2'At774 :
-    ∀ (q : Fin 4 → CircleCoordinates), ∀ (p : Fin (4 : ℕ) → CircleCoordinates), (p (3 : Fin (4 :
-        ℕ)) = q (2 : Fin (4 : ℕ))) → (
-    let base : Fin 4 → CircleCoordinates := ![q 0, q 3, q 1, q 2]
-    let u := BandPackingSymmetryQuadrupleAction .conjugate base
-    let pp := BandPackingSymmetryQuadrupleAction .conjugate p
-    ((-1 : Fin 3).succ = 3) → (((-2 : Fin 3).succ = 2) → (
-    pp 2 = u 2))) := by
-  classical
-  intro q p h3 base u pp negOneSucc negTwoSucc
-  let reflect : CircleCoordinates → CircleCoordinates := fun C => (C.1, GaussianReflection
-      C.2)
-  simpa [u, pp, base, BandPackingSymmetryQuadrupleAction,
-     BandPackingSymmetryReversesOrientation, BandPackingSymmetryCircleAction, negOneSucc,
-         negTwoSucc, reflect] using congrArg reflect h3
-
-private theorem h3'At777 :
-    ∀ (q : Fin 4 → CircleCoordinates), ∀ (p : Fin (4 : ℕ) → CircleCoordinates), (p (2 : Fin (4 :
-        ℕ)) = q (1 : Fin (4 : ℕ))) → (
-    let base : Fin 4 → CircleCoordinates := ![q 0, q 3, q 1, q 2]
-    let u := BandPackingSymmetryQuadrupleAction .conjugate base
-    let pp := BandPackingSymmetryQuadrupleAction .conjugate p
-    ((-1 : Fin 3).succ = 3) → (((-2 : Fin 3).succ = 2) → (
-    pp 3 = u 3))) := by
-  classical
-  intro q p h2 base u pp negOneSucc negTwoSucc
-  let reflect : CircleCoordinates → CircleCoordinates := fun C => (C.1, GaussianReflection
-      C.2)
-  simpa [u, pp, base, BandPackingSymmetryQuadrupleAction,
-     BandPackingSymmetryReversesOrientation, BandPackingSymmetryCircleAction, negOneSucc,
-         negTwoSucc, reflect] using congrArg reflect h2
 
 private theorem hlt2'At784 :
     ∀ (q : Fin 4 → CircleCoordinates), ∀ (p : Fin (4 : ℕ) → CircleCoordinates),
@@ -855,19 +581,6 @@ private theorem hlt3'At787 :
   simpa [u, base, BandPackingSymmetryQuadrupleAction,
      BandPackingSymmetryReversesOrientation, BandPackingSymmetryCircleAction] using
          hthird.2.2.2.2.2.1
-
-private theorem hord'At790 :
-    ∀ (q : Fin 4 → CircleCoordinates), ∀ (p : Fin (4 : ℕ) → CircleCoordinates), (p (2 : Fin (4 :
-        ℕ)) = q (1 : Fin (4 : ℕ))) → ((p (3 : Fin (4 : ℕ)) = q (2 : Fin (4 : ℕ))) → (((p (2 : Fin
-        (4 : ℕ))).1 < (p (3 : Fin (4 : ℕ))).1) → (
-    let base : Fin 4 → CircleCoordinates := ![q 0, q 3, q 1, q 2]
-    let u := BandPackingSymmetryQuadrupleAction .conjugate base
-    ((-1 : Fin 3).succ = 3) → (((-2 : Fin 3).succ = 2) → ((u 3).1 < (u 2).1))))) := by
-  classical
-  intro q p h2 h3 hlt base u negOneSucc negTwoSucc
-  simpa [u, base, BandPackingSymmetryQuadrupleAction,
-     BandPackingSymmetryReversesOrientation, BandPackingSymmetryCircleAction, negOneSucc,
-         negTwoSucc, h2, h3] using hlt
 
 end RetainedBoundaryDetails
 
@@ -968,24 +681,33 @@ private theorem firstParentCase :
         simpa [pp] using BandPackingSymmetryProperCovariance .conjugate _ hpr
       have ht' : ProperBandQuadruple tt := by
         simpa [tt] using BandPackingSymmetryProperCovariance .conjugate _ htr
-      have hnl' := RetainedBoundaryDetails.hnl'At549 q hnoLine
-      have haum' := RetainedBoundaryProof.haum'At397 q hatMostOneUnit
+      let index : Fin 4 → Fin 4 := ![0, 1, 3, 2]
+      have hindex : Function.Injective index := by decide
+      have hcurvature : ∀ i, (u i).1 = (q (index i)).1 := by
+        intro i
+        fin_cases i <;> rfl
+      obtain ⟨hnl', haum'⟩ := RetainedBoundaryDetails.curvatureInvariants q u index
+        hindex hcurvature hnoLine hatMostOneUnit
       have negOneSucc : (-1 : Fin 3).succ = 3 := by decide
       have negTwoSucc : (-2 : Fin 3).succ = 2 := by decide
       have hs' := RetainedBoundaryProof.conjugateSuccessor q p hsucc
       have negOne : (-1 : Fin 3) = 2 := by decide
       have negTwo : (-2 : Fin 3) = 1 := by decide
-      have h0' := RetainedBoundaryDetails.h0'At562 q p h0 negOne negTwo
-      have h2' := RetainedBoundaryDetails.h2'At566 q p h3 negOne negTwo
-      have h3' := RetainedBoundaryDetails.h3'At570 q p h2 negOne negTwo
+      have h0' : pp 0 = u 1 :=
+        RetainedBoundaryDetails.conjugateCoordinate pr q 0 1 h0
+      have h2' : pp 2 = u 2 :=
+        RetainedBoundaryDetails.conjugateCoordinate pr q 3 3 h3
+      have h3' : pp 3 = u 3 :=
+        RetainedBoundaryDetails.conjugateCoordinate pr q 2 2 h2
       have ht0' := RetainedBoundaryDetails.ht0'At574 q p h3 t ht0 negOne negTwo
       have ht1' := RetainedBoundaryDetails.ht1'At577 q p h2 t ht1 negOne negTwo
       have hlt2' := RetainedBoundaryDetails.hlt2'At580 q p hfirst
           negOneSucc negTwoSucc
       have hlt3' := RetainedBoundaryDetails.hlt3'At583 q p hfirst
           negOneSucc negTwoSucc
-      have hord' := RetainedBoundaryDetails.hord'At586 q p h2 h3 hlt
-          negOneSucc negTwoSucc
+      have hord' : (u 3).1 < (u 2).1 := by
+        rw [hcurvature 3, hcurvature 2]
+        simpa [index, h2, h3] using hlt
       have tupleEq := RetainedBoundaryDetails.htuple q
       refine ⟨.conjugate, ?_⟩
       simpa [u, tupleEq] using buildConfiguration u pp tt hu hnl' haum' hp' hs' h0' h2' h3'
@@ -1040,8 +762,13 @@ private theorem secondParentCase :
       rcases bd with ⟨t, ht, ht0, ht1, hlt⟩
       let u : Fin 4 → CircleCoordinates := ![q 0, q 2, q 3, q 1]
       have hu := RetainedBoundaryDetails.huAt613 q hq
-      have hnl' := RetainedBoundaryDetails.hnl'At620 q hnoLine
-      have haum' := RetainedBoundaryDetails.haum'At623 q hatMostOneUnit
+      let index : Fin 4 → Fin 4 := ![0, 2, 3, 1]
+      have hindex : Function.Injective index := by decide
+      have hcurvature : ∀ i, (u i).1 = (q (index i)).1 := by
+        intro i
+        fin_cases i <;> rfl
+      obtain ⟨hnl', haum'⟩ := RetainedBoundaryDetails.curvatureInvariants q u index
+        hindex hcurvature hnoLine hatMostOneUnit
       have hs' : u = ![(2 * (p 0).1 + 2 * (p 2).1 + 2 * (p 3).1 - (p 1).1,
           2 * (p 0).2 + 2 * (p 2).2 + 2 * (p 3).2 - (p 1).2), p 0, p 2, p 3] := hsucc
       have h0' : p 0 = u 1 := by simpa [u] using h0
@@ -1064,22 +791,29 @@ private theorem secondParentCase :
       have hu := RetainedBoundaryDetails.huAt646 q hq
       have hp' : ProperBandQuadruple pp := BandPackingSymmetryProperCovariance .conjugate p hp
       have ht' : ProperBandQuadruple tt := BandPackingSymmetryProperCovariance .conjugate t ht
-      have hnl' := RetainedBoundaryDetails.hnl'At656 q hnoLine
-      have haum' := RetainedBoundaryDetails.haum'At660 q hatMostOneUnit
-      have negOneSucc : (-1 : Fin 3).succ = 3 := by decide
-      have negTwoSucc : (-2 : Fin 3).succ = 2 := by decide
+      let index : Fin 4 → Fin 4 := ![0, 2, 1, 3]
+      have hindex : Function.Injective index := by decide
+      have hcurvature : ∀ i, (u i).1 = (q (index i)).1 := by
+        intro i
+        fin_cases i <;> rfl
+      obtain ⟨hnl', haum'⟩ := RetainedBoundaryDetails.curvatureInvariants q u index
+        hindex hcurvature hnoLine hatMostOneUnit
       have hs' := RetainedBoundaryProof.conjugateSuccessor base p hsucc
-      have h0' := RetainedBoundaryDetails.h0'At670 q p h0 negOneSucc negTwoSucc
-      have h2' := RetainedBoundaryDetails.h2'At673 q p h3 negOneSucc negTwoSucc
-      have h3' := RetainedBoundaryDetails.h3'At676 q p h2 negOneSucc negTwoSucc
+      have h0' : pp 0 = u 1 :=
+        RetainedBoundaryDetails.conjugateCoordinate p base 0 1 h0
+      have h2' : pp 2 = u 2 :=
+        RetainedBoundaryDetails.conjugateCoordinate p base 3 3 h3
+      have h3' : pp 3 = u 3 :=
+        RetainedBoundaryDetails.conjugateCoordinate p base 2 2 h2
       have ht0' : tt 0 = u 2 := by simp [u, tt, base, BandPackingSymmetryQuadrupleAction,
         BandPackingSymmetryReversesOrientation, BandPackingSymmetryCircleAction, ht0, h3]
       have ht1' : tt 1 = u 3 := by simp [u, tt, base, BandPackingSymmetryQuadrupleAction,
         BandPackingSymmetryReversesOrientation, BandPackingSymmetryCircleAction, ht1, h2]
       have hlt2' := RetainedBoundaryDetails.hlt2'At683 q p hsecond
       have hlt3' := RetainedBoundaryDetails.hlt3'At686 q p hsecond
-      have hord' := RetainedBoundaryDetails.hord'At689 q p h2 h3 hlt
-          negOneSucc negTwoSucc
+      have hord' : (u 3).1 < (u 2).1 := by
+        rw [hcurvature 3, hcurvature 2]
+        simpa [index, h2, h3] using hlt
       refine ⟨.conjugate, ?_⟩
       simpa [u, base] using buildConfiguration u pp tt hu hnl' haum' hp' hs' h0' h2' h3'
         hlt2' hlt3' ht' ht0' ht1' hord'
@@ -1133,8 +867,13 @@ private theorem thirdParentCase :
       rcases bd with ⟨t, ht, ht0, ht1, hlt⟩
       let u : Fin 4 → CircleCoordinates := ![q 0, q 3, q 1, q 2]
       have hu := RetainedBoundaryDetails.huAt713 q hq
-      have hnl' := RetainedBoundaryDetails.hnl'At720 q hnoLine
-      have haum' := RetainedBoundaryDetails.haum'At723 q hatMostOneUnit
+      let index : Fin 4 → Fin 4 := ![0, 3, 1, 2]
+      have hindex : Function.Injective index := by decide
+      have hcurvature : ∀ i, (u i).1 = (q (index i)).1 := by
+        intro i
+        fin_cases i <;> rfl
+      obtain ⟨hnl', haum'⟩ := RetainedBoundaryDetails.curvatureInvariants q u index
+        hindex hcurvature hnoLine hatMostOneUnit
       have hs' := hsucc
       have h0' : p 0 = u 1 := by simpa [u] using h0
       have h2' : p 2 = u 2 := by simpa [u] using h2
@@ -1157,22 +896,29 @@ private theorem thirdParentCase :
       have hu : ProperBandQuadruple u := BandPackingSymmetryProperCovariance .conjugate base hb
       have hp' : ProperBandQuadruple pp := BandPackingSymmetryProperCovariance .conjugate p hp
       have ht' : ProperBandQuadruple tt := BandPackingSymmetryProperCovariance .conjugate t ht
-      have hnl' := RetainedBoundaryDetails.hnl'At757 q hnoLine
-      have haum' := RetainedBoundaryDetails.haum'At761 q hatMostOneUnit
-      have negOneSucc : (-1 : Fin 3).succ = 3 := by decide
-      have negTwoSucc : (-2 : Fin 3).succ = 2 := by decide
+      let index : Fin 4 → Fin 4 := ![0, 3, 2, 1]
+      have hindex : Function.Injective index := by decide
+      have hcurvature : ∀ i, (u i).1 = (q (index i)).1 := by
+        intro i
+        fin_cases i <;> rfl
+      obtain ⟨hnl', haum'⟩ := RetainedBoundaryDetails.curvatureInvariants q u index
+        hindex hcurvature hnoLine hatMostOneUnit
       have hs' := RetainedBoundaryProof.conjugateSuccessor base p hsucc
-      have h0' := RetainedBoundaryDetails.h0'At771 q p h0 negOneSucc negTwoSucc
-      have h2' := RetainedBoundaryDetails.h2'At774 q p h3 negOneSucc negTwoSucc
-      have h3' := RetainedBoundaryDetails.h3'At777 q p h2 negOneSucc negTwoSucc
+      have h0' : pp 0 = u 1 :=
+        RetainedBoundaryDetails.conjugateCoordinate p base 0 1 h0
+      have h2' : pp 2 = u 2 :=
+        RetainedBoundaryDetails.conjugateCoordinate p base 3 3 h3
+      have h3' : pp 3 = u 3 :=
+        RetainedBoundaryDetails.conjugateCoordinate p base 2 2 h2
       have ht0' : tt 0 = u 2 := by simp [u, tt, base, BandPackingSymmetryQuadrupleAction,
         BandPackingSymmetryReversesOrientation, BandPackingSymmetryCircleAction, ht0, h3]
       have ht1' : tt 1 = u 3 := by simp [u, tt, base, BandPackingSymmetryQuadrupleAction,
         BandPackingSymmetryReversesOrientation, BandPackingSymmetryCircleAction, ht1, h2]
       have hlt2' := RetainedBoundaryDetails.hlt2'At784 q p hthird
       have hlt3' := RetainedBoundaryDetails.hlt3'At787 q p hthird
-      have hord' := RetainedBoundaryDetails.hord'At790 q p h2 h3 hlt
-          negOneSucc negTwoSucc
+      have hord' : (u 3).1 < (u 2).1 := by
+        rw [hcurvature 3, hcurvature 2]
+        simpa [index, h2, h3] using hlt
       refine ⟨.conjugate, ?_⟩
       simpa [u, base] using buildConfiguration u pp tt hu hnl' haum' hp' hs' h0' h2' h3'
         hlt2' hlt3' ht' ht0' ht1' hord'
