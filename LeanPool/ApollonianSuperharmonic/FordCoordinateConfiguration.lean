@@ -956,50 +956,6 @@ private theorem hq1ltN :
   have hlt := Q.q₁_lt
   omega
 
-private theorem hv32At908 :
-    (∀ (Q : FordFareyParameter), ∀ (q1pos : 0 < Q.q₁), ∀ (hgtq : Q.q₁ > Q.q₂), let pd : Int
-        := Q.p₁ - Q.p₂;
-    let qd : Nat := Q.q₁ - Q.q₂;
-    ∀ (hqdlt : qd < Q.q₁), ∀ (hd1 : pd * (Q.q₁ : Int) - (qd : Int) * Q.p₁ = 1), ∀ (hd2 : Q.p₂ *
-        (Q.q₁ : Int) - (Q.q₂ : Int) * Q.p₁ = -1), ∀ (hred : Nat.Coprime Q.q₁ Q.p₁.natAbs), ∀
-            (hq1gt : 1 < Q.q₁), let R : FordFareyParameter := {
-      p := Q.p₁, q := Q.q₁, q_pos := q1pos, reduced := hred,
-      p₁ := pd, q₁ := qd, p₂ := Q.p₂, q₂ := Q.q₂,
-      sum_p := by dsimp [pd]; ring,
-      sum_q := by dsimp [qd]; omega,
-      det₁ := hd1, det₂ := hd2, q₁_lt := hqdlt,
-      q₂_pos := Q.q₂_pos,
-      unit_case := by intro hu; omega };
-    (BandVectors.1 (FordRecursiveQuadruple R (3 : Fin (4 : ℕ))) (FordRecursiveQuadruple R (2 :
-        Fin (4 : ℕ))) = -(⟨(0 : ℤ), (1 : ℤ)⟩ * (↑R.q₂ : GaussianInt))) → (BandVectors.1
-        ((FordRecursiveQuadruple Q) 3)
-        ((FordRecursiveQuadruple Q) 2) =
-        -((⟨0, 1⟩ : GaussianInt) * (Q.q₂ : GaussianInt)))) := by
-  classical
-  intro Q q1pos hgtq pd qd hqdlt hd1 hd2 hred hq1gt R rv32
-  simpa [FordRecursiveQuadruple, R] using rv32
-
-private theorem ha32At914 :
-    (∀ (Q : FordFareyParameter), ∀ (q1pos : 0 < Q.q₁), ∀ (hgtq : Q.q₁ > Q.q₂), let pd : Int
-        := Q.p₁ - Q.p₂;
-    let qd : Nat := Q.q₁ - Q.q₂;
-    ∀ (hqdlt : qd < Q.q₁), ∀ (hd1 : pd * (Q.q₁ : Int) - (qd : Int) * Q.p₁ = 1), ∀ (hd2 : Q.p₂ *
-        (Q.q₁ : Int) - (Q.q₂ : Int) * Q.p₁ = -1), ∀ (hred : Nat.Coprime Q.q₁ Q.p₁.natAbs), ∀
-            (hq1gt : 1 < Q.q₁), let R : FordFareyParameter := {
-      p := Q.p₁, q := Q.q₁, q_pos := q1pos, reduced := hred,
-      p₁ := pd, q₁ := qd, p₂ := Q.p₂, q₂ := Q.q₂,
-      sum_p := by dsimp [pd]; ring,
-      sum_q := by dsimp [qd]; omega,
-      det₁ := hd1, det₂ := hd2, q₁_lt := hqdlt,
-      q₂_pos := Q.q₂_pos,
-      unit_case := by intro hu; omega };
-    (BandVectors.2 (FordRecursiveQuadruple R (3 : Fin (4 : ℕ))) (FordRecursiveQuadruple R (2 :
-        Fin (4 : ℕ))) = -(↑R.p₂ : GaussianInt)) → (BandVectors.2 ((FordRecursiveQuadruple Q) 3)
-        ((FordRecursiveQuadruple Q) 2) = -(Q.p₂ : GaussianInt))) := by
-  classical
-  intro Q q1pos hgtq pd qd hqdlt hd1 hd2 hred hq1gt R ra32
-  simpa [FordRecursiveQuadruple, R] using ra32
-
 private theorem hd2At925 :
     ∀ (Q : FordFareyParameter),
       Q.p₁ * (Q.q₂ : Int) - (Q.q₁ : Int) * Q.p₂ = 1 →
@@ -1034,48 +990,6 @@ private theorem hq2ltN :
   classical
   intro n Q hQ q2lt
   omega
-
-private theorem hv13At961 :
-    (∀ (Q : FordFareyParameter), ∀ (hgtq : ¬Q.q₁ > Q.q₂), let pd : Int := Q.p₂ - Q.p₁;
-    let qd : Nat := Q.q₂ - Q.q₁;
-    ∀ (hqdpos : 0 < qd), ∀ (hd1 : Q.p₁ * (Q.q₂ : Int) - (Q.q₁ : Int) * Q.p₂ = 1), ∀ (hd2 : pd *
-        (Q.q₂ : Int) - (qd : Int) * Q.p₂ = -1), ∀ (hred : Nat.Coprime Q.q₂ Q.p₂.natAbs), ∀ (hq2gt
-            : 1 < Q.q₂), let R : FordFareyParameter := {
-      p := Q.p₂, q := Q.q₂, q_pos := Q.q₂_pos, reduced := hred,
-      p₁ := Q.p₁, q₁ := Q.q₁, p₂ := pd, q₂ := qd,
-      sum_p := by dsimp [pd]; ring,
-      sum_q := by dsimp [qd]; omega,
-      det₁ := hd1, det₂ := hd2, q₁_lt := by omega,
-      q₂_pos := hqdpos,
-      unit_case := by intro hu; omega };
-    (BandVectors.1 (FordRecursiveQuadruple R (1 : Fin (4 : ℕ))) (FordRecursiveQuadruple R (3 :
-        Fin (4 : ℕ))) = (↑R.q₁ : GaussianInt)) → (BandVectors.1 ((FordRecursiveQuadruple Q) 1)
-        ((FordRecursiveQuadruple Q) 3) = (Q.q₁ : GaussianInt))) := by
-  classical
-  intro Q hgtq pd qd hqdpos hd1 hd2 hred hq2gt R rv13
-  simpa [FordRecursiveQuadruple, R] using rv13
-
-private theorem ha13At966 :
-    (∀ (Q : FordFareyParameter), ∀ (hgtq : ¬Q.q₁ > Q.q₂), let pd : Int := Q.p₂ - Q.p₁;
-    let qd : Nat := Q.q₂ - Q.q₁;
-    ∀ (hqdpos : 0 < qd), ∀ (hd1 : Q.p₁ * (Q.q₂ : Int) - (Q.q₁ : Int) * Q.p₂ = 1), ∀ (hd2 : pd *
-        (Q.q₂ : Int) - (qd : Int) * Q.p₂ = -1), ∀ (hred : Nat.Coprime Q.q₂ Q.p₂.natAbs), ∀ (hq2gt
-            : 1 < Q.q₂), let R : FordFareyParameter := {
-      p := Q.p₂, q := Q.q₂, q_pos := Q.q₂_pos, reduced := hred,
-      p₁ := Q.p₁, q₁ := Q.q₁, p₂ := pd, q₂ := qd,
-      sum_p := by dsimp [pd]; ring,
-      sum_q := by dsimp [qd]; omega,
-      det₁ := hd1, det₂ := hd2, q₁_lt := by omega,
-      q₂_pos := hqdpos,
-      unit_case := by intro hu; omega };
-    (BandVectors.2 (FordRecursiveQuadruple R (1 : Fin (4 : ℕ))) (FordRecursiveQuadruple R (3 :
-        Fin (4 : ℕ))) = ⟨(0 : ℤ), (1 : ℤ)⟩ * (↑R.p₁ : GaussianInt)) → (BandVectors.2
-        ((FordRecursiveQuadruple Q) 1)
-        ((FordRecursiveQuadruple Q) 3) =
-        (⟨0, 1⟩ : GaussianInt) * (Q.p₁ : GaussianInt))) := by
-  classical
-  intro Q hgtq pd qd hqdpos hd1 hd2 hred hq2gt R ra13
-  simpa [FordRecursiveQuadruple, R] using ra13
 
 private theorem hq1pos :
     ∀ (P : FordFareyParameter), ((1 : ℕ) < P.q) → (0 < P.q₁) := by
@@ -1298,12 +1212,14 @@ theorem FordCoordinateConfiguration (P : FordFareyParameter) :
           have hsemi := FordConfigurationProof.hsemiAt342 Q q1pos hgtq hqdpos hqdlt hd1 hd2
               hred hq1gt hsucc
           have direct := stepLaw (FordRecursiveQuadruple R) rsemi
-          have hv32 := FordConfigurationDetails.hv32At908 Q q1pos hgtq hqdlt hd1 hd2 hred hq1gt
-              rv32
+          have hv32 : BandVectors.1 (FordRecursiveQuadruple Q 3) (FordRecursiveQuadruple Q 2) =
+              -((⟨0, 1⟩ : GaussianInt) * (Q.q₂ : GaussianInt)) := by
+            simpa [FordRecursiveQuadruple, R] using rv32
           have hv13 := FordConfigurationProof.hv13At359 Q q1pos hgtq hqdlt hd1 hd2 hred hq1gt rv32
                     rv13 direct
-          have ha32 := FordConfigurationDetails.ha32At914 Q q1pos hgtq hqdlt hd1 hd2 hred hq1gt
-              ra32
+          have ha32 : BandVectors.2 (FordRecursiveQuadruple Q 3) (FordRecursiveQuadruple Q 2) =
+              -(Q.p₂ : GaussianInt) := by
+            simpa [FordRecursiveQuadruple, R] using ra32
           have ha13 := FordConfigurationProof.ha13At390 Q q1pos hgtq hqdlt hd1 hd2 hred hq1gt
               ra32 ra13 direct
           exact ⟨hsemi, hv32, hv13, ha32, ha13⟩
@@ -1338,10 +1254,14 @@ theorem FordCoordinateConfiguration (P : FordFareyParameter) :
           have hsemi := FordConfigurationProof.hsemiAt448 Q hgtq q1pos' hqdpos hd1 hd2 hred
               hq2gt hfinal
           have direct := stepLaw _ trot
-          have hv13 := FordConfigurationDetails.hv13At961 Q hgtq hqdpos hd1 hd2 hred hq2gt rv13
+          have hv13 : BandVectors.1 (FordRecursiveQuadruple Q 1) (FordRecursiveQuadruple Q 3) =
+              (Q.q₁ : GaussianInt) := by
+            simpa [FordRecursiveQuadruple, R] using rv13
           have hv32 := FordConfigurationProof.hv32At473 Q hgtq q1pos' hqdpos hd1 hd2 hred hq2gt
                     rv32 rv13 direct
-          have ha13 := FordConfigurationDetails.ha13At966 Q hgtq hqdpos hd1 hd2 hred hq2gt ra13
+          have ha13 : BandVectors.2 (FordRecursiveQuadruple Q 1) (FordRecursiveQuadruple Q 3) =
+              (⟨0, 1⟩ : GaussianInt) * (Q.p₁ : GaussianInt) := by
+            simpa [FordRecursiveQuadruple, R] using ra13
           have ha32 := FordConfigurationProof.ha32At503 Q hgtq q1pos' hqdpos hd1 hd2 hred hq2gt
                     ra32 ra13 direct
           exact ⟨hsemi, hv32, hv13, ha32, ha13⟩

@@ -5,6 +5,7 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.ApollonianSuperharmonic.LatticeFootprintIncidence
 public import Mathlib.Init
 public import Mathlib.Topology.MetricSpace.Pseudo.Constructions
 public import Mathlib.Basic.Real.Basic
@@ -226,17 +227,7 @@ theorem P4456T2VertexInterior (T : ProtoTile) (hne : T.cells.Nonempty)
 -- BODY
   classical
   have hsome : ∃ j : Fin 4, LatticeVertexIncidentCell x j ∈ T.cells := by
-    simp only [FootprintVertices, hne, ite_true, Set.mem_ofPred_eq] at hx
-    rcases hx with ⟨c, hc, hcase⟩
-    rcases hcase with rfl | rfl | rfl | rfl
-    · exact ⟨0, by simp [LatticeVertexIncidentCell, hc]⟩
-    · refine ⟨1, ?_⟩
-      simpa [LatticeVertexIncidentCell, sub_eq_add_neg] using hc
-    · refine ⟨3, ?_⟩
-      simpa [LatticeVertexIncidentCell, sub_eq_add_neg] using hc
-    · refine ⟨2, ?_⟩
-      simpa [LatticeVertexIncidentCell, sub_eq_add_neg, add_assoc, add_comm,
-        add_left_comm] using hc
+    exact LatticeFootprintIncidence.incidentCell T x hne hx
   constructor
   · constructor
     · intro hinterior j

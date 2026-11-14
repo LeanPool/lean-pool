@@ -5,6 +5,7 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.ApollonianSuperharmonic.LatticeFootprintIncidence
 public import Mathlib.Init
 
 public import LeanPool.ApollonianSuperharmonic.PeriodicTileAdjacentContactRegularity
@@ -431,21 +432,7 @@ private theorem third_owner_degree :
     (LatticeTileGridStructure _ (P.tiles_are_disks z)).1.1
   have hincident :
       ∃ j : Fin 4, LatticeVertexIncidentCell x j ∈ (P.tile z).cells := by
-    simp only [FootprintVertices, hzne, ite_true, Set.mem_ofPred_eq] at hx
-    rcases hx with ⟨c, hc, h | h | h | h⟩
-    · refine ⟨0, ?_⟩
-      simpa [LatticeVertexIncidentCell] using h ▸ hc
-    · refine ⟨1, ?_⟩
-      subst x
-      convert hc using 1; simp [LatticeVertexIncidentCell]
-    · refine ⟨3, ?_⟩
-      subst x
-      convert hc using 1; simp [LatticeVertexIncidentCell]
-    · refine ⟨2, ?_⟩
-      change x - 1 - ⟨0, 1⟩ ∈ (P.tile z).cells
-      rw [h]
-      convert hc using 1
-      ext <;> simp
+    exact LatticeFootprintIncidence.incidentCell (P.tile z) x hzne hx
   intro e f hxe hxf he hf
   by_contra hne
   have hcover := (LocalLatticeInterfaceSectors.2 (P.tile a) (P.tile b) x

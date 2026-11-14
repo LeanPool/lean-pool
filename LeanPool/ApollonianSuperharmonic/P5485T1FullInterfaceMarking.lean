@@ -5,6 +5,7 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.ApollonianSuperharmonic.LatticeFootprintIncidence
 public import Mathlib.Init
 
 public import LeanPool.ApollonianSuperharmonic.ExactTileInterfaceTriple
@@ -40,13 +41,7 @@ theorem P5485T1FullInterfaceMarking
   have incident (U : ProtoTile) (hne : U.cells.Nonempty)
       (z : GaussianInt) (hz : z ∈ FootprintVertices U) :
       ∃ k : Fin 4, LatticeVertexIncidentCell z k ∈ U.cells := by
-    simp only [FootprintVertices, ite_eq_left hne, Set.mem_ofPred_eq] at hz
-    rcases hz with ⟨c, hc, rfl | rfl | rfl | rfl⟩
-    · exact ⟨0, by simpa [LatticeVertexIncidentCell] using hc⟩
-    · exact ⟨1, by simpa [LatticeVertexIncidentCell] using hc⟩
-    · exact ⟨3, by simpa [LatticeVertexIncidentCell] using hc⟩
-    · exact ⟨2, by simpa [LatticeVertexIncidentCell, sub_eq_add_neg,
-        add_assoc, add_comm, add_left_comm] using hc⟩
+    exact LatticeFootprintIncidence.incidentCell U z hne hz
   have coverage :
       (∀ z, z = x ∨ z = x - 1 ∨ z = x - ⟨0, 1⟩ ∨
         z = x - 1 - ⟨0, 1⟩ → z ∈ A.cells ∨ z ∈ B.cells) ↔

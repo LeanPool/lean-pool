@@ -5,6 +5,7 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.ApollonianSuperharmonic.LatticeFootprintIncidence
 public import Mathlib.Init
 public import LeanPool.ApollonianSuperharmonic.TileTouchingDisjoint
 
@@ -307,25 +308,6 @@ private theorem firstFour :
   · intro h
     exact ((R.unique_common x).mpr (h.trans hr.symm)).1.2
 
-private theorem incident :
-    (by
-      classical
-      exact
-        ∀ (x : GaussianInt), ∀ (N : ProtoTile), (N.cells.Nonempty) → ((x ∈ FootprintVertices N) →
-            (∃ j : Fin 4, LatticeVertexIncidentCell x j ∈ N.cells)) ) := by
-  classical
-  intro x N hne hn
-  simp only [FootprintVertices, hne, ite_true, Set.mem_ofPred_eq] at hn
-  rcases hn with ⟨a, ha, h | h | h | h⟩
-  · exact ⟨0, by simpa [LatticeVertexIncidentCell] using h ▸ ha⟩
-  · refine ⟨1, ?_⟩; rw [h]; simpa [LatticeVertexIncidentCell] using ha
-  · refine ⟨3, ?_⟩; rw [h]; simpa [LatticeVertexIncidentCell] using ha
-  · refine ⟨2, ?_⟩
-    change x - 1 - ⟨0, 1⟩ ∈ N.cells
-    rw [h]
-    convert ha using 1
-    ext <;> simp
-
 private abbrev touchDisjoint := ApollonianSuperharmonic.TileTouchingDisjoint.cells
 
 private theorem nested :
@@ -495,7 +477,7 @@ theorem P4590T1MixedCompanionMarks
   have incident (N : ProtoTile) (hne : N.cells.Nonempty)
       (hn : x ∈ FootprintVertices N) :
       ∃ j : Fin 4, LatticeVertexIncidentCell x j ∈ N.cells :=
-          MixedCompanionMarksGeometry.incident x N hne hn
+          LatticeFootprintIncidence.incidentCell N x hne hn
   have touchDisjoint (M N : ProtoTile) (hm : M.cells.Nonempty)
       (hn : N.cells.Nonempty) (ht : TileTouching M N) : Disjoint M.cells N.cells :=
           MixedCompanionMarksGeometry.touchDisjoint M N hm hn ht

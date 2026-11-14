@@ -5,6 +5,7 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.ApollonianSuperharmonic.LatticeFootprintIncidence
 public import Mathlib.Init
 public import LeanPool.ApollonianSuperharmonic.TileTranslationProperties
 public import LeanPool.ApollonianSuperharmonic.LatticeTileNonempty
@@ -324,26 +325,6 @@ private theorem boundary_raw :
   simp only [BoundaryFootprintVertices, ite_eq_left hne, Set.mem_ofPred_eq] at hx
   obtain ⟨e, he, hxe⟩ := hx
   exact edge_vertex_footprint U e (boundary_edge_footprint U e he) x hxe
-
-private theorem footprint_incident :
-    (by
-      classical
-      exact
-        ∀ (U : ProtoTile), (U.cells.Nonempty) → (∀ (x : GaussianInt), (x ∈ FootprintVertices U) →
-            (∃ j : Fin 4, LatticeVertexIncidentCell x j ∈ U.cells)) ) := by
-  classical
-  intro U hne x hx
-  simp only [FootprintVertices, ite_eq_left hne, Set.mem_ofPred_eq] at hx
-  rcases hx with ⟨c, hc, h | h | h | h⟩
-  · exact ⟨0, by simpa [LatticeVertexIncidentCell] using h ▸ hc⟩
-  · subst x
-    exact ⟨1, by simpa [LatticeVertexIncidentCell] using hc⟩
-  · subst x
-    exact ⟨3, by simpa [LatticeVertexIncidentCell] using hc⟩
-  · refine ⟨2, ?_⟩
-    change x - 1 - ⟨0, 1⟩ ∈ U.cells
-    rw [h]
-    convert hc using 1; ext <;> simp
 
 private theorem boundary_missing_incident :
     (by
@@ -1266,7 +1247,9 @@ theorem BandExceptionalRestorationSectorOrder
   have boundary_raw := RestorationSectorGeometry.boundary_raw
       (BoundaryFootprintInclusion.boundaryEdge)
       (RestorationSectorGeometry.edge_vertex_footprint)
-  have footprint_incident := RestorationSectorGeometry.footprint_incident
+  have footprint_incident (U : ProtoTile) (hne : U.cells.Nonempty)
+      (x : GaussianInt) (hx : x ∈ FootprintVertices U) :=
+    LatticeFootprintIncidence.incidentCell U x hne hx
   have boundary_missing_incident := RestorationSectorGeometry.boundary_missing_incident
   have hQO := RestorationSectorGeometry.hQO q cfg
       C₀ T cert touching_disjoint hQne

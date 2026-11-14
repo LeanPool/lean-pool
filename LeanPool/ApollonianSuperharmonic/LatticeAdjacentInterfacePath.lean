@@ -5,6 +5,7 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.ApollonianSuperharmonic.LatticeFootprintIncidence
 public import LeanPool.ApollonianSuperharmonic.BoundaryFootprintInclusion
 
 public import Mathlib.Init
@@ -84,24 +85,10 @@ private theorem touching_path :
     · intro hx
       have hu : x ∈ FootprintVertices U := hx.1
       have hv : x ∈ FootprintVertices V := hx.2
-      simp only [FootprintVertices, ite_eq_left hU, Set.mem_ofPred_eq] at hu
-      simp only [FootprintVertices, ite_eq_left hV, Set.mem_ofPred_eq] at hv
       have hincU : ∃ j : Fin 4, LatticeVertexIncidentCell x j ∈ U.cells := by
-        obtain ⟨z, hz, hc⟩ := hu
-        rcases hc with rfl | rfl | rfl | rfl
-        · exact ⟨0, by simpa [LatticeVertexIncidentCell] using hz⟩
-        · exact ⟨1, by simpa [LatticeVertexIncidentCell] using hz⟩
-        · exact ⟨3, by simpa [LatticeVertexIncidentCell] using hz⟩
-        · exact ⟨2, by simpa [LatticeVertexIncidentCell, sub_eq_add_neg,
-            add_assoc, add_comm, add_left_comm] using hz⟩
+        exact LatticeFootprintIncidence.incidentCell U x hU hu
       have hincV : ∃ j : Fin 4, LatticeVertexIncidentCell x j ∈ V.cells := by
-        obtain ⟨z, hz, hc⟩ := hv
-        rcases hc with rfl | rfl | rfl | rfl
-        · exact ⟨0, by simpa [LatticeVertexIncidentCell] using hz⟩
-        · exact ⟨1, by simpa [LatticeVertexIncidentCell] using hz⟩
-        · exact ⟨3, by simpa [LatticeVertexIncidentCell] using hz⟩
-        · exact ⟨2, by simpa [LatticeVertexIncidentCell, sub_eq_add_neg,
-            add_assoc, add_comm, add_left_comm] using hz⟩
+        exact LatticeFootprintIncidence.incidentCell V x hV hv
       obtain ⟨j, hj⟩ := hincU
       obtain ⟨k, hk⟩ := hincV
       exact incident_boundary U V x hd ⟨j, hj⟩ ⟨k, hk⟩

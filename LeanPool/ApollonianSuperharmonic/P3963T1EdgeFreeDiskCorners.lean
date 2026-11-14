@@ -5,6 +5,7 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.ApollonianSuperharmonic.LatticeFootprintIncidence
 public import Mathlib.Init
 
 public import LeanPool.ApollonianSuperharmonic.FootprintVertices
@@ -40,13 +41,7 @@ theorem P3963T1EdgeFreeDiskCorners (U V : ProtoTile)
   have rawIncident (T : ProtoTile) (hne : T.cells.Nonempty)
       (x : GaussianInt) (hx : x ∈ FootprintVertices T) :
       ∃ j : Fin 4, LatticeVertexIncidentCell x j ∈ T.cells := by
-    simp only [FootprintVertices, hne, ite_true, Set.mem_ofPred_eq] at hx
-    obtain ⟨c, hc, h | h | h | h⟩ := hx
-    · exact ⟨0, by simpa [LatticeVertexIncidentCell, h] using hc⟩
-    · exact ⟨1, by simpa [LatticeVertexIncidentCell, h] using hc⟩
-    · exact ⟨3, by simpa [LatticeVertexIncidentCell, h] using hc⟩
-    · exact ⟨2, by simpa [LatticeVertexIncidentCell, h, sub_eq_add_neg,
-        add_comm, add_left_comm, add_assoc] using hc⟩
+    exact LatticeFootprintIncidence.incidentCell T x hne hx
   have hrawBoundary : FootprintVertices U ∩ FootprintVertices V ⊆
       BoundaryFootprintVertices U ∩ BoundaryFootprintVertices V := by
     rintro x ⟨hxU, hxV⟩

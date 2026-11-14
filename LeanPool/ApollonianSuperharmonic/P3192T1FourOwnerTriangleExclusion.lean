@@ -5,6 +5,7 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.ApollonianSuperharmonic.LatticeFootprintIncidence
 public import Mathlib.Init
 
 public import LeanPool.ApollonianSuperharmonic.P3102T2CommonEdgeSectorTransition
@@ -36,22 +37,7 @@ theorem P3192T1FourOwnerTriangleExclusion
   classical
   have incident (i : Fin 4) :
       ∃ j : Fin 4, LatticeVertexIncidentCell x j ∈ (T i).cells := by
-    have h := hx i
-    simp only [FootprintVertices, hne i, ite_true, Set.mem_ofPred_eq] at h
-    rcases h with ⟨c, hc, h | h | h | h⟩
-    · refine ⟨0, ?_⟩
-      simpa [LatticeVertexIncidentCell] using h ▸ hc
-    · refine ⟨1, ?_⟩
-      subst x
-      convert hc using 1; simp [LatticeVertexIncidentCell]
-    · refine ⟨3, ?_⟩
-      subst x
-      convert hc using 1; simp [LatticeVertexIncidentCell]
-    · refine ⟨2, ?_⟩
-      change x - 1 - ⟨0, 1⟩ ∈ (T i).cells
-      rw [h]
-      convert hc using 1
-      ext <;> simp
+    exact LatticeFootprintIncidence.incidentCell (T i) x (hne i) (hx i)
   choose sector hsector using incident
   have hinj : Function.Injective sector := by
     intro i j hij

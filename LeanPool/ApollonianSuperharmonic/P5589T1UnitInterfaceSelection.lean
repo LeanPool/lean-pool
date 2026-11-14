@@ -5,6 +5,7 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.ApollonianSuperharmonic.LatticeFootprintIncidence
 public import Mathlib.Init
 
 public import LeanPool.ApollonianSuperharmonic.OpposingStringInterfacePath
@@ -140,13 +141,7 @@ theorem P5589T1UnitInterfaceSelection
       · exact Or.inr ⟨hBV hcells.1,hAU hcells.2⟩
   have incident (T : ProtoTile) (hT : T.cells.Nonempty) (hx : x ∈ FootprintVertices T) :
       ∃ j : Fin 4, inc j ∈ T.cells := by
-    simp only [FootprintVertices, ite_eq_left hT, Set.mem_ofPred_eq] at hx
-    obtain ⟨c,hc,hx⟩ := hx
-    rcases hx with hx | hx | hx | hx
-    · refine ⟨0,?_⟩; simpa [inc,LatticeVertexIncidentCell,hx] using hc
-    · refine ⟨1,?_⟩; simpa [inc,LatticeVertexIncidentCell,hx] using hc
-    · refine ⟨3,?_⟩; simpa [inc,LatticeVertexIncidentCell,hx] using hc
-    · refine ⟨2,?_⟩; simpa [inc,LatticeVertexIncidentCell,hx,sub_sub] using hc
+    simpa [inc] using LatticeFootprintIncidence.incidentCell T x hT hx
   have endpointGood (T : ProtoTile) (h : PartialOdometer)
       (hzip : (T, h) ∈ ts.zip hs) (ht : TouchingTriple U V T)
       (hx : x ∈ FootprintVertices T) (hr : h = hm ∨ h = hp)

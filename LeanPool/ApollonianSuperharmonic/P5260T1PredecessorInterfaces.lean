@@ -5,6 +5,7 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.ApollonianSuperharmonic.LatticeFootprintIncidence
 public import Mathlib.Init
 public import LeanPool.ApollonianSuperharmonic.TileTranslationProperties
 public import LeanPool.ApollonianSuperharmonic.SimpleGridPathBetween
@@ -52,20 +53,7 @@ private theorem rawBoundaryVertices :
     have incident (T : ProtoTile) (hT : T.cells.Nonempty)
         (hmem : z ∈ FootprintVertices T) :
         ∃ j : Fin 4, LatticeVertexIncidentCell z j ∈ T.cells := by
-      simp only [FootprintVertices, ite_eq_left hT, Set.mem_ofPred_eq] at hmem
-      obtain ⟨c, hc, hcorner⟩ := hmem
-      rcases hcorner with hcorner | hcorner | hcorner | hcorner
-      · subst z
-        exact ⟨0, by simpa [LatticeVertexIncidentCell] using hc⟩
-      · subst z
-        exact ⟨1, by simpa [LatticeVertexIncidentCell] using hc⟩
-      · subst z
-        exact ⟨3, by simpa [LatticeVertexIncidentCell] using hc⟩
-      · subst z
-        have hcell : LatticeVertexIncidentCell (c + 1 + ⟨0, 1⟩) 2 = c := by
-          simp [LatticeVertexIncidentCell]
-          abel
-        exact ⟨2, by rw [hcell]; exact hc⟩
+      exact LatticeFootprintIncidence.incidentCell T z hT hmem
     obtain ⟨ix, hx⟩ := incident X hX hz.1
     obtain ⟨iy, hy⟩ := incident Y hY hz.2
     have hyX : LatticeVertexIncidentCell z iy ∉ X.cells := by

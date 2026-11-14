@@ -5,6 +5,7 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.ApollonianSuperharmonic.LatticeFootprintIncidence
 public import Mathlib.Init
 
 public import LeanPool.ApollonianSuperharmonic.P4339T1PrecursorSupportGeometry
@@ -45,16 +46,7 @@ theorem P4616T1MixedCoarseSectors
   have incident (N : ProtoTile) (hne : N.cells.Nonempty)
       (z : GaussianInt) (hz : z ∈ FootprintVertices N) :
       ∃ j : Fin 4, LatticeVertexIncidentCell z j ∈ N.cells := by
-    simp only [FootprintVertices, hne, ite_true, Set.mem_ofPred_eq] at hz
-    rcases hz with ⟨a, ha, h | h | h | h⟩
-    · exact ⟨0, by simpa [LatticeVertexIncidentCell] using h ▸ ha⟩
-    · refine ⟨1, ?_⟩; rw [h]; simpa [LatticeVertexIncidentCell] using ha
-    · refine ⟨3, ?_⟩; rw [h]; simpa [LatticeVertexIncidentCell] using ha
-    · refine ⟨2, ?_⟩
-      change z - 1 - ⟨0, 1⟩ ∈ N.cells
-      rw [h]
-      convert ha using 1
-      ext <;> simp
+    exact LatticeFootprintIncidence.incidentCell N z hne hz
   have corner (N : ProtoTile) (z : GaussianInt) (j : Fin 4)
       (hj : LatticeVertexIncidentCell z j ∈ N.cells) : z ∈ FootprintVertices N := by
     have hne : N.cells.Nonempty := ⟨_, hj⟩

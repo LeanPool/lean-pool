@@ -5,6 +5,7 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.ApollonianSuperharmonic.LatticeFootprintIncidence
 public import Mathlib.Init
 
 public import LeanPool.ApollonianSuperharmonic.BandOrderedGeneralPeriodicBlockCells
@@ -45,20 +46,7 @@ theorem P4616T1PeriodicEndpointExclusion
   have incident (R : ProtoTile) (z : GaussianInt)
       (hne : R.cells.Nonempty) (hz : z ∈ FootprintVertices R) :
       ∃ j : Fin 4, LatticeVertexIncidentCell z j ∈ R.cells := by
-    simp only [FootprintVertices, hne, ite_true, Set.mem_ofPred_eq] at hz
-    rcases hz with ⟨a, ha, h | h | h | h⟩
-    · exact ⟨0, by simpa [LatticeVertexIncidentCell] using h ▸ ha⟩
-    · refine ⟨1, ?_⟩
-      rw [h]
-      simpa [LatticeVertexIncidentCell] using ha
-    · refine ⟨3, ?_⟩
-      rw [h]
-      simpa [LatticeVertexIncidentCell] using ha
-    · refine ⟨2, ?_⟩
-      change z - 1 - ⟨0, 1⟩ ∈ R.cells
-      rw [h]
-      convert ha using 1
-      ext <;> simp
+    exact LatticeFootprintIncidence.incidentCell R z hne hz
   intro hxy
   obtain ⟨j, hj⟩ := incident (TileTranslation S d) y hne hy
   have hjT : LatticeVertexIncidentCell y j ∈ (TileTranslation T d).cells := by

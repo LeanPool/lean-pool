@@ -5,6 +5,7 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.ApollonianSuperharmonic.LatticeFootprintIncidence
 public import Mathlib.Init
 public import LeanPool.ApollonianSuperharmonic.FootprintFiniteness
 public import LeanPool.ApollonianSuperharmonic.SimpleGridPathBetween
@@ -411,31 +412,6 @@ private theorem huniqueRho :
   · rintro rfl
     exact hrho
 
-private theorem footprint_incident :
-    (by
-      classical
-      exact
-        ∀ (T : ProtoTile), (T.cells.Nonempty) → (∀ (z : GaussianInt), (z ∈ FootprintVertices T) →
-            (∃ j : Fin 4, LatticeVertexIncidentCell z j ∈ T.cells)) ) := by
-  classical
-  intro T hne z hz
-  let I : GaussianInt := ⟨0, 1⟩
-  unfold FootprintVertices at hz
-  rw [ite_eq_left hne] at hz
-  rcases hz with ⟨c, hc, h | h | h | h⟩
-  · subst z
-    exact ⟨0, by simpa [LatticeVertexIncidentCell] using hc⟩
-  · subst z
-    refine ⟨1, ?_⟩
-    simpa [LatticeVertexIncidentCell] using hc
-  · subst z
-    refine ⟨3, ?_⟩
-    simpa [LatticeVertexIncidentCell, I, Zsqrtd.ext_iff] using hc
-  · subst z
-    refine ⟨2, ?_⟩
-    change c + 1 + I - 1 - I ∈ T.cells
-    convert hc using 1; ring
-
 private theorem endpoint_of_third :
     (by
       classical
@@ -725,7 +701,7 @@ theorem LatticeTileThreeDiskJunction
       htripleVfinite rho hrho z
   have footprint_incident (T : ProtoTile) (hne : T.cells.Nonempty)
       (z : GaussianInt) (hz : z ∈ FootprintVertices T) :=
-          ThreeDiskJunctionGeometry.footprint_incident T hne z hz
+          LatticeFootprintIncidence.incidentCell T z hne hz
   have endpoint_of_third (X Y Z : ProtoTile)
       (hX : LatticeTile X) (hY : LatticeTile Y)
       (hZne : Z.cells.Nonempty)

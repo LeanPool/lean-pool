@@ -5,6 +5,7 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.ApollonianSuperharmonic.LatticeFootprintIncidence
 public import Mathlib.Init
 
 public import LeanPool.ApollonianSuperharmonic.P4418T3EndpointOwnerIndices
@@ -102,23 +103,6 @@ private theorem root_disjoint :
   classical
   intro q cfg C T cert m n r s hne
   exact (BandOrderedGeneralPeriodicBlockCells q cfg C T cert).2 m n r s hne
-
-private theorem footprint_incident :
-    (by
-      classical
-      exact
-        ∀ (U : ProtoTile), (U.cells.Nonempty) → (∀ (z : GaussianInt), (z ∈ FootprintVertices U) →
-            (∃ k : Fin 4, LatticeVertexIncidentCell z k ∈ U.cells)) ) := by
-  classical
-  intro U hne z hz
-  simp only [FootprintVertices, hne, ite_true, Set.mem_ofPred_eq] at hz
-  rcases hz with ⟨c, hc, rfl | rfl | rfl | rfl⟩
-  · exact ⟨0, by simpa [LatticeVertexIncidentCell] using hc⟩
-  · exact ⟨1, by simpa [LatticeVertexIncidentCell] using hc⟩
-  · exact ⟨3, by simpa [LatticeVertexIncidentCell] using hc⟩
-  · refine ⟨2, ?_⟩
-    simpa [LatticeVertexIncidentCell, sub_eq_add_neg, add_assoc,
-      add_comm, add_left_comm] using hc
 
 private theorem incident_footprint :
     (by
@@ -941,8 +925,8 @@ theorem P4418T3RoutedBlockCriterion
   have old_nonempty : (TileTranslation T shift).cells.Nonempty :=
     (LatticeTileGridStructure _ old_lattice).1.1
   have footprint_incident (U : ProtoTile) (hne : U.cells.Nonempty)
-      (z : GaussianInt) (hz : z ∈ FootprintVertices U) := RoutedBlockGeometry.footprint_incident
-          U hne z hz
+      (z : GaussianInt) (hz : z ∈ FootprintVertices U) :=
+    LatticeFootprintIncidence.incidentCell U z hne hz
   have incident_footprint (U : ProtoTile) (hne : U.cells.Nonempty)
       (z : GaussianInt) (k : Fin 4)
       (hk : LatticeVertexIncidentCell z k ∈ U.cells) := RoutedBlockGeometry.incident_footprint U

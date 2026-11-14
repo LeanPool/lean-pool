@@ -5,6 +5,7 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.ApollonianSuperharmonic.LatticeFootprintIncidence
 public import Mathlib.Init
 
 public import LeanPool.ApollonianSuperharmonic.BandExceptionalRestorationSectorOrder
@@ -387,49 +388,6 @@ private theorem hsegMembership :
     · exact Or.inl hl
     · exact Or.inr (Or.inl (List.mem_of_mem_tail hm))
   · exact Or.inr (Or.inr (List.mem_of_mem_tail hr))
-
-private theorem incidentRaw :
-    (by
-      classical
-      exact
-        ∀ (q : Fin (4 : ℕ) → CircleCoordinates),
-          ∀ (cfg : BandOrderedGeneralConfiguration q),
-            ∀ (C : BandCircle),
-              ∀ (T : ProtoTile),
-                ∀ (cert : BandOrderedGeneralLayoutCertificate q cfg C T),
-                  ∀ (x : GaussianInt),
-                    Nat.card
-                          { is : Fin (3 : ℕ) × Bool //
-                            x ∈ BoundaryFootprintVertices (cert.P is.1 is.2) } =
-                        (2 : ℕ) →
-                      GaussianRealPoint x ≠ TileCentroid T →
-                        (∀ (i : Fin 3),
-                            ∀ (s : Bool),
-                              (i, s) ≠ ((0 : Fin 3), true) →
-                                (i, s) ≠ ((0 : Fin 3), false) →
-                                x ∈ BoundaryFootprintVertices (cert.P i s) → False) →
-                          ∀ (U : ProtoTile),
-                            U.cells.Nonempty →
-                              x ∈ FootprintVertices U →
-                                ∃ j : Fin 4, LatticeVertexIncidentCell x j ∈ U.cells
-    ) := by
-  classical
-  intro q cfg C T cert x hk hnoncentral noThird U hUne hu
-  simp only [FootprintVertices, hUne, ite_true, Set.mem_ofPred_eq] at hu
-  rcases hu with ⟨z, hz, hcorner⟩
-  rcases hcorner with h | h | h | h
-  · refine ⟨0, ?_⟩
-    simpa [LatticeVertexIncidentCell] using h ▸ hz
-  · refine ⟨1, ?_⟩
-    subst x
-    simpa [LatticeVertexIncidentCell] using hz
-  · refine ⟨3, ?_⟩
-    subst x
-    simpa [LatticeVertexIncidentCell] using hz
-  · refine ⟨2, ?_⟩
-    subst x
-    change (z + 1 + ⟨0, 1⟩) - 1 - ⟨0, 1⟩ ∈ U.cells
-    convert hz using 1; ext <;> simp
 
 private theorem hOpositive :
     (by
@@ -921,7 +879,9 @@ theorem P4590T1RestoredBoundaryGeometry :
       (RestoredBoundaryGeometry.hf1 q cfg C T cert f g hfaces) (RestoredBoundaryGeometry.hf2 q
       cfg C T cert f g hfaces) (RestoredBoundaryGeometry.hf12 q cfg C T cert) hrho1 hrho2)
       hconnectorWalk
-  have incidentRaw := RestoredBoundaryGeometry.incidentRaw q cfg C T cert x hk hnoncentral noThird
+  have incidentRaw (U : ProtoTile) (hUne : U.cells.Nonempty)
+      (hu : x ∈ FootprintVertices U) :=
+    LatticeFootprintIncidence.incidentCell U x hUne hu
   have hOpositive := RestoredBoundaryGeometry.hOpositive q cfg C T cert x hnoncentral hOcent
   have hOcuts := RestoredBoundaryGeometry.hOcuts q cfg C T cert x hIncidentA hIncidentB
       translation_zero incidentRaw hOpositive

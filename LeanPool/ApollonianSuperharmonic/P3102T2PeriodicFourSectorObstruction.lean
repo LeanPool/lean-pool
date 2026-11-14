@@ -5,6 +5,7 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.ApollonianSuperharmonic.LatticeFootprintIncidence
 public import Mathlib.Init
 
 public import LeanPool.ApollonianSuperharmonic.P3102T2CommonEdgeSectorTransition
@@ -119,16 +120,7 @@ theorem P3102T2PeriodicFourSectorObstruction
   have htne : (P.tile t).cells.Nonempty :=
     (LatticeTileGridStructure _ (P.tiles_are_disks t)).1.1
   have htincident : ∃ r : Fin 4, LatticeVertexIncidentCell x r ∈ (P.tile t).cells := by
-    simp only [FootprintVertices, htne, ite_true, Set.mem_ofPred_eq] at hxt
-    obtain ⟨c, hc, h | h | h | h⟩ := hxt
-    · exact ⟨0, by simpa [LatticeVertexIncidentCell, h] using hc⟩
-    · refine ⟨1, ?_⟩
-      simpa [LatticeVertexIncidentCell, h] using hc
-    · refine ⟨3, ?_⟩
-      simpa [LatticeVertexIncidentCell, h] using hc
-    · refine ⟨2, ?_⟩
-      simpa [LatticeVertexIncidentCell, h, sub_eq_add_neg,
-        add_comm, add_left_comm, add_assoc] using hc
+    exact LatticeFootprintIncidence.incidentCell (P.tile t) x htne hxt
   obtain ⟨r, hr⟩ := htincident
   have htr : t = owner r := (hpartition _).unique hr (howner r)
   have hadj0 : P.plane.adjacent (owner 0) t := by

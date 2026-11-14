@@ -5,6 +5,7 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.ApollonianSuperharmonic.LatticeFootprintIncidence
 public import Mathlib.Init
 
 public import LeanPool.ApollonianSuperharmonic.TileTouching
@@ -62,13 +63,7 @@ theorem P4677T2TouchingWalk (T U : ProtoTile) (x y : GaussianInt)
   have incident (V : ProtoTile) (z : GaussianInt) (hn : V.cells.Nonempty)
       (hz : z ∈ FootprintVertices V) :
       ∃ j : Fin 4, LatticeVertexIncidentCell z j ∈ V.cells := by
-    simp only [FootprintVertices, ite_eq_left hn, Set.mem_ofPred_eq] at hz
-    rcases hz with ⟨c, hc, rfl | rfl | rfl | rfl⟩
-    · exact ⟨0, by simpa [LatticeVertexIncidentCell] using hc⟩
-    · exact ⟨1, by simpa [LatticeVertexIncidentCell] using hc⟩
-    · exact ⟨3, by simpa [LatticeVertexIncidentCell] using hc⟩
-    · exact ⟨2, by simpa [LatticeVertexIncidentCell, sub_eq_add_neg,
-        add_assoc, add_comm, add_left_comm] using hc⟩
+    exact LatticeFootprintIncidence.incidentCell V z hn hz
   rcases h with h | h | h
   · rcases h with ⟨hT, hU, hd, hp⟩
     let V := BoundaryFootprintVertices T ∩ BoundaryFootprintVertices U

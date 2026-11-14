@@ -5,6 +5,7 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.ApollonianSuperharmonic.LatticeFootprintIncidence
 public import Mathlib.Init
 public import LeanPool.ApollonianSuperharmonic.P4055T1GridPathImage
 public import LeanPool.ApollonianSuperharmonic.TileTranslationProperties
@@ -1069,14 +1070,7 @@ private theorem fixedPointNotCommon :
   intro T U k x hT hU hd hc hfixed hxT hxU
   have incident (Y : ProtoTile) (hne : Y.cells.Nonempty) (hx : x ∈ FootprintVertices Y) :
       ∃ j : Fin 4, LatticeVertexIncidentCell x j ∈ Y.cells := by
-    simp only [FootprintVertices, hne, ite_true, Set.mem_ofPred_eq] at hx
-    rcases hx with ⟨c, hc, h | h | h | h⟩
-    · refine ⟨0, ?_⟩; simpa [LatticeVertexIncidentCell] using h ▸ hc
-    · subst x; refine ⟨1, ?_⟩; simpa [LatticeVertexIncidentCell] using hc
-    · subst x; refine ⟨3, ?_⟩; simpa [LatticeVertexIncidentCell] using hc
-    · subst x; refine ⟨2, ?_⟩
-      convert hc using 1
-      ext <;> simp [LatticeVertexIncidentCell]
+    exact LatticeFootprintIncidence.incidentCell Y x hne hx
   obtain ⟨j, hj⟩ := incident U hU hxU
   obtain ⟨l, hl⟩ := incident T hT hxT
   have rotate (j : Fin 4) (hj : LatticeVertexIncidentCell x j ∈ U.cells) :
