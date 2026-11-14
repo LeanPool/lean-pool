@@ -14,8 +14,8 @@ public import LeanPool.RoyStrongSix.Roy.Support
 # Transport of Roy's invariants along a coordinate realization
 
 Let `X = (S ≤ T)` be an object and `ψ : ℂ^{d₀} × ℂ^{d₁} → ℂ^{k₀} × ℂ^{k₁}` a `ℂ`-linear map with
-`ker ψ ∩ T = S`, `ψ(T) = everything`, `ψ(Ω ∩ T) = Ω'`, whose second component is a map `ψ₁` of the
-second factor with `ker ψ₁ ∩ T₁ = S₁` and `ψ₁(T₁) = everything`. Then Roy's invariants of `X` are
+`ker ψ ∩ T = S`, `ψ(T) = everything`, `ψ(Ω ∩ T) = Ω'`, and let `ψ₁` be a map of the second factor
+with `ker ψ₁ ∩ T₁ = S₁` and `ψ₁(T₁) = everything`. Then Roy's invariants of `X` are
 the quantities of the coordinate object `(k₀, k₁, ψ(Y ∩ T), ψ(W ∩ T), ψ(V ∩ T))` that appear in
 Theorem 1.
 -/
@@ -56,7 +56,7 @@ theorem finrank_E (k0 k1 : ℕ) : finrank ℂ (E k0 k1) = k0 + k1 := by
 
 /-- The transport lemma. -/
 theorem transport (X : M.Ob) {k0 k1 : ℕ} (ψ : E M.d0 M.d1 →ₗ[ℂ] E k0 k1)
-    (ψ1 : (Fin M.d1 → ℂ) →ₗ[ℂ] (Fin k1 → ℂ)) (_ : ∀ x, (ψ x).2 = ψ1 x.2)
+    (ψ1 : (Fin M.d1 → ℂ) →ₗ[ℂ] (Fin k1 → ℂ))
     (hker : LinearMap.ker ψ ⊓ X.1.2.sub = X.1.1.sub) (htop : X.1.2.sub.map ψ = ⊤)
     (hker1 : LinearMap.ker ψ1 ⊓ X.1.2.S1 = X.1.1.S1) (htop1 : X.1.2.S1.map ψ1 = ⊤)
     (hΩ : (Omega M.d0 M.d1 ⊓ subQ X.1.2).map (ψ.restrictScalars ℚ) = Omega k0 k1) :

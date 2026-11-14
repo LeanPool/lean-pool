@@ -377,7 +377,7 @@ theorem exponents_le_of_power_bound (X : Params.Exps) (hn : 1 ≤ X.n)
 `ratio_of_obstruction` gives the ratio bound. -/
 theorem concl_of_obstruction {Y : Submodule ℚ (E d0 d1)} {W V : Submodule ℂ (E d0 d1)}
     (H : Hyps d0 d1 Y W V) (η : Fin ℓ → E d0 d1) (hηY : span ℚ (Set.range η) = Y)
-    (X : Params.Exps) (hXp : X.p = d1) (hXd : X.d = d0 + d1) (_ : X.n = finrank ℂ ↥V)
+    (X : Params.Exps) (hXp : X.p = d1) (hXd : X.d = d0 + d1)
     (hXq : X.q = d0 + d1 - finrank ℂ ↥V) (hqp : X.q ≤ X.p) (hn : 1 ≤ X.n)
     {C : ℝ} {β : ℕ} (hβ : C < β) (hβ1 : 1 ≤ β)
     (h0 : Submodule Qb (Fin d0 → Qb)) (U : Submodule ℚ (Fin d1 → ℚ)) (hnd : h0 ≠ ⊤ ∨ U ≠ ⊥)

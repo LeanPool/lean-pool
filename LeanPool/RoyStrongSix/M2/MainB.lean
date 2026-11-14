@@ -258,7 +258,7 @@ theorem multEstB [CharZero K] [IsAlgClosed K]
   have hpdim' : (hdata blk D K p).1 = (hdata blk D K (Lr W S Pt T r)).1 := hpdim.trans hflat
   /- 2. The stabilizer of `V = Z(p)`. -/
   have hGVsub : IsSubgroupG (stabG (zeros (p : Set B))) := stabG_isSubgroup D hIGp hD
-  obtain ⟨R, -, hZR⟩ := component D hIGp hD (gensR W S Pt T r) rfl hLrp hpdim'
+  obtain ⟨R, -, hZR⟩ := component D hIGp hD (gensR W S Pt T r) rfl hpdim'
   obtain ⟨V0, Λ0, hGVcl⟩ : ∃ V0 Λ0, stabG (zeros (p : Set B)) = prodSet V0 Λ0 :=
     ⟨_, _, classify hGVsub (stabG_eq_zeros (p := p))⟩
   set GV := stabG (zeros (p : Set B)) with hGV

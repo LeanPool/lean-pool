@@ -24,7 +24,8 @@ Everything is phrased with prime ideals and the bridge `hdim + ht = card σ`.
 * `vanish_zeros_eq` (Nullstellensatz on `G`, `K` algebraically closed): `I(Z(L)) = √L` for `I_G ≤
 L`.
 * `hdim_vanish_cosets`: a finite union of translates of `E` has the Hilbert dimension of `E`.
-* **`component`** (Roy §8.4.1): let `L = I_G + (gens)`, and `p ⊇ L` prime with `hdim p = hdim L`,
+* **`component`** (Roy §8.4.1): let `L = I_G + (gens)`, and `p` be prime containing `I_G`
+  with `hdim p = hdim L`,
   `V = Z(p)`. Then `G_V = {h : hV ⊆ V}` is an algebraic subgroup, and the zero set of
   `{P ∘ τ_v : P ∈ gens, v ∈ V}` is covered by finitely many cosets of `G_V`.
 -/
@@ -333,7 +334,7 @@ theorem stabG_eq_zeros :
 
 /-- **Roy's component step.** -/
 theorem component (hD : ∀ i, 1 ≤ D i) {L : Ideal B} (gens : Set B) (hLg : L = IG ⊔ Ideal.span gens)
-    (_ : L ≤ p) (hdim : (hdata blk D K p).1 = (hdata blk D K L).1) :
+    (hdim : (hdata blk D K p).1 = (hdata blk D K L).1) :
     ∃ R : Finset (GPt K d0 d1), (∀ a ∈ R, ∀ v ∈ zeros (p : Set B), ∀ P ∈ gens,
         eval (pt (gmul a v)) P = 0) ∧
       zeros {Q | ∃ P ∈ gens, ∃ v ∈ zeros (p : Set B), Q = transl v P} ⊆

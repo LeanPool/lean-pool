@@ -82,7 +82,7 @@ theorem stmt1_of_theorem1 (hT1 : WaldschmidtTheorem1)
       · change μ M.d0 M.d1 q ∈ X.1.2.sub
         rw [μ_apply]; exact ⟨X.1.2.S0.zero_mem, X.1.2.S1.smul_mem ω hqT⟩
   obtain ⟨hr, hd1, hvd, hwd, hc, he⟩ :=
-    transport X ψ ψ1 (fun x => rfl) hkerψ htopψ hker1 htop1 hΩψ
+    transport X ψ ψ1 hkerψ htopψ hker1 htop1 hΩψ
   -- the coordinate object
   set Y' : Submodule ℚ (E k0 k1) := (M.Y ⊓ subQ X.1.2).map (ψ.restrictScalars ℚ) with hY'
   set W' : Submodule ℂ (E k0 k1) := (M.W ⊓ X.1.2.sub).map ψ with hW'
@@ -208,7 +208,7 @@ theorem stmt1_of_theorem1 (hT1 : WaldschmidtTheorem1)
     rw [Submodule.map_comp, hΩψ]
     exact map_Omega_of_block s s1 hfst1 (fun x => by rw [hsplit]) P1s hs1surj
   obtain ⟨hr'', hd1'', hvd'', hwd'', hc'', he''⟩ :=
-    transport X'' σ σ1 (fun x => by rw [hσ]) hkerσ htopσ hkerσ1 htopσ1 hΩσ
+    transport X'' σ σ1 hkerσ htopσ hkerσ1 htopσ1 hΩσ
   -- identify the transported quantities with those of Theorem 1
   have eW : (M.W ⊓ X''.1.2.sub).map σ = W'.map s := Submodule.map_comp _ _ _
   have eY : (M.Y ⊓ subQ X''.1.2).map (σ.restrictScalars ℚ) = Y'.map (s.restrictScalars ℚ) := by

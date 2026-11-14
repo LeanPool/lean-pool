@@ -260,7 +260,7 @@ theorem core_of_multEst (hM : MultEst Qb) : CoreT1 := by
     obtain ⟨P, hP, hbid, hvan⟩ := vanishing_of_kernel D wb W hwb c hc0 hc
     obtain ⟨h0, U, hndg, hineq⟩ := hC W H.rat η D P T L0 L1 S' hP hbid hT1 hL01 hL11
       (fun s hs => hvan s hs)
-    exact concl_of_obstruction H η hηY X hXp hXd hXn hXq hqp hn1 hβC hβ1 h0 U hndg hineq
+    exact concl_of_obstruction H η hηY X hXp hXd hXq hqp hn1 hβC hβ1 h0 U hndg hineq
   · -- a non-zero maximal minor: contradiction
     exfalso
     set N := Fintype.card (Mono d0 d1 L0 L1) with hNdef

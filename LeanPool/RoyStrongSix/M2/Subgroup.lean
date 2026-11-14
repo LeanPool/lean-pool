@@ -220,7 +220,7 @@ def torusChar (U : Submodule ℚ (Fin d1 → ℚ)) {κ : Type*} [Fintype κ] (jj
     simp only [Subgroup.coe_mul, Pi.mul_apply, Units.val_mul, mul_pow, Finset.prod_mul_distrib]
 
 theorem torusChar_injective [CharZero K] (U : Submodule ℚ (Fin d1 → ℚ)) {κ : Type*} [Fintype κ]
-    (jj : κ → Fin d1) (_ : Function.Injective jj)
+    (jj : κ → Fin d1)
     (hind : LinearIndependent ℚ fun k => U.mkQ (Pi.single (jj k) 1)) :
     Function.Injective (torusChar (K := K) U jj) := by
   classical
@@ -367,7 +367,7 @@ theorem exists_indep_restr [CharZero K] (h0 : Submodule K (Fin d0 → K))
     intro w hw
     -- evaluate at the points `(Σ sᵢ vᵢ, y)`
     let χ := torusChar (K := K) U jj
-    have hχinj := torusChar_injective (K := K) U jj hj hind
+    have hχinj := torusChar_injective (K := K) U jj hind
     have hval : ∀ (s : Fin h → K) (y : TU K U),
         ∑ ab : ι, w ab * ((∏ i, s i ^ (ab.1 i : ℕ)) * χ (fun k => (ab.2 k : ℕ)) y) = 0 := by
       intro s y
