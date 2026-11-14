@@ -1,0 +1,448 @@
+/-
+Copyright (c) 2026 Wesley Pegden. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Wesley Pegden
+-/
+module
+
+public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.BoundaryFootprintInclusion
+
+public import LeanPool.ApollonianSuperharmonic.P4677T2TouchingWalk
+public import LeanPool.ApollonianSuperharmonic.TouchingTriple
+public import LeanPool.ApollonianSuperharmonic.LatticeTileBoundarySimpleGridCycle
+
+-- [TABLET NODE: P4677T2PrecursorWalk]
+
+/-!
+# P4677T2PrecursorWalk
+
+Adapted from Wesley Pegden’s Apache-2.0 Trellis formalization of Levine–Pegden–Smart.
+Changes: pool module paths, public exports, project namespace and current Mathlib compatibility.
+-/
+
+@[expose] public section
+
+namespace ApollonianSuperharmonic
+
+namespace PrecursorWalkGeometry
+
+private abbrev boundary_edge_footprint := BoundaryFootprintInclusion.boundaryEdge
+
+private abbrev edge_vertex := BoundaryFootprintInclusion.edgeVertex
+
+private abbrev boundary_vertex_footprint := BoundaryFootprintInclusion.boundaryVertex
+
+private theorem head_reach :
+    (by
+      classical
+      exact
+        ∀ (A : ProtoTile), ∀ (B : ProtoTile),
+        let R : GaussianInt → GaussianInt → Prop := fun u v =>
+          u ∈ FootprintVertices A ∩ FootprintVertices B ∧
+          v ∈ FootprintVertices A ∩ FootprintVertices B ∧
+          {u, v} ∈ FootprintEdges A ∩ FootprintEdges B
+        ∀ (u : GaussianInt), ∀ (l : List GaussianInt), List.IsChain R (u :: l) → ∀ z ∈ u :: l,
+            Relation.ReflTransGen R u z ) := by
+  classical
+  intro A B R u l hc
+  induction l generalizing u with
+  | nil =>
+      intro z hz
+      have heq : z = u := by simpa using hz
+      subst z
+      exact .refl
+  | cons v l ih =>
+      intro z hz
+      rcases List.mem_cons.mp hz with rfl | hz
+      · exact .refl
+      · exact (Relation.ReflTransGen.single
+          (List.isChain_cons_cons.mp hc).1).trans
+          (ih v (List.isChain_cons_cons.mp hc).2 z hz)
+
+private theorem chain_reach :
+    (by
+      classical
+      exact
+        ∀ (A : ProtoTile), ∀ (B : ProtoTile),
+        let R : GaussianInt → GaussianInt → Prop := fun u v =>
+          u ∈ FootprintVertices A ∩ FootprintVertices B ∧
+          v ∈ FootprintVertices A ∩ FootprintVertices B ∧
+          {u, v} ∈ FootprintEdges A ∩ FootprintEdges B
+        (∀ (u : GaussianInt), ∀ (l : List GaussianInt), (List.IsChain R (u :: l)) → (∀ z ∈ u ::
+            l, Relation.ReflTransGen R u z)) → (∀ {p : List GaussianInt}, ∀ {u : GaussianInt}, ∀
+            {v : GaussianInt}, List.IsChain R p → p.head? = some u → p.getLast? = some v →
+            Relation.ReflTransGen R u v) ) := by
+  classical
+  intro A B R head_reach p u v hc hh hl
+  cases p with
+  | nil => simp at hh
+  | cons c cs =>
+      have hcu : c = u := by simpa using hh
+      subst c
+      have hvmem : v ∈ u :: cs := by
+        rcases List.getLast?_eq_some_iff.mp hl with ⟨l, hform⟩
+        rw [hform]
+        simp
+      exact head_reach u cs hc v hvmem
+
+private theorem edge_parent :
+    (by
+      classical
+      exact
+        ∀ (A : ProtoTile),
+          ∀ (T : ProtoTile),
+            T.cells ⊆ A.cells → ∀ e ∈ FootprintEdges T, e ∈ FootprintEdges A
+    ) := by
+  classical
+  intro A T hTc e he
+  rcases he with ⟨c, hc, hshape⟩
+  exact ⟨c, hTc hc, hshape⟩
+
+private abbrev edge_parentB := ApollonianSuperharmonic.PrecursorWalkGeometry.edge_parent
+
+private theorem p₁chain :
+    (by
+      classical
+      exact
+        ∀ (A : ProtoTile), ∀ (B : ProtoTile), ∀ (X : ProtoTile), ∀ (Y : ProtoTile), (X.cells ⊆
+            A.cells) → ((Y.cells ⊆ B.cells) → ((FootprintVertices X ⊆ FootprintVertices A) →
+            ((FootprintVertices Y ⊆ FootprintVertices B) → (∀ (p₁ : List GaussianInt), (∀ z ∈ p₁,
+            z ∈ FootprintVertices X ∩ FootprintVertices Y) → ((∀ (a : GaussianInt), ∀ (b :
+            GaussianInt), ∀ (l₁ : List GaussianInt), ∀ (l₂ : List GaussianInt), p₁ = l₁ ++ a :: b
+            :: l₂ → {a, b} ∈ FootprintEdges X ∩ FootprintEdges Y) → (
+        let R : GaussianInt → GaussianInt → Prop := fun u v =>
+          u ∈ FootprintVertices A ∩ FootprintVertices B ∧
+          v ∈ FootprintVertices A ∩ FootprintVertices B ∧
+          {u, v} ∈ FootprintEdges A ∩ FootprintEdges B
+        (∀ (T : ProtoTile), (T.cells ⊆ A.cells) → ((FootprintVertices T ⊆ FootprintVertices A) →
+            (∀ (e : Finset GaussianInt), (e ∈ FootprintEdges T) → (e ∈ FootprintEdges A)))) → ((∀
+            (T : ProtoTile), (T.cells ⊆ B.cells) → (∀ (e : Finset GaussianInt), (e ∈
+            FootprintEdges T) → (e ∈ FootprintEdges B))) → (List.IsChain R p₁)))))))) ) := by
+  classical
+  intro A B X Y hXc hYc hXf hYf p₁ hp₁v hp₁e R edge_parent edge_parentB
+  apply List.isChain_iff_forall_rel_of_append_cons_cons.mpr
+  intro u v l r h
+  refine ⟨?_, ?_, ?_⟩
+  · have hu := hp₁v u (by simp [h])
+    exact ⟨hXf hu.1, hYf hu.2⟩
+  · have hv := hp₁v v (by simp [h])
+    exact ⟨hXf hv.1, hYf hv.2⟩
+  · have he := hp₁e u v l r h
+    exact ⟨edge_parent X hXc hXf _ he.1,
+      edge_parentB Y hYc _ he.2⟩
+
+private abbrev p₃chain :=
+  ApollonianSuperharmonic.PrecursorWalkGeometry.p₁chain
+
+private theorem qmem :
+    (by
+      classical
+      exact
+        ∀ (O : ProtoTile), ∀ (q : List GaussianInt), (BoundaryFootprintVertices O = (↑q.toFinset
+            : Set GaussianInt)) → (∀ z ∈ q, z ∈ BoundaryFootprintVertices O) ) := by
+  classical
+  intro O q hqvertices z hz
+  rw [hqvertices]
+  simpa using hz
+
+private theorem aq :
+    (by
+      classical
+      exact
+        ∀ (X : ProtoTile), ∀ (Y : ProtoTile), ∀ (O : ProtoTile), ∀ (a : GaussianInt), (a ∈
+            BoundaryFootprintVertices X ∧ a ∈ BoundaryFootprintVertices Y ∧ a ∈
+            BoundaryFootprintVertices O) → (∀ (q : List GaussianInt), (BoundaryFootprintVertices
+            O = (↑q.toFinset : Set GaussianInt)) → (a ∈ q)) ) := by
+  classical
+  intro X Y O a ha q hqvertices
+  have : a ∈ (q.toFinset : Set GaussianInt) := by rw [← hqvertices]; exact ha.2.2
+  simpa using this
+
+private abbrev bq := ApollonianSuperharmonic.PrecursorWalkGeometry.aq
+
+private theorem S_symm :
+    (by
+      classical
+      exact
+        ∀ (O : ProtoTile),
+        let S : GaussianInt → GaussianInt → Prop := fun u v =>
+          u ∈ BoundaryFootprintVertices O ∧ v ∈ BoundaryFootprintVertices O ∧
+            {u, v} ∈ BoundaryFootprintEdges O
+        ∀ (u : GaussianInt), ∀ (v : GaussianInt), S u v → S v u ) := by
+  classical
+  intro O S u v huv
+  refine ⟨huv.2.1, huv.1, ?_⟩
+  simpa [Finset.pair_comm] using huv.2.2
+
+private theorem qchain :
+    (by
+      classical
+      exact
+        ∀ (O : ProtoTile), ∀ (q : List GaussianInt), ∀ (q₀ : GaussianInt), ∀ (q₁ : GaussianInt),
+            (∀ (e : Finset GaussianInt), e ∈ BoundaryFootprintEdges O ↔ e = {q₁, q₀} ∨ ∃ (a :
+            GaussianInt) (b : GaussianInt) (l₁ : List GaussianInt) (l₂ : List GaussianInt), q =
+            l₁ ++ a :: b :: l₂ ∧ e = {a, b}) → ((∀ (z : GaussianInt), (z ∈ q) → (z ∈
+            BoundaryFootprintVertices O)) → (
+        let S : GaussianInt → GaussianInt → Prop := fun u v =>
+          u ∈ BoundaryFootprintVertices O ∧ v ∈ BoundaryFootprintVertices O ∧
+            {u, v} ∈ BoundaryFootprintEdges O
+        List.IsChain S q)) ) := by
+  classical
+  intro O q q₀ q₁ hqedges qmem S
+  apply List.isChain_iff_forall_rel_of_append_cons_cons.mpr
+  intro u v l r h
+  refine ⟨qmem u (by simp [h]), qmem v (by simp [h]), ?_⟩
+  apply (hqedges {u, v}).2
+  exact Or.inr ⟨u, v, l, r, h, rfl⟩
+
+private theorem qhead_reach :
+    (by
+      classical
+      exact
+        ∀ (O : ProtoTile),
+        let S : GaussianInt → GaussianInt → Prop := fun u v =>
+          u ∈ BoundaryFootprintVertices O ∧ v ∈ BoundaryFootprintVertices O ∧
+            {u, v} ∈ BoundaryFootprintEdges O
+        ∀ (u : GaussianInt), ∀ (l : List GaussianInt), List.IsChain S (u :: l) → ∀ z ∈ u :: l,
+            Relation.ReflTransGen S u z ) := by
+  classical
+  intro O S u l hc
+  induction l generalizing u with
+  | nil =>
+      intro z hz
+      have heq : z = u := by simpa using hz
+      subst z
+      exact .refl
+  | cons v l ih =>
+      intro z hz
+      rcases List.mem_cons.mp hz with rfl | hz
+      · exact .refl
+      · exact (Relation.ReflTransGen.single
+          (List.isChain_cons_cons.mp hc).1).trans
+          (ih v (List.isChain_cons_cons.mp hc).2 z hz)
+
+private theorem qreverse :
+    (by
+      classical
+      exact
+        ∀ (O : ProtoTile),
+        let S : GaussianInt → GaussianInt → Prop := fun u v =>
+          u ∈ BoundaryFootprintVertices O ∧ v ∈ BoundaryFootprintVertices O ∧
+            {u, v} ∈ BoundaryFootprintEdges O
+        (∀ (u : GaussianInt), ∀ (v : GaussianInt), (S u v) → (S v u)) → (∀ {u : GaussianInt}, ∀
+            {v : GaussianInt}, Relation.ReflTransGen S u v → Relation.ReflTransGen S v u) ) := by
+  classical
+  intro O S S_symm u v h
+  induction h with
+  | refl => exact .refl
+  | @tail c d hcd hstep ih => exact ih.head (S_symm c d hstep)
+
+private theorem qhead :
+    (by
+      classical
+      exact
+        ∀ (q : List GaussianInt) (q₀ : GaussianInt),
+          q.head? = some q₀ → ∃ (c : GaussianInt) (l : List GaussianInt), q = c :: l) := by
+  classical
+  intro q q₀ hqhead
+  cases q with
+  | nil => simp at hqhead
+  | cons c l => exact ⟨c, l, rfl⟩
+
+private theorem S_to_R :
+    (by
+      classical
+      exact
+        ∀ (A : ProtoTile), ∀ (B : ProtoTile), ∀ (O : ProtoTile), ∀ (O' : ProtoTile), (O.cells ⊆
+            A.cells) → ((O'.cells ⊆ B.cells) → ((FootprintVertices O ⊆ FootprintVertices A) →
+            ((FootprintVertices O' ⊆ FootprintVertices B) → ((O.cells = O'.cells) → ((∀ (T :
+            ProtoTile), ∀ (e : Finset GaussianInt), (e ∈ BoundaryFootprintEdges T) → (e ∈
+            FootprintEdges T)) → ((∀ (T : ProtoTile), ∀ (z : GaussianInt), (z ∈
+            BoundaryFootprintVertices T) → (z ∈ FootprintVertices T)) → (
+        let R : GaussianInt → GaussianInt → Prop := fun u v =>
+          u ∈ FootprintVertices A ∩ FootprintVertices B ∧
+          v ∈ FootprintVertices A ∩ FootprintVertices B ∧
+          {u, v} ∈ FootprintEdges A ∩ FootprintEdges B
+        (∀ (T : ProtoTile), (T.cells ⊆ A.cells) → ((FootprintVertices T ⊆ FootprintVertices A) →
+            (∀ (e : Finset GaussianInt), (e ∈ FootprintEdges T) → (e ∈ FootprintEdges A)))) → ((∀
+            (T : ProtoTile), (T.cells ⊆ B.cells) → (∀ (e : Finset GaussianInt), (e ∈
+            FootprintEdges T) → (e ∈ FootprintEdges B))) → ((O'.cells.Nonempty) → (
+        let S : GaussianInt → GaussianInt → Prop := fun u v =>
+          u ∈ BoundaryFootprintVertices O ∧ v ∈ BoundaryFootprintVertices O ∧
+            {u, v} ∈ BoundaryFootprintEdges O
+        ∀ {u : GaussianInt}, ∀ {v : GaussianInt}, S u v → R u v)))))))))) ) := by
+  classical
+  intro A B O O' hOc hO'c hOf hO'f hcell boundary_edge_footprint boundary_vertex_footprint R
+      edge_parent edge_parentB hneO' S u v huv
+  refine ⟨?_, ?_, ?_⟩
+  · exact ⟨hOf (boundary_vertex_footprint O u huv.1),
+      hO'f (boundary_vertex_footprint O' u (by
+        simpa [BoundaryFootprintVertices, hneO',
+          BoundaryFootprintEdges, hcell] using huv.1))⟩
+  · exact ⟨hOf (boundary_vertex_footprint O v huv.2.1),
+      hO'f (boundary_vertex_footprint O' v (by
+        simpa [BoundaryFootprintVertices, hneO',
+          BoundaryFootprintEdges, hcell] using huv.2.1))⟩
+  · have heO := boundary_edge_footprint O _ huv.2.2
+    have heO' : {u, v} ∈ FootprintEdges O' := by
+      simpa [FootprintEdges, hcell] using heO
+    exact ⟨edge_parent O hOc hOf _ heO,
+      edge_parentB O' hO'c _ heO'⟩
+
+private theorem qrouteR :
+    (by
+      classical
+      exact
+        ∀ (A : ProtoTile), ∀ (B : ProtoTile), ∀ (O : ProtoTile), ∀ (a : GaussianInt), ∀ (b :
+            GaussianInt),
+        let R : GaussianInt → GaussianInt → Prop := fun u v =>
+          u ∈ FootprintVertices A ∩ FootprintVertices B ∧
+          v ∈ FootprintVertices A ∩ FootprintVertices B ∧
+          {u, v} ∈ FootprintEdges A ∩ FootprintEdges B
+        let S : GaussianInt → GaussianInt → Prop := fun u v =>
+          u ∈ BoundaryFootprintVertices O ∧ v ∈ BoundaryFootprintVertices O ∧
+            {u, v} ∈ BoundaryFootprintEdges O
+        (Relation.ReflTransGen S a b) → ((∀ {u : GaussianInt}, ∀ {v : GaussianInt}, (S u v) → (R
+            u v)) → (Relation.ReflTransGen R a b)) ) := by
+  classical
+  intro A B O a b R S qroute S_to_R
+  exact Relation.ReflTransGen.mono (fun _ _ hstep => S_to_R hstep)
+    a b qroute
+
+end PrecursorWalkGeometry
+
+theorem P4677T2PrecursorWalk :
+    ∀ (A : ProtoTile), ∀ (B : ProtoTile), ∀ (X : ProtoTile), ∀ (Y : ProtoTile), ∀ (Z :
+        ProtoTile), ∀ (W : ProtoTile), ∀ (O : ProtoTile), ∀ (O' : ProtoTile), ∀ (x :
+        GaussianInt), ∀ (y : GaussianInt), (X.cells ⊆ A.cells) → ((Z.cells ⊆ A.cells) → ((Y.cells
+        ⊆ B.cells) → ((W.cells ⊆ B.cells) → ((O.cells ⊆ A.cells) → ((O'.cells ⊆ B.cells) →
+        ((FootprintVertices X ⊆ FootprintVertices A) → ((FootprintVertices Z ⊆ FootprintVertices
+        A) → ((FootprintVertices Y ⊆ FootprintVertices B) → ((FootprintVertices W ⊆
+        FootprintVertices B) → ((FootprintVertices O ⊆ FootprintVertices A) → ((FootprintVertices
+        O' ⊆ FootprintVertices B) → ((O.cells = O'.cells) → ((O.cells = ∅ → O.anchor = O'.anchor)
+        → ((O.cells.Nonempty → LatticeTile O) → ((TouchingTriple X Y O) → ((TouchingTriple Z W O)
+        → ((x ∈ FootprintVertices X ∩ FootprintVertices Y) → ((y ∈ FootprintVertices Z ∩
+        FootprintVertices W) → (∃ p : List GaussianInt,
+      p.head? = some x ∧ p.getLast? = some y ∧
+      (∀ z ∈ p, z ∈ FootprintVertices A ∩ FootprintVertices B) ∧
+      ∀ a b : GaussianInt, ∀ l₁ l₂ : List GaussianInt,
+        p = l₁ ++ a :: b :: l₂ →
+        {a, b} ∈ FootprintEdges A ∩ FootprintEdges B))))))))))))))))))) := by
+  intro A B X Y Z W O O' x y hXc hZc hYc hWc hOc hO'c hXf hZf hYf hWf hOf hO'f hcell hanchor
+      hdisk hfirst hlast hx hy
+-- BODY
+  classical
+  have boundary_edge_footprint (T : ProtoTile) (e : Finset GaussianInt)
+      (he : e ∈ BoundaryFootprintEdges T) : e ∈ FootprintEdges T :=
+          PrecursorWalkGeometry.boundary_edge_footprint T e he
+  have edge_vertex (T : ProtoTile) (e : Finset GaussianInt)
+      (he : e ∈ FootprintEdges T) (z : GaussianInt) (hz : z ∈ e) :
+      z ∈ FootprintVertices T := PrecursorWalkGeometry.edge_vertex T e he z hz
+  have boundary_vertex_footprint (T : ProtoTile) (z : GaussianInt)
+      (hz : z ∈ BoundaryFootprintVertices T) : z ∈ FootprintVertices T :=
+          PrecursorWalkGeometry.boundary_vertex_footprint boundary_edge_footprint edge_vertex T z hz
+  obtain ⟨a, ha, _⟩ := hfirst.2.2.2
+  obtain ⟨b, hb, _⟩ := hlast.2.2.2
+  have haX : a ∈ FootprintVertices X := boundary_vertex_footprint X a ha.1
+  have haY : a ∈ FootprintVertices Y := boundary_vertex_footprint Y a ha.2.1
+  have haO : a ∈ FootprintVertices O := boundary_vertex_footprint O a ha.2.2
+  have hbZ : b ∈ FootprintVertices Z := boundary_vertex_footprint Z b hb.1
+  have hbW : b ∈ FootprintVertices W := boundary_vertex_footprint W b hb.2.1
+  have hbO : b ∈ FootprintVertices O := boundary_vertex_footprint O b hb.2.2
+  obtain ⟨p₁, hp₁h, hp₁l, hp₁v, hp₁e⟩ :=
+    P4677T2TouchingWalk X Y x a hfirst.1 ⟨hx.1, hx.2⟩ ⟨haX, haY⟩
+  obtain ⟨p₃, hp₃h, hp₃l, hp₃v, hp₃e⟩ :=
+    P4677T2TouchingWalk Z W b y hlast.1 ⟨hbZ, hbW⟩ ⟨hy.1, hy.2⟩
+  let R : GaussianInt → GaussianInt → Prop := fun u v =>
+    u ∈ FootprintVertices A ∩ FootprintVertices B ∧
+    v ∈ FootprintVertices A ∩ FootprintVertices B ∧
+    {u, v} ∈ FootprintEdges A ∩ FootprintEdges B
+  have head_reach (u : GaussianInt) (l : List GaussianInt)
+      (hc : List.IsChain R (u :: l)) :
+      ∀ z ∈ u :: l, Relation.ReflTransGen R u z := PrecursorWalkGeometry.head_reach A B u l hc
+  have chain_reach {p : List GaussianInt} {u v : GaussianInt}
+      (hc : List.IsChain R p) (hh : p.head? = some u)
+      (hl : p.getLast? = some v) : Relation.ReflTransGen R u v :=
+          PrecursorWalkGeometry.chain_reach A B head_reach (p := p) (u := u) (v := v) hc hh hl
+  have edge_parent (T : ProtoTile) (hTc : T.cells ⊆ A.cells)
+      (hTf : FootprintVertices T ⊆ FootprintVertices A)
+      (e : Finset GaussianInt) (he : e ∈ FootprintEdges T) :
+      e ∈ FootprintEdges A := PrecursorWalkGeometry.edge_parent A T hTc e he
+  have edge_parentB (T : ProtoTile) (hTc : T.cells ⊆ B.cells)
+      (e : Finset GaussianInt) (he : e ∈ FootprintEdges T) :
+      e ∈ FootprintEdges B := PrecursorWalkGeometry.edge_parentB B T hTc e he
+  have p₁chain : List.IsChain R p₁ := PrecursorWalkGeometry.p₁chain A B X Y hXc hYc hXf hYf p₁
+      hp₁v hp₁e edge_parent edge_parentB
+  have p₃chain : List.IsChain R p₃ := PrecursorWalkGeometry.p₃chain A B Z W hZc hWc hZf hWf p₃
+      hp₃v hp₃e edge_parent edge_parentB
+  by_cases hneO : O.cells.Nonempty
+  · have hneO' : O'.cells.Nonempty := by rw [← hcell]; exact hneO
+    have hcycle := LatticeTileBoundarySimpleGridCycle O (hdisk hneO)
+    rcases hcycle with ⟨q, q₀, q₁, hqnd, hqlen, hqhead, hqlast,
+      hqvertices, hqclose, hqstep, hqedges⟩
+    have qmem (z : GaussianInt) (hz : z ∈ q) :
+        z ∈ BoundaryFootprintVertices O := PrecursorWalkGeometry.qmem O q hqvertices z hz
+    have aq : a ∈ q := PrecursorWalkGeometry.aq X Y O a ha q hqvertices
+    have bq : b ∈ q := PrecursorWalkGeometry.bq Z W O b hb q hqvertices
+    let S : GaussianInt → GaussianInt → Prop := fun u v =>
+      u ∈ BoundaryFootprintVertices O ∧ v ∈ BoundaryFootprintVertices O ∧
+        {u, v} ∈ BoundaryFootprintEdges O
+    have S_symm (u v : GaussianInt) (huv : S u v) : S v u := PrecursorWalkGeometry.S_symm O u v huv
+    have qchain : List.IsChain S q := PrecursorWalkGeometry.qchain O q q₀ q₁ hqedges qmem
+    have qhead_reach (u : GaussianInt) (l : List GaussianInt)
+        (hc : List.IsChain S (u :: l)) :
+        ∀ z ∈ u :: l, Relation.ReflTransGen S u z := PrecursorWalkGeometry.qhead_reach O u l hc
+    have qreverse {u v : GaussianInt}
+        (h : Relation.ReflTransGen S u v) : Relation.ReflTransGen S v u :=
+            PrecursorWalkGeometry.qreverse O S_symm (u := u) (v := v) h
+    have qhead : ∃ c l, q = c :: l := PrecursorWalkGeometry.qhead q q₀ hqhead
+    rcases qhead with ⟨c, l, rfl⟩
+    have hca : c = q₀ := by simpa using hqhead
+    subst c
+    have amem : a ∈ q₀ :: l := aq
+    have bmem : b ∈ q₀ :: l := bq
+    have qroute : Relation.ReflTransGen S a b :=
+      (qreverse (qhead_reach q₀ l qchain a amem)).trans
+        (qhead_reach q₀ l qchain b bmem)
+    have S_to_R {u v : GaussianInt} (huv : S u v) : R u v := PrecursorWalkGeometry.S_to_R A B O
+        O' hOc hO'c hOf hO'f hcell boundary_edge_footprint boundary_vertex_footprint edge_parent
+        edge_parentB hneO' (u := u) (v := v) huv
+    have qrouteR : Relation.ReflTransGen R a b := PrecursorWalkGeometry.qrouteR A B O a b qroute
+        S_to_R
+    have hroute := (chain_reach p₁chain hp₁h hp₁l).trans
+      (qrouteR.trans (chain_reach p₃chain hp₃h hp₃l))
+    obtain ⟨p, hc, hlast⟩ := List.exists_isChain_cons_of_relationReflTransGen hroute
+    refine ⟨x :: p, rfl, ?_, ?_, ?_⟩
+    · rw [List.getLast?_eq_some_getLast (List.cons_ne_nil x p), hlast]
+    · have inside : ∀ z ∈ x :: p, z ∈ FootprintVertices A ∩ FootprintVertices B :=
+        hc.induction (fun z => z ∈ FootprintVertices A ∩ FootprintVertices B)
+          (x :: p) (fun {_ _} h _ => h.2.1)
+          (fun _ => ⟨hXf hx.1, hYf hx.2⟩)
+      intro z hz
+      exact inside z hz
+    · intro u v l r h
+      have hed := (List.isChain_iff_forall_rel_of_append_cons_cons.mp hc h).2.2
+      exact hed
+  · have haeq : a = O.anchor := by simpa [FootprintVertices, hneO] using haO
+    have hbeq : b = O.anchor := by simpa [FootprintVertices, hneO] using hbO
+    have hab : a = b := haeq.trans hbeq.symm
+    have middle : Relation.ReflTransGen R a b := by
+      rw [hab]
+    have hroute := (chain_reach p₁chain hp₁h hp₁l).trans
+      (middle.trans (chain_reach p₃chain hp₃h hp₃l))
+    obtain ⟨p, hc, hlast⟩ := List.exists_isChain_cons_of_relationReflTransGen hroute
+    refine ⟨x :: p, rfl, ?_, ?_, ?_⟩
+    · rw [List.getLast?_eq_some_getLast (List.cons_ne_nil x p), hlast]
+    · have inside : ∀ z ∈ x :: p, z ∈ FootprintVertices A ∩ FootprintVertices B :=
+        hc.induction (fun z => z ∈ FootprintVertices A ∩ FootprintVertices B)
+          (x :: p) (fun {_ _} h _ => h.2.1)
+          (fun _ => ⟨hXf hx.1, hYf hx.2⟩)
+      intro z hz
+      exact inside z hz
+    · intro u v l r h
+      exact (List.isChain_iff_forall_rel_of_append_cons_cons.mp hc h).2.2
+
+end ApollonianSuperharmonic
+
+end
