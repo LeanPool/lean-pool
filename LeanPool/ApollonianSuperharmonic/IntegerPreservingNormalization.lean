@@ -6,6 +6,7 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.GaussianLatticeFiniteness
 public import Mathlib.Tactic.Positivity
 
 public import LeanPool.ApollonianSuperharmonic.IntegerSuperharmonicRepresentative
@@ -84,56 +85,7 @@ theorem IntegerPreservingNormalization
   obtain ⟨R0, hR0⟩ := hdiv ((f 0 : Real) - LatticeQuadraticForm B 0)
   let radius : Real := max R0 1
   let S : Set GaussianInt := {x | (x.re : Real)^2 + (x.im : Real)^2 < radius}
-  obtain ⟨N, hN⟩ := exists_nat_ge radius
-  have hR : radius ≤ (N : Real) := hN
-  have hNo : (1 : Real) ≤ (N : Real) := le_trans (le_max_right R0 1) hN
-  have hS : S.Finite := by
-    have hx_of_mem (x : GaussianInt) (hx : x ∈ S) :
-        -(N : Int) ≤ x.re ∧ x.re ≤ N ∧ -(N : Int) ≤ x.im ∧ x.im ≤ N := by
-      dsimp [S, radius] at hx
-      have hr : -(N : Real) ≤ (x.re : Real) := by
-        nlinarith [sq_nonneg (x.im : Real), sq_nonneg ((x.re : Real) + N), hR, hNo]
-      have hr' : (x.re : Real) ≤ (N : Real) := by
-        nlinarith [sq_nonneg (x.im : Real), sq_nonneg ((x.re : Real) - N), hR, hNo]
-      have hi : -(N : Real) ≤ (x.im : Real) := by
-        nlinarith [sq_nonneg (x.re : Real), sq_nonneg ((x.im : Real) + N), hR, hNo]
-      have hi' : (x.im : Real) ≤ (N : Real) := by
-        nlinarith [sq_nonneg (x.re : Real), sq_nonneg ((x.im : Real) - N), hR, hNo]
-      exact ⟨by exact_mod_cast hr, by exact_mod_cast hr',
-        by exact_mod_cast hi, by exact_mod_cast hi'⟩
-    let encode (x : S) : Fin (2 * N + 1) × Fin (2 * N + 1) :=
-      ⟨⟨(x.1.re + N).toNat, by
-          have hxs := hx_of_mem x.1 x.2
-          omega⟩, ⟨(x.1.im + N).toNat, by
-          have hxs := hx_of_mem x.1 x.2
-          omega⟩⟩
-    let : Finite S := Finite.of_injective encode (by
-      intro x y hxy
-      apply Subtype.ext
-      apply Zsqrtd.ext
-      · have he := congrArg (fun z => z.1) (congrArg Prod.fst hxy)
-        have hxn := (hx_of_mem x.1 x.2).1
-        have hxp := (hx_of_mem x.1 x.2).2.1
-        have hyn := (hx_of_mem y.1 y.2).1
-        have hyp := (hx_of_mem y.1 y.2).2.1
-        have hxn0 : 0 ≤ x.1.re + N := by omega
-        have hyn0 : 0 ≤ y.1.re + N := by omega
-        dsimp [encode] at he
-        have hxn1 := Int.toNat_of_nonneg hxn0
-        have hyn1 := Int.toNat_of_nonneg hyn0
-        omega
-      · have he := congrArg (fun z => z.val) (congrArg Prod.snd hxy)
-        have hxn := (hx_of_mem x.1 x.2).2.2.1
-        have hxp := (hx_of_mem x.1 x.2).2.2.2
-        have hyn := (hx_of_mem y.1 y.2).2.2.1
-        have hyp := (hx_of_mem y.1 y.2).2.2.2
-        have hxn0 : 0 ≤ x.1.im + N := by omega
-        have hyn0 : 0 ≤ y.1.im + N := by omega
-        dsimp [encode] at he
-        have hxn1 := Int.toNat_of_nonneg hxn0
-        have hyn1 := Int.toNat_of_nonneg hyn0
-        omega)
-    exact Set.finite_coe_iff.mp (by infer_instance : Finite S)
+  have hS : S.Finite := gaussianLatticeDisk_finite radius
   have hSne : S.Nonempty := by
     refine ⟨0, ?_⟩
     dsimp [S, radius]

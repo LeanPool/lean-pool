@@ -6,6 +6,7 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.QuadraticCocycleSubgroup
 
 public import LeanPool.ApollonianSuperharmonic.DiamondExceptionalLattice
 public import LeanPool.ApollonianSuperharmonic.DiamondOdometer
@@ -64,58 +65,13 @@ theorem P5435T1Cocycle (K : DiamondParameter) :
     have h := hF 0 hmem
     norm_num at h
     exact h
-  let B (v a : GaussianInt) : Prop :=
-    Matrix.mulVec (DiamondPeakMatrix K) ![(v.re : Real), (v.im : Real)] =
-      ![(a.re : Real), (a.im : Real)]
-  let H : AddSubgroup GaussianInt :=
-    { carrier := {v | ∃ a : GaussianInt, B v a ∧
-        ∀ x, g (x+v) = g x + x.re*a.re + x.im*a.im + g v}
-      zero_mem' := by
-        refine ⟨0, ?_, ?_⟩
-        · dsimp [B]
-          ext i; fin_cases i <;> simp [Matrix.mulVec, dotProduct]
-        · intro x; simp [hzero]
-      add_mem' := by
-        rintro u v ⟨a, hMa, hua⟩ ⟨b, hMb, hvb⟩
-        refine ⟨a+b, ?_, ?_⟩
-        · dsimp [B] at hMa hMb ⊢
-          have he : ![((u+v).re : Real), ((u+v).im : Real)] =
-              ![(u.re : Real), (u.im : Real)] + ![(v.re : Real), (v.im : Real)] := by
-            ext i; fin_cases i <;> simp
-          simp only [Zsqrtd.re_add, Zsqrtd.im_add] at he
-          rw [he, Matrix.mulVec_add, hMa, hMb]
-          ext i; fin_cases i <;> simp
-        · intro x
-          have h1 := hvb (x+u)
-          have h2 := hua x
-          have h3 := hvb u
-          simp only [Zsqrtd.re_add, Zsqrtd.im_add] at h1 ⊢
-          rw [add_assoc] at h1
-          linear_combination h1 + h2 - h3
-      neg_mem' := by
-        rintro v ⟨a, hMa, hva⟩
-        refine ⟨-a, ?_, ?_⟩
-        · dsimp [B] at hMa ⊢
-          have he : ![((-v).re : Real), ((-v).im : Real)] =
-              - ![(v.re : Real), (v.im : Real)] := by
-            ext i; fin_cases i <;> simp
-          simp only [Zsqrtd.re_neg, Zsqrtd.im_neg] at he
-          rw [he, Matrix.mulVec_neg, hMa]
-          ext i; fin_cases i <;> simp
-        · intro x
-          have h1 := hva (x-v)
-          have h2 := hva (-v)
-          simp only [sub_add_cancel, neg_add_cancel, Zsqrtd.re_sub,
-            Zsqrtd.im_sub, Zsqrtd.re_neg, Zsqrtd.im_neg, hzero] at h1 h2
-          simp only [Zsqrtd.re_neg, Zsqrtd.im_neg]
-          rw [show x + -v = x-v by abel]
-          linear_combination -h1 + h2 }
+  let H := quadraticCocycleSubgroup (DiamondPeakMatrix K) g hzero
   have hgen : {v : GaussianInt | v = ⟨0, -(2 * K.1 : Int)⟩ ∨
       v = ⟨(K.1 + 1 : Int), (K.1 : Int)⟩} ⊆ H := by
     intro v hv
     rcases hv with rfl | rfl
     · refine ⟨⟨-k, k-1⟩, ?_, ?_⟩
-      · dsimp [B, DiamondPeakMatrix]
+      · dsimp [DiamondPeakMatrix]
         ext i; fin_cases i <;>
           simp [Matrix.mulVec, dotProduct, k]
         all_goals
@@ -132,7 +88,7 @@ theorem P5435T1Cocycle (K : DiamondParameter) :
         change g _ = g x + (-k)*x.re + (k-1)*x.im - k*(k-2) at h
         linarith
     · refine ⟨⟨k, 1⟩, ?_, ?_⟩
-      · dsimp [B, DiamondPeakMatrix]
+      · dsimp [DiamondPeakMatrix]
         ext i; fin_cases i <;>
           simp [Matrix.mulVec, dotProduct, k]
         all_goals

@@ -1017,43 +1017,6 @@ private theorem hsigned :
     intro i s
     simpa [d] using hcent' i s)
 
-private theorem pairEq :
-    (by
-      classical
-      exact
-        ∀ (q : Fin (4 : ℕ) → CircleCoordinates), ∀ (r : Fin (3 : ℕ)), ∀ (g : BandPackingSymmetry),
-        let q' : Fin 4 → CircleCoordinates :=
-          BandPackingSymmetryQuadrupleAction g
-            ![q 0, q r.succ, q (r + 1).succ, q (r + 2).succ]
-        ∀ (T1 : ProtoTile), ∀ (S : Fin (3 : ℕ) → Bool → ProtoTile),
-        let a : GaussianInt := BandVectors.1 (q' 3) (q' 2)
-        let U : Fin 3 → Bool → ProtoTile := fun i s =>
-          if i = 0 then
-            if s then TileTranslation T1 (a - ⟨0, 1⟩ * a) else T1
-          else if i = 1 then
-            if s then TileTranslation (S 1 s) a
-            else TileTranslation (S 1 s) (-⟨0, 1⟩ * a)
-          else if s then TileTranslation (S 2 s) (-⟨0, 1⟩ * a)
-            else TileTranslation (S 2 s) a
-        let d : GaussianInt → Real × Real := fun z =>
-          (1 / 2 : Real) • (GaussianRealPoint z -
-            (-(GaussianRealPoint z).2, (GaussianRealPoint z).1))
-        let p0 : Real × Real := TileCentroid T1 + d a
-        let R : Real × Real → Real × Real := fun p =>
-          (2 * p0.1 - p.1, 2 * p0.2 - p.2)
-        (∀ (i : Fin (3 : ℕ)),
-        let w := BandVectors.1 (q' (i + (2 : Fin (3 : ℕ))).succ) (q' (i + (1 : Fin (3 : ℕ))).succ);
-        let u := GaussianQuarterTurn w - w; (TileTranslation (U i true) u).cells = (U i
-            false).cells ∧ ((U i true).cells = ∅ → (TileTranslation (U i true) u).anchor = (U i
-            false).anchor) ∧ FootprintVertices (TileTranslation (U i true) u) = FootprintVertices
-            (U i false) ∧ TileCentroid (TileTranslation (U i true) u) = TileCentroid (U i false)
-            ∧ TileArea (U i true) = TileArea (U i false) ∧ CentrallyReflectedAt p0 (U i true) (U
-            i false)) → (∀ (i : Fin 3), TileRealization (U i false) = R '' TileRealization (U i
-            true)) ) := by
-  classical
-  intro q r g q' T1 S a U d p0 R hsigned i
-  simpa [R, CentrallyReflectedAt] using (hsigned i).2.2.2.2.2
-
 private theorem pairMem :
     (by
       classical
@@ -1097,38 +1060,6 @@ private theorem pairMem :
     rw [hp']
     rw [pairEq i]
     exact ⟨R p, hp, rfl⟩
-
-private theorem pairMem' :
-    (by
-      classical
-      exact
-        ∀ (q : Fin (4 : ℕ) → CircleCoordinates), ∀ (r : Fin (3 : ℕ)), ∀ (g : BandPackingSymmetry),
-        let q' : Fin 4 → CircleCoordinates :=
-          BandPackingSymmetryQuadrupleAction g
-            ![q 0, q r.succ, q (r + 1).succ, q (r + 2).succ]
-        ∀ (T1 : ProtoTile), ∀ (S : Fin (3 : ℕ) → Bool → ProtoTile),
-        let a : GaussianInt := BandVectors.1 (q' 3) (q' 2)
-        let U : Fin 3 → Bool → ProtoTile := fun i s =>
-          if i = 0 then
-            if s then TileTranslation T1 (a - ⟨0, 1⟩ * a) else T1
-          else if i = 1 then
-            if s then TileTranslation (S 1 s) a
-            else TileTranslation (S 1 s) (-⟨0, 1⟩ * a)
-          else if s then TileTranslation (S 2 s) (-⟨0, 1⟩ * a)
-            else TileTranslation (S 2 s) a
-        let d : GaussianInt → Real × Real := fun z =>
-          (1 / 2 : Real) • (GaussianRealPoint z -
-            (-(GaussianRealPoint z).2, (GaussianRealPoint z).1))
-        let p0 : Real × Real := TileCentroid T1 + d a
-        let R : Real × Real → Real × Real := fun p =>
-          (2 * p0.1 - p.1, 2 * p0.2 - p.2)
-        (∀ (p : Real × Real), R (R p) = p) → ((∀ (i : Fin 3), ∀ (p : Real × Real), (p ∈
-            TileRealization (U i false) ↔ R p ∈ TileRealization (U i true))) → (∀ (i : Fin 3), ∀
-            (p : Real × Real), (p ∈ TileRealization (U i true) ↔ R p ∈ TileRealization (U i
-            false)))) ) := by
-  classical
-  intro q r g q' T1 S a U d p0 R hRinv pairMem i p
-  simpa [hRinv] using (pairMem i (R p)).symm
 
 private theorem realization0 :
     (by
@@ -1805,16 +1736,16 @@ private theorem hrootCent :
     apply Prod.ext <;> dsimp [R] <;> ring
   have hsigned := PrototileConstruction.hsigned q r g T1 S hparents hcent'
   have pairEq (i : Fin 3) :
-      TileRealization (U i false) = R '' TileRealization (U i true) :=
-          PrototileConstruction.pairEq q r g T1 S hsigned i
+      TileRealization (U i false) = R '' TileRealization (U i true) := by
+    exact (hsigned i).2.2.2.2.2
   have pairMem (i : Fin 3) (p : Real × Real) :
       (p ∈ TileRealization (U i false) ↔
         R p ∈ TileRealization (U i true)) := PrototileConstruction.pairMem q r g
             T1 S hRinv pairEq i p
   have pairMem' (i : Fin 3) (p : Real × Real) :
       (p ∈ TileRealization (U i true) ↔
-        R p ∈ TileRealization (U i false)) := PrototileConstruction.pairMem' q r
-            g T1 S hRinv pairMem i p
+        R p ∈ TileRealization (U i false)) := by
+    simpa [hRinv] using (pairMem i (R p)).symm
   have realization0 : TileRealization T0 =
       ⋃ i : Fin 3, ⋃ s : Bool, TileRealization (U i s) :=
           PrototileConstruction.realization0 q r g T1 S hcells0

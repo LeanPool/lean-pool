@@ -109,38 +109,6 @@ private theorem tableFacts :
   fin_cases k <;> fin_cases t <;>
     simp [makeIndex, slot, P4261T1ExteriorIndices]
 
-private theorem hslot :
-    (by
-      classical
-      exact
-        ∀ (i' : Fin (3 : ℕ)), ∀ (s : Fin (4 : ℕ)), ∀ (r : Fin (3 : ℕ)),
-        let j : Fin 3 := i' + r
-        let makeIndex : Fin 3 → Fin 4 → PeriodicSubtileIndex := fun k t =>
-          if k = 0 then
-            if t = 0 then ⟨.A, 0, -1⟩ else if t = 1 then ⟨.B, 1, 1⟩
-              else if t = 2 then ⟨.B, 0, 1⟩ else ⟨.A, -1, -1⟩
-          else if k = 1 then
-            if t = 0 then ⟨.C, 1, 1⟩ else if t = 1 then ⟨.D, -1, 0⟩
-              else if t = 2 then ⟨.D, -1, -1⟩ else ⟨.C, 1, 0⟩
-          else
-            if t = 0 then ⟨.E, -1, 0⟩ else if t = 1 then ⟨.F, 0, -1⟩
-              else if t = 2 then ⟨.F, 1, 0⟩ else ⟨.E, 0, 1⟩
-        let a : PeriodicSubtileIndex := makeIndex j s
-        let slot : SixSubtileLabel → Fin 3 × Bool := fun l => match l with
-          | .A => (0, true)
-          | .B => (0, false)
-          | .C => (1, true)
-          | .D => (1, false)
-          | .E => (2, true)
-          | .F => (2, false)
-        (a ∈ P4261T1ExteriorIndices ∧ (slot a.label).1 = j ∧ (slot a.label).2 = if a.label =
-            SixSubtileLabel.A ∨ a.label = SixSubtileLabel.C ∨ a.label = SixSubtileLabel.E then
-            true else false) → ((slot a.label).1 = j ∧ (slot a.label).2 = (if a.label = .A ∨
-            a.label = .C ∨ a.label = .E then true else false)) ) := by
-  classical
-  intro i' s r j makeIndex a slot htable
-  exact ⟨htable.2.1, htable.2.2⟩
-
 private theorem hsuppliedCentroid :
     (by
       classical
@@ -598,7 +566,7 @@ theorem P4261T1SubtileCoordinates
     have ha := htable.1
     have hslot : (slot a.label).1 = j ∧ (slot a.label).2 =
         (if a.label = .A ∨ a.label = .C ∨ a.label = .E then true else false) :=
-            SubtileCoordinateGeometry.hslot i' s r htable
+            ⟨htable.2.1, htable.2.2⟩
     have hrowCentroid :
         TileCentroid (SubtileOccurrenceInterpretation cert.P cert.u cert.v a) - TileCentroid T₀ =
           (1 / 2 : ℝ) • GaussianRealPoint

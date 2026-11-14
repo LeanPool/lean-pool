@@ -6,6 +6,7 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.GridBoundaryCombinatorics
 public import LeanPool.ApollonianSuperharmonic.GaussianRealPointProperties
 
 public import LeanPool.ApollonianSuperharmonic.BoundaryFootprintVertexDegreeTwo
@@ -432,95 +433,9 @@ private theorem boundary_edge_cyclic (T : ProtoTile) (hinside : FourNeighborConn
           x cyclic_edge_boundary gridPath_head gridPath_last gridPath_nodup
           gridPath_zip_fourNeighbor gridPath_close_fourNeighbor z w gridPath_length_four
           hrightCyclic hzout hz hmin q hq
-  change (∃ a b : GaussianInt, e = {a, b} ∧
-        ((a, b) ∈ cyclicEdges ∨ (b, a) ∈ cyclicEdges))
-  rcases he with ⟨q, (⟨rfl, hxor⟩ | ⟨rfl, hxor⟩)⟩
-  · refine ⟨q, q + 1, rfl, ?_⟩
-    by_contra hnone
-    rw [not_or] at hnone
-    have hcontrol := (component_index_control (q - ⟨0, 1⟩)).2.2.1
-    have heq : GridRayCrossingIndex q gridPath =
-        GridRayCrossingIndex (q - ⟨0, 1⟩) gridPath := by
-      have hraw := hcontrol (by
-        constructor
-        · simpa [cyclicEdges, Zsqrtd.ext_iff, add_assoc, add_comm,
-            add_left_comm] using hnone.2
-        · simpa [cyclicEdges, Zsqrtd.ext_iff, add_assoc, add_comm,
-            add_left_comm] using hnone.1)
-      simpa [Zsqrtd.ext_iff] using hraw
-    rcases hxor with ⟨hq, hbelow⟩ | ⟨hq, hbelow⟩
-    · rw [unoccupied_index_zero (q - ⟨0, 1⟩) hbelow] at heq
-      exact occupied_index_nonzero q hq heq
-    · rw [unoccupied_index_zero q hq] at heq
-      exact occupied_index_nonzero (q - ⟨0, 1⟩) hbelow heq.symm
-  · refine ⟨q, q + ⟨0, 1⟩, rfl, ?_⟩
-    by_contra hnone
-    rw [not_or] at hnone
-    have hcontrol := (component_index_control (q - 1)).1
-    have heq : GridRayCrossingIndex q gridPath =
-        GridRayCrossingIndex (q - 1) gridPath := by
-      have hraw := hcontrol (by
-        constructor
-        · simpa [cyclicEdges, Zsqrtd.ext_iff] using hnone.1
-        · simpa [cyclicEdges, Zsqrtd.ext_iff] using hnone.2)
-      simpa [Zsqrtd.ext_iff] using hraw
-    rcases hxor with ⟨hq, hleft⟩ | ⟨hq, hleft⟩
-    · rw [unoccupied_index_zero (q - 1) hleft] at heq
-      exact occupied_index_nonzero q hq heq
-    · rw [unoccupied_index_zero q hq] at heq
-      exact occupied_index_nonzero (q - 1) hleft heq.symm
-
-private theorem zip_mem_decompose (gridPath : List GaussianInt) (gridPath_length_four : 4 ≤
-    gridPath.length) (a b : GaussianInt) (hab : (a, b) ∈ gridPath.zip gridPath.tail) : ∃ l₁ l₂ :
-    List GaussianInt, gridPath = l₁ ++ a :: b :: l₂ := by
-  classical
-  rw [List.mem_iff_getElem] at hab
-  rcases hab with ⟨i, hi, hab⟩
-  have hi' : i < gridPath.tail.length := by
-    simpa [List.length_zip] using hi
-  have hi0 : i < gridPath.length := by
-    simp only [List.length_tail] at hi'
-    omega
-  have hi1 : i + 1 < gridPath.length := by
-    simp only [List.length_tail] at hi'
-    omega
-  rw [List.getElem_zip, List.getElem_tail] at hab
-  injection hab with ha hb
-  refine ⟨gridPath.take i, gridPath.drop (i + 2), ?_⟩
-  calc
-    gridPath = gridPath.take i ++ gridPath.drop i :=
-      (List.take_append_drop i gridPath).symm
-    _ = gridPath.take i ++ gridPath[i] :: gridPath.drop (i + 1) := by
-      rw [List.drop_eq_getElem_cons hi0]
-    _ = gridPath.take i ++ gridPath[i] :: gridPath[i + 1] ::
-        gridPath.drop (i + 2) := by
-      rw [List.drop_eq_getElem_cons hi1]
-    _ = gridPath.take i ++ a :: b :: gridPath.drop (i + 2) := by
-      rw [ha, hb]
-
-private theorem cyclic_endpoints_mem (gridPath : List GaussianInt) (y : GaussianInt) (x :
-    GaussianInt) (gridPath_head : gridPath.head? = some x) (gridPath_last : gridPath.getLast? =
-    some y) (gridPath_length_four : 4 ≤ gridPath.length) (a b : GaussianInt) (hab : (a, b) ∈
-    (cyclicEdges gridPath y x)) : a ∈ gridPath ∧ b ∈ gridPath := by
-  classical
-  have zip_mem_decompose (a b : GaussianInt)
-      (hab : (a, b) ∈ gridPath.zip gridPath.tail) :
-      ∃ l₁ l₂ : List GaussianInt, gridPath = l₁ ++ a :: b :: l₂ := zip_mem_decompose gridPath
-          gridPath_length_four a b hab
-  simp only [List.mem_append, List.mem_singleton] at hab
-  rcases hab with hab | hab
-  · rcases zip_mem_decompose a b hab with ⟨l₁, l₂, hpath⟩
-    rw [hpath]
-    simp
-  · have hab' : a = y ∧ b = x := Prod.mk.inj hab
-    constructor
-    · rw [hab'.1]
-      exact List.getLast?_eq_some_iff.mp gridPath_last |>.choose_spec ▸
-        (by simp)
-    · rw [hab'.2]
-      rcases List.head?_eq_some_iff.mp gridPath_head with ⟨l, hl⟩
-      rw [hl]
-      simp
+  exact GridBoundaryCombinatorics.boundaryEdge_mem_cycle_of_index_control
+    T gridPath x y (fun q => ⟨(component_index_control q).1,
+      (component_index_control q).2.2.1⟩) unoccupied_index_zero occupied_index_nonzero e he
 
 private theorem boundary_vertices_eq (T : ProtoTile) (hinside : FourNeighborConnected (T.cells :
     Set LatticeCell)) (houtside : FourNeighborConnected ((T.cells : Set LatticeCell)ᶜ)) (gridPath
@@ -548,8 +463,9 @@ private theorem boundary_vertices_eq (T : ProtoTile) (hinside : FourNeighborConn
             gridPath_zip_fourNeighbor gridPath_close_fourNeighbor z w gridPath_length_four
             hrightCyclic hzout hz hmin e he
   have cyclic_endpoints_mem (a b : GaussianInt) (hab : (a, b) ∈ cyclicEdges) :
-      a ∈ gridPath ∧ b ∈ gridPath := cyclic_endpoints_mem gridPath y x gridPath_head
-          gridPath_last gridPath_length_four a b hab
+      a ∈ gridPath ∧ b ∈ gridPath :=
+          GridBoundaryCombinatorics.cyclicPair_endpoints_mem gridPath x y
+            gridPath_head gridPath_last a b hab
   ext v
   constructor
   · intro hv

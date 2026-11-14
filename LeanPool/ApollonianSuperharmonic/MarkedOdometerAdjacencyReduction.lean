@@ -2109,37 +2109,6 @@ private theorem hOFixedOriginalAt1498 :
     bundle.normalized_fixed_function_eq, hfunL] at h
   exact h
 
-private theorem hcentOriginalAt1510 :
-    (by
-      classical
-      exact
-        ∀ (C₀ : BandCircle), ∀ (Cᵢ : BandCircle), ∀ (T₀ : ProtoTile), ∀ (Tᵢ : ProtoTile), ∀ (h₀ :
-            PartialOdometer), ∀ (hᵢ : PartialOdometer), ∀ (x : GaussianInt), ∀ (bundle :
-            BandOrderedGeneralNormalizedOccurrenceBundle C₀ Cᵢ T₀ Tᵢ h₀ hᵢ x), ∀ (ginv :
-            BandPackingSymmetry), (∀ (T : ProtoTile), BandPackingSymmetryTileAction ginv
-            (BandPackingSymmetryTileAction bundle.symmetry T) = T) → (
-        let selectedSupport := bundle.pieces bundle.selectedSlot bundle.selectedSign
-        let T' := BandPackingSymmetryTileAction ginv selectedSupport
-        ∀ (r : Fin (4 : ℕ) → CircleCoordinates), ∀ (j : Fin (3 : ℕ)), ∀ (t' : Fin (4 : ℕ)),
-            (TileCentroid (BandPackingSymmetryTileAction ginv bundle.normalizedFixed) -
-            TileCentroid (BandPackingSymmetryTileAction ginv selectedSupport) = (1 / 2 : ℝ) •
-            GaussianRealPoint ((⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt) ^ (↑t' : ℕ) * (BandVectors.1
-            (BandPackingSymmetryQuadrupleAction ginv r (if BandPackingSymmetryReversesOrientation
-            ginv = true then -j else j).succ) (BandPackingSymmetryQuadrupleAction ginv r (0 : Fin
-            (4 : ℕ))) + BandVectors.1 (BandPackingSymmetryQuadrupleAction ginv r (0 : Fin (4 :
-            ℕ))) (BandPackingSymmetryQuadrupleAction ginv r (if
-            BandPackingSymmetryReversesOrientation ginv = true then -j else j).succ)))) →
-            (TileCentroid Tᵢ - TileCentroid T' = (1 / 2 : ℝ) • GaussianRealPoint ((⟨0, 1⟩ :
-            GaussianInt) ^ t'.val * (BandVectors.1 ((BandPackingSymmetryQuadrupleAction ginv r)
-            (if BandPackingSymmetryReversesOrientation ginv then -j else j).succ)
-            ((BandPackingSymmetryQuadrupleAction ginv r) 0) + BandVectors.1
-            ((BandPackingSymmetryQuadrupleAction ginv r) 0) ((BandPackingSymmetryQuadrupleAction
-            ginv r) (if BandPackingSymmetryReversesOrientation ginv then -j else j).succ))))) )
-            := by
-  classical
-  intro C₀ Cᵢ T₀ Tᵢ h₀ hᵢ x bundle ginv htileL selectedSupport T' r j t' hcentInv
-  simpa [T', bundle.normalized_fixed_eq, htileL] using hcentInv
-
 private theorem hnewAdjAt1521 :
     (by
       classical
@@ -2894,8 +2863,15 @@ private theorem reverseAdjacencyCase :
       bundle ginv htileL hfunL r j hOFixedInv hfixedCoord
   have hslopeFixedOriginal : PartialOdometerSlope hᵢ = some pFixed := by
     simpa [bundle.normalized_fixed_function_eq, hfunL] using hslopeFixedInv
-  have hcentOriginal := MarkedAdjacencyGeometry.hcentOriginalAt1510 C₀ Cᵢ T₀ Tᵢ h₀ hᵢ x
-      bundle ginv htileL r j t' hcentInv
+  have hcentOriginal : TileCentroid Tᵢ - TileCentroid T' =
+      (1 / 2 : ℝ) • GaussianRealPoint ((⟨0, 1⟩ : GaussianInt) ^ t'.val *
+        (BandVectors.1 ((BandPackingSymmetryQuadrupleAction ginv r)
+          (if BandPackingSymmetryReversesOrientation ginv then -j else j).succ)
+          ((BandPackingSymmetryQuadrupleAction ginv r) 0) +
+        BandVectors.1 ((BandPackingSymmetryQuadrupleAction ginv r) 0)
+          ((BandPackingSymmetryQuadrupleAction ginv r)
+            (if BandPackingSymmetryReversesOrientation ginv then -j else j).succ))) := by
+    simpa [T', bundle.normalized_fixed_eq, htileL] using hcentInv
   have hnewAdj := MarkedAdjacencyGeometry.hnewAdjAt1521 C₀ Cᵢ T₀ Tᵢ h₀ hᵢ x bundle ginv
       hinverseProper hinversePositive r j hr pSelected pFixed t' hslopeSelectedInv
       hslopeReInv hslopeImInv hselectedCoord hfixedCoord hOSelectedOriginal hOFixedOriginal
