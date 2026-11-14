@@ -25,6 +25,79 @@ jobs:
       run: |
         revision=$(PYTHONPATH=python python3 -m lean_pool.ci_cache revision)
         echo "revision=$revision" >> "$GITHUB_OUTPUT"
+  metadata:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    name: Refresh generated metadata
+    timeout-minutes: 240
+    permissions:
+      contents: read
+    steps:
+    - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
+      with:
+        fetch-depth: 0
+        ref: main
+        token: ${{ secrets.REBASE_TOKEN }}
+    - uses: astral-sh/setup-uv@d0d8abe699bfb85fec6de9f7adb5ae17292296ff
+      with:
+        enable-cache: true
+    - name: Install dependencies
+      run: cd python && uv sync --locked
+    - name: Wait for an empty merge queue
+      env:
+        GH_TOKEN: ${{ github.token }}
+      run: |
+        # A direct push to main makes GitHub rebuild every queued group, so wait
+        # (up to three hours) for the queue to drain before committing.
+        set -euo pipefail
+        owner=${GITHUB_REPOSITORY%/*}
+        name=${GITHUB_REPOSITORY#*/}
+        for check in {1..36}; do
+          query="{ repository(owner: \"$owner\", name: \"$name\") {
+            mergeQueue(branch: \"main\") { entries(first: 1) { totalCount } } } }"
+          queued=$(gh api graphql -f query="$query" \
+            --jq '.data.repository.mergeQueue.entries.totalCount // 0') || queued=unknown
+          if [ "$queued" = 0 ]; then
+            echo 'Merge queue is empty.'
+            exit 0
+          fi
+          echo "Merge queue has $queued entries (check $check); waiting."
+          sleep 300
+        done
+        echo '::warning::Merge queue stayed busy for three hours; refreshing metadata anyway.'
+    - name: Commit generated metadata
+      run: |
+        set -euo pipefail
+        git config user.name 'github-actions[bot]'
+        git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+        for attempt in {1..5}; do
+          git fetch origin main
+          git reset --hard origin/main
+          (cd python && uv run python -m lean_pool.stats --repo ..)
+          (cd python && uv run python -m lean_pool.notice --repo ..)
+          unexpected=$(git diff --name-only | { grep -vE '^(NOTICE|README\.md)$' || true; })
+          if [ -n "$unexpected" ]; then
+            echo '::error::Metadata generators changed other files.'
+            exit 1
+          fi
+          if git diff --quiet; then
+            echo 'Generated metadata is already current.'
+            exit 0
+          fi
+          git add README.md NOTICE
+          git commit -m 'Refresh generated project statistics and attribution'
+          if git push origin HEAD:main; then
+            exit 0
+          fi
+          git fetch origin main
+          if [ "$(git rev-parse HEAD^)" = "$(git rev-parse origin/main)" ]; then
+            echo '::error::Metadata push rejected; check REBASE_TOKEN permissions and ruleset bypass.'
+            exit 1
+          fi
+          echo "Main advanced during attempt $attempt; regenerating metadata."
+        done
+        echo '::error::Main kept advancing; metadata refresh exhausted five attempts.'
+        exit 1
   exposition:
     needs: prepare
     runs-on: ubuntu-latest
