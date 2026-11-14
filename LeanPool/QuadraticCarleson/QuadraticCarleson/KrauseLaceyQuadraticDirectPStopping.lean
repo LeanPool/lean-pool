@@ -57,13 +57,13 @@ theorem directQuadraticNormalizedCoefficient_ne_top :
 
 theorem directQuadraticOneNodeConstant_nonneg :
     0 ≤ directQuadraticOneNodeConstant := by
-  exact mul_nonneg (by norm_num) ENNReal.toReal_nonneg
+  exact mul_nonneg (by norm_num1) ENNReal.toReal_nonneg
 
 theorem ofReal_directQuadraticOneNodeConstant :
     ENNReal.ofReal directQuadraticOneNodeConstant =
       20 * directQuadraticNormalizedCoefficient := by
   unfold directQuadraticOneNodeConstant
-  rw [ENNReal.ofReal_mul (by norm_num : (0 : ℝ) ≤ 20),
+  rw [ENNReal.ofReal_mul (by norm_num1 : (0 : ℝ) ≤ 20),
     ENNReal.ofReal_toReal directQuadraticNormalizedCoefficient_ne_top]
   norm_num
 
@@ -118,7 +118,7 @@ theorem localizedTailMaximal_congr_ae
   by_cases hlen : (2 : ℝ) ^ ell.1 ≤ I.length
   · simp only [ hlen, ite_eq_left]
     exact krauseLaceyLocalizedPiece_congr_ae hfg (scale I) I x
-  · simp [hlen]
+  · simp only [hlen, ↓reduceIte]
 
 theorem localizedTailMaximal_zero
     (ell₀ : ℤ) (scale : RealInterval → ℤ) (S : Finset RealInterval)

@@ -63,7 +63,7 @@ theorem nonstandardScaleWeight_le (s : ℕ) :
     nonstandardScaleWeight s ≤ 64 * (2 : ℝ) ^ (-(s : ℝ) / 5) := by
   have h := sq_succ_le_sixtyFour_mul_rpow_four_fifths s
   have hmul := mul_le_mul_of_nonneg_right h
-    (Real.rpow_nonneg (by norm_num : (0 : ℝ) ≤ 2) (-(s : ℝ)))
+    (Real.rpow_nonneg (by norm_num1 : (0 : ℝ) ≤ 2) (-(s : ℝ)))
   unfold nonstandardScaleWeight
   calc
     (((s + 1 : ℕ) : ℝ) ^ 2) * (2 : ℝ) ^ (-(s : ℝ)) ≤
@@ -71,7 +71,7 @@ theorem nonstandardScaleWeight_le (s : ℕ) :
           (2 : ℝ) ^ (-(s : ℝ)) := hmul
     _ = 64 * (2 : ℝ) ^ (-(s : ℝ) / 5) := by
       rw [mul_assoc]
-      rw [← Real.rpow_add (by norm_num : (0 : ℝ) < 2)]
+      rw [← Real.rpow_add (by norm_num1 : (0 : ℝ) < 2)]
       congr 1
       ring
 
@@ -81,30 +81,30 @@ theorem nonstandardScaleWeight_rpow_le_scaleDecayRatio
     {q : ℝ} (hq : 2 ≤ q) (s : ℕ) :
     nonstandardScaleWeight s ^ (1 / q) ≤
       8 * scaleDecayRatio q ^ s := by
-  have hq0 : 0 < q := by linarith
+  have hq0 : 0 < q := by linarith only [hq]
   have hpow := Real.rpow_le_rpow
     (nonstandardScaleWeight_pos s).le (nonstandardScaleWeight_le s)
       (by positivity : 0 ≤ (1 : ℝ) / q)
   have hexp : (1 : ℝ) / q ≤ 1 / 2 := by
-    exact (div_le_div_iff_of_pos_left one_pos hq0 (by norm_num)).mpr hq
+    exact (div_le_div_iff_of_pos_left one_pos hq0 (by norm_num1)).mpr hq
   have h64 : (64 : ℝ) ^ (1 / q) ≤ 8 := by
     calc
       (64 : ℝ) ^ (1 / q) ≤ (64 : ℝ) ^ (1 / 2) :=
-        Real.rpow_le_rpow_of_exponent_le (by norm_num) hexp
-      _ = 8 := by norm_num [show (1 / 2 : ℝ) = (2 : ℝ)⁻¹ by norm_num]
+        Real.rpow_le_rpow_of_exponent_le (by norm_num1) hexp
+      _ = 8 := by norm_num [show (1 / 2 : ℝ) = (2 : ℝ)⁻¹ by norm_num1]
   calc
     nonstandardScaleWeight s ^ (1 / q) ≤
         (64 * (2 : ℝ) ^ (-(s : ℝ) / 5)) ^ (1 / q) := hpow
     _ = (64 : ℝ) ^ (1 / q) *
         (2 : ℝ) ^ ((-(s : ℝ) / 5) * (1 / q)) := by
-      rw [Real.mul_rpow (by norm_num : (0 : ℝ) ≤ 64)
-        (Real.rpow_nonneg (by norm_num : (0 : ℝ) ≤ 2) _),
-        ← Real.rpow_mul (by norm_num : (0 : ℝ) ≤ 2)]
+      rw [Real.mul_rpow (by norm_num1 : (0 : ℝ) ≤ 64)
+        (Real.rpow_nonneg (by norm_num1 : (0 : ℝ) ≤ 2) _),
+        ← Real.rpow_mul (by norm_num1 : (0 : ℝ) ≤ 2)]
     _ ≤ 8 * (2 : ℝ) ^ ((-(s : ℝ) / 5) * (1 / q)) := by
       gcongr
     _ = 8 * scaleDecayRatio q ^ s := by
       unfold scaleDecayRatio
-      rw [← Real.rpow_mul_natCast (by norm_num : (0 : ℝ) ≤ 2)]
+      rw [← Real.rpow_mul_natCast (by norm_num1 : (0 : ℝ) ≤ 2)]
       congr 2
       field_simp
 

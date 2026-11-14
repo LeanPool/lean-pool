@@ -24,13 +24,13 @@ lemma kernelHessian_zero {r theta : ℝ}
     (_hr : 2 < r) (htheta : 1 < theta) (htr : 2 * theta < r) {d : ℕ} :
     kernelHessian r theta (0 : Point d) = 0 := by
   have he1 : 2 * theta / r - 1 ≠ 0 := by
-    have hr0 : 0 < r := by linarith
+    have hr0 : 0 < r := by linarith only [htheta, htr]
     rw [ne_eq, sub_eq_zero, div_eq_one_iff_eq (ne_of_gt hr0)]
-    linarith
-  have he2 : r - 2 ≠ 0 := by linarith
+    linarith only [htr]
+  have he2 : r - 2 ≠ 0 := by linarith only [htheta, htr]
   ext h i
   simp [kernelHessian, kernelHessianCoord, lpPowerFDeriv,
-    pairingCLM, O3.lpPower_zero (by linarith : r ≠ 0),
+    pairingCLM, O3.lpPower_zero (by linarith only [htheta, htr] : r ≠ 0),
     O3.Experimental.scalarJ, Real.zero_rpow he1, Real.zero_rpow he2]
 
 lemma lpPower_rpow_eq_lpNorm_rpow_of_ne_zero {r a : ℝ}
@@ -49,14 +49,14 @@ lemma abs_lpPowerFDeriv_apply_le {r : ℝ} (hr : 2 < r) {d : ℕ}
     |lpPowerFDeriv r x h| ≤
       r * O3.lpNorm r x ^ (r - 1) * lpAmbientConstant r d * ‖h‖ := by
   have hp : r.HolderConjugate (O3.conjugateExponent r) :=
-    O3.holderConjugate_conjugateExponent (by linarith : 1 < r)
+    O3.holderConjugate_conjugateExponent (by linarith only [hr] : 1 < r)
   have hholder := O3.abs_pairing_le_lpNorm_mul hp.symm
     (O3.powerDualityMap r x) h
-  have hdual := lpNorm_powerDualityMap (d := d) (by linarith : 1 < r) x
-  have hamb := lpNorm_le_ambientConstant (d := d) (by linarith : 1 ≤ r) h
+  have hdual := lpNorm_powerDualityMap (d := d) (by linarith only [hr] : 1 < r) x
+  have hamb := lpNorm_le_ambientConstant (d := d) (by linarith only [hr] : 1 ≤ r) h
   rw [lpPowerFDeriv, smul_apply, pairingCLM_apply]
   change |r * O3.pairing (O3.powerDualityMap r x) h| ≤ _
-  rw [abs_mul, abs_of_pos (by linarith : 0 < r)]
+  rw [abs_mul, abs_of_pos (by linarith only [hr] : 0 < r)]
   rw [hdual] at hholder
   have hpow0 : 0 ≤ O3.lpNorm r x ^ (r - 1) := Real.rpow_nonneg
     (O3.lpNorm_nonneg r x) _
@@ -76,11 +76,11 @@ lemma hessianCoordConstant_nonneg {r theta : ℝ}
     (hr : 2 < r) (htheta : 1 < theta) {d : ℕ} :
     0 ≤ hessianCoordConstant r theta d := by
   unfold hessianCoordConstant
-  refine mul_nonneg (mul_nonneg (by norm_num) (by linarith)) ?_
+  refine mul_nonneg (mul_nonneg (by norm_num) (by linarith only [htheta])) ?_
   exact add_nonneg
-    (mul_nonneg (mul_nonneg (abs_nonneg _) (by linarith))
+    (mul_nonneg (mul_nonneg (abs_nonneg _) (by linarith only [hr]))
       (lpAmbientConstant_nonneg r d))
-    (by linarith)
+    (by linarith only [hr])
 
 lemma abs_kernelHessianCoord_first_apply_le {r theta : ℝ}
     (hr : 2 < r) (htheta : 1 < theta) {d : ℕ}
@@ -96,11 +96,11 @@ lemma abs_kernelHessianCoord_first_apply_le {r theta : ℝ}
     Real.rpow_le_rpow (abs_nonneg _) hxi (by linarith)
   have hpower : O3.lpPower r x ^ (2 * theta / r - 2) =
       O3.lpNorm r x ^ (r * (2 * theta / r - 2)) :=
-    lpPower_rpow_eq_lpNorm_rpow_of_ne_zero (by linarith : r ≠ 0) x hx
+    lpPower_rpow_eq_lpNorm_rpow_of_ne_zero (by linarith only [hr] : r ≠ 0) x hx
   have hderiv := abs_lpPowerFDeriv_apply_le hr x h
   simp only [smul_apply, smul_eq_mul, abs_mul]
   rw [abs_of_pos (by norm_num : (0 : ℝ) < 4),
-    abs_of_pos (by linarith : 0 < theta), abs_scalarJ_eq (by linarith : 1 < r),
+    abs_of_pos (by linarith only [htheta] : 0 < theta), abs_scalarJ_eq (by linarith : 1 < r),
     abs_of_nonneg (Real.rpow_nonneg (O3.lpPower_nonneg r x) _), hpower]
   rw [show
     4 * theta * |x i| ^ (r - 1) *
@@ -140,7 +140,7 @@ lemma abs_kernelHessianCoord_second_apply_le {r theta : ℝ}
         (ContinuousLinearMap.proj i : Point d →L[ℝ] ℝ)) h| ≤
       (4 * theta * (r - 1)) * O3.lpNorm r x ^ (2 * theta - 2) * ‖h‖ := by
   have hn : 0 < O3.lpNorm r x := O3.lpNorm_pos_of_ne_zero hx
-  have hxi := norm_apply_le_lpNorm (d := d) (by linarith : 1 ≤ r) x i
+  have hxi := norm_apply_le_lpNorm (d := d) (by linarith only [hr] : 1 ≤ r) x i
   have hcoord : |x i| ^ (r - 2) ≤ O3.lpNorm r x ^ (r - 2) :=
     Real.rpow_le_rpow (abs_nonneg _) hxi (by linarith)
   have hpower : O3.lpPower r x ^ (2 * theta / r - 1) =
@@ -149,7 +149,7 @@ lemma abs_kernelHessianCoord_second_apply_le {r theta : ℝ}
   have hhi : |h i| ≤ ‖h‖ := by
     simpa [Real.norm_eq_abs] using norm_le_pi_norm h i
   have hcoef0 : 0 ≤ 4 * theta * (r - 1) :=
-    mul_nonneg (mul_nonneg (by norm_num) (by linarith)) (by linarith)
+    mul_nonneg (mul_nonneg (by norm_num) (by linarith only [htheta])) (by linarith only [hr])
   have hpow10 : 0 ≤ O3.lpNorm r x ^ (r * (2 * theta / r - 1)) :=
     Real.rpow_nonneg (O3.lpNorm_nonneg r x) _
   have hpow20 : 0 ≤ O3.lpNorm r x ^ (r - 2) :=
@@ -157,9 +157,9 @@ lemma abs_kernelHessianCoord_second_apply_le {r theta : ℝ}
   simp only [smul_apply, smul_eq_mul, ContinuousLinearMap.proj_apply,
     abs_mul]
   rw [abs_of_pos (by norm_num : (0 : ℝ) < 4),
-    abs_of_pos (by linarith : 0 < theta),
+    abs_of_pos (by linarith only [htheta] : 0 < theta),
     abs_of_nonneg (Real.rpow_nonneg (O3.lpPower_nonneg r x) _), hpower,
-    abs_of_pos (by linarith : 0 < r - 1),
+    abs_of_pos (by linarith only [hr] : 0 < r - 1),
     abs_of_nonneg (Real.rpow_nonneg (abs_nonneg (x i)) _)]
   rw [show
     4 * theta * O3.lpNorm r x ^ (r * (2 * theta / r - 1)) *
@@ -180,7 +180,7 @@ lemma abs_kernelHessianCoord_second_apply_le {r theta : ℝ}
               O3.lpNorm r x ^ (r - 2)) * ‖h‖ by ring]
       rw [← Real.rpow_add hn]
       congr 2
-      field_simp [ne_of_gt (by linarith : 0 < r)]
+      field_simp [ne_of_gt (by linarith only [hr] : 0 < r)]
       ring
 
 lemma abs_kernelHessianCoord_apply_le {r theta : ℝ}
@@ -216,8 +216,8 @@ lemma norm_kernelHessian_le_lpNorm_rpow {r theta : ℝ}
   by_cases hx : x = 0
   · subst x
     rw [kernelHessian_zero hr htheta htr]
-    simp [O3.lpNorm_zero (by linarith : 0 < r),
-      Real.zero_rpow (by linarith : 2 * theta - 2 ≠ 0)]
+    simp [O3.lpNorm_zero (by linarith only [htheta, htr] : 0 < r),
+      Real.zero_rpow (by linarith only [htheta] : 2 * theta - 2 ≠ 0)]
   · apply ContinuousLinearMap.opNorm_le_bound _
       (mul_nonneg (hessianCoordConstant_nonneg hr htheta)
         (Real.rpow_nonneg (O3.lpNorm_nonneg r x) _))
@@ -247,9 +247,9 @@ lemma norm_kernelHessian_le_ambient_rpow {r theta : ℝ}
     (x : Point d) :
     ‖kernelHessian r theta x‖ ≤
       hessianAmbientConstant r theta d * ‖x‖ ^ (2 * theta - 2) := by
-  have hlp := lpNorm_le_ambientConstant (d := d) (by linarith : 1 ≤ r) x
+  have hlp := lpNorm_le_ambientConstant (d := d) (by linarith only [htheta, htr] : 1 ≤ r) x
   have hrpow := Real.rpow_le_rpow (O3.lpNorm_nonneg r x) hlp
-    (by linarith : 0 ≤ 2 * theta - 2)
+    (by linarith only [htheta] : 0 ≤ 2 * theta - 2)
   have hcoordC : 0 ≤ hessianCoordConstant r theta d :=
     hessianCoordConstant_nonneg hr htheta
   calc
@@ -275,7 +275,7 @@ theorem continuousAt_kernelHessian_zero {r theta : ℝ}
     (fun x : Point d ↦ norm_kernelHessian_le_ambient_rpow hr htheta htr x)
   have hpow : ContinuousAt
       (fun x : Point d ↦ ‖x‖ ^ (2 * theta - 2)) 0 :=
-    continuousAt_id.norm.rpow_const (Or.inr (by linarith : 0 ≤ 2 * theta - 2))
+    continuousAt_id.norm.rpow_const (Or.inr (by linarith only [htheta] : 0 ≤ 2 * theta - 2))
   have hc : ContinuousAt
       (fun _ : Point d ↦ hessianAmbientConstant r theta d) 0 := continuousAt_const
   have hbound : ContinuousAt

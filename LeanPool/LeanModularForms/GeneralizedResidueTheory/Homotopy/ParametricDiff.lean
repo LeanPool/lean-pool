@@ -346,7 +346,7 @@ private lemma homotopy_schwarz_product_rule
   rw [hLHS, hRHS, homotopy_chain_rule_s f H hH t s hf,
     homotopy_chain_rule_t f H hH t s hf,
     schwarz_partialDeriv_comm H hH t s]
-  ring
+  ac_rfl
 
 /-! ### Helpers for `hasDerivAt_homotopy_param` -/
 

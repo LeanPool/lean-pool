@@ -56,8 +56,8 @@ theorem hasSignedSumSquareBound_badSubcollectionGenerations
     omega
   · intro I hI
     split_ifs with hi
-    · rcases hc _ hi with h | h | h <;> rw [h] <;> norm_num
-    · norm_num
+    · rcases hc _ hi with h | h | h <;> rw [h] <;> norm_num1
+    · norm_num1
 
 theorem eLpNorm_badSubcollectionPrefixMaximal_le
     {S : Finset RealInterval} {f : ℝ → ℂ} (hf : Integrable f)
@@ -236,7 +236,7 @@ theorem eLpNorm_paperPrunedActivePrefixMaximal_le
   apply mul_le_mul_of_nonneg_right _ (Real.sqrt_nonneg _)
   have h := log2_activeOverlapCutoff_le s
   have hr : (Nat.log2 (activeOverlapCutoff s) : ℝ) ≤ 2 * (s : ℝ) + 1 := by exact_mod_cast h
-  linarith
+  linarith only [hr]
 
 theorem norm_badLengthTailAction_le_prefix
     {S : Finset RealInterval} (f : ℝ → ℂ) (I₀ : RealInterval) (k₀ s : ℤ)
@@ -309,15 +309,15 @@ theorem eLpNorm_pruned_badLengthTailMaximal_le
       (aemeasurable_badLengthTailMaximal S hf I₀ k₀ s scale P).aestronglyMeasurable
     intro x
     rw [Real.norm_of_nonneg (badLengthTailMaximal_nonneg f I₀ k₀ s scale hlam P hP x),
-      smul_eq_mul, Real.norm_of_nonneg (mul_nonneg (by norm_num)
+      smul_eq_mul, Real.norm_of_nonneg (mul_nonneg (by norm_num1)
         (badSubcollectionPrefixMaximal_nonneg S f I₀ k₀ s scale P P.card x))]
     exact badLengthTailMaximal_le_prefix f I₀ k₀ s scale hlam P hP x
   apply hmono.trans
   change eLpNorm ((2 : ℝ) • badSubcollectionPrefixMaximal S f I₀ k₀ s scale P P.card)
     2 volume ≤ _
   rw [eLpNorm_const_smul, show ‖(2 : ℝ)‖ₑ = ENNReal.ofReal 2 by
-      exact Real.enorm_of_nonneg (by norm_num),
-    ENNReal.ofReal_mul (by norm_num : (0 : ℝ) ≤ 2)]
+      exact Real.enorm_of_nonneg (by norm_num1),
+    ENNReal.ofReal_mul (by norm_num1 : (0 : ℝ) ≤ 2)]
   exact mul_le_mul_right (eLpNorm_prunedActivePrefixMaximal_le hf I₀ k₀ s hk₀ hs scale
     hlam hparent hsub N hN P.card M) _
 
@@ -383,7 +383,7 @@ theorem eLpNorm_exponentiallyPruned_badLengthTailMaximal_le
   apply ENNReal.ofReal_le_ofReal
   have hr : (Nat.log2 (activeExponentialCutoff s) : ℝ) ≤ 2 * (s : ℝ) + 5 := by
     exact_mod_cast log2_activeExponentialCutoff_le s
-  nlinarith [Real.sqrt_nonneg (nonstandardSignedEnergyBudget f I₀ s)]
+  nlinarith only [hr, Real.sqrt_nonneg (nonstandardSignedEnergyBudget f I₀ s)]
 
 theorem lintegral_active_removed_overlap_sq_le
     {S : Finset RealInterval} (f : ℝ → ℂ) (I₀ : RealInterval) (k₀ : ℤ) (s : ℕ)
@@ -523,7 +523,7 @@ theorem eLpNorm_nonstandard_badLengthTailMaximal_le
       exact badLengthTailMaximal_le_pruned_add_removed f I₀ k₀ s scale hlam N hN _ x
     _ ≤ eLpNorm (badLengthTailMaximal S f I₀ k₀ s scale P) 2 volume +
         eLpNorm (badLengthTailMaximal S f I₀ k₀ s scale R) 2 volume :=
-      eLpNorm_add_le (by norm_num)
+      eLpNorm_add_le (by norm_num1)
     _ ≤ ENNReal.ofReal ((4 * (s : ℝ) + 12) * Real.sqrt (nonstandardSignedEnergyBudget f I₀ s)) +
         ENNReal.ofReal (Real.sqrt (badRemovedEnergyBudget f I₀ s)) :=
       add_le_add (eLpNorm_exponentiallyPruned_badLengthTailMaximal_le hf I₀ k₀ s hk₀

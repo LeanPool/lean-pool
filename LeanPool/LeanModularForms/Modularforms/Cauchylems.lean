@@ -148,8 +148,14 @@ theorem telescope_aux (z : ℍ) (m : ℤ) (b : ℕ) :
       ring
     · omega
     · omega
-    · simp_all
-    · simp_all
+    · simp_all only [neg_add_rev, Int.reduceNeg, Finset.disjoint_insert_right, Finset.mem_Ico,
+      le_add_iff_nonneg_left, Int.neg_nonneg, Int.reduceLE, add_neg_lt_iff_lt_add, false_and,
+      not_false_eq_true, Finset.disjoint_singleton_right, neg_le_self_iff, Nat.cast_nonneg,
+      lt_self_iff_false, and_false, and_self]
+    · simp_all only [neg_add_rev, Int.reduceNeg, Finset.disjoint_insert_right, Finset.mem_Ico,
+      le_add_iff_nonneg_left, Int.neg_nonneg, Int.reduceLE, add_neg_lt_iff_lt_add, false_and,
+      not_false_eq_true, Finset.disjoint_singleton_right, neg_le_self_iff, Nat.cast_nonneg,
+      lt_self_iff_false, and_false, and_self]
 
 theorem extracted_3 (z : ℍ) (b : ℤ) : CauchySeq fun N : ℕ ↦
   ∑ n ∈ Finset.Ico (-↑N : ℤ) ↑N, (1 / ((b : ℂ) * ↑z + ↑n) - 1 / (↑b * ↑z + ↑n + 1)) := by
@@ -190,7 +196,7 @@ theorem extracted_5 (z : ℍ) (b : ℤ) :
     apply this
   apply Filter.Eventually.of_forall
   intro N
-  simp
+  simp only [zpow_ofNat, comp_apply, one_div]
   congr
 
 lemma CauchySeq.congr (f g : ℕ → ℂ) (hf : f = g) (hh : CauchySeq g) : CauchySeq f := hf ▸ hh
@@ -201,14 +207,14 @@ lemma cauchy_seq_mul_const (f : ℕ → ℂ) (c : ℂ) (hc : c ≠ 0) :
   rw [Metric.cauchySeq_iff'] at *
   simp only [ne_eq, gt_iff_lt, ge_iff_le, Pi.smul_apply, smul_eq_mul] at *
   intro ε hε
-  have hC : 0 < ‖c‖ := by simp [ne_eq, hc, not_false_eq_true]
-  obtain ⟨N, hN⟩ := hf (ε / ‖c‖) (by rw [lt_div_iff₀' hC]; simp [hε])
+  have hC : 0 < ‖c‖ := by simp only [norm_pos_iff, ne_eq, hc, not_false_eq_true]
+  obtain ⟨N, hN⟩ := hf (ε / ‖c‖) (by rw [lt_div_iff₀' hC]; simp only [mul_zero, hε])
   exact ⟨N, fun n hn => by
     have h1 := hN n hn
     simp only [dist_eq_norm, gt_iff_lt] at *
     rw [← mul_sub]
     simp only [Complex.norm_mul]
-    rw [lt_div_iff₀' (by simp [hc])] at h1
+    rw [lt_div_iff₀' (by simp only [norm_pos_iff, ne_eq, hc, not_false_eq_true])] at h1
     exact h1⟩
 
 
@@ -223,7 +229,7 @@ lemma term_evem (z : ℍ) (m : ℤ) : summableTerm z m = summableTerm z (-m) := 
   nth_rw 1 [int_sum_neg]
   congr
   funext m
-  simp
+  simp only [Int.cast_neg, inv_inj]
   ring
 
 lemma t8 (z : ℍ) :
@@ -247,7 +253,7 @@ lemma t8 (z : ℍ) :
     congr
     ext d
     let Z : ℍ := ⟨(d +1)* z, by simp only [mul_im, add_re, natCast_re, one_re, coe_im, add_im,
-      natCast_im, one_im, add_zero, coe_re, zero_mul]; exact mul_pos (by linarith) z.2⟩
+      natCast_im, one_im, add_zero, coe_re, zero_mul]; exact mul_pos (by linarith only []) z.2⟩
     have := q_exp_iden 2 (by norm_num) (z := Z)
     simp only [one_div, neg_mul, even_two, Even.neg_pow, Nat.add_one_sub_one,
       Nat.factorial_one, Nat.cast_one, div_one, pow_one, Z] at *
@@ -281,7 +287,8 @@ theorem G2_c_tendsto (z : ℍ) :
         rw [← this]
         have := (a4 2 z).prod_symm.prod
         apply Summable.mul_left
-        simp_all
+        simp_all only [neg_mul, even_two, Even.neg_pow, Nat.add_one_sub_one, Nat.factorial_one,
+          Nat.cast_one, div_one, pow_one, Nat.cast_add, Prod.swap_prod_mk, uncurry_apply_pair]
     have := hf.hasSum
     have V := this.comp tendsto_finset_range
     simp only [neg_mul, even_two, Even.neg_pow, Nat.add_one_sub_one, Nat.factorial_one,

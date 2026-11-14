@@ -69,7 +69,7 @@ theorem integral_mul_lapTrace_nonneg_of_ae_tendsto {w χ : Point n → ℝ}
   have hc'pos : 0 < c' := by positivity
   have hcc' : c ≤ c' := by
     have := le_abs_self c
-    linarith
+    linarith only [this]
   -- the sequence of steps `h_k = 1 / (k + 1)`
   set hs : ℕ → ℝ := fun k => 1 / ((k : ℝ) + 1) with hsdef
   have hs_ne : ∀ k, hs k ≠ 0 := fun k => by
@@ -93,7 +93,7 @@ theorem integral_mul_lapTrace_nonneg_of_ae_tendsto {w χ : Point n → ℝ}
   have hFnn : ∀ k x, 0 ≤ F k x := by
     intro k x
     have := hlow (hs k) (hs_ne k) x
-    exact mul_nonneg (by linarith) (hχ0 x)
+    exact mul_nonneg (by linarith only [hcc', this]) (hχ0 x)
   set I : ℝ := ∫ x, w x * lapTrace χ x with hIdef
   set B : ℝ := ∫ x, χ x with hBdef
   have hFintegral : ∀ k, ∫ x, F k x =
@@ -135,7 +135,7 @@ theorem integral_mul_lapTrace_nonneg_of_ae_tendsto {w χ : Point n → ℝ}
         ((ENNReal.continuous_ofReal.tendsto _).comp hlim).liminf_eq
       rw [hlimeq]
       exact ENNReal.ofReal_le_ofReal
-        (mul_le_mul_of_nonneg_right (by linarith) (hχ0 x))
+        (mul_le_mul_of_nonneg_right (by linarith only [hT]) (hχ0 x))
     · rw [image_eq_zero_of_notMem_tsupport hxs, mul_zero, ENNReal.ofReal_zero]
       exact bot_le
   have hlintχ : ∫⁻ x, ENNReal.ofReal (c' * χ x) = ENNReal.ofReal (c' * B) := by
@@ -146,10 +146,10 @@ theorem integral_mul_lapTrace_nonneg_of_ae_tendsto {w χ : Point n → ℝ}
     rw [← hlintχ, ← hliminf]
     exact (lintegral_mono_ae hpoint).trans hfatou
   rcases ENNReal.ofReal_le_ofReal_iff'.mp hchain with hle | hle
-  · linarith
+  · linarith only [hle]
   · exfalso
     have : 0 < c' * B := mul_pos hc'pos hpos
-    linarith
+    linarith only [hle, this]
 
 /-! ### Subsolutions of the Laplace equation -/
 
@@ -198,10 +198,10 @@ theorem integral_lapTrace_mul_nonneg_of_viscositySubsolution_laplace
     refine mem_cthickening_of_dist_le z x r K₀ hx ?_
     have := dist_triangle z y x
     rw [mem_ball] at hz
-    linarith
+    linarith only [hy, hz, this]
   obtain ⟨M₀, hM₀⟩ := hK.exists_bound_of_continuousOn hcontK
   have hM : ∀ z ∈ K, |u z| ≤ M₀ := fun z hz => by
-    simpa [Real.norm_eq_abs] using hM₀ z hz
+    exact hM₀ z hz
   -- the test function side
   set L := lapTrace χ with hLdef
   have hLcont : Continuous L := continuous_lapTrace hχ
@@ -246,7 +246,7 @@ theorem integral_lapTrace_mul_nonneg_of_viscositySubsolution_laplace
     rw [superjet_eq_of_mem_nhds hKC (hKnhds x hxK₀ y hdist)] at hsuperK
     have hsub := hu.2 y (hKC hy) _ hsuperK
     simp only [laplaceOperator_apply] at hsub
-    linarith
+    linarith only [hsub]
   have hstep1 : 0 ≤ ∫ x, w x * L x :=
     integral_mul_lapTrace_nonneg_of_ae_tendsto hw hχ hχc hχ0
       (fun h hh x => neg_mul_le_coordSecondDifference_of_coordinateSemiconvexOn hsemi hh x)
@@ -267,7 +267,7 @@ theorem integral_lapTrace_mul_nonneg_of_viscositySubsolution_laplace
   have habs := (le_abs_self _).trans (le_of_eq_of_le (Real.norm_eq_abs _).symm hle)
   have hεA : ε' * A ≤ ε := by
     rw [hε'def, div_mul_eq_mul_div, div_le_iff₀ (by positivity)]
-    nlinarith
-  linarith
+    nlinarith only [hε]
+  linarith only [hstep1, habs, hεA]
 
 end ViscositySolns

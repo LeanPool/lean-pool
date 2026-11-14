@@ -47,7 +47,7 @@ theorem UpperSemicontinuousOn.sub_continuousOn
     UpperSemicontinuousOn (fun x => u x - φ x) C := by
   have hnegφ : UpperSemicontinuousOn (fun x => -φ x) C :=
     ContinuousOn.upperSemicontinuousOn_real hφ.neg
-  simpa [sub_eq_add_neg] using hu.add hnegφ
+  exact hu.add hnegφ
 
 /--
 Subtracting a continuous perturbation preserves lower semicontinuity.
@@ -58,7 +58,7 @@ theorem LowerSemicontinuousOn.sub_continuousOn
     LowerSemicontinuousOn (fun x => u x - φ x) C := by
   have hnegφ : LowerSemicontinuousOn (fun x => -φ x) C :=
     ContinuousOn.lowerSemicontinuousOn_real hφ.neg
-  simpa [sub_eq_add_neg] using hu.add hnegφ
+  exact hu.add hnegφ
 
 /--
 An upper semicontinuous function attains its maximum on a nonempty compact set.

@@ -57,7 +57,9 @@ lemma innerProduct_is_pd_kernel :
     intro i j
     simp only [a, b, star_def]
     apply Complex.ext
-    · simp_all
+    · simp_all only [mul_re, conj_re, conj_im, neg_mul, sub_neg_eq_add, ofReal_add, ofReal_mul,
+        ofReal_sub, add_re, ofReal_re, ofReal_im, mul_zero, sub_zero, I_re, sub_re, zero_mul,
+        I_im, sub_im, mul_im, add_zero, sub_self]
     · simp only [Complex.add_im, Complex.ofReal_im, Complex.mul_im, Complex.I_re, Complex.I_im,
                  Complex.ofReal_re, mul_zero, zero_add,
                  Complex.conj_re, Complex.conj_im]
@@ -65,11 +67,15 @@ lemma innerProduct_is_pd_kernel :
   -- The product cbarᵢcⱼ⟪xᵢ,xⱼ⟫ has real part (aᵢaⱼ + bᵢbⱼ)⟪xᵢ,xⱼ⟫
   have re_prod : ∀ i j, (star (c i) * c j * (⟪x i,
     x j⟫_ℝ : ℂ)).re = (a i * a j + b i * b j) * ⟪x i, x j⟫_ℝ := by
-    simp_all
+    simp_all only [RCLike.star_def, ofReal_add, ofReal_mul, ofReal_sub, mul_re, add_re, ofReal_re,
+      ofReal_im, mul_zero, sub_zero, I_re, sub_re, zero_mul, I_im, sub_im, mul_im, add_zero,
+      sub_self, add_im, one_mul, zero_add, implies_true]
   -- Sum over i,j: Re(∑∑) = ∑∑ (aᵢaⱼ + bᵢbⱼ)⟪xᵢ,xⱼ⟫
   have sum_re : (∑ i : Fin m, ∑ j : Fin m, star (c i) * c j * (⟪x i, x j⟫_ℝ : ℂ)).re =
                 ∑ i : Fin m, ∑ j : Fin m, (a i * a j + b i * b j) * ⟪x i, x j⟫_ℝ := by
-    simp_all
+    simp_all only [RCLike.star_def, ofReal_add, ofReal_mul, ofReal_sub, mul_re, add_re, ofReal_re,
+      ofReal_im, mul_zero, sub_zero, I_re, sub_re, zero_mul, I_im, sub_im, mul_im, add_zero,
+      sub_self, add_im, one_mul, zero_add, implies_true, re_sum]
   rw [sum_re]
   -- Split into two sums
   have split_sum : ∑ i : Fin m, ∑ j : Fin m, (a i * a j + b i * b j) * ⟪x i, x j⟫_ℝ =
@@ -112,7 +118,7 @@ lemma real_valued_PD_kernel_gives_PSD_matrix {α : Type*} (K : α → α → ℂ
   constructor
   · -- Hermitian (symmetric for real matrices)
     ext i j
-    simp_all
+    simp_all only [conjTranspose_apply, of_apply, star_trivial]
   · -- Nonneg quadratic form for real vectors
     intro v
     have h := hK m x (fun i => (v i : ℂ))
@@ -261,7 +267,8 @@ theorem gaussian_rbf_pd_innerProduct_proof :
   have h_sum' : ∑ i : Fin m, ∑ j : Fin m, (starRingEnd ℂ) (c i) * c j * cexp (-(1/2 : ℂ) * (‖x i -
     x j‖^2 : ℝ)) =
                ∑ i : Fin m, ∑ j : Fin m, (starRingEnd ℂ) (d i) * d j * cexp (⟪x i, x j⟫_ℝ : ℂ) := by
-    simp_all
+    simp_all only [one_div, ofReal_sub, ofReal_add, ofReal_pow, ofReal_mul, ofReal_ofNat, neg_mul,
+      RCLike.star_def]
   rw [h_sum']
   -- Now apply that exp(⟨·,·⟩) is a PD kernel
   have h_inner_pd : IsPositiveDefiniteKernel (fun (u v : H) => (⟪u,

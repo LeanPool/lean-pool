@@ -50,7 +50,7 @@ theorem measurable_realFixedHeightQuadraticMaximal (height : ℕ)
     {f : ℝ → ℂ} (hf : MemLp f 2) :
     Measurable (realFixedHeightQuadraticMaximal height f) := by
   rw [realFixedHeightQuadraticMaximal_eq_rational height
-    (hf.locallyIntegrable (by norm_num : (1 : ℝ≥0∞) ≤ 2))]
+    (hf.locallyIntegrable (by norm_num1 : (1 : ℝ≥0∞) ≤ 2))]
   exact measurable_countableConvolutionMaximal_of_memLp _
     (fun n ↦ (continuous_fixedHeightQuadraticKernel _ _ _).measurable) hf
 
@@ -63,7 +63,7 @@ theorem realFixedHeightQuadraticMaximal_sq_lintegral_decay
       ENNReal.ofReal (70996725888 * positiveDyadicAmplitudeBound ^ 2 /
         (2 : ℝ) ^ ((height - 1) / 5)) * ∫⁻ x, ‖f x‖ₑ ^ 2 := by
   rw [realFixedHeightQuadraticMaximal_eq_rational height
-    (hf.locallyIntegrable (by norm_num : (1 : ℝ≥0∞) ≤ 2))]
+    (hf.locallyIntegrable (by norm_num1 : (1 : ℝ≥0∞) ≤ 2))]
   exact countable_fixedHeightQuadraticKernel_maximal_sq_decay_all_heights
     height rationalModulationSequence rationalModulationSequence_ne_zero hf
 

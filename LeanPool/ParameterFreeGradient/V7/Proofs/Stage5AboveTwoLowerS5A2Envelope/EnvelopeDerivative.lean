@@ -65,9 +65,8 @@ lemma hasFDerivAt_of_global_support_and_lp_lipschitz
   intro c hc
   let C : ℝ := lpAmbientConstant p d
   let A : ℝ := L * C ^ (2 : ℕ)
-  have hC : 0 ≤ C := lpAmbientConstant_nonneg _ _
   have hA : 0 ≤ A := mul_nonneg hL (sq_nonneg C)
-  have hradius : 0 < c / (A + 1) := div_pos hc (by linarith)
+  have hradius : 0 < c / (A + 1) := div_pos hc (by linarith only [hA])
   have hevent : ∀ᶠ h in nhds (0 : Point d), ‖h‖ < c / (A + 1) := by
     simpa only [dist_zero_right] using
       (Metric.eventually_nhds_iff_ball.2 ⟨c / (A + 1), hradius, by
@@ -83,7 +82,7 @@ lemma hasFDerivAt_of_global_support_and_lp_lipschitz
     dsimp [R]
     rw [hsub] at hlower
     rw [pairingCLM_apply]
-    linarith
+    linarith only [hlower]
   have hRupper : R ≤ O3.pairing (g (x + h) - g x) h := by
     dsimp [R]
     rw [hdiff] at hupper
@@ -91,9 +90,9 @@ lemma hasFDerivAt_of_global_support_and_lp_lipschitz
     simp only [O3.pairing, Pi.neg_apply, mul_neg,
       Finset.sum_neg_distrib] at hupper ⊢
     simp only [Pi.sub_apply, sub_mul, Finset.sum_sub_distrib]
-    linarith
+    linarith only [hupper]
   have hholder := O3.pairing_le_lpNorm_mul
-    (O3.holderConjugate_conjugateExponent (by linarith : 1 < p)).symm
+    (O3.holderConjugate_conjugateExponent hp).symm
       (g (x + h) - g x) h
   have hsmooth := hlip (x + h) x
   rw [hsub] at hsmooth
@@ -112,9 +111,12 @@ lemma hasFDerivAt_of_global_support_and_lp_lipschitz
           exact O3.lpNorm_nonneg p h
         _ = L * lpNorm p h ^ (2 : ℕ) := by ring
     have hnormsq : lpNorm p h ^ (2 : ℕ) ≤ (C * ‖h‖) ^ (2 : ℕ) := by
-      nlinarith [O3.lpNorm_nonneg p h]
+      exact pow_le_pow_left₀ (O3.lpNorm_nonneg p h) hpambient 2
     dsimp [A]
-    nlinarith [mul_le_mul_of_nonneg_left hnormsq hL]
+    calc
+      R ≤ L * lpNorm p h ^ 2 := hRupper.trans hpair
+      _ ≤ L * (C * ‖h‖) ^ 2 := mul_le_mul_of_nonneg_left hnormsq hL
+      _ = L * C ^ 2 * ‖h‖ ^ 2 := by ring
   change ‖R‖ ≤ c * ‖h‖
   calc
     ‖R‖ ≤ A * ‖h‖ ^ (2 : ℕ) := hrem
@@ -123,8 +125,10 @@ lemma hasFDerivAt_of_global_support_and_lp_lipschitz
       have hsmall : A * ‖h‖ ≤ c := by
         have : (A + 1) * ‖h‖ < c := by
           simpa [mul_comm] using
-            ((lt_div_iff₀ (by linarith : 0 < A + 1)).mp hh)
-        nlinarith
-      nlinarith
+            ((lt_div_iff₀ (by linarith only [hA] : 0 < A + 1)).mp hh)
+        linarith only [this, hn]
+      calc
+        A * ‖h‖ ^ 2 = (A * ‖h‖) * ‖h‖ := by ring
+        _ ≤ c * ‖h‖ := mul_le_mul_of_nonneg_right hsmall hn
 
 end V7.Stage5AboveTwoLowerS5A2Envelope

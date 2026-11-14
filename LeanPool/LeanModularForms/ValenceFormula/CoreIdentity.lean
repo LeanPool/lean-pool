@@ -16,8 +16,6 @@ import LeanPool.LeanModularForms.ValenceFormula.WindingWeights.Rho
 import LeanPool.LeanModularForms.ValenceFormula.WindingWeights.RhoPlusOne
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.Arctan
 import Mathlib.CategoryTheory.Category.Init
-import Mathlib.MeasureTheory.Covering.Besicovitch
-import Mathlib.NumberTheory.ArithmeticFunction.Misc
 
 /-!
 # Core Identity for the Valence Formula
@@ -90,9 +88,11 @@ private lemma elliptic_finset_sum_eq_three (S : Finset UpperHalfPlane)
       · exact ellipticPointRhoPlusOne_mem_fd
     exact hS_complete_zero x hx_fd hx_not_S
   rw [Finset.sum_subset h_ell_sub h_zero_outside,
-    Finset.sum_insert (by simp [ellipticPointI_ne_rho, ellipticPoint_ne_iρ1]),
-    Finset.sum_insert (by simp [ellipticPoint_ne_ρρ1]), Finset.sum_singleton]
-  ring
+    Finset.sum_insert (by simp only [Finset.mem_insert, ellipticPointI_ne_rho, Finset.mem_singleton,
+      ellipticPoint_ne_iρ1, or_self, not_false_eq_true]),
+    Finset.sum_insert (by simp only [Finset.mem_singleton, ellipticPoint_ne_ρρ1,
+      not_false_eq_true]), Finset.sum_singleton]
+  ac_rfl
 
 include hf in
 private theorem explicit_coefficients (S : Finset UpperHalfPlane) (hS : ∀ p ∈ S, p ∈ 𝒟)
@@ -377,7 +377,8 @@ private theorem bdry_ne_eq_union (S : Finset UpperHalfPlane) (hS : ∀ p ∈ S, 
         fun h => by rw [h] at hn; linarith [h_rho1_norm]⟩,
         fun ⟨_, h⟩ => by have := (abs_lt.mp h).1; linarith⟩
     · exact ⟨⟨hs,
-        fun h => by rw [h] at hre; simp [ellipticPointI'] at hre,
+        fun h => by rw [h] at hre; simp only [ellipticPointI', I_re, gt_iff_lt,
+          lt_self_iff_false] at hre,
         fun h => by rw [h] at hre; linarith [ellipticPointRho_re_neg],
         hne⟩,
         fun ⟨h, _⟩ => by linarith⟩

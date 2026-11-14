@@ -9,9 +9,6 @@ public import LeanPool.PoincareThreeBody.SafeCollisionPhase
 import LeanPool.PoincareThreeBody.AnalyticCompactParameterIntegral
 import LeanPool.PoincareThreeBody.DisturbingParameterAnalytic
 import Mathlib.Analysis.Analytic.Constructions
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.Arctan
-import Mathlib.MeasureTheory.Covering.Besicovitch
-import Mathlib.Tactic.Positivity.Finset
 
 /-!
 # Analyticity of the collision-avoiding average at the boundary

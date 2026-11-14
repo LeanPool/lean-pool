@@ -7,6 +7,8 @@ Authors: OpenAI, Dean Cureton
 module
 
 public import LeanPool.GapCVP.Part05E
+public import LeanPool.GapCVP.Part05A
+import LeanPool.GapCVP.Part05B
 
 /-! # GapCVP proof, part 05, continuation 06 -/
 
@@ -387,19 +389,19 @@ private theorem unaryPrefixSuffix_true_step (input : List Bool) :
     actualUnaryPrefixSuffixMachine.step
       (unaryPrefixSuffixConfiguration (true :: input)) =
       some (unaryPrefixSuffixConfiguration input) := by
-  compactMachineStepTac [actualUnaryPrefixSuffixMachine, unaryPrefixSuffixConfiguration]
+  rfl
 
 private theorem unaryPrefixSuffix_false_step (input : List Bool) :
     actualUnaryPrefixSuffixMachine.step
       (unaryPrefixSuffixConfiguration (false :: input)) =
       some (Turing.haltList actualUnaryPrefixSuffixMachine input) := by
-  compactMachineStepTac [actualUnaryPrefixSuffixMachine, unaryPrefixSuffixConfiguration]
+  rfl
 
 private theorem unaryPrefixSuffix_missing_step :
     actualUnaryPrefixSuffixMachine.step
       (unaryPrefixSuffixConfiguration []) =
       some (Turing.haltList actualUnaryPrefixSuffixMachine []) := by
-  compactMachineStepTac [actualUnaryPrefixSuffixMachine, unaryPrefixSuffixConfiguration]
+  rfl
 
 private def unaryPrefixSuffix_validTrace
     (count : ℕ) (suffix : List Bool) :

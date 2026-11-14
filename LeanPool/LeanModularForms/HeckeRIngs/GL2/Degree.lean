@@ -70,7 +70,8 @@ private lemma deg_T_ad_of_pos' (a d : ℕ) (ha : 0 < a) (hd : 0 < d) (hdvd : a �
     deg (GLPair 2) (TAd a d) =
     HeckeCosetDeg (GLPair 2) (TDiag ![a, d]) := by
   unfold deg; rw [T_ad_of_pos a d ha hd hdvd]
-  unfold TElem; simp
+  unfold TElem; simp only [Nat.succ_eq_add_one, Nat.reduceAdd, RingHom.coe_mk, MonoidHom.coe_mk,
+    OneHom.coe_mk, deg_fun_T_single, one_mul]
 
 include hp in
 /-- Non-scalar case: `deg(TAd(pⁱ, p^{k-i})) = p^{k-2i-1}(p+1)` when `2i < k`. -/
@@ -163,11 +164,11 @@ theorem deg_T_sum (m : ℕ+) :
   | one =>
     intro hn
     rw [show (⟨1, hn⟩ : ℕ+) = (1 : ℕ+) from rfl, deg_T_sum_one]
-    simp
+    simp only [PNat.val_ofNat, ArithmeticFunction.sigma_one, Nat.cast_one]
   | @prime_pow p k hp hk =>
     intro hn
     rw [deg_T_sum_prime_pow p hp k]; simp only [ArithmeticFunction.sigma_one_apply]
-    simp_all
+    simp_all only [PNat.mk_coe, Nat.sum_divisors_prime_pow, Nat.cast_sum, Nat.cast_pow]
   | @coprime a b ha hb hcop iha ihb =>
     intro hn
     rw [show TSum ⟨a * b, hn⟩ = TSum ⟨a, by omega⟩ * TSum ⟨b, by omega⟩ from

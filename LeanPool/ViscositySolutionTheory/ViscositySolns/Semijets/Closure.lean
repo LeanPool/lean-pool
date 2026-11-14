@@ -303,10 +303,10 @@ theorem closedSuperjet_translate_add_left
     rcases hz with ⟨w, hw, rfl⟩
     rcases w with ⟨⟨y, r⟩, KJ⟩
     rcases hw with ⟨hyK, hr, hKJ⟩
-    exact ⟨⟨y, hyK, rfl⟩, by simpa using hr,
+    exact ⟨⟨y, hyK, rfl⟩, by exact hr,
       superjet_translate_add_left hKJ⟩
   change ((x0 + x, u (x0 + x)), J) ∈ closure (SuperjetGraph ((fun y : Point n => x0 + y) '' K) u)
-  simpa only [shift, add_sub_cancel_right] using closure_mono hsubset hshift_mem
+  exact closure_mono hsubset hshift_mem
 
 /--
 Closed subjets are preserved by translating the domain.
@@ -339,10 +339,10 @@ theorem closedSubjet_translate_add_left
     rcases hz with ⟨w, hw, rfl⟩
     rcases w with ⟨⟨y, r⟩, KJ⟩
     rcases hw with ⟨hyK, hr, hKJ⟩
-    exact ⟨⟨y, hyK, rfl⟩, by simpa using hr,
+    exact ⟨⟨y, hyK, rfl⟩, by exact hr,
       subjet_translate_add_left hKJ⟩
   change ((x0 + x, u (x0 + x)), J) ∈ closure (SubjetGraph ((fun y : Point n => x0 + y) '' K) u)
-  simpa only [shift, add_sub_cancel_right] using closure_mono hsubset hshift_mem
+  exact closure_mono hsubset hshift_mem
 
 /-- For fixed base point, the closed superjet fiber is topologically closed. -/
 theorem isClosed_closedSuperjet {C : Set (Point n)} {u : Point n -> Real} {x : Point n} :
@@ -500,7 +500,7 @@ theorem closedSuperjet_sub_of_add_hasSecondOrderExpansionWithin
             z.2.hessian - (A z.1.1).hessian :=
           (Jet.continuous_hessian.comp continuous_snd).sub
             (Jet.continuous_hessian.comp (hA_cont.comp hbase))
-        simpa using Continuous.prodMk hgrad hhess
+        exact Continuous.prodMk hgrad hhess
     exact hleft.prodMk hright
   have hshift_mem :
       shift ((x, (fun y => u y + φ y) x), J) ∈
@@ -619,7 +619,7 @@ theorem closedSubjet_sub_of_add_hasSecondOrderExpansionWithin
             z.2.hessian - (A z.1.1).hessian :=
           (Jet.continuous_hessian.comp continuous_snd).sub
             (Jet.continuous_hessian.comp (hA_cont.comp hbase))
-        simpa using Continuous.prodMk hgrad hhess
+        exact Continuous.prodMk hgrad hhess
     exact hleft.prodMk hright
   have hshift_mem :
       shift ((x, (fun y => u y + φ y) x), J) ∈

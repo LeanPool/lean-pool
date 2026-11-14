@@ -7,6 +7,7 @@ module
 
 public import LeanPool.LeanModularForms.GeneralizedResidueTheory.Basic
 public import LeanPool.LeanModularForms.ValenceFormula.Boundary.Basic
+import LeanPool.LeanModularForms.GeneralizedResidueTheory.LogDerivFTC
 import LeanPool.LeanModularForms.ContourIntegral.CrossingLimit
 import LeanPool.LeanModularForms.ContourIntegral.WindingNumber
 import LeanPool.LeanModularForms.ValenceFormula.Boundary.Smooth
@@ -15,7 +16,6 @@ import LeanPool.LeanModularForms.ValenceFormula.TrigLemmas
 import LeanPool.LeanModularForms.ValenceFormula.WindingWeights.Common
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.Arctan
 import Mathlib.CategoryTheory.Category.Init
-import Mathlib.NumberTheory.ArithmeticFunction.Misc
 
 /-!
 # Generalized Winding Number at Left Edge Points
@@ -39,7 +39,7 @@ private lemma leftEdge_t₀_mem_Ioo (H : ℝ) (_hH_sqrt : Real.sqrt 3 / 2 < H) (
   have hα_pos : 0 < H - Real.sqrt 3 / 2 := by linarith only [hs_im_lower, hs_im]
   constructor
   · linarith only [hs_im_lower, hα_pos,
-    div_pos (by linarith : (0 : ℝ) < s.im - Real.sqrt 3 / 2) hα_pos]
+    div_pos (by exact sub_pos.mpr hs_im_lower : (0 : ℝ) < s.im - Real.sqrt 3 / 2) hα_pos]
   · have : (s.im - Real.sqrt 3 / 2) / (H - Real.sqrt 3 / 2) < 1 :=
       (div_lt_one hα_pos).mpr (by linarith only [hs_im])
     linarith only [this]
@@ -55,7 +55,7 @@ private lemma leftEdge_h₃_eq {H : ℝ} {s : ℂ} (hs_re : s.re = -1 / 2) (t : 
 
 private lemma leftEdge_dist_from_rightVertical (s : ℂ) (hs_re : s.re = -1 / 2)
     (z : ℂ) (hz_re : z.re = 1 / 2) : 1 ≤ ‖z - s‖ := by
-  have hre : (z - s).re = 1 := by simp [Complex.sub_re, hz_re, hs_re]; ring
+  have hre : (z - s).re = 1 := by simp only [sub_re, hz_re, one_div, hs_re]; ring
   calc 1 = |(z - s).re| := by rw [hre]; norm_num
     _ ≤ ‖z - s‖ := abs_re_le_norm (z - s)
 
@@ -81,14 +81,14 @@ private lemma leftEdge_min_dist_from_non_seg4 (H : ℝ) (s : ℂ) (hs_re : s.re 
         · rw [fdBoundary_H_eq_seg2_H H h1 h2]
           simp only [fdBoundarySeg2H, fdBoundarySeg2]
           rw [show (↑Real.pi / 3 + (↑t - 1) * (↑Real.pi / 2 - ↑Real.pi / 3)) * I =
-              ↑(Real.pi / 3 + (t - 1) * (Real.pi / 2 - Real.pi / 3)) * I from by push_cast; ring]
+              ↑(Real.pi / 3 + (t - 1) * (Real.pi / 2 - Real.pi / 3)) * I from by push_cast; ac_rfl]
           exact Complex.norm_exp_ofReal_mul_I _
         · push Not at h2
           rw [fdBoundary_H_eq_seg3_H H h2 h3]
           simp only [fdBoundarySeg3H, fdBoundarySeg3]
           rw [show (↑Real.pi / 2 + (↑t - 2) * (2 * ↑Real.pi / 3 - ↑Real.pi / 2)) * I =
               ↑(Real.pi / 2 + (t - 2) * (2 * Real.pi / 3 - Real.pi / 2)) * I
-              from by push_cast; ring]
+              from by push_cast; ac_rfl]
           exact Complex.norm_exp_ofReal_mul_I _
       calc d ≤ ‖s‖ - 1 := le_trans (min_le_left _ _) (min_le_left _ _)
         _ ≤ _ := rightEdge_dist_from_arc s _ h_on_arc
@@ -214,12 +214,12 @@ private lemma leftEdge_slit_seg5 (H : ℝ) (s : ℂ) (hs_re : s.re = -1 / 2)
     subst ht4_eq
     simp [Complex.sub_im, Complex.add_im, Complex.mul_im, Complex.ofReal_re,
       Complex.ofReal_im, Complex.I_re, Complex.I_im]
-    linarith
+    linarith only [hs_im]
   · left
     have : 4 < t := lt_of_le_of_ne ht4 (Ne.symm ht4_eq)
     simp only [sub_re, add_re, ofReal_re, div_ofNat_re, re_ofNat, mul_re, I_re, mul_zero, ofReal_im,
       I_im, mul_one, sub_self, add_zero, sub_pos, gt_iff_lt]
-    rw [hs_re]; linarith
+    rw [hs_re]; linarith only [this]
 
 private lemma leftEdge_norm_gt_of_seg4_left (H : ℝ) (s : ℂ) (hs_re : s.re = -1 / 2)
     (α : ℝ) (hα_pos : 0 < α) (hα_def : α = H - Real.sqrt 3 / 2)
@@ -279,7 +279,7 @@ private lemma mem_Ioo_of_uIoc_sdiff_endpoints {a b t : ℝ} (hab : a ≤ b)
   refine ⟨?_, ?_⟩
   · simp_all
   · rcases eq_or_lt_of_le ht_mem.2 with h | h
-    · exact absurd (by simp only [mem_insert_iff, mem_singleton_iff]; right; linarith) ht_ne
+    · exact absurd (by simp only [mem_insert_iff, mem_singleton_iff]; right; exact h) ht_ne
     · exact h
 
 private lemma ae_endpoints_compl (a b : ℝ) : ({a, b} : Set ℝ)ᶜ ∈ ae volume :=
@@ -480,7 +480,7 @@ private lemma leftEdge_ftc_telescope (H : ℝ) (_hH_sqrt : Real.sqrt 3 / 2 < H)
     hasDerivAt_arc_rep s
   have hd₃ : ∀ t : ℝ, HasDerivAt h₃ ((↑α : ℂ) * I) t := fun t =>
     (hasDerivAt_fdBoundary_seg4_H H t).sub (hasDerivAt_const t s)
-      |>.congr_deriv (by simp [hα_def])
+      |>.congr_deriv (by simp only [ofReal_sub, ofReal_div, ofReal_ofNat, sub_zero, hα_def])
   have hd₅ : ∀ t : ℝ, HasDerivAt h₅ 1 t := fun t =>
     (hasDerivAt_fdBoundary_seg5_H H t).sub (hasDerivAt_const t s)
       |>.congr_deriv (by simp only [sub_zero])
@@ -553,23 +553,25 @@ private lemma leftEdge_ftc_telescope (H : ℝ) (_hH_sqrt : Real.sqrt 3 / 2 < H)
     (fun t ⟨ht4, ht5⟩ => leftEdge_slit_seg5 H s hs_re hs_im t ht4 ht5)
   obtain ⟨h_ae₀, h_ae_arc, h_ae₃, h_ae₅⟩ := leftEdge_ae_seg_eq g h₀ h_arc h₃ h₅
     hg_h₀ hg_arc hg_h₃ hg_h₅ hderiv_01 hderiv_arc hderiv_3 hderiv_5
+  have transported₀ := LogDerivFTC.intervalIntegrable_integral_eq_congr_ae piece₀ h_ae₀
+  have transported₁ := LogDerivFTC.intervalIntegrable_integral_eq_congr_ae piece₁ h_ae_arc
+  have transported₂ := LogDerivFTC.intervalIntegrable_integral_eq_congr_ae piece₂
+    (h_ae₃ 3 (t₀ - δ) le_rfl (by linarith only [hεα_lt_t₀m3])
+      ((sub_le_self t₀ hδ_pos.le).trans _ht₀_lt4.le))
+  have transported₃ := LogDerivFTC.intervalIntegrable_integral_eq_congr_ae piece₃
+    (h_ae₃ (t₀ + δ) 4 (_ht₀_gt3.le.trans (le_add_of_nonneg_right hδ_pos.le))
+      (by linarith only [hεα_lt_4mt₀]) le_rfl)
+  have transported₄ := LogDerivFTC.intervalIntegrable_integral_eq_congr_ae piece₄ h_ae₅
   have hint₀ : IntervalIntegrable (fun t => deriv g t / g t) volume 0 1 :=
-    piece₀.1.congr_ae ((ae_restrict_iff' measurableSet_uIoc).mpr
-      (h_ae₀.mono (fun t ht hm => ht hm)))
+    transported₀.1
   have hint_arc : IntervalIntegrable (fun t => deriv g t / g t) volume 1 3 :=
-    piece₁.1.congr_ae ((ae_restrict_iff' measurableSet_uIoc).mpr
-      (h_ae_arc.mono (fun t ht hm => ht hm)))
+    transported₁.1
   have hint₃_left : IntervalIntegrable (fun t => deriv g t / g t) volume 3 (t₀ - δ) :=
-    piece₂.1.congr_ae ((ae_restrict_iff' measurableSet_uIoc).mpr
-      ((h_ae₃ 3 (t₀ - δ) le_rfl (by linarith) (by linarith)).mono
-        (fun t ht hm => ht hm)))
+    transported₂.1
   have hint₃_right : IntervalIntegrable (fun t => deriv g t / g t) volume (t₀ + δ) 4 :=
-    piece₃.1.congr_ae ((ae_restrict_iff' measurableSet_uIoc).mpr
-      ((h_ae₃ (t₀ + δ) 4 (by linarith) (by linarith) le_rfl).mono
-        (fun t ht hm => ht hm)))
+    transported₃.1
   have hint₅ : IntervalIntegrable (fun t => deriv g t / g t) volume 4 5 :=
-    piece₄.1.congr_ae ((ae_restrict_iff' measurableSet_uIoc).mpr
-      (h_ae₅.mono (fun t ht hm => ht hm)))
+    transported₄.1
   -- Convert deriv g / g to the inverse-times-deriv form for the statement
   have h_congr : ∀ t, deriv g t / g t =
       (fdBoundaryH H t - s)⁻¹ * deriv (fun u => fdBoundaryH H u - s) t := fun t => by
@@ -582,26 +584,20 @@ private lemma leftEdge_ftc_telescope (H : ℝ) (_hH_sqrt : Real.sqrt 3 / 2 < H)
     (intervalIntegrable_congr (fun t _ => h_congr t)).mp (hint₃_right.trans hint₅)
   -- FTC for each segment
   have h_ftc₀ : ∫ t in (0 : ℝ)..(1 : ℝ), deriv g t / g t =
-      Complex.log (h₀ 1) - Complex.log (h₀ 0) := by
-    rw [← piece₀.2, intervalIntegral.integral_congr_ae (h_ae₀.mono (fun t ht hm => ht hm))]
+      Complex.log (h₀ 1) - Complex.log (h₀ 0) :=
+    transported₀.2
   have h_ftc_arc : ∫ t in (1 : ℝ)..(3 : ℝ), deriv g t / g t =
-      Complex.log (h_arc 3) - Complex.log (h_arc 1) := by
-    rw [← piece₁.2, intervalIntegral.integral_congr_ae
-      (h_ae_arc.mono (fun t ht hm => ht hm))]
+      Complex.log (h_arc 3) - Complex.log (h_arc 1) :=
+    transported₁.2
   have h_ftc₃_left : ∫ t in (3 : ℝ)..(t₀ - δ), deriv g t / g t =
-      Complex.log (h₃ (t₀ - δ)) - Complex.log (h₃ 3) := by
-    rw [← piece₂.2, intervalIntegral.integral_congr_ae
-      ((h_ae₃ 3 (t₀ - δ) le_rfl (by linarith) (by linarith)).mono
-        (fun t ht hm => ht hm))]
+      Complex.log (h₃ (t₀ - δ)) - Complex.log (h₃ 3) :=
+    transported₂.2
   have h_ftc₃_right : ∫ t in (t₀ + δ)..(4 : ℝ), deriv g t / g t =
-      Complex.log (h₃ 4) - Complex.log (h₃ (t₀ + δ)) := by
-    rw [← piece₃.2, intervalIntegral.integral_congr_ae
-      ((h_ae₃ (t₀ + δ) 4 (by linarith) (by linarith) le_rfl).mono
-        (fun t ht hm => ht hm))]
+      Complex.log (h₃ 4) - Complex.log (h₃ (t₀ + δ)) :=
+    transported₃.2
   have h_ftc₅ : ∫ t in (4 : ℝ)..(5 : ℝ), deriv g t / g t =
-      Complex.log (h₅ 5) - Complex.log (h₅ 4) := by
-    rw [← piece₄.2, intervalIntegral.integral_congr_ae
-      (h_ae₅.mono (fun t ht hm => ht hm))]
+      Complex.log (h₅ 5) - Complex.log (h₅ 4) :=
+    transported₄.2
   -- Assemble the telescoping sum
   have h_left_sum : (∫ t in (0 : ℝ)..(t₀ - δ), deriv g t / g t) =
       Complex.log (h₀ 1) - Complex.log (h₀ 0) +

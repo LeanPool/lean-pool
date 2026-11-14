@@ -121,7 +121,7 @@ theorem quadraticHilbertTrunc_eq_oscillatory_reduction
       have hi4 := integral_sub ((h1.add h2).add h3) h4
       have hi3 := integral_add (h1.add h2) h3
       have hi2 := integral_add h1 h2
-      simp only [Pi.add_apply, Pi.sub_apply] at hi5 hi4 hi3 hi2
+      simp only [Pi.sub_apply, Pi.add_apply] at hi5 hi4 hi3 hi2
       rw [hi5, hi4, hi3, hi2]
       change _ + _ + quadraticHilbertConvolutionTrunc 0 ε f x -
         quadraticHilbertConvolutionTrunc 0 (innerRadius lam hlam) f x + _ = _

@@ -8,8 +8,6 @@ module
 
 public import LeanPool.QuadraticCarleson.QuadraticCarleson.PositiveDyadicKernel
 public import Mathlib.Analysis.Calculus.Deriv.Inv
-public import Mathlib.Analysis.Calculus.Deriv.Support
-public import Mathlib.Analysis.SpecialFunctions.ExpDeriv
 
 /-!
 # Derivative of the low oscillatory kernel
@@ -61,13 +59,12 @@ theorem hasDerivAt_quadraticPhase_lowKernel (lam t : ℝ) :
         (((4 * Real.pi * lam * t : ℝ) : ℂ) * Complex.I)) t := by
   unfold phase
   have hpow : HasDerivAt (fun u : ℝ ↦ u ^ 2) (2 * t) t := by
-    simpa using hasDerivAt_pow 2 t
+    simpa only [Nat.cast_ofNat, Nat.add_one_sub_one, pow_one] using hasDerivAt_pow 2 t
   have hr : HasDerivAt (fun u : ℝ ↦ 2 * Real.pi * (lam * u ^ 2))
       (4 * Real.pi * lam * t) t := by
     exact ((hpow.const_mul lam).const_mul (2 * Real.pi)).congr_deriv (by ring)
   have hc := hr.ofReal_comp.mul_const Complex.I
-  simpa [Function.comp_def, mul_comm, mul_left_comm, mul_assoc] using
-    (Complex.hasDerivAt_exp _).comp t hc
+  exact (Complex.hasDerivAt_exp _).comp t hc
 
 /-- The two cutoff scales in the telescoped formula. -/
 noncomputable def lowOuterScale (lam : ℝ) (hlam : lam ≠ 0) (B : ℕ) : ℝ :=
@@ -101,7 +98,7 @@ theorem lowCutoffQuotient_deriv
       lowCutoffQuotientDerivative lam hlam B t := by
   let hd (c : ℝ) := by
     have hc : HasDerivAt (fun u : ℝ ↦ c * u) c t := by
-      simpa using (hasDerivAt_id t).const_mul c
+      simpa only [id_eq, mul_one] using (hasDerivAt_id t).const_mul c
     exact ((dyadicCutoff_smooth.differentiable (by simp)).differentiableAt.hasDerivAt).comp t hc
   have hquot := ((hd (lowOuterScale lam hlam B)).sub
     (hd (lowInnerScale lam hlam))).div (hasDerivAt_id t) ht
@@ -138,7 +135,7 @@ theorem hasDerivAt_paperLowOscillatoryKernel
     · exact differentiableAt_id
     · exact ht
   have hqderiv : deriv q t = lowCutoffQuotientDerivative lam hlam B t := by
-    simpa [q] using lowCutoffQuotient_deriv hlam B ht
+    exact lowCutoffQuotient_deriv hlam B ht
   let hq := hqdiff.hasDerivAt.congr_deriv hqderiv
   have hprod := hq.ofReal_comp.mul (hasDerivAt_quadraticPhase_lowKernel lam t)
   apply hprod.congr_of_eventuallyEq
@@ -154,34 +151,34 @@ theorem paperLowOscillatoryKernel_deriv
 
 theorem lowOuterScale_pos {lam : ℝ} (hlam : lam ≠ 0) (B : ℕ) :
     0 < lowOuterScale lam hlam B := by
-  exact zpow_pos (by norm_num) _
+  exact zpow_pos (by norm_num1) _
 
 theorem lowInnerScale_pos {lam : ℝ} (hlam : lam ≠ 0) :
     0 < lowInnerScale lam hlam := by
-  exact zpow_pos (by norm_num) _
+  exact zpow_pos (by norm_num1) _
 
 theorem lowInnerScale_le_two_sqrt_abs {lam : ℝ} (hlam : lam ≠ 0) :
     lowInnerScale lam hlam ≤ 2 * Real.sqrt |lam| := by
   let j := oscillatoryScaleIndex lam 0 hlam
   have hs := (oscillatoryScaleIndex_spec lam 0 hlam).1
-  have hp : 0 < (2 : ℝ) ^ j := zpow_pos (by norm_num) _
+  have hp : 0 < (2 : ℝ) ^ j := zpow_pos (by norm_num1) _
   have hjinv : lowInnerScale lam hlam = 2 / (2 : ℝ) ^ j := by
     dsimp [lowInnerScale, j]
-    rw [inv_zpow, zpow_sub₀ (by norm_num : (2 : ℝ) ≠ 0)]
+    rw [inv_zpow, zpow_sub₀ (by norm_num1 : (2 : ℝ) ≠ 0)]
     norm_num
   rw [hjinv]
   apply (div_le_iff₀ hp).2
-  nlinarith [hs]
+  linarith only [hlam, hs]
 
 theorem lowOuterScale_le_sqrt_abs_div_pow {lam : ℝ} (hlam : lam ≠ 0) (B : ℕ) :
     lowOuterScale lam hlam B ≤ Real.sqrt |lam| / (2 : ℝ) ^ B := by
   let j := oscillatoryScaleIndex lam 0 hlam
   have hs := (oscillatoryScaleIndex_spec lam 0 hlam).1
-  have hj : 0 < (2 : ℝ) ^ j := zpow_pos (by norm_num) _
+  have hj : 0 < (2 : ℝ) ^ j := zpow_pos (by norm_num1) _
   have hB : 0 < (2 : ℝ) ^ B := by positivity
   have heq : lowOuterScale lam hlam B = 1 / ((2 : ℝ) ^ j * (2 : ℝ) ^ B) := by
     dsimp [lowOuterScale, j]
-    rw [inv_zpow, zpow_add₀ (by norm_num : (2 : ℝ) ≠ 0), zpow_natCast]
+    rw [inv_zpow, zpow_add₀ (by norm_num1 : (2 : ℝ) ≠ 0), zpow_natCast]
     rw [one_div]
   rw [heq]
   rw [show 1 / ((2 : ℝ) ^ j * (2 : ℝ) ^ B) =
@@ -189,7 +186,7 @@ theorem lowOuterScale_le_sqrt_abs_div_pow {lam : ℝ} (hlam : lam ≠ 0) (B : �
   apply (div_le_div_iff_of_pos_right hB).2
   rw [one_div]
   apply (inv_le_iff_one_le_mul₀' hj).2
-  simpa using hs
+  exact hs
 
 /-- A single explicit constant used in both Calderón--Zygmund derivative
 bounds. -/
@@ -198,7 +195,7 @@ noncomputable def lowKernelDerivativeConstant : ℝ :=
 
 theorem lowKernelDerivativeConstant_nonneg : 0 ≤ lowKernelDerivativeConstant := by
   unfold lowKernelDerivativeConstant
-  exact mul_nonneg (by norm_num)
+  exact mul_nonneg (by norm_num1)
     (add_nonneg (add_nonneg dyadicCutoffDerivBound_nonneg zero_le_one) Real.pi_pos.le)
 
 theorem abs_dyadicCutoff_sub_le_one (x y : ℝ) :
@@ -253,7 +250,6 @@ theorem paperLowOscillatoryKernelDerivative_norm_le_raw
   let d : ℝ := dyadicCutoff (lowOuterScale lam hlam B * t) -
     dyadicCutoff (lowInnerScale lam hlam * t)
   have hd : |d| ≤ 1 := abs_dyadicCutoff_sub_le_one _ _
-  have htabs : 0 < |t| := abs_pos.mpr ht
   have hphaseTerm :
       ‖(((d / t : ℝ) : ℂ) *
           (phase (lam * t ^ 2) * (((4 * Real.pi * lam * t : ℝ) : ℂ) * Complex.I)))‖ ≤
@@ -261,8 +257,7 @@ theorem paperLowOscillatoryKernelDerivative_norm_le_raw
     simp only [norm_mul, norm_phase, Complex.norm_real, Real.norm_eq_abs,
       Complex.norm_I, mul_one, one_mul, abs_div]
     have hpi : 0 ≤ Real.pi := Real.pi_pos.le
-    have hfour : 0 ≤ 4 * Real.pi * |lam| := mul_nonneg (mul_nonneg (by norm_num) hpi) (abs_nonneg _)
-    rw [abs_of_nonneg (by norm_num : (0 : ℝ) ≤ 4), abs_of_nonneg hpi]
+    rw [abs_of_nonneg (by norm_num1 : (0 : ℝ) ≤ 4), abs_of_nonneg hpi]
     calc
       |d| / |t| * (4 * Real.pi * |lam| * |t|) ≤
           1 / |t| * (4 * Real.pi * |lam| * |t|) := by
@@ -302,10 +297,10 @@ theorem paperLowOscillatoryKernelDerivative_eq_zero_of_normalized_lt
     by_contra hne
     have hs := paperLowOscillatoryKernel_support_normalized lam hlam B
       (show u ∈ support (paperLowOscillatoryKernel lam hlam B) by simpa [mem_support] using hne)
-    linarith [hs.1]
+    linarith only [hu, hs, hs.1]
   have hder := hz.deriv_eq
   rw [paperLowOscillatoryKernel_deriv hlam B ht0] at hder
-  simpa using hder
+  simpa only [deriv_const'] using hder
 
 theorem paperLowOscillatoryKernelDerivative_eq_zero_of_normalized_gt
     {lam : ℝ} (hlam : lam ≠ 0) (B : ℕ) {t : ℝ}
@@ -322,7 +317,7 @@ theorem paperLowOscillatoryKernelDerivative_eq_zero_of_normalized_gt
     exact (not_lt_of_ge hs.2.le) hu
   have hder := hz.deriv_eq
   rw [paperLowOscillatoryKernel_deriv hlam B ht0] at hder
-  simpa using hder
+  simpa only [deriv_const'] using hder
 
 theorem paperLowOscillatoryKernelDerivative_norm_le_abs_lam
     {lam : ℝ} (hlam : lam ≠ 0) (B : ℕ) {t : ℝ} (ht0 : t ≠ 0) :
@@ -336,23 +331,23 @@ theorem paperLowOscillatoryKernelDerivative_norm_le_abs_lam
   have hT : 0 < |t| := abs_pos.mpr ht0
   have hS : 0 < Real.sqrt |lam| := Real.sqrt_pos.2 (abs_pos.mpr hlam)
   have hSsq : (Real.sqrt |lam|) ^ 2 = |lam| := Real.sq_sqrt (abs_nonneg _)
-  have hP : (1 : ℝ) ≤ (2 : ℝ) ^ B := one_le_pow₀ (by norm_num)
+  have hP : (1 : ℝ) ≤ (2 : ℝ) ^ B := one_le_pow₀ (by norm_num1)
   have hao := lowOuterScale_le_sqrt_abs_div_pow hlam B
   have hai := lowInnerScale_le_two_sqrt_abs hlam
   have hao' : lowOuterScale lam hlam B ≤ Real.sqrt |lam| := by
     exact hao.trans (div_le_self hS.le hP)
   have hscales : lowOuterScale lam hlam B + lowInnerScale lam hlam ≤
-      3 * Real.sqrt |lam| := by linarith
-  have hlow_sq := mul_self_le_mul_self (by norm_num : (0 : ℝ) ≤ 1 / 8) hlow
+      3 * Real.sqrt |lam| := by linarith only [hlam, hai, hao']
+  have hlow_sq := mul_self_le_mul_self (by norm_num1 : (0 : ℝ) ≤ 1 / 8) hlow
   have hone : 1 ≤ 64 * |lam| * |t| ^ 2 := by
-    nlinarith [hSsq]
+    nlinarith only [hSsq, hlow_sq]
   have hscaleT :
       (lowOuterScale lam hlam B + lowInnerScale lam hlam) * |t| ≤
         24 * |lam| * |t| ^ 2 := by
     have h₁ := mul_le_mul_of_nonneg_right hscales hT.le
     have h₂ := mul_le_mul_of_nonneg_right hlow
-      (mul_nonneg (by norm_num : (0 : ℝ) ≤ 24) (mul_nonneg hS.le hT.le))
-    nlinarith [hSsq]
+      (mul_nonneg (by norm_num1 : (0 : ℝ) ≤ 24) (mul_nonneg hS.le hT.le))
+    nlinarith only [hlam, hSsq, h₁, h₂]
   have hraw := paperLowOscillatoryKernelDerivative_norm_le_raw hlam B ht0
   refine hraw.trans ?_
   have hC := dyadicCutoffDerivBound_nonneg
@@ -361,7 +356,7 @@ theorem paperLowOscillatoryKernelDerivative_norm_le_abs_lam
   unfold lowKernelDerivativeConstant
   refine le_of_mul_le_mul_right ?_ (sq_pos_of_pos hT)
   field_simp [abs_ne_zero.mpr ht0]
-  nlinarith [mul_nonneg (abs_nonneg lam) (sq_nonneg |t|)]
+  nlinarith only [hlam, hone, hC, hpi, hscaleC, mul_nonneg (abs_nonneg lam) (sq_nonneg |t|)]
 
 theorem paperLowOscillatoryKernelDerivative_norm_le_pow_div
     {lam : ℝ} (hlam : lam ≠ 0) (B : ℕ) {t : ℝ} (ht0 : t ≠ 0) :

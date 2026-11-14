@@ -60,7 +60,7 @@ theorem eLpNorm_removed_badLengthTailMaximal_le_sqrt_of_geometry
         overlapPrunedFamily (activeBadIntervals S f I₀ k₀ s scale N)
           (activeExponentialCutoff s))) 2 volume ≤
       ENNReal.ofReal (Real.sqrt (badRemovedEnergyBudget f I₀ s)) := by
-  apply (ENNReal.rpow_le_rpow_iff (by norm_num : (0 : ℝ) < 2)).mp
+  apply (ENNReal.rpow_le_rpow_iff (by norm_num1 : (0 : ℝ) < 2)).mp
   rw [ENNReal.rpow_two, ENNReal.rpow_two,
     ← ENNReal.ofReal_pow (Real.sqrt_nonneg _) 2,
     Real.sq_sqrt (badRemovedEnergyBudget_nonneg f I₀ s), ofReal_badRemovedEnergyBudget]
@@ -190,7 +190,7 @@ theorem eLpNorm_nonstandard_badLengthTailMaximal_le
       exact badLengthTailMaximal_le_pruned_add_removed f I₀ k₀ s scale hlam N hN _ x
     _ ≤ eLpNorm (badLengthTailMaximal S f I₀ k₀ s scale P) 2 volume +
         eLpNorm (badLengthTailMaximal S f I₀ k₀ s scale R) 2 volume :=
-      eLpNorm_add_le (by norm_num)
+      eLpNorm_add_le (by norm_num1)
     _ ≤ ENNReal.ofReal ((4 * (s : ℝ) + 12) * Real.sqrt (nonstandardSignedEnergyBudget f I₀ s)) +
         ENNReal.ofReal (Real.sqrt (badRemovedEnergyBudget f I₀ s)) :=
       add_le_add (eLpNorm_exponentiallyPruned_badLengthTailMaximal_le hf I₀ k₀ s hk₀

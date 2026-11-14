@@ -62,7 +62,7 @@ lemma arg_pow_aux (n : ℕ) (x : ℂ) (hx : x ≠ 0) (hna : |arg x| < π / n) :
 lemma one_add_abs_half_ne_zero {x : ℂ} (hb : ‖x‖ < 1 / 2) : 1 + x ≠ 0 := by
   intro h
   rw [add_eq_zero_iff_neg_eq] at h
-  simp [← h] at hb; linarith only [hb]
+  simp only [← h, norm_neg, norm_one, one_div] at hb; linarith only [hb]
 
 lemma arg_pow (n : ℕ) (f : ℕ → ℂ) (hf : Tendsto f atTop (𝓝 0)) : ∀ᶠ m : ℕ in atTop,
     Complex.arg ((1 + f m) ^ n) = n * Complex.arg (1 + f m) := by
@@ -154,4 +154,4 @@ lemma log_summable_pow (f : ℕ → ℂ) (hf : Summable f) (m : ℕ) :
   have H := clog_pow m f hft
   simp only [norm_mul, Complex.norm_natCast, eventually_atTop] at *
   obtain ⟨a, ha⟩ := H
-  exact ⟨a, fun b hb => by simp [ha b hb]⟩
+  exact ⟨a, fun b hb => by simp only [ha b hb, Complex.norm_mul, RCLike.norm_natCast, Std.le_refl]⟩

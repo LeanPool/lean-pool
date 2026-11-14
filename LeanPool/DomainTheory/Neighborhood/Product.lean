@@ -6,7 +6,6 @@ Authors: Catskills Research Company
 module
 
 public import LeanPool.DomainTheory.Neighborhood.ApproximableExercises
-import Mathlib.Data.Set.Image
 
 /-!
 # Lecture III (§3) — the product system: Definitions 3.1, 3.3, Propositions 3.2,
@@ -70,17 +69,19 @@ def prodNbhd (X : Set α) (Y : Set β) : Set (α ⊕ β) := Sum.inl '' X ∪ Sum
 
 @[simp] theorem mem_prodNbhd_inl {X : Set α} {Y : Set β} {a : α} :
     (Sum.inl a : α ⊕ β) ∈ prodNbhd X Y ↔ a ∈ X := by
-  simp [prodNbhd]
+  simp only [prodNbhd, Set.mem_union, Set.mem_image, Sum.inl.injEq, exists_eq_right,
+    reduceCtorEq, and_false, exists_false, or_false]
 
 @[simp] theorem mem_prodNbhd_inr {X : Set α} {Y : Set β} {b : β} :
     (Sum.inr b : α ⊕ β) ∈ prodNbhd X Y ↔ b ∈ Y := by
-  simp [prodNbhd]
+  simp only [prodNbhd, Set.mem_union, Set.mem_image, reduceCtorEq, and_false, exists_false,
+    Sum.inr.injEq, exists_eq_right, false_or]
 
 @[simp] theorem inl_preimage_prodNbhd (X : Set α) (Y : Set β) :
-    Sum.inl ⁻¹' prodNbhd X Y = X := by ext a; simp
+    Sum.inl ⁻¹' prodNbhd X Y = X := by ext a; simp only [Set.mem_preimage, mem_prodNbhd_inl]
 
 @[simp] theorem inr_preimage_prodNbhd (X : Set α) (Y : Set β) :
-    Sum.inr ⁻¹' prodNbhd X Y = Y := by ext b; simp
+    Sum.inr ⁻¹' prodNbhd X Y = Y := by ext b; simp only [Set.mem_preimage, mem_prodNbhd_inr]
 
 /-- Scott's (2): the product nbhds intersect componentwise. -/
 theorem prodNbhd_inter (X X' : Set α) (Y Y' : Set β) :
@@ -94,10 +95,10 @@ theorem prodNbhd_subset_iff {X X' : Set α} {Y Y' : Set β} :
   constructor
   · intro h
     refine ⟨fun a ha => ?_, fun b hb => ?_⟩
-    · have : (Sum.inl a : α ⊕ β) ∈ prodNbhd X' Y' := h (by simpa using ha)
-      simpa using this
-    · have : (Sum.inr b : α ⊕ β) ∈ prodNbhd X' Y' := h (by simpa using hb)
-      simpa using this
+    · have : (Sum.inl a : α ⊕ β) ∈ prodNbhd X' Y' := h (by simpa only [mem_prodNbhd_inl] using ha)
+      simpa only [mem_prodNbhd_inl] using this
+    · have : (Sum.inr b : α ⊕ β) ∈ prodNbhd X' Y' := h (by simpa only [mem_prodNbhd_inr] using hb)
+      simpa only [mem_prodNbhd_inr] using this
   · rintro ⟨hX, hY⟩ (a | b) hs
     · simp only [mem_prodNbhd_inl] at hs ⊢; exact hX hs
     · simp only [mem_prodNbhd_inr] at hs ⊢; exact hY hs
@@ -412,7 +413,8 @@ def paired (f : ApproximableMap V₂ V₀) (g : ApproximableMap V₂ V₁) :
     refine ⟨hX', z.up_mem hzW (prod_mem_prodNbhd hX' V₁.master_mem) ?_⟩
     exact prodNbhd_subset_iff.mpr ⟨hsub, V₁.sub_master hB⟩
   · rintro ⟨hX', hz⟩
-    exact ⟨prodNbhd X' V₁.master, hz, prod_mem_prodNbhd hX' V₁.master_mem, hX', by simp⟩
+    exact ⟨prodNbhd X' V₁.master, hz, prod_mem_prodNbhd hX' V₁.master_mem, hX', by simp only [
+      inl_preimage_prodNbhd, Std.le_refl]⟩
 
 /-- **Proposition 3.4(ii) (Scott 1981, PRG-19).** `p₁(z) = z₁`. -/
 @[simp] theorem toElementMap_proj₁ (z : (prod V₀ V₁).Element) :
@@ -426,7 +428,8 @@ def paired (f : ApproximableMap V₂ V₀) (g : ApproximableMap V₂ V₁) :
     refine ⟨hY', z.up_mem hzW (prod_mem_prodNbhd V₀.master_mem hY') ?_⟩
     exact prodNbhd_subset_iff.mpr ⟨V₀.sub_master hA, hsub⟩
   · rintro ⟨hY', hz⟩
-    exact ⟨prodNbhd V₀.master Y', hz, prod_mem_prodNbhd V₀.master_mem hY', hY', by simp⟩
+    exact ⟨prodNbhd V₀.master Y', hz, prod_mem_prodNbhd V₀.master_mem hY', hY', by simp only [
+      inr_preimage_prodNbhd, Std.le_refl]⟩
 
 /-- **Proposition 3.4(iv) (Scott 1981, PRG-19).** `⟨f, g⟩(w) = ⟨f(w), g(w)⟩`. -/
 theorem toElementMap_paired (f : ApproximableMap V₂ V₀) (g : ApproximableMap V₂ V₁)

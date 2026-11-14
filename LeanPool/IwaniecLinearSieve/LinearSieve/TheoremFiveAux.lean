@@ -46,25 +46,25 @@ theorem eventually_add_mul_log_le (α β : ℝ) : ∀ᶠ x in atTop, α + β * l
   filter_upwards [isLittleO_log_id_atTop.bound hε, eventually_ge_atTop (2 * α),
     eventually_ge_atTop 1] with x hx hxα hx1
   have hl : 0 ≤ log x := log_nonneg hx1
-  rw [norm_of_nonneg hl, id, norm_of_nonneg (by linarith)] at hx
+  rw [norm_of_nonneg hl, id, norm_of_nonneg (by linarith only [hx1])] at hx
   have h1 : β * log x ≤ |β| * log x := mul_le_mul_of_nonneg_right (le_abs_self β) hl
   have h2 : |β| * log x ≤ x / 2 := by
     have hq : |β| / (|β| + 1) ≤ 1 := by
-      rw [div_le_one (by positivity)]; linarith
+      rw [div_le_one (by positivity)]; linarith only []
     calc |β| * log x ≤ |β| * (1 / (2 * (|β| + 1)) * x) := by gcongr
       _ = |β| / (|β| + 1) * (x / 2) := by field_simp
       _ ≤ 1 * (x / 2) := by gcongr
       _ = x / 2 := one_mul _
-  linarith
+  linarith only [hxα, h1, h2]
 
 theorem one_lt_log_three : 1 < log 3 := by
   rw [lt_log_iff_exp_lt (by norm_num)]
-  linarith [exp_one_lt_d9]
+  linarith only [exp_one_lt_d9]
 
 theorem lam_pos {y : ℝ} (hy : 1 < y) : 0 < lam y := by
-  have h3 : log 3 + log y = log (3 * y) := (log_mul (by norm_num) (by linarith)).symm
+  have h3 : log 3 + log y = log (3 * y) := (log_mul (by norm_num) (by linarith only [hy])).symm
   have := log_pos hy
-  exact log_pos (by linarith [one_lt_log_three])
+  exact log_pos (by linarith only [one_lt_log_three, h3, this])
 
 /-- `log ξ = log L - (11/5) log λ`. -/
 theorem log_xi_eq {y : ℝ} (hy : 1 < y) : log (xi y) = log (log y) - 11 / 5 * log (lam y) := by
@@ -87,40 +87,40 @@ theorem eventually_scalar (c : ℝ) (hc : 100 ≤ c) : ∀ᶠ y in atTop,
       (eventually_ge_atTop c),
     tendsto_lam.eventually (eventually_add_mul_log_le (c + 10) 8)] with y hy3 h1 h2 h3 h4
   simp only [Function.comp] at h2 h3
-  have hy : 1 < y := by linarith
+  have hy : 1 < y := by linarith only [hy3]
   have hL : 1 < log y := by
-    have := log_le_log (by norm_num) hy3; linarith [one_lt_log_three]
-  have hL0 : 0 < log y := by linarith
+    have := log_le_log (by norm_num) hy3; linarith only [one_lt_log_three, this]
+  have hL0 : 0 < log y := by linarith only [hL]
   have hlam := lam_pos hy
-  have h3y : log (3 * y) = log 3 + log y := log_mul (by norm_num) (by linarith)
-  have ha : 0 ≤ log (lam y) := by linarith
+  have h3y : log (3 * y) = log 3 + log y := log_mul (by norm_num) (by linarith only [hy3])
+  have ha : 0 ≤ log (lam y) := by linarith only [hc, h2]
   -- `log L ≤ λ ≤ log L + 1`
   have hℓ1 : log (log y) ≤ lam y := by
-    unfold lam; exact log_le_log hL0 (by rw [h3y]; linarith [one_lt_log_three])
+    unfold lam; exact log_le_log hL0 (by rw [h3y]; linarith only [one_lt_log_three])
   have hℓ2 : lam y - 1 ≤ log (log y) := by
     have hle : log (3 * y) ≤ exp 1 * log y := by
       have : log 3 ≤ log y := log_le_log (by norm_num) hy3
-      have : 2 ≤ exp 1 := by linarith [add_one_le_exp (1 : ℝ)]
+      have : 2 ≤ exp 1 := by linarith only [add_one_le_exp (1 : ℝ)]
       rw [h3y]; nlinarith
-    have := log_le_log (by rw [h3y]; linarith [one_lt_log_three]) hle
+    have := log_le_log (by rw [h3y]; linarith only [one_lt_log_three, hL]) hle
     rw [log_mul (exp_pos 1).ne' hL0.ne', log_exp] at this
-    unfold lam; linarith
+    unfold lam; linarith only [this]
   have hlogξ := log_xi_eq hy
   have hξ := xi_pos hy
-  have hl2 : log 2 ≤ 1 := by linarith [log_le_sub_one_of_pos (by norm_num : (0 : ℝ) < 2)]
-  have hl16 : log 16 ≤ 15 := by linarith [log_le_sub_one_of_pos (by norm_num : (0 : ℝ) < 16)]
-  have hl24 : log 24 ≤ 23 := by linarith [log_le_sub_one_of_pos (by norm_num : (0 : ℝ) < 24)]
+  have hl2 : log 2 ≤ 1 := by linarith only [log_le_sub_one_of_pos (by norm_num : (0 : ℝ) < 2)]
+  have hl16 : log 16 ≤ 15 := by linarith only [log_le_sub_one_of_pos (by norm_num : (0 : ℝ) < 16)]
+  have hl24 : log 24 ≤ 23 := by linarith only [log_le_sub_one_of_pos (by norm_num : (0 : ℝ) < 24)]
   refine ⟨hy3, h2, h3, h1, hℓ1, hℓ2, ?_, ?_, ?_, ?_, ?_⟩
   · rw [← log_le_log_iff (by positivity) hξ, log_mul (by norm_num) hlam.ne']
-    linarith
+    linarith only [hc, h2, h4, hℓ2, hlogξ, hl24]
   · have h := (log_le_log_iff (by positivity) hL0).1 (by
       rw [log_mul (by norm_num) (by positivity), log_pow]; push_cast
-      linarith : log (16 * lam y ^ 2) ≤ log (log y))
+      linarith only [hc, h2, h4, hℓ2, hl16] : log (16 * lam y ^ 2) ≤ log (log y))
     exact h
   · rw [log_div hξ.ne' (by norm_num)]
-    linarith
-  · linarith
-  · linarith
+    linarith only [hc, h2, h4, hℓ2, hlogξ, hl2]
+  · linarith only [hc, h2, h4, hℓ2, hlogξ]
+  · linarith only [hc, h2, hℓ1, hlogξ]
 
 /-! ### The crude part ([I71, p. 27]) -/
 
@@ -132,47 +132,52 @@ theorem crude_exponent_le {L ℓ lam ξ a : ℝ} (hL : 0 < L) (hℓ : ℓ = log 
     (h16 : 16 * lam ^ 2 ≤ L) (hlogξ : log ξ ≤ lam) :
     8 * L ^ 4 * (1 + exp (L + 2 * ξ - L / lam) + 2 * exp (L - ξ * log ξ + ξ * a + 5 * ξ)) ≤
       exp (L - ξ * log ξ + 3 / 2 * ξ * a) := by
-  have hlam0 : 0 < lam := by linarith
-  have hξ0 : 0 < ξ := by linarith
+  have hlam0 : 0 < lam := by linarith only [hlam]
+  have hξ0 : 0 < ξ := by linarith only [hlam, h24]
   have h8 : 8 * L ^ 4 = exp (log 8 + 4 * ℓ) := by
     rw [exp_add, exp_log (by norm_num), hℓ,
       show (4 : ℝ) * log L = log (L ^ 4) by rw [log_pow]; norm_num, exp_log (by positivity)]
-  have hl3 : log 3 ≤ 2 := by linarith [log_le_sub_one_of_pos (by norm_num : (0 : ℝ) < 3)]
-  have hl8 : log 8 ≤ 7 := by linarith [log_le_sub_one_of_pos (by norm_num : (0 : ℝ) < 8)]
-  have hl2 : log 2 ≤ 1 := by linarith [log_le_sub_one_of_pos (by norm_num : (0 : ℝ) < 2)]
+  have hl3 : log 3 ≤ 2 := by linarith only [log_le_sub_one_of_pos (by norm_num : (0 : ℝ) < 3)]
+  have hl8 : log 8 ≤ 7 := by linarith only [log_le_sub_one_of_pos (by norm_num : (0 : ℝ) < 8)]
+  have hl2 : log 2 ≤ 1 := by linarith only [log_le_sub_one_of_pos (by norm_num : (0 : ℝ) < 2)]
   set T := L - ξ * log ξ + 3 / 2 * ξ * a with hT
   have h3 : exp T = 3 * exp (T - log 3) := by
     rw [exp_sub, exp_log (by norm_num)]; field_simp
   -- `ξ log ξ + 2 ξ ≤ L / (2λ)` and `8 + 4λ ≤ L / (2λ)`
   have hLl : ξ * log ξ + 2 * ξ ≤ L / (2 * lam) := by
     rw [le_div_iff₀ (by positivity)]
-    have : ξ * log ξ ≤ ξ * lam := mul_le_mul_of_nonneg_left hlogξ hξ0.le
-    nlinarith
+    calc
+      (ξ * log ξ + 2 * ξ) * (2 * lam) = 2 * ξ * lam * (log ξ + 2) := by ring
+      _ ≤ 2 * ξ * lam * (2 * lam) :=
+        mul_le_mul_of_nonneg_left (by linarith only [hlogξ, hlam]) (by positivity)
+      _ = 4 * (ξ * lam ^ 2) := by ring
+      _ ≤ L := hxilam
   have hLm : 8 + 4 * lam ≤ L / (2 * lam) := by
-    rw [le_div_iff₀ (by positivity)]; nlinarith
-  have hLlam : L / lam ≤ L := div_le_self hL.le (by linarith)
+    rw [le_div_iff₀ (by positivity)]
+    nlinarith only [h16, hlam]
+  have hLlam : L / lam ≤ L := div_le_self hL.le (by linarith only [hlam])
   have hξa : 0 ≤ ξ * a := by positivity
   have e1 : 8 * L ^ 4 ≤ exp (T - log 3) := by
     rw [h8, exp_le_exp, hT]
     have : L / lam = 2 * (L / (2 * lam)) := by field_simp
-    nlinarith
+    nlinarith only [this, hLl, hLm, hLlam, hl3, hl8, hℓlam, hξa, h24, hlam]
   have e2 : 8 * L ^ 4 * exp (L + 2 * ξ - L / lam) ≤ exp (T - log 3) := by
     rw [h8, ← exp_add, exp_le_exp, hT]
     have : L / lam = 2 * (L / (2 * lam)) := by field_simp
-    nlinarith
+    nlinarith only [this, hLl, hLm, hl3, hl8, hℓlam, ha, hξ0, h24, hlam]
   have e3 : 8 * L ^ 4 * (2 * exp (L - ξ * log ξ + ξ * a + 5 * ξ)) ≤ exp (T - log 3) := by
     rw [h8, mul_left_comm, ← exp_add, ← exp_log (by norm_num : (0 : ℝ) < 2), ← exp_add,
       exp_le_exp, hT]
-    have : 6 * ξ ≤ 1 / 2 * ξ * a := by nlinarith
-    nlinarith
+    have : 6 * ξ ≤ 1 / 2 * ξ * a := by nlinarith only [ha, hξ0]
+    nlinarith only [this, hl2, hl3, hl8, hℓlam, h24, hlam]
   rw [h3]
-  nlinarith
+  nlinarith only [e1, e2, e3]
 
 /-! ### The slack ([I71, (4.2), (4.6)]) -/
 
 /-- `(1 + x)^p ≤ e^{p x}` for `x ≥ 0`, `p ≥ 0`. -/
 theorem one_add_rpow_le_exp {x p : ℝ} (hx : 0 ≤ x) (hp : 0 ≤ p) : (1 + x) ^ p ≤ exp (p * x) := by
-  rw [rpow_def_of_pos (by linarith), exp_le_exp, mul_comm]
+  rw [rpow_def_of_pos (by linarith only [hx]), exp_le_exp, mul_comm]
   gcongr
   linarith [log_le_sub_one_of_pos (by linarith : (0 : ℝ) < 1 + x)]
 

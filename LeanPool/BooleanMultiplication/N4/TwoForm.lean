@@ -69,43 +69,47 @@ def targetTwoLinear : TargetCoeff →ₗ[F₂] TwoForm where
 theorem targetTwo_cross (c : TargetCoeff) (i j : Fin 4) :
     targetTwo c (aCoord i) (bCoord j) =
       c ⟨i.val + j.val, by omega⟩ := by
-  fin_cases i <;> fin_cases j <;> simp [targetTwo, aCoord, bCoord]
+  simp [targetTwo, aCoord, bCoord, i.isLt]
 
 theorem targetTwo_sameA (c : TargetCoeff) (i j : Fin 4) :
     targetTwo c (aCoord i) (aCoord j) = 0 := by
-  fin_cases i <;> fin_cases j <;> simp [targetTwo, aCoord]
+  simp [targetTwo, aCoord, i.isLt, show ¬ 4 ≤ j.val by omega]
 
 theorem targetTwo_sameB (c : TargetCoeff) (i j : Fin 4) :
     targetTwo c (bCoord i) (bCoord j) = 0 := by
-  fin_cases i <;> fin_cases j <;> simp [targetTwo, bCoord]
+  simp [targetTwo, bCoord]
 
+-- Expose the coordinate basis before kernel reduction of each fixed `8 × 8` matrix.
 @[simp] theorem targetTwo_basis_zero :
     targetTwo (targetBasis 0) = zeroPlaceTwo := by
   funext i j
-  fin_cases i <;> fin_cases j <;>
-    simp [targetTwo, targetBasis, zeroPlaceTwo, vectorWedge, aLinear, bLinear, aCoord, bCoord,
-      Pi.basisFun]
+  simp only [targetBasis, zeroPlaceTwo, vectorWedge, aLinear, bLinear, Pi.basisFun_apply]
+  revert i j
+  decide +kernel
 
 @[simp] theorem targetTwo_basis_one :
     targetTwo (targetBasis 1) = zeroFirstJetTwo := by
   funext i j
-  fin_cases i <;> fin_cases j <;>
-    simp [targetTwo, targetBasis, zeroFirstJetTwo, vectorWedge, aLinear, bLinear, aCoord,
-      bCoord, Pi.basisFun]
+  simp only [targetBasis, zeroFirstJetTwo, vectorWedge, aLinear, bLinear, Pi.basisFun_apply,
+    Pi.add_apply]
+  revert i j
+  decide +kernel
 
 @[simp] theorem targetTwo_basis_two :
     targetTwo (targetBasis 2) = zeroSecondJetTwo := by
   funext i j
-  fin_cases i <;> fin_cases j <;>
-    simp [targetTwo, targetBasis, zeroSecondJetTwo, vectorWedge, aLinear, bLinear, aCoord,
-      bCoord, Pi.basisFun]
+  simp only [targetBasis, zeroSecondJetTwo, vectorWedge, aLinear, bLinear, Pi.basisFun_apply,
+    Pi.add_apply]
+  revert i j
+  decide +kernel
 
 @[simp] theorem rationalPlaceTwo_zero_eq :
     rationalPlaceTwo 0 = zeroPlaceTwo := by
-  funext i j
-  fin_cases i <;> fin_cases j <;>
-    simp [rationalPlaceTwo, zeroPlaceTwo, vectorWedge, placeA, placeB, aLinear, bLinear,
-      aCoord, bCoord, Pi.basisFun]
+  apply congrArg₂ vectorWedge
+  · funext i
+    fin_cases i <;> simp [placeA, aLinear, aCoord, Pi.basisFun]
+  · funext i
+    fin_cases i <;> simp [placeB, bLinear, bCoord, Pi.basisFun]
 
 theorem targetTwo_injective : Function.Injective targetTwo := by
   intro c d h

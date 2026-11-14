@@ -33,7 +33,7 @@ theorem terminal_gradient_le (p eps M D : ℝ) (hp : 2 < p)
   let nf := nF p eps M D
   let nd := nD p eps M D
   let delta0 := delta eps M D
-  have hp1 : 1 < p := by linarith
+  have hp1 : 1 < p := by linarith only [hp]
   have hdelta : 0 < delta0 := delta_pos heps hM hD
   have hnf : 1 ≤ nf := one_le_nF hp heps hM hD
   have hnd : 1 ≤ nd := one_le_nD hp heps hM hD
@@ -58,7 +58,7 @@ theorem terminal_gradient_le (p eps M D : ℝ) (hp : 2 < p)
     intro y
     dsimp [oracle1, phaseOneOracle, normalizedPairOracle]
     rw [hzphys]
-    exact div_le_div_of_nonneg_right (by linarith [hxstar (x0 + D • y)])
+    exact div_le_div_of_nonneg_right (by linarith only [hxstar, hxstar (x0 + D • y)])
       (mul_nonneg hM.le (sq_nonneg D))
   have hpguards : ∀ k < nf,
       FunctionBregman oracle1.value oracle1.gradient
@@ -116,7 +116,7 @@ theorem terminal_gradient_le (p eps M D : ℝ) (hp : 2 < p)
     intro y
     dsimp [oracle2, phaseTwoOracle, normalizedPairOracle]
     rw [hz2phys]
-    exact div_le_div_of_nonneg_right (by linarith [hxstar (center + D • y)])
+    exact div_le_div_of_nonneg_right (by linarith only [hxstar, hxstar (center + D • y)])
       (mul_nonneg hM.le (sq_nonneg D))
   have hqguards : ∀ k < nd,
       FunctionBregman oracle2.value oracle2.gradient

@@ -65,7 +65,7 @@ private theorem locallyIntegrable_finiteRadiusSmoothHighPassMaxTestOperator
       (finiteRadiusSmoothHighPassMaxNNNorm lam s f x : ℝ)) := by
     unfold finiteRadiusSmoothHighPassMaxNNNorm
     induction s using Finset.induction_on with
-    | empty => simp
+    | empty => simp only [Finset.sup_empty, bot_eq_zero', NNReal.coe_zero, measurable_const]
     | @insert ε s hε ih =>
         simp only [Finset.sup_insert, NNReal.coe_max, coe_nnnorm]
         exact (hmeas ε).norm.max ih
@@ -103,7 +103,7 @@ private theorem locallyIntegrable_finiteRadiusSmoothHighPassMaxTestOperator
               (dyadicCeilRadius ε.1.1 ε.1.2) f x‖₊) :=
         NNReal.coe_le_coe.mpr hsup
       rw [NNReal.coe_sum] at hcoe
-      simpa only [coe_nnnorm] using hcoe
+      exact hcoe
     _ ≤ C := by
       apply Finset.sum_le_sum
       intro ε hε
@@ -136,7 +136,7 @@ private theorem locallyIntegrable_finiteRadiusSmoothHighPassMaxTestOperator
 theorem hasUniformFiniteRadiusSmoothSparseBound_of_positiveSuffix
     {A : ℝ} (hA : HasUniformPositiveSuffixSmoothSparseBound A) :
     HardyLittlewoodBoundaryControl.HasUniformFiniteRadiusSmoothSparseBound (2 * A) := by
-  refine ⟨mul_nonneg (by norm_num) hA.1, ?_⟩
+  refine ⟨mul_nonneg (by norm_num1) hA.1, ?_⟩
   intro lam hlam s
   refine ⟨fun f ↦ locallyIntegrable_finiteRadiusSmoothHighPassMaxTestOperator lam s f, ?_⟩
   intro p hp hp2
@@ -147,11 +147,6 @@ theorem hasUniformFiniteRadiusSmoothSparseBound_of_positiveSuffix
         (finitePositiveDyadicSuffixMaxOperator lam j N) := by
     intro j N
     exact hA.2 lam hlam p hp hp2 j N |>.1
-  have hbound : ∀ (j : ℤ) (N : ℕ),
-      sparseOnePNorm p (finitePositiveDyadicSuffixMaxOperator lam j N) ≤
-        A * holderConjugate p := by
-    intro j N
-    exact hA.2 lam hlam p hp hp2 j N |>.2
   have hfinite :=
     hasSparseOnePBound_finiteRadiusSmoothHighPassMax_of_uniform_positive_finiteSuffixMax
       lam s hpos hsuffix
@@ -166,8 +161,8 @@ theorem hasUniformFiniteRadiusSmoothSparseBound_of_positiveSuffix
   have hnorm : sparseOnePNorm p
       (absoluteValueOperator (finiteRadiusSmoothHighPassMaxTestOperator lam s)) ≤
       2 * (A * holderConjugate p) := by
-    exact sparseOnePNorm_le_of_bound (mul_nonneg (by norm_num) hpos) hfiniteAbs
-  refine ⟨⟨2 * (A * holderConjugate p), mul_nonneg (by norm_num) hpos, hfiniteAbs⟩, ?_⟩
+    exact sparseOnePNorm_le_of_bound (mul_nonneg (by norm_num1) hpos) hfiniteAbs
+  refine ⟨⟨2 * (A * holderConjugate p), mul_nonneg (by norm_num1) hpos, hfiniteAbs⟩, ?_⟩
   calc
     _ ≤ 2 * (A * holderConjugate p) := hnorm
     _ = (2 * A) * holderConjugate p := by ring

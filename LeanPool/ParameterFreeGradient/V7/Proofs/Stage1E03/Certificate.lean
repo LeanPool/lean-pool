@@ -267,7 +267,7 @@ theorem fullShape_radius_lt (inst : PositiveInstance 2 d x0)
       exact hbound'.trans (by
         rw [hnEq]
         simpa using hbudget)
-    linarith
+    linarith only [hgood, hnorm]
 
 theorem source_trial_certificate (inst : PositiveInstance 2 d x0)
     (eps M D : ℝ) (n : ℕ) (heps : 0 < eps) (hM : 0 < M) (hD : 0 < D)

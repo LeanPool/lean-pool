@@ -6,8 +6,6 @@ Authors: Catskills Research Company
 module
 
 public import LeanPool.DomainTheory.Neighborhood.Exercise513
-import Mathlib.Tactic.NormNum.Inv
-import Mathlib.Tactic.NormNum.Pow
 
 /-!
 # Exercise 5.14 (Scott 1981, PRG-19, Lecture V) — the graph model `Pω`

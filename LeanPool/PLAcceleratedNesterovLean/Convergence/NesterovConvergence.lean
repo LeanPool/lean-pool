@@ -58,22 +58,27 @@ private lemma rate_bound_case_small {θ a : ℝ}
   have h_exp_lb : 1 - a + a ^ 2 / 4 ≤ Real.exp (-a) := by
     have h := @Real.one_sub_div_pow_le_exp_neg 2 a (by simp; linarith : a ≤ ↑(2 : ℕ))
     simp only [Nat.cast_ofNat] at h
-    nlinarith [sq_nonneg (1 - a / 2)]
-  nlinarith
+    linarith only [h]
+  have ha_nn : 0 ≤ a := by linarith only [hθ_nn, hθ_le]
+  linarith only [h_exp_lb, mul_le_mul_of_nonneg_right hθ_le ha_nn]
 
 /-- For θ ≤ 1/4 and a ≥ 2: (1−θ)√(1−θ) ≥ 1/2, so rate ≤ 1−a/2 ≤ 0 ≤ exp(−a). -/
 private lemma rate_bound_case_large {θ a : ℝ}
     (_hθ_nn : 0 ≤ θ) (hθ_le : θ ≤ 1 / 4)
     (ha_ge2 : 2 ≤ a) :
     1 - (1 - θ) * Real.sqrt (1 - θ) * a ≤ Real.exp (-a) := by
-  have h1θ_nn : (0 : ℝ) ≤ 1 - θ := by linarith
-  have h1θ_ge : (3 : ℝ)/4 ≤ 1 - θ := by linarith
+  have h1θ_nn : (0 : ℝ) ≤ 1 - θ := by linarith only [hθ_le]
+  have h1θ_ge : (3 : ℝ)/4 ≤ 1 - θ := by linarith only [hθ_le]
   have h_sqrt_lb : Real.sqrt (1 - θ) ≥ 2/3 := by
     rw [ge_iff_le, ← Real.sqrt_sq (by norm_num : (0:ℝ) ≤ 2/3)]
-    exact Real.sqrt_le_sqrt (by nlinarith [sq_nonneg (2:ℝ)])
-  have h_prod : (1 - θ) * Real.sqrt (1 - θ) ≥ 1/2 := by nlinarith
-  have h1 : (1 - θ) * Real.sqrt (1 - θ) * a ≥ 1 := by nlinarith
-  linarith [Real.exp_pos (-a)]
+    exact Real.sqrt_le_sqrt (by linarith only [hθ_le])
+  have h_prod : (1 - θ) * Real.sqrt (1 - θ) ≥ 1/2 := by
+    linarith only [mul_le_mul h1θ_ge h_sqrt_lb
+      (by norm_num : (0 : ℝ) ≤ 2/3) h1θ_nn]
+  have h1 : (1 - θ) * Real.sqrt (1 - θ) * a ≥ 1 := by
+    have ha_nn : 0 ≤ a := by linarith only [ha_ge2]
+    linarith only [ha_ge2, mul_le_mul_of_nonneg_right h_prod ha_nn]
+  linarith only [h1, Real.exp_pos (-a)]
 
 -- Scalar comparison with the retuning parameter θ explicit.
 /-- If `0 < θ ≤ min (√(μ/L)/8) (1/4)`, then the retuned one-step factor from
@@ -87,7 +92,7 @@ theorem nesterov_rate_bound_theta
     1 - (1 - θ) * Real.sqrt (muOfTheta μ θ * (1 / ↑L)) ≤
       Real.exp (-(1 / Real.sqrt (↑L / μ))) := by
   set a := Real.sqrt (μ / ↑L) with ha_def
-  have h1θ_nn : 0 ≤ 1 - θ := by linarith
+  have h1θ_nn : 0 ≤ 1 - θ := by linarith only [hθ_le_quarter]
   have ha_pos : 0 < a := Real.sqrt_pos_of_pos (div_pos hμ hL)
   have h_prod_eq : muOfTheta μ θ * (1 / ↑L) = (μ / ↑L) * (1 - θ) := by
     change μ * (1 - θ) * (1 / ↑L) = μ / ↑L * (1 - θ)
@@ -97,20 +102,22 @@ theorem nesterov_rate_bound_theta
     rw [ha_def, one_div, ← Real.sqrt_inv, inv_div]
   rw [h_target_eq]
   have h_sqrt_lb : Real.sqrt (1 - θ) ≥ 1 - θ := by
-    have hle : (1 - θ) ^ 2 ≤ 1 - θ := by nlinarith [mul_nonneg hθ_pos.le h1θ_nn]
+    have hle : (1 - θ) ^ 2 ≤ 1 - θ := by
+      linarith only [mul_nonneg hθ_pos.le h1θ_nn]
     calc (1 : ℝ) - θ = Real.sqrt ((1 - θ) ^ 2) := (Real.sqrt_sq h1θ_nn).symm
       _ ≤ Real.sqrt (1 - θ) := Real.sqrt_le_sqrt hle
   have h_prod_lb : (1 - θ) * Real.sqrt (1 - θ) ≥ 1 - 2 * θ := by
-    nlinarith [mul_le_mul_of_nonneg_left h_sqrt_lb h1θ_nn, sq_nonneg θ]
+    linarith only [mul_le_mul_of_nonneg_left h_sqrt_lb h1θ_nn, sq_nonneg θ]
   have h_rate_ub : 1 - (1 - θ) * (a * Real.sqrt (1 - θ)) ≤
       1 - (1 - 2 * θ) * a := by
     have : (1 - θ) * (a * Real.sqrt (1 - θ)) =
         (1 - θ) * Real.sqrt (1 - θ) * a := by ring
-    rw [this]; nlinarith
+    rw [this]
+    exact sub_le_sub_left (mul_le_mul_of_nonneg_right h_prod_lb ha_pos.le) 1
   by_cases ha2 : a ≤ 2
-  · linarith [rate_bound_case_small hθ_pos.le hθ_le ha_pos ha2]
+  · exact h_rate_ub.trans (rate_bound_case_small hθ_pos.le hθ_le ha_pos ha2)
   · push Not at ha2
-    linarith [rate_bound_case_large hθ_pos.le hθ_le_quarter ha2.le]
+    linarith only [rate_bound_case_large hθ_pos.le hθ_le_quarter ha2.le]
 
 -- The local assembly uses the full Lyapunov argument and rate conversion.
 /-! ## State-position local theorem family -/
@@ -268,7 +275,7 @@ theorem nesterov_convergence_at_base_point_position_params
     have hL₀_le_two_gap : L₀ ≤ 2 * (f x₀ - fStar f) := by
       rw [show L₀ = (f x₀ - fStar f) + μ' / 2 * ‖x₀ - π x₀‖ ^ 2 from
         (hlyap_eq_psi x₀)]
-      nlinarith
+      linarith only [hQG₀_norm]
     have hsqrt_pos : 0 < Real.sqrt (μ' * η) := Real.sqrt_pos_of_pos (by positivity)
     have hr_pos : 0 < r := by
       simp only [hr_def]
@@ -324,7 +331,7 @@ theorem nesterov_convergence_at_base_point_position_params
               (Real.exp (-(1 / Real.sqrt (↑L / μ)))) ^ k := by
             apply mul_le_mul_of_nonneg_left
             · exact pow_le_pow_left₀ (le_of_lt hr_pos) hr_le_exp k
-            · nlinarith
+            · exact mul_nonneg (by norm_num) hgap₀_nn
         _ = 2 * Real.exp (-(↑k / Real.sqrt (↑L / μ))) * (f x₀ - fStar f) := by
             rw [h_exp_pow]
             ring

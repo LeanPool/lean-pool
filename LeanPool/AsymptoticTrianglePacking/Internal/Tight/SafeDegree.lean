@@ -7,8 +7,6 @@ Authors: Juan Pablo Traverso Gianini, Aristotle
 module
 
 public import LeanPool.AsymptoticTrianglePacking.Internal.Tight.CoverProb
-public import LeanPool.AsymptoticTrianglePacking.Internal.Measurable
-public import LeanPool.AsymptoticTrianglePacking.Internal.Prelude
 
 /-!
 # LeanPool.AsymptoticTrianglePacking.Internal — the SAFE degree and its SHARP expectation

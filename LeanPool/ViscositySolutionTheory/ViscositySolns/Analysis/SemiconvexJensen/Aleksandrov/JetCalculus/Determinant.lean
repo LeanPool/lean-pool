@@ -78,7 +78,7 @@ theorem Matrix.PosSemidef.det_le_pow_of_le_smul_one
               simp [Matrix.sub_mulVec, dotProduct_sub]
         _ = lambda - hHerm.eigenvalues i := by
           rw [hsmul_one, hdotA]
-    linarith
+    linarith only [hHerm, hquad_nonneg, hquad]
   calc
     A.det = ∏ i : Fin n, hHerm.eigenvalues i := by
       simpa [hHerm] using hHerm.det_eq_prod_eigenvalues
@@ -119,7 +119,7 @@ theorem hessian_abs_det_le_pow_of_neg_smul_one_le_of_le_zero
     have hsame_abs : |(-A).det| = |A.det| := by
       rw [Matrix.det_neg]
       simp [abs_mul]
-    linarith
+    linarith only [habs_neg, hsame_abs]
   simpa [hdet_abs_eq] using hdet_neg_le
 
 /--

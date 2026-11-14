@@ -12,7 +12,6 @@ import LeanPool.InfinitaryLogic.Methods.LocalEMCardinality
 import LeanPool.InfinitaryLogic.Methods.LocalEMSmall
 import LeanPool.InfinitaryLogic.Methods.LocalEMTemplateRealization
 import LeanPool.InfinitaryLogic.Methods.SchemaLocalEMSource
-import LeanPool.InfinitaryLogic.Methods.SchemaTermTruth
 /-!
 # Small models of every infinite size: the countable-symbol core (issue #11 unit 7a)
 

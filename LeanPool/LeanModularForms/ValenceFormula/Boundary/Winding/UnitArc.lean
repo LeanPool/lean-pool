@@ -15,7 +15,6 @@ import LeanPool.LeanModularForms.ValenceFormula.TrigLemmas
 import LeanPool.LeanModularForms.ValenceFormula.WindingWeights.Common
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.Arctan
 import Mathlib.CategoryTheory.Category.Init
-import Mathlib.NumberTheory.ArithmeticFunction.Misc
 
 /-!
 # Unit Arc Winding Number
@@ -51,9 +50,9 @@ private lemma unitArc_re_pos_at_offsets (s : ℂ) (t₀ δ' : ℝ)
     simp only [Complex.sub_re, Complex.add_re, Complex.ofReal_re,
       Complex.mul_re, Complex.ofReal_im, Complex.I_re, Complex.I_im,
       mul_zero, zero_mul, sub_self, add_zero]
-    have hθ_m_lt : θ_m < θ₀' := by simp [θ_m, θ₀']; nlinarith only [_hδ'_pos, Real.pi_pos]
-    have hθ_m_nn : 0 ≤ θ_m := by simp [θ_m]; nlinarith only [hδ'_left, Real.pi_pos]
-    have hθ₀_le_pi : θ₀' ≤ Real.pi := by simp [θ₀']; nlinarith only [_hδ'_pos, hδ'_left,
+    have hθ_m_lt : θ_m < θ₀' := by simp only [θ_m, θ₀']; nlinarith only [_hδ'_pos, Real.pi_pos]
+    have hθ_m_nn : 0 ≤ θ_m := by simp only [θ_m]; nlinarith only [hδ'_left, Real.pi_pos]
+    have hθ₀_le_pi : θ₀' ≤ Real.pi := by simp only [θ₀']; nlinarith only [_hδ'_pos, hδ'_left,
       hδ'_right, Real.pi_pos]
     linarith only [hθ_m_lt, hθ_m_nn, hθ₀_le_pi,
       Real.cos_lt_cos_of_nonneg_of_le_pi hθ_m_nn hθ₀_le_pi hθ_m_lt]
@@ -63,9 +62,9 @@ private lemma unitArc_re_pos_at_offsets (s : ℂ) (t₀ δ' : ℝ)
     simp only [Complex.sub_re, Complex.add_re, Complex.ofReal_re,
       Complex.mul_re, Complex.ofReal_im, Complex.I_re, Complex.I_im,
       mul_zero, zero_mul, sub_self, add_zero, neg_sub]
-    have hθ_gt : θ₀' < θ_p := by simp [θ₀', θ_p]; nlinarith only [_hδ'_pos, Real.pi_pos]
-    have hθ₀_nn : 0 ≤ θ₀' := by simp [θ₀']; nlinarith only [_hδ'_pos, hδ'_left, Real.pi_pos]
-    have hθ_p_le_pi : θ_p ≤ Real.pi := by simp [θ_p]; nlinarith only [_hδ'_pos, hδ'_left,
+    have hθ_gt : θ₀' < θ_p := by simp only [θ₀', θ_p]; nlinarith only [_hδ'_pos, Real.pi_pos]
+    have hθ₀_nn : 0 ≤ θ₀' := by simp only [θ₀']; nlinarith only [_hδ'_pos, hδ'_left, Real.pi_pos]
+    have hθ_p_le_pi : θ_p ≤ Real.pi := by simp only [θ_p]; nlinarith only [_hδ'_pos, hδ'_left,
       hδ'_right, Real.pi_pos]
     linarith only [hθ_gt, hθ₀_nn, hθ_p_le_pi,
       Real.cos_lt_cos_of_nonneg_of_le_pi hθ₀_nn hθ_p_le_pi hθ_gt]
@@ -117,7 +116,7 @@ private lemma unitArc_log_diff_tendsto (s : ℂ)
     have hδ_lt1 : δ < t₀ - 1 := lt_of_lt_of_le hδ_small (min_le_left _ _)
     have hδ_lt2 : δ < 3 - t₀ := lt_of_lt_of_le hδ_small (min_le_right _ _)
     obtain ⟨h_re_a, h_re_b⟩ := unitArc_re_pos_at_offsets s t₀ δ ht₀_Ioo h_s_arc hδ_pos
-      (by linarith) (by linarith)
+      (by linarith only [hδ_lt1]) (by linarith only [hδ_lt2])
     exact (log_div_of_re_pos h_re_a h_re_b).symm
   exact h_ratio.congr' (h_ev_agree.mono fun _ h => h.symm)
 
@@ -300,7 +299,7 @@ private lemma unitArc_limit_aux (H : ℝ) (s : ℂ)
     · have hcont : Continuous δ_fn := by
         rw [hδ_fn_def]
         exact continuous_const.mul (Real.continuous_arcsin.comp (continuous_id'.div_const 2))
-      have h0 : δ_fn 0 = 0 := by simp [hδ_fn_def, Real.arcsin_zero]
+      have h0 : δ_fn 0 = 0 := by simp only [hδ_fn_def, zero_div, Real.arcsin_zero, mul_zero]
       simpa [h0] using hcont.tendsto 0 |>.mono_left nhdsWithin_le_nhds
     · exact eventually_nhdsWithin_of_forall fun ε hε => Set.mem_Ioi.mpr (by
         simp only [hδ_fn_def]
@@ -414,8 +413,8 @@ private lemma unitArc_winding_aux (H : ℝ) (hH : 1 < H) (s : ℂ)
         (Real.arcsin_sin (by nlinarith only [hhw_pos, Real.pi_pos]) (by
           nlinarith only [hhw_le_t₀_sub_one, hhw_le_three_sub_t₀, Real.pi_pos])).symm
       rw [hπhw12]
-      apply Real.arcsin_lt_arcsin (by linarith)
-      · linarith
+      apply Real.arcsin_lt_arcsin (by linarith only [hε_pos])
+      · linarith only [hε_lt_2sin]
       · exact Real.sin_le_one _
     simp only [hδ_fn_def]
     calc 12 / Real.pi * Real.arcsin (ε / 2) < 12 / Real.pi * (Real.pi * hw / 12) :=
@@ -436,8 +435,8 @@ private lemma unitArc_winding_aux (H : ℝ) (hH : 1 < H) (s : ℂ)
     have hδ_lt := hδ_lt_hw ε hε_pos hε_lt
     have hδ_lt_t₀m1 : δ_fn ε < t₀ - 1 := lt_of_lt_of_le hδ_lt hhw_le_t₀_sub_one
     have hδ_lt_3mt₀ : δ_fn ε < 3 - t₀ := lt_of_lt_of_le hδ_lt hhw_le_three_sub_t₀
-    have hδ_left : 1 < t₀ - δ_fn ε := by linarith
-    have hδ_right : t₀ + δ_fn ε < 3 := by linarith
+    have hδ_left : 1 < t₀ - δ_fn ε := by linarith only [hhw_le_t₀_sub_one, hδ_lt]
+    have hδ_right : t₀ + δ_fn ε < 3 := by linarith only [hhw_le_three_sub_t₀, hδ_lt]
     have hδ_pos' := hδ_pos ε hε_pos hε_lt
     have h_arc_left : 1 < t₀ + δ_fn ε := by linarith [ht₀_Ioo.1, hδ_pos']
     rw [Complex.norm_def,
@@ -457,11 +456,11 @@ private lemma unitArc_winding_aux (H : ℝ) (hH : 1 < H) (s : ℂ)
         nlinarith only [hhw_le_t₀_sub_one, hhw_le_three_sub_t₀, hδ_lt, Real.pi_pos]
     have hε_half_bounds : -1 ≤ ε / 2 ∧ ε / 2 ≤ 1 := by
       constructor
-      · linarith
+      · linarith only [hhw_le_t₀_sub_one, hhw_le_three_sub_t₀, hε_pos, hδ_lt, hδ_pos']
       · have hthresh_le : threshold ≤ 2 * Real.sin (Real.pi * hw / 12) :=
           min_le_right _ _
         nlinarith only [hε_lt, hthresh_le, Real.sin_le_one (Real.pi * hw / 12)]
-    rw [h2sin, Real.sqrt_sq_eq_abs, abs_of_pos (by linarith), hangle,
+    rw [h2sin, Real.sqrt_sq_eq_abs, abs_of_pos (by linarith only [hsin_pos]), hangle,
         Real.sin_arcsin hε_half_bounds.1 hε_half_bounds.2]
     ring
   have h_far : ∀ ε, 0 < ε → ε < threshold →
@@ -472,19 +471,19 @@ private lemma unitArc_winding_aux (H : ℝ) (hH : 1 < H) (s : ℂ)
     have hδ_pos' := hδ_pos ε hε_pos hε_lt
     have hδ_lt_t₀m1 : δ_fn ε < t₀ - 1 := lt_of_lt_of_le hδ_lt hhw_le_t₀_sub_one
     have hδ_lt_3mt₀ : δ_fn ε < 3 - t₀ := lt_of_lt_of_le hδ_lt hhw_le_three_sub_t₀
-    have hδ_left : 1 < t₀ - δ_fn ε := by linarith
-    have hδ_right : t₀ + δ_fn ε < 3 := by linarith
+    have hδ_left : 1 < t₀ - δ_fn ε := by linarith only [hhw_le_t₀_sub_one, hδ_lt]
+    have hδ_right : t₀ + δ_fn ε < 3 := by linarith only [hhw_le_three_sub_t₀, hδ_lt]
     have hδ_eq := hδ_norm_eq ε hε_pos hε_lt
     rcases lt_or_ge t (t₀ - δ_fn ε) with ht_left | ht_right
     · exact unitArc_norm_gt_left s H hH t₀ (δ_fn ε) ε ht₀_Ioo h_s_arc hs_re
         hδ_pos' hδ_left hδ_right hδ_eq hε_lt_d t ⟨ht_mem.1, le_of_lt ht_left⟩ ht_left
     · have ht_right' : t₀ + δ_fn ε < t := by
         rcases le_or_gt t₀ t with h_t_ge | h_t_lt
-        · rw [abs_of_nonneg (by linarith)] at habs; linarith
+        · rw [abs_of_nonneg (by exact sub_nonneg.mpr h_t_ge)] at habs; linarith only [habs]
         · exfalso
           have h_abs_eq : |t - t₀| = t₀ - t := by rw [abs_of_neg (sub_neg.mpr h_t_lt)]; ring
           have habs' : δ_fn ε < t₀ - t := h_abs_eq ▸ habs
-          linarith
+          linarith only [habs, ht_right, h_abs_eq]
       exact unitArc_norm_gt_right s H hH t₀ (δ_fn ε) ε ht₀_Ioo h_s_arc hs_re hs_norm hs_im_pos
         hδ_pos' hδ_left hδ_right hδ_eq hε_lt_d t ht_right' ht_mem.2
   have h_near : ∀ ε, 0 < ε → ε < threshold →
@@ -531,4 +530,4 @@ theorem gWN_fdBoundary_H_eq_neg_half_of_unitArc (H : ℝ) (hH : 1 < H) (s : ℂ)
     generalizedWindingNumber' (fdBoundaryH H) 0 5 s = -1/2 := by
   apply ContourIntegral.gWN_eq_neg_half_of_pv_tendsto
   convert unitArc_winding_tendsto H hH s hs_norm hs_re hs_im_pos using 2
-  simp [sub_zero, gt_iff_lt]
+  simp only [sub_zero, deriv_sub_const_fun, gt_iff_lt]

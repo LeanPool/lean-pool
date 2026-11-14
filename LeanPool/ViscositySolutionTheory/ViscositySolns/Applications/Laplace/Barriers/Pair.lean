@@ -45,7 +45,7 @@ theorem viscositySupersolution_laplaceOperator_const {C : Set (Point n)} (hCopen
   have h := trace_hessian_le_of_mem_subjet_of_mem_superjet hxint hJ hK
   rw [laplaceOperator_apply]
   simp only [Matrix.trace_zero] at h
-  linarith
+  linarith only [h]
 
 /-- Constants are viscosity subsolutions of `-Δu = 0` on open sets. -/
 theorem viscositySubsolution_laplaceOperator_const {C : Set (Point n)} (hCopen : IsOpen C)
@@ -78,7 +78,7 @@ theorem exists_eucSq_le_of_isBounded {C : Set (Point n)} (hC : Bornology.IsBound
   obtain ⟨M, hM⟩ := hC.closure.exists_norm_le
   refine ⟨n * (2 * |M|) ^ 2, fun x hx y hy => ?_⟩
   have h1 : ‖x - y‖ <= 2 * |M| :=
-    (norm_sub_le x y).trans (by linarith [hM x hx, hM y hy, le_abs_self M])
+    (norm_sub_le x y).trans (by linarith only [hM, hx, hy, hM x hx, hM y hy, le_abs_self M])
   calc
     eucSq x y <= n * ‖x - y‖ ^ 2 := eucSq_le_card_mul_norm_sq x y
     _ <= n * (2 * |M|) ^ 2 :=
@@ -163,7 +163,7 @@ theorem laplaceUpperBarrier_properties (hCopen : IsOpen C) (hCbdd : Bornology.Is
       have h2 := hh z hzC p.1 (frontier_subset_closure hp.1)
       have h3 := le_abs_self (h z - h p.1)
       unfold laplaceBarrierBranch
-      linarith
+      linarith only [h1, h2, h3]
   · intro z hz x hx
     obtain ⟨y, hy⟩ := nonempty_exteriorSphereParams hext hz
     have h1 := laplaceUpperBarrier_le (A := laplaceBarrierCoeff n R D L) hCbdd hhc hy x
@@ -197,9 +197,9 @@ theorem neg_laplaceUpperBarrier_neg_le (hext : UniformExteriorSphereSq C R)
     rw [eucSq_comm q.1 x] at h5
     have h6 := mul_le_mul_of_nonneg_left h5 hL
     unfold laplaceBarrierBranch
-    linarith
+    linarith only [h1, h2, h3, h4, h6]
   unfold laplaceBarrierBranch
-  linarith
+  linarith only [hV]
 
 end Assembly
 
@@ -266,6 +266,6 @@ theorem exists_laplace_barrierPair_of_uniformExteriorSphereSq
     · rw [upperEnvelope_eq_of_continuous hUc (frontier_subset_closure hz), hUbd z hz]
     · have h := hVmod z hz x hx
       change _ <= -V x
-      linarith
+      linarith only [h]
 
 end ViscositySolns

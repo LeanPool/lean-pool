@@ -61,7 +61,7 @@ theorem lowerKernelPhi_convex {r theta : ℝ}
       (mul_nonneg hb (O3.lpNorm_nonneg r y))
   have hmono : lpNorm r (a • x + b • y) ^ (2 * theta) ≤
       (a * lpNorm r x + b * lpNorm r y) ^ (2 * theta) :=
-    Real.rpow_le_rpow (O3.lpNorm_nonneg r _) hnorm (by linarith)
+    Real.rpow_le_rpow (O3.lpNorm_nonneg r _) hnorm (by linarith only [htheta])
   have hpow := (convexOn_rpow (by linarith : 1 ≤ 2 * theta)).2
     (show lpNorm r x ∈ Set.Ici (0 : ℝ) from O3.lpNorm_nonneg r x)
     (show lpNorm r y ∈ Set.Ici (0 : ℝ) from O3.lpNorm_nonneg r y)
@@ -76,6 +76,6 @@ theorem lowerKernelPhi_convex {r theta : ℝ}
   change 2 * lpNorm r (a • x + b • y) ^ (2 * theta) ≤
     a * (2 * lpNorm r x ^ (2 * theta)) +
       b * (2 * lpNorm r y ^ (2 * theta))
-  nlinarith
+  linarith only [hmono, hpow']
 
 end V7.Stage5AboveTwoLowerS5A2Envelope

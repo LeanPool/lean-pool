@@ -45,11 +45,11 @@ theorem integral_comp_log_div {F : ℝ → ℝ} {y α β : ℝ} (hy : 1 < y) (h�
       ∫ t in α..β, F t / t := by
   set L := log y
   have hL : 0 < L := log_pos hy
-  have hy0 : 0 < y := by linarith
+  have hy0 : 0 < y := by linarith only [hy]
   set f : ℝ → ℝ := fun t => exp (L * t⁻¹)
   set f' : ℝ → ℝ := fun t => exp (L * t⁻¹) * (L * -(t ^ 2)⁻¹)
   have hpos : ∀ x ∈ uIcc α β, 0 < x := fun x hx => by
-    rw [uIcc_of_le hαβ] at hx; linarith [hx.1]
+    rw [uIcc_of_le hαβ] at hx; linarith only [hx.1, hα, hx]
   have hderiv : ∀ x, 0 < x → HasDerivAt f (f' x) x := fun x hx =>
     ((hasDerivAt_inv hx.ne').const_mul L).exp
   have hfA : ∀ γ, f γ = y ^ (1 / γ) := fun γ => by
@@ -58,7 +58,7 @@ theorem integral_comp_log_div {F : ℝ → ℝ} {y α β : ℝ} (hy : 1 < y) (h�
     (f' := f') (g := fun u => F (L / log u) / (u * log u))
     (continuousOn_of_forall_continuousAt fun x hx => (hderiv x (hpos x hx)).continuousAt)
     (fun x hx => hderiv x (by
-      rw [min_eq_left hαβ] at hx; linarith [hx.1]))
+      rw [min_eq_left hαβ] at hx; linarith only [hx.1, hα, hx]))
     (fun x hx => by
       simp only [f']
       rw [mul_neg]
@@ -84,7 +84,7 @@ theorem log_rpow_one_div {y : ℝ} (hy : 0 < y) (γ : ℝ) : log (y ^ (1 / γ)) 
 theorem div_log_mem_Icc {y α β u : ℝ} (hy : 1 < y) (hα : 0 < α) (hαβ : α ≤ β)
     (hu : u ∈ Icc (y ^ (1 / β)) (y ^ (1 / α))) : 0 < log u ∧ log y / log u ∈ Icc α β := by
   have hL : 0 < log y := log_pos hy
-  have hy0 : 0 < y := by linarith
+  have hy0 : 0 < y := by linarith only [hy]
   have hβ : 0 < β := hα.trans_le hαβ
   have hB0 : 0 < y ^ (1 / β) := rpow_pos_of_pos hy0 _
   have hu0 : 0 < u := hB0.trans_le hu.1
@@ -92,8 +92,8 @@ theorem div_log_mem_Icc {y α β u : ℝ} (hy : 1 < y) (hα : 0 < α) (hαβ : �
   have h2 : log u ≤ log y / α := log_rpow_one_div hy0 α ▸ log_le_log hu0 hu.2
   have hlu : 0 < log u := (div_pos hL hβ).trans_le h1
   refine ⟨hlu, ?_, ?_⟩
-  · rw [le_div_iff₀ hlu]; rw [le_div_iff₀ hα] at h2; linarith
-  · rw [div_le_iff₀ hlu]; rw [div_le_iff₀ hβ] at h1; linarith
+  · rw [le_div_iff₀ hlu]; rw [le_div_iff₀ hα] at h2; linarith only [h2]
+  · rw [div_le_iff₀ hlu]; rw [div_le_iff₀ hβ] at h1; linarith only [h1]
 
 /-- [I71, Lemma 13] in the variable `t = log y / log u`: for `F ≥ 0` antitone on `[α, β]`, and any
 set `S` of primes between those in `(y^{1/β}, y^{1/α})` and those in `[y^{1/β}, y^{1/α}]`,
@@ -106,7 +106,7 @@ theorem lemma13_param : ∃ C, 0 ≤ C ∧ ∀ (F : ℝ → ℝ) (y α β : ℝ)
   obtain ⟨C, hC0, hC⟩ := lemma13_mono_of_subset
   refine ⟨C, hC0, fun F y α β S hy hα hαβ hB hF hF0 hS1 hS2 => ?_⟩
   have hL : 0 < log y := log_pos hy
-  have hy0 : 0 < y := by linarith
+  have hy0 : 0 < y := by linarith only [hy]
   have hBA : y ^ (1 / β) ≤ y ^ (1 / α) :=
     rpow_le_rpow_of_exponent_le hy.le (one_div_le_one_div_of_le hα hαβ)
   have hmono : MonotoneOn (fun u => F (log y / log u)) (Icc (y ^ (1 / β)) (y ^ (1 / α))) := by
@@ -114,7 +114,7 @@ theorem lemma13_param : ∃ C, 0 ≤ C ∧ ∀ (F : ℝ → ℝ) (y α β : ℝ)
     obtain ⟨hlu, hmu⟩ := div_log_mem_Icc hy hα hαβ hu
     obtain ⟨hlv, hmv⟩ := div_log_mem_Icc hy hα hαβ hv
     exact hF hmv hmu (div_le_div_of_nonneg_left hL.le hlu
-      (log_le_log (by linarith [hu.1]) huv))
+      (log_le_log (by linarith only [hu.1, hB, hu]) huv))
   have h := hC (fun u => F (log y / log u)) (y ^ (1 / α)) (y ^ (1 / β)) S hB hBA hmono
     (fun u hu => hF0 _ (div_log_mem_Icc hy hα hαβ hu).2) hS1 hS2
   rwa [integral_comp_log_div hy hα hαβ, log_rpow_one_div hy0, div_div_cancel₀ hL.ne'] at h
@@ -130,15 +130,15 @@ theorem le_div_log_of_le_rpow {y α : ℝ} {p : ℕ} (hy : 1 < y) (hα : 0 < α)
     (hpA : (p : ℝ) ≤ y ^ (1 / α)) : α ≤ log y / log p := by
   have hlp : 0 < log (p : ℝ) := log_pos (by exact_mod_cast hp)
   have h := log_le_log (by positivity) hpA
-  rw [log_rpow_one_div (by linarith)] at h
-  rw [le_div_iff₀ hlp]; rw [le_div_iff₀ hα] at h; linarith
+  rw [log_rpow_one_div (by linarith only [hy])] at h
+  rw [le_div_iff₀ hlp]; rw [le_div_iff₀ hα] at h; linarith only [h]
 
 theorem antitoneOn_div_sub_one : AntitoneOn (fun t : ℝ => t / (t - 1)) (Ioi 1) := by
   intro u hu v hv huv
-  have hu1 : 0 < u - 1 := by linarith [hu.out]
-  have hv1 : 0 < v - 1 := by linarith [hv.out]
+  have hu1 : 0 < u - 1 := by linarith only [hu.out, hu]
+  have hv1 : 0 < v - 1 := by linarith only [hv.out, huv, hu1]
   simp only
-  rw [div_le_div_iff₀ hv1 hu1]; nlinarith
+  rw [div_le_div_iff₀ hv1 hu1]; nlinarith only [huv]
 
 /-- [I71, Corollary 1 to Lemma 13]: for `M ≥ 0` antitone on `[α - 1, β - 1]`, `2 ≤ α ≤ β`,
 `y^{1/β} ≥ 2`,
@@ -151,16 +151,16 @@ theorem cor1 : ∃ C, 0 ≤ C ∧ ∀ (M : ℝ → ℝ) (y α β : ℝ), 1 < y �
       (∫ t in α..β, M (t - 1) / (t - 1)) / log y| ≤
       C * M (α - 1) * pntE (y ^ (1 / β)) / log y := by
   obtain ⟨C, hC0, hC⟩ := lemma13_param
-  refine ⟨2 * C, by linarith, fun M y α β hy hα hαβ hB hM hM0 => ?_⟩
+  refine ⟨2 * C, by linarith only [hC0], fun M y α β hy hα hαβ hB hM hM0 => ?_⟩
   have hL : 0 < log y := log_pos hy
-  have hy0 : 0 < y := by linarith
+  have hy0 : 0 < y := by linarith only [hy]
   set F : ℝ → ℝ := fun t => M (t - 1) * (t / (t - 1)) / log y with hFdef
   have hMt : AntitoneOn (fun t => M (t - 1)) (Icc α β) := fun u hu v hv huv =>
     hM ⟨by linarith [hu.1], by linarith [hu.2]⟩ ⟨by linarith [hv.1], by linarith [hv.2]⟩
-      (by linarith)
+      (by linarith only [huv])
   have hF : AntitoneOn F (Icc α β) := by
     have := antitoneOn_mul_of_nonneg hMt (antitoneOn_div_sub_one.mono fun t ht =>
-      show (1 : ℝ) < t by linarith [ht.1])
+      show (1 : ℝ) < t by linarith only [ht.1, hα, ht])
       (fun t ht => hM0 _ ⟨by linarith [ht.1], by linarith [ht.2]⟩)
       fun t ht => div_nonneg (by linarith [ht.1]) (by linarith [ht.1])
     exact fun u hu v hv huv => div_le_div_of_nonneg_right (this hu hv huv) hL.le
@@ -168,7 +168,7 @@ theorem cor1 : ∃ C, 0 ≤ C ∧ ∀ (M : ℝ → ℝ) (y α β : ℝ), 1 < y �
     div_nonneg (mul_nonneg (hM0 _ ⟨by linarith [ht.1], by linarith [ht.2]⟩)
       (div_nonneg (by linarith [ht.1]) (by linarith [ht.1]))) hL.le
   have h := hC F y α β ((primesLT (y ^ (1 / α))).filter (fun p : ℕ => y ^ (1 / β) ≤ p)) hy
-    (by linarith) hαβ hB hF hF0
+    (by linarith only [hα]) hαβ hB hF hF0
     (fun p hp => by
       rw [mem_filter, mem_primesLT] at hp
       exact ⟨hp.1.1, hp.2, hp.1.2.le⟩)
@@ -181,7 +181,7 @@ theorem cor1 : ∃ C, 0 ≤ C ∧ ∀ (M : ℝ → ℝ) (y α β : ℝ), 1 < y �
     rw [mem_filter, mem_primesLT] at hp
     have hp1 := hp.1.1.one_lt
     have hlp : 0 < log (p : ℝ) := log_pos (by exact_mod_cast hp1)
-    have ht := le_div_log_of_le_rpow hy (by linarith) hp1 hp.1.2.le
+    have ht := le_div_log_of_le_rpow hy (by linarith only [hα]) hp1 hp.1.2.le
     rw [log_div_prime_eq hy0 hp1]
     simp only [F]
     have : (p : ℝ) ≠ 0 := by positivity
@@ -190,15 +190,15 @@ theorem cor1 : ∃ C, 0 ≤ C ∧ ∀ (M : ℝ → ℝ) (y α β : ℝ), 1 < y �
     rw [← intervalIntegral.integral_div]
     refine intervalIntegral.integral_congr fun t ht => ?_
     rw [uIcc_of_le hαβ] at ht
-    have : 0 < t := by linarith [ht.1]
-    have : t - 1 ≠ 0 := by linarith [ht.1]
+    have : 0 < t := by linarith only [ht.1, hα, ht]
+    have : t - 1 ≠ 0 := by linarith only [ht.1, hα, ht]
     simp only [F]
     field_simp
   have hFα : F α ≤ 2 * M (α - 1) / log y := by
-    have hMα := hM0 (α - 1) ⟨le_rfl, by linarith⟩
+    have hMα := hM0 (α - 1) ⟨le_rfl, by linarith only [hαβ]⟩
     have : α / (α - 1) ≤ 2 := by rw [div_le_iff₀ (by linarith)]; linarith
     simp only [F]
-    exact div_le_div_of_nonneg_right (by nlinarith) hL.le
+    exact div_le_div_of_nonneg_right (by nlinarith only [hMα, this]) hL.le
   rw [hsum, hint] at h
   refine h.trans ?_
   calc C * F α * pntE (y ^ (1 / β)) ≤ C * (2 * M (α - 1) / log y) * pntE (y ^ (1 / β)) := by
@@ -214,16 +214,16 @@ theorem cor1_le : ∃ C, 0 ≤ C ∧ ∀ (M : ℝ → ℝ) (y α β : ℝ), 1 < 
       (∫ t in α..β, M (t - 1) / (t - 1)) / log y + C * M (α - 1) * pntE (y ^ (1 / β)) / log y := by
   obtain ⟨C, hC0, hC⟩ := cor1
   exact ⟨C, hC0, fun M y α β hy hα hαβ hB hM hM0 => by
-    linarith [(abs_le.1 (hC M y α β hy hα hαβ hB hM hM0)).2]⟩
+    linarith only [(abs_le.1 (hC M y α β hy hα hαβ hB hM hM0)).2, hC, hy, hα, hαβ, hB, hM, hM0]⟩
 
 /-! ### Corollary 3 -/
 
 /-- `G'(s-1) s²/(s-1)² ≤ 32 s² G(s)` for `s ≥ 2` (Lemma 8 and the Corollary to Lemma 6). -/
 theorem errMaj_shift_sq_le (lower lower' : Bool) {s : ℝ} (hs : 2 ≤ s) :
     errMaj lower' (s - 1) * (s ^ 2 / (s - 1) ^ 2) ≤ 32 * s ^ 2 * errMaj lower s := by
-  have hs1 : 0 < s - 1 := by linarith
+  have hs1 : 0 < s - 1 := by linarith only [hs]
   have hq : s ^ 2 / (s - 1) ^ 2 ≤ 4 := by
-    rw [div_le_iff₀ (pow_pos hs1 2)]; nlinarith
+    rw [div_le_iff₀ (pow_pos hs1 2)]; nlinarith only [hs]
   have hq0 : 0 ≤ s ^ 2 / (s - 1) ^ 2 := by positivity
   have hG' := errMaj_pos lower' (s - 1)
   have hG := (errMaj_mem lower s).1
@@ -245,7 +245,7 @@ theorem errMaj_shift_sq_le (lower lower' : Bool) {s : ℝ} (hs : 2 ≤ s) :
 theorem growth_le_delta {y t a : ℝ} (ht : 1 ≤ t) (hta : t ≤ a) :
     (1 + t ^ 2 * log t ^ 5 / log y ^ 2) ^ (5 * (t - 1)) ≤ delta a y := by
   have hlt := log_nonneg ht
-  have hla : log t ≤ log a := log_le_log (by linarith) hta
+  have hla : log t ≤ log a := log_le_log (by linarith only [ht]) hta
   have hx0 := lsx_nonneg (log y) ht
   have hxa : t ^ 2 * log t ^ 5 / log y ^ 2 ≤ a ^ 2 * log a ^ 5 / log y ^ 2 := by
     gcongr
@@ -265,17 +265,17 @@ theorem cor3_summand_le {G : ℝ → ℝ} {y : ℝ} {p : ℕ} (hy : 1 < y) (hp :
         (5 * (log y / log p - 1)) * G (log y / log p - 1) *
         ((log y / log p) ^ 2 / (log y / log p - 1) ^ 2) / log y ^ 2 / p := by
   have hlp : 0 < log (p : ℝ) := log_pos (by exact_mod_cast hp)
-  have hy0 : 0 < y := by linarith
+  have hy0 : 0 < y := by linarith only [hy]
   have hyp := log_div_prime_eq hy0 hp
   set t := log y / log p with htdef
   have hLt : log y = log p * t := by rw [htdef]; field_simp
-  have ht1 : 0 < t - 1 := by linarith
+  have ht1 : 0 < t - 1 := by linarith only [ht]
   have hp0 : (0 : ℝ) < p := by positivity
   have hb : (t - 1) ^ 2 * log (t - 1) ^ 5 / log (y / p) ^ 2 =
       t ^ 2 * log (t - 1) ^ 5 / log y ^ 2 := by
     rw [hyp, hLt]; field_simp
-  have hl1 : 0 ≤ log (t - 1) := log_nonneg (by linarith)
-  have hl2 : log (t - 1) ≤ log t := log_le_log ht1 (by linarith)
+  have hl1 : 0 ≤ log (t - 1) := log_nonneg (by linarith only [ht])
+  have hl2 : log (t - 1) ≤ log t := log_le_log ht1 (by linarith only [])
   have hbase : t ^ 2 * log (t - 1) ^ 5 / log y ^ 2 ≤ t ^ 2 * log t ^ 5 / log y ^ 2 := by
     gcongr
   have hb0 : 0 ≤ t ^ 2 * log (t - 1) ^ 5 / log y ^ 2 := by positivity
@@ -313,7 +313,7 @@ theorem cor3_large : ∃ C, 0 ≤ C ∧ ∀ (lower : Bool) (y s b : ℝ) (S : Fi
         (p * log (y / p) ^ 2) ≤
       delta s y * errMaj lower s / log y ^ 2 * (1 + C * b ^ 2 * pntE (y ^ (1 / b))) := by
   obtain ⟨C, hC0, hC⟩ := lemma13_param
-  refine ⟨32 * C, by linarith, fun lower y s b S hy hs hsb hB hb hS1 hS2 => ?_⟩
+  refine ⟨32 * C, by linarith only [hC0], fun lower y s b S hy hs hsb hB hb hS1 hS2 => ?_⟩
   set r : ℕ := if lower then 1 else 0
   have hG' := errMaj_not_eq_majG lower
   have hGs : errMaj lower s = majG (r + 1) s := by rw [errMaj_eq_majG_succ]
@@ -325,44 +325,44 @@ theorem cor3_large : ∃ C, 0 ≤ C ∧ ∀ (lower : Bool) (y s b : ℝ) (S : Fi
   have hΦ : AntitoneOn Φ (Icc s b) := fun u hu v hv huv =>
     div_le_div_of_nonneg_right (antitoneOn_cor3Weight r hs hb hu hv huv) hL2.le
   have hΦ0 : ∀ t ∈ Icc s b, 0 ≤ Φ t := fun t ht => by
-    have ht1 : (1 : ℝ) ≤ t := by linarith [ht.1]
+    have ht1 : (1 : ℝ) ≤ t := by linarith only [ht.1, hs4, ht]
     have := lsx_nonneg (log y) ht1
     have := majG_pos r (t - 1)
     exact div_nonneg (mul_nonneg (mul_nonneg (rpow_pos_of_pos (by linarith) _).le this.le)
       (by positivity)) hL2.le
-  have h13 := hC Φ y s b S hy (by linarith) hsb hB hΦ hΦ0 hS1 hS2
+  have h13 := hC Φ y s b S hy (by linarith only [hs4]) hsb hB hΦ hΦ0 hS1 hS2
   have hsum : ∑ p ∈ S, delta (log y / log p - 1) (y / p) * errMaj (!lower) (log y / log p - 1) /
       (p * log (y / p) ^ 2) ≤ ∑ p ∈ S, Φ (log y / log p) / p := by
     refine sum_le_sum fun p hp => ?_
     obtain ⟨hpp, hpB, hpA⟩ := hS1 p hp
-    have ht := (div_log_mem_Icc hy (by linarith) hsb ⟨hpB, hpA⟩).2
+    have ht := (div_log_mem_Icc hy (by linarith only [hs4]) hsb ⟨hpB, hpA⟩).2
     rw [hG']
-    exact cor3_summand_le hy hpp.one_lt (by linarith [ht.1]) (majG_pos _ _).le
+    exact cor3_summand_le hy hpp.one_lt (by linarith only [ht.1, hs4, ht]) (majG_pos _ _).le
   have hint : ∫ t in s..b, Φ t / t = (∫ t in s..b, (1 + t ^ 2 * log t ^ 5 / log y ^ 2) ^
       (5 * (t - 1)) * majG r (t - 1) * t / (t - 1) ^ 2) / log y ^ 2 := by
     rw [← intervalIntegral.integral_div]
     refine intervalIntegral.integral_congr fun t ht => ?_
     rw [uIcc_of_le hsb] at ht
-    have : t ≠ 0 := by linarith [ht.1]
-    have : t - 1 ≠ 0 := by linarith [ht.1]
+    have : t ≠ 0 := by linarith only [ht.1, hs4, ht]
+    have : t - 1 ≠ 0 := by linarith only [ht.1, hs4, ht]
     simp only [Φ]
     field_simp
   have h11 := lemma11 r hs hsb hb
   have hΦs : Φ s ≤ delta s y * (32 * s ^ 2 * majG (r + 1) s) / log y ^ 2 := by
-    have h1 := growth_le_delta (y := y) (by linarith : (1 : ℝ) ≤ s) le_rfl
-    have h2 := errMaj_shift_sq_le lower (!lower) (by linarith : (2 : ℝ) ≤ s)
+    have h1 := growth_le_delta (y := y) (by linarith only [hs4] : (1 : ℝ) ≤ s) le_rfl
+    have h2 := errMaj_shift_sq_le lower (!lower) (by linarith only [hs4] : (2 : ℝ) ≤ s)
     rw [hG', hGs] at h2
     have h3 : 0 ≤ majG r (s - 1) * (s ^ 2 / (s - 1) ^ 2) := by
       have := majG_pos r (s - 1); positivity
     change (1 + s ^ 2 * log s ^ 5 / log y ^ 2) ^ (5 * (s - 1)) * majG r (s - 1) *
       (s ^ 2 / (s - 1) ^ 2) / log y ^ 2 ≤ _
     rw [mul_assoc _ (majG r (s - 1))]
-    exact div_le_div_of_nonneg_right (mul_le_mul h1 h2 h3 (delta_pos (by linarith) y).le)
+    exact div_le_div_of_nonneg_right (mul_le_mul h1 h2 h3 (delta_pos (by linarith only [hs4]) y).le)
       hL2.le
   rw [abs_le] at h13
   rw [hint] at h13
   have hpE := pntE_pos (y ^ (1 / b))
-  have hδ := delta_pos (by linarith : (1 : ℝ) ≤ s) y
+  have hδ := delta_pos (by linarith only [hs4] : (1 : ℝ) ≤ s) y
   have hG := majG_pos (r + 1) s
   have hsb2 : s ^ 2 ≤ b ^ 2 := by gcongr
   rw [hGs]
@@ -383,7 +383,7 @@ theorem cor3_large : ∃ C, 0 ≤ C ∧ ∀ (lower : Bool) (y s b : ℝ) (S : Fi
       majG r (t - 1) * t / (t - 1) ^ 2) / log y ^ 2 ≤ delta s y * majG (r + 1) s / log y ^ 2 :=
     div_le_div_of_nonneg_right h11.le hL2.le
   calc _ ≤ ∑ p ∈ S, Φ (log y / log p) / p := hsum
-    _ ≤ _ := by nlinarith
+    _ ≤ _ := by nlinarith only [h13, e1, e2, e3]
 
 /-- Corollary 3 on `[s, a]` with `a ≤ e^{32}`: here `δ(t_p - 1, y/p) ≤ δ(e^{32}, y)` and Lemma 13
 is applied to `G'(t-1) t²/(t-1)²` directly. -/
@@ -396,28 +396,28 @@ theorem cor3_small : ∃ C, 0 ≤ C ∧ ∀ (lower : Bool) (y s a : ℝ) (S : Fi
       delta (exp 32) y / log y ^ 2 *
         (errMaj lower s - errMaj lower a + C * s ^ 2 * errMaj lower s * pntE (y ^ (1 / a))) := by
   obtain ⟨C, hC0, hC⟩ := lemma13_param
-  refine ⟨32 * C, by linarith, fun lower y s a S hy hs hsa ha hB hS1 hS2 => ?_⟩
+  refine ⟨32 * C, by linarith only [hC0], fun lower y s a S hy hs hsa ha hB hS1 hS2 => ?_⟩
   have hs2 : 2 ≤ s := (two_le_errLower lower).trans hs
   have hL : 0 < log y := log_pos hy
   have hL2 : 0 < log y ^ 2 := by positivity
   set F : ℝ → ℝ := fun t => errMaj (!lower) (t - 1) * (t ^ 2 / (t - 1) ^ 2) with hFdef
   have hF : AntitoneOn F (Icc s a) :=
-    antitoneOn_mul_of_nonneg (fun u _ v _ huv => errMaj_antitone _ (by linarith))
+    antitoneOn_mul_of_nonneg (fun u _ v _ huv => errMaj_antitone _ (by linarith only [huv]))
       (antitoneOn_sq_div_sq_sub_one.mono fun t ht => show (1 : ℝ) < t by linarith [ht.1])
       (fun t _ => (errMaj_pos _ _).le) fun t _ => by positivity
   have hF0 : ∀ t ∈ Icc s a, 0 ≤ F t := fun t _ => by
     have := errMaj_pos (!lower) (t - 1); positivity
-  have h13 := hC F y s a S hy (by linarith) hsa hB hF hF0 hS1 hS2
+  have h13 := hC F y s a S hy (by linarith only [hs2]) hsa hB hF hF0 hS1 hS2
   have hδ0 : 0 ≤ delta (exp 32) y :=
-    (delta_pos (by linarith [four_lt_of_exp_le (le_refl (exp 32))]) y).le
+    (delta_pos (by linarith only [four_lt_of_exp_le (le_refl (exp 32)), hsa, ha, hs2]) y).le
   have hsum : ∑ p ∈ S, delta (log y / log p - 1) (y / p) * errMaj (!lower) (log y / log p - 1) /
       (p * log (y / p) ^ 2) ≤ delta (exp 32) y / log y ^ 2 * ∑ p ∈ S, F (log y / log p) / p := by
     rw [mul_sum]
     refine sum_le_sum fun p hp => ?_
     obtain ⟨hpp, hpB, hpA⟩ := hS1 p hp
-    have ht := (div_log_mem_Icc hy (by linarith) hsa ⟨hpB, hpA⟩).2
+    have ht := (div_log_mem_Icc hy (by linarith only [hs2]) hsa ⟨hpB, hpA⟩).2
     refine (cor3_summand_le hy hpp.one_lt (by linarith [ht.1]) (errMaj_pos _ _).le).trans ?_
-    have hg := growth_le_delta (y := y) (by linarith [ht.1] : (1 : ℝ) ≤ log y / log p)
+    have hg := growth_le_delta (y := y) (by linarith only [ht.1, hs2, ht] : (1 : ℝ) ≤ log y / log p)
       (ht.2.trans ha)
     have hF1 : 0 ≤ F (log y / log p) := hF0 _ ht
     have hp0 : (0 : ℝ) < p := by exact_mod_cast hpp.pos
@@ -430,8 +430,8 @@ theorem cor3_small : ∃ C, 0 ≤ C ∧ ∀ (lower : Bool) (y s a : ℝ) (S : Fi
     rw [← integral_errMaj_shift lower hs hsa]
     refine intervalIntegral.integral_congr fun t ht => ?_
     rw [uIcc_of_le hsa] at ht
-    have : t ≠ 0 := by linarith [ht.1]
-    have : t - 1 ≠ 0 := by linarith [ht.1]
+    have : t ≠ 0 := by linarith only [ht.1, hs2, ht]
+    have : t - 1 ≠ 0 := by linarith only [ht.1, hs2, ht]
     simp only [F]
     field_simp
   have hFs : F s ≤ 32 * s ^ 2 * errMaj lower s := errMaj_shift_sq_le lower (!lower) hs2
@@ -441,7 +441,7 @@ theorem cor3_small : ∃ C, 0 ≤ C ∧ ∀ (lower : Bool) (y s a : ℝ) (S : Fi
       errMaj lower s - errMaj lower a + 32 * C * s ^ 2 * errMaj lower s * pntE (y ^ (1 / a)) := by
     have : C * F s * pntE (y ^ (1 / a)) ≤
         C * (32 * s ^ 2 * errMaj lower s) * pntE (y ^ (1 / a)) := by gcongr
-    linarith [h13.2]
+    linarith only [h13.2, h13, this]
   calc _ ≤ _ := hsum
     _ ≤ _ := mul_le_mul_of_nonneg_left hmain (div_nonneg hδ0 hL2.le)
 
@@ -460,7 +460,7 @@ theorem cor3_primesLT : ∃ C, 0 ≤ C ∧ ∀ (lower : Bool) (y s b : ℝ), 1 <
         (1 + C * b ^ 2 * pntE (y ^ (1 / b))) := by
   obtain ⟨C₁, hC₁, h₁⟩ := cor3_large
   obtain ⟨C₂, hC₂, h₂⟩ := cor3_small
-  refine ⟨C₁ + C₂, by linarith, fun lower y s b hy hs hb32 hB hb => ?_⟩
+  refine ⟨C₁ + C₂, by linarith only [hC₁, hC₂], fun lower y s b hy hs hb32 hB hb => ?_⟩
   set s₀ := exp 32 with hs₀
   have hs2 : 2 ≤ s := (two_le_errLower lower).trans hs
   have hs₀4 : 4 < s₀ := four_lt_of_exp_le le_rfl
@@ -470,17 +470,17 @@ theorem cor3_primesLT : ∃ C, 0 ≤ C ∧ ∀ (lower : Bool) (y s b : ℝ), 1 <
   set S := (primesLT (y ^ (1 / s))).filter (fun p : ℕ => y ^ (1 / b) ≤ p) with hS
   have hRHS : 0 ≤ delta (max s s₀) y * errMaj lower s / log y ^ 2 *
       (1 + (C₁ + C₂) * b ^ 2 * pntE (y ^ (1 / b))) := by
-    have := delta_pos (by linarith [le_max_left s s₀] : (1 : ℝ) ≤ max s s₀) y
+    have := delta_pos (by linarith only [le_max_left s s₀, hs2] : (1 : ℝ) ≤ max s s₀) y
     have : 0 ≤ (C₁ + C₂) * b ^ 2 * pntE (y ^ (1 / b)) :=
-      mul_nonneg (mul_nonneg (by linarith) (sq_nonneg b)) hpE.le
+      mul_nonneg (mul_nonneg (by linarith only [hC₁, hC₂]) (sq_nonneg b)) hpE.le
     positivity
   rcases lt_or_ge b s with hbs | hsb
   · -- no primes
     have hempty : S = ∅ := by
       refine Finset.eq_empty_of_forall_notMem fun p hp => ?_
       rw [hS, mem_filter, mem_primesLT] at hp
-      have := rpow_one_div_le_rpow_one_div hy.le (by linarith) hbs.le
-      linarith [hp.1.2, hp.2]
+      have := rpow_one_div_le_rpow_one_div hy.le (by linarith only [hb32, hs₀4]) hbs.le
+      linarith only [hp.1.2, hp.2, hp, this]
     rw [hempty, sum_empty]
     exact hRHS
   rcases le_total s₀ s with hs₀s | hss₀
@@ -489,35 +489,37 @@ theorem cor3_primesLT : ∃ C, 0 ≤ C ∧ ∀ (lower : Bool) (y s b : ℝ), 1 <
     refine (h₁ lower y s b S hy hs₀s hsb hB hb (fun p hp => ?_) fun p hp h1 h2 => ?_).trans ?_
     · rw [hS, mem_filter, mem_primesLT] at hp; exact ⟨hp.1.1, hp.2, hp.1.2.le⟩
     · rw [hS, mem_filter, mem_primesLT]; exact ⟨⟨hp, h2⟩, h1.le⟩
-    · have := delta_pos (by linarith : (1 : ℝ) ≤ s) y
+    · have := delta_pos (by linarith only [hs₀4, hs₀s] : (1 : ℝ) ≤ s) y
       gcongr
-      linarith
+      linarith only [hC₂]
   -- `s < s₀`: split at `y^{1/s₀}`
   rw [max_eq_right hss₀]
-  have hB₀ : y ^ (1 / b) ≤ y ^ (1 / s₀) := rpow_one_div_le_rpow_one_div hy.le (by linarith) hb32
-  have hB₀s : y ^ (1 / s₀) ≤ y ^ (1 / s) := rpow_one_div_le_rpow_one_div hy.le (by linarith) hss₀
+  have hB₀ : y ^ (1 / b) ≤ y ^ (1 / s₀) := rpow_one_div_le_rpow_one_div hy.le (by
+    linarith only [hs₀4]) hb32
+  have hB₀s : y ^ (1 / s₀) ≤ y ^ (1 / s) := rpow_one_div_le_rpow_one_div hy.le (by
+    linarith only [hs2]) hss₀
   rw [← sum_filter_add_sum_filter_not S (fun p : ℕ => y ^ (1 / s₀) ≤ p)]
   have e₁ := h₂ lower y s s₀ (S.filter fun p : ℕ => y ^ (1 / s₀) ≤ p) hy hs hss₀ le_rfl
-    (by linarith) (fun p hp => by
+    (by linarith only [hB, hB₀]) (fun p hp => by
       rw [mem_filter, hS, mem_filter, mem_primesLT] at hp
       exact ⟨hp.1.1.1, hp.2, hp.1.1.2.le⟩)
     (fun p hp h1 h2 => by
       rw [mem_filter, hS, mem_filter, mem_primesLT]
-      exact ⟨⟨⟨hp, h2⟩, by linarith⟩, h1.le⟩)
+      exact ⟨⟨⟨hp, h2⟩, by linarith only [hB₀, h1]⟩, h1.le⟩)
   have e₂ := h₁ lower y s₀ b (S.filter fun p : ℕ => ¬ y ^ (1 / s₀) ≤ p) hy le_rfl hb32 hB hb
     (fun p hp => by
       rw [mem_filter, hS, mem_filter, mem_primesLT] at hp
       exact ⟨hp.1.1.1, hp.1.2, (not_le.1 hp.2).le⟩)
     (fun p hp h1 h2 => by
       rw [mem_filter, hS, mem_filter, mem_primesLT]
-      exact ⟨⟨⟨hp, by linarith⟩, h1.le⟩, not_le.2 h2⟩)
+      exact ⟨⟨⟨hp, by linarith only [hB₀s, h2]⟩, h1.le⟩, not_le.2 h2⟩)
   refine (add_le_add e₁ e₂).trans ?_
   -- combine
-  have hδ := delta_pos (by linarith : (1 : ℝ) ≤ s₀) y
+  have hδ := delta_pos (by linarith only [hs₀4] : (1 : ℝ) ≤ s₀) y
   have hG₀ := errMaj_pos lower s₀
   have hGG : errMaj lower s₀ ≤ errMaj lower s := errMaj_antitone lower hss₀
   have hpE₀ : pntE (y ^ (1 / s₀)) ≤ pntE (y ^ (1 / b)) :=
-    pntE_le_pntE (by linarith) hB₀
+    pntE_le_pntE (by linarith only [hB]) hB₀
   have hsb2 : s ^ 2 * pntE (y ^ (1 / s₀)) ≤ b ^ 2 * pntE (y ^ (1 / b)) := by
     have : s ^ 2 ≤ b ^ 2 := by gcongr
     exact mul_le_mul this hpE₀ (pntE_pos _).le (sq_nonneg b)
@@ -531,7 +533,7 @@ theorem cor3_primesLT : ∃ C, 0 ≤ C ∧ ∀ (lower : Bool) (y s b : ℝ), 1 <
       C₂ * s ^ 2 * errMaj lower s * pntE (y ^ (1 / s₀)) +
       errMaj lower s₀ * (1 + C₁ * b ^ 2 * pntE (y ^ (1 / b))) ≤
       errMaj lower s * (1 + (C₁ + C₂) * b ^ 2 * pntE (y ^ (1 / b))) := by
-    nlinarith
+    nlinarith only [i1, i2]
   have hk : 0 ≤ delta s₀ y / log y ^ 2 := div_nonneg hδ.le hL2.le
   calc delta s₀ y / log y ^ 2 * (errMaj lower s - errMaj lower s₀ +
         C₂ * s ^ 2 * errMaj lower s * pntE (y ^ (1 / s₀))) +
@@ -548,7 +550,7 @@ theorem cor3_primesLT : ∃ C, 0 ≤ C ∧ ∀ (lower : Bool) (y s b : ℝ), 1 <
 theorem lt_rpow_one_div_max_three {y s x : ℝ} (hy : 1 < y) (hs : 0 < s) (hx : 0 ≤ x) :
     x < y ^ (1 / max s 3) ↔ x < y ^ (1 / s) ∧ x ^ 3 < y := by
   have h3 : x < y ^ (1 / (3 : ℝ)) ↔ x ^ 3 < y := by
-    rw [one_div, lt_rpow_inv_iff_of_pos hx (by linarith) (by norm_num)]
+    rw [one_div, lt_rpow_inv_iff_of_pos hx (by linarith only [hy]) (by norm_num)]
     norm_cast
   rcases le_total s 3 with hs3 | hs3
   · rw [max_eq_right hs3, h3]
@@ -586,14 +588,14 @@ theorem cor3 : ∃ C, 0 ≤ C ∧ ∀ (lower : Bool) (y s b : ℝ), 1 < y → sM
         (primesLT (y ^ (1 / max s 3))).filter (fun p : ℕ => y ^ (1 / b) ≤ p) := by
       ext p
       simp only [mem_filter, mem_rosserPrimes, mem_primesLT, Bool.false_eq_true, false_or]
-      rw [lt_rpow_one_div_max_three hy (by linarith) (Nat.cast_nonneg p)]
+      rw [lt_rpow_one_div_max_three hy (by linarith only [hs1]) (Nat.cast_nonneg p)]
       tauto
     have hG : errMaj false (max s 3) = errMaj false s := by
       rcases le_total s 3 with h | h
       · rw [max_eq_right h, errMaj_false_of_le_three le_rfl, errMaj_false_of_le_three h]
       · rw [max_eq_left h]
     have hmax : max (max s 3) (exp 32) = max s (exp 32) := by
-      have : (3 : ℝ) ≤ exp 32 := by linarith [four_lt_of_exp_le (le_refl (exp 32))]
+      have : (3 : ℝ) ≤ exp 32 := by linarith only [four_lt_of_exp_le (le_refl (exp 32))]
       rw [max_assoc, max_eq_right this]
     rw [hset, ← hG, ← hmax]
     exact hC false y (max s 3) b hy (le_max_right _ _) hb32 hB hb
@@ -604,7 +606,7 @@ theorem cor3 : ∃ C, 0 ≤ C ∧ ∀ (lower : Bool) (y s b : ℝ), 1 < y → sM
 theorem sq_mul_log_pow_four_le_of_le {b b' X : ℝ} (hb : 1 ≤ b) (hbb' : b ≤ b')
     (h : b' ^ 2 * log b' ^ 4 ≤ X) : b ^ 2 * log b ^ 4 ≤ X := by
   have := log_nonneg hb
-  have : log b ≤ log b' := log_le_log (by linarith) hbb'
+  have : log b ≤ log b' := log_le_log (by linarith only [hb]) hbb'
   have : b ^ 2 * log b ^ 4 ≤ b' ^ 2 * log b' ^ 4 := by gcongr
   linarith
 

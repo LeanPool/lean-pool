@@ -177,11 +177,12 @@ theorem cubeGoodSet_nat_coordinateGradient_cross_bound_three_halves
     sourceCubeOscillation_nonneg_of_boundedOn hbounded
   have hcoeff_nonneg :
       0 ≤ 2 * (((m : ℝ) + 1) + sourceCubeOscillation n u) := by
-    nlinarith
+    nlinarith only [hosc_nonneg]
   have hmain :=
     cubeGoodSet_nat_abs_gradient_coord_sub_le_three_halves_global
       (n := n) (m := m) (u := u) (x0 := x) (x1 := y) i hu hbounded hx hy.1 hy.2
-  simpa [dist_eq_norm, Real.toNNReal_of_nonneg hcoeff_nonneg] using hmain
+  simpa only [Real.toNNReal_of_nonneg hcoeff_nonneg, NNReal.coe_mk, dist_eq_norm, ge_iff_le] using
+    hmain
 
 /-- The lower McShane-type envelope used in the source proof:
 `inf_y (g y + K * dist x y)` over `y ∈ E`. -/
@@ -232,8 +233,8 @@ theorem lowerMcShaneEnvelope_lipschitzWith
         lowerMcShaneEnvelope K E g x ≤
           g y + (K : ℝ) * (dist z y + dist x z) := by
       exact hx_le.trans (by gcongr)
-    nlinarith
-  nlinarith
+    nlinarith only [hx_le']
+  nlinarith only [hsub]
 
 /-- The lower envelope is bounded above by every defining cone. -/
 theorem lowerMcShaneEnvelope_le_base
@@ -251,12 +252,12 @@ theorem upperMcShaneEnvelope_lipschitzWith
   have hnegBound : ∃ M : ℝ, ∀ y ∈ E, -M ≤ -g y := by
     refine ⟨M, ?_⟩
     intro y hy
-    linarith [hM y hy]
+    linarith only [hM, hy, hM y hy]
   have hlip : LipschitzWith K (lowerMcShaneEnvelope K E (fun y => -g y)) :=
     lowerMcShaneEnvelope_lipschitzWith (K := K) (E := E) (g := fun y => -g y) hnegBound
   refine LipschitzWith.of_dist_le_mul ?_
   intro x z
-  simpa [upperMcShaneEnvelope, dist_neg_neg] using hlip.dist_le_mul x z
+  simpa only [upperMcShaneEnvelope, dist_neg_neg] using hlip.dist_le_mul x z
 
 /-- Every defining cone lies below the upper envelope. -/
 theorem base_le_upperMcShaneEnvelope
@@ -267,13 +268,13 @@ theorem base_le_upperMcShaneEnvelope
   have hnegBound : ∃ M : ℝ, ∀ y ∈ E, -M ≤ -g y := by
     refine ⟨M, ?_⟩
     intro z hz
-    linarith [hM z hz]
+    linarith only [hM, hz, hM z hz]
   have hle :
       lowerMcShaneEnvelope K E (fun z => -g z) x ≤
         -g y + (K : ℝ) * dist x y :=
     lowerMcShaneEnvelope_le_base (K := K) (E := E) (g := fun z => -g z) hnegBound hy
   dsimp [upperMcShaneEnvelope]
-  linarith
+  linarith only [hle]
 
 /-- The lower envelope agrees with `g` at points where the source cross estimate is based. -/
 theorem lowerMcShaneEnvelope_eq_on_of_cross_bound
@@ -286,7 +287,7 @@ theorem lowerMcShaneEnvelope_eq_on_of_cross_bound
   have hxE : x ∈ E := hFE hx
   have : Nonempty E := ⟨⟨x, hxE⟩⟩
   apply le_antisymm
-  · simpa using
+  · simpa only [dist_self, mul_zero, add_zero] using
       lowerMcShaneEnvelope_le_base (K := K) (E := E) (g := g) hbound (x := x) (y := x) hxE
   · refine le_ciInf ?_
     intro y
@@ -298,8 +299,8 @@ theorem lowerMcShaneEnvelope_eq_on_of_cross_bound
             g x - g y = -(g y - g x) := by ring
             _ ≤ |g y - g x| := neg_le_abs _
             _ ≤ (K : ℝ) * dist (y : SourceCubeSpace n) x := habs
-        simpa [dist_comm] using hraw
-      linarith
+        simpa only [tsub_le_iff_right, ge_iff_le, dist_comm] using hraw
+      linarith only [hleft]
     exact hy_le
 
 /-- The upper envelope agrees with `g` at points where the source cross estimate is based. -/
@@ -318,7 +319,7 @@ theorem upperMcShaneEnvelope_eq_on_of_cross_bound
       rcases hbound with ⟨M, hM⟩
       refine ⟨M, ?_⟩
       intro y hy
-      linarith [hM y hy]
+      linarith only [hM, hy, hM y hy]
     have hle :
         -g x ≤ lowerMcShaneEnvelope K E (fun y => -g y) x := by
       refine le_ciInf ?_
@@ -328,11 +329,11 @@ theorem upperMcShaneEnvelope_eq_on_of_cross_bound
         have hright : g y - g x ≤ (K : ℝ) * dist x y := by
           have hraw : g y - g x ≤ (K : ℝ) * dist (y : SourceCubeSpace n) x :=
             (le_abs_self (g y - g x)).trans habs
-          simpa [dist_comm] using hraw
-        linarith
+          simpa only [tsub_le_iff_right, ge_iff_le, dist_comm] using hraw
+        linarith only [hright]
       exact hy_le
-    linarith
-  · simpa using
+    linarith only [hle]
+  · simpa only [dist_self, mul_zero, sub_zero] using
       base_le_upperMcShaneEnvelope (K := K) (E := E) (g := g) hbound (x := x) (y := x) hxE
 
 /-- Lower-envelope increments are below the original increments at cross-estimate base points. -/
@@ -350,9 +351,9 @@ theorem lowerMcShaneEnvelope_increment_le_of_cross_bound
   have hy_le :
       lowerMcShaneEnvelope K E g y ≤ g y :=
     by
-      simpa using
+      simpa only [dist_self, mul_zero, add_zero] using
         lowerMcShaneEnvelope_le_base (K := K) (E := E) (g := g) hbound (x := y) (y := y) hyE
-  linarith
+  linarith only [hxEq, hy_le]
 
 /-- Original increments are below upper-envelope increments at cross-estimate base points. -/
 theorem le_upperMcShaneEnvelope_increment_of_cross_bound
@@ -369,9 +370,9 @@ theorem le_upperMcShaneEnvelope_increment_of_cross_bound
   have hy_le :
       g y ≤ upperMcShaneEnvelope K E g y :=
     by
-      simpa using
+      simpa only [dist_self, mul_zero, sub_zero] using
         base_le_upperMcShaneEnvelope (K := K) (E := E) (g := g) hbound (x := y) (y := y) hyE
-  linarith
+  linarith only [hxEq, hy_le]
 
 /-- The concrete envelopes are ordered on the defining set `E`. -/
 theorem lowerMcShaneEnvelope_le_upperMcShaneEnvelope_of_mem
@@ -381,11 +382,11 @@ theorem lowerMcShaneEnvelope_le_upperMcShaneEnvelope_of_mem
     {x : SourceCubeSpace n} (hx : x ∈ E) :
     lowerMcShaneEnvelope K E g x ≤ upperMcShaneEnvelope K E g x := by
   have hle_g : lowerMcShaneEnvelope K E g x ≤ g x := by
-    simpa using
+    simpa only [dist_self, mul_zero, add_zero] using
       lowerMcShaneEnvelope_le_base (K := K) (E := E) (g := g) hLowerBound
         (x := x) (y := x) hx
   have hg_le : g x ≤ upperMcShaneEnvelope K E g x := by
-    simpa using
+    simpa only [dist_self, mul_zero, sub_zero] using
       base_le_upperMcShaneEnvelope (K := K) (E := E) (g := g) hUpperBound
         (x := x) (y := x) hx
   exact hle_g.trans hg_le
@@ -442,7 +443,7 @@ theorem lipschitzEnvelope_touching_hasFDerivAt_eq
   have hmin : IsLocalMin h x0 := by
     filter_upwards [horder] with x hx
     dsimp [h]
-    linarith
+    linarith only [htouch, hx]
   have hd : HasFDerivAt h (Lplus - Lminus) x0 := by
     change HasFDerivAt (gplus - gminus) (Lplus - Lminus) x0
     exact hdplus.sub hdminus
@@ -470,12 +471,12 @@ theorem lipschitzEnvelope_squeeze_expansion
   have hminus :
       (fun x : SourceCubeSpace n => gminus x - gminus x0 - inner ℝ ell (x - x0))
         =o[𝓝[E] x0] fun x => ‖x - x0‖ := by
-    simpa [InnerProductSpace.toDual_apply_apply] using
+    simpa only [isLittleO_norm_right, InnerProductSpace.toDual_apply_apply] using
       (hdminus.hasFDerivWithinAt.isLittleO.norm_right)
   have hplus :
       (fun x : SourceCubeSpace n => gplus x - gplus x0 - inner ℝ ell (x - x0))
         =o[𝓝[E] x0] fun x => ‖x - x0‖ := by
-    simpa [InnerProductSpace.toDual_apply_apply] using
+    simpa only [isLittleO_norm_right, InnerProductSpace.toDual_apply_apply] using
       (hdplus.hasFDerivWithinAt.isLittleO.norm_right)
   refine Asymptotics.isLittleO_iff.2 ?_
   intro c hc
@@ -487,21 +488,21 @@ theorem lipschitzEnvelope_squeeze_expansion
   set rplus : ℝ := gplus x - gplus x0 - lin
   have hrminus_le : rminus ≤ rg := by
     dsimp [rminus, rg, lin]
-    linarith
+    linarith only [hlower_x]
   have hrg_le : rg ≤ rplus := by
     dsimp [rplus, rg, lin]
-    linarith
+    linarith only [hupper_x]
   have hminus_abs : |rminus| ≤ c * ‖x - x0‖ := by
-    simpa [Real.norm_eq_abs, rminus, lin] using hminus_bound
+    simpa only [Real.norm_eq_abs, abs_norm] using hminus_bound
   have hplus_abs : |rplus| ≤ c * ‖x - x0‖ := by
-    simpa [Real.norm_eq_abs, rplus, lin] using hplus_bound
+    simpa only [Real.norm_eq_abs, abs_norm] using hplus_bound
   have hleft : -(c * ‖x - x0‖) ≤ rg :=
     ((abs_le.mp hminus_abs).1).trans hrminus_le
   have hright : rg ≤ c * ‖x - x0‖ :=
     hrg_le.trans (abs_le.mp hplus_abs).2
   have hrg_abs : |rg| ≤ c * ‖x - x0‖ :=
     abs_le.mpr ⟨hleft, hright⟩
-  simpa [Real.norm_eq_abs, rg, lin] using hrg_abs
+  simpa only [Real.norm_eq_abs, abs_norm, ge_iff_le] using hrg_abs
 
 /-- Packaged touching-envelope squeeze step.
 
@@ -529,10 +530,10 @@ theorem lipschitzEnvelope_touching_squeeze_expansion
     lipschitzEnvelope_touching_hasFDerivAt_eq horder htouch hdminus hdplus
   have hdminus' :
       HasFDerivAt gminus (InnerProductSpace.toDual ℝ (SourceCubeSpace n) ell) x0 := by
-    simpa [ell] using hdminus
+    simpa only [ell, LinearIsometryEquiv.apply_symm_apply] using hdminus
   have hdplus' :
       HasFDerivAt gplus (InnerProductSpace.toDual ℝ (SourceCubeSpace n) ell) x0 := by
-    simpa [ell, hL.symm] using hdplus
+    simpa only [ell, LinearIsometryEquiv.apply_symm_apply, hL.symm] using hdplus
   exact lipschitzEnvelope_squeeze_expansion hlower hupper hdminus' hdplus'
 
 /-- A.e. envelope bridge for a fixed coordinate-gradient function.
@@ -795,7 +796,7 @@ theorem cubeGoodSet_nat_ae_coordinateGradient_expansion_three_halves_of_mem
   let K : ℝ≥0 :=
     Real.toNNReal (2 * (((m : ℝ) + 1) + sourceCubeOscillation n u))
   have hUclosure : U ⊆ closure E := by
-    simpa [U, E] using
+    exact
       sourceOpenCube_one_subset_closure_sourceCubeDifferentiabilitySet_three_halves_of_convex
         (n := n) (u := u) hu
   have hEnonempty : E.Nonempty := by
@@ -809,35 +810,35 @@ theorem cubeGoodSet_nat_ae_coordinateGradient_expansion_three_halves_of_mem
   let : Nonempty E := ⟨⟨y0, hy0E⟩⟩
   have hLower :
       ∃ M : ℝ, ∀ y ∈ E, -M ≤ (fun z : SourceCubeSpace n => frechetGradient u z i) y := by
-    simpa [E] using
+    exact
       sourceCubeDifferentiabilitySet_three_halves_frechetGradient_coord_bddBelow
         (n := n) (u := u) i hu hbounded
   have hUpper :
       ∃ M : ℝ, ∀ y ∈ E, (fun z : SourceCubeSpace n => frechetGradient u z i) y ≤ M := by
-    simpa [E] using
+    exact
       sourceCubeDifferentiabilitySet_three_halves_frechetGradient_coord_bddAbove
         (n := n) (u := u) i hu hbounded
   have hFE : F ⊆ E := by
-    simpa [F, E] using
+    exact
       cubeGoodSet_subset_sourceCubeDifferentiabilitySet_three_halves
         (n := n) (m := m) (u := u)
   have hFU : F ⊆ U := by
-    simpa [F, U] using cubeGoodSet_subset_sourceOpenCube_one (n := n) (m := m) (u := u)
+    exact cubeGoodSet_subset_sourceOpenCube_one (n := n) (m := m) (u := u)
   have hcross :
       ∀ x ∈ F, ∀ y ∈ E,
         |(fun z : SourceCubeSpace n => frechetGradient u z i) y -
             (fun z : SourceCubeSpace n => frechetGradient u z i) x| ≤
           (K : ℝ) * dist y x := by
-    simpa [F, E, K] using
+    exact
       cubeGoodSet_nat_coordinateGradient_cross_bound_three_halves
         (n := n) (m := m) (u := u) i hu hbounded
   have hAE :=
     lowerUpperMcShaneEnvelope_ae_squeeze_of_cross_bound_on_open_of_mem
       (K := K) (E := E) (F := F) (U := U)
       (g := fun z : SourceCubeSpace n => frechetGradient u z i)
-      hLower hUpper hFE hFU (by simpa [U] using isOpen_sourceOpenCube (n := n) 1)
+      hLower hUpper hFE hFU (by exact isOpen_sourceOpenCube (n := n) 1)
       hUclosure hcross
-  simpa [E, F] using hAE
+  exact hAE
 
 /-- Source-envelope output assembled over all coordinates: at almost every point of an integer
 good set, the Fréchet gradient has a first-order expansion along `D_{3/2}`. -/

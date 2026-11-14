@@ -622,7 +622,7 @@ theorem nesterov_pl_accelerated_rate_embedded
         exact div_pos (Real.sqrt_pos_of_pos (div_pos hμ hL)) (by norm_num)
       have hθ_le : θ ≤ Real.sqrt (μ / ↑L) / 8 := by
         dsimp only [θ]
-        nlinarith [Real.sqrt_nonneg (μ / ↑L)]
+        linarith only [Real.sqrt_nonneg (μ / ↑L)]
       obtain ⟨U_tub, _hU_tub_open, _hS_sub_tub, hU_tub_sub, hGenTub⟩ :=
         exists_general_tubular_subneighborhood M ι hι U hU_open hS_sub
       have hf_C2_tub : ContDiffOn ℝ 2 f U_tub := hf_C2.mono hU_tub_sub
@@ -685,7 +685,7 @@ theorem nesterov_pl_accelerated_rate_c3_internal
           exact div_pos (Real.sqrt_pos_of_pos (div_pos hμ hL)) (by norm_num)
         have hθ_le : θ ≤ Real.sqrt (μ / ↑L) / 8 := by
           dsimp only [θ]
-          nlinarith [Real.sqrt_nonneg (μ / ↑L)]
+          linarith only [Real.sqrt_nonneg (μ / ↑L)]
         obtain ⟨U_tub, _hU_tub_open, _hS_sub_tub, hU_tub_sub, _hGenTub, hTub_sub⟩ :=
           exists_tubular_subneighborhood_of_c3_pl hd hU_open hS_sub hPL hf_C3
         have hf_C2_tub : ContDiffOn ℝ 2 f U_tub :=

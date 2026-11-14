@@ -6,7 +6,7 @@ Authors: OpenAI, Dean Cureton
 
 module
 
-public import LeanPool.GapCVP.Part03
+public import LeanPool.GapCVP.Part03E
 
 /-! # GapCVP proof, part 04 -/
 
@@ -354,7 +354,7 @@ theorem naturalCompareWordsEqualBit
       some (naturalCompareConfiguration 6 outcome
         input firstCounter firstReversed secondCounter secondReversed
         firstForward secondForward source sourcePrefix output) := by
-  cases bit <;> naturalCompareStepTac
+  naturalCompareStepTac
 
 theorem naturalCompareWordsLessBit
     (outcome : EncodedWordOrdering)

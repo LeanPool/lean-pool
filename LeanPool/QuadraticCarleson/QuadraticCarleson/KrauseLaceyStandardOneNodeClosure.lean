@@ -151,7 +151,7 @@ theorem eLpNorm_energyStandardPhysicalTailMaximal_le
       apply eLpNorm_congr_norm_ae (hF j hj)
         (integrable_energyStandardPhysicalLayerAction S hf I₀ k₀ scale j).aestronglyMeasurable
       filter_upwards with x
-      simp only [F, Complex.norm_real, Real.norm_eq_abs, abs_norm]
+      simp only [Complex.norm_real, Real.norm_eq_abs, abs_norm, F]
     rw [heq]
     exact eLpNorm_energyStandardFixedPhysicalSourceAction_le_budget_mul_ratio
       hf I₀ k₀ j (by omega) (hP j hj) scale hlam hsub

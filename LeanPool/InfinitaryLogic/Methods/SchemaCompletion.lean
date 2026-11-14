@@ -612,6 +612,42 @@ theorem schemaCompletionTheorySpec (hM : Cardinal.beth (Ordinal.omega 1) ≤ Car
   iSup_witness_localColim := fun hmem t hT =>
     schemaCompletionTheory_iSup_witness_localColim hM hmem t hT
 
+/-- Decide a universe sentence without exposing the finite-support subtype in the result. -/
+theorem schemaCompletionTheory_complete_of_universe
+    (hM : Cardinal.beth (Ordinal.omega 1) ≤ Cardinal.mk M)
+    {τ : (((localColim s₀)[[ℕ]])[[ℕ]]).Sentenceω}
+    {support : HasFiniteConstSupport (L'' := localColim s₀) τ}
+    (member : (⟨τ, support⟩ : FSentence (L'' := localColim s₀) (J := ℕ)) ∈
+      schemaFSentenceUniverse s₀) :
+    τ ∈ schemaCompletionTheory (schemaEnumeration s₀) hM ∨
+      τ.not ∈ schemaCompletionTheory (schemaEnumeration s₀) hM :=
+  (schemaCompletionTheorySpec hM).complete_on_universe ⟨τ, support⟩ member
+
+/-- Negation membership for a universe sentence, expressed without a support coercion. -/
+theorem schemaCompletionTheory_not_mem_iff_of_universe
+    (hM : Cardinal.beth (Ordinal.omega 1) ≤ Cardinal.mk M)
+    {τ : (((localColim s₀)[[ℕ]])[[ℕ]]).Sentenceω}
+    {support : HasFiniteConstSupport (L'' := localColim s₀) τ}
+    (member : (⟨τ, support⟩ : FSentence (L'' := localColim s₀) (J := ℕ)) ∈
+      schemaFSentenceUniverse s₀) :
+    τ.not ∈ schemaCompletionTheory (schemaEnumeration s₀) hM ↔
+      τ ∉ schemaCompletionTheory (schemaEnumeration s₀) hM := by
+  classical
+  constructor
+  · intro hneg hpos
+    refine markerHenkinConsistent_not_mem_and_not_mem
+      ((schemaCompletionTheorySpec hM).finite_consistent {τ, τ.not} fun τ' hτ' => ?_) τ
+      ⟨Finset.mem_insert_self _ _, by
+        rw [Finset.mem_insert]; exact Or.inr (Finset.mem_singleton_self _)⟩
+    rw [Finset.mem_insert, Finset.mem_singleton] at hτ'
+    rcases hτ' with rfl | rfl
+    · exact hpos
+    · exact hneg
+  · intro hnot
+    rcases schemaCompletionTheory_complete_of_universe hM member with hpos | hneg
+    · exact absurd hpos hnot
+    · exact hneg
+
 end Union
 
 /-! ## Checkpoint 5b-1, part 1: the finite interpolation engine
@@ -808,8 +844,8 @@ theorem schemaCompletionTheory_tuple_uniform
       schemaLift ψ u ∈ schemaCompletionTheory (schemaEnumeration s₀) hM →
         schemaLift ψ v ∈ schemaCompletionTheory (schemaEnumeration s₀) hM := by
     intro u v hu
-    rcases (schemaCompletionTheorySpec hM).complete_on_universe _
-      (schemaLift_mem_universe hψ v) with hv | hnv
+    rcases schemaCompletionTheory_complete_of_universe hM
+      (τ := schemaLift ψ v) (schemaLift_mem_universe hψ v) with hv | hnv
     · exact hv
     · exfalso
       let F : Finset (((localColim s₀)[[ℕ]])[[ℕ]].Sentenceω) :=

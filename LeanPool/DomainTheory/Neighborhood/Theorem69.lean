@@ -7,12 +7,8 @@ module
 
 public import LeanPool.DomainTheory.Neighborhood.Definition68
 import LeanPool.DomainTheory.Neighborhood.Theorem41
-import Mathlib.Data.Finset.Attr
-import Mathlib.Data.Rat.Cast.Order
-import Mathlib.Tactic.NormNum.Abs
-import Mathlib.Tactic.NormNum.DivMod
-import Mathlib.Tactic.NormNum.OfScientific
-import Mathlib.Tactic.NormNum.Pow
+
+import Mathlib.Tactic.Set -- shake: keep
 
 /-!
 # Lecture VI — Theorem 6.9 (Scott 1981, PRG-19): homomorphisms out of a fixed
@@ -231,10 +227,10 @@ theorem homOp_apply_filter (g : StrictMap (T.obj D).sys (T.obj E).sys) :
       = homOpComp T D E j k hj hk g := by
     apply Subtype.ext
     apply ApproximableMap.ext
-    simp_all
+    simp_all only [mem_toElementMap, mem_toStrictFilter, toStrictMap_rel, implies_true]
   have hL := toStrictFilter_toStrictMap
     ((homOp T D E j k hj hk).toElementMap (toStrictFilter g))
-  simp_all
+  simp_all only [mem_toElementMap, mem_toStrictFilter]
 
 end HomOp
 

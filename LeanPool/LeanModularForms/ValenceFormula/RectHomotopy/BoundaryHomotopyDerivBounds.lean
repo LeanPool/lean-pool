@@ -8,7 +8,6 @@ module
 public import LeanPool.LeanModularForms.ValenceFormula.RectHomotopy.Geometry
 import LeanPool.LeanModularForms.ValenceFormula.RectHomotopy.HomotopyDef
 import Mathlib.CategoryTheory.Category.Init
-import Mathlib.NumberTheory.ArithmeticFunction.Misc
 
 /-!
 # Derivative norm bounds for the homotopy segments
@@ -49,12 +48,12 @@ private lemma norm_deriv_arc_chord_le (α c : ℝ) (a b : ℂ) (hab : ‖b - a�
   rw [h_combined.deriv]
   have h_exp_norm : ‖Complex.exp (((α : ℝ) + (t - c) * (Real.pi / 6)) * I)‖ = 1 := by
     rw [show (((α : ℝ) + (t - c) * (Real.pi / 6)) * I) =
-      (((α + (t - c) * (Real.pi / 6)) : ℝ) : ℂ) * I from by push_cast; ring,
+      (((α + (t - c) * (Real.pi / 6)) : ℝ) : ℂ) * I from by push_cast; ac_rfl,
       Complex.norm_exp_ofReal_mul_I]
   have harc_norm : ‖((Real.pi : ℝ) / 6) * I *
       Complex.exp (((α : ℝ) + (t - c) * (Real.pi / 6)) * I)‖ = Real.pi / 6 := by
     rw [norm_mul, norm_mul, h_exp_norm, mul_one, Complex.norm_I, mul_one,
-      show ((Real.pi : ℝ) / 6 : ℂ) = ((Real.pi / 6 : ℝ) : ℂ) from by push_cast; ring,
+      show ((Real.pi : ℝ) / 6 : ℂ) = ((Real.pi / 6 : ℝ) : ℂ) from by push_cast; ac_rfl,
       Complex.norm_real, Real.norm_eq_abs, abs_of_pos (by positivity)]
   calc ‖(1 - s) • (((Real.pi : ℝ) / 6) * I *
             Complex.exp (((α : ℝ) + (t - c) * (Real.pi / 6)) * I)) + s • (b - a)‖

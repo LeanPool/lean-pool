@@ -6,7 +6,6 @@ Authors: Juan Pablo Traverso Gianini, Aristotle
 
 module
 
-public import LeanPool.AsymptoticTrianglePacking.Internal.Basic
 public import LeanPool.AsymptoticTrianglePacking.Internal.Conflict
 public import LeanPool.AsymptoticTrianglePacking.Internal.Prelude
 
@@ -134,7 +133,7 @@ theorem edge_survives_prob {H : Finset (Finset V)} {p : ℝ} (ρ : BernoulliRete
   rw [hge]
   rw [Finset.prod_congr rfl hgfc]
   simp only [prod_const]
-  rw [← ENNReal.ofReal_pow (by linarith : 0 ≤ 1 - p)]
+  rw [← ENNReal.ofReal_pow (by linarith only [hp1] : 0 ≤ 1 - p)]
   rw [← ENNReal.ofReal_mul (by positivity : 0 ≤ p)]
 
 end LeanPool.AsymptoticTrianglePacking.Internal

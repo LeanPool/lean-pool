@@ -177,17 +177,17 @@ theorem sourceOuterAnnulus_lift_lt_bendMargin
   have hdist_norm : dist z x = ‖z - x‖ := by
     rw [dist_eq_norm]
   have hnorm_lower : 3 * r / 4 <= ‖z - x‖ := by
-    simpa [hdist_norm] using hzK.1
+    exact hzK.1
   have hleft_nonneg : 0 <= 3 * r / 4 := by
-    linarith
+    linarith only [hrpos]
   have hnorm_sq :
       (3 * r / 4) ^ 2 <= ‖z - x‖ ^ 2 :=
     (sq_le_sq₀ hleft_nonneg (norm_nonneg (z - x))).2 hnorm_lower
   have hr_sq_pos : 0 < r ^ 2 := sq_pos_of_pos hrpos
   have hmargin_no_gamma : r ^ 2 / 8 < (1 / 4 : Real) * ‖z - x‖ ^ 2 := by
-    nlinarith
+    nlinarith only [hnorm_sq, hr_sq_pos]
   have hmul := mul_lt_mul_of_pos_left hmargin_no_gamma hγpos
-  nlinarith
+  nlinarith only [hmul]
 
 /--
 Geometric small-radius semijet data.
@@ -319,7 +319,8 @@ theorem OperatorContinuous.exists_sourceOuterClosedBall_smallRadius_bentStrictNe
             (J.hessian - (0 : Real) • (1 : Hessian n)) x).gradient
           (quadraticModelJetAt x J.gradient
             (J.hessian - (0 : Real) • (1 : Hessian n)) x).hessian < 0 := by
-    simpa [W, quadraticModel] using hneg
+    simpa only [quadraticModel, sub_self, dotProduct_zero, add_zero, one_div, zero_smul, sub_zero,
+      Matrix.mulVec_zero, mul_zero, quadraticModelJetAt_base] using hneg
   have hpathγ : Continuous fun γ : Real =>
       ((x,
           quadraticModel x (W x) J.gradient
@@ -339,7 +340,7 @@ theorem OperatorContinuous.exists_sourceOuterClosedBall_smallRadius_bentStrictNe
         apply continuous_induced_rng.mpr
         change Continuous fun γ : Real =>
           ((jetPath γ).gradient, (jetPath γ).hessian)
-        simpa [jetPath] using Continuous.prodMk continuous_const hH
+        simpa only [continuous_prodMk] using Continuous.prodMk continuous_const hH
       exact (continuous_quadraticModel_jet x (W x) x).comp hJet
     have hjet : Continuous fun γ : Real =>
         quadraticModelJetAt x J.gradient
@@ -350,7 +351,9 @@ theorem OperatorContinuous.exists_sourceOuterClosedBall_smallRadius_bentStrictNe
             (J.hessian - γ • (1 : Hessian n)) x).gradient,
           (quadraticModelJetAt x J.gradient
             (J.hessian - γ • (1 : Hessian n)) x).hessian)
-      simpa [quadraticModelJetAt] using Continuous.prodMk continuous_const hH
+      simpa only [quadraticModelJetAt, one_div, sub_self, Matrix.mulVec_zero,
+        Matrix.transpose_sub, Matrix.transpose_smul, Matrix.transpose_one, add_zero, smul_zero,
+        continuous_prodMk] using Continuous.prodMk continuous_const hH
     exact Continuous.prodMk (Continuous.prodMk continuous_const hval) hjet
   have hcontγ : Continuous fun γ : Real =>
       F x
@@ -411,7 +414,7 @@ theorem OperatorContinuous.exists_sourceOuterClosedBall_smallRadius_bentStrictNe
           (W x + γ * y.2 ^ 2 / 8) + dotProduct J.gradient (y.1 - x) +
             (1 / 2 : Real) * dotProduct (Matrix.mulVec Xb (y.1 - x)) (y.1 - x) :=
         (hlift.add hlin).add (continuous_const.mul hquad)
-      simpa [quadraticModel, add_assoc] using htotal
+      simpa only [quadraticModel, dotProduct_sub, add_assoc, one_div] using htotal
     have hjet : Continuous fun y : Point n × Real =>
         quadraticModelJetAt x J.gradient Xb y.1 :=
       (continuous_quadraticModelJetAt x J.gradient Xb).comp continuous_fst
@@ -435,7 +438,7 @@ theorem OperatorContinuous.exists_sourceOuterClosedBall_smallRadius_bentStrictNe
   let ρ : Real := σ / 2
   have hρpos : 0 < ρ := by
     dsimp [ρ]
-    linarith
+    linarith only [hσpos]
   refine ⟨γ, V, ρ, hγpos, Metric.isOpen_ball,
     mem_nhdsWithin_of_mem_nhds (Metric.ball_mem_nhds x hεpos), hρpos, ?_⟩
   intro r hrpos hrle
@@ -448,7 +451,7 @@ theorem OperatorContinuous.exists_sourceOuterClosedBall_smallRadius_bentStrictNe
       have hsub : r - 0 = r := by ring
       rw [hsub, abs_of_nonneg hrpos.le]
       dsimp [ρ] at hrle
-      linarith
+      linarith only [hrpos, hrle]
     exact hσT hr_abs
   have hzrt : (z, r) ∈ sourceNegSet := hUT ⟨hzU, hrT⟩
   simpa [sourceNegSet, sourceEval, Xb, W] using hzrt
@@ -480,7 +483,7 @@ theorem geometricSemijetLscSelectionPatchAt
   have hr_le_Lsc : r <= ρLsc := hrle.trans (min_le_left ρLsc (ε / 2))
   have hr_lt_ε : r < ε := by
     have hr_le_half : r <= ε / 2 := hrle.trans (min_le_right ρLsc (ε / 2))
-    linarith
+    linarith only [hrpos, hr_le_half]
   refine ⟨?_, hLsc r hrpos hr_le_Lsc⟩
   intro z hzClosed
   exact hεC (Metric.closedBall_subset_ball hr_lt_ε hzClosed)
@@ -626,7 +629,7 @@ theorem smallRadiusSemijetLscSelectionPatchAt
   have hr_le_geom : r <= ρgeom := hrle.trans (min_le_right ρneg ρgeom)
   rcases hgeomSmall r hrpos hr_le_geom with ⟨hclosedBallC, hfamilyLsc⟩
   refine ⟨hclosedBallC, ?_, hfamilyLsc⟩
-  simpa using hstrict r hrpos hr_le_neg
+  exact hstrict r hrpos hr_le_neg
 
 end PerronLowerEnvelopeBentQuadraticSourceOuterClosedBallGeometricSemijetLscSelectionPatchAt
 
@@ -742,18 +745,18 @@ theorem outerClosedBallLowerEnvelopeLscSelectionPatchAt
   let K : Set (Point n) := {z : Point n | 3 * r / 4 <= dist z x ∧ dist z x <= r}
   refine ⟨γ, r, V, hγpos, hrpos, hVopen, hV, hballV,
     hclosedBallC, hboundaryOutside, ?_, ?_, ?_, ?_, ?_⟩
-  · simpa [W, δ, q] using hWltq
-  · simpa [W, δ, q, Xb] using hqCont
-  · simpa [W, δ, q, Xb] using hneg
+  · exact hWltq
+  · exact hqCont
+  · exact hneg
   · intro z hzK
     have hzS : z ∈ S := hKS z hzK
     have hmargin :
         δ < ((1 / 4 : Real) * γ) * ‖z - x‖ ^ 2 := by
-      simpa [δ] using
+      exact
         (sourceOuterAnnulus_lift_lt_bendMargin
           (x := x) (z := z) hγpos hrpos hzK)
-    simpa [S, W, δ, q, Xb] using hzS δ hmargin
-  · simpa [K] using hfamilyLsc
+    exact hzS δ hmargin
+  · exact hfamilyLsc
 
 /--
 The semijet support estimate also supplies the no-branch-LSC lower-envelope

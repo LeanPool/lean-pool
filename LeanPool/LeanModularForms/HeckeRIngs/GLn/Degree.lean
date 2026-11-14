@@ -78,7 +78,7 @@ private lemma conjAct_smul_eq_of_mem {G : Type*} [Group G] (H : Subgroup G)
     have : (ConjAct.toConjAct h)⁻¹ • x = h⁻¹ * x * h := by
       change ConjAct.ofConjAct (ConjAct.toConjAct h)⁻¹ * x *
         (ConjAct.ofConjAct (ConjAct.toConjAct h)⁻¹)⁻¹ = _
-      simp [ConjAct.ofConjAct_toConjAct, mul_assoc]
+      simp only [ConjAct.ofConjAct_inv, ConjAct.ofConjAct_toConjAct, inv_inv, mul_assoc]
     rw [this]; exact H.mul_mem (H.mul_mem (H.inv_mem hh) hx) hh
 
 variable (n : ℕ)
@@ -93,7 +93,8 @@ private lemma upperTriGL_eq_diagMat_mul (a : Fin n → ℕ) (ha : ∀ i, 0 < a i
   apply Units.ext
   have hunip_val : (↑(mapGL ℚ (unipSL n a hdiv B)) : Matrix _ _ ℚ) =
       (unipSL n a hdiv B).val.map (Int.cast) := by
-    simp [mapGL_coe_matrix, algebraMap_int_eq, RingHom.mapMatrix_apply]
+    simp only [mapGL_coe_matrix, algebraMap_int_eq, map_apply_coe, RingHom.mapMatrix_apply,
+      Int.coe_castRingHom]
   simp only [upperTriGL_val, Units.val_mul, hunip_val, diagMat_val n a ha]
   ext i j
   simp only [Matrix.map_apply, Matrix.mul_apply, Matrix.diagonal_apply]
@@ -175,7 +176,7 @@ private lemma transpose_mem_conj_inv_of_mem_conj
   have h_trans := transpose_mul_diagMat n a ha σ ρ h_eq
   rw [Subgroup.mem_pointwise_smul_iff_inv_smul_mem, ConjAct.smul_def,
     ConjAct.ofConjAct_inv, ConjAct.ofConjAct_toConjAct, inv_inv]
-  simp_all
+  simp_all only [MonoidHom.mem_range, mul_inv_cancel_right, mapGL_inj, exists_eq]
 
 private lemma transpose_mem_conj_of_mem_conj_inv
     (a : Fin n → ℕ) (ha : ∀ i, 0 < a i) (τ : SL(n, ℤ))
@@ -209,7 +210,7 @@ private lemma relIndex_conj_inv_eq_conj_diag (a : Fin n → ℕ) (ha : ∀ i, 0 
   set φ := invTransposeEquiv n
   suffices h : (ConjAct.toConjAct α • H).comap f =
       ((ConjAct.toConjAct α⁻¹ • H).comap f).map φ.toMonoidHom by
-    rw [h]; simp [Subgroup.index_map_equiv]
+    rw [h]; simp only [ConjAct.toConjAct_inv, MulEquiv.toMonoidHom_eq_coe, Subgroup.index_map_equiv]
   ext σ; simp only [Subgroup.mem_map, MulEquiv.coe_toMonoidHom]
   constructor
   · intro hσ
@@ -341,7 +342,7 @@ private lemma a1_eq_a0_mul_pk {p : ℕ} {a : Fin 2 → ℕ} {k : ℕ}
     (h_ratio : a 1 / a 0 = p ^ k) (h_dvd_a : a 0 ∣ a 1) :
     (a 1 : ℚ) = (a 0 : ℚ) * (↑(p ^ k) : ℚ) := by
   have h1 : a 1 = p ^ k * a 0 := (h_ratio ▸ Nat.div_mul_cancel h_dvd_a).symm
-  push_cast [h1]; ring
+  push_cast [h1]; ac_rfl
 
 private lemma conj_diagMat_mem_of_Gamma0 (a : Fin 2 → ℕ) (ha : ∀ i, 0 < a i) (k : ℕ)
     (h_ratio : a 1 / a 0 = p ^ k) (h_dvd_a : a 0 ∣ a 1)
@@ -365,15 +366,17 @@ private lemma conj_diagMat_mem_of_Gamma0 (a : Fin 2 → ℕ) (ha : ∀ i, 0 < a 
     simp only [← mul_assoc, inv_mul_cancel, one_mul] at h'; exact h'
   apply Units.ext
   have hτ_val : (↑(mapGL ℚ τ) : Matrix _ _ ℚ) = τ.val.map (Int.cast) := by
-    simp [mapGL_coe_matrix, algebraMap_int_eq, RingHom.mapMatrix_apply]
+    simp only [mapGL_coe_matrix, algebraMap_int_eq, map_apply_coe, RingHom.mapMatrix_apply,
+      Int.coe_castRingHom]
   have hσ_val : (↑(mapGL ℚ σ) : Matrix _ _ ℚ) = σ.val.map (Int.cast) := by
-    simp [mapGL_coe_matrix, algebraMap_int_eq, RingHom.mapMatrix_apply]
+    simp only [mapGL_coe_matrix, algebraMap_int_eq, map_apply_coe, RingHom.mapMatrix_apply,
+      Int.coe_castRingHom]
   simp only [Units.val_mul, hτ_val, hσ_val]
   ext i j
   simp only [diagMat_val 2 a ha, Matrix.diagonal_mul, Matrix.mul_diagonal, Matrix.map_apply]
   fin_cases i <;> fin_cases j <;>
     simp only [τ, τ_mat, Matrix.of_apply, Matrix.cons_val', Fin.isValue] <;>
-    push_cast <;> (try rw [hcQ]) <;> (try rw [ha1]) <;> ring
+    push_cast <;> (try rw [hcQ]) <;> (try rw [ha1]) <;> ac_rfl
 
 private lemma Gamma0_of_conj_diagMat_mem (a : Fin 2 → ℕ) (ha : ∀ i, 0 < a i) (k : ℕ)
     (h_ratio : a 1 / a 0 = p ^ k) (h_dvd_a : a 0 ∣ a 1) (σ : SL(2, ℤ))
@@ -397,7 +400,7 @@ private lemma Gamma0_of_conj_diagMat_mem (a : Fin 2 → ℕ) (ha : ∀ i, 0 < a 
       Matrix.map_apply] at this
     exact this
   have h_σ₁₀ : (σ.1 1 0 : ℚ) = ↑(p ^ k) * (τ.1 1 0 : ℚ) := by
-    rw [ha1] at h_entry; field_simp at h_entry ⊢; linarith
+    rw [ha1] at h_entry; field_simp at h_entry ⊢; linarith only [h_entry]
   exact ⟨τ.1 1 0, by exact_mod_cast h_σ₁₀⟩
 
 private lemma conjDiag_relIndex_eq_Gamma0_index

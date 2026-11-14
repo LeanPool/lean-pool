@@ -132,8 +132,8 @@ theorem memLp_of_gradClosed_compactSupport (hd : 1 < d)
   | succ s ih =>
     intro q hsd hpq hqs hgrad hmem i hi
     have hq0 : (0 : ℝ) < (q : ℝ) := lt_of_lt_of_le hp₀0 (by exact_mod_cast hpq)
-    have hsdR : (p₀ : ℝ) * ((s : ℝ) + 1) ≤ (d : ℝ) := by push_cast at hsd; linarith
-    have hsdprev : (p₀ : ℝ) * (s : ℝ) ≤ (d : ℝ) := by nlinarith
+    have hsdR : (p₀ : ℝ) * ((s : ℝ) + 1) ≤ (d : ℝ) := by push_cast at hsd; linarith only [hsd]
+    have hsdprev : (p₀ : ℝ) * (s : ℝ) ≤ (d : ℝ) := by nlinarith only [hp₀1, hsdR]
     push_cast at hqs
     -- The reciprocal at rung `s`, and the exponent naming it.
     set t : ℝ := (p₀ : ℝ)⁻¹ - (s : ℝ) * (d : ℝ)⁻¹ with ht_def
@@ -144,11 +144,11 @@ theorem memLp_of_gradClosed_compactSupport (hd : 1 < d)
         have hc2 : (p₀ : ℝ) * ((s : ℝ) + 1) * ((d : ℝ)⁻¹ * (p₀ : ℝ)⁻¹)
             = ((s : ℝ) + 1) * (d : ℝ)⁻¹ := by field_simp
         rw [hc1, hc2] at hmul
-        linarith
-      rw [ht_def]; linarith
+        linarith only [hmul]
+      rw [ht_def]; linarith only [hdinv0, hstep]
     have ht_le : t ≤ (p₀ : ℝ)⁻¹ := by
       have : 0 ≤ (s : ℝ) * (d : ℝ)⁻¹ := by positivity
-      rw [ht_def]; linarith
+      rw [ht_def]; linarith only [this]
     set Q : ℝ≥0 := Real.toNNReal t⁻¹ with hQ_def
     have hQcoe : ((Q : ℝ≥0) : ℝ) = t⁻¹ := by
       rw [hQ_def]
@@ -164,7 +164,7 @@ theorem memLp_of_gradClosed_compactSupport (hd : 1 < d)
     by_cases hu1 : (q : ℝ)⁻¹ + (d : ℝ)⁻¹ ≤ 1
     · -- The target is at or above the conjugate exponent, so the rung runs onto it.
       set u : ℝ := (q : ℝ)⁻¹ + (d : ℝ)⁻¹ with hu_def
-      have hu0 : 0 < u := by rw [hu_def]; linarith
+      have hu0 : 0 < u := by rw [hu_def]; linarith only [hqs, ht0]
       set p : ℝ≥0 := Real.toNNReal u⁻¹ with hp_def
       have hpcoe : ((p : ℝ≥0) : ℝ) = u⁻¹ := by
         rw [hp_def]
@@ -175,7 +175,7 @@ theorem memLp_of_gradClosed_compactSupport (hd : 1 < d)
         rw [← NNReal.coe_le_coe, NNReal.coe_one, hpcoe]
         have := inv_anti₀ hu0 hu1
         simpa using this
-      have htu : t ≤ u := by rw [ht_def, hu_def]; linarith
+      have htu : t ≤ u := by rw [ht_def, hu_def]; linarith only [hqs]
       have hpQ : p ≤ Q := by
         rw [← NNReal.coe_le_coe]
         refine (inv_le_inv₀ hQ0 hp0).mp ?_
@@ -192,15 +192,15 @@ theorem memLp_of_gradClosed_compactSupport (hd : 1 < d)
       have ht₁0 : 0 < t₁ := by
         by_contra hcon
         have hcon' : t₁ ≤ 0 := le_of_not_gt hcon
-        have hple : (d : ℝ)⁻¹ ≥ (p₀ : ℝ)⁻¹ := by rw [ht₁_def] at hcon'; linarith
+        have hple : (d : ℝ)⁻¹ ≥ (p₀ : ℝ)⁻¹ := by rw [ht₁_def] at hcon'; linarith only [hcon]
         have hdp : (d : ℝ) ≤ (p₀ : ℝ) := (inv_le_inv₀ hp₀0 hdpos).mp hple
         have hqge : (p₀ : ℝ) ≤ (q : ℝ) := by exact_mod_cast hpq
         have hqinv' : (q : ℝ)⁻¹ ≤ (d : ℝ)⁻¹ := inv_anti₀ hdpos (le_trans hdp hqge)
         have hdd : (d : ℝ)⁻¹ ≤ 2⁻¹ := by
           have := inv_anti₀ (b := (2 : ℝ)) (by norm_num) hd2R
           simpa using this
-        linarith
-      have ht₁_le : t₁ ≤ (p₀ : ℝ)⁻¹ := by rw [ht₁_def]; linarith
+        linarith only [hu1, hqinv', hdd]
+      have ht₁_le : t₁ ≤ (p₀ : ℝ)⁻¹ := by rw [ht₁_def]; linarith only [hdinv0]
       set P : ℝ≥0 := Real.toNNReal t₁⁻¹ with hP_def
       have hPcoe : ((P : ℝ≥0) : ℝ) = t₁⁻¹ := by
         rw [hP_def]
@@ -219,7 +219,7 @@ theorem memLp_of_gradClosed_compactSupport (hd : 1 < d)
         refine (inv_le_inv₀ hP0 hq0).mp ?_
         rw [hPinv, ht₁_def]
         have hs0 : 0 ≤ (s : ℝ) * (d : ℝ)⁻¹ := by positivity
-        linarith
+        linarith only [hp₀inv, hu1]
       exact memLp_mono_exponent_compactSupport (hcs i) hPmem (by exact_mod_cast hqP)
 
 /-! ### The exponent of case (i) -/
@@ -252,7 +252,7 @@ theorem memLp_of_gradClosed_compactSupport_ideal (hd : 1 < d)
       field_simp
     have hc2 : (d : ℝ) * ((d : ℝ)⁻¹ * (p₀ : ℝ)⁻¹) = (p₀ : ℝ)⁻¹ := by field_simp
     rw [hc1, hc2] at h
-    linarith
+    linarith only [h]
   have hcoe : ((Real.toNNReal ((p₀ : ℝ)⁻¹ - (s : ℝ) * (d : ℝ)⁻¹)⁻¹ : ℝ≥0) : ℝ)
       = ((p₀ : ℝ)⁻¹ - (s : ℝ) * (d : ℝ)⁻¹)⁻¹ := Real.coe_toNNReal _ (inv_nonneg.mpr ht0.le)
   refine memLp_of_gradClosed_compactSupport hd hp₀ hdep hcs s hsd.le ?_ ?_ hgrad hmem

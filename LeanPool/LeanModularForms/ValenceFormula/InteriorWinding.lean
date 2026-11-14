@@ -12,8 +12,6 @@ import LeanPool.LeanModularForms.GeneralizedResidueTheory.Residue
 import LeanPool.LeanModularForms.ValenceFormula.Boundary.Smooth
 import LeanPool.LeanModularForms.ValenceFormula.RectHomotopy.MainTheorem
 import Mathlib.CategoryTheory.Category.Init
-import Mathlib.MeasureTheory.Covering.Besicovitch
-import Mathlib.NumberTheory.ArithmeticFunction.Misc
 
 /-!
 # Interior Winding Number
@@ -43,12 +41,12 @@ private lemma fdBoundary_H_norm_eq_one_arc {H t : ℝ} (h1 : 1 < t) (h3 : t < 3)
   by_cases h2 : t ≤ 2
   · rw [fdBoundary_H_eq_seg2_H H h1 h2]; simp only [fdBoundarySeg2H, fdBoundarySeg2]
     rw [show (↑Real.pi / 3 + (↑t - 1) * (↑Real.pi / 2 - ↑Real.pi / 3)) * I =
-      ↑(Real.pi / 3 + (t - 1) * (Real.pi / 2 - Real.pi / 3)) * I from by push_cast; ring]
+      ↑(Real.pi / 3 + (t - 1) * (Real.pi / 2 - Real.pi / 3)) * I from by push_cast; ac_rfl]
     exact norm_exp_ofReal_mul_I _
   · push Not at h2
     rw [fdBoundary_H_eq_seg3_H H h2 (le_of_lt h3)]; simp only [fdBoundarySeg3H, fdBoundarySeg3]
     rw [show (↑Real.pi / 2 + (↑t - 2) * (2 * ↑Real.pi / 3 - ↑Real.pi / 2)) * I =
-      ↑(Real.pi / 2 + (t - 2) * (2 * Real.pi / 3 - Real.pi / 2)) * I from by push_cast; ring]
+      ↑(Real.pi / 2 + (t - 2) * (2 * Real.pi / 3 - Real.pi / 2)) * I from by push_cast; ac_rfl]
     exact norm_exp_ofReal_mul_I _
 
 /-- The boundary at height H avoids any strict interior point p
@@ -113,15 +111,15 @@ private lemma arc_hasDerivAt' (s : ℝ) :
     simp only [zero_mul, zero_add] at this; exact this
   have h4 : HasDerivAt (fun s : ℝ =>
       ↑Real.pi * ((s : ℂ) + 1) / 6 * I) (↑Real.pi * 1 / 6 * I) s := (h3.div_const _).mul_const _
-  convert h4 using 1; ring
+  convert h4 using 1; ac_rfl
 
 private lemma fdBoundary_H_hasDerivAt_arc' (H : ℝ) {t : ℝ} (ht1 : 1 < t) (ht3 : t < 3) :
     HasDerivAt (fdBoundaryH H)
       (↑(Real.pi / 6) * I * Complex.exp (↑(Real.pi * (1 + t) / 6) * I)) t := by
   have heq : fdBoundaryH H =ᶠ[𝓝 t] (fun s => Complex.exp ((↑Real.pi * (↑s + 1) / 6) * I)) :=
     Filter.eventuallyEq_iff_exists_mem.mpr ⟨Set.Ioo 1 3, Ioo_mem_nhds ht1 ht3,
-      fun s hs => (fdBoundary_H_eq_arc' hs.1 hs.2).trans (by congr 1; congr 1; push_cast; ring)⟩
-  exact (heq.hasDerivAt_iff.mpr (arc_hasDerivAt' t)).congr_deriv (by push_cast; ring)
+      fun s hs => (fdBoundary_H_eq_arc' hs.1 hs.2).trans (by congr 1; congr 1; push_cast; ac_rfl)⟩
+  exact (heq.hasDerivAt_iff.mpr (arc_hasDerivAt' t)).congr_deriv (by push_cast; ac_rfl)
 
 private def heightSens : ℝ → ℂ := fun t =>
   if t ≤ 1 then ↑(1 - t) * I
@@ -183,7 +181,7 @@ private lemma fdHomot_deriv_continuousOn_piece (H₀ H₁ : ℝ) (p₁ p₂ : �
         continuous_const).continuousOn
     · intro q hq
       convert (fdBoundary_H_hasDerivAt_seg1 _ (lt_of_lt_of_le hq.1.2 h_le1)).deriv using 1
-      push_cast; ring
+      push_cast; ac_rfl
   · push Not at h_le1
     have hp1_ge1 : 1 ≤ p₁ := by
       by_contra h; push Not at h
@@ -210,7 +208,7 @@ private lemma fdHomot_deriv_continuousOn_piece (H₀ H₁ : ℝ) (p₁ p₂ : �
         · intro q hq
           convert (fdBoundary_H_hasDerivAt_seg4 _ (lt_of_le_of_lt hp1_ge3 hq.1.1)
             (lt_of_lt_of_le hq.1.2 h_le4)).deriv using 1
-          push_cast; ring
+          push_cast; ac_rfl
       · push Not at h_le4
         have hp1_ge4 : 4 ≤ p₁ := by
           by_contra h; push Not at h
@@ -245,9 +243,9 @@ private lemma fdHomot_deriv_bound (H : ℝ) (hH : heightCutoff ≤ H) :
       rw [neg_mul, norm_neg, norm_mul,
           Complex.norm_I, mul_one,
           show (↑H_s : ℂ) - ↑(Real.sqrt 3) / 2 = ↑(H_s - Real.sqrt 3 / 2) from by
-            push_cast; ring,
+            push_cast; ac_rfl,
           Complex.norm_real, Real.norm_eq_abs, abs_of_pos (sub_pos.mpr hH_s_sqrt)]
-      exact le_trans (by linarith) (le_max_left _ _)
+      exact le_trans (by linarith only [hH_s_le]) (le_max_left _ _)
     · push Not at ht1
       have ht1' : 1 < t := lt_of_le_of_ne ht1 (Ne.symm h1)
       by_cases ht3 : t < 3
@@ -255,7 +253,7 @@ private lemma fdHomot_deriv_bound (H : ℝ) (hH : heightCutoff ≤ H) :
         rw [norm_mul, norm_mul,
             Complex.norm_of_nonneg (le_of_lt (by positivity : (0 : ℝ) < Real.pi / 6)),
             Complex.norm_I, mul_one, Complex.norm_exp_ofReal_mul_I, mul_one]
-        exact le_trans (by have := Real.pi_le_four; linarith) (le_max_right _ _)
+        exact le_trans (by have := Real.pi_le_four; linarith only [this]) (le_max_right _ _)
       · push Not at ht3
         have ht3' : 3 < t := lt_of_le_of_ne ht3 (Ne.symm h3)
         by_cases ht4 : t < 4
@@ -263,9 +261,9 @@ private lemma fdHomot_deriv_bound (H : ℝ) (hH : heightCutoff ≤ H) :
           rw [norm_mul,
               Complex.norm_I, mul_one,
               show (↑H_s : ℂ) - ↑(Real.sqrt 3) / 2 = ↑(H_s - Real.sqrt 3 / 2) from by
-                push_cast; ring,
+                push_cast; ac_rfl,
               Complex.norm_real, Real.norm_eq_abs, abs_of_pos (sub_pos.mpr hH_s_sqrt)]
-          exact le_trans (by linarith) (le_max_left _ _)
+          exact le_trans (by linarith only [hH_s_le]) (le_max_left _ _)
         · push Not at ht4
           have ht4' : 4 < t := lt_of_le_of_ne ht4 (Ne.symm h4)
           erw [(fdBoundary_H_hasDerivAt_seg5 H_s ht4').deriv]; rw [norm_one]
@@ -352,7 +350,7 @@ theorem gWN_fdBoundary_H_eq_neg_one_of_strictInterior
     simp only [q, add_re, ofReal_re, mul_re, ofReal_im, I_re, I_im]; ring
   have hq_im : q.im = Hmid := by
     simp only [q, add_im, ofReal_im, mul_im, ofReal_re, I_re, I_im]; ring
-  have hq_im_pos : 0 < q.im := hq_im ▸ by linarith
+  have hq_im_pos : 0 < q.im := hq_im ▸ by linarith only [hHmid_gt1]
   have hq_norm : ‖q‖ > 1 := by linarith [Complex.abs_im_le_norm q, abs_of_pos hq_im_pos]
   have hq_re_bound : |q.re| < 1 / 2 := hq_re ▸ hp_re
   have hq_im_lt : q.im < heightCutoff := hq_im ▸ hHmid_lt
@@ -383,8 +381,8 @@ theorem gWN_fdBoundary_H_eq_neg_one_of_strictInterior
         rw [hzs_im]; nlinarith [hs.1, hs.2, hp_low, hHmid_lt]
       exact fdBoundary_H_avoids_interior (zPath s)
         (by linarith [Complex.abs_im_le_norm (zPath s),
-            abs_of_pos (show 0 < (zPath s).im by linarith)])
-        (by rw [hzs_re]; exact hp_re) (by linarith)
+            abs_of_pos (show 0 < (zPath s).im by linarith only [hHmid_gt1, hzs_im_ge])])
+        (by rw [hzs_re]; exact hp_re) (by linarith only [hHmid_gt1, hzs_im_ge])
         (by rw [hzs_im]; nlinarith [hs.1, hs.2, hp_im, hHmid_lt, hH])
         t ht
     · intro t _ ht_not_P s _
@@ -424,7 +422,7 @@ theorem gWN_fdBoundary_H_eq_neg_one_of_strictInterior
         exact hM t ht
       · have hnd : ¬DifferentiableAt ℝ (fun t' => fdBoundaryH H t' - zPath s) t := by
           erw [show (fun t' => fdBoundaryH H t' - zPath s) =
-              fun t' => fdBoundaryH H t' + (-zPath s) from by ext; ring,
+              fun t' => fdBoundaryH H t' + (-zPath s) from by ext; ac_rfl,
             differentiableAt_add_const_iff]
           exact hd
         erw [deriv_zero_of_not_differentiableAt hnd]; rw [norm_zero]

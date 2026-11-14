@@ -7,8 +7,6 @@ module
 
 public import Mathlib.Analysis.Analytic.Basic
 public import Mathlib.Analysis.Calculus.FDeriv.Defs
-import Mathlib.Tactic.ContinuousFunctionalCalculus
-import Mathlib.Tactic.Positivity.Finset
 
 /-!
 # The planar circular restricted three-body Hamiltonian

@@ -53,21 +53,21 @@ theorem integrable_offsetGroupedInput
   have hsum : Integrable (∑ J ∈ T,
       I.centralThird.indicator ((smallestSelectedRegion S J).indicator f)) := by
     induction T using Finset.induction_on with
-    | empty => simp
+    | empty => simp only [Finset.sum_empty, integrable_zero]
     | @insert J T hJ ih =>
         have hterm : Integrable
             (I.centralThird.indicator ((smallestSelectedRegion S J).indicator f)) :=
           (f.integrable_finiteSparseProof.indicator
             (measurableSet_smallestSelectedRegion S J)).indicator
               I.measurableSet_centralThird
-        simpa [Finset.sum_insert, hJ] using hterm.add ih
+        simpa only [hJ, not_false_eq_true, Finset.sum_insert] using hterm.add ih
   unfold offsetGroupedInput
   have hsum' : Integrable (fun x ↦ ∑ J ∈ T,
       I.centralThird.indicator ((smallestSelectedRegion S J).indicator f) x) := by
     convert hsum using 1
     funext x
     simp only [Finset.sum_apply]
-  simpa only [T] using hsum'
+  exact hsum'
 
 /-- A tail at a fixed cutoff is bounded by the positive sum of *all* its
 localized pieces. In particular, no cost is paid for the number of possible
@@ -114,7 +114,7 @@ theorem offsetGroupedInput_eq_zero_of_notMem_centralThird
   unfold offsetGroupedInput
   apply Finset.sum_eq_zero
   intro J hJ
-  simp [Set.indicator_of_notMem hx]
+  simp only [Set.indicator_of_notMem hx]
 
 /-- The elementary kernel-size estimate for one direct offset piece. The
 factor `8` is exactly the ratio between the parent length and the positive
@@ -190,7 +190,7 @@ theorem offsetTailMaximalOn_le_massMajorant_of_scale
       · rw [Set.indicator_of_notMem hx,
           krauseLaceyLocalizedPiece_eq_zero_of_notMem 1 (scale I) I _
             (hscale I (Finset.mem_filter.mp hI).1) hx]
-        simp
+        simp only [enorm_zero, ENNReal.ofReal_zero, Std.le_refl]
     _ ≤ ∑ I ∈ A, ENNReal.ofReal (I.carrier.indicator (fun _ ↦
         (8 * positiveDyadicAmplitudeBound / I.length) *
           ∫ t, ‖offsetGroupedInput S scale f I s t‖) x) := by

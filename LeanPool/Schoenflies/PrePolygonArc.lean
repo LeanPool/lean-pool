@@ -818,12 +818,17 @@ theorem carrier_insertLast : (insertLast P hz).carrier = P.carrier := by
         have := ZMod.val_lt j
         exact ZMod.val_injective _ (by rw [val_neg_one]; omega)
       subst hjm
+      let insertedEdge (i : ZMod (m + 1 + 3)) : Set Plane :=
+        segment ℝ (insVertex P z i) (insVertex P z (i + 1))
+      have insertedEdge_subset (i : ZMod (m + 1 + 3)) :
+          insertedEdge i ⊆ ⋃ j, insertedEdge j := Set.subset_iUnion _ i
+      change P.edge (-1) ⊆ ⋃ i, insertedEdge i
       rw [← insEdge_union hz]
       refine Set.union_subset ?_ ?_
       · refine le_trans (le_of_eq hpen.symm)
-          (edge_subset_carrier (P := insertLast P hz) (-1 - 1))
+          (insertedEdge_subset (-1 - 1))
       · refine le_trans (le_of_eq hlast.symm)
-          (edge_subset_carrier (P := insertLast P hz) (-1))
+          (insertedEdge_subset (-1))
 
 /-- The inserted vertex is a vertex. -/
 theorem insertLast_mem_vertex : ∃ j, (insertLast P hz).vertex j = z :=

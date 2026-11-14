@@ -68,7 +68,7 @@ theorem integrable_modularIntegrand (Φ : YoungFunction) (f : L0Infinity)
   let g : ℝ → ℝ := fun x ↦ Φ (‖f x‖ / α)
   have hg : HasCompactSupport g :=
     f.hasCompactSupport_toFun.comp_left
-      (g := fun z : ℂ ↦ Φ (‖z‖ / α)) (by simp [Φ.map_zero])
+      (g := fun z : ℂ ↦ Φ (‖z‖ / α)) (by simp only [norm_zero, zero_div, Φ.map_zero])
   obtain ⟨C, hC⟩ := f.bounded_toFun
   have hCn : 0 ≤ C := (norm_nonneg (f 0)).trans (hC 0)
   have hbound : ∀ x, ‖g x‖ ≤ Φ (C / α) := by
@@ -117,8 +117,7 @@ theorem hasPhiModularEstimate_iff_real (Φ : YoungFunction) (T : NonnegativeOper
         volume (operatorLevelSet T f α) ≤ ENNReal.ofReal (C * modularMass Φ f α) := by
   unfold HasPhiModularEstimate
   constructor <;> rintro ⟨C, hC, h⟩ <;> refine ⟨C, hC, fun f α hα ↦ ?_⟩
-  · simpa only [← ofReal_modularMass_eq_lintegral Φ f hα,
-      ENNReal.ofReal_mul hC.le] using h f α hα
+  · simpa only [ENNReal.ofReal_mul hC.le, ← ofReal_modularMass_eq_lintegral Φ f hα] using h f α hα
   · simpa only [← ofReal_modularMass_eq_lintegral Φ f hα,
       ENNReal.ofReal_mul hC.le] using h f α hα
 
@@ -144,7 +143,7 @@ theorem not_hasPhiModularEstimate_of_sequence (Φ : YoungFunction) (T : Nonnegat
       (ENNReal.ofReal_le_ofReal_iff hmass).mp (hl.trans (hest (f N) (α N) hαN))
     rw [Real.norm_eq_abs, abs_of_nonneg hmass, Real.norm_eq_abs,
       abs_of_pos hNpos] at hs
-    nlinarith [mul_pos hδ hNpos]
+    linarith only [hδ, hs, hNpos, hlreal, mul_pos hδ hNpos]
   obtain ⟨N, hN⟩ := hfalse.exists
   exact hN
 
@@ -220,7 +219,7 @@ theorem exists_unit_modular_witness_of_sequence (Φ : YoungFunction) (T : Nonneg
     ENNReal.ofReal (modularMass Φ (f N) (α N)) <
         ENNReal.ofReal (κ * (δ * (N : ℝ))) := by
       apply (ENNReal.ofReal_lt_ofReal_iff (by positivity)).mpr
-      nlinarith [mul_pos (mul_pos hκ hδ) hNpos]
+      linarith only [hδ, hκ, hs, hNpos, mul_pos (mul_pos hκ hδ) hNpos]
     _ = ENNReal.ofReal κ * ENNReal.ofReal (δ * (N : ℝ)) :=
       ENNReal.ofReal_mul hκ.le
     _ ≤ ENNReal.ofReal κ * volume (operatorLevelSet T (f N) (α N)) := by gcongr
@@ -241,12 +240,12 @@ theorem scaledCounterexampleModular_le_secant (Φ : YoungFunction) {a : ℝ} (ha
     scaledCounterexampleModular Φ a N ≤
       (a * (Φ (Real.exp (a + C + (N : ℝ) ^ 2)) /
         Real.exp (a + C + (N : ℝ) ^ 2))) * ((N : ℝ) / Real.log (N : ℝ)) := by
-  have hlogpos : 0 < Real.log (N : ℝ) := by linarith
+  have hlogpos : 0 < Real.log (N : ℝ) := by linarith only [hlog]
   have hc : Continuous (fun x ↦ a * (packetSum N x / Real.log (N : ℝ))) :=
     ((continuous_packetSum N).div_const _).const_mul a
   have hs : HasCompactSupport (fun x ↦ a * (packetSum N x / Real.log (N : ℝ))) :=
     (packetSum_hasCompactSupport N).comp_left
-      (g := fun t : ℝ ↦ a * (t / Real.log (N : ℝ))) (by simp)
+      (g := fun t : ℝ ↦ a * (t / Real.log (N : ℝ))) (by simp only [zero_div, mul_zero])
   have hn : ∀ x, 0 ≤ a * (packetSum N x / Real.log (N : ℝ)) :=
     fun x ↦ mul_nonneg ha.le (div_nonneg (packetSum_nonneg N x) hlogpos.le)
   have hM : ∀ x, a * (packetSum N x / Real.log (N : ℝ)) ≤
@@ -256,16 +255,16 @@ theorem scaledCounterexampleModular_le_secant (Φ : YoungFunction) {a : ℝ} (ha
       a * (packetSum N x / Real.log (N : ℝ)) ≤ a * packetSum N x :=
         mul_le_mul_of_nonneg_left (div_le_self (packetSum_nonneg N x) hlog) ha.le
       _ ≤ Real.exp a * Real.exp (C + (N : ℝ) ^ 2) :=
-        mul_le_mul (by linarith [Real.add_one_le_exp a])
+        mul_le_mul (by linarith only [Real.add_one_le_exp a])
           (packetSum_le_exp hC hbound hN x) (packetSum_nonneg N x) (Real.exp_nonneg a)
-      _ = Real.exp (a + C + (N : ℝ) ^ 2) := by rw [← Real.exp_add]; congr 1; ring
+      _ = Real.exp (a + C + (N : ℝ) ^ 2) := by rw [← Real.exp_add]; congr 1; ac_rfl
   rw [scaledCounterexampleModular_eq Φ a hN]
   calc
     (∫ x : ℝ, Φ (a * (packetSum N x / Real.log (N : ℝ)))) ≤
         (Φ (Real.exp (a + C + (N : ℝ) ^ 2)) / Real.exp (a + C + (N : ℝ) ^ 2)) *
           ∫ x : ℝ, a * (packetSum N x / Real.log (N : ℝ)) :=
       Φ.integral_le_secant hc hs hn (Real.exp_pos _) hM
-    _ = _ := by rw [integral_const_mul, integral_div, packetSum_integral]; ring
+    _ = _ := by rw [integral_const_mul, integral_div, packetSum_integral]; ac_rfl
 
 /-- Fixed scalar factors preserve modular smallness. No doubling or
 regularity assumption on the Young function beyond its definition is used. -/
@@ -281,7 +280,7 @@ theorem scaledCounterexampleModular_isLittleO (Φ : YoungFunction)
     (Real.tendsto_log_atTop.comp hcast).eventually_ge_atTop 1] with N hs hNr hlog
   change 1 ≤ Real.log (N : ℝ) at hlog
   have hN : 0 < N := by exact_mod_cast (lt_of_lt_of_le zero_lt_one hNr)
-  have hl : 0 < Real.log (N : ℝ) := by linarith
+  have hl : 0 < Real.log (N : ℝ) := by linarith only [hlog]
   have hn : 0 ≤ scaledCounterexampleModular Φ a N := by
     rw [scaledCounterexampleModular_eq Φ a hN]
     exact integral_nonneg (fun x ↦ Φ.nonneg
@@ -308,8 +307,8 @@ noncomputable def counterexampleHeight (c : ℝ) (N : ℕ) : ℝ :=
 theorem eventually_counterexampleHeight_pos {c : ℝ} (hc : 0 < c) :
     ∀ᶠ N : ℕ in atTop, 0 < counterexampleHeight c N := by
   filter_upwards [eventually_ge_atTop 2] with N hN
-  have hNr : (1 : ℝ) < (N : ℝ) := by exact_mod_cast (lt_of_lt_of_le (by norm_num : 1 < 2) hN)
-  exact div_pos (mul_pos hc (Real.log_pos hNr)) (by linarith)
+  have hNr : (1 : ℝ) < (N : ℝ) := by exact_mod_cast (lt_of_lt_of_le (by decide +kernel : 1 < 2) hN)
+  exact div_pos (mul_pos hc (Real.log_pos hNr)) (by linarith only [hNr])
 
 theorem modularMass_counterexample_height (Φ : YoungFunction) (c : ℝ) (N : ℕ) :
     modularMass Φ (counterexampleL0Infinity N) (counterexampleHeight c N) =
@@ -320,7 +319,7 @@ theorem modularMass_counterexample_height (Φ : YoungFunction) (c : ℝ) (N : �
   congr 1
   change ‖counterexample N x‖ / (c * Real.log (N : ℝ) / (N : ℝ)) = _
   simp only [div_eq_mul_inv, mul_inv_rev, inv_inv]
-  ring
+  ac_rfl
 
 theorem modularMass_counterexample_height_isLittleO (Φ : YoungFunction)
     (hΦ : GrowsSlowerThanEndpoint Φ) {c : ℝ} (hc : 0 < c) :
@@ -345,7 +344,7 @@ theorem counterexample_nonstrict_level_subset (T : NonnegativeOperator) {c : ℝ
     unfold counterexampleHeight
     ring
   rw [heq]
-  linarith
+  linarith only [hN]
 
 /-- The exact remaining analytic input for modular failure: the paper's
 counterexample has a non-strict lower level set of measure at least `δN`

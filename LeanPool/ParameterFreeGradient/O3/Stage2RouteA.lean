@@ -89,7 +89,7 @@ lemma hasDerivAt_lineEnergy_of_ne_zero {p : ℝ} (hp : 1 < p) {d : ℕ}
     (x h : Point d) (t : ℝ) (hz : x + t • h ≠ 0) :
     HasDerivAt (lineEnergy p x h)
       (pairing (dualityMap p (x + t • h)) h) t := by
-  have hp0 : p ≠ 0 := by linarith
+  have hp0 : p ≠ 0 := by linarith only [hp]
   have hS : linePower p x h t ≠ 0 := by
     exact (lpPower_pos_of_ne_zero hz).ne'
   have hpow := (hasDerivAt_linePower hp x h t).rpow_const
@@ -187,7 +187,7 @@ lemma hasDerivAt_scalarJ_zero {q : ℝ} (hq : 2 < q) :
   filter_upwards [self_mem_nhdsWithin] with t ht
   have ht0 : t ≠ 0 := by simpa using ht
   simp only [zero_add, O3.Experimental.scalarJ, abs_zero, smul_eq_mul]
-  rw [Real.zero_rpow (by linarith : q - 2 ≠ 0), zero_mul, sub_zero]
+  rw [Real.zero_rpow (by linarith only [hq] : q - 2 ≠ 0), zero_mul, sub_zero]
   field_simp
 
 lemma hasDerivAt_scalarJ_above_two {q u : ℝ} (hq : 2 < q) :
@@ -195,7 +195,7 @@ lemma hasDerivAt_scalarJ_above_two {q u : ℝ} (hq : 2 < q) :
       ((q - 1) * |u| ^ (q - 2)) u := by
   by_cases hu : u = 0
   · subst u
-    simpa [Real.zero_rpow (by linarith : q - 2 ≠ 0)] using
+    simpa [Real.zero_rpow (by linarith only [hq] : q - 2 ≠ 0)] using
       hasDerivAt_scalarJ_zero hq
   · exact hasDerivAt_scalarJ_of_ne_zero hu
 
@@ -288,10 +288,10 @@ lemma pairing_dualityMap_smul {q : ℝ} (hq : 1 < q) {d : ℕ}
       a * (lpNorm q h) ^ (2 : ℕ) := by
   by_cases ha : a = 0
   · subst a
-    simp [O3.Stage2RouteD.dualityMap_zero (by linarith : 0 < q), pairing]
+    simp [O3.Stage2RouteD.dualityMap_zero (by linarith only [hq] : 0 < q), pairing]
   · have hself := O3.Stage2RouteD.pairing_dualityMap_self hq (a • h)
     rw [O3.Stage2RouteD.pairing_smul_right,
-      O3.Stage2RouteC.lpNorm_smul (by linarith : 1 ≤ q)] at hself
+      O3.Stage2RouteC.lpNorm_smul (by linarith only [hq] : 1 ≤ q)] at hself
     have habs : |a| ^ (2 : ℕ) = a ^ (2 : ℕ) := sq_abs a
     rw [mul_pow, habs] at hself
     apply (mul_left_cancel₀ ha)
@@ -311,7 +311,7 @@ lemma line_duality_pair_eq_affine_of_zero {q : ℝ} (hq : 1 < q) {d : ℕ}
     funext i
     have hzi := congrFun hz i
     simp only [Pi.add_apply, Pi.smul_apply, smul_eq_mul, Pi.zero_apply] at hzi ⊢
-    linarith
+    linarith only [hzi]
   rw [hvec, pairing_dualityMap_smul hq]
 
 lemma hasDerivAt_line_duality_pair_at_zero {q : ℝ} (hq : 1 < q) {d : ℕ}
@@ -353,7 +353,7 @@ lemma hasDerivAt_lineGradientFormula_of_coordinates_ne_zero
           (linePowerPair p x h t) ^ (2 : ℕ) +
         (p - 1) * (linePower p x h t) ^ (2 / p - 1) *
           weightedSquareSum p x h t) t := by
-  have hp0 : p ≠ 0 := by linarith
+  have hp0 : p ≠ 0 := by linarith only [hp]
   have hS : linePower p x h t ≠ 0 :=
     (lpPower_pos_of_ne_zero hzvec).ne'
   have hcoeff := (hasDerivAt_linePower hp x h t).rpow_const
@@ -394,10 +394,10 @@ lemma hasDerivAt_lineGradientFormula_above_two_of_ne_zero
           (linePowerPair q x h t) ^ (2 : ℕ) +
         (q - 1) * (linePower q x h t) ^ (2 / q - 1) *
           weightedSquareSum q x h t) t := by
-  have hq0 : q ≠ 0 := by linarith
+  have hq0 : q ≠ 0 := by linarith only [hq]
   have hS : linePower q x h t ≠ 0 :=
     (lpPower_pos_of_ne_zero hzvec).ne'
-  have hcoeff := (hasDerivAt_linePower (by linarith : 1 < q) x h t).rpow_const
+  have hcoeff := (hasDerivAt_linePower (by linarith only [hq] : 1 < q) x h t).rpow_const
     (Or.inl hS) (p := 2 / q - 1)
   have hpair := hasDerivAt_linePowerPair_above_two (q := q) hq x h t
   have hprod := hcoeff.mul hpair
@@ -434,15 +434,15 @@ lemma lineGradientFormula_deriv_le_above_two {q : ℝ} (hq : 2 < q) {d : ℕ}
       (2 - q) * linePower q x h t ^ (2 / q - 2) *
         linePowerPair q x h t ^ (2 : ℕ) ≤ 0 := by
     exact mul_nonpos_of_nonpos_of_nonneg
-      (mul_nonpos_of_nonpos_of_nonneg (by linarith : 2 - q ≤ 0)
+      (mul_nonpos_of_nonpos_of_nonneg (by linarith only [hq] : 2 - q ≤ 0)
         (Real.rpow_nonneg (lpPower_nonneg q (x + t • h)) _))
       (sq_nonneg _)
   have hw := O3.Stage2RouteD.weightedHolder_upper_power hq
     (x + t • h) h hzvec
   change linePower q x h t ^ (2 / q - 1) *
       weightedSquareSum q x h t ≤ (lpNorm q h) ^ (2 : ℕ) at hw
-  have hmul := mul_le_mul_of_nonneg_left hw (by linarith : 0 ≤ q - 1)
-  linarith
+  have hmul := mul_le_mul_of_nonneg_left hw (by linarith only [hq] : 0 ≤ q - 1)
+  linarith only [hfirst, hmul]
 
 /-- Every line parameter admits an exact derivative of the actual normalized
 duality pairing, together with the sharp `(q-1)` upper bound.  The proof splits
@@ -454,9 +454,9 @@ lemma exists_hasDerivAt_line_duality_pair_le_above_two
         v ≤ (q - 1) * (lpNorm q h) ^ (2 : ℕ) := by
   by_cases hz : x + t • h = 0
   · refine ⟨(lpNorm q h) ^ (2 : ℕ),
-      hasDerivAt_line_duality_pair_at_zero (by linarith : 1 < q) x h t hz, ?_⟩
+      hasDerivAt_line_duality_pair_at_zero (by linarith only [hq] : 1 < q) x h t hz, ?_⟩
     have hn : 0 ≤ (lpNorm q h) ^ (2 : ℕ) := sq_nonneg _
-    nlinarith
+    nlinarith only [hq]
   · let v : ℝ :=
       (2 - q) * linePower q x h t ^ (2 / q - 2) *
           linePowerPair q x h t ^ (2 : ℕ) +
@@ -470,7 +470,7 @@ lemma exists_hasDerivAt_line_duality_pair_le_above_two
         (fun s : ℝ ↦ pairing (dualityMap q (x + s • h)) h) =ᶠ[nhds t]
           lineGradientFormula q x h := by
       filter_upwards [hne] with s hs
-      exact (lineGradientFormula_eq_duality_pair (by linarith : q ≠ 0)
+      exact (lineGradientFormula_eq_duality_pair (by linarith only [hq] : q ≠ 0)
         x h s hs).symm
     refine ⟨v, hformula.congr_of_eventuallyEq heq, ?_⟩
     exact lineGradientFormula_deriv_le_above_two hq x h t hz
@@ -493,7 +493,7 @@ lemma weightedTerm_le_hessianFormula {p : ℝ} (hp2 : p ≤ 2) {d : ℕ}
       (mul_nonneg (sub_nonneg.mpr hp2)
         (Real.rpow_nonneg (lpPower_nonneg p (x + t • h)) (2 / p - 2)))
       (sq_nonneg (linePowerPair p x h t))
-  linarith
+  linarith only [hfirst]
 
 /-- At the endpoint `p = 2`, the weighted Hölder bridge is an identity. -/
 lemma weightedSquareSum_two_eq {d : ℕ} (x h : Point d) (t : ℝ) :

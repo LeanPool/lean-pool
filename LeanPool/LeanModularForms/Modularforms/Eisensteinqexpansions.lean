@@ -157,7 +157,7 @@ def GammaSetOneEquiv : (Fin 2 → ℤ) ≃ (Σn : ℕ, gammaSetN n) where
 theorem q_exp_iden_2 (k : ℕ) (hk : 3 ≤ k) (hk2 : Even k) (z : ℍ) :
     ∑' x : ℤ × ℤ, 1 / ((x.1 : ℂ) * z + x.2) ^ k =
       2 * (riemannZeta (k)) + 2 * ∑' c : ℕ+, ∑' d : ℤ, 1 / (c * (z : ℂ) + d) ^ k := by
-  have hkk : 1 < (k ) := by linarith
+  have hkk : 1 < (k ) := by linarith only [hk]
   rw [Summable.tsum_prod, sum_int_even]
   · simp only [Int.cast_zero, zero_mul, zero_add, one_div, Int.cast_natCast, add_left_inj]
     rw [sum_int_even]
@@ -172,12 +172,12 @@ theorem q_exp_iden_2 (k : ℕ) (hk : 3 ≤ k) (hk2 : Even k) (z : ℍ) :
       simp only [PNat.pow_coe, Nat.cast_pow]
       rw [zeta_nat_eq_tsum_of_gt_one hkk, ← tsum_pNat _ (by simp; omega)]
       simp only [one_div]
-    · simp_all
+    · simp_all only [Int.cast_neg, Even.neg_pow, implies_true]
     have := (Complex.summable_one_div_nat_cpow (p := k)).mpr (by simp [hkk])
     simp only [one_div] at *
     norm_cast at *
     apply Summable.of_nat_of_neg_add_one
-    · simp_all
+    · simp_all only [Nat.cast_pow, Int.cast_pow, Int.cast_natCast]
     rw [← summable_nat_add_iff 1] at this
     apply this.congr
     intro b
@@ -196,7 +196,7 @@ theorem q_exp_iden_2 (k : ℕ) (hk : 3 ≤ k) (hk2 : Even k) (z : ℍ) :
     have := Even.neg_pow hk2 (n* (z : ℂ) + d)
     rw [←this]
     ring
-  · have hkz : 3 ≤ (k : ℤ) := by linarith
+  · have hkz : 3 ≤ (k : ℤ) := by linarith only [hk]
     refine Summable.prod (f := fun x : ℤ × ℤ => 1 / ((x.1 : ℂ) * z + x.2) ^ k) ?_
     rw [← (piFinTwoEquiv fun _ => ℤ).summable_iff]
     apply Summable.of_norm
@@ -205,7 +205,7 @@ theorem q_exp_iden_2 (k : ℕ) (hk : 3 ≤ k) (hk2 : Even k) (z : ℍ) :
     simp_rw [eisSummand]
     simp only [Fin.isValue, zpow_neg, zpow_natCast, norm_inv, norm_pow, one_div,
       piFinTwoEquiv_apply, comp_apply]
-  · have hkz : 3 ≤ (k : ℤ) := by linarith
+  · have hkz : 3 ≤ (k : ℤ) := by linarith only [hk]
     rw [← (piFinTwoEquiv fun _ => ℤ).summable_iff]
     apply Summable.of_norm
     apply (EisensteinSeries.summable_norm_eisSummand hkz z).congr
@@ -223,9 +223,9 @@ lemma EQ1 (k : ℕ) (hk : 3 ≤ (k : ℤ)) (hk2 : Even k) (z : ℍ) : ∑' (x : 
     1 / (x 0 * (z : ℂ) + x 1) ^ ↑k = 2 * riemannZeta ↑k +
     2 * ((-2 * ↑π * Complex.I) ^ k / ↑(k - 1)!) *
      ∑' (n : ℕ+), ↑((σ (k - 1)) ↑n) * cexp (2 * ↑π * Complex.I * ↑z * ↑↑n) := by
-  rw [EQ0, q_exp_iden_2 k (by linarith) hk2]
+  rw [EQ0, q_exp_iden_2 k (by linarith only [hk]) hk2]
   simp only [one_div, neg_mul, add_right_inj]
-  have h1 (c : ℕ+) := q_exp_iden k (by linarith) (c • z)
+  have h1 (c : ℕ+) := q_exp_iden k (by linarith only [hk]) (c • z)
   simp only [Nat.ofNat_le_cast, natPosSMul_apply, one_div, neg_mul] at *
   conv =>
     enter [1,2,1]
@@ -247,7 +247,7 @@ lemma EQ1 (k : ℕ) (hk : 3 ≤ (k : ℤ)) (hk2 : Even k) (z : ℍ) : ∑' (x : 
       simp only [sigmaAntidiagonalEquivProd, PNat.mk_coe, Equiv.coe_fn_mk]
       apply (summable_auxil_1 (k - 1) z).congr
       intro b
-      simp [divisorsAntidiagonalFactors]
+      simp only [divisorsAntidiagonalFactors, comp_apply, PNat.mk_coe]
     simp only [Fin.isValue, piFinTwoEquiv_symm_apply, Fin.cons_zero, Fin.cons_one]
     intro b
     have A3 := a1 k b z
@@ -286,13 +286,13 @@ lemma EQ22 (k : ℕ) (hk : 3 ≤ (k : ℤ)) (z : ℍ) :
           enter [2,1]
           ext c
           rw [show ((0 : ℂ)^ k)⁻¹ = 0 by simp; omega]
-          simp
+          simp only [zero_mul]
         conv =>
           enter [1,1]
           ext c
           rw [gammaSetN_eisSummand k z, show (((0 : ℕ) : ℂ)^ (k : ℤ))⁻¹ = 0 by simp; omega]
-          simp
-        simp
+          simp only [zero_mul]
+        simp only [tsum_zero]
       conv =>
         enter [1,1]
         ext c
@@ -314,7 +314,7 @@ lemma EQ22 (k : ℕ) (hk : 3 ≤ (k : ℤ)) (z : ℍ) :
     apply (EisensteinSeries.summable_norm_eisSummand hk z).subtype
   have := (GammaSetOneEquiv.symm.summable_iff ( f := fun v => eisSummand k v z)).mpr ?_
   · apply this.congr
-    simp_all
+    simp_all only [Nat.ofNat_le_cast, one_div, comp_apply, implies_true]
   exact (EisensteinSeries.summable_norm_eisSummand hk z).of_norm
 
 lemma EQ2 (k : ℕ) (hk : 3 ≤ (k : ℤ)) (z : ℍ) : ∑' (x : Fin 2 → ℤ),

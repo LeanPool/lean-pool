@@ -50,7 +50,7 @@ theorem norm_krauseLaceyLocalizedPiece_le
     have ha : positiveDyadicAmplitude j y = 0 := by
       by_contra hn
       exact hy (positiveDyadicAmplitude_support_subset j hn)
-    simp [F, ha]
+    simp only [ha, zero_mul, F]
   have hid : krauseLaceyLocalizedPiece 1 j I f x = ∫ y in s, F y := by
     unfold krauseLaceyLocalizedPiece
     simp only [one_mul]
@@ -61,12 +61,12 @@ theorem norm_krauseLaceyLocalizedPiece_le
     have ha := norm_positiveDyadicAmplitude_le j y
     have hi : ‖I.centralThird.indicator f (x - y)‖ ≤ M := by
       by_cases hm : x - y ∈ I.centralThird
-      · simpa [Set.indicator_of_mem hm] using hf (x - y)
-      · simp [Set.indicator_of_notMem hm, hM]
+      · simpa only [Set.indicator_of_mem hm] using hf (x - y)
+      · simp only [Set.indicator_of_notMem hm, norm_zero, hM]
     calc
       ‖F y‖ = ‖positiveDyadicAmplitude j y‖ *
           ‖I.centralThird.indicator f (x - y)‖ := by
-        simp only [F, norm_mul, norm_phase, mul_one]
+        simp only [norm_mul, norm_phase, mul_one, F]
       _ ≤ (positiveDyadicAmplitudeBound / R) * M :=
         mul_le_mul ha hi (norm_nonneg _) (div_nonneg hD hR.le)
   have hset := norm_setIntegral_le_of_norm_le_const
@@ -76,7 +76,7 @@ theorem norm_krauseLaceyLocalizedPiece_le
   have hvol : volume.real s = 3 * R / 4 := by
     dsimp [s]
     simp only [Measure.real, Real.volume_Icc]
-    rw [ENNReal.toReal_ofReal (by linarith : 0 ≤ R - R / 4)]
+    rw [ENNReal.toReal_ofReal (by linarith only [hR] : 0 ≤ R - R / 4)]
     ring
   rw [hid]
   calc
@@ -87,7 +87,7 @@ theorem norm_krauseLaceyLocalizedPiece_le
       field_simp
     _ ≤ positiveDyadicAmplitudeBound * M := by
       have hDM : 0 ≤ positiveDyadicAmplitudeBound * M := mul_nonneg hD hM
-      nlinarith
+      linarith only [hDM]
 
 /-- Fixed-scale localized `L∞` endpoint. The exact scale relation supplies
 support in each parent interval, and pairwise-disjoint parents ensure that at

@@ -98,6 +98,7 @@ public import LeanPool.Zeta5Irrational.Stirling
 public import LeanPool.Zeta5Irrational.Table.Bracket
 public import LeanPool.Zeta5Irrational.Table.Common
 public import LeanPool.Zeta5Irrational.Table.Intervals
+public import LeanPool.Zeta5Irrational.Table.RationalSeries
 public import LeanPool.Zeta5Irrational.Table.Tail
 public import LeanPool.Zeta5Irrational.Table.U00
 public import LeanPool.Zeta5Irrational.Table.U01

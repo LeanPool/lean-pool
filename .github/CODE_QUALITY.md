@@ -9,13 +9,54 @@ Lean Pool uses deterministic CI for mechanical quality checks and LLM review for
 [`lean_action_ci.yml`](workflows/lean_action_ci.yml) currently runs:
 
 - `lake exe mk_all --module --check` (the pool and project indexes must use `module` and `public import`)
-- `lake build LeanPool`
+- `lake build LeanPool`, with a 60-minute hard limit on every Lean process
 - a warning scan over the build log
+- a per-file build-time limit: every added or modified `LeanPool` file must build in under 600 s
+- the `LeanPoolLinters` compiler plugin, loaded by Lake for every LeanPool module
 - `lake exe runLinter` on `LeanPool`
 - `lake exe lint-style` on `LeanPool`
 - `python -m lean_pool.quality --repo ..`
 
+With `warningAsError = true` in `lakefile.toml`, every Lean warning is a
+compile error (locally too). The warning scan over the build log remains for
+warnings Lake itself prints.
+
+Build-time limits follow Tau Ceti's CI performance gate.
+[`build_time_limits.py`](../python/lean_pool/build_time_limits.py) runs every CI
+`lake build` in its own process group and stops any Lean process still running after
+60 minutes, which fails the build. Before returning, it cleans up its process group
+and the descendants it observed, including after reparenting. If the process table
+cannot be read, the build is stopped rather than left unwatched.
+
+After the build, it reads Lake's per-module times from the log and fails when a file
+the PR adds or modifies took more than 600 s. Times are Lake's wall-clock times on
+GitHub's 4-vCPU runners. Existing files are checked only once a PR changes them.
+
+After all cache and artifact restores, `prepare` removes the compiled outputs
+of the added or modified modules that job is responsible for timing. This happens
+even for a cache produced under the same policy: an untouched file in that cache
+need not have passed the changed-file limit. Each changed module must emit a
+fresh successful build timing in its responsible job; missing timings and cache
+replays fail that check.
+
+Shards check their assigned modules. Assembly excludes projects listed in the
+same run's shard matrix and checks all remaining changed modules; the canonical
+gate requires every shard and assembly to succeed. Single and rebased root builds
+check all changed modules. Untouched modules can still reuse compiled output.
+
+Reused PR, rebase and queue artifacts must still match `build_time_limits.py`.
+That match does not replace the fresh timing required for a changed module.
+
 The Lean workflow runs on Lean, Lake, project metadata, quality-checker, and workflow changes. It restores and saves Lake caches and pulls Mathlib oleans with `lake exe cache get` when the cache is cold.
+
+The compiler plugin enforces the 200-line proof cap during the normal build, using original
+source syntax and elaborated types rather than a Python text heuristic. Both tactic and term
+proofs are checked, including proofs embedded in definitions, instances, and examples; tactic
+blocks constructing data are not proofs. Declaration headers and comment-only lines are
+excluded. Blank lines count, except inside block comments. Only the outermost overlong proof
+is reported when proof ranges overlap. The existing build-warning gate rejects these warnings.
+The plugin is build tooling under `scripts/ci/`, not a mathematical import of project modules.
+Its pinned-Lean regression test runs in all three compiled-artifact CI test steps.
 
 Lean Pool uses one `public import LeanPool.<Project>.Imports` per project in
 `LeanPool.lean`. Each generated `LeanPool/<Project>/Imports.lean` publicly imports
@@ -41,7 +82,6 @@ Current checks:
 - Lake configuration does not pass forbidden option overrides, trace options, linter disables, or heartbeat / recursion-depth overrides
 - the style-linter allowlist `scripts/nolints-style.txt` has no active entries
 - no Lean content file exceeds 10000 non-blank, non-comment code lines
-- no theorem/lemma proof body exceeds 200 non-blank, non-comment code lines, using the current text heuristic
 - `LeanPool/projects/` contains one valid YAML mapping per project, with its filename matching the unique slug; duplicate fields, nested cards, and mixed old/new registries fail validation
 - project entries have required fields: `slug`, `title`, `entry_module`, `authors`, `source`, `status`, `provenance`, `main_declarations`, and `tags`
 - project entries also carry documentation metadata: `summary`, `branch`, `main_results`, and `msc`
@@ -156,5 +196,4 @@ The following items are documented goals but are not fully implemented or enforc
 - controlled tag vocabulary for `LeanPool/projects/*.yaml`; tags are currently only checked as nonempty strings
 - generated domain/status indexes
 - directory index-file policy: every directory under `LeanPool/` containing Lean files should have an import-only index file with a module docstring
-- AST-aware proof-size measurement; the current 200-line proof cap uses a text heuristic
 - repository-wide slowest-proof reports and persisted performance trend artifacts

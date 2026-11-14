@@ -13,7 +13,6 @@ import LeanPool.PFR.ForMathlib.Entropy.Group
 import LeanPool.PFR.ForMathlib.FiniteRange.IdentDistrib
 import LeanPool.PFR.Mathlib.MeasureTheory.Measure.ProbabilityMeasure
 import LeanPool.ZhangYeungInequality.PFR.Mathlib.Data.Set.Basic
-import LeanPool.ZhangYeungInequality.PFR.Mathlib.MeasureTheory.Measure.Dirac
 import LeanPool.ZhangYeungInequality.PFR.Mathlib.MeasureTheory.Measure.Prod
 import LeanPool.ZhangYeungInequality.PFR.Mathlib.MeasureTheory.Measure.Real
 import LeanPool.ZhangYeungInequality.PFR.Mathlib.Probability.ConditionalProbability
@@ -39,6 +38,13 @@ Here we define Ruzsa distance and establish its basic properties.
 * `ent_bsg`: If $Z=A+B$, then
   $$\sum_{z} P[Z=z] d[(A | Z = z); (B | Z = z)] \leq 3 I[A :B] + 2 H[Z] - H[A] - H[B]$$
 -/
+
+-- Avoid repeated searches for empty or singleton types during simplification.
+attribute [-simp] IsEmpty.forall_iff Finset.univ_eq_empty forall_const
+  Function.const_inj Function.const_eq_zero Function.const_eq_one Set.range_const
+  exists_const IsEmpty.exists_iff add_eq_zero mul_eq_one
+  ProbabilityTheory.iIndepFun.of_subsingleton ProbabilityTheory.iIndep.of_subsingleton
+  ProbabilityTheory.iIndepSets.of_subsingleton
 
 public section
 

@@ -9,11 +9,6 @@ public import LeanPool.DomainTheory.Neighborhood.Example43
 public import LeanPool.DomainTheory.Neighborhood.Exercise326
 public import LeanPool.DomainTheory.Neighborhood.Exercise511
 public import Mathlib.Computability.PartrecBasis
-import Mathlib.Data.Rat.Cast.Order
-import Mathlib.Tactic.NormNum.Abs
-import Mathlib.Tactic.NormNum.DivMod
-import Mathlib.Tactic.NormNum.OfScientific
-import Mathlib.Tactic.NormNum.Pow
 
 /-!
 # Theorem 5.6 (Scott 1981, PRG-19, §5) — the FULL closure: partial recursive ⟹
@@ -214,7 +209,8 @@ theorem component_tupleMap : ∀ (n : ℕ) (gs : Fin n → ApproximableMap 𝒩 
   | 0, _, _, i, hi => absurd hi (Nat.not_lt_zero i)
   | n + 1, gs, z, 0, hi => by
       rw [tupleMap_succ, toElementMap_comp, toElementMap_paired, component_push_zero]
-      exact congrArg (fun w => (gs w).toElementMap z) (Fin.ext (by simp))
+      exact congrArg (fun w => (gs w).toElementMap z) (Fin.ext (by simp only [
+        Fin.coe_ofNat_eq_mod, Nat.zero_mod]))
   | n + 1, gs, z, i + 1, hi => by
       rw [tupleMap_succ, toElementMap_comp, toElementMap_paired, component_push_succ,
         component_tupleMap n (fun j => gs j.succ) z i (Nat.lt_of_succ_lt_succ hi)]
@@ -280,9 +276,9 @@ theorem lamDef_zero : LamDef (strictGuardN 0 (constMap 𝒩 (natElem 0)))
 theorem lamDef_succ : LamDef (strictGuardN 1 (succMap.comp (projN N 0)))
     ((fun v => Nat.succ v.head : List.Vector ℕ 1 → ℕ) : List.Vector ℕ 1 →. ℕ) :=
   lamDef_total _ _ (fun v => by
-    rw [toElementMap_comp, toElementMap_projN, component_vecElem_lt v (by norm_num),
+    rw [toElementMap_comp, toElementMap_projN, component_vecElem_lt v (by decide),
       succMap_natElem]
-    simp_all)
+    simp_all only [Fin.zero_eta, Fin.isValue, List.Vector.get_zero, Nat.succ_eq_add_one])
 
 /-- `get i : Vector ℕ n → ℕ`, the `i`-th projection. -/
 theorem lamDef_get {n : ℕ} (i : Fin n) :
@@ -376,8 +372,8 @@ theorem mem_mOfFn : ∀ {n : ℕ} (p : Fin n → Part ℕ) (w : List.Vector ℕ 
         have hu' := (mem_mOfFn (fun i => p i.succ) u).mp hu
         intro i
         refine Fin.cases ?_ ?_ i
-        · simpa using ha
-        · intro k; simpa using hu' k
+        · simpa only [List.Vector.get_zero, List.Vector.head_cons] using ha
+        · intro k; simpa only [List.Vector.get_cons_succ] using hu' k
       · intro hall
         refine ⟨w.head, ?_, ?_⟩
         · have := hall 0; rwa [List.Vector.get_zero] at this
@@ -813,7 +809,8 @@ theorem lamDef_rfind {n : ℕ} {f : List.Vector ℕ (n + 1) → ℕ}
   · intro v hv
     rw [findMap_vecElem]
     have hdiv : ∀ k, f (k ::ᵥ v) ≠ 0 := by
-      simp_all
+      simp_all only [Nat.rfind_dom, Part.mem_some_iff, true_eq_decide_iff, Part.some_dom,
+        implies_true, and_true, not_exists, ne_eq, not_false_eq_true]
     exact searchMap_diverge φf hf v hdiv 0
 
 end Rfind

@@ -54,7 +54,8 @@ lemma circleParam_closed (z₀ : ℂ) (r : ℝ) (a b : ℝ) (hab : a < b) :
   simp only [circleParam]
   have hne : (b : ℂ) - a ≠ 0 := by
     simp only [sub_ne_zero, Complex.ofReal_inj, ne_eq]; exact ne_of_gt hab
-  simp_all
+  simp_all only [ne_eq, sub_self, zero_div, mul_zero, exp_zero, mul_one, not_false_eq_true,
+    div_self, exp_two_pi_mul_I]
 
 lemma circleParam_dist (z₀ : ℂ) (r : ℝ) (hr : 0 ≤ r)
     (a b : ℝ) (_hab : a < b) (t : ℝ) :
@@ -339,10 +340,10 @@ theorem winding_of_S1_curve_eq_degree (z₀ : ℂ) (a b : ℝ) (_hab : a < b)
     have h2 := h1.const_mul I
     have h3 : HasDerivAt (fun u => exp (I * (θ u : ℂ)))
         (exp (I * (θ t : ℂ)) * (I * (Complex.ofReal (deriv θ t)))) t :=
-      ((hasDerivAt_exp _).scomp t h2).congr_deriv (by rw [smul_eq_mul]; ring)
+      ((hasDerivAt_exp _).scomp t h2).congr_deriv (by rw [smul_eq_mul]; ac_rfl)
     have h4 := (hasDerivAt_const t z₀).add h3
     simp only [zero_add] at h4
-    exact h4.congr_deriv (by ring)
+    exact h4.congr_deriv (by ac_rfl)
   have h_integrand : ∀ t,
       (γ t - z₀)⁻¹ * deriv γ t =
       I * (Complex.ofReal (deriv θ t)) := by
@@ -368,8 +369,8 @@ theorem winding_of_S1_curve_eq_degree (z₀ : ℂ) (a b : ℝ) (_hab : a < b)
         (fun x _ => hasDerivAt_ofReal_comp θ x (hθ_diff x)) h_ofReal_int
     rw [h_ftc,
       show (θ b : ℂ) - (θ a : ℂ) = ((θ b - θ a : ℝ) : ℂ) from
-        by push_cast; ring,
-      hθ_change]; push_cast; ring
+        by push_cast; ac_rfl,
+      hθ_change]; push_cast; ac_rfl
   have h_S1 : ∀ t, ‖γ t - z₀‖ = 1 := by
     intro t; simp only [γ, add_sub_cancel_left, mul_comm I]; exact norm_exp_ofReal_mul_I _
   have hint_const : ∀ ε > 0, ε < 1 →
