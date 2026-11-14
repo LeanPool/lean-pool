@@ -7,7 +7,7 @@ module
 
 public import LeanPool.GKPCarry.Definitions
 import Mathlib.Data.List.Monad
-import Mathlib.Data.Nat.SuccPred
+import Mathlib.Order.SuccPred.Nat
 import Mathlib.Tactic.IntervalCases
 
 /-!

@@ -16,6 +16,9 @@ public import LeanPool.NandakumarRamanaRao.HumanVerification.CauchyCrofton.Polyg
 public import LeanPool.NandakumarRamanaRao.HumanVerification.CauchyCrofton.PolygonHausdorff
 public import LeanPool.NandakumarRamanaRao.HumanVerification.CauchyCrofton.Radial
 public import LeanPool.NandakumarRamanaRao.HumanVerification.CauchyCrofton.Theorem
+import Mathlib.Analysis.SpecialFunctions.Trigonometric.Arctan
+import Mathlib.MeasureTheory.Covering.Besicovitch
+import Mathlib.Tactic.Positivity.Finset
 
 /-! Supporting modules for Equal-area and equal-perimeter convex partitions. -/
 

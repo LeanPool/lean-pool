@@ -4,14 +4,20 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Boris Alexeev
 -/
 module
+public import Mathlib.Topology.Connected.Separation
+public import Mathlib.Tactic.NormNum.Parity
+public import Mathlib.Topology.Algebra.Group.Matrix
+public import Mathlib.Geometry.Manifold.Instances.Icc
+-- Reuse Mathlib's congruence helper for `LinearEquiv.toContinuousLinearEquiv`.
+import all Mathlib.Algebra.Module.ZLattice.Summable -- shake: keep
+import all LeanPool.HopfProblem.CuspFibre.CuspCentralHomology2
 
-public import LeanPool.HopfProblem.Prelude
+public import LeanPool.HopfProblem.InternalPrelude
 public import LeanPool.HopfProblem.TorusHomology.PeriodTorusHigherHomology6
 import all LeanPool.HopfProblem.Recognition.Smale1
 import all LeanPool.HopfProblem.Recognition.Smale2
 import all LeanPool.HopfProblem.Recognition.Smale3
 import all LeanPool.HopfProblem.Recognition.Smale4
-import all LeanPool.HopfProblem.TorusHomology.PeriodTorusHigherHomology6
 
 /-!
 # Hopf problem: recognition · smale 5
@@ -22,10 +28,8 @@ Supporting definitions and proofs for this stage of the six-sphere construction.
 
 open Set Function Filter Manifold Topology
 
-open scoped BigOperators CategoryTheory Complex.UnitDisc ComplexConjugate ContDiff ContinuousMap
-  Convolution ENNReal EuclideanSpace Fin.NatCast InnerProductSpace Interval Matrix MatrixGroups
-  Modular NNReal Pointwise RealInnerProductSpace TensorProduct UniformConvergence Uniformity
-  UpperHalfPlane
+open scoped BigOperators ComplexConjugate ContDiff ContinuousMap ENNReal EuclideanSpace Fin.NatCast
+  InnerProductSpace Interval Matrix NNReal Pointwise RealInnerProductSpace
 
 universe u v
 
@@ -322,7 +326,7 @@ private theorem
         mul_le_mul hβx (hbound x hx) (norm_nonneg _) (by positivity)
       _ ≤ ((a + b * R : ℝ≥0) : ℝ) * Dist.dist x y := by
         simp only [NNReal.coe_add, NNReal.coe_mul]
-        nlinarith [mul_nonneg a.coe_nonneg (dist_nonneg (x := x) (y := y))]
+        linarith only [mul_nonneg a.coe_nonneg (dist_nonneg (x := x) (y := y))]
   apply LipschitzWith.of_dist_le_mul
   intro x y
   by_cases hx : x ∈ S
@@ -1044,11 +1048,11 @@ private theorem Smale.SmoothRadial.fderiv_radialMap_injective {N : Type*} [Norme
       real_inner_self_eq_norm_sq, real_inner_comm v x, inner_zero_right] at heq
     have hd : 0 ≤ deriv φ (‖x‖ ^ 2) := hmono.deriv_nonneg
     have hnonneg : 0 ≤ 2 * deriv φ (‖x‖ ^ 2) * (Inner.inner ℝ v x) ^ 2 := by positivity
-    have hterm : φ (‖x‖ ^ 2) * ‖v‖ ^ 2 ≤ 0 := by nlinarith
+    have hterm : φ (‖x‖ ^ 2) * ‖v‖ ^ 2 ≤ 0 := by linarith only [heq, hnonneg]
     have hsq : ‖v‖ ^ 2 ≤ 0 := by
       by_contra hn
       exact (not_lt_of_ge hterm) (mul_pos (hpos _) (lt_of_not_ge hn))
-    exact norm_eq_zero.mp (by nlinarith [norm_nonneg v])
+    exact norm_eq_zero.mp (by nlinarith only [hsq, norm_nonneg v])
   intro v w hvw
   have hsub : fderiv ℝ (radialMap φ) x (v - w) = 0 := by rw [map_sub, hvw, sub_self]
   exact sub_eq_zero.mp (hzero (v - w) hsub)
@@ -1114,7 +1118,7 @@ private theorem Degree.DiskShrinking.scale_pos {a : ℝ} (ha : 0 < a) (ha₁ : a
 
 private theorem Degree.DiskShrinking.scale_monotone {R a : ℝ} (hR : 1 < R) (ha₁ : a ≤ 1) :
     Monotone (scale R a) := by
-  have hden : 0 < R ^ 2 - 1 := by nlinarith
+  have hden : 0 < R ^ 2 - 1 := by nlinarith only [hR]
   intro s t hst
   exact
     add_le_add_right
@@ -1126,7 +1130,7 @@ private theorem Degree.DiskShrinking.scale_monotone {R a : ℝ} (hR : 1 < R) (ha
 
 private theorem Degree.DiskShrinking.scale_inner {R : ℝ} (hR : 1 < R) (a : ℝ) {s : ℝ} (hs : s ≤ 1) :
     scale R a s = a := by
-  have hden : 0 < R ^ 2 - 1 := by nlinarith
+  have hden : 0 < R ^ 2 - 1 := by nlinarith only [hR]
   rw [scale,
     Real.smoothTransition.zero_of_nonpos
       (div_nonpos_of_nonpos_of_nonneg (sub_nonpos.mpr hs) hden.le)]
@@ -1135,8 +1139,8 @@ private theorem Degree.DiskShrinking.scale_inner {R : ℝ} (hR : 1 < R) (a : ℝ
 private theorem
     Degree.DiskShrinking.scale_outer {R : ℝ} (hR : 1 < R) (a : ℝ) {s : ℝ} (hs : R ^ 2 ≤ s) :
     scale R a s = 1 := by
-  have hden : 0 < R ^ 2 - 1 := by nlinarith
-  rw [scale, Real.smoothTransition.one_of_one_le ((le_div_iff₀ hden).mpr (by linarith))]
+  have hden : 0 < R ^ 2 - 1 := by nlinarith only [hR]
+  rw [scale, Real.smoothTransition.one_of_one_le ((le_div_iff₀ hden).mpr (by linarith only [hs]))]
   ring
 
 private theorem Degree.DiskShrinking.scale_one (R s : ℝ) : scale R 1 s = 1 := by
@@ -1192,7 +1196,7 @@ private theorem Degree.DiskShrinking.family_one_inner {N : Type*} [NormedAddComm
     [InnerProductSpace ℝ N] {R : ℝ} (hR : 1 < R) (a : ℝ) {x : N}
     (hx : ‖x‖ ≤ 1) : family R a (1, x) = a • x := by
   rw [family, Smale.SmoothRadial.radialMap, Smale.SmoothRadial.shrinkTimeFactor_one,
-    scale_inner hR a (by nlinarith [norm_nonneg x])]
+    scale_inner hR a (by nlinarith only [hx, norm_nonneg x])]
 
 private theorem Degree.DiskShrinking.family_origin {N : Type*} [NormedAddCommGroup N]
     [InnerProductSpace ℝ N] (R a t : ℝ) : family R a (t, (0 : N)) = 0 := by
@@ -1212,14 +1216,14 @@ private theorem
     simpa only [one_smul] using hunit hx
   obtain ⟨δ, hδ, hδT⟩ := Metric.mem_nhds_iff.mp (hT.mem_nhds h1)
   let R : ℝ := 1 + δ / 2
-  have hR : 1 < R := by dsimp [R]; linarith
+  have hR : 1 < R := by dsimp [R]; linarith only [hδ]
   have hRpos : 0 < R := zero_lt_one.trans hR
   have hRT : R ∈ T :=
     hδT
       (by
-        rw [Metric.mem_ball, Real.dist_eq, abs_of_nonneg (by dsimp [R]; linarith)]
+        rw [Metric.mem_ball, Real.dist_eq, abs_of_nonneg (by dsimp [R]; linarith only [hδ])]
         dsimp [R]
-        linarith)
+        linarith only [hδ])
   refine ⟨R, hR, ?_⟩
   intro x hx
   have hnorm : ‖R⁻¹ • x‖ ≤ 1 := by
@@ -4004,7 +4008,7 @@ private theorem Smale.CurveImmersion.exists_continuous_curve_with_endpoint_germs
   · intro t ht
     change 3 / 4 ≤ t at ht
     change (if t ≤ 1 / 4 then a t else if t ≤ 3 / 4 then mid t else b t) = b t
-    rw [ite_eq_right (show ¬t ≤ 1 / 4 by linarith)]
+    rw [ite_eq_right (show ¬t ≤ 1 / 4 by linarith only [ht])]
     by_cases hte : t = 3 / 4
     · subst t
       simpa only [ite_eq_left le_rfl] using hm₁
@@ -4027,9 +4031,9 @@ private theorem Smale.exists_smooth_curve_with_endpoint_germs {G H N : Type*} [N
     intro t ht
     rcases ht with ht | ht
     · change t ≤ 1 / 8 at ht
-      exact Or.inl (show t < 1 / 4 by linarith)
+      exact Or.inl (show t < 1 / 4 by linarith only [ht])
     · change 7 / 8 ≤ t at ht
-      exact Or.inr (show 3 / 4 < t by linarith)
+      exact Or.inr (show 3 / 4 < t by linarith only [ht])
   have hgU : ContMDiffOn 𝓘(ℝ, ℝ) J ∞ g U := by
     intro t ht
     apply ContMDiffAt.contMDiffWithinAt
@@ -4055,12 +4059,12 @@ private theorem Smale.exists_smooth_curve_with_endpoint_germs {G H N : Type*} [N
     change t ≤ 1 / 8 at ht
     exact
       (hrel.fst_eq_snd (Or.inl ht)).symm.trans
-        (hgleft (show t ∈ Set.Iic (1 / 4 : ℝ) from by change t ≤ 1 / 4; linarith))
+        (hgleft (show t ∈ Set.Iic (1 / 4 : ℝ) from by change t ≤ 1 / 4; linarith only [ht]))
   · intro t ht
     change 7 / 8 ≤ t at ht
     exact
       (hrel.fst_eq_snd (Or.inr ht)).symm.trans
-        (hgright (show t ∈ Set.Ici (3 / 4 : ℝ) from by change 3 / 4 ≤ t; linarith))
+        (hgright (show t ∈ Set.Ici (3 / 4 : ℝ) from by change 3 / 4 ≤ t; linarith only [ht]))
 
 private theorem Smale.ManifoldImmersion.exists_clean_curve_endpoint_neighborhood {G H N : Type*}
     [NormedAddCommGroup G] [NormedSpace ℝ G] [FiniteDimensional ℝ G] [TopologicalSpace H]

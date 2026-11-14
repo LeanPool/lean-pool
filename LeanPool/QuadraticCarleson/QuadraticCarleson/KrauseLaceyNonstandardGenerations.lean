@@ -74,7 +74,7 @@ theorem inner_localizedPieceLp_eq_zero_of_disjoint
     · rw [krauseLaceyLocalizedPiece_eq_zero_of_notMem 1 k I f hI hxI, inner_zero_left]
       rfl
   rw [integral_congr_ae hzero]
-  simp
+  simp only [Pi.zero_apply, integral_zero]
 
 theorem norm_sum_sq_eq_sum_of_inner_zero
     {ι E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℝ E]

@@ -69,7 +69,8 @@ theorem exists_contDiff_deriv_eq_of_integral_eq_zero {a b : ℝ} {φ : ℝ → �
     image_eq_zero_of_notMem_tsupport fun h ↦ hx (hφs h)
   rcases le_or_gt b a with hba | hab
   · -- The interval is empty, so `φ = 0` and `ψ = 0` works.
-    have hφ0' : φ = 0 := funext fun x ↦ hφ0 x (by simp [Ioo_eq_empty (not_lt.mpr hba)])
+    have hφ0' : φ = 0 := funext fun x ↦ hφ0 x (by simp only [Ioo_eq_empty (not_lt.mpr hba),
+      mem_empty_iff_false, not_false_eq_true])
     exact ⟨0, contDiff_const, HasCompactSupport.zero, by simp, by simp [hφ0']⟩
   -- The primitive of `φ` based at `a`.
   set ψ : ℝ → ℝ := fun t ↦ ∫ s in a..t, φ s with hψ_def
@@ -90,10 +91,10 @@ theorem exists_contDiff_deriv_eq_of_integral_eq_zero {a b : ℝ} {φ : ℝ → �
     refine (integral_congr (g := fun _ ↦ (0 : ℝ)) fun s hs ↦ ?_).trans integral_zero
     rcases le_or_gt s a with hsa | hsa
     · exact hφ0 s fun h ↦ h.1.not_ge hsa
-    · have h1 : s < a + εa := lt_of_le_of_lt hs.2 (max_lt (by linarith) ht)
+    · have h1 : s < a + εa := lt_of_le_of_lt hs.2 (max_lt (by linarith only [hεa]) ht)
       refine hφa ?_
       rw [Real.dist_eq, abs_of_pos (sub_pos.mpr hsa)]
-      linarith
+      linarith only [h1]
   have hright : ∀ t, b - εb < t → ψ t = 0 := by
     intro t ht
     simp only [hψ_def]
@@ -106,10 +107,10 @@ theorem exists_contDiff_deriv_eq_of_integral_eq_zero {a b : ℝ} {φ : ℝ → �
       refine (integral_congr (g := fun _ ↦ (0 : ℝ)) fun s hs ↦ ?_).trans integral_zero
       rcases le_or_gt b s with hbs | hbs
       · exact hφ0 s fun h ↦ h.2.not_ge hbs
-      · have h1 : b - εb < s := lt_of_lt_of_le (lt_min (by linarith) ht) hs.1
+      · have h1 : b - εb < s := lt_of_lt_of_le (lt_min (by linarith only [hεb]) ht) hs.1
         refine hφb ?_
         rw [Real.dist_eq, abs_of_neg (sub_neg.mpr hbs)]
-        linarith
+        linarith only [h1]
     rw [h₁, h₂, add_zero]
   have hsupp : tsupport ψ ⊆ Icc (a + εa) (b - εb) := by
     refine closure_minimal (fun t ht ↦ ⟨?_, ?_⟩) isClosed_Icc

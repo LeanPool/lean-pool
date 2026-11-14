@@ -73,7 +73,7 @@ theorem exists_exteriorSphere_of_le {x₀ y : EuclideanSpace ℝ (Fin d)} {R R' 
       rw [dist_eq_norm, this, norm_smul, hyx, Real.norm_of_nonneg hnn]
       field_simp
     have := dist_triangle x (x₀ + (R' / R) • (y - x₀)) y
-    linarith [hU x hx, dist_comm (x₀ + (R' / R) • (y - x₀)) y]
+    linarith only [hU, hx, hyy', this, hU x hx, dist_comm (x₀ + (R' / R) • (y - x₀)) y]
 
 /-- If the uniform exterior sphere condition holds, it holds with a radius no
 larger than any prescribed `R₀ > 0`. -/
@@ -103,7 +103,7 @@ theorem uniformExteriorSphere_ball {d : ℕ} (c : EuclideanSpace ℝ (Fin d)) {t
       have : x₀ + (x₀ - c) - c = (2 : ℝ) • (x₀ - c) := by rw [two_smul]; abel
       rw [dist_eq_norm, this, norm_smul, ← dist_eq_norm, hx₀t, Real.norm_two]
     have := dist_triangle (x₀ + (x₀ - c)) x c
-    linarith [dist_comm x (x₀ + (x₀ - c))]
+    linarith only [hxc, hyc, this, dist_comm x (x₀ + (x₀ - c))]
 
 section LevelSet
 
@@ -135,7 +135,7 @@ theorem le_of_norm_fderiv_sub_le {ρ : E → ℝ} (hρ : Differentiable ℝ ρ) 
   have h := (abs_le.1 hmvt).1
   rw [map_sub]
   have : Λ * ‖x - x₀‖ ^ 2 = Λ * ‖x - x₀‖ * ‖x - x₀‖ := by ring
-  linarith
+  linarith only [h]
 
 end LevelSet
 

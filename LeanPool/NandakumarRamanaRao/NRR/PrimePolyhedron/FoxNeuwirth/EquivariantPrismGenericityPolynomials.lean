@@ -8,8 +8,10 @@ module
 
 public import LeanPool.NandakumarRamanaRao.NRR.PrimePolyhedron.FoxNeuwirth.EquivariantPrismVertexParameters
 public import LeanPool.NandakumarRamanaRao.NRR.PrimePolyhedron.FoxNeuwirth.AffinePositiveRayBoundary
-public import Mathlib.Algebra.MvPolynomial.Eval
-public import Mathlib.LinearAlgebra.Matrix.Determinant.Basic
+import Mathlib.Combinatorics.Matroid.Init
+import Mathlib.Tactic.Basify
+import Mathlib.Tactic.ENatToNat
+import Mathlib.Tactic.Positivity.Finset
 
 /-!
 # Genericity polynomials for the equivariant refined prism

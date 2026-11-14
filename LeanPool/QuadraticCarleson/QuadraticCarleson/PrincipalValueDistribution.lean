@@ -109,7 +109,7 @@ theorem norm_principalValueNearIntegrand_le (f : 𝓢(ℝ, ℂ)) (x : ℝ) :
   · simp [principalValueNearIntegrand, hx]
   · rw [principalValueNearIntegrand, norm_div, Complex.norm_real, Real.norm_eq_abs]
     apply (div_le_iff₀ (abs_pos.mpr hx)).2
-    simpa only [sub_zero, mul_comm] using norm_schwartz_sub_le_derivSeminorm f 0 x
+    simpa only [mul_comm, sub_zero] using norm_schwartz_sub_le_derivSeminorm f 0 x
 
 /-- Cancellation of the constant term makes the local principal-value
 integrand integrable. -/
@@ -180,7 +180,7 @@ theorem principalValuePairing_add (f g : 𝓢(ℝ, ℂ)) :
   have hnear : principalValueNearIntegrand (f + g) =
       fun x ↦ principalValueNearIntegrand f x + principalValueNearIntegrand g x := by
     funext x
-    simp [principalValueNearIntegrand]
+    simp only [principalValueNearIntegrand, add_apply]
     ring
   have hfar : (fun x : ℝ ↦ (f + g) x / (x : ℂ)) =
     fun x ↦ f x / (x : ℂ) + g x / (x : ℂ) := by
@@ -198,12 +198,12 @@ theorem principalValuePairing_smul (a : ℂ) (f : 𝓢(ℝ, ℂ)) :
   have hnear : principalValueNearIntegrand (a • f) =
       fun x ↦ a • principalValueNearIntegrand f x := by
     funext x
-    simp [principalValueNearIntegrand, smul_eq_mul]
+    simp only [principalValueNearIntegrand, smul_apply, smul_eq_mul]
     ring
   have hfar : (fun x : ℝ ↦ (a • f) x / (x : ℂ)) =
       fun x ↦ a • (f x / (x : ℂ)) := by
     funext x
-    simp [smul_eq_mul]
+    simp only [smul_apply, smul_eq_mul]
     ring
   rw [principalValuePairing, principalValuePairing, hnear, hfar,
     integral_smul, integral_smul]

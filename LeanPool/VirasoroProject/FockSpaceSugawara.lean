@@ -11,7 +11,7 @@ public import LeanPool.VirasoroProject.VirasoroVerma
 import Mathlib.Algebra.Order.Ring.Star
 import Mathlib.Analysis.Normed.Group.Basic
 import Mathlib.Data.EReal.Operations
-import Mathlib.Data.Int.Star
+import Mathlib.Algebra.Order.Star.Int
 import Mathlib.Tactic.Positivity.Finset
 import Mathlib.Topology.Algebra.InfiniteSum.Order
 import Mathlib.Topology.MetricSpace.Bounded

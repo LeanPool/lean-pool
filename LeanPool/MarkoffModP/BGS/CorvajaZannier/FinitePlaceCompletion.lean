@@ -62,7 +62,7 @@ theorem valuation_eq_exp_neg_finitePlaceOrder
         FractionalIdeal.spanSingleton R⁰ ((algebraMap R L d)⁻¹) *
           (↑(Ideal.span {n}) : FractionalIdeal R⁰ L) := by
     rw [FractionalIdeal.coeIdeal_span_singleton,
-      FractionalIdeal.spanSingleton_mul_spanSingleton]
+      ← map_mul]
     apply congrArg (FractionalIdeal.spanSingleton R⁰)
     rw [IsFractionRing.mk'_eq_div, div_eq_mul_inv, mul_comm]
   have hspan :
@@ -124,7 +124,7 @@ theorem finitePrincipalDivisor_mul
       finitePrincipalDivisor (R := R) x + finitePrincipalDivisor (R := R) y := by
   ext v
   simp only [finitePrincipalDivisor_apply, Finsupp.add_apply, finitePlaceOrder]
-  rw [← FractionalIdeal.spanSingleton_mul_spanSingleton,
+  rw [map_mul,
     FractionalIdeal.count_mul L v]
   · exact FractionalIdeal.spanSingleton_ne_zero_iff.mpr hx
   · exact FractionalIdeal.spanSingleton_ne_zero_iff.mpr hy

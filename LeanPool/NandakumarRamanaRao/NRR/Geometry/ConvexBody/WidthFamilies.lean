@@ -6,9 +6,11 @@ Authors: Arseniy Akopyan
 module
 
 
-public import LeanPool.NandakumarRamanaRao.NRR.Geometry.ConvexBody.WidthContinuity
-public import LeanPool.NandakumarRamanaRao.NRR.Geometry.ConvexBody.WidthIdentities
 public import LeanPool.NandakumarRamanaRao.NRR.Geometry.ConvexBody.SupportFunctionParametric
+public import LeanPool.NandakumarRamanaRao.NRR.Geometry.ConvexBody.Width
+public import LeanPool.NandakumarRamanaRao.NRR.Geometry.ConvexBody.WidthIdentities
+import Mathlib.Tactic.Measurability.Init
+public import LeanPool.NandakumarRamanaRao.NRR.Geometry.ConvexBody.WidthContinuity
 /-!
 # `NRR.Geometry.ConvexBody` — width continuity for parameterized families
 

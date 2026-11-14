@@ -10,8 +10,8 @@ public import Mathlib.LinearAlgebra.Dimension.Basic
 import Mathlib.Algebra.Order.Ring.Star
 import Mathlib.Analysis.Normed.Group.Basic
 import Mathlib.Data.EReal.Operations
-import Mathlib.Data.Int.ConditionallyCompleteOrder
-import Mathlib.Data.Int.Star
+import Mathlib.Order.Int.ConditionallyCompleteOrder
+import Mathlib.Algebra.Order.Star.Int
 import Mathlib.LinearAlgebra.Basis.VectorSpace
 import Mathlib.LinearAlgebra.Dimension.FreeAndStrongRankCondition
 import Mathlib.LinearAlgebra.FreeModule.StrongRankCondition

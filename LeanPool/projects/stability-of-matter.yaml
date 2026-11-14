@@ -1,0 +1,57 @@
+slug: stability-of-matter
+title: Stability of matter and the kinetic Lieb–Thirring inequality
+summary: Formalizes stability of non-relativistic fermionic Coulomb matter in three dimensions,
+  the kinetic Lieb–Thirring inequality with Rumin's explicit coefficient, Baxter's electrostatic
+  inequality with its positive nuclear correction, and real quadratic-form stability with Coulomb
+  finiteness. Preserves the Fourier, Pauli-occupation, Hardy and Voronoi infrastructure in the
+  184-module dependency closure of these results. The separate ionization, thermodynamic-limit
+  and Thomas–Fermi developments are outside the imported scope.
+branch: mathematical physics and analysis
+entry_module: LeanPool.LiebThirring
+authors:
+- Scott Armstrong
+- Amélie Loher
+source:
+  url: https://github.com/scottnarmstrong/LiebThirring/tree/8bf4656f07f5aaa227b0b850d77b16976915bbd4
+  github_repo: scottnarmstrong/LiebThirring
+  commit: 8bf4656f07f5aaa227b0b850d77b16976915bbd4
+  arxiv: '2007.09326'
+  announcement_url: https://x.com/scottnarmstrong/status/2109220234028536270
+  announcement_date: '2026-10-11'
+license: Apache-2.0
+status: verified
+provenance: AI
+main_declarations:
+- LiebThirring.stability_of_matter
+main_results:
+- declaration: LiebThirring.stability_of_matter
+  informal: For each positive spin multiplicity and nonnegative maximum nuclear charge, one
+    positive constant bounds electron–nucleus attraction by kinetic energy, electron and nuclear
+    repulsion, and the total particle count, uniformly over normalized antisymmetric L² states,
+    charges and nuclear positions, in nonnegative extended-energy form.
+- declaration: LiebThirring.stability_of_matter_real
+  informal: With distinct nuclear positions and finite kinetic energy, Coulomb expectations
+    and nuclear repulsion are finite and the real quadratic energy is bounded below by a negative
+    constant times the total particle count, with the constant depending only on spin and maximum
+    charge.
+- declaration: LiebThirring.kinetic_lieb_thirring
+  informal: Every normalized antisymmetric L² state with positive spin multiplicity q has kinetic
+    energy at least Rumin's coefficient times q to the power minus two thirds times the integral
+    of the density to the power five thirds, including states of infinite kinetic energy.
+- declaration: LiebThirring.baxter
+  informal: For equal nonnegative nuclear charges, attraction plus the positive nearest-other-nucleus
+    correction is bounded by electron and nuclear repulsion plus nearest-nucleus control, including
+    collisions and empty configurations in nonnegative extended arithmetic.
+- declaration: LiebThirring.kineticEnergy_schwartz
+  informal: The Fourier kinetic energy of a spin-valued Schwartz state equals the sum of the
+    squared classical spatial derivative integrals, with the physical minus-Laplacian normalization.
+tags:
+- mathematical-physics
+- stability-of-matter
+- lieb-thirring
+- coulomb-energy
+- fourier-analysis
+msc:
+- 81Q10
+- 35P15
+- 46N50

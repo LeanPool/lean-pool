@@ -62,17 +62,17 @@ theorem ReflTransGen.to_finitelyManySteps {r : α → α → Prop} (h : Relation
   induction h using Relation.ReflTransGen.head_induction_on
   case refl =>
     use 0, List.Vector.cons z List.Vector.nil
-    aesop
+    aesop (rule_sets := [-default])
   case head a b a_r_b b_rS_z IH_b_z =>
     rcases IH_b_z with ⟨m, zs, b_is_head_zs, z_is_last_zs, zs_steps⟩
     use m + 1
     use a ::ᵥ zs
     simp only [List.Vector.head_cons, List.Vector.get_cons_succ, true_and]
     constructor
-    · aesop
+    · aesop (rule_sets := [-default])
     · intro i
       induction i using Fin.induction
-      all_goals aesop
+      all_goals aesop (rule_sets := [-default])
 
 /-- `a = x₀ ∧ r x₀ x₁ ∧ ... ∧ xₙ = b` implies `ReflTransGen r a b`.
 Similar to `List.relationReflTransGen_of_exists_chain` in mathlib. -/
@@ -116,7 +116,7 @@ theorem ReflTransGen.from_finitelyManySteps (r : α → α → Prop) {n : ℕ} :
       · intro i
         specialize steprel i.succ
         induction i
-        all_goals aesop
+        all_goals aesop (rule_sets := [-default])
 
 /-- `ReflTransGen r a b` is equivalent to `∃ x₀ ... xₙ, a = x₀ ∧ r x₀ x₁ ∧ ... ∧ r xₙ = b` -/
 theorem ReflTransGen.iff_finitelyManySteps (r : α → α → Prop) (x z : α) :

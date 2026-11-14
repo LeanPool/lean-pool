@@ -43,7 +43,7 @@ theorem amnr_velocity_higher_step_abs_le_of_lower_bounds
         (amnrNormalOrderConstant (N - 1) Cb (N - 1) * Cv) ^ n *
           (amnrNormalOrderConstant (N - 1) Cb (N - 1) * (Cc + Cv))) *
             V * S ^ α.length * H ^ n := by
-  have hbi : ContDiff ℝ (⊤ : ℕ∞) (fun y => b y i) := (contDiff_apply ℝ ℝ i).comp hb
+  have hbi : ContDiff ℝ (⊤ : ℕ∞) (fun y => b y i) := (contDiff_apply ℝ (fun _ => ℝ) i).comp hb
   have hv := amnrAdvectionVelocity_contDiff hb hc i
   have hjet := contDiffOn_univ.mp (amnrWord_contDiffOn_infty isOpen_univ hc.contDiffOn
     hv.contDiffOn (List.replicate n none))

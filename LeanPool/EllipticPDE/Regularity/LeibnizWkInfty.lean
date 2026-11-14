@@ -220,7 +220,7 @@ theorem tendsto_setIntegral_mul_convolution_of_measurable
       Set.indicator_of_notMem hx c
   have hctLp : MemLp ct 2 (volume : Measure (EuclideanSpace ℝ (Fin d))) := by
     change eLpNorm ct 2 volume < ⊤
-    rw [hctdef, eLpNorm_indicator_eq_eLpNorm_restrict hBm]
+    rw [hctdef, eLpNorm_indicator_eq_eLpNorm_restrict hBm.nullMeasurableSet]
     refine lt_of_le_of_lt (eLpNorm_le_of_ae_bound (C := max Mc 0)
         hcm.aestronglyMeasurable.restrict ?_) ?_
     · filter_upwards [ae_restrict_of_ae hcM'] with x hx

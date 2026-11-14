@@ -7,6 +7,8 @@ module
 
 
 public import LeanPool.NandakumarRamanaRao.NRR.Representation.ZeroSum
+import Mathlib.Algebra.Order.Module.Field
+import Mathlib.Tactic.Measurability.Init
 
 /-! Supporting modules for Equal-area and equal-perimeter convex partitions. -/
 

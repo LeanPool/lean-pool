@@ -139,7 +139,7 @@ private theorem momentWeakHolomorphicJointMollifierLowerBound_le_mollification
                 dsimp [C,
                   momentWeakHolomorphicJointMollifierLowerBound,
                   momentWeakJointCoverFiniteMinorant]
-                nlinarith [BodyScale.canonicalScale_pos K]
+                nlinarith only [BodyScale.canonicalScale_pos K, hmin]
           _ ≤ momentWeakJointCoverUpperEnvelope
               K F htransport p (q - y) :=
             momentWeakJointCoverFiniteMinorant_le_upperEnvelope
@@ -860,7 +860,7 @@ private theorem momentTorusTruncatedJetOrderDensity_le_diagonal_mul_cutoff
       apply Finset.sum_le_sum
       intro i _
       apply mul_le_mul_of_nonneg_right
-      · exact_mod_cast
+      · exact Nat.cast_le.mpr <|
           momentTruncatedJetOrder_le
             K hk F htransport p N i
       · exact Complex.normSq_nonneg _
@@ -2721,7 +2721,7 @@ private theorem momentWeakHolomorphicStrictJointTorusWeight_le_support_add
     simp only [sourceJointTimeEmbedding, sourceTorusCoverPoint,
       MatrixTorusBochnerBridge.matrixSourceCoverPotential_logarithmicPoint]
   rw [href]
-  nlinarith
+  linarith
 
 private theorem momentWeakHolomorphicStrictJoint_centered_mem_resolventDefect_range_closure
     {n : ℕ} (K : CenteredBody n)
@@ -5418,7 +5418,7 @@ private theorem convexOn_momentWeakHolomorphicEnvelopeLogPartition_Ioi_of_strict
     · have ha0 : a = 0 := hazero.symm
       have hb1 : b = 1 := by linarith
       simp only [ha0, zero_mul, hb1, one_mul, zero_add, hy]
-    · nlinarith [mul_pos hapos hx, mul_nonneg hb hy.le]
+    · linarith [mul_pos hapos hx, mul_nonneg hb hy.le]
   have hmid :=
     tendsto_momentWeakHolomorphicStrictJointLogPartition
       K F htransport p ε hε hε₀ hε₁ hm
@@ -6585,7 +6585,7 @@ private theorem nonnegative_le_exp_mul_one_sub_exp_neg
     simp only [add_neg_cancel, Real.exp_zero]
   rw [hcancel] at hexp
   have hfactor : u * Real.exp (-u) ≤ 1 - Real.exp (-u) := by
-    nlinarith
+    linarith
   calc
     u = u * 1 := by ring
     _ ≤ u * Real.exp (C - u) := by

@@ -46,12 +46,12 @@ private theorem sum_Icc_quarter_pow_tsub_le_two (k : ℕ) :
       ring
     rw [hrewrite]
     norm_num [Nat.add_sub_cancel]
-    nlinarith
+    linarith only [ih]
 
 private theorem four_pow_eq_two_pow_twice (m : ℕ) :
     (4 : ℝ) ^ m = (2 : ℝ) ^ (m * 2) := by
   induction m with
-  | zero => simp
+  | zero => simp only [pow_zero, zero_mul]
   | succ m ih =>
     rw [pow_succ, ih]
     rw [show (m + 1) * 2 = m * 2 + 2 by omega, pow_add]
@@ -191,7 +191,7 @@ theorem paperOscillatoryPacketSum_norm_le
       128 * offSupportOscillatoryConstant / ((N : ℝ) * A ^ 2) := by
   have hNr : (0 : ℝ) < N := by exact_mod_cast (by omega : 0 < N)
   have hcoef : 0 ≤ 64 * offSupportOscillatoryConstant / A ^ 2 :=
-    div_nonneg (mul_nonneg (by norm_num) offSupportOscillatoryConstant_nonneg)
+    div_nonneg (mul_nonneg (by norm_num1) offSupportOscillatoryConstant_nonneg)
       (sq_nonneg A)
   have hsum :
       ‖∑ j ∈ Finset.Icc 1 k.toNat,
@@ -222,7 +222,7 @@ theorem paperOscillatoryPacketSum_norm_le
         ∑ j ∈ Finset.Icc 1 k.toNat,
           (1 / 4 : ℝ) ^ (k.toNat - j) := by
       rw [← Finset.mul_sum]
-      ring
+      ac_rfl
     _ ≤ (N : ℝ)⁻¹ * (64 * offSupportOscillatoryConstant / A ^ 2) * 2 := by
       exact mul_le_mul_of_nonneg_left
         (sum_Icc_quarter_pow_tsub_le_two k.toNat)

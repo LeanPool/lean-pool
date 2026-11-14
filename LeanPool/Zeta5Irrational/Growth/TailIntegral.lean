@@ -21,6 +21,7 @@ import Mathlib.Tactic.Positivity.Basic
 import Mathlib.Tactic.Ring.Basic
 
 import Mathlib.Analysis.Calculus.Deriv.Add
+import Mathlib.Analysis.Calculus.Deriv.Mul
 import Mathlib.Analysis.Calculus.Deriv.Pow
 import Mathlib.Analysis.Calculus.Deriv.Comp
 import Mathlib.Analysis.Calculus.Deriv.Inv

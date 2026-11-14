@@ -142,7 +142,7 @@ theorem differentiableAt_cubeArgument {d : ℕ} (Q : TriadicCube d)
     fun _ => (cubeArgument_den_pos Q hρ₁ hρ₁₂).ne'
   have hcoord : ContDiff ℝ (⊤ : ℕ∞)
       (fun y : Vec d => y i - cubeCenter Q i) :=
-    (contDiff_apply ℝ ℝ i).sub contDiff_const
+    (contDiff_apply ℝ (fun _ => ℝ) i).sub contDiff_const
   exact ((contDiff_const.sub (hcoord.pow 2)).div contDiff_const hden).differentiable
     (by simp) x
 
@@ -222,7 +222,7 @@ theorem norm_iteratedFDeriv_two_cubeArgument_le {d : ℕ}
     ring
   rw [hfun]
   have hsq2 : ContDiff ℝ (2 : ℕ) (fun y : Vec d => (y i - cubeCenter Q i) ^ 2) := by
-    exact (((contDiff_apply ℝ ℝ i).sub contDiff_const).pow 2)
+    exact (((contDiff_apply ℝ (fun _ => ℝ) i).sub contDiff_const).pow 2)
   have hf2 : ContDiff ℝ (2 : ℕ) f :=
     hsq2.const_smul (-(1 / ((ρ₂ * cubeRadius Q) ^ 2 - (ρ₁ * cubeRadius Q) ^ 2)))
   have hg2 : ContDiff ℝ (2 : ℕ) g := by
@@ -301,7 +301,7 @@ theorem cubeFactor_contDiff_two {d : ℕ} (θ : QuantitativeTransitionProfile)
       (ρ₂ * cubeRadius Q) ^ 2 - (ρ₁ * cubeRadius Q) ^ 2 ≠ 0 :=
     fun _ => (cubeArgument_den_pos Q hρ₁ hρ₁₂).ne'
   have hcoord : ContDiff ℝ (2 : ℕ) (fun x : Vec d => x i - cubeCenter Q i) := by
-    exact ((contDiff_apply ℝ ℝ i).sub contDiff_const).of_le
+    exact ((contDiff_apply ℝ (fun _ => ℝ) i).sub contDiff_const).of_le
       (ENat.natCast_le_of_coe_top_le_withTop le_rfl 2)
   have harg : ContDiff ℝ (2 : ℕ) (cubeArgument Q ρ₁ ρ₂ i) := by
     unfold cubeArgument
@@ -405,7 +405,7 @@ theorem norm_iteratedFDeriv_one_cubeFactor_le_of_mem_scaledClosedCubeSet {d : �
         (ρ₂ * cubeRadius Q) ^ 2 - (ρ₁ * cubeRadius Q) ^ 2 ≠ 0 :=
       fun _ => (cubeArgument_den_pos Q hρ₁ hρ₁₂).ne'
     have hcoord : ContDiff ℝ (⊤ : ℕ∞) (fun y : Vec d => y i - cubeCenter Q i) :=
-      (contDiff_apply ℝ ℝ i).sub contDiff_const
+      (contDiff_apply ℝ (fun _ => ℝ) i).sub contDiff_const
     exact ((contDiff_const.sub (hcoord.pow 2)).div contDiff_const hden).differentiable
       (by simp) x
   rw [hnorm]
@@ -454,7 +454,7 @@ theorem norm_iteratedFDeriv_two_cubeFactor_le_of_mem_scaledClosedCubeSet {d : �
         (ρ₂ * cubeRadius Q) ^ 2 - (ρ₁ * cubeRadius Q) ^ 2 ≠ 0 :=
       fun _ => (cubeArgument_den_pos Q hρ₁ hρ₁₂).ne'
     have hcoord : ContDiff ℝ (2 : ℕ) (fun y : Vec d => y i - cubeCenter Q i) := by
-      exact ((contDiff_apply ℝ ℝ i).sub contDiff_const).of_le
+      exact ((contDiff_apply ℝ (fun _ => ℝ) i).sub contDiff_const).of_le
         (ENat.natCast_le_of_coe_top_le_withTop le_rfl 2)
     unfold cubeArgument
     exact (contDiff_const.sub (hcoord.pow 2)).div contDiff_const hden
@@ -474,7 +474,7 @@ theorem cubeCutoff_smooth {d : ℕ} (θ : QuantitativeTransitionProfile)
     fun _ => (cubeArgument_den_pos Q hρ₁ hρ₁₂).ne'
   have hcoord : ContDiff ℝ (⊤ : ℕ∞)
       (fun x : Vec d => x i - cubeCenter Q i) :=
-    (contDiff_apply ℝ ℝ i).sub contDiff_const
+    (contDiff_apply ℝ (fun _ => ℝ) i).sub contDiff_const
   exact (contDiff_const.sub (hcoord.pow 2)).div contDiff_const hden
 
 theorem cubeCutoff_nonneg {d : ℕ} (θ : QuantitativeTransitionProfile)
@@ -847,7 +847,7 @@ theorem norm_fderiv_cubeCutoff_le {d : ℕ}
         fun _ => (cubeArgument_den_pos Q hρ₁ hρ₁₂).ne'
       have hcoord : ContDiff ℝ (⊤ : ℕ∞)
           (fun x : Vec d => x i - cubeCenter Q i) :=
-        (contDiff_apply ℝ ℝ i).sub contDiff_const
+        (contDiff_apply ℝ (fun _ => ℝ) i).sub contDiff_const
       exact ((contDiff_const.sub (hcoord.pow 2)).div contDiff_const hden).differentiable
         (by simp) x
     have hfactor_diff : ∀ i : Fin d,

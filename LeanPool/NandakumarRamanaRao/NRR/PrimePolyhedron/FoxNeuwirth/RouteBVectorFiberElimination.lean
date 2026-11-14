@@ -6,8 +6,10 @@ Authors: Arseniy Akopyan
 module
 
 
-public import LeanPool.NandakumarRamanaRao.NRR.PrimePolyhedron.FoxNeuwirth.RouteBBadSetNullity
 public import Mathlib.MeasureTheory.Measure.Prod
+import Mathlib.Combinatorics.Matroid.Init
+import Mathlib.Tactic.Positivity.Finset
+public import LeanPool.NandakumarRamanaRao.NRR.PrimePolyhedron.FoxNeuwirth.RouteBBadSetNullity
 
 /-!
 # Route B: vector-fiber elimination of the barycentric witness

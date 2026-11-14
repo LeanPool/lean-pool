@@ -8,7 +8,7 @@ module
 
 public import Mathlib.Algebra.BigOperators.Group.Finset.Defs
 public import Mathlib.Basic.Complex.Basic
-public import Mathlib.Data.Int.ConditionallyCompleteOrder
+public import Mathlib.Order.Int.ConditionallyCompleteOrder
 public import Mathlib.Data.Int.Interval
 public import Mathlib.Order.ConditionallyCompleteLattice.Basic
 public import Mathlib.Order.Filter.AtTopBot.Defs
@@ -48,9 +48,12 @@ lemma trex (f : ℤ → ℂ) (N : ℕ) (hn : 1 ≤ N) : ∑ m ∈ Finset.Icc (-N
       rw [add_assoc]
       congr
       rw [Finset.sum_pair]
-      · ring
+      · ac_rfl
       omega
-    simp
+    simp only [neg_add_rev, Int.reduceNeg, Finset.disjoint_insert_right, Finset.mem_Icc,
+      le_add_iff_nonneg_left, Int.neg_nonneg, Int.reduceLE, add_neg_le_iff_le_add, false_and,
+      not_false_eq_true, Finset.disjoint_singleton_right, add_le_iff_nonpos_right, and_false,
+      and_self]
 
 
 lemma Icc_sum_even (f : ℤ → ℂ) (hf : ∀ n, f n = f (-n)) (N : ℕ) :

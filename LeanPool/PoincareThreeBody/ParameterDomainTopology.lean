@@ -7,8 +7,6 @@ module
 
 public import LeanPool.PoincareThreeBody.Core
 import Mathlib.Analysis.Normed.Module.Connected
-import Mathlib.Tactic.ContinuousFunctionalCalculus
-import Mathlib.Tactic.Positivity.Finset
 
 /-!
 # Topology of the collision-free parameter domain

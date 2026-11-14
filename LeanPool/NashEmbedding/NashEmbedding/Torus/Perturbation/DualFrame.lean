@@ -13,7 +13,7 @@ Authors: Aristotle (Harmonic), Claude Fable 5 (Anthropic), Claude Opus 4.7 (Anth
   — at the request of David Wiygul
 -/
 public import Mathlib.Analysis.Calculus.ContDiff.Operations
-public import Mathlib.Tactic
+public import LeanPool.NashEmbedding.Tactics
 public import LeanPool.NashEmbedding.NashEmbedding.Torus.Basic
 
 /-!
@@ -116,8 +116,8 @@ lemma gramMatrix_contDiff {e : ι → (Fin n → ℝ) → (Fin N → ℝ)}
     ContDiff ℝ ∞ (fun x => gramMatrix e x i j) := by
   unfold gramMatrix dotProduct
   exact ContDiff.sum fun k _ =>
-    ((contDiff_apply (𝕜 := ℝ) (E := ℝ) k).comp (he i)).mul
-      ((contDiff_apply (𝕜 := ℝ) (E := ℝ) k).comp (he j))
+    ((contDiff_apply ℝ (fun _ => ℝ) k).comp (he i)).mul
+      ((contDiff_apply ℝ (fun _ => ℝ) k).comp (he j))
 
 omit [Fintype ι] [DecidableEq ι] in
 lemma gramMatrix_periodic {e : ι → (Fin n → ℝ) → (Fin N → ℝ)}

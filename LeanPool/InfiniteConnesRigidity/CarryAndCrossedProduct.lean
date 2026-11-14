@@ -33,12 +33,12 @@ noncomputable section
 -- `instAddCommGroupOfIsSimpleAddGroupOfIsNilpotent` applies to `F = ZMod 2` and, winning instance
 -- search for `AddCommGroup F`, yields an `AddCommMonoid F` that does not match the one carried by
 -- `Module F F`; that breaks `AddCommGroup (V →ₗ[F] F)` and everything built on it.
-attribute [local instance low] instAddCommGroupOfIsSimpleAddGroupOfIsNilpotent
+attribute [-instance] instAddCommGroupOfIsSimpleAddGroupOfIsNilpotent
 
 -- Likewise `AddSubgroupClass.instZModModule` applies to any `AddSubgroupClass` of a `ZMod n`-module
 -- and would take precedence over `Submodule.module` for `↥B`, whose `Module F ↥B` is the one the
 -- `Module.Free`/`Module.Projective` instances are stated for.
-attribute [local instance low] AddSubgroupClass.instZModModule
+attribute [-instance] AddSubgroupClass.instZModModule
 
 namespace ConnesRigidity
 section
@@ -169,7 +169,7 @@ private theorem suslinAwayMapOfDvd_comp_product
         (suslinAwayToProduct M d e) =
       suslinAwayToProduct M d E := by
   apply IsLocalization.ringHom_ext (Submonoid.powers (d : A))
-  ext a
+  ext a : 1
   simp only [RingHom.comp_apply]
   rw [suslinAwayToProduct_algebraMap,
     suslinAwayMapOfDvd_algebraMap,
@@ -370,7 +370,7 @@ private theorem exists_powered_partition_of_unity
   have hpow : Ideal.span (Set.range fun i => s i ^ N) = ⊤ := by
     have hrange : ((fun x : A => x ^ N) '' Set.range s) =
         Set.range (fun i => s i ^ N) := by
-      ext y
+      ext y : 1
       constructor
       · rintro ⟨_, ⟨i, rfl⟩, rfl⟩
         exact ⟨i, rfl⟩
@@ -392,7 +392,7 @@ private def suslinPoweredPrefix
 private theorem suslinPoweredPrefix_zero
     {A : Type*} [CommRing A] (s c : ℕ → A) (N : ℕ) :
     suslinPoweredPrefix s c N 0 = 0 := by
-  simp only [suslinPoweredPrefix, Finset.range_zero, Finset.sum_empty]
+  rfl
 
 /-- Cross-module support for the infinite Connes-rigidity construction. -/
 private theorem suslinPoweredPrefix_succ
@@ -435,7 +435,7 @@ private theorem subgroup_mem_of_powered_partition_patches
     rw [List.mem_reverse, List.mem_map] at hx
     obtain ⟨j, hj, rfl⟩ := hx
     have hjn : j < n := List.mem_range.mp hj
-    simpa [f, suslinPoweredPrefix_succ] using hpatch j hjn
+    simpa only [f, suslinPoweredPrefix_succ] using hpatch j hjn
   dsimp [f] at htel
   rw [hend, suslinPoweredPrefix_zero, hzero, inv_one, mul_one] at htel
   rw [← htel]
@@ -1250,7 +1250,7 @@ private theorem suslinSymbolicLift_eval
   rw [Polynomial.map_map]
   have h : (Polynomial.evalRingHom a).comp
       (Polynomial.C : ℤ →+* Polynomial ℤ) = RingHom.id ℤ := by
-    ext z
+    ext z : 1
     simp only [eq_intCast, Int.cast_eq]
   rw [h, Polynomial.map_id]
 
@@ -1270,8 +1270,6 @@ private theorem suslinSymbolicDifference_eval
 private theorem suslinSymbolicDifferenceDilation_integer
     (a : ℤ) (g : IntegralSpecialLinearGroup) :
     suslinDifferenceDilation a g = suslinPolynomialDilate a g := by
-  apply Matrix.SpecialLinearGroup.ext
-  intro i j
   rfl
 
 /-- Cross-module support for the infinite Connes-rigidity construction. -/
@@ -1340,7 +1338,10 @@ private theorem suslinSymbolicPoweredIncrement_of_elementary_dilation
           (Matrix.SpecialLinearGroup.map (Polynomial.mapRingHom f)
             (suslinDifferencePath (Polynomial.X : Polynomial ℤ)
               (suslinSymbolicLift g))) at h
-    simpa [f, suslinSymbolicDifference_eval] using h
+    have hf : f (Polynomial.C (Polynomial.C (d ^ N))) = Polynomial.C (d ^ N) := by
+      simp only [f, eq_intCast, map_pow, map_intCast]
+    rw [hf, suslinSymbolicDifference_eval] at h
+    exact h
   have heval :
       Matrix.SpecialLinearGroup.map r
           (suslinDilation (Polynomial (Polynomial ℤ))
@@ -1352,27 +1353,21 @@ private theorem suslinSymbolicPoweredIncrement_of_elementary_dilation
             (Polynomial.C (c * d ^ N) *
               (Polynomial.X : Polynomial ℤ)))
           (suslinDifferencePath a g) := by
-    apply Matrix.SpecialLinearGroup.ext
-    intro i j
     change
-      (Polynomial.evalRingHom
-        (Polynomial.C c * (Polynomial.X : Polynomial ℤ)))
-          ((Polynomial.mapRingHom f)
-            ((suslinDilation (Polynomial (Polynomial ℤ))
+      Matrix.SpecialLinearGroup.map
+        (Polynomial.evalRingHom (Polynomial.C c * (Polynomial.X : Polynomial ℤ)))
+        (Matrix.SpecialLinearGroup.map (Polynomial.mapRingHom f)
+            (suslinDilation (Polynomial (Polynomial ℤ))
               (Polynomial.C (Polynomial.C (d ^ N)))
               (suslinDifferencePath (Polynomial.X : Polynomial ℤ)
-                (suslinSymbolicLift g))) i j)) = _
-    rw [show (Polynomial.mapRingHom f)
-          ((suslinDilation (Polynomial (Polynomial ℤ))
-            (Polynomial.C (Polynomial.C (d ^ N)))
-            (suslinDifferencePath (Polynomial.X : Polynomial ℤ)
-              (suslinSymbolicLift g))) i j) =
-          (suslinDifferenceDilation (Polynomial.C (d ^ N))
-            (suslinDifferencePath a g)) i j from
-      congrFun (congrFun (congrArg Subtype.val hbase) i) j]
-    exact RingHom.congr_fun
-      (suslinSymbolic_outer_dilation_eval_mul_X c (d ^ N))
-      (suslinDifferencePath a g i j)
+                (suslinSymbolicLift g)))) = _
+    rw [hbase]
+    change Matrix.SpecialLinearGroup.map
+        ((Polynomial.evalRingHom
+          (Polynomial.C c * (Polynomial.X : Polynomial ℤ))).comp
+          (suslinDifferenceDilationRingHom (Polynomial.C (d ^ N))))
+        (suslinDifferencePath a g) = _
+    rw [suslinSymbolic_outer_dilation_eval_mul_X]
   change (Matrix.SpecialLinearGroup.map r
         (suslinDilation (Polynomial (Polynomial ℤ))
           (Polynomial.C (Polynomial.C (d ^ N)))
@@ -1455,15 +1450,12 @@ private theorem suslin_uniform_symbolic_differencePath_elementary
           (Polynomial.mapRingHom (Polynomial.C : L →+* B₁))
           (Matrix.SpecialLinearGroup.map
             (Polynomial.mapRingHom f) g) := by
-    apply Matrix.SpecialLinearGroup.ext
-    intro i j
-    change
-      Polynomial.map f₁
-          (Polynomial.map (Polynomial.C : ℤ →+* A₁) (g i j)) =
-        Polynomial.map (Polynomial.C : L →+* B₁)
-          (Polynomial.map f (g i j))
-    ext n
-    simp only [coeff_map, eq_intCast, map_intCast, f₁]
+    change Matrix.SpecialLinearGroup.map
+        ((Polynomial.mapRingHom (Polynomial.mapRingHom f)).comp
+          (Polynomial.mapRingHom Polynomial.C)) g =
+      Matrix.SpecialLinearGroup.map
+        ((Polynomial.mapRingHom Polynomial.C).comp (Polynomial.mapRingHom f)) g
+    rw [Polynomial.mapRingHom_comp, Polynomial.mapRingHom_comp, Polynomial.mapRingHom_comp_C]
   have hgT :
       Matrix.SpecialLinearGroup.map (Polynomial.mapRingHom f₁) gT ∈
         localGlobalElementarySubgroup (Polynomial B₁) := by
@@ -1568,8 +1560,8 @@ private theorem suslin_augmentation_mem_elementary_of_finite_away_powered_increm
     exact Finset.single_le_sum
       (fun i _ => Nat.zero_le (exponent i)) (Finset.mem_univ d)
   have hrange : Set.range (fun d : s => (d : ℤ)) = (s : Set ℤ) := by
-    ext d
-    simp
+    ext d : 1
+    simp only [Subtype.range_coe_subtype, SetLike.setOfPred_mem_eq, SetLike.mem_coe]
   have hcover : Ideal.span (Set.range (fun d : s => (d : ℤ))) = ⊤ := by
     rw [hrange]
     exact hspan
@@ -1600,7 +1592,7 @@ private theorem suslin_augmentation_mem_elementary_of_finite_away_powered_increm
       rw [← pow_add, Nat.sub_add_cancel (hle d)]
     have h := hexponent d a
       (coefficient d * (d : ℤ) ^ (N - exponent d))
-    simpa [c, denominator, d, hpow, mul_assoc] using h
+    simpa only [c, denominator, d, hpow, mul_assoc] using h
   let sn : ℕ → ℤ := fun j =>
     if h : j < Fintype.card s then denominator ⟨j, h⟩ else 0
   let cn : ℕ → ℤ := fun j =>
@@ -1922,8 +1914,10 @@ private theorem cornulierColumnRootProduct_apply (v : Index → IntegralPolynomi
         Matrix.SpecialLinearGroup.transvection
           (show (2 : Index) ≠ cornulierLast by decide) (v 2) :
       IntegralSpecialLinearGroup) p q = _
-  fin_cases p <;> fin_cases q <;>
-    simp only [cornulierLast, Fin.zero_eta, Fin.isValue, Fin.mk_one, Fin.reduceFinMk,
+  revert p q
+  refine matrix_four_entrywise _ _
+    ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ <;>
+    simp only [cornulierLast, Fin.isValue,
       ConnesRigidity.MennickeIdentity.specialLinear_mul_transvection_apply, Fin.reduceEq,
       ↓reduceIte,
       Matrix.SpecialLinearGroup.transvection_coe, Matrix.add_apply, Matrix.one_apply,
@@ -1962,8 +1956,10 @@ private theorem cornulierRowRootProduct_apply (v : Index → IntegralPolynomial)
         Matrix.SpecialLinearGroup.transvection
           (show cornulierLast ≠ (2 : Index) by decide) (v 2) :
       IntegralSpecialLinearGroup) p q = _
-  fin_cases p <;> fin_cases q <;>
-    simp only [cornulierLast, Fin.zero_eta, Fin.isValue, Fin.mk_one, Fin.reduceFinMk,
+  revert p q
+  refine matrix_four_entrywise _ _
+    ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ <;>
+    simp only [cornulierLast, Fin.isValue,
       ConnesRigidity.MennickeIdentity.specialLinear_mul_transvection_apply, Fin.reduceEq,
       ↓reduceIte,
       Matrix.SpecialLinearGroup.transvection_coe, Matrix.add_apply, Matrix.one_apply,
@@ -2214,7 +2210,7 @@ private theorem minkowski_matrix_mul_eq_zero_of_det_ne_zero
   have hzero : A * (B * B.adjugate) = 0 := by
     rw [← Matrix.mul_assoc, h, Matrix.zero_mul]
   rw [Matrix.mul_adjugate, Matrix.mul_smul, Matrix.mul_one] at hzero
-  ext i j
+  ext i j : 1
   have hij := congrArg (fun C : Matrix ι ι ℤ => C i j) hzero
   exact (mul_eq_zero.mp hij).resolve_left hdet
 
@@ -2246,9 +2242,7 @@ private theorem minkowski_geom_sum_modThree
 private theorem minkowski_prime_ne_three_modThree
     {p : ℕ} (hp : p.Prime) (hp3 : p ≠ 3) :
     (p : ZMod 3) ≠ 0 := by
-  intro hzero
-  have hdvd : 3 ∣ p := (CharP.cast_eq_zero_iff (ZMod 3) 3 p).mp hzero
-  exact hp3 ((hp.dvd_iff_eq (by decide : 3 ≠ 1)).mp hdvd)
+  exact CharP.cast_ne_zero_of_ne_of_prime (ZMod 3) hp hp3.symm
 
 /-- Cross-module support for the infinite Connes-rigidity construction. -/
 private theorem minkowski_prime_ne_three_matrix
@@ -2280,7 +2274,7 @@ private theorem minkowski_exists_sub_one_eq_three_smul
       congrArg (fun M : Matrix ι ι (ZMod 3) => M i j) hzero
   choose B hB using hdiv
   refine ⟨B, ?_⟩
-  ext i j
+  ext i j : 1
   change (A - 1) i j = 3 * B i j
   exact hB i j
 
@@ -2304,15 +2298,16 @@ private theorem minkowski_prime_three_matrix
     have hzero' : (A - 1) * ((3 : ℤ) • T) = 0 := by
       rw [← hgeom, mul_geom_sum, hpow, sub_self]
     rw [Matrix.mul_smul] at hzero'
-    ext i j
+    ext i j : 1
     have hij := congrArg (fun M : Matrix ι ι ℤ => M i j) hzero'
     exact (mul_eq_zero.mp hij).resolve_left (by norm_num)
   have hT : minkowskiModThree T = 1 := by
     have hthree : (3 : Matrix ι ι (ZMod 3)) = 0 := by
       have hthreeScalar : (3 : ZMod 3) = 0 := ZMod.natCast_self 3
-      ext i j
+      ext i j : 1
       by_cases hij : i = j <;>
-        simp [Matrix.ofNat_apply, hij, hthreeScalar]
+        simp only [Matrix.ofNat_apply, hij, hthreeScalar, ↓reduceIte, Nat.cast_ofNat,
+          Matrix.zero_apply, Nat.cast_zero]
     dsimp [T]
     rw [zsmul_eq_mul, zsmul_eq_mul]
     simp only [map_add, map_mul, map_intCast, map_one]
@@ -2451,7 +2446,7 @@ private theorem commute_matrixUnit_of_commute_nonzero_transvection
   rw [hrepr, Matrix.smul_mul, Matrix.mul_smul] at hsingle
   change Matrix.single i j (1 : A) * (g : Matrix ι ι A) =
     (g : Matrix ι ι A) * Matrix.single i j (1 : A)
-  ext k l
+  ext k l : 1
   have hentry := congrArg (fun M : Matrix ι ι A => M k l) hsingle
   simpa only [Matrix.smul_apply, smul_eq_mul] using
     (mul_left_cancel₀ ha hentry)
@@ -2542,7 +2537,7 @@ private theorem specialLinear_subgroup_conjugacy_infinite
     intro a b hab
     apply scaled_transvection_conjugates_injective
       hij g.val hnot c hc
-    simpa only [Subgroup.coe_mul, InvMemClass.coe_inv] using congrArg (fun h : H => h.val) hab
+    exact congrArg (fun h : H => h.val) hab
   apply (Set.infinite_range_of_injective hinj).mono
   rintro _ ⟨a, rfl⟩
   exact ⟨lift a, rfl⟩
@@ -2690,21 +2685,19 @@ private theorem carry_add_right (ℓ ℓ₁ ℓ₂ : X) :
 
 
 /-- Cross-module support for the infinite Connes-rigidity construction. -/
+public
+theorem linearMap_ext_on_diagonal {W : Type*}
+    [AddCommGroup W] [Module F W] {f g : B →ₗ[F] W}
+    (h : ∀ v : V, f (diagonal v) = g (diagonal v)) : f = g := by
+  apply LinearMap.ext_on_range (v := diagonal) ?_ h
+  exact (Submodule.span_range_subtype_eq_top_iff B
+    (fun v => Submodule.subset_span (Set.mem_range_self v))).mpr rfl
+
+/-- Cross-module support for the infinite Connes-rigidity construction. -/
 private theorem carry_comm (ℓ ℓ' : X) : carry ℓ ℓ' = carry ℓ' ℓ := by
-  apply LinearMap.ext
-  rintro ⟨w, hw⟩
-  change tensorFunctional ℓ ℓ' w = tensorFunctional ℓ' ℓ w
-  change w ∈ Submodule.span F (Set.range square) at hw
-  refine Submodule.span_induction
-    (p := fun z _ => tensorFunctional ℓ ℓ' z = tensorFunctional ℓ' ℓ z)
-    ?_ ?_ ?_ ?_ hw
-  · rintro _ ⟨v, rfl⟩
-    simp only [square, tensorFunctional_tmul, mul_comm]
-  · simp only [map_zero]
-  · intro u v _ _ hu hv
-    simp only [map_add, hu, hv]
-  · intro a v _ hv
-    simp only [map_smul, hv]
+  apply linearMap_ext_on_diagonal
+  intro v
+  exact mul_comm (ℓ v) (ℓ' v)
 
 /-- Cross-module support for the infinite Connes-rigidity construction. -/
 @[expose]
@@ -3259,7 +3252,7 @@ theorem continuous_characterLinear
         χ (Multiplicative.ofAdd x) ≠ ZMod.toCircle (a + 1)} :=
       isOpen_ne.preimage hcircle
     convert hpre using 1
-    ext x
+    ext x : 1
     simp only [Set.mem_ofPred_eq]
     rw [← characterLinear_circle M χ x]
     rw [ZMod.injective_toCircle.ne_iff]
@@ -3267,7 +3260,7 @@ theorem continuous_characterLinear
       a (characterLinear M χ x)
   have hs : (characterLinear M χ : M → F) ⁻¹' s =
       ⋃ a ∈ s, {x : M | characterLinear M χ x = a} := by
-    ext x
+    ext x : 1
     simp only [Set.mem_preimage, Set.mem_iUnion, Set.mem_ofPred_eq, exists_prop, exists_eq_right']
   rw [hs]
   apply isOpen_iUnion
@@ -3304,7 +3297,7 @@ theorem continuous_binaryDual_eq_evaluation
   obtain ⟨I, u, hu, hsubset⟩ := (isOpen_pi_iff.mp hU) 0 hzeroU
   have hzeroCoord : ∀ i ∈ I, (0 : F) ∈ u i := by
     intro i hi
-    simpa only [Pi.zero_apply] using (hu i hi).2
+    exact (hu i hi).2
   have hkernels :
       (⨅ i : {i // i ∈ I}, (Module.Dual.eval F M i.1).ker) ≤ φ.ker := by
     intro ℓ hℓ
@@ -3464,7 +3457,7 @@ private theorem carry_zero_left (x : Bit) : carry 0 x = 0 := by
 /-- Cross-module support for the infinite Connes-rigidity construction. -/
 @[simp]
 private theorem carry_zero_right (x : Bit) : carry x 0 = 0 := by
-  simp only [carry, mul_zero]
+  rfl
 
 /-- Cross-module support for the infinite Connes-rigidity construction. -/
 private theorem carry_comm (x y : Bit) : carry x y = carry y x := by
@@ -3997,7 +3990,7 @@ theorem shiftVector_injective (n : ℕ) :
 public
 theorem shiftVector_range (n : ℕ) :
     LinearMap.range (shiftVector n) = shiftedSubmodule n := by
-  ext v
+  ext v : 1
   rw [LinearMap.mem_range, mem_shiftedSubmodule_iff]
   constructor
   · rintro ⟨u, rfl⟩ i
@@ -4366,6 +4359,9 @@ public
 def auxiliaryBasis : Basis (Basis.ofVectorSpaceIndex F V) F V :=
   Basis.ofVectorSpace F V
 
+-- Keep the chosen basis abstract while elaborating its coordinate operations.
+attribute [local irreducible] auxiliaryBasis
+
 /-- Cross-module support for the infinite Connes-rigidity construction. -/
 @[expose]
 public
@@ -4415,7 +4411,7 @@ private theorem scalar_mul_self (c : F) : c * c = c := by
 /-- Cross-module support for the infinite Connes-rigidity construction. -/
 private theorem tensorDiagonal_square (v : V) : tensorDiagonal (square v) = v := by
   apply auxiliaryBasis.repr.injective
-  ext i
+  ext i : 1
   simp only [tensorDiagonal, coordinateProduct, Basis.repr_symm_apply, square,
     TensorProduct.lift.tmul, LinearMap.coe_mk, AddHom.coe_mk, Basis.repr_linearCombination,
     Finsupp.mul_apply, scalar_mul_self]
@@ -4438,33 +4434,6 @@ theorem d_surjective : Function.Surjective d := by
   intro v
   exact ⟨diagonal v, d_diagonal v⟩
 
-/-- Cross-module support for the infinite Connes-rigidity construction. -/
-public
-theorem linearMap_ext_on_diagonal {W : Type*}
-    [AddCommGroup W] [Module F W] {f g : B →ₗ[F] W}
-    (h : ∀ v : V, f (diagonal v) = g (diagonal v)) : f = g := by
-  apply LinearMap.ext
-  intro w
-  rcases w with ⟨w, hw⟩
-  change f ⟨w, hw⟩ = g ⟨w, hw⟩
-  change w ∈ Submodule.span F (Set.range square) at hw
-  induction hw using Submodule.span_induction with
-  | mem w hw =>
-      rcases hw with ⟨v, rfl⟩
-      exact h v
-  | zero =>
-      change f 0 = g 0
-      simp only [map_zero]
-  | add x y hx hy ihx ihy =>
-      change f (⟨x, hx⟩ + ⟨y, hy⟩) = g (⟨x, hx⟩ + ⟨y, hy⟩)
-      simpa only [map_add] using congrArg₂ (· + ·) ihx ihy
-  | smul c x hx ih =>
-      change f (c • (⟨x, hx⟩ : B)) = g (c • (⟨x, hx⟩ : B))
-      simpa only [map_smul] using congrArg (c • ·) ih
-
-end
-
-section
 
 /-- Cross-module support for the infinite Connes-rigidity construction. -/
 @[expose]
@@ -4683,6 +4652,7 @@ private theorem quadraticPairing_range_le_quadraticRestriction_range (n : ℕ) :
       rw [map_add]
       exact (quadraticRestriction n).range.add_mem ihb ihc
   | smul a b hb ih =>
+      change quadraticPairing (a • (⟨b, hb⟩ : B)) ∈ (quadraticRestriction n).range
       have ha : a = 0 ∨ a = 1 := by
         fin_cases a
         · exact Or.inl rfl
@@ -4692,20 +4662,10 @@ private theorem quadraticPairing_range_le_quadraticRestriction_range (n : ℕ) :
             (⟨(0 : F) • b, by simp only [zero_smul, zero_mem]⟩ : B) = 0 := by
           apply Subtype.ext
           simp only [zero_smul, ZeroMemClass.coe_zero]
-        change quadraticPairing
-          (⟨(0 : F) • b, _⟩ : B) ∈ (quadraticRestriction n).range
+        change quadraticPairing (⟨(0 : F) • b, _⟩ : B) ∈ (quadraticRestriction n).range
         rw [hzero, map_zero]
         exact (quadraticRestriction n).range.zero_mem
-      · have hone :
-            (⟨(1 : F) • b, by simpa only [one_smul] using
-              (show b ∈ B from hb)⟩ : B) =
-              (⟨b, (show b ∈ B from hb)⟩ : B) := by
-          apply Subtype.ext
-          simp only [one_smul]
-        change quadraticPairing
-          (⟨(1 : F) • b, _⟩ : B) ∈ (quadraticRestriction n).range
-        rw [hone]
-        exact ih
+      · simpa only [one_smul] using ih
 
 /-- Cross-module support for the infinite Connes-rigidity construction. -/
 private theorem carry_self_eq_evaluate_d (ℓ : X) (b : B) :
@@ -4820,7 +4780,10 @@ private theorem evalEta_eq_kernelCharacter_linear {n : ℕ} (η : E n)
       kernelCharacter n η h (Multiplicative.ofAdd z.linear) := by
   have hdecomp :
       z = linearSection n z.linear + carryKernelInclusion n z.quadratic := by
-    apply CarryGroup.ext <;> simp
+    apply CarryGroup.ext <;> simp only [CarryGroup.add_linear, linearSection_linear,
+                               carryKernelInclusion_linear, add_zero, CarryGroup.add_quadratic,
+                               linearSection_quadratic, carryKernelInclusion_quadratic, zero_add,
+                               shiftedCarry_zero_right]
   conv_lhs => rw [hdecomp]
   rw [evalEta_add, evalEta_kernel η h, mul_one]
   rfl
@@ -4870,7 +4833,7 @@ private theorem sigma_eq_zero_iff (n : ℕ) (η : E n) :
 /-- Cross-module support for the infinite Connes-rigidity construction. -/
 public
 theorem sigma_ker (n : ℕ) : (sigma n).ker = (iota n).range := by
-  ext η
+  ext η : 1
   constructor
   · intro hη
     have hrestriction : quadraticRestriction n η = 0 :=
@@ -5279,12 +5242,12 @@ private theorem carry_pontryagin_characters_separate
   · apply LinearMap.ext
     intro v
     apply ZMod.injective_toCircle
-    simpa only [linearEvaluationCharacter_apply] using h (linearEvaluationCharacter n v)
+    exact h (linearEvaluationCharacter n v)
   · apply linearMap_ext_on_diagonal
     intro v
     have hfour : CarryGroup.evalFour n v x = CarryGroup.evalFour n v y := by
       apply ZMod.injective_toCircle
-      simpa only [epsilon_apply] using h (epsilon n v)
+      exact h (epsilon n v)
     have hpoint : CarryGroup.pointEvaluation n v x =
         CarryGroup.pointEvaluation n v y := by
       apply FiniteCarry.Carry.codeEquiv.injective
@@ -5304,7 +5267,7 @@ def carryComplexCharacter (n : ℕ) (η : E n) : C(CarryGroup n, ℂ) where
 @[simp]
 private theorem carryComplexCharacter_zero (n : ℕ) :
     carryComplexCharacter n 0 = 1 := by
-  ext z
+  ext z : 1
   rfl
 
 /-- Cross-module support for the infinite Connes-rigidity construction. -/
@@ -5313,13 +5276,13 @@ private theorem carryComplexCharacter_add
     (n : ℕ) (η θ : E n) :
     carryComplexCharacter n (η + θ) =
       carryComplexCharacter n η * carryComplexCharacter n θ := by
-  ext z
+  ext z : 1
   rfl
 
 /-- Cross-module support for the infinite Connes-rigidity construction. -/
 private theorem carryComplexCharacter_star (n : ℕ) (η : E n) :
     star (carryComplexCharacter n η) = carryComplexCharacter n (-η) := by
-  ext z
+  ext z : 1
   exact (Circle.coe_inv_eq_conj
     (Additive.toMul η (Multiplicative.ofAdd z))).symm
 
@@ -5372,15 +5335,13 @@ def carryCharacterL2 (n : ℕ) (η : E n) : Lp ℂ 2 (carryHaar n) :=
 public
 theorem carryCharacterL2_span_closure_eq_top (n : ℕ) :
     (span ℂ (range (carryCharacterL2 n))).topologicalClosure = ⊤ := by
-  convert!
+  have hdense :=
     (ContinuousMap.toLp_denseRange (p := (2 : ℝ≥0∞))
       ℂ (carryHaar n) ℂ (by simp only [ne_eq, ENNReal.ofNat_ne_top,
                               not_false_eq_true])).topologicalClosure_map_submodule
       (carryComplexCharacter_span_closure_eq_top n)
-  rw [map_span]
   unfold carryCharacterL2
-  rw [range_comp']
-  simp only [ContinuousLinearMap.coe_coe]
+  simpa only [map_span, ← range_comp', ContinuousLinearMap.coe_coe] using hdense
 
 /-- Cross-module support for the infinite Connes-rigidity construction. -/
 private theorem integral_add_character_eq_zero
@@ -5395,7 +5356,7 @@ private theorem integral_add_character_eq_zero
     apply hχ
     apply PontryaginDual.ext
     intro g
-    simpa only [PontryaginDual.one_apply, ofAdd_toAdd] using h (Multiplicative.toAdd g)
+    exact h (Multiplicative.toAdd g)
   have htrans :
       (χ (Multiplicative.ofAdd g) : ℂ) *
         (∫ x : G, (χ (Multiplicative.ofAdd x) : ℂ) ∂μ) =
@@ -5681,7 +5642,9 @@ private theorem evaluation_surjective (n : ℕ) :
   intro η
   let η' : E n := Multiplicative.toAdd η
   have hdecomp : z = linearCandidate n φ + carryKernelInclusion n q := by
-    apply CarryGroup.ext <;> simp [z, l, q, linearCandidate]
+    apply CarryGroup.ext <;> simp only [z, l, q, linearCandidate, CarryGroup.add_linear,
+                               carryKernelInclusion_linear, add_zero, CarryGroup.add_quadratic,
+                               carryKernelInclusion_quadratic, zero_add, shiftedCarry_zero_right]
   change evalEta η' z = φ η
   rw [hdecomp, evalEta_add]
   have hquad : evalEta η' (carryKernelInclusion n q) =
@@ -5836,7 +5799,7 @@ def splitComplexCharacter (d : D) : C(X × Y, ℂ) where
 @[simp]
 public
 theorem splitComplexCharacter_zero : splitComplexCharacter 0 = 1 := by
-  ext z
+  ext z : 1
   simp only [splitComplexCharacter, splitPontryaginCharacter_apply, Prod.fst_zero, map_zero,
     Prod.snd_zero, add_zero, AddChar.map_zero_eq_one, Circle.coe_one, ContinuousMap.coe_mk,
     ContinuousMap.one_apply]
@@ -5846,7 +5809,7 @@ theorem splitComplexCharacter_zero : splitComplexCharacter 0 = 1 := by
 private theorem splitComplexCharacter_add (d e : D) :
     splitComplexCharacter (d + e) =
       splitComplexCharacter d * splitComplexCharacter e := by
-  ext z
+  ext z : 1
   change (ZMod.toCircle
     (z.1 (d.1 + e.1) + z.2 (d.2 + e.2)) : ℂ) = _
   rw [z.1.map_add d.1 e.1, z.2.map_add d.2 e.2]
@@ -5858,7 +5821,7 @@ private theorem splitComplexCharacter_add (d e : D) :
 /-- Cross-module support for the infinite Connes-rigidity construction. -/
 private theorem splitComplexCharacter_star (d : D) :
     star (splitComplexCharacter d) = splitComplexCharacter (-d) := by
-  ext z
+  ext z : 1
   change star (ZMod.toCircle (z.1 d.1 + z.2 d.2) : ℂ) =
     (ZMod.toCircle (z.1 (-d.1) + z.2 (-d.2)) : ℂ)
   rw [z.1.map_neg d.1, z.2.map_neg d.2, ← neg_add]
@@ -5914,15 +5877,13 @@ def splitCharacterL2 (d : D) : Lp ℂ 2 productHaar :=
 public
 theorem splitCharacterL2_span_closure_eq_top :
     (span ℂ (range splitCharacterL2)).topologicalClosure = ⊤ := by
-  convert!
+  have hdense :=
     (ContinuousMap.toLp_denseRange (p := (2 : ℝ≥0∞))
       ℂ productHaar ℂ (by simp only [ne_eq, ENNReal.ofNat_ne_top,
                             not_false_eq_true])).topologicalClosure_map_submodule
       splitComplexCharacter_span_closure_eq_top
-  rw [map_span]
   unfold splitCharacterL2
-  rw [range_comp']
-  simp only [ContinuousLinearMap.coe_coe]
+  simpa only [map_span, ← range_comp', ContinuousLinearMap.coe_coe] using hdense
 
 /-- Cross-module support for the infinite Connes-rigidity construction. -/
 public
@@ -6650,7 +6611,7 @@ private theorem kYLinear_carry (k : K) (ℓ ℓ' : X) :
   change carry ℓ ℓ' (kDividedSquareLinear k⁻¹ (diagonal v)) =
     carry (kXLinear k ℓ) (kXLinear k ℓ') (diagonal v)
   rw [kDividedSquareLinear_diagonal]
-  simp only [carry_apply_diagonal, kXLinear_apply]
+  rfl
 
 /-- Cross-module support for the infinite Connes-rigidity construction. -/
 private theorem kYLinear_shiftedCarry (k : K) (n : ℕ) (ℓ ℓ' : X) :
@@ -7308,28 +7269,7 @@ private theorem crossedBaseHaarEquiv_const_one
     letI : IsProbabilityMeasure Y.measure := Y.probability
     crossedBaseHaarEquiv e (Lp.const 2 X.measure (1 : ℂ)) =
       Lp.const 2 Y.measure (1 : ℂ) := by
-  let : IsProbabilityMeasure X.measure := X.probability
-  let : IsProbabilityMeasure Y.measure := Y.probability
-  apply Lp.ext
-  let hp : MeasurePreserving
-      (e.toMeasurableEquiv.symm : Ξ → Ω) Y.measure X.measure :=
-    (EquivariantHaarEquiv.symm e).measure_preserving
-  have hsource := Lp.coeFn_const (μ := X.measure) (p := 2) (1 : ℂ)
-  have hsource' := hp.quasiMeasurePreserving.ae_eq_comp hsource
-  filter_upwards [
-    Lp.coeFn_compMeasurePreserving (Lp.const 2 X.measure (1 : ℂ)) hp,
-    hsource',
-    Lp.coeFn_const (μ := Y.measure) (p := 2) (1 : ℂ)]
-    with z hcomp hsource' htarget
-  change
-    (Lp.compMeasurePreserving e.toMeasurableEquiv.symm hp
-      (Lp.const 2 X.measure (1 : ℂ))) z =
-      Lp.const 2 Y.measure (1 : ℂ) z
-  calc
-    _ = (Lp.const 2 X.measure (1 : ℂ))
-      (e.toMeasurableEquiv.symm z) := hcomp
-    _ = 1 := hsource'
-    _ = _ := htarget.symm
+  rfl
 
 /-- Cross-module support for the infinite Connes-rigidity construction. -/
 public
@@ -7363,35 +7303,19 @@ theorem crossedBaseHaarEquiv_multiplier_apply
         (Lp.compMeasurePreserving e.toMeasurableEquiv.symm
           (EquivariantHaarEquiv.symm e).measure_preserving f)
         (crossedBaseHaarEquiv e ξ) := by
-  apply Lp.ext
   let hs : MeasurePreserving
       (e.toMeasurableEquiv.symm : Ξ → Ω) Y.measure X.measure :=
     (EquivariantHaarEquiv.symm e).measure_preserving
-  have hleft := Lp.coeFn_compMeasurePreserving
-    (crossedBaseMultiplier X f ξ) hs
-  have hmul := hs.quasiMeasurePreserving.ae
-    (crossedBaseMultiplier_apply_ae X f ξ)
-  have hf := Lp.coeFn_compMeasurePreserving f hs
-  have hξ := Lp.coeFn_compMeasurePreserving ξ hs
-  have hright := crossedBaseMultiplier_apply_ae Y
-    (Lp.compMeasurePreserving e.toMeasurableEquiv.symm hs f)
-    (crossedBaseHaarEquiv e ξ)
-  filter_upwards [hleft, hmul, hf, hξ, hright]
-    with z hleft hmul hf hξ hright
-  simp only [Function.comp_apply] at hleft hf hξ
-  change (Lp.compMeasurePreserving e.toMeasurableEquiv.symm hs
-    (crossedBaseMultiplier X f ξ)) z = _
-  calc
-    _ = (crossedBaseMultiplier X f ξ)
-      (e.toMeasurableEquiv.symm z) := hleft
-    _ = f (e.toMeasurableEquiv.symm z) *
-      ξ (e.toMeasurableEquiv.symm z) := hmul
-    _ = (Lp.compMeasurePreserving e.toMeasurableEquiv.symm hs f) z *
-      (crossedBaseHaarEquiv e ξ) z := by
-        congr 1
-        · exact hf.symm
-        · exact hξ.symm
-    _ = _ := hright.symm
+  change Lp.compMeasurePreserving e.toMeasurableEquiv.symm hs
+      ((ContinuousLinearMap.mul ℂ ℂ).holder 2 f ξ) =
+    (ContinuousLinearMap.mul ℂ ℂ).holder 2
+      (Lp.compMeasurePreserving e.toMeasurableEquiv.symm hs f)
+      (Lp.compMeasurePreserving e.toMeasurableEquiv.symm hs ξ)
+  unfold ContinuousLinearMap.holder
+  rw [Lp.toLp_compMeasurePreserving]
+  apply MemLp.toLp_congr
+  exact ((Lp.coeFn_compMeasurePreserving f hs).mul
+    (Lp.coeFn_compMeasurePreserving ξ hs)).symm
 
 /-- Cross-module support for the infinite Connes-rigidity construction. -/
 private theorem crossedBaseHaarEquiv_action
@@ -7432,18 +7356,7 @@ private theorem crossedBaseHaarEquiv_action
       ((e.toMeasurableEquiv.symm : Ξ → Ω) ∘
         (Y.action k⁻¹ : Ξ → Ξ))
       (hs.comp hY) ξ := by
-        apply Lp.ext
-        have hL := Lp.coeFn_compMeasurePreserving ξ (hX.comp hs)
-        have hR := Lp.coeFn_compMeasurePreserving ξ (hs.comp hY)
-        filter_upwards [hL, hR] with z hzL hzR
-        calc
-          _ = ξ (((X.action k⁻¹ : Ω → Ω) ∘
-            (e.toMeasurableEquiv.symm : Ξ → Ω)) z) := by
-              simpa only [Function.comp_apply] using hzL
-          _ = ξ (((e.toMeasurableEquiv.symm : Ξ → Ω) ∘
-            (Y.action k⁻¹ : Ξ → Ξ)) z) :=
-              congrArg ξ (congrFun hfun z)
-          _ = _ := by simpa only [Function.comp_apply] using hzR.symm
+        congr 2
     _ = _ := hright
 
 /-- Cross-module support for the infinite Connes-rigidity construction. -/
@@ -7466,12 +7379,8 @@ theorem crossedHaarHilbertEquiv_group_conj
     (crossedHaarHilbertEquiv e).conjStarAlgEquiv
       (crossedGroupUnitary X k).toContinuousLinearEquiv.toContinuousLinearMap =
         (crossedGroupUnitary Y k).toContinuousLinearEquiv.toContinuousLinearMap := by
-  apply ContinuousLinearMap.ext
-  intro η
-  obtain ⟨ξ, rfl⟩ := (crossedHaarHilbertEquiv e).surjective η
-  simpa only [LinearIsometryEquiv.conjStarAlgEquiv_apply_apply,
-    LinearIsometryEquiv.symm_apply_apply, ContinuousLinearEquiv.coe_coe,
-    LinearIsometryEquiv.coe_toContinuousLinearEquiv] using crossedHaarHilbertEquiv_group_apply e k ξ
+  apply conjStarAlgEquiv_eq_of_intertwining
+  exact crossedHaarHilbertEquiv_group_apply e k
 
 end
 
@@ -7645,14 +7554,7 @@ open scoped ENNReal
 /-- Cross-module support for the infinite Connes-rigidity construction. -/
 private theorem carryCharacterL2_zero (n : ℕ) :
     carryCharacterL2 n 0 = Lp.const 2 (carryHaar n) (1 : ℂ) := by
-  apply Lp.ext
-  filter_upwards [
-    (carryComplexCharacter n 0).coeFn_toLp (p := 2) (𝕜 := ℂ) (carryHaar n),
-    Lp.coeFn_const (μ := carryHaar n) (p := 2) (1 : ℂ)] with z hchar hone
-  change ((ContinuousMap.toLp 2 (carryHaar n) ℂ)
-    (carryComplexCharacter n 0)) z = Lp.const 2 (carryHaar n) (1 : ℂ) z
-  rw [hchar, hone]
-  rfl
+  exact Subtype.ext rfl
 
 /-- Cross-module support for the infinite Connes-rigidity construction. -/
 public
@@ -7683,32 +7585,14 @@ private theorem carryCharacterL2_kEAction (n : ℕ) (k : K) (η : E n) :
         (kCarryAddAut n k⁻¹ : CarryGroup n → CarryGroup n)
         (paperCarryAddAut_preserves_measure n k⁻¹)
         (carryCharacterL2 n η) := by
-  apply Lp.ext
-  have hleft :
-      carryCharacterL2 n (carryEAddAction n k η) =ᵐ[carryHaar n]
-        carryComplexCharacter n (carryEAddAction n k η) :=
-    (carryComplexCharacter n (carryEAddAction n k η)).coeFn_toLp
-      (p := 2) (𝕜 := ℂ) (carryHaar n)
-  have hright := Lp.coeFn_compMeasurePreserving
-    (carryCharacterL2 n η) (paperCarryAddAut_preserves_measure n k⁻¹)
-  have hchar : carryCharacterL2 n η =ᵐ[carryHaar n]
-      carryComplexCharacter n η :=
-    (carryComplexCharacter n η).coeFn_toLp
-      (p := 2) (𝕜 := ℂ) (carryHaar n)
-  have hchar' : ∀ᵐ z ∂carryHaar n,
-      carryCharacterL2 n η (kCarryAddAut n k⁻¹ z) =
-        carryComplexCharacter n η (kCarryAddAut n k⁻¹ z) :=
-    (paperCarryAddAut_preserves_measure n k⁻¹).quasiMeasurePreserving.tendsto_ae hchar
-  filter_upwards [hleft, hright, hchar'] with z hzleft hzright hzchar
-  rw [hzleft, hzright, Function.comp_apply, hzchar]
-  exact carryComplexCharacter_kEAction n k η z
+  rfl
 
 /-- Cross-module support for the infinite Connes-rigidity construction. -/
 private theorem carry_l2Reindex_single
     {α β : Type*} (e : α ≃ β) [DecidableEq α] [DecidableEq β]
     (i : α) (c : ℂ) :
     l2Reindex e (lp.single 2 i c) = lp.single 2 (e i) c := by
-  ext j
+  ext j : 2
   simp only [l2Reindex_apply, lp.single_apply]
   by_cases h : e.symm j = i
   · have hj : j = e i := by simpa only [Equiv.apply_symm_apply] using congrArg e h
@@ -7740,29 +7624,16 @@ private theorem carryFourier_kEAction_comp (n : ℕ) (k : K)
   have hmaps : F.comp R = P.comp F := by
     apply lp.ext_continuousLinearMap (by norm_num)
     intro η
-    apply ContinuousLinearMap.ext
-    intro c
+    apply ContinuousLinearMap.ext_ring
     change
       carryFourierEquiv n
-        (l2Reindex (carryEAddAction n k).toEquiv (lp.single 2 η c)) =
+        (l2Reindex (carryEAddAction n k).toEquiv (lp.single 2 η (1 : ℂ))) =
       Lp.compMeasurePreserving
         (kCarryAddAut n k⁻¹ : CarryGroup n → CarryGroup n)
         (paperCarryAddAut_preserves_measure n k⁻¹)
-        (carryFourierEquiv n (lp.single 2 η c))
-    have hsingle : (lp.single 2 η c : GroupL2 (E n)) =
-        c • (lp.single 2 η (1 : ℂ) : GroupL2 (E n)) := by
-      simpa only [smul_eq_mul, mul_one] using (lp.single_smul (E := fun _ : E n => ℂ) 2 η c (1 : ℂ))
-    rw [hsingle]
-    simp only [map_smul]
-    rw [carry_l2Reindex_single, carryFourierEquiv_single,
-      carryFourierEquiv_single]
-    change c • carryCharacterL2 n (carryEAddAction n k η) =
-      (Lp.compMeasurePreservingₗ ℂ
-        (kCarryAddAut n k⁻¹ : CarryGroup n → CarryGroup n)
-        (paperCarryAddAut_preserves_measure n k⁻¹))
-          (c • carryCharacterL2 n η)
-    rw [map_smul]
-    exact congrArg (c • ·) (carryCharacterL2_kEAction n k η)
+        (carryFourierEquiv n (lp.single 2 η (1 : ℂ)))
+    rw [carry_l2Reindex_single, carryFourierEquiv_single, carryFourierEquiv_single]
+    exact carryCharacterL2_kEAction n k η
   exact DFunLike.congr_fun hmaps ξ
 
 /-- Cross-module support for the infinite Connes-rigidity construction. -/
@@ -7967,7 +7838,8 @@ private theorem continuous_sub_unit_multiplier_on_continuous_norm_le
       unitMultiplier μ u hu hunit ((ContinuousMap.toLp 2 μ ℂ) h) x‖ ≤
       ‖h‖ * ‖((ContinuousMap.toLp 2 μ ℂ) q) x - unitFunctionL2 μ u hu hunit x‖
   rw [hqmul, humul, hqcoe, hhcoe, hucoe, ← sub_mul, norm_mul]
-  nlinarith [ContinuousMap.norm_coe_le_norm h x, norm_nonneg (q x - u x)]
+  exact (mul_le_mul_of_nonneg_left (ContinuousMap.norm_coe_le_norm h x)
+    (norm_nonneg (q x - u x))).trans_eq (mul_comm _ _)
 
 omit [T2Space Ω] [SecondCountableTopology Ω] [μ.WeaklyRegular] in
 /-- Cross-module support for the infinite Connes-rigidity construction. -/
@@ -8046,7 +7918,7 @@ private theorem exists_continuous_norm_le_one_approx (u : Ω → ℂ) (hu : Meas
     (clipContinuousMap_toLp_sub_unit_le μ u hu hunit c)
   rw [dist_eq_norm] at hc
   rw [norm_sub_rev]
-  linarith
+  linarith only [hc]
 
 /-- Cross-module support for the infinite Connes-rigidity construction. -/
 private theorem exists_continuous_multiplier_approx_pair
@@ -8086,8 +7958,8 @@ private theorem exists_continuous_multiplier_approx_pair
       rw [← mul_div_assoc]
       apply (div_le_iff₀ (by positivity :
         0 < 4 * (‖h₁‖ + ‖h₂‖ + 1))).2
-      nlinarith [norm_nonneg h₁, norm_nonneg h₂]
-    linarith
+      nlinarith only [norm_nonneg h₁, norm_nonneg h₂, hε]
+    linarith only [hε, hh₁, hmul, hdelta]
   · rw [dist_eq_norm] at hh₂
     have hmul :
         ‖h₂‖ * ‖(ContinuousMap.toLp 2 μ ℂ) q -
@@ -8098,8 +7970,25 @@ private theorem exists_continuous_multiplier_approx_pair
       rw [← mul_div_assoc]
       apply (div_le_iff₀ (by positivity :
         0 < 4 * (‖h₁‖ + ‖h₂‖ + 1))).2
-      nlinarith [norm_nonneg h₁, norm_nonneg h₂]
-    linarith
+      nlinarith only [norm_nonneg h₁, norm_nonneg h₂, hε]
+    linarith only [hε, hh₂, hmul, hdelta]
+
+/-- Commutation on a dense spanning family extends along a continuous linear map. -/
+private theorem commute_of_dense_span
+    {E A : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E]
+    [NormedRing A] [NormedAlgebra ℂ A]
+    {ι : Type*} (f : E →L[ℂ] A) (χ : ι → E)
+    (hdense : (Submodule.span ℂ (Set.range χ)).topologicalClosure = ⊤)
+    (T : A) (hT : ∀ i, Commute T (f (χ i))) (q : E) : Commute T (f q) := by
+  let leftMap := ((ContinuousLinearMap.mul ℂ A) T).comp f
+  let rightMap := ((ContinuousLinearMap.mul ℂ A).flip T).comp f
+  have hspan : Dense (↑(Submodule.span ℂ (Set.range χ)) : Set E) :=
+    Submodule.dense_iff_topologicalClosure_eq_top.mpr hdense
+  have heq : leftMap = rightMap := by
+    apply ContinuousLinearMap.ext_on hspan
+    rintro _ ⟨i, rfl⟩
+    exact (hT i).eq
+  exact DFunLike.congr_fun heq q
 
 omit [SecondCountableTopology Ω] [μ.WeaklyRegular] in
 /-- Cross-module support for the infinite Connes-rigidity construction. -/
@@ -8109,28 +7998,8 @@ private theorem commute_continuousMultiplier_of_commute_characters
     (T : Lp ℂ 2 μ →L[ℂ] Lp ℂ 2 μ)
     (hT : ∀ i, Commute T (continuousMultiplier μ (χ i)))
     (q : C(Ω, ℂ)) : Commute T (continuousMultiplier μ q) := by
-  let leftMap : C(Ω, ℂ) →L[ℂ] (Lp ℂ 2 μ →L[ℂ] Lp ℂ 2 μ) :=
-    ((ContinuousLinearMap.mul ℂ (Lp ℂ 2 μ →L[ℂ] Lp ℂ 2 μ)) T).comp
-      (continuousMultiplier μ)
-  let rightMap : C(Ω, ℂ) →L[ℂ] (Lp ℂ 2 μ →L[ℂ] Lp ℂ 2 μ) :=
-    ((ContinuousLinearMap.mul ℂ (Lp ℂ 2 μ →L[ℂ] Lp ℂ 2 μ)).flip T).comp
-      (continuousMultiplier μ)
-  have hspan : Dense (↑(Submodule.span ℂ (Set.range χ)) : Set C(Ω, ℂ)) :=
-    Submodule.dense_iff_topologicalClosure_eq_top.mpr hdense
-  have heq :
-      (leftMap : C(Ω, ℂ) → (Lp ℂ 2 μ →L[ℂ] Lp ℂ 2 μ)) = rightMap := by
-    apply Continuous.ext_on hspan leftMap.continuous rightMap.continuous
-    intro q hq
-    refine Submodule.span_induction
-      (p := fun q _ => leftMap q = rightMap q) ?_ ?_ ?_ ?_ hq
-    · rintro _ ⟨i, rfl⟩
-      exact (hT i).eq
-    · exact (map_zero leftMap).trans (map_zero rightMap).symm
-    · intro f g _ _ hf hg
-      rw [map_add, map_add, hf, hg]
-    · intro c f _ hf
-      rw [map_smul, map_smul, hf]
-  exact congrFun heq q
+  exact commute_of_dense_span (E := C(Ω, ℂ)) (A := Lp ℂ 2 μ →L[ℂ] Lp ℂ 2 μ)
+    (continuousMultiplier μ) χ hdense T hT q
 
 /-- Cross-module support for the infinite Connes-rigidity construction. -/
 public
@@ -8185,7 +8054,7 @@ theorem commute_unitMultiplier_of_commute_characters
     dsimp [ε]
     field_simp
   rw [heq] at htotal
-  linarith
+  linarith only [hdpos, htotal]
 
 end
 
@@ -8215,19 +8084,29 @@ private theorem norm_realUnit {x : ℝ} (hx : |x| ≤ 1) :
   have hsq : ‖realUnit x‖ ^ 2 = 1 := by
     rw [Complex.sq_norm]
     exact Complex.normSq_ofReal_add_I_mul_sqrt_one_sub hx
-  nlinarith [norm_nonneg (realUnit x)]
+  exact (sq_eq_sq₀ (norm_nonneg _) zero_le_one).mp (by simpa only [one_pow] using hsq)
 
 /-- Cross-module support for the infinite Connes-rigidity construction. -/
 private theorem realUnit_add_conj (x : ℝ) :
     realUnit x + starRingEnd ℂ (realUnit x) = 2 * (x : ℂ) := by
-  apply Complex.ext <;> simp [realUnit]; ring
+  apply Complex.ext <;> simp only [realUnit, map_add, Complex.conj_ofReal, map_mul,
+                          Complex.conj_I, neg_mul, Complex.add_re, Complex.ofReal_re,
+                          Complex.mul_re, Complex.I_re, zero_mul, Complex.I_im, Complex.ofReal_im,
+                          mul_zero, sub_self, add_zero, Complex.neg_re, neg_zero,
+                          Complex.re_ofNat, Complex.im_ofNat, sub_zero, Complex.add_im,
+                          Complex.mul_im, one_mul, zero_add, Complex.neg_im, add_neg_cancel]; ring
 
 /-- Cross-module support for the infinite Connes-rigidity construction. -/
 private theorem complex_four_unit_decomposition {z : ℂ} :
     z = (realUnit z.re + starRingEnd ℂ (realUnit z.re)) / 2 +
       Complex.I * (realUnit z.im + starRingEnd ℂ (realUnit z.im)) / 2 := by
   rw [realUnit_add_conj, realUnit_add_conj]
-  apply Complex.ext <;> simp
+  apply Complex.ext <;> simp only [ne_eq, OfNat.ofNat_ne_zero, not_false_eq_true,
+                          mul_div_cancel_left₀, Complex.add_re, Complex.ofReal_re,
+                          Complex.div_ofNat_re, Complex.mul_re, Complex.I_re, Complex.re_ofNat,
+                          Complex.im_ofNat, Complex.ofReal_im, mul_zero, sub_zero, zero_mul,
+                          Complex.I_im, Complex.mul_im, add_zero, sub_self, zero_div,
+                          Complex.add_im, Complex.div_ofNat_im, one_mul, zero_add]
 
 variable {Ω : Type*} [MeasurableSpace Ω] {μ : Measure Ω}
 
@@ -8382,44 +8261,28 @@ private theorem lp_infty_eq_four_unitCoefficients (f : Lp ℂ ⊤ μ) :
   let u₄ := unitCoefficient μ (FullUnitDecomposition.unitImConj f)
     (FullUnitDecomposition.measurable_unitImConj f)
     (FullUnitDecomposition.norm_unitImConj f)
-  change (fun x => f x) =ᵐ[μ]
-    (fun x => (c • u₁ + c • u₂ + (c * Complex.I) • u₃ +
-      (c * Complex.I) • u₄) x)
-  filter_upwards [
-    FullUnitDecomposition.lp_infty_four_unit_decomposition f,
-    unitCoefficient_coeFn μ (FullUnitDecomposition.unitRe f)
+  have h₁₂ := (Lp.coeFn_add (c • u₁) (c • u₂)).trans
+    ((Lp.coeFn_smul c u₁).add (Lp.coeFn_smul c u₂))
+  have h₁₂₃ := (Lp.coeFn_add (c • u₁ + c • u₂) ((c * Complex.I) • u₃)).trans
+    (h₁₂.add (Lp.coeFn_smul (c * Complex.I) u₃))
+  have hadd := (Lp.coeFn_add (c • u₁ + c • u₂ + (c * Complex.I) • u₃)
+    ((c * Complex.I) • u₄)).trans (h₁₂₃.add (Lp.coeFn_smul (c * Complex.I) u₄))
+  have hunits :=
+    (((unitCoefficient_coeFn μ (FullUnitDecomposition.unitRe f)
       (FullUnitDecomposition.measurable_unitRe f)
-      (FullUnitDecomposition.norm_unitRe f),
-    unitCoefficient_coeFn μ (FullUnitDecomposition.unitReConj f)
-      (FullUnitDecomposition.measurable_unitReConj f)
-      (FullUnitDecomposition.norm_unitReConj f),
-    unitCoefficient_coeFn μ (FullUnitDecomposition.unitIm f)
-      (FullUnitDecomposition.measurable_unitIm f)
-      (FullUnitDecomposition.norm_unitIm f),
-    unitCoefficient_coeFn μ (FullUnitDecomposition.unitImConj f)
-      (FullUnitDecomposition.measurable_unitImConj f)
-      (FullUnitDecomposition.norm_unitImConj f),
-    Lp.coeFn_add (c • u₁ + c • u₂ + (c * Complex.I) • u₃)
-      ((c * Complex.I) • u₄),
-    Lp.coeFn_add (c • u₁ + c • u₂) ((c * Complex.I) • u₃),
-    Lp.coeFn_add (c • u₁) (c • u₂),
-    Lp.coeFn_smul c u₁,
-    Lp.coeFn_smul c u₂,
-    Lp.coeFn_smul (c * Complex.I) u₃,
-    Lp.coeFn_smul (c * Complex.I) u₄
-    ] with x hdecomp hu₁ hu₂ hu₃ hu₄ hadd₄ hadd₃ hadd₂
-      hsmul₁ hsmul₂ hsmul₃ hsmul₄
-  simp only [Pi.add_apply] at hadd₄ hadd₃ hadd₂
-  simp only [Pi.smul_apply, smul_eq_mul] at hsmul₁ hsmul₂ hsmul₃ hsmul₄
-  rw [hadd₄, hadd₃, hadd₂, hsmul₁, hsmul₂, hsmul₃, hsmul₄]
-  change f x = c * u₁ x + c * u₂ x + (c * Complex.I) * u₃ x +
-    (c * Complex.I) * u₄ x
-  change u₁ x = FullUnitDecomposition.unitRe f x at hu₁
-  change u₂ x = FullUnitDecomposition.unitReConj f x at hu₂
-  change u₃ x = FullUnitDecomposition.unitIm f x at hu₃
-  change u₄ x = FullUnitDecomposition.unitImConj f x at hu₄
-  rw [hu₁, hu₂, hu₃, hu₄]
-  exact hdecomp
+      (FullUnitDecomposition.norm_unitRe f)).const_smul c).add
+      ((unitCoefficient_coeFn μ (FullUnitDecomposition.unitReConj f)
+        (FullUnitDecomposition.measurable_unitReConj f)
+        (FullUnitDecomposition.norm_unitReConj f)).const_smul c)).add
+      ((unitCoefficient_coeFn μ (FullUnitDecomposition.unitIm f)
+        (FullUnitDecomposition.measurable_unitIm f)
+        (FullUnitDecomposition.norm_unitIm f)).const_smul (c * Complex.I))
+    |>.add
+      ((unitCoefficient_coeFn μ (FullUnitDecomposition.unitImConj f)
+        (FullUnitDecomposition.measurable_unitImConj f)
+        (FullUnitDecomposition.norm_unitImConj f)).const_smul (c * Complex.I))
+  exact Filter.EventuallyEq.trans
+    (FullUnitDecomposition.lp_infty_four_unit_decomposition f) (hadd.trans hunits).symm
 
 omit [TopologicalSpace Ω] [CompactSpace Ω] [T2Space Ω] [SecondCountableTopology Ω]
   [BorelSpace Ω] [IsProbabilityMeasure μ] [μ.WeaklyRegular] in

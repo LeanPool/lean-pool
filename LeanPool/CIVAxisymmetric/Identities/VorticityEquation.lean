@@ -13,6 +13,7 @@ public import LeanPool.CIVAxisymmetric.Identities.Vorticity
 public import LeanPool.CIVAxisymmetric.Identities.PotentialVorticity
 public import Mathlib.Analysis.Calculus.FDeriv.Prod
 public import Mathlib.Analysis.Calculus.FDeriv.Symmetric
+public import Mathlib.Analysis.Calculus.Deriv.Pow
 public import Mathlib.Analysis.Calculus.ContDiff.Comp
 
 /-!

@@ -960,7 +960,7 @@ theorem coefficient0_contDiffAt_of_pullback {n : WithTop ℕ∞} {h lam C : ℂ}
     simp only [coefficient0, A0, Matrix.of_apply, Fin.zero_eta, Fin.isValue,
       Matrix.cons_val', Matrix.cons_val_zero, Matrix.cons_val_fin_one, Fin.mk_one,
       Matrix.cons_val_one, Fin.reduceFinMk, Matrix.cons_val] <;>
-    (first | with_reducible exact pointContDiff_const _ | skip) <;>
+    (try with_reducible exact pointContDiff_const _) <;>
     fin_cases j <;>
     simp only [coefficientBase, Fin.isValue, ell, div_eq_mul_inv, axialValue,
         edge, neg_mul, neg_add_rev, Fin.zero_eta,
@@ -991,7 +991,7 @@ theorem coefficient1_contDiffAt_of_pullback {n : WithTop ℕ∞} {h : ℂ} {F : 
     simp only [coefficient1, A1, Matrix.of_apply, Fin.zero_eta, Fin.isValue,
       Matrix.cons_val', Matrix.cons_val_zero, Matrix.cons_val_fin_one, Fin.mk_one,
       Matrix.cons_val_one, Fin.reduceFinMk, Matrix.cons_val] <;>
-    (first | with_reducible exact pointContDiff_const _ | skip) <;>
+    (try with_reducible exact pointContDiff_const _) <;>
     fin_cases j <;>
     simp only [edge, coefficientBase, Fin.isValue, ell, div_eq_mul_inv, neg_mul,
         Fin.zero_eta, Matrix.cons_val_zero,
@@ -1025,7 +1025,6 @@ theorem sourceField_contDiffAt_of_pullback {n : WithTop ℕ∞} {h C : ℂ} {F :
     (with_reducible repeat' first
       | exact hlinv
       | apply pointContDiff_mul
-      | apply pointContDiff_add
       | apply pointContDiff_sub
       | apply pointContDiff_pow
       | exact hF _
@@ -1058,7 +1057,7 @@ theorem coefficient0_analyticAt {h lam C : ℂ} {F : CoefficientData} {r : ℝ} 
     simp only [coefficient0, A0, Matrix.of_apply, Fin.zero_eta, Fin.isValue,
       Matrix.cons_val', Matrix.cons_val_zero, Matrix.cons_val_fin_one, Fin.mk_one,
       Matrix.cons_val_one, Fin.reduceFinMk, Matrix.cons_val] <;>
-    (first | with_reducible exact hconst _ | skip) <;>
+    (try with_reducible exact hconst _) <;>
     fin_cases j <;>
     simp only [coefficientBase, Fin.isValue, ell, div_eq_mul_inv, axialValue,
         edge, neg_mul, neg_add_rev, Fin.zero_eta,
@@ -1085,7 +1084,7 @@ theorem coefficient1_analyticAt {h : ℂ} {F : CoefficientData} {r : ℝ} {z : �
     simp only [coefficient1, A1, Matrix.of_apply, Fin.zero_eta, Fin.isValue,
       Matrix.cons_val', Matrix.cons_val_zero, Matrix.cons_val_fin_one, Fin.mk_one,
       Matrix.cons_val_one, Fin.reduceFinMk, Matrix.cons_val] <;>
-    (first | with_reducible exact hconst _ | skip) <;>
+    (try with_reducible exact hconst _) <;>
     fin_cases j <;>
     simp only [edge, coefficientBase, Fin.isValue, ell, div_eq_mul_inv, neg_mul,
         Fin.zero_eta, Matrix.cons_val_zero,
@@ -1116,9 +1115,7 @@ theorem sourceField_analyticAt {h C : ℂ} {F : CoefficientData} {r : ℝ} {z : 
       | exact hlinv
       | exact hconst _
       | apply pointAnalytic_mul
-      | apply pointAnalytic_add
       | apply pointAnalytic_sub
-      | apply pointAnalytic_pow
       | exact hF _
       | exact hid)
 

@@ -57,6 +57,8 @@ def repository(tmp_path: Path) -> tuple[Path, str, str]:
         'name = "fixture"\nrequiresModuleSystem = true\n'
         '\n[[lean_lib]]\nname = "LeanPool"\n'
     )
+    (root / "python/lean_pool").mkdir(parents=True)
+    (root / "python/lean_pool/build_time_limits.py").write_text("LIMIT = 600\n")
     (root / "lake-manifest.json").write_text(
         json.dumps(
             {
@@ -181,6 +183,7 @@ def test_metadata_edit_reuses_build_without_skipping_validation(
         "lean-toolchain",
         "lake-manifest.json",
         "lakefile.toml",
+        "python/lean_pool/build_time_limits.py",
     ],
 )
 def test_changed_source_or_settings_avoid_download(repository, monkeypatch, path):

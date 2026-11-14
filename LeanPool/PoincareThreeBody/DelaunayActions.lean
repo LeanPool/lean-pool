@@ -7,6 +7,7 @@ module
 
 public import LeanPool.PoincareThreeBody.DelaunayChart
 import LeanPool.PoincareThreeBody.Analytic
+import Mathlib.Analysis.Analytic.Constructions
 import Mathlib.Analysis.Calculus.Deriv.Comp
 import Mathlib.Analysis.Calculus.Deriv.Prod
 import Mathlib.Analysis.Calculus.FDeriv.Analytic

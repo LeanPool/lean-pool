@@ -102,7 +102,7 @@ theorem _root_.Domain.Neighborhood.NeighborhoodSystem.ext {D E : NeighborhoodSys
   rcases D with ⟨Dmem, Dmaster, _, _, _⟩
   rcases E with ⟨Emem, Emaster, _, _, _⟩
   have hm : Dmem = Emem := funext fun X => propext (hmem X)
-  simp_all
+  simp_all only [implies_true]
 
 /-- The subsystem relation is **antisymmetric**: `D ◁ E` and `E ◁ D` force `D =
 E`. (Mutual `sub`

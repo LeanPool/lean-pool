@@ -7,6 +7,7 @@ Authors: OpenAI
 module
 
 public import LeanPool.NavierStokesAndEuler.NavierStokes.ConstructedSlowBase
+import Mathlib.Analysis.Calculus.Deriv.Prod
 public import LeanPool.NavierStokesAndEuler.NavierStokes.FirstOrderBaseEdge
 import LeanPool.NavierStokesAndEuler.NavierStokes.LeadingStressWeights
 import LeanPool.NavierStokesAndEuler.NavierStokes.ZerothStressIdentity

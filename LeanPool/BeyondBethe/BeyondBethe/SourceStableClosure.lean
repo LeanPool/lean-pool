@@ -11,6 +11,7 @@ public import Mathlib.Analysis.Complex.JensenFormula
 public import Mathlib.Analysis.Analytic.Polynomial
 public import Mathlib.Algebra.Polynomial.Roots
 public import Mathlib.Algebra.MvPolynomial.Funext
+public import Mathlib.Algebra.MvPolynomial.Polynomial
 public import Mathlib.Algebra.Polynomial.Degree.SmallDegree
 public import Mathlib.Tactic
 

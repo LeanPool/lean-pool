@@ -8,7 +8,10 @@ module
 
 public import Mathlib.Order.CompletePartialOrder
 public import Mathlib.RingTheory.Henselian
+public import Mathlib.RingTheory.Ideal.KrullsHeightTheorem
 public import Mathlib.RingTheory.IntegralClosure.GoingDown
+public import Mathlib.RingTheory.KrullDimension.Field
+public import Mathlib.RingTheory.KrullDimension.NonZeroDivisors
 public import Mathlib.RingTheory.KrullDimension.Polynomial
 public import Mathlib.RingTheory.NoetherNormalization
 public import Mathlib.RingTheory.PicardGroup

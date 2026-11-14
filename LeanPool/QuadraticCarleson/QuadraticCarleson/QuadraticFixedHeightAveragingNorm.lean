@@ -29,16 +29,16 @@ theorem fixedHeight_floor_decay_le_rpow (height : ℕ) :
   have hn : height ≤ 5 * ((height - 1) / 5) + 5 := by omega
   have hnR : (height : ℝ) ≤ 5 * (((height - 1) / 5 : ℕ) : ℝ) + 5 := by
     exact_mod_cast hn
-  have he : (height : ℝ) / 5 ≤ (((height - 1) / 5 : ℕ) : ℝ) + 1 := by linarith
-  have hp := Real.rpow_le_rpow_of_exponent_le (by norm_num : (1 : ℝ) ≤ 2) he
-  rw [Real.rpow_add (by norm_num : (0 : ℝ) < 2), Real.rpow_natCast, Real.rpow_one] at hp
+  have he : (height : ℝ) / 5 ≤ (((height - 1) / 5 : ℕ) : ℝ) + 1 := by linarith only [hnR]
+  have hp := Real.rpow_le_rpow_of_exponent_le (by norm_num1 : (1 : ℝ) ≤ 2) he
+  rw [Real.rpow_add (by norm_num1 : (0 : ℝ) < 2), Real.rpow_natCast, Real.rpow_one] at hp
   have hinv : 1 / (2 : ℝ) ^ ((height - 1) / 5) ≤
       2 / (2 : ℝ) ^ ((height : ℝ) / 5) :=
     (div_le_div_iff₀ (by positivity) (by positivity)).mpr
       (by simpa only [one_mul, mul_comm] using hp)
   calc
     _ ≤ 2 / (2 : ℝ) ^ ((height : ℝ) / 5) := hinv
-    _ = _ := by rw [neg_div, Real.rpow_neg (by norm_num : (0 : ℝ) ≤ 2)]; rfl
+    _ = _ := by rw [neg_div, Real.rpow_neg (by norm_num1 : (0 : ℝ) ≤ 2)]; rfl
 
 theorem paperFixedHeightQuadraticMaximal_sq_lintegral_rpow_decay
     (height : ℕ) {f : ℝ → ℂ} (hf : MemLp f 2) :
@@ -68,12 +68,12 @@ theorem fixedHeightL2DecayConstant_pos : 0 < fixedHeightL2DecayConstant := by
 theorem fixedHeightL2DecayConstant_sq_ge :
     141993451776 * positiveDyadicAmplitudeBound ^ 2 ≤ fixedHeightL2DecayConstant ^ 2 := by
   unfold fixedHeightL2DecayConstant
-  nlinarith [positiveDyadicAmplitudeBound_nonneg, sq_nonneg positiveDyadicAmplitudeBound]
+  linarith only [positiveDyadicAmplitudeBound_nonneg, sq_nonneg positiveDyadicAmplitudeBound]
 
 theorem eLpNorm_two_sq_lintegral {ε : Type*} [ENorm ε] [TopologicalSpace ε]
     (f : ℝ → ε) (hf : AEStronglyMeasurable f volume) :
     eLpNorm f 2 ^ 2 = ∫⁻ x, ‖f x‖ₑ ^ 2 := by
-  rw [eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num) (by norm_num) hf]
+  rw [eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num1) (by decide +kernel) hf]
   simp only [ENNReal.toReal_ofNat, ENNReal.rpow_two]
   rw [← ENNReal.rpow_mul_natCast]
   norm_num
@@ -85,7 +85,7 @@ theorem paperFixedHeightQuadraticMaximal_eLpNorm_decay
     eLpNorm (paperFixedHeightQuadraticMaximal height f) 2 ≤
       ENNReal.ofReal (fixedHeightL2DecayConstant *
         (2 : ℝ) ^ (-(height : ℝ) / 10)) * eLpNorm f 2 := by
-  apply (ENNReal.rpow_le_rpow_iff (by norm_num : (0 : ℝ) < 2)).mp
+  apply (ENNReal.rpow_le_rpow_iff (by norm_num1 : (0 : ℝ) < 2)).mp
   rw [ENNReal.rpow_two, ENNReal.rpow_two, mul_pow,
     eLpNorm_two_sq_lintegral (paperFixedHeightQuadraticMaximal height f)
       (measurable_paperFixedHeightQuadraticMaximal height hf).aestronglyMeasurable,
@@ -97,7 +97,7 @@ theorem paperFixedHeightQuadraticMaximal_eLpNorm_decay
   apply ENNReal.ofReal_le_ofReal
   have hp : ((2 : ℝ) ^ (-(height : ℝ) / 10)) ^ 2 =
       (2 : ℝ) ^ (-(height : ℝ) / 5) := by
-    rw [← Real.rpow_mul_natCast (by norm_num : (0 : ℝ) ≤ 2)]
+    rw [← Real.rpow_mul_natCast (by norm_num1 : (0 : ℝ) ≤ 2)]
     congr 1
     ring
   rw [mul_pow, hp]

@@ -62,7 +62,7 @@ theorem HasWeakL1Bound.measure_le {α : Type*} [MeasurableSpace α]
   rw [ENNReal.ofReal_div_of_pos ha]
   apply (ENNReal.le_div_iff_mul_le (Or.inl (by simp [ENNReal.ofReal_eq_zero, not_le, ha]))
     (Or.inl ENNReal.ofReal_ne_top)).2
-  simpa [mul_comm] using hf.2 a ha
+  simpa only [mul_comm] using hf.2 a ha
 
 theorem HasWeakL1Bound.measure_ne_top {α : Type*} [MeasurableSpace α]
     {μ : Measure α} {A : ℝ} {f : α → ℝ} (hf : HasWeakL1Bound μ A f)
@@ -91,13 +91,13 @@ theorem HasWeakL1Bound.restrict_measureReal_le_two_div
     (hf : HasWeakL1Bound μ A f) (s : Set α) {t : ℝ} (ht : 0 < t) :
     (μ.restrict s).real {x | t ≤ f x} ≤ 2 * A / t := by
   let u : ℝ := t / 2
-  have hu : 0 < u := by dsimp [u]; linarith
+  have hu : 0 < u := by dsimp [u]; linarith only [ht]
   let small : Set α := {x | t ≤ f x}
   let big : Set α := {x | u < f x}
   have hsub : small ⊆ big := by
     intro x hx
     dsimp [small, big] at hx ⊢
-    exact lt_of_lt_of_le (by dsimp [u]; linarith) hx
+    exact lt_of_lt_of_le (by dsimp [u]; linarith only [ht]) hx
   have hmeasure : (μ.restrict s) small ≤ μ big :=
     ((Measure.restrict_le_self (μ := μ) (s := s)) small).trans (measure_mono hsub)
   have hbigtop : μ big ≠ ∞ := by
@@ -178,7 +178,7 @@ theorem integralOn_le_of_weakL1Bound
       rw [uIcc_of_le hqM] at ht
       exact ht.1
     dsimp only [id_eq] at t0
-    linarith
+    linarith only [hq, t0, htq]
   have htail_int : IntegrableOn (fun t : ℝ ↦ 2 * A / t) (Ioc q M) volume :=
     (htail_cont.intervalIntegrable).1
   have hg_high : IntegrableOn g (Ioc q M) volume := by
@@ -191,9 +191,6 @@ theorem integralOn_le_of_weakL1Bound
         · exact measureReal_nonneg
   have hsplit : Ioc (0 : ℝ) M = Ioc 0 q ∪ Ioc q M :=
     (Ioc_union_Ioc_eq_Ioc hq.le hqM).symm
-  have hgintegrable : IntegrableOn g (Ioc (0 : ℝ) M) volume := by
-    rw [hsplit]
-    exact hg_low.union hg_high
   rw [show (∫ x in s, f x ∂μ) = ∫ x, f x ∂ν by rfl, hlayer]
   rw [hsplit, setIntegral_union (Ioc_disjoint_Ioc_of_le le_rfl) measurableSet_Ioc
     hg_low hg_high]
@@ -206,8 +203,8 @@ theorem integralOn_le_of_weakL1Bound
     _ = m * q + 2 * A * Real.log (M / q) := by
       rw [show (∫ _t in Ioc (0 : ℝ) q, m) = m * q by
         rw [setIntegral_const, measureReal_def, Real.volume_Ioc,
-          ENNReal.toReal_ofReal (by linarith)]
-        simp [smul_eq_mul, mul_comm]]
+          ENNReal.toReal_ofReal (by linarith only [hq])]
+        simp only [sub_zero, smul_eq_mul, mul_comm]]
       rw [← intervalIntegral.integral_of_le hqM]
       rw [show (fun t : ℝ ↦ 2 * A / t) = fun t ↦ (2 * A) * (1 / t) by
         funext t
@@ -228,9 +225,8 @@ noncomputable def kaltonWeight (i : ℕ) : ℝ :=
 
 theorem kaltonWeight_nonneg (i : ℕ) : 0 ≤ kaltonWeight i := by
   unfold kaltonWeight
-  have hi : (0 : ℝ) ≤ (i : ℝ) := Nat.cast_nonneg i
-  have hlog : 0 ≤ Real.log ((i : ℝ) + 1) := Real.log_nonneg (by linarith)
-  linarith
+  have hlog : 0 ≤ Real.log ((i : ℝ) + 1) := Real.log_nonneg (by linarith only [])
+  linarith only [hlog]
 
 theorem kaltonWeight_one_le (i : ℕ) : 1 ≤ kaltonWeight i := by
   unfold kaltonWeight
@@ -241,7 +237,7 @@ theorem kaltonWeight_one_le (i : ℕ) : 1 ≤ kaltonWeight i := by
 its `log₁` notation literally. -/
 theorem paper_outer_weight_eq (i : ℕ) :
     paperLog 1 ((i : ℝ) + 2) = Real.log ((i : ℝ) + 12) := by
-  simp [paperLog]
+  simp only [paperLog, id_eq]
   ring_nf
 
 /-- Kalton's weight is bounded by twice the paper's outer weight. The factor
@@ -250,18 +246,17 @@ theorem kaltonWeight_le_two_paperLog (i : ℕ) :
     kaltonWeight i ≤ 2 * paperLog 1 ((i : ℝ) + 2) := by
   rw [paper_outer_weight_eq]
   unfold kaltonWeight
-  have hi : (0 : ℝ) ≤ (i : ℝ) := Nat.cast_nonneg i
   have hone : 1 ≤ Real.log ((i : ℝ) + 12) := by
     rw [← Real.exp_le_exp]
-    rw [Real.exp_log (by linarith : 0 < (i : ℝ) + 12)]
-    have he : Real.exp 1 < 3 := lt_trans Real.exp_one_lt_d9 (by norm_num)
-    have hi' : (3 : ℝ) ≤ (i : ℝ) + 12 := by linarith
+    rw [Real.exp_log (by linarith only [] : 0 < (i : ℝ) + 12)]
+    have he : Real.exp 1 < 3 := lt_trans Real.exp_one_lt_d9 (by norm_num1)
+    have hi' : (3 : ℝ) ≤ (i : ℝ) + 12 := by linarith only []
     exact le_trans he.le hi'
   have hlog : Real.log ((i : ℝ) + 1) ≤ Real.log ((i : ℝ) + 12) := by
     apply Real.log_le_log
-    · linarith
-    · linarith
-  linarith
+    · linarith only []
+    · linarith only []
+  linarith only [hone, hlog]
 
 /-- The entropy summand in Kalton's equivalent form (3.3.2). Its value at
 `A = 0` is the continuous value zero, rather than the raw expression
@@ -270,11 +265,11 @@ noncomputable def entropySummand (S A : ℝ) : ℝ :=
   if A = 0 then 0 else A * Real.log (S / A)
 
 theorem entropySummand_zero (S : ℝ) : entropySummand S 0 = 0 := by
-  simp [entropySummand]
+  simp only [entropySummand, ↓reduceIte]
 
 theorem entropySummand_eq {S A : ℝ} (hA : A ≠ 0) :
     entropySummand S A = A * Real.log (S / A) := by
-  simp [entropySummand, hA]
+  simp only [entropySummand, hA, ↓reduceIte]
 
 /-- The elementary pointwise estimate behind Kalton's Lemma 3.5. We use
 `q_i = (i+1)⁻²`; the inequality is the tangent bound
@@ -317,10 +312,9 @@ theorem entropySummand_le_index {S A : ℝ} (i : ℕ)
   rw [hrewrite, mul_sub, hcancel] at hscaled
   rw [hlogq] at hscaled
   dsimp [q] at hscaled
-  have hden : 0 < ((i : ℝ) + 1) ^ 2 := by positivity
   rw [div_eq_mul_inv] at hscaled ⊢
   ring_nf at hscaled ⊢
-  linarith
+  linarith only [hscaled]
 
 theorem sum_fin_inv_sq_le_two (n : ℕ) :
     (∑ i : Fin n, (((i : ℝ) + 1) ^ 2)⁻¹) ≤ 2 := by
@@ -329,15 +323,14 @@ theorem sum_fin_inv_sq_le_two (n : ℕ) :
         2 - 2 / ((m : ℝ) + 1) := by
     intro m
     induction m with
-    | zero => norm_num
+    | zero => norm_num1
     | succ m ih =>
         rw [Finset.sum_range_succ]
-        have hm : (0 : ℝ) ≤ (m : ℝ) := Nat.cast_nonneg m
         have hstep :
             (((m : ℝ) + 1) ^ 2)⁻¹ ≤
               2 / ((m : ℝ) + 1) - 2 / ((m : ℝ) + 2) := by
           field_simp
-          nlinarith
+          linarith only []
         calc
           (∑ i ∈ Finset.range m, (((i : ℝ) + 1) ^ 2)⁻¹) +
               (((m : ℝ) + 1) ^ 2)⁻¹ ≤
@@ -355,7 +348,7 @@ theorem sum_fin_inv_sq_le_two (n : ℕ) :
     _ ≤ 2 - 2 / ((n : ℝ) + 1) := aux n
     _ ≤ 2 := by
       have : 0 ≤ 2 / ((n : ℝ) + 1) := by positivity
-      linarith
+      linarith only [this]
 
 /-- Kalton's entropy budget is controlled by his exact finite index weight.
 This is the finite form of the scalar reduction in Theorem 3.6. -/
@@ -378,14 +371,14 @@ theorem sum_entropySummand_le_kaltonWeight {n : ℕ} (A : Fin n → ℝ)
   have hS : 0 < S := lt_of_le_of_ne (Finset.sum_nonneg fun i _ ↦ hA i) (Ne.symm hS0)
   have hpoint := fun i : Fin n => entropySummand_le_index i hS (hA i)
   have hsum := Finset.sum_le_sum (fun i (_hi : i ∈ Finset.univ) ↦ hpoint i)
-  simp only [Finset.sum_sub_distrib, Finset.sum_add_distrib] at hsum
+  simp only [Finset.sum_add_distrib, Finset.sum_sub_distrib] at hsum
   have hrecip := sum_fin_inv_sq_le_two n
   have hSrecip :
       (∑ i : Fin n, S / ((i : ℝ) + 1) ^ 2) ≤ 2 * S := by
     rw [show (∑ i : Fin n, S / ((i : ℝ) + 1) ^ 2) =
         S * ∑ i : Fin n, (((i : ℝ) + 1) ^ 2)⁻¹ by
       simp only [div_eq_mul_inv, Finset.mul_sum]]
-    simpa [mul_comm] using mul_le_mul_of_nonneg_left hrecip hS.le
+    simpa only [mul_comm] using mul_le_mul_of_nonneg_left hrecip hS.le
   dsimp [S] at hsum hSrecip ⊢
   have hdouble :
       (∑ i : Fin n, 2 * A i * Real.log ((i : ℝ) + 1)) =
@@ -410,7 +403,7 @@ theorem sum_entropySummand_le_kaltonWeight {n : ℕ} (A : Fin n → ℝ)
       _ = 2 * ∑ i : Fin n, A i +
           2 * ∑ i : Fin n, A i * Real.log ((i : ℝ) + 1) := by ring
   rw [hrhs]
-  nlinarith
+  linarith only [hS, hsum, hSrecip]
 
 /-- Finite Kalton inequality when the individual weak bounds are positive.
 The proof follows Theorem 3.4: remove the union of the high-value sets,
@@ -462,7 +455,7 @@ theorem hasWeakL1Bound_finset_sum_of_pos
   let m : ℝ := μ.real E
   by_cases hm0 : m = 0
   · have hμE : μ E = 0 := by
-      have hz : (μ E).toReal = 0 := by simpa [m, measureReal_def] using hm0
+      have hz : (μ E).toReal = 0 := by exact hm0
       exact (ENNReal.toReal_eq_zero_iff _).mp hz |>.resolve_right hEtop
     change ENNReal.ofReal a * μ E ≤ _
     simp [hμE]
@@ -488,7 +481,7 @@ theorem hasWeakL1Bound_finset_sum_of_pos
         dsimp [M, S]
         rw [← Finset.sum_div]
         field_simp [hS.ne']
-        exact div_self (by simpa [S] using hS.ne')
+        exact div_self (by exact hS.ne')
   let D : Set α := E \ B
   have hDmeas : MeasurableSet D := hEmeas.diff hBmeas
   have hDtop : μ D ≠ ∞ := ne_top_of_le_ne_top hEtop (measure_mono sdiff_subset)
@@ -607,7 +600,7 @@ theorem hasWeakL1Bound_finset_sum
   have hA : ∀ i, 0 ≤ A i := fun i ↦ (hweak i).1
   have hK : 0 ≤ K := by
     dsimp [K]
-    exact mul_nonneg (by norm_num) (Finset.sum_nonneg fun i _ ↦
+    exact mul_nonneg (by norm_num1) (Finset.sum_nonneg fun i _ ↦
       mul_nonneg (kaltonWeight_nonneg i.val) (hA i))
   constructor
   · exact hK
@@ -630,16 +623,16 @@ theorem hasWeakL1Bound_finset_sum
         (fun x ↦ ∑ i, f i x) := by
     apply hasWeakL1Bound_finset_sum_of_pos f (fun i ↦ A i + ε) hf hf0
     · intro i
-      exact (hweak i).mono (by linarith [hA i])
+      exact (hweak i).mono (by linarith only [hε, hA i])
     · intro i
-      linarith [hA i]
+      linarith only [hA, hε, hA i]
   have hEtop : μ E ≠ ∞ := by
-    simpa [E] using (regularized 1 one_pos).measure_ne_top ha
+    exact (regularized 1 one_pos).measure_ne_top ha
   have hreal : a * μ.real E ≤ K := by
     apply le_of_forall_pos_le_add
     intro δ hδ
     let ε : ℝ := δ / (12 * W)
-    have hε : 0 < ε := div_pos hδ (mul_pos (by norm_num) hW)
+    have hε : 0 < ε := div_pos hδ (mul_pos (by norm_num1) hW)
     have hr := (regularized ε hε).measureReal_le ha
     have hsum_expand :
         (∑ i : Fin n, kaltonWeight i.val * (A i + ε)) =
@@ -662,12 +655,12 @@ theorem hasWeakL1Bound_finset_sum
         12 * ∑ i : Fin n, kaltonWeight i.val * (A i + ε) = K + δ := by
       rw [hsum_expand, mul_add, ← mul_assoc, herr]
     rw [hbudget] at hr
-    simpa [E, mul_comm] using (le_div_iff₀ ha).mp hr
+    simpa only [ge_iff_le, mul_comm] using (le_div_iff₀ ha).mp hr
   apply (ENNReal.toReal_le_toReal
     (ENNReal.mul_ne_top ENNReal.ofReal_ne_top hEtop) ENNReal.ofReal_ne_top).mp
   rw [ENNReal.toReal_mul, ENNReal.toReal_ofReal ha.le,
     ENNReal.toReal_ofReal hK]
-  simpa [E, measureReal_def] using hreal
+  exact hreal
 
 /-- The finite estimate in the logarithmic convention used by the source
 paper. The factor `24 = 12 · 2` displays the explicit comparison with
@@ -694,7 +687,7 @@ theorem hasWeakL1Bound_finset_sum_paperLog
       _ = 2 * ∑ i : Fin n, paperLog 1 ((i.val : ℝ) + 2) * A i := by
         rw [Finset.mul_sum]
         ring_nf
-  linarith
+  linarith only [hsum]
 
 /-- Countable form recorded by Lie, obtained exactly as in the source paper:
 apply the finite estimate to partial sums and then use continuity from below of
@@ -716,7 +709,7 @@ theorem hasWeakL1Bound_tsum
   have hbudget0 : 0 ≤ 12 * ∑' i, b i :=
     mul_nonneg (by norm_num) (tsum_nonneg hb0)
   constructor
-  · simpa [b] using hbudget0
+  · exact hbudget0
   intro a ha
   let P : ℕ → α → ℝ := fun n x ↦ ∑ i ∈ Finset.range n, f i x
   let E : ℕ → Set α := fun n ↦ {x | a < P n x}
@@ -761,7 +754,7 @@ theorem hasWeakL1Bound_tsum
       ((12 * ∑' i, b i) / a) := by
     rw [hEmono.measure_iUnion]
     exact iSup_le fun n ↦ by
-      simpa [E] using (hpartial n).measure_le ha
+      exact (hpartial n).measure_le ha
   rw [hEunion] at hmeasure
   rw [ENNReal.ofReal_div_of_pos ha] at hmeasure
   simpa [b, mul_comm] using
@@ -783,24 +776,17 @@ theorem hasWeakL1Bound_tsum_paperLog
       (fun x ↦ ∑' i, f i x) := by
   let p : ℕ → ℝ := fun i ↦ paperLog 1 ((i : ℝ) + 2) * A i
   let k : ℕ → ℝ := fun i ↦ kaltonWeight i * A i
-  have hp0 : ∀ i, 0 ≤ p i := fun i ↦ by
-    change 0 ≤ paperLog 1 ((i : ℝ) + 2) * A i
-    exact mul_nonneg (by
-      rw [paper_outer_weight_eq]
-      exact Real.log_nonneg (by
-        have hi : (0 : ℝ) ≤ (i : ℝ) := Nat.cast_nonneg i
-        linarith)) (hweak i).1
   have hk0 : ∀ i, 0 ≤ k i := fun i ↦
     mul_nonneg (kaltonWeight_nonneg i) (hweak i).1
   have hkp : ∀ i, k i ≤ 2 * p i := fun i ↦ by
     dsimp only [k, p]
     simpa [mul_assoc] using
       mul_le_mul_of_nonneg_right (kaltonWeight_le_two_paperLog i) (hweak i).1
-  have hp : Summable p := by simpa [p] using hAp
+  have hp : Summable p := by exact hAp
   have h2p : Summable (fun i ↦ 2 * p i) := by
     exact hp.mul_left 2
   have hk : Summable k := Summable.of_nonneg_of_le hk0 hkp h2p
-  have hmain := hasWeakL1Bound_tsum f A hf hf0 hweak (by simpa [k] using hk) hfsum
+  have hmain := hasWeakL1Bound_tsum f A hf hf0 hweak (by exact hk) hfsum
   apply hmain.mono
   have htsum : (∑' i, k i) ≤ 2 * ∑' i, p i := by
     calc

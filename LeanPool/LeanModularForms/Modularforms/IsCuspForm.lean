@@ -147,7 +147,7 @@ private lemma isZeroAtImInfty_of_coeffZero {k : ℤ}
   obtain ⟨m, hm⟩ := Function.Periodic.qParam_left_inv_mod_period (h := 1)
     (Ne.symm (zero_ne_one' ℝ)) y
   have := (periodic_comp_ofComplex (h := 1) f (by simp)).int_mul m y
-  simp_all
+  simp_all only [comp_apply, top_eq_univ, mem_univ, ofReal_one, mul_one, ofComplex_apply]
 
 /-- Build a `CuspForm` from a modular form whose q-expansion has vanishing constant term. -/
 noncomputable def cuspFormOfCoeffZero {k : ℤ}
@@ -169,7 +169,8 @@ lemma IsCuspForm_iff_coeffZero_eq_zero (k : ℤ) (f : ModularForm Γ(1) k) :
     simp only [Nat.factorial_zero, Nat.cast_one, inv_one, iteratedDeriv_zero, one_mul]
     rw [IsCuspForm, CuspFormSubmodule, LinearMap.mem_range] at h
     obtain ⟨g, hg⟩ := h
-    have := CuspFormClass.cuspFunction_apply_zero (h := 1) g (by positivity) (by simp)
+    have := CuspFormClass.cuspFunction_apply_zero (h := 1) g (by positivity) (by simp only [
+      CongruenceSubgroup.strictPeriods_Gamma, Nat.cast_one, AddSubgroup.mem_zmultiples])
     simp only [CuspFormToModularForm, ModFormMk, LinearMap.coe_mk, AddHom.coe_mk] at hg
     rw [← hg]
     exact this

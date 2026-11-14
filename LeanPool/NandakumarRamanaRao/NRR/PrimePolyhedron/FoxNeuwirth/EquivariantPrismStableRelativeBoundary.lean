@@ -6,13 +6,17 @@ Authors: Arseniy Akopyan
 module
 
 
-public import LeanPool.NandakumarRamanaRao.NRR.OddSphereDegree.AlgebraicTopology.FiniteSimplex
-public import Mathlib.Topology.MetricSpace.Pseudo.Pi
 public import LeanPool.NandakumarRamanaRao.NRR.PrimePolyhedron.FoxNeuwirth.RelativeCollarMiddlePrismEndpointsCore
-public import LeanPool.NandakumarRamanaRao.NRR.PrimePolyhedron.FoxNeuwirth.RelativeCollarMiddlePrismEndpoints
-public import LeanPool.NandakumarRamanaRao.NRR.PrimePolyhedron.FoxNeuwirth.ExplicitAffineRelativeCollarStokes
-public import LeanPool.NandakumarRamanaRao.NRR.PrimePolyhedron.FoxNeuwirth.EquivariantPrismSubdivisionMargin
 public import LeanPool.NandakumarRamanaRao.NRR.PrimePolyhedron.FoxNeuwirth.RegularApproximationStability
+public import LeanPool.NandakumarRamanaRao.NRR.PrimePolyhedron.FoxNeuwirth.EquivariantPrismSubdivisionMargin
+public import LeanPool.NandakumarRamanaRao.NRR.PrimePolyhedron.FoxNeuwirth.ExplicitAffineRelativeCollarStokes
+public import LeanPool.NandakumarRamanaRao.NRR.PrimePolyhedron.FoxNeuwirth.RelativeCollarMiddlePrismEndpoints
+import Mathlib.Combinatorics.Matroid.Init
+import Mathlib.Tactic.Basify
+import Mathlib.Tactic.ENatToNat
+import Mathlib.Tactic.Polynomial.Basic
+import Mathlib.Tactic.Positivity.Finset
+public import LeanPool.NandakumarRamanaRao.NRR.OddSphereDegree.AlgebraicTopology.FiniteSimplex
 /-!
 # Stable endpoint approximations and a boundary-relative prism perturbation
 
@@ -288,9 +292,9 @@ theorem endpointInterpolant_equivariant
       simp [mul_assoc]
   rw [hsum]
   simp only [mul_smul]
-  congr 1
   funext j
-  simp only [Finset.sum_apply, PrimeSymmetry.smul_coordinate_apply]
+  simp only [Pi.smul_apply, smul_eq_mul, Finset.sum_apply, PrimeSymmetry.smul_coordinate_apply]
+  apply congrArg (fun y : Real => (Fintype.card (PrimeSymmetry p) : Real)⁻¹ * y)
   apply Finset.sum_congr rfl
   intro g hg
   congr 1

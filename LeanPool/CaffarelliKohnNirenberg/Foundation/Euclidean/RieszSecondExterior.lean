@@ -218,7 +218,7 @@ private lemma integral_norm_le_eLpNorm_of_zero_outside {f : Vec3 → ℝ}
     simpa using hf
   have hK' : MemLp (K.indicator (fun _ : Vec3 => (1 : ℝ)))
       (ENNReal.ofReal (2 : ℝ)) volume :=
-    memLp_indicator_const _ hK 1 (Or.inr hKtop)
+    memLp_indicator_const _ hK.nullMeasurableSet 1 (Or.inr hKtop)
   have hholder := integral_mul_norm_le_Lp_mul_Lq (μ := (volume : Measure Vec3))
     h22 hf' hK'
   have hprod :

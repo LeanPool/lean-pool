@@ -10,8 +10,6 @@ public import LeanPool.LeanModularForms.GeneralizedResidueTheory.GeneralizedResi
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.Arctan
 import Mathlib.CategoryTheory.Category.Init
 import Mathlib.Combinatorics.Matroid.Init
-import Mathlib.MeasureTheory.Covering.Besicovitch
-import Mathlib.Tactic.Positivity.Finset
 
 /-!
 # Residue/GeneralizedTheorem (legacy stub)

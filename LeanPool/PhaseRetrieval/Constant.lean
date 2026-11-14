@@ -8,8 +8,6 @@ module
 public import LeanPool.PhaseRetrieval.Constant.Internal.Local
 import LeanPool.PhaseRetrieval.Constant.Internal.LocalCore
 import LeanPool.PhaseRetrieval.Constant.Internal.LocalHelpers
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Data.Nat.Factorial.DoubleFactorial
 import Mathlib.Tactic.NormNum.Parity
 
 /-!

@@ -5,6 +5,8 @@ Authors: Scott Armstrong, Vlad Vicol
 -/
 module
 
+public import Mathlib.Analysis.Calculus.ParametricIntegral
+
 public import LeanPool.CaffarelliKohnNirenberg.Leray.LerayHopfLimitPropPairingBound
 public import LeanPool.CaffarelliKohnNirenberg.Leray.LerayHopfLimitPropTransport
 public import LeanPool.CaffarelliKohnNirenberg.Leray.FourierCoordinateL2Bridge

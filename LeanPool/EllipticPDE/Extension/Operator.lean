@@ -242,7 +242,7 @@ theorem extension_bound {Ω : Set (EuclideanSpace ℝ (Fin d))}
         ((hgi k).integrable_indicator hΩopen.measurableSet).integrableOn
       have hind : ∀ w : EuclideanSpace ℝ (Fin d) → ℝ,
           eLpNorm (Ω.indicator w) p volume = eLpNorm w p (volume.restrict Ω) := fun w =>
-        eLpNorm_indicator_eq_eLpNorm_restrict hΩopen.measurableSet
+        eLpNorm_indicator_eq_eLpNorm_restrict hΩopen.measurableSet.nullMeasurableSet
       simp only [extPiece, extPieceGrad]
       refine ⟨hasWeakGradOn_univ_mul_cutoff hΩopen.measurableSet (P.part_contDiff none) hcs
           P.part_interior hu hgi hwg,
@@ -329,7 +329,7 @@ theorem extension_bound {Ω : Set (EuclideanSpace ℝ (Fin d))}
           eLpNorm ((ball (x : EuclideanSpace ℝ (Fin d)) r).indicator w) p volume
             ≤ eLpNorm w p volume := by
         intro w
-        rw [eLpNorm_indicator_eq_eLpNorm_restrict measurableSet_ball]
+        rw [eLpNorm_indicator_eq_eLpNorm_restrict measurableSet_ball.nullMeasurableSet]
         exact eLpNorm_mono_measure _ Measure.restrict_le_self
       simp only [extPiece, extPieceGrad, ← hrdef, ← hUxdef, ← hGxdef]
       refine ⟨hasWeakGradOn_univ_mul_cutoff measurableSet_ball (P.part_contDiff (some x)) hcs

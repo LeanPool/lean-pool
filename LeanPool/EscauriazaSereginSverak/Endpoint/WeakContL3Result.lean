@@ -178,7 +178,7 @@ private theorem weakContL3Result_pairing_continuous
   have hgExtMem₂ : MemLp gExt 2 (volume.restrict weakContL3SpatialBall) := by
     change MemLp (weakContL3ResultSmallBall.indicator g) 2
       (volume.restrict weakContL3SpatialBall)
-    rw [memLp_indicator_iff_restrict hballmeas]
+    rw [memLp_indicator_iff_restrict hballmeas.nullMeasurableSet]
     rw [Measure.restrict_restrict_of_subset hsmallsubset]
     exact hgMem₂
   let gExt₂ : Lp L2Vec3 2 (volume.restrict weakContL3SpatialBall) :=

@@ -8,7 +8,7 @@ module
 
 public import LeanPool.Zeta5Irrational.Arith.PoleFun
 import Mathlib.Algebra.Ring.IsFormallyReal
-import Mathlib.Data.Rat.Star
+import Mathlib.Algebra.Order.Star.Rat
 import Mathlib.Tactic.ENatToNat
 import Mathlib.Tactic.ReduceModChar
 import Mathlib.Tactic.Linarith

@@ -9,7 +9,7 @@ module
 public import LeanPool.BrillNoetherGraphs.Utilities.Foundations.RankInvariance
 public import LeanPool.BrillNoetherGraphs.Utilities.Subdivision.RankOne
 public import LeanPool.BrillNoetherGraphs.Utilities.Subdivision.LaplacianEquiv
-public import Mathlib.Data.Int.ConditionallyCompleteOrder
+public import Mathlib.Order.Int.ConditionallyCompleteOrder
 
 /-!
 # The Brill--Noether rank of a finite graph

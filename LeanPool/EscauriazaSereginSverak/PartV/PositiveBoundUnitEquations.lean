@@ -142,7 +142,7 @@ theorem pv_unit_momentum {T t₀ R : ℝ} (x₀ : Vec3) (hR : 0 < R)
     exact hzφ ((tsupport_comp_subset (g := fun v : Vec3 => v i) (by simp)
       (show Vec3 × ℝ → Vec3 from φ)) h)
   have hcont : ∀ i : Fin 3, ContDiff ℝ (⊤ : ℕ∞) (fun w : Vec3 × ℝ => φ w i) :=
-    fun i => (contDiff_apply ℝ ℝ i).comp hφ.1
+    fun i => (contDiff_apply ℝ (fun _ : Fin 3 => ℝ) i).comp hφ.1
   have htime : ∀ i : Fin 3, timePartial (fun w => φ w i) z = 0 := fun i =>
     CKN.timePartial_zero_of_not_mem_tsupport_public (hcont i) (hcomp i)
   have hspace : ∀ i j : Fin 3, spatialPartial (fun w => φ w i) j z = 0 := fun i j =>

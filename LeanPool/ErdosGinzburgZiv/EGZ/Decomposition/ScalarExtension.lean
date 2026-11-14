@@ -218,7 +218,7 @@ theorem ofIntAffineMap_real_injective (A : IntCoord m →ᵃ[ℤ] IntCoord n)
 /-- The difference from the integer offset realizes the real linear part. -/
 theorem integer_sub_zero_real (A : IntegralAffineMap m n) (z : IntCoord m) :
     (A.integer z - A.integer 0).real = A.real.linear z.real := by
-  have h := A.real.linearMap_vsub z.real (0 : RealCoord m)
+  have h := A.real.linear_apply_vsub z.real (0 : RealCoord m)
   rw [vsub_eq_sub, vsub_eq_sub, sub_zero, ← IntCoord.real_zero,
     A.real_integer, A.real_integer] at h
   simpa only [IntCoord.real_sub] using h.symm

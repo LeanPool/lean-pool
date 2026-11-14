@@ -30,7 +30,8 @@ provenance_evidence: >-
   9d07e1456c8ec655666255ec966f138e28c56477 on October 3; this import's proof
   optimization and port are by Codex. Mixed provenance is inferred from the human
   author records and these documented AI contributions. The original core's proof
-  production is not explicitly disclosed and requires confirmation before merging.
+  production method remains unspecified in those records; no claim of exclusively
+  human-written original proofs is made.
 main_declarations:
 - ProbabilityTheory.Copula.exists_sklarCopula
 main_results:

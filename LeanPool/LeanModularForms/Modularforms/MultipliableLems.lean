@@ -36,7 +36,7 @@ theorem term_ne_zero (z : ℍ) (n : ℕ) : 1 -cexp (2 * ↑π * Complex.I * (↑
   rw [sub_ne_zero]
   intro h
   have := exp_upperHalfPlane_lt_one_nat z n
-  simp [← h] at this
+  simp only [← h, norm_one, lt_self_iff_false] at this
 
 theorem ball_pow_ne_1 (x : ℂ) (hx : x ∈ ball 0 1) (n : ℕ) : 1 + (fun n ↦ -x ^ (n + 1)) n ≠ 0 := by
   simp only [mem_ball, dist_zero_right] at *
@@ -44,7 +44,7 @@ theorem ball_pow_ne_1 (x : ℂ) (hx : x ∈ ball 0 1) (n : ℕ) : 1 + (fun n ↦
   intro h
   have hxn : ‖(x ^ (n + 1))‖ < 1 := by
     simp only [norm_pow]; exact pow_lt_one₀ (norm_nonneg x) hx (by omega)
-  simp [← h] at hxn
+  simp only [← h, norm_one, lt_self_iff_false] at hxn
 
 theorem multipliable_lt_one (x : ℂ) (hx : x ∈ ball 0 1) :
   Multipliable fun i ↦ 1 - x ^ (i+ 1) := by
@@ -78,7 +78,7 @@ lemma MultipliableEtaProductExpansion_pnat (z : ℍ) :
   conv at this =>
     enter [1]
     ext n
-    rw [show (n : ℂ) + 1 = (((n + 1) : ℕ) : ℂ) by simp]
+    rw [show (n : ℂ) + 1 = (((n + 1) : ℕ) : ℂ) by simp only [Nat.cast_add, Nat.cast_one] ]
   rw [ ← multipliable_pnat_iff_multipliable_succ (f := g)] at this
   apply this.congr
   intro b
@@ -96,7 +96,7 @@ lemma tprod_ne_zero (x : ℍ) (f : ℕ → ℍ → ℂ) (hf : ∀ i x, 1 + f i x
 lemma Multipliable_pow {ι : Type*} (f : ι → ℂ) (hf : Multipliable f) (n : ℕ) :
      Multipliable (fun i => f i ^ n) := by
   induction n with
-  | zero => simp
+  | zero => simp only [pow_zero, multipliable_one]
   | succ n hn => simpa only [pow_succ] using hn.mul hf
 
 
@@ -109,7 +109,7 @@ lemma MultipliableDeltaProductExpansion_pnat (z : ℍ) :
 lemma tprod_pow (f : ℕ → ℂ) (hf : Multipliable f) (n : ℕ) : (∏' (i : ℕ), f i) ^ n = ∏' (i : ℕ),
     (f i) ^ n := by
   induction n with
-  | zero => simp
+  | zero => simp only [pow_zero, tprod_one]
   | succ n hn =>
     simp only [pow_succ, hn, ← Multipliable.tprod_mul (Multipliable_pow f hf n) hf]
 

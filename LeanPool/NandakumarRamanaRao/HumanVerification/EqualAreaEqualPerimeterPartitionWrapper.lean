@@ -6,8 +6,13 @@ Authors: Arseniy Akopyan
 module
 
 
-public import LeanPool.NandakumarRamanaRao.HumanVerification.Transfer
+public import LeanPool.NandakumarRamanaRao.HumanVerification.InternalModel
 public import LeanPool.NandakumarRamanaRao.HumanVerification.CauchyCrofton.Theorem
+public import LeanPool.NandakumarRamanaRao.HumanVerification.Transfer
+import Mathlib.Analysis.SpecialFunctions.Trigonometric.Arctan
+import Mathlib.Combinatorics.Matroid.Init
+import Mathlib.MeasureTheory.Covering.Besicovitch
+import Mathlib.Tactic.Positivity.Finset
 
 /-! # Equal Area Equal Perimeter Partition Wrapper -/
 

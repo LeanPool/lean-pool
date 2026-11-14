@@ -4,14 +4,16 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Boris Alexeev
 -/
 module
+public import LeanPool.HopfProblem.Foundations.Core2
+public import Mathlib.RingTheory.TotallySplit
+public import Mathlib.RingTheory.Etale.Weakly
 
-public import LeanPool.HopfProblem.Prelude
+public import LeanPool.HopfProblem.InternalPrelude
 public import LeanPool.HopfProblem.Toric.ToricSpace2
 import all LeanPool.HopfProblem.Lattice.Core1
 import all LeanPool.HopfProblem.Foundations.Core2
 import all LeanPool.HopfProblem.Toric.ToricSpace1
 import all LeanPool.HopfProblem.PeriodFamily.PeriodPoint
-import all LeanPool.HopfProblem.Toric.ToricSpace2
 
 /-!
 # Hopf problem: uniformization · cusp uniformization 1
@@ -22,10 +24,8 @@ Supporting definitions and proofs for this stage of the six-sphere construction.
 
 open Set Function Filter Manifold Topology
 
-open scoped BigOperators CategoryTheory Complex.UnitDisc ComplexConjugate ContDiff ContinuousMap
-  Convolution ENNReal EuclideanSpace Fin.NatCast InnerProductSpace Interval Matrix MatrixGroups
-  Modular NNReal Pointwise RealInnerProductSpace TensorProduct UniformConvergence Uniformity
-  UpperHalfPlane
+open scoped BigOperators ComplexConjugate ContDiff ContinuousMap ENNReal EuclideanSpace Fin.NatCast
+  InnerProductSpace Interval Matrix NNReal Pointwise RealInnerProductSpace
 
 universe u v
 
@@ -136,8 +136,8 @@ private theorem CuspUniformization.exponentialCoordinates_holomorphic (t : ℂ) 
   apply contDiff_pi.mpr
   intro i
   fin_cases i
-  · exact exponential_holomorphic.comp (contDiff_apply ℂ ℂ 0)
-  · exact exponential_holomorphic.comp (contDiff_apply ℂ ℂ 1)
+  · exact exponential_holomorphic.comp (contDiff_apply ℂ (fun _ => ℂ) 0)
+  · exact exponential_holomorphic.comp (contDiff_apply ℂ (fun _ => ℂ) 1)
   · exact contDiff_const
 
 private def CuspUniformization.exponentialPoint (t : ℂ) : ComplexPlane₂ → ToricSpace.Space :=
@@ -830,8 +830,8 @@ private theorem CuspUniformization.totalExponentialPoint_holomorphic :
     apply contDiff_pi.mpr
     intro i
     fin_cases i
-    · exact exponential_holomorphic.comp ((contDiff_apply ℂ ℂ 0).comp contDiff_snd)
-    · exact exponential_holomorphic.comp ((contDiff_apply ℂ ℂ 1).comp contDiff_snd)
+    · exact exponential_holomorphic.comp ((contDiff_apply ℂ (fun _ => ℂ) 0).comp contDiff_snd)
+    · exact exponential_holomorphic.comp ((contDiff_apply ℂ (fun _ => ℂ) 1).comp contDiff_snd)
     · exact exponential_holomorphic.comp contDiff_fst
   · intro p _
     exact
@@ -1313,8 +1313,8 @@ private theorem CuspUniformization.totalExponentialCoordinates_holomorphic :
   apply contDiff_pi.mpr
   intro i
   fin_cases i
-  · exact exponential_holomorphic.comp ((contDiff_apply ℂ ℂ 0).comp contDiff_snd)
-  · exact exponential_holomorphic.comp ((contDiff_apply ℂ ℂ 1).comp contDiff_snd)
+  · exact exponential_holomorphic.comp ((contDiff_apply ℂ (fun _ => ℂ) 0).comp contDiff_snd)
+  · exact exponential_holomorphic.comp ((contDiff_apply ℂ (fun _ => ℂ) 1).comp contDiff_snd)
   · exact exponential_holomorphic.comp contDiff_fst
 
 private def CuspUniformization.totalExponentialDerivative (p : LogModel) :

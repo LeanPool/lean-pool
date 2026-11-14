@@ -76,7 +76,6 @@ lemma F_bound_aux {y : ℝ} (hy : 0 < y) (m : ℕ) {N c : ℝ} (hN : 0 ≤ N)
       rw [div_pow, mul_pow (2 * Real.pi * y) (qe y), mul_pow (2 * Real.pi) y,
         pow_succ (2 * Real.pi), pow_succ (qe y), pow_succ y]
       field_simp
-      try ring
 
 lemma abs_F0_le {y : ℝ} (hy : 0 < y) :
     |F0 y| ≤ 1 * (1 + 2 * Real.pi * y) ^ (0 + 1) / (2 * Real.pi * y ^ (0 + 1) * qe y) := by
@@ -214,7 +213,6 @@ lemma prod_bound_aux {a y : ℝ} (ha : 0 < a) (hy : 0 < y) {G Fv c d : ℝ} {m e
     _ = (c * d / (2 * Real.pi)) * (y ^ e * (1 + 2 * Real.pi * y) ^ (m + 1) / (a ^ 2 * qe y)) := by
       rw [pow_add, pow_add]
       field_simp
-      try ring
     _ ≤ (8 * Real.pi / (2 * Real.pi)) * (y ^ e * (1 + 2 * Real.pi * y) ^ 5 / (a ^ 2 * qe y)) := by
       gcongr
     _ = 4 * y ^ e * (1 + 2 * Real.pi * y) ^ 5 / (a ^ 2 * qe y) := by

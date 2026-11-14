@@ -275,22 +275,20 @@ lemma intro_triunion_consistent
   let Γ₂ := (Γ₁₂.filter (· ∈ T₂));
   apply unprovable_imp_trans''! (φ := ⋀Γ₁ ⋏ ⋀Γ₂ ⋏ ⋀Γ₃);
   · exact imp_trans''! (and₂'! <| and_assoc!) <| by
-      apply and_replace_left!;
-      apply imply_left_conj_concat!.mp;
-        apply conjconj_subset!;
-        intro φ hp;
-        simp only [List.mem_append, List.mem_filter, decide_eq_true_eq, Γ₁, Γ₂];
-        simp_all
-  · apply h;
-    refine ⟨?_, ?_, h₃⟩;
-    · intro φ hp;
-      rcases h₁₂ φ (List.mem_of_mem_filter hp) with (_ | _)
-      · assumption;
-      · simpa using List.of_mem_filter hp;
-    · intro φ hp;
-      rcases h₁₂ φ (List.mem_of_mem_filter hp) with (_ | _)
-      · have := List.of_mem_filter hp; simp_all
-      · assumption;
+      apply and_replace_left!
+      apply imply_left_conj_concat!.mp
+      apply conjconj_subset!
+      intro φ hp
+      simp only [List.mem_append, List.mem_filter, decide_eq_true_eq, Γ₁, Γ₂]
+      rcases h₁₂ φ hp with hφ | hφ
+      · exact Or.inl ⟨hp, hφ⟩
+      · exact Or.inr ⟨hp, hφ⟩
+  · apply h
+    refine ⟨?_, ?_, h₃⟩
+    · intro φ hp
+      simpa only [decide_eq_true_eq] using List.of_mem_filter hp
+    · intro φ hp
+      simpa only [decide_eq_true_eq] using List.of_mem_filter hp
 
 omit [DecidableEq α] in
 omit [Entailment.Classical 𝓢] in
@@ -619,22 +617,8 @@ lemma mem_dia_dual : ◇φ ∈ Ω ↔ (∼(□(∼φ)) ∈ Ω) := by classical
 omit [DecidableEq α] in
 lemma iff_mem_multidia : (◇^[n]φ ∈ Ω) ↔ (∃ Ω' :
     MaximalConsistentSet 𝓢, (□''⁻¹^[n]Ω.1 ⊆ Ω'.1) ∧ (φ ∈ Ω'.1)) := by classical
-  constructor;
-  · intro h;
-    have := mem_multidia_dual.mp h;
-    have := iff_mem_neg.mp this;
-    have := iff_mem_multibox.not.mp this;
-    push Not at this;
-    simp_all
-  · rintro ⟨Ω', h₁, h₂⟩;
-    apply mem_multidia_dual.mpr;
-    apply iff_mem_neg.mpr;
-    apply iff_mem_multibox.not.mpr;
-    push Not;
-    use Ω';
-    constructor;
-    · exact h₁;
-    · exact iff_mem_neg.mp <| iff_mem_negneg.mpr h₂;
+  simp only [mem_multidia_dual, iff_mem_neg, iff_mem_multibox, not_forall, not_not, exists_prop]
+  rfl
 omit [DecidableEq α] in
 lemma iff_mem_dia : (◇φ ∈ Ω) ↔ (∃ Ω' :
     MaximalConsistentSet 𝓢, (□''⁻¹Ω.1 ⊆ Ω'.1) ∧ (φ ∈ Ω'.1)) :=

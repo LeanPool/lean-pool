@@ -7,6 +7,9 @@ module
 public import Mathlib.Algebra.Field.Defs
 public import Mathlib.Combinatorics.SimpleGraph.Matching
 
+import Mathlib.Algebra.Order.BigOperators.Group.Finset
+import Mathlib.Data.Nat.Cast.Order.Ring
+
 /-!
 # Spread perfect matchings in Dirac graphs
 

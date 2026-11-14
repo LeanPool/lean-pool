@@ -9,6 +9,7 @@ module
 public import LeanPool.HighContrastHomogenization.Support.Ambient.Basic
 public import Mathlib.Analysis.SpecialFunctions.SmoothTransition
 public import Mathlib.Analysis.Calculus.ContDiff.Operations
+public import Mathlib.Analysis.Calculus.Deriv.Inv
 public import Mathlib.Analysis.Calculus.FDeriv.Mul
 public import Mathlib.MeasureTheory.Measure.Lebesgue.Basic
 public import Mathlib.Topology.Algebra.Module.ContinuousLinearMap.PiProd
@@ -327,7 +328,7 @@ theorem boxCutoff_apply (x : Vec d) :
 /-- Each coordinate factor is `C^∞`. -/
 theorem factor_contDiff (i : Fin d) :
     ContDiff ℝ (⊤ : ℕ∞) (fun x : Vec d => profile (lo i) (hi i) ℓ (x i)) :=
-  profile_contDiff.comp (contDiff_apply ℝ ℝ i)
+  profile_contDiff.comp (contDiff_apply ℝ (fun _ => ℝ) i)
 
 theorem boxCutoff_contDiff : ContDiff ℝ (⊤ : ℕ∞) (boxCutoff lo hi ℓ) :=
   contDiff_prod (fun i _ => factor_contDiff i)

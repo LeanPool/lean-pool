@@ -10,7 +10,7 @@ public import LeanPool.Zeta5Irrational.Arith.OuterBasis
 import LeanPool.Zeta5Irrational.Arith.IntPoly
 import LeanPool.Zeta5Irrational.Arith.OuterEntry
 import LeanPool.Zeta5Irrational.Arith.PoleVal
-import Mathlib.Data.Rat.Star
+import Mathlib.Algebra.Order.Star.Rat
 import Mathlib.RingTheory.Int.Basic
 import Mathlib.Tactic.ENatToNat
 import Mathlib.Tactic.ReduceModChar

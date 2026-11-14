@@ -366,8 +366,9 @@ theorem eLpNorm_evenExt_le {j : Fin d} {u : EuclideanSpace ℝ (Fin d) → ℝ} 
         have hcomp : eLpNorm (fun y => u (reflectLI j y)) p (volume.restrict (halfSpaceNeg j))
             = eLpNorm u p (volume.restrict (halfSpace j)) :=
           eLpNorm_comp_measurePreserving hu hmp
-        rw [eLpNorm_indicator_eq_eLpNorm_restrict (measurableSet_halfSpace j),
-          eLpNorm_indicator_eq_eLpNorm_restrict (measurableSet_halfSpaceNeg j), hcomp]
+        rw [eLpNorm_indicator_eq_eLpNorm_restrict (measurableSet_halfSpace j).nullMeasurableSet,
+          eLpNorm_indicator_eq_eLpNorm_restrict (measurableSet_halfSpaceNeg j).nullMeasurableSet,
+          hcomp]
     _ = 2 * eLpNorm u p (volume.restrict (halfSpace j)) := by
         rw [two_mul]
 
@@ -500,8 +501,8 @@ theorem eLpNorm_evenExtGrad_le {j : Fin d} {g : Fin d → EuclideanSpace ℝ (Fi
             fun y => reflectSign j k * g k (reflectLI j y)) p volume := eLpNorm_add_le hp
     _ ≤ eLpNorm (g k) p (volume.restrict (halfSpace j))
         + eLpNorm (g k) p (volume.restrict (halfSpace j)) := by
-        rw [eLpNorm_indicator_eq_eLpNorm_restrict (measurableSet_halfSpace j),
-          eLpNorm_indicator_eq_eLpNorm_restrict (measurableSet_halfSpaceNeg j)]
+        rw [eLpNorm_indicator_eq_eLpNorm_restrict (measurableSet_halfSpace j).nullMeasurableSet,
+          eLpNorm_indicator_eq_eLpNorm_restrict (measurableSet_halfSpaceNeg j).nullMeasurableSet]
         have hstep : eLpNorm (fun y => reflectSign j k * g k (reflectLI j y)) p
             (volume.restrict (halfSpaceNeg j))
             ≤ eLpNorm (g k) p (volume.restrict (halfSpace j)) :=

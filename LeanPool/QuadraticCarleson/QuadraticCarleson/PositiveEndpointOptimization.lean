@@ -8,7 +8,6 @@ module
 
 public import LeanPool.QuadraticCarleson.QuadraticCarleson.Definitions
 public import Mathlib.Analysis.Complex.ExponentialBounds
-public import Mathlib.Analysis.SpecificLimits.Normed
 
 /-!
 # Scalar optimization in the positive endpoint argument
@@ -56,10 +55,10 @@ theorem InMagnitudeLevel.lower {A : ℕ → ℝ} {k : ℕ} {t : ℝ}
 theorem paperLog_nonnegative (n : ℕ) {t : ℝ} (ht : 0 ≤ t) :
     0 ≤ paperLog n t := by
   induction n with
-  | zero => simpa using ht
+  | zero => simpa only [paperLog_zero] using ht
   | succ n ih =>
       rw [paperLog_succ]
-      exact Real.log_nonneg (by linarith)
+      exact Real.log_nonneg (by linarith only [ih])
 
 /-- Monotonicity of the shifted iterated logarithms on the half-line used in
 the endpoint estimates. -/
@@ -67,15 +66,15 @@ theorem paperLog_mono {n : ℕ} {s t : ℝ} (hs : 0 ≤ s) (hst : s ≤ t) :
     paperLog n s ≤ paperLog n t := by
   have ht : 0 ≤ t := hs.trans hst
   induction n with
-  | zero => simpa using hst
+  | zero => simpa only [paperLog_zero, ge_iff_le] using hst
   | succ n ih =>
       rw [paperLog_succ, paperLog_succ]
       apply Real.strictMonoOn_log.monotoneOn
       · change 0 < 10 + paperLog n s
-        linarith [paperLog_nonnegative n hs]
+        linarith only [hs, paperLog_nonnegative n hs]
       · change 0 < 10 + paperLog n t
-        linarith [paperLog_nonnegative n ht]
-      · simpa [add_comm] using add_le_add_left ih 10
+        linarith only [ht, paperLog_nonnegative n ht]
+      · simpa only [add_le_add_iff_left, add_comm] using add_le_add_left ih 10
 
 /-- The ordinary dyadic scale `2^k`, regarded as a real number. -/
 noncomputable def dyadicScale (k : ℕ) : ℝ := (2 : ℝ) ^ k
@@ -88,7 +87,7 @@ noncomputable def fullAmplitude (k : ℕ) : ℝ :=
 noncomputable def fullCutoff (C : ℝ) (k : ℕ) : ℝ := C * dyadicScale k
 
 theorem dyadicScale_pos (k : ℕ) : 0 < dyadicScale k := by
-  simp [dyadicScale]
+  simp only [dyadicScale, Nat.ofNat_pos, pow_pos]
 
 theorem fullAmplitude_pos (k : ℕ) : 0 < fullAmplitude k := by
   exact Real.exp_pos _
@@ -102,7 +101,7 @@ theorem fullAmplitude_eq_two_pow (k : ℕ) :
   ring
 
 theorem dyadicScale_succ (k : ℕ) : dyadicScale (k + 1) = 2 * dyadicScale k := by
-  simp [dyadicScale, pow_succ, mul_comm]
+  simp only [dyadicScale, pow_succ, mul_comm]
 
 /-- A point in a nonzero full-operator magnitude level pays for its cutoff by
 one copy of the paper's `log₁`. -/
@@ -114,12 +113,12 @@ theorem fullCutoff_le_paperLog_one_of_mem
   have hk' : k - 1 + 1 = k := Nat.sub_add_cancel (Nat.one_le_iff_ne_zero.mpr hk)
   have hlog : Real.log 2 * dyadicScale (k - 1) ≤ paperLog 1 t := by
     rw [paperLog_succ, paperLog_zero,
-      Real.le_log_iff_exp_le (by linarith [ht.nonneg (fun j ↦ (fullAmplitude_pos j).le)])]
-    exact (le_of_lt hlower).trans (by linarith)
+      Real.le_log_iff_exp_le (by linarith only [ht, ht.nonneg (fun j ↦ (fullAmplitude_pos j).le)])]
+    exact (le_of_lt hlower).trans (by linarith only [])
   rw [← hk']
   simp only [fullCutoff, dyadicScale_succ]
   have hd : 2 * dyadicScale (k - 1) ≤ 4 * paperLog 1 t := by
-    nlinarith [Real.log_two_gt_d9, dyadicScale_pos (k - 1)]
+    nlinarith only [hlog, Real.log_two_gt_d9, dyadicScale_pos (k - 1)]
   simpa [mul_assoc, mul_left_comm, mul_comm] using
     mul_le_mul_of_nonneg_left hd hC
 
@@ -132,9 +131,9 @@ theorem fullWeightedLevel_le_orlicz
     (fullCutoff_le_paperLog_one_of_mem hC hk ht) ht0).trans_eq (by ring)
 
 theorem one_le_paperLog_one {t : ℝ} (ht : 0 ≤ t) : 1 ≤ paperLog 1 t := by
-  rw [paperLog_succ, paperLog_zero, Real.le_log_iff_exp_le (by linarith)]
-  have hexp : Real.exp 1 < 10 := Real.exp_one_lt_d9.trans (by norm_num)
-  exact hexp.le.trans (by linarith)
+  rw [paperLog_succ, paperLog_zero, Real.le_log_iff_exp_le (by linarith only [ht])]
+  have hexp : Real.exp 1 < 10 := Real.exp_one_lt_d9.trans (by norm_num1)
+  exact hexp.le.trans (by linarith only [ht])
 
 /-- The same full endpoint conversion including the bottom magnitude band. -/
 theorem fullWeightedLevel_le_orlicz_all
@@ -186,18 +185,18 @@ theorem lacunaryAmplitude_eq_two_pow (k : ℕ) :
   ring
 
 theorem half_lt_log_two : (1 / 2 : ℝ) < Real.log 2 := by
-  linarith [Real.log_two_gt_d9]
+  linarith only [Real.log_two_gt_d9]
 
 theorem dyadicScale_ge_one (k : ℕ) : 1 ≤ dyadicScale k := by
-  exact one_le_pow₀ (by norm_num)
+  exact one_le_pow₀ (by norm_num1)
 
 theorem dyadicScale_ge_nat_succ (k : ℕ) : (k : ℝ) + 1 ≤ dyadicScale k := by
   induction k with
-  | zero => simp [dyadicScale]
+  | zero => simp only [CharP.cast_eq_zero, zero_add, dyadicScale, pow_zero, Std.le_refl]
   | succ k ih =>
       rw [dyadicScale_succ]
       push_cast
-      nlinarith [dyadicScale_ge_one k]
+      linarith only [ih, dyadicScale_ge_one k]
 
 /-- The first shifted logarithm at the bottom of a lacunary level already
 sees the exponent `log 2 * 2^(2^(k-1))`. -/
@@ -208,7 +207,7 @@ theorem paperLog_one_lacunary_lower
   have hlower : lacunaryAmplitude (k - 1) < t := ht.lower hk
   rw [paperLog_succ, paperLog_zero,
     Real.le_log_iff_exp_le (by linarith [ht.nonneg (fun j ↦ (lacunaryAmplitude_pos j).le)])]
-  exact (le_of_lt hlower).trans (by linarith)
+  exact (le_of_lt hlower).trans (by linarith only [])
 
 /-- At a nontrivial lacunary magnitude level, `log₂` dominates the dyadic
 index scale. The factor `8` only absorbs the shift from `k` to `k-1` and the
@@ -257,15 +256,13 @@ theorem dyadicScale_sq_le_sixtyfour_mul_paperLog_two_sq_of_mem
     (ht : InMagnitudeLevel lacunaryAmplitude k t) :
     dyadicScale k ^ 2 ≤ 64 * paperLog 2 t ^ 2 := by
   have h := dyadicScale_le_eight_mul_paperLog_two_of_mem hk ht
-  have hp : 0 ≤ paperLog 2 t :=
-    paperLog_nonnegative 2 (ht.nonneg (fun j ↦ (lacunaryAmplitude_pos j).le))
   have hs := mul_self_le_mul_self (dyadicScale_pos k).le h
-  nlinarith
+  linarith only [hs]
 
 theorem lacunaryScale_ge_one (k : ℕ) : 1 ≤ lacunaryScale k := by
   rw [← Real.exp_zero]
   apply Real.exp_le_exp.mpr
-  exact mul_nonneg (half_lt_log_two.le.trans' (by norm_num)) (dyadicScale_pos k).le
+  exact mul_nonneg (half_lt_log_two.le.trans' (by norm_num1)) (dyadicScale_pos k).le
 
 /-- The logarithmic loss of a block of `B_k` lacunary modulations is at most
 linear in `2^k`. -/
@@ -273,12 +270,12 @@ theorem paperLog_one_lacunaryCutoff_le
     {C : ℝ} (hC : 0 ≤ C) (k : ℕ) :
     paperLog 1 (lacunaryCutoff C k) ≤
       (paperLog 1 C + 1) * dyadicScale k := by
-  have htenC : 0 < 10 + C := by linarith
+  have htenC : 0 < 10 + C := by linarith only [hC]
   have hs1 := lacunaryScale_ge_one k
   have harg :
       10 + lacunaryCutoff C k ≤ (10 + C) * lacunaryScale k := by
     dsimp [lacunaryCutoff]
-    nlinarith
+    linarith only [hs1]
   rw [paperLog_succ, paperLog_zero]
   calc
     Real.log (10 + lacunaryCutoff C k)
@@ -286,7 +283,7 @@ theorem paperLog_one_lacunaryCutoff_le
           apply Real.strictMonoOn_log.monotoneOn
           · change 0 < 10 + lacunaryCutoff C k
             dsimp [lacunaryCutoff]
-            nlinarith [mul_nonneg hC (lacunaryScale_pos k).le]
+            linarith only [hC, mul_nonneg hC (lacunaryScale_pos k).le]
           · change 0 < (10 + C) * lacunaryScale k
             exact mul_pos htenC (lacunaryScale_pos k)
           · exact harg
@@ -294,14 +291,14 @@ theorem paperLog_one_lacunaryCutoff_le
           rw [Real.log_mul (ne_of_gt htenC) (ne_of_gt (lacunaryScale_pos k))]
     _ = paperLog 1 C + Real.log 2 * dyadicScale k := by
           rw [paperLog_succ, paperLog_zero]
-          simp [lacunaryScale]
+          simp only [lacunaryScale, Real.log_exp]
     _ ≤ (paperLog 1 C + 1) * dyadicScale k := by
           have hlogC : 0 ≤ paperLog 1 C := by
             rw [paperLog_succ, paperLog_zero]
-            exact Real.log_nonneg (by linarith)
+            exact Real.log_nonneg (by linarith only [hC])
           have hlog2 : Real.log 2 ≤ 1 := by
-            linarith [Real.log_le_sub_one_of_pos (by norm_num : (0 : ℝ) < 2)]
-          nlinarith [dyadicScale_ge_one k]
+            linarith only [Real.log_le_sub_one_of_pos (by norm_num : (0 : ℝ) < 2)]
+          nlinarith only [hlogC, hlog2, dyadicScale_ge_one k]
 
 /-- Consequently, the `log₁(B_k)^2` factor in the lacunary high-frequency
 estimate is absorbed by `log₂(t)^2` on `F_k`. -/
@@ -314,17 +311,14 @@ theorem paperLog_one_lacunaryCutoff_sq_le_paperLog_two_sq_of_mem
   have hcut0 : 0 ≤ paperLog 1 (lacunaryCutoff C k) := by
     apply paperLog_nonnegative
     exact mul_nonneg hC (lacunaryScale_pos k).le
-  have hconst : 0 ≤ paperLog 1 C + 1 := by
-    have := paperLog_nonnegative 1 hC
-    linarith
   have hscale := dyadicScale_sq_le_sixtyfour_mul_paperLog_two_sq_of_mem hk ht
   calc
     paperLog 1 (lacunaryCutoff C k) ^ 2
-        ≤ ((paperLog 1 C + 1) * dyadicScale k) ^ 2 := by nlinarith
+        ≤ ((paperLog 1 C + 1) * dyadicScale k) ^ 2 := by nlinarith only [hcut, hcut0]
     _ = (paperLog 1 C + 1) ^ 2 * dyadicScale k ^ 2 := by ring
     _ ≤ (paperLog 1 C + 1) ^ 2 * (64 * paperLog 2 t ^ 2) := by
           exact mul_le_mul_of_nonneg_left hscale (sq_nonneg _)
-    _ = 64 * (paperLog 1 C + 1) ^ 2 * paperLog 2 t ^ 2 := by ring
+    _ = 64 * (paperLog 1 C + 1) ^ 2 * paperLog 2 t ^ 2 := by ac_rfl
 
 /-- Three iterated logarithms of a value in the `k`th lacunary band retain a
 linear amount of the level index. -/
@@ -335,15 +329,15 @@ theorem sub_three_mul_log_two_le_paperLog_three_of_mem
   have h2 := dyadicScale_le_eight_mul_paperLog_two_of_mem (by omega) ht
   have ht0 : 0 ≤ t := ht.nonneg (fun j ↦ (lacunaryAmplitude_pos j).le)
   have hdivpos : 0 < dyadicScale k / 8 :=
-    div_pos (dyadicScale_pos k) (by norm_num)
+    div_pos (dyadicScale_pos k) (by norm_num1)
   have harg : dyadicScale k / 8 ≤ 10 + paperLog 2 t := by
-    nlinarith
+    linarith only [h2]
   have hlogdiv :
       Real.log (dyadicScale k / 8) = ((k : ℝ) - 3) * Real.log 2 := by
-    rw [Real.log_div (ne_of_gt (dyadicScale_pos k)) (by norm_num : (8 : ℝ) ≠ 0)]
+    rw [Real.log_div (ne_of_gt (dyadicScale_pos k)) (by norm_num1 : (8 : ℝ) ≠ 0)]
     unfold dyadicScale
     rw [Real.log_pow]
-    have height : (8 : ℝ) = 2 ^ (3 : ℕ) := by norm_num
+    have height : (8 : ℝ) = 2 ^ (3 : ℕ) := by norm_num1
     rw [height, Real.log_pow]
     push_cast
     ring
@@ -352,7 +346,7 @@ theorem sub_three_mul_log_two_le_paperLog_three_of_mem
   apply Real.strictMonoOn_log.monotoneOn
   · exact hdivpos
   · change 0 < 10 + paperLog 2 t
-    linarith [paperLog_nonnegative 2 ht0]
+    linarith only [h2, hdivpos, paperLog_nonnegative 2 ht0]
   · exact harg
 
 /-- The fourth iterated logarithm supplies Kalton's additional
@@ -374,17 +368,16 @@ theorem paperLog_one_index_le_two_mul_paperLog_four_of_mem
         mul_le_mul_of_nonneg_left half_lt_log_two.le hk3
       _ ≤ paperLog 3 t := h3
   have hbase : 0 < 10 + paperLog 3 t := by
-    linarith [paperLog_nonnegative 3 ht0]
+    linarith only [h3lower, paperLog_nonnegative 3 ht0]
   have hsq : (k : ℝ) + 12 ≤ (10 + paperLog 3 t) ^ 2 := by
     have hkreal : (6 : ℝ) ≤ (k : ℝ) := by exact_mod_cast hk
-    nlinarith [sq_nonneg (paperLog 3 t - ((k : ℝ) - 3) / 2)]
+    nlinarith only [h3lower, hkreal, sq_nonneg (paperLog 3 t - ((k : ℝ) - 3) / 2)]
   rw [paperLog_succ, paperLog_zero, paperLog_succ]
   have hlog :
       Real.log ((k : ℝ) + 12) ≤ Real.log ((10 + paperLog 3 t) ^ 2) := by
     apply Real.strictMonoOn_log.monotoneOn
     · change 0 < (k : ℝ) + 12
-      have hk0 : (0 : ℝ) ≤ k := by positivity
-      linarith
+      linarith only []
     · exact sq_pos_of_pos hbase
     · exact hsq
   rw [Real.log_pow] at hlog
@@ -404,17 +397,13 @@ theorem lacunaryLowWeight_le_orlicz_of_mem
   have hindex := paperLog_one_index_le_two_mul_paperLog_four_of_mem hk ht
   have hblock := paperLog_one_lacunaryCutoff_sq_le_paperLog_two_sq_of_mem
     hC (by omega) ht
-  have hi0 : 0 ≤ paperLog 1 ((k : ℝ) + 2) := by
-    apply paperLog_nonnegative
-    positivity
   have hb0 : 0 ≤ paperLog 1 (lacunaryCutoff C k) ^ 2 := sq_nonneg _
   have h4 : 0 ≤ paperLog 4 t := paperLog_nonnegative 4 ht0
-  have hconst : 0 ≤ 64 * (paperLog 1 C + 1) ^ 2 * paperLog 2 t ^ 2 := by positivity
   have hprod :
       paperLog 1 ((k : ℝ) + 2) * paperLog 1 (lacunaryCutoff C k) ^ 2 ≤
         (2 * paperLog 4 t) *
           (64 * (paperLog 1 C + 1) ^ 2 * paperLog 2 t ^ 2) :=
-    mul_le_mul hindex hblock hb0 (mul_nonneg (by norm_num) h4)
+    mul_le_mul hindex hblock hb0 (mul_nonneg (by norm_num1) h4)
   have := mul_le_mul_of_nonneg_right hprod ht0
   calc
     paperLog 1 ((k : ℝ) + 2) *
@@ -433,7 +422,7 @@ theorem lacunaryHighWeight_le_orlicz_of_mem
       64 * (paperLog 1 C + 1) ^ 2 * (t * paperLog 2 t ^ 2) := by
   have ht0 : 0 ≤ t := ht.nonneg (fun j ↦ (lacunaryAmplitude_pos j).le)
   have h := paperLog_one_lacunaryCutoff_sq_le_paperLog_two_sq_of_mem hC hk ht
-  exact (mul_le_mul_of_nonneg_right h ht0).trans_eq (by ring)
+  exact (mul_le_mul_of_nonneg_right h ht0).trans_eq (by ac_rfl)
 
 theorem dyadicScale_le_thirtytwo {k : ℕ} (hk : k < 6) :
     dyadicScale k ≤ 32 := by
@@ -454,7 +443,7 @@ theorem lacunaryLowWeight_smallLevel_le_L1
     apply paperLog_nonnegative
     exact mul_nonneg hC (lacunaryScale_pos k).le
   have hconstant0 : 0 ≤ paperLog 1 C + 1 := by
-    linarith [paperLog_nonnegative 1 hC]
+    linarith only [hC, paperLog_nonnegative 1 hC]
   have hblock : paperLog 1 (lacunaryCutoff C k) ≤
       32 * (paperLog 1 C + 1) := by
     have h := paperLog_one_lacunaryCutoff_le hC k
@@ -464,11 +453,10 @@ theorem lacunaryLowWeight_smallLevel_le_L1
           ≤ (paperLog 1 C + 1) * dyadicScale k := h
       _ ≤ (paperLog 1 C + 1) * 32 :=
         mul_le_mul_of_nonneg_left hd hconstant0
-      _ = 32 * (paperLog 1 C + 1) := by ring
+      _ = 32 * (paperLog 1 C + 1) := by ac_rfl
   have hblocksq : paperLog 1 (lacunaryCutoff C k) ^ 2 ≤
-      (32 * (paperLog 1 C + 1)) ^ 2 := by nlinarith
-  have hi0 := paperLog_nonnegative 1 (by positivity : (0 : ℝ) ≤ (k : ℝ) + 2)
-  have hseven0 := paperLog_nonnegative 1 (by norm_num : (0 : ℝ) ≤ 7)
+      (32 * (paperLog 1 C + 1)) ^ 2 := by nlinarith only [hblock0, hconstant0, hblock]
+  have hseven0 := paperLog_nonnegative 1 (by norm_num1 : (0 : ℝ) ≤ 7)
   have hprod := mul_le_mul hindex hblocksq (sq_nonneg _) hseven0
   exact mul_le_mul_of_nonneg_right hprod ht
 
@@ -491,12 +479,12 @@ theorem fullHighFrequencyPrefactor_le_geometric
     highFrequencyPrefactor β (fullAmplitude k) (fullCutoff C k) ≤
       Real.exp (-((2 * β * C - 1) * Real.log 2) * (k : ℝ)) := by
   let δ : ℝ := (2 * β * C - 1) * Real.log 2
-  have hδ : 0 < δ := mul_pos (sub_pos.mpr hdecay) (half_lt_log_two.trans' (by norm_num))
+  have hδ : 0 < δ := mul_pos (sub_pos.mpr hdecay) (half_lt_log_two.trans' (by norm_num1))
   have hden : 0 < fullCutoff C k :=
     mul_pos (zero_lt_one.trans_le hC) (dyadicScale_pos k)
   have hden1 : 1 ≤ fullCutoff C k := by
     dsimp [fullCutoff]
-    nlinarith [dyadicScale_ge_one k]
+    nlinarith only [hC, dyadicScale_ge_one k]
   have hnum :
       Real.exp (-2 * β * Real.log 2 * fullCutoff C k) * fullAmplitude k =
         Real.exp (-δ * dyadicScale k) := by
@@ -514,7 +502,7 @@ theorem fullHighFrequencyPrefactor_le_geometric
     _ ≤ Real.exp (-δ * (k : ℝ)) := by
           apply Real.exp_le_exp.mpr
           have hk := dyadicScale_ge_nat_succ k
-          nlinarith
+          nlinarith only [hδ, hk]
     _ = Real.exp (-((2 * β * C - 1) * Real.log 2) * (k : ℝ)) := rfl
 
 theorem summable_fullHighFrequencyPrefactor
@@ -522,9 +510,9 @@ theorem summable_fullHighFrequencyPrefactor
     Summable (fun k : ℕ ↦
       highFrequencyPrefactor β (fullAmplitude k) (fullCutoff C k)) := by
   let δ : ℝ := (2 * β * C - 1) * Real.log 2
-  have hδ : 0 < δ := mul_pos (sub_pos.mpr hdecay) (half_lt_log_two.trans' (by norm_num))
+  have hδ : 0 < δ := mul_pos (sub_pos.mpr hdecay) (half_lt_log_two.trans' (by norm_num1))
   have hs : Summable (fun k : ℕ ↦ Real.exp (-δ * (k : ℝ))) := by
-    simpa using Real.summable_pow_mul_exp_neg_nat_mul 0 hδ
+    simpa only [neg_mul, pow_zero, one_mul] using Real.summable_pow_mul_exp_neg_nat_mul 0 hδ
   exact hs.of_nonneg_of_le
     (fun k ↦ highFrequencyPrefactor_nonneg (fullAmplitude_pos k).le
       (mul_nonneg (zero_le_one.trans hC) (dyadicScale_pos k).le))
@@ -536,9 +524,9 @@ theorem one_le_paperLog_one_lacunaryCutoff
   have hb0 : 0 ≤ lacunaryCutoff C k :=
     mul_nonneg hC (lacunaryScale_pos k).le
   rw [paperLog_succ, paperLog_zero,
-    Real.le_log_iff_exp_le (by linarith)]
-  have hexp : Real.exp 1 < 10 := Real.exp_one_lt_d9.trans (by norm_num)
-  linarith
+    Real.le_log_iff_exp_le (by linarith only [hb0])]
+  have hexp : Real.exp 1 < 10 := Real.exp_one_lt_d9.trans (by norm_num1)
+  linarith only [hb0, hexp]
 
 /-- The lacunary high-frequency prefactor has the same geometric majorant.
 Its denominator is the paper's rebalanced `log₁(B_k)^2`. -/
@@ -548,10 +536,10 @@ theorem lacunaryHighFrequencyPrefactor_le_geometric
         paperLog 1 (lacunaryCutoff C k) ^ 2 ≤
       Real.exp (-((2 * β * C - 1) * Real.log 2) * (k : ℝ)) := by
   let δ : ℝ := (2 * β * C - 1) * Real.log 2
-  have hδ : 0 < δ := mul_pos (sub_pos.mpr hdecay) (half_lt_log_two.trans' (by norm_num))
+  have hδ : 0 < δ := mul_pos (sub_pos.mpr hdecay) (half_lt_log_two.trans' (by norm_num1))
   have hlog := one_le_paperLog_one_lacunaryCutoff (zero_le_one.trans hC) k
   have hden : 0 < paperLog 1 (lacunaryCutoff C k) ^ 2 := by positivity
-  have hden1 : 1 ≤ paperLog 1 (lacunaryCutoff C k) ^ 2 := by nlinarith
+  have hden1 : 1 ≤ paperLog 1 (lacunaryCutoff C k) ^ 2 := by nlinarith only [hlog]
   have hnum :
       Real.exp (-2 * β * Real.log 2 * lacunaryCutoff C k) * lacunaryAmplitude k =
         Real.exp (-δ * lacunaryScale k) := by
@@ -569,21 +557,20 @@ theorem lacunaryHighFrequencyPrefactor_le_geometric
           exact le_mul_of_one_le_right (Real.exp_pos _).le hden1
     _ ≤ Real.exp (-δ * (k : ℝ)) := by
           apply Real.exp_le_exp.mpr
-          have hs1 := lacunaryScale_ge_one k
           have hsdk : dyadicScale k ≤ lacunaryScale k := by
             rw [← Real.exp_log (dyadicScale_pos k)]
             apply Real.exp_le_exp.mpr
             unfold dyadicScale
             rw [Real.log_pow (2 : ℝ) k]
             have hk := dyadicScale_ge_nat_succ k
-            have hkd : (k : ℝ) ≤ dyadicScale k := by linarith
+            have hkd : (k : ℝ) ≤ dyadicScale k := by linarith only [hk]
             calc
-              (k : ℝ) * Real.log 2 = Real.log 2 * (k : ℝ) := by ring
+              (k : ℝ) * Real.log 2 = Real.log 2 * (k : ℝ) := by ac_rfl
               _ ≤ Real.log 2 * dyadicScale k :=
                 mul_le_mul_of_nonneg_left hkd
-                  (half_lt_log_two.le.trans' (by norm_num))
+                  (half_lt_log_two.le.trans' (by norm_num1))
           have hk := dyadicScale_ge_nat_succ k
-          nlinarith
+          nlinarith only [hδ, hsdk, hk]
     _ = Real.exp (-((2 * β * C - 1) * Real.log 2) * (k : ℝ)) := rfl
 
 theorem summable_lacunaryHighFrequencyPrefactor
@@ -592,9 +579,9 @@ theorem summable_lacunaryHighFrequencyPrefactor
       Real.exp (-2 * β * Real.log 2 * lacunaryCutoff C k) * lacunaryAmplitude k /
         paperLog 1 (lacunaryCutoff C k) ^ 2) := by
   let δ : ℝ := (2 * β * C - 1) * Real.log 2
-  have hδ : 0 < δ := mul_pos (sub_pos.mpr hdecay) (half_lt_log_two.trans' (by norm_num))
+  have hδ : 0 < δ := mul_pos (sub_pos.mpr hdecay) (half_lt_log_two.trans' (by norm_num1))
   have hs : Summable (fun k : ℕ ↦ Real.exp (-δ * (k : ℝ))) := by
-    simpa using Real.summable_pow_mul_exp_neg_nat_mul 0 hδ
+    simpa only [neg_mul, pow_zero, one_mul] using Real.summable_pow_mul_exp_neg_nat_mul 0 hδ
   exact hs.of_nonneg_of_le
     (fun k ↦ div_nonneg
       (mul_nonneg (Real.exp_pos _).le (lacunaryAmplitude_pos k).le) (sq_nonneg _))
@@ -606,10 +593,10 @@ theorem tsum_fullHighFrequencyPrefactor_le
     ∑' k : ℕ, highFrequencyPrefactor β (fullAmplitude k) (fullCutoff C k) ≤
       (1 - Real.exp (-((2 * β * C - 1) * Real.log 2)))⁻¹ := by
   let δ : ℝ := (2 * β * C - 1) * Real.log 2
-  have hδ : 0 < δ := mul_pos (sub_pos.mpr hdecay) (half_lt_log_two.trans' (by norm_num))
+  have hδ : 0 < δ := mul_pos (sub_pos.mpr hdecay) (half_lt_log_two.trans' (by norm_num1))
   have hp := summable_fullHighFrequencyPrefactor hC hdecay
   have hs : Summable (fun k : ℕ ↦ Real.exp (-δ * (k : ℝ))) := by
-    simpa using Real.summable_pow_mul_exp_neg_nat_mul 0 hδ
+    simpa only [neg_mul, pow_zero, one_mul] using Real.summable_pow_mul_exp_neg_nat_mul 0 hδ
   calc
     ∑' k : ℕ, highFrequencyPrefactor β (fullAmplitude k) (fullCutoff C k)
         ≤ ∑' k : ℕ, Real.exp (-δ * (k : ℝ)) :=
@@ -620,7 +607,7 @@ theorem tsum_fullHighFrequencyPrefactor_le
           intro k
           rw [← Real.exp_nat_mul]
           congr 1
-          ring
+          ac_rfl
     _ = (1 - Real.exp (-δ))⁻¹ := by
           rw [tsum_geometric_of_lt_one (Real.exp_pos _).le]
           exact (Real.exp_lt_one_iff.mpr (neg_neg_of_pos hδ))
@@ -633,10 +620,10 @@ theorem tsum_lacunaryHighFrequencyPrefactor_le
         lacunaryAmplitude k / paperLog 1 (lacunaryCutoff C k) ^ 2 ≤
       (1 - Real.exp (-((2 * β * C - 1) * Real.log 2)))⁻¹ := by
   let δ : ℝ := (2 * β * C - 1) * Real.log 2
-  have hδ : 0 < δ := mul_pos (sub_pos.mpr hdecay) (half_lt_log_two.trans' (by norm_num))
+  have hδ : 0 < δ := mul_pos (sub_pos.mpr hdecay) (half_lt_log_two.trans' (by norm_num1))
   have hp := summable_lacunaryHighFrequencyPrefactor hC hdecay
   have hs : Summable (fun k : ℕ ↦ Real.exp (-δ * (k : ℝ))) := by
-    simpa using Real.summable_pow_mul_exp_neg_nat_mul 0 hδ
+    simpa only [neg_mul, pow_zero, one_mul] using Real.summable_pow_mul_exp_neg_nat_mul 0 hδ
   calc
     ∑' k : ℕ, Real.exp (-2 * β * Real.log 2 * lacunaryCutoff C k) *
           lacunaryAmplitude k / paperLog 1 (lacunaryCutoff C k) ^ 2
@@ -648,7 +635,7 @@ theorem tsum_lacunaryHighFrequencyPrefactor_le
           intro k
           rw [← Real.exp_nat_mul]
           congr 1
-          ring
+          ac_rfl
     _ = (1 - Real.exp (-δ))⁻¹ := by
           rw [tsum_geometric_of_lt_one (Real.exp_pos _).le]
           exact (Real.exp_lt_one_iff.mpr (neg_neg_of_pos hδ))

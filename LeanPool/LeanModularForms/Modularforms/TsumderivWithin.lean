@@ -33,7 +33,9 @@ open scoped Interval Real NNReal ENNReal Topology BigOperators Nat
 abbrev ℍ' := {z : ℂ | 0 < z.im}
 
 lemma upper_half_plane_isOpen :
-    IsOpen ℍ' := by apply isOpen_lt (by fun_prop) (by fun_prop)
+    IsOpen ℍ' := by apply isOpen_lt (by
+      exact continuous_const) (by
+      exact continuous_im)
 
 theorem derivWithin_tsum_fun' {α : Type _} (f : α → ℂ → ℂ) {s : Set ℂ}
     (hs : IsOpen s) (x : ℂ) (hx : x ∈ s) (hf : ∀ y ∈ s, Summable fun n : α => f n y)
@@ -68,7 +70,9 @@ theorem der_iter_eq_der_aux2 (k n : ℕ) (r : ℍ') :
       iteratedDerivWithin k (fun s : ℂ => Complex.exp (2 * ↑π * Complex.I * n * s)) ℍ' z) ↑r := by
   apply DifferentiableOn.differentiableAt
   · exact DifferentiableOn.congr (by fun_prop) (fun x hx => exp_iter_deriv_within k n hx)
-  exact IsOpen.mem_nhds (isOpen_lt (by fun_prop) (by fun_prop)) r.2
+  exact IsOpen.mem_nhds (isOpen_lt (by
+    exact continuous_const) (by
+    exact continuous_im)) r.2
 
 theorem der_iter_eq_der2 (k n : ℕ) (r : ℍ') :
     deriv (iteratedDerivWithin k (fun s : ℂ => Complex.exp (2 * ↑π * Complex.I * n * s)) ℍ') ↑r =
@@ -110,7 +114,11 @@ private lemma summable_two_pi_pow_geometric (r : ℝ) (hr : ‖r‖ < 1) (K : �
   apply Summable.congr _ heq
   rw [summable_mul_left_iff]
   · exact summable_norm_pow_mul_geometric_of_norm_lt_one K hr
-  simp_all
+  simp_all only [Real.norm_eq_abs, norm_mul, norm_pow, RCLike.norm_natCast,
+    norm_ofNat,
+      norm_real, Real.abs_pi, norm_I, mul_one, ne_eq, pow_eq_zero_iff', mul_eq_zero,
+        OfNat.ofNat_ne_zero, Real.pi_ne_zero,
+      or_self, false_and, not_false_eq_true]
 
 theorem iter_deriv_comp_bound2 (K : Set ℂ) (hK1 : K ⊆ ℍ') (hK2 : IsCompact K) (k : ℕ) :
     ∃ u : ℕ → ℝ,
@@ -125,7 +133,7 @@ theorem iter_deriv_comp_bound2 (K : Set ℂ) (hK1 : K ⊆ ℍ') (hK2 : IsCompact
     · intro x; rw [BoundedContinuousFunction.mkOfCompact_apply]; simp_rw [ctsExpTwoPiN]
       simp only [ContinuousMap.coe_mk]
       apply exp_upperHalfPlane_lt_one ⟨x.1, hK1 x.2⟩
-    linarith
+    linarith only []
   have hr2 : 0 ≤ r := by apply norm_nonneg _
   have hu : Summable fun n : ℕ => ‖((2 * ↑π * Complex.I * n) ^ (k + 1) * r ^ n)‖ :=
     summable_two_pi_pow_geometric r (by rwa [Real.norm_of_nonneg hr2]) (k + 1)
@@ -160,9 +168,9 @@ theorem iter_deriv_comp_bound2 (K : Set ℂ) (hK1 : K ⊆ ℍ') (hK2 : IsCompact
       rw [norm_norm]
       simpa [ctsExpTwoPiN] using this
     apply mul_le_mul
-    · simp
-    · simp_all
-    · positivity
+    · simp only [Real.abs_pi, Std.le_refl]
+    · simp_all only [Real.abs_pi, BoundedContinuousFunction.norm_mkOfCompact, Real.norm_eq_abs]
+    · exact norm_nonneg (cexp (2 * ↑π * Complex.I * ↑n * ↑t))
     positivity
 
 
@@ -240,6 +248,7 @@ theorem iter_deriv_comp_bound3 (K : Set ℂ) (hK1 : K ⊆ ℍ') (hK2 : IsCompact
     simpa [ctsExpTwoPiN] using this
   apply mul_le_mul
   · simp
-  · simp_all
-  · positivity
+  · simp_all only [BoundedContinuousFunction.norm_mkOfCompact, Complex.norm_mul, norm_pow,
+    norm_ofNat, norm_real, Real.norm_eq_abs, Real.abs_pi, norm_I, mul_one, RCLike.norm_natCast]
+  · exact norm_nonneg (cexp (2 * ↑π * Complex.I * ↑n * ↑t))
   positivity

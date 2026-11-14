@@ -156,11 +156,15 @@ lemma gff_generating_norm_le_one_real (m : ℝ) [Fact (0 < m)] (f : OSforGFF.Tes
   have heq : freeCovarianceℂBilinear m (toComplex f) (toComplex f) =
              freeCovarianceℂ m (toComplex f) (toComplex f) := by
     unfold freeCovarianceℂBilinear freeCovarianceℂ
-    simp_all
+    simp_all only [one_div, neg_mul, neg_re, mul_re, inv_re, re_ofNat, normSq_ofNat,
+      div_self_mul_self', inv_im, im_ofNat, neg_zero, zero_div, zero_mul, sub_zero,
+      toComplex_apply, conj_ofReal]
   rw [heq]
   have h_nonneg : 0 ≤ (freeCovarianceℂ m (toComplex f) (toComplex f)).re :=
     freeCovarianceℂ_positive m (toComplex f)
-  simp_all
+  simp_all only [one_div, neg_mul, neg_re, mul_re, inv_re, re_ofNat, normSq_ofNat,
+    div_self_mul_self', inv_im, im_ofNat, neg_zero, zero_div, zero_mul, sub_zero,
+    Real.exp_le_one_iff, Left.neg_nonpos_iff, inv_pos, Nat.ofNat_pos, mul_nonneg_iff_of_pos_left]
 
 /-! ## Technical Lemma for OS4 (Real Test Functions) -/
 
@@ -253,7 +257,7 @@ lemma GFF_OS4_from_small_decay_real (m : ℝ) [Fact (0 < m)]
       -- fC = toComplex f and T_a_gC = toComplex (g.translate a)
       change distributionPairingℂReal ω (toComplex f) * distributionPairingℂReal ω (toComplex
         (g.translate a)) = _
-      simp_all
+      simp_all only [gt_iff_lt, Real.norm_eq_abs, distributionPairingℂ_real_toComplex, ofReal_mul]
     rw [h_fun_eq]
     exact integral_complex_ofReal
   have h_S2_norm : ‖S₂ fC T_a_gC‖ = |SchwingerFunction₂ (gaussianFreeFieldFree m) f (g.translate
@@ -276,7 +280,8 @@ lemma GFF_OS4_from_small_decay_real (m : ℝ) [Fact (0 < m)]
     _ = 2 * |SchwingerFunction₂ (gaussianFreeFieldFree m) f (g.translate a)| := by
         simp [norm_neg, h_S2_norm]
     _ < 2 * δ := by
-        simp_all
+        simp_all only [gt_iff_lt, Real.norm_eq_abs, norm_real, norm_neg, Nat.ofNat_pos,
+          mul_lt_mul_iff_right₀]
 
 /-! ## Main Theorem: OS4 for Gaussian Free Field -/
 
@@ -320,7 +325,7 @@ theorem schwartz_cross_covariance_decay_real (m : ℝ) [Fact (0 < m)]
     intro z hz
     simp only [Set.mem_compl_iff, Metric.mem_closedBall, dist_zero_right, not_le] at hz
     simp only [Set.mem_ofPred_eq, ne_eq]
-    exact norm_ne_zero_iff.mp (by linarith)
+    exact norm_ne_zero_iff.mp (by linarith only [hz])
   have h_decay_tendsto : Filter.Tendsto
       (fun a => ∫ x : SpaceTime, ∫ y : SpaceTime,
         (toComplex f) x * (freeCovarianceKernel m (x - y) : ℂ) * (toComplex g) (y - a))
@@ -349,7 +354,7 @@ theorem schwartz_cross_covariance_decay_real (m : ℝ) [Fact (0 < m)]
     have := hR_bound ha_in
     simp only [Metric.mem_ball, dist_zero_right] at this
     have : ‖a‖ ≤ R := le_of_lt this
-    linarith [lt_of_le_of_lt (le_max_left R 1) ha]
+    linarith only [ha, this, lt_of_le_of_lt (le_max_left R 1) ha]
   -- Apply the decay bound from cocompact membership
   have h_int_bound := hK_compl ha_not_in_K
   simp only [Set.mem_ofPred_eq, dist_zero_right] at h_int_bound
@@ -703,7 +708,7 @@ theorem gaussianFreeField_satisfies_OS4_PolynomialClustering (m : ℝ) [Fact (0 
         apply mul_le_mul h_bound
         · apply Real.exp_le_exp.mpr h_bound
         · exact Real.exp_nonneg _
-        · exact mul_nonneg hc_nonneg (Real.rpow_nonneg (by linarith : 0 ≤ 1 + t) _)
+        · exact mul_nonneg hc_nonneg (Real.rpow_nonneg (by linarith only [ht] : 0 ≤ 1 + t) _)
     _ ≤ ‖Ef‖ * ‖Eg‖ * (c_decay * (1 + t)^(-α) * Real.exp c_decay) := by
         apply mul_le_mul_of_nonneg_left _ (mul_nonneg (norm_nonneg _) (norm_nonneg _))
         apply mul_le_mul_of_nonneg_left _ (mul_nonneg hc_nonneg (Real.rpow_nonneg (by linarith) _))
@@ -713,8 +718,8 @@ theorem gaussianFreeField_satisfies_OS4_PolynomialClustering (m : ℝ) [Fact (0 
                 apply mul_le_mul_of_nonneg_left _ hc_nonneg
                 -- Use: for x ≥ 1 and z ≤ 0, x^z ≤ 1
                 apply Real.rpow_le_one_of_one_le_of_nonpos
-                · linarith  -- 1 ≤ 1 + t
-                · linarith  -- -α ≤ 0
+                · linarith only [ht]  -- 1 ≤ 1 + t
+                · linarith only [hα]  -- -α ≤ 0
           _ = c_decay := by ring
     _ = final_c * (1 + t)^(-α) := by ring
 

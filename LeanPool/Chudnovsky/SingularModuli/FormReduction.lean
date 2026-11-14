@@ -45,7 +45,7 @@ open UpperHalfPlane
 def Equiv (f g : BQF) : Prop :=
   ∃ p q r s : ℤ, p * s - q * r = 1 ∧ act f p q r s = g
 
-@[refl] theorem Equiv.refl (f : BQF) : Equiv f f := ⟨1, 0, 0, 1, by ring, act_one f⟩
+@[refl] theorem Equiv.refl (f : BQF) : Equiv f f := ⟨1, 0, 0, 1, by ac_rfl, act_one f⟩
 
 theorem Equiv.symm {f g : BQF} (h : Equiv f g) : Equiv g f := by
   obtain ⟨p, q, r, s, hdet, hfg⟩ := h
@@ -56,7 +56,9 @@ theorem Equiv.trans {f g h : BQF} (hfg : Equiv f g) (hgh : Equiv g h) : Equiv f 
   obtain ⟨p', q', r', s', hdet', rfl⟩ := hgh
   refine ⟨p * p' + q * r', p * q' + q * s', r * p' + s * r', r * q' + s * s', ?_,
     (act_act f p q r s p' q' r' s').symm⟩
-  nlinarith [hdet, hdet']
+  calc
+    _ = (p * s - q * r) * (p' * s' - q' * r') := by ring
+    _ = 1 := by rw [hdet, hdet', one_mul]
 
 /-- The `T`-generator: shift `(a, b, c) ↦ (a, b + 2an, a n² + b n + c)`; preserves the form
 class and (obviously) the discriminant. -/
@@ -69,7 +71,7 @@ lemma act_T_c (f : BQF) (n : ℤ) : (act f 1 n 0 1).c = f.a * n ^ 2 + f.b * n + 
   simp only [act_c]; ring
 
 /-- The `S`-generator: swap `(a, b, c) ↦ (c, −b, a)`. -/
-theorem Equiv.S (f : BQF) : Equiv f (act f 0 (-1) 1 0) := ⟨0, -1, 1, 0, by ring, rfl⟩
+theorem Equiv.S (f : BQF) : Equiv f (act f 0 (-1) 1 0) := ⟨0, -1, 1, 0, by ac_rfl, rfl⟩
 
 lemma act_S_a (f : BQF) : (act f 0 (-1) 1 0).a = f.c := by simp
 lemma act_S_b (f : BQF) : (act f 0 (-1) 1 0).b = -f.b := by simp only [act_b]; ring
@@ -78,7 +80,7 @@ lemma act_S_c (f : BQF) : (act f 0 (-1) 1 0).c = f.a := by simp only [act_c]; ri
 /-- Equivalent forms have equal discriminant. -/
 theorem Equiv.disc_eq {f g : BQF} (h : Equiv f g) : disc f = disc g := by
   obtain ⟨p, q, r, s, hdet, rfl⟩ := h
-  rw [disc_act, hdet]; ring
+  rw [disc_act, hdet]; ac_rfl
 
 /-- Equivalence preserves primitivity. -/
 theorem Equiv.isPrimitive {f g : BQF} (h : Equiv f g) (hf : IsPrimitive f) : IsPrimitive g := by
@@ -196,6 +198,25 @@ private lemma reprN_eq_reprB (m d : ℕ) : reprN m d = reprB m d := by
   · rintro ⟨t, ht, h2, l, ⟨hl1, hl9⟩, h1⟩
     exact ⟨t, ht, l, ⟨hl1, by omega⟩, h1, h2⟩
 
+/-- The Boolean sieve for the three-prime test retains only `163`. -/
+private lemma three_prime_candidates :
+    (List.range 245).filter (fun d => reprB 41 d && reprB 43 d && reprB 61 d) = [163] := by
+  decide +kernel
+
+/-- Membership in the Boolean sieve gives the bounded discriminant test. -/
+private lemma three_prime_bound :
+    ∀ d < 245, reprB 41 d = true → reprB 43 d = true → reprB 61 d = true → d = 163 := by
+  intro d hd h41 h43 h61
+  have hmem : d ∈ (List.range 245).filter
+      (fun d => reprB 41 d && reprB 43 d && reprB 61 d) :=
+    List.mem_filter.mpr ⟨List.mem_range.mpr hd, by simp only [h41, h43, h61, Bool.and_self]⟩
+  simpa only [three_prime_candidates, List.mem_singleton] using hmem
+
+-- Keep the original decision bridge and its generated declarations while reusing the sieve proof.
+private local instance three_prime_decidable : Decidable
+    (∀ d < 245, reprB 41 d = true → reprB 43 d = true → reprB 61 d = true → d = 163) :=
+  isTrue three_prime_bound
+
 /-- **(C5), computational core.** The only `d ∈ [1, 244]` simultaneously representable at
 `m = 41, 43, 61` is `d = 163` (i.e. `D₀ = −163`).  The `{41,43,47}` trap of §6.6 is exactly
 that `d = 43` would also survive there; here it does not.  Decided by the kernel on the
@@ -263,8 +284,8 @@ theorem disc_of_three_relations {D0 : ℤ} (hD3 : D0 ≤ -3)
   have e1 := reprN_of_relation (m := 41) (by norm_num) hD3 hl1 (by exact_mod_cast h1)
   have e2 := reprN_of_relation (m := 43) (by norm_num) hD3 hl2 (by exact_mod_cast h2)
   have e3 := reprN_of_relation (m := 61) (by norm_num) hD3 hl3 (by exact_mod_cast h3)
-  have hl1sq : (1 : ℤ) ≤ l1 ^ 2 := by rcases lt_or_gt_of_ne hl1 with h' | h' <;> nlinarith
-  have hub : (-D0) ≤ 164 := by nlinarith [h1, hl1sq, sq_nonneg t1]
+  have hl1sq : (1 : ℤ) ≤ l1 ^ 2 := by rcases lt_or_gt_of_ne hl1 with h' | h' <;> nlinarith only [h']
+  have hub : (-D0) ≤ 164 := by nlinarith only [h1, hl1sq]
   have hmem : (-D0).toNat ∈ Finset.Icc 1 244 := by
     rw [Finset.mem_Icc]; omega
   have := three_prime_N (-D0).toNat hmem e1 e2 e3

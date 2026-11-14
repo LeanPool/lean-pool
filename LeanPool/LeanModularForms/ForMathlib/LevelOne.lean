@@ -12,10 +12,6 @@ public import LeanPool.LeanModularForms.ForMathlib.CongruenceSubgrps
 public import LeanPool.LeanModularForms.ForMathlib.Identities
 public import Mathlib.NumberTheory.ModularForms.LevelOne.Basic
 
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Combinatorics.Matroid.Init
-import Mathlib.MeasureTheory.Integral.Bochner.Basic
-import Mathlib.Tactic.Positivity.Finset
 /-!
 # Level one modular forms
 

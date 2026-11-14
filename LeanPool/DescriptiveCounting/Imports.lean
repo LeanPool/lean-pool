@@ -1,0 +1,72 @@
+/-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+module  -- shake: keep-all --deprecated_module: ignore
+
+-- Generated project imports; run `lake exe mk_all`.
+public import LeanPool.DescriptiveCounting
+public import LeanPool.DescriptiveCounting.ClauseDischarge
+public import LeanPool.DescriptiveCounting.Complexity
+public import LeanPool.DescriptiveCounting.Composition
+public import LeanPool.DescriptiveCounting.Counting
+public import LeanPool.DescriptiveCounting.Counting.Class
+public import LeanPool.DescriptiveCounting.Counting.RelClosure
+public import LeanPool.DescriptiveCounting.Counting.Relativized
+public import LeanPool.DescriptiveCounting.Counting.SharpP
+public import LeanPool.DescriptiveCounting.Counting.Subtractive
+public import LeanPool.DescriptiveCounting.FixedPoint
+public import LeanPool.DescriptiveCounting.FixedPointExpand
+public import LeanPool.DescriptiveCounting.FixedPointHorn
+public import LeanPool.DescriptiveCounting.FixedPointInflationary
+public import LeanPool.DescriptiveCounting.FixedPointInflationaryLFP
+public import LeanPool.DescriptiveCounting.FixedPointOrderTransfer
+public import LeanPool.DescriptiveCounting.FixedPointPartial
+public import LeanPool.DescriptiveCounting.FixedPointPartialSpace
+public import LeanPool.DescriptiveCounting.FixedPointReduction
+public import LeanPool.DescriptiveCounting.FixedPointReductionClosure
+public import LeanPool.DescriptiveCounting.FixedPointReductionComposition
+public import LeanPool.DescriptiveCounting.FixedPointStep
+public import LeanPool.DescriptiveCounting.FixedPointStepRel
+public import LeanPool.DescriptiveCounting.FixedPointStratify
+public import LeanPool.DescriptiveCounting.Formula
+public import LeanPool.DescriptiveCounting.Hierarchy
+public import LeanPool.DescriptiveCounting.Interpretation
+public import LeanPool.DescriptiveCounting.Iterate
+public import LeanPool.DescriptiveCounting.OrderWalk
+public import LeanPool.DescriptiveCounting.Ordered
+public import LeanPool.DescriptiveCounting.OrderedComposition
+public import LeanPool.DescriptiveCounting.PSpace
+public import LeanPool.DescriptiveCounting.Padding
+public import LeanPool.DescriptiveCounting.Problems.HornSat
+public import LeanPool.DescriptiveCounting.Problems.HornSat.Definability
+public import LeanPool.DescriptiveCounting.Problems.HornSat.Defs
+public import LeanPool.DescriptiveCounting.Problems.HornSat.Hardness
+public import LeanPool.DescriptiveCounting.Problems.HornSat.Membership
+public import LeanPool.DescriptiveCounting.Problems.HornSat.Unsat
+public import LeanPool.DescriptiveCounting.Problems.Sat
+public import LeanPool.DescriptiveCounting.Problems.Sat.Counting
+public import LeanPool.DescriptiveCounting.Problems.Sat.CountingHardness
+public import LeanPool.DescriptiveCounting.Problems.Sat.Hardness
+public import LeanPool.DescriptiveCounting.Problems.Sat.Tseitin
+public import LeanPool.DescriptiveCounting.Problems.Sat.TseitinFormulas
+public import LeanPool.DescriptiveCounting.Problems.Sat.TseitinUnique
+public import LeanPool.DescriptiveCounting.RelComposition
+public import LeanPool.DescriptiveCounting.Relativize
+public import LeanPool.DescriptiveCounting.Relativized
+public import LeanPool.DescriptiveCounting.SecondOrder
+public import LeanPool.DescriptiveCounting.SecondOrderBlockHom
+public import LeanPool.DescriptiveCounting.SecondOrderHorn
+public import LeanPool.DescriptiveCounting.SecondOrderHornPull
+public import LeanPool.DescriptiveCounting.SecondOrderLift
+public import LeanPool.DescriptiveCounting.SecondOrderMerge
+public import LeanPool.DescriptiveCounting.SecondOrderNew
+public import LeanPool.DescriptiveCounting.SecondOrderNewPull
+public import LeanPool.DescriptiveCounting.SecondOrderOrdered
+public import LeanPool.DescriptiveCounting.SecondOrderPull
+public import LeanPool.DescriptiveCounting.SecondOrderRelPull
+public import LeanPool.DescriptiveCounting.SecondOrderTransitiveClosure
+public import LeanPool.DescriptiveCounting.SecondOrderTransitiveClosurePull
+public import LeanPool.DescriptiveCounting.Syntax
+public import LeanPool.DescriptiveCounting.Vocabulary

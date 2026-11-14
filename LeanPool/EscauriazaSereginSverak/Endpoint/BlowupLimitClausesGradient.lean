@@ -43,7 +43,7 @@ theorem blowupLimitClauses_weak_restrict_subset
   have hrestr : (volume.restrict K).restrict S = volume.restrict S := by
     rw [Measure.restrict_restrict hS, Set.inter_eq_left.mpr hSK]
   have hwK : MemLp (S.indicator w) 2 (volume.restrict K) := by
-    rw [memLp_iff, eLpNorm_indicator_eq_eLpNorm_restrict hS, hrestr]
+    rw [memLp_iff, eLpNorm_indicator_eq_eLpNorm_restrict hS.nullMeasurableSet, hrestr]
     exact hw
   have hpair : ∀ f : Vec3 × ℝ → ℝ,
       ∫ z in K, f z * S.indicator w z = ∫ z in S, f z * w z := by

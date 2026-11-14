@@ -7,10 +7,6 @@ module
 
 public import LeanPool.ClassificationOfSurfaces.SphereHemisphere
 public import LeanPool.ClassificationOfSurfaces.SphereCarrierGeometry
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.CategoryTheory.Category.Init
-import Mathlib.Combinatorics.SimpleGraph.Init
-import Mathlib.MeasureTheory.Covering.Besicovitch
 
 /-!
 # The two-monogon quotient is the standard sphere

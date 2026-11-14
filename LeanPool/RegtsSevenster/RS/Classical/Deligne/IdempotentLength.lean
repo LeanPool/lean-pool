@@ -42,7 +42,7 @@ variable {C : Type u}
 notation (`≫`, subtraction of parallel morphisms) elaborates
 without fuss. -/
 private def endHom [Category.{v} C]
-    {Y : C} (e : End Y) : Y ⟶ Y := e
+    {Y : C} (e : End Y) : Y ⟶ Y := e.asHom
 
 /-- A finite family of endomorphisms, extended by zero to a family
 indexed by `ℕ`. -/
@@ -152,7 +152,7 @@ private lemma idemKer_le [Category.{v} C] [Abelian C]
     {Y : C} {e e' : End Y} (h : e' * e = e) :
     idemKer e ≤ idemKer e' := by
   have hc : endHom e ≫ endHom e' = endHom e := by
-    rw [← End.mul_def]; exact h
+    exact congrArg End.asHom h
   have hk : kernel.ι (𝟙 Y - endHom e) ≫ (𝟙 Y - endHom e') = 0 := by
     have h2 : kernel.ι (𝟙 Y - endHom e) ≫ endHom e' =
         kernel.ι (𝟙 Y - endHom e) := by
@@ -175,9 +175,9 @@ private lemma eq_zero_of_idemKer_eq [Category.{v} C] [Abelian C]
     (hfix : e' * a = a) (hkill : e * a = 0)
     (hU : idemKer e = idemKer e') : a = 0 := by
   have hfix' : endHom a ≫ endHom e' = endHom a := by
-    rw [← End.mul_def]; exact hfix
+    exact congrArg End.asHom hfix
   have hkill' : endHom a ≫ endHom e = 0 := by
-    rw [← End.mul_def]; exact hkill
+    exact congrArg End.asHom hkill
   have hz : endHom a ≫ (𝟙 Y - endHom e') = 0 := by
     rw [Preadditive.comp_sub, Category.comp_id, hfix', sub_self]
   have hle : idemKer e' ≤ idemKer e := hU.ge
@@ -188,7 +188,7 @@ private lemma eq_zero_of_idemKer_eq [Category.{v} C] [Abelian C]
     rw [Category.assoc, Subobject.ofMkLEMk_comp, kernel.lift_ι]
   have hae : endHom a ≫ endHom e = endHom a := comp_self_of_factors ha
   rw [hkill'] at hae
-  exact hae.symm
+  exact End.ext hae.symm
 
 end Helpers
 

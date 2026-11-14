@@ -8,7 +8,7 @@ module
 
 public import LeanPool.Stafford38.Stafford38.Characteristic.ArtinianAdaptedBasisTraceAdapter
 public import Mathlib.Data.Fintype.Sort
-public import Mathlib.Data.Prod.Lex
+public import Mathlib.Order.Prod.Lex.Basic
 
 
 /-!

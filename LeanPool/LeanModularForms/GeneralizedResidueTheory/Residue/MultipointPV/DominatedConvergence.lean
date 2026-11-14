@@ -9,7 +9,6 @@ public import LeanPool.LeanModularForms.GeneralizedResidueTheory.Residue
 import LeanPool.LeanModularForms.GeneralizedResidueTheory.Residue.MultipointPV
 import Mathlib.CategoryTheory.Category.Init
 import Mathlib.Combinatorics.Matroid.Init
-import Mathlib.MeasureTheory.Covering.Besicovitch
 import Mathlib.Tactic.Positivity.Finset
 
 /-!
@@ -59,7 +58,7 @@ private lemma γt_not_mem_S0_of_all_far {S0 : Finset ℂ} {γ : ℝ → ℂ} {t 
     (hε : 0 < ε) (hall : ∀ s ∈ S0, ε < ‖γ t - s‖) :
     γ t ∉ (S0 : Set ℂ) := by
   intro h_in; simp only [Finset.mem_coe] at h_in
-  have := hall (γ t) h_in; simp only [sub_self, norm_zero] at this; linarith
+  have := hall (γ t) h_in; simp only [sub_self, norm_zero] at this; linarith only [hε, this]
 
 private lemma residue_sum_ifs_eq_mul_deriv {S0 : Finset ℂ} {f : ℂ → ℂ} {γ : ℝ → ℂ}
     {t : ℝ} {ε : ℝ} (hall : ∀ s ∈ S0, ε < ‖γ t - s‖) :
@@ -149,7 +148,8 @@ private lemma pointwise_ae_limit_off_crossing (S0 : Finset ℂ) (f g_reg : ℂ �
               f (γ.toFun t) * deriv γ.toFun t := by
             simp only [cauchyPrincipalValueIntegrandOn]; rw [ite_eq_right]; push Not; exact hall_far
           rw [hM_eval, residue_sum_ifs_eq_mul_deriv hall_far, ← sub_mul]
-          simp_all
+          simp_all only [ne_eq, mem_Icc, SetLike.mem_coe, not_false_eq_true, norm_pos_iff,
+            add_sub_cancel_right]
     _ = 0 := h_crossing_null
 
 /-! ## Dominated Convergence: Norm Bounds -/
@@ -204,21 +204,21 @@ private lemma residue_sum_norm_le_singular_bound {S0 : Finset ℂ} {f : ℂ → 
             _ = ‖s - z‖ := by ring_nf
             _ = ‖z - s‖ := norm_sub_rev _ _
         by_cases hε_small' : ε ≤ δ / 2
-        · calc δ / 2 ≤ δ - ε := by linarith
-            _ ≤ ‖s - s₀‖ - ‖z - s₀‖ := by linarith [h_sep, hs₀_near]
+        · calc δ / 2 ≤ δ - ε := by linarith only [hε_small']
+            _ ≤ ‖s - s₀‖ - ‖z - s₀‖ := by linarith only [hs₀_near, h_sep]
             _ ≤ ‖z - s‖ := h_tri
-        · push Not at hε_small'; linarith [h_inc]
+        · push Not at hε_small'; linarith only [h_inc, hε_small']
     have hMc_nonneg : 0 ≤ Mc := le_trans (norm_nonneg _) (hMc s hs)
     calc ‖residueSimplePole f s / (z - s)‖
         = ‖residueSimplePole f s‖ / ‖z - s‖ := norm_div _ _
       _ ≤ Mc / ‖z - s‖ := div_le_div_of_nonneg_right (hMc s hs) (norm_nonneg _)
-      _ ≤ Mc / (δ / 2) := div_le_div_of_nonneg_left hMc_nonneg (by linarith) h_dist
+      _ ≤ Mc / (δ / 2) := div_le_div_of_nonneg_left hMc_nonneg (by linarith only [hδ_pos]) h_dist
       _ = 2 * Mc / δ := by ring
   · simp only [h_inc, ↓reduceIte, norm_zero]
     refine div_nonneg (mul_nonneg ?_ ?_) ?_
-    · linarith
+    · linarith only []
     · exact le_trans (norm_nonneg _) (hMc s₀ hs₀)
-    · linarith
+    · linarith only [hδ_pos]
 
 private lemma norm_A_int_bound_some_near (S0 : Finset ℂ) (f : ℂ → ℂ) (γ : PiecewiseC1Immersion)
     (Mc Mγ' δ : ℝ) (hδ_pos : 0 < δ)
@@ -238,7 +238,7 @@ private lemma norm_A_int_bound_some_near (S0 : Finset ℂ) (f : ℂ → ℂ) (γ
         then residueSimplePole f s / (γ.toFun t - s) * deriv γ.toFun t else 0) =
       (∑ s ∈ S0, if ‖γ.toFun t - s‖ > ε
         then residueSimplePole f s / (γ.toFun t - s) else 0) * deriv γ.toFun t := by
-    rw [Finset.sum_mul]; simp_all
+    rw [Finset.sum_mul]; simp_all only [mem_Icc, and_imp, ne_eq, gt_iff_lt, ite_mul, zero_mul]
   rw [h_factor]
   let singularBound := 2 * (S0.card : ℝ) * Mc / δ
   have h_sum_bound : ‖∑ s ∈ S0, if ‖γ.toFun t - s‖ > ε
@@ -251,15 +251,15 @@ private lemma norm_A_int_bound_some_near (S0 : Finset ℂ) (f : ℂ → ℂ) (γ
           Finset.sum_le_sum (residue_sum_norm_le_singular_bound hδ_pos hMc hδ_sep hs₀ hs₀_near)
       _ = singularBound := by simp only [Finset.sum_const]; ring
   have h_sb_nonneg : 0 ≤ singularBound :=
-    div_nonneg (mul_nonneg (mul_nonneg (by linarith) (Nat.cast_nonneg _))
-      (le_trans (norm_nonneg _) (hMc s₀ hs₀))) (by linarith)
+    div_nonneg (mul_nonneg (mul_nonneg (by linarith only []) (Nat.cast_nonneg _))
+      (le_trans (norm_nonneg _) (hMc s₀ hs₀))) (by linarith only [hδ_pos])
   calc ‖(∑ s ∈ S0, if ‖γ.toFun t - s‖ > ε
           then residueSimplePole f s / (γ.toFun t - s) else 0) * deriv γ.toFun t‖
       ≤ singularBound * Mγ' :=
         (norm_mul_le _ _).trans (mul_le_mul h_sum_bound h_γ'_bound (norm_nonneg _) h_sb_nonneg)
     _ ≤ max 0 singularBound * max 0 Mγ' := by
         have h0_le_Mγ' : 0 ≤ Mγ' := le_trans (norm_nonneg _) h_γ'_bound
-        simp_all
+        simp_all only [mem_Icc, and_imp, ne_eq, sup_of_le_right, gt_iff_lt, Std.le_refl]
     _ ≤ B := hB
 
 private lemma A_int_norm_bound (S0 : Finset ℂ) (f g_reg : ℂ → ℂ) (γ : PiecewiseC1Immersion)
@@ -313,7 +313,7 @@ private lemma A_int_aEStronglyMeasurable (S0 : Finset ℂ) (f g_reg : ℂ → �
     · push Not at h_near
       have h_not_in_S0 : γ.toFun t ∉ (S0 : Set ℂ) := by
         intro h_in; have := h_near (γ.toFun t) h_in
-        simp only [sub_self, norm_zero] at this; linarith
+        simp only [sub_self, norm_zero] at this; linarith only [hε, this]
       rw [hg_decomp (γ.toFun t) h_not_in_S0]
   have h_meas1 := aEStronglyMeasurable_pv_integrand_decomposed S0
     (residueSimplePole f) hε hg_cont hγ_cont hγ'_off_P
@@ -348,7 +348,7 @@ private lemma pvIntegrand_intervalIntegrable_of_nonempty (S0 : Finset ℂ) (f g_
   have h_bound : ∀ t ∈ Icc γ.a γ.b,
       ‖cauchyPrincipalValueIntegrandOn S0 f γ.toFun ε t‖ ≤ Mb := by
     intro t ht; simp only [cauchyPrincipalValueIntegrandOn]; split_ifs with h
-    · simp only [norm_zero]; linarith
+    · simp only [norm_zero]; exact le_of_lt hMb_pos
     · push Not at h
       have hγt_notin : γ.toFun t ∉ (S0 : Set ℂ) := by
         intro hmem; simp only [Finset.mem_coe] at hmem
@@ -425,7 +425,9 @@ private lemma A_eq_integral_A_int (S0 : Finset ℂ) (f g_reg : ℂ → ℂ) (γ 
       intro S; induction S using Finset.induction_on with
       | empty => intro _; simp only [Finset.sum_empty]; exact intervalIntegrable_const
       | insert s' S'' hs'' ih =>
-        intro h_all; simp_all
+        intro h_all; simp_all only [ne_eq, SetLike.mem_coe, gt_iff_lt, Finset.mem_insert, or_true,
+          implies_true, forall_const, forall_eq_or_imp, not_false_eq_true, Finset.sum_insert,
+          IntervalIntegrable.add]
     exact this S0 hS_int
   rw [h_sum_eq, ← intervalIntegral.integral_sub hM_int hSum_int]
 

@@ -246,8 +246,12 @@ private theorem mem_of_mem_closedUnderDicoticClosure_of_isEndLike {IsAmbient A :
         intro hEnd
         rw [ofSets_isEndLike_iff, isEnd_def] at hEnd
         cases p
-        · simp_all
-        · simp_all
+        · simp_all only [
+          ClosureOperator.ofCompletePred_apply, iInf_apply, iInf_Prop_eq, Subtype.forall,
+          and_imp, leftMoves_ofSets, Set.not_nonempty_empty]
+        · simp_all only [
+          ClosureOperator.ofCompletePred_apply, iInf_apply, iInf_Prop_eq, Subtype.forall,
+          and_imp, rightMoves_ofSets, Set.not_nonempty_empty]
   }
   have hAB : A ≤ B' := by
     intro g hg
@@ -605,7 +609,7 @@ private theorem mem_universeClosure_endLikePart_of_mem_universe {p : Player}
         intro q
         rcases eq_or_ne q p with rfl | hq
         · exact hp
-        · simp_all
+        · simp_all only [ne_eq, Player.ne_iff_eq_neg, not_false_eq_true]
       -- `g` isn't end-like, so rebuild it from its options and apply dicotic
       -- closure.
       have hEq : !{fun q => moves q g} = g := ofSets_moves_of_not_isEndLike hNo

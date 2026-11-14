@@ -248,7 +248,7 @@ omit hΔ [GradedAlgebra 𝒜] in
 theorem lowerGradeTensorEmbedding_injective (α : NatOrdinal) :
     Function.Injective (lowerGradeTensorEmbedding (𝒜 := 𝒜) (E := E) α) := by
   have h1 : Function.Injective ((𝒜 (α.removeNat 1)).subtype.baseChange E) := by
-    rw [LinearMap.baseChange_eq_ltensor]
+    rw [LinearMap.baseChange_eq_lTensor]
     exact Module.Flat.lTensor_preserves_injective_linearMap _ (Submodule.injective_subtype _)
   intro x y h
   exact (TensorProduct.comm K _ E).injective (h1 h)

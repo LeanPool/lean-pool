@@ -5,7 +5,6 @@ Authors: Zeru Zhu, Jinzheng Li, Yuanjie Ren
 -/
 module
 
-public import Mathlib.Tactic.Push
 public import LeanPool.ACMax.Counting.Moats
 public import LeanPool.ACMax.Counting.SparseCore
 

@@ -42,7 +42,6 @@ private theorem approximationNumber_linearIsometryEquiv_sandwich_le {X Y X' Y' :
           | exact norm_linearIsometryEquiv_le_one b
           | exact norm_linearIsometryEquiv_le_one a
           | exact approximationNumber_nonneg _ _
-          | exact norm_nonneg _
           | exact mul_nonneg zero_le_one (approximationNumber_nonneg _ _)
     _ = _ := by simp
 

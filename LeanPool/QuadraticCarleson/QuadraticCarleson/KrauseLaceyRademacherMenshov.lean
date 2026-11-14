@@ -53,21 +53,21 @@ theorem exists_signs_sum_norm_sq_le
     · refine ⟨Function.update c a 1, ?_, ?_⟩
       · intro i
         by_cases hi : i = a
-        · simp [hi]
+        · simp only [hi, update_self, true_or]
         · simpa only [Function.update_of_ne hi] using hc i
       · rw [hupdate, one_smul, Finset.sum_insert ha]
         exact (add_le_add (le_refl _) hsum).trans hplus
     · refine ⟨Function.update c a (-1), ?_, ?_⟩
       · intro i
         by_cases hi : i = a
-        · simp [hi]
+        · simp only [hi, update_self, or_true]
         · simpa only [Function.update_of_ne hi] using hc i
       · rw [hupdate, neg_one_smul, Finset.sum_insert ha]
         have heq : ‖-v a + w‖ = ‖v a - w‖ := by
           rw [show -v a + w = -(v a - w) by abel, norm_neg]
         rw [heq]
         change (∑ i ∈ s, ‖v i‖ ^ 2) ≤ ‖w‖ ^ 2 at hsum
-        linarith
+        linarith only [hpar, hplus, hsum]
 
 /-- The exact finite signed-sum condition of KL18 (2.8), in squared form.
 The signs are constant coefficients, not functions of the spatial variable. -/
@@ -100,7 +100,7 @@ theorem sum_signed_blocks_eq
   intro i hi
   have hq : i / 2 ^ l < N + 1 :=
     (Nat.div_le_self i _).trans_lt (Nat.lt_succ_of_lt (Finset.mem_range.mp hi))
-  simp [Finset.mem_range.mpr hq]
+  simp only [Finset.sum_ite_eq, Finset.mem_range.mpr hq, ↓reduceIte]
 
 /-- A single dyadic generation has square energy bounded by the same
 signed-sum constant, with no loss in the number of blocks. -/
@@ -160,7 +160,7 @@ theorem prefixSum_eq_sum_differences
     simp only [coarsePrefix, pow_zero, Nat.div_one, Finset.mem_filter, Finset.mem_range]
     omega
   have hlast : coarsePrefix N n (d + 1) = ∅ := by
-    simp [coarsePrefix, Nat.div_eq_of_lt hd]
+    simp only [coarsePrefix, Nat.div_eq_of_lt hd, not_lt_zero, Finset.filter_false]
   rw [Finset.sum_range_sub', hzero, hlast, Finset.sum_empty, sub_zero]
 
 /-- The energy of one binary-prefix increment is bounded by the energy
@@ -332,7 +332,7 @@ theorem eLpNorm_finitePrefixMaximal_sq_le_log2
       ENNReal.ofReal ((Nat.log2 N + 1 : ℝ) ^ 2 * B) := by
   have heq : eLpNorm (finitePrefixMaximal N v) 2 μ ^ 2 =
       ∫⁻ x, ‖finitePrefixMaximal N v x‖ₑ ^ 2 ∂μ := by
-    rw [eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num) (by norm_num)
+    rw [eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num1) (by decide +kernel)
       (aemeasurable_finitePrefixMaximal N v).aestronglyMeasurable]
     simp only [ENNReal.toReal_ofNat, ENNReal.rpow_two]
     rw [← ENNReal.rpow_mul_natCast]
@@ -347,7 +347,7 @@ theorem eLpNorm_finitePrefixMaximal_sq_le_log2
     apply lintegral_congr
     intro x
     rw [← ofReal_norm, ← ENNReal.ofReal_pow (norm_nonneg _) 2]
-    simp
+    simp only [Real.norm_eq_abs, sq_abs]
   rw [heq']
   exact ENNReal.ofReal_le_ofReal (integral_finitePrefixMaximal_sq_le_log2 N v hB)
 
@@ -358,7 +358,7 @@ theorem eLpNorm_finitePrefixMaximal_le_log2
     {A : ℝ} (hA : 0 ≤ A) (hB : HasSignedSumSquareBound N v (A ^ 2)) :
     eLpNorm (finitePrefixMaximal N v) 2 μ ≤
       ENNReal.ofReal ((Nat.log2 N + 1 : ℝ) * A) := by
-  apply (ENNReal.rpow_le_rpow_iff (by norm_num : (0 : ℝ) < 2)).mp
+  apply (ENNReal.rpow_le_rpow_iff (by norm_num1 : (0 : ℝ) < 2)).mp
   rw [ENNReal.rpow_two, ENNReal.rpow_two,
     ← ENNReal.ofReal_pow (by positivity : 0 ≤ (Nat.log2 N + 1 : ℝ) * A), mul_pow]
   exact eLpNorm_finitePrefixMaximal_sq_le_log2 N v hB

@@ -10,6 +10,7 @@ module
 public import LeanPool.CarlsonFunctions.Carlson.TwoVariable.R.Basic
 public import LeanPool.CarlsonFunctions.Carlson.TwoVariable.RPolynomial.Basic
 public import LeanPool.CarlsonFunctions.Carlson.R.SingleIntegral.Continuation
+public import Mathlib.Analysis.SpecialFunctions.Complex.LogDeriv
 
 /-! # The two-variable Carlson R-function -/
 

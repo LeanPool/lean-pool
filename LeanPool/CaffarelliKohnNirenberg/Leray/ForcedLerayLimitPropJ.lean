@@ -107,7 +107,7 @@ theorem forcedLerayLimit_mollified_convergence_of_strong_three
   have he4 : 0 < e4 := ENNReal.div_pos he.ne' (by norm_num)
   have hw : MemLp (fun q : Vec3 × ℝ => slab.indicator u ((q.1,q.2) : ParabolicPoint))
       3 (volume : Measure (Vec3 × ℝ)) :=
-    (memLp_indicator_iff_restrict hslabMeas).2 hu3
+    (memLp_indicator_iff_restrict hslabMeas.nullMeasurableSet).2 hu3
   obtain ⟨g, hgc, hgclose, hgcont, -⟩ :=
     hw.exists_hasCompactSupport_eLpNorm_sub_le (by norm_num) he4.ne'
   let gP : ParabolicPoint → Vec3 := fun z => g (z.1,z.2)

@@ -48,7 +48,7 @@ theorem eventually_inner_le_unitDirection_of_subgradientOn
     abel
   rw [hsub_eq, inner_neg_right] at hxy
   have hraw : inner ℝ r (xs i - y) ≤ inner ℝ (ps i) (xs i - y) := by
-    linarith
+    linarith only [hyx, hxy]
   have hscale :
       ‖xs i - y‖⁻¹ * inner ℝ r (xs i - y) ≤
         ‖xs i - y‖⁻¹ * inner ℝ (ps i) (xs i - y) :=

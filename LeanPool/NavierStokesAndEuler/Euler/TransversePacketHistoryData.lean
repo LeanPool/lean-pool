@@ -7,6 +7,7 @@ Authors: OpenAI
 module
 
 public import LeanPool.NavierStokesAndEuler.Euler.TransversePacketData
+import Mathlib.Analysis.Calculus.Deriv.Comp
 public import LeanPool.NavierStokesAndEuler.Euler.CylinderDirichletData
 public import LeanPool.NavierStokesAndEuler.Euler.BoundedFieldCalculus
 

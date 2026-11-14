@@ -6,6 +6,9 @@ Authors: Bianca Viray, Bryan Boehnke, Grant Yang, George Peykanu, Tianshuo Wang
 module
 
 
+public import Mathlib.RingTheory.IntegralClosure.IntegrallyClosed
+public import Mathlib.RingTheory.IsAdjoinRoot
+public import Mathlib.RingTheory.LocalRing.Quotient
 public import Mathlib.RingTheory.LocalRing.Etale
 public import Mathlib.RingTheory.RingHom.Etale
 public import Mathlib.RingTheory.Ideal.Height

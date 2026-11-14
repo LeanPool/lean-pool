@@ -64,7 +64,7 @@ theorem firstOrderConvex_of_coordinateGradient {d : ℕ} {f : Vec d → ℝ}
     (hasDerivAt_objectiveLine hgrad x y 0)
   norm_num [slope, objectiveLine, AffineMap.lineMap_apply_zero,
     AffineMap.lineMap_apply_one] at htangent
-  linarith
+  linarith only [htangent]
 
 /-- The objective along a line after subtracting its initial linear model and smoothness
 quadratic. -/
@@ -118,7 +118,7 @@ lemma smoothPathRemainderDeriv_nonpos {d : ℕ} {p q L t : ℝ}
       Pi.add_apply, Pi.smul_apply, smul_eq_mul]
     ring
   have hnorm : lpNorm p (z - x) = t * lpNorm p h := by
-    rw [hzsub, Stage2RouteC.lpNorm_smul (by linarith : 1 ≤ p), abs_of_nonneg ht0]
+    rw [hzsub, Stage2RouteC.lpNorm_smul (by linarith only [hp] : 1 ≤ p), abs_of_nonneg ht0]
   have hholder := pairing_le_lpNorm_mul hpq.symm (grad z - grad x) h
   have hlip := hsmooth z x
   rw [hnorm] at hlip
@@ -130,7 +130,7 @@ lemma smoothPathRemainderDeriv_nonpos {d : ℕ} {p q L t : ℝ}
   change pairing (grad z) h - pairing (grad x) h -
       L * t * (lpNorm p h) ^ (2 : ℕ) ≤ 0
   rw [hpairEq]
-  nlinarith
+  linarith only [hholder, hmul]
 
 /-- Exact source descent lemma with coefficient `L/2`. -/
 theorem smooth_descent_lp {d : ℕ} {p q L : ℝ}
@@ -157,7 +157,7 @@ theorem smooth_descent_lp {d : ℕ} {p q L : ℝ}
   have hend := hanti (by simp) (by simp) (by norm_num : (0 : ℝ) ≤ 1)
   norm_num [F, F', smoothPathRemainder, objectiveLine,
     AffineMap.lineMap_apply_zero, AffineMap.lineMap_apply_one] at hend
-  nlinarith
+  linarith only [hend]
 
 end Stage3Anchor
 end O3

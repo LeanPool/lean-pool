@@ -57,7 +57,7 @@ lemma congr_transpose_mul_mul_ne_zero
   have hcalc : U * (U.transpose * G * U) * U.transpose
       = (U * U.transpose) * G * (U * U.transpose) := by
     simp [Matrix.mul_assoc]
-  simp_all
+  simp_all only [ne_eq, mul_zero, zero_mul, one_mul, mul_one, not_true_eq_false]
 
 /-- Cauchy–Schwarz for the semi-inner product induced by a PSD real matrix.
 For all vectors x,y: (xᵀ H y)^2 ≤ (xᵀ H x) (yᵀ H y).
@@ -108,7 +108,8 @@ lemma psd_offdiag_zero_of_diag_zero
   -- Apply Cauchy–Schwarz with x = e_i, y = e_j
   have hcs := psd_cauchy_schwarz H hH_psd (Pi.single i (1 : ℝ)) (Pi.single j (1 : ℝ))
   -- Rewrite each quadratic form
-  simp_all
+  simp_all only [mulVec_single, MulOpposite.op_one, one_smul, single_dotProduct, col_apply,
+    one_mul, mul_zero, sq_nonpos_iff]
 
 /-- For a real PSD matrix, if it is nonzero then some diagonal entry is strictly positive. -/
 lemma posSemidef_diag_pos_exists_of_ne_zero

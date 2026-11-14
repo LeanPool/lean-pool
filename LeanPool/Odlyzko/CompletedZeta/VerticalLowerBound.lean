@@ -13,6 +13,7 @@ import LeanPool.Odlyzko.DedekindZeta.PrimeIdealSummability
 import Mathlib.Analysis.SpecialFunctions.Log.Summable
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
 import Mathlib.Tactic.ArithMult.Init
+import Mathlib.Topology.Algebra.InfiniteSum.Field
 
 /-!
 # Vertical Lower Bound

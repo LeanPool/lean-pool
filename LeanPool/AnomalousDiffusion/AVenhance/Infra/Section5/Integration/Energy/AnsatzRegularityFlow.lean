@@ -67,7 +67,7 @@ theorem gradMatrix_slice_eq {F : ℝ × Vec 2 → Vec 2} (hF : ContDiff ℝ ∞ 
     (i j : Fin 2) :
     gradMatrix (fun z => F (t, z)) y i j =
       fderiv ℝ (fun p => F p j) (t, y) (0, basisVec i) := by
-  have hFj : ContDiff ℝ ∞ (fun p => F p j) := (contDiff_apply ℝ ℝ j).comp hF
+  have hFj : ContDiff ℝ ∞ (fun p => F p j) := (contDiff_apply ℝ (fun _ => ℝ) j).comp hF
   have hd : HasFDerivAt (fun p => F p j) (fderiv ℝ (fun p => F p j) (t, y)) (t, y) :=
     (hFj.differentiable (by simp) (t, y)).hasFDerivAt
   have hc := hd.comp y (hasFDerivAt_prodMk_right t y)
@@ -126,7 +126,7 @@ theorem transportedGrad_contDiffOn (hΦ : IsStreamSeq I Φ) (m : ℕ) (l : ℤ) 
   have hEsm : ContDiffOn ℝ ∞ E s := by
     refine ContDiffOn.sum fun j _ => ContDiffOn.mul ?_ ?_
     · have hXj : ContDiff ℝ ∞ (fun q : ℝ × Vec 2 => I.xFlow hΦ m l q.1 q.2 j) :=
-        (contDiff_apply ℝ ℝ j).comp hXF
+        (contDiff_apply ℝ (fun _ => ℝ) j).comp hXF
       exact ((contDiff_partial hXj (0, basisVec i)).comp hpair).contDiffOn
     · exact ((hT.fderivWithin hsu (by simp)).clm_apply contDiffOn_const)
   refine hEsm.congr ?_

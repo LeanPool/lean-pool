@@ -478,7 +478,7 @@ theorem memLp_indicator_cubeFaceReflectionBlockSet_cubeCoordinateFoldReflectedSc
         (cubeCoordinateFoldReflectedScalar Q F))
       (2 : ℝ≥0∞) MeasureTheory.volume := by
   rw [MeasureTheory.memLp_indicator_iff_restrict
-    (measurableSet_cubeFaceReflectionBlockSet Q)]
+    (measurableSet_cubeFaceReflectionBlockSet Q).nullMeasurableSet]
   simpa [MemScalarL2, volumeMeasureOn] using
     memScalarL2_cubeFaceReflectionBlockSet_cubeCoordinateFoldReflectedScalar
       Q hF
@@ -593,7 +593,7 @@ theorem memLp_indicator_cubeFaceReflectionBlockSet_cubeCoordinateFoldReflectedVe
         (cubeCoordinateFoldReflectedVectorField Q G))
       (2 : ℝ≥0∞) MeasureTheory.volume := by
   rw [MeasureTheory.memLp_indicator_iff_restrict
-    (measurableSet_cubeFaceReflectionBlockSet Q)]
+    (measurableSet_cubeFaceReflectionBlockSet Q).nullMeasurableSet]
   simpa [MemVectorL2, volumeMeasureOn] using
     memVectorL2_cubeFaceReflectionBlockSet_cubeCoordinateFoldReflectedVectorField
       Q hG

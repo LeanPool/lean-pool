@@ -83,7 +83,7 @@ def conjugate (f : L0Infinity) : L0Infinity where
 @[simp] theorem conjugate_conjugate (f : L0Infinity) :
     conjugate (conjugate f) = f := by
   cases f
-  simp [conjugate]
+  simp only [conjugate, RingHomCompTriple.comp_apply, RingHom.id_apply]
 
 end L0Infinity
 
@@ -101,17 +101,17 @@ def dilate (a : ℝ) (ha : 0 < a) (I : RealInterval) : RealInterval :=
 
 @[simp] theorem dilate_length (a : ℝ) (ha : 0 < a) (I : RealInterval) :
     (I.dilate a ha).length = a * I.length := by
-  simp only [length, dilate_left, dilate_right, mul_sub]
+  simp only [length, dilate_right, dilate_left, mul_sub]
 
 @[simp] theorem dilate_inv_dilate (a : ℝ) (ha : 0 < a) (I : RealInterval) :
     (I.dilate a⁻¹ (inv_pos.mpr ha)).dilate a ha = I := by
   cases I
-  simp [dilate, ha.ne']
+  simp only [dilate, ne_eq, ha.ne', not_false_eq_true, mul_inv_cancel_left₀]
 
 @[simp] theorem dilate_dilate_inv (a : ℝ) (ha : 0 < a) (I : RealInterval) :
     (I.dilate a ha).dilate a⁻¹ (inv_pos.mpr ha) = I := by
   cases I
-  simp [dilate, ha.ne']
+  simp only [dilate, ne_eq, ha.ne', not_false_eq_true, inv_mul_cancel_left₀]
 
 theorem dilate_injective (a : ℝ) (ha : 0 < a) : Injective (dilate a ha) :=
   (show LeftInverse (dilate a⁻¹ (inv_pos.mpr ha)) (dilate a ha) from
@@ -135,7 +135,7 @@ def pullbackFamily (a : ℝ) (ha : 0 < a) (S : Set RealInterval) : Set RealInter
 @[simp] theorem pullbackFamily_inverse (a : ℝ) (ha : 0 < a) (S : Set RealInterval) :
     pullbackFamily a⁻¹ (inv_pos.mpr ha) (pullbackFamily a ha S) = S := by
   ext I
-  simp [pullbackFamily]
+  simp only [pullbackFamily, mem_preimage, RealInterval.dilate_inv_dilate]
 
 /-- The index equivalence between the pulled-back interval family and the original family. -/
 def pullbackIndexEquiv (a : ℝ) (ha : 0 < a) (S : Set RealInterval) :
@@ -181,7 +181,7 @@ theorem isSparse_pullbackFamily_iff (a : ℝ) (ha : 0 < a)
     IsSparse η (pullbackFamily a ha S) ↔ IsSparse η S := by
   constructor
   · intro h
-    simpa using isSparse_pullbackFamily a⁻¹ (inv_pos.mpr ha) h
+    simpa only [pullbackFamily_inverse] using isSparse_pullbackFamily a⁻¹ (inv_pos.mpr ha) h
   · exact isSparse_pullbackFamily a ha
 
 /-- Exact normalized local averages under positive dilation. -/
@@ -271,7 +271,7 @@ theorem sparseOnePNorm_dilatedOperator (p a : ℝ) (ha : 0 < a) (T : TestOperato
 
 theorem localAverage_conjugate (p : ℝ) (f : ℝ → ℂ) (I : RealInterval) :
     localAverage p (fun x ↦ conj (f x)) I = localAverage p f I := by
-  simp [localAverage]
+  simp only [localAverage, RCLike.norm_conj, one_div]
 
 theorem sparseForm_conjugate (p : ℝ) (f g : ℝ → ℂ) (S : Set RealInterval) :
     sparseForm p (fun x ↦ conj (f x)) (fun x ↦ conj (g x)) S = sparseForm p f g S := by
@@ -307,7 +307,7 @@ theorem hasSparseOnePBound_conjugatedOperator_iff {C p : ℝ} {T : TestOperator}
     HasSparseOnePBound C p (conjugatedOperator T) ↔ HasSparseOnePBound C p T := by
   constructor
   · intro h
-    simpa using hasSparseOnePBound_conjugatedOperator h
+    simpa only [conjugatedOperator_conjugatedOperator] using hasSparseOnePBound_conjugatedOperator h
   · exact hasSparseOnePBound_conjugatedOperator
 
 theorem sparseOnePNorm_conjugatedOperator (p : ℝ) (T : TestOperator) :
@@ -322,7 +322,7 @@ theorem smoothQuadraticHighPassKernel_scale (sigma : ℝ) (a : ℝ) (ha : 0 < a)
     smoothQuadraticHighPassKernel (sigma * a ^ 2) ρ t =
       (a : ℂ) * smoothQuadraticHighPassKernel sigma (a * ρ) (a * t) := by
   by_cases ht : t = 0
-  · simp [ht, smoothQuadraticHighPassKernel]
+  · simp only [smoothQuadraticHighPassKernel, ht, ↓reduceIte, mul_zero]
   have hratio : (a * t) / (4 * (a * ρ)) = t / (4 * ρ) := by
     rw [show 4 * (a * ρ) = a * (4 * ρ) by ring,
       mul_div_mul_left _ _ ha.ne']
@@ -367,7 +367,7 @@ theorem smoothQuadraticHighPassKernel_neg_one_eq_conj (ρ t : ℝ) :
     smoothQuadraticHighPassKernel (-1) ρ t =
       conj (smoothQuadraticHighPassKernel 1 ρ t) := by
   by_cases ht : t = 0
-  · simp [ht, smoothQuadraticHighPassKernel]
+  · simp only [smoothQuadraticHighPassKernel, ht, ↓reduceIte, map_zero]
   simp only [smoothQuadraticHighPassKernel, ite_eq_right ht, map_mul,
     Complex.conj_ofReal, ← phase_neg_eq_conj]
   congr 2
@@ -508,7 +508,7 @@ theorem locallyIntegrable_finiteSmoothMaxOperator
   have hmax : Measurable (fun x ↦ (finiteSmoothMaxNNNorm lam s f x : ℝ)) := by
     unfold finiteSmoothMaxNNNorm
     induction s using Finset.induction_on with
-    | empty => simp
+    | empty => simp only [Finset.sup_empty, bot_eq_zero', NNReal.coe_zero, measurable_const]
     | @insert ρ s hρ ih =>
         simp only [Finset.sup_insert, NNReal.coe_max, coe_nnnorm]
         exact (hmeas ρ).norm.max ih

@@ -8,9 +8,6 @@ module
 public import Mathlib.Order.Directed
 public import LeanPool.DomainTheory.Neighborhood.Basic
 public import Mathlib.Basic.Finite.Defs
-public import Mathlib.Order.SetNotation
-public import Mathlib.Tactic.ToAdditive
-import Mathlib.Data.Set.BooleanAlgebra
 public import Mathlib.Data.Set.Finite.Basic
 
 /-!
@@ -96,7 +93,7 @@ theorem Cl_mem {F : Set τ} (h : ∃ X ∈ C, F ⊆ X) : Cl C F ∈ C := by
   apply hInter
   · obtain ⟨X, hX, hFX⟩ := h
     exact ⟨X, hX, hFX⟩
-  · simp_all
+  · exact sep_subset C (LE.le F)
 
 /-! ### The neighbourhood system `reprSystem`. -/
 
@@ -120,7 +117,7 @@ theorem nbhd_subset_iff {F G : Set τ} (hF : IsTok C F) :
 /-- `C(∅) = Δ`: the empty token's neighbourhood is everything (the master). -/
 theorem nbhd_empty : nbhd C (∅ : Set τ) = Set.univ := by
   ext G
-  simp [nbhd]
+  simp only [nbhd, empty_subset, ofPred_true, mem_univ]
 
 variable (hne : C.Nonempty)
 
@@ -166,7 +163,7 @@ def toC (x : (reprSystem C hInter hne).Element) : Set τ := ⋃₀ famC C hInter
 theorem mem_toC (x : (reprSystem C hInter hne).Element) {t : τ} :
     t ∈ toC C hInter hne x ↔ ∃ F : Tok C, x.mem (nbhd C F.1) ∧ t ∈ Cl C F.1 := by
   simp only [toC, famC, Set.mem_sUnion, Set.mem_ofPred_eq]
-  simp_all
+  simp_all only [↓existsAndEq, and_true, Subtype.exists, exists_and_left, exists_prop]
 
 /-- **Directedness step.** If `C(F), C(F') ∈ x` then there is a token `F₃` with
 `C(F₃) ∈ x` whose

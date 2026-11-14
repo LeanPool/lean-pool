@@ -108,7 +108,7 @@ theorem eLpNorm_cutoff_mul_g_le
           eLpNorm (B.indicator (fun x => η x * g x)) p volume := by
             exact congrArg (fun F : Vec3 → ℝ => eLpNorm F p volume) hηg_eq_indicator
       _ = eLpNorm (fun x => η x * g x) p (volume.restrict B) :=
-        eLpNorm_indicator_eq_eLpNorm_restrict hball_meas
+        eLpNorm_indicator_eq_eLpNorm_restrict hball_meas.nullMeasurableSet
   -- Step 2: bound |η * g| ≤ |g| on the restricted measure
   have h_step2 : eLpNorm (fun x => η x * g x) p (volume.restrict B) ≤
       eLpNorm g p (volume.restrict B) := by

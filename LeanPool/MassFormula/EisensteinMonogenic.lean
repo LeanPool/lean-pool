@@ -99,8 +99,9 @@ theorem integers_eq_adjoin {π : 𝒪[K]} (hπ : Irreducible π) {x : SeparableC
     integers (IntermediateField.adjoin K {x}) =
       Algebra.adjoin 𝒪[K] {IntermediateField.AdjoinSimple.gen K x} := by
   classical
-  have : IsFractionRing 𝒪[K] K :=
-    inferInstanceAs (IsFractionRing (valuation K).valuationSubring K)
+  -- An auxiliary theorem shares this proof and avoids rebuilding the instance transport wrapper.
+  have : IsFractionRing 𝒪[K] K := by
+    as_aux_lemma => exact inferInstance
   have hKint : IsIntegral K x := hint.tower_top
   set B : PowerBasis K ↥(IntermediateField.adjoin K {x}) :=
     IntermediateField.adjoin.powerBasis hKint with hB
@@ -352,8 +353,8 @@ theorem exists_unit_relation {π : 𝒪[K]} (hπ : Irreducible π) {x : Separabl
           ((minpoly 𝒪[K] x).coeff 0) * u =
         -ξ ^ (minpoly 𝒪[K] x).natDegree := by
   classical
-  have : IsFractionRing 𝒪[K] K :=
-    inferInstanceAs (IsFractionRing (valuation K).valuationSubring K)
+  have : IsFractionRing 𝒪[K] K := by
+    as_aux_lemma => exact inferInstance
   set L' := IntermediateField.adjoin K {x} with hL'
   set x' : ↥L' := IntermediateField.AdjoinSimple.gen K x with hx'
   have hx'mem : x' ∈ integers L' :=
@@ -387,8 +388,8 @@ theorem isTotallyRamified_adjoin {π : 𝒪[K]} (hπ : Irreducible π) {x : Sepa
     (hei : (minpoly 𝒪[K] x).IsEisensteinAt (Submodule.span 𝒪[K] {π})) :
     IsTotallyRamified (IntermediateField.adjoin K {x}) := by
   classical
-  have : IsFractionRing 𝒪[K] K :=
-    inferInstanceAs (IsFractionRing (valuation K).valuationSubring K)
+  have : IsFractionRing 𝒪[K] K := by
+    as_aux_lemma => exact inferInstance
   set L' := IntermediateField.adjoin K {x} with hL'
   set x' : ↥L' := IntermediateField.AdjoinSimple.gen K x with hx'
   have hx'mem : x' ∈ integers L' :=

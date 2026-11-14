@@ -221,7 +221,8 @@ theorem exists_contDiff_scalarL2_tsupport_subset_eLpNorm_sub_le
     unfold volumeMeasureOn
     rw [MeasureTheory.Measure.restrict_apply (hUopen.measurableSet.diff hK_closed.measurableSet)]
     simpa [Set.inter_eq_self_of_subset_left (Set.sdiff_subset : U \ K ⊆ U)] using hμK.le
-  have hindicator := hδ (U \ K) (hUopen.measurableSet.diff hK_closed.measurableSet) hμsmall
+  have hindicator :=
+    hδ (U \ K) (hUopen.measurableSet.diff hK_closed.measurableSet).nullMeasurableSet hμsmall
   calc
     MeasureTheory.eLpNorm (g - φ) 2 (volumeMeasureOn U)
         ≤ MeasureTheory.eLpNorm ((U \ K).indicator g) 2 (volumeMeasureOn U) := by

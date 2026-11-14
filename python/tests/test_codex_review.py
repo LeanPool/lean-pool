@@ -261,12 +261,12 @@ def test_azure_partial_usage_labels_partial_estimate():
 def test_review_json_preserves_literal_mathematical_backslashes():
     """An invalid JSON escape must not lose completed mathematical evidence."""
     raw = (
-        r'{"verdict":"discuss","evidence":"\lambda x => x; '
+        r'{"verdict":"block","evidence":"\lambda x => x; '
         r'\\proper; \nline; \"quote\"; \set"}'
     )
     result = codex_review.decode_review_json(raw)
     assert result == {
-        "verdict": "discuss",
+        "verdict": "block",
         "evidence": '\\lambda x => x; \\proper; \nline; "quote"; \\set',
     }
 

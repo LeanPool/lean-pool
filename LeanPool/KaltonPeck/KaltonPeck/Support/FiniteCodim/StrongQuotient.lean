@@ -13,6 +13,7 @@ Authors: adas1236
 public import LeanPool.KaltonPeck.KaltonPeck.Support.Forms
 public import LeanPool.KaltonPeck.KaltonPeck.Support.Fredholm
 public import LeanPool.KaltonPeck.KaltonPeck.Support.FiniteParity
+public import Mathlib.Topology.Algebra.Module.Equiv.Submodule
 
 /-!
 # Strong symplectic forms on radical quotients

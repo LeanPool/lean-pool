@@ -4,14 +4,19 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Boris Alexeev
 -/
 module
+import Mathlib.AlgebraicTopology.FundamentalGroupoid.InducedMaps
+public import Mathlib.Tactic.NormNum.Parity
+public import Mathlib.AlgebraicTopology.FundamentalGroupoid.FundamentalGroup
+import all Mathlib.Topology.Homotopy.Lifting
+import all LeanPool.HopfProblem.CuspFibre.CuspCentralHomology2
 
-public import LeanPool.HopfProblem.Prelude
+public import LeanPool.HopfProblem.InternalPrelude
 public import LeanPool.HopfProblem.PeriodFamily.Core3
-import all LeanPool.HopfProblem.Lattice.Core1
+import LeanPool.HopfProblem.Lattice.Core1
 import all LeanPool.HopfProblem.Foundations.Core2
 import all LeanPool.HopfProblem.PeriodFamily.PeriodPoint
 import all LeanPool.HopfProblem.Uniformization.CuspUniformization1
-import all LeanPool.HopfProblem.Foundations.Core3
+import LeanPool.HopfProblem.Foundations.Core3
 import all LeanPool.HopfProblem.PeriodFamily.HolomorphicPeriodMap1
 import all LeanPool.HopfProblem.Elliptic.Core1
 import all LeanPool.HopfProblem.Uniformization.SpecialPeriods1
@@ -20,7 +25,6 @@ import all LeanPool.HopfProblem.Threefold.SpecialPeriods4
 import all LeanPool.HopfProblem.Elliptic.Core3
 import all LeanPool.HopfProblem.Elliptic.Core4
 import all LeanPool.HopfProblem.Elliptic.Core5
-import all LeanPool.HopfProblem.PeriodFamily.Core3
 
 /-!
 # Hopf problem: elliptic · core 6
@@ -31,10 +35,8 @@ Supporting definitions and proofs for this stage of the six-sphere construction.
 
 open Set Function Filter Manifold Topology
 
-open scoped BigOperators CategoryTheory Complex.UnitDisc ComplexConjugate ContDiff ContinuousMap
-  Convolution ENNReal EuclideanSpace Fin.NatCast InnerProductSpace Interval Matrix MatrixGroups
-  Modular NNReal Pointwise RealInnerProductSpace TensorProduct UniformConvergence Uniformity
-  UpperHalfPlane
+open scoped BigOperators ComplexConjugate ContDiff ContinuousMap ENNReal EuclideanSpace Fin.NatCast
+  InnerProductSpace Interval Matrix NNReal Pointwise RealInnerProductSpace
 
 universe u v
 
@@ -309,7 +311,7 @@ private theorem Elliptic.affineDeckPathLoop_monodromy (j : Kind) (p : FixedPerio
     (hv : AdmissibleTwist j v) (y : RealPlane₄) (g : AffineDeckGroup j v)
     (q : Path y (g • y)) :
     (affineCoverProjection_isQuotientCoveringMap j p v hv).isCoveringMap.monodromy
-        (FundamentalGroup.fromPath ⟦affineDeckPathLoop j p v hv y g q⟧) ⟨y, rfl⟩ =
+        ⟦affineDeckPathLoop j p v hv y g q⟧ ⟨y, rfl⟩ =
       ⟨g • y, affineCoverProjection_deck j p v hv y g⟩ := by
   let hq := affineCoverProjection_isQuotientCoveringMap j p v hv
   apply hq.isCoveringMap.monodromy_eq_of_map_eq (Path.Homotopic.Quotient.mk q)
@@ -646,7 +648,15 @@ private theorem EllipticRetractionTopology.fundamentalGroup_map_bijective {X Y :
     [TopologicalSpace X] [TopologicalSpace Y] (e : X ≃ₕ Y) (x : X) :
     Function.Bijective (FundamentalGroup.map e.toFun x) := by
   let E := FundamentalGroupoidFunctor.equivOfHomotopyEquiv e
-  exact E.fullyFaithfulFunctor.map_bijective (FundamentalGroupoid.mk x) (FundamentalGroupoid.mk x)
+  obtain ⟨hinj, hsurj⟩ :=
+    E.fullyFaithfulFunctor.map_bijective (FundamentalGroupoid.mk x) (FundamentalGroupoid.mk x)
+  constructor
+  · intro a b h
+    apply CategoryTheory.End.ext
+    exact hinj (congrArg FundamentalGroup.toPath h)
+  · rintro ⟨q⟩
+    obtain ⟨p, hp⟩ := hsurj q
+    exact ⟨FundamentalGroup.fromPath p, CategoryTheory.End.ext hp⟩
 
 private def EllipticRetractionTopology.fundamentalGroupEquivAt {X Y : Type*} [TopologicalSpace X]
     [TopologicalSpace Y] (e : X ≃ₕ Y) (x : X) :

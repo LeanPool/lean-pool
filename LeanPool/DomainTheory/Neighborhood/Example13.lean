@@ -6,9 +6,6 @@ Authors: Catskills Research Company
 module
 
 public import LeanPool.DomainTheory.Neighborhood.Basic
-public import Mathlib.Data.Set.Basic
-import Mathlib.Data.Fintype.Basic
-import Mathlib.Tactic.FinCases
 
 /-!
 # Example 1.3 (Scott 1981, PRG-19, §1)
@@ -22,7 +19,7 @@ its domain elements (Definition 1.6): there are exactly three filters in a linea
 chain
 `⊥ < {Δ,{1,2}} < {Δ,{1,2},{2}}`, with token `2` the sole total element.
 
-This is a concrete finite computation (`fin_cases`/`simp`); footprint
+The finite set calculations use subset and intersection lemmas; footprint
 `[propext, Classical.choice, Quot.sound]` — same as Example 1.2.
 -/
 
@@ -48,16 +45,18 @@ def memSet : Set (Set Token) := {master, twelve, two}
 /-- Membership in the neighbourhood system `𝒟` of Example 1.3. -/
 def mem (X : Set Token) : Prop := X ∈ memSet
 
-theorem mem_master : mem master := by simp [mem, memSet, master, twelve, two]
-theorem mem_twelve : mem twelve := by simp [mem, memSet, master, twelve, two]
-theorem mem_two : mem two := by simp [mem, memSet, master, twelve, two]
+theorem mem_master : mem master := by
+  exact Or.inl rfl
+theorem mem_twelve : mem twelve := by
+  exact Or.inr (Or.inl rfl)
+theorem mem_two : mem two := by
+  exact Or.inr (Or.inr (rfl))
 
 /-- A neighbourhood of Example 1.3 is exactly one of `Δ`, `{1,2}`, or `{2}`. -/
 theorem mem_iff (X : Set Token) : mem X ↔ X = master ∨ X = twelve ∨ X = two := by
   constructor
   · intro h
-    simp only [mem, memSet, master, twelve, two, Set.mem_insert_iff,
-      Set.mem_singleton_iff] at h
+    simp only [mem, memSet, master, twelve, two, Set.mem_insert_iff, Set.mem_singleton_iff] at h
     rcases h with rfl | rfl | rfl
     · exact Or.inl rfl
     · exact Or.inr (Or.inl rfl)
@@ -72,37 +71,41 @@ private theorem twelve_ne_master : twelve ≠ master := by
   intro h
   have hmem : (0 : Token) ∈ twelve := by
     rw [h]
-    simp [master]
-  simp [twelve] at hmem
+    simp only [master, Fin.isValue, Set.mem_univ]
+  simp only [twelve, Fin.isValue, Set.mem_insert_iff, Fin.reduceEq, Set.mem_singleton_iff,
+    Fin.zero_eq_one_iff, Nat.reduceEqDiff, or_self] at hmem
 
 private theorem two_ne_master : two ≠ master := by
   intro h
   have hmem : (0 : Token) ∈ two := by
     rw [h]
-    simp [master]
-  simp [two] at hmem
+    simp only [master, Fin.isValue, Set.mem_univ]
+  simp only [two, Fin.isValue, Set.mem_singleton_iff, Fin.reduceEq] at hmem
 
 private theorem two_ne_twelve : two ≠ twelve := by
   intro h
   have hmem : (1 : Token) ∈ two := by
     rw [h]
-    simp [twelve]
-  simp [two] at hmem
+    simp only [twelve, Fin.isValue, Set.mem_insert_iff, Fin.reduceEq, Set.mem_singleton_iff,
+      or_true]
+  simp only [two, Fin.isValue, Set.mem_singleton_iff, Fin.reduceEq] at hmem
 
 private theorem master_not_subset_twelve : ¬master ⊆ twelve := by
   intro h
-  have : (0 : Token) ∈ twelve := h (by simp [master])
-  simp [twelve] at this
+  have : (0 : Token) ∈ twelve := h (by simp only [master, Fin.isValue, Set.mem_univ])
+  simp only [twelve, Fin.isValue, Set.mem_insert_iff, Fin.reduceEq, Set.mem_singleton_iff,
+    Fin.zero_eq_one_iff, Nat.reduceEqDiff, or_self] at this
 
 private theorem master_not_subset_two : ¬master ⊆ two := by
   intro h
-  have : (0 : Token) ∈ two := h (by simp [master])
-  simp [two] at this
+  have : (0 : Token) ∈ two := h (by simp only [master, Fin.isValue, Set.mem_univ])
+  simp only [two, Fin.isValue, Set.mem_singleton_iff, Fin.reduceEq] at this
 
 private theorem twelve_not_subset_two : ¬twelve ⊆ two := by
   intro h
-  have : (1 : Token) ∈ two := h (by simp [twelve])
-  simp [two] at this
+  have : (1 : Token) ∈ two := h (by simp only [twelve, Fin.isValue, Set.mem_insert_iff,
+    Fin.reduceEq, Set.mem_singleton_iff, or_true])
+  simp only [two, Fin.isValue, Set.mem_singleton_iff, Fin.reduceEq] at this
 
 private theorem eq_of_master_subset {Y : Set Token} (h : mem Y) (hsub : master ⊆ Y) :
   Y = master := by
@@ -118,12 +121,10 @@ private theorem inter_master (A : Set Token) : A ∩ master = A := by
   rw [master]; exact Set.inter_univ A
 
 private theorem twelve_inter_two : twelve ∩ two = two := by
-  ext t
-  fin_cases t <;> simp [twelve, two]
+  exact Set.inter_singleton_of_mem (Or.inl rfl)
 
 private theorem two_inter_twelve : two ∩ twelve = two := by
-  ext t
-  fin_cases t <;> simp [twelve, two]
+  rw [Set.inter_comm]; exact twelve_inter_two
 
 private theorem inter_eq (X Y : Set Token) (h : mem X) (h' : mem Y) :
     X ∩ Y = master ∨ X ∩ Y = twelve ∨ X ∩ Y = two := by
@@ -227,8 +228,7 @@ def elemTwo : neighborhoodSystem.Element where
       · exact Or.inr (Or.inr rfl)
 
 private theorem two_subset_twelve : two ⊆ twelve := by
-  intro t ht
-  fin_cases t <;> simp [two, twelve] at ht ⊢
+  exact Set.singleton_subset_iff.mpr (Or.inl rfl)
 
 private theorem mem_two_of_mem (x : neighborhoodSystem.Element) (h : x.mem two) :
     x = elemTwo := by

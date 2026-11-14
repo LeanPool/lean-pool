@@ -4,8 +4,9 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: OpenAI, Dean Cureton
 -/
 
-module
+module -- shake: keep-all
 
 public import LeanPool.GapCVP.Part07G
+public import LeanPool.GapCVP.Part06 -- shake: keep
 
 /-! # GapCVP proof, part 07 -/

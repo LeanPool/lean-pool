@@ -39,7 +39,7 @@ namespace FockSPR
 private lemma norm_add_sq_le (a b : ℂ) :
     ‖a + b‖ ^ 2 ≤ 2 * ‖a‖ ^ 2 + 2 * ‖b‖ ^ 2 := by
   have h := parallelogram_law_with_norm ℂ a b
-  nlinarith [sq_abs (‖a + b‖), sq_abs (‖a - b‖), sq_abs (‖a‖), sq_abs (‖b‖)]
+  nlinarith only [h, sq_abs (‖a + b‖), sq_abs (‖a - b‖), sq_abs (‖a‖), sq_abs (‖b‖)]
 
 /-! ## Private Lemma 7.1c: Final constant check -/
 private lemma final_constant_check : 8 * 1620 ^ 2 ≤ 4600 ^ 2 := by norm_num
@@ -71,7 +71,7 @@ private lemma radial_gaussian_integral (n : ℕ) :
     2 * ∫ r in Set.Ioi (0 : ℝ), r ^ (2 * n + 1) * Real.exp (-r ^ 2) =
     (n.factorial : ℝ) := by
   have hp : (0 : ℝ) < 2 := two_pos
-  have hq : (-1 : ℝ) < (2 * (n : ℝ) + 1) := by linarith [Nat.cast_nonneg (α := ℝ) n]
+  have hq : (-1 : ℝ) < (2 * (n : ℝ) + 1) := by linarith only [Nat.cast_nonneg (α := ℝ) n]
   have pow_eq : ∀ (r : ℝ), r ∈ Set.Ioi (0 : ℝ) →
       r ^ (2 * n + 1) * Real.exp (-r ^ 2) =
       r ^ (2 * (n : ℝ) + 1) * Real.exp (-r ^ (2 : ℝ)) := by
@@ -179,7 +179,7 @@ private lemma fourier_pow_eq (n : ℕ) (t : AddCircle T) :
     ((fourier 1 t : ℂ)) ^ n = (fourier (↑n : ℤ) t : ℂ) := by
   induction n with
   | zero => simp
-  | succ n ih => rw [pow_succ, ih, ← fourier_add]; push_cast; ring_nf
+  | succ n ih => rw [pow_succ, ih, ← fourier_add]; push_cast; ring
 
 private lemma polyEvalCircle_eq_polyEval {D : ℕ} (a : Fin D → ℂ)
     (r : ℝ) (t : AddCircle T) :
@@ -293,7 +293,7 @@ private lemma circle_level_bound {D : ℕ} (hD : 1 ≤ D) (a : Fin D → ℂ)
         from rfl]
       rw [integral_add (hiV.const_mul _) (hiR.const_mul _),
           integral_const_mul, integral_const_mul]
-    linarith
+    linarith only [h1, h2]
   have h_annulus := annulus_local_estimate hD a j hr_nn hr_lo hr_hi
   have h_rho_pw : ∀ t, (rho (V t)) ^ 2 ≤
       2 * (rho (U t)) ^ 2 + 2 * ‖R t‖ ^ 2 := by
@@ -306,8 +306,9 @@ private lemma circle_level_bound {D : ℕ} (hD : 1 ≤ D) (a : Fin D → ℂ)
     have h_nn : 0 ≤ rho (V t) := abs_nonneg _
     have h_nn2 : 0 ≤ rho (U t) := abs_nonneg _
     have h_nn3 : 0 ≤ ‖R t‖ := norm_nonneg _
-    nlinarith [sq_nonneg (rho (V t) - (rho (U t) + ‖R t‖)),
-              sq_nonneg (rho (U t) - ‖R t‖)]
+    nlinarith only [
+      h_lip, h_nn, sq_nonneg (rho (V t) - (rho (U t) + ‖R t‖)), sq_nonneg (rho (U t) - ‖R t‖)
+    ]
   have h_rho_sq : ∫ t, (rho (V t)) ^ 2 ∂AddCircle.haarAddCircle ≤
       2 * ∫ t, (rho (U t)) ^ 2 ∂AddCircle.haarAddCircle +
       2 * ∫ t, ‖R t‖ ^ 2 ∂AddCircle.haarAddCircle := by
@@ -320,7 +321,7 @@ private lemma circle_level_bound {D : ℕ} (hD : 1 ≤ D) (a : Fin D → ℂ)
           (2 : ℝ) * (fun t => ‖R t‖ ^ 2) t) from rfl]
       rw [integral_add (hiRhoU.const_mul _) (hiR.const_mul _),
           integral_const_mul, integral_const_mul]
-    linarith
+    linarith only [h1, h2]
   have h_ann : ∫ t, ‖V t‖ ^ 2 ∂AddCircle.haarAddCircle ≤
       1620 ^ 2 * ∫ t, (rho (V t)) ^ 2 ∂AddCircle.haarAddCircle := h_annulus
   have h_rho_nn : 0 ≤ ∫ t, (rho (V t)) ^ 2 ∂AddCircle.haarAddCircle :=
@@ -334,7 +335,7 @@ private lemma circle_level_bound {D : ℕ} (hD : 1 ≤ D) (a : Fin D → ℂ)
   change ∫ t, ‖U t‖ ^ 2 ∂AddCircle.haarAddCircle ≤
     4 * 1620 ^ 2 * ∫ t, (rho (U t)) ^ 2 ∂AddCircle.haarAddCircle +
     (4 * 1620 ^ 2 + 2) * ∫ t, ‖R t‖ ^ 2 ∂AddCircle.haarAddCircle
-  nlinarith [h_norm_add, h_ann, h_rho_sq, h_rho_nn, h_rhoU_nn, h_R_nn, h_V_nn]
+  linarith only [h_norm_add, h_rho_sq, h_ann, h_rho_nn, h_rhoU_nn, h_R_nn, h_V_nn]
 
 /-! ## Annular decomposition infrastructure -/
 
@@ -342,7 +343,7 @@ private lemma annular_summand_nonneg (j : ℕ)
     {g : ℝ → ℝ} (hg : ∀ r, r ∈ Set.Icc (j : ℝ) ((j : ℝ) + 1) → 0 ≤ g r) :
     0 ≤ 2 * ∫ r in (j : ℝ)..(j + 1 : ℝ), r * Real.exp (-r ^ 2) * g r := by
   apply mul_nonneg (by norm_num : (0 : ℝ) ≤ 2)
-  apply intervalIntegral.integral_nonneg (by linarith [Nat.cast_nonneg (α := ℝ) j])
+  apply intervalIntegral.integral_nonneg (by linarith only [Nat.cast_nonneg (α := ℝ) j])
   intro r hr
   exact mul_nonneg (mul_nonneg (le_trans (Nat.cast_nonneg (α := ℝ) j) hr.1)
     (le_of_lt (Real.exp_pos _))) (hg r hr)
@@ -489,7 +490,7 @@ private lemma fockNormSq_sup_annular {D : ℕ} (a : Fin D → ℂ) :
   -- fockNormSq a = 2 * ∫_{Ioi 0} f
   have h_eq : fockNormSq a = 2 * ∫ r in Set.Ioi (0 : ℝ), f r := fockNormSq_polar a
   -- Extract: for ε/2 > 0, ∃ N ∈ ℕ with ∫_0^N f > ∫_{Ioi} f - ε/2
-  have h_half : 0 < ε / 2 := by linarith
+  have h_half : 0 < ε / 2 := by linarith only [hε]
   -- Use `Metric.tendsto_atTop` to extract a witness
   rw [Metric.tendsto_atTop] at h_tends
   obtain ⟨N, hN⟩ := h_tends (ε / 2) h_half
@@ -508,12 +509,12 @@ private lemma fockNormSq_sup_annular {D : ℕ} (a : Fin D → ℂ) :
   -- So ∫_{Ioi} f - ε/2 < ∫_0^J f
   set I := ∫ r in Set.Ioi (0 : ℝ), f r
   set S := ∫ r in (0 : ℝ)..(J : ℝ), f r
-  have h_close : I - ε / 2 < S := by linarith [h_abs.1]
+  have h_close : I - ε / 2 < S := by linarith only [h_abs.1]
   -- Goal: fockNormSq a - ε < ∑_{j<J} 2 * ∫_j^{j+1} f
   rw [h_eq, show ∑ j ∈ Finset.range J, 2 * ∫ r in (j : ℝ)..(j + 1 : ℝ), f r =
       2 * ∑ j ∈ Finset.range J, ∫ r in (j : ℝ)..(j + 1 : ℝ), f r from
       (Finset.mul_sum ..).symm, h_telescope]
-  linarith
+  linarith only [h_abs]
 
 private lemma annular_circle_bound {D : ℕ} (hD : 1 ≤ D) (a : Fin D → ℂ) (J : ℕ) :
     (∑ j ∈ Finset.range J,
@@ -609,7 +610,7 @@ private lemma annular_circle_bound {D : ℕ} (hD : 1 ≤ D) (a : Fin D → ℂ) 
   have hwh_ii : IntervalIntegrable (fun r => w r * h r) volume (j : ℝ) ((j : ℝ) + 1) :=
     (hw_cont.mul hh_cont).intervalIntegrable _ _
   -- Integral bound: ∫ w*f ≤ ∫ w*(C₁*g + C₂*h) = C₁ * ∫ w*g + C₂ * ∫ w*h
-  have hj_le : (j : ℝ) ≤ (j : ℝ) + 1 := by linarith
+  have hj_le : (j : ℝ) ≤ (j : ℝ) + 1 := by linarith only []
   have h_int_le : ∫ r in (j : ℝ)..(j + 1 : ℝ), w r * f r ≤
       C₁ * (∫ r in (j : ℝ)..(j + 1 : ℝ), w r * g r) +
       C₂ * (∫ r in (j : ℝ)..(j + 1 : ℝ), w r * h r) := by
@@ -628,7 +629,7 @@ private lemma annular_circle_bound {D : ℕ} (hD : 1 ≤ D) (a : Fin D → ℂ) 
   change 2 * ∫ r in (j : ℝ)..(j + 1 : ℝ), w r * f r ≤
     C₁ * (2 * ∫ r in (j : ℝ)..(j + 1 : ℝ), w r * g r) +
     C₂ * (2 * ∫ r in (j : ℝ)..(j + 1 : ℝ), w r * h r)
-  nlinarith [h_int_le]
+  linarith only [h_int_le]
 
 /-! ## Pre-absorption inequality
 
@@ -647,7 +648,7 @@ private lemma etaCoeff_5_universal (J : ℕ) : etaCoeff 5 J < 4 / (10 : ℝ) ^ 1
     set r := Real.exp (-5) with hr_def
     have hr_pos : 0 < r := Real.exp_pos _
     have hr_lt : r < 1 := Real.exp_lt_one_iff.mpr (by norm_num : (-5:ℝ) < 0)
-    have h1r : 0 < 1 - r := by linarith
+    have h1r : 0 < 1 - r := by linarith only [hr_lt]
     -- exp(5) ≥ 148 (from 13-term Taylor series)
     have hexp5 : (148 : ℝ) ≤ Real.exp 5 :=
       le_trans (by norm_num) (Real.sum_le_exp_of_nonneg (by norm_num : (0:ℝ) ≤ 5) 13)
@@ -657,7 +658,7 @@ private lemma etaCoeff_5_universal (J : ℕ) : etaCoeff 5 J < 4 / (10 : ℝ) ^ 1
         calc 148 * r = 148 * Real.exp (-5) := by rw [hr_def]
           _ ≤ Real.exp 5 * Real.exp (-5) := by gcongr
           _ = 1 := by rw [← Real.exp_add]; simp
-      linarith
+      linarith only [this]
     -- exp(1/4) ≤ 13/10 (from Taylor + error bound)
     have hexp14 : Real.exp (1 / 4 : ℝ) ≤ 13 / 10 :=
       (Real.exp_bound' (by norm_num) (by norm_num) (by norm_num : (0:ℕ) < 4)).trans (by norm_num)
@@ -666,15 +667,18 @@ private lemma etaCoeff_5_universal (J : ℕ) : etaCoeff 5 J < 4 / (10 : ℝ) ^ 1
       intro m hm; simp only [Finset.mem_Icc] at hm
       rw [hr_def, ← Real.exp_nat_mul]; apply Real.exp_le_exp.mpr
       have hm5 : (5 : ℝ) ≤ (m : ℝ) := by exact_mod_cast hm.1
-      have hm0 : (0 : ℝ) ≤ (m : ℝ) := by linarith
+      have hm0 : (0 : ℝ) ≤ (m : ℝ) := by linarith only [hr_pos, hr_le, hm5]
       -- Need: -(m:ℝ)² ≤ ↑m * (-5), i.e., 5*m ≤ m² (since m ≥ 5)
-      nlinarith [mul_self_nonneg ((m : ℝ) - 5)]
+      linarith only [hm5, mul_self_nonneg ((m : ℝ) - 5)]
     -- Step 2: Geometric series ∑_{m ∈ Icc 5 J} r^m ≤ r^5/(1-r)
     have h_geom : ∑ m ∈ Finset.Icc 5 J, r ^ m ≤ r ^ 5 / (1 - r) := by
       rw [show Finset.Icc 5 J = Finset.Ico 5 (J + 1) from by
         ext m; simp [Finset.mem_Icc, Finset.mem_Ico]]
       rw [geom_sum_Ico' (ne_of_lt hr_lt) (by omega : (5:ℕ) ≤ J + 1)]
-      exact div_le_div_of_nonneg_right (by linarith [pow_pos hr_pos (J + 1)]) (le_of_lt h1r)
+      exact div_le_div_of_nonneg_right (by
+        linarith only [
+          hr_pos, pow_pos hr_pos (J + 1)
+        ]) (le_of_lt h1r)
     -- Step 3: Combine all bounds
     have h1 : ∑ m ∈ Finset.Icc 5 J, Real.exp (-(m : ℝ) ^ 2) ≤ r ^ 5 / (1 - r) :=
       le_trans (Finset.sum_le_sum h_pw) h_geom
@@ -698,7 +702,7 @@ private lemma pre_absorption {D : ℕ} (hD : 1 ≤ D) (a : Fin D → ℂ) :
   -- Get bound from total_leakage_bound
   obtain ⟨bound, hbound⟩ := total_leakage_bound a (show (2 : ℕ) ≤ 5 by omega) ε' hε'_pos
   -- Get J₀ from fockNormSq_sup_annular
-  obtain ⟨J₀, hJ₀⟩ := fockNormSq_sup_annular a (δ / 2) (by linarith)
+  obtain ⟨J₀, hJ₀⟩ := fockNormSq_sup_annular a (δ / 2) (by linarith only [hδ])
   -- Use J = max J₀ bound
   set J := max J₀ bound with hJ_def
   -- S_fock(J) ≥ S_fock(J₀) > fockNormSq - δ/2  (monotonicity: more nonneg terms)
@@ -724,7 +728,7 @@ private lemma pre_absorption {D : ℕ} (hD : 1 ≤ D) (a : Fin D → ℂ) :
         (∫ t : AddCircle T,
           ‖remainderPoly a 5 j (↑r * (fourier 1 t : ℂ))‖ ^ 2
           ∂AddCircle.haarAddCircle)
-  have h1 : fockNormSq a < S_fock + δ / 2 := by linarith [hJ₀, h_mono_fock]
+  have h1 : fockNormSq a < S_fock + δ / 2 := by linarith only [hJ₀, h_mono_fock]
   have h2 : S_fock ≤ 4 * 1620 ^ 2 * S_rho + C * S_leak := annular_circle_bound hD a J
   have h3 : S_rho ≤ rhoFockNormSq a := annular_rho_partial_le a J
   -- Apply total_leakage_bound at J (since J ≥ bound)
@@ -734,10 +738,10 @@ private lemma pre_absorption {D : ℕ} (hD : 1 ≤ D) (a : Fin D → ℂ) :
     intro M J₁ J₂ hle; unfold etaCoeff; gcongr
   -- Bound C * ε' * fockNormSq < δ / 4
   have h_eps_bound : C * ε' * fockNormSq a < δ / 4 := by
-    have hfock1 : (0 : ℝ) < fockNormSq a + 1 := by linarith
+    have hfock1 : (0 : ℝ) < fockNormSq a + 1 := by linarith only [hfock_nn]
     calc C * ε' * fockNormSq a
         ≤ C * (δ / (4 * C * (fockNormSq a + 1))) * fockNormSq a := by gcongr; exact min_le_left _ _
-      _ < C * (δ / (4 * C * (fockNormSq a + 1))) * (fockNormSq a + 1) := by gcongr; linarith
+      _ < C * (δ / (4 * C * (fockNormSq a + 1))) * (fockNormSq a + 1) := by gcongr; linarith only []
       _ = δ / 4 := by field_simp
   -- Chain: fockNormSq < 4B²R + C*(eta_J + ε')*F + δ/2
   have h_chain : fockNormSq a < 4 * 1620 ^ 2 * rhoFockNormSq a +
@@ -746,7 +750,7 @@ private lemma pre_absorption {D : ℕ} (hD : 1 ≤ D) (a : Fin D → ℂ) :
         C * ((etaCoeff 5 J + ε') * fockNormSq a) := by
       calc S_fock ≤ 4 * 1620 ^ 2 * S_rho + C * S_leak := h2
         _ ≤ 4 * 1620 ^ 2 * rhoFockNormSq a + C * ((etaCoeff 5 J + ε') * fockNormSq a) := by gcongr
-    nlinarith
+    linarith only [hJ₀, h_mono_fock, h2, h3, h4]
   -- Universal eta bound: C*eta_J < 1/4 (much tighter than < 1/2)
   have h_C_eta_tight : C * etaCoeff 5 J < 1 / 4 :=
     calc C * etaCoeff 5 J < C * (4 / (10 : ℝ) ^ 11) :=
@@ -760,18 +764,21 @@ private lemma pre_absorption {D : ℕ} (hD : 1 ≤ D) (a : Fin D → ℂ) :
   -- Therefore C*(eta_J + ε') < 1/4 + 1/4 = 1/2
   have h_absorb : C * (etaCoeff 5 J + ε') < 1 / 2 := by
     calc C * (etaCoeff 5 J + ε') = C * etaCoeff 5 J + C * ε' := by ring
-      _ < 1 / 4 + 1 / 4 := by linarith
+      _ < 1 / 4 + 1 / 4 := by linarith only [h_C_eta_tight, h_C_eps]
       _ = 1 / 2 := by norm_num
   -- Absorption: F*(1 - η) < 4B²R + δ/2 with η < 1/2, so F < 8B²R + δ
   change fockNormSq a < 8 * 1620 ^ 2 * rhoFockNormSq a + δ
-  nlinarith [h_chain, h_absorb, hfock_nn, hrho_nn]
+  nlinarith only [h_chain, h_absorb, hfock_nn, hrho_nn]
 
 theorem fock_space_coercivity {D : ℕ} (hD : 1 ≤ D) (a : Fin D → ℂ) :
     fockNormSq a ≤ 4600 ^ 2 * rhoFockNormSq a := by
   have hpre := pre_absorption hD a
   calc fockNormSq a
       ≤ 8 * 1620 ^ 2 * rhoFockNormSq a := hpre
-    _ ≤ 4600 ^ 2 * rhoFockNormSq a := by nlinarith [final_constant_check, rhoFockNormSq_nonneg a]
+    _ ≤ 4600 ^ 2 * rhoFockNormSq a := by
+      linarith only [
+        final_constant_check, rhoFockNormSq_nonneg a
+      ]
 
 /-- Fock-space coercivity for complex polynomials with zero constant term. -/
 theorem LocalFockSPR

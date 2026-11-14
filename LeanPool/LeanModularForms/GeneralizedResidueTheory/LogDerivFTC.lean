@@ -114,7 +114,8 @@ theorem ftc_log_piece {g h : ℝ → ℂ} {a b : ℝ} (hab : a ≤ b)
         (show Integrable _ (volume.restrict (Ioc a b)) from hint_h.1)
         ((MeasureTheory.ae_restrict_iff' measurableSet_Ioc).mpr
           (h_congr.mono (fun t ht hm => (ht (uIoc_of_le hab ▸ hm)).symm)))
-    · simp_all
+    · simp_all only [mem_Ioo, and_imp, mem_Icc, ne_eq, uIoc_of_le, mem_Ioc, not_lt, Ioc_eq_empty,
+          integrableOn_empty]
   have h_ftc := integral_logDeriv_eq_log_sub hab hh_cont hh_diff hh_deriv_cont hh_slit
   exact ⟨hint_g, by
     calc ∫ t in a..b, deriv g t / g t
@@ -167,7 +168,7 @@ theorem ftc_log_neg_on_segment {f : ℝ → ℂ} {a b : ℝ} (hab : a ≤ b)
     intro x hx
     have hslit := hf_slit x (Ioo_subset_Icc_self hx)
     have h_log := (hf_diff x hx).hasDerivAt.neg.clog_real hslit
-    simp_all
+    simp_all only [mem_Ioo, and_imp, mem_Icc, ne_eq, Pi.neg_apply, neg_div_neg_eq]
   have hint : IntervalIntegrable (fun t => deriv f t / f t) volume a b := by
     apply ContinuousOn.intervalIntegrable
     rw [Set.uIcc_of_le hab]
@@ -183,5 +184,13 @@ theorem integral_logDeriv_eq_neg_log_sub {f : ℝ → ℂ} {a b : ℝ} (hab : a 
     (hf_neg_slit : ∀ t ∈ Icc a b, -f t ∈ Complex.slitPlane) :
     ∫ t in a..b, deriv f t / f t = Complex.log (-f b) - Complex.log (-f a) :=
   (ftc_log_neg_on_segment hab hf_cont hf_diff hf_deriv_cont hf_neg_slit).2
+
+/-- Transport interval integrability and an evaluated integral along a.e. equality. -/
+theorem intervalIntegrable_integral_eq_congr_ae {f g : ℝ → ℂ} {a b : ℝ} {c : ℂ}
+    (h : IntervalIntegrable f volume a b ∧ ∫ t in a..b, f t = c)
+    (hfg : ∀ᵐ t ∂volume, t ∈ Ι a b → f t = g t) :
+    IntervalIntegrable g volume a b ∧ ∫ t in a..b, g t = c := by
+  refine ⟨h.1.congr_ae ((ae_restrict_iff' measurableSet_uIoc).mpr hfg), ?_⟩
+  exact (intervalIntegral.integral_congr_ae hfg).symm.trans h.2
 
 end LogDerivFTC

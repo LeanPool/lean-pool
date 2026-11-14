@@ -211,7 +211,7 @@ lemma FL_box_cup {φ α β ψ} :
   intro hyp
   have := FL_trans hyp
   simp [FL, FLb] at this
-  aesop
+  aesop (rule_sets := [-default])
 
 /- Lemma 6.2(iv) -/
 lemma FL_box_seq {φ α β ψ} :
@@ -219,7 +219,7 @@ lemma FL_box_seq {φ α β ψ} :
   intro hyp
   have := FL_trans hyp
   simp [FL, FLb] at this
-  aesop
+  aesop (rule_sets := [-default])
 
 /- Lemma 6.2(v) -/
 lemma FL_box_star {φ α ψ} :
@@ -227,7 +227,7 @@ lemma FL_box_star {φ α ψ} :
   intro hyp
   have := FL_trans hyp
   simp [FL, FLb] at this
-  aesop
+  aesop (rule_sets := [-default])
 
 /-! ## Closure of a list -/
 
@@ -281,7 +281,7 @@ lemma FLL_diff_sub {L K} : FLL (L \ K) ⊆ FLL L := FLL_sub (List.diff_subset L 
 /-- Being a member of the FL closure of a list does not depend on the position. -/
 lemma FLL_ext (h : ∀ φ, φ ∈ L1 ↔ φ ∈ L2) φ : φ ∈ FLL L1  ↔ φ ∈ FLL L2 := by
   simp [FLL] at *
-  aesop
+  aesop (rule_sets := [-default])
 
 /-! ## FL Closure of a Finset of Formulas -/
 
@@ -305,7 +305,7 @@ lemma FL_refl_sub {X : Finset Formula} : X ⊆ X.FL := by
 lemma FL_sub {X Y : Finset Formula} : X ⊆ Y → FL X ⊆ FL Y := by
   unfold FL
   intro h x x_in
-  aesop
+  aesop (rule_sets := [-default])
 
 @[simp]
 lemma FL_nil : Finset.FL {} = {} := rfl
@@ -353,7 +353,7 @@ lemma FL_union_eq {X Y : Finset Formula} :
 lemma FL_diff_sub {X Y : Finset Formula} : FL (X \ Y) ⊆ FL X := by
   simp only [FL,]
   intro φ φ_in
-  aesop
+  aesop (rule_sets := [-default])
 
 end Finset
 

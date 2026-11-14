@@ -7,6 +7,8 @@ Authors: OpenAI, Dean Cureton
 module
 
 public import LeanPool.GapCVP.Part07C
+public import LeanPool.GapCVP.Part07B
+public import LeanPool.GapCVP.Part07A
 
 /-! # GapCVP proof, part 07, continuation 04 -/
 
@@ -1117,12 +1119,10 @@ private theorem flatAnnotatedCompleteNonemptyMatchedDecomposition
                     nextFirst, nextSecond,
                     firstRemaining, secondRemaining,
                     ?_, ?_, ?_, hshort⟩
-                  · simpa only [List.map_cons, List.cons_append]
-                      using congrArg
+                  · exact congrArg
                         (fun source : List ℕ => firstHead :: source)
                         hfirstTail
-                  · simpa only [List.map_cons, List.cons_append]
-                      using congrArg
+                  · exact congrArg
                         (fun source : List ℕ => secondHead :: source)
                         hsecondTail
                   · simp only [List.length_cons] at hcount ⊢

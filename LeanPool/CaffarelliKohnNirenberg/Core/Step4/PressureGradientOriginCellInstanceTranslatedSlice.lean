@@ -361,7 +361,7 @@ private theorem eLpNorm_le_finite_cover_sum
       exact Finset.sum_nonneg (fun j _ => norm_nonneg (F j y))
   calc
     _ = eLpNorm (B.indicator g) (ENNReal.ofReal (6 / 5 : ℝ)) volume :=
-      (eLpNorm_indicator_eq_eLpNorm_restrict hB).symm
+      (eLpNorm_indicator_eq_eLpNorm_restrict hB.nullMeasurableSet).symm
     _ ≤ eLpNorm (fun y => ∑ j, ‖F j y‖) (ENNReal.ofReal (6 / 5 : ℝ)) volume :=
       eLpNorm_mono_ae (hg.indicator hB).aestronglyMeasurable (Eventually.of_forall hbound)
     _ ≤ ∑ j, eLpNorm (fun y => ‖F j y‖) (ENNReal.ofReal (6 / 5 : ℝ)) volume := by
@@ -372,7 +372,7 @@ private theorem eLpNorm_le_finite_cover_sum
       apply Finset.sum_congr rfl
       intro j _hj
       rw [eLpNorm_norm _ (hm j).aestronglyMeasurable]
-      exact eLpNorm_indicator_eq_eLpNorm_restrict ((hU j).inter hB)
+      exact eLpNorm_indicator_eq_eLpNorm_restrict ((hU j).inter hB).nullMeasurableSet
 
 /-- The exact finite spatial estimate used by the full-interval carrier
 time theorem. All centres and the source radius are chosen before the

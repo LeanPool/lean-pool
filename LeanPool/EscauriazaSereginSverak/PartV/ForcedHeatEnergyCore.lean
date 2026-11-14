@@ -10,6 +10,7 @@ public import LeanPool.EscauriazaSereginSverak.PartV.ForcedHeatSmooth
 public import LeanPool.EscauriazaSereginSverak.PartV.HeatEntropyH1
 public import Mathlib.MeasureTheory.Integral.IntervalIntegral.FundThmCalculus
 public import Mathlib.MeasureTheory.Integral.Prod
+public import Mathlib.Analysis.Calculus.Deriv.Prod
 
 /-!
 # Energy identities for the smooth forced heat response

@@ -1,0 +1,56 @@
+slug: erdos111-bipartization
+title: Linear finite bipartization costs force countable graph colourings
+summary: A graph whose every finite subgraph on m vertices can be made bipartite by deleting at
+  most C m edges has a proper colouring by natural numbers. Consequently the maximum finite-subgraph
+  bipartization cost h_G(n), divided by n, tends to infinity for every graph that is not countably
+  colourable, including every graph with chromatic cardinal aleph-one. The development preserves
+  finite edge costs, rooted-pattern extension costs, closure chains, probability laws on Boolean
+  products, finite minimax, Hilbert-space classes, and colouring along well-founded orders. It
+  answers the limit question of Erdős Problem 111; it does not determine the exact growth of h_G.
+branch: infinite graph theory
+entry_module: LeanPool.Erdos111
+authors:
+- Jacob Parish
+source:
+  title: Graphs whose finite subgraphs have linear bipartization cost are countably colorable
+  authors:
+  - Plasma AI
+  url: https://github.com/plasma-ai/erdos-111/tree/de72caf0e388c729697b6813f4ea90bfe1617c7b
+  github_repo: plasma-ai/erdos-111
+  commit: de72caf0e388c729697b6813f4ea90bfe1617c7b
+  publication_date: '2026-10-17'
+  publication_evidence: https://api.github.com/repos/plasma-ai/erdos-111/events
+  completion_date: '2026-10-18'
+  completion_url: https://github.com/plasma-ai/erdos-111/commit/115aef1e811ee553cf49a1403b09aa04357d258e
+  proof_url: https://github.com/plasma-ai/erdos-111/blob/de72caf0e388c729697b6813f4ea90bfe1617c7b/blueprint/proof.md
+  problem_url: https://www.erdosproblems.com/111
+  provenance_url: https://github.com/plasma-ai/erdos-111/blob/de72caf0e388c729697b6813f4ea90bfe1617c7b/formalization.yaml
+license: Apache-2.0
+status: verified
+provenance: AI
+main_declarations:
+- Erdos111.countably_colorable_of_linear
+main_results:
+- declaration: Erdos111.countably_colorable_of_linear
+  informal: For any real C, if each finite subgraph H of G has bipartization number at most C
+    times its number of vertices, G admits a proper colouring by natural numbers. Vertex types
+    may inhabit any universe.
+- declaration: Erdos111.tendsto_of_not_countably_colorable
+  informal: If G has no proper colouring by natural numbers, h_G(n)/n tends to positive infinity
+    along the whole natural-number sequence.
+- declaration: Erdos111.erdos_111
+  informal: For every graph of chromatic cardinal aleph-one, h_G(n)/n tends to positive infinity.
+    Here h_G(n) is the largest number of edge deletions needed to bipartize a subgraph on n vertices.
+- declaration: Erdos111.exists_unitVector_classes
+  informal: In any real Hilbert space, unit vectors can be partitioned into countably many classes,
+    each with a positive lower bound for one plus the inner product of any two vectors in that
+    class.
+tags:
+- graph-theory
+- infinite-combinatorics
+- graph-colouring
+- probability
+msc:
+- 05C15
+- 05C63
+- 03E05

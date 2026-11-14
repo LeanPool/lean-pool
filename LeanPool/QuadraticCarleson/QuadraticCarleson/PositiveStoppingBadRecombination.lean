@@ -7,7 +7,6 @@ module
 
 
 public import LeanPool.QuadraticCarleson.QuadraticCarleson.CalderonZygmundStoppingIntervals
-public import LeanPool.QuadraticCarleson.QuadraticCarleson.CalderonZygmundLevelRecombination
 public import LeanPool.QuadraticCarleson.QuadraticCarleson.PositiveHighHeightEstimate
 
 /-! # Exact canonical stopping bad-part recombination -/
@@ -94,7 +93,7 @@ theorem lintegral_enorm_stoppingLevelBadPart_le {f : ℝ → ℂ}
       2 * magnitudeLevelL1Mass volume fullAmplitude f k := by
   have hp (x : ℝ) := map_disjointLevelAtomSum fullAmplitude f k
     (stoppingCenter (f := f)) stoppingLength centeredStoppingIntervals_pairwiseDisjoint
-      (fun z ↦ ‖z‖ₑ) (by simp) x
+      (fun z ↦ ‖z‖ₑ) (by simp only [enorm_zero]) x
   simp_rw [stoppingLevelBadPart, hp]
   rw [lintegral_tsum (fun c ↦
     ((measurable_levelAtom hf k (stoppingCenter c) (stoppingLength c)).enorm).aemeasurable)]

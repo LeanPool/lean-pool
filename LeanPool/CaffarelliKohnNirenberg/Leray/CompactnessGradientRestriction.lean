@@ -33,12 +33,12 @@ theorem inner_indicator_eq_restricted_inner
     (f : α → E) (hf : MemLp f 2 μ)
     (w : Lp E 2 (μ.restrict S)) :
     inner ℝ (hf.toLp f)
-      (((memLp_indicator_iff_restrict hS).mpr (Lp.memLp w)).toLp
+      (((memLp_indicator_iff_restrict hS.nullMeasurableSet).mpr (Lp.memLp w)).toLp
         (S.indicator (fun x => w x))) =
       inner ℝ ((hf.restrict S).toLp f) w := by
   let ψ : α → E := S.indicator (fun x => w x)
   let hψ : MemLp ψ 2 μ :=
-    (memLp_indicator_iff_restrict hS).mpr (Lp.memLp w)
+    (memLp_indicator_iff_restrict hS.nullMeasurableSet).mpr (Lp.memLp w)
   let ψLp : Lp E 2 μ := hψ.toLp ψ
   have hleft : inner ℝ (hf.toLp f) ψLp =
       ∫ x in S, inner ℝ (f x) (w x) ∂μ := by
@@ -77,7 +77,7 @@ theorem weak_l2_restrict_of_weak_l2
   intro w
   let ψ : α → E := S.indicator (fun x => w x)
   let hψ : MemLp ψ 2 μ :=
-    (memLp_indicator_iff_restrict hS).mpr (Lp.memLp w)
+    (memLp_indicator_iff_restrict hS.nullMeasurableSet).mpr (Lp.memLp w)
   let ψLp : Lp E 2 μ := hψ.toLp ψ
   have h := hweak ψLp
   have hn (k : ℕ) :

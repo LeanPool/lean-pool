@@ -62,7 +62,7 @@ theorem memLp_indicator_iff_restrict {α E : Type*} [MeasurableSpace α]
     [NormedAddCommGroup E] {μ : Measure α} {U : Set α} {f : α → E}
     {p : ℝ≥0∞} (hU : MeasurableSet U) :
     MemLp (U.indicator f) p μ ↔ MemLp f p (μ.restrict U) :=
-  MeasureTheory.memLp_indicator_iff_restrict hU
+  MeasureTheory.memLp_indicator_iff_restrict hU.nullMeasurableSet
 
 /-- Integrating a zero extension over the ambient space is integration of the
 original function over its measurable support. -/

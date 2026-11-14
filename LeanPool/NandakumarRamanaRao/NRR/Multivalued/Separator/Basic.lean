@@ -7,6 +7,9 @@ module
 
 
 public import LeanPool.NandakumarRamanaRao.NRR.Multivalued.SignedInterval
+public import Mathlib.Order.CompletePartialOrder
+import Mathlib.Combinatorics.Matroid.Init
+import Mathlib.Tactic.Positivity.Finset
 
 /-!
 # `NRR.Multivalued.Separator.Basic` — top–bottom separator structure

@@ -8,7 +8,6 @@ module
 public import Mathlib.Combinatorics.SimpleGraph.Basic
 public import Mathlib.Basic.Real.Basic
 import Mathlib.Data.Rat.Cast.Order
-import Mathlib.Tactic.Linarith.Frontend
 import Mathlib.Tactic.NormNum.Abs
 import Mathlib.Tactic.NormNum.DivMod
 import Mathlib.Tactic.NormNum.OfScientific

@@ -1024,7 +1024,7 @@ private theorem component_contDiff
     {φ : Vec3 × ℝ → Vec3}
     (hφ : ContDiff ℝ (⊤ : ℕ∞) φ) (i : Fin 3) :
     ContDiff ℝ (⊤ : ℕ∞) (fun z => φ z i) :=
-  (contDiff_apply ℝ ℝ i).comp hφ
+  (contDiff_apply ℝ (fun _ : Fin 3 => ℝ) i).comp hφ
 
 private theorem rescaled_local_momentum_equation
     {T : ℝ} {u : ParabolicPoint → Vec3} {Du : ParabolicPoint → Fin 3 → Vec3}

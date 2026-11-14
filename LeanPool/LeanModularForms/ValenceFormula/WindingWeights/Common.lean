@@ -12,7 +12,6 @@ import LeanPool.LeanModularForms.ValenceFormula.TrigLemmas
 import Mathlib.Analysis.SpecialFunctions.Complex.LogDeriv
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.Arctan
 import Mathlib.CategoryTheory.Category.Init
-import Mathlib.NumberTheory.ArithmeticFunction.Misc
 
 /-!
 # Shared Infrastructure for Winding Weight Computations
@@ -49,7 +48,7 @@ theorem fdBoundary_H_at_two_eq_I (H : ℝ) :
   rw [show (↑(Real.pi : ℝ) / 3 + (↑(2 : ℝ) - 1) * (↑(Real.pi : ℝ) / 2 - ↑(Real.pi : ℝ) / 3)) * I =
     ↑(Real.pi / 2) * I from by push_cast; ring,
     exp_real_angle_I, Real.cos_pi_div_two, Real.sin_pi_div_two]
-  push_cast; ring
+  push_cast; ac_rfl
 
 theorem fdBoundary_H_at_three_eq_rho (H : ℝ) :
     fdBoundaryH H 3 = ellipticPointRho := by
@@ -61,7 +60,7 @@ theorem fdBoundary_H_at_three_eq_rho (H : ℝ) :
     ↑(2 * Real.pi / 3) * I from by push_cast; ring,
     exp_real_angle_I, cos_two_pi_div_three, sin_two_pi_div_three]
   simp only [ellipticPointRho, ellipticPointRho', UpperHalfPlane.coe_mk]
-  push_cast; ring
+  push_cast; ac_rfl
 
 theorem fdBoundary_H_seg0 (H : ℝ) {t : ℝ} (ht : t ≤ 1) :
     fdBoundaryH H t = 1/2 + (↑H - ↑t * (↑H - ↑(Real.sqrt 3) / 2)) * I := by
@@ -90,7 +89,7 @@ theorem fdBoundary_H_seg4 (H : ℝ) {t : ℝ} (ht1 : ¬(t ≤ 1)) (ht2 : ¬(t �
 
 theorem fdBoundary_H_eq_arc {H : ℝ} {t : ℝ} (ht1 : 1 < t) (ht3 : t < 3) :
     fdBoundaryH H t = Complex.exp (↑(Real.pi * (1 + t) / 6) * I) := by
-  simp only [fdBoundaryH, show ¬(t ≤ 1) from by linarith, ↓reduceIte]
+  simp only [fdBoundaryH, show ¬(t ≤ 1) from by linarith only [ht1], ↓reduceIte]
   by_cases h2 : t ≤ 2
   · simp only [h2, ↓reduceIte]; congr 1; push_cast; ring
   · simp only [h2, ↓reduceIte, show t ≤ 3 from le_of_lt ht3]; congr 1; push_cast; ring
@@ -155,7 +154,8 @@ private lemma logDeriv_integrable_congr {g h : ℝ → ℂ} {a b : ℝ} (hab : a
       (show Integrable _ (volume.restrict (Ioc a b)) from hint_h.1)
       ((MeasureTheory.ae_restrict_iff' measurableSet_Ioc).mpr
         (h_congr.mono (fun t ht hm => (ht (uIoc_of_le hab ▸ hm)).symm)))
-  · simp_all
+  · simp_all only [mem_Icc, ne_eq, and_imp, mem_Ioo, uIoc_of_le, mem_Ioc, not_lt, Ioc_eq_empty,
+        integrableOn_empty]
 
 lemma ftc_log_piece_upper {g h : ℝ → ℂ} {a b : ℝ} (hab : a ≤ b)
     (hh_cont : ContinuousOn h (Icc a b)) (hh_diff : ∀ t ∈ Ioo a b, DifferentiableAt ℝ h t)
@@ -246,17 +246,20 @@ lemma hasDerivAt_arc (s : ℂ) :
   intro t
   have hf : HasDerivAt (fun s : ℝ => Real.pi * (1 + s) / 6) (Real.pi / 6) t :=
     ((hasDerivAt_id t).add_const (1 : ℝ) |>.const_mul (Real.pi / 6)).congr_of_eventuallyEq
-      (Eventually.of_forall fun s => show _ from by simp [id]; ring) |>.congr_deriv (by ring)
+      (Eventually.of_forall fun s => show _ from by simp only [id]; ring) |>.congr_deriv (by ac_rfl)
   have hci : HasDerivAt (fun s : ℝ => (↑(Real.pi * (1 + s) / 6) : ℂ) * I)
       ((↑(Real.pi / 6) : ℂ) * I) t :=
     (hf.ofReal_comp.mul_const I).congr_deriv (by norm_num [smul_eq_mul])
-  exact (hci.cexp.sub (hasDerivAt_const t s)).congr_deriv (by simp only [sub_zero]; ring)
+  exact (hci.cexp.sub (hasDerivAt_const t s)).congr_deriv (by simp only [sub_zero]; ac_rfl)
 
 /-- Continuity of the arc derivative. -/
 lemma continuous_arc_deriv (_ : ℂ) :
     Continuous (fun t : ℝ => ↑(Real.pi / 6) * I * exp (↑(Real.pi * (1 + t) / 6) * I)) :=
   Continuous.mul continuous_const (Continuous.cexp (Continuous.mul
-    (continuous_ofReal.comp (by fun_prop : Continuous fun s => Real.pi * (1 + s) / 6))
+    (continuous_ofReal.comp (by
+      exact Continuous.comp' (Continuous.div_const continuous_id' 6)
+          (Continuous.comp' (continuous_const_mul π) (Continuous.const_add continuous_id' 1)) :
+            Continuous fun s => Real.pi * (1 + s) / 6))
     continuous_const))
 
 /-- nhds equality from Ioo agreement. -/
@@ -277,20 +280,22 @@ lemma eventuallyEq_of_Ioi {g h : ℝ → ℂ} {a : ℝ}
 /-- `sin(π/12) < 1/2`, used to bound ε from 2·sin(π/12) bounds. -/
 lemma sin_pi_12_lt_half : Real.sin (Real.pi / 12) < 1 / 2 :=
   calc Real.sin (Real.pi / 12) < Real.sin (Real.pi / 6) :=
-        Real.sin_lt_sin_of_lt_of_le_pi_div_two (by nlinarith [Real.pi_pos])
-          (by nlinarith [Real.pi_pos]) (by nlinarith [Real.pi_pos])
+        Real.sin_lt_sin_of_lt_of_le_pi_div_two (by nlinarith only [Real.pi_pos])
+          (by nlinarith only [Real.pi_pos]) (by nlinarith only [Real.pi_pos])
     _ = 1 / 2 := Real.sin_pi_div_six
 
 /-- `sin(π/12) > 0`. -/
 lemma sin_pi_12_pos : 0 < Real.sin (Real.pi / 12) :=
-  ArcCalculus.sin_pos_of_mem_Ioo_zero_pi (by constructor <;> nlinarith [Real.pi_pos])
+  ArcCalculus.sin_pos_of_mem_Ioo_zero_pi (by constructor <;> nlinarith only [Real.pi_pos])
 
 /-- `arcsin(ε/2) < π/12` whenever `0 < ε < 2·sin(π/12)`. -/
 lemma arcsin_eps_div_two_lt_pi_12 {ε : ℝ} (hε_pos : 0 < ε)
     (hε_lt_2sin : ε < 2 * Real.sin (Real.pi / 12)) :
     Real.arcsin (ε / 2) < Real.pi / 12 :=
   calc Real.arcsin (ε / 2) < Real.arcsin (Real.sin (Real.pi / 12)) :=
-        Real.arcsin_lt_arcsin (by linarith) (by linarith) (Real.sin_le_one _)
-    _ = Real.pi / 12 := Real.arcsin_sin (by nlinarith [Real.pi_pos]) (by nlinarith [Real.pi_pos])
+        Real.arcsin_lt_arcsin (by linarith only [hε_pos])
+            (by linarith only [hε_lt_2sin]) (Real.sin_le_one _)
+    _ = Real.pi / 12 := Real.arcsin_sin (by nlinarith only [Real.pi_pos]) (by
+      nlinarith only [Real.pi_pos])
 
 end

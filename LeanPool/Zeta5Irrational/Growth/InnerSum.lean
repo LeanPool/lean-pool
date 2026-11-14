@@ -9,7 +9,7 @@ module
 import LeanPool.Zeta5Irrational.Growth.InnerTable
 import LeanPool.Zeta5Irrational.Growth.TableGen
 public import LeanPool.Zeta5Irrational.Growth.TablePrime
-import Mathlib.Data.Int.Star
+import Mathlib.Algebra.Order.Star.Int
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.NormNum.Ineq
 import Mathlib.Tactic.NormNum.Inv

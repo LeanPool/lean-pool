@@ -105,10 +105,7 @@ def singlePlaceCoeff3 (theta : Fin 3) : Fin 3 → F₂ :=
 
 @[simp] theorem rationalTwo_singlePlaceCoeff3 (theta : Fin 3) :
     rationalTwo (singlePlaceCoeff3 theta) = rationalPlaceTwo theta := by
-  funext i j
-  fin_cases theta <;> fin_cases i <;> fin_cases j <;>
-    simp [singlePlaceCoeff3, rationalTwo, rationalPlaceTwo, vectorWedge, placeA, placeB,
-      Fin.sum_univ_succ]
+  simp [singlePlaceCoeff3, rationalTwo, ite_smul]
 
 theorem cubicDifference_contraction_sum
     (α β : Fin 3 → F₂) (x y : LinearForm) :

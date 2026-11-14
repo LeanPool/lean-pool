@@ -8,8 +8,6 @@ module
 public import LeanPool.PoincareThreeBody.NormalizationClosure
 import LeanPool.PoincareThreeBody.Analytic
 import Mathlib.Analysis.Normed.Operator.Prod
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.Arctan
-import Mathlib.MeasureTheory.Covering.Besicovitch
 import Mathlib.MeasureTheory.Integral.IntervalIntegral.FundThmCalculus
 
 /-!
@@ -424,7 +422,8 @@ theorem analyticAt_uncurry_domainMassNormalizedCandidate_mass_zero
   have hresidual : AnalyticAt ℝ residual (0, state) := by
     exact (hanalytic (0, state) hbaseDomain).sub
       ((henergy (hamiltonian 0 state)).comp
-        (f := Function.uncurry hamiltonian) (hamiltonian_analyticAt hcollision))
+        (f := Function.uncurry hamiltonian) (x := (0, state))
+        (hamiltonian_analyticAt hcollision))
   rcases hresidual with ⟨p, r, hp⟩
   have hintegral : AnalyticAt ℝ
       (parameterizedMassIntegral residual (0, state)) (0, state) :=

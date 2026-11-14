@@ -527,8 +527,8 @@ noncomputable def coverPathFreeLoop {ι : Type v} (G : ι → Type u)
         (rawBassSerreOrbitQuiver.inst G H))
       (rawBassSerreOrbitRoot G H) a) :
     KuroshFreePart G H :=
-  coverFreeGroupoidPathHom G H p ≫
-    Groupoid.inv (quotientTreePathHom G H a)
+  .of (coverFreeGroupoidPathHom G H p ≫
+    Groupoid.inv (quotientTreePathHom G H a))
 
 theorem coverQuotientTreePathHom_root {ι : Type v} (G : ι → Type u)
     [∀ i, Group (G i)] (H : Subgroup (FreeProduct G)) :
@@ -568,9 +568,10 @@ theorem coverPathValue_formula {ι : Type v} (G : ι → Type u)
       coverPathValue G H p =
         (treeKuroshFreeInclusion G H (coverPathFreeLoop G H p))⁻¹)
     ?_ ?_ _ p
-  · have h := (treeKuroshFreeInclusion G H).map_one
-    simpa [coverPathValue, coverPathFreeLoop, coverFreeGroupoidPathHom,
-      coverQuotientTreePathHom_root] using h
+  · have hloop : coverPathFreeLoop G H Quiver.Path.nil = 1 := by
+      apply End.ext
+      simp [coverPathFreeLoop, coverFreeGroupoidPathHom, coverQuotientTreePathHom_root]
+    simp only [coverPathValue, hloop, map_one, inv_one]
   · intro b c p e ih
     change RawBassSerreOrbitVertex G H at b c
     cases e using Sum.casesOn with
@@ -578,9 +579,10 @@ theorem coverPathValue_formula {ι : Type v} (G : ι → Type u)
       have hloop :
           coverPathFreeLoop G H (p.cons (Sum.inl f)) =
             quotientEdgeLoop G H f * coverPathFreeLoop G H p := by
+        apply End.ext
         unfold coverPathFreeLoop
         rw [coverFreeGroupoidPathHom_cons]
-        rw [quotientEdgeLoop, CategoryTheory.End.mul_def]
+        rw [quotientEdgeLoop, CategoryTheory.End.mul_asHom]
         change
           (coverFreeGroupoidPathHom G H p ≫
               (Quiver.FreeGroupoid.of
@@ -601,9 +603,10 @@ theorem coverPathValue_formula {ι : Type v} (G : ι → Type u)
       have hloop :
           coverPathFreeLoop G H (p.cons (Sum.inr f)) =
             (quotientEdgeLoop G H f)⁻¹ * coverPathFreeLoop G H p := by
+        apply End.ext
         unfold coverPathFreeLoop
         rw [coverFreeGroupoidPathHom_cons]
-        rw [quotientEdgeLoop, CategoryTheory.End.mul_def]
+        rw [quotientEdgeLoop, CategoryTheory.End.mul_asHom]
         change
           (coverFreeGroupoidPathHom G H p ≫
               Groupoid.inv

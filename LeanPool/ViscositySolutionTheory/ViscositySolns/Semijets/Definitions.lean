@@ -188,8 +188,8 @@ theorem superjetExcess_secondOrderNonposWithin {C : Set (Point n)}
   filter_upwards [hineq, hrhoε] with y hy hρy
   unfold SuperjetExcess
   have hrho_le_norm : rho y <= ‖rho y‖ := by
-    simpa [Real.norm_eq_abs] using le_abs_self (rho y)
-  linarith
+    exact le_abs_self (rho y)
+  linarith only [hy, hρy, hrho_le_norm]
 
 theorem subjetExcess_secondOrderNonposWithin {C : Set (Point n)}
     {u : Point n -> Real} {x : Point n} {J : Jet n}
@@ -204,8 +204,8 @@ theorem subjetExcess_secondOrderNonposWithin {C : Set (Point n)}
   filter_upwards [hineq, hrhoε] with y hy hρy
   unfold SubjetExcess
   have hneg_rho_le_norm : -rho y <= ‖rho y‖ := by
-    simpa [Real.norm_eq_abs] using neg_le_abs (rho y)
-  linarith
+    exact neg_le_abs (rho y)
+  linarith only [hy, hρy, hneg_rho_le_norm]
 
 theorem secondOrderNonposWithin_positivePart_isLittleO {C : Set (Point n)}
     {x : Point n} {excess : Point n -> Real}
@@ -231,7 +231,7 @@ theorem superjet_of_superjetExcess_secondOrderNonposWithin {C : Set (Point n)}
   have hle : u y - quadraticModel x (u x) J.gradient J.hessian y <=
       max (u y - quadraticModel x (u x) J.gradient J.hessian y) 0 :=
     le_max_left _ _
-  linarith
+  linarith only [hle]
 
 theorem subjet_of_subjetExcess_secondOrderNonposWithin {C : Set (Point n)}
     {u : Point n -> Real} {x : Point n} {J : Jet n}
@@ -247,7 +247,7 @@ theorem subjet_of_subjetExcess_secondOrderNonposWithin {C : Set (Point n)}
   have hle : quadraticModel x (u x) J.gradient J.hessian y - u y <=
       max (quadraticModel x (u x) J.gradient J.hessian y - u y) 0 :=
     le_max_left _ _
-  linarith
+  linarith only [hle]
 
 theorem superjet_iff_superjetExcess_secondOrderNonposWithin {C : Set (Point n)}
     {u : Point n -> Real} {x : Point n} {J : Jet n} :
@@ -322,7 +322,7 @@ theorem superjet_of_touchesAbove_hasSecondOrderExpansionWithin
   refine ⟨rho, hrho, ?_⟩
   filter_upwards [htouch, hφ] with x htouchx hφx
   calc
-    u x <= φ x + (u x0 - φ x0) := by linarith
+    u x <= φ x + (u x0 - φ x0) := by linarith only [htouchx]
     _ = quadraticModel x0 (u x0) J.gradient J.hessian x + rho x := by
       rw [hφx]
       simp [quadraticModel]
@@ -342,6 +342,6 @@ theorem subjet_of_touchesBelow_hasSecondOrderExpansionWithin
       rw [hφx]
       simp [quadraticModel]
       ring
-    _ <= u x := by linarith
+    _ <= u x := by linarith only [htouchx]
 
 end ViscositySolns

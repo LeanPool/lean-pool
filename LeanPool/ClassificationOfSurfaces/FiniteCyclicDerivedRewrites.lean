@@ -6,10 +6,6 @@ Authors: Ryan McCorvie, Jack McCarthy
 module
 
 public import LeanPool.ClassificationOfSurfaces.FiniteCyclicNormalization
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.CategoryTheory.Category.Init
-import Mathlib.Combinatorics.SimpleGraph.Init
-import Mathlib.MeasureTheory.Covering.Besicovitch
 
 /-!
 # Derived Gallier--Xu word rewrites

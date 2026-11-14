@@ -13,6 +13,7 @@ public import LeanPool.AnomalousDiffusion.AVenhance.Infra.Flow.SecondJetContinui
 public import LeanPool.AnomalousDiffusion.AVenhance.Infra.Flow.FirstJet
 public import Mathlib.Analysis.Calculus.ContDiff.RCLike
 public import Mathlib.Analysis.Matrix.Normed
+public import Mathlib.Analysis.Calculus.Deriv.Prod
 
 /-! Joint C¹ regularity of the variational flow on forward regions. -/
 

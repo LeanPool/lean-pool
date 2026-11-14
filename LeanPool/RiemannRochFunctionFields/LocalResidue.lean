@@ -6,7 +6,7 @@ Authors: Guanghao Li
 module
 
 public import Mathlib.RingTheory.DedekindDomain.AdicValuation
-public import Mathlib.Data.Int.ConditionallyCompleteOrder
+public import Mathlib.Order.Int.ConditionallyCompleteOrder
 import Mathlib.Analysis.SpecialFunctions.Pow.Real
 
 /-! Local residue maps for height-one primes of Dedekind domains. -/

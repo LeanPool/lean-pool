@@ -6,7 +6,10 @@ Authors: Arseniy Akopyan
 module
 
 
+public import LeanPool.NandakumarRamanaRao.NRR.OddSphereDegree.Antipodal
+public import LeanPool.NandakumarRamanaRao.NRR.OddSphereDegree.SphereTopHomology
 public import LeanPool.NandakumarRamanaRao.NRR.OddSphereDegree.AntipodalDegree
+import LeanPool.NandakumarRamanaRao.NRR.OddSphereDegree.DegreeAPIStrengthening
 
 /-!
 # Mod-two comparison of integer degree

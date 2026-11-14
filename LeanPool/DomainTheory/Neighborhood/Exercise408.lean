@@ -6,12 +6,6 @@ Authors: Catskills Research Company
 module
 
 public import LeanPool.DomainTheory.Neighborhood.Theorem41
-import Mathlib.Data.Finset.Attr
-import Mathlib.Data.Rat.Cast.Order
-import Mathlib.Tactic.NormNum.Abs
-import Mathlib.Tactic.NormNum.DivMod
-import Mathlib.Tactic.NormNum.OfScientific
-import Mathlib.Tactic.NormNum.Pow
 
 /-!
 # Exercise 4.8 (Scott 1981, PRG-19, Lecture IV) — the principle of fixed-point
@@ -126,7 +120,7 @@ theorem fix_induction_eq (f a b : ApproximableMap V V)
     have h1 : (b.comp f).toElementMap x = (f.comp b).toElementMap x := by rw [hfb]
     rwa [toElementMap_comp, toElementMap_comp] at h1
   refine fix_induction f (fun x => a.toElementMap x = b.toElementMap x) hbot ?_ ?_
-  · simp_all
+  · simp_all only [implies_true]
   · intro s hmono hs
     -- both sides are directed unions of equal families.
     show a.toElementMap (supChain s hmono) = b.toElementMap (supChain s hmono)

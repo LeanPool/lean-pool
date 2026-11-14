@@ -34,7 +34,8 @@ theorem connectionRank_eq_skeinEnd_finrank {R : ℕ}
     (f : EdgeRankParameter R) (n : ℕ) :
     connectionRank f.val (2 * n) = Module.finrank ℂ (skeinEnd f n) := by
   rw [connectionRank_eq_homSpace_finrank, two_mul]
-  rfl
+  exact (CategoryTheory.End.linearEquiv (R := ℂ)
+    (X := SkeinObj.mk (f := f) n)).finrank_eq.symm
 
 /-- Under the edge-rank hypothesis, natural connection rank agrees
 with the actual module rank of the connection-map range. -/

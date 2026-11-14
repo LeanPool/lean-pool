@@ -1,0 +1,64 @@
+slug: nair-tenenbaum-short-sums
+title: Nair–Tenenbaum short sums of arithmetic functions
+summary: >-
+  Uniform upper bounds for arithmetic functions at polynomial values in short
+  intervals, including prime arguments, arithmetic progressions, Hooley moments,
+  smooth values and Goldbach upper bounds. Preserves the sieve, polynomial-root,
+  number-field counting and lattice-discrepancy infrastructure. Includes a
+  counterexample to the printed Lemma 1, replacement comparisons used by the
+  main proofs, and the nonconstant-coordinate restriction for Corollary 6.
+branch: analytic number theory
+entry_module: LeanPool.NairTenenbaum
+authors:
+- Jason Davies
+source:
+  title: Short sums of certain arithmetic functions
+  authors:
+  - Mohan Nair
+  - Gérald Tenenbaum
+  doi: 10.1007/BF02392880
+  url: https://github.com/jasondavies/nair-tenenbaum-short-sums/tree/0102e310a529d531c6da324caba9c0f6b57c8ce9
+  github_repo: jasondavies/nair-tenenbaum-short-sums
+  commit: 0102e310a529d531c6da324caba9c0f6b57c8ce9
+  completion_url: https://github.com/jasondavies/nair-tenenbaum-short-sums/commit/0f778ee8366de1204c118e212264ef096ec82b49
+  completion_date: '2026-10-30'
+license: Apache-2.0
+status: verified
+provenance: AI
+main_declarations:
+- NairTenenbaum.theoremOne_for_families
+main_results:
+- declaration: NairTenenbaum.theoremOne_for_families
+  informal: >-
+    For an integer polynomial family of positive total degree with no fixed
+    prime divisor, short sums of admissible nonnegative arithmetic functions
+    satisfy the Nair–Tenenbaum sieve bound in its degree-dependent interval
+    range. The height threshold is independent of the coefficients and
+    discriminant; the bound constant depends on the restricted discriminant.
+    Factorization data are constructed from the original family.
+- declaration: NairTenenbaum.theoremTwo
+  informal: >-
+    For any nonconstant irreducible integer polynomial Q and integer k greater
+    than its degree, the greatest prime factor of the product of its values
+    over (x, x + y], with y = x^(degree(Q)/k), eventually exceeds
+    y times exp((log x)^alpha), for each alpha < 2 - log 4.
+- declaration: NairTenenbaum.theoremThree_for_families
+  informal: >-
+    Under the same family and growth hypotheses, with nonzero constant term
+    of the product polynomial, the corresponding bound holds at prime
+    arguments. The constant-term correction is explicit and factorization
+    data are constructed from the original family.
+- declaration: NairTenenbaum.lemmaTwo
+  informal: >-
+    The smooth-weight tail estimate holds for general scalar class-M weights,
+    with the stated cutoff, convergent series and uniform constant.
+tags:
+- analytic-number-theory
+- sieve-theory
+- arithmetic-functions
+- short-intervals
+msc:
+- 11N37
+- 11N36
+- 11N25
+- 11N32

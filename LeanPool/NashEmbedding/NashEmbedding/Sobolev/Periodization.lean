@@ -16,7 +16,7 @@ public import Mathlib.Analysis.Fourier.AddCircleMulti
 public import Mathlib.Analysis.Real.Pi.Bounds
 public import Mathlib.MeasureTheory.Integral.DivergenceTheorem
 public import Mathlib.MeasureTheory.Measure.Haar.NormedSpace
-public import Mathlib.Tactic
+public import LeanPool.NashEmbedding.Tactics
 public import Mathlib.Topology.Separation.CompletelyRegular
 public import LeanPool.NashEmbedding.NashEmbedding.Sobolev.Distribution
 public import LeanPool.NashEmbedding.NashEmbedding.Sobolev.Periodicity
@@ -173,6 +173,33 @@ lemma periodicExtension_contDiff {φ : (Fin n → ℝ) → ℂ}
     exact ContDiffOn.sum fun k hk => hsmooth.comp_contDiffOn ( contDiffOn_id.add contDiffOn_const );
   exact h_cont_diff.contDiffAt ( hU_open.mem_nhds hxU ) |> fun h => h.congr_of_eventuallyEq (
       Filter.eventuallyEq_of_mem ( hU_open.mem_nhds hxU ) fun y hy => hS y hy ▸ rfl )
+
+/-- A translate with a bounded norm has bounded lattice coordinates. -/
+lemma periodicShift_index_le (x : Fin n → ℝ) (k : Fin n → ℤ) (i : Fin n) :
+    |(k i : ℝ)| ≤ (‖x + periodicShift n k‖ + ‖x‖) / (2 * Real.pi) := by
+  apply (le_div_iff₀ (mul_pos zero_lt_two Real.pi_pos)).2
+  calc
+    |(k i : ℝ)| * (2 * Real.pi) = |(x + periodicShift n k) i - x i| := by
+      simp only [Pi.add_apply, periodicShift, add_sub_cancel_left, abs_mul,
+        abs_of_pos Real.pi_pos, abs_two]
+      ring
+    _ ≤ |(x + periodicShift n k) i| + |x i| := abs_sub _ _
+    _ ≤ ‖x + periodicShift n k‖ + ‖x‖ :=
+      add_le_add (by simpa only [Real.norm_eq_abs] using norm_le_pi_norm (x + periodicShift n k) i)
+        (by simpa only [Real.norm_eq_abs] using norm_le_pi_norm x i)
+
+/-- The lattice coordinates of a translate meeting a ball are uniformly bounded. -/
+lemma periodicShift_index_le_of_mem_ball {R : ℝ} {x y : Fin n → ℝ} (k : Fin n → ℤ)
+    (i : Fin n) (hy : y ∈ Metric.ball x 1) (hshift : ‖y + periodicShift n k‖ ≤ R) :
+    |(k i : ℝ)| ≤ (R + ‖x‖ + 1) / (2 * Real.pi) := by
+  have hdist : ‖y - x‖ < 1 := by
+    rw [← dist_eq_norm]
+    exact hy
+  have hnorm : ‖y‖ ≤ ‖y - x‖ + ‖x‖ := by
+    simpa only [sub_add_cancel] using norm_add_le (y - x) x
+  refine (periodicShift_index_le y k i).trans ?_
+  apply div_le_div_of_nonneg_right _ (by positivity)
+  linarith only [hshift, hdist, hnorm]
 
 /-
 If `φ` has pointwise non-negative real part, its periodic extension does too.
@@ -550,7 +577,7 @@ lemma memSobolev_of_rapid_decay (hn : 0 < n) {a : (Fin n → ℤ) → ℂ}
         m^2 := by
       convert mul_le_mul_of_nonneg_left ( pow_le_pow_left₀ ( norm_nonneg _ ) ( hC m ) 2 ) ( show
           0 ≤ weight n s m by exact le_of_lt ( weight_pos s m ) ) using 1
-      all_goals (first | rfl | ring)
+      all_goals (ring)
     have hXp : (0 : ℝ) < 1 + ∑ i : Fin n, ((m i : ℝ) ^ 2) :=
       add_pos_of_pos_of_nonneg zero_lt_one (Finset.sum_nonneg fun _ _ => sq_nonneg _)
     have h_weight_split : weight n (s - ↑N) m = weight n s m * weight n (-(↑N / 2 : ℝ)) m ^ 2 := by
@@ -566,7 +593,7 @@ lemma memSobolev_of_rapid_decay (hn : 0 < n) {a : (Fin n → ℤ) → ℂ}
   have h_pos : (n : ℝ) < 2 * ((↑N : ℝ) - s) := by linarith
   have h_sum := summable_weight_neg (s := (↑N : ℝ) - s) hn h_pos
   convert h_sum using 1
-  all_goals (first | rfl | (funext m; simp only [weight]; congr 1; ring))
+  all_goals ((funext m; simp only [weight]; congr 1; ring))
 
 /-! ## Transport to the unit torus -/
 

@@ -4,11 +4,14 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Boris Alexeev
 -/
 module
+public import Mathlib.NumberTheory.ModularForms.ProperlyDiscontinuous
+public import Mathlib.NumberTheory.ModularForms.Derivative
+public import Mathlib.Geometry.Manifold.LocalDiffeomorph
 
-public import LeanPool.HopfProblem.Prelude
+public import LeanPool.HopfProblem.InternalPrelude
 public import LeanPool.HopfProblem.Foundations.TwoAffineCharts
 public import LeanPool.HopfProblem.Uniformization.SpecialPeriods2
-import all LeanPool.HopfProblem.Recognition.Smale1
+import Mathlib.Topology.Algebra.Group.DiscontinuousSubgroup
 import all LeanPool.HopfProblem.Foundations.Core2
 import all LeanPool.HopfProblem.Foundations.Core3
 import all LeanPool.HopfProblem.Elliptic.Core1
@@ -27,9 +30,8 @@ Supporting definitions and proofs for this stage of the six-sphere construction.
 
 open Set Function Filter Manifold Topology
 
-open scoped BigOperators CategoryTheory Complex.UnitDisc ComplexConjugate ContDiff ContinuousMap
-  Convolution ENNReal EuclideanSpace Fin.NatCast InnerProductSpace Interval Matrix MatrixGroups
-  Modular NNReal Pointwise RealInnerProductSpace TensorProduct UniformConvergence Uniformity
+open scoped BigOperators ComplexConjugate ContDiff ContinuousMap ENNReal EuclideanSpace Fin.NatCast
+  InnerProductSpace Interval Matrix MatrixGroups NNReal Pointwise RealInnerProductSpace
   UpperHalfPlane
 
 universe u v
@@ -2473,24 +2475,7 @@ private theorem
 
 private theorem SpecialPeriods.E2_periodic_comp_ofComplex :
     Function.Periodic (EisensteinSeries.E2 ∘ UpperHalfPlane.ofComplex) (1 : ℂ) := by
-  have hT (z : ℍ) : EisensteinSeries.E2 ((1 : ℝ) +ᵥ z) = EisensteinSeries.E2 z := by
-    have h := congrFun (EisensteinSeries.E2_slash_action ModularGroup.T) z
-    rw [ModularForm.SL_slash_apply, UpperHalfPlane.modular_T_smul] at h
-    have hd : UpperHalfPlane.denom (ModularGroup.T : SL(2, ℤ)) z = 1 := by
-      rw [ModularGroup.denom_apply]
-      rw [ModularGroup.coe_T]
-      norm_num
-    simpa only [hd, one_zpow, mul_one, EisensteinSeries.D2_T, smul_zero, sub_zero] using h
-  intro w
-  by_cases hw : 0 < w.im
-  · have hw' : 0 < (w + 1).im := by simpa using hw
-    have hz : UpperHalfPlane.ofComplex (w + 1) = (1 : ℝ) +ᵥ (⟨w, hw⟩ : ℍ) := by
-      apply UpperHalfPlane.ext
-      simp [UpperHalfPlane.ofComplex_apply_of_im_pos hw', add_comm]
-    simpa [Function.comp_apply, hz, UpperHalfPlane.ofComplex_apply_of_im_pos hw] using hT ⟨w, hw⟩
-  · have hw' : (w + 1).im ≤ 0 := by simpa using le_of_not_gt hw
-    simp [Function.comp_apply, UpperHalfPlane.ofComplex_apply_of_im_nonpos hw',
-      UpperHalfPlane.ofComplex_apply_of_im_nonpos (le_of_not_gt hw)]
+  exact EisensteinSeries.E2_periodic
 
 private theorem SpecialPeriods.E2_cuspFunction_analyticAt_zero :
     AnalyticAt ℂ (UpperHalfPlane.cuspFunction 1 EisensteinSeries.E2) 0 :=
@@ -2525,11 +2510,7 @@ private theorem SpecialPeriods.E2_cuspFunction_zero :
 
 private theorem SpecialPeriods.E2_tendsto_one :
     Filter.Tendsto EisensteinSeries.E2 UpperHalfPlane.atImInfty (𝓝 1) := by
-  have h :=
-    E2_cuspFunction_analyticAt_zero.continuousAt.tendsto.comp
-      (UpperHalfPlane.qParam_tendsto_atImInfty (h := 1) zero_lt_one)
-  simpa only [Function.comp_def, E2_cuspFunction_zero,
-    UpperHalfPlane.eq_cuspFunction _ one_ne_zero E2_periodic_comp_ofComplex] using h
+  exact EisensteinSeries.tendsto_E2_atImInfty
 
 private theorem
     SpecialPeriods.modularForm_tendsto_qExpansion_coeff_zero {k : ℤ} (f : ModularForm 𝒮ℒ k) :

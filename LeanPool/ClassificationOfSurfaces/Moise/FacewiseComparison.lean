@@ -8,9 +8,6 @@ module
 public import LeanPool.ClassificationOfSurfaces.Moise.LocallyFinitePLApproximation
 import LeanPool.ClassificationOfSurfaces.Moise.LocallyFiniteSidePreservation
 import Mathlib.Analysis.Normed.Affine.AddTorsor
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.CategoryTheory.Category.Init
-import Mathlib.MeasureTheory.Covering.Besicovitch
 
 /-!
 # The per-face comparison map for locally finite side preservation
@@ -1124,7 +1121,7 @@ theorem dist_completePath_comparison_lt (G : K.PlaneGraphRealization)
       exact (AffineMap.lineMap _ _).apply_lineMap _ _ _
     rw [hcp, hprofile, hsrcpt]
     have h2r : (2 : ℝ) * r ∈ Set.Icc (0 : ℝ) 1 :=
-      ⟨by linarith [hr.1], by linarith⟩
+      ⟨by linarith only [hr.1], by linarith only [hr2]⟩
     calc dist (AffineMap.lineMap (G.vertexImage (K.edgeFirst e))
             A.leftEndpoint (2 * r))
           (faceOriginalMap G f (AffineMap.lineMap (K.faceEdgeSourcePoint f i 0)
@@ -1152,23 +1149,23 @@ theorem dist_completePath_comparison_lt (G : K.PlaneGraphRealization)
       _ < rsep / 2 := by
           have : G.vertexIsolationRadius (K.edgeFirst e) ≤ rsep / 8 :=
             hiso₁.trans heta8
-          linarith
+          linarith only [this, hrsep_pos]
   · by_cases hr34 : r ≤ 3 / 4
     · -- middle range
       exact dist_completePath_comparison_lt_of_middle G f i htube hr hr2 hr34
     · -- right spoke
       push Not at hr2 hr34
       have hw : (0 : ℝ) ≤ 2 * (2 * r - 1) - 1 ∧ 2 * (2 * r - 1) - 1 ≤ 1 := by
-        constructor <;> nlinarith [hr.2]
+        constructor <;> linarith only [hr.2, hr34]
       have hcp : A.completePath ⟨r, hr⟩ =
           AffineMap.lineMap A.rightEndpoint (G.vertexImage (K.edgeSecond e))
             (2 * (2 * r - 1) - 1) := by
         rw [CentralPolygonalArc.completePath, Path.trans_apply]
-        rw [dite_eq_right (by linarith : ¬ ((⟨r, hr⟩ : unitInterval) : ℝ) ≤ 1 / 2)]
+        rw [dite_eq_right (by linarith only [hr2] : ¬ ((⟨r, hr⟩ : unitInterval) : ℝ) ≤ 1 / 2)]
         rw [Path.trans_apply]
         rw [dite_eq_right (by
           change ¬ (2 * ((⟨r, hr⟩ : unitInterval) : ℝ) - 1) ≤ 1 / 2
-          linarith)]
+          linarith only [hr34])]
         rw [Path.segment_apply]
       have hprofile : sideParamProfile G f i r =
           AffineMap.lineMap (sideTrimRight G f i) 1 (4 * r - 3) := by
@@ -1188,7 +1185,7 @@ theorem dist_completePath_comparison_lt (G : K.PlaneGraphRealization)
         exact (AffineMap.lineMap _ _).apply_lineMap _ _ _
       rw [hcp, hprofile, hsrcpt]
       have h1w : (1 : ℝ) - (2 * (2 * r - 1) - 1) ∈ Set.Icc (0 : ℝ) 1 :=
-        ⟨by linarith [hw.2], by linarith [hw.1]⟩
+        ⟨by linarith only [hw.2], by linarith only [hw.1]⟩
       calc dist (AffineMap.lineMap A.rightEndpoint
               (G.vertexImage (K.edgeSecond e)) (2 * (2 * r - 1) - 1))
             (faceOriginalMap G f (AffineMap.lineMap (K.faceEdgeSourcePoint f i 1)
@@ -1204,11 +1201,11 @@ theorem dist_completePath_comparison_lt (G : K.PlaneGraphRealization)
         _ ≤ G.vertexIsolationRadius (K.edgeSecond e) + rsep / 4 := by
             apply add_le_add
             · rw [dist_lineMap_right, Real.norm_eq_abs,
-                abs_of_nonneg (by linarith [hw.2] : (0:ℝ) ≤ 1 - (2 * (2 * r - 1) - 1))]
+                abs_of_nonneg (by linarith only [hw.2] : (0:ℝ) ≤ 1 - (2 * (2 * r - 1) - 1))]
               calc (1 - (2 * (2 * r - 1) - 1)) *
                   dist A.rightEndpoint (G.vertexImage (K.edgeSecond e)) ≤
                   1 * dist A.rightEndpoint (G.vertexImage (K.edgeSecond e)) :=
-                    mul_le_mul_of_nonneg_right (by linarith [hw.1]) dist_nonneg
+                    mul_le_mul_of_nonneg_right (by linarith only [hw.1]) dist_nonneg
                 _ = G.vertexIsolationRadius (K.edgeSecond e) := by
                     rw [one_mul]
                     exact A.rightEndpoint_on_sphere
@@ -1220,7 +1217,7 @@ theorem dist_completePath_comparison_lt (G : K.PlaneGraphRealization)
         _ < rsep / 2 := by
             have : G.vertexIsolationRadius (K.edgeSecond e) ≤ rsep / 8 :=
               hiso₂.trans heta8
-            linarith
+            linarith only [this, hrsep_pos]
 
 /-- The graph replacement on one face boundary stays within half the face separation radius of
 the facewise comparison map. -/

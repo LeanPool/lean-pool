@@ -172,7 +172,7 @@ theorem eventually_norm_half_rightDeriv_increment_sub_linear_model_le
       gcongr
     _ = ε * ‖z‖ ^ 2 := by
       simp only [Real.norm_eq_abs, abs_of_nonneg (by norm_num : 0 ≤ (1 / 2 : ℝ))]
-      nlinarith [sq_abs z]
+      nlinarith only [sq_abs z]
 
 /-- Near an interior point of a one-dimensional convex domain, the project-local right derivative
 is interval-integrable on the small interval from `x` to `x + z`. -/
@@ -356,9 +356,9 @@ theorem hasRightDerivAverageRemainderAt_of_integral_linearization
   let E : ℝ := (1 / 2 : ℝ) * (rightDeriv f (x + z) - rightDeriv f x) * z
   have hlin_z' : ‖I - M‖ ≤ (ε / 2) * ‖z‖ ^ 2 := by
     rw [intervalIntegral_linear_deriv_model x z q] at hlin_z
-    simpa [I, M] using hlin_z
+    exact hlin_z
   have hend_z' : ‖E - M‖ ≤ (ε / 2) * ‖z‖ ^ 2 := by
-    simpa [E, M] using hend_z
+    exact hend_z
   have hsplit :
       f (x + z) - f x - rightDeriv f x * z -
           (1 / 2 : ℝ) * (rightDeriv f (x + z) - rightDeriv f x) * z =

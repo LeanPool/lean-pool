@@ -124,9 +124,10 @@ lemma X4_le_natAbs_b4 {b₁ b₂ b₃ b₄ : SignType} (hl : b₄ < b₃) :
       refine Nat.sub_le_sub_right ?_ _
       obtain rfl | rfl | rfl := b₃.trichotomy
       · simp at hl
-      · obtain rfl : b₄ = -1 := by decide +revert
+      · obtain rfl : b₄ = -1 := SignType.neg_iff.mp hl
         simpa using b₄_lower_bound hh
-      · obtain rfl | rfl : b₄ = 0 ∨ b₄ = -1 := by decide +revert
+      · obtain rfl | rfl : b₄ = 0 ∨ b₄ = -1 :=
+          (SignType.nonpos_iff.mp (SignType.lt_one_iff.mp hl)).symm
         · simpa using b₃_lower_bound hh
         · simp_rw [SignType.coe_neg, SignType.coe_one, neg_one_mul, neg_neg, one_mul]
           have n₁ : 0 ≤ (X F h - Y F : ℤ) ^ 5 := by
@@ -143,7 +144,7 @@ lemma X4_le_natAbs_b4 {b₁ b₂ b₃ b₄ : SignType} (hl : b₄ < b₃) :
       rw [add_mul]
       refine (Int.natAbs_add_le _ _).trans (Nat.add_le_add ?_ ?_)
       · rw [Int.natAbs_mul, ← one_mul (4 * _)]
-        exact mul_le_mul' (by decide +revert) (b₁_upper_bound hh)
+        exact mul_le_mul' (SignType.natAbs_intCast_le_one b₁) (b₁_upper_bound hh)
       · rw [show (10 * Y F - 1 : ℤ) = (10 * Y F - 1 : ℕ) by grind [Y_pos], ← mul_assoc]
         simp_rw [Int.natAbs_mul, Int.natAbs_pow, Int.natAbs_natCast]
         apply Nat.mul_le_mul_right
@@ -169,18 +170,19 @@ lemma X4_le_natAbs_b3 {b₁ b₂ b₃ : SignType} (hl : b₃ < b₂) :
     _ ≤ 5 * X F h ^ 4 - (b₁ * (X F h ^ 2 + 10 * Y F ^ 3 : ℤ) ^ 2).natAbs := by
       refine Nat.sub_le_sub_left ?_ _
       rw [Int.natAbs_mul, ← one_mul (4 * _)]
-      exact mul_le_mul' (by decide +revert) (b₁_upper_bound hh)
+      exact mul_le_mul' (SignType.natAbs_intCast_le_one b₁) (b₁_upper_bound hh)
     _ ≤ (b₂ * ((10 * Y F - 1 : ℤ) * X F h ^ 4) +
         b₃ * (-2 * Y F * (5 * X F h ^ 4 + 10 * X F h ^ 2 * Y F ^ 2 + Y F ^ 4))).natAbs -
         (b₁ * (X F h ^ 2 + 10 * Y F ^ 3 : ℤ) ^ 2).natAbs := by
       refine Nat.sub_le_sub_right ?_ _
       obtain rfl | rfl | rfl := b₂.trichotomy
       · simp at hl
-      · obtain rfl : b₃ = -1 := by decide +revert
+      · obtain rfl : b₃ = -1 := SignType.neg_iff.mp hl
         simpa using b₃_lower_bound_2
       · have cY : (10 * Y F - 1 : ℤ) = (10 * Y F - 1 : ℕ) := by grind [Y_pos]
         rw [SignType.coe_one, one_mul, cY]
-        obtain rfl | rfl : b₃ = 0 ∨ b₃ = -1 := by decide +revert
+        obtain rfl | rfl : b₃ = 0 ∨ b₃ = -1 :=
+          (SignType.nonpos_iff.mp (SignType.lt_one_iff.mp hl)).symm
         · rw [SignType.coe_zero, zero_mul, add_zero, Int.natAbs_mul]
           simp_rw [Int.natAbs_pow, Int.natAbs_natCast]
           exact Nat.mul_le_mul_right _ (by lia)
@@ -243,7 +245,7 @@ lemma X_le_natAbs_redEmb1 {b₁ b₂ b₃ b₄ : SignType} (hb : b₁ ≠ b₂ �
       rw [Int.natAbs_mul, ← one_mul (X F h ^ 4 + _)]
       norm_cast
       apply Nat.mul_le_mul_right
-      decide +revert
+      exact SignType.one_le_natAbs_intCast_sub hb
     _ ≤ ((b₁ - b₂ : ℤ) * (X F h ^ 4 + 20 * X F h ^ 2 * Y F ^ 3)).natAbs -
         (100 * Y F ^ 6 * b₁ - 2 * Y F ^ 5 * b₂ : ℤ).natAbs := by
       refine Nat.sub_le_sub_left ((Y6_le_X hh).trans' ?_) _
@@ -252,10 +254,10 @@ lemma X_le_natAbs_redEmb1 {b₁ b₂ b₃ b₄ : SignType} (hb : b₁ ≠ b₂ �
       calc
         _ ≤ 100 * Y F ^ 6 * 1 + 2 * Y F ^ 6 * 1 := by
           gcongr
-          · decide +revert
+          · exact SignType.natAbs_intCast_le_one b₁
           · exact Y_pos
           · decide
-          · decide +revert
+          · exact SignType.natAbs_intCast_le_one b₂
         _ ≤ _ := by lia
     _ ≤ _ := Int.sub_le_add_natAbs
 

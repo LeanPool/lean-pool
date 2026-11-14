@@ -504,7 +504,7 @@ lemma sum_prod_majority_le {k t : ℕ} {ε : ℝ} (hε0 : 0 ≤ ε) (hε1 : ε �
       have hne : y j ≠ b j := by
         simpa [hS] using (Finset.mem_filter.mp hj).2
       have hval : y j = !(b j) := by
-        cases hb : b j <;> cases hyj : y j <;> simp_all
+        exact Bool.eq_not_of_ne hne
       rw [hval]
       exact hpe j
     have h2 : (∏ j ∈ Sᶜ, p j (y j)) ≤ 1 :=
@@ -1509,19 +1509,19 @@ private lemma blockDiagonal_mulVec_embed
     rw [Matrix.blockDiagonal_apply]
     by_cases h : u' = u
     · subst h
-      by_cases h2 : u' = v <;> simp [h2]
-    · simp [h, Ne.symm h]
+      by_cases h2 : u' = v <;> simp only [h2, ↓reduceIte, mul_zero]
+    · simp only [ite_eq_right h, ite_eq_right (Ne.symm h), zero_mul]
   simp only [hterm]
   rw [show (∑ s : QBasis ι σ W, ∑ u : V,
       (if u = u' then (if u' = v then fam u' s' s * ψ s else 0) else 0))
       = ∑ s : QBasis ι σ W, (if u' = v then fam u' s' s * ψ s else 0) from
     Finset.sum_congr rfl fun s _ => by
       rw [Finset.sum_ite_eq' Finset.univ u' (fun _ => (if u' = v then fam u' s' s * ψ s else 0))]
-      simp]
+      simp only [Finset.mem_univ, ↓reduceIte]]
   by_cases h : u' = v
   · subst h
-    simp [Matrix.mulVec, dotProduct]
-  · simp [h]
+    simp only [Matrix.mulVec, dotProduct, ↓reduceIte]
+  · simp only [ite_eq_right h, Finset.sum_const_zero]
 
 omit [DecidableEq W] [DecidableEq ι] [DecidableEq σ] in
 /-- **The action on the encoded subspace.** -/
@@ -4101,7 +4101,7 @@ theorem pairRoutine_run_prodState (R₁ : QRoutine ι σ W₁)
     rw [pairRoutine, QRoutine.comp_run, QRoutine.comp_run, QRoutine.comp_run,
       QRoutine.comp_run, QRoutine.comp_run, QRoutine.ofUnitary_run,
       QRoutine.ofUnitary_run]
-    noncomm_ring
+    simp only [Matrix.mul_assoc]
   rw [hrun, ← Matrix.mulVec_mulVec, ← Matrix.mulVec_mulVec,
     ← Matrix.mulVec_mulVec, ← Matrix.mulVec_mulVec, ← Matrix.mulVec_mulVec,
     pairSwap₁_mulVec_prodState]

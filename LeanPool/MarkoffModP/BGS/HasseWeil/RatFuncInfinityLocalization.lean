@@ -8,6 +8,7 @@ module
 
 public import LeanPool.MarkoffModP.BGS.CorvajaZannier.InfinityInertiaDegree
 public import Mathlib.Algebra.Polynomial.Reverse
+public import Mathlib.RingTheory.DedekindDomain.Instances
 public import Mathlib.RingTheory.Localization.AtPrime.Basic
 public import Mathlib.RingTheory.Localization.Integral
 

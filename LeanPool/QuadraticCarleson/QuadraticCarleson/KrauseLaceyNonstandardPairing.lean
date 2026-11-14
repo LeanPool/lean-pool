@@ -68,12 +68,12 @@ theorem badLengthTailMaximal_le_massMajorant
     split_ifs
     · exact norm_localizedBadPiece_le_mass hf I₀ k₀ s scale (hN hI) x
     · rw [norm_zero]
-      exact mul_nonneg (div_nonneg (mul_nonneg (by norm_num)
+      exact mul_nonneg (div_nonneg (mul_nonneg (by norm_num1)
         positiveDyadicAmplitudeBound_nonneg) I.length_pos.le)
         (intervalBadMass_nonneg S f I₀ k₀ s scale I)
   · rw [Set.indicator_of_notMem hx, krauseLaceyLocalizedPiece_eq_zero_of_notMem 1 (scale I) I _
       (Finset.mem_filter.mp (hN hI)).2.1 hx]
-    simp
+    simp only [ite_self, norm_zero, Std.le_refl]
 
 theorem lintegral_nonstandard_pairing_le_sum_local_averages
     {S : Finset RealInterval} {f g : ℝ → ℂ} (hf : Integrable f) (hg : Integrable g)
@@ -146,18 +146,18 @@ theorem lintegral_nonstandard_pairing_le_of_averages_le
       apply Finset.sum_le_sum
       intro I hI
       exact mul_le_mul_of_nonneg_left (hgavg I hI) (mul_nonneg
-        (mul_nonneg (by norm_num) positiveDyadicAmplitudeBound_nonneg)
+        (mul_nonneg (by norm_num1) positiveDyadicAmplitudeBound_nonneg)
         (intervalBadMass_nonneg S f I₀ k₀ s scale I))
     _ = 8 * positiveDyadicAmplitudeBound * G * ∑ I ∈ N, intervalBadMass S f I₀ k₀ s scale I := by
       rw [Finset.mul_sum]
       apply Finset.sum_congr rfl
       intro I hI
-      ring
+      ac_rfl
     _ ≤ _ := mul_le_mul_of_nonneg_left
       (sum_intervalBadInput_mass_le hf I₀ k₀ s scale hlam N
         (hN.trans (nonstandardIntervals_subset S f I₀ k₀ s scale))
         (fun I hI ↦ (Finset.mem_filter.mp (hN hI)).2.1))
-      (mul_nonneg (mul_nonneg (by norm_num) positiveDyadicAmplitudeBound_nonneg) hG)
+      (mul_nonneg (mul_nonneg (by norm_num1) positiveDyadicAmplitudeBound_nonneg) hG)
 
 /-- The genuine two-function good collection supplies the needed
 averages itself, so the source local bound has no average hypothesis. -/
@@ -173,7 +173,7 @@ theorem lintegral_nonstandard_good_pairing_le
         ∫ x, ‖f x‖) := by
   have h := lintegral_nonstandard_pairing_le_of_averages_le hf hg I₀ k₀ s scale hlam
     (nonstandardIntervals S f I₀ k₀ s scale ∩ goodCollection S f g I₀) Finset.inter_subset_left
-    (mul_nonneg (by norm_num) (intervalL1Average_nonneg g I₀))
+    (mul_nonneg (by norm_num1) (intervalL1Average_nonneg g I₀))
     (fun I hI ↦ (goodCollection_averages_le hsub (Finset.mem_inter.mp hI).2).2)
   convert h using 1; congr 1; ring
 

@@ -50,14 +50,14 @@ theorem inner_cutoff_indicator_eq_local_inner
     (w : Vec3 → L2Vec3) (hwLocal : MemLp w 2 (volume.restrict C)) :
     inner ℝ (hfGlobal.toLp (fun x => χ x •
         (WithLp.toLp 2 (f x) : L2Vec3)))
-      (((memLp_indicator_iff_restrict hC).mpr hwLocal).toLp
+      (((memLp_indicator_iff_restrict hC.nullMeasurableSet).mpr hwLocal).toLp
         (C.indicator w)) =
       inner ℝ (hfLocal.toLp (fun x =>
         (WithLp.toLp 2 (f x) : L2Vec3)))
         (hwLocal.toLp w) := by
   let ψ : Vec3 → L2Vec3 := C.indicator w
   let hψ : MemLp ψ 2 (volume : Measure Vec3) :=
-    (memLp_indicator_iff_restrict hC).mpr hwLocal
+    (memLp_indicator_iff_restrict hC.nullMeasurableSet).mpr hwLocal
   rw [inner_toLp_vec3_eq_integral_dot_measure volume _ _ hfGlobal hψ,
     inner_toLp_vec3_eq_integral_dot_measure (volume.restrict C) _ _
       hfLocal hwLocal]
@@ -93,7 +93,7 @@ theorem weak_local_slices_of_weak_cutoff
   intro w
   let ψ : Vec3 → L2Vec3 := C.indicator (fun x => w x)
   let hψ : MemLp ψ 2 (volume : Measure Vec3) :=
-    (memLp_indicator_iff_restrict hC).mpr (Lp.memLp w)
+    (memLp_indicator_iff_restrict hC.nullMeasurableSet).mpr (Lp.memLp w)
   let ψLp : Lp L2Vec3 2 (volume : Measure Vec3) := hψ.toLp ψ
   have hn (n : ℕ) :
       inner ℝ ((hglobal n).toLp (fun x =>

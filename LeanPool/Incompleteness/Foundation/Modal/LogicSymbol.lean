@@ -571,3 +571,19 @@ end «lp_section_9»
 end List
 
 end «lp_section_1»
+
+namespace List
+
+/-- Applying the iterated box operation preserves inclusion of lists. -/
+lemma multibox_subset_mono {F : Type*} [DecidableEq F] [LO.Box F] {n : ℕ} {l₁ l₂ : List F}
+    (h : l₁ ⊆ l₂) : □'^[n]l₁ ⊆ □'^[n]l₂ := by
+  intro φ hφ
+  obtain ⟨ψ, hψ, rfl⟩ := Finset.mem_image.mp (Finset.mem_toList.mp hφ)
+  apply Finset.mem_toList.mpr
+  exact Finset.mem_image.mpr ⟨ψ, List.mem_toFinset.mpr (h (List.mem_toFinset.mp hψ)), rfl⟩
+
+/-- Applying the box operation preserves inclusion of lists. -/
+lemma box_subset_mono {F : Type*} [DecidableEq F] [LO.Box F] {l₁ l₂ : List F}
+    (h : l₁ ⊆ l₂) : □'l₁ ⊆ □'l₂ := multibox_subset_mono h
+
+end List

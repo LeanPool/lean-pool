@@ -48,10 +48,10 @@ private theorem stdOmegaIso_perm {R k ℓ : ℕ}
     (σ : Equiv.Perm (Fin n)) :
     letI := P.braided
     (stdOmegaIso f P e n).hom ≫
-      P.ω.map (permClass f n σ) ≫ (stdOmegaIso f P e n).inv =
+      P.ω.map (permClass f n σ).asHom ≫ (stdOmegaIso f P e n).inv =
       modelPermMap σ := by
   let := P.braided
-  change stdToOmega f P e.hom n ≫ P.ω.map (permClass f n σ) ≫
+  change stdToOmega f P e.hom n ≫ P.ω.map (permClass f n σ).asHom ≫
     stdFromOmega f P e.inv n = _
   rw [permClass_eq_bundleMapClass, ← Category.assoc,
     stdToOmega_bmc_perm_all, Category.assoc,
@@ -90,17 +90,17 @@ theorem stdModel_pow_le_connectionRank {R k ℓ : ℕ}
       (totAlgHom (P.ω.obj (SkeinObj.mk n)) (omegaSkeinRep f P n x)) = 0
     have hz : omegaSkeinRep f P n x = 0 := by
       rw [omegaSkeinRep_eq, hx]
-      exact P.ω.map_zero _ _
+      exact End.ext (P.ω.map_zero _ _)
     rw [hz, map_zero, map_zero]
   have haction (σ : Equiv.Perm (Fin n)) (v : C) :
       ρ σ v = colourTotalEquiv k ℓ n
         (tot (modelPermMap σ) ((colourTotalEquiv k ℓ n).symm v)) := by
     change c (tot (omegaSkeinRep f P n
-      (MonoidAlgebra.of ℂ _ σ)) (c.symm v)) = _
+      (MonoidAlgebra.of ℂ _ σ)).asHom (c.symm v)) = _
     rw [omegaSkeinRep_of]
     change colourTotalEquiv k ℓ n
       (tot (stdOmegaIso f P e n).inv
-        (tot (P.ω.map (permClass f n σ))
+        (tot (P.ω.map (permClass f n σ).asHom)
           (tot (stdOmegaIso f P e n).hom
             ((colourTotalEquiv k ℓ n).symm v)))) = _
     rw [← LinearMap.comp_apply, ← tot_comp,

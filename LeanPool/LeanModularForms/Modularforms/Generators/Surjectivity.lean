@@ -9,7 +9,7 @@ module
 public import LeanPool.LeanModularForms.Modularforms.Generators.Defs
 import LeanPool.LeanModularForms.Modularforms.DimensionFormulas
 import LeanPool.LeanModularForms.Modularforms.QExpansionLems
-import Mathlib.Data.Int.Star
+import Mathlib.Algebra.Order.Star.Int
 
 /-!
 # Generators of the graded ring of level 1 modular forms: Surjectivity
@@ -47,11 +47,13 @@ private lemma mul_modform_ne_zero_of_coeff_one {k₁ k₂ : ℤ}
   intro h
   have hcoeff : (qExpansion 1 (f.mul g)).coeff 0 = 1 := by
     have := qExpansion_mul_coeff 1 k₁ k₂ f g
-    simp_all
+    simp_all only [PowerSeries.coeff_zero_eq_constantCoeff, Nat.cast_one, FunLike.coe_zero,
+      map_mul, mul_one]
   have hcoe : (⇑(f.mul g) : ℍ → ℂ) = 0 := by rw [h]; ext z; simp only [zero_apply, Pi.zero_apply]
   rw [show qExpansion 1 (f.mul g) = qExpansion 1 (0 : ℍ → ℂ) from
     congr_arg (qExpansion 1) hcoe, qExpansion_zero] at hcoeff
-  simp_all
+  simp_all only [PowerSeries.coeff_zero_eq_constantCoeff, PowerSeries.constantCoeff_zero,
+    zero_ne_one]
 
 private lemma mul_Delta_map_eq_DirectSum_mul (n : ℕ) (_hn : 12 ≤ n)
     (h : ModularForm Γ(1) (↑n - 12)) :
@@ -89,7 +91,7 @@ lemma monomial_coeff_zero_eq_one (n a b : ℕ) (hab : 4 * a + 6 * b = n) :
         (DirectSum.of (fun k : ℤ => ModularForm Γ(1) k) 6 E₆) ^ b)
         (↑n : ℤ))).coeff 0 = 1 := by
   subst hab
-  have hab' : (↑(4 * a + 6 * b) : ℤ) = ↑a * 4 + ↑b * 6 := by push_cast; ring
+  have hab' : (↑(4 * a + 6 * b) : ℤ) = ↑a * 4 + ↑b * 6 := by push_cast; ac_rfl
   rw [hab', DirectSum.ofPow, DirectSum.ofPow, DirectSum.of_mul_of]
   convert_to (qExpansion 1 (⇑(GradedMonoid.GMul.mul (GradedMonoid.GMonoid.gnpow a E₄)
       (GradedMonoid.GMonoid.gnpow b E₆)))).coeff 0 = 1 using 2

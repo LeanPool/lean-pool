@@ -130,15 +130,21 @@ theorem cfc_toMat_eq_sum_smul_proj : (A.cfc f).mat =
   have h : ( Matrix.diagonal ( RCLike.ofReal ∘ f ∘ Matrix.IsHermitian.eigenvalues A.H ) : Matrix
       d d 𝕜 ) = ∑ i, f ( A.H.eigenvalues i ) • Matrix.single i i 1 := by
     ext i j; by_cases hij : i = j <;> simp? [ hij ];
-    · simp [ Matrix.sum_apply, Matrix.single ];
-      simp [ Algebra.smul_def ];
+    · simp only [Matrix.single, Matrix.sum_apply, Matrix.of_apply, and_self, Finset.sum_ite_eq',
+      Finset.mem_univ, ↓reduceIte];
+      simp only [Algebra.smul_def, mul_one];
     · rw [Matrix.sum_apply]
-      simp_all?
+      simp_all only [not_and, not_false_eq_true, implies_true, Matrix.single_apply_of_ne,
+        Finset.sum_const_zero]
   rw [h]
-  simp? [Matrix.single, Matrix.mul_assoc]
+  simp only [Matrix.single, Matrix.smul_of, map_sum, Unitary.conjStarAlgAut_apply,
+    Matrix.mul_assoc]
   congr! 1
   ext j k
-  simp [Matrix.mul_apply,Finset.mul_sum, Finset.smul_sum, smul_ite, smul_zero]
+  simp only [Matrix.mul_apply, Matrix.IsHermitian.eigenvectorUnitary_apply, Matrix.of_apply,
+    Pi.smul_apply, smul_ite, smul_zero, Matrix.star_apply, RCLike.star_def, ite_mul,
+    Algebra.smul_mul_assoc, one_mul, zero_mul, Finset.mul_sum, mul_ite, Algebra.mul_smul_comm,
+    mul_zero, Matrix.smul_apply, Matrix.conjTranspose_apply, Finset.smul_sum]
 
 --Ensure we get this instance:
 
@@ -227,16 +233,18 @@ nonrec theorem cfc_const_mul : A.cfc (fun x ↦ r * f x) = r • A.cfc f := by
 
 @[simp]
 nonrec theorem cfc_apply_zero : (0 : HermitianMat d 𝕜).cfc f = f 0 • 1 := by
-  simp [HermitianMat.ext_iff, Algebra.algebraMap_eq_smul_one]
+  simp only [HermitianMat.ext_iff, mat_cfc, mat_zero, cfc_apply_zero,
+    Algebra.algebraMap_eq_smul_one, mat_smul, mat_one]
 
 @[simp]
 nonrec theorem cfc_apply_one : (1 : HermitianMat d 𝕜).cfc f = f 1 • 1 := by
-  simp [HermitianMat.ext_iff, Algebra.algebraMap_eq_smul_one]
+  simp only [HermitianMat.ext_iff, mat_cfc, mat_one, cfc_apply_one,
+    Algebra.algebraMap_eq_smul_one, mat_smul]
 
 theorem cfc_pow {n : ℕ} : A.cfc (· ^ n) = A ^ n := by
   ext1
   induction n
-  · simp
+  · simp only [_root_.pow_zero, cfc_const, one_smul, mat_one, pow_zero]
   · simp_rw [pow_succ, mat_pow, mat_cfc_mul_apply, pow_succ, cfc_id']
     congr
 
@@ -279,12 +287,9 @@ theorem trace_mul_cfc (A : HermitianMat d 𝕜) (f : ℝ → ℝ) :
 theorem norm_eq_sum_eigenvalues_sq (A : HermitianMat d 𝕜) :
     ‖A‖ ^ 2 = ∑ i, (A.H.eigenvalues i)^2 := by
   rw [← RCLike.ofReal_inj (K := 𝕜), RCLike.ofReal_pow, norm_eq_trace_sq]
-  conv_lhs => change (A ^ 2).mat.trace; rw [(A ^ 2).H.trace_eq_sum_eigenvalues]
-  simp only [map_sum, map_pow]
-  rw [← cfc_pow]
-  obtain ⟨e, he⟩ := cfc_eigenvalues (· ^ 2) A
-  simp only [he, Function.comp_apply, map_pow]
-  exact e.sum_comp (fun x ↦ (algebraMap ℝ 𝕜) (A.H.eigenvalues x) ^ 2)
+  have h := trace_mul_cfc A id
+  rw [cfc_id] at h
+  simpa only [pow_two, map_sum, map_mul, id_eq] using h
 
 variable {A} in
 theorem lt_smul_of_norm_lt {r : ℝ} (h : ‖A‖ ≤ r) : A ≤ r • 1 := by
@@ -315,9 +320,9 @@ theorem ball_subset_Icc : Metric.ball A r ⊆ Set.Icc (A - r • 1) (A + r • 1
   constructor
   · rw [← norm_neg] at h
     grw [← lt_smul_of_norm_lt h.le]
-    simp
+    simp only [neg_sub, add_sub_cancel, Std.le_refl]
   · grw [← lt_smul_of_norm_lt h.le]
-    simp
+    simp only [add_sub_cancel, Std.le_refl]
 
 theorem spectrum_subset_of_mem_Icc (A B : HermitianMat d 𝕜) :
     ∃ a b, ∀ x, A ≤ x ∧ x ≤ B → spectrum ℝ x.mat ⊆ Set.Icc a b := by
@@ -373,7 +378,7 @@ protected theorem cfc_continuous {f : ℝ → ℝ} (hf : Continuous f) :
   · ext x
     simp only [Set.mem_iUnion, Set.mem_univ, iff_true]
     use ⟨x, 1⟩
-    simp
+    simp only [Positive.val_one, Metric.mem_ball, dist_self, zero_lt_one]
 
 open ComplexOrder in
 theorem Matrix.PosDef.spectrum_subset_Ioi {d 𝕜 : Type*} [Fintype d] [DecidableEq d] [RCLike 𝕜]
@@ -424,26 +429,23 @@ Bound the Frobenius norm of a functional calculus application.
 lemma norm_cfc_le_sqrt_card_mul_bound {A : HermitianMat d ℂ} {f : ℝ → ℝ} {C : ℝ}
     (hC : 0 ≤ C) (hf : ∀ x ∈ spectrum ℝ A.mat, ‖f x‖ ≤ C) :
     ‖A.cfc f‖ ≤ Real.sqrt (Fintype.card d) * C := by
-  rw [ ← Real.sqrt_sq ( norm_nonneg _ ) ];
-  -- Recall that the Frobenius norm of a Hermitian matrix is the square root of the sum of the
-  -- squares of its eigenvalues.
-  have h_frobenius_eigenvalues : ∀ (M : HermitianMat d ℂ), ‖M‖ ^ 2 = ∑ i ∈ Finset.univ,
-      (M.H.eigenvalues i) ^ 2 := by
-    exact fun M => norm_eq_sum_eigenvalues_sq M;
-  -- Applying the bound on the eigenvalues to the Frobenius norm.
-  have h_bound : ∑ i ∈ Finset.univ, ((A.cfc f).H.eigenvalues i) ^ 2 ≤ (Fintype.card d) * C ^ 2 := by
-    have h_bound : ∀ i, ((A.cfc f).H.eigenvalues i) ^ 2 ≤ C ^ 2 := by
-      intro i
-      have h_eigenvalue_bound : |(A.cfc f).H.eigenvalues i| ≤ C := by
-        obtain ⟨ x, hx, hx' ⟩ : (A.cfc f).H.eigenvalues i ∈ f '' spectrum ℝ A.mat := by
-          have h_bound := (A.cfc f).H.eigenvalues_mem_spectrum_real i
-          rwa [spectrum_cfc_eq_image A f] at h_bound
-        specialize hf x hx
-        aesop;
-      nlinarith only [ abs_le.mp h_eigenvalue_bound ];
-    exact le_trans ( Finset.sum_le_sum fun _ _ => h_bound _ ) ( by simp );
-  rw [ h_frobenius_eigenvalues, Real.sqrt_le_left ] <;> nlinarith [ Real.sqrt_nonneg (
-      Fintype.card d : ℝ ), Real.mul_self_sqrt ( Nat.cast_nonneg ( Fintype.card d ) ) ]
+  have h_bound : ∑ i : d, ((A.cfc f).H.eigenvalues i) ^ 2 ≤ (Fintype.card d) * C ^ 2 := by
+    have hb (i : d) : ((A.cfc f).H.eigenvalues i) ^ 2 ≤ C ^ 2 := by
+      have hi := (A.cfc f).H.eigenvalues_mem_spectrum_real i
+      rw [spectrum_cfc_eq_image] at hi
+      obtain ⟨x, hx, heq⟩ := hi
+      rw [← heq]
+      have hs := (sq_le_sq₀ (norm_nonneg (f x)) hC).mpr (hf x hx)
+      simpa only [Real.norm_eq_abs, sq_abs] using hs
+    calc ∑ i : d, ((A.cfc f).H.eigenvalues i) ^ 2 ≤ ∑ _ : d, C ^ 2 :=
+          Finset.sum_le_sum fun i _ => hb i
+      _ = (Fintype.card d) * C ^ 2 := by
+          rw [Finset.sum_const, Finset.card_univ, nsmul_eq_mul]
+  calc ‖A.cfc f‖ = Real.sqrt (∑ i, ((A.cfc f).H.eigenvalues i) ^ 2) := by
+        rw [← norm_eq_sum_eigenvalues_sq, Real.sqrt_sq (norm_nonneg _)]
+    _ ≤ Real.sqrt ((Fintype.card d) * C ^ 2) := Real.sqrt_le_sqrt h_bound
+    _ = Real.sqrt (Fintype.card d) * C := by
+        rw [Real.sqrt_mul (Nat.cast_nonneg _), Real.sqrt_sq hC]
 
 /-
 The norm of the difference of two functional calculus applications is bounded by `sqrt(d)` times
@@ -587,7 +589,7 @@ lemma eigenvalue_norm_le (A : HermitianMat d ℂ) (i : d) :
     |A.H.eigenvalues i| ≤ ‖A‖ := by
   have h_eigenvalue_bound : |A.H.eigenvalues i| ^ 2 ≤ ‖A‖ ^ 2 := by
     rw [ norm_eq_sum_eigenvalues_sq A ];
-    simp? [pow_two];
+    simp only [pow_two, abs_mul_abs_self];
     exact Finset.single_le_sum ( fun i _ => mul_self_nonneg ( A.H.eigenvalues i ) ) (
         Finset.mem_univ i );
   nlinarith [ norm_nonneg A ]
@@ -599,7 +601,7 @@ lemma spectrum_subset_closedBall (A : HermitianMat d ℂ) :
     spectrum ℝ A.mat ⊆ Metric.closedBall (0 : ℝ) ‖A‖ := by
   rw [A.H.spectrum_real_eq_range_eigenvalues]
   rintro _ ⟨i, rfl⟩
-  simp [Metric.mem_closedBall, dist_zero_right, eigenvalue_norm_le]
+  simp only [Metric.mem_closedBall, dist_zero_right, Real.norm_eq_abs, eigenvalue_norm_le]
 /-
 PROBLEM
 Upper semicontinuity of the spectrum of a Hermitian matrix: if the spectrum of `A₀` is contained
@@ -662,40 +664,28 @@ lemma spectrum_subset_of_isOpen (A₀ : HermitianMat d ℂ) (U : Set ℝ)
       refine max_lt ?_ ?_
       · simpa [dist_eq_norm] using hB
       · simpa [dist_eq_norm] using hs)⟩
-  -- Compactness gives a finite subcover of `ε`-balls; set `δ = min 1 (min_j δ_j)`.
-  obtain ⟨δ, hδ_pos, hδ⟩ : ∃ δ > 0, ∀ t ∈ K, ∃ ε_t > 0, ∀ B : HermitianMat d ℂ, ‖B - A₀‖ < δ →
-      ∀ s : ℝ, |s - t| < ε_t → IsUnit (B.mat - algebraMap ℝ (Matrix d d ℂ) s) := by
+  have h_units : ∀ᶠ B in nhds A₀,
+      ∀ t ∈ K, IsUnit (B.mat - algebraMap ℝ (Matrix d d ℂ) t) := by
     choose! δ hδ ε hε h using h_unitary
     have := hK_compact.elim_nhds_subcover (fun t => Metric.ball t (ε t))
       fun t ht => Metric.ball_mem_nhds t (hε t ht)
     simp_all? [Set.subset_def]
     obtain ⟨t, ht₁, ht₂⟩ := this
-    obtain ⟨δ_min, hδ_min_pos, hδ_min⟩ : ∃ δ_min > 0, ∀ i ∈ t, δ_min ≤ δ i := by
-      by_cases ht : t.Nonempty <;> simp_all? [Finset.Nonempty]
-      · exact ⟨Finset.min' (t.image δ) ⟨_, Finset.mem_image_of_mem δ ht.choose_spec⟩,
-          by
-            obtain ⟨i, hi, he⟩ := Finset.mem_image.mp
-              (Finset.min'_mem (t.image δ) ⟨_, Finset.mem_image_of_mem δ ht.choose_spec⟩)
-            rw [← he]
-            exact hδ i (ht₁ i hi),
-          fun i hi => Finset.min'_le _ _ (Finset.mem_image_of_mem δ hi)⟩
-      · exact ⟨1, zero_lt_one⟩
-    refine ⟨Min.min δ_min 1, lt_min hδ_min_pos zero_lt_one, fun x hx => ?_⟩
-    obtain ⟨i, hi, hi'⟩ := ht₂ x hx
-    exact ⟨ε i - |x - i|, sub_pos.mpr (by simp_all? [abs_sub_comm]; exact hi'),
-      fun B hB s hs => h i (ht₁ i hi) B (lt_of_lt_of_le hB (min_le_of_left_le (hδ_min i hi))) s
-        (by rw [abs_lt] at *; constructor <;> linarith [abs_le.mp (show |x - i| ≤ |x - i| by rfl)])⟩
-  -- For `B` with `‖B - A₀‖ < δ`, any `t ∈ σ(B)` lies outside `K`.
-  have h_not_in_K : ∀ B : HermitianMat d ℂ, ‖B - A₀‖ < δ → ∀ t ∈ spectrum ℝ B.mat, t ∉ K := by
-    intro B hB t ht htK
-    obtain ⟨ε_t, hε_t_pos, hε_t⟩ := hδ t htK
-    have h_unit : IsUnit (B.mat - algebraMap ℝ (Matrix d d ℂ) t) :=
-      hε_t B hB t (by simpa using hε_t_pos)
-    exact ht (by have h1 := h_unit.neg; simp_all?; exact h1)
-  filter_upwards [Metric.ball_mem_nhds A₀ (show 0 < Min.min δ 1 by positivity)] with B hB using
-    fun t ht => Classical.not_not.1 fun h => h_not_in_K B
-      (lt_of_lt_of_le (by simpa [dist_eq_norm] using hB) (min_le_left _ _)) t ht
-      ⟨hM B (lt_of_lt_of_le (by simpa [dist_eq_norm] using hB) (min_le_right _ _)) ht, h⟩
+    have h_near : ∀ᶠ B in nhds A₀, ∀ i : t, ‖B - A₀‖ < δ i :=
+      Filter.eventually_all.mpr fun i => by
+        filter_upwards [Metric.ball_mem_nhds A₀ (hδ i (ht₁ i i.prop))] with B hB
+        simpa only [Metric.mem_ball, dist_eq_norm] using hB
+    filter_upwards [h_near] with B hB
+    intro x hx
+    obtain ⟨i, hi, hxi⟩ := ht₂ x hx
+    exact h i (ht₁ i hi) B (hB ⟨i, hi⟩) x hxi
+  filter_upwards [h_units, Metric.ball_mem_nhds A₀ zero_lt_one] with B hB hnorm
+  intro t ht
+  by_contra hnot
+  have hnorm' : ‖B - A₀‖ < 1 := by
+    simpa only [Metric.mem_ball, dist_eq_norm] using hnorm
+  have hunit := hB t ⟨hM B hnorm' ht, hnot⟩
+  exact (spectrum.mem_iff.mp ht) (by simpa only [neg_sub] using hunit.neg)
 
 /-
 PROBLEM
@@ -888,87 +878,45 @@ lemma dist_lt_of_continuous_spectrum {X : Type*} [TopologicalSpace X]
     (hA₂ : ContinuousOn (fun x ↦ A x) S)
     {x₀ : X} (hx₀ : x₀ ∈ S) {ε : ℝ} (hε : 0 < ε) :
     ∃ U ∈ nhds x₀, ∀ y ∈ U ∩ S, ∀ t ∈ spectrum ℝ (A y).mat, ‖f y t - f x₀ t‖ < ε := by
-      by_contra h_contra;
-      -- For each eigenvalue λᵢ := (A x₀).H.eigenvalues i (which is in T by hA₁), the
-      -- function f is continuous at (x₀, λᵢ) within S ×ˢ T. So there exist open
-      -- neighborhoods U_i of x₀ and V_i of λᵢ such that for all (y, t) ∈ (U_i ∩ S) × (V_i
-      -- ∩ T), we have ‖f y t - f x₀ t‖ < ε.
-      obtain ⟨U_i, V_i, hU_i, hV_i, h_cont⟩ : ∃ (U_i : d → Set X) (V_i : d → Set ℝ), (∀ i,
-          IsOpen (U_i i)) ∧ (∀ i, IsOpen (V_i i)) ∧ (∀ i, x₀ ∈ U_i i) ∧ (∀ i, (A
-          x₀).H.eigenvalues i ∈ V_i i) ∧ (∀ i, ∀ y ∈ U_i i ∩ S, ∀ t ∈ V_i i ∩ T, ‖f y t - f x₀
-          t‖ < ε) := by
-        have h_cont : ∀ i, ∃ (U_i : Set X) (V_i : Set ℝ), IsOpen U_i ∧ IsOpen V_i ∧ x₀ ∈ U_i ∧
-            (A x₀).H.eigenvalues i ∈ V_i ∧ ∀ y ∈ U_i ∩ S, ∀ t ∈ V_i ∩ T, ‖f y t - f x₀ t‖ < ε := by
-          intro i
-          generalize_proofs at *; (
-          have h_cont : ContinuousWithinAt (fun p : X × ℝ => f p.1 p.2 - f x₀ p.2) (S ×ˢ T) (x₀,
-              (A x₀).H.eigenvalues i) := by
-            have hmemT : (A x₀).H.eigenvalues i ∈ T :=
-              hA₁ x₀ hx₀ ((A x₀).H.eigenvalues_mem_spectrum_real i)
-            have h1 : ContinuousWithinAt (fun p : X × ℝ => f p.1 p.2) (S ×ˢ T)
-                (x₀, (A x₀).H.eigenvalues i) := hf (x₀, (A x₀).H.eigenvalues i) ⟨hx₀, hmemT⟩
-            have hg : ContinuousWithinAt (fun q : ℝ => f x₀ q) T ((A x₀).H.eigenvalues i) :=
-              (hf (x₀, (A x₀).H.eigenvalues i) ⟨hx₀, hmemT⟩).comp
-                (continuousWithinAt_const.prodMk continuousWithinAt_id) (fun q hq => ⟨hx₀, hq⟩)
-            have h2 : ContinuousWithinAt (fun p : X × ℝ => f x₀ p.2) (S ×ˢ T)
-                (x₀, (A x₀).H.eigenvalues i) :=
-              hg.comp (f := Prod.snd) (x := (x₀, (A x₀).H.eigenvalues i))
-                continuousWithinAt_snd (fun p hp => hp.2)
-            exact h1.sub h2 )
-          generalize_proofs at *; (
-          have := h_cont.eventually ( Metric.ball_mem_nhds _ hε )
-          simp_all? [ dist_eq_norm ]
-          (
-          rw [ eventually_nhdsWithin_iff ] at this
-          generalize_proofs at *; (
-          rcases mem_nhds_prod_iff.mp this with ⟨ U, V, hU, hV, h ⟩
-          generalize_proofs at *; (
-          exact ⟨ interior U, isOpen_interior, interior hU, isOpen_interior,
-              mem_interior_iff_mem_nhds.mpr V, mem_interior_iff_mem_nhds.mpr hV, fun y hy hyS t
-              ht htT => h ( Set.mk_mem_prod ( interior_subset hy ) ( interior_subset ht ) ) ⟨
-              hyS, htT ⟩ ⟩))))
-        generalize_proofs at *; (
-        choose U_i V_i hU_i hV_i hx₀_i hV_i_i h_cont_i using h_cont; exact ⟨ U_i, V_i, hU_i,
-            hV_i, hx₀_i, hV_i_i, h_cont_i ⟩;);
-      -- The open set W := ⋃ᵢ V_i contains spectrum(A x₀) (since each λᵢ ∈ V_i and
-      -- spectrum = range of eigenvalues). W is open as a union of open sets.
-      set W := ⋃ i, V_i i with hW_def
-      have hW_open : IsOpen W := by
-        exact isOpen_iUnion hV_i
-      have hW_spectrum : spectrum ℝ (A x₀).mat ⊆ W := by
-        intro t ht
-        obtain ⟨i, hi⟩ : ∃ i, t = (A x₀).H.eigenvalues i := by
-          have h_eigenvalues : spectrum ℝ (A x₀).mat = Set.range (A x₀).H.eigenvalues :=
-            (A x₀).H.spectrum_real_eq_range_eigenvalues
-          generalize_proofs at *; (
-          exact h_eigenvalues.subset ht |> Exists.imp fun i hi => hi.symm)
-        aesop
-      have hW_subset : ∀ᶠ B in nhds (A x₀), spectrum ℝ B.mat ⊆ W := by
-        exact spectrum_subset_of_isOpen (A x₀) W hW_open hW_spectrum
-      have hW_subset_S : ∀ᶠ y in nhdsWithin x₀ S, spectrum ℝ (A y).mat ⊆ W := by
-        exact Filter.mem_of_superset ( hA₂.continuousWithinAt hx₀ |> fun h => h.eventually (
-            hW_subset ) ) fun y hy => hy
-      obtain ⟨U', hU'⟩ : ∃ U' ∈ nhds x₀, ∀ y ∈ U' ∩ S, spectrum ℝ (A y).mat ⊆ W := by
-        obtain ⟨ U', hU' ⟩ := mem_nhdsWithin_iff_exists_mem_nhds_inter.mp hW_subset_S; use U';
-            aesop;
-      obtain ⟨U'', hU''⟩ : ∃ U'' ∈ nhds x₀, ∀ i, U'' ⊆ U_i i := by
-        exact ⟨ ⋂ i, U_i i, Filter.mem_of_superset ( Filter.iInter_mem.mpr fun i =>
-            IsOpen.mem_nhds ( hU_i i ) ( h_cont.1 i ) ) fun x hx => by aesop, fun i =>
-            Set.iInter_subset _ i ⟩
-      set U := U' ∩ U'' with hU_def
-      have hU_mem : U ∈ nhds x₀ := by
-        exact Filter.inter_mem hU'.1 hU''.1
-      have hU_subset : ∀ y ∈ U ∩ S, spectrum ℝ (A y).mat ⊆ W := by
-        exact fun y hy => hU'.2 y ⟨ hy.1.1, hy.2 ⟩ |> Set.Subset.trans <| by simp [ hW_def ];
-      have hU_cont : ∀ y ∈ U ∩ S, ∀ t ∈ spectrum ℝ (A y).mat, ‖f y t - f x₀ t‖ < ε := by
-        intro y hy t ht
-        obtain ⟨i, hi⟩ : ∃ i, t ∈ V_i i := by
-          exact Set.mem_iUnion.mp ( hU_subset y hy ht ) |> Exists.imp fun i => by tauto;
-        have h_cont_i : ‖f y t - f x₀ t‖ < ε := by
-          exact h_cont.2.2 i y ⟨ hU''.2 i ( by aesop ), hy.2 ⟩ t ⟨ hi, hA₁ y hy.2 ht ⟩ |> fun h
-              => by simpa using h;
-        exact h_cont_i
-      exact h_contra ⟨U, hU_mem, hU_cont⟩
+  have h_local (i : d) : ∃ U : Set X, ∃ V : Set ℝ, U ∈ nhds x₀ ∧ IsOpen V ∧
+      (A x₀).H.eigenvalues i ∈ V ∧
+      ∀ y ∈ U ∩ S, ∀ t ∈ V ∩ T, ‖f y t - f x₀ t‖ < ε := by
+    have hmem : (A x₀).H.eigenvalues i ∈ T :=
+      hA₁ x₀ hx₀ ((A x₀).H.eigenvalues_mem_spectrum_real i)
+    have hvalue := hf (x₀, (A x₀).H.eigenvalues i) ⟨hx₀, hmem⟩
+    have hfixed : ContinuousWithinAt (fun t => f x₀ t) T ((A x₀).H.eigenvalues i) :=
+      hvalue.comp (continuousWithinAt_const.prodMk continuousWithinAt_id)
+        (fun _ ht => ⟨hx₀, ht⟩)
+    have hd : ContinuousWithinAt (fun p : X × ℝ => f p.1 p.2 - f x₀ p.2)
+        (S ×ˢ T) (x₀, (A x₀).H.eigenvalues i) :=
+      hvalue.sub (hfixed.comp (f := Prod.snd) (x := (x₀, (A x₀).H.eigenvalues i))
+        continuousWithinAt_snd (fun _ hp => hp.2))
+    have he : ∀ᶠ p in nhdsWithin (x₀, (A x₀).H.eigenvalues i) (S ×ˢ T),
+        ‖f p.1 p.2 - f x₀ p.2‖ < ε :=
+      hd.norm.eventually (gt_mem_nhds (by simpa only [sub_self, norm_zero] using hε))
+    obtain ⟨W, hW, hsub⟩ := mem_nhdsWithin_iff_exists_mem_nhds_inter.mp he
+    obtain ⟨U, hU, V, hV, hUV⟩ := mem_nhds_prod_iff.mp hW
+    refine ⟨U, interior V, hU, isOpen_interior, mem_interior_iff_mem_nhds.mpr hV, ?_⟩
+    intro y hy t ht
+    exact hsub (a := (y, t)) ⟨hUV ⟨hy.1, interior_subset ht.1⟩, ⟨hy.2, ht.2⟩⟩
+  choose U V hU hV h_eigenvalue hlocal using h_local
+  let W := ⋃ i, V i
+  have hW : spectrum ℝ (A x₀).mat ⊆ W := by
+    rw [(A x₀).H.spectrum_real_eq_range_eigenvalues]
+    rintro _ ⟨i, rfl⟩
+    exact Set.mem_iUnion_of_mem i (h_eigenvalue i)
+  have hspectrum : ∀ᶠ y in nhdsWithin x₀ S, spectrum ℝ (A y).mat ⊆ W :=
+    (hA₂ x₀ hx₀).eventually
+      (spectrum_subset_of_isOpen (A x₀) W (isOpen_iUnion hV) hW)
+  have hneighborhoods : ∀ᶠ y in nhdsWithin x₀ S, ∀ i, y ∈ U i :=
+    Filter.eventually_all.mpr fun i => mem_nhdsWithin_of_mem_nhds (hU i)
+  have htotal : ∀ᶠ y in nhdsWithin x₀ S,
+      ∀ t ∈ spectrum ℝ (A y).mat, ‖f y t - f x₀ t‖ < ε := by
+    filter_upwards [hspectrum, hneighborhoods, self_mem_nhdsWithin] with y hy hUy hyS
+    intro t ht
+    obtain ⟨i, hi⟩ := Set.mem_iUnion.mp (hy ht)
+    exact hlocal i y ⟨hUy i, hyS⟩ t ⟨hi, hA₁ y hyS ht⟩
+  exact mem_nhdsWithin_iff_exists_mem_nhds_inter.mp htotal
 
 /-
 PROBLEM
@@ -1128,23 +1076,27 @@ lemma inv_cfc_eq_cfc_inv (hf : ∀ i, f (A.H.eigenvalues i) ≠ 0) :
     -- Since the eigenvectorUnitary is unitary, we have that the product of the projections
     -- is the identity matrix.
     have h_unitary : A.H.eigenvectorUnitary.val * A.H.eigenvectorUnitary.val.conjTranspose = 1 := by
-      simp [ Matrix.IsHermitian.eigenvectorUnitary ];
+      simp only [Matrix.IsHermitian.eigenvectorUnitary, OrthonormalBasis.coe_toBasis,
+        OrthonormalBasis.toMatrix_orthonormalBasis_self_mul_conjTranspose];
     have h_inv : ∀ i j, (A.H.eigenvectorUnitary.val * (Matrix.single i i 1) *
         A.H.eigenvectorUnitary.val.conjTranspose) * (A.H.eigenvectorUnitary.val * (Matrix.single
         j j 1) * A.H.eigenvectorUnitary.val.conjTranspose) = if i = j then
         A.H.eigenvectorUnitary.val * (Matrix.single i i 1) *
         A.H.eigenvectorUnitary.val.conjTranspose else 0 := by
-      simp? [ ← Matrix.mul_assoc ];
+      simp only [← Matrix.mul_assoc];
       intro i j; split_ifs <;> simp_all? [ Matrix.mul_assoc, mul_eq_one_comm.mp h_unitary ];
-    simp_all? [ Finset.sum_mul, Finset.mul_sum ];
+    simp_all only [ne_eq, mat_cfc, one_div, Finset.mul_sum, Algebra.mul_smul_comm, Finset.sum_mul,
+      Algebra.smul_mul_assoc, smul_ite, smul_zero, Finset.sum_ite_eq', ↓reduceIte,
+      not_false_eq_true, inv_smul_smul₀];
     have h_sum : ∑ i, (A.H.eigenvectorUnitary.val * (Matrix.single i i 1) *
         A.H.eigenvectorUnitary.val.conjTranspose) = A.H.eigenvectorUnitary.val * (∑ i,
         Matrix.single i i 1) * A.H.eigenvectorUnitary.val.conjTranspose := by
-      simp [ Finset.mul_sum, Finset.sum_mul, Matrix.mul_assoc ];
-    simp_all? [ Matrix.single ];
+      simp only [Matrix.mul_assoc, Finset.mul_sum, Finset.sum_mul];
+    simp_all only [Matrix.single];
     convert h_unitary using 2;
-    ext i j; simp? [ Matrix.mul_apply]
-    simp? [ Matrix.sum_apply, Finset.filter_eq', Finset.filter_and ];
+    ext i j; simp only [Matrix.mul_apply, Matrix.IsHermitian.eigenvectorUnitary_apply]
+    simp only [Matrix.sum_apply, Matrix.of_apply, Finset.sum_boole, Finset.filter_and,
+      Finset.filter_eq', Finset.mem_univ, ↓reduceIte];
     rw [ Finset.sum_eq_single j ] <;> aesop;
   rw [ Matrix.inv_eq_right_inv h_inv ];
 
@@ -1220,7 +1172,7 @@ lemma intervalIntegrable_toMat_iff (A : ℝ → HermitianMat d 𝕜) (T₁ T₂ 
             = x := by
           have h_toMat_linear : Function.Injective L := by
             intro x y hxy;
-            simp_all? only [HermitianMat.ext_iff]
+            simp_all only [HermitianMat.ext_iff]
           have h_toMat_linear : ∃ (L_inv : Matrix d d 𝕜 →ₗ[ℝ] HermitianMat d 𝕜), L_inv.comp L =
               LinearMap.id := by
             exact IsSemisimpleModule.extension_property L h_toMat_linear LinearMap.id;
@@ -1265,7 +1217,7 @@ lemma integral_cfc_eq_cfc_integral (T₁ T₂ : ℝ) {μ : Measure ℝ} (f : ℝ
         HermitianMat.cfc_toMat_eq_sum_smul_proj A ( f t ), intervalIntegral.integral_finsetSum ];
     · rw [ Finset.sum_congr rfl fun i _ ↦ intervalIntegral.integral_smul_const _ _ ];
       exact Eq.symm (cfc_toMat_eq_sum_smul_proj A fun u ↦ ∫ (t : ℝ) in T₁..T₂, f t u ∂μ);
-    · simp_all? [ intervalIntegrable_iff ];
+    · simp_all only [intervalIntegrable_iff, Finset.mem_univ, forall_const];
       exact fun i ↦ ( hf i ).smul_const _
   · exact integrable_cfc T₁ T₂ f hf
 
@@ -1287,7 +1239,10 @@ theorem cfc_pos_of_pos {A : HermitianMat d 𝕜} {f : ℝ → ℝ} (hA : 0 < A)
         le_of_lt;
   have h_f_nonzero : A.cfc f ≠ 0 := by
     contrapose! h_f_pos;
-    simp [h_f_pos, spectrum.mem_iff, Matrix.isUnit_iff_isUnit_det, Algebra.algebraMap_eq_smul_one]
+    simp only [h_f_pos, mat_zero, spectrum.mem_iff, Algebra.algebraMap_eq_smul_one, sub_zero,
+      Matrix.isUnit_iff_isUnit_det, Matrix.det_smul_of_tower, Matrix.det_one, isUnit_iff_ne_zero,
+      ne_eq, smul_eq_zero, pow_eq_zero_iff', one_ne_zero, or_false, not_and, Decidable.not_not,
+      not_imp, and_imp, forall_eq, implies_true]
   exact lt_of_le_of_ne h_f_nonneg h_f_nonzero.symm
 
 /-- If two matrices A and B commute, then they is a common matrix with which they are both CFCs of.
@@ -1381,7 +1336,8 @@ theorem inv_ge_one_of_le_one (hA : A.mat.PosDef) (h : A ≤ 1) : 1 ≤ A⁻¹ :=
             have := h_eigenvalue_le_one ( A.H.eigenvectorBasis i ) ?_ <;> simp_all? [
                 div_le_iff₀,  ];
             · have := Matrix.IsHermitian.mulVec_eigenvectorBasis ( show Matrix.IsHermitian ( A :
-                Matrix d d _ ) from ‹_› ) i; simp_all? [ dotProduct_comm ];
+                Matrix d d _ ) from ‹_› ) i; simp_all only [dotProduct_comm, smul_dotProduct,
+                  ge_iff_le];
               by_cases h : ( A.H.eigenvectorBasis i |> WithLp.ofLp ) ⬝ᵥ star (
                   A.H.eigenvectorBasis i |> WithLp.ofLp ) = 0 <;> simp_all? [ div_le_iff₀ ]; (
               exact absurd h ( by exact ne_of_apply_ne ( fun x => ‖x‖ ) ( by simp ) ));
@@ -1407,12 +1363,12 @@ lemma trace_cfc_eq (A : HermitianMat d ℂ) (f : ℝ → ℝ) :
   obtain ⟨e, he⟩ := HermitianMat.cfc_eigenvalues f A
   have h2 := (A.cfc f).H.trace_eq_sum_eigenvalues
   rw [he] at h2
-  simp? [Function.comp] at h2
+  simp only [mat_cfc, Function.comp, Complex.coe_algebraMap] at h2
   rw [HermitianMat.mat_cfc] at h1
   rw [h2] at h1
   have h3 : (Complex.ofReal) (A.cfc f).trace = Complex.ofReal (∑ i, f (A.H.eigenvalues (e i))) := by
     convert! h1 using 1
-    simp
+    simp only [Complex.ofReal_sum]
   have h4 := Complex.ofReal_injective h3
   rw [h4]
   exact Equiv.sum_comp e (fun x => f (A.H.eigenvalues x))
@@ -1422,57 +1378,42 @@ end uncategorized_cleanup
 lemma mulVec_eq_zero_iff_inner_eigenvector_zero
     (A : HermitianMat d ℂ) (x : EuclideanSpace ℂ d) :
     A.mat.mulVec x = 0 ↔ ∀ i, A.H.eigenvalues i ≠ 0 → inner ℂ (A.H.eigenvectorBasis i) x = 0 := by
-  -- Since the eigenvectors form an orthonormal basis, we can express x as a linear
-  -- combination of these eigenvectors.
-  obtain ⟨c, hc⟩ : ∃ c : d → ℂ, x = ∑ i, c i • A.H.eigenvectorBasis i := by
-    have := A.H.eigenvectorBasis.sum_repr x;
-    exact ⟨ _, this.symm ⟩;
-  -- By definition of $A$, we know that $A.mulVec (x.ofLp) = \sum_{i} c_i \lambda_i e_i$.
-  have h_mulVec : A.val.mulVec (x.ofLp) = ∑ i, c i • (A.H.eigenvalues i) • (A.H.eigenvectorBasis
-      i) := by
-    have h_mulVec : ∀ i, A.val.mulVec (A.H.eigenvectorBasis i) = (A.H.eigenvalues i) •
-        (A.H.eigenvectorBasis i) := by
-      intro i
-      have := A.H.mulVec_eigenvectorBasis i
-      aesop;
-    convert congr_arg ( fun y => ( ∑ i, c i • y i ) ) ( funext fun i => h_mulVec i ) using 1;
-    · simp? [ hc, ];
-      ext i; rw [ Matrix.mulVec, dotProduct ]
-      simp? [ Finset.mul_sum _ _ _, mul_assoc, mul_comm ]
-      rw [ Finset.sum_comm ]
-      simp [ Matrix.mulVec, dotProduct, mul_comm, Finset.mul_sum _ _ _ ]
-    · ext i; simp [ Finset.sum_apply ];
-  constructor;
-  · intro h i hi
-    have h_inner : inner ℂ (A.H.eigenvectorBasis i) (∑ j, c j • (A.H.eigenvalues j) •
-        (A.H.eigenvectorBasis j)) = 0 := by
-      convert congr_arg ( fun x => inner ℂ ( A.H.eigenvectorBasis i ) x ) ( show ( ∑ j, c j •
-          A.H.eigenvalues j • A.H.eigenvectorBasis j ) = 0 from ?_ ) using 1;
-      · simp [ inner_zero_right ];
-      · ext j; replace h := congr_fun h j; aesop;
-    simp_all?
-    convert congr_arg ( fun x : ℂ => x / ( A.H.eigenvalues i ) ) h_inner using 1 <;> norm_num [
-        Finset.sum_div _ _ _, hi ];
-    refine Finset.sum_congr rfl fun j _ => ?_; by_cases hj : A.H.eigenvalues j = 0 <;> simp_all?
-        [ mul_div_assoc ]
-    · ring_nf
-      by_cases hij : i = j <;> simp_all? [ ];
-    · by_cases hij : i = j <;> simp_all? [  inner_self_eq_norm_sq_to_K ];
+  have hcoeff (i : d) : inner ℂ (A.H.eigenvectorBasis i) (A.lin x) =
+      A.H.eigenvalues i • inner ℂ (A.H.eigenvectorBasis i) x := by
+    change inner ℂ (A.H.eigenvectorBasis i) ((A.lin : _ →ₗ[ℂ] _) x) = _
+    rw [← A.isSymmetric]
+    have hi : A.lin (A.H.eigenvectorBasis i) = A.H.eigenvalues i • A.H.eigenvectorBasis i := by
+      apply WithLp.ofLp_injective
+      exact A.H.mulVec_eigenvectorBasis i
+    change inner ℂ (A.lin (A.H.eigenvectorBasis i)) x = _
+    rw [hi]
+    open ComplexOrder in
+    exact CStarModule.inner_smul_left_real
+  have hzero : A.mat.mulVec x = 0 ↔ A.lin x = 0 := by
+    change (A.mat.toEuclideanLin x).ofLp = 0 ↔ A.mat.toEuclideanLin x = 0
+    exact WithLp.ofLp_eq_zero 2
+  rw [hzero]
+  constructor
+  · intro hx i hi
+    have h := hcoeff i
+    rw [hx, inner_zero_right] at h
+    exact (smul_eq_zero.mp h.symm).resolve_left hi
   · intro h
-    have h_zero_coeffs : ∀ i, A.H.eigenvalues i ≠ 0 → c i = 0 := by
-      intro i hi; specialize h i hi; simp_all?
-      rw [ Finset.sum_eq_single i ] at h <;> simp_all? [ orthonormal_iff_ite.mp (
-          A.H.eigenvectorBasis.orthonormal ) ];
-      aesop;
-    simp_all?
-    exact Finset.sum_eq_zero fun i _ => by by_cases hi : A.H.eigenvalues i = 0 <;> simp [ hi,
-        h_zero_coeffs i ];
+    apply A.H.eigenvectorBasis.repr.injective
+    ext i
+    rw [map_zero, OrthonormalBasis.repr_apply_apply, hcoeff]
+    by_cases hi : A.H.eigenvalues i = 0
+    · rw [hi, zero_smul]
+      rfl
+    · rw [h i hi, smul_zero]
+      rfl
 
 open InnerProductSpace in
 lemma cfc_mulVec_expansion (A : HermitianMat d ℂ) (f : ℝ → ℝ) (x : EuclideanSpace ℂ d) :
     (A.cfc f).mat.mulVec x = ∑ i, (f (A.H.eigenvalues i) : ℂ) • inner ℂ (A.H.eigenvectorBasis i)
         x • A.H.eigenvectorBasis i := by
-  ext i; simp [ Matrix.mulVec, dotProduct ]; ring_nf
+  ext i; simp only [Matrix.mulVec, dotProduct, mat_apply, Complex.coe_smul, WithLp.ofLp_sum,
+    WithLp.ofLp_smul, Finset.sum_apply, Pi.smul_apply, smul_eq_mul, Complex.real_smul]; ring_nf
   -- By definition of $cfc$, we know that $(A.cfc f).i j = \sum_k f(\lambda_k) \langle e_k,
   -- e_i \rangle \langle e_j, e_k \rangle$.
   have h_cfc_def : (A.cfc f).mat i = ∑ k, f (A.H.eigenvalues k) • (A.H.eigenvectorBasis k).ofLp
@@ -1484,17 +1425,23 @@ lemma cfc_mulVec_expansion (A : HermitianMat d ℂ) (f : ℝ → ℝ) (x : Eucli
         (Matrix.single k k 1) * A.H.eigenvectorUnitary.val.conjTranspose) := by
       convert cfc_toMat_eq_sum_smul_proj A f using 1;
     convert congr_fun h_cfc_def i using 1;
-    simp? [ funext_iff, Matrix.single ];
-    simp? [ Matrix.mul_apply, Matrix.conjTranspose_apply, Matrix.sum_apply, mul_assoc ];
-    intro x; congr; ext y; simp [ Finset.sum_ite, Finset.filter_eq, Finset.filter_and ]; ring_nf
+    simp only [Matrix.single, funext_iff, Finset.sum_apply, Pi.smul_apply, Pi.star_apply,
+      RCLike.star_def, smul_eq_mul, Complex.real_smul];
+    simp only [mul_assoc, Matrix.sum_apply, Matrix.smul_apply, Matrix.mul_apply,
+      Matrix.IsHermitian.eigenvectorUnitary_apply, Matrix.of_apply, Matrix.conjTranspose_apply,
+      RCLike.star_def, ite_mul, one_mul, zero_mul, Complex.real_smul];
+    intro x; congr; ext y; simp only [Finset.sum_ite, Finset.filter_and, Finset.filter_const,
+      Finset.filter_eq, Finset.mem_univ, ↓reduceIte, not_and, Finset.sum_const_zero, add_zero,
+      mul_eq_mul_left_iff, Complex.ofReal_eq_zero]; ring_nf
     rw [ Finset.sum_eq_single y ] <;> aesop;
-  simp_all? [mul_comm, mul_left_comm ]; ring_nf
+  simp_all only [mat_cfc, mul_comm, mul_left_comm]; ring_nf
   convert! congr_arg ( fun y => ∑ j, x.ofLp j * y j ) h_cfc_def using 1
-  simp [ Finset.mul_sum _ _ _, mul_assoc, mul_left_comm ]
+  simp only [mul_assoc, Finset.sum_apply, Pi.smul_apply, Pi.star_apply, RCLike.star_def,
+    smul_eq_mul, Complex.real_smul, Finset.mul_sum _ _ _, mul_left_comm]
   ring_nf!
   rw [ Finset.sum_comm, Finset.sum_congr rfl ]
   intros
-  simp [ mul_assoc, inner ]
+  simp only [inner, RCLike.star_def, mul_assoc]
   ring_nf!
   simp only [Finset.mul_sum _ _ _, mul_assoc]
 
@@ -1521,9 +1468,12 @@ lemma ker_cfc_le_ker_on_set
       have h_inner_zero_coeff_i : f (A.H.eigenvalues i) • inner ℂ (A.H.eigenvectorBasis i) x =
           inner ℂ (A.H.eigenvectorBasis i) (∑ j, (f (A.H.eigenvalues j) : ℂ) • inner ℂ
           (A.H.eigenvectorBasis j) x • A.H.eigenvectorBasis j) := by
-        simp [  orthonormal_iff_ite.mp ( A.H.eigenvectorBasis.orthonormal ) ]
+        simp only [Complex.real_smul, Complex.coe_smul, CStarModule.inner_sum_right,
+          CStarModule.inner_smul_right_real, CStarModule.inner_op_smul_right,
+          orthonormal_iff_ite.mp (A.H.eigenvectorBasis.orthonormal), mul_ite, mul_one, mul_zero,
+          smul_ite, smul_zero, Finset.sum_ite_eq, Finset.mem_univ, ↓reduceIte]
       rw [h_inner_zero_coeff_i, h_inner_zero_expansion]
-      simp [inner_zero_right]
+      simp only [inner_zero_right]
     have h_inner_zero_final : ∀ i, A.H.eigenvalues i ≠ 0 → inner ℂ (A.H.eigenvectorBasis i) x =
         0 := by
       -- Since $A.H.eigenvalues i \neq 0$, by hypothesis $h$, we have $f(A.H.eigenvalues i) \neq 0$.
@@ -1557,8 +1507,10 @@ lemma ker_le_ker_cfc_on_set (hs : spectrum ℝ A.mat ⊆ s) (h : ∀ i ∈ s, i 
       (A.H.eigenvectorBasis i) x • A.H.eigenvectorBasis i := by
     convert cfc_mulVec_expansion A f x using 1;
   convert h_mulVec_zero using 1
-  simp_all? [ funext_iff];
-  ext i; specialize h_mulVec_zero i; simp_all? [ lin, Matrix.mulVec ];
+  simp_all only [ne_eq, mat_cfc, Complex.coe_smul, WithLp.ofLp_sum, WithLp.ofLp_smul, funext_iff,
+    Finset.sum_apply, Pi.smul_apply, smul_eq_mul, Complex.real_smul, implies_true, iff_true];
+  ext i; specialize h_mulVec_zero i; simp_all only [Matrix.mulVec, lin, mat_cfc,
+    Matrix.ofLp_toLpLin, Matrix.toLin'_apply, PiLp.zero_apply];
   refine Finset.sum_eq_zero fun j _ => ?_
   by_cases hj : A.H.eigenvalues j = 0 <;> simp_all?
   exact Or.inl ( h _ ( hs (Matrix.IsHermitian.eigenvalues_mem_spectrum_real (H A) j ) ) hj )

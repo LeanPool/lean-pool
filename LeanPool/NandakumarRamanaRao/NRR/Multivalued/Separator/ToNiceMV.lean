@@ -8,6 +8,8 @@ module
 
 public import LeanPool.NandakumarRamanaRao.NRR.Multivalued.Separator.SignedDistance
 public import LeanPool.NandakumarRamanaRao.NRR.Multivalued.Operations
+import Mathlib.Combinatorics.Matroid.Init
+import Mathlib.Tactic.Positivity.Finset
 
 /-!
 # `NRR.Multivalued.Separator.ToNiceMV` — separators as nice multivalued functions

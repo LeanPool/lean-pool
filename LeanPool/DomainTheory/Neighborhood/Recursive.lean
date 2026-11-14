@@ -188,7 +188,7 @@ choice-free `sqrt`. -/
 
 /-- **`unpair ∘ pair = id` (choice-free).** Mirrors `Nat.unpair_pair`. -/
 theorem unpair_pair (a b : ℕ) : Nat.unpair (Nat.pair a b) = (a, b) := by
-  simp_all
+  simp_all only [Nat.unpair_pair]
 
 /-- First projection of the pairing round-trip. -/
 theorem unpair_pair_fst (a b : ℕ) : (Nat.pair a b).unpair.1 = a := by rw [unpair_pair]
@@ -205,7 +205,7 @@ theorem sqrt_le_add (n : ℕ) : n ≤ Nat.sqrt n * Nat.sqrt n + Nat.sqrt n + Nat
 
 /-- **`pair ∘ unpair = id` (choice-free).** Mirrors `Nat.pair_unpair`. -/
 theorem pair_unpair (n : ℕ) : Nat.pair (Nat.unpair n).1 (Nat.unpair n).2 = n := by
-  simp_all
+  simp_all only [Nat.pair_unpair]
 
 /-! ## Choice-free primitive-recursive arithmetic
 
@@ -319,9 +319,11 @@ theorem primrec_sub₂ {f g : ℕ → ℕ} (hf : Nat.Primrec f) (hg : Nat.Primre
 (for a `{0,1}`-valued `c`), via `c * a + (1 - c) * b`. -/
 def selectFn (c a b : ℕ) : ℕ := c * a + (1 - c) * b
 
-@[simp] theorem selectFn_one (a b : ℕ) : selectFn 1 a b = a := by simp [selectFn]
+@[simp] theorem selectFn_one (a b : ℕ) : selectFn 1 a b = a := by simp only [selectFn, one_mul,
+  Nat.sub_self, zero_mul, add_zero]
 
-@[simp] theorem selectFn_zero (a b : ℕ) : selectFn 0 a b = b := by simp [selectFn]
+@[simp] theorem selectFn_zero (a b : ℕ) : selectFn 0 a b = b := by simp only [selectFn,
+  zero_mul, tsub_zero, one_mul, zero_add]
 
 /-- `selectFn` of primitive-recursive `c, a, b` is primitive recursive. -/
 theorem primrec_selectFn {c a b : ℕ → ℕ} (hc : Nat.Primrec c) (ha : Nat.Primrec a)
@@ -448,7 +450,7 @@ theorem RecDecidable.or {p q : ℕ → Prop} (hp : RecDecidable p) (hq : RecDeci
   · intro h
     rcases hp.em n with hp' | hp'
     · exact Or.inl hp'
-    · simp_all
+    · simp_all only [not_false_eq_true, true_and, not_not, or_true]
 
 /-! ## "Recursively enumerable" predicates (Scott's notion, Definition 7.2)
 
@@ -486,7 +488,7 @@ variable `i`); the
 witness `i = 0` makes the projection trivial. -/
 theorem RecDecidable.re {p : ℕ → Prop} (hp : RecDecidable p) : REPred p := by
   refine ⟨fun t => p t.unpair.2, hp.comp Nat.Primrec.right, fun n => ?_⟩
-  simp_all
+  simp_all only [Nat.unpair_pair, exists_const]
 
 /-- A recursively decidable binary relation is recursively enumerable. -/
 theorem RecDecidable₂.re {r : ℕ → ℕ → Prop} (hr : RecDecidable₂ r) : REPred₂ r :=
@@ -521,7 +523,7 @@ theorem REPred.comp {p : ℕ → Prop} (hp : REPred p) {g : ℕ → ℕ} (hg : N
   obtain ⟨q, hq, hqe⟩ := hp
   refine ⟨fun t => q (Nat.pair t.unpair.1 (g t.unpair.2)),
     hq.comp (Nat.Primrec.left.pair (hg.comp Nat.Primrec.right)), fun n => ?_⟩
-  simp_all
+  simp_all only [Nat.unpair_pair]
 
 /-- **Conjunction.** Recursive enumerability is closed under `∧`: combine the two
 decidable
@@ -673,7 +675,8 @@ theorem foldStep_pos (stp : ℕ → ℕ) (params a t acc : ℕ) :
     foldStep stp params (Nat.pair (Nat.pair a t + 1) acc)
       = Nat.pair t (stp (Nat.pair a (Nat.pair acc params))) := by
   unfold foldStep
-  simp_all
+  simp_all only [Nat.unpair_pair, le_add_iff_nonneg_left, zero_le, Nat.sub_eq_zero_of_le,
+    add_tsub_cancel_right, selectFn_zero]
 
 /-- Fold the list coded by `c`, threading accumulator `z` and parameter `params`.
 Implemented as
@@ -1191,7 +1194,9 @@ theorem REPred.forall_mem_decodeList {p : ℕ → Prop} (hp : REPred p) :
         refine ⟨j :: iws, fun k hk => ?_⟩
         rcases k with _ | k'
         · rw [List.getD_cons_zero, List.getD_cons_zero]; exact hj
-        · simp_all
+        · simp_all only [implies_true, List.getD_eq_getElem?_getD, List.mem_cons, or_true,
+          getElem?_pos, Option.getD_some, forall_const, forall_eq_or_imp, List.length_cons,
+          add_lt_add_iff_right, List.getElem?_cons_succ, List.getElem_cons_succ]
     obtain ⟨iws, hiws⟩ := hwit (decodeList c) (fun e he => (hpe e).mp (hall e he))
     refine ⟨encodeList iws, (reForallChar_eq_one_iff qc _ c).mpr (fun k hk => ?_)⟩
     rw [decodeList_encodeList]; exact hiws k hk
@@ -1235,7 +1240,7 @@ theorem decodeList_foldl_mapPairStp (n : ℕ) (el : List ℕ) (acc : ℕ) :
     decodeList (List.foldl (fun acc x => mapPairStp (Nat.pair x (Nat.pair acc n))) acc el)
       = (el.map (Nat.pair n ·)).reverse ++ decodeList acc := by
   induction el generalizing acc with
-  | nil => simp
+  | nil => simp only [List.foldl_nil, List.map_nil, List.reverse_nil, List.nil_append]
   | cons e el ih =>
     rw [List.foldl_cons, ih, mapPairStp_eq, decodeList_mapPairStep, List.map_cons,
       List.reverse_cons, List.append_assoc, List.singleton_append]
@@ -1275,6 +1280,7 @@ theorem REPred.forall_mem_decodeList₂ {p : ℕ → ℕ → Prop} (hp : REPred�
     hp'.forall_mem_decodeList
   refine REPred.of_iff (fun t => ?_) (hbase.comp primrec_mapPairCode)
   rw [decodeList_mapPairCode]
-  simp_all
+  simp_all only [List.mem_reverse, List.mem_map, forall_exists_index, and_imp,
+    forall_apply_eq_imp_iff₂, Nat.unpair_pair]
 
 end Domain.Recursive

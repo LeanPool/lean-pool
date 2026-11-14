@@ -6,6 +6,10 @@ Authors: OpenAI, Dean Cureton
 module
 
 public import LeanPool.MetricCodes.Interlacing
+import Mathlib.Algebra.MvPolynomial.Monad
+import Mathlib.Algebra.Order.Floor.Semifield
+import Mathlib.Algebra.Order.Star.Real
+import Mathlib.Tactic.NormNum.RealSqrt
 
 /-!
 # Highest-weight identities
@@ -571,7 +575,7 @@ theorem projectedCoordinateRaise_canonicalGelfandTsetlinFibre_eq_of_pathExchange
   simpa only [EuclideanSpace.basisFun_apply, mul_one] using
     (projectedCoordinateRaise_reverseInterlacingHarmonicBranch_eq_of_pathExchange low mu row
       hlow hhigh hdom 1
-      (by simpa using hexchange) q)
+      (by simpa only [one_smul] using hexchange) q)
 
 theorem canonicalAdjacentProjectedRaiseCoefficient_sq
     {r n : ℕ} (low : Fin (r + 2) → ℕ)
@@ -625,9 +629,9 @@ theorem canonicalAdjacentProjectedRaiseCoefficient_sq_iff_fischerGram
       low mu hlow hlowGram).ne'
   constructor <;> intro h
   · field_simp [hgap, hlowpos] at h ⊢
-    nlinarith [h]
+    linarith [h]
   · field_simp [hgap, hlowpos] at h ⊢
-    nlinarith [h]
+    linarith [h]
 
 theorem canonicalAdjacentProjectedRaiseCoefficient_sq_of_fischerGram
     {r n : ℕ} (low : Fin (r + 2) → ℕ)
@@ -2852,16 +2856,19 @@ theorem spectralPathOperator_succ_rtt_of
       Pi.single_eq_of_ne', mul_zero, add_zero, ne_of_lt hat, ↓reduceIte, sub_zero]
   have hcross : (x - y) • (C * F - F * C) = E * D - F * C := by
     rw [hdelta]
-    exact hrtt s t has.le hat.le w z
+    simpa only [Module.End.mul_eq_comp, C, D, E, F] using hrtt s t has.le hat.le w z
   have hCB : (x - y) • (C * B - B * C) = A * D - B * C := by
     rw [hdelta]
-    exact hrtt s a.castSucc has.le le_rfl w z
+    simpa only [Module.End.mul_eq_comp, A, B, C, D] using
+      hrtt s a.castSucc has.le le_rfl w z
   have hAF : (x - y) • (A * F - F * A) = E * B - F * A := by
     rw [hdelta]
-    exact hrtt a.castSucc t le_rfl hat.le w z
+    simpa only [Module.End.mul_eq_comp, A, B, E, F] using
+      hrtt a.castSucc t le_rfl hat.le w z
   have hEB : (x - y) • (E * B - B * E) = A * F - B * E := by
     rw [hdelta]
-    exact hrtt t a.castSucc hat.le le_rfl w z
+    simpa only [Module.End.mul_eq_comp, A, B, E, F] using
+      hrtt t a.castSucc hat.le le_rfl w z
   have hstep := spectralStep_rtt A B C D E F S T x y
     hAB hSB hTA hTB hSF hTC hTD hST hcross hCB hAF hEB
   rw [hdelta'] at hstep
@@ -2869,13 +2876,7 @@ theorem spectralPathOperator_succ_rtt_of
     spectralPathOperator_succ lam hdom a t k v,
     spectralPathOperator_succ lam hdom a t k u,
     spectralPathOperator_succ lam hdom a s k v]
-  change
-    (u - v) •
-        ((x • C - A.comp S).comp (y • F - B.comp T) -
-          (y • F - B.comp T).comp (x • C - A.comp S)) =
-      (x • E - A.comp T).comp (y • D - B.comp S) -
-        (y • F - B.comp T).comp (x • C - A.comp S)
-  exact hstep
+  simpa only [Module.End.mul_eq_comp, A, B, C, D, E, F, S, T, x, y, w, z, g] using hstep
 
 end ArbitraryRowSameAxisDiamondSpectralRTTStep
 
@@ -3058,7 +3059,8 @@ theorem spectralPathOperator_succ_same_target_commute_of
       lam a.castSucc target target hpos hpos k z
   have hcross : (x - y) • (C * B - B * C) = A * D - B * C := by
     rw [hdelta]
-    exact hrtt target a.castSucc hpos.le le_rfl w z
+    simpa only [Module.End.mul_eq_comp, A, B, C, D] using
+      hrtt target a.castSucc hpos.le le_rfl w z
   have hstep := spectralStep_same_target_commute A B C D R x y
     hAB hCD hRA hRB hRC hRD hcross
   rw [spectralPathOperator_succ lam hdom a target k u,
@@ -3066,7 +3068,7 @@ theorem spectralPathOperator_succ_same_target_commute_of
   change
     (x • C - A.comp R).comp (y • D - B.comp R) =
       (y • D - B.comp R).comp (x • C - A.comp R)
-  exact hstep
+  simpa only [Module.End.mul_eq_comp, A, B, C, D, R, x, y, w, z, g] using hstep
 
 end ArbitraryRowSameAxisDiamondSpectralSelfCommuteStep
 
@@ -3316,11 +3318,11 @@ theorem arbitraryRowAxialRaise_sameAxis_diamond
         (arbitraryRowAxialRaise lam i k p) =
       arbitraryRowAxialRaise (raiseWeight lam j) i k
         (arbitraryRowAxialRaise lam j k p) := by
-  apply LinearMap.congr_fun
-    ((arbitraryRowAxialRaise_sameAxis_diamond_iff_commutator
-      lam i j hij (hdom hij.le) k).mpr ?_) p
-  exact arbitraryRowAxialRaise_sameAxis_commutator
-    lam hdom i j hij k
+  exact LinearMap.congr_fun
+      ((arbitraryRowAxialRaise_sameAxis_diamond_iff_commutator lam i j hij (hdom (LT.lt.le hij))
+        k).mpr
+        (arbitraryRowAxialRaise_sameAxis_commutator lam hdom i j hij k))
+      p
 
 end ArbitraryRowSameAxisDiamondSpectralSuffixClosure
 
@@ -3777,7 +3779,6 @@ theorem coeff_X_mul_pderiv_ne {σ : Type*}
   · have hma : a ∈ d.support :=
       Finsupp.mem_support_iff.mpr ha
     rw [ite_eq_left hma, MvPolynomial.coeff_pderiv, ite_eq_right ha]
-    have hneq : a ≠ b := hab
     have hsub :
         (d - (Finsupp.single a 1 : σ →₀ ℕ)) b = d b := by
       simp only [Finsupp.coe_tsub, Pi.sub_apply, Finsupp.single_eq_of_ne hab.symm, tsub_zero]
@@ -3862,7 +3863,6 @@ theorem sourceRowRoot_sourceLeadingMinor_self {r : ℕ}
       intro heq
       have hv := congrArg Fin.val heq
       change i.val = a.val at hv
-      have ha := a.isLt
       omega
     simp only [hne, ↓reduceIte]
 
@@ -3918,7 +3918,6 @@ theorem sourceColumnRoot_sourceLeadingMinor_self {r : ℕ}
       intro heq
       have hv := congrArg Fin.val heq
       change i.val = b.val at hv
-      have hb := b.isLt
       omega
     simp only [hne, ↓reduceIte]
 
@@ -3981,7 +3980,6 @@ theorem sourceRowRoot_sourceLeadingMinor_upper {r : ℕ}
       intro heq
       have hv := congrArg Fin.val heq
       change j.val = a.val at hv
-      have ha := a.isLt
       omega
     simp only [hne, ↓reduceIte]
 
@@ -4874,7 +4872,7 @@ theorem ambientPositiveRoot_nullSubstitution_sourceColumnRoot
       · simp only [Algebra.algebraMap_self, RingHom.id_apply, hjb, ↓reduceIte, mul_zero,
           isotropicVariable_eq_nullRowLinearForm, sourceColumnRoot_apply, map_sum, map_mul,
           nullSubstitution_X, Algebra.smul_def, MvPolynomial.algebraMap_eq, zero_add, map_zero]
-        ring
+        ac_rfl
 
 theorem ambientCartan_nullSubstitution_sourceColumnRoot
     {r n : ℕ} (h : 2 * (r + 1) ≤ n)
@@ -5145,7 +5143,6 @@ theorem sourceColumnRoot_sourceLeadingMinor_upper {r : ℕ}
       intro heq
       have hv := congrArg Fin.val heq
       change j.val = b.val at hv
-      have hb := b.isLt
       omega
     simp only [hne, ↓reduceIte]
 
@@ -5603,7 +5600,6 @@ theorem exists_minimalBelowColumn_of_mass_pos {m : ℕ}
   have hpos : 0 < d (a, b) := Nat.pos_of_ne_zero hzero
   have hcandidate : P b.val := ⟨a, b, rfl, hba, hpos⟩
   have hleast : Nat.find hex ≤ b.val := Nat.find_min' hex hcandidate
-  have hlt : b.val < i'.val := hbi
   omega
 
 theorem eq_zero_of_upperRoots_of_massZero_coeff
@@ -5649,7 +5645,6 @@ theorem belowDiagonal_entry_eq_zero_of_mass_eq_zero {m : ℕ}
   have hproduct : belowDiagonalWeight (i, j) * d (i, j) = 0 := by omega
   have hweight : belowDiagonalWeight (i, j) ≠ 0 := by
     change i.val - j.val ≠ 0
-    have hvals : j.val < i.val := hji
     omega
   exact (mul_eq_zero.mp hproduct).resolve_left hweight
 
@@ -7104,7 +7099,6 @@ theorem pderiv_even_X_unused {r n : ℕ}
     intro heq
     have hv := congrArg Fin.val heq
     simp only [evenCoordinate_val] at hv
-    have hp := p.isLt
     omega
   simp only [MvPolynomial.pderiv_X, ne_eq, DeterminantVectors.variableIndex_eq_iff, he, and_false,
     not_false_eq_true, Pi.single_eq_of_ne']
@@ -7120,7 +7114,6 @@ theorem pderiv_odd_X_unused {r n : ℕ}
     intro heq
     have hv := congrArg Fin.val heq
     simp only [oddCoordinate_val] at hv
-    have hp := p.isLt
     omega
   simp only [MvPolynomial.pderiv_X, ne_eq, DeterminantVectors.variableIndex_eq_iff, ho, and_false,
     not_false_eq_true, Pi.single_eq_of_ne']

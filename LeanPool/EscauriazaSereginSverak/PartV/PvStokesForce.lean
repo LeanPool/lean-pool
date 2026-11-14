@@ -67,7 +67,7 @@ theorem pvStokes_ext_memLp {r : ℝ≥0∞}
     (hF : ∀ i j, MemLp (F i j) r (volume.restrict (spaceTimeSet (Set.univ : Set Vec3) (Ioo 0 τ))))
     (i j : Fin 3) :
     MemLp ((spaceTimeSet (Set.univ : Set Vec3) (Ioo 0 τ)).indicator (F i j)) r volume :=
-  (memLp_indicator_iff_restrict (pvStokes_slab_measurableSet τ)).2 (hF i j)
+  (memLp_indicator_iff_restrict (pvStokes_slab_measurableSet τ).nullMeasurableSet).2 (hF i j)
 
 theorem pvStokesPressureSlab_eq_zero {z : ParabolicPoint}
     (hz : z ∉ spaceTimeSet (Set.univ : Set Vec3) (Ioo 0 τ)) : pvStokesPressureSlab τ F z = 0 :=
@@ -125,7 +125,8 @@ theorem pvStokesPressureSlab_memLp {r : ℝ} (hr : 1 < r)
   set R := CKN.Leray.rieszPressureSpaceTime r hr Ft hr'
   have hae := pvStokesPressureSlab_ae_eq hr h2 hr'
   have hR := CKN.Leray.rieszPressureSpaceTime_memLp r hr Ft hr'
-  refine ⟨(memLp_congr_ae hae).2 (hR.neg.indicator (pvStokes_slab_measurableSet τ)), ?_⟩
+  refine ⟨(memLp_congr_ae hae).2
+    (hR.neg.indicator (pvStokes_slab_measurableSet τ).nullMeasurableSet), ?_⟩
   have h0 : CKN.Leray.rieszPressureSpaceTime r hr (fun _ _ => (0 : Vec3 × ℝ → ℝ))
       (fun _ _ => MemLp.zero) =ᵐ[volume] 0 :=
     rieszPressureSpaceTime_ae_zero r hr _ _ fun _ _ => EventuallyEq.rfl
@@ -139,7 +140,7 @@ theorem pvStokesPressureSlab_memLp {r : ℝ} (hr : 1 < r)
     eLpNorm (pvStokesPressureSlab τ F) (ENNReal.ofReal r) volume =
         eLpNorm (Q.indicator (-R)) (ENNReal.ofReal r) volume := eLpNorm_congr_ae hae
     _ ≤ eLpNorm (-R) (ENNReal.ofReal r) volume :=
-        eLpNorm_indicator_le _ (pvStokes_slab_measurableSet τ)
+        eLpNorm_indicator_le _ (pvStokes_slab_measurableSet τ).nullMeasurableSet
     _ = eLpNorm R (ENNReal.ofReal r) volume := eLpNorm_neg _ _ _
     _ = eLpNorm (R - CKN.Leray.rieszPressureSpaceTime r hr
           (fun _ _ => (0 : Vec3 × ℝ → ℝ)) (fun _ _ => MemLp.zero)) (ENNReal.ofReal r) volume :=
@@ -175,7 +176,7 @@ theorem pvStokes_ext_sum_le {r : ℝ≥0∞} :
       eLpNorm ((spaceTimeSet (Set.univ : Set Vec3) (Ioo 0 τ)).indicator (F i j)) r volume ≤
         eLpNorm (fun z => fun i j => F i j z) r
           (volume.restrict (spaceTimeSet (Set.univ : Set Vec3) (Ioo 0 τ))) := by
-    rw [eLpNorm_indicator_eq_eLpNorm_restrict (pvStokes_slab_measurableSet τ)]
+    rw [eLpNorm_indicator_eq_eLpNorm_restrict (pvStokes_slab_measurableSet τ).nullMeasurableSet]
     exact pvStokes_entry_eLpNorm_le i j
   calc
     ∑ i : Fin 3, ∑ j : Fin 3,

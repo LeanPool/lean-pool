@@ -13,7 +13,6 @@ import LeanPool.ClassificationOfSurfaces.Moise.FineSubdivision
 import LeanPool.ClassificationOfSurfaces.Moise.NoRetraction
 import LeanPool.ClassificationOfSurfaces.Moise.PolygonalSchoenflies
 import Mathlib.Analysis.Complex.Tietze
-import Mathlib.CategoryTheory.Category.Init
 
 /-!
 # PL approximation of homeomorphisms

@@ -245,7 +245,7 @@ theorem productMask_smooth {d : ℕ} (δ : ℝ) (k : Fin d → ℤ) :
     ContDiff ℝ ∞ (productMask δ k) := by
   apply contDiff_prod
   intro j _
-  exact (gridMask_smooth δ (k j)).comp (contDiff_apply ℝ ℝ j)
+  exact (gridMask_smooth δ (k j)).comp (contDiff_apply ℝ (fun _ => ℝ) j)
 
 theorem productMask_support {d : ℕ} (δ : ℝ) (k : Fin d → ℤ) :
     support (productMask δ k) = ⋂ j, (fun x => x j) ⁻¹' support (gridMask δ (k j)) := by
@@ -639,7 +639,7 @@ def slowCoordinates (D : ℝ) (n : ℕ) (x : SlotColoring.Position) : SlotColori
 theorem slowCoordinates_smooth (D : ℝ) (n : ℕ) : ContDiff ℝ ∞ (slowCoordinates D n) := by
   apply contDiff_pi.mpr
   intro j
-  exact (contDiff_apply ℝ ℝ j).div_const _
+  exact (contDiff_apply ℝ (fun _ => ℝ) j).div_const _
 
 /-- Physical slow mask, given by `slowMask n k (slowCoordinates D n x)`. -/
 def physicalSlowMask (D : ℝ) (n : ℕ) (k : SlotColoring.Grid) (x : SlotColoring.Position) : ℝ :=

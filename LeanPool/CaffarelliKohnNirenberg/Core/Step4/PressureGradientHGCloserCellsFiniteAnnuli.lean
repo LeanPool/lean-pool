@@ -60,7 +60,7 @@ theorem pressure_riesz_annulus_enorm_bound
   have hρ : 0 < ρ := lt_of_lt_of_le (by linarith only [hr]) hrρ
   let A : Set Vec3 := vec3Ball x (2 * ρ) \ vec3Ball x ρ
   have hA : MeasurableSet A := (vec3Ball_measurable _ _).diff (vec3Ball_measurable _ _)
-  have hGA := hG.indicator hA
+  have hGA := hG.indicator hA.nullMeasurableSet
   have hGc := pressure_source_annulus_hasCompactSupport G x hρ
   have hsep : ∀ y ∈ vec3Ball x r, ∀ z ∈ A, ρ / 6 ≤ ‖y - z‖ := by
     intro y hy z hz
@@ -114,7 +114,8 @@ theorem pressure_riesz_annulus_eLpNorm_bound
   have hρ : 0 < ρ := lt_of_lt_of_le (by linarith only [hr]) hrρ
   have hmem := rieszSecondGradientExtension_memLp
     (rieszSecondL2Input i j) (rieszSecondL2_weak_type i j)
-    (hG.indicator ((vec3Ball_measurable _ _).diff (vec3Ball_measurable _ _)))
+    (hG.indicator ((vec3Ball_measurable _ _).diff
+      (vec3Ball_measurable _ _)).nullMeasurableSet)
     (pressure_source_annulus_hasCompactSupport G x hρ)
   have h := eLpNorm_le_of_ae_enorm_bound (p := ENNReal.ofReal (6 / 5 : ℝ))
     hmem.aestronglyMeasurable.restrict
@@ -153,7 +154,7 @@ private theorem nested_indicator_riesz_add
         (rieszSecondL2Input i j) (rieszSecondL2_weak_type i j) (A.indicator G) +
       rieszSecondGradientExtensionOperator
         (rieszSecondL2Input i j) (rieszSecondL2_weak_type i j) ((B \ A).indicator G) := by
-  have h := pressure_riesz_component_indicator_add_ae i j (hG.indicator hB) hA
+  have h := pressure_riesz_component_indicator_add_ae i j (hG.indicator hB.nullMeasurableSet) hA
   have h₁ : A.indicator (B.indicator G) = A.indicator G := by
     funext x
     by_cases hx : x ∈ A
@@ -197,9 +198,11 @@ theorem pressure_riesz_finite_annuli_eLpNorm_bound
         eLpNorm_mono_measure _ Measure.restrict_le_self
       _ ≤ ENNReal.ofReal (czGradientComponentConstant rieszSecondWeakTypeConstant 1) *
           eLpNorm ((vec3Ball x (2 * r)).indicator G) (ENNReal.ofReal (6 / 5 : ℝ)) volume :=
-        pressure_riesz_component_eLpNorm_bound i j (hG.indicator (vec3Ball_measurable _ _))
+        pressure_riesz_component_eLpNorm_bound i j
+          (hG.indicator (vec3Ball_measurable _ _).nullMeasurableSet)
           (ball_indicator_hasCompactSupport G x (by positivity))
-      _ = _ := by rw [eLpNorm_indicator_eq_eLpNorm_restrict (vec3Ball_measurable _ _)]
+      _ = _ := by
+        rw [eLpNorm_indicator_eq_eLpNorm_restrict (vec3Ball_measurable _ _).nullMeasurableSet]
   change eLpNorm (T ((vec3Ball x (ρ N)).indicator G)) _ _ ≤ _
   induction N with
   | zero => simpa [ρ] using hbase

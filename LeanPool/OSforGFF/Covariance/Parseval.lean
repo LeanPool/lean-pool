@@ -725,7 +725,7 @@ theorem parseval_covariance_schwartz_correct (m : ℝ) [Fact (0 < m)] (f : TestF
       have h_exp_le_one : Real.exp (-α * (2 * Real.pi)^2 * ‖k‖^2) ≤ 1 := by
         rw [Real.exp_le_one_iff]
         have : 0 ≤ α * (2 * Real.pi)^2 * ‖k‖^2 := by positivity
-        linarith
+        linarith only [this]
       have h_prop_nonneg := freePropagatorMomentum_mathlib_nonneg m Fact.out k
       calc Real.exp (-α * (2 * Real.pi)^2 * ‖k‖^2) * ‖(SchwartzMap.fourierTransformCLM ℂ f) k‖^2 *
             freePropagatorMomentumMathlib m k

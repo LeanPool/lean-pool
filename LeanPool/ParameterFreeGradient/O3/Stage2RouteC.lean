@@ -97,7 +97,7 @@ theorem ballCarlenLieb_fin_one {p : ℝ} (hp : 1 < p) (hp2 : p ≤ 2)
       2 * ((O3.lpNorm p u) ^ (2 : ℕ) + (O3.lpNorm p v) ^ (2 : ℕ)) := by
   simp_rw [lpNorm_fin_one (zero_lt_one.trans hp)]
   simp only [Pi.add_apply, Pi.sub_apply, sq_abs]
-  nlinarith [sq_nonneg (u 0 - v 0)]
+  nlinarith only [hp2, sq_nonneg (u 0 - v 0)]
 
 /-- The exact Ball--Carlen--Lieb inequality needed by Route C.  This is a
 transparent proposition describing the first missing quantitative input; it is
@@ -137,6 +137,6 @@ theorem ballCarlenLieb_implies_exactMidpoint
     norm_num
   have h := hBCL p hp hp2 d x y
   rw [hnormAvg]
-  nlinarith
+  linarith only [h]
 
 end O3.Stage2RouteC

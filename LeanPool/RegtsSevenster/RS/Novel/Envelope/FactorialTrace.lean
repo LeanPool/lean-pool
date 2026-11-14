@@ -38,15 +38,11 @@ noncomputable def objectCycleTraceTower
     CycleTraceTower (fun n => End (tensorPow A X n)) (End X) where
   traceA := scalarTrace hu X
   trace n := scalarTrace hu (tensorPow A X n)
-  rep n := {
-    toFun := permMor X n
-    map_one' := permMor_one X n
-    map_mul' := permMor_mul X n
-  }
+  rep n := permHom X n
   pow n g := powHom X g n
   cycleTrace n π g := by
     change scalarTrace hu (tensorPow A X n)
-      (powHom X g n ≫ permMor X n π) = _
+      (End.of ((powHom X g n).asHom ≫ permMor X n π)) = _
     rw [scalarTrace_comp_comm, scalarTrace_permMor_powHom,
       prod_fullCycleType, pow_one]
 

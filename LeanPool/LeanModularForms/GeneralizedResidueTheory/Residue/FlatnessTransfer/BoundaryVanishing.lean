@@ -11,7 +11,6 @@ import Mathlib.Analysis.Calculus.FDeriv.Extend
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.Arctan
 import Mathlib.CategoryTheory.Category.Init
 import Mathlib.Combinatorics.Matroid.Init
-import Mathlib.MeasureTheory.Covering.Besicovitch
 import Mathlib.MeasureTheory.Integral.DivergenceTheorem
 
 /-!
@@ -49,7 +48,7 @@ theorem hasDerivAt_zpow_comp_sub
       (↑n * (γ t - s) ^ (n - 1) * L) t := by
   have h_comp := (hasDerivAt_zpow n (γ t - s) (Or.inl (sub_ne_zero.mpr hne))).comp t
     (hγ.sub_const s)
-  exact h_comp.congr_deriv (by ring)
+  exact h_comp.congr_deriv (by ac_rfl)
 
 /-- ContinuousOn for `t ↦ (γ(t) - s)^n` on a set where `γ(t) ≠ s`. -/
 theorem continuousOn_zpow_comp_sub
@@ -158,7 +157,7 @@ private lemma slope_tendsto_right_of_deriv
   have h_no_part : ∀ t ∈ Ioo t₀ δ, t ∉ γ.toPiecewiseC1Curve.partition := by
     intro t ht htp
     have ht_in : t ∈ P := Finset.mem_filter.mpr ⟨htp, ht.1⟩
-    linarith [Finset.min'_le P t ht_in, ht.2]
+    linarith only [ht, ht_in, Finset.min'_le P t ht_in, ht.2]
   have h_sub : Ioo t₀ δ ⊆ Icc γ.a γ.b :=
     fun t ht => ⟨le_of_lt (lt_trans ht₀.1 ht.1), le_trans (le_of_lt ht.2) hδ_le_b⟩
   have h_diff : DifferentiableOn ℝ γ.toFun (Ioo t₀ δ) := fun t ht =>
@@ -189,7 +188,7 @@ private lemma direction_of_slope_tendsto
   filter_upwards [self_mem_nhdsWithin (s := Ioi (0 : ℝ))] with ε (hε : (0 : ℝ) < ε)
   set w := f ε
   rcases eq_or_ne w 0 with hw | hw
-  · simp [hw]
+  · simp only [hw, norm_zero, ofReal_zero, div_zero, smul_zero]
   · have h_inv_pos : (0 : ℝ) < ε⁻¹ := inv_pos_of_pos hε
     have h_inv_ne : (↑(ε⁻¹ : ℝ) : ℂ) ≠ 0 :=
       Complex.ofReal_ne_zero.mpr (ne_of_gt h_inv_pos)
@@ -233,7 +232,7 @@ private lemma slope_tendsto_left_of_deriv
   have h_no_part : ∀ t ∈ Ioo δ t₀, t ∉ γ.toPiecewiseC1Curve.partition := by
     intro t ht htp
     have ht_in : t ∈ P := Finset.mem_filter.mpr ⟨htp, ht.2⟩
-    linarith [Finset.le_max' P t ht_in, ht.1]
+    linarith only [ht, ht_in, Finset.le_max' P t ht_in, ht.1]
   have h_sub : Ioo δ t₀ ⊆ Icc γ.a γ.b :=
     fun t ht => ⟨le_of_lt (lt_of_le_of_lt ha_le_δ ht.1), le_of_lt (lt_trans ht.2 ht₀.2)⟩
   have h_diff : DifferentiableOn ℝ γ.toFun (Ioo δ t₀) := fun t ht =>
@@ -380,7 +379,7 @@ theorem zpow_boundary_diff_tendsto_zero
   calc ε ^ k * ‖(wR ε / ↑‖wR ε‖) ^ k - (wL ε / ↑‖wL ε‖) ^ k‖
       ≤ ε ^ k * (η / 2 * ε ^ (n - 1 : ℕ)) :=
         mul_le_mul_of_nonneg_left h_bnd (zpow_nonneg hε_pos.le k)
-    _ = η / 2 * (ε ^ k * ε ^ (n - 1 : ℕ)) := by ring
+    _ = η / 2 * (ε ^ k * ε ^ (n - 1 : ℕ)) := by ac_rfl
     _ ≤ η / 2 * 1 := mul_le_mul_of_nonneg_left h_pow_le (half_pos hη).le
     _ = η / 2 := mul_one _
     _ < η := half_lt_self hη
@@ -420,18 +419,19 @@ theorem norm_sub_le_tangentDeviation_of_unit (u v : ℂ)
             Complex.abs_re_le_norm _
         _ = 1 := by rw [norm_mul, hu, starRingEnd_apply, norm_star, hv, mul_one]
     exact le_of_abs_le h1
-  have h_re_bound : 1 - (u * starRingEnd ℂ v).re = ‖u - v‖ ^ 2 / 2 := by linarith
+  have h_re_bound : 1 - (u * starRingEnd ℂ v).re = ‖u - v‖ ^ 2 / 2 := by linarith only [h_normSq]
   have h_tri := norm_add_le (tangentDeviation u v) (((u * starRingEnd ℂ v).re - 1) • v)
   rw [← h_decomp] at h_tri
   have h_smul_norm : ‖((u * starRingEnd ℂ v).re - 1) • v‖ = ‖u - v‖ ^ 2 / 2 := by
-    rw [norm_smul, Real.norm_eq_abs, hv, mul_one, abs_of_nonpos (by linarith), neg_sub,
+    rw [norm_smul, Real.norm_eq_abs, hv, mul_one, abs_of_nonpos (by linarith only [h_re_le]),
+      neg_sub,
       h_re_bound]
   have h_sq_le : ‖u - v‖ ^ 2 / 2 ≤ ‖u - v‖ / 2 := by
     rw [div_le_div_iff_of_pos_right two_pos]
     calc ‖u - v‖ ^ 2 = ‖u - v‖ * ‖u - v‖ := sq _
       _ ≤ ‖u - v‖ * 1 := mul_le_mul_of_nonneg_left h_close (norm_nonneg _)
       _ = ‖u - v‖ := mul_one _
-  linarith [h_smul_norm, h_sq_le, h_tri]
+  linarith only [h_tri, h_smul_norm, h_sq_le]
 
 private lemma eq_exp_arg_mul_I_of_norm_one (z : ℂ) (hz : ‖z‖ = 1) :
     z = exp (↑(arg z) * I) := by
@@ -457,7 +457,7 @@ lemma unit_zpow_eq_of_angle_multiple
   rw [h_eq, mul_eq_zero]
   left
   rw [ofReal_eq_zero]
-  linarith
+  linarith only [hn]
 
 private lemma orthogonalProjectionComplex_real_smul_left (c : ℝ) (w L : ℂ) :
     orthogonalProjectionComplex (c • w) L = c • orthogonalProjectionComplex w L := by
@@ -482,12 +482,12 @@ private lemma orthogonalProjectionComplex_real_smul_right (c : ℝ) (hc : c ≠ 
       show star L = starRingEnd ℂ L from rfl]
   rw [show Complex.normSq ((↑c : ℂ) * L) = c ^ 2 * Complex.normSq L from by
     rw [Complex.normSq_mul, Complex.normSq_ofReal, sq],
-    show w * (↑c * starRingEnd ℂ L) = ↑c * (w * starRingEnd ℂ L) from by ring,
+    show w * (↑c * starRingEnd ℂ L) = ↑c * (w * starRingEnd ℂ L) from by ac_rfl,
     Complex.re_ofReal_mul]
   set r := (w * starRingEnd ℂ L).re
   set nS := Complex.normSq L
   rw [show (↑(c * r / (c ^ 2 * nS)) : ℂ) * ((↑c : ℂ) * L) =
-    ↑(c * r / (c ^ 2 * nS) * c) * L from by push_cast; ring,
+    ↑(c * r / (c ^ 2 * nS) * c) * L from by push_cast; ac_rfl,
     show c * r / (c ^ 2 * nS) * c = r / nS from by rw [sq]; field_simp]
 
 lemma tangentDeviation_real_smul_right (c : ℝ) (hc : c ≠ 0) (w L : ℂ) :
@@ -514,8 +514,8 @@ private lemma unit_sq_le_two_mul_tangentDeviation_sq
       rw [← mul_assoc, mul_comm u (↑R : ℂ), mul_assoc,
         Complex.mul_re, Complex.ofReal_re, Complex.ofReal_im, zero_mul, sub_zero]
     rw [hre]; ring
-  have hR_le : R ≤ 1 := by nlinarith [sq_nonneg (‖tangentDeviation u v₀‖)]
-  rw [h_lhs, h_rhs]; nlinarith [hR_pos.le, hR_le]
+  have hR_le : R ≤ 1 := by nlinarith only [h_lhs, sq_nonneg (‖tangentDeviation u v₀‖)]
+  rw [h_lhs, h_rhs]; nlinarith only [hR_pos, h_lhs, hR_pos.le, hR_le]
 
 private lemma norm_sub_le_sqrt2_tangentDeviation
     (u v₀ : ℂ) (hu : ‖u‖ = 1) (hv₀ : ‖v₀‖ = 1)
@@ -602,7 +602,7 @@ lemma re_pos_right_of_slope
       (fun t ht => (hs_diff t ht).differentiableWithinAt)
       hcont.continuousWithinAt hs_mem htend_R)
   have hReLR : 0 < (L_R * starRingEnd ℂ L_R).re := by
-    simp [Complex.mul_conj, Complex.normSq_pos.mpr hL_R_ne]
+    simp only [mul_conj, ofReal_re, Complex.normSq_pos.mpr hL_R_ne]
   have h_slope : Tendsto (slope γ.toFun t₀) (𝓝[>] t₀) (𝓝 L_R) :=
     (hasDerivWithinAt_iff_tendsto_slope' Set.self_notMem_Ioi).mp hderiv
   refine re_pos_of_slope_sign γ s t₀ hcross L_R _ ?_
@@ -628,7 +628,8 @@ lemma re_pos_left_of_slope
       (fun t ht => (hs_diff t ht).differentiableWithinAt)
       hcont.continuousWithinAt hs_mem htend_L)
   have hReLLneg : (L_L * starRingEnd ℂ (-L_L)).re < 0 := by
-    simp [map_neg, mul_neg, Complex.mul_conj, Complex.normSq_pos.mpr hL_L_ne]
+    simp only [map_neg, mul_neg, mul_conj, neg_re, ofReal_re, Left.neg_neg_iff,
+      Complex.normSq_pos.mpr hL_L_ne]
   have h_slope : Tendsto (slope γ.toFun t₀) (𝓝[<] t₀) (𝓝 L_L) :=
     (hasDerivWithinAt_iff_tendsto_slope' Set.self_notMem_Iio).mp hderiv
   refine re_pos_of_slope_sign γ s t₀ hcross (-L_L) _ ?_
@@ -643,9 +644,9 @@ lemma tangentDeviation_scale_eq
     ‖tangentDeviation (w / (↑‖w‖ : ℂ)) (L / (↑‖L‖ : ℂ))‖ =
       ‖tangentDeviation w L‖ / ‖w‖ := by
   rw [show (w / (↑‖w‖ : ℂ) : ℂ) = (‖w‖⁻¹ : ℝ) • w from by
-      simp [Complex.real_smul, Complex.ofReal_inv, inv_mul_eq_div],
+      simp only [real_smul, ofReal_inv, inv_mul_eq_div],
     show (L / (↑‖L‖ : ℂ) : ℂ) = (‖L‖⁻¹ : ℝ) • L from by
-      simp [Complex.real_smul, Complex.ofReal_inv, inv_mul_eq_div],
+      simp only [real_smul, ofReal_inv, inv_mul_eq_div],
     tangentDeviation_real_smul_right _ (inv_ne_zero hL_ne),
     tangentDeviation_real_smul_left, norm_smul, Real.norm_eq_abs,
     abs_of_nonneg (inv_nonneg.mpr (norm_nonneg _)), inv_mul_eq_div]

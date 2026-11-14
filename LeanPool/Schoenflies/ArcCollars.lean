@@ -182,7 +182,7 @@ theorem len_smul_tang : (A.len i) • A.tang i = A.vertex (i + 1) - A.vertex i :
     one_smul]
 
 theorem vertex_succ_eq : A.vertex (i + 1) = A.vertex i + (A.len i) • A.tang i := by
-  rw [len_smul_tang]; module
+  rw [len_smul_tang, add_sub_cancel]
 
 /-- The incoming ray at `vertex (i + 1)` is the reverse of the tangent of edge `i`. -/
 theorem back_eq : A.back i = -A.tang i := by
@@ -204,7 +204,8 @@ theorem det_rays_ne_zero (hi : i < n) : det (A.back i) (A.tang (i + 1)) ≠ 0 :=
 
 /-! ### The edge frame -/
 
-theorem off_zero_zero : A.off i 0 0 = A.vertex i := by rw [off]; module
+theorem off_zero_zero : A.off i 0 0 = A.vertex i := by
+  simp only [off, zero_smul, add_zero]
 
 theorem pt_zero : A.pt i 0 = A.vertex i := off_zero_zero
 
@@ -214,7 +215,7 @@ theorem pt_len : A.pt i (A.len i) = A.vertex (i + 1) := by
   rw [pt_eq, ← vertex_succ_eq]
 
 theorem off_sub_vertex : A.off i t s - A.vertex i = t • A.tang i + s • perp (A.tang i) := by
-  rw [off]; module
+  rw [off, add_assoc, add_sub_cancel_left]
 
 theorem pt_sub_vertex : A.pt i c - A.vertex i = c • A.tang i := by
   rw [pt, off_sub_vertex, zero_smul, add_zero]
@@ -224,7 +225,8 @@ theorem dist_pt_vertex : dist (A.pt i c) (A.vertex i) = |c| := by
 
 theorem off_sub_vertex_succ :
     A.off i t s - A.vertex (i + 1) = (t - A.len i) • A.tang i + s • perp (A.tang i) := by
-  rw [off, vertex_succ_eq]; module
+  rw [off, vertex_succ_eq, sub_smul]
+  abel
 
 /-- The same difference written in the frame of the incoming ray, which is the form the germ
 argument at `vertex (i + 1)` consumes. -/
@@ -256,9 +258,8 @@ theorem dist_pt_vertex_succ : dist (A.pt i c) (A.vertex (i + 1)) = |c - A.len i|
     isDirection_tang.norm, mul_one]
 
 theorem dist_off_pt : dist (A.off i t s) (A.pt i t) = |s| := by
-  rw [pt, dist_eq_norm, show A.off i t s - A.off i t 0 = s • perp (A.tang i) by
-    rw [off, off]; module, norm_smul, Real.norm_eq_abs, norm_perp, isDirection_tang.norm,
-    mul_one]
+  rw [dist_eq_norm, off, pt_eq, add_sub_cancel_left, norm_smul, Real.norm_eq_abs,
+    norm_perp, isDirection_tang.norm, mul_one]
 
 @[simp] theorem coordAlong_off : coordAlong (A.vertex i) (A.tang i) (A.off i t s) = t :=
   coordAlong_param isDirection_tang _ _ _
@@ -279,7 +280,7 @@ theorem mem_edge_iff {x : Plane} :
   constructor
   · rintro ⟨θ, ⟨hθ0, hθ1⟩, rfl⟩
     refine ⟨θ * A.len i, ⟨mul_nonneg hθ0 len_pos.le, ?_⟩, ?_⟩
-    · nlinarith [len_pos (A := A) (i := i)]
+    · exact mul_le_of_le_one_left len_pos.le hθ1
     · rw [pt_eq, ← len_smul_tang]
       simp [smul_smul]
   · rintro ⟨c, ⟨hc0, hc1⟩, rfl⟩
@@ -312,7 +313,7 @@ incoming ray there. -/
 theorem mem_edge_sub_succ {x : Plane} (hx : x ∈ A.edge i) :
     ∃ c : ℝ, 0 ≤ c ∧ x - A.vertex (i + 1) = c • A.back i := by
   obtain ⟨c, ⟨hc0, hc1⟩, rfl⟩ := mem_edge_iff.1 hx
-  refine ⟨A.len i - c, by linarith, ?_⟩
+  refine ⟨A.len i - c, sub_nonneg.mpr hc1, ?_⟩
   rw [pt, off_sub_vertex_succ, back_eq, zero_smul, add_zero]
   module
 
@@ -324,7 +325,7 @@ theorem vertex_add_smul_back : A.vertex (i + 1) + c • A.back i = A.pt i (A.len
 theorem mem_edge_of_smul_back (hc0 : 0 ≤ c) (hc1 : c ≤ A.len i) :
     A.vertex (i + 1) + c • A.back i ∈ A.edge i := by
   rw [vertex_add_smul_back]
-  exact pt_mem_edge ⟨by linarith, by linarith⟩
+  exact pt_mem_edge ⟨sub_nonneg.mpr hc1, sub_le_self _ hc0⟩
 
 theorem mem_edge_of_smul_tang (hc0 : 0 ≤ c) (hc1 : c ≤ A.len i) :
     A.vertex i + c • A.tang i ∈ A.edge i := by
@@ -376,7 +377,7 @@ theorem isCompact_trimmed {lam : ℝ} : IsCompact (A.trimmed i lam) :=
 
 theorem trimmed_subset_edge {lam : ℝ} (hlam : 0 < lam) : A.trimmed i lam ⊆ A.edge i := by
   rintro _ ⟨c, hc, rfl⟩
-  exact pt_mem_edge ⟨le_trans hlam.le hc.1, le_trans hc.2 (by linarith)⟩
+  exact pt_mem_edge ⟨le_trans hlam.le hc.1, le_trans hc.2 (by linarith only [hlam])⟩
 
 /-- **Simplicity, second form.** The trimmed core of an edge misses every other edge: the two
 common points `edges_meet` allows are the endpoints, and the trim removes them. -/
@@ -385,18 +386,18 @@ theorem trimmed_disjoint_edge {lam : ℝ} (hlam : 0 < lam) (hi : i ≤ n) (hj : 
   rw [Set.disjoint_left]
   rintro x ⟨c, hc, rfl⟩ hx
   have hc0 : (0 : ℝ) ≤ c := le_trans hlam.le hc.1
-  have hcl : c ≤ A.len i := le_trans hc.2 (by linarith)
+  have hcl : c ≤ A.len i := le_trans hc.2 (by linarith only [hlam, hi])
   have hmem : A.pt i c ∈ A.edge i ∩ A.edge j := ⟨pt_mem_edge ⟨hc0, hcl⟩, hx⟩
   have hsub := A.edges_meet i hi j hj (Ne.symm hij) hmem
   simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at hsub
   rcases hsub with h | h
   · have h0 : |c| = 0 := by rw [← dist_pt_vertex (A := A) (i := i) (c := c), h, dist_self]
     rw [abs_of_nonneg hc0] at h0
-    linarith [hc.1]
+    linarith only [hlam, h0, hc.left]
   · have h0 : |c - A.len i| = 0 := by
       rw [← dist_pt_vertex_succ (A := A) (i := i) (c := c), h, dist_self]
-    rw [abs_of_nonpos (by linarith)] at h0
-    linarith [hc.2]
+    rw [abs_of_nonpos (by linarith only [hcl])] at h0
+    linarith only [hlam, h0, hc.right]
 
 /-! ### The four germs at an interior vertex
 
@@ -417,9 +418,9 @@ theorem off_sub_mem_arcR_start (hi : i < n) (hs : s < 0)
     A.off (i + 1) t s - A.vertex (i + 1) ∈ arcCCW (A.back i) (A.tang (i + 1)) := by
   have h : A.off (i + 1) t s - A.vertex (i + 1) =
       t • A.tang (i + 1) - (-s) • perp (A.tang (i + 1)) := by
-    rw [off_sub_vertex]; module
+    rw [off_sub_vertex, neg_smul, sub_neg_eq_add]
   rw [h]
-  exact (germs_split' (det_rays_ne_zero hi) (by linarith) hsm).2.2
+  exact (germs_split' (det_rays_ne_zero hi) (neg_pos.mpr hs) hsm).2.2
 
 theorem off_sub_mem_arcL_finish (hi : i < n) (hs : 0 < s)
     (hsm : s * |inner ℝ (A.back i) (A.tang (i + 1))| <
@@ -434,9 +435,9 @@ theorem off_sub_mem_arcR_finish (hi : i < n) (hs : s < 0)
     A.off i t s - A.vertex (i + 1) ∈ arcCCW (A.back i) (A.tang (i + 1)) := by
   have h : A.off i t s - A.vertex (i + 1) =
       (A.len i - t) • A.back i + (-s) • perp (A.back i) := by
-    rw [off_sub_vertex_succ_ray]; module
+    rw [off_sub_vertex_succ_ray, neg_smul, sub_eq_add_neg]
   rw [h]
-  exact (germs_split' (det_rays_ne_zero hi) (by linarith) hsm).2.1
+  exact (germs_split' (det_rays_ne_zero hi) (neg_pos.mpr hs) hsm).2.1
 
 end PolyArc
 
@@ -496,12 +497,12 @@ variable {n : ℕ} {A : PolyArc n} {D K : Set Plane} (S : ArcStrip A D K) {i j k
 
 theorem lam_pos : 0 < S.lam := lt_trans S.rho_pos S.rho_lt_lam
 
-theorem R_pos : 0 < S.R := by have := S.lam_pos; linarith [S.two_lam_lt_R]
+theorem R_pos : 0 < S.R := by have := S.lam_pos; linarith only [S.two_lam_lt_R, this]
 
 theorem rho_lt_R : S.rho < S.R := by
   have := S.lam_pos; have := S.rho_lt_lam; linarith [S.two_lam_lt_R]
 
-theorem lam_lt_R : S.lam < S.R := by have := S.lam_pos; linarith [S.two_lam_lt_R]
+theorem lam_lt_R : S.lam < S.R := by have := S.lam_pos; linarith only [S.two_lam_lt_R, this]
 
 /-! ### The four families of blocks -/
 
@@ -596,10 +597,10 @@ theorem isConnected_sectorR (hi : i < n) : IsConnected (S.sectorR i) :=
   isConnected_cone_arcCCW _ (PolyArc.det_rays_ne_zero hi) S.R_pos
 
 theorem blockL_subset_tube : S.blockL i ⊆ S.tube i := fun _ hy =>
-  ⟨hy.1, hy.2.1, by linarith [S.rho_pos, hy.2.2.1], hy.2.2.2⟩
+  ⟨hy.1, hy.2.1, by linarith only [S.rho_pos, hy.right.right.left], hy.2.2.2⟩
 
 theorem blockR_subset_tube : S.blockR i ⊆ S.tube i := fun _ hy =>
-  ⟨hy.1, hy.2.1, hy.2.2.1, by linarith [S.rho_pos, hy.2.2.2]⟩
+  ⟨hy.1, hy.2.1, hy.2.2.1, by linarith only [S.rho_pos, hy.right.right.right]⟩
 
 theorem sectorL_subset_ball : S.sectorL i ⊆ ball (A.vertex (i + 1)) S.R := cone_subset_ball
 theorem sectorR_subset_ball : S.sectorR i ⊆ ball (A.vertex (i + 1)) S.R := cone_subset_ball
@@ -615,7 +616,7 @@ theorem exists_foot (h : x ∈ S.tube i) :
 
 theorem pt_mem_edge_of_trim {c : ℝ} (hc : c ∈ Set.Icc S.lam (A.len i - S.lam)) :
     A.pt i c ∈ A.edge i :=
-  PolyArc.pt_mem_edge ⟨le_trans S.lam_pos.le hc.1, le_trans hc.2 (by linarith [S.lam_pos])⟩
+  PolyArc.pt_mem_edge ⟨le_trans S.lam_pos.le hc.1, le_trans hc.2 (by linarith only [lam_pos S])⟩
 
 /-! ### The germ argument at an interior vertex -/
 
@@ -645,21 +646,22 @@ theorem blockL_sub_mem_arcL_finish (hi : i < n) (h : x ∈ S.blockL i) :
   obtain ⟨h1, h2, h3, h4⟩ := S.mem_blockL_iff.1 h
   rw [PolyArc.off_coord A i x]
   exact PolyArc.off_sub_mem_arcL_finish hi h3
-    (S.germ_ineq hi (by linarith) h3 h4)
+    (S.germ_ineq hi (by linarith only [h2]) h3 h4)
 
 theorem blockR_sub_mem_arcR_start (hi : i < n) (h : x ∈ S.blockR (i + 1)) :
     x - A.vertex (i + 1) ∈ arcCCW (A.back i) (A.tang (i + 1)) := by
   obtain ⟨h1, h2, h3, h4⟩ := S.mem_blockR_iff.1 h
   rw [PolyArc.off_coord A (i + 1) x]
   exact PolyArc.off_sub_mem_arcR_start hi h4
-    (S.germ_ineq hi h1 (by linarith) (by linarith))
+    (S.germ_ineq hi h1 (by linarith only [h4]) (by linarith only [h3]))
 
 theorem blockR_sub_mem_arcR_finish (hi : i < n) (h : x ∈ S.blockR i) :
     x - A.vertex (i + 1) ∈ arcCCW (A.back i) (A.tang (i + 1)) := by
   obtain ⟨h1, h2, h3, h4⟩ := S.mem_blockR_iff.1 h
   rw [PolyArc.off_coord A i x]
   exact PolyArc.off_sub_mem_arcR_finish hi h4
-    (S.germ_ineq hi (by linarith) (by linarith) (by linarith))
+    (S.germ_ineq hi (by linarith only [hi, h, h1, h2])
+      (by linarith only [h4]) (by linarith only [h3]))
 
 end ArcStrip
 
@@ -732,7 +734,7 @@ theorem sector_notMem_far_edge (hi : i ≤ n + 1) (hj : j ≤ n) (h1 : i ≠ j) 
   intro hx
   have := S.sep_vertex_edge i hi j hj h1 h2 x hx
   rw [mem_ball, dist_comm] at h
-  linarith [S.R_pos]
+  linarith only [h, this, R_pos S]
 
 /-- A sector misses the two edges incident to its vertex: their points lie on the two bounding
 rays, and the arcs are open. -/
@@ -894,7 +896,8 @@ theorem tube_diff_carrier_subset (hi : i ≤ n) :
       rw [PolyArc.pt, ← h]; exact PolyArc.off_coord A i y
     rw [hy0]
     exact PolyArc.edge_subset_carrier hi (PolyArc.pt_mem_edge
-      ⟨by linarith [S.lam_pos], by linarith [S.lam_pos]⟩)
+      ⟨by linarith only [hi, hyc, h1, h2, lam_pos S],
+        by linarith only [hi, hyc, h1, h2, lam_pos S]⟩)
   · exact Or.inl (S.mem_blockL_iff.2 ⟨h1, h2, h, h4⟩)
 
 /-- **Lemma 1.8 (b), the set equality.** Removing the arc from the collar leaves exactly the two
@@ -976,14 +979,14 @@ germ threshold. This is the arc's replacement for the `exists_common_bound` of
 theorem exists_offset_bound {ε b X k : ℝ} (hε : 0 < ε) (hb : 0 < b) (hX : 0 < X) (hk : 0 < k) :
     ∃ σ : ℝ, 0 < σ ∧ σ < ε ∧ σ < b ∧ σ * k < X := by
   refine ⟨min (min (ε / 2) (b / 2)) (X / (2 * k)),
-    lt_min (lt_min (by linarith) (by linarith)) (by positivity), ?_, ?_, ?_⟩
-  · exact lt_of_le_of_lt (le_trans (min_le_left _ _) (min_le_left _ _)) (by linarith)
-  · exact lt_of_le_of_lt (le_trans (min_le_left _ _) (min_le_right _ _)) (by linarith)
+    lt_min (lt_min (half_pos hε) (half_pos hb)) (by positivity), ?_, ?_, ?_⟩
+  · exact lt_of_le_of_lt (le_trans (min_le_left _ _) (min_le_left _ _)) (half_lt_self hε)
+  · exact lt_of_le_of_lt (le_trans (min_le_left _ _) (min_le_right _ _)) (half_lt_self hb)
   · have h : min (min (ε / 2) (b / 2)) (X / (2 * k)) ≤ X / (2 * k) := min_le_right _ _
     have h2 := mul_le_mul_of_nonneg_right h hk.le
     have h3 : X / (2 * k) * k = X / 2 := by field_simp
     rw [h3] at h2
-    linarith
+    exact h2.trans_lt (half_lt_self hX)
 
 namespace ArcStrip
 
@@ -995,7 +998,9 @@ The blueprint's "consecutive edge and vertex blocks overlap in a nonempty labell
 Both witnesses sit at across-coordinate `rho / 2`, at along-coordinate `3 lam / 2` from the
 interior vertex in question. -/
 
-theorem lam_lt_three_halves_lam : S.lam < 3 * S.lam / 2 := by have := S.lam_pos; linarith
+theorem lam_lt_three_halves_lam : S.lam < 3 * S.lam / 2 := by
+  have := S.lam_pos
+  linarith only [this]
 
 theorem three_halves_lam_lt (hi : i ≤ n) : 3 * S.lam / 2 < A.len i - S.lam := by
   have := S.lam_pos
@@ -1010,26 +1015,26 @@ theorem overlap_dist_lt : 3 * S.lam / 2 + S.rho / 2 < S.R := by
 theorem mem_blockL_overlap_start (hi : i < n) :
     A.off (i + 1) (3 * S.lam / 2) (S.rho / 2) ∈ S.blockL (i + 1) :=
   S.mem_blockL_off.2 ⟨S.lam_lt_three_halves_lam, S.three_halves_lam_lt (by omega),
-    by linarith [S.rho_pos], by linarith [S.rho_pos]⟩
+    by linarith only [S.rho_pos], by linarith only [S.rho_pos]⟩
 
 theorem mem_blockR_overlap_start (hi : i < n) :
     A.off (i + 1) (3 * S.lam / 2) (-(S.rho / 2)) ∈ S.blockR (i + 1) :=
   S.mem_blockR_off.2 ⟨S.lam_lt_three_halves_lam, S.three_halves_lam_lt (by omega),
-    by linarith [S.rho_pos], by linarith [S.rho_pos]⟩
+    by linarith only [S.rho_pos], by linarith only [S.rho_pos]⟩
 
 theorem mem_blockL_overlap_finish (hi : i < n) :
     A.off i (A.len i - 3 * S.lam / 2) (S.rho / 2) ∈ S.blockL i := by
   have h1 : S.lam < A.len i - 3 * S.lam / 2 := by
     have := S.lam_pos; have := S.four_lam_lt_len i (by omega); linarith
   exact S.mem_blockL_off.2 ⟨h1, by have := S.lam_pos; linarith, by linarith [S.rho_pos],
-    by linarith [S.rho_pos]⟩
+    by linarith only [S.rho_pos]⟩
 
 theorem mem_blockR_overlap_finish (hi : i < n) :
     A.off i (A.len i - 3 * S.lam / 2) (-(S.rho / 2)) ∈ S.blockR i := by
   have h1 : S.lam < A.len i - 3 * S.lam / 2 := by
     have := S.lam_pos; have := S.four_lam_lt_len i (by omega); linarith
   exact S.mem_blockR_off.2 ⟨h1, by have := S.lam_pos; linarith, by linarith [S.rho_pos],
-    by linarith [S.rho_pos]⟩
+    by linarith only [S.rho_pos]⟩
 
 /-- **The overlap at the departure vertex.** -/
 theorem mem_overlapL_start (hi : i < n) :
@@ -1037,8 +1042,8 @@ theorem mem_overlapL_start (hi : i < n) :
   refine ⟨S.mem_blockL_overlap_start hi,
     S.blockL_sub_mem_arcL_start hi (S.mem_blockL_overlap_start hi), ?_⟩
   refine lt_of_le_of_lt PolyArc.dist_off_vertex_le ?_
-  rw [abs_of_pos (by linarith [S.lam_pos] : (0:ℝ) < 3 * S.lam / 2),
-    abs_of_pos (by linarith [S.rho_pos] : (0:ℝ) < S.rho / 2)]
+  rw [abs_of_pos (by linarith only [S.lam_pos] : (0:ℝ) < 3 * S.lam / 2),
+    abs_of_pos (by linarith only [S.rho_pos] : (0:ℝ) < S.rho / 2)]
   exact S.overlap_dist_lt
 
 /-- **The overlap at the arrival vertex.** -/
@@ -1048,8 +1053,8 @@ theorem mem_overlapL_finish (hi : i < n) :
     S.blockL_sub_mem_arcL_finish hi (S.mem_blockL_overlap_finish hi), ?_⟩
   refine lt_of_le_of_lt PolyArc.dist_off_vertex_succ_le ?_
   rw [show A.len i - 3 * S.lam / 2 - A.len i = -(3 * S.lam / 2) by ring,
-    abs_neg, abs_of_pos (by linarith [S.lam_pos] : (0:ℝ) < 3 * S.lam / 2),
-    abs_of_pos (by linarith [S.rho_pos] : (0:ℝ) < S.rho / 2)]
+    abs_neg, abs_of_pos (by linarith only [S.lam_pos] : (0:ℝ) < 3 * S.lam / 2),
+    abs_of_pos (by linarith only [S.rho_pos] : (0:ℝ) < S.rho / 2)]
   exact S.overlap_dist_lt
 
 theorem mem_overlapR_start (hi : i < n) :
@@ -1057,8 +1062,8 @@ theorem mem_overlapR_start (hi : i < n) :
   refine ⟨S.mem_blockR_overlap_start hi,
     S.blockR_sub_mem_arcR_start hi (S.mem_blockR_overlap_start hi), ?_⟩
   refine lt_of_le_of_lt PolyArc.dist_off_vertex_le ?_
-  rw [abs_of_pos (by linarith [S.lam_pos] : (0:ℝ) < 3 * S.lam / 2),
-    abs_neg, abs_of_pos (by linarith [S.rho_pos] : (0:ℝ) < S.rho / 2)]
+  rw [abs_of_pos (by linarith only [S.lam_pos] : (0:ℝ) < 3 * S.lam / 2),
+    abs_neg, abs_of_pos (by linarith only [S.rho_pos] : (0:ℝ) < S.rho / 2)]
   exact S.overlap_dist_lt
 
 theorem mem_overlapR_finish (hi : i < n) :
@@ -1067,19 +1072,19 @@ theorem mem_overlapR_finish (hi : i < n) :
     S.blockR_sub_mem_arcR_finish hi (S.mem_blockR_overlap_finish hi), ?_⟩
   refine lt_of_le_of_lt PolyArc.dist_off_vertex_succ_le ?_
   rw [show A.len i - 3 * S.lam / 2 - A.len i = -(3 * S.lam / 2) by ring,
-    abs_neg, abs_of_pos (by linarith [S.lam_pos] : (0:ℝ) < 3 * S.lam / 2),
-    abs_neg, abs_of_pos (by linarith [S.rho_pos] : (0:ℝ) < S.rho / 2)]
+    abs_neg, abs_of_pos (by linarith only [S.lam_pos] : (0:ℝ) < 3 * S.lam / 2),
+    abs_neg, abs_of_pos (by linarith only [S.rho_pos] : (0:ℝ) < S.rho / 2)]
   exact S.overlap_dist_lt
 
 theorem blockL_nonempty (hi : i ≤ n) : (S.blockL i).Nonempty :=
   ⟨A.off i (3 * S.lam / 2) (S.rho / 2), S.mem_blockL_off.2
-    ⟨S.lam_lt_three_halves_lam, S.three_halves_lam_lt hi, by linarith [S.rho_pos],
-      by linarith [S.rho_pos]⟩⟩
+    ⟨S.lam_lt_three_halves_lam, S.three_halves_lam_lt hi, by linarith only [S.rho_pos],
+      by linarith only [S.rho_pos]⟩⟩
 
 theorem blockR_nonempty (hi : i ≤ n) : (S.blockR i).Nonempty :=
   ⟨A.off i (3 * S.lam / 2) (-(S.rho / 2)), S.mem_blockR_off.2
-    ⟨S.lam_lt_three_halves_lam, S.three_halves_lam_lt hi, by linarith [S.rho_pos],
-      by linarith [S.rho_pos]⟩⟩
+    ⟨S.lam_lt_three_halves_lam, S.three_halves_lam_lt hi, by linarith only [S.rho_pos],
+      by linarith only [S.rho_pos]⟩⟩
 
 theorem isConnected_blockL (hi : i ≤ n) : IsConnected (S.blockL i) :=
   S.convex_blockL.isConnected (S.blockL_nonempty hi)
@@ -1197,7 +1202,7 @@ theorem sectorL_disjoint_sectorR (hi : i < n) (hj : j < n) (hL : x ∈ S.sectorL
     have h1 : dist (A.vertex (i + 1)) (A.vertex (j + 1)) ≤
         dist (A.vertex (i + 1)) x + dist x (A.vertex (j + 1)) := dist_triangle _ _ _
     rw [dist_comm (A.vertex (i + 1)) x] at h1
-    linarith
+    linarith only [hij, hsep, hdL, hdR, h1]
 
 /-- **The two tracks of the collar are disjoint.** -/
 theorem sideL_disjoint_sideR : Disjoint S.sideL S.sideR := by
@@ -1240,12 +1245,12 @@ theorem subset_nbhd : K ⊆ S.nbhd := by
   rcases lt_or_ge (A.len i - S.R) c with h2 | h2
   · have hin : i ≠ n := fun h => by have h2' := hhigh h; linarith
     refine Or.inr (mem_iUnion_lt_nat.2 ⟨i, by omega, ?_⟩)
-    rw [mem_ball, PolyArc.dist_pt_vertex_succ, abs_of_nonpos (by linarith)]
-    linarith
+    rw [mem_ball, PolyArc.dist_pt_vertex_succ, abs_of_nonpos (sub_nonpos.2 hc1)]
+    simpa only [neg_sub] using (sub_lt_comm.1 h2)
   · refine Or.inl (mem_iUnion_le_nat.2 ⟨i, hi, ?_⟩)
     rw [PolyArc.pt]
-    exact S.mem_tube_off.2 ⟨by linarith [S.lam_lt_R], by linarith [S.lam_lt_R],
-      by linarith [S.rho_pos], S.rho_pos⟩
+    exact S.mem_tube_off.2 ⟨S.lam_lt_R.trans_le h1,
+      h2.trans_lt (sub_lt_sub_left S.lam_lt_R _), neg_neg_iff_pos.2 S.rho_pos, S.rho_pos⟩
 
 /-! ### Both tracks approach every point of `K` -/
 
@@ -1253,53 +1258,11 @@ theorem subset_nbhd : K ⊆ S.nbhd := by
 which stays in the arc because an arc of directions is a cone. -/
 theorem exists_near_sectorL (hi : i < n) {ε : ℝ} (hε : 0 < ε) :
     ∃ y ∈ S.sectorL i, dist y (A.vertex (i + 1)) < ε := by
-  obtain ⟨z, hz⟩ := (S.isConnected_sectorL hi).nonempty
-  have harc : z - A.vertex (i + 1) ∈ arcCCW (A.tang (i + 1)) (A.back i) := hz.1
-  have hwne : z - A.vertex (i + 1) ≠ 0 := fun h => zero_notMem_arcCCW _ _ (h ▸ harc)
-  have hwpos : 0 < ‖z - A.vertex (i + 1)‖ := norm_pos_iff.2 hwne
-  have hzR : ‖z - A.vertex (i + 1)‖ < S.R := by rw [← dist_eq_norm]; exact hz.2
-  refine ⟨A.vertex (i + 1) + (min 1 (ε / (2 * ‖z - A.vertex (i + 1)‖))) • (z - A.vertex (i + 1)),
-    ⟨?_, ?_⟩, ?_⟩ <;>
-    (have hδpos : 0 < min 1 (ε / (2 * ‖z - A.vertex (i + 1)‖)) := lt_min one_pos (by positivity)
-     have hsub : A.vertex (i + 1) +
-         (min 1 (ε / (2 * ‖z - A.vertex (i + 1)‖))) • (z - A.vertex (i + 1)) -
-         A.vertex (i + 1) =
-         (min 1 (ε / (2 * ‖z - A.vertex (i + 1)‖))) • (z - A.vertex (i + 1)) := by module)
-  · rw [Set.mem_ofPred_eq, hsub]
-    exact (smul_mem_arcCCW hδpos).2 harc
-  · rw [mem_ball, dist_eq_norm, hsub, norm_smul, Real.norm_eq_abs, abs_of_pos hδpos]
-    have h1 : min 1 (ε / (2 * ‖z - A.vertex (i + 1)‖)) ≤ 1 := min_le_left _ _
-    nlinarith
-  · rw [dist_eq_norm, hsub, norm_smul, Real.norm_eq_abs, abs_of_pos hδpos]
-    have h2 : min 1 (ε / (2 * ‖z - A.vertex (i + 1)‖)) ≤ ε / (2 * ‖z - A.vertex (i + 1)‖) :=
-      min_le_right _ _
-    have hkey : ε / (2 * ‖z - A.vertex (i + 1)‖) * ‖z - A.vertex (i + 1)‖ = ε / 2 := by field_simp
-    nlinarith [mul_le_mul_of_nonneg_right h2 hwpos.le]
+  exact exists_near_arcCCW_in_ball _ _ _ (S.isConnected_sectorL hi).nonempty hε
 
 theorem exists_near_sectorR (hi : i < n) {ε : ℝ} (hε : 0 < ε) :
     ∃ y ∈ S.sectorR i, dist y (A.vertex (i + 1)) < ε := by
-  obtain ⟨z, hz⟩ := (S.isConnected_sectorR hi).nonempty
-  have harc : z - A.vertex (i + 1) ∈ arcCCW (A.back i) (A.tang (i + 1)) := hz.1
-  have hwne : z - A.vertex (i + 1) ≠ 0 := fun h => zero_notMem_arcCCW _ _ (h ▸ harc)
-  have hwpos : 0 < ‖z - A.vertex (i + 1)‖ := norm_pos_iff.2 hwne
-  have hzR : ‖z - A.vertex (i + 1)‖ < S.R := by rw [← dist_eq_norm]; exact hz.2
-  refine ⟨A.vertex (i + 1) + (min 1 (ε / (2 * ‖z - A.vertex (i + 1)‖))) • (z - A.vertex (i + 1)),
-    ⟨?_, ?_⟩, ?_⟩ <;>
-    (have hδpos : 0 < min 1 (ε / (2 * ‖z - A.vertex (i + 1)‖)) := lt_min one_pos (by positivity)
-     have hsub : A.vertex (i + 1) +
-         (min 1 (ε / (2 * ‖z - A.vertex (i + 1)‖))) • (z - A.vertex (i + 1)) -
-         A.vertex (i + 1) =
-         (min 1 (ε / (2 * ‖z - A.vertex (i + 1)‖))) • (z - A.vertex (i + 1)) := by module)
-  · rw [Set.mem_ofPred_eq, hsub]
-    exact (smul_mem_arcCCW hδpos).2 harc
-  · rw [mem_ball, dist_eq_norm, hsub, norm_smul, Real.norm_eq_abs, abs_of_pos hδpos]
-    have h1 : min 1 (ε / (2 * ‖z - A.vertex (i + 1)‖)) ≤ 1 := min_le_left _ _
-    nlinarith
-  · rw [dist_eq_norm, hsub, norm_smul, Real.norm_eq_abs, abs_of_pos hδpos]
-    have h2 : min 1 (ε / (2 * ‖z - A.vertex (i + 1)‖)) ≤ ε / (2 * ‖z - A.vertex (i + 1)‖) :=
-      min_le_right _ _
-    have hkey : ε / (2 * ‖z - A.vertex (i + 1)‖) * ‖z - A.vertex (i + 1)‖ = ε / 2 := by field_simp
-    nlinarith [mul_le_mul_of_nonneg_right h2 hwpos.le]
+  exact exists_near_arcCCW_in_ball _ _ _ (S.isConnected_sectorR hi).nonempty hε
 
 /-- **Both tracks come arbitrarily close to every point of `K`.** In the middle of an edge this
 is the block; at an interior vertex it is `exists_near_sectorL`; in between it is the germ with
@@ -1392,26 +1355,27 @@ theorem exists_near_sides (hx : x ∈ K) {ε : ℝ} (hε : 0 < ε) :
       abs_pos.2 (PolyArc.det_rays_ne_zero hin')
     have hker : (0 : ℝ) < 1 + |inner ℝ (A.back i) (A.tang (i + 1))| := by positivity
     obtain ⟨σ, hσpos, hσε, hσR, hσm⟩ := exists_offset_bound hε
-      (show (0 : ℝ) < S.R - S.lam by linarith [S.lam_lt_R])
-      (mul_pos (show (0 : ℝ) < A.len i - c by linarith) hdet) hker
+      (sub_pos.2 S.lam_lt_R)
+      (mul_pos (sub_pos.2 hc1') hdet) hker
     have hgerm : σ * |inner ℝ (A.back i) (A.tang (i + 1))| <
-        (A.len i - c) * |det (A.back i) (A.tang (i + 1))| := by
-      have h1 := mul_le_mul_of_nonneg_left
-        (show |inner ℝ (A.back i) (A.tang (i + 1))| ≤
-          1 + |inner ℝ (A.back i) (A.tang (i + 1))| by linarith) hσpos.le
-      linarith
+        (A.len i - c) * |det (A.back i) (A.tang (i + 1))| :=
+      (mul_lt_mul_of_pos_left (lt_add_of_pos_left _ zero_lt_one) hσpos).trans hσm
+    have hsum : S.lam + σ < S.R := by
+      rw [add_comm]
+      exact lt_sub_iff_add_lt.1 hσR
     have hdv : ∀ τ : ℝ, |τ| ≤ σ → dist (A.off i c τ) (A.vertex (i + 1)) < S.R := by
       intro τ hτ
       have h := PolyArc.dist_off_vertex_succ_le (A := A) (i := i) (t := c) (s := τ)
-      rw [abs_sub_comm, abs_of_pos (show (0 : ℝ) < A.len i - c by linarith)] at h
-      linarith
+      rw [abs_sub_comm, abs_of_pos (sub_pos.2 hc1')] at h
+      exact h.trans_lt ((add_le_add hfar hτ).trans_lt hsum)
     refine ⟨⟨A.off i c σ, S.sectorL_subset_sideL hin'
         ⟨PolyArc.off_sub_mem_arcL_finish hin' hσpos hgerm, hdv σ (by rw [abs_of_pos hσpos])⟩, ?_⟩,
       ⟨A.off i c (-σ), S.sectorR_subset_sideR hin'
-        ⟨PolyArc.off_sub_mem_arcR_finish hin' (by linarith) (by rw [neg_neg]; exact hgerm),
-          hdv (-σ) (by rw [abs_of_neg (by linarith : -σ < 0), neg_neg])⟩, ?_⟩⟩
+        ⟨PolyArc.off_sub_mem_arcR_finish hin' (neg_neg_iff_pos.2 hσpos)
+            (by rw [neg_neg]; exact hgerm),
+          hdv (-σ) (by rw [abs_neg, abs_of_pos hσpos])⟩, ?_⟩⟩
     · rw [dist_comm, PolyArc.dist_off_pt, abs_of_pos hσpos]; exact hσε
-    · rw [dist_comm, PolyArc.dist_off_pt, abs_of_neg (by linarith : -σ < 0)]; linarith
+    · rw [dist_comm, PolyArc.dist_off_pt, abs_neg, abs_of_pos hσpos]; exact hσε
 
 /-- Every point of `K` is in the closure of the left track. -/
 theorem subset_closure_sideL : K ⊆ closure S.sideL := by
@@ -1572,7 +1536,7 @@ theorem exists_cone_radius (A : PolyArc n) {D K : Set Plane} (hD : IsOpen D)
   · have h := hve (i, j) (Set.mk_mem_prod hi hj) h1 h2 y hy
     have hm : min (min e₁ (e₂ / 2)) (min (e₃ / 2) (min e₄ (min e₅ e₆))) ≤ e₃ / 2 :=
       le_trans (min_le_right _ _) (min_le_left _ _)
-    linarith
+    linarith only [h1, h2, hy, h, hm]
   · exact subset_trans (ball_subset_ball
       (le_trans (min_le_right _ _) (le_trans (min_le_right _ _) (min_le_left _ _)))) (hball i hi)
   · exact le_trans (le_trans (min_le_right _ _)
@@ -1639,13 +1603,13 @@ theorem exists_half_width (A : PolyArc n) {D : Set Plane} {lam : ℝ} (hD : IsOp
     have h := htrim (i, j) (Set.mk_mem_prod hi hj) hij _ (pt_mem_trimmed hc) y hy
     have hm : min (min (ε₁ / 2) ε₂) (min ε₃ (lam / 2)) ≤ ε₁ / 2 :=
       le_trans (min_le_left _ _) (min_le_left _ _)
-    linarith
+    linarith only [h, hm]
   · intro i hi
     have h := hgerm i hi
     have hnn : (0 : ℝ) ≤ 1 + |inner ℝ (A.back i) (A.tang (i + 1))| := by positivity
     have hm : min (min (ε₁ / 2) ε₂) (min ε₃ (lam / 2)) ≤ ε₂ :=
       le_trans (min_le_left _ _) (min_le_right _ _)
-    nlinarith
+    nlinarith only [hballs, hi, h, hnn, hm]
   · intro i hi c hc
     exact subset_trans (ball_subset_ball
       (le_trans (min_le_right _ _) (min_le_left _ _))) (hballs i hi c hc)

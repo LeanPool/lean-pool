@@ -4,10 +4,12 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Boris Alexeev
 -/
 module
+public import Mathlib.Tactic.NormNum.Parity
+public import Mathlib.AlgebraicTopology.FundamentalGroupoid.FundamentalGroup
+import all Mathlib.Topology.Homotopy.Lifting
 
-public import LeanPool.HopfProblem.Prelude
+public import LeanPool.HopfProblem.InternalPrelude
 public import LeanPool.HopfProblem.Toric.CuspHoneycombHexagon
-import all LeanPool.HopfProblem.Toric.CuspHoneycombHexagon
 
 /-!
 # Hopf problem: foundations · core 4
@@ -18,10 +20,8 @@ Supporting definitions and proofs for this stage of the six-sphere construction.
 
 open Set Function Filter Manifold Topology
 
-open scoped BigOperators CategoryTheory Complex.UnitDisc ComplexConjugate ContDiff ContinuousMap
-  Convolution ENNReal EuclideanSpace Fin.NatCast InnerProductSpace Interval Matrix MatrixGroups
-  Modular NNReal Pointwise RealInnerProductSpace TensorProduct UniformConvergence Uniformity
-  UpperHalfPlane
+open scoped BigOperators ComplexConjugate ContDiff ContinuousMap ENNReal EuclideanSpace Fin.NatCast
+  InnerProductSpace Interval Matrix NNReal Pointwise RealInnerProductSpace
 
 universe u v
 
@@ -72,14 +72,16 @@ def homeomorphFundamentalGroupEquiv {X Y : Type*} [TopologicalSpace X] [Topologi
   left_inv
     γ := by
     rw [FundamentalGroup.mapOfEq_apply]
-    obtain ⟨γ⟩ := γ
+    obtain ⟨⟨γ⟩⟩ := γ
+    apply CategoryTheory.End.ext
     apply congrArg Path.Homotopic.Quotient.mk
     ext t
     exact e.symm_apply_apply (γ t)
   right_inv
     γ := by
     rw [FundamentalGroup.mapOfEq_apply]
-    obtain ⟨γ⟩ := γ
+    obtain ⟨⟨γ⟩⟩ := γ
+    apply CategoryTheory.End.ext
     apply congrArg Path.Homotopic.Quotient.mk
     ext t
     exact e.apply_symm_apply (γ t)

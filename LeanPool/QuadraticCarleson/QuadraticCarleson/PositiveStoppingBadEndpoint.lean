@@ -50,10 +50,10 @@ theorem fullHighMajorant_sq_lintegral_le_orlicz
     (fun k ↦ (2 : ℝ) ^ (-((fullHighCutoff k : ℕ) : ℝ) / 10)) (fullCutoff 20)
     (magnitudeLevelL1Mass volume fullAmplitude f) (fun k ↦ (fullAmplitude_pos k).le)
     (fun _ ↦ by positivity)
-    (fun k ↦ by unfold fullCutoff; exact mul_pos (by norm_num) (dyadicScale_pos k))
+    (fun k ↦ by unfold fullCutoff; exact mul_pos (by norm_num1) (dyadicScale_pos k))
   have hp (k : ℕ) : ((2 : ℝ) ^ (-((fullHighCutoff k : ℕ) : ℝ) / 10)) ^ 2 =
       (2 : ℝ) ^ (-((fullHighCutoff k : ℕ) : ℝ) / 5) := by
-    rw [← Real.rpow_mul_natCast (by norm_num : (0 : ℝ) ≤ 2)]
+    rw [← Real.rpow_mul_natCast (by norm_num1 : (0 : ℝ) ≤ 2)]
     congr 1
     ring
   simp only [hp] at hw
@@ -61,9 +61,9 @@ theorem fullHighMajorant_sq_lintegral_le_orlicz
   have hm : (∑' k : ℕ, ENNReal.ofReal (fullCutoff 20 k) *
       magnitudeLevelL1Mass volume fullAmplitude f k) ≤
       80 * ∫⁻ x, ENNReal.ofReal (‖f x‖ * paperLog 1 ‖f x‖) := by
-    have h := tsum_full_weight_mul_levelMass_le_orlicz volume (C := 20) (by norm_num) hf
-    norm_num only [show (4 : ℝ) * 20 = 80 by norm_num] at h
-    simp_rw [ENNReal.ofReal_mul (by norm_num : (0 : ℝ) ≤ 80)] at h
+    have h := tsum_full_weight_mul_levelMass_le_orlicz volume (C := 20) (by norm_num1) hf
+    norm_num only [show (4 : ℝ) * 20 = 80 by norm_num1] at h
+    simp_rw [ENNReal.ofReal_mul (by norm_num1 : (0 : ℝ) ≤ 80)] at h
     rw [lintegral_const_mul' _ _ (by finiteness)] at h
     simpa only [ENNReal.ofReal_ofNat] using h
   apply hs.trans
@@ -105,7 +105,7 @@ theorem half_levelSet_measure_le_two_lintegral {F : ℝ → ℝ≥0∞} (hF : Me
     _ ≤ volume {x | (1/2 : ℝ≥0∞) ≤ F x} :=
       measure_mono (fun x (hx : (1/2 : ℝ≥0∞) < F x) ↦ hx.le)
     _ = 2 * ((1/2 : ℝ≥0∞) * volume {x | (1/2 : ℝ≥0∞) ≤ F x}) := by
-      rw [← mul_assoc, one_div, ENNReal.mul_inv_cancel (by norm_num) (by finiteness), one_mul]
+      rw [← mul_assoc, one_div, ENNReal.mul_inv_cancel (by norm_num1) (by finiteness), one_mul]
     _ ≤ _ := mul_le_mul' le_rfl hm
 
 theorem half_levelSet_measure_le_four_sq_lintegral {F : ℝ → ℝ≥0∞} (hF : Measurable F) :
@@ -115,8 +115,8 @@ theorem half_levelSet_measure_le_four_sq_lintegral {F : ℝ → ℝ≥0∞} (hF 
     _ ≤ volume {x | (1/2 : ℝ≥0∞)^2 ≤ F x ^ 2} :=
       measure_mono (fun x hx ↦ pow_le_pow_left₀ bot_le hx.le 2)
     _ = 4 * (((1/2 : ℝ≥0∞)^2) * volume {x | (1/2 : ℝ≥0∞)^2 ≤ F x ^ 2}) := by
-      rw [← mul_assoc, show (4 : ℝ≥0∞) = 2 ^ 2 by norm_num, ← mul_pow, one_div,
-        ENNReal.mul_inv_cancel (by norm_num) (by finiteness), one_pow, one_mul]
+      rw [← mul_assoc, show (4 : ℝ≥0∞) = 2 ^ 2 by norm_num1, ← mul_pow, one_div,
+        ENNReal.mul_inv_cancel (by norm_num1) (by finiteness), one_pow, one_mul]
     _ ≤ _ := mul_le_mul' le_rfl hm
 
 /-- The normalized full-real oscillatory endpoint bound for the actual

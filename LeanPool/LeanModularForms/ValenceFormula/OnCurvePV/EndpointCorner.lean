@@ -8,14 +8,11 @@ module
 public import LeanPool.LeanModularForms.GeneralizedResidueTheory.Basic
 public import LeanPool.LeanModularForms.ValenceFormula.Boundary.Basic
 import LeanPool.LeanModularForms.GeneralizedResidueTheory.OnCurvePV.Basic
-import LeanPool.LeanModularForms.ValenceFormula.Boundary.Bounds
 import LeanPool.LeanModularForms.ValenceFormula.Boundary.Smooth
 import LeanPool.LeanModularForms.ValenceFormula.OnCurvePV.Basic
 import LeanPool.LeanModularForms.ValenceFormula.WindingWeights.Common
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.Arctan
 import Mathlib.CategoryTheory.Category.Init
-import Mathlib.MeasureTheory.Covering.Besicovitch
-import Mathlib.NumberTheory.ArithmeticFunction.Misc
 
 /-!
 # On-Curve PV: Endpoint and Corner CPV
@@ -53,10 +50,11 @@ private lemma integral_inv_eq_log_sub (a : ℝ) (ha : 0 < a) (ha1 : a ≤ 1) :
     intro t ht; rw [Set.uIcc_of_le ha1] at ht
     exact Real.hasDerivAt_log (by linarith [ht.1] : t ≠ 0)
   have hint : IntervalIntegrable (fun t : ℝ => t⁻¹) MeasureTheory.volume a 1 := by
-    simp_all
+    simp_all only [uIcc_of_le, mem_Icc, and_imp, intervalIntegrable_inv_iff, zero_le_one, and_true,
+      not_le, or_true]
   rw [intervalIntegral.integral_eq_sub_of_hasDerivAt hderiv hint, Real.log_one,
     Complex.ofReal_one, Complex.log_one, ← Complex.ofReal_log ha.le]
-  push_cast; ring
+  push_cast; ac_rfl
 
 /-- `∫ t in 4..(5 - η), (t - 5)⁻¹ = log η` for `0 < η < 1`. -/
 private lemma integral_shifted_inv_eq_log (η : ℝ) (hη : 0 < η) (hη1 : η < 1) :
@@ -72,7 +70,8 @@ private lemma integral_shifted_inv_eq_log (η : ℝ) (hη : 0 < η) (hη1 : η <
     have h1 := (Real.hasDerivAt_log this).comp t ((hasDerivAt_id t).sub_const 5)
     simp only [Function.comp_def, mul_one] at h1; exact h1
   have hint : IntervalIntegrable (fun t => (t - 5)⁻¹) MeasureTheory.volume 4 (5 - η) := by
-    simp_all
+    simp_all only [uIcc_of_le, mem_Icc, and_imp, intervalIntegrable_sub_inv_iff, le_sub_self_iff,
+      not_and, not_le, implies_true, or_true]
   rw [intervalIntegral.integral_eq_sub_of_hasDerivAt hderiv hint]
   simp only [show 5 - η - 5 = -η from by ring, show (4 : ℝ) - 5 = -(1 : ℝ) from by ring]
   rw [Real.log_neg_eq_log, Real.log_neg_eq_log, Real.log_one, sub_zero]
@@ -92,7 +91,7 @@ private lemma endpoint_avoid_14 (H : ℝ) (hH : Real.sqrt 3 / 2 < H) :
         UpperHalfPlane.coe_mk, Complex.add_im, Complex.ofReal_im,
         Complex.mul_im, Complex.I_re, Complex.I_im, Complex.ofReal_re,
         Complex.div_ofNat, mul_zero, mul_one, s] at h_im
-      linarith
+      linarith only [hH, h_im]
     · have ht1' : 1 < t := lt_of_le_of_ne ht.1 (Ne.symm ht1)
       have h_norm : ‖fdBoundaryH H t‖ = 1 :=
         fdBoundary_H_eq_arc ht1' (lt_of_le_of_ne ht3 (by
@@ -102,7 +101,7 @@ private lemma endpoint_avoid_14 (H : ℝ) (hH : Real.sqrt 3 / 2 < H) :
           simp [ellipticPointRho, ellipticPointRho', UpperHalfPlane.coe_mk,
             Complex.add_im, Complex.neg_im, Complex.ofReal_im, Complex.mul_im,
             Complex.I_re, Complex.I_im, Complex.ofReal_re, Complex.div_ofNat, s] at him
-          linarith [Real.sqrt_pos.mpr (show (0 : ℝ) < 3 from by norm_num)])) |>.symm ▸
+          linarith only [hH, him, Real.sqrt_pos.mpr (show (0 : ℝ) < 3 from by norm_num)])) |>.symm ▸
         Complex.norm_exp_ofReal_mul_I _
       rw [habs] at h_norm
       have : 1 < ‖s‖ := one_lt_norm_of_one_lt_normSq (by
@@ -110,10 +109,12 @@ private lemma endpoint_avoid_14 (H : ℝ) (hH : Real.sqrt 3 / 2 < H) :
           Complex.mul_re, Complex.I_re, Complex.I_im, Complex.ofReal_im,
           Complex.add_im, Complex.mul_im, Complex.one_re, Complex.one_im,
           Complex.div_ofNat]
-        have hH0 : 0 < H := by linarith [Real.sqrt_pos.mpr (show (0 : ℝ) < 3 from by norm_num)]
-        nlinarith [mul_lt_mul hH hH.le (by positivity : (0 : ℝ) < Real.sqrt 3 / 2) hH0.le,
-                   Real.mul_self_sqrt (show (0 : ℝ) ≤ 3 from by norm_num)])
-      linarith
+        have hH0 : 0 < H := by
+          linarith only [hH, Real.sqrt_pos.mpr (show (0 : ℝ) < 3 from by norm_num)]
+        nlinarith only [hH, hH0,
+          mul_lt_mul hH hH.le (by positivity : (0 : ℝ) < Real.sqrt 3 / 2) hH0.le,
+          Real.mul_self_sqrt (show (0 : ℝ) ≤ 3 from by norm_num)])
+      linarith only [h_norm, this]
   · push Not at ht3
     have h_re_t := fdBoundary_H_seg4_re' H ht3 ht.2
     rw [habs] at h_re_t
@@ -156,7 +157,8 @@ private lemma endpoint_norm_seg1 (H : ℝ) (s : ℂ) (hs_def : s = (1 / 2 : ℂ)
     (t : ℝ) (ht0 : 0 ≤ t) (ht1 : t ≤ 1) :
     ‖fdBoundaryH H t - s‖ = t * c := by
   rw [endpoint_diff_seg1 H s hs_def c hc_def t ht0 ht1, norm_mul, Complex.norm_real,
-    Complex.norm_I, mul_one, Real.norm_eq_abs, abs_of_nonpos (by nlinarith : (-t) * c ≤ 0)]
+    Complex.norm_I, mul_one, Real.norm_eq_abs, abs_of_nonpos (by nlinarith only [hc,
+      ht0] : (-t) * c ≤ 0)]
   ring
 
 /-- Norm on seg5: `‖fdBoundaryH H t - s‖ = 5 - t` for the endpoint. -/
@@ -164,7 +166,7 @@ private lemma endpoint_norm_seg5 (H : ℝ) (s : ℂ) (hs_def : s = (1 / 2 : ℂ)
     (t : ℝ) (ht4 : 4 < t) (ht5 : t ≤ 5) :
     ‖fdBoundaryH H t - s‖ = 5 - t := by
   rw [endpoint_diff_seg5 H s hs_def t ht4, Complex.norm_real, Real.norm_eq_abs,
-    abs_of_nonpos (by linarith)]
+    abs_of_nonpos (by linarith only [ht5])]
   ring
 
 /-- Integrand on seg1: `(γ t - s)⁻¹ * γ'(t) = t⁻¹` for the endpoint. -/
@@ -174,7 +176,7 @@ private lemma endpoint_integrand_seg1 (H : ℝ) (s : ℂ) (hs_def : s = (1 / 2 :
     (fdBoundaryH H t - s)⁻¹ * deriv (fdBoundaryH H) t = (↑t : ℂ)⁻¹ := by
   rw [endpoint_diff_seg1 H s hs_def c hc_def t ht0.le ht1.le]
   erw [(fdBoundary_H_hasDerivAt_seg1 H ht1).deriv]
-  have hc_eq : (↑H - ↑(Real.sqrt 3) / 2 : ℂ) = ↑c := by push_cast [hc_def]; ring
+  have hc_eq : (↑H - ↑(Real.sqrt 3) / 2 : ℂ) = ↑c := by push_cast [hc_def]; ac_rfl
   have hrw1 : (-(↑H - ↑(Real.sqrt 3) / 2 : ℂ)) * I = -(↑c : ℂ) * I := by rw [hc_eq]
   have hrw2 : (↑(-t * c) : ℂ) * I = ↑t * (-(↑c : ℂ) * I) := by push_cast; ring
   rw [hrw1, hrw2]
@@ -211,13 +213,14 @@ lemma cpv_at_endpoint (H : ℝ) (hH : Real.sqrt 3 / 2 < H) :
   have hε_1 : ε < 1 := by have := min_le_right c (min 1 δ); have := min_le_left 1 δ; linarith
   have hε_δ : ε < δ := by have := min_le_right c (min 1 δ); have := min_le_right 1 δ; linarith
   have hε₀2_pos : 0 < ε₀ / 2 := by positivity
-  have hε₀2_c : ε₀ / 2 < c := by have := min_le_left c (min 1 δ); linarith
+  have hε₀2_c : ε₀ / 2 < c := by have := min_le_left c (min 1 δ); linarith only [hε, hε_c, this]
   have hε₀2_1 : ε₀ / 2 < 1 := by have := min_le_right c (min 1 δ); have := min_le_left 1 δ; linarith
   have hε₀2_δ : ε₀ / 2 < δ := by
     have := min_le_right c (min 1 δ); have := min_le_right 1 δ; linarith
   suffices h_formula : ∀ η, 0 < η → η < c → η < 1 → η < δ →
       F η = ↑(Real.log c) + C by
-    simp_all
+    simp_all only [one_div, sub_pos, ne_eq, gt_iff_lt, mem_Icc, and_imp, lt_min_iff, zero_lt_one,
+      and_self, and_true, div_pos_iff_of_pos_left, Nat.ofNat_pos]
   intro η hη hη_c hη_1 hη_δ
   have hη_div_c_pos : 0 < η / c := div_pos hη hc
   have hη_div_c_lt_1 : η / c < 1 := (div_lt_one hc).mpr hη_c
@@ -277,13 +280,13 @@ lemma cpv_at_endpoint (H : ℝ) (hH : Real.sqrt 3 / 2 < H) :
       then (fdBoundaryH H t - s)⁻¹ * deriv (fdBoundaryH H) t else 0) =
     ∫ t in (η / c)..1, (↑t : ℂ)⁻¹ := by
     rw [← intervalIntegral.integral_add_adjacent_intervals (hii.mono_set (by
-        rw [Set.uIcc_of_le (by linarith : (0 : ℝ) ≤ η / c),
+        rw [Set.uIcc_of_le (by exact le_of_lt hη_div_c_pos : (0 : ℝ) ≤ η / c),
           Set.uIcc_of_le (by norm_num : (0 : ℝ) ≤ 5)]
-        exact Set.Icc_subset_Icc_right (by linarith)))
+        exact Set.Icc_subset_Icc_right (by linarith only [hε, hε_1, hη_div_c_lt_1])))
       (hii.mono_set (by
-        rw [Set.uIcc_of_le (by linarith : η / c ≤ 1),
+        rw [Set.uIcc_of_le (by exact le_of_lt hη_div_c_lt_1 : η / c ≤ 1),
           Set.uIcc_of_le (by norm_num : (0 : ℝ) ≤ 5)]
-        exact Set.Icc_subset_Icc (by linarith) (by norm_num)))]
+        exact Set.Icc_subset_Icc (by exact le_of_lt hη_div_c_pos) (by norm_num)))]
     have h_zero : (∫ t in (0 : ℝ)..(η / c),
         if η < ‖fdBoundaryH H t - s‖
         then (fdBoundaryH H t - s)⁻¹ * deriv (fdBoundaryH H) t else 0) = 0 := by
@@ -291,7 +294,7 @@ lemma cpv_at_endpoint (H : ℝ) (hH : Real.sqrt 3 / 2 < H) :
           then (fdBoundaryH H t - s)⁻¹ * deriv (fdBoundaryH H) t else 0) =
           ∫ _ in (0 : ℝ)..(η / c), (0 : ℂ) :=
         intervalIntegral.integral_congr (fun t ht => by
-          rw [Set.uIcc_of_le (by linarith : (0 : ℝ) ≤ η / c)] at ht
+          rw [Set.uIcc_of_le (by exact le_of_lt hη_div_c_pos : (0 : ℝ) ≤ η / c)] at ht
           rw [ite_eq_right]; push Not
           rw [h_norm_seg1 t ht.1 (by linarith [ht.2])]
           calc t * c ≤ (η / c) * c := mul_le_mul_of_nonneg_right ht.2 hc.le
@@ -317,13 +320,13 @@ lemma cpv_at_endpoint (H : ℝ) (hH : Real.sqrt 3 / 2 < H) :
       then (fdBoundaryH H t - s)⁻¹ * deriv (fdBoundaryH H) t else 0) =
     ∫ t in (4 : ℝ)..(5 - η), (↑(t - 5) : ℂ)⁻¹ := by
     rw [← intervalIntegral.integral_add_adjacent_intervals (hii.mono_set (by
-        rw [Set.uIcc_of_le (by linarith : (4 : ℝ) ≤ 5 - η),
+        rw [Set.uIcc_of_le (by linarith only [hη_1] : (4 : ℝ) ≤ 5 - η),
           Set.uIcc_of_le (by norm_num : (0 : ℝ) ≤ 5)]
-        exact Set.Icc_subset_Icc (by norm_num) (by linarith)))
+        exact Set.Icc_subset_Icc (by norm_num) (by linarith only [hη])))
       (hii.mono_set (by
-        rw [Set.uIcc_of_le (by linarith : 5 - η ≤ 5),
+        rw [Set.uIcc_of_le (by linarith only [hη] : 5 - η ≤ 5),
           Set.uIcc_of_le (by norm_num : (0 : ℝ) ≤ 5)]
-        exact Set.Icc_subset_Icc_left (by linarith)))]
+        exact Set.Icc_subset_Icc_left (by linarith only [hε, hε_1, hη_1])))]
     have h_zero : (∫ t in (5 - η)..5,
         if η < ‖fdBoundaryH H t - s‖
         then (fdBoundaryH H t - s)⁻¹ * deriv (fdBoundaryH H) t else 0) = 0 := by
@@ -331,7 +334,7 @@ lemma cpv_at_endpoint (H : ℝ) (hH : Real.sqrt 3 / 2 < H) :
           then (fdBoundaryH H t - s)⁻¹ * deriv (fdBoundaryH H) t else 0) =
           ∫ _ in (5 - η)..5, (0 : ℂ) :=
         intervalIntegral.integral_congr (fun t ht => by
-          rw [Set.uIcc_of_le (by linarith : 5 - η ≤ 5)] at ht
+          rw [Set.uIcc_of_le (by linarith only [hη] : 5 - η ≤ 5)] at ht
           rw [ite_eq_right]; push Not
           by_cases ht5 : t = 5
           · rw [ht5, fdBoundary_H_at_five, hs_def, sub_self, norm_zero]; exact hη.le
@@ -352,7 +355,7 @@ lemma cpv_at_endpoint (H : ℝ) (hH : Real.sqrt 3 / 2 < H) :
     have ht_strict : t < 5 - η := lt_of_le_of_ne ht.2
       (fun h => ht_ne_high (Set.mem_singleton_iff.mpr h))
     rw [ite_eq_left, h_integrand_seg5 t ht4]
-    rw [h_norm_seg5 t ht4 (by linarith)]; linarith
+    rw [h_norm_seg5 t ht4 (by linarith only [hη, ht_strict])]; linarith only [ht_strict]
   have h_int1 : ∫ t in (η / c)..1, (↑t : ℂ)⁻¹ =
       Complex.log ↑(1 : ℝ) - Complex.log ↑(η / c) :=
     integral_inv_eq_log_sub (η / c) hη_div_c_pos hη_div_c_lt_1.le
@@ -377,7 +380,7 @@ private lemma corner_cpv_03 (H : ℝ) (hH : Real.sqrt 3 / 2 < H) :
     rw [habs, hs_def] at hre
     simp only [Complex.add_re, Complex.neg_re, Complex.ofReal_re, Complex.mul_re,
       Complex.I_re, Complex.I_im, Complex.ofReal_im, Complex.one_re, Complex.div_ofNat] at hre
-    linarith
+    linarith only [hre]
   · push Not at ht1
     by_cases ht3 : t < 3
     · have h_norm : ‖fdBoundaryH H t‖ = 1 := by
@@ -388,27 +391,33 @@ private lemma corner_cpv_03 (H : ℝ) (hH : Real.sqrt 3 / 2 < H) :
           Complex.ofReal_re, Complex.mul_re, Complex.I_re, Complex.I_im, Complex.ofReal_im,
           Complex.add_im, Complex.neg_im, Complex.mul_im, Complex.one_re, Complex.one_im,
           Complex.div_ofNat]
-        have hH0 : 0 < H := by linarith [Real.sqrt_pos.mpr (show (0 : ℝ) < 3 from by norm_num)]
-        nlinarith [mul_lt_mul hH hH.le (by positivity : (0 : ℝ) < Real.sqrt 3 / 2) hH0.le,
-                   Real.mul_self_sqrt (show (0 : ℝ) ≤ 3 from by norm_num)])
-      linarith
-    · have ht3_eq : t = 3 := le_antisymm ht.2 (by linarith)
+        have hH0 : 0 < H := by
+          linarith only [hH, Real.sqrt_pos.mpr (show (0 : ℝ) < 3 from by norm_num)]
+        nlinarith only [hH, hH0,
+          mul_lt_mul hH hH.le (by positivity : (0 : ℝ) < Real.sqrt 3 / 2) hH0.le,
+          Real.mul_self_sqrt (show (0 : ℝ) ≤ 3 from by norm_num)])
+      linarith only [h_norm, this]
+    · have ht3_eq : t = 3 := le_antisymm ht.2 (by linarith only [ht3])
       subst ht3_eq
       rw [fdBoundary_H_at_three] at habs
       have him_s : s.im = H := by
-        simp_all
+        simp_all only [one_div, Nat.ofNat_nonneg, Std.le_refl, and_self, Nat.one_lt_ofNat,
+          lt_self_iff_false,
+            not_false_eq_true, add_im, neg_im, inv_im, im_ofNat, neg_zero, normSq_ofNat,
+              zero_div, mul_im, ofReal_re, I_im,
+            mul_one, ofReal_im, I_re, mul_zero, add_zero, zero_add]
       rw [← habs] at him_s
       have him_rho : (ellipticPointRho : ℂ).im = Real.sqrt 3 / 2 := by
         simp [ellipticPointRho, ellipticPointRho', UpperHalfPlane.coe_mk,
           Complex.add_im, Complex.neg_im, Complex.ofReal_im, Complex.mul_im,
           Complex.I_re, Complex.I_im, Complex.ofReal_re, Complex.div_ofNat]
-      linarith [him_rho]
+      linarith only [hH, him_s, him_rho]
 
 private lemma integral_inv_shift_four (a b : ℝ) :
     (∫ t in a..b, (↑(t - 4) : ℂ)⁻¹) = ∫ u in (a - 4)..(b - 4), (↑u : ℂ)⁻¹ := by
   simp_rw [← Complex.ofReal_inv]
   rw [intervalIntegral.integral_ofReal, intervalIntegral.integral_ofReal]
-  simp_all
+  simp_all only [intervalIntegral.integral_comp_sub_right]
 
 private lemma integral_inv_neg_axis (r : ℝ) :
     (∫ u in (-1 : ℝ)..(-r), (↑u : ℂ)⁻¹) = -(∫ u in r..1, (↑u : ℂ)⁻¹) := by
@@ -417,7 +426,7 @@ private lemma integral_inv_neg_axis (r : ℝ) :
     ← Complex.ofReal_neg, Complex.ofReal_inj]
   have key : (∫ x in r..(1 : ℝ), (-x)⁻¹) = ∫ x in (-1 : ℝ)..-r, x⁻¹ :=
     intervalIntegral.integral_comp_neg (fun u : ℝ => u⁻¹) (a := r) (b := 1)
-  simp_all
+  simp_all only [inv_neg, intervalIntegral.integral_neg]
 
 lemma cpv_at_corner (H : ℝ) (hH : Real.sqrt 3 / 2 < H) :
     CauchyPrincipalValueExists' (fun z => (z - (-(1/2 : ℂ) + ↑H * I))⁻¹)
@@ -473,14 +482,14 @@ lemma cpv_at_corner (H : ℝ) (hH : Real.sqrt 3 / 2 < H) :
         ‖fdBoundaryH H t - s‖ = t - 4 := by
       intro t ht4
       rw [h_diff_seg5 t ht4, Complex.norm_real, Real.norm_eq_abs,
-        abs_of_pos (by linarith)]
+        abs_of_pos (by exact sub_pos.mpr ht4)]
     have h_integrand_seg4 : ∀ t, 3 < t → t < 4 →
         (fdBoundaryH H t - s)⁻¹ * deriv (fdBoundaryH H) t = (↑(t - 4) : ℂ)⁻¹ := by
       intro t ht3 ht4
       rw [h_diff_seg4 t ht3 ht4.le]; erw [(fdBoundary_H_hasDerivAt_seg4 H ht3 ht4).deriv]
-      have hc_eq : (↑H - ↑(Real.sqrt 3) / 2 : ℂ) = ↑c := by push_cast [hc_def]; ring
+      have hc_eq : (↑H - ↑(Real.sqrt 3) / 2 : ℂ) = ↑c := by push_cast [hc_def]; ac_rfl
       have hrw1 : (↑H - ↑(Real.sqrt 3) / 2 : ℂ) * I = (↑c : ℂ) * I := by rw [hc_eq]
-      have hrw2 : (↑((t - 4) * c) : ℂ) * I = ↑(t - 4) * (↑c * I) := by push_cast; ring
+      have hrw2 : (↑((t - 4) * c) : ℂ) * I = ↑(t - 4) * (↑c * I) := by push_cast; ac_rfl
       rw [hrw1, hrw2]
       exact inv_mul_mul_cancel ↑(t - 4) _
         (mul_ne_zero (Complex.ofReal_ne_zero.mpr hc.ne') I_ne_zero)
@@ -509,13 +518,13 @@ lemma cpv_at_corner (H : ℝ) (hH : Real.sqrt 3 / 2 < H) :
       have h_4mc_le : 4 - η / c ≤ 4 := by linarith [hη_div_c_pos]
       rw [← intervalIntegral.integral_add_adjacent_intervals
         (IntervalIntegrable.mono_set (fdBoundary_H_cutout_ii H hH s η hη)
-          (by rw [Set.uIcc_of_le (by linarith : (3 : ℝ) ≤ 4 - η / c),
+          (by rw [Set.uIcc_of_le (by exact le_of_lt h_4mc : (3 : ℝ) ≤ 4 - η / c),
                    Set.uIcc_of_le (by norm_num : (0 : ℝ) ≤ 5)]
-              exact Set.Icc_subset_Icc (by norm_num) (by linarith)))
+              exact Set.Icc_subset_Icc (by norm_num) (by linarith only [hε, hε_1, hη_div_c_pos])))
         (IntervalIntegrable.mono_set (fdBoundary_H_cutout_ii H hH s η hη)
-          (by rw [Set.uIcc_of_le (by linarith : 4 - η / c ≤ 4),
+          (by rw [Set.uIcc_of_le (by exact h_4mc_le : 4 - η / c ≤ 4),
                    Set.uIcc_of_le (by norm_num : (0 : ℝ) ≤ 5)]
-              exact Set.Icc_subset_Icc (by linarith) (by norm_num)))]
+              exact Set.Icc_subset_Icc (by linarith only [hε, hε_1, hη_div_c_lt_1]) (by norm_num)))]
       have h_zero : (∫ t in (4 - η / c)..4,
           if η < ‖fdBoundaryH H t - s‖
           then (fdBoundaryH H t - s)⁻¹ * deriv (fdBoundaryH H) t else 0) = 0 := by
@@ -546,22 +555,22 @@ lemma cpv_at_corner (H : ℝ) (hH : Real.sqrt 3 / 2 < H) :
       have ht4 : t < 4 := by linarith [hη_div_c_pos]
       rw [ite_eq_left, h_integrand_seg4 t ht3 ht4]
       rw [h_norm_seg4 t ht3 ht4.le]
-      have : η / c < 4 - t := by linarith
+      have : η / c < 4 - t := by linarith only [ht4_strict]
       calc η = (η / c) * c := by field_simp
         _ < (4 - t) * c := mul_lt_mul_of_pos_right this hc
     have h_I45 : (∫ t in (4 : ℝ)..5, if η < ‖fdBoundaryH H t - s‖
         then (fdBoundaryH H t - s)⁻¹ * deriv (fdBoundaryH H) t else 0) =
       ∫ t in (4 + η)..5, (↑(t - 4) : ℂ)⁻¹ := by
-      have h_4ph : 4 + η ≤ 5 := by linarith
+      have h_4ph : 4 + η ≤ 5 := by linarith only [hη_1]
       rw [← intervalIntegral.integral_add_adjacent_intervals
         (IntervalIntegrable.mono_set (fdBoundary_H_cutout_ii H hH s η hη)
-          (by rw [Set.uIcc_of_le (by linarith : (4 : ℝ) ≤ 4 + η),
+          (by rw [Set.uIcc_of_le (by linarith only [hη] : (4 : ℝ) ≤ 4 + η),
                    Set.uIcc_of_le (by norm_num : (0 : ℝ) ≤ 5)]
-              exact Set.Icc_subset_Icc (by norm_num) (by linarith)))
+              exact Set.Icc_subset_Icc (by norm_num) (by exact h_4ph)))
         (IntervalIntegrable.mono_set (fdBoundary_H_cutout_ii H hH s η hη)
           (by rw [Set.uIcc_of_le h_4ph,
                    Set.uIcc_of_le (by norm_num : (0 : ℝ) ≤ 5)]
-              exact Set.Icc_subset_Icc (by linarith) (by norm_num)))]
+              exact Set.Icc_subset_Icc (by linarith only [hε, hε_1, hη]) (by norm_num)))]
       have h_zero : (∫ t in (4 : ℝ)..(4 + η),
           if η < ‖fdBoundaryH H t - s‖
           then (fdBoundaryH H t - s)⁻¹ * deriv (fdBoundaryH H) t else 0) = 0 := by
@@ -570,13 +579,13 @@ lemma cpv_at_corner (H : ℝ) (hH : Real.sqrt 3 / 2 < H) :
             then (fdBoundaryH H t - s)⁻¹ * deriv (fdBoundaryH H) t else 0) =
             ∫ _ in (4 : ℝ)..(4 + η), (0 : ℂ) :=
           intervalIntegral.integral_congr (fun t ht => by
-            rw [Set.uIcc_of_le (by linarith : (4 : ℝ) ≤ 4 + η)] at ht
+            rw [Set.uIcc_of_le (by linarith only [hη] : (4 : ℝ) ≤ 4 + η)] at ht
             rw [ite_eq_right]; push Not
             by_cases ht4 : t = 4
             · subst ht4
               rw [fdBoundary_H_at_four H, hs_def]
               norm_num
-              linarith
+              exact le_of_lt hη
             · have ht4' : 4 < t := lt_of_le_of_ne ht.1 (Ne.symm ht4)
               rw [h_norm_seg5 t ht4']; linarith [ht.2])
         rw [this, intervalIntegral.integral_zero]

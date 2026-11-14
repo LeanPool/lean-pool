@@ -7,11 +7,7 @@ module
 
 public import LeanPool.InfinitaryLogic.Descriptive.StructureSpace
 public import Mathlib.Topology.Constructions
-import Mathlib.Algebra.Order.Module.Field
-import Mathlib.Data.EReal.Inv
 import Mathlib.Tactic.Measurability.Init
-import Mathlib.Topology.Algebra.InfiniteSum.Order
-import Mathlib.Topology.MetricSpace.Bounded
 
 /-!
 # Product Topology on the Structure Space

@@ -6,11 +6,7 @@ Authors: Ryan McCorvie, Jack McCarthy
 module
 
 public import LeanPool.ClassificationOfSurfaces.FiniteCyclicRealization
-import Mathlib.Analysis.SpecialFunctions.Bernstein
 import Mathlib.Analysis.SpecialFunctions.Complex.Circle
-import Mathlib.CategoryTheory.Category.Init
-import Mathlib.Combinatorics.SimpleGraph.Init
-import Mathlib.MeasureTheory.Covering.Besicovitch
 
 /-!
 # Polygonal realization under signed presentation isomorphism

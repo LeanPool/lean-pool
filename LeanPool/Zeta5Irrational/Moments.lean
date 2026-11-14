@@ -11,6 +11,7 @@ public import LeanPool.Zeta5Irrational.Construction
 public import Mathlib.MeasureTheory.Integral.Bochner.Basic
 public import Mathlib.MeasureTheory.Integral.IntegrableOn
 import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Analysis.PSeries
 import Mathlib.NumberTheory.ZetaValues
 import Mathlib.Tactic.ENatToNat
 import Mathlib.Tactic.Polynomial.Basic

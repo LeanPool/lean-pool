@@ -163,7 +163,7 @@ theorem kaehler_span_of_isAlgebraic_adjoin
     apply top_unique
     rintro ⟨z, hz⟩ -
     apply IntermediateField.adjoin_induction k
-        (p := fun x hx ↦
+        (motive := fun x hx ↦
           (⟨x, hx⟩ : L) ∈ IntermediateField.adjoin k (Set.range qL))
     · intro x hx
       obtain ⟨i, rfl⟩ := hx

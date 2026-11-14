@@ -8,7 +8,7 @@ module
 public import Mathlib.Analysis.Complex.Basic
 public import Mathlib.Analysis.SpecificLimits.Normed
 public import Mathlib.Topology.Algebra.IsUniformGroup.Basic
-public import Mathlib.Topology.Algebra.Module.Equiv
+public import Mathlib.Topology.Algebra.Module.Equiv.Basic
 public import Mathlib.Topology.Baire.CompleteMetrizable
 public import Mathlib.Topology.Baire.Lemmas
 

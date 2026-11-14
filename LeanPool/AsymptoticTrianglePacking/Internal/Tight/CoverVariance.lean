@@ -7,16 +7,7 @@ Authors: Juan Pablo Traverso Gianini, Aristotle
 module
 
 public import LeanPool.AsymptoticTrianglePacking.Internal.Tight.TightRound
-public import LeanPool.AsymptoticTrianglePacking.Internal.Prelude
 public import LeanPool.AsymptoticTrianglePacking.Internal.Tight.LossVariance
-public import LeanPool.AsymptoticTrianglePacking.Internal.Basic
-public import LeanPool.AsymptoticTrianglePacking.Internal.Conflict
-public import Mathlib.Analysis.Normed.Ring.Lemmas
-public import LeanPool.AsymptoticTrianglePacking.Internal.Round
-public import LeanPool.AsymptoticTrianglePacking.Internal.Survival
-public import LeanPool.AsymptoticTrianglePacking.Internal.Covered
-public import LeanPool.AsymptoticTrianglePacking.Internal.CoveredExpectation
-public import LeanPool.AsymptoticTrianglePacking.Internal.Tight.CoverProb
 
 
 
@@ -210,7 +201,7 @@ theorem prob_two_matched_le {H : Finset (Finset V)} {p : ℝ}
     rw [hsplit]
     -- p²(1-p)^u ≤ p²(1-p)^u(1-p)^k + k p³
     have hbern : 1 - (k : ℝ) * p ≤ (1 - p) ^ k := by
-      have := one_add_mul_le_pow (a := -p) (by linarith) k
+      have := one_add_mul_le_pow (a := -p) (by linarith only [hp1]) k
       simpa [sub_eq_add_neg, mul_comm] using this
     have hpu : p ^ 2 * (1 - p) ^ u ≤ p ^ 2 := by
       nlinarith only [pow_le_one₀ hq0 (by linarith : (1:ℝ) - p ≤ 1) (n := u), sq_nonneg p,
@@ -548,16 +539,16 @@ theorem prob_two_vertices_covered_le_sum {H : Finset (Finset V)} {p : ℝ}
       have h1 : p * (1 - p) ^ (conflicts H f).card ≤ p := by
         have : (1 - p) ^ (conflicts H f).card ≤ 1 :=
           pow_le_one₀ (by linarith) (by linarith)
-        nlinarith [pow_nonneg (by linarith : (0:ℝ) ≤ 1 - p) (conflicts H f).card]
+        nlinarith [pow_nonneg (by linarith only [hp1] : (0:ℝ) ≤ 1 - p) (conflicts H f).card]
       have h2 : 0 ≤ (p * (1 - p) ^ (conflicts H f).card) * (p * (1 - p) ^ (conflicts H f).card) :=
-        mul_nonneg (mul_nonneg hp0 (pow_nonneg (by linarith) _))
-          (mul_nonneg hp0 (pow_nonneg (by linarith) _))
+        mul_nonneg (mul_nonneg hp0 (pow_nonneg (by linarith only [hp1]) _))
+          (mul_nonneg hp0 (pow_nonneg (by linarith only [hp1]) _))
       have h3 : 0 ≤ ((conflicts H f ∩ conflicts H f).card : ℝ) * p ^ 3 :=
         mul_nonneg (Nat.cast_nonneg _) (pow_nonneg hp0 3)
-      linarith
+      linarith only [h1, h2, h3]
     · rw [ite_eq_right hfg]
       have := prob_two_matched_le ρ hp0 hp1 hfH hgH hfg
-      linarith
+      linarith only [this]
   -- sum the bounds
   have hmeas : (ℙ : Measure Ω).real
       ({ω | u ∈ covered (retainedSet H ρ ω)} ∩ {ω | u' ∈ covered (retainedSet H ρ ω)})
@@ -649,7 +640,7 @@ theorem pair_excess_le_codegree {H : Finset (Finset V)} {p : ℝ} {r Δ κ : ℕ
       _ = 4 * (r : ℝ) ^ 2 * (κ : ℝ) * (Δ : ℝ) ^ 2 := by push_cast; ring
   have hp3 : (0 : ℝ) ≤ p ^ 3 := by positivity
   have := mul_le_mul_of_nonneg_right hsum hp3
-  linarith
+  linarith only [hmain, hcodp, this]
 
 /-- **The codegree-tightened variance of the loss weight.**
 
@@ -673,7 +664,7 @@ theorem centered_second_moment_le_codegree {H : Finset (Finset V)} {p : ℝ} {r 
     have h1 : (0 : ℝ) ≤ (κ : ℝ) * p := mul_nonneg (Nat.cast_nonneg _) hp0
     have h2 : (0 : ℝ) ≤ 4 * (r : ℝ) ^ 2 * (κ : ℝ) * (Δ : ℝ) ^ 2 * p ^ 3 :=
       mul_nonneg (by positivity) (pow_nonneg hp0 3)
-    rw [hεp]; linarith
+    rw [hεp]; linarith only [h1, h2]
   have hq : ∀ x : V, coverRate H p x ≤ (Δ : ℝ) * p := by
     intro x
     refine le_trans (coverRate_le hp0 hp1 x) ?_
@@ -701,7 +692,7 @@ theorem centered_second_moment_le_codegree {H : Finset (Finset V)} {p : ℝ} {r 
   have hdv0 : (0 : ℝ) ≤ (degree H v : ℝ) := Nat.cast_nonneg _
   have hr0 : (0 : ℝ) ≤ (r : ℝ) - 1 := by
     have : (1 : ℝ) ≤ (r : ℝ) := by exact_mod_cast hr1
-    linarith
+    linarith only [this]
   have hA : ((r : ℝ) - 1) * (degree H v : ℝ) ≤ ((r : ℝ) - 1) * (Δ : ℝ) :=
     mul_le_mul_of_nonneg_left hdv hr0
   have hA0 : (0 : ℝ) ≤ ((r : ℝ) - 1) * (degree H v : ℝ) := mul_nonneg hr0 hdv0
@@ -715,7 +706,7 @@ theorem centered_second_moment_le_codegree {H : Finset (Finset V)} {p : ℝ} {r 
   have ht2 : εp * (((r : ℝ) - 1) * (degree H v : ℝ)) ^ 2
       ≤ εp * (((r : ℝ) - 1) * (Δ : ℝ)) ^ 2 := mul_le_mul_of_nonneg_left hsq hε0
   rw [hεp] at ht2 ⊢
-  linarith
+  linarith only [ht1, ht2]
 
 end LeanPool.AsymptoticTrianglePacking.Internal
 

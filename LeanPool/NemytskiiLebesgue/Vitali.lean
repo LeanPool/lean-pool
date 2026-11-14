@@ -145,45 +145,8 @@ theorem IsCaratheodory.seqContinuous_nemytskii_of_aestronglyMeas_of_growth
     (huuₙ : TendstoInMeasure μ uₙ atTop u)
     (hpuₙ : UnifIntegrable uₙ p μ) :
     (fun n : ℕ => fun ω : Ω => f ω (uₙ n ω)).NemytskiiConvergesTo (fun ω : Ω => f ω (u ω)) q μ := by
-  have hs :
-    ∀ s : ℕ → ℕ, StrictMono s → ∃ s' : ℕ → ℕ,
-      StrictMono s' ∧
-      (fun n : ℕ => fun ω : Ω => f ω (uₙ (s (s' n)) ω)).NemytskiiConvergesTo (fun ω : Ω => f ω (u
-        ω)) q μ := by
-    intro s hs
-    obtain ⟨s', s'_mono, s'_ae⟩ :
-      ∃ s' : ℕ → ℕ,
-        StrictMono s' ∧
-        ∀ᵐ ω : Ω ∂μ, Tendsto (fun n : ℕ => uₙ (s (s' n)) ω) atTop (𝓝 (u ω)) := by
-      have := (huuₙ.comp hs.tendsto_atTop).exists_seq_tendsto_ae
-      simp_all
-    refine ⟨s', s'_mono, ?_⟩
-    apply hf.nemytskii_seqContinuous_of_aestronglyMeas_of_growth h1p hp h1q hq haq hC hfaCpq ↓(huₙ
-      _) hup
-    have : TendstoInMeasure μ (fun n : ℕ => uₙ (s (s' n))) atTop u :=
-      huuₙ.comp (hs.tendsto_atTop.comp s'_mono.tendsto_atTop)
-    have : UnifIntegrable (fun n : ℕ => uₙ (s (s' n))) p μ :=
-      hpuₙ.comp (fun n => s (s' n))
-    unfold Function.NemytskiiConvergesTo
-    grind +suggestions
-  contrapose! hs
-  unfold Function.NemytskiiConvergesTo at *
-  rw [ENNReal.tendsto_atTop_zero] at hs
-  simp_all only [ne_eq,
-      ENNReal.toReal_div,
-      gt_iff_lt,
-      ge_iff_le,
-      not_forall,
-      not_exists,
-      not_le,
-      ENNReal.tendsto_nhds_zero,
-      eventually_atTop]
-  obtain ⟨x, hx₀, hx⟩ := hs
-  choose g hgx hgq using hx
-  exact ⟨
-    (g <| Nat.recOn · 0 ↓(g · + 1)),
-    strictMono_nat_of_lt_succ ↓(lt_of_lt_of_le (Nat.lt_succ_self _) (hgx _)),
-    ↓↓⟨x, hx₀, (⟨·, le_rfl, hgq _⟩)⟩⟩
+  exact hf.nemytskii_seqContinuous_of_aestronglyMeas_of_growth h1p hp h1q hq haq hC hfaCpq huₙ hup
+    (tendsto_Lp_finite_of_tendstoInMeasure h1p hp huₙ hup hpuₙ huuₙ)
 
 theorem IsCaratheodory.seqContinuous_nemytskii_of_aestronglyMeas_of_growth_real
     {Ω : Type} [MeasurableSpace Ω] {μ : Measure Ω} [IsFiniteMeasure μ]

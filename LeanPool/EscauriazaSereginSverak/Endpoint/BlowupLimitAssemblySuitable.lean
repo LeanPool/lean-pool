@@ -257,7 +257,7 @@ theorem blowupLimitAssembly_limit_suitable
     have hsubQ' : S ⊆ Q := prod_mono subset_closure subset_closure
     rw [hprodEq] at hw ⊢
     have hw' : MemLp (S.indicator w) 2 (volume.restrict Q) :=
-      ((memLp_indicator_iff_restrict hSm').2 hw).restrict Q
+      ((memLp_indicator_iff_restrict hSm'.nullMeasurableSet).2 hw).restrict Q
     have hlim := (hconvD Q hQc hQI i j (S.indicator w) hw').comp
       (tendsto_add_atTop_nat K)
     have hind : ∀ F : Vec3 × ℝ → ℝ,

@@ -649,7 +649,7 @@ theorem exists_two_grid_drift_comparison (d : ℕ) (hd : 2 ≤ d)
     have hpaid : determinantDrift P γ qPlus jStar t ≤
         Co * (grow * Dold) + (Cs * B) * ((n : ℝ) + L - jStar) * R +
           (Cd * δ + Ci * (K₀ * (3 : ℝ) ^ (-(L : ℝ)))) := by
-      (convert hpay using 1; try rfl)
+      convert hpay using 1
       change (4 / 3 : ℝ) * (1 + (Cw * K₀) * Gb) * (1 / (1 - (3 : ℝ) ^ (-a))) * (grow * Dold) +
           (Cs * B) * ((n : ℝ) + L - jStar) * R +
           (Cd * δ + Ci * (K₀ * (3 : ℝ) ^ (-(L : ℝ)))) = _

@@ -149,8 +149,8 @@ theorem nonconstantOnFibers_iff_kernel {p n r : ℕ}
     refine ⟨v - u, 0, by simp [hφ], by simp, ?_⟩
     intro heq
     apply hξ
-    have hlin := ξ.linearMap_vsub v u
-    have hlin0 := ξ.linearMap_vsub (v - u) 0
+    have hlin := ξ.linear_apply_vsub v u
+    have hlin0 := ξ.linear_apply_vsub (v - u) 0
     change ξ.linear (v - u) = ξ v - ξ u at hlin
     change ξ.linear ((v - u) - 0) = ξ (v - u) - ξ 0 at hlin0
     rw [sub_zero, heq, sub_self] at hlin0

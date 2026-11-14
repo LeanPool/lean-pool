@@ -8,6 +8,7 @@ module
 
 public import LeanPool.SmallUndecidableGroups.Borisov.Model.Intersections
 public import LeanPool.SmallUndecidableGroups.Borisov.Model.HNNModel
+public import Mathlib.Tactic.Group
 
 /-!
 # The four-relator Borisov group as an iterated HNN extension

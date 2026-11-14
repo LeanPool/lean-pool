@@ -9,8 +9,6 @@ module
 public import LeanPool.QuadraticCarleson.QuadraticCarleson.PositiveHighHeightEstimate
 public import LeanPool.QuadraticCarleson.QuadraticCarleson.QuadraticFixedHeightL2Stability
 public import Mathlib.Analysis.Convolution
-public import Mathlib.Analysis.Normed.Group.FunctionSeries
-public import Mathlib.MeasureTheory.Function.LpSeminorm.Indicator
 
 /-!
 # The paper's strict high-height tail
@@ -40,7 +38,7 @@ theorem highHeight_oscillatoryScaleIndex_eq (lam : ℝ) (hlam : lam ≠ 0) (B n 
       oscillatoryScaleIndex lam 0 hlam + (B : ℤ) + (n : ℤ) + 1 := by
   rw [oscillatoryScaleIndex_eq_add]
   push_cast
-  ring
+  ac_rfl
 
 /-- Countable Minkowski in L² for measurable extended nonnegative functions.
 No summability assumption is needed: an infinite right side remains valid. -/
@@ -48,7 +46,7 @@ theorem eLpNorm_tsum_two_le {ι : Type*} [Countable ι]
     (F : ι → ℝ → ℝ≥0∞) (hF : ∀ i, Measurable (F i)) :
     eLpNorm (fun x ↦ ∑' i, F i x) 2 ≤ ∑' i, eLpNorm (F i) 2 := by
   classical
-  apply (ENNReal.rpow_le_rpow_iff (by norm_num : (0 : ℝ) < 2)).mp
+  apply (ENNReal.rpow_le_rpow_iff (by norm_num1 : (0 : ℝ) < 2)).mp
   rw [ENNReal.rpow_two, ENNReal.rpow_two,
     eLpNorm_two_sq_lintegral _ (Measurable.tsum hF).aestronglyMeasurable]
   simp only [enorm_eq_self]
@@ -58,7 +56,7 @@ theorem eLpNorm_tsum_two_le {ι : Type*} [Countable ι]
     intro s
     apply le_iSup_of_le s
     have hs := eLpNorm_sum_le (μ := volume) (s := s) (f := F)
-      (by norm_num : (1 : ℝ≥0∞) ≤ 2)
+      (by norm_num1 : (1 : ℝ≥0∞) ≤ 2)
     have hp := pow_le_pow_left₀ bot_le hs 2
     rw [eLpNorm_two_sq_lintegral _
       (Finset.aestronglyMeasurable_sum s (fun i _ ↦ (hF i).aestronglyMeasurable))] at hp
@@ -80,7 +78,7 @@ noncomputable def highHeightDecayRatio : ℝ≥0∞ :=
 
 theorem highHeightDecayRatio_lt_one : highHeightDecayRatio < 1 := by
   rw [highHeightDecayRatio, ENNReal.ofReal_lt_one]
-  exact Real.rpow_lt_one_of_one_lt_of_neg (by norm_num) (by norm_num)
+  exact Real.rpow_lt_one_of_one_lt_of_neg (by norm_num1) (by norm_num1)
 
 /-- The constant obtained by summing the geometric fixed-height L² bounds. -/
 noncomputable def highHeightTailConstant : ℝ≥0∞ :=
@@ -99,8 +97,8 @@ theorem fixedHeightDecay_highHeight_factor (B n : ℕ) :
         ENNReal.ofReal ((2 : ℝ) ^ (-(B : ℝ) / 10)) * highHeightDecayRatio ^ (n + 1) := by
   have hp : (2 : ℝ) ^ (-((B + n + 1 : ℕ) : ℝ) / 10) =
       (2 : ℝ) ^ (-(B : ℝ) / 10) * ((2 : ℝ) ^ (-(1 : ℝ) / 10)) ^ (n + 1) := by
-    rw [← Real.rpow_mul_natCast (by norm_num : (0 : ℝ) ≤ 2),
-      ← Real.rpow_add (by norm_num : (0 : ℝ) < 2)]
+    rw [← Real.rpow_mul_natCast (by norm_num1 : (0 : ℝ) ≤ 2),
+      ← Real.rpow_add (by norm_num1 : (0 : ℝ) < 2)]
     congr 1
     push_cast
     ring
@@ -115,7 +113,7 @@ theorem tsum_fixedHeightDecay_highHeight (B : ℕ) :
   simp_rw [fixedHeightDecay_highHeight_factor]
   rw [ENNReal.tsum_mul_left, ENNReal.tsum_geometric_add_one]
   unfold highHeightTailConstant
-  ring
+  ac_rfl
 
 /-- The sum of fixed-height quadratic maxima strictly above the cutoff height. -/
 noncomputable def highHeightMajorant (B : ℕ) (b : ℝ → ℂ) (x : ℝ) : ℝ≥0∞ :=
@@ -155,7 +153,7 @@ private theorem tailKernel_eLpNorm_bound (lam : ℝ) (h : ℕ) (hlam : lam ≠ 0
   let R := fixedHeightRadius lam h hlam
   let D := 2 * positiveDyadicAmplitudeBound
   have hR : 0 < R := fixedHeightRadius_pos lam h hlam
-  have hD : 0 ≤ D := mul_nonneg (by norm_num) positiveDyadicAmplitudeBound_nonneg
+  have hD : 0 ≤ D := mul_nonneg (by norm_num1) positiveDyadicAmplitudeBound_nonneg
   have hc : AEStronglyMeasurable (fixedHeightQuadraticKernel lam h hlam) volume :=
     (continuous_fixedHeightQuadraticKernel lam h hlam).aestronglyMeasurable
   calc
@@ -170,8 +168,8 @@ private theorem tailKernel_eLpNorm_bound (lam : ℝ) (h : ℕ) (hlam : lam ≠ 0
           (lt_of_not_ge (fun ha ↦ ht (abs_le.mp ha)))
         simp [hz]
     _ = ENNReal.ofReal ((D / R) * (2 * R) ^ (1 / (2 : ℝ))) := by
-      rw [eLpNorm_indicator_const measurableSet_Icc.nullMeasurableSet (by norm_num)
-        (by norm_num), Real.volume_Icc]
+      rw [eLpNorm_indicator_const measurableSet_Icc.nullMeasurableSet (by norm_num1)
+        (by decide +kernel), Real.volume_Icc]
       simp only [ENNReal.toReal_ofNat, sub_neg_eq_add, ← two_mul, ← ofReal_norm,
         Real.norm_eq_abs, abs_of_nonneg (div_nonneg hD hR.le)]
       rw [ENNReal.ofReal_rpow_of_nonneg (by positivity) (by positivity),
@@ -195,9 +193,9 @@ private theorem tailConvolution_bound (lam : ℝ) (h : ℕ) (hlam : lam ≠ 0)
   have ht := ENNReal.toReal_mono hfin hbound
   have hn : 0 ≤ (2 * positiveDyadicAmplitudeBound / fixedHeightRadius lam h hlam) *
         (2 * fixedHeightRadius lam h hlam) ^ (1 / (2 : ℝ)) := by
-    exact mul_nonneg (div_nonneg (mul_nonneg (by norm_num) positiveDyadicAmplitudeBound_nonneg)
+    exact mul_nonneg (div_nonneg (mul_nonneg (by norm_num1) positiveDyadicAmplitudeBound_nonneg)
       (fixedHeightRadius_pos lam h hlam).le) (Real.rpow_nonneg (mul_nonneg (by
-        norm_num) (fixedHeightRadius_pos lam h hlam).le) _)
+        norm_num1) (fixedHeightRadius_pos lam h hlam).le) _)
   simpa only [convolution, ContinuousLinearMap.mul_apply', ENNReal.toReal_mul,
     toReal_enorm, ENNReal.toReal_ofReal hn] using ht
 
@@ -208,12 +206,12 @@ private theorem tailRadius_factor (R D : ℝ) (hR : 0 < R) (n : ℕ) :
   have hr : (2 : ℝ) ^ (1 / (2 : ℝ)) / 2 = (2 : ℝ) ^ (-(1 / (2 : ℝ))) := by
     calc
       _ = (2 : ℝ) ^ (1 / (2 : ℝ)) / (2 : ℝ) ^ (1 : ℝ) := by rw [Real.rpow_one]
-      _ = (2 : ℝ) ^ (1 / (2 : ℝ) - 1) := (Real.rpow_sub (by norm_num) _ _).symm
+      _ = (2 : ℝ) ^ (1 / (2 : ℝ) - 1) := (Real.rpow_sub (by norm_num1) _ _).symm
       _ = _ := by norm_num
-  rw [show (2 : ℝ) * (R * 2 ^ n) = (2 * R) * 2 ^ n by ring,
+  rw [show (2 : ℝ) * (R * 2 ^ n) = (2 * R) * 2 ^ n by ac_rfl,
     Real.mul_rpow (by positivity) (by positivity),
-    ← Real.rpow_natCast_mul (by norm_num : (0 : ℝ) ≤ 2),
-    mul_comm (n : ℝ), Real.rpow_mul_natCast (by norm_num : (0 : ℝ) ≤ 2)]
+    ← Real.rpow_natCast_mul (by norm_num1 : (0 : ℝ) ≤ 2),
+    mul_comm (n : ℝ), Real.rpow_mul_natCast (by norm_num1 : (0 : ℝ) ≤ 2)]
   rw [← hr, div_pow]
   ring
 
@@ -226,7 +224,7 @@ private theorem tailRadius_scale (lam : ℝ) (hlam : lam ≠ 0) (B n : ℕ) :
     oscillatoryScaleIndex_eq_add lam B hlam]
   rw [show oscillatoryScaleIndex lam 0 hlam + ((B + n : ℕ) : ℤ) - 1 =
     (oscillatoryScaleIndex lam 0 hlam + (B : ℤ) - 1) + (n : ℤ) by omega,
-    zpow_add₀ (by norm_num : (2 : ℝ) ≠ 0), zpow_natCast]
+    zpow_add₀ (by norm_num1 : (2 : ℝ) ≠ 0), zpow_natCast]
 
 /-- The fixed-modulation convolution series from any starting height is continuous
 for every L² input; the geometric bound is uniform in the observation point. -/

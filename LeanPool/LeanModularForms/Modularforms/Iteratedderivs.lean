@@ -12,6 +12,8 @@ public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
 public import Mathlib.Analysis.Calculus.IteratedDeriv.Defs
 import Mathlib.Analysis.Calculus.Deriv.Inv
 import Mathlib.Analysis.Calculus.Deriv.Pow
+import Mathlib.Analysis.Calculus.IteratedDeriv.Lemmas
+import Mathlib.Analysis.Calculus.IteratedDeriv.WithinZpow
 import Mathlib.Analysis.SpecialFunctions.ExpDeriv
 
 /-! # Iteratedderivs -/
@@ -22,7 +24,7 @@ import Mathlib.Analysis.SpecialFunctions.ExpDeriv
 open  UpperHalfPlane TopologicalSpace Set
   Metric Filter Function Complex
 
-open scoped Interval Real NNReal ENNReal Topology BigOperators Nat
+open scoped Interval Real NNReal ENNReal Topology BigOperators Nat Pointwise
 
 
 theorem upper_ne_int (x : ℍ) (d : ℤ) : (x : ℂ) + d ≠ 0 := by
@@ -35,61 +37,15 @@ theorem aut_iter_deriv (d : ℤ) (k : ℕ) :
     EqOn (iteratedDerivWithin k (fun z : ℂ => 1 / (z + d)) {z : ℂ | 0 < z.im})
       (fun t : ℂ => (-1) ^ k * k ! * (1 / (t + d) ^ (k + 1))) {z : ℂ | 0 < z.im} := by
   intro x hx
-  induction k generalizing x with
-  | zero =>
-    simp_all
-  | succ k IH =>
-    rw [iteratedDerivWithin_succ]
-    simp only [one_div, Nat.cast_succ, Nat.factorial, Nat.cast_mul]
-    have := (IH hx)
-    have H : derivWithin (fun (z : ℂ) => (-1: ℂ) ^ k * ↑k ! * ((z + ↑d) ^ (k + 1))⁻¹)
-               {z : ℂ | 0 < z.im} x =
-             (-1) ^ (↑k + 1) * ((↑k + 1) * ↑k !) * ((x + ↑d) ^ (↑k + 1 + 1))⁻¹ := by
-      rw [DifferentiableAt.derivWithin]
-      · simp only [deriv_const_mul_field']
-        rw [show (fun z : ℂ => ((z + d) ^ (k + 1))⁻¹) = (fun z : ℂ => (z + d) ^ (k + 1))⁻¹ from rfl,
-          show (fun z : ℂ => ((z + d) ^ (k + 1))) = (fun z : ℂ => (z + d)) ^ (k + 1) from rfl,
-          deriv_inv'', deriv_pow, deriv_add_const', deriv_id'']
-        · simp only [Nat.cast_add, Nat.cast_one, add_tsub_cancel_right, mul_one]
-          rw [pow_add]
-          simp only [pow_one, Pi.mul_apply, Pi.pow_apply]
-          have Hw : (-(((k : ℂ) + 1) * (x + ↑d) ^ k) / ((x + ↑d) ^ k * (x + ↑d)) ^ 2) =
-                    -(↑k + 1) / (x + ↑d) ^ (k + 2) := by
-            rw [div_eq_div_iff]
-            · norm_cast
-              simp
-              ring
-            · norm_cast
-              apply pow_ne_zero
-              apply mul_ne_zero
-              · apply pow_ne_zero k (upper_ne_int ⟨x, hx⟩ d)
-              apply upper_ne_int ⟨x, hx⟩ d
-            norm_cast
-            apply pow_ne_zero (k + 2) (upper_ne_int ⟨x, hx⟩ d)
-          rw [Hw]
-          ring
-        · fun_prop
-        · fun_prop
-        norm_cast
-        apply pow_ne_zero (k + 1) (upper_ne_int ⟨x, hx⟩ d)
-      · apply DifferentiableAt.mul
-        · fun_prop
-        · apply DifferentiableAt.inv
-          · fun_prop
-          apply pow_ne_zero (k + 1) (upper_ne_int ⟨x, hx⟩ d)
-      · apply IsOpen.uniqueDiffWithinAt _ hx
-        refine isOpen_lt ?_ ?_
-        · fun_prop
-        · fun_prop
-    rw [←H]
-    apply derivWithin_congr
-    · norm_cast at *
-      simp only [mem_ofPred_eq, one_div, Int.reduceNegSucc, Int.reduceNeg, Int.cast_mul,
-        Int.cast_pow, Int.cast_neg, Int.cast_one, Int.cast_natCast, Nat.cast_mul, Nat.cast_add,
-        Nat.cast_one, Int.cast_add] at *
-      intro r hr
-      apply IH hr
-    simp_all
+  have hs : IsOpen {z : ℂ | 0 < z.im} := isOpen_lt continuous_const continuous_im
+  rw [iteratedDerivWithin_comp_add_const]
+  change iteratedDerivWithin k (fun y : ℂ => 1 / y)
+    ((d : ℂ) +ᵥ {z : ℂ | 0 < z.im}) (x + (d : ℂ)) = _
+  have hmem : x + (d : ℂ) ∈ (d : ℂ) +ᵥ {z : ℂ | 0 < z.im} := by
+    simpa only [vadd_eq_add, add_comm] using vadd_mem_vadd_set (a := (d : ℂ)) hx
+  have h := iteratedDerivWithin_one_div k (hs.vadd (d : ℂ)) hmem
+  have exponent : (-1 - (k : ℤ)) = -((k + 1 : ℕ) : ℤ) := by omega
+  simpa only [exponent, zpow_neg, zpow_natCast, one_div] using h
 
 theorem aut_iter_deriv' (d : ℤ) (k : ℕ) :
     EqOn (iteratedDerivWithin k (fun z : ℂ => 1 / (z - d)) {z : ℂ | 0 < z.im})
@@ -119,7 +75,7 @@ theorem iter_div_aut_add (d : ℤ) (k : ℕ) :
   rw [iteratedDerivWithin_add hx ?_]
   · have h2 := aut_iter_deriv d k hx
     have h3 := aut_iter_deriv' d k hx
-    simp_all
+    simp_all only [mem_ofPred_eq, one_div]
   · have h4 := aut_contDiffOn d k
     simp only [one_div] at h4
     apply h4
@@ -128,7 +84,9 @@ theorem iter_div_aut_add (d : ℤ) (k : ℕ) :
     simp only [Int.cast_neg, sub_neg_eq_add, one_div] at h5
     apply h5
     exact hx
-  · exact IsOpen.uniqueDiffOn (isOpen_lt (by fun_prop) (by fun_prop))
+  · exact IsOpen.uniqueDiffOn (isOpen_lt (by
+    exact continuous_const) (by
+    exact continuous_im))
 
 variable {𝕜 : Type*} [NontriviallyNormedField 𝕜] {F : Type*}
   [NormedAddCommGroup F] [NormedSpace 𝕜 F] (n : ℕ) (f : 𝕜 → F) (s : Set 𝕜) (x : 𝕜)
@@ -141,5 +99,7 @@ theorem exp_iter_deriv_within (n m : ℕ) :
            {z : ℂ | 0 < z.im})
       (fun t => (2 * ↑π * Complex.I * m) ^ n * Complex.exp (2 * ↑π * Complex.I * m * t))
       {z : ℂ | 0 < z.im} := by
-  apply EqOn.trans (iteratedDerivWithin_of_isOpen (isOpen_lt (by fun_prop) (by fun_prop)))
+  apply EqOn.trans (iteratedDerivWithin_of_isOpen (isOpen_lt (by
+    exact continuous_const) (by
+    exact continuous_im)))
   exact fun x _ => congr_fun (iteratedDeriv_cexp_const_mul ..) x

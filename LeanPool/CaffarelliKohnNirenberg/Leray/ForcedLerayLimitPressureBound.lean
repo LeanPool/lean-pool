@@ -67,7 +67,7 @@ theorem forcedLerayLimit_productPressure_eLpNorm_le
   have hcomp (i j : Fin 3) : eLpNorm (F i j) (ENNReal.ofReal (3 / 2 : ℝ)) volume ≤
       eLpNorm (fun z => v z i) 3 ((volume : Measure (Vec3 × ℝ)).restrict S) *
         eLpNorm (fun z => w z j) 3 ((volume : Measure (Vec3 × ℝ)).restrict S) := by
-    rw [eLpNorm_indicator_eq_eLpNorm_restrict hS]
+    rw [eLpNorm_indicator_eq_eLpNorm_restrict hS.nullMeasurableSet]
     exact eLpNorm_smul_le_mul_eLpNorm (φ := fun z => v z i) (f := fun z => w z j)
       (hv.eval i).aestronglyMeasurable (hw.eval j).aestronglyMeasurable
   have hfin (i j : Fin 3) : eLpNorm (F i j) (ENNReal.ofReal (3 / 2 : ℝ)) volume ≠ ⊤ :=

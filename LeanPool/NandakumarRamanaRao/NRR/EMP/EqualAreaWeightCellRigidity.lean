@@ -6,11 +6,13 @@ Authors: Arseniy Akopyan
 module
 
 
-public import Mathlib.Tactic
-public import LeanPool.NandakumarRamanaRao.NRR.ConvexBody
-public import LeanPool.NandakumarRamanaRao.NRR.BodySpace.AreaRigidity
 public import LeanPool.NandakumarRamanaRao.NRR.EMP.EqualAreaWeights
+public import LeanPool.NandakumarRamanaRao.NRR.BodySpace.AreaRigidity
 public import LeanPool.NandakumarRamanaRao.NRR.EMP.PowerCellPositiveArea
+import LeanPool.NandakumarRamanaRao.NRR.PowerDiagram.CellGeometry
+import Mathlib.CategoryTheory.Category.Init
+import Mathlib.Tactic.Positivity.Finset
+public import LeanPool.NandakumarRamanaRao.NRR.ConvexBody
 public import LeanPool.NandakumarRamanaRao.NRR.PowerDiagram.BodyCells
 
 /-!

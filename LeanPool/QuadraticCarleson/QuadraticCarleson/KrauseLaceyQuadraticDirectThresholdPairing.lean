@@ -43,11 +43,11 @@ theorem lintegral_pairing_interpolationLow_le
     Real.HolderConjugate.two_two hU.enorm hlow.aestronglyMeasurable.enorm
   calc
     _ ≤ eLpNorm U 2 volume * eLpNorm (interpolationLow g a) 2 volume := by
-      rw [eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num) (by norm_num)
+      rw [eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num1) (by decide +kernel)
           hU.aestronglyMeasurable,
-        eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num) (by norm_num)
+        eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num1) (by decide +kernel)
           hlow.aestronglyMeasurable]
-      simpa only [Pi.mul_apply, ENNReal.toReal_ofNat] using hholder
+      exact hholder
     _ ≤ _ := mul_le_mul' le_rfl
       (eLpNorm_interpolationLow_le_rpow g ha hp hp2 hg)
 
@@ -67,11 +67,11 @@ theorem lintegral_pairing_interpolationLow_ennreal_le
     Real.HolderConjugate.two_two hU hlow.aestronglyMeasurable.enorm
   calc
     _ ≤ eLpNorm U 2 volume * eLpNorm (interpolationLow g a) 2 volume := by
-      rw [eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num) (by norm_num)
+      rw [eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num1) (by decide +kernel)
           hU.aestronglyMeasurable,
-        eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num) (by norm_num)
+        eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num1) (by decide +kernel)
           hlow.aestronglyMeasurable]
-      simpa only [Pi.mul_apply, ENNReal.toReal_ofNat, enorm_eq_self] using hholder
+      exact hholder
     _ ≤ _ := mul_le_mul' le_rfl
       (eLpNorm_interpolationLow_le_rpow g ha hp hp2 hg)
 
@@ -88,7 +88,7 @@ theorem sqrt_mul_rpow_mul_sqrt
   rw [← Real.sqrt_eq_rpow]
   calc
     Real.sqrt V * (A ^ (1 - p / 2) * Real.sqrt V) =
-        A ^ (1 - p / 2) * (Real.sqrt V * Real.sqrt V) := by ring
+        A ^ (1 - p / 2) * (Real.sqrt V * Real.sqrt V) := by ac_rfl
     _ = _ := by rw [Real.mul_self_sqrt hV]
 
 /-- The low part of the direct proof in its normalized form. If `U` has
@@ -113,17 +113,17 @@ theorem lintegral_pairing_interpolationLow_le_normalized
       apply mul_le_mul' hU
       apply ENNReal.rpow_le_rpow
       · exact mul_le_mul' le_rfl hgp
-      norm_num
+      norm_num1
     _ = _ := by
       rw [← ENNReal.ofReal_mul (Real.rpow_nonneg ha.le (2 - p))]
       rw [ENNReal.ofReal_rpow_of_nonneg
-        (mul_nonneg (Real.rpow_nonneg ha.le _) hV) (by norm_num : (0 : ℝ) ≤ 1 / 2)]
+        (mul_nonneg (Real.rpow_nonneg ha.le _) hV) (by norm_num1 : (0 : ℝ) ≤ 1 / 2)]
       rw [← ENNReal.ofReal_mul (mul_nonneg hdelta (Real.sqrt_nonneg V))]
       rw [show delta * Real.sqrt V * (a ^ (2 - p) * V) ^ (1 / 2 : ℝ) =
-        delta * (Real.sqrt V * (a ^ (2 - p) * V) ^ (1 / 2 : ℝ)) by ring]
+        delta * (Real.sqrt V * (a ^ (2 - p) * V) ^ (1 / 2 : ℝ)) by ac_rfl]
       rw [sqrt_mul_rpow_mul_sqrt ha hV]
       congr 1
-      ring
+      ac_rfl
 
 /-- The high part of the direct proof: the local-average pairing estimate
 turns the high truncation into the factor `A^{1-p}`. -/
@@ -190,7 +190,7 @@ theorem lintegral_pairing_interpolationLow_le_directQuadratic
       rw [show directQuadraticDelta s *
           directQuadraticLowThreshold s ^ (1 - p / 2) * V =
           (directQuadraticDelta s *
-            directQuadraticLowThreshold s ^ (1 - p / 2)) * V by ring]
+            directQuadraticLowThreshold s ^ (1 - p / 2)) * V by rfl]
       rw [directQuadratic_low_threshold_identity]
 
 /-- The high local-average pairing at the author's simultaneous choice

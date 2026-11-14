@@ -1009,7 +1009,6 @@ noncomputable instance instSeqCompSeqClass : CompSeqClass ComputableℝSeq := by
            CauSeq.zero_apply, CauSeq.neg_apply, lb_add, ub_add, zero_ub, zero_lb, ub_neg,
            lb_neg, neg_add_rev, neg_neg, zero_add, add_zero]
         try ring_nf
-        try rfl
         try {
           rename_i a n
           simp only [lb_mul, ub_mul, zero_lb, zero_ub, mul_zero, zero_mul, one_lb, one_ub, mul_one,

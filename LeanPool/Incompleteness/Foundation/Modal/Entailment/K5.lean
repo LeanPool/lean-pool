@@ -7,10 +7,6 @@ module
 
 public import LeanPool.Incompleteness.Foundation.Modal.Entailment.K
 
-import Mathlib.Data.Finset.Attr
-import Mathlib.Tactic.Bound.Init
-import Mathlib.Tactic.Finiteness.Attr
-import Mathlib.Tactic.SetLike
 
 /-! # K5 -/
 

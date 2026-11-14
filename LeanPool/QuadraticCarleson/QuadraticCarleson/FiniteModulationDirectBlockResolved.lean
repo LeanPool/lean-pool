@@ -42,13 +42,13 @@ private theorem conjugate_add (f g : L0Infinity) :
       L0Infinity.add (L0Infinity.conjugate f) (L0Infinity.conjugate g) := by
   cases f
   cases g
-  simp [L0Infinity.conjugate, L0Infinity.add]
+  simp only [L0Infinity.conjugate, L0Infinity.add, map_add]
 
 private theorem conjugate_smul (c : ℂ) (f : L0Infinity) :
     L0Infinity.conjugate (L0Infinity.smul c f) =
       L0Infinity.smul (conj c) (L0Infinity.conjugate f) := by
   cases f
-  simp [L0Infinity.conjugate, L0Infinity.smul]
+  simp only [L0Infinity.conjugate, L0Infinity.smul, map_mul]
 
 theorem isSublinear_conjugatedOperator {T : TestOperator} (hT : IsSublinear T) :
     IsSublinear (conjugatedOperator T) := by
@@ -64,7 +64,7 @@ theorem isSublinear_conjugatedOperator {T : TestOperator} (hT : IsSublinear T) :
     absoluteValueOperator (conjugatedOperator T) =
       conjugatedOperator (absoluteValueOperator T) := by
   funext f x
-  simp [absoluteValueOperator, conjugatedOperator]
+  simp only [absoluteValueOperator, conjugatedOperator, RCLike.norm_conj, Complex.conj_ofReal]
 
 theorem continuous_conjugatedOperator {T : TestOperator}
     (hT : ∀ f : L0Infinity, Continuous (T f)) (f : L0Infinity) :
@@ -210,10 +210,10 @@ theorem finiteModulationBlock_weak_bound
     (finitePaperBlockMaxEnorm_le_signedHighSuffix_add_maximal B lam hlam f)
   have hL : 1 ≤ paperLog 1 (N : ℝ) :=
     PositiveEndpointOptimization.one_le_paperLog_one (by positivity)
-  have hLsq : 1 ≤ paperLog 1 (N : ℝ) ^ 2 := by nlinarith
+  have hLsq : 1 ≤ paperLog 1 (N : ℝ) ^ 2 := by nlinarith only [hL]
   have hconst : 2 * C + 384 ≤ finiteBlockWeakConstant * paperLog 1 N ^ 2 := by
     dsimp only [C, finiteBlockWeakConstant]
-    nlinarith
+    linarith only [hLsq]
   have hout := (ExtendedWeakL1Combinators.HasExtendedWeakL1Bound.mono_constant hw
     (mul_le_mul_of_nonneg_right hconst ENNReal.toReal_nonneg)).2 α hα
   rw [ENNReal.ofReal_mul (mul_nonneg finiteBlockWeakConstant_nonneg (sq_nonneg _)),
