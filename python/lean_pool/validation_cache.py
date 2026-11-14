@@ -4,9 +4,10 @@ CI restores receipts from main or earlier runs of the same PR. Every receipt
 covers module inventories, transitive local imports, dependency pins, and code.
 Static repository invariants and text style lint still run on every checkout.
 
-Build shards can validate their own projects in parallel (``shard``) and hand
-their pass receipts to the assembling job (``merge``). That job still recomputes
-every fingerprint and runs whatever a shard did not pass, so it alone decides.
+Build shards can validate their own projects in parallel
+(``lean_pool.shard_validation``) and hand their pass receipts to the assembling
+job (``merge``). That job still recomputes every fingerprint and runs whatever a
+shard did not pass, so it alone decides.
 """
 
 from __future__ import annotations
@@ -28,6 +29,7 @@ SHARED_INPUTS = (
     "lakefile.lean",
     "scripts/ci/LeanPoolLinters.lean",
     "python/lean_pool/validation_cache.py",
+    "python/lean_pool/shard_validation.py",
     "python/pyproject.toml",
     "python/uv.lock",
     ".github/workflows/lean_action_ci.yml",
@@ -277,24 +279,6 @@ def lint_pool(
     return failed
 
 
-def validate_shard(root: Path, cache: ValidationCache) -> bool:
-    """Lint and audit only the cache's units, keeping every pass they earn.
-
-    This runs the per-project checks of the whole-pool run through the same
-    functions. Repository-wide invariants stay with the assembling job.
-    """
-    from lean_pool.quality import _cached_pool_audits, _check_projects
-
-    failed = lint_pool(root, cache, keep_going=True)
-    for unit in failed:
-        print(f"lint failed: {unit}")
-    errors = _check_projects(root, cache) + _cached_pool_audits(root, cache)
-    for error in errors:
-        print(error.format(root))
-    cache.save()
-    return not (failed or errors)
-
-
 def merge_receipts(directory: Path, fragments: list[Path]) -> int:
     """Add shards' pass receipts to the cache; return how many were added.
 
@@ -324,11 +308,10 @@ def merge_receipts(directory: Path, fragments: list[Path]) -> int:
 def main() -> int:
     """Run the cached declaration linter or repository quality checker."""
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("check", choices=("lint", "quality", "shard", "merge"))
+    parser.add_argument("check", choices=("lint", "quality", "merge"))
     parser.add_argument("--repo", type=Path, default=Path.cwd())
     parser.add_argument("--cache", type=Path, default=Path(".lake/validation-cache/v1"))
     parser.add_argument("--refresh", action="store_true")
-    parser.add_argument("--units", nargs="*", default=[])
     parser.add_argument("fragments", nargs="*", type=Path)
     arguments = parser.parse_args()
     logging.basicConfig(level=logging.INFO, format="validation: %(message)s")
@@ -337,14 +320,6 @@ def main() -> int:
         added = merge_receipts(root / arguments.cache, arguments.fragments)
         LOGGER.info("Merged %d shard receipts", added)
         return 0
-    if arguments.check == "shard":
-        cache = ValidationCache(
-            root,
-            root / arguments.cache,
-            refresh=arguments.refresh,
-            units=frozenset(arguments.units),
-        )
-        return 0 if validate_shard(root, cache) else 1
     cache = ValidationCache(root, root / arguments.cache, refresh=arguments.refresh)
     if arguments.check == "lint":
         lint_pool(root, cache)

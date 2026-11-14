@@ -68,7 +68,7 @@ In-job concurrency does not fix that: PR #785 measured that a single lint
 process already saturates a 4-vCPU runner. Instead the planner now shards the
 whole pool when checker inputs change, even with a warm build cache, and every
 shard job lints and audits the projects it built
-(`validation_cache shard --units ...`). Shards upload only their pass receipts.
+(`python -m lean_pool.shard_validation --units ...`). Shards upload only their pass receipts.
 `finalize` merges them (`validation_cache merge`) and then runs the unchanged
 Lint and quality steps, which recompute every fingerprint, reuse matching passes,
 and run anything a shard did not pass. A shard's validation step can therefore

@@ -112,7 +112,7 @@ def test_shards_validate_their_projects_and_assembly_decides() -> None:
     steps = jobs["shard"]["steps"]
     names = [step.get("name") for step in steps]
     validate = steps[names.index("Lint and audit this shard's projects")]
-    assert "validation_cache shard --repo .. --units $PROJECTS" in validate["run"]
+    assert "lean_pool.shard_validation --repo .. --units $PROJECTS" in validate["run"]
     assert validate["continue-on-error"] is True
     assert names.index("Upload build outputs") < names.index(
         "Lint and audit this shard's projects"

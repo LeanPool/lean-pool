@@ -741,7 +741,7 @@ jobs:
         run: |
           cd python
           # shellcheck disable=SC2086 # word-split the project list on purpose
-          uv run python -m lean_pool.validation_cache shard --repo .. --units $PROJECTS
+          uv run python -m lean_pool.shard_validation --repo .. --units $PROJECTS
 
       - name: Upload validation passes
         if: always() && steps.shard-validation.outcome != 'skipped'

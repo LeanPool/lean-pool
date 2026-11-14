@@ -9,6 +9,8 @@ from unittest.mock import patch
 import pytest
 
 from lean_pool.quality import _cached_pool_audits
+from lean_pool.shard_validation import main as shard_main
+from lean_pool.shard_validation import validate_shard
 from lean_pool.validation_cache import (
     GLOBAL_INPUTS,
     ValidationCache,
@@ -19,7 +21,6 @@ from lean_pool.validation_cache import (
     read_receipts,
     source_inventory,
     unit_name,
-    validate_shard,
 )
 
 
@@ -327,7 +328,7 @@ def test_shard_passes_satisfy_the_whole_pool_run_only_while_inputs_match(
     """Merged passes are reused by fingerprint; an edited project is checked again."""
     with (
         patch("lean_pool.validation_cache.subprocess.run") as lint,
-        patch("lean_pool.quality._check_projects", return_value=[]),
+        patch("lean_pool.shard_validation._check_projects", return_value=[]),
         patch("lean_pool.quality._audit_axioms", return_value=[]),
         patch("lean_pool.quality._run_option_audit", return_value=[]),
     ):
@@ -359,7 +360,7 @@ def test_shard_keeps_passes_and_reports_a_failing_unit(repository: Path) -> None
 
     with (
         patch("lean_pool.validation_cache.subprocess.run", side_effect=lint),
-        patch("lean_pool.quality._check_projects", return_value=[]),
+        patch("lean_pool.shard_validation._check_projects", return_value=[]),
         patch("lean_pool.quality._audit_axioms", return_value=[]),
         patch("lean_pool.quality._run_option_audit", return_value=[]),
     ):
@@ -391,3 +392,21 @@ def test_corrupt_fragments_merge_nothing(repository: Path) -> None:
     (listed / "passes.json").write_text('{"version": 1, "receipts": {"lint:X": 1}}')
     assert merge_receipts(directory, [bad, repository / "missing.json"]) == 0
     assert read_receipts(directory / "passes.json") == before
+
+
+def test_shard_command_validates_the_named_units(repository: Path) -> None:
+    """The workflow's entry point scopes the cache to its project list."""
+    with (
+        patch("lean_pool.validation_cache.subprocess.run") as lint,
+        patch("lean_pool.shard_validation._check_projects", return_value=[]),
+        patch("lean_pool.quality._audit_axioms", return_value=[]),
+        patch("lean_pool.quality._run_option_audit", return_value=[]),
+    ):
+        lint.return_value.returncode = 0
+        assert shard_main(["--repo", str(repository), "--units", "B"]) == 0
+    saved = read_receipts(repository / ".lake/validation-cache/v1/passes.json")
+    assert sorted(saved) == [
+        "axioms:LeanPool.B",
+        "backdoors:LeanPool.B",
+        "lint:LeanPool.B",
+    ]
