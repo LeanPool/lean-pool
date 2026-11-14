@@ -8,6 +8,7 @@ module
 
 public import Mathlib.Computability.ContextFreeGrammar
 public import Mathlib.Computability.DFA
+public import Mathlib.Data.Fintype.Prod
 
 /-! Ported from focs-lab/parikh-theorem at
 `9c1cde93f29bbaa91542e401e074ec3cd7646880`; module headers and import paths
