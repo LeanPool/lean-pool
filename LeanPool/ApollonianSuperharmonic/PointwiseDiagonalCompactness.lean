@@ -410,28 +410,6 @@ private theorem refineFiber :
     have he : mapValue q = y := hq
     exact congrArg Subtype.val he
 
-private theorem seq_step :
-    (by
-      classical
-      exact
-        ∀ (u : ℕ → IntegerLatticeFunction), ∀ [this : Encodable GaussianInt],
-        let enumerate : Nat → GaussianInt := fun n =>
-          (Encodable.decode n).getD 0
-        ∀ (refineFiber : ∀ x : GaussianInt, ∀ s : Set Nat, s.Infinite → ∃ t : Set Nat, t ⊆ s ∧
-            t.Infinite ∧ ∃ z : Int, ∀ k ∈ t, u k x = z),
-        let next (n : Nat) (s : Set Nat) (hs : s.Infinite) : Set Nat :=
-          Classical.choose (refineFiber (enumerate n) s hs)
-        ∀ (next_spec : ∀ (n : Nat), ∀ (s : Set Nat), ∀ (hs : s.Infinite), next n s hs ⊆ s ∧ (next
-            n s hs).Infinite ∧ ∃ z, ∀ k ∈ next n s hs, u k (enumerate n) = z),
-        let good : Type := {s : Set Nat // s.Infinite}
-        let seq : Nat → good := Nat.rec ⟨Set.univ, Set.infinite_univ⟩
-          (fun n q => ⟨next n q.1 q.2, (next_spec n q.1 q.2).2.1⟩)
-        ∀ (n : Nat), seq (n + 1) = ⟨next n (seq n).1 (seq n).2, (next_spec n (seq n).1 (seq
-            n).2).2.1⟩ ) := by
-  classical
-  intro u this enumerate refineFiber next next_spec good seq n
-  rfl
-
 private theorem seq_nested :
     (by
       classical
@@ -724,7 +702,7 @@ theorem PointwiseDiagonalCompactness :
     (fun n q => ⟨next n q.1 q.2, (next_spec n q.1 q.2).2.1⟩)
   have seq_step (n : Nat) : seq (n + 1) =
       ⟨next n (seq n).1 (seq n).2, (next_spec n (seq n).1 (seq n).2).2.1⟩ :=
-          DiagonalCompactnessProof.seq_step u (this := this) refineFiber next_spec n
+          by rfl
   have seq_nested (m n : Nat) (hmn : m ≤ n) : (seq n).1 ⊆ (seq m).1 :=
       DiagonalCompactnessProof.seq_nested u (this := this) refineFiber next_spec m n hmn
   let first : Nat := Classical.choose (Set.Infinite.exists_gt (seq 0).2 0)

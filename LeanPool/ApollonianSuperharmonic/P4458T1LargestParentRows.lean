@@ -33,63 +33,6 @@ namespace ApollonianSuperharmonic
 
 namespace LargestParentGeometry
 
-private theorem hq1 :
-    (by
-      classical
-      exact
-        ∀ (C : BandCircle), ∀ (orientation : Bool), ∀ (base : ProtoTile), ∀ (Rminus : ProtoTile),
-            ∀ (Rplus : ProtoTile), ∀ (hminus : PartialOdometer), ∀ (hplus : PartialOdometer), ∀
-            (F : P4458T1BoundaryFrame C orientation base Rminus Rplus hminus hplus), ∀ (p : Fin
-            4 → CircleCoordinates), (![F.q (0 : Fin (4 : ℕ)), F.q F.slot.succ, F.q (F.slot + (1 :
-            Fin (3 : ℕ))).succ, F.q (F.slot + (2 : Fin (3 : ℕ))).succ] = ![((2 : ℤ) * (p (0 : Fin
-            (4 : ℕ))).1 + (2 : ℤ) * (p (2 : Fin (4 : ℕ))).1 + (2 : ℤ) * (p (3 : Fin (4 : ℕ))).1 -
-            (p (1 : Fin (4 : ℕ))).1, (2 : GaussianInt) * (p (0 : Fin (4 : ℕ))).2 + (2 :
-            GaussianInt) * (p (2 : Fin (4 : ℕ))).2 + (2 : GaussianInt) * (p (3 : Fin (4 : ℕ))).2
-            - (p (1 : Fin (4 : ℕ))).2), p (0 : Fin (4 : ℕ)), p (2 : Fin (4 : ℕ)), p (3 : Fin (4 :
-            ℕ))]) → (F.q F.slot.succ = p 0) ) := by
-  classical
-  intro C orientation base Rminus Rplus hminus hplus F p hstep
-  have h := congrFun hstep 1
-  simpa using h
-
-private theorem hq2 :
-    (by
-      classical
-      exact
-        ∀ (C : BandCircle), ∀ (orientation : Bool), ∀ (base : ProtoTile), ∀ (Rminus : ProtoTile),
-            ∀ (Rplus : ProtoTile), ∀ (hminus : PartialOdometer), ∀ (hplus : PartialOdometer), ∀
-            (F : P4458T1BoundaryFrame C orientation base Rminus Rplus hminus hplus), ∀ (p : Fin
-            4 → CircleCoordinates), (![F.q (0 : Fin (4 : ℕ)), F.q F.slot.succ, F.q (F.slot + (1 :
-            Fin (3 : ℕ))).succ, F.q (F.slot + (2 : Fin (3 : ℕ))).succ] = ![((2 : ℤ) * (p (0 : Fin
-            (4 : ℕ))).1 + (2 : ℤ) * (p (2 : Fin (4 : ℕ))).1 + (2 : ℤ) * (p (3 : Fin (4 : ℕ))).1 -
-            (p (1 : Fin (4 : ℕ))).1, (2 : GaussianInt) * (p (0 : Fin (4 : ℕ))).2 + (2 :
-            GaussianInt) * (p (2 : Fin (4 : ℕ))).2 + (2 : GaussianInt) * (p (3 : Fin (4 : ℕ))).2
-            - (p (1 : Fin (4 : ℕ))).2), p (0 : Fin (4 : ℕ)), p (2 : Fin (4 : ℕ)), p (3 : Fin (4 :
-            ℕ))]) → (F.q ((F.slot + 1).succ) = p 2) ) := by
-  classical
-  intro C orientation base Rminus Rplus hminus hplus F p hstep
-  have h := congrFun hstep 2
-  simpa using h
-
-private theorem hq3 :
-    (by
-      classical
-      exact
-        ∀ (C : BandCircle), ∀ (orientation : Bool), ∀ (base : ProtoTile), ∀ (Rminus : ProtoTile),
-            ∀ (Rplus : ProtoTile), ∀ (hminus : PartialOdometer), ∀ (hplus : PartialOdometer), ∀
-            (F : P4458T1BoundaryFrame C orientation base Rminus Rplus hminus hplus), ∀ (p : Fin
-            4 → CircleCoordinates), (![F.q (0 : Fin (4 : ℕ)), F.q F.slot.succ, F.q (F.slot + (1 :
-            Fin (3 : ℕ))).succ, F.q (F.slot + (2 : Fin (3 : ℕ))).succ] = ![((2 : ℤ) * (p (0 : Fin
-            (4 : ℕ))).1 + (2 : ℤ) * (p (2 : Fin (4 : ℕ))).1 + (2 : ℤ) * (p (3 : Fin (4 : ℕ))).1 -
-            (p (1 : Fin (4 : ℕ))).1, (2 : GaussianInt) * (p (0 : Fin (4 : ℕ))).2 + (2 :
-            GaussianInt) * (p (2 : Fin (4 : ℕ))).2 + (2 : GaussianInt) * (p (3 : Fin (4 : ℕ))).2
-            - (p (1 : Fin (4 : ℕ))).2), p (0 : Fin (4 : ℕ)), p (2 : Fin (4 : ℕ)), p (3 : Fin (4 :
-            ℕ))]) → (F.q ((F.slot + 2).succ) = p 3) ) := by
-  classical
-  intro C orientation base Rminus Rplus hminus hplus F p hstep
-  have h := congrFun hstep 3
-  simpa using h
-
 private theorem hCpositive :
     (by
       classical
@@ -1404,12 +1347,9 @@ theorem P4458T1LargestParentRows
 -- BODY
   classical
   subst a
-  have hq1 : F.q F.slot.succ = p 0 := LargestParentGeometry.hq1 C orientation base Rminus Rplus
-      hminus hplus F p hstep
-  have hq2 : F.q ((F.slot + 1).succ) = p 2 := LargestParentGeometry.hq2 C orientation base Rminus
-      Rplus hminus hplus F p hstep
-  have hq3 : F.q ((F.slot + 2).succ) = p 3 := LargestParentGeometry.hq3 C orientation base Rminus
-      Rplus hminus hplus F p hstep
+  have hq1 : F.q F.slot.succ = p 0 := by simpa using congrFun hstep 1
+  have hq2 : F.q ((F.slot + 1).succ) = p 2 := by simpa using congrFun hstep 2
+  have hq3 : F.q ((F.slot + 2).succ) = p 3 := by simpa using congrFun hstep 3
   have hCpositive := LargestParentGeometry.hCpositive C orientation base Rminus Rplus hminus
       hplus F p hp hq1
   have hstrict : (F.q F.slot.succ).1 < (F.q 0).1 := F.proper.2 F.slot

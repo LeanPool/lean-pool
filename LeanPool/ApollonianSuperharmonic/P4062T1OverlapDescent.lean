@@ -191,37 +191,6 @@ private theorem hcopAt264 :
     exact ⟨-P.p₂, P.q₂, by nlinarith only [hx]⟩
   simpa using Int.isCoprime_iff_nat_coprime.mp hc
 
-private theorem hparAt293 :
-    (by
-      classical
-      exact
-        ∀ (P : FordFareyParameter),
-        (
-        (∀ (hP : (2 :
-            ℕ) < P.q), ∀ (hsum : P.q = P.q₁ + P.q₂), ∀ (hcrossdet : P.p₁ * (P.q₂ :
-            Int) - P.p₂ * (P.q₁ : Int) = 1), ∀ (hpos₁ : 0 < P.q₁), ∀ (hpos₂ : 0 < P.q₂), ∀
-                (horder : P.q₂ < P.q₁), ∀ (hdlt : P.q₁ - P.q₂ < P.q), ∀ (hdetdiff : (P.p₁-P.p₂) *
-            (P.q₁ : Int) - ((P.q₁-P.q₂ : Nat) : Int) * P.p₁ = 1), ∀ (H : FordFareyParameter), ∀
-                (hHq : H.q = P.q₁ - P.q₂), ∀ (hredParent : Nat.Coprime P.q₁ P.p₁.natAbs),
-        let Q : FordFareyParameter := by
-          have hdet₂ : P.p₂ * (P.q₁ : Int) -
-              (P.q₂ : Int) * P.p₁ = -1 := by nlinarith only [hcrossdet]
-          refine FordFareyParameter.mk P.p₁ P.q₁ hpos₁ hredParent
-            (P.p₁-P.p₂) (P.q₁-P.q₂) P.p₂ P.q₂ ?_ ?_ ?_ ?_ ?_ ?_ ?_
-          · ring
-          · omega
-          · exact hdetdiff
-          · exact hdet₂
-          · omega
-          · exact hpos₂
-          · intro hu
-            have : P.q₁ = 1 := by simpa using hu
-            omega;
-        Q.p₁ = P.p₁-P.p₂ ∧ Q.q₁ = P.q₁-P.q₂ ∧ Q.p₂ = P.p₂ ∧ Q.q₂ = P.q₂))) := by
-  classical
-  intro P hP hsum hcrossdet hpos₁ hpos₂ horder hdlt hdetdiff H hHq hredParent Q
-  exact ⟨rfl, rfl, rfl, rfl⟩
-
 private abbrev hch₁' := ApollonianSuperharmonic.OverlapDescentDetails.hrec₁'
 
 private theorem hcoordsAt312 :
@@ -371,37 +340,6 @@ private theorem hcopAt469 :
       nlinarith only [hcrossdet]
     exact ⟨P.p₁, -(P.q₁ : Int), by nlinarith only [hx]⟩
   simpa using Int.isCoprime_iff_nat_coprime.mp hc
-
-private theorem hparAt498 :
-    (by
-      classical
-      exact
-        ∀ (P : FordFareyParameter),
-        (∀ (P₂ : FordFareyParameter), ∀ (hP :
-            (2 : ℕ) < P.q), ∀ (hsum : P.q = P.q₁ + P.q₂), ∀ (hcrossdet : P.p₁ * (P.q₂ :
-            Int) - P.p₂ * (P.q₁ : Int) = 1), ∀ (hpos₂ : 0 < P.q₂), ∀ (horder : P.q₁ < P.q₂), ∀
-                (hdiff : 0 < P.q₂ - P.q₁), ∀ (hdetdiff : (P.p₂-P.p₁) * (P.q₂ : Int) - ((P.q₂-P.q₁ :
-            Nat) : Int) * P.p₂ = -1), ∀ (H : FordFareyParameter), ∀ (hHq : H.q = P.q₂ - P.q₁), ∀
-                (hredParent : Nat.Coprime P.q₂ P.p₂.natAbs),
-        let Q : FordFareyParameter := by
-          have hdet₁ : P.p₁ * (P.q₂ : Int) -
-              (P.q₁ : Int) * P.p₂ = 1 := by nlinarith [hcrossdet]
-          refine FordFareyParameter.mk P.p₂ P.q₂ hpos₂ hredParent
-            P.p₁ P.q₁ (P.p₂-P.p₁) (P.q₂-P.q₁) ?_ ?_ ?_ ?_ ?_ ?_ ?_
-          · ring
-          · omega
-          · exact hdet₁
-          · exact hdetdiff
-          · omega
-          · omega
-          · intro hu
-            have : P.q₂ = 1 := by simpa using hu
-            omega;
-        (Q = P₂) → (P₂.p₁ = P.p₁ ∧ P₂.q₁ = P.q₁ ∧ P₂.p₂ = P.p₂-P.p₁ ∧ P₂.q₂ = P.q₂-P.q₁))) := by
-  classical
-  intro P P₂ hP hsum hcrossdet hpos₂ horder hdiff hdetdiff H hHq hredParent Q hQeq
-  simpa [hQeq] using (show Q.p₁ = P.p₁ ∧ Q.q₁ = P.q₁ ∧
-    Q.p₂ = P.p₂-P.p₁ ∧ Q.q₂ = P.q₂-P.q₁ from ⟨rfl,rfl,rfl,rfl⟩)
 
 private abbrev hch₃' := ApollonianSuperharmonic.OverlapDescentDetails.hrec₃'
 
@@ -774,8 +712,8 @@ theorem P4062T1OverlapDescent (P P₁ P₂ : FordFareyParameter)
     have hQeq : Q = P₁ := by
       exact (hRuniq Q ⟨rfl, rfl⟩).trans (hRuniq P₁ ⟨hp₁, hq₁⟩).symm
     have hpar : Q.p₁ = P.p₁-P.p₂ ∧ Q.q₁ = P.q₁-P.q₂ ∧
-        Q.p₂ = P.p₂ ∧ Q.q₂ = P.q₂ := OverlapDescentDetails.hparAt293 P hP hsum hcrossdet
-            hpos₁ hpos₂ horder hdlt hdetdiff H hHq hredParent
+        Q.p₂ = P.p₂ ∧ Q.q₂ = P.q₂ := by
+      exact ⟨rfl, rfl, rfl, rfl⟩
     have hparP : P₁.p₁ = P.p₁-P.p₂ ∧ P₁.q₁ = P.q₁-P.q₂ ∧
         P₁.p₂ = P.p₂ ∧ P₁.q₂ = P.q₂ := by simpa [hQeq] using hpar
     have hchildRec := hfamilyRec P₁ H P₂ (by rw [hq₁]; omega)
@@ -849,8 +787,9 @@ theorem P4062T1OverlapDescent (P P₁ P₂ : FordFareyParameter)
     have hQeq : Q = P₂ := by
       exact (hRuniq Q ⟨rfl, rfl⟩).trans (hRuniq P₂ ⟨hp₂, hq₂⟩).symm
     have hpar : P₂.p₁ = P.p₁ ∧ P₂.q₁ = P.q₁ ∧
-        P₂.p₂ = P.p₂-P.p₁ ∧ P₂.q₂ = P.q₂-P.q₁ := OverlapDescentDetails.hparAt498 P P₂ hP hsum
-            hcrossdet hpos₂ horder hdiff hdetdiff H hHq hredParent hQeq
+        P₂.p₂ = P.p₂-P.p₁ ∧ P₂.q₂ = P.q₂-P.q₁ := by
+      simpa [hQeq] using (show Q.p₁ = P.p₁ ∧ Q.q₁ = P.q₁ ∧
+        Q.p₂ = P.p₂ - P.p₁ ∧ Q.q₂ = P.q₂ - P.q₁ from ⟨rfl, rfl, rfl, rfl⟩)
     have hchildRec := hfamilyRec P₂ P₁ H (by rw [hq₂]; omega)
       (hp₁.trans hpar.1.symm) (hq₁.trans hpar.2.1.symm)
       (hHp.trans hpar.2.2.1.symm) (hHq.trans hpar.2.2.2.symm)

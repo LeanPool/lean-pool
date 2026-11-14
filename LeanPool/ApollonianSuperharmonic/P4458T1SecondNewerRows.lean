@@ -109,63 +109,6 @@ private theorem hjoinFootEq :
 
 
 
-private theorem hqA :
-    (by
-      classical
-      exact
-        ∀ (C : BandCircle), ∀ (orientation : Bool), ∀ (base : ProtoTile), ∀ (Rminus : ProtoTile),
-            ∀ (Rplus : ProtoTile), ∀ (hminus : PartialOdometer), ∀ (hplus : PartialOdometer), ∀
-            (F : P4458T1BoundaryFrame C orientation base Rminus Rplus hminus hplus), ∀ (a : Fin
-            (3 : ℕ)), ∀ (p : Fin (4 : ℕ) → CircleCoordinates), (![F.q (0 : Fin (4 : ℕ)), F.q
-            a.succ, F.q (a + (1 : Fin (3 : ℕ))).succ, F.q (a + (2 : Fin (3 : ℕ))).succ] = ![((2 :
-            ℤ) * (p (0 : Fin (4 : ℕ))).1 + (2 : ℤ) * (p (2 : Fin (4 : ℕ))).1 + (2 : ℤ) * (p (3 :
-            Fin (4 : ℕ))).1 - (p (1 : Fin (4 : ℕ))).1, (2 : GaussianInt) * (p (0 : Fin (4 :
-            ℕ))).2 + (2 : GaussianInt) * (p (2 : Fin (4 : ℕ))).2 + (2 : GaussianInt) * (p (3 :
-            Fin (4 : ℕ))).2 - (p (1 : Fin (4 : ℕ))).2), p (0 : Fin (4 : ℕ)), p (2 : Fin (4 : ℕ)),
-            p (3 : Fin (4 : ℕ))]) → (F.q a.succ = p 0) ) := by
-  classical
-  intro C orientation base Rminus Rplus hminus hplus F a p hstep
-  have h := congrFun hstep 1
-  simpa using h
-
-private theorem hqB :
-    (by
-      classical
-      exact
-        ∀ (C : BandCircle), ∀ (orientation : Bool), ∀ (base : ProtoTile), ∀ (Rminus : ProtoTile),
-            ∀ (Rplus : ProtoTile), ∀ (hminus : PartialOdometer), ∀ (hplus : PartialOdometer), ∀
-            (F : P4458T1BoundaryFrame C orientation base Rminus Rplus hminus hplus), ∀ (a : Fin
-            (3 : ℕ)), ∀ (p : Fin (4 : ℕ) → CircleCoordinates), (![F.q (0 : Fin (4 : ℕ)), F.q
-            a.succ, F.q (a + (1 : Fin (3 : ℕ))).succ, F.q (a + (2 : Fin (3 : ℕ))).succ] = ![((2 :
-            ℤ) * (p (0 : Fin (4 : ℕ))).1 + (2 : ℤ) * (p (2 : Fin (4 : ℕ))).1 + (2 : ℤ) * (p (3 :
-            Fin (4 : ℕ))).1 - (p (1 : Fin (4 : ℕ))).1, (2 : GaussianInt) * (p (0 : Fin (4 :
-            ℕ))).2 + (2 : GaussianInt) * (p (2 : Fin (4 : ℕ))).2 + (2 : GaussianInt) * (p (3 :
-            Fin (4 : ℕ))).2 - (p (1 : Fin (4 : ℕ))).2), p (0 : Fin (4 : ℕ)), p (2 : Fin (4 : ℕ)),
-            p (3 : Fin (4 : ℕ))]) → (F.q (a + 1).succ = p 2) ) := by
-  classical
-  intro C orientation base Rminus Rplus hminus hplus F a p hstep
-  have h := congrFun hstep 2
-  simpa using h
-
-private theorem hqD :
-    (by
-      classical
-      exact
-        ∀ (C : BandCircle), ∀ (orientation : Bool), ∀ (base : ProtoTile), ∀ (Rminus : ProtoTile),
-            ∀ (Rplus : ProtoTile), ∀ (hminus : PartialOdometer), ∀ (hplus : PartialOdometer), ∀
-            (F : P4458T1BoundaryFrame C orientation base Rminus Rplus hminus hplus), ∀ (a : Fin
-            (3 : ℕ)), ∀ (p : Fin (4 : ℕ) → CircleCoordinates), (![F.q (0 : Fin (4 : ℕ)), F.q
-            a.succ, F.q (a + (1 : Fin (3 : ℕ))).succ, F.q (a + (2 : Fin (3 : ℕ))).succ] = ![((2 :
-            ℤ) * (p (0 : Fin (4 : ℕ))).1 + (2 : ℤ) * (p (2 : Fin (4 : ℕ))).1 + (2 : ℤ) * (p (3 :
-            Fin (4 : ℕ))).1 - (p (1 : Fin (4 : ℕ))).1, (2 : GaussianInt) * (p (0 : Fin (4 :
-            ℕ))).2 + (2 : GaussianInt) * (p (2 : Fin (4 : ℕ))).2 + (2 : GaussianInt) * (p (3 :
-            Fin (4 : ℕ))).2 - (p (1 : Fin (4 : ℕ))).2), p (0 : Fin (4 : ℕ)), p (2 : Fin (4 : ℕ)),
-            p (3 : Fin (4 : ℕ))]) → (F.q (a + 2).succ = p 3) ) := by
-  classical
-  intro C orientation base Rminus Rplus hminus hplus F a p hstep
-  have h := congrFun hstep 3
-  simpa using h
-
 private theorem hslot :
     (by
       classical
@@ -3120,12 +3063,9 @@ theorem P4458T1SecondNewerRows :
         hplus F D hUfoot u hjoinFootEq
     have hjoinOccurrence := BoundaryFrameJoinGeometry.joinOccurrence C orientation base Rminus
         Rplus hminus hplus F D hUcent u hjoinBand hjoinCenterEq hjoinFoot
-    have hqA : F.q a.succ = p 0 := SecondNewerRowsGeometry.hqA C orientation base Rminus Rplus
-        hminus hplus F a p hstep
-    have hqB : F.q (a + 1).succ = p 2 := SecondNewerRowsGeometry.hqB C orientation base Rminus
-        Rplus hminus hplus F a p hstep
-    have hqD : F.q (a + 2).succ = p 3 := SecondNewerRowsGeometry.hqD C orientation base Rminus
-        Rplus hminus hplus F a p hstep
+    have hqA : F.q a.succ = p 0 := by simpa using congrFun hstep 1
+    have hqB : F.q (a + 1).succ = p 2 := by simpa using congrFun hstep 2
+    have hqD : F.q (a + 2).succ = p 3 := by simpa using congrFun hstep 3
     have hslot := SecondNewerRowsGeometry.hslot C orientation base Rminus Rplus hminus hplus F a
         selected
     have hSlopeInfo := SecondNewerRowsGeometry.hSlopeInfo C orientation base Rminus Rplus hminus

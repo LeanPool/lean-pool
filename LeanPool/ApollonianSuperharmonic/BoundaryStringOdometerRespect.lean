@@ -254,57 +254,25 @@ private theorem unitPair :
   · obtain ⟨t, ht, ht0, ht1, hlt, _⟩ := third
     omega
 
-private theorem successorCase :
-    (by
-      classical
-      exact
-        ∀ (C : BandCircle), ∀ (ε : Bool), ∀ (B : ProtoTile), ∀ (R : ProtoTile), ∀ (S :
-            ProtoTile), ∀ (g : PartialOdometer), ∀ (h : PartialOdometer), ∀ (F :
-            P4458T1BoundaryFrame C ε B R S g h), ∀ (T : Fin (3 : ℕ) → Bool → ProtoTile), ∀ (H :
-            Fin (3 : ℕ) → Bool → PartialOdometer), ∀ (hsub : ∀ (i : Fin (3 : ℕ)), ∀ (s : Bool),
-            TileOdometer (F.q i.succ) (T i s) (H i s)), ∀ (hfoot : ∀ (i : Fin (3 : ℕ)), ∀ (s :
-            Bool), FootprintVertices (T i s) ⊆ FootprintVertices F.tile), ∀ (hcent : ∀ (i : Fin
-            (3 : ℕ)), ∀ (s : Bool), TileCentroid (T i s) - TileCentroid F.tile = (if s = true
-            then (1 : ℝ) else (-1 : ℝ)) • (1 / 2 : ℝ) • (GaussianRealPoint (BandVectors.1 (F.q (i
-            + (2 : Fin (3 : ℕ))).succ) (F.q (i + (1 : Fin (3 : ℕ))).succ)) - (-(GaussianRealPoint
-            (BandVectors.1 (F.q (i + (2 : Fin (3 : ℕ))).succ) (F.q (i + (1 : Fin (3 :
-            ℕ))).succ))).2, (GaussianRealPoint (BandVectors.1 (F.q (i + (2 : Fin (3 : ℕ))).succ)
-            (F.q (i + (1 : Fin (3 : ℕ))).succ))).1))), ∀ (hdom : ∀ (x : GaussianInt), x ∈
-            F.odometer.domain ↔ ∃ (i : Fin (3 : ℕ)) (s : Bool), x ∈ (H i s).domain), ∀ (hvalue :
-            ∀ (i : Fin (3 : ℕ)), ∀ (s : Bool), ∀ x ∈ (H i s).domain, F.odometer.value x = (H i
-            s).value x), ∀ (hslope : ∀ (i : Fin (3 : ℕ)), ∀ (s : Bool), (F.q i.succ).1 = (0 : ℤ)
-            ∨ ∃ (p : ℝ × ℝ) (p_i : ℝ × ℝ), PartialOdometerSlope F.odometer = some p ∧
-            PartialOdometerSlope (H i s) = some p_i ∧ p_i.1 - p.1 = (if s = true then (1 : ℝ)
-            else (-1 : ℝ)) * (1 / 2 : ℝ) * ((↑(BandVectors.2 (F.q (i + (2 : Fin (3 : ℕ))).succ)
-            (F.q (i + (1 : Fin (3 : ℕ))).succ)).re : ℝ) - (↑(BandVectors.2 (F.q (i + (2 : Fin (3
-            : ℕ))).succ) (F.q (i + (1 : Fin (3 : ℕ))).succ)).im : ℝ)) ∧ p_i.2 - p.2 = (if s =
-            true then (1 : ℝ) else (-1 : ℝ)) * (1 / 2 : ℝ) * ((↑(BandVectors.2 (F.q (i + (2 : Fin
-            (3 : ℕ))).succ) (F.q (i + (1 : Fin (3 : ℕ))).succ)).im : ℝ) + (↑(BandVectors.2 (F.q
-            (i + (2 : Fin (3 : ℕ))).succ) (F.q (i + (1 : Fin (3 : ℕ))).succ)).re : ℝ))), ∀
-            (ancestors : ∀ (j : Fin 3), ∀ (s : Bool), (0 < (F.q j.succ).1) → (AncestorOdometer
-            (F.q j.succ) F.outer.1.1 (T j s) F.tile (H j s) F.odometer)),
-        let D : P4458T1RestrictionFamily F :=
-          { tiles := T, functions := H, odometers := hsub
-            occurrences := fun j s =>
-              ⟨TileOdometerBandPrototile _ _ _ (hsub j s), hfoot j s, hcent j s⟩
-            domain_subset := fun j s x hx => (hdom x).mpr ⟨j, s, hx⟩
-            value_eq := fun j s x hx => (hvalue j s x hx).symm
-            ancestors := ancestors, slopes := hslope }
-        (∀ (u : Fin 4 → CircleCoordinates), (ProperBandQuadruple u) → (ProperBandQuadruple ![u 0,
-            u 2, u 3, u 1])) → ((∀ {X : CircleCoordinates}, ∀ {Y : CircleCoordinates},
-            (PrimitiveVectorOrientation X Y) → ((PrimitiveVectorOrientation Y X) → (False))) →
-            ((∀ (u : Fin 4 → CircleCoordinates), (ProperBandQuadruple u) → (((u 2).1 = 1) → (((u
-            3).1 = 1) → ((PrimitiveVectorOrientation (u 2) (u 3) ∧ UnitOccurrenceOrientation u 1
-            false ∧ UnitOccurrenceOrientation u 2 true) ∨ (PrimitiveVectorOrientation (u 3) (u 2)
-            ∧ UnitOccurrenceOrientation u 1 true ∧ UnitOccurrenceOrientation u 2 false))))) → (∀
-            (a : Fin 3), ∀ (p : Fin 4 → CircleCoordinates), (ProperBandQuadruple p) → ((![F.q 0,
-            F.q a.succ, F.q (a + 1).succ, F.q (a + 2).succ] =
-            ![(2 * (p 0).1 + 2 * (p 2).1 + 2 * (p 3).1 - (p 1).1,
-                2 * (p 0).2 + 2 * (p 2).2 + 2 * (p 3).2 - (p 1).2),
-              p 0, p 2, p 3]) → (Nonempty (P4458T1BoundaryPlacement F D)))))) ) := by
+private theorem successorCase
+    {C : BandCircle} {ε : Bool} {B R S : ProtoTile} {g h : PartialOdometer}
+    (F : P4458T1BoundaryFrame C ε B R S g h) (D : P4458T1RestrictionFamily F)
+    (rotateProper : ∀ u, ProperBandQuadruple u →
+      ProperBandQuadruple ![u 0, u 2, u 3, u 1])
+    (asymmetric : ∀ {X Y : CircleCoordinates}, PrimitiveVectorOrientation X Y →
+      PrimitiveVectorOrientation Y X → False)
+    (unitPair : ∀ u, ProperBandQuadruple u → (u 2).1 = 1 → (u 3).1 = 1 →
+      (PrimitiveVectorOrientation (u 2) (u 3) ∧ UnitOccurrenceOrientation u 1 false ∧
+        UnitOccurrenceOrientation u 2 true) ∨
+      (PrimitiveVectorOrientation (u 3) (u 2) ∧ UnitOccurrenceOrientation u 1 true ∧
+        UnitOccurrenceOrientation u 2 false))
+    (a : Fin 3) (p : Fin 4 → CircleCoordinates) (hp : ProperBandQuadruple p)
+    (hstep :
+      ![F.q 0, F.q a.succ, F.q (a + 1).succ, F.q (a + 2).succ] =
+        ![(2 * (p 0).1 + 2 * (p 2).1 + 2 * (p 3).1 - (p 1).1,
+            2 * (p 0).2 + 2 * (p 2).2 + 2 * (p 3).2 - (p 1).2), p 0, p 2, p 3]) : Nonempty
+                (P4458T1BoundaryPlacement F D) := by
   classical
-  intro C ε B R S g h F T H hsub hfoot hcent hdom hvalue hslope ancestors D rotateProper
-      asymmetric unitPair a p hp hstep
   by_cases selected : F.slot = a
   · exact P4458T1LargestParentRows F D a p hp hstep selected
   have pq2 : p 2 = F.q (a + 1).succ := by
@@ -408,49 +376,17 @@ private theorem successorCase :
     exact P4458T1ThirdNewerRows F D a p hp hstep hB hD selected
       t ht ht0 ht1 newer olderChart
 
-private theorem placement :
-    (by
-      classical
-      exact
-        ∀ (C : BandCircle), ∀ (ε : Bool), ∀ (B : ProtoTile), ∀ (R : ProtoTile), ∀ (S :
-            ProtoTile), ∀ (g : PartialOdometer), ∀ (h : PartialOdometer), ∀ (F :
-            P4458T1BoundaryFrame C ε B R S g h), ∀ (T : Fin (3 : ℕ) → Bool → ProtoTile), ∀ (H :
-            Fin (3 : ℕ) → Bool → PartialOdometer), ∀ (hsub : ∀ (i : Fin (3 : ℕ)), ∀ (s : Bool),
-            TileOdometer (F.q i.succ) (T i s) (H i s)), ∀ (hfoot : ∀ (i : Fin (3 : ℕ)), ∀ (s :
-            Bool), FootprintVertices (T i s) ⊆ FootprintVertices F.tile), ∀ (hcent : ∀ (i : Fin
-            (3 : ℕ)), ∀ (s : Bool), TileCentroid (T i s) - TileCentroid F.tile = (if s = true
-            then (1 : ℝ) else (-1 : ℝ)) • (1 / 2 : ℝ) • (GaussianRealPoint (BandVectors.1 (F.q (i
-            + (2 : Fin (3 : ℕ))).succ) (F.q (i + (1 : Fin (3 : ℕ))).succ)) - (-(GaussianRealPoint
-            (BandVectors.1 (F.q (i + (2 : Fin (3 : ℕ))).succ) (F.q (i + (1 : Fin (3 :
-            ℕ))).succ))).2, (GaussianRealPoint (BandVectors.1 (F.q (i + (2 : Fin (3 : ℕ))).succ)
-            (F.q (i + (1 : Fin (3 : ℕ))).succ))).1))), ∀ (hdom : ∀ (x : GaussianInt), x ∈
-            F.odometer.domain ↔ ∃ (i : Fin (3 : ℕ)) (s : Bool), x ∈ (H i s).domain), ∀ (hvalue :
-            ∀ (i : Fin (3 : ℕ)), ∀ (s : Bool), ∀ x ∈ (H i s).domain, F.odometer.value x = (H i
-            s).value x), ∀ (hslope : ∀ (i : Fin (3 : ℕ)), ∀ (s : Bool), (F.q i.succ).1 = (0 : ℤ)
-            ∨ ∃ (p : ℝ × ℝ) (p_i : ℝ × ℝ), PartialOdometerSlope F.odometer = some p ∧
-            PartialOdometerSlope (H i s) = some p_i ∧ p_i.1 - p.1 = (if s = true then (1 : ℝ)
-            else (-1 : ℝ)) * (1 / 2 : ℝ) * ((↑(BandVectors.2 (F.q (i + (2 : Fin (3 : ℕ))).succ)
-            (F.q (i + (1 : Fin (3 : ℕ))).succ)).re : ℝ) - (↑(BandVectors.2 (F.q (i + (2 : Fin (3
-            : ℕ))).succ) (F.q (i + (1 : Fin (3 : ℕ))).succ)).im : ℝ)) ∧ p_i.2 - p.2 = (if s =
-            true then (1 : ℝ) else (-1 : ℝ)) * (1 / 2 : ℝ) * ((↑(BandVectors.2 (F.q (i + (2 : Fin
-            (3 : ℕ))).succ) (F.q (i + (1 : Fin (3 : ℕ))).succ)).im : ℝ) + (↑(BandVectors.2 (F.q
-            (i + (2 : Fin (3 : ℕ))).succ) (F.q (i + (1 : Fin (3 : ℕ))).succ)).re : ℝ))), ∀
-            (ancestors : ∀ (j : Fin 3), ∀ (s : Bool), (0 < (F.q j.succ).1) → (AncestorOdometer
-            (F.q j.succ) F.outer.1.1 (T j s) F.tile (H j s) F.odometer)),
-        let D : P4458T1RestrictionFamily F :=
-          { tiles := T, functions := H, odometers := hsub
-            occurrences := fun j s =>
-              ⟨TileOdometerBandPrototile _ _ _ (hsub j s), hfoot j s, hcent j s⟩
-            domain_subset := fun j s x hx => (hdom x).mpr ⟨j, s, hx⟩
-            value_eq := fun j s x hx => (hvalue j s x hx).symm
-            ancestors := ancestors, slopes := hslope }
-        (∀ (a : Fin 3), ∀ (p : Fin 4 → CircleCoordinates), (ProperBandQuadruple p) → ((![F.q 0,
-            F.q a.succ, F.q (a + 1).succ, F.q (a + 2).succ] = ![(2 * (p 0).1 + 2 * (p 2).1 + 2 *
-            (p 3).1 - (p 1).1, 2 * (p 0).2 + 2 * (p 2).2 + 2 * (p 3).2 - (p 1).2), p 0, p 2, p
-            3]) → (Nonempty (P4458T1BoundaryPlacement F D)))) → (Nonempty
-            (P4458T1BoundaryPlacement F D)) ) := by
+private theorem placement
+    {C : BandCircle} {ε : Bool} {B R S : ProtoTile} {g h : PartialOdometer}
+    (F : P4458T1BoundaryFrame C ε B R S g h) (D : P4458T1RestrictionFamily F)
+    (successorCase : ∀ (a : Fin 3) (p : Fin 4 → CircleCoordinates),
+      ProperBandQuadruple p →
+      ![F.q 0, F.q a.succ, F.q (a + 1).succ, F.q (a + 2).succ] =
+        ![(2 * (p 0).1 + 2 * (p 2).1 + 2 * (p 3).1 - (p 1).1,
+            2 * (p 0).2 + 2 * (p 2).2 + 2 * (p 3).2 - (p 1).2), p 0, p 2, p 3] →
+      Nonempty (P4458T1BoundaryPlacement F D)) :
+    Nonempty (P4458T1BoundaryPlacement F D) := by
   classical
-  intro C ε B R S g h F T H hsub hfoot hcent hdom hvalue hslope ancestors D successorCase
   rcases BandParentBoundaryGenealogy F.q F.proper with roots | first | second | third
   · exact P4458T1FirstProperRows F D roots
   · obtain ⟨p, hp, hs, _⟩ := first
@@ -583,10 +519,9 @@ theorem BoundaryStringOdometerRespect :
           value_eq := fun j s x hx => (hvalue j s x hx).symm
           ancestors := ancestors, slopes := hslope }
       -- A hidden unit is resolved through a second literal successor.
-      have placement := BoundaryOdometerGeometry.placement C ε B R S g h F T H hsub hfoot hcent
-          hdom hvalue hslope ancestors (BoundaryOdometerGeometry.successorCase C ε B R S g h F T
-          H hsub hfoot hcent hdom hvalue hslope ancestors (BoundaryOdometerGeometry.rotateProper)
-          (BoundaryOdometerGeometry.asymmetric) (BoundaryOdometerGeometry.unitPair))
+      have placement := BoundaryOdometerGeometry.placement F D
+        (BoundaryOdometerGeometry.successorCase F D BoundaryOdometerGeometry.rotateProper
+          BoundaryOdometerGeometry.asymmetric BoundaryOdometerGeometry.unitPair)
       obtain ⟨P⟩ := placement
       have realize {U V : ProtoTile} {k l : PartialOdometer}
           (side : P4458T1BoundarySide F U V k l) := BoundaryOdometerGeometry.realize n ih C ε B
