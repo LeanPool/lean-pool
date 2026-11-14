@@ -113,7 +113,7 @@ theorem isAdicComplete_integer : IsAdicComplete 𝓂[K] 𝒪[K] := by
     have hdist : ∀ {m j : ℕ}, m ≤ j →
         valuation K ((s j : K) - (s m : K)) ≤ valuation K ((π : K) ^ m) := by
       intro m j hmj
-      have h1 : ((s j - s m : 𝒪[K]) : K) = (s j : K) - (s m : K) := by push_cast; ring
+      have h1 : ((s j - s m : 𝒪[K]) : K) = (s j : K) - (s m : K) := by push_cast; ac_rfl
       rw [← h1]
       exact Valuation.Integers.le_of_dvd (Valuation.integer.integers (valuation K)) (hdvd hmj)
     have hmono : ∀ j, C (j + 1) ⊆ C j := by
@@ -164,7 +164,7 @@ theorem isAdicComplete_integer : IsAdicComplete 𝓂[K] 𝒪[K] := by
     refine ⟨⟨ℓ, hℓO⟩, fun j => ?_⟩
     rw [← Ideal.one_eq_top, smul_eq_mul, mul_one, SModEq.sub_mem, hmem_iff]
     refine Valuation.Integers.dvd_of_le (Valuation.integer.integers (valuation K)) ?_
-    have h1 : ((s j - ⟨ℓ, hℓO⟩ : 𝒪[K]) : K) = (s j : K) - ℓ := by push_cast; ring
+    have h1 : ((s j - ⟨ℓ, hℓO⟩ : 𝒪[K]) : K) = (s j : K) - ℓ := by push_cast; ac_rfl
     have h2 : valuation K ((s j : K) - ℓ) = valuation K (ℓ - (s j : K)) :=
       Valuation.map_sub_swap _ _ _
     have h3 : valuation K (ℓ - (s j : K)) ≤ valuation K ((π : K) ^ j) := by
@@ -327,8 +327,8 @@ private lemma ker_aeval_integralGen (hint : IsIntegral 𝒪[K] x) :
     RingHom.ker (Polynomial.aeval (integralGen hint) :
         Polynomial 𝒪[K] →ₐ[𝒪[K]] ↥(integers (IntermediateField.adjoin K {x}))).toRingHom =
       Ideal.span {minpoly 𝒪[K] x} := by
-  have : IsFractionRing 𝒪[K] K :=
-    inferInstanceAs (IsFractionRing (valuation K).valuationSubring K)
+  have : IsFractionRing 𝒪[K] K := by
+    as_aux_lemma => exact inferInstance
   apply le_antisymm
   · intro P hP
     rw [Ideal.mem_span_singleton]
@@ -465,8 +465,8 @@ private lemma integralGen_ne_zero (hint : IsIntegral 𝒪[K] x)
   rw [hx0] at h1
   have h2 : algebraMap 𝒪[K] (SeparableClosure K) (G.coeff 0) = 0 := by
     rw [← h1, Polynomial.aeval_def, Polynomial.eval₂_at_zero]
-  have : IsFractionRing 𝒪[K] K :=
-    inferInstanceAs (IsFractionRing (valuation K).valuationSubring K)
+  have : IsFractionRing 𝒪[K] K := by
+    as_aux_lemma => exact inferInstance
   have hinj : Function.Injective (algebraMap 𝒪[K] (SeparableClosure K)) := by
     rw [IsScalarTower.algebraMap_eq 𝒪[K] K (SeparableClosure K)]
     exact (algebraMap K (SeparableClosure K)).injective.comp (IsFractionRing.injective 𝒪[K] K)
@@ -506,8 +506,8 @@ theorem eq_span_integralGen_of_isMaximal (hπ : Irreducible π) (hint : IsIntegr
     (hei : (minpoly 𝒪[K] x).IsEisensteinAt (Submodule.span 𝒪[K] {π}))
     {Q : Ideal ↥(integers (IntermediateField.adjoin K {x}))} (hQ : Q.IsMaximal) :
     Q = Ideal.span {integralGen hint} := by
-  have : IsFractionRing 𝒪[K] K :=
-    inferInstanceAs (IsFractionRing (valuation K).valuationSubring K)
+  have : IsFractionRing 𝒪[K] K := by
+    as_aux_lemma => exact inferInstance
   have : FiniteDimensional K ↥(IntermediateField.adjoin K {x}) :=
     (IntermediateField.adjoin.powerBasis hint.tower_top).finite
   have hIC : IsIntegralClosure ↥(integers (IntermediateField.adjoin K {x})) ↥𝒪[K]
@@ -580,8 +580,8 @@ Krull–Akizuki, not a field since `integralGen ≠ 0` generates the maximal ide
 theorem isDiscreteValuationRing_integers (hπ : Irreducible π) (hint : IsIntegral 𝒪[K] x)
     (hei : (minpoly 𝒪[K] x).IsEisensteinAt (Submodule.span 𝒪[K] {π})) :
     IsDiscreteValuationRing ↥(integers (IntermediateField.adjoin K {x})) := by
-  have : IsFractionRing 𝒪[K] K :=
-    inferInstanceAs (IsFractionRing (valuation K).valuationSubring K)
+  have : IsFractionRing 𝒪[K] K := by
+    as_aux_lemma => exact inferInstance
   have : FiniteDimensional K ↥(IntermediateField.adjoin K {x}) :=
     (IntermediateField.adjoin.powerBasis hint.tower_top).finite
   have hIC : IsIntegralClosure ↥(integers (IntermediateField.adjoin K {x})) ↥𝒪[K]
@@ -625,8 +625,8 @@ theorem isAdicComplete_span_integralGen (hπ : Irreducible π) (hint : IsIntegra
   constructor
   · -- `IsHausdorff`
     have := isLocalRing_integers hπ hint hei
-    have : IsFractionRing 𝒪[K] K :=
-      inferInstanceAs (IsFractionRing (valuation K).valuationSubring K)
+    have : IsFractionRing 𝒪[K] K := by
+      as_aux_lemma => exact inferInstance
     have : FiniteDimensional K ↥(IntermediateField.adjoin K {x}) :=
       (IntermediateField.adjoin.powerBasis hint.tower_top).finite
     have hIC : IsIntegralClosure ↥(integers (IntermediateField.adjoin K {x})) ↥𝒪[K]
@@ -1002,8 +1002,8 @@ theorem exists_bezout {f : Polynomial 𝒪[K]}
     (hfsep : (f.map (algebraMap 𝒪[K] K)).Separable) :
     ∃ (U V : Polynomial 𝒪[K]) (β : 𝒪[K]), β ≠ 0 ∧
       U * f + V * Polynomial.derivative f = Polynomial.C β := by
-  have : IsFractionRing 𝒪[K] K :=
-    inferInstanceAs (IsFractionRing (valuation K).valuationSubring K)
+  have : IsFractionRing 𝒪[K] K := by
+    as_aux_lemma => exact inferInstance
   obtain ⟨u, v, huv⟩ := hfsep
   obtain ⟨bu, hbu0, hbu⟩ := IsLocalization.integerNormalization_spec (nonZeroDivisors 𝒪[K]) u
   obtain ⟨bv, hbv0, hbv⟩ := IsLocalization.integerNormalization_spec (nonZeroDivisors 𝒪[K]) v
@@ -1299,8 +1299,8 @@ theorem card_aroots_eq (n : ℕ) (hn : 0 < n) (L : IntermediateField K (Separabl
   classical
   obtain ⟨x, π, hπ, hint, hei, hadj, hdeg⟩ := exists_eisenstein_generator K n hn L hL
   subst hadj
-  have : IsFractionRing 𝒪[K] K :=
-    inferInstanceAs (IsFractionRing (valuation K).valuationSubring K)
+  have : IsFractionRing 𝒪[K] K := by
+    as_aux_lemma => exact inferInstance
   -- the structural instances on the integral closure
   have hLoc : IsLocalRing ↥(integers (IntermediateField.adjoin K {x})) :=
     isLocalRing_integers hπ hint hei

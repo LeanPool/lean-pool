@@ -187,8 +187,8 @@ private theorem exists_ramified_ideal_element (n : ℕ) (hn : 0 < n)
       ξ ∈ Q ∧ ξ ∉ Q ^ 2 := by
   classical
   obtain ⟨hLn, hLram⟩ := hL
-  have : IsFractionRing ↥𝒪[K] K :=
-    inferInstanceAs (IsFractionRing (valuation K).valuationSubring K)
+  have : IsFractionRing ↥𝒪[K] K := by
+    as_aux_lemma => exact inferInstance
   have : FiniteDimensional K ↥L :=
     FiniteDimensional.of_finrank_pos (by rw [hLn]; exact hn)
   have hIC : IsIntegralClosure ↥(integers L) ↥𝒪[K] ↥L :=
@@ -265,8 +265,8 @@ theorem exists_eisenstein_generator (n : ℕ) (hn : 0 < n)
       IntermediateField.adjoin K {x} = L ∧ (minpoly 𝒪[K] x).natDegree = n := by
   classical
   obtain ⟨hLn, hLram⟩ := hL
-  have : IsFractionRing ↥𝒪[K] K :=
-    inferInstanceAs (IsFractionRing (valuation K).valuationSubring K)
+  have : IsFractionRing ↥𝒪[K] K := by
+    as_aux_lemma => exact inferInstance
   have : FiniteDimensional K ↥L :=
     FiniteDimensional.of_finrank_pos (by rw [hLn]; exact hn)
   have hIC : IsIntegralClosure ↥(integers L) ↥𝒪[K] ↥L :=
@@ -380,8 +380,8 @@ private theorem norm_derivative_core {π : 𝒪[K]} (hπ : Irreducible π) {x : 
           (Polynomial.derivative (minpoly K (IntermediateField.AdjoinSimple.gen K x)))) ∧
       N₀ ∈ 𝓂[K] ^ ((minpoly 𝒪[K] x).natDegree - 1) := by
   classical
-  have : IsFractionRing 𝒪[K] K :=
-    inferInstanceAs (IsFractionRing (valuation K).valuationSubring K)
+  have : IsFractionRing 𝒪[K] K := by
+    as_aux_lemma => exact inferInstance
   set L' := IntermediateField.adjoin K {x} with hL'
   set x' : ↥L' := IntermediateField.AdjoinSimple.gen K x with hx'
   set g : Polynomial 𝒪[K] := minpoly 𝒪[K] x with hg
@@ -488,8 +488,8 @@ theorem discIdeal_eq_span {π : 𝒪[K]} (hπ : Irreducible π) {x : SeparableCl
           (Polynomial.derivative (minpoly K (IntermediateField.AdjoinSimple.gen K x)))) ∧
       discIdeal (IntermediateField.adjoin K {x}) = Ideal.span {N₀} := by
   classical
-  have : IsFractionRing 𝒪[K] K :=
-    inferInstanceAs (IsFractionRing (valuation K).valuationSubring K)
+  have : IsFractionRing 𝒪[K] K := by
+    as_aux_lemma => exact inferInstance
   have hKint : IsIntegral K x := hint.tower_top
   set L' := IntermediateField.adjoin K {x} with hL'
   set x' : ↥L' := IntermediateField.AdjoinSimple.gen K x with hx'
@@ -588,7 +588,7 @@ theorem discIdeal_eq_span {π : 𝒪[K]} (hπ : Irreducible π) {x : SeparableCl
         show ((M.map (algebraMap 𝒪[K] K)).det) = algebraMap 𝒪[K] K M.det from
           (RingHom.map_det (algebraMap 𝒪[K] K) M).symm]
       simp only [map_mul, map_pow, map_neg, map_one]
-      ring
+      ac_rfl
     have hx₀eq : x₀ = ((M.det) ^ 2 *
         (-1) ^ (Module.finrank K ↥L' * (Module.finrank K ↥L' - 1) / 2)) * N₀ :=
       IsFractionRing.injective 𝒪[K] K hfinal
