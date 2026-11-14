@@ -344,55 +344,17 @@ private theorem slot :
   intro q b k
   fin_cases b <;> fin_cases k <;> rfl
 
-private theorem keep :
-    (by
-      classical
-      exact
-        ∀ (L : Real),
-          ∀ (q : Fin 4 → CircleCoordinates),
-            ProperBandQuadruple q →
-              ∀ (j : Fin 3),
-                (0 : ℤ) < (q j.succ).1 →
-                  dist (((q j.succ).2 : Complex) / ((q j.succ).1 : Real))
-                        (((q 0).2 : Complex) / ((q 0).1 : Real)) =
-                      1 / ((q j.succ).1 : Real) + 1 / ((q 0).1 : Real) →
-                    let p (i : Fin 4) : Complex := (q i).2 / ((q i).1 : Real);
-                    let rad (i : Fin 4) : Real := 1 / ((q i).1 : Real);
-                    let a := p j.succ;
-                    let x := p 0;
-                    let R := rad j.succ;
-                    let S := rad 0;
-                    0 < R →
-                      dist a x = R + S →
-                        let α := R / (R + S);
-                        0 < α →
-                          α < 1 →
-                            α * (R + S) = R →
-                              (1 - α) * (R + S) = S →
-                                let t := a + α • (x - a);
-                              ‖x - a‖ = R + S →
-                                dist t a = R →
-                                dist t x = S →
-                                ∀ [IsClosed (P4984T1ClosedGap L q ∩ Metric.sphere a R)],
-                                (∀ (b : Fin 3),
-                                ∀ (k : Fin 3),
-                                P4828T1Step (P4828T1Rotate q b) k.succ =
-                                if k = 0 then q 0 else q (k + b).succ) →
-                                ∀ (b : Fin (3 : ℕ)),
-                                b ≠ j ↔
-                                ∃ (k : Fin (3 : ℕ)),
-                                P4828T1Step (P4828T1Rotate q b) k.succ = q j.succ
-    ) := by
+private theorem parentPresentAfterOtherStep
+    (q : Fin 4 → CircleCoordinates) (hq : ProperBandQuadruple q) (j b : Fin 3) :
+    b ≠ j ↔ ∃ k : Fin 3, P4828T1Step (P4828T1Rotate q b) k.succ = q j.succ := by
   classical
-  intro L q hq j hj hparentContactDistance p rad a x R S hR hax α hα hαlt hαmul hcompmul t
-      hnormax hta htx hAclosed slot b
   constructor
   · intro hb
     fin_cases b <;> fin_cases j
     all_goals norm_num at hb
     all_goals first | exact ⟨1, rfl⟩ | exact ⟨2, rfl⟩
   · rintro ⟨k, hk⟩ hb
-    rw [slot] at hk
+    rw [IncidentArcGeometry.slot] at hk
     split_ifs at hk with hkzero
     · have hroot : (q j.succ).1 < (q 0).1 := hq.2 j
       have heq := congrArg Prod.fst hk
@@ -414,33 +376,8 @@ private theorem closedGapOfParent :
             m.succ).1 → IsClosed (P4984T1ClosedGap L u) ) := by
   classical
   intro L u m hm
-  let pu (i : Fin 4) : Complex := (u i).2 / ((u i).1 : Real)
-  let fu (i k : Fin 3) : Complex :=
-    ⟨if (u k.succ).2 = -1 then L else L + 2, (pu i.succ).im⟩
-  let Vu : Set Complex := {z | ∃ i : Fin 3, 0 < (u i.succ).1 ∧
-    (z = pu i.succ ∨ ∃ k : Fin 3, (u k.succ).1 = 0 ∧ z = fu i k)}
-  let gu : Fin 3 × Fin 3 → Complex := fun ik =>
-    if (u ik.2.succ).1 = 0 then fu ik.1 ik.2 else pu ik.1.succ
-  have hsub : Vu ⊆ Set.range gu := by
-    rintro z ⟨i, hi, rfl | ⟨k, hk, rfl⟩⟩
-    · exact ⟨(i, m), by simp [gu, hm.ne']⟩
-    · exact ⟨(i, k), by simp [gu, hk, fu]⟩
-  have hfinite : Vu.Finite := (Set.finite_range gu).subset hsub
-  have hpoly : IsClosed (P4909T1ParentPolygon L u) := by
-    change IsClosed (convexHull Real Vu)
-    exact hfinite.isClosed_convexHull Real
-  change IsClosed (P4909T1ParentPolygon L u ∩
-    {z | ∀ k : Fin 3, 0 < (u k.succ).1 →
-      1 / ((u k.succ).1 : Real) ≤
-        dist z (((u k.succ).2 : Complex) / ((u k.succ).1 : Real))})
-  apply hpoly.inter
-  rw [Set.ofPred_forall]
-  apply isClosed_iInter
-  intro k
-  by_cases hk : 0 < (u k.succ).1
-  · simp only [hk, true_implies]
-    exact isClosed_Ici.preimage (continuous_id.dist continuous_const)
-  · simp [not_lt.mp hk]
+  exact @IncidentArcGeometry.hClosedGap L u (IncidentArcGeometry.hParentClosed L u
+    ((Set.finite_range _).subset (IncidentArcGeometry.hVsub L u m hm)))
 
 private theorem hchildCover :
     (by
@@ -772,9 +709,7 @@ theorem P4984T1IncidentArcs (L : Real)
   have hANonempty : (P4984T1ClosedGap L q ∩ Metric.sphere a R).Nonempty :=
     ⟨t, htA⟩
   have slot (b k : Fin 3) := IncidentArcGeometry.slot q b k
-  have keep (b : Fin 3) := @IncidentArcGeometry.keep L q hq j hj hparentContactDistance hR hax hα
-      hαlt hαmul hcompmul hnormax hta htx hAclosed
-          slot b
+  have keep (b : Fin 3) := IncidentArcGeometry.parentPresentAfterOtherStep q hq j b
   have closedGapOfParent (u : Fin 4 → CircleCoordinates) (m : Fin 3)
       (hm : 0 < (u m.succ).1) := IncidentArcGeometry.closedGapOfParent L u m hm
   have hchildCover := IncidentArcGeometry.hchildCover L q hq hs hi j hax
