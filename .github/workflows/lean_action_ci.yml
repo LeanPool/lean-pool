@@ -629,7 +629,6 @@ jobs:
           fi
 
       - name: Install uv
-        if: github.event_name == 'pull_request'
         uses: astral-sh/setup-uv@d0d8abe699bfb85fec6de9f7adb5ae17292296ff
         with:
           enable-cache: true
@@ -716,6 +715,44 @@ jobs:
           name: ci-oleans-${{ matrix.shard }}
           path: shard-oleans-*.tar.gz
           if-no-files-found: ignore
+          retention-days: 1
+
+      # Lint and audit this shard's projects here, in parallel with the other
+      # shards, instead of one after another in `finalize`. Only passes are
+      # handed on: `finalize` recomputes every fingerprint and runs whatever
+      # has no matching pass, so a failure here is reported there.
+      - name: Restore project validation
+        uses: actions/cache/restore@27d5ce7f107fe9357f9df03efb73ab90386fccae
+        with:
+          path: .lake/validation-cache/v1
+          key: LeanValidation-v1-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json', 'lakefile.toml') }}-${{ github.sha }}
+          restore-keys: |
+            LeanValidation-v1-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json', 'lakefile.toml') }}-
+
+      - name: Install validation dependencies
+        continue-on-error: true
+        run: cd python && uv sync --locked
+
+      - name: Lint and audit this shard's projects
+        id: shard-validation
+        continue-on-error: true
+        env:
+          PROJECTS: ${{ matrix.projects }}
+        run: |
+          cd python
+          # shellcheck disable=SC2086 # word-split the project list on purpose
+          uv run python -m lean_pool.validation_cache shard --repo .. --units $PROJECTS
+
+      - name: Upload validation passes
+        if: always() && steps.shard-validation.outcome != 'skipped'
+        continue-on-error: true
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: ci-validation-${{ matrix.shard }}
+          path: .lake/validation-cache/v1/passes.json
+          include-hidden-files: true
+          if-no-files-found: ignore
+          compression-level: 1
           retention-days: 1
 
   finalize:
@@ -946,6 +983,21 @@ jobs:
         run: >-
           PYTHONPATH=python uv run --project python --locked python -m lean_pool.queue_build
           --base "$BASE_SHA" --head "$HEAD_SHA" --receipts
+
+      - name: Download shard validation passes
+        continue-on-error: true
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+        with:
+          pattern: ci-validation-*
+          path: ${{ runner.temp }}/shard-validation
+
+      - name: Merge shard validation passes
+        continue-on-error: true
+        env:
+          FRAGMENTS: ${{ runner.temp }}/shard-validation
+        run: >-
+          PYTHONPATH=python python3 -m lean_pool.validation_cache merge
+          "$FRAGMENTS"
 
       - name: Lint
         run: |

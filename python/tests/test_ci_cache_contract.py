@@ -106,6 +106,36 @@ def test_single_and_sharded_builds_use_validation_cache() -> None:
     assert contracts[0] == contracts[1]
 
 
+def test_shards_validate_their_projects_and_assembly_decides() -> None:
+    """Shard validation only hands passes on; it can never fail or pass the run."""
+    jobs = yaml.safe_load((WORKFLOWS / "lean_action_ci.yml").read_text())["jobs"]
+    steps = jobs["shard"]["steps"]
+    names = [step.get("name") for step in steps]
+    validate = steps[names.index("Lint and audit this shard's projects")]
+    assert "validation_cache shard --repo .. --units $PROJECTS" in validate["run"]
+    assert validate["continue-on-error"] is True
+    assert names.index("Upload build outputs") < names.index(
+        "Lint and audit this shard's projects"
+    )
+    upload = steps[names.index("Upload validation passes")]
+    assert upload["with"]["name"] == "ci-validation-${{ matrix.shard }}"
+    assert upload["continue-on-error"] is True
+    assert not any(
+        step.get("uses", "").startswith("actions/cache/save@") for step in steps
+    )
+    final = jobs["finalize"]["steps"]
+    final_names = [step.get("name") for step in final]
+    merge = final[final_names.index("Merge shard validation passes")]
+    assert "validation_cache merge" in merge["run"]
+    assert (
+        final_names.index("Restore project validation")
+        < final_names.index("Download shard validation passes")
+        < final_names.index("Merge shard validation passes")
+        < final_names.index("Lint")
+        < final_names.index("Repository quality checks")
+    )
+
+
 def test_merge_queue_reports_all_required_gates_without_path_filtered_workflows() -> (
     None
 ):

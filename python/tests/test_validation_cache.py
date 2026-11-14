@@ -13,8 +13,13 @@ from lean_pool.validation_cache import (
     GLOBAL_INPUTS,
     ValidationCache,
     _module_sources,
+    lint_pool,
+    merge_receipts,
     pool_units,
+    read_receipts,
     source_inventory,
+    unit_name,
+    validate_shard,
 )
 
 
@@ -292,3 +297,97 @@ def test_inventory_fallback_preserves_discovered_external_dependencies(
     assert cache.check(kind, modules, lambda: ["changed dependency"]) == [
         "changed dependency"
     ]
+
+
+def _shard(root: Path, *units: str) -> ValidationCache:
+    return ValidationCache(
+        root, root / ".lake/validation-cache/v1", units=frozenset(units)
+    )
+
+
+def test_units_belong_to_their_project_and_the_root_to_itself() -> None:
+    """Shard project names select the same units the pool is partitioned into."""
+    assert unit_name("LeanPool.A.Detail") == unit_name("LeanPool.A") == "A"
+    assert unit_name("LeanPool") == "__root__"
+
+
+def test_shard_cache_validates_only_its_units(repository: Path) -> None:
+    """Other shards' units are neither run nor given a receipt."""
+    cache = _shard(repository, "A")
+    calls: list[str] = []
+    for modules in pool_units(repository):
+        cache.check("lint", modules, lambda: calls.append(modules[0]) or [])
+    assert calls == ["LeanPool.A"]
+    assert list(cache.used) == ["lint:LeanPool.A"]
+
+
+def test_shard_passes_satisfy_the_whole_pool_run_only_while_inputs_match(
+    repository: Path,
+) -> None:
+    """Merged passes are reused by fingerprint; an edited project is checked again."""
+    with (
+        patch("lean_pool.validation_cache.subprocess.run") as lint,
+        patch("lean_pool.quality._check_projects", return_value=[]),
+        patch("lean_pool.quality._audit_axioms", return_value=[]),
+        patch("lean_pool.quality._run_option_audit", return_value=[]),
+    ):
+        lint.return_value.returncode = 0
+        fragment = repository / "fragments/ci-validation-00"
+        shard = ValidationCache(repository, fragment, units=frozenset({"A"}))
+        assert validate_shard(repository, shard)
+    assert sorted(read_receipts(fragment / "passes.json")) == [
+        "axioms:LeanPool.A",
+        "backdoors:LeanPool.A",
+        "lint:LeanPool.A",
+    ]
+    directory = repository / ".lake/validation-cache/v1"
+    assert merge_receipts(directory, [fragment.parent]) == 3
+    assert merge_receipts(directory, [fragment / "passes.json"]) == 0
+    assert _run(repository)[1] == ["LeanPool.B", "LeanPool"]
+    (repository / "LeanPool/A.lean").write_text("-- edited after the shard ran\n")
+    merge_receipts(directory, [fragment.parent])
+    assert _run(repository)[1] == ["LeanPool.A", "LeanPool"]
+
+
+def test_shard_keeps_passes_and_reports_a_failing_unit(repository: Path) -> None:
+    """One failing project costs the assembling job only that project's checks."""
+
+    def lint(command, **kwargs):
+        assert kwargs["check"] is False
+        failed = "LeanPool.A" in command
+        return type("Process", (), {"returncode": int(failed)})()
+
+    with (
+        patch("lean_pool.validation_cache.subprocess.run", side_effect=lint),
+        patch("lean_pool.quality._check_projects", return_value=[]),
+        patch("lean_pool.quality._audit_axioms", return_value=[]),
+        patch("lean_pool.quality._run_option_audit", return_value=[]),
+    ):
+        shard = _shard(repository, "A", "B")
+        assert not validate_shard(repository, shard)
+    saved = read_receipts(repository / ".lake/validation-cache/v1/passes.json")
+    assert "lint:LeanPool.B" in saved and "lint:LeanPool.A" not in saved
+    assert "axioms:LeanPool.A" in saved
+
+
+def test_whole_pool_lint_still_stops_at_a_failing_unit(repository: Path) -> None:
+    """Outside a shard the linter's failure remains a hard error."""
+    cache = ValidationCache(repository, repository / ".lake/validation-cache/v1")
+    with patch("lean_pool.validation_cache.subprocess.run") as lint:
+        lint_pool(repository, cache)
+    assert all(call.kwargs["check"] is True for call in lint.call_args_list)
+
+
+def test_corrupt_fragments_merge_nothing(repository: Path) -> None:
+    """Unreadable or malformed shard output leaves the cache as it was."""
+    directory = repository / ".lake/validation-cache/v1"
+    _run(repository)
+    before = read_receipts(directory / "passes.json")
+    bad = repository / "fragments"
+    bad.mkdir()
+    (bad / "passes.json").write_text("{")
+    listed = bad / "list"
+    listed.mkdir()
+    (listed / "passes.json").write_text('{"version": 1, "receipts": {"lint:X": 1}}')
+    assert merge_receipts(directory, [bad, repository / "missing.json"]) == 0
+    assert read_receipts(directory / "passes.json") == before

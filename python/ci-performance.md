@@ -56,6 +56,26 @@ The plan and the build-time gate also measure a PR's changes from the tested
 merge commit's first parent. The event's `base.sha` can trail main by days,
 which made every project merged since look changed and be rebuilt.
 
+### Validation in shards
+
+Lint and the quality audits reuse per-project pass receipts, so an ordinary PR
+validates only the project it touches. A change to any checker input (the
+workflow, `validation_cache.py`, `quality.py`, the no-lint lists, the pins)
+invalidates every receipt. One job then linted the pool for about 36 minutes and
+audited it for about 68, one project at a time.
+
+In-job concurrency does not fix that: PR #785 measured that a single lint
+process already saturates a 4-vCPU runner. Instead the planner now shards the
+whole pool when checker inputs change, even with a warm build cache, and every
+shard job lints and audits the projects it built
+(`validation_cache shard --units ...`). Shards upload only their pass receipts.
+`finalize` merges them (`validation_cache merge`) and then runs the unchanged
+Lint and quality steps, which recompute every fingerprint, reuse matching passes,
+and run anything a shard did not pass. A shard's validation step can therefore
+neither fail nor pass the run by itself.
+
+`MAX_SHARDS` is 14: beyond that the costliest project fills a shard alone.
+
 Documentation retains its separate, integrity-checked SQLite checkpoints. They
 still depend on available cache capacity; this change reduces duplicate data
 instead of changing the repository's paid storage limit.
