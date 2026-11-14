@@ -1,0 +1,45 @@
+/-
+Copyright (c) 2026 Wesley Pegden. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Wesley Pegden
+-/
+module
+
+public import LeanPool.GoldbergSeymour.HierarchyFullTailPrefix
+public import LeanPool.GoldbergSeymour.HierarchyReplacementPresentation
+public import LeanPool.GoldbergSeymour.HierarchyFullTailLength
+
+/-!
+# Hierarchy Eligible Common Missing Indices
+
+Part of the dependency closure of the Goldberg–Seymour edge-colouring theorem.
+Adapted from Wesley Pegden’s Trellis formalization at
+88d98c1d1a59d1f1bf7c4eb58e73f3945f6daf12; module paths and namespace changed.
+-/
+
+@[expose] public section
+
+namespace GoldbergSeymour
+
+/-- Tail-prefix indices admitting a replacement presentation with a color missing at both terminal
+vertices.
+-/
+noncomputable def HierarchyEligibleCommonMissingIndices {V E : Type*} [Fintype V] [Fintype E]
+    [DecidableEq V] [DecidableEq E] (G : LooplessMultigraph V E) (k : ℕ) (e0 : E)
+    (input : PartialEdgeColoring E k) (T : TreeSequence G e0) (phi : PartialEdgeColoring E k)
+    (ett : ExtendedTashkinovTree G k e0 input T phi) (base : HierarchyBase ett phi)
+    (C : HierarchyCounterexample base)
+    (ctx : HierarchyMinimumCounterexampleContext G k e0 input T phi ett base C) : Finset ℕ := by
+  classical
+  exact (Finset.Icc 1 (HierarchyFullTailLength C - 1)).filter fun i =>
+    ∃ P : HierarchyReplacementPresentation G k e0 input T phi ett base C ctx,
+      ∃ alpha : Fin k,
+        alpha ∈ MissingColors G P.coloring
+            ((HierarchyFullTailPrefix C i).vertex
+              (Fin.last (HierarchyFullTailPrefix C i).length)) ∧
+          alpha ∈ MissingColors G P.coloring
+            (T.vertex (Fin.last T.length))
+
+end GoldbergSeymour
+
+end
