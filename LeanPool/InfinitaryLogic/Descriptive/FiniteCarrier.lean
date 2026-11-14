@@ -5,7 +5,7 @@ Authors: Cameron Freer
 -/
 module
 
-import LeanPool.InfinitaryLogic.Descriptive.CodeTransport
+import LeanPool.InfinitaryLogic.Descriptive.CodeTransport -- shake: keep
 
 public import LeanPool.InfinitaryLogic.Descriptive.SatisfactionBorelOn
 public import LeanPool.InfinitaryLogic.Descriptive.StructureIsoSetoid
