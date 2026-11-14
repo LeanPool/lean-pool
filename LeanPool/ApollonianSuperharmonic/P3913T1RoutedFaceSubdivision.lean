@@ -1821,7 +1821,6 @@ theorem P3913T1RoutedFaceSubdivision :
           w_ne_finish (RoutedFaceDetails.arc12 ι P D f arc_inter_singleton))
           (RoutedFaceDetails.no_cross02 ι P D f g s w_arc w_ne_finish (RoutedFaceDetails.arc20
           ι P D f arc_inter_singleton)) (RoutedFaceDetails.w_block_injective g hi s)
-  have hM' : n + 3 = m0 + (m1 + m2) := by simpa [M] using hM
   have p_edge_piece (i : Fin (n + 3)) :
       ∃ k : Fin 3, ∃ r : Fin (s k).count,
         p i = w k r.castSucc ∧ p (i + 1) = w k r.succ := RoutedSubdivisionProof.p_edge_piece g

@@ -27,41 +27,6 @@ namespace PlacementNormalizationProof
 
 private abbrev hq := ApollonianSuperharmonic.BandQuadrupleCyclicRotation.proper
 
-private theorem hU' :
-    (by
-      classical
-      exact
-        ∀ (r : Fin 4 → CircleCoordinates), ∀ (U : ProtoTile), (BandPrototile (r (0 : Fin (4 :
-            ℕ))) U) → (∀ (a : Fin 3), ∀ (g : BandPackingSymmetry),
-        let q : Fin 4 → CircleCoordinates :=
-          ![r 0, r a.succ, r (a + 1).succ, r (a + 2).succ]
-        ∀ (g' : BandPackingSymmetry), (BandPackingSymmetryReversesOrientation g' =
-            BandPackingSymmetryReversesOrientation g) → (
-        let qg := BandPackingSymmetryQuadrupleAction g' q
-        ((∀ (C : CircleCoordinates), (BandPackingSymmetryCircleAction g' C).1 = C.1) ∧ (∀ (C :
-            CircleCoordinates), ∀ (T : ProtoTile), BandPrototile C T ↔ BandPrototile
-            (BandPackingSymmetryCircleAction g' C) (BandPackingSymmetryTileAction g' T)) ∧ ∀ (q :
-            Fin (4 : ℕ) → CircleCoordinates), ∀ (T : ProtoTile), ∀ (S : Fin (3 : ℕ) → Bool →
-            ProtoTile), ProperBandQuadruple q → BandPrototile (q (0 : Fin (4 : ℕ))) T → (∀ (i :
-            Fin (3 : ℕ)), ∀ (s : Bool), BandSubtileOccurrence q T i s (S i s)) → (∀ (x :
-            LatticeCell), x ∈ T.cells ↔ ∃ (i : Fin (3 : ℕ)) (s : Bool), x ∈ (S i s).cells) →
-        let sigma := fun (i : Fin (3 : ℕ)) => if BandPackingSymmetryReversesOrientation g' = true
-            then -i else i; ∃ (negative : Bool) (e : Fin (3 : ℕ) × Bool ≃ Fin (3 : ℕ) × Bool) (S'
-            : Fin (3 : ℕ) → Bool → ProtoTile), BandPackingSymmetryScopedPhase g' q negative ∧ (∀
-            (i : Fin (3 : ℕ)), ∀ (s : Bool), (e : Fin (3 : ℕ) × Bool → Fin (3 : ℕ) × Bool) (i, s)
-            = (sigma i, s ^^ negative)) ∧ (∀ (i : Fin (3 : ℕ)), ∀ (s : Bool), S' ((e : Fin (3 :
-            ℕ) × Bool → Fin (3 : ℕ) × Bool) (i, s)).1 ((e : Fin (3 : ℕ) × Bool → Fin (3 : ℕ) ×
-            Bool) (i, s)).2 = BandPackingSymmetryTileAction g' (S i s)) ∧ (∀ (i : Fin (3 : ℕ)), ∀
-            (s : Bool), BandSubtileOccurrence (BandPackingSymmetryQuadrupleAction g' q)
-            (BandPackingSymmetryTileAction g' T) i s (S' i s)) ∧ ∀ (x : LatticeCell), x ∈
-            (BandPackingSymmetryTileAction g' T).cells ↔ ∃ (i : Fin (3 : ℕ)) (s : Bool), x ∈ (S'
-            i s).cells) → (BandPrototile (qg 0) (BandPackingSymmetryTileAction g' U)))) ) := by
-  classical
-  intro r U hU a g q g' horientg qg htileCov
-  simpa [qg, q, BandPackingSymmetryQuadrupleAction,
-    BandPackingSymmetryCircleAction, horientg] using
-    (htileCov.2.1 (r 0) U).mp hU
-
 private theorem hWlabel :
     (by
       classical
@@ -120,42 +85,6 @@ private theorem actionParent :
     fin_cases j₀ <;>
       simp [qg, q, BandPackingSymmetryQuadrupleAction, ho,
         ]
-
-private theorem hW' :
-    (by
-      classical
-      exact
-        ∀ (r : Fin 4 → CircleCoordinates), ∀ (i : Fin 3), ∀ (W : ProtoTile), (BandPrototile (r
-            i.succ) W) → (∀ (a : Fin 3),
-        let q : Fin 4 → CircleCoordinates :=
-          ![r 0, r a.succ, r (a + 1).succ, r (a + 2).succ]
-        ∀ (g' : BandPackingSymmetry),
-        let qg := BandPackingSymmetryQuadrupleAction g' q
-        let k : Fin 3 := if BandPackingSymmetryReversesOrientation g'
-          then -(i - a) else i - a
-        ((∀ (C : CircleCoordinates), (BandPackingSymmetryCircleAction g' C).1 = C.1) ∧ (∀ (C :
-            CircleCoordinates), ∀ (T : ProtoTile), BandPrototile C T ↔ BandPrototile
-            (BandPackingSymmetryCircleAction g' C) (BandPackingSymmetryTileAction g' T)) ∧ ∀ (q :
-            Fin (4 : ℕ) → CircleCoordinates), ∀ (T : ProtoTile), ∀ (S : Fin (3 : ℕ) → Bool →
-            ProtoTile), ProperBandQuadruple q → BandPrototile (q (0 : Fin (4 : ℕ))) T → (∀ (i :
-            Fin (3 : ℕ)), ∀ (s : Bool), BandSubtileOccurrence q T i s (S i s)) → (∀ (x :
-            LatticeCell), x ∈ T.cells ↔ ∃ (i : Fin (3 : ℕ)) (s : Bool), x ∈ (S i s).cells) →
-        let sigma := fun (i : Fin (3 : ℕ)) => if BandPackingSymmetryReversesOrientation g' = true
-            then -i else i; ∃ (negative : Bool) (e : Fin (3 : ℕ) × Bool ≃ Fin (3 : ℕ) × Bool) (S'
-            : Fin (3 : ℕ) → Bool → ProtoTile), BandPackingSymmetryScopedPhase g' q negative ∧ (∀
-            (i : Fin (3 : ℕ)), ∀ (s : Bool), (e : Fin (3 : ℕ) × Bool → Fin (3 : ℕ) × Bool) (i, s)
-            = (sigma i, s ^^ negative)) ∧ (∀ (i : Fin (3 : ℕ)), ∀ (s : Bool), S' ((e : Fin (3 :
-            ℕ) × Bool → Fin (3 : ℕ) × Bool) (i, s)).1 ((e : Fin (3 : ℕ) × Bool → Fin (3 : ℕ) ×
-            Bool) (i, s)).2 = BandPackingSymmetryTileAction g' (S i s)) ∧ (∀ (i : Fin (3 : ℕ)), ∀
-            (s : Bool), BandSubtileOccurrence (BandPackingSymmetryQuadrupleAction g' q)
-            (BandPackingSymmetryTileAction g' T) i s (S' i s)) ∧ ∀ (x : LatticeCell), x ∈
-            (BandPackingSymmetryTileAction g' T).cells ↔ ∃ (i : Fin (3 : ℕ)) (s : Bool), x ∈ (S'
-            i s).cells) → ((qg k.succ = BandPackingSymmetryCircleAction g' (r i.succ)) →
-            (BandPrototile (qg k.succ) (BandPackingSymmetryTileAction g' W)))) ) := by
-  classical
-  intro r i W hW a q g' qg k htileCov hWlabel
-  rw [hWlabel]
-  exact (htileCov.2.1 (r i.succ) W).mp hW
 
 private theorem hparent :
     (by
@@ -1128,48 +1057,6 @@ private theorem hZvec :
     | exact iiZCaseC xZ'
     | exact iiZCaseD xZ'
 
-private theorem hZ' :
-    (by
-      classical
-      exact
-        ∀ (r : Fin 4 → CircleCoordinates), ∀ (i : Fin 3), ∀ (s : Fin 4), ∀ (Z : ProtoTile),
-            (BandPrototile (r (if Even (↑s : ℕ) then i - (1 : Fin (3 : ℕ)) else i + (1 : Fin (3 :
-            ℕ))).succ) Z) → (∀ (a : Fin 3),
-        let q : Fin 4 → CircleCoordinates :=
-          ![r 0, r a.succ, r (a + 1).succ, r (a + 2).succ]
-        ∀ (g' : BandPackingSymmetry),
-        let qg := BandPackingSymmetryQuadrupleAction g' q
-        let k : Fin 3 := if BandPackingSymmetryReversesOrientation g'
-          then -(i - a) else i - a
-        ((∀ (C : CircleCoordinates), (BandPackingSymmetryCircleAction g' C).1 = C.1) ∧ (∀ (C :
-            CircleCoordinates), ∀ (T : ProtoTile), BandPrototile C T ↔ BandPrototile
-            (BandPackingSymmetryCircleAction g' C) (BandPackingSymmetryTileAction g' T)) ∧ ∀ (q :
-            Fin (4 : ℕ) → CircleCoordinates), ∀ (T : ProtoTile), ∀ (S : Fin (3 : ℕ) → Bool →
-            ProtoTile), ProperBandQuadruple q → BandPrototile (q (0 : Fin (4 : ℕ))) T → (∀ (i :
-            Fin (3 : ℕ)), ∀ (s : Bool), BandSubtileOccurrence q T i s (S i s)) → (∀ (x :
-            LatticeCell), x ∈ T.cells ↔ ∃ (i : Fin (3 : ℕ)) (s : Bool), x ∈ (S i s).cells) →
-        let sigma := fun (i : Fin (3 : ℕ)) => if BandPackingSymmetryReversesOrientation g' = true
-            then -i else i; ∃ (negative : Bool) (e : Fin (3 : ℕ) × Bool ≃ Fin (3 : ℕ) × Bool) (S'
-            : Fin (3 : ℕ) → Bool → ProtoTile), BandPackingSymmetryScopedPhase g' q negative ∧ (∀
-            (i : Fin (3 : ℕ)), ∀ (s : Bool), (e : Fin (3 : ℕ) × Bool → Fin (3 : ℕ) × Bool) (i, s)
-            = (sigma i, s ^^ negative)) ∧ (∀ (i : Fin (3 : ℕ)), ∀ (s : Bool), S' ((e : Fin (3 :
-            ℕ) × Bool → Fin (3 : ℕ) × Bool) (i, s)).1 ((e : Fin (3 : ℕ) × Bool → Fin (3 : ℕ) ×
-            Bool) (i, s)).2 = BandPackingSymmetryTileAction g' (S i s)) ∧ (∀ (i : Fin (3 : ℕ)), ∀
-            (s : Bool), BandSubtileOccurrence (BandPackingSymmetryQuadrupleAction g' q)
-            (BandPackingSymmetryTileAction g' T) i s (S' i s)) ∧ ∀ (x : LatticeCell), x ∈
-            (BandPackingSymmetryTileAction g' T).cells ↔ ∃ (i : Fin (3 : ℕ)) (s : Bool), x ∈ (S'
-            i s).cells) → (
-        let t : Fin 4 := if BandPackingSymmetryReversesOrientation g'
-          then -s - 1 else s
-        let j : Fin 3 := if Even t.val then k - 1 else k + 1
-        (qg j.succ = BandPackingSymmetryCircleAction g' (r ((if Even s.val then i - 1 else i +
-            1).succ))) → (BandPrototile (qg j.succ) (BandPackingSymmetryTileAction g' Z)))) ) := by
-  classical
-  intro r i s Z hZ a q g' qg k htileCov t j hZlabel
-  rw [hZlabel]
-  exact (htileCov.2.1
-    (r ((if Even s.val then i - 1 else i + 1).succ)) Z).mp hZ
-
 private theorem rsub :
     (by
       classical
@@ -1696,7 +1583,9 @@ theorem P4055T1PlacementNormalization
   have hproperG : ProperBandQuadruple qg :=
     BandPackingSymmetryProperCovariance g' q hq
   have htileCov := BandPackingSymmetryCovariance g'
-  have hU' := PlacementNormalizationProof.hU' r U hU a g g' horientg htileCov
+  have hU' : BandPrototile (qg 0) (BandPackingSymmetryTileAction g' U) := by
+    simpa [qg, q, BandPackingSymmetryQuadrupleAction] using
+      (htileCov.2.1 (r 0) U).mp hU
   have hWlabel := PlacementNormalizationProof.hWlabel r i
       a g'
   have cyclicIndex (j₀ : Fin 3) := PlacementNormalizationProof.cyclicIndex r a j₀
@@ -1705,7 +1594,8 @@ theorem P4055T1PlacementNormalization
   have actionParent (j₀ : Fin 3) := PlacementNormalizationProof.actionParent r a g' j₀
   have hrootLabel : qg 0 = BandPackingSymmetryCircleAction g' (r 0) := by
     simp [qg, q, BandPackingSymmetryQuadrupleAction]
-  have hW' := PlacementNormalizationProof.hW' r i W hW a g' htileCov hWlabel
+  have hW' := (htileCov.2.1 (r i.succ) W).mp hW
+  rw [← hWlabel] at hW'
   let sigma : Fin 3 → Fin 3 := fun m =>
     if BandPackingSymmetryReversesOrientation g' then -m else m
   have hparent (m : Fin 3) := PlacementNormalizationProof.hparent r a g' cyclicIndex actionParent m
@@ -1802,7 +1692,9 @@ theorem P4055T1PlacementNormalization
   have hZvec := PlacementNormalizationProof.hZvec r i s a g'
       evenZero evenTwo notEvenOne notEvenThree hnegVal iiMul iiZCaseA iiZCaseB iiZCaseC iiZCaseD
       iiCube negIiSq negIiCube lpow hZflip hZsourceAction
-  have hZ' := PlacementNormalizationProof.hZ' r i s Z hZ a g' htileCov hZlabel
+  have hZ' := (htileCov.2.1
+    (r ((if Even s.val then i - 1 else i + 1).succ)) Z).mp hZ
+  rw [← hZlabel] at hZ'
   have hUpos' : 0 < (qg 0).1 := by
     rw [hrootLabel, htileCov.1]
     exact hUpos

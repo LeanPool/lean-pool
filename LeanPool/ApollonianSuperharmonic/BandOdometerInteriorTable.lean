@@ -202,32 +202,23 @@ private theorem hcount :
 
 end InteriorTableGeometry
 
-theorem BandOdometerInteriorTable :
-    ∀ (q : Fin 4 → CircleCoordinates), (ProperBandQuadruple q) → (∀ (T : ProtoTile), ∀ (S : Fin 3
-        → Bool → ProtoTile), ∀ (h : PartialOdometer), ∀ (hs : Fin 3 → Bool → PartialOdometer), ∀
-        (g : IntegerLatticeFunction), (BandPrototile (q 0) T) → ((TileOdometer (q 0) T h) →
-        ((GlobalOdometerExtends g h) → ((∀ i, ∀ s, BandSubtileOccurrence q T i s (S i s)) → ((∀
-        x, x ∈ T.cells ↔ ∃ i s, x ∈ (S i s).cells) → ((∀ i, ∀ s, TileOdometer (q i.succ) (S i s)
-        (hs i s)) → ((∀ i, ∀ s, GlobalOdometerExtends g (hs i s)) → (∀ (x : GaussianInt), (x ∈
-        FootprintVertices T) → ((x ∉ BoundaryFootprintVertices T) → (
-    let k := Nat.card {is : Fin 3 × Bool //
-      x ∈ BoundaryFootprintVertices (S is.1 is.2)}
-    (k = 2 → GaussianRealPoint x ≠ TileCentroid T →
-      FourNeighborLaplacian g x = 1) ∧
-    (k = 2 → GaussianRealPoint x = TileCentroid T →
-      FourNeighborLaplacian g x = 0) ∧
+/-- The interior table uses the root odometer and subtile geometry. -/
+theorem bandOdometerInteriorTableOfGeometry (q : Fin 4 → CircleCoordinates)
+    (hq : ProperBandQuadruple q) (T : ProtoTile) (S : Fin 3 → Bool → ProtoTile)
+    (h : PartialOdometer) (g : IntegerLatticeFunction) (hT : BandPrototile (q 0) T)
+    (hodo : TileOdometer (q 0) T h) (hext : GlobalOdometerExtends g h)
+    (hS : ∀ i s, BandSubtileOccurrence q T i s (S i s))
+    (hcells : ∀ x, x ∈ T.cells ↔ ∃ i s, x ∈ (S i s).cells)
+    (x : GaussianInt) (hx : x ∈ FootprintVertices T) (hxb : x ∉ BoundaryFootprintVertices T) :
+    let k := Nat.card {is : Fin 3 × Bool // x ∈ BoundaryFootprintVertices (S is.1 is.2)}
+    (k = 2 → GaussianRealPoint x ≠ TileCentroid T → FourNeighborLaplacian g x = 1) ∧
+    (k = 2 → GaussianRealPoint x = TileCentroid T → FourNeighborLaplacian g x = 0) ∧
     (k = 3 → FourNeighborLaplacian g x = 0) ∧
-    (k = 4 → GaussianRealPoint x ≠ TileCentroid T →
-      FourNeighborLaplacian g x = -1) ∧
-    (k = 4 → GaussianRealPoint x = TileCentroid T →
-      FourNeighborLaplacian g x = -2) ∧
+    (k = 4 → GaussianRealPoint x ≠ TileCentroid T → FourNeighborLaplacian g x = -1) ∧
+    (k = 4 → GaussianRealPoint x = TileCentroid T → FourNeighborLaplacian g x = -2) ∧
     ((k = 2 ∨ k = 3 ∨ k = 4) ∨
-      ∃ i : Fin 3, ∃ s : Bool,
-        0 < (q i.succ).1 ∧
-        x ∈ FootprintVertices (S i s) ∧
-        x ∉ BoundaryFootprintVertices (S i s)))))))))))) := by
-  intro q hq T S h hs g hT hodo hext hS hcells hsub hrest x hx hxb
--- BODY
+      ∃ i : Fin 3, ∃ s : Bool, 0 < (q i.succ).1 ∧
+        x ∈ FootprintVertices (S i s) ∧ x ∉ BoundaryFootprintVertices (S i s)) := by
   obtain ⟨qn, Tn, Sn, hn, gn, xn, e, hqn, hTn, hodon, hextn,
       hSn, hcellsn, hxn, hxbn, hobsn, hcountn, hcentern, hlapn, regimes⟩ :=
     P4120T1RootNormalization q hq T S h g hT hodo hext hS hcells x hx hxb
@@ -380,6 +371,34 @@ theorem BandOdometerInteriorTable :
           exact hf
         · rw [(obs i s).2]
           exact hb
+
+theorem BandOdometerInteriorTable :
+    ∀ (q : Fin 4 → CircleCoordinates), (ProperBandQuadruple q) → (∀ (T : ProtoTile), ∀ (S : Fin 3
+        → Bool → ProtoTile), ∀ (h : PartialOdometer), ∀ (hs : Fin 3 → Bool → PartialOdometer), ∀
+        (g : IntegerLatticeFunction), (BandPrototile (q 0) T) → ((TileOdometer (q 0) T h) →
+        ((GlobalOdometerExtends g h) → ((∀ i, ∀ s, BandSubtileOccurrence q T i s (S i s)) → ((∀
+        x, x ∈ T.cells ↔ ∃ i s, x ∈ (S i s).cells) → ((∀ i, ∀ s, TileOdometer (q i.succ) (S i s)
+        (hs i s)) → ((∀ i, ∀ s, GlobalOdometerExtends g (hs i s)) → (∀ (x : GaussianInt), (x ∈
+        FootprintVertices T) → ((x ∉ BoundaryFootprintVertices T) → (
+    let k := Nat.card {is : Fin 3 × Bool //
+      x ∈ BoundaryFootprintVertices (S is.1 is.2)}
+    (k = 2 → GaussianRealPoint x ≠ TileCentroid T →
+      FourNeighborLaplacian g x = 1) ∧
+    (k = 2 → GaussianRealPoint x = TileCentroid T →
+      FourNeighborLaplacian g x = 0) ∧
+    (k = 3 → FourNeighborLaplacian g x = 0) ∧
+    (k = 4 → GaussianRealPoint x ≠ TileCentroid T →
+      FourNeighborLaplacian g x = -1) ∧
+    (k = 4 → GaussianRealPoint x = TileCentroid T →
+      FourNeighborLaplacian g x = -2) ∧
+    ((k = 2 ∨ k = 3 ∨ k = 4) ∨
+      ∃ i : Fin 3, ∃ s : Bool,
+        0 < (q i.succ).1 ∧
+        x ∈ FootprintVertices (S i s) ∧
+        x ∉ BoundaryFootprintVertices (S i s)))))))))))) := by
+  intro q hq T S h hs g hT hodo hext hS hcells hsub hrest x hx hxb
+  exact ApollonianSuperharmonic.bandOdometerInteriorTableOfGeometry q hq T S h g hT hodo hext hS
+      hcells x hx hxb
 
 end ApollonianSuperharmonic
 

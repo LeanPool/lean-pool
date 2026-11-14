@@ -116,7 +116,6 @@ private theorem hWsub :
         have hzy : FourNeighborAdjacent z y := by
           apply hstep z y [] q
           simp
-        have hzW := hwq z (by simp)
         have hyW := hwq y (by simp)
         have hyX : y ∈ X := by
           exact noCross y hyW z (symmetry z y hzy) haX

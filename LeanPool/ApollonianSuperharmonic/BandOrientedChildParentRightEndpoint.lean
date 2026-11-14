@@ -385,164 +385,6 @@ private theorem transformedCentroid :
   intro r i s U W a P g k centroidAction vectorIdentity
   rw [centroidAction, vectorIdentity]
 
-private theorem hUposFord :
-    (by
-      classical
-      exact
-        ∀ (r : Fin 4 → CircleCoordinates), ((0 : ℤ) < (r (0 : Fin (4 : ℕ))).1) → (∀ (a : Fin (3 :
-            ℕ)), ∀ (g0 : BandPackingSymmetry), ∀ (P : FordFareyParameter),
-            (BandPackingSymmetryReversesOrientation g0 = false) → (
-        let q : Fin 4 → CircleCoordinates :=
-          ![r 0, r a.succ, r (a + 1).succ, r (a + 2).succ]
-        ∀ (g : BandPackingSymmetry), (BandPackingSymmetryReversesOrientation g =
-            BandPackingSymmetryReversesOrientation g0) → (((∀ (C : CircleCoordinates),
-            (BandPackingSymmetryCircleAction g C).1 = C.1) ∧ (∀ (C : CircleCoordinates), ∀ (T :
-            ProtoTile), BandPrototile C T ↔ BandPrototile (BandPackingSymmetryCircleAction g C)
-            (BandPackingSymmetryTileAction g T)) ∧ ∀ (q : Fin (4 : ℕ) → CircleCoordinates), ∀ (T
-            : ProtoTile), ∀ (S : Fin (3 : ℕ) → Bool → ProtoTile), ProperBandQuadruple q →
-            BandPrototile (q (0 : Fin (4 : ℕ))) T → (∀ (i : Fin (3 : ℕ)), ∀ (s : Bool),
-            BandSubtileOccurrence q T i s (S i s)) → (∀ (x : LatticeCell), x ∈ T.cells ↔ ∃ (i :
-            Fin (3 : ℕ)) (s : Bool), x ∈ (S i s).cells) →
-        let sigma := fun (i : Fin (3 : ℕ)) => if BandPackingSymmetryReversesOrientation g = true
-            then -i else i; ∃ (negative : Bool) (e : Fin (3 : ℕ) × Bool ≃ Fin (3 : ℕ) × Bool) (S'
-            : Fin (3 : ℕ) → Bool → ProtoTile), BandPackingSymmetryScopedPhase g q negative ∧ (∀
-            (i : Fin (3 : ℕ)), ∀ (s : Bool), (e : Fin (3 : ℕ) × Bool → Fin (3 : ℕ) × Bool) (i, s)
-            = (sigma i, s ^^ negative)) ∧ (∀ (i : Fin (3 : ℕ)), ∀ (s : Bool), S' ((e : Fin (3 :
-            ℕ) × Bool → Fin (3 : ℕ) × Bool) (i, s)).1 ((e : Fin (3 : ℕ) × Bool → Fin (3 : ℕ) ×
-            Bool) (i, s)).2 = BandPackingSymmetryTileAction g (S i s)) ∧ (∀ (i : Fin (3 : ℕ)), ∀
-            (s : Bool), BandSubtileOccurrence (BandPackingSymmetryQuadrupleAction g q)
-            (BandPackingSymmetryTileAction g T) i s (S' i s)) ∧ ∀ (x : LatticeCell), x ∈
-            (BandPackingSymmetryTileAction g T).cells ↔ ∃ (i : Fin (3 : ℕ)) (s : Bool), x ∈ (S' i
-            s).cells) → ((BandPackingSymmetryQuadrupleAction g q = FordRecursiveQuadruple P) → (0
-            < ((FordRecursiveQuadruple P) 0).1))))) ) := by
-  classical
-  intro r hUpos a g0 P horient q g horientg tileCovariance hzeroAction
-  have he := congrArg (fun x => (x 0).1) hzeroAction
-  have he' : ((FordRecursiveQuadruple P) 0).1 = (r 0).1 := by
-    calc
-      ((FordRecursiveQuadruple P) 0).1 =
-          (BandPackingSymmetryQuadrupleAction g q 0).1 := he.symm
-      _ = (BandPackingSymmetryCircleAction g (r 0)).1 := by
-        simp [q, BandPackingSymmetryQuadrupleAction, horientg, horient]
-      _ = (r 0).1 := tileCovariance.1 _
-  rw [he']
-  exact hUpos
-
-private theorem hWposFord :
-    (by
-      classical
-        exact
-        ∀ (r : Fin 4 → CircleCoordinates),
-          ∀ (i : Fin 3),
-            (((0 : ℤ) < (r i.succ).1) →
-              (∀ (a : Fin (3 : ℕ)),
-                ∀ (g0 : BandPackingSymmetry),
-                  ∀ (P : FordFareyParameter),
-                    (BandPackingSymmetryReversesOrientation g0 = false) →
-                      (let q : Fin 4 → CircleCoordinates :=
-                        ![r 0, r a.succ, r (a + 1).succ, r (a + 2).succ];
-                      (∀ (g : BandPackingSymmetry),
-                        (BandPackingSymmetryReversesOrientation g =
-                            BandPackingSymmetryReversesOrientation g0) →
-                          (((∀ (C : CircleCoordinates),
-                                (BandPackingSymmetryCircleAction g C).1 = C.1) ∧
-                              (∀ (C : CircleCoordinates),
-                                  ∀ (T : ProtoTile),
-                                    BandPrototile C T ↔
-                                      BandPrototile
-                                        (BandPackingSymmetryCircleAction g C)
-                                        (BandPackingSymmetryTileAction g T)) ∧
-                                ∀ (q : Fin (4 : ℕ) → CircleCoordinates),
-                                  ∀ (T : ProtoTile),
-                                    ∀ (S : Fin (3 : ℕ) → Bool → ProtoTile),
-                                      ProperBandQuadruple q →
-                                        BandPrototile (q (0 : Fin (4 : ℕ))) T →
-                                          (∀ (i : Fin (3 : ℕ)),
-                                              ∀ (s : Bool),
-                                                BandSubtileOccurrence q T i s
-                                                  (S i s)) →
-                                            (∀ (x : LatticeCell),
-                                                x ∈ T.cells ↔
-                                                  ∃ (i : Fin (3 : ℕ)) (s : Bool),
-                                                    x ∈ (S i s).cells) →
-                                              let sigma := fun (i : Fin (3 : ℕ)) =>
-                                                if
-                                                    BandPackingSymmetryReversesOrientation
-                                                        g =
-                                                      true then
-                                                  -i
-                                                else i;
-                                              ∃ (negative : Bool) (e :
-                                                Fin (3 : ℕ) × Bool ≃
-                                                  Fin (3 : ℕ) × Bool)
-                                                (S' :
-                                                Fin (3 : ℕ) → Bool → ProtoTile),
-                                                BandPackingSymmetryScopedPhase g q
-                                                    negative ∧
-                                                  (∀ (i : Fin (3 : ℕ)),
-                                                      ∀ (s : Bool),
-                                                        (e :
-                                                              Fin (3 : ℕ) × Bool →
-                                                                Fin (3 : ℕ) × Bool)
-                                                            (i, s) =
-                                                          (sigma i,
-                                                            s ^^ negative)) ∧
-                                                    (∀ (i : Fin (3 : ℕ)),
-                                                        ∀ (s : Bool),
-                                                          S'
-                                                              ((e :
-                                                                    Fin (3 : ℕ) ×
-                                                                        Bool →
-                                                                      Fin (3 : ℕ) ×
-                                                                        Bool)
-                                                                  (i, s)).1
-                                                              ((e :
-                                                                    Fin (3 : ℕ) ×
-                                                                        Bool →
-                                                                      Fin (3 : ℕ) ×
-                                                                        Bool)
-                                                                  (i, s)).2 =
-                                                            BandPackingSymmetryTileAction
-                                                              g (S i s)) ∧
-                                                      (∀ (i : Fin (3 : ℕ)),
-                                                          ∀ (s : Bool),
-                                                            BandSubtileOccurrence
-                                                              (BandPackingSymmetryQuadrupleAction
-                                                                g q)
-                                                              (BandPackingSymmetryTileAction
-                                                                g T)
-                                                              i s (S' i s)) ∧
-                                                        ∀ (x : LatticeCell),
-                                                          x ∈
-                                                              (BandPackingSymmetryTileAction
-                                                                  g T).cells ↔
-                                                            ∃ (i : Fin (3 : ℕ)) (s :
-                                                              Bool),
-                                                              x ∈ (S' i s).cells) →
-                            (let k : Fin 3 := i - a;
-                            (BandPackingSymmetryQuadrupleAction g q =
-                                FordRecursiveQuadruple P) →
-                              (0 < ((FordRecursiveQuadruple P) k.succ).1)))))))) := by
-  classical
-  intro r i hWpos a g0 P horient q g horientg tileCovariance k hzeroAction
-  have he := congrArg (fun x => (x k.succ).1) hzeroAction
-  have source :
-      BandPackingSymmetryQuadrupleAction g q k.succ =
-        BandPackingSymmetryCircleAction g (r i.succ) := by
-    fin_cases a <;> fin_cases i <;>
-      simp [k, q, BandPackingSymmetryQuadrupleAction, horientg, horient]
-  have he' : ((FordRecursiveQuadruple P) k.succ).1 =
-      (r i.succ).1 := by
-    calc
-      ((FordRecursiveQuadruple P) k.succ).1 =
-          (BandPackingSymmetryQuadrupleAction g q k.succ).1 :=
-        (congrArg (fun x => (x k.succ).1) hzeroAction).symm
-      _ = (BandPackingSymmetryCircleAction g (r i.succ)).1 :=
-        congrArg Prod.fst source
-      _ = (r i.succ).1 := tileCovariance.1 _
-  rw [he']
-  exact hWpos
-
 private theorem middleVector :
     (by
       classical
@@ -694,12 +536,34 @@ theorem BandOrientedChildParentRightEndpoint
                   ((FordRecursiveQuadruple P) k.succ))) :=
                       OrientedRightEndpointGeometry.transformedCentroid r i s U W a P g
                       centroidAction vectorIdentity
-    have hUposFord : 0 < ((FordRecursiveQuadruple P) 0).1 :=
-        OrientedRightEndpointGeometry.hUposFord r hUpos a g0 P horient g horientg tileCovariance
-        hzeroAction
-    have hWposFord : 0 < ((FordRecursiveQuadruple P) k.succ).1 :=
-        OrientedRightEndpointGeometry.hWposFord r i hWpos a g0 P horient g horientg
-            tileCovariance hzeroAction
+    have hUposFord : 0 < ((FordRecursiveQuadruple P) 0).1 := by
+      have he := congrArg (fun x => (x 0).1) hzeroAction
+      have he' : ((FordRecursiveQuadruple P) 0).1 = (r 0).1 := by
+        calc
+          ((FordRecursiveQuadruple P) 0).1 =
+              (BandPackingSymmetryQuadrupleAction g q 0).1 := he.symm
+          _ = (BandPackingSymmetryCircleAction g (r 0)).1 := by
+            simp [q, BandPackingSymmetryQuadrupleAction, horientg, horient]
+          _ = (r 0).1 := tileCovariance.1 _
+      rw [he']
+      exact hUpos
+    have hWposFord : 0 < ((FordRecursiveQuadruple P) k.succ).1 := by
+      have source :
+          BandPackingSymmetryQuadrupleAction g q k.succ =
+            BandPackingSymmetryCircleAction g (r i.succ) := by
+        fin_cases a <;> fin_cases i <;>
+          simp [k, q, BandPackingSymmetryQuadrupleAction, horientg, horient]
+      have he' : ((FordRecursiveQuadruple P) k.succ).1 =
+          (r i.succ).1 := by
+        calc
+          ((FordRecursiveQuadruple P) k.succ).1 =
+              (BandPackingSymmetryQuadrupleAction g q k.succ).1 :=
+            (congrArg (fun x => (x k.succ).1) hzeroAction).symm
+          _ = (BandPackingSymmetryCircleAction g (r i.succ)).1 :=
+            congrArg Prod.fst source
+          _ = (r i.succ).1 := tileCovariance.1 _
+      rw [he']
+      exact hWpos
     have fordResult := FordOrientedChildParentRightEndpoint P hP k s
       (BandPackingSymmetryTileAction g U)
       (BandPackingSymmetryTileAction g W) hUford hWford hUposFord hWposFord

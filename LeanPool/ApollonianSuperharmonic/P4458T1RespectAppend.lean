@@ -396,7 +396,6 @@ theorem P4458T1RespectAppend
       xs.dropLast.zip ys.dropLast = (xs.zip ys).dropLast := RespectAppendProof.zipDropLast (α :=
           α) (β := β) xs ys hlen
   have hleftLen : left.length = hl.length := List.Forall₂.length_eq hleftOdo
-  have hrightLen : right.length = hr.length := List.Forall₂.length_eq hrightOdo
   rcases hleftTiles with ⟨_, hleftTileHead, hleftTileLast, hleftNodup, hleftMem,
     hleftTileChain, hleftHeight⟩
   rcases hrightTiles with ⟨_, hrightTileHead, hrightTileLast, hrightNodup, hrightMem,

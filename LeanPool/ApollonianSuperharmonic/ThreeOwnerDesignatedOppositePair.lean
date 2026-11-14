@@ -25,17 +25,19 @@ Changes: pool module paths, public exports, project namespace and current Mathli
 
 namespace ApollonianSuperharmonic
 
-theorem ThreeOwnerDesignatedOppositePair :
-    ∀ (X : ProtoTile), ∀ (Y : ProtoTile), ∀ (Z : ProtoTile), ∀ (x : GaussianInt), (LatticeTile X)
-        → ((LatticeTile Y) → ((LatticeTile Z) → ((Disjoint X.cells Y.cells) → ((Disjoint Y.cells
-        Z.cells) → ((Disjoint Z.cells X.cells) → ((NoCheckerboardCellVertex (X.cells : Set
-        LatticeCell)) → ((NoCheckerboardCellVertex (Y.cells : Set LatticeCell)) →
-        ((NoCheckerboardCellVertex (Z.cells : Set LatticeCell)) → ((∀ j : Fin 4,
-      LatticeVertexIncidentCell x j ∈ X.cells ∨
-        LatticeVertexIncidentCell x j ∈ Y.cells ∨
-        LatticeVertexIncidentCell x j ∈ Z.cells) → ((∃ j : Fin 4, LatticeVertexIncidentCell x j ∈
-            X.cells) → ((∃ j : Fin 4, LatticeVertexIncidentCell x j ∈ Y.cells) → ((∃ j : Fin 4,
-            LatticeVertexIncidentCell x j ∈ Z.cells) → (∀ D : ProtoTile, D = X ∨ D = Y ∨ D = Z →
+/-- The designated opposite pair follows from the cells and their incidence conditions. -/
+theorem threeOwnerDesignatedOppositePairOfCells (X Y Z : ProtoTile) (x : GaussianInt)
+    (hXY : Disjoint X.cells Y.cells) (hYZ : Disjoint Y.cells Z.cells)
+    (hZX : Disjoint Z.cells X.cells)
+    (hcheckerX : NoCheckerboardCellVertex (X.cells : Set LatticeCell))
+    (hcheckerY : NoCheckerboardCellVertex (Y.cells : Set LatticeCell))
+    (hcheckerZ : NoCheckerboardCellVertex (Z.cells : Set LatticeCell))
+    (hexhaust : ∀ j : Fin 4, LatticeVertexIncidentCell x j ∈ X.cells ∨
+      LatticeVertexIncidentCell x j ∈ Y.cells ∨ LatticeVertexIncidentCell x j ∈ Z.cells)
+    (hXocc : ∃ j : Fin 4, LatticeVertexIncidentCell x j ∈ X.cells)
+    (hYocc : ∃ j : Fin 4, LatticeVertexIncidentCell x j ∈ Y.cells)
+    (hZocc : ∃ j : Fin 4, LatticeVertexIncidentCell x j ∈ Z.cells) :
+    ∀ D : ProtoTile, D = X ∨ D = Y ∨ D = Z →
       ∃ U V R : ProtoTile,
         (D = U ∨ D = V) ∧
         ((U = X ∧ V = Y ∧ R = Z) ∨
@@ -49,9 +51,7 @@ theorem ThreeOwnerDesignatedOppositePair :
         x ∈ FootprintVertices U ∧ x ∈ FootprintVertices V ∧
         (∀ y, y = x ∨ y = x + 1 ∨ y = x - 1 ∨
             y = x + ⟨0, 1⟩ ∨ y = x - ⟨0, 1⟩ →
-          y ∈ FootprintVertices U ∨ y ∈ FootprintVertices V)))))))))))))) := by
-  intro X Y Z x hX hY hZ hXY hYZ hZX hcheckerX hcheckerY hcheckerZ hexhaust hXocc hYocc hZocc
--- BODY
+          y ∈ FootprintVertices U ∨ y ∈ FootprintVertices V) := by
   have no_opposite (P Q R : Fin 4 → Prop)
       (hPQ : ∀ j, P j → ¬ Q j)
       (hPR : ∀ j, P j → ¬ R j)
@@ -178,6 +178,35 @@ theorem ThreeOwnerDesignatedOppositePair :
     · refine ⟨Z, Y, X, Or.inl rfl, ?_, ⟨j, hj, hy⟩, star Z Y j hj hy⟩
       exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr ⟨rfl, rfl, rfl⟩))))
     · exact (hnoZ j hj hz).elim
+
+theorem ThreeOwnerDesignatedOppositePair :
+    ∀ (X : ProtoTile), ∀ (Y : ProtoTile), ∀ (Z : ProtoTile), ∀ (x : GaussianInt), (LatticeTile X)
+        → ((LatticeTile Y) → ((LatticeTile Z) → ((Disjoint X.cells Y.cells) → ((Disjoint Y.cells
+        Z.cells) → ((Disjoint Z.cells X.cells) → ((NoCheckerboardCellVertex (X.cells : Set
+        LatticeCell)) → ((NoCheckerboardCellVertex (Y.cells : Set LatticeCell)) →
+        ((NoCheckerboardCellVertex (Z.cells : Set LatticeCell)) → ((∀ j : Fin 4,
+      LatticeVertexIncidentCell x j ∈ X.cells ∨
+        LatticeVertexIncidentCell x j ∈ Y.cells ∨
+        LatticeVertexIncidentCell x j ∈ Z.cells) → ((∃ j : Fin 4, LatticeVertexIncidentCell x j ∈
+            X.cells) → ((∃ j : Fin 4, LatticeVertexIncidentCell x j ∈ Y.cells) → ((∃ j : Fin 4,
+            LatticeVertexIncidentCell x j ∈ Z.cells) → (∀ D : ProtoTile, D = X ∨ D = Y ∨ D = Z →
+      ∃ U V R : ProtoTile,
+        (D = U ∨ D = V) ∧
+        ((U = X ∧ V = Y ∧ R = Z) ∨
+         (U = Y ∧ V = X ∧ R = Z) ∨
+         (U = X ∧ V = Z ∧ R = Y) ∨
+         (U = Z ∧ V = X ∧ R = Y) ∨
+         (U = Y ∧ V = Z ∧ R = X) ∨
+         (U = Z ∧ V = Y ∧ R = X)) ∧
+        (∃ j : Fin 4, LatticeVertexIncidentCell x j ∈ U.cells ∧
+          LatticeVertexIncidentCell x (j + 2) ∈ V.cells) ∧
+        x ∈ FootprintVertices U ∧ x ∈ FootprintVertices V ∧
+        (∀ y, y = x ∨ y = x + 1 ∨ y = x - 1 ∨
+            y = x + ⟨0, 1⟩ ∨ y = x - ⟨0, 1⟩ →
+          y ∈ FootprintVertices U ∨ y ∈ FootprintVertices V)))))))))))))) := by
+  intro X Y Z x hX hY hZ hXY hYZ hZX hcheckerX hcheckerY hcheckerZ hexhaust hXocc hYocc hZocc
+  exact ApollonianSuperharmonic.threeOwnerDesignatedOppositePairOfCells X Y Z x hXY hYZ hZX
+      hcheckerX hcheckerY hcheckerZ hexhaust hXocc hYocc hZocc
 
 end ApollonianSuperharmonic
 

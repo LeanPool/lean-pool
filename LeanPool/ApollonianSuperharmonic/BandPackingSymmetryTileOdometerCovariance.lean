@@ -874,39 +874,6 @@ private theorem hparentAt910 :
     fin_cases i <;>
     simp [BandPackingSymmetryQuadrupleAction, hrev, hneg1, hneg2]
 
-private theorem hT' :
-    (by
-      classical
-      exact
-        ∀ (U : ProtoTile), ∀ (q : Fin (4 : ℕ) → CircleCoordinates), (BandPrototile (q (0 : Fin (4
-            : ℕ))) U) → (∀ (a : BandPackingSymmetry),
-        let Q := BandPackingSymmetryQuadrupleAction
-        let B := BandPackingSymmetryTileAction
-        let q' := Q a q
-        ((∀ (C : CircleCoordinates), (BandPackingSymmetryCircleAction a C).1 = C.1) ∧ (∀ (C :
-            CircleCoordinates), ∀ (T : ProtoTile), BandPrototile C T ↔ BandPrototile
-            (BandPackingSymmetryCircleAction a C) (BandPackingSymmetryTileAction a T)) ∧ ∀ (q :
-            Fin (4 : ℕ) → CircleCoordinates), ∀ (T : ProtoTile), ∀ (S : Fin (3 : ℕ) → Bool →
-            ProtoTile), ProperBandQuadruple q → BandPrototile (q (0 : Fin (4 : ℕ))) T → (∀ (i :
-            Fin (3 : ℕ)), ∀ (s : Bool), BandSubtileOccurrence q T i s (S i s)) → (∀ (x :
-            LatticeCell), x ∈ T.cells ↔ ∃ (i : Fin (3 : ℕ)) (s : Bool), x ∈ (S i s).cells) →
-        let sigma := fun (i : Fin (3 : ℕ)) => if BandPackingSymmetryReversesOrientation a = true
-            then -i else i; ∃ (negative : Bool) (e : Fin (3 : ℕ) × Bool ≃ Fin (3 : ℕ) × Bool) (S'
-            : Fin (3 : ℕ) → Bool → ProtoTile), BandPackingSymmetryScopedPhase a q negative ∧ (∀
-            (i : Fin (3 : ℕ)), ∀ (s : Bool), (e : Fin (3 : ℕ) × Bool → Fin (3 : ℕ) × Bool) (i, s)
-            = (sigma i, s ^^ negative)) ∧ (∀ (i : Fin (3 : ℕ)), ∀ (s : Bool), S' ((e : Fin (3 :
-            ℕ) × Bool → Fin (3 : ℕ) × Bool) (i, s)).1 ((e : Fin (3 : ℕ) × Bool → Fin (3 : ℕ) ×
-            Bool) (i, s)).2 = BandPackingSymmetryTileAction a (S i s)) ∧ (∀ (i : Fin (3 : ℕ)), ∀
-            (s : Bool), BandSubtileOccurrence (BandPackingSymmetryQuadrupleAction a q)
-            (BandPackingSymmetryTileAction a T) i s (S' i s)) ∧ ∀ (x : LatticeCell), x ∈
-            (BandPackingSymmetryTileAction a T).cells ↔ ∃ (i : Fin (3 : ℕ)) (s : Bool), x ∈ (S' i
-            s).cells) → (BandPrototile (q' 0) (B a U))) ) := by
-  classical
-  intro U q hT a Q B q' cov
-  have ht := cov.2.1 (q 0) U
-  have ht' := ht.mp hT
-  simpa [q', Q, B, BandPackingSymmetryQuadrupleAction] using ht'
-
 private theorem hsub' :
     (by
       classical
@@ -1074,44 +1041,6 @@ private theorem hpairAt1015 :
       simpa [p] using (he p.1 p.2).symm
     _ = (i, s) := hep
 
-private theorem hcurvAt1021 :
-    (by
-      classical
-      exact
-        ∀ (q : Fin (4 : ℕ) → CircleCoordinates), ∀ (a : BandPackingSymmetry),
-        let Q := BandPackingSymmetryQuadrupleAction
-        let A := BandPackingSymmetryCircleAction
-        let q' := Q a q
-        let sigma : Fin 3 → Fin 3 := fun i =>
-          if BandPackingSymmetryReversesOrientation a then -i else i
-        ((∀ (C : CircleCoordinates), (BandPackingSymmetryCircleAction a C).1 = C.1) ∧ (∀ (C :
-            CircleCoordinates), ∀ (T : ProtoTile), BandPrototile C T ↔ BandPrototile
-            (BandPackingSymmetryCircleAction a C) (BandPackingSymmetryTileAction a T)) ∧ ∀ (q :
-            Fin (4 : ℕ) → CircleCoordinates), ∀ (T : ProtoTile), ∀ (S : Fin (3 : ℕ) → Bool →
-            ProtoTile), ProperBandQuadruple q → BandPrototile (q (0 : Fin (4 : ℕ))) T → (∀ (i :
-            Fin (3 : ℕ)), ∀ (s : Bool), BandSubtileOccurrence q T i s (S i s)) → (∀ (x :
-            LatticeCell), x ∈ T.cells ↔ ∃ (i : Fin (3 : ℕ)) (s : Bool), x ∈ (S i s).cells) →
-        let sigma := fun (i : Fin (3 : ℕ)) => if BandPackingSymmetryReversesOrientation a = true
-            then -i else i; ∃ (negative : Bool) (e : Fin (3 : ℕ) × Bool ≃ Fin (3 : ℕ) × Bool) (S'
-            : Fin (3 : ℕ) → Bool → ProtoTile), BandPackingSymmetryScopedPhase a q negative ∧ (∀
-            (i : Fin (3 : ℕ)), ∀ (s : Bool), (e : Fin (3 : ℕ) × Bool → Fin (3 : ℕ) × Bool) (i, s)
-            = (sigma i, s ^^ negative)) ∧ (∀ (i : Fin (3 : ℕ)), ∀ (s : Bool), S' ((e : Fin (3 :
-            ℕ) × Bool → Fin (3 : ℕ) × Bool) (i, s)).1 ((e : Fin (3 : ℕ) × Bool → Fin (3 : ℕ) ×
-            Bool) (i, s)).2 = BandPackingSymmetryTileAction a (S i s)) ∧ (∀ (i : Fin (3 : ℕ)), ∀
-            (s : Bool), BandSubtileOccurrence (BandPackingSymmetryQuadrupleAction a q)
-            (BandPackingSymmetryTileAction a T) i s (S' i s)) ∧ ∀ (x : LatticeCell), x ∈
-            (BandPackingSymmetryTileAction a T).cells ↔ ∃ (i : Fin (3 : ℕ)) (s : Bool), x ∈ (S' i
-            s).cells) → (∀ (e : Fin (3 : ℕ) × Bool ≃ Fin (3 : ℕ) × Bool), (∀ (i : Fin 3), q'
-            (sigma i).succ = A a (q i.succ)) → (∀ (i : Fin (3 : ℕ)), ∀ (s : Bool),
-        let p := e.symm (i, s)
-        (sigma p.1 = i) → ((q' i.succ).1 = (q p.1.succ).1))) ) := by
-  classical
-  intro q a Q A q' sigma cov e hparent i s p hidx
-  calc
-    (q' i.succ).1 = (q' (sigma p.1).succ).1 := by rw [hidx]
-    _ = (A a (q p.1.succ)).1 := by rw [hparent]
-    _ = (q p.1.succ).1 := cov.1 _
-
 private theorem hchildCurvPos :
     (by
       classical
@@ -1224,54 +1153,6 @@ private theorem hsign :
     have hb' : s = xor p.2 negative := by
       simpa [hp, hn] using hb.symm
     simp [hp, hn, hb']
-
-private theorem hc1At1079 :
-    (by
-      classical
-      exact
-        ∀ (U : ProtoTile), ∀ (q : Fin (4 : ℕ) → CircleCoordinates), ∀ (S : Fin (3 : ℕ) → Bool →
-            ProtoTile), ∀ (e : Fin (3 : ℕ) × Bool ≃ Fin (3 : ℕ) × Bool), ∀ (i : Fin (3 : ℕ)), ∀
-            (s : Bool),
-        let p := e.symm (i, s)
-        (TileCentroid (S p.1 p.2) - TileCentroid U = (if p.2 = true then (1 : ℝ) else (-1 : ℝ)) •
-            (1 / 2 : ℝ) • (GaussianRealPoint (BandVectors.1 (q (p.1 + (2 : Fin (3 : ℕ))).succ) (q
-            (p.1 + (1 : Fin (3 : ℕ))).succ)) - (-(GaussianRealPoint (BandVectors.1 (q (p.1 + (2 :
-            Fin (3 : ℕ))).succ) (q (p.1 + (1 : Fin (3 : ℕ))).succ))).2, (GaussianRealPoint
-            (BandVectors.1 (q (p.1 + (2 : Fin (3 : ℕ))).succ) (q (p.1 + (1 : Fin (3 :
-            ℕ))).succ))).1))) → ((TileCentroid (S p.1 p.2)).1 - (TileCentroid U).1 = (if p.2 =
-            true then (1 : ℝ) else -1) * (((GaussianInt.toComplex (BandVectors.1 (q ((p.1 +
-            2).succ)) (q ((p.1 + 1).succ)))).re + (GaussianInt.toComplex (BandVectors.1 (q ((p.1
-            + 2).succ)) (q ((p.1 + 1).succ)))).im) / 2)) ) := by
-  classical
-  intro U q S e i s p hc
-  have h := congrArg Prod.fst hc
-  cases hp : p.2 <;> simp [hp, GaussianRealPoint, smul_eq_mul] at h ⊢
-  · ring_nf at h ⊢; exact h
-  · ring_nf at h ⊢; exact h
-
-private theorem hc2At1089 :
-    (by
-      classical
-      exact
-        ∀ (U : ProtoTile), ∀ (q : Fin (4 : ℕ) → CircleCoordinates), ∀ (S : Fin (3 : ℕ) → Bool →
-            ProtoTile), ∀ (e : Fin (3 : ℕ) × Bool ≃ Fin (3 : ℕ) × Bool), ∀ (i : Fin (3 : ℕ)), ∀
-            (s : Bool),
-        let p := e.symm (i, s)
-        (TileCentroid (S p.1 p.2) - TileCentroid U = (if p.2 = true then (1 : ℝ) else (-1 : ℝ)) •
-            (1 / 2 : ℝ) • (GaussianRealPoint (BandVectors.1 (q (p.1 + (2 : Fin (3 : ℕ))).succ) (q
-            (p.1 + (1 : Fin (3 : ℕ))).succ)) - (-(GaussianRealPoint (BandVectors.1 (q (p.1 + (2 :
-            Fin (3 : ℕ))).succ) (q (p.1 + (1 : Fin (3 : ℕ))).succ))).2, (GaussianRealPoint
-            (BandVectors.1 (q (p.1 + (2 : Fin (3 : ℕ))).succ) (q (p.1 + (1 : Fin (3 :
-            ℕ))).succ))).1))) → ((TileCentroid (S p.1 p.2)).2 - (TileCentroid U).2 = (if p.2 =
-            true then (1 : ℝ) else -1) * (((GaussianInt.toComplex (BandVectors.1 (q ((p.1 +
-            2).succ)) (q ((p.1 + 1).succ)))).im - (GaussianInt.toComplex (BandVectors.1 (q ((p.1
-            + 2).succ)) (q ((p.1 + 1).succ)))).re) / 2)) ) := by
-  classical
-  intro U q S e i s p hc
-  have h := congrArg Prod.snd hc
-  cases hp : p.2 <;> simp [hp, GaussianRealPoint, smul_eq_mul] at h ⊢
-  · ring_nf at h ⊢; exact h
-  · ring_nf at h ⊢; exact h
 
 private theorem hcentMix :
     (by
@@ -1714,7 +1595,9 @@ theorem BandPackingSymmetryTileOdometerCovariance
         have hneg1 : -(1 : Fin 3) = 2 := rfl
         have hneg2 : -(2 : Fin 3) = 1 := rfl
         have hparent := TileOdometerSymmetryProof.hparentAt910 q a hneg1 hneg2
-        have hT' := TileOdometerSymmetryProof.hT' U q hT a cov
+        have hT' : BandPrototile (q' 0) (B a U) := by
+          simpa [q', Q, B, BandPackingSymmetryQuadrupleAction] using
+            (cov.2.1 (q 0) U).mp hT
         let hs' : Fin 3 → Bool → PartialOdometer := fun j s =>
           P a (hs (e.symm (j, s)).1 (e.symm (j, s)).2)
         have hsub' := TileOdometerSymmetryProof.hsub' q S hs ih a delta e S' he hS hparent
@@ -1742,8 +1625,12 @@ theorem BandPackingSymmetryTileOdometerCovariance
         have hep : e p = (i, s) := e.apply_symm_apply (i, s)
         have hpair := TileOdometerSymmetryProof.hpairAt1015 a delta e he i s hep
         have hidx : sigma p.1 = i := congrArg Prod.fst hpair
-        have hcurv : (q' i.succ).1 = (q p.1.succ).1 := TileOdometerSymmetryProof.hcurvAt1021 q a
-            cov e hparent i s hidx
+        have hcurv : (q' i.succ).1 = (q p.1.succ).1 := by
+          calc
+            (q' i.succ).1 = (q' (sigma p.1).succ).1 := by rw [hidx]
+            _ = (BandPackingSymmetryCircleAction a (q p.1.succ)).1 :=
+              congrArg Prod.fst (hparent p.1)
+            _ = (q p.1.succ).1 := cov.1 _
         have hprotoChild := TileOdometerBandPrototile (q p.1.succ)
           (S p.1 p.2) (hs p.1 p.2) (hsub p.1 p.2)
         by_cases hz : (q p.1.succ).1 = 0
@@ -1770,8 +1657,6 @@ theorem BandPackingSymmetryTileOdometerCovariance
                 hidx2 hidx1
             have hsign := TileOdometerSymmetryProof.hsign a delta e negative hphaseEq i s hpair
             have hc := hcentroid p.1 p.2
-            have hc1 := TileOdometerSymmetryProof.hc1At1079 U q S e i s hc
-            have hc2 := TileOdometerSymmetryProof.hc2At1089 U q S e i s hc
             let v0 := BandVectors.1 (q ((p.1 + 2).succ)) (q ((p.1 + 1).succ))
             let u0 := BandVectors.2 (q ((p.1 + 2).succ)) (q ((p.1 + 1).succ))
             let vmix := v0 - GaussianQuarterTurn v0

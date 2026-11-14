@@ -222,8 +222,6 @@ private theorem hparAt293 :
   intro P hP hsum hcrossdet hpos₁ hpos₂ horder hdlt hdetdiff H hHq hredParent Q
   exact ⟨rfl, rfl, rfl, rfl⟩
 
-private abbrev hch₀' := ApollonianSuperharmonic.OverlapDescentDetails.hrec₀'
-
 private abbrev hch₁' := ApollonianSuperharmonic.OverlapDescentDetails.hrec₁'
 
 private theorem hcoordsAt312 :

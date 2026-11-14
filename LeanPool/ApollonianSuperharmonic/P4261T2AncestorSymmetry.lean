@@ -342,16 +342,12 @@ private theorem linkCov :
       (if O g then GaussianQuarterTurn (L g w) else L g w) := by
     have hh := (hd i).2.2
     simpa [w', sigma, Q, O, BandPackingSymmetryQuadrupleAction] using hh
-  let eps : Real := if d then -1 else 1
   have centroid : TileCentroid (B g X.2) - TileCentroid (B g Y.2) =
       (if s then (1 : Real) else -1) • offset
         (if O g then GaussianQuarterTurn (L g w) else L g w) := by
     rw [centroidCov, centroidCov, ← rsub, hcent, rsmul, offsetCov]
   have w'eq : w' = BandVectors.1 (Q g q ((if O g then -i else i) + 2).succ)
       (Q g q ((if O g then -i else i) + 1).succ) := by rfl
-  have sign : (if s then (1 : Real) else -1) * eps =
-      (if xor s d then (1 : Real) else -1) := by
-    cases s <;> cases d <;> norm_num [eps]
   refine ⟨xor s d, BandPackingSymmetryProperCovariance g q hq, ?_, ?_, ?_, ?_, ?_, ?_⟩
   · simpa [Q, BandPackingSymmetryQuadrupleAction] using congrArg (A g) hq0
   · rw [parentSlot]
