@@ -97,6 +97,7 @@ jobs:
           }}
         restore-keys: |
           Exposition-v1-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json', 'lakefile.toml', 'scripts/exposition/Extract.lean', 'scripts/exposition/extract-all.sh', 'python/lean_pool/exposition/extract.py', 'python/lean_pool/exposition/source_text.py') }}-
+          Exposition-v1-${{ runner.os }}-
     - name: Extract declarations
       env:
         LEAN_CMD: /home/runner/.elan/bin/lean
