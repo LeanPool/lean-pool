@@ -56,7 +56,7 @@ def _readers(root: Path) -> tuple[set[Path], set[Path]]:
 
 
 def test_slimming_keeps_only_local_imports(repository: Path) -> None:
-    """Dependency entries go; pool modules and checkout sources stay."""
+    """Dependency entries and artifact paths go; local import names stay."""
     setup = _setup_path(repository, "LeanPool.A")
     outcome = slim_file(setup, repository)
     inventory = json.loads(setup.read_text())
@@ -66,7 +66,7 @@ def test_slimming_keeps_only_local_imports(repository: Path) -> None:
         "LeanPool.Gone",
         "Local.Helper",
     ]
-    assert inventory["importArts"]["Local.Helper"] == ARTS
+    assert inventory["importArts"]["Local.Helper"] == []
     assert inventory["name"] == "LeanPool.A" and inventory["isModule"] is True
 
 

@@ -9,10 +9,10 @@ carries about 3,000 entries (~1.6 MB). Across the pool that is ~46 GB of the
 Lake never reads these files back: it rewrites one whenever it recompiles that
 module. Lean Pool's own readers (``validation_cache`` and the exposition
 extractor) only use ``importArts`` keys that name a ``LeanPool`` module or a
-Lean source in this checkout. Dropping every other key keeps their results
-unchanged. Modification times are preserved, so ``find -newer`` packaging still
-ships only freshly built files. Standard library only, so CI can run it with
-the runner's ``python3``.
+Lean source in this checkout, never the artifact paths. Keeping just those keys,
+with empty artifact lists, leaves their results unchanged. Modification times
+are preserved, so ``find -newer`` packaging still ships only freshly built
+files. Standard library only, so CI can run it with the runner's ``python3``.
 """
 
 from __future__ import annotations
@@ -48,12 +48,12 @@ def is_local(module: str, root: Path) -> bool:
 
 
 def slim_inventory(inventory: dict, root: Path) -> dict | None:
-    """Return the inventory without non-local imports, or ``None`` if unchanged."""
+    """Return local import names without artifacts, or ``None`` if unchanged."""
     imports = inventory.get("importArts")
     if not isinstance(imports, dict):
         return None
-    kept = {module: arts for module, arts in imports.items() if is_local(module, root)}
-    if len(kept) == len(imports):
+    kept = {module: [] for module in imports if is_local(module, root)}
+    if kept == imports:
         return None
     return inventory | {"importArts": kept}
 

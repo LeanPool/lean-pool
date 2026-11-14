@@ -32,8 +32,9 @@ that parsing accounted for most of their time.
 Lake never reads a setup file back; it rewrites one when it recompiles that
 module. The only readers, `validation_cache` and the exposition extractor, use
 just the `importArts` keys that name a `LeanPool` module or a Lean source in the
-checkout. So every CI build step is followed by
-`python3 -m lean_pool.slim_setup`, which drops the other keys and keeps
+checkout, never the artifact paths. So every CI build step is followed by
+`python3 -m lean_pool.slim_setup`, which keeps only those names, with empty
+artifact lists, and preserves
 modification times, so shard packaging still ships only fresh files.
 
 Documentation retains its separate, integrity-checked SQLite checkpoints. They
