@@ -6,6 +6,7 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.BoundaryFootprintInclusion
 
 public import LeanPool.ApollonianSuperharmonic.BandOrderedGeneralNormalizedOccurrenceBundle
 public import LeanPool.ApollonianSuperharmonic.BandOrderedGeneralSelectedContactRow
@@ -171,14 +172,8 @@ private theorem hxFixed :
   intro C D T N h k x bundle placement selectedEdge hx hedge centralFoot hfixedO
   let U := SubtileOccurrenceInterpretation placement.layout.P placement.layout.u
     placement.layout.v placement.centralIndex
-  have hfoot : bundle.normalizedPoint ∈ FootprintVertices U := by
-    have he : selectedEdge ∈ FootprintEdges U := hedge.2
-    rcases he with ⟨z, hz, rfl | rfl | rfl | rfl⟩
-    all_goals
-      rw [FootprintVertices, ite_eq_left (show U.cells.Nonempty from ⟨z, hz⟩)]
-      simp only [Finset.mem_insert, Finset.mem_singleton] at hx
-      refine ⟨z, hz, ?_⟩
-      rcases hx with hx | hx <;> simp [hx]
+  have hfoot : bundle.normalizedPoint ∈ FootprintVertices U :=
+    BoundaryFootprintInclusion.edgeVertex U selectedEdge hedge.2 bundle.normalizedPoint hx
   change bundle.normalizedPoint ∈ (bundle.normalizedFixedFunction.domain : Set GaussianInt)
   rw [PositiveCurvatureTileOdometerDomain _ _ _ bundle.normalizedCircle.property hfixedO]
   exact centralFoot hfoot
@@ -211,14 +206,8 @@ private theorem hxSelected :
   intro C D T N h k x bundle placement selectedEdge hx hedge q i e hpos exteriorFoot
   let U := SubtileOccurrenceInterpretation placement.layout.P placement.layout.u
     placement.layout.v placement.exteriorIndex
-  have hfoot : bundle.normalizedPoint ∈ FootprintVertices U := by
-    have he : selectedEdge ∈ FootprintEdges U := hedge.1
-    rcases he with ⟨z, hz, rfl | rfl | rfl | rfl⟩
-    all_goals
-      rw [FootprintVertices, ite_eq_left (show U.cells.Nonempty from ⟨z, hz⟩)]
-      simp only [Finset.mem_insert, Finset.mem_singleton] at hx
-      refine ⟨z, hz, ?_⟩
-      rcases hx with hx | hx <;> simp [hx]
+  have hfoot : bundle.normalizedPoint ∈ FootprintVertices U :=
+    BoundaryFootprintInclusion.edgeVertex U selectedEdge hedge.1 bundle.normalizedPoint hx
   change bundle.normalizedPoint ∈ ((bundle.functions i e).domain : Set GaussianInt)
   rw [PositiveCurvatureTileOdometerDomain _ _ _ hpos (bundle.piece_odometer i e)]
   exact exteriorFoot hfoot

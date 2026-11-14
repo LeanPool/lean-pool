@@ -6,6 +6,7 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.BoundaryFootprintInclusion
 
 public import LeanPool.ApollonianSuperharmonic.P4418T3SelectedInterfaceExists
 public import LeanPool.ApollonianSuperharmonic.P4418T3PresentedRowAdjacency
@@ -199,16 +200,7 @@ theorem BandOrderedGeneralSubtileSelectedRowGeometry :
     change FootprintVertices (occurrence placement.centralIndex) = FootprintVertices S
     rw [placement.selected_central_index]
     exact (placement.piece_layout_footprint _ _).symm
-  have edgeVertex (U : ProtoTile) (e : Finset GaussianInt)
-      (he : e ∈ FootprintEdges U) (y : GaussianInt) (hy : y ∈ e) :
-      y ∈ FootprintVertices U := by
-    rcases he with ⟨c, hc, he⟩
-    unfold FootprintVertices
-    rw [ite_eq_left ⟨c, hc⟩]
-    rcases he with he | he | he | he <;> subst e
-    all_goals simp only [Finset.mem_insert, Finset.mem_singleton] at hy
-    all_goals rcases hy with rfl | rfl
-    all_goals exact ⟨_, hc, by simp⟩
+  have edgeVertex := BoundaryFootprintInclusion.edgeVertex
   have fixedDomain := PositiveCurvatureTileOdometerDomain
     bundle.normalizedFixedCircle.1.1 bundle.normalizedFixed
     bundle.normalizedFixedFunction bundle.normalizedFixedCircle.property

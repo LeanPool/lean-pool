@@ -6,6 +6,7 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.BoundaryFootprintInclusion
 
 public import LeanPool.ApollonianSuperharmonic.LatticeTile
 public import LeanPool.ApollonianSuperharmonic.OdometerCompatibility
@@ -81,25 +82,11 @@ private theorem corner :
   simp only [FootprintVertices, ite_eq_left (show T.cells.Nonempty from ⟨x, hx⟩)]
   exact ⟨x, hx, ha⟩
 
-private theorem edge_vertices :
-    (by
-      classical
-      exact
-        (∀ (T : ProtoTile), ∀ (x : GaussianInt), (x ∈ T.cells) → (∀ (a : GaussianInt), (a = x ∨ a
-            = x + 1 ∨ a = x + ⟨0, 1⟩ ∨ a = x + 1 + ⟨0, 1⟩) → (a ∈ FootprintVertices T))) → (∀ (T
-            : ProtoTile), ∀ (a : GaussianInt), ∀ (b : GaussianInt), (({a, b} : Finset
-            GaussianInt) ∈ FootprintEdges T) → (a ∈ FootprintVertices T ∧ b ∈ FootprintVertices
-            T)) ) := by
-  classical
-  intro corner T a b he
-  obtain ⟨s, hs, he⟩ := he
-  have endpoint (v : GaussianInt) (hv : v ∈ ({a, b} : Finset GaussianInt)) :
-      v ∈ FootprintVertices T := by
-    apply corner T s hs v
-    rcases he with he | he | he | he <;> rw [he] at hv
-    all_goals simp only [Finset.mem_insert, Finset.mem_singleton] at hv
-    all_goals tauto
-  exact ⟨endpoint a (by simp), endpoint b (by simp)⟩
+private theorem edge_vertices (T : ProtoTile) (a b : GaussianInt)
+    (he : ({a, b} : Finset GaussianInt) ∈ FootprintEdges T) :
+    a ∈ FootprintVertices T ∧ b ∈ FootprintVertices T := by
+  exact ⟨BoundaryFootprintInclusion.edgeVertex T {a, b} he a (by simp),
+    BoundaryFootprintInclusion.edgeVertex T {a, b} he b (by simp)⟩
 
 private theorem footprint_reachable :
     (by
@@ -880,7 +867,7 @@ theorem OdometerGluing :
         a = x + 1 + ⟨0, 1⟩) : a ∈ FootprintVertices T := OdometerGluingProof.corner T x hx a ha
   have edge_vertices (T : ProtoTile) (a b : GaussianInt)
       (he : ({a, b} : Finset GaussianInt) ∈ FootprintEdges T) :=
-          OdometerGluingProof.edge_vertices corner T a b he
+          OdometerGluingProof.edge_vertices T a b he
   have footprint_reachable (W : ProtoTile) (hW : LatticeTile W)
       (a b : GaussianInt) (ha : a ∈ FootprintVertices W) (hb : b ∈ FootprintVertices W) :=
           OdometerGluingProof.footprint_reachable adjacent_symm W hW a b ha hb

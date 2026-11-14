@@ -6,6 +6,7 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.BoundaryFootprintInclusion
 
 public import LeanPool.ApollonianSuperharmonic.P4261T2LiteralInterface
 public import LeanPool.ApollonianSuperharmonic.PositiveCurvatureTileOdometerDomain
@@ -34,16 +35,7 @@ theorem P4261T2InterfacePropagation
     OdometerCompatibility h h' := by
 -- BODY
   classical
-  have vertex_of_edge : ∀ (U : ProtoTile) (edge : Finset GaussianInt),
-      edge ∈ FootprintEdges U → ∀ z ∈ edge, z ∈ FootprintVertices U := by
-    intro U edge he z hz
-    rcases he with ⟨a, ha, he | he | he | he⟩
-    all_goals
-      rw [he] at hz
-      simp only [Finset.mem_insert, Finset.mem_singleton] at hz
-      rw [FootprintVertices, ite_eq_left (show U.cells.Nonempty from ⟨a, ha⟩)]
-      refine ⟨a, ha, ?_⟩
-      rcases hz with hz | hz <;> simp [hz]
+  have vertex_of_edge := BoundaryFootprintInclusion.edgeVertex
   let diff := fun z : GaussianInt => h'.value z - h.value z
   let rel := fun x y : GaussianInt => diff x = diff y
   have hchain : pkg.path.IsChain rel := by

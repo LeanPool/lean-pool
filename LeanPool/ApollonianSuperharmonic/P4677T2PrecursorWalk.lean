@@ -33,33 +33,6 @@ private abbrev edge_vertex := BoundaryFootprintInclusion.edgeVertex
 
 private abbrev boundary_vertex_footprint := BoundaryFootprintInclusion.boundaryVertex
 
-private theorem head_reach :
-    (by
-      classical
-      exact
-        ∀ (A : ProtoTile), ∀ (B : ProtoTile),
-        let R : GaussianInt → GaussianInt → Prop := fun u v =>
-          u ∈ FootprintVertices A ∩ FootprintVertices B ∧
-          v ∈ FootprintVertices A ∩ FootprintVertices B ∧
-          {u, v} ∈ FootprintEdges A ∩ FootprintEdges B
-        ∀ (u : GaussianInt), ∀ (l : List GaussianInt), List.IsChain R (u :: l) → ∀ z ∈ u :: l,
-            Relation.ReflTransGen R u z ) := by
-  classical
-  intro A B R u l hc
-  induction l generalizing u with
-  | nil =>
-      intro z hz
-      have heq : z = u := by simpa using hz
-      subst z
-      exact .refl
-  | cons v l ih =>
-      intro z hz
-      rcases List.mem_cons.mp hz with rfl | hz
-      · exact .refl
-      · exact (Relation.ReflTransGen.single
-          (List.isChain_cons_cons.mp hc).1).trans
-          (ih v (List.isChain_cons_cons.mp hc).2 z hz)
-
 private theorem chain_reach :
     (by
       classical
@@ -195,32 +168,6 @@ private theorem qchain :
   refine ⟨qmem u (by simp [h]), qmem v (by simp [h]), ?_⟩
   apply (hqedges {u, v}).2
   exact Or.inr ⟨u, v, l, r, h, rfl⟩
-
-private theorem qhead_reach :
-    (by
-      classical
-      exact
-        ∀ (O : ProtoTile),
-        let S : GaussianInt → GaussianInt → Prop := fun u v =>
-          u ∈ BoundaryFootprintVertices O ∧ v ∈ BoundaryFootprintVertices O ∧
-            {u, v} ∈ BoundaryFootprintEdges O
-        ∀ (u : GaussianInt), ∀ (l : List GaussianInt), List.IsChain S (u :: l) → ∀ z ∈ u :: l,
-            Relation.ReflTransGen S u z ) := by
-  classical
-  intro O S u l hc
-  induction l generalizing u with
-  | nil =>
-      intro z hz
-      have heq : z = u := by simpa using hz
-      subst z
-      exact .refl
-  | cons v l ih =>
-      intro z hz
-      rcases List.mem_cons.mp hz with rfl | hz
-      · exact .refl
-      · exact (Relation.ReflTransGen.single
-          (List.isChain_cons_cons.mp hc).1).trans
-          (ih v (List.isChain_cons_cons.mp hc).2 z hz)
 
 private theorem qreverse :
     (by
@@ -360,7 +307,9 @@ theorem P4677T2PrecursorWalk :
     {u, v} ∈ FootprintEdges A ∩ FootprintEdges B
   have head_reach (u : GaussianInt) (l : List GaussianInt)
       (hc : List.IsChain R (u :: l)) :
-      ∀ z ∈ u :: l, Relation.ReflTransGen R u z := PrecursorWalkGeometry.head_reach A B u l hc
+      ∀ z ∈ u :: l, Relation.ReflTransGen R u z :=
+    hc.induction (Relation.ReflTransGen R u) (u :: l)
+      (fun _ _ hxy hx => hx.tail hxy) (fun _ => .refl)
   have chain_reach {p : List GaussianInt} {u v : GaussianInt}
       (hc : List.IsChain R p) (hh : p.head? = some u)
       (hl : p.getLast? = some v) : Relation.ReflTransGen R u v :=
@@ -392,7 +341,9 @@ theorem P4677T2PrecursorWalk :
     have qchain : List.IsChain S q := PrecursorWalkGeometry.qchain O q q₀ q₁ hqedges qmem
     have qhead_reach (u : GaussianInt) (l : List GaussianInt)
         (hc : List.IsChain S (u :: l)) :
-        ∀ z ∈ u :: l, Relation.ReflTransGen S u z := PrecursorWalkGeometry.qhead_reach O u l hc
+        ∀ z ∈ u :: l, Relation.ReflTransGen S u z :=
+      hc.induction (Relation.ReflTransGen S u) (u :: l)
+        (fun _ _ hxy hx => hx.tail hxy) (fun _ => .refl)
     have qreverse {u v : GaussianInt}
         (h : Relation.ReflTransGen S u v) : Relation.ReflTransGen S v u :=
             PrecursorWalkGeometry.qreverse O S_symm (u := u) (v := v) h

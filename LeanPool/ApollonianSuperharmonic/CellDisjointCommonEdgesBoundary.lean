@@ -8,6 +8,7 @@ module
 public import LeanPool.ApollonianSuperharmonic.LatticeCellEdges
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.BoundaryFootprintInclusion
 
 public import LeanPool.ApollonianSuperharmonic.BoundaryFootprintEdges
 public import LeanPool.ApollonianSuperharmonic.FootprintEdges
@@ -44,17 +45,7 @@ theorem CellDisjointCommonEdgesBoundary (U V : ProtoTile)
     · refine Or.inl ⟨x + I, ?_, Or.inr ?_⟩
       · simpa [I, Zsqrtd.ext_iff, add_comm, add_left_comm, add_assoc] using h
       simpa [I, Zsqrtd.ext_iff] using hx
-  have boundary_footprint (T : ProtoTile) (e : Finset GaussianInt)
-      (he : e ∈ BoundaryFootprintEdges T) : e ∈ FootprintEdges T := by
-    rcases he with ⟨z, ⟨rfl, h⟩ | ⟨rfl, h⟩⟩
-    · rcases h with ⟨hz, -⟩ | ⟨-, hz⟩
-      · exact ⟨z, hz, Or.inl rfl⟩
-      · refine ⟨z - I, hz, Or.inr (Or.inr (Or.inr ?_))⟩
-        congr 1 <;> simp [I, Zsqrtd.ext_iff]
-    · rcases h with ⟨hz, -⟩ | ⟨-, hz⟩
-      · exact ⟨z, hz, Or.inr (Or.inl rfl)⟩
-      · refine ⟨z - 1, hz, Or.inr (Or.inr (Or.inl ?_))⟩
-        congr 1 <;> simp
+  have boundary_footprint := BoundaryFootprintInclusion.boundaryEdge
   ext e
   constructor
   · rintro ⟨heU, heV⟩

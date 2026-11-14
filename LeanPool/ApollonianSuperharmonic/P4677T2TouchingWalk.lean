@@ -7,6 +7,7 @@ module
 
 public import LeanPool.ApollonianSuperharmonic.LatticeFootprintIncidence
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.BoundaryFootprintInclusion
 
 public import LeanPool.ApollonianSuperharmonic.TileTouching
 public import LeanPool.ApollonianSuperharmonic.FootprintEdges
@@ -39,27 +40,8 @@ theorem P4677T2TouchingWalk (T U : ProtoTile) (x y : GaussianInt)
         {a, b} ∈ FootprintEdges T ∩ FootprintEdges U := by
 -- BODY
   classical
-  have edge_raw (V : ProtoTile) (e : Finset GaussianInt)
-      (he : e ∈ BoundaryFootprintEdges V) : e ∈ FootprintEdges V := by
-    rcases he with ⟨z, ⟨rfl, h⟩ | ⟨rfl, h⟩⟩
-    · rcases h with ⟨hz, _⟩ | ⟨_, hz⟩
-      · exact ⟨z, hz, Or.inl rfl⟩
-      · refine ⟨z - ⟨0, 1⟩, hz, Or.inr (Or.inr (Or.inr ?_))⟩
-        congr 1 <;> simp [Zsqrtd.ext_iff]
-    · rcases h with ⟨hz, _⟩ | ⟨_, hz⟩
-      · exact ⟨z, hz, Or.inr (Or.inl rfl)⟩
-      · refine ⟨z - 1, hz, Or.inr (Or.inr (Or.inl ?_))⟩
-        congr 1 <;> simp []
-  have edge_vertex (V : ProtoTile) (e : Finset GaussianInt)
-      (he : e ∈ FootprintEdges V) (z : GaussianInt) (hz : z ∈ e) :
-      z ∈ FootprintVertices V := by
-    rcases he with ⟨c, hc, rfl | rfl | rfl | rfl⟩
-    all_goals
-      simp only [FootprintVertices, ite_eq_left (show V.cells.Nonempty from ⟨c, hc⟩),
-        Set.mem_ofPred_eq]
-      refine ⟨c, hc, ?_⟩
-      simp only [Finset.mem_insert, Finset.mem_singleton] at hz
-      rcases hz with rfl | rfl <;> simp
+  have edge_raw := BoundaryFootprintInclusion.boundaryEdge
+  have edge_vertex := BoundaryFootprintInclusion.edgeVertex
   have incident (V : ProtoTile) (z : GaussianInt) (hn : V.cells.Nonempty)
       (hz : z ∈ FootprintVertices V) :
       ∃ j : Fin 4, LatticeVertexIncidentCell z j ∈ V.cells := by

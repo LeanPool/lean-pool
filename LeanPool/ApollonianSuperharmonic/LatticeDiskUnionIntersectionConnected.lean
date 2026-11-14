@@ -6,6 +6,7 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.BoundaryFootprintInclusion
 public import LeanPool.ApollonianSuperharmonic.FootprintFiniteness
 
 public import LeanPool.ApollonianSuperharmonic.CellDisjointCommonEdgesBoundary
@@ -103,21 +104,9 @@ theorem LatticeDiskUnionIntersectionConnected (U V W : ProtoTile)
     · exact ⟨x + ⟨0, 1⟩, x + 1 + ⟨0, 1⟩, rfl, Or.inl (by ring)⟩
   have hendpoint : {x | ∃ e ∈ E, x ∈ e} ⊆ X := by
     rintro x ⟨e, he, hxe⟩
-    have endpoint_mem (T : ProtoTile) (hne : T.cells.Nonempty)
-        (heT : e ∈ FootprintEdges T) : x ∈ FootprintVertices T := by
-      simp only [FootprintVertices, hne, ite_true]
-      rcases heT with ⟨c, hc, hec⟩
-      refine ⟨c, hc, ?_⟩
-      rcases hec with hec | hec | hec | hec
-      all_goals rw [hec] at hxe
-      all_goals simp only [Finset.mem_insert, Finset.mem_singleton] at hxe
-      · exact hxe.elim Or.inl (fun h => Or.inr (Or.inl h))
-      · exact hxe.elim Or.inl (fun h => Or.inr (Or.inr (Or.inl h)))
-      · exact hxe.elim (fun h => Or.inr (Or.inl h))
-          (fun h => Or.inr (Or.inr (Or.inr h)))
-      · exact hxe.elim (fun h => Or.inr (Or.inr (Or.inl h)))
-          (fun h => Or.inr (Or.inr (Or.inr h)))
-    exact ⟨endpoint_mem U hUne he.1, endpoint_mem V hVne he.2⟩
+    have endpoint_mem (T : ProtoTile) (heT : e ∈ FootprintEdges T) :
+        x ∈ FootprintVertices T := BoundaryFootprintInclusion.edgeVertex T e heT x hxe
+    exact ⟨endpoint_mem U he.1, endpoint_mem V he.2⟩
   have hboundary := CellDisjointCommonEdgesBoundary U V hdisjoint
   have hacyclicSmall := DisjointBoundaryCommonEdgeGraphAcyclic U V hdisjoint
     (LatticeTileGridStructure U hU).2.2

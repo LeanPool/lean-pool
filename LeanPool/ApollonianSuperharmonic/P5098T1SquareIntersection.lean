@@ -6,6 +6,7 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.BoundaryFootprintInclusion
 
 public import LeanPool.ApollonianSuperharmonic.P4062T1CanonicalSupport
 public import LeanPool.ApollonianSuperharmonic.P4456T2SquareEdges
@@ -55,15 +56,8 @@ theorem P5098T1SquareIntersection (p q : Nat) (hp : 0 < p) (hq : 0 < q)
   have ends (T : ProtoTile) (e : Finset GaussianInt) (he : e ∈ FootprintEdges T) :
       (∀ z ∈ e, z ∈ FootprintVertices T) ∧
         ∃ x y, x ∈ e ∧ y ∈ e ∧ (y = x + 1 ∨ y = x + ⟨0, 1⟩) := by
-    rcases he with ⟨c, hc, rfl | rfl | rfl | rfl⟩
-    all_goals
-      have hn : T.cells.Nonempty := ⟨c, hc⟩
-      constructor
-      · intro z hz
-        simp only [Finset.mem_insert, Finset.mem_singleton] at hz
-        simp only [FootprintVertices, ite_eq_left hn, Set.mem_ofPred_eq]
-        rcases hz with hz | hz
-        all_goals exact ⟨c, hc, by rw [hz]; simp⟩
+    refine ⟨BoundaryFootprintInclusion.edgeVertex T e he, ?_⟩
+    rcases he with ⟨c, _, rfl | rfl | rfl | rfl⟩
     · exact ⟨c, c + 1, by simp, by simp, Or.inl rfl⟩
     · exact ⟨c, c + ⟨0, 1⟩, by simp, by simp, Or.inr rfl⟩
     · exact ⟨c + 1, c + 1 + ⟨0, 1⟩, by simp, by simp, Or.inr rfl⟩

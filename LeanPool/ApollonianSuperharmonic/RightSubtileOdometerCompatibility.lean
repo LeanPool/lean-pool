@@ -6,6 +6,7 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.BoundaryFootprintInclusion
 
 public import LeanPool.ApollonianSuperharmonic.OdometerAdjacencyInduction
 public import LeanPool.ApollonianSuperharmonic.LeftAdjacentOdometerCompatibility
@@ -105,77 +106,10 @@ private theorem list_glue :
         · have := hd z hz ha hb
           simpa [same] using this
 
-private theorem edge_endpoints :
-    (by
-      classical
-      exact
-        ∀ (U : ProtoTile), ∀ (a : GaussianInt), ∀ (b : GaussianInt), {a, b} ∈ FootprintEdges U →
-            a ∈ FootprintVertices U ∧ b ∈ FootprintVertices U ) := by
-  classical
-  intro U a b he
-  rcases he with ⟨x, hx, he⟩
-  have hn : U.cells.Nonempty := ⟨x, hx⟩
-  rcases he with he | he | he | he
-  · have ha : a ∈ ({x, x + 1} : Finset GaussianInt) := by
-      rw [← he]
-      simp
-    have hb : b ∈ ({x, x + 1} : Finset GaussianInt) := by
-      rw [← he]
-      simp
-    have lift : ∀ w, w = x ∨ w = x + 1 →
-        w = x ∨ w = x + 1 ∨ w = x + ⟨0, 1⟩ ∨ w = x + 1 + ⟨0, 1⟩ := by
-      intro w hw
-      rcases hw with hw | hw
-      · exact Or.inl hw
-      · exact Or.inr (Or.inl hw)
-    constructor <;> simp only [FootprintVertices, ite_eq_left hn, Set.mem_ofPred_eq]
-    · exact ⟨x, hx, lift a (by simpa using ha)⟩
-    · exact ⟨x, hx, lift b (by simpa using hb)⟩
-  · have ha : a ∈ ({x, x + ⟨0, 1⟩} : Finset GaussianInt) := by
-      rw [← he]
-      simp
-    have hb : b ∈ ({x, x + ⟨0, 1⟩} : Finset GaussianInt) := by
-      rw [← he]
-      simp
-    have lift : ∀ w, w = x ∨ w = x + ⟨0, 1⟩ →
-        w = x ∨ w = x + 1 ∨ w = x + ⟨0, 1⟩ ∨ w = x + 1 + ⟨0, 1⟩ := by
-      intro w hw
-      rcases hw with hw | hw
-      · exact Or.inl hw
-      · exact Or.inr (Or.inr (Or.inl hw))
-    constructor <;> simp only [FootprintVertices, ite_eq_left hn, Set.mem_ofPred_eq]
-    · exact ⟨x, hx, lift a (by simpa using ha)⟩
-    · exact ⟨x, hx, lift b (by simpa using hb)⟩
-  · have ha : a ∈ ({x + 1, x + 1 + ⟨0, 1⟩} : Finset GaussianInt) := by
-      rw [← he]
-      simp
-    have hb : b ∈ ({x + 1, x + 1 + ⟨0, 1⟩} : Finset GaussianInt) := by
-      rw [← he]
-      simp
-    have lift : ∀ w, w = x + 1 ∨ w = x + 1 + ⟨0, 1⟩ →
-        w = x ∨ w = x + 1 ∨ w = x + ⟨0, 1⟩ ∨ w = x + 1 + ⟨0, 1⟩ := by
-      intro w hw
-      rcases hw with hw | hw
-      · exact Or.inr (Or.inl hw)
-      · exact Or.inr (Or.inr (Or.inr hw))
-    constructor <;> simp only [FootprintVertices, ite_eq_left hn, Set.mem_ofPred_eq]
-    · exact ⟨x, hx, lift a (by simpa using ha)⟩
-    · exact ⟨x, hx, lift b (by simpa using hb)⟩
-  · have ha : a ∈ ({x + ⟨0, 1⟩, x + 1 + ⟨0, 1⟩} : Finset GaussianInt) := by
-      rw [← he]
-      simp
-    have hb : b ∈ ({x + ⟨0, 1⟩, x + 1 + ⟨0, 1⟩} : Finset GaussianInt) := by
-      rw [← he]
-      simp
-    have lift : ∀ w, w = x + ⟨0, 1⟩ ∨ w = x + 1 + ⟨0, 1⟩ →
-        w = x ∨ w = x + 1 ∨ w = x + ⟨0, 1⟩ ∨ w = x + 1 + ⟨0, 1⟩ := by
-      intro w hw
-      rcases hw with hw | hw
-      · exact Or.inr (Or.inr (Or.inl hw))
-      · exact Or.inr (Or.inr (Or.inr hw))
-    constructor <;> simp only [FootprintVertices, ite_eq_left hn, Set.mem_ofPred_eq]
-    · exact ⟨x, hx, lift a (by simpa using ha)⟩
-    · exact ⟨x, hx, lift b (by simpa using hb)⟩
+private theorem edge_endpoints (U : ProtoTile) (a b : GaussianInt)
+    (he : {a, b} ∈ FootprintEdges U) : a ∈ FootprintVertices U ∧ b ∈ FootprintVertices U := by
+  exact ⟨BoundaryFootprintInclusion.edgeVertex U {a, b} he a (by simp),
+    BoundaryFootprintInclusion.edgeVertex U {a, b} he b (by simp)⟩
 
 private theorem qdata :
     (by

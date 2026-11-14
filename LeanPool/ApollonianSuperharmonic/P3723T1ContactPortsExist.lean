@@ -584,79 +584,6 @@ private theorem position_periodic :
   simp only [position, rep_shift, period_shift, AddSubgroup.coe_add, real_add]
   abel
 
-private theorem representative_eq :
-    (by
-      classical
-      exact
-        ∀ (ι : Type), ∀ (P : PeriodicTileComplex ι), ∀ (shift_cancel : ∀ (u : P.lattice), ∀ (a :
-            ι), P.shift (-u) (P.shift u a) = a),
-        let S : Setoid (ι × ι) := {
-          r := fun p q => ∃ u : P.lattice,
-            ({P.shift u p.1, P.shift u p.2} : Set ι) = {q.1, q.2}
-          iseqv := {
-            refl := by
-              intro p
-              exact ⟨0, by simp only [P.shift_zero]⟩
-            symm := by
-              intro p q h
-              obtain ⟨u, hu⟩ := h
-              refine ⟨-u, ?_⟩
-              have hh := congrArg (fun s : Set ι => P.shift (-u) '' s) hu
-              simpa only [Set.image_insert_eq, Set.image_singleton, shift_cancel] using hh.symm
-            trans := by
-              intro p q r hpq hqr
-              obtain ⟨u, hu⟩ := hpq
-              obtain ⟨v, hv⟩ := hqr
-              refine ⟨v + u, ?_⟩
-              have hh := congrArg (fun s : Set ι => P.shift v '' s) hu
-              simp only [Set.image_insert_eq, Set.image_singleton, ← P.shift_add] at hh
-              exact hh.trans hv
-          }
-        }
-        let representative (p : ι × ι) : ι × ι := (Quotient.mk S p).out
-        ∀ (p : ι × ι), ∀ (q : ι × ι), (S.r p q) → (representative p = representative q) ) := by
-  classical
-  intro ι P shift_cancel S representative p q h
-  exact congrArg Quotient.out (Quotient.sound h)
-
-private theorem transport_spec :
-    (by
-      classical
-      exact
-        ∀ (ι : Type), ∀ (P : PeriodicTileComplex ι), ∀ (shift_cancel : ∀ (u : P.lattice), ∀ (a :
-            ι), P.shift (-u) (P.shift u a) = a),
-        let S : Setoid (ι × ι) := {
-          r := fun p q => ∃ u : P.lattice,
-            ({P.shift u p.1, P.shift u p.2} : Set ι) = {q.1, q.2}
-          iseqv := {
-            refl := by
-              intro p
-              exact ⟨0, by simp only [P.shift_zero]⟩
-            symm := by
-              intro p q h
-              obtain ⟨u, hu⟩ := h
-              refine ⟨-u, ?_⟩
-              have hh := congrArg (fun s : Set ι => P.shift (-u) '' s) hu
-              simpa only [Set.image_insert_eq, Set.image_singleton, shift_cancel] using hh.symm
-            trans := by
-              intro p q r hpq hqr
-              obtain ⟨u, hu⟩ := hpq
-              obtain ⟨v, hv⟩ := hqr
-              refine ⟨v + u, ?_⟩
-              have hh := congrArg (fun s : Set ι => P.shift v '' s) hu
-              simp only [Set.image_insert_eq, Set.image_singleton, ← P.shift_add] at hh
-              exact hh.trans hv
-          }
-        }
-        let representative (p : ι × ι) : ι × ι := (Quotient.mk S p).out
-        ∀ (representative_spec : ∀ (p : ι × ι), S.r (representative p) p),
-        let transport (p : ι × ι) : P.lattice := Classical.choose (representative_spec p)
-        ∀ (p : ι × ι), ({P.shift (transport p) (representative p).1,
-            P.shift (transport p) (representative p).2} : Set ι) = {p.1, p.2} ) := by
-  classical
-  intro ι P shift_cancel S representative representative_spec transport p
-  exact Classical.choose_spec (representative_spec p)
-
 private theorem transport_unique :
     (by
       classical
@@ -675,137 +602,6 @@ private theorem transport_unique :
   have hsub : u - v = 0 := by simpa only [sub_eq_add_neg, add_comm] using hz
   exact sub_eq_zero.mp hsub
 
-private theorem transport_swap :
-    (by
-      classical
-      exact
-        ∀ (ι : Type), ∀ (P : PeriodicTileComplex ι), ∀ (shift_cancel : ∀ (u : P.lattice), ∀ (a :
-            ι), P.shift (-u) (P.shift u a) = a),
-        let S : Setoid (ι × ι) := {
-          r := fun p q => ∃ u : P.lattice,
-            ({P.shift u p.1, P.shift u p.2} : Set ι) = {q.1, q.2}
-          iseqv := {
-            refl := by
-              intro p
-              exact ⟨0, by simp only [P.shift_zero]⟩
-            symm := by
-              intro p q h
-              obtain ⟨u, hu⟩ := h
-              refine ⟨-u, ?_⟩
-              have hh := congrArg (fun s : Set ι => P.shift (-u) '' s) hu
-              simpa only [Set.image_insert_eq, Set.image_singleton, shift_cancel] using hh.symm
-            trans := by
-              intro p q r hpq hqr
-              obtain ⟨u, hu⟩ := hpq
-              obtain ⟨v, hv⟩ := hqr
-              refine ⟨v + u, ?_⟩
-              have hh := congrArg (fun s : Set ι => P.shift v '' s) hu
-              simp only [Set.image_insert_eq, Set.image_singleton, ← P.shift_add] at hh
-              exact hh.trans hv
-          }
-        }
-        let representative (p : ι × ι) : ι × ι := (Quotient.mk S p).out
-        ∀ (representative_spec : ∀ (p : ι × ι), S.r (representative p) p),
-        let transport (p : ι × ι) : P.lattice := Classical.choose (representative_spec p)
-        (∀ (p : ι × ι), ({P.shift (transport p) (representative p).1,
-            P.shift (transport p) (representative p).2} : Set ι) = {p.1, p.2}) → ((∀ (r : ι × ι),
-            ∀ (p : ι × ι), ∀ (u : P.lattice), ∀ (v : P.lattice), (({P.shift u r.1, P.shift u r.2}
-            : Set ι) = {p.1, p.2}) → ((({P.shift v r.1, P.shift v r.2} : Set ι) = {p.1, p.2}) →
-            (u = v))) → ((∀ (a : ι), ∀ (b : ι), representative (a, b) = representative (b, a)) →
-            (∀ (a : ι), ∀ (b : ι), transport (a, b) = transport (b, a)))) ) := by
-  classical
-  intro ι P shift_cancel S representative representative_spec transport transport_spec
-      transport_unique representative_swap a b
-  apply transport_unique (representative (a, b)) (a, b)
-  · exact transport_spec (a, b)
-  · rw [representative_swap a b]
-    exact (transport_spec (b, a)).trans (Set.pair_comm _ _)
-
-private theorem representative_shift :
-    (by
-      classical
-      exact
-        ∀ (ι : Type), ∀ (P : PeriodicTileComplex ι), ∀ (shift_cancel : ∀ (u : P.lattice), ∀ (a :
-            ι), P.shift (-u) (P.shift u a) = a),
-        let S : Setoid (ι × ι) := {
-          r := fun p q => ∃ u : P.lattice,
-            ({P.shift u p.1, P.shift u p.2} : Set ι) = {q.1, q.2}
-          iseqv := {
-            refl := by
-              intro p
-              exact ⟨0, by simp only [P.shift_zero]⟩
-            symm := by
-              intro p q h
-              obtain ⟨u, hu⟩ := h
-              refine ⟨-u, ?_⟩
-              have hh := congrArg (fun s : Set ι => P.shift (-u) '' s) hu
-              simpa only [Set.image_insert_eq, Set.image_singleton, shift_cancel] using hh.symm
-            trans := by
-              intro p q r hpq hqr
-              obtain ⟨u, hu⟩ := hpq
-              obtain ⟨v, hv⟩ := hqr
-              refine ⟨v + u, ?_⟩
-              have hh := congrArg (fun s : Set ι => P.shift v '' s) hu
-              simp only [Set.image_insert_eq, Set.image_singleton, ← P.shift_add] at hh
-              exact hh.trans hv
-          }
-        }
-        let representative (p : ι × ι) : ι × ι := (Quotient.mk S p).out
-        (∀ (p : ι × ι), ∀ (q : ι × ι), (S.r p q) → (representative p = representative q)) → (∀ (u
-            : P.lattice), ∀ (a : ι), ∀ (b : ι), representative (P.shift u a, P.shift u b) =
-            representative (a, b)) ) := by
-  classical
-  intro ι P shift_cancel S representative representative_eq u a b
-  apply (representative_eq (a, b) (P.shift u a, P.shift u b) ⟨u, rfl⟩).symm
-
-private theorem transport_shift :
-    (by
-      classical
-      exact
-        ∀ (ι : Type), ∀ (P : PeriodicTileComplex ι), ∀ (shift_cancel : ∀ (u : P.lattice), ∀ (a :
-            ι), P.shift (-u) (P.shift u a) = a),
-        let S : Setoid (ι × ι) := {
-          r := fun p q => ∃ u : P.lattice,
-            ({P.shift u p.1, P.shift u p.2} : Set ι) = {q.1, q.2}
-          iseqv := {
-            refl := by
-              intro p
-              exact ⟨0, by simp only [P.shift_zero]⟩
-            symm := by
-              intro p q h
-              obtain ⟨u, hu⟩ := h
-              refine ⟨-u, ?_⟩
-              have hh := congrArg (fun s : Set ι => P.shift (-u) '' s) hu
-              simpa only [Set.image_insert_eq, Set.image_singleton, shift_cancel] using hh.symm
-            trans := by
-              intro p q r hpq hqr
-              obtain ⟨u, hu⟩ := hpq
-              obtain ⟨v, hv⟩ := hqr
-              refine ⟨v + u, ?_⟩
-              have hh := congrArg (fun s : Set ι => P.shift v '' s) hu
-              simp only [Set.image_insert_eq, Set.image_singleton, ← P.shift_add] at hh
-              exact hh.trans hv
-          }
-        }
-        let representative (p : ι × ι) : ι × ι := (Quotient.mk S p).out
-        ∀ (representative_spec : ∀ (p : ι × ι), S.r (representative p) p),
-        let transport (p : ι × ι) : P.lattice := Classical.choose (representative_spec p)
-        (∀ (p : ι × ι), ({P.shift (transport p) (representative p).1,
-            P.shift (transport p) (representative p).2} : Set ι) = {p.1, p.2}) → ((∀ (r : ι × ι),
-            ∀ (p : ι × ι), ∀ (u : P.lattice), ∀ (v : P.lattice), (({P.shift u r.1, P.shift u r.2}
-            : Set ι) = {p.1, p.2}) → ((({P.shift v r.1, P.shift v r.2} : Set ι) = {p.1, p.2}) →
-            (u = v))) → ((∀ (u : P.lattice), ∀ (a : ι), ∀ (b : ι), representative (P.shift u a,
-            P.shift u b) = representative (a, b)) → (∀ (u : P.lattice), ∀ (a : ι), ∀ (b : ι),
-            transport (P.shift u a, P.shift u b) = u + transport (a, b)))) ) := by
-  classical
-  intro ι P shift_cancel S representative representative_spec transport transport_spec
-      transport_unique representative_shift u a b
-  apply transport_unique (representative (a, b)) (P.shift u a, P.shift u b)
-  · rw [← representative_shift u a b]
-    exact transport_spec (P.shift u a, P.shift u b)
-  · have hh := congrArg (fun s : Set ι => P.shift u '' s) (transport_spec (a, b))
-    simpa only [Set.image_insert_eq, Set.image_singleton, ← P.shift_add] using hh
-
 private theorem pair_contact :
     (by
       classical
@@ -819,128 +615,6 @@ private theorem pair_contact :
   rcases Set.pair_eq_pair_iff.mp h with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩
   · rfl
   · exact contact_symmetric _ _
-
-private theorem representative_contact :
-    (by
-      classical
-      exact
-        ∀ (ι : Type), ∀ (P : PeriodicTileComplex ι), ∀ (shift_cancel : ∀ (u : P.lattice), ∀ (a :
-            ι), P.shift (-u) (P.shift u a) = a), (∀ (u : P.lattice), ∀ (a : ι), ∀ (b : ι),
-            P3723T1EdgeContact P (P.shift u a) (P.shift u b) ↔
-            P3723T1EdgeContact P a b) → (
-        let S : Setoid (ι × ι) := {
-          r := fun p q => ∃ u : P.lattice,
-            ({P.shift u p.1, P.shift u p.2} : Set ι) = {q.1, q.2}
-          iseqv := {
-            refl := by
-              intro p
-              exact ⟨0, by simp only [P.shift_zero]⟩
-            symm := by
-              intro p q h
-              obtain ⟨u, hu⟩ := h
-              refine ⟨-u, ?_⟩
-              have hh := congrArg (fun s : Set ι => P.shift (-u) '' s) hu
-              simpa only [Set.image_insert_eq, Set.image_singleton, shift_cancel] using hh.symm
-            trans := by
-              intro p q r hpq hqr
-              obtain ⟨u, hu⟩ := hpq
-              obtain ⟨v, hv⟩ := hqr
-              refine ⟨v + u, ?_⟩
-              have hh := congrArg (fun s : Set ι => P.shift v '' s) hu
-              simp only [Set.image_insert_eq, Set.image_singleton, ← P.shift_add] at hh
-              exact hh.trans hv
-          }
-        }
-        let representative (p : ι × ι) : ι × ι := (Quotient.mk S p).out
-        ∀ (representative_spec : ∀ (p : ι × ι), S.r (representative p) p),
-        let transport (p : ι × ι) : P.lattice := Classical.choose (representative_spec p)
-        (∀ (p : ι × ι), ({P.shift (transport p) (representative p).1,
-            P.shift (transport p) (representative p).2} : Set ι) = {p.1, p.2}) → ((∀ (a : ι), ∀
-                (b : ι), ∀ (c : ι), ∀ (d : ι), (({a, b} : Set ι) = {c, d}) → (P3723T1EdgeContact P
-            a b ↔ P3723T1EdgeContact P c d)) → (∀ (p : ι × ι), (P3723T1EdgeContact P p.1 p.2)
-            → (P3723T1EdgeContact P (representative p).1 (representative p).2))))) := by
-  classical
-  intro ι P shift_cancel contact_periodic S representative representative_spec transport
-      transport_spec pair_contact p hp
-  apply (contact_periodic (transport p) _ _).mp
-  exact (pair_contact _ _ _ _ (transport_spec p)).mpr hp
-
-private theorem baseEdge_common :
-    (by
-      classical
-      exact
-        ∀ (ι : Type), ∀ (P : PeriodicTileComplex ι),
-        let baseEdge (p : ι × ι) : Finset GaussianInt :=
-          if hp : P3723T1EdgeContact P p.1 p.2 then Classical.choose hp.2 else ∅
-        ∀ (p : ι × ι), (P3723T1EdgeContact P p.1 p.2) → (baseEdge p ∈ FootprintEdges (P.tile
-            p.1) ∩ FootprintEdges (P.tile p.2)) ) := by
-  classical
-  intro ι P baseEdge p hp
-  simp only [baseEdge, dite_eq_left hp]
-  exact Classical.choose_spec hp.2
-
-private theorem edge_common :
-    (by
-      classical
-      exact
-        ∀ (ι : Type), ∀ (P : PeriodicTileComplex ι), ∀ (shift_cancel : ∀ (u : P.lattice), ∀ (a :
-            ι), P.shift (-u) (P.shift u a) = a), (∀ (u : P.lattice), ∀ (a : ι), ∀ (b : ι), ∀ (e :
-            Finset GaussianInt), (e ∈ FootprintEdges (P.tile a) ∩
-            FootprintEdges (P.tile b)) → (e.image (fun z => z + (u : GaussianInt)) ∈
-            FootprintEdges (P.tile (P.shift u a)) ∩ FootprintEdges (P.tile (P.shift u b)))) → (
-        let S : Setoid (ι × ι) := {
-          r := fun p q => ∃ u : P.lattice,
-            ({P.shift u p.1, P.shift u p.2} : Set ι) = {q.1, q.2}
-          iseqv := {
-            refl := by
-              intro p
-              exact ⟨0, by simp only [P.shift_zero]⟩
-            symm := by
-              intro p q h
-              obtain ⟨u, hu⟩ := h
-              refine ⟨-u, ?_⟩
-              have hh := congrArg (fun s : Set ι => P.shift (-u) '' s) hu
-              simpa only [Set.image_insert_eq, Set.image_singleton, shift_cancel] using hh.symm
-            trans := by
-              intro p q r hpq hqr
-              obtain ⟨u, hu⟩ := hpq
-              obtain ⟨v, hv⟩ := hqr
-              refine ⟨v + u, ?_⟩
-              have hh := congrArg (fun s : Set ι => P.shift v '' s) hu
-              simp only [Set.image_insert_eq, Set.image_singleton, ← P.shift_add] at hh
-              exact hh.trans hv
-          }
-        }
-        let representative (p : ι × ι) : ι × ι := (Quotient.mk S p).out
-        ∀ (representative_spec : ∀ (p : ι × ι), S.r (representative p) p),
-        let transport (p : ι × ι) : P.lattice := Classical.choose (representative_spec p)
-        (∀ (p : ι × ι), ({P.shift (transport p) (representative p).1,
-            P.shift (transport p) (representative p).2} : Set ι) = {p.1, p.2}) → ((∀ (p : ι × ι),
-                (P3723T1EdgeContact P p.1 p.2) → (P3723T1EdgeContact P (representative p).1
-            (representative p).2)) → (
-        let baseEdge (p : ι × ι) : Finset GaussianInt :=
-          if hp : P3723T1EdgeContact P p.1 p.2 then Classical.choose hp.2 else ∅
-        (∀ (p : ι × ι), (P3723T1EdgeContact P p.1 p.2) → (baseEdge p ∈ FootprintEdges (P.tile
-            p.1) ∩ FootprintEdges (P.tile p.2))) → (
-        let edge (a b : ι) : Finset GaussianInt :=
-          if P3723T1EdgeContact P a b then
-            (baseEdge (representative (a, b))).image
-              (fun z => z + (transport (a, b) : GaussianInt))
-          else ∅
-        ∀ (a : ι), ∀ (b : ι), (P3723T1EdgeContact P a b) → (edge a b ∈ FootprintEdges (P.tile
-            a) ∩ FootprintEdges (P.tile b))))))) := by
-  classical
-  intro ι P shift_cancel common_edge_transport S representative representative_spec transport
-      transport_spec representative_contact baseEdge baseEdge_common edge a b hab
-  have hh := common_edge_transport (transport (a, b))
-    (representative (a, b)).1 (representative (a, b)).2 _
-    (baseEdge_common _ (representative_contact (a, b) hab))
-  simp only [edge, ite_eq_left hab]
-  rcases Set.pair_eq_pair_iff.mp (transport_spec (a, b)) with ⟨h1, h2⟩ | ⟨h1, h2⟩
-  · rw [h1, h2] at hh
-    exact hh
-  · rw [h1, h2] at hh
-    exact ⟨hh.2, hh.1⟩
 
 private theorem footprint_card :
     (by
@@ -1033,6 +707,34 @@ private theorem hac :
       _ = rep a := shift_cancel (period a) (rep a)
   rw [ha] at h
   exact h
+
+private def contactOrbitSetoid {ι : Type} (P : PeriodicTileComplex ι) :
+    Setoid (ι × ι) := by
+  have shift_cancel (u : P.lattice) (a : ι) : P.shift (-u) (P.shift u a) = a := by
+    rw [← P.shift_add, neg_add_cancel, P.shift_zero]
+  exact {
+    r := fun p q => ∃ u : P.lattice,
+      ({P.shift u p.1, P.shift u p.2} : Set ι) = {q.1, q.2}
+    iseqv := {
+      refl := by
+        intro p
+        exact ⟨0, by simp only [P.shift_zero]⟩
+      symm := by
+        intro p q h
+        obtain ⟨u, hu⟩ := h
+        refine ⟨-u, ?_⟩
+        have hh := congrArg (fun s : Set ι => P.shift (-u) '' s) hu
+        simpa only [Set.image_insert_eq, Set.image_singleton, shift_cancel] using hh.symm
+      trans := by
+        intro p q r hpq hqr
+        obtain ⟨u, hu⟩ := hpq
+        obtain ⟨v, hv⟩ := hqr
+        refine ⟨v + u, ?_⟩
+        have hh := congrArg (fun s : Set ι => P.shift v '' s) hu
+        simp only [Set.image_insert_eq, Set.image_singleton, ← P.shift_add] at hh
+        exact hh.trans hv
+    }
+  }
 
 end ContactPortGeometry
 
@@ -1289,70 +991,62 @@ theorem P3723T1ContactPortsExist {ι : Type} (P : PeriodicTileComplex ι) :
           edge (P.shift u a) (P.shift u b) =
             (edge a b).image (fun z => z + (u : GaussianInt))) := by
     -- Identify both orientations and all simultaneous translates before choosing an edge.
-    let S : Setoid (ι × ι) := {
-      r := fun p q => ∃ u : P.lattice,
-        ({P.shift u p.1, P.shift u p.2} : Set ι) = {q.1, q.2}
-      iseqv := {
-        refl := by
-          intro p
-          exact ⟨0, by simp only [P.shift_zero]⟩
-        symm := by
-          intro p q h
-          obtain ⟨u, hu⟩ := h
-          refine ⟨-u, ?_⟩
-          have hh := congrArg (fun s : Set ι => P.shift (-u) '' s) hu
-          simpa only [Set.image_insert_eq, Set.image_singleton, shift_cancel] using hh.symm
-        trans := by
-          intro p q r hpq hqr
-          obtain ⟨u, hu⟩ := hpq
-          obtain ⟨v, hv⟩ := hqr
-          refine ⟨v + u, ?_⟩
-          have hh := congrArg (fun s : Set ι => P.shift v '' s) hu
-          simp only [Set.image_insert_eq, Set.image_singleton, ← P.shift_add] at hh
-          exact hh.trans hv
-      }
-    }
+    let S := ContactPortGeometry.contactOrbitSetoid P
     let representative (p : ι × ι) : ι × ι := (Quotient.mk S p).out
     have representative_spec (p : ι × ι) : S.r (representative p) p :=
       @Quotient.mk_out _ S p
     have representative_eq (p q : ι × ι) (h : S.r p q) :
-        representative p = representative q := ContactPortGeometry.representative_eq ι P
-            shift_cancel p q h
+        representative p = representative q := congrArg Quotient.out (Quotient.sound h)
     let transport (p : ι × ι) : P.lattice := Classical.choose (representative_spec p)
     have transport_spec (p : ι × ι) :
         ({P.shift (transport p) (representative p).1,
           P.shift (transport p) (representative p).2} : Set ι) = {p.1, p.2} :=
-              ContactPortGeometry.transport_spec ι P shift_cancel representative_spec p
+              Classical.choose_spec (representative_spec p)
     have transport_unique := ContactPortGeometry.transport_unique ι P shift_cancel
     have representative_swap (a b : ι) : representative (a, b) = representative (b, a) :=
       representative_eq _ _ ⟨0, by simp only [P.shift_zero]; exact Set.pair_comm _ _⟩
-    have transport_swap (a b : ι) : transport (a, b) = transport (b, a) :=
-        ContactPortGeometry.transport_swap ι P shift_cancel representative_spec transport_spec
-        transport_unique representative_swap a b
+    have transport_swap (a b : ι) : transport (a, b) = transport (b, a) := by
+      apply transport_unique (representative (a, b)) (a, b)
+      · exact transport_spec (a, b)
+      · rw [representative_swap a b]
+        exact (transport_spec (b, a)).trans (Set.pair_comm _ _)
     have representative_shift (u : P.lattice) (a b : ι) :
         representative (P.shift u a, P.shift u b) = representative (a, b) :=
-            ContactPortGeometry.representative_shift ι P shift_cancel representative_eq u a b
+            (representative_eq (a, b) (P.shift u a, P.shift u b) ⟨u, rfl⟩).symm
     have transport_shift (u : P.lattice) (a b : ι) :
-        transport (P.shift u a, P.shift u b) = u + transport (a, b) :=
-            ContactPortGeometry.transport_shift ι P shift_cancel representative_spec
-            transport_spec transport_unique representative_shift u a b
+        transport (P.shift u a, P.shift u b) = u + transport (a, b) := by
+      apply transport_unique (representative (a, b)) (P.shift u a, P.shift u b)
+      · rw [← representative_shift u a b]
+        exact transport_spec (P.shift u a, P.shift u b)
+      · have hh := congrArg (fun s : Set ι => P.shift u '' s) (transport_spec (a, b))
+        simpa only [Set.image_insert_eq, Set.image_singleton, ← P.shift_add] using hh
     have pair_contact := ContactPortGeometry.pair_contact ι P contact_symmetric
     have representative_contact (p : ι × ι) (hp : P3723T1EdgeContact P p.1 p.2) :
-        P3723T1EdgeContact P (representative p).1 (representative p).2 :=
-            ContactPortGeometry.representative_contact ι P shift_cancel contact_periodic
-            representative_spec transport_spec pair_contact p hp
+        P3723T1EdgeContact P (representative p).1 (representative p).2 := by
+      apply (contact_periodic (transport p) _ _).mp
+      exact (pair_contact _ _ _ _ (transport_spec p)).mpr hp
     let baseEdge (p : ι × ι) : Finset GaussianInt :=
       if hp : P3723T1EdgeContact P p.1 p.2 then Classical.choose hp.2 else ∅
     have baseEdge_common (p : ι × ι) (hp : P3723T1EdgeContact P p.1 p.2) :
-        baseEdge p ∈ FootprintEdges (P.tile p.1) ∩ FootprintEdges (P.tile p.2)  :=
-            ContactPortGeometry.baseEdge_common ι P p hp
+        baseEdge p ∈ FootprintEdges (P.tile p.1) ∩ FootprintEdges (P.tile p.2)  := by
+      simp only [baseEdge, dite_eq_left hp]
+      exact Classical.choose_spec hp.2
     let edge (a b : ι) : Finset GaussianInt :=
       if P3723T1EdgeContact P a b then
         (baseEdge (representative (a, b))).image
           (fun z => z + (transport (a, b) : GaussianInt))
       else ∅
-    have edge_common := ContactPortGeometry.edge_common ι P shift_cancel common_edge_transport
-        representative_spec transport_spec representative_contact baseEdge_common
+    have edge_common (a b : ι) (hab : P3723T1EdgeContact P a b) :
+        edge a b ∈ FootprintEdges (P.tile a) ∩ FootprintEdges (P.tile b) := by
+      have hh := common_edge_transport (transport (a, b))
+        (representative (a, b)).1 (representative (a, b)).2 _
+        (baseEdge_common _ (representative_contact (a, b) hab))
+      simp only [edge, ite_eq_left hab]
+      rcases Set.pair_eq_pair_iff.mp (transport_spec (a, b)) with ⟨h1, h2⟩ | ⟨h1, h2⟩
+      · rw [h1, h2] at hh
+        exact hh
+      · rw [h1, h2] at hh
+        exact ⟨hh.2, hh.1⟩
     have footprint_card := ContactPortGeometry.footprint_card
     refine ⟨edge, edge_common, ?_, ?_, ?_, ?_⟩
     · intro a b hab
